@@ -245,7 +245,7 @@ SimonEngine::SimonEngine(GameDetector *detector, OSystem *syst)
 	_continous_mainscript = 0;
 	_continous_vgascript = 0;
 	_draw_images_debug = 0;
-	_subtitles = 0;
+	_subtitles = true;
 	_mouse_cursor = 0;
 	_vga_var9 = 0;
 	_script_unk_1 = 0;
@@ -430,6 +430,7 @@ SimonEngine::SimonEngine(GameDetector *detector, OSystem *syst)
 	_debugMode = detector->_debugMode;
 	_debugLevel = detector->_debugLevel;
 	_language = detector->_language;
+	_noSubtitles = detector->_noSubtitles;
 }
 
 SimonEngine::~SimonEngine() {
@@ -2037,11 +2038,10 @@ void SimonEngine::o_print_str() {
 	case GAME_SIMON1TALKIE:
 	case GAME_SIMON1WIN:
 	case GAME_SIMON1CD32:
-		if (speech_id != 0 && !_subtitles) {
+		if (speech_id != 0)
 			talk_with_speech(speech_id, num_1);
-		} else if (string_ptr != NULL) {
+		if (string_ptr != NULL && _subtitles)
 			talk_with_text(num_1, num_2, (const char *)string_ptr, tv->a, tv->b, tv->c);
-		}
 		break;
 
 	case GAME_SIMON1DEMO:
@@ -2054,7 +2054,7 @@ void SimonEngine::o_print_str() {
 	case GAME_SIMON2TALKIE:
 	case GAME_SIMON2WIN:
 	case GAME_SIMON2MAC:
-		if (speech_id != 0 && num_1 == 1 && !_subtitles)
+		if (speech_id != 0 && num_1 == 1)
 			talk_with_speech(speech_id, num_1);
 
 		if (speech_id != 0 && !_subtitles)
@@ -2729,12 +2729,10 @@ void SimonEngine::o_wait_for_vga(uint a) {
 	_exit_cutscene = false;
 	_skip_speech = false;
 	while (_vga_wait_for != 0) {
-		if (_skip_speech) {
-			if (_game & GF_SIMON2) {
-				if (_vga_wait_for == 200 && !vc_get_bit(14)) {
-					skip_speech();
-					break;
-				}
+		if (_skip_speech && _game & GF_SIMON2) {
+			if (_vga_wait_for == 200 && !vc_get_bit(14)) {
+				skip_speech();
+				break;
 			}
 		} else if (_exit_cutscene) {
 			if (vc_get_bit(9)) {
@@ -3742,6 +3740,8 @@ void SimonEngine::start_vga_code(uint b, uint vga_res, uint vga_struct_id, uint 
 void SimonEngine::talk_with_speech(uint speech_id, uint num_1) {
 	if (!(_game & GF_SIMON2)) {
 		if (speech_id == 9999) {
+			if (_subtitles)
+				return;
 			if (!(_bit_array[0] & 0x4000) && !(_bit_array[1] & 0x1000)) {
 				_bit_array[0] |= 0x4000;
 				_variableArray[100] = 0xF;
@@ -3749,15 +3749,14 @@ void SimonEngine::talk_with_speech(uint speech_id, uint num_1) {
 				o_wait_for_vga(0x82);
 			}
 			_skip_vga_wait = true;
-			return;
-		}
-		if (num_1 < 100) {
+		} else {
+			if (_subtitles && _scriptvar_2) {
+				start_vga_code(4, 2, 204, 0, 0, 0);
+				o_wait_for_vga(204);
+				o_kill_sprite_simon1(204);
+			}
 			o_kill_sprite_simon1(num_1 + 201);
-		}
-
-		_sound->playVoice(speech_id);
-
-		if (num_1 < 100) {
+			_sound->playVoice(speech_id);
 			start_vga_code(4, 2, num_1 + 201, 0, 0, 0);
 		}
 	} else {
@@ -3779,7 +3778,6 @@ void SimonEngine::talk_with_speech(uint speech_id, uint num_1) {
 			}
 			o_kill_sprite_simon2(2, num_1 + 2);
 			_sound->playVoice(speech_id);
-
 			start_vga_code(4, 2, num_1 + 2, 0, 0, 0);
 		}
 	}
@@ -4395,18 +4393,16 @@ void SimonEngine::go() {
 	if (_debugLevel == 4)
 		_start_mainscript = true;
 
-	if (_sound->hasVoice()) {
+	if (_game & GF_TALKIE)
+		if (_noSubtitles)
+			_subtitles = false;
+
+	// English and German versions of Simon the Sorcerer 1 don't have full subtitles
+	if (!(_game & GF_SIMON2) && _language < 2)
 		_subtitles = false;
-	} else {
-		_subtitles = true;
-	}
 
 	if (_language == 4 || (_language > 5 && _language < 20))
-		error("Only English, French, German, Hebrew, Italian and Spanish are supported");
-
-	//Only English and German voice files were produced
-	if  (_language >= 2)
-		_subtitles = true;
+		error("The only known versions are English, French, German, Hebrew, Italian and Spanish");
 
 	while (1) {
 		hitarea_stuff();
@@ -4482,10 +4478,10 @@ void SimonEngine::delay(uint amount) {
 
 				case OSystem::EVENT_RBUTTONDOWN:
 					if (_game & GF_SIMON2)
-					_skip_speech = true;
+ 						_skip_speech = true;
 					else
-					_exit_cutscene = true;
-					break;
+						_exit_cutscene = true;
+ 					break;
 				
 				default:
 					break;

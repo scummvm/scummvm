@@ -186,6 +186,7 @@ public:
 	uint16 _debugMode;
 	uint16 _debugLevel;
 	uint16 _language;
+	bool _noSubtitles;
 	bool _start_mainscript;
 	bool _continous_mainscript;
 	bool _continous_vgascript;

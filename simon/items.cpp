@@ -995,11 +995,10 @@ int SimonEngine::runScript() {
 				if (_game & GF_TALKIE) 
 					d = _array_4[a];
 
-				if (d != 0 && !_subtitles) {
+				if (d != 0)
 					talk_with_speech(d, b);
-				} else if (s != NULL) {
+				if (s != NULL && (d == 0 || _subtitles))
 					talk_with_text(b, c, s, tv->a, tv->b, tv->c);
-				}
 			}
 			break;
 
@@ -1234,12 +1233,10 @@ void SimonEngine::o_inventory_descriptions() {
 	if (_game == GAME_SIMON1CD32 || _game == GAME_SIMON1TALKIE || _game == GAME_SIMON1WIN) {
 		if (child != NULL && child->avail_props & 0x200) {
 			uint offs = getOffsetOfChild2Param(child, 0x200);
-			if (!_subtitles)
-				talk_with_speech(child->array[offs], a);
+			talk_with_speech(child->array[offs], a);
 		} else if (child != NULL && child->avail_props & 0x100) {
 			uint offs = getOffsetOfChild2Param(child, 0x100);
-			if (!_subtitles)
-				talk_with_speech(child->array[offs] + 3550, a);
+			talk_with_speech(child->array[offs] + 3550, a);
 		}
 	} else if (_game == GAME_SIMON2TALKIE || _game == GAME_SIMON2WIN) {
 		if (child != NULL && child->avail_props & 0x200) {
@@ -1289,8 +1286,7 @@ void SimonEngine::o_inventory_descriptions() {
 				}
 			}
 
-			if (!_subtitles)
-				talk_with_speech(var200, a);
+			talk_with_speech(var200, a);
 		}
 
 	}
