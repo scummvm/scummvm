@@ -150,6 +150,14 @@ SOURCE=..\..\sword2\driver\_mouse.h
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\sword2\driver\animation.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\sword2\driver\animation.h
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\sword2\driver\d_draw.cpp
 # End Source File
 # Begin Source File

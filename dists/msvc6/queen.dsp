@@ -139,11 +139,27 @@ LIB32=link.exe -lib
 # PROP Default_Filter ""
 # Begin Source File
 
+SOURCE=..\..\queen\bankman.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\queen\bankman.h
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\queen\command.cpp
 # End Source File
 # Begin Source File
 
 SOURCE=..\..\queen\command.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\queen\credits.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\queen\credits.h
 # End Source File
 # Begin Source File
 
@@ -163,6 +179,10 @@ SOURCE=..\..\queen\debug.h
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\queen\defs.h
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\queen\display.cpp
 # End Source File
 # Begin Source File
@@ -176,6 +196,14 @@ SOURCE=..\..\queen\graphics.cpp
 # Begin Source File
 
 SOURCE=..\..\queen\graphics.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\queen\grid.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\queen\grid.h
 # End Source File
 # Begin Source File
 
@@ -200,6 +228,14 @@ SOURCE=..\..\queen\logic.cpp
 # Begin Source File
 
 SOURCE=..\..\queen\logic.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\queen\music.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\queen\music.h
 # End Source File
 # Begin Source File
 

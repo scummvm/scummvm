@@ -234,6 +234,14 @@ SOURCE=..\..\common\map.h
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\common\md5.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\common\md5.h
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\common\rect.h
 # End Source File
 # Begin Source File

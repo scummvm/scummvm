@@ -209,6 +209,74 @@ SOURCE=..\..\scumm\smush\smush_player.cpp
 SOURCE=..\..\scumm\smush\smush_player.h
 # End Source File
 # End Group
+# Begin Group "imuse_digi"
+
+# PROP Default_Filter ""
+# Begin Source File
+
+SOURCE=..\..\scumm\imuse_digi\dimuse.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\scumm\imuse_digi\dimuse.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\scumm\imuse_digi\dimuse_bndmgr.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\scumm\imuse_digi\dimuse_bndmgr.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\scumm\imuse_digi\dimuse_codecs.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\scumm\imuse_digi\dimuse_music.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\scumm\imuse_digi\dimuse_sndmgr.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\scumm\imuse_digi\dimuse_sndmgr.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\scumm\imuse_digi\dimuse_tables.cpp
+# End Source File
+# End Group
+# Begin Group "insane"
+
+# PROP Default_Filter ""
+# Begin Source File
+
+SOURCE=..\..\scumm\insane\insane.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\scumm\insane\insane.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\scumm\insane\insane_ben.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\scumm\insane\insane_enemy.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\scumm\insane\insane_iact.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\scumm\insane\insane_scenes.cpp
+# End Source File
+# End Group
 # Begin Source File
 
 SOURCE=..\..\scumm\actor.cpp
@@ -248,14 +316,6 @@ SOURCE=..\..\scumm\boxes.cpp
 # Begin Source File
 
 SOURCE=..\..\scumm\boxes.h
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\scumm\bundle.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\scumm\bundle.h
 # End Source File
 # Begin Source File
 
@@ -320,14 +380,6 @@ SOURCE=..\..\scumm\imuse.cpp
 # Begin Source File
 
 SOURCE=..\..\scumm\imuse.h
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\scumm\imuse_digi.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\scumm\imuse_digi.h
 # End Source File
 # Begin Source File
 
@@ -464,6 +516,10 @@ SOURCE=..\..\scumm\script_v5.cpp
 # Begin Source File
 
 SOURCE=..\..\scumm\script_v6.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\scumm\script_v6he.cpp
 # End Source File
 # Begin Source File
 
