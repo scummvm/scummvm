@@ -288,7 +288,7 @@ Command Line Options:
 
 In game Hot Keys:
 -----------------
-        Ctrl 0-9 and Shift 0-9   - load and save games
+        Ctrl 0-9 and Alt 0-9     - load and save games
         Ctrl-Alt 1-7             - cycles between graphics filters
         Ctrl-z OR Alt-x          - quits
         Ctrl-f                   - runs in fast mode.
