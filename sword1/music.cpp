@@ -184,7 +184,7 @@ void Music::startMusic(int32 tuneId, int32 loopFlag) {
 			newStream = 0;
 		}
 		char fName[20];
-		sprintf(fName, "music/%s.wav", _tuneList[tuneId]);
+		sprintf(fName, "%s.wav", _tuneList[tuneId]);
 		if (_handles[newStream].play(fName, loopFlag != 0)) {
 			delete _converter[newStream];
 			_converter[newStream] = makeRateConverter(_handles[newStream].getRate(), _mixer->getOutputRate(), _handles[newStream].isStereo(), false);

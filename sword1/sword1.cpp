@@ -100,9 +100,11 @@ void SwordEngine::initialize(void) {
 
 	// Add default file directories
 	File::addDefaultDirectory(_gameDataPath + "/CLUSTERS/");
+	File::addDefaultDirectory(_gameDataPath + "/MUSIC/");
 	File::addDefaultDirectory(_gameDataPath + "/SPEECH/");
 	File::addDefaultDirectory(_gameDataPath + "/VIDEO/");
 	File::addDefaultDirectory(_gameDataPath + "/clusters/");
+	File::addDefaultDirectory(_gameDataPath + "/music/");
 	File::addDefaultDirectory(_gameDataPath + "/speech/");
 	File::addDefaultDirectory(_gameDataPath + "/video/");
 
