@@ -213,7 +213,7 @@ void Graphics::plotPoint(int16 x, int16 y, uint8 colour) {
  * @param colour colour of the line
  */
 
-// Uses Bressnham's incremental algorithm!
+// Uses Bresenham's incremental algorithm!
 
 void Graphics::drawLine(int16 x0, int16 y0, int16 x1, int16 y1, uint8 colour) {
 	int dxmod, dymod;
