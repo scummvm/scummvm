@@ -847,7 +847,7 @@ void Scumm_v5::o5_faceActor() {
 	a = derefActorSafe(act, "o5_faceActor");
 	assert(a);
 
-	a->factToObject(obj);
+	a->faceToObject(obj);
 }
 
 void Scumm_v5::o5_findInventory() {

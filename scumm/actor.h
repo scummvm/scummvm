@@ -152,7 +152,7 @@ public:
 	AdjustBoxResult adjustXYToBeInBox(int dstX, int dstY, int pathfrom);
 
 	void setDirection(int direction);
-	void factToObject(int obj);
+	void faceToObject(int obj);
 	void turnToDirection(int newdir);
 	void walkActor();
 	void drawActorCostume();

@@ -722,7 +722,7 @@ void Actor::adjustActorPos() {
 	}
 }
 
-void Actor::factToObject(int obj) {
+void Actor::faceToObject(int obj) {
 	int x2, y2, dir;
 	
 	if (!isInCurrentRoom())

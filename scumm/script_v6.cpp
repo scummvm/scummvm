@@ -1065,7 +1065,7 @@ void Scumm_v6::o6_faceActor() {
 	Actor *a = derefActorSafe(pop(), "o6_faceActor");
 	assert(a);
 
-	a->factToObject(obj);
+	a->faceToObject(obj);
 }
 
 void Scumm_v6::o6_animateActor() {
