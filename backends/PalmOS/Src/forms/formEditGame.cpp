@@ -18,6 +18,9 @@ static void GameTabInit(GameInfoType *gameInfoP) {
 	FieldType *fld1P, *fld2P, *fld3P;
 	Char *nameP, *pathP, *gameP;
 	MemHandle nameH, pathH, gameH;
+	ListType *list1P;
+
+	list1P = (ListType *)GetObjectPtr(TabGameInfoEngineList);
 
 	fld1P = (FieldType *)GetObjectPtr(TabGameInfoEntryNameField);
 	fld2P = (FieldType *)GetObjectPtr(TabGameInfoPathField);
@@ -32,14 +35,18 @@ static void GameTabInit(GameInfoType *gameInfoP) {
 	gameP = (Char *)MemHandleLock(gameH);
 	
 	if (gameInfoP) {
+		LstSetSelection(list1P, gameInfoP->engine);
 		StrCopy(nameP, gameInfoP->nameP);
 		StrCopy(pathP, gameInfoP->pathP);
 		StrCopy(gameP, gameInfoP->gameP);
 	} else {
+		LstSetSelection(list1P, 0);
 		MemSet(nameP,MemHandleSize(nameH),0);
 		MemSet(pathP,MemHandleSize(pathH),0);
 		MemSet(gameP,MemHandleSize(gameH),0);
 	}
+
+	CtlSetLabel((ControlType *)GetObjectPtr(TabGameInfoEnginePopTrigger), LstGetSelectionText(list1P, LstGetSelection(list1P)));
 
 	MemHandleUnlock(nameH);
 	MemHandleUnlock(pathH);
@@ -52,8 +59,10 @@ static void GameTabInit(GameInfoType *gameInfoP) {
 
 static Err GameTabSave(GameInfoType *gameInfoP) {
 	FieldType *fld1P, *fld2P, *fld3P;
+	ListType *list1P;
 
 	FormType *frmP = FrmGetActiveForm();
+	list1P = (ListType *)GetObjectPtr(TabGameInfoEngineList);
 
 	fld1P = (FieldType *)GetObjectPtr(TabGameInfoEntryNameField);
 	fld2P = (FieldType *)GetObjectPtr(TabGameInfoPathField);
@@ -84,6 +93,7 @@ static Err GameTabSave(GameInfoType *gameInfoP) {
 		}
 
 	} else {
+		gameInfoP->engine = LstGetSelection(list1P);
 		StrCopy(gameInfoP->nameP, FldGetTextPtr(fld1P));
 		StrCopy(gameInfoP->pathP, FldGetTextPtr(fld2P));
 		StrCopy(gameInfoP->gameP, FldGetTextPtr(fld3P));
@@ -444,6 +454,11 @@ Boolean EditGameFormHandleEvent(EventPtr eventP) {
 				
 				case GameEditDeleteButton:
 					EditGameFormDelete(false);
+					break;
+
+				case TabGameInfoEnginePopTrigger:
+					FrmList(eventP, TabGameInfoEngineList);
+					FrmHideObject(frmP, FrmGetObjectIndex(frmP, TabGameInfoEngineList));
 					break;
 
 				case TabGameDisplayGfxPopupPopTrigger:
