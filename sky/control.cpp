@@ -496,7 +496,7 @@ uint16 SkyControl::saveRestorePanel(bool allowEdit) {
 
 	bool quitPanel = false;
 	bool refreshNames = true;
-	uint16 clickRes;
+	uint16 clickRes = 0;
 	while (!quitPanel) {
 		if (refreshNames) {
 			showSprites(textSprites);
@@ -513,7 +513,7 @@ uint16 SkyControl::saveRestorePanel(bool allowEdit) {
 			quitPanel = true;
 		}
 		bool haveButton = false;
-		for (uint16 cnt = 0; cnt < 6; cnt++)
+		for (cnt = 0; cnt < 6; cnt++)
 			if (lookList[cnt]->isMouseOver(_mouseX, _mouseY)) {
 				buttonControl(lookList[cnt]);
 				haveButton = true;
@@ -586,7 +586,8 @@ void SkyControl::loadSaveDescriptions(uint8 *destBuf) {
 		for (uint16 cnt = 0; cnt < MAX_SAVE_GAMES; cnt++) {
 			sprintf((char*)destPos,"%3d: ", cnt + 1);
 			uint8 nameCnt = 0;
-			while (destPos[nameCnt + 5] = inPos[nameCnt]) nameCnt++;
+			while ((destPos[nameCnt + 5] = inPos[nameCnt]))
+				nameCnt++;
 			destPos += MAX_TEXT_LEN;
 		}
 		free(tmpBuf);
