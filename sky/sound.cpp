@@ -1228,10 +1228,7 @@ bool SkySound::startSpeech(uint16 textNum) {
 	memcpy(playBuffer, speechData + sizeof(dataFileHeader), speechSize);
 
 	free(speechData);
-	_skyDisk->flushPrefetched();
 
-    // TODO: implement pre_after_table_area to find and prefetch file for next speech
-	
-	int slt = _mixer->playRaw(&_ingameSpeech, playBuffer, speechSize - 64, 11025, SoundMixer::FLAG_UNSIGNED | SoundMixer::FLAG_AUTOFREE);
+	_mixer->playRaw(&_ingameSpeech, playBuffer, speechSize - 64, 11025, SoundMixer::FLAG_UNSIGNED | SoundMixer::FLAG_AUTOFREE);
 	return true;
 }
