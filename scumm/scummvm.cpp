@@ -478,6 +478,8 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 	memset(_charsetData, 0, sizeof(_charsetData));
 	_charsetBufPos = 0;
 	memset(_charsetBuffer, 0, sizeof(_charsetBuffer));
+	_copyProtection = false;
+	_demoMode = false;
 	_noSubtitles = false;
 	_confirmExit = false;
 	_numInMsgStack = 0;
