@@ -1,6 +1,10 @@
 For a more comprehensive changelog for the latest experimental CVS code, see:
         http://scummvm.sourceforge.net/daily/ChangeLog
 
+0.7.1 (2005-xx-xx)
+ SCUMM:
+   - Fixed wrong actor animation in Full Throttle INSANE
+
 0.7.0 (2004-12-24)
  New Games:
    - Added 26 Humongous Entertainment titles, only a few are completable.
