@@ -1033,34 +1033,30 @@ void IMuseDigital::parseScriptCmds(int a, int b, int c, int d, int e, int f, int
 		case 0x500: // set priority - could be ignored
 			break;
 		case 0x600: // set volume
-			debug(5, "ImuseSetParam (%x), sample(%d), volume(%d)", sub_cmd, sample, d);
+			debug(5, "ImuseSetParam (0x600), sample(%d), volume(%d)", sub_cmd, sample, d);
 			for (l = 0; l < MAX_DIGITAL_CHANNELS; l++) {
 				if ((_channel[l].idSound == sample) && _channel[l].used) {
-					chan = l;
-					break;
+					_channel[l].vol = d * 1000;
+//					if (_channel[l].volFadeUsed)
+//						_channel[l].volFadeStep = (_channel[l].volFadeDest - _channel[l].vol) * 60 * 40 / (1000 * _channel[chan].volFadeDelay);
 				}
 			}
-			if (chan == -1) {
-				debug(5, "ImuseSetParam (%x), sample(%d) not exist in channels", sub_cmd, sample);
+			if (l == -1) {
+				debug(5, "ImuseSetParam (0x600), sample(%d) not exist in channels", sub_cmd, sample);
 				return;
 			}
-			_channel[chan].vol = d * 1000;
-			if (_channel[chan].volFadeUsed)
-				_channel[chan].volFadeStep = (_channel[chan].volFadeDest - _channel[chan].vol) * 60 * 40 / (1000 * _channel[chan].volFadeDelay);
 			break;
 		case 0x700: // set pan
 			debug(5, "ImuseSetParam (0x700), sample(%d), pan(%d)", sample, d);
 			for (l = 0; l < MAX_DIGITAL_CHANNELS; l++) {
 				if ((_channel[l].idSound == sample) && _channel[l].used) {
-					chan = l;
-					break;
+					_channel[l].pan = d;
 				}
 			}
-			if (chan == -1) {
+			if (l == -1) {
 				debug(5, "ImuseSetParam (0x700), sample(%d) not exist in channels", sample);
 				return;
 			}
-			_channel[chan].pan = d;
 			break;
 		default:
 			warning("IMuseDigital::doCommand SetParam DEFAULT command %d", sub_cmd);
@@ -1077,19 +1073,17 @@ void IMuseDigital::parseScriptCmds(int a, int b, int c, int d, int e, int f, int
 			}
 			for (l = 0; l < MAX_DIGITAL_CHANNELS; l++) {
 				if ((_channel[l].idSound == sample) && _channel[l].used) {
-					chan = l;
-					break;
+					_channel[l].volFadeDelay = e;
+					_channel[l].volFadeDest = d * 1000;
+					_channel[l].volFadeStep = (_channel[l].volFadeDest - _channel[l].vol) * 60 * 40 / (1000 * e);
+					_channel[l].volFadeUsed = true;
+					debug(5, "ImuseFadeParam: vol %d, volDest %d, step %d", _channel[l].vol, d * 1000, _channel[l].volFadeStep);
 				}
 			}
 			if (chan == -1) {
 				debug(5, "ImuseFadeParam (0x600), sample %d not exist in channels", sample);
 				return;
 			}
-			_channel[chan].volFadeDelay = e;
-			_channel[chan].volFadeDest = d * 1000;
-			_channel[chan].volFadeStep = (_channel[chan].volFadeDest - _channel[chan].vol) * 60 * 40 / (1000 * e);
-			_channel[chan].volFadeUsed = true;
-			debug(5, "ImuseFadeParam: vol %d, volDest %d, step %d", _channel[chan].vol, d * 1000, _channel[chan].volFadeStep);
 			break;
 		default:
 			warning("IMuseDigital::doCommand FadeParam DEFAULT sub command %d", sub_cmd);
