@@ -82,7 +82,7 @@ static const VersionSettings scumm_settings[] = {
 	{"zak256", "Zak McKracken and the Alien Mindbenders (256)", GID_ZAK256, 3, VersionSettings::ADLIB_ALWAYS,
 	 GF_SMALL_HEADER | GF_SMALL_NAMES | GF_NO_SCALING | GF_OLD256 | GF_FMTOWNS | GF_AUDIOTRACKS, "00.LFL"},
 	{"loom", "Loom", GID_LOOM, 3, VersionSettings::ADLIB_ALWAYS,
-	 GF_SMALL_HEADER | GF_SMALL_NAMES | GF_NO_SCALING | GF_USE_KEY | GF_16COLOR | GF_OLD_BUNDLE, "00.LFL"},
+	 GF_SMALL_HEADER | GF_SMALL_NAMES | GF_NO_SCALING | GF_USE_KEY | GF_16COLOR | GF_OLD_BUNDLE | GF_LOOM, "00.LFL"},
 
 	/* Scumm Version 4 */
 	{"monkeyEGA", "Monkey Island 1 (EGA)", GID_MONKEY_EGA, 4, VersionSettings::ADLIB_ALWAYS,
@@ -94,7 +94,7 @@ static const VersionSettings scumm_settings[] = {
 	{"monkeyVGA", "Monkey Island 1 (256 color Floppy version)", GID_MONKEY_VGA,  4, VersionSettings::ADLIB_ALWAYS,
 	 GF_SMALL_HEADER | GF_USE_KEY, "000.LFL"},
 	{"loomcd", "Loom (256 color CD version)", GID_LOOM256, 4, VersionSettings::ADLIB_ALWAYS,
-	 GF_SMALL_HEADER | GF_USE_KEY | GF_AUDIOTRACKS, "000.LFL"},
+	 GF_SMALL_HEADER | GF_USE_KEY | GF_LOOM | GF_AUDIOTRACKS, "000.LFL"},
 	{"monkey", "Monkey Island 1", GID_MONKEY, 5, VersionSettings::ADLIB_PREFERRED,
 	 GF_USE_KEY | GF_AUDIOTRACKS, 0},
 	{"monkey1", "Monkey Island 1 (alt)", GID_MONKEY, 5, VersionSettings::ADLIB_PREFERRED,

@@ -99,7 +99,7 @@ void ScummDebugger::attach(Scumm *s, char *entry) {
 		DCmd_Register("scripts", &ScummDebugger::Cmd_PrintScript);
 		DCmd_Register("importres", &ScummDebugger::Cmd_ImportRes);
 
-		if ((_s->_gameId == GID_LOOM) || (_s->_gameId == GID_LOOM256))
+		if ((_s->_features & GF_LOOM))
 			DCmd_Register("drafts", &ScummDebugger::Cmd_PrintDraft);
 
 		DCmd_Register("loadgame", &ScummDebugger::Cmd_LoadGame);
@@ -934,7 +934,7 @@ bool ScummDebugger::Cmd_PrintDraft(int argc, const char **argv) {
 	const char *notes = "cdefgabC";
 	int i, base, draft;
 
-	if (_s->_gameId != GID_LOOM && _s->_gameId != GID_LOOM256) {
+	if (!(_s->_features & GF_LOOM)) {
 		Debug_Printf("Command only works with Loom/LoomCD\n");
 		return true;
 	}

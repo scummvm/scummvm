@@ -225,7 +225,7 @@ int Actor::remapDirection(int dir, bool is_walking) {
 	// not necessary here because we never call the function unless the
 	// actor is in the current room anyway.
 	
-	if (!ignoreBoxes || _vm->_gameId == GID_LOOM || _vm->_gameId == GID_LOOM256) {
+	if (!ignoreBoxes || (_vm->_features & GF_LOOM)) {
 		specdir = _vm->_extraBoxFlags[walkbox];
 		if (specdir) {
 			if (specdir & 0x8000) {

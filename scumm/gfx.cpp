@@ -664,7 +664,7 @@ void Scumm::drawFlashlight() {
 	_flashlight.x = x - _flashlight.w / 2 - _screenStartStrip * 8;
 	_flashlight.y = y - _flashlight.h / 2;
 
-	if (_gameId == GID_LOOM || _gameId == GID_LOOM256)
+	if (_features & GF_LOOM)
 		_flashlight.y -= 12;
 
 	// Clip the flashlight at the borders
@@ -3508,7 +3508,7 @@ void Scumm::decompressDefaultCursor(int idx) {
 
 	// FIXME: None of the stock cursors are right for Loom. Why is that?
 
-	if (_gameId == GID_LOOM || _gameId == GID_LOOM256) {
+	if (_features & GF_LOOM) {
 		int w = 0;
 
 		_cursor.width = 8;
