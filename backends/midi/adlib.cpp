@@ -77,7 +77,7 @@ protected:
 	bool _allocated;
 	byte _channel;
 
-	void init (MidiDriver_ADLIB *owner, byte channel);
+	void init(MidiDriver_ADLIB *owner, byte channel);
 	void allocate() { _allocated = true; }
 
 public:
@@ -103,26 +103,26 @@ public:
 	void release() { _allocated = false; }
 
 	// Regular messages
-	void noteOff (byte note);
-	void noteOn (byte note, byte velocity);
-	void programChange (byte program);
-	void pitchBend (int16 bend);
+	void noteOff(byte note);
+	void noteOn(byte note, byte velocity);
+	void programChange(byte program);
+	void pitchBend(int16 bend);
 
 	// Control Change messages
-	void controlChange (byte control, byte value);
-	void modulationWheel (byte value);
-	void volume (byte value);
-	void panPosition (byte value) { return; } // Not supported
-	void pitchBendFactor (byte value);
-	void detune (byte value);
-	void priority (byte value);
-	void sustain (bool value);
-	void effectLevel (byte value) { return; } // Not supported
-	void chorusLevel (byte value) { return; } // Not supported
+	void controlChange(byte control, byte value);
+	void modulationWheel(byte value);
+	void volume(byte value);
+	void panPosition(byte value) { return; } // Not supported
+	void pitchBendFactor(byte value);
+	void detune(byte value);
+	void priority(byte value);
+	void sustain(bool value);
+	void effectLevel(byte value) { return; } // Not supported
+	void chorusLevel(byte value) { return; } // Not supported
 	void allNotesOff();
 
 	// SysEx messages
-	void sysEx_customInstrument (uint32 type, byte *instr);
+	void sysEx_customInstrument(uint32 type, byte *instr);
 };
 
 // FYI (Jamieson630)
@@ -134,24 +134,24 @@ class AdlibPercussionChannel : public AdlibPart {
 	friend class MidiDriver_ADLIB;
 
 protected:
-	void init (MidiDriver_ADLIB *owner, byte channel);
+	void init(MidiDriver_ADLIB *owner, byte channel);
 
 public:
-	void noteOff (byte note);
-	void noteOn (byte note, byte velocity);
-	void programChange (byte program) { }
-	void pitchBend (int16 bend) { }
+	void noteOff(byte note);
+	void noteOn(byte note, byte velocity);
+	void programChange(byte program) { }
+	void pitchBend(int16 bend) { }
 
 	// Control Change messages
-	void controlChange (byte control, byte value) { }
-	void modulationWheel (byte value) { }
-	void pitchBendFactor (byte value) { }
-	void detune (byte value) { }
-	void priority (byte value) { }
-	void sustain (bool value) { }
+	void controlChange(byte control, byte value) { }
+	void modulationWheel(byte value) { }
+	void pitchBendFactor(byte value) { }
+	void detune(byte value) { }
+	void priority(byte value) { }
+	void sustain(bool value) { }
 
 	// SysEx messages
-	void sysEx_customInstrument (uint32 type, byte *instr) { }
+	void sysEx_customInstrument(uint32 type, byte *instr) { }
 };
 
 struct Struct10 {
@@ -559,12 +559,12 @@ public:
 	int open();
 	void close();
 	void send(uint32 b);
-	uint32 property (int prop, uint32 param);
+	uint32 property(int prop, uint32 param);
 
-	void setPitchBendRange (byte channel, uint range); 
-	void sysEx_customInstrument (byte channel, uint32 type, byte *instr);
+	void setPitchBendRange(byte channel, uint range); 
+	void sysEx_customInstrument(byte channel, uint32 type, byte *instr);
 
-	void setTimerCallback (void *timer_param, void (*timer_proc) (void *));
+	void setTimerCallback(void *timer_param, void (*timer_proc) (void *));
 	uint32 getBaseTempo() {
 #ifdef _WIN32_WCE
 		return 3991 * 2; // Sampled down to 11 kHz
@@ -636,7 +636,7 @@ private:
 
 // MidiChannel method implementations
 
-void AdlibPart::init (MidiDriver_ADLIB *owner, byte channel) {
+void AdlibPart::init(MidiDriver_ADLIB *owner, byte channel) {
 	_owner = owner;
 	_channel = channel;
 	_pri_eff = 127;
@@ -646,15 +646,15 @@ MidiDriver *AdlibPart::device() {
 	return _owner;
 }
 
-void AdlibPart::noteOff (byte note) {
-	_owner->part_key_off (this, note);
+void AdlibPart::noteOff(byte note) {
+	_owner->part_key_off(this, note);
 }
 
-void AdlibPart::noteOn (byte note, byte velocity) {
-	_owner->part_key_on (this, &_part_instr, note, velocity);
+void AdlibPart::noteOn(byte note, byte velocity) {
+	_owner->part_key_on(this, &_part_instr, note, velocity);
 }
 
-void AdlibPart::programChange (byte program) {
+void AdlibPart::programChange(byte program) {
 	if (program > 127)
 		return;
 
@@ -663,12 +663,12 @@ void AdlibPart::programChange (byte program) {
 	for (i = 0; i < ARRAYSIZE(map_gm_to_fm[0]); ++i)
 		count += map_gm_to_fm[program][i];
 	if (!count)
-		warning ("No Adlib instrument defined for GM program %d", (int) program);
+		warning("No Adlib instrument defined for GM program %d", (int) program);
 	_program = program;
 	memcpy(&_part_instr, &map_gm_to_fm [program], sizeof(AdlibInstrument));
 }
 
-void AdlibPart::pitchBend (int16 bend) {
+void AdlibPart::pitchBend(int16 bend) {
 	AdlibVoice *voice;
 
 	_pitchbend = bend;
@@ -678,7 +678,7 @@ void AdlibPart::pitchBend (int16 bend) {
 	}
 }
 
-void AdlibPart::controlChange (byte control, byte value) {
+void AdlibPart::controlChange(byte control, byte value) {
 	switch (control) {
 	case 1:   modulationWheel (value); break;
 	case 7:   volume (value); break;
@@ -697,7 +697,7 @@ void AdlibPart::controlChange (byte control, byte value) {
 	}
 }
 
-void AdlibPart::modulationWheel (byte value) {
+void AdlibPart::modulationWheel(byte value) {
 	AdlibVoice *voice;
 
 	_modwheel = value;
@@ -709,7 +709,7 @@ void AdlibPart::modulationWheel (byte value) {
 	}
 }
 
-void AdlibPart::volume (byte value) {
+void AdlibPart::volume(byte value) {
 	AdlibVoice *voice;
 
 	_vol_eff = value;
@@ -721,7 +721,7 @@ void AdlibPart::volume (byte value) {
 	}
 }
 
-void AdlibPart::pitchBendFactor (byte value) {
+void AdlibPart::pitchBendFactor(byte value) {
 	AdlibVoice *voice;
 
 	_pitchbend_factor = value;
@@ -731,7 +731,7 @@ void AdlibPart::pitchBendFactor (byte value) {
 	}
 }
 
-void AdlibPart::detune (byte value) {
+void AdlibPart::detune(byte value) {
 	AdlibVoice *voice;
 
 	_detune_eff = value;
@@ -741,11 +741,11 @@ void AdlibPart::detune (byte value) {
 	}
 }
 
-void AdlibPart::priority (byte value) {
+void AdlibPart::priority(byte value) {
 	_pri_eff = value;
 }
 
-void AdlibPart::sustain (bool value) {
+void AdlibPart::sustain(bool value) {
 	AdlibVoice *voice;
 
 	_pedal = value;
@@ -759,10 +759,10 @@ void AdlibPart::sustain (bool value) {
 
 void AdlibPart::allNotesOff() {
 	while (_voice)
-		_owner->mc_off (_voice);
+		_owner->mc_off(_voice);
 }
 
-void AdlibPart::sysEx_customInstrument (uint32 type, byte *instr) {
+void AdlibPart::sysEx_customInstrument(uint32 type, byte *instr) {
 	if (type == 'ADL ') {
 		AdlibInstrument *i = &_part_instr;
 		memcpy(i, instr, sizeof(AdlibInstrument));
@@ -771,13 +771,13 @@ void AdlibPart::sysEx_customInstrument (uint32 type, byte *instr) {
 
 // MidiChannel method implementations for percussion
 
-void AdlibPercussionChannel::init (MidiDriver_ADLIB *owner, byte channel) {
-	AdlibPart::init (owner, channel);
+void AdlibPercussionChannel::init(MidiDriver_ADLIB *owner, byte channel) {
+	AdlibPart::init(owner, channel);
 	_pri_eff = 0;
 	_vol_eff = 127;
 }
 
-void AdlibPercussionChannel::noteOff (byte note) {
+void AdlibPercussionChannel::noteOff(byte note) {
 	// Jamieson630: Unless I run into a specific instrument that
 	// may require a key off, I'm going to ignore this message.
 	// The rationale is that a percussion instrument should
@@ -793,11 +793,11 @@ void AdlibPercussionChannel::noteOff (byte note) {
 	byte key = gm_percussion_to_fm [note-34]._key;
 	if (key == 0)
 		return;
-	_owner->part_key_off (this, key);
+	_owner->part_key_off(this, key);
 */
 }
 
-void AdlibPercussionChannel::noteOn (byte note, byte velocity) {
+void AdlibPercussionChannel::noteOn(byte note, byte velocity) {
 	if (note < 34 || note > 81)
 		return; // Out of GM range
 	byte key = gm_percussion_to_fm [note-34]._key;
@@ -805,19 +805,19 @@ void AdlibPercussionChannel::noteOn (byte note, byte velocity) {
 		debug (2, "No FM map for GM percussion key %d (%s)", (int) note, gm_percussion_to_fm [note-34]._name);
 		return;
 	}
-	_owner->part_key_on (this, (AdlibInstrument *) &gm_percussion_to_fm [note-34]._instrument, key, velocity);
+	_owner->part_key_on(this, (AdlibInstrument *) &gm_percussion_to_fm [note-34]._instrument, key, velocity);
 }
 
 // MidiDriver method implementations
 
-MidiDriver_ADLIB::MidiDriver_ADLIB() {
+MidiDriver_ADLIB::MidiDriver_ADLIB()  {
 	uint i;
 
 	_isOpen = false;
 	_game_SmallHeader = false;
 
 	_adlib_reg_cache = 0;
-	_mixer = 0;
+	_mixer = 0
 
 	_timer_proc = 0;
 	_timer_param = 0;
@@ -830,16 +830,17 @@ MidiDriver_ADLIB::MidiDriver_ADLIB() {
 	}
 
 	for (i = 0; i < ARRAYSIZE(_parts); ++i) {
-		_parts[i].init (this, i);
+		_parts[i].init(this, i);
 	}
-	_percussion.init (this, 0);
+	_percussion.init(this, 0);
 }
 
 int MidiDriver_ADLIB::open() {
 	if (_isOpen)
 		return MERR_ALREADY_OPEN;
 	_isOpen = true;
-
+	_mixer = g_mixer;
+	
 	int i;
 	AdlibVoice *voice;
 
@@ -855,14 +856,13 @@ int MidiDriver_ADLIB::open() {
 	int env_bits = g_system->property(OSystem::PROP_GET_FMOPL_ENV_BITS, NULL);   
 	int eg_ent = g_system->property(OSystem::PROP_GET_FMOPL_EG_ENT, NULL);   
 	OPLBuildTables((env_bits ? env_bits : FMOPL_ENV_BITS_HQ), (eg_ent ? eg_ent : FMOPL_EG_ENT_HQ));
-	_opl = OPLCreate(OPL_TYPE_YM3812, 3579545, g_system->property(OSystem::PROP_GET_SAMPLE_RATE, 0));
+	_opl = OPLCreate(OPL_TYPE_YM3812, 3579545, _mixer->getOutputRate());
 
 	adlib_write(1, 0x20);
 	adlib_write(8, 0x40);
 	adlib_write(0xBD, 0x00);
 	create_lookup_table();
 
-	_mixer = g_mixer;
 	_mixer->setupPremix(this, premix_proc);
 	
 	return 0;
@@ -889,7 +889,7 @@ void MidiDriver_ADLIB::close() {
 	_isOpen = false;
 }
 
-void MidiDriver_ADLIB::send (uint32 b) {
+void MidiDriver_ADLIB::send(uint32 b) {
 	//byte param3 = (byte) ((b >> 24) & 0xFF);
 	byte param2 = (byte) ((b >> 16) & 0xFF);
 	byte param1 = (byte) ((b >>  8) & 0xFF);
@@ -904,36 +904,36 @@ void MidiDriver_ADLIB::send (uint32 b) {
 
 	switch (cmd) {
 	case 0x80:// Note Off
-		part->noteOff (param1);
+		part->noteOff(param1);
 		break;
 	case 0x90: // Note On
-		part->noteOn (param1, param2);
+		part->noteOn(param1, param2);
 		break;
 	case 0xA0: // Aftertouch
 		break; // Not supported.
 	case 0xB0: // Control Change
-		part->controlChange (param1, param2);
+		part->controlChange(param1, param2);
 		break;
 	case 0xC0: // Program Change
-		part->programChange (param1);
+		part->programChange(param1);
 		break;
 	case 0xD0: // Channel Pressure
 		break; // Not supported.
 	case 0xE0: // Pitch Bend
-		part->pitchBend ((param1 | (param2 << 7)) - 0x2000);
+		part->pitchBend((param1 | (param2 << 7)) - 0x2000);
 		break;
 	case 0xF0: // SysEx
 		// We should never get here! SysEx information has to be
 		// sent via high-level semantic methods.
-		warning ("MidiDriver_ADLIB: Receiving SysEx command on a send() call");
+		warning("MidiDriver_ADLIB: Receiving SysEx command on a send() call");
 		break;
 
 	default:
-		warning ("MidiDriver_ADLIB: Unknown send() command 0x%02X", cmd);
+		warning("MidiDriver_ADLIB: Unknown send() command 0x%02X", cmd);
 	}
 }
 
-uint32 MidiDriver_ADLIB::property (int prop, uint32 param) {
+uint32 MidiDriver_ADLIB::property(int prop, uint32 param) {
 	switch (prop) {
 		case PROP_OLD_ADLIB: // Older games used a different operator volume algorithm
 			_game_SmallHeader = (param > 0);
@@ -943,7 +943,7 @@ uint32 MidiDriver_ADLIB::property (int prop, uint32 param) {
 	return 0;
 }
 
-void MidiDriver_ADLIB::setPitchBendRange (byte channel, uint range) {
+void MidiDriver_ADLIB::setPitchBendRange(byte channel, uint range) {
 	AdlibVoice *voice;
 	AdlibPart *part = &_parts [channel];
 
@@ -954,11 +954,11 @@ void MidiDriver_ADLIB::setPitchBendRange (byte channel, uint range) {
 	}
 }
 
-void MidiDriver_ADLIB::sysEx_customInstrument (byte channel, uint32 type, byte *instr) {
-	_parts[channel].sysEx_customInstrument (type, instr);
+void MidiDriver_ADLIB::sysEx_customInstrument(byte channel, uint32 type, byte *instr) {
+	_parts[channel].sysEx_customInstrument(type, instr);
 }
 
-void MidiDriver_ADLIB::setTimerCallback (void *timer_param, void (*timer_proc) (void *)) {
+void MidiDriver_ADLIB::setTimerCallback(void *timer_param, void (*timer_proc) (void *)) {
 	_timer_proc = (TimerCallback *) timer_proc;
 	_timer_param = timer_param;
 }
@@ -977,8 +977,8 @@ MidiChannel *MidiDriver_ADLIB::allocateChannel() {
 	return NULL;
 }
 
-MidiDriver *MidiDriver_ADLIB_create() {
-	return new MidiDriver_ADLIB();
+MidiDriver *MidiDriver_ADLIB_create(SoundMixer *mixer) {
+	return new MidiDriver_ADLIB(mixer);
 }
 
 // All the code brought over from IMuseAdlib
@@ -992,7 +992,7 @@ void MidiDriver_ADLIB::adlib_write(byte port, byte value) {
 		return;
 	_adlib_reg_cache[port] = value;
 
-	OPLWriteReg (_opl, port, value);
+	OPLWriteReg(_opl, port, value);
 }
 
 void MidiDriver_ADLIB::generate_samples(int16 *data, int len) {
@@ -1002,7 +1002,7 @@ void MidiDriver_ADLIB::generate_samples(int16 *data, int len) {
 		step = len;
 		if (step > _next_tick)
 			step = _next_tick;
-		YM3812UpdateOne (_opl, data, step);
+		YM3812UpdateOne(_opl, data, step);
 
 		_next_tick -= step;
 		if (!_next_tick) {
@@ -1291,7 +1291,7 @@ int MidiDriver_ADLIB::random_nr(int a) {
 	return _rand_seed * a >> 8;
 }
 
-void MidiDriver_ADLIB::part_key_off (AdlibPart *part, byte note) {
+void MidiDriver_ADLIB::part_key_off(AdlibPart *part, byte note) {
 	AdlibVoice *voice;
 
 	for (voice = part->_voice; voice; voice = voice->_next) {
@@ -1304,7 +1304,7 @@ void MidiDriver_ADLIB::part_key_off (AdlibPart *part, byte note) {
 	}
 }
 
-void MidiDriver_ADLIB::part_key_on (AdlibPart *part, AdlibInstrument *instr, byte note, byte velocity) {
+void MidiDriver_ADLIB::part_key_on(AdlibPart *part, AdlibInstrument *instr, byte note, byte velocity) {
 	AdlibVoice *voice;
 
 	voice = allocate_voice(part->_pri_eff);
@@ -1338,7 +1338,7 @@ AdlibVoice *MidiDriver_ADLIB::allocate_voice(byte pri) {
 	return best;
 }
 
-void MidiDriver_ADLIB::link_mc (AdlibPart *part, AdlibVoice *voice) {
+void MidiDriver_ADLIB::link_mc(AdlibPart *part, AdlibVoice *voice) {
 	voice->_part = part;
 	voice->_next = (AdlibVoice *)part->_voice;
 	part->_voice = voice;
@@ -1348,7 +1348,7 @@ void MidiDriver_ADLIB::link_mc (AdlibPart *part, AdlibVoice *voice) {
 		voice->_next->_prev = voice;
 }
 
-void MidiDriver_ADLIB::mc_key_on (AdlibVoice *voice, AdlibInstrument *instr, byte note, byte velocity) {
+void MidiDriver_ADLIB::mc_key_on(AdlibVoice *voice, AdlibInstrument *instr, byte note, byte velocity) {
 	AdlibPart *part = voice->_part;
 	int c;
 	byte vol_1, vol_2;
@@ -1432,7 +1432,7 @@ void MidiDriver_ADLIB::adlib_note_on_ex(int chan, byte note, int mod)
 	adlib_playnote(chan, code);
 }
 
-void MidiDriver_ADLIB::mc_init_stuff (AdlibVoice *voice, Struct10 * s10,
+void MidiDriver_ADLIB::mc_init_stuff(AdlibVoice *voice, Struct10 * s10,
 															Struct11 * s11, byte flags, InstrumentExtra * ie) {
 	AdlibPart *part = voice->_part;
 	s11->modify_val = 0;
