@@ -29,8 +29,9 @@ namespace Scumm {
 class BundleDirCache {
 public:
 	struct AudioTable {
-		char filename[13];
+		char filename[24];
 		int32 offset;
+		int32 size;
 	};
 private:
 
@@ -38,16 +39,17 @@ private:
 		char fileName[20];
 		AudioTable *bundleTable;
 		int32 numFiles;
+		bool compressedBun;
 	} _budleDirCache[4];
 	
-	int matchFile(const char *filename);
-
 public:
 	BundleDirCache();
 	~BundleDirCache();
 
-	AudioTable *getTable(const char *filename);
-	int32 getNumFiles(const char *filename);
+	int matchFile(const char *filename);
+	AudioTable *getTable(const char *filename, int slot);
+	int32 getNumFiles(const char *filename, int slot);
+	bool isCompressed(int slot);
 };
 
 class BundleMgr {
@@ -80,8 +82,9 @@ public:
 	BundleMgr(BundleDirCache *_cache);
 	~BundleMgr();
 
-	bool openFile(const char *filename);
-	void closeFile();
+	bool open(const char *filename, bool &compressed);
+	void close();
+	File *getFile(const char *filename, int32 &offset, int32 &size);
 	int32 decompressSampleByName(const char *name, int32 offset, int32 size, byte **comp_final, bool header_outside);
 	int32 decompressSampleByIndex(int32 index, int32 offset, int32 size, byte **comp_final, int header_size, bool header_outside);
 	int32 decompressSampleByCurIndex(int32 offset, int32 size, byte **comp_final, int header_size, bool header_outside);

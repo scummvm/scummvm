@@ -23,6 +23,7 @@
 
 #include "stdafx.h"
 #include "common/scummsys.h"
+#include "sound/audiostream.h"
 #include "scumm/imuse_digi/dimuse_bndmgr.h"
 
 namespace Scumm {
@@ -83,6 +84,9 @@ public:
 		int type;
 		int volGroupId;
 		int disk;
+		AudioStream *compressedStream;
+		bool compressed;
+		char lastFileName[24];
 	};
 
 private:
@@ -92,6 +96,7 @@ private:
 	bool checkForProperHandle(soundStruct *soundHandle);
 	soundStruct *allocSlot();
 	void prepareSound(byte *ptr, soundStruct *sound);
+	void prepareSoundFromRMAP(File *file, soundStruct *sound, int32 offset, int32 size);
 
 	ScummEngine *_vm;
 	byte _disk;
@@ -111,6 +116,7 @@ public:
 	void closeSound(soundStruct *soundHandle);
 	soundStruct *cloneSound(soundStruct *soundHandle);
 
+	bool isCompressed(soundStruct *soundHandle);
 	int getFreq(soundStruct *soundHandle);
 	int getBits(soundStruct *soundHandle);
 	int getChannels(soundStruct *soundHandle);

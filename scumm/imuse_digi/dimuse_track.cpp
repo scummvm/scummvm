@@ -119,6 +119,8 @@ void IMuseDigital::startSound(int soundId, const char *soundName, int soundType,
 		if (track->soundHandle == NULL)
 			return;
 
+		track->compressed = _sound->isCompressed(track->soundHandle);
+
 		bits = _sound->getBits(track->soundHandle);
 		channels = _sound->getChannels(track->soundHandle);
 		freq = _sound->getFreq(track->soundHandle);
@@ -147,6 +149,9 @@ void IMuseDigital::startSound(int soundId, const char *soundName, int soundType,
 			track->mixerFlags |= SoundMixer::FLAG_UNSIGNED;
 		} else
 			error("IMuseDigital::startSound(): Can't handle %d bit samples", bits);
+
+		if (track->compressed)
+			track->mixerFlags |= SoundMixer::FLAG_LITTLE_ENDIAN;
 	}
 
 	if (input) {

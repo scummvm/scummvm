@@ -64,6 +64,7 @@ private:
 		bool readyToRemove;
 		bool started;
 		bool souStream;
+		bool compressed;
 		int32 priority;
 		int32 regionOffset;
 		int32 dataOffset;

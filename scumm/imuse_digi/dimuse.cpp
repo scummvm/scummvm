@@ -116,6 +116,7 @@ void IMuseDigital::saveOrLoad(Serializer *ser) {
 		MKLINE(Track, mixerFlags, sleInt32, VER(31)),
 		MK_OBSOLETE(Track, mixerVol, sleInt32, VER(31), VER(42)),
 		MK_OBSOLETE(Track, mixerPan, sleInt32, VER(31), VER(42)),
+		MKLINE(Track, compressed, sleByte, VER(45)),
 		MKEND()
 	};
 
@@ -143,6 +144,10 @@ void IMuseDigital::saveOrLoad(Serializer *ser) {
 									track->soundName, track->soundType,
 									track->volGroupId, -1);
 			assert(track->soundHandle);
+			if (track->compressed) {
+				track->regionOffset = 0;
+				track->dataOffset = _sound->getRegionOffset(track->soundHandle, track->curRegion);
+			}
 			int32 streamBufferSize = track->iteration;
 			int	freq = _sound->getFreq(track->soundHandle);
 			track->stream2 = NULL;
@@ -282,8 +287,8 @@ void IMuseDigital::callback() {
 						_vm->_mixer->setChannelBalance(track->handle, pan);
 						track->stream->append(data, result);
 						track->regionOffset += result;
-						free(data);
 					}
+					free(data);
 
 					if (_sound->isEndOfRegion(track->soundHandle, track->curRegion)) {
 						switchToNextRegion(track);

@@ -30,6 +30,7 @@ BundleDirCache::BundleDirCache() {
 		_budleDirCache[fileId].bundleTable = NULL;
 		_budleDirCache[fileId].fileName[0] = 0;
 		_budleDirCache[fileId].numFiles = 0;
+		_budleDirCache[fileId].compressedBun = false;
 	}
 }
 
@@ -40,16 +41,16 @@ BundleDirCache::~BundleDirCache() {
 	}
 }
 
-BundleDirCache::AudioTable *BundleDirCache::getTable(const char *filename) {
-	int slot = matchFile(filename);
-	assert(slot != -1);
+BundleDirCache::AudioTable *BundleDirCache::getTable(const char *filename, int slot) {
 	return _budleDirCache[slot].bundleTable;
 }
 
-int32 BundleDirCache::getNumFiles(const char *filename) {
-	int slot = matchFile(filename);
-	assert(slot != -1);
+int32 BundleDirCache::getNumFiles(const char *filename, int slot) {
 	return _budleDirCache[slot].numFiles;
+}
+
+bool BundleDirCache::isCompressed(int slot) {
+	return _budleDirCache[slot].compressedBun;
 }
 
 int BundleDirCache::matchFile(const char *filename) {
@@ -80,6 +81,8 @@ int BundleDirCache::matchFile(const char *filename) {
 			error("BundleDirCache::matchFileFile() Can't find free slot for file bundle dir cache");
 
 		tag = file.readUint32BE();
+		if (tag == 'LB23')
+			_budleDirCache[freeSlot].compressedBun = true;
 		offset = file.readUint32BE();
 		
 		strcpy(_budleDirCache[freeSlot].fileName, filename);
@@ -89,22 +92,26 @@ int BundleDirCache::matchFile(const char *filename) {
 		file.seek(offset, SEEK_SET);
 
 		for (int32 i = 0; i < _budleDirCache[freeSlot].numFiles; i++) {
-			char name[13], c;
+			char name[24], c;
 			int32 z = 0;
 			int32 z2;
 
-			for (z2 = 0; z2 < 8; z2++)
-				if ((c = file.readByte()) != 0)
-					name[z++] = c;
-			name[z++] = '.';
-			for (z2 = 0; z2 < 4; z2++)
-				if ((c = file.readByte()) != 0)
-					name[z++] = c;
+			if (tag == 'LB23') {
+				file.read(_budleDirCache[freeSlot].bundleTable[i].filename, 24);
+			} else {
+				for (z2 = 0; z2 < 8; z2++)
+					if ((c = file.readByte()) != 0)
+						name[z++] = c;
+				name[z++] = '.';
+				for (z2 = 0; z2 < 4; z2++)
+					if ((c = file.readByte()) != 0)
+						name[z++] = c;
 
-			name[z] = '\0';
-			strcpy(_budleDirCache[freeSlot].bundleTable[i].filename, name);
+				name[z] = '\0';
+				strcpy(_budleDirCache[freeSlot].bundleTable[i].filename, name);
+			}
 			_budleDirCache[freeSlot].bundleTable[i].offset = file.readUint32BE();
-			file.seek(4, SEEK_CUR);
+			_budleDirCache[freeSlot].bundleTable[i].size = file.readUint32BE();
 		}
 		return freeSlot;
 	} else {
@@ -124,10 +131,22 @@ BundleMgr::BundleMgr(BundleDirCache *cache) {
 }
 
 BundleMgr::~BundleMgr() {
-	closeFile();
+	close();
 }
 
-bool BundleMgr::openFile(const char *filename) {
+File *BundleMgr::getFile(const char *filename, int32 &offset, int32 &size) {
+	for (int i = 0; i < _numFiles; i++) {
+		if (!scumm_stricmp(filename, _bundleTable[i].filename)) {
+			_file.seek(_bundleTable[i].offset, SEEK_SET);
+			offset = _bundleTable[i].offset;
+			size = _bundleTable[i].size;
+			break;
+		}
+	}
+	return &_file;
+}
+
+bool BundleMgr::open(const char *filename, bool &compressed) {
 	if (_file.isOpen())
 		return true;
 
@@ -136,9 +155,12 @@ bool BundleMgr::openFile(const char *filename) {
 		return false;
 	}
 
-	_numFiles = _cache->getNumFiles(filename);
+	int slot = _cache->matchFile(filename);
+	assert(slot != -1);
+	compressed = _cache->isCompressed(slot);
+	_numFiles = _cache->getNumFiles(filename, slot);
 	assert(_numFiles);
-	_bundleTable = _cache->getTable(filename);
+	_bundleTable = _cache->getTable(filename, slot);
 	assert(_bundleTable);
 	_compTableLoaded = false;
 	_outputSize = 0;
@@ -147,7 +169,7 @@ bool BundleMgr::openFile(const char *filename) {
 	return true;
 }
 
-void BundleMgr::closeFile() {
+void BundleMgr::close() {
 	if (_file.isOpen()) {
 		_file.close();
 		_bundleTable = NULL;

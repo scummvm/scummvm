@@ -22,6 +22,7 @@
 #include "common/scummsys.h"
 #include "common/util.h"
 #include "sound/voc.h"
+#include "sound/vorbis.h"
 #include "scumm/scumm.h"
 #include "scumm/imuse_digi/dimuse.h"
 #include "scumm/imuse_digi/dimuse_sndmgr.h"
@@ -77,6 +78,39 @@ void ImuseDigiSndMgr::countElements(byte *ptr, int &numRegions, int &numJumps, i
 			error("ImuseDigiSndMgr::countElements() Unknown sfx header '%s'", tag2str(tag));
 		}
 	} while (tag != MKID_BE('DATA'));
+}
+
+void ImuseDigiSndMgr::prepareSoundFromRMAP(File *file, soundStruct *sound, int32 offset, int32 size) {
+	int l;
+
+	file->seek(offset, SEEK_SET);
+	uint32 tag = file->readUint32BE();
+	assert(tag == 'RMAP');
+	assert(file->readUint32BE() == 1); // version
+	sound->bits = 16;
+	sound->freq = 22050;
+	sound->channels = 2;
+	sound->numRegions = file->readUint32BE();
+	sound->numJumps = file->readUint32BE();
+	sound->numSyncs = file->readUint32BE();
+	sound->region = (_region *)malloc(sizeof(_region) * sound->numRegions);
+	sound->jump = (_jump *)malloc(sizeof(_jump) * sound->numJumps);
+	sound->sync = (_sync *)malloc(sizeof(_sync) * sound->numSyncs);
+	for (l = 0; l < sound->numRegions; l++) {
+		sound->region[l].offset = file->readUint32BE();
+		sound->region[l].length = file->readUint32BE();
+	}
+	for (l = 0; l < sound->numJumps; l++) {
+		sound->jump[l].offset = file->readUint32BE();
+		sound->jump[l].dest = file->readUint32BE();
+		sound->jump[l].hookId = file->readUint32BE();
+		sound->jump[l].fadeDelay = file->readUint32BE();
+	}
+	for (l = 0; l < sound->numSyncs; l++) {
+		sound->sync[l].size = file->readUint32BE();
+		sound->sync[l].ptr = (byte *)malloc(sound->sync[l].size);
+		file->read(sound->sync[l].ptr, sound->sync[l].size);
+	}
 }
 
 void ImuseDigiSndMgr::prepareSound(byte *ptr, soundStruct *sound) {
@@ -224,7 +258,7 @@ bool ImuseDigiSndMgr::openMusicBundle(soundStruct *sound, int disk) {
 	sound->bundle = new BundleMgr(_cacheBundleDir);
 	if (_vm->_gameId == GID_CMI) {
 		if (_vm->_features & GF_DEMO) {
-			result = sound->bundle->openFile("music.bun");
+			result = sound->bundle->open("music.bun", sound->compressed);
 		} else {
 			char musicfile[20];
 			if (disk == -1)
@@ -237,13 +271,13 @@ bool ImuseDigiSndMgr::openMusicBundle(soundStruct *sound, int disk) {
 //				sound->bundle->closeFile();
 //			}
 
-			result = sound->bundle->openFile(musicfile);
+			result = sound->bundle->open(musicfile, sound->compressed);
 
 			// FIXME: Shouldn't we only set _disk if result == true?
 			_disk = (byte)_vm->VAR(_vm->VAR_CURRENTDISK);
 		}
 	} else if (_vm->_gameId == GID_DIG)
-		result = sound->bundle->openFile("digmusic.bun");
+		result = sound->bundle->open("digmusic.bun", sound->compressed);
 	else
 		error("ImuseDigiSndMgr::openMusicBundle() Don't know which bundle file to load");
 
@@ -258,7 +292,7 @@ bool ImuseDigiSndMgr::openVoiceBundle(soundStruct *sound, int disk) {
 	sound->bundle = new BundleMgr(_cacheBundleDir);
 	if (_vm->_gameId == GID_CMI) {
 		if (_vm->_features & GF_DEMO) {
-			result = sound->bundle->openFile("voice.bun");
+			result = sound->bundle->open("voice.bun", sound->compressed);
 		} else {
 			char voxfile[20];
 			if (disk == -1)
@@ -271,13 +305,13 @@ bool ImuseDigiSndMgr::openVoiceBundle(soundStruct *sound, int disk) {
 //				sound->bundle->closeFile();
 //			}
 
-			result = sound->bundle->openFile(voxfile);
+			result = sound->bundle->open(voxfile, sound->compressed);
 
 			// FIXME: Shouldn't we only set _disk if result == true?
 			_disk = (byte)_vm->VAR(_vm->VAR_CURRENTDISK);
 		}
 	} else if (_vm->_gameId == GID_DIG)
-		result = sound->bundle->openFile("digvoice.bun");
+		result = sound->bundle->open("digvoice.bun", sound->compressed);
 	else
 		error("ImuseDigiSndMgr::openVoiceBundle() Don't know which bundle file to load");
 
@@ -323,7 +357,19 @@ ImuseDigiSndMgr::soundStruct *ImuseDigiSndMgr::openSound(int32 soundId, const ch
 			closeSound(sound);
 			return NULL;
 		}
-		if (soundName[0] == 0) {
+		if (sound->compressed) {
+			char fileName[24];
+			int32 offset = 0, size = 0;
+			sprintf(fileName, "%s.map", soundName);
+			File *rmapFile = sound->bundle->getFile(fileName, offset, size);
+			prepareSoundFromRMAP(rmapFile, sound, offset, size);
+			strcpy(sound->name, soundName);
+			sound->soundId = soundId;
+			sound->type = soundType;
+			sound->volGroupId = volGroupId;
+			sound->disk = _disk;
+			return sound;
+		} else if (soundName[0] == 0) {
 			if (sound->bundle->decompressSampleByIndex(soundId, 0, 0x2000, &ptr, 0, header_outside) == 0 || ptr == NULL) {
 				closeSound(sound);
 				return NULL;
@@ -362,7 +408,11 @@ void ImuseDigiSndMgr::closeSound(soundStruct *soundHandle) {
 			_vm->unlock(rtSound, soundHandle->soundId);
 	}
 
+	if (soundHandle->compressedStream)
+		delete soundHandle->compressedStream;
+
 	delete soundHandle->bundle;
+
 	for (int r = 0; r < soundHandle->numSyncs; r++)
 		free(soundHandle->sync[r].ptr);
 	free(soundHandle->region);
@@ -385,6 +435,11 @@ bool ImuseDigiSndMgr::checkForProperHandle(soundStruct *soundHandle) {
 			return true;
 	}
 	return false;
+}
+
+bool ImuseDigiSndMgr::isCompressed(soundStruct *soundHandle) {
+	assert(checkForProperHandle(soundHandle));
+	return soundHandle->compressed;
 }
 
 int ImuseDigiSndMgr::getFreq(soundStruct *soundHandle) {
@@ -500,13 +555,33 @@ int32 ImuseDigiSndMgr::getDataFromRegion(soundStruct *soundHandle, int region, b
 
 	int header_size = soundHandle->offsetData;
 	bool header_outside = ((_vm->_gameId == GID_CMI) && !(_vm->_features & GF_DEMO));
-	if (soundHandle->bundle) {
+	if ((soundHandle->bundle) && (!soundHandle->compressed)) {
 		size = soundHandle->bundle->decompressSampleByCurIndex(start + offset, size, buf, header_size, header_outside);
 	} else if (soundHandle->resPtr) {
 		*buf = (byte *)malloc(size);
 		memcpy(*buf, soundHandle->resPtr + start + offset + header_size, size);
+	} else if ((soundHandle->bundle) && (soundHandle->compressed)) {	
+		*buf = (byte *)malloc(size);
+		char fileName[24];
+		sprintf(fileName, "%s_reg%03d.ogg", soundHandle->name, region);
+		if (scumm_stricmp(fileName, soundHandle->lastFileName) != 0) {
+			int32 offset = 0, size = 0;
+			File *oggFile = soundHandle->bundle->getFile(fileName, offset, size);
+			if (!soundHandle->compressedStream) {
+				soundHandle->compressedStream = makeVorbisStream(oggFile, size);
+				assert(soundHandle->compressedStream);
+				assert(soundHandle->compressedStream->getRate() == 22050);
+				assert(soundHandle->compressedStream->isStereo());
+			}
+			strcpy(soundHandle->lastFileName, fileName);
+		}
+		size = soundHandle->compressedStream->readBuffer((int16 *)*buf, size / 2) * 2;
+		if (soundHandle->compressedStream->endOfData()) {
+			delete soundHandle->compressedStream;
+			soundHandle->compressedStream = NULL;
+		}
 	}
-	
+
 	return size;
 }
 
