@@ -85,9 +85,6 @@ void Engine::mainLoop() {
 		// Run asynchronous tasks
 		lua_runtasks();
 
-		if (_mode == ENGINE_MODE_SMUSH && ! g_smush->isPlaying())
-			_mode = ENGINE_MODE_NORMAL;
-
 		if (_mode == ENGINE_MODE_SMUSH) {
 			if (g_smush->isPlaying()) {
 				movieTime_ = g_smush->getMovieTime();

@@ -168,6 +168,7 @@ void Smush::handleFrame() {
 	_frame++;
 	if (_frame == _nbframes) {
 		_videoFinished = true;
+		Engine::instance()->setMode(ENGINE_MODE_NORMAL);
 	}
 	
 	_movieTime += _speed / 1000;
