@@ -24,12 +24,7 @@
 #include "gui/dialog.h"
 
 
-// Uncomment the following to enable the new font code:
-//#define NEW_FONT_CODE
-
-
 DECLARE_SINGLETON(GUI::NewGui);
-
 
 namespace GUI {
 
@@ -55,7 +50,7 @@ enum {
 
 // Constructor
 NewGui::NewGui() : _scaleEnable(true), _needRedraw(false),
-	_stateIsSaved(false), _cursorAnimateCounter(0), _cursorAnimateTimer(0) {
+	_stateIsSaved(false), _font(0), _cursorAnimateCounter(0), _cursorAnimateTimer(0) {
 
 	_system = &OSystem::instance();
 
@@ -90,6 +85,9 @@ void NewGui::updateScaleFactor() {
 	};
 
 	_scaleFactor = MIN(_system->getWidth() / kDefaultGUIWidth, _system->getHeight() / kDefaultGUIHeight);
+
+	// TODO: Pick a bigger font depending on the 'scale' factor.
+	_font = FontMan.getFontByUsage(Graphics::FontManager::kGUIFont);
 }
 
 void NewGui::runLoop() {
@@ -266,11 +264,7 @@ void NewGui::closeTopDialog() {
 #pragma mark -
 
 const Graphics::Font &NewGui::getFont() const {
-#ifdef NEW_FONT_CODE
-	return Graphics::g_sysfont;
-#else
-	return Graphics::g_scummfont;
-#endif
+	return *_font;
 }
 
 OverlayColor *NewGui::getBasePtr(int x, int y) {
@@ -355,7 +349,7 @@ void NewGui::addDirtyRect(int x, int y, int w, int h) {
 void NewGui::drawChar(byte chr, int xx, int yy, OverlayColor color, const Graphics::Font *font) {
 	if (font == 0)
 		font = &getFont();
-	font->drawChar(&_screen, chr, xx, yy, color, _scaleEnable);
+	font->drawChar(&_screen, chr, xx, yy, color, _scaleFactor);
 }
 
 int NewGui::getStringWidth(const String &str) {

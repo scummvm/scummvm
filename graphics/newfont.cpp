@@ -2579,6 +2579,6 @@ static const FontDesc desc = {
 	sizeof(_font_bits)/sizeof(bitmap_t)
 };
 
-const NewFont g_sysfont(desc);
+extern const NewFont g_sysfont(desc);
 
 } // End of namespace Graphics

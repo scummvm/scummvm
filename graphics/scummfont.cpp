@@ -63,9 +63,8 @@ int ScummFont::getCharWidth(byte chr) const {
 }
 
 //void ScummFont::drawChar(byte chr, int xx, int yy, OverlayColor color) {
-void ScummFont::drawChar(const Surface *dst, byte chr, int tx, int ty, uint32 color, bool scale) const {
+void ScummFont::drawChar(const Surface *dst, byte chr, int tx, int ty, uint32 color, int scaleFactor) const {
 	assert(dst != 0);
-	const int scaleFactor = scale ? g_gui.getScaleFactor() : 1;
 	tx *= scaleFactor; ty *= scaleFactor;
 
 	byte *ptr = (byte *)dst->getBasePtr(tx, ty);
@@ -85,7 +84,7 @@ void ScummFont::drawChar(const Surface *dst, byte chr, int tx, int ty, uint32 co
 
 			if (tx + x < 0 || tx + x >= dst->w)
 				continue;
-			unsigned char c;
+			
 
 			if (mask == 0) {
 				if(scaleFactor != 1 && !(y % 2))
@@ -95,7 +94,7 @@ void ScummFont::drawChar(const Surface *dst, byte chr, int tx, int ty, uint32 co
 
 				mask = 0x80;
 			}
-			c = ((buffer & mask) != 0);
+			const byte c = ((buffer & mask) != 0);
 			if (c) {
 				if (dst->bytesPerPixel == 1)
 					ptr[x] = color;
@@ -106,8 +105,6 @@ void ScummFont::drawChar(const Surface *dst, byte chr, int tx, int ty, uint32 co
 		ptr += dst->pitch;
 	}
 }
-
-const ScummFont g_scummfont;
 
 } // End of namespace Graphics
 

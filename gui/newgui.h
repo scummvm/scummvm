@@ -26,7 +26,7 @@
 #include "common/stack.h"
 #include "common/str.h"
 #include "common/system.h"	// For events
-#include "graphics/font.h"
+#include "graphics/fontman.h"
 
 namespace GUI {
 
@@ -81,6 +81,8 @@ protected:
 	DialogStack	_dialogStack;
 
 	bool		_stateIsSaved;
+	
+	const Graphics::Font *_font;
 
 	// for continuous events (keyDown)
 	struct {

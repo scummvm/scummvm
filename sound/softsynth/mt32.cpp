@@ -32,7 +32,7 @@
 #include "common/file.h"
 #include "common/config-manager.h"
 
-#include "graphics/font.h"
+#include "graphics/fontman.h"
 #include "graphics/surface.h"
 
 class MidiChannel_MT32 : public MidiChannel_MPU401 {
@@ -124,11 +124,12 @@ static int eatSystemEvents() {
 }
 
 static void drawProgress(float progress) {
+	const Graphics::Font &font(*FontMan.getFontByUsage(Graphics::FontManager::kOSDFont));
 	Graphics::Surface surf;
 	uint32 borderColor = 0x2;
 	uint32 fillColor = 0x4;
 	surf.w = g_system->getWidth() / 7 * 5;
-	surf.h = Graphics::g_scummfont.getFontHeight();
+	surf.h = font.getFontHeight();
 	int x = g_system->getWidth() / 7;
 	int y = g_system->getHeight() / 2 - surf.h / 2;
 	surf.pitch = surf.w;
@@ -145,7 +146,7 @@ static void drawProgress(float progress) {
 }
 
 static void drawMessage(int offset, const Common::String &text) {
-	const Graphics::Font &font(Graphics::g_scummfont);
+	const Graphics::Font &font(*FontMan.getFontByUsage(Graphics::FontManager::kOSDFont));
 	Graphics::Surface surf;
 	uint32 color = 0x2;
 	surf.w = g_system->getWidth();

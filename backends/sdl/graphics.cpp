@@ -24,6 +24,7 @@
 #include "common/scaler.h"
 #include "common/util.h"
 #include "graphics/font.h"
+#include "graphics/fontman.h"
 
 static const OSystem::GraphicsMode s_supportedGraphicsModes[] = {
 	{"1x", "Normal (no scaling)", GFX_NORMAL},
@@ -1234,8 +1235,7 @@ void OSystem_SDL::displayMessageOnOSD(const char *msg) {
 	dst.bytesPerPixel = _osdSurface->format->BytesPerPixel;
 	
 	// The font we are going to use:
-//	const Graphics::Font *font = &Graphics::g_sysfont;
-	const Graphics::Font *font = &Graphics::g_scummfont;
+	const Graphics::Font *font = FontMan.getFontByUsage(Graphics::FontManager::kOSDFont);
 	
 	// Clear everything with the "transparent" color, i.e. the colorkey
 	SDL_FillRect(_osdSurface, 0, kOSDColorKey);

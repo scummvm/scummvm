@@ -20,7 +20,6 @@
 
 #include "common/stdafx.h"
 #include "graphics/font.h"
-#include "gui/newgui.h"
 
 namespace Graphics {
 
@@ -37,9 +36,8 @@ int NewFont::getCharWidth(byte chr) const {
 	return desc.width[chr - desc.firstchar];
 }
 
-void NewFont::drawChar(const Surface *dst, byte chr, int tx, int ty, uint32 color, bool scale) const {
+void NewFont::drawChar(const Surface *dst, byte chr, int tx, int ty, uint32 color, int scaleFactor) const {
 	assert(dst != 0);
-	const int scaleFactor = scale ? g_gui.getScaleFactor() : 1;
 	tx *= scaleFactor; ty *= scaleFactor;
 
 	byte *ptr = (byte *)dst->getBasePtr(tx, ty);
@@ -103,7 +101,7 @@ int Font::getStringWidth(const Common::String &str) const {
 	return space;
 }
 
-void Font::drawString(const Surface *dst, const Common::String &s, int x, int y, int w, uint32 color, TextAlignment align, int deltax, bool useEllipsis, bool scale) const {
+void Font::drawString(const Surface *dst, const Common::String &s, int x, int y, int w, uint32 color, TextAlignment align, int deltax, bool useEllipsis, int scaleFactor) const {
 	assert(dst != 0);
 	const int leftX = x, rightX = x + w;
 	uint i;
@@ -168,7 +166,7 @@ void Font::drawString(const Surface *dst, const Common::String &s, int x, int y,
 		if (x+w > rightX)
 			break;
 		if (x >= leftX)
-			drawChar(dst, str[i], x, y, color, scale);
+			drawChar(dst, str[i], x, y, color, scaleFactor);
 		x += w;
 	}
 }

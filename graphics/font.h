@@ -52,9 +52,9 @@ public:
 	virtual int getMaxCharWidth() const = 0;
 
 	virtual int getCharWidth(byte chr) const = 0;
-	virtual void drawChar(const Surface *dst, byte chr, int x, int y, uint32 color, bool scale = false) const = 0;
+	virtual void drawChar(const Surface *dst, byte chr, int x, int y, uint32 color, int scaleFactor = 1) const = 0;
 
-	void drawString(const Surface *dst, const Common::String &str, int x, int y, int w, uint32 color, TextAlignment align = kTextAlignLeft, int deltax = 0, bool useEllipsis = true, bool scale = false) const;
+	void drawString(const Surface *dst, const Common::String &str, int x, int y, int w, uint32 color, TextAlignment align = kTextAlignLeft, int deltax = 0, bool useEllipsis = true, int scaleFactor = 1) const;
 	int getStringWidth(const Common::String &str) const;
 };
 
@@ -65,10 +65,8 @@ public:
 	virtual int getMaxCharWidth() const { return 8; };
 
 	virtual int getCharWidth(byte chr) const;
-	virtual void drawChar(const Surface *dst, byte chr, int x, int y, uint32 color, bool scale) const;
+	virtual void drawChar(const Surface *dst, byte chr, int x, int y, uint32 color, int scaleFactor) const;
 };
-
-extern const ScummFont g_scummfont;
 
 
 
@@ -101,10 +99,8 @@ public:
 	virtual int getMaxCharWidth() const { return desc.maxwidth; };
 
 	virtual int getCharWidth(byte chr) const;
-	virtual void drawChar(const Surface *dst, byte chr, int x, int y, uint32 color, bool scale) const;
+	virtual void drawChar(const Surface *dst, byte chr, int x, int y, uint32 color, int scaleFactor) const;
 };
-
-extern const NewFont g_sysfont;
 
 } // End of namespace Graphics
 
