@@ -31,7 +31,7 @@ int glGetColorTable(int, int, int, void *) { return 0; }
 #endif
 
 #include "fb2opengl.h"
-int _screenStart = 30;
+int _screenStart = 20;
 
 class OSystem_SDL_Normal : public OSystem_SDL_Common {
 public:
@@ -237,7 +237,7 @@ void OSystem_SDL_Normal::load_gfx_mode() {
 	int gl_flags =  FB2GL_320 | FB2GL_RGBA | FB2GL_EXPAND;
         if (_full_screen) gl_flags |= (FB2GL_FS);
 	// 640x480 screen resolution
-	fb2gl.init(640,480,0,_screenStart? 0: 70,gl_flags);
+	fb2gl.init(640,480,0,_screenStart? 15: 70,gl_flags);
 
 	SDL_SetGamma(1.25,1.25,1.25);
 
@@ -286,6 +286,7 @@ void OSystem_SDL_Normal::unload_gfx_mode() {
 }
 
 void OSystem_SDL_Normal::update_screen() {
+	SDL_Rect blackrect2 = {0, _screenStart, _screenWidth, 15};
 	
 	// If the shake position changed, fill the dirty area with blackness
 	if (_currentShakePos != _newShakePos) {
@@ -335,8 +336,8 @@ void OSystem_SDL_Normal::update_screen() {
 			SDL_Rect dst;
 			for(r = _dirty_rect_list; r != last_rect; ++r) {
 				dst = *r;
-				dst.x++;	// Shift rect by one since 2xSai needs to acces the data around
-				dst.y++;	// any pixel to scale it, and we want to avoid mem access crashes.
+//				dst.x++;	// Shift rect by one since 2xSai needs to acces the data around
+//				dst.y++;	// any pixel to scale it, and we want to avoid mem access crashes.
 				if (SDL_BlitSurface(_screen, r, sdl_tmpscreen, &dst) != 0)
 					error("SDL_BlitSurface failed: %s", SDL_GetError());
 			}
@@ -345,6 +346,11 @@ void OSystem_SDL_Normal::update_screen() {
 		// Almost the same thing as SDL_UpdateRects
 		fb2gl.blit16(sdl_tmpscreen,_num_dirty_rects,_dirty_rect_list,0,
 		    _currentShakePos+_screenStart);
+
+
+		SDL_FillRect(sdl_tmpscreen, &blackrect2, 0);
+		fb2gl.blit16(sdl_tmpscreen,1,&blackrect2,0,_screenHeight);
+
 		fb2gl.display();
 	}
 
@@ -426,7 +432,8 @@ void OSystem_SDL_Normal::clear_overlay()
 	// Clear the overlay by making the game screen "look through" everywhere.
 	SDL_Rect src, dst;
 	src.x = src.y = 0;
-	dst.x = dst.y = 1;
+//	dst.x = dst.y = 1;
+	dst.x = dst.y = 0;
 	src.w = dst.w = _screenWidth;
 	src.h = dst.h = _screenHeight;
 	if (SDL_BlitSurface(_screen, &src, sdl_tmpscreen, &dst) != 0)
