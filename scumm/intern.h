@@ -912,8 +912,8 @@ protected:
 	int spriteInfoGet_classFlags(int spriteId, int num);
 	int spriteInfoGet_classFlagsAnd(int spriteId, int num, int *args);
 	int spriteInfoGet_flags_13(int spriteId);
-	int spriteInfoGet_flags_14(int spriteId);
-	int spriteInfoGet_flags_15(int spriteId);
+	int spriteInfoGet_flagYFlipped(int spriteId);
+	int spriteInfoGet_flagXFlipped(int spriteId);
 	int spriteInfoGet_flagActive(int spriteId);
 	int spriteInfoGet_flags_20(int spriteId);
 	int spriteInfoGet_flags_22(int spriteId);

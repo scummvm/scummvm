@@ -180,16 +180,16 @@ int ScummEngine_v90he::spriteInfoGet_flags_13(int spriteId) {
 	return ((_spriteTable[spriteId].flags & kSF13) != 0) ? 1 : 0;
 }
 
-int ScummEngine_v90he::spriteInfoGet_flags_14(int spriteId) {
+int ScummEngine_v90he::spriteInfoGet_flagYFlipped(int spriteId) {
 	checkRange(_varNumSprites, 1, spriteId, "Invalid sprite %d");
 
-	return ((_spriteTable[spriteId].flags & kSF14) != 0) ? 1 : 0;
+	return ((_spriteTable[spriteId].flags & kSFYFlipped) != 0) ? 1 : 0;
 }
 
-int ScummEngine_v90he::spriteInfoGet_flags_15(int spriteId) {
+int ScummEngine_v90he::spriteInfoGet_flagXFlipped(int spriteId) {
 	checkRange(_varNumSprites, 1, spriteId, "Invalid sprite %d");
 
-	return ((_spriteTable[spriteId].flags & kSF15) != 0) ? 1 : 0;
+	return ((_spriteTable[spriteId].flags & kSFXFlipped) != 0) ? 1 : 0;
 }
 
 int ScummEngine_v90he::spriteInfoGet_flagActive(int spriteId) {
@@ -558,9 +558,9 @@ void ScummEngine_v90he::spriteInfoSet_flag14(int spriteId, int value) {
 
 	int oldFlags = _spriteTable[spriteId].flags;
 	if (value)
-		_spriteTable[spriteId].flags |= kSF14;
+		_spriteTable[spriteId].flags |= kSFYFlipped;
 	else
-		_spriteTable[spriteId].flags &= ~(kSF09 | kSF14);
+		_spriteTable[spriteId].flags &= ~(kSF09 | kSFYFlipped);
 
 	if (_spriteTable[spriteId].res_id && _spriteTable[spriteId].flags != oldFlags)
 		_spriteTable[spriteId].flags |= kSFChanged | kSFNeedRedraw;
@@ -571,9 +571,9 @@ void ScummEngine_v90he::spriteInfoSet_flag15(int spriteId, int value) {
 
 	int oldFlags = _spriteTable[spriteId].flags;
 	if (value)
-		_spriteTable[spriteId].flags |= kSF15;
+		_spriteTable[spriteId].flags |= kSFXFlipped;
 	else
-		_spriteTable[spriteId].flags &= ~(kSF09 | kSF15);
+		_spriteTable[spriteId].flags &= ~(kSF09 | kSFXFlipped);
 
 	if (_spriteTable[spriteId].res_id && _spriteTable[spriteId].flags != oldFlags)
 		_spriteTable[spriteId].flags |= kSFChanged | kSFNeedRedraw;
@@ -681,7 +681,7 @@ void ScummEngine_v90he::spriteInfoSet_resetSprite(int spriteId) {
 	_spriteTable[spriteId].tx = 0;
 	_spriteTable[spriteId].ty = 0;
 
-	_spriteTable[spriteId].flags &= ~(kSF09 | kSF14 | kSF15);
+	_spriteTable[spriteId].flags &= ~(kSF09 | kSFYFlipped | kSFXFlipped);
 	_spriteTable[spriteId].flags |= kSFChanged | kSFNeedRedraw;
 	_spriteTable[spriteId].dx = 0;
 	_spriteTable[spriteId].dy = 0;
@@ -1235,9 +1235,9 @@ void ScummEngine_v90he::spritesProcessWiz(bool arg) {
 		}
 
 		wiz.img.flags = 0x10;
-		if (spr_flags & kSF15)
+		if (spr_flags & kSFXFlipped)
 			wiz.img.flags |= kWIFFlipX;
-		if (spr_flags & kSF14)
+		if (spr_flags & kSFYFlipped)
 			wiz.img.flags |= kWIFFlipY;
 		if (spr_flags & kSF13) {
 			wiz.img.flags &= ~(0x11);

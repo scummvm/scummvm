@@ -835,10 +835,10 @@ void ScummEngine_v90he::o90_getSpriteInfo() {
 		if (spriteId) {
 			switch(flags) {
 			case 0:
-				push(spriteInfoGet_flags_15(spriteId));
+				push(spriteInfoGet_flagXFlipped(spriteId));
 				break;
 			case 1:
-				push(spriteInfoGet_flags_14(spriteId));
+				push(spriteInfoGet_flagYFlipped(spriteId));
 				break;
 			case 2:
 				push(spriteInfoGet_flagActive(spriteId));
