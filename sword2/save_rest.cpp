@@ -56,7 +56,7 @@ namespace Sword2 {
 // Quick macro to make swapping in-place easier to write
 #define SWAP32(x)	x = SWAP_BYTES_32(x)
 
-static void convertHeaderEndian(_savegameHeader &header) {
+static void convertHeaderEndian(Sword2Engine::_savegameHeader &header) {
 	int i;
 	
 	// _savegameHeader
