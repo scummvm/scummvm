@@ -2013,7 +2013,7 @@ void ScummEngine::processKbd(bool smushMode) {
 
 	// COMI version string is hard coded
 	// FT version strings are partly hard coded too
-	if (_gameId == GID_DIG && _lastKeyHit == VAR(VAR_VERSION)) {
+	if ((_gameId == GID_DIG || _heversion >= 70) && _lastKeyHit == VAR(VAR_VERSION)) {
 		versionDialog();
 		return;
 	}

@@ -126,6 +126,7 @@ static ResString string_map_table_v6[] = {
 	{100, "Quit"}, 
 	{101, "OK"}, 
 	{93, "Game paused"}, 
+	{210, "Game version"}
 };
 
 static ResString string_map_table_v5[] = {
