@@ -44,7 +44,7 @@ extern bool draw_keyboard;
  truth; it's code was assembly and messy (rareth was its comments). And so large were it's includes that did at
  first seem small; queereth also was its compact(s). Then they did findeth another version, and this was slightly
  different from the first. Then a third, and this was different again. All different, but not really better, for all
- were not really compatible. But, eventualyl, it did come to pass that Steel Sky was implemented on a modern
+ were not really compatible. But, eventually, it did come to pass that Steel Sky was implemented on a modern
  platform. And the programmers looked and saw that it was indeed a miracle. But they were not joyous and instead did
  weep for nobody knew just what had been done. Except people who read the source. Hello.
 
