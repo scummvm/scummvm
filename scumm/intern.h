@@ -217,6 +217,7 @@ protected:
 	/* Version 2 script opcodes */
 	void o2_actorFromPos();
 	void o2_actorSet();
+	void o2_add();
 	void o2_addIndirect();
 	void o2_animateActor();
 	void o2_assignVarByte();
@@ -271,6 +272,7 @@ protected:
 	void o2_setState04();
 	void o2_setState08();
 	void o2_startScript();
+	void o2_subtract();
 	void o2_subIndirect();
 	void o2_verbOps();
 	void o2_waitForActor();

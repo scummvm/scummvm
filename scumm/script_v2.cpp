@@ -105,7 +105,7 @@ void Scumm_v2::setupOpcodes() {
 		/* 38 */
 		OPCODE(o5_lessOrEqual),
 		OPCODE(o2_doSentence),
-		OPCODE(o5_subtract),
+		OPCODE(o2_subtract),
 		OPCODE(o2_waitForActor),
 		/* 3C */
 		OPCODE(o5_stopSound),
@@ -145,7 +145,7 @@ void Scumm_v2::setupOpcodes() {
 		/* 58 */
 		OPCODE(o2_beginOverride),
 		OPCODE(o2_doSentence),
-		OPCODE(o5_add),
+		OPCODE(o2_add),
 		OPCODE(o2_setBitVar),
 		/* 5C */
 		OPCODE(o2_dummy),
@@ -265,7 +265,7 @@ void Scumm_v2::setupOpcodes() {
 		/* B8 */
 		OPCODE(o5_lessOrEqual),
 		OPCODE(o2_doSentence),
-		OPCODE(o5_subtract),
+		OPCODE(o2_subtract),
 		OPCODE(o2_waitForActor),
 		/* BC */
 		OPCODE(o5_stopSound),
@@ -305,7 +305,7 @@ void Scumm_v2::setupOpcodes() {
 		/* D8 */
 		OPCODE(o5_printEgo),
 		OPCODE(o2_doSentence),
-		OPCODE(o5_add),
+		OPCODE(o2_add),
 		OPCODE(o2_setBitVar),
 		/* DC */
 		OPCODE(o2_dummy),
@@ -623,6 +623,20 @@ void Scumm_v2::o2_addIndirect() {
 void Scumm_v2::o2_subIndirect() {
 	int a;
 	getResultPosIndirect();
+	a = getVarOrDirectWord(0x80);
+	_scummVars[_resultVarNumber] -= a;
+}
+
+void Scumm_v2::o2_add() {
+	int a;
+	getResultPos();
+	a = getVarOrDirectWord(0x80);
+	_scummVars[_resultVarNumber] += a;
+}
+
+void Scumm_v2::o2_subtract() {
+	int a;
+	getResultPos();
 	a = getVarOrDirectWord(0x80);
 	_scummVars[_resultVarNumber] -= a;
 }
