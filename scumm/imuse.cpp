@@ -5624,8 +5624,8 @@ void IMuseDigital::stopAll() {
 	}
 }
 
-void IMuseDigital::pause(bool pause) {
-	_pause = pause;
+void IMuseDigital::pause(bool p) {
+	_pause = p;
 }
 
 int32 IMuseDigital::doCommand(int a, int b, int c, int d, int e, int f, int g, int h) {

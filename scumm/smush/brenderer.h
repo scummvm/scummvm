@@ -49,7 +49,6 @@ protected:
 	int32 getNbframes() const { return _nbframes; };	//!< accessor for number of frames
 	int32 getWidth() const { return _width; };	//!< accessor for current width
 	int32 getHeight() const { return _height; };	//!< accessor for current height
-	const Palette & pal() const { return _pal; };	//!< accessor for current palette
 	const char * data() const { return _data; };	//!< accessor for current frame buffer
 	void clean();	//!< memory cleanup (deletes frame buffer)
 	void setFrame(int32 f) { _frame = f; };	//!< allows to change the frame number

@@ -1345,7 +1345,7 @@ void Scumm::o6_walkActorToObj()
 	if (obj >= NUM_ACTORS) {
 		if (whereIsObject(obj) == WIO_NOT_FOUND)
 			return;
-		int x, y, dir;
+		int y, dir;
 		getObjectXYPos(obj, x, y, dir);
 		a->startWalkActor(x, y, dir);
 	} else {

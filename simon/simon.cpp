@@ -4419,7 +4419,7 @@ void SimonState::delay(uint delay)
 bool SimonState::save_game(uint slot, const char *caption)
 {
 	File f;
-	uint item_index, num_item, i;
+	uint item_index, num_item, i, j;
 	TimeEvent *te;
 
 	_lock_word |= 0x100;
@@ -4444,8 +4444,8 @@ bool SimonState::save_game(uint slot, const char *caption)
 	i = 0;
 	for (te = _first_time_struct; te; te = te->next)
 		i++;
-
 	f.writeUint32BE(i);
+
 	for (te = _first_time_struct; te; te = te->next) {
 		f.writeUint32BE(te->time + _base_time);
 		f.writeUint16BE(te->subroutine_id);
@@ -4460,36 +4460,28 @@ bool SimonState::save_game(uint slot, const char *caption)
 		f.writeUint16BE(item->unk3);
 		f.writeUint16BE(item->unk4);
 
-		{
-			Child1 *child1 = findChildOfType1(item);
-			if (child1) {
-				f.writeUint16BE(child1->fr2);
-			}
+		Child1 *child1 = findChildOfType1(item);
+		if (child1) {
+			f.writeUint16BE(child1->fr2);
 		}
 
-		{
-			Child2 *child2 = findChildOfType2(item);
-			uint i, j;
+		Child2 *child2 = findChildOfType2(item);
+		if (child2) {
+			f.writeUint32BE(child2->avail_props);
+			i = child2->avail_props & 1;
 
-			if (child2) {
-				f.writeUint32BE(child2->avail_props);
-				i = child2->avail_props & 1;
-
-				for (j = 1; j < 16; j++) {
-					if ((1 << j) & child2->avail_props) {
-						f.writeUint16BE(child2->array[i++]);
-					}
+			for (j = 1; j < 16; j++) {
+				if ((1 << j) & child2->avail_props) {
+					f.writeUint16BE(child2->array[i++]);
 				}
 			}
 		}
 
-		{
-			Child9 *child9 = (Child9 *) findChildOfType(item, 9);
-			if (child9) {
-				uint i;
-				for (i = 0; i != 4; i++) {
-					f.writeUint16BE(child9->array[i]);
-				}
+		Child9 *child9 = (Child9 *) findChildOfType(item, 9);
+		if (child9) {
+			uint i;
+			for (i = 0; i != 4; i++) {
+				f.writeUint16BE(child9->array[i]);
 			}
 		}
 	}

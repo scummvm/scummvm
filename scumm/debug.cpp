@@ -201,7 +201,7 @@ int ScummDebugger::get_command()
 	const DebuggerCommands *dc;
 	char *s;
 	int i;
-	static char *buf;
+	char *buf;
 
 	do {
 #ifndef HAVE_READLINE

@@ -482,7 +482,7 @@ int Sound::startTalkSound(uint32 offset, uint32 b, int mode) {
 
 	if (mode == 1 && (_scumm->_gameId == GID_TENTACLE
 		|| (_scumm->_gameId == GID_SAMNMAX && !_scumm->isScriptRunning(99)))) {
-		for (int i = 0; i < _scumm->_mixer->NUM_CHANNELS; i++) {
+		for (i = 0; i < _scumm->_mixer->NUM_CHANNELS; i++) {
 			if (i != _talkChannel)
 				_scumm->_mixer->stop(i);
 		}

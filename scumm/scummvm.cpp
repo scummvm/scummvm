@@ -663,7 +663,7 @@ void Scumm::startScene(int room, Actor * a, int objectNr)
 		}
 	} else {
 		if (camera._follows) {
-			Actor *a = derefActorSafe(camera._follows, "startScene: follows");
+			a = derefActorSafe(camera._follows, "startScene: follows");
 			setCameraAt(a->x, a->y);
 		}
 	}
