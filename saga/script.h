@@ -54,7 +54,7 @@ enum AddressTypes {
 	kAddressStatic     = 1,	// offset from global variables
 	kAddressModule     = 2,	// offset from start of module
 	kAddressStack      = 3,	// offset from stack
-	kAddressThread     = 4,	// offset from thread structure
+	kAddressThread     = 4	// offset from thread structure
 /*	kAddressId         = 5,	// offset from const id object
 	kAddressIdIndirect = 6,	// offset from stack id object
 	kAddressIndex      = 7	// index from id*/

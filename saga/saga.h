@@ -75,7 +75,7 @@ class PalAnim;
 #define OBJECT_TYPE_SHIFT 13
 #define OBJECT_TYPE_MASK ((1 << OBJECT_TYPE_SHIFT) - 1)
 
-#define memoryError(Place) error(Place##" Memory allocation error.")
+#define memoryError(Place) error("%s Memory allocation error.", Place)
 
 struct RSCFILE_CONTEXT;
 struct StringList;
