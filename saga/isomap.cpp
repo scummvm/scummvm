@@ -42,7 +42,7 @@ IsoMap::IsoMap(SagaEngine *vm) : _vm(vm) {
 	_multiCount = 0;
 	_viewScroll.x = (128 - 8) * 16;
 	_viewScroll.x = (128 - 8) * 16 - 64;
-	_viewDiff = 20;
+	_viewDiff = 1;
 }
 
 void IsoMap::loadImages(const byte *resourcePointer, size_t resourceLength) {
@@ -211,6 +211,7 @@ int IsoMap::draw(SURFACE *ds) {
 
 void IsoMap::drawTiles(SURFACE *ds) {
 	Point view1;
+	Point fineScroll;
 	Point metaTileY;
 	Point metaTileX;
 	int16 u0, v0, 
@@ -224,14 +225,17 @@ void IsoMap::drawTiles(SURFACE *ds) {
 	_tileScroll.x = _viewScroll.x >> 4;
 	_tileScroll.y = _viewScroll.y >> 4;
 
+	fineScroll.x = _viewScroll.x & 0xf;
+	fineScroll.y = _viewScroll.y & 0xf;
+
 	view1.x = _tileScroll.x - (8 * SAGA_TILEMAP_W);
 	view1.y = (8 * SAGA_TILEMAP_W) - _tileScroll.y;
 
 	u0 = ((view1.y + 64) * 2 + view1.x) >> 4;
 	v0 = ((view1.y + 64) * 2 - view1.x) >> 4;
 	
-	metaTileY.x = (u0 - v0) * 128 - view1.x * 16;
-	metaTileY.y = view1.y * 16 - (u0 + v0) * 64;
+	metaTileY.x = (u0 - v0) * 128 - (view1.x * 16 + fineScroll.x);
+	metaTileY.y = (view1.y * 16 - fineScroll.y) - (u0 + v0) * 64;
 
 	workAreaWidth = _vm->getDisplayWidth() + 128;
 	workAreaHeight = _vm->getDisplayInfo().sceneHeight + 128 + 80;
@@ -452,6 +456,8 @@ void IsoMap::drawTile(SURFACE *ds, uint16 tileIndex, const Point &point) {
 					col++;
 				}
 				while ((col < _tileClip.right) && (count < fgRunCount)) {
+					assert((uint)ds->pixels <= (uint)(drawPointer + count));
+					assert(((uint)ds->pixels + (ds->pitch * _vm->getDisplayWidth())) > (uint)(drawPointer + count));
 					drawPointer[count] = readPointer[count];
 					count++;
 					col++;
