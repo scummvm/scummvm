@@ -328,7 +328,7 @@ Boolean StartScummVM() {
 		
 	// create file for printf, warnings, etc...
 	void DrawStatus(Boolean show);
-	StdioInit(gVars->volRefNum, "PALM/Programs/ScummVM/scumm.log", DrawStatus);
+	StdioInit(gVars->volRefNum, "/PALM/Programs/ScummVM/scumm.log", DrawStatus);
 	gUnistdCWD = SCUMMVM_SAVEPATH;
 
 	// TODO : move this to ypa1.cpp (?)
