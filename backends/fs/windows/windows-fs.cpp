@@ -199,7 +199,7 @@ const char *lastPathComponent(const ScummVM::String &str) {
 FilesystemNode *WindowsFilesystemNode::parent() const {
 	assert(_isValid || _isPseudoRoot);
 	WindowsFilesystemNode *p = new WindowsFilesystemNode();
-	if (!_isPseudoRoot) {
+	if (!_isPseudoRoot && _path.size() > 3) {
         const char *start = _path.c_str();
         const char *end = lastPathComponent(_path);
 
