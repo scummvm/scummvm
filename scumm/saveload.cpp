@@ -266,9 +266,10 @@ void Scumm::saveOrLoad(Serializer *s)
 		MKLINE(Actor, cost.animCounter1, sleUint16),
 		MKLINE(Actor, cost.animCounter2, sleByte),
 		MKARRAY(Actor, palette[0], sleByte, 64),
-		MKLINE(Actor, mask, sleByte),
+		MKLINE(Actor, mask, sleByte), // FIXME: see actor.h comment
 		MKLINE(Actor, shadow_mode, sleByte),
 		MKLINE(Actor, visible, sleByte),
+		// FIXME - frame is never set and thus always 0! See actor.h comment
 		MKLINE(Actor, frame, sleByte),
 		MKLINE(Actor, animSpeed, sleByte),
 		MKLINE(Actor, animProgress, sleByte),

@@ -3071,6 +3071,7 @@ void Scumm::o6_kernelFunction()
 		break;
 	case 212:
 		a = derefActorSafe(args[1], "o6_kernelFunction:212");
+		// FIXME - frame is never set and thus always 0! See actor.h comment
 		push(a->frame);
 		break;
 	case 215:

@@ -89,7 +89,17 @@ public:
 	byte shadow_mode;
 	bool flip;
 	uint speedx, speedy;
-	byte frame; // FIXME - it seems this is never set?
+	
+	// FIXME: the "frame" field is never set, so it is always stays at 0. I am not sure
+	// if at some point in the past it was actually set (somebody wanna check?). There are
+	// two possibilities: either we just scratch this and hope all works fine, or we come
+	// up with a "correct" implementation.
+	// The actor.cpp code uses this to determine if the actor shows a walk animation.
+	// The script_v2.cpp code uses it for o6_kernelFunction:212.
+	// The save/load code (re)stores it.
+	// And debug.cpp prints it for debugging purposes.
+	byte frame;
+
 	byte walkbox;
 	byte mask;	// FIXME: This field is *NOT* used - remove next time save game format changes
 	byte animProgress, animSpeed;

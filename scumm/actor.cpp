@@ -301,7 +301,7 @@ int Actor::actorWalkStep()
 
 	direction = updateActorDirection(true);
 	if (!(moving & MF_IN_LEG) || facing != direction) {
-		printf("walkFrame = %d, frame = %d\n", walkFrame, frame);
+		// FIXME - frame is never set and thus always 0! See actor.h comment
 		if (walkFrame != frame || facing != direction) {
 			startWalkAnim(walkFrame == frame ? 2 : 1, direction);
 		}
@@ -407,24 +407,24 @@ void Actor::setupActorScale()
 	scaley = (byte)scale;
 }
 
-void Actor::startAnimActor(int frame)
+void Actor::startAnimActor(int f)
 {
 	if (_vm->_features & GF_NEW_COSTUMES) {
-		switch (frame) {
+		switch (f) {
 		case 1001:
-			frame = initFrame;
+			f = initFrame;
 			break;
 		case 1002:
-			frame = walkFrame;
+			f = walkFrame;
 			break;
 		case 1003:
-			frame = standFrame;
+			f = standFrame;
 			break;
 		case 1004:
-			frame = talkFrame1;
+			f = talkFrame1;
 			break;
 		case 1005:
-			frame = talkFrame2;
+			f = talkFrame2;
 			break;
 		}
 
@@ -432,27 +432,27 @@ void Actor::startAnimActor(int frame)
 			animProgress = 0;
 			needRedraw = true;
 			needBgReset = true;
-			if (frame == initFrame)
+			if (f == initFrame)
 				cost.reset();
-			_vm->akos_decodeData(this, frame, (uint) - 1);
+			_vm->akos_decodeData(this, f, (uint) - 1);
 		}
 
 	} else {
-		switch (frame) {
+		switch (f) {
 		case 0x38:
-			frame = initFrame;
+			f = initFrame;
 			break;
 		case 0x39:
-			frame = walkFrame;
+			f = walkFrame;
 			break;
 		case 0x3A:
-			frame = standFrame;
+			f = standFrame;
 			break;
 		case 0x3B:
-			frame = talkFrame1;
+			f = talkFrame1;
 			break;
 		case 0x3C:
-			frame = talkFrame2;
+			f = talkFrame2;
 			break;
 		}
 
@@ -461,11 +461,11 @@ void Actor::startAnimActor(int frame)
 			cost.animCounter1 = 0;
 			needRedraw = true;
 
-			if (initFrame == frame)
+			if (initFrame == f)
 				cost.reset();
 
-			if (frame != 0x3E) {
-				_vm->cost_decodeData(this, frame, (uint) - 1);
+			if (f != 0x3E) {
+				_vm->cost_decodeData(this, f, (uint) - 1);
 			}
 		}
 
