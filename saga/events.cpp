@@ -34,7 +34,7 @@
 #include "saga/scene.h"
 #include "saga/interface.h"
 #include "saga/text.h"
-#include "saga/palanim_mod.h"
+#include "saga/palanim.h"
 #include "saga/render.h"
 #include "saga/game_mod.h"
 #include "saga/sndres.h"
@@ -286,10 +286,10 @@ int Events::handleOneShot(R_EVENT *event) {
 	case R_PALANIM_EVENT:
 		switch (event->op) {
 		case EVENT_CYCLESTART:
-			PALANIM_CycleStart();
+			_vm->_palanim->cycleStart();
 			break;
 		case EVENT_CYCLESTEP:
-			PALANIM_CycleStep(event->time);
+			_vm->_palanim->cycleStep(event->time);
 			break;
 		default:
 			break;

@@ -31,7 +31,6 @@
 #include "saga/cvar_mod.h"
 #include "saga/events.h"
 #include "saga/rscfile_mod.h"
-#include "saga/palanim_mod.h"
 
 #include "saga/scene.h"
 #include "saga/ihnm_introproc.h"

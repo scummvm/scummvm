@@ -36,7 +36,7 @@
 #include "saga/rscfile_mod.h"
 #include "saga/sndres.h"
 #include "saga/text.h"
-#include "saga/palanim_mod.h"
+#include "saga/palanim.h"
 #include "saga/music.h"
 
 #include "saga/scene.h"

@@ -56,6 +56,7 @@
 #include "saga/sound.h"
 #include "saga/music.h"
 #include "saga/game_mod.h"
+#include "saga/palanim.h"
 
 GameList Engine_SAGA_gameList() {
 	return Saga::GAME_GameList();
@@ -144,6 +145,7 @@ void SagaEngine::go() {
 	_sdata = new SData();
 	_interface = new Interface(this); // requires script module
 	_actor = new Actor(this);
+	_palanim = new PalAnim(this);
 	_scene = new Scene(this);
 
 	if (!_scene->initialized()) {
@@ -244,6 +246,7 @@ void SagaEngine::shutdown() {
 	delete _console;
 	CVAR_Shutdown();
 	delete _events;
+	delete _palanim;
 
 	delete _interface;
 	delete _render;

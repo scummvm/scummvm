@@ -35,7 +35,7 @@
 #include "saga/isomap.h"
 #include "saga/script_mod.h"
 #include "saga/objectmap.h"
-#include "saga/palanim_mod.h"
+#include "saga/palanim.h"
 #include "saga/render.h"
 #include "saga/rscfile_mod.h"
 #include "saga/script.h"
@@ -722,7 +722,7 @@ int Scene::processSceneResources() {
 			break;
 		case SAGA_PAL_ANIM:
 			debug(0, "Loading palette animation resource.");
-			PALANIM_Load(_resList[i].res_data, _resList[i].res_data_len);
+			_vm->_palanim->loadPalAnim(_resList[i].res_data, _resList[i].res_data_len);
 			break;
 		default:
 			warning("Scene::ProcessSceneResources(): Encountered unknown resource type: %d", _resList[i].res_type);
@@ -804,7 +804,7 @@ int Scene::endScene() {
 	// Free animation info list
 	_vm->_anim->reset();
 
-	PALANIM_Free();
+	_vm->_palanim->freePalAnim();
 	_vm->_objectMap->freeMem();
 	_vm->_actionMap->freeMap();
 

@@ -58,6 +58,7 @@ class Scene;
 class Interface;
 class Console;
 class Events;
+class PalAnim;
 
 using Common::MemoryReadStream;
 
@@ -118,6 +119,7 @@ public:
 	Interface *_interface;
 	Console *_console;
 	Events *_events;
+	PalAnim *_palanim;
 	
 private:
 	int decodeBGImageRLE(const byte *inbuf, size_t inbuf_len, byte *outbuf, size_t outbuf_len);

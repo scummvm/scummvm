@@ -39,9 +39,24 @@ struct PALANIM_ENTRY {
 };
 
 struct PALANIM_DATA {
-	int loaded;
-	uint16 entry_count;
-	PALANIM_ENTRY *entries;
+};
+
+class PalAnim {
+ public:
+	PalAnim(SagaEngine *vm);
+	~PalAnim(void);
+
+	int loadPalAnim(const byte *, size_t);
+	int cycleStart();
+	int cycleStep(int vectortime);
+	int freePalAnim();
+
+ private:
+	SagaEngine *_vm;
+
+	bool _loaded;
+	uint16 _entryCount;
+	PALANIM_ENTRY *_entries;
 };
 
 } // End of namespace Saga
