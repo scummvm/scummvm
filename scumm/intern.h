@@ -439,6 +439,14 @@ protected:
 	void o8_getObjectImageHeight();
 	
 	void o8_getStringWidth();
+
+	/* V8 Scumm Vars */
+	byte VAR_TIMEDATE_YEAR;
+	byte VAR_TIMEDATE_MONTH;
+	byte VAR_TIMEDATE_DAY;
+	byte VAR_TIMEDATE_HOUR;
+	byte VAR_TIMEDATE_MINUTE;
+	byte VAR_TIMEDATE_SECOND;
 };
 
 

@@ -30,11 +30,8 @@
 #include "smush/player.h"
 #include "smush/scumm_renderer.h"
 
-/*
- * NO, we do NOT support CMI yet :-) This file is mostly a placeholder and a place
- * to grow real support in. For now, only a few opcodes are implemented, and they
- * might even be wrong... so don't hold your breath.
- */
+#include <time.h>
+
 
 #define OPCODE(x)	{ &Scumm_v8::x, #x }
 
@@ -1294,7 +1291,17 @@ void Scumm_v8::o8_system()
 
 void Scumm_v8::o8_getDateTime()
 {
-	warning("o8_getDateTime()");
+	struct tm *t;
+	time_t now = time(NULL);
+	
+	t = localtime(&now);
+
+	_vars[VAR_TIMEDATE_YEAR] = t->tm_year;
+	_vars[VAR_TIMEDATE_MONTH] = t->tm_mon;
+	_vars[VAR_TIMEDATE_DAY] = t->tm_mday;
+	_vars[VAR_TIMEDATE_HOUR] = t->tm_hour;
+	_vars[VAR_TIMEDATE_MINUTE] = t->tm_min;
+	_vars[VAR_TIMEDATE_SECOND] = t->tm_sec;
 }
 
 void Scumm_v8::o8_startVideo()

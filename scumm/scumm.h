@@ -934,7 +934,7 @@ public:
 	byte VAR_ME;
 	byte VAR_NUM_ACTOR;
 	byte VAR_CURRENT_LIGHTS;
-	byte VAR_CURRENTDRIVE;
+	byte VAR_CURRENTDRIVE;	// How about merging this with VAR_CURRENTDISK?
 	byte VAR_CURRENTDISK;
 	byte VAR_TMR_1;
 	byte VAR_TMR_2;
