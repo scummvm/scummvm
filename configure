@@ -209,15 +209,16 @@ hosttype=`uname -s`
 echo $hosttype
 case $hosttype in
 	Linux | OpenBSD | FreeBSD | NetBSD | BSD/OS | SunOS | HP-UX)
-		echo "#define UNIX" >> config.h
+		echo "/* #define UNIX */" >> config.h
 		;;
 	IRIX)
-		echo "#define UNIX" >> config.h
+		echo "/* #define UNIX */" >> config.h
 		ranlib=ar -r
 		;;
 	Darwin)
-		echo "#define UNIX" >> config.h
+		echo "/* #define UNIX */" >> config.h
 		echo "#define MACOSX" >> config.h
+		LIBS="$LIBS -framework QuickTime -framework AudioUnit"
 		;;
 esac
 
