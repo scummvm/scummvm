@@ -140,7 +140,7 @@ enum {
 	GF_TALKIE = 1 << 2,
 	GF_DEMO   = 1 << 3,
 	GF_MAC    = 1 << 4,
-	GF_AMIGA = 1 << 5
+	GF_AMIGA  = 1 << 5
 };
 
 enum {

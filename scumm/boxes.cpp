@@ -657,8 +657,7 @@ int Scumm::getPathToDestBox(byte from, byte to) {
 	// case to fix the scene in Indy3 where Indy meets Hitler in Berlin.
 	// It's one of the places (or maybe even the only one?). See bug #770690
 	// and also bug #774783.
-	if ((_gameId == GID_INDY3 || _gameId == GID_INDY3_TOWNS || _gameId == GID_INDY3_256)
-		 && _roomResource == 46 && from == 1 && to == 0)
+	if ((_features & GF_INDY3) && _roomResource == 46 && from == 1 && to == 0)
 		return 1;
 
 	// Skip up to the matrix data for box 'from'

@@ -597,8 +597,7 @@ void Scumm_v5::o5_chainScript() {
 	// called via chainScript by script 32, and in there Local[5] is defined
 	// to the  actor ID of the opposing soldier. So, we copy that value over
 	// to the Local[5] variable of script 33.
-	if ((_gameId == GID_INDY3_TOWNS || _gameId == GID_INDY3_256 || _gameId == GID_INDY3)
-		  && vm.slot[cur].number == 32 && script == 33) {
+	if ((_features & GF_INDY3) && vm.slot[cur].number == 32 && script == 33) {
 		vars[5] = vm.localvar[cur][5];
 	}
 
@@ -967,7 +966,7 @@ void Scumm_v5::o5_getActorScale() {
 		return;
 
 	// INDY3 uses this opcode as a wait_for_actor();
-	if (_gameId == GID_INDY3_TOWNS || _gameId == GID_INDY3_256 || _gameId == GID_INDY3) {
+	if (_features & GF_INDY3) {
 		const byte *oldaddr = _scriptPointer - 1;
 		a = derefActor(getVarOrDirectByte(0x80), "o5_getActorScale (wait)");
 		if (a->moving) {
@@ -1001,7 +1000,7 @@ void Scumm_v5::o5_getActorX() {
 	int a;
 	getResultPos();
 
-	if (_gameId == GID_INDY3_TOWNS || _gameId == GID_INDY3_256 || _gameId == GID_INDY3)
+	if (_features & GF_INDY3)
 		a = getVarOrDirectByte(0x80);
 	else
 		a = getVarOrDirectWord(0x80);
@@ -1013,7 +1012,7 @@ void Scumm_v5::o5_getActorY() {
 	int a;
 	getResultPos();
 
-	if (_gameId == GID_INDY3_TOWNS || _gameId == GID_INDY3_256 || _gameId == GID_INDY3) {
+	if (_features & GF_INDY3) {
 		a = getVarOrDirectByte(0x80);
 
 		// WORKAROUND bug #636433 (can't get into Zeppelin) 
@@ -2350,7 +2349,7 @@ void Scumm_v5::o5_verbOps() {
 void Scumm_v5::o5_wait() {
 	const byte *oldaddr = _scriptPointer - 1;
 
-	if (_gameId == GID_INDY3_TOWNS || _gameId == GID_INDY3_256 || _gameId == GID_INDY3) {
+	if (_features & GF_INDY3) {
 		_opcode = 2;
 	} else
 		_opcode = fetchScriptByte();
@@ -2594,7 +2593,7 @@ void Scumm_v5::decodeParseString() {
  			// It's also needed for Loom, or the lines Bobbin
  			// speaks during the intro are put at position 0,0.
  			// In addition, Loom needs to remember the text colour.
-			if (_gameId == GID_INDY3_TOWNS || _gameId == GID_INDY3_256 || _gameId == GID_INDY3 || _gameId == GID_LOOM) {
+			if ((_features & GF_INDY3) || _gameId == GID_LOOM) {
 				_string[textSlot].t_xpos = _string[textSlot].xpos;
 				_string[textSlot].t_ypos = _string[textSlot].ypos;
  				_string[textSlot].t_color = _string[textSlot].color;

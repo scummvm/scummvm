@@ -80,11 +80,11 @@ enum GameFeatures {
 	GF_OLD256              = 1 << 10,
 	GF_AUDIOTRACKS         = 1 << 11,
 	GF_NO_SCALING          = 1 << 12,
-	GF_ADLIB_DEFAULT       = 1 << 13,
-	GF_AMIGA               = 1 << 14,
-	GF_HUMONGOUS           = 1 << 15,
-	GF_AFTER_HEV7          = 1 << 16,
-	GF_FMTOWNS             = 1 << 17,
+	GF_AMIGA               = 1 << 13,
+	GF_HUMONGOUS           = 1 << 14,
+	GF_AFTER_HEV7          = 1 << 15,
+	GF_FMTOWNS             = 1 << 16,
+	GF_INDY3               = 1 << 17,
 
 	GF_EXTERNAL_CHARSET    = GF_SMALL_HEADER
 };
