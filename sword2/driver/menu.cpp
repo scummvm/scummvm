@@ -20,7 +20,7 @@
 
 #include "common/stdafx.h"
 #include "sword2/sword2.h"
-#include "sword2/driver/d_draw.h"
+#include "sword2/mouse.h"
 #include "sword2/driver/render.h"
 
 namespace Sword2 {
@@ -28,17 +28,20 @@ namespace Sword2 {
 #define MENUDEEP 40
 #define MAXMENUANIMS 8
 
-void Graphics::clearIconArea(int menu, int pocket, Common::Rect *r) {
+void Mouse::clearIconArea(int menu, int pocket, Common::Rect *r) {
+	byte *buf = _vm->_screen->getScreen();
+	int16 screenWide = _vm->_screen->getScreenWide();
+
 	r->top = menu * (RENDERDEEP + MENUDEEP) + (MENUDEEP - RDMENU_ICONDEEP) / 2;
 	r->bottom = r->top + RDMENU_ICONDEEP;
 	r->left = RDMENU_ICONSTART + pocket * (RDMENU_ICONWIDE + RDMENU_ICONSPACING);
 	r->right = r->left + RDMENU_ICONWIDE;
 
-	byte *dst = _buffer + r->top * _screenWide + r->left;
+	byte *dst = buf + r->top * screenWide + r->left;
 
 	for (int i = 0; i < RDMENU_ICONDEEP; i++) {
 		memset(dst, 0, RDMENU_ICONWIDE);
-		dst += _screenWide;
+		dst += screenWide;
 	}
 }
 
@@ -48,12 +51,15 @@ void Graphics::clearIconArea(int menu, int pocket, Common::Rect *r) {
  * system is.
  */
 
-void Graphics::processMenu(void) {
+void Mouse::processMenu() {
 	uint8 menu;
 	uint8 i, j;
 	uint8 frameCount;
 	Common::Rect r1, r2;
 	static int32 lastTime = 0;
+
+	byte *buf = _vm->_screen->getScreen();
+	int16 screenWide = _vm->_screen->getScreenWide();
 
 	if (lastTime == 0) {
 		lastTime = _vm->getMillis();
@@ -153,22 +159,22 @@ void Graphics::processMenu(void) {
 				}
 
 				if (xoff != 0 && yoff != 0) {
-					byte *dst = _buffer + r2.top * _screenWide + r2.left;
+					byte *dst = buf + r2.top * screenWide + r2.left;
 					byte *src = _icons[menu][i];
 
 					if (_pocketStatus[menu][i] != MAXMENUANIMS) {
-						scaleImageFast(
-							dst, _screenWide, r2.right - r2.left, r2.bottom - r2.top,
+						_vm->_screen->scaleImageFast(
+							dst, screenWide, r2.right - r2.left, r2.bottom - r2.top,
 							src, RDMENU_ICONWIDE, RDMENU_ICONWIDE, RDMENU_ICONDEEP);
 					} else {
 						for (j = 0; j < RDMENU_ICONDEEP; j++) {
 							memcpy(dst, src, RDMENU_ICONWIDE);
 							src += RDMENU_ICONWIDE;
-							dst += _screenWide;
+							dst += screenWide;
 						}
 					}
 				}
-				updateRect(&r1);
+				_vm->_screen->updateRect(&r1);
 			}
 			curx += (RDMENU_ICONSPACING + RDMENU_ICONWIDE);
 		}
@@ -181,7 +187,7 @@ void Graphics::processMenu(void) {
  * @return RD_OK, or an error code
  */
 
-int32 Graphics::showMenu(uint8 menu) {
+int32 Mouse::showMenu(uint8 menu) {
 	// Check for invalid menu parameter
 	if (menu > RDMENU_BOTTOM)
 		return RDERR_INVALIDMENU;
@@ -201,7 +207,7 @@ int32 Graphics::showMenu(uint8 menu) {
  * @return RD_OK, or an error code
  */
 
-int32 Graphics::hideMenu(uint8 menu) {
+int32 Mouse::hideMenu(uint8 menu) {
 	// Check for invalid menu parameter
 	if (menu > RDMENU_BOTTOM)
 		return RDERR_INVALIDMENU;
@@ -219,7 +225,7 @@ int32 Graphics::hideMenu(uint8 menu) {
  * This function hides both menus immediately.
  */
 
-void Graphics::closeMenuImmediately(void) {
+void Mouse::closeMenuImmediately() {
 	Common::Rect r;
 	int i;
 
@@ -229,11 +235,11 @@ void Graphics::closeMenuImmediately(void) {
 	for (i = 0; i < RDMENU_MAXPOCKETS; i++) {
 		if (_icons[RDMENU_TOP][i]) {
 			clearIconArea(RDMENU_TOP, i, &r);
-			updateRect(&r);
+			_vm->_screen->updateRect(&r);
 		}
 		if (_icons[RDMENU_BOTTOM][i]) {
 			clearIconArea(RDMENU_BOTTOM, i, &r);
-			updateRect(&r);
+			_vm->_screen->updateRect(&r);
 		}
 	}
 
@@ -248,7 +254,7 @@ void Graphics::closeMenuImmediately(void) {
  * @return RD_OK, or an error code
  */
 
-int32 Graphics::setMenuIcon(uint8 menu, uint8 pocket, byte *icon) {
+int32 Mouse::setMenuIcon(uint8 menu, uint8 pocket, byte *icon) {
 	Common::Rect r;
 
 	// Check for invalid menu parameter.
@@ -265,7 +271,7 @@ int32 Graphics::setMenuIcon(uint8 menu, uint8 pocket, byte *icon) {
 		free(_icons[menu][pocket]);
 		_icons[menu][pocket] = NULL;
 		clearIconArea(menu, pocket, &r);
-		updateRect(&r);
+		_vm->_screen->updateRect(&r);
 	}
 
 	// Only put the icon in the pocket if it is not NULL

@@ -21,6 +21,8 @@
 #ifndef	_BUILD_DISPLAY
 #define	_BUILD_DISPLAY
 
+#include "common/rect.h"
+
 #define MAX_bgp0_sprites 6
 #define MAX_bgp1_sprites 6
 #define MAX_back_sprites 30
@@ -29,7 +31,341 @@
 #define MAX_fgp0_sprites 6
 #define MAX_fgp1_sprites 6
 
+#define PALTABLESIZE     (64 * 64 * 64)
+
+#define BLOCKWIDTH       64
+#define BLOCKHEIGHT      64
+#define MAXLAYERS        5
+
+// Maximum scaled size of a sprite
+#define SCALE_MAXWIDTH   512
+#define SCALE_MAXHEIGHT  512
+
+// Dirty grid cell size
+#define CELLWIDE         10
+#define CELLDEEP         20
+
 namespace Sword2 {
+
+struct ObjectMouse;
+struct ObjectGraphic;
+struct ObjectMega;
+
+// Structure filled out by each object to register its graphic printing
+// requrements
+
+struct BuildUnit {
+	int16 x;
+	int16 y;
+	uint16 scaled_width;
+	uint16 scaled_height;
+	int16 sort_y;
+	uint32 anim_resource;
+	uint16 anim_pc;
+
+	// Denotes a scaling sprite at print time - and holds the scaling value
+	// for the shrink routine
+
+	uint16 scale;
+
+	// Non-zero means this item is a layer - retrieve from background layer
+	// and send to special renderer
+
+	uint16 layer_number;
+
+	// True means we want this frame to be affected by the shading mask
+
+	bool shadingFlag;
+};
+
+enum {
+	MOUSE_normal		= 0,	// normal in game
+	MOUSE_menu		= 1,	// menu chooser
+	MOUSE_drag		= 2,	// dragging luggage
+	MOUSE_system_menu	= 3,	// system menu chooser
+	MOUSE_holding		= 4	// special
+};
+
+struct ScreenInfo {
+	uint16 scroll_offset_x;		// Position x
+	uint16 scroll_offset_y;		// Position y
+	uint16 max_scroll_offset_x;	// Calc'ed in fnInitBackground
+	uint16 max_scroll_offset_y;
+	int16 player_feet_x;		// Feet coordinates to use - cant just
+	int16 player_feet_y;		// fetch the player compact anymore
+	int16 feet_x;			// Special offset-to-player position -
+	int16 feet_y;			// tweek as desired - always set in
+					// screen manager object startup
+	uint16 screen_wide;		// Size of background layer - hence
+	uint16 screen_deep;		// size of back buffer itself (Paul
+					// actually malloc's it)
+	uint32 background_layer_id;	// Id of the normal background layer
+					// from the header of the main
+					// background layer
+	uint16 number_of_layers;
+	uint8 new_palette;		// Set to non zero to start the
+					// palette held within layer file
+					// fading up after a build_display
+	uint8 scroll_flag;		// Scroll mode 0 off 1 on
+	bool mask_flag;			// Using shading mask
+};
+
+// The SpriteInfo structure is used to tell the driver96 code what attributes
+// are linked to a sprite for drawing.  These include position, scaling and
+// compression.
+
+struct SpriteInfo {
+	int16 x;		// coords for top-left of sprite
+	int16 y;
+	uint16 w;		// dimensions of sprite (before scaling)
+	uint16 h;
+	uint16 scale;		// scale at which to draw, given in 256ths ['0' or '256' MEANS DON'T SCALE]
+	uint16 scaledWidth;	// new dimensions (we calc these for the mouse area, so may as well pass to you to save time)
+	uint16 scaledHeight;	//
+	uint16 type;		// mask containing 'RDSPR_' bits specifying compression type, flip, transparency, etc
+	uint16 blend;		// holds the blending values.
+	byte *data;		// pointer to the sprite data
+	byte *colourTable;	// pointer to 16-byte colour table, only applicable to 16-col compression type
+};
+
+struct BlockSurface {
+	byte data[BLOCKWIDTH * BLOCKHEIGHT];
+	bool transparent;
+};
+
+class Screen {
+private:
+	Sword2Engine *_vm;
+
+	// _thisScreen describes the current back buffer and its in-game scroll
+	// positions, etc.
+
+	ScreenInfo _thisScreen;
+
+	int32 _renderCaps;
+	int8 _renderLevel;
+
+	byte *_buffer;
+	byte *_lightMask;
+
+	// Game screen metrics
+	int16 _screenWide;
+	int16 _screenDeep;
+
+	bool _needFullRedraw;
+
+	// Scroll variables.  _scrollX and _scrollY hold the current scroll
+	// position, and _scrollXTarget and _scrollYTarget are the target
+	// position for the end of the game cycle.
+
+	int16 _scrollX;
+	int16 _scrollY;
+
+	int16 _scrollXTarget;
+	int16 _scrollYTarget;
+	int16 _scrollXOld;
+	int16 _scrollYOld;
+
+	int16 _parallaxScrollX;	// current x offset to link a sprite to the
+				// parallax layer
+	int16 _parallaxScrollY;	// current y offset to link a sprite to the
+				// parallax layer
+	int16 _locationWide;
+	int16 _locationDeep;
+
+	// Dirty grid handling
+	byte *_dirtyGrid;
+
+	uint16 _gridWide;
+	uint16 _gridDeep;
+
+	byte _palette[256 * 4];
+	byte _paletteMatch[PALTABLESIZE];
+
+	uint8 _fadeStatus;
+	int32 _fadeStartTime;
+	int32 _fadeTotalTime;
+
+	// 'frames per second' counting stuff
+	uint32 _fps;
+	uint32 _cycleTime;
+	uint32 _frameCount;
+
+	int32 _initialTime;
+	int32 _startTime;
+	int32 _totalTime;
+	int32 _renderAverageTime;
+	int32 _framesPerGameCycle;
+	bool _renderTooSlow;
+
+	void startNewPalette();
+
+	void resetRenderEngine();
+
+	void startRenderCycle();
+	bool endRenderCycle();
+
+	// Holds the order of the sort list, i.e. the list stays static and we
+	// sort this array.
+
+	uint16 _sortOrder[MAX_sort_sprites];
+
+	BuildUnit _bgp0List[MAX_bgp0_sprites];
+	BuildUnit _bgp1List[MAX_bgp1_sprites];
+	BuildUnit _backList[MAX_back_sprites];
+	BuildUnit _sortList[MAX_sort_sprites];
+	BuildUnit _foreList[MAX_fore_sprites];
+	BuildUnit _fgp0List[MAX_fgp0_sprites];
+	BuildUnit _fgp1List[MAX_fgp1_sprites];
+
+	uint32 _curBgp0;
+	uint32 _curBgp1;
+	uint32 _curBack;
+	uint32 _curSort;
+	uint32 _curFore;
+	uint32 _curFgp0;
+	uint32 _curFgp1;
+
+	void drawBackPar0Frames();
+	void drawBackPar1Frames();
+	void drawBackFrames();
+	void drawSortFrames(byte *file);
+	void drawForeFrames();
+	void drawForePar0Frames();
+	void drawForePar1Frames();
+
+	void processLayer(byte *file, uint32 layer_number);
+	void processImage(BuildUnit *build_unit);
+
+	uint8 _scrollFraction;
+
+	// Last palette used - so that we can restore the correct one after a
+	// pause (which dims the screen) and it's not always the main screen
+	// palette that we want, eg. during the eclipse
+
+	// This flag gets set in startNewPalette() and setFullPalette()
+
+	uint32 _lastPaletteRes;
+
+	// Debugging stuff
+	uint32 _largestLayerArea;
+	uint32 _largestSpriteArea;
+	char _largestLayerInfo[128];
+	char _largestSpriteInfo[128];
+
+	void registerFrame(ObjectMouse *ob_mouse, ObjectGraphic *ob_graph, ObjectMega *ob_mega, BuildUnit *build_unit);
+
+	void mirrorSprite(byte *dst, byte *src, int16 w, int16 h);
+	int32 decompressRLE256(byte *dst, byte *src, int32 decompSize);
+	void unwindRaw16(byte *dst, byte *src, uint8 blockSize, byte *colTable);
+	int32 decompressRLE16(byte *dst, byte *src, int32 decompSize, byte *colTable);
+	void renderParallax(Parallax *p, int16 layer);
+
+	void markAsDirty(int16 x0, int16 y0, int16 x1, int16 y1);
+
+	uint8 _xBlocks[MAXLAYERS];
+	uint8 _yBlocks[MAXLAYERS];
+
+	// An array of sub-blocks, one for each of the parallax layers.
+
+	BlockSurface **_blockSurfaces[MAXLAYERS];
+
+	uint16 _xScale[SCALE_MAXWIDTH];
+	uint16 _yScale[SCALE_MAXHEIGHT];
+
+	void blitBlockSurface(BlockSurface *s, Common::Rect *r, Common::Rect *clipRect);
+
+	uint16 _layer;
+
+public:
+	Screen(Sword2Engine *vm, int16 width, int16 height);
+	~Screen();
+
+	int8 getRenderLevel();
+	void setRenderLevel(int8 level);
+
+	byte *getScreen() { return _buffer; }
+	byte *getPalette() { return _palette; }
+	ScreenInfo *getScreenInfo() { return &_thisScreen; }
+
+	int16 getScreenWide() { return _screenWide; }
+	int16 getScreenDeep() { return _screenDeep; }
+
+	uint32 getCurBgp0() { return _curBgp0; }
+	uint32 getCurBgp1() { return _curBgp1; }
+	uint32 getCurBack() { return _curBack; }
+	uint32 getCurSort() { return _curSort; }
+	uint32 getCurFore() { return _curFore; }
+	uint32 getCurFgp0() { return _curFgp0; }
+	uint32 getCurFgp1() { return _curFgp1; }
+
+	uint32 getFps() { return _fps; }
+
+	uint32 getLargestLayerArea() { return _largestLayerArea; }
+	uint32 getLargestSpriteArea() { return _largestSpriteArea; }
+	char *getLargestLayerInfo() { return _largestLayerInfo; }
+	char *getLargestSpriteInfo() { return _largestSpriteInfo; }
+
+	void setNeedFullRedraw();
+
+	void clearScene();
+
+	void resetRenderLists();
+
+	void setLocationMetrics(uint16 w, uint16 h);
+	int32 initialiseBackgroundLayer(Parallax *p);
+	void closeBackgroundLayer();
+
+	void initialiseRenderCycle();
+
+	void initBackground(int32 res, int32 new_palette);
+	void registerFrame(ObjectMouse *ob_mouse, ObjectGraphic *ob_graph, ObjectMega *ob_mega);
+
+	void setScrollFraction(uint8 f) { _scrollFraction = f; }
+	void setScrollTarget(int16 x, int16 y);
+	void setScrolling();
+
+	void setFullPalette(int32 palRes);
+	void setPalette(int16 startEntry, int16 noEntries, byte *palette, uint8 setNow);
+	uint8 quickMatch(uint8 r, uint8 g, uint8 b);
+	int32 fadeUp(float time = 0.75);
+	int32 fadeDown(float time = 0.75);
+	uint8 getFadeStatus();
+	void dimPalette();
+	void waitForFade();
+	void fadeServer();
+
+	void updateDisplay(bool redrawScene = true);
+
+	void displayMsg(byte *text, int time);
+
+	int32 createSurface(SpriteInfo *s, byte **surface);
+	void drawSurface(SpriteInfo *s, byte *surface, Common::Rect *clipRect = NULL);
+	void deleteSurface(byte *surface);
+	int32 drawSprite(SpriteInfo *s);
+
+	void scaleImageFast(byte *dst, uint16 dstPitch, uint16 dstWidth,
+		uint16 dstHeight, byte *src, uint16 srcPitch, uint16 srcWidth,
+		uint16 srcHeight);
+	void scaleImageGood(byte *dst, uint16 dstPitch, uint16 dstWidth,
+		uint16 dstHeight, byte *src, uint16 srcPitch, uint16 srcWidth,
+		uint16 srcHeight, byte *backbuf);
+
+	void updateRect(Common::Rect *r);
+
+	int32 openLightMask(SpriteInfo *s);
+	int32 closeLightMask();
+
+	void buildDisplay();
+
+	void plotPoint(int16 x, int16 y, uint8 colour);
+	void drawLine(int16 x1, int16 y1, int16 x2, int16 y2, uint8 colour);
+#ifdef BACKEND_8BIT
+	void plotYUV(byte *lut, int width, int height, byte *const *dat);
+#endif
+
+};
+
 } // End of namespace Sword2
 
 #endif

@@ -31,7 +31,6 @@
 #include "sword2/memory.h"
 #include "sword2/resman.h"
 #include "sword2/router.h"
-#include "sword2/driver/d_draw.h"
 
 namespace Sword2 {
 

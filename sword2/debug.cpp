@@ -25,9 +25,9 @@
 #include "sword2/logic.h"
 #include "sword2/maketext.h"
 #include "sword2/memory.h"
+#include "sword2/mouse.h"
 #include "sword2/resman.h"
 #include "sword2/router.h"
-#include "sword2/driver/d_draw.h"
 
 namespace Sword2 {
 
@@ -63,20 +63,24 @@ void Debugger::buildDebugText(void) {
 	int32 showVarPos;
 	int32 varNo;
 
+	ScreenInfo *screenInfo = _vm->_screen->getScreenInfo();
+
 	// clear the array of text block numbers for the debug text
 	clearDebugTextBlocks();
 
 	// mouse coords
-/*
 	// print mouse coords beside mouse-marker, if it's being displayed
-	if (displayMouseMarker) {
-		sprintf(buf, "%d,%d", mousex + _thisScreen.scroll_offset_x, mousey + _thisScreen.scroll_offset_y);
-		if (mousex>560)
-			makeDebugTextBlock(buf, mousex - 50, mousey - 15);
+	if (_displayMouseMarker) {
+		int mouseX, mouseY;
+
+		_vm->_mouse->getPos(mouseX, mouseY);
+
+		sprintf(buf, "%d,%d", mouseX + screenInfo->scroll_offset_x, mouseY + screenInfo->scroll_offset_y);
+		if (mouseX > 560)
+			makeDebugTextBlock(buf, mouseX - 50, mouseY - 15);
 		else
-			makeDebugTextBlock(buf, mousex + 5, mousey - 15);
+			makeDebugTextBlock(buf, mouseX + 5, mouseY - 15);
 	}
-*/
 
 	// mouse area coords
 
@@ -186,16 +190,22 @@ void Debugger::buildDebugText(void) {
 
  		makeDebugTextBlock(buf, 0, 15);
 
-		if (_vm->_mouseTouching)
+		uint32 mouseTouching = _vm->_mouse->getMouseTouching();
+
+		int mouseX, mouseY;
+
+		_vm->_mouse->getPos(mouseX, mouseY);
+
+		if (mouseTouching)
 			sprintf(buf, "mouse %d,%d (id %d: %s)",
-				_vm->_mouseX + _vm->_thisScreen.scroll_offset_x,
-				_vm->_mouseY + _vm->_thisScreen.scroll_offset_y,
-				_vm->_mouseTouching,
-				_vm->fetchObjectName(_vm->_mouseTouching, name));
+				mouseX + screenInfo->scroll_offset_x,
+				mouseY + screenInfo->scroll_offset_y,
+				mouseTouching,
+				_vm->fetchObjectName(mouseTouching, name));
 		else
 			sprintf(buf, "mouse %d,%d (not touching)",
-				_vm->_mouseX + _vm->_thisScreen.scroll_offset_x,
-				_vm->_mouseY + _vm->_thisScreen.scroll_offset_y);
+				mouseX + screenInfo->scroll_offset_x,
+				mouseY + screenInfo->scroll_offset_y);
 
 		makeDebugTextBlock(buf, 0, 30);
 
@@ -204,23 +214,23 @@ void Debugger::buildDebugText(void) {
 
 		if (_playerGraphic.anim_resource)
 			sprintf(buf, "player %d,%d %s (%d) #%d/%d",
-				_vm->_thisScreen.player_feet_x,
-				_vm->_thisScreen.player_feet_y,
+				screenInfo->player_feet_x,
+				screenInfo->player_feet_y,
 				_vm->fetchObjectName(_playerGraphic.anim_resource, name),
 				_playerGraphic.anim_resource,
 				_playerGraphic.anim_pc,
 				_playerGraphicNoFrames);
 		else
 			sprintf(buf, "player %d,%d --- %d",
-				_vm->_thisScreen.player_feet_x,
-				_vm->_thisScreen.player_feet_y,
+				screenInfo->player_feet_x,
+				screenInfo->player_feet_y,
 				_playerGraphic.anim_pc);
 
 		makeDebugTextBlock(buf, 0, 45);
 
  		// frames-per-second counter
 
-		sprintf(buf, "fps %d", _vm->_fps);
+		sprintf(buf, "fps %d", _vm->_screen->getFps());
 		makeDebugTextBlock(buf, 440, 0);
 
  		// location number
@@ -240,32 +250,32 @@ void Debugger::buildDebugText(void) {
 
 		// sprite list usage
 
-		sprintf(buf, "bgp0: %d/%d", _vm->_curBgp0, MAX_bgp0_sprites);
+		sprintf(buf, "bgp0: %d/%d", _vm->_screen->getCurBgp0(), MAX_bgp0_sprites);
 		makeDebugTextBlock(buf, 560, 0);
 
-		sprintf(buf, "bgp1: %d/%d", _vm->_curBgp1, MAX_bgp1_sprites);
+		sprintf(buf, "bgp1: %d/%d", _vm->_screen->getCurBgp1(), MAX_bgp1_sprites);
 		makeDebugTextBlock(buf, 560, 15);
 
-		sprintf(buf, "back: %d/%d", _vm->_curBack, MAX_back_sprites);
+		sprintf(buf, "back: %d/%d", _vm->_screen->getCurBack(), MAX_back_sprites);
 		makeDebugTextBlock(buf, 560, 30);
 
-		sprintf(buf, "sort: %d/%d", _vm->_curSort, MAX_sort_sprites);
+		sprintf(buf, "sort: %d/%d", _vm->_screen->getCurSort(), MAX_sort_sprites);
 		makeDebugTextBlock(buf, 560, 45);
 
-		sprintf(buf, "fore: %d/%d", _vm->_curFore, MAX_fore_sprites);
+		sprintf(buf, "fore: %d/%d", _vm->_screen->getCurFore(), MAX_fore_sprites);
 		makeDebugTextBlock(buf, 560, 60);
 
-		sprintf(buf, "fgp0: %d/%d", _vm->_curFgp0, MAX_fgp0_sprites);
+		sprintf(buf, "fgp0: %d/%d", _vm->_screen->getCurFgp0(), MAX_fgp0_sprites);
 		makeDebugTextBlock(buf, 560, 75);
 
-		sprintf(buf, "fgp1: %d/%d", _vm->_curFgp1, MAX_fgp1_sprites);
+		sprintf(buf, "fgp1: %d/%d", _vm->_screen->getCurFgp1(), MAX_fgp1_sprites);
 		makeDebugTextBlock(buf, 560, 90);
 
 		// largest layer & sprite
 
 		// NB. Strings already constructed in Build_display.cpp
-		makeDebugTextBlock(_vm->_largestLayerInfo, 0, 60);
-		makeDebugTextBlock(_vm->_largestSpriteInfo, 0, 75);
+		makeDebugTextBlock(_vm->_screen->getLargestLayerInfo(), 0, 60);
+		makeDebugTextBlock(_vm->_screen->getLargestSpriteInfo(), 0, 75);
 
 		// "waiting for person" indicator - set form fnTheyDo and
 		// fnTheyDoWeWait
@@ -303,6 +313,7 @@ void Debugger::buildDebugText(void) {
 }
 
 void Debugger::drawDebugGraphics(void) {
+	ScreenInfo *screenInfo = _vm->_screen->getScreenInfo();
 	// walk-grid
 
 	if (_displayWalkGrid)
@@ -311,12 +322,17 @@ void Debugger::drawDebugGraphics(void) {
 	// player feet coord marker
 
 	if (_displayPlayerMarker)
-		plotCrossHair(_vm->_thisScreen.player_feet_x, _vm->_thisScreen.player_feet_y, 215);
+		plotCrossHair(screenInfo->player_feet_x, screenInfo->player_feet_y, 215);
 
 	// mouse marker & coords
 
-	if (_displayMouseMarker)
-		plotCrossHair(_vm->_mouseX + _vm->_thisScreen.scroll_offset_x, _vm->_mouseY + _vm->_thisScreen.scroll_offset_y, 215);
+	if (_displayMouseMarker) {
+		int mouseX, mouseY;
+
+		_vm->_mouse->getPos(mouseX, mouseY);
+
+		plotCrossHair(mouseX + screenInfo->scroll_offset_x, mouseY + screenInfo->scroll_offset_y, 215);
+	}
 
    	// mouse area rectangle / sprite box rectangle when testing anims
 
@@ -332,29 +348,30 @@ void Debugger::drawDebugGraphics(void) {
 }
 
 void Debugger::plotCrossHair(int16 x, int16 y, uint8 pen) {
-	_vm->_graphics->plotPoint(x, y, pen);
+	_vm->_screen->plotPoint(x, y, pen);
 
-	_vm->_graphics->drawLine(x - 2, y, x - 5, y, pen);
-	_vm->_graphics->drawLine(x + 2, y, x + 5, y, pen);
+	_vm->_screen->drawLine(x - 2, y, x - 5, y, pen);
+	_vm->_screen->drawLine(x + 2, y, x + 5, y, pen);
 
-	_vm->_graphics->drawLine(x, y - 2, x, y - 5, pen);
-	_vm->_graphics->drawLine(x, y + 2, x, y + 5, pen);
+	_vm->_screen->drawLine(x, y - 2, x, y - 5, pen);
+	_vm->_screen->drawLine(x, y + 2, x, y + 5, pen);
 }
 
 void Debugger::drawRect(int16 x1, int16 y1, int16 x2, int16 y2, uint8 pen) {
-	_vm->_graphics->drawLine(x1, y1, x2, y1, pen);	// top edge
-	_vm->_graphics->drawLine(x1, y2, x2, y2, pen);	// bottom edge
-	_vm->_graphics->drawLine(x1, y1, x1, y2, pen);	// left edge
-	_vm->_graphics->drawLine(x2, y1, x2, y2, pen);	// right edge
+	_vm->_screen->drawLine(x1, y1, x2, y1, pen);	// top edge
+	_vm->_screen->drawLine(x1, y2, x2, y2, pen);	// bottom edge
+	_vm->_screen->drawLine(x1, y1, x1, y2, pen);	// left edge
+	_vm->_screen->drawLine(x2, y1, x2, y2, pen);	// right edge
 }
 
 void Debugger::printCurrentInfo(void) {
 	// prints general stuff about the screen, etc.
+	ScreenInfo *screenInfo = _vm->_screen->getScreenInfo();
 
-	if (_vm->_thisScreen.background_layer_id) {
-		DebugPrintf("background layer id %d\n", _vm->_thisScreen.background_layer_id);
-		DebugPrintf("%d wide, %d high\n", _vm->_thisScreen.screen_wide, _vm->_thisScreen.screen_deep);
-		DebugPrintf("%d normal layers\n", _vm->_thisScreen.number_of_layers);
+	if (screenInfo->background_layer_id) {
+		DebugPrintf("background layer id %d\n", screenInfo->background_layer_id);
+		DebugPrintf("%d wide, %d high\n", screenInfo->screen_wide, screenInfo->screen_deep);
+		DebugPrintf("%d normal layers\n", screenInfo->number_of_layers);
 
 		_vm->_logic->examineRunList();
 	} else

@@ -27,6 +27,8 @@
 
 namespace Sword2 {
 
+struct MovieTextObject;
+
 #define MAX_events 10
 
 // There won't be many, will there? Probably 2 at most i reckon

@@ -35,11 +35,10 @@
 namespace Sword2 {
 
 Logic::Logic(Sword2Engine *vm) :
-	_vm(vm), _kills(0), _smackerLeadOut(0), _sequenceTextLines(0),
-	_speechTime(0), _animId(0), _speechAnimType(0), _leftClickDelay(0),
-	_rightClickDelay(0), _defaultResponseId(0), _officialTextNumber(0),
-	_speechTextBlocNo(0),
-	_choosing(false) {
+	_vm(vm), _kills(0), _smackerLeadIn(0), _smackerLeadOut(0),
+	_sequenceTextLines(0), _speechTime(0), _animId(0), _speechAnimType(0),
+	_leftClickDelay(0), _rightClickDelay(0), _defaultResponseId(0),
+	_officialTextNumber(0),	_speechTextBlocNo(0), _choosing(false) {
 	_scriptVars = NULL;
 	memset(_subjectList, 0, sizeof(_subjectList));
 	memset(_eventList, 0, sizeof(_eventList));

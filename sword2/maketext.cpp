@@ -43,7 +43,6 @@
 #include "sword2/logic.h"
 #include "sword2/maketext.h"
 #include "sword2/resman.h"
-#include "sword2/driver/d_draw.h"
 
 namespace Sword2 {
 
@@ -476,7 +475,7 @@ void FontRenderer::printTextBlocs(void) {
 			spriteInfo.data = _blocList[i].text_mem + sizeof(FrameHeader);
 			spriteInfo.colourTable = 0;
 
-			uint32 rv = _vm->_graphics->drawSprite(&spriteInfo);
+			uint32 rv = _vm->_screen->drawSprite(&spriteInfo);
 			if (rv)
 				error("Driver Error %.8x in printTextBlocs", rv);
 		}

@@ -34,6 +34,7 @@
 #include "sword2/interpreter.h"
 #include "sword2/logic.h"
 #include "sword2/memory.h"
+#include "sword2/mouse.h"
 #include "sword2/resman.h"
 #include "sword2/sound.h"
 
@@ -115,13 +116,14 @@ uint32 Sword2Engine::findBufferSize(void) {
 
 void Sword2Engine::fillSaveBuffer(byte *buffer, uint32 size, byte *desc) {
 	// Set up the _saveGameHeader. Checksum gets filled in last of all.
+	ScreenInfo *screenInfo = _screen->getScreenInfo();
 
 	strcpy(_saveGameHeader.description, (char *) desc);
 	_saveGameHeader.varLength = _resman->fetchLen(1);
-	_saveGameHeader.screenId = _thisScreen.background_layer_id;
+	_saveGameHeader.screenId = screenInfo->background_layer_id;
 	_saveGameHeader.runListId = _logic->getRunList();
-	_saveGameHeader.feet_x = _thisScreen.feet_x;
-	_saveGameHeader.feet_y	= _thisScreen.feet_y;
+	_saveGameHeader.feet_x = screenInfo->feet_x;
+	_saveGameHeader.feet_y	= screenInfo->feet_y;
 	_saveGameHeader.music_id = _sound->getLoopingMusicId();
 
 	memcpy(&_saveGameHeader.player_hub, _resman->openResource(CUR_PLAYER_ID) + sizeof(StandardHeader), sizeof(ObjectHub));
@@ -205,7 +207,7 @@ uint32 Sword2Engine::restoreGame(uint16 slotNo) {
 
 	// Force the game engine to pick a cursor. This appears to be needed
 	// when using the -x command-line option to restore a game.
-	_mouseTouching = 1;
+	_mouse->setMouseTouching(1);
 	return errorCode;
 }
 
@@ -304,16 +306,18 @@ uint32 Sword2Engine::restoreFromBuffer(byte *buffer, uint32 size) {
 	pars[1] = 1;
 	_logic->fnInitBackground(pars);
 
+	ScreenInfo *screenInfo = _screen->getScreenInfo();
+
 	// So palette not restored immediately after control panel - we want to
 	// fade up instead!
-	_thisScreen.new_palette = 99;
+	screenInfo->new_palette = 99;
 
 	// These need setting after the defaults get set in fnInitBackground.
 	// Remember that these can change through the game, so need saving &
 	// restoring too.
 
-	_thisScreen.feet_x = _saveGameHeader.feet_x;
-	_thisScreen.feet_y = _saveGameHeader.feet_y;
+	screenInfo->feet_x = _saveGameHeader.feet_x;
+	screenInfo->feet_y = _saveGameHeader.feet_y;
 
 	// Start the new run list
 	_logic->expressChangeSession(_saveGameHeader.runListId);
@@ -321,15 +325,14 @@ uint32 Sword2Engine::restoreFromBuffer(byte *buffer, uint32 size) {
 	// Force in the new scroll position, so unsightly scroll-catch-up does
 	// not occur when screen first draws after returning from restore panel
 
-	// set '_thisScreen's record of player position
-	// - ready for setScrolling()
+	// Set the screen record of player position - ready for setScrolling()
 
-	_thisScreen.player_feet_x = _saveGameHeader.mega.feet_x;
-	_thisScreen.player_feet_y = _saveGameHeader.mega.feet_y;
+	screenInfo->player_feet_x = _saveGameHeader.mega.feet_x;
+	screenInfo->player_feet_y = _saveGameHeader.mega.feet_y;
 
 	// if this screen is wide, recompute the scroll offsets now
-	if (_thisScreen.scroll_flag)
-		setScrolling();
+	if (screenInfo->scroll_flag)
+		_screen->setScrolling();
 
 	// Any music required will be started after we've returned from
 	// restoreControl() - see systemMenuMouse() in mouse.cpp!

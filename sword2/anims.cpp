@@ -26,8 +26,10 @@
 
 #include "common/stdafx.h"
 #include "common/file.h"
+
 #include "sword2/sword2.h"
 #include "sword2/defs.h"
+#include "sword2/build_display.h"
 #include "sword2/controls.h"
 #include "sword2/interpreter.h"
 #include "sword2/logic.h"
@@ -36,7 +38,6 @@
 #include "sword2/resman.h"
 #include "sword2/sound.h"
 #include "sword2/driver/animation.h"
-#include "sword2/driver/d_draw.h"
 
 namespace Sword2 {
 

@@ -21,72 +21,20 @@
 #include "common/stdafx.h"
 #include "common/system.h"
 #include "sword2/sword2.h"
-#include "sword2/driver/d_draw.h"
 #include "sword2/driver/menu.h"
 #include "sword2/driver/render.h"
 
 namespace Sword2 {
 
-Graphics::Graphics(Sword2Engine *vm, int16 width, int16 height) 
-	: _vm(vm), _iconCount(0), _needFullRedraw(false),
-	  _fadeStatus(RDFADE_NONE), _mouseSprite(NULL), _mouseAnim(NULL),
-	  _luggageAnim(NULL), _layer(0), _renderAverageTime(60),
-	  _lightMask(NULL), _screenWide(width), _screenDeep(height) {
-
-	int i, j;
-
-	_buffer = _dirtyGrid = NULL;
-
-	_buffer = (byte *) malloc(width * height);
-	if (!_buffer)
-		error("Could not initialise display");
-
-	_vm->_system->initSize(width, height);
-
-	_gridWide = width / CELLWIDE;
-	_gridDeep = height / CELLDEEP;
-
-	if ((width % CELLWIDE) || (height % CELLDEEP))
-		error("Bad cell size");
-
-	_dirtyGrid = (byte *) calloc(_gridWide, _gridDeep);
-	if (!_buffer)
-		error("Could not initialise dirty grid");
-
-	for (i = 0; i < ARRAYSIZE(_blockSurfaces); i++)
-		_blockSurfaces[i] = NULL;
-
-	for (i = 0; i < 2; i++) {
-		for (j = 0; j < RDMENU_MAXPOCKETS; j++) {
-			_icons[i][j] = NULL;
-			_pocketStatus[i][j] = 0;
-		}
-
-		_menuStatus[i] = RDMENU_HIDDEN;
-	}
-}
-
-Graphics::~Graphics() {
-	free(_buffer);
-	free(_dirtyGrid);
-	closeBackgroundLayer();
-	free(_lightMask);
-	free(_mouseAnim);
-	free(_luggageAnim);
-	for (int i = 0; i < 2; i++)
-		for (int j = 0; j < RDMENU_MAXPOCKETS; j++)
-			free(_icons[i][j]);
-}
-
 /**
  * @return the graphics detail setting
  */
 
-int8 Graphics::getRenderLevel(void) {
+int8 Screen::getRenderLevel() {
 	return _renderLevel;
 }
 
-void Graphics::setRenderLevel(int8 level) {
+void Screen::setRenderLevel(int8 level) {
 	_renderLevel = level;
 
 	switch (_renderLevel) {
@@ -115,7 +63,7 @@ void Graphics::setRenderLevel(int8 level) {
  * touch the menu areas of the screen.
  */
 
-void Graphics::clearScene(void) {
+void Screen::clearScene() {
 	memset(_buffer + MENUDEEP * _screenWide, 0, _screenWide * RENDERDEEP);
 	_needFullRedraw = true;
 }

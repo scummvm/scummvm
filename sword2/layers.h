@@ -23,30 +23,6 @@
 
 namespace Sword2 {
 
-struct ScreenInfo {
-	uint16 scroll_offset_x;		// Position x
-	uint16 scroll_offset_y;		// Position y
-	uint16 max_scroll_offset_x;	// Calc'ed in fnInitBackground
-	uint16 max_scroll_offset_y;
-	int16 player_feet_x;		// Feet coordinates to use - cant just
-	int16 player_feet_y;		// fetch the player compact anymore
-	int16 feet_x;			// Special offset-to-player position -
-	int16 feet_y;			// tweek as desired - always set in
-					// screen manager object startup
-	uint16 screen_wide;		// Size of background layer - hence
-	uint16 screen_deep;		// size of back buffer itself (Paul
-					// actually malloc's it)
-	uint32 background_layer_id;	// Id of the normal background layer
-					// from the header of the main
-					// background layer
-	uint16 number_of_layers;
-	uint8 new_palette;		// Set to non zero to start the
-					// palette held within layer file
-					// fading up after a build_display
-	uint8 scroll_flag;		// Scroll mode 0 off 1 on
-	bool mask_flag;			// Using shading mask
-};
-
 } // End of namespace Sword2
 
 #endif

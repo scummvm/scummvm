@@ -33,7 +33,6 @@ public:
 	uint8 _currentGraphicsLevel;
 
 	bool _subtitles;
-	bool _stereoReversed;
 	bool _pointerTextSelected;
 
 	Gui(Sword2Engine *vm);

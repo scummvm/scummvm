@@ -23,11 +23,23 @@
 #define ANIMATION_H
 
 #include "graphics/animation.h"
-
 #include "sound/mixer.h"
 
-
 namespace Sword2 {
+
+struct SpriteInfo;
+
+// This is the structure which is passed to the sequence player. It includes
+// the smack to play, and any text lines which are to be displayed over the top
+// of the sequence.
+
+struct MovieTextObject {
+	uint16 startFrame;
+	uint16 endFrame;
+	SpriteInfo *textSprite;
+	uint32 speechBufferSize;
+	uint16 *speech;
+};
 
 class AnimationState : public ::Graphics::BaseAnimationState {
 private:

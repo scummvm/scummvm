@@ -31,7 +31,6 @@
 #include "sword2/resman.h"
 #include "sword2/sound.h"
 #include "sword2/driver/animation.h"
-#include "sword2/driver/d_draw.h"
 #include "sword2/driver/menu.h"
 #include "sword2/driver/render.h"
 
@@ -47,7 +46,7 @@ AnimationState::~AnimationState() {
 #ifdef BACKEND_8BIT
 
 void AnimationState::setPalette(byte *pal) {
-	_vm->_graphics->setPalette(0, 256, pal, RDPAL_INSTANT);
+	_vm->_screen->setPalette(0, 256, pal, RDPAL_INSTANT);
 }
 
 #else
@@ -82,7 +81,7 @@ void AnimationState::drawTextObject(SpriteInfo *s, byte *src) {
 
 void AnimationState::clearScreen(void) {
 #ifdef BACKEND_8BIT
-	memset(_vm->_graphics->getScreen(), 0, MOVIE_WIDTH * MOVIE_HEIGHT);
+	memset(_vm->_screen->getScreen(), 0, MOVIE_WIDTH * MOVIE_HEIGHT);
 #else
 	OverlayColor black = _sys->RGBToColor(0, 0, 0);
 
@@ -93,7 +92,7 @@ void AnimationState::clearScreen(void) {
 
 void AnimationState::updateScreen(void) {
 #ifdef BACKEND_8BIT
-	byte *buf = _vm->_graphics->getScreen() + ((480 - MOVIE_HEIGHT) / 2) * RENDERWIDE + (640 - MOVIE_WIDTH) / 2;
+	byte *buf = _vm->_screen->getScreen() + ((480 - MOVIE_HEIGHT) / 2) * RENDERWIDE + (640 - MOVIE_WIDTH) / 2;
 
 	_vm->_system->copyRectToScreen(buf, MOVIE_WIDTH, (640 - MOVIE_WIDTH) / 2, (480 - MOVIE_HEIGHT) / 2, MOVIE_WIDTH, MOVIE_HEIGHT);
 #else
@@ -104,7 +103,7 @@ void AnimationState::updateScreen(void) {
 
 void AnimationState::drawYUV(int width, int height, byte *const *dat) {
 #ifdef BACKEND_8BIT
-	_vm->_graphics->plotYUV(lut, width, height, dat);
+	_vm->_screen->plotYUV(lut, width, height, dat);
 #else
 	plotYUV(lookup, width, height, dat);
 #endif
@@ -138,12 +137,12 @@ MoviePlayer::MoviePlayer(Sword2Engine *vm)
 
 void MoviePlayer::openTextObject(MovieTextObject *obj) {
 	if (obj->textSprite)
-		_vm->_graphics->createSurface(obj->textSprite, &_textSurface);
+		_vm->_screen->createSurface(obj->textSprite, &_textSurface);
 }
 
 void MoviePlayer::closeTextObject(MovieTextObject *obj) {
 	if (_textSurface) {
-		_vm->_graphics->deleteSurface(_textSurface);
+		_vm->_screen->deleteSurface(_textSurface);
 		_textSurface = NULL;
 	}
 }
@@ -151,12 +150,12 @@ void MoviePlayer::closeTextObject(MovieTextObject *obj) {
 void MoviePlayer::drawTextObject(AnimationState *anim, MovieTextObject *obj) {
 	if (obj->textSprite && _textSurface) {
 #ifdef BACKEND_8BIT
-		_vm->_graphics->drawSurface(obj->textSprite, _textSurface);
+		_vm->_screen->drawSurface(obj->textSprite, _textSurface);
 #else
 		if (anim)
 			anim->drawTextObject(obj->textSprite, _textSurface);
 		else
-			_vm->_graphics->drawSurface(obj->textSprite, _textSurface);
+			_vm->_screen->drawSurface(obj->textSprite, _textSurface);
 #endif
 	}
 }
@@ -211,7 +210,7 @@ int32 MoviePlayer::play(const char *filename, MovieTextObject *text[], int32 lea
 
 	// Wait for the lead-out to stop, if there is any.
 	while (_leadOutHandle.isActive()) {
-		_vm->_graphics->updateDisplay();
+		_vm->_screen->updateDisplay();
 		_vm->_system->delayMillis(30);
 	}
 
@@ -232,7 +231,7 @@ void MoviePlayer::playMPEG(const char *filename, MovieTextObject *text[], byte *
 	bool startNextText = false;
 
 	byte oldPal[256 * 4];
-	memcpy(oldPal, _vm->_graphics->_palette, sizeof(oldPal));
+	memcpy(oldPal, _vm->_screen->getPalette(), sizeof(oldPal));
 
 	AnimationState *anim = new AnimationState(_vm);
 
@@ -246,8 +245,8 @@ void MoviePlayer::playMPEG(const char *filename, MovieTextObject *text[], byte *
 #ifndef BACKEND_8BIT
 	// Clear the screen, because whatever is on it will be visible when the
 	// overlay is removed.
-	_vm->_graphics->clearScene();
-	_vm->_graphics->updateDisplay();
+	_vm->_screen->clearScene();
+	_vm->_screen->updateDisplay();
 #endif
 
 #ifndef SCUMM_BIG_ENDIAN
@@ -357,7 +356,7 @@ void MoviePlayer::playMPEG(const char *filename, MovieTextObject *text[], byte *
 		_snd->stopHandle(handle);
 
 	while (handle.isActive()) {
-		_vm->_graphics->updateDisplay(false);
+		_vm->_screen->updateDisplay(false);
 		_sys->delayMillis(100);
 	}
 
@@ -365,7 +364,7 @@ void MoviePlayer::playMPEG(const char *filename, MovieTextObject *text[], byte *
 	anim->clearScreen();
 	anim->updateScreen();
 
-	_vm->_graphics->setPalette(0, 256, oldPal, RDPAL_INSTANT);
+	_vm->_screen->setPalette(0, 256, oldPal, RDPAL_INSTANT);
 
 	delete anim;
 }
@@ -384,14 +383,14 @@ void MoviePlayer::playDummy(const char *filename, MovieTextObject *text[], byte 
 	byte oldPal[256 * 4];
 	byte tmpPal[256 * 4];
 
-	_vm->_graphics->clearScene();
+	_vm->_screen->clearScene();
 
 	// HACK: Draw instructions
 	//
 	// I'm using the the menu area, because that's unlikely to be touched
 	// by anything else during the cutscene.
 
-	memset(_vm->_graphics->_buffer, 0, _vm->_graphics->_screenWide * MENUDEEP);
+	memset(_vm->_screen->getScreen(), 0, _vm->_screen->getScreenWide() * MENUDEEP);
 
 	byte *data;
 
@@ -415,16 +414,16 @@ void MoviePlayer::playDummy(const char *filename, MovieTextObject *text[], byte 
 	SpriteInfo msgSprite;
 	byte *msgSurface;
 
-	msgSprite.x = _vm->_graphics->_screenWide / 2 - frame->width / 2;
+	msgSprite.x = _vm->_screen->getScreenWide() / 2 - frame->width / 2;
 	msgSprite.y = RDMENU_MENUDEEP / 2 - frame->height / 2;
 	msgSprite.w = frame->width;
 	msgSprite.h = frame->height;
 	msgSprite.type = RDSPR_NOCOMPRESSION;
 	msgSprite.data = data + sizeof(FrameHeader);
 
-	_vm->_graphics->createSurface(&msgSprite, &msgSurface);
-	_vm->_graphics->drawSurface(&msgSprite, msgSurface);
-	_vm->_graphics->deleteSurface(msgSurface);
+	_vm->_screen->createSurface(&msgSprite, &msgSurface);
+	_vm->_screen->drawSurface(&msgSprite, msgSurface);
+	_vm->_screen->deleteSurface(msgSurface);
 
 	free(data);
 
@@ -436,12 +435,12 @@ void MoviePlayer::playDummy(const char *filename, MovieTextObject *text[], byte 
 	// Fake a palette that will hopefully make the text visible. In the
 	// opening cutscene it seems to use colours 1 (black) and 255 (white).
 
-	memcpy(oldPal, _vm->_graphics->_palette, sizeof(oldPal));
+	memcpy(oldPal, _vm->_screen->getPalette(), sizeof(oldPal));
 	memset(tmpPal, 0, sizeof(tmpPal));
 	tmpPal[255 * 4 + 0] = 255;
 	tmpPal[255 * 4 + 1] = 255;
 	tmpPal[255 * 4 + 2] = 255;
-	_vm->_graphics->setPalette(0, 256, tmpPal, RDPAL_INSTANT);
+	_vm->_screen->setPalette(0, 256, tmpPal, RDPAL_INSTANT);
 
 	PlayingSoundHandle handle;
 
@@ -458,7 +457,7 @@ void MoviePlayer::playDummy(const char *filename, MovieTextObject *text[], byte 
 			break;
 
 		if (frameCounter == text[textCounter]->startFrame) {
-			_vm->_graphics->clearScene();
+			_vm->_screen->clearScene();
 			openTextObject(text[textCounter]);
 			drawTextObject(NULL, text[textCounter]);
 			if (text[textCounter]->speech) {
@@ -468,13 +467,13 @@ void MoviePlayer::playDummy(const char *filename, MovieTextObject *text[], byte 
 
 		if (frameCounter == text[textCounter]->endFrame) {
 			closeTextObject(text[textCounter]);
-			_vm->_graphics->clearScene();
-			_vm->_graphics->setNeedFullRedraw();
+			_vm->_screen->clearScene();
+			_vm->_screen->setNeedFullRedraw();
 			textCounter++;
 		}
 
 		frameCounter++;
-		_vm->_graphics->updateDisplay();
+		_vm->_screen->updateDisplay();
 
 		KeyboardEvent *ke = _vm->keyboardEvent();
 
@@ -496,23 +495,23 @@ void MoviePlayer::playDummy(const char *filename, MovieTextObject *text[], byte 
 	// importantly - that we don't free the sound buffer while it's in use.
 
 	while (handle.isActive()) {
-		_vm->_graphics->updateDisplay(false);
+		_vm->_screen->updateDisplay(false);
 		_sys->delayMillis(100);
 	}
 
 	closeTextObject(text[textCounter]);
 
-	_vm->_graphics->clearScene();
-	_vm->_graphics->setNeedFullRedraw();
+	_vm->_screen->clearScene();
+	_vm->_screen->setNeedFullRedraw();
 
 	// HACK: Remove the instructions created above
 	Common::Rect r;
 
-	memset(_vm->_graphics->_buffer, 0, _vm->_graphics->_screenWide * MENUDEEP);
+	memset(_vm->_screen->getScreen(), 0, _vm->_screen->getScreenWide() * MENUDEEP);
 	r.left = r.top = 0;
-	r.right = _vm->_graphics->_screenWide;
+	r.right = _vm->_screen->getScreenWide();
 	r.bottom = MENUDEEP;
-	_vm->_graphics->updateRect(&r);
+	_vm->_screen->updateRect(&r);
 
 	// FIXME: For now, only play the lead-out music for cutscenes that have
 	// subtitles.
@@ -520,7 +519,7 @@ void MoviePlayer::playDummy(const char *filename, MovieTextObject *text[], byte 
 	if (!skipCutscene && leadOut)
 		_vm->_sound->playFx(&_leadOutHandle, leadOut, leadOutLen, SoundMixer::kMaxChannelVolume, 0, false, SoundMixer::kMusicAudioDataType);
 
-	_vm->_graphics->setPalette(0, 256, oldPal, RDPAL_INSTANT);
+	_vm->_screen->setPalette(0, 256, oldPal, RDPAL_INSTANT);
 }
 
 } // End of namespace Sword2

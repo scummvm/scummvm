@@ -25,9 +25,9 @@
 #include "sword2/logic.h"
 #include "sword2/maketext.h"
 #include "sword2/memory.h"
+#include "sword2/mouse.h"
 #include "sword2/resman.h"
 #include "sword2/sound.h"
-#include "sword2/driver/d_draw.h"
 
 #include "common/debugger.cpp"
 
@@ -144,9 +144,9 @@ void Debugger::postEnter() {
 		_vm->_sound->unpauseMusic();
 	}
 
-	if (_vm->_graphics) {
+	if (_vm->_mouse) {
 		// Restore old mouse cursor
-		_vm->_graphics->drawMouse();
+		_vm->_mouse->drawMouse();
 	}
 }
 
@@ -219,7 +219,7 @@ bool Debugger::Cmd_Start(int argc, const char **argv) {
 	}
 
 	_vm->conStart(atoi(argv[1]));
-	_vm->_graphics->setPalette(187, 1, pal, RDPAL_INSTANT);
+	_vm->_screen->setPalette(187, 1, pal, RDPAL_INSTANT);
 	return true;
 }
 

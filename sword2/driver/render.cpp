@@ -21,22 +21,23 @@
 #include "common/stdafx.h"
 #include "common/system.h"
 #include "sword2/sword2.h"
+#include "sword2/build_display.h"
 #include "sword2/driver/animation.h"
-#include "sword2/driver/d_draw.h"
 #include "sword2/driver/menu.h"
 #include "sword2/driver/render.h"
 
 namespace Sword2 {
 
-#define MILLISECSPERCYCLE	83
+#define MILLISECSPERCYCLE  83
+#define RENDERAVERAGETOTAL 4
 
-void Graphics::updateRect(Common::Rect *r) {
+void Screen::updateRect(Common::Rect *r) {
 	_vm->_system->copyRectToScreen(_buffer + r->top * _screenWide + r->left,
 		_screenWide, r->left, r->top, r->right - r->left,
 		r->bottom - r->top);
 }
 
-void Graphics::blitBlockSurface(BlockSurface *s, Common::Rect *r, Common::Rect *clipRect) {
+void Screen::blitBlockSurface(BlockSurface *s, Common::Rect *r, Common::Rect *clipRect) {
 	if (!r->intersects(*clipRect))
 		return;
 
@@ -85,7 +86,7 @@ void Graphics::blitBlockSurface(BlockSurface *s, Common::Rect *r, Common::Rect *
 // This code isn't quite like the original DrawSprite(), but should be close
 // enough.
 
-void Graphics::scaleImageFast(byte *dst, uint16 dstPitch, uint16 dstWidth, uint16 dstHeight, byte *src, uint16 srcPitch, uint16 srcWidth, uint16 srcHeight) {
+void Screen::scaleImageFast(byte *dst, uint16 dstPitch, uint16 dstWidth, uint16 dstHeight, byte *src, uint16 srcPitch, uint16 srcWidth, uint16 srcHeight) {
 	int x, y;
 
 	for (x = 0; x < dstWidth; x++)
@@ -102,7 +103,7 @@ void Graphics::scaleImageFast(byte *dst, uint16 dstPitch, uint16 dstWidth, uint1
 	}
 }
 
-void Graphics::scaleImageGood(byte *dst, uint16 dstPitch, uint16 dstWidth, uint16 dstHeight, byte *src, uint16 srcPitch, uint16 srcWidth, uint16 srcHeight, byte *backbuf) {
+void Screen::scaleImageGood(byte *dst, uint16 dstPitch, uint16 dstWidth, uint16 dstHeight, byte *src, uint16 srcPitch, uint16 srcWidth, uint16 srcHeight, byte *backbuf) {
 	for (int y = 0; y < dstHeight; y++) {
 		for (int x = 0; x < dstWidth; x++) {
 			uint8 c1, c2, c3, c4;
@@ -194,7 +195,7 @@ void Graphics::scaleImageGood(byte *dst, uint16 dstPitch, uint16 dstWidth, uint1
  * @param colour colour of the point
  */
 
-void Graphics::plotPoint(int16 x, int16 y, uint8 colour) {
+void Screen::plotPoint(int16 x, int16 y, uint8 colour) {
 	byte *buf = _buffer + MENUDEEP * RENDERWIDE;
 
 	x -= _scrollX;
@@ -217,7 +218,7 @@ void Graphics::plotPoint(int16 x, int16 y, uint8 colour) {
 
 // Uses Bresenham's incremental algorithm!
 
-void Graphics::drawLine(int16 x0, int16 y0, int16 x1, int16 y1, uint8 colour) {
+void Screen::drawLine(int16 x0, int16 y0, int16 x1, int16 y1, uint8 colour) {
 	int dxmod, dymod;
 	int ince, incne;
 	int d;
@@ -363,7 +364,7 @@ void Graphics::drawLine(int16 x0, int16 y0, int16 x1, int16 y1, uint8 colour) {
  * @param h height of the current location
  */
 
-void Graphics::setLocationMetrics(uint16 w, uint16 h) {
+void Screen::setLocationMetrics(uint16 w, uint16 h) {
 	_locationWide = w;
 	_locationDeep = h;
 	setNeedFullRedraw();
@@ -374,7 +375,7 @@ void Graphics::setLocationMetrics(uint16 w, uint16 h) {
  * parallax can be either foreground, background or the main screen.
  */
 
-void Graphics::renderParallax(Parallax *p, int16 l) {
+void Screen::renderParallax(Parallax *p, int16 l) {
 	int16 x, y;
 	Common::Rect r;
 
@@ -420,7 +421,7 @@ void Graphics::renderParallax(Parallax *p, int16 l) {
  * Initialises the timers before the render loop is entered.
  */
 
-void Graphics::initialiseRenderCycle(void) {
+void Screen::initialiseRenderCycle(void) {
 	_initialTime = _vm->_system->getMillis();
 	_totalTime = _initialTime + MILLISECSPERCYCLE;
 }
@@ -430,7 +431,7 @@ void Graphics::initialiseRenderCycle(void) {
  * render cycle.
  */
 
-void Graphics::startRenderCycle(void) {
+void Screen::startRenderCycle(void) {
 	_scrollXOld = _scrollX;
 	_scrollYOld = _scrollY;
 
@@ -458,7 +459,7 @@ void Graphics::startRenderCycle(void) {
  *         or false if it should continue
  */
 
-bool Graphics::endRenderCycle(void) {
+bool Screen::endRenderCycle(void) {
 	static int32 renderTimeLog[4] = { 60, 60, 60, 60 };
 	static int32 renderCountIndex = 0;
 	int32 time;
@@ -524,7 +525,7 @@ bool Graphics::endRenderCycle(void) {
  * Reset scrolling stuff. This function is called from initBackground()
  */
 
-void Graphics::resetRenderEngine(void) {
+void Screen::resetRenderEngine(void) {
 	_parallaxScrollX = 0;
 	_parallaxScrollY = 0;
 	_scrollX = 0;
@@ -532,22 +533,11 @@ void Graphics::resetRenderEngine(void) {
 }
 
 /**
- * Sets the scroll target position for the end of the game cycle. The driver
- * will then automatically scroll as many times as it can to reach this
- * position in the allotted time.
- */
-
-void Graphics::setScrollTarget(int16 sx, int16 sy) {
-	_scrollXTarget = sx;
-	_scrollYTarget = sy;
-}
-
-/**
  * This function should be called five times with either the parallax layer
  * or a NULL pointer in order of background parallax to foreground parallax.
  */
 
-int32 Graphics::initialiseBackgroundLayer(Parallax *p) {
+int32 Screen::initialiseBackgroundLayer(Parallax *p) {
 	uint16 i, j, k;
 	byte *data;
 	byte *dst;
@@ -666,7 +656,7 @@ int32 Graphics::initialiseBackgroundLayer(Parallax *p) {
  * Should be called once after leaving the room to free up memory.
  */
 
-void Graphics::closeBackgroundLayer(void) {
+void Screen::closeBackgroundLayer(void) {
 	debug(2, "CloseBackgroundLayer");
 
 	for (int i = 0; i < MAXLAYERS; i++) {
@@ -683,7 +673,7 @@ void Graphics::closeBackgroundLayer(void) {
 }
 
 #ifdef BACKEND_8BIT
-void Graphics::plotYUV(byte *lut, int width, int height, byte *const *dat) {
+void Screen::plotYUV(byte *lut, int width, int height, byte *const *dat) {
 	byte *buf = _buffer + ((480 - height) / 2) * RENDERWIDE + (640 - width) / 2;
 
 	int x, y;

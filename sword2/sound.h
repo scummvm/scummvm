@@ -197,7 +197,7 @@ public:
 	void clearFxQueue();
 	void processFxQueue();
 
-	void setReverseStereo(bool reverse) { _reverseStereo = reverse; }
+	void setReverseStereo(bool reverse);
 	bool isReverseStereo() const { return _reverseStereo; }
 
 	void muteSpeech(bool mute);
@@ -228,7 +228,7 @@ public:
 	int32 playFx(FxQueueEntry *fx);
 	int32 playFx(PlayingSoundHandle *handle, byte *data, uint32 len, uint8 vol, int8 pan, bool loop, SoundMixer::SoundType soundType);
 	int32 stopFx(int32 i);
-	int32 setFxIdVolumePan(int32 id, int vol, int pan = -1);
+	int32 setFxIdVolumePan(int32 id, int vol, int pan = 255);
 
 	int32 getSpeechStatus();
 	int32 amISpeaking();

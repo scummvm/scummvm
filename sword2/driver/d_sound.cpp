@@ -35,7 +35,6 @@
 #include "sword2/sword2.h"
 #include "sword2/resman.h"
 #include "sword2/sound.h"
-#include "sword2/driver/d_draw.h"
 
 namespace Sword2 {
 
@@ -790,8 +789,11 @@ int32 Sound::setFxIdVolumePan(int32 i, int vol, int pan) {
 
 	_fxQueue[i].volume = (vol * SoundMixer::kMaxChannelVolume) / 16;
 
-	if (pan != -1)
+	if (pan != 255) {
+		if (isReverseStereo())
+			pan = -pan;
 		_fxQueue[i].pan = (pan * 127) / 16;
+	}
 
 	if (!_fxMuted && _fxQueue[i].handle.isActive()) {
 		_vm->_mixer->setChannelVolume(_fxQueue[i].handle, _fxQueue[i].volume);

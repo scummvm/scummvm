@@ -21,19 +21,21 @@
 #include "common/stdafx.h"
 #include "common/file.h"
 #include "common/system.h"
+
 #include "sword2/sword2.h"
 #include "sword2/defs.h"
+#include "sword2/build_display.h"
 #include "sword2/console.h"
 #include "sword2/controls.h"
 #include "sword2/interpreter.h"
 #include "sword2/logic.h"
 #include "sword2/maketext.h"
 #include "sword2/memory.h"
+#include "sword2/mouse.h"
 #include "sword2/resman.h"
 #include "sword2/router.h"
 #include "sword2/sound.h"
 #include "sword2/driver/animation.h"
-#include "sword2/driver/d_draw.h"
 #include "sword2/driver/render.h"
 
 namespace Sword2 {
@@ -65,7 +67,8 @@ int32 Logic::fnInitBackground(int32 *params) {
 	// params:	0 res id of normal background layer - cannot be 0
 	//		1 1 yes 0 no for a new palette
 
-	return _vm->initBackground(params[0], params[1]);
+	_vm->_screen->initBackground(params[0], params[1]);
+	return IR_CONT;
 }
 
 /**
@@ -106,7 +109,9 @@ int32 Logic::fnRegisterMouse(int32 *params) {
 	// params:	0 pointer to ObjectMouse or 0 for no write to mouse
 	//		  list
 
-	_vm->registerMouse((ObjectMouse *) _vm->_memory->decodePtr(params[0]));
+	ObjectMouse *ob_mouse = (ObjectMouse *) _vm->_memory->decodePtr(params[0]);
+
+	_vm->_mouse->registerMouse(ob_mouse, NULL);
 	return IR_CONT;
 }
 
@@ -244,15 +249,15 @@ int32 Logic::fnChoose(int32 *params) {
 
 		for (i = 0; i < _scriptVars[IN_SUBJECT]; i++) {
 			icon = _vm->_resman->openResource(_subjectList[i].res) + sizeof(StandardHeader) + RDMENU_ICONWIDE * RDMENU_ICONDEEP;
-			_vm->_graphics->setMenuIcon(RDMENU_BOTTOM, i, icon);
+			_vm->_mouse->setMenuIcon(RDMENU_BOTTOM, i, icon);
 			_vm->_resman->closeResource(_subjectList[i].res);
 		}
 
 		for (; i < 15; i++)
-			_vm->_graphics->setMenuIcon(RDMENU_BOTTOM, (uint8) i, NULL);
+			_vm->_mouse->setMenuIcon(RDMENU_BOTTOM, (uint8) i, NULL);
 
-		_vm->_graphics->showMenu(RDMENU_BOTTOM);
-		_vm->setMouse(NORMAL_MOUSE_ID);
+		_vm->_mouse->showMenu(RDMENU_BOTTOM);
+		_vm->_mouse->setMouse(NORMAL_MOUSE_ID);
 		_choosing = true;
 		return IR_REPEAT;
 	}
@@ -261,13 +266,16 @@ int32 Logic::fnChoose(int32 *params) {
 	// about left clicks.
 
 	MouseEvent *me = _vm->mouseEvent();
+	int mouseX, mouseY;
 
-	if (!me || !(me->buttons & RD_LEFTBUTTONDOWN) || _vm->_mouseY < 400)
+	_vm->_mouse->getPos(mouseX, mouseY);
+
+	if (!me || !(me->buttons & RD_LEFTBUTTONDOWN) || mouseY < 400)
 		return IR_REPEAT;
 
 	// Check for click on a menu.
 
-	int hit = _vm->menuClick(_scriptVars[IN_SUBJECT]);
+	int hit = _vm->_mouse->menuClick(_scriptVars[IN_SUBJECT]);
 	if (hit < 0)
 		return IR_REPEAT;
 
@@ -276,7 +284,7 @@ int32 Logic::fnChoose(int32 *params) {
 	for (i = 0; i < _scriptVars[IN_SUBJECT]; i++) {
 		if ((int) i != hit) {
 			icon = _vm->_resman->openResource(_subjectList[i].res) + sizeof(StandardHeader);
-			_vm->_graphics->setMenuIcon(RDMENU_BOTTOM, i, icon);
+			_vm->_mouse->setMenuIcon(RDMENU_BOTTOM, i, icon);
 			_vm->_resman->closeResource(_subjectList[i].res);
 		}
 	}
@@ -288,7 +296,7 @@ int32 Logic::fnChoose(int32 *params) {
 
 	_choosing = false;
 	_scriptVars[IN_SUBJECT] = 0;
-	_vm->setMouse(0);
+	_vm->_mouse->setMouse(0);
 
 	return IR_CONT | (_subjectList[hit].ref << 3);
 }
@@ -371,7 +379,7 @@ int32 Logic::fnWalk(int32 *params) {
 
 		// Walk is about to start, so set the mega's graphic resource
 		ob_graph->anim_resource = ob_mega->megaset_res;
-	} else if (_scriptVars[EXIT_FADING] && _vm->_graphics->getFadeStatus() == RDFADE_BLACK) {
+	} else if (_scriptVars[EXIT_FADING] && _vm->_screen->getFadeStatus() == RDFADE_BLACK) {
 		// Double clicked an exit so quit the walk when screen is black
 		// ok, thats it - back to script and change screen
 
@@ -687,8 +695,9 @@ int32 Logic::fnMegaTableAnim(int32 *params) {
 
 int32 Logic::fnAddMenuObject(int32 *params) {
 	// params:	0 pointer to a MenuObject structure to copy down
+	MenuObject *menuObject = (MenuObject *) _vm->_memory->decodePtr(params[0]);
 
-	_vm->addMenuObject((MenuObject *) _vm->_memory->decodePtr(params[0]));
+	_vm->_mouse->addMenuObject(menuObject);
 	return IR_CONT;
 }
 
@@ -704,12 +713,7 @@ int32 Logic::fnAddMenuObject(int32 *params) {
 int32 Logic::fnStartConversation(int32 *params) {
 	// params:	none
 
-	if (_scriptVars[TALK_FLAG] == 0) {
-		// See fnChooser & speech scripts
-		_scriptVars[CHOOSER_COUNT_FLAG] = 0;
-	}
-
-	fnNoHuman(params);
+	_vm->_mouse->startConversation();
 	return IR_CONT;
 }
 
@@ -720,16 +724,7 @@ int32 Logic::fnStartConversation(int32 *params) {
 int32 Logic::fnEndConversation(int32 *params) {
 	// params:	none
 
-	_vm->_graphics->hideMenu(RDMENU_BOTTOM);
-
-	if (_vm->_mouseY > 399) {
-		// Will wait for cursor to move off the bottom menu
-		_vm->_mouseMode = MOUSE_holding;
-	}
-
-	// In case DC forgets
-	_scriptVars[TALK_FLAG] = 0;
-
+	_vm->_mouse->endConversation();
 	return IR_CONT;
 }
 
@@ -789,7 +784,12 @@ int32 Logic::fnRegisterFrame(int32 *params) {
 	//		1 pointer to graphic structure
 	//		2 pointer to mega structure or NULL if not a mega
 
-	return _vm->registerFrame(params);
+	ObjectMouse *ob_mouse = (ObjectMouse *) _vm->_memory->decodePtr(params[0]);
+	ObjectGraphic *ob_graph = (ObjectGraphic *) _vm->_memory->decodePtr(params[1]);
+	ObjectMega *ob_mega = (ObjectMega *) _vm->_memory->decodePtr(params[2]);
+
+	_vm->_screen->registerFrame(ob_mouse, ob_graph, ob_mega);
+	return IR_CONT;
 }
 
 int32 Logic::fnNoSprite(int32 *params) {
@@ -824,15 +824,16 @@ int32 Logic::fnUpdatePlayerStats(int32 *params) {
 	// params:	0 pointer to mega structure
 
 	ObjectMega *ob_mega = (ObjectMega *) _vm->_memory->decodePtr(params[0]);
+	ScreenInfo *screenInfo = _vm->_screen->getScreenInfo();
 
-	_vm->_thisScreen.player_feet_x = ob_mega->feet_x;
-	_vm->_thisScreen.player_feet_y = ob_mega->feet_y;
+	screenInfo->player_feet_x = ob_mega->feet_x;
+	screenInfo->player_feet_y = ob_mega->feet_y;
 
 	// for the script
 	_scriptVars[PLAYER_FEET_X] = ob_mega->feet_x;
 	_scriptVars[PLAYER_FEET_Y] = ob_mega->feet_y;
 	_scriptVars[PLAYER_CUR_DIR] = ob_mega->current_dir;
-	_scriptVars[SCROLL_OFFSET_X] = _vm->_thisScreen.scroll_offset_x;
+	_scriptVars[SCROLL_OFFSET_X] = screenInfo->scroll_offset_x;
 
 	debug(5, "fnUpdatePlayerStats: %d %d", ob_mega->feet_x, ob_mega->feet_y);
 
@@ -856,13 +857,14 @@ int32 Logic::fnInitFloorMouse(int32 *params) {
 	// params:	0 pointer to object's mouse structure
 
  	ObjectMouse *ob_mouse = (ObjectMouse *) _vm->_memory->decodePtr(params[0]);
+	ScreenInfo *screenInfo = _vm->_screen->getScreenInfo();
 
 	// floor is always lowest priority
 
 	ob_mouse->x1 = 0;
 	ob_mouse->y1 = 0;
-	ob_mouse->x2 = _vm->_thisScreen.screen_wide - 1;
-	ob_mouse->y2 = _vm->_thisScreen.screen_deep - 1;
+	ob_mouse->x2 = screenInfo->screen_wide - 1;
+	ob_mouse->y2 = screenInfo->screen_deep - 1;
 	ob_mouse->priority = 9;
 	ob_mouse->pointer = NORMAL_MOUSE_ID;
 	return IR_CONT;
@@ -939,95 +941,14 @@ int32 Logic::fnEndSession(int32 *params) {
 int32 Logic::fnNoHuman(int32 *params) {
 	// params:	none
 
-	_vm->noHuman();
-	_vm->clearPointerText();
-
-	// must be normal mouse situation or a largely neutral situation -
-	// special menus use noHuman
-
-	// dont hide menu in conversations
-	if (_scriptVars[TALK_FLAG] == 0)
-		_vm->_graphics->hideMenu(RDMENU_BOTTOM);
-
-	if (_vm->_mouseMode == MOUSE_system_menu) {
-		// close menu
-		_vm->_mouseMode = MOUSE_normal;
-		_vm->_graphics->hideMenu(RDMENU_TOP);
-	}
-
+	_vm->_mouse->noHuman();
 	return IR_CONT;
 }
 
 int32 Logic::fnAddHuman(int32 *params) {
 	// params:	none
 
-	// for logic scripts
-	_scriptVars[MOUSE_AVAILABLE] = 1;
-
-	// off
-	if (_vm->_mouseStatus) {
-		_vm->_mouseStatus = false;	// on
-		_vm->_mouseTouching = 1;	// forces engine to choose a cursor
-	}
-
-	// clear this to reset no-second-click system
-	_scriptVars[CLICKED_ID] = 0;
-
-	// this is now done outside the OBJECT_HELD check in case it's set to
-	// zero before now!
-
-	// unlock the mouse from possible large object lock situtations - see
-	// syphon in rm 3
-
-	_vm->_mouseModeLocked = false;
-
-	if (_scriptVars[OBJECT_HELD]) {
-		// was dragging something around
-		// need to clear this again
-		_scriptVars[OBJECT_HELD] = 0;
-
-		// and these may also need clearing, just in case
-		_vm->_examiningMenuIcon = false;
-		Logic::_scriptVars[COMBINE_BASE] = 0;
-
-		_vm->setLuggage(0);
-	}
-
-	// if mouse is over menu area
-	if (_vm->_mouseY > 399) {
-		if (_vm->_mouseMode != MOUSE_holding) {
-			// VITAL - reset things & rebuild the menu
-			_vm->_mouseMode = MOUSE_normal;
-			_vm->setMouse(NORMAL_MOUSE_ID);
-		} else
-			_vm->setMouse(NORMAL_MOUSE_ID);
-	}
-
-	// enabled/disabled from console; status printed with on-screen debug
-	// info
-
-	if (_vm->_debugger->_testingSnR) {
-		uint8 black[4] = {   0,  0,    0,   0 };
-		uint8 white[4] = { 255, 255, 255,   0 };
-
-		// testing logic scripts by simulating an instant Save &
-		// Restore
-
-		_vm->_graphics->setPalette(0, 1, white, RDPAL_INSTANT);
-
-		// stops all fx & clears the queue - eg. when leaving a
-		// location
-
-		_vm->_sound->clearFxQueue();
-
-		// Trash all object resources so they load in fresh & restart
-		// their logic scripts
-
-		_vm->_resman->killAllObjects(false);
-
-		_vm->_graphics->setPalette(0, 1, black, RDPAL_INSTANT);
-	}
-
+	_vm->_mouse->addHuman();
 	return IR_CONT;
 }
 
@@ -1265,8 +1186,8 @@ int32 Logic::fnFadeDown(int32 *params) {
 
 	// params:	none
 
-	if (_vm->_graphics->getFadeStatus() == RDFADE_NONE)
-		_vm->_graphics->fadeDown();
+	if (_vm->_screen->getFadeStatus() == RDFADE_NONE)
+		_vm->_screen->fadeDown();
 
 	return IR_CONT;
 }
@@ -1562,9 +1483,13 @@ int32 Logic::fnISpeak(int32 *params) {
 	// Ok, all is running along smoothly - but a click means stop
 	// unnaturally
 
+	int mouseX, mouseY;
+
+	_vm->_mouse->getPos(mouseX, mouseY);
+
 	// So that we can go to the options panel while text & speech is
 	// being tested
-	if (_scriptVars[SYSTEM_TESTING_TEXT] == 0 || _vm->_mouseY > 0) {
+	if (_scriptVars[SYSTEM_TESTING_TEXT] == 0 || mouseY > 0) {
 		MouseEvent *me = _vm->mouseEvent();
 
 		// Note that we now have TWO click-delays - one for LEFT
@@ -2299,8 +2224,10 @@ int32 Logic::fnSetScrollCoordinate(int32 *params) {
 	// feet_x & feet_y refer to the physical screen coords where the
 	// system will try to maintain George's feet
 
-	_vm->_thisScreen.feet_x = params[0];
-	_vm->_thisScreen.feet_y = params[1];
+	ScreenInfo *screenInfo = _vm->_screen->getScreenInfo();
+
+	screenInfo->feet_x = params[0];
+	screenInfo->feet_y = params[1];
 	return IR_CONT;
 }
 
@@ -2350,16 +2277,17 @@ int32 Logic::fnSetScrollLeftMouse(int32 *params) {
 	// params:	0 pointer to object's mouse structure
 
  	ObjectMouse *ob_mouse = (ObjectMouse *) _vm->_memory->decodePtr(params[0]);
+	ScreenInfo *screenInfo = _vm->_screen->getScreenInfo();
 
 	// Highest priority
 
 	ob_mouse->x1 = 0;
 	ob_mouse->y1 = 0;
-	ob_mouse->x2 = _vm->_thisScreen.scroll_offset_x + SCROLL_MOUSE_WIDTH;
-	ob_mouse->y2 = _vm->_thisScreen.screen_deep - 1;
+	ob_mouse->x2 = screenInfo->scroll_offset_x + SCROLL_MOUSE_WIDTH;
+	ob_mouse->y2 = screenInfo->screen_deep - 1;
 	ob_mouse->priority = 0;
 
-	if (_vm->_thisScreen.scroll_offset_x > 0) {
+	if (screenInfo->scroll_offset_x > 0) {
 		// not fully scrolled to the left
 		ob_mouse->pointer = SCROLL_LEFT_MOUSE_ID;
 	} else {
@@ -2374,16 +2302,17 @@ int32 Logic::fnSetScrollRightMouse(int32 *params) {
 	// params:	0 pointer to object's mouse structure
 
 	ObjectMouse *ob_mouse = (ObjectMouse *) _vm->_memory->decodePtr(params[0]);
+	ScreenInfo *screenInfo = _vm->_screen->getScreenInfo();
 
 	// Highest priority
 
-	ob_mouse->x1 = _vm->_thisScreen.scroll_offset_x + _vm->_graphics->_screenWide - SCROLL_MOUSE_WIDTH;
+	ob_mouse->x1 = screenInfo->scroll_offset_x + _vm->_screen->getScreenWide() - SCROLL_MOUSE_WIDTH;
 	ob_mouse->y1 = 0;
-	ob_mouse->x2 = _vm->_thisScreen.screen_wide - 1;
-	ob_mouse->y2 = _vm->_thisScreen.screen_deep - 1;
+	ob_mouse->x2 = screenInfo->screen_wide - 1;
+	ob_mouse->y2 = screenInfo->screen_deep - 1;
 	ob_mouse->priority = 0;
 
-	if (_vm->_thisScreen.scroll_offset_x < _vm->_thisScreen.max_scroll_offset_x) {
+	if (screenInfo->scroll_offset_x < screenInfo->max_scroll_offset_x) {
 		// not fully scrolled to the right
 		ob_mouse->pointer = SCROLL_RIGHT_MOUSE_ID;
 	} else {
@@ -2405,19 +2334,19 @@ int32 Logic::fnColour(int32 *params) {
 	// what colour?
 	switch (params[0]) {
 	case BLACK:
-		_vm->_graphics->setPalette(0, 1, black, RDPAL_INSTANT);
+		_vm->_screen->setPalette(0, 1, black, RDPAL_INSTANT);
 		break;
 	case WHITE:
-		_vm->_graphics->setPalette(0, 1, white, RDPAL_INSTANT);
+		_vm->_screen->setPalette(0, 1, white, RDPAL_INSTANT);
 		break;
 	case RED:
-		_vm->_graphics->setPalette(0, 1, red, RDPAL_INSTANT);
+		_vm->_screen->setPalette(0, 1, red, RDPAL_INSTANT);
 		break;
 	case GREEN:
-		_vm->_graphics->setPalette(0, 1, green, RDPAL_INSTANT);
+		_vm->_screen->setPalette(0, 1, green, RDPAL_INSTANT);
 		break;
 	case BLUE:
-		_vm->_graphics->setPalette(0, 1, blue, RDPAL_INSTANT);
+		_vm->_screen->setPalette(0, 1, blue, RDPAL_INSTANT);
 		break;
 	}
 #endif
@@ -2450,25 +2379,25 @@ int32 Logic::fnFlash(int32 *params) {
 	// what colour?
 	switch (params[0]) {
 	case WHITE:
-		_vm->_graphics->setPalette(0, 1, white, RDPAL_INSTANT);
+		_vm->_screen->setPalette(0, 1, white, RDPAL_INSTANT);
 		break;
 	case RED:
-		_vm->_graphics->setPalette(0, 1, red, RDPAL_INSTANT);
+		_vm->_screen->setPalette(0, 1, red, RDPAL_INSTANT);
 		break;
 	case GREEN:
-		_vm->_graphics->setPalette(0, 1, green, RDPAL_INSTANT);
+		_vm->_screen->setPalette(0, 1, green, RDPAL_INSTANT);
 		break;
 	case BLUE:
-		_vm->_graphics->setPalette(0, 1, blue, RDPAL_INSTANT);
+		_vm->_screen->setPalette(0, 1, blue, RDPAL_INSTANT);
 		break;
 	}
 
 	// There used to be a busy-wait loop here, so I don't know how long
 	// the delay was meant to be. Probably doesn't matter much.
 
-	_vm->_graphics->updateDisplay();
+	_vm->_screen->updateDisplay();
 	_vm->_system->delayMillis(250);
-	_vm->_graphics->setPalette(0, 1, black, RDPAL_INSTANT);
+	_vm->_screen->setPalette(0, 1, black, RDPAL_INSTANT);
 #endif
 
 	return IR_CONT;
@@ -2736,14 +2665,14 @@ int32 Logic::fnPlaySequence(int32 *params) {
 	// now clear the screen in case the Sequence was quitted (using ESC)
 	// rather than fading down to black
 
-	_vm->_graphics->clearScene();
+	_vm->_screen->clearScene();
 
 	// zero the entire palette in case we're about to fade up!
 
 	byte pal[4 * 256];
 
 	memset(pal, 0, sizeof(pal));
-	_vm->_graphics->setPalette(0, 256, pal, RDPAL_INSTANT);
+	_vm->_screen->setPalette(0, 256, pal, RDPAL_INSTANT);
 
 	debug(5, "fnPlaySequence FINISHED");
 	return IR_CONT;
@@ -2764,10 +2693,10 @@ int32 Logic::fnUnshadedSprite(int32 *params) {
 int32 Logic::fnFadeUp(int32 *params) {
 	// params:	none
 
-	_vm->_graphics->waitForFade();
+	_vm->_screen->waitForFade();
 
-	if (_vm->_graphics->getFadeStatus() == RDFADE_BLACK)
-		_vm->_graphics->fadeUp();
+	if (_vm->_screen->getFadeStatus() == RDFADE_BLACK)
+		_vm->_screen->fadeUp();
 
 	return IR_CONT;
 }
@@ -2785,7 +2714,7 @@ int32 Logic::fnDisplayMsg(int32 *params) {
 	// +2 to skip the encoded text number in the first 2 chars; 3 is
 	// duration in seconds
 
-	_vm->displayMsg(_vm->fetchTextLine(_vm->_resman->openResource(text_res), local_text) + 2, 3);
+	_vm->_screen->displayMsg(_vm->fetchTextLine(_vm->_resman->openResource(text_res), local_text) + 2, 3);
 	_vm->_resman->closeResource(text_res);
 
 	return IR_CONT;
@@ -2793,14 +2722,9 @@ int32 Logic::fnDisplayMsg(int32 *params) {
 
 int32 Logic::fnSetObjectHeld(int32 *params) {
 	// params:	0 luggage icon to set
+	uint32 res = (uint32) params[0];
 
-	_vm->setLuggage(params[0]);
-
-	_scriptVars[OBJECT_HELD] = params[0];
-	_vm->_currentLuggageResource = params[0];
-
-	// mode locked - no menu available
-	_vm->_mouseModeLocked = true;
+	_vm->_mouse->setObjectHeld(res);
 	return IR_CONT;
 }
 
@@ -2824,6 +2748,8 @@ int32 Logic::fnResetGlobals(int32 *params) {
 
 	// params:	none
 
+	ScreenInfo *screenInfo = _vm->_screen->getScreenInfo();
+
 	int32 size;
 	uint32 *globals;
 
@@ -2846,7 +2772,7 @@ int32 Logic::fnResetGlobals(int32 *params) {
 	// - this is taken from fnInitBackground
 
 	// switch on scrolling (2 means first time on screen)
-	_vm->_thisScreen.scroll_flag = 2;
+	screenInfo->scroll_flag = 2;
 
 	return IR_CONT;
 }
@@ -2855,7 +2781,7 @@ int32 Logic::fnSetPalette(int32 *params) {
 	// params:	0 resource number of palette file, or 0 if it's to be
 	//		  the palette from the current screen
 
-	_vm->setFullPalette(params[0]);
+	_vm->_screen->setFullPalette(params[0]);
 	return IR_CONT;
 }
 
@@ -2866,13 +2792,7 @@ int32 Logic::fnSetPalette(int32 *params) {
 int32 Logic::fnRegisterPointerText(int32 *params) {
 	// params:	0 local id of text line to use as pointer text
 
-	assert(_vm->_curMouse < TOTAL_mouse_list);
-
-	// current object id - used for checking pointer_text when mouse area
-	// registered (in fnRegisterMouse and fnRegisterFrame)
-
-	_vm->_mouseList[_vm->_curMouse].id = _scriptVars[ID];
-	_vm->_mouseList[_vm->_curMouse].pointer_text = params[0];
+	_vm->_mouse->registerPointerText(params[0]);
 	return IR_CONT;
 }
 
@@ -2940,18 +2860,9 @@ int32 Logic::fnCheckPlayerActivity(int32 *params) {
 	// params:	0 threshold delay in seconds, ie. what we want to
 	//		  check the actual delay against
 
-	uint32 threshold = params[0] * 12;	// in game cycles
+	uint32 seconds = (uint32) params[0];
 
-	// if the actual delay is at or above the given threshold
-	if (_vm->_playerActivityDelay >= threshold) {
-		// reset activity delay counter, now that we've got a
-		// positive check
-
-		_vm->_playerActivityDelay = 0;
-		_scriptVars[RESULT] = 1;
-	} else
-		_scriptVars[RESULT] = 0;
-
+	_vm->_mouse->checkPlayerActivity(seconds);
 	return IR_CONT;
 }
 
@@ -2961,7 +2872,7 @@ int32 Logic::fnResetPlayerActivityDelay(int32 *params) {
 
 	// params:	none
 
-	_vm->_playerActivityDelay = 0;
+	_vm->_mouse->resetPlayerActivityDelay();
 	return IR_CONT;
 }
 
@@ -3005,6 +2916,7 @@ struct CreditsLine {
 #define CREDITS_LINE_SPACING 20
 
 int32 Logic::fnPlayCredits(int32 *params) {
+	ScreenInfo *screenInfo = _vm->_screen->getScreenInfo();
 	uint32 loopingMusicId = _vm->_sound->getLoopingMusicId();
 
 	// This function just quits the game if this is the playable demo, ie.
@@ -3019,16 +2931,16 @@ int32 Logic::fnPlayCredits(int32 *params) {
 
 	// Prepare for the credits by fading down, stoping the music, etc.
 
-	_vm->setMouse(0);
+	_vm->_mouse->setMouse(0);
 
 	_vm->_sound->muteFx(true);
 	_vm->_sound->muteSpeech(true);
 
-	_vm->_graphics->waitForFade();
-	_vm->_graphics->fadeDown();
-	_vm->_graphics->waitForFade();
+	_vm->_screen->waitForFade();
+	_vm->_screen->fadeDown();
+	_vm->_screen->waitForFade();
 
-	_vm->_graphics->closeMenuImmediately();
+	_vm->_mouse->closeMenuImmediately();
 
 	// There are three files which I believe are involved in showing the
 	// credits:
@@ -3093,7 +3005,7 @@ int32 Logic::fnPlayCredits(int32 *params) {
 		palette[14 * 4 + 3] = 0;
 	}
 
-	_vm->_graphics->setPalette(0, 256, palette, RDPAL_INSTANT);
+	_vm->_screen->setPalette(0, 256, palette, RDPAL_INSTANT);
 
 	// Read the credits text
 
@@ -3206,8 +3118,8 @@ int32 Logic::fnPlayCredits(int32 *params) {
 	pars[1] = FX_SPOT;
 	fnPlayMusic(pars);
 
-	_vm->_graphics->clearScene();
-	_vm->_graphics->fadeUp(0);
+	_vm->_screen->clearScene();
+	_vm->_screen->fadeUp(0);
 
 	spriteInfo.scale = 0;
 	spriteInfo.scaledWidth = 0;
@@ -3232,7 +3144,7 @@ int32 Logic::fnPlayCredits(int32 *params) {
 	while (scrollPos < scrollSteps && !_vm->_quit) {
 		bool foundStartLine = false;
 
-		_vm->_graphics->clearScene();
+		_vm->_screen->clearScene();
 
 		for (i = startLine; i < lineCount; i++) {
 			// Free any sprites that have scrolled off the screen
@@ -3284,23 +3196,23 @@ int32 Logic::fnPlayCredits(int32 *params) {
 				}
 
 				if (spriteInfo.data)
-					_vm->_graphics->drawSprite(&spriteInfo);
+					_vm->_screen->drawSprite(&spriteInfo);
 			} else
 				break;
 		}
 
-		_vm->_graphics->updateDisplay();
+		_vm->_screen->updateDisplay();
 
 		KeyboardEvent *ke = _vm->keyboardEvent();
 
 		if (ke && ke->keycode == 27) {
 			if (!abortCredits) {
 				abortCredits = true;
-				_vm->_graphics->fadeDown();
+				_vm->_screen->fadeDown();
 			}
 		}
 
-		if (abortCredits && _vm->_graphics->getFadeStatus() == RDFADE_BLACK)
+		if (abortCredits && _vm->_screen->getFadeStatus() == RDFADE_BLACK)
 			break;
 
 		_vm->sleepUntil(musicStart + (musicLength * scrollPos) / scrollSteps);
@@ -3325,7 +3237,7 @@ int32 Logic::fnPlayCredits(int32 *params) {
 		// wait for it to really happen.
 
 		while (_vm->_sound->musicTimeRemaining() && !_vm->_quit) {
-			_vm->_graphics->updateDisplay(false);
+			_vm->_screen->updateDisplay(false);
 			_vm->_system->delayMillis(100);
 		}
 	}
@@ -3343,13 +3255,13 @@ int32 Logic::fnPlayCredits(int32 *params) {
 	} else
 		fnStopMusic(NULL);
 
-	_vm->_thisScreen.new_palette = 99;
+	screenInfo->new_palette = 99;
 
-	if (!_vm->_mouseStatus || _choosing)
-		_vm->setMouse(NORMAL_MOUSE_ID);
+	if (!_vm->_mouse->getMouseStatus() || _choosing)
+		_vm->_mouse->setMouse(NORMAL_MOUSE_ID);
 
 	if (_scriptVars[DEAD])
-		_vm->buildSystemMenu();
+		_vm->_mouse->buildSystemMenu();
 
 	return IR_CONT;
 }
@@ -3357,24 +3269,24 @@ int32 Logic::fnPlayCredits(int32 *params) {
 int32 Logic::fnSetScrollSpeedNormal(int32 *params) {
 	// params:	none
 
-	_vm->_scrollFraction = 16;
+	_vm->_screen->setScrollFraction(16);
 	return IR_CONT;
 }
 
 int32 Logic::fnSetScrollSpeedSlow(int32 *params) {
 	// params:	none
 
-	_vm->_scrollFraction = 32;
+	_vm->_screen->setScrollFraction(32);
 	return IR_CONT;
 }
 
-// called from speech scripts to remove the chooser bar when it's not
+// Called from speech scripts to remove the chooser bar when it's not
 // appropriate to keep it displayed
 
 int32 Logic::fnRemoveChooser(int32 *params) {
 	// params:	none
 
-	_vm->_graphics->hideMenu(RDMENU_BOTTOM);
+	_vm->_mouse->hideMenu(RDMENU_BOTTOM);
 	return IR_CONT;
 }
 
@@ -3413,34 +3325,27 @@ int32 Logic::fnRestoreGame(int32 *params) {
 }
 
 int32 Logic::fnRefreshInventory(int32 *params) {
-	// called from 'menu_look_or_combine' script in 'menu_master' object
+	// Called from 'menu_look_or_combine' script in 'menu_master' object
 	// to update the menu to display a combined object while George runs
 	// voice-over. Note that 'object_held' must be set to the graphic of
 	// the combined object
 
 	// params:	none
 
-	// can reset this now
-	_scriptVars[COMBINE_BASE] = 0;
-
-	// so that the icon in 'object_held' is coloured while the rest are
-	// grey
-	_vm->_examiningMenuIcon = true;
-	_vm->buildMenu();
-	_vm->_examiningMenuIcon = false;
-
+	_vm->_mouse->refreshInventory();
 	return IR_CONT;
 }
 
 int32 Logic::fnChangeShadows(int32 *params) {
 	// params:	none
+	ScreenInfo *screenInfo = _vm->_screen->getScreenInfo();
 
 	// if last screen was using a shading mask (see below)
-	if (_vm->_thisScreen.mask_flag) {
-		uint32 rv = _vm->_graphics->closeLightMask();
+	if (screenInfo->mask_flag) {
+		uint32 rv = _vm->_screen->closeLightMask();
 		if (rv)
 			error("Driver Error %.8x", rv);
-		_vm->_thisScreen.mask_flag = false;
+		screenInfo->mask_flag = false;
 	}
 
 	return IR_CONT;

@@ -36,9 +36,9 @@
 #include "sword2/logic.h"
 #include "sword2/maketext.h"
 #include "sword2/memory.h"
+#include "sword2/mouse.h"
 #include "sword2/resman.h"
 #include "sword2/sound.h"
-#include "sword2/driver/d_draw.h"
 
 #ifdef _WIN32_WCE
 extern bool isSmartphone(void);
@@ -121,59 +121,20 @@ Sword2Engine::Sword2Engine(GameDetector *detector, OSystem *syst) : Engine(syst)
 	_bootParam = ConfMan.getInt("boot_param");
 	_saveSlot = ConfMan.getInt("save_slot");
 
-	_debugger = NULL;
-	_graphics = NULL;
-	_sound = NULL;
-	_gui = NULL;
-	_fontRenderer = NULL;
-	_logic = NULL;
-	_resman = NULL;
 	_memory = NULL;
+	_resman = NULL;
+	_sound = NULL;
+	_screen = NULL;
+	_mouse = NULL;
+	_logic = NULL;
+	_fontRenderer = NULL;
+	_gui = NULL;
+	_debugger = NULL;
 
 	_keyboardEvent.pending = false;
 	_mouseEvent.pending = false;
 
-	_lastPaletteRes = 0;
-
-	_largestLayerArea = 0;
-	_largestSpriteArea = 0;
-
-	strcpy(_largestLayerInfo,  "largest layer:  none registered");
-	strcpy(_largestSpriteInfo, "largest sprite: none registered");
-
-	_fps = 0;
-	_cycleTime = 0;
-	_frameCount = 0;
-
 	_wantSfxDebug = false;
-
-	// For the menus
-
-	_totalTemp = 0;
-	memset(_tempList, 0, sizeof(_tempList));
-
-	_totalMasters = 0;
-	memset(_masterMenuList, 0, sizeof(_masterMenuList));
-	memset(&_thisScreen, 0, sizeof(_thisScreen));
-	memset(_mouseList, 0, sizeof(_mouseList));
-
-	_mouseX = _mouseY = 0;
-	_mouseTouching = 0;
-	_oldMouseTouching = 0;
-	_menuSelectedPos = 0;
-	_examiningMenuIcon = false;
-	_mousePointerRes = 0;
-	_mouseMode = 0;
-	_mouseStatus = false;
-	_mouseModeLocked = false;
-	_currentLuggageResource = 0;
-	_oldButton = 0;
-	_buttonClick = 0;
-	_pointerTextBlocNo = 0;
-	_playerActivityDelay = 0;
-	_realLuggageItem = 0;
-
-	_scrollFraction = 16;
 
 #ifdef SWORD2_DEBUG
 	_stepOneCycle = false;
@@ -190,10 +151,11 @@ Sword2Engine::Sword2Engine(GameDetector *detector, OSystem *syst) : Engine(syst)
 
 Sword2Engine::~Sword2Engine() {
 	delete _debugger;
-	delete _graphics;
 	delete _sound;
 	delete _gui;
 	delete _fontRenderer;
+	delete _screen;
+	delete _mouse;
 	delete _logic;
 	delete _resman;
 	delete _memory;
@@ -233,7 +195,7 @@ int Sword2Engine::init(GameDetector &detector) {
 
 	_system->beginGFXTransaction();
 		initCommonGFX(detector);
-		_graphics = new Graphics(this, 640, 480);
+		_screen = new Screen(this, 640, 480);
 	_system->endGFXTransaction();
 
 	// Create the debugger as early as possible (but not before the
@@ -249,6 +211,7 @@ int Sword2Engine::init(GameDetector &detector) {
 	_fontRenderer = new FontRenderer(this);
 	_gui = new Gui(this);
 	_sound = new Sound(this);
+	_mouse = new Mouse(this);
 
 	// Setup mixer
 	if (!_mixer->isReady())
@@ -278,7 +241,7 @@ int Sword2Engine::init(GameDetector &detector) {
 		if (saveExists(_saveSlot))
 			restoreGame(_saveSlot);
 		else {
-			setMouse(NORMAL_MOUSE_ID);
+			_mouse->setMouse(NORMAL_MOUSE_ID);
 			if (!_gui->restoreControl())
 				startGame();
 		}
@@ -286,7 +249,7 @@ int Sword2Engine::init(GameDetector &detector) {
 		int32 pars[2] = { 221, FX_LOOP };
 		bool result;
 
-		setMouse(NORMAL_MOUSE_ID);
+		_mouse->setMouse(NORMAL_MOUSE_ID);
 		_logic->fnPlayMusic(pars);
 		result = _gui->startControl();
 
@@ -302,7 +265,7 @@ int Sword2Engine::init(GameDetector &detector) {
 	} else
 		startGame();
 
-	_graphics->initialiseRenderCycle();
+	_screen->initialiseRenderCycle();
 	
 	return 0;
 }
@@ -374,9 +337,9 @@ int Sword2Engine::go() {
 		// display once every 4 game-cycles
 
 		if (!_renderSkip || (_gameCycle % 4) == 0)
-			buildDisplay();
+			_screen->buildDisplay();
 #else
-		buildDisplay();
+		_screen->buildDisplay();
 #endif
 	}
 	
@@ -433,8 +396,7 @@ void Sword2Engine::parseEvents() {
 			break;
 		case OSystem::EVENT_MOUSEMOVE:
 			if (!(_eventFilter & RD_KEYDOWN)) {
-				_mouseX = event.mouse.x;
-				_mouseY = event.mouse.y - RDMENU_MENUDEEP;
+				_mouse->setPos(event.mouse.x, event.mouse.y - RDMENU_MENUDEEP);
 			}
 			break;
 		case OSystem::EVENT_LBUTTONDOWN:
@@ -493,8 +455,8 @@ void Sword2Engine::gameCycle() {
 			// will fill thrm through fnRegisterFrame() and
 			// fnRegisterMouse().
 
-			resetRenderLists();
-			resetMouseList();
+			_screen->resetRenderLists();
+			_mouse->resetMouseList();
 
 			// Keep going as long as new lists keep getting put in
 			// - i.e. screen changes.
@@ -505,10 +467,12 @@ void Sword2Engine::gameCycle() {
 	}
 
 	// If this screen is wide, recompute the scroll offsets every cycle
-	if (_thisScreen.scroll_flag)
-		setScrolling();
+	ScreenInfo *screenInfo = _screen->getScreenInfo();
 
-	mouseEngine();
+	if (screenInfo->scroll_flag)
+		_screen->setScrolling();
+
+	_mouse->mouseEngine();
 	_sound->processFxQueue();
 }
 
@@ -551,26 +515,19 @@ void Sword2Engine::sleepUntil(uint32 time) {
 	while (getMillis() < time) {
 		// Make sure menu animations and fades don't suffer, but don't
 		// redraw the entire scene.
-		_graphics->processMenu();
-		_graphics->updateDisplay(false);
+		_mouse->processMenu();
+		_screen->updateDisplay(false);
 		_system->delayMillis(10);
 	}
 }
 
 void Sword2Engine::pauseGame() {
 	// Don't allow Pause while screen fading or while black
-	if (_graphics->getFadeStatus() != RDFADE_NONE)
+	if (_screen->getFadeStatus() != RDFADE_NONE)
 		return;
 	
 	_sound->pauseAllSound();
-
-	// Make the mouse cursor normal. This is the only place where we are
-	// allowed to clear the luggage this way.
-
-	clearPointerText();
-	_graphics->setLuggageAnim(NULL, 0);
-	setMouse(0);
-	_mouseTouching = 1;
+	_mouse->pauseGame();
 
 	// If level at max, turn down because palette-matching won't work
 	// when dimmed
@@ -585,22 +542,20 @@ void Sword2Engine::pauseGame() {
 	// dim the palette during the pause
 
 	if (!_stepOneCycle)
-		_graphics->dimPalette();
+		_screen->dimPalette();
 #else
-	_graphics->dimPalette();
+	_screen->dimPalette();
 #endif
 
 	_gamePaused = true;
 }
 
 void Sword2Engine::unpauseGame() {
-	if (Logic::_scriptVars[OBJECT_HELD] && _realLuggageItem)
-		setLuggage(_realLuggageItem);
-
+	_mouse->unpauseGame();
 	_sound->unpauseAllSound();
 
 	// Put back game screen palette; see build_display.cpp
-	setFullPalette(-1);
+	_screen->setFullPalette(-1);
 
 	// If graphics level at max, turn up again
 	if (_graphicsLevelFudged) {
@@ -611,8 +566,8 @@ void Sword2Engine::unpauseGame() {
 	_gamePaused = false;
 
 	// If mouse is about or we're in a chooser menu
-	if (!_mouseStatus || _logic->_choosing)
-		setMouse(NORMAL_MOUSE_ID);
+	if (!_mouse->getMouseStatus() || _logic->_choosing)
+		_mouse->setMouse(NORMAL_MOUSE_ID);
 }
 
 uint32 Sword2Engine::getMillis() {

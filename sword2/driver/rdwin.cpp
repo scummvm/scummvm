@@ -21,7 +21,6 @@
 #include "common/stdafx.h"
 #include "common/system.h"
 #include "sword2/sword2.h"
-#include "sword2/driver/d_draw.h"
 #include "sword2/driver/menu.h"
 
 namespace Sword2 {
@@ -30,7 +29,7 @@ namespace Sword2 {
  * Tell updateDisplay() that the scene needs to be completely updated.
  */
 
-void Graphics::setNeedFullRedraw(void) {
+void Screen::setNeedFullRedraw() {
 	_needFullRedraw = true;
 }
 
@@ -38,7 +37,7 @@ void Graphics::setNeedFullRedraw(void) {
  * Mark an area of the screen as dirty, first generation.
  */
 
-void Graphics::markAsDirty(int16 x0, int16 y0, int16 x1, int16 y1) {
+void Screen::markAsDirty(int16 x0, int16 y0, int16 x1, int16 y1) {
 	int16 gridX0 = x0 / CELLWIDE;
 	int16 gridY0 = y0 / CELLDEEP;
 	int16 gridX1 = x1 / CELLWIDE;
@@ -58,7 +57,7 @@ void Graphics::markAsDirty(int16 x0, int16 y0, int16 x1, int16 y1) {
  * @param redrawScene If true, redraw the scene.
  */
 
-void Graphics::updateDisplay(bool redrawScene) {
+void Screen::updateDisplay(bool redrawScene) {
 	_vm->parseEvents();
 	fadeServer();
 

@@ -82,6 +82,20 @@ Sound::~Sound() {
 	}
 }
 
+void Sound::setReverseStereo(bool reverse) {
+	if (reverse != _reverseStereo) {
+		_reverseStereo = reverse;
+
+		for (int i = 0; i < FXQ_LENGTH; i++) {
+			if (!_fxQueue[i].resource)
+				continue;
+
+			_fxQueue[i].pan = -_fxQueue[i].pan;
+			_vm->_mixer->setChannelBalance(_fxQueue[i].handle, _fxQueue[i].pan);
+		}
+	}
+}
+
 /**
  * Stop all sounds, close their resources and clear the FX queue.
  */
@@ -189,6 +203,9 @@ void Sound::queueFx(int32 res, int32 type, int32 delay, int32 volume, int32 pan)
 
 			volume = (volume * SoundMixer::kMaxChannelVolume) / 16;
 			pan = (pan * 127) / 16;
+
+			if (isReverseStereo())
+				pan = -pan;
 
 			_fxQueue[i].resource = res;
 			_fxQueue[i].data = data + sizeof(StandardHeader);

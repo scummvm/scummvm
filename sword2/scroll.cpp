@@ -21,7 +21,6 @@
 #include "common/stdafx.h"
 #include "sword2/sword2.h"
 #include "sword2/defs.h"
-#include "sword2/interpreter.h"
 #include "sword2/logic.h"
 
 namespace Sword2 {
@@ -30,11 +29,22 @@ namespace Sword2 {
 #define MAX_SCROLL_DISTANCE 8
 
 /**
+ * Sets the scroll target position for the end of the game cycle. The driver
+ * will then automatically scroll as many times as it can to reach this
+ * position in the allotted time.
+ */
+
+void Screen::setScrollTarget(int16 sx, int16 sy) {
+	_scrollXTarget = sx;
+	_scrollYTarget = sy;
+}
+
+/**
  * If the room is larger than the physical screen, this function is called
  * every game cycle to update the scroll offsets.
  */
 
-void Sword2Engine::setScrolling(void) {
+void Screen::setScrolling() {
 	// Normally we aim to get George's feet at (320,250) from top left
 	// of screen window
 	// feet_x = 128 + 320

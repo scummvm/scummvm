@@ -21,19 +21,101 @@
 #include "common/stdafx.h"
 #include "common/system.h"
 #include "sword2/sword2.h"
-#include "sword2/driver/d_draw.h"
+#include "sword2/defs.h"
+#include "sword2/logic.h"
+#include "sword2/resman.h"
 
 namespace Sword2 {
 
 /**
- * Sets a table of palette indices which will be searched later for a quick
- * palette match.
- * @param data the palette match table
+ * Start layer palette fading up
  */
 
-void Graphics::updatePaletteMatchTable(byte *data) {
-	assert(data);
-	memcpy(_paletteMatch, data, PALTABLESIZE);
+void Screen::startNewPalette() {
+	// If the screen is still fading down then wait for black - could
+	// happen when everythings cached into a large memory model
+	waitForFade();
+
+	byte *screenFile = _vm->_resman->openResource(_thisScreen.background_layer_id);
+
+	memcpy(_paletteMatch, _vm->fetchPaletteMatchTable(screenFile), PALTABLESIZE);
+	setPalette(0, 256, _vm->fetchPalette(screenFile), RDPAL_FADE);
+
+	// Indicating that it's a screen palette
+	_lastPaletteRes = 0;
+
+	_vm->_resman->closeResource(_thisScreen.background_layer_id);
+	fadeUp();
+ 	_thisScreen.new_palette = 0;
+}
+
+void Screen::setFullPalette(int32 palRes) {
+	// fudge for hut interior
+	// - unpausing should restore last palette as normal (could be screen
+	// palette or 'dark_palette_13')
+	// - but restoring the screen palette after 'dark_palette_13' should
+	// now work properly too!
+
+	// "Hut interior" refers to the watchman's hut in Marseille, and this
+	// is apparently needed for the palette to be restored properly when
+	// you turn the light off. (I didn't even notice the light switch!)
+
+	if (Logic::_scriptVars[LOCATION] == 13) {
+		// unpausing
+		if (palRes == -1) {
+			// restore whatever palette was last set (screen
+			// palette or 'dark_palette_13')
+			palRes = _lastPaletteRes;
+		}
+	} else {
+		// check if we're just restoring the current screen palette
+		// because we might actually need to use a separate palette
+		// file anyway eg. for pausing & unpausing during the eclipse
+
+		// unpausing (fudged for location 13)
+ 		if (palRes == -1) {
+			// we really meant '0'
+			palRes = 0;
+		}
+
+		if (palRes == 0 && _lastPaletteRes)
+			palRes = _lastPaletteRes;
+	}
+
+	// If non-zero, set palette to this separate palette file. Otherwise,
+	// set palette to current screen palette.
+
+	if (palRes) {
+		byte *pal = _vm->_resman->openResource(palRes);
+
+		StandardHeader *head = (StandardHeader *) pal;
+		assert(head->fileType == PALETTE_FILE);
+
+		pal += sizeof(StandardHeader);
+
+		// always set colour 0 to black because most background screen
+		// palettes have a bright colour 0 although it should come out
+		// as black in the game!
+
+		pal[0] = 0;
+		pal[1] = 0;
+		pal[2] = 0;
+		pal[3] = 0;
+
+		setPalette(0, 256, pal, RDPAL_INSTANT);
+		_vm->_resman->closeResource(palRes);
+	} else {
+		if (_thisScreen.background_layer_id) {
+			byte *data = _vm->_resman->openResource(_thisScreen.background_layer_id);
+			memcpy(_paletteMatch, _vm->fetchPaletteMatchTable(data), PALTABLESIZE);
+			setPalette(0, 256, _vm->fetchPalette(data), RDPAL_INSTANT);
+			_vm->_resman->closeResource(_thisScreen.background_layer_id);
+		} else
+			error("setFullPalette(0) called, but no current screen available!");
+	}
+
+	if (palRes != CONTROL_PANEL_PALETTE)
+		_lastPaletteRes = palRes;
 }
 
 /**
@@ -47,7 +129,7 @@ void Graphics::updatePaletteMatchTable(byte *data) {
 // FIXME: This used to be inlined - probably a good idea - but the
 // linker complained when I tried to use it in sprite.cpp.
 
-uint8 Graphics::quickMatch(uint8 r, uint8 g, uint8 b) {
+uint8 Screen::quickMatch(uint8 r, uint8 g, uint8 b) {
 	return _paletteMatch[((int32) (r >> 2) << 12) + ((int32) (g >> 2) << 6) + (b >> 2)];
 }
 
@@ -59,7 +141,7 @@ uint8 Graphics::quickMatch(uint8 r, uint8 g, uint8 b) {
  * @param fadeNow whether to perform the change immediately or delayed
  */
 
-void Graphics::setPalette(int16 startEntry, int16 noEntries, byte *colourTable, uint8 fadeNow) {
+void Screen::setPalette(int16 startEntry, int16 noEntries, byte *colourTable, uint8 fadeNow) {
 	assert(noEntries > 0);
 
 	memcpy(&_palette[4 * startEntry], colourTable, noEntries * 4);
@@ -70,7 +152,7 @@ void Graphics::setPalette(int16 startEntry, int16 noEntries, byte *colourTable, 
 	}
 }
 
-void Graphics::dimPalette(void) {
+void Screen::dimPalette() {
 	byte *p = _palette;
 
 	for (int i = 0; i < 256; i++) {
@@ -88,7 +170,7 @@ void Graphics::dimPalette(void) {
  * @param time the time it will take the palette to fade up
  */
 
-int32 Graphics::fadeUp(float time) {
+int32 Screen::fadeUp(float time) {
 	if (getFadeStatus() != RDFADE_BLACK && getFadeStatus() != RDFADE_NONE)
 		return RDERR_FADEINCOMPLETE;
 
@@ -104,7 +186,7 @@ int32 Graphics::fadeUp(float time) {
  * @param time the time it will take the palette to fade down
  */
 
-int32 Graphics::fadeDown(float time) {
+int32 Screen::fadeDown(float time) {
 	if (getFadeStatus() != RDFADE_BLACK && getFadeStatus() != RDFADE_NONE)
 		return RDERR_FADEINCOMPLETE;
 
@@ -121,18 +203,18 @@ int32 Graphics::fadeDown(float time) {
  * (not faded), or RDFADE_BLACK (completely faded down)
  */
 
-uint8 Graphics::getFadeStatus(void) {
+uint8 Screen::getFadeStatus() {
 	return _fadeStatus;
 }
 
-void Graphics::waitForFade(void) {
+void Screen::waitForFade() {
 	while (getFadeStatus() != RDFADE_NONE && getFadeStatus() != RDFADE_BLACK) {
 		updateDisplay();
 		_vm->_system->delayMillis(20);
 	}
 }
 
-void Graphics::fadeServer(void) {
+void Screen::fadeServer() {
 	static int32 previousTime = 0;
 	byte fadePalette[256 * 4];
 	byte *newPalette = fadePalette;

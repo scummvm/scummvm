@@ -20,14 +20,19 @@
 
 #include "common/stdafx.h"
 #include "common/system.h"
+
 #include "sword2/sword2.h"
-#include "sword2/driver/d_draw.h"
+#include "sword2/mouse.h"
 
 namespace Sword2 {
 
+// This is the maximum mouse cursor size in the SDL backend
+#define MAX_MOUSE_W     80
+#define MAX_MOUSE_H     80
+
 #define MOUSEFLASHFRAME 6
 
-void Graphics::decompressMouse(byte *decomp, byte *comp, int width, int height, int pitch, int xOff, int yOff) {
+void Mouse::decompressMouse(byte *decomp, byte *comp, int width, int height, int pitch, int xOff, int yOff) {
 	int32 size = width * height;
 	int32 i = 0;
 	int x = 0;
@@ -52,7 +57,7 @@ void Graphics::decompressMouse(byte *decomp, byte *comp, int width, int height, 
 	}
 }
 
-void Graphics::drawMouse(void) {
+void Mouse::drawMouse() {
 	byte mouseData[MAX_MOUSE_W * MAX_MOUSE_H];
 
 	if (!_mouseAnim && !_luggageAnim)
@@ -129,7 +134,7 @@ void Graphics::drawMouse(void) {
  * Animates the current mouse pointer
  */
 
-int32 Graphics::animateMouse(void) {
+int32 Mouse::animateMouse() {
 	uint8 prevMouseFrame = _mouseFrame;
 
 	if (!_mouseAnim)
@@ -154,7 +159,7 @@ int32 Graphics::animateMouse(void) {
  * or not there is a lead-in animation
  */
 
-int32 Graphics::setMouseAnim(byte *ma, int32 size, int32 mouseFlash) {
+int32 Mouse::setMouseAnim(byte *ma, int32 size, int32 mouseFlash) {
 	if (_mouseAnim) {
 		free(_mouseAnim);
 		_mouseAnim = NULL;
@@ -194,7 +199,7 @@ int32 Graphics::setMouseAnim(byte *ma, int32 size, int32 mouseFlash) {
  * @param size the size of the animation data
  */
 
-int32 Graphics::setLuggageAnim(byte *ma, int32 size) {
+int32 Mouse::setLuggageAnim(byte *ma, int32 size) {
 	if (_luggageAnim) {
 		free(_luggageAnim);
 		_luggageAnim = NULL;

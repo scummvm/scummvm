@@ -177,36 +177,6 @@ struct Parallax {
 	#pragma END_PACK_STRUCTS
 #endif
 
-// The SpriteInfo structure is used to tell the driver96 code what attributes
-// are linked to a sprite for drawing.  These include position, scaling and
-// compression.
-
-struct SpriteInfo {
-	int16 x;		// coords for top-left of sprite
-	int16 y;
-	uint16 w;		// dimensions of sprite (before scaling)
-	uint16 h;
-	uint16 scale;		// scale at which to draw, given in 256ths ['0' or '256' MEANS DON'T SCALE]
-	uint16 scaledWidth;	// new dimensions (we calc these for the mouse area, so may as well pass to you to save time)
-	uint16 scaledHeight;	//
-	uint16 type;		// mask containing 'RDSPR_' bits specifying compression type, flip, transparency, etc
-	uint16 blend;		// holds the blending values.
-	byte *data;		// pointer to the sprite data
-	byte *colourTable;	// pointer to 16-byte colour table, only applicable to 16-col compression type
-};
-
-// This is the structure which is passed to the sequence player. It includes
-// the smack to play, and any text lines which are to be displayed over the top
-// of the sequence.
-
-struct MovieTextObject {
-	uint16 startFrame;
-	uint16 endFrame;
-	SpriteInfo *textSprite;
-	uint32 speechBufferSize;
-	uint16 *speech;
-};
-
 } // End of namespace Sword2
 
 #endif

@@ -30,7 +30,6 @@
 #include "sword2/maketext.h"
 #include "sword2/memory.h"
 #include "sword2/resman.h"
-#include "sword2/driver/d_draw.h"
 
 namespace Sword2 {
 
@@ -126,8 +125,10 @@ void Logic::locateTalker(int32 *params) {
 			
 	// Adjust the text coords for RDSPR_DISPLAYALIGN
 
-	_textX -= _vm->_thisScreen.scroll_offset_x;
-	_textY -= _vm->_thisScreen.scroll_offset_y;
+	ScreenInfo *screenInfo = _vm->_screen->getScreenInfo();
+	
+	_textX -= screenInfo->scroll_offset_x;
+	_textY -= screenInfo->scroll_offset_y;
 }
 
 /**

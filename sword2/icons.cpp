@@ -24,12 +24,12 @@
 #include "sword2/interpreter.h"
 #include "sword2/logic.h"
 #include "sword2/memory.h"
+#include "sword2/mouse.h"
 #include "sword2/resman.h"
-#include "sword2/driver/d_draw.h"
 
 namespace Sword2 {
 
-void Sword2Engine::addMenuObject(MenuObject *obj) {
+void Mouse::addMenuObject(MenuObject *obj) {
 	assert(_totalTemp < TOTAL_engine_pockets);
 	memcpy(&_tempList[_totalTemp], obj, sizeof(MenuObject));
 	_totalTemp++;
@@ -39,7 +39,7 @@ void Sword2Engine::addMenuObject(MenuObject *obj) {
  * Create and start the inventory (bottom) menu
  */
 
-void Sword2Engine::buildMenu(void) {
+void Mouse::buildMenu() {
 	uint32 i, j;
 
 	// Clear the temporary inventory list, since we are going to build a
@@ -54,9 +54,9 @@ void Sword2Engine::buildMenu(void) {
 	// register all carried menu objects.
 
 	uint32 null_pc = 0;
-	char *menuScript = (char *) _resman->openResource(MENU_MASTER_OBJECT);
-	_logic->runScript(menuScript, menuScript, &null_pc);
-	_resman->closeResource(MENU_MASTER_OBJECT);
+	char *menuScript = (char *) _vm->_resman->openResource(MENU_MASTER_OBJECT);
+	_vm->_logic->runScript(menuScript, menuScript, &null_pc);
+	_vm->_resman->closeResource(MENU_MASTER_OBJECT);
 
 	// Create a new master list based on the old master inventory list and
 	// the new temporary inventory list. The purpose of all this is, as
@@ -136,7 +136,7 @@ void Sword2Engine::buildMenu(void) {
 				icon_coloured = (res != Logic::_scriptVars[OBJECT_HELD]);
 			}
 
-			icon = _resman->openResource(res) + sizeof(StandardHeader);
+			icon = _vm->_resman->openResource(res) + sizeof(StandardHeader);
 
 			// The coloured icon is stored directly after the
 			// greyed out one.
@@ -145,20 +145,20 @@ void Sword2Engine::buildMenu(void) {
 				icon += (RDMENU_ICONWIDE * RDMENU_ICONDEEP);
 		}
 
-		_graphics->setMenuIcon(RDMENU_BOTTOM, i, icon);
+		setMenuIcon(RDMENU_BOTTOM, i, icon);
 
 		if (res)
-			_resman->closeResource(res);
+			_vm->_resman->closeResource(res);
 	}
 
-	_graphics->showMenu(RDMENU_BOTTOM);
+	showMenu(RDMENU_BOTTOM);
 }
 
 /**
  * Build a fresh system (top) menu.
  */
 
-void Sword2Engine::buildSystemMenu(void) {
+void Mouse::buildSystemMenu() {
 	uint32 icon_list[5] = {
 		OPTIONS_ICON,
 		QUIT_ICON,
@@ -171,7 +171,7 @@ void Sword2Engine::buildSystemMenu(void) {
 	// rest will grey out.
 
 	for (int i = 0; i < ARRAYSIZE(icon_list); i++) {
-		byte *icon = _resman->openResource(icon_list[i]) + sizeof(StandardHeader);
+		byte *icon = _vm->_resman->openResource(icon_list[i]) + sizeof(StandardHeader);
 		
 		// The only case when an icon is grayed is when the player
 		// is dead. Then SAVE is not available.
@@ -179,11 +179,11 @@ void Sword2Engine::buildSystemMenu(void) {
 		if (!Logic::_scriptVars[DEAD] || icon_list[i] != SAVE_ICON)
 			icon += (RDMENU_ICONWIDE * RDMENU_ICONDEEP);
 
-		_graphics->setMenuIcon(RDMENU_TOP, i, icon);
-		_resman->closeResource(icon_list[i]);
+		setMenuIcon(RDMENU_TOP, i, icon);
+		_vm->_resman->closeResource(icon_list[i]);
 	}
 
-	_graphics->showMenu(RDMENU_TOP);
+	showMenu(RDMENU_TOP);
 }
 
 } // End of namespace Sword2

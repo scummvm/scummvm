@@ -20,7 +20,7 @@
 
 #include "common/stdafx.h"
 #include "sword2/sword2.h"
-#include "sword2/driver/d_draw.h"
+#include "sword2/build_display.h"
 
 namespace Sword2 {
 
@@ -32,7 +32,7 @@ namespace Sword2 {
  * @param h height of the sprite
  */
 
-void Graphics::mirrorSprite(byte *dst, byte *src, int16 w, int16 h) {
+void Screen::mirrorSprite(byte *dst, byte *src, int16 w, int16 h) {
 	for (int y = 0; y < h; y++) {
 		for (int x = 0; x < w; x++) {
 			*dst++ = *(src + w - x - 1);
@@ -44,12 +44,12 @@ void Graphics::mirrorSprite(byte *dst, byte *src, int16 w, int16 h) {
 /**
  * This function takes a compressed frame of a sprite with up to 256 colours
  * and decompresses it.
- * @param dest destination buffer
- * @param source source buffer
+ * @param dst destination buffer
+ * @param src source buffer
  * @param decompSize the expected size of the decompressed sprite
  */
 
-int32 Graphics::decompressRLE256(byte *dest, byte *source, int32 decompSize) {
+int32 Screen::decompressRLE256(byte *dst, byte *src, int32 decompSize) {
 	// PARAMETERS:
 	// source	points to the start of the sprite data for input
 	// decompSize	gives size of decompressed data in bytes
@@ -57,35 +57,35 @@ int32 Graphics::decompressRLE256(byte *dest, byte *source, int32 decompSize) {
 	// 		data
 
 	byte headerByte;			// block header byte
-	byte *endDest = dest + decompSize;	// pointer to byte after end of decomp buffer
+	byte *endDest = dst + decompSize;	// pointer to byte after end of decomp buffer
 	int32 rv;
 
-	while(1) {
+	while (1) {
 		// FLAT block
 		// read FLAT block header & increment 'scan' to first pixel
 		// of block
-		headerByte = *source++;
+		headerByte = *src++;
 
 		// if this isn't a zero-length block
 		if (headerByte) {
-			if (dest + headerByte > endDest) {
+			if (dst + headerByte > endDest) {
 				rv = 1;
 				break;
 			}
 
 			// set the next 'headerByte' pixels to the next colour
 			// at 'source'
-			memset(dest, *source, headerByte);
+			memset(dst, *src, headerByte);
 
 			// increment destination pointer to just after this
 			// block
-			dest += headerByte;
+			dst += headerByte;
 
 			// increment source pointer to just after this colour
-			source++;
+			src++;
 
 			// if we've decompressed all of the data
-			if (dest == endDest) {
+			if (dst == endDest) {
 				rv = 0;		// return "OK"
 				break;
 			}
@@ -94,28 +94,28 @@ int32 Graphics::decompressRLE256(byte *dest, byte *source, int32 decompSize) {
 		// RAW block
 		// read RAW block header & increment 'scan' to first pixel of
 		// block
-		headerByte = *source++;
+		headerByte = *src++;
 
 		// if this isn't a zero-length block
 		if (headerByte) {
-			if (dest + headerByte > endDest) {
+			if (dst + headerByte > endDest) {
 				rv = 1;
 				break;
 			}
 
 			// copy the next 'headerByte' pixels from source to
 			// destination
-			memcpy(dest,source,headerByte);
+			memcpy(dst, src, headerByte);
 
 			// increment destination pointer to just after this
 			// block
-			dest += headerByte;
+			dst += headerByte;
 
 			// increment source pointer to just after this block
-			source += headerByte;
+			src += headerByte;
 
 			// if we've decompressed all of the data
-			if (dest == endDest) {
+			if (dst == endDest) {
 				rv = 0;		// return "OK"
 				break;
 			}
@@ -129,19 +129,19 @@ int32 Graphics::decompressRLE256(byte *dest, byte *source, int32 decompSize) {
  * Unwinds a run of 16-colour data into 256-colour palette data.
  */
 
-void Graphics::unwindRaw16(byte *dest, byte *source, uint8 blockSize, byte *colTable) {
+void Screen::unwindRaw16(byte *dst, byte *src, uint8 blockSize, byte *colTable) {
 	// for each pair of pixels
 	while (blockSize > 1) {
 		// 1st colour = number in table at position given by upper
 		// nibble of source byte
-		*dest++ = colTable[(*source) >> 4];
+		*dst++ = colTable[(*src) >> 4];
 
 		// 2nd colour = number in table at position given by lower
 		// nibble of source byte
-		*dest++ = colTable[(*source) & 0x0f];
+		*dst++ = colTable[(*src) & 0x0f];
 
 		// point to next source byte
-		source++;
+		src++;
 
 		// decrement count of how many pixels left to read
 		blockSize -= 2;
@@ -151,50 +151,50 @@ void Graphics::unwindRaw16(byte *dest, byte *source, uint8 blockSize, byte *colT
 	if (blockSize) {
 		// colour = number in table at position given by upper nibble
 		// of source byte
-		*dest++ = colTable[(*source) >> 4];
+		*dst++ = colTable[(*src) >> 4];
 	}
 }
 
 /**
  * This function takes a compressed frame of a sprite (with up to 16 colours)
  * and decompresses it.
- * @param dest destination buffer
- * @param source source buffer
+ * @param dst destination buffer
+ * @param src source buffer
  * @param decompSize the expected size of the uncompressed sprite
  * @param colTable mapping from the 16 encoded colours to the current palette
  */
 
-int32 Graphics::decompressRLE16(byte *dest, byte *source, int32 decompSize, byte *colTable) {
+int32 Screen::decompressRLE16(byte *dst, byte *src, int32 decompSize, byte *colTable) {
 	byte headerByte;			// block header byte
-	byte *endDest = dest + decompSize;	// pointer to byte after end of decomp buffer
+	byte *endDest = dst + decompSize;	// pointer to byte after end of decomp buffer
 	int32 rv;
 
-	while(1) {
+	while (1) {
 		// FLAT block
 		// read FLAT block header & increment 'scan' to first pixel
 		// of block
-		headerByte = *source++;
+		headerByte = *src++;
 
 		// if this isn't a zero-length block
 		if (headerByte) {
-			if (dest + headerByte > endDest) {
+			if (dst + headerByte > endDest) {
 				rv = 1;
 				break;
 			}
 
 			// set the next 'headerByte' pixels to the next
 			// colour at 'source'
-			memset(dest, *source, headerByte);
+			memset(dst, *src, headerByte);
 
 			// increment destination pointer to just after this
 			// block
-			dest += headerByte;
+			dst += headerByte;
 
 			// increment source pointer to just after this colour
-			source++;
+			src++;
 
 			// if we've decompressed all of the data
-			if (dest == endDest) {	
+			if (dst == endDest) {	
 				rv = 0;		// return "OK"
 				break;
 			}
@@ -203,29 +203,29 @@ int32 Graphics::decompressRLE16(byte *dest, byte *source, int32 decompSize, byte
 		// RAW block
 		// read RAW block header & increment 'scan' to first pixel of
 		// block
-		headerByte = *source++;
+		headerByte = *src++;
 
 		// if this isn't a zero-length block
 		if (headerByte) {
-			if (dest + headerByte > endDest) {
+			if (dst + headerByte > endDest) {
 				rv = 1;
 				break;
 			}
 
 			// copy the next 'headerByte' pixels from source to
 			// destination (NB. 2 pixels per byte)
-			unwindRaw16(dest, source, headerByte, colTable);
+			unwindRaw16(dst, src, headerByte, colTable);
 
 			// increment destination pointer to just after this
 			// block
-			dest += headerByte;
+			dst += headerByte;
 
 			// increment source pointer to just after this block
 			// (NB. headerByte gives pixels, so /2 for bytes)
-			source += (headerByte + 1) / 2;
+			src += (headerByte + 1) / 2;
 
 			// if we've decompressed all of the data
-			if (dest >= endDest) {
+			if (dst >= endDest) {
 				rv = 0;		// return "OK"
 				break;
 			}
@@ -244,7 +244,7 @@ int32 Graphics::decompressRLE16(byte *dest, byte *source, int32 decompSize, byte
  * @return RD_OK, or an error code
  */
 
-int32 Graphics::createSurface(SpriteInfo *s, byte **sprite) {
+int32 Screen::createSurface(SpriteInfo *s, byte **sprite) {
 	*sprite = (byte *) malloc(s->w * s->h);
 	if (!*sprite)
 		return RDERR_OUTOFMEMORY;
@@ -269,7 +269,7 @@ int32 Graphics::createSurface(SpriteInfo *s, byte **sprite) {
  * @param clipRect the clipping rectangle
  */
 
-void Graphics::drawSurface(SpriteInfo *s, byte *surface, Common::Rect *clipRect) {
+void Screen::drawSurface(SpriteInfo *s, byte *surface, Common::Rect *clipRect) {
 	Common::Rect rd, rs;
 	uint16 x, y;
 	byte *src, *dst;
@@ -328,7 +328,7 @@ void Graphics::drawSurface(SpriteInfo *s, byte *surface, Common::Rect *clipRect)
  * Destroys a surface.
  */
 
-void Graphics::deleteSurface(byte *surface) {
+void Screen::deleteSurface(byte *surface) {
 	free(surface);
 }
 
@@ -353,7 +353,7 @@ void Graphics::deleteSurface(byte *surface) {
 // FIXME: I'm sure this could be optimized. There's plenty of data copying and
 // mallocing here.
 
-int32 Graphics::drawSprite(SpriteInfo *s) {
+int32 Screen::drawSprite(SpriteInfo *s) {
 	byte *src, *dst;
 	byte *sprite, *newSprite;
 	uint16 scale;
@@ -610,7 +610,7 @@ int32 Graphics::drawSprite(SpriteInfo *s) {
  * Opens the light masking sprite for a room.
  */
 
-int32 Graphics::openLightMask(SpriteInfo *s) {
+int32 Screen::openLightMask(SpriteInfo *s) {
 	// FIXME: The light mask is only needed on higher graphics detail
 	// settings, so to save memory we could simply ignore it on lower
 	// settings. But then we need to figure out how to ensure that it
@@ -633,7 +633,7 @@ int32 Graphics::openLightMask(SpriteInfo *s) {
  * Closes the light masking sprite for a room.
  */
 
-int32 Graphics::closeLightMask(void) {
+int32 Screen::closeLightMask(void) {
 	if (!_lightMask)
 		return RDERR_NOTOPEN;
 

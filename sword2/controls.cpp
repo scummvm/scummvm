@@ -22,14 +22,15 @@
 #include "common/rect.h"
 #include "common/config-manager.h"
 #include "common/system.h"
+
 #include "sword2/sword2.h"
 #include "sword2/controls.h"
 #include "sword2/defs.h"
 #include "sword2/logic.h"
+#include "sword2/mouse.h"
 #include "sword2/resman.h"
 #include "sword2/router.h"
 #include "sword2/sound.h"
-#include "sword2/driver/d_draw.h"
 
 #define	MAX_STRING_LEN		64	// 20 was too low; better to be safe ;)
 #define CHARACTER_OVERLAP	 2	// overlap characters by 3 pixels
@@ -176,7 +177,7 @@ FontRendererGui::FontRendererGui(Gui *gui, int fontId)
 		sprite.data = (byte *) (head + 1);
 		sprite.w = head->width;
 		sprite.h = head->height;
-		_gui->_vm->_graphics->createSurface(&sprite, &_glyph[i]._data);
+		_gui->_vm->_screen->createSurface(&sprite, &_glyph[i]._data);
 		_glyph[i]._width = head->width;
 		_glyph[i]._height = head->height;
 	}
@@ -186,7 +187,7 @@ FontRendererGui::FontRendererGui(Gui *gui, int fontId)
 
 FontRendererGui::~FontRendererGui() {
 	for (int i = 0; i < SIZE_OF_CHAR_SET; i++)
-		_gui->_vm->_graphics->deleteSurface(_glyph[i]._data);
+		_gui->_vm->_screen->deleteSurface(_glyph[i]._data);
 }
 
 void FontRendererGui::fetchText(uint32 textId, byte *buf) {
@@ -255,7 +256,7 @@ void FontRendererGui::drawText(byte *text, int x, int y, int alignment) {
 			sprite.w = getCharWidth(text[i]);
 			sprite.h = getCharHeight(text[i]);
 
-			_gui->_vm->_graphics->drawSurface(&sprite, _glyph[text[i] - 32]._data);
+			_gui->_vm->_screen->drawSurface(&sprite, _glyph[text[i] - 32]._data);
 
 			sprite.x += (getCharWidth(text[i]) - CHARACTER_OVERLAP);
 		}
@@ -275,14 +276,14 @@ void FontRendererGui::drawText(uint32 textId, int x, int y, int alignment) {
 
 Dialog::Dialog(Gui *gui)
 	: _numWidgets(0), _finish(false), _result(0), _gui(gui) {
-	_gui->_vm->setFullPalette(CONTROL_PANEL_PALETTE);
-	_gui->_vm->_graphics->clearScene();
+	_gui->_vm->_screen->setFullPalette(CONTROL_PANEL_PALETTE);
+	_gui->_vm->_screen->clearScene();
 
 	// HACK: Since the dialogs don't do normal scene updates we need to
 	// trigger a full redraw manually.
 
-	_gui->_vm->_graphics->setNeedFullRedraw();
-	_gui->_vm->_graphics->updateDisplay();
+	_gui->_vm->_screen->setNeedFullRedraw();
+	_gui->_vm->_screen->updateDisplay();
 }
 
 Dialog::~Dialog() {
@@ -296,7 +297,7 @@ void Dialog::registerWidget(Widget *widget) {
 }
 
 void Dialog::paint() {
-	_gui->_vm->_graphics->clearScene();
+	_gui->_vm->_screen->clearScene();
 	for (int i = 0; i < _numWidgets; i++)
 		_widgets[i]->paint();
 }
@@ -313,16 +314,19 @@ int Dialog::run() {
 
 	paint();
 
-	int16 oldMouseX = -1;
-	int16 oldMouseY = -1;
+	int oldMouseX = -1;
+	int oldMouseY = -1;
 
 	while (!_finish) {
 		// So that the menu icons will reach their full size
-		_gui->_vm->_graphics->processMenu();
-		_gui->_vm->_graphics->updateDisplay(false);
+		_gui->_vm->_mouse->processMenu();
+		_gui->_vm->_screen->updateDisplay(false);
 
-		int16 newMouseX = _gui->_vm->_mouseX;
-		int16 newMouseY = _gui->_vm->_mouseY + 40;
+		int newMouseX, newMouseY;
+
+		_gui->_vm->_mouse->getPos(newMouseX, newMouseY);
+
+		newMouseY += 40;
 
 		MouseEvent *me = _gui->_vm->mouseEvent();
 		KeyboardEvent *ke = _gui->_vm->keyboardEvent();
@@ -429,7 +433,7 @@ Widget::Widget(Dialog *parent, int states)
 Widget::~Widget() {
 	for (int i = 0; i < _numStates; i++) {
 		if (_surfaces[i]._original)
-			_parent->_gui->_vm->_graphics->deleteSurface(_surfaces[i]._surface);
+			_parent->_gui->_vm->_screen->deleteSurface(_surfaces[i]._surface);
 	}
 	free(_sprites);
 	free(_surfaces);
@@ -484,7 +488,7 @@ void Widget::createSurfaceImage(int state, uint32 res, int x, int y, uint32 pc) 
 	// Points to just after frame header, ie. start of sprite data
 	_sprites[state].data = (byte *) (frame_head + 1);
 
-	_parent->_gui->_vm->_graphics->createSurface(&_sprites[state], &_surfaces[state]._surface);
+	_parent->_gui->_vm->_screen->createSurface(&_sprites[state], &_surfaces[state]._surface);
 	_surfaces[state]._original = true;
 
 	// Release the anim resource
@@ -537,7 +541,7 @@ int Widget::getState() {
 }
 
 void Widget::paint(Common::Rect *clipRect) {
-	_parent->_gui->_vm->_graphics->drawSurface(&_sprites[_state], _surfaces[_state]._surface, clipRect);
+	_parent->_gui->_vm->_screen->drawSurface(&_sprites[_state], _surfaces[_state]._surface, clipRect);
 }
 
 /**
@@ -940,7 +944,7 @@ public:
 
 		_objectLabelsSwitch->setValue(_gui->_pointerTextSelected);
 		_subtitlesSwitch->setValue(_gui->_subtitles);
-		_reverseStereoSwitch->setValue(_gui->_stereoReversed);
+		_reverseStereoSwitch->setValue(_gui->_vm->_sound->isReverseStereo());
 		_musicSwitch->setValue(!_gui->_vm->_sound->isMusicMute());
 		_speechSwitch->setValue(!_gui->_vm->_sound->isSpeechMute());
 		_fxSwitch->setValue(!_gui->_vm->_sound->isFxMute());
@@ -949,8 +953,8 @@ public:
 		_speechSlider->setValue(_mixer->getVolumeForSoundType(SoundMixer::kSpeechAudioDataType));
 		_fxSlider->setValue(_mixer->getVolumeForSoundType(SoundMixer::kSFXAudioDataType));
 
-		_gfxSlider->setValue(_gui->_vm->_graphics->getRenderLevel());
-		_gfxPreview->setState(_gui->_vm->_graphics->getRenderLevel());
+		_gfxSlider->setValue(_gui->_vm->_screen->getRenderLevel());
+		_gfxPreview->setState(_gui->_vm->_screen->getRenderLevel());
 	}
 
 	~OptionsDialog() {
@@ -1020,12 +1024,12 @@ public:
 		} else if (widget == _okButton) {
 			_gui->_subtitles = _subtitlesSwitch->getValue();
 			_gui->_pointerTextSelected = _objectLabelsSwitch->getValue();
-			_gui->_stereoReversed = _reverseStereoSwitch->getValue();
 
 			// Apply the changes
 			_gui->_vm->_sound->muteMusic(!_musicSwitch->getValue());
 			_gui->_vm->_sound->muteSpeech(!_speechSwitch->getValue());
 			_gui->_vm->_sound->muteFx(!_fxSwitch->getValue());
+			_gui->_vm->_sound->setReverseStereo(_reverseStereoSwitch->getValue());
 			_mixer->setVolumeForSoundType(SoundMixer::kMusicAudioDataType, _musicSlider->getValue());
 			_mixer->setVolumeForSoundType(SoundMixer::kSpeechAudioDataType, _speechSlider->getValue());
 			_mixer->setVolumeForSoundType(SoundMixer::kSFXAudioDataType, _fxSlider->getValue());
@@ -1449,7 +1453,7 @@ public:
 					break;
 				}
 
-				_gui->_vm->displayMsg(_gui->_vm->fetchTextLine(_gui->_vm->_resman->openResource(textId / SIZE), textId & 0xffff) + 2, 0);
+				_gui->_vm->_screen->displayMsg(_gui->_vm->fetchTextLine(_gui->_vm->_resman->openResource(textId / SIZE), textId & 0xffff) + 2, 0);
 				result = 0;
 			}
 		} else {
@@ -1470,18 +1474,18 @@ public:
 					break;
 				}
 
-				_gui->_vm->displayMsg(_gui->_vm->fetchTextLine(_gui->_vm->_resman->openResource(textId / SIZE), textId & 0xffff) + 2, 0);
+				_gui->_vm->_screen->displayMsg(_gui->_vm->fetchTextLine(_gui->_vm->_resman->openResource(textId / SIZE), textId & 0xffff) + 2, 0);
 				result = 0;
 			} else {
 				// Prime system with a game cycle
 
 				// Reset the graphic 'BuildUnit' list before a
 				// new logic list (see fnRegisterFrame)
-				_gui->_vm->resetRenderLists();
+				_gui->_vm->_screen->resetRenderLists();
 
 				// Reset the mouse hot-spot list (see
 				// fnRegisterMouse and fnRegisterFrame)
-				_gui->_vm->resetMouseList();
+				_gui->_vm->_mouse->resetMouseList();
 
 				if (_gui->_vm->_logic->processSession())
 					error("restore 1st cycle failed??");
@@ -1504,7 +1508,6 @@ Gui::Gui(Sword2Engine *vm) : _vm(vm), _baseSlot(0) {
 void Gui::readOptionSettings(void) {
 	_subtitles = ConfMan.getBool("subtitles");
 	_pointerTextSelected = ConfMan.getBool("object_labels");
-	_stereoReversed = ConfMan.getBool("reverse_stereo");
 
 	updateGraphicsLevel((uint8) ConfMan.getInt("gfx_details"));
 
@@ -1514,6 +1517,7 @@ void Gui::readOptionSettings(void) {
 	_vm->_sound->muteMusic(ConfMan.getBool("music_mute"));
 	_vm->_sound->muteSpeech(ConfMan.getBool("speech_mute"));
 	_vm->_sound->muteFx(ConfMan.getBool("sfx_mute"));
+	_vm->_sound->setReverseStereo(ConfMan.getBool("reverse_stereo"));
 }
 
 void Gui::writeOptionSettings(void) {
@@ -1523,10 +1527,10 @@ void Gui::writeOptionSettings(void) {
 	ConfMan.set("music_mute", _vm->_sound->isMusicMute());
 	ConfMan.set("speech_mute", _vm->_sound->isSpeechMute());
 	ConfMan.set("sfx_mute", _vm->_sound->isFxMute());
-	ConfMan.set("gfx_details", _vm->_graphics->getRenderLevel());
+	ConfMan.set("gfx_details", _vm->_screen->getRenderLevel());
 	ConfMan.set("subtitles", _subtitles);
 	ConfMan.set("object_labels", _pointerTextSelected);
-	ConfMan.set("reverse_stereo", _stereoReversed);
+	ConfMan.set("reverse_stereo", _vm->_sound->isReverseStereo());
 
 	ConfMan.flushToDisk();
 }
@@ -1574,6 +1578,7 @@ void Gui::quitControl(void) {
 }
 
 void Gui::restartControl(void) {
+	ScreenInfo *screenInfo = _vm->_screen->getScreenInfo();
 	uint32 temp_demo_flag;
 
 	MiniDialog restartDialog(this, 149618693);
@@ -1581,7 +1586,7 @@ void Gui::restartControl(void) {
 	if (!restartDialog.run())
 		return;
 
-	_vm->_graphics->closeMenuImmediately();
+	_vm->_mouse->closeMenuImmediately();
 
 	// Restart the game. To do this, we must...
 
@@ -1613,25 +1618,25 @@ void Gui::restartControl(void) {
 
 	// Reset the graphic 'BuildUnit' list before a new logic list
 	// (see fnRegisterFrame)
-	_vm->resetRenderLists();
+	_vm->_screen->resetRenderLists();
 
 	// Reset the mouse hot-spot list (see fnRegisterMouse and
 	// fnRegisterFrame)
-	_vm->resetMouseList();
+	_vm->_mouse->resetMouseList();
 
-	_vm->_graphics->closeMenuImmediately();
+	_vm->_mouse->closeMenuImmediately();
 
 	// FOR THE DEMO - FORCE THE SCROLLING TO BE RESET!
 	// - this is taken from fnInitBackground
 	// switch on scrolling (2 means first time on screen)
-	_vm->_thisScreen.scroll_flag = 2;
+	screenInfo->scroll_flag = 2;
 
 	if (_vm->_logic->processSession())
 		error("restart 1st cycle failed??");
 
 	// So palette not restored immediately after control panel - we want
 	// to fade up instead!
-	_vm->_thisScreen.new_palette = 99;
+	screenInfo->new_palette = 99;
 }
 
 void Gui::optionControl(void) {
@@ -1647,7 +1652,7 @@ void Gui::updateGraphicsLevel(int newLevel) {
 	else if (newLevel > 3)
 		newLevel = 3;
 
-	_vm->_graphics->setRenderLevel(newLevel);
+	_vm->_screen->setRenderLevel(newLevel);
 
 	// update our global variable - which needs to be checked when dimming
 	// the palette in PauseGame() in sword2.cpp (since palette-matching

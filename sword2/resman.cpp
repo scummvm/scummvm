@@ -28,7 +28,6 @@
 #include "sword2/resman.h"
 #include "sword2/router.h"
 #include "sword2/sound.h"
-#include "sword2/driver/d_draw.h"
 
 #define Debug_Printf _vm->_debugger->DebugPrintf
 
@@ -870,7 +869,7 @@ void ResourceManager::getCd(int cd) {
 	_vm->_sound->stopMusic(true);
 
 	textRes = openResource(2283);
-	_vm->displayMsg(_vm->fetchTextLine(textRes, 5 + cd) + 2, 0);
+	_vm->_screen->displayMsg(_vm->fetchTextLine(textRes, 5 + cd) + 2, 0);
 	closeResource(2283);
 
 	// The original code probably determined automagically when the correct

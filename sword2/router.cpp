@@ -79,7 +79,6 @@
 #include "sword2/logic.h"
 #include "sword2/resman.h"
 #include "sword2/router.h"
-#include "sword2/driver/d_draw.h"
 
 namespace Sword2 {
 
@@ -2367,7 +2366,7 @@ void Router::plotWalkGrid(void) {
 	// lines
 
 	for (i = 0; i < _nBars; i++)
-		_vm->_graphics->drawLine(_bars[i].x1, _bars[i].y1, _bars[i].x2, _bars[i].y2, 254);
+		_vm->_screen->drawLine(_bars[i].x1, _bars[i].y1, _bars[i].x2, _bars[i].y2, 254);
 
 	// nodes
 
@@ -2377,8 +2376,8 @@ void Router::plotWalkGrid(void) {
 }
 
 void Router::plotCross(int16 x, int16 y, uint8 colour) {
-	_vm->_graphics->drawLine(x - 1, y - 1, x + 1, y + 1, colour);
-	_vm->_graphics->drawLine(x + 1, y - 1, x - 1, y + 1, colour);	
+	_vm->_screen->drawLine(x - 1, y - 1, x + 1, y + 1, colour);
+	_vm->_screen->drawLine(x + 1, y - 1, x - 1, y + 1, colour);	
 }
 
 void Router::loadWalkGrid(void) {
