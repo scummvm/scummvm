@@ -105,8 +105,8 @@ bool loadWAVFromStream(Common::SeekableReadStream &stream, int &size, int &rate,
 	flags = 0;
 	if (bitsPerSample == 8)		// 8 bit data is unsigned
 		flags |= SoundMixer::FLAG_UNSIGNED;
-	else if (bitsPerSample == 16)	// 16 bit data is signed
-		flags |= SoundMixer::FLAG_16BITS;
+	else if (bitsPerSample == 16)	// 16 bit data is signed little endian
+		flags |= (SoundMixer::FLAG_16BITS | SoundMixer::FLAG_LITTLE_ENDIAN);
 	else {
 		warning("getWavInfo: unsupported bitsPerSample %d", bitsPerSample);
 		return false;
