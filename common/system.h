@@ -236,7 +236,10 @@ enum {
 	GD_GP32 //ph0x
 };
 
-/* Languages */
+/* Languages
+ * note: values 0->8 are are _needed_ for scripts in comi please don't
+ * remove/change fixed numbers from this enum
+ */
 enum {
 	EN_USA = 0,
 	DE_DEU = 1,
