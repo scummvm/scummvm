@@ -297,10 +297,10 @@ void SkyControl::initPanel(void) {
 	// save/restore panel
 	_savePanel      = createResource( _sprites.savePanel, 1, 0,   0,   0,  0,      DO_NOTHING, SAVEPANEL);
 	_saveButton     = createResource(    _sprites.button, 3, 0,  29, 129, 48,     SAVE_A_GAME, SAVEPANEL);
-	_downFastButton = createResource(_sprites.buttonDown, 1, 0, 212, 104,  0, SHIFT_DOWN_FAST, SAVEPANEL);
-	_downSlowButton = createResource(_sprites.buttonDown, 1, 0, 212, 114,  0, SHIFT_DOWN_SLOW, SAVEPANEL);
-	_upFastButton   = createResource(_sprites.buttonDown, 1, 0, 212,  21,  0,   SHIFT_UP_FAST, SAVEPANEL);
-	_upSlowButton   = createResource(_sprites.buttonDown, 1, 0, 212,  10,  0,   SHIFT_UP_SLOW, SAVEPANEL);
+	_downFastButton = createResource(_sprites.buttonDown, 1, 0, 212, 114,  0, SHIFT_DOWN_FAST, SAVEPANEL);
+	_downSlowButton = createResource(_sprites.buttonDown, 1, 0, 212, 104,  0, SHIFT_DOWN_SLOW, SAVEPANEL);
+	_upFastButton   = createResource(_sprites.buttonDown, 1, 0, 212,  10,  0,   SHIFT_UP_FAST, SAVEPANEL);
+	_upSlowButton   = createResource(_sprites.buttonDown, 1, 0, 212,  21,  0,   SHIFT_UP_SLOW, SAVEPANEL);
 	_quitButton     = createResource(    _sprites.button, 3, 0,  72, 129, 49,       SP_CANCEL, SAVEPANEL);
 	_restoreButton  = createResource(    _sprites.button, 3, 0,  29, 129, 51,  RESTORE_A_GAME, SAVEPANEL);
 	_autoSaveButton = createResource(    _sprites.button, 3, 0, 115, 129, 0x8FFF,    RESTORE_AUTO, SAVEPANEL);
