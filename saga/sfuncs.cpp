@@ -551,17 +551,16 @@ int Script::SF_setFrame(SCRIPTFUNC_PARAMS) {
 	// INCOMPLETE
 
 	SDataWord_T actor_parm;
-	SDataWord_T unk1_parm;
+	SDataWord_T frame;
 	SDataWord_T action_parm;
 
 	int actor_id;
 	int actor_idx;
 	int action;
-	//uint16 flags;
 
 	actor_parm = thread->pop();
 	action_parm = thread->pop();
-	unk1_parm = thread->pop();
+	frame = thread->pop();
 
 	actor_id = _vm->_sdata->readWordS(actor_parm);
 	action = _vm->_sdata->readWordS(action_parm);
