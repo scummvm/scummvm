@@ -282,6 +282,14 @@ SOURCE=.\sound\mixer.h
 # PROP Default_Filter ""
 # Begin Source File
 
+SOURCE=.\gui\browser.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\gui\browser.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\gui\dialog.cpp
 # End Source File
 # Begin Source File
@@ -354,6 +362,18 @@ SOURCE=".\backends\sdl\sdl-common.h"
 # Begin Source File
 
 SOURCE=.\backends\sdl\sdl.cpp
+# End Source File
+# End Group
+# Begin Group "fs"
+
+# PROP Default_Filter ""
+# Begin Source File
+
+SOURCE=.\backends\fs\fs.h
+# End Source File
+# Begin Source File
+
+SOURCE=".\backends\fs\windows\windows-fs.cpp"
 # End Source File
 # End Group
 # End Group
