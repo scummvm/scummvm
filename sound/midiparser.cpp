@@ -19,12 +19,10 @@
  *
  */
 
+#include "stdafx.h"
 #include "midiparser.h"
 #include "mididrv.h"
 #include "common/util.h"
-
-#include <stdio.h>
-#include <memory.h>
 
 
 

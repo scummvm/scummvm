@@ -32,7 +32,7 @@
 #ifdef USE_VORBIS
 #include <vorbis/vorbisfile.h>
 #endif
-#include <stdio.h>
+#include "stdafx.h"
 #include "common/scummsys.h"
 #include "common/system.h"
 
