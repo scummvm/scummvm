@@ -20,18 +20,18 @@
  */
 
 #include "stdafx.h"
-#include "screen.h"
-#include "logic.h"
-#include "sworddefs.h"
-#include "text.h"
-#include "resman.h"
-#include "objectman.h"
 #include "scummsys.h"
-#include "common/util.h"
 #include "system.h"
-#include "menu.h"
-#include "sword1.h"
-#include "animation.h"
+#include "common/util.h"
+#include "sword1/screen.h"
+#include "sword1/logic.h"
+#include "sword1/sworddefs.h"
+#include "sword1/text.h"
+#include "sword1/resman.h"
+#include "sword1/objectman.h"
+#include "sword1/menu.h"
+#include "sword1/sword1.h"
+#include "sword1/animation.h"
 
 namespace Sword1 {
 
@@ -368,42 +368,42 @@ void Screen::processImage(uint32 id) {
 	uint16 spriteY = compact->o_anim_y;
 	if (compact->o_status & STAT_SHRINK) {
 		scale = (compact->o_scale_a * compact->o_ycoord + compact->o_scale_b) / 256;
-		spriteX += ((int16)FROM_LE_16(frameHead->offsetX) * scale) / 256;
-		spriteY += ((int16)FROM_LE_16(frameHead->offsetY) * scale) / 256;
+		spriteX += ((int16)READ_LE_UINT16(&frameHead->offsetX) * scale) / 256;
+		spriteY += ((int16)READ_LE_UINT16(&frameHead->offsetY) * scale) / 256;
 	} else {
 		scale = 256;
-		spriteX += (int16)FROM_LE_16(frameHead->offsetX);
-		spriteY += (int16)FROM_LE_16(frameHead->offsetY);
+		spriteX += (int16)READ_LE_UINT16(&frameHead->offsetX);
+		spriteY += (int16)READ_LE_UINT16(&frameHead->offsetY);
 	}
 	if (scale > 512)
 		debug(1, "compact %d is oversized: scale = %d", id, scale);
 
 	uint8 *tonyBuf = NULL;
 	if (frameHead->runTimeComp[3] == '7') { // RLE7 encoded?
-		decompressRLE7(sprData, FROM_LE_32(frameHead->compSize), _rleBuffer);
+		decompressRLE7(sprData, READ_LE_UINT32(&frameHead->compSize), _rleBuffer);
 		sprData = _rleBuffer;
 	} else if (frameHead->runTimeComp[3] == '0') { // RLE0 encoded?
-		decompressRLE0(sprData, FROM_LE_32(frameHead->compSize), _rleBuffer);
+		decompressRLE0(sprData, READ_LE_UINT32(&frameHead->compSize), _rleBuffer);
 		sprData = _rleBuffer;
 	} else if (frameHead->runTimeComp[1] == 'I') { // new type
-		tonyBuf = (uint8*)malloc(FROM_LE_16(frameHead->width) * FROM_LE_16(frameHead->height));
-		decompressTony(sprData, FROM_LE_32(frameHead->compSize), tonyBuf);
+		tonyBuf = (uint8*)malloc(READ_LE_UINT16(&frameHead->width) * READ_LE_UINT16(&frameHead->height));
+		decompressTony(sprData, READ_LE_UINT32(&frameHead->compSize), tonyBuf);
 		sprData = tonyBuf;
 	}
 
 	uint16 sprSizeX, sprSizeY;
 	if (compact->o_status & STAT_SHRINK) {
-		sprSizeX = (scale * FROM_LE_16(frameHead->width)) / 256;
-		sprSizeY = (scale * FROM_LE_16(frameHead->height)) / 256;
-		fastShrink(sprData, FROM_LE_16(frameHead->width), FROM_LE_16(frameHead->height), scale, _shrinkBuffer);
+		sprSizeX = (scale * READ_LE_UINT16(&frameHead->width)) / 256;
+		sprSizeY = (scale * READ_LE_UINT16(&frameHead->height)) / 256;
+		fastShrink(sprData, READ_LE_UINT16(&frameHead->width), READ_LE_UINT16(&frameHead->height), scale, _shrinkBuffer);
 		sprData = _shrinkBuffer;
 	} else {
-		sprSizeX = FROM_LE_16(frameHead->width);
-		sprSizeY = FROM_LE_16(frameHead->height);
+		sprSizeX = READ_LE_UINT16(&frameHead->width);
+		sprSizeY = READ_LE_UINT16(&frameHead->height);
 	}
 	if (!(compact->o_status & STAT_OVERRIDE)) {
 		//mouse size linked to exact size & coordinates of sprite box - shrink friendly
-		if ((frameHead->offsetX) || (frameHead->offsetY)) {
+		if (READ_LE_UINT16(&frameHead->offsetX) || READ_LE_UINT16(&frameHead->offsetY)) {
 			//for megas the mouse area is reduced to account for sprite not
 			//filling the box size is reduced to 1/2 width, 4/5 height
 			compact->o_mouse_x1 = spriteX + sprSizeX / 4;
@@ -625,7 +625,7 @@ void Screen::addToGraphicList(uint8 listId, uint32 objId) {
 		if (!(cpt->o_status & STAT_SHRINK)) {     // not a boxed mega using shrinking
 			Header *frameRaw = (Header*)_resMan->openFetchRes(cpt->o_resource);
 			FrameHeader *frameHead = _resMan->fetchFrame(frameRaw, cpt->o_frame);
-			_sortList[_sortLength].y += FROM_LE_16(frameHead->height) - 1; // now pointing to base of sprite
+			_sortList[_sortLength].y += READ_LE_UINT16(&frameHead->height) - 1; // now pointing to base of sprite
 			_resMan->resClose(cpt->o_resource);
 		}
 		_sortLength++;

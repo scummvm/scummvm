@@ -21,14 +21,14 @@
 
 #include "stdafx.h"
 #include "scummsys.h"
-#include "memman.h"
-#include "resman.h"
-#include "sworddefs.h"
+#include "sword1/memman.h"
+#include "sword1/resman.h"
+#include "sword1/sworddefs.h"
 #include "base/engine.h"
 #include "common/config-manager.h"
 #include "common/util.h"
 #include "common/str.h"
-#include "swordres.h"
+#include "sword1/swordres.h"
 
 #include "gui/message.h"
 #include "gui/newgui.h"
@@ -308,9 +308,9 @@ void ResMan::openScriptResourceBigEndian(uint32 id) {
 	MemHandle *handle = resHandle(id);
 	// uint32 totSize = handle->size;
 	Header *head = (Header*)handle->data;
-	head->comp_length = FROM_LE_32(head->comp_length);
-	head->decomp_length = FROM_LE_32(head->decomp_length);
-	head->version = FROM_LE_16(head->version);
+	head->comp_length = READ_LE_UINT32(&head->comp_length);
+	head->decomp_length = READ_LE_UINT32(&head->decomp_length);
+	head->version = READ_LE_UINT16(&head->version);
 	uint32 *data = (uint32*)((uint8*)handle->data + sizeof(Header));
 	uint32 size = handle->size - sizeof(Header);
 	if (size & 3)
