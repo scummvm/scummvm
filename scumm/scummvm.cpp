@@ -30,12 +30,13 @@
 #include "actor.h"
 #include "debug.h"
 #include "dialogs.h"
-#include "gameDetector.h"
 #include "gui/newgui.h"
 #include "gui/message.h"
 #include "object.h"
 #include "resource.h"
 #include "string.h"
+#include "verbs.h"
+#include "common/gameDetector.h"
 #include "common/config-file.h"
 
 #ifdef _WIN32_WCE
