@@ -52,6 +52,7 @@ private:
 	};
 
 	byte _game;
+	int _voice_index;
 	int _ambient_index;
 	SoundMixer *_mixer;
 
@@ -78,6 +79,7 @@ public:
 	void playAmbient(uint sound);
 
 	bool hasVoice();
+	void stopVoice();
 	void stopAll();
 	void effectsPause(bool b);
 	void ambientPause(bool b);

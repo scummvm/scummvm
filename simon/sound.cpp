@@ -117,7 +117,7 @@ void SimonSound::playVoice(uint sound)
 	if (!_voice)
 		return;
 	
-	_voice->playSound(sound, &_voice_handle);
+	_voice_index = _voice->playSound(sound, &_voice_handle);
 }
 
 void SimonSound::playEffects(uint sound)
@@ -153,6 +153,11 @@ void SimonSound::playAmbient(uint sound)
 bool SimonSound::hasVoice()
 {
 	return _voice != NULL;
+}
+
+void SimonSound::stopVoice()
+{
+	_mixer->stop(_voice_index);
 }
 
 void SimonSound::stopAll()
