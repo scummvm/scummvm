@@ -1432,6 +1432,8 @@ STUB_FUNC(ChangePrimitive)
 STUB_FUNC(DrawRectangle)
 STUB_FUNC(DrawPolygon)
 STUB_FUNC(DrawLine)
+STUB_FUNC(pause_scripts)
+STUB_FUNC(unpause_scripts)
 
 static void dummyHandler() {
 }
