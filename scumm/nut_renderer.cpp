@@ -278,42 +278,58 @@ void NutRenderer::drawShadowChar(int c, int x, int y, byte color, bool useMask) 
 }
 
 void NutRenderer::drawFrame(byte *dst, int c, int x, int y) {
-	const int width = _chars[c].width;
-	const int height = _chars[c].height;
+	const int width = MIN(_chars[c].width, _vm->_screenWidth - x);
+	const int height = MIN(_chars[c].height, _vm->_screenHeight - y);
 	const byte *src = _chars[c].src;
+	const int srcPitch = _chars[c].width;
 	byte bits = 0;
 
+	const int minX = x < 0 ? -x : 0;
+	const int minY = y < 0 ? -y : 0;
+
 	dst += _vm->_screenWidth * y + x;
-	for (int ty = 0; ty < height; ty++) {
-		for (int tx = 0; tx < width; tx++) {
-			bits = *src++;
-			if (x + tx < 0 || x + tx >= _vm->_screenWidth || y + ty < 0 || y + ty >= _vm->_screenHeight)
-				continue;
+	if (minY) {
+		src += minY * srcPitch;
+		dst += minY * _vm->_screenWidth;
+	}
+	
+	
+	for (int ty = minY; ty < height; ty++) {
+		for (int tx = minX; tx < width; tx++) {
+			bits = src[tx];
 			if (bits != 231) {
 				dst[tx] = bits;
 			}
 		}
+		src += srcPitch;
 		dst += _vm->_screenWidth;
 	}
 }
 
 void NutRenderer::drawChar(byte *dst, byte *mask, byte c, int x, int y, byte color) {
-	const int width = _chars[c].width;
-	const int height = _chars[c].height;
+	const int width = MIN(_chars[c].width, _vm->_screenWidth - x);
+	const int height = MIN(_chars[c].height, _vm->_screenHeight - y);
 	const byte *src = _chars[c].src;
-	byte bits = 0;
+	const int srcPitch = _chars[c].width;
 
 	byte maskmask;
 	int maskpos;
+	
+	const int minX = x < 0 ? -x : 0;
+	const int minY = y < 0 ? -y : 0;
 
-	for (int ty = 0; ty < height; ty++) {
-		maskmask = revBitMask[x & 7];
-		maskpos = 0;
-		for (int tx = 0; tx < width; tx++) {
-			bits = *src++;
-			if (x + tx < 0 || x + tx >= _vm->_screenWidth || y + ty < 0 || y + ty >= _vm->_screenHeight)
-				continue;
-			if (bits != 0) {
+	if (minY) {
+		src += minY * srcPitch;
+		dst += minY * _vm->_screenWidth;
+		if (mask)
+			mask += minY * _vm->gdi._numStrips;
+	}
+	
+	for (int ty = minY; ty < height; ty++) {
+		maskmask = revBitMask[(x + minX) & 7];
+		maskpos = minX;
+		for (int tx = minX; tx < width; tx++) {
+			if (src[tx] != 0) {
 				dst[tx] = color;
 				if (mask)
 					mask[maskpos] |= maskmask;
@@ -324,6 +340,7 @@ void NutRenderer::drawChar(byte *dst, byte *mask, byte c, int x, int y, byte col
 				maskpos++;
 			}
 		}
+		src += srcPitch;
 		dst += _vm->_screenWidth;
 		if (mask)
 			mask += _vm->gdi._numStrips;
@@ -337,7 +354,7 @@ void NutRenderer::draw2byte(byte *dst, byte *mask, int c, int x, int y, byte col
 	}
 
 	int width = _vm->_2byteWidth;
-	int height = _vm->_2byteHeight;
+	int height = MIN(_vm->_2byteHeight, _vm->_screenHeight - y);
 	byte *src = _vm->get2byteCharPtr(c);
 	byte bits = 0;
 
@@ -348,11 +365,11 @@ void NutRenderer::draw2byte(byte *dst, byte *mask, int c, int x, int y, byte col
 		maskmask = revBitMask[x & 7];
 		maskpos = 0;
 		for (int tx = 0; tx < width; tx++) {
-			if ((tx % 8) == 0)
+			if ((tx & 7) == 0)
 				bits = *src++;
-			if (x + tx < 0 || x + tx >= _vm->_screenWidth || y + ty < 0 || y + ty >= _vm->_screenHeight)
+			if (x + tx < 0 || x + tx >= _vm->_screenWidth || y + ty < 0)
 				continue;
-			if (bits & revBitMask[tx % 8]) {
+			if (bits & revBitMask[tx & 7]) {
 				dst[tx] = color;
 				if (mask) {
 					mask[maskpos] |= maskmask;
