@@ -39,6 +39,7 @@ template<int bitFormat>
 struct ColorMasks {
 };
 
+template<>
 struct ColorMasks<565> {
 	static const int highBits = 0xF7DEF7DE;
 	static const int lowBits = 0x08210821;
@@ -48,6 +49,7 @@ struct ColorMasks<565> {
 	static const int greenMask = 0x07E0;
 };
 
+template<>
 struct ColorMasks<555> {
 	static const int highBits = 0x04210421;
 	static const int lowBits = 0x04210421;
