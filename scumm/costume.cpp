@@ -310,7 +310,7 @@ byte CostumeRenderer::mainRoutine(int slot, int frame) {
 		return b;
 	}
 
-	switch ((newAmiCost << 3) | (scaling << 2) | (masking << 1) | charsetmask) {
+	switch ((newAmiCost << 3) | (scaling << 2) | (masking << 1) | (charsetmask ? 1 : 0)) {
 	case 0:
 		proc6();										// no scaling, no masking, no charsetmask
 		break;
