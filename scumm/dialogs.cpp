@@ -451,7 +451,7 @@ void ConfigDialog::close() {
 	if (getResult()) {
 		// Subtitles
 		ConfMan.set("subtitles", subtitlesCheckbox->getState(), _domain);
-		ConfMan.set("speech_mute", !subtitlesCheckbox->getState(), _domain);
+		ConfMan.set("speech_mute", !speechCheckbox->getState(), _domain);
 		// Sync with current setting
 		if (ConfMan.getBool("speech_mute"))
 			_vm->_voiceMode = 2;
