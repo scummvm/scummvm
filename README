@@ -566,8 +566,8 @@ manual configuration. If you ARE using MIDI, you have several different
 choices of output, depending on your operating system and configuration.
         
         adlib     - Uses internal Adlib Emulation (default) 
-        pcjr      - Uses internal PC Speaker Emulation 
-        pcspk     - Uses internal PCjr Emulation
+        pcjr      - Uses internal PCjr Emulation 
+        pcspk     - Uses internal PC Speaker Emulation
         windows   - Windows MIDI. Uses built-in sequencer, for Windows users
         seq       - Uses /dev/sequencer for MIDI, *nix users. See below.
         qt        - Quicktime sound, for Macintosh users.
