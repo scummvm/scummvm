@@ -1223,12 +1223,12 @@ bool SkySound::startSpeech(uint16 textNum) {
 		return false;
 	}
 
-	uint32 speechSize = ((dataFileHeader *)speechData)->s_tot_size;
+	uint32 speechSize = ((dataFileHeader *)speechData)->s_tot_size - sizeof(dataFileHeader);
 	uint8 *playBuffer = (uint8 *)malloc(speechSize);
 	memcpy(playBuffer, speechData + sizeof(dataFileHeader), speechSize);
 
 	free(speechData);
 
-	_spSlot = _mixer->playRaw(&_ingameSpeech, playBuffer, speechSize - 64, 11025, SoundMixer::FLAG_UNSIGNED | SoundMixer::FLAG_AUTOFREE);
+	_spSlot = _mixer->playRaw(&_ingameSpeech, playBuffer, speechSize, 11025, SoundMixer::FLAG_UNSIGNED | SoundMixer::FLAG_AUTOFREE);
 	return true;
 }
