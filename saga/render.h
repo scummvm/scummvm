@@ -53,7 +53,6 @@ struct R_RENDER_MODULE {
 	int r_tmp_buf_w;
 	int r_tmp_buf_h;
 
-	R_SYSTIMER *r_fps_timer;
 	R_SPRITELIST *r_test_sprite;
 
 	unsigned int r_fps;
@@ -62,7 +61,7 @@ struct R_RENDER_MODULE {
 	int r_mode;
 };
 
-void RENDER_FpsTimer(unsigned long interval, void *param);
+void RENDER_FpsTimer(void *refCon);
 
 } // End of namespace Saga
 

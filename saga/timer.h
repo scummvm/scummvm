@@ -23,9 +23,9 @@
 #ifndef SAGA_SYSTIMER_H__
 #define SAGA_SYSTIMER_H__
 
-namespace Saga {
+#include <common/timer.h>
 
-typedef void (*R_SYSTIMER_CALLBACK) (unsigned long, void *);
+namespace Saga {
 
 struct R_SYSTIMER;
 
@@ -33,9 +33,6 @@ int SYSTIMER_InitMSCounter();
 unsigned long SYSTIMER_ReadMSCounter();
 int SYSTIMER_ResetMSCounter();
 int SYSTIMER_Sleep(uint16 msec);
-int SYSTIMER_CreateTimer(R_SYSTIMER **,
-unsigned long, void *, R_SYSTIMER_CALLBACK);
-int SYSTIMER_DestroyTimer(R_SYSTIMER *);
 
 
 } // End of namespace Saga

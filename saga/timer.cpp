@@ -23,9 +23,9 @@
 
 #include "reinherit.h"
 
-#include <SDL.h>
-
 #include "timer.h"
+
+// FIXME: replace calls to this with direct OSystem calls
 
 namespace Saga {
 
@@ -33,8 +33,6 @@ struct R_SYSTIMER {
 	int t_running;
 	unsigned long t_interval;
 	void *t_param;
-	R_SYSTIMER_CALLBACK t_callback_f;
-	SDL_TimerID t_sdl_timerid;
 };
 
 struct R_SYSTIMER_DATA {
@@ -45,8 +43,6 @@ struct R_SYSTIMER_DATA {
 };
 
 static R_SYSTIMER_DATA R_TimerData;
-
-static Uint32 SYSTIMER_Callback(Uint32 interval, void *param);
 
 int SYSTIMER_InitMSCounter() {
 	if (R_TimerData.initialized) {
@@ -60,7 +56,7 @@ int SYSTIMER_InitMSCounter() {
 }
 
 unsigned long SYSTIMER_ReadMSCounter() {
-	Uint32 ms_elapsed = 0;
+	uint32 ms_elapsed = 0;
 
 	if (!R_TimerData.initialized) {
 		return 0;
@@ -94,46 +90,5 @@ int SYSTIMER_Sleep(uint16 msec) {
 	return R_SUCCESS;
 }
 
-int SYSTIMER_CreateTimer(R_SYSTIMER **timer, unsigned long interval, void *param, R_SYSTIMER_CALLBACK callback) {
-	R_SYSTIMER *new_timer = (R_SYSTIMER *)malloc(sizeof *new_timer);
-	if (new_timer == NULL) {
-		return R_MEM;
-	}
-
-	new_timer->t_interval = interval;
-	new_timer->t_param = param;
-	new_timer->t_callback_f = callback;
-
-	*timer = new_timer;
-
-	new_timer->t_sdl_timerid = SDL_AddTimer(interval, SYSTIMER_Callback, new_timer);
-
-	if (new_timer->t_sdl_timerid == NULL) {
-		free(new_timer);
-		*timer = NULL;
-		return R_FAILURE;
-	}
-
-	return R_SUCCESS;
-}
-
-int SYSTIMER_DestroyTimer(R_SYSTIMER *timer) {
-	if (timer == NULL) {
-		return R_FAILURE;
-	}
-
-	timer->t_running = 0;
-	SDL_RemoveTimer(timer->t_sdl_timerid);
-	free(timer);
-
-	return R_SUCCESS;
-}
-
-Uint32 SYSTIMER_Callback(Uint32 interval, void *param) {
-	R_SYSTIMER *timer_p = (R_SYSTIMER *)param;
-	timer_p->t_callback_f(timer_p->t_interval, timer_p->t_param);
-
-	return timer_p->t_interval;
-}
 
 } // End of namespace Saga

@@ -66,7 +66,6 @@ int RENDER_Register() {
 
 int RENDER_Init(OSystem *system) {
 	R_GAME_DISPLAYINFO disp_info;
-	int result;
 	int tmp_w, tmp_h, tmp_bytepp;
 
 	// Initialize system graphics
@@ -77,10 +76,7 @@ int RENDER_Init(OSystem *system) {
 	}
 
 	// Initialize FPS timer callback
-	result = SYSTIMER_CreateTimer(&RenderModule.r_fps_timer, 1000, NULL, RENDER_FpsTimer);
-	if (result != R_SUCCESS) {
-		return R_FAILURE;
-	}
+	g_timer->installTimerProc(&RENDER_FpsTimer, 1000, _vm);
 
 	// Create background buffer 
 	RenderModule.r_bg_buf_w = disp_info.logical_w;
@@ -227,10 +223,7 @@ unsigned int RENDER_ResetFrameCount() {
 	return framecount;
 }
 
-void RENDER_FpsTimer(unsigned long interval, void *param) {
-	YS_IGNORE_PARAM(interval);
-	YS_IGNORE_PARAM(param);
-
+void RENDER_FpsTimer(void *refCon) {
 	RenderModule.r_fps = RenderModule.r_framecount;
 	RenderModule.r_framecount = 0;
 
