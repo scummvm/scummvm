@@ -203,6 +203,13 @@ int32 Logic::executeOpcode(int i, int32 *params) {
 	return (this->*op) (params);
 }
 
+// FIXME: The script engine assumes it can freely cast from pointer to in32
+// and back again with no ill effects. As far as I know, there is absolutely
+// no guarantee that this will work.
+//
+// I also have a feeling the handling of a script's local variables may be
+// alignment-unsafe.
+
 #define CHECKSTACKPOINTER2 assert(stackPointer2 >= 0 && stackPointer2 < STACK_SIZE);
 #define	PUSHONSTACK(x) { stack2[stackPointer2] = (x); stackPointer2++; CHECKSTACKPOINTER2 }
 #define POPOFFSTACK(x) { x = stack2[stackPointer2 - 1]; stackPointer2--; CHECKSTACKPOINTER2 }
@@ -245,8 +252,8 @@ int RunScript(char *scriptData, char *objectData, uint32 *offset) {
 	// FIXME: 'scriptData' and 'variables' used to be const. However,
 	// this code writes into 'variables' so it can not be const.
 
-	char *variables = scriptData + sizeof(int);
-	const char *code = scriptData + (int32) READ_LE_UINT32(scriptData) + sizeof(int);
+	char *variables = scriptData + sizeof(int32);
+	const char *code = scriptData + (int32) READ_LE_UINT32(scriptData) + sizeof(int32);
 	uint32 noScripts = (int32) READ_LE_UINT32(code);
 
 	if (*offset < noScripts) {
@@ -257,14 +264,14 @@ int RunScript(char *scriptData, char *objectData, uint32 *offset) {
 		debug(5, "Start script with offset %d", ip);
 	}
 
-	code += noScripts * sizeof(int) + sizeof(int);
+	code += noScripts * sizeof(int32) + sizeof(int32);
 
 #ifdef DONTPROCESSSCRIPTCHECKSUM
-	code += sizeof(int) * 3;
+	code += sizeof(int32) * 3;
 #else
 	// Code should nop be pointing at an identifier and a checksum
 	const int *checksumBlock = (const int *) code;
-	code += sizeof(int) * 3;
+	code += sizeof(int32) * 3;
 
 	if (READ_LE_UINT32(checksumBlock) != 12345678) {
 		Con_fatal_error("Invalid script in object %s", header->name);
@@ -324,7 +331,6 @@ int RunScript(char *scriptData, char *objectData, uint32 *offset) {
 
 			retVal = g_logic.executeOpcode(parameter, stack2 + stackPointer2 - value);
 
-//			retVal = g_logic._opcodes[parameter].proc(stack2 + stackPointer2 - value);
 			stackPointer2 -= value;
 			CHECKSTACKPOINTER2
 
@@ -410,13 +416,13 @@ int RunScript(char *scriptData, char *objectData, uint32 *offset) {
 			Read16ip(parameter);
 			POPOFFSTACK(value);
 			*((int32 *) (variables + parameter)) += value;
-			debug(5, "+= %d into var %d->%d", value, parameter, *(int32 *) (variables + parameter));
+			debug(5, "+= %d into local var %d->%d", value, parameter, *(int32 *) (variables + parameter));
 			break;
 		case CP_SUBNPOP_LOCAL_VAR32:
 			Read16ip(parameter);
 			POPOFFSTACK(value);
 			*((int32 *) (variables + parameter)) -= value;
-			debug(5, "-= %d into var %d->%d", value, parameter, *(int32 *) (variables + parameter));
+			debug(5, "-= %d into local var %d->%d", value, parameter, *(int32 *) (variables + parameter));
 			break;
 		case CP_SKIPONTRUE:
 			// Skip if the value on the stack is TRUE
@@ -570,7 +576,7 @@ int RunScript(char *scriptData, char *objectData, uint32 *offset) {
 			// Start the script again
 			// Do a ip search to find the script we are running
 
-			tempScrPtr = scriptData + READ_LE_UINT32(scriptData) + sizeof(int);
+			tempScrPtr = scriptData + READ_LE_UINT32(scriptData) + sizeof(int32);
 			scriptNumber = 0;
 			foundScript = 0;
 
@@ -595,14 +601,14 @@ int RunScript(char *scriptData, char *objectData, uint32 *offset) {
 			Read8ip(parameter);
 
 			// ip points to the string
-			PUSHONSTACK((int) (code + ip));
+			PUSHONSTACK((int32) (code + ip));
 			ip += (parameter + 1);
 			break;
 		case CP_PUSH_DEREFERENCED_STRUCTURE:
 			// Push the address of a dereferenced structure
 			Read32ip(parameter);
 			debug(5, "Push address of far variable (%x)", (int32) (variables + parameter));
-			PUSHONSTACK((int) (objectData + sizeof(int) + sizeof(_standardHeader) + sizeof(_object_hub) + parameter));
+			PUSHONSTACK((int32) (objectData + sizeof(int32) + sizeof(_standardHeader) + sizeof(_object_hub) + parameter));
 			break;
 		case OP_GTTHANE:
 			// '>='
