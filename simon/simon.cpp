@@ -1070,7 +1070,7 @@ void SimonState::playSting(uint a) {
 	// midi.shutdown();
 	_mus_file->seek(_mus_offsets[a], SEEK_SET);
 	midi.loadSMF (_mus_file, a);
-	midi.jump (0, 0);
+	midi.startTrack (0);
 }
 
 Subroutine *SimonState::getSubroutineByID(uint subroutine_id) {
@@ -5316,7 +5316,9 @@ void SimonState::loadMusic (uint music) {
 				midi.loadSMF (f, music);
 				delete f;
 			}
-			midi.jump (0, 0);
+
+			midi.setLoop (true);
+			midi.startTrack (0);
 		}
 	}
 }

@@ -1450,12 +1450,12 @@ void SimonState::o_play_music_resource() {
 			_last_music_played = music;
 			_next_music_to_play = -1;
 		}
-		midi.jump (track, 0);
+		midi.startTrack (track);
 	} else {
 		if (music != _last_music_played) {
 			_last_music_played = music;
 			loadMusic (music);
-			midi.jump (track, 0);
+			midi.startTrack (track);
 		}
 	}
 }

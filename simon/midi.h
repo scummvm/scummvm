@@ -62,10 +62,10 @@ public:
 	void loadXMIDI (File *in);
 
 	void setLoop (bool loop);
-	void queueTrack (byte track, bool loop);
+	void startTrack(int track);
+	void queueTrack (int track, bool loop);
 	bool isPlaying (bool check_queued = false) { return (_currentTrack != 255 && (_queuedTrack != 255 || !check_queued)); }
 
-	void jump (uint16 track, uint16 tick);
 	void stop();
 	void pause (bool b);
 

@@ -1823,7 +1823,7 @@ void SimonState::vc_69_play_track() {
 	// as a means of stopping what music is currently
 	// playing.
 	midi.setLoop (loop != 0);
-	midi.jump (track, 0);
+	midi.startTrack (track);
 }
 
 void SimonState::vc_70_queue_music() {
@@ -1838,7 +1838,7 @@ void SimonState::vc_70_queue_music() {
 	// a different track upon completion.
 	midi.setLoop (loop != 0);
 	if (track != -1 && track != 999)
-		midi.queueTrack ((byte) track, 0);
+		midi.queueTrack (track, 0);
 }
 
 void SimonState::vc_71_check_music_queue() {
@@ -1873,7 +1873,7 @@ void SimonState::vc_72_play_track_2() {
 		midi.stop();
 	} else {
 		midi.setLoop (loop != 0);
-		midi.jump (track, 0);
+		midi.startTrack (track);
 	}
 }
 

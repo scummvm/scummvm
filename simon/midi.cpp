@@ -116,9 +116,8 @@ void MidiPlayer::metaEvent (byte type, byte *data, uint16 length) {
 		// Have to unlock it before calling jump()
 		// (which locks it itself), and then relock it
 		// upon returning.
-		debug (0, "  Switching to queued track");
 		_system->unlock_mutex (_mutex);
-		jump (destination, 0);
+		startTrack (destination);
 		_system->lock_mutex (_mutex);
 	} else {
 		stop();
@@ -133,7 +132,7 @@ void MidiPlayer::onTimer (void *data) {
 	player->_system->unlock_mutex (player->_mutex);
 }
 
-void MidiPlayer::jump (uint16 track, uint16 tick) {
+void MidiPlayer::startTrack (int track) {
 	if (track == _currentTrack)
 		return;
 
@@ -162,11 +161,14 @@ void MidiPlayer::jump (uint16 track, uint16 tick) {
 		_parser = parser; // That plugs the power cord into the wall
 	} else if (_parser) {
 		_system->lock_mutex (_mutex);
+		if (!_parser->setTrack (track)) {
+			_system->unlock_mutex (_mutex);
+			return;
+		}
 		_currentTrack = (byte) track;
+		_parser->jumpToTick (0);
 	}
 
-	_parser->setTrack ((byte) track);
-	_parser->jumpToTick (tick ? tick - 1 : 0);
 	_system->unlock_mutex (_mutex);
 	pause (false);
 }
@@ -223,12 +225,12 @@ void MidiPlayer::setLoop (bool loop) {
 	_system->unlock_mutex (_mutex);
 }
 
-void MidiPlayer::queueTrack (byte track, bool loop) {
+void MidiPlayer::queueTrack (int track, bool loop) {
 	_system->lock_mutex (_mutex);
 	if (_currentTrack == 255) {
 		_system->unlock_mutex (_mutex);
 		setLoop (loop);
-		jump (track, 0);
+		startTrack (track);
 	} else {
 		_queuedTrack = track;
 		_loopQueuedTrack = loop;
@@ -350,7 +352,6 @@ void MidiPlayer::loadMultipleSMF (File *in) {
 	_paused = true;
 	_currentTrack = 255;
 	_system->unlock_mutex (_mutex);
-//	jump (0, 1);
 }
 
 void MidiPlayer::loadXMIDI (File *in) {
