@@ -339,6 +339,7 @@ struct Part {
 struct ImTrigger {
 	int sound;
 	byte id;
+	uint16 expire;
 	byte command [4];
 };
 
@@ -413,6 +414,7 @@ private:
 
 	uint16 _trigger_count;
 	ImTrigger _snm_triggers[16];	// Sam & Max triggers
+	uint16 _snm_trigger_index;
 
 	uint16 _channel_volume[8];
 	uint16 _channel_volume_eff[8];	/* NoSave */
@@ -444,6 +446,9 @@ private:
 	void expire_volume_faders();
 
 	Part *allocate_part(byte pri);
+
+	int32 ImSetTrigger (int sound, int id, int a, int b, int c, int d);
+	int32 ImClearTrigger (int sound, int id);
 
 	int enqueue_command(int a, int b, int c, int d, int e, int f, int g);
 	int enqueue_trigger(int sound, int marker);
@@ -1587,24 +1592,10 @@ int32 IMuseInternal::do_command(int a, int b, int c, int d, int e, int f, int g,
 			if (g_scumm->_gameId != GID_SAMNMAX) {
 				return set_channel_volume(b, c);
 			} else {
-				// Sam & Max: ImSetTrigger.
-				// Sets a trigger for a particular player and
-				// marker ID, along with do_command parameters
-				// to invoke at the marker. The marker is
-				// represented by MIDI SysEx block 00 xx (F7)
-				// where "xx" is the marker ID.
-				for (i = 0; i < 16; ++i) {
-					if (!_snm_triggers [i].id) {
-						_snm_triggers [i].id = d;
-						_snm_triggers [i].sound = b;
-						_snm_triggers [i].command [0] = e;
-						_snm_triggers [i].command [1] = f;
-						_snm_triggers [i].command [2] = g;
-						_snm_triggers [i].command [3] = h;
-						return 0;
-					}
-				}
-				return -1;
+				if (e || f || g || h) 
+					return ImSetTrigger (b, d, e, f, g, h);
+				else
+					return ImClearTrigger (b, d);
 			}
 		case 18:
 			if (g_scumm->_gameId != GID_SAMNMAX) {
@@ -1629,23 +1620,14 @@ int32 IMuseInternal::do_command(int a, int b, int c, int d, int e, int f, int g,
 			// Sam & Max: ImClearTrigger
 			// This should clear a trigger that's been set up
 			// with ImSetTrigger (cmd == 17). Seems to work....
-			a = 0;
-			for (i = 0; i < 16; ++i) {
-				if (_snm_triggers [i].sound == b && _snm_triggers [i].id &&
-					(d == -1 || _snm_triggers [i].id == d))
-				{
-					_snm_triggers [i].sound = _snm_triggers [i].id = 0;
-					++a;
-				}
-			}
-			return (a > 0) ? 0 : -1;
+			return ImClearTrigger (b, d);
 		case 20: // FIXME: Deferred command system? - Sam and Max
 			return 0;
 		case 2:
 		case 3:
 			return 0;
 		default:
-			warning("IMuseInternal::do_command invalid command %d", cmd);
+			warning("do_command (%d [%d/%d], %d, %d, %d, %d, %d, %d, %d) unsupported", a, param, cmd, b, c, d, e, f, g, h);
 		}
 	} else if (param == 1) {
 		if ((1 << cmd) & (0x783FFF)) {
@@ -1726,12 +1708,73 @@ int32 IMuseInternal::do_command(int a, int b, int c, int d, int e, int f, int g,
 		case 24:
 			return 0;
 		default:
-			warning("IMuseInternal::do_command default midi command %d", cmd);
+			warning("do_command (%d [%d/%d], %d, %d, %d, %d, %d, %d, %d) unsupported", a, param, cmd, b, c, d, e, f, g, h);
 			return -1;
 		}
 	}
 
 	return -1;
+}
+
+int32 IMuseInternal::ImSetTrigger (int sound, int id, int a, int b, int c, int d) {
+	// Sam & Max: ImSetTrigger.
+	// Sets a trigger for a particular player and
+	// marker ID, along with do_command parameters
+	// to invoke at the marker. The marker is
+	// represented by MIDI SysEx block 00 xx (F7)
+	// where "xx" is the marker ID.
+	uint16 oldest_trigger = 0;
+	int oldest_index = -1;
+
+	int i;
+	for (i = 0; i < 16; ++i) {
+		ImTrigger *trig = &_snm_triggers [i];
+		if (!trig->id)
+			break;
+		if (trig->id == id && trig->sound == sound)
+			break;
+
+		uint16 diff;
+		if (trig->expire <= _snm_trigger_index)
+			diff = _snm_trigger_index - trig->expire;
+		else
+			diff = 0x10000 - trig->expire + _snm_trigger_index;
+
+		if (oldest_index < 0 || oldest_trigger < diff) {
+			oldest_index = i;
+			oldest_trigger = diff;
+		}
+	}
+
+	// If we didn't find a trigger, see if we can expire one.
+	if (i >= 16) {
+		if (oldest_index < 0)
+			return -1;
+		i = oldest_index;
+	}
+
+	_snm_triggers [i].id = id;
+	_snm_triggers [i].sound = sound;
+	_snm_triggers [i].expire = (++_snm_trigger_index & 0xFFFF);
+	_snm_triggers [i].command [0] = a;
+	_snm_triggers [i].command [1] = b;
+	_snm_triggers [i].command [2] = c;
+	_snm_triggers [i].command [3] = d;
+	return 0;
+}
+
+int32 IMuseInternal::ImClearTrigger (int sound, int id) {
+	int count = 0;
+	int i;
+	for (i = 0; i < 16; ++i) {
+		if (_snm_triggers [i].sound == sound && _snm_triggers [i].id &&
+			(id == -1 || _snm_triggers [i].id == id))
+		{
+			_snm_triggers [i].sound = _snm_triggers [i].id = 0;
+			++count;
+		}
+	}
+	return (count > 0) ? 0 : -1;
 }
 
 int IMuseInternal::set_channel_volume(uint chan, uint vol)
@@ -5113,13 +5156,10 @@ void IMuseGM::part_changed(Part *part, uint16 what)
 				}
 			}
 		} else {
-			debug (0, "Setting instrument (%d)", (int) _part_instr [part->_slot].oplvl_1);
-			if (_part_instr [part->_slot].oplvl_1 != 0) {
-				_md->sysEx_customInstrument (mc->_chan, 'ADL ', (byte *) (&_part_instr [part->_slot]));
-			} else if (part->_program < 32) {
+			if (part->_program < 32) {
 				memcpy (&_part_instr [part->_slot], &_glob_instr[part->_program], sizeof (Instrument));
-				_md->sysEx_customInstrument (mc->_chan, 'ADL ', (byte *) (&_part_instr [part->_slot]));
 			}
+			_md->sysEx_customInstrument (mc->_chan, 'ADL ', (byte *) (&_part_instr [part->_slot]));
 		}
 	}
 
