@@ -143,20 +143,19 @@ void SkyState::go() {
 	loadBase0();
 
 	while (1) {
-		delay(100);
+		//delay(100);
 		_skyLogic->engine();
 		_skyScreen->recreate();
 		_skyScreen->spriteEngine();
 		_skyScreen->flip();
 		_skyScreen->showScreen(_skyScreen->giveCurrent());
+		//getchar();
 	}
 }
 
 void SkyState::initialise(void) {
 
 	//initialise_memory();
-
-	memset(_itemList, sizeof(void*), 2048);
 
 	_skyDisk = new SkyDisk(_gameDataPath);
 	_skySound = new SkySound(_mixer, _skyDisk);
