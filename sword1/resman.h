@@ -50,6 +50,7 @@ class ResMan {
 public:
 	ResMan(const char *resFile, MemMan *pMemoMan);
 	~ResMan(void);
+	void flush(void);
 	void resClose(uint32 id);
 	void resOpen(uint32 id);
 	void *fetchRes(uint32 id);

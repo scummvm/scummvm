@@ -54,9 +54,7 @@ void SwordMusic::mixer(int16 *buf, uint len) {
 	else {
 		_system->lock_mutex(_mutex);
 		len >>= 1;
-		if (len > _smpInBuf)
-			warning("SwordMusic::mixer: sample buffer underrun");
-		else {
+		if (len <= _smpInBuf) {
 			uint32 maxLen = BUFSIZE - _bufPos;
 			if (len >= maxLen) {
 				for (uint32 cnt = 0; cnt < maxLen; cnt++)

@@ -67,6 +67,7 @@ class OSystem;
 class SwordMouse {
 public:
 	SwordMouse(OSystem *system, ResMan *pResMan, ObjectMan *pObjMan);
+	void initialize(void);
 	void addToList(int id, BsObject *compact);
 	void useLogicAndMenu(SwordLogic *pLogic, SwordMenu *pMenu);
 	void setLuggage(uint32 resID, uint32 rate);
@@ -83,9 +84,9 @@ public:
 	void fnLockMouse(void);
 	void fnUnlockMouse(void);
 	void setMenuStatus(uint8 status);
+	void controlPanel(bool on);
 private:
 	MousePtr *_pointers[17];
-	uint32 _currentPtrId, _frame;
 	OSystem *_system;
 	SwordLogic *_logic;
 	SwordMenu *_menu;
@@ -94,6 +95,7 @@ private:
 	ObjectMan *_objMan;
 	uint16 _mouseX, _mouseY;
 
+	uint32 _currentPtrId, _frame;
 	uint8 _mouseStatus, _mouseCount;
 	uint16 _numObjs;
 	uint16 _lastState, _state;

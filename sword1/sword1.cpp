@@ -39,6 +39,7 @@
 #include "swordres.h"
 #include "menu.h"
 #include "music.h"
+#include "control.h"
 
 /* Broken Sword 1 */
 static const GameSettings sword1_setting =
@@ -113,10 +114,10 @@ void SwordEngine::initialize(void) {
 	_mouse->useLogicAndMenu(_logic, _menu);
 
 	_systemVars.justRestoredGame = _systemVars.currentCD = 
-		_systemVars.gamePaused = _systemVars.saveGameFlag = 
-		_systemVars.deathScreenFlag = _systemVars.currentMusic = 0;
-	_systemVars.snrStatus = 0;
+		_systemVars.gamePaused = 0;
+	_systemVars.deathScreenFlag = 3;
 	_systemVars.rate = 8;
+	_systemVars.forceRestart = false;
 
 	switch (Common::parseLanguage(ConfMan.get("language"))) {
 	case Common::DE_DEU:
@@ -142,8 +143,21 @@ void SwordEngine::initialize(void) {
 	_systemVars.showText = ConfMan.getBool("subtitles");
 	
 	_systemVars.playSpeech = 1;
-	startPositions(ConfMan.getInt("boot_param"));
 	_mouseState = 0;
+
+	_logic->initialize();
+	_objectMan->initialize();
+	_mouse->initialize();
+}
+
+void SwordEngine::reinitialize(void) {
+	_resMan->flush(); // free everything that's currently alloced and opened.
+	_memMan->flush(); // Handle with care.
+
+	_logic->initialize();     // now reinitialize these objects as they (may) have locked
+	_objectMan->initialize(); // resources which have just been wiped.
+	_mouse->initialize();
+	// todo: reinitialize swordmenu.
 }
 
 void SwordEngine::startPositions(int32 startNumber) {
@@ -1000,27 +1014,63 @@ void SwordEngine::startPositions(int32 startNumber) {
 		error("Can't start in location %d", startNumber);
 	}
 
-
 	compact = (BsObject*)_objectMan->fetchObject(PLAYER);
 	_logic->fnEnterSection(compact, PLAYER, startNumber, 0, 0, 0, 0, 0);	// (automatically opens the compact resource for that section)
+	_systemVars.deathScreenFlag = 0;
 }
 
 void SwordEngine::go(void) {
 	
 	initialize();
+	_systemVars.deathScreenFlag = 3;
 	// check if we have savegames. if we do, show control panel, else start intro.
+	/* death flags:
+		   0 = not dead, normal game
+		   1 = dead
+		   2 = game won
+		   3 = game was just started */
+	SwordControl *control = new SwordControl(_resMan, _objectMan, _system, _mouse, getSavePath());
+	uint8 controlRes = 0;
+
+	uint8 startPos = ConfMan.getInt("boot_param");
+	if (startPos) {
+		startPositions(startPos);
+		_systemVars.deathScreenFlag = 0;
+	} else {
+		// Temporary:
+		startPositions(0);
+		_systemVars.deathScreenFlag = 0;
+		//todo: check if we have savegames. if we do, show control panel, else start intro.
+		//control->runPanel();
+	}
+
 	do {
-		mainLoop();
-		// mainLoop was left, show control panel
+        mainLoop();
+
+		// the mainloop was left, either because the player pressed F5 or because the logic
+		// wants to restart the game.
+		if (!_systemVars.forceRestart)
+			controlRes = control->runPanel();
+		if ((controlRes == CONTROL_RESTART_GAME) || (_systemVars.forceRestart)) {
+			_music->fadeDown();
+			startPositions(1);
+			_systemVars.forceRestart = false;
+		} else if (controlRes == CONTROL_GAME_RESTORED) {
+			reinitialize();  // first clear anything which was loaded
+			control->doRestore(); // then actually load the savegame data.
+			_mouse->fnUnlockMouse(); // and allow mouse movements.
+			_mouse->fnAddHuman();
+		}
+		_systemVars.deathScreenFlag = 0;
 	} while (true);
 }
 
 void SwordEngine::mainLoop(void) {
 	uint32 newTime, frameTime;
+	bool wantControlPanel = false;
 	do {
 		// do we need the section45-hack from sword.c here?
 		// todo: ensure right cd is inserted
-		_sound->newScreen(SwordLogic::_scriptVars[NEW_SCREEN]);
 		_screen->newScreen(SwordLogic::_scriptVars[NEW_SCREEN]);
 		_logic->newScreen(SwordLogic::_scriptVars[NEW_SCREEN]);
 		SwordLogic::_scriptVars[SCREEN] = SwordLogic::_scriptVars[NEW_SCREEN];
@@ -1028,7 +1078,6 @@ void SwordEngine::mainLoop(void) {
 		do {
 			_music->stream();
 			frameTime = _system->get_msecs();
-			_systemVars.saveGameFlag = 0;
 			_logic->engine();
 			_logic->updateScreenParams(); // sets scrolling
 
@@ -1066,23 +1115,24 @@ void SwordEngine::mainLoop(void) {
 
 			_mouse->engine( _mouseX, _mouseY, _mouseState);
 			_mouseState = 0;
+			if (_keyPressed == 63)
+				wantControlPanel = true;
 			// do something smart here to implement pausing the game. If we even want that, that is.
 		} while ((SwordLogic::_scriptVars[SCREEN] == SwordLogic::_scriptVars[NEW_SCREEN]) &&
-			(_systemVars.saveGameFlag < 2));	// change screen
-
+			(!_systemVars.forceRestart) && (!wantControlPanel));
+        
 		if (SwordLogic::_scriptVars[SCREEN] != 53) // we don't fade down after syria pan (53).
 			_screen->fadeDownPalette();
 		while (_screen->stillFading()) {
 			_music->stream();
 			_screen->updateScreen();
 			delay(1000/12);
-			// todo: fade sfx?
 		}
 
+		_sound->quitScreen();
 		_screen->quitScreen(); // close graphic resources
 		_objectMan->closeSection(SwordLogic::_scriptVars[SCREEN]); // close the section that PLAYER has just left, if it's empty now
-		// todo: stop sfx, clear sfx queue, free sfx memory
-	} while (_systemVars.saveGameFlag < 2);
+	} while ((!_systemVars.forceRestart) && (!wantControlPanel));
 }
 
 void SwordEngine::delay(uint amount) { //copied and mutilated from sky.cpp
@@ -1091,7 +1141,7 @@ void SwordEngine::delay(uint amount) { //copied and mutilated from sky.cpp
 
 	uint32 start = _system->get_msecs();
 	uint32 cur = start;
-	uint16 _key_pressed = 0;	//reset
+	_keyPressed = 0;
 
 	do {
 		while (_system->poll_event(&event)) {
@@ -1100,9 +1150,9 @@ void SwordEngine::delay(uint amount) { //copied and mutilated from sky.cpp
 
 				// Make sure backspace works right (this fixes a small issue on OS X)
 				if (event.kbd.keycode == 8)
-					_key_pressed = 8;
+					_keyPressed = 8;
 				else
-					_key_pressed = (byte)event.kbd.ascii;
+					_keyPressed = (uint8)event.kbd.ascii;
 				break;
 			case OSystem::EVENT_MOUSEMOVE:
 				_mouseX = event.mouse.x;

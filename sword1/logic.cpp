@@ -48,19 +48,26 @@ SwordLogic::SwordLogic(ObjectMan *pObjMan, ResMan *resMan, SwordScreen *pScreen,
 	_music = pMusic;
 	_sound = pSound;
 	_menu = pMenu;
-	_textMan = new SwordText(_objMan, _resMan, false);
+	_textMan = NULL;
 	_screen->useTextManager(_textMan);
 	_router = new SwordRouter(_objMan, _resMan);
+	_eventMan = NULL;
+}
 
-	//_collision = new SwordCollision(_objMan, this);
-	_eventMan = new EventManager();
-	
+void SwordLogic::initialize(void) {
 	memset(_scriptVars, 0, NUM_SCRIPT_VARS * sizeof(uint32));
 	for (uint8 cnt = 0; cnt < NON_ZERO_SCRIPT_VARS; cnt++)
 		_scriptVars[_scriptVarInit[cnt][0]] = _scriptVarInit[cnt][1];
+	
+	delete _eventMan;
+	_eventMan = new EventManager();
 
+	delete _textMan;
+	_textMan = new SwordText(_objMan, _resMan, false);
+	_screen->useTextManager(_textMan);
 	_textRunning = _speechRunning = false;
 	_speechFinished = true;
+	_router->resetExtraData();
 }
 
 void SwordLogic::newScreen(uint32 screen) {
@@ -1542,7 +1549,7 @@ int SwordLogic::fnCheckCD(BsObject *cpt, int32 id, int32 screen, int32 b, int32 
 }
 
 int SwordLogic::fnRestartGame(BsObject *cpt, int32 id, int32 a, int32 b, int32 c, int32 d, int32 z, int32 x) {
-	SwordEngine::_systemVars.saveGameFlag = 3;
+	SwordEngine::_systemVars.forceRestart = true;
 	cpt->o_logic = LOGIC_quit;
 	return SCRIPT_STOP;
 }
@@ -1553,8 +1560,7 @@ int SwordLogic::fnQuitGame(BsObject *cpt, int32 id, int32 a, int32 b, int32 c, i
 }
 
 int SwordLogic::fnDeathScreen(BsObject *cpt, int32 id, int32 a, int32 b, int32 c, int32 d, int32 z, int32 x) {
-	SwordEngine::_systemVars.saveGameFlag = 1;
-	SwordEngine::_systemVars.snrStatus = 1;
+
 	if (_scriptVars[FINALE_OPTION_FLAG] == 4) // successful end of game!
 		SwordEngine::_systemVars.deathScreenFlag = 2;
 	else

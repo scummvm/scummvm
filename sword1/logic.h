@@ -46,6 +46,7 @@ class SwordLogic {
 public:
 	SwordLogic(ObjectMan *pObjMan, ResMan *resMan, SwordScreen *pScreen, SwordMouse *pMouse, SwordSound *pSound, SwordMusic *pMusic, SwordMenu *pMenu);
 	~SwordLogic(void);
+	void initialize(void);
 	void newScreen(uint32 screen);
 	void engine(void);
 	void updateScreenParams(void);

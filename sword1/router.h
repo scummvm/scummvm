@@ -79,16 +79,6 @@ struct PathData {
 	int32	num;
 };
 
-/*struct FrameInfos {
-	int32 framesPerStep, framesPerChar;
-	int32 standFrames;
-	int32 slowInFrames, slowOutFrames;
-	int32 turnFramesLeft, turnFramesRight;
-	int32 walkFramesLeft, walkFramesRight;
-	uint16 startX, startY, targetX, targetY, targetDir;
-	int32 scaleA, scaleB;
-};*/
-
 #define ROUTE_END_FLAG 255
 #define NO_DIRECTIONS 8
 #define MAX_FRAMES_PER_CYCLE 16

@@ -100,7 +100,8 @@ void ResMan::freeCluDescript(void) {
 		if (BsClu *cluster = _prj.clu[clusCnt]) {
 			for (uint32 grpCnt = 0; grpCnt < cluster->noGrp; grpCnt++)
 				if (BsGrp *group = cluster->grp[grpCnt]) {
-					_memMan->freeNow(group->resHandle);
+					for (uint32 resCnt = 0; resCnt < group->noRes; resCnt++)
+						_memMan->freeNow(group->resHandle + resCnt);
 					delete[] group->resHandle;
 					delete[] group->offset;
 					delete[] group->length;
@@ -110,6 +111,18 @@ void ResMan::freeCluDescript(void) {
 			delete cluster;
 		}
 	delete[] _prj.clu;
+}
+
+void ResMan::flush(void) {
+	for (uint32 clusCnt = 0; clusCnt < _prj.noClu; clusCnt++)
+		if (BsClu *cluster = _prj.clu[clusCnt])
+			for (uint32 grpCnt = 0; grpCnt < cluster->noGrp; grpCnt++)
+				if (BsGrp *group = cluster->grp[grpCnt])
+					for (uint32 resCnt = 0; resCnt < group->noRes; resCnt++)
+						if (group->resHandle[resCnt].cond != MEM_FREED) {
+							_memMan->setCondition(group->resHandle + resCnt, MEM_CAN_FREE);
+							group->resHandle[resCnt].refCount = 0;
+						}
 }
 
 void *ResMan::fetchRes(uint32 id) {
@@ -192,10 +205,11 @@ void ResMan::resClose(uint32 id) {
 	BsMemHandle *handle = resHandle(id);
 	if (!handle->refCount) {
 		warning("Resource Manager fail: unlocking object with refCount 0. Id: %d\n", id);		
-	} else
+	} else {
 		handle->refCount--;
-	if (!handle->refCount)
-		_memMan->setCondition( handle, MEM_CAN_FREE);
+		if (!handle->refCount)
+			_memMan->setCondition( handle, MEM_CAN_FREE);
+	}
 }
 
 FrameHeader *ResMan::fetchFrame(void *resourceData, uint32 frameNo) {

@@ -29,9 +29,14 @@
 
 ObjectMan::ObjectMan(ResMan *pResourceMan) {
 	_resMan = pResourceMan;
+}
+
+void ObjectMan::initialize(void) {
 	for (uint16 cnt = 0; cnt < TOTAL_SECTIONS; cnt++)
-		_liveList[cnt] = 0;
-	
+		_liveList[cnt] = 0; // we don't need to close the files here. When this routine is
+							// called, the memory was flushed() anyways, so these resources
+							// already *are* closed.
+
 	_liveList[128] = _liveList[129] = _liveList[130] = _liveList[131] = _liveList[133] =
 		_liveList[134] = _liveList[145] = _liveList[146] = _liveList[TEXT_sect] = 1;
 	
@@ -41,7 +46,6 @@ ObjectMan::ObjectMan(ResMan *pResourceMan) {
 		else
 			_cptData[cnt] = NULL;
 	}
-
 }
 
 ObjectMan::~ObjectMan(void) {
@@ -130,4 +134,20 @@ uint32 ObjectMan::fetchNoObjects(int section) {
 void ObjectMan::closeSection(uint32 screen) {
 	if (_liveList[screen] == 0)	 // close the section that PLAYER has just left, if it's empty now
 		_resMan->resClose(_objectList[screen]);
+}
+
+void ObjectMan::loadLiveList(uint16 *src) {
+	for (uint16 cnt = 0; cnt < TOTAL_SECTIONS; cnt++) {
+		if (_liveList[cnt]) {
+			_resMan->resClose(_objectList[cnt]);
+			_cptData[cnt] = NULL;
+		}
+		_liveList[cnt] = src[cnt];
+		if (_liveList[cnt])
+			_cptData[cnt] = ((uint8*)_resMan->cptResOpen(_objectList[cnt])) + sizeof(Header);
+	}
+}
+
+void ObjectMan::saveLiveList(uint16 *dest) {
+	memcpy(dest, _liveList, TOTAL_SECTIONS * sizeof(uint16));
 }

@@ -46,6 +46,7 @@ public:
 	void setCondition(BsMemHandle *bsMem, uint16 pCond);
 	void freeNow(BsMemHandle *bsMem);
 	void initHandle(BsMemHandle *bsMem);
+	void flush(void);
 private:
 	void addToFreeList(BsMemHandle *bsMem);
 	void removeFromFreeList(BsMemHandle *bsMem);

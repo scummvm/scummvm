@@ -48,6 +48,13 @@ SwordText::SwordText(ObjectMan *pObjMan, ResMan *pResMan, bool czechVersion) {
 	_textBlocks[0] = _textBlocks[1] = NULL;
 }
 
+SwordText::~SwordText(void) {
+	if (_textBlocks[0])
+		free(_textBlocks[0]);
+	if (_textBlocks[1])
+		free(_textBlocks[1]);
+}
+
 uint32 SwordText::lowTextManager(uint8 *ascii, int32 width, uint8 pen) {
 	_textCount++;
 	if (_textCount > MAX_TEXT_OBS)
@@ -170,7 +177,9 @@ FrameHeader *SwordText::giveSpriteData(uint32 textTarget) {
 void SwordText::releaseText(uint32 id) {
 	id &= ITM_ID;
 	assert(id <= 1);
-	free(_textBlocks[id]);
-	_textBlocks[id] = NULL;
-	_textCount--;
+	if (_textBlocks[id]) {
+		free(_textBlocks[id]);
+		_textBlocks[id] = NULL;
+		_textCount--;
+	}
 }

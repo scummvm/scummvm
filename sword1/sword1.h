@@ -45,11 +45,12 @@ struct SystemVars {
 	//uint32	endOfQ;				// next available slot in sound fx queue
 	//uint8	debug;				// toggles tdebug file
 
-	uint8	saveGameFlag;		// controls save game loop							0=off 1=save game 2=restore game 3=restart 4=quit to dos
-	uint8	deathScreenFlag;	// 1 death screen version of the control panel, 2 = successful end of game
+	//uint8	saveGameFlag;		// controls save game loop							0=off 1=save game 2=restore game 3=restart 4=quit to dos
+	uint8	deathScreenFlag;	// 1 death screen version of the control panel, 2 = successful end of game, 3 = force restart
+	bool	forceRestart;
 	uint8	playSpeech;
 	uint8   showText;
-	uint8   snrStatus;
+	//uint8   snrStatus;
 			// ^=> move into SwordControl... or whatever it will be.
 	//uint8	displayText;		// toggles debug text display						on "t"
 	//uint8	displayGrid;		// toggles debug grid display						on "g"
@@ -57,8 +58,8 @@ struct SystemVars {
 	//uint8	framesPerSecond;	// toggles one frame pre second mode		on "1"
 	//uint8	writingPCXs;		// writing a PCX every frame						on "f"
 	//int16	parallaxOn;			I think we don't need this.
-	uint8	language;
-	int32	currentMusic;
+    uint8	language;
+	//int32	currentMusic;
 	//uint32	gameCycle;
 };
 
@@ -68,16 +69,19 @@ public:
 	SwordEngine(GameDetector *detector, OSystem *syst);
 	virtual ~SwordEngine();
 	static SystemVars _systemVars;
+	void reinitialize(void);
 protected:
 	void go();
 private:
 	void delay(uint amount);
 	void initialize(void);
+
 	void mainLoop(void);
 	void fnCheckCd(uint32 newScreen);
 	void startPositions(int32 startNumber);
 
 	uint16 _mouseX, _mouseY, _mouseState;
+	uint8 _keyPressed;
 
 	GameDetector *_detector;
 	OSystem		*_system;

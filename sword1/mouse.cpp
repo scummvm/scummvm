@@ -35,14 +35,6 @@ SwordMouse::SwordMouse(OSystem *system, ResMan *pResMan, ObjectMan *pObjMan) {
 	_resMan = pResMan;
 	_objMan = pObjMan;
 	_system = system;
-	_numObjs = 0;
-	_menuStatus = _mouseStatus = 0; // mouse off and unlocked
-	_getOff = 0;
-	_specialPtrId = 0;
-	_inTopMenu = false;
-
-	for (uint8 cnt = 0; cnt < 17; cnt++)
-		_pointers[cnt] = (MousePtr*)_resMan->mouseResOpen(MSE_POINTER + cnt);
 	/*_resMan->resOpen(MSE_POINTER);		// normal mouse (1 frame anim)
 	_resMan->resOpen(MSE_OPERATE);
 	_resMan->resOpen(MSE_PICKUP);
@@ -61,6 +53,37 @@ SwordMouse::SwordMouse(OSystem *system, ResMan *pResMan, ObjectMan *pObjMan) {
 	_resMan->resOpen(MSE_ARROW8);		// UPWARDS
 	_resMan->resOpen(MSE_ARROW9);*/		// DOWNWARDS
 	// luggage & chess stuff is opened dynamically
+}
+
+void SwordMouse::initialize(void) {
+	_numObjs = 0;
+	_menuStatus = _mouseStatus = 0; // mouse off and unlocked
+	_getOff = 0;
+	_specialPtrId = 0;
+	_inTopMenu = false;
+
+	for (uint8 cnt = 0; cnt < 17; cnt++)
+		_pointers[cnt] = (MousePtr*)_resMan->mouseResOpen(MSE_POINTER + cnt);
+}
+
+void SwordMouse::controlPanel(bool on) { // true on entering cpanel, false when leaving
+	static uint32 savedPtrId = 0, savedSpecialId = 0;
+	static uint8 savedMouseStatus;
+	if (on) {
+		savedPtrId = _currentPtrId;
+		savedSpecialId = _specialPtrId;
+		savedMouseStatus = _mouseStatus;
+		_mouseStatus = 1;
+		setPointer(MSE_POINTER, 0);
+	} else {
+		_currentPtrId = savedPtrId;
+		_mouseStatus = savedMouseStatus;
+		_specialPtrId = savedSpecialId;
+		if (_specialPtrId)
+			setPointer(_specialPtrId, 0);
+		else
+			setPointer(_currentPtrId + MSE_POINTER, 0);
+	}
 }
 
 void SwordMouse::useLogicAndMenu(SwordLogic *pLogic, SwordMenu *pMenu) {
@@ -186,7 +209,7 @@ void SwordMouse::setPointer(uint32 resId, uint32 rate) {
 	}
 	_frame = 0;
 
-	if (resId == 0) {
+	if ((resId == 0) || (!(_mouseStatus & 1))) {
 		_system->set_mouse_cursor(NULL, 0, 0, 0, 0);
 		_system->show_mouse(false);
 	} else {

@@ -57,7 +57,7 @@ class SwordSound {
 public:
 	SwordSound(const char *searchPath, SoundMixer *mixer, ResMan *pResMan);
 	~SwordSound(void);
-	void newScreen(uint16 screen);
+	void quitScreen(void);
 
 	bool startSpeech(uint16 roomNo, uint16 localNo); // this should work more or less.
 													 // Maybe we'll need a delay of 3 gameCycles.

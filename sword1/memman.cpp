@@ -67,6 +67,18 @@ void MemMan::setCondition(BsMemHandle *bsMem, uint16 pCond) {
 	}
 }
 
+void MemMan::flush(void) {
+	while (_memListFree) {
+		free(_memListFreeEnd->data);
+		_memListFreeEnd->data = NULL;
+		_memListFreeEnd->cond = MEM_FREED;
+		_alloced -= _memListFreeEnd->size;
+		removeFromFreeList(_memListFreeEnd);
+	}
+	if (_alloced)
+		warning("MemMan::flush: Something's wrong: still %d bytes alloced", _alloced);
+}
+
 void MemMan::checkMemoryUsage(void) {
 	while ((_alloced > MAX_ALLOC) && _memListFree) {
 		free(_memListFreeEnd->data);
@@ -92,19 +104,6 @@ void MemMan::addToFreeList(BsMemHandle *bsMem) {
 }
 
 void MemMan::removeFromFreeList(BsMemHandle *bsMem) {
-	/*BsMemHandle *forw = _memListFree;
-	BsMemHandle *rev = _memListFreeEnd;
-
-	while (forw || rev) {
-		if (!(forw && rev))
-			error("mem list is completely fubared");
-		printf("%p <-> %p\n", forw, rev);
-		forw = forw->next;
-		rev = rev->prev;
-	}
-	printf("\n");*/
-	if (!(bsMem->prev || bsMem->next))
-		warning("removeFromFreeList: memory block wasn't in list");
 	if (_memListFree == bsMem)
 		_memListFree = bsMem->next;
 	if (_memListFreeEnd == bsMem)

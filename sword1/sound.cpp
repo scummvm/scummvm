@@ -121,7 +121,7 @@ bool SwordSound::speechFinished(void) {
 	return (_speechHandle == 0);
 }
 
-void SwordSound::newScreen(uint16 screen) {
+void SwordSound::quitScreen(void) {
 	// stop all running SFX
 	while (_endOfQueue)
 		fnStopFx(_fxQueue[0].id);

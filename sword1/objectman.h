@@ -32,8 +32,9 @@ class ObjectMan {
 public:
 	ObjectMan(ResMan *pResourceMan);
 	~ObjectMan(void);
+	void initialize(void);
+
 	BsObject *fetchObject(uint32 id);
-	//void unlockObject(uint32 id);
 	uint32 fetchNoObjects(int section);
 	bool sectionAlive(uint16 section);
 	void megaEntering(uint16 section);
@@ -44,12 +45,15 @@ public:
 	void unlockText(uint32 textId);
 	uint32 lastTextNumber(int section);
 
-	void closeSection(uint32 screen);
+    void closeSection(uint32 screen);
+	
+	void saveLiveList(uint16 *dest); // for loading/saving
+	void loadLiveList(uint16 *src);
 private:
 	ResMan *_resMan;
 	static const uint32 _objectList[TOTAL_SECTIONS];	//a table of pointers to object files
 	static const uint32 _textList[TOTAL_SECTIONS][7];	//a table of pointers to text files
-	int	_liveList[TOTAL_SECTIONS]; 						//which sections are active
+	uint16	_liveList[TOTAL_SECTIONS]; 					//which sections are active
 	uint8 *_cptData[TOTAL_SECTIONS];
 };
 

@@ -996,32 +996,34 @@
 #define ICON_YES 				 0x0404005D
 	// 94 entities in TXTs, 94 in datafiles.
 	// save_menu
-#define SR_BUTTON 				 0x04050000
-#define SR_PALETTE 				 0x04050001
-#define SR_PANEL_ENGLISH 		 0x04050002
-#define SR_PANEL_FRENCH 		 0x04050003
-#define SR_PANEL_GERMAN 		 0x04050004
-#define SR_PANEL_ITALIAN 		 0x04050005
-#define SR_PANEL_SPANISH 		 0x04050006
-#define SR_PANEL_AMERICAN 		 0x04050007
-#define SR_TEXT_BUTTON 			 0x04050008
-#define SR_SPEED 				 0x04050009
-#define SR_SCROLL1 				 0x0405000A
-#define SR_SCROLL2 				 0x0405000B
-#define SR_CONFIRM 				 0x0405000C
-#define SR_VOLUME 				 0x0405000D
-#define SR_VLIGHT 				 0x0405000E
-#define SR_VKNOB 				 0x0405000F
-#define SR_WINDOW 				 0x04050010
-#define SR_SLAB1 				 0x04050011
-#define SR_SLAB2 				 0x04050012
-#define SR_SLAB3 				 0x04050013
-#define SR_SLAB4 				 0x04050014
-#define SR_BUTUF 				 0x04050015
-#define SR_BUTUS 				 0x04050016
-#define SR_BUTDS 				 0x04050017
-#define SR_BUTDF 				 0x04050018
-#define SR_DEATHPANEL 			 0x04050019
+#define SR_UNKNOWN_RESOURCE1	 0x04050000
+#define SR_BUTTON				 0x04050001
+#define SR_UNKNOWN_RESOURCE2	 0x04050002 // this is actually the red font
+#define SR_PALETTE 				 0x04050003
+#define SR_PANEL_ENGLISH 		 0x04050004
+#define SR_PANEL_FRENCH 		 0x04050005
+#define SR_PANEL_GERMAN 		 0x04050006
+#define SR_PANEL_ITALIAN 		 0x04050007
+#define SR_PANEL_SPANISH 		 0x04050008
+#define SR_PANEL_AMERICAN 		 0x04050009
+#define SR_TEXT_BUTTON 			 0x0405000A
+#define SR_SPEED 				 0x0405000B
+#define SR_SCROLL1 				 0x0405000C
+#define SR_SCROLL2 				 0x0405000D
+#define SR_CONFIRM 				 0x0405000E
+#define SR_VOLUME 				 0x0405000F
+#define SR_VLIGHT 				 0x04050010
+#define SR_VKNOB 				 0x04050011
+#define SR_WINDOW 				 0x04050012
+#define SR_SLAB1 				 0x04050013
+#define SR_SLAB2 				 0x04050014
+#define SR_SLAB3 				 0x04050015
+#define SR_SLAB4 				 0x04050016
+#define SR_BUTUF 				 0x04050017
+#define SR_BUTUS 				 0x04050018
+#define SR_BUTDS 				 0x04050019
+#define SR_BUTDF 				 0x0405001A
+#define SR_DEATHPANEL 			 0x0405001B // 0x04050019
 	// 26 entities in TXTs, 29 in datafiles.
 	// george
 #define GEORGE_MEGA 			 0x04060000
