@@ -737,7 +737,7 @@ void Screen::spriteClipAndSet(uint16 *pSprX, uint16 *pSprY, uint16 *pSprWidth, u
 	*pSprX = (uint16)sprX;
 	*pSprY = (uint16)sprY;
 
-	if (*pSprWidth && *pSprHeight && !_fullRefresh) {
+	if (*pSprWidth && *pSprHeight) {
 		// sprite will be drawn, so mark it in the grid buffer (we don't need to keep
 		// track of changed blocks if we're going to do a full refresh, anyways.
 		uint16 gridH = (*pSprHeight + (sprY & (SCRNGRID_Y - 1)) + (SCRNGRID_Y - 1)) / SCRNGRID_Y;
