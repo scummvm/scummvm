@@ -808,6 +808,7 @@ void IMuseDigital::startSound(int sound) {
 
 			if ((sound == kTalkSoundID) && (_voiceVocData)) {
 				_channel[l].mixerSize = _voiceVocRate * 2;
+				_channel[l].freq = _voiceVocRate;
 				_channel[l].size = _voiceVocSize * 2;
 				_channel[l].bits = 8;
 				_channel[l].channels = 2;
