@@ -67,8 +67,6 @@ static const VersionSettings scumm_settings[] = {
 	/* Scumm Version 2 */
 	{"maniac", "Maniac Mansion", GID_MANIAC, 2, 0, 0,
 	 GF_AFTER_V2 | GF_SMALL_HEADER | GF_USE_KEY | GF_SMALL_NAMES | GF_16COLOR | GF_OLD_BUNDLE | GF_NO_SCALLING, "00.LFL"},
-	{"mmamiga", "Maniac Mansion", GID_MANIAC, 2, 0, 0,
-	 GF_AFTER_V2 | GF_SMALL_HEADER | GF_USE_KEY | GF_SMALL_NAMES | GF_16COLOR | GF_OLD_BUNDLE | GF_NO_SCALLING | GF_AMIGA, "00.LFL"},
 	{"zak",         "Zak McKracken and the Alien Mindbenders",      GID_ZAK,     2, 0, 0,
 	 GF_AFTER_V2 | GF_SMALL_HEADER | GF_USE_KEY | GF_SMALL_NAMES | GF_16COLOR | GF_OLD_BUNDLE | GF_NO_SCALLING, "00.LFL"},
 
