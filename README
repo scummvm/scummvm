@@ -436,7 +436,7 @@ Language options:
 ScummVM includes a language option for the Curse of Monkey Island, Simon
 the Sorcerer 1 & 2 and Beneath a Steel Sky.
 
-Curse of Monkey Island / Simon the Sorcerer:
+Curse of Monkey Island
 
         en  - English (default)
         de  - German
@@ -447,6 +447,15 @@ Curse of Monkey Island / Simon the Sorcerer:
         jp  - Japanese
         zh  - Chinese
         kr  - Korean
+        hb  - Hebrew
+
+Simon the Sorcerer: 1 & 2
+
+        en  - English (default)
+        de  - German
+        fr  - French
+        it  - Italian
+        es  - Spanish
         hb  - Hebrew
 
 Beneath a Steel Sky:
