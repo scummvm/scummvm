@@ -664,15 +664,15 @@ const ScummVM::String& GameDetector::getGameName() {
 	return _gameText;
 }
 
-int GameDetector::detectMain() {
+bool GameDetector::detectMain() {
 	if (_gameFileName.isEmpty()) {
 		warning("No game was specified...");
-		return (-1);
+		return false;
 	}
 
 	if (!detectGame()) {
-		warning("Game detection failed. Using default settings");
-		_gameText = "Please choose a game";
+		warning("%s is an invalid target. Use the -z parameter to list targets", _gameFileName.c_str());
+		return false;
 	}
 
 	/* Use the adlib sound driver if auto mode is selected,
@@ -713,7 +713,7 @@ int GameDetector::detectMain() {
 #endif
 	}
 
-	return (0);
+	return true;
 }
 
 OSystem *GameDetector::createSystem() {

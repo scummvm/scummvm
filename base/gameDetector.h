@@ -113,7 +113,7 @@ public:
 	GameDetector();
 
 	void parseCommandLine(int argc, char **argv);
-	int detectMain();
+	bool detectMain();
 	void setGame(const String &name);
 	const String& getGameName(void);
 

@@ -249,7 +249,7 @@ int main(int argc, char *argv[]) {
 		launcherDialog(detector, system);
 
 	// Verify the given game name
-	if (!detector.detectMain()) {
+	if (detector.detectMain()) {
 		// Set the window caption to the game name
 		prop.caption = g_config->get("description", detector._gameFileName);
 		if (prop.caption == NULL)	
@@ -265,11 +265,7 @@ int main(int argc, char *argv[]) {
 
 		// Create the game engine
 		Engine *engine = detector.createEngine(system);
-
-		// print a message if gameid is invalid
-		if (engine == NULL)
-			error("%s is an invalid target. Use the -z parameter to list targets", 
-					detector._gameFileName.c_str());
+		assert(engine);
 
 		// Run the game engine
 		engine->go();

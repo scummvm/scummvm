@@ -243,6 +243,18 @@ void PluginManager::loadPlugins() {
 #else
 	// Load dynamic plugins
 	// TODO... this is right now just a nasty hack. 
+	// This should search one or multiple directories for all plugins it can
+	// find (to this end, we maybe should use a special prefix/suffix; e.g.
+	// instead of libscumm.so, use scumm.engine or scumm.plugin etc.).
+	//
+	// The list of directories to search could be e.g.:
+	// User specified (via config file), ".", "./plugins", "$(prefix)/lib".
+	//
+	// We also need to add code which ensures what we are looking at is
+	// a) a ScummVM engine and b) matches the version of the executable.
+	// Hence one more symbol should be exported by plugins which returns
+	// the "ABI" version the plugin was built for, and we can compare that
+	// to the ABI version of the executable.
 	#ifndef DISABLE_SCUMM
 		tryLoadPlugin(new DynamicPlugin("scumm/libscumm.so"));
 	#endif
