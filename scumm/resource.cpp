@@ -608,7 +608,7 @@ int Scumm::readSoundResource(int type, int idx)
 				pri = 15;
 				break;
 			case MKID('ADL '):
-				pri = 1;
+//				pri = 1;
 				if (_use_adlib)
 					pri = 10;
 				break;

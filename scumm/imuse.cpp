@@ -3242,6 +3242,7 @@ void Part::fix_after_load()
 	set_detune(_detune);
 	set_pri(_pri);
 	set_pan(_pan);
+	if (_program < 128) _instrument.program (_program, _player->_mt32emulate);
 	changed (IMuseDriver::pcAll);
 }
 
