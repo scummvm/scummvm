@@ -1581,8 +1581,9 @@ int MidiDriver_ALSA::open(int mode) {
 }
 
 void MidiDriver_ALSA::close() {
-    _mode = 0;
-    snd_seq_close(seq_handle);
+	_mode = 0;
+        if (seq_handle)
+		snd_seq_close(seq_handle);
 }
 
 
