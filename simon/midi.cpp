@@ -228,10 +228,8 @@ void MidiPlayer::playSMF (File *in, int song) {
 
 	// For GMF files, we're going to have to use
 	// hardcoded size tables.
-	if (!memcmp (_data, "GMF\x1", 4) && size == 64000) {
+	if (!memcmp (_data, "GMF\x1", 4) && size == 64000)
 		size = simon1_gmf_size [song];
-		_data[size++] = 0x00; // Trailing 0 makes this match the standalone GMF files
-	}
 
 	MidiParser *parser = MidiParser::createParser_SMF();
 	parser->property (MidiParser::mpMalformedPitchBends, 1);
