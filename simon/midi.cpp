@@ -140,7 +140,6 @@ void MidiPlayer::read_one_song(File *in, Song *s, uint music)
 		break;
 
 	case 'GMF\x1':
-		warning("Old style songs not properly supported yet");
 		read_mthd(in, s, true, music);
 		break;
 

@@ -1915,8 +1915,6 @@ void SimonState::vc_70()
 
 	_vc70_var1 = a;
 	_vc70_var2 = b;
-
-	warning("vc_70(%d,%d): music stuff?", a, b);
 }
 
 
@@ -1934,8 +1932,6 @@ void SimonState::vc_72()
 		_vc72_var2 = b;
 		_vc72_var3 = a;
 	}
-
-	warning("vc_72(%d,%d): music stuff?", a, b);
 }
 
 void SimonState::vc_73()
