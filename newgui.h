@@ -133,7 +133,7 @@ public:
 	void frameRect(int x, int y, int w, int h, byte color);
 	void addDirtyRect(int x, int y, int w, int h);
 	void drawChar(const char c, int x, int y);
-	void drawString(const char *str, int x, int y, int w, byte color);
+	void drawString(const char *str, int x, int y, int w, byte color, bool center = false);
 
 	void drawBitmap(uint32 bitmap[8], int x, int y, byte color);
 	void blitTo(byte buffer[320*200], int x, int y, int w, int h);

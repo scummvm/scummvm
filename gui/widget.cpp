@@ -52,6 +52,7 @@ void Widget::draw()
 		gui->box(_x, _y, _w, _h);
 		_x += 4;
 		_y += 4;
+		_w -= 8;
 	}
 	
 	// Now perform the actual widget draw
@@ -64,6 +65,7 @@ void Widget::draw()
 	if (_flags & WIDGET_BORDER) {
 		_x -= 4;
 		_y -= 4;
+		_w += 8;
 	}
 	_x -= _boss->_x;
 	_y -= _boss->_y;
@@ -74,7 +76,7 @@ void Widget::draw()
 
 
 StaticTextWidget::StaticTextWidget(Dialog *boss, int x, int y, int w, int h, const char *text)
-	: Widget (boss, x, y, w, h), _label(0)
+	: Widget (boss, x, y, w, h), _label(0), _centred(false)
 {
 	_type = kStaticTextWidget;
 	setLabel(text);
@@ -104,7 +106,7 @@ void StaticTextWidget::setLabel(const char *label)
 void StaticTextWidget::drawWidget(bool hilite)
 {
 	NewGui *gui = _boss->getGui();
-	gui->drawString(_label, _x, _y, _w, hilite ? gui->_textcolorhi : gui->_textcolor);
+	gui->drawString(_label, _x, _y, _w, hilite ? gui->_textcolorhi : gui->_textcolor, _centred);
 }
 
 
@@ -117,6 +119,8 @@ ButtonWidget::ButtonWidget(Dialog *boss, int x, int y, int w, int h, const char 
 	assert(label);
 	_flags = WIDGET_ENABLED | WIDGET_BORDER | WIDGET_CLEARBG ;
 	_type = kButtonWidget;
+	
+	setCentred(true);
 }
 
 ButtonWidget::~ButtonWidget()

@@ -401,23 +401,25 @@ void NewGui::drawChar(const char str, int xx, int yy)
 
 }
 
-void NewGui::drawString(const char *str, int x, int y, int w, byte color)
+void NewGui::drawString(const char *str, int x, int y, int w, byte color, bool center)
 {
-	StringTab *st = &_s->string[5];
-	st->charset = 1;
-	st->center = false;
-	st->color = color;
-	st->xpos = x;
-	st->ypos = y;
-	st->right = x + w;
-
 	if (_s->_gameId) {						/* If a game is active.. */
+		StringTab *st = &_s->string[5];
+		st->charset = 1;
+		st->center = center;
+		st->color = color;
+		st->xpos = center ? x+w/2 : x;
+		st->ypos = y;
+		st->right = x + w;
+	
 		_s->_messagePtr = (byte *)str;
 		_s->drawString(5);
 	} else {
+		// FIXME - support center, use nicer custom font. Ultimately, we might
+		// want to *always* draw our messages this way.
 		uint len = strlen(str);
 		for (uint letter = 0; letter < len; letter++)
-			drawChar(str[letter], st->xpos + (letter * 8), st->ypos);
+			drawChar(str[letter], x + (letter * 8), y);
 	}
 }
 
