@@ -30,7 +30,6 @@
 #include "queen/queen.h"
 #include "queen/sound.h"
 #include "queen/state.h"
-#include "queen/talk.h"
 #include "queen/walk.h"
 
 namespace Queen {

@@ -85,21 +85,6 @@ void Talk::talk(const char *filename, int personInRoom, char *cutawayFilename) {
 
 	cutawayFilename[0] = '\0';
 
-	int roomStart = _vm->logic()->currentRoomData();
-	ObjectData *data = _vm->logic()->objectData(roomStart + personInRoom);
-
-	if (data->name <= 0)	// disabled!
-		return;
-
-	if (data->entryObj > 0)
-		return;
-
-	if (State::findTalk(data->state) == STATE_TALK_MUTE) {
-		// 'I can't talk to that'
-		_vm->logic()->makeJoeSpeak(24 + _vm->randomizer.getRandomNumber(2));
-		return;
-	}
-
 	load(filename);
 
 	Person person;
@@ -770,16 +755,13 @@ void Talk::defaultAnimation(
 				_vm->update();
 			}
 
+			if (_vm->input()->talkQuit())
+				break;
+			
 			if (_vm->logic()->joeWalk() == JWM_SPEAK) {
-				if (_vm->input()->talkQuit())
-					break;
-
 				_vm->update();
 			}
 			else {
-				if (_vm->input()->talkQuit())
-					break;
-
 				_vm->update(true);
 				if (_vm->logic()->joeWalk() == JWM_EXECUTE)
 					// Selected a command, so exit
@@ -828,9 +810,7 @@ void Talk::speakSegment(
 
 	switch (command) {
 		case SPEAK_PAUSE:
-			for (i = 0; i < 10; i++) {
-				if (_vm->input()->talkQuit())
-					break;
+			for (i = 0; i < 10 && !_vm->input()->talkQuit(); i++) {
 				_vm->update();
 			}
 			return;

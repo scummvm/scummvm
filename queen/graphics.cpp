@@ -1151,6 +1151,11 @@ void BamScene::updateCarAnimation() {
 }
 
 void BamScene::updateFightAnimation() {
+	static const BamDataBlock *fightDataBlocks[] = {
+		_fight1Data,
+		_fight2Data,
+		_fight3Data
+	};
 	if (_flag != F_STOP) {
 		const BamDataBlock *bdb = &_fightData[_index];
 
@@ -1195,12 +1200,7 @@ void BamScene::updateFightAnimation() {
 			break;
 		case 99: // end of BAM data
 			_lastSoundIndex = _index = 0;
-			const BamDataBlock *data[] = {
-				_fight1Data,
-				_fight2Data,
-				_fight3Data
-			};
-			_fightData = data[_vm->randomizer.getRandomNumber(2)];
+			_fightData = fightDataBlocks[_vm->randomizer.getRandomNumber(2)];
 			if (_flag == F_REQ_STOP) {
 				_flag = F_STOP;
 			}

@@ -187,7 +187,7 @@ void Journal::drawSaveDescriptions() {
 		_vm->display()->setText(136, y, _saveDescriptions[n], false);
 		_vm->display()->setText(109, y + 1, nb, false);
 	}
-	// hightlight current page
+	// highlight current page
 	showBob(BOB_SAVE_PAGE, 300, 3 + _currentSavePage * 15, 6 + _currentSavePage);
 }
 
@@ -220,8 +220,7 @@ void Journal::handleNormalMode(int16 zoneNum, int x) {
 		_quit = true;
 	} else if (zoneNum == ZN_GIVEUP) {
 		enterYesNoMode(zoneNum, TXT_GIVE_UP);
-	}
-	if (zoneNum == ZN_TEXT_SPEED) {
+	} else if (zoneNum == ZN_TEXT_SPEED) {
 		_vm->talkSpeed((x - 136) * 100 / 130);
 		drawConfigPanel();
 	} else if (zoneNum == ZN_SFX_TOGGLE) {
@@ -389,14 +388,14 @@ void Journal::drawPanel(const int *frames, const int *titles, int n) {
 }
 
 void Journal::drawNormalPanel() {
-	int frames[] = { FRAME_BLUE_1, FRAME_BLUE_2, FRAME_BLUE_1, FRAME_ORANGE };
-	int titles[] = { TXT_REVIEW_ENTRY, TXT_MAKE_ENTRY, TXT_CLOSE, TXT_GIVE_UP };
+	static const int frames[] = { FRAME_BLUE_1, FRAME_BLUE_2, FRAME_BLUE_1, FRAME_ORANGE };
+	static const int titles[] = { TXT_REVIEW_ENTRY, TXT_MAKE_ENTRY, TXT_CLOSE, TXT_GIVE_UP };
 	drawPanel(frames, titles, 4);
 }
 
 void Journal::drawYesNoPanel(int titleNum) {
-	int frames[] = { FRAME_GREY, FRAME_BLUE_1, FRAME_BLUE_2 };
-	int titles[] = { titleNum, TXT_YES, TXT_NO };
+	static const int frames[] = { FRAME_GREY, FRAME_BLUE_1, FRAME_BLUE_2 };
+	static const int titles[] = { titleNum, TXT_YES, TXT_NO };
 	drawPanel(frames, titles, 3);
 
 	hideBob(BOB_LEFT_RECT_4);

@@ -55,7 +55,7 @@ void BankManager::load(const char *bankname, uint32 bankslot) {
 	debug(9, "BankManager::load() entries = %d", entries); 
 
 	uint32 offset = 2;
-	uint8 *p = _banks[bankslot].data;
+	const uint8 *p = _banks[bankslot].data;
 	for (uint16 i = 1; i <= entries; ++i) {
 		_banks[bankslot].indexes[i] = offset;
 		uint16 w = READ_LE_UINT16(p + offset + 0);
@@ -74,7 +74,7 @@ void BankManager::unpack(uint32 srcframe, uint32 dstframe, uint32 bankslot) {
 	assert(_banks[bankslot].data != NULL);
 		
 	BobFrame *pbf = &_frames[dstframe];
-	uint8 *p = _banks[bankslot].data + _banks[bankslot].indexes[srcframe];
+	const uint8 *p = _banks[bankslot].data + _banks[bankslot].indexes[srcframe];
 	pbf->width    = READ_LE_UINT16(p + 0);
 	pbf->height   = READ_LE_UINT16(p + 2);
 	pbf->xhotspot = READ_LE_UINT16(p + 4);
@@ -91,7 +91,7 @@ void BankManager::overpack(uint32 srcframe, uint32 dstframe, uint32 bankslot) {
 	assert(bankslot < MAX_BANKS_NUMBER);
 	assert(_banks[bankslot].data != NULL);
 
-	uint8 *p = _banks[bankslot].data + _banks[bankslot].indexes[srcframe];
+	const uint8 *p = _banks[bankslot].data + _banks[bankslot].indexes[srcframe];
 	uint16 src_w = READ_LE_UINT16(p + 0);
 	uint16 src_h = READ_LE_UINT16(p + 2);
 
@@ -135,7 +135,7 @@ void BankManager::eraseFrame(uint32 index) {
 }
 
 void BankManager::eraseFrames(bool joe) {
-    uint32 i = 0;
+	uint32 i = 0;
 	if (!joe) {
 		i = FRAMES_JOE + FRAMES_JOE_XTRA;
 	}

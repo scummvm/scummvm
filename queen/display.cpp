@@ -575,13 +575,14 @@ void Display::screenMode(int comPanel, bool inCutaway) {
 }
 
 void Display::prepareUpdate() {
-	if (!_fullscreen)
+	int h = GAME_SCREEN_HEIGHT;
+	if (!_fullscreen) {
+		h = ROOM_ZONE_HEIGHT;
 		memcpy(_screenBuf + SCREEN_W * ROOM_ZONE_HEIGHT, _panelBuf, PANEL_W * PANEL_H);
-	int i;
-	int n = _fullscreen ? 200 : 150;
+	}
 	uint8 *dst = _screenBuf;
-	uint8 *src = _backdropBuf + _horizontalScroll;
-	for (i = 0; i < n; ++i) {
+	const uint8 *src = _backdropBuf + _horizontalScroll;
+	while (h--) {
 		memcpy(dst, src, SCREEN_W);
 		dst += SCREEN_W;
 		src += BACKDROP_W;
@@ -598,6 +599,7 @@ void Display::update(bool dynalum, int16 dynaX, int16 dynaY) {
 		_pal.dirtyMin = 144;
 		_pal.dirtyMax = 144;
 	}
+	// uncomment this line to disable the dirty blocks rendering	
 //	_fullRefresh = 1;
 	if (_fullRefresh) {
 		_system->copyRectToScreen(_screenBuf, SCREEN_W, 0, 0, SCREEN_W, SCREEN_H);
@@ -639,7 +641,7 @@ void Display::update(bool dynalum, int16 dynaX, int16 dynaY) {
 
 void Display::setupPanel() {
 	uint32 size;
-	uint8 *pcxBuf = _vm->resource()->loadFile("panel.pcx", 0, &size);
+	const uint8 *pcxBuf = _vm->resource()->loadFile("panel.pcx", 0, &size);
 	uint8 *dst = _panelBuf + PANEL_W * 10;
 	readPCX(dst, PANEL_W, pcxBuf + 128, PANEL_W, PANEL_H - 10);
 	const uint8 *pal = pcxBuf + size - 768 + 144 * 3;
@@ -695,8 +697,7 @@ void Display::blit(uint8 *dstBuf, uint16 dstPitch, uint16 x, uint16 y, const uin
 		}
 	} else if (!xflip) { // Masked bitmap unflipped
 		while (h--) {
-			int i;
-			for(i = 0; i < w; ++i) {
+			for(int i = 0; i < w; ++i) {
 				uint8 b = *(srcBuf + i);
 				if(b != 0) {
 					*(dstBuf + i) = b;
@@ -707,8 +708,7 @@ void Display::blit(uint8 *dstBuf, uint16 dstPitch, uint16 x, uint16 y, const uin
 		}
 	} else { // Masked bitmap flipped
 		while (h--) {
-			int i;
-			for(i = 0; i < w; ++i) {
+			for(int i = 0; i < w; ++i) {
 				uint8 b = *(srcBuf + i);
 				if(b != 0) {
 					*(dstBuf - i) = b;
@@ -798,13 +798,11 @@ void Display::showMouseCursor(bool show) {
 
 void Display::initFont() {
 	// calculate font justification sizes
-	uint16 i, y, x;
-
-	for (i = 0; i < 256; ++i) {
+	for (int i = 0; i < 256; ++i) {
 		_charWidth[i] = 0;
-		for (y = 0; y < 8; ++y) {
+		for (int y = 0; y < 8; ++y) {
 			uint8 c = _font[i * 8 + y];
-			for (x = 0; x < 8; ++x) {
+			for (int x = 0; x < 8; ++x) {
 				if ((c & (0x80 >> x)) && (x > _charWidth[i])) {
 					_charWidth[i] = x;
 				}
@@ -898,6 +896,8 @@ void Display::drawChar(uint16 x, uint16 y, uint8 color, const uint8 *chr) {
 }
 
 void Display::drawText(uint16 x, uint16 y, uint8 color, const char *text, bool outlined) {
+	static const int dx[] = { -1, 0, 1, 1, 1, 0, -1, -1 };
+	static const int dy[] = { -1, -1, -1, 0, 1, 1, 1, 0 };	
 	const uint8 *str = (const uint8*)text;
 	uint16 xs = x;
 	while (*str && x < SCREEN_W) {
@@ -905,10 +905,8 @@ void Display::drawText(uint16 x, uint16 y, uint8 color, const char *text, bool o
 		const uint8 *pchr = _font + c * 8;
 
 		if (outlined) {
-			const int xOff[] = { -1, 0, 1, 1, 1, 0, -1, -1 };
-			const int yOff[] = { -1, -1, -1, 0, 1, 1, 1, 0 };
 			for (int i = 0; i < 8; ++i) {
-				drawChar(x + xOff[i], y + yOff[i], INK_OUTLINED_TEXT, pchr);
+				drawChar(x + dx[i], y + dy[i], INK_OUTLINED_TEXT, pchr);
 			}
 		}
 		drawChar(x, y, color, pchr);
@@ -997,7 +995,7 @@ void Display::blankScreenEffect2() {
 			p += SCREEN_W;
 		}
 		_system->copyRectToScreen(buf, SCREEN_W, x, y, 2, 2);
-			_system->updateScreen();
+		_system->updateScreen();
 		_vm->input()->delay(10);
 	}
 }
@@ -1026,7 +1024,7 @@ void Display::blankScreenEffect3() {
 			++i;
 			_system->copyRectToScreen(buf, SCREEN_W, x, y, 2, 2);
 		}
-			_system->updateScreen();
+		_system->updateScreen();
 		_vm->input()->delay(10);
 	}
 }

@@ -835,14 +835,22 @@ void Logic::makePersonSpeak(const char *sentence, Person *person, const char *vo
 }
 
 void Logic::startDialogue(const char *dlgFile, int personInRoom, char *cutaway) {
-	char cutawayFile[20];
-	if (cutaway == NULL) {
-		cutaway = cutawayFile;
-	}
-	_vm->display()->fullscreen(true);
-	Talk::talk(dlgFile, personInRoom, cutaway, _vm);
-	if (!cutaway[0]) {
-		_vm->display()->fullscreen(false);
+	ObjectData *data = objectData(_roomData[_currentRoom] + personInRoom);
+	if (data->name > 0 && data->entryObj <= 0) {
+		if (State::findTalk(data->state) == STATE_TALK_MUTE) {
+			// 'I can't talk to that'
+			makeJoeSpeak(24 + _vm->randomizer.getRandomNumber(2));
+		} else {
+			char cutawayFile[20];
+			if (cutaway == NULL) {
+				cutaway = cutawayFile;
+			}
+			_vm->display()->fullscreen(true);
+			Talk::talk(dlgFile, personInRoom, cutaway, _vm);
+			if (!cutaway[0]) {
+				_vm->display()->fullscreen(false);
+			}
+		}
 	}
 }
 
