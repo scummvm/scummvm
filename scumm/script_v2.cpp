@@ -1219,17 +1219,15 @@ void Scumm_v2::o2_roomOps() {
 void Scumm_v2::o2_cutscene() {
 	//warning("TODO o2_cutscene()");
 
-	vm.cutSceneData[0] = _userState;
+	vm.cutSceneData[0] = _userState | (_userPut ? 16 : 0);
 	vm.cutSceneData[1] = (int16)VAR(VAR_CURSORSTATE);
 	vm.cutSceneData[2] = _currentRoom;
 	vm.cutSceneData[3] = camera._mode;
 	
 	VAR(VAR_CURSORSTATE) = 200;
 	
-	// TODO: some cursor command stuff (hide mouse etc maybe?)
-	freezeScripts(0);
-	_userPut = 0;
-	_cursor.state = 0;
+	// Hide inventory, freeze scripts, hide cursor
+	setUserState(15);
 	
 	_sentenceNum = 0;
 	stopScript(SENTENCE_SCRIPT);
@@ -1249,10 +1247,8 @@ void Scumm_v2::o2_endCutscene() {
 	
 	VAR(VAR_CURSORSTATE) = vm.cutSceneData[1];
 
-	// TODO: some cursor command stuff (probably to reset it to the pre-cutscene state)
-	unfreezeScripts();
-	_userPut = 1;
-	_cursor.state = 1;
+	// Reset user state to values before cutscene
+	setUserState(vm.cutSceneData[0] | 7);
 	
 	if (_gameId == GID_MANIAC) {
 		camera._mode = (byte) vm.cutSceneData[3];
@@ -1357,27 +1353,31 @@ void Scumm_v2::o2_setObjectName() {
 }
 
 void Scumm_v2::o2_cursorCommand() {	// TODO: Define the magic numbers
-	int cmd = getVarOrDirectWord(0x80);
-	int a2 = cmd >> 8;
+	uint16 cmd = getVarOrDirectWord(0x80);
+	byte state = cmd >> 8;
 
 	if (cmd & 0xFF) {
 		VAR(VAR_CURSORSTATE) = cmd & 0xFF;
 	}
+	
+	setUserState(state);
+}
 
-	if (a2 & 4) {						// Userface
-		_userState = a2 & (32 | 64 | 128);
+void Scumm_v2::setUserState(byte state) {
+	if (state & 4) {						// Userface
+		_userState = state & (32 | 64 | 128);
 		runInventoryScript(0);
 	}
 
-	if (a2 & 1) {						// Freeze
-		if (a2 & 8)
+	if (state & 1) {						// Freeze
+		if (state & 8)
 			freezeScripts(0);
 		else
 			unfreezeScripts();
 	}
 
-	if (a2 & 2) {						// Cursor Show/Hide
-		if (a2 & 16) {
+	if (state & 2) {						// Cursor Show/Hide
+		if (state & 16) {
 			_userPut = 1;
 			_cursor.state = 1;
 		} else {

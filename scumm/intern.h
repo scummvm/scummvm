@@ -215,6 +215,7 @@ protected:
 	virtual void clearStateCommon(byte type);
 	
 	void resetSentence();
+	void setUserState(byte state);
 
 	/* Version 2 script opcodes */
 	void o2_actorFromPos();
