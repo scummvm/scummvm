@@ -87,18 +87,17 @@ void Scumm::stopScriptNr(int script) {
 	if (script == 0)
 		return;
 
-	ss = &vm.slot[1];
-
-	for (i = 1; i < NUM_SCRIPT_SLOT; i++, ss++) {
-		if (script != ss->number || ss->where != WIO_GLOBAL && ss->where != WIO_LOCAL || ss->status == ssDead)
-			continue;
-
-		if (ss->cutsceneOverride)
-			error("Script %d stopped with active cutscene/override", script);
-		ss->number = 0;
-		ss->status = ssDead;
-		if (_currentScript == i)
-			_currentScript = 0xFF;
+	ss = vm.slot;
+	for (i = 0; i < NUM_SCRIPT_SLOT; i++, ss++) {
+		if (script == ss->number && ss->status != ssDead &&
+			(ss->where == WIO_GLOBAL && ss->where == WIO_LOCAL)) {
+			if (ss->cutsceneOverride)
+				error("Script %d stopped with active cutscene/override", script);
+			ss->number = 0;
+			ss->status = ssDead;
+			if (_currentScript == i)
+				_currentScript = 0xFF;
+		}
 	}
 
 	if (_numNestedScripts == 0)
@@ -108,7 +107,8 @@ void Scumm::stopScriptNr(int script) {
 	num = _numNestedScripts;
 
 	do {
-		if (nest->number == script && (nest->where == WIO_GLOBAL || nest->where == WIO_LOCAL)) {
+		if (nest->number == script &&
+				(nest->where == WIO_GLOBAL || nest->where == WIO_LOCAL)) {
 			nest->number = 0xFF;
 			nest->slot = 0xFF;
 			nest->where = 0xFF;
@@ -125,9 +125,8 @@ void Scumm::stopObjectScript(int script) {
 	if (script == 0)
 		return;
 
-	ss = &vm.slot[1];
-
-	for (i = 1; i < NUM_SCRIPT_SLOT; i++, ss++) {
+	ss = vm.slot;
+	for (i = 0; i < NUM_SCRIPT_SLOT; i++, ss++) {
 		if (script == ss->number && ss->status != ssDead &&
 		    (ss->where == WIO_ROOM || ss->where == WIO_INVENTORY || ss->where == WIO_FLOBJECT)) {
 			if (ss->cutsceneOverride)
@@ -159,9 +158,9 @@ void Scumm::stopObjectScript(int script) {
 int Scumm::getScriptSlot() {
 	ScriptSlot *ss;
 	int i;
-	ss = &vm.slot[1];
 
-	for (i = 1; i < NUM_SCRIPT_SLOT; i++, ss++) {
+	ss = vm.slot;
+	for (i = 0; i < NUM_SCRIPT_SLOT; i++, ss++) {
 		if (ss->status == ssDead)
 			return i;
 	}
@@ -550,7 +549,7 @@ void Scumm::runHook(int i) {
 void Scumm::freezeScripts(int flag) {
 	int i;
 
-	for (i = 1; i < NUM_SCRIPT_SLOT; i++) {
+	for (i = 0; i < NUM_SCRIPT_SLOT; i++) {
 		if (_currentScript != i && vm.slot[i].status != ssDead && (vm.slot[i].unk1 == 0 || flag >= 0x80)) {
 			vm.slot[i].status |= 0x80;
 			vm.slot[i].freezeCount++;
@@ -568,7 +567,7 @@ void Scumm::freezeScripts(int flag) {
 
 void Scumm::unfreezeScripts() {
 	int i;
-	for (i = 1; i < NUM_SCRIPT_SLOT; i++) {
+	for (i = 0; i < NUM_SCRIPT_SLOT; i++) {
 		if (vm.slot[i].status & 0x80) {
 			if (!--vm.slot[i].freezeCount) {
 				vm.slot[i].status &= 0x7F;
@@ -662,9 +661,8 @@ void Scumm::killScriptsAndResources() {
 	ScriptSlot *ss;
 	int i;
 
-	ss = &vm.slot[1];
-
-	for (i = 1; i < NUM_SCRIPT_SLOT; i++, ss++) {
+	ss = vm.slot;
+	for (i = 0; i < NUM_SCRIPT_SLOT; i++, ss++) {
 		if (ss->where == WIO_ROOM || ss->where == WIO_FLOBJECT) {
 			if (ss->cutsceneOverride != 0)
 				error("Object %d stopped with active cutscene/override in exit", ss->number);
@@ -690,7 +688,7 @@ void Scumm::killScriptsAndResources() {
 }
 
 void Scumm::killAllScriptsExceptCurrent() {
-	for (int i = 1; i < NUM_SCRIPT_SLOT; i++) {
+	for (int i = 0; i < NUM_SCRIPT_SLOT; i++) {
 		if (i != _currentScript)
 			vm.slot[i].status = ssDead;
 	}
@@ -794,7 +792,7 @@ void Scumm::runInputScript(int a, int cmd, int mode) {
 }
 
 void Scumm::decreaseScriptDelay(int amount) {
-	ScriptSlot *ss = &vm.slot[0];
+	ScriptSlot *ss = vm.slot;
 	int i;
 	for (i = 0; i < NUM_SCRIPT_SLOT; i++, ss++) {
 		if (ss->status == ssPaused) {
