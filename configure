@@ -244,7 +244,7 @@ Usage: $0 [OPTIONS]...
 
 Configuration:
   -h, --help             display this help and exit
-  --backend=BACKEND      backend to build (sdl, x11, morphos, dc, gp32) [sdl]
+  --backend=BACKEND      backend to build (sdl, x11, morphos, dc, gp32, null) [sdl]
 
 Installation directories:
   --prefix=DIR           use this prefix for installing ScummVM [/usr/local]
@@ -972,6 +972,10 @@ fi
 # Backend related stuff
 #
 case $_backend in
+  null)
+    DEFINES="$DEFINES -DUSE_NULL_DRIVER"
+    OBJS="$OBJS backends/null/null.o"
+    ;;
   sdl)
     find_sdlconfig
     INCLUDES="$INCLUDES `$_sdlconfig --cflags`"
