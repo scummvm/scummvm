@@ -1217,18 +1217,14 @@ void Actor::setActorCostume(int c) {
 	costumeNeedsInit = true;
 	
 	if (_vm->_features & GF_NEW_COSTUMES) {
+		cost.reset();
 		memset(animVariable, 0, sizeof(animVariable));
+		costume = c;
 		
 		if (visible) {
-			cost.reset();
-			costume = c;
 			if (costume) {
 				_vm->ensureResourceLoaded(rtCostume, costume);
 			}
-			startAnimActor(initFrame);
-		} else {
-			costume = c;
-			cost.reset();
 		}
 	} else {
 		if (visible) {
