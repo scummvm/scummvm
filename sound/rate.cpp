@@ -30,8 +30,19 @@
 #include "stdafx.h"
 #include "sound/rate.h"
 
-
+/**
+ * The precision of the fractional computations used by the rate converter.
+ * Normally you should never have to modify this value.
+ */
 #define FRAC_BITS 16
+
+/**
+ * The size of the intermediate input cache. Bigger values may increase
+ * performance, but only until some point (depends largely on cache size,
+ * target processor and various other factors), at which it will decrease
+ * again.
+ */
+#define INTERMEDIATE_BUFFER_SIZE 512
 
 
 /**
@@ -48,7 +59,9 @@
 template<bool stereo, bool reverseStereo>
 class LinearRateConverter : public RateConverter {
 protected:
-	bool _reverseStereo;
+	st_sample_t inBuf[INTERMEDIATE_BUFFER_SIZE];
+	const st_sample_t *inPtr;
+	int inLen;
 
 	/** fractional position of the output stream in input stream unit */
 	unsigned long opos, opos_frac;
@@ -101,6 +114,8 @@ LinearRateConverter<stereo, reverseStereo>::LinearRateConverter(st_rate_t inrate
 
 	ilast[0] = ilast[1] = 0;
 	icur[0] = icur[1] = 0;
+	
+	inLen = 0;
 }
 
 /*
@@ -112,6 +127,9 @@ int LinearRateConverter<stereo, reverseStereo>::flow(AudioInputStream &input, st
 {
 	st_sample_t *ostart, *oend;
 	st_sample_t out[2], tmpOut;
+	
+	const int numChannels = stereo ? 2 : 1;
+	int i;
 
 	ostart = obuf;
 	oend = obuf + osamp * 2;
@@ -120,16 +138,17 @@ int LinearRateConverter<stereo, reverseStereo>::flow(AudioInputStream &input, st
 
 		// read enough input samples so that ipos > opos
 		while (ipos <= opos) {
-
-			// Abort if we reached the end of the input buffer
-			if (input.eof())
-				goto the_end;
-
-			ilast[0] = icur[0];
-			icur[0] = input.read();
-			if (stereo) {
-				ilast[1] = icur[1];
-				icur[1] = input.read();
+			// Check if we have to refill the buffer
+			if (inLen == 0) {
+				inPtr = inBuf;
+				inLen = input.readBuffer(inBuf, ARRAYSIZE(inBuf));
+				if (inLen <= 0)
+					goto the_end;
+			}
+			for (i = 0; i < numChannels; i++) {
+				ilast[i] = icur[i];
+				icur[i] = *inPtr++;
+				inLen--;
 			}
 			ipos++;
 		}
@@ -185,7 +204,10 @@ public:
 		int16 tmp[2];
 		st_size_t len = osamp;
 		assert(input.isStereo() == stereo);
-		while (!input.eof() && len--) {
+
+// TODO: use readBuffer
+
+		while (!input.eos() && len--) {
 			tmp[0] = tmp[1] = (input.read() * vol) >> 8;
 			if (stereo)
 				tmp[reverseStereo ? 0 : 1] = (input.read() * vol) >> 8;

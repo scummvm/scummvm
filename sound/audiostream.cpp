@@ -47,6 +47,17 @@ protected:
 	const byte *_loopPtr;
 	const byte *_loopEnd;
 
+	inline int16 readIntern() {
+		//assert(_ptr < _end);
+		int16 val = readSample<is16Bit, isUnsigned>(_ptr);
+		_ptr += (is16Bit ? 2 : 1);
+		if (_loopPtr && _ptr == _end) {
+			_ptr = _loopPtr;
+			_end = _loopEnd;
+		}
+		return val;
+	}
+	inline bool eosIntern() const	{ return _ptr >= _end; };
 public:
 	LinearMemoryStream(const byte *ptr, uint len, uint loopOffset, uint loopLen)
 		: _ptr(ptr), _end(ptr+len), _loopPtr(0), _loopEnd(0) {
@@ -57,22 +68,25 @@ public:
 		if (stereo)	// Stereo requires even sized data
 			assert(len % 2 == 0);
 	}
-	int16 read() {
-		//assert(_ptr < _end);
-		int16 val = readSample<is16Bit, isUnsigned>(_ptr);
-		_ptr += (is16Bit ? 2 : 1);
-		if (_loopPtr && _ptr == _end) {
-			_ptr = _loopPtr;
-			_end = _loopEnd;
-		}
-		return val;
+	int readBuffer(int16 *buffer, int numSamples) {
+		int samples = 0;
+		do {
+			const int len = MIN(numSamples, (_end - _ptr) / (is16Bit ? 2 : 1));
+			for (; samples < len; samples++) {
+				*buffer++ = readSample<is16Bit, isUnsigned>(_ptr);
+				_ptr += (is16Bit ? 2 : 1);
+			}
+			if (_loopPtr && _ptr == _end) {
+				_ptr = _loopPtr;
+				_end = _loopEnd;
+			}
+		} while (samples < numSamples && !eosIntern());
+		return samples;
 	}
-	bool eof() const {
-		return _ptr >= _end;
-	}
-	bool isStereo() const {
-		return stereo;
-	}
+
+	int16 read()				{ return readIntern(); }
+	bool eos() const			{ return eosIntern(); }
+	bool isStereo() const		{ return stereo; }
 };
 
 
@@ -90,14 +104,16 @@ protected:
 	byte *_pos;
 	byte *_end;
 	
+	inline int16 readIntern();
+	inline bool eosIntern() const { return _end == _pos; };
 public:
 	WrappedMemoryStream(uint bufferSize);
-	~WrappedMemoryStream() { free(_bufferStart); }
-	int16 read();
-	bool eof() const;
-	bool isStereo() const {
-		return stereo;
-	}
+	~WrappedMemoryStream()		{ free(_bufferStart); }
+	int readBuffer(int16 *buffer, int numSamples);
+
+	int16 read()				{ return readIntern(); }
+	bool eos() const			{ return eosIntern(); }
+	bool isStereo() const		{ return stereo; }
 
 	void append(const byte *data, uint32 len);
 };
@@ -113,7 +129,7 @@ WrappedMemoryStream<stereo, is16Bit, isUnsigned>::WrappedMemoryStream(uint buffe
 }
 
 template<bool stereo, bool is16Bit, bool isUnsigned>
-int16 WrappedMemoryStream<stereo, is16Bit, isUnsigned>::read() {
+inline int16 WrappedMemoryStream<stereo, is16Bit, isUnsigned>::readIntern() {
 	//assert(_pos != _end);
 	int16 val = readSample<is16Bit, isUnsigned>(_pos);
 	_pos += (is16Bit ? 2 : 1);
@@ -126,8 +142,12 @@ int16 WrappedMemoryStream<stereo, is16Bit, isUnsigned>::read() {
 }
 
 template<bool stereo, bool is16Bit, bool isUnsigned>
-bool WrappedMemoryStream<stereo, is16Bit, isUnsigned>::eof() const {
-	return _end == _pos;
+int WrappedMemoryStream<stereo, is16Bit, isUnsigned>::readBuffer(int16 *buffer, int numSamples) {
+	int samples;
+	for (samples = 0; samples < numSamples && !eosIntern(); samples++) {
+		*buffer++ = readIntern();
+	}
+	return samples;
 }
 
 template<bool stereo, bool is16Bit, bool isUnsigned>
@@ -160,6 +180,37 @@ void WrappedMemoryStream<stereo, is16Bit, isUnsigned>::append(const byte *data, 
 
 
 #ifdef USE_MAD
+class MP3InputStream : public MusicStream {
+	struct mad_stream _stream;
+	struct mad_frame _frame;
+	struct mad_synth _synth;
+	mad_timer_t _duration;
+	uint32 _posInFrame;
+	uint32 _bufferSize;
+	int _size;
+	bool _isStereo;
+	int _curChannel;
+	File *_file;
+	byte *_ptr;
+	int _rate;
+	bool _initialized;
+
+	bool init();
+	void refill();
+	inline int16 readIntern();
+	inline bool eosIntern() const;
+public:
+	MP3InputStream(File *file, mad_timer_t duration, uint size = 0);
+	~MP3InputStream();
+	int readBuffer(int16 *buffer, int numSamples);
+
+	int16 read()				{ return readIntern(); }
+	bool eos() const			{ return eosIntern(); }
+	bool isStereo() const		{ return _isStereo; }
+	
+	int getRate() const			{ return _rate; }
+};
+
 
 /**
  * Playback the MP3 data in the given file for the specified duration.
@@ -299,7 +350,7 @@ void MP3InputStream::refill() {
 	_posInFrame = 0;
 }
 
-bool MP3InputStream::eof() const {
+inline bool MP3InputStream::eosIntern() const {
 	return (_size < 0 || _posInFrame >= _synth.pcm.length);
 }
 
@@ -317,7 +368,7 @@ static inline int scale_sample(mad_fixed_t sample) {
 	return sample >> (MAD_F_FRACBITS + 1 - 16);
 }
 
-int16 MP3InputStream::read() {
+inline int16 MP3InputStream::readIntern() {
 	if (_size < 0 || _posInFrame >= _synth.pcm.length) {	// EOF
 		return 0;
 	}
@@ -343,6 +394,18 @@ int16 MP3InputStream::read() {
 	return sample;
 }
 
+int MP3InputStream::readBuffer(int16 *buffer, int numSamples) {
+	int samples;
+	for (samples = 0; samples < numSamples && !eosIntern(); samples++) {
+		*buffer++ = readIntern();
+	}
+	return samples;
+}
+
+MusicStream *makeMP3Stream(File *file, mad_timer_t duration, uint size) {
+	return new MP3InputStream(file, duration, size);
+}
+
 #endif
 
 
@@ -352,6 +415,29 @@ int16 MP3InputStream::read() {
 
 
 #ifdef USE_VORBIS
+
+class VorbisInputStream : public MusicStream {
+	OggVorbis_File *_ov_file;
+	int _end_pos;
+	bool _eofFlag;
+	int _numChannels;
+	int16 _buffer[4096];
+	int16 *_pos;
+	
+	void refill();
+	inline int16 readIntern();
+	inline bool eosIntern() const;
+public:
+	VorbisInputStream(OggVorbis_File *file, int duration);
+	int readBuffer(int16 *buffer, int numSamples);
+
+	int16 read()				{ return readIntern(); }
+	bool eos() const			{ return eosIntern(); }
+	bool isStereo() const		{ return _numChannels >= 2; }
+	
+	int getRate() const			{ return ov_info(_ov_file, -1)->rate; }
+};
+
 
 #ifdef CHUNKSIZE
 #define VORBIS_TREMOR
@@ -371,19 +457,27 @@ VorbisInputStream::VorbisInputStream(OggVorbis_File *file, int duration)
 	_eofFlag = false;
 }
 
-int16 VorbisInputStream::read() {
+inline int16 VorbisInputStream::readIntern() {
 	if (_pos >= _buffer + ARRAYSIZE(_buffer)) {
 		refill();
 	}
 	return *_pos++;
 }
 
-bool VorbisInputStream::eof() const {
+inline bool VorbisInputStream::eosIntern() const {
 	if (_eofFlag)
 		return true;
 	if (_pos < _buffer + ARRAYSIZE(_buffer))
 		return false;
 	return (_end_pos <= ov_pcm_tell(_ov_file));
+}
+
+int VorbisInputStream::readBuffer(int16 *buffer, int numSamples) {
+	int samples;
+	for (samples = 0; samples < numSamples && !eosIntern(); samples++) {
+		*buffer++ = readIntern();
+	}
+	return samples;
 }
 
 void VorbisInputStream::refill() {
@@ -424,6 +518,10 @@ void VorbisInputStream::refill() {
 	}
 
 	_pos = _buffer;
+}
+
+MusicStream *makeVorbisStream(OggVorbis_File *file, int duration) {
+	return new VorbisInputStream(file, duration);
 }
 
 #endif

@@ -709,7 +709,7 @@ void ChannelRaw::mix(int16 *data, uint len) {
 	assert(_input);
 	assert(_converter);
 
-	if (_input->eof()) {
+	if (_input->eos()) {
 		// TODO: call drain method
 		destroy();
 		return;
@@ -820,7 +820,7 @@ void ChannelStream::mix(int16 *data, uint len) {
 	assert(_input);
 	assert(_converter);
 
-	if (_input->eof()) {
+	if (_input->eos()) {
 		// TODO: call drain method
 
 		// Normally, the stream stays around even if all its data is used up.
@@ -929,7 +929,7 @@ static inline int scale_sample(mad_fixed_t sample) {
 ChannelMP3::ChannelMP3(SoundMixer *mixer, PlayingSoundHandle *handle, File *file, uint size)
 	: Channel(mixer, handle) {
 	// Create the input stream
-	_input = new MP3InputStream(file, mad_timer_zero, size);
+	_input = makeMP3Stream(file, mad_timer_zero, size);
 
 	// Get a rate converter instance
 //printf("ChannelMP3: inrate %d, outrate %d, stereo %d\n", _input->getRate(), mixer->getOutputRate(), _input->isStereo());
@@ -951,7 +951,7 @@ void ChannelMP3::mix(int16 *data, uint len) {
 	assert(_input);
 	assert(_converter);
 
-	if (_input->eof()) {
+	if (_input->eos()) {
 		// TODO: call drain method
 		destroy();
 		return;
@@ -1013,7 +1013,7 @@ void ChannelMP3::mix(int16 *data, uint len) {
 ChannelMP3CDMusic::ChannelMP3CDMusic(SoundMixer *mixer, PlayingSoundHandle *handle, File *file, mad_timer_t duration) 
 	: Channel(mixer, handle) {
 	// Create the input stream
-	_input = new MP3InputStream(file, duration, 0);
+	_input = makeMP3Stream(file, duration, 0);
 
 	// Get a rate converter instance
 //printf("ChannelMP3CDMusic: inrate %d, outrate %d, stereo %d\n", _input->getRate(), mixer->getOutputRate(), _input->isStereo());
@@ -1034,7 +1034,7 @@ void ChannelMP3CDMusic::mix(int16 *data, uint len) {
 	assert(_input);
 	assert(_converter);
 
-	if (_input->eof()) {
+	if (_input->eos()) {
 		// TODO: call drain method
 		destroy();
 		return;
@@ -1158,15 +1158,11 @@ void ChannelMP3CDMusic::mix(int16 *data, uint len) {
 ChannelVorbis::ChannelVorbis(SoundMixer *mixer, PlayingSoundHandle *handle, OggVorbis_File *ov_file, int duration, bool is_cd_track)
 	: Channel(mixer, handle) {
 #ifdef SOX_HACK
-	vorbis_info *vi;
-	
 	// Create the input stream
-	_input = new VorbisInputStream(ov_file, duration);
+	_input = makeVorbisStream(ov_file, duration);
 
 	// Get a rate converter instance
-	vi = ov_info(ov_file, -1);
-	assert(vi->channels == 1 || vi->channels == 2);
-	_converter = makeRateConverter(vi->rate, mixer->getOutputRate(), _input->isStereo());
+	_converter = makeRateConverter(_input->getRate(), mixer->getOutputRate(), _input->isStereo());
 #else
 	_ov_file = ov_file;
 
@@ -1187,7 +1183,7 @@ void ChannelVorbis::mix(int16 *data, uint len) {
 	assert(_input);
 	assert(_converter);
 
-	if (_input->eof()) {
+	if (_input->eos()) {
 		// TODO: call drain method
 		destroy();
 		return;

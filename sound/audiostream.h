@@ -24,6 +24,7 @@
 
 #include "stdafx.h"
 #include "common/scummsys.h"
+#include "common/util.h"
 #ifdef USE_MAD
 #include <mad.h>
 #endif
@@ -47,10 +48,34 @@ class AudioInputStream {
 public:
 	virtual ~AudioInputStream() {}
 
+	/**
+	 * Fill the given buffer with up to numSamples samples.
+	 * Returns the actual number of samples read, or -1 if
+	 * a critical error occured (note: you *must* check if
+	 * this value is less than what you requested, this can
+	 * happend when the stream is fully used up).
+	 * For stereo stream, buffer will be filled with interleaved
+	 * left and right channel samples.
+	 *
+	 * For maximum efficency, subclasses should always override
+	 * the default implementation!
+	 */
+	virtual int readBuffer(int16 *buffer, int numSamples) {
+		int samples;
+		for (samples = 0; samples < numSamples && !eos(); samples++) {
+			*buffer++ = read();
+		}
+		return samples;
+	}
+
+	/** Read a singel (16 bit signed) sample from the stream. */
 	virtual int16 read() = 0;
-	//virtual int size() const = 0;
+	
+	/** Is this a stereo stream? */
 	virtual bool isStereo() const = 0;
-	virtual bool eof() const = 0;
+	
+	/* End of stream reached? */
+	virtual bool eos() const = 0;
 
 	virtual int getRate() const { return -1; }
 };
@@ -65,64 +90,34 @@ protected:
 	int _len;
 public:
 	ZeroInputStream(uint len) : _len(len) { }
+	int readBuffer(int16 *buffer, int numSamples) {
+		int samples = MIN(_len, numSamples);
+		memset(buffer, 0, samples * 2);
+		_len -= samples;
+		return samples;
+	}
 	int16 read() { assert(_len > 0); _len--; return 0; }
 	int size() const { return _len; }
 	bool isStereo() const { return false; }
-	bool eof() const { return _len <= 0; }
+	bool eos() const { return _len <= 0; }
 };
 
-#ifdef USE_MAD
-class MP3InputStream : public AudioInputStream {
-	struct mad_stream _stream;
-	struct mad_frame _frame;
-	struct mad_synth _synth;
-	mad_timer_t _duration;
-	uint32 _posInFrame;
-	uint32 _bufferSize;
-	int _size;
-	bool _isStereo;
-	int _curChannel;
-	File *_file;
-	byte *_ptr;
-	int _rate;
-	bool _initialized;
-
-	bool init();
-	void refill();
+class MusicStream : public AudioInputStream {
 public:
-	MP3InputStream(File *file, mad_timer_t duration, uint size = 0);
-	~MP3InputStream();
-	int16 read();
-	bool eof() const;
-	bool isStereo() const { return _isStereo; }
-	
-	int getRate() const { return _rate; }
+	virtual int getRate() const = 0;
 };
-#endif
-
-
-#ifdef USE_VORBIS
-class VorbisInputStream : public AudioInputStream {
-	OggVorbis_File *_ov_file;
-	int _end_pos;
-	bool _eofFlag;
-	int _numChannels;
-	int16 _buffer[4096];
-	int16 *_pos;
-	
-	void refill();
-public:
-	VorbisInputStream(OggVorbis_File *file, int duration);
-	int16 read();
-	bool eof() const;
-	bool isStereo() const { return _numChannels >= 2; }
-};
-#endif
-
 
 
 AudioInputStream *makeLinearInputStream(byte _flags, const byte *ptr, uint32 len, uint loopOffset, uint loopLen);
 WrappedAudioInputStream *makeWrappedInputStream(byte _flags, uint32 len);
+
+#ifdef USE_MAD
+MusicStream *makeMP3Stream(File *file, mad_timer_t duration, uint size = 0);
+#endif
+
+#ifdef USE_VORBIS
+MusicStream *makeVorbisStream(OggVorbis_File *file, int duration);
+#endif
 
 
 #endif
