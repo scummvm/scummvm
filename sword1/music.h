@@ -25,39 +25,53 @@
 #include "scummsys.h"
 #include "common/system.h"
 #include "common/file.h"
+#include "sound/audiostream.h"
+#include "sound/rate.h"
+
 #define TOTAL_TUNES 270
 
-#define SAMPLERATE 11025
-#define BUFSIZE (6 * SAMPLERATE)
 #define WAVEHEADERSIZE 0x2C
 
 class SoundMixer;
+
+class SwordMusicHandle : public AudioInputStream {
+private:
+	File _file;
+	bool _looping;
+	int32 _fading;
+	int _rate;
+	bool _stereo;
+public:
+	SwordMusicHandle() : _looping(false), _fading(0) {}
+	virtual int readBuffer(int16 *buffer, const int numSamples);
+	int16 read();
+	bool play(const char *filename, bool loop);
+	void stop();
+	void fadeUp();
+	void fadeDown();
+	bool streaming() const { return _file.isOpen(); }
+	int32 fading() { return _fading; }
+	bool endOfData() const;
+	bool endOfStream() const { return false; }
+	bool isStereo() const { return _stereo; }
+	int getRate() const { return _rate; }
+};
 
 class SwordMusic {
 public:
 	SwordMusic(OSystem *system, SoundMixer *pMixer);
 	~SwordMusic();
-	void stream(void);
 	void startMusic(int32 tuneId, int32 loopFlag);
-	void fadeDown(void);
+	void fadeDown();
 private:
-	File _musicFile;
+	SwordMusicHandle _handles[2];
+	RateConverter *_converter[2];
 	OSystem *_system;
 	SoundMixer *_mixer;
-	bool _fading;
-	uint16 _fadeVal;
-	bool _playing;
-	bool _loop;
 	OSystem::MutexRef _mutex;
 	static void passMixerFunc(void *param, int16 *buf, uint len);
-	void mixTo(int16 *src, int16 *dst, uint32 len);
 	void mixer(int16 *buf, uint32 len);
 	static const char _tuneList[TOTAL_TUNES][8]; // in staticres.cpp
-	uint32 _waveSize, _wavePos;
-	int16 *_musicBuf; // samples for 6 seconds
-	uint32 _bufPos, _smpInBuf;
-	int16 *_fadeBuf;
-	uint32 _fadeBufPos, _fadeSmpInBuf;
 };
 
 #endif // BSMUSIC_H

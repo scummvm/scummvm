@@ -1116,7 +1116,6 @@ uint8 SwordEngine::mainLoop(void) {
 		SwordLogic::_scriptVars[SCREEN] = SwordLogic::_scriptVars[NEW_SCREEN];
 		
 		do {
-			_music->stream();
 			uint32 frameTime = _system->get_msecs();
 			_logic->engine();
 			_logic->updateScreenParams(); // sets scrolling
@@ -1154,7 +1153,6 @@ uint8 SwordEngine::mainLoop(void) {
 		if ((retCode == 0) && (SwordLogic::_scriptVars[SCREEN] != 53) && _systemVars.wantFade) {
 			_screen->fadeDownPalette();
 			while (_screen->stillFading()) {
-				_music->stream();
 				_screen->updateScreen();
 				delay(1000/12);
 			}

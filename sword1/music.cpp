@@ -19,192 +19,149 @@
  *
  */
 
-// todo: add fadeout, crossfading.
-// this code always loops. make it depend on _loopFlag
-
 #include "stdafx.h"
 #include "music.h"
 #include "sound/mixer.h"
 #include "common/util.h"
 #include "common/file.h"
 
+// This means fading takes about half a second. This may need some tuning...
+#define FADE_SAMPLES 5512
+
+// These functions are only called from SwordMusic, so I'm just going to
+// assume that if locking is needed it has already been taken care of.
+
+void SwordMusicHandle::fadeDown() {
+	if (_fading < 0)
+		_fading = -_fading;
+	else if (_fading == 0)
+		_fading = FADE_SAMPLES;
+}
+
+void SwordMusicHandle::fadeUp() {
+	if (_fading > 0)
+		_fading = -_fading;
+	else if (_fading == 0)
+		_fading = -FADE_SAMPLES;
+}
+
+bool SwordMusicHandle::endOfData() const {
+	return !streaming();
+}
+
+int SwordMusicHandle::readBuffer(int16 *buffer, const int numSamples) {
+	int samples;
+	for (samples = 0; samples < numSamples && !endOfData(); samples++)
+		*buffer++ = read();
+	return samples;
+}
+
+int16 SwordMusicHandle::read() {
+	if (!streaming())
+		return 0;
+	int16 sample = _file.readUint16LE();
+	if (_file.ioFailed()) {
+		if (!_looping) {
+			stop();
+			return 0;
+		}
+		_file.clearIOFailed();
+		_file.seek(WAVEHEADERSIZE);
+		sample = _file.readUint16LE();
+	}
+	if (_fading > 0) {
+		if (--_fading == 0) {
+			_looping = false;
+			_file.close();
+		}
+		sample = (sample * _fading) / FADE_SAMPLES;
+	} else if (_fading < 0) {
+		_fading++;
+		sample = (sample * (FADE_SAMPLES + _fading)) / FADE_SAMPLES;
+	}
+	return sample;
+}
+
+bool SwordMusicHandle::play(const char *filename, bool loop) {
+	uint8 wavHeader[WAVEHEADERSIZE];
+	stop();
+	_file.open(filename);
+	if (!_file.isOpen())
+		return false;
+	_file.read(wavHeader, WAVEHEADERSIZE);
+	_stereo = (READ_LE_UINT16(wavHeader + 0x16) == 2);
+	_rate = READ_LE_UINT16(wavHeader + 0x18);
+	_looping = loop;
+	fadeUp();
+	return true;
+}
+
+void SwordMusicHandle::stop() {
+	if (_file.isOpen())
+		_file.close();
+	_fading = 0;
+	_looping = false;
+}
+
 SwordMusic::SwordMusic(OSystem *system, SoundMixer *pMixer) {
 	_system = system;
 	_mixer = pMixer;
 	_mixer->setupPremix(passMixerFunc, this);
-	_fading = false;
-	_playing = false;
-	_loop = false;
 	_mutex = _system->create_mutex();
-	_fadeSmpInBuf = _fadeBufPos = _waveSize = _wavePos = _bufPos = _smpInBuf = 0;
-	assert(_mixer->getOutputRate() == 22050);
-	_fadeBuf = NULL;
-	_musicBuf = NULL;
+	_converter[0] = NULL;
+	_converter[1] = NULL;
 }
 
 SwordMusic::~SwordMusic() {
 	_mixer->setupPremix(0, 0);
+	delete _converter[0];
+	delete _converter[1];
 }
 
 void SwordMusic::passMixerFunc(void *param, int16 *buf, uint len) {
 	((SwordMusic*)param)->mixer(buf, len);
 }
 
-void SwordMusic::mixTo(int16 *src, int16 *dst, uint32 len) {
-	if (!_playing)
-		memset(dst, 0, len * 8);
-	if (!_fading) { // no fading, simply copy it over
-		for (uint32 cnt = 0; cnt < len; cnt++)
-			dst[(cnt << 2) | 0] = dst[(cnt << 2) | 1] =
-			dst[(cnt << 2) | 2] = dst[(cnt << 2) | 3] = (int16)READ_LE_UINT16(src + cnt);
-	} else {
-		if (_fadeBuf) { // do a cross fade
-			for (uint32 cnt = 0; cnt < len; cnt++) {
-				int16 resVal = ((int16)READ_LE_UINT16(_fadeBuf + _fadeBufPos) * _fadeVal) >> 15;
-				resVal += ((int16)READ_LE_UINT16(src + cnt) * (32768 - _fadeVal)) >> 15;
-				dst[(cnt << 2) | 0] = dst[(cnt << 2) | 1] =
-				dst[(cnt << 2) | 2] = dst[(cnt << 2) | 3] = resVal;
-				_fadeVal--;
-				_fadeBufPos++;
-				_fadeSmpInBuf--;
-			}
-			if ((!_fadeVal) || (!_fadeSmpInBuf)) {
-				free(_fadeBuf);
-				_fadeBuf = NULL;
-				_fading = false;
-			}
-			if (_fadeBufPos == BUFSIZE)
-				_fadeBufPos = 0;
-		} else { // simple fadeout
-			for (uint32 cnt = 0; cnt < len; cnt++) {
-				dst[(cnt << 2) | 0] = dst[(cnt << 2) | 1] =
-				dst[(cnt << 2) | 2] = dst[(cnt << 2) | 3] = 
-				((int16)READ_LE_UINT16(src + cnt) * _fadeVal) >> 15;
-				_fadeVal--;
-			}
-			if ((!_fadeVal) || (!_smpInBuf)) {
-				_fading = _playing = false;
-				free(_musicBuf);
-				_musicBuf = NULL;
-			}
-		}
-	}
-}
-
 void SwordMusic::mixer(int16 *buf, uint32 len) {
-	if (!_playing) {
-		memset(buf, 0, 2 * len * sizeof(int16));
-		return;
-	}
-	uint32 remain = 0;	
-	if (_smpInBuf < (len >> 1)) {
-		if (_loop)
-			return;
-		remain = (len >> 1) - _smpInBuf;
-		len = _smpInBuf << 1;
-	}
-	_system->lock_mutex(_mutex);
-	len >>= 1;
-	while (len) {
-		uint32 length = len;
-		length = MIN(length, BUFSIZE - _bufPos);
-		if (_fading && _fadeBuf) {
-			length = MIN(length, (uint32)_fadeVal);
-			length = MIN(length, _fadeSmpInBuf);
-			length = MIN(length, BUFSIZE - _fadeBufPos);
+	Common::StackLock lock(_mutex);
+	for (int i = 0; i < ARRAYSIZE(_handles); i++) {
+		if (_handles[i].streaming() && _converter[i]) {
+			st_volume_t vol = 255;
+			_converter[i]->flow(_handles[i], buf, len, vol, vol);
 		}
-		mixTo(_musicBuf + _bufPos, buf, length);
-		len -= length;
-		buf += 4 * length;
-		_bufPos += length;
-		_smpInBuf -= length;
-		if (_bufPos == BUFSIZE)
-			_bufPos = 0;
-	}
-	if (remain) {
-		memset(buf, 0, remain * 8);
-		_playing = false;
-	}
-	_system->unlock_mutex(_mutex);
-}
-
-void SwordMusic::stream(void) {
-	// make sure we've got enough samples in buffer.
-	if ((_smpInBuf < 4 * SAMPLERATE) && _playing && _musicFile.isOpen()) {
-		_system->lock_mutex(_mutex);
-		uint32 loadTotal = BUFSIZE - _smpInBuf;
-		while (uint32 doLoad = loadTotal) {
-			if (BUFSIZE - ((_bufPos + _smpInBuf) % BUFSIZE) < loadTotal)
-				doLoad = BUFSIZE - (_bufPos + _smpInBuf) % BUFSIZE;
-			doLoad = MIN(doLoad, _waveSize - _wavePos);
-			
-			int16 *dest = _musicBuf + ((_bufPos + _smpInBuf) % BUFSIZE);
-			_musicFile.read(dest, doLoad * 2);
-			_wavePos += doLoad;
-			if (_wavePos == _waveSize) {
-				if (_loop) {
-					_wavePos = 0;
-					_musicFile.seek(WAVEHEADERSIZE);
-				} else
-					loadTotal = doLoad;
-			}
-			loadTotal -= doLoad;
-			_smpInBuf += doLoad;
-		}
-		_system->unlock_mutex(_mutex);
 	}
 }
 
 void SwordMusic::startMusic(int32 tuneId, int32 loopFlag) {
-	_system->lock_mutex(_mutex);
-	_loop = (loopFlag > 0);
-	if (tuneId) {		
-		if (_musicFile.isOpen())
-			_musicFile.close();
+	Common::StackLock lock(_mutex);
+	if (strlen(_tuneList[tuneId]) > 0) {
+		int newStream = 0;
+		if (_handles[0].streaming() && _handles[1].streaming()) {
+			// If both handles are playing, stop the one that's
+			// fading down.
+			if (_handles[0].fading() > 0)
+				_handles[0].stop();
+			else
+				_handles[1].stop();
+		}
+		if (_handles[0].streaming()) {
+			_handles[0].fadeDown();
+			newStream = 1;
+		} else if (_handles[1].streaming()) {
+			_handles[1].fadeDown();
+			newStream = 0;
+		}
 		char fName[20];
 		sprintf(fName, "music/%s.wav", _tuneList[tuneId]);
-		_musicFile.open(fName);
-		if (_musicFile.isOpen()) {
-			if (_playing) { // do a cross fade
-				_fadeBuf = _musicBuf;
-				_fadeBufPos = _bufPos;
-				_fadeSmpInBuf = _smpInBuf;
-				_fading = true;
-				_fadeVal = 32768;
-			} else
-				_fading = false;
-			_musicBuf = (int16*)malloc(BUFSIZE * 2);
-
-			_musicFile.seek(0x28);
-			_waveSize = _musicFile.readUint32LE() / 2;
-			_wavePos = 0;
-			_smpInBuf = 0;
-			_bufPos = 0;
-			_playing = true;
-		} else {
-			_fading = true;
-			_fadeVal = 32768;
-			if (_fadeBuf) {
-				free(_fadeBuf);
-				_fadeBuf = NULL;
-			}
-		}
-	} else {
-		if (_playing)
-			fadeDown();
-		if (_musicFile.isOpen())
-			_musicFile.close();
-	}
-	_system->unlock_mutex(_mutex);
-	stream();
-}
-
-void SwordMusic::fadeDown(void) {
-	_fadeVal = 32768;
-	_fading = true;
-	if (_fadeBuf) {
-		free(_fadeBuf);
-		_fadeBuf = NULL;
+		_handles[newStream].play(fName, loopFlag);
+		delete _converter[newStream];
+		_converter[newStream] = makeRateConverter(_handles[newStream].getRate(), _mixer->getOutputRate(), _handles[newStream].isStereo(), false);
 	}
 }
 
+void SwordMusic::fadeDown() {
+	Common::StackLock lock(_mutex);
+	for (int i = 0; i < ARRAYSIZE(_handles); i++)
+		if (_handles[i].streaming())
+			_handles[i].fadeDown();
+}

@@ -231,7 +231,6 @@ uint8 SwordControl::runPanel(void) {
 	_music->startMusic(61, 1);
 
 	do {
-		_music->stream();
 		if (newMode) {
 			mode = newMode;
 			fullRefresh = true;
