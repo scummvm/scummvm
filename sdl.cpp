@@ -467,14 +467,16 @@ void OSystem_SDL::add_dirty_rect(int x, int y, int w, int h) {
 #define DOLINE(x) a ^= ((uint32*)buf)[0+(x)*(SCREEN_WIDTH/4)]; b ^= ((uint32*)buf)[1+(x)*(SCREEN_WIDTH/4)]
 void OSystem_SDL::mk_checksums(const byte *buf) {
 	uint32 *sums = dirty_checksums;
-	int x,y;
+	uint x,y;
+	const uint last_x = (uint)SCREEN_WIDTH/8;
+	const uint last_y = (uint)SCREEN_HEIGHT/8;
 
 	/* the 8x8 blocks in buf are enumerated starting in the top left corner and
 	 * reading each line at a time from left to right */
-	for(y=0; y!=SCREEN_HEIGHT/8; y++,buf+=SCREEN_WIDTH*(8-1))
-		for(x=0; x!=SCREEN_WIDTH/8; x++,buf+=8) {
-			int32 a = x;
-			int32 b = y;
+	for(y=0; y != last_y; y++, buf+=SCREEN_WIDTH*(8-1))
+		for(x=0; x != last_x; x++, buf+=8) {
+			uint32 a = x;
+			uint32 b = y;
 
 			DOLINE(0); ROL(a,13); ROL(b,11);
 			DOLINE(2); ROL(a,13); ROL(b,11);
