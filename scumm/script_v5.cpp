@@ -1033,13 +1033,6 @@ void Scumm_v5::o5_getActorY() {
 	if (_gameId == GID_INDY3_256 || _gameId == GID_INDY3) {
 		a = getVarOrDirectByte(0x80);
 
-		// Indy3 hack to cheat the 'Leap of Faith' grail test
-		// This test is so damn annoying, I'm leaving this in.
-		if (_roomResource == 85) {
-			setResult(94);
-			return;
-		}
-
 		// FIXME - bug 636433 workaround (can't get into Zeppelin) 
 		if (_roomResource == 36) {
 			setResult(getObjY(a) - 1);
