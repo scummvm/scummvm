@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef __SkyGrid__
-#define __SkyGrid__
+#ifndef SKYGRID_H
+#define SKYGRID_H
 
 #include "stdafx.h"
 #include "disk.h"
@@ -53,7 +53,7 @@ public:
 private:
 	static int8 _gridConvertTable[];
 	uint8 *_gameGrids;
-	SkyDisk *_disk;
+	SkyDisk *_skyDisk;
 };
 
-#endif //__SkyGrid__
+#endif //SKYGRID_H

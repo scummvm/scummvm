@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef __SkyMouse__
-#define __SkyMouse__
+#ifndef SKYMOUSE_H
+#define SKYMOUSE_H
 
 #include "stdafx.h"
 #include "sky/disk.h"
@@ -81,4 +81,4 @@ protected:
 
 };
 
-#endif //__SkyMouse__
+#endif //SKYMOUSE_H

@@ -132,7 +132,7 @@ int8 SkyGrid::_gridConvertTable[] = {
 SkyGrid::SkyGrid(SkyDisk *pDisk) {
 
 	_gameGrids = (uint8 *)malloc(TOT_NO_GRIDS * GRID_SIZE);
-	_disk = pDisk;
+	_skyDisk = pDisk;
 }
 
 SkyGrid::~SkyGrid(void) {
@@ -144,7 +144,7 @@ void SkyGrid::loadGrids(void) {
 
 	// no endian conversion necessary as I'm using uint8* instead of uint32*
 	for (uint8 cnt = 0; cnt < TOT_NO_GRIDS; cnt++)
-		_disk->loadFile(GRID_FILE_START + cnt, _gameGrids + (cnt * GRID_SIZE));
+		_skyDisk->loadFile(GRID_FILE_START + cnt, _gameGrids + (cnt * GRID_SIZE));
 	// todo: add BASS hack for Reich's door (grid.asm, load_grids proc)
 }
 
