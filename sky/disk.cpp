@@ -172,9 +172,18 @@ uint8 *SkyDisk::loadFile(uint16 fileNr, uint8 *dest) {
 		if ( (uint8)(_fileFlags >> (22) & 0x1) ) //do we include the header?
 			inputPtr += sizeof(struct dataFileHeader);
 		else {
+#ifdef SCUMM_BIG_ENDIAN
+			// Convert dataFileHeader to BE (it only consists of 16 bit words)
+			for (uint i = 0; i < sizeof(struct dataFileHeader); i+=2) {
+				*(uint16 *)outputPtr = READ_LE_UINT16(inputPtr);
+				inputPtr += 2;
+				outputPtr += 2;
+			}
+#else
 			memcpy(outputPtr, inputPtr, sizeof(struct dataFileHeader));
 			inputPtr += sizeof(struct dataFileHeader);
 			outputPtr += sizeof(struct dataFileHeader);
+#endif
 		}
 
 		RncDecoder rncDecoder;
@@ -253,14 +262,15 @@ uint8 *SkyDisk::getFileInfo(uint16 fileNr) {
 	uint16 *dnrTbl16Ptr = (uint16 *)_dinnerTableArea;
 
 	for (i = 0; i < _dinnerTableEntries; i++) {
-		if (READ_LE_UINT16(dnrTbl16Ptr + (i * 4)) == fileNr) {
+		if (READ_LE_UINT16(dnrTbl16Ptr) == fileNr) {
 			debug(2, "file %d found!", fileNr);
-			return (uint8 *)(dnrTbl16Ptr + (i * 4));
+			return (uint8 *)dnrTbl16Ptr;
 		}
+		dnrTbl16Ptr += 4;
 	}
 
-	// if file not found return NULL
-	return (uint8 *)NULL;
+	// if file not found return 0
+	return 0;
 }
 
 void SkyDisk::fnCacheChip(uint32 list) {
