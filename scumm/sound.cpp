@@ -715,7 +715,7 @@ int Sound::isSoundRunning(int sound) const {
 			// ID number of the first active music it finds.
 			// TODO handle MRAW (pcm music) in humongous games
 			if (_currentMusic)
-				return _currentMusic;
+				return (_musicChannelHandle.isActive()) ? _currentMusic : 0;
 			else
 				return _vm->_imuse->getSoundStatus(sound);
 		}
