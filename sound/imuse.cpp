@@ -24,6 +24,7 @@
 #include "fmopl.h"
 #include "mididrv.h"
 #include "imuse.h"
+#include "saveload.h"
 
 /*
  * Some constants
