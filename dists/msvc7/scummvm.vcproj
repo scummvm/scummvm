@@ -21,7 +21,7 @@
 				AdditionalOptions="/wd4201 /wd4512 /wd4511 /wd4100 /wd4121 /wd4310 /wd4706 /wd4127 /wd4189 /wd4702"
 				Optimization="0"
 				AdditionalIncludeDirectories="../../;../../common"
-				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE;USE_ZLIB;USE_MAD;USE_VORBIS;USE_MPEG2;DISABLE_SAGA"
+				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE;USE_ZLIB;USE_MAD;USE_VORBIS;USE_MPEG2;USE_NASM;DISABLE_SAGA"
 				MinimalRebuild="TRUE"
 				ExceptionHandling="TRUE"
 				BasicRuntimeChecks="3"
@@ -76,7 +76,7 @@
 				InlineFunctionExpansion="1"
 				OmitFramePointers="TRUE"
 				AdditionalIncludeDirectories="../../;../../common"
-				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE;USE_ZLIB;USE_MAD;USE_VORBIS;DISABLE_SAGA"
+				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE;USE_ZLIB;USE_MAD;USE_VORBIS;USE_MPEG2;USE_NASM;DISABLE_SAGA"
 				StringPooling="TRUE"
 				MinimalRebuild="FALSE"
 				ExceptionHandling="TRUE"
@@ -254,10 +254,48 @@
 					RelativePath="..\..\common\scaler\hq2x.h">
 				</File>
 				<File
+					RelativePath="..\..\common\scaler\hq2x_i386.asm">
+					<FileConfiguration
+						Name="Debug|Win32">
+						<Tool
+							Name="VCCustomBuildTool"
+							CommandLine="nasm.exe -O1 -f win32 -g -o $(OutDir)\$(InputName).obj $(InputPath)
+"
+							Outputs="$(OutDir)\$(InputName).obj"/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32">
+						<Tool
+							Name="VCCustomBuildTool"
+							CommandLine="nasm.exe -O1 -f win32 -o $(OutDir)\$(InputName).obj $(InputPath)
+"
+							Outputs="$(OutDir)\$(InputName).obj"/>
+					</FileConfiguration>
+				</File>
+				<File
 					RelativePath="..\..\common\scaler\hq3x.cpp">
 				</File>
 				<File
 					RelativePath="..\..\common\scaler\hq3x.h">
+				</File>
+				<File
+					RelativePath="..\..\common\scaler\hq3x_i386.asm">
+					<FileConfiguration
+						Name="Debug|Win32">
+						<Tool
+							Name="VCCustomBuildTool"
+							CommandLine="nasm.exe -O1 -f win32 -g -o $(OutDir)\$(InputName).obj $(InputPath)
+"
+							Outputs="$(OutDir)\$(InputName).obj"/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32">
+						<Tool
+							Name="VCCustomBuildTool"
+							CommandLine="nasm.exe -O1 -f win32 -o $(OutDir)\$(InputName).obj $(InputPath)
+"
+							Outputs="$(OutDir)\$(InputName).obj"/>
+					</FileConfiguration>
 				</File>
 				<File
 					RelativePath="..\..\common\scaler\intern.h">
