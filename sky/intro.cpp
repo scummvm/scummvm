@@ -326,7 +326,7 @@ void SkyState::intro(void) {
 		free(_diffData);
 		WAIT_SEQUENCE;
  		
-		free(_workScreen); 
+		free(_workBase);
 		_workScreen = _skyDisk->loadFile(FN_4B_LOG, NULL);
 		seq4bData = _skyDisk->loadFile(FN_4B, NULL);	
 
