@@ -498,148 +498,146 @@ static int mapKey(SDLKey key, SDLMod mod, Uint16 unicode)
 bool OSystem_SDL_Common::poll_event(Event *event) {
 	SDL_Event ev;
 	int axis;
+	byte b = 0;
+	
 	kbd_mouse();
 
-	for(;;) {
-		if (!SDL_PollEvent(&ev))
-			return false;
-
+	while(SDL_PollEvent(&ev)) {
 		switch(ev.type) {
-		case SDL_KEYDOWN: {
-				byte b = 0;
-				if (ev.key.keysym.mod & KMOD_SHIFT)
-					b |= KBD_SHIFT;
-				if (ev.key.keysym.mod & KMOD_CTRL)
-					b |= KBD_CTRL;
-				if (ev.key.keysym.mod & KMOD_ALT)
-					b |= KBD_ALT;
-				event->kbd.flags = b;
+		case SDL_KEYDOWN:
+			if (ev.key.keysym.mod & KMOD_SHIFT)
+				b |= KBD_SHIFT;
+			if (ev.key.keysym.mod & KMOD_CTRL)
+				b |= KBD_CTRL;
+			if (ev.key.keysym.mod & KMOD_ALT)
+				b |= KBD_ALT;
+			event->kbd.flags = b;
 
-				// Alt-Return toggles full screen mode				
-				if (b == KBD_ALT && ev.key.keysym.sym==SDLK_RETURN) {
-					property(PROP_TOGGLE_FULLSCREEN, NULL);
-					break;
-				}
+			// Alt-Return toggles full screen mode				
+			if (b == KBD_ALT && ev.key.keysym.sym == SDLK_RETURN) {
+				property(PROP_TOGGLE_FULLSCREEN, NULL);
+				break;
+			}
 
-				if ((b == KBD_CTRL && ev.key.keysym.sym=='z') || (b == KBD_ALT && ev.key.keysym.sym=='x')) {
-					quit();
-					break;
-				}
-				// Ctr-Alt-1 till Ctrl-Alt-9 will change the GFX mode
-				if (b == (KBD_CTRL|KBD_ALT) && 
-				    (ev.key.keysym.sym>='1') && (ev.key.keysym.sym<='9')) {
-					Property prop;
-					prop.gfx_mode = ev.key.keysym.sym - '1';
-					property(PROP_SET_GFX_MODE, &prop);
-					break;
-				}
+			// Ctrl-z and Alt-X quit
+			if ((b == KBD_CTRL && ev.key.keysym.sym=='z') || (b == KBD_ALT && ev.key.keysym.sym=='x')) {
+				quit();
+				break;
+			}
+
 #ifdef MACOSX
-				// quit on Cmd-Q on Mac
-				if ((ev.key.keysym.mod & KMOD_META) && ev.key.keysym.sym=='q') {
-					quit();
-					break;
-				}
+			// On Macintosh', Cmd-Q quits
+			if ((ev.key.keysym.mod & KMOD_META) && ev.key.keysym.sym=='q') {
+				quit();
+				break;
+			}
 #endif
+			// Ctr-Alt-1 till Ctrl-Alt-9 will change the GFX mode
+			if (b == (KBD_CTRL|KBD_ALT) && 
+				(ev.key.keysym.sym>='1') && (ev.key.keysym.sym<='9')) {
+				Property prop;
+				prop.gfx_mode = ev.key.keysym.sym - '1';
+				property(PROP_SET_GFX_MODE, &prop);
+				break;
+			}
 
 #ifdef QTOPIA
-				// quit on fn+backspace on zaurus
-				if (ev.key.keysym.sym == 127) {
-					quit();
-					break;
-				}
-				// map menu key (f11) to f5 (scumm menu)
-				if (ev.key.keysym.sym == SDLK_F11) {
-					event->event_code = EVENT_KEYDOWN;
-					event->kbd.keycode = SDLK_F5;
-					event->kbd.ascii = mapKey(SDLK_F5, ev.key.keysym.mod, 0);
-				}
-				// map center (space) to tab (default action )
-				// I wanted to map the calendar button but the calendar comes up
-				//
-				else if (ev.key.keysym.sym == SDLK_SPACE) {
-					event->event_code = EVENT_KEYDOWN;
-					event->kbd.keycode = SDLK_TAB;
-					event->kbd.ascii = mapKey(SDLK_TAB, ev.key.keysym.mod, 0);
-				}
-				// since we stole space (pause) above we'll rebind it to the tab key on the keyboard
-				else if (ev.key.keysym.sym == SDLK_TAB) {
-					event->event_code = EVENT_KEYDOWN;
-					event->kbd.keycode = SDLK_SPACE;
-					event->kbd.ascii = mapKey(SDLK_SPACE, ev.key.keysym.mod, 0);
-				}
-				else {
-				// let the events fall through if we didn't change them, this may not be the best way to
-				// set it up, but i'm not sure how sdl would like it if we let if fall through then redid it though.
-				// and yes i have an huge terminal size so i dont wrap soon enough.
-					event->event_code = EVENT_KEYDOWN;
-					event->kbd.keycode = ev.key.keysym.sym;
-					event->kbd.ascii = mapKey(ev.key.keysym.sym, ev.key.keysym.mod, ev.key.keysym.unicode);
-				}
-#else
+			// quit on fn+backspace on zaurus
+			if (ev.key.keysym.sym == 127) {
+				quit();
+				break;
+			}
+
+			// map menu key (f11) to f5 (scumm menu)
+			if (ev.key.keysym.sym == SDLK_F11) {
+				event->event_code = EVENT_KEYDOWN;
+				event->kbd.keycode = SDLK_F5;
+				event->kbd.ascii = mapKey(SDLK_F5, ev.key.keysym.mod, 0);
+			}
+			// map center (space) to tab (default action )
+			// I wanted to map the calendar button but the calendar comes up
+			//
+			else if (ev.key.keysym.sym == SDLK_SPACE) {
+				event->event_code = EVENT_KEYDOWN;
+				event->kbd.keycode = SDLK_TAB;
+				event->kbd.ascii = mapKey(SDLK_TAB, ev.key.keysym.mod, 0);
+			}
+			// since we stole space (pause) above we'll rebind it to the tab key on the keyboard
+			else if (ev.key.keysym.sym == SDLK_TAB) {
+				event->event_code = EVENT_KEYDOWN;
+				event->kbd.keycode = SDLK_SPACE;
+				event->kbd.ascii = mapKey(SDLK_SPACE, ev.key.keysym.mod, 0);
+			} else {
+			// let the events fall through if we didn't change them, this may not be the best way to
+			// set it up, but i'm not sure how sdl would like it if we let if fall through then redid it though.
+			// and yes i have an huge terminal size so i dont wrap soon enough.
 				event->event_code = EVENT_KEYDOWN;
 				event->kbd.keycode = ev.key.keysym.sym;
 				event->kbd.ascii = mapKey(ev.key.keysym.sym, ev.key.keysym.mod, ev.key.keysym.unicode);
+			}
+#else
+			event->event_code = EVENT_KEYDOWN;
+			event->kbd.keycode = ev.key.keysym.sym;
+			event->kbd.ascii = mapKey(ev.key.keysym.sym, ev.key.keysym.mod, ev.key.keysym.unicode);
 #endif
-				
-				switch(ev.key.keysym.sym) {
-					case SDLK_LEFT:
-						km.x_vel = -1;
-						km.x_down_count = 1;
-					break;
-					case SDLK_RIGHT:
-						km.x_vel =  1;
-						km.x_down_count = 1;
-					break;
-					case SDLK_UP:
-						km.y_vel = -1;
-						km.y_down_count = 1;
-					break;
-					case SDLK_DOWN:
-						km.y_vel =  1;
-						km.y_down_count = 1;
-					break;
-					default:
-					break;
-				}
-
-				return true;
+			
+			switch(ev.key.keysym.sym) {
+			case SDLK_LEFT:
+				km.x_vel = -1;
+				km.x_down_count = 1;
+				break;
+			case SDLK_RIGHT:
+				km.x_vel =  1;
+				km.x_down_count = 1;
+				break;
+			case SDLK_UP:
+				km.y_vel = -1;
+				km.y_down_count = 1;
+				break;
+			case SDLK_DOWN:
+				km.y_vel =  1;
+				km.y_down_count = 1;
+				break;
+			default:
+				break;
 			}
 
-		case SDL_KEYUP: {
+			return true;
+	
+		case SDL_KEYUP:
 			event->event_code = EVENT_KEYUP;
 			event->kbd.keycode = ev.key.keysym.sym;
 			event->kbd.ascii = mapKey(ev.key.keysym.sym, ev.key.keysym.mod, ev.key.keysym.unicode);
 
-				switch(ev.key.keysym.sym){
-					case SDLK_LEFT:
-						if (km.x_vel < 0) {
-							km.x_vel = 0;
-							km.x_down_count = 0;
-						}
-					break;
-					case SDLK_RIGHT:
-						if (km.x_vel > 0) {
-							km.x_vel = 0;
-							km.x_down_count = 0;
-						}
-					break;
-					case SDLK_UP:
-						if (km.y_vel < 0) {
-							km.y_vel = 0;
-							km.y_down_count = 0;
-						}
-					break;
-					case SDLK_DOWN:
-						if (km.y_vel > 0) {
-							km.y_vel = 0;
-							km.y_down_count = 0;
-						}
-					break;
-					default:
-					break;
+			switch(ev.key.keysym.sym) {
+			case SDLK_LEFT:
+				if (km.x_vel < 0) {
+					km.x_vel = 0;
+					km.x_down_count = 0;
 				}
-				return true;
+				break;
+			case SDLK_RIGHT:
+				if (km.x_vel > 0) {
+					km.x_vel = 0;
+					km.x_down_count = 0;
+				}
+				break;
+			case SDLK_UP:
+				if (km.y_vel < 0) {
+					km.y_vel = 0;
+					km.y_down_count = 0;
+				}
+				break;
+			case SDLK_DOWN:
+				if (km.y_vel > 0) {
+					km.y_vel = 0;
+					km.y_down_count = 0;
+				}
+				break;
+			default:
+				break;
 			}
+			return true;
 
 		case SDL_MOUSEMOTION:
 			event->event_code = EVENT_MOUSEMOVE;
@@ -656,12 +654,10 @@ bool OSystem_SDL_Common::poll_event(Event *event) {
 				event->event_code = EVENT_LBUTTONDOWN;
 			else if (ev.button.button == SDL_BUTTON_RIGHT)
 				event->event_code = EVENT_RBUTTONDOWN;
-#if defined(SDL_BUTTON_WHEELUP) && defined(SDL_BUTTON_WHEELDOWN)
 			else if (ev.button.button == SDL_BUTTON_WHEELUP)
 				event->event_code = EVENT_WHEELUP;
 			else if (ev.button.button == SDL_BUTTON_WHEELDOWN)
 				event->event_code = EVENT_WHEELDOWN;
-#endif
 			else
 				break;
 			km.x = event->mouse.x = ev.motion.x;
@@ -784,12 +780,18 @@ bool OSystem_SDL_Common::poll_event(Event *event) {
 			}
 			return true;
 
+		case SDL_VIDEOEXPOSE:
+			_forceFull = true;
+			break;
+
 		case SDL_QUIT:
 			quit();
+			break;
 		}
 	}
+	return false;
 }
-	
+
 bool OSystem_SDL_Common::set_sound_proc(void *param, SoundProc *proc, byte format) {
 	SDL_AudioSpec desired;
 
