@@ -373,7 +373,7 @@ int32 MoviePlayer::playDummy(const char *filename, MovieTextObject *text[], byte
 		_vm->_graphics->createSurface(&msgSprite, &msgSurface);
 		_vm->_graphics->drawSurface(&msgSprite, msgSurface);
 		_vm->_graphics->deleteSurface(msgSurface);
-		_vm->_memory->memFree(data);
+		free(data);
 
 		// In case the cutscene has a long lead-in, start just before
 		// the first line of text.
