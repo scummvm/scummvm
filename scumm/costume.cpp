@@ -67,11 +67,15 @@ byte CostumeRenderer::mainRoutine(int xmoveCur, int ymoveCur) {
 	int step;
 	
 	CHECK_HEAP
-	v1.mask = 0xF;
-	v1.shr = 4;
+
+	v1.scaletable = cost_scaleTable;
+
 	if (_loaded._numColors == 32) {
 		v1.mask = 7;
 		v1.shr = 3;
+	} else {
+		v1.mask = 0xF;
+		v1.shr = 4;
 	}
 
 	switch (_loaded._ptr[7] & 0x7F) {
@@ -158,7 +162,7 @@ byte CostumeRenderer::mainRoutine(int xmoveCur, int ymoveCur) {
 			if (scal < _scaleY)
 				y_bottom++;
 		}
-		_scaleIndexY = _scaleIndexYTop = 128 - ymoveCur;
+		_scaleIndexY = 128 - ymoveCur;
 	} else {
 		if (!_mirror)
 			xmoveCur = -xmoveCur;
@@ -175,9 +179,8 @@ byte CostumeRenderer::mainRoutine(int xmoveCur, int ymoveCur) {
 		y_bottom = y_top + _height;
 	}
 
-	v1.scaleXstep = -1;
-	if (_mirror)
-		v1.scaleXstep = 1;
+	v1.skip_width = _width;
+	v1.scaleXstep = _mirror ? 1 : -1;
 
 	_vm->updateDirtyRect(0, x_left, x_right + 1, y_top, y_bottom, _dirty_id);
 
@@ -193,7 +196,7 @@ byte CostumeRenderer::mainRoutine(int xmoveCur, int ymoveCur) {
 		if (!use_scaling)
 			skip = -v1.x;
 		if (skip > 0) {
-			_width2 -= skip;
+			v1.skip_width -= skip;
 			codec1_ignorePakCols(skip);
 			v1.x = 0;
 		} else {
@@ -201,14 +204,14 @@ byte CostumeRenderer::mainRoutine(int xmoveCur, int ymoveCur) {
 			if (skip <= 0) {
 				drawFlag = 2;
 			} else {
-				_width2 -= skip;
+				v1.skip_width -= skip;
 			}
 		}
 	} else {
 		if (!use_scaling)
 			skip = x_right - _vm->_screenWidth;
 		if (skip > 0) {
-			_width2 -= skip;
+			v1.skip_width -= skip;
 			codec1_ignorePakCols(skip);
 			v1.x = _vm->_screenWidth - 1;
 		} else {
@@ -216,11 +219,11 @@ byte CostumeRenderer::mainRoutine(int xmoveCur, int ymoveCur) {
 			if (skip <= 0)
 				drawFlag = 2;
 			else
-				_width2 -= skip;
+				v1.skip_width -= skip;
 		}
 	}
 
-	if (_width2 == 0)
+	if (v1.skip_width <= 0)
 		return 0;
 
 	if (x_left < 0)
@@ -261,9 +264,9 @@ byte CostumeRenderer::mainRoutine(int xmoveCur, int ymoveCur) {
 void CostumeRenderer::proc3() {
 	const byte *mask, *src;
 	byte *dst;
-	byte maskbit, len, height, pcolor, width;
-	int color;
-	uint y;
+	byte len, maskbit;
+	uint y, color, height, pcolor;
+	const byte *scaleytab;
 	bool masked;
 
 	y = v1.y;
@@ -272,8 +275,8 @@ void CostumeRenderer::proc3() {
 	len = v1.replen;
 	color = v1.repcolor;
 	height = _height;
-	width = _width2;
 
+	scaleytab = &v1.scaletable[_scaleIndexY];
 	maskbit = revBitMask[v1.x & 7];
 	mask = v1.mask_ptr + (v1.x >> 3);
 
@@ -288,7 +291,7 @@ void CostumeRenderer::proc3() {
 			len = *src++;
 
 		do {
-			if (_scaleY == 255 || cost_scaleTable[_scaleIndexY++] < _scaleY) {
+			if (_scaleY == 255 || *scaleytab++ < _scaleY) {
 				masked = (y < _outheight) && v1.mask_ptr && ((mask[0] | mask[v1.imgbufoffs]) & maskbit);
 				
 				if (color && y < _outheight && !masked) {
@@ -304,18 +307,19 @@ void CostumeRenderer::proc3() {
 					}
 					*dst = pcolor;
 				}
-				dst += _vm->_screenWidth;
+				dst += _outwidth;
 				mask += _numStrips;
 				y++;
 			}
 			if (!--height) {
-				if (!--width)
+				if (!--v1.skip_width)
 					return;
 				height = _height;
 				y = v1.y;
 
-				_scaleIndexY = _scaleIndexYTop;
-				if (_scaleX == 255 || cost_scaleTable[_scaleIndexX] < _scaleX) {
+				scaleytab = &v1.scaletable[_scaleIndexY];
+
+				if (_scaleX == 255 || v1.scaletable[_scaleIndexX] < _scaleX) {
 					v1.x += v1.scaleXstep;
 					if (v1.x < 0 || v1.x >= _vm->_screenWidth)
 						return;
@@ -466,7 +470,7 @@ byte CostumeRenderer::drawLimb(const CostumeData &cost, int limb) {
 			assert(_srcptr[3] == 0);
 		
 			costumeInfo = (const CostumeInfo *)_srcptr;
-			_width = _width2 = READ_LE_UINT16(&costumeInfo->width);
+			_width = READ_LE_UINT16(&costumeInfo->width);
 			_height = READ_LE_UINT16(&costumeInfo->height);
 			xmoveCur = _xmove + (int16)READ_LE_UINT16(&costumeInfo->rel_x);
 			ymoveCur = _ymove + (int16)READ_LE_UINT16(&costumeInfo->rel_y);

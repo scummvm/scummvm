@@ -47,10 +47,8 @@ class CostumeRenderer : public BaseCostumeRenderer {
 protected:
 	LoadedCostume _loaded;
 	
-	byte _width2;
-
 	byte _scaleIndexX;						/* must wrap at 256 */
-	byte _scaleIndexY, _scaleIndexYTop;
+	byte _scaleIndexY;
 	byte _palette[32];
 
 public:

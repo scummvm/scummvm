@@ -388,9 +388,9 @@ void AkosRenderer::codec1_genericDecode() {
 					maskbit = revBitMask[v1.x & 7];
 					v1.destptr += v1.scaleXstep;
 				}
-				mask = v1.mask_ptr + (v1.x >> 3);
 				v1.scaleXindex += v1.scaleXstep;
 				dst = v1.destptr;
+				mask = v1.mask_ptr + (v1.x >> 3);
 			}
 		StartPos:;
 		} while (--len);
