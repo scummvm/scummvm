@@ -4681,6 +4681,8 @@ int IMuseGM::midi_driver_thread(void *param)
 			mid->_se->on_timer();
 		}
 	}
+
+	return 0;
 }
 #else
 #include <proto/exec.h>
