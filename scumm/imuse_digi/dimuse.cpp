@@ -177,7 +177,6 @@ void IMuseDigital::saveOrLoad(Serializer *ser) {
 				error("IMuseDigital::saveOrLoad(): Can't handle %d bit samples", bits);
 
 #ifdef SCUMM_LITTLE_ENDIAN
-#error foo
 			if (track->compressed)
 				track->mixerFlags |= SoundMixer::FLAG_LITTLE_ENDIAN;
 #endif
