@@ -895,6 +895,17 @@ static int compareDrawOrder(const void* a, const void* b)
 	if (diff > 0)
 		return +1;
 
+	// FIXME: This hack works around bug #775097. It's probably wrong, though :-/
+	// Would be interesting if somebody could check the disassembly (see also the
+	// comment on the above mentioned tracker item).
+	if (g_scumm->_gameId == GID_TENTACLE) {
+		diff = actor1->forceClip - actor2->forceClip;
+		if (diff < 0)
+			return -1;
+		if (diff > 0)
+			return +1;
+	}
+
 	// The qsort() function is not guaranteed to be stable (i.e. it may
 	// re-order "equal" elements in an array it sorts). Hence we use the
 	// actor number as tie-breaker. This is needed for the Sam & Max intro,
