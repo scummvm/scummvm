@@ -115,7 +115,6 @@ void IMuseDigital::startSound(int soundId, const char *soundName, int soundType,
 				_track[l]->iteration = 0;
 				_track[l]->souStream = true;
 				_track[l]->soundName[0] = 0;
-				// Do nothing here, we already have an audio stream
 			} else {
 				_track[l]->souStream = false;
 				strcpy(_track[l]->soundName, soundName);
@@ -155,7 +154,7 @@ void IMuseDigital::startSound(int soundId, const char *soundName, int soundType,
 			}
 
 			if (input) {
-				_track[l]->stream2 = NULL;
+				_track[l]->stream2 = input;
 				_track[l]->stream = NULL;
 				_track[l]->started = false;
 			} else {
