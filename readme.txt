@@ -510,8 +510,8 @@ Credits:
  Porters:
         Lionel Ulmer       - X11/Linux port
         Nicolas Bacca      - PocketPC/WinCE port
-        Mutwin Kraus       - Macintosh port (Retired)
-        Max Horn           - Macintosh port, many bug fixes
+        Mutwin Kraus       - MacOS 9 port (Retired)
+        Max Horn           - MacOS X port, many bug fixes, new GUI
         Marcus Comstedt    - Dreamcast port
         Ruediger Hanke     - MorphOS port
 
