@@ -257,6 +257,8 @@ uint8 Control::runPanel(void) {
 			fullRefresh = true;
 			destroyButtons();
 			memset(_screenBuf, 0, 640 * 480);
+			if (mode != BUTTON_SAVE_PANEL)
+				_cursorVisible = false;
 		}
 		switch (mode) {
 			case BUTTON_MAIN_PANEL:
@@ -268,8 +270,19 @@ uint8 Control::runPanel(void) {
 					_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, true);
 					setupSaveRestorePanel(true);
 				}
-				if (_keyPressed)
-					handleSaveKey(_keyPressed);
+				if (_selectedSavegame < 255) {
+					bool visible = _cursorVisible;
+					if (_cursorTick == 0)
+						_cursorVisible = true;
+					else if (_cursorTick == 3)
+						_cursorVisible = false;
+					if (_keyPressed)
+						handleSaveKey(_keyPressed);
+					else if (_cursorVisible != visible)
+						showSavegameNames();
+					if (++_cursorTick > 5)
+						_cursorTick = 0;
+				}
 				break;
 			case BUTTON_RESTORE_PANEL:
 				if (fullRefresh)
@@ -334,6 +347,16 @@ uint8 Control::getClicks(uint8 mode, uint8 *retVal) {
 				showSavegameNames();
 		}
 		_selectedButton = 255;
+	}
+	if (_mouseState & BS1_WHEEL_UP) {
+		for (uint8 cnt = 0; cnt < checkButtons; cnt++)
+			if (_buttons[cnt]->_id == BUTTON_SCROLL_UP_SLOW)
+				return handleButtonClick(_buttons[cnt]->_id, mode, retVal);
+	}
+	if (_mouseState & BS1_WHEEL_DOWN) {
+		for (uint8 cnt = 0; cnt < checkButtons; cnt++)
+			if (_buttons[cnt]->_id == BUTTON_SCROLL_DOWN_SLOW)
+				return handleButtonClick(_buttons[cnt]->_id, mode, retVal);
 	}
 	return 0;
 }
@@ -731,11 +754,15 @@ void Control::showSavegameNames(void) {
 		_buttons[cnt]->draw();
 		uint8 textMode = TEXT_LEFT_ALIGN;
 		uint16 ycoord = _saveButtons[cnt].y + 2;
+		uint8 str[40];
+		sprintf((char*)str, "%d. %s", cnt + _saveScrollPos + 1, _saveNames[cnt + _saveScrollPos]);
 		if (cnt + _saveScrollPos == _selectedSavegame) {
 			textMode |= TEXT_RED_FONT;
 			ycoord += 2;
+			if (_cursorVisible)
+				strcat((char*)str, "_");
 		}
-		renderText(_saveNames[cnt + _saveScrollPos], _saveButtons[cnt].x + 6, ycoord, textMode);
+		renderText(str, _saveButtons[cnt].x + 6, ycoord, textMode);
 	}
 }
 
@@ -758,6 +785,8 @@ void Control::saveNameSelect(uint8 id, bool saving) {
 			_oldName[0] = '\0';
 		}
 	}
+	if (_selectedSavegame < 255)
+		_cursorTick = 0;
 	showSavegameNames();
 }
 
@@ -814,9 +843,10 @@ uint16 Control::getTextWidth(const uint8 *str) {
 
 void Control::renderText(const uint8 *str, uint16 x, uint16 y, uint8 mode) {
 	uint8 *font = _font;
-	if (mode & TEXT_RED_FONT)
+	if (mode & TEXT_RED_FONT) {
+		mode &= ~TEXT_RED_FONT;
 		font = _redFont;
-	mode &= ~TEXT_RED_FONT;
+	}
 	
 	if (mode == TEXT_RIGHT_ALIGN) // negative x coordinate means right-aligned.
 		x -= getTextWidth(str);
@@ -995,6 +1025,14 @@ void Control::delay(uint32 msecs) {
 			case OSystem::EVENT_LBUTTONUP:
 				_mouseDown = false;
 				_mouseState |= BS1L_BUTTON_UP;
+				break;
+			case OSystem::EVENT_WHEELUP:
+				_mouseDown = false;
+				_mouseState |= BS1_WHEEL_UP;
+				break;
+			case OSystem::EVENT_WHEELDOWN:
+				_mouseDown = false;
+				_mouseState |= BS1_WHEEL_DOWN;
 				break;
 			case OSystem::EVENT_QUIT:
 				_system->quit();
