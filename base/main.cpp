@@ -345,7 +345,9 @@ extern "C" int scummvm_main(GameDetector &detector, int argc, char *argv[]) {
 		}
 	}
 	if (cfgFilename != NULL)
-		ConfMan.switchFile(cfgFilename);
+		ConfMan.loadConfigFile(cfgFilename);
+	else
+		ConfMan.loadDefaultConfigFile();
 
 	// Update the config file
 	ConfMan.set("versioninfo", gScummVMVersion, Common::ConfigManager::kApplicationDomain);

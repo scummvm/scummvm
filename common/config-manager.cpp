@@ -62,7 +62,12 @@ const String falseStr("false");
 
 
 ConfigManager::ConfigManager() {
+	// Ensure the global domain(s) are setup.
+	_globalDomains.addKey(kApplicationDomain);
+}
 
+
+void ConfigManager::loadDefaultConfigFile() {
 	char configFile[MAXPATHLEN];
 #if defined(UNIX)
 	if(getenv("HOME") != NULL)
@@ -80,10 +85,10 @@ ConfigManager::ConfigManager() {
 	#endif
 #endif
 
-	switchFile(configFile);
+	loadConfigFile(configFile);
 }
 
-void ConfigManager::switchFile(const String &filename) {
+void ConfigManager::loadConfigFile(const String &filename) {
 	_globalDomains.clear();
 	_gameDomains.clear();
 	_transientDomain.clear();
