@@ -46,8 +46,6 @@ static OSystem *createSystem() {
 	return OSystem_MorphOS_create(gfx_mode, ConfMan.getBool("fullscreen"));
 #elif defined(_WIN32_WCE)
 	return OSystem_WINCE3_create();
-#elif defined(MACOS_CARBON)
-	return OSystem_MAC_create(gfx_mode, ConfMan.getBool("fullscreen"));
 #elif defined(__GP32__)	// ph0x
 	return OSystem_GP32_create(GFX_NORMAL, true);
 #elif defined(__PALM_OS__) //chrilith

@@ -51,7 +51,7 @@ void InitScalers(uint32 BitFormat) {
 	} else if (BitFormat == 555) {
 		dotmatrix = dotmatrix_555;
 	} else {
-		error("Unknown bit format %d\n", BitFormat);
+		error("Unknown bit format %d", BitFormat);
 	}
 
 	gBitFormat = BitFormat;
@@ -291,4 +291,3 @@ void DotMatrix(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPi
 		q += nextlineDst << 1;
 	}
 }
-

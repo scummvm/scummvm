@@ -21,6 +21,9 @@
 #ifndef COMMON_SCALER_H
 #define COMMON_SCALER_H
 
+#include "common/stdafx.h"
+#include "common/scummsys.h"
+
 extern void InitScalers(uint32 BitFormat);
 
 typedef void ScalerProc(const uint8 *srcPtr, uint32 srcPitch,
