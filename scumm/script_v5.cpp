@@ -549,6 +549,36 @@ void Scumm_v5::o5_add() {
 	int a;
 	getResultPos();
 	a = getVarOrDirectWord(0x80);
+
+	// WORKAROUND bug #770065: This works around a script bug in LoomCD. To
+	// understand the reasoning behind this, compare script 210 and 218 in
+	// room 20. Apparently they made a mistake when converting the absolute
+	// delays into relative ones.
+	if (_gameId == GID_LOOM256 && vm.slot[_currentScript].number == 210 && _currentRoom == 20 && _resultVarNumber == 0x4000) {
+		switch (a) {
+		// Fix for the Var[250] == 11 case
+		case 138:
+			a = 145;
+			break;
+		case 324:
+			a = 324 - 138;
+			break;
+		// Fixes for the Var[250] == 14 case
+		case 130:
+			a = 170;
+			break;
+		case 342:
+			a = 342 - 130 + 15;	// Small extra adjustment for the "OUCH"
+			break;
+		case 384:
+			a -= 342;
+			break;
+		case 564:
+			a -= 384;
+			break;
+		}
+	}
+
 	setResult(readVar(_resultVarNumber) + a);
 }
 
@@ -583,7 +613,7 @@ void Scumm_v5::o5_chainScript() {
 	cur = _currentScript;
 
 	// WORKAROUND bug #743314: Work around a bug in script 33 in Indy3 VGA.
-	// That script is used for the fist fights in the Zeppeling. It uses
+	// That script is used for the fist fights in the Zeppelin. It uses
 	// Local[5], even though that is never set to any value. But script 33 is
 	// called via chainScript by script 32, and in there Local[5] is defined
 	// to the  actor ID of the opposing soldier. So, we copy that value over
