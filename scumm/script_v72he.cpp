@@ -1184,8 +1184,11 @@ void ScummEngine_v72he::o72_actorOps() {
 		a->talkPosY = pop();
 		a->talkPosX = pop();
 		break;
-	case 156:		// HE 7.2
+	case 156:		// HE 72+
 		a->charset = pop();
+		break;
+	case 175:		// HE 99+
+		a->transparency = pop();
 		break;
 	case 198:		// SO_ACTOR_VARIABLE
 		i = pop();

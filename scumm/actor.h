@@ -134,6 +134,7 @@ public:
 	CostumeData cost;
 	uint32 condMask;
 	bool talkUnk;
+	byte transparency;
 	AuxBlock auxBlock;
 
 	struct {

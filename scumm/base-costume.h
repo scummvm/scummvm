@@ -62,6 +62,7 @@ public:
 	byte _scaleX, _scaleY;
 
 	int _draw_top, _draw_bottom;
+	byte _transparency;
 	bool _skipLimb;
 	bool _actorDrawVirScr;
 
@@ -117,6 +118,7 @@ public:
 		_mirror = false;
 		_width = _height = 0;
 		_skipLimb = 0;
+		_transparency = 0;
 		
 		_clipOverride.right = 0;
 		_clipOverride.left = 0;

@@ -139,6 +139,7 @@ void Actor::initActor(int mode) {
 	_clipOverride = _vm->_actorClipOverride;
 
 	auxBlock.visible = false;
+	transparency = 0;
 
 	_vm->_classData[number] = (_vm->_version >= 7) ? _vm->_classData[0] : 0;
 }
@@ -1075,6 +1076,7 @@ void Actor::drawActorCostume(bool hitTestMode) {
 	bcr->_draw_bottom = 0;
 
 	bcr->_skipLimb = (skipLimb != 0);
+	bcr->_transparency = transparency;
 	
 	if (_vm->_heversion >= 80 && talkUnk == 0) {
 		condMask &= 0xFFFFFC00;
