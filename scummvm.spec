@@ -58,7 +58,7 @@ rm -Rf %{buildroot}
 %changelog
 * 0.4.1 (2003-05-25)
   - Added AdvMame3x filter
-  - Fixed crash Curse of Monkey Island (and possibly other games as well)
+  - Fixed crash in Curse of Monkey Island (and possibly other games as well)
   - Fixed airport doors in Zak256
   - Fixed crash in SDL backend
   - Fixed various iMuse bugs
