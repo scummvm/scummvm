@@ -8,6 +8,7 @@ MODULE_OBJS = \
 	queen/graphics.o \
 	queen/input.o \
 	queen/logic.o \
+	queen/musicdata.o \
 	queen/queen.o \
 	queen/resource.o \
 	queen/restables.o \

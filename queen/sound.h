@@ -31,6 +31,22 @@ namespace Queen {
 class Input;
 class Resource;
 
+struct songData { 
+	int16 tuneList[5];
+	int16 volume;
+	int16 tempo;
+	int16 reverb;
+	int16 override;
+	int16 ignore;
+};
+
+struct tuneData { 
+	int16 tuneNum[9];
+	int16 sfx[2];
+	int16 mode;
+	int16 delay;
+};
+
 class Sound {
 public:
 	Sound(SoundMixer *mixer, Input *input, Resource *resource);
@@ -45,8 +61,16 @@ protected:
 	Input *_input;
 	Resource *_resource;
 
+	static const songData _song[];
+	static const tuneData _tune[];
+	static const char *_sfxName[];
+	
 	int16 _lastOverride;
+	int16 _lastMerge;
+	int16 _altMrgPri;
 	int16 _currentSong;
+	int16 _previousSong;
+	int16 _previousSongNum;
 	PlayingSoundHandle _sfxHandle;
 };
 
