@@ -1837,7 +1837,7 @@ void SimonState::vc_70() {
 
 void SimonState::vc_71() {
 	// Simon2
-	if (_vc72_var3 == 0xFFFF && _vc72_var1 == 0xFFFF)
+	if (_vc72_var3 == 0xFFFF && _vc70_var1 == 0xFFFF)
 		vc_skip_next_instruction();
 }
 
