@@ -14,7 +14,6 @@ MODULE_OBJS := \
 	sword2/logic.o \
 	sword2/maketext.o \
 	sword2/memory.o \
-	sword2/mem_view.o \
 	sword2/mouse.o \
 	sword2/protocol.o \
 	sword2/resman.o \

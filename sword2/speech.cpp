@@ -96,7 +96,7 @@ int32 Logic::fnChoose(int32 *params) {
 	MouseEvent *me;
 	uint32 i;
 	int hit;
-	uint8 *icon;
+	byte *icon;
 
 	_scriptVars[AUTO_SELECTED] = 0;	// see below
 
@@ -367,7 +367,7 @@ int32 Logic::fnTheyDoWeWait(int32 *params) {
 
 	_vm->_resman->closeResource(target);
 
-	ob_logic = (ObjectLogic *) _vm->_memory->intToPtr(params[0]);
+	ob_logic = (ObjectLogic *) _vm->_memory->decodePtr(params[0]);
 
 	if (!_scriptVars[INS_COMMAND] && _scriptVars[RESULT] == 1 && ob_logic->looping == 0) {
 		// first time so set up targets command if target is waiting
@@ -476,7 +476,7 @@ int32 Logic::fnTimedWait(int32 *params) {
 	StandardHeader *head;
 	int32 target = params[1];
 
-	ob_logic = (ObjectLogic *) _vm->_memory->intToPtr(params[0]);
+	ob_logic = (ObjectLogic *) _vm->_memory->decodePtr(params[0]);
 
 	if (!ob_logic->looping)
 		ob_logic->looping = params[2];	// first time in
@@ -557,7 +557,7 @@ int32 Logic::fnSpeechProcess(int32 *params) {
 	ObjectSpeech *ob_speech;
 	int32 pars[9];
 
-	ob_speech = (ObjectSpeech *) _vm->_memory->intToPtr(params[1]);
+	ob_speech = (ObjectSpeech *) _vm->_memory->decodePtr(params[1]);
 
 	debug(5, "  SP");
 
@@ -843,10 +843,10 @@ int32 Logic::fnISpeak(int32 *params) {
 	ObjectLogic *ob_logic;
 	ObjectGraphic *ob_graphic;
 	ObjectMega *ob_mega;
-	uint8 *anim_file;
+	byte *anim_file;
 	uint32 local_text;
 	uint32 text_res;
-	uint8 *text;
+	byte *text;
 	static bool speechRunning;
 	int32 *anim_table;
 	bool speechFinished = false;
@@ -860,8 +860,8 @@ int32 Logic::fnISpeak(int32 *params) {
 
 	// set up the pointers which we know we'll always need
 
-	ob_logic = (ObjectLogic *) _vm->_memory->intToPtr(params[S_OB_LOGIC]);
-	ob_graphic = (ObjectGraphic *) _vm->_memory->intToPtr(params[S_OB_GRAPHIC]);
+	ob_logic = (ObjectLogic *) _vm->_memory->decodePtr(params[S_OB_LOGIC]);
+	ob_graphic = (ObjectGraphic *) _vm->_memory->decodePtr(params[S_OB_GRAPHIC]);
 
 	// FIRST TIME ONLY: create the text, load the wav, set up the anim,
 	// etc.
@@ -918,7 +918,7 @@ int32 Logic::fnISpeak(int32 *params) {
 				if (head->fileType == TEXT_FILE) {
 					// if it's not an animation file
 					// if line number is out of range
-					if (!_vm->checkTextLine((uint8 *) head, local_text)) {
+					if (!_vm->checkTextLine((byte *) head, local_text)) {
 						// line number out of range
 						_scriptVars[RESULT] = 2;
 					}
@@ -1003,10 +1003,10 @@ int32 Logic::fnISpeak(int32 *params) {
 			// use this direction table to derive the anim
 			// NB. ASSUMES WE HAVE A MEGA OBJECT!!
 
-			ob_mega = (ObjectMega *) _vm->_memory->intToPtr(params[S_OB_MEGA]);
+			ob_mega = (ObjectMega *) _vm->_memory->decodePtr(params[S_OB_MEGA]);
 
 			// pointer to anim table
-			anim_table = (int32 *) _vm->_memory->intToPtr(params[S_DIR_TABLE]);
+			anim_table = (int32 *) _vm->_memory->decodePtr(params[S_DIR_TABLE]);
 
 			// appropriate anim resource is in 'table[direction]'
 			_animId = anim_table[ob_mega->current_dir];
@@ -1282,7 +1282,7 @@ void Logic::locateTalker(int32 *params) {
 
 	ObjectMega *ob_mega;
 
-	uint8 *file;
+	byte *file;
 	FrameHeader *frame_head;
 	AnimHeader *anim_head;
 	CdtEntry *cdt_entry;
@@ -1313,7 +1313,7 @@ void Logic::locateTalker(int32 *params) {
 
 		if (cdt_entry->frameType & FRAME_OFFSET) {
 			// this may be NULL
-			ob_mega = (ObjectMega *) _vm->_memory->intToPtr(params[S_OB_MEGA]);
+			ob_mega = (ObjectMega *) _vm->_memory->decodePtr(params[S_OB_MEGA]);
 
 			// calc scale at which to print the sprite, based on
 			// feet y-coord & scaling constants (NB. 'scale' is
@@ -1378,7 +1378,7 @@ void Logic::formText(int32 *params) {
 
 	uint32 local_text;
 	uint32 text_res;
-	uint8 *text;
+	byte *text;
 	uint32 textWidth;
 	ObjectSpeech *ob_speech;
 
@@ -1386,7 +1386,7 @@ void Logic::formText(int32 *params) {
 	// text
 
 	if (params[S_TEXT]) {
-	 	ob_speech = (ObjectSpeech *) _vm->_memory->intToPtr(params[S_OB_SPEECH]);
+	 	ob_speech = (ObjectSpeech *) _vm->_memory->decodePtr(params[S_OB_SPEECH]);
 
 		// establish the max width allowed for this text sprite
 

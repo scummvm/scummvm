@@ -46,9 +46,9 @@ int32 Logic::fnWalk(int32 *params) {
 	//		5 target y-coord
 	//		6 target direction (8 means end walk on ANY direction)
 
-	ObjectLogic *ob_logic = (ObjectLogic *) _vm->_memory->intToPtr(params[0]);
-	ObjectGraphic *ob_graph = (ObjectGraphic *) _vm->_memory->intToPtr(params[1]);
-	ObjectMega *ob_mega  = (ObjectMega *) _vm->_memory->intToPtr(params[2]);
+	ObjectLogic *ob_logic = (ObjectLogic *) _vm->_memory->decodePtr(params[0]);
+	ObjectGraphic *ob_graph = (ObjectGraphic *) _vm->_memory->decodePtr(params[1]);
+	ObjectMega *ob_mega  = (ObjectMega *) _vm->_memory->decodePtr(params[2]);
 
 	int16 target_x = (int16) params[4];
 	int16 target_y = (int16) params[5];
@@ -74,7 +74,7 @@ int32 Logic::fnWalk(int32 *params) {
 
 		assert(params[6] >= 0 && params[6] <= 8);
 
-		ob_walkdata = (ObjectWalkdata *) _vm->_memory->intToPtr(params[3]);
+		ob_walkdata = (ObjectWalkdata *) _vm->_memory->decodePtr(params[3]);
 
 		ob_mega->walk_pc = 0;
 
@@ -134,7 +134,7 @@ int32 Logic::fnWalk(int32 *params) {
 
 	// get pointer to walkanim & current frame position
 
-	WalkData *walkAnim = _router->lockRouteMem();
+	WalkData *walkAnim = _router->getRouteMem();
 	int32 walk_pc = ob_mega->walk_pc;
 
 	// If stopping the walk early, overwrite the next step with a
@@ -143,7 +143,7 @@ int32 Logic::fnWalk(int32 *params) {
 	if (checkEventWaiting()) {
 		if (walkAnim[walk_pc].step == 0 && walkAnim[walk_pc + 1].step == 1) {
 			// At the beginning of a step
-			ob_walkdata = (ObjectWalkdata *) _vm->_memory->intToPtr(params[3]);
+			ob_walkdata = (ObjectWalkdata *) _vm->_memory->decodePtr(params[3]);
 			_router->earlySlowOut(ob_mega, ob_walkdata);
 		}
 	}
@@ -198,12 +198,9 @@ int32 Logic::fnWalk(int32 *params) {
 		}
 	}
 
-	// Increment the walkanim frame number, float the walkanim & come
-	// back next cycle
+	// Increment the walkanim frame number and come back next cycle
 
 	ob_mega->walk_pc++;
-
-	_router->floatRouteMem();
 	return IR_REPEAT;
 }
 
@@ -228,12 +225,12 @@ int32 Logic::fnWalkToAnim(int32 *params) {
 	pars[2] = params[2];
 	pars[3] = params[3];
 
-	ObjectLogic *ob_logic = (ObjectLogic *) _vm->_memory->intToPtr(params[0]);
+	ObjectLogic *ob_logic = (ObjectLogic *) _vm->_memory->decodePtr(params[0]);
 
 	// If this is the start of the walk, read anim file to get start coords
 
 	if (!ob_logic->looping) {
-		uint8 *anim_file = _vm->_resman->openResource(params[4]);
+		byte *anim_file = _vm->_resman->openResource(params[4]);
 		AnimHeader *anim_head = _vm->fetchAnimHeader( anim_file );
 
 		pars[4] = anim_head->feetStartX;
@@ -278,7 +275,7 @@ int32 Logic::fnTurn(int32 *params) {
 	pars[2] = params[2];
 	pars[3] = params[3];
 
-	ObjectLogic *ob_logic = (ObjectLogic *) _vm->_memory->intToPtr(params[0]);
+	ObjectLogic *ob_logic = (ObjectLogic *) _vm->_memory->decodePtr(params[0]);
 
 	// If this is the start of the turn, get the mega's current feet
 	// coords + the required direction
@@ -286,7 +283,7 @@ int32 Logic::fnTurn(int32 *params) {
 	if (!ob_logic->looping) {
 		assert(params[4] >= 0 && params[4] <= 7);
 
-		ObjectMega *ob_mega = (ObjectMega *) _vm->_memory->intToPtr(params[2]);
+		ObjectMega *ob_mega = (ObjectMega *) _vm->_memory->decodePtr(params[2]);
 
 		pars[4] = ob_mega->feet_x;
 		pars[5] = ob_mega->feet_y;
@@ -311,8 +308,8 @@ int32 Logic::fnStandAt(int32 *params) {
 
 	assert(params[4] >= 0 && params[4] <= 7);
 
-	ObjectGraphic *ob_graph = (ObjectGraphic *) _vm->_memory->intToPtr(params[0]);
-	ObjectMega *ob_mega = (ObjectMega *) _vm->_memory->intToPtr(params[1]);
+	ObjectGraphic *ob_graph = (ObjectGraphic *) _vm->_memory->decodePtr(params[0]);
+	ObjectMega *ob_mega = (ObjectMega *) _vm->_memory->decodePtr(params[1]);
 
 	// set up the stand frame & set the mega's new direction
 
@@ -339,7 +336,7 @@ int32 Logic::fnStand(int32 *params) {
 	//		1 pointer to object's mega structure
 	//		2 target direction
 
-	ObjectMega *ob_mega = (ObjectMega *) _vm->_memory->intToPtr(params[1]);
+	ObjectMega *ob_mega = (ObjectMega *) _vm->_memory->decodePtr(params[1]);
 
 	int32 pars[5];
 
@@ -361,7 +358,7 @@ int32 Logic::fnStandAfterAnim(int32 *params) {
 	//		1 pointer to object's mega structure
 	//		2 anim resource id
 
-	uint8 *anim_file = _vm->_resman->openResource(params[2]);
+	byte *anim_file = _vm->_resman->openResource(params[2]);
 	AnimHeader *anim_head = _vm->fetchAnimHeader(anim_file);
 
 	int32 pars[5];
@@ -399,7 +396,7 @@ int32 Logic::fnStandAtAnim(int32 *params) {
 	//		1 pointer to object's mega structure
 	//		2 anim resource id
 
-	uint8 *anim_file = _vm->_resman->openResource(params[2]);
+	byte *anim_file = _vm->_resman->openResource(params[2]);
 	AnimHeader *anim_head = _vm->fetchAnimHeader(anim_file);
 
 	int32 pars[5];
@@ -483,13 +480,13 @@ int32 Logic::fnFaceXY(int32 *params) {
 	pars[2] = params[2];
 	pars[3] = params[3];
 
-	ObjectLogic *ob_logic = (ObjectLogic *) _vm->_memory->intToPtr(params[0]);
+	ObjectLogic *ob_logic = (ObjectLogic *) _vm->_memory->decodePtr(params[0]);
 
 	// If this is the start of the turn, get the mega's current feet
 	// coords + the required direction
 
 	if (!ob_logic->looping) {
-		ObjectMega *ob_mega = (ObjectMega *) _vm->_memory->intToPtr(params[2]);
+		ObjectMega *ob_mega = (ObjectMega *) _vm->_memory->decodePtr(params[2]);
 	
 		pars[4] = ob_mega->feet_x;
 		pars[5] = ob_mega->feet_y;
@@ -513,7 +510,7 @@ int32 Logic::fnFaceMega(int32 *params) {
 	pars[2] = params[2];
 	pars[3] = params[3];
 
-	ObjectLogic *ob_logic = (ObjectLogic *) _vm->_memory->intToPtr(params[0]);
+	ObjectLogic *ob_logic = (ObjectLogic *) _vm->_memory->decodePtr(params[0]);
 
 	// If this is the start of the walk, decide where to walk to.
 
@@ -533,7 +530,7 @@ int32 Logic::fnFaceMega(int32 *params) {
 
 		_vm->_resman->closeResource(params[4]);
 
-		ObjectMega *ob_mega = (ObjectMega *) _vm->_memory->intToPtr(params[2]);
+		ObjectMega *ob_mega = (ObjectMega *) _vm->_memory->decodePtr(params[2]);
 
 		pars[3] = params[3];
 		pars[4] = ob_mega->feet_x;
@@ -563,7 +560,7 @@ int32 Logic::fnWalkToTalkToMega(int32 *params) {
 	pars[2] = params[2];
 	pars[3] = params[3];
 
-	ObjectLogic *ob_logic = (ObjectLogic *) _vm->_memory->intToPtr(params[0]);
+	ObjectLogic *ob_logic = (ObjectLogic *) _vm->_memory->decodePtr(params[0]);
 
 	// If this is the start of the walk, calculate the route.
 
@@ -586,7 +583,7 @@ int32 Logic::fnWalkToTalkToMega(int32 *params) {
 		// Stand exactly beside the mega, ie. at same y-coord
 		pars[5] = _engineMega.feet_y;
 
-		ObjectMega *ob_mega = (ObjectMega *) _vm->_memory->intToPtr(params[2]);
+		ObjectMega *ob_mega = (ObjectMega *) _vm->_memory->decodePtr(params[2]);
 
 		// Apply scale factor to walk distance. Ay+B gives 256 * scale
 		// ie. 256 * 256 * true_scale for even better accuracy, ie.
@@ -674,7 +671,7 @@ int32 Logic::fnSetScaling(int32 *params) {
 	// Where s is system scale, which itself is (256 * actual_scale) ie.
 	// s == 128 is half size
 
- 	ObjectMega *ob_mega = (ObjectMega *) _vm->_memory->intToPtr(params[0]);
+ 	ObjectMega *ob_mega = (ObjectMega *) _vm->_memory->decodePtr(params[0]);
 
 	ob_mega->scale_a = params[1];
 	ob_mega->scale_b = params[2];

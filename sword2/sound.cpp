@@ -82,7 +82,7 @@ void Sword2Engine::processFxQueue(void) {
 // called from processFxQueue only
 
 void Sword2Engine::triggerFx(uint8 j) {
-	uint8 *data;
+	byte *data;
 	int32 id;
 	uint32 rv;
 
@@ -160,7 +160,7 @@ int32 Logic::fnPlayFx(int32 *params) {
 	//		fnStopFx (fx_water);
 
 	uint8 j = 0;
-	uint8 *data;
+	byte *data;
 	uint32 id;
 	uint32 rv;
 

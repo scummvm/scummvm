@@ -47,7 +47,7 @@ struct StandardHeader {
 	uint32 decompSize;		// Length of decompressed file held in
 					// memory (NB. frames still held
 					// compressed)
-	uint8 name[NAME_LEN];		// Name of object
+	byte name[NAME_LEN];		// Name of object
 } GCC_PACK;
 
 // fileType

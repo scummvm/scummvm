@@ -30,7 +30,7 @@ namespace Sword2 {
 int32 Logic::fnAddMenuObject(int32 *params) {
 	// params:	0 pointer to a MenuObject structure to copy down
 
-	_vm->addMenuObject((MenuObject *) _vm->_memory->intToPtr(params[0]));
+	_vm->addMenuObject((MenuObject *) _vm->_memory->decodePtr(params[0]));
 	return IR_CONT;
 }
 
@@ -140,7 +140,7 @@ void Sword2Engine::buildMenu(void) {
 
 	for (i = 0; i < 15; i++) {
 		uint32 res = _masterMenuList[i].icon_resource;
-		uint8 *icon = NULL;
+		byte *icon = NULL;
 
 		if (res) {
 			bool icon_coloured;
@@ -196,7 +196,7 @@ void Sword2Engine::buildSystemMenu(void) {
 	// rest will grey out.
 
 	for (int i = 0; i < ARRAYSIZE(icon_list); i++) {
-		uint8 *icon = _resman->openResource(icon_list[i]) + sizeof(StandardHeader);
+		byte *icon = _resman->openResource(icon_list[i]) + sizeof(StandardHeader);
 		
 		// The only case when an icon is grayed is when the player
 		// is dead. Then SAVE is not available.

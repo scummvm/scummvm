@@ -31,7 +31,7 @@ namespace Sword2 {
  * @param h height of the sprite
  */
 
-void Graphics::mirrorSprite(uint8 *dst, uint8 *src, int16 w, int16 h) {
+void Graphics::mirrorSprite(byte *dst, byte *src, int16 w, int16 h) {
 	for (int y = 0; y < h; y++) {
 		for (int x = 0; x < w; x++) {
 			*dst++ = *(src + w - x - 1);
@@ -48,15 +48,15 @@ void Graphics::mirrorSprite(uint8 *dst, uint8 *src, int16 w, int16 h) {
  * @param decompSize the expected size of the decompressed sprite
  */
 
-int32 Graphics::decompressRLE256(uint8 *dest, uint8 *source, int32 decompSize) {
+int32 Graphics::decompressRLE256(byte *dest, byte *source, int32 decompSize) {
 	// PARAMETERS:
 	// source	points to the start of the sprite data for input
 	// decompSize	gives size of decompressed data in bytes
 	// dest		points to start of destination buffer for decompressed
 	// 		data
 
-	uint8 headerByte;			// block header byte
-	uint8 *endDest = dest + decompSize;	// pointer to byte after end of decomp buffer
+	byte headerByte;			// block header byte
+	byte *endDest = dest + decompSize;	// pointer to byte after end of decomp buffer
 	int32 rv;
 
 	while(1) {
@@ -128,7 +128,7 @@ int32 Graphics::decompressRLE256(uint8 *dest, uint8 *source, int32 decompSize) {
  * Unwinds a run of 16-colour data into 256-colour palette data.
  */
 
-void Graphics::unwindRaw16(uint8 *dest, uint8 *source, uint8 blockSize, uint8 *colTable) {
+void Graphics::unwindRaw16(byte *dest, byte *source, uint8 blockSize, byte *colTable) {
 	// for each pair of pixels
 	while (blockSize > 1) {
 		// 1st colour = number in table at position given by upper
@@ -163,9 +163,9 @@ void Graphics::unwindRaw16(uint8 *dest, uint8 *source, uint8 blockSize, uint8 *c
  * @param colTable mapping from the 16 encoded colours to the current palette
  */
 
-int32 Graphics::decompressRLE16(uint8 *dest, uint8 *source, int32 decompSize, uint8 *colTable) {
-	uint8 headerByte;			// block header byte
-	uint8 *endDest = dest + decompSize;	// pointer to byte after end of decomp buffer
+int32 Graphics::decompressRLE16(byte *dest, byte *source, int32 decompSize, byte *colTable) {
+	byte headerByte;			// block header byte
+	byte *endDest = dest + decompSize;	// pointer to byte after end of decomp buffer
 	int32 rv;
 
 	while(1) {
@@ -243,8 +243,8 @@ int32 Graphics::decompressRLE16(uint8 *dest, uint8 *source, int32 decompSize, ui
  * @return RD_OK, or an error code
  */
 
-int32 Graphics::createSurface(SpriteInfo *s, uint8 **sprite) {
-	*sprite = (uint8 *) malloc(s->w * s->h);
+int32 Graphics::createSurface(SpriteInfo *s, byte **sprite) {
+	*sprite = (byte *) malloc(s->w * s->h);
 	if (!*sprite)
 		return RDERR_OUTOFMEMORY;
 
@@ -268,10 +268,10 @@ int32 Graphics::createSurface(SpriteInfo *s, uint8 **sprite) {
  * @param clipRect the clipping rectangle
  */
 
-void Graphics::drawSurface(SpriteInfo *s, uint8 *surface, Common::Rect *clipRect) {
+void Graphics::drawSurface(SpriteInfo *s, byte *surface, Common::Rect *clipRect) {
 	Common::Rect rd, rs;
 	uint16 x, y;
-	uint8 *src, *dst;
+	byte *src, *dst;
 
 	rs.left = 0;
 	rs.right = s->w;
@@ -327,7 +327,7 @@ void Graphics::drawSurface(SpriteInfo *s, uint8 *surface, Common::Rect *clipRect
  * Destroys a surface.
  */
 
-void Graphics::deleteSurface(uint8 *surface) {
+void Graphics::deleteSurface(byte *surface) {
 	free(surface);
 }
 
@@ -353,9 +353,9 @@ void Graphics::deleteSurface(uint8 *surface) {
 // mallocing here.
 
 int32 Graphics::drawSprite(SpriteInfo *s) {
-	uint8 *src, *dst;
-	uint8 *sprite, *newSprite;
-	uint8 *backbuf = NULL;
+	byte *src, *dst;
+	byte *sprite, *newSprite;
+	byte *backbuf = NULL;
 	uint16 scale;
 	int16 i, j;
 	uint16 srcPitch;
@@ -370,7 +370,7 @@ int32 Graphics::drawSprite(SpriteInfo *s) {
 	if (s->type & RDSPR_NOCOMPRESSION)
 		sprite = s->data;
 	else {
-		sprite = (uint8 *) malloc(s->w * s->h);
+		sprite = (byte *) malloc(s->w * s->h);
 		freeSprite = true;
 		if (!sprite)
 			return RDERR_OUTOFMEMORY;
@@ -388,7 +388,7 @@ int32 Graphics::drawSprite(SpriteInfo *s) {
 	}
 
 	if (s->type & RDSPR_FLIP) {
-		newSprite = (uint8 *) malloc(s->w * s->h);
+		newSprite = (byte *) malloc(s->w * s->h);
 		if (newSprite == NULL) {
 			if (freeSprite)
 				free(sprite);
@@ -486,7 +486,7 @@ int32 Graphics::drawSprite(SpriteInfo *s) {
 			return RDERR_NOTIMPLEMENTED;
 		}
 
-		newSprite = (uint8 *) malloc(s->scaledWidth * s->scaledHeight);
+		newSprite = (byte *) malloc(s->scaledWidth * s->scaledHeight);
 		if (newSprite == NULL) {
 			if (freeSprite)
 				free(sprite);
@@ -519,10 +519,10 @@ int32 Graphics::drawSprite(SpriteInfo *s) {
 	// (actors, presumably) are always affected.
 
 	if ((_renderCaps & RDBLTFX_SHADOWBLEND) && _lightMask && (scale != 256 || (s->type & RDSPR_SHADOW))) {
-		uint8 *lightMap;
+		byte *lightMap;
 
 		if (!freeSprite) {
-			newSprite = (uint8 *) malloc(s->w * s->h);
+			newSprite = (byte *) malloc(s->w * s->h);
 			memcpy(newSprite, sprite, s->w * s->h);
 			sprite = newSprite;
 			freeSprite = true;
@@ -640,7 +640,7 @@ int32 Graphics::openLightMask(SpriteInfo *s) {
 	if (_lightMask)
 		return RDERR_NOTCLOSED;
 
-	_lightMask = (uint8 *) malloc(s->w * s->h);
+	_lightMask = (byte *) malloc(s->w * s->h);
 	if (!_lightMask)
 		return RDERR_OUTOFMEMORY;
 

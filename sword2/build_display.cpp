@@ -53,7 +53,7 @@ void Sword2Engine::buildDisplay(void) {
 	_graphics->animateMouse();
 	_graphics->startRenderCycle();
 
-	uint8 *file = _resman->openResource(_thisScreen.background_layer_id);
+	byte *file = _resman->openResource(_thisScreen.background_layer_id);
 	MultiScreenHeader *screenLayerTable = (MultiScreenHeader *) (file + sizeof(StandardHeader));
 
 	// Render at least one frame, but if the screen is scrolling, and if
@@ -118,7 +118,7 @@ void Sword2Engine::buildDisplay(void) {
  * @param time The number of seconds to display the message
  */
 
-void Sword2Engine::displayMsg(uint8 *text, int time) {
+void Sword2Engine::displayMsg(byte *text, int time) {
 	PalEntry pal[256];
 	PalEntry oldPal[256];
 
@@ -135,8 +135,8 @@ void Sword2Engine::displayMsg(uint8 *text, int time) {
 	_graphics->closeMenuImmediately();
 	_graphics->clearScene();
 
-	Memory *text_spr = _fontRenderer->makeTextSprite(text, 640, 187, _speechFontId);
-	FrameHeader *frame = (FrameHeader *) text_spr->ad;
+	byte *text_spr = _fontRenderer->makeTextSprite(text, 640, 187, _speechFontId);
+	FrameHeader *frame = (FrameHeader *) text_spr;
 
 	SpriteInfo spriteInfo;
 
@@ -152,7 +152,7 @@ void Sword2Engine::displayMsg(uint8 *text, int time) {
 	spriteInfo.scaledHeight	= 0;
 	spriteInfo.type = RDSPR_DISPLAYALIGN | RDSPR_NOCOMPRESSION | RDSPR_TRANS;
 	spriteInfo.blend = 0;
-	spriteInfo.data = text_spr->ad + sizeof(FrameHeader);
+	spriteInfo.data = text_spr + sizeof(FrameHeader);
 	spriteInfo.colourTable = 0;
 
 	uint32 rv = _graphics->drawSprite(&spriteInfo);
@@ -166,15 +166,15 @@ void Sword2Engine::displayMsg(uint8 *text, int time) {
 	pal[187].green = 255;
 	pal[187].blue = 255;
 
-	_graphics->setPalette(0, 256, (uint8 *) pal, RDPAL_FADE);
+	_graphics->setPalette(0, 256, (byte *) pal, RDPAL_FADE);
 	_graphics->fadeUp();
-	_memory->freeMemory(text_spr);
+	free(text_spr);
 	_graphics->waitForFade();
 
 	uint32 targetTime = _system->get_msecs() + (time * 1000);
 
 	sleepUntil(targetTime);
-	_graphics->setPalette(0, 256, (uint8 *) oldPal, RDPAL_FADE);
+	_graphics->setPalette(0, 256, (byte *) oldPal, RDPAL_FADE);
 }
 
 /**
@@ -211,7 +211,7 @@ void Sword2Engine::drawBackFrames(void) {
 		processImage(&_backList[i]);
 }
 
-void Sword2Engine::drawSortFrames(uint8 *file) {
+void Sword2Engine::drawSortFrames(byte *file) {
 	uint i, j;
 
 	// Sort the sort list. Used to be a separate function, but it was only
@@ -260,7 +260,7 @@ void Sword2Engine::drawForePar1Frames(void) {
 		processImage(&_fgp1List[i]);
 }
 
-void Sword2Engine::processLayer(uint8 *file, uint32 layer_number) {
+void Sword2Engine::processLayer(byte *file, uint32 layer_number) {
 	LayerHeader *layer_head = fetchLayerHeader(file, layer_number);
 
  	SpriteInfo spriteInfo;
@@ -295,8 +295,8 @@ void Sword2Engine::processLayer(uint8 *file, uint32 layer_number) {
 }
 
 void Sword2Engine::processImage(BuildUnit *build_unit) {
-	uint8 *file = _resman->openResource(build_unit->anim_resource);
-	uint8 *colTablePtr = NULL;
+	byte *file = _resman->openResource(build_unit->anim_resource);
+	byte *colTablePtr = NULL;
 
 	AnimHeader *anim_head = fetchAnimHeader(file);
 	CdtEntry *cdt_entry = fetchCdtEntry(file, build_unit->anim_pc);
@@ -337,7 +337,7 @@ void Sword2Engine::processImage(BuildUnit *build_unit) {
 			spriteType |= RDSPR_RLE16;
 			// points to just after last cdt_entry, ie.
 			// start of colour table
-			colTablePtr = (uint8 *) (anim_head + 1) + anim_head->noAnimFrames * sizeof(CdtEntry);
+			colTablePtr = (byte *) (anim_head + 1) + anim_head->noAnimFrames * sizeof(CdtEntry);
 			break;
 		}
 	}
@@ -359,7 +359,7 @@ void Sword2Engine::processImage(BuildUnit *build_unit) {
 	spriteInfo.type = spriteType;
 	spriteInfo.blend = anim_head->blend;
 	// points to just after frame header, ie. start of sprite data
-	spriteInfo.data = (uint8 *) (frame_head + 1);
+	spriteInfo.data = (byte *) (frame_head + 1);
 	spriteInfo.colourTable	= colTablePtr;
 
 	// check for largest layer for debug info
@@ -434,10 +434,10 @@ void Sword2Engine::registerFrame(int32 *params, BuildUnit *build_unit) {
 	//         1 pointer to graphic structure
 	//         2 pointer to mega structure
 
-	ObjectGraphic *ob_graph = (ObjectGraphic *) _memory->intToPtr(params[1]);
+	ObjectGraphic *ob_graph = (ObjectGraphic *) _memory->decodePtr(params[1]);
 	assert(ob_graph->anim_resource);
 
-	uint8 *file = _resman->openResource(ob_graph->anim_resource);
+	byte *file = _resman->openResource(ob_graph->anim_resource);
 
 	AnimHeader *anim_head = fetchAnimHeader(file);
 	CdtEntry *cdt_entry = fetchCdtEntry(file, ob_graph->anim_pc);
@@ -469,7 +469,7 @@ void Sword2Engine::registerFrame(int32 *params, BuildUnit *build_unit) {
 	int scale = 0;
 
 	if (cdt_entry->frameType & FRAME_OFFSET) {
-		ObjectMega *ob_mega = (ObjectMega *) _memory->intToPtr(params[2]);
+		ObjectMega *ob_mega = (ObjectMega *) _memory->decodePtr(params[2]);
 
 		// calc scale at which to print the sprite, based on feet
 		// y-coord & scaling constants (NB. 'scale' is actually
@@ -508,7 +508,7 @@ void Sword2Engine::registerFrame(int32 *params, BuildUnit *build_unit) {
 
 	if (params[0]) {
 		// passed a mouse structure, so add to the _mouseList
-		ObjectMouse *ob_mouse = (ObjectMouse *) _memory->intToPtr(params[0]);
+		ObjectMouse *ob_mouse = (ObjectMouse *) _memory->decodePtr(params[0]);
 
 		if (ob_mouse->pointer) {
 			assert(_curMouse < TOTAL_mouse_list);
@@ -557,7 +557,7 @@ int32 Logic::fnRegisterFrame(int32 *params) {
 }
 
 int32 Sword2Engine::registerFrame(int32 *params) {
-	ObjectGraphic *ob_graph = (ObjectGraphic *) _memory->intToPtr(params[1]);
+	ObjectGraphic *ob_graph = (ObjectGraphic *) _memory->decodePtr(params[1]);
 
 	// check low word for sprite type
 	switch (ob_graph->type & 0x0000ffff) {
@@ -605,18 +605,18 @@ int32 Sword2Engine::registerFrame(int32 *params) {
 	return IR_CONT;
 }
 
+/**
+ * Start layer palette fading up
+ */
+
 void Sword2Engine::startNewPalette(void) {
-	// start layer palette fading up
-
-	uint8 *screenFile;
-
 	// if the screen is still fading down then wait for black - could
 	// happen when everythings cached into a large memory model
 	_graphics->waitForFade();
 
-	screenFile = _resman->openResource(_thisScreen.background_layer_id);
+	byte *screenFile = _resman->openResource(_thisScreen.background_layer_id);
 
-	_graphics->updatePaletteMatchTable((uint8 *) fetchPaletteMatchTable(screenFile));
+	_graphics->updatePaletteMatchTable((byte *) fetchPaletteMatchTable(screenFile));
 	_graphics->setPalette(0, 256, fetchPalette(screenFile), RDPAL_FADE);
 
 	// indicating that it's a screen palette
@@ -632,7 +632,7 @@ int32 Logic::fnUpdatePlayerStats(int32 *params) {
 
 	// params:	0 pointer to mega structure
 
-	ObjectMega *ob_mega = (ObjectMega *) _vm->_memory->intToPtr(params[0]);
+	ObjectMega *ob_mega = (ObjectMega *) _vm->_memory->decodePtr(params[0]);
 
 	_vm->_thisScreen.player_feet_x = ob_mega->feet_x;
 	_vm->_thisScreen.player_feet_y = ob_mega->feet_y;
@@ -715,7 +715,7 @@ void Sword2Engine::setFullPalette(int32 palRes) {
 	// If non-zero, set palette to this separate palette file. Otherwise,
 	// set palette to current screen palette.
 
-	uint8 *file;
+	byte *file;
 
 	if (palRes) {
 		file = _resman->openResource(palRes);

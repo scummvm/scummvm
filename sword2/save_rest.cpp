@@ -88,26 +88,26 @@ static void convertHeaderEndian(Sword2Engine::SaveGameHeader &header) {
 
 // SAVE GAME
 
-uint32 Sword2Engine::saveGame(uint16 slotNo, uint8 *desc) {
-	Memory *saveBufferMem;
+uint32 Sword2Engine::saveGame(uint16 slotNo, byte *desc) {
+	byte *saveBufferMem;
 	uint32 bufferSize;
 	uint32 errorCode;
 
 	// allocate the savegame buffer
 
 	bufferSize = findBufferSize();
-	saveBufferMem = _memory->allocMemory(bufferSize, MEM_locked, (uint32) UID_savegame_buffer);
+	saveBufferMem = (byte *) malloc(bufferSize);
 
 	fillSaveBuffer(saveBufferMem, bufferSize, desc);
 
 	// save it (hopefully no longer platform-specific)
 
 	// save the buffer
-	errorCode = saveData(slotNo, saveBufferMem->ad, bufferSize);
+	errorCode = saveData(slotNo, saveBufferMem, bufferSize);
 
 	// free the buffer
 
-	_memory->freeMemory(saveBufferMem);
+	free(saveBufferMem);
 
 	return errorCode;
 }
@@ -119,8 +119,8 @@ uint32 Sword2Engine::findBufferSize(void) {
 	return sizeof(_saveGameHeader) + _resman->fetchLen(1);
 }
 
-void Sword2Engine::fillSaveBuffer(Memory *buffer, uint32 size, uint8 *desc) {
-	uint8 *varsRes;
+void Sword2Engine::fillSaveBuffer(byte *buffer, uint32 size, byte *desc) {
+	byte *varsRes;
 
 	// set up the _saveGameHeader
 
@@ -160,7 +160,7 @@ void Sword2Engine::fillSaveBuffer(Memory *buffer, uint32 size, uint8 *desc) {
 #endif
 
 	// copy the header to the savegame buffer
-	memcpy(buffer->ad, &_saveGameHeader, sizeof(_saveGameHeader));
+	memcpy(buffer, &_saveGameHeader, sizeof(_saveGameHeader));
 
 	// copy the global variables to the buffer
 
@@ -168,10 +168,10 @@ void Sword2Engine::fillSaveBuffer(Memory *buffer, uint32 size, uint8 *desc) {
 	varsRes = _resman->openResource(1);
 
 	// copy that to the buffer, following the header
-	memcpy(buffer->ad + sizeof(_saveGameHeader), varsRes, FROM_LE_32(_saveGameHeader.varLength));
+	memcpy(buffer + sizeof(_saveGameHeader), varsRes, FROM_LE_32(_saveGameHeader.varLength));
 
 #ifdef SCUMM_BIG_ENDIAN
-	uint32 *globalVars = (uint32 *) (buffer->ad + sizeof(_saveGameHeader) + sizeof(StandardHeader));
+	uint32 *globalVars = (uint32 *) (buffer + sizeof(_saveGameHeader) + sizeof(StandardHeader));
 	const uint numVars = (FROM_LE_32(_saveGameHeader.varLength) - sizeof(StandardHeader)) / 4;
 
 	for (uint i = 0; i < numVars; i++)
@@ -183,11 +183,11 @@ void Sword2Engine::fillSaveBuffer(Memory *buffer, uint32 size, uint8 *desc) {
 
 	// set the checksum & copy that to the buffer
 
-	_saveGameHeader.checksum = TO_LE_32(calcChecksum((buffer->ad) + sizeof(_saveGameHeader.checksum), size - sizeof(_saveGameHeader.checksum)));
- 	memcpy(buffer->ad, &_saveGameHeader.checksum, sizeof(_saveGameHeader.checksum));
+	_saveGameHeader.checksum = TO_LE_32(calcChecksum(buffer + sizeof(_saveGameHeader.checksum), size - sizeof(_saveGameHeader.checksum)));
+ 	memcpy(buffer, &_saveGameHeader.checksum, sizeof(_saveGameHeader.checksum));
 }
 
-uint32 Sword2Engine::saveData(uint16 slotNo, uint8 *buffer, uint32 bufferSize) {
+uint32 Sword2Engine::saveData(uint16 slotNo, byte *buffer, uint32 bufferSize) {
 	char saveFileName[MAX_FILENAME_LEN];
 	uint32 itemsWritten;
 	SaveFile *out;
@@ -219,19 +219,19 @@ uint32 Sword2Engine::saveData(uint16 slotNo, uint8 *buffer, uint32 bufferSize) {
 // RESTORE GAME
 
 uint32 Sword2Engine::restoreGame(uint16 slotNo) {
-	Memory *saveBufferMem;
+	byte *saveBufferMem;
 	uint32 bufferSize;
 	uint32 errorCode;
 
 	// allocate the savegame buffer
 
 	bufferSize = findBufferSize();
-	saveBufferMem = _memory->allocMemory(bufferSize, MEM_locked, (uint32) UID_savegame_buffer);
+	saveBufferMem = (byte *) malloc(bufferSize);
 
 	// read the savegame file into our buffer
 
 	// load savegame into buffer
-	errorCode = restoreData(slotNo, saveBufferMem->ad, bufferSize);
+	errorCode = restoreData(slotNo, saveBufferMem, bufferSize);
 
 	// if it was read in successfully, then restore the game from the
 	// buffer & free the buffer
@@ -244,7 +244,7 @@ uint32 Sword2Engine::restoreGame(uint16 slotNo) {
 		// loading in the new screen & runlist
 	} else {
 		// because restoreFromBuffer would have freed it
-		_memory->freeMemory(saveBufferMem);
+		free(saveBufferMem);
 	}
 
 	// Force the game engine to pick a cursor. This appears to be needed
@@ -253,7 +253,7 @@ uint32 Sword2Engine::restoreGame(uint16 slotNo) {
 	return errorCode;
 }
 
-uint32 Sword2Engine::restoreData(uint16 slotNo, uint8 *buffer, uint32 bufferSize) {
+uint32 Sword2Engine::restoreData(uint16 slotNo, byte *buffer, uint32 bufferSize) {
 	char saveFileName[MAX_FILENAME_LEN];
 	SaveFile *in;
 	SaveFileManager *mgr = _system->get_savefile_manager();
@@ -295,12 +295,12 @@ uint32 Sword2Engine::restoreData(uint16 slotNo, uint8 *buffer, uint32 bufferSize
 	}
 }
 
-uint32 Sword2Engine::restoreFromBuffer(Memory *buffer, uint32 size) {
-	uint8 *varsRes;
+uint32 Sword2Engine::restoreFromBuffer(byte *buffer, uint32 size) {
+	byte *varsRes;
 	int32 pars[2];
 
 	// get a copy of the header from the savegame buffer
-	memcpy(&_saveGameHeader, buffer->ad, sizeof(_saveGameHeader));
+	memcpy(&_saveGameHeader, buffer, sizeof(_saveGameHeader));
 
 #ifdef SCUMM_BIG_ENDIAN
 	convertHeaderEndian(_saveGameHeader);
@@ -308,8 +308,8 @@ uint32 Sword2Engine::restoreFromBuffer(Memory *buffer, uint32 size) {
 
 	// Calc checksum & check that aginst the value stored in the header
 
-	if (_saveGameHeader.checksum != calcChecksum(buffer->ad + sizeof(_saveGameHeader.checksum), size - sizeof(_saveGameHeader.checksum))) {
-		_memory->freeMemory(buffer);
+	if (_saveGameHeader.checksum != calcChecksum(buffer + sizeof(_saveGameHeader.checksum), size - sizeof(_saveGameHeader.checksum))) {
+		free(buffer);
 
 		// error: incompatible save-data - can't use!
 		return SR_ERR_INCOMPATIBLE;
@@ -324,7 +324,7 @@ uint32 Sword2Engine::restoreFromBuffer(Memory *buffer, uint32 size) {
 
 	// if header contradicts actual current size of global variables
 	if (_saveGameHeader.varLength != _resman->fetchLen(1)) {
-		_memory->freeMemory(buffer);
+		free(buffer);
 
 		// error: incompatible save-data - can't use!
 		return SR_ERR_INCOMPATIBLE;
@@ -355,7 +355,7 @@ uint32 Sword2Engine::restoreFromBuffer(Memory *buffer, uint32 size) {
 	varsRes = _resman->openResource(1);
 
 	// copy that to the buffer, following the header
-	memcpy(varsRes, buffer->ad + sizeof(_saveGameHeader), _saveGameHeader.varLength);
+	memcpy(varsRes, buffer + sizeof(_saveGameHeader), _saveGameHeader.varLength);
 
 #ifdef SCUMM_BIG_ENDIAN
 	uint32 *globalVars = (uint32 *) (varsRes + sizeof(StandardHeader));
@@ -370,7 +370,7 @@ uint32 Sword2Engine::restoreFromBuffer(Memory *buffer, uint32 size) {
 
 	// free it now, rather than in RestoreGame, to unblock memory before
 	// new screen & runlist loaded
-	_memory->freeMemory(buffer);
+	free(buffer);
 
 	pars[0] = _saveGameHeader.screenId;
 	pars[1] = 1;
@@ -428,7 +428,7 @@ uint32 Sword2Engine::restoreFromBuffer(Memory *buffer, uint32 size) {
 
 // GetSaveDescription - PC version...
 
-uint32 Sword2Engine::getSaveDescription(uint16 slotNo, uint8 *description) {
+uint32 Sword2Engine::getSaveDescription(uint16 slotNo, byte *description) {
 	char saveFileName[MAX_FILENAME_LEN];
 	SaveGameHeader dummy;
 	SaveFile *in;
@@ -547,7 +547,7 @@ void Sword2Engine::putPlayerStructures(void) {
 	_resman->closeResource(CUR_PLAYER_ID);
 }
 
-uint32 Sword2Engine::calcChecksum(uint8 *buffer, uint32 size) {
+uint32 Sword2Engine::calcChecksum(byte *buffer, uint32 size) {
 	uint32 total = 0;
 
 	for (uint32 pos = 0; pos < size; pos++)
@@ -569,9 +569,9 @@ int32 Logic::fnPassPlayerSaveData(int32 *params) {
 
 	// copy from player object to savegame header
 
-	memcpy(&_vm->_saveGameHeader.logic, _vm->_memory->intToPtr(params[0]), sizeof(ObjectLogic));
-	memcpy(&_vm->_saveGameHeader.graphic, _vm->_memory->intToPtr(params[1]), sizeof(ObjectGraphic));
-	memcpy(&_vm->_saveGameHeader.mega, _vm->_memory->intToPtr(params[2]), sizeof(ObjectMega));
+	memcpy(&_vm->_saveGameHeader.logic, _vm->_memory->decodePtr(params[0]), sizeof(ObjectLogic));
+	memcpy(&_vm->_saveGameHeader.graphic, _vm->_memory->decodePtr(params[1]), sizeof(ObjectGraphic));
+	memcpy(&_vm->_saveGameHeader.mega, _vm->_memory->decodePtr(params[2]), sizeof(ObjectMega));
 
 	// makes no odds
 	return IR_CONT;
@@ -585,17 +585,17 @@ int32 Logic::fnGetPlayerSaveData(int32 *params) {
 	//		1 pointer to object's graphic structure
 	//		2 pointer to object's mega structure
 
-	ObjectLogic *ob_logic = (ObjectLogic *) _vm->_memory->intToPtr(params[0]);
-	ObjectGraphic *ob_graphic = (ObjectGraphic *) _vm->_memory->intToPtr(params[1]);
-	ObjectMega *ob_mega = (ObjectMega *) _vm->_memory->intToPtr(params[2]);
+	ObjectLogic *ob_logic = (ObjectLogic *) _vm->_memory->decodePtr(params[0]);
+	ObjectGraphic *ob_graphic = (ObjectGraphic *) _vm->_memory->decodePtr(params[1]);
+	ObjectMega *ob_mega = (ObjectMega *) _vm->_memory->decodePtr(params[2]);
 
 	int32 pars[3];
 
 	// copy from savegame header to player object
 
-	memcpy((uint8 *) ob_logic, &_vm->_saveGameHeader.logic, sizeof(ObjectLogic));
-	memcpy((uint8 *) ob_graphic, &_vm->_saveGameHeader.graphic, sizeof(ObjectGraphic));
-	memcpy((uint8 *) ob_mega, &_vm->_saveGameHeader.mega, sizeof(ObjectMega));
+	memcpy((byte *) ob_logic, &_vm->_saveGameHeader.logic, sizeof(ObjectLogic));
+	memcpy((byte *) ob_graphic, &_vm->_saveGameHeader.graphic, sizeof(ObjectGraphic));
+	memcpy((byte *) ob_mega, &_vm->_saveGameHeader.mega, sizeof(ObjectMega));
 
  	// any walk-data must be cleared - the player will be set to stand if
 	// he was walking when saved
@@ -606,10 +606,10 @@ int32 Logic::fnGetPlayerSaveData(int32 *params) {
 		ob_mega->currently_walking = 0;
 
 		// pointer to object's graphic structure
-		pars[0] = _vm->_memory->ptrToInt((const uint8 *) ob_graphic);
+		pars[0] = _vm->_memory->encodePtr((byte *) ob_graphic);
 
 		// pointer to object's mega structure
-		pars[1] = _vm->_memory->ptrToInt((const uint8 *) ob_mega);
+		pars[1] = _vm->_memory->encodePtr((byte *) ob_mega);
 
 		// target direction
 		pars[2] = ob_mega->current_dir;

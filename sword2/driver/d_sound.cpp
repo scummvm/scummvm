@@ -251,7 +251,7 @@ bool MusicHandle::endOfData(void) const {
  * @return True if the data appears to be a WAV file, otherwise false.
  */
 
-bool Sound::getWavInfo(uint8 *data, WavInfo *wavInfo) {
+bool Sound::getWavInfo(byte *data, WavInfo *wavInfo) {
 	uint32 wavLength;
 	uint32 offset;
 
@@ -750,7 +750,7 @@ int32 Sound::amISpeaking(void) {
 
 uint32 Sound::preFetchCompSpeech(const char *filename, uint32 speechid, uint16 **buf) {
 	uint32 i;
-	uint8 *data8;
+	byte *data8;
 	uint32 speechPos, speechLength;
 	File fp;
 	uint32 bufferSize;
@@ -772,7 +772,7 @@ uint32 Sound::preFetchCompSpeech(const char *filename, uint32 speechid, uint16 *
 	}
 
 	// Create a temporary buffer for compressed speech
-	data8 = (uint8 *) malloc(speechLength);
+	data8 = (byte *) malloc(speechLength);
 	if (!data8) {
 		fp.close();
 		return 0;
@@ -1036,7 +1036,7 @@ bool Sound::isFxPlaying(int32 id) {
  * @warning Zero is not a valid id
  */
 
-int32 Sound::openFx(int32 id, uint8 *data) {
+int32 Sound::openFx(int32 id, byte *data) {
 	if (!_soundOn)
 		return RD_OK;
 
@@ -1128,7 +1128,7 @@ int32 Sound::closeFx(int32 id) {
  * @warning Zero is not a valid id
  */
 
-int32 Sound::playFx(int32 id, uint8 *data, uint8 vol, int8 pan, uint8 type) {
+int32 Sound::playFx(int32 id, byte *data, uint8 vol, int8 pan, uint8 type) {
 	if (!_soundOn)
 		return RD_OK;
 

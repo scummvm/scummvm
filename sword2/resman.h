@@ -26,35 +26,27 @@ namespace Sword2 {
 
 class Sword2Engine;
 
+struct Resource {
+	byte *ptr;
+	uint32 size;
+	uint32 refCount;
+	uint32 refTime;
+};
+
 class ResourceManager {
 public:
 	ResourceManager(Sword2Engine *vm);	// read in the config file
 	~ResourceManager(void);
 
-	// Returns ad of resource. Loads if not in memory. Retains a count.
-	// Resource can be aged out of memory if count = 0
-	// The resource is locked while count != 0
-	// Resource floats when count = 0
+	byte *openResource(uint32 res, bool dump = false);
+	void closeResource(uint32 res);
 
-	uint8 *openResource(uint32 res, bool dump = false);
-	void closeResource(uint32 res);		// decrements the count
-
-	// returns '0' if resource out of range or null, otherwise '1' for ok
-
-	uint8 checkValid(uint32 res);
-
-	//for mem_view to query the owners of mem blocs
-
-	char *fetchCluster(uint32 res);
-	uint32 fetchAge(uint32 res);
-	uint32 fetchCount(uint32 count);
-
-	uint32 helpTheAgedOut(void);
-
+	bool checkValid(uint32 res);
 	uint32 fetchLen(uint32 res);
 
-	void nextCycle(void);
-	uint32 fetchUsage(void);
+	void expelOldResources(void);
+
+	void passTime(void);
 
 	// Prompts the user for the specified CD.
 	void getCd(int cd);
@@ -63,6 +55,8 @@ public:
 		return _curCd;
 	}
 
+	void remove(int res);
+
 	// ----console commands
 
 	void printConsoleClusters(void);
@@ -70,11 +64,9 @@ public:
 	void kill(int res);
 	void killAll(bool wantInfo);
 	void killAllObjects(bool wantInfo);
-	void remove(uint32 res);
 	void removeAll(void);
 
-	// pointer to a pointer (or list of pointers in-fact)
-	Memory **_resList;
+	Resource *_resList;
 
 private:
 	Sword2Engine *_vm;
@@ -82,20 +74,13 @@ private:
 	int _curCd;
 	uint32 _totalResFiles;
 	uint32 _totalClusters;
-	uint32 _currentMemoryUsage;
-
-	// Inc's each time open is called and is given to resource as its age.
-	// Cannot be allowed to start at 0! (A pint if you can tell me why)
 
 	uint32 _resTime;
-
-	uint32 *_age;
 
 	// Gode generated res-id to res number/rel number conversion table
 
 	uint16 *_resConvTable;
 
-	uint16 *_count;
 	char _resourceFiles[MAX_res_files][20];
 	uint8 _cdTab[MAX_res_files];		// Location of each cluster.
 };							

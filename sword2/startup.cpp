@@ -147,7 +147,7 @@ int32 Logic::fnRegisterStartPoint(int32 *params) {
 		error("ERROR: _startList full");
 
 	// +1 to allow for NULL terminator
-	if (strlen((const char *) _vm->_memory->intToPtr(params[1])) + 1 > MAX_description)
+	if (strlen((const char *) _vm->_memory->decodePtr(params[1])) + 1 > MAX_description)
 		error("ERROR: startup description too long");
 #endif
 
@@ -158,7 +158,7 @@ int32 Logic::fnRegisterStartPoint(int32 *params) {
 	// the correct start
 	_startList[_totalStartups].key = params[0];
 
-	strcpy(_startList[_totalStartups].description, (const char *) _vm->_memory->intToPtr(params[1]));
+	strcpy(_startList[_totalStartups].description, (const char *) _vm->_memory->decodePtr(params[1]));
 
 	// point to next
 	_totalStartups++;

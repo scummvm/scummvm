@@ -131,7 +131,7 @@ int32 Logic::fnPause(int32 *params) {
 	// NB. Pause-value of 0 causes script to continue, 1 causes a 1-cycle
 	// quit, 2 gives 2 cycles, etc.
 
-	ObjectLogic *ob_logic = (ObjectLogic *) _vm->_memory->intToPtr(params[0]);
+	ObjectLogic *ob_logic = (ObjectLogic *) _vm->_memory->decodePtr(params[0]);
 
 	if (ob_logic->looping == 0) {
 		ob_logic->looping = 1;
@@ -152,7 +152,7 @@ int32 Logic::fnRandomPause(int32 *params) {
 	//		1 minimum number of game-cycles to pause
 	//		2 maximum number of game-cycles to pause
 
-	ObjectLogic *ob_logic = (ObjectLogic *) _vm->_memory->intToPtr(params[0]);
+	ObjectLogic *ob_logic = (ObjectLogic *) _vm->_memory->decodePtr(params[0]);
 	int32 pars[2];
 
 	if (ob_logic->looping == 0) {
@@ -189,7 +189,7 @@ int32 Logic::fnPassMega(int32 *params) {
 
 	// params: 	0 pointer to a mega structure
 
-	memcpy(&_engineMega, _vm->_memory->intToPtr(params[0]), sizeof(ObjectMega));
+	memcpy(&_engineMega, _vm->_memory->decodePtr(params[0]), sizeof(ObjectMega));
 	return IR_CONT;
 }
 
@@ -202,7 +202,7 @@ int32 Logic::fnSetValue(int32 *params) {
 	// params:	0 pointer to object's mega structure
 	//		1 value to set it to
 
-	ObjectMega *ob_mega = (ObjectMega *) _vm->_memory->intToPtr(params[0]);
+	ObjectMega *ob_mega = (ObjectMega *) _vm->_memory->decodePtr(params[0]);
 
 	ob_mega->megaset_res = params[1];
 	return IR_CONT;
@@ -323,7 +323,7 @@ int32 Logic::fnResetGlobals(int32 *params) {
 
 	debug(5, "globals size: %d", size);
 
-	globals = (uint32 *) ((uint8 *) _vm->_resman->openResource(1) + sizeof(StandardHeader));
+	globals = (uint32 *) ((byte *) _vm->_resman->openResource(1) + sizeof(StandardHeader));
 
 	// blank each global variable
 	memset(globals, 0, size);
@@ -363,7 +363,7 @@ struct CreditsLine {
 	byte type;
 	int top;
 	int height;
-	Memory *sprite;
+	byte *sprite;
 };
 
 #define CREDITS_FONT_HEIGHT 25
@@ -432,8 +432,8 @@ int32 Logic::fnPlayCredits(int32 *params) {
 
 	uint16 logoWidth = 0;
 	uint16 logoHeight = 0;
-	uint8 *logoData = NULL;
-	uint8 palette[1024];
+	byte *logoData = NULL;
+	byte palette[1024];
 
 	if (f.open("credits.bmp")) {
 		logoWidth = f.readUint16LE();
@@ -446,7 +446,7 @@ int32 Logic::fnPlayCredits(int32 *params) {
 			palette[i * 4 + 3] = 0;
 		}
 
-		logoData = (uint8 *) malloc(logoWidth * logoHeight);
+		logoData = (byte *) malloc(logoWidth * logoHeight);
 
 		f.read(logoData, logoWidth * logoHeight);
 		f.close();
@@ -610,7 +610,7 @@ int32 Logic::fnPlayCredits(int32 *params) {
 
 			if (creditsLines[i].top + creditsLines[i].height < scrollPos) {
 				if (creditsLines[i].sprite) {
-					_vm->_memory->freeMemory(creditsLines[i].sprite);
+					free(creditsLines[i].sprite);
 					creditsLines[i].sprite = NULL;
 					debug(2, "Freeing sprite '%s'", creditsLines[i].str);
 				}
@@ -626,15 +626,15 @@ int32 Logic::fnPlayCredits(int32 *params) {
 
 				if (!creditsLines[i].sprite) {
 					debug(2, "Creating sprite '%s'", creditsLines[i].str);
-					creditsLines[i].sprite = _vm->_fontRenderer->makeTextSprite((uint8 *) creditsLines[i].str, 600, 14, _vm->_speechFontId, 0);
+					creditsLines[i].sprite = _vm->_fontRenderer->makeTextSprite((byte *) creditsLines[i].str, 600, 14, _vm->_speechFontId, 0);
 				}
 
-				FrameHeader *frame = (FrameHeader *) creditsLines[i].sprite->ad;
+				FrameHeader *frame = (FrameHeader *) creditsLines[i].sprite;
 
 				spriteInfo.y = creditsLines[i].top - scrollPos;
 				spriteInfo.w = frame->width;
 				spriteInfo.h = frame->height;
-				spriteInfo.data = creditsLines[i].sprite->ad + sizeof(FrameHeader);
+				spriteInfo.data = creditsLines[i].sprite + sizeof(FrameHeader);
 
 				switch (creditsLines[i].type) {
 				case LINE_LEFT:
@@ -685,7 +685,7 @@ int32 Logic::fnPlayCredits(int32 *params) {
 		if (creditsLines[i].str)
 			free(creditsLines[i].str);
 		if (creditsLines[i].sprite)
-			_vm->_memory->freeMemory(creditsLines[i].sprite);
+			free(creditsLines[i].sprite);
 	}
 
 	if (logoData)

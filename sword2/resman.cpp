@@ -30,7 +30,6 @@
 
 namespace Sword2 {
 
-// ---------------------------------------------------------------------------
 // Welcome to the easy resource manager - written in simple code for easy
 // maintenance
 // 
@@ -39,7 +38,19 @@ namespace Sword2 {
 //	resource.inf which is a list of ascii cluster file names
 //	resource.tab which is a table which tells us which cluster a resource
 //      is located in and the number within the cluster
-// ---------------------------------------------------------------------------
+
+// If 0, resouces are expelled immediately when they are closed. At the moment
+// this causes the game to crash, which seems like a bug to me. In fact, it
+// could be a clue to the mysterious and infrequent crashes...
+
+#define CACHE_CLUSTERS 1
+
+// Resources age every time a new room is entered. This constant indicates how
+// long a cached resource (i.e. one that has been closed) is allowed to live
+// before it dies of old age. This may need some tuning, but I picked three
+// because so many areas in the game seem to consist of about three rooms.
+
+#define MAX_CACHE_AGE 3
 
 enum {
 	BOTH		= 0x0,		// Cluster is on both CDs
@@ -75,132 +86,128 @@ ResourceManager::ResourceManager(Sword2Engine *vm) {
 	// wish to know what resource files there are and what is in each
 
 	File file;
-	uint32 end;
-	Memory *temp;
-	uint32 pos = 0;
-	uint32 j = 0;
+	uint32 size;
+	byte *temp;
 
 	_totalClusters = 0;
 	_resConvTable = NULL;
 
-	if (!file.open("resource.inf")) {
-		error("init cannot *OPEN* resource.inf");
-	}
+	if (!file.open("resource.inf"))
+		error("Cannot open resource.inf");
 
-	end = file.size();
+	size = file.size();
 
-	//get some space for the incoming resource file - soon to be trashed
-	temp = _vm->_memory->allocMemory(end, MEM_locked, (uint32) UID_temp);
+	// Get some space for the incoming resource file - soon to be trashed
+	temp = (byte *) malloc(size);
 
-	if (file.read(temp->ad, end) != end) {
+	if (file.read(temp, size) != size) {
 		file.close();
 		error("init cannot *READ* resource.inf");
 	}
 
 	file.close();
 
-	// ok, we've loaded in the resource.inf file which contains a list of
-	// all the files now extract the filenames
+	// Ok, we've loaded in the resource.inf file which contains a list of
+	// all the files now extract the filenames.
+
+	// Using this method the Gode generated resource.inf must have #0d0a on
+	// the last entry
+
+	uint32 i = 0;
+	uint32 j = 0;
+
 	do {
 		// item must have an #0d0a
-		while (temp->ad[j] != 13) {
-			_resourceFiles[_totalClusters][pos] = temp->ad[j];
+		while (temp[i] != 13) {
+			_resourceFiles[_totalClusters][j] = temp[i];
+			i++;
 			j++;
-			pos++;
 		}
 
 		// NULL terminate our extracted string
-		_resourceFiles[_totalClusters][pos]=0;
+		_resourceFiles[_totalClusters][j] = 0;
 
 		// Reset position in current slot between entries, skip the
 		// 0x0a in the source and increase the number of clusters.
 
-		pos = 0;
-		j += 2;
+		j = 0;
+		i += 2;
 		_totalClusters++;
 
 		// TODO: put overload check here
-	} while (j != end);	// using this method the Gode generated resource.inf must have #0d0a on the last entry
+	} while (i != size);
 
-	// now load in the binary id to res conversion table
-	if (!file.open("resource.tab")) {
-		error("init cannot *OPEN* resource.tab");
-	}
+	free(temp);
 
-	// find how many resources
-	end = file.size();
+	// Now load in the binary id to res conversion table
+	if (!file.open("resource.tab"))
+		error("Cannot open resource.tab");
 
-	_totalResFiles = end / 4;
+	// Find how many resources
+	size = file.size();
 
-	// table seems ok so malloc some space
-	_resConvTable = (uint16 *) malloc(end);
+	_totalResFiles = size / 4;
 
-	for (j = 0; j < end / 2; j++)
-		_resConvTable[j] = file.readUint16LE();
+	// Table seems ok so malloc some space
+	_resConvTable = (uint16 *) malloc(size);
+
+	for (i = 0; i < size / 2; i++)
+		_resConvTable[i] = file.readUint16LE();
 
 	if (file.ioFailed()) {
 		file.close();
-		error("init cannot *READ* resource.tab");
+		error("Cannot read resource.tab");
 	}
 
 	file.close();
 
-	if (!file.open("cd.inf")) {
-		error("init cannot *OPEN* cd.inf");
-	}
+	if (!file.open("cd.inf"))
+		error("Cannot open cd.inf");
 
 	CdInf *cdInf = new CdInf[_totalClusters];
 
-	for (j = 0; j < _totalClusters; j++) {
-		file.read(cdInf[j].clusterName, sizeof(cdInf[j].clusterName));
-		cdInf[j].cd = file.readByte();
+	for (i = 0; i < _totalClusters; i++) {
+		file.read(cdInf[i].clusterName, sizeof(cdInf[i].clusterName));
+		cdInf[i].cd = file.readByte();
 		
-		if (file.ioFailed()) {
-			error("init failed to read cd.inf. Insufficient entries?");
-		}
+		if (file.ioFailed())
+			error("Cannot read cd.inf");
 	}
 
 	file.close();
 
-	for (j = 0; j < _totalClusters; j++) {
-		uint32 i = 0;
+	for (i = 0; i < _totalClusters; i++) {
+		for (j = 0; j < _totalClusters; j++) {
+			if (scumm_stricmp((char *) cdInf[j].clusterName, _resourceFiles[i]) == 0)
+				break;
+		}
 
-		while (scumm_stricmp((char *) cdInf[i].clusterName, _resourceFiles[j]) != 0 && i < _totalClusters)
-			i++;
+		if (j == _totalClusters)
+			error("%s is not in cd.inf", _resourceFiles[i]);
 
-		if (i == _totalClusters) {
-			error("init, %s is not in cd.inf", _resourceFiles[j]);
-		} else
-			_cdTab[j] = cdInf[i].cd;
+		_cdTab[i] = cdInf[j].cd;
 	}
 
 	delete [] cdInf;
 
-	debug(5, "%d resources in %d cluster files", _totalResFiles, _totalClusters);
-	for (j = 0; j < _totalClusters; j++)
-		debug(5, "filename of cluster %d: -%s", j, _resourceFiles[j]);
+	debug(1, "%d resources in %d cluster files", _totalResFiles, _totalClusters);
+	for (i = 0; i < _totalClusters; i++)
+		debug(2, "filename of cluster %d: -%s", i, _resourceFiles[i]);
 
-	// create space for a list of pointers to mem's
-	_resList = (Memory **) malloc(_totalResFiles * sizeof(Memory *));
+	_resList = (Resource *) malloc(_totalResFiles * sizeof(Resource));
 
-	_age = (uint32 *) malloc(_totalResFiles * sizeof(uint32));
-	_count = (uint16 *) malloc(_totalResFiles * sizeof(uint16));
-
-	for (j = 0; j < _totalResFiles; j++) {
-		// age must be 0 if the file is not in memory at all
-		_age[j] = 0;
-		_count[j] = 0;
+	for (i = 0; i < _totalResFiles; i++) {
+		_resList[i].ptr = NULL;
+		_resList[i].size = 0;
+		_resList[i].refCount = 0;
+		_resList[i].refTime = 0;
 	}
 
-	_resTime = 1;	//cannot start at 0
-	_vm->_memory->freeMemory(temp);	//get that memory back
+	_resTime = 0;
 }
 
 ResourceManager::~ResourceManager(void) {
-	// free up our mallocs
 	free(_resList);
-	free(_age);
-	free(_count);
 	free(_resConvTable);
 }
 
@@ -209,7 +216,7 @@ ResourceManager::~ResourceManager(void) {
 #define SWAP16(x)	x = SWAP_BYTES_16(x)
 #define SWAP32(x)	x = SWAP_BYTES_32(x)
 
-void convertEndian(uint8 *file, uint32 len) {
+void convertEndian(byte *file, uint32 len) {
 	int i;
 	StandardHeader *hdr = (StandardHeader *) file;
 	
@@ -390,40 +397,29 @@ void convertEndian(uint8 *file, uint32 len) {
 	}
 }
 
-uint8 *ResourceManager::openResource(uint32 res, bool dump) {
-	// returns ad of resource. Loads if not in memory
-	// retains a count
-	// resource can be aged out of memory if count = 0
-	// the resource is locked while count != 0 i.e. until a closeResource
-	// is called
+/**
+ * Returns the address of a resource. Loads if not in memory. Retains a count.
+ */
 
-	File	file;
-	uint16	parent_res_file;
-	uint16	actual_res;
-	uint32	pos, len;
-
-	uint32	table_offset;
-
+byte *ResourceManager::openResource(uint32 res, bool dump) {
 	assert(res < _totalResFiles);
 
-	// is the resource in memory already?
-	// if the file is not in memory then age should and MUST be 0
-	if (!_age[res]) {
-		// fetch the correct file and read in the correct portion
-		// if the file cannot fit then we must trash the oldest large
-		// enough floating file
+	// Is the resource in memory already? If not, load it.
+
+	if (!_resList[res].ptr) {
+		// Fetch the correct file and read in the correct portion.
 
 		// points to the number of the ascii filename
-		parent_res_file = _resConvTable[res * 2];
+		uint16 parent_res_file = _resConvTable[res * 2];
 
 		assert(parent_res_file != 0xffff);
 
-		// relative resource within the file
-		actual_res = _resConvTable[(res * 2) + 1];
+		// Relative resource within the file
+		uint16 actual_res = _resConvTable[(res * 2) + 1];
 
-		// first we have to find the file via the _resConvTable
+		// First we have to find the file via the _resConvTable
 
-		debug(5, "resOpen %s res %d", _resourceFiles[parent_res_file], res);
+		debug(5, "openResource %s res %d", _resourceFiles[parent_res_file], res);
 
 		// If we're loading a cluster that's only available from one
 		// of the CDs, remember which one so that we can play the
@@ -435,6 +431,8 @@ uint8 *ResourceManager::openResource(uint32 res, bool dump) {
 		// Actually, as long as the file can be found we don't really
 		// care which CD it's on. But if we can't find it, keep asking
 		// for the CD until we do.
+
+		File file;
 
 		while (!file.open(_resourceFiles[parent_res_file])) {
 			// If the file is supposed to be on hard disk, or we're
@@ -448,32 +446,28 @@ uint8 *ResourceManager::openResource(uint32 res, bool dump) {
 		}
 
 		// 1st DWORD of a cluster is an offset to the look-up table
-		table_offset = file.readUint32LE();
+		uint32 table_offset = file.readUint32LE();
 
-		debug(5, "table offset = %d", table_offset);
+		debug(6, "table offset = %d", table_offset);
 
-		// 2 dwords per resource
 		file.seek(table_offset + actual_res * 8, SEEK_SET);
-		// get position of our resource within the cluster file
-		pos = file.readUint32LE();
-		// read the length
-		len = file.readUint32LE();
 
-		// get to position in file of our particular resource
+		uint32 pos = file.readUint32LE();
+		uint32 len = file.readUint32LE();
+
 		file.seek(pos, SEEK_SET);
 
-		debug(5, "res len %d", len);
+		debug(6, "res len %d", len);
 
-		// ok, we know the length so try and allocate the memory
-		// if it can't then old files will be ditched until it works
-		_resList[res] = _vm->_memory->allocMemory(len, MEM_locked, res);
+		// Ok, we know the length so try and allocate the memory.
+		// If it can't then old files will be ditched until it works.
+		_resList[res].ptr = _vm->_memory->memAlloc(len, res);
+		_resList[res].size = len;
 
-		// now load the file
-		// hurray, load it in.
-		file.read(_resList[res]->ad, len);
+		file.read(_resList[res].ptr, len);
 
 		if (dump) {
-			StandardHeader *header = (StandardHeader *) _resList[res]->ad;
+			StandardHeader *header = (StandardHeader *) _resList[res].ptr;
 			char buf[256];
 			char tag[10];
 			File out;
@@ -531,7 +525,7 @@ uint8 *ResourceManager::openResource(uint32 res, bool dump) {
 
 			if (!out.open(buf, "")) {
 				if (out.open(buf, "", File::kFileWriteMode))
-					out.write(_resList[res]->ad, len);
+					out.write(_resList[res].ptr, len);
 			}
 
 			if (out.isOpen())
@@ -542,184 +536,112 @@ uint8 *ResourceManager::openResource(uint32 res, bool dump) {
 		file.close();
 
 #ifdef SCUMM_BIG_ENDIAN
-		convertEndian((uint8 *) _resList[res]->ad, len);
+		convertEndian(_resList[res].ptr, len);
 #endif
-	} else {
-		debug(9, "RO %d, already open count=%d", res, _count[res]);
 	}
 
-	// number of times opened - the file won't move in memory while count
-	// is non zero
-	_count[res]++;
+	_resList[res].refCount++;
+	_resList[res].refTime = _resTime;
 
-	// update the accessed time stamp - touch the file in other words
-	_age[res] = _resTime;
-
-	// pass the address of the mem & lock the memory too
-	// might be locked already (if count > 1)
-	_vm->_memory->lockMemory(_resList[res]);
-
-	return (uint8 *) _resList[res]->ad;
-}
-
-uint8 ResourceManager::checkValid(uint32 res) {
-	// returns '1' if resource is valid, otherwise returns '0'
-	// used in startup.cpp to ignore invalid screen-manager resources
-
-	uint16 parent_res_file;
-
-	// resource number out of range
-	if (res >= _totalResFiles)
-		return 0;
-
-	// points to the number of the ascii filename
-	parent_res_file = _resConvTable[res * 2];
-
-	// null & void resource
-	if (parent_res_file == 0xffff)
-		return 0;
-
-	// ok
-	return 1;
-}
-
-void ResourceManager::nextCycle(void) {
-	// increment the cycle and calculate actual per-cycle memory useage
-
-#ifdef _SWORD2_DEBUG
-	_currentMemoryUsage = 0;
-
-	for (int i = 1; i < _totalResFiles; i++) {
-		// was accessed last cycle
-		if (_age[i] == _resTime)
-			_currentMemoryUsage += _resList[i]->size;
-	}
-#endif
-
-	_resTime++;
-
-	// if you left the game running for a hundred years when this went to 0
-	// there'd be a resource left stuck in memory - after another hundred
-	// years there'd be another...
-	//
-	// Mind you, by then the our get_msecs() function will have wrapped
-	// around too, probably causing a mess of other problems.
-
-	if (!_resTime)
-		_resTime++;
-}
-
-uint32 ResourceManager::fetchUsage(void) {
-	// returns memory usage previous cycle
-	return _currentMemoryUsage;
+	return _resList[res].ptr;
 }
 
 void ResourceManager::closeResource(uint32 res) {
-	// decrements the count
-	// resource floats when count = 0
-
 	assert(res < _totalResFiles);
-	assert(_count[res]);
+	assert(_resList[res].refCount > 0);
 
-	//one less has it open
-	_count[res]--;
+	_resList[res].refCount--;
+	_resList[res].refTime = _resTime;
 
-	//if noone has the file open then unlock and allow to float
-	if (!_count[res]) {
-		// pass the address of the mem
-		_vm->_memory->floatMemory(_resList[res]);
-	}
+#if !CACHE_CLUSTERS
+	// Maybe it's useful on some platforms if memory is released as
+	// quickly as possible?
+
+	if (_resList[res].refCount == 0)
+		remove(res);
+#endif
 }
 
+/**
+ * Returns true if resource is valid, otherwise false.
+ */
+
+bool ResourceManager::checkValid(uint32 res) {
+	// Resource number out of range
+	if (res >= _totalResFiles)
+		return false;
+
+	// Points to the number of the ascii filename
+	uint16 parent_res_file = _resConvTable[res * 2];
+
+	// Null & void resource
+	if (parent_res_file == 0xffff)
+		return false;
+
+	return true;
+}
+
+void ResourceManager::passTime() {
+	// In the original game this was called every game cycle. This allowed
+	// for a more exact measure of when a loaded resouce was most recently
+	// used. When the memory pool got too fragmented, the oldest and
+	// largest of the closed resources would be expelled from the cache.
+
+	// With the new memory manager, there is no single memory block that
+	// can become fragmented. Therefore, it makes more sense to me to
+	// measure an object's age in how many rooms ago it was last used.
+
+	// Therefore, this function is now called when a new room is loaded.
+
+	_resTime++;
+}
+
+/**
+ * Returns the total file length of a resource - i.e. all headers are included
+ * too.
+ */
+
 uint32 ResourceManager::fetchLen(uint32 res) {
-	// returns the total file length of a resource - i.e. all headers are
-	// included too
+	if (_resList[res].ptr)
+		return _resList[res].size;
 
-	File fh;
-	uint16 parent_res_file;
-	uint16 actual_res;
-	uint32 len;
-	uint32 table_offset;
+	// Does this ever happen?
+	warning("fetchLen: Resource %u is not loaded; reading length from file", res);
 
-	// points to the number of the ascii filename
-	parent_res_file = _resConvTable[res * 2];
+	// Points to the number of the ascii filename
+	uint16 parent_res_file = _resConvTable[res * 2];
 
 	// relative resource within the file
-	actual_res = _resConvTable[(res * 2) + 1];
+	uint16 actual_res = _resConvTable[(res * 2) + 1];
 
 	// first we have to find the file via the _resConvTable
 	// open the cluster file
 
-	if (!fh.open(_resourceFiles[parent_res_file]))
-		error("fetchLen cannot *OPEN* %s", _resourceFiles[parent_res_file]);
+	File file;
+
+	if (!file.open(_resourceFiles[parent_res_file]))
+		error("Cannot open %s", _resourceFiles[parent_res_file]);
 
 	// 1st DWORD of a cluster is an offset to the look-up table
-	table_offset = fh.readUint32LE();
+	uint32 table_offset = file.readUint32LE();
 
 	// 2 dwords per resource + skip the position dword
-	fh.seek(table_offset + (actual_res * 8) + 4, SEEK_SET);
+	file.seek(table_offset + (actual_res * 8) + 4, SEEK_SET);
 
-	// read the length
-	len = fh.readUint32LE();
-	return len;
+	return file.readUint32LE();
 }
 
-char *ResourceManager::fetchCluster(uint32 res) {
-	// returns a pointer to the ascii name of the cluster file which
-	// contains resource res
-	return _resourceFiles[_resConvTable[res * 2]];
-}
+void ResourceManager::expelOldResources() {
+	int nuked = 0;
 
-uint32 ResourceManager::fetchAge(uint32 res) {
-	// return the age of res
-	return _age[res];
-}
-
-uint32 ResourceManager::fetchCount(uint32 res) {
-	// return the open count of res
-	return _count[res];
-}
-
-uint32 ResourceManager::helpTheAgedOut(void) {
-	// remove from memory the oldest closed resource
-
-	uint32 oldest_res;	// holds id of oldest found so far when we have to chuck stuff out of memory
-	uint32 oldest_age;	// age of above during search
-	uint32 j;
-	uint32 largestResource = 0;
-
-	oldest_age = _resTime;
-	oldest_res = 0;
-
-	for (j = 2; j < _totalResFiles; j++) {
-		// not held open and older than this one
-		if (!_count[j] && _age[j] && _age[j] <= oldest_age) {	
-			if (_age[j] == oldest_age && _resList[j]->size > largestResource)	{
-				// Kick old resource of oldest age and largest
-				// size (Helps the poor defragger).
-				oldest_res = j;
-				largestResource = _resList[j]->size;
-			} else if (_age[j] < oldest_age)	{
-				oldest_res = j;
-				oldest_age = _age[j];
-				largestResource = _resList[j]->size;
-			}
+	for (uint i = 0; i < _totalResFiles; i++) {
+		if (_resList[i].ptr && _resList[i].refCount == 0 && _resTime - _resList[i].refTime >= MAX_CACHE_AGE) {
+			remove(i);
+			nuked++;
 		}
 	}
 
-	// there was not a file we could release
-	// no bytes released - oh dear, lets hope this never happens
-	if (!oldest_res)
-		return 0;
-
-	debug(5, "removing %d, age %d, size %d", oldest_res, _age[oldest_res], _resList[oldest_res]->size);
-
-	// trash this old resource
-
-	_age[oldest_res] = 0;		// effectively gone from _resList
-	_vm->_memory->freeMemory(_resList[oldest_res]);	// release the memory too
-
-	return _resList[oldest_res]->size;	// return bytes freed
+	debug(1, "%d resources died of old age", nuked);
 }
 
 void ResourceManager::printConsoleClusters(void) {
@@ -750,20 +672,13 @@ void ResourceManager::printConsoleClusters(void) {
 }
 
 void ResourceManager::examine(int res) {
-	StandardHeader *file_header;
-
 	if (res < 0 || res >= (int) _totalResFiles)
 		Debug_Printf("Illegal resource %d (there are %d resources 0-%d)\n", res, _totalResFiles, _totalResFiles - 1);
 	else if (_resConvTable[res * 2] == 0xffff)
 		Debug_Printf("%d is a null & void resource number\n", res);
 	else {
 		// open up the resource and take a look inside!
-		file_header = (StandardHeader *) openResource(res);
-
-		// Debug_Printf("%d\n", file_header->fileType);
-		// Debug_Printf("%s\n", file_header->name);
-
-		// Resource types. See header.h
+		StandardHeader *file_header = (StandardHeader *) openResource(res);
 
 		switch (file_header->fileType) {
 		case ANIMATION_FILE:
@@ -813,141 +728,100 @@ void ResourceManager::kill(int res) {
 		return;
 	}
 
-	// if noone has the file open then unlock and allow to float
-	if (!_count[res]) {
-		if (_age[res]) {
-			_age[res] = 0;		// effectively gone from _resList
-			_vm->_memory->freeMemory(_resList[res]);	// release the memory too
-			Debug_Printf("Trashed %d\n", res);
-		} else
-			Debug_Printf("%d not in memory\n", res);
-	} else
-		Debug_Printf("File is open - cannot remove\n");
+	if (!_resList[res].ptr) {
+		Debug_Printf("Resource %d is not in memory\n", res);
+		return;
+	}
+
+	if (_resList[res].refCount) {
+		Debug_Printf("Resource %d is open - cannot remove\n", res);
+		return;
+	}
+
+	remove(res);
+	Debug_Printf("Trashed %d\n", res);
 }
 
-void ResourceManager::remove(uint32 res) {
-	if (_age[res]) {
-		_age[res] = 0;			// effectively gone from _resList
-		_vm->_memory->freeMemory(_resList[res]);	// release the memory too
-		debug(5, " - Trashing %d", res);
-	} else
-		debug(5, "remove(%d) not even in memory!", res);
-}
-
-void ResourceManager::removeAll(void) {
-	// remove all res files from memory - ready for a total restart
-	// including player object & global variables resource
-
-	int j;
-	uint32 res;
-
-	j = _vm->_memory->_baseMemBlock;
-
-	do {
-		if (_vm->_memory->_memList[j].uid < 65536) {	// a resource
-			res = _vm->_memory->_memList[j].uid;
-			_age[res] = 0;		// effectively gone from _resList
-			_vm->_memory->freeMemory(_resList[res]);	// release the memory too
-		}
-
-		j = _vm->_memory->_memList[j].child;
-	} while	(j != -1);
-}
-
-void ResourceManager::killAll(bool wantInfo) {
-	// remove all res files from memory
-	// its quicker to search the mem blocs for res files than search
-	// resource lists for those in memory
-
-	int j;
-	uint32 res;
-	uint32 nuked = 0;
-  	StandardHeader *header;
-
-	j = _vm->_memory->_baseMemBlock;
-
-	do {
-		if (_vm->_memory->_memList[j].uid < 65536) {	// a resource
-			res = _vm->_memory->_memList[j].uid;
-
-			// not the global vars which are assumed to be open in
-			// memory & not the player object!
-			if (res != 1 && res != CUR_PLAYER_ID) {
-				header = (StandardHeader *) openResource(res);
-				closeResource(res);
-
-				_age[res] = 0;		// effectively gone from _resList
-				_vm->_memory->freeMemory(_resList[res]);	// release the memory too
-				nuked++;
-
-				// if this was called from the console,
-				if (wantInfo) {
-					Debug_Printf("Nuked %5d: %s\n", res, header->name);
-					debug(5, " nuked %d: %s", res, header->name);
-				}	
-			}
-		}
-		j = _vm->_memory->_memList[j].child;
-	} while (j != -1);
-
-	// if this was called from the console
-	if (wantInfo) {
-		Debug_Printf("Expelled %d resource(s)\n", nuked);
+void ResourceManager::remove(int res) {
+	if (_resList[res].ptr) {
+		_vm->_memory->memFree(_resList[res].ptr);
+		_resList[res].ptr = NULL;
 	}
 }
 
-//----------------------------------------------------------------------------
-// Like killAll but only kills objects (except George & the variable table of
-// course) - ie. forcing them to reload & restart their scripts, which
-// simulates the effect of a save & restore, thus checking that each object's
-// re-entrant logic works correctly, and doesn't cause a statuette to
-// disappear forever, or some plaster-filled holes in sand to crash the game &
-// get James in trouble again.
+/**
+ * Remove all res files from memory - ready for a total restart. This includes
+ * the player object and global variables resource.
+ */
+
+void ResourceManager::removeAll(void) {
+	for (uint i = 0; i < _totalResFiles; i++)
+		remove(i);
+}
+
+/**
+ * Remove all resources from memory.
+ */
+
+void ResourceManager::killAll(bool wantInfo) {
+	int nuked = 0;
+
+	for (uint i = 0; i < _totalResFiles; i++) {
+		// Don't nuke the global variables or the player object!
+		if (i == 1 || i == CUR_PLAYER_ID)
+			continue;
+
+		if (_resList[i].ptr) {
+			StandardHeader *header = (StandardHeader *) _resList[i].ptr;
+
+			if (wantInfo)
+				Debug_Printf("Nuked %5d: %s\n", i, header->name);
+
+			remove(i);
+			nuked++;
+		}
+	}
+
+	if (wantInfo)
+		Debug_Printf("Expelled %d resources\n", nuked);
+}
+
+/**
+ * Like killAll but only kills objects (except George & the variable table of
+ * course) - ie. forcing them to reload & restart their scripts, which
+ * simulates the effect of a save & restore, thus checking that each object's
+ * re-entrant logic works correctly, and doesn't cause a statuette to
+ * disappear forever, or some plaster-filled holes in sand to crash the game &
+ * get James in trouble again.
+ */
 
 void ResourceManager::killAllObjects(bool wantInfo) {
-	// remove all object res files from memory, excluding George
-	// its quicker to search the mem blocs for res files than search
-	// resource lists for those in memory
+	int nuked = 0;
 
-	int j;
-	uint32 res;
-	uint32 nuked = 0;
- 	StandardHeader *header;
+	for (uint i = 0; i < _totalResFiles; i++) {
+		// Don't nuke the global variables or the player object!
+		if (i == 1 || i == CUR_PLAYER_ID)
+			continue;
 
-	j = _vm->_memory->_baseMemBlock;
+		if (_resList[i].ptr) {
+			StandardHeader *header = (StandardHeader *) _resList[i].ptr;
 
-	do {
-		if (_vm->_memory->_memList[j].uid < 65536) {	// a resource
-			res = _vm->_memory->_memList[j].uid;
-			//not the global vars which are assumed to be open in
-			// memory & not the player object!
-			if (res != 1 && res != CUR_PLAYER_ID) {
-				header = (StandardHeader *) openResource(res);
-				closeResource(res);
+			if (header->fileType == GAME_OBJECT) {
+				if (wantInfo)
+					Debug_Printf("Nuked %5d: %s\n", i, header->name);
 
-				if (header->fileType == GAME_OBJECT) {
-					_age[res] = 0;		// effectively gone from _resList
-					_vm->_memory->freeMemory(_resList[res]);	// release the memory too
-   					nuked++;
-
-					// if this was called from the console
-					if (wantInfo) {
-						Debug_Printf("Nuked %5d: %s\n", res, header->name);
-						debug(5, " nuked %d: %s", res, header->name);
-					}	
-				}
+				remove(i);
+				nuked++;
 			}
 		}
-		j = _vm->_memory->_memList[j].child;
-	} while (j != -1);
+	}
 
-	// if this was called from the console
 	if (wantInfo)
-		Debug_Printf("Expelled %d object resource(s)\n", nuked);
+		Debug_Printf("Expelled %d resources\n", nuked);
 }
 
 void ResourceManager::getCd(int cd) {
-	uint8 *textRes;
+	byte *textRes;
 
 	// stop any music from playing - so the system no longer needs the
 	// current CD - otherwise when we take out the CD, Windows will

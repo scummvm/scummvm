@@ -38,7 +38,7 @@ public:
 	~AnimationState();
 
 #ifndef BACKEND_8BIT
-	void drawTextObject(SpriteInfo *s, uint8 *src);
+	void drawTextObject(SpriteInfo *s, byte *src);
 #endif
 
 	void clearScreen();
@@ -63,7 +63,7 @@ private:
 	SoundMixer *_snd;
 	OSystem *_sys;
 
-	uint8 *_textSurface;
+	byte *_textSurface;
 
 	static struct MovieInfo _movies[];
 
@@ -71,11 +71,11 @@ private:
 	void closeTextObject(MovieTextObject *obj);
 	void drawTextObject(AnimationState *anim, MovieTextObject *obj);
 
-	int32 playDummy(const char *filename, MovieTextObject *text[], uint8 *musicOut);
+	int32 playDummy(const char *filename, MovieTextObject *text[], byte *musicOut);
 
 public:
 	MoviePlayer(Sword2Engine *vm);
-	int32 play(const char *filename, MovieTextObject *text[], uint8 *musicOut);
+	int32 play(const char *filename, MovieTextObject *text[], byte *musicOut);
 };
 
 } // End of namespace Sword2

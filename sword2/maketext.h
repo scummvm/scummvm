@@ -61,7 +61,7 @@ enum {
 	int16 x;
 	int16 y;
 	uint16 type;
-	Memory *text_mem;
+	byte *text_mem;
 };
 
 // Info for each line of words in the output text sprite
@@ -86,12 +86,12 @@ private:
 				// each line - negative for overlap
 	uint8 _borderPen;	// output pen colour of character borders
 
-	uint16 analyseSentence(uint8 *sentence, uint16 maxWidth, uint32 fontRes, LineInfo *line);
-	Memory *buildTextSprite(uint8 *sentence, uint32 fontRes, uint8 pen, LineInfo *line, uint16 noOfLines);
-	uint16 charWidth(uint8 ch, uint32 fontRes);
+	uint16 analyseSentence(byte *sentence, uint16 maxWidth, uint32 fontRes, LineInfo *line);
+	byte *buildTextSprite(byte *sentence, uint32 fontRes, uint8 pen, LineInfo *line, uint16 noOfLines);
+	uint16 charWidth(byte ch, uint32 fontRes);
 	uint16 charHeight(uint32 fontRes);
-	FrameHeader* findChar(uint8 ch, uint8 *charSet);
-	void copyChar(FrameHeader *charPtr, uint8 *spritePtr, uint16 spriteWidth, uint8 pen);
+	FrameHeader* findChar(byte ch, byte *charSet);
+	void copyChar(FrameHeader *charPtr, byte *spritePtr, uint16 spriteWidth, uint8 pen);
 	
 public:
 	FontRenderer(Sword2Engine *vm) : _vm(vm) {
@@ -99,12 +99,12 @@ public:
 			_blocList[i].text_mem = NULL;
 	}
 
-	Memory *makeTextSprite(uint8 *sentence, uint16 maxWidth, uint8 pen, uint32 fontRes, uint8 border = BORDER_PEN);
+	byte *makeTextSprite(byte *sentence, uint16 maxWidth, uint8 pen, uint32 fontRes, uint8 border = BORDER_PEN);
 
 	void killTextBloc(uint32 bloc_number);
 	void printTextBlocs(void);
 
-	uint32 buildNewBloc(uint8 *ascii, int16 x, int16 y, uint16 width, uint8 pen, uint32 type, uint32 fontRes, uint8 justification);
+	uint32 buildNewBloc(byte *ascii, int16 x, int16 y, uint16 width, uint8 pen, uint32 type, uint32 fontRes, uint8 justification);
 };
 
 } // End of namespace Sword2

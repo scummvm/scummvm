@@ -287,9 +287,6 @@ void Sword2Engine::gameCycle(void) {
 
 	mouseEngine();
 	processFxQueue();
-
-	// update age and calculate previous cycle memory usage
-	_resman->nextCycle();
 }
 
 void Sword2Engine::go() {

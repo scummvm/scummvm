@@ -64,10 +64,10 @@ uint8 Graphics::getMatch(uint8 r, uint8 g, uint8 b) {
  * from the current palCopy
  */
 
-void Graphics::updatePaletteMatchTable(uint8 *data) {
+void Graphics::updatePaletteMatchTable(byte *data) {
 	if (!data) {
 		int16 red, green, blue;
-		uint8 *p;
+		byte *p;
 
 		// Create palette match table
 
@@ -109,7 +109,7 @@ uint8 Graphics::quickMatch(uint8 r, uint8 g, uint8 b) {
  * @param colourTable the new colour entries
  */
 
-void Graphics::setPalette(int16 startEntry, int16 noEntries, uint8 *colourTable, uint8 fadeNow) {
+void Graphics::setPalette(int16 startEntry, int16 noEntries, byte *colourTable, uint8 fadeNow) {
 	if (noEntries) {
 		memcpy(&_palCopy[startEntry][0], colourTable, noEntries * 4);
 		if (fadeNow == RDPAL_INSTANT) {

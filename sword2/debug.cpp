@@ -50,7 +50,7 @@ void Debugger::makeDebugTextBlock(char *text, int16 x, int16 y) {
 
 	assert(blockNo < MAX_DEBUG_TEXTS);
 
-	_debugTextBlocks[blockNo] = _vm->_fontRenderer->buildNewBloc((uint8 *) text, x, y, 640 - x, 0, RDSPR_DISPLAYALIGN, CONSOLE_FONT_ID, NO_JUSTIFICATION);
+	_debugTextBlocks[blockNo] = _vm->_fontRenderer->buildNewBloc((byte *) text, x, y, 640 - x, 0, RDSPR_DISPLAYALIGN, CONSOLE_FONT_ID, NO_JUSTIFICATION);
 }
 
 void Debugger::buildDebugText(void) {
@@ -290,7 +290,7 @@ void Debugger::buildDebugText(void) {
 		// memory indicator - this should come last, to show all the
 		// sprite blocks above!
 
-		_vm->_memory->memoryString(buf);
+		_vm->_memory->memStatusStr(buf);
 		makeDebugTextBlock(buf, 0, 0);
 	}
 }

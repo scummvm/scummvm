@@ -87,7 +87,7 @@ private:
 		uint32 textNumber;
 		uint16 startFrame;
 		uint16 endFrame;
-		Memory *text_mem;
+		byte *text_mem;
 		uint32 speechBufferSize;
 		uint16 *speech_mem;
 	};

@@ -172,7 +172,7 @@ bool Debugger::Cmd_Help(int argc, const char **argv) {
 }
 
 bool Debugger::Cmd_Mem(int argc, const char **argv) {
-	_vm->_memory->displayMemory();
+	_vm->_memory->memDisplay();
 	return true;
 }
 

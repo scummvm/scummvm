@@ -78,7 +78,7 @@ protected:
 	SpriteInfo *_sprites;
 
 	struct WidgetSurface {
-		uint8 *_surface;
+		byte *_surface;
 		bool _original;
 	};
  
@@ -129,7 +129,7 @@ private:
 	Gui *_gui;
 	
 	struct Glyph {
-		uint8 *_data;
+		byte *_data;
 		int _width;
 		int _height;
 	};
@@ -148,21 +148,21 @@ public:
 	FontRendererGui(Gui *gui, int fontId);
 	~FontRendererGui();
 
-	void fetchText(uint32 textId, uint8 *buf);
+	void fetchText(uint32 textId, byte *buf);
 
-	int getCharWidth(uint8 c);
-	int getCharHeight(uint8 c);
+	int getCharWidth(byte c);
+	int getCharHeight(byte c);
 
-	int getTextWidth(uint8 *text);
+	int getTextWidth(byte *text);
 	int getTextWidth(uint32 textId);
 
-	void drawText(uint8 *text, int x, int y, int alignment = kAlignLeft);
+	void drawText(byte *text, int x, int y, int alignment = kAlignLeft);
 	void drawText(uint32 textId, int x, int y, int alignment = kAlignLeft);
 };
 
 FontRendererGui::FontRendererGui(Gui *gui, int fontId)
 	: _gui(gui), _fontId(fontId) {
-	uint8 *font = _gui->_vm->_resman->openResource(fontId);
+	byte *font = _gui->_vm->_resman->openResource(fontId);
 	FrameHeader *head;
 	SpriteInfo sprite;
 
@@ -170,7 +170,7 @@ FontRendererGui::FontRendererGui(Gui *gui, int fontId)
 
 	for (int i = 0; i < SIZE_OF_CHAR_SET; i++) {
 		head = (FrameHeader *) _gui->_vm->fetchFrameHeader(font, i);
-		sprite.data = (uint8 *) (head + 1);
+		sprite.data = (byte *) (head + 1);
 		sprite.w = head->width;
 		sprite.h = head->height;
 		_gui->_vm->_graphics->createSurface(&sprite, &_glyph[i]._data);
@@ -186,8 +186,8 @@ FontRendererGui::~FontRendererGui() {
 		_gui->_vm->_graphics->deleteSurface(_glyph[i]._data);
 }
 
-void FontRendererGui::fetchText(uint32 textId, uint8 *buf) {
-	uint8 *data = _gui->_vm->fetchTextLine(_gui->_vm->_resman->openResource(textId / SIZE), textId & 0xffff);
+void FontRendererGui::fetchText(uint32 textId, byte *buf) {
+	byte *data = _gui->_vm->fetchTextLine(_gui->_vm->_resman->openResource(textId / SIZE), textId & 0xffff);
 	int i;
 
 	for (i = 0; data[i + 2]; i++) {
@@ -199,19 +199,19 @@ void FontRendererGui::fetchText(uint32 textId, uint8 *buf) {
 	_gui->_vm->_resman->closeResource(textId / SIZE);
 }
 
-int FontRendererGui::getCharWidth(uint8 c) {
+int FontRendererGui::getCharWidth(byte c) {
 	if (c < 32)
 		return 0;
 	return _glyph[c - 32]._width;
 }
 
-int FontRendererGui::getCharHeight(uint8 c) {
+int FontRendererGui::getCharHeight(byte c) {
 	if (c < 32)
 		return 0;
 	return _glyph[c - 32]._height;
 }
 
-int FontRendererGui::getTextWidth(uint8 *text) {
+int FontRendererGui::getTextWidth(byte *text) {
 	int textWidth = 0;
 
 	for (int i = 0; text[i]; i++)
@@ -221,13 +221,13 @@ int FontRendererGui::getTextWidth(uint8 *text) {
 }
 
 int FontRendererGui::getTextWidth(uint32 textId) {
-	uint8 text[MAX_STRING_LEN];
+	byte text[MAX_STRING_LEN];
 
 	fetchText(textId, text);
 	return getTextWidth(text);
 }
 
-void FontRendererGui::drawText(uint8 *text, int x, int y, int alignment) {
+void FontRendererGui::drawText(byte *text, int x, int y, int alignment) {
 	SpriteInfo sprite;
 	int i;
 
@@ -260,7 +260,7 @@ void FontRendererGui::drawText(uint8 *text, int x, int y, int alignment) {
 }
 
 void FontRendererGui::drawText(uint32 textId, int x, int y, int alignment) {
-	uint8 text[MAX_STRING_LEN];
+	byte text[MAX_STRING_LEN];
 
 	fetchText(textId, text);
 	drawText(text, x, y, alignment);
@@ -431,7 +431,7 @@ Widget::~Widget() {
 }
 
 void Widget::createSurfaceImage(int state, uint32 res, int x, int y, uint32 pc) {
-	uint8 *file, *colTablePtr = NULL;
+	byte *file, *colTablePtr = NULL;
 	AnimHeader *anim_head;
 	FrameHeader *frame_head;
 	CdtEntry *cdt_entry;
@@ -463,7 +463,7 @@ void Widget::createSurfaceImage(int state, uint32 res, int x, int y, uint32 pc) 
 		spriteType |= RDSPR_RLE256;
 		// Points to just after last cdt_entry, i.e. start of colour
 		// table
-		colTablePtr = (uint8 *) (anim_head + 1) +
+		colTablePtr = (byte *) (anim_head + 1) +
 			anim_head->noAnimFrames * sizeof(CdtEntry);
 		break;
 	}
@@ -477,7 +477,7 @@ void Widget::createSurfaceImage(int state, uint32 res, int x, int y, uint32 pc) 
 	_sprites[state].blend = anim_head->blend;
 
 	// Points to just after frame header, ie. start of sprite data
-	_sprites[state].data = (uint8 *) (frame_head + 1);
+	_sprites[state].data = (byte *) (frame_head + 1);
 
 	_parent->_gui->_vm->_graphics->createSurface(&_sprites[state], &_surfaces[state]._surface);
 	_surfaces[state]._original = true;
@@ -1044,7 +1044,7 @@ class Slot : public Widget {
 private:
 	int _mode;
 	FontRendererGui *_fr;
-	uint8 _text[SAVE_DESCRIPTION_LEN];
+	byte _text[SAVE_DESCRIPTION_LEN];
 	bool _clickable;
 	bool _editable;
 
@@ -1071,7 +1071,7 @@ public:
 		return _editable;
 	}
 
-	void setText(FontRendererGui *fr, int slot, uint8 *text) {
+	void setText(FontRendererGui *fr, int slot, byte *text) {
 		_fr = fr;
 		if (text)
 			sprintf((char *) _text, "%d.  %s", slot, text);
@@ -1079,7 +1079,7 @@ public:
 			sprintf((char *) _text, "%d.  ", slot);
 	}
 
-	uint8 *getText() {
+	byte *getText() {
 		return &_text[0];
 	}
 
@@ -1147,7 +1147,7 @@ public:
 class SaveLoadDialog : public Dialog {
 private:
 	int _mode, _selectedSlot;
-	uint8 _editBuffer[SAVE_DESCRIPTION_LEN];
+	byte _editBuffer[SAVE_DESCRIPTION_LEN];
 	int _editPos, _firstPos;
 	int _cursorTick;
 
@@ -1162,7 +1162,7 @@ private:
 	Button *_okButton;
 	Button *_cancelButton;
 
-	void saveLoadError(uint8 *text);
+	void saveLoadError(byte *text);
 
 public:
 	SaveLoadDialog(Gui *gui, int mode)
@@ -1232,7 +1232,7 @@ public:
 		for (int i = 0; i < 8; i++) {
 			Slot *slot = _slotButton[(_gui->_baseSlot + i) % 8];
 			FontRendererGui *fr;
-			uint8 description[SAVE_DESCRIPTION_LEN];
+			byte description[SAVE_DESCRIPTION_LEN];
 
 			slot->setY(72 + i * 36);
 
@@ -1295,7 +1295,7 @@ public:
 		} else {
 			Slot *slot = (Slot *) widget;
 			int textWidth;
-			uint8 tmp;
+			byte tmp;
 			int i;
 			int j;
 
@@ -1417,7 +1417,7 @@ public:
 
 			_editBuffer[_editPos] = 0;
 
-			uint32 rv = _gui->_vm->saveGame(_selectedSlot, (uint8 *) &_editBuffer[_firstPos]);
+			uint32 rv = _gui->_vm->saveGame(_selectedSlot, (byte *) &_editBuffer[_firstPos]);
 
 			if (rv != SR_OK) {
 				uint32 textId;
@@ -1474,9 +1474,9 @@ public:
 	}
 };
 
-void SaveLoadDialog::saveLoadError(uint8* text) {
+void SaveLoadDialog::saveLoadError(byte* text) {
 	// Print a message on screen. Second parameter is duration.
-	_gui->_vm->displayMsg((uint8 *) text, 0);
+	_gui->_vm->displayMsg((byte *) text, 0);
 
 	// Wait for ESC or mouse click
 	while (1) {

@@ -55,6 +55,10 @@ int32 Sword2Engine::initBackground(int32 res, int32 new_palette) {
 	assert(res);
 	debug(1, "CHANGED TO LOCATION \"%s\"", fetchObjectName(res));
 
+	// The resources age every time a new room is entered.
+	_resman->passTime();
+	_resman->expelOldResources();
+
 	clearFxQueue();
 	_graphics->waitForFade();
 
@@ -75,7 +79,7 @@ int32 Sword2Engine::initBackground(int32 res, int32 new_palette) {
 	// info/and set them up at the beginning of the sort list - why do it
 	// each cycle
 
-	uint8 *file = _resman->openResource(_thisScreen.background_layer_id);
+	byte *file = _resman->openResource(_thisScreen.background_layer_id);
 	ScreenHeader *screen_head = fetchScreenHeader(file);
 
 	// set number of special sort layers

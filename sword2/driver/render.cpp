@@ -332,7 +332,7 @@ void Graphics::stretchImage(byte *dst, uint16 dstPitch, uint16 dstWidth, uint16 
  */
 
 void Graphics::plotPoint(uint16 x, uint16 y, uint8 colour) {
-	uint8 *buf = _buffer + 40 * RENDERWIDE;
+	byte *buf = _buffer + 40 * RENDERWIDE;
 	int16 newx, newy;
 	
 	newx = x - _scrollX;
@@ -353,7 +353,7 @@ void Graphics::plotPoint(uint16 x, uint16 y, uint8 colour) {
 
 // Uses Bressnham's incremental algorithm!
 void Graphics::drawLine(int16 x0, int16 y0, int16 x1, int16 y1, uint8 colour) {
-	uint8 *buf = _buffer + 40 * RENDERWIDE;
+	byte *buf = _buffer + 40 * RENDERWIDE;
 	int dx, dy;
 	int dxmod, dymod;
 	int ince, incne;
@@ -700,15 +700,15 @@ void Graphics::setScrollTarget(int16 sx, int16 sy) {
  */
 
 int32 Graphics::initialiseBackgroundLayer(Parallax *p) {
-	uint8 *memchunk;
+	byte *memchunk;
 	uint8 zeros;
 	uint16 count;
 	uint16 i, j, k;
 	uint16 x;
-	uint8 *data;
-	uint8 *dst;
+	byte *data;
+	byte *dst;
 	ParallaxLine line;
-	uint8 *pLine;
+	byte *pLine;
 
 	debug(2, "initialiseBackgroundLayer");
 
@@ -732,7 +732,7 @@ int32 Graphics::initialiseBackgroundLayer(Parallax *p) {
 
 	// Decode the parallax layer into a large chunk of memory
 
-	memchunk = (uint8 *) calloc(_xBlocks[_layer] * _yBlocks[_layer], BLOCKWIDTH * BLOCKHEIGHT);
+	memchunk = (byte *) calloc(_xBlocks[_layer] * _yBlocks[_layer], BLOCKWIDTH * BLOCKHEIGHT);
 	if (!memchunk)
 		return RDERR_OUTOFMEMORY;
 
@@ -740,7 +740,7 @@ int32 Graphics::initialiseBackgroundLayer(Parallax *p) {
 		if (p->offset[i] == 0)
 			continue;
 
-		pLine = (uint8 *) p + FROM_LE_32(p->offset[i]);
+		pLine = (byte *) p + FROM_LE_32(p->offset[i]);
 		line.packets = READ_LE_UINT16(pLine);
 		line.offset = READ_LE_UINT16(pLine + 2);
 		data = pLine + sizeof(ParallaxLine);

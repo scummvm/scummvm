@@ -50,7 +50,7 @@ void AnimationState::setPalette(byte *pal) {
 
 #else
 
-void AnimationState::drawTextObject(SpriteInfo *s, uint8 *src) {
+void AnimationState::drawTextObject(SpriteInfo *s, byte *src) {
 	OverlayColor *dst = overlay + RENDERWIDE * (s->y) + s->x;
 
 	// FIXME: These aren't the "right" colours, but look good to me.
@@ -166,7 +166,7 @@ void MoviePlayer::drawTextObject(AnimationState *anim, MovieTextObject *obj) {
  * @param musicOut lead-out music
  */
 
-int32 MoviePlayer::play(const char *filename, MovieTextObject *text[], uint8 *musicOut) {
+int32 MoviePlayer::play(const char *filename, MovieTextObject *text[], byte *musicOut) {
 	// This happens if the user quits during the "eye" smacker
 	if (_vm->_quit)
 		return RD_OK;
@@ -178,7 +178,7 @@ int32 MoviePlayer::play(const char *filename, MovieTextObject *text[], uint8 *mu
 	uint32 flags = SoundMixer::FLAG_16BITS;
 	bool startNextText = false;
 
-	uint8 oldPal[1024];
+	byte oldPal[1024];
 	memcpy(oldPal, _vm->_graphics->_palCopy, 1024);
 
 	AnimationState *anim = new AnimationState(_vm);
@@ -342,11 +342,11 @@ int32 MoviePlayer::play(const char *filename, MovieTextObject *text[], uint8 *mu
  * are missing.
  */
 
-int32 MoviePlayer::playDummy(const char *filename, MovieTextObject *text[], uint8 *musicOut) {
+int32 MoviePlayer::playDummy(const char *filename, MovieTextObject *text[], byte *musicOut) {
 	int frameCounter = 0, textCounter = 0;
 	if (text) {
-		uint8 oldPal[1024];
-		uint8 tmpPal[1024];
+		byte oldPal[1024];
+		byte tmpPal[1024];
 
 		_vm->_graphics->clearScene();
 
@@ -357,23 +357,23 @@ int32 MoviePlayer::playDummy(const char *filename, MovieTextObject *text[], uint
 
 		memset(_vm->_graphics->_buffer, 0, _vm->_graphics->_screenWide * MENUDEEP);
 
-		uint8 msg[] = "Cutscene - Narration Only: Press ESC to exit, or visit www.scummvm.org to download cutscene videos";
-		Memory *data = _vm->_fontRenderer->makeTextSprite(msg, RENDERWIDE, 255, _vm->_speechFontId);
-		FrameHeader *frame = (FrameHeader *) data->ad;
+		byte msg[] = "Cutscene - Narration Only: Press ESC to exit, or visit www.scummvm.org to download cutscene videos";
+		byte *data = _vm->_fontRenderer->makeTextSprite(msg, RENDERWIDE, 255, _vm->_speechFontId);
+		FrameHeader *frame = (FrameHeader *) data;
 		SpriteInfo msgSprite;
-		uint8 *msgSurface;
+		byte *msgSurface;
 
 		msgSprite.x = _vm->_graphics->_screenWide / 2 - frame->width / 2;
 		msgSprite.y = RDMENU_MENUDEEP / 2 - frame->height / 2;
 		msgSprite.w = frame->width;
 		msgSprite.h = frame->height;
 		msgSprite.type = RDSPR_NOCOMPRESSION;
-		msgSprite.data = data->ad + sizeof(FrameHeader);
+		msgSprite.data = data + sizeof(FrameHeader);
 
 		_vm->_graphics->createSurface(&msgSprite, &msgSurface);
 		_vm->_graphics->drawSurface(&msgSprite, msgSurface);
 		_vm->_graphics->deleteSurface(msgSurface);
-		_vm->_memory->freeMemory(data);
+		_vm->_memory->memFree(data);
 
 		// In case the cutscene has a long lead-in, start just before
 		// the first line of text.

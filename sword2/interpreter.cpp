@@ -194,7 +194,7 @@ do { \
 	stack[stackPtr++] = (value); \
 } while (false)
 
-#define push_ptr(ptr) push(_vm->_memory->ptrToInt(ptr))
+#define push_ptr(ptr) push(_vm->_memory->encodePtr(ptr))
 
 #define pop() (assert(stackPtr < ARRAYSIZE(stack)), stack[--stackPtr])
 
@@ -301,7 +301,7 @@ int Logic::runScript(char *scriptData, char *objectData, uint32 *offset) {
 		int retVal;
 		int caseCount;
 		bool foundCase;
-		uint8 *ptr;
+		byte *ptr;
 
 		curCommand = code[ip++];
 
@@ -372,7 +372,7 @@ int Logic::runScript(char *scriptData, char *objectData, uint32 *offset) {
 
 			Read16ip(parameter);
 			parameter /= 4;
-			ptr = (uint8 *) &localVars[parameter];
+			ptr = (byte *) &localVars[parameter];
 			push_ptr(ptr);
 			debug(9, "CP_PUSH_LOCAL_ADDR: &localVars[%d] => %p", parameter, ptr);
 			break;
@@ -382,7 +382,7 @@ int Logic::runScript(char *scriptData, char *objectData, uint32 *offset) {
 			Read8ip(parameter);
 
 			// ip now points to the string
-			ptr = (uint8 *) (code + ip);
+			ptr = (byte *) (code + ip);
 			push_ptr(ptr);
 			debug(9, "CP_PUSH_STRING: \"%s\"", ptr);
 			ip += (parameter + 1);
@@ -390,7 +390,7 @@ int Logic::runScript(char *scriptData, char *objectData, uint32 *offset) {
 		case CP_PUSH_DEREFERENCED_STRUCTURE:
 			// Push the address of a dereferenced structure
 			Read32ip(parameter);
-			ptr = (uint8 *) (objectData + sizeof(int32) + sizeof(StandardHeader) + sizeof(ObjectHub) + parameter);
+			ptr = (byte *) (objectData + sizeof(int32) + sizeof(StandardHeader) + sizeof(ObjectHub) + parameter);
 			push_ptr(ptr);
 			debug(9, "CP_PUSH_DEREFERENCED_STRUCTURE: %d => %p", parameter, ptr);
 			break;

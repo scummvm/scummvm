@@ -68,7 +68,7 @@ MouseEvent *Input::mouseEvent(void) {
 // 0xFF. That means that parts of the mouse cursor that weren't meant to be
 // transparent may be now.
 
-void Graphics::decompressMouse(uint8 *decomp, uint8 *comp, int width, int height, int pitch, int xOff, int yOff) {
+void Graphics::decompressMouse(byte *decomp, byte *comp, int width, int height, int pitch, int xOff, int yOff) {
 	int32 size = width * height;
 	int32 i = 0;
 	int x = 0;
@@ -155,7 +155,7 @@ void Graphics::drawMouse(void) {
 	memset(_mouseData, 0xFF, mouse_width * mouse_height);
 
 	if (_luggageAnim)
-		decompressMouse(_mouseData, (uint8 *) _luggageAnim + READ_LE_UINT32(_luggageOffset), _luggageAnim->mousew,
+		decompressMouse(_mouseData, (byte *) _luggageAnim + READ_LE_UINT32(_luggageOffset), _luggageAnim->mousew,
 				_luggageAnim->mouseh, mouse_width, deltaX, deltaY);
 
 	if (_mouseAnim)
@@ -177,7 +177,7 @@ int32 Graphics::animateMouse(void) {
 	if (++_mouseFrame == _mouseAnim->noAnimFrames)
 		_mouseFrame = MOUSEFLASHFRAME;
 
-	_mouseSprite = (uint8 *) _mouseAnim + READ_LE_UINT32(_mouseOffsets + _mouseFrame);
+	_mouseSprite = (byte *) _mouseAnim + READ_LE_UINT32(_mouseOffsets + _mouseFrame);
 
 	if (_mouseFrame != prevMouseFrame)
 		drawMouse();
@@ -193,7 +193,7 @@ int32 Graphics::animateMouse(void) {
  * or not there is a lead-in animation
  */
 
-int32 Graphics::setMouseAnim(uint8 *ma, int32 size, int32 mouseFlash) {
+int32 Graphics::setMouseAnim(byte *ma, int32 size, int32 mouseFlash) {
 	if (_mouseAnim) {
 		free(_mouseAnim);
 		_mouseAnim = NULL;
@@ -209,8 +209,8 @@ int32 Graphics::setMouseAnim(uint8 *ma, int32 size, int32 mouseFlash) {
 		if (!_mouseAnim)
 			return RDERR_OUTOFMEMORY;
 
-		memcpy((uint8 *) _mouseAnim, ma, size);
-		_mouseOffsets = (int32 *) ((uint8 *) _mouseAnim + sizeof(MouseAnim));
+		memcpy((byte *) _mouseAnim, ma, size);
+		_mouseOffsets = (int32 *) ((byte *) _mouseAnim + sizeof(MouseAnim));
 
 		animateMouse();
 		drawMouse();
@@ -233,7 +233,7 @@ int32 Graphics::setMouseAnim(uint8 *ma, int32 size, int32 mouseFlash) {
  * @param size the size of the animation data
  */
 
-int32 Graphics::setLuggageAnim(uint8 *ma, int32 size) {
+int32 Graphics::setLuggageAnim(byte *ma, int32 size) {
 	if (_luggageAnim) {
 		free(_luggageAnim);
 		_luggageAnim = NULL;
@@ -244,8 +244,8 @@ int32 Graphics::setLuggageAnim(uint8 *ma, int32 size) {
 		if (!_luggageAnim)
 			return RDERR_OUTOFMEMORY;
 
-		memcpy((uint8 *) _luggageAnim, ma, size);
-		_luggageOffset = (int32 *) ((uint8 *) _luggageAnim + sizeof(MouseAnim));
+		memcpy((byte *) _luggageAnim, ma, size);
+		_luggageOffset = (int32 *) ((byte *) _luggageAnim + sizeof(MouseAnim));
 
 		animateMouse();
 		drawMouse();

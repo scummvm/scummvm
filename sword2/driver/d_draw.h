@@ -91,9 +91,9 @@ private:
 
 	bool _needFullRedraw;
 
-	uint8 _paletteMatch[PALTABLESIZE];
+	byte _paletteMatch[PALTABLESIZE];
 
-	uint8 _fadePalette[256][4];
+	byte _fadePalette[256][4];
 	uint8 _fadeStatus;
 
 	int32 _fadeStartTime;
@@ -102,7 +102,7 @@ private:
 	byte _mouseData[MAX_MOUSE_W * MAX_MOUSE_H];
 
 	uint8 _mouseFrame;
-	uint8 *_mouseSprite;
+	byte *_mouseSprite;
 	struct MouseAnim *_mouseAnim;
 	struct MouseAnim *_luggageAnim;
 	int32 *_mouseOffsets;
@@ -146,11 +146,11 @@ private:
 	uint16 _xScale[SCALE_MAXWIDTH];
 	uint16 _yScale[SCALE_MAXHEIGHT];
 
-	uint8 *_lightMask;
+	byte *_lightMask;
 
 	void clearIconArea(int menu, int pocket, Common::Rect *r);
 
-	void decompressMouse(uint8 *decomp, uint8 *comp, int width, int height, int pitch, int xOff = 0, int yOff = 0);
+	void decompressMouse(byte *decomp, byte *comp, int width, int height, int pitch, int xOff = 0, int yOff = 0);
 
 	uint8 getMatch(uint8 r, uint8 g, uint8 b);
 	void fadeServer(void);
@@ -166,10 +166,10 @@ private:
 
 	void blitBlockSurface(BlockSurface *s, Common::Rect *r, Common::Rect *clipRect);
 
-	void mirrorSprite(uint8 *dst, uint8 *src, int16 w, int16 h);
-	int32 decompressRLE256(uint8 *dest, uint8 *source, int32 decompSize);
-	void unwindRaw16(uint8 *dest, uint8 *source, uint8 blockSize, uint8 *colTable);
-	int32 decompressRLE16(uint8 *dest, uint8 *source, int32 decompSize, uint8 *colTable);
+	void mirrorSprite(byte *dst, byte *src, int16 w, int16 h);
+	int32 decompressRLE256(byte *dest, byte *source, int32 decompSize);
+	void unwindRaw16(byte *dest, byte *source, uint8 blockSize, byte *colTable);
+	int32 decompressRLE16(byte *dest, byte *source, int32 decompSize, byte *colTable);
 
 
 public:
@@ -180,7 +180,7 @@ public:
 	int16 _screenWide;
 	int16 _screenDeep;
 
-	uint8 _palCopy[256][4];
+	byte _palCopy[256][4];
 
 	byte *getScreen(void) { return _buffer; }
 
@@ -192,15 +192,15 @@ public:
 	void processMenu(void);
 	int32 showMenu(uint8 menu);
 	int32 hideMenu(uint8 menu);
-	int32 setMenuIcon(uint8 menu, uint8 pocket, uint8 *icon);
+	int32 setMenuIcon(uint8 menu, uint8 pocket, byte *icon);
 	void closeMenuImmediately(void);
 
 	void updateDisplay(bool redrawScene = true);
 	void setWindowName(const char *windowName);
 	void setNeedFullRedraw(void);
 
-	void setPalette(int16 startEntry, int16 noEntries, uint8 *palette, uint8 setNow);
-	void updatePaletteMatchTable(uint8 *data);
+	void setPalette(int16 startEntry, int16 noEntries, byte *palette, uint8 setNow);
+	void updatePaletteMatchTable(byte *data);
 	uint8 quickMatch(uint8 r, uint8 g, uint8 b);
 	int32 fadeUp(float time = 0.75);
 	int32 fadeDown(float time = 0.75);
@@ -208,8 +208,8 @@ public:
 	void dimPalette(void);
 	void waitForFade(void);
 
-	int32 setMouseAnim(uint8 *ma, int32 size, int32 mouseFlash);
-	int32 setLuggageAnim(uint8 *la, int32 size);
+	int32 setMouseAnim(byte *ma, int32 size, int32 mouseFlash);
+	int32 setLuggageAnim(byte *la, int32 size);
 	int32 animateMouse(void);
 
 	void drawMouse(void);
@@ -232,9 +232,9 @@ public:
 #endif
 
 
-	int32 createSurface(SpriteInfo *s, uint8 **surface);
-	void drawSurface(SpriteInfo *s, uint8 *surface, Common::Rect *clipRect = NULL);
-	void deleteSurface(uint8 *surface);
+	int32 createSurface(SpriteInfo *s, byte **surface);
+	void drawSurface(SpriteInfo *s, byte *surface, Common::Rect *clipRect = NULL);
+	void deleteSurface(byte *surface);
 	int32 drawSprite(SpriteInfo *s);
 	int32 openLightMask(SpriteInfo *s);
 	int32 closeLightMask(void);

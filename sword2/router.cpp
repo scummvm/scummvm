@@ -110,7 +110,7 @@ void Router::allocateRouteMem(void) {
 	if (_routeSlots[slotNo])
 		freeRouteMem();
 
-	_routeSlots[slotNo] = _vm->_memory->allocMemory(sizeof(WalkData) * O_WALKANIM_SIZE, MEM_locked, (uint32) UID_walk_anim);
+	_routeSlots[slotNo] = (WalkData *) malloc(sizeof(WalkData) * O_WALKANIM_SIZE);
 
 	// 12000 bytes were used for this in Sword1 mega compacts, based on
 	// 20 bytes per 'WalkData' frame
@@ -125,36 +125,23 @@ void Router::allocateRouteMem(void) {
 	// megaObject->route_slot_id = slotNo + 1;
 }
 
-WalkData *Router::lockRouteMem(void) {
+WalkData *Router::getRouteMem(void) {
 	uint8 slotNo = returnSlotNo(Logic::_scriptVars[ID]);
 	
-	_vm->_memory->lockMemory(_routeSlots[slotNo]);
-	return (WalkData *) _routeSlots[slotNo]->ad;
-}
-
-void Router::floatRouteMem(void) {
-	uint8 slotNo = returnSlotNo(Logic::_scriptVars[ID]); 
-
-	_vm->_memory->floatMemory(_routeSlots[slotNo]);
+	return (WalkData *) _routeSlots[slotNo];
 }
 
 void Router::freeRouteMem(void) {
 	uint8 slotNo = returnSlotNo(Logic::_scriptVars[ID]); 
 
-	// free the mem block pointed to from this entry of _routeSlots[]
-
-	_vm->_memory->freeMemory(_routeSlots[slotNo]);
+	free(_routeSlots[slotNo]);
 	_routeSlots[slotNo] = NULL;
 }
 
 void Router::freeAllRouteMem(void) {
 	for (int i = 0; i < TOTAL_ROUTE_SLOTS; i++) {
-		if (_routeSlots[i]) {
-			// free the mem block pointed to from this entry of
-			// _routeSlots[]
-			_vm->_memory->freeMemory(_routeSlots[i]);
-			_routeSlots[i] = NULL;
-		}
+		free(_routeSlots[i]);
+		_routeSlots[i] = NULL;
 	}
 }
 
@@ -191,8 +178,7 @@ int32 Router::routeFinder(ObjectMega *ob_mega, ObjectWalkdata *ob_walkdata, int3
 	setUpWalkGrid(ob_mega, x, y, dir);
 	loadWalkData(ob_walkdata);
 
-	// lock the WalkData array (NB. AFTER loading walkgrid & walkdata!)
-	walkAnim = lockRouteMem();
+	walkAnim = getRouteMem();
 
 	// All route data now loaded start finding a route
 
@@ -267,8 +253,6 @@ int32 Router::routeFinder(ObjectMega *ob_mega, ObjectWalkdata *ob_walkdata, int3
 		// routeFlag = 0;
 		break;
 	}
-
-	floatRouteMem();	// float the WalkData array again
 
 	return routeFlag;	// send back null route
 }
@@ -728,8 +712,7 @@ void Router::earlySlowOut(ObjectMega *ob_mega, ObjectWalkdata *ob_walkdata) {
 
  	walk_pc = ob_mega->walk_pc;
 
-	// lock the WalkData array (NB. AFTER loading walkgrid & walkdata!)
-	walkAnim = lockRouteMem();
+	walkAnim = getRouteMem();
 
 	// if this mega does actually have slow-out frames
 	if (_usingSlowOutFrames) {
@@ -2400,7 +2383,7 @@ void Router::plotCross(int16 x, int16 y, uint8 colour) {
 
 void Router::loadWalkGrid(void) {
 	WalkGridHeader floorHeader;
-	uint8 *fPolygrid;
+	byte *fPolygrid;
 	uint32 theseBars;
 	uint32 theseNodes;
 
@@ -2415,7 +2398,7 @@ void Router::loadWalkGrid(void) {
 			// open walk grid file
 			fPolygrid = _vm->_resman->openResource(_walkGridList[i]);
  			fPolygrid += sizeof(StandardHeader);
- 			memcpy((uint8 *) &floorHeader, fPolygrid, sizeof(WalkGridHeader));
+ 			memcpy((byte *) &floorHeader, fPolygrid, sizeof(WalkGridHeader));
  			fPolygrid += sizeof(WalkGridHeader);
 
 			// how many bars & nodes are we getting from this
@@ -2432,7 +2415,7 @@ void Router::loadWalkGrid(void) {
 
 			// lines
 
- 			memcpy((uint8 *) &_bars[_nBars], fPolygrid, theseBars * sizeof(BarData));
+ 			memcpy((byte *) &_bars[_nBars], fPolygrid, theseBars * sizeof(BarData));
 
 			// move pointer to start of node data
 			fPolygrid += theseBars * sizeof(BarData);
@@ -2441,7 +2424,7 @@ void Router::loadWalkGrid(void) {
 
 			// leave node 0 for start node
 			for (uint j = 0; j < theseNodes; j++) {
-				memcpy((uint8 *) &_node[_nNodes + j].x, fPolygrid, 2 * sizeof(int16));
+				memcpy((byte *) &_node[_nNodes + j].x, fPolygrid, 2 * sizeof(int16));
 				fPolygrid += 2 * sizeof(int16);
 			}
 

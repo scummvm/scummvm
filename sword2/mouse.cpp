@@ -131,7 +131,7 @@ void Sword2Engine::systemMenuMouse(void) {
 	uint32 safe_looping_music_id;
 	MouseEvent *me;
 	int hit;
-	uint8 *icon;
+	byte *icon;
 	int32 pars[2];
 	uint32 icon_list[5] = {
 		OPTIONS_ICON,
@@ -772,15 +772,12 @@ void Sword2Engine::mouseOnOff(void) {
 }
 
 void Sword2Engine::setMouse(uint32 res) {
-	uint8 *icon;
-	uint32 len;
-
 	// high level - whats the mouse - for the engine
 	_mousePointerRes = res;
 
 	if (res) {
-		icon = _resman->openResource(res) + sizeof(StandardHeader);
-		len = _resman->_resList[res]->size - sizeof(StandardHeader);
+		byte *icon = _resman->openResource(res) + sizeof(StandardHeader);
+		uint32 len = _resman->fetchLen(res) - sizeof(StandardHeader);
 
 		// don't pulse the normal pointer - just do the regular anim
 		// loop
@@ -798,17 +795,13 @@ void Sword2Engine::setMouse(uint32 res) {
 }
 
 void Sword2Engine::setLuggage(uint32 res) {
-	uint8 *icon;
-	uint32 len;
-
 	_realLuggageItem = res;
 
 	if (res) {
-		icon = _resman->openResource(res) + sizeof(StandardHeader);
-		len = _resman->_resList[res]->size - sizeof(StandardHeader);
+		byte *icon = _resman->openResource(res) + sizeof(StandardHeader);
+		uint32 len = _resman->fetchLen(res) - sizeof(StandardHeader);
 
-		_graphics->setLuggageAnim(icon, len);
-
+		_graphics->setLuggageAnim(icon + sizeof(StandardHeader), len);
 		_resman->closeResource(res);
 	} else
 		_graphics->setLuggageAnim(NULL, 0);
@@ -853,7 +846,7 @@ uint32 Sword2Engine::checkMouseList(void) {
 void Sword2Engine::createPointerText(uint32 text_id, uint32 pointer_res) {
 	uint32 local_text;
 	uint32 text_res;
-	uint8 *text;
+	byte *text;
 	// offsets for pointer text sprite from pointer position
 	int16 xOffset, yOffset;
 	uint8 justification;
@@ -1179,7 +1172,7 @@ int32 Logic::fnRegisterMouse(int32 *params) {
 	// params:	0 pointer to ObjectMouse or 0 for no write to mouse
 	//		  list
 
-	_vm->registerMouse((ObjectMouse *) _vm->_memory->intToPtr(params[0]));
+	_vm->registerMouse((ObjectMouse *) _vm->_memory->decodePtr(params[0]));
 	return IR_CONT;
 }
 
@@ -1203,7 +1196,7 @@ int32 Logic::fnRegisterPointerText(int32 *params) {
 int32 Logic::fnInitFloorMouse(int32 *params) {
 	// params:	0 pointer to object's mouse structure
 
- 	ObjectMouse *ob_mouse = (ObjectMouse *) _vm->_memory->intToPtr(params[0]);
+ 	ObjectMouse *ob_mouse = (ObjectMouse *) _vm->_memory->decodePtr(params[0]);
 
 	// floor is always lowest priority
 
@@ -1221,7 +1214,7 @@ int32 Logic::fnInitFloorMouse(int32 *params) {
 int32 Logic::fnSetScrollLeftMouse(int32 *params) {
 	// params:	0 pointer to object's mouse structure
 
- 	ObjectMouse *ob_mouse = (ObjectMouse *) _vm->_memory->intToPtr(params[0]);
+ 	ObjectMouse *ob_mouse = (ObjectMouse *) _vm->_memory->decodePtr(params[0]);
 
 	// Highest priority
 
@@ -1245,7 +1238,7 @@ int32 Logic::fnSetScrollLeftMouse(int32 *params) {
 int32 Logic::fnSetScrollRightMouse(int32 *params) {
 	// params:	0 pointer to object's mouse structure
 
-	ObjectMouse *ob_mouse = (ObjectMouse *) _vm->_memory->intToPtr(params[0]);
+	ObjectMouse *ob_mouse = (ObjectMouse *) _vm->_memory->decodePtr(params[0]);
 
 	// Highest priority
 

@@ -107,22 +107,22 @@ private:
 	void drawBackPar0Frames(void);
 	void drawBackPar1Frames(void);
 	void drawBackFrames(void);
-	void drawSortFrames(uint8 *file);
+	void drawSortFrames(byte *file);
 	void drawForeFrames(void);
 	void drawForePar0Frames(void);
 	void drawForePar1Frames(void);
 
 	void startNewPalette(void);
-	void processLayer(uint8 *file, uint32 layer_number);
+	void processLayer(byte *file, uint32 layer_number);
 	void processImage(BuildUnit *build_unit);
 
 	void getPlayerStructures(void);
 	void putPlayerStructures(void);
 
-	uint32 saveData(uint16 slotNo, uint8 *buffer, uint32 bufferSize);
-	uint32 restoreData(uint16 slotNo, uint8 *buffer, uint32 bufferSize);
+	uint32 saveData(uint16 slotNo, byte *buffer, uint32 bufferSize);
+	uint32 restoreData(uint16 slotNo, byte *buffer, uint32 bufferSize);
 
-	uint32 calcChecksum(uint8 *buffer, uint32 size);
+	uint32 calcChecksum(byte *buffer, uint32 size);
 
 	void pauseGame(void);
 	void unpauseGame(void);
@@ -163,7 +163,7 @@ public:
 
 	void resetRenderLists(void);
 	void buildDisplay(void);
-	void displayMsg(uint8 *text, int time);
+	void displayMsg(byte *text, int time);
 	void removeMsg(void);
 	void setFullPalette(int32 palRes);
 
@@ -261,21 +261,21 @@ public:
 
 	void registerMouse(ObjectMouse *ob_mouse);
 
-	uint8 *fetchPalette(uint8 *screenFile);
-	ScreenHeader *fetchScreenHeader(uint8 *screenFile);
-	LayerHeader *fetchLayerHeader(uint8 *screenFile, uint16 layerNo);
-	uint8 *fetchShadingMask(uint8 *screenFile);
+	byte *fetchPalette(byte *screenFile);
+	ScreenHeader *fetchScreenHeader(byte *screenFile);
+	LayerHeader *fetchLayerHeader(byte *screenFile, uint16 layerNo);
+	byte *fetchShadingMask(byte *screenFile);
 
-	AnimHeader *fetchAnimHeader(uint8 *animFile);
-	CdtEntry *fetchCdtEntry(uint8 *animFile, uint16 frameNo);
-	FrameHeader *fetchFrameHeader(uint8 *animFile, uint16 frameNo);
-	Parallax *fetchBackgroundParallaxLayer(uint8 *screenFile, int layer);
-	Parallax *fetchBackgroundLayer(uint8 *screenFile);
-	Parallax *fetchForegroundParallaxLayer(uint8 *screenFile, int layer);
-	uint8 *fetchTextLine(uint8 *file, uint32 text_line);
-	bool checkTextLine(uint8 *file, uint32 text_line);
-	uint8 *fetchPaletteMatchTable(uint8 *screenFile);
-	uint8 *fetchObjectName(int32 resourceId);
+	AnimHeader *fetchAnimHeader(byte *animFile);
+	CdtEntry *fetchCdtEntry(byte *animFile, uint16 frameNo);
+	FrameHeader *fetchFrameHeader(byte *animFile, uint16 frameNo);
+	Parallax *fetchBackgroundParallaxLayer(byte *screenFile, int layer);
+	Parallax *fetchBackgroundLayer(byte *screenFile);
+	Parallax *fetchForegroundParallaxLayer(byte *screenFile, int layer);
+	byte *fetchTextLine(byte *file, uint32 text_line);
+	bool checkTextLine(byte *file, uint32 text_line);
+	byte *fetchPaletteMatchTable(byte *screenFile);
+	byte *fetchObjectName(int32 resourceId);
 
 	// savegame file header
 
@@ -304,13 +304,13 @@ public:
 
 	SaveGameHeader _saveGameHeader;
 
-	uint32 saveGame(uint16 slotNo, uint8 *description);
+	uint32 saveGame(uint16 slotNo, byte *description);
 	uint32 restoreGame(uint16 slotNo);
-	uint32 getSaveDescription(uint16 slotNo, uint8 *description);
+	uint32 getSaveDescription(uint16 slotNo, byte *description);
 	bool saveExists(void);
 	bool saveExists(uint16 slotNo);
-	void fillSaveBuffer(Memory *buffer, uint32 size, uint8 *desc);
-	uint32 restoreFromBuffer(Memory *buffer, uint32 size);
+	void fillSaveBuffer(byte *buffer, uint32 size, byte *desc);
+	uint32 restoreFromBuffer(byte *buffer, uint32 size);
 	uint32 findBufferSize(void);
 
 	uint8 _scrollFraction;

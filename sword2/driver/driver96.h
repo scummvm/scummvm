@@ -214,8 +214,8 @@ struct SpriteInfo {
 	uint16 scaledHeight;	//
 	uint16 type;		// mask containing 'RDSPR_' bits specifying compression type, flip, transparency, etc
 	uint16 blend;		// holds the blending values.
-	uint8 *data;		// pointer to the sprite data
-	uint8 *colourTable;	// pointer to 16-byte colour table, only applicable to 16-col compression type
+	byte *data;		// pointer to the sprite data
+	byte *colourTable;	// pointer to 16-byte colour table, only applicable to 16-col compression type
 };
 
 // This is the structure which is passed to the sequence player. It includes

@@ -81,9 +81,9 @@ int32 Logic::animate(int32 *params, bool reverse) {
 	//		1 pointer to object's graphic structure
 	//		2 resource id of animation file
 
- 	ObjectLogic *ob_logic = (ObjectLogic *) _vm->_memory->intToPtr(params[0]);
- 	ObjectGraphic *ob_graphic = (ObjectGraphic *) _vm->_memory->intToPtr(params[1]);
-	uint8 *anim_file;
+ 	ObjectLogic *ob_logic = (ObjectLogic *) _vm->_memory->decodePtr(params[0]);
+ 	ObjectGraphic *ob_graphic = (ObjectGraphic *) _vm->_memory->decodePtr(params[1]);
+	byte *anim_file;
 	AnimHeader *anim_head;
  	int32 res = params[2];
 
@@ -202,11 +202,11 @@ int32 Logic::megaTableAnimate(int32 *params, bool reverse) {
 	// If this is the start of the anim, read the anim table to get the
 	// appropriate anim resource
 
- 	ObjectLogic *ob_logic = (ObjectLogic *) _vm->_memory->intToPtr(params[0]);
+ 	ObjectLogic *ob_logic = (ObjectLogic *) _vm->_memory->decodePtr(params[0]);
 
 	if (ob_logic->looping == 0) {
-	 	ObjectMega *ob_mega = (ObjectMega *) _vm->_memory->intToPtr(params[2]);
-		uint32 *anim_table = (uint32 *) _vm->_memory->intToPtr(params[3]);
+	 	ObjectMega *ob_mega = (ObjectMega *) _vm->_memory->decodePtr(params[2]);
+		uint32 *anim_table = (uint32 *) _vm->_memory->decodePtr(params[3]);
 
 		// appropriate anim resource is in 'table[direction]'
 		pars[2] = anim_table[ob_mega->current_dir];
@@ -224,7 +224,7 @@ int32 Logic::fnSetFrame(int32 *params) {
 	assert(res);
 
 	// open the resource (& check it's valid)
-	uint8 *anim_file = _vm->_resman->openResource(res);
+	byte *anim_file = _vm->_resman->openResource(res);
 
 	StandardHeader *head = (StandardHeader *) anim_file;
 	assert(head->fileType == ANIMATION_FILE);
@@ -233,7 +233,7 @@ int32 Logic::fnSetFrame(int32 *params) {
 	AnimHeader *anim_head = _vm->fetchAnimHeader(anim_file);
 
 	// set up anim resource in graphic object
-	ObjectGraphic *ob_graphic = (ObjectGraphic *) _vm->_memory->intToPtr(params[0]);
+	ObjectGraphic *ob_graphic = (ObjectGraphic *) _vm->_memory->decodePtr(params[0]);
 
 	ob_graphic->anim_resource = res;
 	ob_graphic->anim_pc = params[2] ? anim_head->noAnimFrames - 1 : 0;
@@ -244,14 +244,14 @@ int32 Logic::fnSetFrame(int32 *params) {
 }
 
 void Logic::setSpriteStatus(uint32 sprite, uint32 type) {
-	ObjectGraphic *ob_graphic = (ObjectGraphic *) _vm->_memory->intToPtr(sprite);
+	ObjectGraphic *ob_graphic = (ObjectGraphic *) _vm->_memory->decodePtr(sprite);
 
 	// Remove the previous status, but don't affect the shading upper-word
 	ob_graphic->type = (ob_graphic->type & 0xffff0000) | type;
 }
 
 void Logic::setSpriteShading(uint32 sprite, uint32 type) {
-	ObjectGraphic *ob_graphic = (ObjectGraphic *) _vm->_memory->intToPtr(sprite);
+	ObjectGraphic *ob_graphic = (ObjectGraphic *) _vm->_memory->decodePtr(sprite);
 
 	// Remove the previous shading, but don't affect the status lower-word.
 	// Note that drivers may still shade mega frames automatically, even
@@ -338,7 +338,7 @@ void Logic::createSequenceSpeech(MovieTextObject *sequenceText[]) {
  	FrameHeader *frame;
  	uint32 local_text;
 	uint32 text_res;
-	uint8 *text;
+	byte *text;
 	uint32 wavId;	// ie. offical text number (actor text number)
 	bool speechRunning;
  	char speechFile[256];
@@ -426,19 +426,14 @@ void Logic::createSequenceSpeech(MovieTextObject *sequenceText[]) {
 	// MovieTextObject's
 	sequenceText[_sequenceTextLines] = NULL;
 
-  	// now lock all the memory blocks containing text sprites & speech
-	// samples and set up the pointers to them, etc, for the drivers
-
 	for (line = 0; line < _sequenceTextLines; line++) {
 		// if we've made a text sprite for this line...
 
 		if (_sequenceTextList[line].text_mem) {
-			_vm->_memory->lockMemory(_sequenceTextList[line].text_mem);
-
 			// now fill out the SpriteInfo structure in the
 			// MovieTextObjectStructure
 
-			frame = (FrameHeader *) _sequenceTextList[line].text_mem->ad;
+			frame = (FrameHeader *) _sequenceTextList[line].text_mem;
 
 			sequenceText[line]->textSprite = new SpriteInfo;
 
@@ -448,7 +443,7 @@ void Logic::createSequenceSpeech(MovieTextObject *sequenceText[]) {
 			sequenceText[line]->textSprite->w = frame->width;
 			sequenceText[line]->textSprite->h = frame->height;
 			sequenceText[line]->textSprite->type = RDSPR_DISPLAYALIGN | RDSPR_NOCOMPRESSION;
-			sequenceText[line]->textSprite->data = _sequenceTextList[line].text_mem->ad + sizeof(FrameHeader);
+			sequenceText[line]->textSprite->data = _sequenceTextList[line].text_mem + sizeof(FrameHeader);
 		}
 
 		// if we've loaded a speech sample for this line...
@@ -464,19 +459,17 @@ void Logic::createSequenceSpeech(MovieTextObject *sequenceText[]) {
 }
 
 void Logic::clearSequenceSpeech(MovieTextObject *sequenceText[]) {
-	uint32 line;
-
-	for (line = 0; line < _sequenceTextLines; line++) {
+	for (uint i = 0; i < _sequenceTextLines; i++) {
 		// free up the memory used by this MovieTextObject
-		delete sequenceText[line];
+		delete sequenceText[i];
 
 		// free up the mem block containing this text sprite
-		if (_sequenceTextList[line].text_mem)
-			_vm->_memory->freeMemory(_sequenceTextList[line].text_mem);
+		if (_sequenceTextList[i].text_mem)
+			free(_sequenceTextList[i].text_mem);
 
 		// free up the mem block containing this speech sample
-		if (_sequenceTextList[line].speech_mem)
-			free(_sequenceTextList[line].speech_mem);
+		if (_sequenceTextList[i].speech_mem)
+			free(_sequenceTextList[i].speech_mem);
 	}
 
 	// IMPORTANT! Reset the line count ready for the next sequence!
@@ -484,7 +477,7 @@ void Logic::clearSequenceSpeech(MovieTextObject *sequenceText[]) {
 }
 
 int32 Logic::fnSmackerLeadIn(int32 *params) {
-	uint8 *leadIn;
+	byte *leadIn;
 	uint32 rv;
 
 	// params:	0 id of lead-in music
@@ -521,18 +514,18 @@ int32 Logic::fnPlaySequence(int32 *params) {
 
 	char filename[30];
 	MovieTextObject *sequenceSpeechArray[MAX_SEQUENCE_TEXT_LINES + 1];
-	uint8 *leadOut = NULL;
+	byte *leadOut = NULL;
 
 	// The original code had some #ifdef blocks for skipping or muting the
 	// cutscenes - fondly described as "the biggest fudge in the history
 	// of computer games" - but at the very least we want to show the
 	// cutscene subtitles, so I removed them.
 
-	debug(5, "fnPlaySequence(\"%s\");", (const char *) _vm->_memory->intToPtr(params[0]));
+	debug(5, "fnPlaySequence(\"%s\");", (const char *) _vm->_memory->decodePtr(params[0]));
 
 	// add the appropriate file extension & play it
 
-	strcpy(filename, (const char *) _vm->_memory->intToPtr(params[0]));
+	strcpy(filename, (const char *) _vm->_memory->decodePtr(params[0]));
 
 	// Write to walkthrough file (zebug0.txt)
  	debug(5, "PLAYING SEQUENCE \"%s\"", filename);
@@ -598,7 +591,7 @@ int32 Logic::fnPlaySequence(int32 *params) {
 	PalEntry pal[256];
 
 	memset(pal, 0, 256 * sizeof(PalEntry));
-	_vm->_graphics->setPalette(0, 256, (uint8 *) pal, RDPAL_INSTANT);
+	_vm->_graphics->setPalette(0, 256, (byte *) pal, RDPAL_INSTANT);
 
 	debug(5, "fnPlaySequence FINISHED");
 	return IR_CONT;
