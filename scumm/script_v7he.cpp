@@ -386,6 +386,10 @@ const char *ScummEngine_v7he::getOpcodeDesc(byte i) {
 
 
 void ScummEngine_v7he::o7_objectX() {
+	if (_heversion <= 71) {
+		o6_invalid();
+	}
+
 	int object = pop();
 	int objnum = getObjectIndex(object);
 
@@ -399,6 +403,10 @@ void ScummEngine_v7he::o7_objectX() {
 
 
 void ScummEngine_v7he::o7_objectY() {
+	if (_heversion <= 71) {
+		o6_invalid();
+	}
+
 	int object = pop();
 	int objnum = getObjectIndex(object);
 
@@ -453,7 +461,7 @@ byte ScummEngine_v7he::stringLen(byte *ptr) {
 	c = *ptr++;
 
 	if (len == c)
-		return 1;
+		return 0;
 
 	do {
 		len++;
@@ -464,18 +472,32 @@ byte ScummEngine_v7he::stringLen(byte *ptr) {
 		c = *ptr++;
 	} while (c);
 
-	return len+1;
+	return len;
 }
 
 void ScummEngine_v7he::o7_readINI() {
 	int len;
+	int type;
+	int retval;
 
+	// we pretend that we don't have .ini file
 	len = resStrLen(_scriptPointer);
-	debug(1, "stub o7_readINI(\"%s\")", _scriptPointer);
 	_scriptPointer += len + 1;
-	pop();
-	push(0);
-	
+	type = pop();
+
+	switch (type) {
+	case 1: // number
+		push(0);
+		break;
+	case 2: // string
+		defineArray(0, 4, 0, 0);
+		retval = readVar(0);
+		writeArray(0, 0, 0, 0);
+		push(retval); // var ID string
+		break;
+	default:
+		warning("o7_readINI(..., %d): read-ini string not implemented", type);
+	}
 }
 
 void ScummEngine_v7he::o7_unknownF4() {
