@@ -55,7 +55,7 @@ static const int8 shake_positions[NUM_SHAKE_POSITIONS] = {
 };
 
 /**
- * The following structs define four basic fades/transitions used by 
+ * The following structs define four basic fades/transitions used by
  * transitionEffect(), each looking differently to the user.
  * Note that the stripTables contain strip numbers, and they assume
  * that the screen has 40 vertical strips (i.e. 320 pixel), and 25 horizontal
@@ -65,7 +65,7 @@ static const int8 shake_positions[NUM_SHAKE_POSITIONS] = {
  * code won't work correctly in COMI. Also, the number of iteration depends
  * on min(vertStrips, horizStrips}. So the 13 is derived from 25/2, rounded up.
  * And the 25 = min(25,40). Hence for Zak256 instead of 13 and 25, the values
- * 15 and 30 should be used, and for COMI probably 30 and 60. 
+ * 15 and 30 should be used, and for COMI probably 30 and 60.
  */
 struct TransitionEffect {
 	byte numOfIterations;
@@ -447,7 +447,7 @@ void Gdi::drawStripToScreen(VirtScreen *vs, int x, int width, int top, int botto
 	const int y = vs->topline + top - _vm->_screenTop;
 	const int height = bottom - top;
 	
-	// Compute screen etc. buffer pointers 
+	// Compute screen etc. buffer pointers
 	const byte *src = vs->getPixels(x, top);
 	byte *dst = _compositeBuf + x + y * _vm->_screenWidth;
 	const byte *text = (byte *)_textSurface.pixels + x + y * _textSurface.pitch;
@@ -468,7 +468,7 @@ void Gdi::drawStripToScreen(VirtScreen *vs, int x, int width, int top, int botto
 	// Compose the text over the game graphics
 	for (int h = 0; h < height; ++h) {
 		for (int w = 0; w < width; ++w) {
-			if (text[w] == CHARSET_MASK_TRANSPARENCY) 
+			if (text[w] == CHARSET_MASK_TRANSPARENCY)
 				dst[w] = src[w];
 			else
 				dst[w] = text[w];
@@ -1161,7 +1161,7 @@ void Gdi::drawBitmap(const byte *ptr, VirtScreen *vs, int x, int y, const int wi
 	// dificult to draw only parts of a room/object. We handle the V2 graphics
 	// differently from all other (newer) graphic formats for this reason.
 	//
-	if (_vm->_version == 2) 
+	if (_vm->_version == 2)
 		drawBitmapV2Helper(ptr, vs, x, y, width, height, stripnr, numstrip, table);
 
 	while (numstrip--) {
@@ -1281,7 +1281,7 @@ void Gdi::drawBitmap(const byte *ptr, VirtScreen *vs, int x, int y, const int wi
 		}
 		
 #if 0
-		// HACK: blit mask(s) onto normal screen. Useful to debug masking 
+		// HACK: blit mask(s) onto normal screen. Useful to debug masking
 		for (i = 0; i < numzbuf; i++) {
 			mask_ptr = getMaskBuffer(x, y, i);
 			byte *dst = backbuff_ptr;
@@ -1312,7 +1312,7 @@ next_iter:
  * Draw a bitmap onto a virtual screen. This is main drawing method for room backgrounds
  * used throughout in 7.2+ HE versions.
  *
- * TODO: This function essentially is a stripped down & special cased version of 
+ * TODO: This function essentially is a stripped down & special cased version of
  * the generic Gdi::drawBitmap() method. We might consider merging those two.
  */
 void Gdi::drawBMAPBg(const byte *ptr, VirtScreen *vs, int startstrip, int width) {
@@ -1640,7 +1640,7 @@ void Gdi::decompressAuxImage(uint8 *dst1, uint8 *dst2, int dstPitch, const Commo
 				code >>= 1;
 dec_sub1:		dst1Ptr += code;
 				dst2Ptr += code;
-				w -= code;					
+				w -= code;
 			} else if (code & 2) {
 				code = (code >> 2) + 1;
 dec_sub2:			w -= code;
@@ -1662,7 +1662,7 @@ dec_sub3:		w -= code;
 				} else {
 					code += w;
 					memcpy(dst1Ptr, dst2Ptr, code);
-				}								
+				}
 			}
 		}
 		
