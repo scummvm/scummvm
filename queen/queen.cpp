@@ -102,11 +102,8 @@ QueenEngine::QueenEngine(GameDetector *detector, OSystem *syst)
 
 	_mixer->setVolume(ConfMan.getInt("sfx_volume"));
 
-	_debugMode = ConfMan.hasKey("debuglevel");
 	_debugLevel = ConfMan.getInt("debuglevel");
 	_detectname = detector->_game.detectname;
-
-	_fastMode = 0;
 
 	_system->init_size(320, 200);
 }
@@ -188,9 +185,6 @@ void QueenEngine::roomChanged() {
 
 void QueenEngine::go() {
 
-	if (!_dump_file)
-		_dump_file = stdout;
-
 	initialise();
 
 	_logic->oldRoom(0);
@@ -226,6 +220,7 @@ void QueenEngine::go() {
 }
 
 void QueenEngine::initialise(void) {
+
 	_resource = new Resource(_gameDataPath, _detectname,  _system->get_savefile_manager(), getSavePath());
 	_input = new Input(_resource->getLanguage(), _system);
 	_display = new Display(_resource->getLanguage(), _system, _input);

@@ -36,16 +36,25 @@ class Display;
 class Sound;
 
 class QueenEngine : public Engine {
-	void errorString(const char *buf_input, char *buf_output);
+public:
+
+	QueenEngine(GameDetector *detector, OSystem *syst);
+	virtual ~QueenEngine();
+
 protected:
-	bool _quickLaunch; // set when starting with -x
 
-	uint16 _debugMode;
-	int _numScreenUpdates;
+	void errorString(const char *buf_input, char *buf_output);
 
-	int _number_of_savegames;
+	//! Called when we go from one room to another
+	void roomChanged(); // SETUP_ROOM
 
-	FILE *_dump_file;
+	void go();
+
+	void initialise();
+
+	static void timerHandler(void *ptr);
+	void gotTimerTick();
+
 	
 	Graphics *_graphics;
 	Input *_input;
@@ -55,23 +64,6 @@ protected:
 	Sound *_sound;
 	
 	const char *_detectname; // necessary for music
-	
-public:
-	QueenEngine(GameDetector *detector, OSystem *syst);
-	virtual ~QueenEngine();
-
-protected:
-	byte _fastMode;
-
-	void go();
-
-	//! Called when we go from one room to another
-	void roomChanged(); // SETUP_ROOM
-
-	void initialise();
-
-	static void timerHandler(void *ptr);
-	void gotTimerTick();
 };
 
 } // End of namespace Queen
