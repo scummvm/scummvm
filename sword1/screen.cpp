@@ -441,10 +441,21 @@ void SwordScreen::blitBlockClear(uint16 x, uint16 y, uint8 *data) {
 void SwordScreen::renderParallax(uint8 *data) {
 	ParallaxHeader *header = (ParallaxHeader*)data;
 	assert((FROM_LE_16(header->sizeX) >= SCREEN_WIDTH) && (FROM_LE_16(header->sizeY) >= SCREEN_DEPTH));
-	double scrlfx =  FROM_LE_16(header->sizeX) / ((double)_scrnSizeX );
-	double scrlfy = FROM_LE_16(header->sizeY) / ((double)_scrnSizeY );
-	uint16 scrlX = (uint16)(SwordLogic::_scriptVars[SCROLL_OFFSET_X] * scrlfx);
-	uint16 scrlY = (uint16)(SwordLogic::_scriptVars[SCROLL_OFFSET_Y] * scrlfy);
+
+	double scrlfx, scrlfy;
+	uint16 scrlX, scrlY;
+
+	if (_scrnSizeX != SCREEN_WIDTH) {
+		scrlfx = (FROM_LE_16(header->sizeX) - SCREEN_WIDTH) / ((double)(_scrnSizeX - SCREEN_WIDTH));
+		scrlX = (uint16)(SwordLogic::_scriptVars[SCROLL_OFFSET_X] * scrlfx);
+	} else
+		scrlX = 0;
+
+	if (_scrnSizeY != SCREEN_DEPTH) {
+		scrlfy = (FROM_LE_16(header->sizeY) - SCREEN_DEPTH) / ((double)(_scrnSizeY - SCREEN_DEPTH));
+		scrlY = (uint16)(SwordLogic::_scriptVars[SCROLL_OFFSET_Y] * scrlfy);
+	} else
+		scrlY = 0;
 
 	for (uint16 cnty = 0; cnty < SCREEN_DEPTH; cnty++) {
 		uint8 *src = data + READ_LE_UINT32(header->lineIndexes + cnty + scrlY);
