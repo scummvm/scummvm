@@ -399,6 +399,16 @@ void Cutaway::actionSpecialMove(int index) {
 			}
 			break;
 
+		// End game
+		case 14: {
+				int i;
+				for (i = 0; i < 40; ++i) {
+					_logic->update();
+				}
+				OSystem::instance()->quit();
+			}
+			break;
+
         // Dinocam
 		case 15:
 			_graphics->cameraBob(-1);
@@ -416,6 +426,8 @@ void Cutaway::actionSpecialMove(int index) {
 		case 16:
 			_graphics->cameraBob(0);
 			break;
+
+		// XXX sm17&18 : alternative intro
 
 		case 19:
 			_logic->gameState(VAR_AZURA_IN_LOVE, 1);
@@ -477,6 +489,11 @@ void Cutaway::actionSpecialMove(int index) {
 			}
 			break;
 
+		// Turn guard on
+		case 25:
+			_logic->gameState(85, 1);
+			break;
+
 		// c69g.CUT - Pan left 320 to 144
 		case 26:
 			_graphics->cameraBob(-1);
@@ -486,6 +503,26 @@ void Cutaway::actionSpecialMove(int index) {
 					_logic->display()->horizontalScroll(144);
 				}
 				_logic->update();
+			}
+			break;
+
+		// smooch
+		case 27: {
+				_graphics->cameraBob(-1);
+				BobSlot *bobAzura = _graphics->bob(5);
+				BobSlot *bobJoe = _graphics->bob(6);
+				while (_logic->display()->horizontalScroll() < 320) {
+					_logic->display()->horizontalScroll(_logic->display()->horizontalScroll() + 8);
+					if (bobJoe->x - bobAzura->x > 128) {
+						bobAzura->x += 10;
+						bobJoe->x += 6;
+					}
+					else {
+						bobAzura->x += 8;
+						bobJoe->x += 8;
+					}
+					_logic->update();
+				}
 			}
 			break;
 
@@ -575,6 +612,45 @@ void Cutaway::actionSpecialMove(int index) {
 			}
 			break;
 			
+		// Scale blimp - end game!
+		case 29: {
+				int16 z = 256;
+				BobSlot *bob = _graphics->bob(7);
+				int16 x = bob->x;
+				int16 y = bob->y;
+				while (bob->x > 150) {
+					bob->x = x * 256 / z + 150;
+					bob->x = y * 256 / z + 112;
+					bob->scale = 100 * 256 / z;
+
+					++z;
+					if (z % 6 == 0) {
+						--x;
+					}
+
+					_logic->update();
+				}
+			}
+			break;
+
+		// scale ending
+		case 30: {
+				_graphics->bob(7)->active = false; // Turn off blimp
+				BobSlot *b = _graphics->bob(20);
+				b->x = 160;
+				b->y = 100;
+				int i;
+				for (i = 5; i <= 100; i += 5) {
+					b->scale = i;
+					_logic->update();
+				}
+				for (i = 0; i < 50; ++i) {
+					_logic->update();
+				}
+				_logic->display()->palFadeOut(0, 255, _logic->currentRoom());
+			}
+            break;
+
 		// c74a.cut - Wait for car to reach correct position before pouring oil
 		case 31:
 			while (_graphics->bamData()->index != 60) {
@@ -588,6 +664,16 @@ void Cutaway::actionSpecialMove(int index) {
 			_logic->update();
 			OSystem::instance()->set_shake_pos(0);
 			_logic->update();
+			break;
+
+		// Attempt puzzle
+		case 33: {
+				static short n = 0;
+				++n;
+				if (n & 4) {
+					_logic->joeSpeak(226, true);
+				}
+			}
 			break;
 
 		// cred.cut - scale title
@@ -607,6 +693,8 @@ void Cutaway::actionSpecialMove(int index) {
 				}
 			}
 			break;
+
+		// XXX sm35: demo
 
 		// cdint.cut - pan right fast
 		case 36:

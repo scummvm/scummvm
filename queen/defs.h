@@ -249,8 +249,11 @@ enum {
 	ROOM_UNUSED_INTRO_4       =  93,
 	ROOM_UNUSED_INTRO_5       =  94,
 	FOTAQ_LOGO                =  95,
-	AZURA_1                   = 106,
-	WARNER_LOGO               = 126
+	WARNER_LOGO               = 126,
+
+	FAYE_HEAD                 =  37,
+	AZURA_HEAD                = 106,
+	FRANK_HEAD                = 107
 };
 
 
