@@ -1,0 +1,42 @@
+$Id$
+
+Cross-reference for functions and variables for the original source code and
+the ScummVM implementation.
+
+CONSTANTS
+=========
+
+
+
+FUNCTIONS
+=========
+
+CUTAWAY   			Cutaway::run
+FIND_SCALE			Logic::findScale
+SPEAK				Talk::? (not yet available)
+talk				Talk::run
+tflen				Resource::fileSize
+topen				Resource::loadFile
+
+
+VARIABLES
+=========
+
+AREAMAX				Logic::_areaMax
+DESCTOT				Logic::_numDescriptions
+GRAPHIC_MAX			Logic::_numGraphics
+GRAPHIC_DATA		Logic::_graphicData
+ITEM_DATA			Logic::_itemData
+ITEMTOT				Logic::_numItems
+NAMETOT				Logic::_numNames
+OBJECT_DATA			Logic::_objectData
+OBJMAX				Logic::_objMax
+OBJTOT				Logic::_numObjects
+ROOM				Logic::_currentRoom
+ROOM_DATA			Logic::_roomData
+ROOM_NAMEstr		Logic::? (not yet implemented)
+ROOMTOT				Logic::_numRooms
+SFXNAME				Logic::_sfxName
+VersionStr			Logic::language (add more functions if needed)
+WALK_OFF_MAX		Logic::_numWalkOffs
+
