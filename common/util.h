@@ -35,7 +35,7 @@
 #define	MAX(a,b) (((a)>(b))?(a):(b))
 #endif
 
-#define SWAP(a,b) do{int tmp=a; a=b; b=tmp; } while(0)
+static inline void SWAP(int &a, int &b) { int tmp=a; a=b; b=tmp; }
 #define ARRAYSIZE(x) (sizeof(x)/sizeof(x[0]))
 
 #if USE_555_FORMAT
