@@ -223,7 +223,7 @@ void Scumm::scummMain(int argc, char **argv) {
 		setupScummVarsOld();
 
 	
-	if (_features & GF_AFTER_V6)
+	if ((_features & GF_AFTER_V7) || (_gameId == GID_SAMNMAX)) 
 		NUM_ACTORS = 30;
 	else
 		NUM_ACTORS = 13;

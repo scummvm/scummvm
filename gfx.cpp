@@ -5,7 +5,6 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -947,11 +946,11 @@ void Scumm::redrawBGStrip(int start, int num) {
 
 	gfxUsageBits[s]|=0x80000000;
 	
-	if (_curVirtScreen->height < _scrHeight) {	
+	/*if (_curVirtScreen->height < _scrHeight) {	
 		warning("Screen Y size %d < Room height %d",
 			_curVirtScreen->height,
 			_scrHeight);
-	}	
+	}*/	
 
 	gdi.drawBitmap(getResourceAddress(rtRoom, _roomResource)+_IM00_offs,
 		_curVirtScreen, s, 0, _curVirtScreen->height, s, num, 0);
