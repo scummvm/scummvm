@@ -278,6 +278,7 @@ Freddi Fish 2: The Case of the Haunted Schoolhouse
 	-	All	en	51305e929e330e24a75a0351c8f9975e	freddi2	Kirben
 	-	Windows	All	5057fb0e99e5aa29df1836329232f101	freddi2	sev
 	-	Windows	nl	ac62d50e39492ee3738b4e83a5ac780f	freddi2	joostp
+	-	Windows	ru	e41de1c2a15abbcdbf9977e2d7e8a340	freddi2	sev
 	Demo	All	en	fc8d197a22146e74766e9cb0cfcaf1da	ff2-demo	khalek, sev
 	Demo	All	en	d37c55388294b66e53e7ced3af88fa68	ff2-demo	khalek
 
@@ -334,6 +335,7 @@ Pajama Sam 1: No Need to Hide When It's Dark Outside
 
 Pajama Sam 2: Thunder and Lightning Aren't so Frightening
 	-	All	en	d4e79c3d8645b8266cd78c325bc35154	pajama2	Kirben
+	-	Windows	ru	32709cbeeb3044b34129950860a83f14	pajama2	sev
 	Demo	All	en	36a6750e03fb505fc19fc2bf3e4dbe91	pj2demo	sev
 
 Pajama Sam 3: You Are What You Eat From Your Head to Your Feet
@@ -422,6 +424,7 @@ Spy Fox 1: Dry Cereal
 	-	All	en	3de99ef0523f8ca7958faa3afccd035a	spyfox	Kirben
 	-	Windows	en	6bf70eee5de3d24d2403e0dd3d267e8a	spyfox	khalek
 	-	Windows	nl	9bda5fee51d2fda5253d02c642016bf4	spyfox	joostp
+	-	Windows	ru	72ac6bc980d5101c2142189d746bd62f	spyfox	sev
 	Demo	All	en	53e94115b55dd51d4b8ff0871aa1df1e	spydemo	khalek, sev
 	Demo	All	en	fbdd947d21e8f5bac6d6f7a316af1c5a	spydemo	sev
 	Demo	Windows	en	9d4ab3e0e1d1ebc6ba8a6a4c470ed184	spydemo	khalek
