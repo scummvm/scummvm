@@ -97,9 +97,7 @@ public:
 
 class Voice2612 {
 public:
-	MidiChannel_YM2612 *_owner;
-	Voice2612 *prev, *next;
-	bool _in_use;
+	Voice2612 *next;
 	uint16 _rate;
 
 protected:
@@ -129,18 +127,17 @@ public:
 
 class MidiChannel_YM2612 : public MidiChannel {
 protected:
-	MidiDriver_YM2612 *_owner;
 	uint16 _rate;
-	byte _instrument[48];
 	Voice2612 *_voices;
+	Voice2612 *_next_voice;
 
 public:
-	void removeVoice (Voice2612 *voice);
+	void removeAllVoices();
 	void nextTick(int *outbuf, int buflen);
 	void rate(uint16 r);
 
 public:
-	MidiChannel_YM2612 (MidiDriver_YM2612 *owner);
+	MidiChannel_YM2612();
 	virtual ~MidiChannel_YM2612();
 
 	// MidiChannel interface
@@ -160,7 +157,6 @@ public:
 class MidiDriver_YM2612 : public MidiDriver {
 protected:
 	MidiChannel_YM2612 *_channel[16];
-	Voice2612 *_voices[32];
 
 	int _next_voice;
 	int _volume;
@@ -181,9 +177,6 @@ protected:
 
 	void generate_samples(int16 *buf, int len);
 	static void premix_proc(void *param, int16 *buf, uint len);
-
-public:
-	Voice2612 *allocateVoice();
 
 public:
 	MidiDriver_YM2612(SoundMixer *mixer);
@@ -318,7 +311,7 @@ void Operator2612::frequency(int freq) {
 
 	r = _specifiedReleaseRate;
 	if (r != 0) {
-		r = r * 2 + 1;		// このタイミングで良いのかわからん
+		r = r * 2 + 1;		// (Translated) I cannot know whether the timing is a good choice or not
 		r = r * 2 + (keyscaleTable[freq/262205] >> (3-_keyScale));
 		// KS による補正はあるらしい。赤p.206 では記述されてないけど。
 		if (r >= 64)
@@ -435,9 +428,7 @@ void Operator2612::nextTick(const int *phasebuf, int *outbuf, int buflen) {
 ////////////////////////////////////////
 
 Voice2612::Voice2612() {
-	_owner = 0;
-	prev = next = 0;
-	_in_use = false;
+	next = 0;
 	_control7 = 127;
 	_note = 40;
 	_frequency = 440;
@@ -513,16 +504,8 @@ void Voice2612::setInstrument(byte const *instrument) {
 }
 
 void Voice2612::nextTick(int *outbuf, int buflen) {
-	if (!_in_use || _velocity == 0)
+	if (_velocity == 0)
 		return;
-	if (!_opr[0]->inUse() && !_opr[1]->inUse() &&
-	    !_opr[2]->inUse() && !_opr[3]->inUse())
-	{
-		_in_use = false;
-		if (_owner)
-			_owner->removeVoice (this);
-		return;
-	}
 
 	if (_buflen < buflen) {
 		free(_buffer);
@@ -593,7 +576,6 @@ void Voice2612::noteOn(int n, int onVelo) {
 	_note = n;
 	velocity(onVelo);
 	recalculateFrequency();
-	_in_use = true;
 	int i;
 	for (i = 0; i < ARRAYSIZE(_opr); i++)
 		_opr[i]->keyOn();
@@ -645,64 +627,71 @@ void Voice2612::recalculateFrequency() {
 //
 ////////////////////////////////////////
 
-MidiChannel_YM2612::MidiChannel_YM2612 (MidiDriver_YM2612 *owner) {
-//	_voice = new Voice2612();
-	_owner = owner;
+MidiChannel_YM2612::MidiChannel_YM2612() {
 	_voices = 0;
+	_next_voice = 0;
 }
 
 MidiChannel_YM2612::~MidiChannel_YM2612() {
-//	delete _voice;
+	removeAllVoices();
+}
+
+void MidiChannel_YM2612::removeAllVoices() {
+	if (!_voices)
+		return;
+	Voice2612 *last, *voice = _voices;
+	for (; voice; voice = last) {
+		last = voice->next;
+		delete voice;
+	}
+	_voices = _next_voice = 0;
 }
 
 void MidiChannel_YM2612::noteOn(byte note, byte onVelo) {
-	Voice2612 *voice = _owner->allocateVoice();
-	if (!voice)
+	if (!_voices)
 		return;
-	voice->_owner = this;
-	voice->_rate = _rate;
-	voice->next = _voices;
-	voice->prev = 0;
-	if (_voices)
-		_voices->prev = voice;
-	_voices = voice;
-	voice->setInstrument (_instrument);
-	voice->noteOn(note, onVelo);
+	_next_voice = _next_voice ? _next_voice : _voices;
+	_next_voice->noteOn(note, onVelo);
+	_next_voice = _next_voice->next;
 }
 
 void MidiChannel_YM2612::noteOff(byte note) {
-	Voice2612 *voice = _voices;
-	for (; voice; voice = voice->next) {
-		if (voice->noteOff(note))
-			removeVoice(voice);
-	}
-}
-
-void MidiChannel_YM2612::removeVoice(Voice2612 *voice) {
-	// We ASSUME that the voice belongs to us.
-	voice->_owner = 0;
-	if (voice->next)
-		voice->next->prev = voice->prev;
-	if (voice->prev)
-		voice->prev->next = voice->next;
-	else
-		_voices = voice->next;
+	if (!_voices)
+		return;
+	if (_next_voice == _voices)
+		_next_voice = 0;
+	Voice2612 *voice = _next_voice;
+	do {
+		if (!voice)
+			voice = _voices;
+		if (voice->noteOff(note)) {
+			_next_voice = voice;
+			break;
+		}
+		voice = voice->next;
+	} while (voice != _next_voice);
 }
 
 void MidiChannel_YM2612::controlChange(byte control, byte value) {
-  // いいのかこれで?
-	Voice2612 *voice = _voices;
-	for (; voice; voice = voice->next)
-		voice->setControlParameter(control, value);
+	// いいのかこれで?
+	if (control == 121) {
+		// Reset controller
+		removeAllVoices();
+	} else {
+		Voice2612 *voice = _voices;
+		for (; voice; voice = voice->next)
+			voice->setControlParameter(control, value);
+	}
 }
 
 void MidiChannel_YM2612::sysEx_customInstrument(uint32 type, byte *fmInst) {
 	if (type != 'EUP ')
 		return;
-	memcpy (_instrument, fmInst, 48);
-	Voice2612 *voice = _voices;
-	for (; voice; voice = voice->next)
-		voice->setInstrument(fmInst);
+	Voice2612 *voice = new Voice2612;
+	voice->next = _voices;
+	_voices = voice;
+	voice->_rate = _rate;
+	voice->setInstrument(fmInst);
 }
 
 void MidiChannel_YM2612::pitchBend(int16 value) {
@@ -744,10 +733,8 @@ _mixer(mixer)
 	createLookupTables();
 	_volume = 256;
 	int i;
-	for (i = 0; i < ARRAYSIZE(_voices); i++)
-		_voices[i] = new Voice2612;
 	for (i = 0; i < ARRAYSIZE(_channel); i++)
-		_channel[i] = new MidiChannel_YM2612 (this);
+		_channel[i] = new MidiChannel_YM2612;
 	rate(_mixer->getOutputRate());
 }
 
@@ -755,8 +742,6 @@ MidiDriver_YM2612::~MidiDriver_YM2612() {
 	int i;
 	for (i = 0; i < ARRAYSIZE(_channel); i++)
 		delete _channel[i];
-	for (i = 0; i < ARRAYSIZE(_voices); i++)
-		delete _voices[i];
 	delete sintbl;
 	delete powtbl;
 	delete frequencyTable;
@@ -865,8 +850,8 @@ void MidiDriver_YM2612::nextTick(int16 *buf1, int buflen) {
 	int *buf0 = (int *)buf1;
 
 	int i;
-	for (i = 0; i < ARRAYSIZE(_voices); i++)
-		_voices[i]->nextTick(buf0, buflen);
+	for (i = 0; i < ARRAYSIZE(_channel); i++)
+		_channel[i]->nextTick(buf0, buflen);
 
 	for (i = 0; i < buflen; ++i)
 		buf1[i*2+1] = buf1[i*2] = ((buf0[i] * volume()) >> 10) & 0xffff;
@@ -949,20 +934,6 @@ void MidiDriver_YM2612::createLookupTables() {
 		for (i = 0; i < 1024; i++)
 			attackOut[i] = (int)(((0x7fff+0x03a5)*30.0) / (30.0+i)) - 0x03a5;
 	}
-}
-
-Voice2612 *MidiDriver_YM2612::allocateVoice() {
-	_next_voice %= ARRAYSIZE(_voices);
-	int oldStart = _next_voice;
-	do {
-		if (!_voices[_next_voice++]->_in_use)
-			return _voices[_next_voice-1];
-		_next_voice %= ARRAYSIZE(_voices);
-	} while (_next_voice != oldStart);
-	Voice2612 *voice = _voices[_next_voice++];
-	if (voice->_owner)
-		voice->_owner->removeVoice (voice);
-	return voice;
 }
 
 ////////////////////////////////////////

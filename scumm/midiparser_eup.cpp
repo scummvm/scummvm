@@ -33,7 +33,7 @@ namespace Scumm {
 class MidiParser_EUP : public MidiParser {
 protected:
 	byte _instruments[6][50]; // Two extra bytes for SysEx ID and channel #
-	byte _channel_instr[16];
+	byte *_instr_to_channel;
 	struct {
 		byte *enable;
 		int8 *channel;
@@ -71,20 +71,21 @@ void MidiParser_EUP::parseNextEvent (EventInfo &info) {
 	// program changes to get a reasonable "one-size-
 	// fits-all" sound until we actually support the
 	// FM synthesis capabilities of FM Towns.
-	for (; _presend < 32; ++_presend) {
-		if (_channel_instr[_presend >> 1] == 0xFF) continue;
+	for (; _presend < 12; ++_presend) {
+		if (_instr_to_channel[_presend>>1] >= 16)
+			continue;
 		info.start = pos;
 		info.delta = 0;
 		if (_presend & 1) {
-			info.event = 0xB0;
-			info.basic.param1 = 7;
-			info.basic.param2 = 127;
-		} else {
-			byte *data = &_instruments[_channel_instr[_presend >> 1]][0];
-			data[1] = _presend >> 1;
+			byte *data = &_instruments[_presend>>1][0];
+			data[1] = _instr_to_channel[_presend>>1];
 			info.event = 0xF0;
 			info.ext.data = data;
 			info.length = 48;
+		} else {
+			info.event = 0xB0 | (_presend >> 1);
+			info.basic.param1 = 121;
+			info.basic.param2 = 0;
 		}
 		++_presend;
 		return;
@@ -186,11 +187,8 @@ bool MidiParser_EUP::loadMusic (byte *data, uint32 size) {
 	pos += 32;
 
 	pos += 8; // Unknown bytes
-	for (i = 0; i < 16; ++i)
-		_channel_instr[i] = 0xFF;
-	for (i = 0; i < 6; ++i)
-		_channel_instr[pos[i]] = i;
-	pos += 6; // Instrument-to-channel mapping (not supported yet)
+	_instr_to_channel = pos; // Instrument-to-channel mapping
+	pos += 6;
 	pos += 4; // Skip the music size for now.
 	pos++;    // Unknown byte
 	byte tempo = *pos++;
