@@ -218,7 +218,7 @@ void Scumm_v8::setupScummVars()
 	VAR_CAMERA_POS_Y = 10;
 	VAR_CAMERA_DEST_X = 11;
 	VAR_CAMERA_DEST_Y = 12;
-
+	VAR_TALK_ACTOR = 15;	// FIXME: I think this is wrong also, but it works for the moment
 	VAR_LEFTBTN_HOLD = 16;	// FIXME: Is this right?
 
 	VAR_ROOM = 31;
@@ -251,6 +251,8 @@ void Scumm_v8::setupScummVars()
 	VAR_CAMERA_SPEED_Y = 108;
 	VAR_CAMERA_ACCEL_X = 109;
 	VAR_CAMERA_ACCEL_Y = 110;
+
+	VAR_DEBUGMODE = 130;
 	
 	// var 266, 290 and 301 have something to do with cursor images, since various scripts
 	// have setCursorImg(var290,2) or setCursorImg(var266,1) or setCursorImg(var301,1)
