@@ -39,18 +39,18 @@
 extern bool toolbar_drawn;
 extern bool hide_toolbar;
 extern bool draw_keyboard;
-extern bool get_key_mapping;
+extern bool _get_key_mapping;
 extern struct keyops keyMapping;
 extern void save_key_mapping(void);
 extern void do_hide(bool);
 extern void do_quit();
 uint16 _key_mapping_required;
 uint16 _current_page;
-bool keyboard_override;
-bool save_hide_toolbar;
+extern bool keyboard_override;
+extern bool save_hide_toolbar;
 #else
 #define save_key_mapping() ;
-bool get_key_mapping;
+bool _get_key_mapping;
 uint16 _key_mapping_required;
 #endif
 
@@ -402,7 +402,7 @@ void Gui::drawWidget(const GuiWidget *w)
 				break;
 #ifdef _WIN32_WCE
 			case GUI_KEYTEXT:
-				strcpy(text, getGAPIKeyName(getAction((_current_page * 5) + w->_string_number - 1)->action_key));
+				strcpy(text, getGAPIKeyName((int)getAction((_current_page * 5) + w->_string_number - 1)->action_key));
 				break;
 			case GUI_ACTIONTEXT:
 				strcpy(text, getActionName(getAction((_current_page * 5) + w->_string_number - 1)->action_type));
@@ -632,7 +632,7 @@ void Gui::handleOptionsDialogCommand(int cmd)
 		return;
 	case 2:
 		_key_mapping_required = 0;
-		get_key_mapping = true;
+		_get_key_mapping = true;
 		_widgets[0] = keys_dialog;
 		_active = true;
 		_cur_page = 0;
@@ -719,7 +719,7 @@ void Gui::handleKeysDialogCommand(int cmd)
 		_key_mapping_required = cmd;
 
 	if (cmd == 60) {
-		get_key_mapping = false;
+		_get_key_mapping = false;
 		save_key_mapping();
 		close();
 	}
