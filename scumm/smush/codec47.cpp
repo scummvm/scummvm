@@ -25,24 +25,6 @@
 #include "blitter.h"
 
 bool DumpDecoder::decode(Blitter & dst, Chunk & src) {
-	int32 i = 0;
-	/*int32 seq =*/ src.getWord();
-	int32 codec = src.getByte();
-	/*int32 flags =*/ src.getByte();
-	int32 unknown[22];
-	for(i = 0; i < 0; i++) {
-		unknown[i] = src.getByte();
-	}
-	if(codec == 5 || codec == 1) {
-		do {
-			int32 code = src.getByte();
-			int32 length = (code >> 1) + 1;
-			if (code & 1)
-				dst.put(src.getChar(), length);
-			else
-				dst.blit(src, length);
-		} while (!src.eof());
-	}
 
 	return true;
 }

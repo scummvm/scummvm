@@ -23,6 +23,7 @@
 #include "common/file.h"
 #include "common/util.h"
 #include "common/engine.h" // for debug, warning, error
+#include "scumm/scumm.h"
 
 #include "player.h"
 
@@ -564,7 +565,8 @@ void SmushPlayer::handleFrame(Chunk & b) {
 				handleDeltaPalette(*sub);
 				break;
 			case TYPE_IACT:
-				handleImuseAction(*sub);
+				if (g_scumm->_gameId != GID_CMI)
+					handleImuseAction(*sub);
 				break;
 			case TYPE_STOR:
 				handleStore(*sub);

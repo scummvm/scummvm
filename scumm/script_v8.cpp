@@ -1288,7 +1288,7 @@ void Scumm_v8::o8_startVideo()
 	
 	//ScummRenderer * sr = new ScummRenderer(this, 1000/14);
 	//SmushPlayer * sp = new SmushPlayer(sr);
-	//sp->play((char*)_scriptPointer, dirName);
+	//sp->play((char*)_scriptPointer, getGameDataPath());
 	
 	_scriptPointer += len + 1;
 }
