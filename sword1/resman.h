@@ -57,7 +57,6 @@ public:
 	void dumpRes(uint32 id);
 	void *openFetchRes(uint32 id);
 	void *cptResOpen(uint32 id);
-	void *mouseResOpen(uint32 id);
 	Header *lockScript(uint32 scrID);
 	void unlockScript(uint32 scrID);
 	FrameHeader *fetchFrame(void *resourceData, uint32 frameNo);
@@ -70,7 +69,6 @@ private:
 	void openScriptResourceBigEndian(uint32 id);
 
 	File *openClusterFile(uint32 id);
-	void makePathToCluster(char *str);
 	void loadCluDescript(const char *fileName);
 	void freeCluDescript(void);
 	BsPrj _prj;

@@ -227,13 +227,11 @@ FrameHeader *ResMan::fetchFrame(void *resourceData, uint32 frameNo) {
 
 File *ResMan::openClusterFile(uint32 id) {
 	File *clusFile = new File();
-	char fullPath[MAX_PATH_LEN];
 	char fileName[15];
-	makePathToCluster(fullPath);
 	sprintf(fileName, "%s.CLU", _prj.clu[(id >> 24)-1]->label);
 	clusFile->open(fileName);
 	if (!clusFile->isOpen())
-		error("Can't open cluster file %s in directory: %s\n", fileName, fullPath);
+		error("Can't open cluster file %s", fileName);
 	return clusFile;
 }
 
@@ -262,32 +260,6 @@ uint32 ResMan::resOffset(uint32 id) {
 	uint8 group = (uint8)(id >> 16);
 
 	return _prj.clu[cluster]->grp[group]->offset[id & 0xFFFF];
-}
-
-void ResMan::makePathToCluster(char *str) {
-	*str = '\0';
-	// todo: add search stuff, cd1, cd2, etc.
-}
-
-void *ResMan::mouseResOpen(uint32 id) {
-	BsMemHandle *memHandle = resHandle(id);
-	if (memHandle->cond == MEM_FREED) {
-		resOpen(id);
-		uint16 *head = (uint16*)memHandle->data;
-#ifdef SCUMM_BIG_ENDIAN
-		for (uint8 endCnt = 0; endCnt < 5; endCnt++)
-			head[endCnt] = READ_LE_UINT16(head + endCnt);
-#endif
-		// fix transparency:
-		uint8 *rawData = (uint8*)memHandle->data;
-		uint32 size = head[0] * head[1] * head[2];
-		rawData += 0x3A;
-		for (uint32 cnt = 0; cnt < size; cnt++)
-			if (rawData[cnt] == 0)
-				rawData[cnt] = 255;
-		return memHandle->data;
-	} else 
-		return openFetchRes(id);
 }
 
 void ResMan::openCptResourceBigEndian(uint32 id) {
