@@ -20,4 +20,13 @@
  *
  */
 
+#ifndef __MATH_H__
+#define __MATH_H__
+
 #include "mathlib.h"
+
+#ifndef M_PI
+#	define M_PI 3.14159265358979323846
+#endif
+
+#endif
