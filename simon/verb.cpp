@@ -112,7 +112,7 @@ void SimonState::hitareaChangedHelper()
 {
 	FillOrCopyStruct *fcs;
 
-	if ((_game == GAME_SIMON2WIN) || (_game == GAME_SIMON2WIN)) {
+	if ((_game == GAME_SIMON2WIN) || (_game == GAME_SIMON2DOS)) {
 		if (_bit_array[4] & 0x8000)
 			return;
 	}
