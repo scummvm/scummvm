@@ -473,25 +473,33 @@ void SwordScreen::renderParallax(uint8 *data) {
 	uint32 *lineIndexes = (uint32*)(data + sizeof(ParallaxHeader));
 	assert((FROM_LE_16(header->sizeX) >= SCREEN_WIDTH) && (FROM_LE_16(header->sizeY) >= SCREEN_DEPTH));
 
-	double scrlfx, scrlfy;
-	uint16 scrlX, scrlY;
+	//double scrlfx, scrlfy;
+	uint16 paraScrlX, paraScrlY;
+	uint16 scrnScrlX, scrnScrlY;
+	uint16 scrnWidth, scrnHeight;
+
+	// we have to render more than the visible screen part for displaying scroll frames
+	scrnScrlX = MIN((uint32)_oldScrollX, SwordLogic::_scriptVars[SCROLL_OFFSET_X]);
+	scrnWidth = SCREEN_WIDTH + ABS((int32)_oldScrollX - (int32)SwordLogic::_scriptVars[SCROLL_OFFSET_X]);
+	scrnScrlY = MIN((uint32)_oldScrollY, SwordLogic::_scriptVars[SCROLL_OFFSET_Y]);
+	scrnHeight = SCREEN_DEPTH + ABS((int32)_oldScrollY - (int32)SwordLogic::_scriptVars[SCROLL_OFFSET_Y]);
 
 	if (_scrnSizeX != SCREEN_WIDTH) {
-		scrlfx = (FROM_LE_16(header->sizeX) - SCREEN_WIDTH) / ((double)(_scrnSizeX - SCREEN_WIDTH));
-		scrlX = (uint16)(SwordLogic::_scriptVars[SCROLL_OFFSET_X] * scrlfx);
+		double scrlfx = (FROM_LE_16(header->sizeX) - SCREEN_WIDTH) / ((double)(_scrnSizeX - SCREEN_WIDTH));
+		paraScrlX = (uint16)(scrnScrlX * scrlfx);
 	} else
-		scrlX = 0;
+		paraScrlX = 0;
 
 	if (_scrnSizeY != SCREEN_DEPTH) {
-		scrlfy = (FROM_LE_16(header->sizeY) - SCREEN_DEPTH) / ((double)(_scrnSizeY - SCREEN_DEPTH));
-		scrlY = (uint16)(SwordLogic::_scriptVars[SCROLL_OFFSET_Y] * scrlfy);
+		double scrlfy = (FROM_LE_16(header->sizeY) - SCREEN_DEPTH) / ((double)(_scrnSizeY - SCREEN_DEPTH));
+		paraScrlY = (uint16)(scrnScrlY * scrlfy);
 	} else
-		scrlY = 0;
-
-	for (uint16 cnty = 0; cnty < SCREEN_DEPTH; cnty++) {
-		uint8 *src = data + READ_LE_UINT32(lineIndexes + cnty + scrlY);
-		uint8 *dest = _screenBuf + SwordLogic::_scriptVars[SCROLL_OFFSET_X] + (cnty + SwordLogic::_scriptVars[SCROLL_OFFSET_Y]) * _scrnSizeX;
-		uint16 remain = scrlX;
+		paraScrlY = 0;
+	
+	for (uint16 cnty = 0; cnty < scrnHeight; cnty++) {
+		uint8 *src = data + READ_LE_UINT32(lineIndexes + cnty + paraScrlY);
+		uint8 *dest = _screenBuf + scrnScrlX + (cnty + scrnScrlY) * _scrnSizeX;
+		uint16 remain = paraScrlX;
 		uint16 xPos = 0;
 		bool copyFirst = false;
 		while (remain) { // skip past the first part of the parallax to get to the right scrolling position
@@ -519,7 +527,7 @@ void SwordScreen::renderParallax(uint8 *data) {
 			} else
 				copyFirst = true;
 		}
-		while (xPos < SCREEN_WIDTH) {
+		while (xPos < scrnWidth) {
 			if (!copyFirst) {
 				if (uint8 skip = *src++) {
 					dest += skip;
@@ -527,10 +535,10 @@ void SwordScreen::renderParallax(uint8 *data) {
 				}
 			} else
 				copyFirst = false;
-			if (xPos < SCREEN_WIDTH) {
+			if (xPos < scrnWidth) {
 				if (uint8 doCopy = *src++) {
-					if (xPos + doCopy > SCREEN_WIDTH)
-						doCopy = SCREEN_WIDTH - xPos;
+					if (xPos + doCopy > scrnWidth)
+						doCopy = scrnWidth - xPos;
 					memcpy(dest, src, doCopy);
 					dest += doCopy;
 					xPos += doCopy;
