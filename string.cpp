@@ -328,14 +328,6 @@ void Scumm::CHARSET_1()
 
 	charset._disableOffsX = charset._unk12 = !_keepText;
 
-	bool has_speech = false;
-	for (byte *tmp = buffer; *tmp; ++tmp) {
-		if (*tmp == 10) {
-			has_speech = true;
-			break;
-		}
-	}
-
 	do {
 		c = *buffer++;
 		if (c == 0) {
@@ -373,11 +365,11 @@ void Scumm::CHARSET_1()
 				charset.printCharOld(c);
 			else if (!(_features & GF_AFTER_V6)) {
 //                                if (!_vars[VAR_V5_CHARFLAG]) { /* FIXME */
-				if (!(has_speech && _noSubtitles))
+				if (!(a && _noSubtitles))
 					charset.printChar(c);
 //                                }
 			} else {
-				if (!(has_speech && _noSubtitles))
+				if (!(a && _noSubtitles))
 					charset.printChar(c);
 			}
 
