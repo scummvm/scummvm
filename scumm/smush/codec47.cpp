@@ -230,7 +230,6 @@ static int16 smush_table[256];
 void Codec47Decoder::makeTables37(int32 param) {
 	int32 variable1, variable2;
 	int32 b1, b2;
-	int32 * tmp_table37_1_2, * tmp_table37_1_1, * tmp_table37_2_2, * tmp_table37_2_1;
 	int32 value_table37_1_2, value_table37_1_1, value_table37_2_2, value_table37_2_1;
 	int32 table[64], tmp, s;
 	int32 * table37_1 = 0, * table37_2 = 0, * table_ptr;
@@ -268,44 +267,35 @@ void Codec47Decoder::makeTables37(int32 param) {
 	}
 
 	s = 0;
-	tmp_table37_1_1 = table37_1;
-	tmp_table37_2_1 = table37_2;
 	for (x = 0; x < 16; x++) {
-		tmp_table37_1_2 = table37_1;
-		tmp_table37_2_2 = table37_2;
-
-		value_table37_1_1 = *tmp_table37_1_1;
-		value_table37_2_1 = *tmp_table37_2_1;
+		value_table37_1_1 = table37_1[x];
+		value_table37_2_1 = table37_2[x];
 		for(y = 0; y < 16; y++) {
-			value_table37_1_2 = *tmp_table37_1_2;
-			value_table37_2_2 = *tmp_table37_2_2;
+			value_table37_1_2 = table37_1[y];
+			value_table37_2_2 = table37_2[y];
 
 			if (value_table37_2_1 == 0) {
 				b1 = 0;
 			} else if (value_table37_2_1 == param - 1) {
 				b1 = 1;
+			} else  if (value_table37_1_1 == 0) {
+				b1 = 2;
+			} else if (value_table37_1_1 == param - 1) {
+				b1 = 3;
 			} else {
-				if (value_table37_1_1 == 0) {
-					b1 = 2;
-				} else if (value_table37_1_1 == param - 1) {
-					b1 = 3;
-				} else {
-					b1 = 4;
-				}
+				b1 = 4;
 			}
 
 			if (value_table37_2_2 == 0) {
 				b2 = 0;
 			} else if (value_table37_2_2 == param - 1) {
 				b2 = 1;
+			} else if (value_table37_1_2 == 0) {
+				b2 = 2;
+			} else if (value_table37_1_2 == param - 1) {
+				b2 = 3;
 			} else {
-				if (value_table37_1_2 == 0) {
-					b2 = 2;
-				} else if (value_table37_1_2 == param - 1) {
-					b2 = 3;
-				} else {
-					b2 = 4;
-				}
+				b2 = 4;
 			}
 			
 			memset(table, 0, param * param * 4);
@@ -320,14 +310,10 @@ void Codec47Decoder::makeTables37(int32 param) {
 				int32 variable3, variable4;
 
 				if (variable2 > 0) {
-					int32 tmp_c, tmp_ib;
-
-					// This code linearly interpolates between value_table37_1_1 and value_table37_1_2
+					// Linearly interpolate between value_table37_1_1 and value_table37_1_2
 					// respectively value_table37_2_1 and value_table37_2_2.
-					tmp_c = variable2 - variable1;
-					tmp_ib = variable2 / 2;
-					variable4 = (value_table37_1_1 * variable1 + value_table37_1_2 * tmp_c + tmp_ib) / variable2;
-					variable3 = (value_table37_2_1 * variable1 + value_table37_2_2 * tmp_c + tmp_ib) / variable2;
+					variable4 = (value_table37_1_1 * variable1 + value_table37_1_2 * (variable2 - variable1) + variable2 / 2) / variable2;
+					variable3 = (value_table37_2_1 * variable1 + value_table37_2_2 * (variable2 - variable1) + variable2 / 2) / variable2;
 				} else {
 					variable4 = value_table37_1_1;
 					variable3 = value_table37_2_1;
@@ -394,11 +380,7 @@ void Codec47Decoder::makeTables37(int32 param) {
 				}
 				s += 128;
 			}
-			tmp_table37_1_2++;
-			tmp_table37_2_2++;
 		}
-		tmp_table37_1_1++;
-		tmp_table37_2_1++;
 	}
 }
 
@@ -408,68 +390,46 @@ void Codec47Decoder::makeTables47(int32 width) {
 
 	_lastTableWidth = width;
 
-	int32 a, c, d, s, tmp_value, tmp_offset;
-	int16 tmp, tmp2;
+	int32 a, c, d;
+	int16 tmp;
 
-	int16 * tmp_ptr = smush_table;
-	int16 * ptr_table = &codec47_table[1];
+	int16 *tmp_ptr = smush_table;
+	int16 *ptr_table = codec47_table;
 	do {
-		int16 tmp_word = *ptr_table;
-		tmp_word *= (int16)width;
-		tmp_word += *(ptr_table - 1);
-		*tmp_ptr = tmp_word;
+		*tmp_ptr++ = ptr_table[1] * width + ptr_table[0];
 		ptr_table += 2;
-		tmp_ptr++;
 	} while (tmp_ptr < &smush_table[255]);
 	a = 0;
 	c = 0;
-	s = 0;
-	tmp_value = 0;
 	do {
 		for (d = 0; d < smush_buf_small[96 + c]; d++) {
 			tmp = smush_buf_small[64 + c + d];
-			tmp2 = tmp >> 2;
-			tmp &= 3;
-			tmp2 &= 0xFFFF00FF;
-			tmp2 = tmp2 * width + tmp;
-			smush_buf_small[(s + d) * 2] = (byte)tmp2;
-			smush_buf_small[(s + d) * 2 + 1] = tmp2 >> 8;
+			tmp = (byte)(tmp >> 2) * width + (tmp & 3);
+			smush_buf_small[c + d * 2] = (byte)tmp;
+			smush_buf_small[c + d * 2 + 1] = tmp >> 8;
 		}
 		for (d = 0; d < smush_buf_small[97 + c]; d++) {
 			tmp = smush_buf_small[80 + c + d];
-			tmp2 = tmp >> 2;
-			tmp &= 3;
-			tmp2 &= 0xFFFF00FF;
-			tmp2 = tmp2 * width + tmp;
-			smush_buf_small[32 + (s + d) * 2] = (byte)tmp2;
-			smush_buf_small[32 + (s + d) * 2 + 1] = tmp2 >> 8;
+			tmp = (byte)(tmp >> 2) * width + (tmp & 3);
+			smush_buf_small[32 + c + d * 2] = (byte)tmp;
+			smush_buf_small[32 + c + d * 2 + 1] = tmp >> 8;
 		}
 		for (d = 0; d < smush_buf_big[384 + a]; d++) {
 			tmp = smush_buf_big[256 + a + d];
-			tmp2 = tmp >> 3;
-			tmp = tmp & 7;
-			tmp2 &= 0xFFFF00FF;
-			tmp2 = tmp2 * width + tmp;
-			tmp_offset = tmp_value + d;
-			smush_buf_big[tmp_offset * 2] = (byte)tmp2;
-			smush_buf_big[tmp_offset * 2 + 1] = tmp2 >> 8;
+			tmp = (byte)(tmp >> 3) * width + (tmp & 7);
+			smush_buf_big[a + d * 2] = (byte)tmp;
+			smush_buf_big[a + d * 2 + 1] = tmp >> 8;
 		}
 		for (d = 0; d < smush_buf_big[385 + a]; d++) {
 			tmp = smush_buf_big[320 + a + d];
-			tmp2 = tmp >> 3;
-			tmp = tmp & 7;
-			tmp2 &= 0xFFFF00FF;
-			tmp2 = tmp2 * width + tmp;
-			tmp_offset = tmp_value + d;
-			smush_buf_big[128 + (tmp_offset * 2)] = (byte)tmp2;
-			smush_buf_big[128 + (tmp_offset * 2) + 1] = tmp2 >> 8;
+			tmp = (byte)(tmp >> 3) * width + (tmp & 7);
+			smush_buf_big[128 + a + d * 2] = (byte)tmp;
+			smush_buf_big[128 + a + d * 2 + 1] = tmp >> 8;
 		}
 		
 		a += 388;
-		tmp_value += 194;
 		c += 128;
-		s += 64;
-	} while (s < 16384);
+	} while (c < 32768);
 }
 	
 void Codec47Decoder::bompDecode(byte *dst, byte *src, int32 len) {
