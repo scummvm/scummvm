@@ -8,7 +8,7 @@
 #   Prologue information
 #------------------------------------------------------------------------------
 Name		: scummvm
-Version		: 0.6.1
+Version		: 0.7.0
 Release		: 1
 Summary		: Graphic adventure game interpreter
 Group		: Interpreters
@@ -62,7 +62,7 @@ rm -Rf ${RPM_BUILD_ROOT}
 #------------------------------------------------------------------------------
 %files
 %defattr(0644,root,root,0755)
-%doc README NEWS COPYING
+%doc AUTHORS README NEWS COPYING
 %attr(0755,root,root)%{_bindir}/scummvm
 %{_datadir}/applications/*
 %{_datadir}/pixmaps/scummvm.xpm
@@ -72,6 +72,8 @@ rm -Rf ${RPM_BUILD_ROOT}
 #   Change Log
 #------------------------------------------------------------------------------
 %changelog
+* Mon Dec 20 2004 (0.7.0)
+  - added AUTHORS file
 * Thu Jul 15 2004 (0.6.0-2)
   - added .desktop file (modified from patch 891909)
   - used some elements of the .spec file for scummvm from http://livna.org/
