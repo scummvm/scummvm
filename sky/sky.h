@@ -65,6 +65,8 @@ protected:
 	byte *_introTextSpace;
 	byte *_introTextSave;
 
+	bool _floppyIntro;
+
 	uint16 _debugMode;
 	uint16 _debugLevel;
 	bool _paintGrid;

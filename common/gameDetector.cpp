@@ -83,6 +83,9 @@ static const char USAGE_STRING[] =
 	"\t--multi-midi   - enable combination Adlib and native MIDI\n"
 	"\t--native-mt32  - true Roland MT-32 (disable GM emulation)\n"
 	"\t--aspect-ratio - enable aspect ratio correction\n"
+#ifndef DISABLE_SKY
+	"\t--floppy-intro - Use floppy version intro for Beneath a Steel Sky CD\n"
+#endif
 	"\n"
 	"The meaning of long options can be inverted by prefixing them with \"no-\",\n"
 	"e.g. \"--no-aspect-ratio\".\n"
@@ -162,6 +165,10 @@ GameDetector::GameDetector() {
 	_sfx_volume = kDefaultSFXVolume;
 	_amiga = false;
 	_language = 0;
+
+#ifndef DISABLE_SKY
+	_floppyIntro = false;
+#endif
 
 	_talkSpeed = 60;
 	_debugMode = 0;
@@ -259,6 +266,10 @@ void GameDetector::updateconfig() {
 			printf(USAGE_STRING);
 			exit(-1);
 		}
+
+#ifndef DISABLE_SKY
+	_floppyIntro = g_config->getBool("floppy_intro", _floppyIntro);
+#endif
 
 	if ((val = g_config->get("language")))
 		if ((_language = parseLanguage(val)) == -1) {
@@ -469,6 +480,11 @@ void GameDetector::parseCommandLine(int argc, char **argv) {
 				} else if (!strcmp (s, "aspect-ratio")) {
 					_aspectRatio = long_option_value;
 					g_config->setBool ("aspect_ratio", _aspectRatio);
+#ifndef DISABLE_SKY
+				} else if (!strcmp (s, "floppy-intro")) {
+					_floppyIntro = long_option_value;
+					g_config->setBool ("floppy_intro", _floppyIntro);
+#endif
 				} else {
 					goto ShowHelpAndExit;
 				}

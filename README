@@ -379,6 +379,7 @@ Command Line Options:
         --multi-midi   - enable combination Adlib and native MIDI
         --native-mt32  - true Roland MT-32 (disable GM emulation)
         --aspect-ratio - enable aspect ratio correction
+        --floppy-intro - Use floppy version intro for Beneath a Steel Sky CD
 
 The meaning of long options can be inversed by prefixing them with "no-", e.g.
 --no-aspect-ratio. This is useful if you want to override a setting in the

@@ -88,6 +88,8 @@ SkyState::SkyState(GameDetector *detector, OSystem *syst)
 	_systemVars.language = detector->_language;
 	_detector = detector;
 
+	_floppyIntro = detector->_floppyIntro;
+
 	_introTextSpace = 0;
 	_introTextSave = 0;
 }

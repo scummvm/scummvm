@@ -205,6 +205,9 @@ bool SkyState::intro(void) {
 
 	uint32 *commandPtr = (uint32 *)zeroCommands;
 
+	if (!isCDVersion())
+		_floppyIntro = true;
+
 	_skyDisk->prefetchFile(60112); // revolution screen
 	_skyDisk->prefetchFile(60113); // revolution palette
 
@@ -214,7 +217,7 @@ bool SkyState::intro(void) {
 	escDelay(3000); //keep virgin screen up for 3 seconds
 	CHECK_ESC
 	
-	if (!isCDVersion())
+	if (_floppyIntro)
 		_skyMusic->startMusic(1);
 	
 	escDelay(3000); //and another 3 seconds.
@@ -242,7 +245,7 @@ bool SkyState::intro(void) {
 	_skyScreen->paletteFadeUp(60115);
 
 
-	if (isCDVersion()) {
+	if (!_floppyIntro) {
 		return doCDIntro();
 	} else {
 		_skyDisk->prefetchFile(FN_A_PAL);

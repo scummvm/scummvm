@@ -120,6 +120,8 @@ public:
 	bool _amiga;
 	int _language;
 
+	bool _floppyIntro;
+
 	uint16 _talkSpeed;
 	uint16 _debugMode;
 	uint16 _debugLevel;
