@@ -1466,21 +1466,13 @@ void Scumm::initRoomSubBlocks() {
 		_IM00_offs = READ_LE_UINT16(roomptr + 0x0A);
 		if (_version == 2)
 			_roomStrips = gdi.generateStripTable(roomptr + _IM00_offs, _roomWidth, _roomHeight, _roomStrips);
-	} else if (_features & GF_SMALL_HEADER)
+	} else if (_version == 8) {
+		_IM00_offs = getObjectImage(roomptr, 1) - roomptr;
+	} else if (_features & GF_SMALL_HEADER) {
 		_IM00_offs = findResourceData(MKID('IM00'), roomptr) - roomptr;
-	else if (_version == 8) {
-		ptr = findResource(MKID('IMAG'), roomptr);
-		assert(ptr);
-		ptr = findResource(MKID('WRAP'), ptr);
-		assert(ptr);
-		ptr = findResource(MKID('OFFS'), ptr);
-		assert(ptr);
-		// Get the address of the first SMAP (corresponds to IM00)
-		ptr += READ_LE_UINT32(ptr + 8);
-		_IM00_offs = ptr - roomptr;
-	} else
-		_IM00_offs =
-			findResource(MKID('IM00'), findResource(MKID('RMIM'), roomptr)) - roomptr;
+	} else {
+		_IM00_offs = findResource(MKID('IM00'), findResource(MKID('RMIM'), roomptr)) - roomptr;
+	}
 
 	//
 	// Look for an exit script

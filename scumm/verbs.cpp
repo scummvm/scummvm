@@ -455,7 +455,7 @@ void Scumm::drawVerbBitmap(int verb, int x, int y) {
 
 		imgw = (*(obim + size + 11));
 		imgh = (*(obim + size + 17)) >> 3;
-		imptr = (obim + 8);
+		imptr = getObjectImage(obim, 1);
 	} else {
 		imhd = (const ImageHeader *)findResourceData(MKID('IMHD'), obim);
 		if (_version >= 7) {
@@ -465,21 +465,7 @@ void Scumm::drawVerbBitmap(int verb, int x, int y) {
 			imgw = READ_LE_UINT16(&imhd->old.width) >> 3;
 			imgh = READ_LE_UINT16(&imhd->old.height) >> 3;
 		}
-
-		if (_version == 8) {
-			warning("drawVerbBitmap(%d, %d, %d)", verb, x, y);
-			imptr = findResource(MKID('IMAG'), obim);
-			assert(imptr);
-			imptr = findResource(MKID('WRAP'), imptr);
-			assert(imptr);
-			imptr = findResource(MKID('OFFS'), imptr);
-			assert(imptr);
-			// Get the address of the second SMAP (corresponds to IM01)
-			imptr += READ_LE_UINT32(imptr + 12);
-		} else
-			imptr = findResource(MKID('IM01'), obim);
-		if (!imptr)
-			error("No image for verb %d", verb);
+		imptr = getObjectImage(obim, 1);
 	}
 	assert(imptr);
 	if (_version == 1) {

@@ -723,6 +723,9 @@ protected:
 
 	uint32 getOBCDOffs(int object) const;
 	byte *getOBCDFromObject(int obj);
+	const byte *getOBIMFromObject(const ObjectData &od);
+	const byte *getObjectImage(const byte *ptr, int state);
+
 	int getDistanceBetween(bool is_obj_1, int b, int c, bool is_obj_2, int e, int f);
 
 

@@ -229,7 +229,7 @@ int Scumm::getObjectOrActorXY(int object, int &x, int &y) {
  * Returns X, Y and direction in angles
  */
 void Scumm::getObjectXYPos(int object, int &x, int &y, int &dir) {
-	ObjectData *od = &_objs[getObjectIndex(object)];
+	ObjectData &od = _objs[getObjectIndex(object)];
 	int state;
 	const byte *ptr;
 	const ImageHeader *imhd;
@@ -239,13 +239,7 @@ void Scumm::getObjectXYPos(int object, int &x, int &y, int &dir) {
 		if (state < 0)
 			state = 0;
 
-		if (od->fl_object_index) {
-			ptr = getResourceAddress(rtFlObject, od->fl_object_index);
-			ptr = findResource(MKID('OBIM'), ptr);
-		} else {
-			ptr = getResourceAddress(rtRoom, _roomResource);
-			ptr += od->OBIMoffset;
-		}
+		ptr = getOBIMFromObject(od);
 		if (!ptr) {
 			// FIXME: We used to assert here, but it seems that in the nexus
 			// in The Dig, this can happen, at least with old savegames, and
@@ -255,23 +249,23 @@ void Scumm::getObjectXYPos(int object, int &x, int &y, int &dir) {
 		}
 		imhd = (const ImageHeader *)findResourceData(MKID('IMHD'), ptr);
 		if (_version == 8) {
-			x = od->x_pos + (int32)READ_LE_UINT32(&imhd->v8.hotspot[state].x);
-			y = od->y_pos + (int32)READ_LE_UINT32(&imhd->v8.hotspot[state].y);
+			x = od.x_pos + (int32)READ_LE_UINT32(&imhd->v8.hotspot[state].x);
+			y = od.y_pos + (int32)READ_LE_UINT32(&imhd->v8.hotspot[state].y);
 		} else if (_version == 7) {
-			x = od->x_pos + (int16)READ_LE_UINT16(&imhd->v7.hotspot[state].x);
-			y = od->y_pos + (int16)READ_LE_UINT16(&imhd->v7.hotspot[state].y);
+			x = od.x_pos + (int16)READ_LE_UINT16(&imhd->v7.hotspot[state].x);
+			y = od.y_pos + (int16)READ_LE_UINT16(&imhd->v7.hotspot[state].y);
 		} else {
-			x = od->x_pos + (int16)READ_LE_UINT16(&imhd->old.hotspot[state].x);
-			y = od->y_pos + (int16)READ_LE_UINT16(&imhd->old.hotspot[state].y);
+			x = od.x_pos + (int16)READ_LE_UINT16(&imhd->old.hotspot[state].x);
+			y = od.y_pos + (int16)READ_LE_UINT16(&imhd->old.hotspot[state].y);
 		}
 	} else {
-		x = od->walk_x;
-		y = od->walk_y;
+		x = od.walk_x;
+		y = od.walk_y;
 	}
 	if (_version == 8)
-		dir = fromSimpleDir(1, od->actordir);
+		dir = fromSimpleDir(1, od.actordir);
 	else
-		dir = oldDirToNewDir(od->actordir & 3);
+		dir = oldDirToNewDir(od.actordir & 3);
 }
 
 int Scumm::getObjActToObjActDist(int a, int b) {
@@ -388,7 +382,7 @@ static const uint32 IMxx_tags[] = {
 };
 
 void Scumm::drawObject(int obj, int arg) {
-	ObjectData *od;
+	ObjectData &od = _objs[obj];
 	int xpos, ypos, height, width;
 	const byte *ptr;
 	int x, a, numstrip;
@@ -397,47 +391,27 @@ void Scumm::drawObject(int obj, int arg) {
 	if (_BgNeedsRedraw)
 		arg = 0;
 
-	od = &_objs[obj];
-
-	if (od->obj_nr == 0)
+	if (od.obj_nr == 0)
 		return;
 
-	checkRange(_numGlobalObjects - 1, 0, od->obj_nr, "Object %d out of range in drawObject");
+	checkRange(_numGlobalObjects - 1, 0, od.obj_nr, "Object %d out of range in drawObject");
 
-	xpos = od->x_pos >> 3;
-	ypos = od->y_pos;
+	xpos = od.x_pos >> 3;
+	ypos = od.y_pos;
 
-	width = od->width >> 3;
-	height = od->height &= 0xFFFFFFF8;	// Mask out last 3 bits
+	width = od.width >> 3;
+	height = od.height &= 0xFFFFFFF8;	// Mask out last 3 bits
 
 	if (width == 0 || xpos > _screenEndStrip || xpos + width < _screenStartStrip)
 		return;
 
-	if (od->fl_object_index) {
-		ptr = getResourceAddress(rtFlObject, od->fl_object_index);
-		ptr = findResource(MKID('OBIM'), ptr);
-	} else {
-		ptr = getResourceAddress(rtRoom, _roomResource);
-		ptr = ptr + od->OBIMoffset;
-	}
+	ptr = getOBIMFromObject(od);
 
 	if (_features & GF_OLD_BUNDLE)
 		ptr += 0;
-	else if (_features & GF_SMALL_HEADER)
-		ptr += 8;
-	else if (_version == 8) {
-		ptr = findResource(MKID('IMAG'), ptr);
-		if (!ptr)
-			return;
+	else
+		ptr = getObjectImage(ptr, getState(od.obj_nr));
 
-		ptr = findResource(MKID('WRAP'), ptr);
-		assert(ptr);
-		ptr = findResource(MKID('OFFS'), ptr);
-		assert(ptr);
-		// Get the address of the specified SMAP (corresponding to IMxx)
-		ptr += READ_LE_UINT32(ptr + 4 + 4*getState(od->obj_nr));
-	} else
-		ptr = findResource(IMxx_tags[getState(od->obj_nr)], ptr);
 	if (!ptr)
 		return;
 
@@ -465,7 +439,7 @@ void Scumm::drawObject(int obj, int arg) {
 		}
 		// Sam & Max needs this to fix object-layering problems with
 		// the inventory and conversation icons.
-		if ((_version >= 7 || _gameId == GID_SAMNMAX) && getClass(od->obj_nr, kObjectClassIgnoreBoxes))
+		if ((_version >= 7 || _gameId == GID_SAMNMAX) && getClass(od.obj_nr, kObjectClassIgnoreBoxes))
 			flags |= Gdi::dbDrawMaskOnAll;
 		gdi.drawBitmap(ptr, &virtscr[0], x, ypos, width << 3, height, x - xpos, numstrip, flags);
 	}
@@ -974,6 +948,51 @@ byte *Scumm::getOBCDFromObject(int obj) {
 	return 0;
 }
 
+const byte *Scumm::getOBIMFromObject(const ObjectData &od) {
+	const byte *ptr;
+
+	if (od.fl_object_index) {
+		ptr = getResourceAddress(rtFlObject, od.fl_object_index);
+		ptr = findResource(MKID('OBIM'), ptr);
+	} else {
+		ptr = getResourceAddress(rtRoom, _roomResource);
+		if (ptr)
+			ptr += od.OBIMoffset;
+	}
+	return ptr;
+}
+
+const byte *Scumm::getObjectImage(const byte *ptr, int state) {
+	assert(ptr);
+	if (_features & GF_OLD_BUNDLE)
+		ptr += 0;
+	else if (_features & GF_SMALL_HEADER) {
+		ptr += 8;
+	} else if (_version == 8) {
+		// The OBIM contains an IMAG, which in turn contains a WRAP, which contains
+		// an OFFS chunk and multiple BOMP/SMAP chunks. To find the right BOMP/SMAP,
+		// we use the offsets in the OFFS chunk,
+		ptr = findResource(MKID('IMAG'), ptr);
+		if (!ptr)
+			return 0;
+
+		ptr = findResource(MKID('WRAP'), ptr);
+		if (!ptr)
+			return 0;
+
+		ptr = findResource(MKID('OFFS'), ptr);
+		if (!ptr)
+			return 0;
+
+		// Get the address of the specified SMAP (corresponding to IMxx)
+		ptr += READ_LE_UINT32(ptr + 4 + 4*state);
+	} else {
+		ptr = findResource(IMxx_tags[state], ptr);
+	}
+	
+	return ptr;
+}
+
 void Scumm::addObjectToInventory(uint obj, uint room) {
 	int i, slot;
 	uint32 size;
@@ -1337,27 +1356,11 @@ void Scumm::setCursorImg(uint img, uint room, uint imgindex) {
 		h = READ_LE_UINT16(&foir.cdhd->v6.h) >> 3;
 	}
 
-	// TODO - for V8 don't use IMxx_tags. Rather, we do something similiar to the V8
-	// code in drawBlastObject. It would be *much* nicer if we could aggregate this
-	// common code into some helper functions, instead of having long convuluted
-	// cases scattered all over the place.
+	dataptr = getObjectImage(foir.obim, imgindex);
+	assert(dataptr);
 	if (_version == 8) {
-		dataptr = findResource(MKID('IMAG'), foir.obim);
-		assert(dataptr);
-		dataptr = findResource(MKID('WRAP'), dataptr);
-		assert(dataptr);
-		dataptr = findResource(MKID('OFFS'), dataptr);
-		assert(dataptr);
-		dataptr += READ_LE_UINT32(dataptr + 4 + 4*imgindex);
-		// TODO - distinguish between SMAP and BOMP here?
-
-		// HACK - adjust dataptr here until bomp code gets adjusted for V8
 		bomp = dataptr;
 	} else {
-		dataptr = findResource(IMxx_tags[imgindex], foir.obim);
-		if (dataptr == NULL)
-			error("setCursorImg: No such image");
-	
 		size = READ_BE_UINT32(dataptr + 4);
 		if (size > sizeof(_grabbedCursor))
 			error("setCursorImg: Cursor image too large");
@@ -1435,7 +1438,7 @@ void Scumm::drawBlastObjects() {
 void Scumm::drawBlastObject(BlastObject *eo) {
 	VirtScreen *vs;
 	const byte *bomp, *ptr;
-	int idx, objnum;
+	int objnum;
 	BompDrawData bdd;
 
 	vs = &virtscr[0];
@@ -1446,45 +1449,23 @@ void Scumm::drawBlastObject(BlastObject *eo) {
 	if (objnum == -1)
 		error("drawBlastObject: getObjectIndex on BlastObject %d failed", eo->number);
 
-	idx = _objs[objnum].fl_object_index;
-	if (idx) {
-		ptr = getResourceAddress(rtFlObject, idx);
-		ptr = findResource(MKID('OBIM'), ptr);
-	} else {
-		idx = objnum;
-		ptr = getResourceAddress(rtRoom, _roomResource) + _objs[objnum].OBIMoffset;
-	}
+	ptr = getOBIMFromObject(_objs[objnum]);
 	if (!ptr)
-		error("BlastObject object %d (%d) image not found", eo->number, idx);
+		error("BlastObject object %d image not found", eo->number);
 
+	const byte *img = getObjectImage(ptr, eo->image);
 	if (_version == 8) {
-		// The OBIM contains an IMAG, which in turn contains a WRAP, which contains
-		// an OFFS chunk and multiple BOMP chunks. To find the right BOMP, we can
-		// either use the offsets in the OFFS chunk, or iterate over all BOMPs we find.
-		// Here we use the first method.
-		ptr = findResource(MKID('IMAG'), ptr);
-		assert(ptr);
-		ptr = findResource(MKID('WRAP'), ptr);
-		assert(ptr);
-		ptr = findResource(MKID('OFFS'), ptr);
-		assert(ptr);
-		// Get the address of the specified BOMP (we really should verify it's a BOMP and not a SMAP
-		bomp = ptr + READ_LE_UINT32(ptr + 4 + 4*eo->image) + 8;
+		assert(img);
+		bomp = img + 8;
 	} else {
-		const byte *img = findResource(IMxx_tags[eo->image], ptr);
 		if (!img)
-			img = findResource(IMxx_tags[1], ptr);	// Backward compatibility with samnmax blast objects
-
-		if (!img)
-			error("blast-object %d invalid image %d (1-x)", eo->number, eo->image);
-	
+			img = getObjectImage(ptr, 1);	// Backward compatibility with samnmax blast objects
+		assert(img);
 		bomp = findResourceData(MKID('BOMP'), img);
 	}
 
 	if (!bomp)
 		error("object %d is not a blast object", eo->number);
-
-	//hexdump(bomp,32);
 
 	if (_version == 8) {
 		bdd.srcwidth = READ_LE_UINT32(&((const BompHeader *)bomp)->v8.width);
