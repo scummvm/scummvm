@@ -139,7 +139,6 @@ void MidiParser_XMIDI::onTimer() {
 	uint32 length;
 	int i;
 	NoteTimer *ptr;
-	bool active_notes;
 	byte note;
 	byte vel;
 	uint32 note_length;
@@ -156,8 +155,6 @@ void MidiParser_XMIDI::onTimer() {
 	pos = _play_pos;
 
 	// Send any necessary note off events.
-	active_notes = false;
-
 	ptr = &_notes_cache[0];
 	for (i = ARRAYSIZE(_notes_cache); i; --i, ++ptr) {
 		if (ptr->time_left) {
@@ -165,7 +162,6 @@ void MidiParser_XMIDI::onTimer() {
 				_driver->send (0x80 | ptr->channel | (ptr->note << 8));
 				ptr->time_left = 0;
 			} else {
-				active_notes = true;
 				ptr->time_left -= _timer_rate;
 			}
 		}
@@ -243,31 +239,27 @@ void MidiParser_XMIDI::onTimer() {
 
 			case 0xF: // META event
 				event = *pos++;
-				// Skip any META events except end of song.
+				length = readVLQ (pos);
+				_driver->metaEvent (event, pos, (uint16) length);
+
+				// End of song must be processed by us,
+				// as well as sending it to the output device.
 				if (event == 0x2F) {
 					// End of song. See if there are still holding notes
 					// we need to wait for.
-					if (!active_notes) {
-						_play_pos = 0;
-						setTrack (_active_track + 1);
-					} else {
-						// Still active notes. Back up to the start of this
-						// event once again, and set all note timings to
-						// 1. That way they'll get turned off next clock.
-						ptr = &_notes_cache[0];
-						for (i = ARRAYSIZE(_notes_cache); i; --i, ++ptr) {
-							if (ptr->time_left)
-								ptr->time_left = 1;
+					ptr = &_notes_cache[0];
+					for (i = ARRAYSIZE(_notes_cache); i; --i, ++ptr) {
+						if (ptr->time_left) {
+							_driver->send (0x80 | ptr->channel | (ptr->note << 8));
+							ptr->time_left = 0;
 						}
-						_play_pos -= 2;
 					}
+					_play_pos = 0;
 					_lock = 0;
 					return;
-				} else {
-					length = readVLQ (pos);
-					pos += length;
 				}
-				break;
+
+				pos += length;
 			}
 		}
 

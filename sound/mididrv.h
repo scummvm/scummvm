@@ -72,6 +72,7 @@ public:
 
 	virtual void sysEx (byte *msg, uint16 length) { }
 	virtual void sysEx_customInstrument (byte channel, uint32 type, byte *instr) { }
+	virtual void metaEvent (byte type, byte*data, uint16 length) { }
 
 	// Timing functions - MidiDriver now operates timers
 	virtual void setTimerCallback (void *timer_param, void (*timer_proc) (void *)) = 0;
