@@ -938,7 +938,7 @@ void Scumm::unkRoomFunc3(int unk1, int unk2, int rfact, int gfact, int bfact)
 }
 
 
-void Scumm::palManipulate(int start, int end, int color, int time, int e)
+void Scumm::palManipulate(int start, int end, int d, int time, int e)
 {
 	// TODO - correctly implement this function (see also bug #558245)
 	//
