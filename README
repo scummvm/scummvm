@@ -1,6 +1,6 @@
 ScummVM README
-Last updated:    2002-07-08
-Release version: 0.2.2 [CVS]
+Last updated:    2002-09-10
+Release version: 0.2.3 [CVS]
 ------------------------------------------------------------------------
 
 For more information, compatibility lists, details on donating, the latest
@@ -39,6 +39,7 @@ be playable to the end:
 
         Loom (256 color CD version)               [Game: loomcd]
         Zak McKraken (256 color FM Towns version) [Game: zak256]
+        Monkey Island 1 (VGA verson)              [Game: monkeyvga]
         Monkey Island 1 (CD version)              [Game: monkey1]
         Monkey Island 2                           [Game: monkey2]
         Indiana Jones And The Fate Of Atlantis    [Game: atlantis]
@@ -52,10 +53,10 @@ your own risk, and please do not file bug reports about them. If you want
 the latest updates on game compatibility, visit our web site and view the
 compatibility chart.
 
-        Monkey Island 1 (VGA floppy)                   [Game: monkeyvga]
-        Indiana Jones and the Last Crusade (256 color) [Game: indy3]
-        Full Throttle                                  [Game: ft]
-        The Dig                                        [Game: dig]
+        Indiana Jones & the Last Crusade (256)   [Game: indy3]
+        Full Throttle                            [Game: ft]
+        The Dig                                  [Game: dig]
+        Simon the Sorcerer II                    [Game: simon2dos/simon2win]
 
 The following games are SCUMM engine, but NOT supported by ScummVM (yet).
 
@@ -70,6 +71,10 @@ features that sometimes make it impossible to finish the game. Save often,
 and please file a bug report (details on submitted bug reports are below)
 if you discover such a bug.
 
+There is also a known problem with some versions of Simon the Sorcerer
+not loading correctly. If you experience problems please try both the
+simon1dos and simon1win game targets, some versions of Simon are labelled
+'Windows' but use the DOS game files.
 
 Supported Platforms:
 -------------------
@@ -118,32 +123,28 @@ the section on Reporting Bugs.
                   way, we do not know where to buy or download a copy of this
                   game. Petition LucasArts to re-release it :)
 
-                - No music or sound effects yet.
 
-
-       Loom (256 Talkie):
-                - If you are having random crashes, this is a Windows bug.
-                  Try copying the data files from CD to your hard disk.
-
-                - Bobbin may sometimes appear to walk backwards.
-
-
-       Monkey 1 (CD Version):
-                - If you are having random crashes, this is a Windows bug.
-                  Try copying the data files from CD to your hard disk.
+       All CD games:
+               - If you are experiencing random crashes, and your game
+                 plays music from CD, you have encountered a Windows bug.
+                 Try copying the data files from CD to your hard disk, and
+                 running them from there.
 
 
 Reporting Bugs:
 ---------------
-To report a bug, please create a SourceForge account and follow the bugs
-link from our homepage. Please make sure the bug is reproducible, and 
-still exists in the latest daily build/current CVS version. Also check the
-compatibility listing for that game to ensure the issue is not already known.
 
-Do NOT report bugs listed as being completable above.
+To report a bug, please create a SourceForge account and follow the bugs
+link from our homepage. Please make sure the bug is reproducible, and
+still occurs in the latest daily build/current CVS version. Also check
+the existing bug list, and compatibility listing for that game, to
+ensure the issue is not already known.
+
+Do NOT report bugs on games that are not listed as being completable
+above. We -know- those games have bugs.
 
 Please include the following information:
-        - Game version (PLEASE test the latest CVS/Daily build)
+        - ScummVM version (PLEASE test the latest CVS/Daily build)
         - Bug details, including instructions on reproducing
         - Language of game (English, German, etc)
         - Version of game (Talkie, Floppy...)
@@ -221,13 +222,13 @@ parameter (or edit the config file manually), ScummVM will remember the
 path, and other settings for this game. Documentation on the configuration
 file can be found near the end of this readme.
 
-The short game name you see at the end of the command line is very
-important. A short list is contained at the top of this file. You can also
-get the current list of games and game names at:
+The short game name ('game target') you see at the end of the command
+line is very important. A short list is contained at the top of this
+file. You can also get the current list of games and game names at:
         http://scummvm.sourceforge.net/compatibility.php
 
-For the adventurous, who like to live on the edge... you can download daily
-builds of Win32, Redhat, Debian and other packages here:
+For the adventurous, who like to live on the edge... you can download
+daily builds of Win32, Redhat, Debian and other packages here:
         Daily builds - http://scummvm.sourceforge.net/daily/
 
 
