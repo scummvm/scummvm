@@ -43,7 +43,7 @@ private:
 
 	struct {
 		int id;
-		const char *string;
+		char *string;
 	} _strings[MAX_STRINGS];
 
 	int _nbStrings;
