@@ -677,7 +677,7 @@ ChannelRaw::ChannelRaw(SoundMixer *mixer, PlayingSoundHandle *handle, void *soun
 	// TODO: add support for SoundMixer::FLAG_REVERSE_STEREO
 
 	// Get a rate converter instance
-	_converter = makeRateConverter(rate, mixer->getOutputRate(), flags & SoundMixer::FLAG_STEREO != 0);
+	_converter = makeRateConverter(rate, mixer->getOutputRate(), (flags & SoundMixer::FLAG_STEREO) != 0);
 #else
 	_pos = 0;
 	_fpPos = 0;
@@ -768,7 +768,7 @@ ChannelStream::ChannelStream(SoundMixer *mixer, PlayingSoundHandle *handle, void
 	// TODO: add support for SoundMixer::FLAG_REVERSE_STEREO
 
 	// Get a rate converter instance
-	_converter = makeRateConverter(rate, mixer->getOutputRate(), flags & SoundMixer::FLAG_STEREO != 0);
+	_converter = makeRateConverter(rate, mixer->getOutputRate(), (flags & SoundMixer::FLAG_STEREO) != 0);
 #else
 	_flags = flags;
 	_bufferSize = buffer_size;
