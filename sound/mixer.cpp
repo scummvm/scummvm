@@ -480,7 +480,7 @@ void Channel::mix(int16 *data, uint len) {
 		// slightly odd divisor: the 255 reflects the fact that the maximal
 		// value for _volume is 255, while the 127 is there because the
 		// balance value ranges from -127 to 127.  The mixer (music/sound)
-		// volume is in the range 0 - 256.
+		// volume is in the range 0 - kMaxMixerVolume.
 		// Hence, the vol_l/vol_r values will be in that range, too
 		
 		int vol = _mixer->getVolumeForSoundType(_type) * _volume;
