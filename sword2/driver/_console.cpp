@@ -109,7 +109,7 @@ int32 OpenConsole(void)
 	warning("stub OpenConsole");
 /*
 	if (consoleStatus)
-		return(RDERR_ALREADYOPEN);
+		return RDERR_ALREADYOPEN;
 
 	if (consoleSprite == NULL)
 	{
@@ -119,13 +119,13 @@ int32 OpenConsole(void)
 	}
 
 	if (consoleSprite == NULL)
-		return(RDERR_OUTOFMEMORY);
+		return RDERR_OUTOFMEMORY;
 
 	memset(consoleSprite, 0, consoleSize);
 */
 	consoleStatus = 1;
 	
-	return(RD_OK);
+	return RD_OK;
 
 }
 
@@ -137,14 +137,14 @@ int32 CloseConsole(void)
 {
 
 	if (!consoleStatus)
-		return(RDERR_ALREADYCLOSED);
+		return RDERR_ALREADYCLOSED;
 
 	free(consoleSprite);
 	consoleSprite = NULL;
 
 	consoleStatus = 0;
 
-	return(RD_OK);
+	return RD_OK;
 
 }
 

@@ -244,7 +244,7 @@ void Build_display(void) {
 			// walkgrid, mouse & player markers & mouse area
 			// rectangle
 
-			Draw_debug_graphics();	// JAMES (08apr97)
+			Draw_debug_graphics();
 
  			// ---------------------------------------------------
 			// text blocks
@@ -408,31 +408,25 @@ void RemoveMsg(void) {
 }
 
 void Send_back_par0_frames(void) {
-	uint32 j;
-
 	// could be none at all - theoretically at least
-	for (j = 0; j < cur_bgp0; j++) {
+	for (uint i = 0; i < cur_bgp0; i++) {
 		// frame attached to 1st background parallax
-		Process_image(&bgp0_list[j]);
+		Process_image(&bgp0_list[i]);
 	}
 }
 
 void Send_back_par1_frames(void) {
-	uint32 j;
-
 	// could be none at all - theoretically at least
-	for (j = 0; j < cur_bgp1; j++) {
-		// frame attached to 1nd background parallax
-		Process_image(&bgp1_list[j]);
+	for (uint i = 0; i < cur_bgp1; i++) {
+		// frame attached to 2nd background parallax
+		Process_image(&bgp1_list[i]);
 	}
 }
 
 void Send_back_frames(void) {
-	uint32 j;
-
 	// could be none at all - theoretically at least
-	for (j = 0; j < cur_back; j++) {
-		Process_image(&back_list[j]);
+	for (uint i = 0; i < cur_back; i++) {
+		Process_image(&back_list[i]);
 	}
 }
 
@@ -440,48 +434,40 @@ void Send_sort_frames(void) {
 	// send the sort frames for printing - layers, shrinkers & normal flat
 	// sprites
 
-	uint32 j;
-
 	// could be none at all - theoretically at least
-	for (j = 0; j < cur_sort; j++) {
-		if (sort_list[sort_order[j]].layer_number) {
+	for (uint i = 0; i < cur_sort; i++) {
+		if (sort_list[sort_order[i]].layer_number) {
 			// its a layer  - minus 1 for true layer number
 			// we need to know from the buildit because the layers
 			// will have been sorted in random order
-			Process_layer(sort_list[sort_order[j]].layer_number - 1);
+			Process_layer(sort_list[sort_order[i]].layer_number - 1);
 		} else {
 			// sprite
-			Process_image(&sort_list[sort_order[j]]);
+			Process_image(&sort_list[sort_order[i]]);
 		}
 	}
 }
 
 void Send_fore_frames(void) {
-	uint32 j;
-
 	// could be none at all - theoretically at least
-	for (j = 0; j < cur_fore; j++) {
-		Process_image(&fore_list[j]);
+	for (uint i = 0; i < cur_fore; i++) {
+		Process_image(&fore_list[i]);
 	}
 }
 
 void Send_fore_par0_frames(void) {
-	uint32 j;
-
 	// could be none at all - theoretically at least
-	for (j = 0; j < cur_fgp0; j++) {
+	for (uint i = 0; i < cur_fgp0; i++) {
 		// frame attached to 1st foreground parallax
-		Process_image(&fgp0_list[j]);
+		Process_image(&fgp0_list[i]);
 	}
 }
 
 void Send_fore_par1_frames(void) {
-	uint32 j;
-
 	// could be none at all - theoretically at least
-	for (j = 0; j < cur_fgp1; j++) {
+	for (uint i = 0; i < cur_fgp1; i++) {
 		// frame attached to 2nd foreground parallax
-		Process_image(&fgp1_list[j]);
+		Process_image(&fgp1_list[i]);
 	}
 }
 
@@ -633,7 +619,6 @@ void Process_image(buildit *build_unit) {
 	}
 #endif
 
-
 #ifdef _SWORD2_DEBUG
 	if (SYSTEM_TESTING_ANIMS) {	// see anims.cpp
 		// bring the anim into the visible screen
@@ -691,8 +676,8 @@ void Reset_render_lists(void) {
 	if (cur_sort) {
 		// there are some layers - so rebuild the sort order
 		// positioning
-		for (uint j = 0; j < cur_sort; j++)
-			sort_order[j] = j;	//rebuild the order list
+		for (uint i = 0; i < cur_sort; i++)
+			sort_order[i] = i;	//rebuild the order list
 	}
 }
 
@@ -705,7 +690,6 @@ void Sort_the_sort_list(void) {
 
 	for (uint i = 0; i < cur_sort - 1; i++) {
 		for (uint j = 0; j < cur_sort - 1; j++) {
-			//this > next then swap
 			if (sort_list[sort_order[j]].sort_y > sort_list[sort_order[j + 1]].sort_y) {
 				SWAP(sort_order[j], sort_order[j + 1]);
 			}
@@ -819,7 +803,7 @@ void Register_frame(int32 *params, buildit *build_unit)	{
 		// passed a mouse structure, so add to the mouse_list
 		ob_mouse = (Object_mouse *) params[0];
 
-		// only if 'pointer' isn't NULL (James13feb97)
+		// only if 'pointer' isn't NULL
 		if (ob_mouse->pointer) {
 #ifdef _SWORD2_DEBUG
 			if (cur_mouse == TOTAL_mouse_list)
@@ -866,7 +850,7 @@ int32 FN_register_frame(int32 *params) {
 	//         1 pointer to graphic structure
 	//         2 pointer to mega structure or NULL if not a mega
 
-	Object_graphic	*ob_graph = (Object_graphic *) params[1];
+	Object_graphic *ob_graph = (Object_graphic *) params[1];
 
 	// check low word for sprite type
 	switch (ob_graph->type & 0x0000ffff) {
@@ -1080,7 +1064,7 @@ void SetFullPalette(int32 palRes) {
  			Con_fatal_error("FN_set_palette() called with invalid resource!");
 #endif
 
-		file = (uint8*) (head + 1);
+		file = (uint8 *) (head + 1);
 
 		// always set colour 0 to black because most background screen
 		// palettes have a bright colour 0 although it should come out

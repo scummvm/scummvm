@@ -240,7 +240,7 @@ int32 ShowMenu(uint8 menu) {
 int32 HideMenu(uint8 menu) {
 	// Check for invalid menu parameter
 	if (menu > RDMENU_BOTTOM)
-		return(RDERR_INVALIDMENU);
+		return RDERR_INVALIDMENU;
 
 	// Check that the menu is not currently hidden, or in the process of
 	// being hidden.

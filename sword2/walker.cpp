@@ -170,7 +170,7 @@ int32 FN_walk(int32 *params) {
 		RESULT = 0;		// 0 means ok
 
 		// continue the script so that RESULT can be checked!
-		return(IR_CONT);
+		return IR_CONT;
 	}
 
 	// get pointer to walkanim & current frame position

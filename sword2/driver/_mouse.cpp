@@ -296,7 +296,7 @@ int32 SetLuggageAnim(uint8 *ma, int32 size) {
 	if (ma)	{
 		luggageAnim = (_mouseAnim *) malloc(size);
 		if (!luggageAnim)
-			return(RDERR_OUTOFMEMORY);
+			return RDERR_OUTOFMEMORY;
 
 		memcpy((uint8 *) luggageAnim, ma, size);
 		luggageOffset = (int32 *) ((uint8 *) luggageAnim + sizeof(_mouseAnim));

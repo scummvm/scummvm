@@ -83,7 +83,7 @@ extern char largest_sprite_info[128];
 // the only build list needed externally - by layers.cpp - for adding layers
 // to sort list
 
-extern	buildit	sort_list[];
+extern buildit sort_list[];
 
 // function prototypes needed externally
 

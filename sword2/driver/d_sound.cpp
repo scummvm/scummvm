@@ -1053,7 +1053,7 @@ int32 Sound::dipMusic() {
 		}
 	}
 	
-	return (hr);
+	return hr;
 */
 }
 

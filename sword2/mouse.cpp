@@ -853,7 +853,7 @@ uint32 Check_mouse_list(void) {
 				CreatePointerText(mouse_list[j].pointer_text, mouse_list[j].pointer);
 
 				// return pointer type
-				return(mouse_list[j].pointer);
+				return mouse_list[j].pointer;
 			}
 
 			j++;
@@ -1329,7 +1329,7 @@ int32 FN_set_object_held(int32 *params) {
 
 int32 FN_remove_chooser(int32 *params) {
 	HideMenu(RDMENU_BOTTOM);
-	return(IR_CONT);
+	return IR_CONT;
 }
 
 int32 FN_disable_menu(int32 *params) {

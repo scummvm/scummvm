@@ -163,7 +163,7 @@ uint32 SaveGame(uint16 slotNo, uint8 *desc) {
 
 uint32 FindBufferSize(void) {
 	// size of savegame header + size of global variables
-	return (sizeof(g_header) + res_man.fetchLen(1));
+	return sizeof(g_header) + res_man.fetchLen(1);
 }
 
 void FillSaveBuffer(mem *buffer, uint32 size, uint8 *desc) {

@@ -393,7 +393,7 @@ uint32 Parse_user_input(void) {
 	// quick check for numbers here
 	if (!isalpha(console_buffer[0])) {
 		Print_to_console("Eh?");
-		return(0);
+		return 0;
 	}
 
 	j = 0;
@@ -599,7 +599,7 @@ uint32 Parse_user_input(void) {
 					return 0;
 				case 35:	// VERSION
 					Con_display_version();
-					return(0);
+					return 0;
 				case 36:	// SOFT
 				case 37:	// HARD
 					// ScummVM doesn't distinguish between
