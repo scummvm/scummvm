@@ -13,6 +13,7 @@ MODULE_OBJS = \
 	sky/grid.o \
 	sky/intro.o \
 	sky/logic.o \
+	sky/mouse.o \
 	sky/musicbase.o \
 	sky/rnc_deco.o \
 	sky/screen.o \

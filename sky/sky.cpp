@@ -25,6 +25,7 @@
 #include "sky/compact.h"
 #include "sky/logic.h"
 #include "sky/debug.h"
+#include "sky/mouse.h"
 #include "common/file.h"
 #include "common/gameDetector.h"
 #include <errno.h>
@@ -128,6 +129,7 @@ void SkyState::initialise(void) {
 
 	_gameVersion = _skyDisk->determineGameVersion();
 	_skyText = getSkyText();
+	_skyMouse = new SkyMouse(_skyDisk);
 	
 	initialiseScreen();
 	initVirgin();
@@ -137,7 +139,7 @@ void SkyState::initialise(void) {
 	//initialiseRouter();
 	loadFixedItems();
 	_skyGrid = new SkyGrid(_skyDisk);
-	_skyLogic = new SkyLogic(_skyDisk, _skyGrid, _skyText);
+	_skyLogic = new SkyLogic(_skyDisk, _skyGrid, _skyText, _skyMusic, _skyMouse, _gameVersion);
 }
 
 void SkyState::initItemList() {

@@ -48,10 +48,13 @@ static const LogicTable logicTable[] = {
 	&SkyLogic::simpleAnim,	 // 16 Module anim without x,y's
 };
 
-SkyLogic::SkyLogic(SkyDisk *skyDisk, SkyGrid *skyGrid, SkyText *skyText) {
+SkyLogic::SkyLogic(SkyDisk *skyDisk, SkyGrid *skyGrid, SkyText *skyText, SkyMusicBase *skyMusic, SkyMouse *skyMouse, uint32 gameVersion) {
 	_skyDisk = skyDisk;
 	_skyGrid = skyGrid;
 	_skyText = skyText;
+	_skyMusic = skyMusic;
+	_skyMouse = skyMouse;
+	_gameVersion = gameVersion;
 	_skyAutoRoute = new SkyAutoRoute(_skyGrid);
 
 	for (uint i = 0; i < sizeof(_moduleList)/sizeof(uint16*); i++)
@@ -1076,8 +1079,7 @@ uint32 SkyLogic::fnNormalMouse(uint32 a, uint32 b, uint32 c) {
 }
 
 uint32 SkyLogic::fnBlankMouse(uint32 a, uint32 b, uint32 c) {
-	warning("Stub: fnBlankMouse");
-	return 1;
+	return _skyMouse->fnBlankMouse();
 }
 
 uint32 SkyLogic::fnCrossMouse(uint32 a, uint32 b, uint32 c) {
@@ -1532,8 +1534,30 @@ uint32 SkyLogic::fnLeaveSection(uint32 a, uint32 b, uint32 c) {
 	error("Stub: fnLeaveSection");
 }
 
-uint32 SkyLogic::fnEnterSection(uint32 a, uint32 b, uint32 c) {
-	error("Stub: fnEnterSection");
+uint32 SkyLogic::fnEnterSection(uint32 sectionNo, uint32 b, uint32 c) {
+	
+	if (SkyState::isDemo(_gameVersion))
+		if (sectionNo > 2)
+			error("End of demo");
+
+	_scriptVariables[CUR_SECTION] = sectionNo;
+
+	if (sectionNo == 5) //linc section - has different mouse icons
+		_skyMouse->replaceMouseCursors(60302);
+
+	else
+		if (sectionNo != _currentSection) {
+
+			_currentSection = sectionNo;
+			_saveCurrentSection = sectionNo;
+
+			sectionNo++;
+			_skyMusic->loadSectionMusic(sectionNo);
+			_skyGrid->loadGrids();
+
+		}
+			
+	return 1;
 }
 
 uint32 SkyLogic::fnRestoreGame(uint32 a, uint32 b, uint32 c) {

@@ -26,10 +26,12 @@
 #include "sky/disk.h"
 #include "sky/grid.h"
 #include "sky/autoroute.h"
+#include "sky/musicbase.h"
+#include "sky/mouse.h"
 
 class SkyLogic {
 public:
-	SkyLogic(SkyDisk *skyDisk, SkyGrid *skyGrid, SkyText *skyText);
+	SkyLogic(SkyDisk *skyDisk, SkyGrid *skyGrid, SkyText *skyText, SkyMusicBase *skyMusic, SkyMouse *skyMouse, uint32 gameVersion);
 	void engine();
 
 	void lreturn();
@@ -144,7 +146,7 @@ public:
 	uint32 fnEyeball(uint32 a, uint32 b, uint32 c);
 	uint32 fnCursorUp(uint32 a, uint32 b, uint32 c);
 	uint32 fnLeaveSection(uint32 a, uint32 b, uint32 c);
-	uint32 fnEnterSection(uint32 a, uint32 b, uint32 c);
+	uint32 fnEnterSection(uint32 sectionNo, uint32 b, uint32 c);
 	uint32 fnRestoreGame(uint32 a, uint32 b, uint32 c);
 	uint32 fnRestartGame(uint32 a, uint32 b, uint32 c);
 	uint32 fnNewSwingSeq(uint32 a, uint32 b, uint32 c);
@@ -185,10 +187,17 @@ protected:
 	Compact *_compact;
 	uint32 _scriptVariables[838];
 
+	uint32 _currentSection;
+	uint32 _saveCurrentSection;
+	
+	uint32 _gameVersion;
+	
 	SkyDisk *_skyDisk;
 	SkyGrid *_skyGrid;
 	SkyText *_skyText;
+	SkyMusicBase *_skyMusic;
 	SkyAutoRoute *_skyAutoRoute;
+	SkyMouse *_skyMouse;
 };
 
 #endif

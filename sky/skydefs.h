@@ -43,6 +43,7 @@
 #define HIT_ID 38
 #define THE_CHOSEN_ONE 52
 #define TEXT1 54
+#define CUR_SECTION	144
 
 //screen/grid defines
 #define GAME_SCREEN_WIDTH	320
@@ -4242,4 +4243,53 @@
 #define C_AT_WAS	82
 #define C_ALT	84
 #define C_REQUEST	86
+
+//system flags
+#define SF_TIMER	(1 << 0)	// set if timer interrupt redirected
+#define SF_GRAPHICS	(1 << 1)	// set if screen is in graphics mode
+#define SF_MOUSE	(1 << 2)	// set if mouse handler installed
+#define SF_KEYBOARD	(1 << 3)	// set if keyboard interrupt redirected
+#define SF_MUSIC_BOARD	(1 << 4)	// set if a music board detected
+#define SF_ROLAND	(1 << 5)	// set if roland board present
+#define SF_ADLIB	(1 << 6)	// set if adlib board present
+#define SF_SBLASTER	(1 << 7)	// set if sblaster present
+#define SF_TANDY	(1 << 8)	// set if tandy present
+#define SF_MUSIC_BIN	(1 << 9)	// set if music driver is loaded
+#define SF_PLUS_FX	(1 << 10)	// set if extra fx module needed
+#define SF_FX_OFF	(1 << 11)	// set if fx disabled
+#define SF_MUS_OFF	(1 << 12)	// set if music disabled
+#define SF_TIMER_TICK	(1 << 13)	// set every timer interupt
+
+// Status flags
+#define SF_CHOOSING	(1 << 14)	// set when choosing text
+#define SF_NO_SCROLL	(1 << 15)	// when set don't scroll
+#define SF_SPEED	(1 << 16)	// when set allow speed options
+#define SF_GAME_RESTORED	(1 << 17)	// set when game restored or restarted
+#define SF_REPLAY_RST	(1 << 18)	// set when loading restart data (used to stop rewriting of replay file)
+#define SF_SPEECH_FILE	(1 << 19)	// set when loading speech file
+#define SF_VOC_PLAYING	(1 << 20)	// set when a voc file is playing
+#define SF_PLAY_VOCS	(1 << 21)	// set when we want speech instead of text
+#define SF_CRIT_ERR	(1 << 22)	// set when critical error routine trapped
+#define SF_ALLOW_SPEECH	(1 << 23)	// speech allowes on cd sblaster version
+#define SF_ALLOW_TEXT	(1 << 24)	// text allowed on cd sblaster version
+#define SF_ALLOW_QUICK	(1 << 25)	// when set allow speed playing
+#define SF_TEST_DISK	(1 << 26)	// set when loading files
+#define SF_MOUSE_STOPPED	(1 << 27)	// set if mouse handler skipped to prevent stack overflow
+
+// Mouse flags
+#define MF_NO_UPDATE	(1 << 0)	// set to disable mouse updating
+#define MF_IN_INT	(1 << 1)	// set when in mouse interrupt
+#define MF_SAVED	(1 << 2)	// set when saved data is valid
+#define MF_GOT_INT	(1 << 3)	// set when mouse interrupt received
+
+#define MOUSE_NORMAL	(1 << 1)	// normal mouse
+#define MOUSE_DISK	(1 << 2)	// disk mouse
+#define MOUSE_DOWN	(1 << 3)
+#define MOUSE_RIGHT	(1 << 4)	// right pointer
+#define MOUSE_LEFT	(1 << 5)	// left pointer
+#define MOUSE_BLANK	(1 << 6)	// blank mouse
+#define MOUSE_CROSS	(1 << 7)	// angry mouse
+#define MOUSE_UP	(1 << 8)	// mouse up
+
+
 

@@ -35,6 +35,7 @@
 #include "sky/musicbase.h"
 #include "sky/adlibmusic.h"
 #include "sky/gmmusic.h"
+#include "sky/mouse.h"
 
 class SkyLogic;
 class SkyGrid;
@@ -89,6 +90,7 @@ protected:
 	SkyText *_skyText;
 	SkyGrid *_skyGrid;
 	SkyLogic *_skyLogic;
+	SkyMouse *_skyMouse;
 
 	SkyMusicBase *_skyMusic;
 	GameDetector *_detector; // necessary for music
