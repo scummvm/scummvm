@@ -40,13 +40,15 @@ public:
 	void loop(bool val)	{ _loop = val; }
 	
 protected:
+	bool _isPlaying;
 	bool _loop;
 	byte *_musicData;
 	uint16 _numSongs;
 	uint32 _musicDataSize;
 	MidiDriver *_driver;
 	MidiParser *_midi;
-	
+
+	static void myTimerProc(void *refCon);	
 	uint32 songOffset(uint16 songNum);
 	uint32 songLength(uint16 songNum);
 };

@@ -29,26 +29,23 @@
 
 namespace Queen {
 
-	Music::Music(MidiDriver *driver, QueenEngine *vm) : _loop(false), _driver(driver) {
+	Music::Music(MidiDriver *driver, QueenEngine *vm) : _isPlaying(false), _loop(false), _driver(driver) {
 		_midi = MidiParser::createParser_SMF();
 		_midi->setMidiDriver(_driver);
 		int ret = _driver->open();
 		if (ret)
 			warning("MIDI Player init failed: \"%s\"", _driver->getErrorName(ret));
 		_midi->setTimerRate(_driver->getBaseTempo());
-		_driver->setTimerCallback((void *)_midi, _midi->timerCallback);
-					
+		_driver->setTimerCallback(this, myTimerProc);			
+		
 		_musicData = vm->resource()->loadFile("AQ.RL", 0, NULL);
 		_musicDataSize = vm->resource()->fileSize("AQ.RL");
 		_numSongs = READ_LE_UINT16(_musicData);
 	}
 
 	Music::~Music() {
-		stopSong();
+		_driver->setTimerCallback(NULL, NULL);
 		_midi->unloadMusic();
-		// Send All Notes Off
-		for (int i = 0; i < 16; ++i)
-			_driver->send((123 << 8) | 0xB0 | i);
 		_driver->close();
 		delete _midi;
 		delete[] _musicData;	
@@ -60,13 +57,19 @@ namespace Queen {
 		else
 			_midi->property(MidiParser::mpAutoLoop, 0);
 		
+		_isPlaying = true;
 		_midi->loadMusic(_musicData + songOffset(songNum), songLength(songNum));
 		_midi->setTrack(0);		
-		_driver->setTimerCallback((void *)_midi, _midi->timerCallback);
 	}
 
 	void Music::stopSong() {
-		_driver->setTimerCallback(NULL, NULL);
+		_isPlaying = false;
+	}
+
+	void Music::myTimerProc(void *refCon) {
+		Music *music = (Music *)refCon;
+		if (music->_isPlaying)
+			music->_midi->onTimer();
 	}
 	
 	uint32 Music::songOffset(uint16 songNum) {
