@@ -70,9 +70,8 @@ const byte cost_scaleTable[256] = {
 #endif
 
 byte CostumeRenderer::mainRoutine(int xmoveCur, int ymoveCur) {
-	int i, skip;
+	int i, skip = 0;
 	byte drawFlag = 1;
-	uint scal;
 	bool use_scaling;
 	byte startScaleIndexX;
 	byte newAmiCost;
@@ -112,9 +111,9 @@ byte CostumeRenderer::mainRoutine(int xmoveCur, int ymoveCur) {
 
 	use_scaling = (_scaleX != 0xFF) || (_scaleY != 0xFF);
 
-	skip = 0;
-
 	if (use_scaling) {
+
+		/* Scale direction */
 		v1.scaleXstep = -1;
 		if (xmoveCur < 0) {
 			xmoveCur = -xmoveCur;
@@ -122,42 +121,47 @@ byte CostumeRenderer::mainRoutine(int xmoveCur, int ymoveCur) {
 		}
 
 		if (_mirror) {
+			/* Adjust X position */
 			startScaleIndexX = _scaleIndexX = 128 - xmoveCur;
 			for (i = 0; i < xmoveCur; i++) {
 				if (cost_scaleTable[_scaleIndexX++] < _scaleX)
 					v1.x -= v1.scaleXstep;
 			}
+
 			rect.right = rect.left = v1.x;
+
 			_scaleIndexX = startScaleIndexX;
 			for (i = 0; i < _width; i++) {
 				if (rect.right < 0) {
 					skip++;
 					startScaleIndexX = _scaleIndexX;
 				}
-				scal = cost_scaleTable[_scaleIndexX++];
-				if (scal < _scaleX)
+				if (cost_scaleTable[_scaleIndexX++] < _scaleX)
 					rect.right++;
 			}
 		} else {
+			/* No mirror */
+			/* Adjust X position */
 			startScaleIndexX = _scaleIndexX = xmoveCur + 128;
 			for (i = 0; i < xmoveCur; i++) {
-				scal = cost_scaleTable[_scaleIndexX--];
-				if (scal < _scaleX)
+				if (cost_scaleTable[_scaleIndexX--] < _scaleX)
 					v1.x += v1.scaleXstep;
 			}
+
 			rect.right = rect.left = v1.x;
+
 			_scaleIndexX = startScaleIndexX;
 			for (i = 0; i < _width; i++) {
 				if (rect.left >= _outwidth) {
-					skip++;
 					startScaleIndexX = _scaleIndexX;
+					skip++;
 				}
-				scal = cost_scaleTable[_scaleIndexX--];
-				if (scal < _scaleX)
+				if (cost_scaleTable[_scaleIndexX--] < _scaleX)
 					rect.left--;
 			}
 		}
 		_scaleIndexX = startScaleIndexX;
+
 		if (skip)
 			skip--;
 
@@ -166,25 +170,28 @@ byte CostumeRenderer::mainRoutine(int xmoveCur, int ymoveCur) {
 			ymoveCur = -ymoveCur;
 			step = 1;
 		}
+
 		_scaleIndexY = 128 - ymoveCur;
 		for (i = 0; i < ymoveCur; i++) {
-			scal = cost_scaleTable[_scaleIndexY++];
-			if (scal < _scaleY)
+			if (cost_scaleTable[_scaleIndexY++] < _scaleY)
 				v1.y -= step;
 		}
+
 		rect.top = rect.bottom = v1.y;
 		_scaleIndexY = 128 - ymoveCur;
 		for (i = 0; i < _height; i++) {
-			scal = cost_scaleTable[_scaleIndexY++];
-			if (scal < _scaleY)
+			if (cost_scaleTable[_scaleIndexY++] < _scaleY)
 				rect.bottom++;
 		}
+
 		_scaleIndexY = 128 - ymoveCur;
 	} else {
 		if (!_mirror)
 			xmoveCur = -xmoveCur;
+
 		v1.x += xmoveCur;
 		v1.y += ymoveCur;
+
 		if (_mirror) {
 			rect.left = v1.x;
 			rect.right = v1.x + _width;
@@ -192,8 +199,10 @@ byte CostumeRenderer::mainRoutine(int xmoveCur, int ymoveCur) {
 			rect.left = v1.x - _width;
 			rect.right = v1.x;
 		}
+
 		rect.top = v1.y;
 		rect.bottom = rect.top + _height;
+
 	}
 
 	v1.skip_width = _width;
