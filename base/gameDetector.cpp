@@ -221,7 +221,7 @@ GameDetector::GameDetector() {
 	ConfMan.registerDefault("joystick_num", -1);
 	ConfMan.registerDefault("confirm_exit", false);
 
-	_debugMode = false;
+	_debugMode = (ConfMan.getInt("debuglevel") > 0);
 	_dumpScripts = false;
 	_midi_driver = MD_AUTO;
 
@@ -478,6 +478,7 @@ ShowHelpAndExit:
 void GameDetector::setTarget(const String &name) {
 	_targetName = name;
 	ConfMan.setActiveDomain(name);
+	_debugMode = (ConfMan.getInt("debuglevel") > 0);
 }
 
 int GameDetector::parseGraphicsMode(const String &str) {
