@@ -208,13 +208,8 @@ void OSystem_PALMOS::init_size(uint w, uint h) {
 	if (_mode == GFX_WIDE) {
 		_decaly = 10;
 		_screeny = 10;
-
-		// precalc 1.5x stuff
-		for (UInt16 oh = 0; oh < 320; oh++)
-			onehalf[oh] = ((oh % 2) == 0);
-
 	} else {
-		_decaly = (320 - h )/ 2;
+		_decaly = (320 - h) / 2;
 		_screeny= _decaly * 320;
 	}
 
@@ -268,30 +263,45 @@ void OSystem_PALMOS::copy_rect(const byte *buf, int pitch, int x, int y, int w, 
 	}
 }
 
+// only avalaible for 320x200 games, so use values instead of vars
+#define WIDE_PITCH			320
+#define WIDE_HALF_HEIGHT	100	// 200 / 2
+
 void OSystem_PALMOS::update_screen__wide() {
 	Coord x, y;
-	UInt32 pitch = 320;
 	UInt32 next = _decaly << 1;
 	UInt8 *dst = _screenP;
-	UInt8 *src1 = _offScreenP + pitch - 1;
+	UInt8 *src1 = _offScreenP + WIDE_PITCH - 1;
 	UInt8 *src2 = src1;
 
-	for (x = 0; x < _screenWidth; x++) {
-		for (y = 0; y < _screenHeight; y++) {
+	for (x = 0; x < _screenWidth >> 1; x++) 
+	{
+		for (y = 0; y < WIDE_HALF_HEIGHT; y++) 
+		{
 			*dst++ = *src1;
-			if (onehalf[y])
-				*dst++ = *src1;
-			src1 += pitch;
+			src1 += WIDE_PITCH;
+			*dst++ = *src1;
+			*dst++ = *src1;
+			src1 += WIDE_PITCH;
 		}
 		src1 = --src2;
 		dst += next;
 
-		if (onehalf[x]) {
-			MemMove(dst, dst - pitch, 300);	// 300 = 200 x 1.5
-			dst += pitch;
+		for (y = 0; y < WIDE_HALF_HEIGHT; y++) 
+		{
+			*dst++ = *src1;
+			src1 += WIDE_PITCH;
+			*dst++ = *src1;
+			*dst++ = *src1;
+			src1 += WIDE_PITCH;
 		}
-	}
-	
+		src1 = --src2;
+		dst += next;
+
+		MemMove(dst, dst - WIDE_PITCH, 300);	// 300 = 200 x 1.5
+		dst += WIDE_PITCH;
+	}	
+
 	WinScreenUnlock();
 	_screenP = WinScreenLock(winLockCopy) + _screeny;
 }
@@ -502,8 +512,7 @@ bool OSystem_PALMOS::show_mouse(bool visible) {
 	return last;
 }
 
-void OSystem_PALMOS::warp_mouse(int x, int y) {
-}
+void OSystem_PALMOS::warp_mouse(int x, int y) {}
 
 void OSystem_PALMOS::set_mouse_pos(int x, int y) {
 	if (x != _mouseCurState.x || y != _mouseCurState.y) {
@@ -603,7 +612,6 @@ void OSystem_PALMOS::SimulateArrowKeys(Event *event, Int8 iHoriz, Int8 iVert, Bo
 	event->event_code = EVENT_MOUSEMOVE;
 	event->mouse.x = x;
 	event->mouse.y = y;
-	set_mouse_pos(event->mouse.x, event->mouse.y);
 }
 
 static void getCoordinates(EventPtr event, Boolean wide, Coord *x, Coord *y) {
@@ -1039,7 +1047,7 @@ static UInt16 checkMSA() {
 //				Char buf[100];
 //				StrPrintF(buf,"MSA refNum %ld, Try to open lib ...", refNum);
 //				FrmCustomAlert(1000,buf,0,0);
-				MsaLibClose(refNum, msaLibOpenModeAlbum);	// try to close the lib if we previously let it open (?)
+				MsaLibClose(refNum, msaLibOpenModeAlbum);	// close the lib if we previously let it open (?) Need to add Notify for sonySysNotifyMsaEnforceOpenEvent just in case ...
 				error = MsaLibOpen(refNum, msaLibOpenModeAlbum);			
 /*				switch (error) {
 				case msaErrAlreadyOpen:

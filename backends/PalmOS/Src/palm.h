@@ -272,7 +272,6 @@ private:
 	eventsEnum _lastEvent;
 
 	UInt16 _wideRefNum;
-	Boolean onehalf[320];
 
 	OSystem_PALMOS();
 
