@@ -83,13 +83,13 @@ SagaEngine::SagaEngine(GameDetector *detector, OSystem *syst)
 
 	// The Linux version of Inherit the Earth puts all data files in an
 	// 'itedata' sub-directory, except for voices.rsc
-	File::addDefaultDirectory(_gameDataPath + "/itedata/");
+	File::addDefaultDirectory(_gameDataPath + "itedata/");
 
 	// The Windows version of Inherit the Earth puts various data files in
 	// other subdirectories.
-	File::addDefaultDirectory(_gameDataPath + "/graphics/");
-	File::addDefaultDirectory(_gameDataPath + "/music/");
-	File::addDefaultDirectory(_gameDataPath + "/sound/");
+	File::addDefaultDirectory(_gameDataPath + "graphics/");
+	File::addDefaultDirectory(_gameDataPath + "music/");
+	File::addDefaultDirectory(_gameDataPath + "sound/");
 
 	// Setup mixer
 	if (!_mixer->isReady()) {

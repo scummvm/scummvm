@@ -103,12 +103,12 @@ Sword2Engine::Sword2Engine(GameDetector *detector, OSystem *syst)
 	: Engine(syst) {
 
 	// Add default file directories
-	File::addDefaultDirectory(_gameDataPath + "/CLUSTERS/");
-	File::addDefaultDirectory(_gameDataPath + "/SWORD2/");
-	File::addDefaultDirectory(_gameDataPath + "/VIDEO/");
-	File::addDefaultDirectory(_gameDataPath + "/clusters/");
-	File::addDefaultDirectory(_gameDataPath + "/sword2/");
-	File::addDefaultDirectory(_gameDataPath + "/video/");
+	File::addDefaultDirectory(_gameDataPath + "CLUSTERS/");
+	File::addDefaultDirectory(_gameDataPath + "SWORD2/");
+	File::addDefaultDirectory(_gameDataPath + "VIDEO/");
+	File::addDefaultDirectory(_gameDataPath + "clusters/");
+	File::addDefaultDirectory(_gameDataPath + "sword2/");
+	File::addDefaultDirectory(_gameDataPath + "video/");
 
 	g_sword2 = this;
 	_debugger = NULL;

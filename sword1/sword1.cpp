@@ -118,14 +118,14 @@ SwordEngine::~SwordEngine() {
 void SwordEngine::initialize(void) {
 
 	// Add default file directories
-	File::addDefaultDirectory(_gameDataPath + "/CLUSTERS/");
-	File::addDefaultDirectory(_gameDataPath + "/MUSIC/");
-	File::addDefaultDirectory(_gameDataPath + "/SPEECH/");
-	File::addDefaultDirectory(_gameDataPath + "/VIDEO/");
-	File::addDefaultDirectory(_gameDataPath + "/clusters/");
-	File::addDefaultDirectory(_gameDataPath + "/music/");
-	File::addDefaultDirectory(_gameDataPath + "/speech/");
-	File::addDefaultDirectory(_gameDataPath + "/video/");
+	File::addDefaultDirectory(_gameDataPath + "CLUSTERS/");
+	File::addDefaultDirectory(_gameDataPath + "MUSIC/");
+	File::addDefaultDirectory(_gameDataPath + "SPEECH/");
+	File::addDefaultDirectory(_gameDataPath + "VIDEO/");
+	File::addDefaultDirectory(_gameDataPath + "clusters/");
+	File::addDefaultDirectory(_gameDataPath + "music/");
+	File::addDefaultDirectory(_gameDataPath + "speech/");
+	File::addDefaultDirectory(_gameDataPath + "video/");
 
 	_system->initSize(640, 480);
 	debug(5, "Starting memory manager");

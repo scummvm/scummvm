@@ -566,7 +566,7 @@ bool GameDetector::detectMain() {
 	String gameDataPath(ConfMan.get("path"));
 	if (gameDataPath.isEmpty()) {
 		warning("No path was provided. Assuming the data files are in the current directory");
-#ifndef __PALM_OS__	// add last slash also in File::fopenNoCase, so this is not needed
+		gameDataPath = "./";
 	} else if (gameDataPath.lastChar() != '/'
 #ifdef __MORPHOS__
 					&& gameDataPath.lastChar() != ':'
@@ -574,7 +574,6 @@ bool GameDetector::detectMain() {
 					&& gameDataPath.lastChar() != '\\') {
 		gameDataPath += '/';
 		ConfMan.set("path", gameDataPath, kTransientDomain);
-#endif
 	}
 
 	return true;

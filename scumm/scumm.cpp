@@ -438,15 +438,15 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 	// Add default file directories.
 	if (((_features & GF_AMIGA) || (_features & GF_ATARI_ST)) && (_version <= 4)) {
 		// This is for the Amiga version of Indy3/Loom/Maniac/Zak
-		File::addDefaultDirectory(_gameDataPath + "/ROOMS/");
-		File::addDefaultDirectory(_gameDataPath + "/rooms/");
+		File::addDefaultDirectory(_gameDataPath + "ROOMS/");
+		File::addDefaultDirectory(_gameDataPath + "rooms/");
 	}
 
 	if ((_features & GF_MACINTOSH) && (_version == 3)) {
 		// This is for the Mac version of Indy3/Loom
-		File::addDefaultDirectory(_gameDataPath + "/Rooms 1/");
-		File::addDefaultDirectory(_gameDataPath + "/Rooms 2/");
-		File::addDefaultDirectory(_gameDataPath + "/Rooms 3/");
+		File::addDefaultDirectory(_gameDataPath + "Rooms 1/");
+		File::addDefaultDirectory(_gameDataPath + "Rooms 2/");
+		File::addDefaultDirectory(_gameDataPath + "Rooms 3/");
 	}
 
 #ifdef MACOSX
@@ -467,16 +467,16 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 #endif
 	if (_version == 8) {
 		// This is for COMI
-		File::addDefaultDirectory(_gameDataPath + "/RESOURCE/");
-		File::addDefaultDirectory(_gameDataPath + "/resource/");
+		File::addDefaultDirectory(_gameDataPath + "RESOURCE/");
+		File::addDefaultDirectory(_gameDataPath + "resource/");
 	}
 
 	if (_version == 7) {
 		// This is for Full Throttle & The Dig
-		File::addDefaultDirectory(_gameDataPath + "/VIDEO/");
-		File::addDefaultDirectory(_gameDataPath + "/video/");
-		File::addDefaultDirectory(_gameDataPath + "/DATA/");
-		File::addDefaultDirectory(_gameDataPath + "/data/");
+		File::addDefaultDirectory(_gameDataPath + "VIDEO/");
+		File::addDefaultDirectory(_gameDataPath + "video/");
+		File::addDefaultDirectory(_gameDataPath + "DATA/");
+		File::addDefaultDirectory(_gameDataPath + "data/");
 	}
 
 	// The mac versions of Sam&Max, DOTT, FT and The Dig used a special meta

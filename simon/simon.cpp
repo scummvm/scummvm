@@ -379,16 +379,16 @@ SimonEngine::SimonEngine(GameDetector *detector, OSystem *syst)
 		gss = PTR(simon2win_settings);
 
 		// Add default file directories
-		File::addDefaultDirectory(_gameDataPath + "/voices/");
-		File::addDefaultDirectory(_gameDataPath + "/VOICES/");
+		File::addDefaultDirectory(_gameDataPath + "voices/");
+		File::addDefaultDirectory(_gameDataPath + "VOICES/");
 	} else if (_game & GF_SIMON2)
 		gss = PTR(simon2dos_settings);
 	else if (_game & GF_ACORN) {
 		gss = PTR(simon1acorn_settings);
 
 		// Add default file directories
-		File::addDefaultDirectory(_gameDataPath + "/execute/");
-		File::addDefaultDirectory(_gameDataPath + "/EXECUTE/");
+		File::addDefaultDirectory(_gameDataPath + "execute/");
+		File::addDefaultDirectory(_gameDataPath + "EXECUTE/");
 	} else if (_game & GF_AMIGA) {
 		gss = PTR(simon1amiga_settings);
 	} else if (_game & GF_DEMO)
@@ -400,20 +400,20 @@ SimonEngine::SimonEngine(GameDetector *detector, OSystem *syst)
 		// Add default file directories
 		switch(_language) {
 		case 20:
-			File::addDefaultDirectory(_gameDataPath + "/hebrew/");
-			File::addDefaultDirectory(_gameDataPath + "/HEBREW/");
+			File::addDefaultDirectory(_gameDataPath + "hebrew/");
+			File::addDefaultDirectory(_gameDataPath + "HEBREW/");
 			break;
 		case  5:
-			File::addDefaultDirectory(_gameDataPath + "/spanish/");
-			File::addDefaultDirectory(_gameDataPath + "/SPANISH/");
+			File::addDefaultDirectory(_gameDataPath + "spanish/");
+			File::addDefaultDirectory(_gameDataPath + "SPANISH/");
 			break;
 		case  3:
-			File::addDefaultDirectory(_gameDataPath + "/italian/");
-			File::addDefaultDirectory(_gameDataPath + "/ITALIAN/");
+			File::addDefaultDirectory(_gameDataPath + "italian/");
+			File::addDefaultDirectory(_gameDataPath + "ITALIAN/");
 			break;
 		case  2:
-			File::addDefaultDirectory(_gameDataPath + "/french/");
-			File::addDefaultDirectory(_gameDataPath + "/FRENCH/");
+			File::addDefaultDirectory(_gameDataPath + "french/");
+			File::addDefaultDirectory(_gameDataPath + "FRENCH/");
 			break;
 		}
 	}
