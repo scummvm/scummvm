@@ -29,6 +29,7 @@
 namespace Scumm {
 
 static void blit(byte *dst, int dstPitch, const byte *src, int srcPitch, int w, int h);
+static void fill(byte *dst, int dstPitch, byte color, int w, int h);
 
 struct StripTable {
 	int offsets[160];
@@ -633,8 +634,8 @@ void ScummEngine::restoreBG(Common::Rect rect, byte backColor) {
 
 	screenBuf = vs->getPixels(rect.left, rect.top);
 
-	int height = rect.height();
-	int width = rect.width();
+	const int height = rect.height();
+	const int width = rect.width();
 	
 	if (!height)
 		return;
@@ -642,18 +643,11 @@ void ScummEngine::restoreBG(Common::Rect rect, byte backColor) {
 	if (vs->hasTwoBuffers && _currentRoom != 0 && isLightOn()) {
 		blit(screenBuf, vs->pitch, vs->getBackPixels(rect.left, rect.top), vs->pitch, width, height);
 		if (vs->number == kMainVirtScreen && _charset->_hasMask) {
-			const int mask_width = rect.width();
 			byte *mask = (byte *)gdi._textSurface.pixels + gdi._textSurface.pitch * rect.top + rect.left;
-			while (height--) {
-				memset(mask, CHARSET_MASK_TRANSPARENCY, mask_width);
-				mask += gdi._textSurface.pitch;
-			}
+			fill(mask, gdi._textSurface.pitch, CHARSET_MASK_TRANSPARENCY, width, height);
 		}
 	} else {
-		while (height--) {
-			memset(screenBuf, backColor, width);
-			screenBuf += vs->pitch;
-		}
+		fill(screenBuf, vs->pitch, backColor, width, height);
 	}
 }
 
@@ -717,10 +711,6 @@ static void blit(byte *dst, int dstPitch, const byte *src, int srcPitch, int w, 
 	assert(src != NULL);
 	assert(dst != NULL);
 	
-	// TODO: This function currently always assumes that srcPitch == dstPitch
-	// and furthermore that both equal _screenWidth.
-	//if (w==_screenWidth)
-
 	if (w == srcPitch && w == dstPitch) {
 		memcpy(dst, src, w*h);
 	} else {
@@ -728,6 +718,20 @@ static void blit(byte *dst, int dstPitch, const byte *src, int srcPitch, int w, 
 			memcpy(dst, src, w);
 			dst += dstPitch;
 			src += srcPitch;
+		} while (--h);
+	}
+}
+
+static void fill(byte *dst, int dstPitch, byte color, int w, int h) {
+	assert(h > 0);
+	assert(dst != NULL);
+	
+	if (w == dstPitch) {
+		memset(dst, color, w*h);
+	} else {
+		do {
+			memset(dst, color, w);
+			dst += dstPitch;
 		} while (--h);
 	}
 }
@@ -786,10 +790,7 @@ void ScummEngine::drawBox(int x, int y, int x2, int y2, int color) {
 		bgbuff = vs->getBackPixels(x, y);
 		blit(backbuff, vs->pitch, bgbuff, vs->pitch, width, height);
 	} else {
-		while (height--) {
-			memset(backbuff, color, width);
-			backbuff += vs->pitch;
-		}
+		fill(backbuff, vs->pitch, color, width, height);
 	}
 }
 
@@ -803,11 +804,7 @@ void ScummEngine::drawFlashlight() {
 										_flashlight.y, _flashlight.y + _flashlight.h, USAGE_BIT_DIRTY);
 		
 		if (_flashlight.buffer) {
-			i = _flashlight.h;
-			do {
-				memset(_flashlight.buffer, 0, _flashlight.w);
-				_flashlight.buffer += vs->pitch;
-			} while (--i);
+			fill(_flashlight.buffer, vs->pitch, 0, _flashlight.w, _flashlight.h);
 		}
 		_flashlight.isDrawn = false;
 	}
