@@ -4,7 +4,7 @@ CFLAGS = -g -O2 -Wall
 LDFLAGS = -g
 LIBS = -L../lua/lib -llua
 
-all: bmtoppm delua imc2wav int2flt mat2ppm unlab vima
+all: bmtoppm delua imc2wav int2flt mat2ppm set2fig unlab vima
 
 bmtoppm: bmtoppm.c
 	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ bmtoppm.c -lppm
