@@ -205,13 +205,15 @@ byte CostumeRenderer::mainRoutine(int xmoveCur, int ymoveCur) {
 		if (!use_scaling)
 			skip = -v1.x;
 		if (skip > 0) {
-			v1.skip_width -= skip;
+			if (!(_vm->_features & GF_AMIGA)) {
+				v1.skip_width -= skip;
 
-			if (_loaded._format == 0x57)
-				c64_ignorePakCols(skip);
-			else
-				codec1_ignorePakCols(skip);
-			v1.x = 0;
+				if (_loaded._format == 0x57)
+					c64_ignorePakCols(skip);
+				else
+					codec1_ignorePakCols(skip);
+				v1.x = 0;
+			}
 		} else {
 			skip = x_right - _vm->_screenWidth;
 			if (skip <= 0) {
@@ -224,13 +226,15 @@ byte CostumeRenderer::mainRoutine(int xmoveCur, int ymoveCur) {
 		if (!use_scaling)
 			skip = x_right - _vm->_screenWidth;
 		if (skip > 0) {
-			v1.skip_width -= skip;
+			if (!(_vm->_features & GF_AMIGA)) {
+				v1.skip_width -= skip;
 
-			if (_loaded._format == 0x57)
-				c64_ignorePakCols(skip);
-			else
-				codec1_ignorePakCols(skip);
-			v1.x = _vm->_screenWidth - 1;
+				if (_loaded._format == 0x57)
+					c64_ignorePakCols(skip);
+				else
+					codec1_ignorePakCols(skip);
+				v1.x = _vm->_screenWidth - 1;
+			}
 		} else {
 			skip = -1 - x_left;
 			if (skip <= 0)
