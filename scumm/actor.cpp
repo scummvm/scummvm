@@ -895,7 +895,33 @@ void Actor::drawActorCostume()
 
 		cr._outheight = _vm->virtscr->height;
 
-		cr._zbuf = _vm->getMaskFromBox(walkbox);
+		// If walkbox is 0, that could mean two things:
+		//
+		// Either the actor is or has been moved around with
+		// ignoreBoxes != 0. In this case, use the mask for the
+		// walkbox the actor is currently inside or, if it's not in
+		// any walkbox, don't mask at all.
+		//
+		// This fixes two graphics glitches in Loom. Bobbin's feet
+		// are not obscured after Rusty's ghost has shown him what's
+		// happened to The Forge, and Rusty himself isn't partially
+		// obscured after Bobbin heals him.
+		//
+		// Or it could mean that the actor really is in walkbox 0.
+
+		if (walkbox == 0) {
+			int i;
+
+			cr._zbuf = 0;
+
+			for (i = _vm->getNumBoxes() - 1; i >= 0; i--) {
+				if (_vm->checkXYInBoxBounds(i, x, y)) {
+					cr._zbuf = _vm->getMaskFromBox(i);
+					break;
+				}
+			}
+		} else
+			cr._zbuf = _vm->getMaskFromBox(walkbox);
 
 		if (forceClip)
 			cr._zbuf = forceClip;
