@@ -41,22 +41,22 @@ namespace Scumm {
 
 void CDECL debugC(int channel, const char *s, ...) {
 #ifdef __PALM_OS__
-        char buf[256]; // 1024 is too big overflow the stack
+	char buf[256]; // 1024 is too big overflow the stack
 #else
-        char buf[1024];
+	char buf[1024];
 #endif
-        va_list va;
+	va_list va;
 
 	// FIXME: Still spew all debug at -d9, for crashes in startup etc.
 	//	  Add setting from commandline ( / abstract channel interface)
-        if (!(g_scumm->_debugFlags & channel) && (g_debugLevel < 9))
-                return;
+	if (!(g_scumm->_debugFlags & channel) && (g_debugLevel < 9))
+		return;
 
-        va_start(va, s);
-        vsprintf(buf, s, va);
-        va_end(va);
+	va_start(va, s);
+	vsprintf(buf, s, va);
+	va_end(va);
 
-	debug(buf);
+	debug(g_debugLevel, buf);
 };
 	
 ScummDebugger::ScummDebugger(ScummEngine *s)
