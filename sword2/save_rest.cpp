@@ -398,7 +398,7 @@ uint32 Sword2Engine::restoreFromBuffer(Memory *buffer, uint32 size) {
 		setScrolling();
 
 	// Any music required will be started after we've returned from
-	// Restore_control() - see System_menu() in mouse.cpp!
+	// restoreControl() - see systemMenuMouse() in mouse.cpp!
 
 	_loopingMusicId = _saveGameHeader.music_id;
 
