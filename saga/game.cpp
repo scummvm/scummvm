@@ -229,13 +229,11 @@ static GAME_MD5 game_md5[] = {
 	{ GID_ITE_MACCD,    "95863b89a0916941f6c5e1789843ba14", "sounds.rsc" },
 	{ GID_ITE_MACCD,    "c14c4c995e7a0d3828e3812a494301b7", "Inherit the Earth Voices" },
 
-	// Please, provide md5 of first 5000 bytes of music.rsc
-	// head -c 5000 music.rsc | md5 | mail -s 'linux music.rsc md5' sev
 	{ GID_ITE_LINCD,    "8f4315a9bb10ec839253108a032c8b54", "ite.rsc" },
 	{ GID_ITE_LINCD,    "a891405405edefc69c9d6c420c868b84", "scripts.rsc" },
 	{ GID_ITE_LINCD,    "e2ccb61c325d6d1ead3be0e731fe29fe", "sounds.rsc" },
 	{ GID_ITE_LINCD,    "41bb6b95d792dde5196bdb78740895a6", "voices.rsc" },
-	{ GID_ITE_LINCD,    "????????????????????????????????", "music.rsc" },
+	{ GID_ITE_LINCD,    "d6454756517f042f01210458abe8edd4", "music.rsc" },
 
 	{ GID_ITE_DISK_DE,  "869fc23c8f38f575979ec67152914fee", "ite.rsc" },
 	{ GID_ITE_DISK_DE,  "516f7330f8410057b834424ea719d1ef", "scripts.rsc" },
