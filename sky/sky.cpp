@@ -110,22 +110,14 @@ void SkyState::initialise(void) {
 	_skySound = new SkySound(_mixer);
 	_skyDisk = new SkyDisk(_gameDataPath);
 	
-	// FIXME: This is *ugly* (and maybe even incorrect?)
-	// We need to know if we have to use adlib for midi or not.
-
-	if (_detector->_midi_driver == MD_ADLIB) {
-        _skyMusic = new SkyAdlibMusic(_mixer, _skyDisk);
+	if (_detector->getMidiDriverType() == MD_ADLIB) {
+		_skyMusic = new SkyAdlibMusic(_mixer, _skyDisk);
 	} else {
-		if (_detector->_midi_driver == MD_AUTO) {
-#if defined (_WIN32_WCE) || defined(UNIX) || defined(X11_BACKEND)
-			_skyMusic = new SkyAdlibMusic(_mixer, _skyDisk);
-#else
-			_skyMusic = new SkyGmMusic(_detector->createMidi(), _skyDisk);
-#endif
-		} else {
-			_skyMusic = new SkyGmMusic(_detector->createMidi(), _skyDisk);
-		}
+		_skyMusic = new SkyGmMusic(_detector->createMidi(), _skyDisk);
 	}
+	// TODO: Add option for users with real MT32 to use it. Driver is done.
+	// _skyMusic = new SkyMT32Music(_detector->createMidi(), _skyDisk);
+
 
 	_gameVersion = _skyDisk->determineGameVersion();
 	_skyText = new SkyText(_skyDisk, _gameVersion, _language);

@@ -35,6 +35,7 @@
 #include "sky/musicbase.h"
 #include "sky/adlibmusic.h"
 #include "sky/gmmusic.h"
+#include "sky/mt32music.h"
 #include "sky/mouse.h"
 
 class SkyLogic;

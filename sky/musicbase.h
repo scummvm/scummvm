@@ -57,7 +57,7 @@ protected:
 	uint16 _driverFileBase;
 
 	uint16 _musicVolume, _numberOfChannels;
-	uint8 _currentMusic;
+	uint8 _currentMusic, _currentSection;
 	uint8 _musicTempo0; // can be changed by music stream
 	uint8 _musicTempo1; // given once per music
 	uint32 _tempo;      // calculated from musicTempo0 and musicTempo1
