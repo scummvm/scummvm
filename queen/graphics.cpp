@@ -258,7 +258,7 @@ void BobSlot::animOneStep() {
 
 	if (anim.string.buffer != NULL) {
 		--anim.speed;
-		if(anim.speed == 0) {
+		if(anim.speed <= 0) {
 			// jump to next entry
 			++anim.string.curPos;
 			uint16 nextFrame = anim.string.curPos->frame;

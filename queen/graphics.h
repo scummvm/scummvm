@@ -60,7 +60,7 @@ struct BobSlot {
 	//! animation stuff
 	bool animating;
 	struct {
-		uint16 speed, speedBak;
+		int16 speed, speedBak;	// Must be signed!
 
 		//! string based animation
 		struct {
