@@ -267,11 +267,20 @@ public:
 	ObjectData *_objs;
 	ScummDebugger *_debugger;
 
+	// Core variables
+	byte _gameId;
 	byte _version;
-	
 	uint32 _features;						// Should only be accessed for reading (TODO enforce it compiler-wise with making it private and creating an accessor)
+
 	void setFeatures (uint32 newFeatures);	// Changes the features set. This allows some gamewide stuff to be precalculated/prepared (ie CostumeRenderer)
 
+	/** Random number generator */
+	Common::RandomSource _rnd;
+
+	/** Graphics manager */
+	Gdi gdi;
+
+	/** Central resource data. */
 	struct {
 		byte mode[rtNumTypes];
 		uint16 num[rtNumTypes];
@@ -357,17 +366,6 @@ protected:
 protected:
 	byte _fastMode;
 
-public:
-	/* Random number generation */
-	Common::RandomSource _rnd;
-
-	/* Core variable definitions */
-	byte _gameId;
-
-	/* Core class/array definitions */
-	Gdi gdi;
-
-protected:
 	Actor *_actors;	// Has _numActors elements
 	
 	uint16 *_inventory;

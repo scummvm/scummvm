@@ -269,14 +269,18 @@ static const GameSettings scumm_settings[] = {
 };
 
 ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst)
-	: Engine(detector, syst), _pauseDialog(0), _optionsDialog(0), _saveLoadDialog(0) {
+	: Engine(detector, syst),
+	  _targetName(detector->_targetName),
+	  _gameId(detector->_game.id),
+	  _version(detector->_game.version),
+	  _features(detector->_game.features),
+	  gdi(this), _pauseDialog(0), _optionsDialog(0), _saveLoadDialog(0) {
 	OSystem::Property prop;
 
 	// Init all vars - maybe now we can get rid of our custom new/delete operators?
 	_imuse = NULL;
 	_imuseDigital = NULL;
 	_musicEngine = NULL;
-	_features = 0;
 	_verbs = NULL;
 	_objs = NULL;
 	_debugger = NULL;
@@ -295,8 +299,6 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst)
 	_confirmExitDialog = NULL;
 	_debuggerDialog = NULL;
 	_fastMode = 0;
-	_gameId = 0;
-	memset(&gdi, 0, sizeof(Gdi));
 	_actors = NULL;
 	_inventory = NULL;
 	_newNames = NULL;
@@ -587,8 +589,10 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst)
 	// Use g_scumm from error() ONLY
 	g_scumm = this;
 
+	// Create debugger
 	_debugger = new ScummDebugger(this);
 
+	// Read settings from the detector & config manager
 	_debugMode = detector->_debugMode;
 	_debugLevel = ConfMan.getInt("debuglevel");
 	_dumpScripts = detector->_dumpScripts;
@@ -599,16 +603,12 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst)
 	// differing from the regular version(s) of that game.
 	_gameName = ConfMan.hasKey("basename") ? ConfMan.get("basename") : detector->_game.gameName;
 
-	_targetName = detector->_targetName;
-	_gameId = detector->_game.id;
-	_version = detector->_game.version;
-	setFeatures(detector->_game.features);
+	_midiDriver = detector->_midi_driver;
 
 	_demoMode = ConfMan.getBool("demo_mode");
 	_noSubtitles = ConfMan.getBool("nosubtitles");
 	_confirmExit = ConfMan.getBool("confirm_exit");
 	_defaultTalkDelay = ConfMan.getInt("talkspeed");
-	_midiDriver = detector->_midi_driver;
 	_native_mt32 = ConfMan.getBool("native_mt32");
 	_language = GameDetector::parseLanguage(ConfMan.get("language"));
 	memset(&res, 0, sizeof(res));
@@ -629,20 +629,21 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst)
 		_screenHeight = 200;
 	}
 
-	gdi._numStrips = _screenWidth / 8;
-
-	_newgui = g_gui;
-	_sound = new Sound(this);
-
-	_sound->_sound_volume_master = ConfMan.getInt("master_volume");
-	_sound->_sound_volume_sfx = ConfMan.getInt("sfx_volume");
-	_sound->_sound_volume_music = ConfMan.getInt("music_volume");
-
-	/* Initialize backend */
+	// Initialize backend
 	syst->init_size(_screenWidth, _screenHeight);
 	prop.cd_num = ConfMan.getInt("cdrom");
 	if (prop.cd_num >= 0 && (_features & GF_AUDIOTRACKS))
 		syst->property(OSystem::PROP_OPEN_CD, &prop);
+
+	// Setup GDI object
+	gdi._numStrips = _screenWidth / 8;
+
+	_newgui = g_gui;
+
+	_sound = new Sound(this);
+	_sound->_sound_volume_master = ConfMan.getInt("master_volume");
+	_sound->_sound_volume_sfx = ConfMan.getInt("sfx_volume");
+	_sound->_sound_volume_music = ConfMan.getInt("music_volume");
 
 #ifndef __GP32__ //ph0x FIXME, "quick dirty hack"
 	/* Bind the mixer to the system => mixer will be invoked
@@ -751,6 +752,22 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst)
 			fp.close();
 		}
 	}
+
+	// Create the charset renderer
+	if (_version <= 2)
+		_charset = new CharsetRendererV2(this);
+	else if (_version == 3)
+		_charset = new CharsetRendererV3(this);
+	else if (_version == 8)
+		_charset = new CharsetRendererNut(this);
+	else
+		_charset = new CharsetRendererClassic(this);
+
+	// Create the costume renderer
+	if (_features & GF_NEW_COSTUMES)
+		_costumeRenderer = new AkosRenderer(this);
+	else
+		_costumeRenderer = new CostumeRenderer(this);
 }
 
 ScummEngine::~ScummEngine() {
@@ -806,7 +823,6 @@ void ScummEngine::go() {
 #pragma mark -
 
 void ScummEngine::launch() {
-	gdi._vm = this;
 
 #ifdef __PALM_OS__
 	// revert to old value (450000) and make ScummVM works again in some devices with same problem as below.
@@ -889,22 +905,16 @@ void ScummEngine::launch() {
 	_saveLoadFlag = 0;
 }
 
-void ScummEngine::setFeatures (uint32 newFeatures) {
-	bool newCostumes = (_features & GF_NEW_COSTUMES) != 0;
-	bool newNewCostumes = (newFeatures & GF_NEW_COSTUMES) != 0;
+void ScummEngine::setFeatures(uint32 newFeatures) {
 	bool amigaPalette = (_features & GF_AMIGA) != 0;
 	bool newAmigaPalette = (newFeatures & GF_AMIGA) != 0;
 
-	_features = newFeatures;
-	
-	if (!_costumeRenderer || newCostumes != newNewCostumes) {
-		delete _costumeRenderer;
-		if (newNewCostumes)
-			_costumeRenderer = new AkosRenderer(this);
-		else
-			_costumeRenderer = new CostumeRenderer(this);
+	if ((_features ^ newFeatures) & ~GF_AMIGA) {
+		error("setFeatures may only be used to toggle GF_AMIGA flag!");
 	}
 
+	_features = newFeatures;
+	
 	if ((_features & GF_16COLOR) && amigaPalette != newAmigaPalette) {
 		if (_features & GF_AMIGA)
 			setupAmigaPalette();
@@ -952,17 +962,6 @@ void ScummEngine::scummInit() {
 		_switchRoomEffect = 5;
 	}
 	
-	if (_version <= 2)
-		_charset = new CharsetRendererV2(this);
-	else if (_version == 3)
-		_charset = new CharsetRendererV3(this);
-	else if (_version == 8)
-		_charset = new CharsetRendererNut(this);
-	else
-		_charset = new CharsetRendererClassic(this);
-
-	memset(_charsetData, 0, sizeof(_charsetData));
-
 	if (!(_features & GF_SMALL_NAMES) && _version != 8)
 		loadCharset(1);
 	

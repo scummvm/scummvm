@@ -110,17 +110,19 @@ struct StripTable {
 
 class Gdi {
 	friend class ScummEngine;	// Mostly for the code in saveload.cpp ...
-public:
 	ScummEngine *_vm;
 
+public:
 	int _numZBuffer;
 	int _imgBufOffs[8];
 	int32 _numStrips;
 	Common::Rect _mask;
 	byte _C64Colors[4];
+	
+	Gdi(ScummEngine *vm);
 
 protected:
-	byte _palette_mod;
+	byte *_roomPalette;
 	byte _decomp_shr, _decomp_mask;
 	byte _transparentColor;
 	uint32 _vertStripNextInc;
