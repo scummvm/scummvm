@@ -862,7 +862,7 @@ int32 Bundle::decompressCodec(int32 codec, byte *comp_input, byte *comp_output, 
 				while (left--) {
 					curTableEntry = _destImcTable[curTablePos];
 					decompTable = curTableEntry - 2;
-					bitMask = (1 << decompTable) << 1;
+					bitMask = 2 << decompTable;
 					readPos = src + (tableEntrySum >> 3);
 					
 					// FIXME - it seems the decoder often reads exactly one byte too
