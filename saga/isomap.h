@@ -50,9 +50,10 @@ struct ISOTILE_ENTRY {
 
 struct ISO_METATILE_ENTRY {
 	int mtile_n;
-	int unknown02;
-	int unknown04;
-	int unknown06;
+	int height;
+	int highest_pixel;
+	byte v_bits;
+	byte u_bits;
 	int tile_tbl[SAGA_METATILE_SIZE];
 };
 

@@ -95,10 +95,10 @@ int IsoMap::loadMetaTileset(const byte *mtileres_p, size_t mtileres_len) {
 
 	for (ct = 0; ct < mtile_ct; ct++) {
 		mtile_tbl[ct].mtile_n = readS.readUint16LE();
-		mtile_tbl[ct].unknown02 = readS.readSint16LE();
-		mtile_tbl[ct].unknown04 = readS.readSint16LE();
-		mtile_tbl[ct].unknown06 = readS.readSint16LE();
-
+		mtile_tbl[ct].height = readS.readSint16LE();
+		mtile_tbl[ct].highest_pixel = readS.readSint16LE();
+		mtile_tbl[ct].v_bits = readS.readByte();
+		mtile_tbl[ct].u_bits = readS.readByte();
 		for (i = 0; i < SAGA_METATILE_SIZE; i++) {
 			mtile_tbl[ct].tile_tbl[i] = readS.readUint16LE();
 		}

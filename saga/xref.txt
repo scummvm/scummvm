@@ -95,3 +95,9 @@ Tile.h
  isoTile.offset            ISOTILE_ENTRY.tile_offset
  isoTile.terrain_mask      ISOTILE_ENTRY.terrain_mask
  isoTile.fgd_bgd_attr      ISOTILE_ENTRY.mask
+
+ tilePlatform.metaTile     ISO_METATILE_ENTRY.mtile_n
+ tilePlatform.height       ISO_METATILE_ENTRY.height
+ tilePlatform.highestPixel ISO_METATILE_ENTRY.highest_pixel
+ tilePlatform.vBits        ISO_METATILE_ENTRY.v_bits
+ tilePlatform.uBits        ISO_METATILE_ENTRY.u_bits
