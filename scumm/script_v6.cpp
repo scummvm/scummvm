@@ -1300,10 +1300,8 @@ void Scumm_v6::o6_getActorWidth()
 void Scumm_v6::o6_getActorScaleX()
 {
 	Actor *a = derefActorSafe(pop(), "o6_getActorScale");
-	if(!a)
-		push(0); // FIXME: DIG seems to call this with an invalid actor id
-	else
-		push(a->scalex);
+	assert(a);
+	push(a->scalex);
 }
 
 void Scumm_v6::o6_getActorAnimCounter1()
@@ -1317,20 +1315,16 @@ void Scumm_v6::o6_getAnimateVariable()
 {
 	int var = pop();
 	Actor *a = derefActorSafe(pop(), "o6_getAnimateVariable");
-	if(!a)
-		push(0); // FIXME: DIG seems to call this with an invalid actor id
-	else
-		push(a->getAnimVar(var));
+	assert(a);
+	push(a->getAnimVar(var));
 }
 
 void Scumm_v6::o6_isActorInBox()
 {
 	int box = pop();
 	Actor *a = derefActorSafe(pop(), "o6_isActorInBox");
-	if(!a)
-		push(0); // FIXME: DIG seems to call this with an invalid actor id
-	else
-		push(checkXYInBoxBounds(box, a->x, a->y));
+	assert(a);
+	push(checkXYInBoxBounds(box, a->x, a->y));
 }
 
 void Scumm_v6::o6_getActorLayer()
@@ -2301,8 +2295,8 @@ void Scumm_v6::o6_printActor()
 
 void Scumm_v6::o6_printEgo()
 {
-	_actorToPrintStrFor = _vars[VAR_EGO];
-	decodeParseString(0, 0);
+	push(_vars[VAR_EGO]);
+	decodeParseString(0, 1);
 }
 
 void Scumm_v6::o6_talkActor()
