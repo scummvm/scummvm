@@ -98,6 +98,7 @@ class Sword2Sound {
 		uint8 fxiPaused[MAXFX];
 		uint8 fxLooped[MAXFX];
 		uint8 fxVolume[MAXFX];
+		uint16 fxRate[MAXFX];
 		uint32 flagsFx[MAXFX];
 		uint16 *bufferFx[MAXFX];
 		int32 bufferSizeFx[MAXFX];

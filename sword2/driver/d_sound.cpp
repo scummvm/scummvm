@@ -328,6 +328,7 @@ int32 Sword2Sound::InitialiseSound(uint16 freq, uint16 channels, uint16 bitDepth
 	memset(fxCached,	0, sizeof(fxCached));
 	memset(fxiPaused,	0, sizeof(fxiPaused));
 	memset(fxLooped, 	0, sizeof(fxLooped));
+	memset(fxRate,		0, sizeof(fxRate));
 
  	memset(musStreaming,	0, sizeof(musStreaming));
 	memset(musicPaused,	0, sizeof(musicPaused));
@@ -686,6 +687,8 @@ int32 Sword2Sound::OpenFx(int32 id, uint8 *data) {
 		if (wav->channels == 2)
 			flagsFx[fxi] |= SoundMixer::FLAG_STEREO;
 
+		fxRate[fxi] = wav->samplesPerSec;
+
 		//Until the mixer supports LE samples natively, we need to convert our LE ones to BE
 		for (int32 j = 0; j < (bufferSizeFx[fxi] / 2); j++)
 			bufferFx[fxi][j] = TO_BE_16(bufferFx[fxi][j]);
@@ -831,7 +834,7 @@ int32 Sword2Sound::PlayFx(int32 id, uint8 *data, uint8 vol, int8 pan, uint8 type
 //					IDirectSoundBuffer_SetVolume(dsbFx[i], musicVolTable[volMusic[0]]);
 				}
 //				IDirectSoundBuffer_SetPan(dsbFx[i], 0);
-				g_engine->_mixer->playRaw(&soundHandleFx[i], bufferFx[i], bufferSizeFx[i], 22050, flagsFx[i]);
+				g_engine->_mixer->playRaw(&soundHandleFx[i], bufferFx[i], bufferSizeFx[i], fxRate[i], flagsFx[i]);
 
 				fxCached[i] = RDSE_FXTOCLEAR;
 			} else {
@@ -855,7 +858,7 @@ int32 Sword2Sound::PlayFx(int32 id, uint8 *data, uint8 vol, int8 pan, uint8 type
 				}
 //				IDirectSoundBuffer_SetPan(dsbFx[i], panTable[pan+16]);
 
-				g_engine->_mixer->playRaw(&soundHandleFx[i], bufferFx[i], bufferSizeFx[i], 22050, flagsFx[i]);
+				g_engine->_mixer->playRaw(&soundHandleFx[i], bufferFx[i], bufferSizeFx[i], fxRate[i], flagsFx[i]);
 				if (id == (int32) 0xffffffff) {
 					fxCached[i] = RDSE_FXTOCLEAR;
 				}
@@ -878,7 +881,7 @@ int32 Sword2Sound::PlayFx(int32 id, uint8 *data, uint8 vol, int8 pan, uint8 type
 //					IDirectSoundBuffer_SetVolume(dsbFx[i], musicVolTable[volMusic[0]]);
 				}
 //				IDirectSoundBuffer_SetPan(dsbFx[i], 0);
-				g_engine->_mixer->playRaw(&soundHandleFx[i], bufferFx[i], bufferSizeFx[i], 22050, flagsFx[i]);
+				g_engine->_mixer->playRaw(&soundHandleFx[i], bufferFx[i], bufferSizeFx[i], fxRate[i], flagsFx[i]);
 			} else {
 				hr = OpenFx(id, data);
 				if (hr != RD_OK) {
@@ -904,7 +907,7 @@ int32 Sword2Sound::PlayFx(int32 id, uint8 *data, uint8 vol, int8 pan, uint8 type
 //					IDirectSoundBuffer_SetVolume(dsbFx[i], volTable[vol*fxVol]);
 				}
 //				IDirectSoundBuffer_SetPan(dsbFx[i], panTable[pan+16]);
-				g_engine->_mixer->playRaw(&soundHandleFx[i], bufferFx[i], bufferSizeFx[i], 22050, flagsFx[i]);
+				g_engine->_mixer->playRaw(&soundHandleFx[i], bufferFx[i], bufferSizeFx[i], fxRate[i], flagsFx[i]);
 			}
 		}
 	}
