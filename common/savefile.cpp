@@ -21,6 +21,7 @@
 
 #include "stdafx.h"
 #include "common/util.h"
+#include "common/config-manager.h"
 #include "common/savefile.h"
 
 #include <stdio.h>
@@ -29,6 +30,42 @@
 #ifdef USE_ZLIB
 #include <zlib.h>
 #endif
+
+const char *SaveFileManager::getSavePath() const {
+
+#if defined(__PALM_OS__)
+	return SCUMMVM_SAVEPATH;
+#else
+
+	const char *dir = NULL;
+
+#if !defined(MACOS_CARBON) && !defined(_WIN32_WCE)
+	dir = getenv("SCUMMVM_SAVEPATH");
+#endif
+
+	// If SCUMMVM_SAVEPATH was not specified, try to use game specific savepath from config
+	if (!dir || dir[0] == 0) {
+		dir = ConfMan.get("savepath").c_str();
+		
+		// Work around a bug (#999122) in the original 0.6.1 release of
+		// ScummVM, which would insert a bad savepath value into config files.
+		if (0 == strcmp(dir, "None")) {
+			ConfMan.removeKey("savepath", ConfMan.getActiveDomain());
+			ConfMan.flushToDisk();
+			dir = ConfMan.get("savepath").c_str();
+		}
+	}
+
+#ifdef _WIN32_WCE
+	if (dir[0] == 0)
+		dir = _gameDataPath.c_str();
+#endif
+
+	assert(dir);
+
+	return dir;
+#endif
+}
 
 class StdioSaveFile : public SaveFile {
 private:
@@ -103,9 +140,9 @@ static void join_paths(const char *filename, const char *directory,
 	strncat(buf, filename, bufsize-1);
 }
 
-SaveFile *DefaultSaveFileManager::open_savefile(const char *filename, const char *directory, bool saveOrLoad) {
+SaveFile *DefaultSaveFileManager::openSavefile(const char *filename, bool saveOrLoad) {
 	char buf[256];
-	join_paths(filename, directory, buf, sizeof(buf));
+	join_paths(filename, getSavePath(), buf, sizeof(buf));
 	SaveFile *sf = makeSaveFile(buf, saveOrLoad);
 	if (!sf->isOpen()) {
 		delete sf;
@@ -114,7 +151,7 @@ SaveFile *DefaultSaveFileManager::open_savefile(const char *filename, const char
 	return sf;
 }
 
-void DefaultSaveFileManager::list_savefiles(const char * /* prefix */,  const char *directory, bool *marks, int num) {
+void DefaultSaveFileManager::listSavefiles(const char * /* prefix */, bool *marks, int num) {
 	memset(marks, true, num * sizeof(bool));
 }
 

@@ -57,9 +57,6 @@ public:
 	 */
 	virtual int go() = 0;
 
-	/** Get the path to the save game directory. */
-	virtual const char *getSavePath() const;
-
 	/** Get the path to the game data directory. */
 	virtual const char *getGameDataPath() const;
 

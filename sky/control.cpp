@@ -191,7 +191,7 @@ void ControlStatus::drawToScreen(void) {
 	_statusText->drawToScreen(WITH_MASK);
 }
 
-Control::Control(SaveFileManager *saveFileMan, Screen *screen, Disk *disk, Mouse *mouse, Text *text, MusicBase *music, Logic *logic, Sound *sound, OSystem *system, const char *savePath) {
+Control::Control(SaveFileManager *saveFileMan, Screen *screen, Disk *disk, Mouse *mouse, Text *text, MusicBase *music, Logic *logic, Sound *sound, OSystem *system) {
 	_saveFileMan = saveFileMan;
 
 	_skyScreen = screen;
@@ -202,7 +202,6 @@ Control::Control(SaveFileManager *saveFileMan, Screen *screen, Disk *disk, Mouse
 	_skyLogic = logic;
 	_skySound = sound;
 	_system = system;
-	_savePath = savePath;
 	_memListRoot = NULL;
 }
 
@@ -788,7 +787,7 @@ bool Control::autoSaveExists(void) {
 	else
 		sprintf(fName, "SKY-VM%03d.ASD", SkyEngine::_systemVars.gameVersion);
 
-	f = _saveFileMan->open_savefile(fName, _savePath, false);
+	f = _saveFileMan->openSavefile(fName, false);
 	if (f != NULL) {
 		test = true;
 		delete f;
@@ -887,7 +886,7 @@ uint16 Control::saveRestorePanel(bool allowSave) {
 						refreshNames = true;
 					}
 					if (clickRes == NO_DISK_SPACE) {
-						displayMessage(0, "Could not save game in directory '%s'", _savePath);
+						displayMessage(0, "Could not save game in directory '%s'", _saveFileMan->getSavePath());
 						quitPanel = true;
 					}
 					if ((clickRes == CANCEL_PRESSED) || (clickRes == GAME_RESTORED))
@@ -1010,7 +1009,7 @@ void Control::loadDescriptions(uint8 *destBuf) {
 	memset(destBuf, 0, MAX_SAVE_GAMES * MAX_TEXT_LEN);
 
 	SaveFile *inf;
-	inf = _saveFileMan->open_savefile("SKY-VM.SAV",_savePath,false);
+	inf = _saveFileMan->openSavefile("SKY-VM.SAV", false);
 	if (inf != NULL) {
 		uint8 *tmpBuf = (uint8 *)malloc(MAX_SAVE_GAMES * MAX_TEXT_LEN);
 		inf->read(tmpBuf, MAX_SAVE_GAMES * MAX_TEXT_LEN);
@@ -1087,7 +1086,7 @@ void Control::saveDescriptions(uint8 *srcBuf) {
 	}
 	SaveFile *outf;
 
-	outf = _saveFileMan->open_savefile("SKY-VM.SAV", _savePath, true);
+	outf = _saveFileMan->openSavefile("SKY-VM.SAV", true);
 	if (outf != NULL) {
 		outf->write(tmpBuf, tmpPos - tmpBuf);
 		delete outf;
@@ -1103,16 +1102,16 @@ void Control::doAutoSave(void) {
 		sprintf(fName, "SKY-VM%03d.ASD", SkyEngine::_systemVars.gameVersion);
 	SaveFile *outf;
 
-	outf = _saveFileMan->open_savefile(fName, _savePath, true);
+	outf = _saveFileMan->openSavefile(fName, true);
 	if (outf == NULL) {
-		displayMessage(0, "Unable to create autosave file '%s' in directory '%s'", fName, _savePath);
+		displayMessage(0, "Unable to create autosave file '%s' in directory '%s'", fName, _saveFileMan->getSavePath());
 		return;
 	}
 	uint8 *saveData = (uint8 *)malloc(0x20000);
 	uint32 fSize = prepareSaveData(saveData);
 
 	if (outf->write(saveData, fSize) != fSize)
-		displayMessage(0, "Unable to write autosave file '%s' in directory '%s'. Disk full?", fName, _savePath);
+		displayMessage(0, "Unable to write autosave file '%s' in directory '%s'. Disk full?", fName, _saveFileMan->getSavePath());
 
 	delete outf;
 	free(saveData);
@@ -1124,7 +1123,7 @@ uint16 Control::saveGameToFile(void) {
 	sprintf(fName,"SKY-VM.%03d", _selectedGame);
 
 	SaveFile *outf;
-	outf = _saveFileMan->open_savefile(fName, _savePath, true);
+	outf = _saveFileMan->openSavefile(fName, true);
 	if (outf == NULL) {
 		return NO_DISK_SPACE;
 	}
@@ -1529,7 +1528,7 @@ uint16 Control::restoreGameFromFile(bool autoSave) {
 		sprintf(fName,"SKY-VM.%03d", _selectedGame);
 
 	SaveFile *inf;
-	inf = _saveFileMan->open_savefile(fName, _savePath, false);
+	inf = _saveFileMan->openSavefile(fName, false);
 	if (inf == NULL) {
 		return RESTORE_FAILED;
 	}

@@ -1167,7 +1167,7 @@ void ScummEngine_v5::o5_saveLoadGame() {
 
 		listSavegames(avail_saves, ARRAYSIZE(avail_saves));
 		makeSavegameName(filename, slot, false);
-		if (avail_saves[slot] && (_saveFileMan->open_savefile(filename, getSavePath(), false)))
+		if (avail_saves[slot] && (_saveFileMan->openSavefile(filename, false)))
 			result = 6; // save file exists
 		else
 			result = 7; // save file does not exist
@@ -1943,7 +1943,7 @@ void ScummEngine_v5::o5_roomOps() {
 			s = filename;
 			while ((*s++ = fetchScriptByte()));
 
-			file = _saveFileMan->open_savefile(filename, getSavePath(), true);
+			file = _saveFileMan->openSavefile(filename, true);
 			if (file != NULL) {
 				byte *ptr;
 				ptr = getResourceAddress(rtString, a);
@@ -1962,7 +1962,7 @@ void ScummEngine_v5::o5_roomOps() {
 			s = filename;
 			while ((*s++ = fetchScriptByte()));
 
-			file = _saveFileMan->open_savefile(filename, getSavePath(), false);
+			file = _saveFileMan->openSavefile(filename, false);
 			if (file != NULL) {
 				byte *ptr;
 				int len = 256, cnt = 0;

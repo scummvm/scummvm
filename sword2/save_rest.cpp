@@ -167,7 +167,7 @@ uint32 Sword2Engine::saveData(uint16 slotNo, byte *buffer, uint32 bufferSize) {
 
 	SaveFile *out;
 
-	if (!(out = _saveFileMan->open_savefile(saveFileName, getSavePath(), true))) {
+	if (!(out = _saveFileMan->openSavefile(saveFileName, true))) {
 		return SR_ERR_FILEOPEN;
 	}
 
@@ -214,7 +214,7 @@ uint32 Sword2Engine::restoreData(uint16 slotNo, byte *buffer, uint32 bufferSize)
 
 	SaveFile *in;
 
-	if (!(in = _saveFileMan->open_savefile(saveFileName, getSavePath(), false))) {
+	if (!(in = _saveFileMan->openSavefile(saveFileName, false))) {
 		// error: couldn't open file
 		return SR_ERR_FILEOPEN;
 	}
@@ -359,7 +359,7 @@ uint32 Sword2Engine::getSaveDescription(uint16 slotNo, byte *description) {
 
 	SaveFile *in;
 
-	if (!(in = _saveFileMan->open_savefile(saveFileName, getSavePath(), false))) {
+	if (!(in = _saveFileMan->openSavefile(saveFileName, false))) {
 		return SR_ERR_FILEOPEN;
 	}
 
@@ -386,7 +386,7 @@ bool Sword2Engine::saveExists(uint16 slotNo) {
 
 	SaveFile *in;
 
-	if (!(in = _saveFileMan->open_savefile(saveFileName, getSavePath(), false))) {
+	if (!(in = _saveFileMan->openSavefile(saveFileName, false))) {
 		return false;
 	}
 

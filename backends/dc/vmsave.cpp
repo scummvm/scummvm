@@ -258,12 +258,11 @@ public:
 
 class VMSaveManager : public SaveFileManager {
 public:
-  virtual SaveFile *open_savefile(const char *filename, const char *directory, bool saveOrLoad);
-  virtual void list_savefiles(const char *prefix, const char *directory, bool *marks, int num);
+  virtual SaveFile *openSavefile(const char *filename, bool saveOrLoad);
+  virtual void listSavefiles(const char *prefix, bool *marks, int num);
 };
 
-SaveFile *VMSaveManager::open_savefile(const char *filename, const char *directory,
-				       bool saveOrLoad)
+SaveFile *VMSaveManager::openSavefile(const char *filename, bool saveOrLoad)
 {
   VMSave *s = new VMSave(filename, saveOrLoad);
   if(saveOrLoad)
@@ -332,8 +331,7 @@ uint32 VMSave::write(const void *buf, uint32 cnt)
 }
 
 
-void VMSaveManager::list_savefiles(const char *prefix, const char *directory,
-				   bool *marks, int num)
+void VMSaveManager::listSavefiles(const char *prefix, bool *marks, int num)
 {
   memset(marks, false, num*sizeof(bool));
   

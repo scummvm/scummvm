@@ -68,7 +68,7 @@ struct ButtonInfo {
 
 class Control {
 public:
-	Control(SaveFileManager *saveFileMan, ResMan *pResMan, ObjectMan *pObjMan, OSystem *system, Mouse *pMouse, Sound *pSound, Music *pMusic, const char *savePath);
+	Control(SaveFileManager *saveFileMan, ResMan *pResMan, ObjectMan *pObjMan, OSystem *system, Mouse *pMouse, Sound *pSound, Music *pMusic);
 	uint8 runPanel(void);
 	void doRestore(void);
 	void askForCd(void);
@@ -126,7 +126,6 @@ private:
 	Mouse *_mouse;
 	Music *_music;
 	Sound *_sound;
-	char _savePath[256];
 	uint8 *_font, *_redFont;
 	uint8 *_screenBuf;
 	uint8 _keyPressed;

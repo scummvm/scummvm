@@ -36,6 +36,7 @@ public:
 };
 
 class SaveFileManager {
+
 public:
 	virtual ~SaveFileManager() {}
 
@@ -46,14 +47,17 @@ public:
 	 * @param saveOrLoad	true for saving, false for loading
 	 * @return pointer to a SaveFile object
 	 */
-	virtual SaveFile *open_savefile(const char *filename, const char *directory, bool saveOrLoad) = 0;
-	virtual void list_savefiles(const char * /* prefix */,  const char *directory, bool *marks, int num) = 0;
+	virtual SaveFile *openSavefile(const char *filename, bool saveOrLoad) = 0;
+	virtual void listSavefiles(const char * /* prefix */, bool *marks, int num) = 0;
+
+	/** Get the path to the save game directory. */
+	virtual const char *getSavePath() const;
 };
 
 class DefaultSaveFileManager : public SaveFileManager {
 public:
-	virtual SaveFile *open_savefile(const char *filename, const char *directory, bool saveOrLoad);
-	virtual void list_savefiles(const char * /* prefix */,  const char *directory, bool *marks, int num);
+	virtual SaveFile *openSavefile(const char *filename, bool saveOrLoad);
+	virtual void listSavefiles(const char * /* prefix */, bool *marks, int num);
 
 protected:
 	virtual SaveFile *makeSaveFile(const char *filename, bool saveOrLoad);

@@ -175,7 +175,7 @@ private:
 
 class Control {
 public:
-	Control(SaveFileManager *saveFileMan, Screen *screen, Disk *disk, Mouse *mouse, Text *text, MusicBase *music, Logic *logic, Sound *sound, OSystem *system, const char *savePath);
+	Control(SaveFileManager *saveFileMan, Screen *screen, Disk *disk, Mouse *mouse, Text *text, MusicBase *music, Logic *logic, Sound *sound, OSystem *system);
 	void doControlPanel(void);
 	void doLoadSavePanel(void);
 	void restartGame(void);
@@ -230,7 +230,6 @@ private:
 	void lodsStr(uint8 **srcPos, uint16 *src);
 	uint16 parseSaveData(uint8 *srcBuf);
 
-	const char *_savePath;
 	uint16 *lz77decode(uint16 *data);
 	void applyDiff(uint16 *data, uint16 *diffData, uint16 len);
 	static Compact *_saveLoadCpts[833]; //-----------------

@@ -81,42 +81,6 @@ void Engine::initCommonGFX(GameDetector &detector) {
 	_system->setFeatureState(OSystem::kFeatureFullscreenMode, ConfMan.getBool("fullscreen"));
 }
 
-const char *Engine::getSavePath() const {
-
-#if defined(__PALM_OS__)
-	return SCUMMVM_SAVEPATH;
-#else
-
-	const char *dir = NULL;
-
-#if !defined(MACOS_CARBON) && !defined(_WIN32_WCE)
-	dir = getenv("SCUMMVM_SAVEPATH");
-#endif
-
-	// If SCUMMVM_SAVEPATH was not specified, try to use game specific savepath from config
-	if (!dir || dir[0] == 0) {
-		dir = ConfMan.get("savepath").c_str();
-		
-		// Work around a bug (#999122) in the original 0.6.1 release of
-		// ScummVM, which would insert a bad savepath value into config files.
-		if (0 == strcmp(dir, "None")) {
-			ConfMan.removeKey("savepath", ConfMan.getActiveDomain());
-			ConfMan.flushToDisk();
-			dir = ConfMan.get("savepath").c_str();
-		}
-	}
-
-#ifdef _WIN32_WCE
-	if (dir[0] == 0)
-		dir = _gameDataPath.c_str();
-#endif
-
-	assert(dir);
-
-	return dir;
-#endif
-}
-
 const char *Engine::getGameDataPath() const {
 	return _gameDataPath.c_str();
 }

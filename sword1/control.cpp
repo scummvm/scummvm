@@ -156,7 +156,7 @@ void ControlButton::setSelected(uint8 selected) {
 	draw();
 }
 
-Control::Control(SaveFileManager *saveFileMan, ResMan *pResMan, ObjectMan *pObjMan, OSystem *system, Mouse *pMouse, Sound *pSound, Music *pMusic, const char *savePath) {
+Control::Control(SaveFileManager *saveFileMan, ResMan *pResMan, ObjectMan *pObjMan, OSystem *system, Mouse *pMouse, Sound *pSound, Music *pMusic) {
 	_saveFileMan = saveFileMan;
 	_resMan = pResMan;
 	_objMan = pObjMan;
@@ -164,7 +164,6 @@ Control::Control(SaveFileManager *saveFileMan, ResMan *pResMan, ObjectMan *pObjM
 	_mouse = pMouse;
 	_music = pMusic;
 	_sound = pSound;
-	strcpy(_savePath, savePath);
 	_lStrings = _languageStrings + SwordEngine::_systemVars.language * 20;
 }
 
@@ -670,7 +669,7 @@ bool Control::restoreFromFile(void) {
 
 void Control::readSavegameDescriptions(void) {
 	SaveFile *inf;
-	inf = _saveFileMan->open_savefile("SAVEGAME.INF", _savePath, SAVEFILE_READ);
+	inf = _saveFileMan->openSavefile("SAVEGAME.INF", SAVEFILE_READ);
 	_saveScrollPos = _saveFiles = 0;
 	_selectedSavegame = 255;
 	if (inf && inf->isOpen()) {
@@ -713,11 +712,11 @@ int Control::displayMessage(const char *altButton, const char *message, ...) {
 
 void Control::writeSavegameDescriptions(void) {
 	SaveFile *outf;
-	outf = _saveFileMan->open_savefile("SAVEGAME.INF", _savePath, SAVEFILE_WRITE);
+	outf = _saveFileMan->openSavefile("SAVEGAME.INF", SAVEFILE_WRITE);
 	
 	if (!outf) {
 		// Display an error message, and do nothing
-		displayMessage(0, "Unable to write to path '%s'", _savePath);
+		displayMessage(0, "Unable to write to path '%s'", _saveFileMan->getSavePath());
 		return;
 	}
 	
@@ -738,7 +737,7 @@ void Control::writeSavegameDescriptions(void) {
 bool Control::savegamesExist(void) {
 	bool retVal = false;
 	SaveFile *inf;
-	inf = _saveFileMan->open_savefile("SAVEGAME.INF", _savePath, SAVEFILE_READ);
+	inf = _saveFileMan->openSavefile("SAVEGAME.INF", SAVEFILE_READ);
 	if (inf && inf->isOpen())
 		retVal = true;
 	delete inf;
@@ -895,10 +894,10 @@ void Control::saveGameToFile(uint8 slot) {
 	sprintf(fName, "SAVEGAME.%03d", slot);
 	uint16 liveBuf[TOTAL_SECTIONS];
 	SaveFile *outf;
-	outf = _saveFileMan->open_savefile(fName, _savePath, SAVEFILE_WRITE);
+	outf = _saveFileMan->openSavefile(fName, SAVEFILE_WRITE);
 	if (!outf || !outf->isOpen()) {
 		// Display an error message, and do nothing
-		displayMessage(0, "Unable to create file '%s' in directory '%s'", fName, _savePath);
+		displayMessage(0, "Unable to create file '%s' in directory '%s'", fName, _saveFileMan->getSavePath());
 		return;
 	}
 
@@ -928,10 +927,10 @@ bool Control::restoreGameFromFile(uint8 slot) {
 	uint16 cnt;
 	sprintf(fName, "SAVEGAME.%03d", slot);
 	SaveFile *inf;
-	inf = _saveFileMan->open_savefile(fName, _savePath, SAVEFILE_READ);
+	inf = _saveFileMan->openSavefile(fName, SAVEFILE_READ);
 	if (!inf || !inf->isOpen()) {
 		// Display an error message, and do nothing
-		displayMessage(0, "Can't open file '%s' in directory '%s'", fName, _savePath);
+		displayMessage(0, "Can't open file '%s' in directory '%s'", fName, _saveFileMan->getSavePath());
 		return false;
 	}
 

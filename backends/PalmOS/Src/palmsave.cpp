@@ -126,17 +126,17 @@ uint32 PalmSaveFile::write(const void *buf, uint32 size) {
 
 class PalmSaveFileManager : public SaveFileManager {
 public:
-	SaveFile *open_savefile(const char *filename, const char *directory, bool saveOrLoad);
-	void list_savefiles(const char *prefix, const char *directory, bool *marks, int num);
+	SaveFile *openSavefile(const char *filename, bool saveOrLoad);
+	void listSavefiles(const char *prefix, bool *marks, int num);
 
 protected:
 	SaveFile *makeSaveFile(const char *filename, bool saveOrLoad);
 };
 
-SaveFile *PalmSaveFileManager::open_savefile(const char *filename, const char *directory, bool saveOrLoad) {
+SaveFile *PalmSaveFileManager::openSavefile(const char *filename, bool saveOrLoad) {
 	char buf[256];
 
-	strncpy(buf, directory, sizeof(buf));
+	strncpy(buf, getSavePath(), sizeof(buf));
 	strncat(buf, filename, sizeof(buf));
 
 	SaveFile *sf = makeSaveFile(buf, saveOrLoad);
@@ -148,10 +148,10 @@ SaveFile *PalmSaveFileManager::open_savefile(const char *filename, const char *d
 	return sf;
 }
 
-void PalmSaveFileManager::list_savefiles(const char *prefix, const char *directory, bool *marks, int num) {
+void PalmSaveFileManager::listSavefiles(const char *prefix, bool *marks, int num) {
 	FileRef fileRef;
 	// try to open the dir
-	Err e = VFSFileOpen(gVars->volRefNum, directory, vfsModeRead, &fileRef);
+	Err e = VFSFileOpen(gVars->volRefNum, getSavePath(), vfsModeRead, &fileRef);
 	memset(marks, false, num*sizeof(bool));
 
 	if (e != errNone)

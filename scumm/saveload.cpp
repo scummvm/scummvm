@@ -69,7 +69,7 @@ bool ScummEngine::saveState(int slot, bool compat) {
 
 	makeSavegameName(filename, slot, compat);
 
-	if (!(out = _saveFileMan->open_savefile(filename, getSavePath(), true)))
+	if (!(out = _saveFileMan->openSavefile(filename, true)))
 		return false;
 
 	memcpy(hdr.name, _saveLoadName, sizeof(hdr.name));
@@ -96,7 +96,7 @@ bool ScummEngine::loadState(int slot, bool compat) {
 	byte *roomptr;
 
 	makeSavegameName(filename, slot, compat);
-	if (!(in = _saveFileMan->open_savefile(filename, getSavePath(), false)))
+	if (!(in = _saveFileMan->openSavefile(filename, false)))
 		return false;
 
 	in->read(&hdr, sizeof(hdr));
@@ -329,7 +329,7 @@ void ScummEngine::listSavegames(bool *marks, int num) {
 	char prefix[256];
 	makeSavegameName(prefix, 99, false);
 	prefix[strlen(prefix)-2] = 0;
-	_saveFileMan->list_savefiles(prefix, getSavePath(), marks, num);
+	_saveFileMan->listSavefiles(prefix, marks, num);
 }
 
 bool ScummEngine::getSavegameName(int slot, char *desc) {
@@ -339,7 +339,7 @@ bool ScummEngine::getSavegameName(int slot, char *desc) {
 	int len;
 
 	makeSavegameName(filename, slot, false);
-	if (!(out = _saveFileMan->open_savefile(filename, getSavePath(), false))) {
+	if (!(out = _saveFileMan->openSavefile(filename, false))) {
 		strcpy(desc, "");
 		return false;
 	}

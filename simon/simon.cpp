@@ -2733,12 +2733,11 @@ int SimonEngine::count_savegames() {
 
 	char *prefix = gen_savename(999);
 	prefix[strlen(prefix)-3] = '\0';
-	_saveFileMan->list_savefiles(prefix, getSavePath(), marks, 256);
+	_saveFileMan->listSavefiles(prefix, marks, 256);
 
 	while (i < 256) {
 		if (marks[i] &&
-		    (f = _saveFileMan->open_savefile(gen_savename(i), getSavePath(),
-					    false))) {
+		    (f = _saveFileMan->openSavefile(gen_savename(i), false))) {
 			i++;
 			delete f;
 		} else
@@ -2758,7 +2757,7 @@ int SimonEngine::display_savegame_list(int curpos, bool load, char *dst) {
 	slot = curpos;
 
 	while (curpos + 6 > slot) {
-		if(!(in = _saveFileMan->open_savefile(gen_savename(slot), getSavePath(), false)))
+		if(!(in = _saveFileMan->openSavefile(gen_savename(slot), false)))
 			break;
 
 		in->read(dst, 18);
@@ -2782,7 +2781,7 @@ int SimonEngine::display_savegame_list(int curpos, bool load, char *dst) {
 		}
 	} else {
 		if (curpos + 6 == slot) {
-			if((in = _saveFileMan->open_savefile(gen_savename(slot), getSavePath(), false))) {
+			if((in = _saveFileMan->openSavefile(gen_savename(slot), false))) {
 				slot++;
 				delete in;
 			}
@@ -4917,7 +4916,7 @@ bool SimonEngine::save_game(uint slot, char *caption) {
 #endif
 
 
-	f = _saveFileMan->open_savefile(gen_savename(slot), getSavePath(), true);
+	f = _saveFileMan->openSavefile(gen_savename(slot), true);
 	if (f == NULL) {
 		_lock_word &= ~0x100;
 		return false;
@@ -5018,7 +5017,7 @@ bool SimonEngine::load_game(uint slot) {
 #endif
 
 
-	f = _saveFileMan->open_savefile(gen_savename(slot), getSavePath(), false);
+	f = _saveFileMan->openSavefile(gen_savename(slot), false);
 	if (f == NULL) {
 		_lock_word &= ~0x100;
 		return false;
