@@ -1069,7 +1069,6 @@ void ScummEngine_v8::o8_actorOps() {
 		a->talkFrequency = pop();
 		break;
 	case 0x89:		// SO_ACTOR_PAN
-		// FIXME: This should be stored in savegames.
 		// 0 = left, 64 = middle, 127 = right.
 		a->talkPan = pop();
 
@@ -1207,13 +1206,15 @@ void ScummEngine_v8::o8_verbOps() {
 	case 0xA6:		// SO_VERB_CHARSET Choose charset for verb
 		// FIXME - TODO
 		vs->charset_nr = pop();
+		warning("SO_VERB_CHARSET %d: not yet implemented", vs->charset_nr);
 		break;
 	case 0xA7:		// SO_VERB_LINE_SPACING Choose linespacing for verb
 		// FIXME - TODO
 		// Note: it seems that var596 stores the "line spacing". It is used by various
 		// scripts that place verbs for that.
 		// Also, var595 contains the vertical position at which to start placing verbs (330)
-		pop();
+		a = pop();
+		warning("SO_VERB_CHARSET %d: not yet implemented", a);
 		break;
 	default:
 		error("o8_verbops: default case 0x%x", subOp);
@@ -1305,9 +1306,6 @@ void ScummEngine_v8::o8_kernelSetFunctions() {
 	case 23:	// setActorChoreLimbFrame
 		// FIXME: This is critical, and is the cause of the Cannon "too many scripts" crash
 		// This opcode is used a lot in script 28.
-		// The problem here is that args[4] is always 0, as it is computed from
-		// lipSyncWidth and lipSyncHeight, which we currently don't support. As a result,
-		// actors will currently not move their mouth at all!
 //		warning("o8_kernelSetFunctions: setActorChoreLimbFrame(%d, %d, %d, %d)", args[1], args[2], args[3], args[4]);
 		a = derefActor(args[1], "o8_kernelSetFunctions:setActorChoreLimbFrame");
 
