@@ -12,6 +12,18 @@ overpack()					Graphics::bankOverpack
 unpack()					Graphics::bankUnpack
 
 
+COMMAND
+=======
+-
+ACTION,ACTION2
+CLEVEL
+COMMANDstr
+OLDVERB,VERB
+OLDNOUN,NOUN,NOUN2
+PARSE
+SUBJ1,SUBJ2,SUBJECT
+
+
 CREDIT SCRIPTING SYSTEM
 =======================
 Cinit()
@@ -33,9 +45,13 @@ CUTAWAY
 CUTAWAY()					Cutaway::run
 SCENE_START()
 SCENE_END()
-TROOM
-IROOM
+-
+CUTJOEF
+CUTON
+CUTQUIT
 FINAL_ROOM
+IROOM
+TROOM
 
 
 DEBUG
@@ -82,8 +98,22 @@ clothespal
 dresspal
 font						Graphics::FONT
 font_sizes					Graphics::FONT_SIZES
+OUTLINE
 sortedbobs					Graphics::_sortedBobs
 scrollx						Graphics::_horizontalScroll
+
+
+INPUT
+=====
+-
+drawmouseflag
+key_commands
+key_language
+KEYVERB
+MKEY
+MouseButton
+mouseflag
+no_check_keys
 
 
 INVENTORY
@@ -97,6 +127,18 @@ INS_ITEM_NUM()
 INV1,INV2,INV3,INV4
 
 
+JOE
+===
+FACE_JOE()					Logic::joeFace
+GRAB_DIR()
+GRAB_JOE()
+SETUP_JOE()					Logic::joeSetup
+-
+JOE_RESPstr 				Logic::_joeResponse
+JOEF,JX,JY,JDIR				Logic::_joe.*
+JOEWALK														// legal values = 0,1,2,3
+
+
 LOGIC
 =====
 DISP_OBJECTS()				Logic::roomSetupObjects
@@ -107,7 +149,6 @@ FIND_FRAME()				Logic::findFrame
 FIND_GRAPHIC()
 FIND_SACTION()
 FIND_SCALE()				Logic::findScale
-FIND_STATE()				Logic::findState*
 FIND_VERB()
 LOOK()
 LOOK_ICON()
@@ -118,6 +159,7 @@ P2_SET_AREAS()
 P3_SET_OBJECTS()
 P3_COPY_FROM()
 P4_SET_ITEMS()
+REDISP_OBJECT()				Logic::roomRefreshObject
 restart_game()
 SELECT()
 SELECT_ITEM()
@@ -126,7 +168,6 @@ SELECT_VERB()
 SETUP_BOBS()				Graphics::bobSetupControl
 SETUP_FURNITURE()			Logic::roomSetupFurniture
 SETUP_ITEMS()
-SETUP_JOE()					Logic::joeSetup
 SETUP_ROOM()
 SETUP_SCRVARS()
 update() 					Graphics::update
@@ -134,57 +175,55 @@ USE_UNDERWEAR()
 USE_CLOTHES()
 USE_DRESS()
 USE_JOURNAL()				Graphics::useJournal
-WALK()
+WALK()						Logic::joeWalk
 -
-A_ANIMstr 				Logic::_aAnim
-A_ANIM_MAX				Logic::_numAAnim
-A_NAMEstr 				Logic::_aName
-A_NAME_MAX				Logic::_numAName
-A_FILEstr 				Logic::_aFile
-A_FILE_MAX				Logic::_numAFile
-ACTOR_DATA_MAX			Logic::_numActors
-AREA					Logic::_area
-AREAMAX					Logic::_areaMax
-COM_A					Logic::_cmdArea
-COM_A_MAX				Logic::_numCmdArea
-COM_O					Logic::_cmdObject
-COM_O_MAX				Logic::_numCmdObject
-COM_G					Logic::_cmdGameState
-COM_G_MAX				Logic::_numCmdGameState
-COM_I					Logic::_cmdInventory
-COM_I_MAX				Logic::_numCmdInventory
-COM_LIST				Logic::_cmdList
-COM_LIST_MAX			Logic::_numCmdList
-DESCTOT					Logic::_numDescriptions
-FMAX					Logic::_numFurnitureStatic
-FMAXA					Logic::_numFurnitureAnimated
-FMAXLEN					Logic::_numFurnitureAnimatedLen
-FRAMES					Logic::_numFrames
-FURN_DATA_MAX			Logic::_numFurniture
-GAMESTATE				Logic::_gameState
-GRAPHIC_ANIM_MAX		Logic::_numGraphicAnim
-GRAPHIC_DATA			Logic::_graphicData
-GRAPHIC_MAX				Logic::_numGraphics
-ITEMTOT					Logic::_numItems
-ITEM_DATA				Logic::_itemData
-JOE_RESPstr 			Logic::_joeResponse
-JOEF,JX,JY				Logic::_joe.*
-NAMETOT					Logic::_numNames
-NEW_ANIM				Logic::_newAnim
-OBJ_DESC_MAX			Logic::_numObjDesc
-OBJECT_BOX				Logic::_objectBox
-OBJECT_DATA				Logic::_objectData
-OBJECT_DESCRstr			Logic::_objDescription
-OBJECT_NAMEstr			Logic::_objName
-OBJMAX					Logic::_objMax
-OBJTOT					Logic::_numObjects
-OLDROOM,ROOM,NEW_ROOM  	Logic::_*oom
-ROOMTOT					Logic::_numRooms
-ROOM_DATA				Logic::_roomData
-ROOM_NAMEstr			Logic::_roomName
-VERB_NAMEstr			Logic::_verbName
-WALK_OFF_DATA			Logic::_walkOffData
-WALK_OFF_MAX			Logic::_numWalkOffs
+A_ANIMstr 					Logic::_aAnim
+A_ANIM_MAX					Logic::_numAAnim
+A_NAMEstr 					Logic::_aName
+A_NAME_MAX					Logic::_numAName
+A_FILEstr 					Logic::_aFile
+A_FILE_MAX					Logic::_numAFile
+ACTOR_DATA_MAX				Logic::_numActors
+AREA						Logic::_area
+AREAMAX						Logic::_areaMax
+COM_A						Logic::_cmdArea
+COM_A_MAX					Logic::_numCmdArea
+COM_O						Logic::_cmdObject
+COM_O_MAX					Logic::_numCmdObject
+COM_G						Logic::_cmdGameState
+COM_G_MAX					Logic::_numCmdGameState
+COM_I						Logic::_cmdInventory
+COM_I_MAX					Logic::_numCmdInventory
+COM_LIST					Logic::_cmdList
+COM_LIST_MAX				Logic::_numCmdList
+DESCTOT						Logic::_numDescriptions
+FMAX						Logic::_numFurnitureStatic
+FMAXA						Logic::_numFurnitureAnimated
+FMAXLEN						Logic::_numFurnitureAnimatedLen
+FRAMES						Logic::_numFrames
+FURN_DATA_MAX				Logic::_numFurniture
+GAMESTATE					Logic::_gameState
+GRAPHIC_ANIM_MAX			Logic::_numGraphicAnim
+GRAPHIC_DATA				Logic::_graphicData
+GRAPHIC_MAX					Logic::_numGraphics
+ITEMTOT						Logic::_numItems
+ITEM_DATA					Logic::_itemData
+NAMETOT						Logic::_numNames
+NEW_ANIM					Logic::_newAnim
+OBJ_DESC_MAX				Logic::_numObjDesc
+OBJECT_BOX					Logic::_objectBox
+OBJECT_DATA					Logic::_objectData
+OBJECT_DESCRstr				Logic::_objDescription
+OBJECT_NAMEstr				Logic::_objName
+OBJMAX						Logic::_objMax
+OBJTOT						Logic::_numObjects
+OLDROOM,ROOM,NEW_ROOM  		Logic::_*oom
+ROOMTOT						Logic::_numRooms
+ROOM_DATA					Logic::_roomData
+ROOM_NAMEstr				Logic::_roomName
+VERB_NAMEstr				Logic::_verbName
+WALK_OFF_DATA				Logic::_walkOffData
+WALK_OFF_MAX				Logic::_numWalkOffs
 
 
 PERSONS
@@ -194,12 +233,15 @@ SET_PERSON_DATA				Logic::personSetData
 SETUP_PERSON				Logic::personSetup
 OBJ_PERSON					Logic::objectForPerson
 -
+PERSON_FACE,
+PERSON_FACE_MAX
 PERSON_FRAMES				Logic::_personFrames
 P_ANIMstr					Person.anim
 P_BANK						Person.bankNum
 P_NAMEstr					Person.name
 P_STAND,P_BNUM,P_ROOM		Person.actor->*
 P_X,P_Y,P_COLOR				Person.actor->*
+P_VALUE,P_GAMES				Person.actor->*
 
 
 RESOURCE
@@ -220,6 +262,7 @@ palscroll()
 putcharacter()				Graphics::displayChar
 setpal()
 -
+COMPANEL
 FULLSCREEN					Graphics::_fullscreen
 palette						Graphics::_paletteRoom
 panelflag					Graphics::_panelFlag
@@ -235,8 +278,16 @@ sfxplay()
 -
 bamflag
 bamindex
-SFXNAME						Graphics::_sfxName
+SFXNAME						Logic::_sfxName
 tmpbamflag
+VOLUME
+
+
+STATE
+=====
+ALTER_DEFAULT()
+ALTER_STATE()
+FIND_STATE()				Logic::findState*
 
 
 TALK
@@ -247,6 +298,14 @@ SPEAK						Talk::?
 SPEAK_SUB
 talk						Talk::run
 TALK_PROC
+-
+A1,A12
+TALK_SELECTED
+OLDLEVEL,LEVEL
+TALKHEAD
+TALKQUIT
+TALKSPD
+TALKstr
 
 
 TEXTS
@@ -254,6 +313,7 @@ TEXTS
 blanktexts()				Graphics::textClear
 drawtext()					Graphics::textDrawAll
 Ink() 						Graphics::textCurrentColor
+menutext()
 MIDDLE() 
 text()						Graphics::textSet
 textlen() 					Graphics::textWidth
@@ -269,7 +329,6 @@ CALC_WALK()					Walk::incWalkData
 CALC_X()					Walk::calcC
 CALC_Y()					Walk::calcC
 CALCSCALE()					Area::calcScale
-FACE_JOE()					Logic::joeFace
 FIND_FREE_AREA				Walk::findFreeArea
 FIND_NEWP()					Walk::findAreaPosition
 FIND_OLDP()					Walk::findAreaPosition
@@ -279,6 +338,8 @@ MOVE_OTHER()				Walk::personMove
 AREALIST					Walk::_areaList
 AREASTRIKE					Walk::_areaStrike
 movdata						Walk::_moveData
+NEWP,OLDP					* locals in joeMove && personMove
+OLDX,X,OLDY,Y				* passed as arguments *
 WALK_DATA					Walk::_walkData
 WALKI						Walk::_walkDataCount
 
@@ -304,96 +365,72 @@ CLEAR_COMMAND()
 EXECUTE_ACTION()
 CHECK_PLAYER()
 SETUP_VARS()
-ALTER_STATE()
-ALTER_DEFAULT()
-REDISP_OBJECT()		
 SETUP_SCREENS()
-GRAB_DIR()
-GRAB_JOE()
 int prompt_do()
 SETUP_HERO()				Logic::joeSetupInRoom
 find_cd_cut()
 find_cd_desc()
-menutext()
 OPEN_CLOSE_OTHER()
 CREATE_ANIM()				Logic::animCreate
 -
 VersionStr					Logic::language (add more functions if needed)
 Gstr
 PERstr
-TALKstr
 Pstr
 Kstr
-SANIMstr
 WORDstr
 TEMPstr
-COMMANDstr
 bank9
 OBJECT_DESCRstr
 PERSON2str
 JOE2str
 PKEYstr
 JOEKEYstr
-SUBJ1,SUBJ2,
-TALK_SELECTED
 JOEH,
 NEWDEF,
 NEWA,
 MAPC,M,A,XD,YD,RES,
-PSY,PSX,CSX,DX1,DX2,DY1,DY2,CCF,CSY,PCF,FRAME,
+FRAME,
 AM,WX,WY,Y1,
-A2,PX,PY,OLDP,NEWP,LD,F1,F2,F3,F4,F5,F6,F7,F8,JDIR,DIFF,
+A2,PX,PY,LD,DIFF,
 SFXTOGGLE,VOICETOGGLE,MUSICTOGGLE,TEXTTOGGLE
 DESC2,DESC,
-SUBJECT,
 OBJMAXv,
-KEYVERB,
 OBJ_DESC_DATA,
 PERSON_DATA,
-PERSON_OBJ,OBJ_CUT,OBJ_ANIM,CUTJOEF,CUTQUIT,
+PERSON_OBJ,OBJ_CUT,OBJ_ANIM,
 FS,FE,FACE,TY,DY,BS,DS,
 TEMPA,
 I2,
-OLDVERB,VERB,
-OLDNOUN,NOUN,NOUN2,
-PARSE,ACTION,ACTION2,CLEVEL,
-OLDX,X,OLDY,Y,NEWP,
 SFACTOR, // shrink factor, used to scale (down) the bobs
-JOEWALK, // legal values = 0,1,2,3
-ENTRY_OBJ,SFRAME,
-EFRAME,SPEED,
-BODY,BF,RF,AF,SCENE,
+ENTRY_OBJ,
+SCENE,
 DEFCOMM,
-TALKSPD,
-VOLUME,CUTON,
 N,V,
-tx,ty,ds,bs,bx,by,dx,dy,SX,SY,F,IX,IY,X2,X1,IY,SFAC,FDIR,
-OBJ,E,SF2,P_VALUE,P_GAMES,T,
+ds,bs,bx,by,dx,dy,SX,SY,IX,IY,X2,X1,IY,SFAC,FDIR,
+OBJ,E,SF2,T,
 OLDBANK,RET,OLDS,CH,GSET,OFFSET,
 OLDG,COND,COM,TEMPI,CURRCOM,TA2,COMMAX,S2,S1,ITEM,TYPE,HEAD,C,
-OLDLEVEL,BANK,FD,NAME,TL,TI,TS,WC,IMAGE,OWALK,LEVELMAX,JMAX,
-LEVEL,BNUM,D,P,LI,R,FTOT,A1,A12,CURRBOB,
-COMPANEL,
-MKEY,
-PERSON_FACE,
-PERSON_FACE_MAX,FF,
-TALKHEAD,TALKQUIT,OUTLINE,
+BANK,FD,NAME,TL,TI,TS,WC,IMAGE,OWALK,LEVELMAX,JMAX,
+BNUM,D,P,LI,R,FTOT,
 CANTQUIT,
 CURRSONG,
 walkgameload
 actiondata
-key_commands
-key_language
 nopalscroll
 in_journal
 decbase
 choice
-no_check_keys
 config_request
-MouseButton
-mouseflag
-drawmouseflag
 
-AREAMAXv		*no need to be global*
-CURRY 			*no need to be global*
-OMAX,OMAXA 		*no need to be global*
+
+(NO NEED TO BE GLOBAL)
+===============
+Nstr,F1,F2,F3,F4,F5,F6,F7,F8,SF,BF,AS,MS ; MOVE_OTHER (struct movdata *)
+Nstr,S,F,BODY,BF,RF,AF,SANIMstr,FF ; FIND_SACTION (struct action *)
+CURRBOB ; SETUP_FURNITURE, REDISP_OBJECT, DISP_OBJECTS
+PSY,PSX,CSX,DX1,DX2,DY1,DY2,PCF,CCF,CSY ; FIND_NEWP, FIND_OLDP
+tx,ty,SFRAME,EFRAME,SPEED ; FIND_GRAPHIC
+AREAMAXv
+CURRY
+OMAX,OMAXA
