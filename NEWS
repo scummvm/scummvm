@@ -2,6 +2,10 @@ For a more comprehensive changelog for the latest experimental CVS code, see:
         http://scummvm.sourceforge.net/daily/ChangeLog
 
 0.7.1 (2005-xx-xx)
+ General:
+   - Added a MT-32 emulator. (It was actually added in 0.7.0 but we forgot to
+     put it into the NEWS file :-).
+
  SCUMM:
    - Fixed wrong actor animation in Full Throttle INSANE
 
