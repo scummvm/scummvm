@@ -639,7 +639,7 @@ int32 IMuseDigital::getCurMusicPosInMs() {
 
 	for (int l = 0; l < MAX_DIGITAL_TRACKS; l++) {
 		_track[l].locked = true;
-		if ((_track[l].used) && (_track[l].soundGroup == IMUSE_MUSIC)) {
+		if ((_track[l].used) && (_track[l].soundGroup == IMUSE_MUSIC) && (!_track[l].volFadeUsed)) {
 			soundId = _track[l].soundId;
 		}
 		_track[l].locked = false;
@@ -653,6 +653,7 @@ int32 IMuseDigital::getCurVoiceLipSyncWidth() {
 	int32 msPos = getPosInMs(kTalkSoundID) + _vm->VAR(_vm->VAR_SYNC) + 50;
 	int32 width = 0, height = 0;
 
+	debug(5, "IMuseDigital::getCurVoiceLipSyncWidth(%d)", kTalkSoundID);
 	getLipSync(kTalkSoundID, 0, msPos, width, height);
 	return width;
 }
@@ -661,23 +662,46 @@ int32 IMuseDigital::getCurVoiceLipSyncHeight() {
 	int32 msPos = getPosInMs(kTalkSoundID) + _vm->VAR(_vm->VAR_SYNC) + 50;
 	int32 width = 0, height = 0;
 
+	debug(5, "IMuseDigital::getCurVoiceLipSyncHeight(%d)", kTalkSoundID);
 	getLipSync(kTalkSoundID, 0, msPos, width, height);
 	return height;
 }
 
 int32 IMuseDigital::getCurMusicLipSyncWidth(int syncId) {
-	int32 msPos = getPosInMs(_curMusicSoundId) + _vm->VAR(_vm->VAR_SYNC) + 50;
+	int soundId = -1;
+
+	for (int l = 0; l < MAX_DIGITAL_TRACKS; l++) {
+		_track[l].locked = true;
+		if ((_track[l].used) && (_track[l].soundGroup == IMUSE_MUSIC) && (!_track[l].volFadeUsed)) {
+			soundId = _track[l].soundId;
+		}
+		_track[l].locked = false;
+	}
+
+	int32 msPos = getPosInMs(soundId) + _vm->VAR(_vm->VAR_SYNC) + 50;
 	int32 width = 0, height = 0;
 
-	getLipSync(_curMusicSoundId, syncId, msPos, width, height);
+	debug(5, "IMuseDigital::getCurVoiceLipSyncWidth(%d)", soundId);
+	getLipSync(soundId, syncId, msPos, width, height);
 	return width;
 }
 
 int32 IMuseDigital::getCurMusicLipSyncHeight(int syncId) {
-	int32 msPos = getPosInMs(_curMusicSoundId) + _vm->VAR(_vm->VAR_SYNC) + 50;
+	int soundId = -1;
+
+	for (int l = 0; l < MAX_DIGITAL_TRACKS; l++) {
+		_track[l].locked = true;
+		if ((_track[l].used) && (_track[l].soundGroup == IMUSE_MUSIC) && (!_track[l].volFadeUsed)) {
+			soundId = _track[l].soundId;
+		}
+		_track[l].locked = false;
+	}
+
+	int32 msPos = getPosInMs(soundId) + _vm->VAR(_vm->VAR_SYNC) + 50;
 	int32 width = 0, height = 0;
 
-	getLipSync(_curMusicSoundId, syncId, msPos, width, height);
+	debug(5, "IMuseDigital::getCurVoiceLipSyncHeight(%d)", soundId);
+	getLipSync(soundId, syncId, msPos, width, height);
 	return height;
 }
 
