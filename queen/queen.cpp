@@ -125,8 +125,7 @@ void QueenEngine::roomChanged() {
 	// logic because that would cause a circular dependency between Cutaway and
 	// Logic... :-(
 
-	if (_logic->currentRoom() == 7) {
-		warning("Room 7 not yet handled!");
+	if (_logic->currentRoom() == ROOM_JUNGLE_PINNACLE) {
 		_logic->handlePinnacleRoom();
 	}
 	else if (_logic->currentRoom() == FOTAQ_LOGO && _logic->gameState(VAR_INTRO_PLAYED) == 0) {
