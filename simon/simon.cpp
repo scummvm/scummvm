@@ -38,18 +38,18 @@ extern bool draw_keyboard;
 
 static const VersionSettings simon_settings[] = {
 	// Simon the Sorcerer 1 & 2 (not SCUMM games)
-	{"simon1dos", "Simon the Sorcerer 1 (DOS)", GID_SIMON_FIRST, 99, 99, 99, GAME_SIMON1DOS, "GAMEPC"},
-	{"simon1amiga", "Simon the Sorcerer 1 (Amiga)", GID_SIMON_FIRST, 99, 99, 99, GAME_SIMON1AMIGA, "gameamiga"},
-	{"simon2dos", "Simon the Sorcerer 2 (DOS)", GID_SIMON_FIRST, 99, 99, 99, GAME_SIMON2DOS, "GAME32"},
-	{"simon1talkie", "Simon the Sorcerer 1 Talkie (DOS)", GID_SIMON_FIRST, 99, 99, 99, GAME_SIMON1TALKIE, "SIMON.GME"},
-	{"simon2talkie", "Simon the Sorcerer 2 Talkie (DOS)", GID_SIMON_FIRST, 99, 99, 99, GAME_SIMON2TALKIE, "GSPTR30"},
-	{"simon1win", "Simon the Sorcerer 1 Talkie (Windows)", GID_SIMON_FIRST, 99, 99, 99, GAME_SIMON1WIN, "SIMON.GME"},
-	{"simon1cd32", "Simon the Sorcerer 1 Talkie (Amiga CD32)", GID_SIMON_FIRST, 99, 99, 99, GAME_SIMON1CD32, "gameamiga"},
-	{"simon2win", "Simon the Sorcerer 2 Talkie (Windows)", GID_SIMON_FIRST, 99, 99, 99, GAME_SIMON2WIN, "GSPTR30"},
-	{"simon2mac", "Simon the Sorcerer 2 Talkie (Amiga or Mac)", GID_SIMON_FIRST, 99, 99, 99, GAME_SIMON2MAC, "GSPTR30"},
-	{"simon1demo", "Simon the Sorcerer 1 (DOS Demo)", GID_SIMON_FIRST, 99, 99, 99, GAME_SIMON1DEMO, "GDEMO"}, 
+	{"simon1dos", "Simon the Sorcerer 1 (DOS)", GID_SIMON_FIRST, 99, GAME_SIMON1DOS, "GAMEPC"},
+	{"simon1amiga", "Simon the Sorcerer 1 (Amiga)", GID_SIMON_FIRST, 99, GAME_SIMON1AMIGA, "gameamiga"},
+	{"simon2dos", "Simon the Sorcerer 2 (DOS)", GID_SIMON_FIRST, 99, GAME_SIMON2DOS, "GAME32"},
+	{"simon1talkie", "Simon the Sorcerer 1 Talkie (DOS)", GID_SIMON_FIRST, 99, GAME_SIMON1TALKIE, "SIMON.GME"},
+	{"simon2talkie", "Simon the Sorcerer 2 Talkie (DOS)", GID_SIMON_FIRST, 99, GAME_SIMON2TALKIE, "GSPTR30"},
+	{"simon1win", "Simon the Sorcerer 1 Talkie (Windows)", GID_SIMON_FIRST, 99, GAME_SIMON1WIN, "SIMON.GME"},
+	{"simon1cd32", "Simon the Sorcerer 1 Talkie (Amiga CD32)", GID_SIMON_FIRST, 99, GAME_SIMON1CD32, "gameamiga"},
+	{"simon2win", "Simon the Sorcerer 2 Talkie (Windows)", GID_SIMON_FIRST, 99, GAME_SIMON2WIN, "GSPTR30"},
+	{"simon2mac", "Simon the Sorcerer 2 Talkie (Amiga or Mac)", GID_SIMON_FIRST, 99, GAME_SIMON2MAC, "GSPTR30"},
+	{"simon1demo", "Simon the Sorcerer 1 (DOS Demo)", GID_SIMON_FIRST, 99, GAME_SIMON1DEMO, "GDEMO"}, 
 
-	{NULL, NULL, 0, 0, 0, 0, 0, NULL}
+	{NULL, NULL, 0, 0, 0, NULL}
 };
 
 const VersionSettings *Engine_SIMON_targetList() {
@@ -418,7 +418,7 @@ SimonEngine::SimonEngine(GameDetector *detector, OSystem *syst)
 	if (ret)
 		warning ("MIDI Player init failed: \"%s\"", midi.getErrorName (ret));
 
-	_game = (byte)detector->_features;
+	_game = (byte)detector->_game.features;
 
 	// Setup mixer
 	if (!_mixer->bindToSystem(syst))

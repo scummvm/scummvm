@@ -148,7 +148,6 @@ static int countVersions(const VersionSettings *v) {
 
 GameDetector::GameDetector() {
 	_fullScreen = false;
-	_gameId = 0;
 
 	_use_adlib = false;
 
@@ -168,7 +167,8 @@ GameDetector::GameDetector() {
 	_gameDataPath = 0;
 	_gameTempo = 0;
 	_midi_driver = MD_AUTO;
-	_features = 0;
+	_game.id = 0;
+	_game.features = 0;
 
 	_multi_midi = false;
 	_native_mt32 = false;
@@ -289,26 +289,14 @@ void GameDetector::updateconfig() {
 
 void GameDetector::list_games() {
 	const VersionSettings *v = version_settings;
-	char config[4] = "";
+	const char *config;
 
 	printf("Game          SCUMM ver Full Title                                     Config\n"
 	       "------------- --------- ---------------------------------------------- -------\n");
 
 	while (v->filename && v->gamename) {
-		if (g_config->has_domain(v->filename)) {
-			strcpy(config, "Yes");
-		}
-		else {
-			strcpy(config, "");
-		}
-
-		if (v->major != 99)
-			printf("%-14s%d.%d.%d\t%-47s%s\n", v->filename,
-		     	  v->major, v->middle, v->minor, v->gamename, config);
-		else
-			printf("%-14s%-7s\t%-47s%s\n", v->filename, "n/a", 
-					v->gamename, config);
-
+		config = (g_config->has_domain(v->filename)) ? "Yes" : "";
+		printf("%-14s%-7s\t%-47s%s\n", v->filename, "n/a", v->gamename, config);
 		v++;
 	}
 		
@@ -578,27 +566,23 @@ bool GameDetector::parseMusicDriver(const char *s) {
 bool GameDetector::detectGame() {
 	const VersionSettings *gnl = version_settings;
 	const char *realGame, *basename;
-	_gameId = 0;
+	_game.id = 0;
 	_gameText.clear();
 
-	if (!(realGame = g_config->get("gameid")))
+	realGame = g_config->get("gameid");
+	if (!realGame)
 		realGame = _gameFileName.c_str();
 	printf("Looking for %s\n", realGame);
 
 	do {
 		if (!scumm_stricmp(realGame, gnl->filename)) {
-			_gameId = gnl->id;
-			if ((basename = g_config->get("basename")))
-				_gameRealName = basename;
-			else
-				_gameRealName = gnl->filename;
-			_features = gnl->features;
+			_game = *gnl;
+			if ((basename = g_config->get("basename")))	{
+				// FIXME: What is this good for?
+				_game.filename = basename;
+			}
 			_gameText = gnl->gamename;
-			if (gnl->major != 99)
-				debug(1, "Trying to start game '%s', version %d.%d.%d",
-							gnl->gamename, gnl->major, gnl->middle, gnl->minor);
-			else
-				debug(1, "Trying to start game '%s'",gnl->gamename);
+			debug(1, "Trying to start game '%s'",gnl->gamename);
 			return true;
 		}
 	} while ((++gnl)->filename);
@@ -633,7 +617,7 @@ int GameDetector::detectMain() {
 	 * default, OR if the game is an older game that doesn't
 	 * support anything else anyway. */
 #ifndef __PALM_OS__ // currently adlib is not supported, is this really needed ?
-	if ((_midi_driver == MD_AUTO && _features & GF_ADLIB_DEFAULT) || _features & GF_SMALL_HEADER) {
+	if ((_midi_driver == MD_AUTO && _game.features & GF_ADLIB_DEFAULT) || _game.features & GF_SMALL_HEADER) {
 		_midi_driver = MD_ADLIB;
 		_use_adlib = true;
 	}
@@ -668,7 +652,7 @@ OSystem *GameDetector::createSystem() {
 #elif defined(X11_BACKEND)
 	return OSystem_X11_create();
 #elif defined(__MORPHOS__)
-	return OSystem_MorphOS_create(_gameId, _gfx_mode, _fullScreen);
+	return OSystem_MorphOS_create(_game.id, _gfx_mode, _fullScreen);
 #elif defined(_WIN32_WCE)
 	return OSystem_WINCE3_create();
 #elif defined(MACOS_CARBON)

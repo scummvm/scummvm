@@ -446,7 +446,10 @@ protected:
 	uint16 _mouseButStat;
 	byte _leftBtnPressed, _rightBtnPressed;
 
-	int _bootParam;		// The bootparam, to be passed to the script 1, the bootscript
+	/** The bootparam, to be passed to the script 1, the bootscript. */
+	int _bootParam;
+	
+	byte _version;
 	
 	// Various options useful for debugging
 	bool _dumpScripts;

@@ -213,7 +213,7 @@ int main(int argc, char *argv[]) {
 
 	// See if the game should default to 1x scaler
 	if ((detector._default_gfx_mode) && 
-	   (detector._features & GF_DEFAULT_TO_1X_SCALER)) {
+	   (detector._game.features & GF_DEFAULT_TO_1X_SCALER)) {
 		prop.gfx_mode = GFX_NORMAL;
 		system->property(OSystem::PROP_SET_GFX_MODE, &prop);
 	}

@@ -100,7 +100,7 @@ enum GameFeatures {
 struct VersionSettings {
 	const char *filename;
 	const char *gamename;
-	byte id, major, middle, minor;
+	byte id, version;
 	uint32 features;
 	char *detectname;
 };
@@ -142,7 +142,6 @@ public:
 	const String& getGameName(void);
 	
 	bool _fullScreen;
-	byte _gameId;
 
 	bool _use_adlib;
 
@@ -162,10 +161,9 @@ public:
 	char *_gameDataPath;
 	int _gameTempo;
 	int _midi_driver;
+
 	String _gameFileName;
-	String _gameText;
-	String _gameRealName;
-	uint32 _features;
+	VersionSettings _game;
 
 	int _gfx_mode;
 	bool _default_gfx_mode;
@@ -187,6 +185,8 @@ public:
 	void updateconfig();
 
 protected:
+	String _gameText;
+
 	bool detectGame(void);
 	bool parseMusicDriver(const char *s);
 	int parseLanguage(const char *s);

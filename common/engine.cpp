@@ -82,21 +82,21 @@ Engine *Engine::createFromDetector(GameDetector *detector, OSystem *syst) {
 	Engine *engine = NULL;
 
 #ifndef DISABLE_SCUMM
-	if (detector->_gameId >= GID_SCUMM_FIRST && detector->_gameId <= GID_SCUMM_LAST) {
+	if (detector->_game.id >= GID_SCUMM_FIRST && detector->_game.id <= GID_SCUMM_LAST) {
 		// Some kind of Scumm game
 		engine = Engine_SCUMM_create(detector, syst);
 	}
 #endif
 
 #ifndef DISABLE_SIMON
-	if (detector->_gameId >= GID_SIMON_FIRST && detector->_gameId <= GID_SIMON_LAST) {
+	if (detector->_game.id >= GID_SIMON_FIRST && detector->_game.id <= GID_SIMON_LAST) {
 		// Simon the Sorcerer
 		engine = Engine_SIMON_create(detector, syst);
 	}
 #endif
 
 #ifndef DISABLE_SKY
-	if (detector->_gameId >= GID_SKY_FIRST && detector->_gameId <= GID_SKY_LAST) {
+	if (detector->_game.id >= GID_SKY_FIRST && detector->_game.id <= GID_SKY_LAST) {
 		// Beneath a Steel Sky
 		engine = Engine_SKY_create(detector, syst);
 	}

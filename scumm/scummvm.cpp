@@ -87,96 +87,96 @@ static const VersionSettings scumm_settings[] = {
 	/* Scumm Version 1 */
 	/* Scumm Version 2 */
 
-	{"maniac", "Maniac Mansion", GID_MANIAC, 2, 0, 0,
+	{"maniac", "Maniac Mansion", GID_MANIAC, 2,
 	 GF_AFTER_V2 | GF_SMALL_HEADER | GF_USE_KEY | GF_SMALL_NAMES | GF_16COLOR | GF_OLD_BUNDLE | GF_NO_SCALLING, "00.LFL"},
-	{"zak",         "Zak McKracken and the Alien Mindbenders",      GID_ZAK,     2, 0, 0,
+	{"zak",         "Zak McKracken and the Alien Mindbenders", GID_ZAK, 2,
 	 GF_AFTER_V2 | GF_SMALL_HEADER | GF_USE_KEY | GF_SMALL_NAMES | GF_16COLOR | GF_OLD_BUNDLE | GF_NO_SCALLING, "00.LFL"},
 
 	/* Scumm Version 3 */
-	{"indy3EGA", "Indiana Jones and the Last Crusade", GID_INDY3, 3, 0, 0,
+	{"indy3EGA", "Indiana Jones and the Last Crusade", GID_INDY3, 3,
 	 GF_AFTER_V3 | GF_SMALL_HEADER | GF_SMALL_NAMES | GF_NO_SCALLING | GF_USE_KEY | GF_16COLOR | GF_OLD_BUNDLE, "00.LFL"},
-	{"indy3", "Indiana Jones and the Last Crusade (256)", GID_INDY3_256, 3, 0, 22,
+	{"indy3", "Indiana Jones and the Last Crusade (256)", GID_INDY3_256, 3,
 	 GF_AFTER_V3 | GF_SMALL_HEADER | GF_SMALL_NAMES | GF_NO_SCALLING | GF_OLD256 | GF_ADLIB_DEFAULT, "00.LFL"},
-	{"zak256", "Zak McKracken and the Alien Mindbenders (256)", GID_ZAK256, 3, 0, 0,
+	{"zak256", "Zak McKracken and the Alien Mindbenders (256)", GID_ZAK256, 3,
 	 GF_AFTER_V3 | GF_SMALL_HEADER | GF_SMALL_NAMES | GF_NO_SCALLING | GF_OLD256 | GF_AUDIOTRACKS, "00.LFL"},
-	{"loom", "Loom", GID_LOOM, 3, 5, 40,
+	{"loom", "Loom", GID_LOOM, 3,
 	 GF_AFTER_V3 | GF_SMALL_HEADER | GF_SMALL_NAMES | GF_NO_SCALLING | GF_USE_KEY | GF_16COLOR | GF_OLD_BUNDLE, "00.LFL"},
 
 	/* Scumm Version 4 */
-	{"monkeyEGA", "Monkey Island 1 (EGA)", GID_MONKEY_EGA, 4, 0, 62,
+	{"monkeyEGA", "Monkey Island 1 (EGA)", GID_MONKEY_EGA, 4,
 	 GF_AFTER_V4 | GF_SMALL_HEADER | GF_USE_KEY | GF_16COLOR | GF_ADLIB_DEFAULT, "000.LFL"},
-	{"pass", "Passport to Adventure", GID_MONKEY_EGA, 4, 0, 62,
+	{"pass", "Passport to Adventure", GID_MONKEY_EGA, 4,
 	 GF_AFTER_V4 | GF_SMALL_HEADER | GF_USE_KEY | GF_16COLOR | GF_ADLIB_DEFAULT, "000.LFL"},
 
 	/* Scumm version 5 */
-	{"monkeyVGA", "Monkey Island 1 (256 color Floppy version)", GID_MONKEY_VGA,  5, 0, 16,
+	{"monkeyVGA", "Monkey Island 1 (256 color Floppy version)", GID_MONKEY_VGA,  4,
 	 GF_AFTER_V4 | GF_SMALL_HEADER | GF_USE_KEY | GF_ADLIB_DEFAULT, "000.LFL"},
-	{"loomcd", "Loom (256 color CD version)", GID_LOOM256, 5, 1, 42,
+	{"loomcd", "Loom (256 color CD version)", GID_LOOM256, 4,
 	 GF_AFTER_V4 | GF_SMALL_HEADER | GF_USE_KEY | GF_AUDIOTRACKS | GF_ADLIB_DEFAULT, "000.LFL"},
-	{"monkey", "Monkey Island 1", GID_MONKEY, 5, 2, 2,
+	{"monkey", "Monkey Island 1", GID_MONKEY, 5,
 	 GF_AFTER_V5 | GF_USE_KEY | GF_AUDIOTRACKS | GF_ADLIB_DEFAULT, 0},
-	{"monkey1", "Monkey Island 1 (alt)", GID_MONKEY, 5, 2, 2,
+	{"monkey1", "Monkey Island 1 (alt)", GID_MONKEY, 5,
 	 GF_AFTER_V5 | GF_USE_KEY | GF_AUDIOTRACKS | GF_ADLIB_DEFAULT, 0},
-	{"monkey2", "Monkey Island 2: LeChuck's revenge", GID_MONKEY2, 5, 2, 2,
+	{"monkey2", "Monkey Island 2: LeChuck's revenge", GID_MONKEY2, 5,
 	 GF_AFTER_V5 | GF_USE_KEY | GF_ADLIB_DEFAULT, 0},
-	{"mi2demo", "Monkey Island 2: LeChuck's revenge (Demo)", GID_MONKEY2, 5, 2, 2,
+	{"mi2demo", "Monkey Island 2: LeChuck's revenge (Demo)", GID_MONKEY2, 5,
 	 GF_AFTER_V5 | GF_USE_KEY | GF_ADLIB_DEFAULT, 0},
-	{"indydemo", "Indiana Jones and the Fate of Atlantis (FM Towns Demo)", GID_INDY4, 5, 2, 02,
+	{"indydemo", "Indiana Jones and the Fate of Atlantis (FM Towns Demo)", GID_INDY4, 5,
 	 GF_AFTER_V5 | GF_USE_KEY | GF_ADLIB_DEFAULT, 0},
-	{"atlantis", "Indiana Jones and the Fate of Atlantis", GID_INDY4, 5, 5, 0,
+	{"atlantis", "Indiana Jones and the Fate of Atlantis", GID_INDY4, 5,
 	 GF_AFTER_V5 | GF_USE_KEY | GF_ADLIB_DEFAULT, 0},
-	{"playfate", "Indiana Jones and the Fate of Atlantis (Demo)", GID_INDY4, 5, 5, 0,
+	{"playfate", "Indiana Jones and the Fate of Atlantis (Demo)", GID_INDY4, 5,
 	 GF_AFTER_V5 | GF_USE_KEY | GF_ADLIB_DEFAULT, 0},
-	{"fate", "Indiana Jones and the Fate of Atlantis (Demo)", GID_INDY4, 5, 5, 0,
+	{"fate", "Indiana Jones and the Fate of Atlantis (Demo)", GID_INDY4, 5,
 	 GF_AFTER_V5 | GF_USE_KEY | GF_ADLIB_DEFAULT, 0},
 
 	/* Scumm Version 6 */
-	{"puttputt", "Putt-Putt Joins The Parade (DOS)", GID_SAMNMAX, 6, 1, 1,
+	{"puttputt", "Putt-Putt Joins The Parade (DOS)", GID_SAMNMAX, 6,
 	 GF_NEW_OPCODES | GF_AFTER_V6 | GF_USE_KEY | GF_ADLIB_DEFAULT | GF_HUMONGOUS | GF_NEW_COSTUMES, 0},
-	{"puttdemo", "Putt-Putt Joins The Parade (DOS Demo)", GID_PUTTDEMO, 6, 1, 1,
+	{"puttdemo", "Putt-Putt Joins The Parade (DOS Demo)", GID_PUTTDEMO, 6,
 	 GF_NEW_OPCODES | GF_AFTER_V6 | GF_USE_KEY | GF_ADLIB_DEFAULT | GF_HUMONGOUS, 0},
-	{"moondemo", "Putt-Putt Goes To The Moon (DOS Demo)", GID_SAMNMAX, 6, 1, 1,
+	{"moondemo", "Putt-Putt Goes To The Moon (DOS Demo)", GID_SAMNMAX, 6,
 	 GF_NEW_OPCODES | GF_AFTER_V6 | GF_USE_KEY | GF_ADLIB_DEFAULT | GF_HUMONGOUS | GF_NEW_COSTUMES, 0},
-	{"puttmoon", "Putt-Putt Goes To The Moon (DOS)", GID_SAMNMAX, 6, 1, 1,
+	{"puttmoon", "Putt-Putt Goes To The Moon (DOS)", GID_SAMNMAX, 6,
 	 GF_NEW_OPCODES | GF_AFTER_V6 | GF_USE_KEY | GF_ADLIB_DEFAULT | GF_HUMONGOUS | GF_NEW_COSTUMES, 0},
-	{"funpack", "Putt-Putt's Fun Pack", GID_SAMNMAX, 6, 1, 1,
+	{"funpack", "Putt-Putt's Fun Pack", GID_SAMNMAX, 6,
 	 GF_NEW_OPCODES | GF_AFTER_V6 | GF_USE_KEY | GF_ADLIB_DEFAULT | GF_HUMONGOUS | GF_NEW_COSTUMES, 0},
-	{"fbpack", "Fatty Bear's Fun Pack", GID_SAMNMAX, 6, 1, 1,
+	{"fbpack", "Fatty Bear's Fun Pack", GID_SAMNMAX, 6,
 	 GF_NEW_OPCODES | GF_AFTER_V6 | GF_USE_KEY | GF_ADLIB_DEFAULT | GF_HUMONGOUS | GF_NEW_COSTUMES, 0},
-	{"fbear", "Fatty Bear's Birthday Surprise (DOS)", GID_SAMNMAX, 6, 1, 1,
+	{"fbear", "Fatty Bear's Birthday Surprise (DOS)", GID_SAMNMAX, 6,
 	 GF_NEW_OPCODES | GF_AFTER_V6 | GF_USE_KEY | GF_ADLIB_DEFAULT | GF_HUMONGOUS | GF_NEW_COSTUMES, 0},
-	{"fbdemo", "Fatty Bear's Birthday Surprise (DOS Demo)", GID_SAMNMAX, 6, 1, 1,
+	{"fbdemo", "Fatty Bear's Birthday Surprise (DOS Demo)", GID_SAMNMAX, 6,
 	 GF_NEW_OPCODES | GF_AFTER_V6 | GF_USE_KEY | GF_ADLIB_DEFAULT | GF_HUMONGOUS | GF_NEW_COSTUMES, 0},
-	{"tentacle", "Day Of The Tentacle", GID_TENTACLE, 6, 4, 2,
+	{"tentacle", "Day Of The Tentacle", GID_TENTACLE, 6,
 	 GF_NEW_OPCODES | GF_AFTER_V6 | GF_USE_KEY | GF_ADLIB_DEFAULT, 0},
-	{"dottdemo", "Day Of The Tentacle (Demo)", GID_TENTACLE, 6, 3, 2,
+	{"dottdemo", "Day Of The Tentacle (Demo)", GID_TENTACLE, 6,
 	 GF_NEW_OPCODES | GF_AFTER_V6 | GF_USE_KEY | GF_ADLIB_DEFAULT, 0},
-	{"samnmax", "Sam & Max", GID_SAMNMAX, 6, 4, 2,
+	{"samnmax", "Sam & Max", GID_SAMNMAX, 6,
 	 GF_NEW_OPCODES | GF_AFTER_V6 | GF_USE_KEY | GF_DRAWOBJ_OTHER_ORDER, 0},
-	{"samdemo", "Sam & Max (Demo)", GID_SAMNMAX, 6, 3, 0,
+	{"samdemo", "Sam & Max (Demo)", GID_SAMNMAX, 6,
 	 GF_NEW_OPCODES | GF_AFTER_V6 | GF_USE_KEY  | GF_DRAWOBJ_OTHER_ORDER | GF_ADLIB_DEFAULT, 0},
-	{"snmdemo", "Sam & Max (Demo)", GID_SAMNMAX, 6, 5, 0,
+	{"snmdemo", "Sam & Max (Demo)", GID_SAMNMAX, 6,
 	 GF_NEW_OPCODES | GF_AFTER_V6 | GF_USE_KEY  | GF_DRAWOBJ_OTHER_ORDER | GF_ADLIB_DEFAULT, 0},
-	{"snmidemo", "Sam & Max (Interactive WIP Demo)", GID_SAMNMAX, 6, 5, 0,
+	{"snmidemo", "Sam & Max (Interactive WIP Demo)", GID_SAMNMAX, 6,
 	 GF_NEW_OPCODES | GF_AFTER_V6 | GF_USE_KEY  | GF_DRAWOBJ_OTHER_ORDER | GF_ADLIB_DEFAULT, 0},
 
-	{"test", "Test demo game", GID_SAMNMAX, 6, 6, 6, GF_NEW_OPCODES | GF_AFTER_V6, 0},
+	{"test", "Test demo game", GID_SAMNMAX, 6, GF_NEW_OPCODES | GF_AFTER_V6, 0},
 
 	/* Humongous Entertainment Scumm Version 7 */
-	{"farmdemo", "Let's Explore the Farm with Buzzy (Demo)", GID_SAMNMAX, 7, 0, 0,
+	{"farmdemo", "Let's Explore the Farm with Buzzy (Demo)", GID_SAMNMAX, 6,
 	 GF_NEW_OPCODES | GF_AFTER_V6 | GF_AFTER_HEV7 | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0},
 
 	/* Scumm Version 7 */
-	{"ft", "Full Throttle", GID_FT, 7, 3, 0,
+	{"ft", "Full Throttle", GID_FT, 7,
 	 GF_NEW_OPCODES | GF_AFTER_V6 | GF_AFTER_V7 | GF_NEW_COSTUMES, 0},
-	{"dig", "The Dig", GID_DIG, 7, 5, 0,
+	{"dig", "The Dig", GID_DIG, 7,
 	 GF_NEW_OPCODES | GF_AFTER_V6 | GF_AFTER_V7 | GF_NEW_COSTUMES, 0},
 
 	/* Scumm Version 8 */
-	{"comi", "The Curse of Monkey Island", GID_CMI, 8, 1, 0,
+	{"comi", "The Curse of Monkey Island", GID_CMI, 8,
 	 GF_NEW_OPCODES | GF_AFTER_V6 | GF_AFTER_V7 | GF_AFTER_V8 | GF_NEW_COSTUMES | GF_DEFAULT_TO_1X_SCALER, 0},
 
-	{NULL, NULL, 0, 0, 0, 0, 0, NULL}
+	{NULL, NULL, 0, 0, 0, NULL}
 };
 
 const VersionSettings *Engine_SCUMM_targetList() {
@@ -187,24 +187,34 @@ Engine *Engine_SCUMM_create(GameDetector *detector, OSystem *syst) {
 	Engine *engine;
 
 	if (detector->_amiga)
-		detector->_features |= GF_AMIGA;
+		detector->_game.features |= GF_AMIGA;
 
-	if (detector->_features & GF_AFTER_V8)
-		engine = new Scumm_v8(detector, syst);
-	else if (detector->_features & GF_AFTER_V7)
-		engine = new Scumm_v7(detector, syst);
-	else if (detector->_features & GF_AFTER_V6)
-		engine = new Scumm_v6(detector, syst);
-	else if (detector->_features & GF_AFTER_V5)
-		engine = new Scumm_v5(detector, syst);
-	else if (detector->_features & GF_AFTER_V4)
-		engine = new Scumm_v4(detector, syst);
-	else if (detector->_features & GF_AFTER_V3)
-		engine = new Scumm_v3(detector, syst);
-	else if (detector->_features & GF_AFTER_V2)
+	switch (detector->_game.version) {
+	case 1:
+	case 2:
 		engine = new Scumm_v2(detector, syst);
-	else
+		break;
+	case 3:
+		engine = new Scumm_v3(detector, syst);
+		break;
+	case 4:
+		engine = new Scumm_v4(detector, syst);
+		break;
+	case 5:
+		engine = new Scumm_v5(detector, syst);
+		break;
+	case 6:
+		engine = new Scumm_v6(detector, syst);
+		break;
+	case 7:
+		engine = new Scumm_v7(detector, syst);
+		break;
+	case 8:
+		engine = new Scumm_v8(detector, syst);
+		break;
+	default:
 		error("Engine_SCUMM_create(): Unknown version of game engine");
+	}
 
 	return engine;
 }
@@ -546,10 +556,17 @@ Scumm::Scumm (GameDetector *detector, OSystem *syst)
 	_debugLevel = detector->_debugLevel;
 	_dumpScripts = detector->_dumpScripts;
 	_bootParam = detector->_bootParam;
+#if 1
+	_exe_name = strdup(detector->_game.filename);
+	_game_name = strdup(detector->_gameFileName.c_str());
+	_gameId = detector->_game.id;
+	setFeatures(detector->_game.features);
+#else
 	_exe_name = strdup(detector->_gameRealName.c_str());	// FIXME: probably should use String class here
 	_game_name = strdup(detector->_gameFileName.c_str());
 	_gameId = detector->_gameId;
 	setFeatures (detector->_features);
+#endif
 	_noSubtitles = detector->_noSubtitles;
 	_defaultTalkDelay = detector->_talkSpeed;
 	_use_adlib = detector->_use_adlib;
