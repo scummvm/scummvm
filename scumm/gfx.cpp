@@ -2743,10 +2743,27 @@ void ScummEngine::fadeOut(int effect) {
 	if (!(_features & GF_NEW_CAMERA))
 		camera._last.x = camera._cur.x;
 
+	if (_switchRoomEffect >= 130 && _switchRoomEffect <= 133) {
+		// We're going to use scrollEffect(), so we'll need a copy of
+		// the current VirtScreen zero.
+
+		free(_scrollBuffer);
+		_scrollBuffer = (byte *) malloc(vs->h * vs->w);
+
+		byte *src = vs->getPixels(0, 0);
+		byte *dst = _scrollBuffer;
+
+		for (int y = 0; y < vs->h; y++) {
+			memcpy(dst, src, vs->w);
+			src += vs->pitch;
+			dst += vs->w;
+		}
+	}
+
+
 	if (_screenEffectFlag && effect != 0) {
 	
 		// Fill screen 0 with black
-		
 		memset(vs->getPixels(0, 0), 0, vs->pitch * vs->h);
 	
 		// Fade to black with the specified effect, if any.
