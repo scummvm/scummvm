@@ -469,8 +469,6 @@ int32 Logic::fnPlayCredits(int32 *params) {
 		creditsLines[i].sprite = NULL;
 	}
 
-	char textLine[80];
-
 	if (!f.open("credits.clu")) {
 		warning("Can't find credits.clu");
 		return IR_CONT;
@@ -478,87 +476,106 @@ int32 Logic::fnPlayCredits(int32 *params) {
 
 	int lineTop = 400;
 	int lineCount = 0;
-	int pos = 0;
-
-	textLine[0] = 0;
-
 	int paragraphStart = 0;
 	bool hasCenterMark = false;
 
 	while (1) {
+		char buffer[80];
+		char *line = buffer;
+		char *center_mark = NULL;
+
 		if (lineCount >= ARRAYSIZE(creditsLines)) {
 			warning("Too many credits lines");
 			break;
 		}
 
-		byte b = f.readByte();
+		int pos = 0;
 
-		if (f.ioFailed())
-			break;
+		while (1) {
+			byte b = f.readByte();
 
-		// Remember that the current paragraph has at least once center
-		// mark. If a paragraph has no center marks, it should be
-		// centered.
+			if (f.ioFailed()) {
+				if (pos != 0)
+					line[pos] = 0;
+				else
+					line = NULL;
+				break;
+			}
 
-		if (b == '^')
+			if (b == 0x0d) {
+				f.readByte();
+				line[pos] = 0;
+				pos = 0;
+				break;
+			}
+
+			if (pos < ARRAYSIZE(buffer)) {
+				if (b == '^')
+					center_mark = line + pos;
+				line[pos++] = b;
+			}
+		}
+
+		if (!line || strlen(line) == 0) {
+			if (!hasCenterMark) {
+				for (i = paragraphStart; i < lineCount; i++)
+					creditsLines[i].type = LINE_CENTER;
+			}
+			paragraphStart = lineCount;
+			hasCenterMark = false;
+			if (!line)
+				break;
+			if (paragraphStart == lineCount)
+				lineTop += CREDITS_LINE_SPACING;
+			continue;
+		}
+
+		if (center_mark) {
+			// The current paragraph has at least one center mark.
 			hasCenterMark = true;
 
-		if (b == '^' && pos != 0) {
-			textLine[pos] = 0;
+			if (center_mark != line) {
+				// The center mark is somewhere inside the
+				// line. Split it into left and right side.
+				*center_mark = 0;
 
-			creditsLines[lineCount].top = lineTop;
-			creditsLines[lineCount].height = CREDITS_FONT_HEIGHT;
-			creditsLines[lineCount].type = LINE_LEFT;
-			creditsLines[lineCount].str = strdup(textLine);
-
-			lineCount++;
-			textLine[0] = '^';
-			pos = 1;
-		} else if (b == 0x0a) {
-			creditsLines[lineCount].top = lineTop;
-
-			if (textLine[0] == '^') {
-				creditsLines[lineCount].str = strdup(textLine + 1);
-				creditsLines[lineCount].type = LINE_RIGHT;
-			} else {
-				creditsLines[lineCount].str = strdup(textLine);
-				creditsLines[lineCount].type = LINE_LEFT;
-			}
-
-			if (strcmp(textLine, "@") == 0) {
-				creditsLines[lineCount].height = logoHeight;
-				lineTop += logoHeight;
-			} else {
+				creditsLines[lineCount].top = lineTop;
 				creditsLines[lineCount].height = CREDITS_FONT_HEIGHT;
-				lineTop += CREDITS_LINE_SPACING;
-			}
+				creditsLines[lineCount].type = LINE_LEFT;
+				creditsLines[lineCount].str = strdup(line);
 
-			if (strlen(textLine) > 0)
+				*center_mark = '^';
+				line = center_mark;
 				lineCount++;
-			else {
-				if (!hasCenterMark)
-					for (int j = paragraphStart; j < lineCount; j++)
-						creditsLines[j].type = LINE_CENTER;
 
-				paragraphStart = lineCount;
-				hasCenterMark = false;
+				if (lineCount >= ARRAYSIZE(creditsLines)) {
+					warning("Too many credits lines");
+					break;
+				}
 			}
+		}
 
-			pos = 0;
-		} else if (b == 0x0d) {
-			textLine[pos++] = 0;
+		creditsLines[lineCount].top = lineTop;
+
+		if (*line == '^') {
+			creditsLines[lineCount].type = LINE_RIGHT;
+			line++;
 		} else
-			textLine[pos++] = b;
+			creditsLines[lineCount].type = LINE_LEFT;
+
+		if (strcmp(line, "@") == 0) {
+			creditsLines[lineCount].height = logoHeight;
+			lineTop += logoHeight;
+		} else {
+			creditsLines[lineCount].height = CREDITS_FONT_HEIGHT;
+			lineTop += CREDITS_LINE_SPACING;
+		}
+
+		creditsLines[lineCount].str = strdup(line);
+		lineCount++;
 	}
 
 	f.close();
-
-	// The paragraph detection above won't find the last paragraph, so we
-	// have to deal with it separately.
-
-	if (!hasCenterMark)
-		for (int j = paragraphStart; j < lineCount; j++)
-			creditsLines[j].type = LINE_CENTER;
 
 	// We could easily add some ScummVM stuff to the credits, if we wanted
 	// to. On the other hand, anyone with the attention span to actually
