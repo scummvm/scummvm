@@ -1104,6 +1104,7 @@ void Scumm::beginOverride() {
 	fetchScriptByte();
 	fetchScriptWord();
 	
+	// FIXME: why is this here? it doesn't seem to belong here?
 	VAR(VAR_OVERRIDE) = 0;
 }
 
@@ -1115,5 +1116,7 @@ void Scumm::endOverride() {
 
 	vm.cutScenePtr[idx] = 0;
 	vm.cutSceneScript[idx] = 0;
-	VAR(VAR_OVERRIDE) = 0;
+	
+	if (!(_features & GF_AFTER_V3))
+		VAR(VAR_OVERRIDE) = 0;
 }
