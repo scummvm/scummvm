@@ -33,7 +33,6 @@ class StringResource;
 
 class SmushPlayer {
 private:
-
 	Scumm *_scumm;
 	int _version;
 	int32 _nbframes;
@@ -44,7 +43,6 @@ private:
 	SmushFont *_sf[5];
 	Codec37Decoder _codec37;
 	Codec47Decoder _codec47;
-	int dst_width, dst_height;
 	FileChunk *_base;
 	byte *_frameBuffer;
 
@@ -63,25 +61,26 @@ private:
 	int _speed;
 	bool _outputSound;
 
-public:
-
 	int _width, _height;
-	byte *_data;
-	volatile bool _smushProcessFrame;
+	byte *_dst;
 	bool _updateNeeded;
 
+	volatile bool _smushProcessFrame;
+
+public:
 	SmushPlayer(Scumm *, int, bool);
 	~SmushPlayer();
+
+	void play(const char *filename, const char *directory);
+
+private:
 	void updatePalette(void);
 	void parseNextFrame();
 	void init();
 	void deinit();
 	void setupAnim(const char *file, const char *directory);
 	void updateScreen();
-	void play(const char *filename, const char *directory);
-	void setPalette(byte *palette);
-
-protected:
+	void setPalette(const byte *palette);
 
 	bool readString(const char *file, const char *directory);
 	void checkBlock(const Chunk &, Chunk::type, uint32 = 0);
@@ -99,6 +98,8 @@ protected:
 	void handleTextResource(Chunk &);
 	void handleDeltaPalette(Chunk &);
 	void readPalette(byte *, Chunk &);
+	
+	static void timerCallback(void *ptr);
 };
 
 #endif

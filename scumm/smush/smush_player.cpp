@@ -191,7 +191,7 @@ static StringResource *getStrings(const char *file, const char *directory, bool 
 
 SmushPlayer *player;
 
-void smush_callback(void *ptr) {
+void SmushPlayer::timerCallback(void *ptr) {
 	Scumm *scumm = (Scumm *)ptr;
 	if (!scumm->_smushPlay)
 		return;
@@ -208,7 +208,7 @@ SmushPlayer::SmushPlayer(Scumm *scumm, int speed, bool subtitles) {
 	_smixer = 0;
 	_strings = NULL;
 	_skipNext = false;
-	_data = NULL;
+	_dst = NULL;
 	_storeFrame = false;
 	_width = 0;
 	_height = 0;
@@ -247,8 +247,8 @@ void SmushPlayer::init() {
 	_scumm->setDirtyColors(0, 255);
 	_smixer->_silentMixer = _scumm->_silentDigitalImuse;
 	_scumm->_smushPlay = true;
-	_data = _scumm->virtscr[0].screenPtr + _scumm->virtscr[0].xstart;
-	_scumm->_timer->installProcedure(&smush_callback, _speed);
+	_dst = _scumm->virtscr[0].screenPtr + _scumm->virtscr[0].xstart;
+	_scumm->_timer->installProcedure(&timerCallback, _speed);
 
 	_alreadyInit = false;
 }
@@ -256,7 +256,7 @@ void SmushPlayer::init() {
 void SmushPlayer::deinit() {
 	_scumm->_smushPlay = false;
 	while (_smushProcessFrame) {}
-	_scumm->_timer->releaseProcedure(&smush_callback);
+	_scumm->_timer->releaseProcedure(&timerCallback);
 
 	for (int i = 0; i < 5; i++) {
 		if (_sf[i]) {
@@ -360,7 +360,7 @@ void SmushPlayer::handleFetch(Chunk &b) {
 	checkBlock(b, TYPE_FTCH, 6);
 
 	if (_frameBuffer != NULL) {
-		memcpy(_data, _frameBuffer, _width * _height);
+		memcpy(_dst, _frameBuffer, _width * _height);
 	}
 }
 
@@ -565,10 +565,10 @@ void SmushPlayer::handleTextResource(Chunk &b) {
 	// bit 3 - wrap around  8
 	switch (flags & 9) {
 		case 0: 
-			sf->drawStringAbsolute(str, _data, _width, pos_x, pos_y);
+			sf->drawStringAbsolute(str, _dst, _width, pos_x, pos_y);
 			break;
 		case 1:
-			sf->drawStringCentered(str, _data, _width, _height, pos_x, MAX(pos_y, top));
+			sf->drawStringCentered(str, _dst, _width, _height, pos_x, MAX(pos_y, top));
 			break;
 		case 8:
 			// FIXME: Is 'right' the maximum line width here, just
@@ -576,7 +576,7 @@ void SmushPlayer::handleTextResource(Chunk &b) {
 			// in The Dig's intro, where 'left' and 'right' are
 			// always 0 and 321 respectively, and apparently we
 			// handle that correctly.
-			sf->drawStringWrap(str, _data, _width, _height, pos_x, MAX(pos_y, top), left, right);
+			sf->drawStringWrap(str, _dst, _width, _height, pos_x, MAX(pos_y, top), left, right);
 			break;
 		case 9:
 			// In this case, the 'right' parameter is actually the
@@ -585,7 +585,7 @@ void SmushPlayer::handleTextResource(Chunk &b) {
 			//
 			// Note that in The Dig's "Spacetime Six" movie it's
 			// 621. I have no idea what that means.
-			sf->drawStringWrapCentered(str, _data, _width, _height, pos_x, MAX(pos_y, top), left, MIN(left + right, _width));
+			sf->drawStringWrapCentered(str, _dst, _width, _height, pos_x, MAX(pos_y, top), left, MIN(left + right, _width));
 			break;
 		default:
 			warning("SmushPlayer::handleTextResource. Not handled flags: %d", flags);
@@ -709,17 +709,17 @@ void SmushPlayer::handleFrameObject(Chunk &b) {
 		// BTW regarding codec 3: I haven't yet actually seen it being used,
 		// but is it really identical to codec 1? Or isn't it maybe a
 		// 'reverse' version (see also bompDecodeLineReverse).
-		decompressBomp(_data, chunk_buffer, _width, _height);
+		decompressBomp(_dst, chunk_buffer, _width, _height);
 #else
 		extern void smush_decode_codec1(byte *dst, byte *src, int height);
-		smush_decode_codec1(_data, chunk_buffer, _height);
+		smush_decode_codec1(_dst, chunk_buffer, _height);
 #endif
 		break;
 	case 37:
-		_codec37.decode(_data, chunk_buffer);
+		_codec37.decode(_dst, chunk_buffer);
 		break;
 	case 47:
-		_codec47.decode(_data, chunk_buffer);
+		_codec47.decode(_dst, chunk_buffer);
 		break;
 	default:
 		error("Invalid codec for frame object : %d", (int)codec);
@@ -729,7 +729,7 @@ void SmushPlayer::handleFrameObject(Chunk &b) {
 		if (_frameBuffer == NULL) {
 			_frameBuffer = (byte *)malloc(_width * _height);
 		}
-		memcpy(_frameBuffer, _data, _width * _height);
+		memcpy(_frameBuffer, _dst, _width * _height);
 		_storeFrame = false;
 	}
 
@@ -806,8 +806,12 @@ void SmushPlayer::handleAnimHeader(Chunk &b) {
 }
 
 void SmushPlayer::setupAnim(const char *file, const char *directory) {
+	Chunk *sub;
+	int i;
+	char file_font[11];
+
 	_base = new FileChunk(file, directory);
-	Chunk *sub = _base->subBlock();
+	sub = _base->subBlock();
 	checkBlock(*sub, TYPE_AHDR);
 	handleAnimHeader(*sub);
 
@@ -819,16 +823,14 @@ void SmushPlayer::setupAnim(const char *file, const char *directory) {
 		_sf[0]->loadFont("scummfnt.nut", directory);
 		_sf[2]->loadFont("titlfnt.nut", directory);
 	} else if (_scumm->_gameId == GID_DIG) {
-		for (int i = 0; i < 4; i++) {
-			char file_font[11];
-			sprintf((char *)&file_font, "font%d.nut", i);
+		for (i = 0; i < 4; i++) {
+			sprintf(file_font, "font%d.nut", i);
 			_sf[i] = new SmushFont(i != 0, false);
 			_sf[i]->loadFont(file_font, directory);
 		}
 	} else if (_scumm->_gameId == GID_CMI) {
-		for (int i = 0; i < 5; i++) {
-			char file_font[11];
-			sprintf((char *)&file_font, "font%d.nut", i);
+		for (i = 0; i < 5; i++) {
+			sprintf(file_font, "font%d.nut", i);
 			_sf[i] = new SmushFont(false, true);
 			_sf[i]->loadFont(file_font, directory);
 		}
@@ -856,16 +858,15 @@ void SmushPlayer::parseNextFrame() {
 	delete sub;
 }
 
-void SmushPlayer::setPalette(byte *palette) {
+void SmushPlayer::setPalette(const byte *palette) {
 	byte palette_colors[1024];
 	byte *p = palette_colors;
-	byte *data = palette;
 
-	for (int i = 0; i != 256; i++, data += 3, p += 4) {
-		p[0] = data[0]; // red
-		p[1] = data[1]; // green
-		p[2] = data[2]; // blue
-		p[3] = 0;
+	for (int i = 0; i != 256; ++i) {
+		*p++ = *palette++; // red
+		*p++ = *palette++; // green
+		*p++ = *palette++; // blue
+		*p++ = 0;
 	}
 
 	_scumm->_system->set_palette(palette_colors, 0, 256);
@@ -873,22 +874,26 @@ void SmushPlayer::setPalette(byte *palette) {
 
 void SmushPlayer::updateScreen() {
 	uint32 end_time, start_time = _scumm->_system->get_msecs();
-	_scumm->_system->copy_rect(_data, _width, 0, 0, _width, _height);
+	_scumm->_system->copy_rect(_dst, _width, 0, 0, _width, _height);
 	_updateNeeded = true;
 	end_time = _scumm->_system->get_msecs();
 	debug(4, "Smush stats: updateScreen( %03d )", end_time - start_time);
 }
 
 void SmushPlayer::play(const char *filename, const char *directory) {
+
+	// Verify the specified file exists
 	File f;
 	f.open(filename, directory);
 	if (!f.isOpen()) {
 		warning("SmushPlayer::play() File not found %s", filename);
 		return;
 	}
+	f.close();
 
 	_updateNeeded = false;
 
+	// Load the video
 	setupAnim(filename, directory);
 	init();
 
@@ -897,16 +902,17 @@ void SmushPlayer::play(const char *filename, const char *directory) {
 		_scumm->processKbd();
 		if (_updateNeeded) {
 			
-			uint32 end_time, start_time = _scumm->_system->get_msecs();
+			uint32 end_time, start_time;
+			
+			start_time = _scumm->_system->get_msecs();
 			_scumm->_system->update_screen();
 			_updateNeeded = false;
 			end_time = _scumm->_system->get_msecs();
+
 			debug(4, "Smush stats: BackendUpdateScreen( %03d )", end_time - start_time);
 
 		}
-		if (_scumm->_videoFinished || _scumm->_quit)
-			break;
-		if (_scumm->_saveLoadFlag)
+		if (_scumm->_videoFinished || _scumm->_quit || _scumm->_saveLoadFlag)
 			break;
 		_scumm->_system->delay_msecs(10);
 	};
