@@ -580,7 +580,7 @@ void Scumm_v6::o6_bor() {
 
 void Scumm_v6::o6_band() {
 	int a = pop();
-	push(pop() | a);
+	push(pop() & a);
 }
 
 void Scumm_v6::o6_pop() {
