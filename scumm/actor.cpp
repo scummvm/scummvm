@@ -32,6 +32,9 @@
 
 #include <math.h>
 
+byte Actor::INVALID_BOX = 0;
+
+
 void Actor::initActor(int mode) {
 	if (mode == 1) {
 		costume = 0;
@@ -64,7 +67,7 @@ void Actor::initActor(int mode) {
 	setActorWalkSpeed(8, 2);
 	animSpeed = 0;
 
-	ignoreBoxes = 0;
+	ignoreBoxes = false;
 	forceClip = 0;
 	ignoreTurns = false;
 	
@@ -199,9 +202,6 @@ int Actor::remapDirection(int dir, bool is_walking) {
 			if (specdir & 0x8000) {
 				dir = specdir & 0x3FFF;
 			} else {
-				// FIXME - I am not 100% if this code is right (Fingolfin)
-				warning("remapDirection: special dir");
-
 				specdir = specdir & 0x3FFF;
 				if (specdir - 90 < dir && dir < specdir + 90)
 					dir = specdir;
@@ -345,11 +345,9 @@ int Actor::actorWalkStep() {
 		return 0;
 	}
 
-	// FIXME: Fingolfin asks: what do these 8000 here ?!? That looks wrong... maybe
-	// a 0x8000 was meant? But even that makes not much sense to me
-	tmpX = ((actorX + 8000) << 16) + walkdata.xfrac + (walkdata.deltaXFactor >> 8) * scalex;
+	tmpX = (actorX << 16) + walkdata.xfrac + (walkdata.deltaXFactor >> 8) * scalex;
 	walkdata.xfrac = (uint16)tmpX;
-	actorX = (tmpX >> 16) - 8000;
+	actorX = (tmpX >> 16);
 
 	tmpY = (actorY << 16) + walkdata.yfrac + (walkdata.deltaYFactor >> 8) * scaley;
 	walkdata.yfrac = (uint16)tmpY;
@@ -378,7 +376,7 @@ void Actor::setupActorScale() {
 		return;
 	}
 
-	if (ignoreBoxes != 0)
+	if (ignoreBoxes)
 		return;
 
 	if (_vm->getBoxFlags(walkbox) & kBoxPlayerOnly)
@@ -596,97 +594,103 @@ int Actor::getActorXYPos(int &xPos, int &yPos) {
 }
 
 AdjustBoxResult Actor::adjustXYToBeInBox(int dstX, int dstY, int pathfrom) {
+	const uint thresholdTable[] = { 30, 80, 0 };
 	AdjustBoxResult abr, tmp;
 	uint threshold;
-	uint best;
-	int box, iterations = 0;			/* Use iterations for those odd times we get stuck in the loop */
-	int firstValidBox, i, j;
-	byte flags, b;
-
-	if (_vm->_features & GF_SMALL_HEADER)
-		firstValidBox = 0;
-	else
-		firstValidBox = 1;
+	uint bestDist;
+	int numBoxes;
+	int box;
+	byte flags, bestBox;
+	const int firstValidBox = (_vm->_features & GF_SMALL_HEADER) ? 0 : 1;
 
 	abr.x = dstX;
 	abr.y = dstY;
-	abr.dist = 0;
+	abr.dist = INVALID_BOX;
 
-	if (ignoreBoxes == 0) {
-		threshold = 30;
+	if (ignoreBoxes)
+		return abr;
 
-		while (1) {
-			iterations++;
-			if (iterations > 1000)
-				return abr;							/* Safety net */
-			box = _vm->getNumBoxes() - 1;
-			if (box < firstValidBox)
-				return abr;
+	for (int tIdx = 0; tIdx < ARRAYSIZE(thresholdTable); tIdx++) {
+		threshold = thresholdTable[tIdx];
 
-			best = (uint) 0xFFFF;
-			b = 0;
+		numBoxes = _vm->getNumBoxes() - 1;
+		if (numBoxes < firstValidBox)
+			return abr;
 
-// FIXME - why was that check here? It apparently causes bug #643001
-//			if (!(_vm->_features & GF_OLD256) || box)
-			for (j = box; j >= firstValidBox; j--) {
-				flags = _vm->getBoxFlags(j);
+		bestDist = (uint) 0xFFFF;
+		bestBox = INVALID_BOX;
 
-				if (flags & kBoxInvisible && (!(flags & kBoxPlayerOnly) || isInClass(31)))
+		// We iterate (backwards) over all boxes, searching the one closes
+		// to the desired coordinates.
+		for (box = numBoxes; box >= firstValidBox; box--) {
+			flags = _vm->getBoxFlags(box);
+
+			if (flags & kBoxInvisible && (!(flags & kBoxPlayerOnly) || isInClass(31)))
+				continue;
+			
+			// FIXME: the following is essentially a hack to fix issues in Zak256
+			// and possibly elsewhere; but it seems the original did nothing like this
+			// so hopefully one day we'll find a 'proper' solution and can remove
+			// this hack.
+			if (pathfrom >= firstValidBox) {
+
+				if (flags & kBoxLocked && (!(flags & kBoxPlayerOnly)))
 					continue;
-				
-				if (pathfrom >= firstValidBox) {
 
+				int i = _vm->getPathToDestBox(pathfrom, box);
+				if (i == -1)
+					continue;
+
+				if (_vm->_features & GF_OLD256) {
+					// FIXME - we check here if the box suggested by getPathToDestBox
+					// is locked or not. This prevents us from walking thru
+					// closed doors in some cases in Zak256. However a better fix
+					// would be to recompute the box matrix whenever flags change.
+					flags = _vm->getBoxFlags(i);
 					if (flags & kBoxLocked && (!(flags & kBoxPlayerOnly)))
 						continue;
-
-					i = _vm->getPathToDestBox(pathfrom, j);
-					if (i == -1)
+					if (flags & kBoxInvisible && (!(flags & kBoxPlayerOnly) || isInClass(31)))
 						continue;
-
-					if (_vm->_features & GF_OLD256) {
-						// FIXME - we check here if the box suggested by getPathToDestBox
-						// is locked or not. This prevents us from walking thru
-						// closed doors in some cases in Zak256. However a better fix
-						// would be to recompute the box matrix whenever flags change.
-						flags = _vm->getBoxFlags(i);
-						if (flags & kBoxLocked && (!(flags & kBoxPlayerOnly)))
-							continue;
-						if (flags & kBoxInvisible && (!(flags & kBoxPlayerOnly) || isInClass(31)))
-							continue;
-					}
 				}
-
-				if (!_vm->inBoxQuickReject(j, dstX, dstY, threshold))
-					continue;
-
-				if (_vm->checkXYInBoxBounds(j, dstX, dstY)) {
-					abr.x = dstX;
-					abr.y = dstY;
-					abr.dist = j;
-					return abr;
-				}
-
-				tmp = _vm->getClosestPtOnBox(j, dstX, dstY);
-
-				if (tmp.dist >= best)
-					continue;
-
-				abr.x = tmp.x;
-				abr.y = tmp.y;
-
-				if (tmp.dist == 0) {
-					abr.dist = j;
-					return abr;
-				}
-				best = tmp.dist;
-				b = j;
 			}
 
-			if (threshold == 0 || threshold * threshold >= best) {
-				abr.dist = b;
+			// For increased performance, we perform a quick test if
+			// the coordinates can even be within a distance of 'threshold'
+			// pixels of the box.
+			if (!_vm->inBoxQuickReject(box, dstX, dstY, threshold))
+				continue;
+
+			// Check if the point is contained in the box. If it is,
+			// we don't have to search anymore.
+			if (_vm->checkXYInBoxBounds(box, dstX, dstY)) {
+				abr.x = dstX;
+				abr.y = dstY;
+				abr.dist = box;
 				return abr;
 			}
-			threshold = (threshold == 30) ? 80 : 0;
+
+			// Find the point in the box which is closest to our point.
+			tmp = _vm->getClosestPtOnBox(box, dstX, dstY);
+
+			// Check if the box is closer than the previous boxes.
+			if (tmp.dist < bestDist) {
+				abr.x = tmp.x;
+				abr.y = tmp.y;
+	
+				if (tmp.dist == 0) {
+					abr.dist = box;
+					return abr;
+				}
+				bestDist = tmp.dist;
+				bestBox = box;
+			}
+		}
+
+		// If the closest ('best') box we found is within the threshold, or if
+		// we are on the last run (i.e. threshold == 0), return that box.
+		if (threshold == 0 || threshold * threshold >= bestDist) {
+			abr.dist = bestBox;
+			return abr;
 		}
 	}
 
@@ -695,7 +699,6 @@ AdjustBoxResult Actor::adjustXYToBeInBox(int dstX, int dstY, int pathfrom) {
 
 void Actor::adjustActorPos() {
 	AdjustBoxResult abr;
-	byte flags;
 
 	abr = adjustXYToBeInBox(x, y, -1);
 
@@ -714,9 +717,11 @@ void Actor::adjustActorPos() {
 		stopActorMoving();
 	}
 
-	flags = _vm->getBoxFlags(walkbox);
-	if (flags & 7) {
-		turnToDirection(facing);
+	if (walkbox != INVALID_BOX) {
+		byte flags = _vm->getBoxFlags(walkbox);
+		if (flags & 7) {
+			turnToDirection(facing);
+		}
 	}
 }
 
@@ -863,9 +868,10 @@ void Scumm::processActors() {
 	for (ac = actors; ac != end; ++ac) {
 		a = *ac;
 		if (a->costume) {
-			CHECK_HEAP getMaskFromBox(a->walkbox);
+			CHECK_HEAP
 			a->drawActorCostume();
-			CHECK_HEAP a->animateCostume();
+			CHECK_HEAP
+			a->animateCostume();
 		}
 	}
 	
@@ -881,9 +887,10 @@ void Scumm::processUpperActors() {
 	for (i = 1; i < _numActors; i++) {
 		a = derefActor(i);
 		if (a->isInCurrentRoom() && a->costume && a->layer < 0) {
-			CHECK_HEAP getMaskFromBox(a->walkbox);
+			CHECK_HEAP
 			a->drawActorCostume();
-			CHECK_HEAP a->animateCostume();
+			CHECK_HEAP
+			a->animateCostume();
 		}
 	}
 }
@@ -906,58 +913,15 @@ void Actor::drawActorCostume() {
 
 		cr._outheight = _vm->virtscr[0].height;
 
-		// FIXME - Hack to fix two glitches in the scene where Bobbin
-		// heals Rusty: Bobbin's feet get masked when Rusty shows him
-		// what happens to The Forge, and Rusty gets masked after
-		// Bobbin heals him. (Room 34)
-		//
-		// It also fixes a much less noticable glitch when Bobbin
-		// jumps out of Mandible's cage. (Room 43)
-		//
-		// When an actor is moved around without regards to walkboxes,
-		// its walkbox is set to 0. Unfortunately that's a valid
-		// walkbox in older games, and its mask may be completely
-		// wrong for this purpose.
-		//
-		// So instead use the mask of the box where the actor happens
-		// to be at the moment or, if it's not in any box, don't mask
-		// at all.
-		//
-		// This is similar to the _zbuf == 100 check used for AKOS
-		// costumes, except I haven't been able to figure out the
-		// proper check here. It's not quite enough to check if
-		// ignoreBoxes != 0 and checking if walkbox == 0 yields too
-		// many false positives, e.g. Bobbin leaving the sandy beach
-		// towards the forest, or Stoke leaving the room where he
-		// locks up "Rusty".
-		//
-		// Until someone can find the proper fix, only apply it to the
-		// rooms where it's actually known to be needed.
-
-		if (_vm->_gameId == GID_LOOM256 && (_vm->_currentRoom == 34 || _vm->_currentRoom == 43) && walkbox == 0) {
-			int num_boxes, i;
-
-			cr._zbuf = 0;
-			num_boxes = _vm->getNumBoxes();
-
-			// Sometimes boxes overlap, so the direction of this
-			// loop matters in some rooms.
-
-			for (i = 0; i < num_boxes; i++) {
-				if (_vm->checkXYInBoxBounds(i, x, y)) {
-					cr._zbuf = _vm->getMaskFromBox(i);
-					break;
-				}
-			}
-		} else
-			cr._zbuf = _vm->getMaskFromBox(walkbox);
-
 		if (forceClip)
 			cr._zbuf = forceClip;
 		else if (isInClass(20))
 			cr._zbuf = 0;
-		else if (cr._zbuf > _vm->gdi._numZBuffer)
-			cr._zbuf = (byte)_vm->gdi._numZBuffer;
+		else {
+			cr._zbuf = _vm->getMaskFromBox(walkbox);
+			if (cr._zbuf > _vm->gdi._numZBuffer)
+				cr._zbuf = _vm->gdi._numZBuffer;
+		}
 
 		cr._shadow_mode = shadow_mode;
 		if (_vm->_features & GF_SMALL_HEADER)
@@ -1232,16 +1196,10 @@ void Actor::setActorCostume(int c) {
 void Actor::startWalkActor(int destX, int destY, int dir) {
 	AdjustBoxResult abr;
 
-	// FIXME: Fingolfin isn't convinced calling adjustXYToBeInBox here is the 
-	// right thing. In fact I think it might completly wrong...
-	abr = adjustXYToBeInBox(destX, destY, walkbox);
+	abr.x = destX;
+	abr.y = destY;
 
 	if (!isInCurrentRoom()) {
-		// FIXME: Should we really use abr.x / abr.y here? Shouldn't it be destX / destY?
-		// Considering that abr was obtained by adjustXYToBeInBox which works on
-		// the boxes in the *current* room no in the room the actor actually is in.
-		// Occurs in Monkey Island 1 demo, after title name.
-		warning("When is this ever triggered anyway? (%d,%d) -> (%d,%d)", x, y, abr.x, abr.y);
 		x = abr.x;
 		y = abr.y;
 		if (dir != -1)
@@ -1249,27 +1207,10 @@ void Actor::startWalkActor(int destX, int destY, int dir) {
 		return;
 	}
 
-	if (ignoreBoxes != 0) {
-		// FIXME: this seems wrong for GF_SMALL_HEADER games where walkbox
-		// is a valid box. Rather, I'd think that for these games, we should
-		// set walkbox to -1 or some other "illegal" value. The same for
-		// abr.dist (which is used to set walkdata.destbox after all).
-		// Also together with my above FIXME comment that would mean that up to
-		// here there is no reason to even call adjustXYToBeInBox....
-		abr.dist = 0;
-		walkbox = 0;
+	if (ignoreBoxes) {
+		abr.dist = INVALID_BOX;
+		walkbox = INVALID_BOX;
 	} else {
-		// FIXME: this prevents part of bug #605970 (Loom) from
-		// occuring, and also fixes a walk bug with Rusty's ghost.
-		// Not sure if there is a better way to achieve this.
-		if (walkbox == 0)
-			adjustActorPos();
-
-		// Fingolfin remarks on the above FIXME: this is yet another case of the 
-		// walbox 0 problem... In many parts of the code we use "0" to denote "illegal walkbox",
-		// which is correct for newer games but wrong for GF_SMALL_HEADER games
-		// which use -1 / 0xFF for the same purpose.
-
 		if (_vm->checkXYInBoxBounds(walkdata.destbox, abr.x, abr.y)) {
 			abr.dist = walkdata.destbox;
 		} else {
@@ -1378,7 +1319,7 @@ void Actor::walkActor() {
 
 	do {
 		moving &= ~MF_NEW_LEG;
-		if ((!walkbox && (!(_vm->_features & GF_SMALL_HEADER)))) {
+		if (walkbox == INVALID_BOX) {
 			setBox(walkdata.destbox);
 			walkdata.curbox = walkdata.destbox;
 			break;
@@ -1388,7 +1329,7 @@ void Actor::walkActor() {
 			break;
 
 		box = _vm->getPathToDestBox(walkbox, walkdata.destbox);
-		if (box == -1 || box > 0xF0) {
+		if (box < 0 || box > 0xF0) {
 			walkdata.destbox = walkbox;
 			moving |= MF_LAST_LEG;
 			return;
@@ -1419,7 +1360,7 @@ void Actor::walkActorOld() {
 	restart:
 		moving &= ~MF_NEW_LEG;
 
-		if (walkbox == 0xFF) {
+		if (walkbox == INVALID_BOX) {
 			walkbox = walkdata.destbox;
 			walkdata.curbox = walkdata.destbox;
 			moving |= MF_LAST_LEG;
@@ -1435,7 +1376,7 @@ void Actor::walkActorOld() {
 
 		next_box = _vm->getPathToDestBox(walkbox, walkdata.destbox);
 
-		if (next_box == -1) {
+		if (next_box < 0) {
 			moving |= MF_LAST_LEG;
 			return;
 		}

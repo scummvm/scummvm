@@ -542,6 +542,9 @@ Scumm::Scumm (GameDetector *detector, OSystem *syst)
 	_hexdumpScripts = false;
 	_showStack = false;
 
+	if (_features & GF_SMALL_HEADER)
+		Actor::INVALID_BOX = 255;
+
 	if (_gameId == GID_ZAK256) {	// FmTowns is 320x240
 		_screenWidth = 320;
 		_screenHeight = 240;

@@ -135,6 +135,7 @@ byte Scumm::getBoxFlags(int box) {
 
 void Scumm::setBoxScale(int box, int scale) {
 	Box *ptr = getBoxBaseAddr(box);
+	assert(ptr);
 	if (_features & GF_AFTER_V8)
 		ptr->v8.scale = TO_LE_32(scale);
 	else if (_features & GF_AFTER_V2)
@@ -144,13 +145,18 @@ void Scumm::setBoxScale(int box, int scale) {
 }
 
 void Scumm::setBoxScaleSlot(int box, int slot) {
-	Box *b = getBoxBaseAddr(box);
-	b->v8.scaleSlot = TO_LE_32(slot);
+	Box *ptr = getBoxBaseAddr(box);
+	assert(ptr);
+	ptr->v8.scaleSlot = TO_LE_32(slot);
 }
 
 int Scumm::getScale(int box, int x, int y) {
+	if (_features & GF_NO_SCALLING)
+		return 255;
+
 	Box *ptr = getBoxBaseAddr(box);
-	assert(ptr);
+	if (!ptr)
+		return 255;
 
 	if (_features & GF_AFTER_V8) {
 		int slot = FROM_LE_32(ptr->v8.scaleSlot);
@@ -181,9 +187,6 @@ int Scumm::getScale(int box, int x, int y) {
 			}
 		} else
 			return FROM_LE_32(ptr->v8.scale);
-	} else if (_features & GF_AFTER_V2) {
-		// FIXME - nothing ?!?
-		return 255;
 	} else {
 		uint16 scale = READ_LE_UINT16(&ptr->old.scale);
 
@@ -227,15 +230,19 @@ byte Scumm::getNumBoxes() {
 
 Box *Scumm::getBoxBaseAddr(int box) {
 	byte *ptr = getResourceAddress(rtMatrix, 2);
-	if (!ptr)
+	if (!ptr || box == 255)
 		return NULL;
+
 	// FIXME: In "pass to adventure", the loom demo, when bobbin enters
 	// the tent to the elders, box = 2, but ptr[0] = 2 -> errors out.
 	// Hence we disable the check for now. Maybe in PASS (and other old games)
 	// we shouldn't subtract 1 from ptr[0] when performing the check?
 	// this also seems to be incorrect for atari st demo of zak
 	// and assumingly other v2 games
-	if ((_gameId != GID_MONKEY_EGA) && (_gameId != GID_ZAK))
+	if (_gameId == GID_MONKEY_EGA) {
+		if (box < 0 || box > ptr[0] - 1)
+			warning("Illegal box %d", box);
+	} else
 		checkRange(ptr[0] - 1, 0, box, "Illegal box %d");
 
 	if (_features & GF_AFTER_V2)
@@ -273,7 +280,7 @@ int Scumm::getSpecialBox(int x, int y) {
 bool Scumm::checkXYInBoxBounds(int b, int x, int y) {
 	BoxCoords box;
 
-	if (b == 0 && (!(_features & GF_SMALL_HEADER)))
+	if (b < 0 || b == Actor::INVALID_BOX)
 		return false;
 
 	getBoxCoordinates(b, &box);
@@ -316,6 +323,7 @@ bool Scumm::checkXYInBoxBounds(int b, int x, int y) {
 
 void Scumm::getBoxCoordinates(int boxnum, BoxCoords *box) {
 	Box *bp = getBoxBaseAddr(boxnum);
+	assert(bp);
 
 	if (_features & GF_AFTER_V8) {
 		box->ul.x = (short)FROM_LE_32(bp->v8.ulx);

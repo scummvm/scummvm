@@ -83,7 +83,7 @@ public:
 	byte charset;
 	int16 newDirection;
 	byte moving;
-	byte ignoreBoxes;
+	bool ignoreBoxes;
 	byte forceClip;
 	byte initFrame, walkFrame, standFrame, talkFrame1, talkFrame2;
 	bool needRedraw, needBgReset, costumeNeedsInit, visible;
@@ -102,6 +102,8 @@ public:
 	uint16 sound[8];
 	CostumeData cost;
 	byte palette[256];
+	
+	static byte INVALID_BOX;
 
 protected:
 	Scumm *_vm;
