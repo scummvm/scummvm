@@ -68,6 +68,15 @@ void Engine::mainLoop() {
 				lua_endblock();
 			}
 			if (event.type == SDL_KEYUP && controlsEnabled_[event.key.keysym.sym]) {
+				// temporary hack for save/load request until game menu will work
+				if (event.key.keysym.sym == SDLK_F5) {
+					_savegameLoadRequest = true;
+					continue;
+				} else if (event.key.keysym.sym == SDLK_F8) {
+					_savegameSaveRequest = true;
+					continue;
+				}
+
 				lua_beginblock();
 				lua_Object handler = getEventHandler("buttonHandler");
 				if (handler != LUA_NOOBJECT) {
