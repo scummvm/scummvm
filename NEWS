@@ -8,6 +8,7 @@ For a more comprehensive changelog for the latest experimental CVS code, see:
    - Added support for V1 SCUMM games 'Maniac Mansion' and 'Zak McKracken'
 
  General:
+   - Subtitles now default to disabled. '-n' option now enabled subtitles.
    - Added HQ2x and HQ3x scalers
    - New 'from scratch' sound mixer
    - Improved native MT32 support

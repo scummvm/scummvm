@@ -1,5 +1,5 @@
 ScummVM README
-Last updated:    2003-12-09
+Last updated:    2003-12-11
 Release version: 0.5.7-cvs
 ------------------------------------------------------------------------
 
@@ -366,13 +366,13 @@ Examples:
  * Win32:
   Running Monkey Island, fullscreen, from a hard disk:
    C:\Games\LucasArts\scummvm.exe -f -pC:\Games\LucasArts\monkey\ monkey
-  Running Full Throttle from CD, fullscreen and with subtitles disabled:
+  Running Full Throttle from CD, fullscreen and with subtitles enabled:
    C:\Games\LucasArts\scummvm.exe -f -n -pD:\resource\ ft
 
  * Unix:
   Running Monkey Island, fullscreen, from a hard disk:
    /path/to/scummvm -f -p/games/LucasArts/monkey/ monkey
-  Running Full Throttle from CD, fullscreen and with subtitles disabled:
+  Running Full Throttle from CD, fullscreen and with subtitles enabled:
    /path/to/scummvm -f -n -p/cdrom/resource/ ft
 
 5.2) Language options:

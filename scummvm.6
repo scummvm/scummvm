@@ -2,7 +2,7 @@
 .\" First parameter, NAME, should be all caps
 .\" Second parameter, SECTION, should be 1-8, maybe w/ subsection
 .\" other parameters are allowed: see man(7), man(1)
-.TH SCUMMVM 6 "August 6, 2003"
+.TH SCUMMVM 6 "December 11, 2003"
 .\" Please adjust this date whenever revising the manpage.
 .\"
 .\" Some roff macros, for reference:
@@ -36,7 +36,9 @@ that may make it impossible to finish the game. Check
 .B http://www.scummvm.org/compatibility.php
 for the latest compatibility information.
 .SS OPTIONS
-If you don't pass ScummVM options it will start the graphical game launcher.
+If you don't pass ScummVM options it will start the graphical game launcher,
+which allows game selection from, and addition to, the config file.
+.P
 The interpreter expects to find the game's data files in the current directory,
 if a path isn't specified in a config file.
 You may supply a different path using -p on the command line. The name of the
@@ -321,11 +323,14 @@ Others.
 
 .SH EXAMPLES
 .TP
+.B Running the builtin game launcher
+scummvm
+.TP
 .B Running Day of the Tentacle specifying the path
 scummvm -p /usr/local/share/games/tentacle/ tentacle
 .TP
-.B Running The Dig with advmame2x graphics filter with no subtitles
-scummvm -g advmame2x -n dig
+.B Running The Dig with advmame2x graphics filter with subtitles
+scummvm -g advmame2x dig
 .TP
 .B Running The Italian version of Maniac Mansion fullscreen
 scummvm -q it -f maniac
