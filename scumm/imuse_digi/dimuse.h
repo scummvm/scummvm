@@ -97,7 +97,7 @@ private:
 	static void timer_handler(void *refConf);
 	void callback();
 	void switchToNextRegion(int track);
-	void allocSlot(int priority);
+	bool allocSlot(int priority);
 	void startSound(int soundId, const char *soundName, int soundType, int volGroupId, AudioStream *input, int hookId, int volume, int priority);
 	void selectVolumeGroup(int soundId, int volGroupId);
 

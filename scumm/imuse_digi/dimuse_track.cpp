@@ -32,7 +32,7 @@
 
 namespace Scumm {
 
-void IMuseDigital::allocSlot(int priority) {
+bool IMuseDigital::allocSlot(int priority) {
 	int l;
 	int lower_priority = 127;
 	bool found_free = false;
@@ -68,9 +68,11 @@ void IMuseDigital::allocSlot(int priority) {
 			warning("IMuseDigital::startSound(): Removed sound %d from track %d", _track[track_id]->soundId, track_id);
 		} else {
 			warning("IMuseDigital::startSound(): Priority sound too low");
-			return;
+			return false;
 		}
 	}
+
+	return true;
 }
 
 void IMuseDigital::startSound(int soundId, const char *soundName, int soundType, int volGroupId, AudioStream *input, int hookId, int volume, int priority) {
@@ -78,7 +80,10 @@ void IMuseDigital::startSound(int soundId, const char *soundName, int soundType,
 	debug(5, "IMuseDigital::startSound(%d)", soundId);
 	int l;
 
-	allocSlot(priority);
+	if (!allocSlot(priority)) {
+		warning("IMuseDigital::startSound() Can't start sound - no free slots");
+		return;
+	}
 
 	for (l = 0; l < MAX_DIGITAL_TRACKS; l++) {
 		if (!_track[l]->used && !_track[l]->handle.isActive()) {
