@@ -43,8 +43,7 @@ RSC=rc.exe
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_CONSOLE" /D "_MBCS" /Yu"stdafx.h" /FD /c
-# ADD CPP /nologo /G6 /MD /W3 /O2 /Ob2 /I "." /D "WIN32" /D "NDEBUG" /D "_CONSOLE" /D "_MBCS" /FD /c
-# SUBTRACT CPP /YX /Yc /Yu
+# ADD CPP /nologo /G6 /MD /W3 /O2 /Ob2 /I "." /I "Sound" /D "WIN32" /D "NDEBUG" /D "_CONSOLE" /D "_MBCS" /FD /c
 # ADD BASE RSC /l 0x41d /d "NDEBUG"
 # ADD RSC /l 0x41d /d "NDEBUG"
 BSC32=bscmake.exe
@@ -188,6 +187,10 @@ SOURCE=.\debug.cpp
 
 !ENDIF 
 
+# End Source File
+# Begin Source File
+
+SOURCE=.\gameDetecter.cpp
 # End Source File
 # Begin Source File
 
@@ -411,7 +414,15 @@ SOURCE=.\verbs.cpp
 # PROP Default_Filter "h;hpp;hxx;hm;inl"
 # Begin Source File
 
+SOURCE=.\akos.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\sound\fmopl.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\gameDetecter.h
 # End Source File
 # Begin Source File
 

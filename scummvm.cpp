@@ -950,7 +950,7 @@ int Scumm::normalizeAngle(int angle) {
 	return (angle+360)%360;
 }
 
-extern Scumm scumm;
+extern Scumm *scumm;
 
 void NORETURN CDECL error(const char *s, ...) {
 	char buf[1024];
@@ -960,12 +960,12 @@ void NORETURN CDECL error(const char *s, ...) {
 	vsprintf(buf, s, va);
 	va_end(va);
 
-	if (scumm._currentScript != 0xFF) {
-		ScriptSlot *ss = &scumm.vm.slot[scumm._currentScript];
+	if (scumm->_currentScript != 0xFF) {
+		ScriptSlot *ss = &scumm->vm.slot[scumm->_currentScript];
 		fprintf(stderr, "Error(%d:%d:0x%X): %s!\n",
-			scumm._roomResource,
+			scumm->_roomResource,
 			ss->number,
-			scumm._scriptPointer - scumm._scriptOrgPointer,
+			scumm->_scriptPointer - scumm->_scriptOrgPointer,
 			buf);
 	} else {
 		fprintf(stderr, "Error: %s!\n", buf);
