@@ -223,9 +223,12 @@ void SkyState::initialise(void) {
                         _system->property(OSystem::PROP_TOGGLE_FULLSCREEN, 0);
         }
 
-	if (isCDVersion())
-		_systemVars.systemFlags |= SF_ALLOW_SPEECH | SF_ALLOW_TEXT;
-	else
+	if (isCDVersion()) {
+		if (_detector->_noSubtitles)
+			_systemVars.systemFlags |= SF_ALLOW_SPEECH;
+		else
+			_systemVars.systemFlags |= SF_ALLOW_SPEECH | SF_ALLOW_TEXT;
+	} else
 		_systemVars.systemFlags |= SF_ALLOW_TEXT;
 
 	_systemVars.systemFlags |= SF_PLAY_VOCS;
