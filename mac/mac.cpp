@@ -873,7 +873,8 @@ void cd_stop() {;}
 int cd_is_running() {return 0;}
 
 void launcherLoop() {
-  /* No launcher on mac yet => stub function */
+  /* No launcher an Mac yet, probably there won't ever be one, as */
+  /* there is a nice Mac-like Launcher already. */
 }
 
 void BoxTest(int num) {
@@ -894,6 +895,12 @@ void InitMacStuff()
    	SIOUXSettings.setupmenus		= false;
 }
 
+void setWindowName(Scumm *scumm)
+{
+	StringPtr gameText = CToPascal(scumm->getGameName());
+	SetWTitle(wm->wPtr, gameText);
+}
+
 void main(void)
 {
 	InitMacStuff();
@@ -910,8 +917,7 @@ void main(void)
 	
 	scumm.scummMain(2, &gameTitle);
 	
-	StringPtr gameText = CToPascal(wm->_scumm->getGameName());
-	SetWTitle(wm->wPtr, gameText);
+	setWindowName(wm->_scumm);
 	
 	if (!(scumm._features & GF_SMALL_HEADER))
     	gui.init(&scumm);
