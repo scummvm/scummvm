@@ -120,6 +120,7 @@ void SknApplySkin() {
 	RectangleType r;
 	FormPtr frmP = FrmGetActiveForm();
 
+	WinSetDrawWindow(WinGetDisplayWindow());
 	WinScreenLock(winLockDontCare);
 	//SknSetPalette();
 	RctSetRectangle(&r,0,0,160,160);
@@ -382,15 +383,18 @@ static void SknSetPalette() {
 
 void SknUpdateList() {
 	MemHandle record;
-	UInt16 index, maxIndex, maxView;
+	Int32 index, maxIndex, maxView;
 	GameInfoType *game;
 	RectangleType rArea, rField, rCopy, rArea2x;
 	DmOpenRef skinDBP;
 
 	UInt8 txtColor, norColor, selColor, bkgColor;
 	UInt16 x,y;
+	
+	// prevent flashing screen on Zodiac ?
+	if (!OPTIONS_TST(kOptDeviceZodiac))
+		WinScreenLock(winLockCopy);
 
-	WinScreenLock(winLockCopy);
 	SknGetListBounds(&rArea, &rArea2x);
 	skinDBP = SknOpenSkin();
 	// set default bg
@@ -419,10 +423,14 @@ void SknUpdateList() {
 	maxIndex = DmNumRecords(gameDB);
 	maxView = rArea.extent.y / sknInfoListItemSize;
 
-	if (index > 0 && (index+maxView) > maxIndex) {
-		index -= (index+maxView) - maxIndex;
-		 gPrefs->listPosition = index;
-	}	
+	if (index > 0 && (index + maxView) > maxIndex)
+		index -= (index + maxView) - maxIndex;
+
+	if (index < 0)
+		index = 0;
+
+	gPrefs->listPosition = index;
+
 	SknRedrawSlider(skinDBP, index, maxIndex, maxView);
 	SknRedrawTools(skinDBP);
 	SknGetListColors(skinDBP, skinColors, &norColor, &selColor, &bkgColor);
@@ -467,7 +475,9 @@ void SknUpdateList() {
 
 	RctSetRectangle(&rArea,0,0,160,160);
 	WinSetClip(&rArea);
-	WinScreenUnlock();
+	
+	if (!OPTIONS_TST(kOptDeviceZodiac))
+		WinScreenUnlock();
 }
 
 UInt16 SknCheckClick(DmOpenRef skinDBP, Coord mx, Coord my) {
@@ -508,30 +518,21 @@ void SknSelect(Coord x, Coord y) {
 			return;
 
 		if (index < DmNumRecords(gameDB)) {
-			GameInfoType modGame;
-
+			Boolean newValue;
+			
 			oldIndex = GamGetSelected();
+
+			if (oldIndex != index && oldIndex != dmMaxRecordIndex)
+				GamUnselect();
+
 			record = DmGetRecord(gameDB, index);
 			game = (GameInfoType *)MemHandleLock(record);
 
-			MemMove(&modGame, game, sizeof(GameInfoType));	
-			modGame.selected = !modGame.selected;
-			DmWrite(game, 0, &modGame, sizeof(GameInfoType));
+			newValue = !game->selected;
+			DmWrite(game, OffsetOf(GameInfoType,selected), &newValue, sizeof(Boolean));
 
 			MemHandleUnlock(record);
 			DmReleaseRecord (gameDB, index, 0);
-
-			if (oldIndex != index && oldIndex != dmMaxRecordIndex)	{
-				record = DmGetRecord(gameDB, oldIndex);
-				game = (GameInfoType *)MemHandleLock(record);
-
-				MemMove(&modGame, game, sizeof(GameInfoType));	
-				modGame.selected = false;
-				DmWrite(game, 0, &modGame, sizeof(GameInfoType));
-
-				MemHandleUnlock(record);
-				DmReleaseRecord (gameDB, oldIndex, 0);
-			}
 			
 			lastIndex = index;
 			SknUpdateList();
