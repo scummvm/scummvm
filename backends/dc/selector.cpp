@@ -152,7 +152,7 @@ static bool checkName(const char *base, char *text = 0)
   GameDetector g;
   GameSettings gs = g.findGame(base);
 
-  if (gs.gameName) {
+  if (gs.name) {
     if(text != NULL)
       strcpy(text, gs.description);
     return true;
@@ -164,7 +164,7 @@ static const char *checkDetect(const FilesystemNode *entry)
 {
   FSList files;
   files.push_back(*entry);
-  GameList candidates;
+  DetectedGameList candidates;
 
   const PluginList &plugins = PluginManager::instance().getPlugins();
   PluginList::ConstIterator iter = plugins.begin();
@@ -173,7 +173,7 @@ static const char *checkDetect(const FilesystemNode *entry)
   }
   if (candidates.isEmpty())
     return NULL;
-  return candidates[0].gameName;
+  return candidates[0].name;
 }
 
 static bool isGame(const FilesystemNode *entry, char *base)
