@@ -62,7 +62,7 @@ class RateConverter {
 public:
 	RateConverter() {}
 	virtual ~RateConverter() {}
-	virtual int flow(AudioInputStream &input, st_sample_t *obuf, st_size_t osamp, st_volume_t vol) = 0;
+	virtual int flow(AudioInputStream &input, st_sample_t *obuf, st_size_t osamp, st_volume_t vol, byte vol_p, int8 pan) = 0;
 	virtual int drain(st_sample_t *obuf, st_size_t osamp, st_volume_t vol) = 0;
 };
 

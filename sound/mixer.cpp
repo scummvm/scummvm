@@ -487,17 +487,6 @@ void Channel::destroy() {
 	delete this;
 }
 
-static void changeVolumeAndPan(int16 *data, uint len, byte volume, int8 pan) {
-	byte volumeLeft = abs(pan - 128);
-	byte volumeRight = abs(pan + 128);
-	for (uint32 i = 0; i < len; i++) {
-		int16 sampleL = data[i * 2 + 0];
-		int16 sampleR = data[i * 2 + 1];
-		data[i * 2 + 0] = (sampleL * volume * volumeLeft) / (256 * 256);
-		data[i * 2 + 1] = (sampleR * volume * volumeRight) / (256 * 256);
-	}
-}
-
 /* len indicates the number of sample *pairs*. So a value of
    10 means that the buffer contains twice 10 sample, each
    16 bits, for a total of 40 bytes.
@@ -509,8 +498,7 @@ void Channel::mix(int16 *data, uint len) {
 		destroy();
 	} else {
 		assert(_converter);
-		_converter->flow(*_input, data, len, getVolume());
-		changeVolumeAndPan(data, len, _volume, _pan);
+		_converter->flow(*_input, data, len, getVolume(), _volume, _pan);
 	}
 }
 
@@ -586,8 +574,7 @@ void ChannelStream::mix(int16 *data, uint len) {
 	}
 
 	assert(_converter);
-	_converter->flow(*_input, data, len, getVolume());
-	changeVolumeAndPan(data, len, _volume, _pan);
+	_converter->flow(*_input, data, len, getVolume(), _volume, _pan);
 }
 
 #ifdef USE_MAD

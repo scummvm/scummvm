@@ -80,7 +80,7 @@ protected:
 
 public:
 	LinearRateConverter(st_rate_t inrate, st_rate_t outrate);
-	int flow(AudioInputStream &input, st_sample_t *obuf, st_size_t osamp, st_volume_t vol);
+	int flow(AudioInputStream &input, st_sample_t *obuf, st_size_t osamp, st_volume_t vol, byte vol_p, int8 pan);
 	int drain(st_sample_t *obuf, st_size_t osamp, st_volume_t vol) {
 		return (ST_SUCCESS);
 	}
@@ -124,7 +124,7 @@ LinearRateConverter<stereo, reverseStereo>::LinearRateConverter(st_rate_t inrate
  * Return number of samples processed.
  */
 template<bool stereo, bool reverseStereo>
-int LinearRateConverter<stereo, reverseStereo>::flow(AudioInputStream &input, st_sample_t *obuf, st_size_t osamp, st_volume_t vol)
+int LinearRateConverter<stereo, reverseStereo>::flow(AudioInputStream &input, st_sample_t *obuf, st_size_t osamp, st_volume_t vol, byte vol_p, int8 pan)
 {
 	st_sample_t *ostart, *oend;
 	st_sample_t out[2], tmpOut;
@@ -170,6 +170,13 @@ int LinearRateConverter<stereo, reverseStereo>::flow(AudioInputStream &input, st
 				out[reverseStereo ? 0 : 1] = (st_sample_t)((tmpOut * vol) >> 8);
 			}
 	
+			byte pan_l = abs(pan - 128);
+			byte pan_r = abs(pan + 128);
+			out[0] = (st_sample_t)((out[0] * vol_p) >> 8);
+			out[1] = (st_sample_t)((out[1] * vol_p) >> 8);
+			out[0] = (st_sample_t)((out[0] * pan_l) >> 8);
+			out[1] = (st_sample_t)((out[1] * pan_r) >> 8);
+
 			// output left channel
 			clampedAdd(*obuf++, out[0]);
 	
@@ -201,7 +208,7 @@ the_end:
 template<bool stereo, bool reverseStereo>
 class CopyRateConverter : public RateConverter {
 public:
-	virtual int flow(AudioInputStream &input, st_sample_t *obuf, st_size_t osamp, st_volume_t vol) {
+	virtual int flow(AudioInputStream &input, st_sample_t *obuf, st_size_t osamp, st_volume_t vol, byte vol_p, int8 pan) {
 		int16 tmp[2];
 		st_size_t len = osamp;
 		assert(input.isStereo() == stereo);
@@ -209,6 +216,12 @@ public:
 			tmp[0] = tmp[1] = (input.read() * vol) >> 8;
 			if (stereo)
 				tmp[reverseStereo ? 0 : 1] = (input.read() * vol) >> 8;
+			byte pan_l = abs(pan - 128);
+			byte pan_r = abs(pan + 128);
+			tmp[0] = ((tmp[0] * vol_p) >> 8);
+			tmp[1] = ((tmp[1] * vol_p) >> 8);
+			tmp[0] = ((tmp[0] * pan_l) >> 8);
+			tmp[1] = ((tmp[1] * pan_r) >> 8);
 			clampedAdd(*obuf++, tmp[0]);
 			clampedAdd(*obuf++, tmp[1]);
 		}
