@@ -142,6 +142,7 @@ public:
 	int open();
 	void close();
 	void send(uint32 b);
+	void sysEx (byte *msg, uint16 length);
 
 private:
 	bool _isOpen;
@@ -231,6 +232,28 @@ void MidiDriver_SEQ::send(uint32 b)
 		break;
 	}
 	write(device, buf, position);
+}
+
+void MidiDriver_SEQ::sysEx (byte *msg, uint16 length)
+{
+	if (length > 256) {
+		warning ("Cannot send SysEx block - data too large");
+		return;
+	}
+
+	unsigned char buf [1024];
+	int position = 0;
+	byte *chr = msg;
+
+	// Should be we using EV_SYSEX instead of SEQ_MIDIPUTC?
+	// I'm not sure how to send EV_SYSEX.
+	for (; length; --length) {
+		buf[position++] = SEQ_MIDIPUTC;
+		buf[position++] = (unsigned char) *chr;
+		buf[position++] = _device_num;
+		buf[position++] = 0;
+	}
+	write (device, buf, position);
 }
 
 MidiDriver *MidiDriver_SEQ_create()
