@@ -161,15 +161,16 @@ void WrappedMemoryStream<stereo, is16Bit, isUnsigned>::append(const byte *data, 
 
 #ifdef USE_MAD
 
-#define MP3_BUFFER_SIZE 131072
-
 /**
  * Playback the MP3 data in the given file for the specified duration.
  *
  * @param file		file containing the MP3 data
- * @param duration	playback duration in frames (1/75th of a second), 0 means playback until EOF
+ * @param duration	playback duration in frames (1/75th of a second), 0 means
+ *					playback until EOF
+ * @param size		optional, if non-zero this limits playback based on the
+ * 					number of input bytes rather then a duration
  */
-MP3InputStream::MP3InputStream(File *file, mad_timer_t duration) {
+MP3InputStream::MP3InputStream(File *file, mad_timer_t duration, uint size) {
 	// duration == 0 means: play everything till end of file
 	
 	_isStereo = false;
@@ -177,6 +178,7 @@ MP3InputStream::MP3InputStream(File *file, mad_timer_t duration) {
 	_file = file;
 	_rate = 0;
 	_posInFrame = 0;
+	_bufferSize = size ? size : (128 * 1024);	// Default buffer size is 128K
 	
 	_duration = duration;
 
@@ -184,9 +186,15 @@ MP3InputStream::MP3InputStream(File *file, mad_timer_t duration) {
 	mad_frame_init(&_frame);
 	mad_synth_init(&_synth);
 	
-	_ptr = (byte *)malloc(MP3_BUFFER_SIZE + MAD_BUFFER_GUARD);
-	
+	_ptr = (byte *)malloc(_bufferSize + MAD_BUFFER_GUARD);
+
 	_initialized = init();
+
+	// If a size is specified, we do not perform any further read operations
+	if (size) {
+		_file = 0;
+	}
+	
 }
 
 MP3InputStream::~MP3InputStream() {
@@ -201,7 +209,7 @@ bool MP3InputStream::init() {
 	// TODO
 	
 	// Read in the first chunk of the MP3 file
-	_size = _file->read(_ptr, MP3_BUFFER_SIZE);
+	_size = _file->read(_ptr, _bufferSize);
 	if (_size <= 0) {
 		warning("MP3InputStream: Failed to read MP3 data");
 		return false;
@@ -244,19 +252,22 @@ void MP3InputStream::refill() {
 		if (_stream.error == MAD_ERROR_BUFLEN) {
 			int offset;
 
+			if (!_file)
+				_size = -1;
+		
 			// Give up immediately if we are at the EOF already
 			if (_size <= 0)
 				return;
 
 			if (!_stream.next_frame) {
 				offset = 0;
-				memset(_ptr, 0, MP3_BUFFER_SIZE + MAD_BUFFER_GUARD);
+				memset(_ptr, 0, _bufferSize + MAD_BUFFER_GUARD);
 			} else {
 				offset = _stream.bufend - _stream.next_frame;
 				memcpy(_ptr, _stream.next_frame, offset);
 			}
 			// Read in more data from the input file
-			_size = _file->read(_ptr + offset, MP3_BUFFER_SIZE - offset);
+			_size = _file->read(_ptr + offset, _bufferSize - offset);
 			
 			// Nothing read -> EOF -> bail out
 			if (_size <= 0) {
@@ -286,8 +297,10 @@ void MP3InputStream::refill() {
 }
 
 bool MP3InputStream::eof() const {
-	// Time over -> input steam ends
-	if (mad_timer_compare(_duration, mad_timer_zero) <= 0)
+	// Time over -> input steam ends. Unless _file is 0, which
+	// means that playback is based on the number of input bytes
+	// rather than a duration.
+	if (_file && mad_timer_compare(_duration, mad_timer_zero) <= 0)
 		return true;
 	return (_posInFrame >= _synth.pcm.length);
 }
@@ -307,8 +320,9 @@ static inline int scale_sample(mad_fixed_t sample) {
 }
 
 int16 MP3InputStream::read() {
-	if (_size < 0 || _posInFrame >= _synth.pcm.length)	// EOF
+	if (_size < 0 || _posInFrame >= _synth.pcm.length) {	// EOF
 		return 0;
+	}
 
 	int16 sample;
 	if (_isStereo) {

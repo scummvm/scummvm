@@ -51,6 +51,8 @@ public:
 	//virtual int size() const = 0;
 	virtual bool isStereo() const = 0;
 	virtual bool eof() const = 0;
+
+	virtual int getRate() const { return -1; }
 };
 
 class WrappedAudioInputStream : public AudioInputStream {
@@ -75,6 +77,7 @@ class MP3InputStream : public AudioInputStream {
 	struct mad_frame _frame;
 	struct mad_synth _synth;
 	uint32 _posInFrame;
+	uint32 _bufferSize;
 	int _size;
 	bool _isStereo;
 	int _curChannel;
@@ -87,7 +90,7 @@ class MP3InputStream : public AudioInputStream {
 	bool init();
 	void refill();
 public:
-	MP3InputStream(File *file, mad_timer_t duration);
+	MP3InputStream(File *file, mad_timer_t duration, uint size = 0);
 	~MP3InputStream();
 	int16 read();
 	bool eof() const;

@@ -37,6 +37,10 @@ class Channel {
 protected:
 	SoundMixer *_mixer;
 	PlayingSoundHandle *_handle;
+#ifdef SOX_HACK
+	RateConverter *_converter;
+	AudioInputStream *_input;
+#endif
 public:
 	int _id;
 	Channel(SoundMixer *mixer, PlayingSoundHandle *handle)
@@ -44,6 +48,8 @@ public:
 		assert(mixer);
 	}
 	virtual ~Channel() {
+		delete _converter;
+		delete _input;
 		if (_handle)
 			*_handle = 0;
 	}
@@ -65,10 +71,7 @@ public:
 class ChannelRaw : public Channel {
 	byte *_ptr;
 	byte _flags;
-#ifdef SOX_HACK
-	RateConverter *_converter;
-	AudioInputStream *_input;
-#else
+#ifndef SOX_HACK
 	uint32 _pos;
 	uint32 _size;
 	uint32 _fpSpeed;
@@ -89,10 +92,7 @@ public:
 };
 
 class ChannelStream : public Channel {
-#ifdef SOX_HACK
-	RateConverter *_converter;
-	WrappedAudioInputStream *_input;
-#else
+#ifndef SOX_HACK
 	byte *_ptr;
 	byte *_endOfData;
 	byte *_endOfBuffer;
@@ -134,8 +134,12 @@ public:
 	~ChannelMP3Common();
 };
 
+#ifdef SOX_HACK
+class ChannelMP3 : public Channel {
+#else
 class ChannelMP3 : public ChannelMP3Common {
 	uint32 _position;
+#endif
 
 public:
 	ChannelMP3(SoundMixer *mixer, PlayingSoundHandle *handle, File *file, uint size);
@@ -146,8 +150,6 @@ public:
 
 #ifdef SOX_HACK
 class ChannelMP3CDMusic : public Channel {
-	RateConverter *_converter;
-	MP3InputStream *_input;
 #else
 class ChannelMP3CDMusic : public ChannelMP3Common {
 	uint32 _bufferSize;
@@ -157,7 +159,6 @@ class ChannelMP3CDMusic : public ChannelMP3Common {
 
 public:
 	ChannelMP3CDMusic(SoundMixer *mixer, PlayingSoundHandle *handle, File *file, mad_timer_t duration);
-	~ChannelMP3CDMusic();
 
 	void mix(int16 *data, uint len);
 	bool isMusicChannel() { return true; }
@@ -167,10 +168,7 @@ public:
 
 #ifdef USE_VORBIS
 class ChannelVorbis : public Channel {
-#ifdef SOX_HACK
-	RateConverter *_converter;
-	AudioInputStream *_input;
-#else
+#ifndef SOX_HACK
 	OggVorbis_File *_ov_file;
 	int _end_pos;
 #endif
@@ -178,7 +176,6 @@ class ChannelVorbis : public Channel {
 
 public:
 	ChannelVorbis(SoundMixer *mixer, PlayingSoundHandle *handle, OggVorbis_File *ov_file, int duration, bool is_cd_track);
-	~ChannelVorbis();
 
 	void mix(int16 *data, uint len);
 	bool isMusicChannel() {
@@ -702,10 +699,6 @@ ChannelRaw::ChannelRaw(SoundMixer *mixer, PlayingSoundHandle *handle, void *soun
 }
 
 ChannelRaw::~ChannelRaw() {
-#ifdef SOX_HACK
-	delete _converter;
-	delete _input;
-#endif
 	if (_flags & SoundMixer::FLAG_AUTOFREE)
 		free(_ptr);
 }
@@ -762,7 +755,7 @@ ChannelStream::ChannelStream(SoundMixer *mixer, PlayingSoundHandle *handle, void
 	
 	// Create the input stream
 	_input = makeWrappedInputStream(flags, buffer_size);
-	_input->append((const byte *)sound, size);
+	((WrappedAudioInputStream *)_input)->append((const byte *)sound, size);
 	// TODO: add support for SoundMixer::FLAG_REVERSE_STEREO
 
 	// Get a rate converter instance
@@ -791,17 +784,14 @@ ChannelStream::ChannelStream(SoundMixer *mixer, PlayingSoundHandle *handle, void
 }
 
 ChannelStream::~ChannelStream() {
-#ifdef SOX_HACK
-	delete _converter;
-	delete _input;
-#else
+#ifndef SOX_HACK
 	free(_ptr);
 #endif
 }
 
 void ChannelStream::append(void *data, uint32 len) {
 #ifdef SOX_HACK
-	_input->append((const byte *)data, len);
+	((WrappedAudioInputStream *)_input)->append((const byte *)data, len);
 #else
 	if (_endOfData + len > _endOfBuffer) {
 		/* Wrap-around case */
@@ -936,6 +926,17 @@ static inline int scale_sample(mad_fixed_t sample) {
 	return sample >> (MAD_F_FRACBITS + 1 - 16);
 }
 
+#ifdef SOX_HACK
+ChannelMP3::ChannelMP3(SoundMixer *mixer, PlayingSoundHandle *handle, File *file, uint size)
+	: Channel(mixer, handle) {
+	// Create the input stream
+	_input = new MP3InputStream(file, mad_timer_zero, size);
+
+	// Get a rate converter instance
+//printf("ChannelMP3: inrate %d, outrate %d, stereo %d\n", _input->getRate(), mixer->getOutputRate(), _input->isStereo());
+	_converter = makeRateConverter(_input->getRate(), mixer->getOutputRate(), _input->isStereo());
+}
+#else
 ChannelMP3::ChannelMP3(SoundMixer *mixer, PlayingSoundHandle *handle, File *file, uint size)
 	: ChannelMP3Common(mixer, handle) {
 	_posInFrame = 0xFFFFFFFF;
@@ -944,8 +945,23 @@ ChannelMP3::ChannelMP3(SoundMixer *mixer, PlayingSoundHandle *handle, File *file
 
 	_size = file->read(_ptr, size);
 }
+#endif
 
 void ChannelMP3::mix(int16 *data, uint len) {
+#ifdef SOX_HACK
+	assert(_input);
+	assert(_converter);
+
+	if (_input->eof()) {
+		// TODO: call drain method
+		destroy();
+		return;
+	}
+
+	const int volume = _mixer->getVolume();
+	st_size_t tmpLen = len;
+	_converter->flow(*_input, data, &tmpLen, volume);
+#else
 	const int volume = _mixer->getVolume();
 
 	// Exit if all data is used up (this also covers the case were reading from the file failed).
@@ -990,6 +1006,7 @@ void ChannelMP3::mix(int16 *data, uint len) {
 		_posInFrame = 0;
 		_position = _stream.next_frame - _ptr;
 	}
+#endif
 }
 
 #define MP3CD_BUFFERING_SIZE 131072
@@ -998,7 +1015,7 @@ void ChannelMP3::mix(int16 *data, uint len) {
 ChannelMP3CDMusic::ChannelMP3CDMusic(SoundMixer *mixer, PlayingSoundHandle *handle, File *file, mad_timer_t duration) 
 	: Channel(mixer, handle) {
 	// Create the input stream
-	_input = new MP3InputStream(file, duration);
+	_input = new MP3InputStream(file, duration, 0);
 
 	// Get a rate converter instance
 //printf("ChannelMP3CDMusic: inrate %d, outrate %d, stereo %d\n", _input->getRate(), mixer->getOutputRate(), _input->isStereo());
@@ -1013,13 +1030,6 @@ ChannelMP3CDMusic::ChannelMP3CDMusic(SoundMixer *mixer, PlayingSoundHandle *hand
 	_ptr = (byte *)malloc(MP3CD_BUFFERING_SIZE);
 }
 #endif
-
-ChannelMP3CDMusic::~ChannelMP3CDMusic() {
-#ifdef SOX_HACK
-	delete _converter;
-	delete _input;
-#endif
-}
 
 void ChannelMP3CDMusic::mix(int16 *data, uint len) {
 #ifdef SOX_HACK
@@ -1169,13 +1179,6 @@ ChannelVorbis::ChannelVorbis(SoundMixer *mixer, PlayingSoundHandle *handle, OggV
 		_end_pos = 0;
 #endif
 	_is_cd_track = is_cd_track;
-}
-
-ChannelVorbis::~ChannelVorbis() {
-#ifdef SOX_HACK
-	delete _converter;
-	delete _input;
-#endif
 }
 
 #ifdef CHUNKSIZE
