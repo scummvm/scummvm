@@ -668,8 +668,8 @@ void ScummEngine_v90he::o90_wizImageOps() {
 		_wizParams.box2.left = _wizParams.box2.right = pop();
 		break;
 	case 91: // HE99+
-		_wizParams.processFlags |= 0x10000;
-		_wizParams.unk_380 = pop();
+		_wizParams.processFlags |= kWPFDstResNum;
+		_wizParams.dstResNum = pop();
 		break;
 	case 108:
 		_wizParams.processFlags |= kWPFSetPos;
@@ -2307,11 +2307,11 @@ void ScummEngine_v90he::o90_kernelSetFunctions() {
 		break;
 	case 24:
 		_skipProcessActors = 1;
-		_fullRedraw = 1;
+		//_fullRedraw = 1;
 		break;
 	case 25:
 		_skipProcessActors = 0;
-		_fullRedraw = 1;
+		//_fullRedraw = 1;
 		break;
 	case 42:
 		_wiz._rectOverrideEnabled = true;

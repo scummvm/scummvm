@@ -1982,6 +1982,9 @@ load_game:
 
 		processDrawQue();
 
+		if (_heversion >= 99)
+			_fullRedraw = false;
+
 		// Full Throttle always redraws verbs and draws verbs before actors
 		if (_version >= 7)
 			redrawVerbs();

@@ -887,7 +887,7 @@ void ScummEngine_v72he::o72_printWizImage() {
 	wi.x1 = wi.y1 = 0;
 	wi.state = 0;
 	wi.flags = kWIFPrint;
-	drawWizImage(&wi);
+	displayWizImage(&wi);
 }
 
 void ScummEngine_v72he::o72_getArrayDimSize() {
@@ -1610,13 +1610,13 @@ void ScummEngine_v72he::o72_kernelGetFunctions() {
 }
 
 void ScummEngine_v72he::o72_drawWizImage() {
-	_wizParams.processFlags |= kWPFSetPos | kWPFNewFlags;
-	_wizParams.img.flags = pop();
-	_wizParams.img.state = 0;
-	_wizParams.img.y1 = pop();
-	_wizParams.img.x1 = pop();
-	_wizParams.img.resNum = pop();
-	displayWizComplexImage(&_wizParams);
+	WizImage wi;
+	wi.flags = pop();
+	wi.y1 = pop();
+	wi.x1 = pop();
+	wi.resNum = pop();
+	wi.state = 0;
+	displayWizImage(&wi);
 }
 
 void ScummEngine_v72he::o72_unknownCF() {

@@ -584,12 +584,12 @@ void ScummEngine_v80he::o80_drawBox() {
 }
 
 void ScummEngine_v80he::o80_drawWizPolygon() {
-	_wizParams.processFlags |= kWPFSetPos | kWPFNewFlags;
-	_wizParams.img.flags = kWIFIsPolygon;
-	_wizParams.img.state = 0;
-	_wizParams.img.y1 = _wizParams.img.x1 = pop();
-	_wizParams.img.resNum = pop();
-	displayWizComplexImage(&_wizParams);
+	WizImage wi;
+	wi.x1 = wi.y1 = pop();
+	wi.resNum = pop();
+	wi.state = 0;
+	wi.flags = kWIFIsPolygon;
+	displayWizImage(&wi);	
 }
 
 void ScummEngine_v80he::o80_unknownE0() {
@@ -608,35 +608,37 @@ void ScummEngine_v80he::o80_unknownE0() {
 	switch (subOp) {
 	case 55:
 		{
-		Actor *a = derefActorSafe(num, "o80_unknownE0");
-		int top_actor = a->_top;
-		int bottom_actor = a->_bottom;
-		a->_drawToBackBuf = true;
-		a->_needRedraw = true;
-		a->drawActorCostume();
-		a->_drawToBackBuf = false;
-		a->_needRedraw = true;
-		a->drawActorCostume();
-		a->_needRedraw = false;
+			Actor *a = derefActorSafe(num, "o80_unknownE0");
+			int top_actor = a->_top;
+			int bottom_actor = a->_bottom;
+			a->_drawToBackBuf = true;
+			a->_needRedraw = true;
+			a->drawActorCostume();
+			a->_drawToBackBuf = false;
+			a->_needRedraw = true;
+			a->drawActorCostume();
+			a->_needRedraw = false;
 
-		if (a->_top > top_actor)
-			a->_top = top_actor;
-		if (a->_bottom < bottom_actor)
-			a->_bottom = bottom_actor;
+			if (a->_top > top_actor)
+				a->_top = top_actor;
+			if (a->_bottom < bottom_actor)
+				a->_bottom = bottom_actor;
 
-		type = 2;
+			type = 2;
 		}
 		break;
 	case 63:
-		_wizParams.processFlags |= kWPFSetPos;
-		_wizParams.img.flags = 0;
-		_wizParams.img.state = 0;
-		_wizParams.img.y1 = y1;
-		_wizParams.img.x1 = x1;
-		_wizParams.img.resNum = num;
-		displayWizComplexImage(&_wizParams);
+		{
+			WizImage wi;
+			wi.flags = 0;
+			wi.y1 = y1;
+			wi.x1 = x1;
+			wi.resNum = num;
+			wi.state = 0;
+			displayWizImage(&wi);
 
-		type = 3;
+			type = 3;
+		}
 		break;
 	case 66:
 		type = 1;

@@ -71,7 +71,7 @@ struct WizParameters {
 	uint8 remapColor[256];
 	uint8 remapIndex[256];
 	int remapNum;
-	int unk_380;
+	int dstResNum;
 	byte fillColor;
 	Common::Rect box2;
 	WizImage img;
@@ -101,6 +101,7 @@ enum WizProcessFlags {
 	kWPFUseDefImgWidth = 0x2000,
 	kWPFUseDefImgHeight = 0x4000,
 	kWPFPaletteNum = 0x8000,
+	kWPFDstResNum = 0x10000,
 	kWPFFillColor = 0x20000,
 	kWPFClipBox2 = 0x40000
 };

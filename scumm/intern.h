@@ -741,11 +741,12 @@ protected:
 	int readFileToArray(int slot, int32 size);
 	void writeFileFromArray(int slot, int resID);
 
+	void displayWizImage(WizImage *pwi);
 	void displayWizComplexImage(const WizParameters *params);
 	void drawWizComplexPolygon(int resnum, int state, int po_x, int po_y, int arg14, int angle, int zoom, const Common::Rect *r);
 	void captureWizImage(int resnum, const Common::Rect& r, bool frontBuffer, int compType);
 	void getWizImageDim(int resnum, int state,  int32 &w, int32 &h);
-	uint8 *drawWizImage(const WizImage *pwi);
+	uint8 *drawWizImage(int resNum, int state, int x1, int y1, int create, const Common::Rect *clipBox, int flags, uint8 *newResourcePtr, int paletteNum);
 	void drawWizPolygon(int resnum, int state, int id, int flags);
 	void flushWizBuffer();
 

@@ -89,7 +89,7 @@ struct SpriteGroup {
 	int flags;
 	int tx;
 	int ty;
-	int field_20;
+	int dstResNum;
 	int scaling;
 	int scale_x;
 	int scale_y;

@@ -440,7 +440,7 @@ int ScummEngine_v90he::spriteGroupGet_zorderPriority(int spriteGroupId) {
 int ScummEngine_v90he::spriteGroupGet_field_20(int spriteGroupId) {
 	checkRange(_varNumSpriteGroups, 1, spriteGroupId, "Invalid sprite group %d");
 
-	return _spriteGroups[spriteGroupId].field_20;
+	return _spriteGroups[spriteGroupId].dstResNum;
 }
 
 int ScummEngine_v90he::spriteGroupGet_scale_x_ratio_mul(int spriteGroupId) {
@@ -931,8 +931,8 @@ void ScummEngine_v90he::spriteGroupSet_inc_tx_ty(int spriteGroupId, int value1, 
 void ScummEngine_v90he::spriteGroupSet_field_20(int spriteGroupId, int value) {
 	checkRange(_varNumSpriteGroups, 1, spriteGroupId, "Invalid sprite group %d");
 
-	if (_spriteGroups[spriteGroupId].field_20 != value) {
-		_spriteGroups[spriteGroupId].field_20 = value;
+	if (_spriteGroups[spriteGroupId].dstResNum != value) {
+		_spriteGroups[spriteGroupId].dstResNum = value;
 		redrawSpriteGroup(spriteGroupId);
 	}
 }
@@ -1026,7 +1026,7 @@ void ScummEngine_v90he::spritesResetGroup(int spriteGroupId) {
 	spg->flags &= ~kSGFClipBox;
 	redrawSpriteGroup(spriteGroupId);
 
-	spg->field_20 = 0;
+	spg->dstResNum = 0;
 	spg->scaling = 0;
 	spg->scale_x = 0x3F800000;
 	spg->scale_x_ratio_mul = 1;
@@ -1341,9 +1341,9 @@ void ScummEngine_v90he::spritesProcessWiz(bool arg) {
 			wiz.processFlags |= kWPFPaletteNum;
 			wiz.img.paletteNum = spi->paletteNum;
 		}
-		if (spi->res_id && spi->group_num && _spriteGroups[spi->group_num].field_20) {
-			wiz.processFlags |= 0x10000;
-			wiz.unk_380 = _spriteGroups[spi->group_num].field_20;
+		if (spi->res_id && spi->group_num && _spriteGroups[spi->group_num].dstResNum) {
+			wiz.processFlags |= kWPFDstResNum;
+			wiz.dstResNum = _spriteGroups[spi->group_num].dstResNum;
 		}
 		displayWizComplexImage(&wiz);
 	}

@@ -1246,7 +1246,7 @@ void ScummEngine_v100he::o100_wizImageOps() {
 		_wizParams.processMode = 8;
 		break;
 	case 54:
-		_wizParams.processFlags |= 0x10000;
+		_wizParams.processFlags |= kWPFDstResNum;
 		//_wizParams.unk_17C = pop();
 		//_wizParams.unk_180 = pop();
 		pop();
@@ -1346,8 +1346,8 @@ void ScummEngine_v100he::o100_wizImageOps() {
 		_wizParams.box2.left = _wizParams.box2.right = pop();
 		break;
 	case 135:
-		_wizParams.processFlags |= 0x10000;
-		_wizParams.unk_380 = pop();
+		_wizParams.processFlags |= kWPFDstResNum;
+		_wizParams.dstResNum = pop();
 		break;
 	case 136:
 		_wizParams.processFlags |= kWPFFillColor | kWPFClipBox2;
