@@ -272,7 +272,7 @@ void MusicPlayer::playMusic() {
 
 		for (uint i = 0; i < packedSize; i++)
 #if defined(SCUMM_NEED_ALIGNMENT)
-			memcpy(&_buf[i], &data[*(idx + i)], sizeof(uint16));
+			memcpy(&_buf[i], (byte*)((byte*)data + *(idx + i) * sizeof(uint16)), sizeof(uint16));
 #else
 			_buf[i] = data[*(idx + i)];
 #endif
