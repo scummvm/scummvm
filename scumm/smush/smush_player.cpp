@@ -384,7 +384,9 @@ void SmushPlayer::handleImuseAction(Chunk &b) {
 	int flags = b.getWord();
 	int unknown = b.getShort();
 	int track_flags = b.getWord();
-
+	
+	if (flags != 46)
+		return;
 	assert(flags == 46 && unknown == 0);
 	int track_id = b.getWord();
 	int index = b.getWord();
