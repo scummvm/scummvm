@@ -54,6 +54,7 @@ public:
 	virtual int32 availableSoundData() const = 0;
 	virtual void getSoundData(int16 * sound_buffer, int32 size) = 0; // size is in sample 
 	virtual void getSoundData(int8 * sound_buffer, int32 size) = 0;
+	virtual int32 getRate() = 0;
 	virtual bool getParameters(int32 &rate, bool &stereo, bool &is_16bit) = 0;
 	virtual int32 getTrackIdentifier() const = 0;
 };
@@ -94,6 +95,7 @@ public:
 	int32 availableSoundData() const;
 	void getSoundData(int16 * sound_buffer, int32 size);
 	void getSoundData(int8 * sound_buffer, int32 size) { error("16bit request for SAUD channel should never happen"); };
+	int32 getRate() { return _frequency; }
 	bool getParameters(int32 &rate, bool &stereo, bool &is_16bit) { 
 		rate = _frequency;
 		stereo = true;
@@ -146,6 +148,7 @@ public:
 	int32 availableSoundData() const;
 	void getSoundData(int16 * sound_buffer, int32 size);
 	void getSoundData(int8 * sound_buffer, int32 size);
+	int32 getRate() { return _rate; }
 	bool getParameters(int32 &rate, bool &stereo, bool &is_16bit) {
 		rate = _frequency;
 		stereo = (_channels == 2);

@@ -36,14 +36,14 @@
 
 #include "brenderer.h"
 
-class scumm_mixer;
+class ScummMixer;
 class Scumm;
 class Mixer;
 
 class ScummRenderer : public BaseRenderer {
 private:
 	Scumm * _scumm;
-	scumm_mixer * _smixer;
+	ScummMixer * _smixer;
 	uint32 _insaneSpeed;
 	volatile bool _wait;
 public:
