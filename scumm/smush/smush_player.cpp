@@ -567,9 +567,8 @@ void SmushPlayer::handleTextResource(Chunk &b) {
 			// FIXME: Is 'right' the maximum line width here, just
 			// as it is in the next case? It's used several times
 			// in The Dig's intro, where 'left' and 'right' are
-			// always 0 and 321 respectively. Someone will have to
-			// compare it to the original to see if we draw them
-			// correctly.
+			// always 0 and 321 respectively, and apparently we
+			// handle that correctly.
 			sf->drawStringWrap(str, _data, _width, _height, pos_x, MAX(pos_y, top), left, right);
 			break;
 		case 9:
