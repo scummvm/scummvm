@@ -31,9 +31,6 @@
 
 namespace Common {
 
-class File;
-
-
 /**
  * The (singleton) configuration manager, used to query & set configuration
  * values using string keys.
