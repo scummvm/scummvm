@@ -24,6 +24,9 @@
 #include "scummsys.h"
 #include "common/list.h"
 
+#include <assert.h>
+#include <string.h>
+
 namespace ScummVM {
 
 /*
