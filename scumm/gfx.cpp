@@ -2108,6 +2108,10 @@ void Scumm::dissolveEffect(int width, int height) {
 
 	blits = 0;
 	blits_before_refresh = (3 * w * h) / 25;
+	
+	// Speed up the effect for Loom
+	if (_gameId == GID_LOOM256)
+		blits_before_refresh *= 4;
 
 	for (i = 0; i < w * h; i++) {
 		x = offsets[i] % vs->width;
