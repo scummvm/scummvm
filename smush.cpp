@@ -32,7 +32,7 @@ Smush *g_smush;
 extern SoundMixer *g_mixer;
 static uint16 smushDestTable[5786];
 void vimaInit(uint16 *destTable);
-void decompressVima(const char *src, int16 *dest, int destLen, uint16 *destTable);
+void decompressVima(const byte *src, int16 *dest, int destLen, uint16 *destTable);
 
 extern SoundMixer *g_mixer;
 
@@ -101,18 +101,11 @@ void Smush::deinit() {
  	_file.close();
 }
 
-void Smush::handleBlocky16(byte *src) {
-	_blocky16.decode(_internalBuffer, src);
-}
-
 void Smush::handleWave(const byte *src, uint32 size) {
 	int16 *dst = new int16[size * _channels];
-	decompressVima((char *)src, dst, size * _channels * 2, smushDestTable);
-	
+	decompressVima(src, dst, size * _channels * 2, smushDestTable);
+
 	int flags = SoundMixer::FLAG_16BITS | SoundMixer::FLAG_AUTOFREE;
-#if SDL_BYTEORDER == SDL_LIL_ENDIAN
-	flags |= SoundMixer::FLAG_LITTLE_ENDIAN;
-#endif
 	if (_channels == 2)
 		flags |= SoundMixer::FLAG_STEREO;
 
@@ -152,7 +145,7 @@ void Smush::handleFrame() {
 
 	do {
 		if (READ_BE_UINT32(frame + pos) == MKID_BE('Bl16')) {
-			handleBlocky16(frame + pos + 8);
+			_blocky16.decode(_internalBuffer, frame + pos + 8);
 			pos += READ_BE_UINT32(frame + pos + 4) + 8;
 		} else if (READ_BE_UINT32(frame + pos) == MKID_BE('Wave')) {
 			int decompressed_size = READ_BE_UINT32(frame + pos + 8);
