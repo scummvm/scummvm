@@ -527,20 +527,20 @@ int SimonEngine::runScript() {
 
 		case 98:{									/* start vga */
 				if (!(_game & GF_SIMON2)) {
-					uint b = getVarOrWord();
-					uint c = getVarOrByte();
-					uint d = getVarOrWord();
-					uint e = getVarOrWord();
-					uint f = getVarOrWord();
-					start_vga_code(c, b / 100, b, d, e, f);
+					uint vga_sprite_id = getVarOrWord();
+					uint b = getVarOrByte();
+					uint x = getVarOrWord();
+					uint y = getVarOrWord();
+					uint base_color = getVarOrWord();
+					start_vga_code(b, vga_sprite_id / 100, vga_sprite_id, x, y, base_color);
 				} else {
-					uint a = getVarOrWord();
-					uint b = getVarOrWord();
-					uint c = getVarOrByte();
-					uint d = getVarOrWord();
-					uint e = getVarOrWord();
-					uint f = getVarOrWord();
-					start_vga_code(c, a, b, d, e, f);
+					uint vga_res = getVarOrWord();
+					uint vga_sprite_id = getVarOrWord();
+					uint b = getVarOrByte();
+					uint x = getVarOrWord();
+					uint y = getVarOrWord();
+					uint base_color = getVarOrWord();
+					start_vga_code(b, vga_res, vga_sprite_id, x, y, base_color);
 				}
 			}
 			break;
@@ -726,9 +726,9 @@ int SimonEngine::runScript() {
 			break;
 
 		case 130:{									/* set script cond */
-				uint a = getVarOrByte();
+				uint var = getVarOrByte();
 				getNextWord();
-				if (a == 1)
+				if (var == 1)
 					_script_cond_b = getNextWord();
 				else
 					_script_cond_c = getNextWord();

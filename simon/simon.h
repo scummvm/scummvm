@@ -566,13 +566,13 @@ protected:
 	void handle_verb_clicked(uint verb);
 
 	void o_set_video_mode(uint mode, uint vga_res);
-	void set_video_mode(uint a, uint b);
+	void set_video_mode(uint mode, uint vga_res_id);
 	void set_video_mode_internal(uint mode, uint vga_res_id);
 
 	void ensureVgaResLoadedC(uint vga_res);
 	void ensureVgaResLoaded(uint vga_res);
 
-	void start_vga_code(uint b, uint vga_res, uint vga_struct_id, uint c, uint d, uint f);
+	void start_vga_code(uint b, uint vga_res, uint vga_struct_id, uint x, uint y, uint base_color);
 	void o_unk26_helper(uint a, uint b, uint c, uint d, uint e, uint f, uint g, uint h);
 	void talk_with_speech(uint speech_id, uint vga_struct_id);
 	void talk_with_text(uint vga_struct_id, uint color, const char *string_ptr, uint threeval_a, int threeval_b, uint width);

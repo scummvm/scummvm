@@ -2111,7 +2111,7 @@ ThreeValues *SimonEngine::getThreeValues(uint a) {
 }
 
 void SimonEngine::o_print_str() {
-	uint vga_struct_id = getVarOrByte();
+	uint vga_sprite_id = getVarOrByte();
 	uint color = getVarOrByte();
 	uint string_id = getNextStringID();
 	const byte *string_ptr = NULL;
@@ -2127,26 +2127,26 @@ void SimonEngine::o_print_str() {
 		string_ptr = getStringPtrByID(string_id);
 	}
 
-	tv = getThreeValues(vga_struct_id);
+	tv = getThreeValues(vga_sprite_id);
 
 	if ((_game & GF_SIMON2) && (_game & GF_TALKIE)) {
-		if (speech_id != 0 && vga_struct_id == 1 && (_language == 20 || !_subtitles))
-			talk_with_speech(speech_id, vga_struct_id);
+		if (speech_id != 0 && vga_sprite_id == 1 && (_language == 20 || !_subtitles))
+			talk_with_speech(speech_id, vga_sprite_id);
 
 		if ((_game & GF_TALKIE) && (speech_id == 0))
-			o_kill_sprite_simon2(2, vga_struct_id + 2);
+			o_kill_sprite_simon2(2, vga_sprite_id + 2);
 
 		if (string_ptr != NULL && (speech_id == 0 || _subtitles))
-			talk_with_text(vga_struct_id, color, (const char *)string_ptr, tv->a, tv->b, tv->c);
+			talk_with_text(vga_sprite_id, color, (const char *)string_ptr, tv->a, tv->b, tv->c);
 
 	} else if (_game & GF_TALKIE) {
 		if (speech_id != 0)
-			talk_with_speech(speech_id, vga_struct_id);
+			talk_with_speech(speech_id, vga_sprite_id);
 		if (string_ptr != NULL && (speech_id == 0 || _subtitles))
-			talk_with_text(vga_struct_id, color, (const char *)string_ptr, tv->a, tv->b, tv->c);
+			talk_with_text(vga_sprite_id, color, (const char *)string_ptr, tv->a, tv->b, tv->c);
 
 	} else {
-		talk_with_text(vga_struct_id, color, (const char *)string_ptr, tv->a, tv->b, tv->c);
+		talk_with_text(vga_sprite_id, color, (const char *)string_ptr, tv->a, tv->b, tv->c);
 
 	}
 
@@ -3849,7 +3849,7 @@ void SimonEngine::video_copy_if_flag_0x8_c(FillOrCopyStruct *fcs) {
 	fcs->mode = 0;
 }
 
-void SimonEngine::start_vga_code(uint b, uint vga_res, uint vga_struct_id, uint c, uint d, uint f) {
+void SimonEngine::start_vga_code(uint b, uint vga_res, uint vga_sprite_id, uint x, uint y, uint base_color) {
 	VgaSprite *vsp;
 	VgaPointersEntry *vpe;
 	byte *p, *pp;
@@ -3857,7 +3857,7 @@ void SimonEngine::start_vga_code(uint b, uint vga_res, uint vga_struct_id, uint 
 
 	_lock_word |= 0x40;
 
-	if (has_vgastruct_with_id(vga_struct_id, vga_res)) {
+	if (has_vgastruct_with_id(vga_sprite_id, vga_res)) {
 		_lock_word &= ~0x40;
 		return;
 	}
@@ -3870,11 +3870,11 @@ void SimonEngine::start_vga_code(uint b, uint vga_res, uint vga_struct_id, uint 
 	vsp->priority = 0;
 	vsp->unk4 = 0;
 
-	vsp->y = d;
-	vsp->x = c;
+	vsp->y = y;
+	vsp->x = x;
 	vsp->image = 0;
-	vsp->base_color = f;
-	vsp->id = vga_struct_id;
+	vsp->base_color = base_color;
+	vsp->id = vga_sprite_id;
 	vsp->unk7 = vga_res;
 
 	for (;;) {
@@ -3893,11 +3893,11 @@ void SimonEngine::start_vga_code(uint b, uint vga_res, uint vga_struct_id, uint 
 	p = pp + READ_BE_UINT16(&((VgaFile1Header2 *) p)->id_table);
 
 	for (;;) {
-		if (READ_BE_UINT16(&((VgaFile1Struct0x6 *) p)->id) == vga_struct_id) {
+		if (READ_BE_UINT16(&((VgaFile1Struct0x6 *) p)->id) == vga_sprite_id) {
 
-			//dump_vga_script(pp + READ_BE_UINT16(&((VgaFile1Struct0x6*)p)->script_offs), vga_res, vga_struct_id);
+			//dump_vga_script(pp + READ_BE_UINT16(&((VgaFile1Struct0x6*)p)->script_offs), vga_res, vga_sprite_id);
 
-			add_vga_timer(gss->VGA_DELAY_BASE, pp + READ_BE_UINT16(&((VgaFile1Struct0x6 *) p)->script_offs), vga_struct_id, vga_res);
+			add_vga_timer(gss->VGA_DELAY_BASE, pp + READ_BE_UINT16(&((VgaFile1Struct0x6 *) p)->script_offs), vga_sprite_id, vga_res);
 			break;
 		}
 		p += sizeof(VgaFile1Struct0x6);
@@ -3910,7 +3910,7 @@ void SimonEngine::start_vga_code(uint b, uint vga_res, uint vga_struct_id, uint 
 	_lock_word &= ~0x40;
 }
 
-void SimonEngine::talk_with_speech(uint speech_id, uint vga_struct_id) {
+void SimonEngine::talk_with_speech(uint speech_id, uint vga_sprite_id) {
 	if (!(_game & GF_SIMON2)) {
 		if (speech_id == 9999) {
 			if (_subtitles)
@@ -3928,9 +3928,9 @@ void SimonEngine::talk_with_speech(uint speech_id, uint vga_struct_id) {
 				o_wait_for_vga(204);
 				o_kill_sprite_simon1(204);
 			}
-			o_kill_sprite_simon1(vga_struct_id + 201);
+			o_kill_sprite_simon1(vga_sprite_id + 201);
 			_sound->playVoice(speech_id);
-			start_vga_code(4, 2, vga_struct_id + 201, 0, 0, 0);
+			start_vga_code(4, 2, vga_sprite_id + 201, 0, 0, 0);
 		}
 	} else {
 		if (speech_id == 0xFFFF) {
@@ -3949,14 +3949,14 @@ void SimonEngine::talk_with_speech(uint speech_id, uint vga_struct_id) {
 				o_wait_for_vga(205);
 				o_kill_sprite_simon2(2, 5);
 			}
-			o_kill_sprite_simon2(2, vga_struct_id + 2);
+			o_kill_sprite_simon2(2, vga_sprite_id + 2);
 			_sound->playVoice(speech_id);
-			start_vga_code(4, 2, vga_struct_id + 2, 0, 0, 0);
+			start_vga_code(4, 2, vga_sprite_id + 2, 0, 0, 0);
 		}
 	}
 }
 
-void SimonEngine::talk_with_text(uint vga_struct_id, uint color, const char *string_ptr, uint threeval_a, int threeval_b, uint width) {
+void SimonEngine::talk_with_text(uint vga_sprite_id, uint color, const char *string_ptr, uint threeval_a, int threeval_b, uint width) {
 	char print_str_buf[0x140];
 	char *char_buf;
 	const char *string_ptr_2, *string_ptr_3;
@@ -3966,8 +3966,8 @@ void SimonEngine::talk_with_text(uint vga_struct_id, uint color, const char *str
 	uint height;
 
 	// FIXME: Simon1dos Dwarf Mine - Fix text for dwarf song
-	if (vga_struct_id >= 100)
-		vga_struct_id -= 100;
+	if (vga_sprite_id >= 100)
+		vga_sprite_id -= 100;
 
 	char_buf = print_str_buf;
 	string_ptr_3 = string_ptr_2 = string_ptr;
@@ -4197,13 +4197,13 @@ void SimonEngine::talk_with_text(uint vga_struct_id, uint color, const char *str
 
 	strcpy(char_buf, string_ptr_2);
 	if (!(_game & GF_SIMON2)) {
-		o_kill_sprite_simon1(199 + vga_struct_id);
+		o_kill_sprite_simon1(199 + vga_sprite_id);
 	} else {
-		o_kill_sprite_simon2(2, vga_struct_id);
+		o_kill_sprite_simon2(2, vga_sprite_id);
 	}
 	color = color * 3 + 192;
 
-	render_string(vga_struct_id, color, width, height, print_str_buf);
+	render_string(vga_sprite_id, color, width, height, print_str_buf);
 	num_of_rows = 4;
 	if (!(_bit_array[8] & 0x20))
 		num_of_rows = 3;
@@ -4212,9 +4212,9 @@ void SimonEngine::talk_with_text(uint vga_struct_id, uint color, const char *str
 		threeval_b = 2;
 
 	if (!(_game & GF_SIMON2)) {
-		start_vga_code(num_of_rows, 2, 199 + vga_struct_id, threeval_a >> 3, threeval_b, 12);
+		start_vga_code(num_of_rows, 2, 199 + vga_sprite_id, threeval_a >> 3, threeval_b, 12);
 	} else {
-		start_vga_code(num_of_rows, 2, vga_struct_id, threeval_a >> 3, threeval_b, 12);
+		start_vga_code(num_of_rows, 2, vga_sprite_id, threeval_a >> 3, threeval_b, 12);
 	}
 }
 

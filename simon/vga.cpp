@@ -267,7 +267,7 @@ void SimonEngine::vc_2_call() {
 }
 
 void SimonEngine::vc_3_new_sprite() {
-	uint16 a, f, base_color, x, y, vga_struct_id;
+	uint16 a, f, base_color, x, y, vga_sprite_id;
 	uint16 res;
 	VgaSprite *vsp;
 	VgaPointersEntry *vpe;
@@ -278,10 +278,10 @@ void SimonEngine::vc_3_new_sprite() {
 
 	if (_game & GF_SIMON2) {
 		f = vc_read_next_word();		/* 0 */
-		vga_struct_id = vc_read_next_word();	/* 2 */
+		vga_sprite_id = vc_read_next_word();	/* 2 */
 	} else {
-		vga_struct_id = vc_read_next_word();	/* 2 */
-		f = vga_struct_id / 100;
+		vga_sprite_id = vc_read_next_word();	/* 2 */
+		f = vga_sprite_id / 100;
 	}
 
 	x = vc_read_next_word();			/* 4 */
@@ -289,7 +289,7 @@ void SimonEngine::vc_3_new_sprite() {
 	base_color = vc_read_next_word();		/* 8 */
 
 	/* 2nd param ignored with simon1 */
-	if (has_vgastruct_with_id(vga_struct_id, f))
+	if (has_vgastruct_with_id(vga_sprite_id, f))
 		return;
 
 	vsp = _vga_sprites;
@@ -303,7 +303,7 @@ void SimonEngine::vc_3_new_sprite() {
 	vsp->image = 0;
 	vsp->x = x;
 	vsp->y = y;
-	vsp->id = vga_struct_id;
+	vsp->id = vga_sprite_id;
 	vsp->unk7 = res = f;
 
 	old_file_1 = _cur_vga_file_1;
@@ -324,7 +324,7 @@ void SimonEngine::vc_3_new_sprite() {
 	p = pp + READ_BE_UINT16(&((VgaFile1Header *) pp)->hdr2_start);
 	p = pp + READ_BE_UINT16(&((VgaFile1Header2 *) p)->id_table);
 
-	while (READ_BE_UINT16(&((VgaFile1Struct0x6 *) p)->id) != vga_struct_id)
+	while (READ_BE_UINT16(&((VgaFile1Struct0x6 *) p)->id) != vga_sprite_id)
 		p += sizeof(VgaFile1Struct0x6);
 
 #ifdef DUMP_FILE_NR
@@ -347,9 +347,9 @@ void SimonEngine::vc_3_new_sprite() {
 	}
 #endif
 
-	//dump_vga_script(_cur_vga_file_1 + READ_BE_UINT16(&((VgaFile1Struct0x6*)p)->script_offs), res, vga_struct_id);
+	//dump_vga_script(_cur_vga_file_1 + READ_BE_UINT16(&((VgaFile1Struct0x6*)p)->script_offs), res, vga_sprite_id);
 
-	add_vga_timer(gss->VGA_DELAY_BASE, _cur_vga_file_1 + READ_BE_UINT16(&((VgaFile1Struct0x6 *) p)->script_offs), vga_struct_id, res);
+	add_vga_timer(gss->VGA_DELAY_BASE, _cur_vga_file_1 + READ_BE_UINT16(&((VgaFile1Struct0x6 *) p)->script_offs), vga_sprite_id, res);
 	_cur_vga_file_1 = old_file_1;
 }
 
