@@ -3,6 +3,7 @@ MODULE := sky
 MODULE_OBJS := \
 	sky/autoroute.o \
 	sky/compact.o \
+	sky/control.o \
 	sky/debug.o \
 	sky/disk.o \
 	sky/grid.o \
@@ -15,7 +16,6 @@ MODULE_OBJS := \
 	sky/sky.o \
 	sky/sound.o \
 	sky/text.o \
-	sky/control.o \
 	sky/music/adlibchannel.o \
 	sky/music/adlibmusic.o \
 	sky/music/gmchannel.o \
