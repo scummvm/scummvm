@@ -272,7 +272,6 @@ Mixer::Mixer() :
 void Mixer::start() {
   Sound::init();
   g_mixer->setupPremix(mixerCallback, this);
-  g_mixer->bindToSystem();
   g_mixer->setVolume(100);
 }
 

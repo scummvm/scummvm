@@ -20,7 +20,7 @@
 
 #include "../bits.h"
 
-class AudioInputStream;
+class AudioStream;
 
 typedef int16 st_sample_t;
 typedef uint16 st_volume_t;
@@ -64,7 +64,7 @@ class RateConverter {
 public:
 	RateConverter() {}
 	virtual ~RateConverter() {}
-	virtual int flow(AudioInputStream &input, st_sample_t *obuf, st_size_t osamp, st_volume_t vol_l, st_volume_t vol_r) = 0;
+	virtual int flow(AudioStream &input, st_sample_t *obuf, st_size_t osamp, st_volume_t vol_l, st_volume_t vol_r) = 0;
 	virtual int drain(st_sample_t *obuf, st_size_t osamp, st_volume_t vol) = 0;
 };
 

@@ -22,13 +22,24 @@
 #include "../bits.h"
 #include <SDL.h>
 
-typedef uint32 PlayingSoundHandle;
-typedef void (*SoundProc)(void *param, byte *buf, int len);
-
+class AudioStream;
 class Channel;
 
-class SoundMixer {
+class PlayingSoundHandle {
 	friend class Channel;
+	friend class SoundMixer;
+	int val;
+	int getIndex() const { return val - 1; }
+	void setIndex(int i) { val = i + 1; }
+	void resetIndex() { val = 0; }
+public:
+	PlayingSoundHandle() { resetIndex(); }
+	bool isActive() const { return val > 0; }
+};
+
+typedef void (*SoundProc)(void *param, byte *buf, int len);
+
+class SoundMixer {
 public:
 	typedef void PremixProc (void *param, int16 *data, uint len);
 
@@ -37,12 +48,13 @@ public:
 	};
 
 	enum {
-		FLAG_UNSIGNED = 1 << 0,         // unsigned samples (default: signed)
-		FLAG_STEREO = 1 << 1,           // sound is in stereo (default: mono)
-		FLAG_16BITS = 1 << 2,           // sound is 16 bits wide (default: 8bit)
-		FLAG_AUTOFREE = 1 << 3,         // sound buffer is freed automagically at the end of playing
-		FLAG_REVERSE_STEREO = 1 << 4,   // reverse the left and right stereo channel
-		FLAG_LOOP = 1 << 5              // loop the audio
+		FLAG_UNSIGNED = 1 << 0,         /** unsigned samples (default: signed) */
+		FLAG_16BITS = 1 << 1,           /** sound is 16 bits wide (default: 8bit) */
+		FLAG_LITTLE_ENDIAN = 1 << 2,    /** sample is little endian (default: big endian) */
+		FLAG_STEREO = 1 << 3,           /** sound is in stereo (default: mono) */
+		FLAG_REVERSE_STEREO = 1 << 4,   /** reverse the left and right stereo channel */
+		FLAG_AUTOFREE = 1 << 5,         /** sound buffer is freed automagically at the end of playing */
+		FLAG_LOOP = 1 << 6              /** loop the audio */
 	};
 
 private:
@@ -52,10 +64,9 @@ private:
 	PremixProc *_premixProc;
 
 	uint _outputRate;
-
 	int _globalVolume;
-
 	bool _paused;
+	bool _mixerReady;
 
 	Channel *_channels[NUM_CHANNELS];
 
@@ -63,16 +74,18 @@ public:
 	SoundMixer();
 	~SoundMixer();
 
-	void bindToSystem();
+	bool isReady() const { return _mixerReady; };
 
 	void setupPremix(PremixProc *proc, void *param);
 
 	// start playing a raw sound
-	int playRaw(PlayingSoundHandle *handle, void *sound, uint32 size, uint rate, byte flags,
-				int id = -1, byte volume = 255, int8 pan = 0, uint32 loopStart = 0, uint32 loopEnd = 0);
+	void playRaw(PlayingSoundHandle *handle, void *sound, uint32 size, uint rate, byte flags,
+				int id = -1, byte volume = 255, int8 balance = 0, uint32 loopStart = 0, uint32 loopEnd = 0);
+
+	void playInputStream(PlayingSoundHandle *handle, AudioStream *input, bool isMusic, byte volume = 255, int8 balance = 0, int id = -1, bool autofreeStream = true);
 
 	/** Start a new stream. */
-	int newStream(PlayingSoundHandle *handle, void *sound, uint32 size, uint rate, byte flags, uint32 buffer_size, byte volume = 255, int8 pan = 0);
+	void newStream(PlayingSoundHandle *handle, uint rate, byte flags, uint32 buffer_size, byte volume = 255, int8 balance = 0);
 
 	/** Append to an existing stream. */
 	void appendStream(PlayingSoundHandle handle, void *sound, uint32 size);
@@ -83,9 +96,6 @@ public:
 	/** stop all currently playing sounds */
 	void stopAll();
 
-	/** stop playing the given channel */
-	void stopChannel(int channel);
-
 	/** stop playing the sound with given ID  */
 	void stopID(int id);
 
@@ -94,9 +104,6 @@ public:
 
 	/** pause/unpause all channels */
 	void pauseAll(bool paused);
-
-	/** pause/unpause the given channel */
-	void pauseChannel(int index, bool paused);
 
 	/** pause/unpause the sound with the given ID */
 	void pauseID(int id, bool paused);
@@ -107,8 +114,8 @@ public:
 	/** set the channel volume for the given handle (0 - 255) */
 	void setChannelVolume(PlayingSoundHandle handle, byte volume);
 
-	/** set the channel pan for the given handle (-127 ... 0 ... 127) (left ... center ... right)*/
-	void setChannelPan(PlayingSoundHandle handle, int8 pan);
+	/** set the channel balance for the given handle (-127 ... 0 ... 127) (left ... center ... right)*/
+	void setChannelBalance(PlayingSoundHandle handle, int8 balance);
 
 	/** set the global volume, 0-256 */
 	void setVolume(int volume);
@@ -120,10 +127,12 @@ public:
 	uint getOutputRate() const { return _outputRate; }
 
 private:
-	int insertChannel(PlayingSoundHandle *handle, Channel *chan);
+	bool setSoundProc(SoundProc proc, void *param);
+
+	void insertChannel(PlayingSoundHandle *handle, Channel *chan);
 
 	/** main mixer method */
-	void mix(int16 *buf, uint len);
+	void mix(int16 * buf, uint len);
 
 	static void mixCallback(void *s, byte *samples, int len);
 };

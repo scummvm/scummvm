@@ -24,9 +24,9 @@
 /**
  * Generic input stream for the resampling code.
  */
-class AudioInputStream {
+class AudioStream {
 public:
-	virtual ~AudioInputStream() {}
+	virtual ~AudioStream() {}
 
 	/**
 	 * Fill the given buffer with up to numSamples samples.
@@ -36,37 +36,61 @@ public:
 	 * happen when the stream is fully used up).
 	 * For stereo stream, buffer will be filled with interleaved
 	 * left and right channel samples.
-	 *
-	 * For maximum efficency, subclasses should always override
-	 * the default implementation!
 	 */
-	virtual int readBuffer(int16 *buffer, const int numSamples) {
-		int samples;
-		for (samples = 0; samples < numSamples && !eos(); samples++) {
-			*buffer++ = read();
-		}
-		return samples;
-	}
+	virtual int readBuffer(int16 *buffer, const int numSamples) = 0;
 
-	/** Read a singel (16 bit signed) sample from the stream. */
-	virtual int16 read() = 0;
+	/**
+	 * Read a single (16 bit signed) sample from the stream.
+	 */
+//	virtual int16 read() = 0;
 	
 	/** Is this a stereo stream? */
 	virtual bool isStereo() const = 0;
 	
-	/* End of stream reached? */
-	virtual bool eos() const = 0;
+	/**
+	 * End of data reached? If this returns true, it means that at this
+	 * time there is no data available in the stream. However there may be
+	 * more data in the future.
+	 * This is used by e.g. a rate converter to decide whether to keep on
+	 * converting data or stop.
+	 */
+	virtual bool endOfData() const = 0;
+	
+	/**
+	 * End of stream reached? If this returns true, it means that all data
+	 * in this stream is used up and no additional data will appear in it
+	 * in the future.
+	 * This is used by the mixer to decide whether a given stream shall be
+	 * removed from the list of active streams (and thus be destroyed).
+	 * By default this maps to endOfData()
+	 */
+	virtual bool endOfStream() const { return endOfData(); }
 
-	virtual int getRate() const { return -1; }
+	/** Sample rate of the stream. */
+	virtual int getRate() const = 0;
+
+	/**
+	 * This function returns the number of samples that were delivered to
+	 * the mixer which is a rough estimate of how moch time of the stream
+	 * has been played.
+	 * The exact value is not available as it needs information from the
+	 * audio device on how many samples have been already played
+	 * As our buffer is relatively short the estimate is exact enough
+	 * The return -1 is kind of a hack as this function is only required
+	 * for the video audio sync in the bs2 cutscenes I am to lazy to
+	 * implement it for all subclasses
+	 */
+	virtual int getSamplesPlayed() const { return -1; }
 };
 
-class WrappedAudioInputStream : public AudioInputStream {
+class AppendableAudioStream : public AudioStream {
 public:
 	virtual void append(const byte *data, uint32 len) = 0;
+	virtual void finish() = 0;
 };
 
-class ZeroInputStream : public AudioInputStream {
-protected:
+class ZeroInputStream : public AudioStream {
+private:
 	int _len;
 public:
 	ZeroInputStream(uint len) : _len(len) { }
@@ -77,18 +101,13 @@ public:
 		return samples;
 	}
 	int16 read() { assert(_len > 0); _len--; return 0; }
-	int size() const { return _len; }
 	bool isStereo() const { return false; }
 	bool eos() const { return _len <= 0; }
+	
+	int getRate() const { return -1; }
 };
 
-class MusicStream : public AudioInputStream {
-public:
-	virtual int getRate() const = 0;
-};
-
-
-AudioInputStream *makeLinearInputStream(byte _flags, const byte *ptr, uint32 len, uint loopOffset, uint loopLen);
-WrappedAudioInputStream *makeWrappedInputStream(byte _flags, uint32 len);
+AudioStream *makeLinearInputStream(int rate, byte _flags, const byte *ptr, uint32 len, uint loopOffset, uint loopLen);
+AppendableAudioStream *makeAppendableAudioStream(int rate, byte _flags, uint32 len);
 
 #endif

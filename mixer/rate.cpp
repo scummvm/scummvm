@@ -42,7 +42,6 @@
  */
 #define INTERMEDIATE_BUFFER_SIZE 512
 
-
 /**
  * Audio rate converter based on simple linear Interpolation.
  *
@@ -77,12 +76,11 @@ protected:
 
 public:
 	LinearRateConverter(st_rate_t inrate, st_rate_t outrate);
-	int flow(AudioInputStream &input, st_sample_t *obuf, st_size_t osamp, st_volume_t vol_l, st_volume_t vol_r);
+	int flow(AudioStream &input, st_sample_t *obuf, st_size_t osamp, st_volume_t vol_l, st_volume_t vol_r);
 	int drain(st_sample_t *obuf, st_size_t osamp, st_volume_t vol) {
 		return (ST_SUCCESS);
 	}
 };
-
 
 /*
  * Prepare processing.
@@ -121,7 +119,7 @@ LinearRateConverter<stereo, reverseStereo>::LinearRateConverter(st_rate_t inrate
  * Return number of samples processed.
  */
 template<bool stereo, bool reverseStereo>
-int LinearRateConverter<stereo, reverseStereo>::flow(AudioInputStream &input, st_sample_t *obuf, st_size_t osamp, st_volume_t vol_l, st_volume_t vol_r) {
+int LinearRateConverter<stereo, reverseStereo>::flow(AudioStream &input, st_sample_t *obuf, st_size_t osamp, st_volume_t vol_l, st_volume_t vol_r) {
 	st_sample_t *ostart, *oend;
 	st_sample_t out[2];
 
@@ -188,21 +186,51 @@ the_end:
  */
 template<bool stereo, bool reverseStereo>
 class CopyRateConverter : public RateConverter {
+	st_sample_t *_buffer;
+	st_size_t _bufferSize;
 public:
-	virtual int flow(AudioInputStream &input, st_sample_t *obuf, st_size_t osamp, st_volume_t vol_l, st_volume_t vol_r) {
-		int16 tmp[2];
-		st_size_t len = osamp;
+	CopyRateConverter() : _buffer(0), _bufferSize(0) {}
+	~CopyRateConverter() {
+		free(_buffer);
+	}
+
+	virtual int flow(AudioStream &input, st_sample_t *obuf, st_size_t osamp, st_volume_t vol_l, st_volume_t vol_r) {
 		assert(input.isStereo() == stereo);
-		while (!input.eos() && len--) {
-			tmp[0] = tmp[1] = input.read();
-			if (stereo)
-				tmp[reverseStereo ? 0 : 1] = input.read();
+		
+		st_sample_t *ptr;
+		st_size_t len;
+		
+		if (stereo)
+			osamp *= 2;
+
+		// Reallocate temp buffer, if necessary
+		if (osamp > _bufferSize) {
+			free(_buffer);
+			_buffer = (st_sample_t *)malloc(osamp * 2);
+			_bufferSize = osamp;
+		}
+
+		// Read up to 'osamp' samples into our temporary buffer
+		len = input.readBuffer(_buffer, osamp);
+		
+		// Mix the data into the output buffer
+		ptr = _buffer;
+		while (len--) {
+			st_sample_t tmp0, tmp1;
+			tmp0 = tmp1 = *ptr++;
+			if (stereo) {
+				if (reverseStereo)
+					tmp0 = *ptr++;
+				else
+					tmp1 = *ptr++;
+				len--;
+			}
 
 			// output left channel
-			clampedAdd(*obuf++, (tmp[0] * (int)vol_l) >> 8);
+			clampedAdd(*obuf++, (tmp0 * (int)vol_l) >> 8);
 	
 			// output right channel
-			clampedAdd(*obuf++, (tmp[1] * (int)vol_r) >> 8);
+			clampedAdd(*obuf++, (tmp1 * (int)vol_r) >> 8);
 		}
 		return (ST_SUCCESS);
 	}
@@ -223,6 +251,7 @@ RateConverter *makeRateConverter(st_rate_t inrate, st_rate_t outrate, bool stere
 				return new LinearRateConverter<true, false>(inrate, outrate);
 		} else
 			return new LinearRateConverter<false, false>(inrate, outrate);
+		//return new ResampleRateConverter(inrate, outrate, 1);
 	} else {
 		if (stereo) {
 			if (reverseStereo)

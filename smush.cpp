@@ -93,7 +93,6 @@ Smush::Smush() {
 	_speed = 0;
 	_channels = -1;
 	_freq = 0;
-	_soundHandle = 0;
 	_freq = 22050;
 }
 
@@ -136,11 +135,9 @@ void Smush::handleWave(const byte *src, uint32 size) {
 	int flags = SoundMixer::FLAG_16BITS | SoundMixer::FLAG_AUTOFREE;
 	if (_channels == 2)
 		flags |= SoundMixer::FLAG_STEREO;
-	if (_soundHandle == 0)
-		g_mixer->newStream(&_soundHandle, (byte *)dst, size * _channels * 2, _freq,
-							flags, 500000);
-	else
-		g_mixer->appendStream(_soundHandle, (byte *)dst, size * _channels * 2);
+	if (!_soundHandle.isActive())
+		g_mixer->newStream(&_soundHandle, _freq, flags, 500000);
+	g_mixer->appendStream(_soundHandle, (byte *)dst, size * _channels * 2);
 }
 
 void Smush::handleFrame() {
@@ -236,24 +233,23 @@ void Smush::play(const char *filename, const char *directory) {
 		char inBuf[1024], outBuf[1024], flags;
 		int status = 0;
 
-
 		warning("Decompressing SMUSH cutscene %s - This may take a minute", filename);
-		fread(inBuf, 4, sizeof(char), tmp);		//	Header, Method, Flags
+		fread(inBuf, 4, sizeof(byte), tmp);		//	Header, Method, Flags
 		flags = inBuf[4];
-		fread(inBuf, 6, sizeof(char), tmp);		// 	XFlags
+		fread(inBuf, 6, sizeof(byte), tmp);		// 	XFlags
 
 		if (((flags & 0x04) != 0) || ((flags & 0x10) != 0))	// Misc
 			error("Unsupported header flag");
 
 		if ((flags & 0x08) != 0) {				// Name
-		  while(inBuf[0] != 0) {
-			fread(inBuf, 1, sizeof(char), tmp);
-			printf("%c", inBuf[0]);
-		 }
+			while(inBuf[0] != 0) {
+				fread(inBuf, 1, sizeof(byte), tmp);
+				printf("%c", inBuf[0]);
+			}
 		}
 
-		if ((flags & 0x02 != 0))				// CRC
-			fread(inBuf, 2, sizeof(char), tmp);
+		if ((flags & 0x02) != 0)				// CRC
+			fread(inBuf, 2, sizeof(byte), tmp);
 
 		z.zalloc = NULL;
 		z.zfree = NULL;
@@ -262,15 +258,15 @@ void Smush::play(const char *filename, const char *directory) {
 		if (inflateInit2(&z, -15) != Z_OK)
 			error("Smush::play() - inflateInit error");
 
-		z.next_in = (Bytef*)inBuf;
-		z.avail_in = fread(inBuf, 1, sizeof(inBuf), tmp);
+		z.next_in = (Bytef *)inBuf;
+		z.avail_in = (uInt)fread(inBuf, 1, sizeof(inBuf), tmp);
 		z.next_out = (Bytef *)outBuf;
 		z.avail_out = sizeof(outBuf);
 
-		while(1) {
+		for (;;) {
 			if (z.avail_in == 0) {
 				z.next_in = (Bytef*)inBuf;
-				z.avail_in = fread(inBuf, 1, sizeof(inBuf), tmp);
+				z.avail_in = (uInt)fread(inBuf, 1, sizeof(inBuf), tmp);
 			}
 
 			status = inflate(&z, Z_NO_FLUSH);
@@ -293,7 +289,7 @@ void Smush::play(const char *filename, const char *directory) {
 					outFile = fopen(tmpOut, "wb");
 
 				fwrite(outBuf, 1, sizeof(outBuf), outFile);
-				z.next_out = (Bytef*)outBuf;
+				z.next_out = (Bytef *)outBuf;
 				z.avail_out = sizeof(outBuf);
 			}
 		}
@@ -360,7 +356,7 @@ FILE *File::fopenNoCase(const char *filename, const char *directory, const char 
 
 	// Record the length of the dir name (so we can cut of anything trailing it
 	// later, when we try with different file names).
-	const int dirLen = strlen(buf);
+	const int dirLen = (int)strlen(buf);
 
 	if (dirLen > 0) {
 		strcat(buf, "/");	// prevent double /
@@ -380,7 +376,7 @@ FILE *File::fopenNoCase(const char *filename, const char *directory, const char 
 	for (int dirIdx = 0; dirIdx < ARRAYSIZE(dirs); dirIdx++) {
 		buf[dirLen] = 0;
 		strcat(buf, dirs[dirIdx]);
-		int8 len = strlen(buf);
+		int len = (int)strlen(buf);
 		strcat(buf, filename);
 
 		ptr = buf + len;
@@ -443,7 +439,7 @@ bool File::open(const char *filename, const char *directory, int mode, byte encb
 
 	_encbyte = encbyte;
 
-	int len = strlen(filename);
+	int len = (int)strlen(filename);
 	if (_name != 0)
 		delete [] _name;
 	_name = new char[len+1];
@@ -524,7 +520,7 @@ uint32 File::read(void *ptr, uint32 len) {
 	if (len == 0)
 		return 0;
 
-	real_len = fread(ptr2, 1, len, _handle);
+	real_len = (uint32)fread(ptr2, 1, len, _handle);
 	if (real_len < len) {
 		clearerr(_handle);
 		_ioFailed = true;
