@@ -385,3 +385,13 @@ void IMuseDigital::pause(bool p) {
 }
 
 } // End of namespace Scumm
+DETRACKS; l++) {
+		Track *track = _track[l];
+		if (track->used) {
+			_vm->_mixer->pauseHandle(track->handle, p);
+		}
+	}
+	_pause = p;
+}
+
+} // End of namespace Scumm
