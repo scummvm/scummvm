@@ -22,7 +22,7 @@
 #ifndef BSEVENTMAN_H
 #define BSEVENTMAN_H
 
-#include "object.h"
+#include "sword1/object.h"
 
 namespace Sword1 {
 

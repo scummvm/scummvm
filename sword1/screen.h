@@ -22,7 +22,7 @@
 #ifndef BSSCREEN_H
 #define BSSCREEN_H
 
-#include "sworddefs.h"
+#include "sword1/sworddefs.h"
 
 class OSystem;
 

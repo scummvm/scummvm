@@ -23,8 +23,8 @@
 #define BSMOUSE_H
 
 #include "scummsys.h"
-#include "sworddefs.h"
-#include "object.h"
+#include "sword1/sworddefs.h"
+#include "sword1/object.h"
 
 class OSystem;
 

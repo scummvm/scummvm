@@ -20,7 +20,7 @@
  */
 
 #include "stdafx.h"
-#include "memman.h"
+#include "sword1/memman.h"
 #include "common/util.h"
 
 namespace Sword1 {

@@ -22,8 +22,8 @@
 #ifndef BSMENU_H
 #define BSMENU_H
 
-#include "sworddefs.h"
-#include "object.h"
+#include "sword1/sworddefs.h"
+#include "sword1/object.h"
 
 namespace Sword1 {
 

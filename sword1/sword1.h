@@ -25,7 +25,7 @@
 #include "base/engine.h"
 #include "common/util.h"
 #include "base/gameDetector.h"
-#include "sworddefs.h"
+#include "sword1/sworddefs.h"
 
 namespace Sword1 {
 

@@ -20,16 +20,16 @@
  */
 
 #include "stdafx.h"
-#include "mouse.h"
-#include "menu.h"
-#include "screen.h"
-#include "logic.h"
-#include "resman.h"
-#include "objectman.h"
-#include "sworddefs.h"
+#include "sword1/mouse.h"
+#include "sword1/menu.h"
+#include "sword1/screen.h"
+#include "sword1/logic.h"
+#include "sword1/resman.h"
+#include "sword1/objectman.h"
+#include "sword1/sworddefs.h"
 #include "system.h"
-#include "swordres.h"
-#include "menu.h"
+#include "sword1/swordres.h"
+#include "sword1/menu.h"
 
 namespace Sword1 {
 

@@ -20,7 +20,7 @@
  */
 
 #include "stdafx.h"
-#include "music.h"
+#include "sword1/music.h"
 #include "sound/mixer.h"
 #include "common/util.h"
 #include "common/file.h"

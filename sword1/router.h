@@ -23,7 +23,7 @@
 #define BSROUTER_H
 
 #include "scummsys.h"
-#include "object.h"
+#include "sword1/object.h"
 
 namespace Sword1 {
 

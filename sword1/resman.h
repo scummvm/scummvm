@@ -22,9 +22,9 @@
 #ifndef RESMAN_H
 #define RESMAN_H
 
-#include "memman.h"
+#include "sword1/memman.h"
 #include "file.h"
-#include "sworddefs.h"
+#include "sword1/sworddefs.h"
 
 namespace Sword1 {
 

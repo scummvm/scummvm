@@ -20,21 +20,22 @@
  */
 
 #include "stdafx.h"
-#include "logic.h"
-#include "text.h"
-#include "sound.h"
-#include "eventman.h"
-#include "menu.h"
 #include "common/util.h"
-#include "router.h"
-#include "screen.h"
-#include "mouse.h"
-#include "sword1.h"
-#include "music.h"
-#include "swordres.h"
-#include "animation.h"
 
-#include "debug.h"
+#include "sword1/logic.h"
+#include "sword1/text.h"
+#include "sword1/sound.h"
+#include "sword1/eventman.h"
+#include "sword1/menu.h"
+#include "sword1/router.h"
+#include "sword1/screen.h"
+#include "sword1/mouse.h"
+#include "sword1/sword1.h"
+#include "sword1/music.h"
+#include "sword1/swordres.h"
+#include "sword1/animation.h"
+
+#include "sword1/debug.h"
 
 namespace Sword1 {
 

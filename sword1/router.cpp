@@ -20,13 +20,13 @@
  */
 
 #include "stdafx.h"
-#include "router.h"
+#include "sword1/router.h"
 #include "common/util.h"
 #include "scummsys.h"
-#include "swordres.h"
-#include "sworddefs.h"
-#include "objectman.h"
-#include "resman.h"
+#include "sword1/swordres.h"
+#include "sword1/sworddefs.h"
+#include "sword1/objectman.h"
+#include "sword1/resman.h"
 
 namespace Sword1 {
 

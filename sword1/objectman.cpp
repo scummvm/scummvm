@@ -20,12 +20,12 @@
  */
 
 #include "stdafx.h"
-#include "objectman.h"
+#include "sword1/objectman.h"
 #include "scummsys.h"
 #include "common/util.h"
-#include "sworddefs.h"
-#include "swordres.h"
-#include "sword1.h"
+#include "sword1/sworddefs.h"
+#include "sword1/swordres.h"
+#include "sword1/sword1.h"
 
 namespace Sword1 {
 

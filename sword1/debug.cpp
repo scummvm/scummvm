@@ -20,8 +20,8 @@
  */
 
 #include "stdafx.h"
-#include "debug.h"
 #include "common/util.h"
+#include "sword1/debug.h"
 
 namespace Sword1 {
 

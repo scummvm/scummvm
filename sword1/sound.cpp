@@ -20,11 +20,11 @@
  */
 
 #include "stdafx.h"
-#include "sound.h"
+#include "sword1/sound.h"
 #include "common/util.h"
-#include "resman.h"
-#include "logic.h"
-#include "sword1.h"
+#include "sword1/resman.h"
+#include "sword1/logic.h"
+#include "sword1/sword1.h"
 
 namespace Sword1 {
 

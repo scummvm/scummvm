@@ -23,7 +23,7 @@
 #define BSCONTROL_H
 
 #include "scummsys.h"
-#include "sworddefs.h"
+#include "sword1/sworddefs.h"
 
 class OSystem;
 class SaveFileManager;

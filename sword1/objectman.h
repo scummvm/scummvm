@@ -25,8 +25,8 @@
 #define OBJECTMAN_H
 
 #include "resman.h"
-#include "sworddefs.h"
-#include "object.h"
+#include "sword1/sworddefs.h"
+#include "sword1/object.h"
 
 namespace Sword1 {
 
@@ -63,4 +63,3 @@ private:
 } // End of namespace Sword1 
 
 #endif //OBJECTMAN_H
-

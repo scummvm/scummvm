@@ -22,8 +22,8 @@
 #ifndef BSTEXT_H
 #define BSTEXT_H
 
-#include "object.h"
-#include "sworddefs.h"
+#include "sword1/object.h"
+#include "sword1/sworddefs.h"
 
 namespace Sword1 {
 

@@ -23,8 +23,8 @@
 #define BSLOGIC_H
 // combination of logic.c and scr_int.c
 
-#include "sworddefs.h"
-#include "objectman.h"
+#include "sword1/sworddefs.h"
+#include "sword1/objectman.h"
 #include "common/util.h"
 #include "sound/mixer.h"
 
