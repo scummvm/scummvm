@@ -39,6 +39,7 @@ struct SystemVars {
 	uint16 currentMusic;
 	bool pastIntro;
 	bool quitting;
+	bool paused;
 };
 
 struct Compact;

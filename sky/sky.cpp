@@ -113,7 +113,7 @@ namespace Sky {
 
 void *SkyEngine::_itemList[300];
 
-SystemVars SkyEngine::_systemVars = {0, 0, 0, 0, 4316, 0, 0, false, false };
+SystemVars SkyEngine::_systemVars = {0, 0, 0, 0, 4316, 0, 0, false, false, false };
 
 SkyEngine::SkyEngine(GameDetector *detector, OSystem *syst)
 	: Engine(syst), _fastMode(0) {
@@ -142,6 +142,14 @@ void SkyEngine::initVirgin() {
 
 void SkyEngine::handleKey(void) {
 
+	if (_keyPressed && _systemVars.paused) {
+		_skySound->fnUnPauseFx();
+		_systemVars.paused = false;
+		_skyScreen->setPaletteEndian((uint8 *)_skyCompact->fetchCpt(SkyEngine::_systemVars.currentPalette));
+		_keyFlags = _keyPressed = 0;
+		return;
+	}
+
 	if (_keyFlags == OSystem::KBD_CTRL) {
 		if (_keyPressed == 'f')
 			_fastMode ^= 1;
@@ -150,17 +158,32 @@ void SkyEngine::handleKey(void) {
 		else if (_keyPressed == 'd')
 			_debugger->attach();
 	} else {
-		if (_keyPressed == '`' || _keyPressed == '~' || _keyPressed == '#')
+		switch (_keyPressed) {
+		case '`':
+		case '~':
+		case '#':
 			_debugger->attach();
-		
-		if (_keyPressed == 63)
+			break;
+		case 63:
 			_skyControl->doControlPanel();
+			break;
 
-		if ((_keyPressed == 27) && (!_systemVars.pastIntro))
-			_skyControl->restartGame();
+		case 27:
+			if (!_systemVars.pastIntro)
+				_skyControl->restartGame();
+			break;
 
-		if (_keyPressed == '.')
+		case '.':
 			_skyMouse->logicClick();
+			break;
+
+		case 'p':
+			_skyScreen->halvePalette();
+			_skySound->fnPauseFx();
+			_systemVars.paused = true;
+			break;
+
+		}
 	}
 	_keyFlags = _keyPressed = 0;
 }
@@ -211,6 +234,12 @@ int SkyEngine::go() {
 		_skySound->checkFxQueue();
 		_skyMouse->mouseEngine((uint16)_mouseX, (uint16)_mouseY);
 		handleKey();
+		while (_systemVars.paused) {
+			_system->updateScreen();			
+			delay(300);
+			handleKey();
+		}
+
 		_skyLogic->engine();
 		_skyScreen->recreate();
 		_skyScreen->spriteEngine();
