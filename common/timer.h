@@ -36,7 +36,7 @@ class Timer {
 
 private:
 	Engine *_engine;
-	void *_mutex;
+	OSystem::MutexRef _mutex;
 	void *_timerHandler;
 	int32 _thisTime;
 	int32 _lastTime;

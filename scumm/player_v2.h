@@ -24,6 +24,7 @@
 #define PLAYER_V2_H
 
 #include "common/scummsys.h"
+#include "common/system.h"
 
 #if !defined(__GNUC__)
 	#pragma START_PACK_STRUCTS
@@ -116,7 +117,7 @@ private:
 	byte *next_data;
 	byte *retaddr;
 
-	void *_mutex;
+	OSystem::MutexRef _mutex;
 	void mutex_up() { _system->lock_mutex (_mutex); }
 	void mutex_down() { _system->unlock_mutex (_mutex); }
 

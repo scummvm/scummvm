@@ -48,7 +48,7 @@ struct MusicInfo {
 class MidiPlayer : public MidiDriver {
 protected:
 	OSystem *_system;
-	void *_mutex;
+	OSystem::MutexRef _mutex;
 	MidiDriver *_driver;
 
 	MusicInfo _music;

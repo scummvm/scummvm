@@ -19,6 +19,7 @@
  */
 
 #include "stdafx.h"
+#include "engine.h"
 #include "util.h"
 
 //
@@ -163,5 +164,23 @@ uint RandomSource::getRandomNumber(uint max) {
 
 uint RandomSource::getRandomNumberRng(uint min, uint max) {
 	return getRandomNumber(max - min) + min;
+}
+
+StackLock::StackLock(OSystem::MutexRef mutex) : _mutex(mutex) {
+	lock();
+}
+
+StackLock::~StackLock() {
+	unlock();
+}
+
+void StackLock::lock() {
+	assert(g_system);
+	g_system->lock_mutex(_mutex);
+}
+
+void StackLock::unlock() {
+	assert(g_system);
+	g_system->unlock_mutex(_mutex);
 }
 

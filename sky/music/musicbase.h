@@ -69,7 +69,7 @@ protected:
 	uint32 _aktTime;
 	Actions _onNextPoll;
 	SkyChannelBase *_channels[10];
-	void *_mutex;
+	OSystem::MutexRef _mutex;
 	
 	virtual void setupPointers(void) = 0;
 	virtual void setupChannels(uint8 *channelData) = 0;

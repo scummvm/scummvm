@@ -24,6 +24,7 @@
 #define IMUSE_H
 
 #include "scummsys.h"
+#include "common/system.h"
 
 class IMuseInternal;
 class MidiDriver;
@@ -36,7 +37,7 @@ class IMuse {
 private:
 	OSystem *_system;
 	IMuseInternal *_target;
-	void *_mutex;
+	OSystem::MutexRef _mutex;
 
 	IMuse (OSystem *system, IMuseInternal *target);
 	void in();

@@ -54,7 +54,7 @@ private:
 	static void onGenerateSamples(void *s, byte *samples, int len);
 
 	OSystem *_syst;
-	void *_mutex;
+	OSystem::MutexRef _mutex;
 
 	void *_premixParam;
 	PremixProc *_premixProc;

@@ -22,6 +22,7 @@
 #ifndef SOUND_MPU401_H
 #define SOUND_MPU401_H
 
+#include "common/system.h"
 #include "mididrv.h"
 
 ////////////////////////////////////////
@@ -79,7 +80,7 @@ private:
 
 	MidiChannel_MPU401 _midi_channels [16];
 	volatile bool _started_thread;
-	void *_mutex; // Concurrent shutdown barrier
+	OSystem::MutexRef _mutex; // Concurrent shutdown barrier
 	volatile TimerCallback _timer_proc;
 	void *_timer_param;
 
