@@ -126,11 +126,11 @@ EditGameDialog::EditGameDialog(NewGui *gui, Config &config, const String &domain
 	_fullscreenCheckbox->setState(_config.getBool("fullscreen", false, _domain));
 
 	// Display 'Amiga' checkbox, but only for Scumm games.
-	if (GID_SIMON_FIRST <= v->id && v->id <= GID_SIMON_LAST) {
-		_amigaPalCheckbox = 0;
-	} else {
+	if (GID_SCUMM_FIRST <= v->id && v->id <= GID_SCUMM_LAST) {
 		_amigaPalCheckbox = new CheckboxWidget(this, 15, 82, 200, 16, "Use Amiga Palette", 0, 'A');
 		_amigaPalCheckbox->setState(_config.getBool("amiga", false, _domain));
+	} else {
+		_amigaPalCheckbox = 0;
 	}
 
 	// Add OK & Cancel buttons
