@@ -1632,7 +1632,7 @@ void Scumm_v5::o5_roomOps() {
 		break;
 	case 2:											/* room color */
 		if (_features & GF_SMALL_HEADER) {
-			if (!(_features & GF_AFTER_V2)) {
+			if (!(_features & GF_AFTER_V3)) {
 				a = getVarOrDirectWord(0x80);
 				b = getVarOrDirectWord(0x40);
 			}
