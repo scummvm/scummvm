@@ -94,7 +94,8 @@ enum GameFeatures {
 	GF_NES                 = 1 << 18,
 	GF_ATARI_ST            = 1 << 19,
 	GF_MACINTOSH           = 1 << 20,
-	GF_DEMO			       = 1 << 21,
+	GF_PC		       = 1 << 21,
+	GF_DEMO		       = 1 << 22,
 
 	GF_EXTERNAL_CHARSET    = GF_SMALL_HEADER
 };

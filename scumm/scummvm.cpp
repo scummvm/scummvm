@@ -1131,7 +1131,7 @@ void ScummEngine::initScummVars() {
 		case MD_PCJR:  VAR(VAR_SOUNDCARD) = 1; break;
 		default:       
 			if ((_gameId == GID_MONKEY_EGA || _gameId == GID_MONKEY_VGA || _gameId == GID_LOOM)
-			   &&  !(_features & GF_AMIGA || _features & GF_ATARI_ST || _features & GF_MACINTOSH || _features & GF_FMTOWNS)) {
+			   &&  (_features & GF_PC)) {
 				if (_gameId == GID_LOOM) {
 					char buf[50];
 					uint i = 82;
@@ -2837,6 +2837,7 @@ Engine *Engine_SCUMM_create(GameDetector *detector, OSystem *syst) {
 		game.features |= GF_MACINTOSH;
 		break;
 	default:
+		game.features |= GF_PC;
 		break;
 	}
 
