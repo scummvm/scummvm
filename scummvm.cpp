@@ -241,7 +241,7 @@ int Scumm::scummLoop(int delta)
 	} else {
 		_vars[VAR_CAMERA_POS_X] = camera._cur.x;
 	}
-	_vars[VAR_HAVE_MSG] = _haveMsg;
+	_vars[VAR_HAVE_MSG] = (_haveMsg == 0xFE) ? 0xFF : _haveMsg;
 	_vars[VAR_VIRT_MOUSE_X] = _virtual_mouse_x;
 	_vars[VAR_VIRT_MOUSE_Y] = _virtual_mouse_y;
 	_vars[VAR_MOUSE_X] = mouse.x;

@@ -202,12 +202,12 @@ void Scumm::CHARSET_1()
 	Actor *a;
 	byte *buffer;
 
+	if (!_haveMsg)
+		return;
+
 	if (!(_features & GF_AFTER_V7)) {
-		if (!_haveMsg || (camera._dest.x >> 3) != (camera._cur.x >> 3) ||
+		if ((camera._dest.x >> 3) != (camera._cur.x >> 3) ||
 				camera._cur.x != camera._last.x)
-			return;
-	} else {
-		if (!_haveMsg)
 			return;
 	}
 
@@ -279,10 +279,10 @@ void Scumm::CHARSET_1()
 		charset._strBottom = gdi._mask_bottom;
 	}
 
-	if (!_haveMsg || _talkDelay)
+	if (_talkDelay)
 		return;
 
-	if (_haveMsg != 0xFF) {
+	if (_haveMsg != 0xFF && _haveMsg != 0xFE) {
 		if (_sfxMode == 0)
 			stopTalk();
 		return;
@@ -331,6 +331,8 @@ void Scumm::CHARSET_1()
 	do {
 		c = *buffer++;
 		if (c == 0) {
+			// End of text reached, set _haveMsg to 1 so that the text will be
+			// removed next time CHARSET_1 is called.
 			_haveMsg = 1;
 			_keepText = false;
 			break;
@@ -365,11 +367,11 @@ void Scumm::CHARSET_1()
 				charset.printCharOld(c);
 			else if (!(_features & GF_AFTER_V6)) {
 //                                if (!_vars[VAR_V5_CHARFLAG]) { /* FIXME */
-				if (!(a && _noSubtitles))
+				if (!(_haveMsg == 0xFE && _noSubtitles))
 					charset.printChar(c);
 //                                }
 			} else {
-				if (!(a && _noSubtitles))
+				if (!(_haveMsg == 0xFE && _noSubtitles))
 					charset.printChar(c);
 			}
 
@@ -381,7 +383,8 @@ void Scumm::CHARSET_1()
 
 		c = *buffer++;
 		if (c == 3) {
-			_haveMsg = 0xFF;
+			if (_haveMsg != 0xFE)
+				_haveMsg = 0xFF;
 			_keepText = false;
 			break;
 		} else if (c == 1) {
@@ -405,6 +408,10 @@ void Scumm::CHARSET_1()
 																														 24);
 			talkSound(tmpA, tmpB, 2);
 			buffer += 14;
+			
+			// Set flag that speech variant exist of this msg
+			if (_haveMsg == 0xFF)
+				_haveMsg = 0xFE;
 		} else if (c == 14) {
 			int oldy = getResourceAddress(rtCharset, charset._curId)[30];
 
