@@ -40,6 +40,7 @@ void Scumm::openRoom(int room) {
 	bool result;
 	char buf[128];
 	char buf2[128] = "";
+	byte encByte = 0;
 
 	debug(9, "openRoom(%d)", room);
 	assert(room >= 0);
@@ -51,7 +52,6 @@ void Scumm::openRoom(int room) {
 
 	/* Room -1 means close file */
 	if (room == -1) {
-		_encbyte = 0;
 		deleteRoomOffsets();
 		_fileHandle.close();
 		return;
@@ -92,28 +92,28 @@ void Scumm::openRoom(int room) {
 					sprintf(buf2, "%s.sm%.1d",  _exe_name, room == 0 ? 0 : res.roomno[rtRoom][room]);
 			}
 
-			_encbyte = (_features & GF_USE_KEY) ? 0x69 : 0;
+			encByte = (_features & GF_USE_KEY) ? 0x69 : 0;
 		} else if (!(_features & GF_SMALL_NAMES)) {
 			if (room == 0 || room >= 900) {
 				sprintf(buf, "%.3d.lfl", room);
-				_encbyte = 0;
-				if (openResourceFile(buf)) {
+				encByte = 0;
+				if (openResourceFile(buf, encByte)) {
 					return;
 				}
 				askForDisk(buf, room == 0 ? 0 : res.roomno[rtRoom][room]);
 
 			} else {
 				sprintf(buf, "disk%.2d.lec", room == 0 ? 0 : res.roomno[rtRoom][room]);
-				_encbyte = 0x69;
+				encByte = 0x69;
 			}
 		} else {
 			sprintf(buf, "%.2d.lfl", room);
-			_encbyte = (_features & GF_USE_KEY) ? 0xFF : 0;
+			encByte = (_features & GF_USE_KEY) ? 0xFF : 0;
 		}
 
-		result = openResourceFile(buf);
+		result = openResourceFile(buf, encByte);
 		if ((result == false) && (buf2[0]))
-			result = openResourceFile(buf2);
+			result = openResourceFile(buf2, encByte);
 			
 		if (result) {
 			if (room == 0)
@@ -134,8 +134,8 @@ void Scumm::openRoom(int room) {
 
 	do {
 		sprintf(buf, "%.3d.lfl", room);
-		_encbyte = 0;
-		if (openResourceFile(buf))
+		encByte = 0;
+		if (openResourceFile(buf, encByte))
 			break;
 		askForDisk(buf, room == 0 ? 0 : res.roomno[rtRoom][room]);
 	} while (1);
@@ -147,7 +147,6 @@ void Scumm::openRoom(int room) {
 void Scumm::closeRoom() {
 	if (_lastLoadedRoom != -1) {
 		_lastLoadedRoom = -1;
-		_encbyte = 0;
 		deleteRoomOffsets();
 		_fileHandle.close();
 	}
@@ -205,14 +204,14 @@ void Scumm::readRoomsOffsets() {
 	}
 }
 
-bool Scumm::openResourceFile(const char *filename) {
+bool Scumm::openResourceFile(const char *filename, byte encByte) {
 	debug(9, "openResourceFile(%s)", filename);
 
-	if (_fileHandle.isOpen() == true) {
+	if (_fileHandle.isOpen()) {
 		_fileHandle.close();
 	}
 
-	_fileHandle.open(filename, getGameDataPath(), 1, _encbyte);
+	_fileHandle.open(filename, getGameDataPath(), 1, encByte);
 
 	return _fileHandle.isOpen();
 }
@@ -1661,7 +1660,7 @@ void Scumm::readMAXS() {
 		_shadowPalette = (byte *)calloc(_shadowPaletteSize, 1);
 
 	allocateArrays();
-	_dynamicRoomOffsets = 1;
+	_dynamicRoomOffsets = true;
 }
 
 void Scumm::allocateArrays() {

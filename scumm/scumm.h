@@ -604,7 +604,6 @@ protected:
 	void setStringVars(int i);
 
 	/* Should be in Resource class */
-	byte _encbyte;
 	File _fileHandle;
 	uint32 _fileOffset;
 	int _resourceHeaderSize;
@@ -622,7 +621,7 @@ protected:
 	void deleteRoomOffsets();
 	void readRoomsOffsets();
 	void askForDisk(const char *filename, int disknum);
-	bool openResourceFile(const char *filename);
+	bool openResourceFile(const char *filename, byte encByte);
 
 	void loadPtrToResource(int type, int i, const byte *ptr);
 	void readResTypeList(int id, uint32 tag, const char *name);

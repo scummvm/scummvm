@@ -306,7 +306,6 @@ Scumm::Scumm (GameDetector *detector, OSystem *syst)
 	memset(_scummStack, 0, sizeof(_scummStack));
 	_keyScriptKey = 0;
 	_keyScriptNo = 0;
-	_encbyte = 0;
 	memset(&_fileHandle, 0, sizeof(File));
 	_fileOffset = 0;
 	_exe_name = NULL;
