@@ -94,7 +94,7 @@ Actor::Actor(SagaEngine *vm) : _vm(vm) {
 	_xCellCount = _vm->getDisplayWidth() / 2;
 
 	_pathCellCount = _yCellCount * _xCellCount;
-	_pathCell = (byte*)malloc(_pathCellCount);
+	_pathCell = (int*)malloc(_pathCellCount * sizeof *_pathCell);
 	
 	_pathRect.left = 0;
 	_pathRect.right = _vm->getDisplayWidth();
@@ -1120,7 +1120,7 @@ void Actor::findActorPath(ActorData * actor, const Point &pointFrom, const Point
 	Point bestPoint;
 	Point maskPoint;
 	int maskType1, maskType2;
-	byte cellValue;
+	int cellValue;
 	int i;
 	Rect intersect;
 	
@@ -1140,7 +1140,7 @@ void Actor::findActorPath(ActorData * actor, const Point &pointFrom, const Point
 			maskType1 = _vm->_scene->getBGMaskType(maskPoint);
 			maskPoint.x += 1;
 			maskType2 = _vm->_scene->getBGMaskType(maskPoint);
-			cellValue = (maskType1 | maskType2) ? 'W' : -1;
+			cellValue = (maskType1 | maskType2) ? kPathCellBarrier : kPathCellEmpty;
 			setPathCell(iteratorPoint, cellValue);
 		}
 	}
@@ -1158,7 +1158,7 @@ void Actor::findActorPath(ActorData * actor, const Point &pointFrom, const Point
 
 		for (iteratorPoint.y = intersect.top; iteratorPoint.y < intersect.bottom; iteratorPoint.y++) {
 			for (iteratorPoint.x = 0; iteratorPoint.x < _xCellCount; iteratorPoint.x++) {
-				setPathCell(iteratorPoint, 'W');
+				setPathCell(iteratorPoint, kPathCellBarrier);
 			}
 		}
 	}
@@ -1234,7 +1234,7 @@ bool Actor::scanPathLine(const Point &point1, const Point &point2) {
 
 		iteratorPoint.x = point.x >> 1;
 		iteratorPoint.y = point.y - _vm->getPathYOffset();
-		if (getPathCell(iteratorPoint) == 'W')
+		if (getPathCell(iteratorPoint) == kPathCellBarrier)
 			return false;	
 	}
 	return true;
@@ -1284,14 +1284,7 @@ int Actor::fillPathArray(const Point &pointFrom, const Point &pointTo, Point &be
 			Point nextPoint;
 			nextPoint.x = samplePathDirection->x + pathDirection->x;
 			nextPoint.y = samplePathDirection->y + pathDirection->y;
-			// FIXME: The following two "if" statements are equivalent, but the first one at least
-			// generates no warning ;-)
-			// getPathCell returns a byte, which is unsigned, so "getPathCell(nextPoint)" < 0 is always false.
-			// I assume that the proper fix would be to change the return value of getPathCell to be signed
-			// or something like that, but I'll leave that to the authors...
-			// Alas, once more, compiling with all warnings and -Werror proves useful :-)
-			if (false) {
-			//if ((nextPoint.x >= 0) && (nextPoint.y >= 0) && (nextPoint.x < _xCellCount) && (nextPoint.y < _yCellCount) && (getPathCell(nextPoint) < 0)) {
+			if ((nextPoint.x >= 0) && (nextPoint.y >= 0) && (nextPoint.x < _xCellCount) && (nextPoint.y < _yCellCount) && (getPathCell(nextPoint) == kPathCellEmpty)) {
 				setPathCell(nextPoint, samplePathDirection->direction);
 
 				newPathDirectionIterator = pathDirectionList.pushBack();

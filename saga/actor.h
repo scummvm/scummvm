@@ -111,6 +111,10 @@ enum ActorFlagsEx {
 	kActorRandom = (1 << 10)
 };
 
+enum PathCellType {
+	kPathCellEmpty = -1,
+	kPathCellBarrier = 0x57
+};
 
 struct PathDirectionData {
 	int direction;
@@ -279,10 +283,10 @@ private:
 	void findActorPath(ActorData * actor, const Point &pointFrom, const Point &pointTo);
 	void handleSpeech(int msec);
 	void handleActions(int msec, bool setup);
-	void setPathCell(const Point &testPoint, byte value) {
+	void setPathCell(const Point &testPoint, int value) {
 		_pathCell[testPoint.x + testPoint.y * _xCellCount] = value;
 	}
-	byte getPathCell(const Point &testPoint) {
+	int getPathCell(const Point &testPoint) {
 		return _pathCell[testPoint.x + testPoint.y * _xCellCount];
 	}
 	bool scanPathLine(const Point &point1, const Point &point2);
@@ -296,7 +300,7 @@ private:
 	SpeechData _activeSpeech;
 	Rect _barrierList[ACTOR_BARRIERS_MAX];
 	int _barrierCount;
-	byte *_pathCell;
+	int *_pathCell;
 	int _pathCellCount;
 	int _xCellCount;
 	int _yCellCount;
