@@ -711,7 +711,7 @@ void Scumm_v5::o5_doSentence() {
 
 	st = &_sentence[_sentenceNum++];
 
-	st->unk5 = a;
+	st->verb = a;
 	st->unk4 = getVarOrDirectWord(0x40);
 	b = st->unk3 = getVarOrDirectWord(0x20);
 	if (b == 0) {

@@ -216,7 +216,7 @@ struct ArrayHeader {
 };
 
 struct SentenceTab {
-	byte unk5;
+	byte verb;
 	byte unk2;
 	uint16 unk4;
 	uint16 unk3;

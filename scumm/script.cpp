@@ -794,7 +794,7 @@ void Scumm::doSentence(int c, int b, int a) {
 		
 		// Check if this doSentence request is identical to the previous one;
 		// if yes, ignore this invocation.
-		if (_sentenceNum && st->unk5 == c && st->unk4 == b && st->unk3 == a)
+		if (_sentenceNum && st->verb == c && st->unk4 == b && st->unk3 == a)
 			return;
 
 		_sentenceNum++;
@@ -811,7 +811,7 @@ void Scumm::doSentence(int c, int b, int a) {
 
 	}
 
-	st->unk5 = c;
+	st->verb = c;
 	st->unk4 = b;
 	st->unk3 = a;
 	st->freezeCount = 0;
@@ -838,7 +838,7 @@ void Scumm::checkAndRunSentenceScript() {
 		if (_sentence[_sentenceNum].unk2 && _sentence[_sentenceNum].unk3 == _sentence[_sentenceNum].unk4)
 			return;
 
-	_localParamList[0] = _sentence[_sentenceNum].unk5;
+	_localParamList[0] = _sentence[_sentenceNum].verb;
 	_localParamList[1] = _sentence[_sentenceNum].unk4;
 	_localParamList[2] = _sentence[_sentenceNum].unk3;
 	_currentScript = 0xFF;

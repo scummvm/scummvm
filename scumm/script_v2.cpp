@@ -816,7 +816,7 @@ void Scumm_v2::o2_doSentence() {
 
 	st = &_sentence[_sentenceNum++];
 
-	st->unk5 = a;
+	st->verb = a;
 	st->unk4 = getVarOrDirectWord(0x40);
 	st->unk3 = getVarOrDirectWord(0x20);
 	st->freezeCount = 0;
