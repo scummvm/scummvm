@@ -24,6 +24,7 @@
 #define SOUND_MIDIDRV_H
 
 #include "common/scummsys.h"
+#include "common/timer.h"
 
 class MidiChannel;
 class SoundMixer;
@@ -123,7 +124,7 @@ public:
 	virtual void metaEvent (byte type, byte*data, uint16 length) { }
 
 	// Timing functions - MidiDriver now operates timers
-	virtual void setTimerCallback (void *timer_param, void (*timer_proc) (void *)) = 0;
+	virtual void setTimerCallback (void *timer_param, TimerProc timer_proc) = 0;
 	virtual uint32 getBaseTempo (void) = 0;
 
 	// Channel allocation functions

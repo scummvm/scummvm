@@ -193,7 +193,7 @@ public:
 	void setPitchBendRange(byte channel, uint range) { }
 	void sysEx(byte *msg, uint16 length);
 
-	void setTimerCallback(void *timer_param, void (*timer_proc)(void *));
+	void setTimerCallback(void *timer_param, TimerProc timer_proc);
 	uint32 getBaseTempo() { return 1000000 / BASE_FREQ; }
 
 	MidiChannel *allocateChannel() { return 0; }
@@ -770,8 +770,8 @@ void MidiDriver_YM2612::close() {
 	_mixer->setupPremix(0, 0);
 }
 
-void MidiDriver_YM2612::setTimerCallback(void *timer_param, void (*timer_proc)(void *)) {
-	_timer_proc = (TimerCallback *) timer_proc;
+void MidiDriver_YM2612::setTimerCallback(void *timer_param, TimerProc timer_proc) {
+	_timer_proc = timer_proc;
 	_timer_param = timer_param;
 }
 
