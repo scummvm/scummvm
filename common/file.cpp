@@ -119,8 +119,8 @@ File::File() {
 }
 
 File::~File() {
-	delete [] _name;
 	close();
+	delete [] _name;
 }
 
 bool File::open(const char *filename, const char *directory, int mode, byte encbyte) {
