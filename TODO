@@ -10,6 +10,7 @@ Residual TODO list:
  * Add OpenGL lighting
  * Add SMUSH (aquadran is looking, Grim seems to uses CMI codecs + 2 new ones)
  * Proper vsscanf implementation in textsplit.cpp for platforms without it (many!)
+ * Cross platform GUI for debug input dialogs (ctrl+e ctrl+g etc) original used MFC
 
 MSVC notes:
  These things need doing (At least) for it to be compilable under MSVC..
