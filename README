@@ -663,7 +663,7 @@ setup real time priority, which may reduce music lag.
 Asking TiMidity to become an ALSA sequencer:
   timidity -iAqqq -B2,8 -Os1S -s 44100 &
 (If you get distorted output with this setting, you can try dropping the 
--B2,8 or changing the value. To reduce the possibility of )
+-B2,8 or changing the value.)
 
 Asking FluidSynth to become an ALSA sequencer (using SoundFonts):
   fluidsynth -m alsa_seq /path/to/8mbgmsfx.sf2
