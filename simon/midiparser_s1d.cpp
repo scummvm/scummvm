@@ -24,7 +24,6 @@
 #include "common/util.h"
 
 #include <stdio.h>
-#include <memory.h>
 
 //////////////////////////////////////////////////
 //
