@@ -1780,7 +1780,7 @@ void ScummEngine_v6::o6_actorOps() {
 	case 218:		
 		{
 			// TODO: this opcode is used in the putt-putt fun pack, in 'checkers" mini game
-			warning("o6_actorOps(): unimplemented opcode 218");
+			warning("o6_actorOps():218 partially unimplemented");
 
 			int top_actor = a->top;
 			int bottom_actor = a->bottom;
@@ -1792,10 +1792,10 @@ void ScummEngine_v6::o6_actorOps() {
 			a->drawActorCostume();
 			a->needRedraw = false;
 
-			if (a->top > top_actor) {
+			if (a->top < top_actor) {
 				a->bottom = top_actor;
 			}
-			if (a->bottom < bottom_actor) {
+			if (a->bottom > bottom_actor) {
 				a->bottom = bottom_actor;
 			}
 		}
