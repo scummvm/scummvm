@@ -106,6 +106,8 @@ public:
 	static SystemVars _systemVars;
 
 protected:
+	byte _fastMode;
+
 	void logic_engine();
 	void delay(uint amount);
 	void go();

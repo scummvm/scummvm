@@ -93,6 +93,8 @@ SkyState::SkyState(GameDetector *detector, OSystem *syst)
 
 	_floppyIntro = detector->_floppyIntro;
 
+	_fastMode = 0;
+
 	_system->init_size(320, 200);
 }
 
@@ -202,7 +204,12 @@ void SkyState::go() {
 	_lastSaveTime = _system->get_msecs();
 
 	while (1) {
-		delay(_systemVars.gameSpeed);
+		if (_fastMode & 2)
+			delay(0);
+		else if (_fastMode & 1)
+			delay(10);
+		else
+			delay(_systemVars.gameSpeed);
 
 		if (_system->get_msecs() - _lastSaveTime > 5 * 60 * 1000) {
 			if (_skyControl->loadSaveAllowed()) {
@@ -404,6 +411,17 @@ void SkyState::delay(uint amount) { //copied and mutilated from Simon.cpp
 		while (_system->poll_event(&event)) {
 			switch (event.event_code) {
 				case OSystem::EVENT_KEYDOWN:
+					if (event.kbd.flags == OSystem::KBD_CTRL) {
+						if (event.kbd.keycode == 'f') {
+							_fastMode ^= 1;
+							break;
+						}
+						if (event.kbd.keycode == 'g') {
+							_fastMode ^= 2;
+							break;
+						}
+					}
+
 					// Make sure backspace works right (this fixes a small issue on OS X)
 					if (event.kbd.keycode == 8)
 						_key_pressed = 8;
