@@ -105,6 +105,11 @@ enum StateDirection {
 	STATE_DIR_FRONT = 3
 };
 
+enum StateTalk {
+	STATE_TALK_TALK,
+	STATE_TALK_MUTE
+};
+
 
 } // End of namespace Queen
 

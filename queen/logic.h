@@ -84,7 +84,7 @@ public:
 	void joeFacing(uint16 dir);
 	void joeX(uint16 x);
 	void joeY(uint16 y);
-	void joeWalk(uint16 walk);
+	void joeWalk(uint16 walking);
 	void joeScale(uint16 scale);
 	void joePrevFacing(uint16 dir);
 	
@@ -126,6 +126,11 @@ public:
 	void animErase(uint16 bobNum);
 
 	StateDirection findStateDirection(uint16 state); // == FIND_STATE(state, "DIR");
+	StateTalk      findStateTalk     (uint16 state); // == FIND_STATE(state, "TALK");
+
+	Walk *walk()	{ return _walk; }
+
+	int talkSpeed() { return _talkSpeed; }
 
 	//! SETUP_JOE(), loads the various bobs needed to animate Joe
 	void joeSetup();
@@ -135,7 +140,6 @@ public:
 	
 	//! FACE_JOE()
 	uint16 joeFace();
-
 
 protected:
 	bool _textToggle;
@@ -198,6 +202,7 @@ protected:
 	char **_aFile;	//A_FILEstr
 
 	enum {
+		DEFAULT_TALK_SPEED = 7,
 		GAME_STATE_COUNT = 211
 	};
 
@@ -222,6 +227,8 @@ protected:
 	Resource *_resource;
 	Graphics *_graphics;
 	Walk *_walk;
+
+	int _talkSpeed;	// TALKSPD
 
 	void initialise();
 };

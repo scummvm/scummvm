@@ -36,7 +36,8 @@ class Talk {
 	//! Public interface to run a talk from a file
 	static void talk(
 		const char *filename,
-		char *cutawayFilename,
+		int personInRoom,
+		char *cutawayFilename, 
 		Graphics *graphics,
 		Logic *logic,
 		Resource *resource);
@@ -140,7 +141,7 @@ class Talk {
 	~Talk();
 
 	//! Perform talk in file and return a cutaway filename
-	void talk(const char *filename, char *cutawayFilename);
+	void talk(const char *filename, int personInRoom, char *cutawayFilename);
 
 	//! Load talk data from .dog file 
 	void load(const char *filename);
@@ -174,6 +175,8 @@ class Talk {
 		int command,
 		const char *voiceFilePrefix,
 		int index);
+
+	int countSpaces(const char *segment);
 
 	static int splitOption(const char *str, char optionText[5][MAX_STRING_SIZE]);
 

@@ -28,7 +28,7 @@
 namespace Queen {
 
 Logic::Logic(Resource *resource, Graphics *graphics) 
-	: _resource(resource), _graphics(graphics) {
+	: _resource(resource), _graphics(graphics), _talkSpeed(DEFAULT_TALK_SPEED) {
 	_jas = _resource->loadFile("QUEEN.JAS", 20);
 	_joe.x = _joe.y = 0;
 	_walk = new Walk(this, _graphics);
@@ -573,8 +573,8 @@ void Logic::joeY(uint16 y) {
 	_joe.y = y;
 }
 
-void Logic::joeWalk(uint16 walk) {
-	_joe.walk = walk;
+void Logic::joeWalk(uint16 walking) {
+	_joe.walk = walking;
 }
 
 void Logic::joeScale(uint16 scale) {
@@ -1375,6 +1375,9 @@ StateDirection Logic::findStateDirection(uint16 state) {
 	return sd;
 }
 
+StateTalk Logic::findStateTalk(uint16 state) {
+	return (state & (1 << 9)) ? STATE_TALK_TALK : STATE_TALK_MUTE;
+}
 
 void Logic::joeSetup() {
 	int i;

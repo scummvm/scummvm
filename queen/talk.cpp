@@ -34,12 +34,13 @@ namespace Queen {
 
 void Talk::talk(
 		const char *filename, 
+		int personInRoom,
 		char *cutawayFilename,
 		Graphics *graphics,
 		Logic *logic,
 		Resource *resource) {
 	Talk *talk = new Talk(graphics, logic, resource);
-	talk->talk(filename, cutawayFilename);
+	talk->talk(filename, personInRoom, cutawayFilename);
 	delete talk;
 }
 
@@ -72,7 +73,7 @@ Talk::~Talk() {
 
 
 
-void Talk::talk(const char *filename, char *cutawayFilename) {
+void Talk::talk(const char *filename, int personInRoom, char *cutawayFilename) {
 	_oldSelectedSentenceIndex = 0;
 	_oldSelectedSentenceValue = 0;
 
@@ -81,6 +82,16 @@ void Talk::talk(const char *filename, char *cutawayFilename) {
 	cutawayFilename[0] = '\0';
 
 	// XXX S=SUBJECT[1];
+
+	int roomStart = _logic->roomData(_logic->currentRoom());
+	ObjectData *data = _logic->objectData(roomStart + personInRoom);
+
+	if (data->name <= 0)	// disabled!
+		return;
+
+	if (data->entryObj > 0)
+		return;
+	
 	// XXX R=ROOM_DATA[ROOM];
 	// XXX if(OBJECT_DATA[NOUN2+R][0]<=0) return;
 	// XXX if(OBJECT_DATA[NOUN2+R][4]>0) return;
@@ -99,6 +110,9 @@ void Talk::talk(const char *filename, char *cutawayFilename) {
 	
 	load(filename);
 
+	//Person person;
+	//_logic->personSetData(
+	
 	char personName[MAX_STRING_SIZE];
 	// XXX SET_PERSON_DATA(N,NAMEstr,0);
 	int bobNum = 1; // XXX P_BNUM;
@@ -566,6 +580,18 @@ exit:
 	return personWalking;
 }
 
+int Talk::countSpaces(const char *segment) {
+	int tmp = 0;
+
+	while (*segment++)
+		tmp++;
+	
+	if (tmp < 10)
+		tmp = 10;
+
+	return (tmp * 2) / _logic->talkSpeed();
+}
+
 void Talk::speakSegment(
 		const char *segment, 
 		int length,
@@ -582,6 +608,23 @@ void Talk::speakSegment(
 
 	debug(0, "Playing voice file '%s'", voiceFileName);
 
+
+	if (SPEAK_PAUSE == command) {
+		for (int i = 0; i < 10; i++) {
+			if (_quit)
+				break;
+			_graphics->update();
+		}
+		return;
+	}
+
+	//int spaces = countSpaces(segment);
+
+	if (scumm_stricmp(person, "JOE")) {
+	}
+	else {
+
+	}
 
 }
 

@@ -294,10 +294,10 @@ TALK
 ====
 MAKE_SPEAK_BOB
 MOVE_SPEAK
-SPEAK						Talk::?
-SPEAK_SUB
-talk						Talk::run
-TALK_PROC
+SPEAK						Talk::speak
+SPEAK_SUB					Talk::speakSegment
+talk						Talk::talk
+TALK_PROC					Talk::talk
 -
 A1,A12
 TALK_SELECTED

@@ -39,8 +39,8 @@ class Cutaway {
 				char *nextFilename,
 				Graphics *graphics,
 				Logic *logic,
-				Resource *resource,
-				Walk *walk);
+				Resource *resource);
+
 	private:
 		//! Collection of constants used by QueenCutaway
 		enum {
@@ -205,8 +205,7 @@ class Cutaway {
 				const char *filename, 
 				Graphics *graphics,
 				Logic *logic,
-				Resource *resource,
-				Walk *walk);
+				Resource *resource);
 		~Cutaway();
 
 		//! Run this cutaway object 

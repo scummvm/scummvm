@@ -58,9 +58,8 @@ void Cutaway::run(
 		char *nextFilename,
 		Graphics *graphics,
 		Logic *logic,
-		Resource *resource,
-		Walk *walk) {
-	Cutaway *cutaway = new Cutaway(filename, graphics,logic, resource, walk);
+		Resource *resource) {
+	Cutaway *cutaway = new Cutaway(filename, graphics, logic, resource);
 	cutaway->run(nextFilename);
 	delete cutaway;
 }
@@ -69,9 +68,8 @@ Cutaway::Cutaway(
 		const char *filename, 
 		Graphics *graphics,
 		Logic *logic,
-		Resource *resource,
-		Walk *walk) 
-: _graphics(graphics), _logic(logic), _resource(resource), _walk(walk),
+		Resource *resource) 
+: _graphics(graphics), _logic(logic), _resource(resource), _walk(logic->walk()),
 	_quit(false), _personFaceCount(0), _lastSong(0), _songBeforeComic(0) {
 	memset(&_bankNames, 0, sizeof(_bankNames));
 	load(filename); 
@@ -1050,7 +1048,7 @@ void Cutaway::talk(char *nextFilename) {
 		warning("Cutaway::talk() used but not fully implemented");
 		nextFilename[0] = '\0';
 
-		Talk::talk(_talkFile, nextFilename, _graphics, _logic, _resource);
+		Talk::talk(_talkFile, 0 /* XXX */, nextFilename, _graphics, _logic, _resource);
 	}
 }
 
