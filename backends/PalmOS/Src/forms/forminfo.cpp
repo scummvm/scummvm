@@ -152,8 +152,9 @@ static void InfoFormInit() {
 	TabAddContent(&frmP, tabP, "Version", TabInfoVersionForm, VersionTabPreInit);
 	TabAddContent(&frmP, tabP, "Memory", TabInfoSystemForm, SystemTabPreInit);
 
+	lastTab = 0;
 	FrmDrawForm(frmP);
-	TabSetActive(frmP, tabP, 0);
+	TabSetActive(frmP, tabP, lastTab);
 
 	AboutTabInit(true);
 
