@@ -143,9 +143,10 @@ osxsnap: bundle
 win32dist: scummvm$(EXEEXT)
 	mkdir -p $(WIN32PATH)
 	strip scummvm.exe -o $(WIN32PATH)/scummvm$(EXEEXT)
-	cp COPYING $(WIN32PATH)/copying.txt
-	cp README $(WIN32PATH)/readme.txt
-	cp NEWS $(WIN32PATH)/news.txt
+	cp COPYING $(WIN32PATH)/COPYING.txt
+	cp AUTHORS $(WIN32PATH)/AUTHORS.txt
+	cp README $(WIN32PATH)/README.txt
+	cp NEWS $(WIN32PATH)/NEWS.txt
 	cp /usr/local/README-SDL.txt $(WIN32PATH)
 	cp /usr/local/bin/SDL.dll $(WIN32PATH)
 	u2d $(WIN32PATH)/*.txt
