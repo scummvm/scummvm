@@ -354,7 +354,7 @@ case $hosttype in
 	Darwin)
 		DEFINES="$DEFINES -DUNIX -DMACOSX"
 		LIBS="$LIBS -framework QuickTime -framework AudioUnit"
-		#CXXFLAGS="$CXXFLAGS -faltivec"
+		CXXFLAGS="$CXXFLAGS -faltivec"
 		;;
 	MINGW32*)
 		echo "mingw32 not supported by configure script"
