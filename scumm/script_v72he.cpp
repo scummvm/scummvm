@@ -1300,7 +1300,7 @@ void ScummEngine_v72he::o72_unknownC1() {
 	copyScriptString(string);
 	pop();
 
-	debug(1, "stub o72_unknownC1(%s)", string);
+	//debug(1, "stub o72_unknownC1(%s)", string);
 }
 
 void ScummEngine_v72he::drawWizImage(int restype, int resnum, int state, int x1, int y1, int flags) {
