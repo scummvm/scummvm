@@ -20,12 +20,9 @@
 #ifndef	_FUNCTION
 #define	_FUNCTION
 
-//#include "src\driver96.h"
 #include "object.h"
 
-
-extern	Object_graphic	engine_graph;	// global for engine
-extern	Object_mega		engine_mega;	// global for engine
-
+extern Object_graphic engine_graph;	// global for engine
+extern Object_mega engine_mega;		// global for engine
 
 #endif
