@@ -237,6 +237,7 @@ protected:
 		bool needUpdatescreen;
 		bool needUnload;
 		bool needToggle;
+		bool normal1xScaler;
 	};
 	TransactionDetails _transactionDetails;
 

@@ -73,9 +73,21 @@ void OSystem_SDL::beginGFXTransaction(void) {
 	_transactionDetails.needHotswap = false;
 	_transactionDetails.needUpdatescreen = false;
 	_transactionDetails.needUnload = false;
+
+	_transactionDetails.normal1xScaler = false;
 }
 
 void OSystem_SDL::endGFXTransaction(void) {
+	// for each engine we run initCommonGFX() as first thing in the transaction
+	// and initSize() is called later. If user runs launcher at 320x200 with
+	// 2x overlay, setting to Nomral1x sclaler in that case will be suppressed
+	// and backend is forced to 2x
+	//
+	// This leads to bad results such as 1280x960 window for 640x480 engines.
+	// To prevent that we rerun setGraphicsMode() if there was 1x scaler request
+	if (_transactionDetails.normal1xScaler)
+		setGraphicsMode(GFX_NORMAL);
+
 	assert (_transactionMode == kTransactionActive);
 
 	_transactionMode = kTransactionCommit;
@@ -168,6 +180,8 @@ bool OSystem_SDL::setGraphicsMode(int mode) {
 		warning("unknown gfx mode %d", mode);
 		return false;
 	}
+
+	_transactionDetails.normal1xScaler = (mode == GFX_NORMAL);
 
 	// Do not let switch to lesser than overlay size resolutions
 	if (_screenWidth * newScaleFactor < _overlayWidth) {
