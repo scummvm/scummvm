@@ -31,6 +31,15 @@ class OSystem_Dreamcast : public OSystem {
   OSystem_Dreamcast();
 
 
+  // Determine whether the backend supports the specified feature.
+  bool hasFeature(Feature f);
+
+  // En-/disable the specified feature.
+  void setFeatureState(Feature f, bool enable);
+
+  // Query the state of the specified feature. For example, test whether
+  bool getFeatureState(Feature f);
+
   // Retrieve a list of all graphics modes supported by this backend.
   const GraphicsMode *getSupportedGraphicsModes() const;
 

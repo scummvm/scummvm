@@ -143,6 +143,47 @@ void OSystem_Dreamcast::deleteMutex(MutexRef mutex)
 }
 
 
+/* Features */
+bool OSystem_Dreamcast::hasFeature(Feature f)
+{
+  switch(f) {
+  case kFeatureAspectRatioCorrection:
+  case kFeatureVirtualKeyboard:
+    return true;
+  default:
+    return false;
+  }
+}
+
+void OSystem_Dreamcast::setFeatureState(Feature f, bool enable)
+{
+  switch(f) {
+  case kFeatureAspectRatioCorrection:
+    /* FIXME */
+    break;
+  case kFeatureVirtualKeyboard:
+    /* FIXME */
+    break;
+  default:
+    break;
+  }
+}
+
+bool OSystem_Dreamcast::getFeatureState(Feature f)
+{
+  switch(f) {
+  case kFeatureAspectRatioCorrection:
+    /* FIXME */
+    return false;
+  case kFeatureVirtualKeyboard:
+    /* FIXME */
+    return false;
+  default:
+    return false;
+  }
+}
+
+
 void dc_init_hardware()
 {
 #ifndef NOSERIAL
