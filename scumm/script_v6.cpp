@@ -2958,12 +2958,9 @@ void ScummEngine_v6::o6_stampObject() {
 		int objnum = getObjectIndex(object);
 		if (objnum == -1)
 			return;
-		if (objnum != -1) {
-			_objs[objnum].x_pos = x * 8;
-			_objs[objnum].y_pos = y * 8;
-		}
+		_objs[objnum].x_pos = x * 8;
+		_objs[objnum].y_pos = y * 8;
 		putState(object, state);
-
 		drawObject(objnum, 0);
 		warning("o6_stampObject: (%d at (%d,%d) state %d)", object, x, y, state);
 		
