@@ -534,11 +534,15 @@ void Sound::startTalkSound(uint32 offset, uint32 b, int mode, PlayingSoundHandle
 			return;
 		}
 
-		sprintf(filename, "audio/%s.%d/%d.voc", roomname, offset, b);
 		_sfxFile->close();
+		sprintf(filename, "audio/%s.%d/%d.voc", roomname, offset, b);
 		_sfxFile->open(filename);
 		if (!_sfxFile->isOpen()) {
-			warning("startTalkSound: dig demo: voc file not found: %s", filename);
+			sprintf(filename, "%d.%d.voc", offset, b);
+			_sfxFile->open(filename);
+		}
+		if (!_sfxFile->isOpen()) {
+			warning("startTalkSound: dig demo: voc file not found");
 			return;
 		}
 
