@@ -2970,8 +2970,13 @@ void Scumm_v6::o6_findAllObjects() {
 
 static void sub_FEE_78D2(int num, int &arg1, int &arg2) {
 	byte *ptr = g_scumm->getResourceAddress(rtString, num);
-	arg1 = READ_LE_UINT16(ptr + 4);
-	arg2 = READ_LE_UINT16(ptr + 2);
+	if (g_scumm->_features & GF_AFTER_V7) {
+		arg1 = READ_LE_UINT32(ptr + 8);
+		arg2 = READ_LE_UINT32(ptr + 4);
+	} else {
+		arg1 = READ_LE_UINT16(ptr + 4);
+		arg2 = READ_LE_UINT16(ptr + 2);
+	}
 }
 
 static void sub_FEE_7822(int num, int arg1, int arg2) {
