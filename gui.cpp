@@ -807,36 +807,15 @@ void Gui::addLetter(byte letter)
 	}
 }
 
-byte Gui::getDefaultColor(int color)
-{
-	if ((_s->_features & GF_AFTER_V7) || (_s->_features & GF_SMALL_HEADER))
-		return 0;
-	if (_s->_features & GF_AFTER_V6) {
-		if (color == 8)
-			color = 1;
-		return _s->readArray(110, 0, color);
-	} else {
-		return _s->getStringAddress(21)[color];
-	}
-}
-
 void Gui::init(Scumm *s)
 {
+	/* Default GUI colors */
+	_bgcolor = 0;
+	_color = 0;
+	_textcolor = 8;							// 15 is nice
+	_textcolorhi = 15;
+	_shadowcolor = 0;
 	_s = s;
-	if (_s->_gameId && !(_s->_features & GF_SMALL_HEADER)
-			&& !(_s->_features & GF_AFTER_V7)) {
-		_bgcolor = getDefaultColor(0);
-		_color = getDefaultColor(1);
-		_textcolor = getDefaultColor(2);
-		_textcolorhi = getDefaultColor(6);
-		_shadowcolor = getDefaultColor(8);
-	} else {
-		_bgcolor = 0;
-		_color = 0;
-		_textcolor = 8;							// 15 is nice
-		_textcolorhi = 15;
-		_shadowcolor = 0;
-	}
 }
 
 void Gui::loop(Scumm *s)

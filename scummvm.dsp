@@ -154,6 +154,10 @@ SOURCE=.\v4\resource_v4.cpp
 # End Group
 # Begin Source File
 
+SOURCE=.\2xsai.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\actor.cpp
 
 !IF  "$(CFG)" == "scummvm - Win32 Release"
@@ -439,11 +443,27 @@ SOURCE=.\verbs.cpp
 # PROP Default_Filter "h;hpp;hxx;hm;inl"
 # Begin Source File
 
+SOURCE=.\akos.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\boxes.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\cdmusic.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\sound\fmopl.h
 # End Source File
 # Begin Source File
 
 SOURCE=.\gameDetector.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\gfx.h
 # End Source File
 # Begin Source File
 
@@ -455,11 +475,19 @@ SOURCE=.\gui.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\mp3_cd.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\scumm.h
 # End Source File
 # Begin Source File
 
 SOURCE=.\scummsys.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\smush.h
 # End Source File
 # Begin Source File
 
@@ -469,10 +497,10 @@ SOURCE=.\sound.h
 
 SOURCE=.\StdAfx.h
 # End Source File
-# End Group
-# Begin Group "Resource Files"
+# Begin Source File
 
-# PROP Default_Filter "ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe"
+SOURCE=.\system.h
+# End Source File
 # End Group
 # Begin Source File
 

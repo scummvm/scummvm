@@ -35,13 +35,16 @@
 /* Initialized operator new */
 void * operator new(size_t size);
 	
-
+class GameDetector;
 class Scumm;
 struct Actor;
 struct ScummDebugger;
 struct Serializer;
 
 typedef void (Scumm::*OpcodeProc)();
+
+/* Use this one from error() ONLY */
+extern Scumm *g_scumm;
 
 /* System Wide Constants */
 enum {
@@ -502,7 +505,11 @@ enum GameId {
 	GID_INDY3_256 = 9,
 	GID_LOOM = 10,
 	GID_FT = 11,
-	GID_DIG = 12
+	GID_DIG = 12,
+
+	/* Simon the Sorcerer */
+	GID_SIMON_FIRST = 13,
+	GID_SIMON_LAST = GID_SIMON_FIRST+3,
 };
 
 enum GameFeatures {
@@ -1056,40 +1063,30 @@ public:
 	void stopTalk();	
 
 	/* Akos Class */
-        bool akos_drawCostume(AkosRenderer *ar);
-        void akos_setPalette(AkosRenderer *ar, byte *palette);
-        void akos_setCostume(AkosRenderer *ar, int costume);
-        void akos_setFacing(AkosRenderer *ar, Actor *a);
-        bool akos_drawCostumeChannel(AkosRenderer *ar, int chan);
-        void akos_codec1(AkosRenderer *ar);
-        void akos_codec5(AkosRenderer *ar);
-        void akos_codec16(AkosRenderer *ar);
-        void akos_codec1_ignorePakCols(AkosRenderer *ar, int num);
-        void akos_c1_spec2(AkosRenderer *ar);
-        void akos_c1_spec3(AkosRenderer *ar);
+	bool akos_drawCostume(AkosRenderer *ar);
+	void akos_setPalette(AkosRenderer *ar, byte *palette);
+	void akos_setCostume(AkosRenderer *ar, int costume);
+	void akos_setFacing(AkosRenderer *ar, Actor *a);
+	bool akos_drawCostumeChannel(AkosRenderer *ar, int chan);
+	void akos_codec1(AkosRenderer *ar);
+	void akos_codec5(AkosRenderer *ar);
+	void akos_codec16(AkosRenderer *ar);
+	void akos_codec1_ignorePakCols(AkosRenderer *ar, int num);
+	void akos_c1_spec2(AkosRenderer *ar);
+	void akos_c1_spec3(AkosRenderer *ar);
 
-        void akos_c1_0_decode(AkosRenderer *ar);
-        void akos_c1_12_decode(AkosRenderer *ar);
-        void akos_c1_12y_decode(AkosRenderer *ar);
-        void akos_c1_3_decode(AkosRenderer *ar);
-        void akos_c1_4_decode(AkosRenderer *ar);
-        void akos_c1_4y_decode(AkosRenderer *ar);
-        void akos_c1_56_decode(AkosRenderer *ar);
-        void akos_c1_56y_decode(AkosRenderer *ar);
-        void akos_c1_7_decode(AkosRenderer *ar);
+	bool akos_increaseAnims(byte *akos, Actor *a);
+	bool akos_increaseAnim(Actor *a, int i, byte *aksq, uint16 *akfo, int numakfo);
 
-        bool akos_increaseAnims(byte *akos, Actor *a);
-        bool akos_increaseAnim(Actor *a, int i, byte *aksq, uint16 *akfo, int numakfo);
+	int getAnimVar(Actor *a, byte var);
+	void setAnimVar(Actor *a, byte var, int value);
 
-        int getAnimVar(Actor *a, byte var);
-        void setAnimVar(Actor *a, byte var, int value);
-
-        void akos_queCommand(byte cmd, Actor *a, int param_1, int param_2);
-        bool akos_compare(int a, int b, byte cmd);
-        void akos_decodeData(Actor *a, int frame, uint usemask);
-        int akos_frameToAnim(Actor *a, int frame);
-        bool akos_hasManyDirections(Actor *a);
-        int akos_findManyDirection(int16 ManyDirection, uint16 facing);
+	void akos_queCommand(byte cmd, Actor *a, int param_1, int param_2);
+	bool akos_compare(int a, int b, byte cmd);
+	void akos_decodeData(Actor *a, int frame, uint usemask);
+	int akos_frameToAnim(Actor *a, int frame);
+	bool akos_hasManyDirections(Actor *a);
+	int akos_findManyDirection(int16 ManyDirection, uint16 facing);
 
 
 
@@ -1676,6 +1673,12 @@ public:
 	byte VAR_CHARSET_MASK;
 
 	void launch();
+
+	static Scumm *createFromDetector(GameDetector *detector);
+	void go();
+
+	void setupGUIColors();
+	byte getDefaultGUIColor(int color);
 };
 
 class Scumm_v3 : public Scumm

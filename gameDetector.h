@@ -28,9 +28,15 @@ public:
 	char *getGameName(void);
 
 	bool _fullScreen;
+	bool _restore;
+	byte _gameId;
+	bool _simon;
+
 	uint16 _debugMode;
 	uint16 _noSubtitles;
 	uint16 _bootParam;
+	uint16 _soundCardType;
+
 	unsigned int _scale;
 	char *_gameDataPath;
 	int _gameTempo;
@@ -38,13 +44,11 @@ public:
 	int _midi_driver;
 	int _videoMode;
 	char *_exe_name;
-	byte _gameId;
 	const char *_gameText;
 	uint32 _features;
-	uint16 _soundCardType;
-
+	
 	int _scummVersion;
 	int _cdrom;
-	bool _restore;
+	
 
 };

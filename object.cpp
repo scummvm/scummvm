@@ -49,7 +49,6 @@ void Scumm::putClass(int obj, int cls, bool set)
 			cls = 24;
 	}
 
-
 	if (set)
 		_classData[obj] |= (1 << (cls - 1));
 	else

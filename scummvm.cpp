@@ -24,8 +24,8 @@
 #include "scumm.h"
 #include "gui.h"
 #include "string.h"
+#include "gameDetector.h"
 
-extern void launcherLoop();
 void Scumm::initRandSeeds()
 {
 	_randSeed1 = 0xA943DE35;
@@ -1010,8 +1010,6 @@ int Scumm::normalizeAngle(int angle)
 	return (angle + 360) % 360;
 }
 
-extern Scumm *scumm;
-
 void NORETURN CDECL error(const char *s, ...)
 {
 	char buf[1024];
@@ -1021,12 +1019,12 @@ void NORETURN CDECL error(const char *s, ...)
 	vsprintf(buf, s, va);
 	va_end(va);
 
-	if (scumm->_currentScript != 0xFF) {
-		ScriptSlot *ss = &scumm->vm.slot[scumm->_currentScript];
+	if (g_scumm->_currentScript != 0xFF) {
+		ScriptSlot *ss = &g_scumm->vm.slot[g_scumm->_currentScript];
 		fprintf(stderr, "Error(%d:%d:0x%X): %s!\n",
-						scumm->_roomResource,
+						g_scumm->_roomResource,
 						ss->number,
-						scumm->_scriptPointer - scumm->_scriptOrgPointer, buf);
+						g_scumm->_scriptPointer - g_scumm->_scriptOrgPointer, buf);
 	} else {
 		fprintf(stderr, "Error: %s!\n", buf);
 	}
@@ -1145,3 +1143,83 @@ void Scumm::launch()
 
 
 }
+
+Scumm *Scumm::createFromDetector(GameDetector *detector)
+{
+	Scumm *scumm;
+
+	if (detector->_features & GF_OLD256)
+		scumm = new Scumm_v3;
+	else if (detector->_features & GF_SMALL_HEADER)	// this force loomCD as v4
+		scumm = new Scumm_v4;
+	else if (detector->_features & GF_AFTER_V7)
+		scumm = new Scumm_v7;
+	else if (detector->_features & GF_AFTER_V6)	// this force SamnmaxCD as v6
+		scumm = new Scumm_v6;
+	else
+		scumm = new Scumm_v5;
+
+	scumm->_fullScreen = detector->_fullScreen;
+	scumm->_debugMode = detector->_debugMode;
+	scumm->_bootParam = detector->_bootParam;
+	scumm->_scale = detector->_scale;
+	scumm->_gameDataPath = detector->_gameDataPath;
+	scumm->_gameTempo = detector->_gameTempo;
+	scumm->_soundEngine = detector->_soundEngine;
+	scumm->_videoMode = detector->_videoMode;
+	scumm->_exe_name = detector->_exe_name;
+	scumm->_gameId = detector->_gameId;
+	scumm->_gameText = detector->_gameText;
+	scumm->_features = detector->_features;
+	scumm->_soundCardType = detector->_soundCardType;
+	scumm->_noSubtitles = detector->_noSubtitles;
+	scumm->_midi_driver = detector->_midi_driver;
+	scumm->_cdrom = detector->_cdrom;
+
+	scumm->delta = 6;
+	if (detector->_restore) {
+		scumm->_saveLoadSlot = 0;
+		scumm->_saveLoadFlag = 2;
+		scumm->_saveLoadCompatible = false;
+	}
+
+	scumm->delta = 0;
+
+	return scumm;
+}
+
+void Scumm::go() {
+	launch();
+	setupGUIColors();
+	mainRun();
+}
+
+
+byte Scumm::getDefaultGUIColor(int color)
+{
+	/* FIXME: strange IF line? */
+	if ((_features & GF_AFTER_V7) || (_features & GF_SMALL_HEADER))
+		return 0;
+	if (_features & GF_AFTER_V6) {
+		if (color == 8)
+			color = 1;
+		return readArray(110, 0, color);
+	} else {
+		return getStringAddress(21)[color];
+	}
+}
+
+void Scumm::setupGUIColors() {
+	Gui *gui = (Gui*)_gui;
+
+	/* FIXME: strange IF line? */
+	if (_gameId && !(_features & GF_SMALL_HEADER)	&& !(_features & GF_AFTER_V7)) {
+		gui->_bgcolor = getDefaultGUIColor(0);
+		gui->_color = getDefaultGUIColor(1);
+		gui->_textcolor = getDefaultGUIColor(2);
+		gui->_textcolorhi = getDefaultGUIColor(6);
+		gui->_shadowcolor = getDefaultGUIColor(8);
+	}
+}
+
+

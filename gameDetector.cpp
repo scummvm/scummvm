@@ -26,24 +26,27 @@
 #include "gameDetector.h"
 
 
-#define USAGE_STRING    "ScummVM - Scumm Interpreter\n" \
-                                                "Syntax:\n" \
-                                                "\tscummvm [-v] [-d] [-n] [-b<num>] [-t<num>] [-s<num>] [-p<path>] [-m<num>] [-f] game\n" \
-                                                "Flags:\n" \
-                                                "\tv       - show version info and exit\n" \
-												"\tc<num>  - use cdrom <num> for cd audio\n" \
-                                                "\td       - enable debug output\n" \
-                                                "\tn       - no subtitles for speech\n" \
-                                                "\tb<num>  - start in room <num>\n" \
-                                                "\tt<num>  - set music tempo. Suggested: 1F0000\n" \
-                                                "\ts<num>  - set scale factor to <num> (1, 2, or 3 - 2 by default)\n" \
-                                                "\tp<path> - look for game in <path>\n" \
-                                                "\tm<num>  - set music volume to <num> (0-100)\n" \
-                                                "\te<num>  - set music engine. see readme.txt for details\n" \
-                                                "\tr       - emulate roland mt32 instruments\n" \
-                                                "\tf       - fullscreen mode\n" \
-                                                "\tg       - graphics mode. 1 for 2xSai anti-aliasing\n" \
-												"\ta       - load autosave game (for recovering from crashes)\n"
+
+static const char USAGE_STRING[] = 
+	"ScummVM - Scumm Interpreter\n"
+	"Syntax:\n"
+  "\tscummvm [-v] [-d] [-n] [-b<num>] [-t<num>] [-s<num>] [-p<path>] [-m<num>] [-f] game\n"
+	"Flags:\n"
+	"\tv       - show version info and exit\n"
+	"\tc<num>  - use cdrom <num> for cd audio\n"
+	"\td       - enable debug output\n"
+	"\tn       - no subtitles for speech\n"
+	"\tb<num>  - start in room <num>\n"
+	"\tt<num>  - set music tempo. Suggested: 1F0000\n"
+	"\ts<num>  - set scale factor to <num> (1, 2, or 3 - 2 by default)\n"
+	"\tp<path> - look for game in <path>\n"
+	"\tm<num>  - set music volume to <num> (0-100)\n"
+	"\te<num>  - set music engine. see readme.txt for details\n"
+	"\tr       - emulate roland mt32 instruments\n"
+	"\tf       - fullscreen mode\n"
+	"\tg       - graphics mode. 1 for 2xSai anti-aliasing\n"
+	"\ta       - load autosave game (for recovering from crashes)\n"
+;
 
 void GameDetector::parseCommandLine(int argc, char **argv)
 {
@@ -233,6 +236,11 @@ static const VersionSettings version_settings[] = {
 	{"dig", "The Dig", GID_DIG, 7, 5, 0,
 	 GF_NEW_OPCODES | GF_AFTER_V6 | GF_AFTER_V7},
 
+	/* Simon the Sorcerer 1 & 2 (not SCUMM games) */
+	{"simon1dos", "Simon the Sorcerer 1 for DOS", GID_SIMON_FIRST+1, 99, 99, 99, 0},
+	{"simon1win", "Simon the Sorcerer 1 for Windows", GID_SIMON_FIRST+2, 99, 99, 99, 0},
+	{"simon2win", "Simon the Sorcerer 2 for Windows", GID_SIMON_FIRST+3, 99, 99, 99, 0},
+	
 	/* Scumm Version 8 */
 //    {"curse",       "The Curse of Monkey Island",                   GID_CMI,      8, 1, 0,},
 	{NULL, NULL}
