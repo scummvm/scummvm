@@ -41,9 +41,6 @@
 
 #include "sound/mididrv.h"
 
-#include <errno.h>
-#include <time.h>
-
 #ifdef __PALM_OS__
 #include "globals.h"
 #endif
