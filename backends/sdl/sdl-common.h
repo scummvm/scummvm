@@ -225,6 +225,8 @@ protected:
 	virtual void load_gfx_mode() = 0;
 	virtual void unload_gfx_mode() = 0;
 
+	virtual bool save_screenshot(const char *filename) = 0;
+
 	void setup_icon();
 	void kbd_mouse();
 	void init_joystick() { _joystick = SDL_JoystickOpen(0); }

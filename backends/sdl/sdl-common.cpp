@@ -554,6 +554,25 @@ bool OSystem_SDL_Common::poll_event(Event *event) {
 				break;
 			}
 
+			if (b == KBD_ALT && ev.key.keysym.sym == 's') {
+				char filename[20];
+
+				for (int n = 0;; n++) {
+					SDL_RWops *file;
+
+					sprintf(filename, "scummvm%05d.bmp", n);
+					file = SDL_RWFromFile(filename, "r");
+					if (!file)
+						break;
+					SDL_RWclose(file);
+				}
+				if (save_screenshot(filename))
+					printf("Saved '%s'\n", filename);
+				else
+					printf("Could not save screenshot!\n");
+				break;
+			}
+
 #ifdef MACOSX
 			// On Macintosh', Cmd-Q quits
 			if ((ev.key.keysym.mod & KMOD_META) && ev.key.keysym.sym=='q') {

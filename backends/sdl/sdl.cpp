@@ -42,6 +42,7 @@ protected:
 
 	virtual void load_gfx_mode();
 	virtual void unload_gfx_mode();
+	virtual bool save_screenshot(const char *filename);
 	void hotswap_gfx_mode();
 };
 
@@ -376,3 +377,10 @@ uint32 OSystem_SDL::property(int param, Property *value) {
 	return OSystem_SDL_Common::property(param, value);
 }
 
+bool OSystem_SDL::save_screenshot(const char *filename) {
+	assert(_hwscreen != NULL);
+
+	StackLock lock(_graphicsMutex, this);	// Lock the mutex until this function ends
+	SDL_SaveBMP(_hwscreen, filename);
+	return true;
+}
