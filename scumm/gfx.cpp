@@ -3491,8 +3491,8 @@ void Scumm::updateCursor() {
 
 void Scumm::animateCursor() {
 	if (_cursor.animate) {
-		if (!(_cursor.animateIndex & 0x3)) {
-			decompressDefaultCursor((_cursor.animateIndex >> 2) & 3);
+		if (!(_cursor.animateIndex & 0x1)) {
+			decompressDefaultCursor((_cursor.animateIndex >> 1) & 3);
 		}
 		_cursor.animateIndex++;
 	}

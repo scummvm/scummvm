@@ -42,7 +42,7 @@
 
 enum {
 	kDoubleClickDelay = 500, // milliseconds
-	kCursorAnimateDelay = 500,
+	kCursorAnimateDelay = 250,
 	kKeyRepeatInitialDelay = 400,
 	kKeyRepeatSustainDelay = 100
 };
