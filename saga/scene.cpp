@@ -302,7 +302,7 @@ int Scene::changeScene(int sceneNumber, int actorsEntrance, int fadeIn) {
 	}
 
 	endScene();
-	loadScene(sceneNumber, BY_SCENE, SC_defaultScene, NULL, fadeIn, actorsEntrance);
+	loadScene(sceneNumber, BY_SCENE, NULL, NULL, fadeIn, actorsEntrance);
 
 	return SUCCESS;
 }
@@ -645,7 +645,7 @@ int Scene::loadScene(int scene_num, int load_flag, SCENE_PROC scene_proc, SceneD
 		event.param2 = _desc.startScriptEntrypointNumber;
 		event.param3 = 0;		// Action
 		event.param4 = _sceneNumber;	// Object
-		event.param5 = 0;		// With Object - TODO: should be 'entrance'
+		event.param5 = actorsEntrance;	// With Object
 		event.param6 = 0;		// Actor
 
 		q_event = _vm->_events->chain(q_event, &event);
@@ -663,15 +663,89 @@ int Scene::loadScene(int scene_num, int load_flag, SCENE_PROC scene_proc, SceneD
 		q_event = _vm->_events->chain(q_event, &event);
 	}
 
-	if (scene_proc == NULL) {
-		_sceneProc = SC_defaultScene;
-	} else {
-		_sceneProc = scene_proc;
-	}
-
 	getInfo(&scene_info);
 
-	_sceneProc(SCENE_BEGIN, &scene_info, this);
+	if (scene_proc == NULL) {
+		if (!_inGame) {
+			_inGame = true;
+			_vm->_interface->setMode(kPanelInventory);
+		}
+
+		_vm->_sound->stopVoice();
+		_vm->_sound->stopSound();
+
+		if (_desc.musicRN >= 0) {
+			event.type = ONESHOT_EVENT;
+			event.code = MUSIC_EVENT;
+			event.param = _desc.musicRN;
+			event.param2 = MUSIC_DEFAULT;
+			event.op = EVENT_PLAY;
+			event.time = 0;
+
+			_vm->_events->queue(&event);
+		} else {
+			event.type = ONESHOT_EVENT;
+			event.code = MUSIC_EVENT;
+			event.op = EVENT_STOP;
+			event.time = 0;
+
+			_vm->_events->queue(&event);
+		}
+
+		// Set scene background
+		event.type = ONESHOT_EVENT;
+		event.code = BG_EVENT;
+		event.op = EVENT_DISPLAY;
+		event.param = SET_PALETTE;
+		event.time = 0;
+
+		_vm->_events->queue(&event);
+
+		// Activate user interface
+		event.type = ONESHOT_EVENT;
+		event.code = INTERFACE_EVENT;
+		event.op = EVENT_ACTIVATE;
+		event.time = 0;
+
+		_vm->_events->queue(&event);
+
+		// Begin palette cycle animation if present
+		event.type = ONESHOT_EVENT;
+		event.code = PALANIM_EVENT;
+		event.op = EVENT_CYCLESTART;
+		event.time = 0;
+
+		q_event = _vm->_events->queue(&event);
+
+		// Show cursor
+		event.type = ONESHOT_EVENT;
+		event.code = CURSOR_EVENT;
+		event.op = EVENT_SHOW;
+		_vm->_events->chain(q_event, &event);
+
+		// Start the scene main script
+		if (_desc.sceneScriptEntrypointNumber > 0) {
+			event.type = ONESHOT_EVENT;
+			event.code = SCRIPT_EVENT;
+			event.op = EVENT_EXEC_NONBLOCKING;
+			event.time = 0;
+			event.param = _desc.scriptModuleNumber;
+			event.param2 = _desc.sceneScriptEntrypointNumber;
+			event.param3 = kVerbEnter;		// Action
+			event.param4 = _sceneNumber;	// Object
+			event.param5 = actorsEntrance;		// With Object
+			event.param6 = 0;		// Actor
+
+			_vm->_events->queue(&event);
+		}
+
+		debug(0, "Scene started");
+
+	} else {
+		scene_proc(SCENE_BEGIN, &scene_info, this);
+	}
+
+
 
 	// We probably don't want "followers" to go into scene -1. At the very
 	// least we don't want garbage to be drawn that early in the ITE intro.
@@ -930,9 +1004,11 @@ int Scene::endScene() {
 
 	debug(0, "Ending scene...");
 
-	getInfo(&scene_info);
+	if (_sceneProc != NULL) {
+		getInfo(&scene_info);
 
-	_sceneProc(SCENE_END, &scene_info, this);
+		_sceneProc(SCENE_END, &scene_info, this);
+	}
 
 	//
 	_vm->_script->abortAllThreads();
@@ -1014,9 +1090,6 @@ void Scene::cmdSceneInfo() {
 	_vm->_console->DebugPrintf(fmt, "Music R#", _desc.musicRN);
 }
 
-int Scene::SC_defaultScene(int param, SCENE_INFO *scene_info, void *refCon) {
-	return ((Scene *)refCon)->defaultScene(param, scene_info);
-}
 
 void Scene::cmdActionMapInfo() {
 	_actionMap->cmdInfo();
@@ -1026,96 +1099,6 @@ void Scene::cmdObjectMapInfo() {
 	_objectMap->cmdInfo();
 }
 
-int Scene::defaultScene(int param, SCENE_INFO *scene_info) {
-	EVENT event;
-	EVENT *q_event;
-
-	if (!_inGame) {
-		_inGame = true;
-		_vm->_interface->setMode(kPanelInventory);
-	}
-
-	switch (param) {
-	case SCENE_BEGIN:
-		_vm->_sound->stopVoice();
-		_vm->_sound->stopSound();
-
-		if (_desc.musicRN >= 0) {
-			event.type = ONESHOT_EVENT;
-			event.code = MUSIC_EVENT;
-			event.param = _desc.musicRN;
-			event.param2 = MUSIC_DEFAULT;
-			event.op = EVENT_PLAY;
-			event.time = 0;
-
-			_vm->_events->queue(&event);
-		} else {
-			event.type = ONESHOT_EVENT;
-			event.code = MUSIC_EVENT;
-			event.op = EVENT_STOP;
-			event.time = 0;
-
-			_vm->_events->queue(&event);
-		}
-
-		// Set scene background
-		event.type = ONESHOT_EVENT;
-		event.code = BG_EVENT;
-		event.op = EVENT_DISPLAY;
-		event.param = SET_PALETTE;
-		event.time = 0;
-
-		_vm->_events->queue(&event);
-
-		// Activate user interface
-		event.type = ONESHOT_EVENT;
-		event.code = INTERFACE_EVENT;
-		event.op = EVENT_ACTIVATE;
-		event.time = 0;
-
-		_vm->_events->queue(&event);
-
-		// Begin palette cycle animation if present
-		event.type = ONESHOT_EVENT;
-		event.code = PALANIM_EVENT;
-		event.op = EVENT_CYCLESTART;
-		event.time = 0;
-
-		q_event = _vm->_events->queue(&event);
-		
-		// Show cursor
-		event.type = ONESHOT_EVENT;
-		event.code = CURSOR_EVENT;
-		event.op = EVENT_SHOW;
-		_vm->_events->chain(q_event, &event);
-
-		// Start the scene main script
-		if (_desc.sceneScriptEntrypointNumber > 0) {
-			event.type = ONESHOT_EVENT;
-			event.code = SCRIPT_EVENT;
-			event.op = EVENT_EXEC_NONBLOCKING;
-			event.time = 0;
-			event.param = _desc.scriptModuleNumber;
-			event.param2 = _desc.sceneScriptEntrypointNumber;
-			event.param3 = 0;		// Action
-			event.param4 = _sceneNumber;	// Object
-			event.param5 = 0;		// With Object - TODO: should be 'entrance'
-			event.param6 = 0;		// Actor - TODO: should be VERB_ENTER
-
-			_vm->_events->queue(&event);
-		}
-
-		debug(0, "Scene started");
-		break;
-	case SCENE_END:
-		break;
-	default:
-		warning("Scene::defaultScene(): Illegal scene procedure parameter");
-		break;
-	}
-
-	return 0;
-}
 
 void Scene::loadSceneEntryList(const byte* resourcePointer, size_t resourceLength) {	
 	int i;

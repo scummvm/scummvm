@@ -296,8 +296,6 @@ class Scene {
 	
 	int _sceneDoors[SCENE_DOORS_MAX];
 
-	static int SC_defaultScene(int param, SCENE_INFO *scene_info, void *refCon);
-	int defaultScene(int param, SCENE_INFO *scene_info);
 
  public:
 	ObjectMap *_actionMap;
