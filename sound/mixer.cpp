@@ -36,7 +36,11 @@ SoundMixer::SoundMixer() {
 }
 
 SoundMixer::~SoundMixer() {
+	_syst->clear_sound_proc();
 	free(_volumeTable);
+	for (int i = 0; i != NUM_CHANNELS; i++) {
+		delete _channels[i];
+	}
 }
 
 void SoundMixer::unInsert(Channel *chan) {
