@@ -57,10 +57,11 @@ SwordMouse::SwordMouse(OSystem *system, ResMan *pResMan, ObjectMan *pObjMan) {
 
 void SwordMouse::initialize(void) {
 	_numObjs = 0;
-	_menuStatus = _mouseStatus = 0; // mouse off and unlocked
+	_mouseStatus = 0; // mouse off and unlocked
 	_getOff = 0;
 	_specialPtrId = 0;
 	_inTopMenu = false;
+	_mouseOverride = false;
 
 	for (uint8 cnt = 0; cnt < 17; cnt++)
 		_pointers[cnt] = (MousePtr*)_resMan->mouseResOpen(MSE_POINTER + cnt);
@@ -68,17 +69,15 @@ void SwordMouse::initialize(void) {
 
 void SwordMouse::controlPanel(bool on) { // true on entering cpanel, false when leaving
 	static uint32 savedPtrId = 0, savedSpecialId = 0;
-	static uint8 savedMouseStatus;
 	if (on) {
 		savedPtrId = _currentPtrId;
 		savedSpecialId = _specialPtrId;
-		savedMouseStatus = _mouseStatus;
-		_mouseStatus = 1;
+		_mouseOverride = true;
 		setPointer(MSE_POINTER, 0);
 	} else {
 		_currentPtrId = savedPtrId;
-		_mouseStatus = savedMouseStatus;
 		_specialPtrId = savedSpecialId;
+		_mouseOverride = false;
 		if (_specialPtrId)
 			setPointer(_specialPtrId, 0);
 		else
@@ -89,10 +88,6 @@ void SwordMouse::controlPanel(bool on) { // true on entering cpanel, false when 
 void SwordMouse::useLogicAndMenu(SwordLogic *pLogic, SwordMenu *pMenu) {
 	_logic = pLogic;
 	_menu = pMenu;
-}
-
-void SwordMouse::setMenuStatus(uint8 status) {
-	_menuStatus = status;
 }
 
 void SwordMouse::addToList(int id, BsObject *compact) {
@@ -209,7 +204,7 @@ void SwordMouse::setPointer(uint32 resId, uint32 rate) {
 	}
 	_frame = 0;
 
-	if ((resId == 0) || (!(_mouseStatus & 1))) {
+	if ((resId == 0) || (!(_mouseStatus & 1) && (!_mouseOverride))) {
 		_system->set_mouse_cursor(NULL, 0, 0, 0, 0);
 		_system->show_mouse(false);
 	} else {
@@ -227,7 +222,7 @@ void SwordMouse::setPointer(uint32 resId, uint32 rate) {
 
 void SwordMouse::animate(void) {
 	MousePtr *currentPtr;
-	if ((_mouseStatus == 1) || _menuStatus) {
+	if ((_mouseStatus == 1) || _mouseOverride) {
 		if (_specialPtrId)
 			currentPtr = _specialPtr;
 		else

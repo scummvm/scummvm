@@ -182,7 +182,6 @@ void SwordMenu::fnEndMenu(void) {
 		_screen->clearMenu(MENU_TOP);
 		_screen->clearMenu(MENU_BOT);
 		_objectBarShown = false;
-		_mouse->setMenuStatus(0);
 	}
 }
 
@@ -190,7 +189,7 @@ void SwordMenu::fnChooser(BsObject *compact) {
 	SwordLogic::_scriptVars[OBJECT_HELD] = 0;
 	buildSubjects();
 	compact->o_logic = LOGIC_choose;
-	_mouse->setMenuStatus(1); // so the mouse cursor will be shown.
+	_mouse->controlPanel(true); // so the mouse cursor will be shown.
 	_subjectBarShown = true;
 }
 
@@ -203,7 +202,7 @@ void SwordMenu::fnEndChooser(void) {
 			delete _subjects[cnt];
 			_subjects[cnt] = NULL;
 		}
-	_mouse->setMenuStatus(0);
+	_mouse->controlPanel(false);
 	_subjectBarShown = false;
 }
 

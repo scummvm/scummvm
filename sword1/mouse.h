@@ -83,7 +83,6 @@ public:
 	void fnNormalMouse(void);
 	void fnLockMouse(void);
 	void fnUnlockMouse(void);
-	void setMenuStatus(uint8 status);
 	void controlPanel(bool on);
 private:
 	MousePtr *_pointers[17];
@@ -100,10 +99,9 @@ private:
 	uint16 _numObjs;
 	uint16 _lastState, _state;
 	uint32 _getOff;
-	uint8 _menuStatus;
 	uint32 _specialPtrId; // for special mouse cursors which aren't in the _pointers[] array.
 	MousePtr *_specialPtr;
-	bool _inTopMenu;
+	bool _inTopMenu, _mouseOverride;
 };
 
 #endif //BSMOUSE_H
