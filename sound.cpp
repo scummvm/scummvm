@@ -684,7 +684,7 @@ typedef struct {int offset, size, codec;} COMP_table;
 void Scumm::decompressBundleSound(int index) {
 	int i, z;
 	COMP_table table[50];
-	static unsigned char *CompInput, *CompOutput, *CompFinal;
+	unsigned char *CompInput, *CompOutput, *CompFinal, *Final;
 	int outputSize, finalSize;
 
 	fileSeek(_sfxFile, bundle_table[index].offset, SEEK_SET);
@@ -759,10 +759,25 @@ void Scumm::decompressBundleSound(int index) {
 		free(CompOutput); CompOutput= NULL;
 	}
 
-	/* FIXME: This is nasty. We are actually sending the whole
-		  decompressed packet to the mixer.. but the packet
-		  actually contains further subblocks! (eg, sync) */
-	_mixer->play_raw(NULL, CompFinal, finalSize, 22050, SoundMixer::FLAG_UNSIGNED | SoundMixer::FLAG_AUTOFREE);
+	{	/* Parse decompressed data */
+		byte *ptr = CompFinal;
+		int tag, size;
+		tag = READ_BE_UINT32(ptr); ptr+=4;
+		if (tag != 'iMUS') {
+			warning("Decompression of bundle sound failed");
+			free(CompFinal);
+			return;
+		}
+		size = READ_BE_UINT32(ptr); ptr+=4;
+		tag = READ_BE_UINT32(ptr);  ptr+=4;
+		size = READ_BE_UINT32(ptr); ptr+=size+4;
+		tag = READ_BE_UINT32(ptr);  ptr+=4;
+		size = READ_BE_UINT32(ptr); ptr+=4;
+		Final = (unsigned char *)malloc(size);
+		memcpy(&Final[0], &ptr[0], size);
+		_mixer->play_raw(NULL, Final, size, 22050, SoundMixer::FLAG_UNSIGNED | SoundMixer::FLAG_AUTOFREE);
+		free(CompFinal);
+	}
 }
 
 void Scumm::playBundleSound(char *sound)

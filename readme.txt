@@ -393,6 +393,7 @@ Credits:
         Jonathan 'khalek'  - Expert weaver in the Loom
         Nicolas Noble      - Config file support
         Pawel Kolodziejski - Added missing Dig SMUSH codecs
+	Felix Jakschitsc   - His hard work on Zak256
 
         And to all the contributors, users, and beta testers we've missed.
         Thanks!
