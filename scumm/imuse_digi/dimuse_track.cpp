@@ -161,10 +161,10 @@ void IMuseDigital::startSound(int soundId, const char *soundName, int soundType,
 				_track[l]->stream = NULL;
 				_track[l]->started = false;
 			} else {
-				// setup 1 second mixer wrapped buffer
-				int32 mixerBufferSize = _track[l]->iteration;
+				// setup 1 second stream wrapped buffer
+				int32 streamBufferSize = _track[l]->iteration;
 				_track[l]->stream2 = NULL;
-				_track[l]->stream = makeAppendableAudioStream(freq, _track[l]->mixerFlags, mixerBufferSize);
+				_track[l]->stream = makeAppendableAudioStream(freq, _track[l]->mixerFlags, streamBufferSize);
 				_vm->_mixer->playInputStream(&_track[l]->handle, _track[l]->stream, false, _track[l]->vol / 1000, _track[l]->pan, -1);
 				_track[l]->started = true;
 			}
@@ -305,9 +305,9 @@ int IMuseDigital::cloneToFadeOutTrack(int track, int fadeDelay, int killNormalTr
 		_track[track]->used = false;
 	} else {
 		_track[track]->soundHandle = _sound->cloneSound(_track[fadeTrack]->soundHandle);
-		// setup 1 second mixer wrapped buffer
-		int32 mixerBufferSize = _track[track]->iteration;
-		_track[track]->stream = makeAppendableAudioStream(_sound->getFreq(_track[track]->soundHandle), _track[track]->mixerFlags, mixerBufferSize);
+		// setup 1 second stream wrapped buffer
+		int32 streamBufferSize = _track[track]->iteration;
+		_track[track]->stream = makeAppendableAudioStream(_sound->getFreq(_track[track]->soundHandle), _track[track]->mixerFlags, streamBufferSize);
 		_vm->_mixer->playInputStream(&_track[track]->handle, _track[track]->stream, false, _track[track]->vol / 1000, _track[track]->pan, -1);
 		_track[track]->started = true;
 	}
