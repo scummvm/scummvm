@@ -825,6 +825,13 @@ void Scumm::o5_actorSetClass()
 		newClass = getVarOrDirectWord(0x80);
 		if (newClass == 0) {
 			_classData[act] = 0;
+			if( _features & GF_SMALL_HEADER)
+			{
+				Actor *a;
+				a=derefActor(act);
+				a->forceClip=0;
+			}
+				
 			continue;
 		}
 
