@@ -50,7 +50,6 @@ Smush::Smush() {
 	_movieTime = 0;
 	_surface = NULL;
 	_bufSurface = NULL;
-	_timerMutex = g_timer->getMutex();
 }
 
 Smush::~Smush() {
@@ -78,15 +77,11 @@ void Smush::init() {
 	    _buf = (byte *)_bufSurface->pixels;
 	}
 
-	while (g_timerCallbackRunning) {};
-	g_timerLock = true;
 	g_timer->installTimerProc(&timerCallback, _speed, NULL);
-	g_timerLock = false;
 }
 
 void Smush::deinit() {
     g_timer->removeTimerProc(&timerCallback);
-	g_timerLock = false;
 
 	_videoFinished = true;
 	_videoPause = true;

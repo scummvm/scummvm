@@ -63,7 +63,6 @@ public:
 	 */
 	void removeTimerProc(TimerProc proc);
 
-	MutexRef getMutex();
 protected:
 	static int timer_handler(int t);
 	int handler(int t);

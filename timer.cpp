@@ -118,8 +118,8 @@ bool Timer::installTimerProc(TimerProc procedure, int32 interval, void *refCon) 
 	assert(interval > 0);
 	StackLock lock(_mutex);
 
-	while (g_timerCallbackRunning) {};
 	g_timerLock = true;
+	while (g_timerCallbackRunning) {};
 
 	for (int l = 0; l < MAX_TIMERS; l++) {
 		if (!_timerSlots[l].procedure) {
@@ -141,8 +141,8 @@ bool Timer::installTimerProc(TimerProc procedure, int32 interval, void *refCon) 
 void Timer::removeTimerProc(TimerProc procedure) {
 	StackLock lock(_mutex);
 
-	while (g_timerCallbackRunning) {};
 	g_timerLock = true;
+	while (g_timerCallbackRunning) {};
 
 	for (int l = 0; l < MAX_TIMERS; l++) {
 		if (_timerSlots[l].procedure == procedure) {
@@ -154,8 +154,4 @@ void Timer::removeTimerProc(TimerProc procedure) {
 	}
 
 	g_timerLock = false;
-}
-
-MutexRef Timer::getMutex() {
-    return _mutex;
 }
