@@ -22,7 +22,7 @@
  */
 
 /* Action map module */
-
+#include "saga.h"
 #include "reinherit.h"
 
 #include "yslib.h"
@@ -57,16 +57,13 @@ namespace Saga {
 		int exit_ct;
 		int i, pt;
 
-		const byte *read_p = exmap_res;
-		size_t read_len = exmap_res_len;
-
 		assert(ActmapModule.init);
 		assert(exmap_res != NULL);
 
-		(void)read_len;
+		MemoryReadStream *exmapStream = new MemoryReadStream(exmap_res, exmap_res_len);
 
 		// Load exits
-		exit_ct = ys_read_s16_le(read_p, &read_p);
+		exit_ct = exmapStream->readSint16LE();
 		if (exit_ct < 0) {
 			return R_FAILURE;
 		}
@@ -78,12 +75,12 @@ namespace Saga {
 		}
 
 		for (i = 0; i < exit_ct; i++) {
-			exmap_entry[i].unknown00 = ys_read_s16_le(read_p, &read_p);
-			exmap_entry[i].unknown02 = ys_read_s16_le(read_p, &read_p);
-			exmap_entry[i].exit_scene = ys_read_s16_le(read_p, &read_p);
-			exmap_entry[i].unknown06 = ys_read_s16_le(read_p, &read_p);
+			exmap_entry[i].unknown00 = exmapStream->readSint16LE();
+			exmap_entry[i].unknown02 = exmapStream->readSint16LE();
+			exmap_entry[i].exit_scene = exmapStream->readSint16LE();
+			exmap_entry[i].unknown06 = exmapStream->readSint16LE();
 
-			exmap_entry[i].pt_count = ys_read_s16_le(read_p, &read_p);
+			exmap_entry[i].pt_count = exmapStream->readSint16LE();
 			if (exmap_entry[i].pt_count < 0) {
 				free(exmap_entry);
 				return R_FAILURE;
@@ -96,8 +93,8 @@ namespace Saga {
 			}
 
 			for (pt = 0; pt < exmap_entry[i].pt_count; pt++) {
-				exmap_pt_tbl[pt].x = ys_read_s16_le(read_p, &read_p);
-				exmap_pt_tbl[pt].y = ys_read_s16_le(read_p, &read_p);
+				exmap_pt_tbl[pt].x = exmapStream->readSint16LE();
+				exmap_pt_tbl[pt].y = exmapStream->readSint16LE();
 			}
 
 			exmap_entry[i].pt_tbl = exmap_pt_tbl;

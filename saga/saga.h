@@ -29,6 +29,7 @@
 #include "base/engine.h"
 #include "base/gameDetector.h"
 #include "common/util.h"
+#include "common/stream.h"
 
 #include <limits.h>
 #include <stddef.h>
@@ -40,6 +41,8 @@ namespace Saga {
 class SndRes;
 class Sound;
 class Music;
+
+typedef Common::MemoryReadStream MemoryReadStream;
 
 #define R_PBOUNDS(n,max) (((n)>=(0))&&((n)<(max)))
 
