@@ -1241,12 +1241,12 @@ bool SkySound::startSpeech(uint16 textNum) {
 
 void SkySound::fnPauseFx(void) {
 
-	_mixer->pauseChannel(SOUND_CH0, true);
-	_mixer->pauseChannel(SOUND_CH1, true);
+	_mixer->pauseID(SOUND_CH0, true);
+	_mixer->pauseID(SOUND_CH1, true);
 }
 
 void SkySound::fnUnPauseFx(void) {
 
-	_mixer->pauseChannel(SOUND_CH0, false);
-	_mixer->pauseChannel(SOUND_CH1, false);
+	_mixer->pauseID(SOUND_CH0, false);
+	_mixer->pauseID(SOUND_CH1, false);
 }
