@@ -31,7 +31,6 @@ _build_simon=yes
 _build_sky=yes
 # binary names
 _ranlib=ranlib
-_ldd=ldd
 
 cc_check() {
   echo >> "$TMPLOG"
@@ -41,9 +40,6 @@ cc_check() {
   rm -f "$TMPO"
   ( $CXX "$TMPC" -o "$TMPO" "$@" ) >> "$TMPLOG" 2>&1
   TMP="$?"
-  echo >> "$TMPLOG"
-  echo "ldd $TMPO" >> "$TMPLOG"
-  ( $_ldd "$TMPO" ) >> "$TMPLOG" 2>&1
   echo >> "$TMPLOG"
   return "$TMP"
 }
@@ -324,7 +320,7 @@ else
 fi
 echo "$_mad"
 
-echocheck "ALSA 9"
+echocheck "ALSA 0.9"
 if test "$_alsa" = auto ; then
   _alsa=no
   cat > $TMPC << EOF
@@ -341,7 +337,7 @@ else
 fi
 echo "$_alsa"
 
-rm -f $TMPC $TMPO
+rm -f $TMPC $TMPO $TMPLOG
 
 #
 # End of config.h
