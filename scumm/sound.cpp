@@ -1049,7 +1049,7 @@ ScummFile *Sound::openSfxFile() {
 			sprintf(buf, "%s.he2", _vm->getGameName());
 		else
 			sprintf(buf, "%s.tlk", _vm->getGameName());
-		if (file->open(buf))
+		if (file->open(buf) && _vm->_heversion <= 72) 
 			file->setEnc(0x69);
 		_soundMode = kVOCMode;
 	}
