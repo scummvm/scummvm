@@ -22,26 +22,49 @@
 #ifndef KYRA_H
 #define KYRA_H
 
-#include "common/scummsys.h"
+//#include "common/scummsys.h"
 #include "base/engine.h"
 #include "base/gameDetector.h"
 #include "common/util.h"
 
+enum {
+	GF_FLOPPY	= 1 << 0,
+	GF_TALKIE	= 1 << 1,
+	GF_KYRA1	= 1 << 2,
+	GF_KYRA2	= 1 << 3
+};
+
 namespace Kyra {
+	class Resourcemanager;
+	class CPSImage;
+	class Font;
+	class Palette;
+	class VMContext;
 
 class KyraEngine : public Engine {
-
+public:
+	KyraEngine(GameDetector *detector, OSystem *syst);
+	~KyraEngine();
 	void errorString( const char *buf_input, char *buf_output);
+
+	void updateScreen(void);
+        void setCurrentPalette(Palette* pal, bool delNextTime = true);
+
+        Resourcemanager* resManager(void) { return _resMgr; }
+//        MidiDriver* midiDriver(void) { return _midiDriver; }
 
 protected:
 	void go();
 	void shutdown();
+        Resourcemanager* _resMgr;
+	uint8 *_screen;
 
-public:
+        Font* _font;
+        CPSImage* _mouse;
+        CPSImage* _items;
 
-	KyraEngine(GameDetector *detector, OSystem *syst);
-	virtual ~KyraEngine();
-
+        VMContext* _currentScript; // our current script
+        VMContext* _npcScript; // script from NPCs
 };
 
 } // End of namespace Kyra
