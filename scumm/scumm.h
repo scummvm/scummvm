@@ -400,7 +400,8 @@ public:
 	uint16 _mouseButStat;
 	byte _leftBtnPressed, _rightBtnPressed;
 
-	int16 _virtual_mouse_x, _virtual_mouse_y, _bootParam;
+	int16 _virtual_mouse_x, _virtual_mouse_y;
+	int _bootParam;
 	uint16 _debugMode, _soundCardType;
 
 	/* Not sure where this stuff goes */
@@ -464,15 +465,15 @@ public:
 	uint16 _curExecScript;
 	byte **_lastCodePtr;
 	int _resultVarNumber, _scummStackPos;
-	int16 _localParamList[16],  _scummStack[150];
+	int _localParamList[16],  _scummStack[150];
 	
 	virtual void setupOpcodes() = 0;
 	virtual void executeOpcode(int i) = 0;
 	virtual const char *getOpcodeDesc(int i) = 0;
 
-	void initializeLocals(int slot, int16 *vars);
+	void initializeLocals(int slot, int *vars);
 	int	getScriptSlot();
-	void runScript(int script, int a, int b, int16 *lvarptr);
+	void runScript(int script, int a, int b, int *lvarptr);
 	void stopScriptNr(int script);
 	void runScriptNested(int script);
 	void executeScript();	
@@ -497,7 +498,7 @@ public:
 	void freezeScripts(int scr);
 	void unfreezeScripts();
 	void runAllScripts();
-	void cutscene(int16 *args);
+	void cutscene(int *args);
 	void endCutscene();
 	void exitCutscene();
 	void runExitScript();
@@ -648,7 +649,7 @@ public:
 	int getVerbEntrypoint(int obj, int entry);
 	int getVerbSlot(int id, int mode);
 	void killVerb(int slot);
-	void runVerbCode(int script, int entry, int a, int b, int16 *vars);
+	void runVerbCode(int script, int entry, int a, int b, int *vars);
 	void setVerbObject(uint room, uint object, uint verb);
 
 	/* Should be in Actor class */

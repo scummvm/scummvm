@@ -35,7 +35,7 @@ enum {
 
 
 /* Start executing script 'script' with parameters 'a' and 'b' */
-void Scumm::runScript(int script, int a, int b, int16 *lvarptr)
+void Scumm::runScript(int script, int a, int b, int *lvarptr)
 {
 	byte *scriptPtr;
 	uint32 scriptOffs;
@@ -592,7 +592,7 @@ bool Scumm::isScriptInUse(int script)
 
 void Scumm::runHook(int i)
 {
-	int16 tmp[16];
+	int tmp[16];
 	tmp[0] = i;
 	if (_vars[VAR_HOOK_SCRIPT]) {
 		runScript(_vars[VAR_HOOK_SCRIPT], 0, 0, tmp);
@@ -781,7 +781,7 @@ void Scumm::checkAndRunSentenceScript()
 
 void Scumm::runInputScript(int a, int cmd, int mode)
 {
-	int16 args[16];
+	int args[16];
 	memset(args, 0, sizeof(args));
 	args[0] = a;
 	args[1] = cmd;
@@ -805,7 +805,7 @@ void Scumm::decreaseScriptDelay(int amount)
 	}
 }
 
-void Scumm::runVerbCode(int object, int entry, int a, int b, int16 *vars)
+void Scumm::runVerbCode(int object, int entry, int a, int b, int *vars)
 {
 	uint32 obcd;
 	int slot, where, offs;
@@ -843,7 +843,7 @@ void Scumm::runVerbCode(int object, int entry, int a, int b, int16 *vars)
 	runScriptNested(slot);
 }
 
-void Scumm::initializeLocals(int slot, int16 *vars)
+void Scumm::initializeLocals(int slot, int *vars)
 {
 	int i;
 	if (!vars) {
@@ -897,7 +897,7 @@ void Scumm::endCutscene()
 {
 	ScriptSlot *ss = &vm.slot[_currentScript];
 	uint32 *csptr;
-	int16 args[16];
+	int args[16];
 
 	memset(args, 0, sizeof(args));
 
@@ -919,7 +919,7 @@ void Scumm::endCutscene()
 		runScript(_vars[VAR_CUTSCENE_END_SCRIPT], 0, 0, args);
 }
 
-void Scumm::cutscene(int16 *args)
+void Scumm::cutscene(int *args)
 {
 	int scr = _currentScript;
 	vm.slot[scr].cutsceneOverride++;
@@ -1016,21 +1016,30 @@ int Scumm::defineArray(int array, int type, int dim2, int dim1)
 
 	id = getArrayId();
 
-	if (array & 0x4000) {
-		_arrays[id] = (char)vm.slot[_currentScript].number;
-	}
+	if (_features & GF_AFTER_V8) {
+		if (array & 0x40000000) {
+			_arrays[id] = (char)vm.slot[_currentScript].number;
+		}
+	
+		if (array & 0x80000000) {
+			error("Can't define bit variable as array pointer");
+		}
 
-	if (array & 0x8000) {
-		error("Can't define bit variable as array pointer");
+		size = (type == 5) ? 32 : 8;
+	} else {
+		if (array & 0x4000) {
+			_arrays[id] = (char)vm.slot[_currentScript].number;
+		}
+	
+		if (array & 0x8000) {
+			error("Can't define bit variable as array pointer");
+		}
+
+		size = (type == 5) ? 16 : 8;
 	}
 
 	writeVar(array, id);
 
-	if (_features & GF_AFTER_V8) {
-		size = (type == 5) ? 32 : 8;
-	} else {
-		size = (type == 5) ? 16 : 8;
-	}
 	size *= dim2 + 1;
 	size *= dim1 + 1;
 	size >>= 3;

@@ -46,7 +46,7 @@ protected:
 	virtual const char *getOpcodeDesc(int i);
 
 	void decodeParseString();
-	int getWordVararg(int16 *ptr);
+	int getWordVararg(int *ptr);
 	int getVarOrDirectWord(byte mask);
 	int getVarOrDirectByte(byte mask);
 
@@ -210,7 +210,7 @@ protected:
 	int popRoomAndObj(int *room);
 
 	void decodeParseString(int a, int b);
-	int getStackList(int16 *args, uint maxnum);
+	int getStackList(int *args, uint maxnum);
 
 	/* Version 6 script opcodes */
 	void o6_setBlastObjectWindow();

@@ -11,6 +11,7 @@ SCUMM_OBJS = \
 	scumm/gfx.o \
 	scumm/imuse.o \
 	scumm/instrument.o \
+	scumm/nut_renderer.o \
 	scumm/object.o \
 	scumm/resource.o \
 	scumm/resource_v2.o \
@@ -25,8 +26,7 @@ SCUMM_OBJS = \
 	scumm/sound.o \
 	scumm/string.o \
 	scumm/vars.o \
-	scumm/verbs.o \
-	scumm/nut_renderer.o
+	scumm/verbs.o
 
 SMUSH_OBJS = \
 	scumm/smush/blitter.o \

@@ -148,7 +148,7 @@ public:
 	void stopSound(int a);
 	void stopAllSounds();
 	void clearSoundQue();
-	void soundKludge(int16 * list);
+	void soundKludge(int *list, int num);
 	void talkSound(uint32 a, uint32 b, int mode, int frame);
 	void setupSound();
 	void pauseSounds(bool pause);

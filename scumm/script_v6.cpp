@@ -410,7 +410,6 @@ int Scumm::readArray(int array, int idx, int base)
 	if (ah->type == 4) {
 		return ah->data[base];
 	} else if (_features & GF_AFTER_V8) {
-		// FIXME - this is just a guess, might be wrong
 		return (int32)READ_LE_UINT32(ah->data + base * 4);
 	} else {
 		return (int16)READ_LE_UINT16(ah->data + base * 2);
@@ -436,7 +435,7 @@ void Scumm::writeArray(int array, int idx, int base, int value)
 	}
 }
 
-int Scumm_v6::getStackList(int16 *args, uint maxnum)
+int Scumm_v6::getStackList(int *args, uint maxnum)
 {
 	uint num, i;
 
@@ -720,7 +719,7 @@ void Scumm_v6::o6_jump()
 
 void Scumm_v6::o6_startScriptEx()
 {
-	int16 args[16];
+	int args[16];
 	int script, flags;
 
 	getStackList(args, sizeof(args) / sizeof(args[0]));
@@ -731,7 +730,7 @@ void Scumm_v6::o6_startScriptEx()
 
 void Scumm_v6::o6_jumpToScript()
 {
-	int16 args[16];
+	int args[16];
 	int script, flags;
 
 	getStackList(args, sizeof(args) / sizeof(args[0]));
@@ -743,7 +742,7 @@ void Scumm_v6::o6_jumpToScript()
 
 void Scumm_v6::o6_startScript()
 {
-	int16 args[16];
+	int args[16];
 	int script;
 	getStackList(args, sizeof(args) / sizeof(args[0]));
 	script = pop();
@@ -752,7 +751,7 @@ void Scumm_v6::o6_startScript()
 
 void Scumm_v6::o6_startObject()
 {
-	int16 args[16];
+	int args[16];
 	int script, entryp;
 	int flags;
 	getStackList(args, sizeof(args) / sizeof(args[0]));
@@ -794,7 +793,7 @@ void Scumm_v6::o6_endCutscene()
 
 void Scumm_v6::o6_cutscene()
 {
-	int16 args[16];
+	int args[16];
 	getStackList(args, sizeof(args) / sizeof(args[0]));
 	cutscene(args);
 }
@@ -816,7 +815,7 @@ void Scumm_v6::o6_freezeUnfreeze()
 void Scumm_v6::o6_cursorCommand()
 {
 	int a, i;
-	int16 args[16];
+	int args[16];
 
 	switch (fetchScriptByte()) {
 	case 0x90:
@@ -885,7 +884,7 @@ void Scumm_v6::o6_breakHere()
 
 void Scumm_v6::o6_ifClassOfIs()
 {
-	int16 args[16];
+	int args[16];
 	int num, obj, cls;
 	bool b;
 	int cond = 1;
@@ -904,7 +903,7 @@ void Scumm_v6::o6_ifClassOfIs()
 
 void Scumm_v6::o6_setClass()
 {
-	int16 args[16];
+	int args[16];
 	int num, obj, cls;
 
 	num = getStackList(args, sizeof(args) / sizeof(args[0]));
@@ -1355,7 +1354,7 @@ void Scumm_v6::o6_isSoundRunning()
 
 void Scumm_v6::o6_setBoxFlags()
 {
-	int16 table[65];
+	int table[65];
 	int num, value;
 
 	value = pop();
@@ -1608,7 +1607,7 @@ void Scumm_v6::o6_actorOps()
 {
 	Actor *a;
 	int i, j, k;
-	int16 args[8];
+	int args[8];
 	byte b;
 
 	b = fetchScriptByte();
@@ -1907,7 +1906,7 @@ void Scumm_v6::o6_findObject()
 
 void Scumm_v6::o6_pseudoRoom()
 {
-	int16 list[100];
+	int list[100];
 	int num, a, value;
 
 	num = getStackList(list, sizeof(list) / sizeof(list[0]));
@@ -1946,7 +1945,7 @@ void Scumm::arrayop_1(int a, byte *ptr)
 void Scumm_v6::o6_arrayOps()
 {
 	int a, b, c, d, num;
-	int16 list[128];
+	int list[128];
 
 	switch (fetchScriptByte()) {
 	case 205:
@@ -2140,15 +2139,15 @@ void Scumm_v6::o6_getAnimateVariable()
 
 void Scumm_v6::o6_soundKludge()
 {
-	int16 list[16];
-	getStackList(list, sizeof(list) / sizeof(list[0]));
+	int list[16];
+	int num = getStackList(list, sizeof(list) / sizeof(list[0]));
 
-	_sound->soundKludge(list);
+	_sound->soundKludge(list, num);
 }
 
 void Scumm_v6::o6_isAnyOf()
 {
-	int16 list[100];
+	int list[100];
 	int num;
 	int16 val;
 
@@ -2350,7 +2349,7 @@ void Scumm_v6::o6_dummy()
 
 void Scumm_v6::o6_startObjectQuick()
 {
-	int16 args[16];
+	int args[16];
 	int script, entryp;
 	getStackList(args, sizeof(args) / sizeof(args[0]));
 	entryp = pop();
@@ -2360,7 +2359,7 @@ void Scumm_v6::o6_startObjectQuick()
 
 void Scumm_v6::o6_startScriptQuick()
 {
-	int16 args[16];
+	int args[16];
 	int script;
 	getStackList(args, sizeof(args) / sizeof(args[0]));
 	script = pop();
@@ -2430,7 +2429,7 @@ void Scumm_v6::o6_distPtPt()
 
 void Scumm_v6::o6_drawBlastObject()
 {
-	int16 args[16];
+	int args[16];
 	int a, b, c, d, e;
 
 	getStackList(args, sizeof(args) / sizeof(args[0]));
@@ -2459,7 +2458,7 @@ void Scumm_v6::o6_setBlastObjectWindow()
 
 void Scumm_v6::o6_miscOps()
 {
-	int16 args[30];
+	int args[30];
 	int i;
 	Actor *a;
 
@@ -2758,7 +2757,7 @@ void Scumm_v6::o6_miscOps()
 
 void Scumm_v6::o6_kernelFunction()
 {
-	int16 args[30];
+	int args[30];
 	int i;
 	Actor *a;
 
@@ -2858,7 +2857,7 @@ void Scumm_v6::o6_delayFrames()
 
 void Scumm_v6::o6_pickOneOf()
 {
-	int16 args[100];
+	int args[100];
 	int i, num;
 
 	num = getStackList(args, sizeof(args) / sizeof(args[0]));
@@ -2870,7 +2869,7 @@ void Scumm_v6::o6_pickOneOf()
 
 void Scumm_v6::o6_pickOneOfDefault()
 {
-	int16 args[100];
+	int args[100];
 	int i, num, def;
 
 	def = pop();

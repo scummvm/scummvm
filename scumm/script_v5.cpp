@@ -466,7 +466,7 @@ void Scumm_v5::o5_actorSet()
 		case 15:										/* unk */
 			error("o5_actorset:unk not implemented");
 #if 0
-			int16 args[16] =
+			int args[16] =
 				{
 					0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
 					0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
@@ -583,7 +583,7 @@ void Scumm_v5::o5_breakHere()
 
 void Scumm_v5::o5_chainScript()
 {
-	int16 vars[16];
+	int vars[16];
 	int data;
 	int cur;
 
@@ -603,7 +603,7 @@ void Scumm_v5::o5_chainScript()
 void Scumm_v5::o5_cursorCommand()
 {
 	int i, j, k;
-	int16 table[16];
+	int table[16];
 	switch ((_opcode = fetchScriptByte()) & 0x1F) {
 	case 1:											/* cursor show */
 		_cursor.state = 1;
@@ -665,7 +665,7 @@ void Scumm_v5::o5_cursorCommand()
 
 void Scumm_v5::o5_cutscene()
 {
-	int16 args[16];
+	int args[16];
 	getWordVararg(args);
 	cutscene(args);
 }
@@ -2030,7 +2030,7 @@ void Scumm_v5::o5_setVarRange()
 
 void Scumm_v5::o5_soundKludge()
 {
-	int16 items[15];
+	int items[15];
 	int i;
 
 	if (_features & GF_SMALL_HEADER) {	// Is WaitForSentence in SCUMM V3
@@ -2048,9 +2048,9 @@ void Scumm_v5::o5_soundKludge()
 	for (i = 0; i < 15; i++)
 		items[i] = 0;
 
-	getWordVararg(items);
+	int num = getWordVararg(items);
 
-	_sound->soundKludge(items);
+	_sound->soundKludge(items, num);
 }
 
 void Scumm_v5::o5_startMusic()
@@ -2061,7 +2061,7 @@ void Scumm_v5::o5_startMusic()
 void Scumm_v5::o5_startObject()
 {
 	int obj, script;
-	int16 data[16];
+	int data[16];
 
 	obj = getVarOrDirectWord(0x80);
 	script = getVarOrDirectByte(0x40);
@@ -2073,7 +2073,7 @@ void Scumm_v5::o5_startObject()
 void Scumm_v5::o5_startScript()
 {
 	int op, script;
-	int16 data[16];
+	int data[16];
 	int a, b;
 
 	op = _opcode;
@@ -2449,7 +2449,7 @@ void Scumm_v5::o5_walkActorToObject()
 	}
 }
 
-int Scumm_v5::getWordVararg(int16 *ptr)
+int Scumm_v5::getWordVararg(int *ptr)
 {
 	int i;
 

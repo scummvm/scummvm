@@ -627,7 +627,7 @@ void Scumm_v8::o8_arrayOps()
 	byte subOp = fetchScriptByte();
 	int array = fetchScriptWord();
 	int b, c, d, len;
-	int16 list[128];
+	int list[128];
 	
 	switch (subOp) {
 	case 0x14:		// SO_ASSIGN_STRING
@@ -706,7 +706,7 @@ void Scumm_v8::o8_cursorCommand()
 	// TODO
 	byte subOp = fetchScriptByte();
 	int a, i;
-	int16 args[16];
+	int args[16];
 	
 	switch (subOp) {
 	case 0xDC:		// SO_CURSOR_ON Turn cursor on
@@ -744,8 +744,6 @@ void Scumm_v8::o8_cursorCommand()
 			int idx = pop();
 			int room, obj;
 			obj = popRoomAndObj(&room);
-			// FIXME
-			printf("setCursorImg(%d, %d, %d)\n", obj, room, idx);
 			setCursorImg(obj, room, idx);
 		}
 		break;
@@ -1131,11 +1129,10 @@ void Scumm_v8::o8_verbOps()
 
 void Scumm_v8::o8_soundKludge()
 {
-	int16 args[16];
-	getStackList(args, sizeof(args) / sizeof(args[0]));
+	int args[16];
+	int num = getStackList(args, sizeof(args) / sizeof(args[0]));
 
-	// FIXME - is this right?
-	_sound->soundKludge(args);
+	_sound->soundKludge(args, num);
 }
 
 void Scumm_v8::o8_system()
@@ -1151,8 +1148,8 @@ void Scumm_v8::o8_system()
 void Scumm_v8::o8_kludge()
 {
 	// TODO
-	int16 args[30];
-	getStackList(args, sizeof(args) / sizeof(args[0]));
+	int args[30];
+	int len = getStackList(args, sizeof(args) / sizeof(args[0]));
 
 	switch (args[0]) {
 	case 11:
@@ -1196,15 +1193,15 @@ void Scumm_v8::o8_kludge()
 	case 34:
 	case 109:
 	default:
-		warning("o8_kludge: default case %d", args[0]);
+		warning("o8_kludge: default case (len = %d)", len);
 	}
 }
 
 void Scumm_v8::o8_kludge2()
 {
 	// TODO
-	int16 args[30];
-	getStackList(args, sizeof(args) / sizeof(args[0]));
+	int args[30];
+	int len = getStackList(args, sizeof(args) / sizeof(args[0]));
 
 	switch (args[0]) {
 	case 0xCE:		// getRGBSlot
@@ -1215,14 +1212,34 @@ void Scumm_v8::o8_kludge2()
 	case 0xDA:		// lipSyncWidth
 	case 0xDB:		// lipSyncHeight
 	case 0xDC:		// actorTalkAnimation
-	case 0xDD:		// getMasterSFXVol
-	case 0xDE:		// getMasterVoiceVol
-	case 0xDF:		// getMasterMusicVol
-	case 0xE0:		// readRegistryValue
-	default:
 		// FIXME - hack!
 		push(0);
-//		warning("o8_kludge2: default case %d", args[0]);
+		break;
+	case 0xDD:		// getMasterSFXVol
+		push(_sound->_sound_volume_sfx / 2);
+		break;
+	case 0xDE:		// getMasterVoiceVol
+		push(_sound->_sound_volume_sfx / 2);
+		break;
+	case 0xDF:		// getMasterMusicVol
+		push(_sound->_sound_volume_music / 2);
+		break;
+	case 0xE0:		// readRegistryValue
+		{
+		printf("readRegistryValue(%d)\n", args[1]);
+		int array = args[1];
+		// FIXME - hack: for some reasons the wrong variable ID arrives here, compared to the
+		// scripts. Probably a wrong push/pop somewhere. For now override to correct value.
+		array = 658;
+		ArrayHeader *ah = (ArrayHeader *)getResourceAddress(rtString, readVar(array));
+		if (!strcmp((char *)ah->data, "Saveload Page"))
+			push(1);
+		else
+			push(0);
+		}
+		break;
+	default:
+		error("o8_kludge2: default case (len = %d)", len);
 	}
 
 }

@@ -684,7 +684,7 @@ void Sound::clearSoundQue() {
 	memset(_soundQue2, 0, sizeof(_soundQue2));
 }
 
-void Sound::soundKludge(int16 * list) {
+void Sound::soundKludge(int *list, int num) {
 	int16 *ptr;
 	int i;
 
