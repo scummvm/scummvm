@@ -35,15 +35,13 @@
 #include <Winuser.h>
 #include <Winnls.h>
 #include "resource.h"
-#include "scumm.h"
-#include "config-file.h"
+#include "scumm/scumm.h"
+#include "common/config-manager.h"
 #include "screen.h"
-
-extern Config *g_config;
 
 #define CURRENT_GAMES_VERSION 7
 
-#define MAX_GAMES 30
+#define MAX_GAMES 32
 int MAX_DIRECTORY = 40;
 
 #define MAX_DISPLAYED_DIRECTORIES 7
@@ -285,6 +283,20 @@ static const ScummGame GameList[] = {
 		 0
 	},
 	{
+		 "Broken Sword 2",
+		 "Experimental",
+		 "", "PLAYERS.CLU", "",
+		 "sword2",
+		 0
+	},
+	{
+		 "Broken Sword 2",
+		 "Experimental",
+		 "", "R2CTLNS.OCX", "",
+		 "sword2alt",
+		 0
+	},
+	{
 		 NULL, NULL, NULL, NULL, NULL, NULL, 0
 	}
 };
@@ -365,18 +377,18 @@ bool loadGameSettings(BOOL display) {
 	_scanning = false;
 
 	/* check version */
-	version = g_config->getInt("GamesVersion", 0, "wince");
+	version = ConfMan.getInt("GamesVersion", "wince");
 	if (!version || version != CURRENT_GAMES_VERSION) 
 		return FALSE;
 
-	current = g_config->get("GamesInstalled", "wince");
+	current = ConfMan.get("GamesInstalled", "wince").c_str();
 	if (!current)
 		return FALSE;
 	index = atoi(current);
 
 	installedGamesNumber = index;
 
-	current = g_config->get("GamesReferences", "wince");
+	current = ConfMan.get("GamesReferences", "wince").c_str();
 	if (!current)
 		return FALSE;
 	for (i=0; i<index; i++) {
@@ -390,7 +402,7 @@ bool loadGameSettings(BOOL display) {
 		gamesInstalled[i].reference = j;
 	}
 
-	current = g_config->get("BasePath", "wince");
+	current = ConfMan.get("BasePath", "wince").c_str();
 	if (!current)
 		return FALSE;
 	MultiByteToWideChar(CP_ACP, 0, current, strlen(current) + 1, basePath, sizeof(basePath));
@@ -399,7 +411,7 @@ bool loadGameSettings(BOOL display) {
 		char keyName[100];
 
 		sprintf(keyName, "GamesDirectory%d", i);
-		current = g_config->get(keyName, "wince");
+		current = ConfMan.get(keyName, "wince").c_str();
 		if (!current)
 			return FALSE;
 		MultiByteToWideChar(CP_ACP, 0, current, strlen(current) + 1, gamesInstalled[i].directory, sizeof(gamesInstalled[i].directory));
@@ -795,7 +807,7 @@ void startFindGame(BOOL display, TCHAR *path) {
 	if (display)
 		drawCommentString("Saving the results");
 
-	g_config->setInt("GamesInstalled", index, "wince");
+	ConfMan.set("GamesInstalled", index, "wince");
 
 	tempo[0] = '\0';
 	for (i=0; i<index; i++) {
@@ -804,23 +816,23 @@ void startFindGame(BOOL display, TCHAR *path) {
 		strcat(tempo, x);
 	}	
 
-	g_config->set("GamesReferences", tempo, "wince");
+	ConfMan.set("GamesReferences", tempo, "wince");
 
 	WideCharToMultiByte(CP_ACP, 0, basePath, wcslen(basePath) + 1, workdir, sizeof(workdir), NULL, NULL);
 
-	g_config->set("BasePath", workdir, "wince");
+	ConfMan.set("BasePath", workdir, "wince");
 
 	for (i=0; i<index; i++) {
 		char keyName[100];
 
 		sprintf(keyName, "GamesDirectory%d", i);
 		WideCharToMultiByte(CP_ACP, 0, gamesInstalled[i].directory, wcslen(gamesInstalled[i].directory) + 1, workdir, sizeof(workdir), NULL, NULL);
-		g_config->set(keyName, workdir, "wince");
+		ConfMan.set(keyName, workdir, "wince");
 	}
 
-	g_config->setInt("GamesVersion", CURRENT_GAMES_VERSION, "wince");
+	ConfMan.set("GamesVersion", CURRENT_GAMES_VERSION, "wince");
 
-	g_config->flush();
+	ConfMan.flushToDisk();
 
 	//SetDlgItemText(hwndDlg, IDC_FILEPATH, TEXT("Scan finished"));
 	if (display)
@@ -884,15 +896,15 @@ void findGame(TCHAR *directory) {
 
 			
 			work = wcsrchr(directory, '\\');
-			WideCharToMultiByte(CP_ACP, 0, work + 1, wcslen(work + 1) + 1, curdir, sizeof(curdir), NULL, NULL);
-			if (stricmp(curdir, current_game.directory) == 0) {
-				
-				//MessageBox(NULL, TEXT("Match directory !"), TEXT("..."), MB_OK);
-				
-				gamesFound[i] = 1;
-				gamesInstalled[installedGamesNumber].reference = i;
-				wcscpy(gamesInstalled[installedGamesNumber].directory, directory);
-				installedGamesNumber++;
+			if (work) {
+				WideCharToMultiByte(CP_ACP, 0, work + 1, wcslen(work + 1) + 1, curdir, sizeof(curdir), NULL, NULL);
+				if (stricmp(curdir, current_game.directory) == 0) {				
+					//MessageBox(NULL, TEXT("Match directory !"), TEXT("..."), MB_OK);				
+					gamesFound[i] = 1;
+					gamesInstalled[installedGamesNumber].reference = i;
+					wcscpy(gamesInstalled[installedGamesNumber].directory, directory);
+					installedGamesNumber++;
+				}
 			}
 		}
 		else
@@ -933,13 +945,17 @@ void findGame(TCHAR *directory) {
 	if (x == INVALID_HANDLE_VALUE)
 		return;
 	if (desc.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) {
-		wsprintf(newDirectory, TEXT("%s\\%s"), directory, desc.cFileName);
-		findGame(newDirectory);
+		if (wcscmp(desc.cFileName, TEXT("Windows")) != 0) {
+			wsprintf(newDirectory, TEXT("%s\\%s"), directory, desc.cFileName);
+			findGame(newDirectory);
+		}
 	}
 	while (FindNextFile(x, &desc))
 		if (desc.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) {
-		wsprintf(newDirectory, TEXT("%s\\%s"), directory, desc.cFileName);
-		findGame(newDirectory);
+			if (wcscmp(desc.cFileName, TEXT("Windows")) != 0) {
+				wsprintf(newDirectory, TEXT("%s\\%s"), directory, desc.cFileName);
+				findGame(newDirectory);
+			}
 	}	
 	FindClose(x);
 }
