@@ -21,10 +21,8 @@
 
 #include "common/stdafx.h"
 #include "common/file.h"
-#include "sound/vorbis.h"
-#include "sound/mp3.h"
-
 #include "sword1/animation.h"
+
 
 #define MOVIE_WIDTH		640
 #define MOVIE_HEIGHT	400
@@ -139,24 +137,13 @@ bool AnimationState::init(const char *name) {
 	ticks = _sys->get_msecs();
 
 	/* Play audio - TODO: Sync with video?*/
-	sndfile = new File;
-
-#ifdef USE_VORBIS
-	sprintf(tempFile, "%s.ogg", name);
-	if (sndfile->open(tempFile)) 
-		bgSoundStream = makeVorbisStream(sndfile, sndfile->size());				
-#endif
-
-#ifdef USE_MAD
-	if (!sndfile->isOpen()) {
-		sprintf(tempFile, "%s.mp3", name);
-		if (sndfile->open(tempFile)) 
-			bgSoundStream = makeMP3Stream(sndfile, sndfile->size());
+	sndfile = new File();
+	bgSoundStream = AudioStream::openStreamFile(name, sndfile);
+	if (bgSoundStream != NULL) {
+		_snd->playInputStream(&bgSound, bgSoundStream, false, 255, 0, -1, false);
+	} else {
+		warning("Cutscene: Could not open Audio Track for %s", name);
 	}
-#endif
-
-	if (sndfile->isOpen())
-		_snd->playInputStream(&bgSound, bgSoundStream, false, 255, 0, -1, false);	
 
 	return true;
 #else /* USE_MPEG2 */

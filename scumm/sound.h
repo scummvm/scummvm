@@ -52,7 +52,7 @@ protected:
 
 	MP3OffsetTable *offset_table;	// SO3 MP3 compressed audio
 	int num_sound_effects;		// SO3 MP3 compressed audio
-	bool _vorbis_mode;	// true if using SOG, false if using SO3
+	enum {  kMP3Mode, kVorbisMode, kFlacMode } _sound_mode;	
 
 	int _currentCDSound;
 

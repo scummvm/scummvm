@@ -13,7 +13,8 @@ MODULE_OBJS := \
 	sound/mpu401.o \
 	sound/rate.o \
 	sound/voc.o \
-	sound/vorbis.o
+	sound/vorbis.o \
+	sound/flac.o
 #	sound/resample.o \
 
 MODULE_DIRS += \

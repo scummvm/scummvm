@@ -133,6 +133,15 @@ public:
 	void sfxPlay(const char *name, bool isSpeech);
 };
 #endif
+
+#ifdef USE_FLAC
+class FLACSound : public Sound {
+public:
+	FLACSound(SoundMixer *mixer, QueenEngine *vm) : Sound(mixer, vm) {};
+	void sfxPlay(const char *name, bool isSpeech);
+};
+#endif // #ifdef USE_FLAC
+
 } // End of namespace Queen
 
 #endif

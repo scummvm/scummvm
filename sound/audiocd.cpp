@@ -24,9 +24,37 @@
 #include "sound/audiocd.h"
 #include "sound/mp3.h"
 #include "sound/vorbis.h"
+#include "sound/flac.h"
 #include "base/engine.h"
 #include "common/file.h"
 #include "common/util.h"
+
+struct TrackFormat {
+	/** Decodername */
+	const char* decoderName;
+	/** 
+	 * Pointer to a function which tries to open the specified track - the only argument
+	 * is the number of the track to be played.
+	 * Returns either the DigitalTrackInfo object representing the requested track or null
+	 * in case of an error
+	 */
+	DigitalTrackInfo* (*openTrackFunction)(int);
+};
+
+static const TrackFormat TRACK_FORMATS[] = {
+	/* decoderName,		openTrackFunction */ 
+#ifdef USE_FLAC
+	{ "Flac",			getFlacTrack },
+#endif // #ifdef USE_FLAC
+#ifdef USE_VORBIS
+	{ "Ogg Vorbis",		getVorbisTrack },
+#endif // #ifdef USE_VORBIS
+#ifdef USE_MAD
+	{ "Mpeg Layer 3",	getMP3Track },
+#endif // #ifdef USE_MAD
+
+	{ NULL, NULL } // Terminator
+};
 
 
 AudioCDManager::AudioCDManager() {
@@ -101,15 +129,10 @@ AudioCDManager::Status AudioCDManager::getStatus() const {
 }
 
 int AudioCDManager::getCachedTrack(int track) {
-	int i;
-#if defined(USE_MAD) || defined(USE_VORBIS)
-	char track_name[1024];
-	File *file = new File();
-#endif
 	int current_index;
 
 	// See if we find the track in the cache
-	for (i = 0; i < CACHE_TRACKS; i++)
+	for (int i = 0; i < CACHE_TRACKS; i++)
 		if (_cached_tracks[i] == track) {
 			if (_track_info[i])
 				return i;
@@ -127,35 +150,11 @@ int AudioCDManager::getCachedTrack(int track) {
 
 	_cached_tracks[current_index] = track;
 
-#ifdef USE_MAD
-	sprintf(track_name, "track%d.mp3", track);
-	file->open(track_name);
+	for (int i = 0; i < ARRAYSIZE(TRACK_FORMATS)-1 && _track_info[current_index] == NULL; ++i)
+		_track_info[current_index] = TRACK_FORMATS[i].openTrackFunction(track);
 
-	if (file->isOpen()) {
-		_track_info[current_index] = makeMP3TrackInfo(file);
-		if (_track_info[current_index]->error()) {
-			delete _track_info[current_index];
-			_track_info[current_index] = NULL;
-			return -1;
-		}
+	if (_track_info[current_index] != NULL)
 		return current_index;
-	}
-#endif
-
-#ifdef USE_VORBIS
-	sprintf(track_name, "track%d.ogg", track);
-	file->open(track_name);
-
-	if (file->isOpen()) {
-		_track_info[current_index] = makeVorbisTrackInfo(file);
-		if (_track_info[current_index]->error()) {
-			delete _track_info[current_index];
-			_track_info[current_index] = NULL;
-			return -1;
-		}
-		return current_index;
-	}
-#endif
 
 	debug(2, "Track %d not available in compressed format", track);
 	return -1;

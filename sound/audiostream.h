@@ -26,6 +26,8 @@
 #include "common/scummsys.h"
 #include "common/util.h"
 
+class File;
+
 
 /**
  * Generic input stream for the resampling code.
@@ -74,6 +76,17 @@ public:
 
 	/** Sample rate of the stream. */
 	virtual int getRate() const = 0;
+
+	/**
+	 * Tries to load a file by trying all available formats.
+	 * In case of an error, the file handle will be closed, but deleting
+	 * it is still the responsibilty of the caller.
+	 * @param filename		a filename without an extension
+	 * @param fileHandle	a pointer to an existing File instance
+	 * @return	an Audiostream ready to use in case of success; 
+	 *			NULL in case of an error (e.g. invalid/nonexisting file)
+	 */
+	static AudioStream* openStreamFile(const char* filename, File *fileHandle);
 };
 
 class AppendableAudioStream : public AudioStream {

@@ -137,9 +137,11 @@ static const GameSpecificSettings simon1_settings = {
 	"SIMON.VOC",                            // voc_filename
 	"SIMON.MP3",                            // mp3_filename
 	"SIMON.OGG",                            // vorbis_filename
+	"SIMON.FLA",                            // flac_filename
 	"EFFECTS.VOC",                          // voc_effects_filename
 	"EFFECTS.MP3",                          // mp3_effects_filename
 	"EFFECTS.OGG",                          // vorbis_effects_filename
+	"EFFECTS.FLA",                          // flac_effects_filename
 	"GAMEPC",                               // gamepc_filename
 };
 
@@ -149,9 +151,11 @@ static const GameSpecificSettings simon1acorn_settings = {
 	"SIMON",                                // voc_filename
 	"SIMON.MP3",                            // mp3_filename
 	"SIMON.OGG",                            // vorbis_filename
+	"SIMON.FLA",                            // flac_filename
 	"EFFECTS",                              // voc_effects_filename
 	"EFFECTS.MP3",                          // mp3_effects_filename
 	"EFFECTS.OGG",                          // vorbis_effects_filename
+	"EFFECTS.FLA",                          // flac_effects_filename
 	"GAMEBASE",                             // gamepc_filename
 };
 
@@ -161,9 +165,11 @@ static const GameSpecificSettings simon1amiga_settings = {
 	"",                                     // voc_filename
 	"SIMON.MP3",                            // mp3_filename
 	"SIMON.OGG",                            // vorbis_filename
+	"SIMON.FLA",                            // flac_filename
 	"",                                     // voc_effects_filename
 	"",                                     // mp3_effects_filename
 	"",                                     // vorbis_effects_filename
+	"",                                     // flac_effects_filename
 	"gameamiga",                            // gamepc_filename
 };
 
@@ -173,9 +179,11 @@ static const GameSpecificSettings simon1demo_settings = {
 	"",                                     // voc_filename
 	"",                                     // mp3_filename
 	"",                                     // vorbis_filename
+	"",										// flac_filename
 	"",                                     // voc_effects_filename
 	"",                                     // mp3_effects_filename
 	"",                                     // vorbis_effects_filename
+	"",                                     // flac_effects_filename
 	"GDEMO",                                // gamepc_filename
 };
 
@@ -185,9 +193,11 @@ static const GameSpecificSettings simon2win_settings = {
 	"SIMON2.VOC",                           // voc_filename
 	"SIMON2.MP3",                           // mp3_filename
 	"SIMON2.OGG",                           // vorbis_filename
+	"SIMON2.FLA",                           // flac_filename
 	"",                                     // voc_effects_filename
 	"",                                     // mp3_effects_filename
 	"",                                     // vorbis_effects_filename
+	"",                                     // flac_effects_filename
 	"GSPTR30",                              // gamepc_filename
 };
 
@@ -197,9 +207,11 @@ static const GameSpecificSettings simon2mac_settings = {
 	"",                                     // voc_filename
 	"SIMON2.MP3",                           // mp3_filename
 	"SIMON2.OGG",                           // vorbis_filename
+	"SIMON2.FLA",                           // flac_filename
 	"",                                     // voc_effects_filename
 	"",                                     // mp3_effects_filename
 	"",                                     // vorbis_effects_filename
+	"",                                     // flac_effects_filename
 	"gsptr30",                              // gamepc_filename
 };
 
@@ -209,9 +221,11 @@ static const GameSpecificSettings simon2dos_settings = {
 	"",                                     // voc_filename
 	"",                                     // mp3_filename
 	"",                                     // vorbis_filename
+	"",										// flac_filename
 	"",                                     // voc_effects_filename
 	"",                                     // mp3_effects_filename
 	"",                                     // vorbis_effects_filename
+	"",                                     // flac_effects_filename
 	"GAME32",                               // gamepc_filename
 };
 #endif

@@ -4,7 +4,9 @@
 %%% TeX-master: "readme"
 %%% End: 
 
-\subsection{Using MP3 files for CD audio}
+\subsection{Using compressed audiofiles (MP3, Ogg Vorbis, Flac)}
+
+\subsubsection{Using MP3 files for CD audio}
 
 Use LAME or some other mp3 encoder to rip the cd audio tracks to files. Name
 the files track1.mp3 track2.mp3 etc. ScummVM must be compiled with MAD support
@@ -26,6 +28,21 @@ command line with the value after q specifying the desired quality from 0 to 10:
 \begin{verbatim}
   oggenc -q 5 track1.wav
 \end{verbatim}
+
+
+\subsubsection{Using Flac files for CD audio}
+Use flac or some other flac encoder to encode the audio tracks to files.
+Name the files track1.flac track2.flac etc. In your filesystem only allows 
+three letter extensions, name the files track1.fla track2.fla etc. 
+ScummVM must be compiled with flac support to use this option. You'll need to 
+rip the files from the CD as a WAV file, then encode the flac files. This can 
+be done with the following flac command line:
+\begin{verbatim}
+  flac --best track1.wav
+\end{verbatim}
+%
+Remember that the quality is always the same, varying encoder options will only
+affect the encoding time and resulting filesize. 
 
 
 \subsubsection{Compressing MONSTER.SOU with MP3}
@@ -52,10 +69,26 @@ game directory. Ogg encoding may take a considerable longer amount of time
 than MP3, so have a good book handy.
 
 
+\subsubsection{Compressing MONSTER.SOU with Flac}
+
+As above, but ScummVM must be compiled with Flac support. Run:
+\begin{verbatim}
+  extract --flac --best -b 1152 monster.sou
+\end{verbatim}
+%
+This should produce a smaller monster.sof file, which you should copy to your
+game directory. Remember that the quality is always the same, varying encoder
+options will only affect the encoding time and resulting  filesize. Playing
+with the blocksize (-b <value>), has the biggest impact on the resulting
+filesize -- 1152 seems to be a good value for those kind of soundfiles. Be sure
+to read the encoder documentation before you use other values.
+
+
 \subsubsection{Compressing sfx/speech in Simon the Sorcerer 1 and 2}
 
-Use our simon2mp3 util from the scummvm-tools package to perform
-this task, and ScummVM must be compiled with MAD or VORBIS support.\\
+Use our simon2mp3 util from the scummvm-tools package to perform this task.
+You can choose between multiple target formats, but note that you can only use
+each if ScummVM was compiled with the respective decoder support enabled.
 
 \begin{tabular}[h]{ll}
   simon2mp3 effects    &(For simon1acorn)\\
@@ -68,10 +101,15 @@ this task, and ScummVM must be compiled with MAD or VORBIS support.\\
   simon2mp3 mac        &(For simon2mac)\\
 \end{tabular}
 
-For Ogg Vorbis add --vorbis, i.e.
+For Ogg Vorbis add --vorbis to the options, i.e.
 \begin{verbatim}
   simon2mp3 --vorbis
 \end{verbatim}
 %
-Eventually you will have a much smaller *.mp3 or *.ogg file, copy this
+For Flac add --flac and optional parameters, i.e.
+\begin{verbatim}
+  simon2mp3 --flac --best -b 1152 
+\end{verbatim}
+%
+Eventually you will have a much smaller *.mp3, *.ogg or *.fla file, copy this
 file to your game dir. You can safely remove the old file.

@@ -37,6 +37,7 @@
 #include "sound/mp3.h"
 #include "sound/voc.h"
 #include "sound/vorbis.h"
+#include "sound/flac.h"
 
 
 namespace Scumm {
@@ -831,17 +832,25 @@ void Sound::pauseSounds(bool pause) {
 
 void Sound::startSfxSound(File *file, int file_size, PlayingSoundHandle *handle, int id) {
 
-	AudioStream *input = 0;
+	AudioStream *input = NULL;
 	
 	if (file_size > 0) {
-		if (_vorbis_mode) {
-#ifdef USE_VORBIS
-			input = makeVorbisStream(file, file_size);
-#endif
-		} else {
+		switch (_sound_mode) {
+		case kMP3Mode:
 #ifdef USE_MAD
 			input = makeMP3Stream(file, file_size);
 #endif
+			break;
+		case kVorbisMode:
+#ifdef USE_VORBIS
+			input = makeVorbisStream(file, file_size);
+#endif
+			break;
+		case kFlacMode:
+#ifdef USE_FLAC
+			input = makeFlacStream(file, file_size);
+#endif
+			break;
 		}
 	} else {
 		input = makeVOCStream(_sfxFile);
@@ -869,13 +878,24 @@ File *Sound::openSfxFile() {
 	 * same directory */
 	offset_table = NULL;
 
-#ifdef USE_MAD
-	sprintf(buf, "%s.so3", _vm->getGameName());
-	if (!file->open(buf, _vm->getGameDataPath())) {
-		file->open("monster.so3", _vm->getGameDataPath());
+#ifdef USE_FLAC
+	if (!file->isOpen()) {
+		sprintf(buf, "%s.sof", _vm->getGameName());
+		if (!file->open(buf, _vm->getGameDataPath()))
+			file->open("monster.sof", _vm->getGameDataPath());
+		if (file->isOpen())
+			_sound_mode = kFlacMode;
 	}
-	if (file->isOpen())
-		_vorbis_mode = false;
+#endif
+
+#ifdef USE_MAD
+	if (!file->isOpen()) {
+		sprintf(buf, "%s.so3", _vm->getGameName());
+		if (!file->open(buf, _vm->getGameDataPath()))
+			file->open("monster.so3", _vm->getGameDataPath());
+		if (file->isOpen())
+			_sound_mode = kMP3Mode;
+	}
 #endif
 
 #ifdef USE_VORBIS
@@ -884,7 +904,7 @@ File *Sound::openSfxFile() {
 		if (!file->open(buf, _vm->getGameDataPath()))
 			file->open("monster.sog", _vm->getGameDataPath());
 		if (file->isOpen())
-			_vorbis_mode = true;
+			_sound_mode = kVorbisMode;
 	}
 #endif
 

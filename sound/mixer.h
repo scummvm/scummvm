@@ -112,6 +112,9 @@ public:
 #ifdef USE_VORBIS
 	void playVorbis(PlayingSoundHandle *handle, File *file, uint32 size, byte volume = 255, int8 balance = 0, int id = -1);
 #endif
+#ifdef USE_FLAC
+	void playFlac(PlayingSoundHandle *handle, File *file, uint32 size, byte volume = 255, int8 balance = 0, int id = -1);
+#endif
 
 	void playInputStream(PlayingSoundHandle *handle, AudioStream *input, bool isMusic, byte volume = 255, int8 balance = 0, int id = -1, bool autofreeStream = true);
 

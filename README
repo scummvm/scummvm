@@ -32,7 +32,7 @@ Table of Contents:
  * 7.2 MIDI emulation
  * 7.3 Native MIDI support
  * 7.4 UNIX native & ALSA sequencer support
- * 7.5 Using MP3 or OGG to store/compress audio
+ * 7.5 Using compressed audiofiles (MP3, Ogg Vorbis, Flac)
 8.0) Configuration Files
 9.0) Compiling
 X.X) Credits
@@ -812,7 +812,22 @@ command line with the value after q specifying the desired quality from 0 to 10:
   oggenc -q 5 track1.wav
 
 
-7.5.2) Compressing MONSTER.SOU with MP3:
+7.5.2) Using Flac files for CD audio:
+------ ------------------------------------
+Use flac or some other flac encoder to encode the audio tracks to files.
+Name the files track1.flac track2.flac etc. In your filesystem only allows 
+three letter extensions, name the files track1.fla track2.fla etc. 
+ScummVM must be compiled with flac support to use this option. You'll need to 
+rip the files from the CD as a WAV file, then encode the flac files. This can 
+be done with the following flac command line:
+
+  flac --best track1.wav
+
+Remember that the quality is always the same, varying encoder options will only
+affect the encoding time and resulting filesize. 
+
+
+7.5.3) Compressing MONSTER.SOU with MP3:
 ------ ---------------------------------
 You need LAME, and our extract util from the scummvm-tools package to perform
 this task, and ScummVM must be compiled with MAD support.
@@ -823,7 +838,7 @@ Eventually you will have a much smaller monster.so3 file, copy this file
 to your game directory. You can safely remove the monster.sou file.
 
 
-7.5.3) Compressing MONSTER.SOU with Ogg Vorbis:
+7.5.4) Compressing MONSTER.SOU with Ogg Vorbis:
 ------ ----------------------------------------
 As above, but ScummVM must be compiled with OGG support. Run:
 
@@ -834,10 +849,25 @@ game directory. Ogg encoding may take a considerable longer amount of time
 than MP3, so have a good book handy.
 
 
-7.5.4) Compressing sfx/speech in Simon the Sorcerer 1 and 2
+7.5.5) Compressing MONSTER.SOU with Flac:
+------ ----------------------------------------
+As above, but ScummVM must be compiled with Flac support. Run:
+
+  extract --flac --best -b 1152 monster.sou
+
+This should produce a smaller monster.sof file, which you should copy to your
+game directory. Remember that the quality is always the same, varying encoder
+options will only affect the encoding time and resulting  filesize. Playing
+with the blocksize (-b <value>), has the biggest impact on the resulting
+filesize - 1152 seems to be a good value for those kind of soundfiles. Be sure
+to read the encoder documentation before you use other values.
+
+
+7.5.6) Compressing sfx/speech in Simon the Sorcerer 1 and 2
 ------ ----------------------------------------------------
-Use our simon2mp3 util from the scummvm-tools package to perform
-this task, and ScummVM must be compiled with MAD or VORBIS support.
+Use our simon2mp3 util from the scummvm-tools package to perform this task.
+You can choose between multiple target formats, but note that you can only use
+each if ScummVM was compiled with the respective decoder support enabled.
 
   simon2mp3 effects     (For simon1acorn)
   simon2mp3 simon       (For simon1acorn)
@@ -848,11 +878,15 @@ this task, and ScummVM must be compiled with MAD or VORBIS support.
   simon2mp3 simon2.wav  (For simon2win) 
   simon2mp3 mac         (For simon2mac) 
 
-For Ogg Vorbis add --vorbis, ie
+For Ogg Vorbis add --vorbis to the options, i.e.
 
   simon2mp3 --vorbis
 
-Eventually you will have a much smaller *.mp3 or *.ogg file, copy this
+For Flac add --flac and optional parameters, i.e.
+
+  simon2mp3 --flac --best -b 1152 
+
+Eventually you will have a much smaller *.mp3, *.ogg or *.fla file, copy this
 file to your game dir. You can safely remove the old file.
 
 

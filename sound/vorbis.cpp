@@ -156,8 +156,21 @@ VorbisTrackInfo::~VorbisTrackInfo() {
 	}
 }
 
-DigitalTrackInfo *makeVorbisTrackInfo(File *file) {
-	return new VorbisTrackInfo(file);
+DigitalTrackInfo *getVorbisTrack(int track) {
+	char track_name[32];
+	File *file = new File();
+
+	sprintf(track_name, "track%d.ogg", track);
+	file->open(track_name);
+
+	if (file->isOpen()) {
+		VorbisTrackInfo *trackInfo = new VorbisTrackInfo(file);
+		if (!trackInfo->error())
+			return trackInfo;
+		delete trackInfo;
+	}
+	delete file;
+	return NULL;
 }
 
 #pragma mark -

@@ -241,6 +241,30 @@ void VorbisSound::playSound(uint sound, PlayingSoundHandle *handle, byte flags)
 }
 #endif
 
+#ifdef USE_FLAC
+class FlacSound : public BaseSound {
+public:
+	FlacSound(SoundMixer *mixer, File *file, uint32 base = 0) : BaseSound(mixer, file, base) {};
+	void playSound(uint sound, PlayingSoundHandle *handle, byte flags);
+};
+
+void FlacSound::playSound(uint sound, PlayingSoundHandle *handle, byte flags)
+{
+	if (_offsets == NULL)
+		return;
+
+	_file->seek(_offsets[sound], SEEK_SET);
+
+	int i = 1;
+	while (_offsets[sound + i] == _offsets[sound])
+			i++;
+
+	uint32 size = _offsets[sound + i] - _offsets[sound];
+
+	_mixer->playFlac(handle, _file, size);
+}
+#endif
+
 Sound::Sound(const byte game, const GameSpecificSettings *gss, const Common::String &gameDataPath, SoundMixer *mixer)
 	: _game(game), _gameDataPath(gameDataPath), _mixer(mixer) {
 	_voice = 0;
@@ -259,6 +283,15 @@ Sound::Sound(const byte game, const GameSpecificSettings *gss, const Common::Str
 	File *file = new File();
 	const char *s;
 
+#ifdef USE_FLAC
+	if (!_voice && gss->flac_filename && gss->flac_filename[0]) {
+		file->open(gss->flac_filename, gameDataPath);
+		if (file->isOpen()) {
+			_voice_file = true;
+			_voice = new FlacSound(_mixer, file);
+		}
+	}
+#endif
 #ifdef USE_MAD
 	if (!_voice && gss->mp3_filename && gss->mp3_filename[0]) {
 		file->open(gss->mp3_filename, gameDataPath);
@@ -338,6 +371,14 @@ Sound::Sound(const byte game, const GameSpecificSettings *gss, const Common::Str
 			file->open(gss->vorbis_effects_filename, gameDataPath);
 			if (file->isOpen()) {
 				_effects = new VorbisSound(_mixer, file);
+			}
+		}
+#endif
+#ifdef USE_FLAC
+		if (!_effects && gss->flac_effects_filename && gss->flac_effects_filename[0]) {
+			file->open(gss->flac_effects_filename, gameDataPath);
+			if (file->isOpen()) {
+				_effects = new FlacSound(_mixer, file);
 			}
 		}
 #endif

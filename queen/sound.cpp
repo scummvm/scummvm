@@ -61,6 +61,14 @@ Sound *Sound::giveSound(SoundMixer *mixer, QueenEngine *vm, uint8 compression) {
 					return new OGGSound(mixer, vm);
 				#endif
 				break;
+		case COMPRESSION_FLAC:
+				#ifndef USE_FLAC
+					warning("Using FLAC compressed datafile, but FLAC support not compiled in");
+					return new SilentSound(mixer, vm);
+				#else
+					return new FLACSound(mixer, vm);
+				#endif
+				break;
 		default:
 				warning("Unknown compression type");
 				return new SilentSound(mixer, vm);
@@ -181,6 +189,13 @@ void MP3Sound::sfxPlay(const char *name, bool isSpeech) {
 void OGGSound::sfxPlay(const char *name, bool isSpeech) {
 	if (_vm->resource()->fileExists(name))
 		_mixer->playVorbis(isSpeech ? &_speechHandle : &_sfxHandle, _vm->resource()->giveCompressedSound(name), _vm->resource()->fileSize(name));
+}
+#endif
+
+#ifdef USE_FLAC
+void FLACSound::sfxPlay(const char *name, bool isSpeech) {
+	if (_vm->resource()->fileExists(name))
+		_mixer->playFlac(isSpeech ? &_speechHandle : &_sfxHandle, _vm->resource()->giveCompressedSound(name), _vm->resource()->fileSize(name));
 }
 #endif
 

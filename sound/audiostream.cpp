@@ -24,7 +24,9 @@
 #include "common/util.h"
 #include "sound/audiostream.h"
 #include "sound/mixer.h"
-
+#include "sound/mp3.h"
+#include "sound/vorbis.h"
+#include "sound/flac.h"
 
 // This used to be an inline template function, but
 // buggy template function handling in MSVC6 forced
@@ -36,6 +38,61 @@
 
 #define READ_ENDIAN_SAMPLE(is16Bit, isUnsigned, ptr, isLE) \
 	((is16Bit ? (isLE ? READ_LE_UINT16(ptr) : READ_BE_UINT16(ptr)) : (*ptr << 8)) ^ (isUnsigned ? 0x8000 : 0))
+
+
+struct StreamFileFormat {
+	/** Decodername */
+	const char* decoderName;
+	const char* fileExtension;
+	/** 
+	 * Pointer to a function which tries to open a file of type StreamFormat.
+	 * Return NULL in case of an error (invalid/nonexisting file). 
+	 */
+	AudioStream* (*openStreamFile)(File *file, uint32 size);
+};
+
+static const StreamFileFormat STREAM_FILEFORMATS[] = {	
+	/* decoderName,		fileExt, openStreamFuntion */ 
+#ifdef USE_FLAC
+	{ "Flac",			"flac", makeFlacStream },
+	{ "Flac",			"fla",  makeFlacStream },
+#endif // #ifdef USE_FLAC
+#ifdef USE_VORBIS
+	{ "Ogg Vorbis",		"ogg",  makeVorbisStream },
+#endif // #ifdef USE_VORBIS
+#ifdef USE_MAD
+	{ "Mpeg Layer 3",	"mp3",  makeMP3Stream },
+#endif // #ifdef USE_MAD
+
+	{ NULL, NULL, NULL } // Terminator
+};
+
+AudioStream* AudioStream::openStreamFile(const char* filename, File *fileHandle)
+{
+	char buffer[1024];
+	const uint len = strlen(filename);
+	assert(len+6 < sizeof(buffer)); // we need a bigger buffer if wrong
+	
+	memcpy(buffer, filename, len);
+	buffer[len] = '.';
+	char *ext = &buffer[len+1];
+
+	AudioStream* stream = NULL;
+
+	for (int i = 0; i < ARRAYSIZE(STREAM_FILEFORMATS)-1 && stream == NULL; ++i) {
+		strcpy(ext, STREAM_FILEFORMATS[i].fileExtension);
+		fileHandle->open(buffer);
+		if (fileHandle->isOpen())
+			stream = STREAM_FILEFORMATS[i].openStreamFile(fileHandle, fileHandle->size());
+	}
+
+	if (stream == NULL) {
+		fileHandle->close();
+		debug(1, "AudioStream: Could not open compressed AudioFile %s", filename);
+	}
+
+	return stream;
+}
 
 #pragma mark -
 #pragma mark --- LinearMemoryStream ---

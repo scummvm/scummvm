@@ -261,7 +261,7 @@ int MP3InputStream::readBuffer(int16 *buffer, const int numSamples) {
 	return samples;
 }
 
-AudioStream *makeMP3Stream(File *file, uint size) {
+AudioStream *makeMP3Stream(File *file, uint32 size) {
 	return new MP3InputStream(file, mad_timer_zero, size);
 }
 
@@ -385,8 +385,21 @@ MP3TrackInfo::~MP3TrackInfo() {
 		_file->close();
 }
 
-DigitalTrackInfo *makeMP3TrackInfo(File *file) {
-	return new MP3TrackInfo(file);
+DigitalTrackInfo *getMP3Track(int track) {
+	char track_name[32];
+	File *file = new File();
+
+	sprintf(track_name, "track%d.mp3", track);
+	file->open(track_name);
+
+	if (file->isOpen()) {
+		MP3TrackInfo *trackInfo = new MP3TrackInfo(file);
+		if (!trackInfo->error())
+			return trackInfo;
+		delete trackInfo;
+	}
+	delete file;
+	return NULL;
 }
 
 

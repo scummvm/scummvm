@@ -29,6 +29,7 @@
 #include "sound/audiostream.h"
 #include "sound/mp3.h"
 #include "sound/vorbis.h"
+#include "sound/flac.h"
 
 
 #pragma mark -
@@ -265,6 +266,14 @@ void SoundMixer::playMP3(PlayingSoundHandle *handle, File *file, uint32 size, by
 void SoundMixer::playVorbis(PlayingSoundHandle *handle, File *file, uint32 size, byte volume, int8 balance, int id) {
 	// Create the input stream
 	AudioStream *input = makeVorbisStream(file, size);
+	playInputStream(handle, input, false, volume, balance, id);
+}
+#endif
+
+#ifdef USE_FLAC
+void SoundMixer::playFlac(PlayingSoundHandle *handle, File *file, uint32 size, byte volume, int8 balance, int id) {
+	// Create the input stream
+	AudioStream *input = makeFlacStream(file, size);
 	playInputStream(handle, input, false, volume, balance, id);
 }
 #endif

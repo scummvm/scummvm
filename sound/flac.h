@@ -19,22 +19,21 @@
  *
  */
 
-#ifndef SOUND_VORBIS_H
-#define SOUND_VORBIS_H
+#ifndef SOUND_FLAC_H
+#define SOUND_FLAC_H
 
 #include "stdafx.h"
 #include "common/scummsys.h"
 
-#ifdef USE_VORBIS
+#ifdef USE_FLAC
 
 class AudioStream;
 class DigitalTrackInfo;
 class File;
 
-DigitalTrackInfo *getVorbisTrack(int track);
+DigitalTrackInfo *getFlacTrack(int track);
 
-AudioStream *makeVorbisStream(File *file, uint32 size);
+AudioStream *makeFlacStream(File *file, uint32 size);
 
-#endif
-
-#endif
+#endif // #ifdef USE_FLAC
+#endif // #ifndef SOUND_FLAC_H

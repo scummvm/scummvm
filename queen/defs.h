@@ -29,7 +29,8 @@ namespace Queen {
 enum {
 	COMPRESSION_NONE  = 0,
 	COMPRESSION_MP3   = 1,	
-	COMPRESSION_OGG   = 2
+	COMPRESSION_OGG   = 2,
+	COMPRESSION_FLAC  = 3
 };
 
 enum {

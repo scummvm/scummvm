@@ -31,9 +31,9 @@ class AudioStream;
 class DigitalTrackInfo;
 class File;
 
-DigitalTrackInfo *makeMP3TrackInfo(File *file);
+DigitalTrackInfo *getMP3Track(int track);
 
-AudioStream *makeMP3Stream(File *file, uint size);
+AudioStream *makeMP3Stream(File *file, uint32 size);
 
 #endif
 

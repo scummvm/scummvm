@@ -26,6 +26,7 @@ CXXFLAGS="$CXXFLAGS $CPPFLAGS"
 
 # default lib behaviour yes/no/auto
 _vorbis=auto
+_flac=auto
 _mad=auto
 _alsa=auto
 _zlib=auto
@@ -207,6 +208,9 @@ Optional Libraries:
 
   --with-mad-prefix=PFX    Prefix where libmad is installed (optional)
   --disable-mad            disable libmad (MP3) support [autodetect]
+  
+  --with-flac-prefix=PFX   Prefix where libFLAC is installed (optional)
+  --disable-flac           disable FLAC support [autodetect]
 
   --with-zlib-prefix=PFX   Prefix where zlib is installed (optional)
   --disable-zlib           disable zlib (compression) support [autodetect]
@@ -243,6 +247,8 @@ for ac_option in $@; do
       --disable-alsa)		_alsa=no	;;
       --enable-vorbis)		_vorbis=yes	;;
       --disable-vorbis)		_vorbis=no	;;
+      --enable-flac)		_flac=yes	;;
+      --disable-flac)		_flac=no	;;
       --enable-mad)		_mad=yes	;;
       --disable-mad)		_mad=no		;;
       --enable-zlib)		_zlib=yes	;;
@@ -268,6 +274,11 @@ for ac_option in $@; do
 	_prefix=`echo $ac_option | cut -d '=' -f 2`
 	VORBIS_CFLAGS="-I$_prefix/include"
 	VORBIS_LIBS="-L$_prefix/lib"
+	;;
+      --with-flac-prefix=*)
+	_prefix=`echo $ac_option | cut -d '=' -f 2`
+	FLAC_CFLAGS="-I$_prefix/include"
+	FLAC_LIBS="-L$_prefix/lib"
 	;;
       --with-mad-prefix=*)
 	_prefix=`echo $ac_option | cut -d '=' -f 2`
@@ -622,6 +633,25 @@ else
 fi
 echo "$_vorbis"
 
+echocheck "FLAC"
+if test "$_flac" = auto ; then
+  _flac=no
+  cat > $TMPC << EOF
+#include <FLAC/seekable_stream_decoder.h>
+int main(void) { FLAC__seekable_stream_decoder_init( 0 ); return 0; }
+EOF
+  cc_check $LDFLAGS $CXXFLAGS $FLAC_CFLAGS $FLAY_LIBS \
+  -lFLAC -lm && _flac=yes
+fi
+if test "$_flac" = yes ; then
+  _def_flac='#define USE_FLAC'
+  LIBS="$LIBS $FLAC_LIBS -lFLAC"
+  INCLUDES="$INCLUDES $FLAC_CFLAGS"
+else
+  _def_flac='#undef USE_FLAC'
+fi
+echo "$_flac"
+
 #
 # Check for MAD (MP3 library)
 #
@@ -809,6 +839,7 @@ typedef signed $type_4_byte int32;
 
 /* Libs */
 $_def_vorbis
+$_def_flac
 $_def_mad
 $_def_alsa
 $_def_zlib
