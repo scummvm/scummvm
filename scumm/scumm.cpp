@@ -1859,13 +1859,15 @@ load_game:
 		}
 		if (_heversion >= 71) {
 			preProcessAuxQueue();
-			processActors();
-			postProcessAuxQueue();
 
 			if (_heversion >= 90) {
 				((ScummEngine_v90he *)this)->spritesMarkDirty(0);
 				((ScummEngine_v90he *)this)->spritesProcessWiz(true);
 			}
+
+			processActors();
+			postProcessAuxQueue();
+
 		} else {
 			processActors();
 		}
@@ -1939,6 +1941,9 @@ load_game:
 	
 	/* show or hide mouse */
 	_system->showMouse(_cursor.state > 0);
+
+	if (_heversion >= 90)
+		((ScummEngine_v90he *)this)->spritesUpdateImages();
 
 	if (VAR_TIMER != 0xFF)
 		VAR(VAR_TIMER) = 0;

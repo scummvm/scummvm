@@ -1119,9 +1119,9 @@ void ScummEngine_v90he::spritesSortActiveSprites() {
 
 		if (spi->flags & kSF16) {
 			if (!spi->flags & kSF23) {
-				if (!spi->flags & kSF30)
+				if (!(spi->flags & kSF30))
 					spi->flags |= kSFNeedRedraw;
-				if (!spi->flags & kSF31)
+				if (!(spi->flags & kSF31))
 					spi->flags |= kSF01;
 			}
 			if (spi->group_num)
