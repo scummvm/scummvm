@@ -519,11 +519,7 @@ int ScummEngine::readVar(uint var) {
 			var = (var >> 4) & 0xFF;
 
 			if (!_copyProtection) {
-				// INDY3, EGA Loom and, apparently, Zak256 check this
-				// during the game...
-				if (_gameId == GID_INDY3 && (_features & GF_OLD_BUNDLE) && var == 94 && bit == 4) {
-					return 0;
-				} else if (_gameId == GID_LOOM && (_features & GF_FMTOWNS) && var == 214 && bit == 15) {
+				if (_gameId == GID_LOOM && (_features & GF_FMTOWNS) && var == 214 && bit == 15) {
 					return 0;
 				} else if (_gameId == GID_ZAK256 && var == 151 && bit == 8) {
 					return 0;

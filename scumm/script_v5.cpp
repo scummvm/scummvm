@@ -1463,6 +1463,14 @@ void ScummEngine_v5::o5_loadRoom() {
 
 	room = getVarOrDirectByte(PARAM_1);
 	
+	if (!_copyProtection) {
+		// Skip copy protection scheme
+		if (_gameId == GID_INDY3 && (_features & GF_OLD_BUNDLE) && room == 92) {
+			VAR(57) = 1;
+			return;
+		}
+	}
+
 	// For small header games, we only call startScene if the room
 	// actually changed. This avoid unwanted (wrong) fades in Zak256
 	// and others. OTOH, it seems to cause a problem in newer games.
