@@ -285,12 +285,12 @@ public:
 
 	/**
 	 * Start audio CD playback. 
-	 * @param track			the track to play.
-	 * @param num_loops		how often playback should be repeated (-1 = infinitely often).
-	 * @param start_frame	the frame at which playback should start.
-	 * @param end_frame		the frame at which playback should end.
+	 * @param track		the track to play.
+	 * @param num_loops	how often playback should be repeated (-1 = infinitely often).
+	 * @param start		the frame at which playback should start (75 frames = 1 second).
+	 * @param duration	the number of frames to play.
 	 */
-	virtual void play_cdrom(int track, int num_loops, int start_frame, int end_frame) = 0;
+	virtual void play_cdrom(int track, int num_loops, int start, int duration) = 0;
 
 	/**
 	// Stop audio CD playback
