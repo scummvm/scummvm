@@ -65,4 +65,7 @@ Interp.c
  ModuleEntry->codeID       _scriptLUT->script_rn
  ModuleEntry->strID        _scriptLUT->diag_list_rn
  ModuleEntry->vtableID     _scriptLUT->voice_lut_rn
- 
+ threadBase.theAction      threadVars[kVarAction]
+ threadBase.theObject      threadVars[kVarObject]
+ threadBase.withObject     threadVars[kVarWithObject]
+ threadBase.theActor       threadVars[kVarActor]

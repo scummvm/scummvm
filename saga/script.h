@@ -68,6 +68,13 @@ struct R_SEMAPHORE {
 	int hold_count;
 };
 
+enum {
+	kVarObject = 0,
+	kVarWithObject,
+	kVarAction,
+	kVarActor
+};
+
 struct R_SCRIPT_THREAD {
 	int executing;
 
@@ -86,6 +93,8 @@ struct R_SCRIPT_THREAD {
 
 	int stackPtr;
 	int framePtr;
+
+	SDataWord_T threadVars[4];
 
 	SDataWord_T retVal;
 
@@ -203,6 +212,7 @@ public:
 	int SThreadDestroy(R_SCRIPT_THREAD *thread);
 
 private:
+	void setFramePtr(R_SCRIPT_THREAD *thread, int newPtr);
 	unsigned char *SThreadGetReadPtr(R_SCRIPT_THREAD *thread);
 	unsigned long SThreadGetReadOffset(const byte *read_p);
 	size_t SThreadGetReadLen(R_SCRIPT_THREAD *thread);

@@ -35,6 +35,12 @@
 
 namespace Saga {
 
+void Script::setFramePtr(R_SCRIPT_THREAD *thread, int newPtr) {
+	thread->framePtr = newPtr;
+	dataBuffer(3)->len = 2 * (ARRAYSIZE(thread->stackBuf) - thread->framePtr);
+	dataBuffer(3)->data = (SDataWord_T *) &(thread->stackBuf[newPtr]);
+}
+
 R_SCRIPT_THREAD *Script::SThreadCreate() {
 	YS_DL_NODE *new_node;
 	R_SCRIPT_THREAD *new_thread;
@@ -49,7 +55,10 @@ R_SCRIPT_THREAD *Script::SThreadCreate() {
 	}
 
 	new_thread->stackPtr = ARRAYSIZE(new_thread->stackBuf) - 1;
-	new_thread->framePtr = ARRAYSIZE(new_thread->stackBuf) - 1;
+	setFramePtr(new_thread, new_thread->stackPtr);
+
+	dataBuffer(4)->len = sizeof(new_thread->threadVars);
+	dataBuffer(4)->data = new_thread->threadVars;
 
 	new_node = ys_dll_add_head(threadList(), new_thread, sizeof *new_thread);
 
@@ -198,6 +207,9 @@ int Script::SThreadRun(R_SCRIPT_THREAD *thread, int instr_limit, int msec) {
 	}
 
 	MemoryReadStream scriptS(currentScript()->bytecode->bytecode_p, currentScript()->bytecode->bytecode_len);
+
+	dataBuffer(2)->len = currentScript()->bytecode->bytecode_len;
+	dataBuffer(2)->data = (SDataWord_T *) currentScript()->bytecode->bytecode_p;
 
 	scriptS.seek(thread->i_offset);
 
@@ -353,7 +365,7 @@ int Script::SThreadRun(R_SCRIPT_THREAD *thread, int instr_limit, int msec) {
 			break;
 		case 0x1A: // (ENTR) Enter the dragon
 			thread->push(thread->framePtr);
-			thread->framePtr = thread->stackPtr;
+			setFramePtr(thread, thread->stackPtr);
 			param1 = scriptS.readUint16LE();
 			thread->stackPtr -= (param1 / 2);
 			break;
@@ -362,7 +374,7 @@ int Script::SThreadRun(R_SCRIPT_THREAD *thread, int instr_limit, int msec) {
 			// FALL THROUGH
 		case 0x1C: // Return with void
 			thread->stackPtr = thread->framePtr;
-			thread->framePtr = thread->pop();
+			setFramePtr(thread, thread->pop());
 			if (thread->stackSize() == 0) {
 				_vm->_console->print("Script execution complete.");
 				thread->executing = 0;

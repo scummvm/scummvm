@@ -30,29 +30,48 @@
 namespace Saga {
 
 SData::SData() {
-	unsigned int i;
 	void *alloc_ptr;
+	int i;
 
 	debug(0, "Initializing script data buffers");
+
 	for (i = 0; i < R_SCRIPT_DATABUF_NUM; i++) {
 		alloc_ptr = malloc(sizeof *_vm->_script->dataBuffer(0));
+
 		if (alloc_ptr == NULL) {
 			error("Couldn't allocate memory for script data buffer %d", i);
 		}
 
 		_vm->_script->setBuffer(i, (R_SCRIPT_DATABUF *)alloc_ptr);
-		alloc_ptr = calloc(R_SCRIPT_DATABUF_LEN, sizeof(SDataWord_T));
+	}
 
-		if (alloc_ptr == NULL) {
-			error("Couldn't allocate memory for script data buffer %d", i);
-		}
+	alloc_ptr = calloc(R_SCRIPT_DATABUF_LEN, sizeof(SDataWord_T));
 
-		_vm->_script->dataBuffer(i)->len = R_SCRIPT_DATABUF_LEN;
-		_vm->_script->dataBuffer(i)->data = (SDataWord_T *)alloc_ptr;
+	if (alloc_ptr == NULL) {
+		error("Couldn't allocate memory for shared script buffer");
+	}
+
+	// Buffer 0 is the shared data buffer. All scripts can access this.
+	_vm->_script->dataBuffer(0)->len = R_SCRIPT_DATABUF_LEN;
+	_vm->_script->dataBuffer(0)->data = (SDataWord_T *)alloc_ptr;
+
+	// FIXME: Buffer 1 is the script's static area. The original
+	// interpreter uses part of buffer 0 for this, but I don't yet
+	// understand quite how. 
+
+	_vm->_script->setBuffer(1, (R_SCRIPT_DATABUF *)alloc_ptr);
+	_vm->_script->dataBuffer(1)->len = R_SCRIPT_DATABUF_LEN;
+	_vm->_script->dataBuffer(1)->data = (SDataWord_T *)alloc_ptr;
+
+	// Remaining buffers are per-script.
+	for (i = 2; i < R_SCRIPT_DATABUF_NUM; i++) {
+		_vm->_script->dataBuffer(i)->len = 0;
+		_vm->_script->dataBuffer(i)->data = NULL;
 	}
 }
 
 SData::~SData() {
+	// TODO: Free the script data buffers
 }
 
 int SData::getWord(int n_buf, int n_word, SDataWord_T *data) {

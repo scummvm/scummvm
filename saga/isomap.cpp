@@ -34,6 +34,7 @@ namespace Saga {
 IsoMap::IsoMap(Gfx *gfx) {
 	_gfx = gfx;
 	_init = 1;
+	_tiles_loaded = 0;
 }
 
 int IsoMap::loadTileset(const byte *tileres_p, size_t tileres_len) {

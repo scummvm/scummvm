@@ -112,7 +112,7 @@ Script::Script() {
 		// Skip the unused portion of the structure
 		for (j = scriptS.pos(); j < prevTell + _scriptLUTEntryLen; j++) {
 			if (scriptS.readByte() != 0)
-				error("Unused scriptLUT part isn't really unused for LUT %d (pos: %d)", i, j);
+				warning("Unused scriptLUT part isn't really unused for LUT %d (pos: %d)", i, j);
 		}
 	}
 

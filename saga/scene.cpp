@@ -138,6 +138,8 @@ Scene::Scene(SagaEngine *vm) : _vm(vm), _initialized(false) {
 	_animEntries = 0;
 	_animList = NULL;
 	_sceneProc = NULL;
+	_objectMap = NULL;
+	_actionMap = NULL;
 	memset(&_bg, 0, sizeof(_bg));
 	memset(&_bgMask, 0, sizeof(_bgMask));
 
@@ -858,6 +860,9 @@ int Scene::endScene() {
 	delete _objectMap;
 	delete _actionMap;
 
+	_objectMap = NULL;
+	_actionMap = NULL;
+
 	ys_dll_destroy(_animList);
 
 	_animEntries = 0;
@@ -984,6 +989,12 @@ int Scene::defaultScene(int param, R_SCENE_INFO *scene_info) {
 				_vm->_console->print("Thread creation failed.");
 				break;
 			}
+
+			_startScriptThread->threadVars[kVarAction] = 0;
+			_startScriptThread->threadVars[kVarObject] = _sceneNumber;
+			_startScriptThread->threadVars[kVarWithObject] = 0; // TOTO: entrance
+			_startScriptThread->threadVars[kVarActor] = 0;
+
 			_vm->_script->SThreadExecute(_startScriptThread, _desc.startScriptNum);
 			_vm->_script->SThreadCompleteThread();
 		}
@@ -998,7 +1009,7 @@ int Scene::defaultScene(int param, R_SCENE_INFO *scene_info) {
 			_vm->_events->queue(&event);
 		} else
 			_vm->_music->stop();
-		//break; //HACK to disable faery script
+
 		if (_desc.sceneScriptNum > 0) {
 			R_SCRIPT_THREAD *_sceneScriptThread;
 
@@ -1010,8 +1021,10 @@ int Scene::defaultScene(int param, R_SCENE_INFO *scene_info) {
 				break;
 			}
 
-			// TODO: Set up thread variables. First we'll need to
-			// add the concept of thread variables...
+			_sceneScriptThread->threadVars[kVarAction] = 0;
+			_sceneScriptThread->threadVars[kVarObject] = _sceneNumber;
+			_sceneScriptThread->threadVars[kVarWithObject] = 0; // TODO: entrance
+			_sceneScriptThread->threadVars[kVarActor] = 0; // TODO: VERB_ENTER
 
 			_vm->_script->SThreadExecute(_sceneScriptThread, _desc.sceneScriptNum);
 		}
