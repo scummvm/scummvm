@@ -39,7 +39,7 @@ bool Scumm::getClass(int obj, int cls)
 		if (cls == 32)							// CLASS_TOUCHABLE
 			cls = 24;
 
-		if (_gameId == GID_INDY3_256 && cls == 22)			// Masking fix for Indy3
+		if (_gameId == GID_INDY3_256 && cls == 22 && _currentRoom == 76)			// Masking fix for Indy3
 			cls = 21;
 	}
 	return (_classData[obj] & (1 << (cls - 1))) != 0;
@@ -59,7 +59,7 @@ void Scumm::putClass(int obj, int cls, bool set)
 		if (cls == 32)							// CLASS_TOUCHABLE
 			cls = 24;
 
-		if (_gameId == GID_INDY3_256 && cls == 22)			// Masking fix for Indy3
+		if (_gameId == GID_INDY3_256 && cls == 22 && _currentRoom == 76)			// Masking fix for Indy3
 			cls = 21;
 	}
 
