@@ -333,7 +333,7 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 	: Engine(syst),
 	  _gameId(gs.id),
 	  _version(gs.version),
-	  _heversion(gs.version),
+	  _heversion(gs.heversion),
 	  _features(gs.features),
 	  gdi(this), _pauseDialog(0), _optionsDialog(0), _mainMenuDialog(0),
 	  _targetName(detector->_targetName) {
