@@ -382,6 +382,79 @@ void SimonState::dump_single_bitmap(int file, int image, byte *offs, int w, int 
 #endif
 }
 
+void pal_load(byte *pal, const byte *vga1, int a, int b) {
+	uint num = a==0 ? 0x20 : 0x10;
+	byte *palptr;
+	const byte *src;
+	
+	palptr = (byte*)&pal[a<<4];
+
+	src = vga1 + 6 + b*96;
+	
+	do {
+		palptr[0] = src[0]<<2;
+		palptr[1] = src[1]<<2;
+		palptr[2] = src[2]<<2;
+		palptr[3] = 0;
+
+		palptr += 4;
+		src += 3;
+	} while (--num);
+}
+
+void SimonState::dump_vga_bitmaps(byte *vga, byte *vga1, int res) {
+	int i;
+	uint32 offs;
+	byte *p2;
+
+	byte pal[768];
+
+	{
+		memset(pal, 0, sizeof(pal));
+		pal_load(pal, vga1, 2, 0);
+		pal_load(pal, vga1, 3, 1);
+		pal_load(pal, vga1, 4, 2);
+		pal_load(pal, vga1, 5, 3);
+	}
+
+	
+	{
+		char buf[255], buf2[255];
+		sprintf(buf, "bmp_%d", res);
+		mkdir(buf2);
+	}
+
+
+	int width, height, flags;
+	
+//	i = 538;
+
+	for(i=1; ; i++) {
+		p2 = vga + i * 8;
+		//offs = swap32(*(uint32*)p2);
+
+		/* try to detect end of images.
+		 * assume the end when offset >= 200kb */
+		if (offs >= 200*1024)
+			return;
+		
+		//width = swap16(*(uint16*)(p2+6));
+		height = p2[5];
+		flags = p2[4];
+
+		fprintf(_dump_file, "Image %d. Width=%d, Height=%d, Flags=0x%X\n", i, width, height, flags);
+		fflush(_dump_file);
+
+		/* dump bitmap */
+		{
+			char buf[255];
+			sprintf(buf, "bmp_%d\\%d.bmp", res, i);
+
+			dump_bitmap(buf, vga + offs, width, height, flags, pal, 0);
+		}
+	}
+}
+
 void SimonState::dump_vga_script_always(byte *ptr, uint res, uint sprite_id)
 {
 	fprintf(_dump_file, "; address=%x, vgafile=%d  vgasprite=%d\n",
