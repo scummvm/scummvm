@@ -1002,6 +1002,7 @@ private:
 	midi_channel ch[16];
 };
 
+static unsigned char adlib_opadd[] = {0x00  ,0x01 ,0x02  ,0x08  ,0x09  ,0x0A  ,0x10 ,0x11  ,0x12};
 MidiDriver_MIDIEMU::MidiDriver_MIDIEMU(){
 	int i, j;
 	
@@ -1051,7 +1052,7 @@ void MidiDriver_MIDIEMU::premix_proc(void *param, int16 *buf, unsigned int len) 
 
 void MidiDriver_MIDIEMU::send(uint32 b)
 {
-	unsigned char channel = b & 0x0F;
+	unsigned char channel = (char)(b & 0x0F);
 
 	switch (b & 0xF0) {
 	case 0x80: {/*note off*/
@@ -1069,13 +1070,12 @@ void MidiDriver_MIDIEMU::send(uint32 b)
 		int i, j;
 		int onl, on, nv;
 		unsigned char ins[11];
-
+		on = -1;
                 if (ch[channel].on != 0) {
 			for (i = 0; i < 9; i++)
 				chp[i][2]++;
 
-			j = 0;
-			on = -1;
+			j = 0;			
 			onl = 0;
 			for (i = 0; i < 9; i++)
 				if ((chp[i][0] == -1) && (chp[i][2] > onl)) {
@@ -1234,8 +1234,6 @@ void MidiDriver_MIDIEMU::midi_write_adlib(unsigned int r, unsigned char v) {
 	OPLWriteReg(_opl, r, v);
 	adlib_data[r] = v;
 }
-
-static unsigned char adlib_opadd[] = {0x00  ,0x01 ,0x02  ,0x08  ,0x09  ,0x0A  ,0x10 ,0x11  ,0x12};
 
 void MidiDriver_MIDIEMU::midi_fm_instrument(int voice, unsigned char *inst) {
 	/* Just gotta make sure this happens because who knows when it'll be reset otherwise.... */
