@@ -20,14 +20,8 @@
  * $Header$
  *
  */
-/*
 
- Description:   
- 
-    Event module public header
-
- Notes: 
-*/
+// Event module public header
 
 #ifndef SAGA_EVENTS_MOD_H
 #define SAGA_EVENTS_MOD_H
@@ -35,20 +29,17 @@
 namespace Saga {
 
 enum R_EVENT_TYPES {
-
 	R_ONESHOT_EVENT,
 	R_CONTINUOUS_EVENT,
 	R_INTERVAL_EVENT
 };
 
 enum R_EVENT_FLAGS {
-
 	R_SIGNALED = 0x8000,
 	R_NODESTROY = 0x4000
 };
 
 enum R_EVENT_CODES {
-
 	R_BG_EVENT = 1,
 	R_ANIM_EVENT,
 	R_MUSIC_EVENT,
@@ -65,80 +56,63 @@ enum R_EVENT_CODES {
 };
 
 enum R_EVENT_OPS {
-
-	/* INSTANTANEOUS events
-	 * \*------------------------------------------------------------- */
-	/* BG events */
+	// INSTANTANEOUS events
+	// BG events
 	EVENT_DISPLAY = 1,
-	/* ANIM events */
+	// ANIM events
 	EVENT_FRAME = 1,
-	/* MUISC & SOUND events */
+	// MUISC & SOUND events
 	EVENT_PLAY = 1,
 	EVENT_STOP = 2,
-	/* SCENE events */
+	// SCENE events
 	EVENT_END = 2,
-	/* TEXT events */
+	// TEXT events
 	EVENT_HIDE = 2,
 	EVENT_REMOVE = 3,
-	/* PALANIM events */
+	// PALANIM events
 	EVENT_CYCLESTART = 1,
 	EVENT_CYCLESTEP = 2,
-	/* INTERFACE events */
+	// INTERFACE events
 	EVENT_ACTIVATE = 1,
 	EVENT_DEACTIVATE,
-	/* ACTOR events */
+	// ACTOR events
 	EVENT_MOVE = 1,
 
-	/* CONTINUOUS events
-	 * \*------------------------------------------------------------- */
-	/* PALETTE events */
+	// CONTINUOUS events
+	// PALETTE events
 	EVENT_PALTOBLACK = 1,
 	EVENT_BLACKTOPAL = 2,
-	/* TRANSITION events */
+	// TRANSITION events
 	EVENT_DISSOLVE = 1
 };
 
 enum R_EVENT_PARAMS {
-
 	NO_SET_PALETTE,
 	SET_PALETTE
 };
 
 struct R_EVENT {
-
 	unsigned int type;
-	unsigned int code;	/* Event operation category & flags */
-	int op;			/* Event operation */
-
-	long param;		/* Optional event parameter */
+	unsigned int code; // Event operation category & flags 
+	int op;            // Event operation
+	long param;        // Optional event parameter
 	long param2;
-
-	void *data;		/* Optional event data */
-
-	long time;		/* Elapsed time until event */
-	long duration;		/* Duration of event */
+	void *data;        // Optional event data
+	long time;         // Elapsed time until event
+	long duration;     // Duration of event
 	long d_reserved;
 
-	R_EVENT *chain;	/* Event chain 
-					 * (For consecutive events) */
-
+	R_EVENT *chain;    // Event chain (For consecutive events)
 	R_EVENT() { memset(this, 0, sizeof(*this)); }
-
 };
 
-int EVENT_Init(void);
-
-int EVENT_Shutdown(void);
-
+int EVENT_Init();
+int EVENT_Shutdown();
 int EVENT_HandleEvents(long msec);
-
-int EVENT_ClearList(void);
-
-int EVENT_FreeList(void);
-
-R_EVENT *EVENT_Queue(R_EVENT * event);
-
-R_EVENT *EVENT_Chain(R_EVENT * head_event, R_EVENT * add_event);
+int EVENT_ClearList();
+int EVENT_FreeList();
+R_EVENT *EVENT_Queue(R_EVENT *event);
+R_EVENT *EVENT_Chain(R_EVENT *eead_event, R_EVENT *add_event);
 
 } // End of namespace Saga
 

@@ -20,14 +20,8 @@
  * $Header$
  *
  */
-/*
 
- Description:   
- 
-    Event management module header file
-
- Notes: 
-*/
+// Event management module header file
 
 #ifndef SAGA_EVENT_H
 #define SAGA_EVENT_H
@@ -35,13 +29,10 @@
 namespace Saga {
 
 #define R_EVENT_DBGLVL R_DEBUG_NONE
-
 #define R_EVENT_WARNINGCOUNT 1000
-
 #define R_EVENT_MASK 0x00FF
 
 enum R_EVENT_STATUSCODE {
-
 	R_EVENT_INVALIDCODE = 0,
 	R_EVENT_DELETE,
 	R_EVENT_CONTINUE,
@@ -49,15 +40,11 @@ enum R_EVENT_STATUSCODE {
 };
 
 static int HandleContinuous(R_EVENT * event);
-
 static int HandleOneShot(R_EVENT * event);
-
 static int HandleInterval(R_EVENT * event);
-
 static int ProcessEventTime(long msec);
-
 static int InitializeEvent(R_EVENT * event);
 
 } // End of namespace Saga
 
-#endif				/* R_EVENT_H */
+#endif
