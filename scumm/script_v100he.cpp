@@ -833,78 +833,160 @@ void ScummEngine_v100he::o100_drawObject() {
 
 void ScummEngine_v100he::o100_setSpriteGroupInfo() {
 	byte string[260];
+	int type, value1, value2, value3, value4;
 
 	byte subOp = fetchScriptByte();
 
-	debug(1,"o100_setSpriteGroupInfo stub (%d)", subOp);
+	debug(1,"o100_setSpriteGroupInfo (%d)", subOp);
 	switch (subOp) {
 	case 0:
-		pop();
+		_curSpriteGroupId = pop();
 		break;
 	case 6:
-		pop();
-		pop();
+		value2 = pop();
+		value1 = pop();
+		if (!_curSpriteGroupId)
+			break;
+
+		spriteGroupSet_case28(_curSpriteGroupId, value1, value2);
 		break;
 	case 18:
-		pop();
-		pop();
-		pop();
-		pop();
+		value4 = pop();
+		value3 = pop();
+		value2 = pop();
+		value1 = pop();
+		if (!_curSpriteGroupId)
+			break;
+
+		spriteGroupSet_fields_0_4_8_C(_curSpriteGroupId, value1, value2, value3, value4);
 		break;
 	case 38:
-		switch (pop()) {
+		type = pop() - 1;
+		switch (type) {
+		case 0:
+			value2 = pop();
+			value1 = pop();
+			if (!_curSpriteGroupId)
+				break;
+
+			spriteGroupSet_case0_0(_curSpriteGroupId, value1, value2);
+			break;
 		case 1:
-			pop();
-			pop();
+			value1 = pop();
+			if (!_curSpriteGroupId)
+				break;
+
+			spriteGroupSet_case0_1(_curSpriteGroupId, value1);
 			break;
 		case 2:
-			pop();
+			value1 = pop();
+			if (!_curSpriteGroupId)
+				break;
+
+			spriteGroupSet_case0_2(_curSpriteGroupId, value1);
 			break;
 		case 3:
-			pop();
+			value1 = pop();
+			if (!_curSpriteGroupId)
+				break;
+
+			spriteGroupSet_case0_3(_curSpriteGroupId, value1);
 			break;
 		case 4:
-			pop();
+			if (!_curSpriteGroupId)
+				break;
+
+			spriteGroupSet_case0_4(_curSpriteGroupId);
 			break;
 		case 5:
+			value1 = pop();
+			if (!_curSpriteGroupId)
+				break;
+
+			spriteGroupSet_case0_5(_curSpriteGroupId, value1);
 			break;
 		case 6:
-			pop();
+			value1 = pop();
+			if (!_curSpriteGroupId)
+				break;
+
+			spriteGroupSet_case0_6(_curSpriteGroupId, value1);
 			break;
 		case 7:
-			pop();
-			break;
-		case 8:
-			pop();
+			value1 = pop();
+			if (!_curSpriteGroupId)
+				break;
+
+			spriteGroupSet_case0_7(_curSpriteGroupId, value1);
 			break;
 		default:
 			error("o100_setSpriteGroupInfo subOp 38: Unknown case %d", subOp);
 		}
 		break;
 	case 40:
-		pop();
+		value1 = pop();
+		if (!_curSpriteGroupId)
+			break;
+
+		spriteGroupSet_case26(_curSpriteGroupId, value1);
 		break;
 	case 49:
-		pop();
-		pop();
+		value2 = pop();
+		value1 = pop();
+		if (!_curSpriteGroupId)
+			break;
+
+		spriteGroupSet_tx_ty(_curSpriteGroupId, value1, value2);
 		break;
 	case 52:
 		copyScriptString(string);
 		break;
 	case 53:
+		if (!_curSpriteGroupId)
+			break;
+
+		spriteGroupSet_case180(_curSpriteGroupId);
 		break;
 	case 54:
+		// dummy case
 		pop();
 		pop();
 		break;
 	case 59:
-		pop();
+		value1 = pop();
+		if (!_curSpriteGroupId)
+			break;
+
+		spriteGroupSet_field_10(_curSpriteGroupId, value1);
 		break;
 	case 60:
-		pop();
-		pop();
+		type = pop();
+		value1 = pop();
+		if (!_curSpriteGroupId)
+			break;
+
+		switch (type) {
+		case 0:
+			spriteGroupSet_case5_0(_curSpriteGroupId, value1);
+			break;
+		case 1:
+			spriteGroupSet_case5_1(_curSpriteGroupId, value1);
+			break;
+		case 2:
+			spriteGroupSet_case5_2(_curSpriteGroupId, value1);
+			break;
+		case 3:
+			spriteGroupSet_case5_3(_curSpriteGroupId, value1);
+			break;
+		default:
+			error("o100_setSpriteGroupInfo subOp 60: Unknown case %d", subOp);
+		}
 		break;
 	case 89:
+		if (!_curSpriteGroupId)
+			break;
+
+		spriteGroupSet_case56(_curSpriteGroupId);
 		break;
 	default:
 		error("o100_setSpriteGroupInfo: Unknown case %d", subOp);

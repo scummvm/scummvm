@@ -512,6 +512,85 @@ void ScummEngine_v90he::spriteInfoSet_addImageToList(int spriteId, int imageNum,
 	// TODO
 }
 
+//
+// spriteGroupSet functions
+//
+void ScummEngine_v90he::spriteGroupSet_case0_0(int spriteGroupId, int value1, int value2) {
+	// TODO
+}
+
+void ScummEngine_v90he::spriteGroupSet_case0_1(int spriteGroupId, int value) {
+	// TODO
+}
+
+void ScummEngine_v90he::spriteGroupSet_case0_2(int spriteGroupId, int value) {
+	// TODO
+}
+
+void ScummEngine_v90he::spriteGroupSet_case0_3(int spriteGroupId, int value) {
+	// TODO
+}
+
+void ScummEngine_v90he::spriteGroupSet_case0_4(int spriteGroupId) {
+	// TODO
+}
+
+void ScummEngine_v90he::spriteGroupSet_case0_5(int spriteGroupId, int value) {
+	// TODO
+}
+
+void ScummEngine_v90he::spriteGroupSet_case0_6(int spriteGroupId, int value) {
+	// TODO
+}
+
+void ScummEngine_v90he::spriteGroupSet_case0_7(int spriteGroupId, int value) {
+	// TODO
+}
+
+void ScummEngine_v90he::spriteGroupSet_case5_0(int spriteGroupId, int value) {
+	// TODO
+}
+
+void ScummEngine_v90he::spriteGroupSet_case5_1(int spriteGroupId, int value) {
+	// TODO
+}
+
+void ScummEngine_v90he::spriteGroupSet_case5_2(int spriteGroupId, int value) {
+	// TODO
+}
+
+void ScummEngine_v90he::spriteGroupSet_case5_3(int spriteGroupId, int value) {
+	// TODO
+}
+
+void ScummEngine_v90he::spriteGroupSet_field_10(int spriteGroupId, int value) {
+	// TODO
+}
+
+void ScummEngine_v90he::spriteGroupSet_tx_ty(int spriteGroupId, int value1, int value2) {
+	// TODO
+}
+
+void ScummEngine_v90he::spriteGroupSet_case26(int spriteGroupId, int value) {
+	// TODO
+}
+
+void ScummEngine_v90he::spriteGroupSet_case28(int spriteGroupId, int value1, int value2) {
+	// TODO
+}
+
+void ScummEngine_v90he::spriteGroupSet_fields_0_4_8_C(int spriteGroupId, int value1, int value2, int value3, int value4) {
+	// TODO
+}
+
+void ScummEngine_v90he::spriteGroupSet_case56(int spriteGroupId) {
+	// TODO
+}
+
+void ScummEngine_v90he::spriteGroupSet_case180(int spriteGroupId) {
+	// TODO
+}
+
 void ScummEngine_v90he::spritesAllocTables(int numSprites, int numGroups, int numMaxSprites) {
 	_varNumSpriteGroups = numGroups;
 	_numSpritesToProcess = 0;
