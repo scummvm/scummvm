@@ -56,13 +56,14 @@ void hexdump(const byte * data, int len, int bytesPerLine) {
 		return;
 
 	printf("%06x: ", offset);
-	for (i = 0; i < len; i++) {
-		printf("%02x ", data[i]);
+	for (i = 0; i < bytesPerLine; i++) {
+		if (i < len)
+			printf("%02x ", data[i]);
+		else
+			printf("   ");
 		if (i % 4 == 3)
 			printf(" ");
 	}
-	for (; i < bytesPerLine; i++)
-		printf("   ");
 	printf(" |");
 	for (i = 0; i < len; i++) {
 		c = data[i];
