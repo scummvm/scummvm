@@ -243,6 +243,12 @@ int getCdState()
   return param[0];
 }
 
+static void drawBackground()
+{
+  draw_solid_quad(20.0, 20.0, 620.0, 460.0,
+		  0xff0000, 0x00ff00, 0x0000ff, 0xffffff);
+}
+
 void waitForDisk()
 {
   Label lab;
@@ -265,9 +271,8 @@ void waitForDisk()
     }
     
     ta_begin_frame();
-    
-    draw_solid_quad(20.0, 20.0, 620.0, 460.0,
-		    0xff0000, 0x00ff00, 0x0000ff, 0xffffff);
+
+    drawBackground();
 
     ta_commit_end();
 
@@ -286,10 +291,19 @@ void waitForDisk()
   }
 }
 
+static void drawGameLabel(Game &game, int pal, float x, float y,
+			  unsigned int argb, int fade = 0, float scale = 1.0)
+{
+  unsigned int fade_alpha = (255-fade)<<24;
+
+  game.icon.draw(x, y, x+32.0*scale, y+32.0*scale, pal, 0xffffff|fade_alpha);
+  game.label.draw(x+54.0*scale, y+4.0*scale, argb|fade_alpha, scale);
+}
+
 int gameMenu(Game *games, int num_games)
 {
   int top_game = 0, selector_pos = 0;
-  int16 mousex = 0, mousey = 0;
+  int16 mousex = 0, mousey = 64;
 
   if(!num_games)
     return -1;
@@ -301,24 +315,21 @@ int gameMenu(Game *games, int num_games)
 
     ta_begin_frame();
     
-    draw_solid_quad(20.0, 20.0, 620.0, 460.0,
-		    0xff0000, 0x00ff00, 0x0000ff, 0xffffff);
+    drawBackground();
     
     ta_commit_end();
     
     float y = 40.0;
     for(int i=top_game, cnt=0; cnt<10 && i<num_games; i++, cnt++) {
       int pal = 48+(i&15);
-      games[i].icon.set_palette(pal);
-      games[i].icon.draw(50.0, y, 82.0, y+32.0, pal);
 
       if(cnt == selector_pos)
 	draw_trans_quad(100.0, y, 590.0, y+32.0,
 			0x7000ff00, 0x7000ff00, 0x7000ff00, 0x7000ff00);
 
-      games[i].label.draw(104.0, y+4.0, (cnt == selector_pos?
-					 0xffffff00 : 0xffffffff));
-
+      games[i].icon.set_palette(pal);
+      drawGameLabel(games[i], pal, 50.0, y, (cnt == selector_pos?
+					     0xffff00 : 0xffffff));
       y += 40.0;
     }
 
@@ -332,17 +343,48 @@ int gameMenu(Game *games, int num_games)
     handleInput(locked_get_pads(), mousex, mousey, lmb, rmb, key);
     setimask(mask);
     
-    if(lmb || key==13 || key==319)
-      return top_game + selector_pos;
+    if(lmb || key==13 || key==319) {
+      int selected_game = top_game + selector_pos;
 
-    if(mousey>=16) {
+      for(int fade=0; fade<=256; fade+=4) {
+
+	unsigned int fade_colour = 0x00ffffff | ((255-fade)<<24);
+
+	ta_begin_frame();
+    
+	drawBackground();
+    
+	ta_commit_end();
+    
+	float y = 40.0;
+
+	if(fade < 256)
+	  for(int i=top_game, cnt=0; cnt<10 && i<num_games; i++, cnt++)
+	    if(cnt != selector_pos) {
+	      drawGameLabel(games[i], 48+(i&15), 50.0, y, 0xffffff, fade);
+	      y += 40.0;
+	    }
+
+	y = (40.0/256.0 * (selector_pos + 1))*(256-fade) + 80.0/256.0*fade;
+	float x = 50.0/256.0*(256-fade) + 160.0/256.0*fade;
+	float scale = 1.0+9.0/256.0*fade;
+
+	drawGameLabel(games[selector_pos], 48+(selected_game&15), x, y,
+		      0xffff00, 0, scale);
+
+	ta_commit_frame();
+      }
+      return selected_game;
+    }
+
+    if(mousey>=64+16) {
       if(selector_pos + top_game + 1 < num_games)
 	if(++selector_pos >= 10) {
 	  --selector_pos;
 	  ++top_game;
 	}
       mousey -= 16;
-    } else if(mousey<=-16) {
+    } else if(mousey<=64-16) {
       if(selector_pos + top_game > 0)
 	if(--selector_pos < 0) {
 	  ++selector_pos;
