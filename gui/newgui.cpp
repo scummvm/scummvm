@@ -77,15 +77,14 @@ void NewGui::updateColors() {
 void NewGui::updateScaleFactor() {
 	if(!_scaleEnable) {
 		_scaleFactor = 1;
-		return;
+	} else {
+		enum {
+			kDefaultGUIWidth = 320,
+			kDefaultGUIHeight = 200
+		};
+	
+		_scaleFactor = MIN(_system->getOverlayWidth() / kDefaultGUIWidth, _system->getOverlayHeight() / kDefaultGUIHeight);
 	}
-
-	enum {
-		kDefaultGUIWidth = 320,
-		kDefaultGUIHeight = 200
-	};
-
-	_scaleFactor = MIN(_system->getOverlayWidth() / kDefaultGUIWidth, _system->getOverlayHeight() / kDefaultGUIHeight);
 
 	// Pick the font depending on the scale factor.
 	if (_scaleFactor == 1)
