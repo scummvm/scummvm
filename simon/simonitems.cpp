@@ -23,6 +23,13 @@
 #include "stdafx.h"
 #include "simon.h"
 
+#ifdef _WIN32_WCE
+
+extern bool toolbar_drawn;
+extern bool draw_keyboard;
+
+#endif
+
 int SimonState::runScript()
 {
 	byte opcode;
@@ -744,6 +751,13 @@ int SimonState::runScript()
 			break;
 
 		case 132:{
+#ifdef _WIN32_WCE
+
+				if (!draw_keyboard) {
+					draw_keyboard = true;
+					toolbar_drawn = false;
+				}
+#endif
 				o_save_game();
 			}
 			break;

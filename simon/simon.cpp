@@ -31,6 +31,14 @@ byte *sdl_buf_attached;
 
 SimonState *g_simon;
 
+#ifdef _WIN32_WCE
+
+extern bool toolbar_drawn;
+extern bool draw_keyboard;
+
+#endif
+
+
 SimonState *SimonState::create(OSystem *syst, MidiDriver *driver)
 {
 	SimonState *s = new SimonState;
@@ -2391,6 +2399,15 @@ get_out:;
 	do {
 		delay(10);
 	} while (i == _timer_4);
+
+#ifdef _WIN32_WCE
+
+	if (draw_keyboard) {
+		draw_keyboard = false;
+		toolbar_drawn = false;
+	}
+
+#endif
 }
 
 
@@ -4304,6 +4321,10 @@ void SimonState::delay(uint delay)
 				break;
 
 				case OSystem::EVENT_LBUTTONDOWN:_left_button_down++;
+#ifdef _WIN32_WCE
+				sdl_mouse_x = event.mouse.x;
+				sdl_mouse_y = event.mouse.y;
+#endif
 				break;
 
 				case OSystem::EVENT_RBUTTONDOWN:_exit_cutscene = true;
