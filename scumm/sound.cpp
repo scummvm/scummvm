@@ -222,6 +222,37 @@ void Sound::playSound(int soundID) {
 			_scumm->_mixer->playRaw(NULL, sound, size, rate, flags, soundID);
 			return;
 		}
+		// XMI MIDI
+		else if ((READ_UINT32_UNALIGNED(ptr) == MKID('MIDI')) && (_scumm->_features & GF_HUMONGOUS)) {
+			// skip HSHD
+			ptr += 8 + READ_BE_UINT32_UNALIGNED(ptr+12);
+			if (READ_UINT32_UNALIGNED(ptr) != MKID('SDAT'))
+				return; // abort
+			
+			size = READ_BE_UINT32_UNALIGNED(ptr+4) - 8;
+			ptr += 8; // don't need SDAT block anymore
+
+			// XMI playing stuff goes here
+			// ptr should be pointing to XMI file in memory
+
+			// FIXME: dumping xmi files for testing, remove when working
+			if (1) {
+				File out;
+				char buf[64];
+				sprintf(buf, "dumps/sound-%d.xmi", soundID);
+				
+				out.open(buf, "", 1);
+				if (out.isOpen() == false) {
+					out.open(buf, "", 2);
+					if (out.isOpen() == false)
+						return;
+					out.write(ptr, size);
+				}
+				out.close();
+			}
+
+			return;
+		}
 		else if (READ_UINT32_UNALIGNED(ptr) == MKID('Crea')) {
 			_scumm->_imuseDigital->startSound(soundID);
 			return;

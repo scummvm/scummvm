@@ -460,7 +460,10 @@ void Scumm::initScummVars() {
 		_vars[VAR_VIDEOMODE] = 0x13;
 		_vars[VAR_HEAPSPACE] = 1400;
 		_vars[VAR_MOUSEPRESENT] = true; // FIXME - used to be 0, but that seems odd?!?
-		_vars[VAR_SOUNDPARAM] = 0;
+//		if (_features & GF_HUMONGOUS) // FIXME uncomment when XMI support is added
+//			_vars[VAR_SOUNDPARAM] = 1; // soundblaster for music
+//		else
+			_vars[VAR_SOUNDPARAM] = 0;
 		_vars[VAR_SOUNDPARAM2] = 0;
 		_vars[VAR_SOUNDPARAM3] = 0;
 
