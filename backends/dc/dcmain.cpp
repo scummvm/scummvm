@@ -20,18 +20,18 @@
  *
  */
 
-#define RONIN_TIMER_ACCESS
+
+#define REAL_MAIN
 
 #include <common/scummsys.h>
 #include <common/stdafx.h>
 #include <common/engine.h>
-#include <common/gameDetector.h>
 #include "dc.h"
 #include "icon.h"
 
 
 Icon icon;
-
+const char *gGameName;
 
 OSystem *OSystem_Dreamcast_create() {
 	return OSystem_Dreamcast::create();
@@ -105,6 +105,10 @@ uint32 OSystem_Dreamcast::property(int param, Property *value)
   case PROP_GET_SAMPLE_RATE:
     return 22050;
 
+  case PROP_SET_WINDOW_CAPTION:
+    gGameName = value->caption;
+    break;
+
   }
   
   return 0;
@@ -116,32 +120,6 @@ void OSystem_Dreamcast::quit() {
 
 void *OSystem_Dreamcast::create_thread(ThreadProc *proc, void *param) {
   warning("Creating a thread! (not supported.)\n");
-}
-
-uint32 OSystem_Dreamcast::get_msecs()
-{
-  static uint32 msecs=0;
-  static unsigned int t0=0;
-
-  unsigned int t = Timer();
-  unsigned int dm, dt = t - t0;
-
-  t0 = t;
-  dm = (dt << 6)/3125U;
-  dt -= (dm * 3125U)>>6;
-  t0 -= dt;
-
-  return msecs += dm;
-}
-
-void OSystem_Dreamcast::delay_msecs(uint msecs)
-{
-  get_msecs();
-  unsigned int t, start = Timer();
-  int time = (((unsigned int)msecs)*100000U)>>11;
-  while(((int)((t = Timer())-start))<time)
-    checkSound();
-  get_msecs();
 }
 
 void OSystem_Dreamcast::set_timer(int timer, int (*callback)(int))
@@ -168,35 +146,6 @@ void OSystem_Dreamcast::delete_mutex(void *mutex)
 }
 
 
-/*
-void waitForTimer(Scumm *s, int time)
-{
-  if(time<0)
-    return;
-  unsigned int start = Timer();
-  unsigned int devpoll = start+USEC_TO_TIMER(25000);
-  unsigned int t;
-  int oldmousex = s->mouse.x, oldmousey = s->mouse.y;
-  time = (((unsigned int)time)*100000U)>>11;
-  int mask = getimask();
-  while(((int)((t = Timer())-start))<time)
-    if(((int)(t-devpoll))>0) {
-      setimask(15);
-      checkSound();
-      handleInput(locked_get_pads(), s->mouse.x, s->mouse.y,
-		  s->_leftBtnPressed, s->_rightBtnPressed, s->_keyPressed);
-      setimask(mask);
-      devpoll += USEC_TO_TIMER(17000);
-      if(s->mouse.x != oldmousex || s->mouse.y != oldmousey) {
-	extern void updateScreen(Scumm *s);
-	updateScreen(s);
-	oldmousex = s->mouse.x;
-	oldmousey = s->mouse.y;
-      }
-    }
-}
-*/
-
 void dc_init_hardware(void)
 {
 #ifndef NOSERIAL
@@ -211,17 +160,20 @@ void dc_init_hardware(void)
   init_arm();
 }
 
-int dc_setup(GameDetector &detector)
+int main()
 {
+  extern int scumm_main(int argc, char *argv[]);
+
   static char *argv[] = { "scummvm", NULL, NULL, NULL };
   static int argc = 3;
 
+  dc_init_hardware();
   initSound();
 
-  if(!selectGame(&detector, argv[2], argv[1], icon))
+  if(!selectGame(argv[2], argv[1], icon))
     exit(0);
 
-  detector.parseCommandLine(argc, argv);
+  scumm_main(argc, argv);
 
-  return 0;
+  exit(0);
 }
