@@ -239,7 +239,7 @@ void ScummEngine_v72he::setupOpcodes() {
 		OPCODE(o6_isSoundRunning),
 		OPCODE(o6_setBoxFlags),
 		OPCODE(o6_invalid),
-		OPCODE(o6_resourceRoutines),
+		OPCODE(o7_resourceRoutines),
 		/* 9C */
 		OPCODE(o6_roomOps),
 		OPCODE(o6_actorOps),
