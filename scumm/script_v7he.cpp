@@ -344,16 +344,16 @@ void ScummEngine_v70he::setupOpcodes() {
 		OPCODE(o6_invalid),
 		OPCODE(o70_getStringWidth),
 		OPCODE(o70_getStringLen),
-		OPCODE(o70_unknownEF),
+		OPCODE(o70_appendString),
 		/* F0 */
 		OPCODE(o6_invalid),
-		OPCODE(o70_stringCompare),
+		OPCODE(o70_compareString),
 		OPCODE(o6_invalid),
 		OPCODE(o70_readINI),
 		/* F4 */
 		OPCODE(o70_writeINI),
-		OPCODE(o70_unknownF5),
-		OPCODE(o70_unknownF6),
+		OPCODE(o70_getStringLenForWidth),
+		OPCODE(o70_getCharIndexInString),
 		OPCODE(o6_invalid),
 		/* F8 */
 		OPCODE(o6_invalid),
@@ -379,7 +379,7 @@ const char *ScummEngine_v70he::getOpcodeDesc(byte i) {
 	return _opcodesv70he[i].desc;
 }
 
-void ScummEngine_v70he::arrrays_unk2(int dst, int src, int srcOffs, int len) {
+void ScummEngine_v70he::appendSubstring(int dst, int src, int srcOffs, int len) {
 	int dstOffs, value;
 	int i = 0;
 
@@ -813,7 +813,7 @@ void ScummEngine_v70he::o70_getStringLen() {
 	push(len);
 }
 
-void ScummEngine_v70he::o70_unknownEF() {
+void ScummEngine_v70he::o70_appendString() {
 	int dst, size;
 
 	int len = pop();
@@ -828,13 +828,13 @@ void ScummEngine_v70he::o70_unknownEF() {
 
 	dst = readVar(0);
 
-	arrrays_unk2(dst, src, srcOffs, len);
+	appendSubstring(dst, src, srcOffs, len);
 
 	push(dst);
-	debug(1,"stub o70_unknownEF");
+	debug(1,"stub o70_appendString");
 }
 
-void ScummEngine_v70he::o70_stringCompare() {
+void ScummEngine_v70he::o70_compareString() {
 	byte *addr, *addr2;
 	int i = 0;
 
@@ -843,11 +843,11 @@ void ScummEngine_v70he::o70_stringCompare() {
 
 	addr = getStringAddress(id);
 	if (!addr)
-		error("o70_stringCompare: Reference to zeroed array pointer (%d)", id);
+		error("o70_compareString: Reference to zeroed array pointer (%d)", id);
 
 	addr2 = getStringAddress(id2);
 	if (!addr2)
-		error("o70_stringCompare: Reference to zeroed array pointer (%d)", id);
+		error("o70_compareString: Reference to zeroed array pointer (%d)", id);
 
 	while(1) {
 		if (*addr != *addr2)
@@ -873,7 +873,7 @@ void ScummEngine_v70he::o70_stringCompare() {
 	}
 
 	push (i);
-	debug(1,"o70_stringCompare stub (%d, %d, %d)", id, id2, i);
+	debug(1,"o70_compareString stub (%d, %d, %d)", id, id2, i);
 }
 
 void ScummEngine_v70he::o70_readINI() {
@@ -934,7 +934,7 @@ void ScummEngine_v70he::o70_writeINI() {
 	}
 }
 
-void ScummEngine_v70he::o70_unknownF5() {
+void ScummEngine_v70he::o70_getStringLenForWidth() {
 	int chr, max;
 	int array, len, pos, width = 0;
 
@@ -956,10 +956,10 @@ void ScummEngine_v70he::o70_unknownF5() {
 	}
 
 	push(len);
-	debug(1,"stub o70_unknownF5 (%d)", len);
+	debug(1,"stub o70_getStringLenForWidth (%d)", len);
 }
 
-void ScummEngine_v70he::o70_unknownF6() {
+void ScummEngine_v70he::o70_getCharIndexInString() {
 	int array, end, len, pos, value;
 
 	value = pop();
@@ -998,7 +998,7 @@ void ScummEngine_v70he::o70_unknownF6() {
 	}
 
 	push(-1);
-	debug(1,"stub o70_unknownF6");
+	debug(1,"stub o70_getCharIndexInString");
 }
 
 void ScummEngine_v70he::o70_setFilePath() {

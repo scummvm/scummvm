@@ -144,7 +144,7 @@ void ScummEngine_v80he::setupOpcodes() {
 		OPCODE(o80_writeConfigFile),
 		OPCODE(o6_wordVarInc),
 		/* 50 */
-		OPCODE(o72_unknown50),
+		OPCODE(o72_resetCutscene),
 		OPCODE(o6_invalid),
 		OPCODE(o72_findObjectWithClassOf),
 		OPCODE(o6_wordArrayInc),
@@ -339,19 +339,19 @@ void ScummEngine_v80he::setupOpcodes() {
 		OPCODE(o72_redimArray),
 		OPCODE(o60_readFilePos),
 		/* EC */
-		OPCODE(o72_unknownEC),
+		OPCODE(o72_copyString),
 		OPCODE(o70_getStringWidth),
 		OPCODE(o70_getStringLen),
-		OPCODE(o72_unknownEF),
+		OPCODE(o70_appendString),
 		/* F0 */
-		OPCODE(o72_unknownF0),
-		OPCODE(o70_stringCompare),
+		OPCODE(o72_concatString),
+		OPCODE(o70_compareString),
 		OPCODE(o72_checkGlobQueue),
 		OPCODE(o72_readINI),
 		/* F4 */
 		OPCODE(o72_writeINI),
-		OPCODE(o70_unknownF5),
-		OPCODE(o70_unknownF6),
+		OPCODE(o70_getStringLenForWidth),
+		OPCODE(o70_getCharIndexInString),
 		OPCODE(o6_invalid),
 		/* F8 */
 		OPCODE(o72_getResourceSize),

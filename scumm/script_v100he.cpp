@@ -324,15 +324,15 @@ void ScummEngine_v100he::setupOpcodes() {
 		OPCODE(o6_startScriptQuick2),
 		OPCODE(o6_getState),
 		/* E0 */
-		OPCODE(o70_stringCompare),
-		OPCODE(o72_unknownEC),
-		OPCODE(o72_unknownEF),
-		OPCODE(o72_unknownF0),
+		OPCODE(o70_compareString),
+		OPCODE(o72_copyString),
+		OPCODE(o70_appendString),
+		OPCODE(o72_concatString),
 		/* E4 */
 		OPCODE(o70_getStringLen),
-		OPCODE(o70_unknownF5),
+		OPCODE(o70_getStringLenForWidth),
 		OPCODE(o6_invalid),
-		OPCODE(o70_unknownF6),
+		OPCODE(o70_getCharIndexInString),
 		/* E8 */
 		OPCODE(o70_getStringWidth),
 		OPCODE(o60_readFilePos),

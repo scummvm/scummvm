@@ -632,7 +632,7 @@ protected:
 	
 	virtual void redrawBGAreas();
 
-	void arrrays_unk2(int dst, int src, int len2, int len);
+	void appendSubstring(int dst, int src, int len2, int len);
 
 	int findObject(int x, int y, int num, int *args);
 	void polygonErase(int fromId, int toId);
@@ -652,12 +652,12 @@ protected:
 	void o70_kernelSetFunctions();
 	void o70_getStringWidth();
 	void o70_getStringLen();
-	void o70_unknownEF();
-	void o70_stringCompare();
+	void o70_appendString();
+	void o70_compareString();
 	void o70_readINI();
 	void o70_writeINI();
-	void o70_unknownF5();
-	void o70_unknownF6();
+	void o70_getStringLenForWidth();
+	void o70_getCharIndexInString();
 	void o70_setFilePath();
 	void o70_setWindowCaption();
 	void o70_polygonOps();
@@ -740,7 +740,7 @@ protected:
 	void o72_pushDWord();
 	void o72_addMessageToStack();
 	void o72_isAnyOf();
-	void o72_unknown50();
+	void o72_resetCutscene();
 	void o72_findObjectWithClassOf();
 	void o72_getObjectImageX();
 	void o72_getObjectImageY();
@@ -773,9 +773,8 @@ protected:
 	void o72_getPixel();
 	void o72_pickVarRandom();
 	void o72_redimArray();
-	void o72_unknownEC();
-	void o72_unknownEF();
-	void o72_unknownF0();
+	void o72_copyString();
+	void o72_concatString();
 	void o72_checkGlobQueue();
 	void o72_readINI();
 	void o72_writeINI();
@@ -903,7 +902,7 @@ protected:
 	void o90_shr4();
 	void o90_findAllObjectsWithClassOf();
 	void o90_getPolygonOverlap();
-	void o90_unknown36();
+	void o90_cond();
 	void o90_dim2dim2Array();
 	void o90_sortArray();
 	void o90_getObjectData();

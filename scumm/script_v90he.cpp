@@ -90,11 +90,11 @@ void ScummEngine_v90he::setupOpcodes() {
 		OPCODE(o90_getSegmentAngle),
 		/* 24 */
 		OPCODE(o90_getDistanceBetweenPoints),
-		OPCODE(o90_unknown25),
-		OPCODE(o90_unknown26),
-		OPCODE(o90_unknown27),
+		OPCODE(o90_unknown25), // o90_getSpriteInfo
+		OPCODE(o90_unknown26), // o90_setSpriteInfo
+		OPCODE(o90_unknown27), // o90_getSpriteGroupInfo
 		/* 28 */
-		OPCODE(o90_unknown28),
+		OPCODE(o90_unknown28), // o90_setSpriteGroupInfo
 		OPCODE(o90_getWizData),
 		OPCODE(o6_invalid),
 		OPCODE(o90_startScriptUnk),
@@ -111,7 +111,7 @@ void ScummEngine_v90he::setupOpcodes() {
 		/* 34 */
 		OPCODE(o90_findAllObjectsWithClassOf),
 		OPCODE(o90_getPolygonOverlap),
-		OPCODE(o90_unknown36),
+		OPCODE(o90_cond),
 		OPCODE(o90_dim2dim2Array),
 		/* 38 */
 		OPCODE(o6_invalid),
@@ -144,7 +144,7 @@ void ScummEngine_v90he::setupOpcodes() {
 		OPCODE(o80_writeConfigFile),
 		OPCODE(o6_wordVarInc),
 		/* 50 */
-		OPCODE(o72_unknown50),
+		OPCODE(o72_resetCutscene),
 		OPCODE(o6_invalid),
 		OPCODE(o72_findObjectWithClassOf),
 		OPCODE(o6_wordArrayInc),
@@ -339,19 +339,19 @@ void ScummEngine_v90he::setupOpcodes() {
 		OPCODE(o72_redimArray),
 		OPCODE(o60_readFilePos),
 		/* EC */
-		OPCODE(o72_unknownEC),
+		OPCODE(o72_copyString),
 		OPCODE(o70_getStringWidth),
 		OPCODE(o70_getStringLen),
-		OPCODE(o72_unknownEF),
+		OPCODE(o70_appendString),
 		/* F0 */
-		OPCODE(o72_unknownF0),
-		OPCODE(o70_stringCompare),
+		OPCODE(o72_concatString),
+		OPCODE(o70_compareString),
 		OPCODE(o72_checkGlobQueue),
 		OPCODE(o72_readINI),
 		/* F4 */
 		OPCODE(o72_writeINI),
-		OPCODE(o70_unknownF5),
-		OPCODE(o70_unknownF6),
+		OPCODE(o70_getStringLenForWidth),
+		OPCODE(o70_getCharIndexInString),
 		OPCODE(o6_invalid),
 		/* F8 */
 		OPCODE(o72_getResourceSize),
@@ -1510,7 +1510,7 @@ void ScummEngine_v90he::o90_getPolygonOverlap() {
 	}
 }
 
-void ScummEngine_v90he::o90_unknown36() {
+void ScummEngine_v90he::o90_cond() {
 	int a = pop();
 	int b = pop();
 	int c = pop();

@@ -145,7 +145,7 @@ void ScummEngine_v72he::setupOpcodes() {
 		OPCODE(o6_invalid),
 		OPCODE(o6_wordVarInc),
 		/* 50 */
-		OPCODE(o72_unknown50),
+		OPCODE(o72_resetCutscene),
 		OPCODE(o6_invalid),
 		OPCODE(o72_findObjectWithClassOf),
 		OPCODE(o6_wordArrayInc),
@@ -340,19 +340,19 @@ void ScummEngine_v72he::setupOpcodes() {
 		OPCODE(o72_redimArray),
 		OPCODE(o60_readFilePos),
 		/* EC */
-		OPCODE(o72_unknownEC),
+		OPCODE(o72_copyString),
 		OPCODE(o70_getStringWidth),
 		OPCODE(o70_getStringLen),
-		OPCODE(o72_unknownEF),
+		OPCODE(o70_appendString),
 		/* F0 */
-		OPCODE(o72_unknownF0),
-		OPCODE(o70_stringCompare),
+		OPCODE(o72_concatString),
+		OPCODE(o70_compareString),
 		OPCODE(o72_checkGlobQueue),
 		OPCODE(o72_readINI),
 		/* F4 */
 		OPCODE(o72_writeINI),
-		OPCODE(o70_unknownF5),
-		OPCODE(o70_unknownF6),
+		OPCODE(o70_getStringLenForWidth),
+		OPCODE(o70_getCharIndexInString),
 		OPCODE(o6_invalid),
 		/* F8 */
 		OPCODE(o72_getResourceSize),
@@ -638,7 +638,7 @@ void ScummEngine_v72he::o72_isAnyOf() {
 	push(0);
 }
 
-void ScummEngine_v72he::o72_unknown50() {
+void ScummEngine_v72he::o72_resetCutscene() {
 	int idx;
 
 	idx = vm.cutSceneStackPointer;
@@ -2367,7 +2367,7 @@ void ScummEngine_v72he::redimArray(int arrayId, int newDim2start, int newDim2end
 	ah->dim2end = TO_LE_32(newDim2end);
 }
 
-void ScummEngine_v72he::o72_unknownEC() {
+void ScummEngine_v72he::o72_copyString() {
 	int dst, size;
 	int src = pop();
 
@@ -2378,34 +2378,13 @@ void ScummEngine_v72he::o72_unknownEC() {
 	writeArray(0, 0, 0, 0);
 	dst = readVar(0);
 
-	arrrays_unk2(dst, src, -1, -1);
+	appendSubstring(dst, src, -1, -1);
 
 	push(dst);
-	debug(1,"stub o72_unknownEC");
+	debug(1,"stub o72_copyString");
 }
 
-void ScummEngine_v72he::o72_unknownEF() {
-	int dst, size;
-
-	int len = pop();
-	int srcOffs = pop();
-	int src = pop();
-
-	size = len - srcOffs + 2;
-
-	writeVar(0, 0);
-	defineArray(0, kStringArray, 0, 0, 0, size);
-	writeArray(0, 0, 0, 0);
-
-	dst = readVar(0);
-
-	arrrays_unk2(dst, src, srcOffs, len);
-
-	push(dst);
-	debug(1,"stub o72_unknownEF");
-}
-
-void ScummEngine_v72he::o72_unknownF0() {
+void ScummEngine_v72he::o72_concatString() {
 	int dst, size;
 
 	int src2 = pop();
@@ -2420,11 +2399,11 @@ void ScummEngine_v72he::o72_unknownF0() {
 
 	dst = readVar(0);
 
-	arrrays_unk2(dst, src1, 0, -1);
-	arrrays_unk2(dst, src2, 0, -1);
+	appendSubstring(dst, src1, 0, -1);
+	appendSubstring(dst, src2, 0, -1);
 
 	push(dst);
-	debug(1,"stub o72_unknownF0");
+	debug(1,"stub o72_concatString");
 }
 
 void ScummEngine_v72he::o72_checkGlobQueue() {
