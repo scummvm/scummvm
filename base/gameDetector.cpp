@@ -177,6 +177,9 @@ GameDetector::GameDetector() {
 	ConfMan.registerDefault("debuglevel", 0);
 	ConfMan.registerDefault("joystick_num", -1);
 	ConfMan.registerDefault("confirm_exit", false);
+#ifdef USE_ALSA
+	ConfMan.registerDefault("alsa_port", "65:0");
+#endif
 
 	_dumpScripts = false;
 

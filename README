@@ -629,7 +629,8 @@ sequencer support does not work, you can always fall back on Adlib emulation.
 7.4.1 Playing sound with ALSA sequencer:                        [UNIX ONLY]
 ----- ----------------------------------
 If you have installed the ALSA driver with the sequencer support, then
-set the environment variable "SCUMMVM_PORT" to your sequencer port - e.g. 65:0
+set the environment variable SCUMMVM_PORT or the config file parameter
+alsa_port to your sequencer port. The default is "65:0".
 
 Here is a little howto on how to use the ALSA sequencer with your soundcard.
 In all cases, to have a list of all the sequencer ports you have, try the
@@ -825,6 +826,8 @@ The following keywords are recognized:
         joystick_num    number   Number of joystick device to use for input
         master_volume   number   The master volume setting (0-255)
         music_driver    string   The music engine to use.
+        alsa_port       string   Port to use for output when using the
+                                 ALSA music driver.
         music_volume    number   The music volume setting (0-255)
         multi_midi      bool     If true, enable combination Adlib and native
                                  MIDI.

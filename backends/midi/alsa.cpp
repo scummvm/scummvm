@@ -29,6 +29,8 @@
 
 #include "stdafx.h"
 #include "common/util.h"
+#include "common/config-manager.h"
+
 #include <alsa/asoundlib.h>
 
 /*
@@ -84,8 +86,8 @@ int MidiDriver_ALSA::open() {
 	_isOpen = true;
 
 	if (!(var = getenv("SCUMMVM_PORT"))) {
-		// default alsa port if none specified
-		if (parse_addr("65:0", &seq_client, &seq_port) < 0) {
+		// use config option if no var specified
+		if (parse_addr(ConfMan.get("alsa_port").c_str(), &seq_client, &seq_port) < 0) {
 			error("Invalid port %s", var);
 			return -1;
 		}
