@@ -1065,10 +1065,6 @@ void ScummEngine_v5::o5_getActorRoom() {
 void ScummEngine_v5::o5_getActorScale() {
 	Actor *a;
 	
-	// dummy opcode in the loom
-	if (_gameId == GID_LOOM)
-		return;
-
 	// INDY3 uses this opcode for waitForActor
 	if (_gameId == GID_INDY3) {
 		const byte *oldaddr = _scriptPointer - 1;
