@@ -160,7 +160,7 @@ void ScummEngine::CHARSET_1() {
 			_charsetColorMap[i] = _charsetData[_charset->getCurID()][i];
 
 	if (_keepText) {
-		_charset->_str = gdi._mask;
+		_charset->_str = _charset->_mask;
 	}
 
 	if (_talkDelay)
@@ -198,14 +198,14 @@ void ScummEngine::CHARSET_1() {
 	if (!_keepText) {
 		if (_version <= 3 && _gameId != GID_LOOM) {
 			_charset->_hasMask = true;
-			gdi._mask.left = _string[0].xpos;
-			gdi._mask.top = _string[0].ypos;
-			gdi._mask.bottom = _string[0].ypos + 8;
-			gdi._mask.right = _screenWidth;
+			_charset->_mask.left = _string[0].xpos;
+			_charset->_mask.top = _string[0].ypos;
+			_charset->_mask.bottom = _string[0].ypos + 8;
+			_charset->_mask.right = _screenWidth;
 			if (_string[0].ypos <= 16)	// If we are cleaning the text line, clean 2 lines.
-				gdi._mask.bottom = 16;
+				_charset->_mask.bottom = 16;
 		}
-		restoreCharsetBg();
+		_charset->restoreCharsetBg();
 	}
 
 	t = _charset->_right - _string[0].xpos - 1;
@@ -353,7 +353,7 @@ void ScummEngine::CHARSET_1() {
 	_charsetBufPos = buffer - _charsetBuffer;
 
 	_charset->_hasMask = (_charset->_str.left != -1);
-	gdi._mask = _charset->_str;
+	_charset->_mask = _charset->_str;
 }
 
 void ScummEngine::drawString(int a) {
@@ -483,7 +483,7 @@ warning("Would have set _charset->_blitAlso = true (wanted to print '%c' = %d\n"
 
 	if (_version >= 7) {
 		_charset->_hasMask = true;
-		gdi._mask.extend(_charset->_str);
+		_charset->_mask.extend(_charset->_str);
 	}
 }
 

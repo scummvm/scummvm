@@ -213,7 +213,6 @@ public:
 	int _numZBuffer;
 	int _imgBufOffs[8];
 	int32 _numStrips;
-	Common::Rect _mask;
 	byte _C64Colors[4];
 	
 	Gdi(ScummEngine *vm);
@@ -266,7 +265,6 @@ public:
 	void drawBitmap(const byte *ptr, VirtScreen *vs, int x, int y, const int width, const int height,
 	                int stripnr, int numstrip, byte flag, StripTable *table = 0);
 	StripTable *generateStripTable(const byte *src, int width, int height, StripTable *table);
-	void clearCharsetMask();
 
 	void disableZBuffer() { _zbufferDisabled = true; }
 	void enableZBuffer() { _zbufferDisabled = false; }

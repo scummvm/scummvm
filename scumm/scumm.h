@@ -246,6 +246,8 @@ class ScummEngine : public Engine {
 	friend class ScummDebugger;
 	friend class SmushPlayer;
 	friend class Insane;
+	friend class CharsetRenderer;
+	
 	void errorString(const char *buf_input, char *buf_output);
 public:
 	/* Put often used variables at the top.
@@ -368,6 +370,13 @@ public:
 			static int32 fake;
 			fake = 0;
 			return fake;
+		}
+		return _scummVars[var];
+	}
+	int32 scummVar(byte var, const char *varName, const char *file, int line) const
+	{
+		if (var == 0xFF) {
+			warning("Illegal access to variable %s in file %s, line %d", varName, file, line);
 		}
 		return _scummVars[var];
 	}
@@ -765,6 +774,8 @@ protected:
 	uint32 _CLUT_offs;
 	uint32 _IM00_offs, _PALS_offs;
 
+	StripTable *_roomStrips;
+
 	//ender: fullscreen
 	bool _fullRedraw, _BgNeedsRedraw, _verbRedraw;
 	bool _screenEffectFlag, _completeScreenRedraw;
@@ -787,8 +798,10 @@ protected:
 		bool isDrawn;
 	} _flashlight;
 	
-	StripTable *_roomStrips;
-
+public:
+	bool isLightOn() const;
+	
+protected:
 	void initScreens(int b, int h);
 	void initVirtScreen(VirtScreenNumber slot, int number, int top, int width, int height, bool twobufs, bool scrollable);
 	void initBGBuffers(int height);
@@ -1005,7 +1018,9 @@ protected:
 	bool areBoxesNeighbours(int i, int j);
 
 	/* String class */
+public:
 	CharsetRenderer *_charset;
+protected:
 	byte _charsetColor;
 public:
 	byte _charsetColorMap[16];
@@ -1018,10 +1033,7 @@ protected:
 protected:
 
 	void initCharset(int charset);
-	void restoreCharsetBg();
-public:
-	bool hasCharsetMask(int left, int top, int right, int bottom);
-protected:
+
 	void CHARSET_1();
 	void drawString(int a);
 	const byte *addMessageToStack(const byte *msg);

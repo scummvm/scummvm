@@ -2619,7 +2619,7 @@ void ScummEngine_v6::o6_kernelSetFunctions() {
 			createSpecialPalette(args[1], args[2], args[3], args[4], args[5], 0, 256);
 			break;
 		case 110:
-			gdi.clearCharsetMask();
+			_charset->clearCharsetMask();
 			break;
 		case 111:
 			a = derefActor(args[1], "o6_kernelSetFunctions: 111");

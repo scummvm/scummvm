@@ -347,12 +347,12 @@ void ScummEngine::cameraMoved() {
 		// When talking to Rusty for first time
 		// When sleeping in straw at Blacksmith's Guild.
 		if ((_gameId == GID_LOOM256 || _gameId == GID_PASS) && dx)
-			gdi._mask.left -= 8;
+			_charset->_mask.left -= 8;
 		else if (dx || dy) {
-			gdi._mask.left -= dx;
-			gdi._mask.right -= dx;
-			gdi._mask.top -= dy;
-			gdi._mask.bottom -= dy;
+			_charset->_mask.left -= dx;
+			_charset->_mask.right -= dx;
+			_charset->_mask.top -= dy;
+			_charset->_mask.bottom -= dy;
 		}
 	}
 }

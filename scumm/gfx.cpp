@@ -542,20 +542,6 @@ void ScummEngine::redrawBGStrip(int start, int num) {
 					&virtscr[0], s, 0, _roomWidth, virtscr[0].height, s, num, 0, _roomStrips);
 }
 
-void ScummEngine::restoreCharsetBg() {
-	if (_charset->_hasMask) {
-		restoreBG(gdi._mask);
-		_charset->_hasMask = false;
-		gdi._mask.top = gdi._mask.left = 32767;
-		gdi._mask.right = gdi._mask.bottom = 0;
-		_charset->_str.left = -1;
-		_charset->_left = -1;
-	}
-
-	_charset->_nextLeft = _string[0].xpos;
-	_charset->_nextTop = _string[0].ypos;
-}
-
 void ScummEngine::restoreBG(Common::Rect rect, byte backColor) {
 	VirtScreen *vs;
 	int topline, height, width;
@@ -589,7 +575,7 @@ void ScummEngine::restoreBG(Common::Rect rect, byte backColor) {
 	width = rect.width();
 
 	// Check whether lights are turned on or not
-	lightsOn = (_features & GF_NEW_OPCODES) || (vs->number != kMainVirtScreen) || (VAR(VAR_CURRENT_LIGHTS) & LIGHTMODE_screen);
+	lightsOn = isLightOn();
 
 	if (vs->hasTwoBuffers && _currentRoom != 0 && lightsOn ) {
 		blit(backbuff, vs->backBuf + offset, width, height);
@@ -621,16 +607,30 @@ void ScummEngine::restoreBG(Common::Rect rect, byte backColor) {
 	}
 }
 
-void Gdi::clearCharsetMask() {
-	memset(_vm->getResourceAddress(rtBuffer, 9), 0, _imgBufOffs[1]);
+void CharsetRenderer::restoreCharsetBg() {
+	if (_hasMask) {
+		_vm->restoreBG(_mask);
+		_hasMask = false;
+		_mask.top = _mask.left = 32767;
+		_mask.right = _mask.bottom = 0;
+		_str.left = -1;
+		_left = -1;
+	}
+
+	_nextLeft = _vm->_string[0].xpos;
+	_nextTop = _vm->_string[0].ypos;
+}
+
+void CharsetRenderer::clearCharsetMask() {
+	memset(_vm->getResourceAddress(rtBuffer, 9), 0, _vm->gdi._imgBufOffs[1]);
 	_mask.top = _mask.left = 32767;
 	_mask.right = _mask.bottom = 0;
 }
 
-bool ScummEngine::hasCharsetMask(int left, int top, int right, int bottom) {
+bool CharsetRenderer::hasCharsetMask(int left, int top, int right, int bottom) {
 	Common::Rect rect(left, top, right, bottom);
 	
-	return _charset->_hasMask && rect.intersects(gdi._mask);
+	return _hasMask && rect.intersects(_mask);
 }
 
 byte *ScummEngine::getMaskBuffer(int x, int y, int z) {
@@ -814,6 +814,10 @@ void ScummEngine::drawFlashlight() {
 	_flashlight.isDrawn = true;
 }
 
+bool ScummEngine::isLightOn() const {
+	return (VAR_CURRENT_LIGHTS == 0xFF) || (VAR(VAR_CURRENT_LIGHTS) & LIGHTMODE_screen);
+}
+
 #pragma mark -
 #pragma mark --- Image drawing ---
 #pragma mark -
@@ -841,7 +845,7 @@ void Gdi::drawBitmap(const byte *ptr, VirtScreen *vs, int x, int y, const int wi
 	bool useOrDecompress = false;
 
 	// Check whether lights are turned on or not
-	lightsOn = (_vm->_features & GF_NEW_OPCODES) || (vs->number != kMainVirtScreen) || (_vm->VAR(_vm->VAR_CURRENT_LIGHTS) & LIGHTMODE_screen);
+	lightsOn = _vm->isLightOn();
 
 	CHECK_HEAP;
 	if (_vm->_features & GF_SMALL_HEADER)
@@ -1077,7 +1081,7 @@ void Gdi::drawBitmap(const byte *ptr, VirtScreen *vs, int x, int y, const int wi
 
 		CHECK_HEAP;
 		if (vs->hasTwoBuffers) {
-			if (_vm->hasCharsetMask(sx * 8, y, (sx + 1) * 8, bottom)) {
+			if (_vm->_charset->hasCharsetMask(sx * 8, y, (sx + 1) * 8, bottom)) {
 				if (flag & dbClear || !lightsOn)
 					clear8ColWithMasking(backbuff_ptr, height, mask_ptr);
 				else
@@ -1213,8 +1217,8 @@ void Gdi::resetBackground(int top, int bottom, int strip) {
 
 	numLinesToProcess = bottom - top;
 	if (numLinesToProcess) {
-		if ((_vm->_features & GF_NEW_OPCODES) || (_vm->VAR(_vm->VAR_CURRENT_LIGHTS) & LIGHTMODE_screen)) {
-			if (_vm->hasCharsetMask(strip * 8, top, (strip + 1) * 8, bottom))
+		if (_vm->isLightOn()) {
+			if (_vm->_charset->hasCharsetMask(strip * 8, top, (strip + 1) * 8, bottom))
 				draw8ColWithMasking(backbuff_ptr, bgbak_ptr, numLinesToProcess, mask_ptr);
 			else
 				draw8Col(backbuff_ptr, bgbak_ptr, numLinesToProcess);

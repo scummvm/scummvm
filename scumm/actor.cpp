@@ -1190,7 +1190,7 @@ void ScummEngine::stopTalk() {
 		VAR(VAR_TALK_ACTOR) = 0xFF;
 	}
 	_keepText = false;
-	restoreCharsetBg();
+	_charset->restoreCharsetBg();
 }
 
 void ScummEngine::clearMsgQueue() {

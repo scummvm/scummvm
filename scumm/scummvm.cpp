@@ -1086,7 +1086,7 @@ void ScummEngine::scummInit() {
 
 	virtscr[0].xstart = 0;
 
-	if (!(_features & GF_NEW_OPCODES)) {
+	if (VAR_CURRENT_LIGHTS != 0xFF) {
 		// Setup light
 		_flashlight.xStrips = 7;
 		_flashlight.yStrips = 7;
@@ -1222,7 +1222,7 @@ void ScummEngine::initScummVars() {
 		VAR(39) = 320;
 	}
 
-	if (!(_features & GF_NEW_OPCODES)) {
+	if (VAR_CURRENT_LIGHTS != 0xFF) {
 		// Setup light
 		VAR(VAR_CURRENT_LIGHTS) = LIGHTMODE_actor_base | LIGHTMODE_actor_color | LIGHTMODE_screen;
 	}
@@ -1426,7 +1426,7 @@ load_game:
 
 	if (_completeScreenRedraw) {
 		_completeScreenRedraw = false;
-		gdi.clearCharsetMask();
+		_charset->clearCharsetMask();
 		_charset->_hasMask = false;
 
 		// HACK as in game save stuff isn't supported currently
@@ -1499,7 +1499,7 @@ load_game:
 		setActorRedrawFlags();
 		resetActorBgs();
 
-		if (!(_features & GF_NEW_OPCODES) &&
+		if (VAR_CURRENT_LIGHTS != 0xFF &&
 		    !(VAR(VAR_CURRENT_LIGHTS) & LIGHTMODE_screen) &&
 		      VAR(VAR_CURRENT_LIGHTS) & LIGHTMODE_flashlight) {
 			drawFlashlight();

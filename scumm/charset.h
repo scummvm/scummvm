@@ -32,6 +32,13 @@ struct VirtScreen;
 
 class CharsetRenderer {
 public:
+	
+	/**
+	 * Charset mask - rectangle covering the parts of the screen which are 
+	 * currently (partially) masked.
+	 */
+	Common::Rect _mask;
+
 	Common::Rect _str;
 	int _nextLeft, _nextTop;
 
@@ -61,6 +68,10 @@ protected:
 public:
 	CharsetRenderer(ScummEngine *vm);
 	virtual ~CharsetRenderer() {}
+
+	void restoreCharsetBg();
+	void clearCharsetMask();
+	bool hasCharsetMask(int left, int top, int right, int bottom);
 
 	virtual void printChar(int chr) = 0;
 
