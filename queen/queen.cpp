@@ -36,13 +36,13 @@ extern bool draw_keyboard;
 
 #endif
 
-static const TargetSettings queen_settings[] = {
+static const GameSettings queen_settings[] = {
 	/* Flight of the Amazon Queen */
 	{ "queen", "Flight of the Amazon Queen", GID_QUEEN_FIRST, 99, MDT_ADLIB | MDT_NATIVE | MDT_PREFER_NATIVE, 0, "queen.1" },
 	{ NULL, NULL, 0, 0, MDT_NONE, 0, NULL} 
 };
 
-const TargetSettings *Engine_QUEEN_targetList() {
+const GameSettings *Engine_QUEEN_targetList() {
 	return queen_settings;
 }
 

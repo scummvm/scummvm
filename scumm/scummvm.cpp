@@ -76,7 +76,7 @@ enum MouseButtonStatus {
 // Use g_scumm from error() ONLY
 ScummEngine *g_scumm = 0;
 
-static const TargetSettings scumm_settings[] = {
+static const GameSettings scumm_settings[] = {
 	/* Scumm Version 1 */
 	/* Scumm Version 2 */
 
@@ -595,8 +595,8 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst)
 	_debugLevel = ConfMan.getInt("debuglevel");
 	_dumpScripts = detector->_dumpScripts;
 	_bootParam = ConfMan.getInt("boot_param");
-	_exe_name = strdup(detector->_game.targetName);
-	_game_name = strdup(detector->_gameFileName.c_str());
+	_exe_name = strdup(detector->_game.gameName);
+	_game_name = strdup(detector->_targetName.c_str());
 	_gameId = detector->_game.id;
 	_version = detector->_game.version;
 	setFeatures(detector->_game.features);
@@ -2634,7 +2634,7 @@ int normalizeAngle(int angle) {
 
 using namespace Scumm;
 
-const TargetSettings *Engine_SCUMM_targetList() {
+const GameSettings *Engine_SCUMM_targetList() {
 	return scumm_settings;
 }
 

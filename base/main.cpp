@@ -259,16 +259,18 @@ int main(int argc, char *argv[]) {
 	g_gui = new NewGui(system);
 
 	// Unless a game was specified, show the launcher dialog
-	if (detector._gameFileName.isEmpty())
+	if (detector._targetName.isEmpty())
 		launcherDialog(detector, system);
 
 	// Verify the given game name is a valid supported game
 	if (detector.detectMain()) {
 
 		// Set the window caption to the game name
-		prop.caption = ConfMan.get("description", detector._gameFileName).c_str();
+		prop.caption = ConfMan.get("description", detector._targetName).c_str();
 		if (prop.caption == NULL)	
-			prop.caption = detector._gameFileName.c_str();
+			prop.caption = detector._game.description;
+		if (prop.caption == NULL)	
+			prop.caption = detector._targetName.c_str();
 		if (prop.caption != NULL)	
 			system->property(OSystem::PROP_SET_WINDOW_CAPTION, &prop);
 
@@ -277,7 +279,7 @@ int main(int argc, char *argv[]) {
 		// should combine both checks into one.
 
 		// See if the game should default to 1x scaler
-		if (!ConfMan.hasKey("gfx_mode", detector._gameFileName) && 
+		if (!ConfMan.hasKey("gfx_mode", detector._targetName) && 
 		   (detector._game.features & GF_DEFAULT_TO_1X_SCALER)) {
 			prop.gfx_mode = GFX_NORMAL;
 			system->property(OSystem::PROP_SET_GFX_MODE, &prop);

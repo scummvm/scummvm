@@ -48,7 +48,7 @@
 
 extern uint16 _debugLevel;
 
-static const TargetSettings sword2_settings[] = {
+static const GameSettings sword2_settings[] = {
 	/* Broken Sword 2 */
 	{"sword2", "Broken Sword II", GID_SWORD2, 99, MDT_ADLIB | MDT_NATIVE, GF_DEFAULT_TO_1X_SCALER, "players.clu" },
 	{"sword2alt", "Broken Sword II (alt)", GID_SWORD2, 99, MDT_ADLIB | MDT_NATIVE, GF_DEFAULT_TO_1X_SCALER, "r2ctlns.ocx" },
@@ -56,7 +56,7 @@ static const TargetSettings sword2_settings[] = {
 	{NULL, NULL, 0, 0, MDT_NONE, 0, NULL}
 };
 
-const TargetSettings *Engine_SWORD2_targetList() {
+const GameSettings *Engine_SWORD2_targetList() {
 	return sword2_settings;
 }
 
@@ -104,7 +104,7 @@ Sword2Engine::Sword2Engine(GameDetector *detector, OSystem *syst)
 	g_sword2 = this;
 	_features = detector->_game.features;
 	_gameId = detector->_game.id;
-	_gameName = strdup(detector->_gameFileName.c_str());
+	_gameName = strdup(detector->_targetName.c_str());
 	_bootParam = ConfMan.getInt("boot_param");
 	_saveSlot = ConfMan.getInt("save_slot");
 	_debugLevel = ConfMan.getInt("debuglevel");

@@ -50,7 +50,7 @@ enum {
 	kQuitCmd = 'QUIT'
 };
 
-typedef Common::List<const TargetSettings *> GameList;
+typedef Common::List<const GameSettings *> GameList;
 
 /*
  * A dialog that allows the user to edit a config game entry.
@@ -80,7 +80,7 @@ class EditGameDialog : public Dialog {
 	typedef Common::String String;
 	typedef Common::StringList StringList;
 public:
-	EditGameDialog(NewGui *gui, const String &domain, const TargetSettings *target);
+	EditGameDialog(NewGui *gui, const String &domain, const GameSettings *target);
 
 	virtual void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);
 
@@ -92,7 +92,7 @@ protected:
 	CheckboxWidget *_amigaCheckbox;
 };
 
-EditGameDialog::EditGameDialog(NewGui *gui, const String &domain, const TargetSettings *target)
+EditGameDialog::EditGameDialog(NewGui *gui, const String &domain, const GameSettings *target)
 	: Dialog(gui, 8, 50, 320 - 2 * 8, 200 - 2 * 40),
 	  _domain(domain) {
 
@@ -247,7 +247,7 @@ void LauncherDialog::updateListing() {
 		if (name.isEmpty())
 			name = iter->_key;
 		if (description.isEmpty()) {
-			const TargetSettings *v = _detector.findTarget(name);
+			const GameSettings *v = _detector.findGame(name);
 			if (v && v->description)
 				description = v->description;
 		} 
@@ -284,8 +284,8 @@ GameList findGame(FilesystemNode *dir) {
 	const PluginList &plugins = PluginManager::instance().getPlugins();
 	int p;
 	for (p = 0; p < plugins.size(); p++) {
-		const TargetSettings *v = plugins[p]->getTargets();
-		while (v->targetName && v->description) {
+		const GameSettings *v = plugins[p]->getTargets();
+		while (v->gameName && v->description) {
 	
 			// Determine the 'detectname' for this game, that is, the name of a 
 			// file that *must* be presented if the directory contains the data
@@ -296,9 +296,9 @@ GameList findGame(FilesystemNode *dir) {
 				strcat(detectName2, ".");
 				detectName3[0] = '\0';
 			} else {
-				strcpy(detectName, v->targetName);
-				strcpy(detectName2, v->targetName);
-				strcpy(detectName3, v->targetName);
+				strcpy(detectName, v->gameName);
+				strcpy(detectName2, v->gameName);
+				strcpy(detectName3, v->gameName);
 				strcat(detectName, ".000");
 				if (v->version >= 7) {
 					strcat(detectName2, ".la0");
@@ -309,11 +309,11 @@ GameList findGame(FilesystemNode *dir) {
 	
 			// Iterate over all files in the given directory
 			for (int i = 0; i < size; i++) {
-				const char *targetName = (*files)[i].displayName().c_str();
+				const char *gameName = (*files)[i].displayName().c_str();
 	
-				if ((0 == scumm_stricmp(detectName, targetName))  || 
-					(0 == scumm_stricmp(detectName2, targetName)) ||
-					(0 == scumm_stricmp(detectName3, targetName))) {
+				if ((0 == scumm_stricmp(detectName, gameName))  || 
+					(0 == scumm_stricmp(detectName2, gameName)) ||
+					(0 == scumm_stricmp(detectName3, gameName))) {
 					// Match found, add to list of candidates, then abort inner loop.
 					list.push_back(v);
 					break;
@@ -350,7 +350,7 @@ void LauncherDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 			// ...so let's determine a list of candidates, games that
 			// could be contained in the specified directory.
 			GameList candidates = findGame(dir);
-			const TargetSettings *v = 0;
+			const GameSettings *v = 0;
 
 			if (candidates.isEmpty()) {
 				// No game was found in the specified directory
@@ -376,7 +376,7 @@ void LauncherDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 				// The auto detector or the user made a choice.
 				// Pick a domain name which does not yet exist (after all, we
 				// are *adding* a game to the config, not replacing).
-				String domain(v->targetName);
+				String domain(v->gameName);
 				if (ConfMan.hasGameDomain(domain)) {
 					char suffix = 'a';
 					domain += suffix;
@@ -385,7 +385,7 @@ void LauncherDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 						suffix++;
 						domain += suffix;
 					}
-					ConfMan.set("gameid", v->targetName, domain);
+					ConfMan.set("gameid", v->gameName, domain);
 					ConfMan.set("description", v->description, domain);
 				}
 				ConfMan.set("path", dir->path(), domain);
@@ -431,7 +431,7 @@ void LauncherDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 		String gameId(ConfMan.get("gameid", _domains[item]));
 		if (gameId.isEmpty())
 			gameId = _domains[item];
-		EditGameDialog editDialog(_gui, _domains[item], _detector.findTarget(gameId));
+		EditGameDialog editDialog(_gui, _domains[item], _detector.findGame(gameId));
 		if (editDialog.runModal()) {
 			// User pressed OK, so make changes permanent
 
@@ -463,7 +463,7 @@ void LauncherDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 	case kListItemDoubleClickedCmd:
 		// Print out what was selected
 		assert(item >= 0);
-		_detector.setGame(_domains[item]);
+		_detector.setTarget(_domains[item]);
 		close();
 		break;
 	case kListSelectionChangedCmd:

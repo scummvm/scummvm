@@ -29,7 +29,7 @@
 class Engine;
 class GameDetector;
 class OSystem;
-struct TargetSettings;
+struct GameSettings;
 
 /**
  * Abstract base class for the plugin system.
@@ -47,8 +47,8 @@ public:
 	virtual int getVersion() const	{ return 0; }	// TODO!
 	
 	virtual int countTargets() const;
-	virtual const TargetSettings *getTargets() const = 0;
-	virtual const TargetSettings *findTarget(const char *targetName) const;
+	virtual const GameSettings *getTargets() const = 0;
+	virtual const GameSettings *findGame(const char *gameName) const;
 
 	virtual Engine *createInstance(GameDetector *detector, OSystem *syst) const = 0;
 };
@@ -69,7 +69,7 @@ public:
 #define REGISTER_PLUGIN(name,targetListFactory,engineFactory) \
 	extern "C" { \
 		const char *PLUGIN_name() { return name; } \
-		const TargetSettings *PLUGIN_getTargetList() { return targetListFactory(); } \
+		const GameSettings *PLUGIN_getTargetList() { return targetListFactory(); } \
 		Engine *PLUGIN_createEngine(GameDetector *detector, OSystem *syst) { return engineFactory(detector, syst); } \
 	}
 #endif

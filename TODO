@@ -11,7 +11,7 @@ General
 * allow for return-to-launcher instead of a normal "quit" ?
 * improve the argv (command line args) parser
 * extend the Plugin API to provide for "game detection": instead of the
-  TargetSettings::detectname "hack" to detect files, provide a callback
+  GameSettings::detectname "hack" to detect files, provide a callback
   in each Plugin which given a FSList returns a list of candidate targets.
   This way, a plugin can implement tests more elaborate than filename
   checking, e.g. it could actually peek into the files.

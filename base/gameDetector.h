@@ -84,8 +84,8 @@ enum MidiDriverType {
 	MDT_PREFER_NATIVE = 16
 };
 
-struct TargetSettings {
-	const char *targetName;
+struct GameSettings {
+	const char *gameName;
 	const char *description;
 	byte id, version;
 	int midi; // MidiDriverType values
@@ -102,8 +102,8 @@ public:
 	void parseCommandLine(int argc, char **argv);
 	bool detectMain();
 
-	String _gameFileName;
-	TargetSettings _game;
+	String _targetName;
+	GameSettings _game;
 	const Plugin *_plugin;
 	
 	bool _debugMode;
@@ -120,14 +120,14 @@ public:
 	MidiDriver *createMidi();
 	int getMidiDriverType();	// FIXME: Try to get rid of this, only Sky frontend uses it
 
-	void setGame(const String &name);
+	void setTarget(const String &name);
 
 	static int parseGraphicsMode(const String &s);	// Used in main()
 	static int parseMusicDriver(const String &s);
 	static Language parseLanguage(const String &s);
 	static Platform parsePlatform(const String &s);
 	
-	const TargetSettings *findTarget(const String &targetName, const Plugin **plugin = NULL) const;
+	const GameSettings *findGame(const String &gameName, const Plugin **plugin = NULL) const;
 
 protected:
 	bool detectGame(void);

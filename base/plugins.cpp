@@ -44,27 +44,27 @@ typedef Engine *(*EngineFactory)(GameDetector *detector, OSystem *syst);
 // 1) Clean seperation from the game modules (scumm, simon) and the generic code
 // 2) Faster (compiler doesn't have to parse lengthy header files)
 #ifndef DISABLE_SCUMM
-extern const TargetSettings *Engine_SCUMM_targetList();
+extern const GameSettings *Engine_SCUMM_targetList();
 extern Engine *Engine_SCUMM_create(GameDetector *detector, OSystem *syst);
 #endif
 
 #ifndef DISABLE_SIMON
 extern Engine *Engine_SIMON_create(GameDetector *detector, OSystem *syst);
-extern const TargetSettings *Engine_SIMON_targetList();
+extern const GameSettings *Engine_SIMON_targetList();
 #endif
 
 #ifndef DISABLE_SKY
-extern const TargetSettings *Engine_SKY_targetList();
+extern const GameSettings *Engine_SKY_targetList();
 extern Engine *Engine_SKY_create(GameDetector *detector, OSystem *syst);
 #endif
 
 #ifndef DISABLE_SWORD2
-extern const TargetSettings *Engine_SWORD2_targetList();
+extern const GameSettings *Engine_SWORD2_targetList();
 extern Engine *Engine_SWORD2_create(GameDetector *detector, OSystem *syst);
 #endif
 
 #ifndef DISABLE_QUEEN
-extern const TargetSettings *Engine_QUEEN_targetList();
+extern const GameSettings *Engine_QUEEN_targetList();
 extern Engine *Engine_QUEEN_create(GameDetector *detector, OSystem *syst);
 #endif
 
@@ -75,19 +75,19 @@ extern Engine *Engine_QUEEN_create(GameDetector *detector, OSystem *syst);
 
 
 int Plugin::countTargets() const {
-	const TargetSettings *target = getTargets();
+	const GameSettings *target = getTargets();
 	int count;
-	for (count = 0; target->targetName; target++, count++)
+	for (count = 0; target->gameName; target++, count++)
 		;
 	return count;
 }
 
-const TargetSettings *Plugin::findTarget(const char *targetName) const {
-	// Find the TargetSettings for this target
-	const TargetSettings *target = getTargets();
-	assert(targetName);
-	while (target->targetName) {
-		if (!scumm_stricmp(target->targetName, targetName)) {
+const GameSettings *Plugin::findGame(const char *gameName) const {
+	// Find the GameSettings for this target
+	const GameSettings *target = getTargets();
+	assert(gameName);
+	while (target->gameName) {
+		if (!scumm_stricmp(target->gameName, gameName)) {
 			return target;
 		}
 		target++;
@@ -101,11 +101,11 @@ const TargetSettings *Plugin::findTarget(const char *targetName) const {
 
 class StaticPlugin : public Plugin {
 	const char *_name;
-	const TargetSettings *_targets;
+	const GameSettings *_targets;
 	int _targetCount;
 	EngineFactory _ef;
 public:
-	StaticPlugin(const char *name, const TargetSettings *targets, EngineFactory ef)
+	StaticPlugin(const char *name, const GameSettings *targets, EngineFactory ef)
 		: _name(name), _targets(targets), _ef(ef) {
 		_targetCount = Plugin::countTargets();
 	}
@@ -113,7 +113,7 @@ public:
 	const char *getName() const					{ return _name; }
 
 	int countTargets() const					{ return _targetCount; }
-	const TargetSettings *getTargets() const	{ return _targets; }
+	const GameSettings *getTargets() const	{ return _targets; }
 
 	Engine *createInstance(GameDetector *detector, OSystem *syst) const {
 		return (*_ef)(detector, syst);
@@ -131,7 +131,7 @@ class DynamicPlugin : public Plugin {
 	Common::String _filename;
 
 	Common::String _name;
-	const TargetSettings *_targets;
+	const GameSettings *_targets;
 	int _targetCount;
 	EngineFactory _ef;
 	
@@ -144,7 +144,7 @@ public:
 	const char *getName() const					{ return _name.c_str(); }
 
 	int countTargets() const					{ return _targetCount; }
-	const TargetSettings *getTargets() const	{ return _targets; }
+	const GameSettings *getTargets() const	{ return _targets; }
 
 	Engine *createInstance(GameDetector *detector, OSystem *syst) const {
 		assert(_ef);
@@ -174,7 +174,7 @@ void *DynamicPlugin::findSymbol(const char *symbol) {
 }
 
 typedef const char *(*NameFunc)();
-typedef const TargetSettings *(*TargetListFunc)();
+typedef const GameSettings *(*TargetListFunc)();
 
 bool DynamicPlugin::loadPlugin() {
 	assert(!_dlHandle);

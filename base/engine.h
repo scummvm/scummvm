@@ -59,7 +59,7 @@ enum GameId {
 class SoundMixer;
 class GameDetector;
 class Timer;
-struct TargetSettings;
+struct GameSettings;
 
 class Engine {
 public:
