@@ -2860,7 +2860,7 @@ get_out:;
 
 void SimonEngine::o_file_error(FillOrCopyStruct *fcs, bool save_error) {
 	HitArea *ha;
-	char *string, *string2;
+	const char *string, *string2;
 
 	if (save_error) {
 		string = "\r       Save failed.";
