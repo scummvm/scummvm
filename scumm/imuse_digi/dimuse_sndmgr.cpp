@@ -366,6 +366,10 @@ ImuseDigiSndMgr::soundStruct *ImuseDigiSndMgr::openSound(int32 soundId, const ch
 			int32 offset = 0, size = 0;
 			sprintf(fileName, "%s.map", soundName);
 			File *rmapFile = sound->bundle->getFile(fileName, offset, size);
+			if (!rmapFile) {
+				closeSound(sound);
+				return NULL;
+			}
 			prepareSoundFromRMAP(rmapFile, sound, offset, size);
 			strcpy(sound->name, soundName);
 			sound->soundId = soundId;

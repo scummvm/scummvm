@@ -140,10 +140,11 @@ File *BundleMgr::getFile(const char *filename, int32 &offset, int32 &size) {
 			_file.seek(_bundleTable[i].offset, SEEK_SET);
 			offset = _bundleTable[i].offset;
 			size = _bundleTable[i].size;
-			break;
+			return &_file;
 		}
 	}
-	return &_file;
+
+	return NULL;
 }
 
 bool BundleMgr::open(const char *filename, bool &compressed) {
