@@ -224,6 +224,7 @@ void SwordEngine::mainLoop(void) {
 		if (SwordLogic::_scriptVars[SCREEN] != 53)	// don't fade down after syria pan
 			_screen->fadeDownPalette();
 		while (_screen->stillFading()) {
+			_music->stream();
 			_screen->updateScreen();
 			delay(1000/12);
 			// todo: fade sfx?
@@ -267,6 +268,16 @@ void SwordEngine::delay(uint amount) { //copied and mutilated from sky.cpp
 				break;
 			case OSystem::EVENT_RBUTTONDOWN:
 				_mouseState |= BS1R_BUTTON_DOWN;
+#ifdef _WIN32_WCE
+				_mouseX = event.mouse.x;
+				_mouseY = event.mouse.y;
+#endif
+				break;
+			case OSystem::EVENT_LBUTTONUP:
+				_mouseState |= BS1L_BUTTON_UP;
+				break;
+			case OSystem::EVENT_RBUTTONUP:
+				_mouseState |= BS1R_BUTTON_UP;
 				break;
 			case OSystem::EVENT_QUIT:
 				_system->quit();

@@ -49,7 +49,6 @@ SwordText::SwordText(ObjectMan *pObjMan, ResMan *pResMan, bool czechVersion) {
 }
 
 uint32 SwordText::lowTextManager(uint8 *ascii, int32 width, uint8 pen) {
-	// get rid of that textId thing!
 	_textCount++;
 	if (_textCount > MAX_TEXT_OBS)
 		error("SwordText::lowTextManager: MAX_TEXT_OBS exceeded!");

@@ -868,16 +868,13 @@ int SwordLogic::fnCheckFade(BsObject *cpt, int32 id, int32 c, int32 d, int32 e, 
 }
 
 int SwordLogic::fnSetSpritePalette(BsObject *cpt, int32 id, int32 spritePal, int32 d, int32 e, int32 f, int32 z, int32 x) {
-	_screen->fnSetPalette(184, 72, (uint8*)_resMan->openFetchRes(spritePal));
+	_screen->fnSetPalette(184, 72, id, false);
 	_resMan->resClose(spritePal);
 	return SCRIPT_CONT;
 }
 
 int SwordLogic::fnSetWholePalette(BsObject *cpt, int32 id, int32 spritePal, int32 d, int32 e, int32 f, int32 z, int32 x) {
-	uint8 *pal = (uint8*)_resMan->openFetchRes(spritePal);
-	pal[0] = pal[1] = pal[2] = 0;
-	_screen->fnSetPalette(0, 256, pal);
-	_resMan->resClose(spritePal);
+	_screen->fnSetPalette(0, 256, id, false);
 	return SCRIPT_CONT;
 }
 

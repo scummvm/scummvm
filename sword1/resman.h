@@ -51,12 +51,12 @@ public:
 	ResMan(const char *resFile, MemMan *pMemoMan);
 	~ResMan(void);
 	void resClose(uint32 id);
-	//void resOpen(uint32 id);
 	void resOpen(uint32 id);
 	void *fetchRes(uint32 id);
 	void dumpRes(uint32 id);
 	void *openFetchRes(uint32 id);
 	void *cptResOpen(uint32 id);
+	void *mouseResOpen(uint32 id);
 	Header *lockScript(uint32 scrID);
 	void unlockScript(uint32 scrID);
 	FrameHeader *fetchFrame(void *resourceData, uint32 frameNo);

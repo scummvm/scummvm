@@ -48,6 +48,7 @@
 #define LOGIC_new_script 15
 #define LOGIC_pause_for_event 16
 
+#define TOTAL_pockets 52
 #define TOTAL_subjects (375-256+1)
 #define BASE_SUBJECT 256
 
@@ -58,16 +59,6 @@
 
 #define	MAX_text_obs	2			//text compacts
 #define	TEXT_sect		149			//text compacts exist in section 149, probably after all the megas
-
-/*struct Header {
-	// I took this one from QEADER.H, but it looks like it's something different than _header.
-	// => commented out.
-	int16	version;
-	char	type[4];
-	int32	comp_length;
-	char	compression[4];
-	int32	decomp_length;
-};*/
 
 #if !defined(__GNUC__)
 	#pragma START_PACK_STRUCTS
@@ -148,6 +139,65 @@ enum Language {
 #define MOUE 9502720
 #define ALBERT 9568256
 #define DUANE 8781824
+
+#define menu_bible 69
+#define menu_newspaper 1
+#define menu_hazel_wand 2
+#define menu_beer_towel 68
+#define menu_beer_towel_wet 4
+#define menu_beer_towel_damp 5
+#define menu_beer_towel_dried 6
+#define menu_hotel_key 7
+#define menu_ball 8
+#define menu_statuette 9
+#define menu_red_nose_first 10
+#define menu_red_nose_second 11
+#define menu_polished_chalice 12
+#define menu_dollar_bill 13
+#define menu_photograph 14
+#define menu_keyring_first 15
+#define menu_keyring_second 70
+#define menu_keyring_third 17
+#define menu_fuse_wire 18
+#define menu_gem 19
+#define menu_statuette_paint 20
+#define menu_stick 21
+#define menu_excav_key 71
+#define menu_false_key 72
+#define menu_painted_key 73
+#define menu_lab_pass 25
+#define menu_lifting_keys 26
+#define menu_manuscript 27
+#define menu_match_book 28
+#define menu_suit_material 29
+#define menu_stick_towel 30
+#define menu_plaster 31
+#define menu_pressure_gauge 32
+#define menu_railway_ticket 33
+#define menu_buzzer 74
+#define menu_rosso_card 75
+#define menu_toilet_key 36
+#define menu_soap 76
+#define menu_soap_imp 77
+#define menu_soap_plas 78
+#define menu_stone_key 79
+#define menu_chalice 41
+#define menu_tissue 42
+#define menu_toilet_brush 80
+#define menu_toilet_chain 44
+#define menu_towel 45
+#define menu_tripod 46
+#define menu_lens 81
+#define menu_towel_cut 48
+#define menu_mirror 82
+#define menu_tissue_charred 50
+#define menu_cog_1 51
+#define menu_cog_2 52
+#define menu_handle 83
+#define menu_coin 84
+#define menu_biro 55
+#define menu_pipe 56
+#define menu_flashlight 57
 
 #define IT_MCODE                1               // Call an mcode routine
 #define IT_PUSHNUMBER           2               // push a number on the stack
@@ -1386,6 +1436,6 @@ enum ScriptVariableNames {
 #define GUARD_ROOF_63 4128781
 #define LEFT_TREE_POINTER_71 4653058
 #define RIGHT_TREE_POINTER_71 4653059
-
+#define SCR_icon_combine_script (0*0x10000 + 25)
 
 #endif //SWORDDEFS_H

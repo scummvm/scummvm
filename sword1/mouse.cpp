@@ -35,18 +35,12 @@ SwordMouse::SwordMouse(OSystem *system, ResMan *pResMan, ObjectMan *pObjMan) {
 	_objMan = pObjMan;
 	_system = system;
 	_numObjs = 0;
-	_mouseStatus = 0; // mouse off and unlocked
+	_menuStatus = _mouseStatus = 0; // mouse off and unlocked
 	_getOff = 0;
+	_specialPtrId = 0;
 
-	for (uint8 cnt = 0; cnt < 17; cnt++) {
-        _pointers[cnt] = (MousePtr*)_resMan->openFetchRes(MSE_POINTER + cnt);
-#ifdef SCUMM_BIG_ENDIAN
-		uint16 *data = (uint16*)_pointers[cnt];
-		for (uint8 endCnt = 0; endCnt < 5; endCnt++)
-			data[endCnt] = READ_LE_UINT16(data + endCnt);
-#endif
-		fixTransparency(_pointers[cnt]->data + 0x30, _pointers[cnt]->sizeX * _pointers[cnt]->sizeY * _pointers[cnt]->numFrames);
-	}
+	for (uint8 cnt = 0; cnt < 17; cnt++)
+		_pointers[cnt] = (MousePtr*)_resMan->mouseResOpen(MSE_POINTER + cnt);
 	/*_resMan->resOpen(MSE_POINTER);		// normal mouse (1 frame anim)
 	_resMan->resOpen(MSE_OPERATE);
 	_resMan->resOpen(MSE_PICKUP);
@@ -71,6 +65,10 @@ void SwordMouse::useLogic(SwordLogic *pLogic) {
 	_logic = pLogic;
 }
 
+void SwordMouse::setMenuStatus(uint8 status) {
+	_menuStatus = status;
+}
+
 void SwordMouse::addToList(int id, BsObject *compact) {
 	_objList[_numObjs].id = id;
 	_objList[_numObjs].compact = compact;
@@ -82,13 +80,22 @@ void SwordMouse::flushEvents(void) {
 }
 
 void SwordMouse::engine(uint16 x, uint16 y, uint16 eventFlags) {
-	//warning("Stub: SwordMouse::engine");
 	_state = 0; // all mouse events are flushed after one cycle.
 	if (_lastState) { // delay all events by one cycle to notice L_button + R_button clicks correctly.
 		_state = _lastState | eventFlags;
 		_lastState = 0;
 	} else if (eventFlags)
 		_lastState = eventFlags;
+
+	// if we received both, mouse down and mouse up event in this cycle, resort them so that
+	// we'll receive the up event in the next one.
+	if ((_state & MOUSE_DOWN_MASK) && (_state & MOUSE_UP_MASK)) {
+		_lastState = _state & MOUSE_UP_MASK;
+		_state &= MOUSE_DOWN_MASK;
+	}
+
+	_mouseX = x;
+	_mouseY = y;
 	if (!(_mouseStatus & 1)) {  // no human?
 		// if the mouse is turned off, I want the menu automatically removed,
 		// except while in conversation, while examining a menu object or while combining two menu objects!
@@ -122,14 +129,11 @@ void SwordMouse::engine(uint16 x, uint16 y, uint16 eventFlags) {
 		}
 		if (touchedId != (int)SwordLogic::_scriptVars[SPECIAL_ITEM]) { //the mouse collision situation has changed in one way or another
 			SwordLogic::_scriptVars[SPECIAL_ITEM] = touchedId;
-			debug(9, "New special item: %X\n", touchedId);
 			if (_getOff) { // there was something else selected before, run its get-off script
 				_logic->runMouseScript(NULL, _getOff);
 				_getOff = 0;
 			}
 			if (touchedId) { // there's something new selected, now.
-				// BsObject *compact = _objMan->fetchObject(SwordLogic::_scriptVars[SPECIAL_ITEM]);
-
 				if	(_objList[clicked].compact->o_mouse_on)	//run its get on
 					_logic->runMouseScript(_objList[clicked].compact, _objList[clicked].compact->o_mouse_on);
 
@@ -138,9 +142,9 @@ void SwordMouse::engine(uint16 x, uint16 y, uint16 eventFlags) {
 		}
 	} else
 		SwordLogic::_scriptVars[SPECIAL_ITEM] = 0;
-	if (_state & (BS1L_BUTTON_DOWN | BS1R_BUTTON_DOWN)) {
-		// todo: handle menus
-		SwordLogic::_scriptVars[MOUSE_BUTTON] = _state;
+	if (_state & MOUSE_DOWN_MASK) {
+		// todo: handle top menu?
+		SwordLogic::_scriptVars[MOUSE_BUTTON] = _state & MOUSE_DOWN_MASK;
 		if (SwordLogic::_scriptVars[SPECIAL_ITEM]) {
 			BsObject *compact = _objMan->fetchObject(SwordLogic::_scriptVars[SPECIAL_ITEM]);
 			_logic->runMouseScript(compact, compact->o_mouse_click);
@@ -158,27 +162,44 @@ void SwordMouse::setLuggage(uint32 resId, uint32 rate) {
 }
 
 void SwordMouse::setPointer(uint32 resId, uint32 rate) {
-	_currentPtrId = resId - MSE_POINTER;
+	if (_specialPtrId) {
+		_resMan->resClose(_specialPtrId);
+		_specialPtrId = 0;
+	}
 	_rate = rate;
 	_rateCnt = 1;
 	_frame = 0;
+
 	if (resId == 0) {
+		_rateCnt = 0;
 		_system->set_mouse_cursor(NULL, 0, 0, 0, 0);
 		_system->show_mouse(false);
 	} else {
+		if (resId <= MSE_ARROW9)
+			_currentPtrId = resId - MSE_POINTER;
+		else {
+			_currentPtrId = 0;
+			_specialPtrId = resId;
+			_specialPtr = (MousePtr*)_resMan->mouseResOpen(resId);
+		}
         animate();
 		_system->show_mouse(true);
 	}
 }
 
 void SwordMouse::animate(void) {
-	if (_rateCnt && (_mouseStatus == 1)) {
+	MousePtr *currentPtr;
+	if (_rateCnt && ((_mouseStatus == 1) || _menuStatus)) {
+		if (_specialPtrId)
+			currentPtr = _specialPtr;
+		else
+			currentPtr = _pointers[_currentPtrId];
 		_rateCnt--;
 		if (!_rateCnt) {
 			_rateCnt = _rate;
-			_frame = (_frame + 1) % _pointers[_currentPtrId]->numFrames;
-			uint16 size = _pointers[_currentPtrId]->sizeX * _pointers[_currentPtrId]->sizeY;
-			_system->set_mouse_cursor(_pointers[_currentPtrId]->data + 0x30 + _frame * size, _pointers[_currentPtrId]->sizeX, _pointers[_currentPtrId]->sizeY, _pointers[_currentPtrId]->hotSpotX, _pointers[_currentPtrId]->hotSpotY);
+			_frame = (_frame + 1) % currentPtr->numFrames;
+			uint16 size = currentPtr->sizeX * currentPtr->sizeY;
+			_system->set_mouse_cursor(currentPtr->data + 0x30 + _frame * size, currentPtr->sizeX, currentPtr->sizeY, currentPtr->hotSpotX, currentPtr->hotSpotY);
 		}
 	}
 }
@@ -222,10 +243,4 @@ void SwordMouse::fnUnlockMouse(void) {
 void SwordMouse::giveCoords(uint16 *x, uint16 *y) {
 	*x = _mouseX;
 	*y = _mouseY;
-}
-
-void SwordMouse::fixTransparency(uint8 *data, uint32 size) {
-	for (uint32 cnt = 0; cnt < size; cnt++)
-		if (data[cnt] == 0)
-			data[cnt] = 255;
 }

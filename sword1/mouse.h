@@ -33,6 +33,8 @@
 #define BS1R_BUTTON_DOWN		8
 #define BS1R_BUTTON_UP			16
 #define MOUSE_BOTH_BUTTONS		(BS1L_BUTTON_DOWN | BS1R_BUTTON_DOWN)
+#define MOUSE_DOWN_MASK			(BS1L_BUTTON_DOWN | BS1R_BUTTON_DOWN)
+#define MOUSE_UP_MASK			(BS1L_BUTTON_UP | BS1R_BUTTON_UP)
 
 struct MouseObj {
 	int id;
@@ -79,8 +81,8 @@ public:
 	void fnNormalMouse(void);
 	void fnLockMouse(void);
 	void fnUnlockMouse(void);
+	void setMenuStatus(uint8 status);
 private:
-	void fixTransparency(uint8 *data, uint32 size);
 	MousePtr *_pointers[17];
 	uint32 _currentPtrId, _rate, _rateCnt, _frame;
 	OSystem *_system;
@@ -94,6 +96,9 @@ private:
 	uint16 _numObjs;
 	uint16 _lastState, _state;
 	uint32 _getOff;
+	uint8 _menuStatus;
+	uint32 _specialPtrId; // for special mouse cursors which aren't in the _pointers[] array.
+	MousePtr *_specialPtr;
 };
 
 #endif //BSMOUSE_H

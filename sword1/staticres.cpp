@@ -28,6 +28,376 @@
 #include "music.h"
 #include "sound.h"
 
+const MenuObject SwordMenu::_objectDefs[TOTAL_pockets + 1] = {
+	{	// 0 can't use
+		0,
+	},
+	{	// 1 NEWSPAPER
+		menu_newspaper,							// text_desc
+		ICON_NEWSPAPER,							// big_icon_res
+		0,													// big_icon_frame
+		LUGG_NEWSPAPER,							// luggage_icon_res
+		SCR_icon_combine_script,		// use_script
+	},
+	{	// 2 HAZEL_WAND
+		menu_hazel_wand,						// text_desc
+		ICON_HAZEL_WAND,						// big_icon_res
+		0,													// big_icon_frame
+		LUGG_HAZEL_WAND,						// luggage_icon_res
+		SCR_icon_combine_script,		// use_script
+	},
+	{	// 3 BEER_TOWEL
+		0,													// text_desc - SEE MENU.SCR
+		ICON_BEER_TOWEL,						// big_icon_res
+		0,													// big_icon_frame
+		LUGG_BEER_TOWEL,						// luggage_icon_res
+		SCR_icon_combine_script,		// use_script
+	},
+	{	// 4 HOTEL_KEY
+		menu_hotel_key,							// text_desc
+		ICON_HOTEL_KEY,							// big_icon_res
+		0,													// big_icon_frame
+		LUGG_HOTEL_KEY,							// luggage_icon_res
+		SCR_icon_combine_script,		// use_script
+	},
+	{	// 5 BALL
+		menu_ball,									// text_desc
+		ICON_BALL,									// big_icon_res
+		0,													// big_icon_frame
+		LUGG_BALL,									// luggage_icon_res
+		SCR_icon_combine_script,		// use_script
+	},
+	{	// 6 STATUETTE
+		menu_statuette,							// text_desc
+		ICON_STATUETTE,							// big_icon_res
+		0,													// big_icon_frame
+		LUGG_STATUETTE,							// luggage_icon_res
+		SCR_icon_combine_script,		// use_script
+	},
+	{	// 7 RED_NOSE
+		0,													// text_desc - SEE MENU.SCR
+		ICON_RED_NOSE,							// big_icon_res
+		0,													// big_icon_frame
+		LUGG_RED_NOSE,							// luggage_icon_res
+		SCR_icon_combine_script,			// use_script
+	},
+	{	// 8 POLISHED_CHALICE
+		menu_polished_chalice,			// text_desc
+		ICON_POLISHED_CHALICE,			// big_icon_res
+		0,													// big_icon_frame
+		LUGG_POLISHED_CHALICE,			// luggage_icon_res
+		SCR_icon_combine_script,			// use_script
+	},
+	{	// 9 DOLLAR_BILL
+		menu_dollar_bill,						// text_desc
+		ICON_DOLLAR_BILL,						// big_icon_res
+		0,													// big_icon_frame
+		LUGG_DOLLAR_BILL,						// luggage_icon_res
+		SCR_icon_combine_script,			// use_script
+	},
+	{	// 10 PHOTO
+		menu_photograph,						// text_desc
+		ICON_PHOTOGRAPH,						// big_icon_res
+		0,													// big_icon_frame
+		LUGG_PHOTOGRAPH,						// luggage_icon_res
+		SCR_icon_combine_script,			// use_script
+	},
+	{	// 11 FLASHLIGHT
+		menu_flashlight,						// text_desc
+		ICON_FLASHLIGHT,						// big_icon_res
+		0,													// big_icon_frame
+		LUGG_FLASHLIGHT,						// luggage_icon_res
+		SCR_icon_combine_script,			// use_script
+	},
+	{	// 12 FUSE_WIRE
+		menu_fuse_wire,							// text_desc
+		ICON_FUSE_WIRE,							// big_icon_res
+		0,													// big_icon_frame
+		LUGG_FUSE_WIRE,							// luggage_icon_res
+		SCR_icon_combine_script,			// use_script
+	},
+	{	// 13 GEM
+		menu_gem,										// text_desc
+		ICON_GEM,										// big_icon_res
+		0,													// big_icon_frame
+		LUGG_GEM,										// luggage_icon_res
+		SCR_icon_combine_script,			// use_script
+	},
+	{	// 14 STATUETTE_PAINT
+		menu_statuette_paint,				// text_desc
+		ICON_STATUETTE_PAINT,				// big_icon_res
+		0,													// big_icon_frame
+		LUGG_STATUETTE_PAINT,				// luggage_icon_res
+		SCR_icon_combine_script,			// use_script
+	},
+	{	// 15 STICK
+		menu_stick,									// text_desc
+		ICON_STICK,									// big_icon_res
+		0,													// big_icon_frame
+		LUGG_STICK,									// luggage_icon_res
+		SCR_icon_combine_script,			// use_script
+	},
+	{	// 16 EXCAV_KEY
+		menu_excav_key,							// text_desc
+		ICON_EXCAV_KEY,							// big_icon_res
+		0,													// big_icon_frame
+		LUGG_EXCAV_KEY,							// luggage_icon_res
+		SCR_icon_combine_script,			// use_script
+	},
+	{	// 17 LAB_PASS
+		menu_lab_pass,							// text_desc
+		ICON_LAB_PASS,							// big_icon_res
+		0,													// big_icon_frame
+		LUGG_LAB_PASS,							// luggage_icon_res
+		SCR_icon_combine_script,			// use_script
+	},
+	{	// 18 LIFTING_KEYS
+		menu_lifting_keys,					// text_desc
+		ICON_LIFTING_KEYS,					// big_icon_res
+		0,													// big_icon_frame
+		LUGG_LIFTING_KEYS,					// luggage_icon_res
+		SCR_icon_combine_script,			// use_script
+	},
+	{	// 19 MANUSCRIPT
+		menu_manuscript,						// text_desc
+		ICON_MANUSCRIPT,						// big_icon_res
+		0,													// big_icon_frame
+		LUGG_MANUSCRIPT,						// luggage_icon_res
+		SCR_icon_combine_script,			// use_script
+	},
+	{	// 20 MATCH_BOOK
+		menu_match_book,						// text_desc
+		ICON_MATCHBOOK,							// big_icon_res
+		0,													// big_icon_frame
+		LUGG_MATCHBOOK,							// luggage_icon_res
+		SCR_icon_combine_script,			// use_script
+	},
+	{	// 21 SUIT_MATERIAL
+		menu_suit_material,					// text_desc
+		ICON_SUIT_MATERIAL,					// big_icon_res
+		0,													// big_icon_frame
+		LUGG_SUIT_MATERIAL,					// luggage_icon_res
+		SCR_icon_combine_script,			// use_script
+	},
+	{	// 22 STICK_TOWEL
+		menu_stick_towel,						// text_desc
+		ICON_STICK_TOWEL,						// big_icon_res
+		0,													// big_icon_frame
+		LUGG_STICK_TOWEL,						// luggage_icon_res
+		SCR_icon_combine_script,			// use_script
+	},
+	{	// 23 PLASTER
+		menu_plaster,								// text_desc
+		ICON_PLASTER,								// big_icon_res
+		0,													// big_icon_frame
+		LUGG_PLASTER,								// luggage_icon_res
+		SCR_icon_combine_script,			// use_script
+	},
+	{	// 24 PRESSURE_GAUGE
+		menu_pressure_gauge,				// text_desc
+		ICON_PRESSURE_GAUGE,				// big_icon_res
+		0,													// big_icon_frame
+		LUGG_PRESSURE_GAUGE,				// luggage_icon_res
+		SCR_icon_combine_script,			// use_script
+	},
+	{	// 25 RAILWAY_TICKET
+		menu_railway_ticket,				// text_desc
+		ICON_RAILWAY_TICKET,				// big_icon_res
+		0,													// big_icon_frame
+		LUGG_RAILWAY_TICKET,				// luggage_icon_res
+		SCR_icon_combine_script,			// use_script
+	},
+	{	// 26 BUZZER
+		menu_buzzer,								// text_desc
+		ICON_BUZZER,								// big_icon_res
+		0,													// big_icon_frame
+		LUGG_BUZZER,								// luggage_icon_res
+		SCR_icon_combine_script,			// use_script
+	},
+	{	// 27 ROSSO_CARD
+		menu_rosso_card,						// text_desc
+		ICON_ROSSO_CARD,						// big_icon_res
+		0,													// big_icon_frame
+		LUGG_ROSSO_CARD,						// luggage_icon_res
+		SCR_icon_combine_script,			// use_script
+	},
+	{	// 28 TOILET_KEY
+		menu_toilet_key,						// text_desc
+		ICON_TOILET_KEY,						// big_icon_res
+		0,													// big_icon_frame
+		LUGG_TOILET_KEY,						// luggage_icon_res
+		SCR_icon_combine_script,			// use_script
+	},
+	{	// 29 SOAP
+		menu_soap,									// text_desc
+		ICON_SOAP,									// big_icon_res
+		0,													// big_icon_frame
+		LUGG_SOAP,									// luggage_icon_res
+		SCR_icon_combine_script,			// use_script
+	},
+	{	// 30 STONE_KEY
+		menu_stone_key,							// text_desc
+		ICON_STONE_KEY,							// big_icon_res
+		0,													// big_icon_frame
+		LUGG_STONE_KEY,							// luggage_icon_res
+		SCR_icon_combine_script,			// use_script
+	},
+	{	// 31 CHALICE
+		menu_chalice,								// text_desc
+		ICON_CHALICE,								// big_icon_res
+		0,													// big_icon_frame
+		LUGG_CHALICE,								// luggage_icon_res
+		SCR_icon_combine_script,			// use_script
+	},
+	{	// 32 TISSUE
+		menu_tissue,								// text_desc
+		ICON_TISSUE,								// big_icon_res
+		0,													// big_icon_frame
+		LUGG_TISSUE,								// luggage_icon_res
+		SCR_icon_combine_script,			// use_script
+	},
+	{	// 33 TOILET_BRUSH
+		menu_toilet_brush,					// text_desc
+		ICON_TOILET_BRUSH,					// big_icon_res
+		0,													// big_icon_frame
+		LUGG_TOILET_BRUSH,					// luggage_icon_res
+		SCR_icon_combine_script,			// use_script
+	},
+	{	// 34 TOILET_CHAIN
+		menu_toilet_chain,					// text_desc
+		ICON_TOILET_CHAIN,					// big_icon_res
+		0,													// big_icon_frame
+		LUGG_TOILET_CHAIN,					// luggage_icon_res
+		SCR_icon_combine_script,			// use_script
+	},
+	{	// 35 TOWEL
+		menu_towel,									// text_desc
+		ICON_TOWEL,									// big_icon_res
+		0,													// big_icon_frame
+		LUGG_TOWEL,									// luggage_icon_res
+		SCR_icon_combine_script,			// use_script
+	},
+	{	// 36 TRIPOD
+		menu_tripod,								// text_desc
+		ICON_TRIPOD,								// big_icon_res
+		0,													// big_icon_frame
+		LUGG_TRIPOD,								// luggage_icon_res
+		SCR_icon_combine_script,			// use_script
+	},
+	{	// 37 LENS
+		menu_lens,									// text_desc
+		ICON_LENS,									// big_icon_res
+		0,													// big_icon_frame
+		LUGG_LENS,									// luggage_icon_res
+		SCR_icon_combine_script,			// use_script
+	},
+	{	// 38 MIRROR
+		menu_mirror,								// text_desc
+		ICON_MIRROR,								// big_icon_res
+		0,													// big_icon_frame
+		LUGG_MIRROR,								// luggage_icon_res
+		SCR_icon_combine_script,			// use_script
+	},
+	{	// 39 TOWEL_CUT
+		menu_towel_cut,							// text_desc
+		ICON_TOWEL_CUT,							// big_icon_res
+		0,													// big_icon_frame
+		LUGG_TOWEL_CUT,							// luggage_icon_res
+		SCR_icon_combine_script,			// use_script
+	},
+	{	// 40 BIBLE
+		menu_bible,									// text_desc
+		ICON_BIBLE,									// big_icon_res
+		0,													// big_icon_frame
+		LUGG_BIBLE,									// luggage_icon_res
+		SCR_icon_combine_script,			// use_script
+	},
+	{	// 41 TISSUE_CHARRED
+		menu_tissue_charred,				// text_desc
+		ICON_TISSUE_CHARRED,				// big_icon_res
+		0,													// big_icon_frame
+		LUGG_TISSUE_CHARRED,				// luggage_icon_res
+		SCR_icon_combine_script,			// use_script
+	},
+	{	// 42 FALSE_KEY
+		menu_false_key,							// text_desc
+		ICON_FALSE_KEY,							// big_icon_res
+		0,													// big_icon_frame
+		LUGG_FALSE_KEY,							// luggage_icon_res
+		SCR_icon_combine_script,			// use_script
+	},
+	{	// 43 PAINTED_KEY - looks identical to excav key, so uses that icon & luggage
+		menu_painted_key,						// text_desc
+		ICON_EXCAV_KEY,							// big_icon_res
+		0,													// big_icon_frame
+		LUGG_EXCAV_KEY,							// luggage_icon_res
+		SCR_icon_combine_script,			// use_script
+	},
+	{	// 44 KEYRING
+		0,													// text_desc - SEE MENU.SCR
+		ICON_KEYRING,								// big_icon_res
+		0,													// big_icon_frame
+		LUGG_KEYRING,								// luggage_icon_res
+		SCR_icon_combine_script,			// use_script
+	},
+	{	// 45 SOAP_IMP
+		menu_soap_imp,							// text_desc
+		ICON_SOAP_IMP,							// big_icon_res
+		0,													// big_icon_frame
+		LUGG_SOAP_IMP,							// luggage_icon_res
+		SCR_icon_combine_script,			// use_script
+	},
+	{	// 46 SOAP_PLAS
+		menu_soap_plas,							// text_desc
+		ICON_SOAP_PLAS,							// big_icon_res
+		0,													// big_icon_frame
+		LUGG_SOAP_PLAS,							// luggage_icon_res
+		SCR_icon_combine_script,			// use_script
+	},
+	{	// 47 COG_1 - the larger cog with spindle attached
+		menu_cog_1,									// text_desc
+		ICON_COG_1,									// big_icon_res
+		0,													// big_icon_frame
+		LUGG_COG_1,									// luggage_icon_res
+		SCR_icon_combine_script,			// use_script
+	},
+	{	// 48 COG_2 - the smaller cog, found in the rubble
+		menu_cog_2,									// text_desc
+		ICON_COG_2,									// big_icon_res
+		0,													// big_icon_frame
+		LUGG_COG_2,									// luggage_icon_res
+		SCR_icon_combine_script,			// use_script
+	},
+	{	// 49 HANDLE
+		menu_handle,								// text_desc
+		ICON_HANDLE,								// big_icon_res
+		0,													// big_icon_frame
+		LUGG_HANDLE,								// luggage_icon_res
+		SCR_icon_combine_script,			// use_script
+	},
+	{	// 50 COIN
+		menu_coin,									// text_desc
+		ICON_COIN,									// big_icon_res
+		0,													// big_icon_frame
+		LUGG_COIN,									// luggage_icon_res
+		SCR_icon_combine_script,			// use_script
+	},
+	{	// 51 BIRO
+		menu_biro,									// text_desc
+		ICON_BIRO,									// big_icon_res
+		0,													// big_icon_frame
+		LUGG_BIRO,									// luggage_icon_res
+		SCR_icon_combine_script,			// use_script
+	},
+	{	// 52 PIPE
+		menu_pipe,									// text_desc
+		ICON_PIPE,									// big_icon_res
+		0,													// big_icon_frame
+		LUGG_PIPE,									// luggage_icon_res
+		SCR_icon_combine_script,			// use_script
+	}
+};
+
 const Subject SwordMenu::_subjectList[TOTAL_subjects] = {
 	{	// 256
 		0,								// subject_res

@@ -173,14 +173,11 @@ void ResMan::resOpen(uint32 id) {  // load resource ID into memory
 	if (memHandle->cond == MEM_FREED) { // memory has been freed
 		uint32 size = resLength(id);
 		_memMan->alloc(memHandle, size);
-		// uint8 *dest = (uint8*)memHandle->data;
 		File *clusFile = openClusterFile(id);
 		clusFile->seek( resOffset(id) );
 		clusFile->read( memHandle->data, size);
 		if (clusFile->ioFailed())
 			error("Can't read %d bytes from cluster %d\n", size, id);
-		// original loop was a lot more complicated, more error handling and
-		// some calls to the music system, don't think we'll need that.
 		clusFile->close();
 		delete clusFile;
 	} else
@@ -211,7 +208,7 @@ FrameHeader *ResMan::fetchFrame(void *resourceData, uint32 frameNo) {
 }
 
 File *ResMan::openClusterFile(uint32 id) {
-	File *clusFile = new File();;
+	File *clusFile = new File();
 	char fullPath[MAX_PATH_LEN];
 	char fileName[15];
 	makePathToCluster(fullPath);
@@ -246,6 +243,27 @@ uint32 ResMan::resOffset(uint32 id) {
 void ResMan::makePathToCluster(char *str) {
 	*str = '\0';
 	// todo: add search stuff, cd1, cd2, etc.
+}
+
+void *ResMan::mouseResOpen(uint32 id) {
+	BsMemHandle *memHandle = resHandle(id);
+	if (memHandle->cond == MEM_FREED) {
+		resOpen(id);
+#ifdef SCUMM_BIG_ENDIAN
+		uint16 *head = (uint16*)memHandle->data;
+		for (uint8 endCnt = 0; endCnt < 5; endCnt++)
+			head[endCnt] = READ_LE_UINT16(head + endCnt);
+#endif
+		// fix transparency:
+		uint8 *rawData = (uint8*)memHandle->data;
+		uint32 size = READ_LE_UINT16(rawData) * READ_LE_UINT16(rawData + 2) * READ_LE_UINT16(rawData + 4);
+		rawData += 0x3A;
+		for (uint32 cnt = 0; cnt < size; cnt++)
+			if (rawData[cnt] == 0)
+				rawData[cnt] = 255;
+		return memHandle->data;
+	} else 
+		return openFetchRes(id);
 }
 
 void ResMan::openCptResourceBigEndian(uint32 id) {

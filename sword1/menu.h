@@ -37,6 +37,14 @@ struct Subject {
 	uint32 frameNo;
 };
 
+struct MenuObject {
+	int32 textDesc;
+	uint32 bigIconRes;
+	uint32 bigIconFrame;
+	uint32 luggageIconRes;
+	uint32 useScript;
+};
+
 class SwordMenuIcon {
 public:
 	SwordMenuIcon(uint8 menuType, uint8 menuPos, uint32 resId, uint32 frame, SwordScreen *screen);
@@ -66,15 +74,24 @@ public:
 
 private:
 	void buildSubjects(void);
-	void clearMenu(uint8 menuType);
+	void buildMenu(void);
+	void showMenu(uint8 menuType);
+	bool _subjectBarShown; // originally "subject_status"
+	bool _objectBarShown; // originally "menu_status"
 	uint8 checkMenuClick(uint8 menuType);
+	//- lower menu, speech subjects:
 	SwordMenuIcon *_subjects[16];
 	uint32 _subjectBar[16];
+	//- top menu, items
+	SwordMenuIcon *_objects[TOTAL_pockets];
+	uint32 _menuList[TOTAL_pockets];
+	uint32 _inMenu;
+	uint32 _secondItem;
 
 	SwordScreen *_screen;
 	SwordMouse *_mouse;
 	static const Subject _subjectList[TOTAL_subjects];
-
+	static const MenuObject _objectDefs[TOTAL_pockets + 1];
 };
 
 #endif //BSMENU_H

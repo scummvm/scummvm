@@ -29,7 +29,7 @@
 #include "scummsys.h"
 #include "common/util.h"
 #include "system.h"
-#include "router.h"
+#include "menu.h"
 
 #define SCROLL_FRACTION 16
 #define MAX_SCROLL_DISTANCE 8
@@ -112,14 +112,21 @@ void SwordScreen::fadeUpPalette(void) {
 	_fadingDirection = FADE_UP;
 }
 
-void SwordScreen::fnSetPalette(uint8 start, uint16 length, uint8 *data) {
-	memcpy(_targetPalette + start * 3, data, length * 3);
-	_system->set_palette(data, start, length);
-}
-
-void SwordScreen::fnSetFadeTargetPalette(uint8 start, uint16 length, uint8 *data) {
-	memcpy(_targetPalette + start * 3, data, length * 3);
-	debug(1, "fnSetFadeTargetPalette called");
+void SwordScreen::fnSetPalette(uint8 start, uint16 length, uint32 id, bool fadeUp) {
+	uint8 *palData = (uint8*)_resMan->openFetchRes(id);
+	if (start == 0) // force color 0 to black
+		palData[0] = palData[1] = palData[2] = 0;
+	for (uint32 cnt = 0; cnt < length; cnt++) {
+		_targetPalette[(start + cnt) * 4 + 0] = palData[cnt * 3 + 0] << 2;
+		_targetPalette[(start + cnt) * 4 + 1] = palData[cnt * 3 + 1] << 2;
+		_targetPalette[(start + cnt) * 4 + 2] = palData[cnt * 3 + 2] << 2;
+	}
+	_resMan->resClose(id);
+	if (fadeUp) {
+		_fadingStep = 1;
+		_fadingDirection = 1;
+	} else
+		_system->set_palette(_targetPalette, start, length);
 }
 
 bool SwordScreen::stillFading(void) {
@@ -255,7 +262,7 @@ void SwordScreen::newScreen(uint32 screen) {
 	_screenGrid = (uint8*)malloc(_gridSizeX * _gridSizeY);
 	memset(_screenGrid, 0x80, _gridSizeX * _gridSizeY); // force refresh
 	for (uint8 cnt = 0; cnt < _roomDefTable[_currentScreen].totalLayers; cnt++) {
-		// open and lock all resources, will be closed in closeScreen()
+		// open and lock all resources, will be closed in quitScreen()
 		_layerBlocks[cnt] = (uint8*)_resMan->openFetchRes(_roomDefTable[_currentScreen].layers[cnt]);
 		if (cnt > 0)
 			_layerBlocks[cnt] += sizeof(Header);
@@ -271,23 +278,8 @@ void SwordScreen::newScreen(uint32 screen) {
 	if (_roomDefTable[_currentScreen].parallax[1])
 		_parallax[1] = (uint8*)_resMan->openFetchRes(_roomDefTable[_currentScreen].parallax[1]);
 
-	// TEMPORARY!
-	uint8 *bgPal = (uint8*)_resMan->openFetchRes(_roomDefTable[_currentScreen].palettes[0]);
-	// uint8 *sprPal = (uint8*)_resMan->openFetchRes(_roomDefTable[_currentScreen].palettes[1]);
-	for (uint16 cnt = 0; cnt < 256; cnt++) {
-		_targetPalette[cnt * 4 + 0] = bgPal[cnt * 3 + 0] << 2;
-		_targetPalette[cnt * 4 + 1] = bgPal[cnt * 3 + 1] << 2;
-		_targetPalette[cnt * 4 + 2] = bgPal[cnt * 3 + 2] << 2;
-	}
-	/*for (uint16 cnt = 0; cnt < 72; cnt++) {
-		_targetPalette[(cnt + 184) * 4 + 0] = bgPal[cnt * 3 + 0];
-		_targetPalette[(cnt + 184) * 4 + 1] = bgPal[cnt * 3 + 1];
-		_targetPalette[(cnt + 184) * 4 + 2] = bgPal[cnt * 3 + 2];
-	}*/
-	_targetPalette[0] = _targetPalette[1] = _targetPalette[2] = 0;
-	_system->set_palette(_targetPalette, 0, 256);	
-	_resMan->resClose(_roomDefTable[_currentScreen].palettes[0]);
-	//_resMan->resClose(_roomDefTable[_currentScreen].palettes[1]);
+	fnSetPalette(0, 184, _roomDefTable[_currentScreen].palettes[0], true);
+	fnSetPalette(184, 72, _roomDefTable[_currentScreen].palettes[1], true);
 }
 
 void SwordScreen::quitScreen(void) {
@@ -731,12 +723,28 @@ void SwordScreen::spriteClipAndSet(uint16 *pSprX, uint16 *pSprY, uint16 *pSprWid
 	}
 }
 
-void SwordScreen::showFrame(uint16 x, uint16 y, uint32 resId, uint32 frameNo) {
-	warning("stub: SwordScreen::showFrame(%d, %d, %d, %d)", x, y, resId, frameNo);
-}
-
 void SwordScreen::fnFlash(uint8 color) {
 	warning("stub: SwordScreen::fnFlash(%d)", color);
+}
+
+// ------------------- SwordMenu screen interface ---------------------------
+
+void SwordScreen::showFrame(uint16 x, uint16 y, uint32 resId, uint32 frameNo) {
+	FrameHeader *frameHead = _resMan->fetchFrame(_resMan->openFetchRes(resId), frameNo);
+	uint8 *frameData = ((uint8*)frameHead) + sizeof(FrameHeader);
+	_system->copy_rect(frameData, FROM_LE_16(frameHead->width), x, y, FROM_LE_16(frameHead->width), FROM_LE_16(frameHead->height));
+	_resMan->resClose(resId);
+}
+
+void SwordScreen::clearMenu(uint8 menuType) {
+	// isn't there a better way to do this?
+	uint8 *tmp = (uint8*)malloc(640 * 40);
+	memset(tmp, 0, 640 * 40);
+	if (menuType == MENU_BOT)
+		_system->copy_rect(tmp, 640, 0, 440, 640, 40);
+	else
+		_system->copy_rect(tmp, 640, 0, 0, 640, 40);
+	free(tmp);
 }
 
 // ------------------- router debugging code --------------------------------

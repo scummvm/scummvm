@@ -59,7 +59,6 @@ class ResMan;
 class ObjectMan;
 class SwordText; // Text objects use sprites that are created internally at run-time
 				 // the buffer belongs to SwordText, so we need a reference here.
-class SwordRouter;
 class OSystem;
 
 class SwordScreen {
@@ -77,16 +76,16 @@ public:
 	void addToGraphicList(uint8 listId, uint32 objId);
 
 	void recreate();
-	void spritesAndParallax(void); //=> background_parallax, backsprites, sortsprites
-								   //   foreground_parallax, foresprites
+	void spritesAndParallax(void);
+
 	void fadeDownPalette(void);
 	void fadeUpPalette(void);
-	void fnSetPalette(uint8 start, uint16 length, uint8 *data);
-	void fnSetFadeTargetPalette(uint8 start, uint16 length, uint8 *data);
+	void fnSetPalette(uint8 start, uint16 length, uint32 id, bool fadeUp);
 	bool stillFading(void);
 
 	void updateScreen(void);
 	void showFrame(uint16 x, uint16 y, uint32 resId, uint32 frameNo);
+	void clearMenu(uint8 menuType);
 
 	void fnSetParallax(uint32 screen, uint32 resId);
 	void fnFlash(uint8 color);

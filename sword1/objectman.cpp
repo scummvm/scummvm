@@ -65,7 +65,7 @@ void ObjectMan::megaLeaving(uint16 section, int id) {
 		error("mega %d is leaving empty section %d", id, section);
 	_liveList[section]--;
 	if ((_liveList[section] == 0) && (id != PLAYER)) {
-		_resMan->resClose(_liveList[section]);
+		_resMan->resClose(_objectList[section]);
 		_cptData[section] = NULL;
 	}
 	/* if the player is leaving the section then we have to close the resources after
