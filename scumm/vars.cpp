@@ -77,7 +77,7 @@ void ScummEngine::setupScummVars() {
 	VAR_TMR_4 = 47;
 	VAR_SOUNDCARD = 48;
 	VAR_VIDEOMODE = 49;
-	VAR_SAVELOADDIALOG_KEY = 50;
+	VAR_MAINMENU_KEY = 50;
 	VAR_FIXEDDISK = 51;
 	VAR_CURSORSTATE = 52;
 	VAR_USERPUT = 53;
@@ -205,7 +205,7 @@ void ScummEngine_v7::setupScummVars() {
 	VAR_CUTSCENEEXIT_KEY = 62;
 	VAR_RESTART_KEY = 63;			// ???
 	VAR_PAUSE_KEY = 64;
-	VAR_SAVELOADDIALOG_KEY = 65;	// ???
+	VAR_MAINMENU_KEY = 65;	// ???
 	VAR_TALKSTOP_KEY = 67;
 	VAR_KEYPRESS = 118;
 
@@ -294,7 +294,7 @@ void ScummEngine_v8::setupScummVars() {
 	VAR_CUTSCENEEXIT_KEY = 62;	// FIXME -  guess based on script-1 (could also be 68)
 
 	VAR_PAUSE_KEY = 64;
-	VAR_SAVELOADDIALOG_KEY = 65;
+	VAR_MAINMENU_KEY = 65;
 	VAR_TALKSTOP_KEY = 67;
 
 

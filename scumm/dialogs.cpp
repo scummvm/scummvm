@@ -19,6 +19,13 @@
  */
 
 #include "stdafx.h"
+
+#include "common/config-manager.h"
+
+#include "gui/chooser.h"
+#include "gui/newgui.h"
+#include "gui/ListWidget.h"
+
 #include "scumm/dialogs.h"
 #include "scumm/sound.h"
 #include "scumm/scumm.h"
@@ -31,10 +38,6 @@
 #ifndef DISABLE_HELP
 #include "scumm/help.h"
 #endif
-
-#include "gui/newgui.h"
-#include "gui/ListWidget.h"
-#include "common/config-manager.h"
 
 #ifdef _WIN32_WCE
 #include "gapi_keys.h"
@@ -192,28 +195,124 @@ enum {
 	kQuitCmd = 'QUIT'
 };
 
-SaveLoadDialog::SaveLoadDialog(ScummEngine *scumm)
-	: ScummDialog(scumm, 20, 8, 280, 184) {
-	const int x = _w - kButtonWidth - 8;
-	int y = 20;
+class SaveLoadChooser : public ChooserDialog {
+	typedef Common::String String;
+	typedef Common::StringList StringList;
+protected:
+	bool _saveMode;
 
-	// The headline
-	addResText(0, 7, 260, 16, 1);
+public:
+	SaveLoadChooser(const String &title, const StringList& list, const String &buttonLabel, bool saveMode);
+	
+	virtual void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);
+	const String &getResultString() const;
+};
 
-	// The five buttons on the side
-	_saveButton = addPushButton(x, y, queryResString(4), kSaveCmd, 'S'); y += 20;
-	_loadButton = addPushButton(x, y, queryResString(5), kLoadCmd, 'L'); y += 20;
+SaveLoadChooser::SaveLoadChooser(const String &title, const StringList& list, const String &buttonLabel, bool saveMode)
+	: ChooserDialog(title, list, buttonLabel, 182), _saveMode(saveMode) {
+
+	_list->setEditable(saveMode);
+	_list->setNumberingMode(saveMode ? kListNumberingOne : kListNumberingZero);
+}
+
+const Common::String &SaveLoadChooser::getResultString() const {
+	return _list->getSelectedString();
+}
+
+void SaveLoadChooser::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
+	int selItem = _list->getSelected();
+	switch (cmd) {
+	case kListItemActivatedCmd:
+	case kListItemDoubleClickedCmd:
+		if (selItem >= 0) {
+			if (!getResultString().isEmpty()) {
+				setResult(selItem);
+				close();
+			} else if (_saveMode) {
+				// Start editing the selected item, for saving
+				_list->startEditMode();
+			}
+		}
+		break;
+	case kListSelectionChangedCmd:
+		if (_saveMode) {
+			_list->startEditMode();
+		}
+		_chooseButton->setEnabled(selItem >= 0);
+		_chooseButton->draw();
+		break;
+	default:
+		ChooserDialog::handleCommand(sender, cmd, data);
+	}
+}
+
+
+Common::StringList generateSavegameList(ScummEngine *scumm, bool saveMode) {
+	// Get savegame names
+	Common::StringList l;
+	char name[32];
+	uint i = saveMode ? 1 : 0;
+	bool avail_saves[81];
+
+	SaveFileManager *mgr = OSystem::instance()->get_savefile_manager();
+
+	scumm->listSavegames(avail_saves, ARRAYSIZE(avail_saves), mgr);
+	for (; i < ARRAYSIZE(avail_saves); i++) {
+		if (avail_saves[i])
+			scumm->getSavegameName(i, name, mgr);
+		else
+			name[0] = 0;
+		l.push_back(name);
+	}
+
+	delete mgr;
+
+	return l;
+}
+
+enum {
+	rowHeight = 18,
+	kMainMenuWidth 	= (kButtonWidth + 2*8),
+	kMainMenuHeight 	= 7*rowHeight + 3*5 + 7 + 5
+};
+
+class SeperatorWidget : public Widget {
+protected:
+	typedef Common::String String;
+
+	String _label;
+	int		_align;
+public:
+	SeperatorWidget(GuiObject *boss, int x, int y, int w) : Widget(boss, x, y, w, 2) { }
+
+protected:
+	void drawWidget(bool hilite) {
+		g_gui.hLine(_x, _y, _x + _w - 2, g_gui._color);
+		g_gui.hLine(_x+1, _y+1, _x + _w - 1, g_gui._shadowcolor);
+	}
+};
+
+
+MainMenuDialog::MainMenuDialog(ScummEngine *scumm)
+	: ScummDialog(scumm, (320 - kMainMenuWidth)/2, (200 - kMainMenuHeight)/2, kMainMenuWidth, kMainMenuHeight) {
+	int y = 7;
+
+	const int x = (_w - kButtonWidth) / 2;
+	addButton(x, y, "Resume", kPlayCmd, 'P'); y += rowHeight;
 	y += 5;
 
-	addButton(x, y, "About", kAboutCmd, 'A'); y += 20;	// About
+	addButton(x, y, "Load", kLoadCmd, 'L'); y += rowHeight;
+	addButton(x, y, "Save", kSaveCmd, 'S'); y += rowHeight;
+	y += 5;
+
+	addButton(x, y, "Options", kOptionsCmd, 'O'); y += rowHeight;
 #ifndef DISABLE_HELP
-	addButton(x, y, "Help", kHelpCmd, 'H'); y += 20;	// Help
+	addButton(x, y, "Help", kHelpCmd, 'H'); y += rowHeight;
 #endif
-	addButton(x, y, "Options", kOptionsCmd, 'O'); y += 20;	// Options
+	addButton(x, y, "About", kAboutCmd, 'A'); y += rowHeight;
 	y += 5;
 
-	addButton(x, y, queryResString(6), kPlayCmd, 'P'); y += 20;	// Play
-	addButton(x, y, queryResString(8), kQuitCmd, 'Q'); y += 20;	// Quit
+	addButton(x, y, "Quit", kQuitCmd, 'Q'); y += rowHeight;
 
 	//
 	// Create the sub dialog(s)
@@ -222,21 +321,16 @@ SaveLoadDialog::SaveLoadDialog(ScummEngine *scumm)
 #ifndef DISABLE_HELP
 	_helpDialog = new HelpDialog(scumm);
 #endif
-
-	// The save game list
-	_savegameList = new ListWidget(this, 8, 20, x - 14, 156);
 }
 
-SaveLoadDialog::~SaveLoadDialog() {
+MainMenuDialog::~MainMenuDialog() {
 	delete _aboutDialog;
 #ifndef DISABLE_HELP
 	delete _helpDialog;
 #endif
 }
 
-void SaveLoadDialog::open() {
-	switchToLoadMode();
-
+void MainMenuDialog::open() {
 #ifdef _WIN32_WCE
 	force_keyboard(true);
 #endif
@@ -244,45 +338,13 @@ void SaveLoadDialog::open() {
 	ScummDialog::open();
 }
 
-void SaveLoadDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
+void MainMenuDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
 	switch (cmd) {
 	case kSaveCmd:
-		if (!_saveMode) {
-			switchToSaveMode();
-		}
+		save();
 		break;
 	case kLoadCmd:
-		if (_saveMode) {
-			switchToLoadMode();
-		}
-		break;
-	case kListItemDoubleClickedCmd:
-		if (_savegameList->getSelected() >= 0) {
-			if (_saveMode) {
-				if (_savegameList->getSelectedString().isEmpty()) {
-					// Start editing the selected item, for saving
-					_savegameList->startEditMode();
-				} else {
-					save();
-				}
-			} else if (!_savegameList->getSelectedString().isEmpty()) {
-				load();
-			}
-		}
-		break;
-	case kListItemActivatedCmd:
-		if (_savegameList->getSelected() >= 0 && !_savegameList->getSelectedString().isEmpty()) {
-			if (_saveMode) {
-				save();
-			} else {
-				load();
-			}
-		}
-		break;
-	case kListSelectionChangedCmd:
-		if (_saveMode) {
-			_savegameList->startEditMode();
-		}
+		load();
 		break;
 	case kPlayCmd:
 		close();
@@ -307,7 +369,7 @@ void SaveLoadDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 	}
 }
 
-void SaveLoadDialog::close() {
+void MainMenuDialog::close() {
 	ScummDialog::close();
 
 #ifdef _WIN32_WCE
@@ -315,62 +377,24 @@ void SaveLoadDialog::close() {
 #endif
 }
 
-void SaveLoadDialog::fillList() {
-	// Get savegame names
-	Common::StringList l;
-	char name[32];
-	uint i = _saveMode ? 1 : 0;
-	bool avail_saves[81];
-
-	SaveFileManager *mgr = _scumm->_system->get_savefile_manager();
-
-	_scumm->listSavegames(avail_saves, ARRAYSIZE(avail_saves), mgr);
-	for (; i < ARRAYSIZE(avail_saves); i++) {
-		if (avail_saves[i])
-			_scumm->getSavegameName(i, name, mgr);
-		else
-			name[0] = 0;
-		l.push_back(name);
+void MainMenuDialog::save() {
+	int idx;
+	SaveLoadChooser dialog("Save game:", generateSavegameList(_scumm, true), "Save", true);
+	idx = dialog.runModal();
+	if (idx >= 0) {
+		_scumm->requestSave(idx + 1, dialog.getResultString().c_str());
+		close();
 	}
-
-	delete mgr;
-
-	_savegameList->setList(l);
-	_savegameList->setNumberingMode(_saveMode ? kListNumberingOne : kListNumberingZero);
 }
 
-void SaveLoadDialog::save() {
-	// Save the selected item
-	_scumm->requestSave(_savegameList->getSelected() + 1, _savegameList->getSelectedString().c_str());
-	close();
-}
-
-void SaveLoadDialog::load() {
-	// Load the selected item
-	_scumm->requestLoad(_savegameList->getSelected());
-	close();
-}
-
-void SaveLoadDialog::switchToSaveMode() {
-	_saveMode = true;
-	_saveButton->setState(true);
-	_loadButton->setState(false);
-	_saveButton->clearFlags(WIDGET_ENABLED);
-	_loadButton->setFlags(WIDGET_ENABLED);
-	_savegameList->setEditable(true);
-	fillList();
-	draw();
-}
-
-void SaveLoadDialog::switchToLoadMode() {
-	_saveMode = false;
-	_saveButton->setState(false);
-	_loadButton->setState(true);
-	_saveButton->setFlags(WIDGET_ENABLED);
-	_loadButton->clearFlags(WIDGET_ENABLED);
-	_savegameList->setEditable(false);
-	fillList();
-	draw();
+void MainMenuDialog::load() {
+	int idx;
+	SaveLoadChooser dialog("Load game:", generateSavegameList(_scumm, false), "Load", false);
+	idx = dialog.runModal();
+	if (idx >= 0) {
+		_scumm->requestLoad(idx);
+		close();
+	}
 }
 
 #pragma mark -
@@ -541,8 +565,8 @@ HelpDialog::HelpDialog(ScummEngine *scumm)
 	_page = 1;
 	_numPages = ScummHelp::numPages(scumm->_gameId);
 
-	_prevButton = addPushButton(10, 170, "Previous", kPrevCmd, 'P');
-	_nextButton = addPushButton(90, 170, "Next", kNextCmd, 'N');
+	_prevButton = addButton(10, 170, "Previous", kPrevCmd, 'P');
+	_nextButton = addButton(90, 170, "Next", kNextCmd, 'N');
 	addButton(210, 170, "Close", kCloseCmd, 'C');
 	_prevButton->clearFlags(WIDGET_ENABLED);
 

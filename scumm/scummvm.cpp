@@ -287,7 +287,7 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 	  _gameId(gs.id),
 	  _version(gs.version),
 	  _features(gs.features),
-	  gdi(this), _pauseDialog(0), _optionsDialog(0), _saveLoadDialog(0),
+	  gdi(this), _pauseDialog(0), _optionsDialog(0), _mainMenuDialog(0),
 	  _targetName(detector->_targetName) {
 	OSystem::Property prop;
 
@@ -308,7 +308,7 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 	_quit = false;
 	_pauseDialog = NULL;
 	_optionsDialog = NULL;
-	_saveLoadDialog = NULL;
+	_mainMenuDialog = NULL;
 	_confirmExitDialog = NULL;
 	_fastMode = 0;
 	_actors = NULL;
@@ -531,7 +531,7 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 	VAR_TMR_4 = 0xFF;
 	VAR_SOUNDCARD = 0xFF;
 	VAR_VIDEOMODE = 0xFF;
-	VAR_SAVELOADDIALOG_KEY = 0xFF;
+	VAR_MAINMENU_KEY = 0xFF;
 	VAR_FIXEDDISK = 0xFF;
 	VAR_CURSORSTATE = 0xFF;
 	VAR_USERPUT = 0xFF;
@@ -799,7 +799,7 @@ ScummEngine::~ScummEngine() {
 	delete _charset;
 	delete _pauseDialog;
 	delete _optionsDialog;
-	delete _saveLoadDialog;
+	delete _mainMenuDialog;
 	delete _confirmExitDialog;
 
 	delete _sound;
@@ -1778,7 +1778,7 @@ void ScummEngine::processKbd() {
 	else if ((_version <= 3) || (_gameId == GID_SAMNMAX) || (_gameId == GID_CMI))
 		saveloadkey = 319;	// F5
 	else
-		saveloadkey = VAR(VAR_SAVELOADDIALOG_KEY);
+		saveloadkey = VAR(VAR_MAINMENU_KEY);
 
 	if (_lastKeyHit == VAR(VAR_CUTSCENEEXIT_KEY) ||
 		(VAR(VAR_CUTSCENEEXIT_KEY) == 4 && _lastKeyHit == 27)) {
@@ -1799,7 +1799,7 @@ void ScummEngine::processKbd() {
 		if (VAR_SAVELOAD_SCRIPT != 0xFF && _currentRoom != 0)
 			runScript(VAR(VAR_SAVELOAD_SCRIPT), 0, 0, 0);
 
-		saveloadDialog();		// Display NewGui
+		mainMenuDialog();		// Display NewGui
 
 		if (VAR_SAVELOAD_SCRIPT != 0xFF && _currentRoom != 0)
 			runScript(VAR(VAR_SAVELOAD_SCRIPT2), 0, 0, 0);
@@ -2459,10 +2459,10 @@ void ScummEngine::pauseDialog() {
 	runDialog(*_pauseDialog);
 }
 
-void ScummEngine::saveloadDialog() {
-	if (!_saveLoadDialog)
-		_saveLoadDialog = new SaveLoadDialog(this);
-	runDialog(*_saveLoadDialog);
+void ScummEngine::mainMenuDialog() {
+	if (!_mainMenuDialog)
+		_mainMenuDialog = new MainMenuDialog(this);
+	runDialog(*_mainMenuDialog);
 }
 
 void ScummEngine::optionsDialog() {

@@ -16,9 +16,8 @@ General
   some kind of main loop, which, besides many other things, also polls and
   dispatches events. The idea is to turn this around: the event loop
   frequently gives the engine time to do these "other things".
-* Remove various parts from GameSettings struct: "id", "version", "detectname".
-  Those are only needed internally by the plugins, and hence shouldn't be
-  exported. On the long run, "midi" and "features" might be removed, too.
+* Remove "detectname" from GameSettings struct. On the long run, "midi" and/or
+  "features" might be removed, too.
 * Enhance the Makefile-based build system to support VPATH and stuff, so that
   one can compile scummvm in a directory tree seperate from the source tree.
   That would make it possible to build ScummVM with different build options,
@@ -51,19 +50,10 @@ GUI
 * LAUNCHER: fix global options dialog to be properly persistent
 * LAUNCHER: add more options to global options dialog
 * LAUNCHER: add more options to game target options dialog 
-* Maybe make use of TabWidget in the Scumm help dialog?
 * Global & game target options dialogs probably could share some "panes"
   -> write code allowing this
   -> also, 'in game' option dialogs (for volume/scaler/etc. settings)
      could potentially reuse these, too
-* Maybe rearrange SCUMM in-game menu: essentially, only keep the headline
-  ("How may I serve you?") and the buttons in it (maybe rename "Play"
-  to "Resume" or so). I.e. remove the savegame list. Then, turn
-  "Save" and "Load" into real buttons, which when clicked pop up a
-  new save or load dialog. That way we avoid all the confusing parts of the
-  current scheme in an elegant fashion. A similar approach is used by
-  StarCraft/WarCraft/Diablo/NWN/many others. Drawback: Loading a game
-  would now require one click more.
 * Maybe rearrange Launcher dialog, too, to look a bit like the current
   SCUMM in-game menu: instead of two button rows, have a single button
   column at the right side, and the target list on the left side.

@@ -343,16 +343,16 @@ public:
 protected:
 	Dialog *_pauseDialog;
 	Dialog *_optionsDialog;
-	Dialog *_saveLoadDialog;
+	Dialog *_mainMenuDialog;
 	Dialog *_confirmExitDialog;
 
 protected:
 	int runDialog(Dialog &dialog);
 	void confirmexitDialog();
 	void pauseDialog();
-	void saveloadDialog();
+	void mainMenuDialog();
 public:
-	void optionsDialog();	// Used by SaveLoadDialog::handleCommand()
+	void optionsDialog();	// Used by MainMenuDialog::handleCommand()
 protected:
 	char displayError(bool showCancel, const char *message, ...);
 
@@ -1122,7 +1122,7 @@ public:
 	byte VAR_TMR_4;
 	byte VAR_SOUNDCARD;
 	byte VAR_VIDEOMODE;
-	byte VAR_SAVELOADDIALOG_KEY;
+	byte VAR_MAINMENU_KEY;
 	byte VAR_FIXEDDISK;
 	byte VAR_CURSORSTATE;
 	byte VAR_USERPUT;

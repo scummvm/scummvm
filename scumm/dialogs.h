@@ -52,32 +52,22 @@ protected:
 	const String queryResString(int stringno);
 };
 
-class SaveLoadDialog : public ScummDialog {
+class MainMenuDialog : public ScummDialog {
 public:
-	SaveLoadDialog(ScummEngine *scumm);
-	~SaveLoadDialog();
+	MainMenuDialog(ScummEngine *scumm);
+	~MainMenuDialog();
 	virtual void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);
 	virtual void open();	
 	virtual void close();
 
 protected:
-	ListWidget	 *_savegameList;
-
-	PushButtonWidget *_saveButton;
-	PushButtonWidget *_loadButton;
-	
 	Dialog		*_aboutDialog;
 #ifndef DISABLE_HELP
 	Dialog		*_helpDialog;
 #endif
 
-	bool _saveMode;
-
-	void fillList();
 	void save();
 	void load();
-	void switchToSaveMode();
-	void switchToLoadMode();
 };
 
 #ifndef DISABLE_HELP
@@ -90,8 +80,8 @@ public:
 protected:
 	typedef Common::String String;
 
-	PushButtonWidget *_nextButton;
-	PushButtonWidget *_prevButton;
+	ButtonWidget *_nextButton;
+	ButtonWidget *_prevButton;
 
 	StaticTextWidget *_title;
 	StaticTextWidget *_key[HELP_NUM_LINES];
