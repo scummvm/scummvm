@@ -1896,7 +1896,7 @@ void ScummEngine_v72he::o72_readINI() {
 
 void ScummEngine_v72he::o72_writeINI() {
 	int type, value;
-	byte option[256], option2[1024];
+	byte option[256], string[1024];
 
 	type = fetchScriptByte();
 
@@ -1907,8 +1907,8 @@ void ScummEngine_v72he::o72_writeINI() {
 		debug(1,"o72_writeINI: %s set to %d", option, value);
 		break;
 	case 7: // string
+		copyScriptString(string);
 		copyScriptString(option);
-		copyScriptString(option2);
 		debug(1,"o72_writeINI: %s set to %s", option, option2);
 		break;
 	default:
