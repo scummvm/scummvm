@@ -552,10 +552,6 @@ void ScummEngine_v2::o2_setBitVar() {
 
 }
 
-#ifndef BYPASS_COPY_PROT
-#define BYPASS_COPY_PROT
-#endif
-
 void ScummEngine_v2::o2_getBitVar() {
 	getResultPos();
 	int var = fetchScriptWord();
@@ -565,15 +561,7 @@ void ScummEngine_v2::o2_getBitVar() {
 	int bit_offset = bit_var & 0x0f;
 	bit_var >>= 4;
 
-#if defined(BYPASS_COPY_PROT)
-	// The Enchanced version of Zak McKracken included in the
-	// SelectWare Classic Collection bundle has no copy protection
-	// and doesn't include the codes.
-	if (_gameId == GID_ZAK && var == 1467) 
-		setResult(0);
-	else
-#endif
-		setResult((_scummVars[bit_var] & (1 << bit_offset)) ? 1 : 0);
+	setResult((_scummVars[bit_var] & (1 << bit_offset)) ? 1 : 0);
 }
 
 void ScummEngine_v2::ifStateCommon(byte type) {
@@ -1109,8 +1097,20 @@ void ScummEngine_v2::o2_putActor() {
 	a->putActor(x, y, a->room);
 }
 
+#ifndef BYPASS_COPY_PROT
+#define BYPASS_COPY_PROT
+#endif
+
 void ScummEngine_v2::o2_startScript() {
 	int script = getVarOrDirectByte(PARAM_1);
+
+#if defined(BYPASS_COPY_PROT)
+	// The Enchanced version of Zak McKracken included in the
+	// SelectWare Classic Collection bundle has no copy protection
+	// and doesn't include the codes.
+	if ((_gameId == GID_ZAK) && (script == 15) && (_roomResource == 45))
+		return;
+#endif
 	runScript(script, 0, 0, 0);
 }
 
