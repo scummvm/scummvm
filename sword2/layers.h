@@ -43,7 +43,7 @@ struct ScreenInfo {
 					// palette held within layer file
 					// fading up after a build_display
 	uint8 scroll_flag;		// Scroll mode 0 off 1 on
-	uint8 mask_flag;		// Using shading mask
+	bool mask_flag;			// Using shading mask
 };
 
 } // End of namespace Sword2

@@ -761,11 +761,9 @@ int32 Logic::fnChangeShadows(int32 *params) {
 	// if last screen was using a shading mask (see below)
 	if (_vm->_thisScreen.mask_flag) {
 		uint32 rv = _vm->_graphics->closeLightMask();
-
 		if (rv)
 			error("Driver Error %.8x", rv);
-
-		_vm->_thisScreen.mask_flag = 0;
+		_vm->_thisScreen.mask_flag = false;
 	}
 
 	return IR_CONT;

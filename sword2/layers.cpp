@@ -27,6 +27,7 @@
 
 #include "common/stdafx.h"
 #include "sword2/sword2.h"
+#include "sword2/interpreter.h"
 #include "sword2/logic.h"
 #include "sword2/resman.h"
 #include "sword2/driver/d_draw.h"
@@ -42,40 +43,28 @@ int32 Logic::fnInitBackground(int32 *params) {
 	return _vm->initBackground(params[0], params[1]);
 }
 
+/**
+ * This function is called when entering a new room.
+ * @param res resource id of the normal background layer
+ * @param new_palette 1 for new palette, otherwise 0
+ */
+
 int32 Sword2Engine::initBackground(int32 res, int32 new_palette) {
-	MultiScreenHeader *screenLayerTable;
-	ScreenHeader *screen_head;
-	LayerHeader *layer;
- 	SpriteInfo spriteInfo;
-	uint8 *file;
-	uint32 rv;
+	int i;
 
-	debug(5, "CHANGED TO LOCATION \"%s\"", fetchObjectName(res));
+	assert(res);
+	debug(1, "CHANGED TO LOCATION \"%s\"", fetchObjectName(res));
 
-	// stop all fx & clears the queue
 	clearFxQueue();
-
-#ifdef _SWORD2_DEBUG
-	debug(5, "fnInitBackground(%d)", res);
-
-	if (!res) {
-		error("ERROR: fnInitBackground cannot have 0 for background layer id!");
-	}
-#endif
-
-	// if the screen is still fading down then wait for black
 	_graphics->waitForFade();
 
 	// if last screen was using a shading mask (see below)
 	if (_thisScreen.mask_flag) {
-		rv = _graphics->closeLightMask();
-		if (rv)
-			error("Driver Error %.8x", rv);
+		if (_graphics->closeLightMask() != RD_OK)
+			error("Could not close light mask");
 	}
-	
-	// New stuff for faster screen drivers
 
-	// for drivers: close the previous screen if one is open
+	// Close the previous screen, if one is open
 	if (_thisScreen.background_layer_id)
 		_graphics->closeBackgroundLayer();
 
@@ -86,80 +75,69 @@ int32 Sword2Engine::initBackground(int32 res, int32 new_palette) {
 	// info/and set them up at the beginning of the sort list - why do it
 	// each cycle
 
-	// file points to 1st byte in the layer file
-	file = _resman->openResource(_thisScreen.background_layer_id);
-	
-	screen_head = fetchScreenHeader(file);
+	uint8 *file = _resman->openResource(_thisScreen.background_layer_id);
+	ScreenHeader *screen_head = fetchScreenHeader(file);
 
 	// set number of special sort layers
 	_thisScreen.number_of_layers = screen_head->noLayers;
 	_thisScreen.screen_wide = screen_head->width;
 	_thisScreen.screen_deep = screen_head->height;
 
-	debug(5, "res test layers=%d width=%d depth=%d", screen_head->noLayers, screen_head->width, screen_head->height);
+	debug(2, "layers=%d width=%d depth=%d", screen_head->noLayers, screen_head->width, screen_head->height);
 
 	// initialise the driver back buffer
 	_graphics->setLocationMetrics(screen_head->width, screen_head->height);
 
-	if (screen_head->noLayers) {
-		for (int i = 0; i < screen_head->noLayers; i++) {
-			// get layer header for layer i
-			layer = fetchLayerHeader(file, i);
+	for (i = 0; i < screen_head->noLayers; i++) {
+		debug(3, "init layer %d", i);
 
-			// add into the sort list
+		LayerHeader *layer = fetchLayerHeader(file, i);
 
-			// need this for sorting - but leave the rest blank,
-			// we'll take from the header at print time
-			_sortList[i].sort_y = layer->y + layer->height;
-			// signifies a layer
-			_sortList[i].layer_number = i + 1;
+		// Add the layer to the sort list. We only provide just enough
+		// information so that it's clear that it's a layer, and where
+		// to sort it in relation to other things in the list.
 
-			debug(5, "init layer %d", i);
-		}
+		_sortList[i].layer_number = i + 1;
+		_sortList[i].sort_y = layer->y + layer->height;
 	}
 
-	// using the screen size setup the scrolling variables
+	// reset scroll offsets
+	_thisScreen.scroll_offset_x = 0;
+	_thisScreen.scroll_offset_y = 0;
 
-	// if layer is larger than physical screen
 	if (screen_head->width > _graphics->_screenWide || screen_head->height > _graphics->_screenDeep) {
-		// switch on scrolling (2 means first time on screen)
+		// The layer is larger than the physical screen. Switch on
+		// scrolling. (2 means first time on screen)
 		_thisScreen.scroll_flag = 2;
 
-		// note, if we've already set the player up then we could do
+		// Note: if we've already set the player up then we could do
 		// the initial scroll set here
 
-		// reset scroll offsets
+		// Calculate the maximum scroll offsets to prevent scrolling
+		// off the edge. The minimum offsets are both 0.
 
-		_thisScreen.scroll_offset_x = 0;
-		_thisScreen.scroll_offset_y = 0;
-
-		// calc max allowed offsets (to prevent scrolling off edge) -
-		// MOVE TO NEW_SCREEN in GTM_CORE.C !!
-		// NB. min scroll offsets are both zero
 		_thisScreen.max_scroll_offset_x = screen_head->width - _graphics->_screenWide;
-		// 'screenDeep' includes the menu's, so take away 80 pixels
 		_thisScreen.max_scroll_offset_y = screen_head->height - (_graphics->_screenDeep - (RDMENU_MENUDEEP * 2));
 	} else {
-		// layer fits on physical screen - scrolling not required
-		_thisScreen.scroll_flag = 0;		// switch off scrolling
-		_thisScreen.scroll_offset_x = 0;	// reset scroll offsets
-		_thisScreen.scroll_offset_y = 0;
+		// The later fits on the phyiscal screen. Switch off scrolling.
+		_thisScreen.scroll_flag = 0;
 	}
 
-	// no inter-cycle scroll between new screens (see setScrollTarget in
-	// build display)
 	_graphics->resetRenderEngine();
 
-	// these are the physical screen coords where the system
-	// will try to maintain George's actual feet coords
+	// These are the physical screen coords where the system will try to
+	// maintain George's actual feet coords.
+
 	_thisScreen.feet_x = 320;
 	_thisScreen.feet_y = 340;
 
 	// shading mask
 
-	screenLayerTable = (MultiScreenHeader *) (file + sizeof(StandardHeader));
+	MultiScreenHeader *screenLayerTable = (MultiScreenHeader *) (file + sizeof(StandardHeader));
 
 	if (screenLayerTable->maskOffset) {
+	 	SpriteInfo spriteInfo;
+
 		spriteInfo.x = 0;
 		spriteInfo.y = 0;
 		spriteInfo.w = screen_head->width;
@@ -172,71 +150,40 @@ int32 Sword2Engine::initBackground(int32 res, int32 new_palette) {
 		spriteInfo.data = fetchShadingMask(file);
 		spriteInfo.colourTable = 0;
 
-		rv = _graphics->openLightMask(&spriteInfo);
-		if (rv)
-			error("Driver Error %.8x", rv);
+		if (_graphics->openLightMask(&spriteInfo) != RD_OK)
+			error("Could not open light mask");
 
 		// so we know to close it later! (see above)
-		_thisScreen.mask_flag = 1;
+		_thisScreen.mask_flag = true;
 	} else {
 		// no need to close a mask later
-		_thisScreen.mask_flag = 0;
+		_thisScreen.mask_flag = false;
 	}
 
-	// close the screen file
+	// Background parallax layers
+
+	for (i = 0; i < 2; i++) {
+		if (screenLayerTable->bg_parallax[i])
+			_graphics->initialiseBackgroundLayer(fetchBackgroundParallaxLayer(file, i));
+		else
+			_graphics->initialiseBackgroundLayer(NULL);
+	}
+
+	// Normal backround layer
+
+	_graphics->initialiseBackgroundLayer(fetchBackgroundLayer(file));
+
+	// Foreground parallax layers
+
+	for (i = 0; i < 2; i++) {
+		if (screenLayerTable->fg_parallax[i])
+			_graphics->initialiseBackgroundLayer(fetchForegroundParallaxLayer(file, i));
+		else
+			_graphics->initialiseBackgroundLayer(NULL);
+	}
+
    	_resman->closeResource(_thisScreen.background_layer_id);
-
-	setUpBackgroundLayers();
-
-	debug(5, "end init");
-	return 1;
-}
-
-// called from fnInitBackground and also from control panel
-
-void Sword2Engine::setUpBackgroundLayers(void) {
-	MultiScreenHeader *screenLayerTable;
-	ScreenHeader *screen_head;
-	uint8 *file;
-	int i;
-
-	// if we actually have a screen to initialise (in case not called from
-	// control panel)
-	if (_thisScreen.background_layer_id) {
-		// open resource & set pointers to headers
-		// file points to 1st byte in the layer file
-
-		file = _resman->openResource(_thisScreen.background_layer_id);
-
-		screen_head = fetchScreenHeader(file);
-
-		screenLayerTable = (MultiScreenHeader *) (file + sizeof(StandardHeader));
-
-		// Background parallax layers
-
-		for (i = 0; i < 2; i++) {
-			if (screenLayerTable->bg_parallax[i])
-				_graphics->initialiseBackgroundLayer(fetchBackgroundParallaxLayer(file, i));
-			else
-				_graphics->initialiseBackgroundLayer(NULL);
-		}
-
-		// Normal backround layer
-
-		_graphics->initialiseBackgroundLayer(fetchBackgroundLayer(file));
-
-		// Foreground parallax layers
-
-		for (i = 0; i < 2; i++) {
-			if (screenLayerTable->fg_parallax[i])
-				_graphics->initialiseBackgroundLayer(fetchForegroundParallaxLayer(file, i));
-			else
-				_graphics->initialiseBackgroundLayer(NULL);
-		}
-
-		// close the screen file
-		_resman->closeResource(_thisScreen.background_layer_id);
-	}
+	return IR_CONT;
 }
 
 } // End of namespace Sword2

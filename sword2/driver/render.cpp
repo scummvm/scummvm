@@ -673,6 +673,17 @@ bool Graphics::endRenderCycle(void) {
 }
 
 /**
+ * Reset scrolling stuff. This function is called from initBackground()
+ */
+
+void Graphics::resetRenderEngine(void) {
+	_parallaxScrollX = 0;
+	_parallaxScrollY = 0;
+	_scrollX = 0;
+	_scrollY = 0;
+}
+
+/**
  * Sets the scroll target position for the end of the game cycle. The driver
  * will then automatically scroll as many times as it can to reach this
  * position in the allotted time.

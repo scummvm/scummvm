@@ -64,13 +64,6 @@ MouseEvent *Input::mouseEvent(void) {
 	return NULL;
 }
 
-void Graphics::resetRenderEngine(void) {
-	_parallaxScrollX = 0;
-	_parallaxScrollY = 0;
-	_scrollX = 0;
-	_scrollY = 0;
-}
-
 // FIXME: The original code used 0 for transparency, while our backend uses
 // 0xFF. That means that parts of the mouse cursor that weren't meant to be
 // transparent may be now.

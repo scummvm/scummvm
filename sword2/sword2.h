@@ -213,8 +213,6 @@ public:
 
 	ScreenInfo _thisScreen;
 
-	void setUpBackgroundLayers(void);
-
 	uint32 _curMouse;
 	MouseUnit _mouseList[TOTAL_mouse_list];
 
