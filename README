@@ -10,7 +10,6 @@ at: http://www.scummvm.org/
 
 About:
 ------
-
 ScummVM is an implementation of the SCUMM (Script Creation Utility for
 Maniac Mansion) engine used in various Lucas Arts games such as Monkey
 Island and Day of the Tentacle. At this time ScummVM should be considered
@@ -25,15 +24,16 @@ If you enjoy ScummVM feel free to donate using the PayPal button on the
 ScummVM homepage. This will help us buy utilities needed to develop ScummVM
 easier and quicker. If you cannot donate, help and contribute a patch!
 
+
 Contacting:
 -----------
 The easiest way to contact the ScummVM team is by submitting bug reports or
 commenting in our forums. You can also join and e-mail the scummvm-devel
 mailing list, or chat with us on irc (#scummvm, irc.freenode.net)
 
+
 Supported Games:
 ----------------
-
 At the moment the following games have been reported to work, and should
 be playable to the end:
 
@@ -66,14 +66,14 @@ The following games are SCUMM engine, but NOT supported by ScummVM (yet).
         Loom (16 color floppy version)
         Curse of Monkey Island
 
-Please be aware that the engine may contain bugs and unimplemented
-features that sometimes make it impossible to finish the game. Save often,
-and please file a bug report (instructions on submitting bug reports are below)
-if you discover such a bug.
+Please be aware that the engine may contain bugs and unimplemented features
+that sometimes make it impossible to finish the game. Save often, and please
+file a bug report (instructions on submitting bug reports are below) if you
+encounter such a bug.
+
 
 Supported Platforms:
 -------------------
-
 ScummVM has been ported to run on many platforms and operating systems.
 Links to these ports can be found either on the ScummVM web page or by a
 Google search. Many thanks to the effort of porters. If you have a port of
@@ -90,9 +90,9 @@ ScummVM and wish to commit it into the main CVS, feel free to contact us!
         Dreamcast       - ???
         UNIX            - SDL           (SDL may work on Solaris, IRIX, *BSD)
 
+
 Known Bugs:
 -----------
-
 This release has the following known bugs. There is no need to report them,
 although patches to fix them are welcome. If you discover a bug that is not
 listed here, nor in the compatibility table on the web site, please see
@@ -144,7 +144,6 @@ the section on Reporting Bugs.
 
 Simon the Sorcerer 1 and 2 games note
 --------------------------------------
-
 The Simon the Sorcerer 1 & 2 games were split into six targets to make 
 coding easier and to make it more clear which target should be used:
 simon1dos - Use for Simon the Sorcerer 1 for DOS (Disk)
@@ -166,7 +165,6 @@ So if you have any old save games you will need to change their filenames to use
 
 Reporting Bugs:
 ---------------
-
 To report a bug, please create a SourceForge account and follow the bugs
 link from our homepage. Please make sure the bug is reproducible, and
 still occurs in the latest daily build/current CVS version. Also check
@@ -191,7 +189,6 @@ Please include the following information:
 
 Compiling:
 ----------
-
 You need SDL-1.2.2 or newer (older versions may work, but are unsupported), and
 a supported compiler. Several compilers, including GCC, mingw and Microsoft
 Visual C++ are supported. If you wish to use MP3-compressed CD tracks or
@@ -239,7 +236,6 @@ messages (see http://www.sysinternals.com/ntw2k/freeware/debugview.shtml).
 
 Running:
 --------
-
 Before you run the engine, you need to put the game's datafiles in a
 directory. The filenames must be in lowercase on *nix systems
 (monkey2.000 and monkey2.001). If you use a game with speech, the file
@@ -302,42 +298,42 @@ Command Line Options:
 
 Hot Keys:
 ---------
-
-ScummVM supports various in game hotkeys. They differ between the scumm and simon
-games.
+ScummVM supports various in game hotkeys. They differ between the scumm and
+simon games.
 
     Common:
-        Ctrl-z OR Alt-x          - quit
-        Ctrl-Alt 1-7             - Switch between graphics filters
-        Ctrl-Alt 1               - Switch beetwen bilinear and non-linear filtering [OpenGL backend]
-        Ctrl-Alt 2               - Don't fit the game in the whole screen (black borders) [OpenGL backend]
-        Ctrl-Alt 3               - Fit the game in the whole screen (no black borders) [OpenGL backend]
-        Ctrl-Alt 4-7             - Zoom [OpenGL backend]
-        Keyboard Arrow Keys      - Mouse Movement [SDL backend]
+        Ctrl-z OR Alt-x        - quit
+        Keyboard Arrow Keys    - simulate mouse movement
+        Ctrl-Alt 1-7           - Switch between graphics filters
+        Ctrl-Alt 1             - Switch beetwen bilinear and non-linear filtering [OpenGL backend]
+        Ctrl-Alt 2             - Don't fit the game in the whole screen (black borders) [OpenGL backend]
+        Ctrl-Alt 3             - Fit the game in the whole screen (no black borders) [OpenGL backend]
+        Ctrl-Alt 4-7           - Zoom [OpenGL backend]
 
     Scumm:
-        Ctrl 0-9 and Alt 0-9     - load and save game state
-        Ctrl-f                   - runs in fast mode.
-        Ctrl-g                   - runs in really REALLY fast mode.
-        Ctrl-d                   - starts the debugger.
-        Ctrl-s                   - shows memory consumption.
-        [ and ]                  - music volume, down/up
-        - and +                  - text speed, slower/faster
-        F5                       - displays a save/load box.
-        Space                    - pauses
-        Period (.)               - skips current line of text in some games
-        Alt-Enter                - toggles full screen/windowed
-        Enter                    - Left Mouse Button Press
-        Tab                      - Right Mouse Button Press
+        Ctrl 0-9 and Alt 0-9   - load and save game state
+        Ctrl-f                 - runs in fast mode.
+        Ctrl-g                 - runs in really REALLY fast mode.
+        Ctrl-d                 - starts the debugger.
+        Ctrl-s                 - shows memory consumption.
+        [ and ]                - music volume, down/up
+        - and +                - text speed, slower/faster
+        F5                     - displays a save/load box.
+        Space                  - pauses
+        Period (.)             - skips current line of text in some games
+        Alt-Enter              - toggles full screen/windowed
+        Enter                  - simulate left mouse button press
+        Tab                    - simulate right mouse button press
 
     Simon:
-        - and +                  - (Simon) music volume, down/up
-        m                        - (Simon) music on/off
-        s                        - (Simon) sound effects on/off
-        b                        - (Simon) ambient sounds on/off
+        - and +                - music volume, down/up
+        m                      - music on/off
+        s                      - sound effects on/off
+        b                      - ambient sounds on/off
 
 Note that using ctrl-f and ctrl-g are not recommended: Games can crash when
 being ran faster than their normal speed, as scripts will loose synchronisation
+
 
 Graphics filters:
 -----------------
@@ -371,7 +367,6 @@ of 320x240 - hence for this game scalers will scale to 640x480 or 960x720.
 
 Autosaves:
 ----------
-
 Because ScummVM is still a beta product, it -can- crash and/or hang
 occasionally. As such, every five minutes it will save a game in Slot 0. This
 game can be loaded via Ctrl-0, or the F5 menu. This autosaving only applies to
@@ -380,7 +375,6 @@ Scumm games, not other games (such as Simon the Sorcerer)
 
 Savegames:
 ----------
-
 Savegames are by default put in the current directory. You can specify the save
 in the config file by setting the savepath parameter. See the example config
 file later in this readme.
@@ -415,6 +409,7 @@ choices of output, depending on your operating system and configuration.
 To select a sound driver, pass its name via the '-e' option to scummvm, for example:
 
     scummvm -e adlib monkey2
+
 
 Playing sound with Adlib emulation:
 -----------------------------------
@@ -622,7 +617,6 @@ Credits:
         LucasFilm/LucasArts who made SCUMM the insane mess to reimplement
         that it is today. Feel free to drop us a line and tell us what you
         think, guys!
-
 
 
 
