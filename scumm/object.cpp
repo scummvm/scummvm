@@ -298,11 +298,17 @@ int Scumm::getObjActToObjActDist(int a, int b) {
 	}
 
 	// Now compute the distance between the two points
-	dist = getDist(x, y, x2, y2);
-	// For V1/V2 games, distances are measured in "charactes" instead of pixels,
-	// so we divide by 8, rounding up.
-	if (_version <= 2)
-		dist = (dist + 7) / 8;
+	x = ABS(x - x2);
+	y = ABS(y - y2);
+
+	// For V1/V2 games, distances are measured in the original "character"
+	// based coordinate system, instead of pixels. Otherwise various scripts
+	// will break.
+	if (_version <= 2) {
+		dist = MAX(x/8, y/2);
+	} else 
+		dist = MAX(x, y);
+
 	return dist;
 }
 
