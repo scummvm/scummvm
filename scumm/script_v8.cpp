@@ -287,8 +287,8 @@ void Scumm_v8::setupOpcodes() {
 		OPCODE(o6_invalid),
 		OPCODE(o6_invalid),
 		/* C8 */
-		OPCODE(o6_startScriptQuick),
-		OPCODE(o6_startObjectQuick),
+		OPCODE(o6_startScriptQuick),	// FIXME: are these really the "quick" (=recursive) variants,
+		OPCODE(o6_startObjectQuick),	// or aren't these maybe supposed to be the "plain" versions, too?
 		OPCODE(o6_pickOneOf),
 		OPCODE(o6_pickOneOfDefault),
 		/* CC */
