@@ -97,11 +97,11 @@ struct RoomHeader {
 	union {
 		struct {
 			uint32 version;
-			uint16 width,height;
+			uint16 width, height;
 			uint16 numObjects;
 		} GCC_PACK v7;
 		struct {
-			uint16 width,height;
+			uint16 width, height;
 			uint16 numObjects;
 		} GCC_PACK old;
 	} GCC_PACK;
@@ -111,7 +111,7 @@ struct CodeHeader {
 	union {
 		struct {
 			uint16 obj_id;
-			byte x,y,w,h;
+			byte x, y, w, h;
 			byte flags;
 			byte parent;
 			int16 walk_x;
@@ -122,7 +122,7 @@ struct CodeHeader {
 		struct {
 			uint16 obj_id;
 			int16 x, y;
-			uint16 w,h;
+			uint16 w, h;
 			byte flags, parent;
 			uint16 unk1;
 			uint16 unk2;
@@ -148,7 +148,7 @@ struct ImageHeader { /* file format */
 			uint16 height;
 			uint16 unk_2;
 			struct {
-				int16 x,y;
+				int16 x, y;
 			} GCC_PACK hotspot[15];
 		} GCC_PACK old;
 
@@ -156,13 +156,13 @@ struct ImageHeader { /* file format */
 			uint32 version;
 			uint16 obj_id;
 			uint16 unk[1];
-			int16 x_pos,y_pos;
-			uint16 width,height;
+			int16 x_pos, y_pos;
+			uint16 width, height;
 			byte unk2[3];
 			byte actordir;
 			uint16 unk_2;
 			struct {
-				int16 x,y;
+				int16 x, y;
 			} GCC_PACK hotspot[15];
 		} GCC_PACK v7;
 	} GCC_PACK;
@@ -173,12 +173,12 @@ struct ImageHeader { /* file format */
 #endif
 
 struct VerbSlot {
-	int16 x,y;
+	int16 x, y;
 	int16 right, bottom;
-	int16 oldleft, oldtop, oldright,oldbottom;
+	int16 oldleft, oldtop, oldright, oldbottom;
 	uint8 verbid;
-	uint8 color,hicolor,dimcolor,bkcolor,type;
-	uint8 charset_nr,curmode;
+	uint8 color, hicolor, dimcolor, bkcolor, type;
+	uint8 charset_nr, curmode;
 	uint8 saveid;
 	uint8 key;
 	bool center;
@@ -210,7 +210,7 @@ struct ScriptSlot {
 	uint16 newfield;
 	byte status;
 	byte where;
-	byte unk1,unk2,freezeCount,didexec;
+	byte unk1, unk2, freezeCount, didexec;
 	byte cutsceneOverride;
 	byte unk5;
 };
@@ -264,7 +264,7 @@ enum {
 enum {
 	MBS_LEFT_CLICK = 0x8000,
 	MBS_RIGHT_CLICK = 0x4000,
-	MBS_MOUSE_MASK = (MBS_LEFT_CLICK|MBS_RIGHT_CLICK),
+	MBS_MOUSE_MASK = (MBS_LEFT_CLICK | MBS_RIGHT_CLICK),
 	MBS_MAX_KEY	= 0x0200
 };
 
@@ -314,14 +314,14 @@ struct CharsetRenderer {
 	int _xpos2, _ypos2;
 	
 	int _bufPos;
-	byte _unk12,_disableOffsX;
+	byte _unk12, _disableOffsX;
 	byte *_ptr;
 	byte _unk2, _bpp;
 	byte _invNumBits;
 	uint32 _charOffs;
 	byte *_charPtr;
 	int _width, _height;
-	int _offsX,_offsY;
+	int _offsX, _offsY;
 	byte _bitMask, _revBitMask;
 	int _bottom;
 	int _virtScreenHeight;
@@ -376,11 +376,11 @@ struct CostumeRenderer {
 	uint _outheight;
 	int _scaleIndexXStep;
 	int _scaleIndexYStep;
-	byte _scaleIndexX; /* must wrap at 256*/
+	byte _scaleIndexX;						/* must wrap at 256 */
 	byte _scaleIndexY, _scaleIndexYTop;
-	int _left,_right;
+	int _left, _right;
 	int _dir2;
-	int _top,_bottom;
+	int _top, _bottom;
 	int _ypostop;
 	int _ypitch;
 	byte _docontinue;
@@ -434,7 +434,7 @@ struct StringTab {
 	byte charset, t_charset;
 	bool center, t_center;
 	bool overhead, t_overhead;
-	bool no_talk_anim,t_no_talk_anim;
+	bool no_talk_anim, t_no_talk_anim;
 };
 
 enum GameId {
@@ -455,7 +455,7 @@ enum GameId {
 
 	/* Simon the Sorcerer */
 	GID_SIMON_FIRST = 20,
-	GID_SIMON_LAST = GID_SIMON_FIRST+3,
+	GID_SIMON_LAST = GID_SIMON_FIRST + 3,
 };
 
 enum GameFeatures {
@@ -539,10 +539,10 @@ public:
 	} vm;
 
 	struct {
-		int16 x,y;
+		int16 x, y;
 	} mouse;
 
-	/* Init functions, etc*/
+	/* Init functions, etc */
 	byte _fastMode;
 	char *getGameName();
 	Scumm(); // constructor
@@ -679,7 +679,7 @@ public:
 	byte _opcode, _numNestedScripts, _currentScript;
 	uint16 _curExecScript;
 	const OpcodeProc *_opcodes;
-	const char* *_opcodes_lookup;
+	const char **_opcodes_lookup;
 	byte **_lastCodePtr;
 	int _resultVarNumber, _scummStackPos;
 	int16 _localParamList[16],  _scummStack[150];
@@ -902,7 +902,7 @@ public:
 	int16 _sound_volume_master, _sound_volume_music, _sound_volume_sfx;
 	int _saveSound;
 	void *_sfxFile;
-	uint16 _soundParam,_soundParam2,_soundParam3;
+	uint16 _soundParam, _soundParam2, _soundParam3;
 	uint32 _talk_sound_a, _talk_sound_b;
 	byte _talk_sound_mode;
 	bool _mouthSyncMode;
@@ -923,7 +923,7 @@ public:
 	int _cached_tracks[CACHE_TRACKS];
 	struct mad_header _mad_header[CACHE_TRACKS];
 	long _mp3_size[CACHE_TRACKS];
-	FILE* _mp3_tracks[CACHE_TRACKS];
+	FILE *_mp3_tracks[CACHE_TRACKS];
 	int _mp3_index;
 	bool _mp3_cd_playing;
 
@@ -1062,7 +1062,7 @@ public:
 	void drawRoomObjects(int arg);
 	void drawRoomObject(int i, int arg);
 	void drawBox(int x, int y, int x2, int y2, int color);
-	void drawBomp(BompDrawData *bd, int param1, byte* dataPtr, int param2, int param3);
+	void drawBomp(BompDrawData *bd, int param1, byte *dataPtr, int param2, int param3);
 
 	void restoreBG(int left, int top, int right, int bottom);
 	void redrawBGStrip(int start, int num);	
@@ -1089,14 +1089,14 @@ public:
 	void palManipulate();
 	int remapPaletteColor(int r, int g, int b, uint threshold);
 	void moveMemInPalRes(int start, int end, byte direction);
-	void setupShadowPalette(int slot,int rfact,int gfact,int bfact,int from,int to);
+	void setupShadowPalette(int slot, int rfact, int gfact, int bfact, int from, int to);
 	void darkenPalette(int a, int b, int c, int d, int e);
 
 	void setShake(int mode);
 
 	void setCursor(int cursor);
 	void setCursorImg(uint img, uint room, uint imgindex);
-	void setCursorHotspot2(int x,int y);
+	void setCursorHotspot2(int x, int y);
 	void grabCursor(int x, int y, int w, int h);
 	void grabCursor(byte *ptr, int width, int height);
 	void makeCursorColorTransparent(int a);
@@ -1128,7 +1128,7 @@ public:
 	uint _shakeFrame;
 	int _screenStartStrip, _screenEndStrip;
 	int _screenLeft, _screenTop;
-	uint16 _enqueue_b,_enqueue_c,_enqueue_d,_enqueue_e;
+	uint16 _enqueue_b, _enqueue_c, _enqueue_d, _enqueue_e;
 	int _enqueuePos; 
 	BlastObject _enqueuedObjects[32];
 
@@ -1170,8 +1170,8 @@ public:
 	PathNode *unkMatrixProc2(PathVertex *vtx, int i);
 	bool areBoxesNeighbours(int i, int j);
 	void addToBoxMatrix(byte b);
-	bool compareSlope(int X1,int Y1,int X2,int Y2,int X3,int Y3);
-	void SetGate(int line1,int line2, int polyx[8], int polyy[8]);
+	bool compareSlope(int X1, int Y1, int X2, int Y2, int X3, int Y3);
+	void SetGate(int line1, int line2, int polyx[8], int polyy[8]);
 	void *addToBoxVertexHeap(int size);
 	PathVertex *addPathVertex();
 	bool checkXYInBoxBounds(int box, int x, int y);
@@ -1187,7 +1187,7 @@ public:
 	int getPathToDestBox(byte from, byte to);
 	int findPathTowards(Actor *a, byte box, byte box2, byte box3);
 	int findPathTowardsOld(Actor *a, byte box, byte box2, byte box3);
-	void GetGates(int trap1,int trap2);
+	void GetGates(int trap1, int trap2);
 	bool inBoxQuickReject(int box, int x, int y, int threshold);
 	AdjustBoxResult getClosestPtOnBox(int box, int x, int y);
 	int getSpecialBox(int param1, int param2);
