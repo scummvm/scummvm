@@ -1302,7 +1302,6 @@ void Control::importOldCompact(Compact* destCpt, uint8 **srcPos, uint16 numElems
 
 uint16 Control::parseSaveData(uint8 *srcBuf) {
 	uint32 reloadList[60];
-	uint32 oldSection = Logic::_scriptVariables[CUR_SECTION];
 	uint32 cnt;
 	uint8 *srcPos = srcBuf;
 	uint32 size;

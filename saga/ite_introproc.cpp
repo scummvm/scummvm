@@ -128,7 +128,6 @@ int Scene::ITEStartProc() {
 	SCENE_QUEUE first_scene;
 	GAME_SCENEDESC gs_desc;
 
-	int game_id = GAME_GetGame();
 	n_introscenes = ARRAYSIZE(ITE_IntroList);
 
 	for (i = 0; i < n_introscenes; i++) {
