@@ -717,7 +717,7 @@ public:
 protected:
 	byte *_objectOwnerTable, *_objectRoomTable, *_objectStateTable;
 	ObjectIDMap _objectIDMap;
-	byte _numObjectsInRoom;
+	int _numObjectsInRoom;
 
 	void setupRoomObject(ObjectData *od, const byte *room, const byte *searchptr = NULL);
 	void markObjectRectAsDirty(int obj);
