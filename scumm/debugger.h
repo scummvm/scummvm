@@ -50,6 +50,7 @@ protected:
 	bool Cmd_PrintBoxMatrix(int argc, const char **argv);
 	bool Cmd_PrintObjects(int argc, const char **argv);
 	bool Cmd_Actor(int argc, const char **argv);
+	bool Cmd_Camera(int argc, const char **argv);
 	bool Cmd_Object(int argc, const char **argv);
 	bool Cmd_Script(int argc, const char **argv);
 	bool Cmd_PrintScript(int argc, const char **argv);

@@ -81,6 +81,7 @@ ScummDebugger::ScummDebugger(ScummEngine *s)
 	DCmd_Register("actors", &ScummDebugger::Cmd_PrintActor);
 	DCmd_Register("box", &ScummDebugger::Cmd_PrintBox);
 	DCmd_Register("matrix", &ScummDebugger::Cmd_PrintBoxMatrix);
+	DCmd_Register("camera", &ScummDebugger::Cmd_Camera);
 	DCmd_Register("room", &ScummDebugger::Cmd_Room);
 	DCmd_Register("objects", &ScummDebugger::Cmd_PrintObjects);
 	DCmd_Register("object", &ScummDebugger::Cmd_Object);
@@ -606,6 +607,14 @@ bool ScummDebugger::Cmd_DebugLevel(int argc, const char **argv) {
 			DebugPrintf("Not a valid debug level\n");
 	}
 
+	return true;
+}
+
+bool ScummDebugger::Cmd_Camera(int argc, const char **argv) {
+	DebugPrintf("Camera: cur (%d,%d) - dest (%d,%d) - accel (%d,%d) -- last (%d,%d)\n",
+		_vm->camera._cur.x, _vm->camera._cur.y, _vm->camera._dest.x, _vm->camera._dest.y,
+		_vm->camera._accel.x, _vm->camera._accel.y, _vm->camera._last.x, _vm->camera._last.y);
+		
 	return true;
 }
 
