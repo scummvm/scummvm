@@ -35,9 +35,9 @@ class Plugin;
 
 /** Global (shared) game feature flags. */
 enum {
-//	GF_HAS_SPEECH = 1 << 29,
-//	GF_HAS_SUBTITLES = 1 << 30,
-	GF_DEFAULT_TO_1X_SCALER = 1 << 31
+//	GF_HAS_SPEECH = 1 << 28,
+//	GF_HAS_SUBTITLES = 1 << 29,
+	GF_DEFAULT_TO_1X_SCALER = 1 << 30
 };
 
 enum MidiDriverType {
