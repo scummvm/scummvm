@@ -47,8 +47,18 @@ static const LogicTable logicTable[] = {
 	&SkyLogic::simpleAnim,	 // 16 Module anim without x,y's
 };
 
+SkyLogic::SkyLogic(SkyDisk *skyDisk, SkyGrid *grid) {
+	_skyDisk = skyDisk;
+	_grid = grid;
+
+	for (uint i = 0; i < sizeof(_moduleList)/sizeof(uint16*); i++)
+		_moduleList[i] = 0;
+	_stackPtr = 0;
+
+	initScriptVariables();
+}
+
 void SkyLogic::engine() {
-#define logic_list_no 141
 	Compact *compact2 = SkyState::fetchCompact(141); // logic list
 
 	while (compact2->logic) { // 0 means end of list
@@ -215,16 +225,9 @@ void SkyLogic::simpleAnim() {
 	error("Stub: SkyLogic::simpleAnim");
 }
 
-
-
-static uint16 *_moduleList[16] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-static uint32 _stack[20];
-static byte _stackPtr = 0;
-#define f_module_0	60400
-
 void SkyLogic::checkModuleLoaded(uint16 moduleNo) {
 	if (!_moduleList[moduleNo])
-		_moduleList[moduleNo] = (uint16 *)_skyDisk->loadFile((uint16)moduleNo + f_module_0, NULL);
+		_moduleList[moduleNo] = (uint16 *)_skyDisk->loadFile((uint16)moduleNo + F_MODULE_0, NULL);
 }
 
 void SkyLogic::push(uint32 a) {
@@ -358,7 +361,7 @@ static  McodeTable mcodeTable[] = {
 	&SkyLogic::fnPrintf,
 };
 
-static const uint32 forward_list1b[] = {
+static const uint32 forwardList1b[] = {
 	JOBS_SPEECH,
 	JOBS_S4,
 	JOBS_ALARMED,
@@ -424,7 +427,7 @@ static const uint32 forward_list1b[] = {
 	DEATH_SCRIPT,
 };
 
-static const uint32 forward_list2b[] = {
+static const uint32 forwardList2b[] = {
 	STD_ON,
 	STD_EXIT_LEFT_ON,
 	STD_EXIT_RIGHT_ON,
@@ -434,7 +437,7 @@ static const uint32 forward_list2b[] = {
 	MEGA_ACTION,
 };
 
-static const uint32 forward_list3b[] = {
+static const uint32 forwardList3b[] = {
 	DANI_SPEECH,
 	DANIELLE_GO_HOME,
 	SPUNKY_GO_HOME,
@@ -458,7 +461,7 @@ static const uint32 forward_list3b[] = {
 	FOSTER_ENTER_COURT,
 };
 
-static const uint32 forward_list4b[] = {
+static const uint32 forwardList4b[] = {
 	WALTER_SPEECH,
 	JOEY_MEDIC,
 	JOEY_MED_LOGIC,
@@ -475,7 +478,7 @@ static const uint32 forward_list4b[] = {
 	SC82_JOBS_SSS,
 };
 
-static const uint32 forward_list5b[] = {
+static const uint32 forwardList5b[] = {
 	SET_UP_INFO_WINDOW,
 	SLAB_ON,
 	UP_MOUSE,
@@ -486,7 +489,7 @@ static const uint32 forward_list5b[] = {
 
 #define RESULT 1
 void SkyLogic::initScriptVariables() {
-	for (int i = 0; i < 838; i++)
+	for (uint i = 0; i < sizeof(_scriptVariables)/sizeof(uint32); i++)
 		_scriptVariables[i] = 0;
 
 	_scriptVariables[3] = 141;
@@ -517,11 +520,11 @@ void SkyLogic::initScriptVariables() {
 	_scriptVariables[821] = 1;
 	_scriptVariables[822] = 1;
 
-	memcpy(_scriptVariables + 353, forward_list1b, sizeof(forward_list1b));
-	memcpy(_scriptVariables + 657, forward_list2b, sizeof(forward_list2b));
-	memcpy(_scriptVariables + 722, forward_list3b, sizeof(forward_list3b));
-	memcpy(_scriptVariables + 664, forward_list4b, sizeof(forward_list4b));
-	memcpy(_scriptVariables + 506, forward_list5b, sizeof(forward_list5b));
+	memcpy(_scriptVariables + 353, forwardList1b, sizeof(forwardList1b));
+	memcpy(_scriptVariables + 657, forwardList2b, sizeof(forwardList2b));
+	memcpy(_scriptVariables + 722, forwardList3b, sizeof(forwardList3b));
+	memcpy(_scriptVariables + 664, forwardList4b, sizeof(forwardList4b));
+	memcpy(_scriptVariables + 506, forwardList5b, sizeof(forwardList5b));
 }
 
 uint32 SkyLogic::script(Compact *compact, uint16 scriptNo, uint16 offset) {
@@ -537,9 +540,9 @@ script:
 	printf("scriptNo: %d, moduleNo: %d, offset: %d\n", scriptNo, moduleNo, offset);
 	uint16 *scriptData = _moduleList[moduleNo]; // get module address
 
-	printf("File: %d\n", moduleNo + f_module_0);
+	printf("File: %d\n", moduleNo + F_MODULE_0);
 	if (!scriptData) { // The module has not been loaded
-		scriptData = (uint16 *)_skyDisk->loadFile(moduleNo + f_module_0, NULL);
+		scriptData = (uint16 *)_skyDisk->loadFile(moduleNo + F_MODULE_0, NULL);
 		_moduleList[moduleNo] = scriptData; // module has been loaded
 	}
 
@@ -713,8 +716,6 @@ script:
 		}
 	}
 }
-
-#define C_ACTION_MODE 4
 
 uint32 SkyLogic::fnCacheChip(uint32 a, uint32 b, uint32 c) {
 	error("Stub: fnCacheChip");

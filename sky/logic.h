@@ -28,7 +28,7 @@
 
 class SkyLogic {
 public:
-	SkyLogic(SkyDisk *skyDisk, SkyGrid *grid) : _skyDisk(skyDisk), _grid(grid) { initScriptVariables(); };
+	SkyLogic(SkyDisk *skyDisk, SkyGrid *grid);
 	void engine();
 
 	void lreturn();
@@ -172,6 +172,10 @@ protected:
 	void checkModuleLoaded(uint16 moduleNo);
 	uint32 script(Compact *compact, uint16 scriptNo, uint16 offset);
 	void initScriptVariables();
+
+	uint16 *_moduleList[16];
+	uint32 _stack[20];
+	byte _stackPtr;
 
 	Compact *_compact;
 	uint32 _scriptVariables[838];
