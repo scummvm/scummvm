@@ -148,29 +148,27 @@ struct ACTORDIALOGUE {
 
 typedef Common::List<ACTORDIALOGUE> ActorDialogList;
 
-struct SPEAKINTENT {
-	int si_init;
-	uint16 si_flags;
-	int si_last_action;
-	ActorDialogList si_diaglist;	/* Actor dialogue list */
-	SPEAKINTENT() {
-		si_init = 0;
-		si_flags = 0;
-		si_last_action = 0;
-	}
-};
 
 struct ACTORINTENT {
 	int a_itype;
 	uint16 a_iflags;
 	int a_idone;
-	SPEAKINTENT speakIntent;
+
+	int si_init;
+	uint16 si_flags;
+	int si_last_action;
+	ActorDialogList si_diaglist;	/* Actor dialogue list */
+
 	WALKINTENT walkIntent;
 
 	ACTORINTENT() {
 		a_itype = 0;
 		a_iflags = 0;
 		a_idone = 0;
+
+		si_init = 0;
+		si_flags = 0;
+		si_last_action = 0;
 	}
 };
 
@@ -295,7 +293,7 @@ public:
 	
 private:
 	int handleWalkIntent(ActorData *actor, WALKINTENT *a_walk_int, int *complete_p, int msec);
-	int handleSpeakIntent(ActorData *actor, SPEAKINTENT *a_speakint, int *complete_p, int msec);
+	int handleSpeakIntent(ActorData *actor, ACTORINTENT *a_aintent, int *complete_p, int msec);
 	int setPathNode(WALKINTENT *walk_int, Point *src_pt, Point *dst_pt, SEMAPHORE *sem);
 
 	ActorData *getActor(uint16 actorId);

@@ -230,7 +230,7 @@ int Actor::direct(int msec) {
 			case INTENT_SPEAK:
 				// Actor wants to blab
 				{
-					handleSpeakIntent(actor, &a_intent->speakIntent, &a_intent->a_idone, msec);
+					handleSpeakIntent(actor, a_intent, &a_intent->a_idone, msec);
 				}
 				break;
 
@@ -328,8 +328,8 @@ int Actor::drawActors() {
 		if (actorIntentIterator != actor->a_intentlist.end()) {
 			a_intent = actorIntentIterator.operator->();
 			if (a_intent->a_itype == INTENT_SPEAK) {
-				actorDialogIterator = a_intent->speakIntent.si_diaglist.begin();
-				if (actorDialogIterator != a_intent->speakIntent.si_diaglist.end()) {
+				actorDialogIterator = a_intent->si_diaglist.begin();
+				if (actorDialogIterator != a_intent->si_diaglist.end()) {
 					a_dialogue = actorDialogIterator.operator->();
 					diag_x = actor->s_pt.x;
 					diag_y = actor->s_pt.y;
@@ -368,13 +368,13 @@ int Actor::skipDialogue() {
 			if (a_intent->a_itype == INTENT_SPEAK) {
 				// Okay, found a speak intent. Remove one dialogue entry 
 				// from it, releasing any semaphore */
-				actorDialogIterator = a_intent->speakIntent.si_diaglist.begin();
-				if (actorDialogIterator != a_intent->speakIntent.si_diaglist.end()) {
+				actorDialogIterator = a_intent->si_diaglist.begin();
+				if (actorDialogIterator != a_intent->si_diaglist.end()) {
 					a_dialogue = actorDialogIterator.operator->();
 					if (a_dialogue->d_sem != NULL) {
 						_vm->_script->SThreadReleaseSem(a_dialogue->d_sem);
 					}
-					a_intent->speakIntent.si_diaglist.erase(actorDialogIterator);
+					a_intent->si_diaglist.erase(actorDialogIterator);
 					// And stop any currently playing voices
 					_vm->_sound->stopVoice();
 				}
@@ -386,7 +386,6 @@ int Actor::skipDialogue() {
 }
 
 void Actor::speak(uint16 actorId, const char *d_string, uint16 d_voice_rn, SEMAPHORE *sem) {
-	ActorOrderList::iterator actorOrderIterator;
 	ActorData *actor;
 	ActorIntentList::iterator actorIntentIterator;
 	ACTORINTENT *a_intent_p = NULL;
@@ -417,15 +416,15 @@ void Actor::speak(uint16 actorId, const char *d_string, uint16 d_voice_rn, SEMAP
 
 	if (use_existing_ai) {
 		// Store the current dialogue off the existing actor intent
-		a_intent_p->speakIntent.si_diaglist.push_back(a_dialogue);
+		a_intent_p->si_diaglist.push_back(a_dialogue);
 	} else {
 		// Create a new actor intent
 		a_intent.a_itype = INTENT_SPEAK;
 		a_intent.a_idone = 0;
 		a_intent.a_iflags = 0;
 
-		a_intent.speakIntent.si_last_action = actor->action;
-		a_intent.speakIntent.si_diaglist.push_back(a_dialogue);
+		a_intent.si_last_action = actor->action;
+		a_intent.si_diaglist.push_back(a_dialogue);
 
 		actor->a_intentlist.push_back(a_intent);
 	}
@@ -435,7 +434,7 @@ void Actor::speak(uint16 actorId, const char *d_string, uint16 d_voice_rn, SEMAP
 	}
 }
 
-int Actor::handleSpeakIntent(ActorData *actor, SPEAKINTENT *a_speakint, int *complete_p, int msec) {
+int Actor::handleSpeakIntent(ActorData *actor, ACTORINTENT *a_aintent, int *complete_p, int msec) {
 	ActorDialogList::iterator actorDialogIterator;
 	ActorDialogList::iterator nextActorDialogIterator;
 	ACTORDIALOGUE *a_dialogue;
@@ -443,18 +442,18 @@ int Actor::handleSpeakIntent(ActorData *actor, SPEAKINTENT *a_speakint, int *com
 	long carry_time;
 	int intent_complete = 0;
 
-	if (!a_speakint->si_init) {
+	if (!a_aintent->si_init) {
 		// Initialize speak intent by setting up action
 		actor->action = ACTION_SPEAK;
 		actor->action_frame = 0;
 		actor->action_time = 0;
 		actor->action_flags = ACTION_LOOP;
-		a_speakint->si_init = 1;
+		a_aintent->si_init = 1;
 	}
 
 	// Process actor dialogue list
-	actorDialogIterator = a_speakint->si_diaglist.begin();
-	if (actorDialogIterator != a_speakint->si_diaglist.end()) {
+	actorDialogIterator = a_aintent->si_diaglist.begin();
+	if (actorDialogIterator != a_aintent->si_diaglist.end()) {
 		a_dialogue = actorDialogIterator.operator->();
 		if (!a_dialogue->d_playing) {
 			// Dialogue voice hasn't played yet - play it now
@@ -478,7 +477,7 @@ int Actor::handleSpeakIntent(ActorData *actor, SPEAKINTENT *a_speakint, int *com
 
 			nextActorDialogIterator = actorDialogIterator;
 			++nextActorDialogIterator;
-			if (nextActorDialogIterator != a_speakint->si_diaglist.end()) {
+			if (nextActorDialogIterator != a_aintent->si_diaglist.end()) {
 				a_dialogue2 = nextActorDialogIterator.operator->();
 				a_dialogue2->d_time -= carry_time;
 			}
@@ -486,8 +485,8 @@ int Actor::handleSpeakIntent(ActorData *actor, SPEAKINTENT *a_speakint, int *com
 			// Check if there are any dialogue nodes left. If not, 
 			// flag this speech intent as complete
 
-			actorDialogIterator = a_speakint->si_diaglist.erase(actorDialogIterator);
-			if (actorDialogIterator != a_speakint->si_diaglist.end()) {
+			actorDialogIterator = a_aintent->si_diaglist.erase(actorDialogIterator);
+			if (actorDialogIterator == a_aintent->si_diaglist.end()) {
 				intent_complete = 1;
 			}
 		}
