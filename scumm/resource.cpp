@@ -1488,7 +1488,6 @@ int Scumm::readSoundResourceSmallHeader(int type, int idx) {
 		_fileHandle.seek(wa_size - 2, SEEK_CUR);
 
 		if (!(_features & GF_ATARI_ST || _features & GF_MACINTOSH)) {
-			warning("Loader");
 			ad_offs = _fileHandle.pos();
 			ad_size = _fileHandle.readUint16LE();
 		}
