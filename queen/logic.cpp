@@ -2297,53 +2297,53 @@ bool LogicGame::handleSpecialMove(uint16 sm) {
 		/* 00 */
 		0,
 		0,
-		&Logic::asmMakeJoeUseDress,
-		&Logic::asmMakeJoeUseNormalClothes,
+		&LogicGame::asmMakeJoeUseDress,
+		&LogicGame::asmMakeJoeUseNormalClothes,
 		/* 04 */
-		&Logic::asmMakeJoeUseUnderwear,
-		&Logic::asmSwitchToDressPalette,
-		&Logic::asmSwitchToNormalPalette,
-		&Logic::asmStartCarAnimation,       // room 74
+		&LogicGame::asmMakeJoeUseUnderwear,
+		&LogicGame::asmSwitchToDressPalette,
+		&LogicGame::asmSwitchToNormalPalette,
+		&LogicGame::asmStartCarAnimation,       // room 74
 		/* 08 */
-		&Logic::asmStopCarAnimation,        // room 74
-		&Logic::asmStartFightAnimation,     // room 69
-		&Logic::asmWaitForFrankPosition,    // c69e.cut
-		&Logic::asmMakeFrankGrowing,        // c69z.cut
+		&LogicGame::asmStopCarAnimation,        // room 74
+		&LogicGame::asmStartFightAnimation,     // room 69
+		&LogicGame::asmWaitForFrankPosition,    // c69e.cut
+		&LogicGame::asmMakeFrankGrowing,        // c69z.cut
 		/* 12 */
-		&Logic::asmMakeRobotGrowing,        // c69z.cut
-		&Logic::asmShrinkRobot,
-		&Logic::asmEndGame,
-		&Logic::asmPutCameraOnDino,
+		&LogicGame::asmMakeRobotGrowing,        // c69z.cut
+		&LogicGame::asmShrinkRobot,
+		&LogicGame::asmEndGame,
+		&LogicGame::asmPutCameraOnDino,
 		/* 16 */
-		&Logic::asmPutCameraOnJoe,
-		&Logic::asmAltIntroPanRight,        // cintr.cut
-		&Logic::asmAltIntroPanLeft,         // cintr.cut
-		&Logic::asmSetAzuraInLove,
+		&LogicGame::asmPutCameraOnJoe,
+		&LogicGame::asmAltIntroPanRight,        // cintr.cut
+		&LogicGame::asmAltIntroPanLeft,         // cintr.cut
+		&LogicGame::asmSetAzuraInLove,
 		/* 20 */
-		&Logic::asmPanRightFromJoe,
-		&Logic::asmSetLightsOff,
-		&Logic::asmSetLightsOn,
-		&Logic::asmSetManequinAreaOn,
+		&LogicGame::asmPanRightFromJoe,
+		&LogicGame::asmSetLightsOff,
+		&LogicGame::asmSetLightsOn,
+		&LogicGame::asmSetManequinAreaOn,
 		/* 24 */
-		&Logic::asmPanToJoe,
-		&Logic::asmTurnGuardOn,
-		&Logic::asmPanLeft320To144,
-		&Logic::asmSmooch,
+		&LogicGame::asmPanToJoe,
+		&LogicGame::asmTurnGuardOn,
+		&LogicGame::asmPanLeft320To144,
+		&LogicGame::asmSmooch,
 		/* 28 */
-		&Logic::asmMakeLightningHitPlane,
-		&Logic::asmScaleBlimp,
-		&Logic::asmScaleEnding,
-		&Logic::asmWaitForCarPosition,
+		&LogicGame::asmMakeLightningHitPlane,
+		&LogicGame::asmScaleBlimp,
+		&LogicGame::asmScaleEnding,
+		&LogicGame::asmWaitForCarPosition,
 		/* 32 */
-		&Logic::asmShakeScreen,
-		&Logic::asmAttemptPuzzle,
-		&Logic::asmScaleTitle,
+		&LogicGame::asmShakeScreen,
+		&LogicGame::asmAttemptPuzzle,
+		&LogicGame::asmScaleTitle,
 		0,
 		/* 36 */
-		&Logic::asmPanRightToHugh,
-		&Logic::asmMakeWhiteFlash,
-		&Logic::asmPanRightToJoeAndRita,
-		&Logic::asmPanLeftToBomb            // cdint.cut
+		&LogicGame::asmPanRightToHugh,
+		&LogicGame::asmMakeWhiteFlash,
+		&LogicGame::asmPanRightToJoeAndRita,
+		&LogicGame::asmPanLeftToBomb            // cdint.cut
 	};
 	if (sm >= ARRAYSIZE(asmTable) || asmTable[sm] == 0)
 		return false;
