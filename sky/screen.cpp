@@ -179,10 +179,14 @@ void SkyScreen::flip(void) {
 	// drawMouseToBackScreen();
 	uint8 *screenPos = _currentScreen;
 	uint8 *backPos = _backScreen;
+	uint32 copyX, copyWidth;
 	for (uint8 cnty = 0; cnty < GRID_Y; cnty++) {
+		copyWidth = 0;
 		for (uint8 cntx = 0; cntx < GRID_X; cntx++) {
 			if (_gameGrid[cnty * GRID_X + cntx] & 1) {
 				_gameGrid[cnty * GRID_X + cntx] &= ~1;
+				if (!copyWidth) copyX = cntx * GRID_W;
+				copyWidth += GRID_W;
 				uint8 *copySrc = backPos;
 				uint8 *copyDest = screenPos;
 				for (uint8 gridLineCnt = 0; gridLineCnt < GRID_H; gridLineCnt++) {
@@ -190,10 +194,16 @@ void SkyScreen::flip(void) {
 					copySrc += GAME_SCREEN_WIDTH;
 					copyDest += GAME_SCREEN_WIDTH;
 				}
-				_system->copy_rect(screenPos, GAME_SCREEN_WIDTH, cntx * GRID_W, cnty * GRID_H, GRID_W, GRID_H);
+			} else if (copyWidth) {
+				_system->copy_rect(_currentScreen + cnty * GRID_H * GAME_SCREEN_WIDTH + copyX, GAME_SCREEN_WIDTH, copyX, cnty * GRID_H, copyWidth, GRID_H);
+				copyWidth = 0;
 			}
 			backPos += GRID_W;
 			screenPos += GRID_W;
+		}
+		if (copyWidth) {
+			_system->copy_rect(_currentScreen + cnty * GRID_H * GAME_SCREEN_WIDTH + copyX, GAME_SCREEN_WIDTH, copyX, cnty * GRID_H, copyWidth, GRID_H);
+			copyWidth = 0;
 		}
 		screenPos += (GRID_H - 1) * GAME_SCREEN_WIDTH;
 		backPos += (GRID_H - 1) * GAME_SCREEN_WIDTH;
