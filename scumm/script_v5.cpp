@@ -506,8 +506,8 @@ void Scumm_v5::o5_actorSet() {
 			a->animSpeed = getVarOrDirectByte(0x80);
 			a->animProgress = 0;
 			break;
-		case 23:										/* unk2 */
-			a->shadow_mode = getVarOrDirectByte(0x80);	/* shadow mode */
+		case 23:										/* shadow mode */
+			a->shadow_mode = getVarOrDirectByte(0x80);
 			break;
 		default:
 			warning("o5_actorSet: default case");

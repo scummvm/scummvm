@@ -59,9 +59,6 @@ void Sound::addSoundToQueue(int sound) {
 		_scumm->ensureResourceLoaded(rtSound, sound);
 		addSoundToQueue2(sound);
 	}
-
-//	if (_features & GF_AUDIOTRACKS)
-//		warning("Requesting audio track: %d", sound);
 }
 
 void Sound::addSoundToQueue2(int sound) {
@@ -175,6 +172,7 @@ void Sound::playSound(int soundID) {
 	char *sound;
 	int size;
 	int rate;
+	byte flags = SoundMixer::FLAG_UNSIGNED | SoundMixer::FLAG_AUTOFREE;
 	
 	debug(3,"playSound #%d (room %d)", soundID, _scumm->getResourceRoomNr(rtSound, soundID));
 	ptr = _scumm->getResourceAddress(rtSound, soundID);
@@ -208,7 +206,7 @@ void Sound::playSound(int soundID) {
 			// Allocate a sound buffer, copy the data into it, and play
 			sound = (char *)malloc(size);
 			memcpy(sound, ptr, size);
-			_scumm->_mixer->playRaw(NULL, sound, size, rate, SoundMixer::FLAG_UNSIGNED | SoundMixer::FLAG_AUTOFREE);
+			_scumm->_mixer->playRaw(NULL, sound, size, rate, flags, soundID);
 			return;
 		}
 		// Support for Putt-Putt sounds - very hackish, too 8-)
@@ -226,7 +224,7 @@ void Sound::playSound(int soundID) {
 			// Allocate a sound buffer, copy the data into it, and play
 			sound = (char *)malloc(size);
 			memcpy(sound, ptr + 8, size);
-			_scumm->_mixer->playRaw(NULL, sound, size, rate, SoundMixer::FLAG_UNSIGNED | SoundMixer::FLAG_AUTOFREE);
+			_scumm->_mixer->playRaw(NULL, sound, size, rate, flags, soundID);
 			return;
 		}
 		else if (READ_UINT32_UNALIGNED(ptr) == MKID('Crea')) {
@@ -286,11 +284,10 @@ void Sound::playSound(int soundID) {
 			// Allocate a sound buffer, copy the data into it, and play
 			sound = (char *)malloc(size);
 			memcpy(sound, ptr + 33, size);
-			_scumm->_mixer->playRaw(NULL, sound, size, rate, SoundMixer::FLAG_UNSIGNED | SoundMixer::FLAG_AUTOFREE);
+			_scumm->_mixer->playRaw(NULL, sound, size, rate, flags, soundID);
 			return;
 		} else if (_scumm->_features & GF_OLD256) {
 			size = READ_LE_UINT32(ptr);
-
 	#if 0
 			// FIXME - this is just some debug output for Zak256
 			if (size != 30) {
@@ -384,8 +381,8 @@ void Sound::playSound(int soundID) {
 			}
 	
 			// FIXME: Maybe something in the header signifies looping? Need to
-			// track it down and add a mixer flag or something (see also bug .
-			_scumm->_mixer->playRaw(NULL, sound, size, 11000, SoundMixer::FLAG_UNSIGNED | SoundMixer::FLAG_AUTOFREE);
+			// track it down and add a mixer flag or something.
+			_scumm->_mixer->playRaw(NULL, sound, size, 11000, flags, soundID);
 			return;
 		}
 	
@@ -571,7 +568,9 @@ int Sound::isSoundRunning(int sound) {
 
 	if (sound == _scumm->current_cd_sound)
 		return pollCD();
-
+	
+	_scumm->_mixer->stopID(sound);
+	
 	i = _soundQue2Pos;
 	while (i--) {
 		if (_soundQue2[i] == sound)
@@ -584,13 +583,13 @@ int Sound::isSoundRunning(int sound) {
 	if (!_scumm->isResourceLoaded(rtSound, sound))
 		return 0;
 
-	if (_scumm->_imuseDigital) {
+	if (_scumm->_imuseDigital)
 		return _scumm->_imuseDigital->getSoundStatus(sound);
-	}
 
-	if (!_scumm->_imuse)
-		return 0;
-	return _scumm->_imuse->get_sound_status(sound);
+	if (_scumm->_imuse)
+		return _scumm->_imuse->get_sound_status(sound);
+
+	return 0;
 }
 
 // This is exactly the same as isSoundRunning except that it
