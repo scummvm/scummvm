@@ -1430,6 +1430,7 @@ uint SimonState::item_get_icon_number(Item *item) {
 void SimonState::loadIconFile() {
 	File in;
 	if (_game & GF_AMIGAS)
+		/* TODO Add support for decruncher */
 		in.open("icon.pkd", _gameDataPath);
 	else
 		in.open("ICON.DAT", _gameDataPath);
@@ -4419,6 +4420,7 @@ void SimonState::read_vga_from_datfile_1(uint vga_id) {
 		if (_game == GAME_SIMON1CD32) {
 			sprintf(buf, "0%d.out", vga_id); 
 		} else if (_game == GAME_SIMON1AMIGA) {
+			/* TODO Add support for decruncher */
 			sprintf(buf, "0%d.pkd", vga_id); 
 		} else {
 			sprintf(buf, "0%d.VGA", vga_id); 
@@ -4452,6 +4454,7 @@ byte *SimonState::read_vga_from_datfile_2(uint id) {
 		if (_game == GAME_SIMON1CD32) {
 			sprintf(buf, "%.3d%d.out", id >> 1, (id & 1) + 1);
 		} else if (_game == GAME_SIMON1AMIGA) {
+			/* TODO Add support for decruncher */
 			sprintf(buf, "%.3d%d.pkd", id >> 1, (id & 1) + 1);
 		} else {
 			sprintf(buf, "%.3d%d.VGA", id >> 1, (id & 1) + 1);
@@ -4734,7 +4737,7 @@ void SimonState::go() {
 		_subtitles = true;
 
 	midi._midi_sfx_toggle = false;
-	
+
 	while (1) {
 		hitarea_stuff();
 		handle_verb_clicked(_verb_hitarea);
@@ -5054,28 +5057,37 @@ void SimonState::playMusic(uint music_unk, uint music) {
 		_vc70_var1 = 0xFFFF;
 		_vc72_var3 = 0xFFFF;
 		_midi_unk2 = 0xFFFF;
-	} else if (!(_game & GF_DEMO) && !(_game & GF_AMIGAS)){ // Simon 1 music
-		midi.shutdown();
-		if (_game & GF_WIN) {	
-			_game_file->seek(_game_offsets_ptr[gss->MUSIC_INDEX_BASE + music], SEEK_SET);
-			midi.read_all_songs(_game_file, music);
-		} else if (_game & GF_TALKIE) {
-			_game_file->seek(_game_offsets_ptr[gss->MUSIC_INDEX_BASE + music], SEEK_SET);
-			midi.read_all_songs_old(_game_file, music);
-		} else {
-			char buf[50];
-			File *f = new File();
-			sprintf(buf, "MOD%d.MUS", music);
-			f->open(buf, _gameDataPath);
-			if (f->isOpen() == false) {
-				warning("Can't load music from '%s'", buf);
-				return;
+	} else { // Simon 1 music
+		if (_game & GF_AMIGAS) {
+			if (_game != GAME_SIMON1CD32) {
+				/* TODO Add support for decruncher */
 			}
-			midi.read_all_songs_old(f, music);
-			delete f;
+			/* TODO Add Protracker support for simon1amiga/cd32 */
+		} else if (_game & GF_DEMO) {
+			/* TODO Add music support for simon1demo */
+		} else {
+			midi.shutdown();
+			if (_game & GF_WIN) {	
+				_game_file->seek(_game_offsets_ptr[gss->MUSIC_INDEX_BASE + music], SEEK_SET);
+				midi.read_all_songs(_game_file, music);
+			} else if (_game & GF_TALKIE) {
+				_game_file->seek(_game_offsets_ptr[gss->MUSIC_INDEX_BASE + music], SEEK_SET);
+				midi.read_all_songs_old(_game_file, music);
+			} else {
+				char buf[50];
+				File *f = new File();
+				sprintf(buf, "MOD%d.MUS", music);
+				f->open(buf, _gameDataPath);
+				if (f->isOpen() == false) {
+					warning("Can't load music from '%s'", buf);
+					return;
+				}
+				midi.read_all_songs_old(f, music);
+				delete f;
+			}
+			midi.initialize();
+			midi.play();
 		}
-		midi.initialize();
-		midi.play();
 	}
 }
 

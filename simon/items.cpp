@@ -1228,7 +1228,7 @@ void SimonState::o_177() {
 		tv = getThreeValues(a);
 	}
 
-	if (_game == GAME_SIMON1TALKIE || _game == GAME_SIMON1WIN) {
+	if (_game == GAME_SIMON1CD32 || _game == GAME_SIMON1TALKIE || _game == GAME_SIMON1WIN) {
 		if (child != NULL && child->avail_props & 0x200) {
 			uint offs = getOffsetOfChild2Param(child, 0x200);
 			if (!_subtitles)
