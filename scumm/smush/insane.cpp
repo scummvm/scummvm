@@ -149,9 +149,9 @@ void Insane::initvars(void) {
 	_keybX = 0;
 	_keybY = 0;
 	_firstBattle = false;
+	_battleScene = true;
 	_val11d = 0;
 	_val32d = -1;
-	_val39_ = true;
 	_val51d = 0;
 	_val52d = 0;
 	_val53d = 0;
@@ -496,12 +496,12 @@ void Insane::initvars(void) {
 }
 
 void Insane::init_actStruct(int actornum, int actnum, int32 actorval, byte state, 
-								  int32 room, int32 facing, int32 speedX, int32 frame) {
+								  int32 room, int32 facing, int32 tilt, int32 frame) {
 	_actor[actornum].act[actnum].actor = actorval;
 	_actor[actornum].act[actnum].state = state;
 	_actor[actornum].act[actnum].room = room;
 	_actor[actornum].act[actnum].facing = facing;
-	_actor[actornum].act[actnum].speedX = speedX;
+	_actor[actornum].act[actnum].tilt = tilt;
 	_actor[actornum].act[actnum].frame = frame;
 }
 
@@ -823,8 +823,6 @@ int32 Insane::enemy2handler(int32 actor1, int32 actor2, int32 probability) {
 	int32 act1damage, act2damage, act1x, act2x, retval;
 	int32 dist;
 
-	debug(0, "enemy2handler()");
-
 	retval = 0;
 	act1damage = _actor[actor1].damage; // ebx
 	act2damage = _actor[actor2].damage; // ebp
@@ -958,8 +956,6 @@ int32 Insane::enemy2handler(int32 actor1, int32 actor2, int32 probability) {
 
 int32 Insane::enemy2initializer(int32 actor1, int32 actor2, int32 probability) {
 	int i;
-
-	debug(0, "enemy2initializer()");
 
 	for (i = 0; i < 7; i++)
 		_enemyState[EN_ROTT3][i] = 0;
@@ -1480,12 +1476,12 @@ void Insane::putActors(void) {
 }
 
 void Insane::readState(void) {
-	_actor[0].inventory[INV_CHAIN] = readArray(_numberArray, 50) != 0; // Chain
-	_actor[0].inventory[INV_CHAINSAW] = readArray(_numberArray, 51) != 0; // Chainsaw
-	_actor[0].inventory[INV_MACE] = readArray(_numberArray, 52) != 0; // Mace
-	_actor[0].inventory[INV_2X4] = readArray(_numberArray, 53) != 0; // 2x4
-	_actor[0].inventory[INV_WRENCH] = readArray(_numberArray, 54) != 0; // Wrench
-	_actor[0].inventory[INV_DUST] = readArray(_numberArray, 55) != 0; // Dust
+	_actor[0].inventory[INV_CHAIN] = readArray(_numberArray, 50) != 0;
+	_actor[0].inventory[INV_CHAINSAW] = readArray(_numberArray, 51) != 0;
+	_actor[0].inventory[INV_MACE] = readArray(_numberArray, 52) != 0;
+	_actor[0].inventory[INV_2X4] = readArray(_numberArray, 53) != 0;
+	_actor[0].inventory[INV_WRENCH] = readArray(_numberArray, 54) != 0;
+	_actor[0].inventory[INV_DUST] = readArray(_numberArray, 55) != 0;
 	_actor[0].inventory[INV_HAND] = 1; // Boot
 	_actor[0].inventory[INV_BOOT] = 1; // Hand
 
@@ -1659,7 +1655,7 @@ void Insane::shutCurrentScene(void) {
 		_actor[0].runningSound = 0;
 	}
 
-	_val39_ = true;
+	_battleScene = true;
 }
 
 
@@ -2074,7 +2070,7 @@ void Insane::setEnemyCostumes (void) {
 		_actor[1].act[0].state = 98;
 		_actor[1].act[1].state = 98;
 	
-		smlayer_putActor(1, 2, _actor[1].x + _actor[1].act[2].speedX - 17, 
+		smlayer_putActor(1, 2, _actor[1].x + _actor[1].act[2].tilt - 17, 
 						 _actor[1].y + _actor[1].y1 - 98, _smlayer_room2);
 	} else if (_currEnemy == EN_TORQUE) {
 		smlayer_setActorCostume(1, 2, readArray(_numberArray, _enemy[_currEnemy].costume4));
@@ -2085,7 +2081,7 @@ void Insane::setEnemyCostumes (void) {
 		_actor[1].act[2].state = 1;
 		_actor[1].act[0].state = 1;
 		_actor[1].act[1].state = 1;
-		smlayer_putActor(1, 2, _actor[1].x + _actor[1].act[2].speedX - 17, 
+		smlayer_putActor(1, 2, _actor[1].x + _actor[1].act[2].tilt - 17, 
 						 _actor[1].y + _actor[1].y1 - 98, _smlayer_room2);
 	} else {
 		_actor[1].act[2].room = 1;
@@ -2107,7 +2103,7 @@ void Insane::setEnemyCostumes (void) {
 		_actor[1].act[1].state = 1;
 	
 		if (_actor[1].act[2].room != 0)
-			smlayer_putActor(1, 2, _actor[1].x + _actor[1].act[2].speedX - 17, 
+			smlayer_putActor(1, 2, _actor[1].x + _actor[1].act[2].tilt - 17, 
 							 _actor[1].y + _actor[1].y1 - 98, 
 							 _smlayer_room2);
 	}
@@ -2521,7 +2517,7 @@ void Insane::postCase11(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 
 void Insane::postCase0(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 					   int32 setupsan13, int32 curFrame, int32 maxFrame) {
-	actorsReaction(true);
+	turnBen(true);
 	
 	if (!curFrame || curFrame == 420)
 		smlayer_setFluPalette(_smush_roadrashRip, 0);
@@ -2559,7 +2555,7 @@ void Insane::postCase16(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 	char buf[12];
 	int32 tmp;
 	
-	actorsReaction(true);
+	turnBen(true);
 	sprintf(buf, "^f01%02o", curFrame & 0x3f);
 	smlayer_showStatusMsg(-1, renderBitmap, codecparam, 180, 168, 1, 2, 0, "%s", buf);
 	tmp = 400-curFrame;
@@ -2613,8 +2609,8 @@ void Insane::postCase1(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 
 void Insane::postCase2(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 					   int32 setupsan13, int32 curFrame, int32 maxFrame) {
-	actorsReaction(_val39_);
-	checkEnemyLoose(1);
+	turnBen(_battleScene);
+	turnEnemy(true);
 	
 	if (!curFrame)
 		smlayer_setFluPalette(_smush_roadrashRip, 0);
@@ -2630,8 +2626,8 @@ void Insane::postCase2(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 
 void Insane::postCase20(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 						int32 setupsan13, int32 curFrame, int32 maxFrame) {
-	actorsReaction(true);
-	checkEnemyLoose(1);
+	turnBen(true);
+	turnEnemy(true);
 	
 	if (curFrame >= maxFrame)
 		smush_rewindCurrentSan(1088, -1, -1);
@@ -2712,7 +2708,7 @@ void Insane::postCase12(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 
 		switch (_currEnemy) {
 		case EN_ROTT2:
-			actorsReaction(true);
+			turnBen(true);
 
 			if (_enemy[1].field_8 <= 1)
 				prepareScenePropScene(scenePropIdx[32], 0, 1);
@@ -2720,19 +2716,19 @@ void Insane::postCase12(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 				prepareScenePropScene(scenePropIdx[33], 0, 1);
 			break;
 		case EN_ROTT3:
-			actorsReaction(true);
+			turnBen(true);
 
 			if (_enemy[1].field_8 <= 1)
 				prepareScenePropScene(scenePropIdx[25], 0, 1);
 			break;
 		case EN_VULTF1:
-			actorsReaction(true);
+			turnBen(true);
 
 			if (_enemy[1].field_8 <= 1)
 				prepareScenePropScene(scenePropIdx[2], 0, 1);
 			break;
 		case EN_VULTF2:
-			actorsReaction(true);
+			turnBen(true);
 
 			if (_enemy[1].field_8 <= 1)
 				prepareScenePropScene(scenePropIdx[9], 0, 1);
@@ -2740,13 +2736,13 @@ void Insane::postCase12(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 				prepareScenePropScene(scenePropIdx[16], 0, 1);
 			break;
 		case EN_VULTM2:
-			actorsReaction(true);
+			turnBen(true);
 
 			prepareScenePropScene(scenePropIdx[18], 0, 1);
-			_val39_ = false;
+			_battleScene = false;
 			break;
 		case EN_TORQUE:
-			actorsReaction(false);
+			turnBen(false);
 			setWordInString(_numberArray, 1, _val51d);
 			smush_setToFinish();
 			break;
@@ -2754,29 +2750,29 @@ void Insane::postCase12(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 		case EN_VULTM1:
 		case EN_CAVEFISH:
 		default:
-			actorsReaction(true);
+			turnBen(true);
 			break;
 		}
 	} else {
 		switch (_currEnemy) {
 		case EN_VULTM2:
 			if (_enemy[EN_VULTM2].field_8 <= 1)
-				actorsReaction(false);
+				turnBen(false);
 			else
-				actorsReaction(true);
+				turnBen(true);
 			break;
 		case EN_TORQUE:
-			actorsReaction(false);
+			turnBen(false);
 			if (_actor[1].y != 300)
 				prepareScenePropScene(scenePropIdx[57], 1, 0);
 			break;
 		default:
-			actorsReaction(true);
+			turnBen(true);
 		}
 		_actor[1].y -= (_actor[1].y - 200) / 20 + 1;
 	}
 
-	checkEnemyLoose(false);
+	turnEnemy(false);
 
 	if (curFrame == 0)
 		smlayer_setFluPalette(_smush_roadrashRip, 0);
@@ -2848,7 +2844,7 @@ void Insane::postCaseAll(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 				_currScenePropSubIdx = 0;
 				_actor[0].field_4C = 0;
 				_actor[1].field_4C = 0;
-				_val39_ = true;
+				_battleScene = true;
 			}
 		}
 	}
@@ -2886,7 +2882,7 @@ void Insane::queueSceneSwitch(int32 sceneId, byte *fluPtr, const char *filename,
 	_temp2SceneId = sceneId;
 }
 
-void Insane::actorsReaction(bool flag) {
+void Insane::turnBen(bool battle) {
 	int32 buttons;
 	
 	switch (_currSceneId) {
@@ -2910,8 +2906,8 @@ void Insane::actorsReaction(bool flag) {
 			}
 		}
 		buttons = 0;
-		if (!_actor[0].lost && flag) {
-			buttons = processBattle();
+		if (!_actor[0].lost && battle) {
+			buttons = actionBen();
 			if (_currSceneId == 13)
 				buttons &= 2;
 			if (_currEnemy == EN_TORQUE)
@@ -2944,7 +2940,7 @@ void Insane::actorsReaction(bool flag) {
 				return;
 			}
 		}
-		if (!_actor[0].lost && !flag)
+		if (!_actor[0].lost && !battle)
 			func11(func10(true));
 		else
 			func11(0);
@@ -2952,7 +2948,7 @@ void Insane::actorsReaction(bool flag) {
 	}
 }
 
-int32 Insane::processBattle(void) {
+int32 Insane::actionBen(void) {
 	int32 buttons, tmp;
 	bool doDamage = false;
 
@@ -3279,6 +3275,7 @@ void Insane::smush_rewindCurrentSan(int arg_0, int arg_4, int arg_8) {
 	_smush_curFrame = 0; // HACK
 }
 
+// Ben
 void Insane::actor02Reaction(int32 buttons) {
 	int32 tmp, tmp2;
 	
@@ -3289,7 +3286,7 @@ void Insane::actor02Reaction(int32 buttons) {
 		_actor[0].kicking = 0;
 		smlayer_setActorFacing(0, 2, 29, 180);
 		_actor[0].act[2].state = 107;
-		_actor[0].act[2].speedX = speedTranslator(_actor[0].speed);
+		_actor[0].act[2].tilt = calcTilt(_actor[0].speed);
 		break;
 	case 107:
 		smlayer_setActorLayer(0, 2, 5);
@@ -3301,7 +3298,7 @@ void Insane::actor02Reaction(int32 buttons) {
 			smlayer_startSound2(318);
 			switchWeapon();
 		}
-		_actor[0].act[2].speedX = speedTranslator(_actor[0].speed);
+		_actor[0].act[2].tilt = calcTilt(_actor[0].speed);
 		break;
 	case 104:
 		smlayer_setActorLayer(0, 2, 5);
@@ -3309,7 +3306,7 @@ void Insane::actor02Reaction(int32 buttons) {
 		_actor[0].kicking = 0;
 		smlayer_setActorFacing(0, 2, 28, 180);
 		_actor[0].act[2].state = 105;
-		_actor[0].act[2].speedX = speedTranslator(_actor[0].speed);
+		_actor[0].act[2].tilt = calcTilt(_actor[0].speed);
 		break;
 	case 105:
 		smlayer_setActorLayer(0, 2, 5);
@@ -3317,11 +3314,11 @@ void Insane::actor02Reaction(int32 buttons) {
 		_actor[0].kicking = 0;
 		if (_actor[0].act[2].frame >= 5) {
 			_actor[0].act[2].state = 1;
-			_actor[0].inventory[INV_MACE] = 0; // Mace
+			_actor[0].inventory[INV_MACE] = 0;
 			smlayer_startSound2(318);
 			switchWeapon();
 		}
-		_actor[0].act[2].speedX = speedTranslator(_actor[0].speed);
+		_actor[0].act[2].tilt = calcTilt(_actor[0].speed);
 		break;
 	case 108:
 		smlayer_setActorLayer(0, 2, 5);
@@ -3329,7 +3326,7 @@ void Insane::actor02Reaction(int32 buttons) {
 		_actor[0].kicking = 0;
 		smlayer_setActorFacing(0, 2, 28, 180);
 		_actor[0].act[2].state = 109;
-		_actor[0].act[2].speedX = speedTranslator(_actor[0].speed);
+		_actor[0].act[2].tilt = calcTilt(_actor[0].speed);
 		break;
 	case 109:
 		smlayer_setActorLayer(0, 2, 5);
@@ -3341,7 +3338,7 @@ void Insane::actor02Reaction(int32 buttons) {
 			smlayer_startSound2(318);
 			switchWeapon();
 		}
-		_actor[0].act[2].speedX = speedTranslator(_actor[0].speed);
+		_actor[0].act[2].tilt = calcTilt(_actor[0].speed);
 		break;
 	case 73:
 		smlayer_setActorLayer(0, 2, 6);
@@ -3352,7 +3349,7 @@ void Insane::actor02Reaction(int32 buttons) {
 			smlayer_setActorFacing(0, 2, 19, 180);
 			_actor[0].act[2].state = 74;
 		}
-		_actor[0].act[2].speedX = speedTranslator(_actor[0].speed);
+		_actor[0].act[2].tilt = calcTilt(_actor[0].speed);
 		break;
 	case 74:
 		smlayer_setActorLayer(0, 2, 6);
@@ -3364,7 +3361,7 @@ void Insane::actor02Reaction(int32 buttons) {
 			_actor[0].act[2].state = 1;
 			_actor[0].field_2C = 2;
 		}
-		_actor[0].act[2].speedX = speedTranslator(_actor[0].speed);
+		_actor[0].act[2].tilt = calcTilt(_actor[0].speed);
 		break;
 	case 79:
 		smlayer_setActorLayer(0, 2, 6);
@@ -3375,7 +3372,7 @@ void Insane::actor02Reaction(int32 buttons) {
 			smlayer_setActorFacing(0, 2, 23, 180);
 			_actor[0].act[2].state = 80;
 		}
-		_actor[0].act[2].speedX = speedTranslator(_actor[0].speed);
+		_actor[0].act[2].tilt = calcTilt(_actor[0].speed);
 		break;
 	case 80:
 		smlayer_setActorLayer(0, 2, 6);
@@ -3386,7 +3383,7 @@ void Insane::actor02Reaction(int32 buttons) {
 			smlayer_setActorFacing(0, 2, 25, 180);
 			_actor[0].act[2].state = 63;
 		}
-		_actor[0].act[2].speedX = speedTranslator(_actor[0].speed);
+		_actor[0].act[2].tilt = calcTilt(_actor[0].speed);
 		break;
 	case 81:
 		smlayer_setActorLayer(0, 2, 6);
@@ -3397,7 +3394,7 @@ void Insane::actor02Reaction(int32 buttons) {
 			smlayer_setActorFacing(0, 2, 23, 180);
 			_actor[0].act[2].state = 82;
 		}
-		_actor[0].act[2].speedX = speedTranslator(_actor[0].speed);
+		_actor[0].act[2].tilt = calcTilt(_actor[0].speed);
 		break;
 	case 82:
 		smlayer_setActorLayer(0, 2, 6);
@@ -3408,7 +3405,7 @@ void Insane::actor02Reaction(int32 buttons) {
 			smlayer_setActorFacing(0, 2, 26, 180);
 			_actor[0].act[2].state = 64;
 		}
-		_actor[0].act[2].speedX = speedTranslator(_actor[0].speed);
+		_actor[0].act[2].tilt = calcTilt(_actor[0].speed);
 		break;
 	case 77:
 		smlayer_setActorLayer(0, 2, 6);
@@ -3419,7 +3416,7 @@ void Insane::actor02Reaction(int32 buttons) {
 			smlayer_setActorFacing(0, 2, 23, 180);
 			_actor[0].act[2].state = 78;
 		}
-		_actor[0].act[2].speedX = speedTranslator(_actor[0].speed);
+		_actor[0].act[2].tilt = calcTilt(_actor[0].speed);
 		break;
 	case 78:
 		smlayer_setActorLayer(0, 2, 6);
@@ -3430,7 +3427,7 @@ void Insane::actor02Reaction(int32 buttons) {
 			smlayer_setActorFacing(0, 2, 25, 180);
 			_actor[0].act[2].state = 65;
 		}
-		_actor[0].act[2].speedX = speedTranslator(_actor[0].speed);
+		_actor[0].act[2].tilt = calcTilt(_actor[0].speed);
 		break;
 	case 83:
 		smlayer_setActorLayer(0, 2, 6);
@@ -3441,7 +3438,7 @@ void Insane::actor02Reaction(int32 buttons) {
 			smlayer_setActorFacing(0, 2, 23, 180);
 			_actor[0].act[2].state = 84;
 		}
-		_actor[0].act[2].speedX = speedTranslator(_actor[0].speed);
+		_actor[0].act[2].tilt = calcTilt(_actor[0].speed);
 		break;
 	case 84:
 		smlayer_setActorLayer(0, 2, 6);
@@ -3452,7 +3449,7 @@ void Insane::actor02Reaction(int32 buttons) {
 			smlayer_setActorFacing(0, 2, 25, 180);
 			_actor[0].act[2].state = 66;
 		}
-		_actor[0].act[2].speedX = speedTranslator(_actor[0].speed);
+		_actor[0].act[2].tilt = calcTilt(_actor[0].speed);
 		break;
 	case 75:
 		smlayer_setActorLayer(0, 2, 6);
@@ -3463,7 +3460,7 @@ void Insane::actor02Reaction(int32 buttons) {
 			smlayer_setActorFacing(0, 2, 23, 180);
 			_actor[0].act[2].state = 76;
 		}
-		_actor[0].act[2].speedX = speedTranslator(_actor[0].speed);
+		_actor[0].act[2].tilt = calcTilt(_actor[0].speed);
 		break;
 		break;
 	case 76:
@@ -3475,7 +3472,7 @@ void Insane::actor02Reaction(int32 buttons) {
 			smlayer_setActorFacing(0, 2, 25, 180);
 			_actor[0].act[2].state = 62;
 		}
-		_actor[0].act[2].speedX = speedTranslator(_actor[0].speed);
+		_actor[0].act[2].tilt = calcTilt(_actor[0].speed);
 		break;
 	case 2:
 		smlayer_setActorLayer(0, 2, 4);
@@ -3483,7 +3480,7 @@ void Insane::actor02Reaction(int32 buttons) {
 		_actor[0].kicking = 1;
 		_actor[0].field_2C = 1;
 		_actor[0].act[2].state = 3;
-		_actor[0].act[2].speedX = speedTranslator(_actor[0].speed);
+		_actor[0].act[2].tilt = calcTilt(_actor[0].speed);
 		smlayer_startSound1(63);
 		break;
 	case 3:
@@ -3509,7 +3506,7 @@ void Insane::actor02Reaction(int32 buttons) {
 		}
 	
 		_actor[0].kicking = 1;
-		_actor[0].act[2].speedX = speedTranslator(_actor[0].speed);
+		_actor[0].act[2].tilt = calcTilt(_actor[0].speed);
 		break;
 	case 4:
 		smlayer_setActorLayer(0, 2, 5);
@@ -3521,7 +3518,7 @@ void Insane::actor02Reaction(int32 buttons) {
 			_actor[0].act[2].facing = -1000;
 			_actor[0].field_2C = 2;
 		}
-		_actor[0].act[2].speedX = speedTranslator(_actor[0].speed);
+		_actor[0].act[2].tilt = calcTilt(_actor[0].speed);
 		break;
 	case 5:
 		smlayer_setActorLayer(0, 2, 5);
@@ -3532,7 +3529,7 @@ void Insane::actor02Reaction(int32 buttons) {
 		_actor[0].kicking = 1;
 		smlayer_setActorFacing(0, 2, 19, 180);
 		_actor[0].act[2].state = 11;
-		_actor[0].act[2].speedX = speedTranslator(_actor[0].speed);
+		_actor[0].act[2].tilt = calcTilt(_actor[0].speed);
 		smlayer_startSound1(75);
 		break;
 	case 11:
@@ -3567,7 +3564,7 @@ void Insane::actor02Reaction(int32 buttons) {
 				_actor[0].act[2].state = 12;
 			}
 		}
-		_actor[0].act[2].speedX = speedTranslator(_actor[0].speed);
+		_actor[0].act[2].tilt = calcTilt(_actor[0].speed);
 		break;
 	case 97:
 		smlayer_setActorLayer(0, 2, 5);
@@ -3581,7 +3578,7 @@ void Insane::actor02Reaction(int32 buttons) {
 			_actor[0].act[2].state = 13;
 			_actor[0].x = _actor[1].x - 116;
 		}
-		_actor[0].act[2].speedX = speedTranslator(_actor[0].speed);
+		_actor[0].act[2].tilt = calcTilt(_actor[0].speed);
 		break;
 	case 12:
 		smlayer_setActorLayer(0, 2, 4);
@@ -3610,7 +3607,7 @@ void Insane::actor02Reaction(int32 buttons) {
 			smlayer_setActorFacing(0, 2, 21, 180);
 			_actor[0].act[2].state = 13;
 		}
-		_actor[0].act[2].speedX = speedTranslator(_actor[0].speed);
+		_actor[0].act[2].tilt = calcTilt(_actor[0].speed);
 		break;
 	case 13:
 		smlayer_setActorLayer(0, 2, 5);
@@ -3620,7 +3617,7 @@ void Insane::actor02Reaction(int32 buttons) {
 			smlayer_setActorFacing(0, 2, 25, 180);
 			_actor[0].act[2].state = 63;
 		}
-		_actor[0].act[2].speedX = speedTranslator(_actor[0].speed);
+		_actor[0].act[2].tilt = calcTilt(_actor[0].speed);
 		break;
 	case 6:
 		smlayer_setActorLayer(0, 2, 4);
@@ -3630,7 +3627,7 @@ void Insane::actor02Reaction(int32 buttons) {
 		smlayer_setActorCostume(0, 2, readArray(_numberArray, 22));
 		smlayer_setActorFacing(0, 2, 19, 180);
 		_actor[0].act[2].state = 7;
-		_actor[0].act[2].speedX = speedTranslator(_actor[0].speed);
+		_actor[0].act[2].tilt = calcTilt(_actor[0].speed);
 		smlayer_startSound1(66);
 		break;
 	case 7:
@@ -3642,7 +3639,7 @@ void Insane::actor02Reaction(int32 buttons) {
 			smlayer_setActorFacing(0, 2, 20, 180);
 			_actor[0].act[2].state = 8;
 		}
-		_actor[0].act[2].speedX = speedTranslator(_actor[0].speed);
+		_actor[0].act[2].tilt = calcTilt(_actor[0].speed);
 		break;
 	case 8:
 		smlayer_setActorLayer(0, 2, 4);
@@ -3658,7 +3655,7 @@ void Insane::actor02Reaction(int32 buttons) {
 			smlayer_setActorFacing(0, 2, 21, 180);
 			_actor[0].act[2].state = 9;
 		}
-		_actor[0].act[2].speedX = speedTranslator(_actor[0].speed);
+		_actor[0].act[2].tilt = calcTilt(_actor[0].speed);
 		break;
 	case 9:
 		smlayer_setActorLayer(0, 2, 5);
@@ -3670,7 +3667,7 @@ void Insane::actor02Reaction(int32 buttons) {
 			_actor[0].field_34 = 2;
 			_actor[0].act[2].state = 1;
 		}
-		_actor[0].act[2].speedX = speedTranslator(_actor[0].speed);
+		_actor[0].act[2].tilt = calcTilt(_actor[0].speed);
 		break;
 	case 14:
 		smlayer_setActorLayer(0, 2, 8);
@@ -3678,7 +3675,7 @@ void Insane::actor02Reaction(int32 buttons) {
 		_actor[0].kicking = 1;
 		smlayer_setActorFacing(0, 2, 19, 180);
 		_actor[0].act[2].state = 15;
-		_actor[0].act[2].speedX = speedTranslator(_actor[0].speed);
+		_actor[0].act[2].tilt = calcTilt(_actor[0].speed);
 		smlayer_startSound1(78);
 		break;
 	case 15:
@@ -3689,7 +3686,7 @@ void Insane::actor02Reaction(int32 buttons) {
 			switch (_actor[1].weapon) {
 			case INV_CHAIN:
 			case INV_CHAINSAW:
-				if (weaponEffective()) {
+				if (weaponIsEffective()) {
 					smlayer_setActorFacing(0, 2, 22, 180);
 					_actor[0].act[2].state = 81;
 				} else {
@@ -3710,7 +3707,7 @@ void Insane::actor02Reaction(int32 buttons) {
 				break;
 			}
 		}
-		_actor[0].act[2].speedX = speedTranslator(_actor[0].speed);
+		_actor[0].act[2].tilt = calcTilt(_actor[0].speed);
 		break;
 	case 16:
 		smlayer_setActorLayer(0, 2, 8);
@@ -3744,7 +3741,7 @@ void Insane::actor02Reaction(int32 buttons) {
 			smlayer_setActorFacing(0, 2, 21,180);
 			_actor[0].act[2].state = 17;
 		}
-		_actor[0].act[2].speedX = speedTranslator(_actor[0].speed);
+		_actor[0].act[2].tilt = calcTilt(_actor[0].speed);
 		break;
 	case 17:
 		smlayer_setActorLayer(0, 2, 5);
@@ -3755,7 +3752,7 @@ void Insane::actor02Reaction(int32 buttons) {
 			_actor[0].act[2].state = 64;
 			smlayer_stopSound(76);
 		}
-		_actor[0].act[2].speedX = speedTranslator(_actor[0].speed);
+		_actor[0].act[2].tilt = calcTilt(_actor[0].speed);
 		break;
 	case 18:
 		smlayer_setActorLayer(0, 2, 4);
@@ -3763,7 +3760,7 @@ void Insane::actor02Reaction(int32 buttons) {
 		_actor[0].kicking = 1;
 		smlayer_setActorFacing(0, 2, 19, 180);
 		_actor[0].act[2].state = 19;
-		_actor[0].act[2].speedX = speedTranslator(_actor[0].speed);
+		_actor[0].act[2].tilt = calcTilt(_actor[0].speed);
 		smlayer_startSound1(69);
 		break;
 	case 19:
@@ -3791,7 +3788,7 @@ void Insane::actor02Reaction(int32 buttons) {
 				break;
 			case INV_MACE:
 			case INV_2X4:
-				if (weaponEffective()) {
+				if (weaponIsEffective()) {
 					smlayer_setActorFacing(0, 2, 22, 180);
 					_actor[0].act[2].state = 77;
 					break;
@@ -3804,7 +3801,7 @@ void Insane::actor02Reaction(int32 buttons) {
 			smlayer_setActorFacing(0, 2, 20, 180);
 			_actor[0].act[2].state = 20;
 		}
-		_actor[0].act[2].speedX = speedTranslator(_actor[0].speed);
+		_actor[0].act[2].tilt = calcTilt(_actor[0].speed);
 		break;
 	case 20:
 		smlayer_setActorLayer(0, 2, 4);
@@ -3837,7 +3834,7 @@ void Insane::actor02Reaction(int32 buttons) {
 			smlayer_setActorFacing(0, 2, 21, 180);
 			_actor[0].act[2].state = 21;
 		}
-		_actor[0].act[2].speedX = speedTranslator(_actor[0].speed);
+		_actor[0].act[2].tilt = calcTilt(_actor[0].speed);
 		break;
 	case 21:
 		smlayer_setActorLayer(0, 2, 5);
@@ -3847,7 +3844,7 @@ void Insane::actor02Reaction(int32 buttons) {
 			smlayer_setActorFacing(0, 2, 25, 180);
 			_actor[0].act[2].state = 65;
 		}
-		_actor[0].act[2].speedX = speedTranslator(_actor[0].speed);
+		_actor[0].act[2].tilt = calcTilt(_actor[0].speed);
 		break;
 	case 110:
 		smlayer_setActorLayer(0, 2, 4);
@@ -3855,7 +3852,7 @@ void Insane::actor02Reaction(int32 buttons) {
 		_actor[0].kicking = 0;
 		smlayer_setActorFacing(0, 2, 30, 180);
 		_actor[0].act[2].state = 111;
-		_actor[0].act[2].speedX = speedTranslator(_actor[0].speed);
+		_actor[0].act[2].tilt = calcTilt(_actor[0].speed);
 		break;
 	case 111:
 		smlayer_setActorLayer(0, 2, 4);
@@ -3866,7 +3863,7 @@ void Insane::actor02Reaction(int32 buttons) {
 			_actor[0].act[2].state = 65;
 			_actor[0].inventory[INV_CHAIN] = 1; // Chain
 		}
-		_actor[0].act[2].speedX = speedTranslator(_actor[0].speed);
+		_actor[0].act[2].tilt = calcTilt(_actor[0].speed);
 		break;
 	case 22:
 		smlayer_setActorLayer(0, 2, 6);
@@ -3874,7 +3871,7 @@ void Insane::actor02Reaction(int32 buttons) {
 		_actor[0].kicking = 1;
 		smlayer_setActorFacing(0, 2, 19, 180);
 		_actor[0].act[2].state = 23;
-		_actor[0].act[2].speedX = speedTranslator(_actor[0].speed);
+		_actor[0].act[2].tilt = calcTilt(_actor[0].speed);
 		smlayer_startSound1(81);
 		break;
 	case 23:
@@ -3889,7 +3886,7 @@ void Insane::actor02Reaction(int32 buttons) {
 			case INV_2X4:
 			case INV_BOOT:
 			case INV_DUST:
-				if (weaponEffective()) {
+				if (weaponIsEffective()) {
 					smlayer_setActorFacing(0, 2, 22, 180);
 					_actor[0].act[2].state = 83;
 				}
@@ -3902,7 +3899,7 @@ void Insane::actor02Reaction(int32 buttons) {
 			smlayer_setActorFacing(0, 2, 21, 180);
 			_actor[0].act[2].state = 21;
 		}
-		_actor[0].act[2].speedX = speedTranslator(_actor[0].speed);
+		_actor[0].act[2].tilt = calcTilt(_actor[0].speed);
 		break;
 	case 24:
 		smlayer_setActorLayer(0, 2, 4);
@@ -3936,7 +3933,7 @@ void Insane::actor02Reaction(int32 buttons) {
 			smlayer_setActorFacing(0, 2, 21, 180);
 			_actor[0].act[2].state = 25;
 		}
-		_actor[0].act[2].speedX = speedTranslator(_actor[0].speed);
+		_actor[0].act[2].tilt = calcTilt(_actor[0].speed);
 		break;
 	case 25:
 		smlayer_setActorLayer(0, 2, 5);
@@ -3947,7 +3944,7 @@ void Insane::actor02Reaction(int32 buttons) {
 			_actor[0].act[2].state = 66;
 			_actor[0].field_2C = 1;
 		}
-		_actor[0].act[2].speedX = speedTranslator(_actor[0].speed);
+		_actor[0].act[2].tilt = calcTilt(_actor[0].speed);
 		break;
 	case 26:
 		smlayer_setActorLayer(0, 2, 4);
@@ -3955,7 +3952,7 @@ void Insane::actor02Reaction(int32 buttons) {
 		_actor[0].kicking = 1;
 		smlayer_setActorFacing(0, 2, 19, 180);
 		_actor[0].act[2].state = 27;
-		_actor[0].act[2].speedX = speedTranslator(_actor[0].speed);
+		_actor[0].act[2].tilt = calcTilt(_actor[0].speed);
 		smlayer_startSound1(72);
 		break;
 	case 27:
@@ -3974,7 +3971,7 @@ void Insane::actor02Reaction(int32 buttons) {
 			case INV_2X4:
 			case INV_BOOT:
 			case INV_DUST:
-				if (weaponEffective()) {
+				if (weaponIsEffective()) {
 					smlayer_setActorFacing(0, 2, 22, 180);
 					_actor[0].act[2].state = 75;
 					break;
@@ -3985,7 +3982,7 @@ void Insane::actor02Reaction(int32 buttons) {
 				break;
 			}
 		}
-		_actor[0].act[2].speedX = speedTranslator(_actor[0].speed);
+		_actor[0].act[2].tilt = calcTilt(_actor[0].speed);
 		break;
 	case 28:
 		smlayer_setActorLayer(0, 2, 4);
@@ -4022,7 +4019,7 @@ void Insane::actor02Reaction(int32 buttons) {
 			smlayer_setActorFacing(0, 2, 21, 180);
 			_actor[0].act[2].state = 29;
 		}
-		_actor[0].act[2].speedX = speedTranslator(_actor[0].speed);
+		_actor[0].act[2].tilt = calcTilt(_actor[0].speed);
 		break;
 	case 29:
 		smlayer_setActorLayer(0, 2, 5);
@@ -4032,7 +4029,7 @@ void Insane::actor02Reaction(int32 buttons) {
 			smlayer_setActorFacing(0, 2, 25, 180);
 			_actor[0].act[2].state = 62;
 		}
-		_actor[0].act[2].speedX = speedTranslator(_actor[0].speed);
+		_actor[0].act[2].tilt = calcTilt(_actor[0].speed);
 		break;
 	case 30:
 		smlayer_setActorLayer(0, 2, 4);
@@ -4040,7 +4037,7 @@ void Insane::actor02Reaction(int32 buttons) {
 		smlayer_setActorCostume(0, 2, readArray(_numberArray, 21));
 		smlayer_setActorFacing(0, 2, 18, 180);
 		_actor[0].act[2].state = 31;
-		_actor[0].act[2].speedX = speedTranslator(_actor[0].speed);
+		_actor[0].act[2].tilt = calcTilt(_actor[0].speed);
 		smlayer_startSound1(84);
 		break;
 	case 31:
@@ -4050,7 +4047,7 @@ void Insane::actor02Reaction(int32 buttons) {
 			smlayer_setActorFacing(0, 2, 20, 180);
 			_actor[0].act[2].state = 32;
 		}
-		_actor[0].act[2].speedX = speedTranslator(_actor[0].speed);
+		_actor[0].act[2].tilt = calcTilt(_actor[0].speed);
 		break;
 	case 32:
 		smlayer_setActorLayer(0, 2, 4);
@@ -4076,7 +4073,7 @@ void Insane::actor02Reaction(int32 buttons) {
 			smlayer_setActorFacing(0, 2, 21, 180);
 			_actor[0].act[2].state = 33;
 		}
-		_actor[0].act[2].speedX = speedTranslator(_actor[0].speed);
+		_actor[0].act[2].tilt = calcTilt(_actor[0].speed);
 		break;
 	case 33:
 		smlayer_setActorLayer(0, 2, 5);
@@ -4086,7 +4083,7 @@ void Insane::actor02Reaction(int32 buttons) {
 			smlayer_setActorCostume(0, 2, readArray(_numberArray, 12));
 			_actor[0].act[2].state = 1;
 		}
-		_actor[0].act[2].speedX = speedTranslator(_actor[0].speed);
+		_actor[0].act[2].tilt = calcTilt(_actor[0].speed);
 		break;
 	case 36:
 		smlayer_setActorLayer(0, 2, 5);
@@ -4188,11 +4185,11 @@ void Insane::actor02Reaction(int32 buttons) {
 		
 		if (!smlayer_actorNeedRedraw(0, 2)) {
 			setProperActorState();
-			_actor[0].act[2].speedX = 0;
+			_actor[0].act[2].tilt = 0;
 			// heh, for some reason there is no break at this
-			// place, so speedX gets overriden on next line
+			// place, so tilt gets overriden on next line
 		}
-		_actor[0].act[2].speedX = speedTranslator(_actor[0].speed);
+		_actor[0].act[2].tilt = calcTilt(_actor[0].speed);
 		break;
 	case 35:
 		smlayer_setActorLayer(0, 2, 5);
@@ -4200,9 +4197,9 @@ void Insane::actor02Reaction(int32 buttons) {
 		
 		if (!smlayer_actorNeedRedraw(0, 2)) {
 			switchWeapon();
-			_actor[0].act[2].speedX = 0;
+			_actor[0].act[2].tilt = 0;
 		}
-		_actor[0].act[2].speedX = speedTranslator(_actor[0].speed);
+		_actor[0].act[2].tilt = calcTilt(_actor[0].speed);
 		break;
 	case 63:
 		smlayer_setActorLayer(0, 2, 5);
@@ -4212,7 +4209,7 @@ void Insane::actor02Reaction(int32 buttons) {
 		}
 		_actor[0].field_2C = 1;
 		_actor[0].kicking = 0;
-		_actor[0].act[2].speedX = speedTranslator(_actor[0].speed);
+		_actor[0].act[2].tilt = calcTilt(_actor[0].speed);
 		break;
 	case 64:
 		smlayer_setActorLayer(0, 2, 5);
@@ -4222,7 +4219,7 @@ void Insane::actor02Reaction(int32 buttons) {
 		}
 		_actor[0].field_2C = 1;
 		_actor[0].kicking = 0;
-		_actor[0].act[2].speedX = speedTranslator(_actor[0].speed);
+		_actor[0].act[2].tilt = calcTilt(_actor[0].speed);
 		break;
 	case 65:
 		smlayer_setActorLayer(0, 2, 5);
@@ -4232,7 +4229,7 @@ void Insane::actor02Reaction(int32 buttons) {
 		}
 		_actor[0].field_2C = 1;
 		_actor[0].kicking = 0;
-		_actor[0].act[2].speedX = speedTranslator(_actor[0].speed);
+		_actor[0].act[2].tilt = calcTilt(_actor[0].speed);
 		break;
 	case 66:
 		smlayer_setActorLayer(0, 2, 5);
@@ -4242,7 +4239,7 @@ void Insane::actor02Reaction(int32 buttons) {
 		}
 		_actor[0].field_2C = 1;
 		_actor[0].kicking = 0;
-		_actor[0].act[2].speedX = speedTranslator(_actor[0].speed);
+		_actor[0].act[2].tilt = calcTilt(_actor[0].speed);
 		break;
 	case 62:
 		smlayer_setActorLayer(0, 2, 5);
@@ -4252,7 +4249,7 @@ void Insane::actor02Reaction(int32 buttons) {
 		}
 		_actor[0].field_2C = 1;
 		_actor[0].kicking = 0;
-		_actor[0].act[2].speedX = speedTranslator(_actor[0].speed);
+		_actor[0].act[2].tilt = calcTilt(_actor[0].speed);
 		break;
 	case 1:
 		smlayer_setActorLayer(0, 2, 5);
@@ -4301,21 +4298,21 @@ void Insane::actor02Reaction(int32 buttons) {
 		default:
 			break;
 		}
-		_actor[0].act[2].speedX = 0;
+		_actor[0].act[2].tilt = 0;
 		break;
 	default:
 		break;
 	}
-	tmp = _actor[0].x + _actor[0].act[2].speedX + 17 + _actor[0].x1;
+	tmp = _actor[0].x + _actor[0].act[2].tilt + 17 + _actor[0].x1;
 	tmp2 = _actor[0].y + _actor[0].y1 - 98;
-	
+
 	if (_actor[0].act[2].room)
 		smlayer_putActor(0, 2, tmp, tmp2, _smlayer_room2);
 	else
 		smlayer_putActor(0, 2, tmp, tmp2, _smlayer_room);
-	
 }
 
+// Bike
 void Insane::actor00Reaction(int32 buttons) {
 	int32 tmpx, tmpy;
 
@@ -4374,6 +4371,7 @@ void Insane::actor00Reaction(int32 buttons) {
 		smlayer_putActor(0, 0, tmpx, tmpy, _smlayer_room);
 }
 
+// Bike top
 void Insane::actor01Reaction(int32 buttons) {
 	int32 tmpx, tmpy;
 
@@ -4478,11 +4476,12 @@ void Insane::actor01Reaction(int32 buttons) {
 
 	tmpx = _actor[0].x + _actor[0].x1;
 	tmpy = _actor[0].y + _actor[0].y1;
+
 	if (_actor[0].act[1].room)
 		smlayer_putActor(0, 1, tmpx, tmpy, _smlayer_room2);
 	else 
 		smlayer_putActor(0, 1, tmpx, tmpy, _smlayer_room);
-	
+
 	_actor[0].field_30 = _actor[0].field_2C;
 	_actor[0].field_38 = _actor[0].field_34;
 }
@@ -4725,7 +4724,7 @@ int32 Insane::weaponDamage(int32 actornum) {
 	return map[_actor[actornum].weapon];
 }
 
-bool Insane::weaponEffective(void) {
+bool Insane::weaponIsEffective(void) {
 	if ((_actor[1].x - _actor[0].x > weaponMaxRange(0)) ||
 		(_actor[1].x - _actor[0].x < weaponMinRange(0)) ||
 		!_actor[1].kicking)
@@ -4907,12 +4906,12 @@ void Insane::reinitActors(void) {
 	_actor[0].field_14 = 0;
 }
 
-int Insane::speedTranslator(int value) {
-	const int a[7] = {-5, -4, -2, 0, 2, 4, 5};
-	if (value+3 > 6)
+int Insane::calcTilt(int speed) {
+	const int tilt[7] = {-5, -4, -2, 0, 2, 4, 5};
+	if (speed + 3 > 6)
 		return 0;
 	
-	return a[value+3];
+	return tilt[speed + 3];
 }
 
 bool Insane::actor1StateFlags(int state) {
@@ -5242,8 +5241,8 @@ void Insane::smlayer_showStatusMsg(int32 arg_0, byte *renderBitmap, int32 codecp
 	warning("stub Insane::smlayer_showStatusMsg(...)");
 }
 
-void Insane::checkEnemyLoose(int arg_0) {
-	int tmp;
+void Insane::turnEnemy(bool battle) {
+	int buttons;
 
 	if (_actor[1].damage < _actor[1].maxdamage) {
 		_actor[1].lost = 0;
@@ -5258,40 +5257,173 @@ void Insane::checkEnemyLoose(int arg_0) {
 		}
 	}
 
-	tmp = 0;
+	buttons = 0;
 
 	if (_actor[1].lost == 0) {
-		if (arg_0)
-			tmp = func60();
+		if (battle)
+			buttons = actionEnemy();
 	}
 
 	debug(1, "11:%d 12:%d 13:%d 10:%d", _actor[1].act[1].state, 
 				_actor[1].act[2].state, _actor[1].act[3].state, _actor[1].act[0].state);
-	proc59(1, 1, tmp);
-	proc51(1, 2, tmp);
-	proc54(1, 3, tmp);
-	proc55(1, 0, tmp);
+	actor11Reaction(buttons);
+	proc51(buttons);
+	proc54(buttons);
+	actor10Reaction(buttons);
 }
 
-void Insane::proc59(int32 actornum, int32 actnum, int32 arg_8) {
+void Insane::actor11Reaction(int32 buttons) {
+	proc56(buttons);
+
+	switch(_actor[1].speed) {
+	case -3:
+		if (_actor[1].act[1].state != 41 || _actor[1].field_2C != _actor[0].field_30) {
+			setEnemyAnimation(1, 6);
+			_actor[1].act[1].state = 41;
+		}
+	
+		if (_actor[1].field_14 >= -100) {
+			setEnemyAnimation(1, 7);
+			_actor[1].act[1].state = 40;
+			_actor[1].field_8 = 48;
+			_actor[1].speed = -2;
+		}
+
+		//insane_actor1.x += (a - a * 32) / 32;
+
+		//_actor[1].x = _actor[1].field_14; // XXX
+		break;
+	}
+}
+
+void Insane::proc56(int32 buttons) {
 	// FIXME: implement
 }
 
-void Insane::proc51(int32 actornum, int32 actnum, int32 arg_8) {
+// 12
+void Insane::proc51(int32 buttons) {
 	// FIXME: implement
 }
 
-void Insane::proc54(int32 actornum, int32 actnum, int32 arg_8) {
+// 13
+void Insane::proc54(int32 buttons) {
 	// FIXME: implement
 }
 
-void Insane::proc55(int32 actornum, int32 actnum, int32 arg_8) {
-	// FIXME: implement
+
+// FIXME: this is exact actor00Reaction. Combine
+void Insane::actor10Reaction(int32 buttons) {
+	int32 tmpx, tmpy;
+
+	switch (_actor[1].speed) {
+	case -3:
+		if (_actor[1].act[0].state != 41) {
+			smlayer_setActorFacing(1, 0, 6, 180);
+			_actor[1].act[0].state = 41;
+		}
+		break;
+	case -2:
+		if (_actor[1].act[0].state != 40) {
+			smlayer_setActorFacing(1, 0, 7, 180);
+			_actor[1].act[0].state = 40;
+		}
+		break;
+	case -1:
+		if (_actor[1].act[0].state != 39) {
+			smlayer_setActorFacing(1, 0, 8, 180);
+			_actor[1].act[0].state = 39;
+		}
+		break;
+	case 0:
+		if (_actor[1].act[0].state != 1) {
+			smlayer_setActorFacing(1, 0, 9, 180);
+			_actor[1].act[0].state = 1;
+		}
+		break;
+	case 1:
+		if (_actor[1].act[0].state != 55) {
+			smlayer_setActorFacing(1, 0, 10, 180);
+			_actor[1].act[0].state = 55;
+		}
+		break;
+	case 2:
+		if (_actor[1].act[0].state != 56) {
+			smlayer_setActorFacing(1, 0, 11, 180);
+			_actor[1].act[0].state = 56;
+		}
+		break;
+	case 3:
+		if (_actor[1].act[0].state != 57) {
+			smlayer_setActorFacing(1, 0, 12, 180);
+			_actor[1].act[0].state = 57;
+		}
+		break;
+	default:
+		break;
+	}
+	tmpx = _actor[1].x + _actor[1].x1;
+	tmpy = _actor[1].y + _actor[1].y1;
+
+	if (_actor[1].act[0].room)
+		smlayer_putActor(1, 0, tmpx, tmpy, _smlayer_room2);
+	else
+		smlayer_putActor(1, 0, tmpx, tmpy, _smlayer_room);
 }
 
-int32 Insane::func60(void) {
-	// FIXME: implement
-	return 0;
+int32 Insane::actionEnemy(void) {
+	int32 buttons;
+
+	if (_actor[1].enemyHandler != -1)
+		buttons = enemyHandler(_actor[1].enemyHandler, 0, 1, _actor[1].probability);
+	else
+		buttons = enemyHandler(EN_TORQUE, 0, 1, _actor[1].probability);
+
+	if (_actor[1].speed) {
+		_actor[1].field_18 += _actor[1].field_14 / 40;
+	} else {
+		if (_actor[1].field_18 < 0)
+			_actor[1].field_18++;
+		else
+			_actor[1].field_18--;
+	}
+
+	if (_actor[1].field_18 > 8)
+		_actor[1].field_18 = 8;
+
+	if (_actor[1].field_18 < -8)
+		_actor[1].field_18 = -8;
+
+	_actor[1].x += _actor[0].field_18;
+
+	if (_actor[1].x > 250)
+		_actor[1].x--;
+	else
+		_actor[1].x--;
+
+	if (_actor[1].x > 320) {
+		_actor[1].x = 320;
+		_actor[1].damage++;
+		_actor[1].x1 = -_actor[1].x1;
+		_actor[1].damage++;
+
+		return buttons;
+	}
+
+	if (!_actor[1].lost) {
+		if (_actor[0].x + 90 > _actor[1].x)
+			_actor[1].x = _actor[0].x + 90;
+	}
+		
+	if (_actor[1].x < 0) {
+		_actor[1].x = 0;
+		_actor[1].x1 = -_actor[1].x1;
+		_actor[1].damage++;
+	} else if (_actor[1].x > 310) {
+		_actor[1].x1 = -_actor[1].x1;
+		_actor[1].damage++;
+	}
+
+	return buttons;
 }
 
 void Insane::smlayer_setActorFacing(int actornum, int actnum, int frame, int direction) {

@@ -117,11 +117,11 @@ class Insane {
 	int32 _firstBattle;
 	bool _weaponJustSwitched;
 	bool _kickingInProgress;
+	int32 _battleScene;
 	int32 _val8d;
 	byte _val10b;
 	int32 _val11d;
 	int32 _val32d;
-	int32 _val39_;
 	int32 _val50d;
 	int32 _val51d;
 	int32 _val52d;
@@ -256,7 +256,7 @@ class Insane {
 		byte  state;
 		int32 room;
 		int32 facing;
-		int32 speedX;
+		int32 tilt;
 		int32 frame;
 	};
   
@@ -393,7 +393,7 @@ class Insane {
 	void switchSceneIfNeeded(void);
 	int smush_changeState(int state);
 	void init_actStruct(int actornum, int actnum, int32 actorval, byte state, 
-						  int32 room, int32 facing, int32 speedX, int32 frame);
+						  int32 room, int32 facing, int32 tilt, int32 frame);
 	void init_enemyStruct(int n, int32 handler, int32 initializer,
 							   int32 field_8, int32 maxdamage, int32 field_10,
 							   int32 field_14, int32 sound, const char *filename,
@@ -433,7 +433,7 @@ class Insane {
 	void smlayer_overrideDrawActorAt(byte *, byte, byte);
 	void queueSceneSwitch(int32 sceneId, byte *fluPtr, const char *filename, 
 						  int32 arg_C, int32 arg_10, int32 startFrame, int32 numFrames);
-	void actorsReaction(bool flag);
+	void turnBen(bool battle);
 	void smush_rewindCurrentSan(int arg_0, int arg_4, int arg_8);
 	void smlayer_showStatusMsg(int32 arg_0, byte *renderBitmap, int32 codecparam, 
 							   int32 x, int32 y, int32 arg_14, int32 arg_18, 
@@ -442,15 +442,15 @@ class Insane {
 							const char *filenamePtr, int startFrame, int numFrames);
 	int32 func10(bool flag);
 	void func11(int32 arg_0);
-	void actor02Reaction(int32 arg_4);
-	void actor00Reaction(int32 arg_4);
-	void actor01Reaction(int32 arg_4);
-	void actor03Reaction(int32 arg_4);
-	void checkEnemyLoose(int);
-	int32 processBattle(void);
+	void actor02Reaction(int32 buttons);
+	void actor00Reaction(int32 buttons);
+	void actor01Reaction(int32 buttons);
+	void actor03Reaction(int32 buttons);
+	void turnEnemy(bool battle);
+	int32 actionBen(void);
 	void chooseWeaponAnim(int arg_0);
 	void setEnemyAnimation(int32 actornum, int arg_4);
-	int speedTranslator(int value);
+	int calcTilt(int speed);
 	bool smush_eitherNotStartNewFrame(void);
 	void smlayer_setActorFacing(int actornum, int actnum, int frame, int direction);
 	int32 weaponMaxRange(int32 actornum);
@@ -460,7 +460,7 @@ class Insane {
 	int32 calcDamage(bool arg_0, bool arg_4);
 	int32 weaponDamage(int32 actornum);
 	void proc47(int32 actornum, int32 val);
-	bool weaponEffective(void);
+	bool weaponIsEffective(void);
 	bool actor1StateFlags(int state);
 	bool actor0StateFlags1(int state);
 	bool actor0StateFlags2(int state);
@@ -482,13 +482,14 @@ class Insane {
 	void smush_setupSanFile(const char *filename, int32 offset);
 	int32 getLastKey(bool arg_0);
 	void drawSpeedyActor(int32 arg_0);
-	void proc59(int32 actornum, int32 actnum, int32 arg_8);
-	void proc51(int32 actornum, int32 actnum, int32 arg_8);
-	void proc54(int32 actornum, int32 actnum, int32 arg_8);
-	void proc55(int32 actornum, int32 actnum, int32 arg_8);
-	int32 func60(void);
+	void actor11Reaction(int32 buttons);
+	void proc51(int32 buttons);
+	void proc54(int32 buttons);
+	void actor10Reaction(int32 buttons);
+	int32 actionEnemy(void);
 	int32 processKeyboard(void);
 	int32 func75(void);
+	void proc56(int32 buttons);
 
 	void blah(void);
 
