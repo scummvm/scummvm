@@ -589,10 +589,14 @@ bool Scumm::isScriptInUse(int script) {
 
 
 void Scumm::runHook(int i) {
-	int tmp[16];
-	tmp[0] = i;
-	if (VAR(VAR_HOOK_SCRIPT)) {
-		runScript(VAR(VAR_HOOK_SCRIPT), 0, 0, tmp);
+	if (_features & GF_AFTER_V2) {
+		// FIXME - TODO
+	} else {
+		int tmp[16];
+		tmp[0] = i;
+		if (VAR(VAR_HOOK_SCRIPT)) {
+			runScript(VAR(VAR_HOOK_SCRIPT), 0, 0, tmp);
+		}
 	}
 }
 

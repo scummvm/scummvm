@@ -1982,7 +1982,7 @@ void Scumm::setCameraAt(int pos_x, int pos_y) {
 		if (camera._cur.x > VAR(VAR_CAMERA_MAX_X))
 			camera._cur.x = VAR(VAR_CAMERA_MAX_X);
 
-		if (VAR(VAR_SCROLL_SCRIPT)) {
+		if (VAR_SCROLL_SCRIPT != 0xFF && VAR(VAR_SCROLL_SCRIPT)) {
 			VAR(VAR_CAMERA_POS_X) = camera._cur.x;
 			runScript(VAR(VAR_SCROLL_SCRIPT), 0, 0, 0);
 		}
