@@ -51,6 +51,7 @@ class Screen;
 class Control;
 class MusicBase;
 class Intro;
+class Debugger;
 
 class SkyEngine : public Engine {
 	void errorString(const char *buf_input, char *buf_output);
@@ -68,7 +69,8 @@ protected:
 	Mouse *_skyMouse;
 	Screen *_skyScreen;
 	Control *_skyControl;
-
+	Debugger *_debugger;
+	
 	MusicBase *_skyMusic;
 	Intro *_skyIntro;
 	

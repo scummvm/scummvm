@@ -34,6 +34,7 @@
 #include "sky/control.h"
 #include "sky/debug.h"
 #include "sky/disk.h"
+#include "sky/grid.h"
 #include "sky/intro.h"
 #include "sky/logic.h"
 #include "sky/mouse.h"
@@ -75,10 +76,6 @@ extern bool draw_keyboard;
 */
 
 #undef WITH_DEBUG_CHEATS
-
-#ifdef WITH_DEBUG_CHEATS
-#include "sky/grid.h"
-#endif
 
 static const GameSettings skySetting =
 	{"sky", "Beneath a Steel Sky", 0 };
@@ -140,6 +137,7 @@ SkyEngine::~SkyEngine() {
 	delete _skyText;
 	delete _skyMouse;
 	delete _skyScreen;
+	delete _debugger;
 }
 
 void SkyEngine::errorString(const char *buf1, char *buf2) {
@@ -178,6 +176,10 @@ void SkyEngine::doCheat(uint8 num) {
 
 void SkyEngine::handleKey(void) {
 
+	if (_key_pressed == '`') {
+		_debugger->attach();
+	}
+	
 	if (_key_pressed == 63)
 		_skyControl->doControlPanel();
 
@@ -186,11 +188,6 @@ void SkyEngine::handleKey(void) {
 #ifdef WITH_DEBUG_CHEATS
 	if ((_key_pressed >= '0') && (_key_pressed <= '9'))
 		doCheat(_key_pressed - '0');
-
-	if (_key_pressed == 'r') {
-		warning("loading grid");
-		_skyLogic->_skyGrid->loadGrids();
-	}
 #endif
 	if (_key_pressed == '.')
 		_skyMouse->logicClick();
@@ -224,6 +221,10 @@ void SkyEngine::go() {
 	_lastSaveTime = _system->get_msecs();
 
 	while (1) {
+		if (_debugger->isAttached()) {
+			_debugger->onFrame();
+		}
+			
 		if (_fastMode & 2)
 			delay(0);
 		else if (_fastMode & 1)
@@ -246,6 +247,8 @@ void SkyEngine::go() {
 		if (!_skyLogic->checkProtection()) { // don't let copy prot. screen flash up
 			_skyScreen->recreate();
 			_skyScreen->spriteEngine();
+			if (_debugger->showGrid())
+				_skyScreen->showGrid(_skyLogic->_skyGrid->giveGrid(Logic::_scriptVariables[SCREEN]));
 			_skyScreen->flip();
 		}
 	}
@@ -355,6 +358,8 @@ void SkyEngine::initialise(void) {
 		_quickLaunch = false;
 
 	_skyMusic->setVolume(ConfMan.getInt("music_volume") >> 1);
+
+	_debugger = new Debugger(_skyLogic, _skyMouse, _skyScreen);
 }
 
 void SkyEngine::initItemList() {
@@ -433,7 +438,7 @@ Compact *SkyEngine::fetchCompact(uint32 a) {
 	return (Compact *)(_itemList[119 + sectionNum][compactNum]);
 }
 
-void SkyEngine::delay(uint amount) { //copied and mutilated from Simon.cpp
+void SkyEngine::delay(uint amount) {
 
 	OSystem::Event event;
 
@@ -487,7 +492,7 @@ void SkyEngine::delay(uint amount) { //copied and mutilated from Simon.cpp
 			break;
 
 		{
-			uint this_delay = 20; // 1?
+			uint this_delay = 20;
 #ifdef _WIN32_WCE
 			this_delay = 10;
 #endif

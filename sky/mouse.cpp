@@ -265,6 +265,10 @@ void Mouse::buttonEngine1(void) {
 	}
 }
 
+void Mouse::resetCursor() {
+	spriteMouse(_currentCursor, 0, 0);
+}
+
 uint16 Mouse::findMouseCursor(uint32 itemNum) {
 
 	uint8 cnt;

@@ -1115,6 +1115,10 @@ static const uint32 forwardList5b[] = {
 	DISCONNECT_FOSTER
 };
 
+void Logic::fnExec(uint16 num, uint32 a, uint32 b, uint32 c) {
+	(this->*mcodeTable[num])(a, b, c);
+}
+
 void Logic::initScriptVariables() {
 	for (int i = 0; i < ARRAYSIZE(_scriptVariables); i++)
 		_scriptVariables[i] = 0;
@@ -2449,7 +2453,7 @@ bool Logic::fnUnPauseFx(uint32 a, uint32 b, uint32 c) {
 }
 
 bool Logic::fnPrintf(uint32 a, uint32 b, uint32 c) {
-	printf("fnPrintf: %d", a);
+	printf("fnPrintf: %d\n", a);
 	return true;
 }
 

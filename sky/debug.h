@@ -24,9 +24,40 @@
 
 #include "stdafx.h"
 #include "common/scummsys.h"
+#include "common/debugger.h"
 
 namespace Sky {
 
+class Logic;
+class Mouse;
+class Screen;
+
+class Debugger : public Common::Debugger<Debugger> {
+public:
+	Debugger(Logic *logic, Mouse *mouse, Screen *screen);
+	bool showGrid()	{	return _showGrid; }
+	
+protected:
+	virtual void preEnter();
+	virtual void postEnter();
+
+	bool Cmd_Exit(int argc, const char **argv);
+	bool Cmd_Help(int argc, const char **argv);
+	bool Cmd_ShowGrid(int argc, const char **argv);
+	bool Cmd_ReloadGrid(int argc, const char **argv);
+	bool Cmd_ShowCompact(int argc, const char **argv);
+	bool Cmd_LogicCommand(int argc, const char **argv);
+	bool Cmd_Info(int argc, const char **argv);
+	bool Cmd_ScriptVar(int argc, const char **argv);
+	
+	Logic *_logic;
+	Mouse *_mouse;
+	Screen *_screen;
+
+	bool _showGrid;
+};
+
+	
 class Debug {
 public:
 	static void fetchCompact(uint32 a);

@@ -22,6 +22,14 @@
 #include "stdafx.h"
 #include "common/util.h"
 #include "sky/debug.h"
+#include "sky/grid.h"
+#include "sky/logic.h"
+#include "sky/mouse.h"
+#include "sky/screen.h"
+#include "sky/sky.h"
+#include "sky/struc.h"
+
+#include "common/debugger.cpp"
 
 namespace Sky {
 
@@ -205,7 +213,7 @@ static const char *section_0_compacts[] = {
 	"exit_seq",
 	"forklift_cpt",
 	"forklift1_cdt",
-	"forklift2_cdt",
+	"forklift2_cdt"
 };
 
 static const char *logic_table_names[] = {
@@ -225,7 +233,7 @@ static const char *logic_table_names[] = {
 	"Logic::frames",
 	"Logic::pause",
 	"Logic::wait_sync",
-	"Logic::simple_anim",
+	"Logic::simple_anim"
 };
 
 static const char opcode_par[] = {
@@ -249,7 +257,7 @@ static const char opcode_par[] = {
 	0,
 	1,
 	0,
-	0,
+	0
 };
 
 static const char *opcodes[] = {
@@ -273,7 +281,7 @@ static const char *opcodes[] = {
 	"is_equal",
 	"skip_nz",
 	"script_exit",
-	"restart_script",
+	"restart_script"
 };
 
 static const char *mcodes[] = {
@@ -391,7 +399,7 @@ static const char *mcodes[] = {
 	"fn_quit_to_dos",
 	"fn_pause_fx",
 	"fn_un_pause_fx",
-	"fn_printf",
+	"fn_printf"
 };
 
 static const char *scriptVars[] = {
@@ -1231,7 +1239,7 @@ static const char *scriptVars[] = {
 	"man_talk",
 	"man_loc1",
 	"man_loc2",
-	"man_loc3",
+	"man_loc3"
 };
 
 void Debug::fetchCompact(uint32 a) {
@@ -1263,6 +1271,185 @@ void Debug::script(uint32 command, uint16 *scriptData) {
 
 void Debug::mcode(uint32 mcode, uint32 a, uint32 b, uint32 c) {
 	debug(6, "MCODE: %s(%d, %d, %d)", mcodes[mcode], a, b, c);
+}
+
+
+
+
+Debugger::Debugger(Logic *logic, Mouse *mouse, Screen *screen) : _logic(logic), _mouse(mouse), _screen(screen), _showGrid(false) {
+	DCmd_Register("exit", &Debugger::Cmd_Exit);
+	DCmd_Register("help", &Debugger::Cmd_Help);
+	DCmd_Register("info", &Debugger::Cmd_Info);
+	DCmd_Register("showgrid", &Debugger::Cmd_ShowGrid);
+	DCmd_Register("reloadgrid", &Debugger::Cmd_ReloadGrid);
+	DCmd_Register("compact", &Debugger::Cmd_ShowCompact);
+	DCmd_Register("logiccmd", &Debugger::Cmd_LogicCommand);
+	DCmd_Register("scriptvar", &Debugger::Cmd_ScriptVar);
+}
+
+void Debugger::preEnter() {
+
+}
+
+void Debugger::postEnter() {
+	_mouse->resetCursor();
+}
+
+bool Debugger::Cmd_Exit(int argc, const char **argv) {
+	_detach_now = true;
+	return false;
+}
+
+bool Debugger::Cmd_Help(int argc, const char **argv) {
+	// console normally has 39 line width
+	// wrap around nicely
+	int width = 0, size;
+
+	DebugPrintf("Commands are:\n");
+	for (int i = 0; i < _dcmd_count; ++i) {
+		size = strlen(_dcmds[i].name) + 1;
+
+		if ((width + size) >= 39) {
+			DebugPrintf("\n");
+			width = size;
+		} else {
+			width += size;
+		}
+
+		DebugPrintf("%s ", _dcmds[i].name);
+	}
+	DebugPrintf("\n");
+	return true;
+}
+
+bool Debugger::Cmd_ShowGrid(int argc, const char **argv) {
+	_showGrid = !_showGrid;
+	DebugPrintf("Show grid: %s\n", _showGrid ? "On" : "Off");
+	if (!_showGrid)	_screen->forceRefresh();
+	return true;
+}
+
+bool Debugger::Cmd_ReloadGrid(int argc, const char **argv) {
+	_logic->_skyGrid->loadGrids();
+	DebugPrintf("Grid reloaded\n");
+	return true;
+}
+
+bool Debugger::Cmd_ShowCompact(int argc, const char **argv) {
+	if (argc < 2) {
+		DebugPrintf("Example: %s foster\n", argv[0]);
+		return true;
+	}
+	
+	int i;
+	int numCompacts = sizeof(section_0_compacts) / sizeof(section_0_compacts[0]);
+
+	if (0 == strcmp(argv[1], "list")) {
+		for (i = 0; i < numCompacts; ++i) {
+			DebugPrintf("%s\n", section_0_compacts[i]);
+		}
+		return true;
+	}
+	
+	Compact *cpt = 0;
+
+	for (i = 0; i < numCompacts; ++i) {
+		if (0 == strcmp(section_0_compacts[i], argv[1])) {
+			cpt = SkyEngine::fetchCompact(i);
+			break;
+		}
+	}
+
+	if (cpt) {
+		DebugPrintf("------Compact %d ('%s')------\n", i, section_0_compacts[i]);
+		DebugPrintf("logic     : %d\n", cpt->logic);
+		DebugPrintf("status    : %d\n", cpt->status);
+		DebugPrintf("sync      : %d\n", cpt->sync);
+		DebugPrintf("screen    : %d\n", cpt->screen);
+		DebugPrintf("x/y       : %d/%d\n", cpt->xcood, cpt->ycood);
+		DebugPrintf("getToFlag : %d\n", cpt->getToFlag);
+		DebugPrintf("mode      : %d\n", cpt->mode);
+	} else {
+		DebugPrintf("Unknown compact: '%s'\n", argv[1]);
+	}
+	
+	return true;
+}
+
+bool Debugger::Cmd_LogicCommand(int argc, const char **argv) {
+	if (argc < 2) {
+		DebugPrintf("Example: %s fn_printf 42\n", argv[0]);
+		return true;
+	}
+	
+	int numMCodes = sizeof(mcodes) / sizeof(mcodes[0]);
+	
+	if (0 == strcmp(argv[1], "list")) {
+		for (int i = 0; i < numMCodes; ++i) {
+			DebugPrintf("%s\n", mcodes[i]);
+		}
+		return true;
+	}
+	
+	uint32 arg1 = 0, arg2 = 0, arg3 = 0;
+
+	switch (argc) {
+		case  5:
+			arg3 = atoi(argv[4]);
+		case  4:
+			arg2 = atoi(argv[3]);
+		case  3:
+			arg1 = atoi(argv[2]);
+	}
+	
+	for (int i = 0; i < numMCodes; ++i) {
+		if (0 == strcmp(mcodes[i], argv[1])) {
+			_logic->fnExec(i, arg1, arg2, arg3);
+			return true;
+		}
+	}
+
+	DebugPrintf("Unknown function: '%s'\n", argv[1]);
+		
+	return true;
+}
+
+bool Debugger::Cmd_Info(int argc, const char **argv) {
+	DebugPrintf("Beneath a Steel Sky version: 0.0%d\n", SkyEngine::_systemVars.gameVersion);
+	DebugPrintf("Speech: %s\n", (SkyEngine::_systemVars.systemFlags & SF_ALLOW_SPEECH) ? "on" : "off");
+	DebugPrintf("Text  : %s\n", (SkyEngine::_systemVars.systemFlags & SF_ALLOW_TEXT) ? "on" : "off");
+	return true;
+}
+
+bool Debugger::Cmd_ScriptVar(int argc, const char **argv) {
+	if (argc < 2) {
+		DebugPrintf("Example: %s lamb_friend <value>\n", argv[0]);
+		return true;
+	}
+	
+	int numScriptVars = sizeof(scriptVars) / sizeof(scriptVars[0]);	
+
+	if (0 == strcmp(argv[1], "list")) {
+		for (int i = 0; i < numScriptVars; ++i) {
+			DebugPrintf("%s\n", scriptVars[i]);
+		}
+		return true;
+	}					
+
+	for (int i = 0; i < numScriptVars; ++i) {
+		if (0 == strcmp(scriptVars[i], argv[1])) {
+			if (argc == 3) {
+				Logic::_scriptVariables[i] = atoi(argv[2]);
+			}
+			DebugPrintf("%s = %d\n", argv[1], Logic::_scriptVariables[i]);
+			
+			return true;
+		}
+	}
+
+	DebugPrintf("Unknown ScriptVar: '%s'\n", argv[1]);
+	
+	return true;
 }
 
 } // End of namespace Sky

@@ -240,6 +240,7 @@ public:
 	bool fnPrintf(uint32 a, uint32 b, uint32 c);
 
 	void stdSpeak(Compact *target, uint32 textNum, uint32 animNum, uint32 base);
+	void fnExec(uint16 num, uint32 a, uint32 b, uint32 c);
 	
 	static uint32 _scriptVariables[838];
 	Grid *_skyGrid;

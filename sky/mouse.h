@@ -58,7 +58,8 @@ public:
 	uint16 giveCurrentMouseType(void) { return _currentCursor; };
 	bool wasClicked(void);
 	void logicClick(void) { _logicClick = true; };
-
+	void resetCursor();
+	
 protected:
 
 	void pointerEngine(uint16 xPos, uint16 yPos);
