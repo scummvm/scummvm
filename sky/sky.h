@@ -113,6 +113,8 @@ protected:
 	void go();
 
 	//intro related
+	static uint8 fosterImg[297 * 143];
+	static uint8 fosterPal[256 * 3];
 	void checkCommands(uint32 *&cmdPtr);
 	void introFrame(uint8 **diffPtr, uint8 **vgaPtr, uint8 *screenData);
 

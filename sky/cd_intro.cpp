@@ -199,6 +199,8 @@
 #define WAIT_SEQUENCE while (_skyScreen->sequenceRunning()) { delay(50); CHECK_ESC }
 #define WAIT_RELATIVE(x)	( delay(20 * (x)) )
 
+#define NORMAL_CD_INTRO
+
 void SkyState::doCDIntro() {
 
 	uint32 loadedVocSize, bgVocSize;
@@ -595,15 +597,24 @@ void SkyState::doCDIntro() {
 	WAIT_VOICE; //54
 	START_VOICE; //55
 
+#ifdef NORMAL_CD_INTRO
 	_skyDisk->prefetchFile(cd_55_pal);
 	_skyDisk->prefetchFile(cd_55_log);
+#endif
 	LOAD_NEW_VOICE(cdv_56);
 	WAIT_VOICE; //55
 	START_VOICE; //56
 
 	_skyScreen->fnFadeDown(0);
-	_skyScreen->showScreen(cd_55_log);
+#ifdef NORMAL_CD_INTRO
+	_skyScreen->showScreen(cd_55_log);  // foster screen
 	_skyScreen->paletteFadeUp(cd_55_pal);
+#else
+	memset(_skyScreen->giveCurrent(), 0, 320*200);
+	_system->copy_rect(_skyScreen->giveCurrent(), 320, 0, 0, 320, 200);
+	_system->copy_rect(fosterImg, 297, 11, 28, 297, 143);
+	_skyScreen->paletteFadeUp(fosterPal);
+#endif
 
 	LOAD_NEW_VOICE(cdv_57);
 	WAIT_VOICE; //56
