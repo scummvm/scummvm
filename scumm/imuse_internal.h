@@ -170,8 +170,6 @@ protected:
 	uint _loop_counter;
 	uint _loop_to_tick;
 	uint _loop_from_tick;
-	uint32 _tempo;
-	uint32 _tempo_eff; // No Save
 	byte _speed;
 	bool _abort;
 
@@ -217,7 +215,6 @@ protected:
 	void clear_active_notes();
 
 	// Sequencer part
-	void setTempo(uint32 data);
 	int start_seq_sound (int sound, bool reset_vars = true);
 	int query_param(int param);
 
@@ -243,7 +240,6 @@ public:
 	int8   getPan() { return _pan; }
 	Part * getPart (uint8 part);
 	byte   getPriority() { return _priority; }
-	uint32 getTempo() { return _tempo; }
 	uint   getTicksPerBeat() { return TICKS_PER_BEAT; }
 	int8   getTranspose() { return _transpose; }
 	byte   getVolume() { return _volume; }

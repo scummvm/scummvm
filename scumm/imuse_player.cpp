@@ -66,8 +66,6 @@ _loop_from_beat (0),
 _loop_counter (0),
 _loop_to_tick (0),
 _loop_from_tick (0),
-_tempo (0),
-_tempo_eff (0),
 _speed (128),
 _isMT32 (false),
 _isGM (false),
@@ -165,9 +163,6 @@ int Player::start_seq_sound (int sound, bool reset_vars) {
 		_loop_counter = 0;
 		_loop_to_tick = 0;
 		_loop_from_tick = 0;
-
-		setTempo(500000);
-		setSpeed(128);
 	}
 
 	ptr = _se->findStartOfSound (sound);
@@ -180,29 +175,13 @@ int Player::start_seq_sound (int sound, bool reset_vars) {
 		_parser = MidiParser::createParser_XMIDI();
 	else
 		_parser = MidiParser::createParser_SMF();
-	_parser->setTimerRate ((_midi->getBaseTempo() * _speed) >> 7);
 	_parser->setMidiDriver (this);
 	_parser->property (MidiParser::mpSmartJump, 1);
 	_parser->loadMusic (ptr, 0);
 	_parser->setTrack (_track_index);
+	setSpeed (reset_vars ? 128 : _speed);
 
 	return 0;
-}
-
-void Player::setTempo(uint32 b) {
-	uint32 i, j;
-
-	i = _midi->getBaseTempo();
-
-	j = _tempo = b;
-	j = j * 100 / _se->_tempoFactor;
-
-	while (i & 0xFFFF0000 || j & 0xFFFF0000) {
-		i >>= 1;
-		j >>= 1;
-	}
-
-	_tempo_eff = (i << 16) / j;
 }
 
 void Player::uninit_parts() {
@@ -219,7 +198,7 @@ void Player::uninit_parts() {
 void Player::setSpeed(byte speed) {
 	_speed = speed;
 	if (_parser)
-		_parser->setTimerRate ((_midi->getBaseTempo() * speed) / 128);
+		_parser->setTimerRate (((_midi->getBaseTempo() * speed) >> 7) * _se->_tempoFactor / 100);
 }
 
 void Player::send (uint32 b) {
@@ -1124,7 +1103,6 @@ void Player::fixAfterLoad() {
 		clear();
 	} else {
 		start_seq_sound (_id, false);
-		setTempo (_tempo);
 		setSpeed (_speed);
 		if (_parser)
 			_parser->jumpToTick (_music_tick); // start_seq_sound already switched tracks
@@ -1139,13 +1117,9 @@ uint32 Player::getBaseTempo() {
 
 void Player::metaEvent (byte type, byte *msg, uint16 len) {
 	if (type == 0x2F) {
-		_parser->jumpToTick (0); // That aborts current parsing
+		_parser->unloadMusic();
 		clear();
-		return;
 	}
-
-	if (type == 0x51)
-		setTempo ((msg[0] << 16) | (msg[1] << 8) | msg[2]);
 }
 
 
@@ -1182,7 +1156,7 @@ int Player::save_or_load(Serializer *ser) {
 		MKLINE(Player, _loop_counter, sleUint16, VER_V8),
 		MKLINE(Player, _loop_to_tick, sleUint16, VER_V8),
 		MKLINE(Player, _loop_from_tick, sleUint16, VER_V8),
-		MKLINE(Player, _tempo, sleUint32, VER_V8),
+		MK_OBSOLETE(Player, _tempo, sleUint32, VER_V8, VER_V19),
 		MK_OBSOLETE(Player, _cur_pos, sleUint32, VER_V8, VER_V17),
 		MK_OBSOLETE(Player, _next_pos, sleUint32, VER_V8, VER_V17),
 		MK_OBSOLETE(Player, _song_offset, sleUint32, VER_V8, VER_V17),
