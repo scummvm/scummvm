@@ -34,6 +34,11 @@ void Scumm::unkMessage1()
 	_msgPtrToAdd = buffer;
 	_messagePtr = addMessageToStack(_messagePtr);
 
+	if ((_gameId == GID_CMI) && _debugMode) {	// In CMI, unkMessage1 is used for printDebug output
+		warning("%s", buffer);
+		return;
+	}
+
 	if (buffer[0] == 0xFF && buffer[1] == 10) {
 		uint32 a, b;
 
@@ -46,7 +51,7 @@ void Scumm::unkMessage1()
 		// mentioned in the patch. FIXME after iMUSE is done.
 		if (_gameId != GID_SAMNMAX || (_vars[VAR_V6_SOUNDMODE] != 2))
 			_sound->talkSound(a, b, 1, -1);
-	}
+	} 
 }
 
 void Scumm::unkMessage2()
