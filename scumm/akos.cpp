@@ -606,7 +606,7 @@ byte AkosRenderer::codec1(int xmoveCur, int ymoveCur) {
 			startScaleIndexX = 0x180 + xmoveCur;
 			j = startScaleIndexX;
 			for (i = 0; i < xmoveCur; i++) {
-				if (v1.scaletable[j++] < _scaleX)
+				if (v1.scaletable[j--] < _scaleX)
 					cur_x += v1.scaleXstep;
 			}
 
