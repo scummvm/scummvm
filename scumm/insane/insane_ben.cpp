@@ -1942,13 +1942,12 @@ void Insane::switchBenWeapon(void) {
 	case INV_BOOT:
 	case INV_HAND:
 	case INV_DUST:
-		if (!((_vm->_features & GF_DEMO) && (_vm->_features & GF_PC))) {
-			smlayer_setActorCostume(0, 2, readArray(12));
-			_actor[0].weaponClass = 2;
-			_actor[0].act[2].state = 1;
-		} else {
+		if ((_vm->_features & GF_DEMO) && (_vm->_features & GF_PC))
 			smlayer_setActorCostume(0, 2, readArray(11));
-		}
+		else
+			smlayer_setActorCostume(0, 2, readArray(12));
+		_actor[0].weaponClass = 2;
+		_actor[0].act[2].state = 1;
 		break;
 	default:
 		break;
