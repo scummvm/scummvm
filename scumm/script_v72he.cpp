@@ -1470,8 +1470,6 @@ uint8 *ScummEngine_v72he::drawWizImage(int restype, int resnum, int state, int x
 		} else if (flags & 0x100) {
 //  		drawWizImageHelper2(p, wizd, cw, ch, x1, y1, width, height, &rScreen, 0, 1);  			
 			warning("drawWizImage() unhandled flag 0x100");
-		} else if (flags & 2) {
-//  		drawWizImageHelper3(dst, wizd, cw, ch, x1, y1, width, height, rScreen, rmap + 4);
 		} else {
 			gdi.copyWizImage(dst, wizd, cw, ch, x1, y1, width, height, &rScreen);
 		}
