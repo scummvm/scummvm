@@ -2409,13 +2409,13 @@ int Scumm::getWordVararg(int16 *ptr) {
 	return i;
 }
 
-uint Scumm::getVarOrDirectWord(byte mask) {
+int Scumm::getVarOrDirectWord(byte mask) {
 	if (_opcode&mask)
 		return readVar(fetchScriptWord());
-	return (uint16)fetchScriptWord();
+	return (int16)fetchScriptWord();
 }
 
-uint Scumm::getVarOrDirectByte(byte mask) {
+int Scumm::getVarOrDirectByte(byte mask) {
 	if (_opcode&mask)
 		return readVar(fetchScriptWord());
 	return fetchScriptByte();

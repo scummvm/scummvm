@@ -736,8 +736,8 @@ public:
 	int fetchScriptWord();
 	void ignoreScriptWord() { fetchScriptWord(); }
 	void ignoreScriptByte() { fetchScriptByte(); }
-	uint getVarOrDirectWord(byte mask);
-	uint getVarOrDirectByte(byte mask);
+	int getVarOrDirectWord(byte mask);
+	int getVarOrDirectByte(byte mask);
 	void getResultPos();
 	void setResult(int result);
 	int readVar(uint var);
