@@ -101,7 +101,8 @@ void SkyLogic::engine() {
 }
 
 void SkyLogic::lreturn() {
-	error("lreturn: Is this really called?");
+	// WTF???
+	return;
 }
 
 void SkyLogic::logicScript() {
@@ -1102,7 +1103,9 @@ uint32 SkyLogic::fnArAnimate(uint32 a, uint32 b, uint32 c) {
 }
 
 uint32 SkyLogic::fnIdle(uint32 a, uint32 b, uint32 c) {
-	error("Stub: fnIdle");
+	// set the player idling
+	_compact->logic = 0;
+	return 1;
 }
 
 uint32 SkyLogic::fnInteract(uint32 targetId, uint32 b, uint32 c) {
@@ -1271,7 +1274,8 @@ uint32 SkyLogic::fnSetStop(uint32 a, uint32 b, uint32 c) {
 }
 
 uint32 SkyLogic::fnClearStop(uint32 a, uint32 b, uint32 c) {
-	error("Stub: fnClearStop");
+	_scriptVariables[MOUSE_STOP] = 0;
+	return 1;
 }
 
 uint32 SkyLogic::fnPointerText(uint32 a, uint32 b, uint32 c) {
@@ -1685,7 +1689,8 @@ uint32 SkyLogic::fnWaitSwingEnd(uint32 a, uint32 b, uint32 c) {
 }
 
 uint32 SkyLogic::fnSkipIntroCode(uint32 a, uint32 b, uint32 c) {
-	error("Stub: fnSkipIntroCode");
+	warning("Stub: fnSkipIntroCode");
+	return 1;
 }
 
 uint32 SkyLogic::fnBlankScreen(uint32 a, uint32 b, uint32 c) {
