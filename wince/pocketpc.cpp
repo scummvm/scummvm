@@ -23,6 +23,7 @@
 #include <assert.h>
 
 #include "scumm.h"
+#include "debug.h"
 #include "screen.h"
 #include "gui.h"
 #include "sound/mididrv.h"
@@ -48,11 +49,12 @@
 
 #define MAX(a,b) (((a)<(b)) ? (b) : (a))
 #define MIN(a,b) (((a)>(b)) ? (b) : (a))
-#define POCKETSCUMM_BUILD "070202"
+#define POCKETSCUMM_BUILD "080502"
 
 #define VERSION "Build " POCKETSCUMM_BUILD " (VM " SCUMMVM_CVS ")"
 
 typedef int (*tTimeCallback)(int);
+typedef void SoundProc(void *param, byte *buf, int len);
 
 GameDetector detector;
 Gui gui;
@@ -171,6 +173,7 @@ private:
 	//bool handleMessage();
 	static LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 	
+
 	byte *_gfx_buf;
 	uint32 _start_time;
 	Event _event;
@@ -261,6 +264,8 @@ bool hide_cursor;
 bool get_key_mapping;
 static char _directory[MAX_PATH];
 
+SoundProc *real_soundproc;
+
 const char KEYBOARD_MAPPING_ALPHA_HIGH[] = {"ABCDEFGHIJKLM"};
 const char KEYBOARD_MAPPING_NUMERIC_HIGH[] = {"12345"};
 const char KEYBOARD_MAPPING_ALPHA_LOW[] = {"NOPQRSTUVWXYZ"};
@@ -273,13 +278,18 @@ extern void setFindGameDlgHandle(HWND);
 extern void getSelectedGame(int, char*, TCHAR*);
 
 extern void palette_update();
+
+extern void own_soundProc(void *buffer, byte *samples, int len);
+
 //#define SHMenuBar_GetMenu(hWndMB,ID_MENU) (HMENU)SendMessage((hWndMB), SHCMBM_GETSUBMENU, (WPARAM)0, (LPARAM)ID_MENU)
 
 /* Monkey2 keyboard stuff */
 bool monkey2_keyboard;
-int monkey2_keyboard_count;
 
 void do_quit() {
+	scummcfg->set("Sound", sound_activated, "wince");
+	scummcfg->set("DisplayMode", GetScreenMode(), "wince");
+	scummcfg->flush();
 	GXCloseInput();
 	GXCloseDisplay();
 	SDL_AudioQuit();
@@ -392,12 +402,18 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLin
 	char* argv[3];
 	char argdir[MAX_PATH];
 	char *game_name;
+	const char *sound;
 
-	sound_activated = true;
 	hide_toolbar = false;
 
 	scummcfg = new Config("scummvm.ini", "scummvm");
 	scummcfg->set_writing(true);
+
+	sound = scummcfg->get("Sound", "wince");
+	if (sound) 
+		sound_activated = (atoi(sound) == 1);
+	else
+		sound_activated = true;
 
 	game_name = GameSelector();
 	if (!game_name)
@@ -419,8 +435,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLin
 	if (strcmp(game_name, "monkey2") == 0) {
 		draw_keyboard = true;
 		monkey2_keyboard = true;
-		monkey2_keyboard_count = 0;
-	}
+	}		
 
 	if (detector.detectMain(argc, argv))
 		return (-1);
@@ -476,7 +491,13 @@ LRESULT CALLBACK OSystem_WINCE3::WndProc(HWND hWnd, UINT message, WPARAM wParam,
 {
 	static		 SHACTIVATEINFO sai;
 
-	OSystem_WINCE3 *wm = (OSystem_WINCE3*)GetWindowLong(hWnd, GWL_USERDATA);	
+	OSystem_WINCE3 *wm = (OSystem_WINCE3*)GetWindowLong(hWnd, GWL_USERDATA);
+	
+	if (monkey2_keyboard && g_scumm->_vars[g_scumm->VAR_ROOM] != 108) {
+		monkey2_keyboard = false;
+		draw_keyboard = false;
+		toolbar_drawn = false;
+	}
 
 	switch (message) 
 	{
@@ -657,20 +678,26 @@ LRESULT CALLBACK OSystem_WINCE3::WndProc(HWND hWnd, UINT message, WPARAM wParam,
 		return 0;
 	
 	case WM_KEYDOWN:
-		if(wParam) { // gets rid of zero that seems to preceed GAPI events.
+		if(wParam && wParam != 0x84) { // WHAT THE ???			
 
+			/*
 			unsigned char GAPI_key;
 
 			GAPI_key = getGAPIKeyMapping((short)wParam);
 			if (GAPI_key) {
+			*/
 				if (get_key_mapping) {
-					wm->_event.kbd.ascii = GAPI_KEY_BASE + GAPI_key;
+					wm->_event.kbd.ascii = GAPI_KEY_BASE + GAPIKeysTranslate((int)wParam);
 					wm->_event.event_code = EVENT_KEYDOWN;
+					break;
 				}					
+				/*
 				else
 					processAction((short)wParam);
-			}
-			else {
+				*/
+			/*}*/
+			if (!processAction(GAPIKeysTranslate((int)wParam)))
+			/*else*/ {
 				wm->_event.kbd.ascii = mapKey(wParam);
 				wm->_event.event_code = EVENT_KEYDOWN;								
 			}
@@ -736,14 +763,6 @@ LRESULT CALLBACK OSystem_WINCE3::WndProc(HWND hWnd, UINT message, WPARAM wParam,
 				else
 				if (x>=186 && y>=(200 + offset_y) && x<=255) {
 				   // Numeric selection
-					if (monkey2_keyboard) {
-					   monkey2_keyboard_count++;
-					   if (monkey2_keyboard_count == 4) {
-						   monkey2_keyboard = false;
-						   draw_keyboard = false;
-						   toolbar_drawn = false;
-					   }
-				   }
 				   wm->_event.event_code = EVENT_KEYDOWN;
 				   wm->_event.kbd.ascii =
 					   (y <= (220 + offset_y) ? KEYBOARD_MAPPING_NUMERIC_HIGH[((x - 187 + 10) / 14) - 1] :
@@ -821,17 +840,17 @@ LRESULT CALLBACK OSystem_WINCE3::WndProc(HWND hWnd, UINT message, WPARAM wParam,
 							break;
 						}
 						/*if (GetScreenMode()) {*/
+						/*
 							draw_keyboard = true;
 							if (!hide_toolbar)
 								toolbar_drawn = false;
+						*/
 						/*}*/
 						wm->_event.event_code = EVENT_KEYDOWN;
 						wm->_event.kbd.ascii = mapKey(VK_F5);
 						break;
 					case ToolbarMode:
 						SetScreenMode(!GetScreenMode());
-						scummcfg->set("DisplayMode", GetScreenMode(), "wince");
-						scummcfg->flush();
 						if (!hide_toolbar)
 							toolbar_drawn = false;
 						break;
@@ -848,12 +867,6 @@ LRESULT CALLBACK OSystem_WINCE3::WndProc(HWND hWnd, UINT message, WPARAM wParam,
 						break;
 					case ToolbarSound:
 						sound_activated = !sound_activated;
-						if (detector._gameId >= GID_SIMON_FIRST &&
-							detector._gameId <= GID_SIMON_LAST) {
-							g_mixer->pause(!sound_activated);
-						}
-						else
-							g_scumm->pauseSounds(!sound_activated);
 						redrawSoundItem();
 						break;
 					default:
@@ -890,35 +903,39 @@ LRESULT CALLBACK OSystem_WINCE3::WndProc(HWND hWnd, UINT message, WPARAM wParam,
 
 void load_key_mapping() {
 	 unsigned char actions[NUMBER_ACTIONS];
+	 int actions_keys[NUMBER_ACTIONS];
 	 const char		*current;
+	 const char		*version;
 	 int			i;
-
-	 memset(actions, 0, NUMBER_ACTIONS);
+	 
+	 memset(actions_keys, 0, sizeof(actions_keys));
+	 
+	 version = scummcfg->get("KeysVersion", "wince");
 
 	 current = scummcfg->get("ActionKeys", "wince");
-	 if (current) {
+	 if (current && version) {
 		for (i=0; i<NUMBER_ACTIONS; i++) {
 			char x[6];
 			int j;
 
 			memset(x, 0, sizeof(x));
-			memcpy(x, current + 3 * i, 2);
+			memcpy(x, current + 5 * i, 4);
 			sscanf(x, "%x", &j);
-			actions[i] = j;
+			actions_keys[i] = j;
 		}
 	 }
-	 setActionKeys(actions);
+	 setActionKeys(actions_keys);
 
 	 memset(actions, 0, NUMBER_ACTIONS);
 
 	 actions[0] = ACTION_PAUSE;
 	 actions[1] = ACTION_SAVE;
-	 actions[2] = ACTION_QUIT;
+	 actions[2] = ACTION_BOSS;
 	 actions[3] = ACTION_SKIP;
 	 actions[4] = ACTION_HIDE;
 
 	 current = scummcfg->get("ActionTypes", "wince");
-	 if (current) {
+	 if (current && version) {
 		for (i=0; i<NUMBER_ACTIONS; i++) {
 			char x[6];
 			int j;
@@ -930,18 +947,24 @@ void load_key_mapping() {
 		}
 	 }
 	 setActionTypes(actions);
+
+	 if (!version) {
+		 scummcfg->set("KeysVersion", "2", "wince");
+		 scummcfg->flush();
+	 }
 }
 					
 void save_key_mapping() {
 	 char tempo[1024];
+	 const int *work_keys;
 	 const unsigned char *work;
 	 int i;
 
 	 tempo[0] = '\0';
-	 work = getActionKeys();
+	 work_keys = getActionKeys();
 	 for (i=0; i<NUMBER_ACTIONS; i++) {
 		 char x[4];
-		 sprintf(x, "%.2x ", work[i]);
+		 sprintf(x, "%.4x ", work_keys[i]);
 		 strcat(tempo, x);
 	 }
 	 scummcfg->set("ActionKeys", tempo, "wince");
@@ -990,15 +1013,29 @@ void action_save() {
 	system = (OSystem_WINCE3*)g_scumm->_system;
 
 	/*if (GetScreenMode()) {*/
+	/*
 		draw_keyboard = true;
 		if (!hide_toolbar)
 			toolbar_drawn = false;
+	*/
 	/*}*/
 
 	system->addEventKeyPressed(mapKey(VK_F5));
 }
 
 void action_quit() {
+	do_quit();
+}
+
+void action_boss() {
+	toolbar_drawn = false;
+	hide_toolbar = true;
+	Cls();
+	g_scumm->_saveLoadSlot = 0;
+	g_scumm->_saveLoadCompatible = false;
+	g_scumm->_saveLoadFlag = 1;
+	strcpy(g_scumm->_saveLoadName, "BOSS");
+	g_scumm->saveState(g_scumm->_saveLoadSlot, g_scumm->_saveLoadCompatible);
 	do_quit();
 }
 
@@ -1012,8 +1049,8 @@ void action_skip() {
 		system->addEventKeyPressed(g_scumm->_vars[g_scumm->VAR_TALKSTOP_KEY]);						
 }
 
-void action_hide() {
-	hide_toolbar = !hide_toolbar;
+void do_hide(bool hide_state) {
+	hide_toolbar = hide_state;
 	if (hide_toolbar)
 		RestoreScreenGeometry();
 	else
@@ -1021,6 +1058,10 @@ void action_hide() {
 	Cls();
 	toolbar_drawn = hide_toolbar;
 	g_scumm->_system->update_screen();
+}
+
+void action_hide() {
+	do_hide(!hide_toolbar);
 }
 
 void action_keyboard() {
@@ -1033,7 +1074,6 @@ void action_keyboard() {
 
 void action_sound() {
 	sound_activated = !sound_activated;
-	g_scumm->pauseSounds(!sound_activated);
 }
 
 void action_cursoronoff() {
@@ -1048,7 +1088,7 @@ void keypad_init() {
 	static pAction actions[TOTAL_ACTIONS] =
 	{ action_pause, action_save, action_quit, action_skip, action_hide, 
 	  action_keyboard, action_sound, action_right_click, action_cursoronoff,
-	  action_subtitleonoff
+	  action_subtitleonoff, action_boss
 	};
 	
 	GAPIKeysInit(actions);
@@ -1376,16 +1416,25 @@ bool OSystem_WINCE3::poll_event(Event *event) {
 	return false;
 }
 	
+void own_soundProc(void *buffer, byte *samples, int len) {
+
+	(*real_soundproc)(buffer, samples, len);
+
+	if (!sound_activated)
+		memset(samples, 0, len);
+}
+
 bool OSystem_WINCE3::set_sound_proc(void *param, SoundProc *proc, byte format) {
 	SDL_AudioSpec desired;
 
 	/* only one format supported at the moment */
 
+	real_soundproc = proc;
 	desired.freq = SAMPLES_PER_SEC;
 	desired.format = AUDIO_S16SYS;
 	desired.channels = 2;
 	desired.samples = 128;
-	desired.callback = proc;
+	desired.callback = own_soundProc;
 	desired.userdata = param;
 	if (SDL_OpenAudio(&desired, NULL) != 0) {
 		return false;

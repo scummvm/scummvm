@@ -35,7 +35,8 @@
 #include "screen.h"
 
 struct oneAction _actions[NUMBER_ACTIONS];
-struct GXKeyList _keys;
+struct GXKeyList _portrait_keys;
+struct GXKeyList _landscape_keys;
 pAction *_action_functions;
 
 const char* ActionsText[] = {
@@ -49,7 +50,8 @@ const char* ActionsText[] = {
 	"Sound",
 	"Right click",
 	"Cursor on/off",
-	"Subtitles on/off"
+	"Subtitles on/off",
+	"Boss"
 };
 
 bool _typeExists(int x) {
@@ -95,9 +97,33 @@ void GAPIKeysGetReference() {
 	}
 	*/
 
-	_keys = GXGetDefaultKeys(GX_LANDSCAPEKEYS);
+	_portrait_keys = GXGetDefaultKeys(GX_NORMALKEYS);
+	_landscape_keys = GXGetDefaultKeys(GX_LANDSCAPEKEYS);
 }
 
+int GAPIKeysTranslate(int key) {
+/*
+	if (key == _landscape_keys.vkUp)
+		return _portrait_keys.vkUp;
+	if (key == _landscape_keys.vkDown)
+		return _portrait_keys.vkDown;
+	if (key == _landscape_keys.vkLeft)
+		return _portrait_keys.vkLeft;
+	if (key == _landscape_keys.vkRight)
+		return _portrait_keys.vkRight;
+	if (key == _landscape_keys.vkA)
+		return _portrait_keys.vkA;
+	if (key == _landscape_keys.vkB)
+		return _portrait_keys.vkB;
+	if (key == _landscape_keys.vkC)
+		return _portrait_keys.vkC;
+	if (key == _landscape_keys.vkStart)
+		return _portrait_keys.vkStart;
+*/
+	return key;
+}
+
+/*
 const unsigned char getGAPIKeyMapping(short key) {
 	// first the standard GAPI controls
 	if (key == _keys.vkA)
@@ -138,9 +164,44 @@ const unsigned char getGAPIKeyMapping(short key) {
 			return 0;
 	}
 }
+*/
 
-const char* getGAPIKeyName(unsigned char key) {
+const char* getGAPIKeyName(int key) {
+	static char key_name[50];
+
+	if (!key)
+		return "Not mapped";
+	if (key == _portrait_keys.vkA)
+		return "Button A";
+	if (key == _portrait_keys.vkB)
+		return "Button B";
+	if (key == _portrait_keys.vkC)
+		return "Button C";
+	if (key == _portrait_keys.vkStart)
+		return "Button Start";
+	if (key == _portrait_keys.vkUp)
+		return "Pad Up";
+	if (key == _portrait_keys.vkDown)
+		return "Pad Down";
+	if (key == _portrait_keys.vkLeft)
+		return "Pad Left";
+	if (key == _portrait_keys.vkRight)
+		return "Pad Right";
+	if (key == INTERNAL_KEY_CALENDAR)
+		return "Button Calendar";
+	if (key == INTERNAL_KEY_CONTACTS)
+		return "Button Contacts";
+	if (key == INTERNAL_KEY_INBOX)
+		return "Button Inbox";
+	if (key == INTERNAL_KEY_ITASK)
+		return "Button ITask";
+	sprintf(key_name, "Key %.4x", key);
+		return key_name;
+
+/*
 	switch(key) {
+		case 0:
+			return "Not mapped";
 		case GAPI_KEY_VKA:
 			return "Button A";
 		case GAPI_KEY_VKB:
@@ -166,27 +227,36 @@ const char* getGAPIKeyName(unsigned char key) {
 		case GAPI_KEY_VKRIGHT:
 			return "Pad Right";
 		default:
-			return "Not mapped";
+			sprintf(key_name, "Unknown key %.4x", key);
+			return key_name;
 	}
+*/
 }
 
 struct oneAction* getAction(int action) {
 	return &_actions[action];
 }
 
-void processAction (short key) {
+bool processAction (int key) {
 	int i;
+	/*
 	unsigned char GAPI_key;
 
 	GAPI_key = getGAPIKeyMapping(key);
 	if (!GAPI_key)
 		return;
-	
+	*/
+
 	for (i=0; i<NUMBER_ACTIONS; i++) 
-		if (_actions[i].action_key == GAPI_key &&
+		//if (_actions[i].action_key == GAPI_key &&
+		if (_actions[i].action_key == key &&
 			_actions[i].action_type != ACTION_NONE &&
-			_action_functions[_actions[i].action_type - 1])
+			_action_functions[_actions[i].action_type - 1]) {
 					_action_functions[_actions[i].action_type - 1]();
+					return true;
+		}
+
+	return false;
 }
 
 void clearActionKey (unsigned char key) {
@@ -198,9 +268,9 @@ void clearActionKey (unsigned char key) {
 		}
 }
 
-const unsigned char* getActionKeys() {
+const int* getActionKeys() {
 	int i;
-	static unsigned char actionKeys[NUMBER_ACTIONS];
+	static int actionKeys[NUMBER_ACTIONS];
 
 	for (i=0; i<NUMBER_ACTIONS; i++)
 		actionKeys[i] = _actions[i].action_key;
@@ -253,7 +323,7 @@ void setPreviousType(int action) {
 
 
 
-void setActionKeys(unsigned char *actionKeys) {
+void setActionKeys(int *actionKeys) {
 	int i;
 
 	for (i=0; i<NUMBER_ACTIONS; i++)
