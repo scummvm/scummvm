@@ -114,7 +114,6 @@ void Scumm::setupScummVarsOld()
 
 void Scumm::setupScummVarsNew()
 {
-
 	VAR_MOUSE_X = 1;
 	VAR_MOUSE_Y = 2;
 	VAR_VIRT_MOUSE_X = 3;
@@ -163,11 +162,11 @@ void Scumm::setupScummVarsNew()
 	VAR_UNK_SCRIPT = 60;
 	VAR_UNK_SCRIPT_2 = 61;
 
-	VAR_PAUSE_KEY = 64;
-	VAR_RESTART_KEY = 63;					/* ?? */
-	VAR_TALKSTOP_KEY = 66;				/* ?? */
-	VAR_SAVELOADDIALOG_KEY = 65;	/* ?? */
 	VAR_CUTSCENEEXIT_KEY = 62;
+	VAR_RESTART_KEY = 63;			// ???
+	VAR_PAUSE_KEY = 64;
+	VAR_SAVELOADDIALOG_KEY = 65;	// ???
+	VAR_TALKSTOP_KEY = 66;			// ???
 
 	VAR_TIMER_NEXT = 97;
 	VAR_TMR_1 = 98;
@@ -194,7 +193,7 @@ void Scumm::setupScummVarsNew()
 	VAR_DEBUGMODE = 116;
 
 	VAR_CHARSET_MASK = 119;
-	VAR_VIDEONAME = 0xF6/2;
+	VAR_VIDEONAME = 123;
 	VAR_CUSTOMSCALETABLE = 131;
 
 	//VAR_V5_DRAWFLAGS = 9;
