@@ -27,6 +27,7 @@
 #include "bs2/build_display.h"
 #include "bs2/console.h"
 #include "bs2/controls.h"
+#include "bs2/credits.h"
 #include "bs2/debug.h"
 #include "bs2/events.h"
 #include "bs2/header.h"
@@ -403,6 +404,8 @@ void Sword2State::go() {
 				} else if (toupper(c) == 'P') {
 					// 'P' while not paused = pause!
 					PauseGame();
+				} else if (toupper(c) == 'C' && _gameId == GID_SWORD2) {
+					FN_play_credits(NULL);
 				}
 #ifdef _SWORD2_DEBUG
 				else if (toupper(c) == 'S') {

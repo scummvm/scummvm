@@ -18,6 +18,7 @@
  */
 
 #include "stdafx.h"
+#include "driver/driver96.h"
 #include "build_display.h"
 #include "credits.h"
 #include "debug.h"
@@ -28,6 +29,7 @@
 #include "logic.h"
 #include "protocol.h"
 #include "resman.h"
+#include "sound.h"
 #include "sword2.h"	// for CloseGame()
 
 Object_graphic engine_graph;	// global for engine
@@ -379,45 +381,87 @@ int32 FN_reset_globals(int32 *params) {	// Tony29May97
 }
 
 int32 FN_play_credits(int32 *params) {
-	// FN_play_credits - Plays the credits?
+	// params:	none
+
 	// This function just quits the game if this is the playable demo, ie.
 	// credits are NOT played in the demo any more!
 
-	/*	uint32	rv;	// for Credits() return value
-
 	if (!DEMO) {
-		_drvDrawStatus ds;
-		_drvSoundStatus ss;
-		_drvKeyStatus ks;
+		uint8 oldPal[1024];
+		uint8 tmpPal[1024];
+		int32 music_length;
+		uint32 safe_looping_music_id;
+		int32 pars[2];
 
-		ClearAllFx();	// Must stop all fx
-		CloseFx(-2);	// including leadins
-		CloseFx(-1);	// including leadouts
-		StopMusic();	// Stop any streaming music
+		// FIXME: We need a better method for saving/restoring the
+		// music state as this one only restarts looping music.
 
-#if 0
-		// FIXME: I don't think this is needed
-		
-		// And wait for it to die
-		for (int i = 0; i<16; i++) {
-			g_sound->UpdateCompSampleStreaming();
+		safe_looping_music_id = looping_music_id;
+
+		g_sound->MuteFx(1);
+		g_sound->MuteSpeech(1);
+		g_sound->StopMusic();
+
+		memcpy(oldPal, palCopy, 1024);
+		memset(tmpPal, 0, 1024);
+
+		WaitForFade();
+		FadeDown(0.75);
+		WaitForFade();
+
+		tmpPal[4] = 255;
+		tmpPal[5] = 255;
+		tmpPal[6] = 255;
+		BS2_SetPalette(0, 256, tmpPal, RDPAL_INSTANT);
+
+		// Play the credits music. Is it enough with just one
+		// repetition of it?
+
+		pars[0] = 309;
+		pars[1] = FX_SPOT;
+		FN_play_music(pars);
+
+		music_length = 1000 * g_sound->MusicTimeRemaining();
+
+		debug(0, "Credits music length: ~%d ms", music_length);
+
+		while (g_sound->MusicTimeRemaining()) {
+			char key;
+
+			EraseBackBuffer();
+
+			// FIXME: Draw the credits text. The actual text
+			// messages are stored in credits.clu, and I'm guessing
+			// that credits.bmp may be the font.
+
+			ServiceWindows();
+
+			if (ReadKey(&key) == RD_OK && key == 27)
+				break;
+
+			g_system->delay_msecs(30);
 		}
-#endif
 
-		GetDrawStatus(&ds);
-		GetSoundStatus(&ss);
-		GetKeyStatus(&ks);
+		looping_music_id = safe_looping_music_id;
 
-		rv = Credits(&ds, &ss, res_man.GetCdPath(), GetRenderType()==3, &gotTheFocus, &ks);
+		if (looping_music_id) {
+			pars[0] = looping_music_id;
+			pars[1] = FX_LOOP;
+			FN_play_music(pars);
+		} else
+			FN_stop_music(NULL);
 
-		// (James14aug97) Because game crashing when trying to close
-		// down after credits
-		SetDrawStatus(&ds);
-		SetSoundStatus(&ss);
+		BS2_SetPalette(0, 256, oldPal, RDPAL_FADE);
+
+		FadeUp(0.75);
+		WaitForFade();
+
+		g_sound->MuteFx(0);
+		g_sound->MuteSpeech(0);
 	}
-*/
 
 	// FIXME: This probably isn't the correct way of shutting down ScummVM
+	// Anyway, I don't know if we ever call this from the demo.
 
 	if (g_sword2->_gameId == GID_SWORD2_DEMO) {
 		Close_game();		// close engine systems down
