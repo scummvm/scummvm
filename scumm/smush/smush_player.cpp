@@ -843,7 +843,8 @@ void SmushPlayer::setupAnim(const char *file, const char *directory) {
 	handleAnimHeader(*sub);
 
 	if (_insanity)
-		readString("mineroad.trs", directory);
+		if(!(_scumm->_features & GF_DEMO))
+			readString("mineroad.trs", directory);
 	else
 		readString(file, directory);
 

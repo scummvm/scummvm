@@ -57,6 +57,10 @@ static const int scenePropIdx[58] = {0,  12,  14,  18,  20,  22,  24,  26,  28, 
 Insane::Insane(ScummEngine *scumm) {
 	_scumm = scumm;
 	
+	// Demo has different insane, so disable it now
+	if (_scumm->_features & GF_DEMO)
+		return;
+
 	initvars();
 
 	readFileToMem("roadrash.rip", &_smush_roadrashRip);
@@ -1127,6 +1131,10 @@ void Insane::startVideo1(const char *filename, int num, int argC, int frameRate,
 
 	// blah();
 
+	// Demo has different insane, so disable it now
+	if (_scumm->_features & GF_DEMO)
+		return;
+	
 	_player->insanity(true);
 	_player->play(filename, _scumm->getGameDataPath());
 
@@ -4463,7 +4471,8 @@ void Insane::escapeKeyHandler(void) {
 	struct fluConf *flu;
 
 	//if (!_ptrMainLoop) { } // We don't need it
-	if (!_insaneIsRunning) {
+ 	// Demo has different insane, so disable it now
+	if (!_insaneIsRunning || _scumm->_features & GF_DEMO) {
 		smush_setToFinish();
 		return;
 	}
