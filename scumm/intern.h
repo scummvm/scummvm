@@ -650,10 +650,10 @@ protected:
 	void o70_findObject();
 	void o70_quitPauseRestart();
 	void o70_kernelSetFunctions();
-	void o70_unknownED();
-	void o70_stringLen();
+	void o70_getStringWidth();
+	void o70_getStringLen();
 	void o70_unknownEF();
-	void o70_unknownF1();
+	void o70_stringCompare();
 	void o70_readINI();
 	void o70_writeINI();
 	void o70_unknownF5();
@@ -808,8 +808,8 @@ protected:
 	void loadWizCursor(int resId, int resType, bool state);
 	
 	/* HE version 80 script opcodes */
-	void o80_unknown45();
-	void o80_unknown48();
+	void o80_loadSBNG();
+	void o80_stringToInt();
 	void o80_getSoundVar();
 	void o80_localizeArrayToRoom();
 	void o80_readConfigFile();
@@ -899,8 +899,8 @@ protected:
 	void o90_getWizData();
 	void o90_unknown2F();
 	void o90_mod();
-	void o90_unknown31();
-	void o90_unknown32();
+	void o90_shl4();
+	void o90_shr4();
 	void o90_findAllObjectsWithClassOf();
 	void o90_getPolygonOverlap();
 	void o90_unknown36();

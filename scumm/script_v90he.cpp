@@ -105,8 +105,8 @@ void ScummEngine_v90he::setupOpcodes() {
 		OPCODE(o90_unknown2F),
 		/* 30 */
 		OPCODE(o90_mod),
-		OPCODE(o90_unknown31),
-		OPCODE(o90_unknown32),
+		OPCODE(o90_shl4),
+		OPCODE(o90_shr4),
 		OPCODE(o6_invalid),
 		/* 34 */
 		OPCODE(o90_findAllObjectsWithClassOf),
@@ -130,11 +130,11 @@ void ScummEngine_v90he::setupOpcodes() {
 		OPCODE(o6_writeWordVar),
 		/* 44 */
 		OPCODE(o90_getObjectData),
-		OPCODE(o80_unknown45),
+		OPCODE(o80_loadSBNG),
 		OPCODE(o6_invalid),
 		OPCODE(o6_wordArrayWrite),
 		/* 48 */
-		OPCODE(o80_unknown48),
+		OPCODE(o80_stringToInt),
 		OPCODE(o80_getSoundVar),
 		OPCODE(o80_localizeArrayToRoom),
 		OPCODE(o6_wordArrayIndexedWrite),
@@ -340,12 +340,12 @@ void ScummEngine_v90he::setupOpcodes() {
 		OPCODE(o60_readFilePos),
 		/* EC */
 		OPCODE(o72_unknownEC),
-		OPCODE(o70_unknownED),
-		OPCODE(o70_stringLen),
+		OPCODE(o70_getStringWidth),
+		OPCODE(o70_getStringLen),
 		OPCODE(o72_unknownEF),
 		/* F0 */
 		OPCODE(o72_unknownF0),
-		OPCODE(o70_unknownF1),
+		OPCODE(o70_stringCompare),
 		OPCODE(o72_checkGlobQueue),
 		OPCODE(o72_readINI),
 		/* F4 */
@@ -1217,7 +1217,7 @@ int ScummEngine_v90he::isWizPixelNonTransparent(int restype, int resnum, int sta
 		if (c == 1) {
 			ret = gdi.isWizPixelNonTransparent(wizd, x, y, w, h);
 		} else if (c == 0 || c == 2 || c == 3) {
-			ret = gdi.getRawWizPixelColor(wizd, x, y, w, h, VAR(VAR_WIZ_TCOLOR)) != VAR(VAR_WIZ_TCOLOR);
+			ret = gdi.getRawWizPixelColor(wizd, x, y, w, h, VAR(VAR_WIZ_TCOLOR)) != VAR(VAR_WIZ_TCOLOR) ? 1 : 0;
 		}
 	}
 	return ret;
@@ -1384,12 +1384,12 @@ void ScummEngine_v90he::o90_unknown2F() {
 	debug(1,"o90_unknown2F stub (%d)", subOp);
 }
 
-void ScummEngine_v90he::o90_unknown31() {
+void ScummEngine_v90he::o90_shl4() {
 	int a = pop() << 2;
 	push(pop() << a);
 }
 
-void ScummEngine_v90he::o90_unknown32() {
+void ScummEngine_v90he::o90_shr4() {
 	int a = pop() << 2;
 	push(pop() >> a);
 }

@@ -342,12 +342,12 @@ void ScummEngine_v70he::setupOpcodes() {
 		OPCODE(o60_readFilePos),
 		/* EC */
 		OPCODE(o6_invalid),
-		OPCODE(o70_unknownED),
-		OPCODE(o70_stringLen),
+		OPCODE(o70_getStringWidth),
+		OPCODE(o70_getStringLen),
 		OPCODE(o70_unknownEF),
 		/* F0 */
 		OPCODE(o6_invalid),
-		OPCODE(o70_unknownF1),
+		OPCODE(o70_stringCompare),
 		OPCODE(o6_invalid),
 		OPCODE(o70_readINI),
 		/* F4 */
@@ -718,7 +718,7 @@ void ScummEngine_v70he::o70_quitPauseRestart() {
 	}
 }
 
-void ScummEngine_v70he::o70_unknownED() {
+void ScummEngine_v70he::o70_getStringWidth() {
 	int array, pos, len;
 	int chr, width = 0;
 
@@ -741,7 +741,7 @@ void ScummEngine_v70he::o70_unknownED() {
 	}
 
 	push(width);
-	debug(1,"stub o70_unknownED (%d)", width);
+	debug(1,"stub o70_getStringWidth (%d)", width);
 }
 
 void ScummEngine_v70he::o70_kernelSetFunctions() {
@@ -799,7 +799,7 @@ void ScummEngine_v70he::o70_kernelSetFunctions() {
 	}
 }
 
-void ScummEngine_v70he::o70_stringLen() {
+void ScummEngine_v70he::o70_getStringLen() {
 	int id, len;
 	byte *addr;
 
@@ -807,7 +807,7 @@ void ScummEngine_v70he::o70_stringLen() {
 
 	addr = getStringAddress(id);
 	if (!addr)
-		error("o70_stringLen: Reference to zeroed array pointer (%d)", id);
+		error("o70_getStringLen: Reference to zeroed array pointer (%d)", id);
 
 	len = resStrLen(getStringAddress(id));
 	push(len);
@@ -834,7 +834,7 @@ void ScummEngine_v70he::o70_unknownEF() {
 	debug(1,"stub o70_unknownEF");
 }
 
-void ScummEngine_v70he::o70_unknownF1() {
+void ScummEngine_v70he::o70_stringCompare() {
 	byte *addr, *addr2;
 	int i = 0;
 
@@ -843,11 +843,11 @@ void ScummEngine_v70he::o70_unknownF1() {
 
 	addr = getStringAddress(id);
 	if (!addr)
-		error("o70_unknownF1: Reference to zeroed array pointer (%d)", id);
+		error("o70_stringCompare: Reference to zeroed array pointer (%d)", id);
 
 	addr2 = getStringAddress(id2);
 	if (!addr2)
-		error("o70_unknownF1: Reference to zeroed array pointer (%d)", id);
+		error("o70_stringCompare: Reference to zeroed array pointer (%d)", id);
 
 	while(1) {
 		if (*addr != *addr2)
@@ -873,7 +873,7 @@ void ScummEngine_v70he::o70_unknownF1() {
 	}
 
 	push (i);
-	debug(1,"o70_unknownF1 stub (%d, %d, %d)", id, id2, i);
+	debug(1,"o70_stringCompare stub (%d, %d, %d)", id, id2, i);
 }
 
 void ScummEngine_v70he::o70_readINI() {

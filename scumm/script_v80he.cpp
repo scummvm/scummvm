@@ -130,11 +130,11 @@ void ScummEngine_v80he::setupOpcodes() {
 		OPCODE(o6_writeWordVar),
 		/* 44 */
 		OPCODE(o6_invalid),
-		OPCODE(o80_unknown45),
+		OPCODE(o80_loadSBNG),
 		OPCODE(o6_invalid),
 		OPCODE(o6_wordArrayWrite),
 		/* 48 */
-		OPCODE(o80_unknown48),
+		OPCODE(o80_stringToInt),
 		OPCODE(o80_getSoundVar),
 		OPCODE(o80_localizeArrayToRoom),
 		OPCODE(o6_wordArrayIndexedWrite),
@@ -340,12 +340,12 @@ void ScummEngine_v80he::setupOpcodes() {
 		OPCODE(o60_readFilePos),
 		/* EC */
 		OPCODE(o72_unknownEC),
-		OPCODE(o70_unknownED),
-		OPCODE(o70_stringLen),
+		OPCODE(o70_getStringWidth),
+		OPCODE(o70_getStringLen),
 		OPCODE(o72_unknownEF),
 		/* F0 */
 		OPCODE(o72_unknownF0),
-		OPCODE(o70_unknownF1),
+		OPCODE(o70_stringCompare),
 		OPCODE(o72_checkGlobQueue),
 		OPCODE(o72_readINI),
 		/* F4 */
@@ -377,7 +377,7 @@ const char *ScummEngine_v80he::getOpcodeDesc(byte i) {
 	return _opcodesV80he[i].desc;
 }
 
-void ScummEngine_v80he::o80_unknown45() {
+void ScummEngine_v80he::o80_loadSBNG() {
 	// Loads SBNG sound resource
 	byte subOp = fetchScriptByte();
 
@@ -393,12 +393,12 @@ void ScummEngine_v80he::o80_unknown45() {
 		//_heSBNGId = pop();
 		break;
 	default:
-		warning("o80_unknown45: default case %d", subOp);
+		warning("o80_loadSBNG: default case %d", subOp);
 	}
-	debug(1,"o80_unknown45 stub (%d)",subOp);
+	debug(1,"o80_loadSBNG stub (%d)",subOp);
 }
 
-void ScummEngine_v80he::o80_unknown48() {
+void ScummEngine_v80he::o80_stringToInt() {
 	int id, len, val;
 	byte *addr;
 	char string[100];
@@ -407,7 +407,7 @@ void ScummEngine_v80he::o80_unknown48() {
 
 	addr = getStringAddress(id);
 	if (!addr)
-		error("o80_unknown48: Reference to zeroed array pointer (%d)", id);
+		error("o80_stringToInt: Reference to zeroed array pointer (%d)", id);
 
 	len = resStrLen(getStringAddress(id)) + 1;
 	memcpy(string, addr, len);
