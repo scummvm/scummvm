@@ -803,6 +803,7 @@ public:
 	void setupShadowPalette(int slot, int redScale, int greenScale, int blueScale, int startColor, int endColor);
 	void setupShadowPalette(int redScale, int greenScale, int blueScale, int startColor, int endColor);
 	void darkenPalette(int redScale, int greenScale, int blueScale, int startColor, int endColor);
+	void desaturatePalette(int hueScale, int satScale, int lightScale, int startColor, int endColor);
 
 	void setCursor(int cursor);
 	void setCursorImg(uint img, uint room, uint imgindex);

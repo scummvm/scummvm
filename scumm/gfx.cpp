@@ -2821,6 +2821,118 @@ void Scumm::darkenPalette(int redScale, int greenScale, int blueScale, int start
 	}
 }
 
+static double value(double n1, double n2, double hue)
+{
+	if (hue > 360.0)
+		hue = hue - 360.0;
+	else if (hue < 0.0)
+		hue = hue + 360.0;
+
+	if (hue < 60.0)
+		return n1 + (n2 - n1) * hue / 60.0;
+	if (hue < 180.0)
+		return n2;
+	if (hue < 240.0)
+		return n1 + (n2 - n1) * (240.0 - hue) / 60.0;
+	return n1;
+}
+
+void Scumm::desaturatePalette(int hueScale, int satScale, int lightScale, int startColor, int endColor)
+{
+	// This function scales the HSL (Hue, Saturation and Lightness)
+	// components of the palette colours. It's used in CMI when Guybrush
+	// walks from the beach towards the swamp.
+	//
+	// I don't know if this function is correct, but the output seems to
+	// match the original fairly closely.
+	//
+	// FIXME: Rewrite using integer arithmetics only?
+
+	if (startColor <= endColor) {
+		byte *cptr, *cur;
+		int j;
+
+		cptr = getPalettePtr() + startColor * 3;
+		cur = _currentPalette + startColor * 3;
+
+		for (j = startColor; j <= endColor; j++) {
+			double R, G, B;
+			double H, S, L;
+			double min, max;
+			int red, green, blue;
+
+			R = ((double) *cptr++) / 255.0;
+			G = ((double) *cptr++) / 255.0;
+			B = ((double) *cptr++) / 255.0;
+
+			// RGB to HLS (Foley and VanDam)
+
+			min = MIN(R, MIN(G, B));
+			max = MAX(R, MAX(G, B));
+
+			L = (max + min) / 2.0;
+
+			if (max != min) {
+				if (L <= 0.5)
+					S = (max - min) / (max + min);
+				else
+					S = (max - min) / (2.0 - max - min);
+
+				if (R == max)
+					H = (G - B) / (max - min);
+				else if (G == max)
+					H = 2.0 + (B - R) / (max - min);
+				else
+					H = 4.0 + (R - G) / (max - min);
+
+				H = H * 60.0;
+				if (H < 0.0)
+					H = H + 360.0;
+			} else {
+				S = 0.0;
+				H = 0.0; // undefined
+			}
+
+			// Scale the result
+
+			H = (H * hueScale) / 255.0;
+			S = (S * satScale) / 255.0;
+			L = (L * lightScale) / 255.0;
+
+			// HLS to RGB (Foley and VanDam)
+
+			double m1, m2;
+
+			if (min != max) {
+				if (L <= 0.5)
+					m2 = L * (1 + S);
+				else
+					m2 = L + S - L * S;
+
+				m1 = 2.0 * L - m2;
+
+				R = value(m1, m2, H + 120);
+				G = value(m1, m2, H);
+				B = value(m1, m2, H - 120);
+			} else {
+				R = L;
+				G = L;
+				B = L;
+			}
+
+			red = (int) (255.0 * R + 0.5);
+			green = (int) (255.0 * G + 0.5);
+			blue = (int) (255.0 * B + 0.5);
+
+			*cur++ = red;
+			*cur++ = green;
+			*cur++ = blue;
+		}
+
+		setDirtyColors(startColor, endColor);
+	}
+}
+
 int Scumm::remapPaletteColor(int r, int g, int b, uint threshold) {
 	int i;
 	int ar, ag, ab;
