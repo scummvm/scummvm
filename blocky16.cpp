@@ -707,9 +707,9 @@ void Blocky16::decode(byte *dst, const byte *src) {
 		}
 
 #if defined(SYSTEM_BIG_ENDIAN) && !defined(MACOSX)
-	for (int i = 0; i < _width * _height; ++i) {
-		((uint16 *)_curBuf)[i] = SWAP_BYTES_16(((uint16 *)_curBuf)[i]);
-	}			
+		for (int i = 0; i < _width * _height; ++i) {
+			((uint16 *)_curBuf)[i] = SWAP_BYTES_16(((uint16 *)_curBuf)[i]);
+		}			
 #endif
 		
 		break;
