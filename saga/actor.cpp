@@ -689,7 +689,7 @@ bool Actor::actorWalkTo(uint16 actorId, const ActorLocation &toLocation) {
 		//todo: it
 	}
 	{
-		Point pointFrom, pointTo, pointBest;
+		Point pointFrom, pointTo;
 
 		pointFrom.x = actor->location.x / ACTOR_LMULT;
 		pointFrom.y = actor->location.y / ACTOR_LMULT;
