@@ -66,7 +66,11 @@ void Scumm::initScreens(int a, int b, int w, int h)
 	}
 
 	if (!getResourceAddress(rtBuffer, 4)) {
-		initVirtScreen(3, 0, 80, _realWidth, 13, false, false);
+		if (_features & GF_AFTER_V7) {
+			initVirtScreen(3, 0, (_realHeight / 2) - 10, _realWidth, 13, false, false);
+		} else {
+			initVirtScreen(3, 0, 80, _realWidth, 13, false, false);
+		}
 	}
 	initVirtScreen(0, 0, b, _realWidth, h - b, true, true);
 	initVirtScreen(1, 0, 0, _realWidth, b, false, false);
