@@ -58,9 +58,16 @@ class ResMan;
 #define WAVE_VOL_TAB_LENGTH 480
 #define WAVE_VOL_THRESHOLD 190000 //120000
 
+enum CowMode {
+	CowWave = 0,
+	CowMp3,
+	CowVorbis,
+	CowDemo
+};
+
 class Sound {
 public:
-	Sound(const char *searchPath, SoundMixer *mixer, ResMan *pResMan, bool isDemo);
+	Sound(const char *searchPath, SoundMixer *mixer, ResMan *pResMan);
 	~Sound(void);
 	void setSpeechVol(uint8 volL, uint8 volR) { _speechVolL = volL; _speechVolR = volR; };
 	void setSfxVol(uint8 volL, uint8 volR) { _sfxVolL = volL; _sfxVolR = volR; };
@@ -93,6 +100,7 @@ private:
 	uint32		 *_cowHeader;
 	uint32		 _cowHeaderSize;
 	uint8		 _currentCowFile;
+	CowMode		 _cowMode;
 	PlayingSoundHandle _speechHandle, _fxHandle;
 	Common::RandomSource _rnd;
 	
@@ -100,7 +108,6 @@ private:
 	uint8		 _endOfQueue;
 	SoundMixer *_mixer;
 	ResMan *_resMan;
-	bool _isDemo;
 	char _filePath[100];
 	static const char _musicList[270];
 	static const uint16 _roomsFixedFx[TOTAL_ROOMS][TOTAL_FX_PER_ROOM];

@@ -138,7 +138,7 @@ void SwordEngine::initialize(void) {
 	_mouse = new Mouse(_system, _resMan, _objectMan);
 	_screen = new Screen(_system, _resMan, _objectMan);
 	_music = new Music(_system, _mixer);
-	_sound = new Sound("", _mixer, _resMan, (_features & GF_DEMO) != 0);
+	_sound = new Sound("", _mixer, _resMan);
 	_menu = new Menu(_screen, _mouse);
 	_logic = new Logic(_objectMan, _resMan, _screen, _mouse, _sound, _music, _menu, _system, _mixer);
 	_mouse->useLogicAndMenu(_logic, _menu);

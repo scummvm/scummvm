@@ -24,14 +24,121 @@
 #include "sound/mixer.h"
 #include "common/util.h"
 #include "common/file.h"
+#include "sound/mp3.h"
+#include "sound/vorbis.h"
 
 namespace Sword1 {
+
+WaveAudioStream *makeWaveStream(File *source, uint32 size) {
+	return new WaveAudioStream(source, size);
+}
+
+WaveAudioStream::WaveAudioStream(File *source, uint32 pSize) {
+	uint32 size;
+	uint8 wavHeader[WAVEHEADERSIZE];
+
+	_sourceFile = source;
+	_sourceFile->incRef();
+	if (_sourceFile->isOpen()) {
+		_sourceFile->read(wavHeader, WAVEHEADERSIZE);
+		_isStereo = (READ_LE_UINT16(wavHeader + 0x16) == 2);
+		_rate = READ_LE_UINT16(wavHeader + 0x18);
+		size = ((pSize) ? pSize : READ_LE_UINT32(wavHeader + 0x28));
+		assert(size <= (source->size() - source->pos()));
+		_bitsPerSample = READ_LE_UINT16(wavHeader + 0x22);
+		_samplesLeft = (size * 8) / _bitsPerSample;
+		if ((_bitsPerSample != 16) && (_bitsPerSample != 8))
+			error("WaveAudioStream: unknown wave type");
+	} else {
+		_samplesLeft = 0;
+		_isStereo = false;
+		_bitsPerSample = 16;
+		_rate = 22050;
+	}
+}
+
+WaveAudioStream::~WaveAudioStream(void) {
+	_sourceFile->decRef();
+}
+
+int WaveAudioStream::readBuffer(int16 *buffer, const int numSamples) {
+	int samples = ((int)_samplesLeft < numSamples) ? (int)_samplesLeft : numSamples;
+	if (_bitsPerSample == 16)
+		for (int cnt = 0; cnt < samples; cnt++)
+			*buffer++ = (int16)_sourceFile->readUint16LE();
+	else
+		for (int cnt = 0; cnt < samples; cnt++)
+			*buffer++ = (int16)_sourceFile->readByte() << 8;
+	_samplesLeft -= samples;
+	return samples;
+}
+
+bool WaveAudioStream::endOfData(void) const {
+	if (_samplesLeft == 0)
+		return true;
+	else
+		return false;
+}
 
 // This means fading takes 3 seconds.
 #define FADE_LENGTH 3
 
 // These functions are only called from Music, so I'm just going to
 // assume that if locking is needed it has already been taken care of.
+
+AudioStream *MusicHandle::createAudioSource(void) {
+	_file.seek(0);
+	switch (_musicMode) {
+#ifdef USE_MAD
+		case MusicMp3:
+			printf("creating mp3 stream\n");
+			return makeMP3Stream(&_file, _file.size());			
+#endif
+#ifdef USE_VORBIS
+		case MusicVorbis:
+			return makeVorbisStream(&_file, _file.size());
+#endif
+		case MusicWave:
+			return makeWaveStream(&_file, 0);
+		case MusicNone: // shouldn't happen
+			warning("createAudioSource ran into null create\n");
+			return NULL;
+		default:
+			error("MusicHandle::createAudioSource: called with illegal MusicMode");
+	}
+	return NULL; // never reached
+}
+
+bool MusicHandle::play(const char *fileBase, bool loop) {
+	char fileName[30];
+	stop();
+	_musicMode = MusicNone;
+#ifdef USE_MAD
+	sprintf(fileName, "%s.mp3", fileBase);
+	if (_file.open(fileName))
+		_musicMode = MusicMp3;
+#endif
+#ifdef USE_VORBIS
+	if (!_file.isOpen()) { // mp3 doesn't exist (or not compiled with MAD support)
+		sprintf(fileName, "%s.ogg", fileBase);
+		if (_file.open(fileName))
+			_musicMode = MusicVorbis;
+	}
+#endif
+	if (!_file.isOpen()) {
+		sprintf(fileName, "%s.wav", fileBase);
+		if (_file.open(fileName))
+            _musicMode = MusicWave;
+		else {
+			warning("Music file %s could not be opened", fileName);
+			return false;
+		}
+	}
+	_audioSource = createAudioSource();
+	_looping = loop;
+	fadeUp();
+	return true;
+}
 
 void MusicHandle::fadeDown() {
 	if (streaming()) {
@@ -57,53 +164,67 @@ bool MusicHandle::endOfData() const {
 	return !streaming();
 }
 
-int MusicHandle::readBuffer(int16 *buffer, const int numSamples) {
-	int samples;
-	for (samples = 0; samples < numSamples && !endOfData(); samples++) {
-		int16 sample = _file.readUint16LE();
-		if (_file.ioFailed()) {
-			if (!_looping) {
-				stop();
-				sample = 0;
-			} else {
-				_file.clearIOFailed();
-				_file.seek(WAVEHEADERSIZE);
-				sample = _file.readUint16LE();
-			}
-		}
-		if (_fading > 0) {
-			if (--_fading == 0) {
-				_looping = false;
-				_file.close();
-			}
-			sample = (sample * _fading) / _fadeSamples;
-		} else if (_fading < 0) {
-			_fading--;
-			sample = -(sample * _fading) / _fadeSamples;
-			if (_fading <= -_fadeSamples)
-				_fading = 0;
-		}
-		*buffer++ = sample;
-	}
-	return samples;
+// is we don't have an audiosource, return some dummy values.
+// shouldn't happen anyways.
+bool MusicHandle::streaming(void) const {
+	return (_audioSource) ? (!_audioSource->endOfStream()) : false;
 }
 
-bool MusicHandle::play(const char *filename, bool loop) {
-	uint8 wavHeader[WAVEHEADERSIZE];
-	stop();
-	if (!_file.open(filename)) {
-		warning("Music file %s could not be opened", filename);
-		return false;
+bool MusicHandle::isStereo(void) const {
+	return (_audioSource) ? _audioSource->isStereo() : false;
+}
+
+int MusicHandle::getRate(void) const {
+	return (_audioSource) ? _audioSource->getRate() : 11025;
+}
+
+int MusicHandle::readBuffer(int16 *buffer, const int numSamples) {
+	int totalSamples = 0;
+	int16 *bufStart = buffer;
+	if (!_audioSource)
+		return 0;
+	int expectedSamples = numSamples;
+	while ((expectedSamples > 0) && _audioSource) { // _audioSource becomes NULL if we reach EOF and aren't looping
+		int samplesReturned = _audioSource->readBuffer(buffer, expectedSamples);
+		buffer += samplesReturned;
+		totalSamples += samplesReturned;
+        expectedSamples -= samplesReturned;
+		if ((expectedSamples > 0) && _audioSource->endOfData()) {
+			debug(2, "Music reached EOF");
+			_audioSource->endOfData();
+			if (_looping) { 
+                delete _audioSource; // recreate same source.
+				_audioSource = createAudioSource();
+			}
+			if ((!_looping) || (!_audioSource))
+				stop();
+		}
 	}
-	_file.read(wavHeader, WAVEHEADERSIZE);
-	_stereo = (READ_LE_UINT16(wavHeader + 0x16) == 2);
-	_rate = READ_LE_UINT16(wavHeader + 0x18);
-	_looping = loop;
-	fadeUp();
-	return true;
+	// buffer was filled, now do the fading (if necessary)
+	int samplePos = 0;
+	while ((_fading > 0) && (samplePos < totalSamples)) { // fade down
+		bufStart[samplePos] = (bufStart[samplePos] * --_fading) / _fadeSamples;
+		samplePos++;
+		if (_fading == 0) {
+			stop();
+			// clear the rest of the buffer
+            memset(bufStart + samplePos, 0, (totalSamples - samplePos) * 2);
+			return samplePos;
+		}
+	}
+	while ((_fading < 0) && (samplePos < totalSamples)) { // fade up
+        bufStart[samplePos] = -(bufStart[samplePos] * --_fading) / _fadeSamples;
+		if (_fading <= -_fadeSamples)
+			_fading = 0;
+	}
+	return totalSamples;
 }
 
 void MusicHandle::stop() {
+	if (_audioSource) {
+		delete _audioSource;
+		_audioSource = NULL;
+	}
 	if (_file.isOpen())
 		_file.close();
 	_fading = 0;
@@ -183,9 +304,7 @@ void Music::startMusic(int32 tuneId, int32 loopFlag) {
 			_handles[1].fadeDown();
 			newStream = 0;
 		}
-		char fName[20];
-		sprintf(fName, "%s.wav", _tuneList[tuneId]);
-		if (_handles[newStream].play(fName, loopFlag != 0)) {
+		if (_handles[newStream].play(_tuneList[tuneId], loopFlag != 0)) {
 			delete _converter[newStream];
 			_converter[newStream] = makeRateConverter(_handles[newStream].getRate(), _mixer->getOutputRate(), _handles[newStream].isStereo(), false);
 		}

@@ -36,27 +36,51 @@ namespace Sword1 {
 
 #define WAVEHEADERSIZE 0x2C
 
+enum MusicMode {
+	MusicNone = 0,
+	MusicWave,
+	MusicMp3,
+	MusicVorbis
+};
+
+class WaveAudioStream : public AudioStream {
+public:
+	WaveAudioStream(File *source, uint32 pSize);
+	virtual ~WaveAudioStream();
+	virtual int readBuffer(int16 *buffer, const int numSamples);
+	virtual bool isStereo(void) const { return _isStereo; };
+	virtual bool endOfData(void) const;
+	virtual int getRate(void) const { return _rate; };
+private:
+	File	*_sourceFile;
+	uint32	 _rate;
+	bool	 _isStereo;
+	uint32   _samplesLeft;
+	uint16	 _bitsPerSample;
+};
+
 class MusicHandle : public AudioStream {
 private:
 	File _file;
 	bool _looping;
 	int32 _fading;
 	int32 _fadeSamples;
-	int _rate;
-	bool _stereo;
+	MusicMode _musicMode;
+	AudioStream *_audioSource;
+	AudioStream *createAudioSource(void);
 public:
-	MusicHandle() : _looping(false), _fading(0) {}
+	MusicHandle() : _looping(false), _fading(0), _audioSource(NULL) {}
 	virtual int readBuffer(int16 *buffer, const int numSamples);
 	bool play(const char *filename, bool loop);
 	void stop();
 	void fadeUp();
 	void fadeDown();
-	bool streaming() const { return _file.isOpen(); }
+	bool streaming() const;
 	int32 fading() { return _fading; }
 	bool endOfData() const;
 	bool endOfStream() const { return false; }
-	bool isStereo() const { return _stereo; }
-	int getRate() const { return _rate; }
+	bool isStereo() const;
+	int getRate() const;
 };
 
 class Music {

@@ -31,7 +31,7 @@ namespace Sword1 {
 #define SOUND_SPEECH_ID 1
 #define SPEECH_FLAGS (SoundMixer::FLAG_16BITS | SoundMixer::FLAG_AUTOFREE | SoundMixer::FLAG_LITTLE_ENDIAN)
 
-Sound::Sound(const char *searchPath, SoundMixer *mixer, ResMan *pResMan, bool isDemo) {
+Sound::Sound(const char *searchPath, SoundMixer *mixer, ResMan *pResMan) {
 	strcpy(_filePath, searchPath);
 	_mixer = mixer;
 	_resMan = pResMan;
@@ -39,7 +39,6 @@ Sound::Sound(const char *searchPath, SoundMixer *mixer, ResMan *pResMan, bool is
 	_endOfQueue = 0;
 	_currentCowFile = 0;
 	_speechVolL = _speechVolR = _sfxVolL = _sfxVolR = 192;
-	_isDemo = isDemo;
 }
 
 int Sound::addToQueue(int32 fxNo) {
@@ -167,12 +166,35 @@ bool Sound::startSpeech(uint16 roomNo, uint16 localNo) {
 	uint32 index = _cowHeader[locIndex + (localNo * 2) - 1];
 	debug(6, "startSpeech(%d, %d): locIndex %d, sampleSize %d, index %d", roomNo, localNo, locIndex, sampleSize, index);
 	if (sampleSize) {
-		uint32 size;
-		int16 *data = uncompressSpeech(index + _cowHeaderSize, sampleSize, &size);
 		uint8 speechVol = (_speechVolR + _speechVolL) / 2;
 		int8 speechPan = (_speechVolR - _speechVolL) / 2;
-		if (data)
-			_mixer->playRaw(&_speechHandle, data, size, 11025, SPEECH_FLAGS, SOUND_SPEECH_ID, speechVol, speechPan);
+		if (_cowMode == CowWave) {
+			uint32 size;
+			int16 *data = uncompressSpeech(index + _cowHeaderSize, sampleSize, &size);
+			if (data)
+				_mixer->playRaw(&_speechHandle, data, size, 11025, SPEECH_FLAGS, SOUND_SPEECH_ID, speechVol, speechPan);
+		} 
+#ifdef USE_MAD
+		else if (_cowMode == CowMp3) {
+			warning("playing mp3: Sample(%d/%d) Index %X, Size %d", roomNo, localNo, index, sampleSize);
+			_cowFile.seek(index);
+			_mixer->playMP3(&_speechHandle, &_cowFile, sampleSize, speechVol, speechPan, SOUND_SPEECH_ID);
+			// with compressed audio, we can't calculate the wave volume.
+			// so default to talking.
+			for (int cnt = 0; cnt < 480; cnt++)
+				_waveVolume[cnt] = true;
+			_waveVolPos = 0;
+		}
+#endif
+#ifdef USE_VORBIS
+		else if (_cowMode == CowVorbis) {
+			_cowFile.seek(index);
+			_mixer->playVorbis(&_speechHandle, &_cowFile, sampleSize, speechVol, speechPan, SOUND_SPEECH_ID);
+			for (int cnt = 0; cnt < 480; cnt++)
+				_waveVolume[cnt] = true;	
+			_waveVolPos = 0;
+		}
+#endif
 		return true;
 	} else
 		return false;
@@ -187,8 +209,7 @@ int16 *Sound::uncompressSpeech(uint32 index, uint32 cSize, uint32 *size) {
 		headerPos++;
 	if (headerPos < 100) {
 		int32 resSize;
-		// Demo uses slightly different headers
-		if (_isDemo) {
+		if (_cowMode == CowDemo) { // Demo uses slightly different headers
 			resSize = READ_LE_UINT32(fBuf + headerPos + 6) >> 1;
 			headerPos += 2;
 		} else
@@ -259,12 +280,40 @@ void Sound::initCowSystem(void) {
 	/* look for speech1/2.clu in the data dir
 	   and speech/speech.clu (running from cd or using cd layout)
 	*/
-	sprintf(cowName, "SPEECH%d.CLU", SwordEngine::_systemVars.currentCD);
+#ifdef USE_MAD
+	sprintf(cowName, "SPEECH%d.CL3", SwordEngine::_systemVars.currentCD);
 	_cowFile.open(cowName);
+	if (_cowFile.isOpen()) {
+		debug(1, "Using MP3 compressed Speech Cluster");
+		_cowMode = CowMp3;
+	} 
+#endif
+#ifdef USE_VORBIS
+	if (!_cowFile.isOpen()) {
+		sprintf(cowName, "SPEECH%d.CLV", SwordEngine::_systemVars.currentCD);
+		_cowFile.open(cowName);
+		if (_cowFile.isOpen()) {
+			debug(1, "Using Vorbis compressed Speech Cluster");
+			_cowMode = CowVorbis;
+		}
+	}
+#endif
+	if (!_cowFile.isOpen()) {
+		sprintf(cowName, "SPEECH%d.CLU", SwordEngine::_systemVars.currentCD);
+		_cowFile.open(cowName);
+		if (!_cowFile.isOpen()) {
+			_cowFile.open("speech.clu");
+		}
+		debug(1, "Using uncompressed Speech Cluster");
+		_cowMode = CowWave;
+	}
 	if (!_cowFile.isOpen())
 		_cowFile.open("speech.clu");
-	if (!_cowFile.isOpen())
-		_cowFile.open("cows.mad"); 
+	if (!_cowFile.isOpen()) {
+		_cowFile.open("cows.mad");
+		if (_cowFile.isOpen())
+			_cowMode = CowDemo;
+	}
 	if (_cowFile.isOpen()) {
 		_cowHeaderSize = _cowFile.readUint32LE();
 		_cowHeader = (uint32*)malloc(_cowHeaderSize);
