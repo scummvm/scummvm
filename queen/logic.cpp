@@ -95,8 +95,7 @@ void Logic::initialise() {
 	// the following table isn't available in demo version
 	if (_vm->resource()->isDemo()) {
 		_sfxName = NULL;
-	}
-	else {
+	} else {
 		_sfxName = new uint16[_numRooms + 1];
 		_sfxName[0] = 0;
 		for (i = 1; i <= _numRooms; i++) {
@@ -345,19 +344,16 @@ uint16 Logic::findBob(uint16 obj) {
 					++bobnum;
 				}
 			}
-		}
-		else {
+		} else {
 			if(img <= -10) {
 				// object has been turned off, but the image order hasn't been updated
 				if(_graphicData[-(img + 10)].lastFrame != 0) {
 					bobtype = 1;
 				}
-			}
-			else if(img == -2) {
+			} else if(img == -2) {
 				// -1 static, -2 animated
 				bobtype = 1;
-			}
-			else if(img > 0) {
+			} else if(img > 0) {
 				if(_graphicData[img].lastFrame != 0) {
 					bobtype = 1;
 				}
@@ -370,12 +366,10 @@ uint16 Logic::findBob(uint16 obj) {
 				if(img <= -10) {
 					if(_graphicData[-(img + 10)].lastFrame != 0) {
 						++idxAnimated;
-					}
-					else {
+					} else {
 						++idxStatic;
 					}
-				}
-				else if(img > 0) {
+				} else if(img > 0) {
 					if(img > 5000) {
 						img -= 5000;
 					}
@@ -385,15 +379,12 @@ uint16 Logic::findBob(uint16 obj) {
 					
 					if(_graphicData[img].lastFrame != 0) {
 						++idxAnimated;
-					}
-					else {
+					} else {
 						++idxStatic;
 					}
-				}
-				else if(img == -1) {
+				} else if(img == -1) {
 					++idxStatic;
-				}
-				else if(img == -2) {
+				} else if(img == -2) {
 					++idxAnimated;
 				}
 			}
@@ -402,8 +393,7 @@ uint16 Logic::findBob(uint16 obj) {
 				if(idxStatic > 0) {
 					bobnum = 19 + _numFurnitureStatic + idxStatic;
 				}
-			}
-			else {
+			} else {
 				// animated bob
 				if(idxAnimated > 0) {
 					bobnum = 4 + _numFurnitureAnimated + idxAnimated;
@@ -433,8 +423,7 @@ uint16 Logic::findFrame(uint16 obj) {
 		if(bobnum <= 3) {
 			framenum = 29 + FRAMES_JOE_XTRA + bobnum;
 		}
-	}
-	else {
+	} else {
 		uint16 idx = 0;
 		for(i = _roomData[room] + 1; i < obj; ++i) {
 			img = _objectData[i].image;
@@ -443,16 +432,13 @@ uint16 Logic::findFrame(uint16 obj) {
 				if(pgd->lastFrame != 0) {
 					// skip all the frames of the animation
 					idx += ABS(pgd->lastFrame) - pgd->firstFrame + 1;
-				}
-				else {
+				} else {
 					// static bob, skip one frame
 					++idx;
 				}
-			}
-			else if(img == -1) {
+			} else if(img == -1) {
 				++idx;
-			}
-			else if(img > 0) {
+			} else if(img > 0) {
 				if(img > 5000) {
 					img -= 5000;
 				}
@@ -460,11 +446,9 @@ uint16 Logic::findFrame(uint16 obj) {
 				uint16 lastFrame = ABS(pgd->lastFrame);
 				if(pgd->firstFrame < 0) {
 					idx += lastFrame;
-				}
-				else if(lastFrame != 0) {
+				} else if(lastFrame != 0) {
 					idx += (lastFrame - pgd->firstFrame) + 1;
-				}
-				else {
+				} else {
 					++idx;
 				}
 			}
@@ -475,12 +459,10 @@ uint16 Logic::findFrame(uint16 obj) {
 			GraphicData* pgd = &_graphicData[-(img + 10)];
 			if(pgd->lastFrame != 0) {
 				idx += ABS(pgd->lastFrame) - pgd->firstFrame + 1;
-			}
-			else {
+			} else {
 				++idx;
 			}
-		}
-		else if(img == -1 || img > 0) {
+		} else if(img == -1 || img > 0) {
 			++idx;
 		}
 
@@ -619,8 +601,7 @@ uint16 Logic::zoneInArea(uint16 screen, uint16 x, uint16 y) const {
 	uint16 zone = zoneIn(screen, x, y);
 	if (zone <= _objMax[_currentRoom]) {
 		zone = 0;
-	}
-	else {
+	} else {
 		zone -= _objMax[_currentRoom];
 	}
 	return zone;
@@ -695,8 +676,7 @@ void Logic::roomErase() {
 
 	if (_currentRoom >= 114) {
 		_vm->display()->palFadeOut(0, 255, _currentRoom);
-	}
-	else {
+	} else {
 		_vm->display()->palFadeOut(0, 223, _currentRoom);
 	}
 	
@@ -718,13 +698,11 @@ void Logic::roomErase() {
 		if (pod->name == 0) {
 			// object has been deleted, invalidate image
 			pod->image = 0;
-		}
-		else if (pod->image > -4000 && pod->image <= -10) {
+		} else if (pod->image > -4000 && pod->image <= -10) {
 			if (_graphicData[ABS(pod->image + 10)].lastFrame == 0) {
 				// static Bob
 				pod->image = -1;
-			}
-			else {
+			} else {
 				// animated Bob
 				pod->image = -2;
 			}
@@ -772,9 +750,7 @@ void Logic::roomSetupFurniture() {
 				_vm->graphics()->bankUnpack(pgd->firstFrame, curImage, 15);
 				++_numFrames;
 				BobSlot *pbs = _vm->graphics()->bob(19 + _numFurnitureStatic);
-				pbs->active = true;
-				pbs->x = pgd->x;
-				pbs->y = pgd->y;
+				pbs->curPos(pgd->x, pgd->y);
 				pbs->frameNum = curImage;
 			}
 		}
@@ -806,8 +782,7 @@ void Logic::roomSetupFurniture() {
 				}
 				BobSlot *pbs = _vm->graphics()->bob(5 + curBob);
 				pbs->animNormal(image, curImage, pgd->speed / 4, rebound, false);
-				pbs->x = pgd->x;
-				pbs->y = pgd->y;
+				pbs->curPos(pgd->x, pgd->y);
 				++curBob;
 			}
 		}
@@ -858,13 +833,11 @@ void Logic::roomSetupObjects() {
 			// create a blank frame for the for the OFF object
 			++_numFrames;
 			++curImage;
-		}
-		else if(pod->image == -2) {
+		} else if(pod->image == -2) {
 			// animated OFF Bob
 			curBob = 5 + _numFurnitureAnimated + numObjectAnimated;
 			++numObjectAnimated;
-		}
-		else if(pod->image > 0 && pod->image < 5000) {
+		} else if(pod->image > 0 && pod->image < 5000) {
 			GraphicData *pgd = &_graphicData[pod->image];
 			int16 lastFrame = pgd->lastFrame;
 			bool rebound = false;
@@ -878,8 +851,7 @@ void Logic::roomSetupObjects() {
 				animSetup(pgd, curImage + 1, curBob + numObjectAnimated, pod->name > 0);
 				curImage += pgd->lastFrame;
 				++numObjectAnimated;
-			}
-			else if (lastFrame != 0) {
+			} else if (lastFrame != 0) {
 				// animated objects
 				uint16 j;
 				uint16 firstFrame = curImage + 1;
@@ -891,17 +863,14 @@ void Logic::roomSetupObjects() {
 				curBob = 5 + _numFurnitureAnimated + numObjectAnimated;
 				if (pod->name > 0) {
 					BobSlot *pbs = _vm->graphics()->bob(curBob);
-					pbs->active = true;
-					pbs->x = pgd->x;
-					pbs->y = pgd->y;
+					pbs->curPos(pgd->x, pgd->y);
 					pbs->frameNum = firstFrame;
 					if (pgd->speed > 0) {
 						pbs->animNormal(firstFrame, curImage, pgd->speed / 4, rebound, false);
 					}
 				}
 				++numObjectAnimated;
-			}
-			else {
+			} else {
 				// static objects
 				curBob = 20 + _numFurnitureStatic + numObjectStatic;
 				++curImage;
@@ -913,9 +882,7 @@ void Logic::roomSetupObjects() {
 				++_numFrames;
 				if (pod->name > 0) {
 					BobSlot *pbs = _vm->graphics()->bob(curBob);
-					pbs->active = true;
-					pbs->x = pgd->x;
-					pbs->y = pgd->y;
+					pbs->curPos(pgd->x, pgd->y);
 					pbs->frameNum = curImage;
 				}
 				++numObjectStatic;
@@ -931,8 +898,7 @@ void Logic::roomSetupObjects() {
 			uint16 noun = i - _roomData[_currentRoom];
 			if (pod->name > 0) {
 				curImage = personSetup(noun, curImage);
-			}
-			else {
+			} else {
 				curImage = personAllocate(noun, curImage);
 			}
 		}
@@ -986,8 +952,7 @@ uint16 Logic::roomRefreshObject(uint16 obj) {
 		// a person object
 		if (pod->name <= 0) {
 			_vm->graphics()->bobClear(curBob);
-		}
-		else {
+		} else {
 			// find person number
 			uint16 pNum = 1;
 			uint16 i = _roomData[_currentRoom] + 1;
@@ -1031,8 +996,7 @@ uint16 Logic::roomRefreshObject(uint16 obj) {
 	if (pgd->firstFrame < 0) {
 		animSetup(pgd, curImage, curBob, pod->name != 0);
 		curImage += pgd->lastFrame - 1;
-	}
-	else if (lastFrame != 0) {
+	} else if (lastFrame != 0) {
 		// turn on an animated bob
 		_vm->graphics()->bankUnpack(pgd->firstFrame, 2, 15);
 		pbs->animating = false;
@@ -1043,21 +1007,16 @@ uint16 Logic::roomRefreshObject(uint16 obj) {
 			++curImage;
 			_vm->graphics()->bankUnpack(j, curImage, 15);
 		}
-		pbs->active = true;
-		pbs->x = pgd->x;
-		pbs->y = pgd->y;
+		pbs->curPos(pgd->x, pgd->y);
 		pbs->frameNum = firstImage;
 		if (pgd->speed > 0) {
 			pbs->animNormal(firstImage, curImage, pgd->speed / 4, rebound, false);
 		}
-	}
-	else {
+	} else {
 		// frame 2 is used as a buffer frame to prevent BOB flickering
 		_vm->graphics()->bankUnpack(pgd->firstFrame, 2, 15);
 		_vm->graphics()->bankUnpack(pgd->firstFrame, curImage, 15);
-		pbs->active = true;
-		pbs->x = pgd->x;
-		pbs->y = pgd->y;
+		pbs->curPos(pgd->x, pgd->y);
 		pbs->frameNum = curImage;
 	}
 
@@ -1109,8 +1068,7 @@ void Logic::roomDisplay(uint16 room, RoomDisplayMode mode, uint16 scale, int com
 		BobSlot *joe = _vm->graphics()->bob(0);
 		if (IS_CD_INTRO_ROOM(_currentRoom)) {
 			_vm->display()->palFadeIn(0, 255, _currentRoom, joe->active, joe->x, joe->y);
-		}
-		else {
+		} else {
 			_vm->display()->palFadeIn(0, 223, _currentRoom, joe->active, joe->x, joe->y);
 		}
 	}
@@ -1173,8 +1131,7 @@ void Logic::personSetData(int16 noun, const char *actorName, bool loadBank, Pers
 		pp->name = _aName[pp->actor->name];
 		if (pp->actor->anim != 0) {
 			pp->anim = _aAnim[pp->actor->anim];
-		}
-		else {
+		} else {
 			pp->anim = NULL;
 		}
 
@@ -1220,10 +1177,8 @@ uint16 Logic::personSetup(uint16 noun, uint16 curImage) {
 		xflip = true;
 	}
 	BobSlot *pbs = _vm->graphics()->bob(pad->bobNum);
-	pbs->active = true;
+	pbs->curPos(pad->x, pad->y);
 	pbs->scale = scale;
-	pbs->x = pad->x;
-	pbs->y = pad->y;
 	pbs->frameNum = p.bobFrame;
 	pbs->xflip = xflip;
 
@@ -1232,8 +1187,7 @@ uint16 Logic::personSetup(uint16 noun, uint16 curImage) {
 	if (p.anim != NULL) {
 		_personFrames[pad->bobNum] = curImage + 1;
 		curImage = animCreate(curImage, &p);
-	}
-	else {
+	} else {
 		animErase(pad->bobNum);
 	}
 	return curImage;
@@ -1309,8 +1263,7 @@ uint16 Logic::animCreate(uint16 curImage, const Person *person) {
 		if (f1 > 500) {
 			// SFX
 			allocatedFrames[f1 - 500] = 1;
-		}
-		else {
+		} else {
 			allocatedFrames[f1] = 1;
 		}
 		
@@ -1331,8 +1284,7 @@ uint16 Logic::animCreate(uint16 curImage, const Person *person) {
 		uint16 frameNum = animFrames[i].frame;
 		if (frameNum > 500) {
 			animFrames[i].frame = curImage + allocatedFrames[frameNum - 500] + 500;
-		}
-		else {
+		} else {
 			animFrames[i].frame = curImage + allocatedFrames[frameNum];
 		}
 	}
@@ -1416,8 +1368,7 @@ void Logic::animSetup(const GraphicData *gd, uint16 firstImage, uint16 bobNum, b
 	BobSlot *pbs = _vm->graphics()->bob(bobNum);
 	pbs->animating = false;
 	if (visible) {
-		pbs->x = gd->x;
-		pbs->y = gd->y;
+		pbs->curPos(gd->x, gd->y);
 		if (tempFrames[0] < 0) {
 			pbs->xflip = true;
 		}
@@ -1431,8 +1382,7 @@ void Logic::animSetup(const GraphicData *gd, uint16 firstImage, uint16 bobNum, b
 						if (pga->frame - 500 == tempFrames[j - 1]) {
 							frameNr = j + firstImage - 1 + 500;
 						}
-					}
-					else if (pga->frame == tempFrames[j - 1]) {
+					} else if (pga->frame == tempFrames[j - 1]) {
 						frameNr = j + firstImage - 1;
 					}
 				}
@@ -1486,16 +1436,14 @@ ObjectData *Logic::joeSetupInRoom(bool autoPosition, uint16 scale) {
 	if (!autoPosition || joeX() != 0 || joeY() != 0) {
 		oldx = joeX();
 		oldy = joeY();
-	}
-	else {
+	} else {
 		// find the walk off point for the entry object and make 
 		// Joe walking to that point
 		pwo = walkOffPointForObject(_entryObj);
 		if (pwo != NULL) {
 			oldx = pwo->x;
 			oldy = pwo->y;
-		}
-		else {
+		} else {
 			// no walk off point, use object position
 			oldx = pod->x;
 			oldy = pod->y;
@@ -1506,13 +1454,11 @@ ObjectData *Logic::joeSetupInRoom(bool autoPosition, uint16 scale) {
 
 	if (scale > 0 && scale < 100) {
 		joeScale(scale);
-	}
-	else {
+	} else {
 		uint16 a = zoneInArea(ZONE_ROOM, oldx, oldy);
 		if (a > 0) {
 			joeScale(currentRoomArea(a)->calcScale(oldy));
-		}
-		else {
+		} else {
 			joeScale(100);
 		}
 	}
@@ -1520,8 +1466,7 @@ ObjectData *Logic::joeSetupInRoom(bool autoPosition, uint16 scale) {
 	if (joeCutFacing() > 0) {
 		joeFacing(joeCutFacing());
 		joeCutFacing(0);
-	}
-	else {
+	} else {
 		// check to see which way Joe entered room
 		switch (State::findDirection(pod->state)) {
 		case DIR_BACK:
@@ -1556,9 +1501,7 @@ ObjectData *Logic::joeSetupInRoom(bool autoPosition, uint16 scale) {
 	}
 
 	joeFace();
-	pbs->active = true;
-	pbs->x = oldx;
-	pbs->y = oldy;
+	pbs->curPos(oldx, oldy);
 	pbs->frameNum = 29 + FRAMES_JOE_XTRA;
 	joeX(0);
 	joeY(0);
@@ -1578,8 +1521,7 @@ uint16 Logic::joeFace() {
 	uint16 frame;
 	if (_currentRoom == 108) {
 		frame = 1;
-	}
-	else {
+	} else {
 		frame = 33;
 		if (joeFacing() == DIR_FRONT) {
 			if (joePrevFacing() == DIR_BACK) {
@@ -1587,15 +1529,13 @@ uint16 Logic::joeFace() {
 				update();
 			}
 			frame = 34;
-		}
-		else if (joeFacing() == DIR_BACK) {
+		} else if (joeFacing() == DIR_BACK) {
 			if (joePrevFacing() == DIR_FRONT) {
 				pbs->frameNum = 33 + FRAMES_JOE_XTRA;
 				update();
 			}
 			frame = 35;
-		}
-		else if ((joeFacing() == DIR_LEFT && joePrevFacing() == DIR_RIGHT) 
+		} else if ((joeFacing() == DIR_LEFT && joePrevFacing() == DIR_RIGHT) 
 			|| 	(joeFacing() == DIR_RIGHT && joePrevFacing() == DIR_LEFT)) {
 			pbs->frameNum = 34 + FRAMES_JOE_XTRA;
 			update();
@@ -1635,11 +1575,9 @@ void Logic::joeGrab(int16 grabState) {
 	case STATE_GRAB_MID:
 		if (joeFacing() == DIR_BACK) {
 			frame = 6;
-		}
-		else if (joeFacing() == DIR_FRONT) {
+		} else if (joeFacing() == DIR_FRONT) {
 			frame = 4;
-		}
-		else {
+		} else {
 			frame = 2;
 		}
 		break;
@@ -1647,8 +1585,7 @@ void Logic::joeGrab(int16 grabState) {
 	case STATE_GRAB_DOWN:
 		if (joeFacing() == DIR_BACK) {
 			frame = 9;
-		}
-		else {
+		} else {
 			frame = 8;
 		}
 		break;
@@ -1692,8 +1629,7 @@ void Logic::joeUseDress(bool showCut) {
 		if (gameState(VAR_DRESSING_MODE) == 0) {
 			playCutaway("cdres.CUT");
 			inventoryInsertItem(ITEM_CLOTHES);
-		}
-		else {
+		} else {
 			playCutaway("cudrs.CUT");
 		}
 	}
@@ -1856,8 +1792,7 @@ void Logic::inventoryRefresh() {
 			// unpack frame for object and draw it
 			_vm->graphics()->bankUnpack(_itemData[itemNum].frame, dstFrame, 14);
 			_vm->graphics()->bobDrawInventoryItem(dstFrame, x, 14);
-		}
-		else {
+		} else {
 			// no object, clear the panel 
 			_vm->graphics()->bobDrawInventoryItem(0, x, 14);
 		}
@@ -2058,8 +1993,7 @@ void Logic::customMoveJoe(int facing, uint16 areaNum, uint16 walkDataNum) {
 	case ROOM_AMAZON_HIDEOUT:
 		if (walkDataNum == 4) {
 			playCutaway("c17a.CUT", nextCut);
-		}
-		else if (walkDataNum == 2) {
+		} else if (walkDataNum == 2) {
 			playCutaway("c17b.CUT", nextCut);
 		}
 		break;
@@ -2103,12 +2037,10 @@ void Logic::customMoveJoe(int facing, uint16 areaNum, uint16 walkDataNum) {
 			_gameState[VAR_ESCAPE_FROM_HOTEL_COUNT] = 1;
 			joeUseUnderwear();
 			joeFace();
-		}
-		else if (_gameState[VAR_ESCAPE_FROM_HOTEL_COUNT] == 1) {
+		} else if (_gameState[VAR_ESCAPE_FROM_HOTEL_COUNT] == 1) {
 			playCutaway("c73b.CUT");
 			_gameState[VAR_ESCAPE_FROM_HOTEL_COUNT] = 2;
-		}
-		else if (_gameState[VAR_ESCAPE_FROM_HOTEL_COUNT] == 2) {
+		} else if (_gameState[VAR_ESCAPE_FROM_HOTEL_COUNT] == 2) {
 			playCutaway("c73c.CUT");
 		}
 		break;
@@ -2126,8 +2058,7 @@ void Logic::customMoveJoe(int facing, uint16 areaNum, uint16 walkDataNum) {
 		if (areaNum == 3) {
 			if (_gameState[VAR_BYPASS_FLODA_RECEPTIONIST] == 1) {
 				playCutaway("c103e.CUT", nextCut);
-			}
-			else if (_gameState[VAR_BYPASS_FLODA_RECEPTIONIST] == 0) {
+			} else if (_gameState[VAR_BYPASS_FLODA_RECEPTIONIST] == 0) {
 				playCutaway("c103b.CUT", nextCut);
 				_gameState[VAR_BYPASS_FLODA_RECEPTIONIST] = 1;
 			}
@@ -2474,8 +2405,7 @@ void Logic::useJournal() {
 
 	if (_vm->resource()->isDemo()) {
 		makePersonSpeak("This is a demo, so I can't load or save games*14", NULL, "");
-	}
-	else {
+	} else {
 
 		// XXX save some vars
 		// 
@@ -2516,8 +2446,7 @@ void Logic::checkOptionSettings() {
 	// check talkspeed value
 	if (_talkSpeed < 4) {
 		_talkSpeed = 4;
-	}
-	else if (_talkSpeed > 95) {
+	} else if (_talkSpeed > 95) {
 		_talkSpeed = 100;
 	}
 
@@ -2919,8 +2848,7 @@ void Logic::asmPanToJoe() {
 	int i = _vm->graphics()->bob(0)->x - 160;
 	if (i < 0) {
 		i = 0;
-	}
-	else if (i > 320) {
+	} else if (i > 320) {
 		i = 320;
 	}
 	_vm->graphics()->cameraBob(-1);
@@ -2932,8 +2860,7 @@ void Logic::asmPanToJoe() {
 			}
 			update();
 		}
-	}
-	else {
+	} else {
 		while (_vm->display()->horizontalScroll() < i) {
 			_vm->display()->horizontalScroll(_vm->display()->horizontalScroll() + 16);
 			if (_vm->display()->horizontalScroll() > i ) {
@@ -2972,8 +2899,7 @@ void Logic::asmSmooch() {
 		if (bobJoe->x - bobAzura->x > 128) {
 			bobAzura->x += 10;
 			bobJoe->x += 6;
-		}
-		else {
+		} else {
 			bobAzura->x += 8;
 			bobJoe->x += 8;
 		}
