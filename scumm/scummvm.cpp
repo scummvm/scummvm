@@ -1383,6 +1383,8 @@ void Scumm::startScene(int room, Actor * a, int objectNr) {
 
 	_egoPositioned = false;
 	runEntryScript();
+	if (_version <= 2)
+		runScript(5, 0, 0, 0);
 
 	if (_version < 7) {
 		if (a && !_egoPositioned) {
@@ -2086,7 +2088,6 @@ void Scumm::processKbd() {
 
 		if (_lastKeyHit) {		// Key Input
 			VAR(VAR_KEYPRESS) = _lastKeyHit;
-			runInputScript(4, 0, 0);
 		}
 	}
 

@@ -865,7 +865,7 @@ void Scumm::doSentence(int verb, int objectA, int objectB) {
 
 void Scumm::checkAndRunSentenceScript() {
 	int i;
-	ScriptSlot *ss;
+	const ScriptSlot *ss;
 	int sentenceScript;
 	if (_version <= 2)
 		sentenceScript = 2;

@@ -273,33 +273,32 @@ void Scumm::checkExecVerbs() {
 		for (i = 1; i < _maxVerbs; i++, vs++) {
 			if (vs->verbid && vs->saveid == 0 && vs->curmode == 1) {
 				if (_mouseButStat == vs->key) {
+					// Trigger verb as if the user clicked it
 					runInputScript(1, vs->verbid, 1);
 					return;
 				}
 			}
 		}
+		// Generic keyboard input
 		runInputScript(4, _mouseButStat, 1);
 	} else if (_mouseButStat & MBS_MOUSE_MASK) {
 		VirtScreen *zone = findVirtScreen(_mouse.y);
 		byte code = _mouseButStat & MBS_LEFT_CLICK ? 1 : 2;
-		if (zone->number == 0) {
-			over = checkMouseOver(_mouse.x, _mouse.y);
-			if (over != 0) {
-				runInputScript(1, _verbs[over].verbid, code);
-				return;
-			}
-			runInputScript(2, 0, code);
+		if (_version <= 2 && zone->number == 2 && _mouse.y <= zone->topline + 8) {
+			// Click into V2 sentence line
+			runInputScript(5, 0, 0);
 		} else if (_version <= 2 && zone->number == 2 && _mouse.y > zone->topline + 32) {
+			// Click into V2 inventory
 			checkV2Inventory(_mouse.x, _mouse.y);
 		} else {
 			over = checkMouseOver(_mouse.x, _mouse.y);
-
-			// FIXME For the future: Indy3 and under inv scrolling
-			/*
-			   if (over >= 31 && over <= 36) 
-			   over += _inventoryOffset;
-			 */
-			runInputScript(1, over != 0 ? _verbs[over].verbid : 0, code);
+			if (over != 0) {
+				// Verb was clicked
+				runInputScript(1, _verbs[over].verbid, code);
+			} else {
+				// Scene was clicked
+				runInputScript((zone->number == 0) ? 2 : 1, 0, code);
+			}
 		}
 	}
 }
