@@ -1469,7 +1469,7 @@ bool Debugger::Cmd_Section(int argc, const char **argv) {
 	int section = atoi(argv[1]);
 	
 	if (section >= 0 && section <= 6) {
-		_logic->fnEnterSection(section % 6, 0, 0);
+		_logic->fnEnterSection(section == 6 ? 4 : section, 0, 0);
 		_logic->fnAssignBase(ID_FOSTER, baseId[section], 0);
 		SkyEngine::fetchCompact(ID_FOSTER)->extCompact->megaSet = 0;
 	} else {
