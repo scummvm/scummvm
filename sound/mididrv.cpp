@@ -665,7 +665,11 @@ void MidiDriver_QT::send(uint32 b)
 		break;
 
 	case 0xE0:{									// Pitch bend
-			long theBend = ((((long)midiCmd[1] + (long)(midiCmd[2] << 8))) - 0x4000) / 4;
+			long theBend = (long)midiCmd[1] | (long)(midiCmd[2] << 8);
+			// QuickTime specifies pitchbend in semitones, using 8.8 fixed point values;
+			// but iMuse sends us the pitch bend data relative to +/- 12 semitones. Thus
+			// we have to convert it to the QT format.
+			theBend = (theBend - 0x4000) * 6 / 128;
 			NASetController(qtNoteAllocator, qtNoteChannel[chanID], kControllerPitchBend, theBend);
 		}
 		break;
