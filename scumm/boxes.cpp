@@ -34,6 +34,17 @@
 struct Box {				/* Internal walkbox file format */
 	union {
 		struct {
+			byte uy;
+			byte ly;
+			byte ulx;
+			byte urx;
+			byte llx;
+			byte lrx;
+			byte mask;
+			byte flags;
+		} GCC_PACK v2;
+
+		struct {
 			int16 ulx, uly;
 			int16 urx, ury;
 			int16 lrx, lry;
@@ -85,6 +96,8 @@ byte Scumm::getMaskFromBox(int box) {
 
 	if (_features & GF_AFTER_V8)
 		return (byte) FROM_LE_32(ptr->v8.mask);
+	else if (_features & GF_AFTER_V2)
+		return ptr->v2.mask;
 	else
 		return ptr->old.mask;
 }
@@ -97,12 +110,14 @@ void Scumm::setBoxFlags(int box, int val) {
 		assert(box >= 0 && box < 65);
 		_extraBoxFlags[box] = val;
 	} else {
-		Box *b = getBoxBaseAddr(box);
-		assert(b);
+		Box *ptr = getBoxBaseAddr(box);
+		assert(ptr);
 		if (_features & GF_AFTER_V8)
-			b->v8.flags = TO_LE_32(val);
+			ptr->v8.flags = TO_LE_32(val);
+		else if (_features & GF_AFTER_V2)
+			ptr->v2.flags = val;
 		else
-			b->old.flags = val;
+			ptr->old.flags = val;
 	}
 }
 
@@ -112,16 +127,20 @@ byte Scumm::getBoxFlags(int box) {
 		return 0;
 	if (_features & GF_AFTER_V8)
 		return (byte) FROM_LE_32(ptr->v8.flags);
+	else if (_features & GF_AFTER_V2)
+		return ptr->v2.flags;
 	else
 		return ptr->old.flags;
 }
 
 void Scumm::setBoxScale(int box, int scale) {
-	Box *b = getBoxBaseAddr(box);
+	Box *ptr = getBoxBaseAddr(box);
 	if (_features & GF_AFTER_V8)
-		b->v8.scale = TO_LE_32(scale);
+		ptr->v8.scale = TO_LE_32(scale);
+	else if (_features & GF_AFTER_V2)
+		error("This should not ever be called!");
 	else
-		b->old.scale = TO_LE_16(scale);
+		ptr->old.scale = TO_LE_16(scale);
 }
 
 void Scumm::setBoxScaleSlot(int box, int slot) {
@@ -162,6 +181,9 @@ int Scumm::getScale(int box, int x, int y) {
 			}
 		} else
 			return FROM_LE_32(ptr->v8.scale);
+	} else if (_features & GF_AFTER_V2) {
+		// FIXME - nothing ?!?
+		return 255;
 	} else {
 		uint16 scale = READ_LE_UINT16(&ptr->old.scale);
 
@@ -216,14 +238,15 @@ Box *Scumm::getBoxBaseAddr(int box) {
 	if ((_gameId != GID_MONKEY_EGA) && !(_features & GF_AFTER_V2))
 		checkRange(ptr[0] - 1, 0, box, "Illegal box %d");
 
-	if (_features & GF_SMALL_HEADER) {
-		if (_features & GF_AFTER_V3) // GF_OLD256 or GF_AFTER_V3 ?
-			return (Box *)(ptr + box * (SIZEOF_BOX - 2) + 1);
-		else
-			return (Box *)(ptr + box * SIZEOF_BOX + 1);
-	} else if (_features & GF_AFTER_V8) {
-		return (Box *)(ptr + box * 52 + 4);
-	} else
+	if (_features & GF_AFTER_V2)
+		return (Box *)(ptr + box * SIZEOF_BOX_V2 + 1);
+	else if (_features & GF_AFTER_V3)
+		return (Box *)(ptr + box * SIZEOF_BOX_V3 + 1);
+	else if (_features & GF_SMALL_HEADER)
+		return (Box *)(ptr + box * SIZEOF_BOX + 1);
+	else if (_features & GF_AFTER_V8)
+		return (Box *)(ptr + box * SIZEOF_BOX_V8 + 4);
+	else
 		return (Box *)(ptr + box * SIZEOF_BOX + 2);
 }
 
@@ -326,6 +349,16 @@ void Scumm::getBoxCoordinates(int boxnum, BoxCoords *box) {
 			SWAP(box->ll.x, box->lr.x);
 			SWAP(box->ll.y, box->lr.y);
 		}
+	} else if (_features & GF_AFTER_V2) {
+		box->ul.x = bp->v2.ulx;
+		box->ul.y = bp->v2.uy;
+		box->ur.x = bp->v2.urx;
+		box->ur.y = bp->v2.uy;
+	
+		box->ll.x = bp->v2.llx;
+		box->ll.y = bp->v2.ly;
+		box->lr.x = bp->v2.lrx;
+		box->lr.y = bp->v2.ly;
 	} else {
 		box->ul.x = (int16)READ_LE_UINT16(&bp->old.ulx);
 		box->ul.y = (int16)READ_LE_UINT16(&bp->old.uly);

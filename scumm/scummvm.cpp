@@ -1332,8 +1332,10 @@ void Scumm::initRoomSubBlocks() {
 		if (ptr) {
 			byte numOfBoxes = *ptr;
 			int size;
-			if (_features & GF_AFTER_V3)
-				size = numOfBoxes * (SIZEOF_BOX - 2) + 1;
+			if (_features & GF_AFTER_V2)
+				size = numOfBoxes * SIZEOF_BOX_V2 + 1;
+			else if (_features & GF_AFTER_V3)
+				size = numOfBoxes * SIZEOF_BOX_V3 + 1;
 			else
 				size = numOfBoxes * SIZEOF_BOX + 1;
 

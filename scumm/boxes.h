@@ -23,7 +23,10 @@
 #ifndef BOXES_H
 #define BOXES_H
 
+#define SIZEOF_BOX_V2 8
+#define SIZEOF_BOX_V3 18
 #define SIZEOF_BOX 20
+#define SIZEOF_BOX_V8 52
 
 typedef enum {
 	kBoxXFlip		= 0x08,
