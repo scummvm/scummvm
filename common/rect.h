@@ -54,7 +54,9 @@ struct Rect {
 
 	Rect() : top(0), left(0), bottom(0), right(0) {}
 	Rect(int16 x, int16 y) : top(0), left(0), bottom(x), right(y) {}
-	Rect(int16 x1, int16 y1, int16 x2, int16 y2) : top(y1), left(x1), bottom(y2), right(x2) {}
+	Rect(int16 x1, int16 y1, int16 x2, int16 y2) : top(y1), left(x1), bottom(y2), right(x2) {
+		assert(isValidRect());
+	}
 	int16 width() const { return right - left; }
 	int16 height() const { return bottom - top; }
 
@@ -112,14 +114,28 @@ struct Rect {
 	}
 	
 	void clip(const Rect & r) {
+		assert(isValidRect());
+		assert(r.isValidRect());
+
 		if (top < r.top) top = r.top;
+		else if (top > r.bottom) top = r.bottom;
+
 		if (left < r.left) left = r.left;
+		else if (left > r.right) left = r.right;
+
 		if (bottom > r.bottom) bottom = r.bottom;
+		else if (bottom < r.top) bottom = r.top;
+
 		if (right > r.right) right = r.right;
+		else if (right < r.left) right = r.left;
 	}
 	
 	void clip(int maxw, int maxh) {
 		clip(Rect(0, 0, maxw, maxh));
+	}
+	
+	bool isValidRect() const {
+		return (left <= right && top <= bottom);
 	}
 };
 
