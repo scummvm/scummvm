@@ -23,6 +23,7 @@
 #include "stdafx.h"
 #include "scumm.h"
 #include "actor.h"
+#include <math.h>
 
 byte Scumm::getMaskFromBox(int box)
 {
