@@ -78,6 +78,7 @@ static const char USAGE_STRING[] =
 	"                           atari, fmtowns, mac, pc)\n"
 	"  --multi-midi             Enable combination Adlib and native MIDI\n"
 	"  --native-mt32            True Roland MT-32 (disable GM emulation)\n"
+	"  --output-rate=RATE       Select output sample rate in Hz (e.g. 22050)\n"
 	"  --aspect-ratio           Enable aspect ratio correction\n"
 	"\n"
 #if !defined(DISABLE_SKY) || !defined(DISABLE_QUEEN)
@@ -310,6 +311,10 @@ void GameDetector::parseCommandLine(int argc, char **argv) {
 				if (parseMusicDriver(option) < 0)
 					goto ShowHelpAndExit;
 				ConfMan.set("music_driver", option, kTransientDomain);
+			END_OPTION
+
+			DO_LONG_OPTION("output-rate")
+				ConfMan.set("output_rate", (int)strtol(option, 0, 10), kTransientDomain);
 			END_OPTION
 
 			DO_OPTION_BOOL('f', "fullscreen")

@@ -95,6 +95,7 @@ OSystem_SDL::OSystem_SDL()
 #endif
 	_hwscreen(0), _screen(0), _screenWidth(0), _screenHeight(0),
 	_tmpscreen(0), _overlayVisible(false),
+	_samplesPerSec(0),
 	_cdrom(0), _scaler_proc(0), _modeChanged(false), _dirty_checksums(0),
 	_mouseVisible(false), _mouseDrawn(false), _mouseData(0),
 	_mouseHotspotX(0), _mouseHotspotY(0),
@@ -274,18 +275,40 @@ void OSystem_SDL::deleteMutex(MutexRef mutex) {
 
 bool OSystem_SDL::setSoundCallback(SoundProc proc, void *param) {
 	SDL_AudioSpec desired;
+	SDL_AudioSpec obtained;
 
 	memset(&desired, 0, sizeof(desired));
 
-	desired.freq = SAMPLES_PER_SEC;
+	if (ConfMan.hasKey("output_rate"))
+		_samplesPerSec = ConfMan.getInt("output_rate");
+	else
+		_samplesPerSec = SAMPLES_PER_SEC;
+
+	// Originally, we always used 2048 samples. This loop will produce the
+	// same result at 22050 Hz, and should hopefully produce something
+	// sensible for other frequencies. Note that it must be a power of two.
+
+	uint16 samples = 0x8000;
+
+	for (;;) {
+		if (samples / (_samplesPerSec / 1000) < 100)
+			break;
+		samples >>= 1;
+	}
+
+	desired.freq = _samplesPerSec;
 	desired.format = AUDIO_S16SYS;
 	desired.channels = 2;
-	desired.samples = 2048;
+	desired.samples = samples;
 	desired.callback = proc;
 	desired.userdata = param;
-	if (SDL_OpenAudio(&desired, NULL) != 0) {
+	if (SDL_OpenAudio(&desired, &obtained) != 0) {
 		return false;
 	}
+	// Note: This should be the obtained output rate, but it seems that at
+	// least on some platforms SDL will lie and claim it did get the rate
+	// even if it didn't. Probably only happens for "weird" rates, though.
+	_samplesPerSec = obtained.freq;
 	SDL_PauseAudio(0);
 	return true;
 }
@@ -295,7 +318,7 @@ void OSystem_SDL::clearSoundCallback() {
 }
 
 int OSystem_SDL::getOutputSampleRate() const {
-	return SAMPLES_PER_SEC;
+	return _samplesPerSec;
 }
 
 #pragma mark -

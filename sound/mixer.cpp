@@ -111,11 +111,6 @@ SoundMixer::SoundMixer() {
 	_premixProc = 0;
 	int i = 0;
 
-	_outputRate = (uint) _syst->getOutputSampleRate();
-
-	if (_outputRate == 0)
-		error("OSystem returned invalid sample rate");
-
 	_globalVolume = 0;
 	_musicVolume = 0;
 
@@ -125,6 +120,12 @@ SoundMixer::SoundMixer() {
 		_channels[i] = 0;
 
 	_mixerReady = _syst->setSoundCallback(mixCallback, this);
+	_outputRate = (uint) _syst->getOutputSampleRate();
+
+	if (_outputRate == 0)
+		error("OSystem returned invalid sample rate");
+
+	debug(1, "Output sample rate: %d Hz", _outputRate);
 }
 
 SoundMixer::~SoundMixer() {

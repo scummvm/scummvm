@@ -34,6 +34,7 @@ Table of Contents:
  * 7.3 Native MIDI support
  * 7.4 UNIX native & ALSA sequencer support
  * 7.5 Using compressed audiofiles (MP3, Ogg Vorbis, Flac)
+ * 7.6 Output sample rate
 8.0) Configuration Files
 9.0) Compiling
 X.X) Credits
@@ -330,6 +331,7 @@ arguments - see the next section.
                            atari, fmtowns, mac, pc)
   --multi-midi             Enable combination of Adlib and native MIDI
   --native-mt32            True Roland MT-32 (disable GM emulation)
+  --output-rate=RATE       Select output sample rate in Hz (e.g. 22050)
   --aspect-ratio           Enable aspect ratio correction
 
   --alt-intro              Use alternative intro for CD versions of Beneath a
@@ -863,6 +865,35 @@ For Flac add --flac and optional parameters, i.e.
 Eventually you will have a much smaller *.mp3, *.ogg or *.fla file, copy this
 file to your game dir. You can safely remove the old file.
 
+7.6) Output sample rate:
+---- -------------------
+
+The output sample rate tells ScummVM how many sound samples to play per channel
+per second. There is much that could be said on this subject, but most of it
+would be irrelevant here. The short version is that for most games 22050 Hz is
+fine, but in some cases 44100 Hz is preferable. On extremely low-end systems
+you may want to use 11025 Hz, but it's unlikely that you have to worry about
+that.
+
+To elaborate, most of the sounds ScummVM has to play were sampled at either
+22050 Hz or 11025 Hz. Using a higher sample rate will not magically improve the
+quality of these sounds. Hence, 22050 Hz is fine.
+
+Some games use CD audio. If you use compressed files for this, they are
+probably sampled at 44100 Hz, so for these games that may be a better choice of
+sample rate.
+
+When using the Adlib, FM Towns, PC Speaker or IBM PCjr music drivers, ScummVM
+is responsible for generating the samples. Usually 22050 Hz will be plenty for
+these, but there is at least one piece of Adlib music in Beneath a Steeel Sky
+that will sound a lot better at 44100 Hz.
+
+Using frequencies in between is not recommended. For one thing, your sound card
+may not support it. In theory, ScummVM should fall back on a sensible frequency
+in that case, but don't count on it. More importantly, ScummVM has to resample
+all sounds to its output frequency. This is much easier to do well if the
+output frequency is a multiple of the original frequency.
+
 
 8.0) Configuration file:
 ---- -------------------
@@ -946,6 +977,8 @@ The following keywords are recognized:
         joystick_num    number   Number of joystick device to use for input
         master_volume   number   The master volume setting (0-255)
         music_driver    string   The music engine to use.
+        output_rate     number   The output sample rate to use, in Hz. Sensible
+                                 values are 11025, 22050 and 44100.
         alsa_port       string   Port to use for output when using the
                                  ALSA music driver.
         music_volume    number   The music volume setting (0-255)

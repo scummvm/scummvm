@@ -169,6 +169,9 @@ protected:
 	SDL_Surface *_tmpscreen;
 	bool _overlayVisible;
 
+	// Audio
+	int _samplesPerSec;
+
 	// CD Audio
 	SDL_CD *_cdrom;
 	int cd_track, cd_num_loops, cd_start_frame, cd_duration;
