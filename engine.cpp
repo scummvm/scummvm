@@ -45,6 +45,7 @@ void Engine::mainLoop() {
 	frameStart_ = SDL_GetTicks();
 	unsigned int frameCounter = 0;
 	unsigned int timeAccum = 0;
+	unsigned int frameTimeCollection = 0;
 	char fps[8] = "";
 	_savegameLoadRequest = false;
 	_savegameSaveRequest = false;
@@ -181,6 +182,12 @@ void Engine::mainLoop() {
 		unsigned newStart = SDL_GetTicks();
 		frameTime_ = newStart - frameStart_;
 		frameStart_ = newStart;
+
+		frameTimeCollection += frameTime_;
+		if (frameTimeCollection > 10000) {
+			frameTimeCollection = 0;
+			lua_collectgarbage(0);
+		}
 
 		lua_beginblock();
 		set_frameTime(frameTime_);
