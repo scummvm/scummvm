@@ -534,10 +534,41 @@ void *Scumm::openSfxFile()
 	FILE *file = NULL;
 
 	if (_gameId == GID_DIG) {
+		int tag, offset, num_files;
+		
 		sprintf(buf, "%s%svoice.bun", _gameDataPath, _exe_name);
 		file = fopen(buf, "rb");
-		if (!file)
+		if (!file) {
 			warning("Unable to open DIG voice bundle: %s", buf);
+			return NULL;
+		}
+
+		tag = fileReadDwordBE(file);
+		offset = fileReadDwordBE(file);
+		num_files = fileReadDwordBE(file);
+
+		bundle_table = (BundleAudioTable *) malloc(num_files * sizeof(BundleAudioTable));
+		num_sound_effects = num_files;
+		fileSeek(file, offset, SEEK_SET);
+
+		for (int i=0; i < num_files; i++) {
+			char filename[13], c;
+			int z = 0;
+			
+			/* Construct filename */
+			for (int z2=0;z2<8; z2++)
+				if ((c = fileReadByte(file)) != 0)
+					filename[z++] = c;
+			filename[z++] = '.';
+			for (z2=0;z2<4;z2++)
+				if ((c = fileReadByte(file)) != 0)
+					filename[z++] = c;
+			filename[z] = '\0';
+			strcpy(bundle_table[i].filename, filename);
+			bundle_table[i].offset = fileReadDwordBE(file);
+			bundle_table[i].size = fileReadDwordBE(file);			
+		}
+
 		return file;
 	}
 
@@ -608,9 +639,134 @@ bool Scumm::isSfxFinished()
 	return !_mixer->has_active_channel();
 }
 
+#define NextBit bit = mask&1; mask>>=1; if (!--bitsleft) {mask = *(unsigned short *)srcptr; srcptr+=2; bitsleft=16;}
+int CompDecode(unsigned char *src, unsigned char *dst)
+{
+	unsigned char *result, *srcptr = src, *dstptr = dst;
+	int data, size, bit, bitsleft = 16, mask = *(unsigned short *)srcptr;	
+	srcptr+=2;
+
+	while(1) {
+		NextBit
+		if (bit) {
+			*dstptr++ = *srcptr++;
+		} else {
+			NextBit
+			if (!bit) {
+				NextBit size = bit<<1;
+				NextBit size = (size|bit) + 3;
+				data = *srcptr++ | 0xffffff00;
+			} else {
+				data = *srcptr++;
+				size = *srcptr++;
+
+				data |= 0xfffff000 + ((size & 0xf0) << 4);
+				size = (size & 0x0f) + 3;
+
+				if (size==3)
+			 		if (((*srcptr++)+1) == 1)
+						return dstptr - dst;	/* End of buffer */
+			}
+			result = dstptr+data;
+			while (size--) 
+				*dstptr++=*result++;
+		}
+	}
+}
+#undef NextBit
+
+typedef struct {int offset, size, codec;} COMP_table;
+void Scumm::decompressBundleSound(int index) {
+	int i, z;
+	COMP_table table[50];
+	unsigned char *CompInput, *CompOutput, *CompFinal;
+	int outputSize, finalSize;
+
+	fileSeek(_sfxFile, bundle_table[index].offset, SEEK_SET);
+
+	int tag = fileReadDwordBE(_sfxFile);
+	int num = fileReadDwordBE(_sfxFile);
+	fileReadDwordBE(_sfxFile);	 fileReadDwordBE(_sfxFile);
+	
+	if (tag != 'COMP') {
+		warning("Compressed sound %d invalid (%c%c%c%c)", index, tag>>24, tag>>16, tag>>8, tag);
+		return;
+	}
+
+	/* Read compression table */
+	for (i=0; i<num; i++) {
+		table[i].offset = fileReadDwordBE(_sfxFile);
+		table[i].size   = fileReadDwordBE(_sfxFile);
+		table[i].codec  = fileReadDwordBE(_sfxFile);
+		fileReadDwordBE(_sfxFile);
+	}
+	
+	CompFinal = (unsigned char *)alloc(1000000);
+	finalSize = 0;
+
+	/* Decompress data */
+	for (i=0; i<num; i++) {
+		unsigned char *p;
+		fileSeek(_sfxFile, bundle_table[index].offset + table[i].offset, SEEK_SET);
+
+		CompInput  = (unsigned char *)alloc(table[i].size);
+		CompOutput = (unsigned char *)alloc(10000);
+		
+		fileRead((FILE *)_sfxFile, CompInput, table[i].size);
+
+		switch(table[i].codec) {
+			case 0:
+				warning("Unimplemented bundle codec 1");
+			break;
+
+			case 1:
+				outputSize = CompDecode(&CompInput[0], &CompOutput[0]);
+			break;
+
+			case 2:
+				outputSize = CompDecode(&CompInput[0], &CompOutput[0]);
+				p = CompOutput;
+				for (z = 1; z < outputSize; z++)
+					p[z] += p[z - 1];
+			break;
+			
+			case 3: 
+				outputSize = CompDecode(&CompInput[0], &CompOutput[0]);
+				p = CompOutput;
+				for (z = 2; z < outputSize; z++)
+					p[z] += p[z - 1];
+				for (z = 1; z < outputSize; z++)
+					p[z] += p[z - 1];		  				
+			break;
+
+			default:
+				printf("Unknown codec %d!\n", table[i].codec);
+			break;
+		  }
+		
+		memcpy(&CompFinal[finalSize], &CompOutput[0], outputSize);
+		finalSize+=outputSize;
+
+		free(CompInput);  CompInput = NULL;
+		free(CompOutput); CompOutput= NULL;
+	}
+
+	/* FIXME: This is nasty. We are actually sending the whole
+			  decompressed packet to the mixer.. but the packet
+			  actually contains further subblocks! (eg, sync) */
+	_mixer->play_raw(NULL, CompFinal, finalSize,22050, SoundMixer::FLAG_AUTOFREE);
+}
+
 void Scumm::playBundleSound(char *sound)
 {
-	warning("playBundleSound: %s", sound);
+	for (int i=0; i < num_sound_effects; i++) {
+		if (!stricmp(sound, bundle_table[i].filename)) {
+			decompressBundleSound(i);
+			return;
+		}			
+	} 
+
+	warning("playBundleSound can't find %s", sound);
 }
 
 int Scumm::playSfxSound(void *sound, uint32 size, uint rate)

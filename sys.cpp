@@ -161,6 +161,46 @@ uint32 Scumm::fileReadDwordBE()
 	return (b << 16) | a;
 }
 
+/* Overloaded versions */
+int Scumm::fileReadByte(void *handle)
+{
+	byte b;
+
+	if (fread(&b, 1, 1, (FILE *) handle) != 1) {
+			clearerr((FILE *) handle);
+			_fileReadFailed = true;
+	}
+	return b ^ _encbyte;
+}
+
+uint Scumm::fileReadWordLE(void *handle)
+{
+	uint a = fileReadByte(handle);
+	uint b = fileReadByte(handle);
+	return a | (b << 8);
+}
+
+uint32 Scumm::fileReadDwordLE(void *handle)
+{
+	uint a = fileReadWordLE(handle);
+	uint b = fileReadWordLE(handle);
+	return (b << 16) | a;
+}
+
+uint Scumm::fileReadWordBE(void *handle)
+{
+	uint b = fileReadByte(handle);
+	uint a = fileReadByte(handle);
+	return a | (b << 8);
+}
+
+uint32 Scumm::fileReadDwordBE(void *handle)
+{
+	uint b = fileReadWordBE(handle);
+	uint a = fileReadWordBE(handle);
+	return (b << 16) | a;
+}
+
 byte *Scumm::alloc(int size)
 {
 	byte *me = (byte *)::calloc(size + 4, 1);

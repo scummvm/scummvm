@@ -167,7 +167,11 @@ struct MP3OffsetTable {	/* Compressed Sound (.SO3) */
 	int compressed_size;
 };
 
-
+struct BundleAudioTable {
+ char filename[13];
+ int size;
+ int offset;
+};
 
 #if 0
 typedef enum {			/* Mixer types */

@@ -1016,9 +1016,11 @@ public:
 	MP3OffsetTable *offset_table;	// SO3 MP3 compressed audio
 	int num_sound_effects;		// SO3 MP3 compressed audio
 
+	BundleAudioTable *bundle_table; // DIG/CMI bundles
 	void pauseSounds(bool pause);
 	bool isSfxFinished();
 	void playBundleSound(char *sound);
+	void decompressBundleSound(int index);
 	int playSfxSound(void *sound, uint32 size, uint rate);
  	int playSfxSound_MP3(void *sound, uint32 size);
 	void stopSfxSound();
@@ -1333,13 +1335,21 @@ public:
 	int fileReadByte();
 	uint32 fileReadDwordLE();
 	uint32 fileReadDwordBE();
+	int fileReadByte(void *handle);
+	uint32 fileReadDwordLE(void *handle);
+	uint32 fileReadDwordBE(void *handle);
+
 #if defined(SCUMM_LITTLE_ENDIAN)
 	uint32 fileReadDword() { return fileReadDwordLE(); }
+	uint32 fileReadDword(void *handle) { return fileReadDwordLE(handle); }
 #elif defined(SCUMM_BIG_ENDIAN)
 	uint32 fileReadDword() { return fileReadDwordBE(); }
+	uint32 fileReadDword(void *handle) {return fileReadDwordBE(handle);}
 #endif
 	uint fileReadWordLE();
 	uint fileReadWordBE();
+	uint fileReadWordLE(void *handle);
+	uint fileReadWordBE(void *handle);
 
 	static byte *alloc(int size);
 	static byte *realloc(void *mem, int size);

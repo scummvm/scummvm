@@ -234,7 +234,13 @@ void codec37_proc5(byte *dst, byte *src, int next_offs, int bw, int bh,
 		i = bw;
 		do {
 			code = *src++;
-			if (code == 0xFF) {
+			if (code == 0xFD) {
+				// FIXME: Not implemented yet        
+			} else if (code == 0xFE) {
+				// FIXME: Not implemented yet
+				src += 4;
+				dst += 4;
+			} else if (code == 0xFF) {			
 				*(uint32 *)(dst + 0) = ((uint32 *)src)[0];
 				*(uint32 *)(dst + 320) = ((uint32 *)src)[1];
 				*(uint32 *)(dst + 320 * 2) = ((uint32 *)src)[2];
@@ -592,18 +598,32 @@ void SmushPlayer::setPalette()
 {
 	int i;
 
+
+
 	byte palette_colors[1024];
+
 	byte *p = palette_colors;
+
 	
+
 	byte *data = _fluPalette;
 
+
+
 	for (i = 0; i != 256; i++, data += 3, p+=4) {
+
 		p[0] = data[0];
+
 		p[1] = data[1];
+
 		p[2] = data[2];
+
 		p[3] = 0;
+
 	}
+
 	sm->_system->set_palette(palette_colors, 0, 256);
+
 
 }
 
