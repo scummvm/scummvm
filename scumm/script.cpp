@@ -748,6 +748,14 @@ void Scumm::killScriptsAndResources()
 	}
 }
 
+void Scumm::killAllScriptsExceptCurrent()
+{
+	for (int i = 1; i < NUM_SCRIPT_SLOT; i++) {
+		if (i != _currentScript)
+			vm.slot[i].status = ssDead;
+	}
+}
+
 void Scumm::checkAndRunSentenceScript()
 {
 	int i;

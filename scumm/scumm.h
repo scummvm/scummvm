@@ -506,6 +506,7 @@ public:
 
 	void beginOverride();
 	void endOverride();
+	void killAllScriptsExceptCurrent();
 	void killScriptsAndResources();
 	void checkAndRunSentenceScript();
 	void decreaseScriptDelay(int amount);

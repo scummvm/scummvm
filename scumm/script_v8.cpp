@@ -1239,6 +1239,7 @@ void Scumm_v8::o6_kernelSetFunctions()
 		break;
 	case 30:	// killAllScriptsButMe
 		warning("o6_kernelSetFunctions: killAllScriptsButMe()");
+		killAllScriptsExceptCurrent();
 		break;
 	case 31:	// stopAllVideo
 		warning("o6_kernelSetFunctions: stopAllVideo()");
