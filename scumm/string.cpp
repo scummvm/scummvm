@@ -261,7 +261,10 @@ void Scumm::CHARSET_1() {
 				has_talk_sound = true;
 				buffer += 14;
 	
-				// Set flag that speech variant exist of this msg
+				// Set flag that speech variant exist of this msg.
+				// TODO: This does not work for the speech system in V7+ games
+				// since they encode the voice information differently, and it
+				// is being stripped from the string before it ever gets here.
 				if (_haveMsg == 0xFF)
 					_haveMsg = 0xFE;
 				break;
@@ -298,9 +301,6 @@ void Scumm::CHARSET_1() {
 				c += *buffer++ * 256;
 			if (_version <= 3) {
 				_charset->printChar(c);
-			} else if (_version >= 6) {
-				if (!_noSubtitles || (_haveMsg != 0xFE && _haveMsg != 0xFF))
-					_charset->printChar(c);
 			} else {
 				if (!_noSubtitles || _haveMsg != 0xFE)
 					_charset->printChar(c);
