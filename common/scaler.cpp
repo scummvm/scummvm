@@ -668,14 +668,14 @@ static int   RGBtoYUV[65536];
 
 // Interpolate two 16 bit pixels with the given weights.
 template<int w1, int w2>
-static inline uint16 interpolate16(uint16 p1, uint16 p2) {
+static inline uint16 interpolate16_2(uint16 p1, uint16 p2) {
 	return ((((p1 & redblueMask) * w1 + (p2 & redblueMask) * w2) / (w1 + w2)) & redblueMask) |
 	       ((((p1 & greenMask) * w1 + (p2 & greenMask) * w2) / (w1 + w2)) & greenMask);
 }
 
 // Interpolate three 16 bit pixels with the given weights.
 template<int w1, int w2, int w3>
-static inline uint16 interpolate16(uint16 p1, uint16 p2, uint16 p3) {
+static inline uint16 interpolate16_3(uint16 p1, uint16 p2, uint16 p3) {
 	return ((((p1 & redblueMask) * w1 + (p2 & redblueMask) * w2 + (p3 & redblueMask) * w3) / (w1 + w2 + w3)) & redblueMask) |
 	       ((((p1 & greenMask) * w1 + (p2 & greenMask) * w2 + (p3 & greenMask) * w3) / (w1 + w2 + w3)) & greenMask);
 }
@@ -695,48 +695,48 @@ static inline bool diffYUV(int yuv1, int yuv2) {
 }
 
 #define PIXEL00_0   *(q) = w[5];
-#define PIXEL00_10  *(q) = interpolate16<3,1>(w[5], w[1]);
-#define PIXEL00_11  *(q) = interpolate16<3,1>(w[5], w[4]);
-#define PIXEL00_12  *(q) = interpolate16<3,1>(w[5], w[2]);
-#define PIXEL00_20  *(q) = interpolate16<2,1,1>(w[5], w[4], w[2]);
-#define PIXEL00_30  *(q) = interpolate16<6,1,1>(w[5], w[4], w[2]);
-#define PIXEL00_40  *(q) = interpolate16<14,1,1>(w[5], w[4], w[2]);
-#define PIXEL00_50  *(q) = interpolate16<5,2,1>(w[5], w[2], w[4]);
-#define PIXEL00_51  *(q) = interpolate16<5,2,1>(w[5], w[4], w[2]);
-#define PIXEL00_60  *(q) = interpolate16<2,3,3>(w[5], w[4], w[2]);
+#define PIXEL00_10  *(q) = interpolate16_2<3,1>(w[5], w[1]);
+#define PIXEL00_11  *(q) = interpolate16_2<3,1>(w[5], w[4]);
+#define PIXEL00_12  *(q) = interpolate16_2<3,1>(w[5], w[2]);
+#define PIXEL00_20  *(q) = interpolate16_3<2,1,1>(w[5], w[4], w[2]);
+#define PIXEL00_30  *(q) = interpolate16_3<6,1,1>(w[5], w[4], w[2]);
+#define PIXEL00_40  *(q) = interpolate16_3<14,1,1>(w[5], w[4], w[2]);
+#define PIXEL00_50  *(q) = interpolate16_3<5,2,1>(w[5], w[2], w[4]);
+#define PIXEL00_51  *(q) = interpolate16_3<5,2,1>(w[5], w[4], w[2]);
+#define PIXEL00_60  *(q) = interpolate16_3<2,3,3>(w[5], w[4], w[2]);
 
 #define PIXEL01_0   *(q+1) = w[5];
-#define PIXEL01_10  *(q+1) = interpolate16<3,1>(w[5], w[3]);
-#define PIXEL01_11  *(q+1) = interpolate16<3,1>(w[5], w[2]);
-#define PIXEL01_12  *(q+1) = interpolate16<3,1>(w[5], w[6]);
-#define PIXEL01_20  *(q+1) = interpolate16<2,1,1>(w[5], w[2], w[6]);
-#define PIXEL01_30  *(q+1) = interpolate16<6,1,1>(w[5], w[2], w[6]);
-#define PIXEL01_40  *(q+1) = interpolate16<14,1,1>(w[5], w[2], w[6]);
-#define PIXEL01_50  *(q+1) = interpolate16<5,2,1>(w[5], w[6], w[2]);
-#define PIXEL01_51  *(q+1) = interpolate16<5,2,1>(w[5], w[2], w[6]);
-#define PIXEL01_60  *(q+1) = interpolate16<2,3,3>(w[5], w[2], w[6]);
+#define PIXEL01_10  *(q+1) = interpolate16_2<3,1>(w[5], w[3]);
+#define PIXEL01_11  *(q+1) = interpolate16_2<3,1>(w[5], w[2]);
+#define PIXEL01_12  *(q+1) = interpolate16_2<3,1>(w[5], w[6]);
+#define PIXEL01_20  *(q+1) = interpolate16_3<2,1,1>(w[5], w[2], w[6]);
+#define PIXEL01_30  *(q+1) = interpolate16_3<6,1,1>(w[5], w[2], w[6]);
+#define PIXEL01_40  *(q+1) = interpolate16_3<14,1,1>(w[5], w[2], w[6]);
+#define PIXEL01_50  *(q+1) = interpolate16_3<5,2,1>(w[5], w[6], w[2]);
+#define PIXEL01_51  *(q+1) = interpolate16_3<5,2,1>(w[5], w[2], w[6]);
+#define PIXEL01_60  *(q+1) = interpolate16_3<2,3,3>(w[5], w[2], w[6]);
 
 #define PIXEL10_0   *(q+nextlineDst) = w[5];
-#define PIXEL10_10  *(q+nextlineDst) = interpolate16<3,1>(w[5], w[7]);
-#define PIXEL10_11  *(q+nextlineDst) = interpolate16<3,1>(w[5], w[8]);
-#define PIXEL10_12  *(q+nextlineDst) = interpolate16<3,1>(w[5], w[4]);
-#define PIXEL10_20  *(q+nextlineDst) = interpolate16<2,1,1>(w[5], w[8], w[4]);
-#define PIXEL10_30  *(q+nextlineDst) = interpolate16<6,1,1>(w[5], w[8], w[4]);
-#define PIXEL10_40  *(q+nextlineDst) = interpolate16<14,1,1>(w[5], w[8], w[4]);
-#define PIXEL10_50  *(q+nextlineDst) = interpolate16<5,2,1>(w[5], w[4], w[8]);
-#define PIXEL10_51  *(q+nextlineDst) = interpolate16<5,2,1>(w[5], w[8], w[4]);
-#define PIXEL10_60  *(q+nextlineDst) = interpolate16<2,3,3>(w[5], w[8], w[4]);
+#define PIXEL10_10  *(q+nextlineDst) = interpolate16_2<3,1>(w[5], w[7]);
+#define PIXEL10_11  *(q+nextlineDst) = interpolate16_2<3,1>(w[5], w[8]);
+#define PIXEL10_12  *(q+nextlineDst) = interpolate16_2<3,1>(w[5], w[4]);
+#define PIXEL10_20  *(q+nextlineDst) = interpolate16_3<2,1,1>(w[5], w[8], w[4]);
+#define PIXEL10_30  *(q+nextlineDst) = interpolate16_3<6,1,1>(w[5], w[8], w[4]);
+#define PIXEL10_40  *(q+nextlineDst) = interpolate16_3<14,1,1>(w[5], w[8], w[4]);
+#define PIXEL10_50  *(q+nextlineDst) = interpolate16_3<5,2,1>(w[5], w[4], w[8]);
+#define PIXEL10_51  *(q+nextlineDst) = interpolate16_3<5,2,1>(w[5], w[8], w[4]);
+#define PIXEL10_60  *(q+nextlineDst) = interpolate16_3<2,3,3>(w[5], w[8], w[4]);
 
 #define PIXEL11_0   *(q+1+nextlineDst) = w[5];
-#define PIXEL11_10  *(q+1+nextlineDst) = interpolate16<3,1>(w[5], w[9]);
-#define PIXEL11_11  *(q+1+nextlineDst) = interpolate16<3,1>(w[5], w[6]);
-#define PIXEL11_12  *(q+1+nextlineDst) = interpolate16<3,1>(w[5], w[8]);
-#define PIXEL11_20  *(q+1+nextlineDst) = interpolate16<2,1,1>(w[5], w[6], w[8]);
-#define PIXEL11_30  *(q+1+nextlineDst) = interpolate16<6,1,1>(w[5], w[6], w[8]);
-#define PIXEL11_40  *(q+1+nextlineDst) = interpolate16<14,1,1>(w[5], w[6], w[8]);
-#define PIXEL11_50  *(q+1+nextlineDst) = interpolate16<5,2,1>(w[5], w[8], w[6]);
-#define PIXEL11_51  *(q+1+nextlineDst) = interpolate16<5,2,1>(w[5], w[6], w[8]);
-#define PIXEL11_60  *(q+1+nextlineDst) = interpolate16<2,3,3>(w[5], w[6], w[8]);
+#define PIXEL11_10  *(q+1+nextlineDst) = interpolate16_2<3,1>(w[5], w[9]);
+#define PIXEL11_11  *(q+1+nextlineDst) = interpolate16_2<3,1>(w[5], w[6]);
+#define PIXEL11_12  *(q+1+nextlineDst) = interpolate16_2<3,1>(w[5], w[8]);
+#define PIXEL11_20  *(q+1+nextlineDst) = interpolate16_3<2,1,1>(w[5], w[6], w[8]);
+#define PIXEL11_30  *(q+1+nextlineDst) = interpolate16_3<6,1,1>(w[5], w[6], w[8]);
+#define PIXEL11_40  *(q+1+nextlineDst) = interpolate16_3<14,1,1>(w[5], w[6], w[8]);
+#define PIXEL11_50  *(q+1+nextlineDst) = interpolate16_3<5,2,1>(w[5], w[8], w[6]);
+#define PIXEL11_51  *(q+1+nextlineDst) = interpolate16_3<5,2,1>(w[5], w[6], w[8]);
+#define PIXEL11_60  *(q+1+nextlineDst) = interpolate16_3<2,3,3>(w[5], w[6], w[8]);
 
 void HQ2x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, int width, int height) {
 	int  w[10];
@@ -2596,58 +2596,58 @@ void HQ2x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, 
 }
 
 
-#define PIXEL00_1M  *(q) = interpolate16<3,1>(w[5], w[1]);
-#define PIXEL00_1U  *(q) = interpolate16<3,1>(w[5], w[2]);
-#define PIXEL00_1L  *(q) = interpolate16<3,1>(w[5], w[4]);
-#define PIXEL00_2   *(q) = interpolate16<2,1,1>(w[5], w[4], w[2]);
-#define PIXEL00_4   *(q) = interpolate16<2,7,7>(w[5], w[4], w[2]);
-#define PIXEL00_5   *(q) = interpolate16<1,1>(w[4], w[2]);
+#define PIXEL00_1M  *(q) = interpolate16_2<3,1>(w[5], w[1]);
+#define PIXEL00_1U  *(q) = interpolate16_2<3,1>(w[5], w[2]);
+#define PIXEL00_1L  *(q) = interpolate16_2<3,1>(w[5], w[4]);
+#define PIXEL00_2   *(q) = interpolate16_3<2,1,1>(w[5], w[4], w[2]);
+#define PIXEL00_4   *(q) = interpolate16_3<2,7,7>(w[5], w[4], w[2]);
+#define PIXEL00_5   *(q) = interpolate16_2<1,1>(w[4], w[2]);
 #define PIXEL00_C   *(q) = w[5];
 
-#define PIXEL01_1   *(q+1) = interpolate16<3,1>(w[5], w[2]);
-#define PIXEL01_3   *(q+1) = interpolate16<7,1>(w[5], w[2]);
-#define PIXEL01_6   *(q+1) = interpolate16<3,1>(w[2], w[5]);
+#define PIXEL01_1   *(q+1) = interpolate16_2<3,1>(w[5], w[2]);
+#define PIXEL01_3   *(q+1) = interpolate16_2<7,1>(w[5], w[2]);
+#define PIXEL01_6   *(q+1) = interpolate16_2<3,1>(w[2], w[5]);
 #define PIXEL01_C   *(q+1) = w[5];
 
-#define PIXEL02_1M  *(q+2) = interpolate16<3,1>(w[5], w[3]);
-#define PIXEL02_1U  *(q+2) = interpolate16<3,1>(w[5], w[2]);
-#define PIXEL02_1R  *(q+2) = interpolate16<3,1>(w[5], w[6]);
-#define PIXEL02_2   *(q+2) = interpolate16<2,1,1>(w[5], w[2], w[6]);
-#define PIXEL02_4   *(q+2) = interpolate16<2,7,7>(w[5], w[2], w[6]);
-#define PIXEL02_5   *(q+2) = interpolate16<1,1>(w[2], w[6]);
+#define PIXEL02_1M  *(q+2) = interpolate16_2<3,1>(w[5], w[3]);
+#define PIXEL02_1U  *(q+2) = interpolate16_2<3,1>(w[5], w[2]);
+#define PIXEL02_1R  *(q+2) = interpolate16_2<3,1>(w[5], w[6]);
+#define PIXEL02_2   *(q+2) = interpolate16_3<2,1,1>(w[5], w[2], w[6]);
+#define PIXEL02_4   *(q+2) = interpolate16_3<2,7,7>(w[5], w[2], w[6]);
+#define PIXEL02_5   *(q+2) = interpolate16_2<1,1>(w[2], w[6]);
 #define PIXEL02_C   *(q+2) = w[5];
 
-#define PIXEL10_1   *(q+nextlineDst) = interpolate16<3,1>(w[5], w[4]);
-#define PIXEL10_3   *(q+nextlineDst) = interpolate16<7,1>(w[5], w[4]);
-#define PIXEL10_6   *(q+nextlineDst) = interpolate16<3,1>(w[4], w[5]);
+#define PIXEL10_1   *(q+nextlineDst) = interpolate16_2<3,1>(w[5], w[4]);
+#define PIXEL10_3   *(q+nextlineDst) = interpolate16_2<7,1>(w[5], w[4]);
+#define PIXEL10_6   *(q+nextlineDst) = interpolate16_2<3,1>(w[4], w[5]);
 #define PIXEL10_C   *(q+nextlineDst) = w[5];
 
 #define PIXEL11     *(q+1+nextlineDst) = w[5];
 
-#define PIXEL12_1   *(q+2+nextlineDst) = interpolate16<3,1>(w[5], w[6]);
-#define PIXEL12_3   *(q+2+nextlineDst) = interpolate16<7,1>(w[5], w[6]);
-#define PIXEL12_6   *(q+2+nextlineDst) = interpolate16<3,1>(w[6], w[5]);
+#define PIXEL12_1   *(q+2+nextlineDst) = interpolate16_2<3,1>(w[5], w[6]);
+#define PIXEL12_3   *(q+2+nextlineDst) = interpolate16_2<7,1>(w[5], w[6]);
+#define PIXEL12_6   *(q+2+nextlineDst) = interpolate16_2<3,1>(w[6], w[5]);
 #define PIXEL12_C   *(q+2+nextlineDst) = w[5];
 
-#define PIXEL20_1M  *(q+nextlineDst2) = interpolate16<3,1>(w[5], w[7]);
-#define PIXEL20_1D  *(q+nextlineDst2) = interpolate16<3,1>(w[5], w[8]);
-#define PIXEL20_1L  *(q+nextlineDst2) = interpolate16<3,1>(w[5], w[4]);
-#define PIXEL20_2   *(q+nextlineDst2) = interpolate16<2,1,1>(w[5], w[8], w[4]);
-#define PIXEL20_4   *(q+nextlineDst2) = interpolate16<2,7,7>(w[5], w[8], w[4]);
-#define PIXEL20_5   *(q+nextlineDst2) = interpolate16<1,1>(w[8], w[4]);
+#define PIXEL20_1M  *(q+nextlineDst2) = interpolate16_2<3,1>(w[5], w[7]);
+#define PIXEL20_1D  *(q+nextlineDst2) = interpolate16_2<3,1>(w[5], w[8]);
+#define PIXEL20_1L  *(q+nextlineDst2) = interpolate16_2<3,1>(w[5], w[4]);
+#define PIXEL20_2   *(q+nextlineDst2) = interpolate16_3<2,1,1>(w[5], w[8], w[4]);
+#define PIXEL20_4   *(q+nextlineDst2) = interpolate16_3<2,7,7>(w[5], w[8], w[4]);
+#define PIXEL20_5   *(q+nextlineDst2) = interpolate16_2<1,1>(w[8], w[4]);
 #define PIXEL20_C   *(q+nextlineDst2) = w[5];
 
-#define PIXEL21_1   *(q+1+nextlineDst2) = interpolate16<3,1>(w[5], w[8]);
-#define PIXEL21_3   *(q+1+nextlineDst2) = interpolate16<7,1>(w[5], w[8]);
-#define PIXEL21_6   *(q+1+nextlineDst2) = interpolate16<3,1>(w[8], w[5]);
+#define PIXEL21_1   *(q+1+nextlineDst2) = interpolate16_2<3,1>(w[5], w[8]);
+#define PIXEL21_3   *(q+1+nextlineDst2) = interpolate16_2<7,1>(w[5], w[8]);
+#define PIXEL21_6   *(q+1+nextlineDst2) = interpolate16_2<3,1>(w[8], w[5]);
 #define PIXEL21_C   *(q+1+nextlineDst2) = w[5];
 
-#define PIXEL22_1M  *(q+2+nextlineDst2) = interpolate16<3,1>(w[5], w[9]);
-#define PIXEL22_1D  *(q+2+nextlineDst2) = interpolate16<3,1>(w[5], w[8]);
-#define PIXEL22_1R  *(q+2+nextlineDst2) = interpolate16<3,1>(w[5], w[6]);
-#define PIXEL22_2   *(q+2+nextlineDst2) = interpolate16<2,1,1>(w[5], w[6], w[8]);
-#define PIXEL22_4   *(q+2+nextlineDst2) = interpolate16<2,7,7>(w[5], w[6], w[8]);
-#define PIXEL22_5   *(q+2+nextlineDst2) = interpolate16<1,1>(w[6], w[8]);
+#define PIXEL22_1M  *(q+2+nextlineDst2) = interpolate16_2<3,1>(w[5], w[9]);
+#define PIXEL22_1D  *(q+2+nextlineDst2) = interpolate16_2<3,1>(w[5], w[8]);
+#define PIXEL22_1R  *(q+2+nextlineDst2) = interpolate16_2<3,1>(w[5], w[6]);
+#define PIXEL22_2   *(q+2+nextlineDst2) = interpolate16_3<2,1,1>(w[5], w[6], w[8]);
+#define PIXEL22_4   *(q+2+nextlineDst2) = interpolate16_3<2,7,7>(w[5], w[6], w[8]);
+#define PIXEL22_5   *(q+2+nextlineDst2) = interpolate16_2<1,1>(w[6], w[8]);
 #define PIXEL22_C   *(q+2+nextlineDst2) = w[5];
 
 void HQ3x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, int width, int height) {
