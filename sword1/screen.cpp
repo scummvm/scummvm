@@ -390,13 +390,9 @@ void SwordScreen::processImage(uint32 id) {
 void SwordScreen::verticalMask(uint16 x, uint16 y, uint16 bWidth, uint16 bHeight) {
 	if (_roomDefTable[_currentScreen].totalLayers <= 1)
 		return;
-	bWidth = (bWidth + (SCRNGRID_X - 1)) / SCRNGRID_X;
-	bHeight = (bHeight + (SCRNGRID_Y - 1)) / SCRNGRID_Y;
-	
-	if (x & (SCRNGRID_X - 1))
-		bWidth++;
-	if (y & (SCRNGRID_Y - 1))
-		bHeight++;
+
+	bWidth = (bWidth + (x & (SCRNGRID_X - 1)) + (SCRNGRID_X - 1)) / SCRNGRID_X;
+	bHeight = (bHeight + (y & (SCRNGRID_Y - 1)) + (SCRNGRID_Y - 1)) / SCRNGRID_Y;
 
 	x /= SCRNGRID_X;
 	y /= SCRNGRID_Y;
