@@ -968,7 +968,7 @@ int32 FN_i_speak(int32 *params) {
 		// New fudge to wait for smacker samples to finish
 		// since they can over-run into the game
 
-		if (g_sound->GetSpeechStatus() != RDSE_SAMPLEFINISHED)
+		if (g_sound->getSpeechStatus() != RDSE_SAMPLEFINISHED)
 			return IR_REPEAT;
 		
 		// New fudge for 'fx' subtitles
@@ -1199,7 +1199,7 @@ int32 FN_i_speak(int32 *params) {
 				strcpy(speechFile, "speech.clu");
 
 			// Load speech but don't start playing yet
-			rv = g_sound->PlayCompSpeech(speechFile, params[S_WAV], SPEECH_VOLUME, speech_pan);
+			rv = g_sound->playCompSpeech(speechFile, params[S_WAV], SPEECH_VOLUME, speech_pan);
 			if (rv == RD_OK) {
 				// ok, we've got something to play
 				// (2 means not playing yet - see below)
@@ -1207,7 +1207,7 @@ int32 FN_i_speak(int32 *params) {
 
 				// set it playing now (we might want to do
 				// this next cycle, don't know yet)
-				g_sound->UnpauseSpeech();
+				g_sound->unpauseSpeech();
 			} else {
 				debug(5, "ERROR: PlayCompSpeech(speechFile=\"%s\", wav=%d (res=%d pos=%d)) returned %.8x", speechFile, params[S_WAV], text_res, local_text, rv);
 			}
@@ -1247,7 +1247,7 @@ int32 FN_i_speak(int32 *params) {
 				// if playing a sample
 				if (!unpause_zone) {
 					// if we're at a quiet bit
-					if (g_sound->AmISpeaking() == RDSE_QUIET) {
+					if (g_sound->amISpeaking() == RDSE_QUIET) {
 						// restart from frame 0
 						// ('closed mouth' frame)
 						ob_graphic->anim_pc = 0;
@@ -1277,11 +1277,11 @@ int32 FN_i_speak(int32 *params) {
 
 	// if playing a sample (note that value of '2' means about to play!)
 
-	if (speechRunning==1) {
+	if (speechRunning == 1) {
 		if (!unpause_zone) {
-			// has it finished?	James25feb97
-			if (g_sound->GetSpeechStatus() == RDSE_SAMPLEFINISHED)
-				speechFinished=1;
+			// has it finished?
+			if (g_sound->getSpeechStatus() == RDSE_SAMPLEFINISHED)
+				speechFinished = 1;
 		} else
 			unpause_zone--;
 	} else if (speechRunning == 0 && speech_time) {
@@ -1289,7 +1289,7 @@ int32 FN_i_speak(int32 *params) {
 		// ends the speech
 
 		// if no sample then we're using speech_time to end speech
-		// naturally	James25feb97
+		// naturally
 
 		speech_time--;
 		if (!speech_time)
@@ -1315,7 +1315,7 @@ int32 FN_i_speak(int32 *params) {
 		// mouse click, after click_delay has expired -> end the speech
  		// we ignore mouse releases
 
-#ifdef _SWORD2_DEBUG	// (James26jun97)
+#ifdef _SWORD2_DEBUG
 		// if testing text & speech
 		if (SYSTEM_TESTING_TEXT) {
 			// and RB used to click past text
@@ -1334,12 +1334,12 @@ int32 FN_i_speak(int32 *params) {
 			me = MouseEvent();
 		} while (me);
 
-		speechFinished = 1;	// James25feb97
+		speechFinished = 1;
 
 		// if speech sample playing
 		if (speechRunning) {
 			// halt the sample prematurely
-			g_sound->StopSpeechSword2();
+			g_sound->stopSpeech();
 		}
 	}
 

@@ -563,7 +563,7 @@ void CreateSequenceSpeech(_movieTextObject *sequenceText[]) {
 			else
 				strcpy(speechFile, "speech.clu");
 
-			sequence_text_list[line].speechBufferSize = g_sound->PreFetchCompSpeech((char *) speechFile, wavId, &sequence_text_list[line].speech_mem);
+			sequence_text_list[line].speechBufferSize = g_sound->preFetchCompSpeech((char *) speechFile, wavId, &sequence_text_list[line].speech_mem);
 			if (sequence_text_list[line].speechBufferSize) {
 				// ok, we've got speech!
 				speechRunning = 1;
@@ -670,14 +670,14 @@ int32 FN_smacker_lead_in(int32 *params) {
 
 	leadIn += sizeof(_standardHeader);
 	// wav data gets copied to sound memory
-	rv = g_sound->PlayFx(0, leadIn, 0, 0, RDSE_FXLEADIN);
+	rv = g_sound->playFx(0, leadIn, 0, 0, RDSE_FXLEADIN);
 
 	if (rv)
-		debug(5, "SFX ERROR: PlayFx() returned %.8x", rv);
+		debug(5, "SFX ERROR: playFx() returned %.8x", rv);
 
 	res_man.close(params[0]);
 
-	// fade out any music that is currently playing (James22july97)
+	// fade out any music that is currently playing
 	FN_stop_music(NULL);
 
 	// continue script
@@ -750,7 +750,7 @@ int32 FN_play_sequence(int32 *params) {
 	FN_stop_music(NULL);
 
 	// pause sfx during sequence, except the one used for lead-in music
-	g_sound->PauseFxForSequence();
+	g_sound->pauseFxForSequence();
 
 	if (sequenceTextLines && g_sword2->_gameId == GID_SWORD2)
 		rv = PlaySmacker(filename, sequenceSpeechArray, leadOut);
@@ -758,7 +758,7 @@ int32 FN_play_sequence(int32 *params) {
 		rv = PlaySmacker(filename, NULL, leadOut);
 
 	// unpause sound fx again, in case we're staying in same location
-	g_sound->UnpauseFx();
+	g_sound->unpauseFx();
 
 	// close the lead-out music resource
 

@@ -64,79 +64,79 @@ public:
 };
 
 class Sword2Sound {
-	public:
-		Sword2Sound(SoundMixer *mixer);
-		~Sword2Sound();
-		void FxServer(int16 *data, uint len);
-		int32 PlaySpeech(uint8 *data, uint8 vol, int8 pan);
-		int32 PlayCompSpeech(const char *filename, uint32 speechid, uint8 vol, int8 pan);
-		uint32 PreFetchCompSpeech(const char *filename, uint32 speechid, uint16 **buf);
-		int32 AmISpeaking();
-		int32 StopSpeechSword2(void);
-		int32 GetSpeechStatus(void);
-		int32 PauseSpeech(void);
-		int32 UnpauseSpeech(void);
-		int32 OpenFx(int32 id, uint8 *data);
-		int32 PlayFx(int32 id, uint8 *data, uint8 vol, int8 pan, uint8 type);
-		int32 CloseFx(int32 id);
-		int32 ClearAllFx(void);
-		int32 PauseFx(void);
-		int32 PauseFxForSequence(void);
-		int32 UnpauseFx(void);
-		int32 PauseMusic(void);
-		int32 UnpauseMusic(void);
-		int32 StreamCompMusic(const char *filename, uint32 musicId, bool looping);
-		void saveMusicState();
-		void restoreMusicState();
-		void playLeadOut(uint8 *leadOut);
-		int32 MusicTimeRemaining();
-		int32 ReverseStereo(void);
-		uint8 GetFxVolume(void);
-		uint8 GetSpeechVolume(void);
-		uint8 GetMusicVolume(void);
-		uint8 IsMusicMute(void);
-		uint8 IsFxMute(void);
-		uint8 IsSpeechMute(void);
-		void StopMusic(void);
-		void SetFxVolume(uint8 vol);
-		void SetSpeechVolume(uint8 vol);
-		void SetMusicVolume(uint8 vol);
-		void MuteMusic(uint8 mute);
-		void MuteFx(uint8 mute);
-		void MuteSpeech(uint8 mute);
-		int32 IsFxOpen(int32 id);
-		int32 SetFxVolumePan(int32 id, uint8 vol, int8 pan);
-		int32 SetFxIdVolume(int32 id, uint8 vol);
-		void UpdateCompSampleStreaming(int16 *data, uint len);
-		SoundMixer *_mixer;
-	private:
-		int32 StreamCompMusicFromLock(const char *filename, uint32 musicId, bool looping);
-		int32 GetFxIndex(int32 id);
-		int32 DipMusic();
+private:
+	SoundMixer *_mixer;
 
-		OSystem::MutexRef _mutex;
-		RateConverter *_converter;
+	OSystem::MutexRef _mutex;
+	RateConverter *_converter;
 
-		FxHandle fx[MAXFX];
-		MusicHandle music[MAXMUS + 1];
+	FxHandle _fx[MAXFX];
+	MusicHandle _music[MAXMUS + 1];
 
-		// We used to have two music volumes - one for each channel -
-		// but they were always set to the same value.
+	// We used to have two music volumes - one for each channel -
+	// but they were always set to the same value.
 
-		uint8 musicVol;
+	uint8 _musicVol;
 
-		uint8 soundOn;
-		uint8 speechStatus;
-		uint8 fxPaused;
-		uint8 speechPaused;
-		uint8 speechVol;
-		uint8 fxVol;
-		uint8 speechMuted;
-		uint8 fxMuted;
+	uint8 _soundOn;
+	uint8 _speechStatus;
+	uint8 _fxPaused;
+	uint8 _speechPaused;
+	uint8 _speechVol;
+	uint8 _fxVol;
+	uint8 _speechMuted;
+	uint8 _fxMuted;
 
-		PlayingSoundHandle soundHandleSpeech;
-		uint8 musicMuted;
+	PlayingSoundHandle _soundHandleSpeech;
+	uint8 _musicMuted;
+
+	int32 getFxIndex(int32 id);
+	int32 dipMusic();
+
+	void updateCompSampleStreaming(int16 *data, uint len);
+
+public:
+	Sword2Sound(SoundMixer *mixer);
+	~Sword2Sound();
+	void fxServer(int16 *data, uint len);
+	int32 playCompSpeech(const char *filename, uint32 speechid, uint8 vol, int8 pan);
+	uint32 preFetchCompSpeech(const char *filename, uint32 speechid, uint16 **buf);
+	int32 amISpeaking();
+	int32 stopSpeech(void);
+	int32 getSpeechStatus(void);
+	void pauseSpeech(void);
+	void unpauseSpeech(void);
+	int32 openFx(int32 id, uint8 *data);
+	int32 playFx(int32 id, uint8 *data, uint8 vol, int8 pan, uint8 type);
+	int32 closeFx(int32 id);
+	void clearAllFx(void);
+	void pauseFx(void);
+	void pauseFxForSequence(void);
+	void unpauseFx(void);
+	void pauseMusic(void);
+	void unpauseMusic(void);
+	int32 streamCompMusic(const char *filename, uint32 musicId, bool looping);
+	void saveMusicState();
+	void restoreMusicState();
+	void playLeadOut(uint8 *leadOut);
+	int32 musicTimeRemaining();
+	void reverseStereo(void);
+	uint8 getFxVolume(void);
+	uint8 getSpeechVolume(void);
+	uint8 getMusicVolume(void);
+	uint8 isMusicMute(void);
+	uint8 isFxMute(void);
+	uint8 isSpeechMute(void);
+	void stopMusic(void);
+	void setFxVolume(uint8 vol);
+	void setSpeechVolume(uint8 vol);
+	void setMusicVolume(uint8 vol);
+	void muteMusic(uint8 mute);
+	void muteFx(uint8 mute);
+	void muteSpeech(uint8 mute);
+	int32 isFxOpen(int32 id);
+	int32 setFxIdVolumePan(int32 id, uint8 vol, int8 pan);
+	int32 setFxIdVolume(int32 id, uint8 vol);
 };
-
 
 #endif

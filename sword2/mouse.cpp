@@ -171,7 +171,6 @@ void System_menu(void) {
 	_mouseEvent *me;
 	int j, hit;
 	uint8 *icon;
-	uint32 rv;	// for drivers return value
 	int32 pars[2];
 	uint32 icon_list[5] = {
 		OPTIONS_ICON,
@@ -215,9 +214,7 @@ void System_menu(void) {
 					}
 				}
 
-				rv = g_sound->PauseFx();
-				if (rv != RD_OK)
-					debug(5, "ERROR: PauseFx() returned %.8x in SystemMenu()", rv);
+				g_sound->pauseFx();
 
 				// NB. Need to keep a safe copy of
 				// 'looping_music_id' for savegame & for
@@ -282,7 +279,6 @@ void System_menu(void) {
 				if (this_screen.new_palette != 99) {
 					// '0' means put back game screen
 					// palette; see Build_display.cpp
-					// (James17jun97)
 
 					SetFullPalette(0);
 
@@ -293,9 +289,7 @@ void System_menu(void) {
 				} else
 					this_screen.new_palette = 1;
 
-				rv = g_sound->UnpauseFx();
-				if (rv != RD_OK)
-					debug(5, "ERROR: UnpauseFx() returned %.8x in SystemMenu()", rv);
+				g_sound->unpauseFx();
 
 				// If there was looping music before coming
 				// into the control panels then restart it!

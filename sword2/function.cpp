@@ -398,9 +398,9 @@ int32 FN_play_credits(int32 *params) {
 
 		g_sound->saveMusicState();
 
-		g_sound->MuteFx(1);
-		g_sound->MuteSpeech(1);
-		g_sound->StopMusic();
+		g_sound->muteFx(1);
+		g_sound->muteSpeech(1);
+		g_sound->stopMusic();
 
 		memcpy(oldPal, palCopy, 1024);
 		memset(tmpPal, 0, 1024);
@@ -421,13 +421,13 @@ int32 FN_play_credits(int32 *params) {
 		pars[1] = FX_SPOT;
 		FN_play_music(pars);
 
-		music_length = 1000 * g_sound->MusicTimeRemaining();
+		music_length = 1000 * g_sound->musicTimeRemaining();
 
 		debug(0, "Credits music length: ~%d ms", music_length);
 
 		CloseMenuImmediately();
 
-		while (g_sound->MusicTimeRemaining()) {
+		while (g_sound->musicTimeRemaining()) {
 			EraseBackBuffer();
 			SetNeedRedraw();
 
@@ -454,8 +454,8 @@ int32 FN_play_credits(int32 *params) {
 		Build_display();
 		WaitForFade();
 
-		g_sound->MuteFx(0);
-		g_sound->MuteSpeech(0);
+		g_sound->muteFx(0);
+		g_sound->muteSpeech(0);
 	}
 
 	// FIXME: This probably isn't the correct way of shutting down ScummVM

@@ -91,7 +91,7 @@ void Process_fx_queue(void) {
 			break;
 		case FX_SPOT2:
 			// Once the Fx has finished remove it from the queue.
-			if (g_sound->IsFxOpen(j + 1))
+			if (g_sound->isFxOpen(j + 1))
 				fxq[j].resource = 0;
 			break;
 		}
@@ -112,7 +112,7 @@ void Trigger_fx(uint8 j) {
 		data = res_man.open(fxq[j].resource);
 		data += sizeof(_standardHeader);
 		// wav data gets copied to sound memory
-		rv = g_sound->PlayFx(id, data, fxq[j].volume, fxq[j].pan, RDSE_FXSPOT);
+		rv = g_sound->playFx(id, data, fxq[j].volume, fxq[j].pan, RDSE_FXSPOT);
 		// release the sample
 		res_man.close(fxq[j].resource);
 	} else {
@@ -122,15 +122,15 @@ void Trigger_fx(uint8 j) {
 
 		if (fxq[j].type == FX_RANDOM) {
 			// Not looped
-			rv = g_sound->PlayFx(id, NULL, fxq[j].volume, fxq[j].pan, RDSE_FXSPOT);
+			rv = g_sound->playFx(id, NULL, fxq[j].volume, fxq[j].pan, RDSE_FXSPOT);
 		} else {
 			// Looped
-			rv = g_sound->PlayFx(id, NULL, fxq[j].volume, fxq[j].pan, RDSE_FXLOOP);
+			rv = g_sound->playFx(id, NULL, fxq[j].volume, fxq[j].pan, RDSE_FXLOOP);
 		}
 	}
 
 	if (rv)
-		debug(5, "SFX ERROR: PlayFx() returned %.8x", rv);
+		debug(5, "SFX ERROR: playFx() returned %.8x", rv);
 }
 
 // called from script only
@@ -231,10 +231,10 @@ int32 FN_play_fx(int32 *params) {
 		data += sizeof(_standardHeader);
 
 		// copy it to sound memory, using position in queue as 'id'
-		rv = g_sound->OpenFx(id, data);
+		rv = g_sound->openFx(id, data);
 
 		if (rv)
-			debug(5, "SFX ERROR: OpenFx() returned %.8x", rv);
+			debug(5, "SFX ERROR: openFx() returned %.8x", rv);
 
 		// release the sample
 		res_man.close(fxq[j].resource);
@@ -269,9 +269,9 @@ int32 FN_set_fx_vol_and_pan(int32 *params) {
 
 	debug(5, "FN_set_fx_vol_and_pan(%d, %d, %d)", params[0], params[1], params[2]);
 
-	// SetFxVolumePan(int32 id, uint8 vol, uint8 pan);
+	// setFxIdVolumePan(int32 id, uint8 vol, uint8 pan);
 	// driver fx_id is 1 + <pos in queue>
-	g_sound->SetFxVolumePan(1 + params[0], params[1], params[2]);
+	g_sound->setFxIdVolumePan(1 + params[0], params[1], params[2]);
 	return IR_CONT;
 }
 
@@ -283,7 +283,7 @@ int32 FN_set_fx_vol(int32 *params) {
 	//		1 new volume (0..16)
 
 	// SetFxIdVolume(int32 id, uint8 vol);
-	g_sound->SetFxIdVolume(1 + params[0], params[1]);
+	g_sound->setFxIdVolume(1 + params[0], params[1]);
 	return IR_CONT;
 }
 
@@ -304,10 +304,10 @@ int32 FN_stop_fx(int32 *params) {
 		id = (uint32) j + 1;		// because 0 is not a valid id
 
 		// stop fx & remove sample from sound memory
-		rv = g_sound->CloseFx(id);
+		rv = g_sound->closeFx(id);
 
 		if (rv)
-			debug(5, "SFX ERROR: CloseFx() returned %.8x", rv);
+			debug(5, "SFX ERROR: closeFx() returned %.8x", rv);
 	}
 
 	// remove from queue
@@ -330,33 +330,11 @@ int32 FN_stop_all_fx(int32 *params) {
 
 void Clear_fx_queue(void) {
 	// stop all fx & remove the samples from sound memory
-	g_sound->ClearAllFx();
+	g_sound->clearAllFx();
 
 	// clean out the queue
 	Init_fx_queue();
 }
-
-// ===========================================================================
-//	int32 StreamMusic(uint8 *filename, int32 loopFlag)
-//
-//	Streams music from the file defined by filename.  The loopFlag should
-//	be set to RDSE_FXLOOP if the music is to loop back to the start.
-//	Otherwise, it should be RDSE_FXSPOT.
-//	The return value must be checked for any problems.
-//
-// ---------------------------------------------------------------------------
-//
-//	int32 PauseMusic(void)
-//
-//	Stops the music dead in it's tracks.
-//
-// ---------------------------------------------------------------------------
-//
-//	int32 UnpauseMusic(void)
-//
-//	Re-starts the music from where it was stopped.
-//
-// ===========================================================================
 
 int32 FN_prepare_music(int32 *params) {
 	return IR_CONT;
@@ -406,10 +384,10 @@ int32 FN_play_music(int32 *params) {
 			strcpy(filename, "music.clu");
 	}
 
-	rv = g_sound->StreamCompMusic(filename, params[0], loopFlag);
+	rv = g_sound->streamCompMusic(filename, params[0], loopFlag);
 
 	if (rv)
-		debug(5, "ERROR: StreamCompMusic(%s, %d, %d) returned error 0x%.8x", filename, params[0], loopFlag, rv);
+		debug(5, "ERROR: streamCompMusic(%s, %d, %d) returned error 0x%.8x", filename, params[0], loopFlag, rv);
 
 	return IR_CONT;
 }
@@ -418,13 +396,13 @@ int32 FN_stop_music(int32 *params) {	// called from script only
 	// params:	none
 
 	looping_music_id = 0;		// clear the 'looping' flag
-	g_sound->StopMusic();
+	g_sound->stopMusic();
 	return IR_CONT;
 }
 
 void Kill_music(void) {			// James22aug97
 	looping_music_id = 0;		// clear the 'looping' flag
-	g_sound->StopMusic();
+	g_sound->stopMusic();
 }
 
 int32 FN_check_music_playing(int32 *params) {
@@ -434,39 +412,19 @@ int32 FN_check_music_playing(int32 *params) {
 	// or 0 if no music playing
 
 	// in seconds, rounded up to the nearest second
-	RESULT = g_sound->MusicTimeRemaining();
+	RESULT = g_sound->musicTimeRemaining();
 
 	return IR_CONT;
 }
 
 void PauseAllSound(void) {
-	uint32	rv;
-
-	rv = g_sound->PauseMusic();
-	if (rv != RD_OK)
-		debug(5, "ERROR: PauseMusic() returned %.8x in PauseAllSound()", rv);
-
-	rv = g_sound->PauseSpeech();
-	if (rv != RD_OK)
-		debug(5, "ERROR: PauseSpeech() returned %.8x in PauseAllSound()", rv);
-
-	rv = g_sound->PauseFx();
-	if (rv != RD_OK)
-		debug(5, "ERROR: PauseFx() returned %.8x in PauseAllSound()", rv);
+	g_sound->pauseMusic();
+	g_sound->pauseSpeech();
+	g_sound->pauseFx();
 }
 
 void UnpauseAllSound(void) {
-	uint32	rv;
-
-	rv = g_sound->UnpauseMusic();
-	if (rv != RD_OK)
-		debug(5, "ERROR: UnpauseMusic() returned %.8x in UnpauseAllSound()", rv);
-
-	rv = g_sound->UnpauseSpeech();
-	if (rv != RD_OK)
-		debug(5, "ERROR: UnpauseSpeech() returned %.8x in UnpauseAllSound()", rv);
-
-	rv = g_sound->UnpauseFx();
- 	if (rv != RD_OK)
-		debug(5, "ERROR: UnpauseFx() returned %.8x in UnpauseAllSound()", rv);
+	g_sound->unpauseMusic();
+	g_sound->unpauseSpeech();
+	g_sound->unpauseFx();
 }

@@ -255,8 +255,8 @@ uint32 Con_start(uint8 *input) {
 			FN_stop_music(NULL);
 
 			// halt the sample prematurely
-			g_sound->UnpauseSpeech();
-			g_sound->StopSpeechSword2();
+			g_sound->unpauseSpeech();
+			g_sound->stopSpeech();
 
 			// clean out all resources & flags, ready for a total
 			// restart (James24mar97)
