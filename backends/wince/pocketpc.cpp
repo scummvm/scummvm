@@ -50,7 +50,9 @@
 #include "dynamic_imports.h"
 
 #if defined(MIPS) || defined(SH3)
+#if 0
 #define GAMEX
+#endif
 #endif
 
 #ifdef GAMEX
