@@ -145,20 +145,16 @@ void IMuseDigital::startSound(int soundId, const char *soundName, int soundType,
 				freq -= (freq % 25);
 
 				_track[l]->iteration = freq * channels;
-				_track[l]->pullSize = _track[l]->iteration;
 				if (channels == 2)
 					_track[l]->mixerFlags = SoundMixer::FLAG_STEREO | SoundMixer::FLAG_REVERSE_STEREO;
 
 				if ((bits == 12) || (bits == 16)) {
 					_track[l]->mixerFlags |= SoundMixer::FLAG_16BITS;
 					_track[l]->iteration *= 2;
-					_track[l]->pullSize = _track[l]->iteration;
 				} else if (bits == 8) {
 					_track[l]->mixerFlags |= SoundMixer::FLAG_UNSIGNED;
 				} else
 					error("IMuseDigital::startSound(): Can't handle %d bit samples", bits);
-
-				_track[l]->pullSize /= 25;	// We want a "frame rate" of 25 audio blocks per second
 			}
 
 			if (input) {
@@ -292,7 +288,6 @@ int IMuseDigital::cloneToFadeOutTrack(int track, int fadeDelay, int killNormalTr
 	_track[track]->mixerVol = _track[fadeTrack]->mixerVol;
 	_track[track]->mixerPan = _track[fadeTrack]->mixerPan;
 	_track[track]->mod = _track[fadeTrack]->mod;
-	_track[track]->pullSize = _track[fadeTrack]->pullSize;
 	_track[track]->used = _track[fadeTrack]->used;
 	_track[track]->toBeRemoved = _track[fadeTrack]->toBeRemoved;
 	_track[track]->started = _track[fadeTrack]->started;

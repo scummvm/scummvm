@@ -153,13 +153,8 @@ void IMuseDigital::callback() {
 			}
 
 			if (_track[l]->stream) {
-				int32 mixer_size = _track[l]->pullSize;
 				byte *data = NULL;
 				int32 result = 0;
-
-				if (_track[l]->stream->endOfData()) {
-					mixer_size *= 2;
-				}
 
 				if (_track[l]->curRegion == -1) {
 					switchToNextRegion(l);
@@ -168,6 +163,25 @@ void IMuseDigital::callback() {
 				}
 
 				int bits = _sound->getBits(_track[l]->soundHandle);
+				int channels = _sound->getChannels(_track[l]->soundHandle);
+
+				int32 mixer_size = _track[l]->stream->getFreeSpace() - 4;
+				if ((_track[l]->iteration / 2) > mixer_size)
+					continue;
+
+				if ((bits == 12) || (bits == 16)) {
+					if (channels == 1)
+						mixer_size &= ~1;
+					if (channels == 2)
+						mixer_size &= ~3;
+				} else {
+					if (channels == 2)
+						mixer_size &= ~1;
+				}
+
+				if (mixer_size == 0)
+					continue;
+
 				do {
 					if (bits == 12) {
 						byte *ptr = NULL;
@@ -184,16 +198,15 @@ void IMuseDigital::callback() {
 						free(ptr);
 					} else if (bits == 16) {
 						result = _sound->getDataFromRegion(_track[l]->soundHandle, _track[l]->curRegion, &data, _track[l]->regionOffset, mixer_size);
-						if (_sound->getChannels(_track[l]->soundHandle) == 1) {
+						if (channels == 1) {
 							result &= ~1;
 						}
-						if (_sound->getChannels(_track[l]->soundHandle) == 2) {
-							if (result & 2)
-								result &= ~2;
+						if (channels == 2) {
+							result &= ~3;
 						}
 					} else if (bits == 8) {
 						result = _sound->getDataFromRegion(_track[l]->soundHandle, _track[l]->curRegion, &data, _track[l]->regionOffset, mixer_size);
-						if (_sound->getChannels(_track[l]->soundHandle) == 2) {
+						if (channels == 2) {
 							result &= ~1;
 						}
 					}

@@ -63,7 +63,6 @@ private:
 		int volGroupId;
 		int iteration;
 		int mod;
-		int32 pullSize;
 		int32 mixerFlags;
 		int mixerVol;
 		int mixerPan;
