@@ -786,6 +786,11 @@ void Scumm::scummInit() {
 
 
 void Scumm::initScummVars() {
+
+	// FIXME
+	if (_features & GF_AFTER_V2)
+		return;
+
 	if (!(_features & GF_AFTER_V6))
 		VAR(VAR_V5_TALK_STRING_Y) = -0x50;
 
@@ -1729,13 +1734,13 @@ void Scumm::processKbd() {
 		return;
 	}
 
-	if (_lastKeyHit == VAR(VAR_RESTART_KEY)) {
+	if (VAR_RESTART_KEY != 0xFF && _lastKeyHit == VAR(VAR_RESTART_KEY)) {
 		warning("Restart not implemented");
 //		pauseGame(true);
 		return;
 	}
 
-	if (_lastKeyHit == VAR(VAR_PAUSE_KEY)) {
+	if (VAR_PAUSE_KEY != 0xFF && _lastKeyHit == VAR(VAR_PAUSE_KEY)) {
 		pauseGame(true);
 		/* pause */
 		return;
@@ -1755,7 +1760,7 @@ void Scumm::processKbd() {
 		if (_features & GF_AFTER_V7)
 			runScript(VAR(VAR_UNK_SCRIPT_2), 0, 0, 0);
 		return;
-	} else if (_lastKeyHit == VAR(VAR_TALKSTOP_KEY)) {
+	} else if (VAR_TALKSTOP_KEY != 0xFF && _lastKeyHit == VAR(VAR_TALKSTOP_KEY)) {
 		_talkDelay = 0;
 		if (_sound->_sfxMode & 2)
 			stopTalk();
@@ -2213,10 +2218,12 @@ void Scumm::launch() {
 
 	scummInit();
 
-	if (!(_features & GF_AFTER_V7))
-		VAR(VAR_VERSION) = 21;
-
-	VAR(VAR_DEBUGMODE) = _debugMode;
+	if (!(_features & GF_AFTER_V2)) {
+		if (!(_features & GF_AFTER_V7))
+			VAR(VAR_VERSION) = 21;
+	
+		VAR(VAR_DEBUGMODE) = _debugMode;
+	}
 
 	if (_gameId == GID_MONKEY)
 		_scummVars[74] = 1225;
