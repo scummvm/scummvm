@@ -420,7 +420,8 @@ protected:
 
 	int16 _virtual_mouse_x, _virtual_mouse_y;
 	int _bootParam;
-	bool _dumpScripts, _hexdumpScripts, _showStack;
+	bool _dumpScripts, _hexdumpScripts;
+	int _showStack;
 	uint16 _debugMode, _soundCardType;
 
 	/* Not sure where this stuff goes */

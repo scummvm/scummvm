@@ -280,7 +280,7 @@ void Scumm::executeScript() {
 	int c;
 	while (_currentScript != 0xFF) {
 		
-		if (_showStack == true) {
+		if (_showStack == 1) {
 			printf("Stack:");
 			for (c=0; c < _scummStackPos; c++) {
 				printf(" %d", _scummStack[c]); 
