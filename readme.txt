@@ -1,5 +1,5 @@
 ScummVM README
-Last updated:    2002-04-14
+Last updated:    2002-04-15
 Release version: 0.2.0  [CVS build]
 ------------------------------------------------------------------------
 
@@ -198,7 +198,7 @@ Command Line Options:
         -s<num>   - set the scale factor, 1-3    default is '2'
         -m<num>   - set the music volume, 0-100  default is '60'
         -t<num>   - set music tempo              default is '2031616'
-        -e<num>   - select sound engine. see below.
+        -e<mode>   - select sound engine. see below.
         -g<mode>  - select graphics scaler. see below.
 	-f        - fullscreen mode
         -n        - disable subtitles
@@ -245,11 +245,15 @@ configuration.
 
 If you ARE using MIDI, you have several different choices of output, 
 depending on your operating system and configuration.
-
-        -e0 - Null output. Don't play any music. This is default on non-windows operating systems
-        -e1 - Windows output. This uses the builtin Windows sequencer. Naturally, only on Windows
-        -e4 - Quicktime sound, for Macintosh users.
-
+        
+	-eadlib     - Uses internal Adlib Emulation (default) 
+        -ewindows   - Windows MIDI. Uses builtin sequencer. Only on Windows
+	-etimidity  - Uses Timidity for music. Requires Timidity.
+	-eseq       - Uses /dev/sequencer for MIDI. *nix only.
+        -eqt        - Quicktime sound, for Macintosh users.
+	-eamidi     - Uses the MorphOS MIDI system. MorphOS only.
+	-enull      - Null output. Don't play any music.
+	
 
 Playing sound with Adlib emulation:
 -----------------------------------
