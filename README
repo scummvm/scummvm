@@ -101,6 +101,7 @@ ScummVM and wish to commit it into the main CVS, feel free to contact us!
         Acorn (RiscOS)  - ???
         Dreamcast       - custom backend 
         GP32            - custom backend
+        PalmOS          - custom backend
         UNIX            - SDL           (Linux, Solaris, IRIX, *BSD)
 
 
@@ -653,13 +654,14 @@ Credits:
 --------
  The core ScummVM team:
         James Brown          - Lead developer
+        Max Horn             - Lead Developer
         Vincent Hamm         - Developer (retired)
-        Max Horn             - Developer, MacOS X port, new GUI
         Jeremy Newman        - Webmaster
         Ludvig Strigeus      - Original ScummVM author, initial Simon support (retired)
 
  Developers:
         Torbjorn Andersson   - Many different contributions
+        Chris Apers          - PalmOS port
         Nicolas Bacca        - PocketPC/WinCE port
         Ralph Brorsen        - Helped write the new GUI (retired)
         Jamieson Christian   - Lots of work on iMuse/MIDI
