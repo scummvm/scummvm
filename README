@@ -918,6 +918,7 @@ X.X Credits:
         Ludvig Strigeus      - Original ScummVM and SimonVM author
 
  Contributors:
+        Quietust             - Sound support for Amiga SCUMM V2 - V3 games
         Stuart Caie          - Decoders for Simon 1 Amiga data files
         Janne Huttunen       - V3 actor mask support, Dig/FT Smush audio
         Kovacs Endre Janos   - Several fixes for Simon1
