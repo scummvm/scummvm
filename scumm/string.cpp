@@ -842,15 +842,12 @@ void Scumm::loadLanguageBundle() {
 }
 
 void Scumm::translateText(byte *text, byte *trans_buff) {
-	if ((_existLanguageFile == true) && (text[0] == '/')) {
-		char name[20], tmp[500], tmp2[20], num_s[20], number[4];
-		int32 num, l, j, k, r, pos;
-		char enc;
+	char name[20], tmp[500], tmp2[20], num_s[20], number[4], enc;
+	int32 num, l, j, k, r, pos = 0;
+	char *buf = _languageBuffer;
 
-		char *buf = _languageBuffer;
-		pos = 0;
-
-		if (_gameId == GID_CMI) {
+	if (_gameId == GID_CMI) {
+		if ((text[0] == '/') && (_existLanguageFile == true)) {
 			struct langIndexNode target;
 			struct langIndexNode *found;
 
@@ -880,11 +877,20 @@ void Scumm::translateText(byte *text, byte *trans_buff) {
 					}
 					file.close();
 					return;
+				} else {
+					// Some evil person removed the language file?
+					_existLanguageFile = false;
 				}
-				// Some evil person removed the language file?
-				_existLanguageFile = false;
 			}
-		} else if (_gameId == GID_DIG) {
+		}
+		byte *pointer = (byte *)strchr((char *)text + 1, '/');
+		if (pointer != NULL) {
+			pointer++;
+			memcpy(trans_buff, pointer, resStrLen(pointer) + 1);
+			return;
+		}
+	} else if (_gameId == GID_DIG) {
+		if ((text[0] == '/') && (_existLanguageFile == true)) {
 			// copy name from text /..../
 			for (l = 0; (l < 20) && (text[l + 1] != '.'); l++) {
 				name[l] = text[l + 1];
@@ -968,23 +974,17 @@ void Scumm::translateText(byte *text, byte *trans_buff) {
 				}
 			}
 		}
-	}
-
-	if (text[0] == '/') {
 		byte *pointer = (byte *)strchr((char *)text + 1, '/');
 		if (pointer != NULL) {
 			pointer++;
-			int l = 0;
+			l = 0;
 			while (*pointer != '/' && *pointer != 0xff && *pointer != 0) {
 				trans_buff[l++] = *pointer++;
 			}
 			trans_buff[l] = '\0';
+			return;
 		}
-		else
-			trans_buff[0] = '\0';
-		return;
 	}
-
 	memcpy(trans_buff, text, resStrLen(text) + 1);
 }
 
