@@ -3,6 +3,7 @@ MODULE := common
 MODULE_OBJS := \
 	common/config-manager.o \
 	common/file.o \
+	common/md5.o \
 	common/scaler.o \
 	common/str.o \
 	common/timer.o \
