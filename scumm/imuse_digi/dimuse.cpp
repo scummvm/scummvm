@@ -206,7 +206,7 @@ void IMuseDigital::switchToNextRegion(int track) {
 	int hookid = _sound->getJumpIdByRegion(_track[track].soundHandle, _track[track].curRegion);
 	if (hookid == _track[track].curHookId) {
 		int region = checkJumpByRegion(track, _track[track].curRegion);
-		if ((region != -1) && (_track[track].soundGroup != IMUSE_MUSIC))
+		if (region != -1)
 			_track[track].curRegion = region;
 	}
 
