@@ -639,12 +639,14 @@ void Cutaway::handlePersonRecord(
 			bob->y = object.moveToY;
 		}
 
+/* FIXME
 		_walk->personMove(
 				&p, 
 				object.moveToX, object.moveToY,
 				_logic->numFrames() + 1, 		// XXX CI+1
 				_logic->objectData(object.objectNumber)->image
 				);
+*/
 	}
 
 	if (_quit)
