@@ -37,103 +37,219 @@ public:
 	bool isActive() const { return val > 0; }
 };
 
-typedef void (*SoundProc)(void *param, byte *buf, int len);
-
 class SoundMixer {
 public:
-	typedef void PremixProc (void *param, int16 *data, uint len);
+	enum {
+		/** unsigned samples (default: signed) */
+		FLAG_UNSIGNED = 1 << 0,
 
+		/** sound is 16 bits wide (default: 8bit) */
+		FLAG_16BITS = 1 << 1,
+
+		/** sample is little endian (default: big endian) */
+		FLAG_LITTLE_ENDIAN = 1 << 2,
+
+		/** sound is in stereo (default: mono) */
+		FLAG_STEREO = 1 << 3,
+
+		/** reverse the left and right stereo channel */
+		FLAG_REVERSE_STEREO = 1 << 4,
+
+		/** sound buffer is freed automagically at the end of playing */
+		FLAG_AUTOFREE = 1 << 5,
+
+		/** loop the audio */
+		FLAG_LOOP = 1 << 6
+	};
+
+private:
 	enum {
 		NUM_CHANNELS = 16
 	};
 
-	enum {
-		FLAG_UNSIGNED = 1 << 0,         /** unsigned samples (default: signed) */
-		FLAG_16BITS = 1 << 1,           /** sound is 16 bits wide (default: 8bit) */
-		FLAG_LITTLE_ENDIAN = 1 << 2,    /** sample is little endian (default: big endian) */
-		FLAG_STEREO = 1 << 3,           /** sound is in stereo (default: mono) */
-		FLAG_REVERSE_STEREO = 1 << 4,   /** reverse the left and right stereo channel */
-		FLAG_AUTOFREE = 1 << 5,         /** sound buffer is freed automagically at the end of playing */
-		FLAG_LOOP = 1 << 6              /** loop the audio */
-	};
-
-private:
 	MutexRef _mutex;
 
-	void *_premixParam;
-	PremixProc *_premixProc;
+	Channel *_premixChannel;
 
 	uint _outputRate;
-	int _globalVolume;
-	bool _paused;
-	bool _mixerReady;
 
+	int _globalVolume;
+
+	bool _paused;
+	
 	Channel *_channels[NUM_CHANNELS];
+
+	bool _mixerReady;
 
 public:
 	SoundMixer();
 	~SoundMixer();
 
+
+
+	/**
+	 * Is the mixer ready and setup? This may not be the case on systems which
+	 * don't support digital sound output. In that case, the mixer proc may
+	 * never be called. That in turn can cause breakage in games which use the
+	 * premix callback for syncing. In particular, the Adlib MIDI emulation...
+	 *
+	 * @return whether the mixer is ready and setup
+	 */
 	bool isReady() const { return _mixerReady; };
 
-	void setupPremix(PremixProc *proc, void *param);
 
-	// start playing a raw sound
+
+	/**
+	 * Set the premix stream. This is mainly used for the adlib music, but
+	 * is not limited to it. The premix stream is invoked by the mixer whenever
+	 * it needs to generate any data, before any other mixing takes place.
+	 */
+	void setupPremix(AudioStream *stream);
+
+
+
+	/**
+	 * Start playing the given raw sound data.
+	 * Internally, this simply creates an audio input stream wrapping the data
+	 * (using the makeLinearInputStream factory function), which is then
+	 * passed on to playInputStream.
+	 */
 	void playRaw(PlayingSoundHandle *handle, void *sound, uint32 size, uint rate, byte flags,
-				int id = -1, byte volume = 255, int8 balance = 0, uint32 loopStart = 0, uint32 loopEnd = 0);
+				int id = -1, byte volume = 255, int8 balance = 0,
+				uint32 loopStart = 0, uint32 loopEnd = 0);
 
-	void playInputStream(PlayingSoundHandle *handle, AudioStream *input, bool isMusic, byte volume = 255, int8 balance = 0, int id = -1, bool autofreeStream = true);
+	/**
+	 * Start playing the given audio input stream.
+	 */
+	void playInputStream(PlayingSoundHandle *handle, AudioStream *input, bool isMusic,
+				int id = -1, byte volume = 255, int8 balance = 0,
+				bool autofreeStream = true, bool permanent = false);
 
-	/** Start a new stream. */
-	void newStream(PlayingSoundHandle *handle, uint rate, byte flags, uint32 buffer_size, byte volume = 255, int8 balance = 0);
 
-	/** Append to an existing stream. */
-	void appendStream(PlayingSoundHandle handle, void *sound, uint32 size);
 
-	/** Mark a stream as finished - it will play all its remaining data, then stop. */
-	void endStream(PlayingSoundHandle handle);
+	/**
+	 * Stop all currently playing sounds.
+	 */
+	void stopAll(bool force = false);
 
-	/** stop all currently playing sounds */
-	void stopAll();
-
-	/** stop playing the sound with given ID  */
+	/**
+	 * Stop playing the sound with given ID.
+	 *
+	 * @param id the ID of the sound to affect
+	 */
 	void stopID(int id);
 
-	/** stop playing the channel for the given handle */
+	/**
+	 * Stop playing the sound corresponding to the given handle.
+	 *
+	 * @param handle the sound to affect
+	 */
 	void stopHandle(PlayingSoundHandle handle);
 
-	/** pause/unpause all channels */
+
+
+	/**
+	 * Pause/unpause the mixer (this temporarily stops all audio processing,
+	 * including all regular channels and the premix channel).
+	 *
+	 * @param paused true to pause the mixer, false to unpause it
+	 */
 	void pauseAll(bool paused);
 
-	/** pause/unpause the sound with the given ID */
+	/**
+	 * Pause/unpause the sound with the given ID.
+	 *
+	 * @param id the ID of the sound to affect
+	 * @param paused true to pause the sound, false to unpause it
+	 */
 	void pauseID(int id, bool paused);
 
-	/** pause/unpause the channel for the given handle */
+	/**
+	 * Pause/unpause the sound corresponding to the given handle.
+	 *
+	 * @param handle the sound to affect
+	 * @param paused true to pause the sound, false to unpause it
+	 */
 	void pauseHandle(PlayingSoundHandle handle, bool paused);
 
-	/** set the channel volume for the given handle (0 - 255) */
+
+
+	/**
+	 * Check if a sound with the given ID is active.
+	 *
+	 * @param id the ID of the sound to query
+	 * @return true if the sound is active
+	 */
+	bool isSoundIDActive(int id);
+
+	/**
+	 * Check if the mixer is paused (using pauseAll).
+	 *
+	 * @return true if the mixer is paused
+	 */
+	bool isPaused();
+
+
+
+	/**
+	 * Set the channel volume for the given handle.
+	 *
+	 * @param handle the sound to affect
+	 * @param volume the new channel volume (0 - 255)
+	 */
 	void setChannelVolume(PlayingSoundHandle handle, byte volume);
 
-	/** set the channel balance for the given handle (-127 ... 0 ... 127) (left ... center ... right)*/
+	/**
+	 * Set the channel balance for the given handle.
+	 *
+	 * @param handle the sound to affect
+	 * @param balance the new channel balance:
+	 *        (-127 ... 0 ... 127) corresponds to (left ... center ... right)
+	 */
 	void setChannelBalance(PlayingSoundHandle handle, int8 balance);
 
-	/** set the global volume, 0-256 */
+	/**
+	 * Get approximation of for how long the channel has been playing.
+	 */
+	uint32 getSoundElapsedTime(PlayingSoundHandle handle);
+
+	/**
+	 * Set the global volume.
+	 *
+	 * @param volume the new global volume, 0-256
+	 */
 	void setVolume(int volume);
 
-	/** query the global volume, 0-256 */
+	/**
+	 * Query the global volume.
+	 *
+	 * @return the global music volume, 0-256
+	 */
 	int getVolume() const { return _globalVolume; }
 
-	/** query the output rate in kHz */
+	/**
+	 * Query the system's audio output sample rate. This returns
+	 * the same value as OSystem::getOutputSampleRate().
+	 *
+	 * @return the output sample rate in Hz
+	 */
 	uint getOutputRate() const { return _outputRate; }
 
 private:
+	typedef void (*SoundProc)(void *param, byte *buf, int len);
 	bool setSoundProc(SoundProc proc, void *param);
 
 	void insertChannel(PlayingSoundHandle *handle, Channel *chan);
 
-	/** main mixer method */
+	/**
+	 * Internal main method -- all the actual mixing work is done from here.
+	 */
 	void mix(int16 * buf, uint len);
 
+	/**
+	 * The mixer callback function, passed on to OSystem::setSoundCallback().
+	 * This simply calls the mix() method.
+	 */
 	static void mixCallback(void *s, byte *samples, int len);
 };
 

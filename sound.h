@@ -20,6 +20,7 @@
 
 #include "bits.h"
 #include "resource.h"
+#include "mixer/audiostream.h"
 #include <list>
 
 class Sound : public Resource {
@@ -43,7 +44,7 @@ private:
 	friend class Mixer;
 };
 
-class Mixer {
+class Mixer : public AudioStream {
 public:
 	static Mixer *instance();
 
@@ -61,9 +62,17 @@ public:
 
 	void getAudio(int16 *data, int numSamples);
 
+	bool isStereo() const { return true; };
+	bool endOfData() const { return false; }
+	int getRate() const { return 22050; };
+	int readBuffer(int16 *data, const int numSamples) {
+		getAudio(data, numSamples);
+		return numSamples;
+	}
+
 private:
 	Mixer();
-	~Mixer();
+	~Mixer() { }
 
 	static Mixer *_instance;
 	typedef std::list<ResPtr<Sound> > SoundList;

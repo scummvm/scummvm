@@ -270,7 +270,7 @@ Mixer::Mixer() :
 
 void Mixer::start() {
 	Sound::init();
-	g_mixer->setupPremix(mixerCallback, this);
+	g_mixer->setupPremix(this);
 	g_mixer->setVolume(100);
 }
 
