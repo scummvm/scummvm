@@ -799,7 +799,7 @@ protected:
 	virtual void executeOpcode(byte i);
 	virtual const char *getOpcodeDesc(byte i);
 
-	void loadImgSpot(int resId, int state, Common::Point &spot);
+	void loadImgSpot(int resId, int state, uint32 &w, uint32 &h);
 	void loadWizCursor(int resId, int resType, bool state);
 	
 	/* HE version 80 script opcodes */

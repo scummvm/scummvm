@@ -1159,7 +1159,7 @@ void ScummEngine_v60he::localizeArray(int slot, int script) {
 	if (slot >= _numArray)
 		error("o60_localizeArray(%d): array slot out of range", slot);
 
-	_arraySlot[slot] = vm.slot[_currentScript].number;
+	_arraySlot[slot] = script;
 }
 
 void ScummEngine_v60he::o60_localizeArray() {

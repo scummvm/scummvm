@@ -774,40 +774,54 @@ void ScummEngine_v90he::o90_unknown28() {
 }
 
 void ScummEngine_v90he::o90_unknown29() {
+	int state, resId;
+	uint32 w, h;
+
 	int subOp = fetchScriptByte();
 	subOp -= 30;
 
 	switch (subOp) {
 	case 0:
-		pop();
-		pop();
+		state = pop();
+		resId = pop();
+		loadImgSpot(resId, state, w, h);
+		push(w);
 		break;
 	case 1:
-		pop();
-		pop();
+		state = pop();
+		resId = pop();
+		loadImgSpot(resId, state, w, h);
+		push(h);
 		break;
 	case 2:
-		pop();
-		pop();
+		state = pop();
+		resId = pop();
+		getWizImageDim(resId, state, w, h);
+		push(w);
 		break;
 	case 3:
-		pop();
-		pop();
+		state = pop();
+		resId = pop();
+		getWizImageDim(resId, state, w, h);
+		push(h);
 		break;
 	case 6:
 		pop();
+		push(0);
 		break;
 	case 15:
 		pop();
 		pop();
 		pop();
 		pop();
+		push(0);
 		break;
 	case 36:
 		pop();
 		pop();
 		pop();
 		pop();
+		push(0);
 		break;
 	case 100:
 		pop();
@@ -816,11 +830,11 @@ void ScummEngine_v90he::o90_unknown29() {
 		pop();
 		pop();
 		pop();
+		push(0);
 		break;
 	default:
 		error("o90_unknown29: Unknown case %d", subOp);
 	}
-	push(0);
 
 	debug(1,"o90_unknown29 stub (%d)", subOp);
 }

@@ -559,29 +559,30 @@ void ScummEngine_v80he::o80_cursorCommand() {
 	VAR(VAR_USERPUT) = _userPut;
 }
 
-void ScummEngine_v80he::loadImgSpot(int resId, int state, Common::Point &spot) {
+void ScummEngine_v80he::loadImgSpot(int resId, int state, uint32 &w, uint32 &h) {
 	const uint8 *dataPtr = getResourceAddress(rtImage, resId);
 	if (!dataPtr)
 		error("loadImgSpot: unknown Image %d", resId);
 
 	const uint8 *spotPtr = findWrappedBlock(MKID('SPOT'), dataPtr, state, 0);
 
-	if (!spotPtr) {
-		spot.x = spot.y = 0;
+	if (spotPtr) {
+		w = (int16)READ_LE_UINT32(spotPtr + 0);
+		h = (int16)READ_LE_UINT32(spotPtr + 4);
 	} else {
-		spot.x = (int16)READ_LE_UINT32(spotPtr + 0);
-		spot.y = (int16)READ_LE_UINT32(spotPtr + 4);
+		w = 0;
+		h = 0;
 	}
 }
 
 void ScummEngine_v80he::loadWizCursor(int resId, int resType, bool state) {
 	Common::Rect rc;
-	Common::Point spot;
+	uint32 w, h;
 
-	loadImgSpot(resId, 0, spot);
+	loadImgSpot(resId, 0, w, h);
 
-	rc.top = spot.x;
-	rc.right = spot.y;
+	rc.top = w;
+	rc.right = h;
 
 	rc.top = MAX((int)rc.top, 0);
 	rc.right = MAX((int)rc.right, 0);
