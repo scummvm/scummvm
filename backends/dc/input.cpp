@@ -20,6 +20,8 @@
  *
  */
 
+#define RONIN_TIMER_ACCESS
+
 #include <common/scummsys.h>
 #include <common/stdafx.h>
 #include <common/engine.h>
