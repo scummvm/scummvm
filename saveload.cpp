@@ -618,7 +618,8 @@ void Serializer::saveLoadArrayOf(void *b, int len, int datasize, byte filetype) 
 
 void Serializer::saveLoadArrayOf(void *b, int num, int datasize, const SaveLoadEntry *sle) {
 	byte *data = (byte*)b;
-	while (--num) {
+
+	while (--num>=0) {
 		saveLoadEntries(data, sle);		
 		data += datasize;
 	}
