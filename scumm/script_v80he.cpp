@@ -325,7 +325,7 @@ void ScummEngine_v80he::setupOpcodes() {
 		OPCODE(o72_deleteFile),
 		OPCODE(o6_rename),
 		/* E0 */
-		OPCODE(o6_soundOps),
+		OPCODE(o6_invalid),
 		OPCODE(o72_getPixel),
 		OPCODE(o6_localizeArray),
 		OPCODE(o80_pickVarRandom),
