@@ -994,7 +994,7 @@ protected:
 	void spriteGroupSet_scale_x_ratio_div(int spriteGroupId, int value);
 	void spriteGroupSet_scale_y_ratio_mul(int spriteGroupId, int value);
 	void spriteGroupSet_scale_y_ratio_div(int spriteGroupId, int value);
-	void spriteGroupSet_flagNeedRedrawAnd(int spriteGroupId);
+	void spriteGroupSet_flagClipBoxAnd(int spriteGroupId);
 
 	void spritesAllocTables(int numSprites, int numGroups, int numMaxSprites);
 	void spritesResetGroup(int spriteGroupId);

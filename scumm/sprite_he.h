@@ -61,8 +61,7 @@ enum SpriteFlags {
 };
 
 enum SpriteGroupFlags {
-	kSGFClipBox     = 1 << 0,
-	kSGFNeedRedraw  = 1 << 1
+	kSGFClipBox     = (1 << 0)
 };
 
 struct SpriteInfo {

@@ -1069,7 +1069,7 @@ void ScummEngine_v100he::o100_setSpriteGroupInfo() {
 		if (!_curSpriteGroupId)
 			break;
 
-		spriteGroupSet_flagNeedRedrawAnd(_curSpriteGroupId);
+		spriteGroupSet_flagClipBoxAnd(_curSpriteGroupId);
 		break;
 	default:
 		error("o100_setSpriteGroupInfo: Unknown case %d", subOp);

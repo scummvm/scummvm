@@ -1554,7 +1554,7 @@ void ScummEngine_v90he::o90_setSpriteGroupInfo() {
 		if (!_curSpriteGroupId)
 			break;
 
-		spriteGroupSet_flagNeedRedrawAnd(_curSpriteGroupId);
+		spriteGroupSet_flagClipBoxAnd(_curSpriteGroupId);
 		break;
 	case 180:
 		if (!_curSpriteGroupId)
