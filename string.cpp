@@ -234,10 +234,10 @@ void Scumm::CHARSET_1() {
 		charset._colorMap[i] = _charsetData[charset._curId][i];
 	
 	if (_keepText) {
-		charset._strLeft = string[0].mask_left;
-		charset._strRight = string[0].mask_right;
-		charset._strTop = string[0].mask_top;
-		charset._strBottom = string[0].mask_bottom;
+		charset._strLeft = gdi._mask_left;
+		charset._strRight = gdi._mask_right;
+		charset._strTop = gdi._mask_top;
+		charset._strBottom = gdi._mask_bottom;
 	}
 
 	if (!_haveMsg || _talkDelay)
@@ -258,14 +258,14 @@ void Scumm::CHARSET_1() {
 
 	if (!_keepText) {
 		restoreCharsetBg();
-		string[0].xpos2 = string[0].xpos;
-		string[0].ypos2 = string[0].ypos;
+		charset._xpos2 = string[0].xpos;
+		charset._ypos2 = string[0].ypos;
 	}
 	
 	t = charset._right - string[0].xpos - 1;
 	if (charset._center) {
-		if (t > string[0].xpos2)
-			t = string[0].xpos2;
+		if (t > charset._xpos2)
+			t = charset._xpos2;
 		t <<= 1;
 	}
 
@@ -275,7 +275,7 @@ void Scumm::CHARSET_1() {
 
 	_lastXstart = virtscr[0].xstart;
 	if (charset._center) {
-		string[0].xpos2 -= charset.getStringWidth(0, buffer,0) >> 1;
+		charset._xpos2 -= charset.getStringWidth(0, buffer,0) >> 1;
 	}
 
 	charset._disableOffsX = charset._unk12 = !_keepText;
@@ -289,11 +289,11 @@ void Scumm::CHARSET_1() {
 		}
 		if (c == 13) {
 newLine:;
-			string[0].xpos2 = string[0].xpos;
+			charset._xpos2 = string[0].xpos;
 			if (charset._center) {
-				string[0].xpos2 -= charset.getStringWidth(0, buffer, 0)>>1;
+				charset._xpos2 -= charset.getStringWidth(0, buffer, 0)>>1;
 			}
-			string[0].ypos2 += getResourceAddress(rtCharset,charset._curId)[30];
+			charset._ypos2 += getResourceAddress(rtCharset,charset._curId)[30];
 			charset._disableOffsX = 1;
 			continue;
 		}
@@ -301,8 +301,8 @@ newLine:;
 		if (c==0xFE) c=0xFF;
 
 		if (c!=0xFF) {
-			charset._left = string[0].xpos2;
-			charset._top = string[0].ypos2;
+			charset._left = charset._xpos2;
+			charset._top = charset._ypos2;
 			
 			if (_majorScummVersion==5) {
 				if (!_vars[VAR_V5_CHARFLAG]) {
@@ -312,8 +312,8 @@ newLine:;
 				charset.printChar(c);
 			}
 
-			string[0].xpos2 = charset._left;
-			string[0].ypos2 = charset._top;
+			charset._xpos2 = charset._left;
+			charset._ypos2 = charset._top;
 
 			_talkDelay += _vars[VAR_CHARINC];
 			continue;
@@ -349,7 +349,7 @@ newLine:;
 			buffer += 2;
 			for (i=0; i<4; i++)
 				charset._colorMap[i] = _charsetData[charset._curId][i];
-			string[0].ypos2 -= getResourceAddress(rtCharset,charset._curId)[30] - oldy;
+			charset._ypos2 -= getResourceAddress(rtCharset,charset._curId)[30] - oldy;
 		} else if (c==12) {
 			int color;
 			color = *buffer++;
@@ -367,10 +367,10 @@ newLine:;
 
 	charset._bufPos = buffer - charset._buffer;
 
-	string[0].mask_left = charset._strLeft;
-	string[0].mask_right = charset._strRight;
-	string[0].mask_top = charset._strTop;
-	string[0].mask_bottom = charset._strBottom;
+	gdi._mask_left = charset._strLeft;
+	gdi._mask_right = charset._strRight;
+	gdi._mask_top = charset._strTop;
+	gdi._mask_bottom = charset._strBottom;
 }
 
 void Scumm::drawString(int a) {
@@ -462,8 +462,11 @@ void Scumm::drawString(int a) {
 	}
 
 	charset._ignoreCharsetMask = 0;
-	string[a].xpos2 = charset._left;
-	string[a].ypos2 = charset._top;
+	
+	if (a==0) {
+		charset._xpos2 = charset._left;
+		charset._ypos2 = charset._top;
+	}
 }
 
 byte *Scumm::addMessageToStack(byte *msg) {

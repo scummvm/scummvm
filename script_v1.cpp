@@ -1935,7 +1935,7 @@ void Scumm::decodeParseString() {
 		case 0: /* set string xy */
 			string[textSlot].xpos = getVarOrDirectWord(0x80);
 			string[textSlot].ypos = getVarOrDirectWord(0x40);
-			string[textSlot].overhead = 0;
+			string[textSlot].overhead = false;
 			break;
 		case 1: /* color */
 			string[textSlot].color = getVarOrDirectByte(0x80);
@@ -1944,15 +1944,15 @@ void Scumm::decodeParseString() {
 			string[textSlot].right = getVarOrDirectWord(0x80);
 			break;
 		case 4:	/* center*/
-			string[textSlot].center = 1;
-			string[textSlot].overhead = 0;
+			string[textSlot].center = true;
+			string[textSlot].overhead = false;
 			break;
 		case 6: /* left */
-			string[textSlot].center = 0;
-			string[textSlot].overhead = 0;
+			string[textSlot].center = false;
+			string[textSlot].overhead = false;
 			break;
 		case 7: /* overhead */
-			string[textSlot].overhead = 1;
+			string[textSlot].overhead = true;
 			break;
 		case 8: /* ignore */
 			getVarOrDirectWord(0x80);

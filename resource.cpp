@@ -659,14 +659,14 @@ void Scumm::lock(int type, int i) {
 	validateResource("Locking", type, i);
 	res.flags[type][i] |= 0x80;
 
-	debug(9, "locking %d,%d", type, i);
+//	debug(1, "locking %d,%d", type, i);
 }
 
 void Scumm::unlock(int type, int i) {
 	validateResource("Unlocking", type, i);
 	res.flags[type][i] &= ~0x80;
 
-	debug(9, "unlocking %d,%d", type, i);
+//	debug(1, "unlocking %d,%d", type, i);
 }
 
 bool Scumm::isResourceInUse(int type, int i) {
@@ -698,8 +698,6 @@ void Scumm::increaseResourceCounter() {
 		}
 	}
 }
-
-#define EXPIRE_FREQ 40
 
 void Scumm::expireResources(uint32 size) {
 	int i,j;
@@ -738,6 +736,8 @@ void Scumm::expireResources(uint32 size) {
 			break;
 		nukeResource(best_type, best_res);
 	} while (size + _allocatedSize > _minHeapThreshold);
+
+	increaseResourceCounter();
 
 	debug(1, "Expired resources, mem %d -> %d", oldAllocatedSize, _allocatedSize);
 }
@@ -785,7 +785,20 @@ bool Scumm::isResourceLoaded(int type, int index) {
 }
 
 void Scumm::resourceStats() {
-	printf("Total allocated size=%d\n", _allocatedSize);
+	int i,j;
+	uint32 lockedSize = 0, lockedNum = 0;
+	byte flag;
+	
+	for (i=1; i<=16; i++)
+		for(j=res.num[i]; --j>=0;) {
+			flag = res.flags[i][j];
+			if (flag&0x80 && res.address[i][j]) {
+				lockedSize += ((ResHeader*)res.address[i][j])->size;
+				lockedNum++;
+			}
+		}
+	
+	printf("Total allocated size=%d, locked=%d(%d)\n", _allocatedSize, lockedSize, lockedNum);
 }
 
 void Scumm::heapClear(int mode) {
@@ -793,13 +806,12 @@ void Scumm::heapClear(int mode) {
 	warning("heapClear: not implemented");
 }
 
-
 void Scumm::unkHeapProc2(int a, int b) {
 	warning("unkHeapProc2: not implemented");
 } 
 
 void Scumm::loadFlObject(int a, int b) {
-	debug(9, "loadFlObject(%d,%d):not implemented", a, b);
+	warning("loadFlObject(%d,%d):not implemented", a, b);
 }
 
 void Scumm::readMAXS() {
@@ -819,14 +831,13 @@ void Scumm::readMAXS() {
 	_numCostumes = fileReadWordLE();
 	_numGlobalObjects = fileReadWordLE();
 
-	allocResTypeData(3, MKID('COST'), _numCostumes, "costume", 1);
-	allocResTypeData(1, MKID('ROOM'), _numRooms, "room", 1);
-	allocResTypeData(4, MKID('SOUN'), _numSounds, "sound", 1);
-	allocResTypeData(2, MKID('SCRP'), _numScripts, "script", 1);
-	allocResTypeData(6, MKID('CHAR'), _numCharsets, "charset", 1);
+	allocResTypeData(rtCostume, MKID('COST'), _numCostumes, "costume", 1);
+	allocResTypeData(rtRoom, MKID('ROOM'), _numRooms, "room", 1);
+	allocResTypeData(rtSound, MKID('SOUN'), _numSounds, "sound", 1);
+	allocResTypeData(rtScript, MKID('SCRP'), _numScripts, "script", 1);
+	allocResTypeData(rtCharset, MKID('CHAR'), _numCharsets, "charset", 1);
+	allocResTypeData(rtObjectName, MKID('NONE'),50,"new name", 0);
 	
-	allocResTypeData(16, MKID('NONE'),50,"new name", 0);
-
 	allocateArrays();
 
 	_objectFlagTable = (byte*)alloc(_numGlobalObjects);

@@ -30,6 +30,7 @@ enum {
 	CMD_GO,
 	CMD_ACTOR,
 	CMD_SCRIPTS,
+	CMD_EXIT
 };
 
 void ScummDebugger::attach(Scumm *s) {
@@ -48,12 +49,14 @@ bool ScummDebugger::do_command() {
 
 	switch(get_command()) {
 	case CMD_HELP:
-		printf("Debugger commands:\n"
-		       "help -> display this help text\n"
-			   "quit -> quit the debugger\n"
-			   "go [numframes] -> increase frame\n"
-				 "actor [actornum] -> show actor information\n"
-				 "scripts -> show running scripts\n"
+		printf(
+				"Debugger commands:\n"
+				"(h)elp -> display this help text\n"
+				"(q)uit -> quit the debugger\n"
+				"(g)o [numframes] -> increase frame\n"
+				"(a)ctor [actornum] -> show actor information\n"
+				"(s)cripts -> show running scripts\n"
+				"(e)xit -> exit game\n"
 			   );
 		return true;
 
@@ -76,7 +79,10 @@ bool ScummDebugger::do_command() {
 	case CMD_SCRIPTS:
 		printScripts();
 		return true;
+	case CMD_EXIT:
+		exit(1);
 	}
+	/* this line is never reached */
 }
 
 void ScummDebugger::enter() {
@@ -114,6 +120,7 @@ static const DebuggerCommands debugger_commands[] = {
 	{ "g", 1, CMD_GO },
 	{ "a", 1, CMD_ACTOR },
 	{ "s", 1, CMD_SCRIPTS },
+	{ "e", 1, CMD_EXIT },
 	{ 0, 0, 0 },
 };
 
@@ -155,18 +162,18 @@ void ScummDebugger::printActors(int act) {
 	int i;
 	Actor *a;
 
-	if (act==-1) {
-		printf("+--------------------------------------------------------------+\n");
-		printf("|# |room|  x y   |elev|cos|width|box|mov|zp|frame|scale|spd|dir|\n");
-		printf("+--+----+--------+----+---+-----+---+---+--+-----+-----+---+---+\n");
-		for(i=1; i<13; i++) {
+	printf("+--------------------------------------------------------------+\n");
+	printf("|# |room|  x y   |elev|cos|width|box|mov|zp|frame|scale|spd|dir|\n");
+	printf("+--+----+--------+----+---+-----+---+---+--+-----+-----+---+---+\n");
+	for(i=1; i<13; i++) {
+		if (act==-1 || act==i) {
 			a = &_s->actor[i];
 			if (a->visible)
 				printf("|%2d|%4d|%3d  %3d|%4d|%3d|%5d|%3d|%3d|%2d|%5d|%5d|%3d|%3d|\n",
 					i,a->room,a->x,a->y,a->elevation,a->costume,a->width,a->walkbox,a->moving,a->neverZClip,a->animIndex,a->scalex,a->speedx,a->facing);
 		}
-		printf("+--------------------------------------------------------------+\n");
 	}
+	printf("+--------------------------------------------------------------+\n");
 }
 
 void ScummDebugger::printScripts() {

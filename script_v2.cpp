@@ -2065,7 +2065,7 @@ void Scumm::decodeParseString2(int m, int n) {
 	case 65:
 		string[m].ypos = pop();
 		string[m].xpos = pop();
-		string[m].overhead = 0;
+		string[m].overhead = false;
 		break;
 	case 66:
 		string[m].color = pop();
@@ -2074,22 +2074,22 @@ void Scumm::decodeParseString2(int m, int n) {
 		string[m].right = pop();
 		break;
 	case 69:
-		string[m].center = 1;
-		string[m].overhead = 0;
+		string[m].center = true;
+		string[m].overhead = false;
 		break;
 	case 71:
-		string[m].center = 0;
-		string[m].overhead = 0;
+		string[m].center = false;
+		string[m].overhead = false;
 		break;
 	case 72:
-		string[m].overhead = 1;
-		string[m].no_talk_anim = 0;
+		string[m].overhead = true;
+		string[m].no_talk_anim = false;
 		break;
 	case 73:
 		error("decodeParseString2: case 73");
 		break;
 	case 74:
-		string[m].no_talk_anim = 1;
+		string[m].no_talk_anim = true;
 		break;
 	case 75:
 		_messagePtr = _scriptPointer;

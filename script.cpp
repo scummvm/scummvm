@@ -28,7 +28,7 @@ void Scumm::runScript(int script, int a, int b, int16 *lvarptr) {
 	byte *scriptPtr;
 	uint32 scriptOffs;
 	byte scriptType;
-	int slot,i;
+	int slot;
 	ScriptSlot *s;
 
 #ifdef NO_SOUND_HACK
@@ -64,15 +64,9 @@ void Scumm::runScript(int script, int a, int b, int16 *lvarptr) {
 	s->unk1 = a;
 	s->unk2 = b;
 	s->freezeCount = 0;
-	
-	if (lvarptr==NULL) {
-		for(i=0; i<16; i++)
-			vm.localvar[slot * 0x11 + i] = 0;
-	} else {
-		for(i=0; i<16; i++)
-			vm.localvar[slot * 0x11 + i] = lvarptr[i];
-	}
 
+	initializeLocals(slot, lvarptr);
+	
 	runScriptNested(slot);
 }
 
@@ -179,7 +173,7 @@ void Scumm::runScriptNested(int script) {
 		nest->slot = _currentScript;
 	}
 
-	if (++_numNestedScripts>=0x10)
+	if (++_numNestedScripts>sizeof(vm.nest)/sizeof(vm.nest[0]))
 		error("Too many nested scripts");
 
 	_currentScript = script;
@@ -269,7 +263,7 @@ void Scumm::executeScript() {
 }
 
 byte Scumm::fetchScriptByte() {
-	if (*_lastCodePtr != _scriptOrgPointer + 6) {
+	if (*_lastCodePtr + sizeof(ResHeader) != _scriptOrgPointer) {
 		uint32 oldoffs = _scriptPointer - _scriptOrgPointer;
 		getScriptBaseAddress();
 		_scriptPointer = _scriptOrgPointer + oldoffs;
@@ -279,28 +273,15 @@ byte Scumm::fetchScriptByte() {
 
 int Scumm::fetchScriptWord() {
 	int a;
-
-	if (*_lastCodePtr != _scriptOrgPointer + 6) {
+	if (*_lastCodePtr + sizeof(ResHeader) != _scriptOrgPointer) {
 		uint32 oldoffs = _scriptPointer - _scriptOrgPointer;
 		getScriptBaseAddress();
 		_scriptPointer = _scriptOrgPointer + oldoffs;
 	}
-	
 	a = READ_LE_UINT16(_scriptPointer);
 	_scriptPointer += 2;
-
-	debug(9, "fetchword=%d", a);
 	return a;
 }
-
-void Scumm::ignoreScriptWord() {
-	fetchScriptWord();
-}
-
-void Scumm::ignoreScriptByte() {
-	fetchScriptByte();
-}
-
 
 int Scumm::readVar(uint var) {
 	int a;
@@ -334,13 +315,13 @@ int Scumm::readVar(uint var) {
 		var &= 0xFFF;
 		checkRange(0x10, 0, var, "Local variable %d out of range(r)");
 
-#ifdef BYPASS_COPY_PROT
-		if (!copyprotbypassed && _currentScript==1 && _gameId==GID_MONKEY2) {
+#if defined(BYPASS_COPY_PROT)
+		if (!copyprotbypassed && _currentScript==1 && _gameId==GID_MONKEY2 && var==0) {
 			copyprotbypassed=1;
 			return 1;
 		}
 #endif
-		return vm.localvar[_currentScript * 17 + var];
+		return vm.localvar[_currentScript][var];
 	}
 
 	error("Illegal varbits (r)");
@@ -368,7 +349,7 @@ void Scumm::writeVar(uint var, int value) {
 	if (var&0x4000) {
 		var &= 0xFFF;
 		checkRange(0x10, 0, var, "Local variable %d out of range(w)");
-		vm.localvar[_currentScript * 17 + var] = value;
+		vm.localvar[_currentScript][var] = value;
 		return;
 	}
 
@@ -388,8 +369,6 @@ void Scumm::getResultPos() {
 		}
 		_resultVarNumber&=~0x2000;
 	}
-
-	debug(9, "getResultPos=%d", _resultVarNumber);
 }
 
 void Scumm::setResult(int value) {
@@ -587,7 +566,7 @@ void Scumm::killScriptsAndResources() {
 	i = 0;
 	do {
 		if (_objs[i].fl_object_index)
-			nukeResource(0xD, _objs[i].fl_object_index);
+			nukeResource(rtFlObject, _objs[i].fl_object_index);
 	} while (++i <= _numObjectsInRoom);
 
 	/* Nuke local object names */
@@ -655,11 +634,9 @@ void Scumm::decreaseScriptDelay(int amount) {
 	}
 }
 
-
-
 void Scumm::runVerbCode(int object, int entry, int a, int b, int16 *vars) {
 	uint32 obcd;
-	int slot, where, offs,i;
+	int slot, where, offs;
 
 	if (!object)
 		return;
@@ -688,15 +665,20 @@ void Scumm::runVerbCode(int object, int entry, int a, int b, int16 *vars) {
 	vm.slot[slot].freezeCount = 0;
 	vm.slot[slot].newfield = 0;
 
-	if (!vars) {
-		for(i=0; i<16; i++)
-			vm.localvar[slot * 17 + i] = 0;
-	} else {
-		for (i=0; i<16; i++)
-			vm.localvar[slot * 17 + i] = vars[i];
-	}
+	initializeLocals(slot, vars);
 
 	runScriptNested(slot);
+}
+
+void Scumm::initializeLocals(int slot, int16 *vars) {
+	int i;
+	if (!vars) {
+		for(i=0; i<16; i++)
+			vm.localvar[slot][i] = 0;
+	} else {
+		for (i=0; i<16; i++)
+			vm.localvar[slot][i] = vars[i];
+	}
 }
 
 int Scumm::getVerbEntrypoint(int obj, int entry) {
@@ -767,7 +749,7 @@ void Scumm::cutscene(int16 *args) {
 	int scr = _currentScript;
 	vm.slot[scr].cutsceneOverride++;
 	
-	if (++vm.cutSceneStackPointer > 5)
+	if (++vm.cutSceneStackPointer > sizeof(vm.cutSceneData)/sizeof(vm.cutSceneData[0]))
 		error("Cutscene stack overflow");
 
 	vm.cutSceneData[vm.cutSceneStackPointer] = args[0];

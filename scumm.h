@@ -23,8 +23,6 @@
 
 #define SWAP(a,b) do{int tmp=a; a=b; b=tmp; } while(0)
 
-#define BYPASS_COPY_PROT
-
 struct Scumm;
 struct Actor;
 
@@ -62,7 +60,8 @@ struct VerbSlot {
 	uint8 color,hicolor,dimcolor,bkcolor,type;
 	uint8 charset_nr,curmode;
 	uint8 saveid;
-	uint8 key,center;
+	uint8 key;
+	bool center;
 	uint8 field_1B;
 	uint16 imgindex;
 };
@@ -344,8 +343,9 @@ struct CharsetRenderer {
 	bool _blitAlso;
 	
 	int _strLeft, _strRight, _strTop, _strBottom;
-//	int _mask_bottom, _mask_right, _mask_top, _mask_left;
 	byte _curId;
+
+	int _xpos2, _ypos2;
 	
 	byte _bufPos;
 	byte _unk12,_disableOffsX;
@@ -486,14 +486,15 @@ struct SentenceTab {
 };
 
 struct StringTab {
-	int16 t_xpos, t_ypos, t_center, t_overhead;
-	int16 t_no_talk_anim, t_right, t_color, t_charset;
+	int16 t_xpos, t_ypos;
+	int16 t_right;
 	int16 xpos, ypos;
-	int16 xpos2,ypos2;
-	int16 center, overhead;
-	int16 no_talk_anim, right;
-	int16 color,charset;
-	int16 mask_top, mask_bottom, mask_right, mask_left;
+	int16 right;
+	byte color, t_color;
+	byte charset, t_charset;
+	bool center, t_center;
+	bool overhead, t_overhead;
+	bool no_talk_anim,t_no_talk_anim;
 };
 
 struct ColorCycle {
@@ -524,6 +525,7 @@ struct Gdi {
 	byte _hotspot_y;
 	int16 _drawMouseX;
 	int16 _drawMouseY;
+	int16 _mask_top, _mask_bottom, _mask_right, _mask_left;
 	byte _currentCursor;
 	byte _mouseColors[4];
 	byte _mouseColor;
@@ -779,7 +781,7 @@ struct Scumm {
 		byte cutSceneStackPointer;
 		ScriptSlot slot[NUM_SCRIPT_SLOT];
 		NestedScript nest[15];
-		int16 localvar[NUM_SCRIPT_SLOT*17];
+		int16 localvar[NUM_SCRIPT_SLOT][17];
 	} vm;
 
 	struct {
@@ -1008,8 +1010,8 @@ struct Scumm {
 	void executeScript();
 	byte fetchScriptByte();
 	int fetchScriptWord();
-	void ignoreScriptWord();
-	void ignoreScriptByte();
+	void ignoreScriptWord() { fetchScriptWord(); }
+	void ignoreScriptByte() { fetchScriptByte(); }
 	int getVarOrDirectWord(byte mask);
 	int getVarOrDirectByte(byte mask);
 	int readVar(uint var);
@@ -1575,6 +1577,8 @@ struct Scumm {
 	void decompressDefaultCursor(int index);
 
 	void allocateArrays();
+
+	void initializeLocals(int slot, int16 *vars);
 };
 
 struct ScummDebugger {
@@ -1644,7 +1648,7 @@ void outputdisplay2(Scumm *s, int disp);
 extern const byte revBitMask[8];
 void blitToScreen(Scumm *s, byte *src, int x, int y, int w, int h);
 
-void NORETURN CDECL error(const char *s, ...);
+void CDECL error(const char *s, ...) NORETURN;
 void CDECL warning(const char *s, ...);
 void CDECL debug(int level, const char *s, ...);
 void checkHeap();

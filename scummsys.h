@@ -73,7 +73,11 @@ typedef signed long int32;
 #endif
 
 #define FORCEINLINE inline
-#define NORETURN 
+
+#if defined(__GNUC__)
+#define NORETURN __dead2
+#else
+#endif
 #define CDECL 
 
 typedef unsigned char byte;

@@ -85,7 +85,8 @@ int Scumm::getObjectIndex(int object) {
 int Scumm::whereIsObject(int object) {
 	int i;
 
-	assert(object>=0 && object < _numGlobalObjects);
+	if (object >= _numGlobalObjects)
+		return -1;
 
 	if ((_objectFlagTable[object]&0xF)!=0xF) {
 		for (i=0; i<_maxInventoryItems; i++)
@@ -793,7 +794,7 @@ void Scumm::setCursorImg(uint room, uint img) {
 	h = READ_LE_UINT16(&cdhd->v6.h)>>3;
 
 	size = READ_BE_UINT32(&cdhd->size);
-	if (size > 1000)
+	if (size > sizeof(_grabbedCursor))
 		error("setCursorImg: Cursor image too large");
 	
 	dataptr = findResource(MKID('IM01'),obim, 0);

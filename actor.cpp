@@ -34,8 +34,8 @@ void Scumm::initActor(Actor *a, int mode) {
 	}
 
 	a->elevation = 0;
-	a->width = 0x18;
-	a->talkColor = 0xF;
+	a->width = 24;
+	a->talkColor = 15;
 	a->new_2 = 0;
 	a->new_1 = -80;
 	a->scaley = a->scalex = 0xFF;

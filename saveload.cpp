@@ -28,7 +28,7 @@ struct SaveGameHeader {
 	uint32 ver;
 };
 
-#define CURRENT_VER 2
+#define CURRENT_VER 3
 
 bool Scumm::saveState(const char *filename) {
 	FILE *out = fopen(filename,"wb");
@@ -83,9 +83,11 @@ bool Scumm::loadState(const char *filename) {
 
 	/* Nuke all resources */
 	for (i=1; i<=16; i++)
-		if (!(i==rtFlObject || i==rtTemp || i==rtBuffer || res.mode[i]))
-			for(j=0; j<res.num[i]; j++)
+		if (i!=rtTemp && i!=rtBuffer)
+			for(j=0; j<res.num[i]; j++) {
 				nukeResource(i,j);
+				res.flags[i][j] = 0;
+			}
 
 	initScummVars();
 	
@@ -96,6 +98,8 @@ bool Scumm::loadState(const char *filename) {
 
 	sb = _screenB;
 	sh = _screenH;
+
+	gdi._mask_left = -1;
 	
 	initScreens(0, 0, 320, 200);
 	_screenEffectFlag = 1;
@@ -252,7 +256,7 @@ void Scumm::saveOrLoad(Serializer *s) {
 		MKLINE(Scumm,_numObjectsInRoom,sleByte),
 		MKLINE(Scumm,_currentScript,sleByte),
 		MKARRAY(Scumm,_localScriptList[0],sleUint32,0x39),
-		MKARRAY(Scumm,vm.localvar[0],sleUint16,NUM_SCRIPT_SLOT*17),
+		MKARRAY(Scumm,vm.localvar[0][0],sleUint16,NUM_SCRIPT_SLOT*17),
 		MKARRAY(Scumm,_resourceMapper[0],sleByte,128),
 		MKARRAY(Scumm,charset._colorMap[0],sleByte,16),
 		MKARRAY(Scumm,_charsetData[0][0],sleByte,10*16),
@@ -325,6 +329,7 @@ void Scumm::saveOrLoad(Serializer *s) {
 		MKLINE(Scumm,_screenH,sleUint16),
 
 		MKARRAY(Scumm,cost._transEffect[0],sleByte,256),
+
 		MKEND()
 	};
 
@@ -363,24 +368,18 @@ void Scumm::saveOrLoad(Serializer *s) {
 	const SaveLoadEntry stringTabEntries[] = {
 		MKLINE(StringTab,t_xpos,sleInt16),
 		MKLINE(StringTab,t_ypos,sleInt16),
-		MKLINE(StringTab,t_center,sleInt16),
-		MKLINE(StringTab,t_overhead,sleInt16),
-		MKLINE(StringTab,t_no_talk_anim,sleInt16),
+		MKLINE(StringTab,t_center,sleByte),
+		MKLINE(StringTab,t_overhead,sleByte),
+		MKLINE(StringTab,t_no_talk_anim,sleByte),
 		MKLINE(StringTab,t_right,sleInt16),
 		MKLINE(StringTab,t_color,sleInt16),
 		MKLINE(StringTab,t_charset,sleInt16),
 		MKLINE(StringTab,xpos,sleInt16),
 		MKLINE(StringTab,ypos,sleInt16),
-		MKLINE(StringTab,xpos2,sleInt16),
-		MKLINE(StringTab,ypos2,sleInt16),
 		MKLINE(StringTab,center,sleInt16),
 		MKLINE(StringTab,overhead,sleInt16),
 		MKLINE(StringTab,no_talk_anim,sleInt16),
 		MKLINE(StringTab,right,sleInt16),
-		MKLINE(StringTab,mask_top,sleInt16),
-		MKLINE(StringTab,mask_bottom,sleInt16),
-		MKLINE(StringTab,mask_right,sleInt16),
-		MKLINE(StringTab,mask_left,sleInt16),
 		MKEND()
 	};
 
@@ -406,32 +405,6 @@ void Scumm::saveOrLoad(Serializer *s) {
 	s->saveLoadArrayOf(string, 6, sizeof(string[0]), stringTabEntries);
 	s->saveLoadArrayOf(_colorCycle, 16, sizeof(_colorCycle[0]), colorCycleEntries);
 
-//	debug(1, "1) At position %d", ftell(inout));
-//	for (i=1; i<13; i++)
-//		s->saveLoadEntries(&actor[i],actorEntries);
-//	debug(1, "2) At position %d", ftell(inout));
-//	for (i=0; i<NUM_SCRIPT_SLOT; i++)
-//		s->saveLoadEntries(&vm.slot[i],scriptSlotEntries);
-//	debug(1, "3) At position %d", ftell(inout));
-//	for (i=0; i<_numLocalObjects; i++)
-//		s->saveLoadEntries(&_objs[i],objectEntries);
-//	debug(1, "4) At position %d", ftell(inout));	
-//	for (i=0; i<_numVerbs; i++)
-//		s->saveLoadEntries(&_verbs[i],verbEntries);
-//	debug(1, "5) At position %d", ftell(inout));	
-//	for (i=0; i<16; i++)
-//		s->saveLoadEntries(&vm.nest[i],nestedScriptEntries);
-//	debug(1, "6) At position %d", ftell(inout));	
-//	for (i=0; i<6; i++)
-//		s->saveLoadEntries(&sentence[i],sentenceTabEntries);
-//	debug(1, "7) At position %d", ftell(inout));	
-//	for (i=0; i<6; i++)
-//		s->saveLoadEntries(&string[i],stringTabEntries);
-//	debug(1, "8) At position %d", ftell(inout));	
-//	for (i=0; i<16; i++)
-//		s->saveLoadEntries(&_colorCycle[i],colorCycleEntries);
-//	debug(1, "9) At position %d", ftell(inout));
-
 	for (i=1; i<=16; i++)
 		if (res.mode[i]==0)
 			for(j=1; j<res.num[i]; j++)
@@ -441,11 +414,29 @@ void Scumm::saveOrLoad(Serializer *s) {
 	s->saveLoadArrayOf(_classData, _numGlobalObjects, sizeof(_classData[0]), sleUint32);
 	s->saveLoadArrayOf(_vars, _numVariables, sizeof(_vars[0]), sleInt16);
 	s->saveLoadArrayOf(_bitVars, _numBitVariables>>3, 1, sleByte);
+
+	/* Save or load a list of the locked objects */
+	if (s->isSaving()) {
+		for (i=1; i<=16; i++)
+			for(j=1; j<res.num[i]; j++) {
+				if (res.flags[i][j]&0x80) {
+					s->saveByte(i);
+					s->saveWord(j);
+				}
+			}
+		s->saveByte(0xFF);
+	} else {
+		int r;
+		while ((r = s->loadByte()) != 0xFF) {
+			res.flags[r][s->loadWord()] |= 0x80;
+		}
+	}
 }
 
 void Scumm::saveLoadResource(Serializer *ser, int type, int index) {
 	byte *ptr;
 	uint32 size,sizele;
+	byte flag;
 
 	/* don't save/load these resource types */
 	if (type==13 || type==12 || type==10 || res.mode[type])

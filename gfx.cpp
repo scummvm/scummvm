@@ -741,8 +741,8 @@ void Gdi::decompressBitmap() {
 }
 
 int Scumm::hasCharsetMask(int x, int y, int x2, int y2) {
-	if (!charset._hasMask || y > string[0].mask_bottom || x > string[0].mask_right || 
-		y2 < string[0].mask_top || x2 < string[0].mask_left )	
+	if (!charset._hasMask || y > gdi._mask_bottom || x > gdi._mask_right || 
+		y2 < gdi._mask_top || x2 < gdi._mask_left )	
 		return 0;
 	return 1;
 }
@@ -1170,16 +1170,16 @@ void Gdi::unkDecode7() {
 
 void Scumm::restoreCharsetBg() {
 	_bkColor = 0;
-	if (string[0].mask_left != -1) {
-		restoreBG(string[0].mask_left, string[0].mask_top, string[0].mask_right, string[0].mask_bottom);
+	if (gdi._mask_left != -1) {
+		restoreBG(gdi._mask_left, gdi._mask_top, gdi._mask_right, gdi._mask_bottom);
 		charset._hasMask = false;
-		string[0].mask_left = -1;
+		gdi._mask_left = -1;
 		charset._strLeft = -1;
 		charset._left = -1;
 	}
 	
-	string[0].xpos2 = string[0].xpos;
-	string[0].ypos2 = string[0].ypos;
+	charset._xpos2 = string[0].xpos;
+	charset._ypos2 = string[0].ypos;
 }
 
 void Scumm::restoreBG(int left, int top, int right, int bottom) {
