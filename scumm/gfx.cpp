@@ -668,7 +668,7 @@ void CharsetRenderer::restoreCharsetBg() {
 				// clean out the charset mask
 
 				const int mask_width = _vm->gdi._numStrips;
-				byte *mask = _vm->getMaskBuffer(0, vs->topline, 0);
+				byte *mask = _vm->getMaskBuffer(0, 0, 0);
 				assert(vs->width == 8 * _vm->gdi._numStrips);
 				
 				int height = vs->height;
