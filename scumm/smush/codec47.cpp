@@ -228,7 +228,7 @@ static byte smush_buf_small[32768];
 static int16 smush_table[256];
 
 void Codec47Decoder::makeTables37(int32 param) {
-	int32 variable1, variable2, variable3, variable4, count_1, count_2;
+	int32 variable1, variable2, variable4, count_1, count_2;
 	int32 tmp_param, tmp_param_tmp, tmp_value1, tmp_value2, b1, b2;
 	int32 * tmp_table37_1_2, * tmp_table37_1_1, * tmp_table37_2_2, * tmp_table37_2_1;
 	int32 value_table37_1_1, value_table37_1_2;
@@ -281,7 +281,7 @@ void Codec47Decoder::makeTables37(int32 param) {
 			tmp_value1 = tmp;
 			if (tmp == 0) {
 				b1 = 0;
-			} else if ((tmp_value1 - param) == -1) {
+			} else if ((tmp - param) == -1) {
 				b1 = 1;
 			} else {
 				b1 = 2;
@@ -299,7 +299,7 @@ void Codec47Decoder::makeTables37(int32 param) {
 			tmp_value2 = tmp;
 			if (tmp == 0) {
 				b2 = 0;
-			} else if ((tmp_value2 - param) == -1) {
+			} else if ((tmp - param) == -1) {
 				b2 = 1;
 			} else {
 				tmp = *(tmp_table37_1_2);
@@ -330,35 +330,21 @@ void Codec47Decoder::makeTables37(int32 param) {
 
 			variable2 = tmp_c + 1;
 			for (variable1 = 0; variable1 < variable2; variable1++) {
-				tmp_a = variable2;
-				if (tmp_a > 1) {
-					tmp_c = tmp_a;
-					tmp_a = variable1;
-					tmp_c -= tmp_a;
-					tmp_a = variable2;
-					tmp_c--;
-					tmp_a--;
-					tmp_ib = tmp_a;
+				if (variable2 > 1) {
+					int32 variable3;
+
+					tmp_c = variable2 - variable1 - 1;
+					tmp_ib = variable2 - 1;
 					tmp_d = value_table37_1_1;
 					tmp_ib >>= 1;
-					variable3 = tmp_a;
-					tmp_a = value_table37_1_2;
+					variable3 = variable2 - 1;
 					tmp_d *= variable1;
-					tmp_a *= tmp_c;
-					tmp_a += tmp_d;
-					tmp_a += tmp_ib;
-					tmp_a /= variable3;
-					tmp_d = tmp_value2;
-					variable4 = tmp_a;
-					tmp_a = tmp_value1;
-					tmp_d *= tmp_c;
-					tmp_a *= variable1;
-					tmp_d += tmp_a;
-					tmp_a = tmp_d + tmp_ib;
-					tmp_a /= variable3;
+					tmp_a = value_table37_1_2 * tmp_c + tmp_d + tmp_ib;
+					variable4 = tmp_a / variable3;
+					tmp_d = tmp_value2 * tmp_c + tmp_value1 * variable1 + tmp_ib;
+					tmp_a = tmp_d / variable3;
 				} else {
-					tmp_a = value_table37_1_1;
-					variable4 = tmp_a;
+					variable4 = value_table37_1_1;
 					tmp_a = tmp_value1;
 				}
 				tmp_c = param;
@@ -367,107 +353,61 @@ void Codec47Decoder::makeTables37(int32 param) {
 				tmp_c += tmp_d;
 				table_ptr = &table[tmp_c];
 				*(table_ptr) = 1;
-				if (b1 != 2)
-					goto label8;
-				if (b2 == 3)
-					goto label11;
-label8:
-				if (b2 != 2)
-					goto label9;
-				if (b1 == 3)
-					goto label11;
-label9:
-				if (b1 != 0)
-					goto label10;
-				if (b2 != 1)
-					goto label11;
-label10:
-				if (b2 != 0)
-					goto label12;
-				if (b1 == 1)
-					goto label13;
-label11:
-				if (tmp_a < 0)
+
+				if ((b1 == 2 && b2 == 3) ||
+				    (b2 == 2 && b1 == 3) ||
+				    (b1 == 0 && b2 != 1) ||
+				    (b2 == 0 && b1 != 1)) {
+					if (tmp_a < 0)
+						continue;
+					tmp_c = param;
+					tmp_c <<= 2;
+					do {
+						*(table_ptr) = 1;
+						table_ptr -= tmp_c / 4;
+					} while (--tmp_a >= 0);
 					continue;
-				tmp_c = param;
-				tmp_c <<= 2;
-				do {
-					*(table_ptr) = 1;
-					table_ptr -= tmp_c / 4;
-				} while (--tmp_a >= 0);
-				continue;
-label12:
-				if (b1 != 1)
-					goto label14;
-label13:
-				if (b2 != 0)
-					goto label15;
-label14:
-				if (b2 != 1)
-					goto label16;
-				if (b1 == 0)
-					goto label17;
-label15:
-				tmp_c = param;
-				if (tmp_c <= tmp_a)
+				}
+				
+				if ((b2 != 0 && b1 == 1) ||
+				    (b1 != 0 && b2 == 1)) {
+					tmp_c = param;
+					if (tmp_c <= tmp_a)
+						continue;
+					tmp_c <<= 2;
+					tmp_d = param;
+					tmp_d -= tmp_a;
+					do {
+						*(table_ptr) = 1;
+						table_ptr += tmp_c / 4;
+					} while (--tmp_d != 0);
 					continue;
-				tmp_c <<= 2;
-				tmp_d = param;
-				tmp_d -= tmp_a;
-				do {
-					*(table_ptr) = 1;
-					table_ptr += tmp_c / 4;
-				} while (--tmp_d != 0);
-				continue;
-label16:
-				if (b1 != 0)
-					goto label18;
-label17:
-				if (b2 == 1)
-					goto label21;
-label18:
-				if (b2 != 0)
-					goto label19;
-				if (b1 == 1)
-					goto label21;
-label19:
-				if (b1 != 3)
-					goto label20;
-				if (b2 != 2)
-					goto label21;
-label20:
-				if (b2 != 3)
-					goto label22;
-				if (b1 == 2)
-					goto label23;
-label21:
-				tmp_c = param;
-				if (tmp_c <= variable4)
-					continue;
-				tmp_c -= variable4;
-				d = tmp_c;
-				do {
-					*(table_ptr++) = 1;
-				} while (--d != 0);
-				continue;
-label22:
-				if (b1 != 2)
-					goto label24;
-label23:
-				if (b2 != 3)
-					goto label25;
-label24:
-				if (b2 != 2)
-					continue;
-				if (b1 == 3)
-					continue;
-label25:
-				if (variable4 >= 0) {
-					tmp_c = variable4 + 1;
+				}
+
+				if ((b1 == 0 && b2 == 1) ||
+				    (b2 == 0 && b1 == 1) ||
+				    (b1 == 3 && b2 != 2) ||
+				    (b2 == 3 && b1 != 2)) {
+					tmp_c = param;
+					if (tmp_c <= variable4)
+						continue;
+					tmp_c -= variable4;
 					d = tmp_c;
 					do {
-						*(table_ptr--) = 1;
+						*(table_ptr++) = 1;
 					} while (--d != 0);
+					continue;
+				}
+				
+				if ((b1 == 2 && b2 != 3) ||
+				    (b2 == 2 && b1 != 3)) {
+					if (variable4 >= 0) {
+						tmp_c = variable4 + 1;
+						d = tmp_c;
+						do {
+							*(table_ptr--) = 1;
+						} while (--d != 0);
+					}
 				}
 			}
 
