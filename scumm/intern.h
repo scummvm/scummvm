@@ -616,6 +616,8 @@ protected:
 
 	virtual void decodeParseString(int a, int b);
 
+	byte stringLen(byte *);
+
 	/* Version 7 script opcodes */
 	void o7_objectX();
 	void o7_objectY();
