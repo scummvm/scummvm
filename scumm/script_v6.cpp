@@ -566,7 +566,7 @@ int ScummEngine_v6::getStackList(int *args, uint maxnum) {
 		error("Too many items %d in stack list, max %d", num, maxnum);
 
 	i = num;
-	while (((int)--i) >= 0) {
+	while (i--) {
 		args[i] = pop();
 	}
 
