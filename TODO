@@ -209,8 +209,6 @@ GUI
   most other bitmap fonts have it on the right, though). To this end, we maybe
   should backup the background before drawing the caret, and restore it when
   erasing the caret.
-* Eye candy: add a nice credits scroller to the AboutDialog class, which then
-  displays (scrolling) all the ScummVM credits...
 * Add a new "options" dialog which is used by all frontends: for this, we'd
   agree on a hotkey used in all engines to invoke that dialog; it would sport
   settings for the volume, graphics, paths, etc.; it would co-exist with the
@@ -386,15 +384,8 @@ X11 backend
 
 General
 =======
-* Keep only tools which are directly useful for our "regular" users in the
-  tools module; all dev-only tools (like convbdf) shall be moved to a new
-  location (either a new CVS module "devtools", or into a subdirectory
-  "tools" of the "scummvm" CVS module).
-* Rename the various compression tools in a consistent fashion (e.g.
-  "compress_FOO"). 
-* Also try to unify the usage of said tools.
-* Add my credits.pl and ./dist-scummvm.sh scripts to the new devtools module/
-  directory.
+* Try to unify the usage of the compression tools, where possible /
+  necessary.
 
 Descumm
 =======
