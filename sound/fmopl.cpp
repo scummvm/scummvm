@@ -227,10 +227,10 @@ void OPLBuildTables(int ENV_BITS_PARAM, int EG_ENT_PARAM) {
 	EG_AED = EG_DST;
 	//EG_STEP = (96.0/EG_ENT);
 
-	for (i=0; i < (int)sizeof(KSL_TABLE_SEED); i++)
+	for (i=0; i < (int)sizeof(KSL_TABLE_SEED)/sizeof(double); i++)
 		KSL_TABLE[i] = SC_KSL(KSL_TABLE_SEED[i]);
 
-	for (i=0; i < (int)sizeof(SL_TABLE_SEED); i++)
+	for (i=0; i < (int)sizeof(SL_TABLE_SEED)/sizeof(uint); i++)
 		SL_TABLE[i] = SC_SL(SL_TABLE_SEED[i]);
 }
 
