@@ -38,7 +38,7 @@
 
 namespace Saga {
 
-// Inherit the Earth - Demo version
+// Inherit the Earth - DOS Demo version
 
 R_GAME_FILEDESC ITEDEMO_GameFiles[] = {
 	{"ITE.RSC", R_GAME_RESOURCEFILE},
@@ -54,6 +54,14 @@ R_GAME_FONTDESC ITEDEMO_GameFonts[] = {
 
 R_GAME_SOUNDINFO ITEDEMO_GameSound = {
 	R_GAME_SOUND_VOC, 0, 0, 0
+};
+
+// Inherit the Earth - win32 Wyrmkeep Demo version
+R_GAME_FILEDESC ITEWINDEMO_GameFiles[] = {
+	{"ITED.RSC", R_GAME_RESOURCEFILE},
+	{"SCRIPTSD.RSC", R_GAME_SCRIPTFILE},
+	{"SOUNDSD.RSC", R_GAME_SOUNDFILE},
+	{"VOICESD.RSC", R_GAME_VOICEFILE}
 };
 
 // Inherit the Earth - Diskette version
@@ -147,11 +155,11 @@ R_GAME_SOUNDINFO IHNM_GameSound = {
 };
 
 R_GAMEDESC GameDescs[] = {
-	// Inherit the earth - Demo version
+	// Inherit the earth - DOS Demo version
 	{
 		R_GAMETYPE_ITE,
 		R_GAME_ITE_DEMO, // Game id
-		"Inherit the Earth - Demo version", // Game title
+		"Inherit the Earth - DOS Demo version", // Game title
 		320, 200, // Logical resolution
 		137, // Scene viewport height
 		ITE_DEFAULT_SCENE, // Starting scene number
@@ -165,6 +173,24 @@ R_GAMEDESC GameDescs[] = {
 		0 // Game supported flag
 	},
 
+	// Inherit the earth - win32 Wyrmkeep Demo version
+	{
+		R_GAMETYPE_ITE,
+		R_GAME_ITE_WINDEMO,
+		"Inherit the Earth - Win32 Wyrmkeep Demo version",
+		320, 200,
+		137,
+		ITE_DEFAULT_SCENE,
+		&ITE_Resources,
+		ARRAYSIZE(ITEWINDEMO_GameFiles),
+		ITEWINDEMO_GameFiles,
+		ARRAYSIZE(ITECD_GameFonts),
+		ITECD_GameFonts,
+		&ITECD_GameSound,
+		NULL,
+		0
+	},
+	
 	// Inherit the earth - Disk version
 	{
 		R_GAMETYPE_ITE,
@@ -180,7 +206,7 @@ R_GAMEDESC GameDescs[] = {
 		ITEDISK_GameFonts,
 		&ITE_GameSound,
 		Verify_ITEDISK,
-		0
+		1
 	},
 
 	// Inherit the earth - CD version
