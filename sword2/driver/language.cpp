@@ -22,6 +22,16 @@
 
 namespace Sword2 {
 
+// Language codes
+#define ENGLISH		0x00
+#define AMERICAN	0x01
+#define GERMAN		0x02
+#define FRENCH		0x03
+#define SPANISH		0x04
+#define ITIALIAN	0x05
+#define JAPANESE	0x06
+#define SLOVAK		0x07
+
 uint8 languageVersion = ENGLISH;
 
 static uint8 versionFromFile = 0;

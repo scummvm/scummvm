@@ -35,7 +35,6 @@ namespace Sword2 {
 // defines specific to windows headers...
 #ifndef WIN32
 
-#define SEM_FAILCRITICALERRORS 1
 #define FILE_ATTRIBUTE_NORMAL 0x80
 #define _MAX_PATH 260
 
@@ -109,18 +108,6 @@ namespace Sword2 {
 #define RDERR_INVALIDID			0x0008000D
 
 
-
-
-// Language codes
-#define ENGLISH				0x00
-#define AMERICAN			0x01
-#define GERMAN				0x02
-#define FRENCH				0x03
-#define SPANISH				0x04
-#define ITIALIAN			0x05
-#define JAPANESE			0x06
-#define SLOVAK				0x07
-
 // Key codes
 #define RDKEY_ESCAPE			27
 
@@ -145,15 +132,6 @@ namespace Sword2 {
 #define RDSPR_RLE16			0x0000
 #define RDSPR_RLE256			0x0100
 #define RDSPR_RLE256FAST		0x0200
-
-
-//Rendering defines
-#define RD_SOFTWARESCREENBUFFER		0x01
-
-
-//Windows defines
-#define RD_FULLSCREEN			0x01000000
-#define RD_WINDOWED			0x01000001
 
 
 //Fading defines
@@ -206,13 +184,6 @@ namespace Sword2 {
 #define RDBLTFX_FLATALPHA		0x20
 #define RDBLTFX_GRADEDALPHA		0x40
 #define RDBLTFX_ALLHARDWARE		0x80
-
-// Max number of sound fx
-#define MAXFX 16
-#define MAXMUS 2
-
-// Key buffer size
-#define MAX_KEY_BUFFER 32
 
 // Maximum scaled size of a sprite
 #define SCALE_MAXWIDTH 512

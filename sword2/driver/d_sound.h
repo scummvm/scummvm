@@ -27,6 +27,10 @@
 
 namespace Sword2 {
 
+// Max number of sound fx
+#define MAXFX 16
+#define MAXMUS 2
+
 extern void sword2_sound_handler(void *refCon);
 
 typedef struct {
