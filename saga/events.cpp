@@ -159,13 +159,13 @@ int HandleContinuous(R_EVENT *event) {
 	case R_PAL_EVENT:
 		switch (event->op) {
 		case EVENT_BLACKTOPAL:
-			back_buf = SYSGFX_GetBackBuffer();
-			SYSGFX_BlackToPal(back_buf, (PALENTRY *)event->data, event_pc);
+			back_buf = GFX_GetBackBuffer();
+			GFX_BlackToPal(back_buf, (PALENTRY *)event->data, event_pc);
 			break;
 
 		case EVENT_PALTOBLACK:
-			back_buf = SYSGFX_GetBackBuffer();
-			SYSGFX_PalToBlack(back_buf, (PALENTRY *)event->data, event_pc);
+			back_buf = GFX_GetBackBuffer();
+			GFX_PalToBlack(back_buf, (PALENTRY *)event->data, event_pc);
 			break;
 		default:
 			break;
@@ -249,7 +249,7 @@ static int HandleOneShot(R_EVENT *event) {
 
 			if (SCENE_GetMode() == R_SCENE_MODE_NORMAL) {
 
-				back_buf = SYSGFX_GetBackBuffer();
+				back_buf = GFX_GetBackBuffer();
 
 				RENDER_GetBufferInfo(&rbuf_info);
 				SCENE_GetBGInfo(&bginfo);
@@ -262,7 +262,7 @@ static int HandleOneShot(R_EVENT *event) {
 				if (event->param == SET_PALETTE) {
 					PALENTRY *pal_p;
 					SCENE_GetBGPal(&pal_p);
-					SYSGFX_SetPalette(back_buf, pal_p);
+					GFX_SetPalette(back_buf, pal_p);
 				}
 			}
 		}

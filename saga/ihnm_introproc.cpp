@@ -142,7 +142,7 @@ int IHNM_IntroMovieProc2(int param, R_SCENE_INFO *scene_info) {
 
 	case SCENE_BEGIN:
 		// Fade to black out of the intro CyberDreams logo anim
-		SYSGFX_GetCurrentPal(current_pal);
+		GFX_GetCurrentPal(current_pal);
 
 		event.type = R_CONTINUOUS_EVENT;
 		event.code = R_PAL_EVENT;
@@ -203,7 +203,7 @@ int IHNM_IntroMovieProc3(int param, R_SCENE_INFO *scene_info) {
 	switch (param) {
 	case SCENE_BEGIN:
 		// Fade to black out of the intro DG logo anim
-		SYSGFX_GetCurrentPal(current_pal);
+		GFX_GetCurrentPal(current_pal);
 
 		event.type = R_CONTINUOUS_EVENT;
 		event.code = R_PAL_EVENT;

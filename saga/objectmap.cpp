@@ -365,7 +365,7 @@ int OBJECTMAP_Draw(R_SURFACE *ds, R_POINT *imouse_pt, int color, int color2) {
 	}
 
 	if (draw_txt) {
-		FONT_Draw(SMALL_FONT_ID, ds, txt_buf, 0, 2, 2, SYSGFX_GetWhite(), SYSGFX_GetBlack(), FONT_OUTLINE);
+		FONT_Draw(SMALL_FONT_ID, ds, txt_buf, 0, 2, 2, GFX_GetWhite(), GFX_GetBlack(), FONT_OUTLINE);
 	}
 
 	return R_SUCCESS;

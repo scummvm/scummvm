@@ -72,7 +72,7 @@ int RENDER_Init(OSystem *system) {
 	// Initialize system graphics
 	GAME_GetDisplayInfo(&disp_info);
 
-	if (SYSGFX_Init(system, disp_info.logical_w, disp_info.logical_h) != R_SUCCESS) {
+	if (GFX_Init(system, disp_info.logical_w, disp_info.logical_h) != R_SUCCESS) {
 		return R_FAILURE;
 	}
 
@@ -107,7 +107,7 @@ int RENDER_Init(OSystem *system) {
 	RenderModule.r_tmp_buf_w = tmp_w;
 	RenderModule.r_tmp_buf_h = tmp_h;
 
-	RenderModule.r_backbuf_surface = SYSGFX_GetBackBuffer();
+	RenderModule.r_backbuf_surface = GFX_GetBackBuffer();
 
 	// Initialize cursor state
 	if (RenderModule.r_softcursor) {
@@ -155,8 +155,8 @@ int RENDER_DrawScene() {
 
 	// Display scene maps, if applicable
 	if (RENDER_GetFlags() & RF_OBJECTMAP_TEST) {
-		OBJECTMAP_Draw(backbuf_surface, &mouse_pt, SYSGFX_GetWhite(), SYSGFX_GetBlack());
-		ACTIONMAP_Draw(backbuf_surface, SYSGFX_MatchColor(R_RGB_RED));
+		OBJECTMAP_Draw(backbuf_surface, &mouse_pt, GFX_GetWhite(), GFX_GetBlack());
+		ACTIONMAP_Draw(backbuf_surface, GFX_MatchColor(R_RGB_RED));
 	}
 
 	// Draw queued actors
@@ -175,7 +175,7 @@ int RENDER_DrawScene() {
 		sprintf(txt_buf, "%d", RenderModule.r_fps);
 		fps_width = FONT_GetStringWidth(SMALL_FONT_ID, txt_buf, 0, FONT_NORMAL);
 		FONT_Draw(SMALL_FONT_ID, backbuf_surface, txt_buf, 0, backbuf_surface->buf_w - fps_width, 2,
-					SYSGFX_GetWhite(), SYSGFX_GetBlack(), FONT_OUTLINE);
+					GFX_GetWhite(), GFX_GetBlack(), FONT_OUTLINE);
 	}
 
 	// Display "paused game" message, if applicable
@@ -183,7 +183,7 @@ int RENDER_DrawScene() {
 		int msg_len = strlen(R_PAUSEGAME_MSG);
 		int msg_w = FONT_GetStringWidth(BIG_FONT_ID, R_PAUSEGAME_MSG, msg_len, FONT_OUTLINE);
 		FONT_Draw(BIG_FONT_ID, backbuf_surface, R_PAUSEGAME_MSG, msg_len,
-				(backbuf_surface->buf_w - msg_w) / 2, 90, SYSGFX_GetWhite(), SYSGFX_GetBlack(), FONT_OUTLINE);
+				(backbuf_surface->buf_w - msg_w) / 2, 90, GFX_GetWhite(), GFX_GetBlack(), FONT_OUTLINE);
 	}
 
 	// Update user interface
@@ -197,7 +197,7 @@ int RENDER_DrawScene() {
 	// Display text formatting test, if applicable
 	if (RenderModule.r_flags & RF_TEXT_TEST) {
 		TEXT_Draw(MEDIUM_FONT_ID, backbuf_surface, test_txt, mouse_pt.x, mouse_pt.y,
-				SYSGFX_GetWhite(), SYSGFX_GetBlack(), FONT_OUTLINE | FONT_CENTERED);
+				GFX_GetWhite(), GFX_GetBlack(), FONT_OUTLINE | FONT_CENTERED);
 	}
 
 	// Display palette test, if applicable

@@ -34,6 +34,19 @@ namespace Saga {
 #define R_CURSOR_ORIGIN_X 4
 #define R_CURSOR_ORIGIN_Y 4
 
+#define R_RED_WEIGHT 0.299
+#define R_GREEN_WEIGHT 0.587
+#define R_BLUE_WEIGHT 0.114
+
+struct R_GFX_MODULE {
+	int init;
+
+	R_SURFACE r_back_buf;
+
+	int white_index;
+	int black_index;
+};
+
 } // End of namespace Saga
 
 #endif

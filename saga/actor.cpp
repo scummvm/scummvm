@@ -221,7 +221,7 @@ int ACTOR_DrawList() {
 
 	R_SURFACE *back_buf;
 
-	back_buf = SYSGFX_GetBackBuffer();
+	back_buf = GFX_GetBackBuffer();
 
 	for (walk_p = ys_dll_head(ActorModule.list); walk_p != NULL; walk_p = ys_dll_next(walk_p)) {
 		actor = (R_ACTOR *)ys_dll_get_data(walk_p);

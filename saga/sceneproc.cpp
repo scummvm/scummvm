@@ -55,7 +55,7 @@ int InitialSceneProc(int param, R_SCENE_INFO *scene_info) {
 		_vm->_sound->stopVoice();
 
 		// Fade palette to black from intro scene
-		SYSGFX_GetCurrentPal(current_pal);
+		GFX_GetCurrentPal(current_pal);
 
 		event.type = R_CONTINUOUS_EVENT;
 		event.code = R_PAL_EVENT;

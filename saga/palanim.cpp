@@ -153,8 +153,8 @@ int PALANIM_CycleStep(int vectortime) {
 		return R_FAILURE;
 	}
 
-	SYSGFX_GetCurrentPal(pal);
-	back_buf = SYSGFX_GetBackBuffer();
+	GFX_GetCurrentPal(pal);
+	back_buf = GFX_GetBackBuffer();
 
 	for (i = 0; i < PAnimData.entry_count; i++) {
 		cycle = PAnimData.entries[i].cycle;
@@ -174,7 +174,7 @@ int PALANIM_CycleStep(int vectortime) {
 		}
 	}
 
-	SYSGFX_SetPalette(back_buf, pal);
+	GFX_SetPalette(back_buf, pal);
 
 	event.type = R_ONESHOT_EVENT;
 	event.code = R_PALANIM_EVENT;

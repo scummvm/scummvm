@@ -242,7 +242,7 @@ int ITE_IntroCave1Proc(int param, R_SCENE_INFO *scene_info) {
 	switch (param) {
 	case SCENE_BEGIN:
 		// Fade to black out of the intro DG/NWC logo animation
-		SYSGFX_GetCurrentPal(current_pal);
+		GFX_GetCurrentPal(current_pal);
 		event.type = R_CONTINUOUS_EVENT;
 		event.code = R_PAL_EVENT;
 		event.op = EVENT_PALTOBLACK;

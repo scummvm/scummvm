@@ -109,18 +109,16 @@ int TRANSITION_Dissolve(byte *dst_img, int dst_w, int dst_h,
 // System : Graphics
 #define R_PAL_ENTRIES 256
 
-int SYSGFX_Init(OSystem *system, int width, int height);
-R_SURFACE *SYSGFX_GetScreenSurface();
-R_SURFACE *SYSGFX_GetBackBuffer();
-int SYSGFX_LockSurface(R_SURFACE *surface);
-int SYSGFX_UnlockSurface(R_SURFACE *surface);
-int SYSGFX_GetWhite();
-int SYSGFX_GetBlack();
-int SYSGFX_MatchColor(unsigned long colormask);
-int SYSGFX_SetPalette(R_SURFACE *surface, PALENTRY *pal);
-int SYSGFX_GetCurrentPal(PALENTRY *src_pal);
-int SYSGFX_PalToBlack(R_SURFACE *surface, PALENTRY *src_pal, double percent);
-int SYSGFX_BlackToPal(R_SURFACE *surface, PALENTRY *src_pal, double percent);
+int GFX_Init(OSystem *system, int width, int height);
+R_SURFACE *GFX_GetScreenSurface();
+R_SURFACE *GFX_GetBackBuffer();
+int GFX_GetWhite();
+int GFX_GetBlack();
+int GFX_MatchColor(unsigned long colormask);
+int GFX_SetPalette(R_SURFACE *surface, PALENTRY *pal);
+int GFX_GetCurrentPal(PALENTRY *src_pal);
+int GFX_PalToBlack(R_SURFACE *surface, PALENTRY *src_pal, double percent);
+int GFX_BlackToPal(R_SURFACE *surface, PALENTRY *src_pal, double percent);
 
 // System : Input 
 int SYSINPUT_Init();
@@ -128,9 +126,6 @@ int SYSINPUT_ProcessInput(void);
 int SYSINPUT_GetMousePos(int *mouse_x, int *mouse_y);
 int SYSINPUT_HideMouse(void);
 int SYSINPUT_ShowMouse(void);
-
-// sys_signal.c
-int ITESYS_CheckSignal(void);
 
 } // End of namespace Saga
 

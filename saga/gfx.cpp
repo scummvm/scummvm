@@ -37,6 +37,42 @@
 
 namespace Saga {
 
+static R_GFX_MODULE GfxModule;
+static OSystem *_system;
+
+static byte cur_pal[R_PAL_ENTRIES * 4];
+
+int GFX_Init(OSystem *system, int width, int height) {
+	R_SURFACE r_back_buf;
+
+	_system = system;
+	_system->initSize(width, height);
+
+	debug(0, "Init screen %dx%d", width, height);
+	// Convert sdl surface data to R surface data
+	r_back_buf.buf = (byte *)calloc(1, width * height);
+	r_back_buf.buf_w = width;
+	r_back_buf.buf_h = height;
+	r_back_buf.buf_pitch = width;
+
+	r_back_buf.clip_rect.left = 0;
+	r_back_buf.clip_rect.top = 0;
+	r_back_buf.clip_rect.right = width - 1;
+	r_back_buf.clip_rect.bottom = height - 1;
+
+	// Set module data
+	GfxModule.r_back_buf = r_back_buf;
+	GfxModule.init = 1;
+
+	return R_SUCCESS;
+}
+
+/*
+~Gfx() {
+  free(GfxModule.r_back_buf->buf);
+}
+ */
+
 int GFX_DrawPalette(R_SURFACE *dst_s) {
 	int x;
 	int y;
@@ -841,6 +877,234 @@ void GFX_DrawLine(R_SURFACE *ds, R_POINT *p1, R_POINT *p2, int color) {
 	}
 
 	return;
+}
+
+R_SURFACE *GFX_GetBackBuffer() {
+	return &GfxModule.r_back_buf;
+}
+
+int GFX_GetWhite(void) {
+	return GfxModule.white_index;
+}
+
+int GFX_GetBlack(void) {
+	return GfxModule.black_index;
+}
+
+int GFX_MatchColor(unsigned long colormask) {
+	int i;
+	int red = (colormask & 0x0FF0000UL) >> 16;
+	int green = (colormask & 0x000FF00UL) >> 8;
+	int blue = colormask & 0x00000FFUL;
+	int dr;
+	int dg;
+	int db;
+	long color_delta;
+	long best_delta = LONG_MAX;
+	int best_index = 0;
+	byte *ppal;
+
+	for (i = 0, ppal = cur_pal; i < R_PAL_ENTRIES; i++, ppal += 4) {
+		dr = ppal[0] - red;
+		dr = ABS(dr);
+		dg = ppal[1] - green;
+		dg = ABS(dg);
+		db = ppal[2] - blue;
+		db = ABS(db);
+		ppal[3] = 0;
+
+		color_delta = (long)(dr * R_RED_WEIGHT + dg * R_GREEN_WEIGHT + db * R_BLUE_WEIGHT);
+
+		if (color_delta == 0) {
+			return i;
+		}
+
+		if (color_delta < best_delta) {
+			best_delta = color_delta;
+			best_index = i;
+		}
+	}
+
+	return best_index;
+}
+
+int GFX_SetPalette(R_SURFACE *surface, PALENTRY *pal) {
+	byte red;
+	byte green;
+	byte blue;
+	int color_delta;
+	int best_wdelta = 0;
+	int best_windex = 0;
+	int best_bindex = 0;
+	int best_bdelta = 1000;
+	int i;
+	byte *ppal;
+
+	for (i = 0, ppal = cur_pal; i < R_PAL_ENTRIES; i++, ppal += 4) {
+		red = pal[i].red;
+		ppal[0] = red;
+		color_delta = red;
+		green = pal[i].green;
+		ppal[1] = green;
+		color_delta += green;
+		blue = pal[i].blue;
+		ppal[2] = blue;
+		color_delta += blue;
+		ppal[3] = 0;
+
+		if (color_delta < best_bdelta) {
+			best_bindex = i;
+			best_bdelta = color_delta;
+		}
+
+		if (color_delta > best_wdelta) {
+			best_windex = i;
+			best_wdelta = color_delta;
+		}
+	}
+
+	// Set whitest and blackest color indices
+	GfxModule.white_index = best_windex;
+	GfxModule.black_index = best_bindex;
+
+	_system->setPalette(cur_pal, 0, R_PAL_ENTRIES);
+
+	return R_SUCCESS;
+}
+
+int GFX_GetCurrentPal(PALENTRY *src_pal) {
+	int i;
+	byte *ppal;
+
+	for (i = 0, ppal = cur_pal; i < R_PAL_ENTRIES; i++, ppal += 4) {
+		src_pal[i].red = ppal[0];
+		src_pal[i].green = ppal[1];
+		src_pal[i].blue = ppal[2];
+	}
+
+	return R_SUCCESS;
+}
+
+int GFX_PalToBlack(R_SURFACE *surface, PALENTRY *src_pal, double percent) {
+	int i;
+	//int fade_max = 255;
+	int new_entry;
+	byte *ppal;
+
+	double fpercent;
+
+	if (percent > 1.0) {
+		percent = 1.0;
+	}
+
+	// Exponential fade
+	fpercent = percent * percent;
+
+	fpercent = 1.0 - fpercent;
+
+	// Use the correct percentage change per frame for each palette entry 
+	for (i = 0, ppal = cur_pal; i < R_PAL_ENTRIES; i++, ppal += 4) {
+		new_entry = (int)(src_pal[i].red * fpercent);
+
+		if (new_entry < 0) {
+			ppal[0] = 0;
+		} else {
+			ppal[0] = (byte) new_entry;
+		}
+
+		new_entry = (int)(src_pal[i].green * fpercent);
+
+		if (new_entry < 0) {
+			ppal[1] = 0;
+		} else {
+			ppal[1] = (byte) new_entry;
+		}
+
+		new_entry = (int)(src_pal[i].blue * fpercent);
+
+		if (new_entry < 0) {
+			ppal[2] = 0;
+		} else {
+			ppal[2] = (byte) new_entry;
+		}
+		ppal[3] = 0;
+	}
+
+	_system->setPalette(cur_pal, 0, R_PAL_ENTRIES);
+
+	return R_SUCCESS;
+}
+
+int GFX_BlackToPal(R_SURFACE *surface, PALENTRY *src_pal, double percent) {
+	int new_entry;
+	double fpercent;
+	int color_delta;
+	int best_wdelta = 0;
+	int best_windex = 0;
+	int best_bindex = 0;
+	int best_bdelta = 1000;
+	byte *ppal;
+	int i;
+
+	if (percent > 1.0) {
+		percent = 1.0;
+	}
+
+	// Exponential fade
+	fpercent = percent * percent;
+
+	fpercent = 1.0 - fpercent;
+
+	// Use the correct percentage change per frame for each palette entry
+	for (i = 0, ppal = cur_pal; i < R_PAL_ENTRIES; i++, ppal += 4) {
+		new_entry = (int)(src_pal[i].red - src_pal[i].red * fpercent);
+
+		if (new_entry < 0) {
+			ppal[0] = 0;
+		} else {
+			ppal[0] = (byte) new_entry;
+		}
+
+		new_entry = (int)(src_pal[i].green - src_pal[i].green * fpercent);
+
+		if (new_entry < 0) {
+			ppal[1] = 0;
+		} else {
+			ppal[1] = (byte) new_entry;
+		}
+
+		new_entry = (int)(src_pal[i].blue - src_pal[i].blue * fpercent);
+
+		if (new_entry < 0) {
+			ppal[2] = 0;
+		} else {
+			ppal[2] = (byte) new_entry;
+		}
+		ppal[3] = 0;
+	}
+
+	// Find the best white and black color indices again
+	if (percent >= 1.0) {
+		for (i = 0, ppal = cur_pal; i < R_PAL_ENTRIES; i++, ppal += 4) {
+			color_delta = ppal[0];
+			color_delta += ppal[1];
+			color_delta += ppal[2];
+
+			if (color_delta < best_bdelta) {
+				best_bindex = i;
+				best_bdelta = color_delta;
+			}
+
+			if (color_delta > best_wdelta) {
+				best_windex = i;
+				best_wdelta = color_delta;
+			}
+		}
+	}
+
+	_system->setPalette(cur_pal, 0, R_PAL_ENTRIES);
+
+	return R_SUCCESS;
 }
 
 } // End of namespace Saga

@@ -254,7 +254,7 @@ int INTERFACE_Draw() {
 	R_RECT rect;
 	R_POINT origin;
 
-	back_buf = SYSGFX_GetBackBuffer();
+	back_buf = GFX_GetBackBuffer();
 
 	if (!IfModule.active) {
 		return R_SUCCESS;
@@ -318,7 +318,7 @@ int INTERFACE_Update(R_POINT *imouse_pt, int update_flag) {
 	imouse_x = imouse_pt->x;
 	imouse_y = imouse_pt->y;
 
-	back_buf = SYSGFX_GetBackBuffer();
+	back_buf = GFX_GetBackBuffer();
 
 	// Get game display info
 	GAME_GetDisplayInfo(&g_di);

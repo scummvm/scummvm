@@ -215,11 +215,6 @@ void SagaEngine::go() {
 	SCENE_Start();
 
 	for (;;) {
-#ifdef R_USE_CUSTOM_WININIT
-		if (ITESYS_CheckSignal()) {
-			break;
-		}
-#endif
 		if (RENDER_GetFlags() & RF_RENDERPAUSE) {
 			// Freeze time while paused
 			SYSTIMER_ResetMSCounter();
