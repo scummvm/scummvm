@@ -900,9 +900,6 @@ void Scumm::o5_chainScript()
 
 	cur = _currentScript;
 
-	if (vm.slot[cur].cutsceneOverride != 0)
-		error("Script %d chaining with active cutscene/override");
-
 	vm.slot[cur].number = 0;
 	vm.slot[cur].status = 0;
 	_currentScript = 0xFF;
@@ -1012,6 +1009,7 @@ void Scumm::o5_delay()
 	delay |= fetchScriptByte() << 16;
 	vm.slot[_currentScript].delay = delay;
 	vm.slot[_currentScript].status = 1;
+	
 	o5_breakHere();
 }
 
@@ -1398,6 +1396,8 @@ void Scumm::o5_getDist()
 			&& r < 60)
 		r = 60;
 
+	if (r > 0)	// FIXME: Fixes several off-by-one errors (eg,					
+		r--;	//		  zak's tv). Find real cause of bug. 
 	setResult(r);
 }
 
@@ -1606,13 +1606,6 @@ void Scumm::o5_loadRoom()
 {
 	int room;
 
-	/* Begin: Autosave 
-	   _saveLoadSlot = 0;
-	   sprintf(_saveLoadName, "Autosave", _saveLoadSlot);
-	   _saveLoadFlag = 1;
-	   _saveLoadCompatible = false;
-	   End: Autosave */
-
 	room = getVarOrDirectByte(0x80);
 	startScene(room, 0, 0);
 	_fullRedraw = 1;
@@ -1622,13 +1615,6 @@ void Scumm::o5_loadRoomWithEgo()
 {
 	int obj, room, x, y;
 	Actor *a;
-
-	/* Begin: Autosave 
-	   _saveLoadSlot = 0;
-	   sprintf(_saveLoadName, "Autosave", _saveLoadSlot);
-	   _saveLoadFlag = 1;
-	   _saveLoadCompatible = false;
-	   End: Autosave */
 
 	obj = getVarOrDirectWord(0x80);
 	room = getVarOrDirectByte(0x40);

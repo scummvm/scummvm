@@ -1287,6 +1287,8 @@ void Scumm::mainRun()
 			delta = 5;
 		} else {
 			delta = scummLoop(delta);
+			if (delta < 1)	// Ensure we don't get into a loop
+				delta = 1;  // by not decreasing sleepers.
 		}
 	}
 }
