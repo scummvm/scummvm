@@ -134,6 +134,11 @@ SIMON
 * Add support for Protracker music format used in Amiga versions
 * Add support for decoding main graphics correctly in Amiga versions
 
+Queen
+=====
+* Get rid of the alternate 'queencomp' target (this requires some kind of 
+  doesFileExist() method)
+
 Descumm
 =======
 * Turn it into a library, to be used by a command line frontend (like now),
