@@ -385,7 +385,7 @@ int Scumm::readVar(uint var)
 		} else {
 			var &= 0xFFF;
 		}
-		checkRange(0x10, 0, var, "Local variable %d out of range(r)");
+		checkRange(20, 0, var, "Local variable %d out of range(r)");
 		return vm.localvar[_currentScript][var];
 	}
 
@@ -450,7 +450,7 @@ void Scumm::writeVar(uint var, int value)
 			var &= 0xFFF;
 		}
 
-		checkRange(0x10, 0, var, "Local variable %d out of range(w)");
+		checkRange(20, 0, var, "Local variable %d out of range(w)");
 		vm.localvar[_currentScript][var] = value;
 		return;
 	}

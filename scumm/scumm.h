@@ -254,7 +254,7 @@ public:
 		byte cutSceneStackPointer;
 		ScriptSlot slot[NUM_SCRIPT_SLOT];
 		NestedScript nest[15];
-		int32 localvar[NUM_SCRIPT_SLOT][17];
+		int32 localvar[NUM_SCRIPT_SLOT][21];
 	} vm;
 
 	struct {
