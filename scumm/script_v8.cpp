@@ -962,8 +962,6 @@ void Scumm_v8::o8_actorOps() {
 		a->setAnimSpeed(pop());
 		break;
 	case 0x6D:		// SO_ACTOR_DEFAULT
-		// FIXME - is this right? Or maybe a->initActor(2) ?
-		//warning("o8_actorOps: SO_ACTOR_DEFAULT");
 		a->initActor(0);
 		break;
 	case 0x6E:		// SO_ACTOR_ELEVATION
@@ -1035,8 +1033,6 @@ void Scumm_v8::o8_actorOps() {
 		a->ignoreTurns = false;
 		break;
 	case 0x7E:		// SO_ACTOR_NEW New actor
-		// FIXME - is this right? Or maybe a->initActor(0) ?
-		warning("o8_actorOps: SO_ACTOR_NEW");
 		a->initActor(2);
 		break;
 	case 0x7F:		// SO_ACTOR_DEPTH Set actor Z position
