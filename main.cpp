@@ -36,7 +36,7 @@ Scumm *g_scumm;
 Config * scummcfg;
 
 
-#if defined(__APPLE__)
+#if defined(__APPLE__) && defined(SDL)
 #include <SDL.h>
 #elif !defined(__MORPHOS__)
 #undef main
@@ -95,7 +95,7 @@ static void do_memory_test(void) {
 int main(int argc, char *argv[])
 {
 #if defined(MACOS)
-	/* support for config file on macos */
+	// support for config file on macos
 
 	char *argitem;
 	char *argstr;
