@@ -568,7 +568,7 @@ int ScummEngine_v6::getStackList(int *args, uint maxnum) {
 		error("Too many items %d in stack list, max %d", num, maxnum);
 
 	i = num;
-	while (((int)--i) >= 0) {
+	while (i--) {
 		args[i] = pop();
 	}
 
@@ -855,10 +855,7 @@ void ScummEngine_v6::o6_drawObject() {
 	int state = pop();
 	int obj = pop();
 
-	// FIXME: Why is the following here? Is it based on disassembly, or was
-	// it simply added to work around a bug (in ScummVM or scripts) ?
-	// In either case, the answer should be put into a comment (replacing this
-	// one, of course :-)
+	// This is based on disassembly
 	if (state == 0)
 		state = 1;
 
@@ -1826,19 +1823,13 @@ void ScummEngine_v6::o6_actorOps() {
 		break;
 	case 95:		// SO_IGNORE_BOXES
 		a->ignoreBoxes = 1;
-		if (_version >= 7)
-			a->forceClip = 100;
-		else
-			a->forceClip = 0;
+		a->forceClip = (_version >= 7) ? 100 : 0;
 		if (a->isInCurrentRoom())
 			a->putActor(a->_pos.x, a->_pos.y, a->room);
 		break;
 	case 96:		// SO_FOLLOW_BOXES
 		a->ignoreBoxes = 0;
-		if (_version >= 7)
-			a->forceClip = 100;
-		else
-			a->forceClip = 0;
+		a->forceClip = (_version >= 7) ? 100 : 0;
 		if (a->isInCurrentRoom())
 			a->putActor(a->_pos.x, a->_pos.y, a->room);
 		break;
@@ -1990,6 +1981,7 @@ void ScummEngine_v6::o6_verbOps() {
 	case 139:		// SO_VERB_IMAGE_IN_ROOM
 		b = pop();
 		a = pop();
+
 		if (slot && a != vs->imgindex) {
 			setVerbObject(b, a, slot);
 			vs->type = kImageVerbType;

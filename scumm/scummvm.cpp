@@ -1503,8 +1503,9 @@ load_game:
 		processDrawQue();
 
 		// Full Throttle always redraws verbs and draws verbs before actors
-		if ((_gameId == GID_FT) || _verbRedraw)
+		if ((_gameId == GID_FT) || _verbRedraw) {
 			redrawVerbs();
+		}
 	
 		setActorRedrawFlags();
 		resetActorBgs();
@@ -1527,10 +1528,9 @@ load_game:
 			clearClickedStatus();
 		}
 
-
-		if (!_verbRedraw && _cursor.state > 0) {
+		if (!_verbRedraw && _cursor.state > 0)
 			verbMouseOver(checkMouseOver(_mouse.x, _mouse.y));
-		}
+
 		_verbRedraw = false;
 
 		if (_version <= 2) {
@@ -1696,6 +1696,19 @@ void ScummEngine::parseEvents() {
 
 		case OSystem::EVENT_RBUTTONUP:
 			_rightBtnPressed &= ~msDown;
+			break;
+	
+		// The following two cases enable dialog choices to be
+		// scrolled through in the SegaCD version of MI
+		// as nothing else uses the wheel don't bother
+		// checking the gameid
+			
+		case OSystem::EVENT_WHEELDOWN:
+			_keyPressed = 55;
+			break;
+
+		case OSystem::EVENT_WHEELUP:
+			_keyPressed = 54;
 			break;
 	
 		case OSystem::EVENT_QUIT:
@@ -2048,6 +2061,7 @@ void ScummEngine::startScene(int room, Actor *a, int objectNr) {
 	}
 
 	initRoomSubBlocks();
+
 	if (_features & GF_OLD_BUNDLE)
 		loadRoomObjectsOldBundle();
 	else if (_features & GF_SMALL_HEADER)
