@@ -1325,22 +1325,34 @@ void Scumm_v8::o8_kernelSetFunctions()
 	int len = getStackList(args, sizeof(args) / sizeof(args[0]));
 
 	switch (args[0]) {
-	case 11:	// lockObject
-//		warning("o8_kernelSetFunctions: lockObject(%d)", args[1]);
-		lock(rtFlObject, args[1]);	// FIXME - no idea if this is right?
-//		getObjectIndex(args[1]);
+	case 11: {	// lockObject
+		int objidx = getObjectIndex(args[1]);
+		if (objidx == -1) {
+			warning("Cannot find object %d to lock\n", args[1]);
+			break;
+		}
+
+		lock(rtFlObject, objidx);
+
 //		if (ObjData.field28 != 0) {
 //			ObjData.field32 = 1;
 //		}
 		break;
-	case 12:	// unlockObject
-		warning("o8_kernelSetFunctions: unlockObject(%d)", args[1]);
-		unlock(rtFlObject, args[1]);	// FIXME - no idea if this is right?
-//		getObjectIndex(args[1]);
+	}
+	case 12: {	// unlockObject
+		int objidx = getObjectIndex(args[1]);
+		if (objidx == -1) {
+			warning("Cannot find object %d to unlock\n", args[1]);
+			break;
+		}
+
+		unlock(rtFlObject, objidx);
+
 //		if (ObjData.field28 != 0) {
 //			ObjData.field32 = 0;
 //		}
 		break;
+	}
 	case 13:	// remapCostume
 		a = derefActorSafe(args[1], "o8_kernelSetFunctions:remapCostume");
 		assert(a);
