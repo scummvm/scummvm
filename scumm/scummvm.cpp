@@ -90,10 +90,12 @@ static const VersionSettings scumm_settings[] = {
 	/* Scumm Version 3 */
 	{"indy3EGA", "Indiana Jones and the Last Crusade", GID_INDY3, 3, VersionSettings::ADLIB_ALWAYS,
 	 GF_SMALL_HEADER | GF_SMALL_NAMES | GF_NO_SCALLING | GF_USE_KEY | GF_16COLOR | GF_OLD_BUNDLE, "00.LFL"},
+	{"indy3Towns", "Indiana Jones and the Last Crusade (FM Towns)", GID_INDY3_TOWNS, 3, VersionSettings::ADLIB_ALWAYS,
+	 GF_SMALL_HEADER | GF_SMALL_NAMES | GF_NO_SCALLING | GF_OLD256 | GF_FMTOWNS | GF_AUDIOTRACKS, "00.LFL"},
 	{"indy3", "Indiana Jones and the Last Crusade (256)", GID_INDY3_256, 3, VersionSettings::ADLIB_ALWAYS,
 	 GF_SMALL_HEADER | GF_SMALL_NAMES | GF_NO_SCALLING | GF_OLD256 | GF_ADLIB_DEFAULT, "00.LFL"},
 	{"zak256", "Zak McKracken and the Alien Mindbenders (256)", GID_ZAK256, 3, VersionSettings::ADLIB_ALWAYS,
-	 GF_SMALL_HEADER | GF_SMALL_NAMES | GF_NO_SCALLING | GF_OLD256 | GF_AUDIOTRACKS, "00.LFL"},
+	 GF_SMALL_HEADER | GF_SMALL_NAMES | GF_NO_SCALLING | GF_OLD256 | GF_FMTOWNS | GF_AUDIOTRACKS, "00.LFL"},
 	{"loom", "Loom", GID_LOOM, 3, VersionSettings::ADLIB_ALWAYS,
 	 GF_SMALL_HEADER | GF_SMALL_NAMES | GF_NO_SCALLING | GF_USE_KEY | GF_16COLOR | GF_OLD_BUNDLE, "00.LFL"},
 
@@ -567,7 +569,7 @@ Scumm::Scumm (GameDetector *detector, OSystem *syst)
 	_hexdumpScripts = false;
 	_showStack = false;
 
-	if (_gameId == GID_ZAK256) {	// FmTowns is 320x240
+	if (_features & GF_FMTOWNS) {	// FmTowns is 320x240
 		_screenWidth = 320;
 		_screenHeight = 240;
 	} else if (_gameId == GID_CMI) {

@@ -599,7 +599,7 @@ void Scumm_v5::o5_chainScript() {
 	// the actor ID of the opposing soldier. So, we copy that value
 	// over to the Local[5] variable of script 33.
 	// See also bug #743314.
-	if (_gameId == GID_INDY3_256 && vm.slot[cur].number == 32 && script == 33) {
+	if ((_gameId == GID_INDY3_256 || _gameId == GID_INDY3_TOWNS) && vm.slot[cur].number == 32 && script == 33) {
 		vars[5] = vm.localvar[cur][5];
 	}
 
@@ -667,7 +667,7 @@ void Scumm_v5::o5_cursorCommand() {
 		initCharset(getVarOrDirectByte(0x80));
 		break;
 	case 14:											/* unk */
-		if (_features & GF_OLD_BUNDLE || _gameId == GID_INDY3_256) {
+		if (_features & GF_OLD_BUNDLE || _gameId == GID_INDY3_256 || _gameId == GID_INDY3_TOWNS) {
 			// FIXME: What is this supposed to do? From comparing
 			// Indy3's script 118 to the Passport Demo's script 58
 			// my guess is that it's some sort of "init charset",
@@ -690,7 +690,7 @@ void Scumm_v5::o5_cursorCommand() {
 		break;
 	}
 
-	if (!(_features & GF_OLD_BUNDLE) && _gameId != GID_INDY3_256) {
+	if (!(_features & GF_OLD_BUNDLE) && _gameId != GID_INDY3_256 && _gameId != GID_INDY3_TOWNS) {
 		VAR(VAR_CURSORSTATE) = _cursor.state;
 		VAR(VAR_USERPUT) = _userPut;
 	}
@@ -975,7 +975,7 @@ void Scumm_v5::o5_getActorScale() {
 		return;
 
 	// INDY3 uses this opcode as a wait_for_actor();
-	if ((_gameId == GID_INDY3_256) || (_gameId == GID_INDY3)) {
+	if ((_gameId == GID_INDY3_TOWNS) || (_gameId == GID_INDY3_256) || (_gameId == GID_INDY3)) {
 		const byte *oldaddr = _scriptPointer - 1;
 		a = derefActor(getVarOrDirectByte(0x80), "o5_getActorScale (wait)");
 		if (a->moving) {
@@ -1009,7 +1009,7 @@ void Scumm_v5::o5_getActorX() {
 	int a;
 	getResultPos();
 
-	if (_gameId == GID_INDY3_256 || _gameId == GID_INDY3)
+	if (_gameId == GID_INDY3_TOWNS || _gameId == GID_INDY3_256 || _gameId == GID_INDY3)
 		a = getVarOrDirectByte(0x80);
 	else
 		a = getVarOrDirectWord(0x80);
@@ -1021,7 +1021,7 @@ void Scumm_v5::o5_getActorY() {
 	int a;
 	getResultPos();
 
-	if (_gameId == GID_INDY3_256 || _gameId == GID_INDY3) {
+	if (_gameId == GID_INDY3_TOWNS || _gameId == GID_INDY3_256 || _gameId == GID_INDY3) {
 		a = getVarOrDirectByte(0x80);
 
 		// FIXME - bug 636433 workaround (can't get into Zeppelin) 
@@ -1505,7 +1505,7 @@ void Scumm_v5::o5_resourceRoutines() {
 	_opcode = fetchScriptByte();
 	if (_opcode != 17)
 		resid = getVarOrDirectByte(0x80);
-	if (_gameId != GID_ZAK256) {
+	if (!(_features & GF_FMTOWNS)) {
 		// FIXME - this probably can be removed eventually, I don't think the following
 		// check will ever be triggered, but then I could be wrong and it's better
 		// to play it safe.
@@ -2014,7 +2014,7 @@ void Scumm_v5::o5_setVarRange() {
 }
 
 void Scumm_v5::o5_startMusic() {
-	if (_gameId == GID_ZAK256) {
+	if (_features & GF_FMTOWNS) {
 		// In Zak256, this seems to be some kind of Audio CD status query function.
 		// See also bug #762589 (thanks to Hibernatus for providing the information).
 		getResultPos();
@@ -2341,7 +2341,7 @@ void Scumm_v5::o5_verbOps() {
 void Scumm_v5::o5_wait() {
 	const byte *oldaddr = _scriptPointer - 1;
 
-	if ((_gameId == GID_INDY3_256) || (_gameId == GID_INDY3)) {
+	if ((_gameId == GID_INDY3_TOWNS) || (_gameId == GID_INDY3_256) || (_gameId == GID_INDY3)) {
 		_opcode = 2;
 	} else
 		_opcode = fetchScriptByte();
@@ -2584,7 +2584,7 @@ void Scumm_v5::decodeParseString() {
  			// It's also needed for Loom, or the lines Bobbin
  			// speaks during the intro are put at position 0,0.
  			// In addition, Loom needs to remember the text colour.
-			if (_gameId == GID_INDY3_256 || _gameId == GID_INDY3 || _gameId == GID_LOOM) {
+			if (_gameId == GID_INDY3_TOWNS || _gameId == GID_INDY3_256 || _gameId == GID_INDY3 || _gameId == GID_LOOM) {
 				_string[textSlot].t_xpos = _string[textSlot].xpos;
 				_string[textSlot].t_ypos = _string[textSlot].ypos;
  				_string[textSlot].t_color = _string[textSlot].color;
@@ -2615,7 +2615,7 @@ void Scumm_v5::o5_oldRoomEffect() {
 		a = getVarOrDirectWord(0x80);
 
 #if 1
-		if (_gameId == GID_ZAK256) {
+		if (_features & GF_FMTOWNS) {
 			// FIXME / TODO: OK the first thing to note is: at least in Zak256,
 			// maybe also in other games, this opcode does a bit more. I added
 			// some stubs here, but somebody with a full IDA or more knowledge

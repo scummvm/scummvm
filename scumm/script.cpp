@@ -507,13 +507,18 @@ int Scumm::readVar(uint var) {
 			return (_scummVars[ var ] & ( 1 << bit ) ) ? 1 : 0;
 		} else {
 			var &= 0x7FFF;
+#if defined(BYPASS_COPY_PROT)
+			if (_gameId == GID_INDY3_TOWNS && var == 1508) {
+				return 0;
+			}
+#endif
 			checkRange(_numBitVariables - 1, 0, var, "Bit variable %d out of range(r)");
 			return (_bitVars[var >> 3] & (1 << (var & 7))) ? 1 : 0;
 		}
 	}
 
 	if (var & 0x4000) {
-		if (_gameId == GID_INDY3_256) {
+		if (_gameId == GID_INDY3_256 || _gameId == GID_INDY3_TOWNS) {
 			var &= 0xF;
 		} else {
 			var &= 0xFFF;
@@ -580,7 +585,7 @@ void Scumm::writeVar(uint var, int value) {
 	}
 
 	if (var & 0x4000) {
-		if (_gameId == GID_INDY3_256) {
+		if (_gameId == GID_INDY3_256 || _gameId == GID_INDY3_TOWNS) {
 			var &= 0xF;
 		} else {
 			var &= 0xFFF;
@@ -758,7 +763,7 @@ void Scumm::runExitScript() {
 		// not actual data not even a 00 (stop code)
 		// maybe we should be limiting ourselves to strictly reading the size 
 		// described in the header?
-		if (_gameId == GID_INDY3_256) {
+		if (_gameId == GID_INDY3_256 || _gameId == GID_INDY3_TOWNS) {
 			// FIXME: Oddly, Indy3 seems to contain exit scripts with only a size
 			// and a tag - not even a terminating NULL!
 			byte *roomptr = getResourceAddress(rtRoom, _roomResource);

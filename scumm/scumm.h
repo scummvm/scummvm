@@ -84,6 +84,7 @@ enum GameFeatures {
 	GF_AMIGA               = 1 << 14,
 	GF_HUMONGOUS           = 1 << 15,
 	GF_AFTER_HEV7          = 1 << 16,
+	GF_FMTOWNS             = 1 << 17,
 
 	GF_EXTERNAL_CHARSET    = GF_SMALL_HEADER
 };
@@ -212,7 +213,8 @@ enum ScummGameId {
 	GID_ZAK,
 	GID_PUTTDEMO,
 	GID_PUTTPUTT,
-	GID_MONKEY_SEGA
+	GID_MONKEY_SEGA,
+	GID_INDY3_TOWNS
 };
 
 #define _maxRooms res.num[rtRoom]

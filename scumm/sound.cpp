@@ -803,7 +803,7 @@ void Sound::stopSound(int a) {
 		stopCD();
 	}
 
-	if (_scumm->_gameId == GID_ZAK256) {
+	if (_scumm->_features & GF_FMTOWNS) {
 		_scumm->_mixer->stopID(a);
 	} else if (_scumm->_imuseDigital) {
 		_scumm->_imuseDigital->stopSound(a);
