@@ -1178,12 +1178,12 @@ void IMuseInternal::initMidiDriver(MidiDriver *midi) {
 }
 
 void IMuseInternal::initMT32(MidiDriver *midi) {
-	byte buffer[32] = "\x41\x10\x16\x12\x00\x00\x00                        ";
+	byte buffer[52];
 	char info[256] = "ScummVM ";
 	int len;
 	
 	// Reset the MT-32
-	memcpy(&buffer[4], "\x7f\x00\x00\x01\x00", 5);
+	memcpy(&buffer[0], "\x41\x10\x16\x12\x7f\x00\x00\x01\x00", 9);
 	midi->sysEx(buffer, 9);
 	g_system->delay_msecs (100);
 
@@ -1204,14 +1204,16 @@ void IMuseInternal::initMT32(MidiDriver *midi) {
 	midi->sysEx(buffer, 28);
 	g_system->delay_msecs (500);
 
-	// Set master volume to 100%
-	memcpy(&buffer[4], "\x10\x00\x16\x64\x76", 5);
-	midi->sysEx(buffer, 9);
-	g_system->delay_msecs (500);
+	// Setup master tune, reverb mode, reverb time, reverb level,
+	// channel mapping, partial reserve and master volume
+	memcpy(&buffer[4], "\x10\x00\x00\x40\x00\x04\x04\x04\x04\x04\x04\x04\x04\x04\x04\x00\x01\x02\x03\x04\x05\x06\x07\x08\x09\x64\x77", 27);
+	midi->sysEx(buffer, 31);
+	g_system->delay_msecs (250);
 
-	// Set partial reserve equally for all channels
-	memcpy(&buffer[4], "\x10\x00\x04\x04\x04\x04\x04\x04\x04\x04\x04\x00\x4C", 13);
-	midi->sysEx(buffer, 17);
+	// Setup rythm part
+	memcpy(&buffer[4], "\x03\x01\x10\x40\x64\x07\x00\x4a\x64\x06\x00\x41\x64\x07\x00\x4b\x64\x08\x00\x45\x64\x06\x00\x44\x64\x0b\x00\x51\x64\x05\x00\x43\x64\x08\x00\x50\x64\x07\x00\x42\x64\x03\x00\x4c\x64\x07\x00\x44", 48);
+	midi->sysEx(buffer, 52);
+	g_system->delay_msecs (250);
 }
 
 void IMuseInternal::init_queue() {
