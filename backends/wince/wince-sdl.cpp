@@ -62,6 +62,8 @@ using namespace CEGUI;
 // Given to the true main, needed for backend adaptation
 
 static GameDetector _gameDetector;
+static FILE *stdout_file;
+	
 
 // Static member inits
 
@@ -75,6 +77,8 @@ OSystem::SoundProc OSystem_WINCE3::_originalSoundProc = NULL;
 extern "C" int scummvm_main(GameDetector &gameDetector, int argc, char **argv);
 
 int SDL_main(int argc, char **argv) {
+	/* Avoid print problems - this file will be put in RAM anyway */
+	stdout_file = fopen("\\scummvm_stdout.txt", "w");
 	return scummvm_main(_gameDetector, argc, argv);
 }    
    
@@ -1322,6 +1326,8 @@ bool OSystem_WINCE3::poll_event(Event *event) {
 }
 
 void OSystem_WINCE3::quit() {
+	fclose(stdout_file);
+	DeleteFile(TEXT("\\scummvm_stdout.txt"));
 	CEDevice::disableHardwareKeyMapping();
 	OSystem_SDL_Common::quit();
 }
