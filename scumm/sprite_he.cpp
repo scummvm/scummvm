@@ -31,10 +31,8 @@
 namespace Scumm {
 
 void ScummEngine_v90he::allocateArrays() {
-	_spriteGroups = (SpriteGroup *)calloc(_numSprites, sizeof(SpriteGroup));
-	_spriteTable = (SpriteInfo *)calloc(_numSprites, sizeof(SpriteInfo));
-	
 	ScummEngine::allocateArrays();
+	spritesAllocTables(_numSprites, 64, 64);
 }
 
 int ScummEngine_v90he::spriteInfoGet_flags_1(int spriteNum) {
@@ -83,6 +81,82 @@ int ScummEngine_v90he::spriteInfoGet_flags_8(int spriteNum) {
 	checkRange(_numSprites, 1, spriteNum, "_spriteTableGet_flags_8: Invalid sprite %d");
 
 	return ((_spriteTable[spriteNum].flags & kSF31) != 0) ? 1 : 0;
+}
+
+void ScummEngine_v90he::spritesAllocTables(int numSprites, int numGroups, int numImgLists) {
+	_varNumSpriteGroups = numGroups;
+	_numSpritesToProcess = 0;
+	_varNumSprites = numSprites;
+	_varNumImgLists = numImgLists;
+	_spriteGroups = (SpriteGroup *)malloc((_varNumSpriteGroups + 1) * sizeof(SpriteGroup));
+	_spriteTable = (SpriteInfo *)malloc((_varNumSprites + 1) * sizeof(SpriteInfo));
+	_activeSpritesTable = (SpriteInfo **)malloc((_varNumSprites + 1) * sizeof(SpriteInfo *));
+	_imageListTable = (uint32 *)malloc((_varNumImgLists + 1) * sizeof(uint32)); // XXX
+	_imageListStack = (uint16 *)malloc((_varNumImgLists + 1) * sizeof(uint16));
+}
+
+void ScummEngine_v90he::spritesResetTables(bool refreshScreen) {
+	int i;
+	for (i = 0; i < _varNumImgLists; ++i) {
+		_imageListStack[i] = i;
+	}
+	memset(_spriteTable, 0, (_varNumSprites + 1) * sizeof(SpriteInfo));
+	memset(_spriteGroups, 0, (_varNumSpriteGroups + 1) * sizeof(SpriteGroup));
+	for (int curGrp = 1; curGrp < _varNumSpriteGroups; ++curGrp) {
+		SpriteGroup *spg = &_spriteGroups[curGrp];
+		checkRange(_varNumSpriteGroups, 1, curGrp, "Invalid sprite group %d");
+		if (spg->field_10 != 0) {
+			spg->field_10 = 0;
+			spriteGroupCheck(curGrp);
+			for (i = 0; i < _numSpritesToProcess; ++i) {
+				SpriteInfo *spi = _activeSpritesTable[i];
+				if (spi->group_num == curGrp) {
+					spi->flags |= kSF1 | kSF2;
+				}
+			}
+		}
+		if (spg->tx != 0 || spg->ty != 0) {
+			spg->tx = spg->ty = 0;
+			spriteGroupCheck(curGrp);
+			for (i = 0; i < _numSpritesToProcess; ++i) {
+				SpriteInfo *spi = _activeSpritesTable[i];
+				if (spi->group_num == curGrp) {
+					spi->flags |= kSF1 | kSF2;
+				}
+			}
+		}
+		spg->flags &= ~kSGF1;
+		spriteMarkIfInGroup(curGrp, kSF1 | kSF2);
+		if (spg->field_20 != 0) {
+			spriteGroupCheck(curGrp);
+			for (i = 0; i < _numSpritesToProcess; ++i) {
+				SpriteInfo *spi = _activeSpritesTable[i];
+				if (spi->group_num == curGrp) {
+					spi->flags |= kSF1 | kSF2;
+				}
+			}
+		}
+		spriteGroupCheck(curGrp);
+		spg->scaling = 0;
+		spg->scale_x = 0x3F800000;
+		spg->field_30 = 0;
+		spg->field_34 = 0;
+		spg->scale_y = 0x3F800000;
+		spg->field_38 = 0;
+		spg->field_3C = 0;
+	}
+	if (refreshScreen) {
+		gdi.copyVirtScreenBuffers(Common::Rect(_screenWidth, _screenHeight));
+	}
+	_numSpritesToProcess = 0;
+}
+
+void ScummEngine_v90he::spriteGroupCheck(int sprGrpId) {
+	// XXX
+}
+
+void ScummEngine_v90he::spriteMarkIfInGroup(int sprGrpId, uint32 flags) {
+	// XXX
 }
 
 } // End of namespace Scumm

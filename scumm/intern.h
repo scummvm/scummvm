@@ -879,6 +879,10 @@ protected:
 	int spriteInfoGet_flags_6(int spriteNum);
 	int spriteInfoGet_flags_7(int spriteNum);	
 	int spriteInfoGet_flags_8(int spriteNum);
+	void spritesAllocTables(int numSprites, int numGroups, int numImgSprites);
+	void spritesResetTables(bool refreshScreen);
+	void spriteGroupCheck(int sprGrpId);
+	void spriteMarkIfInGroup(int sprGrpId, uint32 flags);
 
 	/* HE version 90 script opcodes */
 	void o90_dup();

@@ -60,6 +60,11 @@ enum SpriteFlags {
 	kSF32      = (1 << 31)
 };
 
+enum SpriteGroupFlags {
+	kSGF1  = 1 << 0,
+	kSFG2  = 1 << 1
+};
+
 struct SpriteInfo {
 	int field_0;
 	int flags;
@@ -116,8 +121,17 @@ struct SpriteGroup {
 	int field_3C;
 };
 
+	int _varNumSpriteGroups;
+	int _numSpritesToProcess;
+	int _varNumSprites;
+	int _varNumImgLists;
 	SpriteInfo *_spriteTable;
 	SpriteGroup *_spriteGroups;
+	SpriteInfo **_activeSpritesTable;
+	uint32 *_imageListTable; // XXX wrong type
+	uint16 *_imageListStack;
+	int _curSprImageListNum;
+
 
 } // End of namespace Scumm
 
