@@ -226,7 +226,7 @@ void ScummEngine_v7he::setupOpcodes() {
 		OPCODE(o6_getActorMoving),
 		OPCODE(o6_isScriptRunning),
 		/* 8C */
-		OPCODE(o6_getActorRoom),
+		OPCODE(o7_getActorRoom),
 		OPCODE(o6_getObjectX),
 		OPCODE(o6_getObjectY),
 		OPCODE(o6_getObjectOldDir),
@@ -243,7 +243,7 @@ void ScummEngine_v7he::setupOpcodes() {
 		/* 98 */
 		OPCODE(o6_isSoundRunning),
 		OPCODE(o6_setBoxFlags),
-		OPCODE(o6_createBoxMatrix),
+		OPCODE(o6_invalid),
 		OPCODE(o6_resourceRoutines),
 		/* 9C */
 		OPCODE(o6_roomOps),
@@ -644,6 +644,16 @@ void ScummEngine_v7he::o7_pickupObject() {
 	runInventoryScript(obj);									/* Difference */
 }
 
+
+void ScummEngine_v7he::o7_getActorRoom() {
+	int act = pop();
+
+	if (act < _numActors) {
+		Actor *a = derefActor(act, "o7_getActorRoom");
+		push(a->room);
+	} else
+		push(getObjectRoom(act));
+}
 
 void ScummEngine_v7he::o7_startSound() {
 	byte op;

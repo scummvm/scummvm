@@ -243,7 +243,7 @@ void ScummEngine_v6he::setupOpcodes() {
 		/* 98 */
 		OPCODE(o6_isSoundRunning),
 		OPCODE(o6_setBoxFlags),
-		OPCODE(o6_createBoxMatrix),
+		OPCODE(o6_invalid),
 		OPCODE(o6_resourceRoutines),
 		/* 9C */
 		OPCODE(o6_roomOps),
@@ -492,7 +492,8 @@ void ScummEngine_v6he::o6_roomOps() {
 		c = pop();
 		b = pop();
 		a = pop();
-		setupShadowPalette(a, b, c, d, e);
+		if (_heversion == 60)
+			setupShadowPalette(a, b, c, d, e);
 		break;
 
 	case 184:		// SO_SAVE_STRING
