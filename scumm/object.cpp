@@ -1420,7 +1420,6 @@ void ScummEngine::nukeFlObjects(int min, int max) {
 void ScummEngine::enqueueObject(int objectNumber, int objectX, int objectY, int objectWidth,
 								int objectHeight, int scaleX, int scaleY, int image, int mode) {
 	BlastObject *eo;
-	ObjectData *od;
 
 	if (_blastObjectQueuePos >= (int)ARRAYSIZE(_blastObjectQueue)) {
 		warning("enqueueObject: overflow");
@@ -1432,17 +1431,15 @@ void ScummEngine::enqueueObject(int objectNumber, int objectX, int objectY, int 
 
 	eo = &_blastObjectQueue[_blastObjectQueuePos++];
 	eo->number = objectNumber;
-	eo->rect.left = objectX + (camera._cur.x & 7);
+	eo->rect.left = objectX;
 	eo->rect.top = objectY + _screenTop;
 	if (objectWidth == 0) {
-		od = &_objs[idx];
-		eo->rect.right = eo->rect.left + od->width;
+		eo->rect.right = eo->rect.left + _objs[idx].width;
 	} else {
 		eo->rect.right = eo->rect.left + objectWidth;
 	}
 	if (objectHeight == 0) {
-		od = &_objs[idx];
-		eo->rect.bottom = eo->rect.top + od->height;
+		eo->rect.bottom = eo->rect.top + _objs[idx].height;
 	} else {
 		eo->rect.bottom = eo->rect.top + objectHeight;
 	}
@@ -1548,21 +1545,14 @@ void ScummEngine::removeBlastObject(BlastObject *eo) {
 	int i;
 
 	r = eo->rect;
-
-	if (r.bottom < 0 || r.right < 0 || r.top > vs->h || r.left > vs->w)
+	
+	r.clip(Common::Rect(vs->w, vs->h));
+	
+	if (r.width() <= 0 || r.height() <= 0)
 		return;
 
-	if (r.top < 0)
-		r.top = 0;
-	if (r.bottom > vs->h)
-		r.bottom = vs->h;
-	if (r.left < 0)
-		r.left = 0;
-	if (r.right > vs->w)
-		r.right = vs->w;
-
 	left_strip = r.left / 8;
-	right_strip = (r.right - 1) / 8;
+	right_strip = (r.right + (vs->xstart % 8)) / 8;
 
 	if (left_strip < 0)
 		left_strip = 0;
