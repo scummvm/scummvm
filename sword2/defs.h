@@ -23,119 +23,123 @@
 #define	SIZE	0x10000			// 65536 items per section
 #define	NuSIZE	0xffff			// & with this
 
-// global variable references
-// NB. 4 * <number from linc's Global Variables list>
-
-#define VAR(n)				(*(uint32 *) (g_sword2->_resman->_resList[1]->ad + sizeof(StandardHeader) + 4 * (n)))
-
-#define ID				VAR(0)
-#define RESULT				VAR(1)
-#define PLAYER_ACTION			VAR(2)
-// #define CUR_PLAYER_ID		VAR(3)
 // always 8 (George object used for Nico player character as well)
-#define	CUR_PLAYER_ID			8
-#define PLAYER_ID			VAR(305)
-#define TALK_FLAG			VAR(13)
+#define CUR_PLAYER_ID 8
 
-#define MOUSE_X				VAR(4)
-#define MOUSE_Y				VAR(5)
-#define LEFT_BUTTON			VAR(109)
-#define RIGHT_BUTTON			VAR(110)
-#define CLICKED_ID			VAR(178)
+// global variable references
 
-#define IN_SUBJECT			VAR(6)
-#define COMBINE_BASE			VAR(7)
-#define OBJECT_HELD			VAR(14)
+enum {
+	ID				= 0,
+	RESULT				= 1,
+	PLAYER_ACTION			= 2,
+	// CUR_PLAYER_ID		= 3,
+	PLAYER_ID			= 305,
+	TALK_FLAG			= 13,
 
-#define SPEECH_ID			VAR(9)
-#define INS1				VAR(10)
-#define INS2				VAR(11)
-#define INS3				VAR(12)
-#define INS4				VAR(60)
-#define INS5				VAR(61)
-#define INS_COMMAND			VAR(59)
+	MOUSE_X				= 4,
+	MOUSE_Y				= 5,
+	LEFT_BUTTON			= 109,
+	RIGHT_BUTTON			= 110,
+	CLICKED_ID			= 178,
 
-#define PLAYER_FEET_X			VAR(141)
-#define PLAYER_FEET_Y			VAR(142)
-#define PLAYER_CUR_DIR			VAR(937)
+	IN_SUBJECT			= 6,
+	COMBINE_BASE			= 7,
+	OBJECT_HELD			= 14,
 
-// for debug.cpp
-#define LOCATION			VAR(62)
+	SPEECH_ID			= 9,
+	INS1				= 10,
+	INS2				= 11,
+	INS3				= 12,
+	INS4				= 60,
+	INS5				= 61,
+	INS_COMMAND			= 59,
 
-// so scripts can force scroll offsets
-#define SCROLL_X			VAR(345)
-#define SCROLL_Y			VAR(346)
+	PLAYER_FEET_X			= 141,
+	PLAYER_FEET_Y			= 142,
+	PLAYER_CUR_DIR			= 937,
 
-#define EXIT_CLICK_ID			VAR(710)
-#define EXIT_FADING			VAR(713)
+	// for debug.cpp
+	LOCATION			= 62,
 
-#define SYSTEM_TESTING_ANIMS		VAR(912)
-#define SYSTEM_TESTING_TEXT		VAR(1230)
-#define SYSTEM_WANT_PREVIOUS_LINE	VAR(1245)
+	// so scripts can force scroll offsets
+	SCROLL_X			= 345,
+	SCROLL_Y			= 346,
 
-// 1=on 0=off (set in fnAddHuman and fnNoHuman)
-#define MOUSE_AVAILABLE			VAR(686)
+	EXIT_CLICK_ID			= 710,
+	EXIT_FADING			= 713,
 
-// used in fnChoose
-#define AUTO_SELECTED			VAR(1115)
+	SYSTEM_TESTING_ANIMS		= 912,
+	SYSTEM_TESTING_TEXT		= 1230,
+	SYSTEM_WANT_PREVIOUS_LINE	= 1245,
 
-// see fnStartConversation and fnChooser
-#define CHOOSER_COUNT_FLAG		VAR(15)
+	// 1=on 0=off (set in fnAddHuman and fnNoHuman)
+	MOUSE_AVAILABLE			= 686,
 
-// signifies a demo mode
-#define DEMO				VAR(1153)
+	// used in fnChoose
+	AUTO_SELECTED			= 1115,
 
-// Indicates to script whether this is the Playstation version.
-// #define PSXFLAG			VAR(1173)
+	// see fnStartConversation and fnChooser
+	CHOOSER_COUNT_FLAG		= 15,
 
-// 1 = dead
-#define DEAD				VAR(1256)
+	// signifies a demo mode
+	DEMO				= 1153,
 
- // If set indicates that the speech anim is to run through only once.
-#define SPEECHANIMFLAG			VAR(1278)
+	// Indicates to script whether this is the Playstation version.
+	// PSXFLAG			= 1173,
 
-// for the engine
-#define SCROLL_OFFSET_X			VAR(1314)
+	// for the poor PSX so it knows what language is running.
+	// GAME_LANGUAGE		= 111,
 
-// for the poor PSX so it knows what language is running.
-// #define GAME_LANGUAGE		VAR(111)
+	// 1 = dead
+	DEAD				= 1256,
 
-// resource id's of pouse mointers. It's pretty much safe to do it like this
+	// If set indicates that the speech anim is to run through only once.
+	SPEECHANIMFLAG			= 1278,
 
-#define NORMAL_MOUSE_ID			17
-#define SCROLL_LEFT_MOUSE_ID		1440
-#define SCROLL_RIGHT_MOUSE_ID		1441
+	// for the engine
+	SCROLL_OFFSET_X			= 1314
+};
 
-// Console Font - does not use game text - only English required
-#define CONSOLE_FONT_ID			340		// ConsFont
+// Resource IDs
 
-// Speech Font
-#define ENGLISH_SPEECH_FONT_ID		341		// SpchFont
-#define FINNISH_SPEECH_FONT_ID		956		// FinSpcFn
-#define POLISH_SPEECH_FONT_ID		955		// PolSpcFn
+enum {
+	// mouse mointers - It's pretty much safe to do it like this
+	NORMAL_MOUSE_ID			= 17,
+	SCROLL_LEFT_MOUSE_ID		= 1440,
+	SCROLL_RIGHT_MOUSE_ID		= 1441,
 
-// Control Panel Font (and un-selected savegame descriptions)
-#define ENGLISH_CONTROLS_FONT_ID	2005		// Sfont
-#define FINNISH_CONTROLS_FONT_ID	959		// FinSavFn
-#define POLISH_CONTROLS_FONT_ID		3686		// PolSavFn
+	// Console Font - does not use game text - only English required
+	CONSOLE_FONT_ID			= 340,
 
-// Red Font (for selected savegame descriptions)
-#define ENGLISH_RED_FONT_ID		2005		// 1998	// Redfont
-#define FINNISH_RED_FONT_ID		959		// 960	// FinRedFn
-#define POLISH_RED_FONT_ID		3686		// 3688	// PolRedFn
+	// Speech Font
+	ENGLISH_SPEECH_FONT_ID		= 341,
+	FINNISH_SPEECH_FONT_ID		= 956,
+	POLISH_SPEECH_FONT_ID		= 955,
 
-// Control panel palette resource id
+	// Control Panel Font (and un-selected savegame descriptions)
+	ENGLISH_CONTROLS_FONT_ID	= 2005,
+	FINNISH_CONTROLS_FONT_ID	= 959,
+	POLISH_CONTROLS_FONT_ID		= 3686,
 
-#define CONTROL_PANEL_PALETTE		261
+	// Red Font (for selected savegame descriptions)
+	// BS2 doesn't draw selected savegames in red, so I guess this is a
+	// left-over from BS1
+	ENGLISH_RED_FONT_ID		= 2005,		// 1998	// Redfont
+	FINNISH_RED_FONT_ID		= 959,		// 960	// FinRedFn
+	POLISH_RED_FONT_ID		= 3686,		// 3688	// PolRedFn
 
-// res id's of the system menu icons
-#define OPTIONS_ICON			344
-#define QUIT_ICON			335
-#define SAVE_ICON			366
-#define RESTORE_ICON			364
-#define RESTART_ICON			342
+	// Control panel palette resource id
+	CONTROL_PANEL_PALETTE		= 261,
 
-// res id of conversation exit icon, 'EXIT' menu icon (used in fnChoose)
-#define EXIT_ICON			65
+	// res id's of the system menu icons
+	OPTIONS_ICON			= 344,
+	QUIT_ICON			= 335,
+	SAVE_ICON			= 366,
+	RESTORE_ICON			= 364,
+	RESTART_ICON			= 342,
+
+	// conversation exit icon, 'EXIT' menu icon (used in fnChoose)
+	EXIT_ICON			= 65
+};
 
 #endif

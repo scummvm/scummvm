@@ -224,13 +224,9 @@ void Sword2Engine::errorString(const char *buf1, char *buf2) {
 int32 Sword2Engine::initialiseGame(void) {
 	// init engine drivers
 
-	uint8 *file;
-
 	// initialise global script variables
 	// res 1 is the globals list
-	file = _resman->openResource(1);
-	debug(5, "CALLING: SetGlobalInterpreterVariables");
-	_logic->setGlobalInterpreterVariables((int32 *) (file + sizeof(StandardHeader)));
+	Logic::_scriptVars = (uint32 *) (_resman->openResource(1) + sizeof(StandardHeader));
 
 	// DON'T CLOSE VARIABLES RESOURCE - KEEP IT OPEN AT VERY START OF
 	// MEMORY SO IT CAN'T MOVE!
@@ -238,7 +234,7 @@ int32 Sword2Engine::initialiseGame(void) {
 	// DON'T CLOSE PLAYER OBJECT RESOURCE - KEEP IT OPEN IN MEMORY SO IT
 	// CAN'T MOVE!
 
-	file = _resman->openResource(8);
+	_resman->openResource(8);
 
 	// Set up font resource variables for this language version
 
@@ -252,9 +248,9 @@ int32 Sword2Engine::initialiseGame(void) {
 
 	// all demos (not just web)
 	if (_features & GF_DEMO)
-		DEMO = 1;
+		Logic::_scriptVars[DEMO] = 1;
 	else
-		DEMO = 0;
+		Logic::_scriptVars[DEMO] = 0;
 
 	return 0;
 }
@@ -380,7 +376,7 @@ void Sword2Engine::go() {
 						pauseGame();
 					break;
 				case 'c':
-					if (!DEMO && !_logic->_choosing)
+					if (!Logic::_scriptVars[DEMO] && !_logic->_choosing)
 						_logic->fnPlayCredits(NULL);
 					break;
 #ifdef _SWORD2_DEBUG
@@ -440,7 +436,7 @@ void Sword2Engine::startGame(void) {
 	debug(5, "startGame() STARTING:");
 
 	// all demos not just web
-	if (DEMO)
+	if (Logic::_scriptVars[DEMO])
 		screen_manager_id = 19;		// DOCKS SECTION START
 	else
 		screen_manager_id = 949;	// INTRO & PARIS START
@@ -526,7 +522,7 @@ void Sword2Engine::pauseGame(void) {
 }
 
 void Sword2Engine::unpauseGame(void) {
-	if (OBJECT_HELD && _realLuggageItem)
+	if (Logic::_scriptVars[OBJECT_HELD] && _realLuggageItem)
 		setLuggage(_realLuggageItem);
 
 	unpauseAllSound();

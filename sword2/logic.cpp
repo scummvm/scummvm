@@ -32,6 +32,16 @@
 namespace Sword2 {
 
 /**
+ * Reset the script variables. If the resource is already open, this won't do
+ * anything, I beleive.
+ */
+
+void Logic::resetScriptVars(void) {
+	_scriptVars = (uint32 *) (_vm->_resman->openResource(1) + sizeof(StandardHeader));
+	_vm->_resman->closeResource(1);
+}
+    
+/**
  * Do one cycle of the current session.
  */
 
@@ -64,26 +74,26 @@ int Logic::processSession(void) {
 		game_object_list = (uint32 *) (head + 1);
 
 		// read the next id
-		ID = game_object_list[_pc++];
-		id = ID;
+		_scriptVars[ID] = game_object_list[_pc++];
+		id = _scriptVars[ID];
 
 		// release the list again so it can float in memory - at this
 		// point not one thing should be locked
 
 		_vm->_resman->closeResource(run_list);
 
-		debug(5, "%d", ID);
+		debug(5, "%d", _scriptVars[ID]);
 
 		// null terminated
-		if (!ID) {
+		if (!_scriptVars[ID]) {
 			// end the session naturally
 			return 0;
 		}
 
-		head = (StandardHeader *) _vm->_resman->openResource(ID);
+		head = (StandardHeader *) _vm->_resman->openResource(_scriptVars[ID]);
 
 		if (head->fileType != GAME_OBJECT)
-			error("processSession: %d not an object", ID);
+			error("processSession: %d not an object", _scriptVars[ID]);
 
 		_curObjectHub = (ObjectHub *) (head + 1);
 
@@ -104,7 +114,7 @@ int Logic::processSession(void) {
 
 			// there is a distinction between running one of our
 			// own scripts and that of another object
-			if (script / SIZE == ID) {
+			if (script / SIZE == _scriptVars[ID]) {
 				// its our script
 
 				debug(5, "run script %d pc%d",
@@ -181,7 +191,7 @@ int Logic::processSession(void) {
 		// clear any syncs that were waiting for this character - it
 		// has used them or now looses them
 
-		clearSyncs(ID);
+		clearSyncs(_scriptVars[ID]);
 
 		if (_pc != 0xffffffff) {
 			// the session is still valid so run the service script
@@ -197,7 +207,7 @@ int Logic::processSession(void) {
 
 		// and that's it so close the object resource
 
-		_vm->_resman->closeResource(ID);
+		_vm->_resman->closeResource(_scriptVars[ID]);
 	}
 
 	// leaving a room so remove all ids that must reboot correctly
@@ -222,7 +232,7 @@ void Logic::expressChangeSession(uint32 sesh_id) {
 	_pc = 0xffffffff;
 
 	// reset now in case we double-clicked an exit prior to changing screen
-	EXIT_FADING = 0;
+	_scriptVars[EXIT_FADING] = 0;
 
 	// we're trashing the list - presumably to change room
 	// in theory sync waiting in the list could be left behind and never
@@ -296,7 +306,7 @@ void Logic::logicUp(uint32 new_script) {
 
 	// can be 0, 1, 2
 	if (LEVEL == 3)
-		error("logicUp id %d has run off script tree! :-O", ID);
+		error("logicUp id %d has run off script tree! :-O", _scriptVars[ID]);
 
 	// setup new script on next level (not the current level)
 
@@ -387,11 +397,11 @@ int32 Logic::fnAddToKillList(int32 *params) {
 	uint32 entry;
 
 	// DON'T EVER KILL GEORGE!
-	if (ID != 8) {
+	if (_scriptVars[ID] != 8) {
 		// first, scan list to see if this object is already included
 
 		entry = 0;
-		while (entry < _kills && _objectKillList[entry] != ID)
+		while (entry < _kills && _objectKillList[entry] != _scriptVars[ID])
 			entry++;
 
 		// if this ID isn't already in the list, then add it,
@@ -402,7 +412,7 @@ int32 Logic::fnAddToKillList(int32 *params) {
 			assert(_kills < OBJECT_KILL_LIST_SIZE);
 
 			// add this 'ID' to the kill list
-			_objectKillList[_kills] = ID;
+			_objectKillList[_kills] = _scriptVars[ID];
 			_kills++;
 
 			// "another one bites the dust"

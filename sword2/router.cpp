@@ -76,6 +76,7 @@
 #include "common/stdafx.h"
 #include "sword2/sword2.h"
 #include "sword2/defs.h"
+#include "sword2/logic.h"
 #include "sword2/resman.h"
 #include "sword2/router.h"
 #include "sword2/driver/d_draw.h"
@@ -83,7 +84,7 @@
 namespace Sword2 {
 
 uint8 Router::returnSlotNo(uint32 megaId) {
-	if (ID == CUR_PLAYER_ID) {
+	if (Logic::_scriptVars[ID] == CUR_PLAYER_ID) {
 		// George (8)
 		return 0;
 	} else {
@@ -101,7 +102,7 @@ void Router::allocateRouteMem(void) {
 	// in middle of route, the old route will be safely cleared from
 	// memory just before they create a new one
 
-	slotNo = returnSlotNo(ID); 
+	slotNo = returnSlotNo(Logic::_scriptVars[ID]); 
 
 	// if this slot is already used, then it can't be needed any more
 	// because this id is creating a new route!
@@ -109,7 +110,7 @@ void Router::allocateRouteMem(void) {
 	if (_routeSlots[slotNo])
 		freeRouteMem();
 
-	_routeSlots[slotNo] = _vm->_memory->allocMemory(sizeof(WalkData) * O_WALKANIM_SIZE, MEM_locked, (uint32)UID_walk_anim);
+	_routeSlots[slotNo] = _vm->_memory->allocMemory(sizeof(WalkData) * O_WALKANIM_SIZE, MEM_locked, (uint32) UID_walk_anim);
 
 	// 12000 bytes were used for this in Sword1 mega compacts, based on
 	// 20 bytes per 'WalkData' frame
@@ -125,20 +126,20 @@ void Router::allocateRouteMem(void) {
 }
 
 WalkData *Router::lockRouteMem(void) {
-	uint8 slotNo = returnSlotNo(ID);
+	uint8 slotNo = returnSlotNo(Logic::_scriptVars[ID]);
 	
 	_vm->_memory->lockMemory(_routeSlots[slotNo]);
 	return (WalkData *) _routeSlots[slotNo]->ad;
 }
 
 void Router::floatRouteMem(void) {
-	uint8 slotNo = returnSlotNo(ID); 
+	uint8 slotNo = returnSlotNo(Logic::_scriptVars[ID]); 
 
 	_vm->_memory->floatMemory(_routeSlots[slotNo]);
 }
 
 void Router::freeRouteMem(void) {
-	uint8 slotNo = returnSlotNo(ID); 
+	uint8 slotNo = returnSlotNo(Logic::_scriptVars[ID]); 
 
 	// free the mem block pointed to from this entry of _routeSlots[]
 
@@ -1447,13 +1448,13 @@ int32 Router::solidWalkAnimator(WalkData *walkAnim) {
 		while (lastDir != _currentDir) {
 			lastDir += turnDir;
 
-			// new frames for turn frames	29oct95jps
+			// new frames for turn frames
 			if (turnDir < 0) {
 				if (lastDir < 0)
 					lastDir += NO_DIRECTIONS;
 				module = _firstStandingTurnLeftFrame + lastDir;
 			} else {
-				if ( lastDir > 7)
+				if (lastDir > 7)
 					lastDir -= NO_DIRECTIONS;
 				module = _firstStandingTurnRightFrame + lastDir;
 			}

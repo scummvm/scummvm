@@ -30,14 +30,12 @@
 
 namespace Sword2 {
 
-#define STACK_SIZE 10
-
-#define	MAX_events 10
+#define MAX_events 10
 
 // There won't be many, will there? Probably 2 at most i reckon
-#define	MAX_syncs 10
+#define MAX_syncs 10
 
-#define	TREE_SIZE 3
+#define TREE_SIZE 3
 
 // This must allow for the largest number of objects in a screen
 #define OBJECT_KILL_LIST_SIZE 50
@@ -49,9 +47,6 @@ class Sword2Engine;
 class Logic {
 private:
 	Sword2Engine *_vm;
-
-	// Point to the global variable data
-	int32 *_globals;
 
 	uint32 _objectKillList[OBJECT_KILL_LIST_SIZE];
 
@@ -162,13 +157,14 @@ private:
 
 public:
 	Logic(Sword2Engine *vm) :
-		  _vm(vm), _globals(NULL), _kills(0), _debugFlag(false),
-		  _smackerLeadOut(0), _sequenceTextLines(0), _speechTime(0),
-		  _animId(0), _speechAnimType(0), _leftClickDelay(0),
-		  _rightClickDelay(0), _defaultResponseId(0),
-		  _totalStartups(0), _totalScreenManagers(0),
-		  _officialTextNumber(0), _speechScriptWaiting(0),
-		  _speechTextBlocNo(0), _choosing(false), _unpauseZone(0) {
+		  _vm(vm), _kills(0), _debugFlag(false), _smackerLeadOut(0),
+		  _sequenceTextLines(0), _speechTime(0), _animId(0),
+		  _speechAnimType(0), _leftClickDelay(0), _rightClickDelay(0),
+		  _defaultResponseId(0), _totalStartups(0),
+		  _totalScreenManagers(0), _officialTextNumber(0),
+		  _speechScriptWaiting(0), _speechTextBlocNo(0),
+		  _choosing(false), _unpauseZone(0) {
+		_scriptVars = NULL;
 		memset(_subjectList, 0, sizeof(_subjectList));
 		memset(_eventList, 0, sizeof(_eventList));
 		memset(_syncList, 0, sizeof(_syncList));
@@ -179,6 +175,9 @@ public:
 	~Logic() {
 		delete _router;
 	}
+
+	// Point to the global variable data
+	static uint32 *_scriptVars;
 
 	// "TEXT" - current official text line number - will match the wav
 	// filenames
@@ -200,10 +199,11 @@ public:
 
 	uint32 _unpauseZone;
 
+	void resetScriptVars(void);
+
 	void conPrintStartMenu(void);
 	void conStart(int start);
 
-	void setGlobalInterpreterVariables(int32 *vars);
 	int runScript(char *scriptData, char *objectData, uint32 *offset);
 
 	struct EventUnit {

@@ -78,7 +78,8 @@ int32 Logic::fnWalk(int32 *params) {
 		// anim.
 		
 		if (ob_mega->feet_x == target_x && ob_mega->feet_y == target_y && ob_mega->current_dir == target_dir) {
-			RESULT = 0;	// 0 means ok - finished walk
+			// 0 means ok - finished walk
+			_scriptVars[RESULT] = 0;
 			return IR_CONT;	// may as well continue the script
 		}
 
@@ -119,7 +120,7 @@ int32 Logic::fnWalk(int32 *params) {
 			_router->freeRouteMem();
 
 			// 1 means error, no walk created
-			RESULT = 1;
+			_scriptVars[RESULT] = 1;
 
 			// may as well continue the script
 			return IR_CONT;
@@ -129,7 +130,7 @@ int32 Logic::fnWalk(int32 *params) {
 		// resource
 
 		ob_graph->anim_resource = ob_mega->megaset_res;
-	} else if (EXIT_FADING && _vm->_graphics->getFadeStatus() == RDFADE_BLACK) {
+	} else if (_scriptVars[EXIT_FADING] && _vm->_graphics->getFadeStatus() == RDFADE_BLACK) {
 		// double clicked an exit so quit the walk when screen is black
 
 		// ok, thats it - back to script and change screen
@@ -139,18 +140,18 @@ int32 Logic::fnWalk(int32 *params) {
 
 		// must clear in-case on the new screen there's a walk
 		// instruction (which would get cut short)
-		EXIT_CLICK_ID = 0;
+		_scriptVars[EXIT_CLICK_ID] = 0;
 
 		// this will be reset when we change screens, so we can use
 		// it in script to check if a 2nd-click came along
-		// EXIT_FADING = 0;
+		// _scriptVars[EXIT_FADING] = 0;
 
 		// finished walk
 		ob_mega->currently_walking = 0;
 
 		// (see fnGetPlayerSaveData() in save_rest.cpp
 
-		RESULT = 0;		// 0 means ok
+		_scriptVars[RESULT] = 0;		// 0 means ok
 
 		// continue the script so that RESULT can be checked!
 		return IR_CONT;
@@ -206,10 +207,12 @@ int32 Logic::fnWalk(int32 *params) {
 
 		if (checkEventWaiting()) {
 			startEvent();
-			RESULT = 1;		// 1 means didn't finish walk
+			// 1 means didn't finish walk
+			_scriptVars[RESULT] = 1;
 			return IR_TERMINATE;
 		} else {
-			RESULT = 0;		// 0 means ok - finished walk
+			// 0 means ok - finished walk
+			_scriptVars[RESULT] = 0;
 
 			// CONTINUE the script so that RESULT can be checked!
 			// Also, if an anim command follows the fnWalk command,
@@ -724,7 +727,7 @@ int32 Logic::fnAddWalkGrid(int32 *params) {
 	// re-enter a location
 
 	// DON'T EVER KILL GEORGE!
-	if (ID != 8) {
+	if (_scriptVars[ID] != 8) {
 		// need to call this in case it wasn't called in script!
 		// ('params' just used as dummy param)
 		fnAddToKillList(params);

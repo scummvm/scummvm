@@ -56,7 +56,7 @@ int32 Logic::fnAddSubject(int32 *params) {
 	// params:	0 id
 	//		1 daves reference number
 
-	if (IN_SUBJECT == 0) {
+	if (_scriptVars[IN_SUBJECT] == 0) {
 		// This is the start of the new subject list
 		// Set the default repsonse id to zero in case we're never
 		// passed one
@@ -77,12 +77,12 @@ int32 Logic::fnAddSubject(int32 *params) {
 		// a luggage icon is clicked on someone when it wouldn't have
 		// been in the chooser list (see fnChoose below)
 	} else {
-		_subjectList[IN_SUBJECT].res = params[0];
-		_subjectList[IN_SUBJECT].ref = params[1];
+		_subjectList[_scriptVars[IN_SUBJECT]].res = params[0];
+		_subjectList[_scriptVars[IN_SUBJECT]].ref = params[1];
 
 		debug(5, "fnAddSubject res %d, uid %d", params[0], params[1]);
 
-		IN_SUBJECT++;
+		_scriptVars[IN_SUBJECT]++;
 	}
 
 	return IR_CONT;
@@ -98,11 +98,11 @@ int32 Logic::fnChoose(int32 *params) {
 	int hit;
 	uint8 *icon;
 
-	AUTO_SELECTED = 0;	// see below
+	_scriptVars[AUTO_SELECTED] = 0;	// see below
 
 	// new thing to intercept objects held at time of clicking on a person
 
-	if (OBJECT_HELD) {
+	if (_scriptVars[OBJECT_HELD]) {
 		// So that, if there is no match, the speech script uses the
 		// default text for objects that are not accounted for
 
@@ -121,8 +121,8 @@ int32 Logic::fnChoose(int32 *params) {
 
 		// scan the subject list for a match with our 'object_held'
 
-		for (i = 0; i < IN_SUBJECT; i++) {
-			if (_subjectList[i].res == OBJECT_HELD) {
+		for (i = 0; i < _scriptVars[IN_SUBJECT]; i++) {
+			if (_subjectList[i].res == _scriptVars[OBJECT_HELD]) {
 				// Return special subject chosen code (same
 				// as in normal chooser routine below)
 				response = _subjectList[i].ref;
@@ -130,8 +130,8 @@ int32 Logic::fnChoose(int32 *params) {
 			}
 		}
 
-		OBJECT_HELD = 0; // clear it so it doesn't keep happening!
-		IN_SUBJECT = 0;	 // clear the subject list
+		_scriptVars[OBJECT_HELD] = 0;	// clear it so it doesn't keep happening!
+		_scriptVars[IN_SUBJECT] = 0;	// clear the subject list
 
 		return IR_CONT | (response << 3);
 	}
@@ -141,9 +141,9 @@ int32 Logic::fnChoose(int32 *params) {
 	// If this is the 1st time the chooser is coming up in this
 	// conversation, AND there's only 1 subject, AND it's the EXIT icon
 
-	if (CHOOSER_COUNT_FLAG == 0 && IN_SUBJECT == 1 && _subjectList[0].res == EXIT_ICON) {
-		AUTO_SELECTED = 1;	// for speech script
-		IN_SUBJECT = 0;		// clear the subject list
+	if (_scriptVars[CHOOSER_COUNT_FLAG] == 0 && _scriptVars[IN_SUBJECT] == 1 && _subjectList[0].res == EXIT_ICON) {
+		_scriptVars[AUTO_SELECTED] = 1;	// for speech script
+		_scriptVars[IN_SUBJECT] = 0;	// clear the subject list
 
 		// return special subject chosen code (same as in normal
 		// chooser routine below)
@@ -154,14 +154,14 @@ int32 Logic::fnChoose(int32 *params) {
 		// new choose session
 		// build menus from subject_list
 
-		if (!IN_SUBJECT)
+		if (!_scriptVars[IN_SUBJECT])
 			error("fnChoose with no subjects :-O");
 
 		// init top menu from master list
 		// all icons are highlighted / full colour
 
 		for (i = 0; i < 15; i++) {
-			if (i < IN_SUBJECT) {
+			if (i < _scriptVars[IN_SUBJECT]) {
 				debug(5, " ICON res %d for %d", _subjectList[i].res, i);
 				icon = _vm->_resman->openResource(_subjectList[i].res) + sizeof(StandardHeader) + RDMENU_ICONWIDE * RDMENU_ICONDEEP;
 				_vm->_graphics->setMenuIcon(RDMENU_BOTTOM, (uint8) i, icon);
@@ -199,7 +199,7 @@ int32 Logic::fnChoose(int32 *params) {
 	// Check for click on a menu. If so then end the choose, highlight only
 	// the chosen, blank the mouse and return the ref code * 8
 
-	hit = _vm->menuClick(IN_SUBJECT);
+	hit = _vm->menuClick(_scriptVars[IN_SUBJECT]);
 
 	if (hit < 0) {
 		debug(5, "end choose");
@@ -209,7 +209,7 @@ int32 Logic::fnChoose(int32 *params) {
 	debug(5, "Icons available:");
 
 	// change icons
-	for (i = 0; i < IN_SUBJECT; i++) {
+	for (i = 0; i < _scriptVars[IN_SUBJECT]; i++) {
 		debug(5, "%s", _vm->fetchObjectName(_subjectList[i].res));
 
 		// change all others to grey
@@ -225,7 +225,7 @@ int32 Logic::fnChoose(int32 *params) {
 	// this is our looping flag
 	_choosing = false;
 
-	IN_SUBJECT = 0;
+	_scriptVars[IN_SUBJECT] = 0;
 
 	// blank mouse again
 	_vm->setMouse(0);
@@ -234,7 +234,7 @@ int32 Logic::fnChoose(int32 *params) {
 
 	// for non-speech scripts that manually
 	// call the chooser
-	RESULT = _subjectList[hit].res;
+	_scriptVars[RESULT] = _subjectList[hit].res;
 
 	// return special subject chosen code
 	return IR_CONT | (_subjectList[hit].ref << 3);
@@ -252,8 +252,8 @@ int32 Logic::fnStartConversation(int32 *params) {
 
 	// params:	none
 
-	if (TALK_FLAG == 0)
-		CHOOSER_COUNT_FLAG = 0;	// see fnChooser & speech scripts
+	if (_scriptVars[TALK_FLAG] == 0)
+		_scriptVars[CHOOSER_COUNT_FLAG] = 0;	// see fnChooser & speech scripts
 
 	fnNoHuman(params);
 	return IR_CONT;
@@ -272,7 +272,7 @@ int32 Logic::fnEndConversation(int32 *params) {
 		debug(5, "   holding");
 	}
 
-	TALK_FLAG = 0;	// in-case DC forgets
+	_scriptVars[TALK_FLAG] = 0;	// in-case DC forgets
 
 	// restart george's base script
 	// totalRestart();
@@ -311,20 +311,20 @@ int32 Logic::fnTheyDo(int32 *params) {
 
 	// result is 1 for waiting, 0 for busy
 
-	if (RESULT == 1 && !INS_COMMAND) {
+	if (_scriptVars[RESULT] == 1 && !_scriptVars[INS_COMMAND]) {
 		// its waiting and no other command is queueing
 		// reset debug flag now that we're no longer waiting - see
 		// debug.cpp
 
 		_speechScriptWaiting = 0;
 
-		SPEECH_ID = params[0];
-		INS_COMMAND = params[1];
-		INS1 = params[2];
-		INS2 = params[3];
-		INS3 = params[4];
-		INS4 = params[5];
-		INS5 = params[6];
+		_scriptVars[SPEECH_ID] = params[0];
+		_scriptVars[INS_COMMAND] = params[1];
+		_scriptVars[INS1] = params[2];
+		_scriptVars[INS2] = params[3];
+		_scriptVars[INS3] = params[4];
+		_scriptVars[INS4] = params[5];
+		_scriptVars[INS5] = params[6];
 
 		return IR_CONT;
 	}
@@ -373,18 +373,18 @@ int32 Logic::fnTheyDoWeWait(int32 *params) {
 
 	ob_logic = (ObjectLogic *) _vm->_memory->intToPtr(params[0]);
 
-	if (!INS_COMMAND && RESULT == 1 && ob_logic->looping == 0) {
+	if (!_scriptVars[INS_COMMAND] && _scriptVars[RESULT] == 1 && ob_logic->looping == 0) {
 		// first time so set up targets command if target is waiting
 
 		debug(5, "fnTheyDoWeWait sending command to %d", target);
 
-		SPEECH_ID = params[1];
-		INS_COMMAND = params[2];
-		INS1 = params[3];
-		INS2 = params[4];
-		INS3 = params[5];
-		INS4 = params[6];
-		INS5 = params[7];
+		_scriptVars[SPEECH_ID] = params[1];
+		_scriptVars[INS_COMMAND] = params[2];
+		_scriptVars[INS1] = params[3];
+		_scriptVars[INS2] = params[4];
+		_scriptVars[INS3] = params[5];
+		_scriptVars[INS4] = params[6];
+		_scriptVars[INS5] = params[7];
 
 		ob_logic->looping = 1;
 
@@ -407,7 +407,7 @@ int32 Logic::fnTheyDoWeWait(int32 *params) {
 
 	// result is 1 for waiting, 0 for busy
 
-	if (RESULT == 1) {
+	if (_scriptVars[RESULT] == 1) {
 		// its waiting now so we can be finished with all this
 		debug(5, "fnTheyDoWeWait finished");
 
@@ -451,7 +451,7 @@ int32 Logic::fnWeWait(int32 *params) {
 
 	// result is 1 for waiting, 0 for busy
 
-	if (RESULT == 1) {
+	if (_scriptVars[RESULT] == 1) {
 		// reset debug flag now that we're no longer waiting - see
 		// debug.cpp
 		_speechScriptWaiting = 0;
@@ -499,12 +499,12 @@ int32 Logic::fnTimedWait(int32 *params) {
 
 	// result is 1 for waiting, 0 for busy
 
-	if (RESULT == 1) {
+	if (_scriptVars[RESULT] == 1) {
 		// reset because counter is likely to be still high
 		ob_logic->looping = 0;
 
 		//means ok
-		RESULT = 0;
+		_scriptVars[RESULT] = 0;
 
 		// reset debug flag now that we're no longer waiting - see
 		// debug.cpp
@@ -517,7 +517,7 @@ int32 Logic::fnTimedWait(int32 *params) {
 
 	if (!ob_logic->looping) {	// time up - caller must check RESULT
 		// not ok
-		RESULT = 1;
+		_scriptVars[RESULT] = 1;
 
 		// clear the event that hasn't been picked up - in theory,
 		// none of this should ever happen
@@ -774,30 +774,30 @@ int32 Logic::fnSpeechProcess(int32 *params) {
 			break;
 		}
 
-		if (SPEECH_ID == ID) {
+		if (_scriptVars[SPEECH_ID] == _scriptVars[ID]) {
 			// new command for us!
 			// clear this or it could trigger next go
-			SPEECH_ID = 0;
+			_scriptVars[SPEECH_ID] = 0;
 
 			// grab the command - potentially, we only have this
 			// cycle to do this
 
-			ob_speech->command = INS_COMMAND;
-			ob_speech->ins1 = INS1;
-			ob_speech->ins2 = INS2;
-			ob_speech->ins3 = INS3;
-			ob_speech->ins4 = INS4;
-			ob_speech->ins5 = INS5;
+			ob_speech->command = _scriptVars[INS_COMMAND];
+			ob_speech->ins1 = _scriptVars[INS1];
+			ob_speech->ins2 = _scriptVars[INS2];
+			ob_speech->ins3 = _scriptVars[INS3];
+			ob_speech->ins4 = _scriptVars[INS4];
+			ob_speech->ins5 = _scriptVars[INS5];
+
+			debug(5, "received new command %d", _scriptVars[INS_COMMAND]);
 
 			// the current send has been received - i.e. separate
 			// multiple they-do's
 
-			INS_COMMAND = 0;
+			_scriptVars[INS_COMMAND] = 0;
 
 			// now busy
 			ob_speech->wait_state = 0;
-
-			debug(5, "received new command %d", INS_COMMAND);
 
 			// we'll drop off and be caught by the while(1), so
 			// kicking in the new command straight away
@@ -906,8 +906,8 @@ int32 Logic::fnISpeak(int32 *params) {
 		// See 'testing_routines' object in George's Player Character
 		// section of linc
 
-		if (SYSTEM_TESTING_TEXT) {
-			RESULT = 0;
+		if (_scriptVars[SYSTEM_TESTING_TEXT]) {
+			_scriptVars[RESULT] = 0;
 
 			text_res = params[S_TEXT] / SIZE;
 			local_text = params[S_TEXT] & 0xffff;
@@ -924,22 +924,22 @@ int32 Logic::fnISpeak(int32 *params) {
 					// if line number is out of range
 					if (!_vm->checkTextLine((uint8 *) head, local_text)) {
 						// line number out of range
-						RESULT = 2;
+						_scriptVars[RESULT] = 2;
 					}
 				} else {
 					// invalid (not a text resource)
-					RESULT = 1;
+					_scriptVars[RESULT] = 1;
 				}
 
 				// close the resource
 				_vm->_resman->closeResource(text_res);
 
-				if (RESULT)
+				if (_scriptVars[RESULT])
 					return IR_CONT;
 			} else {
 				// not a valid resource number - invalid (null
 				// resource)
-				RESULT = 1;
+				_scriptVars[RESULT] = 1;
 				return IR_CONT;
 			}
 		}
@@ -961,12 +961,12 @@ int32 Logic::fnISpeak(int32 *params) {
 		// prevent dud lines from appearing while testing text & speech
 		// since these will not occur in the game anyway
 
-		if (SYSTEM_TESTING_TEXT) {	// if testing text & speech
+		if (_scriptVars[SYSTEM_TESTING_TEXT]) {	// if testing text & speech
 			// if actor number is 0 and text line is just a 'dash'
 			// character
 			if (_officialTextNumber == 0 && text[2] == '-' && text[3] == 0) {
 				// dud line - return & continue script
-				RESULT = 3;
+				_scriptVars[RESULT] = 3;
 				return IR_CONT;
 			}
 		}
@@ -984,10 +984,10 @@ int32 Logic::fnISpeak(int32 *params) {
 		// Write to walkthrough file (zebug0.txt)
 		// if (player_id != george), then player is controlling Nico
 
-		if (PLAYER_ID != CUR_PLAYER_ID)
+		if (_scriptVars[PLAYER_ID] != CUR_PLAYER_ID)
 			debug(5, "(%d) Nico: %s", _officialTextNumber, text + 2);
 		else
-			debug(5, "(%d) %s: %s", _officialTextNumber, _vm->fetchObjectName(ID), text + 2);
+			debug(5, "(%d) %s: %s", _officialTextNumber, _vm->fetchObjectName(_scriptVars[ID]), text + 2);
 
 		// Set up the speech animation
 
@@ -996,7 +996,7 @@ int32 Logic::fnISpeak(int32 *params) {
 			_animId = params[S_ANIM];
 
 			// anim type
-			_speechAnimType = SPEECHANIMFLAG;
+			_speechAnimType = _scriptVars[SPEECHANIMFLAG];
 
 			// set the talker's graphic to this speech anim now
 			ob_graphic->anim_resource = _animId;
@@ -1016,7 +1016,7 @@ int32 Logic::fnISpeak(int32 *params) {
 			_animId = anim_table[ob_mega->current_dir];
 
 			// anim type
-			_speechAnimType = SPEECHANIMFLAG;
+			_speechAnimType = _scriptVars[SPEECHANIMFLAG];
 
 			// set the talker's graphic to this speech anim now
 			ob_graphic->anim_resource = _animId;
@@ -1029,7 +1029,7 @@ int32 Logic::fnISpeak(int32 *params) {
 		}
 
 		// Default back to looped lip synced anims.
-		SPEECHANIMFLAG = 0;
+		_scriptVars[SPEECHANIMFLAG] = 0;
 
 		// set up '_textX' & '_textY' for speech-pan and/or
 		// text-sprite position
@@ -1180,7 +1180,7 @@ int32 Logic::fnISpeak(int32 *params) {
 
 	// so that we can go to the options panel while text & speech is
 	// being tested
-	if (SYSTEM_TESTING_TEXT == 0 || _vm->_input->_mouseY > 0) {
+	if (_scriptVars[SYSTEM_TESTING_TEXT] == 0 || _vm->_input->_mouseY > 0) {
 		me = _vm->_input->mouseEvent();
 
 		// Note that we now have TWO click-delays - one for LEFT
@@ -1192,14 +1192,14 @@ int32 Logic::fnISpeak(int32 *params) {
 			// the speech we ignore mouse releases
 
 			// if testing text & speech
-			if (SYSTEM_TESTING_TEXT) {
+			if (_scriptVars[SYSTEM_TESTING_TEXT]) {
 				// and RB used to click past text
 				if (me->buttons & RD_RIGHTBUTTONDOWN) {
 					// then we want the previous line again
-					SYSTEM_WANT_PREVIOUS_LINE = 1;
+					_scriptVars[SYSTEM_WANT_PREVIOUS_LINE] = 1;
 				} else {
 					// LB just want next line again
-					SYSTEM_WANT_PREVIOUS_LINE = 0;
+					_scriptVars[SYSTEM_WANT_PREVIOUS_LINE] = 0;
 				}
 			}
 
@@ -1249,7 +1249,7 @@ int32 Logic::fnISpeak(int32 *params) {
 		// this number comes from the text line)
 		_officialTextNumber = 0;
 
-		RESULT = 0;	// ok
+		_scriptVars[RESULT] = 0;	// ok
 		return IR_CONT;
 	}
 

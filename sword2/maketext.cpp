@@ -49,6 +49,7 @@
 #include "common/stdafx.h"
 #include "sword2/sword2.h"
 #include "sword2/defs.h"
+#include "sword2/logic.h"
 #include "sword2/maketext.h"
 #include "sword2/resman.h"
 #include "sword2/driver/d_draw.h"
@@ -87,7 +88,7 @@ Memory *FontRenderer::makeTextSprite(uint8 *sentence, uint16 maxWidth, uint8 pen
 
 	// allocate memory for array of lineInfo structures
 
-	line = _vm->_memory->allocMemory(MAX_LINES * sizeof(LineInfo), MEM_locked, (uint32)UID_temp);
+	line = _vm->_memory->allocMemory(MAX_LINES * sizeof(LineInfo), MEM_locked, (uint32) UID_temp);
 
 	// get details of sentence breakdown into array of LineInfo structures
 	// and get the no of lines involved
@@ -213,7 +214,7 @@ Memory *FontRenderer::buildTextSprite(uint8 *sentence, uint32 fontRes, uint8 pen
 
 	// allocate memory for sprite, and lock it ready for use
 	// NB. 'textSprite' is the given pointer to the handle to be used
-	textSprite = _vm->_memory->allocMemory(sizeof(FrameHeader) + sizeOfSprite, MEM_locked, (uint32)UID_text_sprite);
+	textSprite = _vm->_memory->allocMemory(sizeof(FrameHeader) + sizeOfSprite, MEM_locked, (uint32) UID_text_sprite);
 
 	// the handle (*textSprite) now points to UNMOVABLE memory block
 	// set up the frame header
@@ -579,7 +580,7 @@ void Sword2Engine::initialiseFontResourceFlags(void) {
 
 	// Get the text line - skip the 2 chars containing the wavId
 
-	if (DEMO)
+	if (Logic::_scriptVars[DEMO])
 		textLine = fetchTextLine(textFile, 451) + 2;
 	else
 		textLine = fetchTextLine(textFile, 54) + 2;

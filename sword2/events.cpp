@@ -66,7 +66,7 @@ void Logic::setPlayerActionEvent(uint32 id, uint32 interact_id) {
 
 bool Logic::checkEventWaiting(void) {
 	for (int i = 0; i < MAX_events; i++) {
-		if (_eventList[i].id == ID)
+		if (_eventList[i].id == _scriptVars[ID])
 			return true;
 	}
 
@@ -78,7 +78,7 @@ void Logic::startEvent(void) {
 	// you must follow with a return IR_TERMINATE
 
 	for (int i = 0; i < MAX_events; i++) {
-		if (_eventList[i].id == ID) {
+		if (_eventList[i].id == _scriptVars[ID]) {
 			// run 3rd script of target object on level 1
 			logicOne(_eventList[i].interact_id);
 
@@ -89,7 +89,7 @@ void Logic::startEvent(void) {
 	}
 
 	// oh dear - stop the system
-	error("Start_event can't find event for id %d", ID);
+	error("Start_event can't find event for id %d", _scriptVars[ID]);
 }
 
 void Logic::clearEvent(uint32 id) {
@@ -149,14 +149,14 @@ int32 Logic::fnSendEvent(int32 *params) {
 }
 
 int32 Logic::fnCheckEventWaiting(int32 *params) {
-	// returns yes/no in RESULT
+	// returns yes/no in _scriptVars[RESULT]
 
 	// params:	none
 
 	if (checkEventWaiting())
-		RESULT = 1;
+		_scriptVars[RESULT] = 1;
 	else
-		RESULT = 0;
+		_scriptVars[RESULT] = 0;
 
 	return IR_CONT;
 }
@@ -219,7 +219,7 @@ int32 Logic::fnPauseForEvent(int32 *params) {
 int32 Logic::fnClearEvent(int32 *params) {
 	// params:	none
 
-	clearEvent(ID);
+	clearEvent(_scriptVars[ID]);
 	return IR_CONT;
 }
 

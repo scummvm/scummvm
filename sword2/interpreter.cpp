@@ -25,6 +25,8 @@
 
 namespace Sword2 {
 
+#define STACK_SIZE 10
+
 // The machine code table
 
 #define OPCODE(x)	{ &Logic::x, #x }
@@ -194,9 +196,7 @@ do { \
 
 #define pop() (assert(stackPtr < ARRAYSIZE(stack)), stack[--stackPtr])
 
-void Logic::setGlobalInterpreterVariables(int32 *vars) {
-	_globals = vars;
-}
+uint32 *Logic::_scriptVars = NULL;
 
 int Logic::runScript(char *scriptData, char *objectData, uint32 *offset) {
 	// Interestingly, unlike our BASS engine the stack is a local variable.
@@ -315,9 +315,9 @@ int Logic::runScript(char *scriptData, char *objectData, uint32 *offset) {
 
 			// WORKAROUND: Pyramid Bug. See explanation above.
 
-			if (checkPyramidBug && _globals[913] == 1) {
+			if (checkPyramidBug && _scriptVars[913] == 1) {
 				warning("Working around Titipoco script bug (the \"Pyramid Bug\")");
-				_globals[913] = 0;
+				_scriptVars[913] = 0;
 			}
 
 			break;
@@ -355,9 +355,9 @@ int Logic::runScript(char *scriptData, char *objectData, uint32 *offset) {
 		case CP_PUSH_GLOBAL_VAR32:
 			// Push a global variable
 			Read16ip(parameter);
-			assert(_globals);
-			debug(5, "Push global var %d (%d)", parameter, _globals[parameter]);
-			push(_globals[parameter]);
+			assert(_scriptVars);
+			debug(5, "Push global var %d (%d)", parameter, _scriptVars[parameter]);
+			push(_scriptVars[parameter]);
 			break;
 		case CP_PUSH_LOCAL_ADDR:
 			// push the address of a local variable
@@ -398,7 +398,7 @@ int Logic::runScript(char *scriptData, char *objectData, uint32 *offset) {
 			Read16ip(parameter);
 			value = pop();
 			debug(5, "Pop %d into global var %d", value, parameter);
-			_globals[parameter] = value;
+			_scriptVars[parameter] = value;
 			break;
 		case CP_ADDNPOP_LOCAL_VAR32:
 			Read16ip(parameter);
@@ -418,15 +418,15 @@ int Logic::runScript(char *scriptData, char *objectData, uint32 *offset) {
 			// Add and pop a global variable
 			Read16ip(parameter);
 			value = pop();
-			_globals[parameter] += value;
-			debug(5, "+= %d into global var %d -> %d", value, parameter, _globals[parameter]);
+			_scriptVars[parameter] += value;
+			debug(5, "+= %d into global var %d -> %d", value, parameter, _scriptVars[parameter]);
 			break;
 		case CP_SUBNPOP_GLOBAL_VAR32:
 			// Sub and pop a global variable
 			Read16ip(parameter);
 			value = pop();
-			_globals[parameter] -= value;
-			debug(5, "-= %d into global var %d -> %d", value, parameter, _globals[parameter]);
+			_scriptVars[parameter] -= value;
+			debug(5, "-= %d into global var %d -> %d", value, parameter, _scriptVars[parameter]);
 			break;
 
 		// Jump opcodes

@@ -59,7 +59,6 @@ void Debugger::buildDebugText(void) {
 	int32 showVarNo;		// for variable watching
 	int32 showVarPos;
 	int32 varNo;
-	int32 *varTable;
 
 	// clear the array of text block numbers for the debug text
 	clearDebugTextBlocks();
@@ -79,7 +78,7 @@ void Debugger::buildDebugText(void) {
 	// mouse area coords
 
 	// defining a mouse area the easy way, by creating a box on-screen
-	if (_draggingRectangle || SYSTEM_TESTING_ANIMS) {
+	if (_draggingRectangle || Logic::_scriptVars[SYSTEM_TESTING_ANIMS]) {
 		// so we can see what's behind the lines
 		_rectFlicker = !_rectFlicker;
 
@@ -129,8 +128,8 @@ void Debugger::buildDebugText(void) {
 
 	if (_displayTextNumbers) {
 		if (_textNumber) {
-			if (SYSTEM_TESTING_TEXT) {
-				if (SYSTEM_WANT_PREVIOUS_LINE)
+			if (Logic::_scriptVars[SYSTEM_TESTING_TEXT]) {
+				if (Logic::_scriptVars[SYSTEM_WANT_PREVIOUS_LINE])
 					sprintf(buf, "backwards");
 				else
  					sprintf(buf, "forwards");
@@ -151,8 +150,8 @@ void Debugger::buildDebugText(void) {
 
 	// resource number currently being checking for animation
 
-	if (SYSTEM_TESTING_ANIMS) {
-		sprintf(buf, "trying resource %d", SYSTEM_TESTING_ANIMS);
+	if (Logic::_scriptVars[SYSTEM_TESTING_ANIMS]) {
+		sprintf(buf, "trying resource %d", Logic::_scriptVars[SYSTEM_TESTING_ANIMS]);
 		makeDebugTextBlock(buf, 0, 90);
 	}
 
@@ -167,13 +166,16 @@ void Debugger::buildDebugText(void) {
 
 		// mouse coords & object pointed to
 
-		if (CLICKED_ID)
+		if (Logic::_scriptVars[CLICKED_ID])
 			sprintf(buf, "last click at %d,%d (id %d: %s)",
-				MOUSE_X, MOUSE_Y, CLICKED_ID,
-				_vm->fetchObjectName(CLICKED_ID));
+				Logic::_scriptVars[MOUSE_X],
+				Logic::_scriptVars[MOUSE_Y],
+				Logic::_scriptVars[CLICKED_ID],
+				_vm->fetchObjectName(Logic::_scriptVars[CLICKED_ID]));
 		else
 			sprintf(buf, "last click at %d,%d (---)",
-				MOUSE_X, MOUSE_Y);
+				Logic::_scriptVars[MOUSE_X],
+				Logic::_scriptVars[MOUSE_Y]);
 
  		makeDebugTextBlock(buf, 0, 15);
 
@@ -216,12 +218,12 @@ void Debugger::buildDebugText(void) {
 
  		// location number
 
-		sprintf(buf, "location=%d", LOCATION);
+		sprintf(buf, "location=%d", Logic::_scriptVars[LOCATION]);
 		makeDebugTextBlock(buf, 440, 15);
 
  		// "result" variable
 
-		sprintf(buf, "result=%d", RESULT);
+		sprintf(buf, "result=%d", Logic::_scriptVars[RESULT]);
 		makeDebugTextBlock(buf, 440, 30);
 
  		// no. of events in event list
@@ -272,9 +274,6 @@ void Debugger::buildDebugText(void) {
 
 		showVarPos = 115;	// y-coord for first showVar
 
-		// res 1 is the global variables resource
-		varTable = (int32 *) (_vm->_resman->openResource(1) + sizeof(StandardHeader));
-
 		for (showVarNo = 0; showVarNo < MAX_SHOWVARS; showVarNo++) {
 			varNo = _showVar[showVarNo];	// get variable number
 
@@ -282,13 +281,11 @@ void Debugger::buildDebugText(void) {
 			// anyway because it changes throughout the logic loop
 
 			if (varNo) {
-				sprintf(buf, "var(%d) = %d", varNo, varTable[varNo]);
+				sprintf(buf, "var(%d) = %d", varNo, Logic::_scriptVars[varNo]);
 				makeDebugTextBlock(buf, 530, showVarPos);
 				showVarPos += 15;	// next line down
 			}
 		}
-
-		_vm->_resman->closeResource(1);	// close global variables resource
 
 		// memory indicator - this should come last, to show all the
 		// sprite blocks above!
@@ -316,7 +313,7 @@ void Debugger::drawDebugGraphics(void) {
 
    	// mouse area rectangle / sprite box rectangle when testing anims
 
-	if (SYSTEM_TESTING_ANIMS) {
+	if (Logic::_scriptVars[SYSTEM_TESTING_ANIMS]) {
 		// draw box around current frame
 		drawRect(_rectX1, _rectY1, _rectX2, _rectY2, 184);
 	} else if (_draggingRectangle) {

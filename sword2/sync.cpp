@@ -32,7 +32,7 @@ int32 Logic::fnSendSync(int32 *params) {
 
 	for (int i = 0; i < MAX_syncs; i++) {
 		if (_syncList[i].id == 0) {
-			debug(5, " %d sending sync %d to %d", ID, params[1], params[0]);
+			debug(5, " %d sending sync %d to %d", _scriptVars[ID], params[1], params[0]);
 			_syncList[i].id = params[0];
 			_syncList[i].sync = params[1];
 			return IR_CONT;
@@ -66,7 +66,7 @@ bool Logic::getSync(void) {
 	// animation to be quit
 
 	for (int i = 0; i < MAX_syncs; i++) {
-		if (_syncList[i].id == ID) {
+		if (_syncList[i].id == _scriptVars[ID]) {
 			// means sync found
 			return true;
 		}
@@ -83,15 +83,15 @@ int32 Logic::fnGetSync(int32 *params) {
 	// params:	none
 
 	for (int i = 0; i < MAX_syncs; i++) {
-		if (_syncList[i].id == ID) {
+		if (_syncList[i].id == _scriptVars[ID]) {
 			// return sync value waiting
-			RESULT = _syncList[i].sync;
+			_scriptVars[RESULT] = _syncList[i].sync;
 			return IR_CONT;
 		}
 	}
 
 	// no sync found
-	RESULT = 0;
+	_scriptVars[RESULT] = 0;
 	return IR_CONT;
 }
 
@@ -100,13 +100,13 @@ int32 Logic::fnWaitSync(int32 *params) {
 
 	// params:	none
 
-	debug(5, "fnWaitSync: %d waits", ID);
+	debug(5, "fnWaitSync: %d waits", _scriptVars[ID]);
 
 	for (int i = 0; i < MAX_syncs; i++) {
-		if (_syncList[i].id == ID) {
+		if (_syncList[i].id == _scriptVars[ID]) {
 			// return sync value waiting
 			debug(5, "fnWaitSync: go");
-			RESULT = _syncList[i].sync;
+			_scriptVars[RESULT] = _syncList[i].sync;
 			return IR_CONT;
 		}
 	}

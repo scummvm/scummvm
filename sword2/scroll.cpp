@@ -44,18 +44,10 @@ void Sword2Engine::setScrolling(void) {
 	uint16 scroll_distance_y;
 
 	// if the scroll offsets are being forced in script
-	if (SCROLL_X || SCROLL_Y) {
-		// ensure not too far right
-		if (_thisScreen.max_scroll_offset_x > SCROLL_X)
-			_thisScreen.scroll_offset_x = SCROLL_X;
-		else
-			_thisScreen.scroll_offset_x = _thisScreen.max_scroll_offset_x;
-
-		// ensure not too far down
-		if (_thisScreen.max_scroll_offset_y > SCROLL_Y)
-			_thisScreen.scroll_offset_y = SCROLL_Y;
-		else
-			_thisScreen.scroll_offset_y = _thisScreen.max_scroll_offset_y;
+	if (Logic::_scriptVars[SCROLL_X] || Logic::_scriptVars[SCROLL_Y]) {
+		// ensure not too far right or too far down
+		_thisScreen.scroll_offset_x = MIN((uint16) Logic::_scriptVars[SCROLL_X], _thisScreen.max_scroll_offset_x);
+		_thisScreen.scroll_offset_y = MIN((uint16) Logic::_scriptVars[SCROLL_Y], _thisScreen.max_scroll_offset_y);
 	} else {
 		// George's offset from the centre - the desired position
 		// for him

@@ -465,7 +465,7 @@ void Sword2Engine::processImage(BuildUnit *build_unit) {
 			frame_head->height);
 	}
 
-	if (SYSTEM_TESTING_ANIMS) {	// see anims.cpp
+	if (Logic::_scriptVars[SYSTEM_TESTING_ANIMS]) { // see anims.cpp
 		// bring the anim into the visible screen
 		// but leave extra pixel at edge for box
 		if (spriteInfo.x + spriteInfo.scaledWidth >= 639)
@@ -569,7 +569,7 @@ void Sword2Engine::registerFrame(int32 *params, BuildUnit *build_unit) {
 	frame_head = fetchFrameHeader(file, ob_graph->anim_pc);
 
 	// update player graphic details for on-screen debug info
-	if (ID == CUR_PLAYER_ID) {
+	if (Logic::_scriptVars[ID] == CUR_PLAYER_ID) {
 		_debugger->_playerGraphic.type = ob_graph->type;
 		_debugger->_playerGraphic.anim_resource = ob_graph->anim_resource;
 		// counting 1st frame as 'frame 1'
@@ -659,10 +659,10 @@ void Sword2Engine::registerFrame(int32 *params, BuildUnit *build_unit) {
 			// isn't same is current id
 			// then we don't want this "left over" pointer text
 
-			if (_mouseList[_curMouse].pointer_text && _mouseList[_curMouse].id != (int32) ID)
+			if (_mouseList[_curMouse].pointer_text && _mouseList[_curMouse].id != (int32) Logic::_scriptVars[ID])
 				_mouseList[_curMouse].pointer_text=0;
 
-			_mouseList[_curMouse].id = ID;
+			_mouseList[_curMouse].id = Logic::_scriptVars[ID];
 			// not using sprite as detection mask
 			_mouseList[_curMouse].anim_resource = 0;
 			_mouseList[_curMouse].anim_pc = 0;
@@ -776,11 +776,11 @@ int32 Logic::fnUpdatePlayerStats(int32 *params) {
 	_vm->_thisScreen.player_feet_y = ob_mega->feet_y;
 
 	// for the script
-	PLAYER_FEET_X = ob_mega->feet_x;
-	PLAYER_FEET_Y = ob_mega->feet_y;
-	PLAYER_CUR_DIR = ob_mega->current_dir;
+	_scriptVars[PLAYER_FEET_X] = ob_mega->feet_x;
+	_scriptVars[PLAYER_FEET_Y] = ob_mega->feet_y;
+	_scriptVars[PLAYER_CUR_DIR] = ob_mega->current_dir;
 
-	SCROLL_OFFSET_X = _vm->_thisScreen.scroll_offset_x;
+	_scriptVars[SCROLL_OFFSET_X] = _vm->_thisScreen.scroll_offset_x;
 
 	debug(5, "fnUpdatePlayerStats: %d %d", ob_mega->feet_x, ob_mega->feet_y);
 
@@ -829,7 +829,7 @@ void Sword2Engine::setFullPalette(int32 palRes) {
 	// now work properly too!
 
 	// hut interior
-	if (LOCATION == 13) {
+	if (Logic::_scriptVars[LOCATION] == 13) {
 		// unpausing
 		if (palRes == -1) {
 			// restore whatever palette was last set (screen

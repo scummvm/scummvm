@@ -48,7 +48,7 @@ int32 Logic::fnRefreshInventory(int32 *params) {
 	// params:	none
 
 	// can reset this now
-	COMBINE_BASE = 0;
+	_scriptVars[COMBINE_BASE] = 0;
 
 	// so that the icon in 'object_held' is coloured while the rest are
 	// grey
@@ -159,11 +159,11 @@ void Sword2Engine::buildMenu(void) {
 				// If this is the icon being examined, make
 				// it coloured. If not, grey this one out.
 
-				if (res == OBJECT_HELD)
+				if (res == Logic::_scriptVars[OBJECT_HELD])
 					icon_coloured = true;
 				else
 					icon_coloured = false;
-			} else if (COMBINE_BASE) {
+			} else if (Logic::_scriptVars[COMBINE_BASE]) {
 				// WHEN ONE MENU OBJECT IS BEING USED WITH
 				// ANOTHER - BOTH TO BE COLOURED, THE REST
 				// GREYED OUT
@@ -171,7 +171,7 @@ void Sword2Engine::buildMenu(void) {
 				// if this if either of the icons being
 				// combined...
 
-				if (res == OBJECT_HELD || res == COMBINE_BASE)
+				if (res == Logic::_scriptVars[OBJECT_HELD] || res == Logic::_scriptVars[COMBINE_BASE])
 					icon_coloured = true;
 				else
 					icon_coloured = false;
@@ -182,7 +182,7 @@ void Sword2Engine::buildMenu(void) {
 				// If this is the selction, grey it out. If
 				// not, make it coloured.
 
-  				if (res == OBJECT_HELD)
+  				if (res == Logic::_scriptVars[OBJECT_HELD])
 					icon_coloured = false;
 				else
 					icon_coloured = true;
@@ -230,7 +230,7 @@ void Sword2Engine::buildSystemMenu(void) {
 		// The only case when an icon is grayed is when the player
 		// is dead. Then SAVE is not available.
 
-		if (!DEAD || icon_list[i] != SAVE_ICON)
+		if (!Logic::_scriptVars[DEAD] || icon_list[i] != SAVE_ICON)
 			icon += (RDMENU_ICONWIDE * RDMENU_ICONDEEP);
 
 		_graphics->setMenuIcon(RDMENU_TOP, i, icon);

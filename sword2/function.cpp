@@ -58,7 +58,7 @@ int32 Logic::fnNewScript(int32 *params) {
 	// params:	0 id of script
 
 	// must clear this
-	PLAYER_ACTION = 0;
+	_scriptVars[PLAYER_ACTION] = 0;
 
 	logicReplace(params[0]);
 	return IR_TERMINATE;
@@ -72,7 +72,7 @@ int32 Logic::fnInteract(int32 *params) {
 	//		  reference
 
 	// must clear this
-	PLAYER_ACTION = 0;
+	_scriptVars[PLAYER_ACTION] = 0;
 
 	// 3rd script of clicked on id
 	logicUp((params[0] < 16) + 2);
@@ -127,12 +127,12 @@ int32 Logic::fnRelease(int32 *params) {
 
 int32 Logic::fnRandom(int32 *params) {
 	// Generates a random number between 'min' & 'max' inclusive, and
-	// sticks it in the script flag 'result'
+	// sticks it in _scriptVars[RESULT]
 
 	// params:	0 min
 	//		1 max
 
-	RESULT = _vm->_rnd.getRandomNumberRng(params[0], params[1]);
+	_scriptVars[RESULT] = _vm->_rnd.getRandomNumberRng(params[0], params[1]);
 	return IR_CONT;
 }
 
@@ -176,7 +176,7 @@ int32 Logic::fnRandomPause(int32 *params) {
 		pars[1] = params[2];
 
 		fnRandom(pars);
-		pars[1] = RESULT;
+		pars[1] = _scriptVars[RESULT];
 	}
 
 	pars[0] = params[0];
@@ -396,7 +396,7 @@ int32 Logic::fnPlayCredits(int32 *params) {
 
 	// params:	none
 
-	if (DEMO) {
+	if (_scriptVars[DEMO]) {
 		_vm->closeGame();
 		return IR_STOP;
 	}
@@ -619,7 +619,7 @@ int32 Logic::fnPlayCredits(int32 *params) {
 	// credits. Note that musicTimeRemaining() will return 0 if the music
 	// is muted, so we need a sensible fallback for that case.
 
-	uint32 musicLength = MAX((int32)(1000 * (_vm->_sound->musicTimeRemaining() - 3)), 25 * (int32)scrollSteps);
+	uint32 musicLength = MAX((int32) (1000 * (_vm->_sound->musicTimeRemaining() - 3)), 25 * (int32) scrollSteps);
 
 	while (scrollPos < scrollSteps && !_vm->_quit) {
 		bool foundStartLine = false;
@@ -734,7 +734,7 @@ int32 Logic::fnPlayCredits(int32 *params) {
 	if (!_vm->_mouseStatus || _choosing)
 		_vm->setMouse(NORMAL_MOUSE_ID);
 
-	if (DEAD)
+	if (_scriptVars[DEAD])
 		_vm->buildSystemMenu();
 
 	return IR_CONT;

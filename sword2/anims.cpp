@@ -107,7 +107,7 @@ int32 Logic::animate(int32 *params, bool reverse) {
 		// 'testing_routines' object in George's Player Character
 		// section of linc
 
-		if (SYSTEM_TESTING_ANIMS) {
+		if (_scriptVars[SYSTEM_TESTING_ANIMS]) {
 			// if the resource number is within range & it's not
 			// a null resource
 
@@ -141,7 +141,7 @@ int32 Logic::animate(int32 *params, bool reverse) {
 #ifdef _SWORD2_DEBUG
 		// check that we haven't been passed a zero resource number
 		if (res == 0)
-			error("animate: %s (id %d) passed zero anim resource", _vm->fetchObjectName(ID), ID);
+			error("animate: %s (id %d) passed zero anim resource", _vm->fetchObjectName(_scriptVars[ID]), _scriptVars[ID]);
 #endif
 
 		// open anim file
@@ -173,7 +173,7 @@ int32 Logic::animate(int32 *params, bool reverse) {
 			ob_graphic->anim_pc = 0;
  	} else if (getSync()) {
 		// We've received a sync - return to script immediately
-		debug(5, "**sync stopped %d**", ID);
+		debug(5, "**sync stopped %d**", _scriptVars[ID]);
 
 		// If sync received, anim finishes right now (remaining on
 		// last frame). Quit animation, but continue script.
@@ -263,7 +263,7 @@ int32 Logic::fnSetFrame(int32 *params) {
 #ifdef _SWORD2_DEBUG
 	// check that we haven't been passed a zero resource number
 	if (res == 0)
-		error("fnSetFrame: %s (id %d) passed zero anim resource", _vm->fetchObjectName(ID), ID);
+		error("fnSetFrame: %s (id %d) passed zero anim resource", _vm->fetchObjectName(_scriptsVars[ID]), _scriptsVars[ID]);
 #endif
 
 	// open the resource (& check it's valid)
@@ -679,7 +679,7 @@ int32 Logic::fnPlaySequence(int32 *params) {
 
 	MoviePlayer player(_vm);
 
-	if (_sequenceTextLines && !DEMO)
+	if (_sequenceTextLines && !_scriptVars[DEMO])
 		rv = player.play(filename, sequenceSpeechArray, leadOut);
 	else
 		rv = player.play(filename, NULL, leadOut);

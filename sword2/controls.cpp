@@ -1617,10 +1617,10 @@ void Gui::restartControl(void) {
 	_vm->killMusic();
 
 	// In case we were dead - well we're not anymore!
-	DEAD = 0;
+	Logic::_scriptVars[DEAD] = 0;
 
 	// Restart the game. Clear all memory and reset the globals
-	temp_demo_flag = DEMO;
+	temp_demo_flag = Logic::_scriptVars[DEMO];
 
 	// Remove all resources from memory, including player object and
 	// global variables
@@ -1628,12 +1628,11 @@ void Gui::restartControl(void) {
 
 	// Reopen global variables resource & send address to interpreter -
 	// it won't be moving
-	_vm->_logic->setGlobalInterpreterVariables((int32 *) (_vm->_resman->openResource(1) + sizeof(StandardHeader)));
-	_vm->_resman->closeResource(1);
+	_vm->_logic->resetScriptVars();
 
-	DEMO = temp_demo_flag;
+	Logic::_scriptVars[DEMO] = temp_demo_flag;
 
-	// Rree all the route memory blocks from previous game
+	// Free all the route memory blocks from previous game
 	_vm->_logic->_router->freeAllRouteMem();
 
 	// Call the same function that first started us up

@@ -258,7 +258,7 @@ int32 Logic::fnPlayFx(int32 *params) {
 	// in case we want to call fnStopFx() later, to kill this fx
 	// (mainly for FX_LOOP & FX_RANDOM)
 
-	RESULT = j;
+	_scriptVars[RESULT] = j;
 	return IR_CONT;
 }
 
@@ -367,7 +367,7 @@ int32 Logic::fnPlayMusic(int32 *params) {
 
 	// add the appropriate file extension & play it
 
-	if (DEMO) {
+	if (_scriptVars[DEMO]) {
 		// The demo I found didn't come with any music file, but you
 		// could use the music from the first CD of the complete game,
 		// I suppose...
@@ -407,7 +407,7 @@ int32 Logic::fnCheckMusicPlaying(int32 *params) {
 	// or 0 if no music playing
 
 	// in seconds, rounded up to the nearest second
-	RESULT = _vm->_sound->musicTimeRemaining();
+	_scriptVars[RESULT] = _vm->_sound->musicTimeRemaining();
 
 	return IR_CONT;
 }

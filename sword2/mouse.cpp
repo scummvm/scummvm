@@ -72,7 +72,7 @@ void Sword2Engine::mouseEngine(void) {
 	// If George is dead, the system menu is visible all the time, and is
 	// the only thing that can be used.
 
-	if (DEAD) {
+	if (Logic::_scriptVars[DEAD]) {
 		if (_mouseMode != MOUSE_system_menu) {
 			_mouseMode = MOUSE_system_menu;
 
@@ -144,7 +144,7 @@ void Sword2Engine::systemMenuMouse(void) {
 	// If the mouse is moved off the menu, close it. Unless the player is
 	// dead, in which case the menu should always be visible.
 
-	if (_input->_mouseY > 0 && !DEAD) {
+	if (_input->_mouseY > 0 && !Logic::_scriptVars[DEAD]) {
 		_mouseMode = MOUSE_normal;
 		_graphics->hideMenu(RDMENU_TOP);
 		return;
@@ -167,7 +167,7 @@ void Sword2Engine::systemMenuMouse(void) {
 
 	// No save when dead
 
-	if (icon_list[hit] == SAVE_ICON && DEAD)
+	if (icon_list[hit] == SAVE_ICON && Logic::_scriptVars[DEAD])
 		return;
 
 	// Gray out all he icons, except the one that was clicked
@@ -219,7 +219,7 @@ void Sword2Engine::systemMenuMouse(void) {
 
 	// Menu stays open on death screen. Otherwise it's closed.
 
-	if (!DEAD) {
+	if (!Logic::_scriptVars[DEAD]) {
 		_mouseMode = MOUSE_normal;
 		_graphics->hideMenu(RDMENU_TOP);
 	} else {
@@ -292,7 +292,7 @@ void Sword2Engine::dragMouse(void) {
 	// not do this, but it feels natural to me.
 
 	if (me->buttons & RD_RIGHTBUTTONDOWN) {
-		OBJECT_HELD = 0;
+		Logic::_scriptVars[OBJECT_HELD] = 0;
 		_menuSelectedPos = 0;
 		_mouseMode = MOUSE_menu;
 		setLuggage(0);
@@ -318,22 +318,24 @@ void Sword2Engine::dragMouse(void) {
 		// Set global script variable 'button'. We know that it was the
 		// left button, not the right one.
 
-		LEFT_BUTTON = 1;
-		RIGHT_BUTTON = 0;
+		Logic::_scriptVars[LEFT_BUTTON]  = 1;
+		Logic::_scriptVars[RIGHT_BUTTON] = 0;
 
 		// These might be required by the action script about to be run
 
-		MOUSE_X = _input->_mouseX + _thisScreen.scroll_offset_x;
-		MOUSE_Y = _input->_mouseY + _thisScreen.scroll_offset_y;
+		Logic::_scriptVars[MOUSE_X] = _input->_mouseX + _thisScreen.scroll_offset_x;
+		Logic::_scriptVars[MOUSE_Y] = _input->_mouseY + _thisScreen.scroll_offset_y;
 
 		// For scripts to know what's been clicked. First used for
 		// 'room_13_turning_script' in object 'biscuits_13'
 
-		CLICKED_ID = _mouseTouching;
+		Logic::_scriptVars[CLICKED_ID] = _mouseTouching;
 
 		_logic->setPlayerActionEvent(CUR_PLAYER_ID, _mouseTouching);
 
-		debug(2, "Used \"%s\" on \"%s\"", fetchObjectName(OBJECT_HELD), fetchObjectName(CLICKED_ID));
+		debug(2, "Used \"%s\" on \"%s\"",
+			fetchObjectName(Logic::_scriptVars[OBJECT_HELD]),
+			fetchObjectName(Logic::_scriptVars[CLICKED_ID]));
 
 		// Hide menu - back to normal menu mode
 
@@ -359,12 +361,12 @@ void Sword2Engine::dragMouse(void) {
 	if ((uint) hit == _menuSelectedPos) {
 		// If we clicked on the same icon again, reset the first icon
 
-		OBJECT_HELD = 0;
+		Logic::_scriptVars[OBJECT_HELD] = 0;
 		_menuSelectedPos = 0;
 	} else {
 		// Otherwise, combine the two icons
 
-		COMBINE_BASE = _masterMenuList[hit].icon_resource;
+		Logic::_scriptVars[COMBINE_BASE] = _masterMenuList[hit].icon_resource;
 		_logic->setPlayerActionEvent(CUR_PLAYER_ID, MENU_MASTER_OBJECT);
 
 		// Turn off mouse now, to prevent player trying to click
@@ -372,7 +374,9 @@ void Sword2Engine::dragMouse(void) {
 
 		noHuman();
 
-		debug(2, "Used \"%s\" on \"%s\"", fetchObjectName(OBJECT_HELD), fetchObjectName(COMBINE_BASE));
+		debug(2, "Used \"%s\" on \"%s\"",
+			fetchObjectName(Logic::_scriptVars[OBJECT_HELD]),
+			fetchObjectName(Logic::_scriptVars[COMBINE_BASE]));
 	}
 
 	// Refresh the menu
@@ -409,12 +413,12 @@ void Sword2Engine::menuMouse(void) {
 		// resource id.
 
 		_examiningMenuIcon = true;
-		OBJECT_HELD = _masterMenuList[hit].icon_resource;
+		Logic::_scriptVars[OBJECT_HELD] = _masterMenuList[hit].icon_resource;
 
 		// Must clear this so next click on exit becomes 1st click
 		// again
 
-		EXIT_CLICK_ID = 0;
+		Logic::_scriptVars[EXIT_CLICK_ID] = 0;
 
 		_logic->setPlayerActionEvent(CUR_PLAYER_ID, MENU_MASTER_OBJECT);
 
@@ -428,7 +432,7 @@ void Sword2Engine::menuMouse(void) {
 		noHuman();
 
 		debug(2, "Right-click on \"%s\" icon",
-			fetchObjectName(OBJECT_HELD));
+			fetchObjectName(Logic::_scriptVars[OBJECT_HELD]));
 
 		return;
 	}
@@ -441,13 +445,13 @@ void Sword2Engine::menuMouse(void) {
 		_mouseMode = MOUSE_drag;
 
 		_menuSelectedPos = hit;
-		OBJECT_HELD = _masterMenuList[hit].icon_resource;
+		Logic::_scriptVars[OBJECT_HELD] = _masterMenuList[hit].icon_resource;
 		_currentLuggageResource = _masterMenuList[hit].luggage_resource;
 
 		// Must clear this so next click on exit becomes 1st click
 		// again
 
-		EXIT_CLICK_ID = 0;
+		Logic::_scriptVars[EXIT_CLICK_ID] = 0;
 
 		// Refresh the menu
 
@@ -456,7 +460,7 @@ void Sword2Engine::menuMouse(void) {
 		setLuggage(_masterMenuList[hit].luggage_resource);
 
 		debug(2, "Left-clicked on \"%s\" icon - switch to drag mode",
-			fetchObjectName(OBJECT_HELD));
+			fetchObjectName(Logic::_scriptVars[OBJECT_HELD]));
 	}
 }
 
@@ -470,7 +474,7 @@ void Sword2Engine::normalMouse(void) {
 	// big-object menu lock situation, of if the player is dragging an
 	// object.
 
-	if (_input->_mouseY < 0 && !_mouseModeLocked && !OBJECT_HELD) {
+	if (_input->_mouseY < 0 && !_mouseModeLocked && !Logic::_scriptVars[OBJECT_HELD]) {
 		_mouseMode = MOUSE_system_menu;
 
 		if (_mouseTouching) {
@@ -498,7 +502,7 @@ void Sword2Engine::normalMouse(void) {
 		// object, even if the inventory menu was closed after the
 		// first object was selected.
 
-		if (!OBJECT_HELD)
+		if (!Logic::_scriptVars[OBJECT_HELD])
 			_mouseMode = MOUSE_menu;
 		else
 			_mouseMode = MOUSE_drag;
@@ -571,8 +575,8 @@ void Sword2Engine::normalMouse(void) {
 	// If user right-clicks while holding an object, release it. The
 	// original code did not do this, but it feels natural to me.
 
-	if (OBJECT_HELD && (me->buttons & RD_RIGHTBUTTONDOWN)) {
-		OBJECT_HELD = 0;
+	if (Logic::_scriptVars[OBJECT_HELD] && (me->buttons & RD_RIGHTBUTTONDOWN)) {
+		Logic::_scriptVars[OBJECT_HELD] = 0;
 		_menuSelectedPos = 0;
 		setLuggage(0);
 		return;
@@ -599,28 +603,28 @@ void Sword2Engine::normalMouse(void) {
 
 	// PLAYER_ACTION script variable - whatever catches this must reset to
 	// 0 again
-	// PLAYER_ACTION = _mouseTouching;
+	// Logic::_scriptVars[PLAYER_ACTION] = _mouseTouching;
 
 	// Idle or router-anim will catch it
 
 	// Set global script variable 'button'
 
 	if (me->buttons & RD_LEFTBUTTONDOWN) {
-		LEFT_BUTTON  = 1;
-		RIGHT_BUTTON = 0;
+		Logic::_scriptVars[LEFT_BUTTON]  = 1;
+		Logic::_scriptVars[RIGHT_BUTTON] = 0;
 		_buttonClick = 0;	// for re-click
 	} else {
-		LEFT_BUTTON  = 0;
-		RIGHT_BUTTON = 1;
+		Logic::_scriptVars[LEFT_BUTTON]  = 0;
+		Logic::_scriptVars[RIGHT_BUTTON] = 1;
 		_buttonClick = 1;	// for re-click
 	}
 
 	// These might be required by the action script about to be run
 
-	MOUSE_X = _input->_mouseX + _thisScreen.scroll_offset_x;
-	MOUSE_Y = _input->_mouseY + _thisScreen.scroll_offset_y;
+	Logic::_scriptVars[MOUSE_X] = _input->_mouseX + _thisScreen.scroll_offset_x;
+	Logic::_scriptVars[MOUSE_Y] = _input->_mouseY + _thisScreen.scroll_offset_y;
 
-	if (_mouseTouching == EXIT_CLICK_ID && (me->buttons & RD_LEFTBUTTONDOWN)) {
+	if (_mouseTouching == Logic::_scriptVars[EXIT_CLICK_ID] && (me->buttons & RD_LEFTBUTTONDOWN)) {
 		// It's the exit double click situation. Let the existing
 		// interaction continue and start fading down. Switch the human
 		// off too
@@ -630,8 +634,8 @@ void Sword2Engine::normalMouse(void) {
 
 		// Tell the walker
 
-		EXIT_FADING = 1;
-	} else if (_oldButton == _buttonClick && _mouseTouching == CLICKED_ID && _mousePointerRes != NORMAL_MOUSE_ID) {
+		Logic::_scriptVars[EXIT_FADING] = 1;
+	} else if (_oldButton == _buttonClick && _mouseTouching == Logic::_scriptVars[CLICKED_ID] && _mousePointerRes != NORMAL_MOUSE_ID) {
 		// Re-click. Do nothing, except on floors
 	} else {
 		// For re-click
@@ -641,13 +645,13 @@ void Sword2Engine::normalMouse(void) {
 		// For scripts to know what's been clicked. First used for
 		// 'room_13_turning_script' in object 'biscuits_13'
 
-		CLICKED_ID = _mouseTouching;
+		Logic::_scriptVars[CLICKED_ID] = _mouseTouching;
 
 		// Must clear these two double-click control flags - do it here
 		// so reclicks after exit clicks are cleared up
 
-		EXIT_CLICK_ID = 0;
-		EXIT_FADING = 0;
+		Logic::_scriptVars[EXIT_CLICK_ID] = 0;
+		Logic::_scriptVars[EXIT_FADING] = 0;
 
 		// WORKAROUND: Examining the lift while at the top of the
 		// pyramid causes the game to hang.
@@ -660,17 +664,21 @@ void Sword2Engine::normalMouse(void) {
 		// If the user didn't click the left button, the script will
 		// terminate. With the mouse cursor still disabled. Ouch!
 
-		if (_mouseTouching == 2773 && !LEFT_BUTTON) {
+		if (_mouseTouching == 2773 && !Logic::_scriptVars[LEFT_BUTTON]) {
 			warning("Working around elevator script bug");
 		} else
 			_logic->setPlayerActionEvent(CUR_PLAYER_ID, _mouseTouching);
 
-		if (OBJECT_HELD)
-			debug(2, "Used \"%s\" on \"%s\"", fetchObjectName(OBJECT_HELD), fetchObjectName(CLICKED_ID));
-		else if (LEFT_BUTTON)
-			debug(2, "Left-clicked on \"%s\"", fetchObjectName(CLICKED_ID));
+		if (Logic::_scriptVars[OBJECT_HELD])
+			debug(2, "Used \"%s\" on \"%s\"",
+				fetchObjectName(Logic::_scriptVars[OBJECT_HELD]),
+				fetchObjectName(Logic::_scriptVars[CLICKED_ID]));
+		else if (Logic::_scriptVars[LEFT_BUTTON])
+			debug(2, "Left-clicked on \"%s\"",
+				fetchObjectName(Logic::_scriptVars[CLICKED_ID]));
 		else	// RIGHT BUTTON
-			debug(2, "Right-clicked on \"%s\"", fetchObjectName(CLICKED_ID));
+			debug(2, "Right-clicked on \"%s\"",
+				fetchObjectName(Logic::_scriptVars[CLICKED_ID]));
 	}
 }
 
@@ -725,7 +733,7 @@ void Sword2Engine::mouseOnOff(void) {
 			setMouse(pointer_type);
 
 			// setup luggage icon
-			if (OBJECT_HELD) {
+			if (Logic::_scriptVars[OBJECT_HELD]) {
 				setLuggage(_currentLuggageResource);
 			}
 		} else
@@ -1014,7 +1022,7 @@ void Sword2Engine::noHuman(void) {
 	// it and when combining objects
 
 	// for logic scripts
-	MOUSE_AVAILABLE = 0;
+	Logic::_scriptVars[MOUSE_AVAILABLE] = 0;
 
 	// human/mouse off
 	_mouseStatus = true;
@@ -1045,12 +1053,12 @@ void Sword2Engine::registerMouse(ObjectMouse *ob_mouse) {
 	// If 'pointer_text' field is set, but the 'id' field isn't same is
 	// current id, then we don't want this "left over" pointer text
 
-	if (_mouseList[_curMouse].pointer_text && _mouseList[_curMouse].id != (int32) ID)
+	if (_mouseList[_curMouse].pointer_text && _mouseList[_curMouse].id != (int32) Logic::_scriptVars[ID])
 		_mouseList[_curMouse].pointer_text = 0;
 
 	// Get id from system variable 'id' which is correct for current object
 
-	_mouseList[_curMouse].id = ID;
+	_mouseList[_curMouse].id = Logic::_scriptVars[ID];
 
 	// Not using sprite as mask - this is only done from fnRegisterFrame()
 
@@ -1082,7 +1090,7 @@ int32 Logic::fnNoHuman(int32 *params) {
 	// special menus use noHuman
 
 	// dont hide menu in conversations
-	if (TALK_FLAG == 0)
+	if (_scriptVars[TALK_FLAG] == 0)
 		_vm->_graphics->hideMenu(RDMENU_BOTTOM);
 
 	if (_vm->_mouseMode == MOUSE_system_menu) {
@@ -1098,7 +1106,7 @@ int32 Logic::fnAddHuman(int32 *params) {
 	// params:	none
 
 	// for logic scripts
-	MOUSE_AVAILABLE = 1;
+	_scriptVars[MOUSE_AVAILABLE] = 1;
 
 	// off
 	if (_vm->_mouseStatus) {
@@ -1106,8 +1114,8 @@ int32 Logic::fnAddHuman(int32 *params) {
 		_vm->_mouseTouching = 1;	// forces engine to choose a cursor
 	}
 
-	//clear this to reset no-second-click system
-	CLICKED_ID = 0;
+	// clear this to reset no-second-click system
+	_scriptVars[CLICKED_ID] = 0;
 
 	// this is now done outside the OBJECT_HELD check in case it's set to
 	// zero before now!
@@ -1117,14 +1125,14 @@ int32 Logic::fnAddHuman(int32 *params) {
 
 	_vm->_mouseModeLocked = false;
 
-	if (OBJECT_HELD) {
+	if (_scriptVars[OBJECT_HELD]) {
 		// was dragging something around
 		// need to clear this again
-		OBJECT_HELD = 0;
+		_scriptVars[OBJECT_HELD] = 0;
 
 		// and these may also need clearing, just in case
 		_vm->_examiningMenuIcon = false;
-		COMBINE_BASE = 0;
+		Logic::_scriptVars[COMBINE_BASE] = 0;
 
 		_vm->setLuggage(0);
 	}
@@ -1192,7 +1200,7 @@ int32 Logic::fnRegisterPointerText(int32 *params) {
 	// current object id - used for checking pointer_text when mouse area
 	// registered (in fnRegisterMouse and fnRegisterFrame)
 
-	_vm->_mouseList[_vm->_curMouse].id = ID;
+	_vm->_mouseList[_vm->_curMouse].id = _scriptVars[ID];
 	_vm->_mouseList[_vm->_curMouse].pointer_text = params[0];
 	return IR_CONT;
 }
@@ -1268,7 +1276,7 @@ int32 Logic::fnSetObjectHeld(int32 *params) {
 
 	_vm->setLuggage(params[0]);
 
-	OBJECT_HELD = params[0];
+	_scriptVars[OBJECT_HELD] = params[0];
 	_vm->_currentLuggageResource = params[0];
 
 	// mode locked - no menu available
@@ -1301,9 +1309,9 @@ int32 Logic::fnCheckPlayerActivity(int32 *params) {
 		// positive check
 
 		_vm->_playerActivityDelay = 0;
-		RESULT = 1;
+		_scriptVars[RESULT] = 1;
 	} else
-		RESULT = 0;
+		_scriptVars[RESULT] = 0;
 
 	return IR_CONT;
 }
