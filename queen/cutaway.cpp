@@ -788,8 +788,6 @@ void Cutaway::handlePersonRecord(
 
 	Person p;
 
-	_personFaceCount = 0;	//Hello, please verify me. (Fixes crash on OSX)
-
 	if (object.objectNumber == OBJECT_JOE) {
 		if (object.moveToX || object.moveToY) {
 			_vm->walk()->moveJoe(0, object.moveToX, object.moveToY, true);
@@ -873,6 +871,9 @@ void Cutaway::run(char *nextFilename) {
 	if (_comPanel == 0 || _comPanel == 2) {
 		_vm->logic()->sceneStart();
 	}
+
+	memset(_personFace, 0, sizeof(_personFace));
+	_personFaceCount = 0;
 
 	byte *ptr = _objectData;
 

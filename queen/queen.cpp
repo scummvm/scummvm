@@ -116,6 +116,10 @@ QueenEngine::~QueenEngine() {
 
 void QueenEngine::errorString(const char *buf1, char *buf2) {
 	strcpy(buf2, buf1);
+	if (_debugger && !_debugger->isAttached()) {
+		_debugger->attach(buf2);
+		_debugger->onFrame();
+	}
 }
 
 

@@ -225,22 +225,18 @@ void BankManager::load(const char *bankname, uint32 bankslot) {
 
 void BankManager::unpack(uint32 srcframe, uint32 dstframe, uint32 bankslot) {
 	debug(9, "BankManager::unpack(%d, %d, %d)", srcframe, dstframe, bankslot);
-
-	uint8 *p = _banks[bankslot].data + _banks[bankslot].indexes[srcframe];
-
 	if (!_banks[bankslot].data)
-		error("BankManager::bankUnpack(%i, %i, %i) called but _banks[bankslot].data is NULL!", 
-				srcframe, dstframe, bankslot);
+		error("BankManager::unpack() _banks[bankslot].data is NULL!");
 		
 	BobFrame *pbf = &_frames[dstframe];
-	delete[] pbf->data;
-
+	uint8 *p = _banks[bankslot].data + _banks[bankslot].indexes[srcframe];
 	pbf->width    = READ_LE_UINT16(p + 0);
 	pbf->height   = READ_LE_UINT16(p + 2);
 	pbf->xhotspot = READ_LE_UINT16(p + 4);
 	pbf->yhotspot = READ_LE_UINT16(p + 6);
 
 	uint32 size = pbf->width * pbf->height;
+	delete[] pbf->data;
 	pbf->data = new uint8[ size ];
 	memcpy(pbf->data, p + 8, size);
 }
@@ -248,6 +244,8 @@ void BankManager::unpack(uint32 srcframe, uint32 dstframe, uint32 bankslot) {
 
 void BankManager::overpack(uint32 srcframe, uint32 dstframe, uint32 bankslot) {
 	debug(9, "BankManager::overpack(%d, %d, %d)", srcframe, dstframe, bankslot);
+	if (!_banks[bankslot].data)
+		error("BankManager::overpack() _banks[bankslot].data is NULL!");
 
 	uint8 *p = _banks[bankslot].data + _banks[bankslot].indexes[srcframe];
 	uint16 src_w = READ_LE_UINT16(p + 0);
@@ -266,7 +264,7 @@ void BankManager::overpack(uint32 srcframe, uint32 dstframe, uint32 bankslot) {
 void BankManager::close(uint32 bankslot) {
 	debug(9, "BankManager::close(%d)", bankslot);
 	delete[] _banks[bankslot].data;
-	_banks[bankslot].data = 0;	
+	memset(&_banks[bankslot], 0, sizeof(_banks[bankslot]));
 }
 
 
