@@ -681,8 +681,15 @@ void Scumm::initRoomSubBlocks() {
 	roomptr = getResourceAddress(rtRoom, _roomResource);
 	
 	rmhd = (RoomHeader*)findResourceData(MKID('RMHD'), roomptr);
-	_scrWidth = READ_LE_UINT16(&rmhd->width);
-	_scrHeight = READ_LE_UINT16(&rmhd->height);
+	
+	if(_features & GF_AFTER_V7) {
+		_scrWidth = READ_LE_UINT16(&(rmhd->v7.width));
+		_scrHeight = READ_LE_UINT16(&(rmhd->v7.height));
+	} else {
+                _scrWidth = READ_LE_UINT16(&(rmhd->old.width));
+		_scrHeight = READ_LE_UINT16(&(rmhd->old.height));
+	}
+				
 
         if( _features & GF_SMALL_HEADER)
                _IM00_offs = findResourceData(MKID('IM00'), roomptr) - roomptr;

@@ -404,11 +404,10 @@ void Scumm::fixActorDirection(Actor *a, int direction) {
 		vald = a->cost.frame[i];
 		if (vald==0xFFFF)
 			continue;
-#if !defined(FULL_THROTTLE)
-		cost_decodeData(a, vald, mask);
-#else
+	if(_features & GF_AFTER_V7)
 		akos_decodeData(a, vald, mask);
-#endif
+	else
+		cost_decodeData(a, vald, mask);
 	}
 
 	a->needRedraw = true;

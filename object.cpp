@@ -354,7 +354,10 @@ void Scumm::loadRoomObjects() {
 	room = getResourceAddress(rtRoom, _roomResource);
 	roomhdr = (RoomHeader*)findResourceData(MKID('RMHD'), room);
 
-	_numObjectsInRoom = READ_LE_UINT16(&roomhdr->numObjects);
+	if(_features & GF_AFTER_V7)
+		_numObjectsInRoom = READ_LE_UINT16(&(roomhdr->v7.numObjects));
+	else
+		_numObjectsInRoom = READ_LE_UINT16(&(roomhdr->old.numObjects));
 	
 	if (_numObjectsInRoom == 0)
 		return;
@@ -420,7 +423,7 @@ void Scumm::loadRoomObjectsSmall() {
        room = getResourceAddress(rtRoom, _roomResource);
        roomhdr = (RoomHeader*)findResourceData(MKID('RMHD'), room);
 
-       _numObjectsInRoom = READ_LE_UINT16(&roomhdr->numObjects);
+       _numObjectsInRoom = READ_LE_UINT16(&(roomhdr->old.numObjects));
 
        if (_numObjectsInRoom == 0)
                return;
@@ -747,7 +750,12 @@ void Scumm::findObjectInRoom(FindObjectInRoom *fo, byte findWhat, uint id, uint 
 
 	fo->roomptr = roomptr = getResourceAddress(rtRoom, room);
 	roomhdr = (RoomHeader*)findResourceData(MKID('RMHD'), roomptr);
-	numobj = READ_LE_UINT16(&roomhdr->numObjects);
+	
+	if(_features & GF_AFTER_V7)
+		numobj = READ_LE_UINT16(&(roomhdr->v7.numObjects));
+	else
+		numobj = READ_LE_UINT16(&(roomhdr->old.numObjects));
+	
 	if (numobj==0)
 		error("findObjectInRoom: No object found in room %d", room);
 	if (numobj > _numLocalObjects)

@@ -75,11 +75,17 @@ struct ResHdr {
 
 
 struct RoomHeader {
-#ifdef FULL_THROTTLE
-	uint32 version;
-#endif
-	uint16 width,height;
-	uint16 numObjects;
+	union {
+		struct {
+			uint32 version;
+			uint16 width,height;
+			uint16 numObjects;
+		} v7;
+		struct {
+			uint16 width,height;
+			uint16 numObjects;
+		} old;
+	};
 } GCC_PACK;
 
 struct BompHeader {

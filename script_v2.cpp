@@ -1179,13 +1179,13 @@ void Scumm::o6_stopObjectScript() {
 }
 
 void Scumm::o6_panCameraTo() {
-#if defined(FULL_THROTTLE)
-	int y = pop();
-	int x = pop();
-	panCameraTo(x,y);
-#else
-	panCameraTo(pop(), 0);
-#endif
+	if(_features & GF_AFTER_V7) {
+		int y = pop();
+		int x = pop();
+		panCameraTo(x,y);
+	} else {
+		panCameraTo(pop(), 0);
+	}
 }
 
 void Scumm::o6_actorFollowCamera() {
