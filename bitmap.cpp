@@ -25,8 +25,6 @@
 #include <cstdlib>
 #include <cstring>
 
-#define BITMAP_TEXTURE_SIZE 256
-
 static void decompress_codec3(const char *compressed, char *result);
 
 Bitmap::Bitmap(const char *filename, const char *data, int len) :
@@ -36,10 +34,19 @@ Bitmap::Bitmap(const char *filename, const char *data, int len) :
 		error("Invalid magic loading bitmap\n");
 
 	int codec = READ_LE_UINT32(data + 8);
+//	_paletteIncluded = READ_LE_UINT32(data + 12);
 	_numImages = READ_LE_UINT32(data + 16);
 	_x = READ_LE_UINT32(data + 20);
 	_y = READ_LE_UINT32(data + 24);
+//	_transparentColor = READ_LE_UINT32(data + 28);
 	_format = READ_LE_UINT32(data + 32);
+//	_numBits = READ_LE_UINT32(data + 36);
+//	_blueBits = READ_LE_UINT32(data + 40);
+//	_greenBits = READ_LE_UINT32(data + 44);
+//	_redBits = READ_LE_UINT32(data + 48);
+//	_blueShift = READ_LE_UINT32(data + 52);
+//	_greenShift = READ_LE_UINT32(data + 56);
+//	_redShift = READ_LE_UINT32(data + 60);
 	_width = READ_LE_UINT32(data + 128);
 	_height = READ_LE_UINT32(data + 132);
 	_currImage = 1;

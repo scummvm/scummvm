@@ -148,7 +148,7 @@ Bitmap *ResourceLoader::loadBitmap(const char *filename) {
 	Block *b = getFileBlock(filename);
 	if (b == NULL) {	// Grim sometimes asks for non-existant bitmaps (eg, ha_overhead)
 		warning("Could not find bitmap %s\n", filename);
-	return NULL;
+		return NULL;
 	}
 
 	Bitmap *result = new Bitmap(filename, b->data(), b->len());
