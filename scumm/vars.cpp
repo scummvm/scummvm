@@ -54,6 +54,14 @@ void ScummEngine::setupScummVars() {
 	VAR_CUTSCENEEXIT_KEY = 24;
 	VAR_TALK_ACTOR = 25;
 	VAR_CAMERA_FAST_X = 26;
+
+	// FIXME: Apparently, in the Mac version of Loom, scumm variable 27 was
+	// used for another purpose. It is being set to values 0, 1, 2 or 3.
+	// Maybe it's some kind of 'scroll mode'. See also:
+	// http://www.scummbar.com/games/media/transcripts/maclucas.txt
+	if (!(_gameId == GID_LOOM && _features & GF_MACINTOSH))
+		VAR_SCROLL_SCRIPT = 27;
+
 	VAR_SCROLL_SCRIPT = 27;
 	VAR_ENTRY_SCRIPT = 28;
 	VAR_ENTRY_SCRIPT2 = 29;
@@ -186,6 +194,7 @@ void ScummEngine_v7::setupScummVars() {
 	VAR_PERFORMANCE_2 = 27;
 	VAR_GAME_LOADED = 29;
 	VAR_V6_EMSSPACE = 32;
+	//VAR_VOICE_MODE = 33; // 0 is voice, 1 is voice+text, 2 is text only
 	VAR_RANDOM_NR = 34;
 	VAR_NEW_ROOM = 35;
 	VAR_WALKTO_OBJ = 36;
