@@ -263,16 +263,16 @@ int SkyEngine::init(GameDetector &detector) {
 	
 	_systemVars.gameVersion = _skyDisk->determineGameVersion();
 
-	int midiDriver = GameDetector::detectMusicDriver(MDT_ADLIB | MDT_NATIVE | MDT_PREFER_NATIVE);
+	int midiDriver = MidiDriver::detectMusicDriver(MDT_ADLIB | MDT_NATIVE | MDT_PREFER_NATIVE);
 	if (midiDriver == MD_ADLIB) {
 		_systemVars.systemFlags |= SF_SBLASTER;
 		_skyMusic = new AdlibMusic(_mixer, _skyDisk, _system);
 	} else {
 		_systemVars.systemFlags |= SF_ROLAND;
 		if (ConfMan.getBool("native_mt32") || (midiDriver == MD_MT32))
-			_skyMusic = new MT32Music(GameDetector::createMidi(midiDriver), _skyDisk, _system);
+			_skyMusic = new MT32Music(MidiDriver::createMidi(midiDriver), _skyDisk, _system);
 		else
-			_skyMusic = new GmMusic(GameDetector::createMidi(midiDriver), _skyDisk, _system);
+			_skyMusic = new GmMusic(MidiDriver::createMidi(midiDriver), _skyDisk, _system);
 	}
 
 	if (isCDVersion()) {

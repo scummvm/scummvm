@@ -85,8 +85,8 @@ endif
 MODULES += \
 	gui \
 	graphics \
-	backends \
 	sound \
+	backends \
 	common
 
 ifdef USE_MT32EMU

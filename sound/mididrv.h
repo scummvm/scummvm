@@ -51,8 +51,14 @@ enum {
 	MD_MT32 = 16
 };
 
-/** Convert a string containing a music driver name into MIDI Driver type. */
-extern int parseMusicDriver(const Common::String &str);
+enum MidiDriverType {
+	MDT_NONE   = 0,
+	MDT_PCSPK  = 1, // MD_PCSPK and MD_PCJR
+	MDT_ADLIB  = 2, // MD_ADLIB
+	MDT_TOWNS  = 4, // MD_TOWNS
+	MDT_NATIVE = 8, // Everything else
+	MDT_PREFER_NATIVE = 16
+};
 
 /**
  * Abstract description of a MIDI driver. Used by the config file and command
@@ -65,15 +71,23 @@ struct MidiDriverDescription {
 	int id;
 };
 
-/**
- * Get a list of all available MidiDriver types.
- * @return list of all available midi drivers, terminated by  a zero entry
- */
-extern const MidiDriverDescription *getAvailableMidiDrivers();
-
-
 /** Abstract MIDI Driver Class */
 class MidiDriver {
+public:
+	/** Convert a string containing a music driver name into MIDI Driver type. */
+	static int parseMusicDriver(const Common::String &str);
+
+	/**
+	 * Get a list of all available MidiDriver types.
+	 * @return list of all available midi drivers, terminated by  a zero entry
+	 */
+	static const MidiDriverDescription *getAvailableMidiDrivers();
+
+	static MidiDriver *createMidi(int midiDriver);
+
+	static int detectMusicDriver(int midiFlags);
+
+
 public:
 	virtual ~MidiDriver() { }
 

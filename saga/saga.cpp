@@ -187,12 +187,12 @@ int SagaEngine::init(GameDetector &detector) {
 	_gfx = new Gfx(_system, disp_info.logical_w, disp_info.logical_h, detector);
 
 	// Graphics should be initialized before music
-	int midiDriver = GameDetector::detectMusicDriver(MDT_NATIVE | MDT_ADLIB | MDT_PREFER_NATIVE);
+	int midiDriver = MidiDriver::detectMusicDriver(MDT_NATIVE | MDT_ADLIB | MDT_PREFER_NATIVE);
 	bool native_mt32 = (ConfMan.getBool("native_mt32") || (midiDriver == MD_MT32));
 
 	bool adlib = false;
 
-	MidiDriver *driver = GameDetector::createMidi(midiDriver);
+	MidiDriver *driver = MidiDriver::createMidi(midiDriver);
 	if (!driver) {
 		driver = MidiDriver_ADLIB_create(_mixer);
 		adlib = true;

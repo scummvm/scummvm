@@ -27,25 +27,15 @@
 
 class Engine;
 class GameDetector;
-class MidiDriver;
 class OSystem;
-class SoundMixer;
 class Plugin;
+class SoundMixer;
 
 /** Global (shared) game feature flags. */
 enum {
 //	GF_HAS_SPEECH = 1 << 28,
 //	GF_HAS_SUBTITLES = 1 << 29,
 	GF_DEFAULT_TO_1X_SCALER = 1 << 30
-};
-
-enum MidiDriverType {
-	MDT_NONE   = 0,
-	MDT_PCSPK  = 1, // MD_PCSPK and MD_PCJR
-	MDT_ADLIB  = 2, // MD_ADLIB
-	MDT_TOWNS  = 4, // MD_TOWNS
-	MDT_NATIVE = 8, // Everything else
-	MDT_PREFER_NATIVE = 16
 };
 
 struct GameSettings {
@@ -69,15 +59,12 @@ public:
 	
 	bool _dumpScripts;
 
-public:
 	void setTarget(const String &name);
 
+public:
 	Engine *createEngine(OSystem *system);
 
 	static SoundMixer *createMixer();
-	static MidiDriver *createMidi(int midiDriver);
-
-	static int detectMusicDriver(int midiFlags);
 
 	static GameSettings findGame(const String &gameName, const Plugin **plugin = NULL);
 

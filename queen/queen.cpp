@@ -349,8 +349,8 @@ int QueenEngine::init(GameDetector &detector) {
 	// Set mixer music volume to maximum, since music volume is regulated by MusicPlayer's MIDI messages
 	_mixer->setMusicVolume(256);
 
-	int midiDriver = GameDetector::detectMusicDriver(MDT_NATIVE | MDT_ADLIB | MDT_PREFER_NATIVE);
-	MidiDriver *driver = GameDetector::createMidi(midiDriver);
+	int midiDriver = MidiDriver::detectMusicDriver(MDT_NATIVE | MDT_ADLIB | MDT_PREFER_NATIVE);
+	MidiDriver *driver = MidiDriver::createMidi(midiDriver);
 	if (!driver)
 		driver = MidiDriver_ADLIB_create(_mixer);
 	else if (ConfMan.getBool("native_mt32") || (midiDriver == MD_MT32))

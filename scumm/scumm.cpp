@@ -1310,7 +1310,7 @@ void ScummEngine_v90he::scummInit() {
 }
 
 void ScummEngine::setupMusic(int midi) {
-	_midiDriver = GameDetector::detectMusicDriver(midi);
+	_midiDriver = MidiDriver::detectMusicDriver(midi);
 	_native_mt32 = (ConfMan.getBool("native_mt32") || (_midiDriver == MD_MT32));
 
 #ifndef __GP32__ //ph0x FIXME, "quick dirty hack"
@@ -1338,7 +1338,7 @@ void ScummEngine::setupMusic(int midi) {
 	} else if (((_midiDriver == MD_PCJR) || (_midiDriver == MD_PCSPK)) && ((_version > 2) && (_version < 5))) {
 		_musicEngine = new Player_V2(this, _midiDriver != MD_PCSPK);
 	} else if (_version > 2 && _heversion <= 60) {
-		MidiDriver *nativeMidiDriver = GameDetector::createMidi(_midiDriver);
+		MidiDriver *nativeMidiDriver = MidiDriver::createMidi(_midiDriver);
 		if (nativeMidiDriver != NULL && _native_mt32)
 			nativeMidiDriver->property (MidiDriver::PROP_CHANNEL_MASK, 0x03FE);
 		bool multi_midi = ConfMan.getBool("multi_midi") && _midiDriver != MD_NULL && (midi & MDT_ADLIB);

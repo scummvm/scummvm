@@ -28,7 +28,6 @@
 #include "base/version.h"
 
 #include "common/config-manager.h"
-#include "common/scaler.h"	// Only for gfx_modes
 
 #include "sound/mididrv.h"
 #include "sound/mixer.h"
@@ -314,7 +313,7 @@ void GameDetector::parseCommandLine(int argc, char **argv) {
 				// maybe print a message like:
 				// "'option' is not a supported music driver on this machine.
 				//  Available driver: ..."
-				if (parseMusicDriver(option) < 0)
+				if (MidiDriver::parseMusicDriver(option) < 0)
 					goto ShowHelpAndExit;
 				ConfMan.set("music_driver", option, kTransientDomain);
 			END_OPTION
@@ -505,54 +504,6 @@ bool GameDetector::detectGame() {
 	}
 }
 
-int GameDetector::detectMusicDriver(int midiFlags) {
-	int musicDriver = parseMusicDriver(ConfMan.get("music_driver"));
-	/* Use the adlib sound driver if auto mode is selected,
-	 * and the game is one of those that want adlib as
-	 * default, OR if the game is an older game that doesn't
-	 * support anything else anyway. */
-	if (musicDriver == MD_AUTO || musicDriver < 0) {
-		if (midiFlags & MDT_PREFER_NATIVE) {
-			if (musicDriver == MD_AUTO) {
-				#if defined (WIN32) && !defined(_WIN32_WCE)
-					musicDriver = MD_WINDOWS; // MD_WINDOWS is default MidiDriver on windows targets
-				#elif defined(MACOSX)
-					musicDriver = MD_COREAUDIO;
-				#elif defined(__PALM_OS__)	// must be before mac
-					musicDriver = MD_YPA1;	// TODO : cahnge this and use Zodiac driver when needed
-				#elif defined(__MORPHOS__)
-					musicDriver = MD_ETUDE;
-				#elif defined (_WIN32_WCE) || defined(UNIX) || defined(X11_BACKEND)
-					// Always use MIDI emulation via adlib driver on CE and UNIX device
-				
-					// TODO: We should, for the Unix targets, attempt to detect
-					// whether a sequencer is available, and use it instead.
-					musicDriver = MD_ADLIB;
-				#else
-					musicDriver = MD_NULL;
-				#endif
-			} else
-				musicDriver = MD_ADLIB;
-		} else
-			musicDriver = MD_TOWNS;
-	}
-	bool nativeMidiDriver =
-		(musicDriver != MD_NULL && musicDriver != MD_ADLIB &&
-		 musicDriver != MD_PCSPK && musicDriver != MD_PCJR &&
-		 musicDriver != MD_TOWNS);
-
-	if (nativeMidiDriver && !(midiFlags & MDT_NATIVE))
-		musicDriver = MD_TOWNS;
-	if (musicDriver == MD_TOWNS && !(midiFlags & MDT_TOWNS))
-		musicDriver = MD_ADLIB;
-	if (musicDriver == MD_ADLIB && !(midiFlags & MDT_ADLIB))
-		musicDriver = MD_PCJR;
-	if ((musicDriver == MD_PCSPK || musicDriver == MD_PCJR) && !(midiFlags & MDT_PCSPK))
-		musicDriver = MD_NULL;
-
-	return musicDriver;
-}
-
 bool GameDetector::detectMain() {
 	if (_targetName.isEmpty()) {
 		warning("No game was specified...");
@@ -587,55 +538,4 @@ Engine *GameDetector::createEngine(OSystem *sys) {
 
 SoundMixer *GameDetector::createMixer() {
 	return new SoundMixer();
-}
-
-MidiDriver *GameDetector::createMidi(int midiDriver) {
-	switch(midiDriver) {
-	case MD_NULL:      return MidiDriver_NULL_create();
-
-	// In the case of Adlib, we won't specify anything.
-	// IMuse is designed to set up its own Adlib driver
-	// if need be, and we only have to specify a native
-	// driver.
-	case MD_ADLIB:     return NULL;
-
-#ifdef USE_MT32EMU
-	case MD_MT32:      return MidiDriver_MT32_create(g_engine->_mixer);
-#endif
-
-	case MD_TOWNS:     return MidiDriver_YM2612_create(g_engine->_mixer);
-
-	// Right now PC Speaker and PCjr are handled
-	// outside the MidiDriver architecture, so
-	// don't create anything for now.
-	case MD_PCSPK:
-	case MD_PCJR:      return NULL;
-#if defined(__PALM_OS__)
-	case MD_YPA1:      return MidiDriver_YamahaPa1_create();
-#ifndef DISABLE_TAPWAVE
-	case MD_ZODIAC:    return MidiDriver_Zodiac_create();
-#endif
-#endif
-#if defined(WIN32) && !defined(_WIN32_WCE)
-	case MD_WINDOWS:   return MidiDriver_WIN_create();
-#endif
-#if defined(__MORPHOS__)
-	case MD_ETUDE:     return MidiDriver_ETUDE_create();
-#endif
-#if defined(UNIX) && !defined(__BEOS__) && !defined(MACOSX)
-	case MD_SEQ:       return MidiDriver_SEQ_create();
-#endif
-#if (defined(MACOSX) || defined(macintosh)) && !defined(__PALM_OS__)
-	case MD_QTMUSIC:   return MidiDriver_QT_create();
-#endif
-#if defined(MACOSX)
-	case MD_COREAUDIO: return MidiDriver_CORE_create();
-#endif
-#if defined(UNIX) && defined(USE_ALSA)
-	case MD_ALSA:      return MidiDriver_ALSA_create();
-#endif
-	}
-
-	error("Invalid midi driver selected");
-	return NULL;
 }

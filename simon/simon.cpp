@@ -678,10 +678,10 @@ int SimonEngine::init(GameDetector &detector) {
 	MidiDriver *driver = 0;
 	_midiDriver = MD_NULL;
 	if (_game == GAME_SIMON1AMIGA || _game == GAME_SIMON1CD32)
-		driver = GameDetector::createMidi(MD_NULL);	// Create fake MIDI driver for Simon1Amiga and Simon2CD32 for now
+		driver = MidiDriver::createMidi(MD_NULL);	// Create fake MIDI driver for Simon1Amiga and Simon2CD32 for now
 	else {
-		_midiDriver = GameDetector::detectMusicDriver(MDT_ADLIB | MDT_NATIVE);
-		driver = GameDetector::createMidi(_midiDriver);
+		_midiDriver = MidiDriver::detectMusicDriver(MDT_ADLIB | MDT_NATIVE);
+		driver = MidiDriver::createMidi(_midiDriver);
 	}
 	if (!driver)
 		driver = MidiDriver_ADLIB_create(_mixer);

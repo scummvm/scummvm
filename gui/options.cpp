@@ -112,11 +112,11 @@ void OptionsDialog::open() {
 
 	if (_multiMidiCheckbox) {
 		// Music driver
-		const MidiDriverDescription *md = getAvailableMidiDrivers();
+		const MidiDriverDescription *md = MidiDriver::getAvailableMidiDrivers();
 		int i = 0;
 		const int midiDriver =
 			ConfMan.hasKey("music_driver", _domain)
-				? parseMusicDriver(ConfMan.get("music_driver", _domain))
+				? MidiDriver::parseMusicDriver(ConfMan.get("music_driver", _domain))
 				: MD_AUTO;
 		while (md->name && md->id != midiDriver) {
 			i++;
@@ -190,7 +190,7 @@ void OptionsDialog::close() {
 				ConfMan.set("multi_midi", _multiMidiCheckbox->getState(), _domain);
 				ConfMan.set("native_mt32", _mt32Checkbox->getState(), _domain);
 				ConfMan.set("subtitles", _subCheckbox->getState(), _domain); 
-				const MidiDriverDescription *md = getAvailableMidiDrivers();
+				const MidiDriverDescription *md = MidiDriver::getAvailableMidiDrivers();
 				while (md->name && md->id != (int)_midiPopUp->getSelectedTag())
 					md++;
 				if (md->name)
@@ -315,7 +315,7 @@ int OptionsDialog::addMIDIControls(GuiObject *boss, int yoffset) {
 	yoffset += 16;
 	
 	// Populate it
-	const MidiDriverDescription *md = getAvailableMidiDrivers();
+	const MidiDriverDescription *md = MidiDriver::getAvailableMidiDrivers();
 	while (md->name) {
 		_midiPopUp->appendEntry(md->description, md->id);
 		md++;
