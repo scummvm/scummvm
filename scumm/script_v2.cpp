@@ -946,16 +946,16 @@ void Scumm_v2::o2_drawSentence() {
 }
 
 void Scumm_v2::o2_ifClassOfIs() {
-	int act = getVarOrDirectWord(0x80);
+	int obj = getVarOrDirectWord(0x80);
 	int clsop = getVarOrDirectByte(0x40);
 
-	if (getObjectIndex(act) == -1) {
+	if (getObjectIndex(obj) == -1) {
 		o5_jumpRelative();
 		return;
 	}
 
-	ObjectData *od = &_objs[getObjectIndex(act)];
-	byte cls = *(getResourceAddress(rtRoom, _currentRoom) + od->OBCDoffset + 10);
+	byte *obcd = getOBCDFromObject(obj);
+	byte cls = *(obcd + 6);
 	if ((cls & clsop) != clsop) {
 		o5_jumpRelative();
 		return;
