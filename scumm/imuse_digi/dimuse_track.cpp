@@ -33,6 +33,7 @@
 namespace Scumm {
 
 bool IMuseDigital::allocSlot(int priority) {
+	Common::StackLock lock(_mutex, "IMuseDigital::allocSlot()");
 	int l;
 	int lower_priority = 127;
 	bool found_free = false;
@@ -79,7 +80,6 @@ bool IMuseDigital::allocSlot(int priority) {
 }
 
 void IMuseDigital::startSound(int soundId, const char *soundName, int soundType, int volGroupId, AudioStream *input, int hookId, int volume, int priority) {
-	Common::StackLock lock(_mutex, "IMuseDigital::startSound()");
 	debug(5, "IMuseDigital::startSound(%d)", soundId);
 	int l;
 
