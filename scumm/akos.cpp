@@ -1106,7 +1106,7 @@ void AkosRenderer::akos16DecodeLine(byte *buf, int32 numbytes, int32 dir) {
 				} else {
 					AKOS16_FILL_BITS()
 					akos16.color = ((byte)akos16.bits) & akos16.mask;
-					AKOS16_EAT_BITS(akos16.shift)					
+					AKOS16_EAT_BITS(akos16.shift)
 					AKOS16_FILL_BITS()
 				}
 			} else {
@@ -1235,7 +1235,7 @@ void AkosRenderer::codec16() {
 */
 
 	// Modified by ludde
-	if (clip_left < 0) { 
+	if (clip_left < 0) {
 		skip_x = -clip_left;
 		clip_left = 0;
 	}

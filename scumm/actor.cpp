@@ -1029,14 +1029,20 @@ void Actor::drawActorCostume() {
 		ar.setPalette(palette);
 		ar.setFacing(this);
 
-		ar._dirty_id = number;
-
 		ar._draw_top = top = 0x7fffffff;
 		ar._draw_bottom = bottom = 0;
 
+		ar._dirty_id = number;
+
 		if (ar.drawCostume(cost)) {
-			// FIXME: this breaks talking in The Dig. But why?
+			// FIXME: this breaks talking in The Dig because the actor
+			// is redrawn too often, thus breaking the waitForActor opcode.
 			// Note that I originally added this to correct some redraw issues.
+			// A "better" implementation would work like the corresponding code
+			// for "old" costumes, that is, only trigger a redraw if the actor
+			// is partially hidden / offscreen... but I am not sure the original
+			// actually does this, so before we spend time on implementing this,
+			// we should first figure out what the original code does here...
 			//needBgReset = true;
 			//needRedraw = true;
 		}
