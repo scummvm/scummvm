@@ -23,6 +23,7 @@
 #include "scumm.h"
 #include "gui.h"
 #include "string.h"
+#include "sound.h"
 
 void Scumm::initRandSeeds() {
 	_randSeed1 = 0xA943DE35;
@@ -195,7 +196,7 @@ void Scumm::scummMain(int argc, char **argv) {
 	_minHeapThreshold = 400000;
 
 	_gameDataPath = NULL;
-        _gameTempo = 0;
+    _gameTempo = 0;
 
 	parseCommandLine(argc, argv);
 
@@ -423,15 +424,22 @@ void Scumm::parseCommandLine(int argc, char **argv) {
                 case 't':
                     _gameTempo = atoi(s+1);
                     goto NextArg;
+                case 'm': {
+					SoundEngine *se = (SoundEngine*)_soundEngine;
+					if (se) 
+						se->set_music_volume(atoi(s+1));
+                    goto NextArg;
+				}
 				default:
 ShowHelpAndExit:;
 					printf(
 						"ScummVM - Scumm Interpreter\n"
 						"Syntax:\n"
-						"\tscummvm [-b<num>] [-p path] game\n"
+						"\tscummvm [-b<num>] [-p path] [-f] [-m<num>] [-t<num>] game\n"
 						"Flags:\n"
+						"\tm<num> - Set music volume (0-100)\n"
+						"\tt<num> - Set music tempo (Default: 2031616)\n"
 						"\tb<num> - start in that room\n"
-                                                "\tt<num> - Set music tempo. Suggested: 1F0000\n"
 						"\tf - fullscreen mode\n");
 					exit(1);
 				}

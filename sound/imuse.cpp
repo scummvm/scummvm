@@ -627,9 +627,9 @@ int SoundEngine::set_music_volume(uint vol) {
 	if (vol > 100) 
 		vol = 100;
 
-	if (vol < 1);
+	if (vol < 1)
 		vol = 1;
-
+	
 	_music_volume = vol;
 	return 0;
 }
@@ -923,7 +923,7 @@ int SoundEngine::initialize(Scumm *scumm, SoundDriver *driver) {
 	_driver = (SOUND_DRIVER_TYPE*)driver;
 
 	_master_volume = 127;
-	_music_volume = 60;
+	if (_music_volume < 1) _music_volume = 60;
 
 	for (i=0; i!=8; i++)
 		_channel_volume[i] = _channel_volume_eff[i] = _volchan_table[i] = 127;

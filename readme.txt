@@ -85,7 +85,8 @@ Command Line Options:
 
 	-p <path> - path to where the game is installed
 	-b<num>   - start in that room
-	-t<num>   - Set music tempo. Suggested: 1F0000
+	-m<num>	  - set the music volume, 0-100. default is '60'.
+	-t<num>   - set music tempo.			 default: 2031616
 	-f        - fullscreen mode
 
 In game Keys:
