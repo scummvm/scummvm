@@ -171,8 +171,8 @@ public:
 	virtual void show_overlay() = 0;
 	virtual void hide_overlay() = 0;
 	virtual void clear_overlay() = 0;
-	virtual void grab_overlay(int16 *buf, int pitch) = 0;
-	virtual void copy_rect_overlay(const int16 *buf, int pitch, int x, int y, int w, int h) = 0;
+	virtual void grab_overlay(NewGuiColor *buf, int pitch) = 0;
+	virtual void copy_rect_overlay(const NewGuiColor *buf, int pitch, int x, int y, int w, int h) = 0;
 
 	// Low-level graphics access
 	virtual int16 get_height() {return 200;}
@@ -180,10 +180,10 @@ public:
 
 	// Methods that convert RGB to/from colors suitable for the overlay.
 	// Default implementation assumes 565 mode.
-	virtual int16 RGBToColor(uint8 r, uint8 g, uint8 b) {
+	virtual NewGuiColor RGBToColor(uint8 r, uint8 g, uint8 b) {
 		return ((((r >> 3) & 0x1F) << 11) | (((g >> 2) & 0x3F) << 5) | ((b >> 3) & 0x1F));
 	}
-	virtual void colorToRGB(int16 color, uint8 &r, uint8 &g, uint8 &b) {
+	virtual void colorToRGB(NewGuiColor color, uint8 &r, uint8 &g, uint8 &b) {
 		r = (((color >> 11) & 0x1F) << 3);
 		g = (((color >> 5) & 0x3F) << 2);
 		b = ((color&0x1F) << 3);
