@@ -520,7 +520,7 @@ void SkyScreen::sortSprites(void) {
 		if (spriteCnt > 1) { // bubble sort
 			for (uint32 cnt1 = 0; cnt1 < spriteCnt - 1; cnt1++)
 				for (uint32 cnt2 = cnt1 + 1; cnt2 < spriteCnt; cnt2++)
-					if (sortList[cnt1].yCood >= sortList[cnt2].yCood) {
+					if (sortList[cnt1].yCood > sortList[cnt2].yCood) {
 						StSortList tmp;
 						tmp.yCood = sortList[cnt1].yCood;
 						tmp.sprite = sortList[cnt1].sprite;
