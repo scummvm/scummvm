@@ -86,9 +86,6 @@ int Scumm::checkMouseOver(int x, int y) {
 
 	vs = &_verbs[i];
 	do {
-                if (_features & GF_OLD256)
-			vs->saveid = 0;
-
 		if (vs->curmode!=1 || !vs->verbid || vs->saveid ||
 			y < vs->y || y >= vs->bottom)
 				continue;
@@ -255,7 +252,7 @@ void Scumm::killVerb(int slot) {
 
 	nukeResource(rtVerb, slot);
 
-	if (vs->saveid==0) {
+	if (vs->saveid==0){
 		drawVerb(slot, 0);
 		verbMouseOver(0);
 	}
