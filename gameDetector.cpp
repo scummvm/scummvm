@@ -23,9 +23,10 @@
 
 #include "stdafx.h"
 #include "scumm.h"
-#include "mididrv.h"
+#include "sound/mididrv.h"
+#include "sound/imuse.h"
 #include "gameDetector.h"
-#include "imuse.h"
+
 
 
 static const char USAGE_STRING[] = 

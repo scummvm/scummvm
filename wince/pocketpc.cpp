@@ -23,7 +23,7 @@
 #include "scumm.h"
 #include "screen.h"
 #include "gui.h"
-#include "mididrv.h"
+#include "sound/mididrv.h"
 #include "gameDetector.h"
 #include "simon/simon.h"
 #include "gapi_keys.h"

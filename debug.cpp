@@ -43,7 +43,7 @@ enum {
 	CMD_LOAD_ROOM,
 	CMD_DUMPBOX,
 	CMD_VAR,
-	CMD_WATCH,
+	CMD_WATCH,	
 	CMD_EXIT
 };
 
@@ -152,6 +152,7 @@ bool ScummDebugger::do_command()
 			printf("Var[%d] = %d\n", var, _s->readVar(var));
 		}
 		return true;
+
 	case CMD_WATCH:
 		if (!_parameters[0]) {
 			printf("Clearing all watches..\n");

@@ -21,10 +21,10 @@
 
 #include "stdafx.h"
 #include "scumm.h"
-#include "mididrv.h"
+#include "sound/mididrv.h"
+#include "sound/imuse.h"
 #include "gui.h"
 #include "guimaps.h"
-#include "imuse.h"
 
 #ifdef _WIN32_WCE
 // Additional variables for Win32 specific GUI

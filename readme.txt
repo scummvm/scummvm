@@ -20,7 +20,7 @@ that saved games can, and probably will, be incompatible between releases.
 Also ScummVM is capable of playing several non-SCUMM games, at the moment
 this includes Simon The Sorcerer.
 
-If you enjoy ScummVM feel free to donates using the PayPal button on the
+If you enjoy ScummVM feel free to donate using the PayPal button on the
 ScummVM homepage.
 
 
@@ -92,12 +92,8 @@ listed here, nor in the compatibility table on the website, please see below.
 
        Sam and Max:
                 - Subgames are not fully functional.
-                - Game may freeze if you look at the Dragon Heart, or trip
-                  an alarm, at Bumpusville
                 - Some overlap may occur in graphics, expecially the intro
-                - Music does not work in adlib mode, use midi
-                - The dark-light torch does not work in the Tunnel of Love.
-                  You'll have to guess where to throw :)
+                - Music isn't perfect. Some overlap may occur
 
        Loom (256 Talkie):
                 - CD music and voices are not totally syncronised
@@ -141,50 +137,44 @@ found in the 'tools' CVS module, or in the 'scummvm-tools' package.
 
 	Microsoft Visual C++:
 	* Open the workspace, scummwm.dsw
-	* If you want to compile the GDI version, remove sdl.cpp from the
-	  project and add windows.cpp. for the SDL version, remove
-	  windows.cpp from the project and add sdl.cpp.
 	* Enter the path to the SDL include files in Tools|Options|Directories
 	* Now it should compile successfully.
 
         BeOS:
         * Open the 'scummvm.proj' file in BeIDE. Compile as normal.
 
-      
+        PocketPC - Windows CE:
+        * Download the SDLAudio library:
+          http://arisme.free.fr/PocketScumm/sources/SDLAudio-1.2.3-src.zip
+        * Open and compile the SDLAudio WCEBuild/WCEBuild workspace in EVC++
+        * Open the ScummVM wince/PocketScumm workspace
+        * Enter the SDLAudio directory to your includes path
+        * Enter the compiled SDLAudio.lib to your link libraries list
+        * Now it should compile successfully
+
+
 Running:
 --------
 
 Before you run the engine, you need to put the game's datafiles in a
 directory. The filenames must be in lowercase on *nix systems
 (monkey2.000 and monkey2.001). If you use a game with speech, the file
-monster.sou must reside in the same directory as scummvm.
+monster.sou must reside in the same directory as the datafiles.
 
-You can either place the scummvm executable in directory in your path,
-or place it one dir up from the games install dir.
-Here is a good example installation directory structure.
-
-<root>/Games/LucasArts/
-|
-+-- scummvm
-|
-+-- momkey/
-|
-+-- samnmax/
-
-In this installation, <root> is either C: for Windows user, or /usr/
-for *nix systems. To run Monkey Island from this install as a Windows user
-you would make a shortcut with this command:
+For example, to run a copy of Monkey Island installed in C:\Games\LucasArts
+under Windows, you would make a shortcut calling this command:
 
   C:\Games\LucasArts\scummvm.exe -f -pC:\Games\LucasArts\monkey\ monkey
 
-Or, if you have, for example, Full Throttle on CD, and you CD drive is D:,
+Or, if you have, for example, Full Throttle on CD, and your CD drive is D:,
 and you wish to disable subtitles and run in fullscreen:
 
   C:\Games\LucasArts\scummvm.exe -f -n -pD:\resource\ ft
 
 The short game name you see at the end of the command line is very
-important. You can get the current list of games and game names at:
-http://scummvm.sourceforge.net/compatibility.php
+important. A short list is contained at the top of this file. You can also
+get the current list of games and game names at:
+        http://scummvm.sourceforge.net/compatibility.php
 
 For the adventurous, who like to live on the edge... you can download daily
 builds of Win32, Redhat, Debian and other packages here:
@@ -209,7 +199,7 @@ Command Line Options:
 	-f        - Full-screen mode.
         -n        - Disable subtitles. Use with games that have voice.
         -r        - Enable Roland conversion. Try if music sounds incorrect.
-
+        -a        - Enable amiga pal conversion, for playing Amiga versions
 
 In game Hot Keys:
 -----------------

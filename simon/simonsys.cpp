@@ -23,7 +23,7 @@
 #include "stdafx.h"
 #include "scummsys.h"
 #include "system.h"
-#include "mixer.h"
+#include "../sound/mixer.h"
 #include "simon.h"
 
 #include <stdarg.h>

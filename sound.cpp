@@ -22,8 +22,8 @@
 
 #include "stdafx.h"
 #include "scumm.h"
-#include "mididrv.h"
-#include "imuse.h"
+#include "sound/mididrv.h"
+#include "sound/imuse.h"
 
 #ifdef _WIN32_WCE
 extern void *bsearch(const void *, const void *, size_t,
