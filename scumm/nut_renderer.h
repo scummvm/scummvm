@@ -1,5 +1,4 @@
 /* ScummVM - Scumm Interpreter
- * Copyright (C) 2001  Ludvig Strigeus
  * Copyright (C) 2001/2002 The ScummVM project
  *
  * This program is free software; you can redistribute it and/or
@@ -24,8 +23,11 @@
 
 #include "common/file.h"
 
+class Scumm;
+
 class NutRenderer {
 private:
+	Scumm *_vm;
 	int32 _offsets[256];
 	byte _tmpCodecBuffer[2000];
 	byte *_dataSrc;
@@ -37,13 +39,13 @@ private:
 	void decodeCodec44(byte *dst, byte *src, uint32 length);
 
 public:
-	NutRenderer();
+	NutRenderer(Scumm *vm);
 	~NutRenderer();
 
 	void bindDisplay(byte *dst, int32 width, int32 height, int32 pitch);
-	bool loadFont(char *filename, char *dir);
+	bool loadFont(const char *filename, const char *dir);
 	void drawChar(char c, int32 x, int32 y, byte color);
-	void drawString(char *string, int32 x, int32 y, byte color, int32 mode);
+	void drawString(const char *string, int32 x, int32 y, byte color, int32 mode);
 	int32 getCharWidth(char c);
 	int32 getCharHeight(char c);
 	int32 getStringWidth(char *string);

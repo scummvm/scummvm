@@ -331,7 +331,7 @@ void Scumm::drawDirtyScreenParts()
 		_system->copy_rect(src, _realWidth, 0, vs->topline, _realWidth, vs->height - _screenTop);
 
 		for (i = 0; i < gdi._numStrips; i++) {
-			vs->tdirty[i] = (byte)vs->height;
+			vs->tdirty[i] = vs->height;
 			vs->bdirty[i] = 0;
 		}
 	}
@@ -372,9 +372,9 @@ void Gdi::updateDirtyScreen(VirtScreen *vs)
 	
 			if (bottom) {
 				top = vs->tdirty[i];
-				vs->tdirty[i] = (byte)vs->height;
+				vs->tdirty[i] = vs->height;
 				vs->bdirty[i] = 0;
-				if (i != (_numStrips - 1) && vs->bdirty[i + 1] == (byte)bottom && vs->tdirty[i + 1] == (byte)top) {
+				if (i != (_numStrips - 1) && vs->bdirty[i + 1] == bottom && vs->tdirty[i + 1] == top) {
 					// Simple optimizations: if two or more neighbouring strips form one bigger rectangle,
 					// blit them all at once.
 					w += 8;

@@ -38,17 +38,17 @@
 
 // FIXME: Move this somewhere better :)
 void Scumm_v8::loadCharset(int charset) {
-	char fontname[255];
+	char fontname[256];
 	sprintf(fontname, "resource/font%d.nut", charset);
 	warning("Loading charset %s\n", fontname);
-	_fr[charset] = new NutRenderer;
-	if (!(_fr[charset]->loadFont(fontname, (char*)getGameDataPath()))) {
+	_fr[charset] = new NutRenderer(this);
+	if (!(_fr[charset]->loadFont(fontname, getGameDataPath()))) {
 		delete _fr[charset];
 		_fr[charset] = NULL;
 		return;
 	}
 
-	_fr[charset]->bindDisplay((byte*)virtscr[0].screenPtr, (int32)_realWidth, (int32)_realHeight, (int32)_realWidth);
+	_fr[charset]->bindDisplay(virtscr[0].screenPtr, _realWidth, _realHeight, _realWidth);
 }
 
 void Scumm_v8::setupOpcodes()

@@ -1,5 +1,4 @@
 /* ScummVM - Scumm Interpreter
- * Copyright (C) 2001  Ludvig Strigeus
  * Copyright (C) 2001/2002 The ScummVM project
  *
  * This program is free software; you can redistribute it and/or
@@ -20,10 +19,11 @@
  */
 
 #include "stdafx.h"
-#include "engine.h"
+#include "scumm.h"
 #include "nut_renderer.h"
 
-NutRenderer::NutRenderer() {
+NutRenderer::NutRenderer(Scumm *vm) {
+	_vm = vm;
 	_initialized = false;
 	_loaded = false;
 	_dataSrc = NULL;
@@ -81,7 +81,7 @@ void NutRenderer::bindDisplay(byte *dst, int32 width, int32 height, int32 pitch)
 	_initialized = true;
 }
 
-bool NutRenderer::loadFont(char *filename, char *dir) {
+bool NutRenderer::loadFont(const char *filename, const char *dir) {
 	debug(2,  "NutRenderer::loadFont() called");
 	if (_loaded == true) {
 		debug(2, "NutRenderer::loadFont() Font already loaded, ok, loading...");
@@ -177,31 +177,37 @@ int32 NutRenderer::getStringWidth(char *string) {
 	return length;
 }
 
-void NutRenderer::drawString(char *string, int32 x, int32 y, byte color, int32 mode) {
-	debug(2,  "NutRenderer::getDrawString() called");
+void NutRenderer::drawString(const char *string, int32 x, int32 y, byte color, int32 mode) {
+	debug(2,  "NutRenderer::drawString() called");
 	if (_loaded == false) {
-		debug(2, "NutRenderer::getDrawString() Font is not loaded");
+		debug(2, "NutRenderer::drawString() Font is not loaded");
 		return;
 	}
 
-	int32 l = 0;
+	int l = 0;
+	int left = x;
+	int height = 0, tmp;
 	do {
 		if ((x < 0) || (y < 0) || (x > _dstWidth) || (y > _dstHeight)) {
-			debug(2, "NutRenderer::getDrawString() position x, y out of range");
+			debug(2, "NutRenderer::drawString() position x, y out of range");
 			return;
 		}
 
 		drawChar(string[l], x, y, color);
 		x += getCharWidth(string[l]);
+		tmp = getCharHeight(string[l]);
+		if (height < tmp)
+			height = tmp;
 		l++;
 	} while (string[l] != 0);
 
+	_vm->updateDirtyRect(0, left, x, y, y + height, 0);
 }
 
 void NutRenderer::drawChar(char c, int32 x, int32 y, byte color) {
-	debug(2,  "NutRenderer::getDrawChar() called");
+	debug(2,  "NutRenderer::drawChar('%c', %d, %d, %d) called", c, x, y, (int)color);
 	if (_loaded == false) {
-		debug(2, "NutRenderer::getDrawChar() Font is not loaded");
+		debug(2, "NutRenderer::drawChar() Font is not loaded");
 		return;
 	}
 
@@ -231,6 +237,5 @@ void NutRenderer::drawChar(char c, int32 x, int32 y, byte color) {
 			}
 		}
 	}
-
 }
 
