@@ -1,4 +1,5 @@
-/* Copyright (C) 1994-2005 Revolution Software Ltd
+/* Copyright (C) 1994-1998 Revolution Software Ltd.
+ * Copyright (C) 2003-2005 The ScummVM project
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
