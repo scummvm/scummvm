@@ -168,13 +168,11 @@ void QueenEngine::initialise(void) {
 	_input = new Input(_resource->getLanguage(), _system);
 	_logic = new Logic(this);
 
-	int midiDriver = GameDetector::detectMusicDriver(MDT_NATIVE | MDT_ADLIB | MDT_PREFER_NATIVE);
-	if (midiDriver == MD_ADLIB) {
-		warning("Adlib music not supported, please use native MIDI if possible");
-		midiDriver = MD_NULL;
-	}
-
-	_music = new Music(GameDetector::createMidi(midiDriver), this);
+	MidiDriver *driver = GameDetector::createMidi(GameDetector::detectMusicDriver(MDT_NATIVE | MDT_ADLIB | MDT_PREFER_NATIVE));
+	if (!driver)
+		driver = MidiDriver_ADLIB_create(_mixer);
+	
+	_music = new Music(driver, this);
 	_sound = Sound::giveSound(_mixer, this, _resource->compression());
 	_walk = new Walk(this);
 	_timer->installTimerProc(&timerHandler, 1000000 / 50, this); //call 50 times per second
