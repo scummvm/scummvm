@@ -44,7 +44,7 @@ void Widget::draw()
 	_y += _boss->_y;
 
 	// Clear background (unless alpha blending is enabled)
-	if (_flags & WIDGET_CLEARBG && !_boss->_screenBuf)
+	if (_flags & WIDGET_CLEARBG)
 		gui->fillRect(_x, _y, _w, _h, gui->_bgcolor);
 
 	// Draw border
@@ -74,37 +74,37 @@ void Widget::draw()
 
 
 StaticTextWidget::StaticTextWidget(Dialog *boss, int x, int y, int w, int h, const char *text)
-	: Widget (boss, x, y, w, h), _text(0)
+	: Widget (boss, x, y, w, h), _label(0)
 {
 	_type = kStaticTextWidget;
-	setText(text);
+	setLabel(text);
 }
 
 StaticTextWidget::~StaticTextWidget()
 {
-	if (_text) {
-		free(_text);
-		_text = 0;
+	if (_label) {
+		free(_label);
+		_label = 0;
 	}
 }
 
-void StaticTextWidget::setText(const char *text)
+void StaticTextWidget::setLabel(const char *label)
 {
-	// Free old text if any
-	if (_text)
-		free(_text);
+	// Free old label if any
+	if (_label)
+		free(_label);
 
-	// Duplicate new text
-	if (text)
-		_text = strdup(text);
+	// Duplicate new label
+	if (label)
+		_label = strdup(label);
 	else
-		_text = 0;
+		_label = 0;
 }
 
 void StaticTextWidget::drawWidget(bool hilite)
 {
 	NewGui *gui = _boss->getGui();
-	gui->drawString(_text, _x, _y, _w, hilite ? gui->_textcolorhi : gui->_textcolor);
+	gui->drawString(_label, _x, _y, _w, hilite ? gui->_textcolorhi : gui->_textcolor);
 }
 
 
@@ -112,18 +112,26 @@ void StaticTextWidget::drawWidget(bool hilite)
 
 
 ButtonWidget::ButtonWidget(Dialog *boss, int x, int y, int w, int h, const char *label, uint32 cmd, uint8 hotkey)
-	: StaticTextWidget(boss, x, y, w, h, label), _cmd(cmd), _hotkey(hotkey)
+	: StaticTextWidget(boss, x, y, w, h, label), CommandSender(boss), _cmd(cmd), _hotkey(hotkey)
 {
+	assert(label);
 	_flags = WIDGET_ENABLED | WIDGET_BORDER | WIDGET_CLEARBG ;
 	_type = kButtonWidget;
 }
 
-void ButtonWidget::handleClick(int button)
+ButtonWidget::~ButtonWidget()
 {
-	if (_flags & WIDGET_ENABLED && _cmd)
-		_boss->handleCommand(_cmd);
+	if (_label) {
+		free(_label);
+		_label = 0;
+	}
 }
 
+void ButtonWidget::handleClick(int x, int y, int button)
+{
+	if (_flags & WIDGET_ENABLED)
+		sendCommand(_cmd, 0);
+}
 
 #pragma mark -
 
@@ -147,13 +155,12 @@ CheckboxWidget::CheckboxWidget(Dialog *boss, int x, int y, int w, int h, const c
 	_type = kCheckboxWidget;
 }
 
-void CheckboxWidget::handleClick(int button)
+void CheckboxWidget::handleClick(int x, int y, int button)
 {
 	if (_flags & WIDGET_ENABLED) {
 		_state = !_state;
 		draw();
-		if (_cmd)
-			_boss->handleCommand(_cmd);
+		sendCommand(_cmd, 0);
 	}
 }
 
@@ -171,7 +178,7 @@ void CheckboxWidget::drawWidget(bool hilite)
 		gui->fillRect(_x + 2, _y + 2, 10, 10, gui->_bgcolor);
 	
 	// Finally draw the label
-	gui->drawString(_text, _x + 20, _y + 3, _w, gui->_textcolor);
+	gui->drawString(_label, _x + 20, _y + 3, _w, gui->_textcolor);
 }
 
 #pragma mark -

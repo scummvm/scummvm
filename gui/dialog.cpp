@@ -84,7 +84,7 @@ void Dialog::handleClick(int x, int y, int button)
 {
 	Widget *w = findWidget(x - _x, y - _y);
 	if (w)
-		w->handleClick(button);
+		w->handleClick(x - _x - w->_x, y - _y - w->_y, button);
 }
 
 void Dialog::handleKey(char key, int modifiers)
@@ -98,7 +98,7 @@ void Dialog::handleKey(char key, int modifiers)
 	key = toupper(key);
 	while (w) {
 		if (w->_type == kButtonWidget && key == toupper(((ButtonWidget *)w)->_hotkey)) {
-			w->handleClick(1);
+			w->handleClick(0, 0, 1);
 			break;
 		}
 		w = w->_next;
@@ -130,7 +130,7 @@ void Dialog::handleMouseMoved(int x, int y, int button)
 }
 
 
-void Dialog::handleCommand(uint32 cmd)
+void Dialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data)
 {
 	switch (cmd) {
 	case kCloseCmd:
@@ -205,10 +205,10 @@ SaveLoadDialog::SaveLoadDialog(NewGui *gui)
 	new SliderWidget(this, 110, 20, 80, 16, "Volume", 0);
 	
 	// FIXME - test
-	new ListWidget(this, 10, 40, 180, 70);
+	new ListWidget(this, 10, 40, 180, 74);
 }
 
-void SaveLoadDialog::handleCommand(uint32 cmd)
+void SaveLoadDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data)
 {
 	switch (cmd) {
 	case kSaveCmd:
@@ -225,7 +225,7 @@ void SaveLoadDialog::handleCommand(uint32 cmd)
 		exit(1);
 		break;
 	default:
-		Dialog::handleCommand(cmd);
+		Dialog::handleCommand(sender, cmd, data);
 	}
 }
 
@@ -249,7 +249,7 @@ OptionsDialog::OptionsDialog(NewGui *gui)
 	addButton(150, 35, 40, 15, CUSTOM_STRING(23), kCloseCmd, 'C');	// Close dialog - FIXME
 }
 
-void OptionsDialog::handleCommand(uint32 cmd)
+void OptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data)
 {
 	switch (cmd) {
 	case kSoundCmd:
@@ -262,7 +262,7 @@ void OptionsDialog::handleCommand(uint32 cmd)
 	case kMiscCmd:
 		break;
 	default:
-		Dialog::handleCommand(cmd);
+		Dialog::handleCommand(sender, cmd, data);
 	}
 }
 

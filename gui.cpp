@@ -908,11 +908,12 @@ const char *Gui::queryString(int stringno, int id)
 
 	result = (char *)_s->getStringAddress(string);
 
-	if (!result)									// Gracelessly degrade to english :)
+	if (!result) {									// Gracelessly degrade to english :)
 		if (_s->_features & GF_AFTER_V6)
 			return string_map_table_v6[stringno - 1].string;
 		else
 			return string_map_table_v5[stringno - 1].string;
+	}
 
 	return result;
 }

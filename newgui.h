@@ -102,6 +102,7 @@ public:
 	void line(int x, int y, int x2, int y2, byte color);
 	void blendRect(int x, int y, int w, int h, byte color);
 	void fillRect(int x, int y, int w, int h, byte color);
+	void checkerRect(int x, int y, int w, int h, byte color);
 	void frameRect(int x, int y, int w, int h, byte color);
 	void addDirtyRect(int x, int y, int w, int h);
 	void drawChar(const char c, int x, int y);

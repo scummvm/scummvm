@@ -20,20 +20,19 @@
 
 #include "stdafx.h"
 #include "ListWidget.h"
+#include "ScrollBarWidget.h"
 #include "dialog.h"
 #include "newgui.h"
 
 
 /*
- * Some thoughts:
- * - We should split out the scrollbar into a seperate widget. This will
- *   simplify the drawing & mouse handling considerably, but also requires
- *   us to come up with a way to couple both widgets (shouldn't be to hard)
- * - Write a class to encapsulate the data instead of using std::list<string>.
- *   How exactly this will look and what it does has yet to be determined.
+ * TODO:
  * - The handleKey method of widgets is currently never called, code for that has
  *   to be added to dialog.cpp
- * - ...
+ * - Once the above item is done, implement scrolling using arrow keys,
+ *   pageup/pagedown, home/end keys etc.
+ * - Allow user to select an entry w/ the mouse
+ * - Implement editing of the selected string in a generic fashion
  */
 
 
@@ -41,85 +40,87 @@
 #define	LINE_HEIGHT		10
 
 
-// Up/down arrow for the scrollbar
-static uint32 up_arrow[8] = {
-	0x00000000,
-	0x00000000,
-	0x00001000,
-	0x00001000,
-	0x00011100,
-	0x00011100,
-	0x00110110,
-	0x00100010,
-};
-
-static uint32 down_arrow[8] = {
-	0x00000000,
-	0x00000000,
-	0x00100010,
-	0x00110110,
-	0x00011100,
-	0x00011100,
-	0x00001000,
-	0x00001000,
-};
-
 ListWidget::ListWidget(Dialog *boss, int x, int y, int w, int h)
-	: Widget(boss, x, y, w, h)
+	: Widget(boss, x, y, w - SCROLLBAR_WIDTH, h)
 {
-	_flags = WIDGET_ENABLED | WIDGET_TRACK_MOUSE | WIDGET_CLEARBG;
+	_flags = WIDGET_ENABLED | WIDGET_CLEARBG;
 	_type = kListWidget;
+	_numberingMode = kListNumberingOne;
+	_entriesPerPage = (_h - 4) / LINE_HEIGHT;
+	_currentPos = 3;
+	
+	_scrollBar = new ScrollBarWidget(boss, _x + _w, _y, SCROLLBAR_WIDTH, _h);
+	_scrollBar->setTarget(this);
+	
+	// FIXME - fill in dummy data for now
+	_list.push_back("A simple game?");
+	_list.push_back("This space for rent!");
+	_list.push_back("To be or not to be...");
+	_list.push_back("It's not easy come up with dummy text :-)");
+	_list.push_back("Foo bar baz");
+	_list.push_back("Empty slots follow:");
+	_list.push_back("");
+	_list.push_back("");
+	_list.push_back("Now again a filled slot");
+	_list.push_back("We need some more text!");
+	_list.push_back("Because only this way...");
+	_list.push_back("...can you see the scrollbar...");
+	_list.push_back("...and verify that it works!");
+	_list.push_back("One");
+	_list.push_back("Two");
+	_list.push_back("Three");
+	_list.push_back("Four");
+	_list.push_back("The End");
+
+
+	_scrollBar->_numEntries = _list.size();
+	_scrollBar->_entriesPerPage = _entriesPerPage;
+	_scrollBar->_currentPos = _currentPos;
+	_scrollBar->recalc();
 }
 
 ListWidget::~ListWidget()
 {
 }
 
-void ListWidget::handleClick(int button)
+void ListWidget::handleClick(int x, int y, int button)
 {
 	if (_flags & WIDGET_ENABLED) {
 	}
 }
 
-void ListWidget::handleMouseMoved(int x, int y, int state)
-{
-}
-
-
 void ListWidget::handleKey(char key, int modifiers)
 {
 }
 
+void ListWidget::handleCommand(CommandSender *sender, uint32 cmd, uint32 data)
+{
+	switch (cmd) {
+	case kSetPositionCmd:
+		if (_currentPos != data) {
+			_currentPos = data;
+			draw();
+		}
+		break;
+	}
+}
+
 void ListWidget::drawWidget(bool hilite)
 {
-	NewGui *gui = _boss->getGui();
-	int		rightX = _x + _w - 1;
-	int		leftX = rightX - 8;
-	int		bottomY = _y + _h;
-	
-	gui->frameRect(leftX, _y, 9, _h, gui->_shadowcolor);
-	
-	// Up arrow
-	gui->fillRect(leftX, _y, 9, 10, gui->_bgcolor);
-	gui->frameRect(leftX, _y, 9, 10, gui->_color);
-	gui->drawBitmap(up_arrow, leftX, _y, gui->_textcolor);
+	NewGui	*gui = _boss->getGui();
+	int		i, pos;
+	String	buffer;
 
-	// Down arrow
-	gui->fillRect(leftX, bottomY - 9, 9, 10, gui->_bgcolor);
-	gui->frameRect(leftX, bottomY - 9, 9, 10, gui->_color);
-	gui->drawBitmap(down_arrow, leftX, bottomY - 9, gui->_textcolor);
-
-	// Slider
-	// FIXME - determine slider position and size. This depends on:
-	// * the number of entries/page
-	// * total number of entries
-	// * current scroll position (i.e. idx of "first" visible entry
-	gui->fillRect(leftX, _y+20, 9, 4, gui->_textcolor);
-	gui->frameRect(leftX, _y+20, 9, 4, gui->_color);
-	
-	// Now draw the list items
+	// Draw the list items
 	// FIXME - this is just a temporary demo hack
-	gui->drawString("1. A simple game", _x+1, _y+1, _w - 10, gui->_textcolor);
-	gui->drawString("2. This space for rent", _x+1, _y+1 + LINE_HEIGHT, _w - 10, gui->_textcolorhi);
-	gui->drawString("3. To be or not to be", _x+1, _y+1 + LINE_HEIGHT*2, _w - 10, gui->_textcolor);
+	for (i = 0, pos = _currentPos; i < _entriesPerPage; i++, pos++) {
+		if (_numberingMode == kListNumberingZero || _numberingMode == kListNumberingOne) {
+			char temp[10];
+			sprintf(temp, "%2d. ", (pos + _numberingMode));
+			buffer = temp;
+		} else
+			buffer = "";
+		buffer += _list[pos];
+		gui->drawString(buffer, _x+5, _y+2 + LINE_HEIGHT * i, _w - 10, gui->_textcolor);
+	}
 }

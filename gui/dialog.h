@@ -22,9 +22,8 @@
 #define DIALOG_H
 
 #include "scummsys.h"
+#include "widget.h"
 
-
-class Widget;
 class NewGui;
 
 #define RES_STRING(id)		_gui->queryResString(id)
@@ -35,7 +34,7 @@ enum {
 	kCloseCmd = 'clos'
 };
 
-class Dialog {
+class Dialog : public CommandReceiver {
 	friend class Widget;
 protected:
 	NewGui	*_gui;
@@ -57,7 +56,7 @@ public:
 	virtual void handleClick(int x, int y, int button);
 	virtual void handleKey(char key, int modifiers); // modifiers = alt/shift/ctrl etc.
 	virtual void handleMouseMoved(int x, int y, int button);
-	virtual void handleCommand(uint32 cmd);
+	virtual void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);
 	
 	NewGui	*getGui()	{ return _gui; }
 	
@@ -77,7 +76,7 @@ class SaveLoadDialog : public Dialog {
 public:
 	SaveLoadDialog(NewGui *gui);
 
-	virtual void handleCommand(uint32 cmd);
+	virtual void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);
 };
 
 
@@ -94,7 +93,7 @@ protected:
 public:
 	OptionsDialog(NewGui *gui);
 
-	virtual void handleCommand(uint32 cmd);
+	virtual void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);
 };
 
 class PauseDialog : public Dialog {

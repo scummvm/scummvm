@@ -23,65 +23,10 @@
 #include "newgui.h"
 #include "guimaps.h"
 #include "gui/dialog.h"
-
-// 8-bit alpha blending routines
-int BlendCache[256][256];
-
-int RGBMatch(byte *palette, int r, int g, int b) {
-	int i, bestidx = 0, besterr = 0xFFFFFF;
-	int error = 0;
-
-	for (i = 0;i < 256;i++) {
-		byte *pal = palette + (i * 3);
-		int r_diff = r - (int)*pal++; 
-		int g_diff = g - (int)*pal++; 
-		int b_diff = b - (int)*pal++; 
-		r_diff *= r_diff; g_diff *= g_diff; b_diff *= b_diff;
-
-		error = r_diff + g_diff + b_diff;
-		if (error < besterr) {
-			besterr = error;
-			bestidx = i;
-		}
-	}
-	return bestidx;
-}
-
-int Blend(int src, int dst, byte *palette) {
-	int r, g, b;
-	int alpha = 128;	// Level of transparency [0-256]
-	byte *srcpal = palette + (dst  * 3);
-	byte *dstpal = palette + (src * 3);
-
-	if (BlendCache[dst][src] > -1)
-		return BlendCache[dst][src];
-
-	r =  (*srcpal++ * alpha);
-    r += (*dstpal++ * (256-alpha));
-    r /= 256;
-
-    g =  (*srcpal++ * alpha);
-    g += (*dstpal++ * (256-alpha));
-    g /= 256;
-
-    b =  (*srcpal++ * alpha);
-    b += (*dstpal++  * (256-alpha));
-    b /= 256;
-       
-	return (BlendCache[dst][src] = RGBMatch(palette, r , g , b ));
-}
-
-void ClearBlendCache(byte *palette, int weight) {
-	for (int i = 0; i < 256; i++)
-		for (int j = 0 ; j < 256 ; j++)			
-//			BlendCache[i][j] = i;	// No alphablending
-//			BlendCache[i][j] = j;	// 100% translucent
-			BlendCache[i][j] = -1;	// Enable alphablending
-}
+#include "gui/util.h"
 
 /*
  * TODO list
- * - keep a copy of the original game background, for alpha/moving
  * - implement the missing / incomplete dialogs
  * - add more widgets
  * - add support for right/center aligned text
@@ -352,6 +297,21 @@ void NewGui::fillRect(int x, int y, int w, int h, byte color)
 	while (h--) {
 		for (int i = 0; i < w; i++) {
 			ptr[i] = color;
+		}
+		ptr += 320;
+	}
+}
+
+void NewGui::checkerRect(int x, int y, int w, int h, byte color)
+{
+	byte *ptr = getBasePtr(x, y);
+	if (ptr == NULL)
+		return;
+
+	while (h--) {
+		for (int i = 0; i < w; i++) {
+			if ((h ^ i) & 1)
+				ptr[i] = color;
 		}
 		ptr += 320;
 	}

@@ -18,44 +18,48 @@
  * $Header$
  */
 
-#ifndef LISTWIDGET_H
-#define LISTWIDGET_H
+#ifndef SCROLLBARWIDGET_H
+#define SCROLLBARWIDGET_H
 
 #include "widget.h"
-#include "util.h"
 
-class ScrollBarWidget;
+#define SCROLLBAR_WIDTH	9
 
 enum {
-	kListNumberingOff	= -1,
-	kListNumberingZero	= 0,
-	kListNumberingOne	= 1
+	kSetPositionCmd		= 'SETP'
 };
 
-/* ListWidget */
-class ListWidget : public Widget, public CommandReceiver {
+
+class ScrollBarWidget : public Widget, public CommandSender {
 protected:
-	StringList		_list;
-	bool			_editable;
-	int				_numberingMode;
-	int				_currentPos;
-	int				_entriesPerPage;
-	ScrollBarWidget	*_scrollBar;
+	enum {
+		kNoPart,
+		kUpArrowPart,
+		kDownArrowPart,
+		kSliderPart,
+		kPageUpPart,
+		kPageDownPart
+	}		_part;
+	int		_sliderHeight;
+	int		_sliderPos;
 public:
-	ListWidget(Dialog *boss, int x, int y, int w, int h);
-	virtual ~ListWidget();
-	
-	void setList(const StringList& list)	{ _list = list; }
-	const StringList& getList()	const		{ return _list; }
-	
-	void setNumberingMode(int numberingMode)	{ _numberingMode = numberingMode; }
-	
-	virtual void handleClick(int x, int y, int button);
-	virtual void handleKey(char key, int modifiers);
-	virtual void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);
+	int		_numEntries;
+	int		_entriesPerPage;
+	int		_currentPos;
+public:
+	ScrollBarWidget(Dialog *boss, int x, int y, int w, int h);
+//	virtual ~ScrollBarWidget();
+
+	void handleClick(int x, int y, int button);
+	void handleMouseMoved(int x, int y, int button);
+	void handleMouseEntered(int button)	{ setFlags(WIDGET_HILITED); }
+	void handleMouseLeft(int button)	{ clearFlags(WIDGET_HILITED); _part = kNoPart; draw(); }
+
+	void recalc();
 
 protected:
 	void drawWidget(bool hilite);
 };
+
 
 #endif
