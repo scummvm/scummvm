@@ -549,7 +549,7 @@ void ScummEngine_v6he::o6_roomOps() {
 
 void ScummEngine_v6he::o6_actorOps() {
 	Actor *a;
-	int i, j, k, l;
+	int i, j, k;
 	int args[8];
 	byte b;
 	byte name[256];
@@ -571,18 +571,18 @@ void ScummEngine_v6he::o6_actorOps() {
 		break;
 	case 30:
 		// _heversion >= 70
-		l = pop();
-		k = pop();
-		j = pop();
-		i = pop();
+		_actorClipBottom = pop();
+		_actorClipRight = pop();
+		_actorClipTop = pop();
+		_actorClipLeft = pop();
 		warning("o6_actorOps: stub case %d", b);
 		break;
 	case 64:
 		// _heversion >= 72
-		l = pop();
-		k = pop();
-		j = pop();
-		i = pop();
+		_actorClipBottom = pop();
+		_actorClipRight = pop();
+		_actorClipTop = pop();
+		_actorClipLeft = pop();
 		warning("o6_actorOps: stub case %d", b);
 		break;
 	case 76:		// SO_COSTUME
@@ -720,12 +720,16 @@ void ScummEngine_v6he::o6_actorOps() {
 		break;
 	case 225:
 		{
-		byte string[256];
+		byte string[128];
 		copyScriptString(string);
-		_actorToPrintStrFor = pop();
-		_string[0].loadDefault();
-		actorTalk(string);
-		warning("o6_actorOps: stub case %d", b);
+		int slot = pop();
+
+		int len = resStrLen(string) + 1;
+		addMessageToStack(string, _queueTalkString[slot], len);
+
+		_queueTalkPosX[slot] = a->talkPosX;
+		_queueTalkPosY[slot] = a->talkPosY;
+		_queueTalkColor[slot] = a->talkColor;
 		break;
 		}
 	default:
@@ -790,7 +794,7 @@ void ScummEngine_v6he::o6_kernelSetFunctions() {
 		//Used before mini games in 3DO versions, seems safe to ignore.
 		break;
 	default:
-		warning("o6_kernelSetFunctions: default case %d (param count %d)", args[0], num);
+		error("o6_kernelSetFunctions: default case %d (param count %d)", args[0], num);
 		break;
 	}
 }
@@ -860,7 +864,6 @@ void ScummEngine_v6he::o6_kernelGetFunctions() {
 	case 1:
 		// Used to store images when decorating cake in
 		// Fatty Bear's Birthday Surprise
-		// XXX gdi_virtScreen = 0;
 		writeVar(0, 0);
 		defineArray(0, kByteArray, 0, virtScreenSave(0, args[1], args[2], args[3], args[4]));
 		retval = readVar(0);
@@ -869,7 +872,7 @@ void ScummEngine_v6he::o6_kernelGetFunctions() {
 		push(retval);
 		break;
 	default:
-		warning("o6_kernelGetFunctions: default case %d", args[0]);
+		error("o6_kernelGetFunctions: default case %d", args[0]);
 	}
 }
 
@@ -1215,7 +1218,7 @@ void ScummEngine_v6he::o6_redimArray() {
 		redimArray(fetchScriptWord(), newX, newY, kByteArray);
 		break;
 	default:
-		break;
+		error("o6_redimArray: default type %d", subcode);
 	}
 }
 

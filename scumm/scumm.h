@@ -844,6 +844,16 @@ public:
 	int16 _queueParam2[32];
 	int16 _queuePos;
 
+	int16 _queueTalkPosX[16];
+	int16 _queueTalkPosY[16];
+	int16 _queueTalkColor[16];
+	byte _queueTalkString[16][128];
+
+	int _actorClipTop;
+	int _actorClipBottom;
+	int _actorClipLeft;
+	int _actorClipRight;
+
 	bool akos_increaseAnims(const byte *akos, Actor *a);
 	bool akos_increaseAnim(Actor *a, int i, const byte *aksq, const uint16 *akfo, int numakfo);
 	void akos_queCommand(byte cmd, Actor *a, int param_1, int param_2);

@@ -383,11 +383,8 @@ const char *ScummEngine_v7he::getOpcodeDesc(byte i) {
 byte ScummEngine_v7he::stringLen(byte *ptr) {
 	byte len;
 	byte c;
-	if (!ptr) {
-		//ptr = _someGlobalPtr;
+	if (!ptr)
 		error("ScummEngine_v7he::stringLen(): zero ptr. Undimplemented behaviour");
-		return 1;
-	}
 
 	len = 0;
 	c = *ptr++;
@@ -409,13 +406,12 @@ byte ScummEngine_v7he::stringLen(byte *ptr) {
 
 int ScummEngine_v7he::getCharsetOffset(int letter) {
 	int offset, result;
-	int id = _charset->getCurID();
 
-	byte *ptr = getResourceAddress(rtCharset, id);
+	byte *ptr = getResourceAddress(rtCharset, _string[0]._default.charset);
 	if (!ptr)
-		error("getCharsetOffset: charset %d not found!", id);
+		error("getCharsetOffset: charset %d not found!", _string[0]._default.charset);
 
-	offset = READ_LE_UINT32(ptr + 29 + letter + 4);
+	offset = READ_LE_UINT32(ptr + 29 + letter);
 	if (offset == 0)
 		return 0;
 
@@ -673,7 +669,6 @@ void ScummEngine_v7he::o7_resourceRoutines() {
 	case 122:
 	case 123:
 	case 203:
-	case 239:
 		debug(5,"stub queueload (%d) resource %d", op, pop());
 		break;
 	case 159:
@@ -701,7 +696,7 @@ void ScummEngine_v7he::o7_resourceRoutines() {
 		debug(5,"stub o7_resourceRoutines unlock object %d", resid);
 		break;
 	default:
-		error("o7_resourceRoutines: default case %d", op);
+		warning("o7_resourceRoutines: default case %d", op);
 	}
 }
 
@@ -750,9 +745,10 @@ void ScummEngine_v7he::o7_unknownED() {
 	}
 
 	writeVar(0, array);
-	while (len >= pos) {
+	while (pos <= len) {
 		letter = readArray(0, 0, pos);
-		result += getCharsetOffset(letter);
+		if (letter)
+			result += getCharsetOffset(letter);
 		pos++;
 	}
 
@@ -828,6 +824,7 @@ void ScummEngine_v7he::o7_unknownEF() {
 
 	size = len - b + 2;
 
+	writeVar(0, 0);
 	defineArray(0, kStringArray, 0, size);
 	writeArray(0, 0, 0, 0);
 
@@ -863,14 +860,22 @@ void ScummEngine_v7he::o7_readINI() {
 	int len;
 	int type;
 	int retval;
+	byte option[256];
 
 	// we pretend that we don't have .ini file
+	addMessageToStack(_scriptPointer, option, sizeof(option));
 	len = resStrLen(_scriptPointer);
 	_scriptPointer += len + 1;
+
 	type = pop();
 	switch (type) {
 	case 1: // number
-		push(0);
+		if (!strcmp((char *)option, "ReadPagesAutomatically"))
+			push(1);
+		else if (!strcmp((char *)option, "NoPrinting"))
+			push(1);
+		else
+			push(0);
 		break;
 	case 2: // string
 		defineArray(0, kStringArray, 0, 0);
@@ -879,38 +884,34 @@ void ScummEngine_v7he::o7_readINI() {
 		push(retval); // var ID string
 		break;
 	default:
-		warning("o7_readINI(%d): read-ini string not implemented", type);
+		error("o7_readINI: default type %d", type);
 	}
 }
 
 void ScummEngine_v7he::o7_writeINI() {
-	int a, b;
-	byte filename1[256], filename2[256];
+	int type, value;
+	byte option[256], option2[256];
 	int len;
 	
-	b = pop();
-	a = pop();
+	type = pop();
+	value = pop();
 
-	switch (b) {
-	case 1:
-		addMessageToStack(_scriptPointer, filename1, sizeof(filename1));
+	addMessageToStack(_scriptPointer, option, sizeof(option));
+	len = resStrLen(_scriptPointer);
+	_scriptPointer += len + 1;
 
-		len = resStrLen(_scriptPointer);
-		_scriptPointer += len + 1;
-		debug(1, "o7_writeINI(%d, %d, \"%s\")", a, b, filename1);
+	switch (type) {
+	case 1: // number
+		debug(1, "o7_writeINI: %s set to %d", option, value);
 		break;
-	case 2:
-		addMessageToStack(_scriptPointer, filename1, sizeof(filename1));
-
+	case 2: // string
+		addMessageToStack(_scriptPointer, option2, sizeof(option2));
 		len = resStrLen(_scriptPointer);
 		_scriptPointer += len + 1;
-
-		addMessageToStack(_scriptPointer, filename2, sizeof(filename2));
-
-		len = resStrLen(_scriptPointer);
-		_scriptPointer += len + 1;
-		debug(1, "o7_writeINI(%d, %d, \"%s\", \"%s\")", a, b, filename1, filename2);
+		debug(1, "o7_writeINI: %s set to %s", option, option2);
 		break;
+	default:
+		error("o7_writeINI: default type %d", type);
 	}
 }
 
@@ -924,7 +925,7 @@ void ScummEngine_v7he::o7_unknownF5() {
 	len = resStrLen(getStringAddress(array));
 	writeVar(0, array);
 
-	while (len < pos) {
+	while (pos < len) {
 		letter = readArray(0, 0, pos);
 		result += getCharsetOffset(letter);
 		if (result >= ebx)
@@ -1028,10 +1029,13 @@ void ScummEngine_v7he::o7_unknownFB() {
 }
 
 void ScummEngine_v7he::o7_unknownFC() {
-	int a = pop();
-	int b = pop();
-	debug(1,"o7_unknownFC (%d, %d) stub", b, a);
-	push(1);
+	// Checks virtual mouse x/y co-ordinates when in verb/inventory area
+	// Maybe checks for polygons ?
+	int y = pop();
+	int x = pop();
+
+	push(0);
+	debug(1,"o7_unknownFC (x %d, y %d) stub", x, y);
 }
 
 } // End of namespace Scumm

@@ -352,7 +352,7 @@ void ScummEngine_v72he::setupOpcodes() {
 		OPCODE(o72_readINI),
 		/* F4 */
 		OPCODE(o72_writeINI),
-		OPCODE(o6_invalid),
+		OPCODE(o72_unknownF5),
 		OPCODE(o72_unknownF6),
 		OPCODE(o6_invalid),
 		/* F8 */
@@ -752,7 +752,7 @@ void ScummEngine_v72he::o72_drawObject() {
 		x = pop();
 		break;
 	default:
-		warning("o72_drawObject: default case %d", subOp);
+		error("o72_drawObject: default case %d", subOp);
 	}
 
 	int object = pop();
@@ -782,19 +782,21 @@ void ScummEngine_v72he::o72_getArrayDimSize() {
 	ArrayHeader *ah;
 
 	switch (subOp) {
-		case 1:
-		case 3:
-			ah = (ArrayHeader *)getResourceAddress(rtString, readVar(fetchScriptWord()));
-			val1 = FROM_LE_32(ah->dim1end);
-			val2 = FROM_LE_32(ah->dim1start);
-			push(val1 - val2 + 1);
-			break;
-		case 2:
-			ah = (ArrayHeader *)getResourceAddress(rtString, readVar(fetchScriptWord()));
-			val1 = FROM_LE_32(ah->dim2end);
-			val2 = FROM_LE_32(ah->dim2start);
-			push(val1 - val2 + 1);
-			break;
+	case 1:
+	case 3:
+		ah = (ArrayHeader *)getResourceAddress(rtString, readVar(fetchScriptWord()));
+		val1 = FROM_LE_32(ah->dim1end);
+		val2 = FROM_LE_32(ah->dim1start);
+		push(val1 - val2 + 1);
+		break;
+	case 2:
+		ah = (ArrayHeader *)getResourceAddress(rtString, readVar(fetchScriptWord()));
+		val1 = FROM_LE_32(ah->dim2end);
+		val2 = FROM_LE_32(ah->dim2start);
+		push(val1 - val2 + 1);
+		break;
+	default:
+		error("o72_getArrayDimSize: default case %d", subOp);
 	}
 }
 
@@ -825,24 +827,21 @@ void ScummEngine_v72he::o72_pickupObject() {
 
 void ScummEngine_v72he::o72_arrayOps() {
 	byte subOp = fetchScriptByte();
-	int array = 0;
+	int array = fetchScriptWord();
 	int b, c, d, len;
 	ArrayHeader *ah;
 	int list[128];
 
 	switch (subOp) {
 	case 7:			// SO_ASSIGN_STRING
-		array = fetchScriptWord();
 		ah = defineArray(array, kStringArray, 0, 0, 0, 1024);
 		copyScriptString(ah->data);
 		break;
 	case 194:			// SO_ASSIGN_STRING
-		array = fetchScriptWord();
 		ah = defineArray(array, kStringArray, 0, 0, 0, 4096);
 		decodeScriptString(ah->data);
 		break;
 	case 208:		// SO_ASSIGN_INT_LIST
-		array = fetchScriptWord();
 		b = pop();
 		c = pop();
 		d = readVar(array);
@@ -854,7 +853,6 @@ void ScummEngine_v72he::o72_arrayOps() {
 		}
 		break;
 	case 212:		// SO_ASSIGN_2DIM_LIST
-		array = fetchScriptWord();
 		len = getStackList(list, ARRAYSIZE(list));
 		d = readVar(array);
 		if (d == 0)
@@ -969,7 +967,7 @@ void ScummEngine_v72he::drawWizImage(int restype, int resnum, int x1, int y1, in
 		}
 		Common::Rect rScreen(0, 0, pvs->w, pvs->h);
 		if (flags & 2) {			
-//			warning("unhandled Wiz image w/ rmap");
+			warning("unhandled Wiz image w/ rmap");
 		} else {
 			copyWizImage(dst, wizd, pvs->w, pvs->h, x1, y1, width, height, &rScreen);
 		}
@@ -1099,7 +1097,7 @@ void ScummEngine_v72he::o72_openFile() {
 	byte filename[100];
 
 	mode = pop();
-	copyScriptString(filename, true);
+	copyScriptString(filename);
 	debug(1,"File %s", filename);
 	
 	for (r = strlen((char*)filename); r != 0; r--) {
@@ -1172,10 +1170,9 @@ void ScummEngine_v72he::o72_readFile() {
 		push(val);
 		break;
 	default:
-		error("default case %d", subOp);
+		error("o72_readFile: default case %d", subOp);
 	}
 	debug(1, "o72_readFile: slot %d, subOp %d val %d", slot, subOp, val);
-
 }
 
 void ScummEngine_v72he::writeFileFromArray(int slot, int resID) {
@@ -1205,8 +1202,9 @@ void ScummEngine_v72he::o72_writeFile() {
 		writeFileFromArray(slot, resID);
 		break;
 	default:
-		error("default case %d", subOp);
+		error("o72_writeFile: default case %d", subOp);
 	}
+	debug(1, "o72_writeFile: slot %d, subOp %d", slot, subOp);
 }
 
 void ScummEngine_v72he::o72_findAllObjects() {
@@ -1228,17 +1226,11 @@ void ScummEngine_v72he::o72_findAllObjects() {
 }
 
 void ScummEngine_v72he::o72_deleteFile() {
-	int r;
 	byte filename[100];
 
 	copyScriptString(filename);
 
-	for (r = strlen((char*)filename); r != 0; r--) {
-		if (filename[r - 1] == '\\')
-			break;
-	}
-
-	debug(1, "stub o72_deleteFile(\"%s\")", filename + r);
+	debug(1, "stub o72_deleteFile(%s)", filename);
 }
 
 void ScummEngine_v72he::o72_getPixel() {
@@ -1326,7 +1318,7 @@ void ScummEngine_v72he::o72_redimArray() {
 		redimArray(fetchScriptWord(), 0, newX, 0, newY, kDwordArray);
 		break;
 	default:
-		break;
+		error("o72_redimArray: default type %d", subcode);
 	}
 }
 
@@ -1377,7 +1369,7 @@ void ScummEngine_v72he::o72_unknownED() {
 	}
 
 	writeVar(0, array);
-	while (len >= pos) {
+	while (len <= pos) {
 		letter = readArray(0, 0, pos);
 		if (letter)
 			result += getCharsetOffset(letter);
@@ -1398,6 +1390,7 @@ void ScummEngine_v72he::o72_unknownEF() {
 
 	size = len - b + 2;
 
+	writeVar(0, 0);
 	defineArray(0, kStringArray, 0, 0, 0, size);
 	writeArray(0, 0, 0, 0);
 
@@ -1437,16 +1430,21 @@ void ScummEngine_v72he::o72_unknownF1() {
 }
 
 void ScummEngine_v72he::o72_readINI() {
-	byte name[100];
-	int type;
-	int retval;
+	byte option[100];
+	int type, retval;
 
 	// we pretend that we don't have .ini file
-	copyScriptString(name);
+	copyScriptString(option);
 	type = fetchScriptByte();
+
 	switch (type) {
 	case 6: // number
-		push(0);
+		if (!strcmp((char *)option, "ReadPagesAutomatically"))
+			push(1);
+		else if (!strcmp((char *)option, "NoPrinting"))
+			push(1);
+		else
+			push(0);
 		break;
 	case 7: // string
 		defineArray(0, kStringArray, 0, 0, 0, 0);
@@ -1455,29 +1453,52 @@ void ScummEngine_v72he::o72_readINI() {
 		push(retval); // var ID string
 		break;
 	default:
-		warning("o72_readINI( read-ini string not implemented", type);
+		error("o72_readINI: default type %d", type);
 	}
-	debug(1, "o72_readINI (%d) %s", type, name);
+	debug(1, "o72_readINI (%d) %s", type, option);
 }
 
 void ScummEngine_v72he::o72_writeINI() {
-	byte b;
-	byte name[256], name2[1024];
+	int type, value;
+	byte option[256], option2[1024];
 
-	b = fetchScriptByte();
+	type = fetchScriptByte();
+	copyScriptString(option);
 
-	switch (b) {
-	case 6:
-		pop();
-		copyScriptString(name);
+	switch (type) {
+	case 6: // number
+		value = pop();
 		break;
-		debug(1,"o72_writeINI stub (%s)", name);
-	case 7:
-		copyScriptString(name2);
-		copyScriptString(name);
-		debug(1,"o72_writeINI stub (%s, %s)", name, name2);
+		debug(1,"o72_writeINI: %s set to %d", option, value);
+	case 7: // string
+		copyScriptString(option2);
+		debug(1,"o72_writeINI: %s set to %s", option, option2);
 		break;
+	default:
+		error("o72_writeINI: default type %d", type);
 	}
+}
+
+void ScummEngine_v72he::o72_unknownF5() {
+	int letter, ebx;
+	int array, len, pos, result = 0;
+	ebx = pop();
+	pos = pop();
+	array = pop();
+
+	len = resStrLen(getStringAddress(array));
+	writeVar(0, array);
+
+	while (pos < len) {
+		letter = readArray(0, 0, pos);
+		result += getCharsetOffset(letter);
+		if (result >= ebx)
+			break;
+		pos++;
+	}
+
+	push(result);
+	debug(1,"stub o72_unknownF5 (%d)", result);
 }
 
 void ScummEngine_v72he::o72_unknownF6() {
@@ -1525,14 +1546,14 @@ void ScummEngine_v72he::o72_unknownF8() {
 	int a = fetchScriptByte();
 	push(1);
 
-	warning("stub o72_unknownF8(%d)", a);
+	debug(1,"stub o72_unknownF8(%d)", a);
 }
 
 void ScummEngine_v72he::o72_unknownF9() {
 	// File related
-	//byte name[100];
-	//copyScriptString(name);
-	//debug(1,"o72_unknownF9: %s", name);
+	//byte filename[100];
+	//copyScriptString(filename);
+	//debug(1,"o72_unknownF9: %s", filename);
 }
 
 void ScummEngine_v72he::o72_unknownFA() {

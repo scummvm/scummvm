@@ -2945,11 +2945,11 @@ void ScummEngine_v6::o6_stopTalking() {
 }
 
 void ScummEngine_v6::o6_findAllObjects() {
-	int a = pop();
+	int room = pop();
 	int i = 1;
 
-	if (a != _currentRoom)
-		warning("o6_findAllObjects: current room is not %d", a);
+	if (room != _currentRoom)
+		warning("o6_findAllObjects: current room is not %d", room);
 	writeVar(0, 0);
 	defineArray(0, kIntArray, 0, _numLocalObjects + 1);
 	writeArray(0, 0, 0, _numLocalObjects);

@@ -746,6 +746,7 @@ protected:
 	void o72_readINI();
 	void o72_writeINI();
 	void o72_unknownF4();
+	void o72_unknownF5();
 	void o72_unknownF6();
 	void o72_unknownF8();
 	void o72_unknownF9();

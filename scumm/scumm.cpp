@@ -654,6 +654,11 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 	_2byteFontPtr = 0;
 	_V1_talkingActor = 0;
 
+	_actorClipTop = 0;
+	_actorClipBottom = 479;
+	_actorClipLeft = 0;
+	_actorClipRight = 639;
+
 	_skipDrawObject = 0;
 	_skipProcessActors = 0;
 	_heSndSoundId = 0;
@@ -668,6 +673,11 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 	memset(_queueParam1, 0, sizeof(_queueParam1));
 	memset(_queueParam2, 0, sizeof(_queueParam2));
 	_queuePos = 0;
+
+	memset(_queueTalkPosX, 0, sizeof(_queueTalkPosX));
+	memset(_queueTalkPosY, 0, sizeof(_queueTalkPosY));
+	memset(_queueTalkColor, 0, sizeof(_queueTalkColor));
+	memset(_queueTalkString, 0, sizeof(_queueTalkString));
 
 	//
 	// Init all VARS to 0xFF

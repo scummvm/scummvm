@@ -739,8 +739,16 @@ byte AkosRenderer::codec1(int xmoveCur, int ymoveCur) {
 	v1.skip_width = _width;
 	v1.scaleXstep = _mirror ? 1 : -1;
 
-	if (_clipOverride.bottom)
-		rect.bottom = _clipOverride.bottom;
+	if (_vm->_heversion >= 71) {
+		if (rect.top < _clipOverride.top)
+			rect.top = _clipOverride.top;
+		if (rect.bottom > _clipOverride.bottom)
+			rect.bottom = _clipOverride.bottom;
+		if (rect.left < _clipOverride.left)
+			rect.left = _clipOverride.left;
+		if (rect.right > _clipOverride.right)
+			rect.right = _clipOverride.right;
+	}
 
 	if (_actorHitMode) {
 		if (_actorHitX < rect.left || _actorHitX >= rect.right || _actorHitY < rect.top || _actorHitY >= rect.bottom)
@@ -1012,8 +1020,16 @@ byte AkosRenderer::codec16(int xmoveCur, int ymoveCur) {
 	maxw = _outwidth;
 	maxh = _outheight;
 
-	if (_clipOverride.bottom)
-		clip.bottom = _clipOverride.bottom;
+	if (_vm->_heversion >= 71) {
+		if (clip.top < _clipOverride.top)
+			clip.top = _clipOverride.top;
+		if (clip.bottom > _clipOverride.bottom)
+			clip.bottom = _clipOverride.bottom;
+		if (clip.left < _clipOverride.left)
+			clip.left = _clipOverride.left;
+		if (clip.right > _clipOverride.right)
+			clip.right = _clipOverride.right;
+	}
 
 	_vm->markRectAsDirty(kMainVirtScreen, clip, _actorID);
 
@@ -1363,7 +1379,7 @@ bool ScummEngine::akos_increaseAnim(Actor *a, int chan, const byte *aksq, const 
 				flag_value = true;
 			continue;
 		case AKC_C0A0:
-			//akos_queCommand(8, a, GB(2), 0);
+			akos_queCommand(8, a, GB(2), 0);
 			continue;
 		case AKC_C0A1:
 			if (a->talking) {
@@ -1378,7 +1394,7 @@ bool ScummEngine::akos_increaseAnim(Actor *a, int chan, const byte *aksq, const 
 			}
 			continue;
 		case AKC_C0A3:
-			//akos_queCommand(8, a, a->getAnimVar(GB(2), 0);
+			akos_queCommand(8, a, a->getAnimVar(GB(2)), 0);
 			continue;
 		case AKC_C016:
 			if (_sound->isSoundRunning( a->sound[a->getAnimVar(GB(4))]))  {
@@ -1481,7 +1497,17 @@ void ScummEngine::akos_processQueue() {
 			}
 			break;
 		case 8:
-			if (param_1 != 0) {
+			if (_heversion >= 71) {
+				_actorToPrintStrFor = a->number;
+
+				a->talkPosX = _queueTalkPosX[param_1];
+				a->talkPosY = _queueTalkPosY[param_1];
+				a->talkColor = _queueTalkColor[param_1];
+
+				_string[0].loadDefault();
+				actorTalk(_queueTalkString[param_1]);
+
+			} else if (param_1 != 0) {
 				if (_imuseDigital) {
 					_imuseDigital->setPan(param_1, param_2);
 				}
