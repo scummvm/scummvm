@@ -3,10 +3,10 @@ For a more comprehensive changelog for the latest experimental CVS code, see:
 
 0.5.3(CVS) (2003-??-??)
 - Added Broken Sword 2 engine
-- Added option to choose between Adlib, PCJr and PC Speaker in earlier games.
+- Added option to choose between Adlib, PCjr and PC Speaker in earlier games.
 - Added Adlib support for indy3ega and loom (ega)
 - Added sound effects support for indy3/monkeyega/monkeyvga/pass
-- Classic V1 versions of Maniac Mansion and Zak McKracken are now completable
+- Classic V1 versions of Maniac Mansion and Zak McKracken are now supported and completable
 - Rewrote sound mixer, and several iMUSE bugs fixed
 - Adlib GM emulation table revamped, providing more accurate software MIDI
 - Added full and partial sound looping to Zak McKracken FmTowns
