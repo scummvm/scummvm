@@ -43,8 +43,44 @@ BrowserDialog::~BrowserDialog() {
 	CFRelease(_titleRef);
 }
 
+static void myNavEventProc(NavEventCallbackMessage message, NavCBRecPtr callBackParms, void * callBackUD) {
+	switch (message) {
+	case kNavCBStart: {
+		// Force the window to be in the shielding window level -- this way 
+		// it's visible even in fullscreen mode.
+		// Some glitches remain:
+		// - Need to center the nav dialog over the game window
+		// - In fullscreen mode, the game window won't be redrawn while the nav
+		//   dialog is up, since our event loop won't run.
+		// - It will not work well if you try to use it in 320x200 fullscreen mode.
+		//   Not that I have found any machine which actually supports that :-).
+		WindowGroupRef group;
+		OSStatus err;
+		err = CreateWindowGroup(0, &group);
+		SetWindowGroupLevel(group, CGShieldingWindowLevel());
+		err = SetWindowGroup(callBackParms->window, group);
+		break; }
+	case kNavCBTerminate: {
+		WindowGroupRef group;
+		OSStatus err;
+		
+		group = GetWindowGroup(callBackParms->window);
+		err = ReleaseWindowGroup(group);
+		break; }
+	case kNavCBEvent: {
+		// TODO: here we could try to redraw the ScummVM window.
+		// This will probably require direct interfacing with the (SDL) backend
+		// and/or with Cocoa.
+		break; }
+	}
+	
+}
+
+static NavEventUPP myNavEventUPP = NewNavEventUPP((NavEventProcPtr)myNavEventProc);
+
 int BrowserDialog::runModal() {
 	NavDialogRef dialogRef;
+	WindowRef windowRef = 0;
 	NavDialogCreationOptions options;
 	NavUserAction result;
 	NavReplyRecord reply;
@@ -59,11 +95,13 @@ int BrowserDialog::runModal() {
 	err = NavGetDefaultDialogCreationOptions(&options);
 	assert(err == noErr);
 	options.windowTitle = _titleRef;
-	options.message = CFSTR("Select your game directory");
+//	options.message = CFSTR("Select your game directory");
 	options.modality = kWindowModalityAppModal;
 	
-	err = NavCreateChooseFolderDialog(&options, 0, 0, 0, &dialogRef);
+	err = NavCreateChooseFolderDialog(&options, myNavEventUPP, 0, g_system, &dialogRef);
 	assert(err == noErr);
+	
+	windowRef = NavDialogGetWindow(dialogRef);
 	
 	err = NavDialogRun(dialogRef);
 	assert(err == noErr);
