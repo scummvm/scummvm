@@ -552,7 +552,6 @@ int Script::SF_sceneEq(SCRIPTFUNC_PARAMS) {
 	return SUCCESS;
 }
 
-
 // Script function #32 (0x20)
 int Script::SF_dropObject(SCRIPTFUNC_PARAMS) {
 	SDataWord_T obj_param = thread->pop();
@@ -915,10 +914,7 @@ int Script::SF_waitWalk(SCRIPTFUNC_PARAMS) {
 
 // Script function #54 (0x36)
 int Script::SF_sceneID(SCRIPTFUNC_PARAMS) {
-	for (int i = 0; i < nArgs; i++)
-		thread->pop();
-
-	debug(1, "stub: SF_sceneID(), %d args", nArgs);
+	thread->retVal = _vm->_scene->currentSceneNumber();
 	return SUCCESS;
 }
 
