@@ -208,7 +208,6 @@ void Gdi::drawStripToScreen(VirtScreen * vs, int x, int w, int t, int b)
 {
 	byte *ptr;
 	int scrollY;
-	int width = w;
 	int height;
 
 	height = b - t;

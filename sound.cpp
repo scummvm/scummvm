@@ -145,7 +145,7 @@ void Scumm::processSfxQueues()
 		act = _vars[VAR_TALK_ACTOR];
 		if (_talkChannel < 0)
 			finished = false;
-		else if (this->_mixer->_channels[_talkChannel] == NULL)
+		else if (_mixer->_channels[_talkChannel] == NULL)
 			finished = true;
 		else
 			finished = false;
@@ -707,8 +707,6 @@ int Scumm::getCachedTrack(int track) {
 	fseek(file, 0, SEEK_END);
 	_mp3_size[current_index] = ftell(file);
 	_mp3_tracks[current_index] = file;
-	if (!_mp3_buffer)
-		_mp3_buffer = malloc(MP3_BUFFER_SIZE);
 	
 	return current_index;
 
@@ -729,7 +727,7 @@ int Scumm::playMP3CDTrack(int track, int num_loops, int start, int delay) {
 		return 0;
 
 	if (!num_loops && !start) {
-		_mixer->stop(_mp3_handle);
+		_mixer->stop(_mp3_index);
 		return 0;
 	}
 
@@ -751,7 +749,7 @@ int Scumm::playMP3CDTrack(int track, int num_loops, int start, int delay) {
 	// Go
 	fseek(_mp3_tracks[index], offset, SEEK_SET);
 
-	_mixer->play_mp3_cdtrack(&_mp3_handle, _mp3_tracks[index], _mp3_buffer, MP3_BUFFER_SIZE, duration);
+	_mp3_index = _mixer->play_mp3_cdtrack(NULL, _mp3_index, _mp3_tracks[index], duration);
 	return 0;
 }
 

@@ -742,15 +742,15 @@ void AdvMame2x(uint8 *srcPtr, uint32 srcPitch, uint8 *null, uint8 *dstPtr, uint3
 
 	for(int j = 0; j < height; ++j) {
 		for(int i = 0; i < width; ++i) {
-			short A = *(p + i - nextlineSrc - 1);
+			// short A = *(p + i - nextlineSrc - 1);
 			short B = *(p + i - nextlineSrc);
-			short C = *(p + i - nextlineSrc + 1);
+			// short C = *(p + i - nextlineSrc + 1);
 			short D = *(p + i - 1);
 			short E = *(p + i );
 			short F = *(p + i + 1);
-			short G = *(p + i + nextlineSrc - 1);
+			// short G = *(p + i + nextlineSrc - 1);
 			short H = *(p + i + nextlineSrc);
-			short I = *(p + i + nextlineSrc + 1);
+			// short I = *(p + i + nextlineSrc + 1);
 
 			*(q + (i << 1)) = D == B && B != F && D != H ? D : E;
 			*(q + (i << 1) + 1) = B == F && B != D && F != H ? F : E;

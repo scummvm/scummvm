@@ -64,10 +64,10 @@ int SoundMixer::play_raw(PlayingSoundHandle *handle, void *sound, uint32 size, u
 int SoundMixer::play_mp3(PlayingSoundHandle *handle, void *sound, uint32 size, byte flags) {
 	return insert(handle, new Channel_MP3(this, sound, size, flags));
 }
-void SoundMixer::play_mp3_cdtrack(PlayingSoundHandle *handle, FILE* file, void *buffer, uint32 buffer_size, mad_timer_t duration) {
-	if (*handle)
-		stop(*handle);
-	insert(handle, new Channel_MP3_CDMUSIC(this, file, buffer, buffer_size, duration));
+int SoundMixer::play_mp3_cdtrack(PlayingSoundHandle *handle, int index, FILE* file, mad_timer_t duration) {
+	/* Stop the previously playing CD track (if any) */
+	stop(index);
+	return insert(handle, new Channel_MP3_CDMUSIC(this, file, duration));
 }
 #endif
 
@@ -113,6 +113,10 @@ void SoundMixer::stop(PlayingSoundHandle psh) {
 		_channels[psh-1]->destroy();
 }
 
+void SoundMixer::stop(int index) {
+	if (_channels[index])
+		_channels[index]->destroy();
+}
 
 bool SoundMixer::has_active_channel() {
 	for(int i=0; i!=NUM_CHANNELS; i++)
@@ -327,15 +331,15 @@ void SoundMixer::Channel_MP3::real_destroy() {
 }
 
 /* MP3 CD music */
+#define MP3CD_BUFFERING_SIZE 131072
 
-SoundMixer::Channel_MP3_CDMUSIC::Channel_MP3_CDMUSIC(SoundMixer *mixer, FILE* file, void *buffer, uint32 buffer_size, mad_timer_t duration) {
+SoundMixer::Channel_MP3_CDMUSIC::Channel_MP3_CDMUSIC(SoundMixer *mixer, FILE* file, mad_timer_t duration) {
 	_mixer = mixer;
 	_file = file;
 	_duration = duration;
 	_initialized = false;
-	_buffer_size = buffer_size;
-	_ptr = buffer;
-	_flags = 0;
+	_buffer_size = MP3CD_BUFFERING_SIZE;
+	_ptr = malloc(MP3CD_BUFFERING_SIZE);
 	_to_be_destroyed = false;
 
 	mad_stream_init(&_stream);
@@ -345,8 +349,6 @@ SoundMixer::Channel_MP3_CDMUSIC::Channel_MP3_CDMUSIC(SoundMixer *mixer, FILE* fi
 #endif
 	mad_frame_init(&_frame);
 	mad_synth_init(&_synth);
-
-	//debug(1, "CRE %d", getpid());
 }
 
 void SoundMixer::Channel_MP3_CDMUSIC::mix(int16 *data, uint len) {
@@ -357,8 +359,6 @@ void SoundMixer::Channel_MP3_CDMUSIC::mix(int16 *data, uint len) {
 		real_destroy();
 		return;
 	}
-
-	//debug(1, "MIX %d", getpid());
 
 	if (!_initialized) {
 		int skip_loop;
@@ -451,14 +451,11 @@ void SoundMixer::Channel_MP3_CDMUSIC::mix(int16 *data, uint len) {
 }
 
 void SoundMixer::Channel_MP3_CDMUSIC::real_destroy() {
-	if (_flags & FLAG_AUTOFREE)
-		free(_ptr);
+	free(_ptr);
 	_mixer->uninsert(this);
 	mad_synth_finish(&_synth);
 	mad_frame_finish(&_frame);
 	mad_stream_finish(&_stream);
-
-	//debug(1, "DES %d", getpid());
 
 	delete this;
 }

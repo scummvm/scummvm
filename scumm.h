@@ -972,7 +972,6 @@ public:
 #ifdef COMPRESSED_SOUND_FILE
 
 	#define CACHE_TRACKS 10
-	#define MP3_BUFFER_SIZE 200000
 
 	/* used for mp3 CD music */
 
@@ -981,8 +980,7 @@ public:
 	struct mad_header _mad_header[CACHE_TRACKS];
 	long _mp3_size[CACHE_TRACKS];
 	FILE* _mp3_tracks[CACHE_TRACKS];
-	void* _mp3_buffer;
-	PlayingSoundHandle _mp3_handle;
+	int _mp3_index;
 
 	int getCachedTrack(int track);
 	int playMP3CDTrack(int track, int num_loops, int start, int delay);

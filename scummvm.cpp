@@ -170,7 +170,6 @@ void Scumm::scummInit()
 
 #ifdef COMPRESSED_SOUND_FILE
 	_current_cache = 0;
-	_mp3_buffer = NULL;
 #endif
 }
 

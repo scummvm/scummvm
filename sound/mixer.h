@@ -78,22 +78,19 @@ private:
 	class Channel_MP3_CDMUSIC : public Channel {
 		SoundMixer *_mixer;
 		void *_ptr;
-        struct mad_stream _stream;
-        struct mad_frame _frame;
-        struct mad_synth _synth;
-        uint32 _pos_in_frame;
-        uint32 _size;
-        uint32 _buffer_size;
-        mad_timer_t _duration;
-        FILE   *_file;
+		struct mad_stream _stream;
+		struct mad_frame _frame;
+		struct mad_synth _synth;
+		uint32 _pos_in_frame;
+		uint32 _size;
+		uint32 _buffer_size;
+		mad_timer_t _duration;
+		FILE   *_file;
 		bool _initialized;
-		byte _flags;
 	public:
 		void mix(int16 *data, uint len);
-		Channel_MP3_CDMUSIC(SoundMixer *mixer, FILE* file, void *buffer, uint32 buffer_size, mad_timer_t duration);
+		Channel_MP3_CDMUSIC(SoundMixer *mixer, FILE* file, mad_timer_t duration);
 		void real_destroy();		
-
-
 	};
 
 #endif
@@ -129,7 +126,7 @@ public:
 	int play_raw(PlayingSoundHandle *handle, void *sound, uint32 size, uint rate, byte flags);
 #ifdef COMPRESSED_SOUND_FILE
 	int play_mp3(PlayingSoundHandle *handle, void *sound, uint32 size, byte flags);
-	void play_mp3_cdtrack(PlayingSoundHandle *handle, FILE* file, void *buffer, uint32 buffer_size, mad_timer_t duration);
+	int play_mp3_cdtrack(PlayingSoundHandle *handle, int index, FILE* file, mad_timer_t duration);
 #endif
 
 	/* Premix procedure, useful when using fmopl adlib */
@@ -143,6 +140,7 @@ public:
 
 	/* stop playing a specific sound */
 	void stop(PlayingSoundHandle psh);
+	void stop(int index);
 
 	/* is any channel active? */
 	bool has_active_channel();

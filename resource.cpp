@@ -423,7 +423,7 @@ void Scumm::loadCharset(int no)
 
 	memset(_charsetData, 0, sizeof(_charsetData));
 
-	assert(no < sizeof(_charsetData)/16);
+	assert(no < (int) sizeof(_charsetData)/16);
 	checkRange(_maxCharsets - 1, 1, no, "Loading illegal charset %d");
 
 //  ensureResourceLoaded(6, no);
