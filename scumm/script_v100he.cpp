@@ -138,7 +138,7 @@ void ScummEngine_v100he::setupOpcodes() {
 		/* 4C */
 		OPCODE(o6_beginOverride),
 		OPCODE(o6_endOverride),
-		OPCODE(o6_invalid),
+		OPCODE(o72_resetCutscene),
 		OPCODE(o6_setOwner),
 		/* 50 */
 		OPCODE(o100_paletteOps),
