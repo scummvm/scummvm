@@ -35,12 +35,15 @@
 #define READSAMPLE(is16Bit, isUnsigned, ptr) \
 	((is16Bit ? READ_BE_UINT16(ptr) : (*ptr << 8)) ^ (isUnsigned ? 0x8000 : 0))
 
+#define READ_ENDIAN_SAMPLE(is16Bit, isUnsigned, ptr, isLE) \
+	((is16Bit ? (isLE ? READ_LE_UINT16(ptr) : READ_BE_UINT16(ptr)) : (*ptr << 8)) ^ (isUnsigned ? 0x8000 : 0))
+
 #pragma mark -
 #pragma mark --- LinearMemoryStream ---
 #pragma mark -
 
 
-template<bool stereo, bool is16Bit, bool isUnsigned>
+template<bool stereo, bool is16Bit, bool isUnsigned, bool isLE>
 class LinearMemoryStream : public AudioInputStream {
 protected:
 	const byte *_ptr;
@@ -50,7 +53,7 @@ protected:
 
 	inline int16 readIntern() {
 		//assert(_ptr < _end);
-		int16 val = READSAMPLE(is16Bit, isUnsigned, _ptr);
+		int16 val = READ_ENDIAN_SAMPLE(is16Bit, isUnsigned, _ptr, isLE);
 		_ptr += (is16Bit ? 2 : 1);
 		if (_loopPtr && eosIntern()) {
 			_ptr = _loopPtr;
@@ -83,13 +86,13 @@ public:
 	bool isStereo() const		{ return stereo; }
 };
 
-template<bool stereo, bool is16Bit, bool isUnsigned>
-int LinearMemoryStream<stereo, is16Bit, isUnsigned>::readBuffer(int16 *buffer, const int numSamples) {
+template<bool stereo, bool is16Bit, bool isUnsigned, bool isLE>
+int LinearMemoryStream<stereo, is16Bit, isUnsigned, isLE>::readBuffer(int16 *buffer, const int numSamples) {
 	int samples = 0;
 	while (samples < numSamples && !eosIntern()) {
 		const int len = MIN(numSamples, samples + (int)(_end - _ptr) / (is16Bit ? 2 : 1));
 		while (samples < len) {
-			*buffer++ = READSAMPLE(is16Bit, isUnsigned, _ptr);
+			*buffer++ = READ_ENDIAN_SAMPLE(is16Bit, isUnsigned, _ptr, isLE);
 			_ptr += (is16Bit ? 2 : 1);
 			samples++;
 		}
@@ -576,17 +579,23 @@ MusicStream *makeVorbisStream(OggVorbis_File *file, int duration) {
 
 
 template<bool stereo>
-static AudioInputStream *makeLinearInputStream(const byte *ptr, uint32 len, bool is16Bit, bool isUnsigned, uint loopOffset, uint loopLen) {
+static AudioInputStream *makeLinearInputStream(const byte *ptr, uint32 len, bool is16Bit, bool isUnsigned, bool isLE, uint loopOffset, uint loopLen) {
 	if (isUnsigned) {
-		if (is16Bit)
-			return new LinearMemoryStream<stereo, true, true>(ptr, len, loopOffset, loopLen);
-		else
-			return new LinearMemoryStream<stereo, false, true>(ptr, len, loopOffset, loopLen);
+		if (is16Bit) {
+			if (isLE)
+				return new LinearMemoryStream<stereo, true, true, true>(ptr, len, loopOffset, loopLen);
+			else 
+				return new LinearMemoryStream<stereo, true, true, false>(ptr, len, loopOffset, loopLen);
+		} else
+			return new LinearMemoryStream<stereo, false, true, false>(ptr, len, loopOffset, loopLen);
 	} else {
-		if (is16Bit)
-			return new LinearMemoryStream<stereo, true, false>(ptr, len, loopOffset, loopLen);
-		else
-			return new LinearMemoryStream<stereo, false, false>(ptr, len, loopOffset, loopLen);
+		if (is16Bit) {
+			if (isLE)
+				return new LinearMemoryStream<stereo, true, false, true>(ptr, len, loopOffset, loopLen);
+			else
+				return new LinearMemoryStream<stereo, true, false, false>(ptr, len, loopOffset, loopLen);
+		} else
+			return new LinearMemoryStream<stereo, false, false, false>(ptr, len, loopOffset, loopLen);
 	}
 }
 
@@ -608,10 +617,11 @@ static WrappedAudioInputStream *makeWrappedInputStream(uint32 len, bool is16Bit,
 AudioInputStream *makeLinearInputStream(byte _flags, const byte *ptr, uint32 len, uint loopOffset, uint loopLen) {
 	const bool is16Bit = (_flags & SoundMixer::FLAG_16BITS) != 0;
 	const bool isUnsigned = (_flags & SoundMixer::FLAG_UNSIGNED) != 0;
+	const bool isLE    = (_flags & SoundMixer::FLAG_LITTLE_ENDIAN) != 0;
 	if (_flags & SoundMixer::FLAG_STEREO) {
-		return makeLinearInputStream<true>(ptr, len, is16Bit, isUnsigned, loopOffset, loopLen);
+		return makeLinearInputStream<true>(ptr, len, is16Bit, isUnsigned, isLE, loopOffset, loopLen);
 	} else {
-		return makeLinearInputStream<false>(ptr, len, is16Bit, isUnsigned, loopOffset, loopLen);
+		return makeLinearInputStream<false>(ptr, len, is16Bit, isUnsigned, isLE, loopOffset, loopLen);
 	}
 }
 
