@@ -20,7 +20,7 @@
 #include "sound/mixer.h"
 #include "simon/intern.h"
 
-class Sound;
+class BaseSound;
 
 class SimonSound {
 private:
@@ -32,8 +32,8 @@ private:
 	int _voice_index;
 	int _ambient_index;
 
-	Sound *_voice;
-	Sound *_effects;
+	BaseSound *_voice;
+	BaseSound *_effects;
 
 	bool _effects_paused;
 	bool _ambient_paused;
