@@ -135,6 +135,7 @@ public:
 	void saveOrLoad (Serializer *s);
 	void send (MidiChannel *mc);
 	void copy_to (Instrument *dest) { dest->program (_program, _mt32); }
+	bool is_valid() { return (_program < 128); }
 };
 
 class Instrument_Adlib : public InstrumentInternal {
@@ -164,6 +165,7 @@ public:
 	void saveOrLoad (Serializer *s);
 	void send (MidiChannel *mc);
 	void copy_to (Instrument *dest) { dest->adlib ((byte *) &_instrument); }
+	bool is_valid() { return true; }
 };
 
 class Instrument_Roland : public InstrumentInternal {
@@ -228,12 +230,15 @@ private:
 
 	char _instrument_name [11];
 
+	uint8 getEquivalentGM();
+
 public:
 	Instrument_Roland (byte *data);
 	Instrument_Roland (Serializer *s);
 	void saveOrLoad (Serializer *s);
 	void send (MidiChannel *mc);
 	void copy_to (Instrument *dest) { dest->roland ((byte *) &_instrument); }
+	bool is_valid() { return (NATIVE_MT32 ? true : (_instrument_name[0] != '\0')); }
 };
 
 ////////////////////////////////////////
@@ -377,6 +382,10 @@ Instrument_Roland::Instrument_Roland (byte *data) {
 	memcpy (&_instrument, data, sizeof (_instrument));
 	memcpy (&_instrument_name, &_instrument.common.name, sizeof (_instrument.common.name));
 	_instrument_name[10] = '\0';
+	if (!NATIVE_MT32 && getEquivalentGM() >= 128) {
+		warning ("MT-32 instrument \"%s\" not supported yet", _instrument_name);
+		_instrument_name[0] = '\0';
+	}
 }
 
 Instrument_Roland::Instrument_Roland (Serializer *s) {
@@ -388,12 +397,17 @@ Instrument_Roland::Instrument_Roland (Serializer *s) {
 }
 
 void Instrument_Roland::saveOrLoad (Serializer *s) {
-	if (s->isSaving())
+	if (s->isSaving()) {
 		s->saveBytes (&_instrument, sizeof (_instrument));
-	else
+	} else {
 		s->loadBytes (&_instrument, sizeof (_instrument));
-	memcpy (&_instrument_name, &_instrument.common.name, sizeof (_instrument.common.name));
-	_instrument_name[10] = '\0';
+		memcpy (&_instrument_name, &_instrument.common.name, sizeof (_instrument.common.name));
+		_instrument_name[10] = '\0';
+		if (!NATIVE_MT32 && getEquivalentGM() >= 128) {
+			warning ("MT-32 instrument \"%s\" not supported yet", _instrument_name);
+			_instrument_name[0] = '\0';
+		}
+	} // end if
 }
 
 void Instrument_Roland::send (MidiChannel *mc) {
@@ -402,14 +416,17 @@ void Instrument_Roland::send (MidiChannel *mc) {
 		mc->device()->sysEx ((byte *) &_instrument, sizeof (_instrument));
 	} else {
 		// Convert to a GM program change.
-		byte i;
-		for (i = 0; i != ARRAYSIZE(roland_to_gm_map); ++i) {
-			if (!memcmp (roland_to_gm_map[i].name, _instrument.common.name, 10)) {
-				mc->programChange (roland_to_gm_map[i].program);
-				return;
-			}
-		}
-		warning ("MT-32 instrument \"%s\" not supported yet", _instrument_name);
-		mc->programChange (0);
+		byte program = getEquivalentGM();
+		if (program < 128)
+			mc->programChange (program);
 	}
+}
+
+uint8 Instrument_Roland::getEquivalentGM() {
+	byte i;
+	for (i = 0; i != ARRAYSIZE(roland_to_gm_map); ++i) {
+		if (!memcmp (roland_to_gm_map[i].name, _instrument.common.name, 10))
+			return roland_to_gm_map[i].program;
+	}
+	return 255;
 }

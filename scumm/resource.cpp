@@ -724,8 +724,9 @@ int Scumm::readSoundResource(int type, int idx) {
 					pri = 2;
 				break;
 			case MKID('SPK '):
-				if (!_use_adlib)
-					pri = 0;
+				pri = -1;
+//				if (!_use_adlib)
+//					pri = 0;
 				break;
 			}
 

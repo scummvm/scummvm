@@ -29,6 +29,10 @@
 #include "scumm/sound.h"
 #include "common/util.h"
 
+// Unremark this statement to activate some of
+// the most common iMuse diagnostic messages.
+// #define IMUSE_DEBUG
+
 //
 // Some constants
 //
@@ -229,6 +233,7 @@ struct Part {
 
 	// New abstract instrument definition
 	Instrument _instrument;
+	bool _unassigned_instrument; // For diagnostic reporting purposes only
 
 	// Used to be in MidiDriver
 	uint16 _actives[8];
@@ -302,7 +307,7 @@ private:
 	MidiDriver *_md;
 	Instrument _glob_instr[32]; // Adlib custom instruments
 
-	byte _midi_program_last[16];
+	Instrument _midi_instrument_last[16];
 	int16 _midi_pitchbend_last[16];
 	byte _midi_pitchbend_factor_last[16];
 	uint8 _midi_volume_last[16];
@@ -340,13 +345,14 @@ public:
 	void set_instrument(uint slot, byte *instr);
 	void part_load_global_instrument (Part *part, byte slot);
 	void part_set_param(Part *part, byte param, int value) {}
-	void part_key_on(Part *part, byte note, byte velocity);
-	void part_key_off(Part *part, byte note);
+//	void part_key_on(Part *part, byte note, byte velocity);
+//	void part_key_off(Part *part, byte note);
 	void part_changed(Part *part, uint16 what);
-	byte get_channel_program (byte channel) { return _midi_program_last [channel]; }
+	void get_channel_instrument (byte channel, Instrument *instrument) { _midi_instrument_last[channel].copy_to (instrument); }
 
 	static int midi_driver_thread(void *param);
 
+	MidiChannel *getPercussionChannel() { return _md->getPercussionChannel(); }
 	uint32 get_base_tempo() { return _md->getBaseTempo(); }
 	byte get_hardware_type() { return 5; }
 };
@@ -471,7 +477,7 @@ public:
 	int get_music_volume();
 	int set_master_volume(uint vol);
 	int get_master_volume();
-	byte get_channel_program (byte channel) { return _driver->get_channel_program (channel); }
+	void get_channel_instrument (byte channel, Instrument *instrument) { _driver->get_channel_instrument (channel, instrument); }
 	bool startSound(int sound);
 	int stopSound(int sound);
 	int stop_all_sounds();
@@ -714,7 +720,7 @@ bool IMuseInternal::startSound(int sound) {
 	if (!mdhd) {
 		mdhd = findTag(sound, MDPG_TAG, 0);
 		if (!mdhd) {
-			warning("SE::startSound failed: Couldn't find sound %d", sound);
+			debug (2, "SE::startSound failed: Couldn't find sound %d", sound);
 			return false;
 		}
 	}
@@ -737,7 +743,6 @@ bool IMuseInternal::startSound(int sound) {
 		return false;
 
 	player->clear();
-
 	return player->startSound(sound);
 }
 
@@ -860,14 +865,25 @@ void IMuseInternal::handle_marker(uint id, byte data) {
 	uint16 *p;
 	uint pos;
 
-	pos = _queue_end;
-	if (pos == _queue_pos)
-		return;
-
 	if (_queue_adding && _queue_sound == id && data == _queue_marker)
 		return;
 
-	p = _cmd_queue[pos].array;
+	// Fix for bug #733401: It would seem that sometimes the
+	// queue read position gets out of sync (possibly just
+	// reset to zero). Therefore, the read position should
+	// skip over any empty (i.e. all zeros) queue entries
+	// until it finds a legit entry to review.
+	pos = _queue_end;
+	while (pos != _queue_pos) {
+		p = _cmd_queue[pos].array;
+		if ((p[0] | p[1] | p[2] | p[3] | p[4] | p[5] | p[6] | p[7]) != 0)
+			break;
+		warning ("Skipping empty command queue entry at position %d", pos);
+		pos = (pos + 1) & (ARRAYSIZE(_cmd_queue) - 1);
+	}
+
+	if (pos == _queue_pos)
+		return;
 
 	if (p[0] != TRIGGER_ID || p[1] != id || p[2] != data)
 		return;
@@ -1268,6 +1284,10 @@ int32 IMuseInternal::doCommand(int a, int b, int c, int d, int e, int f, int g, 
 
 	if (!_initialized && (cmd || param))
 		return -1;
+
+#ifdef IMUSE_DEBUG
+	debug (0, "doCommand - %d (%d/%d), %d, %d, %d, %d, %d, %d, %d", a, (int) param, (int) cmd, b, c, d, e, f, g, h);
+#endif
 
 	if (param == 0) {
 		switch (cmd) {
@@ -2057,6 +2077,18 @@ void Player::parse_sysex(byte *p, uint len) {
 	if (len >= sizeof(buf) * 2)
 		return;
 
+#ifdef IMUSE_DEBUG
+	for (a = 0; a < len + 1 && a < 20; ++a) {
+		sprintf ((char *)&buf[a*3], " %02X", p[a]);
+	} // next for
+	if (a < len + 1) {
+		buf[a*3] = buf[a*3+1] = buf[a*3+2] = '.';
+		++a;
+	} // end if
+	buf[a*3] = '\0';
+	debug (0, "SysEx:%s", buf);
+#endif
+
 	switch (code = *p++) {
 	case 0:
 		if (g_scumm->_gameId != GID_SAMNMAX) {
@@ -2118,10 +2150,16 @@ void Player::parse_sysex(byte *p, uint len) {
 		a = *p++ & 0x0F;
 		if (_se->_hardware_type != *p++ && false)
 			break;
-		decode_sysex_bytes(p, buf, len - 3);
 		part = get_part(a);
-		if (part)
-			part->set_instrument((byte *) buf);
+		if (part) {
+			if (len == 63) {
+				decode_sysex_bytes(p, buf, len - 3);
+				part->set_instrument((byte *) buf);
+			} else {
+				// SPK tracks have len == 49 here, and are not supported
+				part->set_program (254); // Must be invalid, but not 255 (which is reserved)
+			}
+		}
 		break;
 
 	case 17: // Adlib instrument definition (Global)
@@ -2909,6 +2947,7 @@ int IMuseInternal::save_or_load(Serializer *ser, Scumm *scumm) {
 		MKLINE(IMuseInternal, _trigger_count, sleUint16, VER_V8),
 		MKARRAY(IMuseInternal, _channel_volume[0], sleUint16, 8, VER_V8),
 		MKARRAY(IMuseInternal, _volchan_table[0], sleUint16, 8, VER_V8),
+		// TODO: Add _cmd_queue in here
 		MKEND()
 	};
 
@@ -3149,11 +3188,38 @@ void Part::load_global_instrument (byte slot) {
 }
 
 void Part::key_on(byte note, byte velocity) {
-	_drv->part_key_on(this, note, velocity);
+	MidiChannel *mc = _mc;
+	_actives[note >> 4] |= (1 << (note & 0xF));
+
+	// DEBUG
+	if (_unassigned_instrument && !_percussion) {
+		warning ("[%02d] No instrument specified", (int) _chan);
+		_unassigned_instrument = false;
+		return;
+	}
+
+	if (mc && _instrument.isValid()) {
+		mc->noteOn (note, velocity);
+	} else if (_percussion) {
+		mc = _drv->getPercussionChannel();
+		if (!mc)
+			return;
+		mc->volume (_vol_eff);
+		mc->programChange (_bank);
+		mc->noteOn (note, velocity);
+	}
 }
 
 void Part::key_off(byte note) {
-	_drv->part_key_off(this, note);
+	MidiChannel *mc = _mc;
+	_actives[note >> 4] &= ~(1 << (note & 0xF));
+	if (mc) {
+		mc->noteOff (note);
+	} else if (_percussion) {
+		mc = _drv->getPercussionChannel();
+		if (mc)
+			mc->noteOff (note);
+	}
 }
 
 void Part::init(IMuseDriver * driver) {
@@ -3189,17 +3255,17 @@ void Part::setup(Player *player) {
 	_pitchbend_factor = 2;
 	_pitchbend = 0;
 	_effect_level = 64;
-//	_program = player->_se->get_channel_program (_chan);
-//	_instrument.program (_program, player->_mt32emulate);
 	_program = 255;
 	_instrument.clear();
+	_unassigned_instrument = true;
+//	player->_se->get_channel_instrument (_chan, &_instrument);
 	_chorus = 0;
 	_modwheel = 0;
 	_bank = 0;
 	_pedal = false;
 	_mc = NULL;
 
-	if (_program < 128)
+	if (_instrument.isValid())
 		changed (IMuseDriver::pcAll);
 }
 
@@ -3272,7 +3338,6 @@ IMuseDriver::IMuseDriver (MidiDriver *midi) {
 	// any changes that are sent (which would cause
 	// the changes to be ignored).
 	for (i = 0; i < 16; ++i) {
-		_midi_program_last [i] =
 		_midi_pitchbend_factor_last [i] =
 		_midi_volume_last [i] =
 		_midi_modwheel_last [i] =
@@ -3360,36 +3425,6 @@ void IMuseDriver::midiSilence(byte chan) {
 	_md->send((123 << 8) | 0xB0 | chan);
 }
 
-
-void IMuseDriver::part_key_on(Part *part, byte note, byte velocity) {
-	MidiChannel *mc = part->_mc;
-
-	part->_actives[note >> 4] |= (1 << (note & 0xF));
-	if (mc) {
-		mc->noteOn (note, velocity);
-	} else if (part->_percussion) {
-		mc = _md->getPercussionChannel();
-		if (!mc)
-			return;
-		mc->volume (part->_vol_eff);
-		mc->programChange (part->_bank);
-		mc->noteOn (note, velocity);
-	}
-}
-
-void IMuseDriver::part_key_off(Part *part, byte note) {
-	MidiChannel *mc = part->_mc;
-
-	part->_actives[note >> 4] &= ~(1 << (note & 0xF));
-	if (mc) {
-		mc->noteOff (note);
-	} else if (part->_percussion) {
-		mc = _md->getPercussionChannel();
-		if (mc)
-			mc->noteOff (note);
-	}
-}
-
 void IMuseDriver::init(IMuseInternal *eng, OSystem *syst) {
 	int i;
 
@@ -3404,8 +3439,8 @@ void IMuseDriver::init(IMuseInternal *eng, OSystem *syst) {
 	_se = eng;
 	_md->setTimerCallback (NULL, &IMuseDriver::timer_callback);
 
-	for (i = 0; i != ARRAYSIZE(_midi_program_last); i++) {
-		_midi_program_last [i] = 255;
+	for (i = 0; i != ARRAYSIZE(_midi_instrument_last); i++) {
+		_midi_instrument_last [i].clear();
 	}
 }
 
@@ -3536,8 +3571,11 @@ void IMuseDriver::part_changed(Part *part, uint16 what) {
 	if (what & pcEffectLevel)
 		mc->effectLevel (part->_effect_level);
 
-	if (what & pcProgram)
+	if (what & pcProgram && part->_instrument.isValid()) {
 		part->_instrument.send (mc);
+		part->_unassigned_instrument = false;
+//		part->_instrument.copy_to (&_midi_instrument_last [part->_chan]);
+	}
 
 	if (what & pcChorus)
 		mc->chorusLevel (part->_effect_level);

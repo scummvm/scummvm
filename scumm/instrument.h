@@ -34,6 +34,7 @@ public:
 	virtual void saveOrLoad (Serializer *s) = 0;
 	virtual void send (MidiChannel *mc) = 0;
 	virtual void copy_to (Instrument *dest) = 0;
+	virtual bool is_valid() = 0;
 };
 
 class Instrument {
@@ -58,6 +59,7 @@ public:
 	void roland (byte *instrument);
 
 	byte getType() { return _type; }
+	bool isValid() { return (_instrument ? _instrument->is_valid() : false); }
 	void saveOrLoad (Serializer *s);
 	void send (MidiChannel *mc) { if (_instrument) _instrument->send (mc); }
 };
