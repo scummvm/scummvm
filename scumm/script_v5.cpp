@@ -2508,7 +2508,7 @@ void Scumm_v5::o5_verbOps() {
 			vs = &_verbs[slot];
 			vs->verbid = verb;
 			vs->color = 2;
-			vs->hicolor = 0;
+			vs->hicolor = (_version == 3) ? 14 : 0;
 			vs->dimcolor = 8;
 			vs->type = kTextVerbType;
 			vs->charset_nr = _string[0].t_charset;
