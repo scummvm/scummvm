@@ -1385,19 +1385,19 @@ void Gdi::drawBMAPBg(const byte *ptr, VirtScreen *vs, int startstrip) {
 	byte *mask_ptr;
 	const byte *zplane_list[9];
 
-	bmap_ptr = _vm->findResourceData(MKID('BMAP'), ptr);
+	bmap_ptr = _vm->findResource(MKID('BMAP'), ptr) + 8;
 
-	if (bmap_ptr == NULL) {
+	if (bmap_ptr == NULL)
 		error("Gdi::drawBMAPBg: Room %d has no compressed bitmap?", _vm->_roomResource);
-		return;
-	}
 
 	code = *bmap_ptr++;
 
 	// TODO: The following few lines more or less duplicate decompressBitmap(), only
 	// for an area spanning multiple strips. In particular, the codecs 13 & 14
 	// in decompressBitmap call drawStripHE()
-	if ((code >= 134 && code <= 138) || (code >= 144 && code <= 148)) {
+	if (code == 150) {
+		warning("drawBMAPBg: case 150 unhandled");
+	} else if ((code >= 134 && code <= 138) || (code >= 144 && code <= 148)) {
 		_decomp_shr = code % 10;
 		_decomp_mask = 0xFF >> (8 - _decomp_shr);
 
@@ -1430,7 +1430,7 @@ void Gdi::drawBMAPObject(const byte *ptr, VirtScreen *vs, int obj, int x, int y,
 
 	warning("drawBMAPObject() called");
 
-	bmap_ptr = _vm->findResourceData(MKID('BMAP'), ptr);
+	bmap_ptr = _vm->findResource(MKID('BMAP'), ptr) + 8;
 	if (bmap_ptr == NULL) {
 		error("Gdi::drawBMAPObject: No image for item %d?", obj);
 		return;
