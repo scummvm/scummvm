@@ -5,11 +5,11 @@ SDL_LIBS=-L/usr/i586-mingw32msvc/lib -lSDL
 CXXFLAGS = -W -Wall -Ilua/include $(SDL_CFLAGS) # -O2 
 LDFLAGS = -W -Wall # -O2 
 LIBS = -Llua/lib -llua -llualib -lmingw32 -lopengl32 -lglu32 -lgdi32 \
-	-Lmixer -lmixer $(SDL_LIBS)
+	-Lmixer -lmixer $(SDL_LIBS) -lz
 OBJS = main.o lab.o bitmap.o model.o resource.o material.o debug.o \
 	textsplit.o lua.o registry.o localize.o scene.o engine.o actor.o \
 	sound.o timer.o keyframe.o costume.o walkplane.o textobject.o \
-	matrix3.o matrix4.o screen.o blocky16.o smush.o vima.o
+	matrix3.o matrix4.o screen.o blocky16.o smush.o vima.o driver_gl.o
 DEPS = $(OBJS:.o=.d)
 
 residual: $(OBJS) lua/lib/liblua.a lua/lib/liblualib.a mixer/libmixer.a
