@@ -35,7 +35,7 @@
 
 #elif defined(WIN32)
 
-#if _MSC_VER
+#ifdef _MSC_VER
 #pragma once
 #pragma warning( disable : 4068 ) // turn off "unknown pragma" warning
 #pragma warning( disable : 4244 ) // turn off "conversion type" warning
