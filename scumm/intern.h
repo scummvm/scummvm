@@ -326,10 +326,6 @@ protected:
 	
 	const OpcodeEntryV6 *_opcodesV6;
 
-	// HE v7.0+ games
-	Win32ResExtractor *_Win32ResExtractor;
-
-
 	int _smushFrameRate;
 
 public:
@@ -606,10 +602,12 @@ protected:
 		const char *desc;
 	};
 	
+	Win32ResExtractor *_Win32ResExtractor;
+
 	const OpcodeEntryV7he *_opcodesV7he;
 
 public:
-	ScummEngine_v7he(GameDetector *detector, OSystem *syst, const ScummGameSettings &gs) : ScummEngine_v6he(detector, syst, gs) {}
+	ScummEngine_v7he(GameDetector *detector, OSystem *syst, const ScummGameSettings &gs);
 
 protected:
 	virtual void setupScummVars();
@@ -633,6 +631,8 @@ protected:
 	void o7_getActorRoom();
 	void o7_pickupObject();
 	void o7_startSound();
+	void o7_actorOps();
+	void o7_cursorCommand();
 };
 
 class ScummEngine_v7 : public ScummEngine_v6 {

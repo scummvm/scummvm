@@ -954,14 +954,12 @@ ScummEngine_v6::ScummEngine_v6(GameDetector *detector, OSystem *syst, const Scum
 	VAR_TIMEDATE_MINUTE = 0xFF;
 	VAR_TIMEDATE_SECOND = 0xFF;
 
-	// HE v7.0+
-	if (_heversion >= 70) {
-		_Win32ResExtractor = new Win32ResExtractor(this);
-	} else {
-		_Win32ResExtractor = 0;
-	}
-
 	_smushFrameRate = 0;
+}
+
+ScummEngine_v7he::ScummEngine_v7he(GameDetector *detector, OSystem *syst, const ScummGameSettings &gs)
+ : ScummEngine_v6he(detector, syst, gs) {
+	 _Win32ResExtractor = new Win32ResExtractor(this);
 }
 
 void ScummEngine::go() {
