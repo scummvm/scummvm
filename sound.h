@@ -17,6 +17,9 @@
  *
  * Change Log:
  * $Log$
+ * Revision 1.13  2002/04/07 18:46:50  mutle
+ * Changed the name of OffsetTable to MP3OffsetTable, as OffsetTable is already defined in the Apple Headers
+ *
  * Revision 1.12  2002/04/05 04:35:41  ender
  * Fix mp3_cd support
  *
@@ -60,10 +63,13 @@
  * fixed timing bugs
  *
  */
+ 
+ #ifndef SOUND_H
+ #define SOUND_H
 
 #include "gmidi.h"		/* General Midi */
 
-struct OffsetTable {	/* Compressed Sound (.SO3) */
+struct MP3OffsetTable {	/* Compressed Sound (.SO3) */
 	int org_offset;
 	int new_offset;
 	int num_tags;
@@ -657,3 +663,4 @@ public:
 };
 
 
+#endif

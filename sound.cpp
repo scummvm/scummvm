@@ -158,7 +158,7 @@ void Scumm::processSfxQueues() {
 
 #ifdef COMPRESSED_SOUND_FILE
 static int compar(const void *a, const void *b) {
-  return ((OffsetTable *) a)->org_offset - ((OffsetTable *) b)->org_offset;
+  return ((MP3OffsetTable *) a)->org_offset - ((MP3OffsetTable *) b)->org_offset;
 }
 #endif
 
@@ -178,10 +178,10 @@ void Scumm::startTalkSound(uint32 offset, uint32 b, int mode) {
 
 #ifdef COMPRESSED_SOUND_FILE
 	if (offset_table != NULL) {
-	  OffsetTable *result = NULL, key;
+	  MP3OffsetTable *result = NULL, key;
 	  
 	  key.org_offset = offset;
-	  result = (OffsetTable *) bsearch(&key, offset_table, num_sound_effects, sizeof(OffsetTable), compar);
+	  result = (MP3OffsetTable *) bsearch(&key, offset_table, num_sound_effects, sizeof(MP3OffsetTable), compar);
 
 
 	  if (result == NULL) {
@@ -507,10 +507,10 @@ void *Scumm::openSfxFile() {
 	         + the MP3 data
 	  */
 	  int size, compressed_offset;
-	  OffsetTable *cur;
+	  MP3OffsetTable *cur;
 	  
 	  compressed_offset = get_int(file);
-	  offset_table = (OffsetTable *) malloc(compressed_offset);
+	  offset_table = (MP3OffsetTable *) malloc(compressed_offset);
 	  num_sound_effects = compressed_offset / 16;
 	  
 	  size = compressed_offset;

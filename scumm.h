@@ -967,7 +967,7 @@ public:
 	void addSoundToQueue(int sound);
 	void addSoundToQueue2(int sound);
 	void soundKludge(int16 *list);
-	OffsetTable *offset_table;	// SO3 MP3 compressed audio
+	MP3OffsetTable *offset_table;	// SO3 MP3 compressed audio
 	int num_sound_effects;		// SO3 MP3 compressed audio
 
 	void pauseSounds(bool pause);
