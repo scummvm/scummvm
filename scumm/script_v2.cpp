@@ -934,12 +934,24 @@ void Scumm_v2::o2_drawSentence() {
 		}
 	}
 
-	if (0 < _scummVars[29] && _scummVars[29] <= 4) {
+	if (0 < VAR(VAR_SENTENCE_PREPOSITION) && VAR(VAR_SENTENCE_PREPOSITION) <= 4) {
 		// FIXME: Are these stored somewhere in the data? If not, we have to provide
 		// localized versions for all the languages MM/Zak are available in. Note
 		// that we already will have to do that for the fonts anyway.
-		const char *words[] = { " ", " in", " with", " on", " to" };
-		strcat(sentence, words[_scummVars[29]]);
+		//
+		// The order here matches the one defined in gameDetector.h
+		const char *prepositions[][5] = {
+			{ " ", " in", " with", " on", " to" },	// English
+			{ " ", " mit", " mit", " mit", " zu" },	// German
+			{ " ", " dans", " avec", " sur", " <" },	// French
+			{ " ", " in", " with", " on", " to" },	// Italian
+			{ " ", " in", " with", " on", " to" },	// Portugese
+			{ " ", " in", " with", " on", " to" },	// Spanish
+			{ " ", " in", " with", " on", " to" },	// Japanese
+			{ " ", " in", " with", " on", " to" },	// Chinese
+			{ " ", " in", " with", " on", " to" }	// Korean
+			};
+		strcat(sentence, prepositions[0][VAR(VAR_SENTENCE_PREPOSITION)]);
 	}
 
 	if (VAR(VAR_SENTENCE_OBJECT2) > 0) {
