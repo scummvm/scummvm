@@ -138,12 +138,14 @@ void SimonSound::readSfxFile(const char *filename, const char *gameDataPath) {
 		}
 	}
 
+	delete _effects;
 	_effects = new WavSound(_mixer, file);
 }
 
 void SimonSound::loadSfxTable(File *gameFile, uint32 base) {
 	stopAll();
 
+	delete _effects;
 	if (_game & GF_WIN)
 		_effects = new WavSound(_mixer, gameFile, base);
 	else
@@ -159,6 +161,7 @@ void SimonSound::playVoice(uint sound) {
 		if (file->isOpen() == false) {
 			warning("Can't open voice file %s", filename);
 		} else {
+			delete _voice;
 			_voice = new WavSound(_mixer, file, _offsets);
 		}
 	}
@@ -264,6 +267,11 @@ SimonSound::Sound::Sound(SoundMixer *mixer, File *file, uint32 *offsets) {
 	_file = file;
 	_offsets = offsets;
 }
+
+SimonSound::Sound::~Sound() { delete _file; }
+SimonSound::WavSound::~WavSound() { delete _file; }
+SimonSound::VocSound::~VocSound() { delete _file; }
+SimonSound::MP3Sound::~MP3Sound() { delete _file; }
 
 #if !defined(__GNUC__)
 #pragma START_PACK_STRUCTS

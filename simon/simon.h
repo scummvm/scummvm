@@ -104,9 +104,6 @@ struct GameSpecificSettings;
 class SimonEngine : public Engine {
 	void errorString(const char *buf_input, char *buf_output);
 public:
-	File *_mus_file;
-	uint16 *_mus_offsets;
-
 	void playSting(uint a);
 	
 	byte *_vc_ptr;								/* video code ptr */

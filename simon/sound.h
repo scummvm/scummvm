@@ -31,6 +31,7 @@ private:
 	public:
 		Sound(SoundMixer *mixer, File *file, uint32 base = 0);
 		Sound(SoundMixer *mixer, File *file, uint32 *offsets);
+		virtual ~Sound();
 		virtual int playSound(uint sound, PlayingSoundHandle *handle, byte flags = 0) = 0;
 	};
 
@@ -38,18 +39,21 @@ private:
 	public:
 		WavSound(SoundMixer *mixer, File *file, uint32 base = 0) : Sound(mixer, file, base) {};
 		WavSound(SoundMixer *mixer, File *file, uint32 *offsets) : Sound(mixer, file, offsets) {};
+		~WavSound();
 		int playSound(uint sound, PlayingSoundHandle *handle, byte flags = 0);
 	};
 
 	class VocSound : public Sound {
 	public:
 		VocSound(SoundMixer *mixer, File *file, uint32 base = 0) : Sound(mixer, file, base) {};
+		~VocSound();
 		int playSound(uint sound, PlayingSoundHandle *handle, byte flags = 0);
 	};
 
 	class MP3Sound : public Sound {
 	public:
 		MP3Sound(SoundMixer *mixer, File *file, uint32 base = 0) : Sound(mixer, file, base) {};
+		~MP3Sound();
 		int playSound(uint sound, PlayingSoundHandle *handle, byte flags = 0);
 	};
 
