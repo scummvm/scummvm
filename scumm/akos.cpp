@@ -604,16 +604,15 @@ const byte defaultScaleTable[768] = {
 #endif
 
 byte AkosRenderer::codec1(int xmoveCur, int ymoveCur) {
-	int num_colors, value;
+	int num_colors;
 	bool use_scaling;
 	int i, j;
 	int skip = 0, startScaleIndexX, startScaleIndexY;
 	Common::Rect rect;
-	int cur_x, cur_y;
 	int step;
 	byte drawFlag = 1;
 
-	value = (_vm->_features & GF_HUMONGOUS) ? 0x80 : 0x180;
+	const int scaletableSize = (_vm->_features & GF_HUMONGOUS) ? 128 : 384;
 
 	/* implement custom scale table */
 	v1.scaletable = (_vm->_features & GF_HUMONGOUS) ? oldScaleTable : defaultScaleTable;
@@ -636,8 +635,8 @@ byte AkosRenderer::codec1(int xmoveCur, int ymoveCur) {
 
 	use_scaling = (_scaleX != 0xFF) || (_scaleY != 0xFF);
 
-	cur_x = _actorX;
-	cur_y = _actorY;
+	v1.x = _actorX;
+	v1.y = _actorY;
 
 	if (use_scaling) {
 
@@ -650,13 +649,13 @@ byte AkosRenderer::codec1(int xmoveCur, int ymoveCur) {
 
 		if (_mirror) {
 			/* Adjust X position */
-			startScaleIndexX = j = value - xmoveCur;
+			startScaleIndexX = j = scaletableSize - xmoveCur;
 			for (i = 0; i < xmoveCur; i++) {
 				if (v1.scaletable[j++] < _scaleX)
-					cur_x -= v1.scaleXstep;
+					v1.x -= v1.scaleXstep;
 			}
 
-			rect.left = rect.right = cur_x;
+			rect.left = rect.right = v1.x;
 
 			j = startScaleIndexX;
 			for (i = 0, skip = 0; i < _width; i++) {
@@ -670,13 +669,13 @@ byte AkosRenderer::codec1(int xmoveCur, int ymoveCur) {
 		} else {
 			/* No mirror */
 			/* Adjust X position */
-			startScaleIndexX = j = value + xmoveCur;
+			startScaleIndexX = j = scaletableSize + xmoveCur;
 			for (i = 0; i < xmoveCur; i++) {
 				if (v1.scaletable[j--] < _scaleX)
-					cur_x += v1.scaleXstep;
+					v1.x += v1.scaleXstep;
 			}
 
-			rect.left = rect.right = cur_x;
+			rect.left = rect.right = v1.x;
 
 			j = startScaleIndexX;
 			for (i = 0; i < _width; i++) {
@@ -699,40 +698,40 @@ byte AkosRenderer::codec1(int xmoveCur, int ymoveCur) {
 			step = -step;
 		}
 
-		startScaleIndexY = value - ymoveCur;
+		startScaleIndexY = scaletableSize - ymoveCur;
 		for (i = 0; i < ymoveCur; i++) {
 			if (v1.scaletable[startScaleIndexY++] < _scaleY)
-				cur_y -= step;
+				v1.y -= step;
 		}
 
-		rect.top = rect.bottom = cur_y;
-		startScaleIndexY = value - ymoveCur;
+		rect.top = rect.bottom = v1.y;
+		startScaleIndexY = scaletableSize - ymoveCur;
 		for (i = 0; i < _height; i++) {
 			if (v1.scaletable[startScaleIndexY++] < _scaleY)
 				rect.bottom++;
 		}
 
-		startScaleIndexY = value - ymoveCur;
+		startScaleIndexY = scaletableSize - ymoveCur;
 	} else {
 		if (!_mirror)
 			xmoveCur = -xmoveCur;
 
-		cur_x += xmoveCur;
-		cur_y += ymoveCur;
+		v1.x += xmoveCur;
+		v1.y += ymoveCur;
 
 		if (_mirror) {
-			rect.left = cur_x;
-			rect.right = cur_x + _width;
+			rect.left = v1.x;
+			rect.right = v1.x + _width;
 		} else {
-			rect.right = cur_x;
-			rect.left = cur_x - _width;
+			rect.left = v1.x - _width;
+			rect.right = v1.x;
 		}
 
-		rect.top = cur_y;
-		rect.bottom = cur_y + _height;
+		rect.top = v1.y;
+		rect.bottom = rect.top + _height;
 
-		startScaleIndexX = value;
-		startScaleIndexY = value;
+		startScaleIndexX = scaletableSize;
+		startScaleIndexY = scaletableSize;
 	}
 
 	v1.scaleXindex = startScaleIndexX;
@@ -756,11 +755,11 @@ byte AkosRenderer::codec1(int xmoveCur, int ymoveCur) {
 
 	if (_mirror) {
 		if (!use_scaling)
-			skip = -cur_x;
+			skip = -v1.x;
 		if (skip > 0) {
 			v1.skip_width -= skip;
 			codec1_ignorePakCols(skip);
-			cur_x = 0;
+			v1.x = 0;
 		} else {
 			skip = rect.right - _outwidth;
 			if (skip <= 0) {
@@ -775,7 +774,7 @@ byte AkosRenderer::codec1(int xmoveCur, int ymoveCur) {
 		if (skip > 0) {
 			v1.skip_width -= skip;
 			codec1_ignorePakCols(skip);
-			cur_x = _outwidth - 1;
+			v1.x = _outwidth - 1;
 		} else {
 			skip = -1 - rect.left;
 			if (skip <= 0)
@@ -784,9 +783,6 @@ byte AkosRenderer::codec1(int xmoveCur, int ymoveCur) {
 				v1.skip_width -= skip;
 		}
 	}
-
-	v1.x = cur_x;
-	v1.y = cur_y;
 
 	if (v1.skip_width <= 0 || _height <= 0)
 		return 0;
