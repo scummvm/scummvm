@@ -242,6 +242,7 @@ void Scumm::getObjectXYPos(int object, int &x, int &y, int &dir) {
 			return;
 		}
 		imhd = (const ImageHeader *)findResourceData(MKID('IMHD'), ptr);
+		assert(imhd);
 		if (_version == 8) {
 			x = od.x_pos + (int32)READ_LE_UINT32(&imhd->v8.hotspot[state].x);
 			y = od.y_pos + (int32)READ_LE_UINT32(&imhd->v8.hotspot[state].y);
