@@ -204,7 +204,8 @@ SmushPlayer::SmushPlayer(Renderer * renderer, bool wait, bool sound) :
 							_skipNext(false),
 							_subtitles(true),
 							_bgmusic(true),
-							_voices(true) {
+							_voices(true),
+							_curBuffer(0) {
 	_fr[0] = _fr[1] = _fr[2] = _fr[3] = 0;
 	assert(_renderer != 0);
 }
