@@ -35,6 +35,7 @@ public:
 	int _top;
 	int _left, _startLeft;
 	int _right;
+	int _nbChars;
 
 	byte _color;
 

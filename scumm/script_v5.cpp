@@ -2346,7 +2346,7 @@ void Scumm_v5::o5_walkActorToObject() {
 int Scumm_v5::getWordVararg(int *ptr) {
 	int i;
 
-	for (i = 0; i < 15; i++)
+	for (i = 0; i < 16; i++)
 		ptr[i] = 0;
 
 	i = 0;

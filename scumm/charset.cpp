@@ -30,7 +30,10 @@ void CharsetRendererCommon::setCurID(byte id) {
 
 	_fontPtr = _vm->getResourceAddress(rtCharset, id);
 	assert(_fontPtr);
-	if (_vm->_features & GF_SMALL_HEADER)
+	if (_vm->_features & GF_AFTER_V3) {
+		_nbChars = _fontPtr[4];
+		_fontPtr += 6 + _nbChars;
+	} else 	if (_vm->_features & GF_AFTER_V4)
 		_fontPtr += 17;
 	else
 		_fontPtr += 29;
@@ -56,7 +59,7 @@ int CharsetRendererClassic::getCharWidth(byte chr) {
 int CharsetRendererOld256::getCharWidth(byte chr) {
 	int spacing = 0;
 
-	spacing = *(_fontPtr - 11 + chr);
+	spacing = *(_fontPtr - _nbChars + chr);
 
 	// FIXME - this fixes the inventory icons in Zak256/Indy3
 	//  see bug #613109.
@@ -193,7 +196,8 @@ void CharsetRendererOld256::printChar(int chr) {
 		_strBottom = _top;
 		_firstChar = false;
 	}
-	char_ptr = _fontPtr + 207 + (chr + 1) * 8;
+
+	char_ptr = _fontPtr + chr * 8;
 	dest_ptr = vs->screenPtr + vs->xstart + (_top - vs->topline) * _vm->_realWidth + _left;
 	_vm->updateDirtyRect(vs->number, _left, _left + 8, _top - vs->topline, _top - vs->topline + 8, 0);
 
