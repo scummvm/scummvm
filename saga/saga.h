@@ -60,10 +60,6 @@ class Console;
 class Events;
 class PalAnim;
 
-#define GAME_LANGSTR_LIMIT 3
-#define GAME_ITE_LANG_PREFIX "ite_"
-#define GAME_LANG_EXT "lng"
-
 #define MIN_IMG_RLECODE    3
 #define MODEX_SCANLINE_LIMIT 200
 
@@ -462,7 +458,6 @@ public:
 	Point _mousePos;
 
 	bool _quit;
-	char _gameLanguage[GAME_LANGSTR_LIMIT];
 	RSCFILE_CONTEXT **_gameFileContexts;
 
 //current game description
@@ -497,7 +492,6 @@ public:
 	
 	const char *getTextString(int textStringId);
 private:
-	int loadLanguage(void);
 	int loadGame(int gameNumber);
 };
 

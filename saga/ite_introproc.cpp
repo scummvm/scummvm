@@ -40,8 +40,8 @@
 
 namespace Saga {
 
-static INTRO_DIALOGUE IntroDiag[] = {
-	{
+static INTRO_DIALOGUE IntroDiag[][14] = {
+	{ {
 		RID_CAVE_VOICE_0, "intro1a",
 		"We see the sky, we see the land, we see the water, "
 		"and we wonder: Are we the only ones?"
@@ -105,7 +105,71 @@ static INTRO_DIALOGUE IntroDiag[] = {
 	{
 		RID_CAVE_VOICE_13, "intro4d",
 		"And will we also share the same fate one day?"
+	} },
+
+	// German
+    { {
+		RID_CAVE_VOICE_0, "intro1a",
+		"Um uns sind der Himmel, das Land und die Seen; und wir "
+		"fragen uns - sind wir die einzigen?"
 	},
+	{
+		RID_CAVE_VOICE_1, "intro2a",
+		"Lange vor unserer Zeit herrschten die Menschen \201ber die Erde."
+	},
+	{
+		RID_CAVE_VOICE_2, "intro3a",
+		"Sie taten wundersame Dinge und versetzten ganze Berge."
+	},
+	{
+		RID_CAVE_VOICE_3, "intro4a",
+		"Sie kannten das Geheimnis des Fluges, das Geheimnis der Fr\224hlichkeit "
+		"und andere Geheimnisse, die unsere Vorstellungskraft \201bersteigen."
+	},
+	{
+		RID_CAVE_VOICE_4, "intro1b",
+		"Au$erdem kannten die Menschen das Geheimnis des Lebens. Und sie nutzten "
+		"es, um uns die vier gro$en Geschenke zu geben -"
+	},
+	{
+		RID_CAVE_VOICE_5, "intro2b",
+		"den denkenden Geist, das f\201hlende Herz, den sprechenden Mund und die "
+		"greifende Hand."
+	},
+	{
+		RID_CAVE_VOICE_6, "intro3b",
+		"Wir sind ihre Kinder."
+	},
+	{
+		RID_CAVE_VOICE_7, "intro1c",
+		"Sie lehrten uns zu sprechen und unsere H\204nde zu benutzen."
+	},
+	{
+		RID_CAVE_VOICE_8, "intro2c",
+		"Sie zeigten uns die Freude am Denken."
+	},
+	{
+		RID_CAVE_VOICE_9, "intro3c",
+		"Sie liebten uns, und w\204ren wir bereit gewesen, h\204tten sie "
+		"uns sicherlich das Geheimnis der Fr\224hlichkeit offenbart."
+	},
+	{
+		RID_CAVE_VOICE_10, "intro1d",
+		"Und nun sehen wir den Himmel, das Land und die Seen - unser Erbe. "
+		"Und wir fragen uns - warum verschwanden sie?"
+	},
+	{
+		RID_CAVE_VOICE_11, "intro2d",
+		"Leben sie noch in den Sternen? In den Tiefen des Ozeans? Im Wind?"
+	},
+	{
+		RID_CAVE_VOICE_12, "intro3d",
+		"Wir fragen uns - war ihr Schicksal gut oder b\224se?"
+	},
+	{
+		RID_CAVE_VOICE_13, "intro4d",
+		"Und wird uns eines Tages das gleiche Schicksal ereilen?"
+	} }
 };
 
 SCENE_QUEUE ITE_IntroList[] = {
@@ -147,35 +211,21 @@ int Scene::ITEStartProc() {
 	return SUCCESS;
 }
 
-int Scene::ITEIntroRegisterLang() {
-#if 0
-	size_t i;
-
-	for (i = 0; i < ARRAYSIZE(IntroDiag); i++) {
-		if (CVAR_Register_S(IntroDiag[i].i_str,
-			IntroDiag[i].i_cvar_name,
-			NULL, CVAR_CFG, INTRO_STRMAX) != SUCCESS) {
-			warning("Error registering intro text cvars");
-			return FAILURE;
-		}
-	}
-#endif
-
-	return SUCCESS;
-}
-
 enum {
 	kCHeader,
 	kCText
 };
 
 enum {
-	kITEPC          = (1 << 0),
-	kITEPCCD        = (1 << 1),
-	kITEMac         = (1 << 2),
-	kITEWyrmKeep    = (1 << 3),
-	kITEAny         = 0xffff,
-	kITENotWyrmKeep = kITEAny & ~kITEWyrmKeep
+	kITEPC           = (1 << 0),
+	kITEPCCD         = (1 << 1),
+	kITEMac          = (1 << 2),
+	kITEWyrmKeep     = (1 << 3),
+	kITEDe           = (1 << 4),
+	kITEAny          = 0xffff,
+	kITENotWyrmKeep  = kITEAny & ~kITEWyrmKeep,
+	kITENotDe        = kITEAny & ~kITEDe,
+	kITENotDeNotWyrm = kITENotWyrmKeep & ~kITEDe
 };
 
 #define INV(n) (kITEAny & ~(n))
@@ -189,7 +239,9 @@ EVENT *Scene::ITEQueueCredits(SCENE_INFO *scene_info, int delta_time, int durati
 	// The assumption here is that all WyrmKeep versions have the same
 	// credits, regardless of which operating system they're for.
 
-	if (_vm->getFeatures() & GF_WYRMKEEP) {
+	if (_vm->getFeatures() & GF_LANG_DE) {
+		game = kITEDe;
+	} else if (_vm->getFeatures() & GF_WYRMKEEP) {
 		game = kITEWyrmKeep;
 	} else if (_vm->getFeatures() & GF_MAC_RESOURCES) {
 		game = kITEMac;
@@ -389,6 +441,7 @@ int Scene::ITEIntroCave1Proc(int param, SCENE_INFO *scene_info) {
 	TEXTLIST_ENTRY *entry_p;
 	int i;
 	int font_flags = FONT_OUTLINE | FONT_CENTERED;
+	int lang = _vm->getFeatures() & GF_LANG_DE ? 1 : 0;
 
 	switch (param) {
 	case SCENE_BEGIN:
@@ -404,12 +457,13 @@ int Scene::ITEIntroCave1Proc(int param, SCENE_INFO *scene_info) {
 		text_entry.color = 255;
 		text_entry.effect_color = 0;
 		text_entry.text_x = 320 / 2;
-		text_entry.text_y = INTRO_CAPTION_Y;
+		text_entry.text_y = _vm->getFeatures() & GF_LANG_DE ? INTRO_DE_CAPTION_Y :
+			INTRO_CAPTION_Y;
 		text_entry.font_id = MEDIUM_FONT_ID;
 		text_entry.flags = font_flags;
 
 		for (i = INTRO_CAVE1_START; i < INTRO_CAVE1_END; i++) {
-			text_entry.string = IntroDiag[i].i_str;
+			text_entry.string = IntroDiag[lang][i].i_str;
 			entry_p = _vm->textAddEntry(scene_info->text_list, &text_entry);
 
 			// Display text
@@ -425,14 +479,14 @@ int Scene::ITEIntroCave1Proc(int param, SCENE_INFO *scene_info) {
 			event.type = ONESHOT_EVENT;
 			event.code = VOICE_EVENT;
 			event.op = EVENT_PLAY;
-			event.param = IntroDiag[i].i_voice_rn;
+			event.param = IntroDiag[lang][i].i_voice_rn;
 			event.time = event_time;
 
 			q_event = _vm->_events->chain(q_event, &event);
 
-			voice_len = _vm->_sndRes->getVoiceLength(IntroDiag[i].i_voice_rn);
+			voice_len = _vm->_sndRes->getVoiceLength(IntroDiag[lang][i].i_voice_rn);
 			if (voice_len < 0) {
-				voice_len = strlen(IntroDiag[i].i_str) * VOICE_LETTERLEN;
+				voice_len = strlen(IntroDiag[lang][i].i_str) * VOICE_LETTERLEN;
 			}
 
 			// Remove text
@@ -481,6 +535,7 @@ int Scene::ITEIntroCave2Proc(int param, SCENE_INFO *scene_info) {
 	TEXTLIST_ENTRY *entry_p;
 	int i;
 	int font_flags = FONT_OUTLINE | FONT_CENTERED;
+	int lang = _vm->getFeatures() & GF_LANG_DE ? 1 : 0;
 
 	switch (param) {
 	case SCENE_BEGIN:
@@ -505,12 +560,13 @@ int Scene::ITEIntroCave2Proc(int param, SCENE_INFO *scene_info) {
 		text_entry.color = 255;
 		text_entry.effect_color = 0;
 		text_entry.text_x = 320 / 2;
-		text_entry.text_y = INTRO_CAPTION_Y;
+		text_entry.text_y = _vm->getFeatures() & GF_LANG_DE ? INTRO_DE_CAPTION_Y :
+			INTRO_CAPTION_Y;
 		text_entry.font_id = MEDIUM_FONT_ID;
 		text_entry.flags = font_flags;
 
 		for (i = INTRO_CAVE2_START; i < INTRO_CAVE2_END; i++) {
-			text_entry.string = IntroDiag[i].i_str;
+			text_entry.string = IntroDiag[lang][i].i_str;
 			entry_p = _vm->textAddEntry(scene_info->text_list, &text_entry);
 
 			// Display text
@@ -526,14 +582,14 @@ int Scene::ITEIntroCave2Proc(int param, SCENE_INFO *scene_info) {
 			event.type = ONESHOT_EVENT;
 			event.code = VOICE_EVENT;
 			event.op = EVENT_PLAY;
-			event.param = IntroDiag[i].i_voice_rn;
+			event.param = IntroDiag[lang][i].i_voice_rn;
 			event.time = event_time;
 
 			q_event = _vm->_events->chain(q_event, &event);
 
-			voice_len = _vm->_sndRes->getVoiceLength(IntroDiag[i].i_voice_rn);
+			voice_len = _vm->_sndRes->getVoiceLength(IntroDiag[lang][i].i_voice_rn);
 			if (voice_len < 0) {
-				voice_len = strlen(IntroDiag[i].i_str) * VOICE_LETTERLEN;
+				voice_len = strlen(IntroDiag[lang][i].i_str) * VOICE_LETTERLEN;
 			}
 
 			// Remove text
@@ -581,6 +637,7 @@ int Scene::ITEIntroCave3Proc(int param, SCENE_INFO *scene_info) {
 	TEXTLIST_ENTRY *entry_p;
 	int i;
 	int font_flags = FONT_OUTLINE | FONT_CENTERED;
+	int lang = _vm->getFeatures() & GF_LANG_DE ? 1 : 0;
 
 	switch (param) {
 	case SCENE_BEGIN:
@@ -605,12 +662,13 @@ int Scene::ITEIntroCave3Proc(int param, SCENE_INFO *scene_info) {
 		text_entry.color = 255;
 		text_entry.effect_color = 0;
 		text_entry.text_x = 320 / 2;
-		text_entry.text_y = INTRO_CAPTION_Y;
+		text_entry.text_y = _vm->getFeatures() & GF_LANG_DE ? INTRO_DE_CAPTION_Y :
+			INTRO_CAPTION_Y;
 		text_entry.font_id = MEDIUM_FONT_ID;
 		text_entry.flags = font_flags;
 
 		for (i = INTRO_CAVE3_START; i < INTRO_CAVE3_END; i++) {
-			text_entry.string = IntroDiag[i].i_str;
+			text_entry.string = IntroDiag[lang][i].i_str;
 			entry_p = _vm->textAddEntry(scene_info->text_list, &text_entry);
 
 			// Display text
@@ -626,14 +684,14 @@ int Scene::ITEIntroCave3Proc(int param, SCENE_INFO *scene_info) {
 			event.type = ONESHOT_EVENT;
 			event.code = VOICE_EVENT;
 			event.op = EVENT_PLAY;
-			event.param = IntroDiag[i].i_voice_rn;
+			event.param = IntroDiag[lang][i].i_voice_rn;
 			event.time = event_time;
 
 			q_event = _vm->_events->chain(q_event, &event);
 
-			voice_len = _vm->_sndRes->getVoiceLength(IntroDiag[i].i_voice_rn);
+			voice_len = _vm->_sndRes->getVoiceLength(IntroDiag[lang][i].i_voice_rn);
 			if (voice_len < 0) {
-				voice_len = strlen(IntroDiag[i].i_str) * VOICE_LETTERLEN;
+				voice_len = strlen(IntroDiag[lang][i].i_str) * VOICE_LETTERLEN;
 			}
 
 			// Remove text
@@ -682,6 +740,7 @@ int Scene::ITEIntroCave4Proc(int param, SCENE_INFO *scene_info) {
 	TEXTLIST_ENTRY *entry_p;
 	int i;
 	int font_flags = FONT_OUTLINE | FONT_CENTERED;
+	int lang = _vm->getFeatures() & GF_LANG_DE ? 1 : 0;
 
 	switch (param) {
 	case SCENE_BEGIN:
@@ -706,12 +765,13 @@ int Scene::ITEIntroCave4Proc(int param, SCENE_INFO *scene_info) {
 		text_entry.color = 255;
 		text_entry.effect_color = 0;
 		text_entry.text_x = 320 / 2;
-		text_entry.text_y = INTRO_CAPTION_Y;
+		text_entry.text_y = _vm->getFeatures() & GF_LANG_DE ? INTRO_DE_CAPTION_Y :
+			INTRO_CAPTION_Y;
 		text_entry.font_id = MEDIUM_FONT_ID;
 		text_entry.flags = font_flags;
 
 		for (i = INTRO_CAVE4_START; i < INTRO_CAVE4_END; i++) {
-			text_entry.string = IntroDiag[i].i_str;
+			text_entry.string = IntroDiag[lang][i].i_str;
 			entry_p = _vm->textAddEntry(scene_info->text_list, &text_entry);
 
 			// Display text
@@ -727,14 +787,14 @@ int Scene::ITEIntroCave4Proc(int param, SCENE_INFO *scene_info) {
 			event.type = ONESHOT_EVENT;
 			event.code = VOICE_EVENT;
 			event.op = EVENT_PLAY;
-			event.param = IntroDiag[i].i_voice_rn;
+			event.param = IntroDiag[lang][i].i_voice_rn;
 			event.time = event_time;
 
 			q_event = _vm->_events->chain(q_event, &event);
 
-			voice_len = _vm->_sndRes->getVoiceLength(IntroDiag[i].i_voice_rn);
+			voice_len = _vm->_sndRes->getVoiceLength(IntroDiag[lang][i].i_voice_rn);
 			if (voice_len < 0) {
-				voice_len = strlen(IntroDiag[i].i_str) * VOICE_LETTERLEN;
+				voice_len = strlen(IntroDiag[lang][i].i_str) * VOICE_LETTERLEN;
 			}
 
 			// Remove text
@@ -778,12 +838,15 @@ int Scene::ITEIntroValleyProc(int param, SCENE_INFO *scene_info) {
 	EVENT *q_event;
 
 	const INTRO_CREDIT credits[] = {
-		{kITEAny, kCHeader, "Producer"},
+		{kITENotDe, kCHeader, "Producer"},
+		{kITEDe, kCHeader, "Produzent"},
 		{kITEAny, kCText, "Walter Hochbrueckner"},
-		{kITEAny, kCHeader, "Executive Producer"},
+		{kITENotDe, kCHeader, "Executive Producer"},
+		{kITEDe, kCHeader, "Ausf\201hrender Produzent"},
 		{kITEAny, kCText, "Robert McNally"},
 		{kITEWyrmKeep, kCHeader, "2nd Executive Producer"},
 		{kITENotWyrmKeep, kCHeader, "Publisher"},
+		{kITENotDeNotWyrm, kCHeader, "Herausgeber"},
 		{kITEAny, kCText, "Jon Van Caneghem"}
 	};
 
@@ -881,11 +944,15 @@ int Scene::ITEIntroTreeHouseProc(int param, SCENE_INFO *scene_info) {
 	EVENT *q_event;
 
 	const INTRO_CREDIT credits1[] = {
-		{kITEAny, kCHeader, "Game Design"},
+		{kITENotDe, kCHeader, "Game Design"},
+		{kITEDe, kCHeader, "Spielentwurf"},
 		{kITEAny, kCText, "Talin, Joe Pearce, Robert McNally"},
-		{kITEAny, kCText, "and Carolly Hauksdottir"},
-		{kITEAny, kCHeader, "Screenplay and Dialog"},
-		{kITEAny, kCText, "Robert Leh, Len Wein, and Bill Rotsler"}
+		{kITENotDe, kCText, "and Carolly Hauksdottir"},
+		{kITEDe, kCText, "und Carolly Hauksdottir"},
+		{kITENotDe, kCHeader, "Screenplay and Dialog"},
+		{kITEDe, kCHeader, "Geschichte und Dialoge"},
+		{kITENotDe, kCText, "Robert Leh, Len Wein, and Bill Rotsler"},
+		{kITEDe, kCText, "Robert Leh, Len Wein und Bill Rotsler"}
 	};
 
 	int n_credits1 = ARRAYSIZE(credits1);
@@ -893,13 +960,16 @@ int Scene::ITEIntroTreeHouseProc(int param, SCENE_INFO *scene_info) {
 	const INTRO_CREDIT credits2[] = {
 		{kITEWyrmKeep, kCHeader, "Art Direction"},
 		{kITEWyrmKeep, kCText, "Allison Hershey"},
-		{kITEAny, kCHeader, "Art"},
+		{kITENotDe, kCHeader, "Art"},
+		{kITEDe, kCHeader, "Grafiken"},
 		{kITEAny, kCText, "Edward Lacabanne, Glenn Price, April Lee,"},
 		{kITEWyrmKeep, kCText, "Lisa Sample, Brian Dowrick, Reed Waller,"},
 		{kITEWyrmKeep, kCText, "Allison Hershey and Talin"},
 		{kITENotWyrmKeep, kCText, "Lisa Iennaco, Brian Dowrick, Reed"},
-		{kITENotWyrmKeep, kCText, "Waller, Allison Hershey and Talin"},
-		{kITENotWyrmKeep, kCHeader, "Art Direction"},
+		{kITENotDeNotWyrm, kCText, "Waller, Allison Hershey and Talin"},
+		{kITEDe, kCText, "Waller, Allison Hershey und Talin"},
+		{kITENotDeNotWyrm, kCHeader, "Art Direction"},
+		{kITEDe, kCHeader, "Grafische Leitung"},
 		{kITENotWyrmKeep, kCText, "Allison Hershey"}
 	};
 
@@ -959,21 +1029,25 @@ int Scene::ITEIntroFairePathProc(int param, SCENE_INFO *scene_info) {
 	EVENT *q_event;
 
 	const INTRO_CREDIT credits1[] = {
-		{kITEAny, kCHeader, "Programming"},
+		{kITENotDe, kCHeader, "Programming"},
+		{kITEDe, kCHeader, "Programmiert von"},
 		{kITEAny, kCText, "Talin, Walter Hochbrueckner,"},
-		{kITEAny, kCText, "Joe Burks and Robert Wiggins"},
+		{kITENotDe, kCText, "Joe Burks and Robert Wiggins"},
+		{kITEDe, kCText, "Joe Burks und Robert Wiggins"},
 		{kITEPCCD | kITEWyrmKeep, kCHeader, "Additional Programming"},
 		{kITEPCCD | kITEWyrmKeep, kCText, "John Bolton"},
 		{kITEMac, kCHeader, "Macintosh Version"},
 		{kITEMac, kCText, "Michael McNally and Robert McNally"},
-		{kITEAny, kCHeader, "Music and Sound"},
+		{kITENotDe, kCHeader, "Music and Sound"},
+		{kITEDe, kCHeader, "Musik und Sound"},
 		{kITEAny, kCText, "Matt Nathan"}
 	};
 
 	int n_credits1 = ARRAYSIZE(credits1);
 
 	const INTRO_CREDIT credits2[] = {
-		{kITEAny, kCHeader, "Directed by"},
+		{kITENotDe, kCHeader, "Directed by"},
+		{kITEDe, kCHeader, "Regie"},
 		{kITEAny, kCText, "Talin"}
 	};
 

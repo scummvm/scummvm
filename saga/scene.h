@@ -160,6 +160,7 @@ typedef Common::List<SCENE_QUEUE> SceneQueueList;
 #define ITE_INTRO_FRAMETIME 90
 
 #define INTRO_CAPTION_Y 170
+#define INTRO_DE_CAPTION_Y 160
 #define VOICE_PAD 50
 #define VOICE_LETTERLEN 90
 
@@ -303,7 +304,6 @@ class Scene {
 	int IHNMHateProc(int param, SCENE_INFO *scene_info);
 
  public:
-	int ITEIntroRegisterLang(void);
 	static int SC_ITEIntroAnimProc(int param, SCENE_INFO *scene_info, void *refCon);
 	static int SC_ITEIntroCave1Proc(int param, SCENE_INFO *scene_info, void *refCon);
 	static int SC_ITEIntroCave2Proc(int param, SCENE_INFO *scene_info, void *refCon);

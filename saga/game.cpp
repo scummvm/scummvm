@@ -689,37 +689,6 @@ int SagaEngine::initGame(void) {
 		warning("Error loading game resource files.");
 		return FAILURE;
 	}
-	// Load dialogue file 
-	loadLanguage();
-
-	return SUCCESS;
-}
-
-int SagaEngine::loadLanguage(void) {
-	char lang_file[MAXPATH];
-	File test_file;
-
-
-	if (getGameType() == GType_ITE) {
-		snprintf(lang_file, MAXPATH, "%s%s.%s", GAME_ITE_LANG_PREFIX, _gameLanguage, GAME_LANG_EXT);
-		if (!test_file.open(lang_file)) {
-			debug(0, "Couldn't open language file %s. Using default (US English)", lang_file);
-			return SUCCESS;
-		}
-
-		test_file.close();
-
-		if (_vm->_scene->ITEIntroRegisterLang() != SUCCESS) {
-			warning("Error registering intro sequence language cvars");
-			return FAILURE;
-		}
-
-		debug(0, "Using language file %s.", lang_file);
-		// FIXME
-		//CFG_Read(lang_path);
-	} else {
-		debug(0, "Language support for this game not implemented.");
-	}
 
 	return SUCCESS;
 }

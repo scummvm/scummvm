@@ -60,46 +60,28 @@ static const GameSettings saga_games[] = {
 	{0, 0, 0}
 };
 
-static const char *englishTextStrings[] = {
-	"Walk to",
-	"Look At",
-	"Pick Up",
-	"Talk to",
-	"Open",
-	"Close",
-	"Use",
-	"Give",
-	"Options",
-	"Test",
-	"Demo",
-	"Help",
-	"Quit Game",
-	"Fast",
-	"Slow",
-	"On",
-	"Off",
-	"Continue Playing",
-	"Load",
-	"Save",
-	"Game Options",
-	"Reading Speed",
-	"Music",
-	"Sound",
-	"Cancel",
-	"Quit",
-	"OK",
-	"Mid",
-	"Click",
-	"10%",
-	"20%",
-	"30%",
-	"40%",
-	"50%",
-	"60%",
-	"70%",
-	"80%",
-	"90%",
-	"Max"
+static const char *interfaceTextStrings[][39] = {
+	{
+		"Walk to", "Look At", "Pick Up", "Talk to", "Open",
+		"Close", "Use",	"Give", "Options", "Test",
+		"Demo", "Help", "Quit Game", "Fast", "Slow",
+		"On", "Off", "Continue Playing", "Load", "Save",
+		"Game Options", "Reading Speed", "Music", "Sound", "Cancel",
+		"Quit", "OK", "Mid", "Click",
+		"10%", "20%", "30%", "40%", "50%",
+		"60%", 	"70%", "80%", "90%", "Max"
+	},
+	// German
+	{
+		"Gehe zu", "Schau an", "Nimm", "Rede mit", "\231ffne",
+		"Schlie$e", "Benutze",	"Gib", "Optionen", "Test",
+		"Demo", "Hilfe", "Spiel beenden", "S", "L",
+		"An", "Aus", "Weiterspielen", "Laden", "Sichern",
+		"Spieleoptionen", "Lesegeschw.", "Musik", "Sound", "Abbr.",
+		"Beenden", "OK", "M", "Klick",
+		"10%", "20%", "30%", "40%", "50%",
+		"60%", 	"70%", "80%", "90%", "Max"
+	}
 };
 
 GameList Engine_SAGA_gameList() {
@@ -377,7 +359,9 @@ const char *SagaEngine::getObjectName(uint16 objectId) {
 
 const char *SagaEngine::getTextString(int textStringId) {
 
-	return englishTextStrings[textStringId]; //TODO: i18n
+	int lang = _vm->getFeatures() & GF_LANG_DE ? 1 : 0;
+
+	return interfaceTextStrings[lang][textStringId];
 }
 
 } // End of namespace Saga
