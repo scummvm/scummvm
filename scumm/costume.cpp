@@ -584,7 +584,7 @@ void CostumeRenderer::proc3()
 				_scaleIndexX = t + _scaleIndexXStep;
 				if (cost_scaleTable[t] < _scaleX) {
 					_xpos += _scaleIndexXStep;
-					if (_xpos >= _vm->_realWidth)
+					if (_xpos < 0 || _xpos >= _vm->_realWidth)
 						return;
 					maskbit = revBitMask[_xpos & 7];
 					_backbuff_ptr += _scaleIndexXStep;
@@ -646,7 +646,7 @@ void CostumeRenderer::proc2()
 				_scaleIndexX = t + _scaleIndexXStep;
 				if (cost_scaleTable[t] < _scaleX) {
 					_xpos += _scaleIndexXStep;
-					if (_xpos >= _vm->_realWidth)
+					if (_xpos < 0 || _xpos >= _vm->_realWidth)
 						return;
 					maskbit = revBitMask[_xpos & 7];
 					_backbuff_ptr += _scaleIndexXStep;
@@ -707,7 +707,7 @@ void CostumeRenderer::proc1()
 				_scaleIndexX = t + _scaleIndexXStep;
 				if (cost_scaleTable[t] < _scaleX) {
 					_xpos += _scaleIndexXStep;
-					if (_xpos >= _vm->_realWidth)
+					if (_xpos < 0 || _xpos >= _vm->_realWidth)
 						return;
 					_backbuff_ptr += _scaleIndexXStep;
 				}
@@ -1180,7 +1180,7 @@ void CostumeRenderer::proc_special(Actor *a, byte mask2)
 				_scaleIndexX = t + _scaleIndexXStep;
 				if (cost_scaleTable[t] < _scaleX) {
 					_xpos += _scaleIndexXStep;
-					if (_xpos >= _vm->_realWidth)
+					if (_xpos < 0 || _xpos >= _vm->_realWidth)
 						return;
 					maskbit = revBitMask[_xpos & 7];
 					_backbuff_ptr += _scaleIndexXStep;
