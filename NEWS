@@ -9,6 +9,8 @@ For a more comprehensive changelog for the latest experimental CVS code, see:
    - Comments in config files are preserved now
    - Updated AdvMame scalers based on scale2x 2.0 - AdvMame3x looks nicer now
    - Added MMX i386 assembler HQ2x and HQ3x scalers
+   - Alt-x and Ctrl-z quit keys disabled in favour of Ctrl-q on non
+     Mac OS X unices (including Linux)
 
  SCUMM:
    - Added graphics decoders for 3DO Humongous Entertainment games

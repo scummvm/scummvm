@@ -228,6 +228,12 @@ bool OSystem_SDL::poll_event(Event *event) {
 				event->event_code = EVENT_QUIT;
 				return true;
 			}
+#elif defined(UNIX)
+			// On other unices, Control-Q quits
+			if ((ev.key.keysym.mod & KMOD_CTRL) && ev.key.keysym.sym == 'q') {
+				event->event_code = EVENT_QUIT;
+				return true;
+			}
 #else
 			// Ctrl-z and Alt-X quit
 			if ((b == KBD_CTRL && ev.key.keysym.sym == 'z') || (b == KBD_ALT && ev.key.keysym.sym == 'x')) {
