@@ -132,13 +132,14 @@ struct GameSpecificSettings {
  	const char *gamepc_filename;
 };
 
+// TODO: the following really should be turned into GameFeatures...
 enum {
-	GAME_SIMON2 = 1,
-	GAME_WIN = 2,
-	GAME_TALKIE = 4,
-	GAME_DEMO = 8,
-	GAME_MAC = 16,
-	GAME_AMIGA = 32,
+	GAME_SIMON2 = 1 << 0,
+	GAME_WIN    = 1 << 1,
+	GAME_TALKIE = 1 << 2,
+	GAME_DEMO   = 1 << 3,
+	GAME_MAC    = 1 << 4,
+	GAME_AMIGA  = 1 << 5,
 
 	GAME_SIMON1DOS = 0,
 	GAME_SIMON2DOS = GAME_SIMON2,

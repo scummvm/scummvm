@@ -23,10 +23,12 @@
 
 #include "stdafx.h"
 #include "sound/mididrv.h"
-#include "scumm/imuse.h"
 #include "common/engine.h"
 #include "common/gameDetector.h"
 #include "common/config-file.h"
+
+#include "simon/intern.h"	// FIXME - remove this, only used for the GAME_* constants in it!
+
 
 #define CHECK_OPTION() if ((current_option != NULL) || (*s != '\0')) goto ShowHelpAndExit
 #define HANDLE_OPTION() if ((*s == '\0') && (current_option == NULL)) goto ShowHelpAndExit;  \
@@ -168,19 +170,19 @@ const VersionSettings version_settings[] = {
 
 	/* Simon the Sorcerer 1 & 2 (not SCUMM games) */
 	{"simon1dos", "Simon the Sorcerer 1 for DOS", GID_SIMON_FIRST+0, 99, 99, 99, 0, "GAMEPC"},
-	{"simon1amiga", "Simon the Sorcerer 1 for Amiga", GID_SIMON_FIRST+32, 99, 99, 99, 0, "gameamiga"},
-	{"simon2dos", "Simon the Sorcerer 2 for DOS", GID_SIMON_FIRST+1, 99, 99, 99, 0, "GAME32"},
-	{"simon1talkie", "Simon the Sorcerer 1 Talkie for DOS", GID_SIMON_FIRST+4, 99, 99, 99, 0, "SIMON.GME"},
-	{"simon2talkie", "Simon the Sorcerer 2 Talkie for DOS", GID_SIMON_FIRST+5, 99, 99, 99, 0, "GSPTR30"},
-	{"simon2talkie", "Simon the Sorcerer 2 Talkie for DOS", GID_SIMON_FIRST+5, 99, 99, 99, 0, "GSPTR30."},
-	{"simon1win", "Simon the Sorcerer 1 Talkie for Windows", GID_SIMON_FIRST+6, 99, 99, 99, 0, "SIMON.GME"},
-	{"simon1cd32", "Simon the Sorcerer 1 Talkie for Amiga CD32", GID_SIMON_FIRST+36, 99, 99, 99, 0, "gameamiga"},
-	{"simon2win", "Simon the Sorcerer 2 Talkie for Windows", GID_SIMON_FIRST+7, 99, 99, 99, 0, "GSPTR30"},
-	{"simon2win", "Simon the Sorcerer 2 Talkie for Windows", GID_SIMON_FIRST+7, 99, 99, 99, 0, "GSPTR30."},
-	{"simon2amiga", "Simon the Sorcerer 2 Talkie for Amiga", GID_SIMON_FIRST+23, 99, 99, 99, 0, "GSPTR30"},
-	{"simon2mac", "Simon the Sorcerer 2 Talkie for Mac", GID_SIMON_FIRST+23, 99, 99, 99, 0, "GSPTR30"},
-	{"simon1demo", "Simon the Sorcerer 1 for DOS (Demo)", GID_SIMON_FIRST+8, 99, 99, 99, 0, "GDEMO"}, 
-	{"simon2demo", "Simon the Sorcerer 2 Talkie for DOS (Demo)", GID_SIMON_FIRST+5, 99, 99, 99, 0, "GSPTR30"}, 
+	{"simon1amiga", "Simon the Sorcerer 1 for Amiga", GID_SIMON_FIRST+GAME_SIMON1AMIGA, 99, 99, 99, 0, "gameamiga"},
+	{"simon2dos", "Simon the Sorcerer 2 for DOS", GID_SIMON_FIRST+GAME_SIMON2DOS, 99, 99, 99, 0, "GAME32"},
+	{"simon1talkie", "Simon the Sorcerer 1 Talkie for DOS", GID_SIMON_FIRST+GAME_SIMON1TALKIE, 99, 99, 99, 0, "SIMON.GME"},
+	{"simon2talkie", "Simon the Sorcerer 2 Talkie for DOS", GID_SIMON_FIRST+GAME_SIMON2TALKIE, 99, 99, 99, 0, "GSPTR30"},
+	{"simon2talkie", "Simon the Sorcerer 2 Talkie for DOS", GID_SIMON_FIRST+GAME_SIMON2TALKIE, 99, 99, 99, 0, "GSPTR30."},
+	{"simon1win", "Simon the Sorcerer 1 Talkie for Windows", GID_SIMON_FIRST+GAME_SIMON1WIN, 99, 99, 99, 0, "SIMON.GME"},
+	{"simon1cd32", "Simon the Sorcerer 1 Talkie for Amiga CD32", GID_SIMON_FIRST+GAME_SIMON1CD32, 99, 99, 99, 0, "gameamiga"},
+	{"simon2win", "Simon the Sorcerer 2 Talkie for Windows", GID_SIMON_FIRST+GAME_SIMON2WIN, 99, 99, 99, 0, "GSPTR30"},
+	{"simon2win", "Simon the Sorcerer 2 Talkie for Windows", GID_SIMON_FIRST+GAME_SIMON2WIN, 99, 99, 99, 0, "GSPTR30."},
+	{"simon2amiga", "Simon the Sorcerer 2 Talkie for Amiga", GID_SIMON_FIRST+GAME_SIMON2MAC, 99, 99, 99, 0, "GSPTR30"},
+	{"simon2mac", "Simon the Sorcerer 2 Talkie for Mac", GID_SIMON_FIRST+GAME_SIMON2MAC, 99, 99, 99, 0, "GSPTR30"},
+	{"simon1demo", "Simon the Sorcerer 1 for DOS (Demo)", GID_SIMON_FIRST+GAME_SIMON1DEMO, 99, 99, 99, 0, "GDEMO"}, 
+	{"simon2demo", "Simon the Sorcerer 2 Talkie for DOS (Demo)", GID_SIMON_FIRST+GAME_SIMON2TALKIE, 99, 99, 99, 0, "GSPTR30"}, 
 
 	{NULL, NULL, 0, 0, 0, 0, 0, NULL}
 };
