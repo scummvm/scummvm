@@ -1051,10 +1051,7 @@ void Scumm::launch()
 	if (_gameId==GID_MONKEY2 && _bootParam == 0)
 		_bootParam = 10001;
 	
-	if (_features & GF_SMALL_HEADER)
-		readIndexFileSmall();
-	else
-		readIndexFile();
+	readIndexFile();
 
 	initRandSeeds();
 

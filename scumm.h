@@ -810,8 +810,7 @@ public:
     void loadRoomObjectsSmall();
 	void readArrayFromIndexFile();
 	void readMAXS();
-    void readIndexFile();
-    void readIndexFileSmall();
+	virtual void readIndexFile();
 	void loadCharset(int i);
 	void nukeCharset(int i);
 
@@ -1663,22 +1662,17 @@ public:
 	byte VAR_CHARSET_MASK;
 
 	void launch();
-
-	virtual void test1() const { return; };
 };
 
 class Scumm_v7 : public Scumm
 {
 public:
-  //	Scumm_v7();
-//	const static int test = 1;
-	void test1v7() const { printf("Test1"); }
-	void test1() const { test1v7(); }
 };
 
 class Scumm_v3 : public Scumm
 {
 public:
+	void readIndexFile();
 };
 
 struct ScummDebugger {

@@ -322,7 +322,7 @@ void Scumm::readIndexFile() {
 	openRoom(-1);
 }
 
-void Scumm::readIndexFileSmall() {
+void Scumm_v3::readIndexFile() {
        uint16 blocktype;
        uint32 itemsize;
        int numblock = 0;

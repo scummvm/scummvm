@@ -919,8 +919,15 @@ int main(int argc, char* argv[]) {
 #endif
 
 	detecter.detectMain(argc, argv);
-	
-	scumm = new Scumm;
+
+
+	if( detecter._features & GF_AFTER_V7 ) // not final implementation. This is just a test
+		scumm = new Scumm_v7;
+	else
+	if( detecter._features & GF_OLD256 )
+		scumm = new Scumm_v3;
+	else
+		scumm = new Scumm;
 
 	scumm->_fullScreen = detecter._fullScreen;
 	scumm->_debugMode = detecter._debugMode;
