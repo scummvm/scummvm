@@ -27,12 +27,12 @@ namespace Common {
 
 /**
  * Default comparison functor: compares to objects using their </==/> operators.
- * Comparison functors ('comperators') are used by the Map template to
- * compare keys. A non-standard comperator might e.g. be implemented to
+ * Comparison functors ('comparators') are used by the Map template to
+ * compare keys. A non-standard comparator might e.g. be implemented to
  * compare strings, ignoring the case.
  */
 template <class T>
-struct DefaultComperator {
+struct DefaultComparator {
   int operator()(const T& x, const T& y) const { return (x < y) ? -1 : (y < x) ? +1 : 0; }
 };
 
@@ -48,7 +48,7 @@ struct DefaultComperator {
  * @todo Having unit tests for this class would be very desirable. There are a 
  *       big number of things which can go wrong in this code.
  */
-template <class Key, class Value, class Comperator = DefaultComperator<Key> >
+template <class Key, class Value, class Comparator = DefaultComparator<Key> >
 class Map {
 protected:
 	struct Node {
@@ -64,12 +64,12 @@ protected:
 	Node *_header;
 
 private:
-	Map<Key, Value, Comperator>(const Map<Key, Value, Comperator> &map);
-	Map<Key, Value, Comperator> &operator =(const Map<Key, Value, Comperator> &map);
+	Map<Key, Value, Comparator>(const Map<Key, Value, Comparator> &map);
+	Map<Key, Value, Comparator> &operator =(const Map<Key, Value, Comparator> &map);
 
 public:
 	class ConstIterator {
-		friend class Map<Key, Value, Comperator>;
+		friend class Map<Key, Value, Comparator>;
 	protected:
 		Node *_node;
 		ConstIterator(Node *node) : _node(node) {}
@@ -105,12 +105,12 @@ public:
 	};
 
 public:
-	Map<Key, Value, Comperator>() : _root(0) {
+	Map<Key, Value, Comparator>() : _root(0) {
 		_header = new Node();
 		_header->_right = _header->_left = _header;
 	}
 	
-	virtual ~Map<Key, Value, Comperator>() {
+	virtual ~Map<Key, Value, Comparator>() {
 		clearNodes(_root);
 		delete _header;
 		_root = _header = 0;
@@ -199,7 +199,7 @@ public:
 		delete node;
 	}
 
-	void merge(const Map<Key, Value, Comperator> &map) {
+	void merge(const Map<Key, Value, Comparator> &map) {
 		merge(map._root);
 	}
 
@@ -228,7 +228,7 @@ protected:
 
 	/** Find and return the node matching the given key, if any. */
 	Node *findNode(Node *node, const Key &key) const {
-		Comperator cmp;
+		Comparator cmp;
 		while (node) {
 			int val = cmp(key,node->_key);
 			if (val == 0)
@@ -242,7 +242,7 @@ protected:
 	}
 
 	Node *findOrCreateNode(Node *node, const Key &key) {
-		Comperator cmp;
+		Comparator cmp;
 		Node *prevNode = 0;
 		bool left = true;
 		while (node) {

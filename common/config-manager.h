@@ -40,12 +40,12 @@ namespace Common {
  *       of some specific (or any) configuration key changes.
  */
 class ConfigManager : public Singleton<ConfigManager> {
-	struct IgnoreCaseComperator {
+	struct IgnoreCaseComparator {
 	  int operator()(const String& x, const String& y) const { return scumm_stricmp(x.c_str(), y.c_str()); }
 	};
 	
 public:
-	class Domain : public Map<String, String, IgnoreCaseComperator> {
+	class Domain : public Map<String, String, IgnoreCaseComparator> {
 	public:
 		const String &get(const String &key) const {
 			Node *node = findNode(_root, key);
@@ -53,7 +53,7 @@ public:
 		}
 	};
 
-	typedef Map<String, Domain, IgnoreCaseComperator> DomainMap;
+	typedef Map<String, Domain, IgnoreCaseComparator> DomainMap;
 
 	/** The name of the application domain (normally 'scummvm'). */
 	static const String kApplicationDomain;
