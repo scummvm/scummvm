@@ -32,6 +32,7 @@ static void saveRegistry() {
 }
 
 int main(int /* argc */, char ** /* argv */) {
+  char 	GLDriver[1024];
   if (SDL_Init(SDL_INIT_VIDEO) < 0)
     return 1;
   SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 5);
@@ -45,8 +46,8 @@ int main(int /* argc */, char ** /* argv */) {
 
   atexit(SDL_Quit);
   atexit(saveRegistry);
-
-  SDL_WM_SetCaption("Residual", "Residual");
+  sprintf(GLDriver, "Residual: %s/%s", glGetString(GL_VENDOR), glGetString(GL_RENDERER));
+  SDL_WM_SetCaption(GLDriver, "Residual");
   
   Bitmap *splash_bm = ResourceLoader::instance()->loadBitmap("splash.bm");
 
