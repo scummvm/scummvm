@@ -26,10 +26,18 @@
 bool Scumm::getClass(int obj, int cls) {
 	checkRange(_numGlobalObjects-1, 0, obj, "Object %d out of range in getClass");
 
-	cls &= 0x7F;
+	
 	checkRange(32,1,cls,"Class %d out of range in getClass");
+	if (_features && GF_SMALL_HEADER) {
+		byte *oldClass = (byte*)&_classData[obj];
+		if (cls == 32)	// CLASS_TOUCHABLE
+			cls = 23;
 
-	return (_classData[obj] & (1<<(cls-1))) != 0;
+		return (oldClass[cls/8] & bit_table[cls&0x07]) != 0;
+	} else {
+		cls &= 0x7F;
+		return (_classData[obj] & (1<<(cls-1))) != 0;	
+	}
 }
 
 void Scumm::putClass(int obj, int cls, bool set) {
@@ -874,7 +882,6 @@ void Scumm::SamInventoryHack(int obj) {	// FIXME: Sam and Max hack
 		if (value == obj) return;
 		if (value == 0) {
 				_vars[179]++;
-				printf("Adding item %d to slot %d\n", obj, base);
 				writeArray(178, 0, base, obj);
 				return;
 		}

@@ -60,6 +60,7 @@ enum {
 
 const uint16 many_direction_tab[18] = {4, 8, 71, 109, 251, 530, 0, 0, 0, 0, 22, 72, 107, 157, 202, 252, 287, 337};
 const int16 many_direction_tab_2[16] = {0, 90, 180, 270, -1, -1, -1, -1, 0, 45, 90, 135, 180, 225, 270, 315};
+const int bit_table[16] = {1,2,4,8,0x10,0x20,0x40,0x80,0x100,0x200,0x400,0x800,0x1000,0x2000,0x4000,0x8000};
 
 struct ScummPoint {
 	int x,y;

@@ -805,10 +805,6 @@ FixRoom:
 	}
 }
 
-const int bit_table[16] =
-{1,2,4,8,0x10,0x20,0x40,0x80,0x100,0x200,0x400,0x800,0x1000,0x2000,0x4000,0x8000};
-
-
 void Scumm::o5_actorSetClass() {
 	int act = getVarOrDirectWord(0x80);
 	int newClass;
@@ -1505,8 +1501,8 @@ void Scumm::o5_loadRoomWithEgo() {
 
 void Scumm::o5_matrixOps() {
 	int a,b;
-	printf("o5_matrixOps\n");
 	if(_features & GF_OLD256) { /* FIXME: missing function call*/
+		warning("o5_matrixOps - unimplemented on GF_OLD256");
 		a=getVarOrDirectByte(0x80);
 		b=fetchScriptByte();
 		return;
