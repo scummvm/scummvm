@@ -1,0 +1,193 @@
+/* ScummVM - Scumm Interpreter
+ * Copyright (C) 2001-2003 The ScummVM project
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ *
+ * $Header$
+ *
+ */
+
+#include "stdafx.h"
+#include "sound/midiparser.h"
+#include "sound/mididrv.h"
+#include "common/util.h"
+
+
+//////////////////////////////////////////////////
+//
+// The FM Towns Euphony version of MidiParser
+//
+//////////////////////////////////////////////////
+
+class MidiParser_EUP : public MidiParser {
+protected:
+	struct {
+		bool mute;
+		uint8 channel;
+		int8 volume;
+		int8 transpose;
+	} _presets[32];
+	bool _loop;
+	byte _presend; // Tracks which startup implied events have been sent.
+
+protected:
+	void parseNextEvent (EventInfo &info);
+	void resetTracking();
+
+public:
+	bool loadMusic (byte *data, uint32 size);
+};
+
+
+
+//////////////////////////////////////////////////
+//
+// MidiParser_EUP implementation
+//
+//////////////////////////////////////////////////
+
+void MidiParser_EUP::parseNextEvent (EventInfo &info) {
+	byte *pos = _position._play_pos;
+
+	// FIXME: The presend is for sending init events
+	// that aren't actually in the stream. This would
+	// be for, e.g., instrument setup. Right now, we
+	// don't actually use the instruments specified
+	// in the music header. We're sending fixed GM
+	// program changes to get a reasonable "one-size-
+	// fits-all" sound until we actually support the
+	// FM synthesis capabilities of FM Towns.
+	if (_presend) {
+		--_presend;
+		info.start = pos;
+		info.delta = 0;
+		info.event = ((_presend & 1) ? 0xB0 : 0xC0) | (_presend >> 1);
+		info.basic.param1 = ((_presend & 1) ? 7 : 0x38);
+		info.basic.param2 = ((_presend & 1) ? 127 : 0);
+		_presend = (_presend + 2) % 32;
+		return;
+	}
+
+	while (true) {
+		byte cmd = *pos;
+		if ((cmd & 0xF0) == 0x90) {
+			byte preset = pos[1];
+			byte channel = _presets[preset].channel;
+			if (channel >= 16)
+				channel = cmd & 0x0F;
+			uint16 tick = pos[2] | ((uint16) pos[3] << 7);
+			int note = (int) pos[4] + _presets[preset].transpose;
+			int volume = (int) pos[5] + _presets[preset].volume;
+			pos += 6;
+			if ((*pos & 0xF0) == 0x80) {
+				if (!_presets[preset].mute) {
+					uint16 duration = pos[1] | (pos[2] << 4) | (pos[3] << 8) | (pos[4] << 12);
+					info.start = pos;
+					uint32 last = _position._last_event_tick;
+					info.delta = (tick < last) ? 0 : (tick - last);
+					info.event = 0x90 | channel;
+					info.length = duration;
+					info.basic.param1 = note;
+					info.basic.param2 = volume;
+					pos += 6;
+					break;
+				}
+				pos += 6;
+			}
+		} else if (cmd == 0xF2) {
+			// This is basically a "rest".
+			uint16 tick = pos[2] | (pos[3] << 7);
+			uint32 last = _position._last_event_tick;
+			info.start = pos;
+			info.delta = (tick < last) ? 0 : (tick - last);
+			info.event = 0xFF;
+			info.length = 0;
+			info.ext.type = 0x7F; // Bogus META event
+			info.ext.data = pos;
+			pos += 6;
+			break;
+		} else if (cmd == 0xF8) {
+			// TODO: Implement this.
+			pos += 6;
+		} else if (cmd == 0xFD || cmd == 0xFE) {
+			// End of track.
+			if (_loop && false) {
+				// TODO: Implement this.
+			} else {
+				info.start = pos;
+				info.delta = 0;
+				info.event = 0xFF;
+				info.length = 0;
+				info.ext.type = 0x2F;
+				info.ext.data = pos;
+				pos = 0;
+				break;
+			}
+		} else {
+			printf ("Unknown Euphony music event 0x%02X\n", (int) cmd);
+			memset (&info, 0, sizeof(info));
+			pos = 0;
+			break;
+		}
+	}
+	_position._play_pos = pos;
+}
+
+bool MidiParser_EUP::loadMusic (byte *data, uint32 size) {
+	unloadMusic();
+	byte *pos = data;
+
+	if (memcmp (pos, "SO", 2)) {
+		printf ("Warning: 'SO' header expected but found '%c%c' instead.\n", pos[0], pos[1]);
+		return false;
+	}
+
+	byte numInstruments = pos[16];
+	pos += (16 + 2 + numInstruments * 48);
+
+	for (int i = 0; i < 32; ++i) {
+		_presets[i].mute = ((int8) pos[i] == 0);
+		_presets[i].channel = pos[i+32];
+		_presets[i].volume = (int8) pos[i+64];
+		_presets[i].transpose = (int8) pos[i+96];
+	}
+	pos += 32 * 4; // Jump past presets
+	pos += 8; // Unknown bytes
+	pos += 6; // Instrument-to-channel mapping (not supported yet)
+	pos += 4; // Skip the music size for now.
+	pos++;    // Unknown byte
+	byte tempo = *pos++;
+	_loop = (*pos++ != 1);
+	pos++;    // Unknown byte
+
+	_num_tracks = 1;
+	_ppqn = 120;
+	_tracks[0] = pos;
+
+	// Note that we assume the original data passed in
+	// will persist beyond this call, i.e. we do NOT
+	// copy the data to our own buffer. Take warning....
+	resetTracking();
+	setTempo (1000000 * 60 / tempo);
+	setTrack (0);
+	return true;
+}
+
+void MidiParser_EUP::resetTracking() {
+	MidiParser::resetTracking();
+	_presend = 1;
+}
+
+MidiParser *MidiParser_createEUP() { return new MidiParser_EUP; }

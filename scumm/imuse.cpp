@@ -88,6 +88,8 @@ byte *IMuseInternal::findStartOfSound(int sound) {
 	// Check for old-style headers first, like 'RO'
 	if (ptr[4] == 'R' && ptr[5] == 'O'&& ptr[6] != 'L')
 		return ptr + 4;
+	if (ptr[8] == 'S' && ptr[9] == 'O')
+		return ptr + 8;
 
 	ptr += 8;
 	size = READ_BE_UINT32(ptr);
@@ -134,9 +136,12 @@ bool IMuseInternal::isMT32(int sound) {
 		return false;
 	}
 
-	// Check old style headers, like 'RO'
+	// Old style 'RO' has equivalent properties to 'ROL'
 	if (ptr[4] == 'R' && ptr[5] == 'O')
 		return true;
+	// Euphony tracks show as 'SO' and have equivalent properties to 'ADL'
+	if (ptr[8] == 'S' && ptr[9] == 'O')
+		return false;
 
 	return false;
 }
@@ -170,8 +175,12 @@ bool IMuseInternal::isGM(int sound) {
 		return false;
 	}
 
-	// Check old style headers, like 'RO'
+	// Old style 'RO' has equivalent properties to 'ROL'
 	if (ptr[4] == 'R' && ptr[5] == 'O')
+		return true;
+	// Euphony tracks show as 'SO' and have equivalent properties to 'ADL'
+	// FIXME: Right now we're pretending it's GM.
+	if (ptr[8] == 'S' && ptr[9] == 'O')
 		return true;
 
 	return false;

@@ -91,11 +91,11 @@ static const TargetSettings scumm_settings[] = {
 	 GF_SMALL_HEADER | GF_SMALL_NAMES | GF_NO_SCALING | GF_OLD256 | GF_FEW_LOCALS | GF_FMTOWNS | GF_AUDIOTRACKS, "00.LFL"},
 	{"indy3", "Indiana Jones and the Last Crusade (256)", GID_INDY3, 3, MDT_PCSPK | MDT_ADLIB,
 	 GF_SMALL_HEADER | GF_SMALL_NAMES | GF_NO_SCALING | GF_OLD256 | GF_FEW_LOCALS, "00.LFL"},
-	{"zak256", "Zak McKracken and the Alien Mindbenders (256)", GID_ZAK256, 3, MDT_PCSPK,
+	{"zak256", "Zak McKracken and the Alien Mindbenders (256)", GID_ZAK256, 3, MDT_ADLIB,
 	 GF_SMALL_HEADER | GF_SMALL_NAMES | GF_NO_SCALING | GF_OLD256 | GF_FMTOWNS | GF_AUDIOTRACKS, "00.LFL"},
 	{"loom", "Loom", GID_LOOM, 3, MDT_PCSPK | MDT_ADLIB | MDT_NATIVE,
 	 GF_SMALL_HEADER | GF_SMALL_NAMES | GF_NO_SCALING | GF_USE_KEY | GF_16COLOR | GF_OLD_BUNDLE, "00.LFL"},
-	{"loomTowns", "Loom (FM Towns)", GID_LOOM, 3, MDT_NONE,
+	{"loomTowns", "Loom (FM Towns)", GID_LOOM, 3, MDT_ADLIB,
 	 GF_SMALL_HEADER | GF_SMALL_NAMES | GF_NO_SCALING | GF_OLD256 | GF_FMTOWNS | GF_AUDIOTRACKS, "00.LFL"},
 
 	/* Scumm Version 4 */
@@ -723,7 +723,7 @@ Scumm::Scumm (GameDetector *detector, OSystem *syst)
 			_imuse->property(IMuse::PROP_OLD_ADLIB_INSTRUMENTS, (_features & GF_SMALL_HEADER) ? 1 : 0);
 			_imuse->property(IMuse::PROP_MULTI_MIDI, detector->_multi_midi && _midiDriver != MD_NULL);
 			_imuse->property(IMuse::PROP_NATIVE_MT32, detector->_native_mt32);
-			if (_features & GF_HUMONGOUS) {
+			if (_features & GF_HUMONGOUS || _features & GF_FMTOWNS) {
 				_imuse->property(IMuse::PROP_LIMIT_PLAYERS, 1);
 				_imuse->property(IMuse::PROP_RECYCLE_PLAYERS, 1);
 			}

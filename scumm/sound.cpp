@@ -384,23 +384,8 @@ void Sound::playSound(int soundID) {
 			}
 
 			case 1: { // Music (Euphony format)
-				int numInstruments = *(ptr + 0x14);
-				int tuneSize = 0, tempo = 0;
-
-				ptr += (0x16 + (numInstruments * 48));	// Skip instrument definitions
-				ptr += (32*4);	// Skip preset values (mute, channel, volume, transpose)
-				ptr += 8;	// (Unknown)
-				
-				ptr += 6;	// Instrument channel's. Always 6 bytes according to the disassembly.
-
-				tuneSize = READ_LE_UINT32(ptr);
-				ptr += 5;
-
-				tempo = *ptr++;
-				ptr += 2;
-				// Music data begins here
-
-				warning("Euphony tune #%d unsupported", soundID);
+				if (_scumm->_musicEngine)
+					_scumm->_musicEngine->startSound (soundID);
 				break;
 			}
 		

@@ -39,6 +39,7 @@
 ////////////////////////////////////////
 
 extern MidiParser *MidiParser_createRO();
+extern MidiParser *MidiParser_createEUP();
 
 static uint read_word(byte *a) {
 	return (a[0] << 8) + a[1];
@@ -186,6 +187,9 @@ int Player::start_seq_sound(int sound, bool reset_vars) {
 	if (!memcmp (ptr, "RO", 2)) {
 		// Old style 'RO' resource
 		_parser = MidiParser_createRO();
+	} else if (!memcmp (ptr, "SO", 2)) {
+		// Euphony (FM Towns) resource
+		_parser = MidiParser_createEUP();
 	} else if (!memcmp(ptr, "FORM", 4)) {
 		// Humongous Games XMIDI resource
 		_parser = MidiParser::createParser_XMIDI();

@@ -311,6 +311,9 @@
 				RelativePath=".\scumm\midiparser_ro.cpp">
 			</File>
 			<File
+				RelativePath=".\scumm\midiparser_eup.cpp">
+			</File>
+			<File
 				RelativePath="scumm\music.h">
 			</File>
 			<File
