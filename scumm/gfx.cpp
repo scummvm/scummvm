@@ -878,12 +878,16 @@ void CharsetRenderer::restoreCharsetBg() {
 			}
 		} else {
 			// Clear area
-			memset(screenBuf, 0, vs->h * vs->pitch);
+			if (_vm->_features & GF_NES)
+				memset(screenBuf, 0x1d, vs->h * vs->pitch);
+			else
+				memset(screenBuf, 0, vs->h * vs->pitch);
 		}
 
 		if (vs->hasTwoBuffers) {
 			// Clean out the charset mask
-			memset(_vm->gdi._textSurface.pixels, CHARSET_MASK_TRANSPARENCY, _vm->gdi._textSurface.pitch * _vm->gdi._textSurface.h);
+			memset(_vm->gdi._textSurface.pixels, (_vm->_features & GF_NES) ? 0x1d : 
+				   CHARSET_MASK_TRANSPARENCY, _vm->gdi._textSurface.pitch * _vm->gdi._textSurface.h);
 		}
 	}
 }

@@ -1052,7 +1052,10 @@ void ScummEngine_v2::o2_drawSentence() {
 	sentenceline.bottom = virtscr[2].topline + 8;
 	sentenceline.left = 0;
 	sentenceline.right = 319;
-	restoreBG(sentenceline);
+	if (_features & GF_NES)
+		restoreBG(sentenceline, 0x1d);
+	else
+		restoreBG(sentenceline);
 
 	drawString(2, (byte*)sentence);
 }
@@ -1514,7 +1517,10 @@ void ScummEngine_v2::setUserState(byte state) {
 	rect.bottom = virtscr[2].topline + 8 * 88;
 	rect.left = 0;
 	rect.right = 319;
-	restoreBG(rect);
+	if (_features & GF_NES)
+		restoreBG(rect, 0x1d);
+	else
+		restoreBG(rect);
 
 	// Draw all verbs and inventory
 	redrawVerbs();
