@@ -20,9 +20,9 @@
  *
  */
 
-#include "common/plugins.h"
+#include "base/gameDetector.h"
+#include "base/plugins.h"
 #include "common/engine.h"
-#include "common/gameDetector.h"
 
 
 PluginManager	*g_pluginManager = 0;

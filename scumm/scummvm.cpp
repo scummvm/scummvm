@@ -23,7 +23,7 @@
 #include "stdafx.h"
 
 #include "common/config-file.h"
-#include "common/gameDetector.h"
+#include "base/gameDetector.h"
 
 #include "gui/console.h"
 #include "gui/message.h"

@@ -23,7 +23,7 @@
 #include "sky/skydefs.h"
 #include "sky/sky.h"
 #include "common/file.h"
-#include "common/gameDetector.h"
+#include "base/gameDetector.h"
 
 #ifdef _WIN32_WCE
 extern void force_keyboard(bool);

@@ -21,7 +21,7 @@
 #include "stdafx.h"
 #include "driver/driver96.h"
 #include "driver/palette.h"
-#include "common/gameDetector.h"
+#include "base/gameDetector.h"
 #include "common/config-file.h"
 #include "build_display.h"
 #include "console.h"

@@ -22,7 +22,7 @@
 #include "charset.h"
 #include "scumm.h"
 #include "nut_renderer.h"
-#include "common/gameDetector.h"
+#include "base/gameDetector.h"
 
 CharsetRenderer::CharsetRenderer(Scumm *vm) {
 

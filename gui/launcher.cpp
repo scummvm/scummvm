@@ -32,10 +32,11 @@
 
 #include "backends/fs/fs.h"
 
+#include "base/gameDetector.h"
+#include "base/plugins.h"
+
 #include "common/config-file.h"
 #include "common/engine.h"
-#include "common/gameDetector.h"
-#include "common/plugins.h"
 
 enum {
 	kStartCmd = 'STRT',

@@ -22,10 +22,10 @@
 
 #include "stdafx.h"
 #include "backends/intern.h"
+#include "base/gameDetector.h"
+#include "base/plugins.h"
 #include "common/config-file.h"
 #include "common/engine.h"
-#include "common/gameDetector.h"
-#include "common/plugins.h"
 #include "common/scaler.h"	// Only for gfx_modes
 #include "sound/mididrv.h"
 #include "sound/mixer.h"
@@ -191,6 +191,7 @@ GameDetector::GameDetector() {
 	_midi_driver = MD_AUTO;
 	_game.id = 0;
 	_game.features = 0;
+	_plugin = 0;
 
 	_multi_midi = false;
 	_native_mt32 = false;
@@ -297,7 +298,7 @@ void GameDetector::list_games() {
 	}
 }
 
-const TargetSettings *GameDetector::findTarget(const char *targetName) const {
+const TargetSettings *GameDetector::findTarget(const char *targetName, const Plugin **plugin) const {
 	// Find the TargetSettings for this target
 	assert(targetName);
 	const TargetSettings *target;
@@ -305,8 +306,11 @@ const TargetSettings *GameDetector::findTarget(const char *targetName) const {
 	
 	for (int i = 0; i < plugins.size(); i++) {
 		target = plugins[i]->findTarget(targetName);
-		if (target)
+		if (target) {
+			if (plugin)
+				*plugin = plugins[i];
 			return target;
+		}
 	}
 	return 0;
 }
@@ -636,7 +640,7 @@ bool GameDetector::detectGame() {
 		realGame = _gameFileName.c_str();
 	printf("Looking for %s\n", realGame);
 	
-	target = findTarget(realGame);
+	target = findTarget(realGame, &_plugin);
 	
 	if (target) {
 		_game = *target;
@@ -740,41 +744,9 @@ OSystem *GameDetector::createSystem() {
 Engine *GameDetector::createEngine(OSystem *system) {
 	Engine *engine = NULL;
 
-	// FIXME: These checks are evil, as they require us to hard code GIDs.
-	// Much better would be to e.g. put a pointer to the instance creation
-	// method into the TargetSettings or so. That way, in addition to
-	// simplifying this code, GIDs wouldn't have to be unique globally
-	// anymore - only locally for each plugin. And it would be trivial
-	// to add new plugins, without touching the code here.
+	assert(_plugin);
+	engine = _plugin->createInstance(this, system);
 
-#ifndef DISABLE_SCUMM
-	if (_game.id >= GID_SCUMM_FIRST && _game.id <= GID_SCUMM_LAST) {
-		// Some kind of Scumm game
-		engine = Engine_SCUMM_create(this, system);
-	}
-#endif
-
-#ifndef DISABLE_SIMON
-	if (_game.id >= GID_SIMON_FIRST && _game.id <= GID_SIMON_LAST) {
-		// Simon the Sorcerer
-		engine = Engine_SIMON_create(this, system);
-	}
-#endif
-
-#ifndef DISABLE_SKY
-	if (_game.id >= GID_SKY_FIRST && _game.id <= GID_SKY_LAST) {
-		// Beneath a Steel Sky
-		engine = Engine_SKY_create(this, system);
-	}
-#endif
-
-#ifndef DISABLE_SWORD2
-	if (_game.id >= GID_SWORD2_FIRST && _game.id <= GID_SWORD2_LAST) {
-		// Broken Sword 2
-		engine = Engine_SWORD2_create(this, system);
-	}
-#endif
-	
 	return engine;
 }
 

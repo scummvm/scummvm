@@ -30,6 +30,7 @@ class GameDetector;
 class MidiDriver;
 class OSystem;
 class SoundMixer;
+class Plugin;
 
 /** Default sound/music volumes.
  * @todo move this to a better place.
@@ -143,6 +144,7 @@ public:
 
 	String _gameFileName;
 	TargetSettings _game;
+	const Plugin *_plugin;
 	
 	bool _fullScreen;
 	bool _aspectRatio;
@@ -191,7 +193,7 @@ public:
 	int parseGraphicsMode(const char *s);
 	void updateconfig();
 	
-	const TargetSettings *findTarget(const char *targetName) const;
+	const TargetSettings *findTarget(const char *targetName, const Plugin **plugin = NULL) const;
 
 protected:
 	String _gameText;

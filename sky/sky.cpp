@@ -26,8 +26,8 @@
 #include "sky/logic.h"
 #include "sky/debug.h"
 #include "sky/mouse.h"
+#include "base/gameDetector.h"
 #include "common/file.h"
-#include "common/gameDetector.h"
 #include <errno.h>
 #include <time.h>
 

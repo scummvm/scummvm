@@ -35,7 +35,7 @@
 
 #include "stdafx.h"
 #include "scumm/scumm.h"
-#include "common/gameDetector.h"
+#include "base/gameDetector.h"
 #include "common/scaler.h"
 #include "sound/mididrv.h"
 #include "morphos.h"

@@ -45,6 +45,8 @@ PLUGIN_SUFFIX := .a
 # Module settings
 ######################################################################
 
+MODULES := base $(MODULES)
+
 ifdef DISABLE_SCUMM
 DEFINES += -DDISABLE_SCUMM
 else
@@ -88,18 +90,12 @@ CPPFLAGS:= $(DEFINES) $(INCLUDES)
 # Include the build instructions for all modules
 -include $(addsuffix /module.mk,$(MODULES))
 
-# Make engine.o depend on all other object files. This way if anything is
-# changed, it causes engine.cpp to be recompiled. This in turn ensures that
+# Make main.o depend on all other object files. This way if anything is
+# changed, it causes main.cpp to be recompiled. This in turn ensures that
 # the build date in gScummVMBuildDate is correct.
-common/main.o: $(OBJS)
+base/main.o: $(OBJS)
 
-# Some files depend on the values of the DISABLE_* flags; we let these
-# depend on config.mak, so that they get recompiled if config.mak changes.
-common/plugins.o common/gameDetector.o: config.mak
-
-# HACK temporary fix to get compilation on OS X (and possibly others) working again
-OBJS:=common/main.o common/gameDetector.o $(OBJS)
-
+# The build rule for the ScummVM executable
 scummvm$(EXEEXT):  $(OBJS)
 	$(CXX) $(LDFLAGS) -o $@ $+ $(LIBS)
 

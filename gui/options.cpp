@@ -27,7 +27,7 @@
 
 #include "backends/fs/fs.h"
 #include "common/config-file.h"
-#include "common/gameDetector.h"
+#include "base/gameDetector.h"
 
 #if (!( defined(__DC__) || defined(__GP32__)) && !defined(_MSC_VER))
 #include <unistd.h>

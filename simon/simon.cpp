@@ -26,7 +26,7 @@
 #include "sound/mididrv.h"
 #include "common/config-file.h"
 #include "common/file.h"
-#include "common/gameDetector.h"
+#include "base/gameDetector.h"
 #include <errno.h>
 #include <time.h>
 

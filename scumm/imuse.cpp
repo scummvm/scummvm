@@ -22,8 +22,8 @@
 
 #include "stdafx.h"
 
+#include "base/gameDetector.h"	// For kDefaultMasterVolume etc.
 #include "common/util.h"
-#include "common/gameDetector.h"	// For kDefaultMasterVolume etc.
 
 #include "scumm/imuse.h"
 #include "scumm/imuse_internal.h"

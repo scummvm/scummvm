@@ -25,7 +25,7 @@
 #include "sky/compact.h"
 #include "sky/skydefs.h"
 #include "sky/talks.h"
-#include "common/gameDetector.h"
+#include "base/gameDetector.h"
 
 uint32 SkyLogic::_scriptVariables[838];
 

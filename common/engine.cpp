@@ -24,7 +24,7 @@
 #endif
 #include "common/config-file.h"
 #include "common/engine.h"
-#include "common/gameDetector.h"
+#include "base/gameDetector.h"
 #include "common/timer.h"
 #include "sound/mixer.h"
 
