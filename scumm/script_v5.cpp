@@ -891,8 +891,12 @@ void Scumm_v5::saveVars() {
 				warning("stub saveVars to %s", _scriptPointer);
 				_scriptPointer += a + 1;
 				break;
+			case 0x04:
+				return;
+				break;
 			case 0x1F: // close file
 				warning("stub saveVars close file");
+				return;
 				break;
 		}
 
@@ -922,8 +926,12 @@ void Scumm_v5::loadVars() {
 				warning("stub loadVars from %s", _scriptPointer);
 				_scriptPointer += a + 1;
 				break;
+			case 0x04:
+				return;
+				break;
 			case 0x1F: // close file
 				warning("stub loadVars close file");
+				return;
 				break;
 		}
 				
