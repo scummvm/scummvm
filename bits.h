@@ -19,8 +19,20 @@
 #define BITS_H
 
 #include <SDL_byteorder.h>
-#include <stdint.h>
+#include "stdafx.h"
 #include "vector3d.h"
+
+#ifdef _MSC_VER
+	typedef unsigned char byte;
+	typedef unsigned char uint8_t;
+	typedef unsigned short uint16_t;
+	typedef signed short int16_t;
+	typedef unsigned long uint32_t;
+	typedef unsigned int uint_t;
+	typedef signed char int8_t;
+	typedef signed short int16_t;
+	typedef signed long int32_t;
+#endif
 
 inline uint8_t get_uint8(const char *data) {
   return *(reinterpret_cast<const unsigned char *>(data));

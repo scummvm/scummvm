@@ -15,6 +15,7 @@
 //  License along with this library; if not, write to the Free Software
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
 
+#include "stdafx.h"
 #include "resource.h"
 #include "registry.h"
 #include "bitmap.h"
@@ -25,7 +26,6 @@
 #include "model.h"
 #include "sound.h"
 #include "debug.h"
-#include <dirent.h>
 #include <cstring>
 #include <cctype>
 #include <string>
@@ -44,7 +44,7 @@ ResourceLoader::ResourceLoader() {
 	int lab_counter = 0;
 
 #ifdef _MSC_VER
-	WIN32_FIND_DATAW find_file_data;
+	WIN32_FIND_DATAA find_file_data;
 	HANDLE d = FindFirstFile(dir_str.c_str(), &find_file_data);
 #else
 	DIR *d = opendir(dir_str.c_str());
@@ -60,7 +60,7 @@ ResourceLoader::ResourceLoader() {
 #ifdef _MSC_VER
 	do {
 		int namelen = strlen(find_file_data.cFileName);
-		if ((namelen > 4) && (stricmp(findFileData.cFileName + namelen - 4, ".lab") == 0)) {
+		if ((namelen > 4) && (stricmp(find_file_data.cFileName + namelen - 4, ".lab") == 0)) {
 			std::string fullname = dir_str + find_file_data.cFileName;
 			Lab *l = new Lab(fullname.c_str());
 			lab_counter++;
@@ -69,7 +69,7 @@ ResourceLoader::ResourceLoader() {
 			else
 				delete l;
 		}
-	} while (FindNextFile(d, &find_file_data) != NULL)
+	} while (FindNextFile(d, &find_file_data) != NULL);
 	FindClose(d);
 #else
 	dirent *de;

@@ -15,6 +15,7 @@
 //  License along with this library; if not, write to the Free Software
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
 
+#include "stdafx.h"
 #include "lua.h"
 #include "resource.h"
 #include "debug.h"
@@ -56,7 +57,11 @@ static inline Sound *check_sound(int num) {
 
 static inline int check_int(int num) {
   double val = luaL_check_number(num);
+#ifndef _MSC_VER
   return int(round(val));
+#else
+  return int(/*round*/(val));
+#endif
 }
 
 static inline int check_control(int num) {
@@ -723,7 +728,7 @@ void GetControlState() {
     lua_pushnumber(0);
   else {
     Uint8 *keystate = SDL_GetKeyState(NULL);
-    pushbool(keystate[num]);
+    pushbool(keystate[num] != 0);
   }
 }
 

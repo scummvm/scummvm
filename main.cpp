@@ -15,6 +15,7 @@
 //  License along with this library; if not, write to the Free Software
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
 
+#include "stdafx.h"
 #include <SDL.h>
 #include <SDL_video.h>
 #include <SDL_opengl.h>
@@ -25,8 +26,10 @@
 #include "registry.h"
 #include "engine.h"
 #include "mixer.h"
+#ifndef _MSC_VER
 #include <unistd.h>
-//#include <windows.h>
+#endif
+
 static void saveRegistry() {
   Registry::instance()->save();
 }

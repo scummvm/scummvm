@@ -20,7 +20,6 @@
 
 #include <string>
 #include <cstdio>
-#include <stdint.h>
 #include "hash_map.h"
 
 class Block {

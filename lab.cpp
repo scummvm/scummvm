@@ -15,6 +15,7 @@
 //  License along with this library; if not, write to the Free Software
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
 
+#include "stdafx.h"
 #include "lab.h"
 #include "bits.h"
 #include <algorithm>
@@ -46,7 +47,9 @@ bool Lab::open(const char *filename) {
 
   std::fseek(f_, 16, SEEK_SET);
   char binary_entry[16];
+#ifndef _MSC_VER
   file_map_.resize(num_entries);
+#endif
   for (int i = 0; i < num_entries; i++) {
     std::fread(binary_entry, 1, 16, f_);
     int fname_offset = get_LE_uint32(binary_entry);
@@ -57,6 +60,9 @@ bool Lab::open(const char *filename) {
     std::transform(fname.begin(), fname.end(), fname.begin(), tolower);
 
     file_map_.insert(std::make_pair(fname, LabEntry(start, size)));
+#ifndef _MSC_VER
+    file_map_.size();
+#endif
   }
 
   delete [] string_table;

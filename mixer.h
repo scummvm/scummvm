@@ -18,6 +18,7 @@
 #ifndef MIXER_H
 #define MIXER_H
 
+#include "bits.h"
 #include "resource.h"
 #include <list>
 #include <SDL_audio.h>

@@ -18,9 +18,14 @@
 #ifndef HASH_MAP_HH
 #define HASH_MAP_HH
 
+#ifdef _MSC_VER
+#include <hash_map>
+#else
 #include <ext/hash_map>
+#endif
 #include <string>
 
+#ifndef _MSC_VER
 namespace std {
   using namespace __gnu_cxx;
 };
@@ -32,5 +37,6 @@ namespace __gnu_cxx {
     }
   };
 }
+#endif
 
 #endif

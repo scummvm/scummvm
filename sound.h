@@ -18,8 +18,8 @@
 #ifndef SOUND_H
 #define SOUND_H
 
+#include "bits.h"
 #include "resource.h"
-#include <stdint.h>
 
 class Sound : public Resource {
 public:
