@@ -43,21 +43,6 @@ static inline int GetResult(uint32 A, uint32 B, uint32 C, uint32 D) {
 	return rmap[y][x];
 }
 
-template<int bitFormat>
-static inline uint32 INTERPOLATE(uint32 A, uint32 B) {
-
-	return (((A & highBits) >> 1) + ((B & highBits) >> 1) + (A & B & lowBits));
-}
-
-template<int bitFormat>
-static inline uint32 Q_INTERPOLATE(uint32 A, uint32 B, uint32 C, uint32 D) {
-	register uint32 x = ((A & qhighBits) >> 2) + ((B & qhighBits) >> 2) + ((C & qhighBits) >> 2) + ((D & qhighBits) >> 2);
-	register uint32 y = ((A & qlowBits) + (B & qlowBits) + (C & qlowBits) + (D & qlowBits)) >> 2;
-
-	y &= qlowBits;
-	return x + y;
-}
-
 #define INTERPOLATE		INTERPOLATE<bitFormat>
 #define Q_INTERPOLATE	Q_INTERPOLATE<bitFormat>
 

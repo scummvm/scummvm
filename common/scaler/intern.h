@@ -29,6 +29,11 @@
 #include "common/scaler.h"
 #include "common/util.h"
 
+// HACK HACK HACK
+// Enable *experimental* AltiVec support.
+// This will produce code crashing on any machine *without* Altivec
+//
+#define USE_ALTIVEC	0
 
 template<int bitFormat>
 struct ColorMasks {
@@ -61,6 +66,32 @@ struct ColorMasks<555> {
 
 
 extern int gBitFormat;
+
+
+/**
+ * Interpolate two 16 bit pixel pairs at once with equal weights 1.
+ * In particular, A and B can contain two pixels/each in the upper
+ * and lower halves.
+ */
+template<int bitFormat>
+static inline uint32 INTERPOLATE(uint32 A, uint32 B) {
+
+	return (((A & highBits) >> 1) + ((B & highBits) >> 1) + (A & B & lowBits));
+}
+
+/**
+ * Interpolate four 16 bit pixel pairs at once with equal weights 1.
+ * In particular, A and B can contain two pixels/each in the upper
+ * and lower halves.
+ */
+template<int bitFormat>
+static inline uint32 Q_INTERPOLATE(uint32 A, uint32 B, uint32 C, uint32 D) {
+	register uint32 x = ((A & qhighBits) >> 2) + ((B & qhighBits) >> 2) + ((C & qhighBits) >> 2) + ((D & qhighBits) >> 2);
+	register uint32 y = ((A & qlowBits) + (B & qlowBits) + (C & qlowBits) + (D & qlowBits)) >> 2;
+
+	y &= qlowBits;
+	return x + y;
+}
 
 
 /**
@@ -97,17 +128,21 @@ static inline bool diffYUV(int yuv1, int yuv2) {
 	static const int trV   = 0x00000006;
 	
 	int diff;
+	int mask;
 	
 	diff = ((yuv1 & Ymask) - (yuv2 & Ymask));
-	if (diff < 0) diff = - diff;
+	mask = diff >> 31; // -1 if value < 0, 0 otherwise 
+	diff = (diff ^ mask) - mask; //-1: ~value + 1; 0: value 
 	if (diff > trY) return true;
 
 	diff = ((yuv1 & Umask) - (yuv2 & Umask));
-	if (diff < 0) diff = - diff;
+	mask = diff >> 31; // -1 if value < 0, 0 otherwise 
+	diff = (diff ^ mask) - mask; //-1: ~value + 1; 0: value 
 	if (diff > trU) return true;
 
 	diff = ((yuv1 & Vmask) - (yuv2 & Vmask));
-	if (diff < 0) diff = - diff;
+	mask = diff >> 31; // -1 if value < 0, 0 otherwise 
+	diff = (diff ^ mask) - mask; //-1: ~value + 1; 0: value 
 	if (diff > trV) return true;
 
 	return false;

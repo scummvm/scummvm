@@ -83,7 +83,6 @@
  */
 template<int bitFormat>
 void HQ2x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, int width, int height) {
-//	int  w[10];
 	register int  w1, w2, w3, w4, w5, w6, w7, w8, w9;
   
 	const uint32 nextlineSrc = srcPitch / sizeof(uint16);
@@ -130,22 +129,7 @@ void HQ2x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, 
 	vector signed char vecYUV5555;
 	vector signed char vecYUV1234;
 	vector signed char vecYUV6789;
-/*
-	// The pixel vectors.
-	// TODO: Keep the pixels up-to-date in this, just like for the YUV data.
-	// But instead of just keeping the 16 bit pixel values in them, keep
-	// them convert to 32 bit RGB in there! This way, we avoid converting
-	// the same pixels to 32 bit repeatedly (which may be expensive, esp.
-	// when reading 16 bit pixels in 565 format). 
-	// The Altivec enhanced interpolation functions (to be written :-)
-	// then can directly make use of these vectors.
-	vector signed char vecRGB5555;
-	vector signed char vecRGB1234;
-	vector signed char vecRGB6789;
-*/
 #endif
-
-
 
 	while (height--) {
 		w1 = *(p - 1 - nextlineSrc);
