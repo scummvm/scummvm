@@ -57,12 +57,32 @@ void Sector::load0(TextSplitter &ts, char *name, int id) {
   visibility_ = buf;
   ts.scanString(" height %f", 1, &height_);
   ts.scanString(" numvertices %d", 1, &numVertices_);
-  vertices_ = new Vector3d[numVertices_];
+  vertices_ = new Vector3d[numVertices_ + 1];
 
   ts.scanString(" vertices: %f %f %f", 3, &vertices_[0].x(), &vertices_[0].y(),
 &vertices_[0].z());
   for (i=1;i<numVertices_;i++)
     ts.scanString(" %f %f %f", 3, &vertices_[i].x(), &vertices_[i].y(), &vertices_[i].z());
+
+  // Repeat the last vertex for convenience
+  vertices_[numVertices_] = vertices_[0];
 }
 
+bool Sector::isPointInSector(Vector3d point) const {
+  // The algorithm: for each edge A->B, check whether the z-component
+  // of (B-A) x (P-A) is >= 0.  Then the point is at least in the
+  // cylinder above&below the polygon.  (This works because the polygons'
+  // vertices are always given in counterclockwise order, and the
+  // polygons are always convex.)
+  //
+  // (I don't know whether the box height actually has to be considered;
+  // if not then this will be fine as is.)
 
+  for (int i = 0; i < numVertices_; i++) {
+    Vector3d edge = vertices_[i+1] - vertices_[i];
+    Vector3d delta = point - vertices_[i];
+    if (edge.x() * delta.y() < edge.y() * delta.x())
+      return false;
+  }
+  return true;
+}

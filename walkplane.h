@@ -33,11 +33,8 @@ public:
 
     const char *name() const { return name_.c_str(); }
     const int id() const { return id_; }
-    const int type() const { return 0; } // FIXME: Implement type de-masking
-    bool isPointInSector(Vector3d point) const { 
-     // FIXME: Implement point-in-poly function
-     return false; 
-    } 
+    const int type() const { return type_; } // FIXME: Implement type de-masking
+    bool isPointInSector(Vector3d point) const;
 
 private:
     int numVertices_, id_;

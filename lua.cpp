@@ -462,15 +462,35 @@ static void GetActorSector(void) {
   Actor *act = check_actor(1);
   int sectorType = check_int(2);
 
-  warning("GetActorSector(%s, %d): STUB", act->name(), sectorType);
-
-  if (0) {
-   lua_pushnumber(0); // id
-   lua_pushstring(""); // name
-   lua_pushnumber(0); // type
-  } else {
-   lua_pushnil();
+  int sectorFlag;
+  switch (sectorType) {
+  case 1:
+    sectorFlag = 0x1000;
+    break;
+  case 2:
+    sectorFlag = 0x2000;
+    break;
+  case 3:
+    sectorFlag = 0x8000;
+    break;
+  default:
+    error("Invalid sector type %d\n", sectorType);
   }
+
+  int numSectors = Engine::instance()->currScene()->getSectorCount();
+  for (int i = 0; i < numSectors; i++) {
+    Sector *sector = Engine::instance()->currScene()->getSectorBase(i);
+    if (sector->type() & sectorFlag) {
+      if (sector->isPointInSector(act->pos())) {
+	lua_pushnumber(sector->id());
+	lua_pushstring(const_cast<char *>(sector->name()));
+	lua_pushnumber(sector->type());
+	return;
+      }
+    }
+  }
+
+  lua_pushnil();
 }
 
 static void IsActorInSector(void) {
