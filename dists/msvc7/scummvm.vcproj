@@ -522,33 +522,6 @@
 					<File
 						RelativePath="..\..\backends\midi\mt32\tables.h">
 					</File>
-					<Filter
-						Name="freeverb">
-						<File
-							RelativePath="..\..\backends\midi\mt32\freeverb\allpass.cpp">
-						</File>
-						<File
-							RelativePath="..\..\backends\midi\mt32\freeverb\allpass.h">
-						</File>
-						<File
-							RelativePath="..\..\backends\midi\mt32\freeverb\comb.cpp">
-						</File>
-						<File
-							RelativePath="..\..\backends\midi\mt32\freeverb\comb.h">
-						</File>
-						<File
-							RelativePath="..\..\backends\midi\mt32\freeverb\denormals.h">
-						</File>
-						<File
-							RelativePath="..\..\backends\midi\mt32\freeverb\revmodel.cpp">
-						</File>
-						<File
-							RelativePath="..\..\backends\midi\mt32\freeverb\revmodel.h">
-						</File>
-						<File
-							RelativePath="..\..\backends\midi\mt32\freeverb\tuning.h">
-						</File>
-					</Filter>
 				</Filter>
 			</Filter>
 		</Filter>
