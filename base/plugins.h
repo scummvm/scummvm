@@ -75,7 +75,7 @@ public:
 
 
 /** List of plugins. */
-typedef ScummVM::List<Plugin *> PluginList;
+typedef Common::List<Plugin *> PluginList;
 
 
 /**

@@ -27,7 +27,7 @@
 #include "common/util.h"
 
 class FilePtr : public File {
-	ScummVM::String _filename;
+	Common::String _filename;
 	int32 _refcount;
 public:
 	FilePtr(const char *fname, const char *directory) :

@@ -2861,7 +2861,7 @@ printf("o5_oldRoomEffect ODDBALL: _opcode = 0x%x, a = 0x%x\n", _opcode, a);
 				// For now, we force a redraw of the screen background. This 
 				// Makes the Zak end credits work more or less correctly.
 				VirtScreen *vs = &virtscr[0];
-				restoreBG(ScummVM::Rect(0,vs->topline, vs->width, vs->topline + vs->height));
+				restoreBG(Common::Rect(0,vs->topline, vs->width, vs->topline + vs->height));
 				virtscr[0].setDirtyRange(0, virtscr[0].height);
 				updateDirtyScreen(0);
 				

@@ -672,7 +672,7 @@ bool GameDetector::detectGame() {
 	}
 }
 
-const ScummVM::String& GameDetector::getGameName() {
+const Common::String& GameDetector::getGameName() {
 	if (_gameText.isEmpty()) {
 		_gameText = "Unknown game: \"";
 		_gameText += _gameFileName;

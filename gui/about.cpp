@@ -28,11 +28,11 @@ AboutDialog::AboutDialog(NewGui *gui)
 	: Dialog(gui, 10, 20, 300, 124) {
 	addButton((_w - kButtonWidth)/2, 100, "OK", kCloseCmd, '\r');	// Close dialog - FIXME
 	
-	ScummVM::String version("ScummVM ");
+	Common::String version("ScummVM ");
 	version += gScummVMVersion;
 	new StaticTextWidget(this, 10, 10, _w - 20, kLineHeight, version, kTextAlignCenter);
 
-	ScummVM::String date("(built on ");
+	Common::String date("(built on ");
 	date += gScummVMBuildDate;
 	date += ')';
 	new StaticTextWidget(this, 10, 20, _w - 20, kLineHeight, date, kTextAlignCenter);

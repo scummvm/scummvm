@@ -184,7 +184,7 @@ FSList *WindowsFilesystemNode::listDir(ListMode mode) const {
 	return myList;
 }
 
-const char *lastPathComponent(const ScummVM::String &str) {
+const char *lastPathComponent(const Common::String &str) {
 	const char *start = str.c_str();
 	const char *cur = start + str.size() - 2;
 

@@ -255,7 +255,7 @@ void ListWidget::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
 void ListWidget::drawWidget(bool hilite) {
 	NewGui *gui = _boss->getGui();
 	int i, pos, len = _list.size();
-	ScummVM::String buffer;
+	Common::String buffer;
 
 	// Draw a thin frame around the list.
 	gui->hLine(_x, _y, _x + _w - 1, gui->_color);
@@ -296,7 +296,7 @@ void ListWidget::drawCaret(bool erase) {
 	int16 color = erase ? gui->_textcolorhi : gui->_bgcolor;
 	int x = _x + _boss->getX() + 3;
 	int y = _y + _boss->getY() + 1;
-	ScummVM::String	buffer;
+	Common::String	buffer;
 
 	y += (_selectedItem - _currentPos) * kLineHeight;
 

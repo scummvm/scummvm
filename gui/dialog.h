@@ -82,8 +82,8 @@ protected:
 	
 	Widget *findWidget(int x, int y); // Find the widget at pos x,y if any
 
-	ButtonWidget *addButton(int x, int y, const ScummVM::String &label, uint32 cmd, char hotkey);
-	PushButtonWidget *addPushButton(int x, int y, const ScummVM::String &label, uint32 cmd, char hotkey);
+	ButtonWidget *addButton(int x, int y, const Common::String &label, uint32 cmd, char hotkey);
+	PushButtonWidget *addPushButton(int x, int y, const Common::String &label, uint32 cmd, char hotkey);
 
 	void setResult(int result) { _result = result; }
 };

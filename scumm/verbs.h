@@ -32,7 +32,7 @@ enum {
 struct VerbSlot {
 	int16 x, y;
 	int16 right, bottom;
-	ScummVM::Rect old;
+	Common::Rect old;
 	uint16 verbid;
 	uint8 color, hicolor, dimcolor, bkcolor, type;
 	uint8 charset_nr, curmode;

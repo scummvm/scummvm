@@ -77,7 +77,7 @@ struct Box {				/* Internal walkbox file format */
 
 
 static bool compareSlope(int X1, int Y1, int X2, int Y2, int X3, int Y3);
-static ScummVM::Point closestPtOnLine(int ulx, int uly, int llx, int lly, int x, int y);
+static Common::Point closestPtOnLine(int ulx, int uly, int llx, int lly, int x, int y);
 
 
 byte Scumm::getMaskFromBox(int box) {
@@ -434,7 +434,7 @@ bool Scumm::checkXYInBoxBounds(int b, int x, int y) {
 	if (box.ul.x == box.ur.x && box.ul.y == box.ur.y && box.lr.x == box.ll.x && box.lr.y == box.ll.y ||
 		box.ul.x == box.ll.x && box.ul.y == box.ll.y && box.ur.x == box.lr.x && box.ur.y == box.lr.y) {
 
-		ScummVM::Point pt;
+		Common::Point pt;
 		pt = closestPtOnLine(box.ul.x, box.ul.y, box.lr.x, box.lr.y, x, y);
 		if (distanceFromPt(x, y, pt.x, pt.y) <= 4)
 			return true;
@@ -536,11 +536,11 @@ bool compareSlope(int X1, int Y1, int X2, int Y2, int X3, int Y3) {
 	return (Y2 - Y1) * (X3 - X1) <= (Y3 - Y1) * (X2 - X1);
 }
 
-ScummVM::Point closestPtOnLine(int ulx, int uly, int llx, int lly, int x, int y) {
+Common::Point closestPtOnLine(int ulx, int uly, int llx, int lly, int x, int y) {
 	int lydiff, lxdiff;
 	int32 dist, a, b, c;
 	int x2, y2;
-	ScummVM::Point pt;
+	Common::Point pt;
 
 	if (llx == ulx) {	// Vertical line?
 		x2 = ulx;
@@ -641,7 +641,7 @@ bool Scumm::inBoxQuickReject(int b, int x, int y, int threshold) {
 }
 
 int Scumm::getClosestPtOnBox(int b, int x, int y, int16& outX, int16& outY) {
-	ScummVM::Point pt;
+	Common::Point pt;
 	uint dist;
 	uint bestdist = 0xFFFFFF;
 	BoxCoords box;
@@ -769,10 +769,10 @@ int Scumm::getPathToDestBox(byte from, byte to) {
  * Computes the next point actor a has to walk towards in a straight
  * line in order to get from box1 to box3 via box2.
  */
-bool Actor::findPathTowards(byte box1nr, byte box2nr, byte box3nr, ScummVM::Point &foundPath) {
+bool Actor::findPathTowards(byte box1nr, byte box2nr, byte box3nr, Common::Point &foundPath) {
 	BoxCoords box1;
 	BoxCoords box2;
-	ScummVM::Point tmp;
+	Common::Point tmp;
 	int i, j;
 	int flag;
 	int q, pos;
@@ -1142,10 +1142,10 @@ bool Scumm::areBoxesNeighbours(int box1nr, int box2nr) {
 	return result;
 }
 
-void Actor::findPathTowardsOld(byte trap1, byte trap2, byte final_trap, ScummVM::Point &p2, ScummVM::Point &p3) {
-	ScummVM::Point pt;
-	ScummVM::Point gateA[2];
-	ScummVM::Point gateB[2];
+void Actor::findPathTowardsOld(byte trap1, byte trap2, byte final_trap, Common::Point &p2, Common::Point &p3) {
+	Common::Point pt;
+	Common::Point gateA[2];
+	Common::Point gateB[2];
 
 	_vm->getGates(trap1, trap2, gateA, gateB);
 
@@ -1183,15 +1183,15 @@ void Actor::findPathTowardsOld(byte trap1, byte trap2, byte final_trap, ScummVM:
  * This way the lines bound a 'corridor' between the two boxes, through which
  * the actor has to walk to get from trap1 to trap2.
  */
-void Scumm::getGates(int trap1, int trap2, ScummVM::Point gateA[2], ScummVM::Point gateB[2]) {
+void Scumm::getGates(int trap1, int trap2, Common::Point gateA[2], Common::Point gateB[2]) {
 	int i, j;
 	int dist[8];
 	int minDist[3];
 	int closest[3];
 	int box[3];
 	BoxCoords coords;
-	ScummVM::Point closestPoint[8];
-	ScummVM::Point boxCorner[8];
+	Common::Point closestPoint[8];
+	Common::Point boxCorner[8];
 	int line1, line2;
 
 	// For all corner coordinates of the first box, compute the point closest 

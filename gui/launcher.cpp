@@ -48,7 +48,7 @@ enum {
 	kQuitCmd = 'QUIT'
 };
 
-typedef ScummVM::List<const TargetSettings *> GameList;
+typedef Common::List<const TargetSettings *> GameList;
 
 /*
  * A dialog that allows the user to edit a config game entry.
@@ -75,8 +75,8 @@ enum {
 };
 
 class EditGameDialog : public Dialog {
-	typedef ScummVM::String String;
-	typedef ScummVM::StringList StringList;
+	typedef Common::String String;
+	typedef Common::StringList StringList;
 public:
 	EditGameDialog(NewGui *gui, const String &domain, const TargetSettings *target);
 
@@ -229,7 +229,7 @@ void LauncherDialog::close() {
 
 void LauncherDialog::updateListing() {
 	int i;
-	ScummVM::StringList l;
+	Common::StringList l;
 
 	// Retrieve a list of all games defined in the config file
 	_domains.clear();

@@ -24,7 +24,7 @@
 #include "common/scummsys.h"
 #include <assert.h>
 
-namespace ScummVM {
+namespace Common {
 
 template <class T>
 class List {
@@ -126,6 +126,6 @@ protected:
 	}
 };
 
-} // End of namespace ScummVM
+} // End of namespace Common
 
 #endif

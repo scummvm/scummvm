@@ -54,7 +54,7 @@ struct Box;
 struct BoxCoords;
 struct FindObjectInRoom;
 
-typedef ScummVM::Map<ScummVM::String, int> ObjectIDMap;
+typedef Common::Map<Common::String, int> ObjectIDMap;
 
 // Use g_scumm from error() ONLY
 extern Scumm *g_scumm;
@@ -115,7 +115,7 @@ struct ObjectData;
 
 struct BlastText {
 	int16 xpos, ypos;
-	ScummVM::Rect rect;
+	Common::Rect rect;
 	byte color;
 	byte charset;
 	bool center;
@@ -123,7 +123,7 @@ struct BlastText {
 };
 
 struct V2MouseoverBox {
-	ScummVM::Rect rect;
+	Common::Rect rect;
 	byte color;
 	byte hicolor;
 };
@@ -431,8 +431,8 @@ protected:
 	int _keyPressed;
 	uint16 _lastKeyHit;
 
-	ScummVM::Point _mouse;
-	ScummVM::Point _virtualMouse;
+	Common::Point _mouse;
+	Common::Point _virtualMouse;
 
 	uint16 _mouseButStat;
 	byte _leftBtnPressed, _rightBtnPressed;
@@ -720,7 +720,7 @@ protected:
 	int8 v2_mouseover_box;
 
 	void initV2MouseOver();
-	void checkV2MouseOver(ScummVM::Point pos);
+	void checkV2MouseOver(Common::Point pos);
 	void checkV2Inventory(int x, int y);
 	void redrawV2Inventory();
 
@@ -819,7 +819,7 @@ protected:
 	void drawRoomObject(int i, int arg);
 	void drawBox(int x, int y, int x2, int y2, int color);
 
-	void restoreBG(ScummVM::Rect rect, byte backColor = 0);
+	void restoreBG(Common::Rect rect, byte backColor = 0);
 	void redrawBGStrip(int start, int num);	
 	void redrawBGAreas();	
 	
@@ -829,7 +829,7 @@ protected:
 	virtual void setCameraFollows(Actor *a);
 	virtual void moveCamera();
 	virtual void panCameraTo(int x, int y);
-	void clampCameraPos(ScummVM::Point *pt);
+	void clampCameraPos(Common::Point *pt);
 	void actorFollowCamera(int act);
 
 	const byte *getPalettePtr();
@@ -981,7 +981,7 @@ public:
 	byte getNumBoxes();
 	byte *getBoxMatrixBaseAddr();
 	int getPathToDestBox(byte from, byte to);
-	void getGates(int trap1, int trap2, ScummVM::Point gateA[2], ScummVM::Point gateB[2]);
+	void getGates(int trap1, int trap2, Common::Point gateA[2], Common::Point gateB[2]);
 	bool inBoxQuickReject(int box, int x, int y, int threshold);
 	int getClosestPtOnBox(int box, int x, int y, int16& outX, int16& outY);
 	int getSpecialBox(int param1, int param2);

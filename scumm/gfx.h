@@ -34,10 +34,10 @@ enum {					/** Camera modes */
 };
 
 struct CameraData {		/** Camera state data */
-	ScummVM::Point _cur;
-	ScummVM::Point _dest;
-	ScummVM::Point _accel;
-	ScummVM::Point _last;
+	Common::Point _cur;
+	Common::Point _dest;
+	Common::Point _accel;
+	Common::Point _last;
 	int _leftTrigger, _rightTrigger;
 	byte _follows, _mode;
 	bool _movingToActor;
@@ -114,7 +114,7 @@ public:
 	int _numZBuffer;
 	int _imgBufOffs[8];
 	int32 _numStrips;
-	ScummVM::Rect _mask;
+	Common::Rect _mask;
 	byte _C64Colors[4];
 
 protected:

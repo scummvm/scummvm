@@ -158,8 +158,8 @@ int Scumm::getAngleFromPos(int x, int y) const {
 	}
 }
 
-int Actor::calcMovementFactor(ScummVM::Point next) {
-	ScummVM::Point actorPos(_pos);
+int Actor::calcMovementFactor(Common::Point next) {
+	Common::Point actorPos(_pos);
 	int diffX, diffY;
 	int32 deltaXFactor, deltaYFactor;
 
@@ -341,7 +341,7 @@ void Actor::setBox(int box) {
 
 int Actor::actorWalkStep() {
 	int tmpX, tmpY;
-	ScummVM::Point actorPos;
+	Common::Point actorPos;
 	int distX, distY;
 	int nextFacing;
 
@@ -1334,7 +1334,7 @@ void Actor::startWalkAnim(int cmd, int angle) {
 
 void Actor::walkActor() {
 	int new_dir, next_box;
-	ScummVM::Point foundPath;
+	Common::Point foundPath;
 
 	if (_vm->_version >= 7) {
 		// FIXME - this is kind of a hack right now but it fixes the
@@ -1414,7 +1414,7 @@ void Actor::walkActor() {
 
 /*
 void Actor::walkActorV12() {
-	ScummVM::Point foundPath, tmp;
+	Common::Point foundPath, tmp;
 	int new_dir, next_box;
 
 	if (moving & MF_TURN) {
@@ -1465,7 +1465,7 @@ void Actor::walkActorV12() {
 */
 
 void Actor::walkActorOld() {
-	ScummVM::Point p2, p3;	// Gate locations
+	Common::Point p2, p3;	// Gate locations
 	int new_dir, next_box;
 
 	if (!moving)

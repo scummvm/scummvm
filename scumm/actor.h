@@ -37,13 +37,13 @@ enum MoveFlags {
 };
 
 struct ActorWalkData {
-	ScummVM::Point dest;						// Final destination
+	Common::Point dest;						// Final destination
 	byte destbox;
 	int16 destdir;
-	ScummVM::Point cur;										// Current position
+	Common::Point cur;										// Current position
 	byte curbox;
-	ScummVM::Point next;							// Next position on our way to the destination
-	ScummVM::Point point3;
+	Common::Point next;							// Next position on our way to the destination
+	Common::Point point3;
 	int32 deltaXFactor, deltaYFactor;
 	uint16 xfrac, yfrac;
 };
@@ -82,7 +82,7 @@ public:
 	static void initActorClass(Scumm *scumm);
 
 public:
-	ScummVM::Point _pos;
+	Common::Point _pos;
 	int top, bottom;
 	int elevation;
 	uint width;
@@ -133,7 +133,7 @@ public:
 	void putActor(int x, int y, byte room);
 	void setActorWalkSpeed(uint newSpeedX, uint newSpeedY);
 protected:
-	int calcMovementFactor(ScummVM::Point next);
+	int calcMovementFactor(Common::Point next);
 	int actorWalkStep();
 	int remapDirection(int dir, bool is_walking);
 	void setupActorScale();
@@ -204,8 +204,8 @@ protected:
 	
 	bool isPlayer();
 
-	bool findPathTowards(byte box, byte box2, byte box3, ScummVM::Point &foundPath);
-	void findPathTowardsOld(byte box, byte box2, byte box3, ScummVM::Point &p2, ScummVM::Point &p3);
+	bool findPathTowards(byte box, byte box2, byte box3, Common::Point &foundPath);
+	void findPathTowardsOld(byte box, byte box2, byte box3, Common::Point &p2, Common::Point &p3);
 };
 
 #endif

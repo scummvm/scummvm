@@ -305,7 +305,7 @@ int32 PlaySmacker(char *filename, _movieTextObject *text[], uint8 *musicOut) {
 		SetNeedRedraw();
 
 		// HACK: Remove the instructions created above
-		ScummVM::Rect r;
+		Common::Rect r;
 
 		memset(lpBackBuffer, 0, screenWide * MENUDEEP);
 		r.left = r.top = 0;

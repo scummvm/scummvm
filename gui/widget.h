@@ -134,7 +134,7 @@ protected:
 /* StaticTextWidget */
 class StaticTextWidget : public Widget {
 protected:
-	typedef ScummVM::String String;
+	typedef Common::String String;
 
 	String _label;
 	int		_align;

@@ -42,8 +42,8 @@ enum {
 
 /* ListWidget */
 class ListWidget : public Widget, public CommandReceiver, public CommandSender {
-	typedef ScummVM::StringList StringList;
-	typedef ScummVM::String String;
+	typedef Common::StringList StringList;
+	typedef Common::String String;
 protected:
 	StringList		_list;
 	bool			_editable;

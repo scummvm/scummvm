@@ -27,7 +27,7 @@
 #include <assert.h>
 #include <string.h>
 
-namespace ScummVM {
+namespace Common {
 
 /*
  TODO
@@ -141,6 +141,6 @@ public:
 	}
 };
 
-}	// End of namespace ScummVM
+}	// End of namespace Common
 
 #endif

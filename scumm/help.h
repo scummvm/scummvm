@@ -26,7 +26,7 @@
 
 class ScummHelp {
 protected:
-	typedef ScummVM::String String;
+	typedef Common::String String;
 
 public:
 	static int numPages(byte gameId);

@@ -30,10 +30,10 @@
 
 class Config {
 public:
-	typedef ScummVM::String String;
-	typedef ScummVM::StringList StringList;
-	typedef ScummVM::StringMap StringMap;
-	typedef ScummVM::Map<String, StringMap> DomainMap;
+	typedef Common::String String;
+	typedef Common::StringList StringList;
+	typedef Common::StringMap StringMap;
+	typedef Common::Map<String, StringMap> DomainMap;
 
 	Config (const String & = String("config.cfg"), const String & = String("default"));
 	const char *get(const String &key, const String &dom = String()) const;

@@ -30,7 +30,7 @@ struct VirtScreen;
 
 class CharsetRenderer {
 public:
-	ScummVM::Rect _str;
+	Common::Rect _str;
 	int _nextLeft, _nextTop;
 
 	int _top;

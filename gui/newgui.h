@@ -62,7 +62,7 @@ public:
 // This class hopefully will replace the old Gui class completly one day 
 class NewGui {
 	friend class Dialog;
-	typedef ScummVM::String String;
+	typedef Common::String String;
 public:
 
 	// Main entry for the GUI: this will start an event loop that keeps running

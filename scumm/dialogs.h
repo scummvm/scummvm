@@ -38,7 +38,7 @@ public:
 		: Dialog(gui, x, y, w, h), _scumm(scumm) {}
 	
 protected:
-	typedef ScummVM::String String;
+	typedef Common::String String;
 
 	Scumm *_scumm;
 
@@ -88,7 +88,7 @@ public:
 	virtual void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);
 
 protected:
-	typedef ScummVM::String String;
+	typedef Common::String String;
 
 	PushButtonWidget *_nextButton;
 	PushButtonWidget *_prevButton;

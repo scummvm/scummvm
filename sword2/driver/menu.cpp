@@ -43,7 +43,7 @@ static uint8 pocketStatus[2][RDMENU_MAXPOCKETS] = {
 
 static uint8 iconCount = 0;
 
-void ClearIconArea(int menu, int pocket, ScummVM::Rect *r) {
+void ClearIconArea(int menu, int pocket, Common::Rect *r) {
 	byte *dst;
 	int i;
 
@@ -74,7 +74,7 @@ int32 ProcessMenu(void) {
 	uint8 frameCount;
 	int32 curx, xoff;
 	int32 cury, yoff;
-	ScummVM::Rect r1, r2;
+	Common::Rect r1, r2;
 	int32 delta;
 	static int32 lastTime = 0;
 
@@ -254,7 +254,7 @@ int32 HideMenu(uint8 menu) {
  */
 
 int32 CloseMenuImmediately(void) {
-	ScummVM::Rect r;
+	Common::Rect r;
 	int i;
 
 	menuStatus[0] = RDMENU_HIDDEN;
@@ -284,7 +284,7 @@ int32 CloseMenuImmediately(void) {
  */
 
 int32 SetMenuIcon(uint8 menu, uint8 pocket, uint8 *icon) {
-	ScummVM::Rect r;
+	Common::Rect r;
 
 	debug(5, "stub SetMenuIcon( %d, %d )", menu, pocket);
 

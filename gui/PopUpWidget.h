@@ -38,13 +38,13 @@ enum {
  */
 class PopUpWidget : public Widget, public CommandSender {
 	friend class PopUpDialog;
-	typedef ScummVM::String String;
+	typedef Common::String String;
 	
 	struct Entry {
 		String	name;
 		uint32	tag;
 	};
-	typedef ScummVM::List<Entry> EntryList;
+	typedef Common::List<Entry> EntryList;
 protected:
 	static const String emptyStr;
 

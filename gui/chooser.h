@@ -33,8 +33,8 @@ class ListWidget;
  */
 
 class ChooserDialog : public Dialog {
-	typedef ScummVM::String String;
-	typedef ScummVM::StringList StringList;
+	typedef Common::String String;
+	typedef Common::StringList StringList;
 public:
 	ChooserDialog(NewGui *gui, const String title, const StringList &list);
 

@@ -971,7 +971,7 @@ void Scumm_v2::o2_doSentence() {
 }
 
 void Scumm_v2::o2_drawSentence() {
-	ScummVM::Rect sentenceline;
+	Common::Rect sentenceline;
 	static char sentence[256];
 	const byte *temp;
 	int slot = getVerbSlot(VAR(VAR_SENTENCE_VERB),0);
@@ -1537,7 +1537,7 @@ void Scumm_v2::setUserState(byte state) {
 	}
 
 	// Hide all verbs and inventory
-	ScummVM::Rect rect;
+	Common::Rect rect;
 	rect.top = virtscr[2].topline;
 	rect.bottom = virtscr[2].topline + 8*88;
 	rect.left = 0;

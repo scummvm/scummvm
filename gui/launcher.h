@@ -30,8 +30,8 @@ class GameDetector;
 class ListWidget;
 
 class LauncherDialog : public Dialog {
-	typedef ScummVM::String String;
-	typedef ScummVM::StringList StringList;
+	typedef Common::String String;
+	typedef Common::StringList StringList;
 public:
 	LauncherDialog(NewGui *gui, GameDetector &detector);
 	~LauncherDialog();

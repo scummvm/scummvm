@@ -354,6 +354,7 @@ case $hosttype in
 	Darwin)
 		DEFINES="$DEFINES -DUNIX -DMACOSX"
 		LIBS="$LIBS -framework QuickTime -framework AudioUnit"
+		#CXXFLAGS="$CXXFLAGS -faltivec"
 		;;
 esac
 

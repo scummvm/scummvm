@@ -131,9 +131,9 @@ public:
 
 class DynamicPlugin : public Plugin {
 	void *_dlHandle;
-	ScummVM::String _filename;
+	Common::String _filename;
 
-	ScummVM::String _name;
+	Common::String _name;
 	const TargetSettings *_targets;
 	int _targetCount;
 	EngineFactory _ef;

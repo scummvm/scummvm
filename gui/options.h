@@ -30,7 +30,7 @@ class GameDetector;
 class PopUpWidget;
 
 class GlobalOptionsDialog : public Dialog {
-	typedef ScummVM::String String;
+	typedef Common::String String;
 public:
 	GlobalOptionsDialog(NewGui *gui, GameDetector &detector);
 	~GlobalOptionsDialog();

@@ -377,7 +377,7 @@ extern int32 ReadKey(_keyboardEvent *ke);
 //-----------------------------------------------------------------------------
 extern int32 DrawSprite(_spriteInfo *s);
 extern int32 CreateSurface(_spriteInfo *s, uint8 **surface);
-extern void DrawSurface(_spriteInfo *s, uint8 *surface, ScummVM::Rect *clipRect = NULL);
+extern void DrawSurface(_spriteInfo *s, uint8 *surface, Common::Rect *clipRect = NULL);
 extern void DeleteSurface(uint8 *surface);
 extern int32 OpenLightMask(_spriteInfo *s);
 extern int32 CloseLightMask(void);

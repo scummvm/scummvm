@@ -99,9 +99,9 @@ void Scumm::initV2MouseOver() {
 	v2_mouseover_boxes[kSentenceLine].hicolor = hi_color;
 }
 
-void Scumm::checkV2MouseOver(ScummVM::Point pos) {
+void Scumm::checkV2MouseOver(Common::Point pos) {
 	VirtScreen *vs = &virtscr[2];
-	ScummVM::Rect rect;
+	Common::Rect rect;
 	byte *ptr, *dst;
 	int i, x, y, new_box = -1;
 
@@ -197,7 +197,7 @@ void Scumm::checkV2Inventory(int x, int y) {
 void Scumm::redrawV2Inventory() {
 	int i;
 	int max_inv;
-	ScummVM::Rect inventoryBox;
+	Common::Rect inventoryBox;
 
 	v2_mouseover_box = -1;
 

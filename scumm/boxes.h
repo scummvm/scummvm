@@ -39,10 +39,10 @@ typedef enum {
 } BoxFlags;
 
 struct BoxCoords {			/* Box coordinates */
-	ScummVM::Point ul;
-	ScummVM::Point ur;
-	ScummVM::Point ll;
-	ScummVM::Point lr;
+	Common::Point ul;
+	Common::Point ur;
+	Common::Point ll;
+	Common::Point lr;
 };
 
 #endif

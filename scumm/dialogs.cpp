@@ -170,7 +170,7 @@ void ScummDialog::addResText(int x, int y, int w, int h, int resID) {
 }
 
 
-const ScummVM::String ScummDialog::queryResString(int stringno) {
+const Common::String ScummDialog::queryResString(int stringno) {
 	byte *result;
 
 	if (stringno == 0)
@@ -352,7 +352,7 @@ void SaveLoadDialog::close() {
 
 void SaveLoadDialog::fillList() {
 	// Get savegame names
-	ScummVM::StringList l;
+	Common::StringList l;
 	char name[32];
 	uint i = _saveMode ? 1 : 0;
 	bool avail_saves[81];
@@ -715,7 +715,7 @@ KeysDialog::KeysDialog(NewGui *gui, Scumm *scumm)
 	_keyMapping->setFlags(WIDGET_CLEARBG);
 
 	// Get actions names
-	ScummVM::StringList l;
+	Common::StringList l;
 
 	for (int i = 1; i < TOTAL_ACTIONS; i++) 
 		l.push_back(getActionName(i));

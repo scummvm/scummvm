@@ -228,7 +228,7 @@ const int Config::count_domains() {
 	return count;
 }
 
-ScummVM::StringList Config::get_domains() {
+Common::StringList Config::get_domains() {
 	StringList domainNames;
 	DomainMap::Iterator d, end(domains.end());
 	for (d = domains.begin(); d != end; ++d) {

@@ -143,7 +143,7 @@ void BrowserDialog::updateListing() {
 	assert(_nodeContent != NULL);
 
 	// Populate the ListWidget
-	ScummVM::StringList list;
+	Common::StringList list;
 	int size = _nodeContent->size();
 	for (int i = 0; i < size; i++) {
 		list.push_back((*_nodeContent)[i].displayName());

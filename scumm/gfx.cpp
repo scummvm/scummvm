@@ -802,7 +802,7 @@ void Scumm::restoreCharsetBg() {
 	_charset->_nextTop = _string[0].ypos;
 }
 
-void Scumm::restoreBG(ScummVM::Rect rect, byte backColor) {
+void Scumm::restoreBG(Common::Rect rect, byte backColor) {
 	VirtScreen *vs;
 	int topline, height, width;
 	byte *backbuff, *bgbak;
@@ -873,7 +873,7 @@ void Scumm::restoreBG(ScummVM::Rect rect, byte backColor) {
 }
 
 bool Scumm::hasCharsetMask(int left, int top, int right, int bottom) {
-	ScummVM::Rect rect(left, top, right, bottom);
+	Common::Rect rect(left, top, right, bottom);
 	
 	return _charset->_hasMask && rect.intersects(gdi._mask);
 }

@@ -26,8 +26,8 @@
 #include "common/list.h"
 
 class MessageDialog : public Dialog {
-	typedef ScummVM::String String;
-	typedef ScummVM::StringList StringList;
+	typedef Common::String String;
+	typedef Common::StringList StringList;
 public:
 	MessageDialog(NewGui *gui, const String &message, uint32 timer = 0, bool showOKButton = true, bool showCancelButton = false);
 	

@@ -103,7 +103,7 @@ struct Language {
 typedef Engine *(*EngineFactory)(GameDetector *detector, OSystem *syst);
 
 class GameDetector {
-	typedef ScummVM::String String;
+	typedef Common::String String;
 
 public:
 	static const MusicDriver *getMusicDrivers();

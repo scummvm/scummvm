@@ -65,7 +65,7 @@ class FSList;
  */
 class FilesystemNode {
 protected:
-	typedef ScummVM::String String;
+	typedef Common::String String;
 
 public:
 
@@ -146,7 +146,7 @@ public:
 /*
  * A sorted list of multiple file system nodes. E.g. the contents of a given directory.
  */
-class FSList : ScummVM::List<FilesystemNode *> {
+class FSList : Common::List<FilesystemNode *> {
 public:
 	~FSList() {
 		for (int i = 0; i < _size; i++)

@@ -38,7 +38,7 @@ static uint32 up_down_arrows[8] = {
 	0x00001000,
 };
 
-const ScummVM::String PopUpWidget::emptyStr;
+const Common::String PopUpWidget::emptyStr;
 
 //
 // PopUpDialog
@@ -251,7 +251,7 @@ void PopUpDialog::drawMenuEntry(int entry, bool hilite) {
 	int x = _x + 1;
 	int y = _y + 1 + kLineHeight * entry;
 	int w = _w - 2;
-	ScummVM::String &name = _popUpBoss->_entries[entry].name;
+	Common::String &name = _popUpBoss->_entries[entry].name;
 
 	_gui->fillRect(x, y, w, kLineHeight, hilite ? _gui->_textcolorhi : _gui->_bgcolor);
 	if (name.size() == 0) {

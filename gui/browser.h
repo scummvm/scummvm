@@ -32,8 +32,8 @@ class FilesystemNode;
 class FSList;
 
 class BrowserDialog : public Dialog {
-	typedef ScummVM::String String;
-	typedef ScummVM::StringList StringList;
+	typedef Common::String String;
+	typedef Common::StringList StringList;
 public:
 	BrowserDialog(NewGui *gui, const char *title);
 	virtual ~BrowserDialog();

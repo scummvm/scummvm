@@ -23,7 +23,7 @@
 
 #include <ctype.h>
 
-namespace ScummVM {
+namespace Common {
 
 String::String(const char *str, int len) {
 	_refCount = new int(1);
@@ -266,4 +266,4 @@ bool operator != (const char* y, const ConstString &x) {
 	return x != y;
 }
 
-}	// End of namespace ScummVM
+}	// End of namespace Common

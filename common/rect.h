@@ -25,7 +25,7 @@
 #include "common/scummsys.h"
 #include "common/util.h"
 
-namespace ScummVM {
+namespace Common {
 
 /*! 	@brief simple class for handling both 2D position and size
 
@@ -108,6 +108,6 @@ struct Rect {
 	}
 };
 
-}	// End of namespace ScummVM
+}	// End of namespace Common
 
 #endif

@@ -27,8 +27,8 @@
 
 /* EditTextWidget */
 class EditTextWidget : public StaticTextWidget {
-	typedef ScummVM::StringList StringList;
-	typedef ScummVM::String String;
+	typedef Common::StringList StringList;
+	typedef Common::String String;
 protected:
 	String		_backupString;
 	bool			_caretVisible;

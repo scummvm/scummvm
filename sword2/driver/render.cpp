@@ -74,12 +74,12 @@ typedef struct {
 
 BlockSurface **blockSurfaces[MAXLAYERS] = { 0, 0, 0, 0, 0 };
 
-void UploadRect(ScummVM::Rect *r) {
+void UploadRect(Common::Rect *r) {
 	g_system->copy_rect(lpBackBuffer + r->top * screenWide + r->left,
 		screenWide, r->left, r->top, r->right - r->left, r->bottom - r->top);
 }
 
-void BlitBlockSurface(BlockSurface *s, ScummVM::Rect *r, ScummVM::Rect *clip_rect) {
+void BlitBlockSurface(BlockSurface *s, Common::Rect *r, Common::Rect *clip_rect) {
 	if (r->top > clip_rect->bottom || r->left > clip_rect->right || r->bottom <= clip_rect->top || r->right <= clip_rect->left)
 		return;
 
@@ -703,7 +703,7 @@ int32 SetLocationMetrics(uint16 w, uint16 h) {
 
 int32 RenderParallax(_parallax *p, int16 l) {
 	int16 x, y;
-	ScummVM::Rect r;
+	Common::Rect r;
 
 	if (locationWide == screenWide)
 		x = 0;
@@ -715,7 +715,7 @@ int32 RenderParallax(_parallax *p, int16 l) {
 	else
 		y = ((int32) ((p->h - (screenDeep - MENUDEEP * 2)) * scrolly) / (int32) (locationDeep - (screenDeep - MENUDEEP * 2)));
 
-	ScummVM::Rect clip_rect;
+	Common::Rect clip_rect;
 
 	// Leave enough space for the top and bottom menues
 

@@ -295,8 +295,8 @@ int32 CreateSurface(_spriteInfo *s, uint8 **sprite) {
  * @param clipRect the clipping rectangle
  */
 
-void DrawSurface(_spriteInfo *s, uint8 *surface, ScummVM::Rect *clipRect) {
-	ScummVM::Rect rd, rs;
+void DrawSurface(_spriteInfo *s, uint8 *surface, Common::Rect *clipRect) {
+	Common::Rect rd, rs;
 	uint16 x, y, srcPitch;
 	uint8 *src, *dst;
 
@@ -398,7 +398,7 @@ int32 DrawSprite(_spriteInfo *s) {
 	uint16 srcPitch;
 	bool freeSprite = false;
 	bool clipped = false;
-	ScummVM::Rect rd, rs;
+	Common::Rect rd, rs;
 
 	// -----------------------------------------------------------------
 	// Decompression and mirroring

@@ -179,7 +179,7 @@ protected:
 	int _numStates;
 	int _state;
 
-	ScummVM::Rect _hitRect;
+	Common::Rect _hitRect;
 
 public:
 	Sword2Widget(Sword2Dialog *parent, int states) :
@@ -234,7 +234,7 @@ public:
 		return _state;
 	}
 
-	virtual void paint(ScummVM::Rect *clipRect = NULL) {
+	virtual void paint(Common::Rect *clipRect = NULL) {
 		DrawSurface(&_sprites[_state], _surfaces[_state]._surface, clipRect);
 	}
 
@@ -574,7 +574,7 @@ public:
 			createSurfaceImages(3406, x, y);
 	}
 
-	virtual void paint(ScummVM::Rect *clipRect = NULL) {
+	virtual void paint(Common::Rect *clipRect = NULL) {
 		// This will redraw a bit more than is strictly necessary,
 		// but I doubt that will make any noticeable difference.
 
@@ -948,7 +948,7 @@ public:
 		return &_text[0];
 	}
 
-	virtual void paint(ScummVM::Rect *clipRect = NULL) {
+	virtual void paint(Common::Rect *clipRect = NULL) {
 		Sword2Widget::paint();
 
 		// HACK: The main dialog is responsible for drawing the text

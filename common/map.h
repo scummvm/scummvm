@@ -23,7 +23,7 @@
 
 #include "common/scummsys.h"
 
-namespace ScummVM {
+namespace Common {
 
 template <class Key, class Value>
 class Map {
@@ -247,6 +247,6 @@ class String;
 
 typedef Map<String, String> StringMap;
 
-}	// End of namespace ScummVM
+}	// End of namespace Common
 
 #endif
