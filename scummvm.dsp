@@ -259,7 +259,7 @@ SOURCE=.\gui\widget.h
 # End Group
 # Begin Source File
 
-SOURCE=.\2xsai.cpp
+SOURCE=.\scaler.cpp
 # End Source File
 # Begin Source File
 

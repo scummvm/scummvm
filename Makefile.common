@@ -13,7 +13,7 @@ OBJS	+= gui/widget.o gui/dialog.o gui/util.o newgui.o \
 	sys.o verbs.o script_v1.o script_v2.o debug.o gui.o \
 	sound/imuse.o sound/fmopl.o sound/mixer.o debugrl.o \
 	akos.o vars.o insane.o gameDetector.o init.o \
-	v3/resource_v3.o v4/resource_v4.o 2xsai.o main.o \
+	v3/resource_v3.o v4/resource_v4.o scaler.o main.o \
         simon/midi.o simon/simon.o simon/simonsys.o simon/simonvga.o \
         simon/simondebug.o simon/simonres.o simon/simonitems.o simon/simonverb.o \
         sound/mididrv.o config-file.o

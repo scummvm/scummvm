@@ -1810,7 +1810,7 @@ DEP_CPP_SIMONS=\
 # End Group
 # Begin Source File
 
-SOURCE=..\2xsai.cpp
+SOURCE=..\scaler.cpp
 
 !IF  "$(CFG)" == "PocketSCUMM - Win32 (WCE MIPS) Release"
 
