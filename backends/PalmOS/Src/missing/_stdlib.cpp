@@ -80,11 +80,15 @@ MemPtr realloc(MemPtr oldP, UInt32 size) {
 	return newP;
 }
 
+ErrJumpBuf stdlib_errJumpBuf;
+#define ERR_MAGIC	0xDADA
+
 void exit(Int16 status) {
-	// need to change this
 	EventType event;
 	event.eType = keyDownEvent;
 	event.data.keyDown.chr = vchrLaunch;
 	event.data.keyDown.modifiers = commandKeyMask;
-	EvtAddUniqueEventToQueue  (&event, 0, true);
+	EvtAddUniqueEventToQueue(&event, 0, true);
+
+	ErrLongJump(stdlib_errJumpBuf, status == 0 ? 0xDADA : status);
 }

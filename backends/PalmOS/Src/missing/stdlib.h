@@ -26,6 +26,11 @@
 #include <PalmOS.h>
 #include "MemGlue.h"
 
+extern ErrJumpBuf stdlib_errJumpBuf;
+
+#define DO_EXIT( code ) \
+	if (ErrSetJump(stdlib_errJumpBuf) == 0) { code }
+	
 #define atoi				StrAToI
 #define atol				StrAToI
 #define abs(a)				((a) < 0 ? -(a) : (a))
