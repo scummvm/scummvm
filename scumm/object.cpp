@@ -988,10 +988,11 @@ void Scumm::findObjectInRoom(FindObjectInRoom *fo, byte findWhat, uint id, uint 
 				}
 				if (findWhat & foImageHeader) {
 					fo->obim = obimptr;
-					fo->imhd = 0;	// TODO - FIXME: is this used at all?
+					fo->imhd = NULL;
 				}
 				break;
 			}
+			searchptr += 2;
 		}
 		return;
 	}
