@@ -717,8 +717,13 @@ void SmushPlayer::handleZlibFrameObject(Chunk &b) {
 		_alreadyInit = true;
 	}
 
-	_width = width;
-	_height = height;
+	if ((height == 242) && (width == 384)) {
+		_width = width;
+		_height = height;
+	} else {
+		_width = _vm->_screenWidth;
+		_height = _vm->_screenHeight;
+	}
 
 	switch (codec) {
 	case 1:
@@ -776,8 +781,14 @@ void SmushPlayer::handleFrameObject(Chunk &b) {
 		_alreadyInit = true;
 	}
 
-	_width = width;
-	_height = height;
+	if ((height == 242) && (width == 384)) {
+		_width = width;
+		_height = height;
+	} else {
+		_width = _vm->_screenWidth;
+		_height = _vm->_screenHeight;
+	}
+
 	b.getWord();
 	b.getWord();
 
