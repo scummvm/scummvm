@@ -64,8 +64,6 @@ void Walk::joeMoveBlock(int facing, uint16 areaNum, uint16 walkDataNum) {
 	warning("Walk::moveJoeBlock() partially implemented");
 	_graphics->bob(0)->animating = false;
 
-	// XXX  CAN=-2;
-
     // Make Joe face the right direction
 	_joeMoveBlock = true;
 	_logic->joeFacing(facing);
@@ -120,7 +118,7 @@ void Walk::animateJoePrepare() {
 }
 
 
-void Walk::animateJoe() {
+bool Walk::animateJoe() {
 	// queen.c l.2789-2835
 	uint16 lastDirection = 0;
 	uint16 i;
@@ -136,7 +134,7 @@ void Walk::animateJoe() {
 		// area has been turned off, see if we should execute a cutaway
 		if (pwd->area->mapNeighbours < 0) {
 			joeMoveBlock(pwd->anim.facing, pwd->areaNum, i);
-			return;
+			return interrupted;
 		}
 		if (lastDirection != pwd->anim.facing) {
 			_graphics->bobAnimNormal(0, pwd->anim.firstFrame, pwd->anim.lastFrame, 1, false, false);
@@ -168,6 +166,7 @@ void Walk::animateJoe() {
 		lastDirection = pwd->anim.facing;
 	}
 	_logic->joeFacing(lastDirection);
+	return interrupted;
 }
 
 
@@ -306,9 +305,9 @@ void Walk::animatePerson(const MovePersonData *mpd, uint16 image, uint16 bobNum,
 }
 
 
-void Walk::joeMove(int direction, uint16 endx, uint16 endy, bool inCutaway) {
+int16 Walk::joeMove(int direction, uint16 endx, uint16 endy, bool inCutaway) {
 
-//   CAN=0
+	int16 can = 0;
 	initWalkData();
 
 	uint16 oldx = _graphics->bob(0)->x;
@@ -331,33 +330,46 @@ void Walk::joeMove(int direction, uint16 endx, uint16 endy, bool inCutaway) {
 
 	if (_walkDataCount > 0) {
 		animateJoePrepare();
-		animateJoe();
+		if(animateJoe()) {
+			can = -1;
+		}
 	}
 	else {
-//		SPEAK(JOE_RESPstr[4],"JOE",find_cd_desc(4));
+		// path has been blocked, make Joe say so
+		// XXX SPEAK(JOE_RESPstr[4],"JOE",find_cd_desc(4));
+		can = -1;
 	}
 
 	_graphics->bob(0)->animating = false;
 	// XXX if ((CAN==-1) && (walkgameload==0)) NEW_ROOM=0;
 	// XXX walkgameload=0;
-	if (!_joeMoveBlock && direction > 0) {
+	if (_joeMoveBlock) {
+		can = -2;
+	}
+	else if (direction > 0) {
 		_logic->joeFacing(direction);
 	}
 	_logic->joePrevFacing(_logic->joeFacing());
 	_logic->joeFace();
+	return can;
 }
 
 
-void Walk::personMove(const Person *pp, uint16 endx, uint16 endy, uint16 curImage, int direction) {
+int16 Walk::personMove(const Person *pp, uint16 endx, uint16 endy, uint16 curImage, int direction) {
 
 	if (endx == 0 && endy == 0) {
 		warning("Walk::personMove() - endx == 0 && endy == 0");
-		return;
+		return 0;
 	}
 
-	// TODO: room 69 specific
+	// no longer walk characters in ending
+	if (_logic->currentRoom() == 69) {
+		if (strcmp(pp->name, "SPARKY") == 0 || strcmp(pp->name, "FAYE") == 0) {
+			return 0;
+		}
+	}
 
-	// CAN = 0;
+	int16 can = 0;
 	initWalkData();
 
 	uint16 bobNum = pp->actor->bobNum;
@@ -385,6 +397,9 @@ void Walk::personMove(const Person *pp, uint16 endx, uint16 endy, uint16 curImag
 	if (_walkDataCount > 0) {
 		animatePersonPrepare(mpd, direction);
 		animatePerson(mpd, curImage, bobNum, bankNum, direction);
+	}
+	else {
+		can = -1;
 	}
 
 	uint16 standingFrame = 0;
@@ -416,6 +431,7 @@ void Walk::personMove(const Person *pp, uint16 endx, uint16 endy, uint16 curImag
 		pbs->xflip = false;
 	}
 	pbs->frameNum = standingFrame;
+	return can;
 }
 
 

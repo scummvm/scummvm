@@ -75,10 +75,10 @@ public:
 	Walk(Logic* logic, Graphics* graphics);
 
 	//! MOVE_JOE()
-	void joeMove(int direction, uint16 endx, uint16 endy, bool inCutaway);
+	int16 joeMove(int direction, uint16 endx, uint16 endy, bool inCutaway);
 	
 	//! MOVE_OTHER
-	void personMove(const Person *pp, uint16 endx, uint16 endy, uint16 curImage, int direction);
+	int16 personMove(const Person *pp, uint16 endx, uint16 endy, uint16 curImage, int direction);
 
 
 private:
@@ -86,7 +86,7 @@ private:
 	void joeMoveBlock(int facing, uint16 areaNum, uint16 walkDataNum);
 
 	void animateJoePrepare();
-	void animateJoe();
+	bool animateJoe();
 
 	void animatePersonPrepare(const MovePersonData *mpd, int direction);
 	void animatePerson(const MovePersonData *mpd, uint16 image, uint16 bobNum, uint16 bankNum, int direction);

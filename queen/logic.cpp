@@ -21,6 +21,7 @@
 
 #include "stdafx.h"
 #include "queen/logic.h"
+#include "queen/cutaway.h"
 #include "queen/defs.h"
 #include "queen/display.h"
 #include "queen/graphics.h"
@@ -1460,43 +1461,52 @@ StateDirection Logic::findStateDirection(uint16 state) {
 	// of a STATE_DIR_*. Some (all ?) calls to FIND_STATE(, "DIR")
 	// are often followed by a DIR_* constant.
 
-	// see queen.c l.4016-4023
-	StateDirection sd = STATE_DIR_BACK;
-	switch ((state >> 2) & 3) {
-	case 0: 
-		sd = STATE_DIR_BACK;
-		break;
-	case 1: 
-		sd = STATE_DIR_RIGHT;
-		break;
-	case 2: 
-		sd = STATE_DIR_LEFT;
-		break;
-	case 3: 
-		sd = STATE_DIR_FRONT;
-		break;
-	}
-	return sd;
+	// queen.c l.4014-4021
+	static const StateDirection sd[] = {
+		STATE_DIR_BACK,
+		STATE_DIR_RIGHT,
+		STATE_DIR_LEFT,
+		STATE_DIR_FRONT
+	};
+	return sd[(state >> 2) & 3];
 }
 
 StateTalk Logic::findStateTalk(uint16 state) {
 	return (state & (1 << 9)) ? STATE_TALK_TALK : STATE_TALK_MUTE;
 }
 
-void Logic::joeSetup() {
-	int i;
+StateGrab Logic::findStateGrab(uint16 state) {
 
-	_graphics->bankLoad("joe_a.BBK", 13);
+	// queen.c l.4022-4029
+	static const StateGrab gd[] = {
+		STATE_GRAB_NONE,
+		STATE_GRAB_DOWN,
+		STATE_GRAB_UP,
+		STATE_GRAB_MID
+	};
+	return gd[state & 3];
+}
+
+
+void Logic::joeSetupFromBanks(const char *bank1, const char* bank2) {
+
+	int i;
+	_graphics->bankLoad(bank1, 13);
 	for (i = 11; i <= 28 + FRAMES_JOE_XTRA; ++i) {
 		_graphics->bankUnpack(i - 10, i, 13);
 	}
 	_graphics->bankErase(13);
 
-	_graphics->bankLoad("joe_b.BBK", 7);
+	_graphics->bankLoad(bank2, 7);
 	_graphics->bankUnpack(1, 33 + FRAMES_JOE_XTRA, 7);
 	_graphics->bankUnpack(3, 34 + FRAMES_JOE_XTRA, 7);
 	_graphics->bankUnpack(5, 35 + FRAMES_JOE_XTRA, 7);
+}
 
+
+void Logic::joeSetup() {
+
+	joeSetupFromBanks("joe_a.BBK", "joe_b.BBK");
 	_joe.facing = DIR_FRONT;
 }
 
@@ -1629,6 +1639,206 @@ uint16 Logic::joeFace() {
 	pbs->frameNum = 29 + FRAMES_JOE_XTRA;
 	_graphics->bankUnpack(frame, pbs->frameNum, 7);
 	return frame;
+}
+
+
+int16 Logic::joeWalkTo(int16 x, int16 y, const Command *cmd, bool mustWalk) {
+
+	// Check to see if object is actually an exit to another
+	// room. If so, then set up new room
+
+	uint16 k = _roomData[_currentRoom];
+
+	ObjectData *objData = &_objectData[k + cmd->noun2];
+	if (objData->x != 0 || objData->y != 0) {
+		x = objData->x;
+		y = objData->y;
+	}
+
+	if (cmd->action2 == VERB_WALK_TO) {
+		_entryObj = objData->entryObj;
+	}
+	else {
+		_entryObj = 0;
+	}
+
+	_newRoom = 0;
+
+	if (_entryObj != 0 && cmd->action2 != VERB_CLOSE) {
+		// because this is an exit object, see if there is
+		// a walk off point and set (x,y) accordingly
+		WalkOffData *wod = walkOffPointForObject(k + cmd->noun2);
+		if (wod != NULL) {
+			x = wod->x;
+			y = wod->y;
+		}
+	}
+
+
+	// determine which way for Joe to face Object
+	uint16 facing = 0;
+	switch (findStateDirection(objData->state)) {
+	case STATE_DIR_BACK:
+		facing = DIR_BACK;
+		break;
+	case STATE_DIR_FRONT:
+		facing = DIR_FRONT;
+		break;
+	case STATE_DIR_LEFT:
+		facing = DIR_LEFT;
+		break;
+	case STATE_DIR_RIGHT:
+		facing = DIR_RIGHT;
+		break;
+	}
+
+	int16 p = 0;
+	if (mustWalk) {
+		BobSlot *bobJoe  = _graphics->bob(0);
+		if (x == bobJoe->x && y == bobJoe->y) {
+			joeFacing(facing);
+			joeFace();
+		}
+		else {
+			// XXX inCutaway parameter
+			p = _walk->joeMove(facing, x, y, false);
+			// if(P != 0) P = FIND_VERB
+		}
+	}
+	return p;
+}
+
+
+void Logic::joeGrab(uint16 state, uint16 speed) {
+
+	StateGrab sg = findStateGrab(state);
+	if (sg != STATE_GRAB_NONE) {
+		joeGrabDirection(sg, speed);
+	}
+}
+
+
+void Logic::joeGrabDirection(StateGrab grab, uint16 speed) {
+
+	// if speed == 0, then keep Joe in position
+
+	uint16 frame = 0;
+	BobSlot *bobJoe = _graphics->bob(0);
+
+	switch (grab) {
+	case STATE_GRAB_NONE:
+		break;
+
+	case STATE_GRAB_MID:
+		if (_joe.facing == DIR_BACK) {
+			frame = 4;
+		}
+		else if (_joe.facing == DIR_FRONT) {
+			frame = 6;
+		}
+		else {
+			frame = 2;
+		}
+		break;
+
+	case STATE_GRAB_DOWN:
+		if (_joe.facing == DIR_BACK) {
+			frame = 9;
+		}
+		else {
+			frame = 8;
+		}
+		break;
+
+	case STATE_GRAB_UP:
+		// turn back
+		_graphics->bankUnpack(5, 29 + FRAMES_JOE_XTRA, 7);
+		bobJoe->xflip = (_joe.facing == DIR_LEFT);
+		bobJoe->scale = _joe.scale;
+		_graphics->update();
+		// grab up
+        _graphics->bankUnpack(7, 29 + FRAMES_JOE_XTRA, 7);
+		bobJoe->xflip = (_joe.facing == DIR_LEFT);
+		bobJoe->scale = _joe.scale;
+        _graphics->update();
+		// turn back
+		if (speed == 0) {
+			frame = 7;
+		}
+		else {
+			frame = 5;
+		}
+		break;
+	}
+   
+	if (frame != 0) {
+		_graphics->bankUnpack(frame, 29 + FRAMES_JOE_XTRA, 7);
+		bobJoe->xflip = (_joe.facing == DIR_LEFT);
+		bobJoe->scale = _joe.scale;
+		_graphics->update();
+
+		// extra delay for grab down
+		if (grab == STATE_GRAB_DOWN) {
+			_graphics->update();
+			_graphics->update();
+		}
+
+		if (speed > 0) {
+			joeFace();
+		}
+	}
+}
+
+
+void Logic::joeUseDress(bool showCut) {
+
+	if (showCut) {
+		joeFacing(DIR_FRONT);
+		joeFace();
+		if (gameState(VAR_DRESSING_MODE) == 0) {
+			playCutaway("cdres.CUT");
+			// XXX INS_ITEM_NUM(58);
+		}
+		else {
+			playCutaway("cudrs.CUT");
+		}
+	}
+	_display->palSetJoe(JP_DRESS);
+	joeSetupFromBanks("JoeD_A.BBK", "JoeD_B.BBK");
+	// XXX DEL_ITEM_NUM(56, 0);
+	// XXX INVENTORY();
+	gameState(VAR_DRESSING_MODE, 2);
+}
+
+
+void Logic::joeUseClothes(bool showCut) {
+
+	if (showCut) {
+		joeFacing(DIR_FRONT);
+		joeFace();
+		playCutaway("cdclo.CUT");
+		// XXX INS_ITEM_NUM(56);
+	}
+	_display->palSetJoe(JP_CLOTHES);
+	joeSetupFromBanks("Joe_A.BBK", "Joe_B.BBK");
+	// XXX DEL_ITEM_NUM(58,0);
+	// XXX INVENTORY();
+	gameState(VAR_DRESSING_MODE, 0);
+}
+
+
+void Logic::joeUseUnderwear() {
+
+	_display->palSetJoe(JP_CLOTHES);
+	joeSetupFromBanks("JoeU_A.BBK", "JoeU_B.BBK");
+	gameState(VAR_DRESSING_MODE, 1);
+}
+
+
+void Logic::playCutaway(const char* cutFile) {
+
+	char next[20];
+	Cutaway::run(cutFile, next, _graphics, this, _resource);
 }
 
 

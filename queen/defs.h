@@ -48,7 +48,7 @@ enum {
 };
 
 
-enum {
+enum Direction {
 	DIR_LEFT  = 1,
 	DIR_RIGHT = 2,
 	DIR_FRONT = 3,
@@ -107,6 +107,27 @@ enum Language {
 };
 
 
+enum Verb {
+	VERB_OPEN        = 1,
+	VERB_CLOSE       = 2,
+	VERB_MOVE        = 3,
+	VERB_GIVE        = 5,
+	VERB_USE         = 6,
+	VERB_PICK_UP     = 7,
+	VERB_LOOK_AT     = 9,
+	VERB_TALK_TO     = 8,
+	VERB_WALK_TO     = 10,
+	VERB_SCROLL_UP   = 11,
+	VERB_SCROLL_DOWN = 12,
+	VERB_INV_ITEM1   = 13,
+	VERB_INV_ITEM2   = 14,
+	VERB_INV_ITEM3   = 15,
+	VERB_INV_ITEM4   = 16,
+	VERB_USE_JOURNAL = 20,
+	VERB_SKIP_TEXT   = 101
+};
+
+
 enum StateDirection {
 	STATE_DIR_BACK  = 0,
 	STATE_DIR_RIGHT = 1,
@@ -114,9 +135,18 @@ enum StateDirection {
 	STATE_DIR_FRONT = 3
 };
 
+
 enum StateTalk {
 	STATE_TALK_TALK,
 	STATE_TALK_MUTE
+};
+
+
+enum StateGrab {
+	STATE_GRAB_NONE,
+	STATE_GRAB_DOWN,
+	STATE_GRAB_UP,
+	STATE_GRAB_MID
 };
 
 

@@ -23,6 +23,7 @@
 #define QUEENLOGIC_H
 
 #include "queen/queen.h"
+#include "queen/defs.h"
 #include "queen/structs.h"
 
 namespace Queen {
@@ -41,6 +42,12 @@ enum RoomDisplayMode {
 struct ZoneSlot {
 	bool valid;
 	Box box;
+};
+
+
+struct Command {
+	Verb action, action2;
+	uint16 noun, noun2;
 };
 
 
@@ -135,10 +142,13 @@ public:
 
 	StateDirection findStateDirection(uint16 state); // == FIND_STATE(state, "DIR");
 	StateTalk      findStateTalk     (uint16 state); // == FIND_STATE(state, "TALK");
+	StateGrab      findStateGrab     (uint16 state); // == FIND_STATE(state, "GRAB");
 
 	Walk *walk()	{ return _walk; }
 
 	int talkSpeed() { return _talkSpeed; }
+
+	void joeSetupFromBanks(const char *bank1, const char* bank2);
 
 	//! SETUP_JOE(), loads the various bobs needed to animate Joe
 	void joeSetup();
@@ -148,6 +158,26 @@ public:
 	
 	//! FACE_JOE()
 	uint16 joeFace();
+
+	//! WALK()
+	int16 joeWalkTo(int16 x, int16 y, const Command *cmd, bool mustWalk);
+
+	//! GRAB_JOE()
+	void joeGrab(uint16 state, uint16 speed);
+
+	//! GRAB_DIR
+	void joeGrabDirection(StateGrab grab, uint16 speed);
+
+	//! USE_DRESS
+	void joeUseDress(bool showCut);
+
+	//! USE_CLOTHES
+	void joeUseClothes(bool showCut);
+
+	//! USE_UNDERWEAR
+	void joeUseUnderwear();
+
+	void playCutaway(const char* cutFile);
 
 	Display *display() { return _display; }
 
