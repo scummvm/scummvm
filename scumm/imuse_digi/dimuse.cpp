@@ -42,15 +42,15 @@ void IMuseDigital::timer_handler(void *refCon) {
 }
 
 IMuseDigital::IMuseDigital(ScummEngine *scumm)
-	: _scumm(scumm) {
+	: _vm(scumm) {
 	_pause = false;
-	_sound = new ImuseDigiSndMgr(_scumm);
-	_scumm->_timer->installTimerProc(timer_handler, 1000000 / 25, this);
+	_sound = new ImuseDigiSndMgr(_vm);
+	_vm->_timer->installTimerProc(timer_handler, 1000000 / 25, this);
 	_curMusicId = -1;
 }
 
 IMuseDigital::~IMuseDigital() {
-	_scumm->_timer->removeTimerProc(timer_handler);
+	_vm->_timer->removeTimerProc(timer_handler);
 	stopAllSounds();
 	delete _sound;
 }
@@ -58,7 +58,7 @@ IMuseDigital::~IMuseDigital() {
 void IMuseDigital::callback() {
 	int l = 0;
 
-	if (_pause || !_scumm)
+	if (_pause || !_vm)
 		return;
 
 	for (l = 0; l < MAX_DIGITAL_TRACKS;l ++) {
@@ -109,14 +109,14 @@ void IMuseDigital::callback() {
 
 			int pan = (_track[l].pan != 64) ? 2 * _track[l].pan - 127 : 0;
 
-			if (_scumm->_mixer->isReady()) {
+			if (_vm->_mixer->isReady()) {
 				if (_track[l].stream2) {
 					if (!_track[l].started) {
 						_track[l].started = true;
-						_scumm->_mixer->playInputStream(&_track[l].handle, _track[l].stream2, true, _track[l].vol / 1000, _track[l].pan, -1, false);
+						_vm->_mixer->playInputStream(&_track[l].handle, _track[l].stream2, true, _track[l].vol / 1000, _track[l].pan, -1, false);
 					} else {
-						_scumm->_mixer->setChannelVolume(_track[l].handle, _track[l].vol / 1000);
-						_scumm->_mixer->setChannelPan(_track[l].handle, pan);
+						_vm->_mixer->setChannelVolume(_track[l].handle, _track[l].vol / 1000);
+						_vm->_mixer->setChannelPan(_track[l].handle, pan);
 					}
 					continue;
 				}
@@ -164,9 +164,9 @@ void IMuseDigital::callback() {
 					if (result > mixer_size)
 						result = mixer_size;
 
-					if (_scumm->_mixer->isReady()) {
-						_scumm->_mixer->setChannelVolume(_track[l].handle, _track[l].vol / 1000);
-						_scumm->_mixer->setChannelPan(_track[l].handle, pan);
+					if (_vm->_mixer->isReady()) {
+						_vm->_mixer->setChannelVolume(_track[l].handle, _track[l].vol / 1000);
+						_vm->_mixer->setChannelPan(_track[l].handle, pan);
 						_track[l].stream->append(data, result);
 						_track[l].regionOffset += result;
 						_track[l].trackOffset += result;
@@ -189,7 +189,7 @@ void IMuseDigital::callback() {
 void IMuseDigital::switchToNextRegion(int track) {
 	int num_regions = _sound->getNumRegions(_track[track].soundHandle);
 	int num_jumps = _sound->getNumJumps(_track[track].soundHandle);
-	if ((_scumm->_gameId == GID_FT) && (num_jumps != 0)) {
+	if ((_vm->_gameId == GID_FT) && (num_jumps != 0)) {
 		_track[track].regionOffset = 0;
 		return;
 	}
@@ -280,7 +280,7 @@ void IMuseDigital::startSound(int soundId, const char *soundName, int soundType,
 			} else {
 				_track[l].stream2 = NULL;
 				_track[l].stream = makeAppendableAudioStream(freq, mixerFlags, 100000);
-				_scumm->_mixer->playInputStream(&_track[l].handle, _track[l].stream, true, _track[l].vol / 1000, _track[l].pan, -1);
+				_vm->_mixer->playInputStream(&_track[l].handle, _track[l].stream, true, _track[l].vol / 1000, _track[l].pan, -1);
 			}
 
 			if (soundGroup == IMUSE_MUSIC) {
@@ -315,7 +315,7 @@ void IMuseDigital::stopSound(int soundId) {
 				_track[l].toBeRemoved = true;
 			}
 			else if (_track[l].stream2)
-				_scumm->_mixer->stopHandle(_track[l].handle);
+				_vm->_mixer->stopHandle(_track[l].handle);
 		}
 	}
 }
@@ -327,7 +327,7 @@ void IMuseDigital::stopAllSounds(bool waitForStop) {
 			if (_track[l].stream) {
 				_track[l].toBeRemoved = true;
 			} else if (_track[l].stream2)
-				_scumm->_mixer->stopHandle(_track[l].handle);
+				_vm->_mixer->stopHandle(_track[l].handle);
 		}
 	}
 	_curMusicId = -1;
@@ -347,7 +347,7 @@ void IMuseDigital::stopAllSounds(bool waitForStop) {
 void IMuseDigital::pause(bool p) {
 	for (int l = 0; l < MAX_DIGITAL_TRACKS; l++) {
 		if (_track[l].used) {
-			_scumm->_mixer->pauseHandle(_track[l].handle, p);
+			_vm->_mixer->pauseHandle(_track[l].handle, p);
 		}
 	}
 	_pause = p;
@@ -407,7 +407,7 @@ void IMuseDigital::parseScriptCmds(int a, int b, int c, int d, int e, int f, int
 		switch (sub_cmd) {
 		case 0x600: // set new volume with fading
 			debug(5, "ImuseFadeParam - fade sample(%d), to volume(%d) with 60hz ticks(%d)", sample, d, e);
-			if ((_scumm->_gameId == GID_DIG) && (_scumm->_features & GF_DEMO)) {
+			if ((_vm->_gameId == GID_DIG) && (_vm->_features & GF_DEMO)) {
 				stopSound(sample);
 				return;
 			}
@@ -432,14 +432,14 @@ void IMuseDigital::parseScriptCmds(int a, int b, int c, int d, int e, int f, int
 		break;
 	case 0x1000: // ImuseSetState
 		debug(5, "ImuseSetState (%d)", b);
-		if ((_scumm->_gameId == GID_DIG) && (_scumm->_features & GF_DEMO)) {
+		if ((_vm->_gameId == GID_DIG) && (_vm->_features & GF_DEMO)) {
 			if (b == 1)
 				startMusic(1);
 			else {
 				if (getSoundStatus(2) == 0)
 					startMusic(2);
 			}
-		} else if (_scumm->_gameId == GID_DIG) {
+		} else if (_vm->_gameId == GID_DIG) {
 			if (b == 1000) {		// STATE_NULL
 				stopMusic();
 				return;
@@ -454,7 +454,7 @@ void IMuseDigital::parseScriptCmds(int a, int b, int c, int d, int e, int f, int
 					break;
 				}
 			}
-		} else if ((_scumm->_gameId == GID_CMI) && (_scumm->_features & GF_DEMO)) {
+		} else if ((_vm->_gameId == GID_CMI) && (_vm->_features & GF_DEMO)) {
 			if (b == 2) {
 				startMusic("in1.imx", 2002);
 			} else if (b == 4) {
@@ -466,9 +466,9 @@ void IMuseDigital::parseScriptCmds(int a, int b, int c, int d, int e, int f, int
 			} else if (b == 16) {
 				startMusic("gun.imx", 2016);
 			} else {
-				warning("imuse digital: set state unknown for cmi demo: %d, room: %d", b, this->_scumm->_currentRoom);
+				warning("imuse digital: set state unknown for cmi demo: %d, room: %d", b, this->_vm->_currentRoom);
 			}
-		} else if (_scumm->_gameId == GID_CMI) {
+		} else if (_vm->_gameId == GID_CMI) {
 			if (b == 1000) {		// STATE_NULL
 				stopMusic();
 				return;
@@ -482,7 +482,7 @@ void IMuseDigital::parseScriptCmds(int a, int b, int c, int d, int e, int f, int
 					break;
 				}
 			}
-		} else if (_scumm->_gameId == GID_FT) {
+		} else if (_vm->_gameId == GID_FT) {
 			for (l = 0;; l++) {
 				if (_ftStateMusicTable[l].index == -1) {
 					return;
@@ -490,8 +490,8 @@ void IMuseDigital::parseScriptCmds(int a, int b, int c, int d, int e, int f, int
 				if (_ftStateMusicTable[l].index == b) {
 					debug(5, "Play imuse music: %s, %s", _ftStateMusicTable[l].name, _ftStateMusicTable[l].audioname);
 					if (_ftStateMusicTable[l].audioname[0] != 0) {
-						for (r = 0; r < _scumm->_numAudioNames; r++) {
-							if (strcmp(_ftStateMusicTable[l].audioname, &_scumm->_audioNames[r * 9]) == 0) {
+						for (r = 0; r < _vm->_numAudioNames; r++) {
+							if (strcmp(_ftStateMusicTable[l].audioname, &_vm->_audioNames[r * 9]) == 0) {
 								startMusic(r);
 								parseScriptCmds(12, r, 0x600, _ftStateMusicTable[l].volume, 0, 0, 0, 0);
 							}
@@ -503,7 +503,7 @@ void IMuseDigital::parseScriptCmds(int a, int b, int c, int d, int e, int f, int
 		break;
 	case 0x1001: // ImuseSetSequence
 		debug(5, "ImuseSetSequence (%d)", b);
-		if (_scumm->_gameId == GID_DIG) {
+		if (_vm->_gameId == GID_DIG) {
 			for (l = 0; _digSeqMusicTable[l].room != -1; l++) {
 				if (_digSeqMusicTable[l].room == b) {
 					debug(5, "Play imuse music: %s, %s, %s", _digSeqMusicTable[l].name, _digSeqMusicTable[l].title, _digSeqMusicTable[l].filename);
@@ -513,7 +513,7 @@ void IMuseDigital::parseScriptCmds(int a, int b, int c, int d, int e, int f, int
 					break;
 				}
 			}
-		} else if (_scumm->_gameId == GID_CMI) {
+		} else if (_vm->_gameId == GID_CMI) {
 			for (l = 0; _comiSeqMusicTable[l].id != -1; l++) {
 				if (_comiSeqMusicTable[l].id == b) {
 					debug(5, "Play imuse music: %s, %s, %s", _comiSeqMusicTable[l].name, _comiSeqMusicTable[l].title, _comiSeqMusicTable[l].filename);
@@ -523,13 +523,13 @@ void IMuseDigital::parseScriptCmds(int a, int b, int c, int d, int e, int f, int
 					break;
 				}
 			}
-		} else if (_scumm->_gameId == GID_FT) {
+		} else if (_vm->_gameId == GID_FT) {
 			for (l = 0; _ftSeqMusicTable[l].index != -1; l++) {
 				if (_ftSeqMusicTable[l].index == b) {
 					debug(5, "Play imuse music: %s, %s", _ftSeqMusicTable[l].name, _ftSeqMusicTable[l].audioname);
 					if (_ftSeqMusicTable[l].audioname[0] != 0) {
-						for (r = 0; r < _scumm->_numAudioNames; r++) {
-							if (strcmp(_ftSeqMusicTable[l].audioname, &_scumm->_audioNames[r * 9]) == 0) {
+						for (r = 0; r < _vm->_numAudioNames; r++) {
+							if (strcmp(_ftSeqMusicTable[l].audioname, &_vm->_audioNames[r * 9]) == 0) {
 //								startMusic(r);
 //								parseScriptCmds(12, r, 0x600, _ftSeqMusicTable[l].volume, 0, 0, 0, 0);
 							}
@@ -593,22 +593,22 @@ int32 IMuseDigital::getCurMusicPosInMs() {
 
 int32 IMuseDigital::getCurVoiceLipSyncWidth() {
 //	int32 pos = getPosInMs(kTalkSoundID);
-	return _scumm->_rnd.getRandomNumber(255);
+	return _vm->_rnd.getRandomNumber(255);
 }
 
 int32 IMuseDigital::getCurVoiceLipSyncHeight() {
 //	int32 pos = getPosInMs(kTalkSoundID);
-	return _scumm->_rnd.getRandomNumber(255);
+	return _vm->_rnd.getRandomNumber(255);
 }
 
 int32 IMuseDigital::getCurMusicLipSyncWidth(int32 param) {
 //	int32 pos = getPosInMs(_curMusicId);
-	return _scumm->_rnd.getRandomNumber(255);
+	return _vm->_rnd.getRandomNumber(255);
 }
 
 int32 IMuseDigital::getCurMusicLipSyncHeight(int32 param) {
 //	int32 pos = getPosInMs(_curMusicId);
-	return _scumm->_rnd.getRandomNumber(255);
+	return _vm->_rnd.getRandomNumber(255);
 }
 
 } // End of namespace Scumm

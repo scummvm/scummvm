@@ -43,12 +43,12 @@ class ScummEngine;
 class ScummDialog : public GUI::Dialog {
 public:
 	ScummDialog(ScummEngine *scumm, int x, int y, int w, int h)
-		: GUI::Dialog(x, y, w, h), _scumm(scumm) {}
+		: GUI::Dialog(x, y, w, h), _vm(scumm) {}
 	
 protected:
 	typedef Common::String String;
 
-	ScummEngine *_scumm;
+	ScummEngine *_vm;
 
 	// Query a string from the resources
 	const String queryResString(int stringno);
@@ -103,7 +103,7 @@ protected:
 
 class ConfigDialog : public GUI::OptionsDialog {
 protected:
-	ScummEngine *_scumm;
+	ScummEngine *_vm;
 #ifdef _WIN32_WCE
 	GUI::Dialog		*_keysDialog;
 #endif

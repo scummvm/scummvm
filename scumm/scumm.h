@@ -473,7 +473,7 @@ protected:
 	uint16 _curExecScript;
 	byte **_lastCodePtr;
 	int _resultVarNumber, _scummStackPos;
-	int _scummStack[150];
+	int _vmStack[150];
 	int _keyScriptKey, _keyScriptNo;
 	
 	virtual void setupOpcodes() = 0;

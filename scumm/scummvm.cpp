@@ -388,7 +388,7 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 	_lastCodePtr = NULL;
 	_resultVarNumber = 0;
 	_scummStackPos = 0;
-	memset(_scummStack, 0, sizeof(_scummStack));
+	memset(_vmStack, 0, sizeof(_vmStack));
 	_keyScriptKey = 0;
 	_keyScriptNo = 0;
 	_fileOffset = 0;

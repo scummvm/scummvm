@@ -88,7 +88,7 @@ protected:
 	bool _isV3Game;
 	SoundMixer *_mixer;
 	OSystem *_system;
-	ScummEngine *_scumm;
+	ScummEngine *_vm;
 
 	bool _pcjr;
 	int _header_len;

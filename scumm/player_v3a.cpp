@@ -36,7 +36,7 @@ static const uint16 note_freqs[4][12] = {
 
 Player_V3A::Player_V3A(ScummEngine *scumm) {
 	int i;
-	_scumm = scumm;
+	_vm = scumm;
 	_system = scumm->_system;
 	for (i = 0; i < V3A_MAXMUS; i++) {
 		_mus[i].id = 0;
@@ -154,11 +154,11 @@ void Player_V3A::stopSound(int nr) {
 }
 
 void Player_V3A::startSound(int nr) {
-	assert(_scumm);
-	byte *data = _scumm->getResourceAddress(rtSound, nr);
+	assert(_vm);
+	byte *data = _vm->getResourceAddress(rtSound, nr);
 	assert(data);
 
-	if ((_scumm->_gameId != GID_INDY3) && (_scumm->_gameId != GID_LOOM))
+	if ((_vm->_gameId != GID_INDY3) && (_vm->_gameId != GID_LOOM))
 		error("player_v3a - unknown game!");
 
 	if (!_isinit) {
@@ -167,11 +167,11 @@ void Player_V3A::startSound(int nr) {
 		int offset = 4;
 		int numInstruments;
 
-		if (_scumm->_gameId == GID_INDY3) {
-			ptr = _scumm->getResourceAddress(rtSound, 83);
+		if (_vm->_gameId == GID_INDY3) {
+			ptr = _vm->getResourceAddress(rtSound, 83);
 			numInstruments = 12;
 		} else {
-			ptr = _scumm->getResourceAddress(rtSound, 79);
+			ptr = _vm->getResourceAddress(rtSound, 79);
 			numInstruments = 9;
 		}
 		assert(ptr);
@@ -195,7 +195,7 @@ void Player_V3A::startSound(int nr) {
 				_wavetable[i]->_oct[j] = READ_BE_UINT16(ptr + offset + 8);
 				offset += 10;
 			}
-			if (_scumm->_gameId == GID_INDY3) {
+			if (_vm->_gameId == GID_INDY3) {
 				_wavetable[i]->_pitadjust = 0;
 				offset += 2;
 			} else {
@@ -239,7 +239,7 @@ void Player_V3A::startSound(int nr) {
 		}
 		_sfx[i].id = nr;
 		_sfx[i].dur = looped ? -1 : (1 + 60 * size / rate);
-		if ((_scumm->_gameId == GID_INDY3) && (nr == 60))
+		if ((_vm->_gameId == GID_INDY3) && (nr == 60))
 			_sfx[i].dur = 240;
 		_mod->startChannel(nr | 0x100, sound, size, rate, vol, loopStart, loopEnd);
 	}

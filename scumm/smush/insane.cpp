@@ -59,10 +59,10 @@ static const int actorAnimationData[21] = {20, 21, 22, 23, 24, 25, 26, 13, 14, 1
 
 
 Insane::Insane(ScummEngine *scumm) {
-	_scumm = scumm;
+	_vm = scumm;
 	
 	// Demo has different insane, so disable it now
-	if (_scumm->_features & GF_DEMO)
+	if (_vm->_features & GF_DEMO)
 		return;
 
 	initvars();
@@ -77,14 +77,14 @@ Insane::Insane(ScummEngine *scumm) {
 	readFileToMem("minedriv.flu", &_smush_minedrivFlu);
 	readFileToMem("minefite.flu", &_smush_minefiteFlu);
 
-	_smush_iconsNut = new NutRenderer(_scumm);
-	_smush_iconsNut->loadFont("icons.nut", _scumm->getGameDataPath());
-	_smush_icons2Nut = new NutRenderer(_scumm);
-	_smush_icons2Nut->loadFont("icons2.nut", _scumm->getGameDataPath());
-	_smush_bensgoggNut = new NutRenderer(_scumm);
-	_smush_bensgoggNut->loadFont("bensgogg.nut", _scumm->getGameDataPath());
-	_smush_bencutNut = new NutRenderer(_scumm);
-	_smush_bencutNut->loadFont("bencut.nut", _scumm->getGameDataPath());
+	_smush_iconsNut = new NutRenderer(_vm);
+	_smush_iconsNut->loadFont("icons.nut", _vm->getGameDataPath());
+	_smush_icons2Nut = new NutRenderer(_vm);
+	_smush_icons2Nut->loadFont("icons2.nut", _vm->getGameDataPath());
+	_smush_bensgoggNut = new NutRenderer(_vm);
+	_smush_bensgoggNut->loadFont("bensgogg.nut", _vm->getGameDataPath());
+	_smush_bencutNut = new NutRenderer(_vm);
+	_smush_bencutNut->loadFont("bencut.nut", _vm->getGameDataPath());
 
 	// FIXME: implement
 	// openManyResource(0, 4, "specfnt.nut", "titlfnt.nut", "techfnt.nut", "scummfnt.nut");
@@ -733,7 +733,7 @@ int32 Insane::enemy0handler(int32 actor1, int32 actor2, int32 probability) {
 		_actor[actor1].cursorX = -160;
 
 	// Shift+V cheat to win the battle
-	if (_scumm->getKeyState(0x56) && !_beenCheated &&
+	if (_vm->getKeyState(0x56) && !_beenCheated &&
 		!_actor[0].lost && !_actor[1].lost) {
 		_beenCheated = 1;
 		_actor[1].damage = _actor[1].maxdamage + 10;
@@ -878,7 +878,7 @@ int32 Insane::enemy1handler(int32 actor1, int32 actor2, int32 probability) {
 		_actor[actor1].cursorX = -160;
 
 	// Shift+V cheat to win the battle
-	if (_scumm->getKeyState(0x56) && !_beenCheated &&
+	if (_vm->getKeyState(0x56) && !_beenCheated &&
 		!_actor[0].lost && !_actor[1].lost) {
 		_beenCheated = 1;
 		_actor[1].damage = _actor[1].maxdamage + 10;
@@ -1027,7 +1027,7 @@ int32 Insane::enemy2handler(int32 actor1, int32 actor2, int32 probability) {
 		_actor[actor1].cursorX = -160;
 
 	// Shift+V cheat to win the battle
-	if (_scumm->getKeyState(0x56) && !_beenCheated &&
+	if (_vm->getKeyState(0x56) && !_beenCheated &&
 		!_actor[0].lost && !_actor[1].lost) {
 		_beenCheated = 1;
 		_actor[1].damage = _actor[1].maxdamage + 10;
@@ -1185,7 +1185,7 @@ int32 Insane::enemy3handler(int32 actor1, int32 actor2, int32 probability) {
 		_actor[actor1].cursorX = -160;
 
 	// Shift+V cheat to win the battle
-	if (_scumm->getKeyState(0x56) && !_beenCheated &&
+	if (_vm->getKeyState(0x56) && !_beenCheated &&
 		!_actor[0].lost && !_actor[1].lost) {
 		_beenCheated = 1;
 		_actor[1].damage = _actor[1].maxdamage + 10;
@@ -1355,7 +1355,7 @@ int32 Insane::enemy4handler(int32 actor1, int32 actor2, int32 probability) {
 		_actor[actor1].cursorX = -160;
 
 	// Shift+V cheat to win the battle
-	if (_scumm->getKeyState(0x56) && !_beenCheated &&
+	if (_vm->getKeyState(0x56) && !_beenCheated &&
 		!_actor[0].lost && !_actor[1].lost) {
 		_beenCheated = 1;
 		_actor[1].damage = _actor[1].maxdamage + 10;
@@ -1499,7 +1499,7 @@ int32 Insane::enemy5handler(int32 actor1, int32 actor2, int32 probability) {
 	_enHdlVar[EN_VULTF2][0]++;
 
 	// Shift+V cheat to win the battle
-	if (_scumm->getKeyState(0x56) && !_beenCheated &&
+	if (_vm->getKeyState(0x56) && !_beenCheated &&
 		!_actor[0].lost && !_actor[1].lost) {
 		_beenCheated = 1;
 		_actor[1].damage = _actor[1].maxdamage + 10;
@@ -1626,7 +1626,7 @@ int32 Insane::enemy6handler(int32 actor1, int32 actor2, int32 probability) {
 		_actor[actor1].cursorX = -160;
 
 	// Shift+V cheat to win the battle
-	if (_scumm->getKeyState(0x56) && !_beenCheated &&
+	if (_vm->getKeyState(0x56) && !_beenCheated &&
 		!_actor[0].lost && !_actor[1].lost) {
 		_beenCheated = 1;
 		_actor[0].act[2].state = 97;
@@ -1714,7 +1714,7 @@ int32 Insane::enemy7handler(int32 actor1, int32 actor2, int32 probability) {
 	_enHdlVar[EN_CAVEFISH][0] = act1damage;
 
 	// Shift+V cheat to win the battle
-	if (_scumm->getKeyState(0x56) && !_beenCheated &&
+	if (_vm->getKeyState(0x56) && !_beenCheated &&
 		!_actor[0].lost && !_actor[1].lost) {
 		_beenCheated = 1;
 		_actor[1].damage = _actor[1].maxdamage + 10;
@@ -1771,11 +1771,11 @@ int32 Insane::enemyBenHandler(int32 actor1, int32 actor2, int32 probability) {
 int32 Insane::processMouse(void) {
 	int32 buttons = 0;
 
-	_enemyState[EN_BEN][0] = _scumm->_mouse.x;
-	_enemyState[EN_BEN][1] = _scumm->_mouse.y;
+	_enemyState[EN_BEN][0] = _vm->_mouse.x;
+	_enemyState[EN_BEN][1] = _vm->_mouse.y;
 
-	buttons = _scumm->VAR(_scumm->VAR_LEFTBTN_HOLD) ? 1 : 0;
-	buttons |= _scumm->VAR(_scumm->VAR_RIGHTBTN_HOLD) ? 2 : 0;
+	buttons = _vm->VAR(_vm->VAR_LEFTBTN_HOLD) ? 1 : 0;
+	buttons |= _vm->VAR(_vm->VAR_RIGHTBTN_HOLD) ? 2 : 0;
 
 	return buttons;
 }
@@ -1785,16 +1785,16 @@ int32 Insane::processKeyboard(void) {
 	int dx = 0, dy = 0;
 	int tmpx, tmpy;
 
-	if (_scumm->getKeyState(0x14f) || _scumm->getKeyState(0x14b) || _scumm->getKeyState(0x147))
+	if (_vm->getKeyState(0x14f) || _vm->getKeyState(0x14b) || _vm->getKeyState(0x147))
 		dx--;
 
-	if (_scumm->getKeyState(0x151) || _scumm->getKeyState(0x14d) || _scumm->getKeyState(0x149))
+	if (_vm->getKeyState(0x151) || _vm->getKeyState(0x14d) || _vm->getKeyState(0x149))
 		dx++;
 
-	if (_scumm->getKeyState(0x147) || _scumm->getKeyState(0x148) || _scumm->getKeyState(0x149))
+	if (_vm->getKeyState(0x147) || _vm->getKeyState(0x148) || _vm->getKeyState(0x149))
 		dy--;
 
-	if (_scumm->getKeyState(0x14f) || _scumm->getKeyState(0x150) || _scumm->getKeyState(0x151))
+	if (_vm->getKeyState(0x14f) || _vm->getKeyState(0x150) || _vm->getKeyState(0x151))
 		dy++;
 
 	if (dx == _keybOldDx)
@@ -1830,10 +1830,10 @@ int32 Insane::processKeyboard(void) {
 		_enemyState[EN_BEN][1] += tmpy;
 	}
 
-	if (_scumm->getKeyState(0x0d))
+	if (_vm->getKeyState(0x0d))
 		retval |= 1;
 
-	if (_scumm->getKeyState(0x09))
+	if (_vm->getKeyState(0x09))
 		retval |= 2;
 
 	return retval;
@@ -1844,7 +1844,7 @@ void Insane::readFileToMem(const char *name, byte **buf) {
 	uint32 len;
 
 	in = new File();
-	in->open(name, _scumm->getGameDataPath());
+	in->open(name, _vm->getGameDataPath());
 	len = in->size();
 	*buf = (byte *)malloc(len);
 	in->read(*buf, len);
@@ -1858,7 +1858,7 @@ void Insane::runScene(int arraynum) {
 	//	  ptrMainLoop = &ptrMainLoopBody;
 
 	_insaneIsRunning = true;
-	_player = new SmushPlayer(_scumm, _speed);
+	_player = new SmushPlayer(_vm, _speed);
 	_player->insanity(true);
 
 	_numberArray = arraynum;
@@ -1966,7 +1966,7 @@ void Insane::runScene(int arraynum) {
 	smush_proc39();
 	putActors();
 	smush_proc40();
-	_scumm->_sound->pauseSounds(0); // IMUSE_Resume();
+	_vm->_sound->pauseSounds(0); // IMUSE_Resume();
 	_enemy[EN_ROTT3].maxdamage = 120;
 
 	_insaneIsRunning = false;
@@ -1990,7 +1990,7 @@ void Insane::runScene(int arraynum) {
 	setWordInString(_numberArray, 56, _enemy[EN_CAVEFISH].field_10);
 	setWordInString(_numberArray, 340, _enemy[EN_VULTM2].field_10);
 	// insane_unlock(); // FIXME
-	_scumm->_sound->stopAllSounds(); // IMUSE_StopAllSounds();
+	_vm->_sound->stopAllSounds(); // IMUSE_StopAllSounds();
 	if (_memoryAllocatedNotOK) {
 		error("Memory Alloc Error in Mineroad (Heap Size?)");
 	}
@@ -2002,7 +2002,7 @@ void Insane::startVideo(const char *filename, int num, int argC, int frameRate,
 						 int doMainLoop, byte *fluPtr, int32 numFrames) {
 
 	// Demo has different insane, so disable it now
-	if (_scumm->_features & GF_DEMO)
+	if (_vm->_features & GF_DEMO)
 		return;
 
 	_smush_curFrame = 0;
@@ -2019,7 +2019,7 @@ void Insane::startVideo(const char *filename, int num, int argC, int frameRate,
 		smush_setupSanFromStart(filename, 0, -1, -1, 0);
 	}
 
-	_player->play(filename, _scumm->getGameDataPath());
+	_player->play(filename, _vm->getGameDataPath());
 }
 
 int Insane::smlayer_mainLoop(void) {
@@ -2045,7 +2045,7 @@ void Insane::smush_proc41(void) {
 }
 
 void Insane::smush_warpMouse(int x, int y, int buttons) {
-	_scumm->_system->warp_mouse(x, y);
+	_vm->_system->warp_mouse(x, y);
 }
 
 void Insane::putActors(void) {
@@ -2745,15 +2745,15 @@ void Insane::mainLoop(void) {
 		if(!(resid = idx2Tweak()))
 			continue;
 	  
-		_scumm->ensureResourceLoaded(rtSound, resid);
-		_scumm->setResourceCounter(rtSound, resid, 1);
+		_vm->ensureResourceLoaded(rtSound, resid);
+		_vm->setResourceCounter(rtSound, resid, 1);
 	}
-	_scumm->increaseResourceCounter();
+	_vm->increaseResourceCounter();
 	
 	while (!idx1Compare()) {
 		resid = idx1Tweak();
-		_scumm->ensureResourceLoaded(rtCostume, resid);
-		_scumm->setResourceCounter(rtCostume, resid, 1);
+		_vm->ensureResourceLoaded(rtCostume, resid);
+		_vm->setResourceCounter(rtCostume, resid, 1);
 		// smlayer_lock (rtCostume, resid);
 	}
 	
@@ -2809,12 +2809,12 @@ int32 Insane::idx2Tweak(void) {
 
 void Insane::smush_setToFinish(void) {
 	debug(0, "Video is set to finish");
-	_scumm->_videoFinished = 1;
+	_vm->_videoFinished = 1;
 }
 
 // smlayer_stopSound
 void Insane::smlayer_stopSound(int idx) {
-	_scumm->_sound->stopSound(readArray(_numberArray, idx));
+	_vm->_sound->stopSound(readArray(_numberArray, idx));
 }
 
 void Insane::procPreRendering(void) {
@@ -3045,7 +3045,7 @@ void Insane::procPostRendering(byte *renderBitmap, int32 codecparam, int32 setup
 		smlayer_drawSomething(renderBitmap, codecparam, 89, 56, 1, _smush_bencutNut, 0, 0, 0);
 	
 	if (!_keyboardDisable && !_val116w)
-		_scumm->processActors();
+		_vm->processActors();
 	
 	if (needMore)
 		postCaseMore(renderBitmap, codecparam, setupsan12, setupsan13, curFrame, maxFrame);
@@ -5665,7 +5665,7 @@ void Insane::escapeKeyHandler(void) {
 
 	//if (!_ptrMainLoop) { } // We don't need it
  	// Demo has different insane, so disable it now
-	if (!_insaneIsRunning || _scumm->_features & GF_DEMO) {
+	if (!_insaneIsRunning || _vm->_features & GF_DEMO) {
 		smush_setToFinish();
 		return;
 	}
@@ -5834,9 +5834,9 @@ int Insane::smlayer_loadSound(int id, int flag, int phase) {
 		return 0;
 	
 	if (phase == 2)
-		_scumm->ensureResourceLoaded(rtSound, resid);
+		_vm->ensureResourceLoaded(rtSound, resid);
 	
-	_scumm->setResourceCounter(rtSound, resid, 1);
+	_vm->setResourceCounter(rtSound, resid, 1);
 	
 	if (phase == 1) {
 		_objArray2Idx2++;
@@ -5851,12 +5851,12 @@ int Insane::smlayer_loadSound(int id, int flag, int phase) {
 
 void Insane::IMUSE_shutVolume(void) {
 	debug(0, "***************************************************");
-	_scumm->_imuse->pause(true);
+	_vm->_imuse->pause(true);
 }
 
 void Insane::IMUSE_restoreVolume(void) {
 	debug(0, "***************************************************");
-	_scumm->_imuse->pause(false);
+	_vm->_imuse->pause(false);
 }
 
 // smlayer_loadCostume1 && smlayer_loadCostume2
@@ -5867,8 +5867,8 @@ int Insane::smlayer_loadCostume(int id, int phase) {
 	if (!resid)
 		return 0;
 	
-	_scumm->ensureResourceLoaded(rtCostume, resid);
-	_scumm->setResourceCounter(rtCostume, resid, 1);
+	_vm->ensureResourceLoaded(rtCostume, resid);
+	_vm->setResourceCounter(rtCostume, resid, 1);
 	
 	// smlayer_lock(rtCostume, resid); // FIXME
 	
@@ -5883,7 +5883,7 @@ int Insane::smlayer_loadCostume(int id, int phase) {
 }
 
 void Insane::smlayer_setActorCostume(int actornum, int actnum, int costume) {
-	Actor *a = _scumm->derefActor(_actor[actornum].act[actnum].actor, "smlayer_setActorCostume");
+	Actor *a = _vm->derefActor(_actor[actornum].act[actnum].actor, "smlayer_setActorCostume");
 	a->setActorCostume(costume);
 	a->setDirection(180);
 	a->startAnimActor(1);
@@ -5891,12 +5891,12 @@ void Insane::smlayer_setActorCostume(int actornum, int actnum, int costume) {
 }
 
 void Insane::smlayer_putActor(int actornum, int actnum, int x, int y, byte room) {
-	Actor *a = _scumm->derefActor(_actor[actornum].act[actnum].actor, "smlayer_putActor");
+	Actor *a = _vm->derefActor(_actor[actornum].act[actnum].actor, "smlayer_putActor");
 	a->putActor(x, y, room);
 }
 
 void Insane::smlayer_setActorLayer(int actornum, int actnum, int layer) {
-	Actor *a = _scumm->derefActor(_actor[actornum].act[actnum].actor, "smlayer_setActorLayer");
+	Actor *a = _vm->derefActor(_actor[actornum].act[actnum].actor, "smlayer_setActorLayer");
 	a->layer = layer;
 }
 
@@ -5910,12 +5910,12 @@ void Insane::smlayer_setFluPalette(byte *pal, int shut_flag) {
 }
 
 bool Insane::smlayer_isSoundRunning(int32 sound) {
-	return _scumm->_sound->isSoundRunning(readArray(_numberArray, sound)) != 0;
+	return _vm->_sound->isSoundRunning(readArray(_numberArray, sound)) != 0;
 }
 
 bool Insane::smlayer_startSound1(int32 sound) {
 	if (smlayer_loadSound(sound, 0, 2)) {
-		_scumm->_imuseDigital->startSfx(readArray(_numberArray, sound));
+		_vm->_imuseDigital->startSfx(readArray(_numberArray, sound));
 		return true;
 	} else
 		return false;
@@ -5923,14 +5923,14 @@ bool Insane::smlayer_startSound1(int32 sound) {
 
 bool Insane::smlayer_startSound2(int32 sound) {
 	if (smlayer_loadSound(sound, 0, 2)) {
-		_scumm->_imuseDigital->startSfx(readArray(_numberArray, sound));
+		_vm->_imuseDigital->startSfx(readArray(_numberArray, sound));
 		return true;
 	} else
 		return false;
 }
 
 void Insane::smlayer_soundSetPan(int32 soundid, int32 pan) {
-	_scumm->_imuseDigital->parseScriptCmds(12, soundid, 0x700, pan, 0, 0, 0, 0);
+	_vm->_imuseDigital->parseScriptCmds(12, soundid, 0x700, pan, 0, 0, 0, 0);
 }
 
 void Insane::smlayer_soundSetPriority(int32 sound, int32 priority) {
@@ -8061,7 +8061,7 @@ void Insane::clearBit(int n) {
 
 void Insane::smlayer_setActorFacing(int actornum, int actnum, int frame, int direction) {
 	if (_actor[actornum].act[actnum].room) {
-		Actor *a = _scumm->derefActor(_actor[actornum].act[actnum].actor, "smlayer_setActorFacing");
+		Actor *a = _vm->derefActor(_actor[actornum].act[actnum].actor, "smlayer_setActorFacing");
 		a->setDirection(direction);
 		a->startAnimActor(frame);
 		_actor[actornum].act[actnum].frame = 0;
@@ -8100,11 +8100,11 @@ bool Insane::smush_eitherNotStartNewFrame(void) {
 }
 
 int32 Insane::getLastKey(bool arg_0) {
-	return _scumm->_lastKeyHit;
+	return _vm->_lastKeyHit;
 }
 
 bool Insane::smlayer_actorNeedRedraw(int actornum, int actnum) {
-	Actor *a = _scumm->derefActor(_actor[actornum].act[actnum].actor, "smlayer_actorNeedRedraw");
+	Actor *a = _vm->derefActor(_actor[actornum].act[actnum].actor, "smlayer_actorNeedRedraw");
 
 	return a->needRedraw;
 }
@@ -8115,11 +8115,11 @@ void Insane::smush_setPaletteValue(int where, int r, int g, int b) {
 }
 
 int32 Insane::readArray (int number, int item) {
-	return _scumm->readArray (number, 0, item);
+	return _vm->readArray (number, 0, item);
 }
 
 void Insane::setWordInString(int number, int item, int value) {
-	_scumm->writeArray(number, 0, item, value);
+	_vm->writeArray(number, 0, item, value);
 }
 
 void Insane::smush_setupSanWithFlu(const char *filename, int32 setupsan2, int32 step1, 
@@ -8179,9 +8179,9 @@ void Insane::smush_setFrameSteps(int32 step1, int32 step2) {
 	void Insane::smush_setupSanFile(const char *filename, int32 offset, int32 contFrame) {
 	debug(0, "smush_setupSanFile(%s, %x)", filename, offset);
 
-	_player->seekSan(filename, _scumm->getGameDataPath(), offset, contFrame);
+	_player->seekSan(filename, _vm->getGameDataPath(), offset, contFrame);
 
-	_scumm->_imuseDigital->pause(false);
+	_vm->_imuseDigital->pause(false);
 }
 
 }

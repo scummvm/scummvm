@@ -64,7 +64,7 @@ void Player_V1::chainSound(int nr, byte *data) {
 }
 
 void Player_V1::startSound(int nr) {
-	byte *data = _scumm->getResourceAddress(rtSound, nr);
+	byte *data = _vm->getResourceAddress(rtSound, nr);
 	assert(data);
 
 	mutex_up();

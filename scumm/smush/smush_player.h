@@ -37,7 +37,7 @@ class StringResource;
 class SmushPlayer {
 	friend class Insane;
 private:
-	ScummEngine *_scumm;
+	ScummEngine *_vm;
 	int _version;
 	int32 _nbframes;
 	SmushMixer *_smixer;

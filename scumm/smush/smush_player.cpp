@@ -211,7 +211,7 @@ void SmushPlayer::timerCallback(void *refCon) {
 }
 
 SmushPlayer::SmushPlayer(ScummEngine *scumm, int speed) {
-	_scumm = scumm;
+	_vm = scumm;
 	_version = -1;
 	_nbframes = 0;
 	_smixer = 0;
@@ -245,20 +245,20 @@ void SmushPlayer::init() {
 
 	_frame = 0;
 
-	_scumm->_videoFinished = false;
-	_scumm->_insaneState = true;
+	_vm->_videoFinished = false;
+	_vm->_insaneState = true;
 
-	_smixer = new SmushMixer(_scumm->_mixer);
+	_smixer = new SmushMixer(_vm->_mixer);
 
-	_scumm->setDirtyColors(0, 255);
-	_dst = _scumm->virtscr[0].screenPtr + _scumm->virtscr[0].xstart;
+	_vm->setDirtyColors(0, 255);
+	_dst = _vm->virtscr[0].screenPtr + _vm->virtscr[0].xstart;
 	g_timer->installTimerProc(&timerCallback, _speed, this);
 
 	_alreadyInit = false;
 }
 
 void SmushPlayer::deinit() {
-	_scumm->_timer->removeTimerProc(&timerCallback);
+	_vm->_timer->removeTimerProc(&timerCallback);
 
 	for (int i = 0; i < 5; i++) {
 		if (_sf[i]) {
@@ -283,10 +283,10 @@ void SmushPlayer::deinit() {
 		_base = NULL;
 	}
 	
-	_scumm->_mixer->stopHandle(_IACTchannel);
+	_vm->_mixer->stopHandle(_IACTchannel);
 
-	_scumm->_insaneState = false;
-	_scumm->_fullRedraw = true;
+	_vm->_insaneState = false;
+	_vm->_fullRedraw = true;
 }
 
 void SmushPlayer::checkBlock(const Chunk &b, Chunk::type type_expected, uint32 min_size) {
@@ -381,7 +381,7 @@ void SmushPlayer::handleIACT(Chunk &b) {
 	int32 size = b.getDword();
 	int32 bsize = b.getSize() - 18;
 
-	if (_scumm->_gameId != GID_CMI) {
+	if (_vm->_gameId != GID_CMI) {
 		int32 track = track_id;
 		if (track_flags == 1) {
 			track = track_id + 100;
@@ -456,8 +456,8 @@ void SmushPlayer::handleIACT(Chunk &b) {
 					} while (--count);
 
 					if (!_IACTchannel.isActive())
-						_scumm->_mixer->newStream(&_IACTchannel, 22050, SoundMixer::FLAG_STEREO | SoundMixer::FLAG_16BITS, 400000);
-					_scumm->_mixer->appendStream(_IACTchannel, output_data, 0x1000);
+						_vm->_mixer->newStream(&_IACTchannel, 22050, SoundMixer::FLAG_STEREO | SoundMixer::FLAG_16BITS, 400000);
+					_vm->_mixer->appendStream(_IACTchannel, output_data, 0x1000);
 
 					bsize -= len;
 					d_src += len;
@@ -512,11 +512,11 @@ void SmushPlayer::handleTextResource(Chunk &b) {
 		str++; // For Full Throttle text resources
 	}
 
-	if (_scumm->_gameId == GID_CMI) {
-		_scumm->translateText((const byte *)str - 1, _scumm->_transText);
+	if (_vm->_gameId == GID_CMI) {
+		_vm->translateText((const byte *)str - 1, _vm->_transText);
 		while (*str++ != '/')
 			;
-		string2 = (char *)_scumm->_transText;
+		string2 = (char *)_vm->_transText;
 
 		// If string2 contains formatting information there probably
 		// wasn't any translation for it in the language.tab file. In
@@ -548,7 +548,7 @@ void SmushPlayer::handleTextResource(Chunk &b) {
 	assert(sf != NULL);
 	sf->setColor(color);
 
-	if (_scumm->_gameId == GID_CMI && string2[0] != 0) {
+	if (_vm->_gameId == GID_CMI && string2[0] != 0) {
 		str = string2;
 	}
 
@@ -673,7 +673,7 @@ void SmushPlayer::handleFrameObject(Chunk &b) {
 	int width = b.getWord();
 	int height = b.getWord();
 
-	if ((height != _scumm->_screenHeight) || (width != _scumm->_screenWidth))
+	if ((height != _vm->_screenHeight) || (width != _vm->_screenWidth))
 		return;
 
 	if (!_alreadyInit) {
@@ -725,11 +725,11 @@ void SmushPlayer::handleFrame(Chunk &b) {
 	_skipNext = false;
 
 	uint32 start_time, end_time;
-	start_time = _scumm->_system->get_msecs();
+	start_time = _vm->_system->get_msecs();
 
 #ifdef INSANE
 	if (_insanity) {
-		_scumm->_insane->procPreRendering();
+		_vm->_insane->procPreRendering();
 	}
 #endif
 
@@ -756,7 +756,7 @@ void SmushPlayer::handleFrame(Chunk &b) {
 #ifdef INSANE
 			// FIXME: check parameters
 			if (_insanity)
-				_scumm->_insane->procIACT(_dst, 0, 0, 0, *sub, 0, 0);
+				_vm->_insane->procIACT(_dst, 0, 0, 0, *sub, 0, 0);
 			else
 				handleIACT(*sub);
 #else
@@ -772,7 +772,7 @@ void SmushPlayer::handleFrame(Chunk &b) {
 		case TYPE_SKIP:
 #ifdef INSANE
 			if (_insanity)
-				_scumm->_insane->procSKIP(*sub);
+				_vm->_insane->procSKIP(*sub);
 			else
 				handleSkip(*sub);
 #else
@@ -791,11 +791,11 @@ void SmushPlayer::handleFrame(Chunk &b) {
 #ifdef INSANE
 	// FIXME: Check either parameters are valid
 	if (_insanity) {
-		_scumm->_insane->procPostRendering(_dst, 0, 0, 0, _frame, _nbframes-1);
+		_vm->_insane->procPostRendering(_dst, 0, 0, 0, _frame, _nbframes-1);
 	}
 #endif
 
-	end_time = _scumm->_system->get_msecs();
+	end_time = _vm->_system->get_msecs();
 
 	updateScreen();
 	_smixer->handleFrame();
@@ -827,29 +827,29 @@ void SmushPlayer::setupAnim(const char *file, const char *directory) {
 	handleAnimHeader(*sub);
 
 	if (_insanity) {
-		if(!(_scumm->_features & GF_DEMO))
+		if(!(_vm->_features & GF_DEMO))
 			readString("mineroad.trs", directory);
 	} else
 		readString(file, directory);
 
-	if (_scumm->_gameId == GID_FT) {
-		if (!(_scumm->_features & GF_DEMO)) {
+	if (_vm->_gameId == GID_FT) {
+		if (!(_vm->_features & GF_DEMO)) {
 			_sf[0] = new SmushFont(true, false);
 			_sf[2] = new SmushFont(true, false);
 			_sf[0]->loadFont("scummfnt.nut", directory);
 			_sf[2]->loadFont("titlfnt.nut", directory);
 		}
-	} else if (_scumm->_gameId == GID_DIG) {
-		if (!(_scumm->_features & GF_DEMO)) {
+	} else if (_vm->_gameId == GID_DIG) {
+		if (!(_vm->_features & GF_DEMO)) {
 			for (i = 0; i < 4; i++) {
 				sprintf(file_font, "font%d.nut", i);
 				_sf[i] = new SmushFont(i != 0, false);
 				_sf[i]->loadFont(file_font, directory);
 			}
 		}
-	} else if (_scumm->_gameId == GID_CMI) {
+	} else if (_vm->_gameId == GID_CMI) {
 		for (i = 0; i < 5; i++) {
-			if ((_scumm->_features & GF_DEMO) && (i == 4))
+			if ((_vm->_features & GF_DEMO) && (i == 4))
 				break;
 			sprintf(file_font, "font%d.nut", i);
 			_sf[i] = new SmushFont(false, true);
@@ -863,11 +863,11 @@ void SmushPlayer::setupAnim(const char *file, const char *directory) {
 }
 
 void SmushPlayer::parseNextFrame() {
-	if (_scumm->_smushPaused)
+	if (_vm->_smushPaused)
 		return;
 
 	if (_base->eof()) {
-		_scumm->_videoFinished = true;
+		_vm->_videoFinished = true;
 		return;
 	}
 
@@ -894,14 +894,14 @@ void SmushPlayer::setPalette(const byte *palette) {
 		*p++ = 0;
 	}
 
-	_scumm->_system->set_palette(palette_colors, 0, 256);
+	_vm->_system->set_palette(palette_colors, 0, 256);
 }
 
 void SmushPlayer::updateScreen() {
 #ifdef DUMP_SMUSH_FRAMES
 	char fileName[100];
 	// change path below for dump png files
-	sprintf(fileName, "/path/to/somethere/%s%04d.png", _scumm->getGameName(), _frame);
+	sprintf(fileName, "/path/to/somethere/%s%04d.png", _vm->getGameName(), _frame);
 	FILE *file = fopen(fileName, "wb");
 	if (file == NULL) 
 		error("can't open file for writing png");
@@ -949,10 +949,10 @@ void SmushPlayer::updateScreen() {
 	png_destroy_write_struct(&png_ptr, &info_ptr);
 #endif
 
-	uint32 end_time, start_time = _scumm->_system->get_msecs();
-	_scumm->_system->copy_rect(_dst, _width, 0, 0, _width, _height);
+	uint32 end_time, start_time = _vm->_system->get_msecs();
+	_vm->_system->copy_rect(_dst, _width, 0, 0, _width, _height);
 	_updateNeeded = true;
-	end_time = _scumm->_system->get_msecs();
+	end_time = _vm->_system->get_msecs();
 	debug(4, "Smush stats: updateScreen( %03d )", end_time - start_time);
 }
 
@@ -1000,40 +1000,40 @@ void SmushPlayer::play(const char *filename, const char *directory) {
 	_updateNeeded = false;
 	
 	// Hide mouse
-	bool oldMouseState = _scumm->_system->show_mouse(false);
+	bool oldMouseState = _vm->_system->show_mouse(false);
 
 	// Load the video
 	setupAnim(filename, directory);
 	init();
 
 	while (true) {
-		_scumm->parseEvents();
-		_scumm->processKbd();
+		_vm->parseEvents();
+		_vm->processKbd();
 		if (_updateNeeded) {
 			
 			uint32 end_time, start_time;
 			
-			start_time = _scumm->_system->get_msecs();
-			_scumm->_system->update_screen();
+			start_time = _vm->_system->get_msecs();
+			_vm->_system->update_screen();
 			_updateNeeded = false;
 
 			if (_insanity)
-				_scumm->_sound->processSoundQues();
+				_vm->_sound->processSoundQues();
 
-			end_time = _scumm->_system->get_msecs();
+			end_time = _vm->_system->get_msecs();
 
 			debug(4, "Smush stats: BackendUpdateScreen( %03d )", end_time - start_time);
 
 		}
-		if (_scumm->_videoFinished || _scumm->_quit || _scumm->_saveLoadFlag)
+		if (_vm->_videoFinished || _vm->_quit || _vm->_saveLoadFlag)
 			break;
-		_scumm->_system->delay_msecs(10);
+		_vm->_system->delay_msecs(10);
 	};
 
 	deinit();
 	
 	// Reset mouse state
-	_scumm->_system->show_mouse(oldMouseState);
+	_vm->_system->show_mouse(oldMouseState);
 }
 
 } // End of namespace Scumm

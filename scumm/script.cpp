@@ -399,7 +399,7 @@ void ScummEngine::executeScript() {
 		if (_showStack == 1) {
 			printf("Stack:");
 			for (c=0; c < _scummStackPos; c++) {
-				printf(" %d", _scummStack[c]); 
+				printf(" %d", _vmStack[c]); 
 			}
 			printf("\n");
 		}
@@ -617,16 +617,16 @@ void ScummEngine::setResult(int value) {
 }
 
 void ScummEngine::push(int a) {
-	assert(_scummStackPos >= 0 && _scummStackPos < ARRAYSIZE(_scummStack));
-	_scummStack[_scummStackPos++] = a;
+	assert(_scummStackPos >= 0 && _scummStackPos < ARRAYSIZE(_vmStack));
+	_vmStack[_scummStackPos++] = a;
 }
 
 int ScummEngine::pop() {
-	if (_scummStackPos < 1 || _scummStackPos > ARRAYSIZE(_scummStack)) {
+	if (_scummStackPos < 1 || _scummStackPos > ARRAYSIZE(_vmStack)) {
 		error("No items on stack to pop() for %s (0x%X) at [%d-%d]", getOpcodeDesc(_opcode), _opcode, _roomResource, vm.slot[_currentScript].number);
 	}
 
-	return _scummStack[--_scummStackPos];
+	return _vmStack[--_scummStackPos];
 }
 
 void ScummEngine::stopObjectCode() {

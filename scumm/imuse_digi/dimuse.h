@@ -68,7 +68,7 @@ private:
 
 	Track _track[MAX_DIGITAL_TRACKS];
 
-	ScummEngine *_scumm;
+	ScummEngine *_vm;
 	ImuseDigiSndMgr *_sound;
 	bool _pause;
 	int _curMusicId;

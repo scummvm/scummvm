@@ -345,7 +345,7 @@ Player_V2::Player_V2(ScummEngine *scumm, bool pcjr) {
 	int i;
 
 	_isV3Game = (scumm->_version >= 3);
-	_scumm = scumm;
+	_vm = scumm;
 	_system = scumm->_system;
 	_mixer = scumm->_mixer;
 	_sample_rate = _system->property(OSystem::PROP_GET_SAMPLE_RATE, 0);
@@ -491,7 +491,7 @@ void Player_V2::stopSound(int nr) {
 }
 
 void Player_V2::startSound(int nr) {
-	byte *data = _scumm->getResourceAddress(rtSound, nr);
+	byte *data = _vm->getResourceAddress(rtSound, nr);
 	assert(data);
 
 	mutex_up();

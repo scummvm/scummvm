@@ -52,7 +52,7 @@ struct MP3OffsetTable {					/* Compressed Sound (.SO3) */
 Sound::Sound(ScummEngine *parent) {
 	memset(this,0,sizeof(Sound));	// palmos
 	
-	_scumm = parent;
+	_vm = parent;
 	_currentCDSound = 0;
 
 	_sfxFile = 0;
@@ -64,8 +64,8 @@ Sound::~Sound() {
 }
 
 void Sound::addSoundToQueue(int sound) {
-	_scumm->VAR(_scumm->VAR_LAST_SOUND) = sound;
-	_scumm->ensureResourceLoaded(rtSound, sound);
+	_vm->VAR(_vm->VAR_LAST_SOUND) = sound;
+	_vm->ensureResourceLoaded(rtSound, sound);
 	addSoundToQueue2(sound);
 }
 
@@ -80,7 +80,7 @@ void Sound::processSoundQues() {
 
 	processSfxQueues();
 
-	if (_scumm->_features & GF_DIGI_IMUSE)
+	if (_vm->_features & GF_DIGI_IMUSE)
 		return;
 
 	while (_soundQue2Pos) {
@@ -105,8 +105,8 @@ void Sound::processSoundQues() {
 						data[0] >> 8, data[0] & 0xFF,
 						data[1], data[2], data[3], data[4], data[5], data[6], data[7]);
 
-			if (_scumm->_imuse) {
-				_scumm->VAR(_scumm->VAR_SOUNDRESULT) = (short)_scumm->_imuse->doCommand (num, data);
+			if (_vm->_imuse) {
+				_vm->VAR(_vm->VAR_SOUNDRESULT) = (short)_vm->_imuse->doCommand (num, data);
 			}
 		}
 	}
@@ -120,8 +120,8 @@ void Sound::playSound(int soundID) {
 	int rate;
 	byte flags = SoundMixer::FLAG_UNSIGNED | SoundMixer::FLAG_AUTOFREE;
 	
-	debug(3, "playSound #%d (room %d)", soundID, _scumm->getResourceRoomNr(rtSound, soundID));
-	ptr = _scumm->getResourceAddress(rtSound, soundID);
+	debug(3, "playSound #%d (room %d)", soundID, _vm->getResourceRoomNr(rtSound, soundID));
+	ptr = _vm->getResourceAddress(rtSound, soundID);
 	if (!ptr) {
 		return;
 	}
@@ -141,7 +141,7 @@ void Sound::playSound(int soundID) {
 		// Allocate a sound buffer, copy the data into it, and play
 		sound = (char *)malloc(size);
 		memcpy(sound, ptr, size);
-		_scumm->_mixer->playRaw(NULL, sound, size, rate, flags, soundID);
+		_vm->_mixer->playRaw(NULL, sound, size, rate, flags, soundID);
 	}
 	// Support for Putt-Putt sounds - very hackish, too 8-)
 	else if (READ_UINT32(ptr) == MKID('DIGI')) {
@@ -158,7 +158,7 @@ void Sound::playSound(int soundID) {
 		// Allocate a sound buffer, copy the data into it, and play
 		sound = (char *)malloc(size);
 		memcpy(sound, ptr + 8, size);
-		_scumm->_mixer->playRaw(NULL, sound, size, rate, flags, soundID);
+		_vm->_mixer->playRaw(NULL, sound, size, rate, flags, soundID);
 	}
 	else if (READ_UINT32(ptr) == MKID('MRAW')) {
 		// pcm music in 3DO humongous games
@@ -174,7 +174,7 @@ void Sound::playSound(int soundID) {
 		// Allocate a sound buffer, copy the data into it, and play
 		sound = (char *)malloc(size);
 		memcpy(sound, ptr + 8, size);
-		_scumm->_mixer->playRaw(NULL, sound, size, rate, flags, soundID);
+		_vm->_mixer->playRaw(NULL, sound, size, rate, flags, soundID);
 	}	
 	// Support for sampled sound effects in Monkey Island 1 and 2
 	else if (READ_UINT32(ptr) == MKID('SBL ')) {
@@ -218,7 +218,7 @@ void Sound::playSound(int soundID) {
 		// then a semi-sane VOC header is revealed, with
 		// a sampling rate of ~25000 Hz (does that make sense?).
 		// I'll add some code to test that theory for now.
-		if (_scumm->_gameId == GID_MONKEY_SEGA)	{
+		if (_vm->_gameId == GID_MONKEY_SEGA)	{
 			size = READ_BE_UINT32(ptr + 4) - 27;
 			for (int i = 0; i < size; i++)
 				ptr[27 + i] ^= 0x16;
@@ -233,7 +233,7 @@ void Sound::playSound(int soundID) {
 		// FIXME: SBL resources are apparently horribly
 		// distorted on segacd even though it shares the same
 		// header etc. So don't try to play them for now.
-		if (_scumm->_gameId == GID_MONKEY_SEGA)	{
+		if (_vm->_gameId == GID_MONKEY_SEGA)	{
 			return;
 		}
 
@@ -248,12 +248,12 @@ void Sound::playSound(int soundID) {
 		// Allocate a sound buffer, copy the data into it, and play
 		sound = (char *)malloc(size);
 		memcpy(sound, ptr + 33, size);
-		_scumm->_mixer->playRaw(NULL, sound, size, rate, flags, soundID);
+		_vm->_mixer->playRaw(NULL, sound, size, rate, flags, soundID);
 	}
-	else if ((_scumm->_features & GF_FMTOWNS) || READ_UINT32(ptr) == MKID('SOUN') || READ_UINT32(ptr) == MKID('TOWS')) {
+	else if ((_vm->_features & GF_FMTOWNS) || READ_UINT32(ptr) == MKID('SOUN') || READ_UINT32(ptr) == MKID('TOWS')) {
 
 		bool tows = READ_UINT32(ptr) == MKID('TOWS');
-		if (_scumm->_features & GF_FMTOWNS) {
+		if (_vm->_features & GF_FMTOWNS) {
 			size = READ_LE_UINT32(ptr);
 		} else {
 			size = READ_BE_UINT32(ptr + 4) - 2;
@@ -301,14 +301,14 @@ void Sound::playSound(int soundID) {
 				if (loopEnd > 0)
 					flags |= SoundMixer::FLAG_LOOP;
 
-				_scumm->_mixer->playRaw(NULL, sound, waveSize, rate, flags, soundID, 255, 0, loopStart, loopEnd);
+				_vm->_mixer->playRaw(NULL, sound, waveSize, rate, flags, soundID, 255, 0, loopStart, loopEnd);
 			}
 			break;
 		case 1:
 		case 255:	// 255 is the type used in Indy3 FMTowns
 			// Music (Euphony format)
-			if (_scumm->_musicEngine)
-				_scumm->_musicEngine->startSound(soundID);
+			if (_vm->_musicEngine)
+				_vm->_musicEngine->startSound(soundID);
 			break;
 		case 2: // CD track resource
 			ptr += 0x16;
@@ -333,7 +333,7 @@ void Sound::playSound(int soundID) {
 			break;
 		}
 	}
-	else if ((_scumm->_gameId == GID_LOOM) && (_scumm->_features & GF_MACINTOSH))  {
+	else if ((_vm->_gameId == GID_LOOM) && (_vm->_features & GF_MACINTOSH))  {
 		// Mac version of Loom uses yet another sound format
 		/*
 		playSound #9 (room 70)
@@ -356,19 +356,19 @@ void Sound::playSound(int soundID) {
 		000070: 01 18 5a 00  10 00 02 28  5f 00 01 00  00 00 00 00   |..Z....(_.......|
 		*/
 	}
-	else if ((_scumm->_features & GF_MACINTOSH) && (_scumm->_gameId == GID_INDY3) && (ptr[26] == 0)) {
+	else if ((_vm->_features & GF_MACINTOSH) && (_vm->_gameId == GID_INDY3) && (ptr[26] == 0)) {
 		size = READ_BE_UINT16(ptr + 12);
 		rate = 3579545 / READ_BE_UINT16(ptr + 20);
 		sound = (char *)malloc(size);
 		int vol = ptr[24] * 4;
 		memcpy(sound,ptr + READ_BE_UINT16(ptr + 8), size);
-		_scumm->_mixer->playRaw(NULL, sound, size, rate, SoundMixer::FLAG_AUTOFREE, soundID, vol, 0);
+		_vm->_mixer->playRaw(NULL, sound, size, rate, SoundMixer::FLAG_AUTOFREE, soundID, vol, 0);
 	}
 	else {
 		
-		if (_scumm->_gameId == GID_MONKEY_VGA || _scumm->_gameId == GID_MONKEY_EGA) {
+		if (_vm->_gameId == GID_MONKEY_VGA || _vm->_gameId == GID_MONKEY_EGA) {
 			// Sound is currently not supported at all in the amiga versions of these games
-			if (_scumm->_features & GF_AMIGA) {
+			if (_vm->_features & GF_AMIGA) {
 				int track = -1;
 				if (soundID == 50)
 					track = 17;
@@ -390,14 +390,14 @@ void Sound::playSound(int soundID) {
 			// the music is never explicitly stopped.
 			// Rather it seems that starting a new music is supposed to
 			// automatically stop the old song.
-			if (_scumm->_imuse) {
+			if (_vm->_imuse) {
 				if (READ_UINT32(ptr) != MKID('ASFX'))
-					_scumm->_imuse->stopAllSounds();
+					_vm->_imuse->stopAllSounds();
 			}
 		}
 	
-		if (_scumm->_musicEngine) {
-			_scumm->_musicEngine->startSound(soundID);
+		if (_vm->_musicEngine) {
+			_vm->_musicEngine->startSound(soundID);
 		}
 	}
 }
@@ -416,17 +416,17 @@ void Sound::processSfxQueues() {
 		_talk_sound_mode = 0;
 	}
 
-	if ((_sfxMode & 2) && _scumm->VAR(_scumm->VAR_TALK_ACTOR)) {
-		act = _scumm->VAR(_scumm->VAR_TALK_ACTOR);
+	if ((_sfxMode & 2) && _vm->VAR(_vm->VAR_TALK_ACTOR)) {
+		act = _vm->VAR(_vm->VAR_TALK_ACTOR);
 
-		if (_scumm->_imuseDigital) {
+		if (_vm->_imuseDigital) {
 			finished = !isSoundRunning(kTalkSoundID);
 		} else {
 			finished = !_talkChannelHandle.isActive();
 		}
 
-		if (act != 0 && (uint) act < 0x80 && !_scumm->_string[0].no_talk_anim) {
-			a = _scumm->derefActor(act, "processSfxQueues");
+		if (act != 0 && (uint) act < 0x80 && !_vm->_string[0].no_talk_anim) {
+			a = _vm->derefActor(act, "processSfxQueues");
 			if (a->isInCurrentRoom() && (finished || !_endOfMouthSync)) {
 				b = finished || isMouthSyncOff(_curSoundPos);
 				if (_mouthSyncMode != b) {
@@ -440,8 +440,8 @@ void Sound::processSfxQueues() {
 			}
 		}
 
-		if (finished && _scumm->_talkDelay == 0) {
-			_scumm->stopTalk();
+		if (finished && _vm->_talkDelay == 0) {
+			_vm->stopTalk();
 		}
 	}
 
@@ -462,7 +462,7 @@ void Sound::startTalkSound(uint32 offset, uint32 b, int mode, PlayingSoundHandle
 	byte *sound;
 	int id = -1;
 
-	if ((_scumm->_gameId == GID_DIG) && (_scumm->_features & GF_DEMO)) {
+	if ((_vm->_gameId == GID_DIG) && (_vm->_features & GF_DEMO)) {
 		char filename[30];
 		char roomname[10];
 
@@ -508,13 +508,13 @@ void Sound::startTalkSound(uint32 offset, uint32 b, int mode, PlayingSoundHandle
 		// FIXME hack until more is known
 		// the size of the data after the sample isn't known
 		// 64 is just a guess
-		if (_scumm->_features & GF_HUMONGOUS) {
+		if (_vm->_features & GF_HUMONGOUS) {
 			// SKIP TLKB (8) TALK (8) HSHD (24) and SDAT (8)
 			_sfxMode |= mode;
 			_sfxFile->seek(offset + 48, SEEK_SET);
 			sound = (byte *)malloc(b - 64);
 			_sfxFile->read(sound, b - 64);
-			_scumm->_mixer->playRaw(handle, sound, b - 64, 11025, SoundMixer::FLAG_UNSIGNED | SoundMixer::FLAG_AUTOFREE);
+			_vm->_mixer->playRaw(handle, sound, b - 64, 11025, SoundMixer::FLAG_UNSIGNED | SoundMixer::FLAG_AUTOFREE);
 			return;
 		}
 
@@ -527,10 +527,10 @@ void Sound::startTalkSound(uint32 offset, uint32 b, int mode, PlayingSoundHandle
 		// HACK: Checking for script 99 in Sam & Max is to keep Conroy's song
 		// from being interrupted.
 
-		if (mode == 1 && (_scumm->_gameId == GID_TENTACLE
-			|| (_scumm->_gameId == GID_SAMNMAX && !_scumm->isScriptRunning(99)))) {
+		if (mode == 1 && (_vm->_gameId == GID_TENTACLE
+			|| (_vm->_gameId == GID_SAMNMAX && !_vm->isScriptRunning(99)))) {
 			id = 777777;
-			_scumm->_mixer->stopID(id);
+			_vm->_mixer->stopID(id);
 		}
 
 		if (b > 8) {
@@ -572,16 +572,16 @@ void Sound::startTalkSound(uint32 offset, uint32 b, int mode, PlayingSoundHandle
 		_mouthSyncMode = true;
 	}
 
-	if (!_soundsPaused && _scumm->_mixer->isReady())
+	if (!_soundsPaused && _vm->_mixer->isReady())
 		startSfxSound(_sfxFile, size, handle, id);
 }
 
 void Sound::stopTalkSound() {
 	if (_sfxMode & 2) {
-		if (_scumm->_imuseDigital) {
-			_scumm->_imuseDigital->stopSound(kTalkSoundID);
+		if (_vm->_imuseDigital) {
+			_vm->_imuseDigital->stopSound(kTalkSoundID);
 		} else {
-			_scumm->_mixer->stopHandle(_talkChannelHandle);
+			_vm->_mixer->stopHandle(_talkChannelHandle);
 		}
 		_sfxMode &= ~2;
 	}
@@ -607,31 +607,31 @@ bool Sound::isMouthSyncOff(uint pos) {
 
 int Sound::isSoundRunning(int sound) const {
 
-	if (_scumm->_imuseDigital)
-		return (_scumm->_imuseDigital->getSoundStatus(sound) != 0);
+	if (_vm->_imuseDigital)
+		return (_vm->_imuseDigital->getSoundStatus(sound) != 0);
 
 	if (sound == _currentCDSound)
 		return pollCD();
 
-	if (_scumm->_features & GF_HUMONGOUS) {
+	if (_vm->_features & GF_HUMONGOUS) {
 		if (sound == -2) {
 			return isSfxFinished();
 		} else if (sound == -1) {
 			// getSoundStatus(), with a -1, will return the
 			// ID number of the first active music it finds.
 			// TODO handle MRAW (pcm music) in humongous games
-			return _scumm->_imuse->getSoundStatus(sound);
+			return _vm->_imuse->getSoundStatus(sound);
 		}
 	}
 
 	if (isSoundInQueue(sound))
 		return 1;
 
-	if (!_scumm->isResourceLoaded(rtSound, sound))
+	if (!_vm->isResourceLoaded(rtSound, sound))
 		return 0;
 
-	if (_scumm->_musicEngine)
-		return _scumm->_musicEngine->getSoundStatus(sound);
+	if (_vm->_musicEngine)
+		return _vm->_musicEngine->getSoundStatus(sound);
 
 	return 0;
 }
@@ -649,8 +649,8 @@ int Sound::isSoundRunning(int sound) const {
  */
 bool Sound::isSoundInUse(int sound) const {
 
-	if (_scumm->_imuseDigital)
-		return (_scumm->_imuseDigital->getSoundStatus(sound) != 0);
+	if (_vm->_imuseDigital)
+		return (_vm->_imuseDigital->getSoundStatus(sound) != 0);
 
 	if (sound == _currentCDSound)
 		return pollCD() != 0;
@@ -658,11 +658,11 @@ bool Sound::isSoundInUse(int sound) const {
 	if (isSoundInQueue(sound))
 		return true;
 
-	if (!_scumm->isResourceLoaded(rtSound, sound))
+	if (!_vm->isResourceLoaded(rtSound, sound))
 		return false;
 
-	if (_scumm->_imuse)
-		return _scumm->_imuse->get_sound_active(sound);
+	if (_vm->_imuse)
+		return _vm->_imuse->get_sound_active(sound);
 
 	return false;
 }
@@ -698,11 +698,11 @@ void Sound::stopSound(int a) {
 		stopCDTimer();
 	}
 
-	if (!(_scumm->_features & GF_DIGI_IMUSE))
-		_scumm->_mixer->stopID(a);
+	if (!(_vm->_features & GF_DIGI_IMUSE))
+		_vm->_mixer->stopID(a);
 
-	if (_scumm->_musicEngine)
-		_scumm->_musicEngine->stopSound(a);
+	if (_vm->_musicEngine)
+		_vm->_musicEngine->stopSound(a);
 
 	for (i = 0; i < ARRAYSIZE(_soundQue2); i++)
 		if (_soundQue2[i] == a)
@@ -720,26 +720,26 @@ void Sound::stopAllSounds() {
 	_soundQue2Pos = 0;
 	memset(_soundQue2, 0, sizeof(_soundQue2));
 
-	if (_scumm->_musicEngine) {
-		_scumm->_musicEngine->stopAllSounds();
+	if (_vm->_musicEngine) {
+		_vm->_musicEngine->stopAllSounds();
 	}
-	if (_scumm->_imuse) {
+	if (_vm->_imuse) {
 		// FIXME: Maybe we could merge this call to clear_queue()
 		// into IMuse::stopAllSounds() ?
-		_scumm->_imuse->clear_queue();
+		_vm->_imuse->clear_queue();
 	}
 
 	// Stop all SFX
-	if (!_scumm->_imuseDigital) {
-		_scumm->_mixer->stopAll();
+	if (!_vm->_imuseDigital) {
+		_vm->_mixer->stopAll();
 	}
 }
 
 void Sound::soundKludge(int *list, int num) {
 	int i;
 
-	if (_scumm->_imuseDigital) {
-		_scumm->_imuseDigital->parseScriptCmds(list[0], list[1], list[2], list[3], list[4],
+	if (_vm->_imuseDigital) {
+		_vm->_imuseDigital->parseScriptCmds(list[0], list[1], list[2], list[3], list[4],
 												list[5], list[6], list[7]);
 		return;
 	}
@@ -781,24 +781,24 @@ void Sound::setupSound() {
 }
 
 void Sound::pauseSounds(bool pause) {
-	if (_scumm->_imuse)
-		_scumm->_imuse->pause(pause);
+	if (_vm->_imuse)
+		_vm->_imuse->pause(pause);
 
 	// Don't pause sounds if the game isn't active
 	// FIXME - this is quite a nasty hack, replace with something cleaner, and w/o
 	// having to access member vars directly!
-	if (!_scumm->_roomResource)
+	if (!_vm->_roomResource)
 		return;
 
 	_soundsPaused = pause;
 
-	_scumm->_mixer->pauseAll(pause);
+	_vm->_mixer->pauseAll(pause);
 
-	if (_scumm->_imuseDigital) {
-		_scumm->_imuseDigital->pause(pause);
+	if (_vm->_imuseDigital) {
+		_vm->_imuseDigital->pause(pause);
 	}
 
-	if ((_scumm->_features & GF_AUDIOTRACKS) && _scumm->VAR(_scumm->VAR_MUSIC_TIMER) > 0) {
+	if ((_vm->_features & GF_AUDIOTRACKS) && _vm->VAR(_vm->VAR_MUSIC_TIMER) > 0) {
 		if (pause)
 			stopCDTimer();
 		else
@@ -824,11 +824,11 @@ void Sound::startSfxSound(File *file, int file_size, PlayingSoundHandle *handle,
 		input = makeVOCStream(_sfxFile);
 	}
 
-	if (_scumm->_imuseDigital) {
-		//_scumm->_imuseDigital->stopSound(kTalkSoundID);
-		_scumm->_imuseDigital->startVoice(kTalkSoundID, input);
+	if (_vm->_imuseDigital) {
+		//_vm->_imuseDigital->stopSound(kTalkSoundID);
+		_vm->_imuseDigital->startVoice(kTalkSoundID, input);
 	} else {
-		_scumm->_mixer->playInputStream(handle, input, false, 255, 0, id);
+		_vm->_mixer->playInputStream(handle, input, false, 255, 0, id);
 	}
 }
 
@@ -842,9 +842,9 @@ File *Sound::openSfxFile() {
 	offset_table = NULL;
 
 #ifdef USE_MAD
-	sprintf(buf, "%s.so3", _scumm->getGameName());
-	if (!file->open(buf, _scumm->getGameDataPath())) {
-		file->open("monster.so3", _scumm->getGameDataPath());
+	sprintf(buf, "%s.so3", _vm->getGameName());
+	if (!file->open(buf, _vm->getGameDataPath())) {
+		file->open("monster.so3", _vm->getGameDataPath());
 	}
 	if (file->isOpen())
 		_vorbis_mode = false;
@@ -852,9 +852,9 @@ File *Sound::openSfxFile() {
 
 #ifdef USE_VORBIS
 	if (!file->isOpen()) {
-		sprintf(buf, "%s.sog", _scumm->getGameName());
-		if (!file->open(buf, _scumm->getGameDataPath()))
-			file->open("monster.sog", _scumm->getGameDataPath());
+		sprintf(buf, "%s.sog", _vm->getGameName());
+		if (!file->open(buf, _vm->getGameDataPath()))
+			file->open("monster.sog", _vm->getGameDataPath());
 		if (file->isOpen())
 			_vorbis_mode = true;
 	}
@@ -894,20 +894,20 @@ File *Sound::openSfxFile() {
 		return file;
 	}
 
-	sprintf(buf, "%s.sou", _scumm->getGameName());
-	if (!file->open(buf, _scumm->getGameDataPath())) {
-		file->open("monster.sou", _scumm->getGameDataPath());
+	sprintf(buf, "%s.sou", _vm->getGameName());
+	if (!file->open(buf, _vm->getGameDataPath())) {
+		file->open("monster.sou", _vm->getGameDataPath());
 	}
 
 	if (!file->isOpen()) {
-		sprintf(buf, "%s.tlk", _scumm->getGameName());
-		file->open(buf, _scumm->getGameDataPath(), File::kFileReadMode, 0x69);
+		sprintf(buf, "%s.tlk", _vm->getGameName());
+		file->open(buf, _vm->getGameDataPath(), File::kFileReadMode, 0x69);
 	}
 	return file;
 }
 
 bool Sound::isSfxFinished() const {
-	return !_scumm->_mixer->hasActiveSFXChannel();
+	return !_vm->_mixer->hasActiveSFXChannel();
 }
 
 // We use a real timer in an attempt to get better sync with CD tracks. This is
@@ -931,22 +931,22 @@ void Sound::startCDTimer() {
 	// when Chaos first appears, and I have to use 101 for Monkey 1 or the
 	// intro music will be cut short.
 
-	if (_scumm->_gameId == GID_LOOM256)
+	if (_vm->_gameId == GID_LOOM256)
 		timer_interval = 100;
 	else 
 		timer_interval = 101;
 
-	_scumm->_timer->removeTimerProc(&cd_timer_handler);
-	_scumm->_timer->installTimerProc(&cd_timer_handler, 1000 * timer_interval, _scumm);
+	_vm->_timer->removeTimerProc(&cd_timer_handler);
+	_vm->_timer->installTimerProc(&cd_timer_handler, 1000 * timer_interval, _vm);
 }
 
 void Sound::stopCDTimer() {
-	_scumm->_timer->removeTimerProc(&cd_timer_handler);
+	_vm->_timer->removeTimerProc(&cd_timer_handler);
 }
 
 void Sound::playCDTrack(int track, int numLoops, int startFrame, int duration) {
 	// Reset the music timer variable at the start of a new track
-	_scumm->VAR(_scumm->VAR_MUSIC_TIMER) = 0;
+	_vm->VAR(_vm->VAR_MUSIC_TIMER) = 0;
 
 	// Play it
 	if (!_soundsPaused)

@@ -94,7 +94,7 @@ private:
 	int allocSlot();
 	void prepareSound(byte *ptr, int slot);
 
-	ScummEngine *_scumm;
+	ScummEngine *_vm;
 	OSystem::MutexRef _mutex;
 	byte _disk;
 	BundleDirCache *_cacheBundleDir;

@@ -61,7 +61,7 @@ private:
 	};
 
 	OSystem *_system;
-	ScummEngine *_scumm;
+	ScummEngine *_vm;
 	Player_MOD *_mod;
 	soundSlot _slot[V2A_MAXSLOTS];
 

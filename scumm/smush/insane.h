@@ -71,7 +71,7 @@ class Insane {
 
  private:
 	
-	ScummEngine *_scumm;
+	ScummEngine *_vm;
 	SmushPlayer *_player;
 	
 	int32 _speed;

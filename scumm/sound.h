@@ -56,7 +56,7 @@ protected:
 
 	int _currentCDSound;
 
-	ScummEngine *_scumm;
+	ScummEngine *_vm;
 
 public:
 	PlayingSoundHandle _talkChannelHandle;	// Handle of mixer channel actor is talking on

@@ -152,19 +152,19 @@ const Common::String ScummDialog::queryResString(int stringno) {
 	if (stringno == 0)
 		return String();
 
-	if (_scumm->_version >= 7)
-		result = _scumm->getStringAddressVar(string_map_table_v7[stringno - 1].num);
-	else if (_scumm->_version == 6)
-		result = _scumm->getStringAddressVar(string_map_table_v6[stringno - 1].num);
-	else if (_scumm->_version == 5)
-		result = _scumm->getStringAddress(string_map_table_v5[stringno - 1].num);
+	if (_vm->_version >= 7)
+		result = _vm->getStringAddressVar(string_map_table_v7[stringno - 1].num);
+	else if (_vm->_version == 6)
+		result = _vm->getStringAddressVar(string_map_table_v6[stringno - 1].num);
+	else if (_vm->_version == 5)
+		result = _vm->getStringAddress(string_map_table_v5[stringno - 1].num);
 	else
 		// TODO: For V8 games, maybe grab the strings from the language file?
 		return string_map_table_v5[stringno - 1].string;
 
 	if (result && *result == '/') {
 		byte tmp[256];
-		_scumm->translateText(result, tmp);
+		_vm->translateText(result, tmp);
 		
 		// FIXME: AARGH! We shouldn't just strcpy into the data we got from getStringAddress
 		strcpy((char *)result, (char *)tmp);
@@ -344,7 +344,7 @@ void MainMenuDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 		close();
 		break;
 	case kOptionsCmd:
-		_scumm->optionsDialog();
+		_vm->optionsDialog();
 		break;
 	case kAboutCmd:
 		_aboutDialog->runModal();
@@ -355,7 +355,7 @@ void MainMenuDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 		break;
 #endif
 	case kQuitCmd:
-		_scumm->_quit = true;
+		_vm->_quit = true;
 		close();
 		break;
 	default:
@@ -373,7 +373,7 @@ void MainMenuDialog::close() {
 
 void MainMenuDialog::save() {
 	int idx;
-	_saveDialog->setList(generateSavegameList(_scumm, true));
+	_saveDialog->setList(generateSavegameList(_vm, true));
 	idx = _saveDialog->runModal();
 	if (idx >= 0) {
 		const String &result = _saveDialog->getResultString();
@@ -385,17 +385,17 @@ void MainMenuDialog::save() {
 			str = buffer;
 		} else
 			str = result.c_str();
-		_scumm->requestSave(idx + 1, str);
+		_vm->requestSave(idx + 1, str);
 		close();
 	}
 }
 
 void MainMenuDialog::load() {
 	int idx;
-	_loadDialog->setList(generateSavegameList(_scumm, false));
+	_loadDialog->setList(generateSavegameList(_vm, false));
 	idx = _loadDialog->runModal();
 	if (idx >= 0) {
-		_scumm->requestLoad(idx);
+		_vm->requestLoad(idx);
 		close();
 	}
 }
@@ -412,10 +412,10 @@ enum {
 
 #ifndef _WIN32_WCE
 ConfigDialog::ConfigDialog(ScummEngine *scumm)
-	: GUI::OptionsDialog("", 40, 30, 240, 124), _scumm(scumm) {
+	: GUI::OptionsDialog("", 40, 30, 240, 124), _vm(scumm) {
 #else
 ConfigDialog::ConfigDialog(ScummEngine *scumm)
-	: GUI::OptionsDialog("", 40, 30, 240, 124 + 4), _scumm(scumm) {
+	: GUI::OptionsDialog("", 40, 30, 240, 124 + 4), _vm(scumm) {
 #endif
 	//
 	// Add the buttons
@@ -475,15 +475,15 @@ void ConfigDialog::close() {
 	int soundVolumeMusic = ConfMan.getInt("music_volume");
 	int soundVolumeSfx = ConfMan.getInt("sfx_volume");
 
-	if (_scumm->_imuse) {
-		_scumm->_imuse->set_music_volume(soundVolumeMusic);
+	if (_vm->_imuse) {
+		_vm->_imuse->set_music_volume(soundVolumeMusic);
 	}
-	if (_scumm->_musicEngine) {
-		_scumm->_musicEngine->setMasterVolume(soundVolumeMaster);
+	if (_vm->_musicEngine) {
+		_vm->_musicEngine->setMasterVolume(soundVolumeMaster);
 	}
 
-	_scumm->_mixer->setVolume(soundVolumeSfx * soundVolumeMaster / 255);
-	_scumm->_mixer->setMusicVolume(soundVolumeMusic);
+	_vm->_mixer->setVolume(soundVolumeSfx * soundVolumeMaster / 255);
+	_vm->_mixer->setMusicVolume(soundVolumeMusic);
 }
 
 
@@ -532,7 +532,7 @@ void HelpDialog::displayKeyBindings() {
 
 	String titleStr, *keyStr, *dscStr;
 
-	ScummHelp::updateStrings(_scumm->_gameId, _scumm->_version, _page, titleStr, keyStr, dscStr);
+	ScummHelp::updateStrings(_vm->_gameId, _vm->_version, _page, titleStr, keyStr, dscStr);
 
 	_title->setLabel(titleStr);
 	for (int i = 0; i < HELP_NUM_LINES; i++) {
@@ -591,7 +591,7 @@ InfoDialog::InfoDialog(ScummEngine *scumm, const String& message)
 void InfoDialog::setInfoText(const String& message) {
 	int width = g_gui.getStringWidth(message) + 16;
 
-	_x = (_scumm->_screenWidth - width) >> 1;
+	_x = (_vm->_screenWidth - width) >> 1;
 	_w = width;
 
 	new StaticTextWidget(this, 4, 4, _w - 8, _h, message, kTextAlignCenter);

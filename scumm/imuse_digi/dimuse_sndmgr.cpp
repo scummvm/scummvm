@@ -30,7 +30,7 @@ namespace Scumm {
 
 ImuseDigiSndMgr::ImuseDigiSndMgr(ScummEngine *scumm) {
 	memset(&_sounds, 0, sizeof(_sounds));
-	_scumm = scumm;
+	_vm = scumm;
 	_mutex = g_system->create_mutex();
 	_disk = 0;
 	_cacheBundleDir = new BundleDirCache();
@@ -145,23 +145,23 @@ bool ImuseDigiSndMgr::openMusicBundle(int slot) {
 	bool result = false;
 
 	_sounds[slot]._bundle = new BundleMgr(_cacheBundleDir);
-	if (_scumm->_gameId == GID_CMI) {
-		if (_scumm->_features & GF_DEMO) {
-			result = _sounds[slot]._bundle->openFile("music.bun", _scumm->getGameDataPath());
+	if (_vm->_gameId == GID_CMI) {
+		if (_vm->_features & GF_DEMO) {
+			result = _sounds[slot]._bundle->openFile("music.bun", _vm->getGameDataPath());
 		} else {
 			char musicfile[20];
-			sprintf(musicfile, "musdisk%d.bun", _scumm->VAR(_scumm->VAR_CURRENTDISK));
-			if (_disk != _scumm->VAR(_scumm->VAR_CURRENTDISK))
+			sprintf(musicfile, "musdisk%d.bun", _vm->VAR(_vm->VAR_CURRENTDISK));
+			if (_disk != _vm->VAR(_vm->VAR_CURRENTDISK))
 				_sounds[slot]._bundle->closeFile();
 
-			result = _sounds[slot]._bundle->openFile(musicfile, _scumm->getGameDataPath());
+			result = _sounds[slot]._bundle->openFile(musicfile, _vm->getGameDataPath());
 
 			if (result == false)
-				result = _sounds[slot]._bundle->openFile("music.bun", _scumm->getGameDataPath());
-			_disk = (byte)_scumm->VAR(_scumm->VAR_CURRENTDISK);
+				result = _sounds[slot]._bundle->openFile("music.bun", _vm->getGameDataPath());
+			_disk = (byte)_vm->VAR(_vm->VAR_CURRENTDISK);
 		}
-	} else if (_scumm->_gameId == GID_DIG)
-		result = _sounds[slot]._bundle->openFile("digmusic.bun", _scumm->getGameDataPath());
+	} else if (_vm->_gameId == GID_DIG)
+		result = _sounds[slot]._bundle->openFile("digmusic.bun", _vm->getGameDataPath());
 	else
 		error("ImuseDigiSndMgr::openMusicBundle() Don't know which bundle file to load");
 
@@ -172,23 +172,23 @@ bool ImuseDigiSndMgr::openVoiceBundle(int slot) {
 	bool result = false;
 
 	_sounds[slot]._bundle = new BundleMgr(_cacheBundleDir);
-	if (_scumm->_gameId == GID_CMI) {
-		if (_scumm->_features & GF_DEMO) {
-			result = _sounds[slot]._bundle->openFile("voice.bun", _scumm->getGameDataPath());
+	if (_vm->_gameId == GID_CMI) {
+		if (_vm->_features & GF_DEMO) {
+			result = _sounds[slot]._bundle->openFile("voice.bun", _vm->getGameDataPath());
 		} else {
 			char voxfile[20];
-			sprintf(voxfile, "voxdisk%d.bun", _scumm->VAR(_scumm->VAR_CURRENTDISK));
-			if (_disk != _scumm->VAR(_scumm->VAR_CURRENTDISK))
+			sprintf(voxfile, "voxdisk%d.bun", _vm->VAR(_vm->VAR_CURRENTDISK));
+			if (_disk != _vm->VAR(_vm->VAR_CURRENTDISK))
 				_sounds[slot]._bundle->closeFile();
 
-			result = _sounds[slot]._bundle->openFile(voxfile, _scumm->getGameDataPath());
+			result = _sounds[slot]._bundle->openFile(voxfile, _vm->getGameDataPath());
 
 			if (result == false)
-				result = _sounds[slot]._bundle->openFile("voice.bun", _scumm->getGameDataPath());
-			_disk = (byte)_scumm->VAR(_scumm->VAR_CURRENTDISK);
+				result = _sounds[slot]._bundle->openFile("voice.bun", _vm->getGameDataPath());
+			_disk = (byte)_vm->VAR(_vm->VAR_CURRENTDISK);
 		}
-	} else if (_scumm->_gameId == GID_DIG)
-		result = _sounds[slot]._bundle->openFile("digvoice.bun", _scumm->getGameDataPath());
+	} else if (_vm->_gameId == GID_DIG)
+		result = _sounds[slot]._bundle->openFile("digvoice.bun", _vm->getGameDataPath());
 	else
 		error("ImuseDigiSndMgr::openVoiceBundle() Don't know which bundle file to load");
 
@@ -210,7 +210,7 @@ ImuseDigiSndMgr::soundStruct *ImuseDigiSndMgr::openSound(int32 soundId, const ch
 
 	if (soundName == NULL) {
 		if ((soundType == IMUSE_RESOURCE)) {
-			ptr = _scumm->getResourceAddress(rtSound, soundId);
+			ptr = _vm->getResourceAddress(rtSound, soundId);
 			if (ptr == NULL) {
 				closeSound(&_sounds[slot]);
 				return NULL;
