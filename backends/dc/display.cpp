@@ -237,6 +237,12 @@ void OSystem_Dreamcast::set_mouse_pos(int x, int y)
   _ms_cur_y = y;
 }
 
+void OSystem_Dreamcast::warp_mouse(int x, int y)
+{
+  _ms_cur_x = x;
+  _ms_cur_y = y;
+}
+
 void OSystem_Dreamcast::set_mouse_cursor(const byte *buf, uint w, uint h,
 					 int hotspot_x, int hotspot_y)
 {

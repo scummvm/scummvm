@@ -23,7 +23,8 @@ class OSystem_Dreamcast : public OSystem {
 
   // Either show or hide the mouse cursor
   bool show_mouse(bool visible);
-  
+  void warp_mouse(int x, int y);
+
   // Set the position of the mouse cursor
   void set_mouse_pos(int x, int y);
   
