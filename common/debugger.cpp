@@ -186,10 +186,14 @@ bool Debugger<T>::RunCommand(const char *inputOrig) {
 				// Alright, we need to check the TYPE of the variable to deref and stuff... the array stuff is a bit ugly :)
 				switch(_dvars[i].type) {
 				// Integer
+				case DVAR_BYTE:
+					*(byte *)_dvars[i].variable = atoi(param[1]);
+					DebugPrintf("byte%s = %d\n", param[0], *(byte *)_dvars[i].variable);
+					break;
 				case DVAR_INT:
 					*(int *)_dvars[i].variable = atoi(param[1]);
 					DebugPrintf("(int)%s = %d\n", param[0], *(int *)_dvars[i].variable);
-				break;
+					break;
 				// Integer Array
 				case DVAR_INTARRAY: {
 					char *chr = strchr(param[0], '[');
@@ -198,15 +202,15 @@ bool Debugger<T>::RunCommand(const char *inputOrig) {
 					} else {
 						int element = atoi(chr+1);
 						int32 *var = *(int32 **)_dvars[i].variable;
-						if (element > _dvars[i].optional) {
+						if (element >= _dvars[i].optional) {
 							DebugPrintf("%s is out of range (array is %d elements big)\n", param[0], _dvars[i].optional);
 						} else {
 							var[element] = atoi(param[1]);
 							DebugPrintf("(int)%s = %d\n", param[0], var[element]);
 						}
 					}
-				}
-				break;
+					}
+					break;
 				default:
 					DebugPrintf("Failed to set variable %s to %s - unknown type\n", _dvars[i].name, param[1]);
 					break;
@@ -215,9 +219,12 @@ bool Debugger<T>::RunCommand(const char *inputOrig) {
 				// And again, type-dependent prints/defrefs. The array one is still ugly.
 				switch(_dvars[i].type) {
 				// Integer
+				case DVAR_BYTE:
+					DebugPrintf("(byte)%s = %d\n", param[0], *(byte *)_dvars[i].variable);
+					break;
 				case DVAR_INT:
 					DebugPrintf("(int)%s = %d\n", param[0], *(int *)_dvars[i].variable);
-				break;
+					break;
 				// Integer array
 				case DVAR_INTARRAY: {
 					char *chr = strchr(param[0], '[');
@@ -225,8 +232,8 @@ bool Debugger<T>::RunCommand(const char *inputOrig) {
 						DebugPrintf("You must access this array as %s[element]\n", param[0]);
 					} else {
 						int element = atoi(chr+1);
-						int16 *var = *(int16 **)_dvars[i].variable;
-						if (element > _dvars[i].optional) {
+						int32 *var = *(int32 **)_dvars[i].variable;
+						if (element >= _dvars[i].optional) {
 							DebugPrintf("%s is out of range (array is %d elements big)\n", param[0], _dvars[i].optional);
 						} else {
 							DebugPrintf("(int)%s = %d\n", param[0], var[element]);
