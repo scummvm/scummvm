@@ -1677,7 +1677,7 @@ void ScummEngine_v100he::o100_unknown29() {
 		warning("o100_unknown29() case 112 unhandled");
 		break;
 	default:
-		error("o100_unknown27: Unknown case %d", subOp);
+		error("o100_unknown29: Unknown case %d", subOp);
 	}
 }
 
