@@ -28,6 +28,9 @@
 #include "sound/mixer.h"
 #include "simon/simon.h"
 
+// FIXME: This is a horrible place to put this, but for now....
+#include "sound/midistreamer.cpp"
+
 void MidiPlayer::read_all_songs(File *in)
 {
 	uint i, num;
@@ -178,6 +181,14 @@ void MidiPlayer::initialize()
 	_midiDriver->property(MidiDriver::PROP_TIMEDIV, _songs[0].ppqn);
 
 	res = _midiDriver->open(MidiDriver::MO_STREAMING);
+	if (res == MidiDriver::MERR_STREAMING_NOT_AVAILABLE) {
+		// No direct streaming, slap a front-end on.
+		_midiDriver = new MidiStreamer (_midiDriver);
+		_midiDriver->property (MidiDriver::PROP_TIMEDIV, _songs[0].ppqn);
+		_midiDriver->set_stream_callback (this, on_fill);
+		res = _midiDriver->open (MidiDriver::MO_STREAMING);
+	}
+
 	if (res != 0)
 		error("MidiPlayer::initializer, got %s", MidiDriver::get_error_name(res));
 }
@@ -408,5 +419,5 @@ void MidiPlayer::play()
 void MidiPlayer::set_driver(MidiDriver *md)
 {
 	_midiDriver = md;
-	md->set_stream_callback(this, on_fill);
+	_midiDriver->set_stream_callback(this, on_fill);
 }
