@@ -810,6 +810,9 @@ void Gdi::drawBitmap(byte *ptr, VirtScreen *vs, int x, int y, const int h,
 
 	assert(smap_ptr);
 
+	if (_vm->_features & GF_AFTER_V8)
+		smap_ptr += 24;
+
 	numzbuf = _disable_zbuffer ? 0 : _numZBuffer;
 
 	if (_vm->_features & GF_SMALL_HEADER) {

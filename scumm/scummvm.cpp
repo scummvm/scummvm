@@ -741,6 +741,8 @@ void Scumm::initRoomSubBlocks()
 
 	if (_features & GF_SMALL_HEADER)
 		_IM00_offs = findResourceData(MKID('IM00'), roomptr) - roomptr;
+	else if (_features & GF_AFTER_V8)
+		_IM00_offs = findResourceData(MKID('IMAG'), roomptr) - roomptr;
 	else
 		_IM00_offs =
 			findResource(MKID('IM00'),
