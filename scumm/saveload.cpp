@@ -615,7 +615,7 @@ void ScummEngine::saveOrLoad(Serializer *s, uint32 savegameVersion) {
 		s->saveLoadArrayOf(_shadowPalette, _shadowPaletteSize, 1, sleByte);
 		// _roomPalette didn't show up until V21 save games
 		if (savegameVersion >= VER(21) && _version < 5)
-			s->saveLoadArrayOf (_roomPalette, _shadowPaletteSize, 1, sleByte);
+			s->saveLoadArrayOf(_roomPalette, sizeof(_roomPalette), 1, sleByte);
 	}
 
 	// PalManip data was not saved before V10 save games

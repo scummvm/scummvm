@@ -208,7 +208,6 @@ void ScummEngine_v3::readMAXS() {
 
 	_shadowPaletteSize = 256;
 
-	_roomPalette = (byte *) calloc(_shadowPaletteSize, 1);		// FIXME - needs to be removed later
 	_shadowPalette = (byte *) calloc(_shadowPaletteSize, 1);	// FIXME - needs to be removed later
 	allocateArrays();
 }

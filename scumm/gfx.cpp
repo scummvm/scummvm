@@ -1770,7 +1770,7 @@ void Gdi::unkDecodeA(byte *dst, const byte *src, int height) {
 		int x = 8;
 		do {
 			FILL_BITS;
-			*dst++ = (_vm->_features & GF_SMALL_HEADER) ? _vm->_roomPalette[color + _palette_mod] : color + _palette_mod;
+			*dst++ = _vm->_roomPalette[color + _palette_mod];
 
 		againPos:
 			if (!READ_BIT) {
@@ -1795,7 +1795,7 @@ void Gdi::unkDecodeA(byte *dst, const byte *src, int height) {
 							if (!--height)
 								return;
 						}
-						*dst++ = (_vm->_features & GF_SMALL_HEADER) ? _vm->_roomPalette[color + _palette_mod] : color + _palette_mod;
+						*dst++ = _vm->_roomPalette[color + _palette_mod];
 					} while (--reps);
 					bits >>= 8;
 					bits |= (*src++) << (cl - 8);
@@ -1819,7 +1819,7 @@ void Gdi::unkDecodeA_trans(byte *dst, const byte *src, int height) {
 		do {
 			FILL_BITS;
 			if (color != _transparentColor)
-				*dst = (_vm->_features & GF_SMALL_HEADER) ? _vm->_roomPalette[color + _palette_mod] : color + _palette_mod;
+				*dst = _vm->_roomPalette[color + _palette_mod];
 			dst++;
 
 		againPos:
@@ -1846,7 +1846,7 @@ void Gdi::unkDecodeA_trans(byte *dst, const byte *src, int height) {
 								return;
 						}
 						if (color != _transparentColor)
-							*dst = (_vm->_features & GF_SMALL_HEADER) ? _vm->_roomPalette[color + _palette_mod] : color + _palette_mod;
+							*dst = _vm->_roomPalette[color + _palette_mod];
 						dst++;
 					} while (--reps);
 					bits >>= 8;
@@ -1870,7 +1870,7 @@ void Gdi::unkDecodeB(byte *dst, const byte *src, int height) {
 		int x = 8;
 		do {
 			FILL_BITS;
-			*dst++ = (_vm->_features & GF_SMALL_HEADER) ? _vm->_roomPalette[color + _palette_mod] : color + _palette_mod;
+			*dst++ = _vm->_roomPalette[color + _palette_mod];
 			if (!READ_BIT) {
 			} else if (!READ_BIT) {
 				FILL_BITS;
@@ -1901,7 +1901,7 @@ void Gdi::unkDecodeB_trans(byte *dst, const byte *src, int height) {
 		do {
 			FILL_BITS;
 			if (color != _transparentColor)
-				*dst = (_vm->_features & GF_SMALL_HEADER) ? _vm->_roomPalette[color + _palette_mod] : color + _palette_mod;
+				*dst = _vm->_roomPalette[color + _palette_mod];
 			dst++;
 			if (!READ_BIT) {
 			} else if (!READ_BIT) {
@@ -1933,7 +1933,7 @@ void Gdi::unkDecodeC(byte *dst, const byte *src, int height) {
 		int h = height;
 		do {
 			FILL_BITS;
-			*dst = (_vm->_features & GF_SMALL_HEADER) ? _vm->_roomPalette[color + _palette_mod] : color + _palette_mod;
+			*dst = _vm->_roomPalette[color + _palette_mod];
 			dst += _vm->_screenWidth;
 			if (!READ_BIT) {
 			} else if (!READ_BIT) {
@@ -1966,7 +1966,7 @@ void Gdi::unkDecodeC_trans(byte *dst, const byte *src, int height) {
 		do {
 			FILL_BITS;
 			if (color != _transparentColor)
-				*dst = (_vm->_features & GF_SMALL_HEADER) ? _vm->_roomPalette[color + _palette_mod] : color + _palette_mod;
+				*dst = _vm->_roomPalette[color + _palette_mod];
 			dst += _vm->_screenWidth;
 			if (!READ_BIT) {
 			} else if (!READ_BIT) {

@@ -276,6 +276,7 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst)
 	// Init all vars - maybe now we can get rid of our custom new/delete operators?
 	_imuse = NULL;
 	_imuseDigital = NULL;
+	_musicEngine = NULL;
 	_features = 0;
 	_verbs = NULL;
 	_objs = NULL;
@@ -429,7 +430,6 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst)
 	_palManipPalette = NULL;
 	_palManipIntermediatePal = NULL;
 	memset(gfxUsageBits, 0, sizeof(gfxUsageBits));
-	_roomPalette = NULL;
 	_shadowPalette = NULL;
 	_shadowPaletteSize = 0;
 	memset(_currentPalette, 0, sizeof(_currentPalette));
@@ -664,9 +664,6 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst)
 	_mixer->setMusicVolume(kDefaultMusicVolume);
 
 	// Init iMuse
-	_imuse = NULL;
-	_imuseDigital = NULL;
-	_musicEngine = NULL;
 	if (_features & GF_DIGI_IMUSE) {
 		_musicEngine = _imuseDigital = new IMuseDigital(this);
 #ifndef __PALM_OS__
@@ -754,8 +751,6 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst)
 			fp.close();
 		}
 	}
-
-	_audioNames = NULL;
 }
 
 ScummEngine::~ScummEngine() {
@@ -780,7 +775,6 @@ ScummEngine::~ScummEngine() {
 
 	delete _costumeRenderer;
 
-	free(_roomPalette);
 	free(_shadowPalette);
 	
 	freeResources();
@@ -1900,8 +1894,7 @@ void ScummEngine::startScene(int room, Actor *a, int objectNr) {
 
 	if (_version < 7) {
 		for (i = 0; i < 256; i++) {
-			if (_features & GF_SMALL_HEADER)
-				_roomPalette[i] = i;
+			_roomPalette[i] = i;
 			_shadowPalette[i] = i;
 		}
 		if (_features & GF_SMALL_HEADER)

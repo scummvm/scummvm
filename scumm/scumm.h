@@ -950,7 +950,7 @@ protected:
 
 public:
 	byte _proc_special_palette[256];
-	byte *_roomPalette;
+	byte _roomPalette[256];
 	byte *_shadowPalette;
 
 protected:
