@@ -126,10 +126,16 @@
 				RelativePath="lua\src\lgc.h">
 			</File>
 			<File
+				RelativePath="lua\src\lib\liolib.c">
+			</File>
+			<File
 				RelativePath="lua\src\llex.c">
 			</File>
 			<File
 				RelativePath="lua\src\llex.h">
+			</File>
+			<File
+				RelativePath="lua\src\lib\lmathlib.c">
 			</File>
 			<File
 				RelativePath="lua\src\lmem.c">
@@ -163,6 +169,9 @@
 			</File>
 			<File
 				RelativePath="lua\src\lstring.h">
+			</File>
+			<File
+				RelativePath="lua\src\lib\lstrlib.c">
 			</File>
 			<File
 				RelativePath="lua\src\ltable.c">

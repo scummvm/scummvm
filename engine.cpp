@@ -101,6 +101,7 @@ void Engine::mainLoop() {
       currScene_->drawBackground();
 
     glEnable(GL_DEPTH_TEST);
+    if (currScene_ != NULL)
     currScene_->setupCamera();
 
     // Draw actors

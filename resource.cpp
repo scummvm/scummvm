@@ -45,8 +45,9 @@ ResourceLoader::ResourceLoader() {
 
 #ifdef _MSC_VER
 	WIN32_FIND_DATAA find_file_data;
-	dir_str += '*';
-	HANDLE d = FindFirstFile(dir_str.c_str(), &find_file_data);
+	std::string dir_strWin32 = dir_str;
+	dir_strWin32 += '*';
+	HANDLE d = FindFirstFile(dir_strWin32.c_str(), &find_file_data);
 #else
 	DIR *d = opendir(dir_str.c_str());
 #endif
