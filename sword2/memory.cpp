@@ -243,10 +243,87 @@ void MemoryManager::memFree(byte *ptr) {
 		_memBlockIndex[i] = _memBlockIndex[i + 1];
 }
 
+static int compare_blocks(const void *p1, const void *p2) {
+	const MemBlock *m1 = *(const MemBlock * const *) p1;
+	const MemBlock *m2 = *(const MemBlock * const *) p2;
+
+	if (m1->size < m2->size)
+		return 1;
+	if (m1->size > m2->size)
+		return -1;
+	return 0;
+}
+
 void MemoryManager::memDisplay() {
-	for (int i = 0; i < MAX_BLOCKS; i++)
+	MemBlock **blocks = (MemBlock **) malloc(_numBlocks * sizeof(MemBlock));
+	int i, j;
+
+	for (i = 0, j = 0; i < MAX_BLOCKS; i++) {
 		if (_memBlocks[i].ptr)
-			Debug_Printf("%d: %ld bytes allocated by resource %d\n", i, _memBlocks[i].size, _memBlocks[i].uid);
+			blocks[j++] = &_memBlocks[i];
+	}
+
+	qsort(blocks, _numBlocks, sizeof(MemBlock *), compare_blocks);
+
+	Debug_Printf("     size id  res  type                 name\n");
+	Debug_Printf("---------------------------------------------------------------------------\n");
+
+	for (i = 0; i < _numBlocks; i++) {
+		StandardHeader *head = (StandardHeader *) blocks[i]->ptr;
+		const char *type;
+
+		switch (head->fileType) {
+		case ANIMATION_FILE:
+			type = "ANIMATION_FILE";
+			break;
+		case SCREEN_FILE:
+			type = "SCREEN_FILE";
+			break;
+		case GAME_OBJECT:
+			type  = "GAME_OBJECT";
+			break;
+		case WALK_GRID_FILE:
+			type = "WALK_GRID_FILE";
+			break;
+		case GLOBAL_VAR_FILE:
+			type = "GLOBAL_VAR_FILE";
+			break;
+		case PARALLAX_FILE_null:
+			type = "PARALLAX_FILE_null";
+			break;
+		case RUN_LIST:
+			type = "RUN_LIST";
+			break;
+		case TEXT_FILE:
+			type = "TEXT_FILE";
+			break;
+		case SCREEN_MANAGER:
+			type = "SCREEN_MANAGER";
+			break;
+		case MOUSE_FILE:
+			type = "MOUSE_FILE";
+			break;
+		case WAV_FILE:
+			type = "WAV_FILE";
+			break;
+		case ICON_FILE:
+			type = "ICON_FILE";
+			break;
+		case PALETTE_FILE:
+			type = "PALETTE_FILE";
+			break;
+		default:
+			type = "<unknown>";
+			break;
+		}
+
+		Debug_Printf("%9ld %-3d %-4d %-20s %s\n", blocks[i]->size, blocks[i]->id, blocks[i]->uid, type, head->name);
+	}
+		
+	free(blocks);
+
+	Debug_Printf("---------------------------------------------------------------------------\n");
+	Debug_Printf("%9ld\n", _totAlloc);
 }
 
 void MemoryManager::memStatusStr(char *buf) {
