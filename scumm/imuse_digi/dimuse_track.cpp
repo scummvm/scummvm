@@ -318,4 +318,3 @@ int IMuseDigital::cloneToFadeOutTrack(int trackId, int fadeDelay) {
 }
 
 } // End of namespace Scumm
-nd of namespace Scumm

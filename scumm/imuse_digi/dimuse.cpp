@@ -360,4 +360,3 @@ void IMuseDigital::switchToNextRegion(int trackId) {
 }
 
 } // End of namespace Scumm
-amespace Scumm
