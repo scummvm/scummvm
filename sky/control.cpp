@@ -122,18 +122,16 @@ void SkyTextResource::drawToScreen(bool doMask) {
 	_oldX = _x;
 	_oldY = _y;
 	cpWidth = (PAN_LINE_WIDTH > (GAME_SCREEN_WIDTH - _x))?(GAME_SCREEN_WIDTH - _x):(PAN_LINE_WIDTH);
-	if (_spriteData && (cpWidth > _spriteData->s_width))
+	if (cpWidth > _spriteData->s_width)
 		cpWidth = _spriteData->s_width;
-	if (_spriteData)
-		cpHeight = (_spriteData->s_height > (GAME_SCREEN_HEIGHT - _y))?(GAME_SCREEN_HEIGHT - _y):(_spriteData->s_height);
-	else
-		cpHeight = PAN_CHAR_HEIGHT;
+	cpHeight = (_spriteData->s_height > (GAME_SCREEN_HEIGHT - _y))?(GAME_SCREEN_HEIGHT - _y):(_spriteData->s_height);
+	
 	uint8 *screenPos = _screen + _y * GAME_SCREEN_WIDTH + _x;
 	uint8 *copyDest = _oldScreen;
 	uint8 *copySrc = ((uint8 *)_spriteData) + sizeof(dataFileHeader);
 	for (cnty = 0; cnty < cpHeight; cnty++) {
 		memcpy(copyDest, screenPos, cpWidth);
-		for (cntx = 0; cntx < PAN_LINE_WIDTH; cntx++)
+		for (cntx = 0; cntx < cpWidth; cntx++)
 			if (copySrc[cntx]) screenPos[cntx] = copySrc[cntx];
 		copySrc += _spriteData->s_width;
 		copyDest += PAN_LINE_WIDTH;
