@@ -1315,8 +1315,10 @@ void Sound::updateCD()
 
 int Sound::getCachedTrack(int track) {
 	int i;
+#if defined(USE_MAD) || defined(USE_VORBIS)
 	char track_name[1024];
-	File * file = new File();
+	File *file = new File();
+#endif
 	int current_index;
 
 	// See if we find the track in the cache
