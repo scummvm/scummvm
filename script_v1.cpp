@@ -2497,17 +2497,16 @@ void Scumm::o5_oldRoomEffect() {
 }
 
 void Scumm::o5_pickupObjectOld() {
+	int obj = getVarOrDirectWord(0x80);
 
-	int obj;
-
-        obj = getVarOrDirectWord(0x80);
-
-	if(getObjectIndex(obj) != 1)
+	if(getObjectIndex(obj) == -1)
 		return;
 	
-	addObjectToInventory(obj,_currentRoom);	/*FIXME: the implementation is not quite acurate */
-
-	
-	warning("pickupObjectOld(%d) not fully supported",obj);
-
+	addObjectToInventory(obj,_currentRoom);
+	removeObjectFromRoom(obj);
+	putOwner(obj, _vars[VAR_EGO]);
+	putClass(obj, 32, 1);
+	putState(obj, 1);
+	clearDrawObjectQueue();
+	runHook(1);
 }
