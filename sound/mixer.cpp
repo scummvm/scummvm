@@ -465,9 +465,6 @@ void SoundMixer::pauseHandle(PlayingSoundHandle handle, bool paused) {
 
 bool SoundMixer::hasActiveSFXChannel() {
 	// FIXME/TODO: We need to distinguish between SFX and music channels
-	// (and maybe also voice) here to work properly in iMuseDigital
-	// games. In the past that was achieve using the _beginSlots hack.
-	// Since we don't have that anymore, it's not that simple anymore.
 	Common::StackLock lock(_mutex);
 	for (int i = 0; i != NUM_CHANNELS; i++)
 		if (_channels[i] && !_channels[i]->isMusicChannel())
@@ -597,7 +594,7 @@ uint32 Channel::getElapsedTime() {
 
 ChannelStream::ChannelStream(SoundMixer *mixer, PlayingSoundHandle *handle,
 							uint rate, byte flags, uint32 buffer_size)
-	: Channel(mixer, handle, true) {
+	: Channel(mixer, handle, false) {
 	// Create the input stream
 	_input = makeAppendableAudioStream(rate, flags, buffer_size);
 
