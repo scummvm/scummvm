@@ -12,7 +12,7 @@ ZIPFILE := scummvm-`date '+%Y-%m-%d'`.zip
 
 INCS	= scumm.h scummsys.h stdafx.h
 
-OBJS	= actor.o akos.o boxes.o costume.o gfx.o object.o resource.o \
+OBJS	= actor.o akos.o boxes.o config-file.o costume.o gfx.o object.o resource.o \
 	saveload.o script.o scummvm.o sound.o string.o sys.o verbs.o \
 	morphos.o morphos_sound.o morphos_start.o script_v1.o script_v2.o debug.o gui.o \
 	imuse.o fmopl.o mixer.o mididrv.o debugrl.o vars.o insane.o \
