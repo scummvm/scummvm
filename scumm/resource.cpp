@@ -1219,7 +1219,9 @@ int Scumm::getResourceDataSize(byte *ptr) {
 	if (ptr == NULL)
 		return 0;
 
-	if (_features & GF_SMALL_HEADER)
+	if (_features & GF_OLD_BUNDLE)
+		return READ_LE_UINT16(ptr) - 4;
+	else if (_features & GF_SMALL_HEADER)
 		return READ_LE_UINT32(ptr) - 6;
 	else
 		return READ_BE_UINT32_UNALIGNED(ptr - 4) - 8;
