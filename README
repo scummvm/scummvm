@@ -255,8 +255,8 @@ Google search. Many thanks to the effort of porters. If you have a port of
 ScummVM and wish to commit it into the main CVS, feel free to contact us!
 
         Windows         - SDL
-        Windows CE      - SDL            (iPaq and other handheld devices)
-        Linux           - X11/OSS audio  (includes iPaqs running Linux)
+        Windows Mobile  - SDL            (iPAQ and other handheld devices)
+        Linux           - X11/OSS audio  (includes iPAQs running Linux)
         Mac OS X        - SDL
         AmigaOS         - SDL
         MorphOS         - Custom backend
@@ -1122,14 +1122,15 @@ messages (see http://www.sysinternals.com/ntw2k/freeware/debugview.shtml).
 	  Tools|Options|Projects|VC++ Directories
         * Now it should compile successfully.
 
-    PocketPC - Windows CE:
-        * Download the SDLAudio library:
-          http://arisme.free.fr/PocketScumm/sources/SDLAudio-1.2.3-src.zip
-        * Open and compile the SDLAudio WCEBuild/WCEBuild workspace in EVC++
-        * Open the ScummVM wince/PocketScumm workspace
-        * Enter the SDLAudio directory to your includes path
-        * Enter the compiled SDLAudio.lib to your link libraries list
-        * Now it should compile successfully
+    Windows Mobile with Microsoft eMbedded Visual C++ 3 or 4 :
+        * Download SDL with additional Windows Mobile tweaks:
+          http://arisme.free.fr/ports/SDL.php
+        * Download additional third party libraries:
+          http://arisme.free.fr/ports	 
+        * Modify your include and library paths accordingly in EVC3/EVC4.
+        * Open the ScummVM project dists\msevc4\PocketSCUMM.vcw
+        * Modify the libraries and config parameters if necessary.
+        * Now it should compile successfully. 
 
     Debian GNU/Linux:
         * Install the packages 'build-essential', 'fakeroot', 'debhelper',
