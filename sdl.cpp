@@ -1197,6 +1197,7 @@ void OSystem_SDL::update_cdrom() {
 void OSystem_SDL::setup_icon() {
 	int w, h, ncols, nbytes, i;
 	unsigned int rgba[256], icon[32 * 32];
+	unsigned char mask[32][4];
 
 	sscanf(scummvm_icon[0], "%d %d %d %d", &w, &h, &ncols, &nbytes);
 	if ((w != 32) || (h != 32) || (ncols > 255) || (nbytes > 1)) {
@@ -1222,15 +1223,19 @@ void OSystem_SDL::setup_icon() {
 		
 		rgba[code] = col;
 	}
+	memset(mask, 0, sizeof(mask));
 	for (h = 0; h < 32; h++) {
 		char *line = scummvm_icon[1 + ncols + h];
 		for (w = 0; w < 32; w++) {
 			icon[w + 32 * h] = rgba[line[w]];
+			if (rgba[line[w]] & 0xFF000000) {
+				mask[h][w >> 3] |= 1 << (7 - (w & 0x07));
+			}
 		}
 	}
 
 	SDL_Surface *sdl_surf = SDL_CreateRGBSurfaceFrom(icon, 32, 32, 32, 32 * 4, 0xFF0000, 0x00FF00, 0x0000FF, 0xFF000000);
-	SDL_WM_SetIcon(sdl_surf, NULL);
+	SDL_WM_SetIcon(sdl_surf, (unsigned char *) mask);
 }
 
 #ifdef USE_NULL_DRIVER
