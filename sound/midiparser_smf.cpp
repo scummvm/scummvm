@@ -225,6 +225,7 @@ bool MidiParser_SMF::loadMusic (byte *data, uint32 size) {
 	// our tracks down into a single Type 0 track.
 	if (_buffer) {
 		free (_buffer);
+		_buffer = 0;
 	}
 
 	if (midi_type == 1) {
@@ -258,6 +259,7 @@ void MidiParser_SMF::compressToType0() {
 		running_status[i] = 0;
 		track_pos[i] = _tracks[i];
 		track_timer[i] = readVLQ (track_pos[i]);
+		running_status[i] = 0;
 	}
 
 	int best_i;
@@ -285,7 +287,7 @@ void MidiParser_SMF::compressToType0() {
 		delta = 0;
 		length = track_timer[best_i];
 		for (i = 0; length; ++i) {
-			delta = (delta << 8) | (length & 0x7F);
+			delta = (delta << 8) | (length & 0x7F) | (i ? 0x80 : 0);
 			length >>= 7;
 		}
 
@@ -326,19 +328,24 @@ void MidiParser_SMF::compressToType0() {
 			track_pos[best_i] = 0;
 		}
 
-		if (track_pos[best_i]) {
-			// Update all tracks' deltas
+		// Update all tracks' deltas
+		if (write) {
 			for (i = 0; i < _num_tracks; ++i) {
 				if (track_pos[i] && i != best_i)
 					track_timer[i] -= track_timer[best_i];
 			}
+		}
 
+		if (track_pos[best_i]) {
 			if (write) {
+				track_timer[best_i] = 0;
+
 				// Write VLQ delta
-				do {
-					*output++ = (byte) (delta & 0xFF | (delta > 0xFF ? 0x80 : 0));
+				while (delta & 0x80) {
+					*output++ = (byte) (delta & 0xFF);
 					delta >>= 8;
-				} while (delta);
+				}
+				*output++ = (byte) (delta & 0xFF);
 
 				// Write MIDI data
 				memcpy (output, track_pos[best_i], copy_bytes);
@@ -347,7 +354,8 @@ void MidiParser_SMF::compressToType0() {
 
 			// Fetch new VLQ delta for winning track
 			track_pos[best_i] += copy_bytes;
-			track_timer[best_i] = readVLQ (track_pos[best_i]);
+			if (active_tracks)
+				track_timer[best_i] += readVLQ (track_pos[best_i]);
 		}
 	}
 
