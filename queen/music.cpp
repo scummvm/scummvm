@@ -205,10 +205,6 @@ static const byte mt32_to_gm[128] = {
 			return;
 		}
 	
-		//Don't play if the queue doesn't have any valid songs
-		if (!validSongs())
-			return;
-		
 		uint16 songNum = _songQueue[_queuePos];
 
 		//Special type
@@ -226,12 +222,38 @@ static const byte mt32_to_gm[128] = {
 			}
 		}
 
-		_currentSong = songNum = isBadSong(songNum) ? nextValidSong() : songNum;
+		byte *prevSong = _musicData + songOffset(_currentSong);
+		if (*prevSong == 0x43 || *prevSong == 0x63) {
+			if (_buf) {
+				delete[] _buf;
+				_buf = 0;
+			}
+		}
+		
+		_currentSong = songNum;
 		if (!songNum) {
 			stopMusic();
 			return;
 		}	
-		_parser->loadMusic(_musicData + songOffset(songNum), songLength(songNum));
+
+		byte *musicPtr = _musicData + songOffset(songNum);
+		uint32 size = songLength(songNum);
+
+		if (*musicPtr == 0x43 || *musicPtr == 0x63) {
+			uint32 packedSize = songLength(songNum) - 0x200;
+			_buf = new uint16[packedSize];
+
+			uint16 *data = (uint16 *)(musicPtr + 1);
+			byte *idx  = ((byte *)data) + 0x200;
+
+			for (uint i = 0; i < packedSize; i++)
+				_buf[i] = data[*(idx + i)];
+
+			musicPtr = ((byte *)_buf) + ((*musicPtr == 0x63) ? 1 : 0);
+			size = packedSize * 2;
+		}
+		
+		_parser->loadMusic(musicPtr, size);
 		_parser->setTrack(0);	
 		//debug(0, "Playing song %d [queue position: %d]", songNum, _queuePos);
 		_isPlaying = true;
@@ -262,61 +284,6 @@ static const byte mt32_to_gm[128] = {
 		return (uint8) _rnd.getRandomNumber(queueSize - 1) & 0xFF;
 	}
 	
-	bool MusicPlayer::isBadSong(uint16 songNum) const {
-		//Songs which are (apparently?) bogus
-		//Atleast they don't contain a valid MThd/MTrk
-		switch(songNum) {
-			case  50:
-			case  51:
-			case  53:
-			case  80:
-			case 176:
-				return true;
-				break;
-			default:
-				return false;
-				break;
-		}
-	}
-
-	uint8  MusicPlayer::validSongs() const {
-		uint8 valid = 0;
-		for (int i = 0; i < MUSIC_QUEUE_SIZE; i++)
-			if (_songQueue[i] && !isBadSong(_songQueue[i]))
-					valid++;
-
-		return valid;
-	}
-
-	uint16 MusicPlayer::nextValidSong() {
-		int i;
-
-		if (_randomLoop && validSongs() > 1) {
-			uint8 pos = randomQueuePos(); 
-			while(isBadSong(_songQueue[pos]))
-				pos = randomQueuePos(); 
-			_queuePos = pos;
-			return _songQueue[pos];
-		}
-	
-		if (!_looping && validSongs() < 2)
-			return 0;
-		
-		for (i = _queuePos + 1; i < MUSIC_QUEUE_SIZE; i++)  
-			if (_songQueue[i] && !isBadSong(_songQueue[i])) {
-				_queuePos = i;
-				return _songQueue[i];
-			}
-
-		for (i = 0; i < _queuePos; i++) 
-			if (_songQueue[i] && !isBadSong(_songQueue[i])) {
-				_queuePos = i;
-				return _songQueue[i];	
-			}
-		
-		return 0;
-	}
-
 	void MusicPlayer::stopMusic() {
 		_isPlaying = false;
 		_parser->unloadMusic();
