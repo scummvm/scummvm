@@ -52,6 +52,7 @@ ConsoleDialog::ConsoleDialog(float widthPercent, float heightPercent)
 
 	_currentPos = 0;
 	_scrollLine = _linesPerPage - 1;
+	_firstLineInBuffer = 0;
 
 	_caretVisible = false;
 	_caretTime = 0;
@@ -71,11 +72,11 @@ ConsoleDialog::ConsoleDialog(float widthPercent, float heightPercent)
 	for (int i = 0; i < kHistorySize; i++)
 		_history[i][0] = '\0';
 
+	_promptStartPos = _promptEndPos = -1;
+
 	// Display greetings & prompt
 	print(gScummVMFullVersion);
 	print("\nConsole is ready\n");
-
-	_promptStartPos = _promptEndPos = -1;
 }
 
 void ConsoleDialog::reflowLayout() {
@@ -109,6 +110,7 @@ void ConsoleDialog::drawDialog() {
 	// Draw text
 	int start = _scrollLine - _linesPerPage + 1;
 	int y = _y + 2;
+
 	for (int line = 0; line < _linesPerPage; line++) {
 		int x = _x + 1;
 		for (int column = 0; column < _lineWidth; column++) {
@@ -232,26 +234,42 @@ void ConsoleDialog::handleKeyDown(uint16 ascii, int keycode, int modifiers) {
 		killChar();
 		draw();
 		break;
-/*
 	case 256 + 24:	// pageup
-		_selectedItem -= _entriesPerPage - 1;
-		if (_selectedItem < 0)
-			_selectedItem = 0;
+		if (modifiers == OSystem::KBD_SHIFT) {
+			_scrollLine -= _linesPerPage - 1;
+			if (_scrollLine < _firstLineInBuffer + _linesPerPage - 1)
+				_scrollLine = _firstLineInBuffer + _linesPerPage - 1;
+			updateScrollBuffer();
+			draw();
+		}
 		break;
 	case 256 + 25:	// pagedown
-		_selectedItem += _entriesPerPage - 1;
-		if (_selectedItem >= _list.size() )
-			_selectedItem = _list.size() - 1;
+		if (modifiers == OSystem::KBD_SHIFT) {
+			_scrollLine += _linesPerPage - 1;
+			if (_scrollLine > _promptEndPos / _lineWidth)
+				_scrollLine = _promptEndPos / _lineWidth;
+			updateScrollBuffer();
+			draw();
+		}
 		break;
-*/
 	case 256 + 22:	// home
-		_scrollLine = _linesPerPage - 1;	// FIXME - this is not correct after a wrap around
-		updateScrollBar();
+		if (modifiers == OSystem::KBD_SHIFT) {
+			_scrollLine = _firstLineInBuffer + _linesPerPage - 1;
+			updateScrollBuffer();
+		} else {
+			_currentPos = _promptStartPos;
+		}
 		draw();
 		break;
 	case 256 + 23:	// end
-		_scrollLine = _currentPos / _lineWidth;
-		updateScrollBar();
+		if (modifiers == OSystem::KBD_SHIFT) {
+			_scrollLine = _promptEndPos / _lineWidth;
+			if (_scrollLine < _linesPerPage - 1)
+				_scrollLine = _linesPerPage - 1;
+			updateScrollBuffer();
+		} else {
+			_currentPos = _promptEndPos;
+		}
 		draw();
 		break;
 	case 273:	// cursor up
@@ -299,7 +317,7 @@ void ConsoleDialog::insertIntoPrompt(const char* str)
 void ConsoleDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
 	switch (cmd) {
 	case kSetPositionCmd:
-		int newPos = (int)data + _linesPerPage - 1;
+		int newPos = (int)data + _linesPerPage - 1 + _firstLineInBuffer;
 		if (newPos != _scrollLine) {
 			_scrollLine = newPos;
 			draw();
@@ -425,12 +443,25 @@ void ConsoleDialog::nextLine() {
 		_scrollLine++;
 	_currentPos = (line + 1) * _lineWidth;
 
-	updateScrollBar();
+	updateScrollBuffer();
 }
 
-void ConsoleDialog::updateScrollBar() {
-	int line = _currentPos / _lineWidth;
-	_scrollBar->_numEntries = (line < _linesInBuffer) ? line + 1 : _linesInBuffer;
+
+// Call this (at least) when the current line changes or when
+// a new line is added
+void ConsoleDialog::updateScrollBuffer() {
+	int lastchar = MAX(_promptEndPos, _currentPos);
+	int line = lastchar / _lineWidth;
+	int numlines = (line < _linesInBuffer) ? line + 1 : _linesInBuffer;
+	int firstline = line - numlines + 1;
+	if (firstline > _firstLineInBuffer) {
+		// clear old line from buffer
+		for (int i = lastchar; i < (line+1) * _lineWidth; ++i)
+			buffer(i) = ' ';
+		_firstLineInBuffer = firstline;
+	}
+
+	_scrollBar->_numEntries = numlines;
 	_scrollBar->_currentPos = _scrollBar->_numEntries - (line - _scrollLine + _linesPerPage);
 	_scrollBar->_entriesPerPage = _linesPerPage;
 	_scrollBar->recalc();
@@ -477,7 +508,7 @@ void ConsoleDialog::putcharIntern(int c) {
 		_currentPos++;
 		if ((_scrollLine + 1) * _lineWidth == _currentPos) {
 			_scrollLine++;
-			updateScrollBar();
+			updateScrollBuffer();
 		}
 	}
 }
@@ -519,13 +550,13 @@ void ConsoleDialog::drawCaret(bool erase) {
 }
 
 void ConsoleDialog::scrollToCurrent() {
-	int line = _currentPos / _lineWidth;
+	int line = _promptEndPos / _lineWidth;
 
 	if (line + _linesPerPage <= _scrollLine) {
 		// TODO - this should only occur for loong edit lines, though
 	} else if (line > _scrollLine) {
 		_scrollLine = line;
-		updateScrollBar();
+		updateScrollBuffer();
 	}
 }
 

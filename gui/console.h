@@ -51,6 +51,7 @@ protected:
 
 	int		_currentPos;
 	int		_scrollLine;
+	int		_firstLineInBuffer;
 	
 	int		_promptStartPos;
 	int 	_promptEndPos;
@@ -112,7 +113,7 @@ protected:
 	void putcharIntern(int c);
 	void insertIntoPrompt(const char *str);
 	void print(const char *str);
-	void updateScrollBar();
+	void updateScrollBuffer();
 	void scrollToCurrent();
 
 	// Line editing
