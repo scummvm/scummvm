@@ -13,6 +13,10 @@ RM_REC = $(RM) -r
 ZIP = zip -q
 CP  = cp
 
+#######################################################################
+# Default compilation parameters. Normally don't edit these           #
+#######################################################################
+
 CFLAGS   = -g -O -Wall -Wstrict-prototypes -Wuninitialized -Wno-long-long -Wno-multichar -Wno-unknown-pragmas
 DEFINES  =
 LDFLAGS :=
@@ -22,6 +26,10 @@ OBJS	 =
 
 # Load the build rules & settings for the chosen backend
 -include build.rules
+
+#######################################################################
+# Compile options - you can modify these to tweak ScummVM compilation #
+#######################################################################
 
 # Enable this if you want ScummVM to dump all scripts it runs.
 # This is mainly interesting for developers.
@@ -37,6 +45,14 @@ LIBS    += -lmad
 
 # Uncomment this to activate extended debugging support in Simon
 DEFINES += -DSIMONDEBUG
+
+# Uncomment this for stricter compile time code verification
+# CFLAGS  += -Wshadow -Werror
+
+
+#######################################################################
+# Misc stuff - you should normally never have to edit this            #
+#######################################################################
 
 # Concat DEFINES and INCLUDES to for the CPPFLAGS
 CPPFLAGS= $(DEFINES) $(INCLUDES)
