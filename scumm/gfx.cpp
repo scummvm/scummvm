@@ -937,11 +937,176 @@ void Gdi::drawBitmap(byte *ptr, VirtScreen *vs, int x, int y, const int width, c
 	if (vs->scrollable)
 		sx -= vs->xstart >> 3;
 
+	//////
+	//////
+	//////   START OF BIG HACK!
+	//////
+	//////
 	if (_vm->_features & GF_AFTER_V2) {
-		// TODO: implement new V2 strip / zplane drawing in here
 		
-		//return;
+		backbuff_ptr = vs->screenPtr + (y * _numStrips + x) * 8;
+		if (vs->alloctwobuffers)
+			bgbak_ptr = _vm->getResourceAddress(rtBuffer, vs->number + 5) + (y * _numStrips + x) * 8;
+		else
+			bgbak_ptr = backbuff_ptr;
+
+		_mask_ptr = _vm->getResourceAddress(rtBuffer, 9) + (y * _numStrips + x);
+
+//if (numstrip > 5) return;
+//if (width != 320 || height != 128) return;
+//if (width != 40 || height != 48) return;
+//if (height == 128) return;
+
+
+//printf("x %d, y %d, width %d, height %d, stripnr %d, numstrip %d, vs->alloctwobuffers %d\n",
+//		x, y, width, height, stripnr, numstrip, vs->alloctwobuffers);
+
+		const int left = stripnr << 3;
+		const int right = left + numstrip << 3;
+		byte *dst = bgbak_ptr;
+		byte *src = smap_ptr;
+		byte color = 0, data = 0;
+		int run = 1;
+		bool dither = false;
+		byte dither_table[128];
+		byte *ptr_dither_table;
+		memset(dither_table, 0, sizeof(dither_table));
+		int theX, theY;
+		
+		// Draw image data. To do this, we decode the full RLE graphics data,
+		// but only draw those parts we actually want to display.
+		assert(height <= 128);
+		for (theX = 0; theX < width; theX++) {
+			ptr_dither_table = dither_table;
+			for (theY = 0; theY < height; theY++) {
+				if (--run == 0) {
+					data = *src++;
+					if (data & 0x80) {
+						run = data & 0x7f;
+						dither = true;
+					} else {
+						run = data >> 4;
+						dither = false;
+					}
+					if (run == 0) {
+						run = *src++;
+					}
+					color = data & 0x0f;
+				}
+				if (!dither) {
+					*ptr_dither_table = color;
+				}
+				if (left <= theX && theX < right) {
+					*dst = *ptr_dither_table++;
+					dst += _vm->_realWidth;
+				}
+			}
+			if (left <= theX && theX < right) {
+				dst -= _vm->_realWidth * height;
+				dst++;
+			}
+		}
+
+/*
+		// Draw mask (zplane) data
+		// TODO - this code is right now completely bogus, will implement it correctly later
+		theY = 0;
+		theX = 0;
+	
+		for (;;) {
+			run = *src++;
+			if (run & 0x80) {
+				run &= 0x7f;
+				data = *src++;
+				do {
+					if (left <= theX && theX < right) {
+						*_mask_ptr = data;
+						_mask_ptr += _numStrips;
+					}
+					theY++;
+					if (theY >= height) {
+						theX++;
+						if (theX >= (width >> 3))
+							goto finish_v2;
+						theY = 0;
+						if (left <= theX && theX < right)
+							_mask_ptr -= _numStrips * height - 1;
+					}
+				} while (--run);
+			} else {
+				do {
+					data = *src++;
+					
+					if (left <= theX && theX < right) {
+						*_mask_ptr = data;
+						_mask_ptr += _numStrips;
+					}
+					theY++;
+					if (theY >= height) {
+						theX++;
+						if (theX >= width)
+							goto finish_v2;
+						theY = 0;
+						if (left <= theX && theX < right)
+							_mask_ptr -= _numStrips * height - 1;
+					}
+				} while (--run);
+			}
+		}
+
+finish_v2:
+*/
+		// Update tdirty / bdirty
+		while (numstrip--) {
+			if (sx < 0)
+				goto next_iter_v2;
+	
+			if (sx >= _numStrips) {
+				return;
+			}
+	
+			if (y < vs->tdirty[sx])
+				vs->tdirty[sx] = y;
+	
+			if (bottom > vs->bdirty[sx])
+				vs->bdirty[sx] = bottom;
+
+			CHECK_HEAP;
+			if (vs->alloctwobuffers) {
+				backbuff_ptr = vs->screenPtr + (y * _numStrips + x) * 8;
+				bgbak_ptr = _vm->getResourceAddress(rtBuffer, vs->number + 5) + (y * _numStrips + x) * 8;
+				_mask_ptr = _vm->getResourceAddress(rtBuffer, 9) + (y * _numStrips + x);
+	
+				if (_vm->hasCharsetMask(sx << 3, y, (sx + 1) << 3, bottom)) {
+					if (flag & dbClear || !lightsOn)
+						clear8ColWithMasking(backbuff_ptr, height, _mask_ptr);
+					else
+						draw8ColWithMasking(backbuff_ptr, bgbak_ptr, height, _mask_ptr);
+				} else {
+					if (flag & dbClear || !lightsOn)
+						clear8Col(backbuff_ptr, height);
+					else
+						draw8Col(backbuff_ptr, bgbak_ptr, height);
+				}
+			}
+next_iter_v2:
+			CHECK_HEAP;
+			x++;
+			sx++;
+			stripnr++;
+		}
+		
+
+		// Get outa here
+		return;
 	}
+
+	//////
+	//////
+	//////   END OF BIG HACK!
+	//////
+	//////
+
 	while (numstrip--) {
 		CHECK_HEAP;
 
