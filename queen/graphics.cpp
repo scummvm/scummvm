@@ -325,6 +325,7 @@ void BobSlot::animReset() {
 
 	if(active && animating) {
 		const AnimFrame *af = anim.string.buffer;
+		printf("animReset() - %X %X", af->frame, af->speed);
 		if (af != NULL) {
 			anim.string.curPos = af;
 			frameNum = af->frame;
@@ -467,7 +468,7 @@ void Graphics::bobClear(uint32 bobnum) {
 
 	BobSlot *pbs = &_bobs[bobnum];
 
-	pbs->active = 0;
+	pbs->active = false;
 	pbs->xflip  = false;
 	pbs->animating = false;
 	pbs->anim.string.buffer = NULL;

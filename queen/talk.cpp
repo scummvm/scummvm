@@ -354,10 +354,9 @@ void Talk::talk(const char *filename, int personInRoom, char *cutawayFilename) {
 		pbs->y = person.actor->y;
 		
 		_logic->display()->fullscreen(_wasFullscren);
-
-		// XXX if (P_ANIMstr[0] != '\0')
-			// Better kick start the persons anim sequence
-		// XXX 	stringanim(BNUM,NEW_ANIM[BNUM]);
+		// Better kick start the persons anim sequence
+		pbs->animating = true;
+		pbs->animReset();
 	}
 
 	_talkHead = false;

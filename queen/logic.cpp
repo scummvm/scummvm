@@ -1098,7 +1098,7 @@ uint16 Logic::roomRefreshObject(uint16 obj) {
 
 	if (pod->image == -3 || pod->image == -4) {
 		// a person object
-		if (pod->name < 0) {
+		if (pod->name <= 0) {
 			_graphics->bobClear(curBob);
 		}
 		else {
@@ -1626,6 +1626,14 @@ ObjectData *Logic::joeSetupInRoom(bool autoPosition, uint16 scale) {
 
 	// check to see which way Joe entered room
 	_joe.facing = State::findDirection(pod->state);
+	switch (_joe.facing) {
+	case DIR_BACK:
+		_joe.facing = DIR_FRONT;
+		break;
+	case DIR_FRONT:
+		_joe.facing = DIR_BACK;
+		break;
+	}
 	_joe.prevFacing = _joe.facing;
 
 	BobSlot *pbs = _graphics->bob(0);
