@@ -245,6 +245,10 @@ void PluginManager::loadPlugins() {
 	LOAD_MODULE("queen", QUEEN);
 #endif
 
+#ifndef DISABLE_KYRA
+	LOAD_MODULE("kyra", KYRA);
+#endif
+
 #ifndef DISABLE_SAGA
 	LOAD_MODULE("saga", SAGA);
 #endif

@@ -85,6 +85,12 @@ else
 MODULES += saga
 endif
 
+ifdef DISABLE_KYRA
+DEFINES += -DDISABLE_KYRA
+else 
+MODULES += kyra
+endif
+
 # After the game specific modules follow the shared modules
 MODULES += \
 	gui \

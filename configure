@@ -38,6 +38,7 @@ _build_sky=yes
 _build_sword1=yes
 _build_sword2=yes
 _build_queen=yes
+_build_kyra=no
 _build_saga=no
 _need_memalign=no
 _build_plugins=no
@@ -212,6 +213,7 @@ Optional Features:
   --disable-sword1         don't build the Broken Sword I engine
   --disable-sword2         don't build the Broken Sword II engine
   --disable-queen          don't build the Flight of the Amazon Queen engine
+  --enable-kyra            build the Legend of Kyrandia engine
   --enable-saga            build the SAGA engine
   --enable-plugins         build engines as loadable modules instead of
                            static linking them
@@ -261,6 +263,7 @@ for ac_option in $@; do
       --disable-sword1)		_build_sword1=no ;;
       --disable-sword2)		_build_sword2=no ;;
       --disable-queen)		_build_queen=no ;;
+      --enable-kyra)		_build_kyra=yes ;;
       --enable-saga)		_build_saga=yes ;;
       --enable-alsa)		_alsa=yes	;;
       --disable-alsa)		_alsa=no	;;
@@ -476,6 +479,12 @@ if test "$_build_queen" = no ; then
 	_mak_queen='DISABLE_QUEEN = 1'
 else
 	_mak_queen='# DISABLE_QUEEN = 1'
+fi
+
+if test "$_build_kyra" = no ; then
+	_mak_queen='DISABLE_KYRA = 1'
+else
+	_mak_queen='# DISABLE_KYRA = 1'
 fi
 
 if test "$_build_saga" = no ; then
@@ -848,6 +857,9 @@ fi
 if test "$_build_saga" = yes ; then
   echo "    SAGA Engine"
 fi
+if test "$_build_kyra" = yes ; then
+  echo "    Legend of Kyrandia"
+fi
 echo
 
 echo_n "Backend... "
@@ -934,6 +946,7 @@ $_mak_sky
 $_mak_sword1
 $_mak_sword2
 $_mak_queen
+$_mak_kyra
 $_mak_saga
 
 INCLUDES += $INCLUDES
