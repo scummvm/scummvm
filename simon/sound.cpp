@@ -214,7 +214,7 @@ int MP3Sound::playSound(uint sound, PlayingSoundHandle *handle, byte flags)
 
 	uint32 size = _offsets[sound+1] - _offsets[sound];
 
-	byte *buffer = (byte *)malloc(size);
+	byte *buffer = (byte *)malloc(size + 1);
 	_file->read(buffer, size);
 
 	return _mixer->playMP3(handle, buffer, size, flags);
