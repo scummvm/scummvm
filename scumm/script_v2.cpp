@@ -1186,53 +1186,7 @@ void Scumm_v2::o2_pickupObject() {
 	clearDrawObjectQueue();
 	runHook(1);
 
-	// FIXME: Ender Quick Hack to allow further Zak testing.
-	// In reality, we should probably stuff the inventory into verbs
-	// as later games do. Easier hotspot tracking :)
-	if (!(_userState & 64))
-		return;
-{
-        int i, items = 0, curInventoryCount = 0;
-	bool alternate = false;
-
-        if (curInventoryCount > _maxInventoryItems)
-                curInventoryCount = _maxInventoryItems;
-
-        for (i = curInventoryCount + 1; i <= _maxInventoryItems; i++) {
-                if (_inventory[i] != 0) {
-			_string[1].charset = 1;
-			_string[1].ypos = virtscr[2].topline + 34 + (8*(items / 2));
-			_string[1].color = 5;
-			_messagePtr = getObjOrActorName(_inventory[i]);
-
-			if (alternate)
-				_string[1].xpos = 200;
-			else
-				_string[1].xpos = 0;
-			drawString(1);
-
-			items++;
-			alternate = !alternate;
-		}
-		if (items == 4)
-			break;
-        }
-
-	//if (curInventoryCount > 0) { // Draw Up Arrow
-		_string[1].xpos = 145;
-		_string[1].ypos = virtscr[2].topline + 32;
-		_messagePtr = (byte*)strdup("U");
-		drawString(1);
-	//}
-
-	//if (items == 4) {	// Draw Down Arrow
-		_string[1].xpos = 145;
-		_string[1].ypos = virtscr[2].topline + 47;
-		_messagePtr = (byte*)strdup("D");
-		drawString(1);
-	//}
-
-}
+	redrawV2Inventory();
 }
 
 void Scumm_v2::o2_setObjectName() {
@@ -1282,6 +1236,7 @@ void Scumm_v2::o2_cursorCommand() {	// TODO: Define the magic numbers
 
 	if (a2 & 4) {						// Userface
 		_userState = a2 & (32 | 64 | 128);
+		redrawV2Inventory();
 	}
 
 	if (a2 & 1) {						// Freeze

@@ -713,6 +713,8 @@ protected:
 	void runObjectScript(int script, int entry, bool freezeResistant, bool recursive, int *vars);
 	void setVerbObject(uint room, uint object, uint verb);
 
+	void redrawV2Inventory();
+
 public:
 	/* Should be in Actor class */
 	Actor *derefActor(int id);
