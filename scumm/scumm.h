@@ -268,18 +268,29 @@ public:
 
 	void mainRun();
 
+	void scummInit();
+	int scummLoop(int delta);
+	void initScummVars();
+
+	void launch();
+
+	Scumm(GameDetector *detector, OSystem *syst);
+	virtual ~Scumm();
+
+	void go();
+
+	void waitForTimer(int msec_delay);
+
+	void updateCursor();
+	void animateCursor();
+	void updatePalette();
+
 	/* _insane vars */
 
 	int _smushFrameRate;
 	bool _insaneState;
 	bool _videoFinished;
 	
-	
-	void scummInit();
-	void scummMain(int argc, char **argv); // is it still used ?
-	int scummLoop(int delta);
-	void initScummVars();
-
 	const char *getResDataPath() const { return _gameDataPath; }
 	const char *getGameDataPath() const {
 		if (_features & GF_AFTER_V8) {
@@ -1026,19 +1037,6 @@ public:
 	byte VAR_CUSTOMSCALETABLE;
 	byte VAR_VIDEONAME;
 	byte VAR_V6_SOUNDMODE;
-
-	void launch();
-
-	Scumm(GameDetector *detector, OSystem *syst);
-	virtual ~Scumm();
-
-	void go();
-
-	void waitForTimer(int msec_delay);
-
-	void updateCursor();
-	void animateCursor();
-	void updatePalette();
 };
 
 // This is a constant lookup table of reverse bit masks

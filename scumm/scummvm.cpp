@@ -200,13 +200,6 @@ void Scumm::scummInit()
 	tempMusic = 0;
 	debug(9, "scummInit");
 
-	if (_features & GF_OLD_BUNDLE)
-		_resourceHeaderSize = 2; // FIXME - to be rechecked
-	else if (_features & GF_SMALL_HEADER)
-		_resourceHeaderSize = 6;
-	else
-		_resourceHeaderSize = 8;
-
 	if (_features & GF_AFTER_V7) {
 		initScreens(0, 0, _realWidth, _realHeight);
 	} else {
@@ -228,7 +221,7 @@ void Scumm::scummInit()
 	setShake(0);
 	setupCursor();
 	
-	/* Allocate and initilise actors */
+	// Allocate and Initialize actors
 	_actors = new Actor[NUM_ACTORS];
 	for (i = 1, a = getFirstActor(); ++a, i < NUM_ACTORS; i++) {
 		a->number = i;
@@ -1584,6 +1577,8 @@ void Scumm::launch()
 
 	setupScummVars();
 
+	setupOpcodes();
+
 	if (_features & GF_AFTER_V8)
 		NUM_ACTORS = 80;
 	else if ((_features & GF_AFTER_V7) || (_gameId == GID_SAMNMAX))
@@ -1603,9 +1598,14 @@ void Scumm::launch()
 		_bootParam = -7873;
 	}
 
-	readIndexFile();
+	if (_features & GF_OLD_BUNDLE)
+		_resourceHeaderSize = 2; // FIXME - to be rechecked
+	else if (_features & GF_SMALL_HEADER)
+		_resourceHeaderSize = 6;
+	else
+		_resourceHeaderSize = 8;
 
-	setupOpcodes();
+	readIndexFile();
 
 	scummInit();
 
