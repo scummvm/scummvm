@@ -36,7 +36,7 @@ Scumm *scumm;
 ScummDebugger debugger;
 Gui gui;
 OSystem _system;
-GameDetecter detecter;
+GameDetector detector;
 
 SoundEngine sound;
 SOUND_DRIVER_TYPE snd_driv;
@@ -789,7 +789,7 @@ void initGraphics(Scumm *s, bool fullScreen, unsigned int scaleFactor) {
 
 	char buf[512], *gameName;
 	
-	sprintf(buf, "ScummVM - %s", gameName = detecter.getGameName());
+	sprintf(buf, "ScummVM - %s", gameName = detector.getGameName());
 	free(gameName);
 
 	desired.freq = SAMPLES_PER_SEC;
@@ -851,7 +851,7 @@ void initGraphics(Scumm *s, bool fullScreen, unsigned int scaleFactor) {
 void setWindowName(Scumm *s) {
   char buf[512], *gameName;
   
-  sprintf(buf, "ScummVM - %s", gameName = detecter.getGameName());
+  sprintf(buf, "ScummVM - %s", gameName = detector.getGameName());
   free(gameName);
   SDL_WM_SetCaption(buf,buf);
 }
@@ -922,19 +922,19 @@ int main(int argc, char* argv[]) {
 	long i;
 
 
-	if(detecter.detectMain(argc, argv))
+	if(detector.detectMain(argc, argv))
 		return(-1);
 
-	if(detecter._features & GF_OLD256)
+	if(detector._features & GF_OLD256)
 		scumm = new Scumm_v3;
 	else
-	if(detecter._features & GF_SMALL_HEADER) // this force loomCD as v4
+	if(detector._features & GF_SMALL_HEADER) // this force loomCD as v4
 		scumm = new Scumm_v4;
 	else
-	if(detecter._features & GF_AFTER_V7)
+	if(detector._features & GF_AFTER_V7)
 		scumm = new Scumm_v7;
 	else
-	if(detecter._features & GF_AFTER_V6) // this force SamnmaxCD as v6
+	if(detector._features & GF_AFTER_V6) // this force SamnmaxCD as v6
 		scumm = new Scumm_v6;
 	else
 		scumm = new Scumm_v5;
@@ -1073,19 +1073,19 @@ int main(int argc, char* argv[]) {
 	
 /* */
 
-	scumm->_fullScreen = detecter._fullScreen;
-	scumm->_debugMode = detecter._debugMode;
-	scumm->_bootParam = detecter._bootParam;
-	scumm->_scale = detecter._scale;
-	scumm->_gameDataPath = detecter._gameDataPath;
-	scumm->_gameTempo = detecter._gameTempo;
-	scumm->_soundEngine = detecter._soundEngine;
-	scumm->_videoMode = detecter._videoMode;
-	scumm->_exe_name = detecter._exe_name;
-	scumm->_gameId = detecter._gameId;
-	scumm->_gameText = detecter._gameText;
-	scumm->_features = detecter._features;
-	scumm->_soundCardType = detecter._soundCardType;
+	scumm->_fullScreen = detector._fullScreen;
+	scumm->_debugMode = detector._debugMode;
+	scumm->_bootParam = detector._bootParam;
+	scumm->_scale = detector._scale;
+	scumm->_gameDataPath = detector._gameDataPath;
+	scumm->_gameTempo = detector._gameTempo;
+	scumm->_soundEngine = detector._soundEngine;
+	scumm->_videoMode = detector._videoMode;
+	scumm->_exe_name = detector._exe_name;
+	scumm->_gameId = detector._gameId;
+	scumm->_gameText = detector._gameText;
+	scumm->_features = detector._features;
+	scumm->_soundCardType = detector._soundCardType;
 
 	
 	scumm->_gui = &gui;

@@ -1,3 +1,26 @@
+/* ScummVM - Scumm Interpreter
+ * Copyright (C) 2001  Ludvig Strigeus
+ * Copyright (C) 2001/2002 The ScummVM project
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ *
+ * $Header$
+ *
+ */
+
+
 #include "stdafx.h"
 #include "scumm.h"
 #include "gameDetector.h"
@@ -20,7 +43,7 @@
                                                 "\tf       - fullscreen mode\n" \
                                                 "\tg       - graphics mode. 1 for 2xSai anti-aliasing\n"
 
-void GameDetecter::parseCommandLine(int argc, char **argv) {
+void GameDetector::parseCommandLine(int argc, char **argv) {
         #if !defined(__APPLE__CW)
         int i;
         char *s;
@@ -176,14 +199,14 @@ static const VersionSettings version_settings[] = {
 
         /* Scumm Version 7 */
         {"ft",          "Full Throttle",                                GID_FT,       7, 3, 0, GF_NEW_OPCODES|GF_AFTER_V6|GF_AFTER_V7},
-            {"dig",                     "The Dig",                                                                              GID_DIG,      7, 5, 0, GF_NEW_OPCODES|GF_AFTER_V6|GF_AFTER_V7},
+		{"dig",			"The Dig",										GID_DIG,		7, 5, 0, GF_NEW_OPCODES|GF_AFTER_V6|GF_AFTER_V7},
 
-        /* Scumm Version 8 */
-//      {"curse",       "The Curse of Monkey Island",                   GID_CMI,      8, 1, 0,},
+		/* Scumm Version 8 */
+//		{"curse",       "The Curse of Monkey Island",                   GID_CMI,      8, 1, 0,},
         {NULL,NULL}
 };
 
-bool GameDetecter::detectGame() {
+bool GameDetector::detectGame() {
         const VersionSettings *gnl = version_settings;
 
         _gameId = 0;
@@ -191,10 +214,8 @@ bool GameDetecter::detectGame() {
         do {
                 if (!scumm_stricmp(_exe_name, gnl->filename)) {
                         _gameId = gnl->id;
-			_scummVersion = gnl->major;
-//                      _majorScummVersion = gnl->major;
-//                      _middleScummVersion = gnl->middle;
-//                      _minorScummVersion = gnl->minor;
+						_scummVersion = gnl->major;
+
                         _features = gnl->features;
                         _gameText = gnl->gamename;
                         debug(1, "Detected game '%s', version %d.%d.%d",
@@ -208,7 +229,7 @@ bool GameDetecter::detectGame() {
         return true;
 }
 
-char *GameDetecter::getGameName() {
+char *GameDetector::getGameName() {
         if (_gameText==NULL) {
                 char buf[256];
                 sprintf(buf, "Unknown game: \"%s\"", _exe_name);
@@ -217,12 +238,12 @@ char *GameDetecter::getGameName() {
         return strdup(_gameText);
 }
 
-int GameDetecter::detectMain(int argc, char **argv)
+int GameDetector::detectMain(int argc, char **argv)
 {
-        _debugMode = 0;  // off by default...
+        _debugMode = 0;		// off by default...
 	
-        _noSubtitles = 0;  // use by default - should this depend on soundtrack?        
-	_scale = 2;  // double size by default
+        _noSubtitles = 0;	// use by default - should this depend on soundtrack?        
+		_scale = 2;			// double size by default
 
         _gameDataPath = NULL;
         _gameTempo = 0;
