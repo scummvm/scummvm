@@ -1160,7 +1160,7 @@ void Sound::bundleMusicHandler(Scumm *scumm) {
 }
 
 int Sound::playBundleSound(char *sound) {
-	byte *ptr;
+	byte *ptr, *orig_ptr;
 	bool result;
 
 	if (_scumm->_noDigitalSamples)
@@ -1197,23 +1197,24 @@ int Sound::playBundleSound(char *sound) {
 		ptr = (byte *)malloc(1000000);
 		output_size = _scumm->_bundle->decompressVoiceSampleByName(name, ptr);
 		if (output_size == 0) {
-			delete ptr;
+			free(ptr);
 			return -1;
 		}
 	} else {
 		ptr = (byte *)malloc(1000000);
 		output_size = _scumm->_bundle->decompressVoiceSampleByName(sound, ptr);
 		if (output_size == 0) {
-			delete ptr;
+			free(ptr);
 			return -1;
 		}
 	}
 	assert(output_size <= 1000000);
+	orig_ptr = ptr;
 
 	tag = READ_BE_UINT32(ptr); ptr += 4;
 	if (tag != MKID_BE('iMUS')) {
 		warning("Decompression of bundle sound failed");
-		free(ptr);
+		free(orig_ptr);
 		return -1;
 	}
 
@@ -1252,7 +1253,7 @@ int Sound::playBundleSound(char *sound) {
 
 	byte *final = (byte *)malloc(size);
 	memcpy(final, ptr, size);
-	free(ptr);
+	free(orig_ptr);
 
 	if (_scumm->_actorToPrintStrFor != 0xFF && _scumm->_actorToPrintStrFor != 0) {
 		Actor *a = _scumm->derefActorSafe(_scumm->_actorToPrintStrFor, "playBundleSound");
