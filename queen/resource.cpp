@@ -77,14 +77,6 @@ int32 QueenResource::resourceIndex(const char *filename) {
 		*ptr = toupper(*ptr);
 	while (*ptr++);
 
-
-	/*
-	for (uint32 i = 0; i < _gameVersion->resourceEntries; i++)
-		if (!(strcmp(entryName, _gameVersion->resourceTable[i].filename)))
-				return i;
-	return -1;
-	*/
-	
 	uint32 low = 0;
 	uint32 high = _gameVersion->resourceEntries - 1;
 
