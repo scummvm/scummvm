@@ -50,7 +50,7 @@ static const char USAGE_STRING[] =
 	"\t-g<mode>   - graphics mode (normal,2x,3x,2xsai,super2xsai,supereagle,advmame2x,tv2x)\n"
 	"\t-e<mode>   - set music engine (see README for details)\n"
 	"\t-a         - specify game is amiga version\n"
-	"\t-q<lang>   - specify language for comi (en,de,fr,it,pt,es,ja,zh,ko,hb)\n"
+	"\t-q<lang>   - specify language (en,de,fr,it,pt,es,ja,zh,ko,hb)\n"
 	"\n"
 	"\t-c<num>    - use cdrom <num> for cd audio\n"
 	"\t-m<num>    - set music volume to <num> (0-255)\n"
@@ -161,8 +161,8 @@ const VersionSettings version_settings[] = {
 	{"simon1cd32", "Simon the Sorcerer 1 Talkie for Amiga CD32", GID_SIMON_FIRST+36, 99, 99, 99, 0, "gameamiga"},
 	{"simon2win", "Simon the Sorcerer 2 Talkie for Windows", GID_SIMON_FIRST+7, 99, 99, 99, 0, "GSPTR30"},
 	{"simon2win", "Simon the Sorcerer 2 Talkie for Windows", GID_SIMON_FIRST+7, 99, 99, 99, 0, "GSPTR30."},
-	{"simon2amiga", "Simon the Sorcerer 2 Talkie for Amiga", GID_SIMON_FIRST+23, 99, 99, 99, 0, "GSPTR30."},
-	{"simon2mac", "Simon the Sorcerer 2 Talkie for Mac", GID_SIMON_FIRST+23, 99, 99, 99, 0, "GSPTR30."},
+	{"simon2amiga", "Simon the Sorcerer 2 Talkie for Amiga", GID_SIMON_FIRST+23, 99, 99, 99, 0, "GSPTR30"},
+	{"simon2mac", "Simon the Sorcerer 2 Talkie for Mac", GID_SIMON_FIRST+23, 99, 99, 99, 0, "GSPTR30"},
 	{"simon1demo", "Simon the Sorcerer 1 for DOS (Demo)", GID_SIMON_FIRST+8, 99, 99, 99, 0, "GDEMO"}, 
 	{"simon2demo", "Simon the Sorcerer 2 Talkie for DOS (Demo)", GID_SIMON_FIRST+5, 99, 99, 99, 0, "GSPTR30"}, 
 
