@@ -176,7 +176,7 @@ void ScummEngine_v90he::setupOpcodes() {
 		OPCODE(o6_endCutscene),
 		/* 68 */
 		OPCODE(o6_cutscene),
-		OPCODE(o6_stopMusic),
+		OPCODE(o6_invalid),
 		OPCODE(o6_freezeUnfreeze),
 		OPCODE(o80_cursorCommand),
 		/* 6C */
