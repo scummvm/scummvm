@@ -1009,7 +1009,7 @@ uint32 OSystem_WINCE3::property(int param, Property *value) {
 		if (ConfMan.getBool("CE_FM_high_quality"))
 			return FMOPL_EG_ENT_HQ;
 		else
-			return FMOPL_EG_ENT_LQ;
+			return (_gameDetector._targetName == "queen" ? FMOPL_EG_ENT_LQ_2 : FMOPL_EG_ENT_LQ);
 	}
 	
 	return OSystem_SDL_Common::property(param, value);
