@@ -41,7 +41,6 @@ void Smush::timerCallback(void *refCon) {
 
 Smush::Smush() {
 	g_smush = this;
-	_mutex = create_mutex();
 	_nbframes = 0;
 	_internalBuffer = NULL;
 	_externalBuffer = NULL;
@@ -59,11 +58,9 @@ Smush::Smush() {
 
 Smush::~Smush() {
 	deinit();
-	delete_mutex(_mutex);
 }
 
 void Smush::init() {
-	StackLock lock(_mutex);
 	_stream = NULL;
 	_frame = 0;
 	_movieTime = 0;
@@ -71,18 +68,16 @@ void Smush::init() {
 	_videoPause = false;
 	_updateNeeded = false;
 
-	if (!_internalBuffer) {
-		_internalBuffer = (byte *)malloc(_width * _height * 2);
-	}
-	if (!_externalBuffer) {
-		_externalBuffer = (byte *)malloc(_width * _height * 2);
-	}
+	assert(!_internalBuffer);
+	assert(!_externalBuffer);
+
+	_internalBuffer = (byte *)malloc(_width * _height * 2);
+	_externalBuffer = (byte *)malloc(_width * _height * 2);
 
 	g_timer->installTimerProc(&timerCallback, _speed, NULL);
 }
 
 void Smush::deinit() {
-	StackLock lock(_mutex);
     g_timer->removeTimerProc(&timerCallback);
 
 	if (_internalBuffer) {
@@ -136,7 +131,6 @@ void Smush::handleWave(const byte *src, uint32 size) {
 }
 
 void Smush::handleFrame() {
-	StackLock lock(_mutex);
 	uint32 tag;
 	int32 size;
 	int pos = 0;
