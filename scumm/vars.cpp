@@ -166,6 +166,10 @@ void ScummEngine_v6::setupScummVars() {
 	VAR_TIMEDATE_DAY = 128;
 	VAR_TIMEDATE_HOUR = 125;
 	VAR_TIMEDATE_MINUTE = 126;
+
+	// Sam & Max specific
+	VAR_CHARSET_MASK = 123;
+
 }
 
 void ScummEngine_v7he::setupScummVars() {
@@ -275,6 +279,8 @@ void ScummEngine_v7::setupScummVars() {
 	VAR_NEW_ROOM = 35;
 	VAR_WALKTO_OBJ = 36;
 
+	//VAR_NUM_GLOBAL_OBJS = 37;
+
 	VAR_CAMERA_DEST_X = 38;
 	VAR_CAMERA_DEST_Y = 39;
 	VAR_CAMERA_FOLLOWED_ACTOR = 40;
@@ -324,12 +330,18 @@ void ScummEngine_v7::setupScummVars() {
 	VAR_CHARINC = 115;
 	VAR_DEBUGMODE = 116;
 
+	// Full Throttle specific	
 	VAR_CHARSET_MASK = 119;
+
 	VAR_VIDEONAME = 123;
 	VAR_CUSTOMSCALETABLE = 131;
 	VAR_BLAST_ABOVE_TEXT = 133;
 
 	VAR_STRING2DRAW = 130;
+
+	//VAR_MUSIC_BUNDLE_LOADED = 135;
+	//VAR_VOICE_BUNDLE_LOADED = 136;
+
 }
 
 void ScummEngine_v8::setupScummVars() {
