@@ -38,6 +38,7 @@
 #ifdef _MSC_VER
 #	pragma warning( disable : 4068 ) // turn off "unknown pragma" warning
 #	pragma warning( disable : 4244 ) // turn off "conversion from 'type1' to 'type2', possible loss of data" warning
+#	pragma warning( disable : 4390 ) // turn off "empty controlled statement found" warning
 #endif
 
 #if _MSC_VER > 1000
