@@ -27,8 +27,8 @@
 // of Linc, and also as part of the game
 
 // I assume Linc was the name of some sort of development tool. Anyway, I've
-// removed the pieces of code that were labelled as INSIDE_LINC, because they
-// didn't look easily portable.
+// removed the pieces of code that were labelled as INSIDE_LINC, because we
+// don't have it, and probably wouldn't have much use for it if we did.
 
 // The machine code table
 
