@@ -21,6 +21,7 @@
 
 #include "stdafx.h"
 #include "scumm.h"
+#include "actor.h"
 #include "intern.h"
 #include "sound.h"
 #include "verbs.h"
@@ -833,6 +834,7 @@ void Scumm_v8::o8_actorOps()
 	// TODO
 	byte subOp = fetchScriptByte();
 	Actor *a;
+	int i, j;
 
 	if (subOp == 0x7A) {
 		_curActor = pop();
@@ -846,43 +848,151 @@ void Scumm_v8::o8_actorOps()
 
 	switch (subOp) {
 	case 0x64:		// SO_ACTOR_COSTUME Set actor costume
+		a->setActorCostume(pop());
+		break;
 	case 0x65:		// SO_ACTOR_STEP_DIST Set actor width of steps
-//	case 0x66:		// SO_358
+		j = pop();
+		i = pop();
+		a->setActorWalkSpeed(i, j);
+		break;
 	case 0x67:		// SO_ACTOR_ANIMATION_DEFAULT Set actor animation to default
+		a->initFrame = 1;
+		a->walkFrame = 2;
+		a->standFrame = 3;
+		a->talkFrame1 = 4;
+		a->talkFrame2 = 5;
+		break;
 	case 0x68:		// SO_ACTOR_ANIMATION_INIT Initialize animation
+		a->initFrame = pop();
+		break;
 	case 0x69:		// SO_ACTOR_ANIMATION_TALK Set actor animation to talk animation
+		a->talkFrame2 = pop();
+		a->talkFrame1 = pop();
+		break;
 	case 0x6A:		// SO_ACTOR_ANIMATION_WALK Set actor animation to walk animation
+		a->walkFrame = pop();
+		break;
 	case 0x6B:		// SO_ACTOR_ANIMATION_STAND Set actor animation to standing animation
+		a->standFrame = pop();
+		break;
 	case 0x6C:		// SO_ACTOR_ANIMATION_SPEED Set speed of animation
+		a->animSpeed = pop();
+		a->animProgress = 0;
+		break;
 	case 0x6D:		// SO_ACTOR_DEFAULT
+		// FIXME - is this right? Or maybe a->initActor(2) ?
+		a->initActor(0);
+		break;
 	case 0x6E:		// SO_ACTOR_ELEVATION
+		a->elevation = pop();
+		a->needRedraw = true;
+		a->needBgReset = true;
+		break;
 	case 0x6F:		// SO_ACTOR_PALETTE Set actor palette
+		j = pop();
+		i = pop();
+		checkRange(31, 0, i, "Illegal palet slot %d");
+		a->palette[i] = j;
+		a->needRedraw = true;
+		break;
 	case 0x70:		// SO_ACTOR_TALK_COLOR Set actor talk color
+		a->talkColor = pop();
+		break;
 	case 0x71:		// SO_ACTOR_NAME Set name of actor
+		loadPtrToResource(rtActorName, a->number, NULL);
+		break;
 	case 0x72:		// SO_ACTOR_WIDTH Set width of actor
+		a->width = pop();
+		break;
 	case 0x73:		// SO_ACTOR_SCALE Set scaling of actor
+		a->scalex = a->scaley = pop();
+		a->needRedraw = true;
+		a->needBgReset = true;
+		break;
 	case 0x74:		// SO_ACTOR_NEVER_ZCLIP ?
+		a->forceClip = 0;
+		break;
 	case 0x75:		// SO_ACTOR_ALWAYS_ZCLIP ?
+		a->forceClip = pop();
+		break;
 	case 0x76:		// SO_ACTOR_IGNORE_BOXES Make actor ignore boxes
+		a->ignoreBoxes = true;
+		a->forceClip = 100;
+		if (a->isInCurrentRoom())
+			a->putActor(a->x, a->y, a->room);
+		break;
 	case 0x77:		// SO_ACTOR_FOLLOW_BOXES Make actor follow boxes
+		a->ignoreBoxes = false;
+		a->forceClip = 100;
+		if (a->isInCurrentRoom())
+			a->putActor(a->x, a->y, a->room);
+		break;
 	case 0x78:		// SO_ACTOR_SPECIAL_DRAW
+		// TODO - implement this!
+		i = pop();
+		warning("o8_actorOps: specialDraw(%d) not implemented", i);
+		break;
 	case 0x79:		// SO_ACTOR_TEXT_OFFSET Set text offset relative to actor
-	case 0x7A:		// SO_ACTOR_INIT Initialize actor
+		a->talkPosX = pop();
+		a->talkPosY = pop();
+		break;
+//	case 0x7A:		// SO_ACTOR_INIT Initialize actor
 	case 0x7B:		// SO_ACTOR_VARIABLE Set actor variable
+		// FIXME - is this right??
+		i = pop();
+		a->setAnimVar(pop(), i);
+		break;
 	case 0x7C:		// SO_ACTOR_IGNORE_TURNS_ON Make actor ignore turns
+		a->ignoreTurns = true;
+		break;
 	case 0x7D:		// SO_ACTOR_IGNORE_TURNS_OFF Make actor follow turns
+		a->ignoreTurns = false;
+		break;
 	case 0x7E:		// SO_ACTOR_NEW New actor
+		// FIXME - is this right? Or maybe a->initActor(0) ?
+		a->initActor(2);
+		break;
 	case 0x7F:		// SO_ACTOR_DEPTH Set actor Z position
+		a->layer = pop();
+		break;
 	case 0x80:		// SO_ACTOR_STOP
+		a->stopActorMoving();
+		a->startAnimActor(a->standFrame);
+		break;
 	case 0x81:		// SO_ACTOR_FACE Make actor face angle
+		a->moving &= ~MF_TURN;
+		a->setDirection(pop());
+		break;
 	case 0x82:		// SO_ACTOR_TURN Turn actor
+		a->turnToDirection(pop());
+		break;
 	case 0x83:		// SO_ACTOR_WALK_SCRIPT Set walk script for actor?
+		a->walk_script = pop();
+		break;
 	case 0x84:		// SO_ACTOR_TALK_SCRIPT Set talk script for actor?
+		a->talk_script = pop();
+		break;
 	case 0x85:		// SO_ACTOR_WALK_PAUSE
+		a->moving |= 0x80;
+		break;
 	case 0x86:		// SO_ACTOR_WALK_RESUME
+		a->moving &= ~0x7f;
+		break;
 	case 0x87:		// SO_ACTOR_VOLUME Set volume of actor speech
+		// TODO - implement this!
+		i = pop();
+		warning("o8_actorOps: setActorVolume(%d) not implemented", i);
+		break;
 	case 0x88:		// SO_ACTOR_FREQUENCY Set frequency of actor speech
+		// TODO - implement this!
+		i = pop();
+		warning("o8_actorOps: setActorFrequency(%d) not implemented", i);
+		break;
 	case 0x89:		// SO_ACTOR_PAN
+		// TODO - implement this!
+		i = pop();
+		warning("o8_actorOps: setActorPan(%d) not implemented", i);
+		break;
 	default:
 		error("o8_actorOps: default case %d", subOp);
 	}
