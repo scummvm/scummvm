@@ -46,14 +46,17 @@ void ScummEngine::unkMessage1(const byte *msg) {
 
 	if (buffer[0] == 0xFF && buffer[1] == 10) {
 		uint32 a, b;
+		int channel = 0;
 
 		a = buffer[2] | (buffer[3] << 8) | (buffer[6] << 16) | (buffer[7] << 24);
 		b = buffer[10] | (buffer[11] << 8) | (buffer[14] << 16) | (buffer[15] << 24);
 
 		// Sam and Max uses a caching system, printing empty messages
 		// and setting VAR_V6_SOUNDMODE beforehand. See patch 609791.
-		if (VAR(VAR_V6_SOUNDMODE) != 2)
-			_sound->talkSound(a, b, 1, VAR(VAR_V6_SOUNDMODE));
+		if (_gameId == GID_SAMNMAX && VAR(VAR_V6_SOUNDMODE) != 2)
+			channel = VAR(VAR_V6_SOUNDMODE);
+
+		_sound->talkSound(a, b, 1, channel);
 	}
 }
 
