@@ -3,7 +3,7 @@ RESIDUALPATH=C:/residual
 
 ### Modify these paths
 SDL_CFLAGS=-I$(SRC)sdl/include
-SDL_LIBS=-L$(SRC)sdl/lib -lSDL
+SDL_LIBS=-L$(SRC)sdl/lib -lSDLmain -lSDL
 
 CXX = g++
 CXXFLAGS = -g -W -Wall -Ilua/include $(SDL_CFLAGS) # -O2 
@@ -12,7 +12,8 @@ LIBS = -Llua/lib -llua -llualib -lmingw32 -lopengl32 -lglu32 $(SDL_LIBS)
 
 OBJS = main.o lab.o bitmap.o model.o resource.o material.o debug.o \
 	textsplit.o lua.o registry.o localize.o scene.o engine.o actor.o \
-	sound.o mixer.o keyframe.o costume.o walkplane.o textobject.o
+	sound.o mixer.o keyframe.o costume.o walkplane.o textobject.o \
+	matrix3.o matrix4.o
 DEPS = $(OBJS:.o=.d)
 EXEEXT =.exe
 
@@ -28,7 +29,7 @@ lua-build:
 	$(MAKE) -C lua
 
 clean: lua-clean
-	-rm -f residual *.o *.d *~
+	-rm -f residual.exe *.o *.d *~
 
 lua-clean:
 	$(MAKE) -C lua clean
@@ -38,7 +39,7 @@ lua-clean:
 .PHONY: lua-build lua-clean
 
 # Some additional targets
-install:   residual$(EXEEXT)
+install:   residual
 	mkdir -p $(RESIDUALPATH)
 	strip residual$(EXEEXT) -o $(RESIDUALPATH)/residual$(EXEEXT)
 
