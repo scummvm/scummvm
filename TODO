@@ -185,12 +185,6 @@ Files
   Of course that can be added w/o a FileManager class, too - but it might be
   nice to have all of these integrated.
 
-Game Detector
-=============
-* Improve the detector for games with all datafiles in subdirs (i.e.
-  Broken Sword 1 & 2). To allow this, we could pass also directories to the
-  detect functions; those then could optionally scan sub directories.
-
 GUI
 ===
 * Remove hard coded 320x200 assumptions, use game screen size
