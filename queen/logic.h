@@ -38,7 +38,10 @@ enum Language {
 };
 
 enum RoomDisplayMode {
-
+	RDM_FADE_NOJOE  = 0, // fade in, no Joe
+	RDM_FADE_JOE    = 1, // Joe is to be displayed
+	RDM_NOFADE_JOE  = 2, // screen does not dissolve into view
+	RDM_FADE_JOE_XY = 3  // display Joe at the current X, Y coords
 };
 
 struct ZoneSlot {
@@ -65,8 +68,8 @@ public:
 	uint16 objMax(int room);
 	GraphicData* graphicData(int index);
 
-	uint16 findBob(uint16 obj); // FIXME: move that to QueenDisplay ?
-	uint16 findFrame(uint16 obj); // FIXME: move that to QueenDisplay ?
+	uint16 findBob(uint16 obj);
+	uint16 findFrame(uint16 obj);
 	uint16 objectForPerson(uint16 bobnum);
 	WalkOffData *walkOffPointForObject(uint16 obj);
 
@@ -102,12 +105,15 @@ public:
 	void zoneSetup();
 
 	void roomErase();
-	uint16 roomSetupFurniture(uint16 frames); // SETUP_FURNITURE()
+	void roomSetupFurniture(); // SETUP_FURNITURE()
 	void roomSetupObjects(); // DISP_OBJECTS
 	void roomSetup(const char* room, int comPanel, bool inCutaway);
-	void roomDisplay(const char* room, int state, uint16 joeScale, int comPanel, bool inCutaway); // DISP_ROOM
+	void roomDisplay(const char* room, RoomDisplayMode mode, uint16 joeScale, int comPanel, bool inCutaway); // DISP_ROOM
 
 	uint16 findScale(uint16 x, uint16 y);
+
+	int16 entryObj() const { return _entryObj; }
+	void entryObj(int16 obj) { _entryObj = obj; }
 
 
 protected:
@@ -157,9 +163,11 @@ protected:
 	uint16 _numFurnitureAnimated; // FMAXA
 	uint16 _numFurnitureStatic; // FMAX
 	uint16 _numFurnitureAnimatedLen; // FMAXLEN
+	uint16 _numFrames; // FRAMES
 
 	Resource *_resource;
 	Graphics *_graphics;
+public:
 	Walk *_walk;
 
 	void initialise();

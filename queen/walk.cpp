@@ -303,7 +303,6 @@ void Walk::animatePerson(const MovePersonData *mpd, const Person *pp) {
 
 	uint16 i;
 	for (i = 1; i <= _walkDataCount; ++i) {
-//		MovePersonAnim *mpa = &_moveAnim[i];
 		WalkData *pwd = &_walkData[i];
 		// unpack necessary frames for bob animation
 		uint16 dstFrame = pp->image;
@@ -364,25 +363,25 @@ void Walk::joeSetup() {
 }
 
 
-ObjectData *Walk::joeSetupInRoom(int state, uint16 scale, uint16 entryObj) {
+ObjectData *Walk::joeSetupInRoom(bool autoPosition, uint16 scale) {
 	// queen.c SETUP_HERO()
 
 	uint16 oldx;
 	uint16 oldy;
 	WalkOffData *pwo = NULL;
-	ObjectData *pod = _logic->objectData(entryObj);
+	ObjectData *pod = _logic->objectData(_logic->entryObj());
 	if (pod == NULL) {
-		error("Walk::joeSetupInRoom() - No object data for obj %d", entryObj);
+		error("Walk::joeSetupInRoom() - No object data for obj %d", _logic->entryObj());
 	}
 
-	if (state == 3 || _logic->joeX() != 0 || _logic->joeY()) {
+	if (!autoPosition || _logic->joeX() != 0 || _logic->joeY() != 0) {
 		oldx = _logic->joeX();
 		oldy = _logic->joeY();
 	}
 	else {
 		// find the walk off point for the entry object and make 
 		// Joe walking to that point
-		pwo = _logic->walkOffPointForObject(entryObj);
+		pwo = _logic->walkOffPointForObject(_logic->entryObj());
 		if (pwo != NULL) {
 			oldx = pwo->x;
 			oldy = pwo->y;
