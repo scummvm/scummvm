@@ -57,8 +57,6 @@ void ChooserDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data
 		break;
 	case kCloseCmd:
 		setResult(-1);
-		close();
-		break;
 	default:
 		Dialog::handleCommand(sender, cmd, data);
 	}

@@ -43,7 +43,6 @@ public:
 	ChooserDialog(const String &title, const StringList &list, const String &buttonLabel = "Choose", int height = 140);
 
 	virtual void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);
-	ListWidget *getListWidget() { return _list; }	// HACK
 };
 
 #endif
