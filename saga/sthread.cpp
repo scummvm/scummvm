@@ -547,7 +547,6 @@ int STHREAD_Run(R_SCRIPT_THREAD *thread, int instr_limit, int msec) {
 			iresult = iparam1 + iparam2;
 			SSTACK_Push(thread->stack, (SDataWord_T) iresult);
 			break;
-
 			// (SUB): Subtraction
 		case 0x2D:
 			SSTACK_Pop(thread->stack, &param2);
@@ -566,7 +565,7 @@ int STHREAD_Run(R_SCRIPT_THREAD *thread, int instr_limit, int msec) {
 			iresult = iparam1 * iparam2;
 			SSTACK_Push(thread->stack, (SDataWord_T) iresult);
 			break;
-			// (DIB): Integer division
+			// (DIV): Integer division
 		case 0x2F:
 			SSTACK_Pop(thread->stack, &param2);
 			SSTACK_Pop(thread->stack, &param1);
@@ -638,6 +637,9 @@ int STHREAD_Run(R_SCRIPT_THREAD *thread, int instr_limit, int msec) {
 			data = (iparam1 <= iparam2) ? 1 : 0;
 			SSTACK_Push(thread->stack, data);
 			break;
+
+// BITWISE INSTRUCTIONS   
+
 			// (SHR): Arithmetic binary shift right
 		case 0x3F:
 			SSTACK_Pop(thread->stack, &param2);
@@ -651,9 +653,6 @@ int STHREAD_Run(R_SCRIPT_THREAD *thread, int instr_limit, int msec) {
 			}
 			SSTACK_Push(thread->stack, param1);
 			break;
-
-// BITWISE INSTRUCTIONS   
-
 			// (SHL) Binary shift left
 		case 0x40:
 			SSTACK_Pop(thread->stack, &param2);
@@ -734,7 +733,7 @@ int STHREAD_Run(R_SCRIPT_THREAD *thread, int instr_limit, int msec) {
 					if (!ScriptModule.voice_lut_present) {
 						voice_rn = -1;
 					} else {
-						voice_rn = ScriptModule. current_script->voice->voices[data];
+						voice_rn = ScriptModule.current_script->voice->voices[data];
 					}
 					ACTOR_Speak(a_index, ScriptModule.current_script->diag-> str[data], voice_rn, &thread->sem);
 				}

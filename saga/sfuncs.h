@@ -44,37 +44,38 @@ struct R_SFUNC_ENTRY {
 
 extern R_SFUNC_ENTRY SFuncList[];
 
-// SF 1
-int SF_Sleep(R_SCRIPTFUNC_PARAMS);
-// SF 3
+int SF_sleep(R_SCRIPTFUNC_PARAMS);
 int SF_3(R_SCRIPTFUNC_PARAMS);
-// SF 4
-int SF_SetCommandText(R_SCRIPTFUNC_PARAMS);
-// SF 6
-int SF_ActorWalkTo(R_SCRIPTFUNC_PARAMS);
-// SF 8
-int SF_SetActorOrient(R_SCRIPTFUNC_PARAMS);
-// SF 11
-int SF_FreezeInterface(R_SCRIPTFUNC_PARAMS);
-// SF 26
-int SF_StartAnim(R_SCRIPTFUNC_PARAMS);
-// SF 27
-int SF_ActorWalkToAsync(R_SCRIPTFUNC_PARAMS);
-// SF 30
-int SF_PlaceActor(R_SCRIPTFUNC_PARAMS);
-// SF 36
-int SF_ActorWalkTo2(R_SCRIPTFUNC_PARAMS);
-// SF 37
-int SF_SetActorAct(R_SCRIPTFUNC_PARAMS);
-// SF 38
-int SF_SetActorAct2(R_SCRIPTFUNC_PARAMS);
-// SF 41
-int SF_LinkAnim(R_SCRIPTFUNC_PARAMS);
-// SF 43
-int SF_PlaceActorEx(R_SCRIPTFUNC_PARAMS);
-// SF 44
-int SF_CheckUserInterrupt(R_SCRIPTFUNC_PARAMS);
+int SF_setCommandText(R_SCRIPTFUNC_PARAMS);
+int SF_actorWalkTo(R_SCRIPTFUNC_PARAMS);
+int SF_setFacing(R_SCRIPTFUNC_PARAMS);
+int SF_freezeInterface(R_SCRIPTFUNC_PARAMS);
+int SF_startAnim(R_SCRIPTFUNC_PARAMS);
+int SF_actorWalkToAsync(R_SCRIPTFUNC_PARAMS);
+int SF_moveTo(R_SCRIPTFUNC_PARAMS);
+int SF_actorWalk(R_SCRIPTFUNC_PARAMS);
+int SF_cycleActorFrames(R_SCRIPTFUNC_PARAMS);
+int SF_setFrame(R_SCRIPTFUNC_PARAMS);
+int SF_linkAnim(R_SCRIPTFUNC_PARAMS);
+int SF_placeActor(R_SCRIPTFUNC_PARAMS);
+int SF_checkUserInterrupt(R_SCRIPTFUNC_PARAMS);
+int SF_moveRelative(R_SCRIPTFUNC_PARAMS);
+int SF_doAction(R_SCRIPTFUNC_PARAMS);
+int SF_faceTowards(R_SCRIPTFUNC_PARAMS);
+int SF_setFollower(R_SCRIPTFUNC_PARAMS);
+int SF_centerActor(R_SCRIPTFUNC_PARAMS);
+int SF_setActorState(R_SCRIPTFUNC_PARAMS);
+int SF_swapActors(R_SCRIPTFUNC_PARAMS);
+int SF_scriptSpecialWalk(R_SCRIPTFUNC_PARAMS);
+int SF_walkRelative(R_SCRIPTFUNC_PARAMS);
+int SF_throwActor(R_SCRIPTFUNC_PARAMS);
+int SF_waitWalk(R_SCRIPTFUNC_PARAMS);
+int SF_changeActorScene(R_SCRIPTFUNC_PARAMS);
+int SF_climb(R_SCRIPTFUNC_PARAMS);
+int SF_setActorZ(R_SCRIPTFUNC_PARAMS);
+int SF_getActorX(R_SCRIPTFUNC_PARAMS);
+int SF_getActorY(R_SCRIPTFUNC_PARAMS);
 
-} // End of namespace Saga
+}
 
 #endif

@@ -40,21 +40,21 @@ namespace Saga {
 
 R_SFUNC_ENTRY SFuncList[R_SFUNC_NUM] = {
 	{0, 0, NULL},
-	{1, 1, SF_Sleep},
+	{1, 1, SF_sleep},
 	{2, 0, NULL},
 	{3, 1, SF_3},
-	{4, 1, SF_SetCommandText},
+	{4, 1, SF_setCommandText},
 	{5, 0, NULL},
-	{6, 3, SF_ActorWalkTo},
-	{7, 0, NULL},
-	{8, 2, SF_SetActorOrient},
+	{6, 3, SF_actorWalkTo},
+	{7, 0, SF_doAction},
+	{8, 2, SF_setFacing},
 	{9, 0, NULL},
 	{10, 0, NULL},
-	{11, 1, SF_FreezeInterface},
+	{11, 1, SF_freezeInterface},
 	{12, 0, NULL},
 	{13, 0, NULL},
-	{14, 0, NULL},
-	{15, 0, NULL},
+	{14, 0, SF_faceTowards},
+	{15, 0, SF_setFollower},
 	{16, 0, NULL},
 	{17, 0, NULL},
 	{18, 0, NULL},
@@ -64,43 +64,43 @@ R_SFUNC_ENTRY SFuncList[R_SFUNC_NUM] = {
 	{22, 0, NULL},
 	{23, 0, NULL},
 	{24, 0, NULL},
-	{25, 0, NULL},
-	{26, 3, SF_StartAnim},
-	{27, 3, SF_ActorWalkToAsync},
+	{25, 0, SF_centerActor},
+	{26, 3, SF_startAnim},
+	{27, 3, SF_actorWalkToAsync},
 	{28, 0, NULL},
-	{29, 0, NULL},
-	{30, 3, SF_PlaceActor},
+	{29, 0, SF_setActorState},
+	{30, 3, SF_moveTo},
 	{31, 0, NULL},
 	{32, 0, NULL},
 	{33, 0, NULL},
-	{34, 0, NULL},
+	{34, 0, SF_swapActors},
 	{35, 0, NULL},
-	{36, 4, SF_ActorWalkTo2},
-	{37, 4, SF_SetActorAct},
-	{38, 3, SF_SetActorAct2},
+	{36, 4, SF_actorWalk},
+	{37, 4, SF_cycleActorFrames},
+	{38, 3, SF_setFrame},
 	{39, 0, NULL},
 	{40, 0, NULL},
-	{41, 4, SF_LinkAnim},
-	{42, 0, NULL},
-	{43, 6, SF_PlaceActorEx},
-	{44, 0, SF_CheckUserInterrupt},
-	{45, 0, NULL},
-	{46, 0, NULL},
+	{41, 4, SF_linkAnim},
+	{42, 0, SF_scriptSpecialWalk},
+	{43, 6, SF_placeActor},
+	{44, 0, SF_checkUserInterrupt},
+	{45, 0, SF_walkRelative},
+	{46, 0, SF_moveRelative},
 	{47, 0, NULL},
 	{48, 0, NULL},
 	{49, 0, NULL},
 	{50, 0, NULL},
 	{51, 0, NULL},
-	{52, 0, NULL},
-	{53, 0, NULL},
+	{52, 0, SF_throwActor},
+	{53, 0, SF_waitWalk},
 	{54, 0, NULL},
-	{55, 0, NULL},
-	{56, 0, NULL},
+	{55, 0, SF_changeActorScene},
+	{56, 0, SF_climb},
 	{57, 0, NULL},
-	{58, 0, NULL},
+	{58, 0, SF_setActorZ},
 	{59, 0, NULL},
-	{60, 0, NULL},
-	{61, 0, NULL},
+	{60, 0, SF_getActorX},
+	{61, 0, SF_getActorY},
 	{62, 0, NULL},
 	{63, 0, NULL},
 	{64, 0, NULL},
@@ -122,7 +122,7 @@ R_SFUNC_ENTRY SFuncList[R_SFUNC_NUM] = {
 // Script function #1 (0x01) blocking
 // Suspends thread execution for the specified time period
 // Param1: time to suspend ( units? )
-int SF_Sleep(R_SCRIPTFUNC_PARAMS) {
+int SF_sleep(R_SCRIPTFUNC_PARAMS) {
 	SDataWord_T time_param;
 	int time;
 
@@ -148,7 +148,7 @@ int SF_3(R_SCRIPTFUNC_PARAMS) {
 // Script function #4 (0x04) nonblocking
 // Set the command display to the specified text string
 // Param1: dialogue index of string
-int SF_SetCommandText(R_SCRIPTFUNC_PARAMS) {
+int SF_setCommandText(R_SCRIPTFUNC_PARAMS) {
 	SDataWord_T s_idx_parm;
 
 	SSTACK_Pop(thread->stack, &s_idx_parm);
@@ -162,7 +162,7 @@ int SF_SetCommandText(R_SCRIPTFUNC_PARAMS) {
 // Param1: actor id
 // Param2: actor destination x
 // Param3: actor destination y
-int SF_ActorWalkTo(R_SCRIPTFUNC_PARAMS) {
+int SF_actorWalkTo(R_SCRIPTFUNC_PARAMS) {
 	SDataWord_T actor_parm;
 	SDataWord_T x_parm;
 	SDataWord_T y_parm;
@@ -189,11 +189,16 @@ int SF_ActorWalkTo(R_SCRIPTFUNC_PARAMS) {
 	return R_SUCCESS;
 }
 
+// Script function #7
+int SF_doAction(R_SCRIPTFUNC_PARAMS) {
+	return R_SUCCESS;
+}
+
 // Script function #8 (0x08) nonblocking
 // Sets the orientation of the specified actor.
 // Param1: actor id
 // Param2: actor orientation
-int SF_SetActorOrient(R_SCRIPTFUNC_PARAMS) {
+int SF_setFacing(R_SCRIPTFUNC_PARAMS) {
 	SDataWord_T actor_parm;
 	SDataWord_T orient_parm;
 	int actor_id;
@@ -220,7 +225,7 @@ int SF_SetActorOrient(R_SCRIPTFUNC_PARAMS) {
 // continues to run. If the parameter is false, the user interface is 
 // reenabled.
 // Param1: boolean
-int SF_FreezeInterface(R_SCRIPTFUNC_PARAMS) {
+int SF_freezeInterface(R_SCRIPTFUNC_PARAMS) {
 	SDataWord_T b_param;
 
 	SSTACK_Pop(thread->stack, &b_param);
@@ -234,12 +239,28 @@ int SF_FreezeInterface(R_SCRIPTFUNC_PARAMS) {
 	return R_SUCCESS;
 }
 
+// Script function #14
+int SF_faceTowards(R_SCRIPTFUNC_PARAMS) {
+	return R_SUCCESS;
+}
+
+// Script function #15
+int SF_setFollower(R_SCRIPTFUNC_PARAMS) {
+	return R_SUCCESS;
+}
+
+// Script function #25
+int SF_centerActor(R_SCRIPTFUNC_PARAMS) {
+	return R_SUCCESS;
+}
+
 // Script function #26 (0x1A) nonblocking
 // Starts the specified animation 
 // Param1: ?
 // Param2: frames of animation to play or -1 to loop
 // Param3: animation id
-int SF_StartAnim(R_SCRIPTFUNC_PARAMS) {
+int SF_startAnim(R_SCRIPTFUNC_PARAMS) {
+// FIXME: implementation is wrong. Should link animation
 	SDataWord_T unk_parm;
 	SDataWord_T frame_parm;
 	SDataWord_T anim_id_parm;
@@ -266,7 +287,7 @@ int SF_StartAnim(R_SCRIPTFUNC_PARAMS) {
 // Param1: actor id
 // Param2: actor destination x
 // Param3: actor destination y
-int SF_ActorWalkToAsync(R_SCRIPTFUNC_PARAMS) {
+int SF_actorWalkToAsync(R_SCRIPTFUNC_PARAMS) {
 	SDataWord_T actor_parm;
 	SDataWord_T x_parm;
 	SDataWord_T y_parm;
@@ -293,13 +314,18 @@ int SF_ActorWalkToAsync(R_SCRIPTFUNC_PARAMS) {
 	return R_SUCCESS;
 }
 
+// Script function #29
+int SF_setActorState(R_SCRIPTFUNC_PARAMS) {
+	return R_SUCCESS;
+}
+
 // Script function #30 (0x1E) nonblocking
 // Positions an actor at the specified location; actor is created if the 
 // actor does not already exist.
 // Param1: actor id
 // Param2: actor pos x
 // Param3: actor pos y
-int SF_PlaceActor(R_SCRIPTFUNC_PARAMS) {
+int SF_moveTo(R_SCRIPTFUNC_PARAMS) {
 	SDataWord_T actor_parm;
 	SDataWord_T x_parm;
 	SDataWord_T y_parm;
@@ -330,13 +356,18 @@ int SF_PlaceActor(R_SCRIPTFUNC_PARAMS) {
 	return R_SUCCESS;
 }
 
+// Script function #34
+int SF_swapActors(R_SCRIPTFUNC_PARAMS) {
+	return R_SUCCESS;
+}
+
 // Script function #36 (0x24) ?
 // Commands the specified actor to walk to the given position
 // Param1: actor id
 // Param2: actor destination x
 // Param3: actor destination y
 // Param4: unknown
-int SF_ActorWalkTo2(R_SCRIPTFUNC_PARAMS) {
+int SF_actorWalk(R_SCRIPTFUNC_PARAMS) {
 	// INCOMPLETE
 	SDataWord_T actor_parm;
 	SDataWord_T x_parm;
@@ -374,7 +405,7 @@ int SF_ActorWalkTo2(R_SCRIPTFUNC_PARAMS) {
 // Param2: unknown
 // Param3: actor action state
 // Param4: unknown
-int SF_SetActorAct(R_SCRIPTFUNC_PARAMS) {
+int SF_cycleActorFrames(R_SCRIPTFUNC_PARAMS) {
 	// INCOMPLETE
 	SDataWord_T actor_parm;
 	SDataWord_T unk1_parm;
@@ -406,7 +437,7 @@ int SF_SetActorAct(R_SCRIPTFUNC_PARAMS) {
 // Param1: actor id
 // Param2: actor action state
 // Param3: unknown
-int SF_SetActorAct2(R_SCRIPTFUNC_PARAMS) {
+int SF_setFrame(R_SCRIPTFUNC_PARAMS) {
 	// INCOMPLETE
 
 	SDataWord_T actor_parm;
@@ -441,7 +472,7 @@ int SF_SetActorAct2(R_SCRIPTFUNC_PARAMS) {
 // Param2: total linked frame count
 // Param3: animation id link target
 // Param4: animation id link source
-int SF_LinkAnim(R_SCRIPTFUNC_PARAMS) {
+int SF_linkAnim(R_SCRIPTFUNC_PARAMS) {
 	SDataWord_T unk_parm;
 	SDataWord_T tframes_parm;
 	SDataWord_T anim1_parm;
@@ -466,6 +497,11 @@ int SF_LinkAnim(R_SCRIPTFUNC_PARAMS) {
 	return R_SUCCESS;
 }
 
+// Script function #42
+int SF_scriptSpecialWalk(R_SCRIPTFUNC_PARAMS) {
+	return R_SUCCESS;
+}
+
 // Script function #43 (0x2B) nonblocking
 // Positions an actor at the specified location; actor is created if the 
 //  actor does not already exist.
@@ -475,7 +511,7 @@ int SF_LinkAnim(R_SCRIPTFUNC_PARAMS) {
 // Param4: ?
 // Param5: actor action
 // Param6: ?
-int SF_PlaceActorEx(R_SCRIPTFUNC_PARAMS) {
+int SF_placeActor(R_SCRIPTFUNC_PARAMS) {
 	// INCOMPLETE
 	SDataWord_T actor_parm;
 	SDataWord_T x_parm;
@@ -522,11 +558,56 @@ int SF_PlaceActorEx(R_SCRIPTFUNC_PARAMS) {
 // Checks to see if the user has interrupted a currently playing 
 // game cinematic. Pushes a zero or positive value if the game 
 // has not been interrupted.
-int SF_CheckUserInterrupt(R_SCRIPTFUNC_PARAMS) {
+int SF_checkUserInterrupt(R_SCRIPTFUNC_PARAMS) {
 	SSTACK_Push(thread->stack, 0);
 
 	// INCOMPLETE
 
+	return R_SUCCESS;
+}
+
+// Script function #45
+int SF_walkRelative(R_SCRIPTFUNC_PARAMS) {
+	return R_SUCCESS;
+}
+
+// Script function #46
+int SF_moveRelative(R_SCRIPTFUNC_PARAMS) {
+	return R_SUCCESS;
+}
+
+// Script function #52
+int SF_throwActor(R_SCRIPTFUNC_PARAMS) {
+	return R_SUCCESS;
+}
+
+// Script function #53
+int SF_waitWalk(R_SCRIPTFUNC_PARAMS) {
+	return R_SUCCESS;
+}
+
+// Script function #55
+int SF_changeActorScene(R_SCRIPTFUNC_PARAMS) {
+	return R_SUCCESS;
+}
+
+// Script function #56
+int SF_climb(R_SCRIPTFUNC_PARAMS) {
+	return R_SUCCESS;
+}
+
+// Script function #58
+int SF_setActorZ(R_SCRIPTFUNC_PARAMS) {
+	return R_SUCCESS;
+}
+
+// Script function #60
+int SF_getActorX(R_SCRIPTFUNC_PARAMS) {
+	return R_SUCCESS;
+}
+
+// Script function #61
+int SF_getActorY(R_SCRIPTFUNC_PARAMS) {
 	return R_SUCCESS;
 }
 

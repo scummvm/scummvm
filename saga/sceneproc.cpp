@@ -105,6 +105,8 @@ int InitialSceneProc(int param, R_SCENE_INFO *scene_info) {
 
 		ANIM_SetFlag(0, ANIM_LOOP);
 		ANIM_Play(0, delay_time);
+
+		debug(0, "InitialSceneproc(): Scene started");
 		break;
 	case SCENE_END:
 		break;
