@@ -371,8 +371,23 @@ void Sound::playSound(int soundID) {
 		
 		if (_scumm->_gameId == GID_MONKEY_VGA || _scumm->_gameId == GID_MONKEY_EGA) {
 			// Sound is currently not supported at all in the amiga versions of these games
-			if (_scumm->_features & GF_AMIGA)
+			if (_scumm->_features & GF_AMIGA) {
+				int track = -1;
+				if (soundID == 50)
+					track = 17;
+				else if (soundID == 53)
+					track = 18;
+				else if ((soundID >= 100) && (soundID <= 118)) {
+					char tracks[19] = {7,6,4,12,2,2,2,2,5,10,1,16,8,9,13,11,15,3,14};
+					track = tracks[soundID - 100];
+				}
+				if (track != -1) {
+					playCDTrack(track,((track < 5) || (track > 16)) ? 1 : -1,0,0);
+					stopCDTimer();
+					_currentCDSound = soundID;
+				}
 				return;
+			}
 	
 			// Works around the fact that in some places in MonkeyEGA/VGA,
 			// the music is never explicitly stopped.
