@@ -2845,7 +2845,7 @@ void Scumm_v6::o6_kernelGetFunctions()
 void Scumm_v6::o6_delayFrames()
 {
 	ScriptSlot *ss = &vm.slot[_currentScript];
-	if (ss->delayFrameCount== 0) {
+	if (ss->delayFrameCount == 0) {
 		ss->delayFrameCount = pop();
 	} else {
 		ss->delayFrameCount--;

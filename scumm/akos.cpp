@@ -70,17 +70,14 @@ enum AkosOpcodes {
 
 bool Scumm::akos_hasManyDirections(Actor *a)
 {
-	if (_features & GF_NEW_COSTUMES) {
-		byte *akos;
-		AkosHeader *akhd;
+	byte *akos;
+	AkosHeader *akhd;
 
-		akos = getResourceAddress(rtCostume, a->costume);
-		assert(akos);
+	akos = getResourceAddress(rtCostume, a->costume);
+	assert(akos);
 
-		akhd = (AkosHeader *) findResourceData(MKID('AKHD'), akos);
-		return (akhd->flags & 2) != 0;
-	}
-	return 0;
+	akhd = (AkosHeader *) findResourceData(MKID('AKHD'), akos);
+	return (akhd->flags & 2) != 0;
 }
 
 int Scumm::akos_frameToAnim(Actor *a, int frame)

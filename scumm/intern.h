@@ -429,6 +429,8 @@ protected:
 	void o8_kernelGetFunctions();
 	void o8_getDateTime();
 
+	void o8_getActorChore();
+
 	void o8_getObjectImageX();
 	void o8_getObjectImageY();
 	void o8_getObjectImageWidth();

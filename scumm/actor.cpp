@@ -474,7 +474,7 @@ void Actor::startAnimActor(int f)
 		if (f == 3 && _vm->_gameId == GID_INDY3_256 && (_vm->_currentRoom != 79))
 			f = initFrame;
 
-		if (isInCurrentRoom() && costume) {
+		if (isInCurrentRoom() && costume != 0) {
 			animProgress = 0;
 			cost.animCounter1 = 0;
 			needRedraw = true;

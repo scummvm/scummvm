@@ -336,8 +336,7 @@ void Scumm_v8::setupOpcodes()
 		OPCODE(o6_getObjectX),
 		/* EC */
 		OPCODE(o6_getObjectY),
-		OPCODE(o6_getActorAnimCounter1),	// FIXME: This is bogus, it should return the value set by setActorChoreLimbFrame
-							// It's pretty critical, and part of (At least) the cannon toomanyscripts crash
+		OPCODE(o8_getActorChore),
 		OPCODE(o6_distObjectObject),
 		OPCODE(o6_distPtPt),
 		/* F0 */
@@ -584,16 +583,21 @@ void Scumm_v8::o8_mod()
 void Scumm_v8::o8_wait()
 {
 	// TODO
+	int actnum, offs;
+	Actor *a;
 	byte subOp = fetchScriptByte();
+
 	switch (subOp) {
-	case 0x1E: {		// SO_WAIT_FOR_ACTOR Wait for actor (to finish current action?)
-		int offs = fetchScriptWordSigned();
-		if (derefActorSafe(pop(), "o8_wait:SO_WAIT_FOR_ACTOR")->moving) {
+	case 0x1E:		// SO_WAIT_FOR_ACTOR Wait for actor (to finish current action?)
+		offs = fetchScriptWordSigned();
+		actnum = pop();
+		a = derefActorSafe(actnum, "o8_wait:SO_WAIT_FOR_ACTOR");
+		assert(a);
+		if (a->moving) {
 			_scriptPointer += offs;
 			o6_breakHere();
 		}
 		return;
-	}
 	case 0x1F:		// SO_WAIT_FOR_MESSAGE Wait for message
 		if (_vars[VAR_HAVE_MSG])
 			break;
@@ -611,27 +615,26 @@ void Scumm_v8::o8_wait()
 		if (!isScriptInUse(_vars[VAR_SENTENCE_SCRIPT]))
 			return;
 		break;
-	case 0x22: {		// SO_WAIT_FOR_ANIMATION
-		int actnum = pop();
-		Actor *a = derefActorSafe(actnum, "o8_wait:SO_WAIT_FOR_ANIMATION");
-		int offs = fetchScriptWordSigned();
-		if (a && a->isInCurrentRoom() && a->needRedraw) {
+	case 0x22:		// SO_WAIT_FOR_ANIMATION
+		offs = fetchScriptWordSigned();
+		actnum = pop();
+		a = derefActorSafe(actnum, "o8_wait:SO_WAIT_FOR_ANIMATION");
+		assert(a);
+		if (a->isInCurrentRoom() && a->needRedraw) {
 			_scriptPointer += offs;
 			o6_breakHere();
 		}
 		return;
-	}
-	case 0x23: {		// SO_WAIT_FOR_TURN
-		int actnum = pop();
-		Actor *a = derefActorSafe(actnum, "o8_wait:SO_WAIT_FOR_TURN");
-		int offs = fetchScriptWordSigned();
-		if (a && a->isInCurrentRoom() && a->moving & MF_TURN) {
+	case 0x23:		// SO_WAIT_FOR_TURN
+		offs = fetchScriptWordSigned();
+		actnum = pop();
+		a = derefActorSafe(actnum, "o8_wait:SO_WAIT_FOR_TURN");
+		assert(a);
+		if (a->isInCurrentRoom() && a->moving & MF_TURN) {
 			_scriptPointer += offs;
 			o6_breakHere();
 		}
 		return;
-	}
-
 	default:
 		error("o8_wait: default case 0x%x", subOp);
 	}
@@ -1315,6 +1318,7 @@ void Scumm_v8::o8_startVideo()
 void Scumm_v8::o8_kernelSetFunctions()
 {
 	// TODO
+	Actor *a;
 	int args[30];
 	int len = getStackList(args, sizeof(args) / sizeof(args[0]));
 
@@ -1336,10 +1340,14 @@ void Scumm_v8::o8_kernelSetFunctions()
 //		}
 		break;
 	case 13:	// remapCostume
-		derefActorSafe(args[1], "o8_kernelSetFunctions:remapCostume")->remapActorPalette(args[2], args[3], args[4], -1);
+		a = derefActorSafe(args[1], "o8_kernelSetFunctions:remapCostume");
+		assert(a);
+		a->remapActorPalette(args[2], args[3], args[4], -1);
 		break;
 	case 14:	// remapCostumeInsert
-		derefActorSafe(args[1], "o8_kernelSetFunctions:remapCostumeInsert")->remapActorPalette(args[2], args[3], args[4], args[5]);
+		a = derefActorSafe(args[1], "o8_kernelSetFunctions:remapCostumeInsert");
+		assert(a);
+		a->remapActorPalette(args[2], args[3], args[4], args[5]);
 		break;
 	case 15:	// setVideoFrameRate
 		// not used anymore (was smush frame rate)
@@ -1353,8 +1361,29 @@ void Scumm_v8::o8_kernelSetFunctions()
 	case 22:	// setBannerColors
 //		warning("o8_kernelSetFunctions: setBannerColors(%d, %d, %d, %d)", args[1], args[2], args[3], args[4]);
 		break;
-	case 23:	// setActorChoreLimbFrame - FIXME: This is critical, and is the cause of the Cannon "too many scripts" crash
-//		warning("o8_kernelSetFunctions: setActorChoreLimbFrame(%d, %d, %d, %d)", args[1], args[2], args[3], args[4]);
+	case 23:	// setActorChoreLimbFrame
+		{
+		// FIXME: This is critical, and is the cause of the Cannon "too many scripts" crash
+		// This opcode is used a lot in script 28.
+		warning("o8_kernelSetFunctions: setActorChoreLimbFrame(%d, %d, %d, %d)", args[1], args[2], args[3], args[4]);
+		a = derefActorSafe(args[1], "o8_kernelSetFunctions:setActorChoreLimbFrame");
+		assert(a);
+/*
+		// The naming of this opcode would suggest this labeling of variables:
+		int chore = args[2];	// mostly the return value of actorTalkAnimation() 
+		int limb = args[3];		// mostly 0 and 1, but also 2, 3
+		int frame = args[4];	// some number usually derived from lipSyncWidth and lipSyncHeight
+		
+		// However, I am not fully sure that is correct (names can deceive, or can simply be wrong).
+		// And even if it is, the question is how to use it...
+		
+		// Note that akos_decodeData takes as parameter a "chore" = frame and bitmask
+		// specifiying a set of limbs. That would lead to code like this:
+		a->frame = chore;
+		akos_decodeData(a, frame, 0x8000 >> limb);
+		// But that seems to be quite bogus :-) Anyway, this is just random guessing, and
+		// it would be much better if somebody would disassmble the code in question.
+*/		}
 		break;
 	case 24:	// clearTextQueue
 		warning("o8_kernelSetFunctions: clearTextQueue()");
@@ -1449,9 +1478,17 @@ void Scumm_v8::o8_kernelGetFunctions()
 		break;
 	case 0xDA:		// lipSyncWidth
 	case 0xDB:		// lipSyncHeight
-	case 0xDC:		// actorTalkAnimation
-		// TODO - these methods are for lip syncing. Not so important right now, though
+		// TODO - these methods are probably for lip syncing?
 		push(0);
+		break;
+	case 0xDC:		// actorTalkAnimation
+		// TODO - this method is used mostly to compute a parameter for setActorChoreLimbFrame 
+		// (to be precise, the second parameter, i.e. args[1])
+		{
+		Actor *a = derefActorSafe(args[1], "actorTalkAnimation");
+		assert(a);
+		push(0);
+		}
 		break;
 	case 0xDD:		// getMasterSFXVol
 		push(_sound->_sound_volume_sfx / 2);
@@ -1486,6 +1523,19 @@ void Scumm_v8::o8_kernelGetFunctions()
 		error("o8_kernelGetFunctions: default case 0x%x (len = %d)", args[0], len);
 	}
 
+}
+
+void Scumm_v8::o8_getActorChore()
+{
+	int actnum = pop();
+	Actor *a = derefActorSafe(actnum, "o8_getActorChore");
+	assert(a);
+
+	// FIXME: hack to avoid the "Too many scripts running" in the canon scene
+	push(11);
+	// Maybe this would be the correct code here? What scumm calls a "chore" corresponds
+	// to our actor "frame", I think.
+//	push(a->frame);
 }
 
 void Scumm_v8::o8_getObjectImageX()
