@@ -27,16 +27,21 @@
 #include "scumm_globals.h"
 
 enum {
-	optNone					=	0,
-	optIsARMDevice			=	1 <<	0,
-	optIsOS5Device			=	1 <<	1,
-	optIsClieDevice			=	1 <<	2,
-	optIsZodiacDevice		=	1 <<	3,
-	optIsCollapsible		=	1 <<	4,
-	optHasWideMode			=	1 <<	5,
-	optIsLandscapeDisplay	=	1 <<	6,	// screen pitch is always based on Landscape mode (portrait/landscape)
-	optHasLandscapeMode		=	1 <<	7,	// screen pitch can be based on portrait or landscape
-	optHas16BitMode			=	1 <<	8,
+	kOptNone					=	0,
+	kOptDeviceARM			=	1 <<	0x00,
+	kOptDeviceOS5			=	1 <<	0x01,
+	kOptDeviceClie			=	1 <<	0x02,
+	kOptDeviceZodiac		=	1 <<	0x03,
+	kOptModeWide			=	1 <<	0x04,
+	kOptModeLandscape		=	1 <<	0x05,
+	kOptMode16Bit			=	1 <<	0x06,
+	kOptModeHiDensity		=	1 <<	0x07,
+	kOptCollapsible			=	1 <<	0x08,
+	kOptDisableOnScrDisp	=	1 <<	0x09,
+	kOpt5WayNavigator		=	1 <<	0x0A,
+	kOptPalmSoundAPI		=	1 <<	0x0B,
+	
+	kOptDeviceProcX86		=	1 <<	0x1F	// DEBUG only
 };
 
 enum {
@@ -75,6 +80,11 @@ typedef struct {
 		UInt8 on;
 		UInt8 off;
 	} indicator;
+
+	struct {
+		UInt8 *pageAddr1;
+		UInt8 *pageAddr2;
+	} flipping;
 	
 	struct {
 		Boolean MP3;
@@ -87,6 +97,8 @@ typedef struct {
 
 extern GlobalsDataPtr gVars;
 
-#define OPTIONS(x)	(gVars->options & (x))
+#define OPTIONS_TST(x)	(gVars->options & (x))
+#define OPTIONS_SET(x)	gVars->options |= (x)
+#define OPTIONS_RST(x)	gVars->options &= ~(x)
 
 #endif
