@@ -19,7 +19,6 @@ dc5e63ecf2672d4a3a0458fe32902a4e BluesBirthdayDemo.he2
 0794110b085ee91c2aa4a5fc844ff2f4 BluesBirthdayDemo.he4
 ccca9a823d117afb1a882fd707586bf0 BluesBirthdayDemo.d32
 
-
 (freddi5 cd)
 sev
 C:\Dev\Project\SPUTM\Src\SrcPWin\*.cpp
@@ -45,5 +44,3 @@ eac7453b1dca87447974ef54137470f9 READDEMO.W32
 8d150f9d9e12e485da50c4560135b4ef DATA/INT_RT_IN_04.DAT
 8cde496829546daaaa28084c49f3f4f7 DATA/INT_RT_IN_05.DAT
 c784fa970208b5bd49fff568ca0036ec DATA/INT_RT_IN_06.DAT
-
-
