@@ -501,12 +501,12 @@ void SmushPlayer::parseXPAL() {
 
 	parseNPAL();
 
-/*	for(i=0; i<0x300; i++) {
+	for(i=0; i<0x300; i++) {
 		_fluPalMul129[i] += _fluPalWords[i];
 		_fluPalette[i] = _fluPalMul129[i]>>7;
 	}
 
-	_paletteChanged = true;*/
+	_paletteChanged = true;
 }
 
 void SmushPlayer::parseFRME() {
