@@ -25,19 +25,18 @@ int MidiDriver_YamahaPa1::open() {
 	if (!(_isOpen = Pa1Lib_midiOpen(NULL, &_midiHandle)))
 		return MERR_DEVICE_NOT_AVAILABLE;
 
-	Pa1Lib_midiControlChange(_midiHandle,0,120,0); // all sound off
-	Pa1Lib_midiControlChange(_midiHandle,0,121,0); // reset all controller
-	Pa1Lib_midiControlChange(_midiHandle,0,123,0); // all notes off
-
 	return 0;
 }
 
 void MidiDriver_YamahaPa1::close() {
 	if (_isOpen) {
-		Pa1Lib_midiControlChange(_midiHandle,0,120,0); // all sound off
-		Pa1Lib_midiControlChange(_midiHandle,0,121,0); // reset all controller
-		Pa1Lib_midiControlChange(_midiHandle,0,123,0); // all notes off
+		for (UInt8 channel = 0; channel < 16; channel++) {
+			Pa1Lib_midiControlChange(_midiHandle, channel, 120,0); // all sound off
+			Pa1Lib_midiControlChange(_midiHandle, channel, 121,0); // reset all controller
+			Pa1Lib_midiControlChange(_midiHandle, channel, 123, 0); // all notes off
+		}
 		Pa1Lib_midiClose(_midiHandle);
+		_isOpen = false;
 	}
 }
 
