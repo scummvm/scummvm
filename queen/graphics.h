@@ -28,12 +28,69 @@
 #define MAX_BANK_SIZE      110
 #define MAX_FRAMES_NUMBER  256
 #define MAX_BANKS_NUMBER    18
+#define MAX_BOBS_NUMBER     64
 
 
-struct ObjectFrame {
-  uint16 width, height;
-  uint16 xhotspot, yhotspot;
-  uint8 *data;
+struct BobFrame {
+	uint16 width, height;
+	uint16 xhotspot, yhotspot;
+	uint8 *data;
+};
+
+// FIXME: share that with logic.h (ObjectData) ?
+struct Box {
+	uint16 x1, y1, x2, y2;
+
+	bool intersects(uint16 x, uint16 y, uint16 w, uint16 h) const {
+		return (x + w > x1) && (y + h > y1) && (x <= x2) && (y <= y2);
+	}
+};
+
+
+struct BobSlot {
+	bool active; 
+	uint16 x, y;     //! current position
+	Box box;         //! bounding box
+	bool xflip; 
+	uint16 scale;    //! shrinking percentage
+	uint16 frameNum; //! associated BobFrame
+	uint8 frameDir;  //! 'direction' for the next frame (-1, 1)
+
+	//! animation stuff
+	bool animating;
+	struct {
+		uint16 speed, speedBak;
+
+		//! string based animation
+		struct {
+			uint8* buffer;
+			uint8* curPos;
+		} string;
+
+		//! normal moving animation
+		struct {
+			bool rebound;
+			uint16 firstFrame, lastFrame;
+		} normal;
+
+	} anim;
+
+	bool moving;
+	uint16 speed;      //! moving speed
+	bool xmajor;       //! move along x axis instead of y
+	int8 xdir, ydir;   //! moving direction
+	uint16 endx, endy; //! destination point
+	uint16 dx, dy;
+	uint16 total;
+
+	void moveOneStep();
+	void animOneStep();
+};
+
+
+//! Inks indexes
+enum {
+	INK_BG_PANEL = 0xE2
 };
 
 
@@ -42,11 +99,26 @@ public:
 
 	QueenGraphics(QueenResource *resource);
 
-	void bankLoad(const char *bankname, uint32 bankslot);
-	void bankUnpack(uint32 srcframe, uint32 dstframe, uint32 bankslot);
-	void bankOverpack(uint32 srcframe, uint32 dstframe, uint32 bankslot);
-	void bankErase(uint32 bankslot);
-	
+	void bankLoad(const char *bankname, uint32 bankslot); // loadbank()
+	void bankUnpack(uint32 srcframe, uint32 dstframe, uint32 bankslot); // unpackbank()
+	void bankOverpack(uint32 srcframe, uint32 dstframe, uint32 bankslot); // overpackbank()
+	void bankErase(uint32 bankslot); // erase()
+
+	void bobAnimString(uint32 bobnum, uint8* animBuf); // stringanim()
+	void bobAnimNormal(uint32 bobnum, uint16 firstFrame, uint16 lastFrame, uint16 speed, bool rebound, bool xflip); // makeanim()
+	void bobMove(uint32 bobnum, uint16 endx, uint16 endy, int16 speed); // movebob()
+	void bobDraw(uint32 bobnum, uint16 x, uint16 y, uint16 scale, bool xflip, const Box& box); // bob()
+	void bobDrawInventoryItem(uint32 bobnum, uint16 x, uint16 y); // invbob()
+	void bobPaste(uint32 bobnum, uint16 x, uint16 y); // bobpaste()
+	void bobShrink(const BobFrame* pbf, uint16 percentage); // shrinkbob()
+	void bobClear(uint32 bobnum); // clearbob()
+	void bobSortAll(); // sortbobs()
+	void bobDrawAll(); // drawbobs()
+	void bobClearAll(); // clearallbobs()
+
+	void frameErase(uint32 fslot);
+
+
 private:
 	
 	struct PackedBank {
@@ -54,8 +126,19 @@ private:
 		uint8 *data;
 	};
 
-	ObjectFrame _frames[MAX_FRAMES_NUMBER];
-	PackedBank _banks[MAX_BANKS_NUMBER];
+	struct ShrunkBobFrame {
+		uint16 width;
+		uint16 height;
+		uint8 data[60000]; // FIXME: original buffer size, maybe it can be smaller
+	};
+
+	BobFrame _frames[MAX_FRAMES_NUMBER]; //! unbanked bob frames
+	PackedBank _banks[MAX_BANKS_NUMBER]; //! banked bob frames
+	BobSlot _bobs[MAX_BOBS_NUMBER];
+	BobSlot* _sortedBobs[MAX_BOBS_NUMBER + 1]; //! bobs displayed
+	ShrunkBobFrame _shrinkBuffer;
+	uint8 _ulines[201][20];
+	uint8 _panel[320 * 50]; // FIXME: rather in QueenDisplay ?
 
 	QueenResource *_resource;
 	
