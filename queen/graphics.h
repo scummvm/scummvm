@@ -138,7 +138,6 @@ public:
 
 	void update(uint16 room);
 
-
 	enum {
 		MAX_BOBS_NUMBER     =  64,
 		MAX_STRING_LENGTH   = 255,
@@ -180,7 +179,6 @@ private:
 
 	QueenEngine *_vm;
 };
-
 
 class BamScene {
 public:

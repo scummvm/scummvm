@@ -511,7 +511,7 @@ void Logic::setupRoom(const char *room, int comPanel, bool inCutaway) {
 	for (uint16 i = 1; i <= _numFurniture; ++i) {
 		if (_furnitureData[i].room == _currentRoom) {
 			++furnTot;
-			furn[furnTot] = _furnitureData[i].gameStateValue;
+			furn[furnTot] = _furnitureData[i].objNum;
 		}
 	}
 	_vm->graphics()->setupNewRoom(room, _currentRoom, furn, furnTot);
@@ -548,7 +548,7 @@ void Logic::displayRoom(uint16 room, RoomDisplayMode mode, uint16 scale, int com
 
 ActorData *Logic::findActor(uint16 noun, const char *name) {
 	uint16 obj = currentRoomData() + noun;
-	int16 img = _objectData[obj].image;
+	int16 img = objectData(obj)->image;
 	if (img != -3 && img != -4) {
 		warning("Logic::findActor() - Object %d is not a person", obj);
 		return NULL;
@@ -573,10 +573,7 @@ ActorData *Logic::findActor(uint16 noun, const char *name) {
 }
 
 
-bool Logic::initPerson(int16 noun, const char *actorName, bool loadBank, Person *pp) {
-	if (noun <= 0) {
-		warning("Logic::initPerson() - Invalid object number: %i", noun);
-	}
+bool Logic::initPerson(uint16 noun, const char *actorName, bool loadBank, Person *pp) {
 	ActorData *pad = findActor(noun, actorName);
 	if (pad != NULL) {
 		pp->actor = pad;
@@ -634,15 +631,13 @@ void Logic::setupJoe() {
 
 ObjectData *Logic::setupJoeInRoom(bool autoPosition, uint16 scale) {
 	debug(9, "Logic::setupJoeInRoom(%d, %d) joe.x=%d joe.y=%d", autoPosition, scale, _joe.x, _joe.y);
-
-	uint16 oldx;
-	uint16 oldy;
 	WalkOffData *pwo = NULL;
 	ObjectData *pod = objectData(_entryObj);
 	if (pod == NULL) {
 		error("Logic::setupJoeInRoom() - No object data for obj %d", _entryObj);
 	}
 
+	uint16 oldx, oldy;
 	if (!autoPosition || joeX() != 0 || joeY() != 0) {
 		oldx = joeX();
 		oldy = joeY();

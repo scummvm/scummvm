@@ -32,13 +32,11 @@
 
 namespace Queen {
 
-
 void BobSlot::curPos(int16 xx, int16 yy) {
 	active = true;
 	x = xx;
 	y = yy;
 }
-
 
 void BobSlot::move(int16 dstx, int16 dsty, int16 spd) {
 	active = true;
@@ -78,7 +76,6 @@ void BobSlot::move(int16 dstx, int16 dsty, int16 spd) {
 	moveOneStep();
 }
 
-
 void BobSlot::moveOneStep() {
 	if(xmajor) {
 		if(x == endx) {
@@ -106,7 +103,6 @@ void BobSlot::moveOneStep() {
 		}
 	}
 }
-
 
 void BobSlot::animOneStep() {
 	if (anim.string.buffer != NULL) {
@@ -142,7 +138,6 @@ void BobSlot::animOneStep() {
 	}
 }
 
-
 void BobSlot::animString(const AnimFrame *animBuf) {
 	active = true;
 	animating = true;
@@ -151,7 +146,6 @@ void BobSlot::animString(const AnimFrame *animBuf) {
 	frameNum = animBuf->frame;
 	anim.speed = animBuf->speed / 4;
 }
-
 
 void BobSlot::animNormal(uint16 firstFrame, uint16 lastFrame, uint16 spd, bool rebound, bool flip) {
 	active = true;
@@ -166,7 +160,6 @@ void BobSlot::animNormal(uint16 firstFrame, uint16 lastFrame, uint16 spd, bool r
 	frameDir = 1;
 	xflip = flip;
 }
-
 
 void BobSlot::clear() {
 	active = false;
@@ -190,11 +183,9 @@ Graphics::Graphics(QueenEngine *vm)
 	_shrinkBuffer.data = new uint8[ BOB_SHRINK_BUF_SIZE ];
 }
 
-
 Graphics::~Graphics() {
 	delete[] _shrinkBuffer.data;
 }
-
 
 void Graphics::unpackControlBank() {
 	_vm->bankMan()->load("control.BBK",17);
@@ -204,12 +195,10 @@ void Graphics::unpackControlBank() {
 	_vm->bankMan()->close(17);
 }
 
-
 void Graphics::setupMouseCursor() {
 	BobFrame *bf = _vm->bankMan()->fetchFrame(1);
 	_vm->display()->setMouseCursor(bf->data, bf->width, bf->height);
 }
-
 
 void Graphics::drawBob(const BobSlot *bs, int16 x, int16 y) {
 	debug(9, "Graphics::drawBob(%d, %d, %d)", bs->frameNum, x, y);
@@ -264,7 +253,6 @@ void Graphics::drawBob(const BobSlot *bs, int16 x, int16 y) {
 	}
 }
 
-
 void Graphics::drawInventoryItem(uint32 frameNum, uint16 x, uint16 y) {
 	if (frameNum != 0) {
 		BobFrame *bf = _vm->bankMan()->fetchFrame(frameNum);
@@ -274,7 +262,6 @@ void Graphics::drawInventoryItem(uint32 frameNum, uint16 x, uint16 y) {
 	}
 }
 
-
 void Graphics::pasteBob(uint16 objNum, uint16 image) {
 	GraphicData *pgd = _vm->logic()->graphicData(objNum);
 	_vm->bankMan()->unpack(pgd->firstFrame, image, 15);
@@ -282,7 +269,6 @@ void Graphics::pasteBob(uint16 objNum, uint16 image) {
 	_vm->display()->drawBobPasteDown(bf->data, pgd->x, pgd->y, bf->width, bf->height);
 	_vm->bankMan()->eraseFrame(image);
 }
-
 
 void Graphics::shrinkFrame(const BobFrame *bf, uint16 percentage) {
 	// computing new size, rounding to upper value
@@ -328,7 +314,6 @@ void Graphics::shrinkFrame(const BobFrame *bf, uint16 percentage) {
 	}
 }
 
-
 void Graphics::clearBob(uint32 bobNum) {
 	BobSlot *pbs = bob(bobNum);
 	pbs->clear();
@@ -336,7 +321,6 @@ void Graphics::clearBob(uint32 bobNum) {
 		pbs->box.y2 = GAME_SCREEN_HEIGHT - 1;
 	}
 }
-
 
 void Graphics::sortBobs() {
 	_sortedBobsCount = 0;
@@ -377,9 +361,7 @@ void Graphics::sortBobs() {
 			SWAP(_sortedBobs[index], _sortedBobs[smallest]);
 		}
 	}
-
 }
-
 
 void Graphics::drawBobs() {
 	int i;
@@ -412,20 +394,17 @@ void Graphics::drawBobs() {
 	}
 }
 
-
 void Graphics::clearBobs() {
 	for(int32 i = 0; i < ARRAYSIZE(_bobs); ++i) {
 		clearBob(i);
 	}
 }
 
-
 void Graphics::stopBobs() {
 	for(int32 i = 0; i < ARRAYSIZE(_bobs); ++i) {
 		_bobs[i].moving = false;
 	}
 }
-
 
 BobSlot *Graphics::bob(int index) {
 	if (index < MAX_BOBS_NUMBER)
@@ -435,7 +414,6 @@ BobSlot *Graphics::bob(int index) {
 				index, MAX_BOBS_NUMBER);
 	}
 }
-
 
 void Graphics::setBobText(
 		BobSlot *pbs, 
@@ -551,7 +529,6 @@ void Graphics::setBobText(
 	}
 }
 
-
 void Graphics::handleParallax(uint16 roomNum) {
 	int i;
 	uint16 screenScroll = _vm->display()->horizontalScroll();
@@ -619,7 +596,6 @@ void Graphics::handleParallax(uint16 roomNum) {
 	}
 }
 
-
 void Graphics::setupNewRoom(const char *room, uint16 roomNum, int16 *furniture, uint16 furnitureCount) {
 	// reset sprites table (bounding box...)
 	clearBobs();
@@ -638,7 +614,6 @@ void Graphics::setupNewRoom(const char *room, uint16 roomNum, int16 *furniture, 
 	}
 }
 
-
 void Graphics::fillAnimBuffer(const char *anim, AnimFrame *af) {
 	while (true) {
 		sscanf(anim, "%3hu,%3hu", &af->frame, &af->speed);
@@ -648,7 +623,6 @@ void Graphics::fillAnimBuffer(const char *anim, AnimFrame *af) {
 		++af;
 	}
 }
-
 
 uint16 Graphics::countAnimFrames(const char *anim) {
 	AnimFrame afbuf[30];
@@ -670,7 +644,6 @@ uint16 Graphics::countAnimFrames(const char *anim) {
 	}
 	return count;
 }
-
 
 void Graphics::setupObjectAnim(const GraphicData *gd, uint16 firstImage, uint16 bobNum, bool visible) {
 	int16 tempFrames[20];
@@ -747,7 +720,6 @@ void Graphics::setupObjectAnim(const GraphicData *gd, uint16 firstImage, uint16 
 	}
 }
 
-
 uint16 Graphics::setupPersonAnim(const ActorData *ad, const char *anim, uint16 curImage) {
 	debug(9, "Graphics::setupPersonAnim(%s, %d)", anim, curImage);
 	_personFrames[ad->bobNum] = curImage + 1;
@@ -795,13 +767,11 @@ uint16 Graphics::setupPersonAnim(const ActorData *ad, const char *anim, uint16 c
 	return curImage;
 }
 
-
 void Graphics::resetPersonAnim(uint16 bobNum) {
 	if (_newAnim[bobNum][0].frame != 0) {
 		bob(bobNum)->animString(_newAnim[bobNum]);
 	}
 }
-
 
 void Graphics::erasePersonAnim(uint16 bobNum) {
 	_newAnim[bobNum][0].frame = 0;
@@ -810,13 +780,11 @@ void Graphics::erasePersonAnim(uint16 bobNum) {
 	pbs->anim.string.buffer = NULL;
 }
 
-
 void Graphics::eraseAllAnims() {
 	for (int i = 1; i <= 16; ++i) {
 		_newAnim[i][0].frame = 0;
 	}
 }
-
 
 uint16 Graphics::refreshObject(uint16 obj) {
 	debug(6, "Graphics::refreshObject(%X)", obj);
@@ -903,7 +871,6 @@ uint16 Graphics::refreshObject(uint16 obj) {
 	return curImage;
 }
 
-
 void Graphics::setupRoomFurniture(int16 *furniture, uint16 furnitureCount) {
 	uint16 i;
 	uint16 curImage = 36 + FRAMES_JOE_XTRA;
@@ -973,7 +940,6 @@ void Graphics::setupRoomFurniture(int16 *furniture, uint16 furnitureCount) {
 		}
 	}
 }
-
 
 void Graphics::setupRoomObjects() {
 	uint16 i;
@@ -1085,7 +1051,6 @@ void Graphics::setupRoomObjects() {
 	}
 }
 
-
 uint16 Graphics::setupPerson(uint16 noun, uint16 curImage) {
 	if (noun == 0) {
 		warning("Trying to setup person 0");
@@ -1123,7 +1088,6 @@ uint16 Graphics::setupPerson(uint16 noun, uint16 curImage) {
 	return curImage;
 }
 
-
 uint16 Graphics::allocPerson(uint16 noun, uint16 curImage) {
 	Person p;
 	if (_vm->logic()->initPerson(noun, "", false, &p) && p.anim != NULL) {
@@ -1132,7 +1096,6 @@ uint16 Graphics::allocPerson(uint16 noun, uint16 curImage) {
 	}
 	return curImage;
 }
-
 
 void Graphics::update(uint16 room) {
 	sortBobs();
@@ -1145,11 +1108,9 @@ void Graphics::update(uint16 room) {
 }
 
 
-
 BamScene::BamScene(QueenEngine *vm)
 	: _flag(F_STOP), _screenShaked(false), _fightData(_fight1Data), _vm(vm) {
 }
-
 
 void BamScene::playSfx() {
 	// FIXME - we don't play all sfx here. This is only necessary for
@@ -1162,7 +1123,6 @@ void BamScene::playSfx() {
 		_lastSoundIndex = _index;
 	}
 }
-
 
 void BamScene::prepareAnimation() {
 	_obj1 = _vm->graphics()->bob(BOB_OBJ1);
@@ -1180,7 +1140,6 @@ void BamScene::prepareAnimation() {
 	_index = 0;
 	_lastSoundIndex = 0;
 }
-
 
 void BamScene::updateCarAnimation() {
 	if (_flag != F_STOP) {
@@ -1214,7 +1173,6 @@ void BamScene::updateCarAnimation() {
 		}
 	}
 }
-
 
 void BamScene::updateFightAnimation() {
 	if (_flag != F_STOP) {
@@ -1274,7 +1232,6 @@ void BamScene::updateFightAnimation() {
 		}
 	}
 }
-
 
 const BamScene::BamDataBlock BamScene::_carData[] = {
 	{ { 310, 105, 1 }, { 314, 106, 17 }, { 366, 101,  1 },  0 },
@@ -1542,7 +1499,6 @@ const BamScene::BamDataBlock BamScene::_fight3Data[] = {
 	{ {  75, 96,  1 }, { 187,  96, -23 }, { 183,  41, 47 },  0 },
 	{ {  75, 96,  1 }, { 187,  96, -23 }, { 183,  41, 47 }, 99 }
 };
-
 
 } // End of namespace Queen
 

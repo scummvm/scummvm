@@ -511,12 +511,12 @@ struct CmdGameState {
 struct FurnitureData {
 	//! room in which the furniture are
 	int16 room;
-	//! type of furniture (stored in GAMESTATE) 
+	//! furniture object number
 	/*!
 		<table>
 			<tr>
-				<td>value</td>
-				<td>description</td>
+				<td>range</td>
+				<td>type</td>
 			</tr>
 			<tr>
 				<td>]0..5000]</td>
@@ -528,11 +528,11 @@ struct FurnitureData {
 			</tr>
 		</table>
 	*/
-	int16 gameStateValue;
+	int16 objNum;
 
 	void readFromBE(byte *&ptr) {
 		room = (int16)READ_BE_UINT16(ptr); ptr += 2;
-		gameStateValue = (int16)READ_BE_UINT16(ptr); ptr += 2;
+		objNum = (int16)READ_BE_UINT16(ptr); ptr += 2;
 	}
 };
 

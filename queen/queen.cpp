@@ -100,7 +100,6 @@ QueenEngine::QueenEngine(GameDetector *detector, OSystem *syst)
 	_system->init_size(GAME_SCREEN_WIDTH, GAME_SCREEN_HEIGHT);
 }
 
-
 QueenEngine::~QueenEngine() {
 	_timer->removeTimerProc(&timerHandler);
 	delete _bam;
@@ -118,7 +117,6 @@ QueenEngine::~QueenEngine() {
 	delete _walk;	
 }
 
-
 void QueenEngine::registerDefaultSettings() {
 	ConfMan.registerDefault("master_volume", 255);
 	ConfMan.registerDefault("music_mute", false);
@@ -127,7 +125,6 @@ void QueenEngine::registerDefaultSettings() {
 	ConfMan.registerDefault("speech_mute", _resource->isFloppy());
 	ConfMan.registerDefault("subtitles", true);
 }
-
 
 void QueenEngine::checkOptionSettings() {
 	// check talkspeed value
@@ -150,7 +147,6 @@ void QueenEngine::checkOptionSettings() {
 	}
 }
 
-
 void QueenEngine::readOptionSettings() {
 	// XXX master_volume
 	_sound->musicToggle(!ConfMan.getBool("music_mute"));
@@ -161,7 +157,6 @@ void QueenEngine::readOptionSettings() {
 	checkOptionSettings();
 }
 
-
 void QueenEngine::writeOptionSettings() {
 	// XXX master_volume
 	ConfMan.set("music_mute", !_sound->musicOn());
@@ -171,7 +166,6 @@ void QueenEngine::writeOptionSettings() {
 	ConfMan.set("subtitles", _subtitles);
 	ConfMan.flushToDisk();
 }
-
 
 void QueenEngine::update(bool checkPlayerInput) {
 	if (_debugger->isAttached()) {
@@ -214,12 +208,7 @@ void QueenEngine::update(bool checkPlayerInput) {
 
 void QueenEngine::errorString(const char *buf1, char *buf2) {
 	strcpy(buf2, buf1);
-	if (_debugger && !_debugger->isAttached()) {
-		_debugger->attach(buf2);
-		_debugger->onFrame();
-	}
 }
-
 
 void QueenEngine::go() {
 	initialise();
@@ -247,16 +236,12 @@ void QueenEngine::go() {
 				_logic->joeWalk(JWM_NORMAL);
 				_command->executeCurrentAction();
 			} else {
-//				if (_command->parse()) {
-//					_command->clear(true);
-//				}
 				_logic->joeWalk(JWM_NORMAL);
 				update(true);
 			}
 		}
 	}
 }
-
 
 void QueenEngine::initialise(void) {
 	_bam = new BamScene(this);
@@ -287,11 +272,9 @@ void QueenEngine::initialise(void) {
 	_timer->installTimerProc(&timerHandler, 1000000 / 50, this); //call 50 times per second
 }
 
-
 void QueenEngine::timerHandler(void *ptr) {
 	((QueenEngine *)ptr)->gotTimerTick();
 }
-
 
 void QueenEngine::gotTimerTick() {
 	_display->handleTimer();

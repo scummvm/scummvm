@@ -50,7 +50,6 @@ public:
 		MAX_BANKS_NUMBER  =  18
 	};
 
-
 private:
 
 	struct PackedBank {

@@ -26,13 +26,11 @@
 
 namespace Queen {
 
-
 BankManager::BankManager(Resource *res) 
 	: _res(res) {
 	memset(_frames, 0, sizeof(_frames));
 	memset(_banks, 0, sizeof(_banks));
 }
-
 
 BankManager::~BankManager() {
 	for(uint32 i = 0; i < MAX_BANKS_NUMBER; ++i) {
@@ -41,20 +39,15 @@ BankManager::~BankManager() {
 	eraseFrames(true);
 }
 
-
 void BankManager::load(const char *bankname, uint32 bankslot) {
 	close(bankslot);
 
 	_banks[bankslot].data = _res->loadFile(bankname);
-	if (!_banks[bankslot].data) {
-		error("Unable to open bank '%s'", bankname);	
-	}
 
 	int16 entries = (int16)READ_LE_UINT16(_banks[bankslot].data);
 	if (entries < 0 || entries >= MAX_BANK_SIZE) {
 		error("Maximum bank size exceeded or negative bank size : %d", entries);
 	}
-
 	debug(9, "BankManager::load(%s, %d) - entries = %d", bankname, bankslot, entries); 
 
 	uint32 offset = 2;
@@ -68,11 +61,9 @@ void BankManager::load(const char *bankname, uint32 bankslot) {
 	}
 }
 
-
 void BankManager::unpack(uint32 srcframe, uint32 dstframe, uint32 bankslot) {
 	debug(9, "BankManager::unpack(%d, %d, %d)", srcframe, dstframe, bankslot);
-	if (!_banks[bankslot].data)
-		error("BankManager::unpack() _banks[bankslot].data is NULL!");
+	assert(_banks[bankslot].data != NULL);
 		
 	BobFrame *pbf = &_frames[dstframe];
 	uint8 *p = _banks[bankslot].data + _banks[bankslot].indexes[srcframe];
@@ -87,11 +78,9 @@ void BankManager::unpack(uint32 srcframe, uint32 dstframe, uint32 bankslot) {
 	memcpy(pbf->data, p + 8, size);
 }
 
-
 void BankManager::overpack(uint32 srcframe, uint32 dstframe, uint32 bankslot) {
 	debug(9, "BankManager::overpack(%d, %d, %d)", srcframe, dstframe, bankslot);
-	if (!_banks[bankslot].data)
-		error("BankManager::overpack() _banks[bankslot].data is NULL!");
+	assert(_banks[bankslot].data != NULL);
 
 	uint8 *p = _banks[bankslot].data + _banks[bankslot].indexes[srcframe];
 	uint16 src_w = READ_LE_UINT16(p + 0);
@@ -106,13 +95,11 @@ void BankManager::overpack(uint32 srcframe, uint32 dstframe, uint32 bankslot) {
 	}
 }
 
-
 void BankManager::close(uint32 bankslot) {
 	debug(9, "BankManager::close(%d)", bankslot);
 	delete[] _banks[bankslot].data;
 	memset(&_banks[bankslot], 0, sizeof(_banks[bankslot]));
 }
-
 
 BobFrame *BankManager::fetchFrame(uint32 index) {
 	debug(9, "BankManager::fetchFrame(%d)", index);
@@ -122,14 +109,12 @@ BobFrame *BankManager::fetchFrame(uint32 index) {
 	return &_frames[index];
 }
 
-
 void BankManager::eraseFrame(uint32 index) {
 	debug(9, "BankManager::eraseFrame(%d)", index);
 	BobFrame *pbf = &_frames[index];
 	delete[] pbf->data;
 	memset(pbf, 0, sizeof(BobFrame));
 }
-
 
 void BankManager::eraseFrames(bool joe) {
     uint32 i = 0;
@@ -141,6 +126,5 @@ void BankManager::eraseFrames(bool joe) {
 		++i;
 	}
 }
-
 
 } // End of namespace Queen

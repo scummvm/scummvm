@@ -35,17 +35,14 @@
 
 namespace Queen {
 
-
 void CmdText::clear() {
 	memset(_command, 0, sizeof(_command));
 }
-
 
 void CmdText::display(uint8 color) {
 	_vm->display()->textCurrentColor(color);
 	_vm->display()->setTextCentered(COMMAND_Y_POS, _command, false);
 }
-
 
 void CmdText::displayTemp(uint8 color, bool locked, Verb v, const char *name) {
 	char temp[MAX_COMMAND_LEN];
@@ -62,7 +59,6 @@ void CmdText::displayTemp(uint8 color, bool locked, Verb v, const char *name) {
 	_vm->display()->setTextCentered(COMMAND_Y_POS, temp, false);
 }
 
-
 void CmdText::displayTemp(uint8 color, const char *name) {
 	char temp[MAX_COMMAND_LEN];
 	sprintf(temp, "%s %s", _command, name);
@@ -70,28 +66,23 @@ void CmdText::displayTemp(uint8 color, const char *name) {
 	_vm->display()->setTextCentered(COMMAND_Y_POS, temp, false);
 }
 
-
 void CmdText::setVerb(Verb v) {
 	strcpy(_command, _vm->logic()->verbName(v));
 }
-
 
 void CmdText::addLinkWord(Verb v) {
 	strcat(_command, " ");
 	strcat(_command, _vm->logic()->verbName(v));
 }
 
-
 void CmdText::addObject(const char *objName) {
 	strcat(_command, " ");
 	strcat(_command, objName);
 }
 
-
 bool CmdText::isEmpty() const {
 	return _command[0] == 0;
 }
-
 
 void CmdState::init() {
 	commandLevel = 1;
@@ -102,13 +93,11 @@ void CmdState::init() {
 	selNoun = 0;
 }
 
-
 Command::Command(QueenEngine *vm)
 	: _vm(vm) {
 
 	_cmdText._vm = vm;
 }
-
 
 void Command::clear(bool clearTexts) {
 	_cmdText.clear();
@@ -119,13 +108,8 @@ void Command::clear(bool clearTexts) {
 	_state.init();
 }
 
-
 void Command::executeCurrentAction() {
 	_vm->logic()->entryObj(0);
-
-//	if (_state.commandLevel == 2 && _mouseKey == Input::MOUSE_RBUTTON) {
-//		_mouseKey = Input::MOUSE_LBUTTON;
-//	}
 
 	if (_mouseKey == Input::MOUSE_RBUTTON && _state.subject[0] > 0) {
 
@@ -216,7 +200,6 @@ void Command::executeCurrentAction() {
 	cleanupCurrentAction();
 }
 
-
 void Command::updatePlayer() {	
 	if (_vm->logic()->joeWalk() != JWM_MOVE) {
 		int16 cx = _vm->input()->mousePosX();
@@ -255,15 +238,18 @@ void Command::updatePlayer() {
 	}
 }
 
-
 void Command::readCommandsFrom(byte *&ptr) {
 	uint16 i;
 
 	_numCmdList = READ_BE_UINT16(ptr); ptr += 2;
 	_cmdList = new CmdListData[_numCmdList + 1];
-	memset(&_cmdList[0], 0, sizeof(CmdListData));
-	for (i = 1; i <= _numCmdList; i++) {
-		_cmdList[i].readFromBE(ptr);
+	if (_numCmdList == 0) {
+		_cmdList[0].readFromBE(ptr);
+	} else {
+		memset(&_cmdList[0], 0, sizeof(CmdListData));
+		for (i = 1; i <= _numCmdList; i++) {
+			_cmdList[i].readFromBE(ptr);
+		}
 	}
 	
 	_numCmdArea = READ_BE_UINT16(ptr); ptr += 2;
@@ -311,7 +297,6 @@ void Command::readCommandsFrom(byte *&ptr) {
 	}
 }
 
-
 ObjectData *Command::findObjectData(uint16 objRoomNum) const {
 	ObjectData *od = NULL;
 	if (objRoomNum != 0) {
@@ -321,7 +306,6 @@ ObjectData *Command::findObjectData(uint16 objRoomNum) const {
 	return od;
 }
 
-
 ItemData *Command::findItemData(Verb invNum) const {
 	ItemData *id = NULL;
 	uint16 itNum = _vm->logic()->findInventoryItem(invNum - VERB_INV_FIRST);
@@ -330,7 +314,6 @@ ItemData *Command::findItemData(Verb invNum) const {
 	}
 	return id;
 }
-
 
 int16 Command::executeCommand(uint16 comId, int16 condResult) {
 	// execute.c l.313-452
@@ -355,9 +338,6 @@ int16 Command::executeCommand(uint16 comId, int16 condResult) {
 
 	bool cutDone = false;
 	if (condResult > 0) {
-		// as we don't handle the pinnacle room exactly like the original, 
-		// the hack described on l.334-339 in execute.c became useless
-
 		// check for cutaway/dialogs before updating Objects
 		const char *desc = _vm->logic()->objectTextualDescription(condResult);
 		if (executeIfCutaway(desc)) {
@@ -454,7 +434,6 @@ int16 Command::executeCommand(uint16 comId, int16 condResult) {
 	return condResult;
 }
 
-
 int16 Command::makeJoeWalkTo(int16 x, int16 y, int16 objNum, Verb v, bool mustWalk) {
 	// Check to see if object is actually an exit to another
 	// room. If so, then set up new room
@@ -502,7 +481,6 @@ int16 Command::makeJoeWalkTo(int16 x, int16 y, int16 objNum, Verb v, bool mustWa
 	return p;
 }
 
-
 void Command::grabCurrentSelection() {
 	_selPosX = _vm->input()->mousePosX();
 	_selPosY = _vm->input()->mousePosY();
@@ -529,7 +507,6 @@ void Command::grabCurrentSelection() {
 		_vm->logic()->joeWalk(JWM_EXECUTE);
 	}
 }
-
 
 void Command::grabSelectedObject(int16 objNum, uint16 objState, uint16 objName) {
 	if (_state.action != VERB_NONE) {
@@ -569,7 +546,6 @@ void Command::grabSelectedObject(int16 objNum, uint16 objState, uint16 objName) 
 		_state.action = VERB_NONE;
 	}
 }
-
 
 void Command::grabSelectedItem() {
 //	_parse = true;
@@ -644,7 +620,6 @@ void Command::grabSelectedItem() {
 	grabSelectedObject(-item, id->state, id->name);
 }
 
-
 void Command::grabSelectedNoun() {
 	// if the NOUN has been selected from screen then it is positive
 	// otherwise it has been selected from inventory and is negative
@@ -707,7 +682,6 @@ void Command::grabSelectedNoun() {
 	grabSelectedObject(objNum, od->state, od->name);
 }
 
-
 void Command::grabSelectedVerb() {
 	_state.action = _state.verb;
 	_state.subject[0] = 0;
@@ -731,7 +705,6 @@ void Command::grabSelectedVerb() {
 	}
 }
 
-
 bool Command::executeIfCutaway(const char *description) {
 	if (strlen(description) > 4 && 
 		scumm_stricmp(description + strlen(description) - 4, ".cut") == 0) {
@@ -748,7 +721,6 @@ bool Command::executeIfCutaway(const char *description) {
 	}
 	return false;
 }
-
 
 bool Command::executeIfDialog(const char *description) {
 	if (strlen(description) > 4 && 
@@ -769,7 +741,6 @@ bool Command::executeIfDialog(const char *description) {
 	}
 	return false;
 }
-
 
 bool Command::handleWrongAction() {
 	// l.96-141 execute.c
@@ -812,7 +783,6 @@ bool Command::handleWrongAction() {
 	}
 	return false;
 }
-
 
 void Command::sayInvalidAction(Verb action, int16 subj1, int16 subj2) {
 	// l.158-272 execute.c
@@ -895,12 +865,11 @@ void Command::sayInvalidAction(Verb action, int16 subj1, int16 subj2) {
 			}
 		}
 		break;
-
+		
 	default:
 		break;
 	}
 }
-
 
 void Command::changeObjectState(Verb action, int16 obj, int16 song, bool cutDone) {
 	// l.456-533 execute.c
@@ -956,7 +925,6 @@ void Command::cleanupCurrentAction() {
 	_state.oldVerb = VERB_NONE;
 }
 
-
 void Command::openOrCloseAssociatedObject(Verb action, int16 otherObj) {
 	CmdListData *cmdList = &_cmdList[1];
 	uint16 com = 0;
@@ -1009,7 +977,6 @@ void Command::openOrCloseAssociatedObject(Verb action, int16 otherObj) {
 		}
 	}
 }
-
 
 int16 Command::setConditions(uint16 command, bool lastCmd) {
 	debug(9, "Command::setConditions(%d, %d)", command, lastCmd);
@@ -1066,7 +1033,6 @@ int16 Command::setConditions(uint16 command, bool lastCmd) {
 	return ret;
 }
 
-
 void Command::setAreas(uint16 command) {
 	debug(9, "Command::setAreas(%d)", command);
 
@@ -1086,7 +1052,6 @@ void Command::setAreas(uint16 command) {
 		}
 	}
 }
-
 
 void Command::setObjects(uint16 command) {
 	debug(9, "Command::setObjects(%d)", command);
@@ -1160,7 +1125,6 @@ void Command::setObjects(uint16 command) {
 	}
 }
 
-
 void Command::setItems(uint16 command) {
 	debug(9, "Command::setItems(%d)", command);
 
@@ -1193,7 +1157,6 @@ void Command::setItems(uint16 command) {
 		}
 	}
 }
-
 
 uint16 Command::nextObjectDescription(ObjectDescription* objDesc, uint16 firstDesc) {
 	// l.69-103 select.c
@@ -1233,7 +1196,6 @@ uint16 Command::nextObjectDescription(ObjectDescription* objDesc, uint16 firstDe
 	return objDesc->lastSeenNumber;
 }
 
-
 void Command::lookAtSelectedObject() {
 	uint16 desc;
 	if (_state.subject[0] < 0) {
@@ -1262,7 +1224,6 @@ void Command::lookAtSelectedObject() {
 	_vm->logic()->joeFace();
 }
 
-
 void Command::lookForCurrentObject(int16 cx, int16 cy) {
 	uint16 obj = _vm->grid()->findObjectUnderCursor(cx, cy);
 	_state.noun = _vm->grid()->findObjectNumber(obj);
@@ -1270,23 +1231,6 @@ void Command::lookForCurrentObject(int16 cx, int16 cy) {
 	if (_state.oldNoun == _state.noun) {
 		return;
 	}
-
-	// if pointing at an Area then exit
-	// if the AREA is linked to an object, then dont exit. Find
-	// the object its linked to &&  store in AOBJ
-
-//	if (_state.noun > _vm->logic()->currentRoomObjMax()) {
-//		if (_state.oldNoun != 0) {
-//			if (_state.defaultVerb != VERB_NONE) {
-//				_cmdText.displayTemp(INK_CMD_LOCK, true, _state.defaultVerb);
-//			}
-//			else if (_state.action != VERB_NONE) {
-//				_cmdText.display(INK_CMD_NORMAL);
-//			}
-//			_state.oldNoun = 0;
-//			return;
-//		}
-//	}
 
 	ObjectData *od = findObjectData(_state.noun);
 	if (od == NULL || od->name <= 0) {
@@ -1316,7 +1260,6 @@ void Command::lookForCurrentObject(int16 cx, int16 cy) {
 	}
 	_state.oldNoun = _state.noun;
 }
-
 
 void Command::lookForCurrentIcon(int16 cx, int16 cy) {
 	_state.verb = _vm->grid()->findVerbUnderCursor(cx, cy);
@@ -1349,6 +1292,5 @@ void Command::lookForCurrentIcon(int16 cx, int16 cy) {
 		_state.oldVerb = _state.verb;
 	}
 }
-
 
 } // End of namespace Queen

@@ -401,9 +401,9 @@ void Cutaway::changeRooms(CutawayObject &object) {
 		comPanel = 1;
 	}
 
-	// FIXME: in the original engine, panel is hidden after displaying head. We do
-	// it before.
-	if(object.room == FAYE_HEAD || object.room == AZURA_HEAD || object.room == FRANK_HEAD) {
+	// FIXME - in the original engine, panel is hidden once the 'head room' is displayed, we
+	// do it before (ie before palette fading)
+	if (object.room == FAYE_HEAD || object.room == AZURA_HEAD || object.room == FRANK_HEAD) {
 		comPanel = 2;
 	}
 
