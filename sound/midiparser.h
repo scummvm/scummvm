@@ -142,7 +142,7 @@ struct NoteTimer {
  *  which it uses to transmit events. However, it does NOT
  *  automatically hook into the MidiDriver's timer callback
  *  or set up its timer rate from the MidiDriver. The client
- *  using the MidiParser must set the timer rate provide
+ *  using the MidiParser must set the timer rate and provide
  *  a means of firing the MidiParser's onTimer() method at
  *  appropriate intervals. The onTimer() event may be called
  *  by the client or by manually hooking and unhooking the
@@ -186,7 +186,7 @@ protected:
 	void hangAllActiveNotes();
 
 	//! Platform independent BE uint32 read-and-advance.
-	/*! This help function reads Big Endian 32-bit numbers
+	/*! This helper function reads Big Endian 32-bit numbers
 	 *  from a memory pointer, at the same time advancing
 	 *  the pointer.
 	 */
@@ -198,7 +198,7 @@ protected:
 	}
 
 	//! Platform independent LE uint16 read-and-advance.
-	/*! This help function reads Little Endian 16-bit numbers
+	/*! This helper function reads Little Endian 16-bit numbers
 	 *  from a memory pointer, at the same time advancing
 	 *  the pointer.
 	 */
