@@ -252,9 +252,10 @@ void ListWidget::scrollToCurrent() {
 	} else if (_selectedItem >= _currentPos + _entriesPerPage ) {
 		// it's below our view
 		_currentPos = _selectedItem - _entriesPerPage + 1;
-		if (_currentPos < 0)
-			_currentPos = 0;
 	}
+
+	if (_currentPos < 0)
+		_currentPos = 0;
 
 	_scrollBar->_currentPos = _currentPos;
 	_scrollBar->recalc();
