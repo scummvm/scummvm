@@ -456,7 +456,7 @@ void ScummEngine::setupShadowPalette(int redScale, int greenScale, int blueScale
 	const byte *basepal = getPalettePtr(_curPalIndex);
 	const byte *compareptr;
 	const byte *pal = basepal + start * 3;
-	byte *table = _shadowPalette + start * 3;
+	byte *table = _shadowPalette + start;
 	int i;
 
 	// This is a correction of the patch supplied for BUG #588501.
