@@ -340,6 +340,16 @@ void OSystem_WINCE3::swap_zoom_down() {
 //#ifdef WIN32_PLATFORM_WFSP
 // Smartphone actions
 
+void OSystem_WINCE3::initZones() {
+        int i;
+
+		_currentZone = 0;
+        for (i=0; i<TOTAL_ZONES; i++) {
+                _mouseXZone[i] = _zones[i].x + (_zones[i].width / 2);
+                _mouseYZone[i] = _zones[i].y + (_zones[i].height / 2);
+        }
+}
+
 void OSystem_WINCE3::loadSmartphoneConfigurationElement(String element, int &value, int defaultValue) {
 	value = ConfMan.getInt(element, "smartphone");
 	if (!value) {
@@ -436,6 +446,23 @@ void OSystem_WINCE3::move_cursor_right() {
 }
 
 void OSystem_WINCE3::switch_zone() {
+	int x,y;
+	int i;
+	retrieve_mouse_location(x, y);
+
+    for (i=0; i<TOTAL_ZONES; i++)
+		if (x >= _zones[i].x && y >= _zones[i].y &&
+			x <= _zones[i].x + _zones[i].width && y <= _zones[i].y + _zones[i].height
+		   ) {
+				_mouseXZone[i] = x;
+				_mouseYZone[i] = y;
+				break;
+		}
+	_currentZone++;
+	if (_currentZone >= TOTAL_ZONES)
+		_currentZone = 0;
+
+	EventsBuffer::simulateMouseMove(_mouseXZone[_currentZone], _mouseYZone[_currentZone]);
 }
 //#endif
 
@@ -1600,3 +1627,8 @@ void OSystem_WINCE3::quit() {
 int OSystem_WINCE3::_platformScreenWidth;
 int OSystem_WINCE3::_platformScreenHeight;
 bool OSystem_WINCE3::_isOzone;
+OSystem_WINCE3::zoneDesc OSystem_WINCE3::_zones[TOTAL_ZONES] = {
+        { 0, 0, 320, 145 },
+        { 0, 145, 150, 55 },
+        { 150, 145, 170, 55 }
+};
