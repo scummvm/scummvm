@@ -44,7 +44,7 @@
  *
  * Secondly, with this abstraction layer, we still avoid a lot of complications based on
  * differences in FS roots, different path separators, or even systems with no real
- * paths (Mac OS 9, which doesn't even have the notion of a "current director").
+ * paths (MacOS 9 doesn't even have the notion of a "current directory").
  * And if we ever want to support devices with no FS in the classical sense (Palm...),
  * we can build upon this.
  */
@@ -180,13 +180,6 @@ public:
 		_size++;
 	}
 	
-	const FilesystemNode& operator [](int idx) const {
-		assert(idx >= 0 && idx < _size);
-		return *_data[idx];
-	}
-
-	int size() const	{ return _size; }
-
 	const_iterator	begin() const {
 		return const_iterator(_data);
 	}

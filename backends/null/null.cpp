@@ -36,7 +36,7 @@ public:
 	void updateScreen() {}
 	bool showMouse(bool visible) { return false; }
 	void set_mouse_pos(int x, int y) {}
-	void setMouseCursor(const byte *buf, uint w, uint h, int hotspot_x, int hotspot_y, byte keycolor = 255) {}
+	void setMouseCursor(const byte *buf, uint w, uint h, int hotspot_x, int hotspot_y, byte keycolor) {}
 	void set_shake_pos(int shake_pos) {}
 	uint32 get_msecs();
 	void delay_msecs(uint msecs);

@@ -1424,7 +1424,7 @@ void OSystem_MorphOS::set_mouse_pos(int x, int y)
 	}
 }
 
-void OSystem_MorphOS::setMouseCursor(const byte *buf, uint w, uint h, int hotspot_x, int hotspot_y, byte keycolor = 255)
+void OSystem_MorphOS::setMouseCursor(const byte *buf, uint w, uint h, int hotspot_x, int hotspot_y, byte keycolor)
 {
 	MouseWidth = w;
 	MouseHeight	= h;
