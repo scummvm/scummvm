@@ -161,6 +161,7 @@ void MidiParser_EUP::parseNextEvent (EventInfo &info) {
 bool MidiParser_EUP::loadMusic (byte *data, uint32 size) {
 	unloadMusic();
 	byte *pos = data;
+	int i;
 
 	if (memcmp (pos, "SO", 2)) {
 		printf ("Warning: 'SO' header expected but found '%c%c' instead.\n", pos[0], pos[1]);
@@ -169,7 +170,7 @@ bool MidiParser_EUP::loadMusic (byte *data, uint32 size) {
 
 	byte numInstruments = pos[16];
 	pos += 16 + 2;
-	for (int i = 0; i < numInstruments; ++i) {
+	for (i = 0; i < numInstruments; ++i) {
 		_instruments[i][0] = 0x7C;
 		memcpy (&_instruments[i][2], pos, 48);
 		pos += 48;
