@@ -1,11 +1,12 @@
 ScummVM README
-Last updated:    2002-04-15
+Last updated:    2002-04-27
 Release version: 0.2.0  [CVS build]
 ------------------------------------------------------------------------
 
-For more information, compatability lists, details on donating, the latest
+For more information, compatibility lists, details on donating, the latest
 release, progress reports and more, please visit the ScummVM home page
 at: http://scummvm.sourceforge.net/
+
 
 About:
 ------
@@ -41,7 +42,7 @@ be playable to the end:
 
 The following games should load, but are not yet fully playable. Play these at
 your own risk, and please do not file bug reports about them. If you want
-the latest updates on game compatibility, visit our website and view the
+the latest updates on game compatibility, visit our web site and view the
 compatibility chart.
 
         Monkey Island 1 (VGA floppy)                   [Game: monkeyvga]
@@ -52,41 +53,43 @@ compatibility chart.
 
 The following games are SCUMM engine, but NOT supported by ScummVM (yet).
 
-	Maniac Mansion
-	Zak McKraken (16 color floppy version)
+        Maniac Mansion
+        Zak McKraken (16 color floppy version)
         Monkey Island 1 (EGA, 16 color floppy version)
-	Loom (16 color floppy version)
-	Curse of Monkey Island
+        Loom (16 color floppy version)
+        Curse of Monkey Island
 
 Please be aware that the engine may contains bugs and non-implemented-
 features that sometimes make it impossible to finish the game. Save often,
 and please file a bug report (details on submitted bug reports are below)
 if you discover such a bug.
 
+
 Supported Platforms:
 -------------------
 
 ScummVM has been ported to run on many platforms and operating systems.
-Links to these ports can be found either on the ScummVM webpage or by a
+Links to these ports can be found either on the ScummVM web page or by a
 Google search. Many thanks to the effort of porters. If you have a port of
 ScummVM and wish to commit it into the main CVS, feel free to contact us!
 
-	Windows 	- SDL
-	Windows CE 	- SDL		(iPaq and other handheld devices)
-	Linux		- SDL/X11 	(includes iPaq devices running Linux)
-	Macintosh	- SDL/CUSTOM	(Including Classic and Mac OS X)
-	AmigaOS		- SDL/AGA
-	MorphOS		- SDL
+        Windows         - SDL
+        Windows CE      - SDL           (iPaq and other handheld devices)
+        Linux           - SDL/X11       (includes iPaq devices running Linux)
+        Macintosh       - SDL/CUSTOM    (Including Classic and Mac OS X)
+        AmigaOS         - SDL/AGA
+        MorphOS         - SDL
         BeOS            - SDL
-	Acorn (RiscOS)	- ???
-	Dreamcast	- ???
+        Acorn (RiscOS)  - ???
+        Dreamcast       - ???
+
 
 Known Bugs:
 -----------
 
 This release has the following known bugs. There is no need to report them,
 although patches to fix them are welcome. If you discover a bug that is not
-listed here, nor in the compatibility table on the website, please see below.
+listed here, nor in the compatibility table on the web site, please see below.
 
        Indy 4 (Fate Of Atlantis):
                 - Keyboard fighting does not work. ScummVM now defaults to
@@ -97,7 +100,7 @@ listed here, nor in the compatibility table on the website, please see below.
 
        Loom (256 Talkie):
                 - If you are having random crashes, this is a Windows bug.
-                  Try copying the data files from CD to your harddisk.
+                  Try copying the data files from CD to your hard disk.
 
 
 Reporting Bugs:
@@ -108,39 +111,39 @@ still exists in the latest daily build/current CVS version. Also check the
 compatibility listing for that game to ensure the issue is not already known.
 
 Please include the following information:
-		- Game version (PLEASE test the latest CVS/Daily build)
-		- Bug details, including instructions on reproducing
-		- Language of game (English, German, etc)
-		- Version of game (Talkie, Floppy...)
-		- Platform and Compiler (Win32, Linux, etc)
-		- Attach a save game if possible
-                - If this bug only occured recently, please note the last
-                  version without the bug, and the first version including
-                  the bug. That way we can fix it quicker by looking at the
-                  changes made.
+        - Game version (PLEASE test the latest CVS/Daily build)
+        - Bug details, including instructions on reproducing
+        - Language of game (English, German, etc)
+        - Version of game (Talkie, Floppy...)
+        - Platform and Compiler (Win32, Linux, etc)
+        - Attach a save game if possible
+        - If this bug only occurred recently, please note the last
+          version without the bug, and the first version including
+          the bug. That way we can fix it quicker by looking at the
+          changes made.
 
 
 Compiling:
 ----------
 
-You need SDL-1.2.2 (older versions may work, but are unsupported), and a
-supported compiler. Several compilers, including GCC, mingw and Microsoft
+You need SDL-1.2.2 or newer (older versions may work, but are unsupported), and
+a supported compiler. Several compilers, including GCC, mingw and Microsoft
 Visual C++ are supported. If you wish to use MP3-compressed CD tracks or
 .SOU files, you will need to install the MAD library and define
 COMPRESSED_SOUND_FILE. Tools for compressing .SOU files to .SO3 files can be
 found in the 'tools' CVS module, or in the 'scummvm-tools' package.
 
 On Win9x/NT/XP you can define WIN_DBG and attach WinDbg to browse the debug 
-messages (see www.sysinternals.com/ntw2k/freeware/debugview.shtml).
+messages (see http://www.sysinternals.com/ntw2k/freeware/debugview.shtml).
 
-	GCC:
-	* Type make (or gmake if that's what GNU make is called on your
-	  system) and hopefully ScummVM will compile for you.
+        GCC:
+        * Type make (or gmake if that's what GNU make is called on your
+          system) and hopefully ScummVM will compile for you.
 
-	Microsoft Visual C++:
-	* Open the workspace, scummwm.dsw
-	* Enter the path to the SDL include files in Tools|Options|Directories
-	* Now it should compile successfully.
+        Microsoft Visual C++:
+        * Open the workspace, scummwm.dsw
+        * Enter the path to the SDL include files in Tools|Options|Directories
+        * Now it should compile successfully.
 
         BeOS:
         * Open the 'scummvm.proj' file in BeIDE. Compile as normal.
@@ -188,32 +191,33 @@ Command Line Options:
 
         scummvm [OPTIONS] [GAME]
 
-	[GAME]    - Short name of game to load. E.g. monkey for Monkey Island.
-	
+        [GAME]    - Short name of game to load. E.g. monkey for Monkey Island.
+        
         -p<path>  - Path to where the game is installed. Default is Cwd.
-	-b<num>   - Start in room <num>.
+        -b<num>   - Start in room <num>.
         -c<num>   - Drive to play cd audio from.  E.g., 0 is first drive.
         -s<num>   - Set the sfx volume, 0-255.    Default is '100'
         -m<num>   - Set the music volume, 0-100.  Default is '60'
         -t<num>   - Set music tempo.              Default is '2031616'
         -e<mode>  - Select sound engine. See below.
         -g<mode>  - Select graphics scaler. See below.
-	-f        - Full-screen mode.
+        -f        - Full-screen mode.
         -n        - Disable subtitles. Use with games that have voice.
         -r        - Enable Roland conversion. Try if music sounds incorrect.
         -a        - Enable amiga pal conversion, for playing Amiga versions
         -d[<num>] - Set debug verbosity to <num>
 
+
 In game Hot Keys:
 -----------------
-	Ctrl 0-9 and Shift 0-9   - load and save states.
+        Ctrl 0-9 and Shift 0-9   - load and save states.
         Ctrl-Alt 0-4             - cycles between filter modes
-	Ctrl-z                   - quits
-	Ctrl-f                   - runs in fast mode.
-	Ctrl-d                   - starts the debugger.
-	Ctrl-s                   - shows memory consumption.
-	F5                       - displays a save/load box.
-	Space                    - pauses.
+        Ctrl-z                   - quits
+        Ctrl-f                   - runs in fast mode.
+        Ctrl-d                   - starts the debugger.
+        Ctrl-s                   - shows memory consumption.
+        F5                       - displays a save/load box.
+        Space                    - pauses.
         Alt-Enter                - toggles full screen/windowed
 
 
@@ -233,8 +237,9 @@ They are:
         -gadvmame2x  - 640x480 scaling. Doesn't rely on blurring like 2xSAI.
 
 Note that filters are very slow when ScummVM is compiled in a debug
-configuration without optimisations. And there is always a speed impact when
+configuration without optimizations. And there is always a speed impact when
 using any form of anti-aliasing/linear filtering.
+
 
 Autosaves:
 ----------
@@ -268,15 +273,15 @@ manual configuration.
 If you ARE using MIDI, you have several different choices of output, 
 depending on your operating system and configuration.
         
-	-eadlib     - Uses internal Adlib Emulation (default) 
+        -eadlib     - Uses internal Adlib Emulation (default) 
         -ewindows   - Windows MIDI. Uses built-in sequencer, for Windows users
-	-etimidity  - Uses Timidity for music. Requires Timidity.
+        -etimidity  - Uses Timidity for music. Requires Timidity.
         -eseq       - Uses /dev/sequencer for MIDI, *nix users.
         -eqt        - Quicktime sound, for Macintosh users.
-        -ecore      - Core sound, for Macintosh users.
+        -ecore      - CoreAudio sound, for MacOS X users.
         -eamidi     - Uses the MorphOS MIDI system, for MorphOS users
-	-enull      - Null output. Don't play any music.
-	
+        -enull      - Null output. Don't play any music.
+        
 
 Playing sound with Adlib emulation:
 -----------------------------------
@@ -284,11 +289,13 @@ By default an Adlib card will be emulated and ScummVM will output the music
 as sampled waves. This offers far superior performance to Timidity, however
 does not work with some games such as Sam and Max.
 
+
 Playing sound with MIDI:
 ------------------------
 Use the appropriate -e<mode> command line option from the list above to
-select your prefered MIDI device. For example, if you wish to use Windows
+select your preferred MIDI device. For example, if you wish to use Windows
 MIDI over the default Adlib Emulation, use the -ewindows option.
+
 
 Playing sound with Sequencer:
 -----------------------------
@@ -298,13 +305,15 @@ variable "SCUMMVM_MIDI" to your sequencer device - eg, /dev/sequencer
 Then start ScummVM with the parameter '-eseq'. This should work on several
 cards, and may offer better performance and quality than Adlib emulation.
 
+
 Playing music with Timidity:
 ----------------------------
 Start Timidity with the following command line :
-	$ timidity -irv 7777
+        $ timidity -irv 7777
 Then start ScummVM with the parameter '-etimidity'. However, Timidity is not
 designed to cope with the rapid changes most iMUSE equipped games use - so
 its use over Adlib emulation or sequencer support is not recommended.
+
 
 Using MP3 files for CD audio:
 -----------------------------
@@ -314,6 +323,7 @@ to use this option. You'll need to rip the file from the CD as a WAV file, then
 encode the MP3 files in Constant Bit Rate sampled at 22 kHz. This can be done with the following LAME command line:
 
 lame -t -q 0 -b 96 --resample 22.05 track1.wav track1.mp3
+
 
 Compressing MONSTER.SOU with MP3:.
 ---------------------------------
@@ -325,6 +335,7 @@ MONSTER.SOU file to a temporary folder. Then run:
   extract monster.sou
 In about 30 minutes or so, you will have a much smaller monster.so3 file, copy
 this file to your game dir. You can safely remove the monter.sou file.
+
 
 Coding style:
 ------------
@@ -339,7 +350,6 @@ is kept standard:
 -TMidiChannelAdl -TGui -TScumm -TSoundEngine -TPart -TPlayer
 
 
-
 Credits:
 --------
   The core ScummVM team:
@@ -352,6 +362,7 @@ Credits:
         Lionel Ulmer      - X11/Linux port
         Nicolas Bacca     - PocketPC/WinCE port
         Mutwin Kraus      - Macintosh port
+        Max Horn          - Macintosh port
         Marcus Comstedt   - DreamCast port
         Ruediger Hanke    - MorphOS port
 
