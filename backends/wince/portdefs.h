@@ -26,6 +26,7 @@
 #define _HEAPOK 0
 
 void *calloc(size_t n, size_t s);
+int isalnum(int c);
 int isdigit(int c);
 int isprint(int c);
 int isspace(int c);
