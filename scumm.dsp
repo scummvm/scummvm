@@ -295,6 +295,14 @@ SOURCE=.\scumm\bundle.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\scumm\charset.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\scumm\charset.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\scumm\costume.cpp
 # End Source File
 # Begin Source File
