@@ -2579,6 +2579,16 @@ void SimonEngine::vc_resume_sprite(byte *code_ptr, uint16 cur_file, uint16 cur_s
 void SimonEngine::add_vga_timer(uint num, byte *code_ptr, uint cur_sprite, uint cur_file) {
 	VgaTimerEntry *vte;
 
+	// When Simon talks to the Golum about stew in French version of
+	// Simon the Sorcerer 1 the code_ptr is at wrong location for
+	// sprite 200. This  was a bug in the original game, which 
+	// caused several glitches in this scene.
+	// We work around the problem by correcting the code_ptr for sprite
+	// 200 in this scene, if it is wrong.
+	if (!(_game & GF_SIMON2) && (_language == 2) &&
+		(code_ptr - _vga_buffer_pointers[cur_file].vgaFile1 == 4) && (cur_sprite == 200) && (cur_file == 2))
+		code_ptr += 0x66;
+
 	_lock_word |= 1;
 
 	for (vte = _vga_timer_list; vte->delay; vte++) {
