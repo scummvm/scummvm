@@ -1434,7 +1434,7 @@ void Control_error(char* text) {	//Tony13May97
 		if (me && (me->buttons & RD_LEFTBUTTONDOWN))
 			break;
 
-		g_sword2->_system->delay_msecs(20);
+		g_system->delay_msecs(20);
 	}
 
 	// Remove the message.
