@@ -141,8 +141,14 @@ Scumm::Scumm (GameDetector *detector, OSystem *syst)
 		if (detector->_use_adlib) {
 			_imuse = IMuse::create_adlib(syst, _mixer);
 		} else {
-			_imuse = IMuse::create_midi(syst, detector->createMidi());
+			void *midiTemp = detector->createMidi();
+			if (!midiTemp) {	// Fallback to adlib/midiemu
+				_imuse = IMuse::create_adlib(syst, _mixer);
+			} else {
+				_imuse = IMuse::create_midi(syst, detector->createMidi());
+			}
 		}
+
 		_imuseDigital = NULL;
 		if (detector->_gameTempo != 0)
 			_imuse->property(IMuse::PROP_TEMPO_BASE, detector->_gameTempo);
@@ -1043,11 +1049,13 @@ void Scumm::processKbd()
 			videoFinished = 1;
 		} else
 			exitCutscene();
-	} else if (_lastKeyHit == saveloadkey
-						 && _currentRoom != 0) {
+	} else if (_lastKeyHit == saveloadkey && _currentRoom != 0) {
 		if (_features & GF_AFTER_V7)
 			runScript(_vars[VAR_UNK_SCRIPT], 0, 0, 0);
-		_gui->saveLoadDialog();
+
+		//_gui->saveLoadDialog();	// FIXME: Old Gui
+		saveloadDialog();		// Display NewGui
+
 		if (_features & GF_AFTER_V7)
 			runScript(_vars[VAR_UNK_SCRIPT_2], 0, 0, 0);
 	} else if (_lastKeyHit == _vars[VAR_TALKSTOP_KEY]) {
@@ -1077,9 +1085,12 @@ void Scumm::processKbd()
 			_defaultTalkDelay = 5;
 
 		_vars[VAR_CHARINC] = _defaultTalkDelay / 20;
-	} else if (_lastKeyHit == 321) { // F7, display new GUI
-		saveloadDialog();
-	}
+	} 
+
+	// FIXME: Preparing to remove
+//	else if (_lastKeyHit == 321) { // F7, display new GUI
+//		saveloadDialog();
+//	}
 			
 	_mouseButStat = _lastKeyHit;
 }

@@ -587,9 +587,16 @@ OSystem *GameDetector::createSystem() {
 MidiDriver *GameDetector::createMidi() {
 	int drv = _midi_driver;
 
-#if defined (_WIN32_WCE)
-	/* Always use MIDI emulation on CE devices */
-	if (drv == MD_AUTO) drv = MD_MIDIEMU;
+#if defined (_WIN32_WCE) || defined(UNIX) || defined(X11_BACKEND)
+	/* Always use MIDI emulation via adlib driver on CE and UNIX devices */
+
+	/* FIXME: We should, for the Unix targets, attempt to detect */
+	/*        whether a sequencer is available, and use it in */
+	/*	  preference */	
+	if (drv == MD_AUTO) {
+		_use_adlib = true;
+		return NULL;
+	}
 #endif
 
 #if defined (WIN32) && !defined(_WIN32_WCE)
@@ -598,17 +605,11 @@ MidiDriver *GameDetector::createMidi() {
 #elif defined(__APPLE__) || defined(macintosh)
 	/* MD_QTMUSIC is default MidiDriver on MacOS targets */
 	if (drv == MD_AUTO) drv = MD_QTMUSIC;
-#elif defined(UNIX) || defined(X11_BACKEND)
-	/* MD_MIDIEMU is default MidiDriver on UNIX targets. */
-	/* FIXME: Attempt to detect if sequencer is available,
-			  and use it in preference. */
-	if (drv == MD_AUTO) drv = MD_MIDIEMU;
 #endif
 
 	switch(drv) {
 	case MD_AUTO:
 	case MD_NULL:		return MidiDriver_NULL_create();
-	case MD_MIDIEMU:	return MidiDriver_MIDIEMU_create();
 #if defined(WIN32) && !defined(_WIN32_WCE)
 	case MD_WINDOWS:	return MidiDriver_WIN_create();
 #endif
