@@ -152,8 +152,7 @@ int Script::SF_takeObject(SCRIPTFUNC_PARAMS) {
 }
 
 // Script function #3 (0x03)
-// Unknown function; pops a parameter and pushes a return value
-// Param1: unknown
+// Check if an object is carried.
 int Script::SF_objectIsCarried(SCRIPTFUNC_PARAMS) {
 	// INCOMPLETE
 	SDataWord_T param1;
@@ -343,7 +342,7 @@ int Script::SF_centerActor(SCRIPTFUNC_PARAMS) {
 // Param3: animation id
 int Script::SF_startAnim(SCRIPTFUNC_PARAMS) {
 // FIXME: implementation is wrong. Should link animation
-	SDataWord_T unk_parm;
+	SDataWord_T timer_parm;
 	SDataWord_T frame_parm;
 	SDataWord_T anim_id_parm;
 	int frame_count;
@@ -351,7 +350,7 @@ int Script::SF_startAnim(SCRIPTFUNC_PARAMS) {
 
 	anim_id_parm = thread->pop();
 	frame_parm = thread->pop();
-	unk_parm = thread->pop();
+	timer_parm = thread->pop();
 
 	frame_count = _vm->_sdata->readWordS(frame_parm);
 	anim_id = _vm->_sdata->readWordS(anim_id_parm);
@@ -476,20 +475,20 @@ int Script::SF_swapActors(SCRIPTFUNC_PARAMS) {
 // Param1: actor id
 // Param2: actor destination x
 // Param3: actor destination y
-// Param4: unknown
+// Param4: flags telling how to walk
 int Script::SF_actorWalk(SCRIPTFUNC_PARAMS) {
 	// INCOMPLETE
 	SDataWord_T actor_parm;
 	SDataWord_T x_parm;
 	SDataWord_T y_parm;
-	SDataWord_T unk_parm;
+	SDataWord_T flags_parm;
 	int actor_idx;
 	Point pt;
 
 	actor_parm = thread->pop();
 	x_parm = thread->pop();
 	y_parm = thread->pop();
-	unk_parm = thread->pop();
+	flags_parm = thread->pop();
 
 	actor_idx = _vm->_actor->getActorIndex(_vm->_sdata->readWordS(actor_parm));
 	if (actor_idx < 0) {
@@ -512,14 +511,14 @@ int Script::SF_actorWalk(SCRIPTFUNC_PARAMS) {
 // Script function #37 (0x25) nonblocking
 // Sets an actor to the specified action state
 // Param1: actor id
-// Param2: unknown
+// Param2: flags telling how to cycle the frames
 // Param3: actor action state
-// Param4: unknown
+// Param4: some kind of delay/speed thing?
 int Script::SF_cycleActorFrames(SCRIPTFUNC_PARAMS) {
 	// INCOMPLETE
 	SDataWord_T actor_parm;
-	SDataWord_T unk1_parm;
-	SDataWord_T unk2_parm;
+	SDataWord_T flags_parm;
+	SDataWord_T delay_parm;
 	SDataWord_T action_parm;
 	int actor_id;
 	int actor_idx;
@@ -527,9 +526,9 @@ int Script::SF_cycleActorFrames(SCRIPTFUNC_PARAMS) {
 	//uint16 flags;
 
 	actor_parm = thread->pop();
-	unk1_parm = thread->pop();
+	flags_parm = thread->pop();
 	action_parm = thread->pop();
-	unk2_parm = thread->pop();
+	delay_parm = thread->pop();
 	actor_id = _vm->_sdata->readWordS(actor_parm);
 	action = _vm->_sdata->readWordS(action_parm);
 	actor_idx = _vm->_actor->getActorIndex(actor_id);
@@ -546,12 +545,12 @@ int Script::SF_cycleActorFrames(SCRIPTFUNC_PARAMS) {
 // Sets an actor to the specified action state
 // Param1: actor id
 // Param2: actor action state
-// Param3: unknown
+// Param3: which frame of the action to use
 int Script::SF_setFrame(SCRIPTFUNC_PARAMS) {
 	// INCOMPLETE
 
 	SDataWord_T actor_parm;
-	SDataWord_T frame;
+	SDataWord_T frame_parm;
 	SDataWord_T action_parm;
 
 	int actor_id;
@@ -560,7 +559,7 @@ int Script::SF_setFrame(SCRIPTFUNC_PARAMS) {
 
 	actor_parm = thread->pop();
 	action_parm = thread->pop();
-	frame = thread->pop();
+	frame_parm = thread->pop();
 
 	actor_id = _vm->_sdata->readWordS(actor_parm);
 	action = _vm->_sdata->readWordS(action_parm);
@@ -598,7 +597,7 @@ int Script::SF_setLeftPortrait(SCRIPTFUNC_PARAMS) {
 // Param3: animation id link target
 // Param4: animation id link source
 int Script::SF_linkAnim(SCRIPTFUNC_PARAMS) {
-	SDataWord_T unk_parm;
+	SDataWord_T timer_parm;
 	SDataWord_T tframes_parm;
 	SDataWord_T anim1_parm;
 	SDataWord_T anim2_parm;
@@ -609,7 +608,7 @@ int Script::SF_linkAnim(SCRIPTFUNC_PARAMS) {
 	anim1_parm = thread->pop();
 	anim2_parm = thread->pop();
 	tframes_parm = thread->pop();
-	unk_parm = thread->pop();
+	timer_parm = thread->pop();
 	tframes = _vm->_sdata->readWordS(tframes_parm);
 	anim_id1 = _vm->_sdata->readWordU(anim1_parm);
 	anim_id2 = _vm->_sdata->readWordU(anim2_parm);
@@ -647,8 +646,9 @@ int Script::SF_placeActor(SCRIPTFUNC_PARAMS) {
 	SDataWord_T actor_parm;
 	SDataWord_T x_parm;
 	SDataWord_T y_parm;
+	SDataWord_T orient_parm;
 	SDataWord_T action_parm;
-	SDataWord_T unknown_parm;
+	SDataWord_T frame_parm;
 	int actor_id;
 	int actor_idx;
 	int action_state;
@@ -658,9 +658,9 @@ int Script::SF_placeActor(SCRIPTFUNC_PARAMS) {
 	actor_parm = thread->pop();
 	x_parm = thread->pop();
 	y_parm = thread->pop();
-	unknown_parm = thread->pop();
+	orient_parm = thread->pop();
 	action_parm = thread->pop();
-	unknown_parm = thread->pop();
+	frame_parm = thread->pop();
 
 	actor_id = _vm->_sdata->readWordS(actor_parm);
 	pt.x = _vm->_sdata->readWordS(x_parm);
