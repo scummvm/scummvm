@@ -1219,7 +1219,7 @@ void Control::importOldCompact(Compact* destCpt, uint8 **srcPos, uint16 numElems
 		else if (graphType == OG_COMPACT)
 			destCpt->grafixProgId = target;
 		else if (graphType == OG_TALKTABLE)
-			destCpt->grafixProgId = TALKTABLE_LIST_ID | target;
+			destCpt->grafixProgId = ((uint16*)_skyCompact->fetchCpt(CPT_TALK_TABLE_LIST))[target];
 		else if (graphType == OG_COMPACTELEM)
 			destCpt->grafixProgId = *(uint16*)_skyCompact->getCompactElem(destCpt, target);
 		else 

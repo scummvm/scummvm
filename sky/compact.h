@@ -33,7 +33,8 @@ enum CptIds {
 	CPT_FOSTER = 3,
 	CPT_MENU_BAR = 0x2E,
 	CPT_REICH_DOOR_20 = 0x30AB,
-	CPT_MOVE_LIST = 0xBD //0x8000
+	CPT_MOVE_LIST = 0xBD,
+	CPT_TALK_TABLE_LIST = 0xBC
 };
 
 enum CptTypeIds {
@@ -46,8 +47,6 @@ enum CptTypeIds {
 	ROUTEBUF,
 	MAINLIST
 };
-
-#define TALKTABLE_LIST_ID 0x7000
 
 namespace Sky {
 

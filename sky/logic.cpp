@@ -2474,14 +2474,13 @@ bool Logic::fnPrintf(uint32 a, uint32 b, uint32 c) {
 
 void Logic::stdSpeak(Compact *target, uint32 textNum, uint32 animNum, uint32 base) {
 
-	uint16 *animPtr;
-
 	animNum += target->megaSet / NEXT_MEGA_SET;
 	animNum &= 0xFF;
 	
-	target->grafixProgId = TALKTABLE_LIST_ID + animNum;
+	uint16 *talkTable = (uint16*)_skyCompact->fetchCpt(CPT_TALK_TABLE_LIST);
+	target->grafixProgId = talkTable[animNum];
 	target->grafixProgPos = 0;
-	animPtr = _skyCompact->getGrafixPtr(target);
+	uint16 *animPtr = _skyCompact->getGrafixPtr(target);
 	
 	if (animPtr) {
 		target->offset = *animPtr++;
