@@ -512,7 +512,7 @@ void Insane::setEnemyAnimation(int32 actornum, int anim) {
 
 	if (anim <= 12)
 		smlayer_setActorFacing(actornum, 1, 
-			  actorAnimationData[_actor[actornum].weaponClass * 7 + anim - 6 + d], 180);
+			  actorAnimationData[_actor[actornum].weaponClass * 7 + anim - 6] + d, 180);
 }
 
 int32 Insane::processMouse(void) {
