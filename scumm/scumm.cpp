@@ -389,7 +389,7 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 	  _targetName(detector->_targetName) {
 
 	// Add default file directories.
-	if ((_features & GF_AMIGA) && (_version <= 3)) {
+	if (((_features & GF_AMIGA) || (_features & GF_ATARI_ST)) && (_version <= 4)) {
 		// This is for the Amiga version of Indy3/Loom/Maniac/Zak
 		File::addDefaultDirectory(_gameDataPath + "/ROOMS/");
 		File::addDefaultDirectory(_gameDataPath + "/rooms/");
