@@ -78,9 +78,9 @@
  * to setup, but I have no idea if/how one can also change files which are not
  * currently being commit'ed.
  */
-const char *gScummVMVersion = "0.5.3cvs";
+const char *gScummVMVersion = "0.5.4cvs";
 const char *gScummVMBuildDate = __DATE__ " " __TIME__;
-const char *gScummVMFullVersion = "ScummVM 0.5.3cvs (" __DATE__ " " __TIME__ ")";
+const char *gScummVMFullVersion = "ScummVM 0.5.4cvs (" __DATE__ " " __TIME__ ")";
 
 
 Config	*g_config = 0;
@@ -102,6 +102,10 @@ extern "C" int main(int argc, char *argv[]);
 #include <SDL.h>
 #elif !defined(__MORPHOS__) && !defined(__DC__)
 #undef main
+#endif
+
+#if defined (ALLEGRO_BACKEND)
+#include "allegro.h"
 #endif
 
 #if defined(UNIX)
@@ -331,6 +335,10 @@ int main(int argc, char *argv[]) {
 	delete system;
 	return 0;
 }
+// allegro needs this for some reason...
+#if defined(ALLEGRO_BACKEND)
+END_OF_MAIN();
+#endif
 
 #endif // WIN32_WCE
 
