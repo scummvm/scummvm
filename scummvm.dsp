@@ -184,6 +184,30 @@ SOURCE=.\base\plugins.h
 # Begin Group "common"
 
 # PROP Default_Filter ""
+# Begin Group "scaler"
+
+# PROP Default_Filter ""
+# Begin Source File
+
+SOURCE=.\common\scaler\2xsai.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\common\scaler\aspect.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\common\scaler\hq2x.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\common\scaler\hq3x.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\common\scaler\intern.h
+# End Source File
+# End Group
 # Begin Source File
 
 SOURCE=".\common\config-file.cpp"
