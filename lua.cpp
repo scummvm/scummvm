@@ -1018,39 +1018,23 @@ static void GetTextObjectDimensions() {
 }
 
 static void StartFullscreenMovie() {
-	bool mode = lua_getparam(2) != 0;
-	if (g_smush->play(lua_getstring(lua_getparam(1)), 0, 0)) {
-		lua_pushnumber(1);
-	} else {
-		lua_pushnil();
-	}
+	bool mode = getbool(2);
+	pushbool(g_smush->play(lua_getstring(lua_getparam(1)), 0, 0));
 }
 
 static void StartMovie() {
-	bool mode = lua_getparam(2) != 0;
+	bool mode = getbool(2);
 	int x = lua_getparam(3);
 	int y = lua_getparam(4);
-	if (g_smush->play(lua_getstring(lua_getparam(1)), x, y)) {
-		lua_pushnumber(1);
-	} else {
-		lua_pushnil();
-	}
+	pushbool(g_smush->play(lua_getstring(lua_getparam(1)), x, y));
 }
 
 static void IsFullscreenMoviePlaying() {
-	if (g_smush->isPlaying()) {
-		lua_pushnumber(1);
-	} else {
-		lua_pushnil();
-	}
+	pushbool(g_smush->isPlaying());
 }
 
 static void IsMoviePlaying() {
-	if (g_smush->isPlaying()) {
-		lua_pushnumber(1);
-	} else {
-		lua_pushnil();
-	}
+	pushbool(g_smush->isPlaying());
 }
 
 static void StopMovie() {
@@ -1058,7 +1042,7 @@ static void StopMovie() {
 }
 
 static void PauseMovie() {
-	g_smush->pause(lua_isnil(lua_getparam(1)));
+	g_smush->pause(lua_isnil(lua_getparam(1)) != 0);
 }
 
 // Stub function for builtin functions not yet implemented
