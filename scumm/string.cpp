@@ -171,9 +171,13 @@ void Scumm::unkMessage2()
 	if (_string[3].color == 0)
 		_string[3].color = 4;
 
-	InfoDialog* dialog = new InfoDialog(_newgui, this, (char*)buf);
-	runDialog (dialog);
-	delete dialog;
+	if (_gameId == GID_MONKEY_VGA) {
+		InfoDialog* dialog = new InfoDialog(_newgui, this, (char*)buf);
+		runDialog (dialog);
+		delete dialog;
+	} else {
+		printf("unkMessage2: %s\n", buf);
+	}
 
 	_messagePtr = tmp;
 }
