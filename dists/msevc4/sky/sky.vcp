@@ -100,7 +100,7 @@ BSC32=bscmake.exe
 # PROP Target_Dir ""
 CPP=clarm.exe
 # ADD BASE CPP /nologo /W3 /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "NDEBUG" /D "ARM" /D "_ARM_" /D "ARMV4" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "_LIB" /YX /O2 /M$(CECrtMT) /c
-# ADD CPP /nologo /W3 /I "../../../" /I "../../../common/" /I "../../../backends/wince/" /I "../../../backends/wince/missing/" /D "_LIB" /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "NDEBUG" /D "ARM" /D "_ARM_" /D "ARMV4" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "SCUMM_NEED_ALIGNMENT" /D "FPM_DEFAULT" /D "USE_MAD" /D "NONSTANDARD_PORT" /D "USE_VORBIS" /D "WIN32" /D "DISABLE_SWORD1" /YX /O2 /M$(CECrtMT) /c
+# ADD CPP /nologo /W3 /I "../../../" /I "../../../common/" /I "../../../backends/wince/" /I "../../../backends/wince/missing/" /D "_LIB" /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "NDEBUG" /D "ARM" /D "_ARM_" /D "ARMV4" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "SCUMM_NEED_ALIGNMENT" /D "FPM_DEFAULT" /D "USE_MAD" /D "NONSTANDARD_PORT" /D "USE_VORBIS" /D "WIN32" /YX /O2 /M$(CECrtMT) /c
 LIB32=link.exe -lib
 # ADD BASE LIB32 /nologo
 # ADD LIB32 /nologo
@@ -126,7 +126,7 @@ BSC32=bscmake.exe
 # PROP Target_Dir ""
 CPP=clarm.exe
 # ADD BASE CPP /nologo /W3 /Zi /Od /D "DEBUG" /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "ARM" /D "_ARM_" /D "ARMV4" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "_LIB" /YX /M$(CECrtMTDebug) /c
-# ADD CPP /nologo /W3 /Zi /Od /I "../../../" /I "../../../common/" /I "../../../backends/wince/" /I "../../../backends/wince/missing/" /D "_LIB" /D "DEBUG" /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "ARM" /D "_ARM_" /D "ARMV4" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "SCUMM_NEED_ALIGNMENT" /D "FPM_DEFAULT" /D "USE_MAD" /D "NONSTANDARD_PORT" /D "DISABLE_SWORD1" /D "USE_VORBIS" /D "WIN32" /YX /M$(CECrtMTDebug) /c
+# ADD CPP /nologo /W3 /Zi /Od /I "../../../" /I "../../../common/" /I "../../../backends/wince/" /I "../../../backends/wince/missing/" /I "../../../backends/wince/CEgui" /I "../../../backends/wince/CEkeys" /D "_LIB" /D "DEBUG" /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "ARM" /D "_ARM_" /D "ARMV4" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "SCUMM_NEED_ALIGNMENT" /D "FPM_DEFAULT" /D "USE_MAD" /D "NONSTANDARD_PORT" /D "USE_VORBIS" /D "WIN32" /YX /M$(CECrtMTDebug) /c
 LIB32=link.exe -lib
 # ADD BASE LIB32 /nologo
 # ADD LIB32 /nologo
@@ -642,13 +642,7 @@ DEP_CPP_ADLIBM=\
 	"..\..\..\sky\sky.h"\
 	"..\..\..\sound\fmopl.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"mad.h"\
 	{$(INCLUDE)}"SDL_byteorder.h"\
-	{$(INCLUDE)}"vorbis\config_types.h"\
-	{$(INCLUDE)}"vorbis\ivorbiscodec.h"\
-	{$(INCLUDE)}"vorbis\ogg.h"\
-	{$(INCLUDE)}"vorbis\os_types.h"\
-	{$(INCLUDE)}"vorbis\vorbisfile.h"\
 	
 NODEP_CPP_ADLIBM=\
 	"..\..\..\common\config.h"\
@@ -673,13 +667,7 @@ DEP_CPP_ADLIBM=\
 	"..\..\..\sky\sky.h"\
 	"..\..\..\sound\fmopl.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"mad.h"\
 	{$(INCLUDE)}"SDL_byteorder.h"\
-	{$(INCLUDE)}"vorbis\config_types.h"\
-	{$(INCLUDE)}"vorbis\ivorbiscodec.h"\
-	{$(INCLUDE)}"vorbis\ogg.h"\
-	{$(INCLUDE)}"vorbis\os_types.h"\
-	{$(INCLUDE)}"vorbis\vorbisfile.h"\
 	
 NODEP_CPP_ADLIBM=\
 	"..\..\..\common\config.h"\
@@ -1413,13 +1401,7 @@ DEP_CPP_CONTR=\
 	"..\..\..\sky\struc.h"\
 	"..\..\..\sky\text.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"mad.h"\
 	{$(INCLUDE)}"SDL_byteorder.h"\
-	{$(INCLUDE)}"vorbis\config_types.h"\
-	{$(INCLUDE)}"vorbis\ivorbiscodec.h"\
-	{$(INCLUDE)}"vorbis\ogg.h"\
-	{$(INCLUDE)}"vorbis\os_types.h"\
-	{$(INCLUDE)}"vorbis\vorbisfile.h"\
 	
 NODEP_CPP_CONTR=\
 	"..\..\..\common\config.h"\
@@ -1453,13 +1435,7 @@ DEP_CPP_CONTR=\
 	"..\..\..\sky\struc.h"\
 	"..\..\..\sky\text.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"mad.h"\
 	{$(INCLUDE)}"SDL_byteorder.h"\
-	{$(INCLUDE)}"vorbis\config_types.h"\
-	{$(INCLUDE)}"vorbis\ivorbiscodec.h"\
-	{$(INCLUDE)}"vorbis\ogg.h"\
-	{$(INCLUDE)}"vorbis\os_types.h"\
-	{$(INCLUDE)}"vorbis\vorbisfile.h"\
 	
 NODEP_CPP_CONTR=\
 	"..\..\..\common\config.h"\
@@ -1820,13 +1796,7 @@ DEP_CPP_INTRO=\
 	"..\..\..\sky\struc.h"\
 	"..\..\..\sky\text.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"mad.h"\
 	{$(INCLUDE)}"SDL_byteorder.h"\
-	{$(INCLUDE)}"vorbis\config_types.h"\
-	{$(INCLUDE)}"vorbis\ivorbiscodec.h"\
-	{$(INCLUDE)}"vorbis\ogg.h"\
-	{$(INCLUDE)}"vorbis\os_types.h"\
-	{$(INCLUDE)}"vorbis\vorbisfile.h"\
 	
 NODEP_CPP_INTRO=\
 	"..\..\..\common\config.h"\
@@ -1856,13 +1826,7 @@ DEP_CPP_INTRO=\
 	"..\..\..\sky\struc.h"\
 	"..\..\..\sky\text.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"mad.h"\
 	{$(INCLUDE)}"SDL_byteorder.h"\
-	{$(INCLUDE)}"vorbis\config_types.h"\
-	{$(INCLUDE)}"vorbis\ivorbiscodec.h"\
-	{$(INCLUDE)}"vorbis\ogg.h"\
-	{$(INCLUDE)}"vorbis\os_types.h"\
-	{$(INCLUDE)}"vorbis\vorbisfile.h"\
 	
 NODEP_CPP_INTRO=\
 	"..\..\..\common\config.h"\
@@ -1935,6 +1899,7 @@ DEP_CPP_LOGIC=\
 	"..\..\..\base\gameDetector.h"\
 	"..\..\..\common\list.h"\
 	"..\..\..\common\savefile.h"\
+	"..\..\..\common\scaler.h"\
 	"..\..\..\common\scummsys.h"\
 	"..\..\..\common\stdafx.h"\
 	"..\..\..\common\str.h"\
@@ -1957,13 +1922,7 @@ DEP_CPP_LOGIC=\
 	"..\..\..\sky\talks.h"\
 	"..\..\..\sky\text.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"mad.h"\
 	{$(INCLUDE)}"SDL_byteorder.h"\
-	{$(INCLUDE)}"vorbis\config_types.h"\
-	{$(INCLUDE)}"vorbis\ivorbiscodec.h"\
-	{$(INCLUDE)}"vorbis\ogg.h"\
-	{$(INCLUDE)}"vorbis\os_types.h"\
-	{$(INCLUDE)}"vorbis\vorbisfile.h"\
 	
 NODEP_CPP_LOGIC=\
 	"..\..\..\common\config.h"\
@@ -1979,6 +1938,7 @@ DEP_CPP_LOGIC=\
 	"..\..\..\base\gameDetector.h"\
 	"..\..\..\common\list.h"\
 	"..\..\..\common\savefile.h"\
+	"..\..\..\common\scaler.h"\
 	"..\..\..\common\scummsys.h"\
 	"..\..\..\common\stdafx.h"\
 	"..\..\..\common\str.h"\
@@ -2001,13 +1961,7 @@ DEP_CPP_LOGIC=\
 	"..\..\..\sky\talks.h"\
 	"..\..\..\sky\text.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"mad.h"\
 	{$(INCLUDE)}"SDL_byteorder.h"\
-	{$(INCLUDE)}"vorbis\config_types.h"\
-	{$(INCLUDE)}"vorbis\ivorbiscodec.h"\
-	{$(INCLUDE)}"vorbis\ogg.h"\
-	{$(INCLUDE)}"vorbis\os_types.h"\
-	{$(INCLUDE)}"vorbis\vorbisfile.h"\
 	
 NODEP_CPP_LOGIC=\
 	"..\..\..\common\config.h"\
@@ -2334,6 +2288,7 @@ DEP_CPP_SKY_C=\
 	"..\..\..\common\list.h"\
 	"..\..\..\common\map.h"\
 	"..\..\..\common\savefile.h"\
+	"..\..\..\common\scaler.h"\
 	"..\..\..\common\scummsys.h"\
 	"..\..\..\common\singleton.h"\
 	"..\..\..\common\stdafx.h"\
@@ -2361,13 +2316,7 @@ DEP_CPP_SKY_C=\
 	"..\..\..\sound\fmopl.h"\
 	"..\..\..\sound\mididrv.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"mad.h"\
 	{$(INCLUDE)}"SDL_byteorder.h"\
-	{$(INCLUDE)}"vorbis\config_types.h"\
-	{$(INCLUDE)}"vorbis\ivorbiscodec.h"\
-	{$(INCLUDE)}"vorbis\ogg.h"\
-	{$(INCLUDE)}"vorbis\os_types.h"\
-	{$(INCLUDE)}"vorbis\vorbisfile.h"\
 	
 NODEP_CPP_SKY_C=\
 	"..\..\..\common\config.h"\
@@ -2389,6 +2338,7 @@ DEP_CPP_SKY_C=\
 	"..\..\..\common\list.h"\
 	"..\..\..\common\map.h"\
 	"..\..\..\common\savefile.h"\
+	"..\..\..\common\scaler.h"\
 	"..\..\..\common\scummsys.h"\
 	"..\..\..\common\singleton.h"\
 	"..\..\..\common\stdafx.h"\
@@ -2416,13 +2366,7 @@ DEP_CPP_SKY_C=\
 	"..\..\..\sound\fmopl.h"\
 	"..\..\..\sound\mididrv.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"mad.h"\
 	{$(INCLUDE)}"SDL_byteorder.h"\
-	{$(INCLUDE)}"vorbis\config_types.h"\
-	{$(INCLUDE)}"vorbis\ivorbiscodec.h"\
-	{$(INCLUDE)}"vorbis\ogg.h"\
-	{$(INCLUDE)}"vorbis\os_types.h"\
-	{$(INCLUDE)}"vorbis\vorbisfile.h"\
 	
 NODEP_CPP_SKY_C=\
 	"..\..\..\common\config.h"\
@@ -2489,13 +2433,7 @@ DEP_CPP_SOUND=\
 	"..\..\..\sky\sound.h"\
 	"..\..\..\sky\struc.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"mad.h"\
 	{$(INCLUDE)}"SDL_byteorder.h"\
-	{$(INCLUDE)}"vorbis\config_types.h"\
-	{$(INCLUDE)}"vorbis\ivorbiscodec.h"\
-	{$(INCLUDE)}"vorbis\ogg.h"\
-	{$(INCLUDE)}"vorbis\os_types.h"\
-	{$(INCLUDE)}"vorbis\vorbisfile.h"\
 	
 NODEP_CPP_SOUND=\
 	"..\..\..\common\config.h"\
@@ -2522,13 +2460,7 @@ DEP_CPP_SOUND=\
 	"..\..\..\sky\sound.h"\
 	"..\..\..\sky\struc.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"mad.h"\
 	{$(INCLUDE)}"SDL_byteorder.h"\
-	{$(INCLUDE)}"vorbis\config_types.h"\
-	{$(INCLUDE)}"vorbis\ivorbiscodec.h"\
-	{$(INCLUDE)}"vorbis\ogg.h"\
-	{$(INCLUDE)}"vorbis\os_types.h"\
-	{$(INCLUDE)}"vorbis\vorbisfile.h"\
 	
 NODEP_CPP_SOUND=\
 	"..\..\..\common\config.h"\
