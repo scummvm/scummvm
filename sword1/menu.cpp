@@ -130,8 +130,7 @@ uint8 SwordMenu::checkMenuClick(uint8 menuType) {
 					SwordLogic::_scriptVars[MENU_LOOKING] = 1;
 					SwordLogic::_scriptVars[DEFAULT_ICON_TEXT] = _objectDefs[_menuList[cnt]].textDesc;
 					refreshMenus = true;
-				}
-				if (mouseEvent & BS1L_BUTTON_DOWN) {
+				} else if (mouseEvent & BS1L_BUTTON_DOWN) {
 					if (SwordLogic::_scriptVars[OBJECT_HELD]) {
 						if (SwordLogic::_scriptVars[OBJECT_HELD] == _menuList[cnt]) {
 							_mouse->setLuggage(0, 0);
@@ -139,19 +138,14 @@ uint8 SwordMenu::checkMenuClick(uint8 menuType) {
 						} else { // the player is clicking another item on this one.
 							   // run its use-script, if there is one
 							SwordLogic::_scriptVars[SECOND_ITEM] = _menuList[cnt];
+							_mouse->setLuggage(0, 0);
 						}
-					} else
+					} else {
 						SwordLogic::_scriptVars[OBJECT_HELD] = _menuList[cnt];
-					refreshMenus = true;
-				} else if (mouseEvent & BS1L_BUTTON_UP) {
-					if (SwordLogic::_scriptVars[OBJECT_HELD] == _menuList[cnt]) {
 						_mouse->setLuggage(_objectDefs[_menuList[cnt]].luggageIconRes, 0);
 						return cnt + 1;
-					} else {
-						_mouse->setLuggage(0, 0);
-						SwordLogic::_scriptVars[OBJECT_HELD] = 0;
-						refreshMenus = true;
 					}
+					refreshMenus = true;
 				}
 		}
 	}
