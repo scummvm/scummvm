@@ -974,9 +974,16 @@ void Scumm::o5_getActorY()
 	int a;
 	getResultPos();
 
-	if (_gameId == GID_INDY3_256)
+	if (_gameId == GID_INDY3_256) {
 		a = getVarOrDirectByte(0x80);
-	else
+
+		// Indy3 hack to cheat the 'Leap of Faith' grail test
+		// This test is so damn annoying, I'm leaving this in.
+		if (_roomResource == 85) {
+			setResult(94);
+			return;
+		}
+	} else
 		a = getVarOrDirectWord(0x80);
 
 	setResult(getObjY(a));
