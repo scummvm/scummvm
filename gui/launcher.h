@@ -43,7 +43,7 @@ protected:
 	Widget			*_startButton;
 	Widget			*_editButton;
 	Widget			*_removeButton;
-	StringList		_filenames;
+	StringList		_domains;
 	GameDetector 	&_detector;
 	BrowserDialog	*_browser;
 

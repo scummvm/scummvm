@@ -24,6 +24,7 @@
 #include "chooser.h"
 #include "newgui.h"
 #include "message.h"
+#include "EditTextWidget.h"
 #include "ListWidget.h"
 
 #include "backends/fs/fs.h"
@@ -41,6 +42,89 @@ enum {
 };
 
 typedef ScummVM::List<const VersionSettings *> GameList;
+
+
+/*
+ * A dialog that allows the user to edit a config game entry.
+ * That will eventually include
+ * - the description (used for user feedback only)
+ * - amiga/subtitles flag? Although those make only sense for Scumm games
+ * - the music driver for that game (<Default> or custom)
+ * - maybe scaler. But there are two problems:
+ *   1) different backends can have different scalers with different names,
+ *      so we first have to add a way to query those... no Ender, I don't
+ *      think a bitmasked property() value is nice for this,  because we would
+ *      have to add to the bitmask values whenever a backends adds a new scaler).
+ *   2) at the time the launcher is running, the GFX backend is already setup.
+ *      so when a game is run via the launcher, the custom scaler setting for it won't be
+ *      used. So we'd also have to add an API to change the scaler during runtime
+ *      (the SDL backend can already do that based on user input, but there is no API
+ *      to achieve it)
+ *   If the APIs for 1&2 are in place, we can think about adding this to the Edit&Option dialogs
+ * - maybe volumes?
+ */
+
+enum {
+	kOKCmd = 'OK  '
+};
+
+class EditGameDialog : public Dialog {
+	typedef ScummVM::String String;
+	typedef ScummVM::StringList StringList;
+public:
+	EditGameDialog(NewGui *gui, Config &config, const String &domain);
+
+	virtual void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);
+
+protected:
+	Config &_config;
+};
+
+EditGameDialog::EditGameDialog(NewGui *gui, Config &config, const String &domain)
+	: Dialog(gui, 10, 30, 320-2*10, 200-2*30), _config(config)
+{
+	// Determine the description string
+	String description(_config.get("description", domain));
+	if (description.isEmpty()) {
+		const VersionSettings *v = version_settings;
+		while (v->filename) {
+			if (!scumm_stricmp(v->filename, domain.c_str())) {
+				description = v->gamename;
+				break;
+			}
+			v++;
+		}
+	}
+	
+	// Label & edit widget for the description
+	new StaticTextWidget(this, 10, 8, 40, kLineHeight, "Name: ", kTextAlignRight);
+	new StaticTextWidget(this, 50, 8, _w-50-10, kLineHeight, description, kTextAlignLeft);	// TODO - should be an EditTextWidget
+	
+	
+	// Path to game data (view only)
+	String path(_config.get("path", domain));
+	new StaticTextWidget(this, 10, 20, 40, kLineHeight, "Path: ", kTextAlignRight);
+	new StaticTextWidget(this, 50, 20, _w-50-10, kLineHeight, path, kTextAlignLeft);
+	
+
+	// Add OK & Cancel buttons
+	addButton(_w-2*(kButtonWidth+10), _h-24, "Cancel", kCloseCmd, 0);
+	addButton(_w-(kButtonWidth+10), _h-24, "OK", kCloseCmd, 0);
+}
+
+void EditGameDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data)
+{
+	switch (cmd) {
+	case kOKCmd:
+		// TODO - write back changes made to config object
+		setResult(1);
+		close();
+		break;
+	default:
+		Dialog::handleCommand(sender, cmd, data);
+	}
+}
+
 
 /*
  * TODO list
@@ -107,8 +191,8 @@ void LauncherDialog::updateListing()
 	// Retrieve a list of all games defined in the config file
 	StringList domains = g_config->get_domains();
 	for (i = 0; i < domains.size();i++) {
-		String name = (char*)g_config->get("gameid", domains[i]);
-		String description = (char*)g_config->get("description", domains[i]);
+		String name(g_config->get("gameid", domains[i]));
+		String description(g_config->get("description", domains[i]));
 		
 		if (name.isEmpty() || description.isEmpty()) {
 			v = version_settings;
@@ -129,7 +213,7 @@ void LauncherDialog::updateListing()
 			while (pos < size && (description > l[pos]))
 				pos++;
 			l.insert_at(pos, description);
-			_filenames.insert_at(pos, domains[i]);
+			_domains.insert_at(pos, domains[i]);
 		}
 	}
 
@@ -191,12 +275,17 @@ void LauncherDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 	int item =  _list->getSelected();
 
 	switch (cmd) {
-	case kAddGameCmd: {
+	case kAddGameCmd:
 		// Allow user to add a new game to the list.
-		// 1) show a dir selection dialog which lets 
-		// the user pick the directory the game data resides in.
-		// 2) show the user a list of games to pick from, already narrowed
-		// down to all possible choices
+		// 1) show a dir selection dialog which lets the user pick the directory
+		//    the game data resides in.
+		// 2) try to auto detect which game is in the directory, if we cannot
+		//    determine it uniquely preent a list of candidates to the user 
+		//    to pick from
+		// 3) Display the 'Edit' dialog for that item, letting the user specify
+		//    an alternate description (to distinguish multiple versions of the
+		//    game, e.g. 'Monkey German' and 'Monkey English') and set default
+		//    options for that game.
 		
 		if (_browser->runModal()) {
 			// User did make a choice...
@@ -209,7 +298,7 @@ void LauncherDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 			
 			if (candidates.isEmpty()) {
 				// No game was found in the specified directory
-				MessageDialog alert(_gui, "ScummVM could not find any game in the specified directory");
+				MessageDialog alert(_gui, "ScummVM could not find any game in the specified directory!");
 				alert.runModal();
 			} else if (candidates.size() == 1) {
 				// Exact match
@@ -229,29 +318,48 @@ void LauncherDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 			
 			if (v != 0) {
 				// The auto detector or the user made a choice.
-				// For now we just forcefully insert it into the config list, but
-				// in the future we might want to check for an existing entry
-				// first... of course the question is, what do we do if we find one?
-				g_config->set("path", dir->path(), v->filename);
+				// Pick a domain name which does not yet exist (after all, we
+				// are *adding* a game to the config, not replacing).
+				String domain(v->filename);
+				if (g_config->has_domain(domain)) {
+					char suffix = 'A';
+					domain += suffix;
+					while (g_config->has_domain(domain)) {
+						domain.deleteLastChar();
+						suffix++;
+						domain += suffix;
+					}
+					g_config->set("gameid", v->filename, domain);
+					g_config->set("description", v->gamename, domain);
+				}
+				g_config->set("path", dir->path(), domain);
 				
-				// Write it to disk
-				g_config->set_writing(true);
-				g_config->flush();
-				g_config->set_writing(false);
-				
-				// Update the ListWidget and force a redraw
-				updateListing();
-				draw();
+				// Display edit dialog for the new entry
+				EditGameDialog editDialog(_gui, *g_config, domain);
+				if (editDialog.runModal()) {
+					// User pressed OK, so make changes permanent
+
+					// Write config to disk
+					g_config->set_writing(true);
+					g_config->flush();
+					g_config->set_writing(false);
+					
+					// Update the ListWidget and force a redraw
+					updateListing();
+					draw();
+				} else {
+					// User aborted, remove the the new domain again
+					g_config->delete_domain(domain);
+				}
 			}
 		}
-		}
 		break;
-	case kRemoveGameCmd: {
-		// TODO - remove the currently selected game from the list
+	case kRemoveGameCmd:
+		// Remove the currently selected game from the list
 		assert(item >= 0);
-		MessageDialog alert(_gui, "'Remove game' dialog not yet implemented!");
-		alert.runModal();
-		}
+		g_config->delete_domain(_domains[item]);
+		updateListing();
+		draw();
 		break;
 	case kEditGameCmd: {
 		// Set game specifc options. Most of these should be "optional", i.e. by 
@@ -261,8 +369,19 @@ void LauncherDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 		// This is useful because e.g. MonkeyVGA needs Adlib music to have decent
 		// music support etc.
 		assert(item >= 0);
-		MessageDialog alert(_gui, "'Edit game' dialog not yet implemented!");
-		alert.runModal();
+		EditGameDialog editDialog(_gui, *g_config, _domains[item]);
+		if (editDialog.runModal()) {
+			// User pressed OK, so make changes permanent
+
+			// Write config to disk
+			g_config->set_writing(true);
+			g_config->flush();
+			g_config->set_writing(false);
+			
+			// Update the ListWidget and force a redraw
+			updateListing();
+			draw();
+		}
 		}
 		break;
 	case kOptionsCmd: {
@@ -279,16 +398,24 @@ void LauncherDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 	case kListItemDoubleClickedCmd:
 		// Print out what was selected
 		assert(item >= 0);
-		_detector.setGame(_filenames[item].c_str());
+		_detector.setGame(_domains[item]);
 		close();
 		break;
-	case kListSelectionChangedCmd:
-		_startButton->setEnabled(data >= 0);
-		_startButton->draw();
-		//_editButton->setEnabled(data >= 0);
-		//_editButton->draw();
-		_removeButton->setEnabled(data >= 0);
-		_removeButton->draw();
+	case kListSelectionChangedCmd: {
+		bool enable = (data >= 0);
+		if (enable != _startButton->isEnabled()) {
+			_startButton->setEnabled(enable);
+			_startButton->draw();
+		}
+		if (enable != _editButton->isEnabled()) {
+			_editButton->setEnabled(enable);
+			_editButton->draw();
+		}
+		if (enable != _removeButton->isEnabled()) {
+			_removeButton->setEnabled(enable);
+			_removeButton->draw();
+		}
+		}
 		break;
 	case kQuitCmd:
 		g_system->quit();
