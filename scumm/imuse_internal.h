@@ -35,7 +35,6 @@ namespace Scumm {
 // the most common iMuse diagnostic messages.
 // #define IMUSE_DEBUG
 
-struct HookDatas;
 struct ParameterFader;
 struct DeferredCommand;
 struct ImTrigger;

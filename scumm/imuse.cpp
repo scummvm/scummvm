@@ -715,7 +715,7 @@ int32 IMuseInternal::doCommand (int numargs, int a[]) {
 			return getSoundStatus(a[1]);
 		case 14:
 			// Sam and Max: Parameter fade
-			player = this->findActivePlayer(a[1]);
+			player = findActivePlayer(a[1]);
 			if (player)
 				return player->addParameterFader(a[3], a[4], a[5]);
 			return -1;
