@@ -973,7 +973,7 @@ void CharsetRendererV3::printChar(int chr) {
 	
 	drawTop = _top - vs->topline;
 	char_ptr = _fontPtr + chr * 8;
-	dest_ptr = vs->screenPtr + vs->xstart + drawTop * _vm->_screenWidth + _left;
+	dest_ptr = vs->screenPtr + vs->xstart + drawTop * vs->width + _left;
 	mask_ptr = _vm->getMaskBuffer(_left, drawTop, 0);
 	useMask = (vs->number == 0 && !_ignoreCharsetMask);
 
@@ -1091,12 +1091,12 @@ void CharsetRendererClassic::printChar(int chr) {
 
 
 	byte *mask = _vm->getMaskBuffer(_left, drawTop, 0);
-	byte *dst = vs->screenPtr + vs->xstart + drawTop * _vm->_screenWidth + _left;
+	byte *dst = vs->screenPtr + vs->xstart + drawTop * vs->width + _left;
 
 	byte *back = dst;
 	if (_blitAlso) {
 		dst = _vm->getResourceAddress(rtBuffer, vs->number + 5)
-			+ vs->xstart + drawTop * _vm->_screenWidth + _left;
+			+ vs->xstart + drawTop * vs->width + _left;
 	}
 
 	if (is2byte) {
@@ -1110,8 +1110,8 @@ void CharsetRendererClassic::printChar(int chr) {
 		int h = height;
 		do {
 			memcpy(back, dst, width);
-			back += _vm->_screenWidth;
-			dst += _vm->_screenWidth;
+			back += vs->width;
+			dst += vs->width;
 		} while (--h);
 	}
 	
@@ -1167,7 +1167,7 @@ void CharsetRendererClassic::drawBitsN(VirtScreen *vs, byte *dst, const byte *sr
 				maskpos++;
 			}
 		}
-		dst += _vm->_screenWidth - width;
+		dst += vs->width - width;
 		mask += _vm->gdi._numStrips;
 	}
 }
@@ -1189,8 +1189,8 @@ void CharsetRendererCommon::drawBits1(VirtScreen *vs, byte *dst, const byte *src
 			if ((bits & revBitMask[x % 8]) && y + drawTop >= 0) {
 				if (_dropShadow) {
 					*(dst + 1) = _shadowColor;
-					*(dst + _vm->_screenWidth) = _shadowColor;
-					*(dst + _vm->_screenWidth + 1) = _shadowColor;
+					*(dst + vs->width) = _shadowColor;
+					*(dst + vs->width + 1) = _shadowColor;
 				}					
 				*dst = _color;
 				if (useMask) {
@@ -1215,7 +1215,7 @@ void CharsetRendererCommon::drawBits1(VirtScreen *vs, byte *dst, const byte *src
 			}
 		}
 
-		dst += _vm->_screenWidth - width;
+		dst += vs->width - width;
 		mask += _vm->gdi._numStrips;
 	}
 }

@@ -228,8 +228,12 @@ void ScummEngine::initScreens(int b, int w, int h) {
 	}
 
 	if (!getResourceAddress(rtBuffer, 4)) {
-		// Since the size of screen 3 is fixed, there is no need to reallocate it
-		// if its size changed.
+		// Since the size of screen 3 is fixed, there is no need to reallocate
+		// it if its size changed.
+		// Not sure what it is good for, though. I think it may have been used
+		// in pre-V7 for the games messages (like 'Pause', Yes/No dialogs,
+		// version display, etc.). I don't know about V7, maybe the same is the
+		// case there. If so, we could probably just remove it completely.
 		if (_version >= 7) {
 			initVirtScreen(kUnkVirtScreen, 0, (_screenHeight / 2) - 10, _screenWidth, 13, false, false);
 		} else {
@@ -258,7 +262,7 @@ void ScummEngine::initVirtScreen(VirtScreenNumber slot, int number, int top, int
 	}
 
 	vs->number = slot;
-	vs->width = _screenWidth;
+	vs->width = width;
 	vs->topline = top;
 	vs->height = height;
 	vs->alloctwobuffers = twobufs;
@@ -268,10 +272,16 @@ void ScummEngine::initVirtScreen(VirtScreenNumber slot, int number, int top, int
 
 	size = vs->width * vs->height;
 	if (vs->scrollable) {
+		// Allow enough spaces so that rooms can be up to 4 resp. 8 screens
+		// wide. To achieve (horizontal!) scrolling, we use a neat trick:
+		// only the offset into the screen buffer (xstart) is changed. That way
+		// very little of the screen has to be redrawn, and we have a very low
+		// memory overhead (namely for every pixel we want to scroll, we need
+		// one additional byte in the buffer).
 		if (_version >= 7) {
-			size += _screenWidth * 8;
+			size += width * 8;
 		} else {
-			size += _screenWidth * 4;
+			size += width * 4;
 		}
 	}
 
@@ -455,8 +465,8 @@ void Gdi::drawStripToScreen(VirtScreen *vs, int x, int w, int t, int b) {
 	if (_vm->_screenTop < 0)
 		_vm->_screenTop = 0;
 
-	ptr = vs->screenPtr + (x + vs->xstart) + (_vm->_screenTop + t) * _vm->_screenWidth;
-	_vm->_system->copy_rect(ptr, _vm->_screenWidth, x, vs->topline + t, w, height);
+	ptr = vs->screenPtr + (x + vs->xstart) + (_vm->_screenTop + t) * vs->width;
+	_vm->_system->copy_rect(ptr, vs->width, x, vs->topline + t, w, height);
 }
 
 /**
@@ -497,6 +507,9 @@ void ScummEngine::blit(byte *dst, const byte *src, int w, int h) {
 	assert(h > 0);
 	assert(src != NULL);
 	assert(dst != NULL);
+	
+	// TODO: This function currently always assumes that srcPitch == dstPitch
+	// and furthermore that both equal _screenWidth.
 
 	if (w==_screenWidth)
 		memcpy (dst, src, w*h);
@@ -554,19 +567,19 @@ void ScummEngine::drawBox(int x, int y, int x2, int y2, int color) {
 	
 	markRectAsDirty(vs->number, x, x2, y, y2, 0);
 
-	backbuff = vs->screenPtr + vs->xstart + y * _screenWidth + x;
+	backbuff = vs->screenPtr + vs->xstart + y * vs->width + x;
 
 	width = x2 - x;
 	height = y2 - y;
 	if (color == -1) {
 		if (vs->number != kMainVirtScreen)
 			error("can only copy bg to main window");
-		bgbuff = getResourceAddress(rtBuffer, vs->number + 5) + vs->xstart + y * _screenWidth + x;
+		bgbuff = getResourceAddress(rtBuffer, vs->number + 5) + vs->xstart + y * vs->width + x;
 		blit(backbuff, bgbuff, width, height);
 	} else {
 		while (height--) {
 			memset(backbuff, color, width);
-			backbuff += _screenWidth;
+			backbuff += vs->width;
 		}
 	}
 }
@@ -625,6 +638,7 @@ void ScummEngine::initBGBuffers(int height) {
 
 void ScummEngine::drawFlashlight() {
 	int i, j, offset, x, y;
+	VirtScreen *vs = &virtscr[kMainVirtScreen];
 
 	// Remove the flash light first if it was previously drawn
 	if (_flashlight.isDrawn) {
@@ -635,7 +649,7 @@ void ScummEngine::drawFlashlight() {
 			i = _flashlight.h;
 			do {
 				memset(_flashlight.buffer, 0, _flashlight.w);
-				_flashlight.buffer += _screenWidth;
+				_flashlight.buffer += vs->width;
 			} while (--i);
 		}
 		_flashlight.isDrawn = false;
@@ -646,8 +660,8 @@ void ScummEngine::drawFlashlight() {
 
 	// Calculate the area of the flashlight
 	if (_gameId == GID_ZAK256 || _version <= 2) {
-		x = _mouse.x + virtscr[0].xstart;
-		y = _mouse.y - virtscr[0].topline;
+		x = _mouse.x + vs->xstart;
+		y = _mouse.y - vs->topline;
 	} else {
 		Actor *a = derefActor(VAR(VAR_EGO), "drawFlashlight");
 		x = a->_pos.x;
@@ -668,20 +682,20 @@ void ScummEngine::drawFlashlight() {
 		_flashlight.x = gdi._numStrips * 8 - _flashlight.w;
 	if (_flashlight.y < 0)
 		_flashlight.y = 0;
-	else if (_flashlight.y + _flashlight.h> virtscr[0].height)
-		_flashlight.y = virtscr[0].height - _flashlight.h;
+	else if (_flashlight.y + _flashlight.h> vs->height)
+		_flashlight.y = vs->height - _flashlight.h;
 
 	// Redraw any actors "under" the flashlight
 	for (i = _flashlight.x / 8; i < (_flashlight.x + _flashlight.w) / 8; i++) {
 		assert(0 <= i && i < gdi._numStrips);
 		setGfxUsageBit(_screenStartStrip + i, USAGE_BIT_DIRTY);
-		virtscr[0].tdirty[i] = 0;
-		virtscr[0].bdirty[i] = virtscr[0].height;
+		vs->tdirty[i] = 0;
+		vs->bdirty[i] = vs->height;
 	}
 
 	byte *bgbak;
-	offset = _flashlight.y * _screenWidth + virtscr[0].xstart + _flashlight.x;
-	_flashlight.buffer = virtscr[0].screenPtr + offset;
+	offset = _flashlight.y * vs->width + vs->xstart + _flashlight.x;
+	_flashlight.buffer = vs->screenPtr + offset;
 	bgbak = getResourceAddress(rtBuffer, 5) + offset;
 
 	blit(_flashlight.buffer, bgbak, _flashlight.w, _flashlight.h);
@@ -691,9 +705,9 @@ void ScummEngine::drawFlashlight() {
 	int corner_data[] = { 8, 6, 4, 3, 2, 2, 1, 1 };
 	int minrow = 0;
 	int maxcol = _flashlight.w - 1;
-	int maxrow = (_flashlight.h - 1) * _screenWidth;
+	int maxrow = (_flashlight.h - 1) * vs->width;
 
-	for (i = 0; i < 8; i++, minrow += _screenWidth, maxrow -= _screenWidth) {
+	for (i = 0; i < 8; i++, minrow += vs->width, maxrow -= vs->width) {
 		int d = corner_data[i];
 
 		for (j = 0; j < d; j++) {
@@ -811,16 +825,16 @@ void ScummEngine::restoreBG(Common::Rect rect, byte backColor) {
 		rect.left = 0;
 	if (rect.right < 0)
 		rect.right = 0;
-	if (rect.left > _screenWidth)
+	if (rect.left > vs->width)
 		return;
-	if (rect.right > _screenWidth)
-		rect.right = _screenWidth;
+	if (rect.right > vs->width)
+		rect.right = vs->width;
 	if (rect.bottom >= height)
 		rect.bottom = height;
 
 	markRectAsDirty(vs->number, rect.left, rect.right, rect.top - topline, rect.bottom - topline, USAGE_BIT_RESTORED);
 
-	int offset = (rect.top - topline) * _screenWidth + vs->xstart + rect.left;
+	int offset = (rect.top - topline) * vs->width + vs->xstart + rect.left;
 	backbuff = vs->screenPtr + offset;
 	bgbak = getResourceAddress(rtBuffer, vs->number + 5) + offset;
 
@@ -855,7 +869,7 @@ void ScummEngine::restoreBG(Common::Rect rect, byte backColor) {
 	} else {
 		while (height--) {
 			memset(backbuff, backColor, width);
-			backbuff += _screenWidth;
+			backbuff += vs->width;
 		}
 	}
 }
@@ -981,7 +995,7 @@ void Gdi::drawBitmap(const byte *ptr, VirtScreen *vs, int x, int y, const int wi
 		warning("Gdi::drawBitmap, strip drawn to %d below window bottom %d", bottom, vs->height);
 	}
 
-	_vertStripNextInc = height * _vm->_screenWidth - 1;
+	_vertStripNextInc = height * vs->width - 1;
 
 	sx = x;
 	if (vs->scrollable)
@@ -1054,7 +1068,7 @@ void Gdi::drawBitmap(const byte *ptr, VirtScreen *vs, int x, int y, const int wi
 				}
 				if (left <= theX && theX < right) {
 					*dst = *ptr_dither_table++;
-					dst += _vm->_screenWidth;
+					dst += vs->width;
 				}
 			}
 			if (left <= theX && theX < right) {
@@ -1241,8 +1255,8 @@ void Gdi::drawBitmap(const byte *ptr, VirtScreen *vs, int x, int y, const int wi
 						dst[j] = dst2[j] = 12+i;
 					maskbits <<= 1;
 				}
-				dst += _vm->_screenWidth;
-				dst2 += _vm->_screenWidth;
+				dst += vs->width;
+				dst2 += vs->width;
 				mask_ptr += _numStrips;
 			}
 		}
@@ -3462,7 +3476,7 @@ void ScummEngine::grabCursor(int x, int y, int w, int h) {
 		return;
 	}
 
-	grabCursor(vs->screenPtr + (y - vs->topline) * _screenWidth + x, w, h);
+	grabCursor(vs->screenPtr + (y - vs->topline) * vs->width + x, w, h);
 
 }
 
@@ -3503,7 +3517,7 @@ void ScummEngine::useIm01Cursor(const byte *im, int w, int h) {
 	for (i = 0; i < h; i++) {
 		memcpy(dst, src, w);
 		dst += w;
-		src += _screenWidth;
+		src += vs->width;
 	}
 
 	drawBox(0, 0, w - 1, h - 1, 0xFF);
@@ -3521,7 +3535,7 @@ void ScummEngine::useIm01Cursor(const byte *im, int w, int h) {
 
 	for (i = 0; i < h; i++) {
 		memcpy(dst, src, w);
-		dst += _screenWidth;
+		dst += vs->width;
 		src += w;
 	}
 

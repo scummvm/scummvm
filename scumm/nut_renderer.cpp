@@ -243,6 +243,7 @@ void NutRenderer::drawShadowChar(int c, int x, int y, byte color, bool useMask) 
 		return;
 	}
 
+	VirtScreen *vs = &_vm->virtscr[kMainVirtScreen];
 	byte *dst, *mask = NULL;
 
 	// HACK: we draw the character a total of 7 times: 6 times shifted
@@ -262,7 +263,7 @@ void NutRenderer::drawShadowChar(int c, int x, int y, byte color, bool useMask) 
 		y += offsetY[i];
 		color = cTable[i];
 		
-		dst = _vm->virtscr[0].screenPtr + (y + _vm->_screenTop) * _vm->_screenWidth + x + _vm->virtscr[0].xstart;
+		dst = vs->screenPtr + (y + _vm->_screenTop) * vs->width + x + vs->xstart;
 		if (useMask)
 			mask = _vm->getMaskBuffer(x, y + _vm->_screenTop, 0);
 		

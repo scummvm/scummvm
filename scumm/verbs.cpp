@@ -102,7 +102,7 @@ void ScummEngine::initV2MouseOver() {
 }
 
 void ScummEngine::checkV2MouseOver(Common::Point pos) {
-	VirtScreen *vs = &virtscr[2];
+	VirtScreen *vs = &virtscr[kVerbVirtScreen];
 	Common::Rect rect;
 	byte *ptr, *dst;
 	int i, x, y, new_box = -1;
@@ -126,7 +126,7 @@ void ScummEngine::checkV2MouseOver(Common::Point pos) {
 		if (v2_mouseover_box != -1) {
 			rect = v2_mouseover_boxes[v2_mouseover_box].rect;
 
-			dst = ptr = vs->screenPtr + vs->xstart + rect.top * _screenWidth + rect.left;
+			dst = ptr = vs->screenPtr + vs->xstart + rect.top * vs->width + rect.left;
 
 			// Remove highlight.
 			for (y = rect.height() - 1; y >= 0; y--) {
@@ -134,7 +134,7 @@ void ScummEngine::checkV2MouseOver(Common::Point pos) {
 					if (dst[x] == v2_mouseover_boxes[v2_mouseover_box].hicolor)
 						dst[x] = v2_mouseover_boxes[v2_mouseover_box].color;
 				}
-				dst += _screenWidth;
+				dst += vs->width;
 			}
 
 			markRectAsDirty(kVerbVirtScreen, rect.left, rect.right, rect.top, rect.bottom, 0);
@@ -143,7 +143,7 @@ void ScummEngine::checkV2MouseOver(Common::Point pos) {
 		if (new_box != -1) {
 			rect = v2_mouseover_boxes[new_box].rect;
 
-			dst = ptr = vs->screenPtr + vs->xstart + rect.top * _screenWidth + rect.left;
+			dst = ptr = vs->screenPtr + vs->xstart + rect.top * vs->width + rect.left;
 
 			// Apply highlight
 			for (y = rect.height() - 1; y >= 0; y--) {
@@ -151,7 +151,7 @@ void ScummEngine::checkV2MouseOver(Common::Point pos) {
 					if (dst[x] == v2_mouseover_boxes[new_box].color)
 						dst[x] = v2_mouseover_boxes[new_box].hicolor;
 				}
-				dst += _screenWidth;
+				dst += vs->width;
 			}
 
 			markRectAsDirty(kVerbVirtScreen, rect.left, rect.right, rect.top, rect.bottom, 0);
@@ -164,7 +164,7 @@ void ScummEngine::checkV2MouseOver(Common::Point pos) {
 void ScummEngine::checkV2Inventory(int x, int y) {
 	int object = 0;
 
-	y -= virtscr[2].topline;
+	y -= virtscr[kVerbVirtScreen].topline;
 
 	if ((y < 34) || !(_mouseButStat & MBS_LEFT_CLICK)) 
 		return;
@@ -197,6 +197,7 @@ void ScummEngine::checkV2Inventory(int x, int y) {
 }
 
 void ScummEngine::redrawV2Inventory() {
+	VirtScreen *vs = &virtscr[kVerbVirtScreen];
 	int i;
 	int max_inv;
 	Common::Rect inventoryBox;
@@ -207,10 +208,10 @@ void ScummEngine::redrawV2Inventory() {
 		return;
 
 	// Clear on all invocations
-	inventoryBox.top = virtscr[2].topline + 32;
-	inventoryBox.bottom = virtscr[2].topline + virtscr[2].height;
+	inventoryBox.top = vs->topline + 32;
+	inventoryBox.bottom = vs->topline + virtscr[2].height;
 	inventoryBox.left = 0;
-	inventoryBox.right = virtscr[2].width;
+	inventoryBox.right = vs->width;
 	restoreBG(inventoryBox);
 
 	_string[1].charset = 1;
@@ -223,7 +224,7 @@ void ScummEngine::redrawV2Inventory() {
 		if (obj == 0)
 			break;
 		
-		_string[1].ypos = v2_mouseover_boxes[i].rect.top + virtscr[2].topline;
+		_string[1].ypos = v2_mouseover_boxes[i].rect.top + vs->topline;
 		_string[1].xpos = v2_mouseover_boxes[i].rect.left;
 
 		_string[1].color = v2_mouseover_boxes[i].color;
@@ -245,7 +246,7 @@ void ScummEngine::redrawV2Inventory() {
 	// If necessary, draw "up" arrow
 	if (_inventoryOffset > 0) {
 		_string[1].xpos = v2_mouseover_boxes[kInventoryUpArrow].rect.left;
-		_string[1].ypos = v2_mouseover_boxes[kInventoryUpArrow].rect.top + virtscr[2].topline;
+		_string[1].ypos = v2_mouseover_boxes[kInventoryUpArrow].rect.top + vs->topline;
 	        _string[1].color = v2_mouseover_boxes[kInventoryUpArrow].color;
 		_messagePtr = (const byte *)" \1\2";
 		drawString(1);
@@ -254,7 +255,7 @@ void ScummEngine::redrawV2Inventory() {
 	// If necessary, draw "down" arrow
 	if (_inventoryOffset + 4 < getInventoryCount(_scummVars[VAR_EGO])) {
 		_string[1].xpos = v2_mouseover_boxes[kInventoryDownArrow].rect.left;
-		_string[1].ypos = v2_mouseover_boxes[kInventoryDownArrow].rect.top + virtscr[2].topline;
+		_string[1].ypos = v2_mouseover_boxes[kInventoryDownArrow].rect.top + vs->topline;
 	        _string[1].color = v2_mouseover_boxes[kInventoryDownArrow].color;
 		_messagePtr = (const byte *)" \3\4";
 		drawString(1);

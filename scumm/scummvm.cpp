@@ -925,7 +925,6 @@ void ScummEngine::launch() {
 	_verbRedraw = false;
 
 	allocResTypeData(rtBuffer, MKID('NONE'), 10, "buffer", 0);
-//	initVirtScreen(kMainVirtScreen, 0, 0, _screenWidth, _screenHeight, false, false);	// FIXME - why is this here? It seems we could remove it in f
 
 	setupScummVars();
 
