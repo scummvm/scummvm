@@ -637,9 +637,9 @@ void Scumm::setupRoomObject(ObjectData *od, byte *room, byte *searchptr) {
 		od->x_pos = *(ptr + 9) << 3;
 		od->y_pos = ((*(ptr + 10)) & 0x7F) << 3;
 
-		od->parentstate = (*(ptr + 10) & 0x80) ? 16 : 0;
-		if (_features & GF_OLD256 && od->parentstate)
-			od->parentstate = 1;
+		od->parentstate = (*(ptr + 10) & 0x80) ? 1 : 0;
+		if (_features & GF_OLD_BUNDLE)
+			od->parentstate <<= 4;
 
 		od->width = *(ptr + 11) << 3;
 
