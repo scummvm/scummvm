@@ -2396,6 +2396,8 @@ void ScummEngine_v6::o6_dimArray() {
 }
 
 void ScummEngine_v6::o6_dummy() {
+	if (_features & GF_HUMONGOUS)	
+		stopObjectCode();
 	/* nothing */
 }
 
