@@ -427,7 +427,7 @@ void Scumm::drawString(int a) {
 	byte buf[256];
 	byte *charsetptr,*space;
 	int i;
-	byte byte1, chr;
+	byte byte1=0, chr;
 	uint color;
 	
 	_msgPtrToAdd = buf;
@@ -701,7 +701,7 @@ void Scumm::initCharset(int charsetno) {
 void CharsetRenderer::printCharOld(int chr) { // Loom3 / Zak256
 	VirtScreen *vs;
 	byte *char_ptr, *dest_ptr;
-	unsigned int buffer, mask=0, x = 0, y = 0;
+	unsigned int buffer=0, mask=0, x = 0, y = 0;
 	unsigned char color;
 
 	_vm->checkRange(_vm->_maxCharsets-1, 0, _curId, "Printing with bad charset %d");

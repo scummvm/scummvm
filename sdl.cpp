@@ -979,8 +979,8 @@ int main(int argc, char* argv[]) {
 	scumm->_scummStackPos=0;
 	scumm->_verbMouseOver=0;
 
-	scumm->_palDirtyMax=-1;
-	scumm->_palDirtyMin=-1;
+	scumm->_palDirtyMax=0;
+	scumm->_palDirtyMin=0;
 	scumm->_debugger=0;
 	scumm->camera._cur.x=0;
 	scumm->camera._cur.y=0;

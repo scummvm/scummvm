@@ -508,7 +508,7 @@ void Scumm::createBoxMatrix() {
 	int code;
 
 	PathVertex *vtx;
-	PathNode *node, *node2;
+	PathNode *node, *node2=NULL;
 
 	_maxBoxVertexHeap = 1000;
 
@@ -861,7 +861,7 @@ int Scumm::findPathTowardsOld(Actor *a, byte trap1, byte trap2, byte final_trap)
 
 void Scumm::GetGates(int trap1,int trap2) {
 int   i;
-int    Closest1,Closest2,Closest3;
+int    Closest1=0,Closest2=0,Closest3=0;
 int    Dist[8];
 int Dist1,Dist2,Dist3;
 int Box1,Box2,Box3;

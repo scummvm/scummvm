@@ -1305,7 +1305,7 @@ void Gdi::unkDecode9() {
        byte *dst = _bgbak_ptr;
        unsigned char c, bits, color, run;
        int x, y, i, z;
-       uint buffer, mask = 128;
+       uint buffer=0, mask = 128;
        int h = _numLinesToProcess;
        x = y = i = z = run = 0;
 	   
@@ -1374,7 +1374,7 @@ void Gdi::unkDecode11() {
        byte *src = _smap_ptr;
        byte *dst = _bgbak_ptr;
        int bits, i;
-       uint buffer, mask = 128;
+       uint buffer=0, mask = 128;
        unsigned char inc = 1, color = *src++;
 	
        _currentX = 8;
@@ -1695,7 +1695,7 @@ void Scumm::moveCamera() {
 	if(_features & GF_AFTER_V7) {
 		CameraData *cd = &camera;
 		ScummPoint old = cd->_cur;
-		Actor *a;
+		Actor *a=NULL;
 
 		if (cd->_follows) {
 			a = derefActorSafe(cd->_follows, "moveCamera");
@@ -1778,7 +1778,7 @@ void Scumm::moveCamera() {
 		CameraData *cd = &camera;
 		int pos = cd->_cur.x;
 		int actorx, t;
-		Actor *a;
+		Actor *a=NULL;
 	
 		cd->_cur.x &= 0xFFF8;
 	
@@ -2309,7 +2309,7 @@ void Scumm::decompressDefaultCursor(int idx) {
 int Scumm::remapPaletteColor(int r, int g, int b, uint threshold) {
 	int i;
 	int ar,ag,ab;
-	uint sum,j,bestsum,bestitem;
+	uint sum,j,bestsum,bestitem=0;
 	byte *pal = _currentPalette;
 
 	if (r>255) r=255;

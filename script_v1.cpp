@@ -1655,7 +1655,7 @@ void Scumm::o5_quitPauseRestart() {
 }
 
 void Scumm::o5_resourceRoutines() {
-	int resid;
+	int resid=0;
 
 	_opcode = fetchScriptByte();
 	if (_opcode != 17)
@@ -1742,7 +1742,7 @@ void Scumm::o5_resourceRoutines() {
 }
 
 void Scumm::o5_roomOps() {
-	int a,b,c,d,e;
+	int a=0,b=0,c,d,e;
 
 	if(_features & GF_OLD256)
 	{

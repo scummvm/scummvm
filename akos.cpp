@@ -552,7 +552,7 @@ void Scumm::akos_codec1(AkosRenderer *ar) {
 	int num_colors;
 	bool use_scaling;
 	int i,j;
-	int x,x_right,x_left,skip,tmp_x,tmp_y;
+	int x,x_right,x_left,skip=0,tmp_x,tmp_y;
 	int y,y_top,y_bottom;
 	bool y_clipping;
 	bool charsetmask;

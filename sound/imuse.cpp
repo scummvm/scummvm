@@ -695,7 +695,7 @@ int SoundEngine::enqueue_trigger(int sound, int marker) {
 int32 SoundEngine::do_command(int a, int b, int c, int d, int e, int f, int g, int h) {
 	byte cmd = a&0xFF;
 	byte param = a>>8;
-	Player *player;
+	Player *player=NULL;
 
 	if (!_initialized && (cmd || param))
 		return -1;

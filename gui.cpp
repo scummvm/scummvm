@@ -96,7 +96,7 @@ const GuiWidget *Gui::widgetFromPos(int x, int y) {
 }
 
 void Gui::drawChar(const char str, int xx, int yy) { 
-  unsigned int buffer, mask = 0, x, y;    
+  unsigned int buffer=0, mask = 0, x, y;    
   byte *tmp;
   int tempc = _color;
   _color = _textcolor;

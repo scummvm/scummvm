@@ -1,7 +1,7 @@
 # $Header$
 
 CC      = gcc
-CFLAGS  = -g -Wall -Wstrict-prototypes -Wno-long-long -Wno-multichar 
+CFLAGS  = -g -O -Wall -Wstrict-prototypes -Wuninitialized -Wno-long-long -Wno-multichar 
 DEFINES = -DUNIX -DUSE_ADLIB 
 LDFLAGS :=
 INCLUDES:= `sdl-config --cflags` -I./ -I./sound

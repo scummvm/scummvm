@@ -657,7 +657,7 @@ int Scumm::loadResource(int type, int idx) {
 int Scumm::readSoundResource(int type, int idx) {
 	uint32 pos, total_size, size, tag,basetag;
 	int pri, best_pri;
-	uint32 best_size, best_offs;
+	uint32 best_size=0, best_offs=0;
 
 	debug(9, "readSoundResource(%d,%d)", type, idx);
 
