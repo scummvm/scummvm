@@ -96,7 +96,7 @@ typedef struct
 
 #include "backends/fs/fs.h"
 
-#if defined(MIPS) || defined(SH3)
+#if (defined(MIPS) || defined(SH3)) && (_WIN32_WCE < 300)
 // Comment this out if you don't want to support GameX
 #define GAMEX
 #endif
@@ -644,8 +644,8 @@ extern void handleSelectGame(int, int);
 
 //#define SHMenuBar_GetMenu(hWndMB,ID_MENU) (HMENU)SendMessage((hWndMB), SHCMBM_GETSUBMENU, (WPARAM)0, (LPARAM)ID_MENU)
 
-/* Monkey2 keyboard stuff */
-bool monkey2_keyboard;
+/* Monkey Island 1 and 2 keyboard stuff (copy protection) */
+bool monkey_keyboard;
 
 bool new_audio_rate;
 
@@ -889,10 +889,11 @@ void runGame(char *game_name) {
 		hide_toolbar = true;
 	*/
 
-	// Keyboard activated for Monkey Island 2
-	if (strcmp(game_name, "monkey2") == 0) {
+	// Keyboard activated for Monkey Island 2 and Monkey 1 floppy
+	if (strcmp(game_name, "monkey2") == 0 ||
+		strcmp(game_name, "monkeyvga") == 0) {
 		draw_keyboard = true;
-		monkey2_keyboard = true;
+		monkey_keyboard = true;
 	}		
 
 	//new_audio_rate = (strcmp(game_name, "dig") == 0 || strcmp(game_name, "monkey") == 0);
@@ -939,8 +940,10 @@ LRESULT CALLBACK OSystem_WINCE3::WndProc(HWND hWnd, UINT message, WPARAM wParam,
 	if (!select_game)
 		wm = (OSystem_WINCE3*)GetWindowLong(hWnd, GWL_USERDATA);
 	
-	if (!select_game && monkey2_keyboard && g_scumm->_vars[g_scumm->VAR_ROOM] != 108) {
-		monkey2_keyboard = false;
+	if (!select_game && monkey_keyboard && (
+			g_scumm->_vars[g_scumm->VAR_ROOM] != 108 &&		// monkey 2
+			g_scumm->_vars[g_scumm->VAR_ROOM] != 90)) {		// monkey 1 floppy
+		monkey_keyboard = false;
 		draw_keyboard = false;
 		toolbar_drawn = false;
 	}
@@ -1055,8 +1058,10 @@ LRESULT CALLBACK OSystem_WINCE3::WndProc(HWND hWnd, UINT message, WPARAM wParam,
 	
 	case WM_KEYDOWN:
 
+		/*
 		if (wParam == VK_ESCAPE)   // FIXME
 			do_quit();
+		*/
 
 		if(wParam && wParam != 0x84 && wParam != 0x5B) { // WHAT THE ???			
 
@@ -1085,6 +1090,7 @@ LRESULT CALLBACK OSystem_WINCE3::WndProc(HWND hWnd, UINT message, WPARAM wParam,
 			if (!processAction(GAPIKeysTranslate((unsigned int)(wParam))))
 			/*else*/ {
 				wm->_event.kbd.ascii = mapKey(wParam);
+				wm->_event.kbd.keycode = mapKey(wParam);
 				wm->_event.event_code = EVENT_KEYDOWN;								
 			}
 		}
@@ -1098,6 +1104,11 @@ LRESULT CALLBACK OSystem_WINCE3::WndProc(HWND hWnd, UINT message, WPARAM wParam,
 			wm->_event.kbd.ascii = GAPIKeysTranslate((int)wParam);
 			wm->_event.event_code = EVENT_KEYUP;
 			break;
+		}
+		else {
+			wm->_event.kbd.ascii = mapKey(wParam);
+			wm->_event.kbd.keycode = mapKey(wParam);
+			wm->_event.event_code = EVENT_KEYUP;
 		}
 		break;
 
@@ -1151,21 +1162,24 @@ LRESULT CALLBACK OSystem_WINCE3::WndProc(HWND hWnd, UINT message, WPARAM wParam,
 					wm->_event.kbd.ascii = 
 						(y <= (220 + offset_y)? KEYBOARD_MAPPING_ALPHA_HIGH[((x + 10) / 14) - 1] :
 												KEYBOARD_MAPPING_ALPHA_LOW[((x + 10) / 14) - 1]);
+					wm->_event.kbd.keycode = wm->_event.kbd.ascii;
 					break;
 				} 
 				else
 				if (x>=186 && y>=(200 + offset_y) && x<=255) {
 				   // Numeric selection
-				   wm->_event.event_code = EVENT_KEYDOWN;
+				   wm->_event.event_code = EVENT_KEYDOWN;				   
 				   wm->_event.kbd.ascii =
 					   (y <= (220 + offset_y) ? KEYBOARD_MAPPING_NUMERIC_HIGH[((x - 187 + 10) / 14) - 1] :
 												KEYBOARD_MAPPING_NUMERIC_LOW[((x - 187 + 10) / 14) - 1]);
+				   wm->_event.kbd.keycode = wm->_event.kbd.ascii;
 				   break;
 				}
 				else
 				if (x>=302 && x <= 316 && y >= (200 + offset_y) && y <= (220 + offset_y)) {
 				  // Backspace
 				  wm->_event.event_code = EVENT_KEYDOWN;
+				  wm->_event.kbd.keycode = 8;
 				  wm->_event.kbd.ascii = mapKey(VK_BACK);
 				  break;
 				}
@@ -1173,6 +1187,7 @@ LRESULT CALLBACK OSystem_WINCE3::WndProc(HWND hWnd, UINT message, WPARAM wParam,
 				if (x>=302 && x<= 316 && y >= (220 + offset_y)) { 
 				  // Enter
 				  wm->_event.event_code = EVENT_KEYDOWN;
+				  wm->_event.kbd.keycode = '\n';
 				  wm->_event.kbd.ascii = mapKey(VK_RETURN);
 				  break;
 				}
@@ -1646,7 +1661,7 @@ void OSystem_WINCE3::update_screen() {
 		else {
 			int i;
 			for (i=0; i<num_of_dirty_square; i++) {
-				Blt_part(_gfx_buf + (320 * ds[i].y) + ds[i].x, (GetScreenMode() ? ds[i].x : ds[i].x * 3/4), ds[i].y, ds[i].w, ds[i].h, 320, true);
+				Blt_part(_gfx_buf + (320 * ds[i].y) + ds[i].x, ((GetScreenMode() || GetSystemMetrics(SM_CXSCREEN) >= 320) ? ds[i].x : ds[i].x * 3/4), ds[i].y, ds[i].w, ds[i].h, 320, true);
 			}
 			num_of_dirty_square = 0;
 		}
@@ -1974,6 +1989,7 @@ void OSystem_WINCE3::move_screen(int dx, int dy, int height) {
 
 /* NECESSARY operators redefinition */
 
+
 void *operator new(size_t size) {
 	return calloc(size, 1);
 }
@@ -1981,3 +1997,4 @@ void *operator new(size_t size) {
 void operator delete(void *ptr) {
 	free(ptr);
 }
+
