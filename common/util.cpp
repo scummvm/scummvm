@@ -90,7 +90,6 @@ void RandomSource::setSeed(uint32 seed) {
 }
 
 uint RandomSource::getRandomNumber(uint max) {
-	/* TODO: my own random number generator */
 	_randSeed = 0xDEADBF03 * (_randSeed + 1);
 	_randSeed = (_randSeed >> 13) | (_randSeed << 19);
 	return _randSeed % (max + 1);
