@@ -68,7 +68,7 @@ int main(int argc, char **argv)
 	return 0;
 }
 EOF
-eval "$1 -o tmp_cxx_compiler tmp_cxx_compiler.cpp 2> /dev/null" && eval "./tmp_cxx_compiler 2> /dev/null" && rm tmp_cxx_compiler tmp_cxx_compiler.cpp
+eval "$1 -o tmp_cxx_compiler tmp_cxx_compiler.cpp 2> /dev/null" && eval "./tmp_cxx_compiler 2> /dev/null" && rm -f tmp_cxx_compiler tmp_cxx_compiler.cpp
 }
 
 #
@@ -104,7 +104,7 @@ if eval "$CXX -o tmp_find_type_with_size tmp_find_type_with_size.cpp"; then
 	exit 1
   fi
 fi
-rm tmp_find_type_with_size tmp_find_type_with_size.cpp
+rm -f tmp_find_type_with_size tmp_find_type_with_size.cpp
 echo $datatype
 }
 
@@ -259,7 +259,7 @@ case $endianess in
 		exit 1
 		;;
 esac
-rm tmp_endianess_check tmp_endianess_check.cpp
+rm -f tmp_endianess_check tmp_endianess_check.cpp
 
 #
 # Determine data type sizes
