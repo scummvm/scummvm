@@ -161,15 +161,17 @@ static bool isGame(const char *fn, char *base)
   return false;
 }
 
-static void checkName(GameDetector *d, Game &game)
+static void checkName(Game &game)
 {
-  d->_exe_name = game.filename_base;
-  if(d->detectGame()) {
-    const char *n = d->getGameName();
-    strcpy(game.text, n);
-  } else
-    strcpy(game.text, game.filename_base);
-  d->_exe_name = NULL;
+  const VersionSettings *gnl = version_settings;
+
+  do {
+    if (!scumm_stricmp(game.filename_base, gnl->filename)) {
+      strcpy(game.text, gnl->gamename);
+      return;
+    }
+  } while ((++gnl)->filename);
+  strcpy(game.text, game.filename_base);
 }
 
 static bool checkExe(const char *dir, const char *f)
@@ -214,7 +216,7 @@ static void makeDefIcon(Icon &icon)
   icon.load(NULL, 0);
 }
 
-static int findGames(GameDetector *d, Game *games, int max)
+static int findGames(Game *games, int max)
 {
   Dir *dirs = new Dir[MAX_DIR];
   int curr_game = 0, curr_dir = 0, num_dirs = 1;
@@ -257,7 +259,7 @@ static int findGames(GameDetector *d, Game *games, int max)
 	      if(checkExe(games[curr_game].dir, "loom"))
 		strcpy(games[curr_game].filename_base, "loomcd");
 	    }
-	    checkName(d, games[curr_game]);
+	    checkName(games[curr_game]);
 #if 0
 	    printf("Registered game <%s> in <%s> <%s> because of <%s> <%s>\n",
 		   games[curr_game].text, games[curr_game].dir,
@@ -433,7 +435,7 @@ int gameMenu(Game *games, int num_games)
   }
 }
 
-bool selectGame(GameDetector *d, char *&ret, char *&dir_ret, Icon &icon)
+bool selectGame(char *&ret, char *&dir_ret, Icon &icon)
 {
   Game *games = new Game[MAX_GAMES];
   int selected, num_games;
@@ -442,7 +444,7 @@ bool selectGame(GameDetector *d, char *&ret, char *&dir_ret, Icon &icon)
   void *mark = ta_txmark();
 
   for(;;) {
-    num_games = findGames(d, games, MAX_GAMES);
+    num_games = findGames(games, MAX_GAMES);
 
     for(int i=0; i<num_games; i++) {
       games[i].icon.create_texture();
