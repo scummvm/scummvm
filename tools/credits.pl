@@ -227,7 +227,7 @@ begin_credits("Credits");
 	add_person("Jonathan Gray", "khalek", "Engine: SCUMM, HE, Broken Sword II");
 	add_person("Travis Howell", "Kirben", "Engine: SCUMM, HE, Simon the Sorcerer");
 	add_person("Oliver Kiehl", "olki", "Engine: Beneath a Steel Sky, Simon");
-	add_person("Pawel Kolodziejski", "aquadran", "Engine: SCUMM (Codecs, iMUSE, Smush, etc)");
+	add_person("Pawel Kolodziejski", "aquadran", "Engine: SCUMM (Codecs, iMUSE, Smush, etc.)");
 	add_person("Gregory Montoir", "cyx", "Engine: Flight of the Amazon Queen, HE");
 	add_person("Joost Peters", "joostp", "Engine: Beneath a Steel Sky, Flight of the Amazon Queen");
 	add_person("Eugene Sandulenko", "_sev", "Engine: SCUMM (FT INSANE), HE, SAGA");
