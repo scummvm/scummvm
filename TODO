@@ -38,6 +38,12 @@ General
   a replacement for File::open() which (optionally) takes a list of subdirs.
   E.g. for Scumm, only certain files are to be expected in the VIDEO subdir).
 * Add test(s) for backend usability in the configure script.
+* Use RandomSource for all random numbers. Right now there are a few places
+  where we don't:
+  - INSANE uses rand() in numerous places
+  - sound/fmopl.cpp uses rand() in one function
+  - backends/midi/adlib.cpp has its own random_nr() function.
+  Any others?
 
 Documentation
 =============
