@@ -17,6 +17,9 @@
  *
  * Change Log:
  * $Log$
+ * Revision 1.6  2001/10/11 10:15:58  strigeus
+ * no SDL cursor
+ *
  * Revision 1.5  2001/10/10 11:53:39  strigeus
  * smoother mouse + bug fix
  *
@@ -267,11 +270,11 @@ void drawMouse(Scumm *s, int xdraw, int ydraw, int color, byte *mask, bool visib
 			bits = mask[3] | (mask[2]<<8) | (mask[1]<<16);
 			mask += 4;
 			if ((uint)(ydraw+y)<200) {
-				for (x=0; x<24; x++,bits>>=1) {
+				for (x=0; x<24; x++,bits<<=1) {
 					if ((uint)(xdraw+x)<320) {
 						bak[x*2] = dst[x*2];
 						bak[x*2+1] = dst[x*2+1];
-						if (bits&1) {
+						if (bits&(1<<23)) {
 							dst[x*2] = color;
 							dst[x*2+1] = color;
 							dst[x*2+640] = color;
@@ -306,9 +309,10 @@ void initGraphics(Scumm *s) {
 	}
 
 	/* Clean up on exit */
-  atexit(SDL_Quit);
+  	atexit(SDL_Quit);
 
 	SDL_WM_SetCaption("ScummVM - Monkey Island 2: LeChuck's revenge","ScummVM - Monkey Island 2: LeChuck's revenge");
+	SDL_ShowCursor(SDL_DISABLE);
 
 #if !defined(SCALEUP_2x2)
 	screen = SDL_SetVideoMode(320, 200, 8, SDL_SWSURFACE);
@@ -337,3 +341,4 @@ int main(int argc, char* argv[]) {
 	scumm.scummMain(argc, argv);
 	return 0;
 }
+
