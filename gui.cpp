@@ -716,26 +716,20 @@ void Gui::handleCommand(int cmd)
 	int lastEdit = _editString;
 	showCaret(false);
 
-	if (_dialog == LAUNCHER_DIALOG) {
+	switch (_dialog) {
+	case LAUNCHER_DIALOG:
 		handleLauncherDialogCommand(cmd);
 		return;
-	}
-	if (_dialog == SOUND_DIALOG) {
+	case SOUND_DIALOG:
 		handleSoundDialogCommand(cmd);
 		return;
-	}
-
-	if (_dialog == OPTIONS_DIALOG) {
+	case OPTIONS_DIALOG:
 		handleOptionsDialogCommand(cmd);
 		return;
-	}
-
-	if (_dialog == KEYS_DIALOG) {
+	case KEYS_DIALOG:
 		handleKeysDialogCommand(cmd);
 		return;
-	}
-
-	if (_dialog == ABOUT_DIALOG) {
+	case ABOUT_DIALOG:
 		if (_return_to == LAUNCHER_DIALOG) {
 			_widgets[0] = launcher_dialog;
 			_active = true;
@@ -746,6 +740,8 @@ void Gui::handleCommand(int cmd)
 			close();
 		return;
 	}
+	
+	// If we get here, it's the SAVELOAD_DIALOG
 
 	switch (cmd) {
 	case 1:											/* up button */
@@ -780,7 +776,7 @@ void Gui::handleCommand(int cmd)
 		_cur_page = 0;
 		draw(0, 100);
 		return;
-	case 8:
+	case 8:											/* ok button (save game) */
 		if (lastEdit == -1 || game_names[lastEdit][0] == 0)
 			return;
 
@@ -902,10 +898,15 @@ void Gui::addLetter(byte letter)
 		if (_editString == -1)
 			return;
 
-		if (letter == 13) { 
+/*
+		FIXME - this code here has no effect at all, since Scumm::convertKeysToClicks()
+		swallows all return key events.
+		// Return pressed?
+		if (letter == '\n' || letter == '\r') { 
 			handleCommand(8);
 			return;
 		}
+*/
 
 		if (letter >= 32 && letter < 128 && _editLen < SAVEGAME_NAME_LEN - 1) {
 			game_names[_editString][_editLen++] = letter;
@@ -1026,16 +1027,16 @@ void Gui::saveLoadDialog()
 {
 	_widgets[0] = save_load_dialog;
 	_editString = -1;
-	_cur_page = 0;
 	_active = true;
+	_cur_page = 0;
 	_dialog = SAVELOAD_DIALOG;
 }
 
 void Gui::pause()
 {
 	_widgets[0] = pause_dialog;
-	_cur_page = 0;
 	_active = true;
+	_cur_page = 0;
 	_dialog = PAUSE_DIALOG;
 }
 
