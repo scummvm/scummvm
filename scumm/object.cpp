@@ -351,7 +351,7 @@ void ScummEngine::drawRoomObject(int i, int arg) {
 		a = od->parentstate;
 		if (!od->parent) {
 			// Ignore FlObjects (they are drawn some other place)
-			if (od.od.fl_object_index == 0)
+			if (od->fl_object_index == 0)
 				drawObject(i, arg);
 			break;
 		}
