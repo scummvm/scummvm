@@ -90,7 +90,8 @@ bool Debugger::Cmd_PlayMusic(int argc, const char **argv) {
 bool Debugger::Cmd_PlayVoice(int argc, const char **argv) {
 	if (argc > 1) {
 		uint voice = atoi(argv[1]);
-		_vm->_sound->playVoice(voice);
+		if ((_vm->_game & GF_SIMON2 && voice < 3623) || (!(_vm->_game & GF_SIMON2) && voice < 1997))
+			_vm->_sound->playVoice(voice);
 	} else
 		DebugPrintf("Syntax: voice <soundnum>\n");
 
