@@ -1276,7 +1276,7 @@ void Gdi::unkDecode8() {
        }
 }
 
-void Gdi::unkDecode9() { /* FIXME: This one doesn't work.. */
+void Gdi::unkDecode9() {
        byte *src = _smap_ptr;
        byte *dst = _bgbak_ptr;
        unsigned char c, bits, color, run;
@@ -1284,37 +1284,37 @@ void Gdi::unkDecode9() { /* FIXME: This one doesn't work.. */
        uint buffer, mask = 128;
        int h = _numLinesToProcess;
        x = y = i = z = run = 0;
-  
-       while (x < 8) {
+	   
+	   _currentX = 8;       
+	   for(;;) {
             c = 0;
             for (i = 0; i < 4; i++) {READ_256BIT;  c+=(bits<<i);}
-            /* printf("%d,", c>>2); */
+            
             switch ((c>>2)) {
                 case 0:
-                        color= 0;
-                        for (i=0; i<4; i++) {READ_256BIT; color+=bits<<i;}// color+=getbit(-1)<<i;
+                        color=0;
+                        for (i=0; i<4; i++) {READ_256BIT; color+=bits<<i;}
                         for (i=0; i<((c&3)+2); i++) {
                                 *dst = (run * 16 + color);
-                                NEXT_ROW
+                                NEXT_ROW								
                         }
                break;
 
                case 1:
                         for (i=0; i<((c&3)+1); i++) {
                                color = 0;
-                               for (z=0; z < 4; z++) {READ_256BIT; color+=bits<<i;}
+                               for (z=0; z < 4; z++) {READ_256BIT; color+=bits<<z;}
                                *dst = (run *16 + color);
-                               NEXT_ROW // y++; if (y>=height) {y=0; x++;}}
+                               NEXT_ROW 							   
                         }
               break;
 
               case 2:
                       run = 0;
-                      for (i = 0; i < 4; i++) {READ_256BIT; c+=run<<i;}
+                      for (i = 0; i < 4; i++) {READ_256BIT; run+=bits<<i;}
                       break;
             }
-  }
-  /* printf("\n"); */
+  }  
 }
 
 void Gdi::unkDecode10() {
@@ -1352,7 +1352,7 @@ void Gdi::unkDecode11() {
        int bits, i;
        uint buffer, mask = 128;
        unsigned char inc = 1, color = *src++;
- 
+	
        _currentX = 8;
        do {
                _tempNumLines = _numLinesToProcess;
