@@ -229,6 +229,11 @@ int SoundMixer::insertChannel(PlayingSoundHandle *handle, Channel *chan) {
 }
 
 int SoundMixer::playRaw(PlayingSoundHandle *handle, void *sound, uint32 size, uint rate, byte flags, int id) {
+	// Prevent duplicate sounds
+        for (int i = 0; i != NUM_CHANNELS; i++)
+                if (_channels[i] != NULL && _channels[i]->_id == id)
+			return -1;
+
 	return insertChannel(handle, new ChannelRaw(this, sound, size, rate, flags, id));
 }
 

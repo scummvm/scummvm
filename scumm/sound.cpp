@@ -370,6 +370,8 @@ void Sound::playSound(int soundID) {
 	#endif
 			rate = 11000;
 			int type = *(ptr + 0x0D);
+			int loop_start = READ_LE_UINT32(ptr+0x26);
+			int loop_end = READ_LE_UINT32(ptr+0x2A);
 
 			// Check if it is a CD playback resource
 			if (type == 2) {
@@ -399,8 +401,15 @@ void Sound::playSound(int soundID) {
 					sound[x] = bit;
 			}
 	
-			// FIXME: Maybe something in the header signifies looping? Need to
-			// track it down and add a mixer flag or something.
+			if (loop_end > 0) {
+				flags |= SoundMixer::FLAG_LOOP;
+
+				if ((loop_end < size) || (loop_start > 0)) {
+					// FIXME: Implement partial loops
+					warning("Partial loops not implemented. Loop at 0x%X thru 0x%X", loop_start, loop_end);
+				}
+			}
+
 			_scumm->_mixer->playRaw(NULL, sound, size, 11000, flags, soundID);
 			return;
 		}
@@ -724,13 +733,15 @@ void Sound::stopSound(int a) {
 		stopCD();
 	}
 
-	if (_scumm->_imuseDigital) {
+	if (_scumm->_gameId == GID_ZAK256) {
+		_scumm->_mixer->stopID(a);
+	} else if (_scumm->_imuseDigital) {
 		_scumm->_imuseDigital->stopSound(a);
 	} else if (_scumm->_imuse) {
 		_scumm->_imuse->stopSound(a);
 	} else if (_scumm->_playerV2) {
 		_scumm->_playerV2->stopSound (a);
-	}
+	} 
 
 	for (i = 0; i < 10; i++)
 		if (_soundQue2[i] == a)
