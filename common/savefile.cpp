@@ -19,8 +19,8 @@
  *
  */
 
-#include "common/savefile.h"
 #include "common/util.h"
+#include "common/savefile.h"
 
 uint32 SaveFile::read(void *ptr, uint32 size)
 {
