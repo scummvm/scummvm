@@ -100,8 +100,8 @@ void close_resources()
 	if (TheSystem)
 		delete TheSystem;
 
-	if (g_scumm)
-		delete g_scumm;
+	if (g_engine)
+		delete g_engine;
 
 	if (ScummPath)
 		FreeVec(ScummPath);
