@@ -78,6 +78,40 @@ UInt16 StrReplace(Char *ioStr, UInt16 inMaxLen, const Char *inParamStr, const Ch
 
 	return occurences;
 }
+
+
+Char *StrIToBase(Char *s, Int32 i, UInt8 b) {
+	const Char *conv = "0123456789ABCDEF";
+	Char o;
+	Int16 c, n = 0;
+	Int32 div, mod;
+	
+	do {
+		div = i / b;
+		mod = i % b;
+		
+		s[n++]	= *(conv + mod);
+		i		= div;
+
+	} while (i >= b);
+
+	if (i > 0) {
+		s[n + 0] = *(conv + i);
+		s[n + 1] = 0;
+	} else {
+		s[n + 0] = 0;
+		n--;
+	}
+
+	for (c=0; c <= (n >> 1); c++) {
+		o		= s[c];
+		s[c]	= s[n - c];
+		s[n - c]= o;
+	}
+
+	return s;
+}
+
 /*
 UInt32 PceNativeRsrcCall(DmResID resID, void *userDataP) {
 	PnoDescriptor pno;

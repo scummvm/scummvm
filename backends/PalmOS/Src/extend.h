@@ -42,6 +42,8 @@ extern const Char *SCUMMVM_SAVEPATH;
 int main(int argc, char **argv);
 
 UInt16 StrReplace(Char *ioStr, UInt16 inMaxLen, const Char *inParamStr, const Char *fndParamStr);
+Char *StrIToBase(Char *s, Int32 i, UInt8 b);
+
 void PalmFatalError(const Char *err);
 
 UInt32 PceNativeRsrcCall(PnoDescriptor *pno, void *userDataP);
