@@ -1,7 +1,7 @@
 scummvm-cvs (@VERSION@-1) unstable; urgency=low
 
-  * This is a CVS snapshot, don't file bugs on the Debian BTS if you use
-    this package. Instead use the Sourceforge bug tracker:
-    http://sourceforge.net/tracker/?group_id=37116
+  * This is a CVS snapshot, don't file bugs in the Debian BTS if
+    you use this package. Instead use the Sourceforge bug tracker
+    found at <http://sourceforge.net/tracker/?group_id=37116>.
 
- -- Tore Anderson <tore@linpro.no>  Fri, 29 Nov 2002 11:03:18 +0100
+ -- Tore Anderson <tore@linpro.no>  Sat, 01 Mar 2003 01:18:34 +0100
