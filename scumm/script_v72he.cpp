@@ -2474,7 +2474,8 @@ void ScummEngine_v72he::o72_getResourceSize() {
 		type = rtScript;
 		break;
 	default:
-		error("o72_getResourceSize: default type %d", subOp);
+		warning("o72_getResourceSize: default type %d", subOp);
+		return;
 	}
 
 	const byte *ptr = getResourceAddress(type, idx);
