@@ -183,10 +183,7 @@ void Scumm::CHARSET_1() {
 	int s, i, t, c;
 	int frme;
 	Actor *a;
-	byte *buffer;
-
-	if(_gameId==GID_ZAK256)
-		return;
+	byte *buffer;	
 
 #if !defined(FULL_THROTTLE)
 	if (!_haveMsg || (camera._dest.x>>3) != (camera._cur.x>>3) ||
@@ -288,7 +285,10 @@ void Scumm::CHARSET_1() {
 	}
 
 	buffer = charset._buffer + charset._bufPos;
-	
+	if(_gameId==GID_ZAK256) {
+		debug(1, "CHARSET_1: %s", buffer);
+		return;
+	}
 	charset.addLinebreaks(0, buffer,0, t);
 
 	_lastXstart = virtscr[0].xstart;

@@ -459,7 +459,7 @@ int Scumm::findPathTowards(Actor *a, byte box1nr, byte box2nr, byte box3nr) {
 		box2.ll = box2.lr;
 		box2.lr = tmp;
 	}
-	error("findPathTowards: default");
+	warning("findPathTowards: default"); // FIXME: ZAK256
 }
 void Scumm::setBoxFlags(int box, int val) {
 	/* FULL_THROTTLE stuff */

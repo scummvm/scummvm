@@ -1892,6 +1892,7 @@ void Scumm::o5_wait() {
 			break;
 		return;
 	case 2: /* wait for message */
+		if (_gameId == GID_ZAK256) return;	// FIXME: ZAK256
 		if (_vars[VAR_HAVE_MSG])
 			break;
 		return;
@@ -2098,7 +2099,7 @@ void Scumm::o5_pickupObjectOld() {
 
 	int obj;
 
-	obj = getVarOrDirectByte(0x80);
+        obj = getVarOrDirectWord(0x80);
 
 	if(getObjectIndex(obj) != 1)
 		return;
