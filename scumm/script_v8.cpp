@@ -1523,7 +1523,7 @@ void Scumm_v8::o8_kernelGetFunctions() {
 		int y = args[2] + (camera._cur.y - (_realHeight /2));;
 		BlastObject *eo;
 
-		for (int i = _blastObjectQueuePos; i >= 0; i--) {
+		for (int i = _blastObjectQueuePos - 1; i >= 0; i--) {
 			eo = &_blastObjectQueue[i];
 
 			if (eo->posX <= x && eo->width + eo->posX > x &&
