@@ -64,7 +64,7 @@ void AudioCDManager::stop() {
 	}
 }
 
-int AudioCDManager::isPlaying() const {
+bool AudioCDManager::isPlaying() const {
 	return _cd.playing || g_system->poll_cdrom();
 }
 
@@ -93,7 +93,7 @@ AudioCDManager::Status AudioCDManager::getStatus() const {
 	// TODO: This could be improved for "real" CD playback.
 	// But to do that, we have to extend the OSystem interface.
 	Status info = _cd;
-	info.playing = isPlaying() != 0;
+	info.playing = isPlaying();
 	return info;
 }
 

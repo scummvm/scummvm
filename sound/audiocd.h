@@ -47,7 +47,7 @@ public:
 
 	void play(int track, int numLoops, int startFrame, int duration);
 	void stop();
-	int isPlaying() const;
+	bool isPlaying() const;
 
 	void updateCD();
 
