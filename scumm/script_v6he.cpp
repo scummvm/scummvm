@@ -965,7 +965,7 @@ void ScummEngine_v6he::o6_kernelGetFunctions() {
 		// Fatty Bear's Birthday Surprise
 		// XXX gdi_virtScreen = 0;
 		writeVar(0, 0);
-		defineArray(0, rtCostume, 0, virtScreenSave(0, args[1], args[2], args[3], args[4]));
+		defineArray(0, kByteArray, 0, virtScreenSave(0, args[1], args[2], args[3], args[4]));
 		retval = readVar(0);
 		ah = (ArrayHeader *)getResourceAddress(rtString, retval);
 		virtScreenSave(ah->data, args[1], args[2], args[3], args[4]);
@@ -1177,7 +1177,7 @@ int ScummEngine_v6he::readFileToArray(int slot, int32 size) {
 
 	writeVar(0, 0);
 
-	ArrayHeader *ah = defineArray(0, rtCostume, 0, size);
+	ArrayHeader *ah = defineArray(0, kByteArray, 0, size);
 	_hFileTable[slot].read(ah->data, size);
 
 	return readVar(0);
@@ -1320,10 +1320,10 @@ void ScummEngine_v6he::o6_redimArray() {
 	subcode = fetchScriptByte();
 	switch (subcode) {
 	case 199:
-		redimArray(fetchScriptWord(), newX, newY, rtInventory);
+		redimArray(fetchScriptWord(), newX, newY, kIntArray);
 		break;
 	case 202:
-		redimArray(fetchScriptWord(), newX, newY, rtCostume);
+		redimArray(fetchScriptWord(), newX, newY, kByteArray);
 		break;
 	default:
 		break;
@@ -1332,7 +1332,7 @@ void ScummEngine_v6he::o6_redimArray() {
 
 void ScummEngine_v6he::redimArray(int arrayId, int newX, int newY, int type) {
 	// Used in mini game at Cosmic Dust Diner in puttmoon
-	int var_2, var_4, ax, cx;
+	int newSize, oldSize;
 
 	if (readVar(arrayId) == 0)
 		error("redimArray: Reference to zeroed array pointer");
@@ -1342,20 +1342,13 @@ void ScummEngine_v6he::redimArray(int arrayId, int newX, int newY, int type) {
 	if (!ah)
 		error("redimArray: Invalid array (%d) reference", readVar(arrayId));
 
-	if (type == rtInventory)
-		var_2 = 2;
-	else // rtCostume
-		var_2 = 1;
+	newSize = (type == kIntArray) ? 2 : 1;
+	oldSize = (ah->type == kIntArray) ? 2 : 1;
 
-	if (FROM_LE_16(ah->type) == rtInventory)
-		var_4 = 2;
-	else
-		var_4 = 1;
+	newSize *= (newX + 1) * (newY + 1);
+	oldSize *= FROM_LE_16(ah->dim1) * FROM_LE_16(ah->dim2);
 
-	cx = var_2 * (newX + 1) * (newY + 1);
-	ax = var_4 * FROM_LE_16(ah->dim1) * FROM_LE_16(ah->dim2);
-
-	if (ax != cx)
+	if (newSize != oldSize)
 		error("redimArray: array %d redim mismatch", readVar(arrayId));
 
 	ah->type = TO_LE_16(type);

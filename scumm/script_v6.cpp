@@ -401,12 +401,21 @@ ArrayHeader *ScummEngine_v6::defineArray(int array, int type, int dim2, int dim1
 	int size;
 	ArrayHeader *ah;
 
-	if (!(_features & GF_HUMONGOUS)) {
-		if (type != rtSound)
-			type = rtInventory;
+	assert(0 <= type && type <= 5);
+
+	
+	if (_features & GF_HUMONGOUS) {
+		if (type == kBitArray || type == kNibbleArray)
+			type = kByteArray;
 	} else {
-		if (type == rtScript || type == rtRoom)
-			type = rtCostume;
+		// NOTE: The following code turns all arrays except string arrays into
+		// integer arrays. There seems to be no reason for this, and it wastes
+		// space. However, we can't just remove this either, as that would
+		// break savegame compatibility. So do not touch this unless you are
+		// also adding code which updated old savegames, too. And of course
+		// readArray() and writeArray() would have to be updated, too...
+		if (type != kStringArray)
+			type = kIntArray;
 	}
 
 	nukeArray(array);
@@ -421,7 +430,7 @@ ArrayHeader *ScummEngine_v6::defineArray(int array, int type, int dim2, int dim1
 			error("Can't define bit variable as array pointer");
 		}
 
-		size = (type == 5) ? 32 : 8;
+		size = (type == kIntArray) ? 4 : 1;
 	} else {
 		if (array & 0x4000) {
 		}
@@ -430,14 +439,13 @@ ArrayHeader *ScummEngine_v6::defineArray(int array, int type, int dim2, int dim1
 			error("Can't define bit variable as array pointer");
 		}
 
-		size = (type == 5) ? 16 : 8;
+		size = (type == kIntArray) ? 2 : 1;
 	}
 
 	writeVar(array, id);
 
 	size *= dim2 + 1;
 	size *= dim1 + 1;
-	size >>= 3;
 
 	ah = (ArrayHeader *)createResource(rtString, id, size + sizeof(ArrayHeader));
 
@@ -471,19 +479,21 @@ int ScummEngine_v6::findFreeArrayId() {
 	return -1;
 }
 
+#define SWAP16(x)  x = SWAP_BYTES_16(x)
+
 ArrayHeader *ScummEngine_v6::getArray(int array) {
 	ArrayHeader *ah = (ArrayHeader *)getResourceAddress(rtString, readVar(array));
 	if (!ah)
 		return 0;
 	
 	// Workaround for a long standing bug where we save array headers in native
-	// endianess, instead of a fixed endianess. We try to detect savegames
+	// endianness, instead of a fixed endianness. We try to detect savegames
 	// which were created on a big endian system and convert them to little
 	// endian.
-	if ((ah->dim1 & 0xF000) || (ah->dim2 & 0xF000) || (ah->type & 0xFF00)) {
-		SWAP_BYTES_16(ah->dim1);
-		SWAP_BYTES_16(ah->dim2);
-		SWAP_BYTES_16(ah->type);
+	if ((FROM_LE_16(ah->dim1) & 0xF000) || (FROM_LE_16(ah->dim2) & 0xF000) || (FROM_LE_16(ah->type) & 0xFF00)) {
+		SWAP16(ah->dim1);
+		SWAP16(ah->dim2);
+		SWAP16(ah->type);
 	}
 	
 	return ah;
@@ -496,21 +506,30 @@ int ScummEngine_v6::readArray(int array, int idx, int base) {
 		error("readArray: invalid array %d (%d)", array, readVar(array));
 	}
 
-	base += idx * FROM_LE_16(ah->dim1);
+	// WORKAROUND bug #645711. This is clearly a script bug, as this script
+	// excerpt shows nicely:
+	// ...
+	// [03A7] (5D)         if (isAnyOf(array-447[localvar13][localvar14],[0,4])) {
+	// [03BD] (5D)           if ((localvar13 != -1) && (localvar14 != -1)) {
+	// [03CF] (B6)             printDebug.begin()
+	// ...
+	if (_gameId == GID_FT && array == 447 && _currentRoom == 95 && vm.slot[_currentScript].number == 2010 && idx == -1 && base == -1) {
+		return 0;
+	}
 
-	// FIXME: comment this for the time being as it was causing ft to crash
-	// in the minefeild
-	// FIX THE FIXME: fixing an assert by commenting out is bad. It's evil.
-	// It's wrong. Find the proper cause, or at least, silently return
-	// from the function, but don't just go on overwriting memory!
-	assert(base >= 0 && base < FROM_LE_16(ah->dim1) * FROM_LE_16(ah->dim2));
+	const int offset = base + idx * FROM_LE_16(ah->dim1);
 
-	if (FROM_LE_16(ah->type) == 4 || (_features & GF_HUMONGOUS && FROM_LE_16(ah->type) == rtCostume)) {
-		return ah->data[base];
+	if (offset < 0 || offset >= FROM_LE_16(ah->dim1) * FROM_LE_16(ah->dim2)) {
+		error("readArray: array %d out of bounds: [%d,%d] exceeds [%d,%d]",
+			array, base, idx, FROM_LE_16(ah->dim1), FROM_LE_16(ah->dim2));
+	}
+
+	if (FROM_LE_16(ah->type) != kIntArray) {
+		return ah->data[offset];
 	} else if (_version == 8) {
-		return (int32)READ_LE_UINT32(ah->data + base * 4);
+		return (int32)READ_LE_UINT32(ah->data + offset * 4);
 	} else {
-		return (int16)READ_LE_UINT16(ah->data + base * 2);
+		return (int16)READ_LE_UINT16(ah->data + offset * 2);
 	}
 }
 
@@ -518,26 +537,20 @@ void ScummEngine_v6::writeArray(int array, int idx, int base, int value) {
 	ArrayHeader *ah = getArray(array);
 	if (!ah)
 		return;
-	base += idx * FROM_LE_16(ah->dim1);
 
-	assert(base >= 0 && base < FROM_LE_16(ah->dim1) * FROM_LE_16(ah->dim2));
+	const int offset = base + idx * FROM_LE_16(ah->dim1);
 
-	if (FROM_LE_16(ah->type) == rtSound || (_features & GF_HUMONGOUS && FROM_LE_16(ah->type) == rtCostume)) {
-		ah->data[base] = value;
+	if (offset < 0 || offset >= FROM_LE_16(ah->dim1) * FROM_LE_16(ah->dim2)) {
+		error("writeArray: array %d out of bounds: [%d,%d] exceeds [%d,%d]",
+			array, base, idx, FROM_LE_16(ah->dim1), FROM_LE_16(ah->dim2));
+	}
+
+	if (FROM_LE_16(ah->type) != kIntArray) {
+		ah->data[offset] = value;
 	} else if (_version == 8) {
-#if defined(SCUMM_NEED_ALIGNMENT)
-		uint32 tmp = TO_LE_32(value);
-		memcpy(&ah->data[base*4], &tmp, 4);
-#else
-		((uint32 *)ah->data)[base] = TO_LE_32(value);
-#endif
+		WRITE_LE_UINT32(ah->data + offset * 4, value);
 	} else {
-#if defined(SCUMM_NEED_ALIGNMENT)
-		uint16 tmp = TO_LE_16(value);
-		memcpy(&ah->data[base*2], &tmp, 2);
-#else
-		((uint16 *)ah->data)[base] = TO_LE_16(value);
-#endif
+		WRITE_LE_UINT16(ah->data + offset * 2, value);
 	}
 }
 
@@ -549,10 +562,7 @@ void ScummEngine_v6::readArrayFromIndexFile() {
 		a = _fileHandle.readUint16LE();
 		b = _fileHandle.readUint16LE();
 		c = _fileHandle.readUint16LE();
-		if (c == 1)
-			defineArray(num, 1, a, b);
-		else
-			defineArray(num, 5, a, b);
+		defineArray(num, c, a, b);
 	}
 }
 
@@ -2044,7 +2054,7 @@ void ScummEngine_v6::o6_arrayOps() {
 	case 205:		// SO_ASSIGN_STRING
 		b = pop();
 		len = resStrLen(_scriptPointer);
-		ah = defineArray(array, 4, 0, len + 1);
+		ah = defineArray(array, kStringArray, 0, len + 1);
 		copyScriptString(ah->data + b);
 		break;
 	case 208:		// SO_ASSIGN_INT_LIST
@@ -2052,7 +2062,7 @@ void ScummEngine_v6::o6_arrayOps() {
 		c = pop();
 		d = readVar(array);
 		if (d == 0) {
-			defineArray(array, 5, 0, b + c);
+			defineArray(array, kIntArray, 0, b + c);
 		}
 		while (c--) {
 			writeArray(array, 0, b + c, pop());
@@ -2335,19 +2345,19 @@ void ScummEngine_v6::o6_dimArray() {
 
 	switch (fetchScriptByte()) {
 	case 199:		// SO_INT_ARRAY
-		data = 5;
+		data = kIntArray;
 		break;
 	case 200:		// SO_BIT_ARRAY
-		data = 1;
+		data = kBitArray;
 		break;
 	case 201:		// SO_NIBBLE_ARRAY
-		data = 2;
+		data = kNibbleArray;
 		break;
 	case 202:		// SO_BYTE_ARRAY
-		data = 3;
+		data = kByteArray;
 		break;
 	case 203:		// SO_STRING_ARRAY
-		data = 4;
+		data = kStringArray;
 		break;
 	case 204:		// SO_UNDIM_ARRAY
 		nukeArray(fetchScriptWord());
@@ -2367,19 +2377,19 @@ void ScummEngine_v6::o6_dim2dimArray() {
 	int a, b, data;
 	switch (fetchScriptByte()) {
 	case 199:		// SO_INT_ARRAY
-		data = 5;
+		data = kIntArray;
 		break;
 	case 200:		// SO_BIT_ARRAY
-		data = 1;
+		data = kBitArray;
 		break;
 	case 201:		// SO_NIBBLE_ARRAY
-		data = 2;
+		data = kNibbleArray;
 		break;
 	case 202:		// SO_BYTE_ARRAY
-		data = 3;
+		data = kByteArray;
 		break;
 	case 203:		// SO_STRING_ARRAY
-		data = 4;
+		data = kStringArray;
 		break;
 	default:
 		error("o6_dim2dimArray: default case");
@@ -2886,7 +2896,7 @@ void ScummEngine_v6::o6_stampObject() {
 		if (state == 0)
 			state = 255;
 
-		debug(6, "o6_stampObject: (%d at (%d,%d) scale %d)", object, x, y, state);
+		//debug(6, "o6_stampObject: (%d at (%d,%d) scale %d)", object, x, y, state);
 		Actor *a = derefActor(object, "o6_stampObject");
 		a->scalex = state;
 		a->scaley = state;
@@ -2912,7 +2922,7 @@ void ScummEngine_v6::o6_stampObject() {
 
 	putState(object, state);
 	drawObject(objnum, 0);
-	debug(6, "o6_stampObject: (%d at (%d,%d) state %d)", object, x, y, state);
+	//debug(6, "o6_stampObject: (%d at (%d,%d) state %d)", object, x, y, state);
 }
 
 void ScummEngine_v6::o6_stopTalking() {
@@ -2926,7 +2936,7 @@ void ScummEngine_v6::o6_findAllObjects() {
 	if (a != _currentRoom)
 		warning("o6_findAllObjects: current room is not %d", a);
 	writeVar(0, 0);
-	defineArray(0, 5, 0, _numLocalObjects + 1);
+	defineArray(0, kIntArray, 0, _numLocalObjects + 1);
 	writeArray(0, 0, 0, _numLocalObjects);
 	
 	while (i < _numLocalObjects) {
@@ -2970,7 +2980,7 @@ void ScummEngine_v6::o6_pickVarRandom() {
 	int value = fetchScriptWord();
 
 	if (readVar(value) == 0) {
-		defineArray(value, 5, 0, num + 1);
+		defineArray(value, kIntArray, 0, num + 1);
 		if (num > 0) {
 			int16 counter = 0;
 			do {
