@@ -277,35 +277,35 @@ void Command::readCommandsFrom(byte *&ptr) {
 	_cmdList = new CmdListData[_numCmdList + 1];
 	memset(&_cmdList[0], 0, sizeof(CmdListData));
 	for (i = 1; i <= _numCmdList; i++) {
-		_cmdList[i].readFrom(ptr);
+		_cmdList[i].readFromBE(ptr);
 	}
 	
 	_numCmdArea = READ_BE_UINT16(ptr); ptr += 2;
 	_cmdArea = new CmdArea[_numCmdArea + 1];
 	memset(&_cmdArea[0], 0, sizeof(CmdArea));
 	for (i = 1; i <= _numCmdArea; i++) {
-		_cmdArea[i].readFrom(ptr);
+		_cmdArea[i].readFromBE(ptr);
 	}
 
 	_numCmdObject = READ_BE_UINT16(ptr); ptr += 2;
 	_cmdObject = new CmdObject[_numCmdObject + 1];
 	memset(&_cmdObject[0], 0, sizeof(CmdObject));
 	for (i = 1; i <= _numCmdObject; i++) {
-		_cmdObject[i].readFrom(ptr);
+		_cmdObject[i].readFromBE(ptr);
 	}
 
 	_numCmdInventory = READ_BE_UINT16(ptr);	ptr += 2;
 	_cmdInventory = new CmdInventory[_numCmdInventory + 1];
 	memset(&_cmdInventory[0], 0, sizeof(CmdInventory));
 	for (i = 1; i <= _numCmdInventory; i++) {
-		_cmdInventory[i].readFrom(ptr);
+		_cmdInventory[i].readFromBE(ptr);
 	}
 
 	_numCmdGameState = READ_BE_UINT16(ptr);	ptr += 2;
 	_cmdGameState = new CmdGameState[_numCmdGameState + 1];
 	memset(&_cmdGameState[0], 0, sizeof(CmdGameState));
 	for (i = 1; i <= _numCmdGameState; i++) {
-		_cmdGameState[i].readFrom(ptr);
+		_cmdGameState[i].readFromBE(ptr);
 	}
 }
 

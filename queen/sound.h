@@ -72,6 +72,8 @@ public:
 	void musicToggle(bool val)	{ _musicToggle = val; }
 	void toggleMusic()		{ _musicToggle ^= true; }
 
+	int16 lastOverride()		{ return _lastOverride; }
+	
 protected:
 	SoundMixer *_mixer;
 	QueenEngine *_vm;

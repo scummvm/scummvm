@@ -110,7 +110,7 @@ void Sound::playSong(int16 songNum) {
 	if (!musicOn())
 		return;
 
-	//TODO: Record onto song stack for saving/loading
+	_lastOverride = songNum;
 	
 	switch (_tune[newTune - 1].mode) {
 		//Random loop
@@ -127,7 +127,16 @@ void Sound::playSong(int16 songNum) {
 			break;
 	}
 
-	_vm->music()->playSong(_tune[newTune - 1].tuneNum[0] - 1);
+	int16 song = _tune[newTune - 1].tuneNum[0] - 1;
+
+	// Work around bug in Roland music, note that these numbers are 'one-off' from
+	// the original code.
+	if (/*isRoland && */ song == 88 || song == 89) {
+		warning("Working around Roland music bug");
+		song = 62;
+	}
+	
+	_vm->music()->playSong(song);
 }
 
 

@@ -28,6 +28,7 @@
 #include "queen/logic.h"
 #include "queen/queen.h"
 #include "queen/resource.h"
+#include "queen/sound.h"
 #include "queen/structs.h"
 
 #include "common/debugger.cpp"
@@ -46,6 +47,7 @@ Debugger::Debugger(QueenEngine *vm)
 	DCmd_Register("info", &Debugger::Cmd_Info);
 	DCmd_Register("items", &Debugger::Cmd_Items);
 	DCmd_Register("room", &Debugger::Cmd_Room);
+	DCmd_Register("song", &Debugger::Cmd_Song);
 }
 
 
@@ -173,5 +175,16 @@ bool Debugger::Cmd_Room(int argc, const char **argv) {
 	return true;
 }
 
+bool Debugger::Cmd_Song(int argc, const char **argv) {
+	
+	if (argc == 2) {
+		int16 songNum = atoi(argv[1]);
+		_vm->sound()->playSong(songNum);
+		DebugPrintf("Playing song %d\n", songNum);
+	} else {
+		DebugPrintf("Usage: %s songnum\n", argv[0]);
+	}
+	return true;
+}
 
 } // End of namespace Queen

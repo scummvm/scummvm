@@ -29,14 +29,21 @@ namespace Queen {
 struct Box {
 	int16 x1, y1, x2, y2;
 
-	void readFrom(byte *&ptr) {
+	void readFromBE(byte *&ptr) {
 		x1 = (int16)READ_BE_UINT16(ptr); ptr += 2;
 		y1 = (int16)READ_BE_UINT16(ptr); ptr += 2;
 		x2 = (int16)READ_BE_UINT16(ptr); ptr += 2;
 		y2 = (int16)READ_BE_UINT16(ptr); ptr += 2;
 	}
 
-	void writeTo(byte *&ptr) {
+	void readFromLE(byte *&ptr) {
+		x1 = (int16)READ_LE_UINT16(ptr); ptr += 2;
+		y1 = (int16)READ_LE_UINT16(ptr); ptr += 2;
+		x2 = (int16)READ_LE_UINT16(ptr); ptr += 2;
+		y2 = (int16)READ_LE_UINT16(ptr); ptr += 2;
+	}
+
+	void writeToBE(byte *&ptr) {
 		WRITE_BE_UINT16(ptr, x1); ptr += 2;
 		WRITE_BE_UINT16(ptr, y1); ptr += 2;
 		WRITE_BE_UINT16(ptr, x2); ptr += 2;
@@ -71,17 +78,25 @@ struct Area {
 	//! entry in ObjectData, object lying in this area
 	uint16 object;
 
-	void readFrom(byte *&ptr) {
+	void readFromBE(byte *&ptr) {
 		mapNeighbours = (int16)READ_BE_UINT16(ptr); ptr += 2;
-		box.readFrom(ptr);
+		box.readFromBE(ptr);
 		bottomScaleFactor = READ_BE_UINT16(ptr); ptr += 2;
 		topScaleFactor = READ_BE_UINT16(ptr); ptr += 2;
 		object = READ_BE_UINT16(ptr); ptr += 2;
 	}
 
-	void writeTo(byte *&ptr) {
+	void readFromLE(byte *&ptr) {
+		mapNeighbours = (int16)READ_LE_UINT16(ptr); ptr += 2;
+		box.readFromLE(ptr);
+		bottomScaleFactor = READ_LE_UINT16(ptr); ptr += 2;
+		topScaleFactor = READ_LE_UINT16(ptr); ptr += 2;
+		object = READ_LE_UINT16(ptr); ptr += 2;
+	}
+
+	void writeToBE(byte *&ptr) {
 		WRITE_BE_UINT16(ptr, mapNeighbours); ptr += 2;
-		box.writeTo(ptr);
+		box.writeToBE(ptr);
 		WRITE_BE_UINT16(ptr, bottomScaleFactor); ptr += 2;
 		WRITE_BE_UINT16(ptr, topScaleFactor); ptr += 2;
 		WRITE_BE_UINT16(ptr, object); ptr += 2;
@@ -113,13 +128,19 @@ struct WalkOffData {
 	//! coordinates to reach
 	uint16 x, y;
 
-	void readFrom(byte *& ptr) {
+	void readFromBE(byte *&ptr) {
 		entryObj = (int16)READ_BE_UINT16(ptr); ptr += 2;
 		x = READ_BE_UINT16(ptr); ptr += 2;
 		y = READ_BE_UINT16(ptr); ptr += 2;
 	}
 
-	void writeTo(byte *&ptr) {
+	void readFromLE(byte *&ptr) {
+		entryObj = (int16)READ_LE_UINT16(ptr); ptr += 2;
+		x = READ_LE_UINT16(ptr); ptr += 2;
+		y = READ_LE_UINT16(ptr); ptr += 2;
+	}
+
+	void writeToBE(byte *&ptr) {
 		WRITE_BE_UINT16(ptr, entryObj); ptr += 2;
 		WRITE_BE_UINT16(ptr, x); ptr += 2;
 		WRITE_BE_UINT16(ptr, y); ptr += 2;
@@ -155,7 +176,7 @@ struct GraphicData {
 	//! moving speed of object
 	uint16 speed;
 
-	void readFrom(byte *& ptr) {
+	void readFromBE(byte *&ptr) {
 		x = READ_BE_UINT16(ptr); ptr += 2;
 		y = READ_BE_UINT16(ptr); ptr += 2;
 		firstFrame = (int16)READ_BE_UINT16(ptr); ptr += 2;
@@ -221,7 +242,7 @@ struct ObjectData {
 	*/
 	int16 image;
 
-	void readFrom(byte *& ptr) {
+	void readFromBE(byte *&ptr) {
 		name = (int16)READ_BE_UINT16(ptr); ptr += 2;
 		x = READ_BE_UINT16(ptr); ptr += 2;
 		y = READ_BE_UINT16(ptr); ptr += 2;
@@ -231,8 +252,19 @@ struct ObjectData {
 		state = READ_BE_UINT16(ptr); ptr += 2;
 		image = (int16)READ_BE_UINT16(ptr); ptr += 2;
 	}
+	
+	void readFromLE(byte *&ptr) {
+		name = (int16)READ_LE_UINT16(ptr); ptr += 2;
+		x = READ_LE_UINT16(ptr); ptr += 2;
+		y = READ_LE_UINT16(ptr); ptr += 2;
+		description = READ_LE_UINT16(ptr); ptr += 2;
+		entryObj = (int16)READ_LE_UINT16(ptr); ptr += 2;
+		room = READ_LE_UINT16(ptr); ptr += 2;
+		state = READ_LE_UINT16(ptr); ptr += 2;
+		image = (int16)READ_LE_UINT16(ptr); ptr += 2;
+	}
 
-	void writeTo(byte *&ptr) {
+	void writeToBE(byte *&ptr) {
 		WRITE_BE_UINT16(ptr, name); ptr += 2;
 		WRITE_BE_UINT16(ptr, x); ptr += 2;
 		WRITE_BE_UINT16(ptr, y); ptr += 2;
@@ -279,7 +311,7 @@ struct ObjectDescription {
 	//! last description number used (in order to avoid re-using it)
 	uint16 lastSeenNumber;
 
-	void readFrom(byte *&ptr) {
+	void readFromBE(byte *&ptr) {
 		object = READ_BE_UINT16(ptr); ptr += 2;
 		type = READ_BE_UINT16(ptr); ptr += 2;
 		lastDescription = READ_BE_UINT16(ptr); ptr += 2;
@@ -300,7 +332,7 @@ struct ItemData {
 	//! entry in OBJECT_DESCR (>0 if available)
 	int16 sfxDescription;
 
-	void readFrom(byte *&ptr) {
+	void readFromBE(byte *&ptr) {
 		name = (int16)READ_BE_UINT16(ptr); ptr += 2;
 		description = READ_BE_UINT16(ptr); ptr += 2;
 		state = READ_BE_UINT16(ptr); ptr += 2;
@@ -308,7 +340,15 @@ struct ItemData {
 		sfxDescription = (int16)READ_BE_UINT16(ptr); ptr += 2;
 	}
 
-	void writeTo(byte *&ptr) {
+	void readFromLE(byte *&ptr) {
+		name = (int16)READ_LE_UINT16(ptr); ptr += 2;
+		description = READ_LE_UINT16(ptr); ptr += 2;
+		state = READ_LE_UINT16(ptr); ptr += 2;
+		frame = READ_LE_UINT16(ptr); ptr += 2;
+		sfxDescription = (int16)READ_LE_UINT16(ptr); ptr += 2;
+	}
+
+	void writeToBE(byte *&ptr) {
 		WRITE_BE_UINT16(ptr, name); ptr += 2;
 		WRITE_BE_UINT16(ptr, description); ptr += 2;
 		WRITE_BE_UINT16(ptr, state); ptr += 2;
@@ -340,7 +380,7 @@ struct ActorData {
 	//! entry in ACTOR_FILE
 	uint16 actorFile;
 
-	void readFrom(byte *&ptr) {
+	void readFromBE(byte *&ptr) {
 		room = (int16)READ_BE_UINT16(ptr); ptr += 2;
 		bobNum = (int16)READ_BE_UINT16(ptr); ptr += 2;
 		name = READ_BE_UINT16(ptr); ptr += 2;
@@ -385,7 +425,7 @@ struct CmdListData {
 	//! special section to execute (refer to execute.c l.423-451)
 	int16 specialSection;
 
-	void readFrom(byte *&ptr) {
+	void readFromBE(byte *&ptr) {
 		verb = (Verb)READ_BE_UINT16(ptr); ptr += 2;
 		nounObj1 = (int16)READ_BE_UINT16(ptr); ptr += 2;
 		nounObj2 = (int16)READ_BE_UINT16(ptr); ptr += 2;
@@ -412,7 +452,7 @@ struct CmdArea {
 	//! room in which the area must be changed
 	uint16 room;
 
-	void readFrom(byte *&ptr) {
+	void readFromBE(byte *&ptr) {
 		id = (int16)READ_BE_UINT16(ptr); ptr += 2;
 		area = (int16)READ_BE_UINT16(ptr); ptr += 2;
 		room = READ_BE_UINT16(ptr); ptr += 2;
@@ -428,7 +468,7 @@ struct CmdObject {
 	//! >0: copy from srcObj, 0: nothing, -1: delete dstObj
 	int16 srcObj;
 
-	void readFrom(byte *&ptr) {
+	void readFromBE(byte *&ptr) {
 		id = (int16)READ_BE_UINT16(ptr); ptr += 2;
 		dstObj = (int16)READ_BE_UINT16(ptr); ptr += 2;
 		srcObj = (int16)READ_BE_UINT16(ptr); ptr += 2;
@@ -444,7 +484,7 @@ struct CmdInventory {
 	//! >0: valid
 	int16 srcItem;
 
-	void readFrom(byte *&ptr) {
+	void readFromBE(byte *&ptr) {
 		id = (int16)READ_BE_UINT16(ptr); ptr += 2;
 		dstItem = (int16)READ_BE_UINT16(ptr); ptr += 2;
 		srcItem = (int16)READ_BE_UINT16(ptr); ptr += 2;
@@ -459,7 +499,7 @@ struct CmdGameState {
 	int16 gameStateValue;
 	uint16 speakValue;
 
-	void readFrom(byte *&ptr) {
+	void readFromBE(byte *&ptr) {
 		id = (int16)READ_BE_UINT16(ptr); ptr += 2;
 		gameStateSlot = (int16)READ_BE_UINT16(ptr); ptr += 2;
 		gameStateValue = (int16)READ_BE_UINT16(ptr); ptr += 2;
@@ -490,7 +530,7 @@ struct FurnitureData {
 	*/
 	int16 gameStateValue;
 
-	void readFrom(byte *&ptr) {
+	void readFromBE(byte *&ptr) {
 		room = (int16)READ_BE_UINT16(ptr); ptr += 2;
 		gameStateValue = (int16)READ_BE_UINT16(ptr); ptr += 2;
 	}
@@ -502,7 +542,7 @@ struct GraphicAnim {
 	int16 frame;
 	uint16 speed;
 
-	void readFrom(byte *&ptr) {
+	void readFromBE(byte *&ptr) {
 		keyFrame = (int16)READ_BE_UINT16(ptr); ptr += 2;
 		frame = (int16)READ_BE_UINT16(ptr); ptr += 2;
 		speed = READ_BE_UINT16(ptr); ptr += 2;
@@ -532,14 +572,21 @@ struct TalkSelected {
 	bool hasTalkedTo;
 	int16 values[4];
 
-	void readFrom(byte *&ptr) {
+	void readFromBE(byte *&ptr) {
 		hasTalkedTo = READ_BE_UINT16(ptr) != 0; ptr += 2;
 		for (int i = 0; i < 4; i++) {
 			values[i] = (int16)READ_BE_UINT16(ptr); ptr += 2;
 		}	
 	}
 
-	void writeTo(byte *&ptr) {
+	void readFromLE(byte *&ptr) {
+		hasTalkedTo = READ_LE_UINT16(ptr) != 0; ptr += 2;
+		for (int i = 0; i < 4; i++) {
+			values[i] = (int16)READ_LE_UINT16(ptr); ptr += 2;
+		}	
+	}
+
+	void writeToBE(byte *&ptr) {
 		WRITE_BE_UINT16(ptr, (uint16)hasTalkedTo); ptr += 2;
 		for (int i = 0; i < 4; i++) {
 			WRITE_BE_UINT16(ptr, values[i]); ptr += 2;

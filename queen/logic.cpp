@@ -70,7 +70,7 @@ void Logic::initialise() {
 	_objectData = new ObjectData[_numObjects + 1];
 	memset(&_objectData[0], 0, sizeof(ObjectData));
 	for (i = 1; i <= _numObjects; i++) {
-		_objectData[i].readFrom(ptr);
+		_objectData[i].readFromBE(ptr);
 	}
 
 	// Room data
@@ -100,7 +100,7 @@ void Logic::initialise() {
 	_itemData = new ItemData[_numItems + 1];
 	memset(&_itemData[0], 0, sizeof(ItemData));
 	for (i = 1; i <= _numItems; i++) {
-		_itemData[i].readFrom(ptr);
+		_itemData[i].readFromBE(ptr);
 	}
 
 	// Graphic Image Data
@@ -109,7 +109,7 @@ void Logic::initialise() {
 	_graphicData = new GraphicData[_numGraphics + 1];
 	memset(&_graphicData[0], 0, sizeof(GraphicData));
 	for (i = 1; i <= _numGraphics; i++) {
-		_graphicData[i].readFrom(ptr);
+		_graphicData[i].readFromBE(ptr);
 	}
 
 	_objMax   = new int16[_numRooms + 1];
@@ -125,14 +125,14 @@ void Logic::initialise() {
 		memset(&_area[i][0], 0, sizeof(Area));
 		for (j = 1; j <= _areaMax[i]; j++) {
 			assert(j < MAX_AREAS_NUMBER);
-			_area[i][j].readFrom(ptr);
+			_area[i][j].readFromBE(ptr);
 		}
 	}
 
 	_objectBox = new Box[_numObjects + 1];
 	memset(&_objectBox[0], 0, sizeof(Box));
 	for (i = 1; i <= _numObjects; i++) {
-		_objectBox[i].readFrom(ptr);
+		_objectBox[i].readFromBE(ptr);
 	}
 
 	// Walk OFF Data
@@ -141,7 +141,7 @@ void Logic::initialise() {
 	_walkOffData = new WalkOffData[_numWalkOffs + 1];
 	memset(&_walkOffData[0], 0, sizeof(WalkOffData));
 	for (i = 1; i <= _numWalkOffs; i++) {
-		_walkOffData[i].readFrom(ptr);
+		_walkOffData[i].readFromBE(ptr);
 	}
 
 	// Special Object Descriptions
@@ -150,7 +150,7 @@ void Logic::initialise() {
 	_objectDescription = new ObjectDescription[_numObjDesc + 1];
 	memset(&_objectDescription[0], 0, sizeof(ObjectDescription));
 	for (i = 1; i <= _numObjDesc; i++) {
-		_objectDescription[i].readFrom(ptr);
+		_objectDescription[i].readFromBE(ptr);
 	}
 
 	_vm->command()->readCommandsFrom(ptr);
@@ -163,7 +163,7 @@ void Logic::initialise() {
 	_furnitureData = new FurnitureData[_numFurniture + 1];
 	memset(&_furnitureData[0], 0, sizeof(_furnitureData));
 	for (i = 1; i <= _numFurniture; i++) {
-		_furnitureData[i].readFrom(ptr);
+		_furnitureData[i].readFromBE(ptr);
 	}
 
 	// Actors
@@ -175,7 +175,7 @@ void Logic::initialise() {
 	_actorData = new ActorData[_numActors + 1];
 	memset(&_actorData[0], 0, sizeof(ActorData));
 	for (i = 1; i <= _numActors; i++) {
-		_actorData[i].readFrom(ptr);
+		_actorData[i].readFromBE(ptr);
 	}
 
 	_numGraphicAnim = READ_BE_UINT16(ptr); ptr += 2;
@@ -183,7 +183,7 @@ void Logic::initialise() {
 	_graphicAnim = new GraphicAnim[_numGraphicAnim + 1];
 	memset(&_graphicAnim[0], 0, sizeof(GraphicAnim));
 	for (i = 1; i <= _numGraphicAnim; i++) {
-		_graphicAnim[i].readFrom(ptr);
+		_graphicAnim[i].readFromBE(ptr);
 	}
 
 	_currentRoom = _objectData[_entryObj].room;
@@ -2296,10 +2296,10 @@ bool Logic::gameSave(uint16 slot, const char *desc) {
 	WRITE_BE_UINT16(ptr, _currentRoom); ptr += 2;
 
 	for (i = 1; i <= _numObjects; i++)
-		_objectData[i].writeTo(ptr);
+		_objectData[i].writeToBE(ptr);
 		
 	for (i = 1; i <= _numItems; i++)
-		_itemData[i].writeTo(ptr);
+		_itemData[i].writeToBE(ptr);
 		
 	for (i = 0; i < GAME_STATE_COUNT; i++) {
 		WRITE_BE_UINT16(ptr, gameState(i)); ptr += 2;
@@ -2307,17 +2307,17 @@ bool Logic::gameSave(uint16 slot, const char *desc) {
 	
 	for (i = 1; i <= _numRooms; i++)
 		for (j = 1; j <= _areaMax[i]; j++)
-			_area[i][j].writeTo(ptr);
+			_area[i][j].writeToBE(ptr);
 			
 	for (i = 0; i < TALK_SELECTED_COUNT; i++)
-			_talkSelected[i].writeTo(ptr);
+			_talkSelected[i].writeToBE(ptr);
 	
 	for (i = 1; i <= _numWalkOffs; i++)
-		_walkOffData[i].writeTo(ptr);
+		_walkOffData[i].writeToBE(ptr);
 
 	WRITE_BE_UINT16(ptr, _joe.facing); ptr += 2;
 	WRITE_BE_UINT16(ptr, _vm->bam()->_flag); ptr += 2;
-	WRITE_BE_UINT16(ptr, 0); ptr += 2; //TODO: lastoverride
+	WRITE_BE_UINT16(ptr, _vm->sound()->lastOverride()); ptr += 2;
 	
 	//TODO: lastmerge, lastalter, altmrgpri
 	for (i = 0; i < 3; i++) {
@@ -2364,10 +2364,10 @@ bool Logic::gameLoad(uint16 slot) {
 	currentRoom(READ_BE_UINT16(ptr)); ptr += 2;
 	
 	for (i = 1; i <= _numObjects; i++)
-		_objectData[i].readFrom(ptr);
+		_objectData[i].readFromBE(ptr);
 
 	for (i = 1; i <= _numItems; i++)
-		_itemData[i].readFrom(ptr);
+		_itemData[i].readFromBE(ptr);
 
 	for (i = 0; i < GAME_STATE_COUNT; i++) {
 		gameState(i, (int16)READ_BE_UINT16(ptr)); ptr += 2;
@@ -2375,18 +2375,17 @@ bool Logic::gameLoad(uint16 slot) {
 
 	for (i = 1; i <= _numRooms; i++)
 		for (j = 1; j <= _areaMax[i]; j++)
-			_area[i][j].readFrom(ptr);
+			_area[i][j].readFromBE(ptr);
 	
 	for (i = 0; i < TALK_SELECTED_COUNT; i++)
-		_talkSelected[i].readFrom(ptr);
+		_talkSelected[i].readFromBE(ptr);
 		
 	for (i = 1; i <= _numWalkOffs; i++)
-		_walkOffData[i].readFrom(ptr);
+		_walkOffData[i].readFromBE(ptr);
 
 	joeFacing(READ_BE_UINT16(ptr));  ptr += 2;
 	_vm->bam()->_flag = READ_BE_UINT16(ptr); ptr += 2;
-	READ_BE_UINT16(ptr); ptr += 2; //TODO: lastoverride
-	//_vm->sound()->playSound(_vm->sound()->lastOverride())
+	_vm->sound()->playSong((int16)READ_BE_UINT16(ptr)); ptr += 2;
 	
 	//TODO: lastmerge, lastalter, altmrgpri
 	for (i = 0; i < 3; i++) {

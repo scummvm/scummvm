@@ -48,7 +48,8 @@ protected:
 	bool Cmd_Info(int argc, const char **argv);
 	bool Cmd_Items(int argc, const char **argv);
 	bool Cmd_Room(int argc, const char **argv);
-
+	bool Cmd_Song(int argc, const char **argv);
+	
 private:
 
 	QueenEngine *_vm;

@@ -46,6 +46,10 @@ namespace Queen {
 	Music::~Music() {
 		stopSong();
 		_midi->unloadMusic();
+		// Send All Notes Off
+		for (int i = 0; i < 16; ++i)
+			_driver->send((123 << 8) | 0xB0 | i);
+		_driver->close();
 		delete _midi;
 		delete[] _musicData;	
 	}
