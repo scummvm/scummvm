@@ -259,8 +259,8 @@ int32 Logic::fnWalkToAnim(int32 *params) {
 }
 
 /**
- * Turn mega to <direction>. Just needs to call fnWalk() with current feet
- * coords, so router can produce anim of turn frames.
+ * Turn mega to the specified direction. Just needs to call fnWalk() with
+ * current feet coords, so router can produce anim of turn frames.
  */
 
 int32 Logic::fnTurn(int32 *params) {
@@ -329,8 +329,8 @@ int32 Logic::fnStandAt(int32 *params) {
 }
 
 /**
- * Stand mega in <direction> at current feet coords
- * Just needs to call fnStandAt() with current feet coords
+ * Stand mega into the specified direction at current feet coords.
+ * Just needs to call fnStandAt() with current feet coords.
  */
 
 int32 Logic::fnStand(int32 *params) {
