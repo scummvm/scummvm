@@ -1455,7 +1455,7 @@ void Actor::nonActorSpeech(const char **strings, int stringsCount, int speechFla
 	
 	_vm->_script->wakeUpThreads(kWaitTypeSpeech);
 
-	for (i = 0; i < stringsCount; i++) {		
+	for (i = 0; i < stringsCount; i++) {
 		_activeSpeech.strings[i] = strings[i];
 	}
 	_activeSpeech.stringsCount = stringsCount;
