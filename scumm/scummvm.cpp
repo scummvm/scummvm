@@ -2038,14 +2038,14 @@ void Scumm::launch() {
 #ifdef __PALM_OS__
 	// PALMOS : check if this value is correct with palm,
 	// old value 450000 doesn't work anymore (return _fntPtr = NULL in zak256, not tested with others)
-	// 1500000 is too big and make ScummVM crashes : MemMove to NULL or immediate exit if try to allocate
+	// 2500000 is too big and make ScummVM crashes : MemMove to NULL or immediate exit if try to allocate
 	// memory with new operator
 	_maxHeapThreshold = 550000;
 #else
 	// Since the new costumes are very big, we increase the heap limit, to avoid having
 	// to constantly reload stuff from the data files.
 	if (_features & GF_NEW_COSTUMES)
-		_maxHeapThreshold = 1500000;
+		_maxHeapThreshold = 2500000;
 	else
 		_maxHeapThreshold = 550000;
 #endif
