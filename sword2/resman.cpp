@@ -42,213 +42,188 @@
 #include "sound.h"	// (James22july97) for Clear_fx_queue() called from CacheNewCluster()
 #include "sword2.h"	// (James11aug97) for CloseGame()
 
-//------------------------------------------------------------------------------------
-//------------------------------------------------------------------------------------
-//welcome to the easy resource manager - written in simple code for easy maintenance
-
-//the resource compiler will create two files
-
+// ---------------------------------------------------------------------------
+// welcome to the easy resource manager - written in simple code for easy
+// maintenance
+// 
+// the resource compiler will create two files
+//
 //	resource.inf which is a list of ascii cluster file names
-//	resource.tab which is a table which tells us which cluster a resource is located in and the number within the cluster
-
-
-//------------------------------------------------------------------------------------
+//	resource.tab which is a table which tells us which cluster a resource
+//      is located in and the number within the cluster
+// ---------------------------------------------------------------------------
 
 #define NONE	 0
 #define FETCHING 1
 
 #define BUFFERSIZE	4096
 
-
 resMan	res_man;	//declare the object global
 
-
-//------------------------------------------------------------------------------------
+// ---------------------------------------------------------------------------
 //
 //
 //	resman.
 //
 //
-//------------------------------------------------------------------------------------
+// ---------------------------------------------------------------------------
+
 #define BOTH		0x0		// Cluster is on both CDs
-#define CD1			0x1		// Cluster is on CD1 only
-#define CD2			0x2		// Cluster is on CD2 only
+#define CD1		0x1		// Cluster is on CD1 only
+#define CD2		0x2		// Cluster is on CD2 only
 #define LOCAL_CACHE	0x4		// Cluster is cached on HDD
 #define LOCAL_PERM	0x8		// Cluster is on HDD.
 
-
-typedef struct
-{
-	uint8	clusterName[20];	// Null terminated cluster name.
-	uint8	cd;					// Cd cluster is on and whether it is on the local drive or not.
+typedef struct {
+	uint8 clusterName[20];	// Null terminated cluster name.
+	uint8 cd;		// Cd cluster is on and whether it is on the local drive or not.
 } _cd_inf;
 
-//------------------------------------------------------------------------------------
+// ---------------------------------------------------------------------------
 
-void	resMan::InitResMan(void)	//Tony29May96
-{
-//we read in the resource info which tells us the names of the resource cluster files
-//ultimately, although there might be groups within the clusters at this point it makes no difference.
-//we only wish to know what resource files there are and what is in each
+void resMan::InitResMan(void) { //Tony29May96
+	// We read in the resource info which tells us the names of the
+	// resource cluster files ultimately, although there might be groups
+	// within the clusters at this point it makes no difference. We only
+	// wish to know what resource files there are and what is in each
 
 	File file;
-	uint32	end;
-	mem	*temp;
-	uint32	pos=0;
-	uint32	j=0;
+	uint32 end;
+	mem *temp;
+	uint32 pos = 0;
+	uint32 j = 0;
 
+	total_clusters = 0;
 
-	total_clusters=0;
-
-
-	if (file.open("resource.inf", g_sword2->getGameDataPath()) == false) {
+	if (!file.open("resource.inf", g_sword2->getGameDataPath())) {
 		Zdebug("InitResMan cannot *OPEN* resource.inf");
-		ExitWithReport("InitResMan cannot *OPEN* resource.inf [file=%s line=%u]",__FILE__,__LINE__);
+		ExitWithReport("InitResMan cannot *OPEN* resource.inf [file=%s line=%u]", __FILE__, __LINE__);
 	}
 
 	end = file.size();
 
-//	Zdebug("seek end %d %d", fh, end);
+	// Zdebug("seek end %d %d", fh, end);
 
-	temp = Twalloc(end, MEM_locked, UID_temp);	//get some space for the incoming resource file - soon to be trashed
+	//get some space for the incoming resource file - soon to be trashed
+	temp = Twalloc(end, MEM_locked, UID_temp);
 
-	file.seek(0, SEEK_SET );
-	file.read( temp->ad, end );
-	if	(file.ioFailed())
-	{
+	if (file.read(temp->ad, end) != end) {
 		file.close();
 		Zdebug("InitResMan cannot *READ* resource.inf");
-		ExitWithReport("InitResMan cannot *READ* resource.inf [file=%s line=%u]",__FILE__,__LINE__);
+		ExitWithReport("InitResMan cannot *READ* resource.inf [file=%s line=%u]", __FILE__, __LINE__);
 	}
 
 	file.close();
 
-
-//ok, we've loaded in the resource.inf file which contains a list of all the files
-//now extract the filenames
-	do
-	{
-		while(*(temp->ad+j)!=13)	//item must have an #0d0a
-		{	resource_files[total_clusters][pos]=*(temp->ad+j);
+	// ok, we've loaded in the resource.inf file which contains a list of
+	// all the files now extract the filenames
+	do {
+		// item must have an #0d0a
+		while(temp->ad[j] != 13) {
+			resource_files[total_clusters][pos] = temp->ad[j];
 			j++;
 			pos++;
-		};
+		}
 
-		resource_files[total_clusters][pos]=0;	//NULL terminate our extracted string
+		// NULL terminate our extracted string
+		resource_files[total_clusters][pos]=0;
 
-		pos=0;	//reset position in current slot between entries
-		j+=2;	//past the 0a
-		total_clusters++;	//done another
+		// Reset position in current slot between entries, skip the
+		// 0x0a in the source and increase the number of clusters.
 
-//		put overload check here
+		pos = 0;
+		j += 2;
+		total_clusters++;
 
+		// TODO: put overload check here
+	} while (j != end);	// using this method the Gode generated resource.inf must have #0d0a on the last entry
 
-	}
-	while(j!=end);	//using this method the Gode generated resource.inf must have #0d0a on the last entry
-
-
-
-
-
-//now load in the binary id to res conversion table
-	if (file.open("resource.tab", g_sword2->getGameDataPath()) == false) {
+	// now load in the binary id to res conversion table
+	if (!file.open("resource.tab", g_sword2->getGameDataPath())) {
 		Zdebug("InitResMan cannot *OPEN* resource.tab");
-		ExitWithReport("InitResMan cannot *OPEN* resource.tab [file=%s line=%u]",__FILE__,__LINE__);
+		ExitWithReport("InitResMan cannot *OPEN* resource.tab [file=%s line=%u]", __FILE__, __LINE__);
 	}
 
+	// find how many resources
+	end = file.size();
 
-//find how many resources
-   end = file.size();
-   file.seek( 0, SEEK_SET); // Back to the beginning of the file
+	total_res_files = end / 4;
 
-	total_res_files=end/4;
+	// table seems ok so malloc some space
+	res_conv_table = (uint16 *) malloc(end);
 
-//table seems ok so malloc some space
-	res_conv_table = (uint16 *) malloc( end );
+	for (j = 0; j < end / 2; j++)
+		res_conv_table[j] = file.readUint16LE();
 
-	file.read( res_conv_table, end );
-	if	(file.ioFailed())
-	{
+	if (file.ioFailed()) {
 		file.close();
 		Zdebug("InitResMan cannot *READ* resource.tab");
-		ExitWithReport("InitResMan cannot *READ* resource.tab [file=%s line=%u]",__FILE__,__LINE__);
+		ExitWithReport("InitResMan cannot *READ* resource.tab [file=%s line=%u]", __FILE__, __LINE__);
 	}
+
 	file.close();
 
-
-	if (file.open("cd.inf", g_sword2->getGameDataPath()) == false) {
+	if (!file.open("cd.inf", g_sword2->getGameDataPath())) {
 		Zdebug("InitResMan cannot *OPEN* cd.inf");
-		ExitWithReport("InitResMan cannot *OPEN* cd.inf [file=%s line=%u]",__FILE__,__LINE__);
+		ExitWithReport("InitResMan cannot *OPEN* cd.inf [file=%s line=%u]", __FILE__, __LINE__);
 	}
-
 
 	_cd_inf *cdInf = new _cd_inf[total_clusters];
 
-	for (j=0;j<total_clusters;j++)
-	{
-		if (file.read(&cdInf[j], sizeof(_cd_inf)) != sizeof(_cd_inf))
-		{
+	for (j = 0; j < total_clusters; j++) {
+		file.read(cdInf[j].clusterName, sizeof(cdInf[j].clusterName));
+		cdInf[j].cd = file.readByte();
+		
+		if (file.ioFailed()) {
 			Zdebug("InitResMan failed to read cd.inf. Insufficient entries?");
-			ExitWithReport("InitResMan failed to read cd.inf. Insufficient entries? [file=%s line=%u]",__FILE__,__LINE__);
+			ExitWithReport("InitResMan failed to read cd.inf. Insufficient entries? [file=%s line=%u]", __FILE__, __LINE__);
 		}
 	}
 
 	file.close();
 
-	for (j=0; j<total_clusters; j++)
-	{
-		uint32 i=0;
+	for (j = 0; j < total_clusters; j++) {
+		uint32 i = 0;
 
-		while((scumm_stricmp((char *) cdInf[i].clusterName, resource_files[j]) != 0) && (i<total_clusters))
+		while (scumm_stricmp((char *) cdInf[i].clusterName, resource_files[j]) != 0 && i < total_clusters)
 			i++;
 
-		if (i == total_clusters)
-		{
+		if (i == total_clusters) {
 			Zdebug("InitResMan, %s is not in cd.inf", resource_files[j]);
-			ExitWithReport("InitResMan, %s is not in cd.inf [file=%s line=%u]",resource_files[j],__FILE__,__LINE__);
-		}
-		else
+			ExitWithReport("InitResMan, %s is not in cd.inf [file=%s line=%u]",resource_files[j], __FILE__, __LINE__);
+		} else
 			cdTab[j] = cdInf[i].cd;
 	}
 
 
 	Zdebug("\n%d resources in %d cluster files", total_res_files, total_clusters);
-	for	(j=0;j<total_clusters;j++)
+	for (j = 0; j < total_clusters; j++)
 		Zdebug("filename of cluster %d: -%s", j, resource_files[j]);
 	Zdebug("");
 
+	// create space for a list of pointers to mem's
+	resList = (mem **) malloc(total_res_files * sizeof(mem *));
 
-	resList = (mem	**) malloc( total_res_files * sizeof(mem	*));	//create space for a list of pointers to mem's
+	age = (uint32 *) malloc(total_res_files * sizeof(uint32));
+	// status = (uint16 *) malloc(total_res_files * sizeof(uint16));
+	count = (uint16 *) malloc(total_res_files * sizeof(uint16));
 
-
-	age = (uint32 *) malloc( total_res_files * sizeof(uint32) );
-
-//	status = (uint16 *) malloc( total_res_files * sizeof(uint16) );
-
-	count = (uint16 *) malloc( total_res_files * sizeof(uint16) );
-
-
-	for	(j=0;j<total_res_files;j++)
-	{	age[j]=0;	//age must be 0 if the file is not in memory at all
-		count[j]=0;
+	for (j = 0; j < total_res_files; j++) {
+		// age must be 0 if the file is not in memory at all
+		age[j] = 0;
+		count[j] = 0;
 	}
 
-	resTime=1;	//cannot start at 0
-
+	resTime = 1;	//cannot start at 0
 	Free_mem(temp);	//get that memory back
 
-/* we don't have to worry about BSODs here - khalek :)
-	// Stop that nasty blue screen??
-	SetErrorMode(SEM_FAILCRITICALERRORS);
-*/
+	// FIXME: Is this really needed?
 
-
-	if (file.open("revcd1.id", g_sword2->getGameDataPath()) == false) {
+	if (!file.open("revcd1.id", g_sword2->getGameDataPath())) {
 		int index = 0;
 /*
 		// Scan for CD drives.
-		for (char c='C'; c<='Z'; c++)
-		{
+		for (char c = 'C'; c <= 'Z'; c++) {
 			sprintf(cdPath, "%c:\\", c);
 			if (GetDriveType(cdPath) == DRIVE_CDROM)
 				cdDrives[index++] = c;
@@ -256,622 +231,567 @@ void	resMan::InitResMan(void)	//Tony29May96
 */
 		cdDrives[index++] = 'C';
 		
-		if (index == 0)
-		{
+		if (index == 0) {
 			Zdebug("InitResMan, cannot find CD drive.");
-			ExitWithReport("InitResMan, cannot find CD drive. [file=%s line=%u]",__FILE__,__LINE__);
+			ExitWithReport("InitResMan, cannot find CD drive. [file=%s line=%u]", __FILE__, __LINE__);
 		}
 
-		while (index<24)
+		while (index < 24)
 			cdDrives[index++] = 0;
 	}
 	else
 		file.close();
 }
 
-//------------------------------------------------------------------------------------
-
-char *resMan::GetCdPath(void)
-{
+char *resMan::GetCdPath(void) {
 	return cdPath;
 }
 
-//------------------------------------------------------------------------------------
-
-void	resMan::Close_ResMan(void)	//Tony29May96
-{
-//free up our mallocs
-
-
+void resMan::Close_ResMan(void) { //Tony29May96
+	// free up our mallocs
 	free(resList);
 	free(age);
-
-//	status = (uint16 *) malloc( total_res_files * sizeof(uint16) );
-
+	// free(status);
 	free(count);
 }
 
-//------------------------------------------------------------------------------------
-uint8	*resMan::Res_open( uint32 res )	//BHTony30May96
-{
-//returns ad of resource. Loads if not in memory
-//retains a count
-//resource can be aged out of memory if count=0
-//the resource is locked while count!=0 i.e. until a res_close is called
+uint8 *resMan::Res_open(uint32 res) {	//BHTony30May96
+	// returns ad of resource. Loads if not in memory
+	// retains a count
+	// resource can be aged out of memory if count = 0
+	// the resource is locked while count != 0 i.e. until a res_close is
+	// called
 
 	File	file;
 	uint16	parent_res_file;
 	uint16	actual_res;
-	uint32	pos,len;
+	uint32	pos, len;
 
 	uint32	table_offset;
 
-
 #ifdef _SWORD2_DEBUG
-	if	(res>=total_res_files)
-		Con_fatal_error("Res_open illegal resource %d (there are %d resources 0-%d)", res, total_res_files, total_res_files-1);
+	if (res >= total_res_files)
+		Con_fatal_error("Res_open illegal resource %d (there are %d resources 0-%d)", res, total_res_files, total_res_files - 1);
 #endif
 
-//is the resource in memory already?
-	if	(!age[res])	//if the file is not in memory then age should and MUST be 0
-	{
-//		fetch the correct file and read in the correct portion
-//		if the file cannot fit then we must trash the oldest large enough floating file
+	// is the resource in memory already?
+	// if the file is not in memory then age should and MUST be 0
+	if (!age[res]) {
+		// fetch the correct file and read in the correct portion
+		// if the file cannot fit then we must trash the oldest large
+		// enough floating file
 
-		parent_res_file = res_conv_table[res*2];	//points to the number of the ascii filename
+		// points to the number of the ascii filename
+		parent_res_file = res_conv_table[res * 2];
 
 #ifdef _SWORD2_DEBUG
-		if	(parent_res_file==0xffff)
+		if (parent_res_file == 0xffff)
 			Con_fatal_error("Res_open tried to open null & void resource number %d", res);
 #endif
 
-		actual_res= res_conv_table[(res*2)+1];		//relative resource within the file
+		// relative resource within the file
+		actual_res = res_conv_table[(res * 2) + 1];
 
-//		first we have to find the file via the res_conv_table
+		// first we have to find the file via the res_conv_table
 
-//		Zdebug("resOpen %s res %d", resource_files[parent_res_file], res);
-//		** at this point here we start to think about where the file is and prompt the user for the right CD to be inserted **
-//		** we need to know the position that we're at within the game - LINC should write this someplace.
+		// Zdebug("resOpen %s res %d", resource_files[parent_res_file], res);
+
+		// ** at this point here we start to think about where the
+		// ** file is and prompt the user for the right CD to be
+		// ** inserted
+		// **
+		// ** we need to know the position that we're at within the
+		// ** game - LINC should write this someplace.
 
 /* these probably aren't necessary - khalek
-
-		if (!(cdTab[parent_res_file] & LOCAL_CACHE) && !(cdTab[parent_res_file] & LOCAL_PERM))
-		{
+		if (!(cdTab[parent_res_file] & LOCAL_CACHE) && !(cdTab[parent_res_file] & LOCAL_PERM)) {
 			// This cluster is on a CD, we need to cache a new one.
 			CacheNewCluster(parent_res_file);
-		}
-		else if (!(cdTab[parent_res_file] & LOCAL_PERM))
-		{
-			GetCd(cdTab[parent_res_file] & 3);				// Makes sure that the correct CD is in the drive.
+		} else if (!(cdTab[parent_res_file] & LOCAL_PERM)) {
+			// Makes sure that the correct CD is in the drive.
+			GetCd(cdTab[parent_res_file] & 3);
 		}
 */
 
+		// This part of the cluster caching is pretty useful though:
+		//
 		// If we're loading a cluster that's only available from one
 		// of the CDs, remember which one so that we can play the
 		// correct music.
+		//
+		// The code to ask for the correct CD will probably be needed
+		// later, too.
+		//
+		// And there's some music / FX stuff in CacheNewCluster() that
+		// might be needed as well.
+		//
+		// But this will do for now.
 
 		if (!(cdTab[parent_res_file] & LOCAL_PERM)) {
 			curCd = cdTab[parent_res_file] & 3;
 		}
 
-		//open the cluster file
-		if (file.open(resource_files[parent_res_file], g_sword2->getGameDataPath()) == false) 
+		// open the cluster file
+		if (!file.open(resource_files[parent_res_file], g_sword2->getGameDataPath()))
 			Con_fatal_error("Res_open cannot *OPEN* %s", resource_files[parent_res_file]);
 
 
-		//1st DWORD of a cluster is an offset to the look-up table
+		// 1st DWORD of a cluster is an offset to the look-up table
 		table_offset = file.readUint32LE();
 
+		// Zdebug("table offset = %d", table_offset);
 
-		//Zdebug("table offset = %d", table_offset);
+		// 2 dwords per resource
+		file.seek(table_offset + actual_res *8, SEEK_SET);
+		// get position of our resource within the cluster file
+		pos = file.readUint32LE();
+		// read the length
+		len = file.readUint32LE();
 
-		file.seek( (table_offset+(actual_res*8)), SEEK_SET);	//2 dwords per resource
-		file.read( &pos, 4);	//get position of our resource within the cluster file
-		file.read( &len, 4);	//read the length
+		// ** get to position in file of our particular resource
+		file.seek(pos, SEEK_SET);
 
-		file.seek(pos, SEEK_SET);	// ** get to position in file of our particular resource
+		// Zdebug("res len %d", len);
 
-//		Zdebug("res len %d", len);
-
-//		ok, we know the length so try and allocate the memory
-//		if it can't then old files will be ditched until it works
+		// ok, we know the length so try and allocate the memory
+		// if it can't then old files will be ditched until it works
 		resList[res] = Twalloc(len, MEM_locked, res);
 
+/* This probably isn't needed
 		// Do a quick ServiceWindows to stop the music screwing up.
 		ServiceWindows();
+*/
 
-//		now load the file
-		file.read( resList[res]->ad, len);	//hurray, load it in.
+		// now load the file
+		// hurray, load it in.
+		file.read(resList[res]->ad, len);
 
-		file.close();	//close the cluster
+		//close the cluster
+		file.close();
+	} else {
+		// Zdebug("RO %d, already open count=%d", res, count[res]);
 	}
-	else
-	{
-//		Zdebug("RO %d, already open count=%d", res, count[res]);
-	}
 
+	// number of times opened - the file won't move in memory while count
+	// is non zero
+	count[res]++;
 
+	// update the accessed time stamp - touch the file in other words
+	age[res] = resTime;
 
-	count[res]++;	//number of times opened - the file won't move in memory while count is non zero
+	// pass the address of the mem & lock the memory too
+	// might be locked already (if count > 1)
+	Lock_mem(resList[res]);
 
-	age[res]=resTime;	//update the accessed time stamp - touch the file in other words
-	
-
-
-
-	Lock_mem( resList[res] );	//pass the address of the mem & lock the memory too
-										//might be locked already (if count>1)
-
-	return( (uint8	*) resList[res]->ad );
+	return (uint8 *) resList[res]->ad;
 }
 
-//------------------------------------------------------------------------------------
-uint8	resMan::Res_check_valid( uint32 res )	// James 12mar97
-{
+uint8 resMan::Res_check_valid(uint32 res) {	// James 12mar97
 	// returns '1' if resource is valid, otherwise returns '0'
 	// used in startup.cpp to ignore invalid screen-manager resources
 
-	uint16	parent_res_file;
+	uint16 parent_res_file;
 
+	// resource number out of range
+	if (res >= total_res_files)
+		return 0;
 
-	if	(res>=total_res_files)
-		return(0);								// resource number out of range
+	// points to the number of the ascii filename
+	parent_res_file = res_conv_table[res * 2];
 
-	parent_res_file = res_conv_table[res*2];	// points to the number of the ascii filename
+	// null & void resource
+	if (parent_res_file == 0xffff)
+		return 0;
 
-	if	(parent_res_file==0xffff)
-		return(0);								// null & void resource
-
-	return(1);									// ok
+	// ok
+	return 1;
 }
-//------------------------------------------------------------------------------------
-//------------------------------------------------------------------------------------
 
-void	resMan::Res_next_cycle( void )	//Tony8Feb97
-{
-//increment the cycle and calculate actual per-cycle memory useage
+void resMan::Res_next_cycle(void) {	//Tony8Feb97
+	// increment the cycle and calculate actual per-cycle memory useage
 
 #ifdef _SWORD2_DEBUG
-	uint32	j;
+	uint32 j;
 #endif
 
-
-
 #ifdef _SWORD2_DEBUG
-	current_memory_useage=0;
+	current_memory_useage = 0;
 
-	for	(j=1;j<total_res_files;j++)
-		if	( age[j]==resTime )	//was accessed last cycle
+	for (j = 1; j < total_res_files; j++) {
+		// was accessed last cycle
+		if (age[j] == resTime)
 			current_memory_useage += resList[j]->size;
+	}
 #endif
 
 	resTime++;
 
-	if	(!resTime)
-		resTime++;	//if you left the game running for a hundred years when this went to 0
-						//there'd be a resource left stuck in memory - after another hundred years there'd be another...
+	// if you left the game running for a hundred years when this went to 0
+	// there'd be a resource left stuck in memory - after another hundred
+	// years there'd be another...
+	//
+	// Mind you, by then the our get_msecs() function will have wrapped
+	// around too, probably causing a mess of other problems.
 
-
+	if (!resTime)
+		resTime++;
 }
-//------------------------------------------------------------------------------------
-uint32	resMan::Res_fetch_useage( void )	//Tony8Feb97
-{
-//returns memory usage previous cycle
 
-	return(current_memory_useage);
+uint32 resMan::Res_fetch_useage(void) {		//Tony8Feb97
+	// returns memory usage previous cycle
+	return current_memory_useage;
 }
-//------------------------------------------------------------------------------------
 
-
-
-
-void	resMan::Res_close( uint32 res )	//Tony30May96
-{
-//decrements the count
-//resource floats when count=0
-
+void resMan::Res_close(uint32 res) {		//Tony30May96
+	// decrements the count
+	// resource floats when count = 0
 
 #ifdef _SWORD2_DEBUG
-	if	(res>=total_res_files)
-		Con_fatal_error("Res_closeing illegal resource %d (there are %d resources 0-%d)", res, total_res_files, total_res_files-1);
+	if (res >= total_res_files)
+		Con_fatal_error("Res_closeing illegal resource %d (there are %d resources 0-%d)", res, total_res_files, total_res_files - 1);
 
-	if	(!(count[res]))	//closing but isnt open?
+	//closing but isnt open?
+	if (!(count[res]))
 		Con_fatal_error("Res_close closing %d but it isn't open", res);
 #endif
 
+	//one less has it open
+	count[res]--;
 
-	count[res]--;	//one less has it open
-
-	if	(!count[res])	//if noone has the file open then unlock and allow to float
-	{
-		Float_mem( resList[res] );	//pass the address of the mem
-
-//		*(status+res)-=RES_locked;	//unlock the resource
-
+	//if noone has the file open then unlock and allow to float
+	if (!count[res]) {
+		Float_mem(resList[res]);	// pass the address of the mem
+		// *(status+res) -= RES_locked;	// unlock the resource
 	}
-
-
 }
 
-//------------------------------------------------------------------------------------
-uint32	resMan::Res_fetch_len( uint32 res )	//Tony27Jan96
-{
-//returns the total file length of a resource - i.e. all headers are included too
+uint32 resMan::Res_fetch_len( uint32 res ) {	//Tony27Jan96
+	// returns the total file length of a resource - i.e. all headers are
+	// included too
 
-	//FILE	*fh=0;	//file pointer
 	File fh;
-	uint16	parent_res_file;
-	uint16	actual_res;
-	uint32	len;
-	uint32	table_offset;
+	uint16 parent_res_file;
+	uint16 actual_res;
+	uint32 len;
+	uint32 table_offset;
 
+	// points to the number of the ascii filename
+	parent_res_file = res_conv_table[res * 2];
 
-	parent_res_file = res_conv_table[res*2];	//points to the number of the ascii filename
+	// relative resource within the file
+	actual_res = res_conv_table[(res * 2) + 1];
 
-	actual_res= res_conv_table[(res*2)+1];		//relative resource within the file
-
-//		first we have to find the file via the res_conv_table
-
-
+	// first we have to find the file via the res_conv_table
 	// open the cluster file
-	if (fh.open(resource_files[parent_res_file],g_sword2->getGameDataPath()) == false)
+
+	if (!fh.open(resource_files[parent_res_file], g_sword2->getGameDataPath()))
 		Con_fatal_error("Res_fetch_len cannot *OPEN* %s", resource_files[parent_res_file]);
 
+	// 1st DWORD of a cluster is an offset to the look-up table
+	table_offset = fh.readUint32LE();
 
-	fh.read( &table_offset, sizeof(uint32));	//1st DWORD of a cluster is an offset to the look-up table
+	// 2 dwords per resource + skip the position dword
+	fh.seek(table_offset + (actual_res * 8) + 4, SEEK_SET);
 
-
-	fh.seek(table_offset+(actual_res*8)+4, SEEK_SET);	//2 dwords per resource + skip the position dword
-	//fread( &pos, sizeof(char), 4, fh);	//get position of our resource within the cluster file
-	fh.read( &len, 4);	//read the length
-
-
-	return(len);
-
+	// read the length
+	len = fh.readUint32LE();
+	return len;
 }
 
-
-//------------------------------------------------------------------------------------
-char	*resMan::Fetch_cluster( uint32 res)	//Tony3June96
-{
-//returns a pointer to the ascii name of the cluster file which contains resource res
-
-	return(resource_files[res_conv_table[res*2]]);
+char *resMan::Fetch_cluster(uint32 res) {	//Tony3June96
+	// returns a pointer to the ascii name of the cluster file which
+	// contains resource res
+	return resource_files[res_conv_table[res * 2]];
 }
-//------------------------------------------------------------------------------------
-uint32	resMan::Fetch_age(uint32 res)	//Tony3June96
-{
-//return the age of res
 
-	return(age[res]);
+uint32 resMan::Fetch_age(uint32 res) {		//Tony3June96
+	// return the age of res
+	return age[res];
 }
-//------------------------------------------------------------------------------------
-uint32	resMan::Fetch_count(uint32 res)		//Tony3June96
-{
-//return the open count of res
 
-	return(count[res]);
+uint32 resMan::Fetch_count(uint32 res) {	//Tony3June96
+	// return the open count of res
+	return count[res];
 }
-//------------------------------------------------------------------------------------
-uint32	resMan::Help_the_aged_out(void)	//Tony10Oct96
-{
-//remove from memory the oldest closed resource
 
-	uint32	oldest_res;	//holds id of oldest found so far when we have to chuck stuff out of memory
-	uint32	oldest_age;	//age of above during search
-	uint32	j;
-	uint32	largestResource = 0;
+uint32 resMan::Help_the_aged_out(void) {	//Tony10Oct96
+	// remove from memory the oldest closed resource
 
+	uint32 oldest_res;	//holds id of oldest found so far when we have to chuck stuff out of memory
+	uint32 oldest_age;	//age of above during search
+	uint32 j;
+	uint32 largestResource = 0;
 
-	oldest_age=resTime;
-	oldest_res=0;
+	oldest_age = resTime;
+	oldest_res = 0;
 
-	for	(j=2;j<total_res_files;j++)
-		if	( (!count[j]) && (age[j]) && (age[j]<=oldest_age))	//not held open and older than this one
-		{	
-			if ((age[j] == oldest_age) && (resList[j]->size > largestResource))
-			{
-				oldest_res      = j;
-				largestResource = resList[j]->size;				// Kick old resource of oldest age and largest size (Helps the poor defragger).
-			}
-			else if (age[j] < oldest_age)
-			{
-				oldest_res		= j;
-				oldest_age		= age[j];
+	for (j = 2; j < total_res_files; j++) {
+		// not held open and older than this one
+		if (!count[j] && age[j] && age[j] <= oldest_age) {	
+			if (age[j] == oldest_age && resList[j]->size > largestResource)	{
+				// Kick old resource of oldest age and largest
+				// size (Helps the poor defragger).
+				oldest_res = j;
+				largestResource = resList[j]->size;
+			} else if (age[j] < oldest_age)	{
+				oldest_res = j;
+				oldest_age = age[j];
 				largestResource = resList[j]->size;
 			}
 		}
-
-	if	(!oldest_res)	//there was not a file we could release
-		return(0);	//no bytes released - oh dear, lets hope this never happens
-
-
-//	Zdebug(42,"removing %d, age %d, size %d", oldest_res, age[oldest_res], resList[oldest_res]->size);
-
-//	trash this old resource
-
-	age[oldest_res]=0;	//effectively gone from resList
-	Free_mem(resList[oldest_res]);	//release the memory too
-
-	return(resList[oldest_res]->size);	//return bytes freed
-}
-//------------------------------------------------------------------------------------
-void	resMan::Print_console_clusters(void)	//Tony10Oct96
-{
-	uint32	j;
-
-
-	if	(total_clusters)
-	{	for	(j=0;j<total_clusters;j++)
-			Print_to_console(" %s", resource_files[j]);
-
-		Print_to_console(" %d resources", total_res_files);
 	}
-	else
-		Print_to_console(" argh! No resources");
 
+	// there was not a file we could release
+	// no bytes released - oh dear, lets hope this never happens
+	if (!oldest_res)
+		return 0;
+
+	// Zdebug(42,"removing %d, age %d, size %d", oldest_res, age[oldest_res], resList[oldest_res]->size);
+
+	// trash this old resource
+
+	age[oldest_res] = 0;		// effectively gone from resList
+	Free_mem(resList[oldest_res]);	// release the memory too
+
+	return resList[oldest_res]->size;	//return bytes freed
+}
+
+void resMan::Print_console_clusters(void) {	//Tony10Oct96
+	uint32 j;
+
+	if (total_clusters) {
+		for (j = 0; j < total_clusters; j++)
+			Print_to_console(" %s", resource_files[j]);
+		Print_to_console(" %d resources", total_res_files);
+	} else
+		Print_to_console(" argh! No resources");
 
 	Scroll_console();
 }
-//------------------------------------------------------------------------------------
-void	resMan::Examine_res(uint8 *input)	//Tony23Oct96
-{
-	uint32	j=0;
-	uint32	res;
+
+void resMan::Examine_res(uint8 *input) {	//Tony23Oct96
+	uint32 j = 0;
+	uint32 res;
 	_standardHeader	*file_header;
 
-
-
-	do
-	{	if	( (*(input+j)>='0') && (*(input+j)<='9'))
+	do {
+		if (input[j] >= '0' && input[j] <= '9')
 			j++;
 		else
 			break;
-	}
-	while(*(input+j));
+	} while(input[j]);
 
+	// didn't quit out of loop on a non numeric chr$
+	if (!input[j]) {
+		res = atoi((char*) input);
 
-	if	(!*(input+j))	//didn't quit out of loop on a non numeric chr$
-	{	res = atoi((char*)input);
-
-		if	(!res)
+		if (!res)
 			Print_to_console("illegal resource");
-
-		else if(res>=total_res_files)
-			Print_to_console("illegal resource %d (there are %d resources 0-%d)", res, total_res_files, total_res_files-1);
-
-		else	if	(res_conv_table[res*2]==0xffff)
-				Print_to_console("%d is a null & void resource number", res);
-
-		else	//open up the resource and take a look inside!
-		{
+		else if (res >= total_res_files)
+			Print_to_console("illegal resource %d (there are %d resources 0-%d)", res, total_res_files, total_res_files - 1);
+		else if (res_conv_table[res * 2] == 0xffff)
+			Print_to_console("%d is a null & void resource number", res);
+		else {
+			//open up the resource and take a look inside!
 			file_header = (_standardHeader*) res_man.Res_open(res);
 
-//			Print_to_console("%d", file_header->fileType);
-//			Print_to_console("%s", file_header->name);
+			// Print_to_console("%d", file_header->fileType);
+			// Print_to_console("%s", file_header->name);
 
-
-			//--------------------------------------------------------------------------------
+			//----------------------------------------------------
 			// resource types: (taken from header.h)
 
-			// 0 something's wrong!
-//			#define ANIMATION_FILE		1	// all normal animations & sprites including mega-sets & font files which are the same format
-//			#define	SCREEN_FILE			2	// each contains background, palette, layer sprites, parallax layers & shading mask
-//			#define	GAME_OBJECT			3	// each contains object hub + structures + script data
-//			#define	WALK_GRID_FILE		4	// walk-grid data
-//			#define	GLOBAL_VAR_FILE		5	// all the global script variables in one file; "there can be only one"
-//			#define PARALLAX_FILE_null	6	// NOT USED
-//			#define	RUN_LIST			7	// each contains a list of object resource id's
-//			#define	TEXT_FILE			8	// each contains all the lines of text for a location or a character's conversation script
-//			#define	SCREEN_MANAGER		9	// one for each location; this contains special startup scripts
-//			#define MOUSE_FILE			10	// mouse pointers and luggage icons (sprites in General \ Mouse pointers & Luggage icons)
-//			#define	ICON_FILE			12	// menu icon						(sprites in General \ Menu icons
-//----------------------------------------------------------
+			// 1:  ANIMATION_FILE
+			//      all normal animations & sprites including
+			//      mega-sets & font files which are the same
+			//      format
+			// 2:  SCREEN_FILE
+			//      each contains background, palette, layer
+			//      sprites, parallax layers & shading mask
+			// 3:  GAME_OBJECT
+			//      each contains object hub + structures + script
+			//      data
+			// 4:  WALK_GRID_FILE
+			//      walk-grid data
+			// 5:  GLOBAL_VAR_FILE
+			//      all the global script variables in one file;
+			//      "there can be only one"
+			// 6:  PARALLAX_FILE_null
+			//      NOT USED
+			// 7:  RUN_LIST
+			//      each contains a list of object resource id's
+			// 8:  TEXT_FILE
+			//      each contains all the lines of text for a
+			//      location or a character's conversation script
+			// 9:  SCREEN_MANAGER
+			//      one for each location; this contains special
+			//      startup scripts
+			// 10: MOUSE_FILE
+			//      mouse pointers and luggage icons (sprites in
+			//      General \ Mouse pointers & Luggage icons)
+			// 11: WAV_FILE
+			//      NOT USED HERE
+			// 12: ICON_FILE
+			//      menu icon (sprites in General \ Menu icons)
+			// 13: PALETTE_FILE
+			//      NOT USED HERE
+			//----------------------------------------------------
 
-
-			switch(file_header->fileType)
-			{
-				//-----------------------
-				case	ANIMATION_FILE:		// 1
-						Print_to_console(" <anim> %s", file_header->name);
-						break;
-				//-----------------------
-				case	SCREEN_FILE:		// 2
-						Print_to_console(" <layer> %s", file_header->name);
-						break;
-				//-----------------------
-				case	GAME_OBJECT:		// 3
-						Print_to_console(" <game object> %s", file_header->name);
-						break;
-				//-----------------------
-				case	WALK_GRID_FILE:		// 4
-						Print_to_console(" <walk grid> %s", file_header->name);
-						break;
-				//-----------------------
-				case	GLOBAL_VAR_FILE:	// 5
-						Print_to_console(" <global variables> %s", file_header->name);
-						break;
-				//-----------------------
-				case	PARALLAX_FILE_null:	// 6
-						Print_to_console(" <parallax file NOT USED!> %s", file_header->name);
-						break;
-				//-----------------------
-				case	RUN_LIST:			// 6
-						Print_to_console(" <run list> %s", file_header->name);
-						break;
-				//-----------------------
-				case	TEXT_FILE:			// 8
-						Print_to_console(" <text file> %s", file_header->name);
-						break;
-				//-----------------------
-				case	SCREEN_MANAGER:		// 9
-						Print_to_console(" <screen manager> %s", file_header->name);
-						break;
-				//-----------------------
-				case	MOUSE_FILE:			// 10
-						Print_to_console(" <mouse pointer> %s", file_header->name);
-						break;
-				//-----------------------
-				case	ICON_FILE:			// 12
-						Print_to_console(" <menu icon> %s", file_header->name);
-						break;
-				//-----------------------
-				default:					// 0 or >13
-						Print_to_console(" unrecognised fileType %d", file_header->fileType);
-						break;
-				//-----------------------
+			switch(file_header->fileType) {
+				case ANIMATION_FILE:
+					Print_to_console(" <anim> %s", file_header->name);
+					break;
+				case SCREEN_FILE:
+					Print_to_console(" <layer> %s", file_header->name);
+					break;
+				case GAME_OBJECT:
+					Print_to_console(" <game object> %s", file_header->name);
+					break;
+				case WALK_GRID_FILE:
+					Print_to_console(" <walk grid> %s", file_header->name);
+					break;
+				case GLOBAL_VAR_FILE:
+					Print_to_console(" <global variables> %s", file_header->name);
+					break;
+				case PARALLAX_FILE_null:
+					Print_to_console(" <parallax file NOT USED!> %s", file_header->name);
+					break;
+				case RUN_LIST:
+					Print_to_console(" <run list> %s", file_header->name);
+					break;
+				case TEXT_FILE:
+					Print_to_console(" <text file> %s", file_header->name);
+					break;
+				case SCREEN_MANAGER:
+					Print_to_console(" <screen manager> %s", file_header->name);
+					break;
+				case MOUSE_FILE:
+					Print_to_console(" <mouse pointer> %s", file_header->name);
+					break;
+				case ICON_FILE:
+					Print_to_console(" <menu icon> %s", file_header->name);
+					break;
+				default:
+					Print_to_console(" unrecognised fileType %d", file_header->fileType);
+					break;
 			}
 			res_man.Res_close(res);
 		}
-	}
-	else
-	{
+	} else {
 		Print_to_console("try typing a number");
 	}
 }
-//------------------------------------------------------------------------------------
-//------------------------------------------------------------------------------------
-void	resMan::Kill_res(uint8 *input)	//Tony23Oct96
-{
-	int	j=0;
-	uint32	res;
 
+void resMan::Kill_res(uint8 *input) {	//Tony23Oct96
+	int j = 0;
+	uint32 res;
 
-
-
-	do
-	{	if	( (*(input+j)>='0') && (*(input+j)<='9'))
+	do {
+		if (input[j] >= '0' && input[j] <= '9')
 			j++;
 		else
 			break;
-	}
-	while(*(input+j));
+	} while (input[j]);
 
-
-
-	if	(!*(input+j))	//didn't quit out of loop on a non numeric chr$
-	{
-		res = atoi((char*)input);
-
+	// didn't quit out of loop on a non numeric chr$
+	if (!input[j]) {
+		res = atoi((char*) input);
 
 #ifdef _SWORD2_DEBUG
-		if	(!res)
+		if (!res)
 			Print_to_console("illegal resource");
 
-		if	(res>=total_res_files)
-			Con_fatal_error(" llegal resource %d (there are %d resources 0-%d)", res, total_res_files, total_res_files-1);
+		if (res >= total_res_files)
+			Con_fatal_error(" llegal resource %d (there are %d resources 0-%d)", res, total_res_files, total_res_files - 1);
 #endif
 
-
-		if	(!count[res])	//if noone has the file open then unlock and allow to float
-		{
-			if (age[res])
-			{
-				age[res]=0;	//effectively gone from resList
+		// if noone has the file open then unlock and allow to float
+		if (!count[res]) {
+			if (age[res]) {
+				age[res] = 0;		//effectively gone from resList
 				Free_mem(resList[res]);	//release the memory too
 				Print_to_console(" trashed %d", res);
-			}
-			else
+			} else
 				Print_to_console("%d not in memory", res);
-		}
-		else
+		} else
 			Print_to_console(" file is open - cannot remove");
-	}
-	else
-	{
+	} else {
 		Print_to_console("try typing a number");
 	}
-
-
 }
-//------------------------------------------------------------------------------------
-void	resMan::Remove_res(uint32	res)	//Tony10Jan97
-{
-	if (age[res])
-	{
-		age[res]=0;	//effectively gone from resList
+
+void resMan::Remove_res(uint32 res) {	//Tony10Jan97
+	if (age[res]) {
+		age[res] = 0;		//effectively gone from resList
 		Free_mem(resList[res]);	//release the memory too
-//		Zdebug(" - Trashing %d", res);
-	}
-	else
+		// Zdebug(" - Trashing %d", res);
+	} else
 		Zdebug("Remove_res(%d) not even in memory!",res);
 }
-//------------------------------------------------------------------------------------
-void	resMan::Remove_all_res(void)	// James24mar97
-{
+
+void resMan::Remove_all_res(void) {	// James24mar97
 	// remove all res files from memory - ready for a total restart
 	// including player object & global variables resource
 
-	int	j=0;
-	uint32	res;
+	int j;
+	uint32 res;
 
+	j = base_mem_block;
 
-	j=base_mem_block;
-
-	do
-	{
-		if	(mem_list[j].uid<65536)	//a resource
-		{
-			res=mem_list[j].uid;
-
-			age[res]=0;	//effectively gone from resList
-			Free_mem(resList[res]);	//release the memory too
+	do {
+		if (mem_list[j].uid < 65536) {	// a resource
+			res = mem_list[j].uid;
+			age[res] = 0;		// effectively gone from resList
+			Free_mem(resList[res]);	// release the memory too
 		}
 
-		j=mem_list[j].child;
-	}
-	while	(j!=-1);
+		j = mem_list[j].child;
+	} while	(j != -1);
 }
-//------------------------------------------------------------------------------------
-void	resMan::Kill_all_res(uint8 wantInfo)	//Tony29Nov96
-{
+
+void resMan::Kill_all_res(uint8 wantInfo) {	//Tony29Nov96
 	// remove all res files from memory
-	// its quicker to search the mem blocs for res files than search resource lists for those in memory
+	// its quicker to search the mem blocs for res files than search
+	// resource lists for those in memory
 
-	int	j=0;
-	uint32	res;
-	uint32	nuked=0;
+	int j;
+	uint32 res;
+	uint32 nuked = 0;
   	_standardHeader *header;
-	int scrolls=0;
-	char	c;
+	int scrolls = 0;
+	char c;
 
+	j = base_mem_block;
 
-	j=base_mem_block;
+	do {
+		if (mem_list[j].uid < 65536) {	// a resource
+			res = mem_list[j].uid;
 
-	do
-	{
-		if	(mem_list[j].uid<65536)	//a resource
-		{
-			res=mem_list[j].uid;
-
-			if	((res!=1)&&(res!=CUR_PLAYER_ID))	//not the global vars which are assumed to be open in memory & not the player object! (James17jan97)
-			{
+			// not the global vars which are assumed to be open in
+			// memory & not the player object! (James17jan97)
+			if (res != 1 && res != CUR_PLAYER_ID) {
 				header = (_standardHeader*) res_man.Res_open(res);
 				res_man.Res_close(res);
 
-				age[res]=0;	//effectively gone from resList
-				Free_mem(resList[res]);	//release the memory too
+				age[res] = 0;		// effectively gone from resList
+				Free_mem(resList[res]);	// release the memory too
 				nuked++;
 
-				if ((wantInfo)&&(console_status))		// if this was called from the console + we want info
-				{
+				// if this was called from the console + we
+				// want info
+				if (wantInfo && console_status) {
 					Print_to_console(" nuked %5d: %s", res, header->name);
 					Zdebug(" nuked %d: %s", res, header->name);
 					Build_display();
 
 					scrolls++;
-					if (scrolls==18)
-					{
+					if (scrolls == 18) {
 						Temp_print_to_console("- Press ESC to stop or any other key to continue");
 						Build_display();
 
-						do
-						{
-			 				//--------------------------------------------------
-							// Service windows
-
-				  			if (ServiceWindows() == RDERR_APPCLOSED)	// if we pressed Ctrl-Q
-							{
+						do {
+							// if we pressed Ctrl-Q
+				  			if (ServiceWindows() == RDERR_APPCLOSED) {
 								Close_game();	//close engine systems down
 								CloseAppWindow();
 								exit(0);	//quit the game
@@ -880,88 +800,79 @@ void	resMan::Kill_all_res(uint8 wantInfo)	//Tony29Nov96
  							while (!gotTheFocus)
 								if (ServiceWindows() == RDERR_APPCLOSED)
 									break;
-							//--------------------------------------------------
-						}
-						while(!KeyWaiting());
+						} while(!KeyWaiting());
 
 						ReadKey(&c);	//kill the key we just pressed
-						if	(c==27)	//ESC
+						if (c == 27)	//ESC
 							break;
 
-						Clear_console_line();	//clear the Press Esc message ready for the new line
-						scrolls=0;
+						// clear the Press Esc message ready for the new line
+						Clear_console_line();
+						scrolls = 0;
 					}
 				}	
 			}
 		}
+		j = mem_list[j].child;
+	} while (j != -1);
 
-		j=mem_list[j].child;
-	}
-	while	(j!=-1);
-
-
-	if ((wantInfo)&&(console_status))		// if this was called from the console + we want info!
-	{	Scroll_console();
+	// if this was called from the console + we want info!
+	if (wantInfo && console_status) {
+		Scroll_console();
 		Print_to_console(" expelled %d resource(s)", nuked);
 	}
 }
-//------------------------------------------------------------------------------------
-// Like Kill_all_res but only kills objects (except George & the variable table of course)
-// - ie. forcing them to reload & restart their scripts, which simulates the effect
-// of a save & restore, thus checking that each object's re-entrant logic works correctly,
-// and doesn't cause a statuette to disappear forever, or some plaster-filled holes
-// in sand to crash the game & get James in trouble again.
 
-void	resMan::Kill_all_objects(uint8 wantInfo)	// James17jan97
-{
+//----------------------------------------------------------------------------
+// Like Kill_all_res but only kills objects (except George & the variable
+// table of course) - ie. forcing them to reload & restart their scripts,
+// which simulates the effect of a save & restore, thus checking that each
+// object's re-entrant logic works correctly, and doesn't cause a statuette to
+// disappear forever, or some plaster-filled holes in sand to crash the game &
+// get James in trouble again.
+
+void resMan::Kill_all_objects(uint8 wantInfo) {		// James17jan97
 	// remove all object res files from memory, excluding George
-	// its quicker to search the mem blocs for res files than search resource lists for those in memory
+	// its quicker to search the mem blocs for res files than search
+	// resource lists for those in memory
 
-	int	j=0;
-	uint32	res;
-	uint32	nuked=0;
+	int j;
+	uint32 res;
+	uint32 nuked = 0;
  	_standardHeader *header;
-	int scrolls=0;
-	char	c;
+	int scrolls = 0;
+	char c;
 
-	j=base_mem_block;
+	j = base_mem_block;
 
-	do
-	{
-		if	(mem_list[j].uid<65536)	//a resource
-		{
+	do {
+		if (mem_list[j].uid < 65536) {	//a resource
 			res=mem_list[j].uid;
-
-			if	((res!=1)&&(res!=CUR_PLAYER_ID))	//not the global vars which are assumed to be open in memory & not the player object! (James17jan97)
-			{
+			//not the global vars which are assumed to be open in
+			// memory & not the player object! (James17jan97)
+			if (res != 1 && res != CUR_PLAYER_ID) {
 				header = (_standardHeader*) res_man.Res_open(res);
 				res_man.Res_close(res);
 
-				if (header->fileType == GAME_OBJECT)
-				{
-					age[res]=0;	//effectively gone from resList
-					Free_mem(resList[res]);	//release the memory too
+				if (header->fileType == GAME_OBJECT) {
+					age[res] = 0;		// effectively gone from resList
+					Free_mem(resList[res]);	// release the memory too
    					nuked++;
 
-					if ((wantInfo)&&(console_status))		// if this was called from the console + we want info
-					{
+					// if this was called from the console + we want info
+					if (wantInfo && console_status)	{
 						Print_to_console(" nuked %5d: %s", res, header->name);
 						Zdebug(" nuked %d: %s", res, header->name);
 						Build_display();
 
 						scrolls++;
-						if (scrolls==18)
-						{
+						if (scrolls==18) {
 							Print_to_console("- Press ESC to stop or any other key to continue");
 							Build_display();
 
-							do
-							{
-			 					//--------------------------------------------------
-								// Service windows
-
-				  				if (ServiceWindows() == RDERR_APPCLOSED)	// if we pressed Ctrl-Q
-								{
+							do {
+								// if we pressed Ctrl-Q
+				  				if (ServiceWindows() == RDERR_APPCLOSED) {
 									Close_game();	//close engine systems down
 									CloseAppWindow();
 									exit(0);	//quit the game
@@ -970,74 +881,68 @@ void	resMan::Kill_all_objects(uint8 wantInfo)	// James17jan97
 								while (!gotTheFocus)
 									if (ServiceWindows() == RDERR_APPCLOSED)
 										break;
- 								//--------------------------------------------------
-							}
-							while(!KeyWaiting());
+							} while(!KeyWaiting());
 
 
 							ReadKey(&c);	//kill the key we just pressed
-							scrolls=0;
+							if (c == 27)	// ESC
+								break;
+
+							// clear the Press Esc message ready for the new line
+							Clear_console_line();
+							scrolls = 0;
 						}
 					}	
 				}
 			}
 		}
+		j = mem_list[j].child;
+	} while (j != -1);
 
-		j=mem_list[j].child;
-	}
-	while	(j!=-1);
-
-
-	if ((wantInfo)&&(console_status))		// if this was called from the console + we want info
+	// if this was called from the console + we want info
+	if (wantInfo && console_status)
 		Print_to_console(" expelled %d object resource(s)", nuked);
 }
 
-//------------------------------------------------------------------------------------
-
-void resMan::CacheNewCluster(uint32 newCluster)
-{
-	//----------------------------------------------------------------------------------------
-	// Stop any music from streaming off the CD before we start the cluster-copy!
-	// - eg. the looping restore-panel music will still be playing if we restored a game
-	//   to a different cluster on the same CD
-	// - and music streaming would interfere with cluster copying, slowing it right down
-	// - but if we restored to a different CD the music is stopped in GetCd() when it asks for the CD
+void resMan::CacheNewCluster(uint32 newCluster) {
+	// Stop any music from streaming off the CD before we start the
+	// cluster-copy!
+	//
+	// eg. the looping restore-panel music will still be playing if we
+	// restored a game to a different cluster on the same CD - and music
+	// streaming would interfere with cluster copying, slowing it right
+	// down - but if we restored to a different CD the music is stopped
+	// in GetCd() when it asks for the CD
 
 	FN_stop_music(NULL);	// (James16sep97)
-	//----------------------------------------------------------------------------------------
 
-	Clear_fx_queue();		// stops all fx & clears the queue (James22july97)
-
+	Clear_fx_queue();	// stops all fx & clears the queue (James22july97)
 	GetCd(cdTab[newCluster] & 3);
 
 	// Kick out old cached cluster and load the new one.
-	uint32 i=0;
-	while ((!(cdTab[i] & LOCAL_CACHE)) && (i<total_clusters))
+	uint32 i = 0;
+	while (!(cdTab[i] & LOCAL_CACHE) && i < total_clusters)
 		i++;
 
-	if (i<total_clusters)
-	{
+	if (i < total_clusters)	{
 		SVM_SetFileAttributes(resource_files[i], FILE_ATTRIBUTE_NORMAL);
 		SVM_DeleteFile(resource_files[i]);
 		cdTab[i] &= (0xff - LOCAL_CACHE);
 		FILE *file;
 		file = fopen("cd.inf", "r+b");
 
-		if (file == NULL)
-		{
+		if (file == NULL) {
 			Zdebug("CacheNewCluster cannot *OPEN* cd.inf");
-			Con_fatal_error("InitResMan cannot *OPEN* cd.inf [file=%s line=%u]",__FILE__,__LINE__);
+			Con_fatal_error("InitResMan cannot *OPEN* cd.inf [file=%s line=%u]", __FILE__, __LINE__);
 		}
 
 		_cd_inf cdInf;
 		
-		do
-		{
+		do {
 			fread(&cdInf, 1, sizeof(_cd_inf), file);
 		} while ((scumm_stricmp((char *) cdInf.clusterName, resource_files[i]) != 0) && !feof(file));
 
-		if (feof(file))
-		{
+		if (feof(file)) {
 			Zdebug("CacheNewCluster cannot find %s in cd.inf", resource_files[i]);
 			Con_fatal_error("CacheNewCluster cannot find %s in cd.inf", resource_files[i]);
 		}
@@ -1052,44 +957,37 @@ void resMan::CacheNewCluster(uint32 newCluster)
 
 	uint8 fadeStat;
 
-	do
-	{
+	do {
 		fadeStat = GetFadeStatus();
-
 
 		//--------------------------------------------------
 		// Service windows
 
-		if (ServiceWindows() == RDERR_APPCLOSED)	// if we pressed Ctrl-Q
-		{
+		// if we pressed Ctrl-Q
+		if (ServiceWindows() == RDERR_APPCLOSED) {
 			Close_game();	//close engine systems down
 			CloseAppWindow();
 			exit(0);	//quit the game
 		}
  		//--------------------------------------------------
+	} while (fadeStat == RDFADE_UP || fadeStat == RDFADE_DOWN);
 
-	} while ((fadeStat == RDFADE_UP) || (fadeStat == RDFADE_DOWN));
-
-	if (GetFadeStatus() != RDFADE_BLACK)
-	{
+	if (GetFadeStatus() != RDFADE_BLACK) {
 		FadeDown((float) 0.75);
 
-		do
-		{
+		do {
 			//--------------------------------------------------
 			// Service windows
 
-			if (ServiceWindows() == RDERR_APPCLOSED)	// if we pressed Ctrl-Q
-			{
+			// if we pressed Ctrl-Q
+			if (ServiceWindows() == RDERR_APPCLOSED) {
 				Close_game();	//close engine systems down
 				CloseAppWindow();
 				exit(0);	//quit the game
 			}
  			//--------------------------------------------------
-		}
-		while(GetFadeStatus()!=RDFADE_BLACK);
+		} while (GetFadeStatus() != RDFADE_BLACK);
 	}
-
 
 	EraseBackBuffer();
 
@@ -1108,39 +1006,39 @@ void resMan::CacheNewCluster(uint32 newCluster)
 	RenderParallax(FetchBackgroundLayer(bgfile), 2);
 	res_man.Res_close(2950);		// release the screen resource
 
-	SVM_SetFileAttributes(resource_files[newCluster], FILE_ATTRIBUTE_NORMAL);	// Git rid of read-only status, if it is set.
+	// Git rid of read-only status, if it is set.
+	SVM_SetFileAttributes(resource_files[newCluster], FILE_ATTRIBUTE_NORMAL);
 
 	FILE *inFile, *outFile;
 	
 	inFile  = fopen(buf, "rb");
 	outFile = fopen(resource_files[newCluster], "wb");
 
-	if ((inFile == NULL) || (outFile == NULL))
-	{
+	if (inFile == NULL || outFile == NULL) {
 		Zdebug("Cache new cluster could not copy %s to %s", buf, resource_files[newCluster]);
-		Con_fatal_error("Cache new cluster could not copy %s to %s [file=%s line=%u]", buf, resource_files[newCluster],__FILE__,__LINE__);
+		Con_fatal_error("Cache new cluster could not copy %s to %s [file=%s line=%u]", buf, resource_files[newCluster], __FILE__, __LINE__);
 	}
 
 	_spriteInfo textSprite;
 	_spriteInfo barSprite;
-	mem			 *text_spr;
+	mem *text_spr;
 	_frameHeader *frame;
-	uint8		 *loadingBar;
-	_cdtEntry	 *cdt;
+	uint8 *loadingBar;
+	_cdtEntry *cdt;
 
-	text_spr = MakeTextSprite( FetchTextLine(res_man.Res_open(2283),8)+2, 640, 187, speech_font_id );
+	text_spr = MakeTextSprite( FetchTextLine(res_man.Res_open(2283), 8) + 2, 640, 187, speech_font_id);
 
 	frame = (_frameHeader*) text_spr->ad;
 
-	textSprite.x			= screenWide/2 - frame->width/2;
-	textSprite.y			= screenDeep/2 - frame->height/2 - RDMENU_MENUDEEP;
-	textSprite.w			= frame->width;
-	textSprite.h			= frame->height;
-	textSprite.scale		= 0;
+	textSprite.x = screenWide /2 - frame->width / 2;
+	textSprite.y = screenDeep /2 - frame->height / 2 - RDMENU_MENUDEEP;
+	textSprite.w = frame->width;
+	textSprite.h = frame->height;
+	textSprite.scale = 0;
 	textSprite.scaledWidth	= 0;
 	textSprite.scaledHeight	= 0;
-	textSprite.type			= RDSPR_DISPLAYALIGN+RDSPR_NOCOMPRESSION+RDSPR_TRANS;
-	textSprite.blend		= 0;
+	textSprite.type = RDSPR_DISPLAYALIGN + RDSPR_NOCOMPRESSION + RDSPR_TRANS;
+	textSprite.blend = 0;
 	textSprite.colourTable	= 0;
 
 	res_man.Res_close(2283);
@@ -1150,28 +1048,28 @@ void resMan::CacheNewCluster(uint32 newCluster)
 	frame = FetchFrameHeader(loadingBar, 0);
 	cdt   = FetchCdtEntry(loadingBar, 0);
 
-	barSprite.x				= cdt->x;
-	barSprite.y				= cdt->y;
-	barSprite.w				= frame->width;
-	barSprite.h				= frame->height;
-	barSprite.scale			= 0;
-	barSprite.scaledWidth	= 0;
-	barSprite.scaledHeight	= 0;
-	barSprite.type			= RDSPR_RLE256FAST+RDSPR_TRANS;
-	barSprite.blend			= 0;
-	barSprite.colourTable	= 0;
+	barSprite.x = cdt->x;
+	barSprite.y = cdt->y;
+	barSprite.w = frame->width;
+	barSprite.h = frame->height;
+	barSprite.scale = 0;
+	barSprite.scaledWidth = 0;
+	barSprite.scaledHeight = 0;
+	barSprite.type = RDSPR_RLE256FAST + RDSPR_TRANS;
+	barSprite.blend = 0;
+	barSprite.colourTable = 0;
 
 	res_man.Res_close(2951);
 
 	loadingBar = res_man.Res_open(2951);
 	frame = FetchFrameHeader(loadingBar, 0);
-	barSprite.data = (uint8 *) (frame+1);
+	barSprite.data = (uint8 *) (frame + 1);
 	res_man.Res_close(2951);
 
-	int16  barX		= barSprite.x;
-	int16  barY		= barSprite.y;
-	int16  textX    = textSprite.x;
-	int16  textY	= textSprite.y;
+	int16 barX = barSprite.x;
+	int16 barY = barSprite.y;
+	int16 textX = textSprite.x;
+	int16 textY = textSprite.y;
 
 	DrawSprite(&barSprite);
 	barSprite.x = barX;
@@ -1183,53 +1081,50 @@ void resMan::CacheNewCluster(uint32 newCluster)
 	textSprite.y = textY;
 
 	CopyScreenBuffer();
-	FadeUp((float)0.75);
+	FadeUp((float) 0.75);
 
-	do
-	{
+	do {
 		//--------------------------------------------------
 		// Service windows
 
-		if (ServiceWindows() == RDERR_APPCLOSED)	// if we pressed Ctrl-Q
-		{
+		// if we pressed Ctrl-Q
+		if (ServiceWindows() == RDERR_APPCLOSED) {
 			Close_game();	//close engine systems down
 			CloseAppWindow();
 			exit(0);	//quit the game
 		}
  		//--------------------------------------------------
-	}
-	while(GetFadeStatus()==RDFADE_UP);
+	} while (GetFadeStatus() == RDFADE_UP);
 
 	fseek(inFile, 0, SEEK_END);
 	uint32 size = ftell(inFile);
 	fseek(inFile, 0, SEEK_SET);
 
 	char buffer[BUFFERSIZE];
-	int  stepSize   = (size/BUFFERSIZE)/100;
-	uint32  read    = 0;
-	int	 step	    = stepSize;
-	int	 fr         = 0;
+	int stepSize = (size / BUFFERSIZE) / 100;
+	uint32  read = 0;
+	int step = stepSize;
+	int fr = 0;
 	uint32 realRead = 0;
 
-	do
-	{
+	do {
 		realRead = fread(buffer, 1, BUFFERSIZE, inFile);
-		read    += realRead;
-		if (fwrite(buffer, 1, realRead, outFile) != realRead)
-		{
+		read += realRead;
+		if (fwrite(buffer, 1, realRead, outFile) != realRead) {
 			Zdebug("Cache new cluster could not copy %s to %s", buf, resource_files[newCluster]);
-			Con_fatal_error("Cache new cluster could not copy %s to %s [file=%s line=%u]", buf, resource_files[newCluster],__FILE__,__LINE__);
+			Con_fatal_error("Cache new cluster could not copy %s to %s [file=%s line=%u]", buf, resource_files[newCluster], __FILE__, __LINE__);
 		}
 
-		if (step == stepSize)
-		{
-			step   = 0;
-			bgfile = res_man.Res_open(2950);	// open the screen resource
+		if (step == stepSize) {
+			step = 0;
+			// open the screen resource
+			bgfile = res_man.Res_open(2950);
 			RenderParallax(FetchBackgroundLayer(bgfile), 2);
-			res_man.Res_close(2950);			// release the screen resource
+			// release the screen resource
+			res_man.Res_close(2950);
 			loadingBar = res_man.Res_open(2951);
 			frame = FetchFrameHeader(loadingBar, fr);
-			barSprite.data = (uint8 *) (frame+1);
+			barSprite.data = (uint8 *) (frame + 1);
 			res_man.Res_close(2951);
 			DrawSprite(&barSprite);
 			barSprite.x = barX;
@@ -1241,59 +1136,56 @@ void resMan::CacheNewCluster(uint32 newCluster)
 			textSprite.y = textY;
 
 			CopyScreenBuffer();
-			fr += 1;
-		}
-		else
-			step += 1;
+			fr++;
+		} else
+			step++;
+
 
 		//--------------------------------------------------
 		// Service windows
 		// NOTE: Carry on even when not got the focus!!!
 
-		if (ServiceWindows() == RDERR_APPCLOSED)	// if we pressed Ctrl-Q
-		{
+		// if we pressed Ctrl-Q
+		if (ServiceWindows() == RDERR_APPCLOSED) {
 			Close_game();	//close engine systems down
 			CloseAppWindow();
 			exit(0);	//quit the game
 		}
  		//--------------------------------------------------
-
 	} while ((read % BUFFERSIZE) == 0);
 
-	if (read != size)
-	{
+	if (read != size) {
 		Zdebug("Cache new cluster could not copy %s to %s", buf, resource_files[newCluster]);
-		Con_fatal_error("Cache new cluster could not copy %s to %s [file=%s line=%u]", buf, resource_files[newCluster],__FILE__,__LINE__);
+		Con_fatal_error("Cache new cluster could not copy %s to %s [file=%s line=%u]", buf, resource_files[newCluster], __FILE__, __LINE__);
 	}
 
 	fclose(inFile);
 	fclose(outFile);
 	Free_mem(text_spr);
 
-	EraseBackBuffer();				// for hardware rendering
+	EraseBackBuffer();		// for hardware rendering
 	EraseSoftwareScreenBuffer();	// for software rendering
 
-	FadeDown((float)0.75);
+	FadeDown((float) 0.75);
 
-	do
-	{
+	do {
 		//--------------------------------------------------
 		// Service windows
 
-		if (ServiceWindows() == RDERR_APPCLOSED)	// if we pressed Ctrl-Q
-		{
+		// if we pressed Ctrl-Q
+		if (ServiceWindows() == RDERR_APPCLOSED) {
 			Close_game();	//close engine systems down
 			CloseAppWindow();
 			exit(0);	//quit the game
 		}
  		//--------------------------------------------------
-	}
-	while(GetFadeStatus()==RDFADE_DOWN);
+	} while (GetFadeStatus() == RDFADE_DOWN);
 
 	CopyScreenBuffer();
 	FadeUp((float)0.75);
 
-	SVM_SetFileAttributes(resource_files[newCluster], FILE_ATTRIBUTE_NORMAL);	// Git rid of read-only status.
+	// Git rid of read-only status.
+	SVM_SetFileAttributes(resource_files[newCluster], FILE_ATTRIBUTE_NORMAL);
 
 	// Update cd.inf and cdTab
 	cdTab[newCluster] |= LOCAL_CACHE;
@@ -1301,21 +1193,18 @@ void resMan::CacheNewCluster(uint32 newCluster)
 	FILE *file;
 	file = fopen("cd.inf", "r+b");
 
-	if (file == NULL)
-	{
+	if (file == NULL) {
 		Zdebug("CacheNewCluster cannot *OPEN* cd.inf");
-		Con_fatal_error("InitResMan cannot *OPEN* cd.inf [file=%s line=%u]",__FILE__,__LINE__);
+		Con_fatal_error("InitResMan cannot *OPEN* cd.inf [file=%s line=%u]", __FILE__, __LINE__);
 	}
 
 	_cd_inf cdInf;
 	
-	do
-	{
+	do {
 		fread(&cdInf, 1, sizeof(_cd_inf), file);
-	} while ((scumm_stricmp((char *) cdInf.clusterName, resource_files[newCluster]) != 0) && !feof(file));
+	} while (scumm_stricmp((char *) cdInf.clusterName, resource_files[newCluster]) != 0 && !feof(file));
 
-	if (feof(file))
-	{
+	if (feof(file)) {
 		Zdebug("CacheNewCluster cannot find %s in cd.inf", resource_files[newCluster]);
 		Con_fatal_error("CacheNewCluster cannot find %s in cd.inf", resource_files[newCluster]);
 	}
@@ -1324,11 +1213,11 @@ void resMan::CacheNewCluster(uint32 newCluster)
 	fwrite(&cdTab[newCluster], 1, 1, file);
 	fclose(file);
 
-	// Now update DelList.log to indicate that this cluster should be removed at uninstall.
+	// Now update DelList.log to indicate that this cluster should be
+	// removed at uninstall.
 	file = fopen("DelList.log", "r+");
 
-	if (file != NULL)
-	{
+	if (file != NULL) {
 		fseek(file, -3, SEEK_END);
 
 		char path[_MAX_PATH];
@@ -1345,69 +1234,64 @@ void resMan::CacheNewCluster(uint32 newCluster)
 	}
 }
 
-//------------------------------------------------------------------------------------
-
-void resMan::GetCd(int cd)
-{
+void resMan::GetCd(int cd) {
 	// TODO support a seperate path for cd data?
 	
-	bool		 done = false;
-	char		 sCDName[_MAX_PATH];
-	uint32		 dwMaxCompLength, dwFSFlags;
-	mem			 *text_spr;
+	bool done = false;
+	char sCDName[_MAX_PATH];
+	uint32 dwMaxCompLength, dwFSFlags;
+	mem *text_spr;
 	_frameHeader *frame;
-	_spriteInfo  spriteInfo;
-	int16		 oldY;
-	int16		 oldX;
-	FILE		 *file;
-	char		 name[16];
-	int			 offNetwork = 0;
-	int			 index = 0;
-	uint8		 *textRes;
+	_spriteInfo spriteInfo;
+	int16 oldY;
+	int16 oldX;
+	FILE *file;
+	char name[16];
+	int offNetwork = 0;
+	int index = 0;
+	uint8 *textRes;
 
-	//----------------------------------------------------------------------------------------
+	// don't ask for CD's in the playable demo downloaded from our
+	// web-site!
 	if (g_sword2->_gameId == GID_SWORD2_DEMO)
-		return;		// don't ask for CD's in the playable demo downloaded from our web-site!
+		return;
 
-	#ifdef _PCGUIDE
-		return;		// don't ask for CD in the patch for the demo on "PC Guide" magazine
-	#endif
-	//----------------------------------------------------------------------------------------
+#ifdef _PCGUIDE
+	// don't ask for CD in the patch for the demo on "PC Guide" magazine
+	return;
+#endif
 
 	sprintf(name, "revcd%d.id", cd);
 	file = fopen(name, "r");
 
-	if (file == NULL)
-	{
-		// Determine what CD is in the drive, and either use it or ask the user to insert the correct CD.
+	if (file == NULL) {
+		// Determine what CD is in the drive, and either use it or ask
+		// the user to insert the correct CD.
 		// Scan all CD drives for our CD as well.
-		while((cdDrives[index] != 0) && (index<24))
-		{
+		while(cdDrives[index] != 0 && index < 24) {
 			sprintf(cdPath, "%c:\\", cdDrives[index]);
 
-			if (!SVM_GetVolumeInformation(cdPath, sCDName, _MAX_PATH, NULL, &dwMaxCompLength, &dwFSFlags, NULL, 0))
-			{
-				sCDName[0] = 0;		// Force the following code to ask for the correct CD.
+			if (!SVM_GetVolumeInformation(cdPath, sCDName, _MAX_PATH, NULL, &dwMaxCompLength, &dwFSFlags, NULL, 0))	{
+				// Force the following code to ask for the correct CD.
+				sCDName[0] = 0;
 			}
 
 			curCd = cd;
 		
-			if (!scumm_stricmp(sCDName,CD1_LABEL))
-			{
+			if (!scumm_stricmp(sCDName,CD1_LABEL)) {
 				if (cd == CD1)
 					return;
-			}
-			else if (!scumm_stricmp(sCDName,CD2_LABEL))
-			{
+			} else if (!scumm_stricmp(sCDName,CD2_LABEL)) {
 				if (cd == CD2)
 					return;
 			}
 
-			index += 1;
+			index++;
 		}
-	}
-	else	// must be running off the network, but still want to see CD-requests to show where they would occur when playing from CD
-	{
+	} else {
+		// must be running off the network, but still want to see
+		// CD-requests to show where they would occur when playing
+		// from CD
 		Zdebug("RUNNING OFF NETWORK");
 
 		fscanf(file, "%s", cdPath);
@@ -1418,78 +1302,69 @@ void resMan::GetCd(int cd)
 		else
 			curCd = cd;
 
-		if (SYSTEM_TESTING_ANIMS || SYSTEM_TESTING_TEXT)	// don't show CD-requests if testing anims or text/speech
+		// don't show CD-requests if testing anims or text/speech
+		if (SYSTEM_TESTING_ANIMS || SYSTEM_TESTING_TEXT)
 			return;
 
 		offNetwork = 1;
 	}
 
-	//----------------------------------------------------------------------------------------
-	// stop any music from playing - so the system no longer needs the current CD
-	// - otherwise when we take out the CD, Windows will complain!
+	// stop any music from playing - so the system no longer needs the
+	// current CD - otherwise when we take out the CD, Windows will
+	// complain!
 
 	FN_stop_music(NULL);	// (James29aug97)
-	//----------------------------------------------------------------------------------------
-
 
 	textRes = res_man.Res_open(2283);
-	DisplayMsg( FetchTextLine(textRes, 5+cd)+2, 0 );
-	text_spr = MakeTextSprite( FetchTextLine( textRes, 5+cd)+2, 640, 187, speech_font_id );
+	DisplayMsg(FetchTextLine(textRes, 5 + cd) + 2, 0);
+	text_spr = MakeTextSprite(FetchTextLine(textRes, 5 + cd) + 2, 640, 187, speech_font_id);
 
 	frame = (_frameHeader*) text_spr->ad;
 
-	spriteInfo.x			= screenWide/2 - frame->width/2;
-	spriteInfo.y			= screenDeep/2 - frame->height/2 - RDMENU_MENUDEEP;
-	spriteInfo.w			= frame->width;
-	spriteInfo.h			= frame->height;
-	spriteInfo.scale		= 0;
+	spriteInfo.x = screenWide / 2 - frame->width / 2;
+	spriteInfo.y = screenDeep / 2 - frame->height / 2 - RDMENU_MENUDEEP;
+	spriteInfo.w = frame->width;
+	spriteInfo.h = frame->height;
+	spriteInfo.scale = 0;
 	spriteInfo.scaledWidth	= 0;
 	spriteInfo.scaledHeight	= 0;
-	spriteInfo.type			= RDSPR_DISPLAYALIGN+RDSPR_NOCOMPRESSION+RDSPR_TRANS;
-	spriteInfo.blend		= 0;
-	spriteInfo.data			= text_spr->ad + sizeof(_frameHeader);
+	spriteInfo.type = RDSPR_DISPLAYALIGN + RDSPR_NOCOMPRESSION + RDSPR_TRANS;
+	spriteInfo.blend = 0;
+	spriteInfo.data = text_spr->ad + sizeof(_frameHeader);
 	spriteInfo.colourTable	= 0;
-	oldY					= spriteInfo.y;
-	oldX					= spriteInfo.x;
+	oldY = spriteInfo.y;
+	oldX = spriteInfo.x;
 
 	res_man.Res_close(2283);
 
-	do
-	{
+	do {
 		if (offNetwork == 1)
 			done = TRUE;
-		else
-		{
+		else {
 			index = 0;
-			while((cdDrives[index] != 0) && (!done) && (index<24))
-			{
+			while (cdDrives[index] != 0 && !done && index < 24) {
 				sprintf(cdPath, "%c:\\", cdDrives[index]);
 
-				if (!SVM_GetVolumeInformation(cdPath, sCDName, _MAX_PATH, NULL, &dwMaxCompLength, &dwFSFlags, NULL, 0))
-				{
+				if (!SVM_GetVolumeInformation(cdPath, sCDName, _MAX_PATH, NULL, &dwMaxCompLength, &dwFSFlags, NULL, 0))	{
 					sCDName[0] = 0;
 				}
 
-				if (!scumm_stricmp(sCDName,CD1_LABEL))
-				{
+				if (!scumm_stricmp(sCDName,CD1_LABEL)) {
 					if (cd == CD1)
 						done = TRUE;
-				}
-				else if (!scumm_stricmp(sCDName,CD2_LABEL))
-				{
+				} else if (!scumm_stricmp(sCDName,CD2_LABEL)) {
 					if (cd == CD2)
 						done = TRUE;
 				}
-
-				index += 1;
+				index++;
 			}
 		}
 		
 		//--------------------------------------------------
 		// Service windows
 
-		if (ServiceWindows() == RDERR_APPCLOSED)	// if we pressed Ctrl-Q
-		{
+		// if we pressed Ctrl-Q
+		if (ServiceWindows() == RDERR_APPCLOSED) {
 			Close_game();	//close engine systems down
 			CloseAppWindow();
 			exit(0);	//quit the game
@@ -1501,28 +1376,16 @@ void resMan::GetCd(int cd)
 
 		//--------------------------------------------------
 	
-		if (gotTheFocus)
-		{
-			EraseBackBuffer();				// for hardware rendering
+		if (gotTheFocus) {
+			EraseBackBuffer();		// for hardware rendering
 			EraseSoftwareScreenBuffer();	// for software rendering
-			DrawSprite( &spriteInfo );		// Keep the message there even when the user task swaps.
-			spriteInfo.y = oldY;			// Drivers change the y co-ordinate, don't know why...
+			DrawSprite(&spriteInfo);	// Keep the message there even when the user task swaps.
+			spriteInfo.y = oldY;		// Drivers change the y co-ordinate, don't know why...
 			spriteInfo.x = oldX;
 			CopyScreenBuffer();
 		}
-
 	} while (!done);
 
 	Free_mem(text_spr);
 	RemoveMsg();
 }
-//------------------------------------------------------------------------------------
-
-
-
-//------------------------------------------------------------------------------------
-//------------------------------------------------------------------------------------
-//------------------------------------------------------------------------------------
-//------------------------------------------------------------------------------------
-
-
