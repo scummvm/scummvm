@@ -117,7 +117,7 @@ public:
 	virtual int16 RGBToColor(uint8 r, uint8 g, uint8 b);
 	virtual void colorToRGB(int16 color, uint8 &r, uint8 &g, uint8 &b);
 
-	static OSystem *create(int gfx_mode, bool full_screenm, bool aspect_ratio, int joystick_num);
+	static OSystem *create(int gfx_mode);
 
 protected:
 	OSystem_SDL_Common();
@@ -125,7 +125,7 @@ protected:
 
 	static OSystem_SDL_Common *create_intern();
 
-	void init_intern(int gfx_mode, bool full_screen, bool aspect_ratio, int joystick_num);
+	void init_intern(int gfx_mode);
 
 	// unseen game screen
 	SDL_Surface *_screen;

@@ -608,7 +608,7 @@ OSystem *GameDetector::createSystem() {
 	return OSystem_PALMOS_create(gfx_mode, ConfMan.getBool("fullscreen"));
 #else
 	/* SDL is the default driver for now */
-	return OSystem_SDL_create(gfx_mode, ConfMan.getBool("fullscreen"), ConfMan.getBool("aspect_ratio"), ConfMan.getInt("joystick_num"));
+	return OSystem_SDL_create(gfx_mode);
 #endif
 }
 

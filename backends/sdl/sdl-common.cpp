@@ -21,6 +21,7 @@
 
 #include "sdl-common.h"
 #include "sound/mididrv.h"
+#include "common/config-manager.h"
 #include "common/scaler.h"
 #include "common/util.h"
 
@@ -41,27 +42,27 @@
 #define JOY_BUT_SPACE 4
 #define JOY_BUT_F5 5
 
-OSystem *OSystem_SDL_create(int gfx_mode, bool full_screen, bool aspect_ratio, int joystick_num) {
-	return OSystem_SDL_Common::create(gfx_mode, full_screen, aspect_ratio, joystick_num);
+OSystem *OSystem_SDL_create(int gfx_mode) {
+	return OSystem_SDL_Common::create(gfx_mode);
 }
 
-OSystem *OSystem_SDL_Common::create(int gfx_mode, bool full_screen, bool aspect_ratio, int joystick_num) {
+OSystem *OSystem_SDL_Common::create(int gfx_mode) {
 	OSystem_SDL_Common *syst = OSystem_SDL_Common::create_intern();
 
-	syst->init_intern(gfx_mode, full_screen, aspect_ratio, joystick_num);
+	syst->init_intern(gfx_mode);
 
 	return syst;
 }
 
-void OSystem_SDL_Common::init_intern(int gfx_mode, bool full_screen, bool aspect_ratio, int joystick_num) {
+void OSystem_SDL_Common::init_intern(int gfx_mode) {
+
+	int joystick_num = ConfMan.getInt("joystick_num");
+	uint32 sdlFlags = SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_TIMER;
 
 	_mode = gfx_mode;
-	_full_screen = full_screen;
-	_adjustAspectRatio = aspect_ratio;
+	_full_screen = ConfMan.getBool("fullscreen");
+	_adjustAspectRatio = ConfMan.getBool("aspect_ratio");
 	_mode_flags = 0;
-	uint32 sdlFlags;
-
-	sdlFlags = SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_TIMER;
 
 	if (joystick_num > -1)
 		sdlFlags |= SDL_INIT_JOYSTICK;
