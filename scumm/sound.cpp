@@ -239,6 +239,24 @@ void Sound::playSound(int soundID) {
 			_scumm->_mixer->playRaw(NULL, sound, size, rate, flags, soundID);
 			return;
 		}
+		else if (READ_UINT32(ptr) == MKID('MRAW')) {
+			// pcm music in 3DO humongous games
+			// TODO play via imuse so isSoundRunning can properly report music value?
+			ptr += 8 + READ_BE_UINT32(ptr+12);
+			if (READ_UINT32(ptr) != MKID('SDAT'))
+				return;
+	
+			size = READ_BE_UINT32(ptr+4) - 8;
+			rate = 22050;
+			flags = SoundMixer::FLAG_AUTOFREE;
+
+			// Allocate a sound buffer, copy the data into it, and play
+			sound = (char *)malloc(size);
+			memcpy(sound, ptr + 8, size);
+			_scumm->_mixer->playRaw(NULL, sound, size, rate, flags, soundID);
+			
+			return;
+		}	
 		// XMIDI 
 		else if ((READ_UINT32(ptr) == MKID('MIDI')) && (_scumm->_features & GF_HUMONGOUS)) {
 			// Pass XMIDI on to IMuse unprocessed.
@@ -658,6 +676,7 @@ int Sound::isSoundRunning(int sound) const {
 		} else if (sound == -1) {
 			// getSoundStatus(), with a -1, will return the
 			// ID number of the first active music it finds.
+			// TODO handle MRAW (pcm music) in humongous games
 			return _scumm->_imuse->getSoundStatus(sound);
 		}
 	}
