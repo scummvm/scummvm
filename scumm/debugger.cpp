@@ -630,7 +630,7 @@ static void hlineColor(ScummEngine *scumm, int x1, int x2, int y, byte color) {
 		x2 = right - 1;
 
 
-	ptr = vs->screenPtr + x1 + y * scumm->_screenWidth;
+	ptr = vs->screenPtr + x1 + y * vs->width;
 
 	while (x1++ <= x2) {
 		*ptr++ = color;

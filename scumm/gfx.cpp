@@ -216,7 +216,7 @@ void ScummEngine::initVirtScreen(VirtScreenNumber slot, int number, int top, int
 	vs->width = width;
 	vs->topline = top;
 	vs->height = height;
-	vs->alloctwobuffers = twobufs;
+	vs->hasTwoBuffers = twobufs;
 	vs->scrollable = scrollable;
 	vs->xstart = 0;
 	vs->backBuf = NULL;
@@ -573,7 +573,7 @@ void ScummEngine::restoreCharsetBg() {
 void ScummEngine::restoreBG(Common::Rect rect, byte backColor) {
 	VirtScreen *vs;
 	int topline, height, width;
-	byte *backbuff, *bgbak;
+	byte *backbuff;
 	bool lightsOn;
 
 	if (rect.top < 0)
@@ -602,7 +602,6 @@ void ScummEngine::restoreBG(Common::Rect rect, byte backColor) {
 
 	int offset = (rect.top - topline) * vs->width + vs->xstart + rect.left;
 	backbuff = vs->screenPtr + offset;
-	bgbak = vs->backBuf + offset;
 
 	height = rect.height();
 	width = rect.width();
@@ -610,8 +609,8 @@ void ScummEngine::restoreBG(Common::Rect rect, byte backColor) {
 	// Check whether lights are turned on or not
 	lightsOn = (_features & GF_NEW_OPCODES) || (vs->number != kMainVirtScreen) || (VAR(VAR_CURRENT_LIGHTS) & LIGHTMODE_screen);
 
-	if (vs->alloctwobuffers && _currentRoom != 0 && lightsOn ) {
-		blit(backbuff, bgbak, width, height);
+	if (vs->hasTwoBuffers && _currentRoom != 0 && lightsOn ) {
+		blit(backbuff, vs->backBuf + offset, width, height);
 		if (vs->number == kMainVirtScreen && _charset->_hasMask && height) {
 			byte *mask;
 			// Note: At first sight it may look as if this could
@@ -939,6 +938,10 @@ void Gdi::drawBitmap(const byte *ptr, VirtScreen *vs, int x, int y, const int wi
 	_vertStripNextInc = height * vs->width - 1;
 
 	sx = x;
+	// FIXME / TODO: This is the only place vs->scrollable is ever checked, and
+	// I think we can simply remove the condition and always use xstart - it
+	// should always be 0 for any non-scrolling virtual screen, after all.
+	assert(vs->scrollable || !vs->xstart);
 	if (vs->scrollable)
 		sx -= vs->xstart / 8;
 
@@ -951,7 +954,7 @@ void Gdi::drawBitmap(const byte *ptr, VirtScreen *vs, int x, int y, const int wi
 	//
 	if (_vm->_version == 2) {
 		
-		if (vs->alloctwobuffers)
+		if (vs->hasTwoBuffers)
 			bgbak_ptr = vs->backBuf + (y * _numStrips + x) * 8;
 		else
 			bgbak_ptr = vs->screenPtr + (y * _numStrips + x) * 8;
@@ -1074,7 +1077,7 @@ void Gdi::drawBitmap(const byte *ptr, VirtScreen *vs, int x, int y, const int wi
 			vs->bdirty[sx] = bottom;
 
 		backbuff_ptr = vs->screenPtr + (y * _numStrips + x) * 8;
-		if (vs->alloctwobuffers)
+		if (vs->hasTwoBuffers)
 			bgbak_ptr = vs->backBuf + (y * _numStrips + x) * 8;
 		else
 			bgbak_ptr = backbuff_ptr;
@@ -1097,7 +1100,7 @@ void Gdi::drawBitmap(const byte *ptr, VirtScreen *vs, int x, int y, const int wi
 		mask_ptr = getMaskBuffer(x, y);
 
 		CHECK_HEAP;
-		if (vs->alloctwobuffers) {
+		if (vs->hasTwoBuffers) {
 			if (_vm->hasCharsetMask(sx * 8, y, (sx + 1) * 8, bottom)) {
 				if (flag & dbClear || !lightsOn)
 					clear8ColWithMasking(backbuff_ptr, height, mask_ptr);

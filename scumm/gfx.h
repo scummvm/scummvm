@@ -55,19 +55,119 @@ enum VirtScreenNumber {
 	kUnkVirtScreen = 3		// ?? Not sure what this one is good for...
 };
 
-/** Virtual screen areas */
+/**
+ * In all Scumm games, one to four virtual screen (or 'windows') together make
+ * up the content of the actual screen. Thinking of virtual screens as fixed
+ * size, fixed location windows might help understanding them. Typical, in all
+ * scumm games there is either one single virtual screen covering the entire
+ * real screen (mostly in all newer games, e.g. Sam & Max, and all V7+ games).
+ * The classic setup consists of three virtual screens: one at the top of the
+ * screen, where all conversation texts are printed; then the main one (which
+ * I like calling 'the stage', since all the actors are doing their stuff
+ * there), and finally the lower part of the real screen is taken up by the
+ * verb area.
+ * Finally, in V5 games and some V6 games, it's almost the same as in the
+ * original games, except that there is no separate conversation area.
+ *
+ * If you now wonder what the last screen is/was good for: I am not 100% sure,
+ * but it appears that it was used by the original engine to display stuff
+ * like the pause message, or questions ("Do you really want to restart?").
+ * It seems that it is not used at all by ScummVM, so we probably could just
+ * get rid of it and save a couple kilobytes of RAM.
+ *
+ * Each of these virtual screens has a fixed number or id (see also the
+ * VirtScreenNumber enum).
+ */
 struct VirtScreen {
+	/**
+	 * The unique id of this screen (correponds to its position in the
+	 * ScummEngine:virtscr array).
+	 */
 	VirtScreenNumber number;
+	
+	/**
+	 * Vertical position of the virtual screen. Tells how much the virtual
+	 * screen is shifted along the y axis relative to the real screen.
+	 * If you wonder why there is no horizontal position: there is none,
+	 * because all virtual screens are always exactly as wide as the
+	 * real screen. This might change in the future to allow smooth
+	 * horizontal scrolling in V7-V8 games.
+	 */
 	uint16 topline;
-	uint16 width, height;
-	byte alloctwobuffers;
+	
+	/** Width of the virtual screen (currently always identical to _screenWidth). */
+	uint16 width;
+
+	/** Height of the virtual screen. */
+	uint16 height;
+
+	/**
+	 * Flag indicating that this virtual screen allows (horizontal) scrolling.
+	 * This is always only true for the main screen (stage)!  After all, verbs
+	 * and the conversation text box don't have to scroll.
+	 * @todo Get rid of this, there is only one place where it is used,
+	 *       and there it is trivial to remove the usage.
+	 */
 	bool scrollable;
+	
+	/**
+	 * Horizontal scroll offset, tells how far the screen is scrolled to the
+	 * right. Only used for the main screen.
+	 */
 	uint16 xstart;
-	uint16 tdirty[80];
-	uint16 bdirty[80];
+
+	/**
+	 * Flag indicating  which tells whether this screen has a back buffer or
+	 * not. This is yet another feature which is only used by the main screen.
+	 * Strictly spoken one could remove this variable and replace checks
+	 * on it with checks on backBuf. But since some code needs to temporarily
+	 * disable the backBuf (so it can abuse drawBitmap; see drawVerbBitmap()
+	 * and useIm01Cursor()), we keep it (at least for now).
+	 */
+	bool hasTwoBuffers;
+	
+	/**
+	 * Pointer to the screen's data buffer. This is where the content of
+	 * the screen is stored. Just as one would expect :-).
+	 */
 	byte *screenPtr;
+	
+	/**
+	 * Pointer to the screen's back buffer, if it has one (see also
+	 * the hasTwoBuffers member).
+	 * The backBuf is used by drawBitmap to store the background graphics of
+	 * the active room. This eases redrawing: whenever a portion of the screen
+	 * has to be redrawn, first a copy from the backBuf content to screenPtr is
+	 * performed. Then, any objects/actors in that area are redrawn atop that.
+	 */
 	byte *backBuf;
 
+	/**
+	 * Array containing for each visible strip of this virtual screen the
+	 * coordinate at which the dirty region of that strip starts.
+	 * 't' stands for 'top' - the top coordinate of the dirty region.
+	 * This together with bdirty is used to do efficient redrawing of
+	 * the screen.
+	 */
+	uint16 tdirty[80];
+
+	/**
+	 * Array containing for each visible strip of this virtual screen the
+	 * coordinate at which the dirty region of that strip end.
+	 * 'b' stands for 'bottom' - the bottom coordinate of the dirty region.
+	 * This together with tdirty is used to do efficient redrawing of
+	 * the screen.
+	 */
+	uint16 bdirty[80];
+
+	/**
+	 * Convenience method to set the whole tdirty and bdirty arrays to one
+	 * specific value each. This is mostly used to mark every as dirty in
+	 * a single step, like so:
+	 *   vs->setDirtyRange(0, vs->height);
+	 * or to mark everything as clean, like so:
+	 *   vs->setDirtyRange(0, 0);
+	 */
 	void setDirtyRange(int top, int bottom) {
 		for (int i = 0; i < 80; i++) {
 			tdirty[i] = top;

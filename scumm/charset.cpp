@@ -970,15 +970,16 @@ void CharsetRendererV3::printChar(int chr) {
 		w++;
 		h++;
 	}
-	
+
 	drawTop = _top - vs->topline;
 	char_ptr = _fontPtr + chr * 8;
 	dest_ptr = vs->screenPtr + vs->xstart + drawTop * vs->width + _left;
 	mask_ptr = _vm->getMaskBuffer(_left, drawTop, 0);
-	useMask = (vs->number == 0 && !_ignoreCharsetMask);
+	useMask = (vs->number == kMainVirtScreen && !_ignoreCharsetMask);
 
 	_vm->markRectAsDirty(vs->number, _left, _left + w, drawTop, drawTop + h, 0);
-	if (vs->number == 0)
+	
+	if (vs->number == kMainVirtScreen)
 		_hasMask = true;
 
 	drawBits1(vs, dest_ptr, char_ptr, mask_ptr, drawTop, 8, 8);
@@ -1084,9 +1085,9 @@ void CharsetRendererClassic::printChar(int chr) {
 
 	_vm->markRectAsDirty(vs->number, _left, _left + width, drawTop, drawTop + height + offsY, 0);
 
-	if (vs->number != 0)
+	if (vs->number != kMainVirtScreen)
 		_blitAlso = false;
-	if (vs->number == 0 && !_ignoreCharsetMask)
+	if (vs->number == kMainVirtScreen && !_ignoreCharsetMask)
 		_hasMask = true;
 
 
@@ -1134,7 +1135,7 @@ void CharsetRendererClassic::drawBitsN(VirtScreen *vs, byte *dst, const byte *sr
 	int maskpos;
 	int color;
 	byte numbits, bits;
-	bool useMask = (vs->number == 0 && !_ignoreCharsetMask);
+	bool useMask = (vs->number == kMainVirtScreen && !_ignoreCharsetMask);
 
 	assert(bpp == 1 || bpp == 2 || bpp == 4 || bpp == 8);
 	bits = *src++;
@@ -1176,7 +1177,7 @@ void CharsetRendererCommon::drawBits1(VirtScreen *vs, byte *dst, const byte *src
 	int y, x;
 	int maskpos;
 	byte bits = 0;
-	bool useMask = (vs->number == 0 && !_ignoreCharsetMask);
+	bool useMask = (vs->number == kMainVirtScreen && !_ignoreCharsetMask);
 
 	for (y = 0; y < height && y + drawTop < vs->height; y++) {
 		maskmask = revBitMask[_left & 7];

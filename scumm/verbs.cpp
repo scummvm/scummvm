@@ -449,8 +449,8 @@ void ScummEngine::drawVerbBitmap(int verb, int x, int y) {
 
 	gdi.disableZBuffer();
 
-	twobufs = vs->alloctwobuffers;
-	vs->alloctwobuffers = 0;
+	twobufs = vs->hasTwoBuffers;
+	vs->hasTwoBuffers = 0;
 
 	xstrip = x / 8;
 	ydiff = y - vs->topline;
@@ -499,7 +499,7 @@ void ScummEngine::drawVerbBitmap(int verb, int x, int y) {
 
 	gdi.enableZBuffer();
 
-	vs->alloctwobuffers = twobufs;
+	vs->hasTwoBuffers = twobufs;
 }
 
 int ScummEngine::getVerbSlot(int id, int mode) const {

@@ -130,10 +130,10 @@ void ScummEngine::useIm01Cursor(const byte *im, int w, int h) {
 
 	drawBox(0, 0, w - 1, h - 1, 0xFF);
 
-	vs->alloctwobuffers = false;
+	vs->hasTwoBuffers = false;
 	gdi.disableZBuffer();
 	gdi.drawBitmap(im, vs, _screenStartStrip, 0, w, h, 0, w / 8, 0);
-	vs->alloctwobuffers = true;
+	vs->hasTwoBuffers = true;
 	gdi.enableZBuffer();
 
 	grabCursor(vs->screenPtr + vs->xstart, w, h);
