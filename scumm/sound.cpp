@@ -499,6 +499,7 @@ void Sound::startTalkSound(uint32 offset, uint32 b, int mode, PlayingSoundHandle
 		// 64 is just a guess
 		if (_scumm->_features & GF_HUMONGOUS) {
 			// SKIP TLKB (8) TALK (8) HSHD (24) and SDAT (8)
+			_sfxMode |= mode;
 			_sfxFile->seek(offset + 48, SEEK_SET);
 			sound = (byte *)malloc(b - 64);
 			_sfxFile->read(sound, b - 64);
