@@ -153,7 +153,8 @@ void ConsoleDialog::handleKeyDown(uint16 ascii, int keycode, int modifiers)
 			nextLine();
 
 			int len = _promptEndPos - _promptStartPos;
-			char str[len + 1];
+//			char str[len + 1];
+			char str[1000];
 
 			if (len < 0) len = 0;	// Prevent overflow from forced Ctrl-D deletion
 
@@ -409,7 +410,11 @@ int ConsoleDialog::vprintf(const char *format, va_list argptr)
 {
 	char	buf[2048];
 
+#if defined(WIN32)
+	int count = _vsnprintf(buf, sizeof(buf), format, argptr);
+#else
 	int count = vsnprintf(buf, sizeof(buf), format, argptr);
+#endif
 	print(buf);
 	return count;
 }

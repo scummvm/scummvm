@@ -1648,7 +1648,7 @@ void Gdi::unkDecode11(byte *dst, byte *src, int height)
 
 
 #pragma mark -
-#pragma mark ### Camera ###
+#pragma mark --- Camera ---
 #pragma mark -
 
 void Scumm::setCameraAtEx(int at)
@@ -2006,7 +2006,7 @@ void Scumm::actorFollowCamera(int act)
 }
 
 #pragma mark -
-#pragma mark ### Transition effects ###
+#pragma mark --- Transition effects ---
 #pragma mark -
 
 void Scumm::fadeIn(int effect)
@@ -2370,7 +2370,7 @@ void Scumm::setShake(int mode)
 }
 
 #pragma mark -
-#pragma mark ### Palette ###
+#pragma mark --- Palette ---
 #pragma mark -
 
 void Scumm::setPaletteFromPtr(byte *ptr)
@@ -2951,7 +2951,7 @@ byte *Scumm::getPalettePtr()
 }
 
 #pragma mark -
-#pragma mark ### Cursor ###
+#pragma mark --- Cursor ---
 #pragma mark -
 
 void Scumm::grabCursor(int x, int y, int w, int h)
@@ -3115,7 +3115,7 @@ void Scumm::makeCursorColorTransparent(int a)
 }
 
 #pragma mark -
-#pragma mark ### Bomp ###
+#pragma mark --- Bomp ---
 #pragma mark -
 
 int32 Scumm::bompDecodeLineMode0(byte * src, byte * line_buffer, int32 size) {
