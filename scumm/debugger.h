@@ -104,7 +104,7 @@ protected:
 	void printBox(int box);
 	void drawBox(int box);
 
-#ifdef USE_CONSOLE
+#if USE_CONSOLE
 	static bool debuggerInputCallback(ConsoleDialog *console, const char *input, void *refCon);
 	static bool debuggerCompletionCallback(ConsoleDialog *console, const char *input, char*& completion, void *refCon);
 #endif
