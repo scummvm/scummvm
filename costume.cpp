@@ -34,7 +34,6 @@ public:
   BitmapComponent(Costume::Component *parent, int parentID,
 		 const char *filename);
   BitmapComponent *copy(Costume::Component *newParent);
-  ~BitmapComponent();
 
   void update();
   void draw();
@@ -42,8 +41,8 @@ public:
 private:
   std::string filename_;
   std::string zbuf_filename_;
-  Bitmap *bitmap_;
-  Bitmap *zbuffer_;
+  ResPtr<Bitmap> bitmap_;
+  ResPtr<Bitmap> zbuffer_;
 };
 
 class ModelComponent : public Costume::Component {
@@ -102,19 +101,10 @@ private:
 
 BitmapComponent::BitmapComponent(Costume::Component *parent, int parentID,
 			       const char *filename) :
-  Costume::Component(parent, parentID), filename_(filename), bitmap_(NULL),
-  zbuffer_(NULL) {
+  Costume::Component(parent, parentID), filename_(filename) {
 
   bitmap_ = ResourceLoader::instance()->loadBitmap(filename);
   warning("Instanced BitmapComponenet from Costume renderer: NOT IMPLEMENTED YET");
-}
-
-BitmapComponent::~BitmapComponent() {
-  if (bitmap_)
-	delete[] bitmap_;
-
-  if (zbuffer_)
-	delete[] zbuffer_;
 }
 
 BitmapComponent *BitmapComponent::copy(Costume::Component *newParent) {
