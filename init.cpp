@@ -152,4 +152,5 @@ Scumm::Scumm(void)
 		_leftBtnPressed = 0;
 		_rightBtnPressed = 0;
 		_lastKeyHit = 0;
+		_cdrom = 0;
 }
