@@ -3,6 +3,7 @@ MODULE := sound
 MODULE_OBJS := \
 	sound/audiocd.o \
 	sound/audiostream.o \
+	sound/flac.o \
 	sound/fmopl.o \
 	sound/mididrv.o \
 	sound/midiparser.o \
@@ -14,7 +15,7 @@ MODULE_OBJS := \
 	sound/rate.o \
 	sound/voc.o \
 	sound/vorbis.o \
-	sound/flac.o \
+	sound/wave.o \
 	sound/softsynth/adlib.o \
 	sound/softsynth/ym2612.o \
 	sound/softsynth/mt32.o \

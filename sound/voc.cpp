@@ -43,11 +43,6 @@ int getSampleRateFromVOCRate(int vocSR) {
 	}
 }
 
-byte *loadVOCFromStream(Common::ReadStream &stream, int &size, int &rate) {
-	int loops, begin_loop, end_loop;
-	return loadVOCFromStream(stream, size, rate, loops, begin_loop, end_loop);
-}
-
 byte *loadVOCFromStream(Common::ReadStream &stream, int &size, int &rate, int &loops, int &begin_loop, int &end_loop) {
 	VocFileHeader fileHeader;
 
@@ -126,6 +121,11 @@ byte *loadVOCFromStream(Common::ReadStream &stream, int &size, int &rate, int &l
 	}
 	debug(4, "VOC Data Size : %d", size);
 	return ret_sound;
+}
+
+byte *loadVOCFromStream(Common::ReadStream &stream, int &size, int &rate) {
+	int loops, begin_loop, end_loop;
+	return loadVOCFromStream(stream, size, rate, loops, begin_loop, end_loop);
 }
 
 AudioStream *makeVOCStream(Common::ReadStream &stream) {
