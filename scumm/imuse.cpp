@@ -327,7 +327,7 @@ public:
 // WARNING: This is the internal variant of the IMUSE class.
 // imuse.h contains a public version of the same class.
 // the public version, only contains a set of methods.
-class IMuseInternal {
+class IMuseInternal : public IMuse {
 	friend struct Player;
 private:
 	IMuseDriver * _driver;
@@ -418,6 +418,8 @@ private:
 	int set_master_volume_intern(uint vol);
 
 public:
+	~IMuseInternal();
+
 	Part *parts_ptr() {
 		return _parts;
 	}
@@ -768,6 +770,10 @@ static int is_note_cmd(byte **a, IsNoteCmdData * isnote)
 
 /**********************************************************************/
 
+IMuseInternal::~IMuseInternal() {
+	terminate();
+}
+
 void IMuseInternal::lock()
 {
 	_locked++;
@@ -888,9 +894,6 @@ bool IMuseInternal::start_sound(int sound)
 			return false;
 		}
 	}
-	player = allocate_player(128);
-	if (!player)
-		return false;
 
 	// Make sure the requested sound is not already playing.
 	// FIXME: This should NEVER happen, but until we get all of the
@@ -4891,104 +4894,19 @@ void IMuseGM::part_off(Part *part)
 
 
 
-/*
- * Implementation of the dummy IMuse class that acts as a proxy for
- * our real IMuseInternal class. This way we reduce the compile time
- * and inter source dependencies.
- */
-IMuse::IMuse():_imuse(NULL)
-{
-}
-
-IMuse::~IMuse()
-{
-	if (_imuse) {
-		_imuse->terminate();
-		delete _imuse;
-	}
-}
-
-void IMuse::on_timer()
-{
-	_imuse->on_timer();
-}
-
-void IMuse::pause(bool paused)
-{
-	_imuse->pause(paused);
-}
-
-int IMuse::save_or_load(Serializer *ser, Scumm *scumm)
-{
-	return _imuse->save_or_load(ser, scumm);
-}
-
-int IMuse::set_music_volume(uint vol)
-{
-	return _imuse->set_music_volume(vol);
-}
-
-int IMuse::get_music_volume()
-{
-	return _imuse->get_music_volume();
-}
-
-int IMuse::set_master_volume(uint vol)
-{
-	return _imuse->set_master_volume(vol);
-}
-
-int IMuse::get_master_volume()
-{
-	return _imuse->get_master_volume();
-}
-
-bool IMuse::start_sound(int sound)
-{
-	return _imuse->start_sound(sound);
-}
-
-int IMuse::stop_sound(int sound)
-{
-	return _imuse->stop_sound(sound);
-}
-
-int IMuse::stop_all_sounds()
-{
-	return _imuse->stop_all_sounds();
-}
-
-int IMuse::get_sound_status(int sound)
-{
-	return _imuse->get_sound_status(sound);
-}
-
-int32 IMuse::do_command(int a, int b, int c, int d, int e, int f, int g, int h)
-{
-	return _imuse->do_command(a, b, c, d, e, f, g, h);
-}
-
-int IMuse::clear_queue()
-{
-	return _imuse->clear_queue();
-}
-
-void IMuse::setBase(byte **base)
-{
-	_imuse->setBase(base);
-}
-
-uint32 IMuse::property(int prop, uint32 value)
-{
-	return _imuse->property(prop, value);
-}
-
+// The IMuse::create method provides a front-end factory
+// for creating IMuseInternal without exposing that class
+// to the client.
 IMuse *IMuse::create(OSystem *syst, MidiDriver *midi, SoundMixer *mixer)
 {
-	IMuse *i = new IMuse;
-	i->_imuse = IMuseInternal::create(syst, midi, mixer);
-	return i;
+	return (IMuse *) IMuseInternal::create (syst, midi, mixer);
 }
+
+
+
+/*
+ *  IMUSE Digital Implementation, for SCUMM v7 and higher.
+ */
 
 static void imus_digital_handler(void * engine) {
 	g_scumm->_imuseDigital->handler();
@@ -5518,7 +5436,7 @@ void IMuseDigital::handler() {
 
 			if (_channel[l]._initialized == false) {
 				_scumm->_mixer->playStream(NULL, l, buf, mixer_size,
-																				 _channel[l]._freq, _channel[l]._mixerFlags, 3, 2000000);
+				                           _channel[l]._freq, _channel[l]._mixerFlags, 3, 2000000);
 				_channel[l]._initialized = true;
 			} else {
 				_scumm->_mixer->append(l, buf, mixer_size, _channel[l]._freq, _channel[l]._mixerFlags);
