@@ -234,11 +234,13 @@ class Scene {
 		return _bgMask.loaded;
 	}
 	int getBGMaskType(const Point &testPoint);
+	bool validBGMaskPoint(const Point &testPoint);
 	bool canWalk(const Point &testPoint);
 	bool offscreenPath(Point &testPoint);
 
 	void setDoorState(int doorNumber, int doorState);
 	int getDoorState(int doorNumber);
+	void initDoorsState();
 
 	int getBGInfo(SCENE_BGINFO *bginfo);
 	int getBGPal(PALENTRY **pal);

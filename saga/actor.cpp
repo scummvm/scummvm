@@ -106,6 +106,27 @@ int angleLUT[16][2] = {
 	{ -98, -237}
 };
 
+int directionLUT[8][2] = {
+	{ 0*2, -2*2},
+	{ 2*2, -1*2},
+	{ 3*2,  0*2},
+	{ 2*2,  1*2},
+	{ 0*2,  2*2},
+	{-2*2,  1*2},
+	{-4*2,  0*2},
+	{-2*2, -1*2}
+};
+
+int tileDirectionLUT[8][2] = {
+	{ 1,  1},
+	{ 2,  0},
+	{ 1, -1},
+	{ 0, -2},
+	{-1, -1},
+	{-2,  0},
+	{-1,  1},
+	{ 0,  2}
+};
 
 Actor::Actor(SagaEngine *vm) : _vm(vm) {
 	int i;
@@ -272,7 +293,7 @@ void Actor::realLocation(ActorLocation &location, uint16 objectId, uint16 walkFl
 			actor = getActor(objectId);
 			location = actor->location;
 		} else {
-			warning("ObjectId unsupported"); //TODO: do it
+			warning("ObjectId unsupported"); //todo: do it
 		}
 		
 	}
@@ -299,24 +320,114 @@ ActorData *Actor::getActor(uint16 actorId) {
 	return actor;
 }
 
+bool Actor::validFollowerLocation(const ActorLocation &location) {
+	Point point;
+	point.x = location.x / ACTOR_LMULT;
+	point.y = location.y / ACTOR_LMULT;
+	
+	if ((point.x < 5) || (point.x >= _vm->getDisplayWidth() - 5) ||
+		(point.y < 0) || (point.y >= _vm->getStatusYOffset())) {
+		return false;
+	}
+	
+	return (_vm->_scene->canWalk(point));
+}
+
 void Actor::updateActorsScene() {
-	int i;
+	int i, j;
+	int followerDirection;
 	ActorData *actor;
+	ActorLocation tempLocation;
+	ActorLocation possibleLocation;
+	Point delta;
 	
 	_activeSpeech.stringsCount = 0;
+	_protagonist = NULL;
 
 	for (i = 0; i < ACTORCOUNT; i++) {
 		actor = &_actors[i];		
 		if (actor->flags & (kProtagonist | kFollower)) {
 			actor->sceneNumber = _vm->_scene->currentSceneNumber();
 			if (actor->flags & kProtagonist) {
-//todo:				actor->finalTarget = a->obj.loc;
+				actor->finalTarget = actor->location;
 				_centerActor = _protagonist = actor;
 			}
-
 		}
-		if (actor->sceneNumber == _vm->_scene->currentSceneNumber())
+		if (actor->sceneNumber == _vm->_scene->currentSceneNumber()) {
 			actor->actionCycle = (rand() & 7) * 4;
+		}
+	}
+	
+	assert(_protagonist);
+
+/* setup protagonist entry
+	// tiled stuff
+	if (_vm->_scene->getMode() == SCENE_MODE_ISO) {
+		//todo: it
+	} else {
+	}
+*/
+	_protagonist->currentAction = kActionWait;
+
+	if (_vm->_scene->getMode() == SCENE_MODE_ISO) {
+		//todo: it
+	} else {
+		_vm->_scene->initDoorsState();
+	}
+
+	followerDirection = _protagonist->facingDirection + 3;
+	calcActorScreenPosition(_protagonist);
+
+	for (i = 0; i < ACTORCOUNT; i++) {
+		actor = &_actors[i];		
+		if (actor->flags & (kFollower)) {
+			actor->facingDirection = actor->actionDirection = _protagonist->facingDirection;
+			actor->currentAction = kActionWait;
+			actor->walkStepsCount = actor->walkStepIndex = 0;
+			actor->location.z = _protagonist->location.z;
+				
+
+			if (_vm->_scene->getMode() == SCENE_MODE_ISO) {
+				//todo: it
+			} else {
+				followerDirection &= 0x07;
+				
+				possibleLocation = _protagonist->location;
+
+
+				delta.x = directionLUT[followerDirection][0];
+				delta.y = directionLUT[followerDirection][1];
+
+
+				for (j = 0; j < 30; j++) {
+					tempLocation = possibleLocation;
+					tempLocation.x += delta.x;
+					tempLocation.y += delta.y;
+				
+					if (validFollowerLocation( tempLocation)) {
+						possibleLocation = tempLocation;
+					} else {
+						tempLocation = possibleLocation;
+						tempLocation.x += delta.x;
+						if (validFollowerLocation( tempLocation)) {
+							possibleLocation = tempLocation;
+						} else {
+							tempLocation = possibleLocation;
+							tempLocation.y += delta.y;
+							if (validFollowerLocation( tempLocation)) {
+								possibleLocation = tempLocation;
+							} else {
+								break;
+							}
+						}
+					}
+				}
+
+				actor->location = possibleLocation;
+			}
+			followerDirection += 2;
+		}
+
 	}
 
 	handleActions(0, true);
@@ -575,8 +686,18 @@ void Actor::handleActions(int msec, bool setup) {
 				break;
 
 			case kActionWalkDir:
-				debug(9,"kActionWalkDir not implemented");
-				//todo: do it
+				// tiled stuff
+				if (_vm->_scene->getMode() == SCENE_MODE_ISO) {
+					//todo: it
+				} else {
+					actor->location.x += directionLUT[actor->actionDirection][0] * 2;
+					actor->location.y += directionLUT[actor->actionDirection][1] * 2;
+
+					frameRange = getActorFrameRange(actor->actorId, actor->walkFrameSequence);
+					actor->actionCycle++;
+					actor->cycleWrap(frameRange->frameCount);
+					actor->frameNumber = frameRange->frameIndex + actor->actionCycle;
+				}
 				break;
 
 			case kActionSpeak:
@@ -819,11 +940,6 @@ int Actor::drawActors() {
 	return SUCCESS;
 }
 
-void Actor::StoA(Point &actorPoint, const Point &screenPoint) {
-	actorPoint.x = (screenPoint.x * ACTOR_LMULT);
-	actorPoint.y = (screenPoint.y * ACTOR_LMULT);
-}
-
 bool Actor::followProtagonist(ActorData *actor) {
 	ActorLocation protagonistLocation;
 	ActorLocation newLocation;
@@ -837,6 +953,7 @@ bool Actor::followProtagonist(ActorData *actor) {
 
 	actor->flags &= ~(kFaster | kFastest);
 	protagonistLocation = _protagonist->location;
+	calcActorScreenPosition(_protagonist);
 
 	if (_vm->_scene->getMode() == SCENE_MODE_ISO) {
 		//todo: it
@@ -863,9 +980,14 @@ bool Actor::followProtagonist(ActorData *actor) {
 
 		actor->location.delta(protagonistLocation, delta);
 		
-		calcActorScreenPosition(_protagonist);
-		protagonistBGMaskType = _vm->_scene->getBGMaskType(_protagonist->screenPosition);
+		protagonistBGMaskType = 0;
+		if (_vm->_scene->isBGMaskPresent()) {
+			if (_vm->_scene->validBGMaskPoint(_protagonist->screenPosition)) {
+				protagonistBGMaskType = _vm->_scene->getBGMaskType(_protagonist->screenPosition);
+			}
+		}
 
+		
 
 		if ((rand() & 0x7) == 0)
 			actor->actorFlags &= ~kActorNoFollow;

@@ -165,6 +165,11 @@ struct ActorLocation {
 		y += location.y;
 		z += location.z;
 	}
+	void fromScreenPoint(const Point &screenPoint) {
+		x = (screenPoint.x * ACTOR_LMULT);
+		y = (screenPoint.y * ACTOR_LMULT);
+		z = 0;
+	}
 };
 
 struct ActorData {
@@ -264,9 +269,6 @@ public:
 	int drawActors();
 	void updateActorsScene();			// calls from scene loading to update Actors info
 
-	void StoA(Point &actorPoint, const Point &screenPoint);
-
-	
 	bool actorEndWalk(uint16 actorId, bool recurse);
 	bool actorWalkTo(uint16 actorId, const ActorLocation &toLocation);
 	ActorData *getActor(uint16 actorId);
@@ -310,7 +312,8 @@ private:
 	void removeNodes();
 	void nodeToPath();
 	void removePathPoints();
-
+	bool validFollowerLocation(const ActorLocation &location);
+	
 	int _lastTickMsec;
 	SagaEngine *_vm;
 	RSCFILE_CONTEXT *_actorContext;

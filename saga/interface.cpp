@@ -555,28 +555,27 @@ int Interface::handleCommandUpdate(SURFACE *ds, const Point& imousePt) {
 }
 
 int Interface::handlePlayfieldClick(SURFACE *ds, const Point& imousePt) {
-	return SUCCESS;
-/*
+//	return SUCCESS;
+
 	int objectNum;
 	uint16 object_flags = 0;
 
 	int script_num;
-	Point iactor_pt;
+	ActorLocation location;
 
 	objectNum = _vm->_scene->_objectMap->hitTest(imousePt);
 
 	if (objectNum == -1) {
 		// Player clicked on empty spot - walk here regardless of verb
-		_vm->_actor->StoA(iactor_pt, imousePt);
-		error("!");
+		location.fromScreenPoint(imousePt);
 
-		_vm->_actor->walkTo(1, &iactor_pt, 0, NULL);
+		_vm->_actor->actorWalkTo(ID_PROTAG, location);
 		return SUCCESS;
 	}
 
 	object_flags = _vm->_scene->_objectMap->getFlags(objectNum);
 
-	if (object_flags & OBJECT_EXIT) { // FIXME. This is wrong
+	if (object_flags & kHitZoneExit) { // FIXME. This is wrong
 		if ((script_num = _vm->_scene->_objectMap->getEPNum(objectNum)) != -1) {
 			// Set active verb in script module
 			_vm->_script->putWord(4, 4, I_VerbData[_activeVerb].s_verb);
@@ -588,13 +587,12 @@ int Interface::handlePlayfieldClick(SURFACE *ds, const Point& imousePt) {
 		}
 	} else {
 		// Not a normal scene object - walk to it as if it weren't there
-		_vm->_actor->StoA(iactor_pt, imousePt);
-//		_vm->_actor->walkTo(1, &iactor_pt, 0, NULL);
-		error("!");
+		location.fromScreenPoint(imousePt);
 
+		_vm->_actor->actorWalkTo(ID_PROTAG, location);
 	}
 
-	return SUCCESS;*/
+	return SUCCESS;
 }
 
 int Interface::handlePlayfieldUpdate(SURFACE *ds, const Point& imousePt) {

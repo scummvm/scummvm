@@ -46,6 +46,10 @@
 
 namespace Saga {
 
+static int initSceneDoors[SCENE_DOORS_MAX] = {
+0, 0xff, 0, 0, 0, 0, 0, 0, 0, 0, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff 
+};
+
 Scene::Scene(SagaEngine *vm) : _vm(vm), _initialized(false) {
 	GAME_SCENEDESC gs_desc;
 	byte *scene_lut_p;
@@ -372,15 +376,25 @@ int Scene::getBGMaskType(const Point &testPoint) {
 	return (_bgMask.buf[offset] >> 4) & 0x0f;
 }
 
+bool Scene::validBGMaskPoint(const Point &testPoint) {
+	if (!_bgMask.loaded) {
+		error("Scene::validBGMaskPoint _bgMask not loaded");
+	}
+
+	return !((testPoint.x < 0) || (testPoint.x >= _bgMask.w) ||
+		(testPoint.y < 0) || (testPoint.y >= _bgMask.h));
+}
+
 bool Scene::canWalk(const Point &testPoint) {
 	int maskType;
+
 	if (!_bgMask.loaded) {
 		return true;
 	}
-	if ((testPoint.x < 0) || (testPoint.x >= _bgMask.w) ||
-		(testPoint.y < 0) || (testPoint.y >= _bgMask.h)) {
+	if (!validBGMaskPoint(testPoint)) {
 			return true;
-		}
+	}
+
 	maskType = getBGMaskType(testPoint);
 	return getDoorState(maskType) == 0;
 }
@@ -485,6 +499,10 @@ int Scene::getDoorState(int doorNumber) {
 		error("Scene::getDoorState wrong doorNumber");
 
 	return _sceneDoors[doorNumber];
+}
+
+void Scene::initDoorsState() {
+	memcpy(_sceneDoors, initSceneDoors, SCENE_DOORS_MAX);
 }
 
 int Scene::getInfo(SCENE_INFO *si) {
