@@ -258,7 +258,7 @@ int Actor::remapDirection(int dir, bool is_walking) {
 		}
 	}
 	// OR 1024 in to signal direction interpolation should be done
-	return normalizeAngle(dir);
+	return normalizeAngle(dir) | 1024;
 }
 
 int Actor::updateActorDirection(bool is_walking) {
