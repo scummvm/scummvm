@@ -230,9 +230,13 @@ int SoundMixer::insertChannel(PlayingSoundHandle *handle, Channel *chan) {
 
 int SoundMixer::playRaw(PlayingSoundHandle *handle, void *sound, uint32 size, uint rate, byte flags, int id) {
 	// Prevent duplicate sounds
+	_syst->lock_mutex(_mutex);	
         for (int i = 0; i != NUM_CHANNELS; i++)
-                if (_channels[i] != NULL && _channels[i]->_id == id)
+                if (_channels[i] != NULL && _channels[i]->_id == id) {
+			_syst->unlock_mutex(_mutex);
 			return -1;
+		}
+	_syst->unlock_mutex(_mutex);
 
 	return insertChannel(handle, new ChannelRaw(this, sound, size, rate, flags, id));
 }
