@@ -339,11 +339,6 @@ void Actor::setupActorScale()
 	uint16 scale;
 	byte *resptr;
 
-	// FIXME: Special 'no scaling' class for MI1 VGA Floppy
-	//        Not totally sure if this is correct.
-	if (_vm->_gameId == GID_MONKEY_VGA && isInClass(22))
-		return;
-
 	if (_vm->_features & GF_NO_SCALLING) {
 		scalex = 0xFF;
 		scaley = 0xFF;
