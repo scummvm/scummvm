@@ -25,6 +25,7 @@
 
 #include <VFSMgr.h>
 #include "scumm_globals.h"
+#include "arm/native.h"
 
 enum {
 	kOptNone					=	0,
@@ -73,9 +74,15 @@ typedef struct {
 	Boolean autoReset;
 	Boolean screenLocked;
 	Boolean stdPalette;
+	Boolean filter;
 	Coord screenWidth, screenHeight;			// silkarea shown
 	Coord screenFullWidth, screenFullHeight;	// silkarea hidden
 	UInt32 screenPitch;
+
+	struct {
+		PnoDescriptor pnoDesc;
+		MemPtr pnoPtr;
+	} arm[PNO_COUNT];
 
 	struct {
 		UInt8 on;
@@ -89,13 +96,12 @@ typedef struct {
 	
 	struct {
 		Boolean enable;
-		UInt8 driver;
-		Boolean setDefaultTrackLength;
+		UInt8 driver, format;
 		UInt16 defaultTrackLength;
 		UInt16 firstTrack;
-		
+		UInt16 volume;		
 	} CD;
-
+	
 } GlobalsDataType, *GlobalsDataPtr;
 
 extern GlobalsDataPtr gVars;
@@ -103,5 +109,7 @@ extern GlobalsDataPtr gVars;
 #define OPTIONS_TST(x)	(gVars->options & (x))
 #define OPTIONS_SET(x)	gVars->options |= (x)
 #define OPTIONS_RST(x)	gVars->options &= ~(x)
+
+#define ARM(x)	gVars->arm[x]
 
 #endif
