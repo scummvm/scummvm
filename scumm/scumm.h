@@ -1034,8 +1034,6 @@ protected:
 public:
 	void clearMsgQueue();	// Used by Actor::putActor
 protected:
-
-	int _numInMsgStack;
 	byte *_msgPtrToAdd;
 	const byte *_messagePtr;
 	bool _keepText;

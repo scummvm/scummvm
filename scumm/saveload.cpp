@@ -410,7 +410,7 @@ void ScummEngine::saveOrLoad(Serializer *s, uint32 savegameVersion) {
 
 		MKLINE(ScummEngine, _talkDelay, sleInt16, VER(8)),
 		MKLINE(ScummEngine, _defaultTalkDelay, sleInt16, VER(8)),
-		MKLINE(ScummEngine, _numInMsgStack, sleInt16, VER(8)),
+		MK_OBSOLETE(ScummEngine, _numInMsgStack, sleInt16, VER(8), VER(27)),
 		MKLINE(ScummEngine, _sentenceNum, sleByte, VER(8)),
 
 		MKLINE(ScummEngine, vm.cutSceneStackPointer, sleByte, VER(8)),

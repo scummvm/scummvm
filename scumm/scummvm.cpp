@@ -477,7 +477,6 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 	_copyProtection = false;
 	_demoMode = false;
 	_confirmExit = false;
-	_numInMsgStack = 0;
 	_msgPtrToAdd = NULL;
 	_messagePtr = NULL;
 	_talkDelay = 0;
@@ -1139,10 +1138,6 @@ void ScummEngine::scummInit() {
 	// all keys are released
 	for (i = 0; i < 512; i++)
 		_keyDownMap[i] = false;
-
-	_numInMsgStack = 0;
-
-	createResource(rtTemp, 6, 500);
 
 	initScummVars();
 
@@ -2515,7 +2510,6 @@ void ScummEngine::restart() {
 	// Reinit things
 	allocateArrays();                   // Reallocate arrays
 	readIndexFile();                    // Reread index (reset objectstate etc)
-	createResource(rtTemp, 6, 500);     // Create temp buffer
 	initScummVars();                    // Reinit scumm variables
 	if (_imuse) {
 		_imuse->setBase(res.address[rtSound]);

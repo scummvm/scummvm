@@ -488,112 +488,87 @@ warning("Would have set _charset->_blitAlso = true (wanted to print '%c' = %d\n"
 }
 
 const byte *ScummEngine::addMessageToStack(const byte *msg) {
-	int num, numorg;
-	unsigned char *ptr, chr;
-
-	numorg = num = _numInMsgStack;
-	ptr = getResourceAddress(rtTemp, 6);
-
-	if (ptr == NULL)
-		error("Message stack not allocated");
+	uint num = 0;
+	uint32 val;
+	byte chr;
+	byte buf[512];
 
 	if (msg == NULL) {
 		warning("Bad message in addMessageToStack, ignoring");
 		return NULL;
 	}
 
-	while ((ptr[num++] = chr = *msg++) != 0) {
-		if (num >= 500)
+	while ((buf[num++] = chr = *msg++) != 0) {
+		if (num >= sizeof(buf))
 			error("Message stack overflow");
 
 		if (chr == 0xff) {	// 0xff is an escape character
-			ptr[num++] = chr = *msg++;	// followed by a "command" code
+			buf[num++] = chr = *msg++;	// followed by a "command" code
 			if (chr != 1 && chr != 2 && chr != 3 && chr != 8) {
-				ptr[num++] = *msg++;	// and some commands are followed by parameters to the functions below
-				ptr[num++] = *msg++;	// these are numbers of names, strings, verbs, variables, etc
+				buf[num++] = *msg++;	// and some commands are followed by parameters to the functions below
+				buf[num++] = *msg++;	// these are numbers of names, strings, verbs, variables, etc
 				if (_version == 8) {
-					ptr[num++] = *msg++;
-					ptr[num++] = *msg++;
+					buf[num++] = *msg++;
+					buf[num++] = *msg++;
 				}
 			}
 		}
 	}
 
-	_numInMsgStack = num;
-	num = numorg;
+	num = 0;
 
 	while (1) {
-		ptr = getResourceAddress(rtTemp, 6);
-		chr = ptr[num++];
+		chr = buf[num++];
 		if (chr == 0)
 			break;
 		if (chr == 0xFF) {
-			chr = ptr[num++];
-			switch (chr) {
-			case 4:
-				if (_version == 8) {
-					addIntToStack(READ_LE_UINT32(ptr + num));
-					num += 4;
-				} else {
-					addIntToStack(READ_LE_UINT16(ptr + num));
-					num += 2;
-				}
-				break;
-			case 5:
-				if (_version == 8) {
-					addVerbToStack(READ_LE_UINT32(ptr + num));
-					num += 4;
-				} else {
-					addVerbToStack(READ_LE_UINT16(ptr + num));
-					num += 2;
-				}
-				break;
-			case 6:
-				if (_version == 8) {
-					addNameToStack(READ_LE_UINT32(ptr + num));
-					num += 4;
-				} else {
-					addNameToStack(READ_LE_UINT16(ptr + num));
-					num += 2;
-				}
-				break;
-			case 7:
-				if (_version == 8) {
-					addStringToStack(READ_LE_UINT32(ptr + num));
-					num += 4;
-				} else if (_version <= 2) {
-					int var = READ_LE_UINT16(ptr + num);
-					num += 2;
-					char c;
-					while ((c = (char) _scummVars[var++])) {
-						if (c != '@')
-							*_msgPtrToAdd++ = c;
+			chr = buf[num++];
+			if (chr == 1 || chr == 2 || chr == 3 || chr == 8) {
+				// Simply copy these special codes
+				*_msgPtrToAdd++ = 0xFF;
+				*_msgPtrToAdd++ = chr;
+			} else {
+				val = (_version == 8) ? READ_LE_UINT32(buf + num) : READ_LE_UINT16(buf + num);
+				switch (chr) {
+				case 4:
+					addIntToStack(val);
+					break;
+				case 5:
+					addVerbToStack(val);
+					break;
+				case 6:
+					addNameToStack(val);
+					break;
+				case 7:
+					if (_version <= 2) {
+						while ((chr = (byte) _scummVars[val++])) {
+							if (chr != '@')
+								*_msgPtrToAdd++ = chr;
+						}
+					} else {
+						addStringToStack(val);
 					}
-				} else {
-					addStringToStack(READ_LE_UINT16(ptr + num));
-					num += 2;
+					break;
+				case 9:
+				case 10:
+				case 12:
+				case 13:
+				case 14:
+					// Simply copy these special codes
+					*_msgPtrToAdd++ = 0xFF;
+					*_msgPtrToAdd++ = chr;
+					*_msgPtrToAdd++ = buf[num+0];
+					*_msgPtrToAdd++ = buf[num+1];
+					if (_version == 8) {
+						*_msgPtrToAdd++ = buf[num+2];
+						*_msgPtrToAdd++ = buf[num+3];
+					}
+					break;
+				default:
+					warning("addMessageToStack(): string escape sequence %d unknown", chr);
+					break;
 				}
-				break;
-			case 3:
-			case 9:
-			case 10:
-			case 12:
-			case 13:
-			case 14:
-				*_msgPtrToAdd++ = 0xFF;
-				*_msgPtrToAdd++ = chr;
-				*_msgPtrToAdd++ = ptr[num++];
-				*_msgPtrToAdd++ = ptr[num++];
-				if (_version == 8) {
-					*_msgPtrToAdd++ = ptr[num++];
-					*_msgPtrToAdd++ = ptr[num++];
-				}
-				break;
-			default:
-				debug(2, "addMessageToStack(): string escape sequence %d unknown", chr);
-				*_msgPtrToAdd++ = 0xFF;
-				*_msgPtrToAdd++ = chr;
-				break;
+				num += (_version == 8) ? 4 : 2;
 			}
 		} else {
 			if (chr != '@') {
@@ -602,7 +577,6 @@ const byte *ScummEngine::addMessageToStack(const byte *msg) {
 		}
 	}
 	*_msgPtrToAdd = 0;
-	_numInMsgStack = numorg;
 
 	return msg;
 }
@@ -627,8 +601,6 @@ void ScummEngine::addVerbToStack(int var) {
 				break;
 			}
 		}
-	} else {
-		addMessageToStack((const byte *)"");
 	}
 }
 
@@ -646,8 +618,6 @@ void ScummEngine::addNameToStack(int var) {
 		} else {
 			addMessageToStack(ptr);
 		}
-	} else {
-		addMessageToStack((const byte *)"");
 	}
 }
 
@@ -667,8 +637,7 @@ void ScummEngine::addStringToStack(int var) {
 				addMessageToStack(ptr);
 			}
 		}
-	} else
-		addMessageToStack((const byte *)"");
+	}
 }
 
 void ScummEngine::initCharset(int charsetno) {
