@@ -521,18 +521,15 @@ void SkyLogic::talk() {
 
 	uint16 *graphixProg = _compact->grafixProg; // no anim file?
 	if (graphixProg) {
-		if (*graphixProg) {
+		if ((*graphixProg) && ((_compact->extCompact->spTime != 3) || (!_skySound->speechFinished()))) {
 			// we will force the animation to finish 3 game cycles
 			// before the speech actually finishes - because it looks good.
 
-			if ((_compact->extCompact->spTime != 3) || (!_skySound->speechFinished())) {
-				_compact->frame = *(graphixProg + 2) + _compact->offset;
-				graphixProg += 3;
-				_compact->grafixProg = graphixProg;
-			}
+			_compact->frame = *(graphixProg + 2) + _compact->offset;
+			graphixProg += 3;
+			_compact->grafixProg = graphixProg;
 		} else {
-			// we ran out of frames, let actor stand still.
-			// TODO: we should improve this and simply restart animation.
+			// we ran out of frames or finished speech, let actor stand still.
 			_compact->frame = _compact->getToFlag;
 			_compact->grafixProg = 0;
 		}
