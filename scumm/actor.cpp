@@ -904,33 +904,31 @@ void Actor::drawActorCostume() {
 	bcr->_dirty_id = number;
 
 	if (!(_vm->_features & GF_NEW_COSTUMES)) {
-		CostumeRenderer& cr = *(CostumeRenderer *)bcr;
 
 		if (forceClip)
-			cr._zbuf = forceClip;
+			bcr->_zbuf = forceClip;
 		else if (isInClass(kObjectClassNeverClip))
-			cr._zbuf = 0;
+			bcr->_zbuf = 0;
 		else {
-			cr._zbuf = _vm->getMaskFromBox(walkbox);
-			if (cr._zbuf > _vm->gdi._numZBuffer)
-				cr._zbuf = _vm->gdi._numZBuffer;
+			bcr->_zbuf = _vm->getMaskFromBox(walkbox);
+			if (bcr->_zbuf > _vm->gdi._numZBuffer)
+				bcr->_zbuf = _vm->gdi._numZBuffer;
 		}
 
-		cr._draw_top = top = 0xFF;
-		cr._draw_bottom = bottom = 0;
+		bcr->_draw_top = top = 0xFF;
 	} else {
-		AkosRenderer& ar = *(AkosRenderer *)bcr;
 
-		ar._zbuf = forceClip;
-		if (ar._zbuf == 100) {
-			ar._zbuf = _vm->getMaskFromBox(walkbox);
-			if (ar._zbuf > _vm->gdi._numZBuffer)
-				ar._zbuf = _vm->gdi._numZBuffer;
+		bcr->_zbuf = forceClip;
+		if (bcr->_zbuf == 100) {
+			bcr->_zbuf = _vm->getMaskFromBox(walkbox);
+			if (bcr->_zbuf > _vm->gdi._numZBuffer)
+				bcr->_zbuf = _vm->gdi._numZBuffer;
 		}
 
-		ar._draw_top = top = 0x7fffffff;
-		ar._draw_bottom = bottom = 0;
+		bcr->_draw_top = top = 0x7fffffff;
 	}
+
+	bcr->_draw_bottom = bottom = 0;
 
 	bcr->_outptr = _vm->virtscr[0].screenPtr + _vm->virtscr[0].xstart;
 	bcr->_outwidth = _vm->virtscr[0].width;
@@ -953,9 +951,14 @@ void Actor::drawActorCostume() {
 		needRedraw = true;
 	}
 
+	// Record the vertical extent of the drawn actor
 	top = bcr->_draw_top;
 	bottom = bcr->_draw_bottom;
 	
+	// Finally get rid of the costume renderer again.
+	// TODO: Instead of creating costume renderers on the fly and then
+	// disposing them again, we could once at the start create one,
+	// and then reuse it.
 	delete bcr;
 }
 

@@ -43,8 +43,8 @@ struct CostumeInfo {
 class Actor;
 class Scumm;
 
-/*
- * Base class for both CostumeRenderer and AkosRenderer
+/**
+ * Base class for both CostumeRenderer and AkosRenderer.
  */
 struct BaseCostumeRenderer {
 public:
