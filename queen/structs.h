@@ -382,32 +382,7 @@ struct CmdListData {
 	bool setConditions;
 	//! graphic image order
 	int16 imageOrder;
-	//! special section to execute
-	/*!
-		refer to execute.c l.423-451
-		<table>
-			<tr>
-				<td>value</td>
-				<td>description</td>
-			</tr>
-			<tr>
-				<td>1</td>
-				<td>use journal</td>
-			</tr>
-			<tr>
-				<td>2</td>
-				<td>use dress</td>
-			</tr>
-			<tr>
-				<td>3</td>
-				<td>use normal clothes</td>
-			</tr>
-			<tr>
-				<td>4</td>
-				<td>use underwear</td>
-			</tr>
-		</table>
-	*/
+	//! special section to execute (refer to execute.c l.423-451)
 	int16 specialSection;
 
 	void readFrom(byte *&ptr) {

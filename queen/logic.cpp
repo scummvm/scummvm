@@ -968,7 +968,7 @@ uint16 Logic::roomRefreshObject(uint16 obj) {
 
 	// check the object is in the current room
 	if (pod->room != _currentRoom) {
-		debug(0, "Trying to display an object (%i=%s) that is not in room (object room=%i, current room=%i)", obj, _objName[ABS(pod->name)], pod->room, _currentRoom);
+		debug(0, "Refreshing an object (%i=%s) not in current room (object room=%i, current room=%i)", obj, _objName[ABS(pod->name)], pod->room, _currentRoom);
 		return curImage;
 	}
 
@@ -1770,6 +1770,7 @@ void Logic::joeSpeak(uint16 descNum, bool objectType) {
 
 
 Verb Logic::findVerbUnderCursor(int16 cursorx, int16 cursory) const {
+
 	static const Verb pv[] = {
 		VERB_NONE,
 		VERB_OPEN,
@@ -1802,27 +1803,21 @@ uint16 Logic::findObjectUnderCursor(int16 cursorx, int16 cursory) const {
 }
 
 
-uint16 Logic::findObjectRoomNumber(uint16 zoneNum) const {
+uint16 Logic::findObjectNumber(uint16 zoneNum) const {
 
 	// l.316-327 select.c
-	uint16 noun = zoneNum;
-	uint16 objectMax = _objMax[_currentRoom];
-	debug(0, "Logic::findObjectRoomNumber(%X, %X)", zoneNum, objectMax);
+	uint16 obj = zoneNum;
+	uint16 objectMax = currentRoomObjMax();
+	debug(9, "Logic::findObjectNumber(%X, %X)", zoneNum, objectMax);
 	if (zoneNum > objectMax) {
 		// this is an area box, check for associated object
-		uint16 obj = currentRoomArea(zoneNum - objectMax)->object;
-		if (obj != 0 && objectData(obj)->name != 0) {
+		obj = currentRoomArea(zoneNum - objectMax)->object;
+		if (obj != 0) {
 			// there is an object, get its number
-			noun = obj - _roomData[_currentRoom];
+			obj -= currentRoomData();
 		}
 	}
-	return noun;
-}
-
-
-uint16 Logic::findObjectGlobalNumber(uint16 zoneNum) const {
-
-	return _roomData[_currentRoom] + findObjectRoomNumber(zoneNum);
+	return obj;
 }
 
 
@@ -2015,8 +2010,11 @@ void Logic::objectCopy(int dummyObjectIndex, int realObjectIndex) {
 
 
 void Logic::checkPlayer() {
+
 	update();
-	_vm->command()->updatePlayer();
+	if (!_vm->input()->cutawayRunning()) {
+		_vm->command()->updatePlayer();
+	}
 }
 
 

@@ -51,30 +51,21 @@ struct CmdText {
 };
 
 
-struct CurrentCmdState {
+struct CmdState {
 
 	void init();
-	void addObject(int16 objNum);
 
-	Verb oldVerb;
-	Verb verb;
+	Verb oldVerb, verb;
 	Verb action;
-	int16 oldNoun;
-	int16 noun;
+	int16 oldNoun, noun;
 	int commandLevel;
-	int16 subject1;
-	int16 subject2;
-};
+	int16 subject[2];
 
-
-struct SelectedCmdState {
-
-	void init();
-	
 	Verb defaultVerb;
-	Verb action;
-	int16 noun;
+	Verb selAction;
+	int16 selNoun;
 };
+
 
 class Command {
 public:
@@ -85,7 +76,7 @@ public:
 	void clear(bool clearTexts);
 
 	//! execute last constructed command
-	void executeCurrentAction(bool walk);
+	void executeCurrentAction();
 
 	//! get player input and construct command from it
 	void updatePlayer();
@@ -93,8 +84,6 @@ public:
 	//! read all command arrays from stream
 	void readCommandsFrom(byte *&ptr);
 
-	//! return true if command is ready to be executed
-	bool parse() const { return _parse; }
 
 	enum {
 		MAX_MATCHING_CMDS = 50
@@ -102,6 +91,9 @@ public:
 
 
 private:
+
+	ObjectData *findObjectData(uint16 objRoomNum) const;
+	ItemData *findItemData(Verb invNum) const;
 
 	int16 executeCommand(uint16 comId, int16 condResult);
 
@@ -116,16 +108,10 @@ private:
 	bool executeIfCutaway(const char *description);
 	bool executeIfDialog(const char *description);
 	
-	bool handleDefaultCommand(bool walk);
-	void executeStandardStuff(Verb action, int16 subj1, int16 subj2);
+	bool handleWrongAction();
+	void sayInvalidAction(Verb action, int16 subj1, int16 subj2);
 	void changeObjectState(Verb action, int16 obj, int16 song, bool cutDone);
 	void cleanupCurrentAction();
-
-	//! find default verb action for specified object
-	Verb findDefault(uint16 obj, bool itemType);
-
-	//! alter default verb action for specified object and update command display
-	void alterDefault(Verb def, bool itemType);
 	
 	//! OPEN_CLOSE_OTHER(OBJECT_DATA[S][4])
 	void openOrCloseAssociatedObject(Verb action, int16 obj);
@@ -145,15 +131,17 @@ private:
 	//! update description for object and returns description number to use
 	uint16 nextObjectDescription(ObjectDescription *objDesc, uint16 firstDesc);
 
-	//! look at current object / item and speak its description
-	void look();
-	void lookCurrentItem();
-	void lookCurrentRoom();
-	void lookCurrentIcon();
+	//! speak description of selected object
+	void lookAtSelectedObject();
 
-	bool isVerbPanel(Verb v) const { return v >= VERB_PANEL_COMMAND_FIRST && v <= VERB_PANEL_COMMAND_LAST; };
+	//! get the current objects under the cursor
+	void lookForCurrentObject();
+
+	//! get the current icon panel under the cursor (inventory item or verb)
+	void lookForCurrentIcon();
+
+	bool isVerbAction(Verb v) const { return (v >= VERB_PANEL_COMMAND_FIRST && v <= VERB_PANEL_COMMAND_LAST) || (v == VERB_WALK_TO); };
 	bool isVerbInv(Verb v) const { return v >= VERB_INV_FIRST && v <= VERB_INV_LAST; }
-	bool isVerbScrollInv(Verb v) const { return v == VERB_SCROLL_UP || v == VERB_SCROLL_DOWN; }
  
 	CmdListData *_cmdList;
 	uint16 _numCmdList;
@@ -176,9 +164,8 @@ private:
 	//! flag indicating that the current command is fully constructed
 	bool _parse;
 
-	CurrentCmdState _curCmd;
-
-	SelectedCmdState _selCmd;
+	//! state of current constructed command
+	CmdState _state;
 
 	//! last user selection
 	int _mouseKey, _selPosX, _selPosY;

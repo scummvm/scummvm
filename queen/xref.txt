@@ -14,14 +14,13 @@ unpack()					Graphics::bankUnpack
 
 COMMAND
 =======
-ALTER_DEFAULT()				Command::alterDefault
+ALTER_DEFAULT()				*not needed* (use State::alterDefaultVerb)
 CLEAR_COMMAND()				Command::clear
 EXECUTE_ACTION()			Command::executeCurrentAction
-FIND_DEFAULT()				Command::findDefault
-LOOK()						Command::look
-LOOK_ICON()					Command::lookCurrentIcon
-LOOK_ITEM()					Command::lookCurrentItem
-LOOK_ROOM()					Command::lookCurrentRoom
+FIND_DEFAULT()				*not needed* (use State::findDefaultVerb)
+LOOK()						Command::lookAtSelectedObject
+LOOK_ICON(),LOOK_ITEM()		Command::lookForCurrentIcon
+LOOK_ROOM()					Command::lookForCurrentObject
 OPEN_CLOSE_OTHER()			Command::openOrCloseAssociatedObject
 P1_SET_CONDITIONS()			Command::setConditions
 P2_SET_AREAS()				Command::setAreas
@@ -33,9 +32,9 @@ SELECT_NOUN()				Command::grabSelectedNoun
 SELECT_VERB()				Command::grabSelectedVerb
 WALK()						Command::makeJoeWalkTo
 -
-ACTION						Command::_curCmd.action
-ACTION2						Command::_selCmd.action
-CLEVEL						Command::_curCmd.commandLevel
+ACTION						Command::_state.action
+ACTION2						Command::_state.selAction
+CLEVEL						Command::_state.commandLevel
 COM_A						Command::_cmdArea
 COM_A_MAX					Command::_numCmdArea
 COM_O						Command::_cmdObject
@@ -47,13 +46,13 @@ COM_I_MAX					Command::_numCmdInventory
 COM_LIST					Command::_cmdList
 COM_LIST_MAX				Command::_numCmdList
 COMMANDstr					Command::_command
-DEFCOMM						Command::_selCmd.defaultVerb
+DEFCOMM						Command::_state.defaultVerb
 MKEY						Command::_mouseKey
-OLDVERB,VERB				Command::_curCmd.*verb
-OLDNOUN,NOUN				Command::_curCmd.*noun
-NOUN2						Command::_selCmd.noun
+OLDVERB,VERB				Command::_state.*verb
+OLDNOUN,NOUN				Command::_state.*noun
+NOUN2						Command::_state.selNoun
 PARSE						Command::_parse
-SUBJ1,SUBJ2,SUBJECT			Command::_selCmd.subject*
+SUBJ1,SUBJ2					Command::_state.subject*
 
 
 CREDIT SCRIPTING SYSTEM
@@ -497,4 +496,4 @@ OBJMAXv	// == Logic::_objMax[Logic::_currentRoom]
 TEMPstr
 WORDstr 
 JOE2str,PERSON2str // locals in Talk::initialTalk
-
+SUBJECT

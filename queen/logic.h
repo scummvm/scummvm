@@ -198,8 +198,7 @@ public:
 
 	Verb findVerbUnderCursor(int16 cursorx, int16 cursory) const;
 	uint16 findObjectUnderCursor(int16 cursorx, int16 cursory) const;
-	uint16 findObjectRoomNumber(uint16 zoneNum) const;
-	uint16 findObjectGlobalNumber(uint16 zoneNum) const;
+	uint16 findObjectNumber(uint16 zoneNum) const;
 
 	void inventorySetup();
 	uint16 findInventoryItem(int invSlot) const;
