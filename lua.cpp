@@ -317,7 +317,12 @@ static void SetActorTurnChores() {
 static void SetActorTalkChore() {
 	Actor *act = check_actor(1);
 	int index = check_int(2);
-	int chore = lua_isnil(lua_getparam(3)) ? check_int(3) : -1;
+	int chore;
+
+	if (lua_isnumber(lua_getparam(3)))
+		chore = check_int(3);
+	else
+		chore = -1;
 
 	Costume *costume = get_costume(act, 4, "setActorTalkChore");
 
