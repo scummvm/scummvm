@@ -131,7 +131,7 @@ void QueenEngine::roomChanged() {
 		_logic->roomDisplay(_logic->roomName(_logic->currentRoom()), RDM_FADE_JOE, 100, 2, true);
 		Cutaway::run("c70d.cut", nextFilename, _graphics, _logic, _resource);
 
-		//_logic->gameState(117) == 1;
+		_logic->gameState(117, 1);
 
 		// XXX setupItems();
 		// XXX inventory();
