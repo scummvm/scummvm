@@ -289,6 +289,7 @@ void Config::rename_domain(const char * d) {
 		rename_domain(d);
 	    } else {
 		hash[i]->rename(d);
+		set_domain(d);
 	    }
 	}
     }

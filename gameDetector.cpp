@@ -242,8 +242,9 @@ void GameDetector::parseCommandLine(int argc, char **argv)
 			if (_exe_name)
 				goto ShowHelpAndExit;
 			_exe_name = s;
-			scummcfg->rename_domain(s);
 			scummcfg->set_domain(s);
+			scummcfg->rename_domain("game-specific");
+			scummcfg->rename_domain(s);
 			updateconfig();
 		}
 	}
