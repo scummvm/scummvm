@@ -110,7 +110,7 @@ enum Language {
 	HB_HEB = 20,
 	RU_RUS = 21,
 	CZ_CZE = 22,
-	NL_NOR = 23
+	NL_NLD = 23
 };
 
 struct LanguageDescription {
