@@ -1935,8 +1935,8 @@ void ScummEngine_v72he::o72_unknownFA() {
 }
 
 void ScummEngine_v72he::decodeParseString(int m, int n) {
-	byte b;
-	int i, id, color;
+	byte b, *ptr;
+	int i, color, size;
 	int args[31];
 	byte name[1024];
 
@@ -2008,8 +2008,24 @@ void ScummEngine_v72he::decodeParseString(int m, int n) {
 		}
 		break;
 	case 0xE1:
-		id = pop();
-		// Load and display talkie resource.
+		ptr = getResourceAddress(rtTalkie, pop());
+		size = READ_BE_UINT32(ptr + 12);
+		memcpy(name, ptr + 16, size);
+
+		switch (m) {
+		case 0:
+			actorTalk(name);
+			break;
+		case 1:
+			drawString(1, name);
+			break;
+		case 2:
+			unkMessage1(name);
+			break;
+		case 3:
+			unkMessage2(name);
+			break;
+		}
 		break;
 	case 0xF9:
 		color = pop();
