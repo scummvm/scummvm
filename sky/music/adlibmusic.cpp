@@ -32,12 +32,12 @@ SkyAdlibMusic::SkyAdlibMusic(SoundMixer *pMixer, SkyDisk *pSkyDisk, OSystem *sys
 
 	_driverFileBase = 60202;
     _mixer = pMixer;
-	_sampleRate = g_system->property(OSystem::PROP_GET_SAMPLE_RATE, 0);
+	_sampleRate = pMixer->getOutputRate();
 
 	int env_bits = g_system->property(OSystem::PROP_GET_FMOPL_ENV_BITS, NULL);   
 	int eg_ent = g_system->property(OSystem::PROP_GET_FMOPL_EG_ENT, NULL);   
 	OPLBuildTables((env_bits ? env_bits : FMOPL_ENV_BITS_HQ), (eg_ent ? eg_ent : FMOPL_EG_ENT_HQ));
-	_opl = OPLCreate(OPL_TYPE_YM3812, 3579545, g_system->property(OSystem::PROP_GET_SAMPLE_RATE, 0));
+	_opl = OPLCreate(OPL_TYPE_YM3812, 3579545, _sampleRate);
   
 	_mixer->setupPremix(this, passMixerFunc);
 }

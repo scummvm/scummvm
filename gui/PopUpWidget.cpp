@@ -104,7 +104,7 @@ PopUpDialog::PopUpDialog(PopUpWidget *boss, int clickX, int clickY)
 	_clickY = clickY - _y;
 
 	// Time the popup was opened
-	_openTime = g_system->get_msecs();
+	_openTime = _gui->get_time();
 }
 
 void PopUpDialog::drawDialog() {
@@ -127,7 +127,7 @@ void PopUpDialog::handleMouseUp(int x, int y, int button, int clickCount) {
 	// Mouse was released. If it wasn't moved much since the original mouse down, 
 	// let the popup stay open. If it did move, assume the user made his selection.
 	int dist = (_clickX - x) * (_clickX - x) + (_clickY - y) * (_clickY - y);
-	if (dist > 3 * 3 || g_system->get_msecs() - _openTime > 300) {
+	if (dist > 3 * 3 || _gui->get_time() - _openTime > 300) {
 		setResult(_selection);
 		close();
 	}
