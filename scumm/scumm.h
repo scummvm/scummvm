@@ -489,6 +489,9 @@ public:
 	int _roomResource;  // FIXME - should be protected but Sound::pauseSounds uses it
 	bool _egoPositioned;	// Used by Actor::putActor, hence public
 
+	int generateMacFileName(const char *filename, char *buf, int bufsize, int cont = 0, int index = 0);
+	int _heMacFileNameIndex;
+
 protected:
 	int _keyPressed;
 	uint16 _lastKeyHit;

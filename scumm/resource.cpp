@@ -123,6 +123,16 @@ void ScummEngine::openRoom(int room) {
 			encByte = (_features & GF_USE_KEY) ? 0xFF : 0;
 		}
 
+		// If we have substitute
+		if (_heMacFileNameIndex > 0) {
+			char tmpBuf[128];
+
+			generateMacFileName(buf, tmpBuf, 128, 0, _heMacFileNameIndex);
+			strcpy(buf, tmpBuf);
+			generateMacFileName(buf2, tmpBuf, 128, 0, _heMacFileNameIndex);
+			strcpy(buf2, tmpBuf);
+		}
+
 		result = openResourceFile(buf, encByte);
 		if ((result == false) && (buf2[0])) {
 			result = openResourceFile(buf2, encByte);

@@ -1547,6 +1547,13 @@ void ScummEngine_v72he::o72_openFile() {
 		sprintf((char *)filename, "%s.he9", _gameName.c_str());
 	}
 
+	if (_heMacFileNameIndex > 0) {
+		char buf1[128];
+
+		generateMacFileName((char *)filename, buf1, 128, 0, _heMacFileNameIndex);
+		strcpy((char *)filename, buf1);
+	}
+
 	for (r = strlen((char*)filename); r != 0; r--) {
 		if (filename[r - 1] == '\\')
 			break;

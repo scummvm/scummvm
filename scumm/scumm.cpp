@@ -69,7 +69,7 @@
 extern bool isSmartphone(void);
 #endif
 
-static int generateMacFileName(const char *filename, char *buf, int bufsize, int cont = 0);
+static int generateMacFileName_(const char *filename, char *buf, int bufsize, int cont = 0, int index = 0);
 
 namespace Scumm {
 
@@ -678,6 +678,7 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 	_expire_counter = 0;
 	_lastLoadedRoom = 0;
 	_roomResource = 0;
+	_heMacFileNameIndex = 0;
 	OF_OWNER_ROOM = 0;
 	_verbMouseOver = 0;
 	_inventoryOffset = 0;
@@ -2597,6 +2598,11 @@ void ScummEngine::errorString(const char *buf1, char *buf2) {
 	}
 }
 
+int ScummEngine::generateMacFileName(const char *filename, char *buf, int bufsize, int cont, int index) {
+	return generateMacFileName_(filename, buf, bufsize, cont, index);
+}
+
+
 } // End of namespace Scumm
 
 using namespace Scumm;
@@ -2674,7 +2680,7 @@ DetectedGameList Engine_SCUMM_detectGames(const FSList &fslist) {
 			}
 
 			if (g->features & GF_HUMONGOUS) {
-				if ((heLastName = generateMacFileName(tempName, detectName, 128, 
+				if ((heLastName = generateMacFileName_(tempName, detectName, 128, 
 													  heLastName)) == -1)
 					heOver = true;
 			} else {
@@ -2736,7 +2742,7 @@ DetectedGameList Engine_SCUMM_detectGames(const FSList &fslist) {
 	return detectedGames;
 }
 
-static int generateMacFileName(const char *filename, char *buf, int bufsize, int cont) {
+static int generateMacFileName_(const char *filename, char *buf, int bufsize, int cont, int index) {
 	if (cont == -1)
 		return -1;
 
@@ -2744,8 +2750,16 @@ static int generateMacFileName(const char *filename, char *buf, int bufsize, int
 		cont++;
 
 	char num = filename[strlen(filename) - 1];
+	
+	// In some cases we have .(a) and .(b) extensions
+	if (num == ')')
+		num = filename[strlen(filename) - 2];
+
 	char *n = strrchr(filename, '.');
 	int len = n - filename;
+
+	if (index > 0)
+		cont = index;
 
 	for (int i = cont; i < ARRAYSIZE(heMacFileNameTable); i++) {
 		if (!scumm_strnicmp(filename, heMacFileNameTable[i].winName, len)) {
@@ -2777,8 +2791,9 @@ Engine *Engine_SCUMM_create(GameDetector *detector, OSystem *syst) {
 
 	// Calculate MD5 of the games detection file, for savegames etc.
 	const char *name = g->name;
-	char detectName[256], gameMD5[32+1];
+	char detectName[256], tempName[256], gameMD5[32+1];
 	uint8 md5sum[16];
+	int heLastName = 0;
 
 	if (g->detectFilename) {
 		strcpy(detectName, game.detectFilename);
@@ -2792,6 +2807,24 @@ Engine *Engine_SCUMM_create(GameDetector *detector, OSystem *syst) {
 	} else if (g->features & GF_HUMONGOUS) {
 		strcpy(detectName, name);
 		strcat(detectName, ".he0");
+		strcpy(tempName, name);
+		strcat(tempName, ".he0");
+		
+		bool heOver = false;
+		File f;
+
+		while (!heOver) {
+			if (f.exists(detectName, ConfMan.get("path").c_str()))
+				break;
+
+			if ((heLastName = generateMacFileName_(tempName, detectName, 256, 
+													  heLastName)) == -1)
+					heOver = true;
+		}
+
+		// Force game to have Mac platform
+		if (heLastName > 0)
+			game.features |= GF_MACINTOSH;
 	} else {
 		strcpy(detectName, name);
 		strcat(detectName, ".000");
@@ -2921,6 +2954,10 @@ Engine *Engine_SCUMM_create(GameDetector *detector, OSystem *syst) {
 	default:
 		error("Engine_SCUMM_create(): Unknown version of game engine");
 	}
+
+	// FIXME: dirty HACK. Should we introduce another parameter to constructor
+	// instead?
+	((ScummEngine *)engine)->_heMacFileNameIndex = heLastName;
 
 	return engine;
 }

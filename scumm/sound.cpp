@@ -171,10 +171,15 @@ void Sound::playSound(int soundID, int heOffset, int heChannel, int heFlags) {
 
 		int music_offs, total_size;
 		uint tracks, skip = 0;
-		char buf[32];
+		char buf[32], buf1[128];
 		File musicFile;
 
 		sprintf(buf, "%s.he4", _vm->getGameName());
+
+		if (_vm->_heMacFileNameIndex > 0) {
+			_vm->generateMacFileName(buf, buf1, 128, 0, _vm->_heMacFileNameIndex);
+			strcpy(buf, buf1);
+		}
 		if (musicFile.open(buf) == false) {
 			warning("playSound: Music file is not open");
 			return;
@@ -1072,10 +1077,18 @@ ScummFile *Sound::openSfxFile() {
 	}
 
 	if (!file->isOpen()) {
-		if (_vm->_heversion >= 70)
+		if (_vm->_heversion >= 70) {
 			sprintf(buf, "%s.he2", _vm->getGameName());
-		else
+
+			if (_vm->_heMacFileNameIndex > 0) {
+				char buf1[128];
+
+				_vm->generateMacFileName(buf, buf1, 128, 0, _vm->_heMacFileNameIndex);
+				strcpy(buf, buf1);
+			}
+		} else {
 			sprintf(buf, "%s.tlk", _vm->getGameName());
+		}
 		if (file->open(buf) && _vm->_heversion <= 72) 
 			file->setEnc(0x69);
 		_soundMode = kVOCMode;
