@@ -134,6 +134,7 @@ void ImuseSndMgr::parseSoundHeader(byte *ptr, SoundStruct *sound, int &headerSiz
 		}
 		for (i = 0; i < sound->numJumps; i++) {
 			sound->jump[i].offset -= headerSize;
+			sound->jump[i].dest -= headerSize;
 		}
 	} else {
 		error("ImuseSndMgr::prepareSound() Unknown sound format");

@@ -57,30 +57,31 @@ bool McmpMgr::openSound(const char *filename, byte **resPtr, int &offsetData) {
 
 	uint32 tag;
 	fread(&tag, 1, 4, _file);
-	tag = MKID_BE(tag);
-	if (tag != MKID_BE('MCMP')) {
+	if (READ_BE_UINT32(&tag) != MKID_BE('MCMP')) {
 		error("McmpMgr::loadCompTable() Expected MCMP tag");
 		return false;
 	}
 
 	fread(&_numCompItems, 1, 2, _file);
-	_numCompItems = MKID_BE(_numCompItems);
+	_numCompItems = READ_BE_UINT16(&_numCompItems);
 	assert(_numCompItems > 0);
 
-	int offset = ftell(_file) + (_numCompItems * 9) + 8;
+	int offset = ftell(_file) + (_numCompItems * 9) + 2;
 	_numCompItems--;
 	_compTable = (CompTable *)malloc(sizeof(CompTable) * _numCompItems);
 	fseek(_file, 5, SEEK_CUR);
 	fread(&_compTable[0].decompSize, 1, 4, _file);
+	int headerSize = _compTable[0].decompSize = READ_BE_UINT32(&_compTable[0].decompSize);
+	int maxSize = headerSize;
+	offset += headerSize;
 
-	int32 maxSize = 0;
 	int i;
 	for (i = 0; i < _numCompItems; i++) {
 		fread(&_compTable[i].codec, 1, 1, _file);
 		fread(&_compTable[i].decompSize, 1, 4, _file);
-		_compTable[i].decompSize = MKID_BE(_compTable[i].decompSize);
+		_compTable[i].decompSize = READ_BE_UINT32(&_compTable[i].decompSize);
 		fread(&_compTable[i].compSize, 1, 4, _file);
-		_compTable[i].compSize = MKID_BE(_compTable[i].compSize);
+		_compTable[i].compSize = READ_BE_UINT32(&_compTable[i].compSize);
 		_compTable[i].offset = offset;
 		offset += _compTable[i].compSize;
 		if (_compTable[i].compSize > maxSize)
@@ -88,16 +89,15 @@ bool McmpMgr::openSound(const char *filename, byte **resPtr, int &offsetData) {
 	}
 	int16 sizeCodecs;
 	fread(&sizeCodecs, 1, 2, _file);
-	sizeCodecs = MKID_BE(sizeCodecs);
+	sizeCodecs = READ_BE_UINT16(&sizeCodecs);
 	for (i = 0; i < _numCompItems; i++) {
 		_compTable[i].offset += sizeCodecs;
 	}
 	fseek(_file, sizeCodecs, SEEK_CUR);
 	_compInput = (byte *)malloc(maxSize);
-	fread(_compInput, 1, _compTable[0].decompSize, _file);
+	fread(_compInput, 1, headerSize, _file);
 	*resPtr = _compInput;
-	offsetData = _compTable[0].compSize;
-
+	offsetData = headerSize;
 	return true;
 }
 
