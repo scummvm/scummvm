@@ -204,18 +204,33 @@ void SimonEngine::showmessage_helper_3(uint a, uint b) {
 }
 
 void SimonEngine::video_putchar(FillOrCopyStruct *fcs, byte c) {
+	byte width = 6;
+
 	if (c == 0xC) {
 		video_fill_or_copy_from_3_to_2(fcs);
 	} else if (c == 0xD || c == 0xA) {
 		video_putchar_newline(fcs);
-	} else if (c == 8 || c == 1) {
-		int8 val = (c == 8) ? 6 : 4;
-		if (fcs->textLength != 0) {
-			fcs->textLength--;
-			fcs->textColumnOffset -= val;
-			if ((int8)fcs->textColumnOffset < val) {
-				fcs->textColumnOffset += 8;
-				fcs->textColumn--;
+	} else if (c == 8 || (_language != 20 && c == 1)) {
+		if (_language == 20) { //Hebrew
+			if (fcs->textLength != 0) {
+				if (c >= 64 && c < 91)
+					width = _hebrew_char_widths [c-64];
+				fcs->textLength--;			
+				fcs->textColumnOffset += width;
+				if (fcs->textColumnOffset >= 8) {
+					fcs->textColumnOffset -= 8;
+					fcs->textColumn--;
+				}
+			}
+		} else {
+			int8 val = (c == 8) ? 6 : 4;
+			if (fcs->textLength != 0) {
+				fcs->textLength--;
+				fcs->textColumnOffset -= val;
+				if ((int8)fcs->textColumnOffset < val) {
+					fcs->textColumnOffset += 8;
+					fcs->textColumn--;
+				}
 			}
 		}
 	} else if (c >= 0x20) {
@@ -226,19 +241,29 @@ void SimonEngine::video_putchar(FillOrCopyStruct *fcs, byte c) {
 			fcs->textRow--;
 		}
 
-		if (_language == 20)
+		if (_language == 20) { //Hebrew
+			if (c >= 64 && c < 91)
+				width = _hebrew_char_widths [c-64];
+
+			fcs->textColumnOffset  -= width;
+			if (fcs->textColumnOffset >= width) {
+				++fcs->textColumn;
+				fcs->textColumnOffset += 8;
+			}
 			video_putchar_drawchar(fcs, fcs->width + fcs->x - fcs->textColumn, fcs->textRow * 8 + fcs->y, c);
-		else
+			fcs->textLength++;
+		} else {
 			video_putchar_drawchar(fcs, fcs->textColumn + fcs->x, fcs->textRow * 8 + fcs->y, c);
 
-		fcs->textLength++;
-		fcs->textColumnOffset += 6;
-		if (c == 'i' || c == 'l')
-			fcs->textColumnOffset -= 2;
+			fcs->textLength++;
+			fcs->textColumnOffset += 6;
+			if (c == 'i' || c == 'l')
+				fcs->textColumnOffset -= 2;
 
-		if (fcs->textColumnOffset >= 8) {
-			fcs->textColumnOffset -= 8;
-			fcs->textColumn++;
+			if (fcs->textColumnOffset >= 8) {
+				fcs->textColumnOffset -= 8;
+				fcs->textColumn++;
+			}
 		}
 	}
 }

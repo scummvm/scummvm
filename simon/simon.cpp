@@ -437,6 +437,9 @@ SimonEngine::SimonEngine(GameDetector *detector, OSystem *syst)
 	_sdl_buf_attached = 0;
 
 	_vc_10_base_ptr_old = 0;
+	memcpy (_hebrew_char_widths,
+		"\x5\x5\x4\x6\x5\x3\x4\x5\x6\x3\x5\x5\x4\x6\x5\x3\x4\x6\x5\x6\x6\x6\x5\x5\x5\x6\x5\x6\x6\x6\x6\x6", 32);
+
 
 	// Setup midi driver
 	if (!driver)
@@ -2656,10 +2659,17 @@ restart:;
 
 		fcs->textRow = unk132_result;
 
-		// init x offset with a 2 character savegame number + a period (18 pix)
-		fcs->textColumn = 2;
-		fcs->textColumnOffset = 2;
-		fcs->textLength = 3;
+		if (_language == 20) {
+			// init x offset with a 2 character savegame number + a period (18 pix)
+			fcs->textColumn = 3;
+			fcs->textColumnOffset = 6;
+			fcs->textLength = 3;
+		} else {
+			// init x offset with a 2 character savegame number + a period (18 pix)
+			fcs->textColumn = 2;
+			fcs->textColumnOffset = 2;
+			fcs->textLength = 3;
+		}
 
 		name = buf + i * 18;
 

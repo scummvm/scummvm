@@ -348,6 +348,7 @@ protected:
 	RandomSource _rnd;
 
 	byte *_vc_10_base_ptr_old;
+	byte _hebrew_char_widths[32];
 
 public:
 	SimonEngine(GameDetector *detector, OSystem *syst);
