@@ -61,6 +61,7 @@ class FilesystemNode;
  * List of multiple file system nodes. E.g. the contents of a given directory.
  */
 class FSList : public Common::Array<FilesystemNode> {
+public:
 	void sort();
 };
 
