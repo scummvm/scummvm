@@ -31,11 +31,6 @@ public:
 	virtual ~SaveFile() {}
 	virtual int fread(void *buf, int size, int cnt) = 0;
 	virtual int fwrite(void *buf, int size, int cnt) = 0;
-#ifdef _WIN32_WCE
-	//Should go away.  See scumm/saveload.cpp and scumm/imuse.cpp
-	virtual int fseek(long offs, int whence) = 0;
-	virtual int feof() = 0;
-#endif
 };
 
 class StdioSaveFile : public SaveFile {
@@ -55,12 +50,6 @@ public:
 		{ return ::fread(buf, size, cnt, fh); }
 	int fwrite(void *buf, int size, int cnt)
 		{ return ::fwrite(buf, size, cnt, fh); }	
-#ifdef _WIN32_WCE
-	int fseek(long offs, int whence)
-		{ return ::fseek(fh, offs, whence); }
-	int feof()
-		{ return ::feof(fh); }
-#endif
 };
 
 class SaveFileManager {
