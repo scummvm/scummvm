@@ -302,8 +302,8 @@ void Scumm::setupOpcodes2()
 		/* D4 */
 		&Scumm::o6_invalid,
 		&Scumm::o6_jumpToScript,
-		&Scumm::o6_land,
-		&Scumm::o6_lor,
+		&Scumm::o6_band,
+		&Scumm::o6_bor,
 		/* D8 */
 		&Scumm::o6_isRoomScriptRunning,
 		&Scumm::o6_invalid,
@@ -625,8 +625,8 @@ void Scumm::setupOpcodes2()
 		/* D4 */
 		"o6_invalid",
 		"o6_jumpToScript",
-		"o6_land",
-		"o6_lor",
+		"o6_band",
+		"o6_bor",
 		/* D8 */
 		"o6_isRoomScriptRunning",
 		"o6_invalid",
@@ -889,16 +889,28 @@ void Scumm::o6_div()
 	push(pop() / a);
 }
 
-void Scumm::o6_land()
+void Scumm::o6_land()	// Logical And
 {
 	int a = pop();
 	push(pop() && a);
 }
 
-void Scumm::o6_lor()
+void Scumm::o6_lor()	// Logical Or
 {
 	int a = pop();
 	push(pop() || a);
+}
+
+void Scumm::o6_bor()	// Bitwise Or
+{
+	int a = pop();
+	push(pop() | a);
+}
+
+void Scumm::o6_band()	// Bitwise And
+{
+	int a = pop();
+	push(pop() | a);
 }
 
 void Scumm::o6_kill()

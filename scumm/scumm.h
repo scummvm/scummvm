@@ -541,6 +541,7 @@ public:
 	void runAllScripts();
 	void setupOpcodes();
 	void setupOpcodes2();	
+	//void setupOpcodes3();	
 	void cutscene(int16 *args);
 	void endCutscene();
 	void exitCutscene();
@@ -1224,6 +1225,9 @@ public:
 	void o6_drawBlastObject();
 	void o6_getActorPriority();
 	void o6_unknownCD();
+	void o6_bor();
+	void o6_band();
+	// void o7_userfaceOps();
 
 	/* Scumm Vars */
 	byte VAR_EGO;
