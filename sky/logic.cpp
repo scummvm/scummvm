@@ -1487,7 +1487,9 @@ bool SkyLogic::fnAddButtons(uint32 a, uint32 b, uint32 c) {
 }
 
 bool SkyLogic::fnNoButtons(uint32 a, uint32 b, uint32 c) {
-	error("Stub: fnNoButtons");
+	//remove the mouse buttons
+	_scriptVariables[MOUSE_STATUS] &= 0xFFFFFFFB;
+	return true;
 }
 
 bool SkyLogic::fnSetStop(uint32 a, uint32 b, uint32 c) {
@@ -1960,11 +1962,17 @@ bool SkyLogic::fnToggleMouse(uint32 a, uint32 b, uint32 c) {
 }
 
 bool SkyLogic::fnMouseOn(uint32 a, uint32 b, uint32 c) {
-	error("Stub: fnMouseOn");
+	//switch on the mouse highlight
+	Compact *cpt = SkyState::fetchCompact(a);
+	cpt->status |= ST_MOUSE;
+	return true;
 }
 
 bool SkyLogic::fnMouseOff(uint32 a, uint32 b, uint32 c) {
-	error("Stub: fnMouseOff");
+	//switch on (off??) the mouse highlight
+	Compact *cpt = SkyState::fetchCompact(a);
+	cpt->status &= ~ST_MOUSE;
+	return true;
 }
 
 bool SkyLogic::fnFetchX(uint32 id, uint32 b, uint32 c) {
