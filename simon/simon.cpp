@@ -7704,6 +7704,10 @@ void SimonState::openGameFile() {
 			error("out of memory, game offsets");
 
 		resfile_read(_game_offsets_ptr, 0, gss->NUM_GAME_OFFSETS*sizeof(uint32));
+#if defined(SCUMM_BIG_ENDIAN)
+		for( int r = 0; r < gss->NUM_GAME_OFFSETS; r++ )
+			_game_offsets_ptr[ r ] = READ_LE_UINT32( &_game_offsets_ptr[ r ] );
+#endif
 	}
 
 	loadIconFile();
@@ -8237,6 +8241,10 @@ void SimonState::initSound() {
 
 		if (fread(_voice_offsets, gss->NUM_VOICE_RESOURCES * sizeof(uint32), 1, _voice_file) != 1)
 			error("Cannot read voice offsets");
+#if defined(SCUMM_BIG_ENDIAN)
+		for( int r = 0; r < gss->NUM_VOICE_RESOURCES; r++ )
+			_voice_offsets[ r ] = READ_LE_UINT32( &_voice_offsets[ r ] );
+#endif
 	}
 }
 
@@ -8255,7 +8263,7 @@ struct WaveHeader {
 
 	uint16 block_align;
 	uint16 bits_per_sample;
-};
+} GCC_PACK;
 
 void SimonState::playVoice(uint voice) {
 	WaveHeader wave_hdr;
@@ -8271,21 +8279,24 @@ void SimonState::playVoice(uint voice) {
 	fseek(_voice_file, _voice_offsets[voice], SEEK_SET);
 
 	if (fread(&wave_hdr, sizeof(wave_hdr), 1, _voice_file)!=1 ||
-		wave_hdr.riff!='FFIR' || wave_hdr.wave!='EVAW' || wave_hdr.fmt!=' tmf' ||
-		wave_hdr.format_tag!=1 || wave_hdr.channels!=1 || wave_hdr.bits_per_sample!=8) {
+		wave_hdr.riff!=MKID('RIFF') || wave_hdr.wave!=MKID('WAVE') || wave_hdr.fmt!=MKID('fmt ') ||
+		READ_LE_UINT16(&wave_hdr.format_tag)!=1 || READ_LE_UINT16(&wave_hdr.channels)!=1 ||
+		READ_LE_UINT16(&wave_hdr.bits_per_sample)!=8) {
 			warning("playVoice(%d): cannot read RIFF header", voice);
 			return;
 		}
 
-	fseek(_voice_file, wave_hdr.size - sizeof(wave_hdr) + 20, SEEK_CUR);
+	fseek(_voice_file, READ_LE_UINT32(&wave_hdr.size) - sizeof(wave_hdr) + 20, SEEK_CUR);
 
-	if (fread(data, sizeof(data), 1, _voice_file) != 1 ||
+	data[ 0 ] = fileReadLE32(_voice_file);
+	data[ 1 ] = fileReadLE32(_voice_file);
+	if (//fread(data, sizeof(data), 1, _voice_file) != 1 ||
 		data[0] != 'atad' ) {
 			warning("playVoice(%d): cannot read data header",voice);
 			return;
 		}
 
-	_mixer->play_raw(&_voice_sound, _voice_file, data[1], wave_hdr.samples_per_sec, 
+	_mixer->play_raw(&_voice_sound, _voice_file, data[1], READ_LE_UINT32(&wave_hdr.samples_per_sec),
 		SoundMixer::FLAG_FILE|SoundMixer::FLAG_UNSIGNED);
 }
 
@@ -8302,7 +8313,7 @@ void SimonState::playSound(uint sound) {
 			return;
 		}
 		
-		p = _sfx_heap + ((uint32*)_sfx_heap)[sound];
+		p = _sfx_heap + READ_LE_UINT32(&((uint32*)_sfx_heap)[sound]);
 
 		for(;;) {
 			p = (byte*)memchr(p, 'd', 1000);
@@ -8316,7 +8327,7 @@ void SimonState::playSound(uint sound) {
 			p++;
 		}
 
-		_mixer->play_raw(&_playing_sound, p+8,*(uint32*)(p+4),22050,SoundMixer::FLAG_UNSIGNED);
+		_mixer->play_raw(&_playing_sound, p+8,READ_LE_UINT32(p+4),22050,SoundMixer::FLAG_UNSIGNED);
 	} else {
 		warning("playSound(%d)", sound);
 	}
