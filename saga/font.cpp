@@ -37,22 +37,22 @@ Font::Font(SagaEngine *vm) : _vm(vm), _initialized(false) {
 	int i;
 
 	// Load font module resource context 
-	if (GAME_GetFileContext(&_font_ctxt,
+	if (GAME_GetFileContext(&_fontContext,
 		R_GAME_RESOURCEFILE, 0) != R_SUCCESS) {
 		error("Font::Font(): Couldn't get resource context.");
 	}
 
 	// Allocate font table
-	GAME_GetFontInfo(&gamefonts, &_n_fonts);
+	GAME_GetFontInfo(&gamefonts, &_nFonts);
 
-	assert(_n_fonts > 0);
+	assert(_nFonts > 0);
 
-	_fonts = (R_FONT **)malloc(_n_fonts * sizeof *_fonts);
+	_fonts = (R_FONT **)malloc(_nFonts * sizeof *_fonts);
 	if (_fonts == NULL) {
 		error("Font::Font(): Memory allocation failure.");
 	}
 
-	for (i = 0; i < _n_fonts; i++) {
+	for (i = 0; i < _nFonts; i++) {
 		loadFont(gamefonts[i].font_rn, gamefonts[i].font_id);
 	}
 
@@ -91,12 +91,12 @@ int Font::loadFont(uint32 font_rn, int font_id) {
 	int nbits;
 	int c;
 
-	if ((font_id < 0) || (font_id >= _n_fonts)) {
+	if ((font_id < 0) || (font_id >= _nFonts)) {
 		return R_FAILURE;
 	}
 
 	// Load font resource
-	if (RSC_LoadResource(_font_ctxt, font_rn, &fontres_p, &fontres_len) != R_SUCCESS) {
+	if (RSC_LoadResource(_fontContext, font_rn, &fontres_p, &fontres_len) != R_SUCCESS) {
 		error("Font::loadFont(): Couldn't load font resource.");
 		return R_FAILURE;
 	}
@@ -182,7 +182,7 @@ int Font::getHeight(int font_id) {
 		return R_FAILURE;
 	}
 
-	if ((font_id < 0) || (font_id >= _n_fonts) || (_fonts[font_id] == NULL)) {
+	if ((font_id < 0) || (font_id >= _nFonts) || (_fonts[font_id] == NULL)) {
 		error("Font::getHeight(): Invalid font id.");
 		return R_FAILURE;
 	}
@@ -348,7 +348,7 @@ int Font::getStringWidth(int font_id, const char *test_str, size_t test_str_ct, 
 		return R_FAILURE;
 	}
 
-	if ((font_id < 0) || (font_id >= _n_fonts) || (_fonts[font_id] == NULL)) {
+	if ((font_id < 0) || (font_id >= _nFonts) || (_fonts[font_id] == NULL)) {
 		error("Font::getStringWidth(): Invalid font id.");
 		return R_FAILURE;
 	}
@@ -383,7 +383,7 @@ int Font::draw(int font_id, R_SURFACE *ds, const char *draw_str, size_t draw_str
 		return R_FAILURE;
 	}
 
-	if ((font_id < 0) || (font_id >= _n_fonts) || (_fonts[font_id] == NULL)) {
+	if ((font_id < 0) || (font_id >= _nFonts) || (_fonts[font_id] == NULL)) {
 		error("Font::draw(): Invalid font id.");
 		return R_FAILURE;
 	}

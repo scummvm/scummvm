@@ -117,9 +117,9 @@ class Font {
 	SagaEngine *_vm;
 
 	bool _initialized;
-	R_RSCFILE_CONTEXT *_font_ctxt;
+	R_RSCFILE_CONTEXT *_fontContext;
 
-	int _n_fonts;
+	int _nFonts;
 	R_FONT **_fonts;
 };
 

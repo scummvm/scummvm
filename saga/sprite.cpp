@@ -32,7 +32,6 @@
 #include "saga/text.h"
 #include "saga/font.h"
 
-#include "saga/sprite_mod.h"
 #include "saga/sprite.h"
 
 namespace Saga {
