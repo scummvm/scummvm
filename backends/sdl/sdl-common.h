@@ -153,14 +153,15 @@ protected:
 
 	struct MousePos {
 		int16 x, y, w, h;
+		MousePos() : x(0), y(0), w(0), h(0) {}
 	};
 
 	bool _mouseVisible;
 	bool _mouseDrawn;
 	byte *_mouseData;
 	byte *_mouseBackup;
-	MousePos _mouse_cur_state;
-	MousePos _mouse_old_state;
+	MousePos _mouseCurState;
+	MousePos _mouseOldState;
 	int16 _mouseHotspotX;
 	int16 _mouseHotspotY;
 

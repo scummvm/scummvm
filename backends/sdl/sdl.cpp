@@ -27,7 +27,7 @@
 
 class OSystem_SDL_Normal : public OSystem_SDL_Common {
 public:
-	OSystem_SDL_Normal() : sdl_tmpscreen(0), sdl_hwscreen(0), _overlay_visible(false) {}
+	OSystem_SDL_Normal();
 
 	// Set colors of the palette
 	void set_palette(const byte *colors, uint start, uint num);
@@ -55,18 +55,24 @@ protected:
 
 	ScalerProc *_scaler_proc;
 
+	int TMP_SCREEN_WIDTH;
+
 	virtual void draw_mouse();
 	virtual void undraw_mouse();
 
 	virtual void load_gfx_mode();
 	virtual void unload_gfx_mode();
 	void hotswap_gfx_mode();
-	
-	int TMP_SCREEN_WIDTH;
 };
 
 OSystem_SDL_Common *OSystem_SDL_Common::create() {
 	return new OSystem_SDL_Normal();
+}
+
+OSystem_SDL_Normal::OSystem_SDL_Normal()
+	 : sdl_tmpscreen(0), sdl_hwscreen(0), _overlay_visible(false),
+	   _scaler_proc(0), TMP_SCREEN_WIDTH(0)
+{
 }
 
 void OSystem_SDL_Normal::set_palette(const byte *colors, uint start, uint num) {
@@ -95,10 +101,10 @@ void OSystem_SDL_Normal::draw_mouse() {
 	if (_mouseDrawn || !_mouseVisible)
 		return;
 
-	int x = _mouse_cur_state.x - _mouseHotspotX;
-	int y = _mouse_cur_state.y - _mouseHotspotY;
-	int w = _mouse_cur_state.w;
-	int h = _mouse_cur_state.h;
+	int x = _mouseCurState.x - _mouseHotspotX;
+	int y = _mouseCurState.y - _mouseHotspotY;
+	int w = _mouseCurState.w;
+	int h = _mouseCurState.h;
 	byte color;
 	byte *src = _mouseData;		// Image representing the mouse
 	uint16 *bak = (uint16*)_mouseBackup;	// Surface used to backup the area obscured by the mouse
@@ -112,7 +118,7 @@ void OSystem_SDL_Normal::draw_mouse() {
 	}
 	if (y < 0) {
 		h += y;
-		src -= y * _mouse_cur_state.w;
+		src -= y * _mouseCurState.w;
 		y = 0;
 	}
 
@@ -127,10 +133,10 @@ void OSystem_SDL_Normal::draw_mouse() {
 
 	// Store the bounding box so that undraw mouse can restore the area the
 	// mouse currently covers to its original content.
-	_mouse_old_state.x = x;
-	_mouse_old_state.y = y;
-	_mouse_old_state.w = w;
-	_mouse_old_state.h = h;
+	_mouseOldState.x = x;
+	_mouseOldState.y = y;
+	_mouseOldState.w = w;
+	_mouseOldState.h = h;
 
 	// Draw the mouse cursor; backup the covered area in "bak"
 
@@ -151,7 +157,7 @@ void OSystem_SDL_Normal::draw_mouse() {
 			dst++;
 			width--;
 		}
-		src += _mouse_cur_state.w - w;
+		src += _mouseCurState.w - w;
 		bak += MAX_MOUSE_W - w;
 		dst += TMP_SCREEN_WIDTH - w;
 		h--;
@@ -176,10 +182,10 @@ void OSystem_SDL_Normal::undraw_mouse() {
 		error("SDL_LockSurface failed: %s.\n", SDL_GetError());
 
 	uint16 *dst, *bak = (uint16 *)_mouseBackup;
-	const int old_mouse_x = _mouse_old_state.x;
-	const int old_mouse_y = _mouse_old_state.y;
-	const int old_mouse_w = _mouse_old_state.w;
-	const int old_mouse_h = _mouse_old_state.h;
+	const int old_mouse_x = _mouseOldState.x;
+	const int old_mouse_y = _mouseOldState.y;
+	const int old_mouse_w = _mouseOldState.w;
+	const int old_mouse_h = _mouseOldState.h;
 	int x, y;
 
 	// No need to do clipping here, since draw_mouse() did that already
