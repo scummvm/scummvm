@@ -240,6 +240,7 @@ void Scumm_v8::setupScummVars()
 	//VAR_VOICE_MODE = 39; // 0 is voice, 1 is voice+text, 2 is text only
 	VAR_CURRENTDISK = 42;
 
+	VAR_SCROLL_SCRIPT = 50;	// FIXME - guess based on where this is in V7
 	VAR_ENTRY_SCRIPT = 51;
 	VAR_ENTRY_SCRIPT2 = 52;
 	VAR_EXIT_SCRIPT = 53;
