@@ -55,12 +55,8 @@ private:
 	struct _jump {
 		int32 offset;		// jump offset position
 		int32 dest;			// jump to dest position
-		int hookId;			// id of hook
-		int fadeDelay;		// fade delay in ms
-	};
-
-	struct _marker {
-		char name[256];		// name of marker
+		byte hookId;			// id of hook
+		int16 fadeDelay;		// fade delay in ms
 	};
 
 	struct _sync {
@@ -71,13 +67,12 @@ private:
 public:
 
 	struct soundStruct {
-		int freq;			// frequency
-		int channels;		// stereo or mono
-		int bits;			// 8, 12, 16
-		int numJumps;		// number of Jumps
-		int numRegions;		// number of Regions
-		int numMarkers;		// number of Markers
-		int numSyncs;		// number of Syncs
+		int16 freq;			// frequency
+		byte channels;		// stereo or mono
+		byte bits;			// 8, 12, 16
+		int8 numJumps;		// number of Jumps
+		int8 numRegions;		// number of Regions
+		int8 numSyncs;		// number of Syncs
 		int32 offsetStop;	// end offset in source data
 		bool endFlag;
 		bool inUse;
@@ -85,11 +80,10 @@ public:
 		int32 offsetData;
 		byte *resPtr;
 		char name[15];
-		int soundId;
+		int16 soundId;
 		bool freeResPtr;
 		BundleMgr *_bundle;
 		_region region[MAX_IMUSE_REGIONS];
-		_marker marker[MAX_IMUSE_MARKERS];
 		_jump jump[MAX_IMUSE_JUMPS];
 		_sync sync[MAX_IMUSE_SYNCS];
 	};
@@ -123,13 +117,11 @@ public:
 	bool isEndOfRegion(soundStruct *soundHandle, int region);
 	int getNumRegions(soundStruct *soundHandle);
 	int getNumJumps(soundStruct *soundHandle);
-	int getNumMarkers(soundStruct *soundHandle);
 	int getRegionOffset(soundStruct *soundHandle, int region);
 	int getJumpIdByRegionAndHookId(soundStruct *soundHandle, int region, int hookId);
 	int getRegionIdByJumpId(soundStruct *soundHandle, int jumpId);
 	int getJumpHookId(soundStruct *soundHandle, int number);
 	int getJumpFade(soundStruct *soundHandle, int number);
-	char *getMarker(soundStruct *soundHandle, int number);
 	void getSyncSizeAndPtrById(soundStruct *soundHandle, int number, int32 &sync_size, byte **sync_ptr);
 
 	int32 getDataFromRegion(soundStruct *soundHandle, int region, byte **buf, int32 offset, int32 size);

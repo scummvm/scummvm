@@ -75,15 +75,7 @@ void ImuseDigiSndMgr::prepareSound(byte *ptr, int slot) {
 				_sounds[slot].channels = READ_BE_UINT32(ptr); ptr += 4;
 			break;
 			case MKID_BE('TEXT'):
-				size = READ_BE_UINT32(ptr); ptr += 4;
-				if (_sounds[slot].numMarkers >= MAX_IMUSE_MARKERS) {
-					warning("ImuseDigiSndMgr::prepareSound(%s) Not enough space for Marker", _sounds[slot].name);
-					ptr += size;
-					break;
-				}
-				strcpy(_sounds[slot].marker[_sounds[slot].numMarkers].name, (char *)ptr + 4);
-				_sounds[slot].numMarkers++;
-				ptr += size;
+				size = READ_BE_UINT32(ptr); ptr += size + 4;
 				break;
 			case MKID_BE('REGN'):
 				size = READ_BE_UINT32(ptr); ptr += 4;
@@ -328,11 +320,6 @@ int ImuseDigiSndMgr::getNumJumps(soundStruct *soundHandle) {
 	return soundHandle->numJumps;
 }
 
-int ImuseDigiSndMgr::getNumMarkers(soundStruct *soundHandle) {
-	assert(soundHandle && checkForProperHandle(soundHandle));
-	return soundHandle->numMarkers;
-}
-
 int ImuseDigiSndMgr::getRegionOffset(soundStruct *soundHandle, int region) {
 	assert(soundHandle && checkForProperHandle(soundHandle));
 	assert(region >= 0 && region < soundHandle->numRegions);
@@ -386,12 +373,6 @@ int ImuseDigiSndMgr::getJumpFade(soundStruct *soundHandle, int number) {
 	assert(soundHandle && checkForProperHandle(soundHandle));
 	assert(number >= 0 && number < soundHandle->numJumps);
 	return soundHandle->jump[number].fadeDelay;
-}
-
-char *ImuseDigiSndMgr::getMarker(soundStruct *soundHandle, int number) {
-	assert(soundHandle && checkForProperHandle(soundHandle));
-	assert(number >= 0 && number < soundHandle->numMarkers);
-	return (char *)(soundHandle->marker[number].name);
 }
 
 int32 ImuseDigiSndMgr::getDataFromRegion(soundStruct *soundHandle, int region, byte **buf, int32 offset, int32 size) {
