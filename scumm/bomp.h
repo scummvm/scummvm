@@ -23,12 +23,8 @@
 #define BOMP_H
 
 int32 setupBompScale(byte *scaling, int32 size, byte scale);
-
 void bompApplyShadow(int shadowMode, const byte *shadowPalette, const byte *line_buffer, byte *dst, int32 size, byte transparency);
-
-
 void decompressBomp(byte *dst, const byte *src, int w, int h);
 void bompDecodeLine(byte *dst, const byte *src, int size);
-
 
 #endif

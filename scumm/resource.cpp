@@ -152,7 +152,7 @@ void Scumm::closeRoom() {
 	}
 }
 
-/* Delete the currently loaded room offsets */
+/** Delete the currently loaded room offsets. */
 void Scumm::deleteRoomOffsets() {
 	if (!(_features & GF_SMALL_HEADER) && !_dynamicRoomOffsets)
 		return;
@@ -163,7 +163,7 @@ void Scumm::deleteRoomOffsets() {
 	}
 }
 
-/* Read room offsets */
+/** Read room offsets */
 void Scumm::readRoomsOffsets() {
 	int num, room, i;
 	byte *ptr;

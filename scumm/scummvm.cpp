@@ -199,7 +199,6 @@ Scumm::Scumm (GameDetector *detector, OSystem *syst)
 	_objs = NULL;
 	_debugger = NULL;
 	_bundle = NULL;
-	_timer =NULL;
 	_sound= NULL;
 	memset(&res, 0, sizeof(res));
 	memset(&vm, 0, sizeof(vm));
@@ -559,7 +558,6 @@ Scumm::Scumm (GameDetector *detector, OSystem *syst)
 	_newgui = g_gui;
 	_bundle = new Bundle();
 	_sound = new Sound(this);
-	_timer = Engine::_timer;
 
 	_sound->_sound_volume_master = detector->_master_volume;
 	_sound->_sound_volume_sfx = detector->_sfx_volume;

@@ -25,13 +25,13 @@
 
 #include "common/rect.h"
 
-enum {					/* Camera modes */
+enum {					/** Camera modes */
 	CM_NORMAL = 1,
 	CM_FOLLOW_ACTOR = 2,
 	CM_PANNING = 3
 };
 
-struct CameraData {		/* Camera state data */
+struct CameraData {		/** Camera state data */
 	ScummVM::Point _cur;
 	ScummVM::Point _dest;
 	ScummVM::Point _accel;
@@ -41,7 +41,7 @@ struct CameraData {		/* Camera state data */
 	bool _movingToActor;
 };
 
-struct VirtScreen {		/* Virtual screen areas */
+struct VirtScreen {		/** Virtual screen areas */
 	int number;
 	uint16 topline;
 	uint16 width, height;
@@ -55,7 +55,7 @@ struct VirtScreen {		/* Virtual screen areas */
 	byte *backBuf;
 };
 
-struct ColorCycle {		/* Palette cycles */
+struct ColorCycle {		/** Palette cycles */
 	uint16 delay;
 	uint16 counter;
 	uint16 flags;
@@ -63,7 +63,7 @@ struct ColorCycle {		/* Palette cycles */
 	byte end;
 };
 
-struct BlastObject {		/* BlastObjects to draw */
+struct BlastObject {		/** BlastObjects to draw */
 	uint16 number;
 	int16 posX, posY;
 	uint16 width, height;
@@ -72,7 +72,8 @@ struct BlastObject {		/* BlastObjects to draw */
 	uint16 mode;
 };
 
-struct BompDrawData {		/* Bomp graphics data */
+/** Bomp graphics data, used as parameter to Scumm::drawBomp. */
+struct BompDrawData {
 	byte *out;
 	int outwidth, outheight;
 	int x, y;

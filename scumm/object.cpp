@@ -207,8 +207,9 @@ int Scumm::getObjectOrActorXY(int object, int &x, int &y) {
 	return 0;
 }
 
-/* Return the position of an object.
-   Returns X, Y and direction in angles
+/**
+ * Return the position of an object.
+ * Returns X, Y and direction in angles
  */
 void Scumm::getObjectXYPos(int object, int &x, int &y, int &dir) {
 	ObjectData *od = &_objs[getObjectIndex(object)];

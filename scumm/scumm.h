@@ -275,7 +275,6 @@ public:
 	ObjectData *_objs;
 	ScummDebugger *_debugger;
 	Bundle *_bundle;
-	Timer *_timer;
 	Sound *_sound;
 
 	struct {

@@ -44,7 +44,7 @@ static const int8 shake_positions[NUM_SHAKE_POSITIONS] = {
 	0, 1 * 2, 2 * 2, 1 * 2, 0 * 2, 2 * 2, 3 * 2, 1 * 2
 };
 
-/*
+/**
  * The following structs define four basic fades/transitions used by 
  * transitionEffect(), each looking differently to the user.
  * Note that the stripTables contain strip numbers, and they assume
@@ -57,12 +57,12 @@ static const int8 shake_positions[NUM_SHAKE_POSITIONS] = {
  * And the 25 = min(25,40). Hence for Zak256 instead of 13 and 25, the values
  * 15 and 30 should be used, and for COMI probably 30 and 60. 
  */
-
 struct TransitionEffect {
 	byte numOfIterations;
 	int8 deltaTable[16];	// four times l / t / r / b
 	byte stripTable[16];	// ditto
 };
+
 #ifdef __PALM_OS__
 static const TransitionEffect *transitionEffects;
 #else
@@ -386,8 +386,10 @@ void Scumm::updateDirtyScreen(int slot) {
 	gdi.updateDirtyScreen(&virtscr[slot]);
 }
 
-// Blit the data from the given VirtScreen to the display. If the camera moved,
-// a full blit is done, otherwise only the visible dirty areas are updated.
+/**
+ * Blit the data from the given VirtScreen to the display. If the camera moved,
+ * a full blit is done, otherwise only the visible dirty areas are updated.
+ */
 void Gdi::updateDirtyScreen(VirtScreen *vs) {
 	if (vs->height == 0)
 		return;
@@ -426,7 +428,9 @@ void Gdi::updateDirtyScreen(VirtScreen *vs) {
 	}
 }
 
-// Blit the specified rectangle from the given virtual screen to the display.
+/**
+ * Blit the specified rectangle from the given virtual screen to the display.
+ */
 void Gdi::drawStripToScreen(VirtScreen *vs, int x, int w, int t, int b) {
 	byte *ptr;
 	int height;
@@ -457,7 +461,9 @@ void Gdi::clearUpperMask() {
 	memset(_vm->getResourceAddress(rtBuffer, 9), 0, _imgBufOffs[1] - _imgBufOffs[0]);
 }
 
-// Reset the background behind an actor or blast object
+/**
+ * Reset the background behind an actor or blast object.
+ */
 void Gdi::resetBackground(int top, int bottom, int strip) {
 	VirtScreen *vs = &_vm->virtscr[0];
 	byte *backbuff_ptr, *bgbak_ptr;
@@ -702,8 +708,10 @@ void Scumm::drawFlashlight() {
 	_flashlight.isDrawn = true;
 }
 
-// Redraw background as needed, i.e. the left/right sides if scrolling took place etc.
-// Note that this only updated the virtual screen, not the actual display.
+/**
+ * Redraw background as needed, i.e. the left/right sides if scrolling took place etc.
+ * Note that this only updated the virtual screen, not the actual display.
+ */
 void Scumm::redrawBGAreas() {
 	int i;
 	int val;
@@ -861,12 +869,6 @@ bool Scumm::hasCharsetMask(int left, int top, int right, int bottom) {
 			&& left <= gdi._mask.right
 			&& bottom >= gdi._mask.top
 			&& right >= gdi._mask.left;
-/*
-	if (!_charset->_hasMask || top > gdi._mask_bottom || left > gdi._mask_right ||
-			bottom < gdi._mask_top || right < gdi._mask_left)
-		return false;
-	return true;
-*/
 }
 
 bool Scumm::isMaskActiveAt(int l, int t, int r, int b, byte *mem) {
@@ -902,6 +904,10 @@ bool Scumm::isMaskActiveAt(int l, int t, int r, int b, byte *mem) {
 #pragma mark --- Image drawing ---
 #pragma mark -
 
+/**
+ * Draw a bitmap onto a virtual screen. This is main drawing method for room backgrounds
+ * and objects, used throughout all SCUMM versions.
+ */
 void Gdi::drawBitmap(const byte *ptr, VirtScreen *vs, int x, int y, const int width, const int height,
                      int stripnr, int numstrip, byte flag) {
 	assert(ptr);
@@ -1003,11 +1009,13 @@ void Gdi::drawBitmap(const byte *ptr, VirtScreen *vs, int x, int y, const int wi
 	if (vs->scrollable)
 		sx -= vs->xstart >> 3;
 
-	//////
-	//////
-	//////   START OF BIG HACK!
-	//////
-	//////
+	//
+	// Since V3, all graphics data was encoded in strips, which is very efficient
+	// for redrawing only parts of the screen. However, V2 is different: here
+	// the whole graphics are encoded as one big chunk. That makes it rather
+	// dificult to draw only parts of a room/object. We handle the V2 graphics
+	// differently from all other (newer) graphic formats for this reason.
+	//
 	if (_vm->_features & GF_AFTER_V2) {
 		
 		if (vs->alloctwobuffers)
@@ -1108,12 +1116,6 @@ void Gdi::drawBitmap(const byte *ptr, VirtScreen *vs, int x, int y, const int wi
 			}
 		}
 	}
-
-	//////
-	//////
-	//////   END OF BIG HACK!
-	//////
-	//////
 
 	while (numstrip--) {
 		CHECK_HEAP;
@@ -1807,21 +1809,21 @@ void Gdi::unkDecodeC_trans(byte *dst, const byte *src, int height) {
 #undef FILL_BITS
 
 /* Ender - Zak256/Indy256 decoders */
-#define READ_256BIT																\
-											if ((mask <<= 1) == 256) {	\
-												buffer = *src++;					\
-												mask = 1;									\
-											}														\
-											bits = ((buffer & mask) != 0);
+#define READ_256BIT                 \
+        if ((mask <<= 1) == 256) {  \
+            buffer = *src++;        \
+            mask = 1;               \
+        }                           \
+        bits = ((buffer & mask) != 0);
 
-#define NEXT_ROW										\
-				dst += _vm->_screenWidth;			\
-				if (--h == 0) {							\
-					if (!--x)									\
-						return;									\
-					dst -= _vertStripNextInc;	\
-					h = height;								\
-				}
+#define NEXT_ROW                       \
+        dst += _vm->_screenWidth;      \
+        if (--h == 0) {                \
+            if (!--x)                  \
+                return;                \
+            dst -= _vertStripNextInc;  \
+            h = height;                \
+        }
 
 void Gdi::unkDecode7(byte *dst, const byte *src, int height) {
 	uint h = height;
@@ -1877,7 +1879,7 @@ void Gdi::unkDecode9(byte *dst, const byte *src, int height) {
 			c += (bits << i);
 		}
 
-		switch ((c >> 2)) {
+		switch (c >> 2) {
 		case 0:
 			color = 0;
 			for (i = 0; i < 4; i++) {
@@ -2068,14 +2070,15 @@ void Scumm::fadeOut(int effect) {
 	_screenEffectFlag = false;
 }
 
-/* Transition effect. There are four different effects possible,
- * indicated by the value of a:
+/**
+ * Perform a transition effect. There are four different effects possible:
  * 0: Iris effect
  * 1: Box wipe (a black box expands from the upper-left corner to the lower-right corner)
  * 2: Box wipe (a black box expands from the lower-right corner to the upper-left corner)
  * 3: Inverse box wipe
  * All effects operate on 8x8 blocks of the screen. These blocks are updated
  * in a certain order; the exact order determines how the effect appears to the user.
+ * @param a		the transition effect to perform
  */
 void Scumm::transitionEffect(int a) {
 	int delta[16];								// Offset applied during each iteration
@@ -2128,13 +2131,14 @@ void Scumm::transitionEffect(int a) {
 	}
 }
 
-// Update width x height areas of the screen, in random order, until the whole
-// screen has been updated. For instance:
-//
-// dissolveEffect(1, 1) produces a pixel-by-pixel dissolve
-// dissolveEffect(8, 8) produces a square-by-square dissolve
-// dissolveEffect(virtsrc[0].width, 1) produces a line-by-line dissolve
-
+/**
+ * Update width*height areas of the screen, in random order, until the whole
+ * screen has been updated. For instance:
+ * 
+ * dissolveEffect(1, 1) produces a pixel-by-pixel dissolve
+ * dissolveEffect(8, 8) produces a square-by-square dissolve
+ * dissolveEffect(virtsrc[0].width, 1) produces a line-by-line dissolve
+ */
 void Scumm::dissolveEffect(int width, int height) {
 	VirtScreen *vs = &virtscr[0];
 	int *offsets;
@@ -2502,8 +2506,10 @@ void Scumm::cyclePalette() {
 	}
 }
 
-// Perform color cycling on the palManipulate data, too, otherwise
-// color cycling will be disturbed by the palette fade.
+/**
+ * Perform color cycling on the palManipulate data, too, otherwise
+ * color cycling will be disturbed by the palette fade.
+ */
 void Scumm::moveMemInPalRes(int start, int end, byte direction) {
 	byte *startptr, *endptr;
 	byte *startptr2, *endptr2;
@@ -2712,7 +2718,7 @@ void Scumm::setupShadowPalette(int redScale, int greenScale, int blueScale, int 
 	}
 }
 
-/* Yazoo: This function create the specialPalette used for semi-transparency in SamnMax */
+/** This function create the specialPalette used for semi-transparency in SamnMax */
 void Scumm::createSpecialPalette(int16 from, int16 to, int16 redScale, int16 greenScale, int16 blueScale,
 			int16 startColor, int16 endColor) {
 	const byte *palPtr, *curPtr;
@@ -2816,16 +2822,18 @@ static double value(double n1, double n2, double hue)
 	return n1;
 }
 
+/**
+ * This function scales the HSL (Hue, Saturation and Lightness)
+ * components of the palette colours. It's used in CMI when Guybrush
+ * walks from the beach towards the swamp.
+ * 
+ * I don't know if this function is correct, but the output seems to
+ * match the original fairly closely.
+ * 
+ * @todo Rewrite desaturatePalette using integer arithmetics only?
+ */
 void Scumm::desaturatePalette(int hueScale, int satScale, int lightScale, int startColor, int endColor)
 {
-	// This function scales the HSL (Hue, Saturation and Lightness)
-	// components of the palette colours. It's used in CMI when Guybrush
-	// walks from the beach towards the swamp.
-	//
-	// I don't know if this function is correct, but the output seems to
-	// match the original fairly closely.
-	//
-	// FIXME: Rewrite using integer arithmetics only?
 
 	if (startColor <= endColor) {
 		const byte *cptr;
