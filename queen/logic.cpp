@@ -380,27 +380,6 @@ void Logic::initialise() {
 		warning("Unexpected queen.jas file format");
 	}
 	
-	/*
-		// FIXME: move to Input class ?
-		switch (_resource->getLanguage()) {
-			case	ENGLISH:
-					_keyLanguage = _keyCommands[KEYS_ENGLISH];
-					break;
-			case	GERMAN:
-					_keyLanguage = _keyCommands[KEYS_GERMAN];
-					break;
-			case	FRENCH:
-					_keyLanguage = _keyCommands[KEYS_FRENCH];
-					break;
-			case	ITALIAN:
-					_keyLanguage = _keyCommands[KEYS_ITALIAN];
-					break;
-			default:
-					_keyLanguage = _keyCommands[KEYS_ENGLISH];
-					break;
-		}
-	*/
-
 	_objDescription = new char*[_numDescriptions + 1];
 	_objDescription[0] = 0;
 	for (i = 1; i <= _numDescriptions; i++)
