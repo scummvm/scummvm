@@ -852,8 +852,9 @@ void Gdi::drawBitmap(byte *ptr, VirtScreen *vs, int x, int y, const int h,
 
 	if (_disable_zbuffer)
 		numzbuf = 0;
-	else if (_numZBuffer <= 1)
-		numzbuf = _numZBuffer;
+// 	FIXME what is this supposed to do? breaks comi
+//	else if (_numZBuffer <= 1)
+//		numzbuf = _numZBuffer;
 	else {
 		numzbuf = _numZBuffer;
 		assert(numzbuf <= (int)ARRAYSIZE(zplane_list));
