@@ -271,7 +271,8 @@ GameList findGame(FilesystemNode *dir) {
 
 	FSList *files = dir->listDir(FilesystemNode::kListFilesOnly);
 	const int size = files->size();
-	char detectName[256];
+	char detectName[128];
+	char detectName2[128];
 	int i;
 
 	// Iterate over all known games and for each check if it might be
@@ -282,23 +283,27 @@ GameList findGame(FilesystemNode *dir) {
 		// Determine the 'detectname' for this game, that is, the name of a 
 		// file that *must* be presented if the directory contains the data
 		// for this game. For example, FOA requires atlantis.000
-		if (v->detectname)
+		if (v->detectname) {
 			strcpy(detectName, v->detectname);
-		else {
+			strcpy(detectName2, v->detectname);
+			strcat(detectName2, ".");
+		} else {
 			strcpy(detectName, v->filename);
-			if (v->features & GF_AFTER_V7)
-				strcat(detectName, ".la0");
-			else if (v->features & GF_HUMONGOUS)
-				strcat(detectName, ".he0");
+			strcpy(detectName2, v->filename);
+			strcat(detectName, ".000");
+			if (v->features & GF_AFTER_V7) {
+				strcat(detectName2, ".la0");
+			} else if (v->features & GF_HUMONGOUS)
+				strcat(detectName2, ".he0");
 			else
-				strcat(detectName, ".000");
+				strcat(detectName2, ".sm0");
 		}
 
 		// Iterate over all files in the given directory
 		for (i = 0; i < size; i++) {
 			const char *filename = (*files)[i].displayName().c_str();
 
-			if (0 == scumm_stricmp(detectName, filename)) {
+			if ((0 == scumm_stricmp(detectName, filename)) || (0 == scumm_stricmp(detectName2, filename))) {
 				// Match found, add to list of candidates, then abort inner loop.
 				list.push_back(v);
 				break;
