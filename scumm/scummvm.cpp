@@ -905,7 +905,7 @@ void Scumm::initRoomSubBlocks() {
 	//
 	// Find the room image data
 	//
-	if (_features & GF_AFTER_V2)
+	if (_features & GF_OLD_BUNDLE)
 		_IM00_offs = READ_LE_UINT16(roomptr + 0x0A);
 	else if (_features & GF_SMALL_HEADER)
 		_IM00_offs = findResourceData(MKID('IM00'), roomptr) - roomptr;
@@ -928,7 +928,7 @@ void Scumm::initRoomSubBlocks() {
 	//
 	if (_features & GF_AFTER_V2)
 		_EXCD_offs = READ_LE_UINT16(roomptr + 0x18);
-	else if (_features & GF_OLD_BUNDLE)
+	else if (_features & GF_AFTER_V3)
 		_EXCD_offs = READ_LE_UINT16(roomptr + 0x19);
 	else {
 		ptr = findResourceData(MKID('EXCD'), roomResPtr);
@@ -943,7 +943,7 @@ void Scumm::initRoomSubBlocks() {
 	//
 	if (_features & GF_AFTER_V2)
 		_ENCD_offs = READ_LE_UINT16(roomptr + 0x1C);
-	else if (_features & GF_OLD_BUNDLE)
+	else if (_features & GF_AFTER_V3)
 		_ENCD_offs = READ_LE_UINT16(roomptr + 0x1B);
 	else {
 		ptr = findResourceData(MKID('ENCD'), roomResPtr);
@@ -959,14 +959,14 @@ void Scumm::initRoomSubBlocks() {
 	if (_features & GF_SMALL_HEADER) {
 		if (_features & GF_AFTER_V2)
 			ptr = roomptr + *(roomptr + 0x15);
-		else if (_features & GF_OLD_BUNDLE)
+		else if (_features & GF_AFTER_V3)
 			ptr = roomptr + READ_LE_UINT16(roomptr + 0x15);
 		else
 			ptr = findResourceData(MKID('BOXD'), roomptr);
 		if (ptr) {
 			byte numOfBoxes = *ptr;
 			int size;
-			if (_features & GF_AFTER_V3) // GF_OLD256 or GF_AFTER_V3 ?
+			if (_features & GF_OLD_BUNDLE)
 				size = numOfBoxes * (SIZEOF_BOX - 2) + 1;
 			else
 				size = numOfBoxes * SIZEOF_BOX + 1;
@@ -976,7 +976,7 @@ void Scumm::initRoomSubBlocks() {
 			ptr += size;
 			if (_features & GF_AFTER_V2)
 				size = (READ_LE_UINT16(roomptr + 0x0A) - *(roomptr + 0x15)) - size;
-			else if (_features & GF_OLD_BUNDLE)
+			else if (_features & GF_AFTER_V3)
 				// FIXME. This is an evil HACK!!!
 				size = (READ_LE_UINT16(roomptr + 0x0A) - READ_LE_UINT16(roomptr + 0x15)) - size;
 			else
@@ -1064,7 +1064,7 @@ void Scumm::initRoomSubBlocks() {
 				loadResource(rtScript, *ptr++);
 		}
 
-		if (!(_features & GF_AFTER_V2)) {
+		if (_features & GF_AFTER_V3) {
 			num_sounds = *(roomResPtr + 23);
 			num_scripts = *(roomResPtr + 24);
 			ptr = roomptr + 29 + num_objects * 4 + num_sounds + num_scripts;

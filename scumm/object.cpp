@@ -637,7 +637,7 @@ void Scumm::setupRoomObject(ObjectData *od, byte *room, byte *searchptr) {
 
 		od->parent = *(ptr + 12);
 
-		if (_features & GF_AFTER_V3) {
+		if (_features & GF_AFTER_V2) {
 			od->walk_x = *(ptr + 13);
 			od->walk_y = *(ptr + 14);
 			od->actordir = (*(ptr + 15)) & 7;
