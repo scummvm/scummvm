@@ -20,6 +20,7 @@
 
 #ifdef WIN32
 
+#include "stdafx.h"
 #include "../fs.h"
 #include <stdio.h>
 #include <stdlib.h>
