@@ -1083,7 +1083,7 @@ void Command::setObjects(uint16 command) {
 					if (image1 != 0 && image2 == 0 && objData->room == _vm->logic()->currentRoom()) {
 						uint16 bobNum = _vm->logic()->findBob(dstObj);
 						if (bobNum != 0) {
-							_vm->graphics()->clearBob(bobNum);
+							_vm->graphics()->bob(bobNum)->clear();
 						}
 					}
 				}
