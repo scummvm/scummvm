@@ -46,7 +46,7 @@ int Scumm::getBoxScale(int box)
 	if (_features & GF_NO_SCALLING)
 		return (255);
 	Box *ptr = getBoxBaseAddr(box);
-	if (!box)
+	if (!ptr)
 		return 255;
 	return FROM_LE_16(ptr->scale);
 }
