@@ -661,36 +661,36 @@ void ScummEngine_v7he::o7_startSound() {
 
 	switch (op) {
 	case 224:
-		_staticVar1 = pop();
+		_heSndSoundFreq = pop();
 		break;
 
 	case 230:
-		_staticVar2 = pop();
+		_heSndVar2 = pop();
 		break;
 
 	case 231:
-		_staticVar3 = pop();
+		_heSndVar3 = pop();
 		break;
 
 	case 232:
-		_staticVar4 = pop();
-		_staticVar3 = 0;
-		_staticVar1 = 11025;
-		_staticVar2 = VAR(VAR_MUSIC_TIMER);
+		_heSndSoundId = pop();
+		_heSndVar3 = 0;
+		_heSndSoundFreq = 11025;
+		_heSndVar2 = VAR(VAR_MUSIC_TIMER);
 		break;
 
 	case 245:
-		_staticVar5 |= 1;
+		_heSndVar5 |= 1;
 		break;
 
 	case 255:
-		// _sound->addSoundToQueue(_staticVar4, _staticVar3, _staticVar2, _staticVar5);
+		// _sound->addSoundToQueue(_heSndSoundId, _heSndVar3, _heSndVar2, _heSndVar5);
 		// FIXME: Music resources (Id 4000+?) are currently unsupported,
 		// so don't attempt to play them.
- 		if (_staticVar4 < 4000)
-			_sound->addSoundToQueue(_staticVar4);
-		debug(1, "o7_startSound stub (%d, %d, %d, %d)", _staticVar4, _staticVar3, _staticVar2, _staticVar5);
-		_staticVar5 = 0;
+ 		if (_heSndSoundId < 4000)
+			_sound->addSoundToQueue(_heSndSoundId);
+		debug(1, "o7_startSound stub (%d, %d, %d, %d)", _heSndSoundId, _heSndVar3, _heSndVar2, _heSndVar5);
+		_heSndVar5 = 0;
 		break;
 
 	default:

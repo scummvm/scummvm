@@ -1008,11 +1008,11 @@ protected:
 	bool testGfxOtherUsageBits(int strip, int bit);
 
 public:
-	byte he_actor_palette[256];
+	byte _he_actor_palette[256];
 	byte _proc_special_palette[256];
 	byte _roomPalette[256];
 	byte *_shadowPalette;
-	int _staticVar1, _staticVar2, _staticVar3, _staticVar4, _staticVar5;
+	int _heSndSoundFreq, _heSndVar2, _heSndVar3, _heSndSoundId, _heSndVar5;
 
 protected:
 	int _shadowPaletteSize;
