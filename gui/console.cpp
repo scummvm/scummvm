@@ -21,6 +21,7 @@
 #include "stdafx.h"
 #include "console.h"
 #include "newgui.h"
+#include "ScrollBarWidget.h"
 
 #include "common/engine.h"
 
@@ -50,7 +51,7 @@ This code is not finished, so please don't complain :-)
 ConsoleDialog::ConsoleDialog(NewGui *gui)
 	: Dialog(gui, 0, 0, 320, 6*kLineHeight+2)
 {
-	_lineWidth = (_w - 2) / kCharWidth;
+	_lineWidth = (_w - kScrollBarWidth - 2) / kCharWidth;
 	_linesPerPage = (_h - 2) / kLineHeight;
 
 	memset(_buffer, ' ', kBufferSize);
@@ -60,15 +61,20 @@ ConsoleDialog::ConsoleDialog(NewGui *gui)
 	_currentLine = 0;
 	_scrollLine = _linesPerPage - 1;
 	
+	_caretVisible = false;
+	_caretTime = 0;
+	
+	// Add scrollbar
+	_scrollBar = new ScrollBarWidget(this, _w - kScrollBarWidth - 1, 0, kScrollBarWidth, _h);
+	_scrollBar->setTarget(this);
+
+	// Display greetings & prompt
 	print("ScummVM "SCUMMVM_VERSION" (" SCUMMVM_CVS ")\n");
 	print("Console is ready\n");
 	
 	print(PROMPT);
 	_promptLine = _currentLine;
 
-
-	_caretVisible = false;
-	_caretTime = 0;
 }
 
 void ConsoleDialog::drawDialog()
@@ -93,6 +99,9 @@ void ConsoleDialog::drawDialog()
 		y += kLineHeight;
 	}
 
+	// Draw the scrollbar
+	_scrollBar->draw();
+
 	// Finally blit it all to the screen
 	_gui->addDirtyRect(_x, _y, _w, _h);
 }
@@ -108,6 +117,11 @@ void ConsoleDialog::handleTickle()
 			drawCaret(false);
 		}
 	}
+}
+
+void ConsoleDialog::handleMouseWheel(int x, int y, int direction)
+{
+	_scrollBar->handleMouseWheel(x, y, direction);
 }
 
 void ConsoleDialog::handleKeyDown(uint16 ascii, int keycode, int modifiers) {
@@ -140,6 +154,28 @@ void ConsoleDialog::handleKeyDown(uint16 ascii, int keycode, int modifiers) {
 				drawCaret(true);
 			draw();	// FIXME - not nice to redraw the full console just for one char!
 			break;
+/*
+		case 256+24:	// pageup
+			_selectedItem -= _entriesPerPage - 1;
+			if (_selectedItem < 0)
+				_selectedItem = 0;
+			break;
+		case 256+25:	// pagedown
+			_selectedItem += _entriesPerPage - 1;
+			if (_selectedItem >= _list.size() )
+				_selectedItem = _list.size() - 1;
+			break;
+*/
+		case 256+22:	// home
+			_scrollLine = _linesPerPage - 1;	// FIXME - this is not correct after a wrap around
+			updateScrollBar();
+			draw();
+			break;
+		case 256+23:	// end
+			_scrollLine = _currentLine;
+			updateScrollBar();
+			draw();
+			break;
 		default:
 			if (ascii == '~' || ascii == '#') {
 				close();
@@ -149,12 +185,40 @@ void ConsoleDialog::handleKeyDown(uint16 ascii, int keycode, int modifiers) {
 	}
 }
 
+void ConsoleDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data)
+{
+	switch (cmd) {
+	case kSetPositionCmd:
+		int newPos = (int)data + _linesPerPage - 1;
+		if (newPos != _scrollLine) {
+			_scrollLine = newPos;
+			draw();
+		}
+		break;
+	}
+}
+
 void ConsoleDialog::nextLine()
 {
 	_currentColumn = 0;
 	if (_currentLine == _scrollLine)
 		_scrollLine++;
 	_currentLine++;
+	
+	updateScrollBar();
+}
+
+void ConsoleDialog::updateScrollBar()
+{
+	if (_currentLine < _linesInBuffer) {
+		_scrollBar->_numEntries = _currentLine + 1;
+		_scrollBar->_currentPos = _scrollLine - _linesPerPage + 1;
+	} else {
+		_scrollBar->_numEntries = _linesInBuffer;
+		_scrollBar->_currentPos = _scrollLine - _linesPerPage + 1 - (_currentLine - _linesInBuffer);
+	}
+	_scrollBar->_entriesPerPage = _linesPerPage;
+	_scrollBar->recalc();
 }
 
 int ConsoleDialog::printf(const char *format, ...)

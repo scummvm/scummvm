@@ -33,6 +33,8 @@ enum {
 	kCharWidth = 8
 };
 
+class ScrollBarWidget;
+
 class ConsoleDialog : public Dialog {
 	typedef ScummVM::String String;
 protected:
@@ -51,6 +53,8 @@ protected:
 
 	bool	_caretVisible;
 	uint32	_caretTime;
+	
+	ScrollBarWidget	*_scrollBar;
 
 public:
 	ConsoleDialog(NewGui *gui);
@@ -61,8 +65,9 @@ public:
 	void drawDialog();
 
 	void handleTickle();
+	void handleMouseWheel(int x, int y, int direction);
 	void handleKeyDown(uint16 ascii, int keycode, int modifiers);
-//	void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);
+	void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);
 
 	int printf(const char *format, ...);
 	int vprintf(const char *format, va_list argptr);
@@ -73,6 +78,7 @@ protected:
 	void drawCaret(bool erase);
 	void print(const char *str);
 	void nextLine();
+	void updateScrollBar();
 };
 
 #endif
