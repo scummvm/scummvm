@@ -51,6 +51,7 @@ struct VirtScreen;
  */
 class BaseCostumeRenderer {
 public:
+	Common::Rect _clipOverride;
 	byte _actorID;
 
 	byte _shadow_mode;
@@ -117,6 +118,11 @@ public:
 		_width = _height = 0;
 		_skipLimb = 0;
 		
+		_clipOverride.right = 0;
+		_clipOverride.left = 0;
+		_clipOverride.top = 0;
+		_clipOverride.bottom = 0;
+
 		_outptr = 0;
 		_outwidth = _outheight = 0;
 	}

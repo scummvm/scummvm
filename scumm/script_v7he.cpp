@@ -763,6 +763,7 @@ void ScummEngine_v7he::o7_unknownED() {
 void ScummEngine_v7he::o7_kernelSetFunctions() {
 	int args[29];
 	int num;
+	Actor *a;
 
 	num = getStackList(args, ARRAYSIZE(args));
 
@@ -794,8 +795,8 @@ void ScummEngine_v7he::o7_kernelSetFunctions() {
 		_fullRedraw = 1;
 		break;
 	case 30:
-		// Y clip of Actor
-		debug(1, "Actor %d Y Clip %d", args[1], args[2]);
+		a = derefActor(args[1], "o7_kernelSetFunctions: 30");
+		a->clipOverride.bottom = args[2];
 		break;
 	default:
 		error("o6_kernelSetFunctions: default case %d (param count %d)", args[0], num);

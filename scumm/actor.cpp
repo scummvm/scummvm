@@ -65,6 +65,11 @@ Actor::Actor() {
 	memset(&walkdata, 0, sizeof(ActorWalkData));
 	walkdata.point3.x = 32000;
 
+	clipOverride.right = 0;
+	clipOverride.left = 0;
+	clipOverride.top = 0;
+	clipOverride.bottom = 0;
+	
 	walkScript = 0;
 
 	initActor(1);
@@ -1015,6 +1020,8 @@ void Actor::drawActorCostume(bool hitTestMode) {
 		else if (_vm->_version == 2)
 			bcr->_actorX += 8;
 	}
+
+	bcr->_clipOverride = clipOverride;
 
 	if (_vm->_version == 4 && boxscale & 0x8000) {
 		bcr->_scaleX = bcr->_scaleY = _vm->getScale(walkbox, _pos.x, _pos.y);

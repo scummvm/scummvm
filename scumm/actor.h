@@ -83,6 +83,7 @@ public:
 
 public:
 	Common::Point _pos;
+	Common::Rect clipOverride;
 	int offs_x, offs_y;
 	int top, bottom;
 	uint width;
