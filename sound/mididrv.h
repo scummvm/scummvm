@@ -126,6 +126,8 @@ public:
 
 	// Timing functions - MidiDriver now operates timers
 	virtual void setTimerCallback (void *timer_param, Timer::TimerProc timer_proc) = 0;
+	
+	/** The time in microseconds between invocations of the timer callback. */
 	virtual uint32 getBaseTempo (void) = 0;
 
 	// Channel allocation functions
