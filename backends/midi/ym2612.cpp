@@ -258,7 +258,6 @@ void Operator2612::frequency(int freq) {
 	double value; // Use for intermediate computations to avoid int64 arithmetic
 	int r;
 
-//	_frequency = freq;
 	_frequency = freq / _owner->_rate;
 
 	r = _specifiedAttackRate;
@@ -281,7 +280,7 @@ void Operator2612::frequency(int freq) {
 	}
 	_attackTime = (int32) value; // 1 秒 == (1 << 12)
 
-	r = _specifiedDecayRate;
+	r = _specifiedDecayRate / _owner->_rate;
 	if (r != 0) {
 		r = r * 2 + (keyscaleTable[freq/262205] >> (3-_keyScale));
 		if (r >= 64)
@@ -290,7 +289,7 @@ void Operator2612::frequency(int freq) {
 	value = (double) powtbl[(r&3) << 7] * (0x10 << (r>>2)) / 31;
 	_decayRate = (int32) value;
 
-	r = _specifiedSustainRate;
+	r = _specifiedSustainRate / _owner->_rate;
 	if (r != 0) {
 		r = r * 2 + (keyscaleTable[freq/262205] >> (3-_keyScale));
 		if (r >= 64)
@@ -299,7 +298,7 @@ void Operator2612::frequency(int freq) {
 	value = (double) powtbl[(r&3) << 7] * (0x10 << (r>>2)) / 31;
 	_sustainRate = (int32) value;
 
-	r = _specifiedReleaseRate;
+	r = _specifiedReleaseRate / _owner->_rate;
 	if (r != 0) {
 		r = r * 2 + 1;		// このタイミングで良いのかわからん
 		r = r * 2 + (keyscaleTable[freq/262205] >> (3-_keyScale));
@@ -333,28 +332,25 @@ int Operator2612::nextTick(uint16 rate, int phaseShift) {
 		}
 		break;
 	case _s_decaying:
-		_currentLevel += _decayRate / rate;
+		_currentLevel += _decayRate;
 		if (_currentLevel >= _sustainLevel) {
 			_currentLevel = _sustainLevel;
 			_state = _s_sustaining;
 		}
 		break;
 	case _s_sustaining:
-		_currentLevel += _sustainRate / rate;
+		_currentLevel += _sustainRate;
 		if (_currentLevel >= ((int32)0x7f << 15)) {
 			_currentLevel = ((int32)0x7f << 15);
 			_state = _s_ready;
 		}
 		break;
 	case _s_releasing:
-		_currentLevel += _releaseRate / rate;
+		_currentLevel += _releaseRate;
 		if (_currentLevel >= ((int32)0x7f << 15)) {
 			_currentLevel = ((int32)0x7f << 15);
 			_state = _s_ready;
 		}
-		break;
-	default:
-		// ここには来ないはず
 		break;
 	};
 
