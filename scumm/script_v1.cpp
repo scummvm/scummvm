@@ -1881,14 +1881,14 @@ void Scumm::o5_roomOps()
 			a = getVarOrDirectWord(0x80);
 			b = getVarOrDirectWord(0x40);
 		}
-		if (a < 160)
-			a = 160;
-		if (b < 160)
-			b = 160;
-		if (a > _scrWidth - 160)
-			a = _scrWidth - 160;
-		if (b > _scrWidth - 160)
-			b = _scrWidth - 160;
+		if (a < (_realWidth / 2))
+			a = (_realWidth / 2);
+		if (b < (_realWidth / 2))
+			b = (_realWidth / 2);
+		if (a > _scrWidth - (_realWidth / 2))
+			a = _scrWidth - (_realWidth / 2);
+		if (b > _scrWidth - (_realWidth / 2))
+			b = _scrWidth - (_realWidth / 2);
 		_vars[VAR_CAMERA_MIN_X] = a;
 		_vars[VAR_CAMERA_MAX_X] = b;
 		break;
@@ -1911,7 +1911,7 @@ void Scumm::o5_roomOps()
 			a = getVarOrDirectWord(0x80);
 			b = getVarOrDirectWord(0x40);
 		}
-		initScreens(0, a, 320, b);
+		initScreens(0, a, _realWidth, b);
 		break;
 	case 4:											/* set palette color */
 		if (_features & GF_SMALL_HEADER) {

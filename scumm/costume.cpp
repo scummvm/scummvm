@@ -284,8 +284,8 @@ byte CostumeRenderer::mainRoutine(Actor *a, int slot, int frame)
 		CHECK_HEAP return 2;
 	}
 
-	_bgbak_ptr = _vm->getResourceAddress(rtBuffer, 5) + _vm->virtscr[0].xstart + _ypos * 320 + _xpos;
-	_backbuff_ptr = _vm->virtscr[0].screenPtr + _vm->virtscr[0].xstart + _ypos * 320 + _xpos;
+	_bgbak_ptr = _vm->getResourceAddress(rtBuffer, 5) + _vm->virtscr[0].xstart + _ypos * _vm->_realWidth + _xpos;
+	_backbuff_ptr = _vm->virtscr[0].screenPtr + _vm->virtscr[0].xstart + _ypos * _vm->_realWidth + _xpos;
 	charsetmask =
 		_vm->hasCharsetMask(_left, _top + _vm->virtscr[0].topline, _right,
 												_vm->virtscr[0].topline + _bottom);
@@ -395,7 +395,7 @@ void CostumeRenderer::proc6()
 				*dst = pcolor;
 			}
 
-			dst += 320;
+			dst += _vm->_realWidth;
 			y++;
 			if (!--height) {
 				if (!--width)
@@ -443,7 +443,7 @@ void CostumeRenderer::proc5()
 					pcolor = _shadow_table[*dst];
 				*dst = pcolor;
 			}
-			dst += 320;
+			dst += _vm->_realWidth;
 			y++;
 			mask += 40;
 			if (!--height) {
@@ -506,7 +506,7 @@ void CostumeRenderer::proc4()
 					pcolor = _shadow_table[*dst];
 				*dst = pcolor;
 			}
-			dst += 320;
+			dst += _vm->_realWidth;
 			y++;
 			mask += 40;
 			if (!--height) {
@@ -570,7 +570,7 @@ void CostumeRenderer::proc3()
 						pcolor = _shadow_table[*dst];
 					*dst = pcolor;
 				}
-				dst += 320;
+				dst += _vm->_realWidth;
 				mask += 40;
 				y++;
 			}
@@ -584,7 +584,7 @@ void CostumeRenderer::proc3()
 				_scaleIndexX = t + _scaleIndexXStep;
 				if (cost_scaleTable[t] < _scaleX) {
 					_xpos += _scaleIndexXStep;
-					if (_xpos >= 320)
+					if (_xpos >= _vm->_realWidth)
 						return;
 					maskbit = revBitMask[_xpos & 7];
 					_backbuff_ptr += _scaleIndexXStep;
@@ -632,7 +632,7 @@ void CostumeRenderer::proc2()
 						pcolor = _shadow_table[*dst];
 					*dst = pcolor;
 				}
-				dst += 320;
+				dst += _vm->_realWidth;
 				mask += 40;
 				y++;
 			}
@@ -925,7 +925,7 @@ void CostumeRenderer::proc3_ami()
 			len = *src++;
 		do {
 			if (cost_scaleTable[_scaleIndexY] < _scaleY) {
-				if (color && _xpos >= 0 && _xpos < 320 && !((*mask | mask[_imgbufoffs]) & maskbit)) {
+				if (color && _xpos >= 0 && _xpos < _vm->_realWidth && !((*mask | mask[_imgbufoffs]) & maskbit)) {
 					pcolor = _palette[color];
 /*					  if (pcolor == 13)
 						pcolor = _shadow_table[*dst];*/

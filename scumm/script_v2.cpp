@@ -1410,7 +1410,7 @@ void Scumm::o6_putActorAtObject()
 	if (whereIsObject(obj) != WIO_NOT_FOUND) {
 		getObjectXYPos(obj, x, y);
 	} else {
-		x = 160;
+		x = (_realWidth / 2);
 		y = 120;
 	}
 	if (room == 0xFF)
@@ -1790,14 +1790,14 @@ void Scumm::o6_roomOps()
 	case 172:										/* room scroll */
 		b = pop();
 		a = pop();
-		if (a < 160)
-			a = 160;
-		if (b < 160)
-			b = 160;
-		if (a > _scrWidth - 160)
-			a = _scrWidth - 160;
-		if (b > _scrWidth - 160)
-			b = _scrWidth - 160;
+		if (a < (_realWidth / 2))
+			a = (_realWidth / 2);
+		if (b < (_realWidth / 2))
+			b = (_realWidth / 2);
+		if (a > _scrWidth - (_realWidth / 2))
+			a = _scrWidth - (_realWidth / 2);
+		if (b > _scrWidth - (_realWidth / 2))
+			b = _scrWidth - (_realWidth / 2);
 		_vars[VAR_CAMERA_MIN_X] = a;
 		_vars[VAR_CAMERA_MAX_X] = b;
 		break;
@@ -1805,7 +1805,7 @@ void Scumm::o6_roomOps()
 	case 174:										/* set screen */
 		b = pop();
 		a = pop();
-		initScreens(0, a, 320, b);
+		initScreens(0, a, _realWidth, b);
 		break;
 
 	case 175:										/* set palette color */

@@ -479,25 +479,25 @@ void Scumm::drawBox(int x, int y, int x2, int y2, int color)
 		y = 0;
 	if (x2 < 0)
 		return;
-	if (x2 > 320)
-		x2 = 320;
+	if (x2 > _realWidth)
+		x2 = _realWidth;
 	if (y2 > bottom)
 		y2 = bottom;
 
 	updateDirtyRect(vs->number, x, x2, y - top, y2 - top, 0);
 
-	backbuff = vs->screenPtr + vs->xstart + (y - top) * 320 + x;
+	backbuff = vs->screenPtr + vs->xstart + (y - top) * _realWidth + x;
 
 	if (color == -1) {
 		if (vs->number != 0)
 			error("can only copy bg to main window");
-		bgbuff = getResourceAddress(rtBuffer, vs->number + 5) + vs->xstart + (y - top) * 320 + x;
+		bgbuff = getResourceAddress(rtBuffer, vs->number + 5) + vs->xstart + (y - top) * _realWidth + x;
 		blit(backbuff, bgbuff, x2 - x, y2 - y);
 	} else {
 		count = y2 - y;
 		while (count) {
 			memset(backbuff, color, x2 - x);
-			backbuff += 320;
+			backbuff += _realWidth;
 			count--;
 		}
 	}

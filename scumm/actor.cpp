@@ -366,8 +366,8 @@ void Actor::setupActorScale()
 		if (resptr == NULL)
 			error("Scale table %d not defined", scale);
 		int theY = y;
-		if (theY >= 200)
-			theY = 199;
+		if (theY >= (_vm->_realWidth / 2))
+			theY = (_vm->_realWidth / 2) - 1;
 		else if (theY < 0)
 			theY = 0;
 		scale = resptr[theY];

@@ -931,7 +931,7 @@ void Scumm::processKbd()
 
 
 	if(_features & GF_AFTER_V7)
-		_virtual_mouse_y = mouse.y + camera._cur.y-100;
+		_virtual_mouse_y = mouse.y + camera._cur.y - (_realHeight / 2);
 	else
 		_virtual_mouse_y = mouse.y;
 

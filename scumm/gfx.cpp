@@ -147,7 +147,7 @@ void Scumm::drawDirtyScreenParts()
 	} else {
 		vs = &virtscr[0];
 
-		src = vs->screenPtr + _screenStartStrip * 8 + camera._cur.y - 100;
+		src = vs->screenPtr + _screenStartStrip * 8 + camera._cur.y - (_realHeight / 2);
 		_system->copy_rect(src, _realWidth, 0, vs->topline, _realWidth, vs->height);
 
 		for (i = 0; i < NUM_STRIPS; i++) {
@@ -1174,7 +1174,7 @@ void Gdi::clear8ColWithMasking()
 			((uint32 *)dst)[0] = 0;
 			((uint32 *)dst)[1] = 0;
 		}
-		dst += 320;
+		dst += _vm->_realWidth;
 		mask += NUM_STRIPS;
 	} while (--height);
 }
@@ -1442,7 +1442,7 @@ void Gdi::unkDecode4()
 		do {
 			FILL_BITS if (color != _transparency)
 				 *dst = color + _palette_mod;
-			dst += 320;
+			dst += _vm->_realWidth;
 			if (!READ_BIT) {
 			} else if (!READ_BIT) {
 				FILL_BITS color = bits & _decomp_mask;
@@ -1680,7 +1680,7 @@ void Gdi::unkDecode11()
 		_tempNumLines = _numLinesToProcess;
 		do {
 			*dst = color;
-			dst += 320;
+			dst += _vm->_realWidth;
 			for (i = 0; i < 3; i++) {
 				READ_256BIT if (!bits)
 					  break;
@@ -1790,7 +1790,7 @@ void Scumm::restoreBG(int left, int top, int right, int bottom)
 		if (height) {
 			do {
 				memset(backbuff, _bkColor, width);
-				backbuff += 320;
+				backbuff += _realWidth;
 			} while (--height);
 		}
 	}
@@ -2312,9 +2312,9 @@ void Scumm::cameraMoved()
 {
 	if (_features & GF_AFTER_V7) {
 
-		assert(camera._cur.x >= 160 && camera._cur.y >= 100);
+		assert(camera._cur.x >= (_realWidth / 2) && camera._cur.y >= (_realHeight / 2));
 
-		_screenStartStrip = (camera._cur.x - 160) >> 3;
+		_screenStartStrip = (camera._cur.x - (_realWidth / 2)) >> 3;
 		_screenEndStrip = _screenStartStrip + NUM_STRIPS - 1;
 		virtscr[0].xstart = _screenStartStrip << 3;
 
@@ -2788,7 +2788,7 @@ void Scumm::grabCursor(int x, int y, int w, int h)
 		return;
 	}
 
-	grabCursor(vs->screenPtr + (y - vs->topline) * 320 + x, w, h);
+	grabCursor(vs->screenPtr + (y - vs->topline) * _realWidth + x, w, h);
 
 }
 
