@@ -1372,6 +1372,21 @@ bool Logic::fnDrawScreen(uint32 a, uint32 b, uint32 c) {
 	debug(5, "Call: fnDrawScreen(%X, %X)",a,b);
 	SkyEngine::_systemVars.currentPalette = a;
 	_skyScreen->fnDrawScreen(a, b);
+	
+	if (Logic::_scriptVariables[SCREEN] == 32) {
+		/* workaround for script bug #786482
+		    Under certain circumstances, which never got completely cleared,
+		    the gardener can get stuck in an animation, waiting for a sync
+		    signal from foster.
+			This is most probably caused by foster leaving the screen before
+			sending the sync.
+			To work around that, we simply send a sync to the gardener every time
+			we enter the screen. If he isn't stuck (and thus not waiting for sync)
+			it will be ignored anyways */
+
+		debug(1, "sending gardener sync");
+		fnSendSync(ID_SC32_GARDENER, 1, 0);
+	}
 	return true;
 }
 
