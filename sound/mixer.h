@@ -115,7 +115,7 @@ public:
 	Channel *_channels[NUM_CHANNELS];
 	PlayingSoundHandle *_handles[NUM_CHANNELS];
 	
-	void insert(PlayingSoundHandle *handle, Channel *chan);
+	int insert(PlayingSoundHandle *handle, Channel *chan);
 	void uninsert(Channel *chan);
 
 	/* start playing a raw sound */
@@ -124,7 +124,7 @@ public:
 		FLAG_UNSIGNED = 2, /* unsigned samples */
 		FLAG_FILE = 4,	   /* sound is a FILE * that's read from */
 	};
-	void play_raw(PlayingSoundHandle *handle, void *sound, uint32 size, uint rate, byte flags);
+	int play_raw(PlayingSoundHandle *handle, void *sound, uint32 size, uint rate, byte flags);
 #ifdef COMPRESSED_SOUND_FILE
 	void play_mp3(PlayingSoundHandle *handle, void *sound, uint32 size, byte flags);
 	void play_mp3_cdtrack(PlayingSoundHandle *handle, FILE* file, void *buffer, uint32 buffer_size, mad_timer_t duration);

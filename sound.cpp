@@ -128,13 +128,22 @@ void Scumm::processSfxQueues()
 	bool b, finished;
 
 	if (_talk_sound_mode != 0) {
-		startTalkSound(_talk_sound_a, _talk_sound_b, _talk_sound_mode);
+		if (_talk_sound_mode == 2)
+			_talkChannel = startTalkSound(_talk_sound_a, _talk_sound_b, _talk_sound_mode);
+		else
+			startTalkSound(_talk_sound_a, _talk_sound_b, _talk_sound_mode);
 		_talk_sound_mode = 0;
 	}
 
-	if (_sfxMode == 2) {
+	if (_vars[VAR_TALK_ACTOR]) { //_sfxMode == 2) {
 		act = _vars[VAR_TALK_ACTOR];
-		finished = isSfxFinished();
+		if (_talkChannel < 0)
+			finished = false;
+		else if (this->_mixer->_channels[_talkChannel] == NULL)
+			finished = true;
+		else
+			finished = false;
+		
 
 		if (act != 0 && (uint) act < 0x80 && !string[0].no_talk_anim) {
 			a = derefActorSafe(act, "processSfxQueues");
@@ -148,11 +157,15 @@ void Scumm::processSfxQueues()
 				}
 			}
 		}
-		if (finished && _talkDelay == 0) {
+		
+		if (finished  && _talkDelay == 0) {
 			stopTalk();
 			_sfxMode = 0;
+			_talkChannel = -1;
 		}
-	} else if (_sfxMode == 1) {
+	}
+		
+	if (_sfxMode == 1) {
 		if (isSfxFinished()) {
 			_sfxMode = 0;
 		}
@@ -167,7 +180,7 @@ static int compar(const void *a, const void *b)
 }
 #endif
 
-void Scumm::startTalkSound(uint32 offset, uint32 b, int mode)
+int Scumm::startTalkSound(uint32 offset, uint32 b, int mode)
 {
 	int num = 0, i;
 	byte file_byte, file_byte_2;
@@ -175,7 +188,7 @@ void Scumm::startTalkSound(uint32 offset, uint32 b, int mode)
 
 	if (!_sfxFile) {
 		warning("startTalkSound: SFX file is not open");
-		return;
+		return -1;
 	}
 
 	if (b > 8) {
@@ -220,7 +233,7 @@ void Scumm::startTalkSound(uint32 offset, uint32 b, int mode)
 	_curSoundPos = 0;
 	_mouthSyncMode = true;
 
-	startSfxSound(_sfxFile, size);
+	return startSfxSound(_sfxFile, size);
 }
 
 void Scumm::stopTalkSound()
@@ -409,7 +422,7 @@ enum {
 
 };
 
-void Scumm::startSfxSound(void *file, int file_size)
+int Scumm::startSfxSound(void *file, int file_size)
 {
 	char ident[8];
 	int block_type;
@@ -441,13 +454,13 @@ void Scumm::startSfxSound(void *file, int file_size)
 	} else {
 	invalid:;
 		warning("startSfxSound: invalid header");
-		return;
+		return -1;
 	}
 
 	block_type = getc((FILE *) file);
 	if (block_type != 1) {
 		warning("startSfxSound: Expecting block_type == 1, got %d", block_type);
-		return;
+		return -1;
 	}
 
 	fread(work, 3, 1, (FILE *) file);
@@ -458,19 +471,19 @@ void Scumm::startSfxSound(void *file, int file_size)
 
 	if (comp != 0) {
 		warning("startSfxSound: Unsupported compression type %d", comp);
-		return;
+		return -1;
 	}
 
 	data = (byte *)malloc(size);
 	if (data == NULL) {
 		error("startSfxSound: out of memory");
-		return;
+		return -1;
 	}
 
 	if (fread(data, size, 1, (FILE *) file) != 1) {
 		/* no need to free the memory since error will shut down */
 		error("startSfxSound: cannot read %d bytes", size);
-		return;
+		return -1;
 	}
 	for (i = 0; i < size; i++) {
 		// Fixme: From WinCE port
@@ -479,7 +492,7 @@ void Scumm::startSfxSound(void *file, int file_size)
 
 		data[i] ^= 0x80;
 	}
-	playSfxSound(data, size, 1000000 / (256 - rate));
+	return playSfxSound(data, size, 1000000 / (256 - rate));
 }
 
 
@@ -584,11 +597,11 @@ void Scumm::playBundleSound(char *sound)
 	warning("playBundleSound: %s", sound);
 }
 
-void Scumm::playSfxSound(void *sound, uint32 size, uint rate)
+int Scumm::playSfxSound(void *sound, uint32 size, uint rate)
 {
 	if (_soundsPaused)
-		return;
-	_mixer->play_raw(NULL, sound, size, rate, SoundMixer::FLAG_AUTOFREE);
+		return -1;
+	return _mixer->play_raw(NULL, sound, size, rate, SoundMixer::FLAG_AUTOFREE);
 }
 
 void Scumm::playSfxSound_MP3(void *sound, uint32 size)

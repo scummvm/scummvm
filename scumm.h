@@ -1002,10 +1002,10 @@ public:
 	void clearSoundQue();
 	void talkSound(uint32 a, uint32 b, int mode);
 	void processSfxQueues();
-	void startTalkSound(uint32 a, uint32 b, int mode);
+	int startTalkSound(uint32 a, uint32 b, int mode);
 	void stopTalkSound();
 	bool isMouthSyncOff(uint pos);
-	void startSfxSound(void *file, int size);
+	int startSfxSound(void *file, int size);
 	void *openSfxFile();
 	void addSoundToQueue(int sound);
 	void addSoundToQueue2(int sound);
@@ -1016,10 +1016,11 @@ public:
 	void pauseSounds(bool pause);
 	bool isSfxFinished();
 	void playBundleSound(char *sound);
-	void playSfxSound(void *sound, uint32 size, uint rate);
+	int playSfxSound(void *sound, uint32 size, uint rate);
  	void playSfxSound_MP3(void *sound, uint32 size);
 	void stopSfxSound();
 
+	int _talkChannel;	/* Mixer channel actor is talking on */
 	bool _useTalkAnims;
 	uint16 _defaultTalkDelay;
 	byte _haveMsg;

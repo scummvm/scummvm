@@ -1652,6 +1652,7 @@ void Scumm::o6_isSoundRunning()
 	int snd = pop();
 	if (snd)
 		snd = isSoundRunning(snd);
+	
 	push(snd);
 }
 
@@ -2328,6 +2329,8 @@ void Scumm::o6_wait()
 			return;
 		}
 	case 169:
+		//printf("waiting for message: %d\n", _vars[VAR_HAVE_MSG]);
+		
 		if (_vars[VAR_HAVE_MSG])
 			break;
 		return;
@@ -2342,6 +2345,7 @@ void Scumm::o6_wait()
 
 		return;
 	case 171:
+		printf("wait for sentence");
 		if (_sentenceNum) {
 			if (sentence[_sentenceNum - 1].unk &&
 					!isScriptInUse(_vars[VAR_SENTENCE_SCRIPT]))

@@ -38,24 +38,26 @@ void SoundMixer::uninsert(Channel *chan) {
 	error("SoundMixer::channel_deleted chan not found");
 }
 
-void SoundMixer::insert(PlayingSoundHandle *handle, Channel *chan) {
+int SoundMixer::insert(PlayingSoundHandle *handle, Channel *chan) {
 	for(int i=0; i!=NUM_CHANNELS; i++) {
 		if (_channels[i] == NULL) {
 			_channels[i] = chan;
 			_handles[i] = handle;
 			if (handle)
 				*handle = i + 1;
-			return;
+			return i;
 		}
 	}
 	
 	warning("SoundMixer::insert out of mixer slots");
 	chan->destroy();
+
+	return -1;
 }
 
 
-void SoundMixer::play_raw(PlayingSoundHandle *handle, void *sound, uint32 size, uint rate, byte flags) {
-	insert(handle, new Channel_RAW(this, sound, size, rate, flags));
+int SoundMixer::play_raw(PlayingSoundHandle *handle, void *sound, uint32 size, uint rate, byte flags) {
+	return insert(handle, new Channel_RAW(this, sound, size, rate, flags));
 }
 
 #ifdef COMPRESSED_SOUND_FILE
@@ -202,8 +204,9 @@ void SoundMixer::Channel_RAW::mix(int16 *data, uint len) {
 		free(s_org);
 	}
 
-	if (!_size)
+	if (_size < 1)
 		destroy();
+
 }
 
 void SoundMixer::Channel_RAW::destroy() {
