@@ -1000,9 +1000,9 @@ int SimonEngine::runScript() {
 					d = _array_4[a];
 
 				if (_game & GF_SIMON2) {
-					if (d != 0 && !_subtitles)
+					if (d != 0 && (_language == 20 || !_subtitles))
 						talk_with_speech(d, b);
-					else if (s != NULL)
+					if (s != NULL && _subtitles)
 						talk_with_text(b, c, s, tv->a, tv->b, tv->c);
 				} else {
 					if (d != 0)
@@ -1304,7 +1304,7 @@ void SimonEngine::o_inventory_descriptions() {
 				}
 			}
 
-			if (!_subtitles)
+			if (_language == 20 || !_subtitles)
 				talk_with_speech(var200, a);
 		}
 

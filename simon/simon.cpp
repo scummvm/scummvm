@@ -2079,16 +2079,14 @@ void SimonEngine::o_print_str() {
 	case GAME_SIMON2TALKIE:
 	case GAME_SIMON2WIN:
 	case GAME_SIMON2MAC:
-		if (speech_id != 0 && num_1 == 1 && !_subtitles)
+		if (speech_id != 0 && num_1 == 1 && (_language == 20 || !_subtitles))
 			talk_with_speech(speech_id, num_1);
-
-		if (speech_id != 0 && !_subtitles)
-			return;
 
 		if ((_game & GF_TALKIE) && (speech_id == 0))
 			o_kill_sprite_simon2(2, num_1 + 2);
 
-		talk_with_text(num_1, num_2, (const char *)string_ptr, tv->a, tv->b, tv->c);
+		if (_subtitles)
+			talk_with_text(num_1, num_2, (const char *)string_ptr, tv->a, tv->b, tv->c);
 		break;
 	}
 }
