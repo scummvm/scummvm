@@ -1740,6 +1740,7 @@ void ScummEngine_v72he::o72_readINI() {
 			push(0);
 		break;
 	case 7: // string
+		writeVar(0, 0);
 		defineArray(0, kStringArray, 0, 0, 0, 0);
 		retval = readVar(0);
 		writeArray(0, 0, 0, 0);
