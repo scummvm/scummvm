@@ -23,7 +23,7 @@ lua-build:
 	$(MAKE) -C lua
 
 clean: lua-clean
-	-rm -f residual *.o *.d *~
+	-rm -f residual.exe *.o *.d *~
 
 lua-clean:
 	$(MAKE) -C lua clean
