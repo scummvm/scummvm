@@ -133,6 +133,7 @@ void SmushPlayer::parseAHDR()
 
 void SmushPlayer::parseIACT() {
 	unsigned int pos, bpos, tag, sublen, subpos, trk, idx, flags;
+	bool new_mixer = false;
 	byte * buf;
 
 	flags = SoundMixer::FLAG_AUTOFREE;
@@ -156,13 +157,14 @@ void SmushPlayer::parseIACT() {
 			    g_scumm->_mixer->_channels[idx] == NULL) {
 				_imusTrk[idx] = trk;
 				_imusSize[idx] = 0;
+				new_mixer = true;
 				break;
 			}
 		}
 	}
 
 	if (idx == 8) {
-		warning("iMUS table full\n");
+		warning("iMUS table full ");
 		return;
 	}
 
@@ -256,8 +258,11 @@ void SmushPlayer::parseIACT() {
 			debug(3, "trk %d: iMUSE play part, len 0x%x rate %d remain 0x%x",
 			      trk, bpos, _imusRate[idx], _imusSubSize[idx]);
 
-			g_scumm->_mixer->append(idx, buf, bpos,
-						_imusRate[idx], flags);
+			if (new_mixer) {
+				g_scumm->_mixer->play_stream(NULL, idx, buf, bpos, _imusRate[idx], flags);
+			} else {
+				g_scumm->_mixer->append(idx, buf, bpos, _imusRate[idx], flags);
+			}
 
 			/* FIXME: append with re-used idx may cause problems
 			   with signed/unsigned issues */
@@ -785,6 +790,7 @@ void SmushPlayer::parseFOBJ()
 void SmushPlayer::parsePSAD()	// FIXME: Needs to append to
 {								//		  a sound buffer
 	unsigned int pos, sublen, tag, idx, trk;
+	bool new_mixer = false;
 	byte * buf;	
 	pos = 0;
 	
@@ -802,9 +808,10 @@ void SmushPlayer::parsePSAD()	// FIXME: Needs to append to
 		for (idx = 0; idx < 8; idx++) {
 			if (_psadTrk[idx] == 0 &&
 			    g_scumm->_mixer->_channels[idx] == NULL) {
-					_psadTrk[idx] = trk;
-					_saudSize[idx] = 0;
-					break;
+				_psadTrk[idx] = trk;
+				_saudSize[idx] = 0;
+				new_mixer = true;
+				break;
 			}
 		}
 	}
@@ -852,9 +859,13 @@ void SmushPlayer::parsePSAD()	// FIXME: Needs to append to
 
 			debug(3, "trk %d: SDAT part len 0x%x rate %d",
 			      trk, sublen, _strkRate[idx]);
-
-			g_scumm->_mixer->append(idx, buf, sublen, 
-				_strkRate[idx], SoundMixer::FLAG_UNSIGNED | SoundMixer::FLAG_AUTOFREE);
+			
+			if (new_mixer) {
+				g_scumm->_mixer->play_stream(NULL, idx, buf, sublen, _strkRate[idx], SoundMixer::FLAG_UNSIGNED | SoundMixer::FLAG_AUTOFREE);
+			} else {
+				g_scumm->_mixer->append(idx, buf, sublen, 
+				                        _strkRate[idx], SoundMixer::FLAG_UNSIGNED | SoundMixer::FLAG_AUTOFREE);
+			}
 			break;
 		case 'SMRK' :
 			_psadTrk[idx] = 0;

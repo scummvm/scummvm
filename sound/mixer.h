@@ -36,7 +36,7 @@ private:
 		virtual void mix(int16 *data, uint len) = 0;
 		void destroy() { _to_be_destroyed = true; }
 		virtual void real_destroy() = 0;
-		virtual void append(void *sound, uint32 size) = 0;
+		virtual void append(void *sound, uint32 size);
 #ifdef COMPRESSED_SOUND_FILE
 		virtual bool sound_finished();
 #endif
@@ -54,9 +54,27 @@ private:
 		
 
 	public:
-		void append(void *sound, uint32 size);		
 		void mix(int16 *data, uint len);
 		Channel_RAW(SoundMixer *mixer, void *sound, uint32 size, uint rate, byte flags);
+		void real_destroy();
+	};
+
+	class Channel_STREAM : public Channel {
+		SoundMixer *_mixer;
+		byte *_ptr;
+		byte *_end_of_data;
+		byte *_pos;
+		uint32 _fp_speed;
+		uint32 _fp_pos;
+		uint32 _buffer_size;
+		uint32 _rate;
+		byte _flags;
+		
+
+	public:
+		void append(void *sound, uint32 size);		
+		void mix(int16 *data, uint len);
+		Channel_STREAM(SoundMixer *mixer, void *sound, uint32 size, uint rate, byte flags);
 		void real_destroy();
 	};
 
@@ -75,7 +93,6 @@ private:
 		byte _flags;
 
 	public:
-		virtual void append(void *sound, uint32 size) {}	// FIXME, FAKE
 		void mix(int16 *data, uint len);
 		Channel_MP3(SoundMixer *mixer, void *sound, uint size, byte flags);
 		void real_destroy();
@@ -95,7 +112,6 @@ private:
 		FILE   *_file;
 		bool _initialized;
 	public:
-		virtual void append(void *sound, uint32 size) {}	// FIXME, FAKE
 		void mix(int16 *data, uint len);
 		Channel_MP3_CDMUSIC(SoundMixer *mixer, FILE* file, mad_timer_t duration);
 		void real_destroy();		
@@ -126,6 +142,7 @@ public:
 	PlayingSoundHandle *_handles[NUM_CHANNELS];
 	
 	int insert(PlayingSoundHandle *handle, Channel *chan);
+	int insert_at(PlayingSoundHandle *handle, int index, Channel *chan);
 	void append(void *data, uint32 len);
 	void uninsert(Channel *chan);
 
@@ -139,6 +156,7 @@ public:
 		FLAG_FILE       = 16, /* sound is a FILE * that's read from */
 	};
 	int play_raw(PlayingSoundHandle *handle, void *sound, uint32 size, uint rate, byte flags);
+	int play_stream(PlayingSoundHandle *handle, int index, void *sound, uint32 size, uint rate, byte flags);
 #ifdef COMPRESSED_SOUND_FILE
 	int play_mp3(PlayingSoundHandle *handle, void *sound, uint32 size, byte flags);
 	int play_mp3_cdtrack(PlayingSoundHandle *handle, FILE* file, mad_timer_t duration);
