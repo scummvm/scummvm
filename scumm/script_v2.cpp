@@ -849,8 +849,8 @@ void Scumm_v2::o2_walkActorTo() {
 	int x, y;
 	Actor *a;
 	a = derefActorSafe(getVarOrDirectByte(0x80), "o2_walkActorTo");
-	x = getVarOrDirectByte(0x40);
-	y = getVarOrDirectByte(0x20);
+	x = getVarOrDirectByte(0x40) * 8;
+	y = getVarOrDirectByte(0x20) * 2;
 	a->ignoreBoxes = true;			// FIXME: Disabling walkboxes
 	a->startWalkActor(x, y, -1);		// for now, just to debug the intro
 }
@@ -860,8 +860,8 @@ void Scumm_v2::o2_putActor() {
 	Actor *a;
 
 	a = derefActorSafe(getVarOrDirectByte(0x80), "o2_putActor");
-	x = getVarOrDirectByte(0x40);
-	y = getVarOrDirectByte(0x20);
+	x = getVarOrDirectByte(0x40) * 8;
+	y = getVarOrDirectByte(0x20) * 2;
 
 	if (!a)
 		return;
@@ -972,8 +972,8 @@ void Scumm_v2::o2_loadRoomWithEgo() {
 	a->putActor(0, 0, room);
 	_egoPositioned = false;
 
-	x = (int16)fetchScriptByte();
-	y = (int16)fetchScriptByte();
+	x = (int16)fetchScriptByte() * 8;
+	y = (int16)fetchScriptByte() * 2;
 
 	startScene(a->room, a, obj);
 
@@ -1139,11 +1139,11 @@ void Scumm_v2::o2_cursorCommand() {
 
 	if (a2 & 2) {						// Cursor Show/Hide
 		if (a2 & 16) 
-                	_cursor.state = 1;
+			_cursor.state = 1;
 		else
-                	_cursor.state = 0;
-
-                verbMouseOver(0);
+			_cursor.state = 0;
+		
+		verbMouseOver(0);
 	}
 }
 

@@ -350,15 +350,15 @@ void Scumm::getBoxCoordinates(int boxnum, BoxCoords *box) {
 			SWAP(box->ll.y, box->lr.y);
 		}
 	} else if (_features & GF_AFTER_V2) {
-		box->ul.x = bp->v2.ulx;
-		box->ul.y = bp->v2.uy;
-		box->ur.x = bp->v2.urx;
-		box->ur.y = bp->v2.uy;
+		box->ul.x = bp->v2.ulx * 8;
+		box->ul.y = bp->v2.uy * 2;
+		box->ur.x = bp->v2.urx * 8;
+		box->ur.y = bp->v2.uy * 2;
 	
-		box->ll.x = bp->v2.llx;
-		box->ll.y = bp->v2.ly;
-		box->lr.x = bp->v2.lrx;
-		box->lr.y = bp->v2.ly;
+		box->ll.x = bp->v2.llx * 8;
+		box->ll.y = bp->v2.ly * 2;
+		box->lr.x = bp->v2.lrx * 8;
+		box->lr.y = bp->v2.ly * 2;
 	} else {
 		box->ul.x = (int16)READ_LE_UINT16(&bp->old.ulx);
 		box->ul.y = (int16)READ_LE_UINT16(&bp->old.uly);
