@@ -427,8 +427,8 @@ void SkyScreen::processSequence(void) {
 				}
 			} while (nrToDo == 0xFF);
 		} while (screenPos < (GAME_SCREEN_WIDTH * GAME_SCREEN_HEIGHT));
-		uint8 *gridPtr = _seqGrid; uint8 *scrPtr = _currentScreen; uint8 *rectPtr;
-		uint8 rectWid = 0, rectX, rectY;
+		uint8 *gridPtr = _seqGrid; uint8 *scrPtr = _currentScreen; uint8 *rectPtr = NULL;
+		uint8 rectWid = 0, rectX = 0, rectY = 0;
 		for (uint8 cnty = 0; cnty < 12; cnty++) {
 			for (uint8 cntx = 0; cntx < 20; cntx++) {
 				if (*gridPtr) {
