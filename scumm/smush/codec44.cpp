@@ -27,45 +27,47 @@
 bool Codec44Decoder::decode(Blitter & dst, Chunk & src) {
 	int32 size_line;
 	int32 num;
-	int32 w, width = getRect().width() + 1;
-	int32 h, height = getRect().height() + 1;
-	bool zero;
-#ifdef DEBUG_CODEC44
-	debug(7, "codec44 : %dx%d", width, height);
-#endif
+	int32 length = src.getSize() - 14;
+	int32 width = getRect().width();
+	int32 height = getRect().height();
+	byte * src2 = (byte*)malloc(length);
+	byte * org_src2 = src2;
+	src.read(src2, length);
+	byte * dst2 = (byte*)malloc(2000);
+	byte * org_dst2 = dst2;
+	byte val;
 
-	for(h = 0; h < height - 1; h++) {
-		w = width;
-		size_line = src.getWord(); // size of compressed line !
-#ifdef DEBUG_CODEC44
-		debug(7, "codec44 : h == %d, size_line == %d", h, size_line);
-#endif
-		zero = true;
-		while(size_line > 1) {
-			num = src.getWord();
+	do {
+		size_line = READ_LE_UINT16(src2);
+		src2 += 2;
+		length -= 2;
+
+		while (size_line != 0) {
+			num = *src2++;
+			val = *src2++;
+			memset(dst2, val, num);
+			dst2 += num;
+			length -= 2;
 			size_line -= 2;
-			if(zero) {
-#ifdef DEBUG_CODEC44
-				debug(7, "codec44 : zeroing %d, entries", num);
-#endif
-				if(w == num)
-					num--;
-				w -= num;
-				if(num)
-					dst.put(0, num);
-			} else {
-				num += 1;
-#ifdef DEBUG_CODEC44
-				debug(7, "codec44 : blitting %d, entries", num);
-#endif
-				if(w == num)
-					num--;
-				w -= num;
-				dst.blit(src, num);
-				size_line -= num;
-			}
-			zero = !zero;
+			if (size_line == 0)
+				break;
+
+			num = READ_LE_UINT16(src2) + 1;
+			src2 += 2;
+			memcpy(dst2, src2, num);
+			dst2 += num;
+			src2 += num;
+			length -= num + 2;
+			size_line -= num + 2;
 		}
-	}
+		dst2--;
+
+	} while (length > 1);
+
+	dst.blit(org_dst2, width * height);
+
+	free(org_src2);
+	free(org_dst2);
+
 	return true;
 }

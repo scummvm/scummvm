@@ -114,12 +114,12 @@ int32 FontRenderer::drawChar(char * buffer, const Point & size, int32 x, int32 y
 }
 
 static char * * split(const char * str, char sep) {
-	char * * ret = new char *[32];
+	char * * ret = new char *[62];
 	int32 n = 0;
 	const char * i = str, * j = strchr(i, sep);
 
 	while(j != NULL) {
-		assert(n < 30);
+		assert(n < 60);
 		ret[n] = new char[j - i + 1];
 		memcpy(ret[n], i, j - i);
 		ret[n++][j - i] = 0;
@@ -160,7 +160,10 @@ bool FontRenderer::drawStringAbsolute(const char * str, char * buffer, const Poi
 
 bool FontRenderer::drawStringCentered(const char * str, char * buffer, const Point & size, int32 y, int32 xmin, int32 width, int32 offset) const {
 	debug(9, "FontRenderer::drawStringCentered(%s, %d, %d)", str, xmin, y);
-	assert(strchr(str, '\n') == 0);
+	if ((strchr(str, '\n') != 0)) {
+		char * j = strchr(str, '\n');
+		*j = 0;
+	}
 	char * * words = split(str, ' ');
 	int32 nb_sub = 0;
 
@@ -235,7 +238,10 @@ bool FontRenderer::drawStringCentered(const char * str, char * buffer, const Poi
 
 bool FontRenderer::drawStringWrap(const char * str, char * buffer, const Point & size, int32 x, int32 y, int32 width) const {
 	debug(9, "FontRenderer::drawStringWrap(%s, %d, %d)", str, x, y);
-	assert(strchr(str, '\n') == 0);
+	if ((strchr(str, '\n') != 0)) {
+		char * j = strchr(str, '\n');
+		*j = 0;
+	}
 	char * * words = split(str, ' ');
 	int32 nb_sub = 0;
 
@@ -308,7 +314,10 @@ bool FontRenderer::drawStringWrap(const char * str, char * buffer, const Point &
 bool FontRenderer::drawStringWrapCentered(const char * str, char * buffer, const Point & size, int32 x, int32 y, int32 width) const {
 	int32 max_substr_width = 0;
 	debug(9, "FontRenderer::drawStringWrapCentered(%s, %d, %d)", str, x, y);
-	assert(strchr(str, '\n') == 0);
+	if ((strchr(str, '\n') != 0)) {
+		char * j = strchr(str, '\n');
+		*j = 0;
+	}
 	char * * words = split(str, ' ');
 	int32 nb_sub = 0;
 

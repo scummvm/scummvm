@@ -53,7 +53,7 @@ private:
 	int16 _deltaPal[768];		//!< the delta palette information set by an xpal
 	Renderer * _renderer;		//!< pointer to the ::renderer
 	StringResource * _strings;	//!< pointer to the string resources associated with the animation
-	FontRenderer * _fr[4];		//!< pointers to the fonts for the animation
+	FontRenderer * _fr[5];		//!< pointers to the fonts for the animation
 	Codec1Decoder _codec1;	//!< the ::decoder for codec 1 and 3
 	Codec37Decoder _codec37;	//!< the ::decoder for codec 37
 	Codec47Decoder _codec47;	//!< the ::decoder for codec 47

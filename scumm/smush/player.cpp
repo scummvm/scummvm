@@ -23,7 +23,6 @@
 #include "common/file.h"
 #include "common/util.h"
 #include "common/engine.h" // for debug, warning, error
-#include "common/engine.h" // for debug, warning, error
 #include "scumm/scumm.h"
 #include "sound/mixer.h"
 
@@ -209,7 +208,7 @@ SmushPlayer::SmushPlayer(Renderer * renderer, bool wait, bool sound) :
 							_bgmusic(true),
 							_voices(true),
 							_curBuffer(0) {
-	_fr[0] = _fr[1] = _fr[2] = _fr[3] = 0;
+	_fr[0] = _fr[1] = _fr[2] = _fr[3] = _fr[4] = 0;
 	assert(_renderer != 0);
 	_IACTchannel = -1;
 	_IACTrest = 0;
@@ -231,6 +230,7 @@ void SmushPlayer::clean() {
 	if(_fr[1]) delete _fr[1];
 	if(_fr[2]) delete _fr[2];
 	if(_fr[3]) delete _fr[3];
+	if(_fr[4]) delete _fr[4];
 }
 
 void SmushPlayer::checkBlock(const Chunk & b, Chunk::type type_expected, uint32 min_size) {
@@ -430,7 +430,6 @@ void SmushPlayer::handleImuseAction(Chunk & b) {
 }
 
 void SmushPlayer::handleTextResource(Chunk & b) {
-	checkBlock(b, TYPE_TRES, 18); 
 	int32 pos_x = b.getShort();
 	int32 pos_y = b.getShort();
 	int32 flags = b.getShort();
@@ -439,18 +438,30 @@ void SmushPlayer::handleTextResource(Chunk & b) {
 	int32 width = b.getShort();
 	/*int32 height =*/ b.getShort();
 	/*int32 unk2 =*/ b.getWord();
-	int32 string_id = b.getWord();
-	debug(6, "SmushPlayer::handleTextResource(%d)", string_id);
-	if(!_strings) return;
+
+	const char * str;
+	char * string;
+	if (g_scumm->_gameId == GID_CMI) {
+		string = (char*)malloc(b.getSize() - 16);
+		str = string;
+		b.read(string, b.getSize() - 16);
+	} else {
+		int32 string_id = b.getWord();
+		debug(6, "SmushPlayer::handleTextResource(%d)", string_id);
+		if(!_strings)
+			return;
+		str = _strings->get(string_id);
+	}
 
 	// if subtitles disabled and bit 3 is set, then do not draw
 	if((!_subtitles) && ((flags & 8) == 8))
 		return;
-	const char * str = _strings->get(string_id);
 
 	FontRenderer * fr = _fr[0];
 	int32 color = 15;
 	while(*str == '/') str++; // For Full Throttle text resources
+	if (g_scumm->_gameId == GID_CMI)
+		while(*str++ != '/');
 	while(str[0] == '^') {
 		switch(str[1]) {
 		case 'f':
@@ -503,6 +514,10 @@ void SmushPlayer::handleTextResource(Chunk & b) {
 	}
 	else
 		warning("SmushPlayer::handleTextResource. Not handled flags: %d\n", flags);
+
+	if (g_scumm->_gameId == GID_CMI) {
+		free (string);
+	}
 }
 
 void SmushPlayer::readPalette(Palette & out, Chunk & in) {
@@ -607,7 +622,6 @@ void SmushPlayer::handleFrameObject(Chunk & b) {
 		decodeCodec(b, r, _codec1);
 		break;
 	case 37:
-		// assert(left == 0 && top == 0);
 		initSize(r, true, false);
 		decodeCodec(b, r, _codec37);
 		_codec37Called = true;
@@ -665,6 +679,7 @@ void SmushPlayer::handleFrame(Chunk & b) {
 				handleSkip(*sub);
 				break;
 			case TYPE_TEXT:
+				handleTextResource(*sub);
 				break;
 			default:
 				error("Unknown frame subChunk found : %s, %d", Chunk::ChunkString(sub->getType()), sub->getSize());
@@ -806,10 +821,10 @@ bool SmushPlayer::play(const char * file, const char * directory) {
 	clean();
 	
 	if(_wait) {
-		bool isFullthrottle;
+		bool isFullthrottle = false;
 		if(!readString(file, directory, isFullthrottle))
 			debug(2, "unable to read text information for \"%s\"", file);
-		if(_strings) {
+		if((_strings) || (g_scumm->_gameId == GID_CMI)) {
 			if(isFullthrottle) {
 				_fr[0] = loadFont("scummfnt.nut", directory, true);
 				_fr[2] = loadFont("titlfnt.nut", directory, true);
@@ -819,6 +834,13 @@ bool SmushPlayer::play(const char * file, const char * directory) {
 					sprintf((char*)&file_font, "font%d.nut", i);
 					_fr[i] = loadFont(file_font, directory, i != 0);
 				}
+			}
+		}
+		if(g_scumm->_gameId == GID_CMI) {
+			for(int i = 0; i < 5; i++) {
+				char file_font[20];
+				sprintf((char*)&file_font, "font%d.nut", i);
+				_fr[i] = loadFont(file_font, directory, i != 0);
 			}
 		}
 	}
