@@ -896,26 +896,40 @@ void Actor::drawActorCostume()
 
 		cr._outheight = _vm->virtscr->height;
 
-		// If walkbox is 0, that could mean two things:
+		// FIXME - Hack to fix two glitches in the scene where Bobbin
+		// heals Rusty: Bobbin's feet get masked when Rusty shows him
+		// what happens to The Forge, and Rusty gets masked after
+		// Bobbin heals him.
 		//
-		// Either the actor is or has been moved around with
-		// ignoreBoxes != 0. In this case, use the mask for the
-		// walkbox the actor is currently inside or, if it's not in
-		// any walkbox, don't mask at all.
+		// When an actor is moved around without regards to walkboxes,
+		// its walkbox is set to 0. Unfortunately that's a valid
+		// walkbox in older games, and its mask may be completely
+		// wrong for this purpose.
 		//
-		// This fixes two graphics glitches in Loom. Bobbin's feet
-		// are not obscured after Rusty's ghost has shown him what's
-		// happened to The Forge, and Rusty himself isn't partially
-		// obscured after Bobbin heals him.
+		// So instead use the mask of the box where the actor happens
+		// to be at the moment or, if it's not in any box, don't mask
+		// at all.
 		//
-		// Or it could mean that the actor really is in walkbox 0.
+		// Checking if ignoreBoxes != 0 isn't enough to fix all the
+		// glitches, so I have to check for walkbox 0. However, that
+		// gives too many false positives -- it breaks masking in a
+		// few other rooms, e.g. when Stoke leaves the room where he
+		// locks up "Rusty".
+		//
+		// Until someone can find the proper fix, only apply it to the
+		// one room where it's actually needed.
 
-		if (_vm->_gameId == GID_LOOM256 && walkbox == 0) {
-			int i;
+		if (_vm->_gameId == GID_LOOM256 && _vm->_currentRoom == 34 && walkbox == 0) {
+			int num_boxes, i;
 
 			cr._zbuf = 0;
+			num_boxes = _vm->getNumBoxes();
 
-			for (i = _vm->getNumBoxes() - 1; i >= 0; i--) {
+			// For this particular room it won't matter in which
+			// direction we loop. In other rooms, looping in the
+			// other direction may pick the wrong box.
+
+			for (i = 0; i < num_boxes; i++) {
 				if (_vm->checkXYInBoxBounds(i, x, y)) {
 					cr._zbuf = _vm->getMaskFromBox(i);
 					break;
@@ -1141,8 +1155,9 @@ void Actor::startWalkActor(int destX, int destY, int dir)
 		abr.dist = 0;
 		walkbox = 0;
 	} else {
-		// FIXME: this prevents part of bug #605970 (Loom) from occuring. Not sure
-		// if there is a better way to achieve this.
+		// FIXME: this prevents part of bug #605970 (Loom) from
+		// occuring, and also fixes a walk bug with Rusty's ghost.
+		// Not sure if there is a better way to achieve this.
 		if (walkbox == 0)
 			adjustActorPos();
 
