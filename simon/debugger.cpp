@@ -80,7 +80,9 @@ bool Debugger::Cmd_PlayMusic(int argc, const char **argv) {
 		if (_vm->_game & GF_SIMON2)
 			DebugPrintf("No support for Simon the Sorcerer 2\n");
 		else if (music < 35)
-		_vm->loadMusic(music);
+			_vm->loadMusic(music);
+		else
+			DebugPrintf("Music out of range (0 - 34)\n");
 	} else
 		DebugPrintf("Syntax: music <musicnum>\n");
 
@@ -90,8 +92,11 @@ bool Debugger::Cmd_PlayMusic(int argc, const char **argv) {
 bool Debugger::Cmd_PlayVoice(int argc, const char **argv) {
 	if (argc > 1) {
 		uint voice = atoi(argv[1]);
-		if ((_vm->_game & GF_SIMON2 && voice < 3623) || (!(_vm->_game & GF_SIMON2) && voice < 1997))
+		uint range = (_vm->_game & GF_SIMON2) ? 3633 : 1997;
+		if (voice < range)
 			_vm->_sound->playVoice(voice);
+		else
+			DebugPrintf("Voice out of range (0 - %d)\n", range);
 	} else
 		DebugPrintf("Syntax: voice <soundnum>\n");
 
