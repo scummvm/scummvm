@@ -553,7 +553,7 @@ void ScummEngine_v90he::spriteInfoSet_flag13(int spriteId, int value) {
 		_spriteTable[spriteId].flags |= kSFChanged | kSFNeedRedraw;
 }
 
-void ScummEngine_v90he::spriteInfoSet_flag14(int spriteId, int value) {
+void ScummEngine_v90he::spriteInfoGet_flagYFlipped(int spriteId, int value) {
 	checkRange(_varNumSprites, 1, spriteId, "Invalid sprite %d");
 
 	int oldFlags = _spriteTable[spriteId].flags;
@@ -566,7 +566,7 @@ void ScummEngine_v90he::spriteInfoSet_flag14(int spriteId, int value) {
 		_spriteTable[spriteId].flags |= kSFChanged | kSFNeedRedraw;
 }
 
-void ScummEngine_v90he::spriteInfoSet_flag15(int spriteId, int value) {
+void ScummEngine_v90he::spriteInfoGet_flagXFlipped(int spriteId, int value) {
 	checkRange(_varNumSprites, 1, spriteId, "Invalid sprite %d");
 
 	int oldFlags = _spriteTable[spriteId].flags;

@@ -962,8 +962,8 @@ protected:
 	void spriteInfoSet_zoom(int spriteId, int value);
 	void spriteInfoSet_rotAngle(int spriteId, int value);
 	void spriteInfoSet_flag13(int spriteId, int value);
-	void spriteInfoSet_flag14(int spriteId, int value);
-	void spriteInfoSet_flag15(int spriteId, int value);
+	void spriteInfoGet_flagYFlipped(int spriteId, int value);
+	void spriteInfoGet_flagXFlipped(int spriteId, int value);
 	void spriteInfoSet_flagActive(int spriteId, int value);
 	void spriteInfoSet_flag20(int spriteId, int value);
 	void spriteInfoSet_flagYFlipped(int spriteId, int value);

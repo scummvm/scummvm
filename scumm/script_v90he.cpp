@@ -1057,10 +1057,10 @@ void ScummEngine_v90he::o90_setSpriteInfo() {
 		for (; spriteId <= _curMaxSpriteId; spriteId++)
 			switch(args[1]) {
 			case 0:
-				spriteInfoSet_flag15(spriteId, args[0]);
+				spriteInfoGet_flagXFlipped(spriteId, args[0]);
 				break;
 			case 1:
-				spriteInfoSet_flag14(spriteId, args[0]);
+				spriteInfoGet_flagYFlipped(spriteId, args[0]);
 				break;
 			case 2:
 				spriteInfoSet_flagActive(spriteId, args[0]);
