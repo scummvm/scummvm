@@ -257,11 +257,6 @@ Mixer *Mixer::instance() {
 	return _instance;
 }
 
-void mixerCallback(void *userdata, int16 *stream, uint len) {
-	Mixer *m = static_cast<Mixer *>(userdata);
-	m->getAudio(stream, len * 2);
-}
-
 extern SoundMixer *g_mixer;
 
 Mixer::Mixer() :

@@ -78,8 +78,6 @@ private:
 	typedef std::list<ResPtr<Sound> > SoundList;
 	SoundList _voiceSounds, _sfxSounds;
 	ResPtr<Sound> _musicSound, _seqSound;
-
-	friend void mixerCallback(void *userdata, uint8 *stream, int len);
 };
 
 #endif
