@@ -1380,7 +1380,7 @@ void Scumm::o5_ifState()
 	int b = getVarOrDirectByte(0x40);
 	bool isNegated = _opcode & 0x20;
 
-	if (((getState(a) & 0xF0 >> 4) != b) ^ isNegated)
+	if ((getState(a) != b) ^ isNegated)
 		o5_jumpRelative();
 	else
 		ignoreScriptWord();
