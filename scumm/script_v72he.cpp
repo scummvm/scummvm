@@ -155,7 +155,7 @@ void ScummEngine_v72he::setupOpcodes() {
 		/* 58 */
 		OPCODE(o72_getTimer),
 		OPCODE(o72_setTimer),
-		OPCODE(o72_unknown5A),
+		OPCODE(o72_getSoundElapsedTimeOfSound),
 		OPCODE(o6_wordArrayDec),
 		/* 5C */
 		OPCODE(o6_if),
@@ -714,13 +714,10 @@ void ScummEngine_v72he::o72_setTimer() {
 	}
 }
 
-void ScummEngine_v72he::o72_unknown5A() {
-	// Seems to get length of sound already played
+void ScummEngine_v72he::o72_getSoundElapsedTimeOfSound() {
 	int snd = pop();
-	int r = _mixer->getSoundElapsedTime(_sound->_musicChannelHandle);
-
-	push(r * 10);
-	debug(1,"o72_unknown5A stub (%d)", snd);
+	push(_mixer->getSoundElapsedTimeOfSoundID(snd) * 10);
+	debug(1,"o72_getSoundElapsedTimeOfSound (%d)", snd);
 }
 
 void ScummEngine_v72he::o72_startScript() {

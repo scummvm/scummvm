@@ -233,6 +233,11 @@ public:
 	void setChannelBalance(PlayingSoundHandle handle, int8 balance);
 
 	/**
+	 * Get approximation of for how long the Sound ID has been playing.
+	 */
+	uint32 getSoundElapsedTimeOfSoundID(int id);
+
+	/**
 	 * Get approximation of for how long the channel has been playing.
 	 */
 	uint32 getSoundElapsedTime(PlayingSoundHandle handle);

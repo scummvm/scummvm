@@ -211,7 +211,6 @@ void ScummEngine::akos_decodeData(Actor *a, int frame, uint usemask) {
 							while (size--) {
 								if (READ_LE_UINT32(akst) == 0) {
 									a->cost.seq3[i] = READ_LE_UINT32(akst + 4);
-									akst += 8;
 									found = true;
 									break;
 								}
@@ -243,7 +242,6 @@ void ScummEngine::akos_decodeData(Actor *a, int frame, uint usemask) {
 								if (READ_LE_UINT16(aksf) == start) {
 									a->cost.seq1[i] = READ_LE_UINT16(aksf + 2);
 									a->cost.seq2[i] = READ_LE_UINT16(aksf + 4);
-									aksf += 6;
 									found = true;
 									break;
 								}
@@ -268,7 +266,6 @@ void ScummEngine::akos_decodeData(Actor *a, int frame, uint usemask) {
 							while (size--) {
 								if (READ_LE_UINT32(akst) == start) {
 									a->cost.seq3[i] = READ_LE_UINT32(akst + 4);
-									akst += 8;
 									found = true;
 									break;
 								}

@@ -333,6 +333,14 @@ void SoundMixer::setChannelBalance(PlayingSoundHandle handle, int8 balance) {
 		_channels[index]->setBalance(balance);
 }
 
+uint32 SoundMixer::getSoundElapsedTimeOfSoundID(int id) {
+	Common::StackLock lock(_mutex);
+	for (int i = 0; i != NUM_CHANNELS; i++)
+		if (_channels[i] && _channels[i]->getId() == id)
+			return _channels[i]->getElapsedTime();
+	return 0;
+}
+
 uint32 SoundMixer::getSoundElapsedTime(PlayingSoundHandle handle) {
 	Common::StackLock lock(_mutex);
 

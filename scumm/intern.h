@@ -759,7 +759,7 @@ protected:
 	void o72_captureWizImage();
 	void o72_getTimer();
 	void o72_setTimer();
-	void o72_unknown5A();
+	void o72_getSoundElapsedTimeOfSound();
 	void o72_startScript();
 	void o72_startObject();
 	void o72_drawObject();

@@ -85,7 +85,6 @@ protected:
 	int16 _currentMusic;
 public:
 	PlayingSoundHandle _talkChannelHandle;	// Handle of mixer channel actor is talking on
-	PlayingSoundHandle _musicChannelHandle;	// Handle of mixer channel music is on
 
 	bool _soundsPaused;
 	byte _sfxMode;

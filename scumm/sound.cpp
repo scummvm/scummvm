@@ -164,7 +164,6 @@ void Sound::playSound(int soundID, int heOffset, int heChannel, int heFlags) {
 	int size = -1;
 	int rate;
 	byte flags = SoundMixer::FLAG_UNSIGNED | SoundMixer::FLAG_AUTOFREE;
-	bool music = false;
 	
 	if (_vm->_heversion >= 70 && soundID > _vm->_numSounds) {
 		debug(0, "playSound #%d", soundID);
@@ -199,16 +198,15 @@ void Sound::playSound(int soundID, int heOffset, int heChannel, int heFlags) {
 		if (skip > tracks - 1)
 			skip = 0;
 
-		musicFile.seek(+28, SEEK_CUR);
-		if (musicFile.readUint32LE() == TO_LE_32(MKID('SGEN'))) {
+		if (_vm->_heversion >= 80) {
+			// Skip to offsets
+			musicFile.seek(+40, SEEK_CUR);
+
 			// Skip to correct music header
 			skip *= 21;
-
-			// Skip to offsets
-			musicFile.seek(+8, SEEK_CUR);
 		} else {
-			// Rewind
-			musicFile.seek(-28, SEEK_CUR);
+			// Skip to offsets
+			musicFile.seek(+4, SEEK_CUR);
 
 			// Skip to correct music header
 			skip *= 25;
@@ -229,12 +227,10 @@ void Sound::playSound(int soundID, int heOffset, int heChannel, int heFlags) {
 		musicFile.read(ptr, size);
 		musicFile.close();
 
+		_vm->_mixer->stopID(_currentMusic);
 		_currentMusic = soundID;
-		music = true;
 		if (_vm->_heversion == 70) {
-			// Allocate a sound buffer, copy the data into it, and play
-			_vm->_mixer->stopHandle(_musicChannelHandle);
-			_vm->_mixer->playRaw(&_musicChannelHandle, ptr, size, 11025, flags, soundID);
+			_vm->_mixer->playRaw(NULL, ptr, size, 11025, flags, soundID);
 			return;
 		}
 	} else {
@@ -299,18 +295,12 @@ void Sound::playSound(int soundID, int heOffset, int heChannel, int heFlags) {
 		}
 
 		// TODO: Set sound channel based on heChannel
-		if (heFlags & 1)
-			flags |= SoundMixer::FLAG_LOOP;
+		//       Set sound looping based on heFlags
 
 		// Allocate a sound buffer, copy the data into it, and play
 		sound = (char *)malloc(size);
 		memcpy(sound, ptr + heOffset + 8, size);
-
-		if (music == true) {
-			_vm->_mixer->stopHandle(_musicChannelHandle);
-			_vm->_mixer->playRaw(&_musicChannelHandle, sound, size, rate, flags, soundID);
-		} else
-			_vm->_mixer->playRaw(NULL, sound, size, rate, flags, soundID);
+		_vm->_mixer->playRaw(NULL, sound, size, rate, flags, soundID);
 	}
 	else if (READ_UINT32(ptr) == MKID('MRAW')) {
 		// pcm music in 3DO humongous games
@@ -325,9 +315,9 @@ void Sound::playSound(int soundID, int heOffset, int heChannel, int heFlags) {
 		// Allocate a sound buffer, copy the data into it, and play
 		sound = (char *)malloc(size);
 		memcpy(sound, ptr + 8, size);
+		_vm->_mixer->stopID(_currentMusic);
 		_currentMusic = soundID;
-		_vm->_mixer->stopHandle(_musicChannelHandle);
-		_vm->_mixer->playRaw(&_musicChannelHandle, sound, size, rate, flags, soundID);
+		_vm->_mixer->playRaw(NULL, sound, size, rate, flags, soundID);
 	}	
 	// Support for sampled sound effects in Monkey Island 1 and 2
 	else if (READ_UINT32(ptr) == MKID('SBL ')) {
@@ -673,7 +663,7 @@ void Sound::startTalkSound(uint32 offset, uint32 b, int mode, PlayingSoundHandle
 			_sfxFile->seek(offset + 32, SEEK_SET);
 
 			if (_sfxFile->readUint32LE() == TO_LE_32(MKID('SBNG'))) {
-				warning("startTalkSound: Skipped SBNG block");
+				debug(2, "startTalkSound: Skipped SBNG block");
 				// Skip the SBNG, so we end up at the SDAT chunk
 				extra = _sfxFile->readUint32BE();
 				_sfxFile->seek(extra - 4, SEEK_CUR);
@@ -821,8 +811,8 @@ int Sound::isSoundRunning(int sound) const {
 			// getSoundStatus(), with a -1, will return the
 			// ID number of the first active music it finds.
 			if (_vm->_heversion >= 70 || _currentMusic)
-				return (_musicChannelHandle.isActive());
-			else if (_vm->_imuse)
+				sound = _currentMusic;
+			if (_vm->_imuse)
 				return (_vm->_imuse->getSoundStatus(sound));
 		}
 	}

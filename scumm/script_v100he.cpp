@@ -311,7 +311,7 @@ void ScummEngine_v100he::setupOpcodes() {
 		OPCODE(o6_isScriptRunning),
 		OPCODE(o90_sin),
 		/* D8 */
-		OPCODE(o72_unknown5A),
+		OPCODE(o72_getSoundElapsedTimeOfSound),
 		OPCODE(o6_isSoundRunning),
 		OPCODE(o80_getSoundVar),
 		OPCODE(o100_unknown25),
