@@ -67,7 +67,7 @@ public:
 
 	int _width, _height;
 	byte *_data;
-	bool _smushProcessFrame;
+	volatile bool _smushProcessFrame;
 	bool _updateNeeded;
 
 	SmushPlayer(Scumm *, int, bool);
