@@ -287,8 +287,8 @@ displayText_t SkyText::displayText(char *textPtr, uint8 *dest, bool centre, uint
 
 	//make the header
 	((struct dataFileHeader *)curDest)->s_width = _dtLineWidth;
-	((struct dataFileHeader *)curDest)->s_height = _charHeight * _dtLines;
-	((struct dataFileHeader *)curDest)->s_sp_size = _dtLineWidth * _charHeight * _dtLines;
+	((struct dataFileHeader *)curDest)->s_height = (uint16)(_charHeight * _dtLines);
+	((struct dataFileHeader *)curDest)->s_sp_size = (uint16)(_dtLineWidth * _charHeight * _dtLines);
 	((struct dataFileHeader *)curDest)->s_offset_x = 0;
 	((struct dataFileHeader *)curDest)->s_offset_y = 0;
 	
