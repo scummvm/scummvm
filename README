@@ -56,7 +56,7 @@ easier and quicker. If you cannot donate, help and contribute a patch!
 ---- ----------
 The easiest way to contact the ScummVM team is by submitting bug reports or
 commenting in our forums. You can also join and e-mail the scummvm-devel
-mailing list, or chat with us on irc (#scummvm, irc.freenode.net)
+mailing list, or chat with us on irc (#scummvm on irc.freenode.net)
 Please do not ask us to support an unsupported game - read our homepages
 FAQ first.
 
@@ -65,7 +65,7 @@ FAQ first.
 To report a bug, please create a SourceForge account and follow the bugs
 link from our homepage. Please make sure the bug is reproducible, and
 still occurs in the latest daily build/current CVS version. Also check
-the Known Bugs list (below) and compatibility listing for that game, to
+the known bugs list (below) and compatibility listing for that game, to
 ensure the issue is not already known.
 
 Also do not report bugs on games that are not listed as being completable
@@ -114,9 +114,12 @@ SCUMM Games:
 Other Games:
      Beneath a Steel Sky                             [Game: sky]
      Simon the Sorcerer 1                            [Game: simon1dos/
-                                                       simon1talkie/simon1win]
-     Simon the Sorcerer 2                            [Game: simon2dos/simon2talkie
-                                                          /simon2win/simon2mac]
+                                                            simon1talkie/
+                                                            simon1win]
+     Simon the Sorcerer 2                            [Game: simon2dos/
+                                                            simon2talkie/
+                                                            simon2win
+                                                            simon2mac]
 
 The following games should be completable, but have some critical problems that
 prevent them from being fully supported at this time. Please do not file bug
@@ -275,12 +278,12 @@ ScummVM and wish to commit it into the main CVS, feel free to contact us!
         Linux           - X11 & OSS audio (includes iPaqs running Linux)
         Mac OS X        - SDL
         AmigaOS         - SDL/AGA
-        MorphOS         - custom backend
+        MorphOS         - Custom backend
         BeOS            - SDL
         Acorn (RiscOS)  - ???
-        Dreamcast       - custom backend 
-        GP32            - custom backend
-        PalmOS          - custom backend
+        Dreamcast       - Custom backend 
+        GP32            - Custom backend
+        PalmOS          - Custom backend
         UNIX            - SDL           (Linux, Solaris, IRIX, *BSD)
 
 The Dreamcast port does not support Curse of Monkey Island, nor The Dig.
@@ -336,9 +339,9 @@ arguments - see the next section.
         -d[<num>]      - Set debug verbosity to <num>
         -u             - Dump scripts if a directory called 'dumps' exists in
                          current directory
-        --multi-midi   - enable combination Adlib and native MIDI
-        --native-mt32  - true Roland MT-32 (disable GM emulation)
-        --aspect-ratio - enable aspect ratio correction
+        --multi-midi   - Enable combination Adlib and native MIDI
+        --native-mt32  - True Roland MT-32 (disable GM emulation)
+        --aspect-ratio - Enable aspect ratio correction
         --floppy-intro - Use floppy version intro for Beneath a Steel Sky CD
 
 The meaning of long options can be inverted by prefixing them with "no-", e.g.
@@ -358,7 +361,7 @@ Examples:
    C:\Games\LucasArts\scummvm.exe -f -n -pD:\resource\ ft
 
  * Unix:
-  Running Monkey Island, fullscreen, from the harddisk:
+  Running Monkey Island, fullscreen, from a hard disk:
    /path/to/scummvm -f -p/games/LucasArts/monkey/ monkey
   Running Full Throttle from CD, fullscreen and with subtitles disabled:
    /path/to/scummvm -f -n -p/cdrom/resource/ ft
@@ -442,7 +445,7 @@ Note #2: Filters can be very slow when ScummVM is compiled in a debug
 configuration without optimizations. And there is always a speed impact when
 using any form of anti-aliasing/linear filtering.
 
-Note #3: The FmTowns version of Zak (zak256 target) uses an original resolution
+Note #3: The Fm Towns version of Zak (zak256 target) uses an original resolution
 of 320x240 - hence for this game scalers will scale to 640x480 or 960x720.
 
 Note #4: The OpenGL filter is included as a curiosity only. It's use is
@@ -456,9 +459,9 @@ ScummVM supports various in game hotkeys. They differ between the SCUMM and
 simon games.
 
     Common:
-        Ctrl-z OR Alt-x        - quit
-        Keyboard Arrow Keys    - simulate mouse movement
-        Ctrl-f                 - runs in fast mode.
+        Ctrl-z OR Alt-x        - Quit
+        Keyboard Arrow Keys    - Simulate mouse movement
+        Ctrl-f                 - Runs in fast mode.
         Ctrl-Alt 0-9           - Switch between graphics filters
         Ctrl-Alt b             - Switch between bilinear and non-linear
                                  filtering [OpenGL backend]
@@ -470,30 +473,30 @@ simon games.
                                  instead, or a multiple thereof.
 
     SCUMM:
-        Ctrl 0-9 and Alt 0-9   - load and save game state
-        Ctrl-g                 - runs in really REALLY fast mode.
-        Ctrl-d                 - starts the debugger.
+        Ctrl 0-9 and Alt 0-9   - Load and save game state
+        Ctrl-g                 - Runs in really REALLY fast mode.
+        Ctrl-d                 - Starts the debugger.
         Tilde (~)              - Show/hide the debugging console
-        Ctrl-s                 - shows memory consumption.
-        [ and ]                - music volume, down/up
-        - and +                - text speed, slower/faster
-        F5                     - displays a save/load box.
-        Space                  - pauses
-        Period (.)             - skips current line of text in some games
-        Alt-Enter              - toggles full screen/windowed
-        Enter                  - simulate left mouse button press
-        Tab                    - simulate right mouse button press
+        Ctrl-s                 - Shows memory consumption.
+        [ and ]                - Music volume, down/up
+        - and +                - Text speed, slower/faster
+        F5                     - Displays a save/load box.
+        Space                  - Pauses
+        Period (.)             - Skips current line of text in some games
+        Alt-Enter              - Toggles full screen/windowed
+        Enter                  - Simulate left mouse button press
+        Tab                    - Simulate right mouse button press
 
     Simon:
-        F1 - F3                - text speed, faster - slower
-        F10                    - shows all characters and objects you can interact with
-	                         (Simon the Sorcerer 2 only)
-        - and +                - music volume, down/up
-        m                      - music on/off
-        s                      - sound effects on/off
-        b                      - background sounds on/off
+        F1 - F3                - Text speed, faster - slower
+        F10                    - Shows all characters and objects you can 
+                                 interact with (Simon the Sorcerer 2 only)
+        - and +                - Music volume, down/up
+        m                      - Music on/off
+        s                      - Sound effects on/off
+        b                      - Background sounds on/off
 
-Note that using ctrl-f and ctrl-g are not recommended: Games can crash when
+Note that using ctrl-f and ctrl-g are not recommended: games can crash when
 being ran faster than their normal speed, as scripts will lose synchronisation
 
 5.5 Using data files from Macintosh game versions:
@@ -524,7 +527,7 @@ You can also use the environment variable SCUMMVM_SAVEPATH to specify where to
 put save games. Don't forget the trailing directory separator. Also be aware
 that saved games may break between ScummVM releases.
 
-Bash (Unix) Example:
+Bash (Unix) example:
         export SCUMMVM_SAVEPATH=/tmp/scummvm_savegames/
 
 Windows example:
@@ -534,8 +537,8 @@ Windows example:
 ---- ----------
 Because ScummVM is still a beta product, it -can- crash and/or hang
 occasionally. As such, every five minutes it will save a game in Slot 0. This
-game can be loaded via Ctrl-0, or the F5 menu. This autosaving does not, however,
-occur with Simon the Sorcerer.
+game can be loaded via Ctrl-0, or the F5 menu. This autosaving does not, 
+however, occur with Simon the Sorcerer.
 
 
 7.0) Music and Sound: 
@@ -569,11 +572,11 @@ best compatibility between machines and games.
 
 7.2) Playing sound with MIDI emulation:
 ---- ----------------------------------
-Some games (such as Sam and Max) only contain MIDI music data. This once
+Some games (such as Sam and Max) only contain MIDI music data.  This once
 prevented music for these games from working on platforms that do not support
 MIDI, or soundcards that do not provide MIDI drivers (e.g, many soundcards will
 not play MIDI under Linux). ScummVM can now emulate MIDI mode using sampled
-waves and Adlib emulation using the -eadlib option. However, if you are capable
+waves and Adlib emulation using the -eadlib option.  However, if you are capable
 of using native MIDI, we recommend using one of the MIDI modes below for best
 sound.
 
@@ -644,7 +647,7 @@ priority.
 Use LAME or some other mp3 encoder to rip the cd audio tracks to files. Name
 the files track1.mp3 track2.mp3 etc. ScummVM must be compiled with MAD support
 to use this option. You'll need to rip the file from the CD as a WAV file,
-then encode the MP3 files in Constant Bit Rate sampled at 22 kHz. This can
+then encode the MP3 files in constant bit rate sampled at 22 kHz. This can
 be done with the following LAME command line:
 
   lame -t -q 0 -b 96 --resample 22.05 track1.wav track1.mp3
@@ -765,7 +768,7 @@ The following keywords are recognized:
                                  in the launcher.
 
         language        string   Specify language (en, de, fr, it, pt, es, jp,
-                                 zh, kr, hb)
+                                 zh, kr,se, gb, hb)
         nosubtitles     bool     Set to true to suppress subtitles.
         talkspeed       number   Text speed (default: 60)
 
@@ -787,8 +790,8 @@ The following keywords are recognized:
         sfx_volume      int      The sfx volume setting (0-255)
         tempo           int      The music tempo (50-200) (default: 100)
 
-        floppy_intro    bool     Use floppy version of introduction in Beneath a 
-                                 Steel Sky (CD version)
+        floppy_intro    bool     Use floppy version of introduction in Beneath
+                                 a Steel Sky (CD version)
 
         debuglevel      int      Enable debug output. The higher number, the
                                  more verbose output.
@@ -855,8 +858,8 @@ messages (see http://www.sysinternals.com/ntw2k/freeware/debugview.shtml).
 X.X Credits:
 --- --------
  The ScummVM team:
-        James Brown          - Lead Developer
-        Max Horn             - Lead Developer
+        James Brown          - Lead developer
+        Max Horn             - Lead developer
         Robert Goeffringmann - Engine: Beneath a Steel Sky (maintainer)
         Jonathan Gray        - Engine: SCUMM
         Oliver Kiehl         - Engine: Beneath a Steel Sky, Simon
@@ -869,17 +872,17 @@ X.X Credits:
         Travis Howell        - Port: Win32, Engine: Simon (maintainer)
         Peter Moraliyski     - Port: GP32
         Lionel Ulmer         - Port: X11
-        Torbjorn Andersson   - Generic Bugfixer and Patch Submitter
+        Torbjorn Andersson   - Generic bugfixer and patch submitter
         Jamieson Christian   - iMUSE, MIDI, all things musical.
         Jochen Hoenicke      - Speaker & PCjr sound support, Adlib work
         Jeremy Newman        - Webmaster
 
  Retired Team Members:
-        Ralph Brorsen        - Help with GUI Implementation
+        Ralph Brorsen        - Help with GUI implementation
         Vincent Hamm         - Co-Founder
         Felix Jakschitsch    - Zak256 reverse engineering
-        Mutwin Kraus         - Original MacOS Porter
-        Ludvig Strigeus      - Original ScummVM and SimonVM Author
+        Mutwin Kraus         - Original MacOS porter
+        Ludvig Strigeus      - Original ScummVM and SimonVM author
 
  Contributors:
         Stuart Caie          - Decoders for Simon 1 Amiga data files
@@ -887,11 +890,11 @@ X.X Credits:
         Kovacs Endre Janos   - Several fixes for Simon1
         Jeroen Janssen       - Numerous readability and bugfix patches
         Claudio Matsuoka     - Daily Linux/BeOS builds 
-        Gregory Montoir      - AdvanceMAME Scale-2X, TV 2x and Dot Matrix
+        Gregory Montoir      - AdvanceMAME Scale-2X, TV 2x and dot matrix
                                implementation
-        Mikesch Nepomuk      - MI1 VGA Floppy patches.
+        Mikesch Nepomuk      - MI1 VGA floppy patches.
         Nicolas Noble        - Config file and ALSA support
-        Edward Rudd          - Fixes for playing MP3 versions of MI1/Loom Audio
+        Edward Rudd          - Fixes for playing MP3 versions of MI1/Loom audio
         Daniel Schepler      - Final MI1 CD music support/ 
                                Initial Ogg Vorbis support
         Andre Souza          - SDL-based OpenGL renderer
@@ -903,7 +906,7 @@ X.X Credits:
  Special thanks to:
         Sander Buskens  - For his work on the initial reversing of Monkey2
         Kevin Carnes    - For Scumm16, the basis of ScummVM older gfx codec
-        Jim Leiterman   - Various info on his FmTowns/Marty SCUMM ports
+        Jim Leiterman   - Various info on his Fm Towns/Marty SCUMM ports
         Jimmi Thogersen - For ScummRev, and much obscure code/documentation
 
         Tony Warriner and everyone at Revolution Software Ltd. for sharing
