@@ -72,7 +72,8 @@ bool init_morphos_music(ULONG MidiUnit, ULONG DevFlags)
 				ScummMidiRequest = NULL;
 				ScummMidiPort = NULL;
 			}
-			EtudeBase = ScummMidiRequest->emr_Std.io_Device;
+			else
+				EtudeBase = ScummMidiRequest->emr_Std.io_Device;
 		}
 		else
 		{
@@ -139,7 +140,7 @@ static bool init_morphos_sound()
 	ahiBuf[1] = &ahiBuf[0][AHI_BUF_SIZE];
 
 	ahiReq[0]->ahir_Version = 4;
-	if (ahiDevice = OpenDevice(AHINAME, 0, (IORequest *) ahiReq[0], 0))
+	if ((ahiDevice = OpenDevice(AHINAME, 0, (IORequest *) ahiReq[0], 0)))
 	{
 		FreeVec(ahiBuf[0]);
 		FreeVec(ahiReq[1]);
