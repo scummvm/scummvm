@@ -971,6 +971,8 @@ void OSystem_SDL::draw_mouse() {
 	if (SDL_LockSurface(sdl_screen) == -1)
 		error("SDL_LockSurface failed: %s.\n", SDL_GetError());
 
+	add_dirty_rect(x, y, w, h);
+
 	dst = (byte *)sdl_screen->pixels + y * SCREEN_WIDTH + x;
 	while (h > 0) {
 		int width = w;
@@ -987,8 +989,6 @@ void OSystem_SDL::draw_mouse() {
 		dst += SCREEN_WIDTH - w;
 		h--;
 	}
-
-	add_dirty_rect(x, y, w, h);
 
 	SDL_UnlockSurface(sdl_screen);
 	
