@@ -35,7 +35,9 @@
 #define MAX(a,b) (((a) > (b)) ? (a) : (b))
 #endif
 
-static inline void SWAP(int &a, int &b) { int tmp = a; a = b; b = tmp; }
+template<class T>
+static inline void SWAP(T &a, T &b) { T tmp = a; a = b; b = tmp; }
+
 #define ARRAYSIZE(x) (sizeof(x) / sizeof(x[0]))
 
 int RGBMatch(byte *palette, int r, int g, int b);

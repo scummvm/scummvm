@@ -31,12 +31,12 @@ namespace ScummVM {
 	This small class is an helper for position and size values.
 */
 struct Point {
-	int x;	//!< The horizontal part of the point
-	int y;	//!< The vertical part of the point
+	int16 x;	//!< The horizontal part of the point
+	int16 y;	//!< The vertical part of the point
 
 	Point() : x(0), y(0) {};
 	Point(const Point & p) : x(p.x), y(p.y) {};
-	explicit Point(int x1, int y1) : x(x1), y(y1) {};
+	explicit Point(int16 x1, int16 y1) : x(x1), y(y1) {};
 	Point & operator=(const Point & p) { x = p.x; y = p.y; return *this; };
 	bool operator==(const Point & p) const { return x == p.x && y == p.y; };
 };
@@ -47,14 +47,14 @@ struct Point {
 	It is mostly used by the blitter class.
 */
 struct Rect {
-	int top, left;		//!< The point at the top left of the rectangle (part of the rect).
-	int bottom, right;	//!< The point at the bottom right of the rectangle (not part of the rect).
+	int16 top, left;		//!< The point at the top left of the rectangle (part of the rect).
+	int16 bottom, right;	//!< The point at the bottom right of the rectangle (not part of the rect).
 
 	Rect() : top(0), left(0), bottom(0), right(0) {}
-	Rect(int x, int y) : top(0), left(0), bottom(x), right(y) {}
-	Rect(int x1, int y1, int x2, int y2) : top(x1), left(y1), bottom(x2), right(y2) {}
-	int width() const { return right - left; }
-	int height() const { return top - bottom; }
+	Rect(int16 x, int16 y) : top(0), left(0), bottom(x), right(y) {}
+	Rect(int16 x1, int16 y1, int16 x2, int16 y2) : top(x1), left(y1), bottom(x2), right(y2) {}
+	int16 width() const { return right - left; }
+	int16 height() const { return top - bottom; }
 
 	/*!	@brief check if given position is inside the rectangle
 		
@@ -63,7 +63,7 @@ struct Rect {
 		
 		@return true if the given position is inside the rectangle, false otherwise
 	*/
-	bool isInside(int x, int y) const {
+	bool isInside(int16 x, int16 y) const {
 		return (left <= x) && (x < right) && (top <= y) && (y < bottom);
 	}
 	/*!	@brief check if given point is inside the rectangle
