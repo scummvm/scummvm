@@ -25,31 +25,41 @@
 
 bool Scumm::getClass(int obj, int cls) {
 	checkRange(_numGlobalObjects-1, 0, obj, "Object %d out of range in getClass");
-
-	
+	cls &= 0x7F;
 	checkRange(32,1,cls,"Class %d out of range in getClass");
+
 	if (_features && GF_SMALL_HEADER) {
 		byte *oldClass = (byte*)&_classData[obj];
 		if (cls == 32)	// CLASS_TOUCHABLE
 			cls = 23;
 
 		return (oldClass[cls/8] & bit_table[cls&0x07]) != 0;
-	} else {
-		cls &= 0x7F;
+	} else {		
 		return (_classData[obj] & (1<<(cls-1))) != 0;	
 	}
 }
 
 void Scumm::putClass(int obj, int cls, bool set) {
 	checkRange(_numGlobalObjects-1, 0, obj, "Object %d out of range in putClass");
-
 	cls &= 0x7F;
 	checkRange(32,1,cls,"Class %d out of range in getClass");
 
-	if (set)
-		_classData[obj] |= (1<<(cls-1));
-	else
-		_classData[obj] &= ~(1<<(cls-1));
+	if (_features && GF_SMALL_HEADER) {
+		byte *oldClass = (byte*)&_classData[obj];
+		if (cls == 32)	// CLASS_TOUCHABLE
+			cls = 23;
+
+		if (set)
+			oldClass[cls/8] |= bit_table[cls&0x07];
+		else
+			oldClass[cls/8] &= bit_table[cls&0x07]^0xff;
+
+	} else {		
+		if (set)
+			_classData[obj] |= (1<<(cls-1));
+		else
+			_classData[obj] &= ~(1<<(cls-1));
+	}
 }
 
 int Scumm::getOwner(int obj) {
@@ -782,6 +792,10 @@ void Scumm::findObjectInRoom(FindObjectInRoom *fo, byte findWhat, uint id, uint 
 	}
 
 	fo->roomptr = roomptr = getResourceAddress(rtRoom, room);
+	if (!roomptr) {	// FIXME: ZAK256 AIRPORT WORKAROUND (buying book from devotee)
+		warning("findObjectInRoom: failed getting roomptr to %d", room);
+		return;
+	}
 	roomhdr = (RoomHeader*)findResourceData(MKID('RMHD'), roomptr);
 	
 	if(_features & GF_AFTER_V7)
