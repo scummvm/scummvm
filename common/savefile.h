@@ -35,8 +35,6 @@ public:
 	//Should go away.  See scumm/saveload.cpp and scumm/imuse.cpp
 	virtual int fseek(long offs, int whence) = 0;
 	virtual int feof() = 0;
-#elif defined(__PALM_OS__)
-	virtual int feof() = 0;
 #endif
 };
 
@@ -60,9 +58,6 @@ public:
 #ifdef _WIN32_WCE
 	int fseek(long offs, int whence)
 		{ return ::fseek(fh, offs, whence); }
-	int feof()
-		{ return ::feof(fh); }
-#elif defined(__PALM_OS__)
 	int feof()
 		{ return ::feof(fh); }
 #endif
