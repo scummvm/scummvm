@@ -137,6 +137,9 @@ bool Scumm::loadState(int slot, bool compat, SaveFileManager *mgr) {
 
 	initScummVars();
 
+	if (_features & GF_OLD_BUNDLE)
+		loadCharset(0); // FIXME - HACK ?
+	
 	Serializer ser(out, false, hdr.ver);
 	saveOrLoad(&ser, hdr.ver);
 	delete out;
