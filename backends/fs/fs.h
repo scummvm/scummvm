@@ -60,8 +60,8 @@
 
 class FSList;
 
-/*
- * A single file system node.
+/**
+ * File system node.
  */
 class FilesystemNode {
 protected:
@@ -69,7 +69,7 @@ protected:
 
 public:
 
-	/*
+	/**
 	 * Flag to tell listDir() which kind of files to list.
 	 */
 	typedef enum {
@@ -78,9 +78,9 @@ public:
 		kListAll = 3
 	} ListMode;
 
-	/*
-	 * The starting point for any file system browsing. Returns a special node
-	 * representing the FS root.
+	/**
+	 * Returns a special node representing the FS root. The starting point for
+	 * any file system browsing.
 	 * On Unix, this will be simply the node for / (the root directory).
 	 * On Windows, it will be a special node which "contains" all drives (C:, D:, E:).
 	 */
@@ -96,44 +96,45 @@ public:
 
 	virtual ~FilesystemNode() {}
 
-	/*
-	 * The display name, used by e.g. the GUI to present the file in the file browser.
+	/**
+	 * Return display name, used by e.g. the GUI to present the file in the file browser.
+	 * @return the display name
 	 */
 	virtual String displayName() const = 0;
 
-	/*
+	/**
 	 * Is this node valid (i.e. refering to an actual FS object)?
 	 */
 	virtual bool isValid() const = 0;
 
-	/*
+	/**
 	 * Is this node a directory or not?
 	 */
 	virtual bool isDirectory() const = 0;
 
-	/*
+	/**
 	 * A path representation suitable for use with fopen()
 	 */
 	virtual String path() const = 0;
 
-	/*
+	/**
 	 * List the content of this directory node.
 	 * If this node is not a directory, throw an exception or call error().
 	 */
 	virtual FSList *listDir(ListMode mode = kListDirectoriesOnly) const = 0;
 
-	/*
+	/**
 	 * The parent node of this directory.
 	 * The parent of the root is the root itself
 	 */
 	virtual FilesystemNode *parent() const = 0;
 
-	/*
+	/**
 	 * Return a clone of this node allocated with new().
 	 */
 	virtual FilesystemNode *clone() const = 0;
 	
-	/*
+	/**
 	 * Compare the name of this node to the name of another.
 	 */
 	virtual bool operator< (const FilesystemNode& node) const
@@ -143,8 +144,8 @@ public:
 };
 
 
-/*
- * A sorted list of multiple file system nodes. E.g. the contents of a given directory.
+/**
+ * Sorted list of multiple file system nodes. E.g. the contents of a given directory.
  */
 class FSList : Common::List<FilesystemNode *> {
 public:

@@ -54,7 +54,7 @@ private:
 	static void addFile (FSList* list, ListMode mode, const Char *base, FileInfoType* find_data);
 };
 
-void PalmOSFilesystemNode::addFile (FSList* list, ListMode mode, const char *base, FileInfoType* find_data) {
+void PalmOSFilesystemNode::addFile(FSList* list, ListMode mode, const char *base, FileInfoType* find_data) {
 	PalmOSFilesystemNode entry;
 	bool isDirectory;
 
@@ -125,14 +125,14 @@ FSList *PalmOSFilesystemNode::listDir(ListMode mode) const {
 }
 
 const char *lastPathComponent(const Common::String &str) {
-        const char *start = str.c_str();
-        const char *cur = start + str.size() - 2;
+	const char *start = str.c_str();
+	const char *cur = start + str.size() - 2;
 
-        while (cur > start && *cur != '/') {
-                --cur;
-        }
+	while (cur > start && *cur != '/') {
+		--cur;
+	}
 
-        return cur+1;
+	return cur+1;
 }
 
 FilesystemNode *PalmOSFilesystemNode::parent() const {
