@@ -2774,6 +2774,12 @@ byte *ScummEngine::get2byteCharPtr(int idx) {
 const char *ScummEngine::getGameDataPath() const {
 #ifdef MACOSX
 	if (_version == 8 && !memcmp(_gameDataPath.c_str(), "/Volumes/MONKEY3_", 17)) {
+		// TODO: The following hack is currently inactive, since Fingolfin
+		// removed most calls to getGameDataPath(). This will soon be put 
+		// back into place once the File::setDefaultDirectory() method is
+		// replaced by a more flexible system...
+
+	
 		// Special case for COMI on Mac OS X. The mount points on OS X depend
 		// on the volume name. Hence if playing from CD, we'd get a problem.
 		// So if loading of a resource file fails, we fall back to the (fixed)
