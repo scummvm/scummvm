@@ -22,6 +22,7 @@
 #include "common/engine.h"
 #include "player_v2.h"
 #include "scumm.h"
+#include "sound/mixer.h"
 
 #define FREQ_HZ 236 // Don't change!
 

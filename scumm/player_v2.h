@@ -24,8 +24,10 @@
 #define PLAYER_V2_H
 
 #include "common/scummsys.h"
-#include "sound/mixer.h"
-class Scumm;
+
+#if !defined(__GNUC__)
+	#pragma START_PACK_STRUCTS
+#endif	
 
 struct channel_data {
 	uint16 time_left;          // 00
@@ -52,11 +54,19 @@ struct channel_data {
 	uint16 music_script_nr;    // 48
 } GCC_PACK;
 
+#if !defined(__GNUC__)
+	#pragma END_PACK_STRUCTS
+#endif
+
+
 union ChannelInfo {
 	channel_data d;
 	uint16 array[sizeof(channel_data)/2];
 };
 
+
+class Scumm;
+class SoundMixer;
 
 
 class Player_V2 {

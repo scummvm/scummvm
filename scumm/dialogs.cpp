@@ -21,11 +21,12 @@
 #include "stdafx.h"
 #include "dialogs.h"
 #include "sound.h"
-#include "sound/mididrv.h"
 #include "scumm.h"
 #include "imuse.h"
 #include "player_v2.h"
 #include "verbs.h"
+#include "sound/mididrv.h"
+#include "sound/mixer.h"
 
 #ifndef DISABLE_HELP
 #include "help.h"

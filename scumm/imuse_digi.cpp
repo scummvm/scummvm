@@ -90,7 +90,7 @@ static void imus_digital_handler(void *engine) {
 }
 
 IMuseDigital::IMuseDigital(Scumm *scumm) {
-	memset(_channel, 0, sizeof(channel) * MAX_DIGITAL_CHANNELS);
+	memset(_channel, 0, sizeof(Channel) * MAX_DIGITAL_CHANNELS);
 	_scumm = scumm;
 	for (int32 l = 0; l < MAX_DIGITAL_CHANNELS; l++) {
 		_channel[l]._initialized = false;
