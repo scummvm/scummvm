@@ -2708,8 +2708,8 @@ void Scumm::o6_miscOps()
 			setCursorImg(args[1], (uint) - 1, args[2]);
 			break;
 		case 13:
-			warning("o6_miscOps: stub13(%d,%d,%d,%d)", args[1], args[2], args[3],
-							args[4]);
+			remapActor(derefActorSafe(args[1], "o6_miscOps:14"), args[2], args[3],
+								 args[4], -1);
 			break;
 		case 14:
 			remapActor(derefActorSafe(args[1], "o6_miscOps:14"), args[2], args[3],
@@ -2721,8 +2721,8 @@ void Scumm::o6_miscOps()
 		case 16:
 			byte buf[200];
 			_msgPtrToAdd = buf;
-			addMessageToStack(getStringAddress(_vars[VAR_STRING2DRAW]));
-			//warning("o6_miscOps: drawString(%s,charset=%d,color=%d,x=%d,y=%d)",buf, args[1],args[2],args[3],args[4]);
+			addMessageToStack(getStringAddressVar(VAR_STRING2DRAW));
+			
 			break;
 		case 17:
 			warning("o6_miscOps: stub17(%d,%d,%d,%d)", args[1], args[2], args[3],
@@ -2888,8 +2888,7 @@ void Scumm::o6_kernelFunction()
 		push(0);
 		break;
 	case 115:
-		warning("o6_kernelFunction: stub115(%d,%d)", args[1], args[2]);
-		push(0);
+		push(getSpecialBox(args[1], args[2]));
 		break;
 	case 116:
 		push(checkXYInBoxBounds(args[3], args[1], args[2]));
@@ -2915,6 +2914,16 @@ void Scumm::o6_kernelFunction()
 		break;
 	case 211:
 		warning("o6_kernelFunction: getInput(%d)", args[1]);
+		/*
+		13 = thrust
+		336 = thrust
+		328 = thrust
+		27 = abord
+		97 = left
+		331 = left
+		115 = right
+		333 = tight
+		*/
 		push(0);
 		break;
 	case 212:

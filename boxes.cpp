@@ -74,6 +74,28 @@ Box *Scumm::getBoxBaseAddr(int box)
 		return (Box *) (ptr + box * SIZEOF_BOX + 2);
 }
 
+int Scumm::getSpecialBox(int param1, int param2)
+{
+	int i;
+	int numOfBoxes;
+	byte flag;
+	
+	numOfBoxes = getNumBoxes() - 1;
+
+	for(i=numOfBoxes;i>=0;i--)
+	{
+		flag = getBoxFlags(i);
+
+		if(!(flag & 0x80) && (flag & 0x20))
+			return(-1);
+
+		if(checkXYInBoxBounds(i,param1,param2))
+			return(i);
+	}
+
+	return(-1);
+}
+
 bool Scumm::checkXYInBoxBounds(int b, int x, int y)
 {
 	BoxCoords box;

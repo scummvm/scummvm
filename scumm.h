@@ -1282,6 +1282,7 @@ public:
 	void GetGates(int trap1,int trap2);
 	bool inBoxQuickReject(int box, int x, int y, int threshold);
 	AdjustBoxResult getClosestPtOnBox(int box, int x, int y);
+	int getSpecialBox(int param1, int param2);
 	
 	void setBoxFlags(int box, int val);
 	void setBoxScale(int box, int b);
