@@ -1099,6 +1099,11 @@ void Actor::startWalkActor(int destX, int destY, int dir)
 		abr.dist = 0;
 		walkbox = 0;
 	} else {
+		// FIXME: this prevents part of bug #605970 (Loom) from occuring. Not sure
+		// if there is a better way to achieve this.
+		if (walkbox == 0)
+			adjustActorPos();
+
 		if (_vm->checkXYInBoxBounds(walkdata.destbox, abr.x, abr.y)) {
 			abr.dist = walkdata.destbox;
 		} else {
