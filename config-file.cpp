@@ -234,20 +234,19 @@ const char *Config::get(const char *key, const char *d) const
 
 const int Config::getInt(const char *key, int def, const char *d) const
 {
-	int i;
+	const char *value = get(key, d);
+	
+	if (value)
+		return atoi(value);
+	return def;
+}
 
-	if (!d)
-		d = domain;
-
-	for (i = 0; i < ndomains; i++) {
-		if (hash[i]->is_domain(d)) {
-			const char *val = hash[i]->get(key);
-			if (val)
-				return atoi(val);
-			break;
-		}
-	}
-
+const bool Config::getBool(const char *key, bool def, const char *d) const
+{
+	const char *value = get(key, d);
+	
+	if (value)
+		return !scumm_stricmp(value, "true");
 	return def;
 }
 
@@ -273,25 +272,15 @@ const char *Config::set(const char *key, const char *value, const char *d)
 
 const char *Config::set(const char *key, int value_i, const char *d)
 {
-	int i;
 	char value[MAXLINELEN];
-
 	sprintf(value, "%i", value_i);
+	return set(key, value, d);
+}
 
-	if (!d)
-		d = domain;
-
-	for (i = 0; i < ndomains; i++) {
-		if (hash[i]->is_domain(d)) {
-			return hash[i]->set(key, value);
-		}
-	}
-
-	ndomains++;
-	hash = (hashconfig **)realloc(hash, ndomains * sizeof(hashconfig *));
-	hash[ndomains - 1] = new hashconfig (d);
-
-	return hash[ndomains - 1]->set(key, value);
+const char *Config::set(const char *key, bool value_b, const char *d)
+{
+	const char *value = value_b ? "true" : "false";
+	return set(key, value, d);
 }
 
 void Config::set_domain(const char *d)

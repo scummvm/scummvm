@@ -31,8 +31,12 @@ public:
 	 ~Config ();
 	const char *get(const char *key, const char *dom = 0) const;
 	const int getInt(const char *key, int def = 0, const char *dom = 0) const;
+	const bool getBool(const char *key, bool def = false, const char *dom = 0) const;
+
 	const char *set(const char *key, const char *value, const char *dom = 0);
 	const char *set(const char *key, int value, const char *dom = 0);
+	const char *set(const char *key, bool value, const char *dom = 0);
+
 	void set_domain(const char *);
 	void flush() const;
 	void rename_domain(const char *);

@@ -71,16 +71,11 @@ void GameDetector::updateconfig()
 {
 	const char * val;
 
-	if ((val = scummcfg->get("amiga")))
-		if (!scumm_stricmp(val, "true"))
-			_amiga = true;
-		else
-			_amiga = false;
-	if ((val = scummcfg->get("save_slot")))
-		_save_slot = atoi(val);
+	_amiga = scummcfg->getBool("amiga", _amiga);
 
-	if ((val = scummcfg->get("cdrom")))
-		_cdrom = atoi(val);
+	_save_slot = scummcfg->getInt("save_slot", _save_slot);
+
+	_cdrom = scummcfg->getInt("cdrom", _cdrom);
 
 	if ((val = scummcfg->get("music_driver")))
 		if (!parseMusicDriver(val)) {
@@ -89,11 +84,7 @@ void GameDetector::updateconfig()
 			exit(-1);
 		}
 
-	if ((val = scummcfg->get("fullscreen", "scummvm")))
-		if (!scumm_stricmp(val, "true"))
-			_fullScreen = true;
-		else
-			_fullScreen = false;
+	_fullScreen = scummcfg->getBool("fullscreen", _fullScreen);
 
 	if ((val = scummcfg->get("gfx_mode")))
 		if ((_gfx_mode = parseGraphicsMode(val)) == -1) {
@@ -102,35 +93,29 @@ void GameDetector::updateconfig()
 			exit(-1);
 		}
 
-	if ((val = scummcfg->get("music_volume")))
-		_music_volume = atoi(val);
+	_music_volume = scummcfg->getInt("music_volume", _music_volume);
 
-	if ((val = scummcfg->get("nosubtitles")))
-		if (!scumm_stricmp(val, "true"))
-			_noSubtitles = true;
-		else
-			_noSubtitles = false;
+	_noSubtitles = scummcfg->getBool("nosubtitles", _noSubtitles);
 
 	if ((val = scummcfg->get("path")))
 		_gameDataPath = strdup(val);
 
-	if ((val = scummcfg->get("sfx_volume")))
-		_sfx_volume = atoi(val);
+	_sfx_volume = scummcfg->getInt("sfx_volume", _sfx_volume);
 
+	// We use strtol for the tempo to allow it to be specified in hex.
 	if ((val = scummcfg->get("tempo")))
 		_gameTempo = strtol(val, NULL, 0);
 
-	if ((val = scummcfg->get("talkspeed")))
-		_talkSpeed = atoi(val);
+	_talkSpeed = scummcfg->getInt("talkspeed", _talkSpeed);
 }
 
 void GameDetector::parseCommandLine(int argc, char **argv)
 {
-#if !defined(MACOS_CARBON)
 	int i;
 	char *s;
 	char *current_option = NULL;
 	char *option = NULL;
+	char c;
 	_save_slot = -1;
 
 	// check for arguments
@@ -146,11 +131,12 @@ void GameDetector::parseCommandLine(int argc, char **argv)
 
 		if (s[0] == '-') {
 			s++;
-			switch (tolower(*s++)) {
+			c = *s++;
+			switch (tolower(c)) {
 			case 'a':
 				CHECK_OPTION();
-				_amiga = true;
-				scummcfg->set("amiga", "true");
+				_amiga = (c == 'a');
+				scummcfg->set("amiga", _amiga);
 				break;
 			case 'b':
 				HANDLE_OPTION();
@@ -176,8 +162,8 @@ void GameDetector::parseCommandLine(int argc, char **argv)
 				break;
 			case 'f':
 				CHECK_OPTION();
-				_fullScreen = true;
-				scummcfg->set("fullscreen", "true", "scummvm");
+				_fullScreen = (c == 'f');
+				scummcfg->set("fullscreen", _fullScreen, "scummvm");
 				break;
 			case 'g':
 				HANDLE_OPTION();
@@ -203,8 +189,8 @@ void GameDetector::parseCommandLine(int argc, char **argv)
 				break;
 			case 'n':
 				CHECK_OPTION();
-				_noSubtitles = true;
-				scummcfg->set("nosubtitles", "true");
+				_noSubtitles = (c == 'n');
+				scummcfg->set("nosubtitles", _noSubtitles);
 				break;
 			case 'p':
 				HANDLE_OPTION();
@@ -280,14 +266,6 @@ void GameDetector::parseCommandLine(int argc, char **argv)
  ShowHelpAndExit:
 	printf(USAGE_STRING);
 	exit(1);
-
-#else
-	_midi_driver = MD_QTMUSIC;
-	_exe_name = *argv;
-	_gameDataPath = (char *)malloc(strlen(_exe_name) + 3);
-	sprintf(_gameDataPath, ":%s:", _exe_name);
-#endif
-
 }
 
 int GameDetector::parseGraphicsMode(const char *s) {
@@ -377,20 +355,16 @@ static const VersionSettings version_settings[] = {
 //      {"indy3",       "Indiana Jones and the Last Crusade",           GID_INDY3,   2, 0, 0,},
 
 	/* Scumm Version 3 */
-	{"indy3", "Indiana Jones and the Last Crusade (256)", GID_INDY3_256, 3, 0,
-	 22,
-	 GF_SMALL_HEADER | GF_USE_KEY | GF_SMALL_NAMES | GF_OLD256 |
-	 GF_NO_SCALLING},
-	{"zak256", "Zak McKracken and the Alien Mindbenders (256)", GID_ZAK256, 3,
-	 0, 0,
-	 GF_SMALL_HEADER | GF_USE_KEY | GF_SMALL_NAMES | GF_OLD256 | GF_AUDIOTRACKS
-	 | GF_NO_SCALLING},
+	{"indy3", "Indiana Jones and the Last Crusade (256)", GID_INDY3_256, 3, 0, 22,
+	 GF_SMALL_HEADER | GF_USE_KEY | GF_SMALL_NAMES | GF_OLD256 | GF_NO_SCALLING},
+	{"zak256", "Zak McKracken and the Alien Mindbenders (256)", GID_ZAK256, 3, 0, 0,
+	 GF_SMALL_HEADER | GF_USE_KEY | GF_SMALL_NAMES | GF_OLD256 | GF_AUDIOTRACKS | GF_NO_SCALLING},
 	{"loom", "Loom", GID_LOOM, 3, 5, 40,
-	 GF_SMALL_HEADER | GF_USE_KEY | GF_SMALL_NAMES | GF_OLD_BUNDLE | GF_16COLOR
-	 | GF_NO_SCALLING},
+	 GF_SMALL_HEADER | GF_USE_KEY | GF_SMALL_NAMES | GF_OLD_BUNDLE | GF_16COLOR | GF_NO_SCALLING},
 
 	/* Scumm Version 4 */
-	{"monkeyEGA", "Monkey Island 1 (EGA)", GID_MONKEY_EGA, 4, 0, 67, GF_SMALL_HEADER | GF_USE_KEY | GF_16COLOR},	// EGA version
+	{"monkeyEGA", "Monkey Island 1 (EGA)", GID_MONKEY_EGA, 4, 0, 67,
+	 GF_SMALL_HEADER | GF_USE_KEY | GF_16COLOR},	// EGA version
 
 	/* Scumm version 5 */
 	{"monkeyVGA", "Monkey Island 1 (256 color Floppy version)", GID_MONKEY_VGA,  5, 0, 16,
@@ -405,10 +379,10 @@ static const VersionSettings version_settings[] = {
 	 GF_USE_KEY | GF_ADLIB_DEFAULT},
 	{"atlantis", "Indiana Jones and the Fate of Atlantis", GID_INDY4, 5, 5, 0,
 	 GF_USE_KEY | GF_ADLIB_DEFAULT},
-	{"playfate", "Indiana Jones and the Fate of Atlantis (Demo)", GID_INDY4,
-	 5, 5, 0, GF_USE_KEY | GF_ADLIB_DEFAULT},
-	{"fate", "Indiana Jones and the Fate of Atlantis (Demo)", GID_INDY4,
-	 5, 5, 0, GF_USE_KEY | GF_ADLIB_DEFAULT},
+	{"playfate", "Indiana Jones and the Fate of Atlantis (Demo)", GID_INDY4, 5, 5, 0,
+	 GF_USE_KEY | GF_ADLIB_DEFAULT},
+	{"fate", "Indiana Jones and the Fate of Atlantis (Demo)", GID_INDY4, 5, 5, 0,
+	 GF_USE_KEY | GF_ADLIB_DEFAULT},
 
 	/* Scumm Version 6 */
 	{"tentacle", "Day Of The Tentacle", GID_TENTACLE, 6, 4, 2,
@@ -418,12 +392,12 @@ static const VersionSettings version_settings[] = {
 	{"samnmax", "Sam & Max", GID_SAMNMAX, 6, 4, 2,
 	 GF_NEW_OPCODES | GF_AFTER_V6 | GF_USE_KEY | GF_DRAWOBJ_OTHER_ORDER},
 	{"samdemo", "Sam & Max (Demo)", GID_SAMNMAX, 6, 3, 0,
-	GF_NEW_OPCODES | GF_AFTER_V6 | GF_USE_KEY  | GF_DRAWOBJ_OTHER_ORDER | GF_ADLIB_DEFAULT},
+	 GF_NEW_OPCODES | GF_AFTER_V6 | GF_USE_KEY  | GF_DRAWOBJ_OTHER_ORDER | GF_ADLIB_DEFAULT},
 	{"snmdemo", "Sam & Max (Demo)", GID_SAMNMAX, 6, 3, 0,
-	GF_NEW_OPCODES | GF_AFTER_V6 | GF_USE_KEY  | GF_DRAWOBJ_OTHER_ORDER | GF_ADLIB_DEFAULT},
+	 GF_NEW_OPCODES | GF_AFTER_V6 | GF_USE_KEY  | GF_DRAWOBJ_OTHER_ORDER | GF_ADLIB_DEFAULT},
 	
 	{"puttdemo", "Putt Putt joins the parade (demo)", GID_SAMNMAX, 6, 3, 0,
-	GF_NEW_OPCODES | GF_AFTER_V6 | GF_USE_KEY  | GF_ADLIB_DEFAULT | GF_HUMONGOUS},
+	 GF_NEW_OPCODES | GF_AFTER_V6 | GF_USE_KEY  | GF_ADLIB_DEFAULT | GF_HUMONGOUS},
 	{"moondemo", "Putt Putt goes to the moon (demo)", GID_SAMNMAX, 6, 3, 0,
 	 GF_NEW_OPCODES | GF_AFTER_V6 | GF_USE_KEY  | GF_ADLIB_DEFAULT | GF_HUMONGOUS},
 
@@ -437,12 +411,14 @@ static const VersionSettings version_settings[] = {
 
 	/* Simon the Sorcerer 1 & 2 (not SCUMM games) */
 	{"simon1dos", "Simon the Sorcerer 1 for DOS", GID_SIMON_FIRST+0, 99, 99, 99, 0},
-	{"simon2dos", "Simon the Sorcerer 2 for Dos", GID_SIMON_FIRST+1, 99, 99, 99, 0},
+	{"simon2dos", "Simon the Sorcerer 2 for DOS", GID_SIMON_FIRST+1, 99, 99, 99, 0},
 	{"simon1win", "Simon the Sorcerer 1 for Windows", GID_SIMON_FIRST+2, 99, 99, 99, 0},	
 	{"simon2win", "Simon the Sorcerer 2 for Windows", GID_SIMON_FIRST+3, 99, 99, 99, 0},
 
 	/* Scumm Version 8 */
-	{"comi", "The Curse of Monkey Island", GID_CMI, 8, 1, 0, GF_NEW_OPCODES|GF_AFTER_V6|GF_AFTER_V7|GF_AFTER_V8},
+	{"comi", "The Curse of Monkey Island", GID_CMI, 8, 1, 0,
+	 GF_NEW_OPCODES | GF_AFTER_V6 | GF_AFTER_V7 | GF_AFTER_V8},
+
 	{NULL, NULL}
 };
 
@@ -643,7 +619,7 @@ MidiDriver *GameDetector::createMidi() {
 #if defined(__APPLE__) || defined(macintosh)
 	case MD_QTMUSIC:	return MidiDriver_QT_create();
 #endif
-#if defined(__APPLE__)
+#if defined(MACOSX)
 	case MD_COREAUDIO:	return MidiDriver_CORE_create();
 #endif
 #if defined(UNIX) && defined(USE_ALSA)
