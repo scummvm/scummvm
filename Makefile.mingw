@@ -1,0 +1,61 @@
+# Where is scummvm will be installed
+SCUMMVMPATH=C:/scummvm
+SRC=.
+
+### Modify these paths
+SDL_CFLAGS=-I$(SRC)/sdl/include
+SDL_LIBS=-L$(SRC)/sdl/lib -lSDLmain -lSDL
+
+CXX      = c++
+AR        = ar cru
+RANLIB = ranlib
+RM      = rm -f
+MKDIR = mkdir -p
+ECHO  = echo -n
+CAT    = cat
+RM      = rm -f
+# recursive version of RM
+RM_REC = $(RM) -r
+ZIP = zip -q
+CP  = cp
+
+CFLAGS   = -g -O -Wall -Wstrict-prototypes -Wuninitialized -Wno-long-long -Wno-multichar
+DEFINES  =
+LDFLAGS :=
+INCLUDES:= -I. -Icommon -Iscumm $(SDL_CFLAGS)
+LIBS	 = $(SDL_LIBS) -lmingw32 -lwinmm
+OBJS	 = scummvmico.o backends/sdl/sdl-common.o backends/sdl/sdl.o 
+EXEEXT	:=.exe
+
+# Enable this if you want ScummVM to dump all scripts it runs.
+# This is mainly interesting for developers.
+# DEFINES += -DDUMP_SCRIPTS
+
+# Uncomment this to activate the MAD lib for compressed sound files
+DEFINES += -DCOMPRESSED_SOUND_FILE
+LIBS    += -lmad
+
+# Uncomment this to activate the ALSA lib for midi
+# DEFINES += -DUSE_ALSA
+# LIBS    += -lasound
+
+# Concat DEFINES and INCLUDES to for the CPPFLAGS
+CPPFLAGS= $(DEFINES) $(INCLUDES)
+
+include Makefile.common
+
+scummvmico.o: scummvm.ico
+	windres scummvm.rc scummvmico.o
+
+# Some additional targets
+install:   scummvm$(EXEEXT)
+	mkdir -p $(SCUMMVMPATH)
+	strip scummvm$(EXEEXT) -o $(SCUMMVMPATH)/scummvm$(EXEEXT)
+
+dist:   install
+	cp COPYING $(SCUMMVMPATH)/copying.txt
+	cp README $(SCUMMVMPATH)/readme.txt
+	cp NEWS $(SCUMMVMPATH)/news.txt
+	cp SDL/README-SDL.txt $(SCUMMVMPATH)
+	cp SDL/lib/SDL.dll $(SCUMMVMPATH)
+	u2d $(SCUMMVMPATH)/*.txt
