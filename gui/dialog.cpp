@@ -56,6 +56,15 @@ void Dialog::handleMouseMoved(int x, int y, int button)
 }
 
 
+void Dialog::handleCommand(uint32 cmd)
+{
+	switch (cmd) {
+	case kCloseCmd:
+		close();
+		break;
+	}
+}
+
 /*
  * Determine the widget at location (x,y) if any. Assumes the coordinates are
  * in the local coordinate system, i.e. relative to the top left of the dialog.
@@ -80,7 +89,7 @@ void Dialog::close()
 void Dialog::addResText(int x, int y, int w, int h, int resID)
 {
 	// Get the string
-	const char *str = _gui->queryString(resID);
+	const char *str = _gui->queryResString(resID);
 	if (!str)
 		str = "Dummy!";
 	new StaticTextWidget(this, x, y, w, h, str);
@@ -92,16 +101,8 @@ void Dialog::addButton(int x, int y, int w, int h, char hotkey, const char *labe
 	// TODO - handle hotkey
 }
 
-void Dialog::addButton(int x, int y, int w, int h, char hotkey, int resID, uint32 cmd)
-{
-	// Get the string
-	const char *label = _gui->queryString(resID);
-	if (!label)
-		label = "Dummy!";
-	addButton(x, y, w, h, hotkey, label, cmd);
-}
-
 #pragma mark -
+
 
 enum {
 	kSaveCmd = 'SAVE',
@@ -118,11 +119,11 @@ SaveLoadDialog::SaveLoadDialog(NewGui *gui)
 //  addResText(10, 7, 240, 16, 2);
 //  addResText(10, 7, 240, 16, 3);
 
-	addButton(200, 20, 54, 16, 'S', 4, kSaveCmd);	// Save
-	addButton(200, 40, 54, 16, 'L', 5, kLoadCmd);	// Load
-	addButton(200, 60, 54, 16, 'P', 6, kPlayCmd);	// Play
-	addButton(200, 80, 54, 16, 'O', 17, kOptionsCmd);	// Options
-	addButton(200, 100, 54, 16, 'Q', 8, kQuitCmd);	// Quit
+	addButton(200, 20, 54, 16, 'S', RES_STRING(4), kSaveCmd);	// Save
+	addButton(200, 40, 54, 16, 'L', RES_STRING(5), kLoadCmd);	// Load
+	addButton(200, 60, 54, 16, 'P', RES_STRING(6), kPlayCmd);	// Play
+	addButton(200, 80, 54, 16, 'O', CUSTOM_STRING(17), kOptionsCmd);	// Options
+	addButton(200, 100, 54, 16, 'Q', RES_STRING(8), kQuitCmd);	// Quit
 }
 
 void SaveLoadDialog::handleCommand(uint32 cmd)
@@ -131,17 +132,55 @@ void SaveLoadDialog::handleCommand(uint32 cmd)
 	case kSaveCmd:
 		break;
 	case kLoadCmd:
-		// FIXME HACK - just to demo the nesting ability
-		_gui->pauseDialog();
 		break;
 	case kPlayCmd:
 		close();
 		break;
 	case kOptionsCmd:
+		_gui->optionsDialog();
 		break;
 	case kQuitCmd:
 		exit(1);
 		break;
+	default:
+		Dialog::handleCommand(cmd);
+	}
+}
+
+
+#pragma mark -
+
+enum {
+	kSoundCmd = 'SOUN',
+	kKeysCmd = 'KEYS',
+	kAboutCmd = 'ABOU',
+	kMiscCmd = 'OPTN'
+};
+
+OptionsDialog::OptionsDialog(NewGui *gui)
+	: Dialog (gui, 50, 80, 210, 60)
+{
+	addButton( 10, 10, 40, 15, 'S', CUSTOM_STRING(5), kSoundCmd);	// Sound
+	addButton( 80, 10, 40, 15, 'K', CUSTOM_STRING(6), kKeysCmd);	// Keys
+	addButton(150, 10, 40, 15, 'A', CUSTOM_STRING(7), kAboutCmd);	// About
+	addButton( 10, 35, 40, 15, 'M', CUSTOM_STRING(18), kMiscCmd);	// Misc
+	addButton(150, 35, 40, 15, 'C', CUSTOM_STRING(23), kCloseCmd);	// Close dialog - FIXME
+}
+
+void OptionsDialog::handleCommand(uint32 cmd)
+{
+	switch (cmd) {
+	case kSoundCmd:
+		break;
+	case kKeysCmd:
+		break;
+	case kAboutCmd:
+		_gui->aboutDialog();
+		break;
+	case kMiscCmd:
+		break;
+	default:
+		Dialog::handleCommand(cmd);
 	}
 }
 

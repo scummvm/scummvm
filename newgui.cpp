@@ -28,10 +28,23 @@
 #define vline(x, y, y2, color) line(x, y, x, y2, color);
 
 
+/*
+ * TODO list
+ * - add more widgets
+ * - implement hotkeys
+ * - add "close" widget to all dialogs (with a flag to turn it off) ?
+ * - make dialogs "moveable" ?
+ * - implement the missing / incomplete dialogs
+ * - come up with a new look&feel / theme for the GUI
+ * - ...
+ */
+
 NewGui::NewGui(Scumm *s) : _s(s), _need_redraw(false)
 {
 	_pauseDialog = new PauseDialog(this);
 	_saveLoadDialog = new SaveLoadDialog(this);
+//	_aboutDialog = new AboutDialog(this);
+	_optionsDialog = new OptionsDialog(this);
 }
 
 void NewGui::pauseDialog()
@@ -42,6 +55,16 @@ void NewGui::pauseDialog()
 void NewGui::saveloadDialog()
 {
 	openDialog(_saveLoadDialog);
+}
+
+void NewGui::aboutDialog()
+{
+//	openDialog(_aboutDialog);
+}
+
+void NewGui::optionsDialog()
+{
+	openDialog(_optionsDialog);
 }
 
 void NewGui::loop()
@@ -124,7 +147,7 @@ void NewGui::closeTopDialog()
 
 #pragma mark -
 
-const char *NewGui::queryString(int stringno)
+const char *NewGui::queryResString(int stringno)
 {
 	char *result;
 	int string;
@@ -149,6 +172,11 @@ const char *NewGui::queryString(int stringno)
 	}
 
 	return result;
+}
+
+const char *NewGui::queryCustomString(int stringno)
+{
+	return string_map_table_custom[stringno];
 }
 
 #pragma mark -

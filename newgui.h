@@ -52,6 +52,9 @@ public:
 	// Dialogs
 	void pauseDialog();
 	void saveloadDialog();
+	void aboutDialog();
+	void optionsDialog();
+
 	void loop();
 
 	bool isActive()	{ return ! _dialogStack.empty(); }
@@ -65,6 +68,8 @@ protected:
 	
 	Dialog		*_pauseDialog;
 	Dialog		*_saveLoadDialog;
+	Dialog		*_aboutDialog;
+	Dialog		*_optionsDialog;
 
 	// sound state
 	bool		_old_soundsPaused;
@@ -94,8 +99,12 @@ public:
 	void drawChar(const char c, int x, int y);
 	void drawString(const char *str, int x, int y, int w, byte color);
 
-	// 
-	const char *queryString(int string);
+	// Query a string from the resources
+	const char *queryResString(int stringno);
+	
+	// Query a custom string. This is in a seperate method so that we
+	// can easily localize the messages in the future if we want to.
+	const char *queryCustomString(int stringno);
 };
 
 #endif

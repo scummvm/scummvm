@@ -50,7 +50,8 @@ static const char* string_map_table_custom[] = {
 	"Show speech subtitles",		//19
 	"Amiga pallette conversion",	//20
 	"Except:",									//21
-	"Simon the Sorcerer (c) Adventuresoft" //22
+	"Simon the Sorcerer (c) Adventuresoft", //22
+	"Close"											//23
 };
 
 static ResString string_map_table_v7[] = {

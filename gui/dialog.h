@@ -27,6 +27,14 @@
 class Widget;
 class NewGui;
 
+#define RES_STRING(id)		_gui->queryResString(id)
+#define CUSTOM_STRING(id)	_gui->queryCustomString(id)
+
+// Some "common" commands sent to handleCommand()
+enum {
+	kCloseCmd = 'clos'
+};
+
 class Dialog {
 	friend class Widget;
 	friend class StaticTextWidget;
@@ -48,8 +56,7 @@ public:
 	virtual void handleKey(char key, int modifiers) // modifiers = alt/shift/ctrl etc.
 		{ if (key == 27) close(); }
 	virtual void handleMouseMoved(int x, int y, int button);
-	virtual void handleCommand(uint32 cmd)
-		{}
+	virtual void handleCommand(uint32 cmd);
 
 protected:
 	Widget* findWidget(int x, int y); // Find the widget at pos x,y if any
@@ -57,12 +64,18 @@ protected:
 
 	void addResText(int x, int y, int w, int h, int resID);
 	void addButton(int x, int y, int w, int h, char hotkey, const char *label, uint32 cmd);
-	void addButton(int x, int y, int w, int h, char hotkey, int resID, uint32 cmd);
 };
 
 class SaveLoadDialog : public Dialog {
 public:
 	SaveLoadDialog(NewGui *gui);
+
+	virtual void handleCommand(uint32 cmd);
+};
+
+class OptionsDialog : public Dialog {
+public:
+	OptionsDialog(NewGui *gui);
 
 	virtual void handleCommand(uint32 cmd);
 };
