@@ -2530,7 +2530,7 @@ void Scumm::launch() {
 	else if (_gameId == GID_MANIAC)
 		_numActors = 25;
 	else if ((_gameId == GID_ZAK) && (_version == 1))
-		_numActors = 14;		// FIXME: Verify this
+		_numActors = 14;		// FIXME: Nasty Wrong Hack(tm)
 	else 
 		_numActors = 13;
 
