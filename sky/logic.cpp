@@ -1560,8 +1560,10 @@ uint32 SkyLogic::fnRandom(uint32 a, uint32 b, uint32 c) {
 	error("Stub: fnRandom");
 }
 
-uint32 SkyLogic::fnPersonHere(uint32 a, uint32 b, uint32 c) {
-	error("Stub: fnPersonHere");
+uint32 SkyLogic::fnPersonHere(uint32 id, uint32 room, uint32 c) {
+	Compact *cpt = SkyState::fetchCompact(id);
+	_scriptVariables[RESULT] = cpt->screen == room ? 1 : 0;
+	return 1;
 }
 
 uint32 SkyLogic::fnToggleMouse(uint32 a, uint32 b, uint32 c) {
