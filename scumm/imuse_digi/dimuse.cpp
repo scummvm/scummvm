@@ -296,8 +296,10 @@ void IMuseDigital::startSound(int soundId, const char *soundName, int soundType,
 				_vm->_mixer->playInputStream(&_track[l].handle, _track[l].stream, true, _track[l].vol / 1000, _track[l].pan, -1);
 			}
 
-			if ((_track[l].soundGroup == IMUSE_MUSIC) && (_vm->_gameId != GID_FT))
+			if ((_track[l].soundGroup == IMUSE_MUSIC) && (_vm->_gameId != GID_FT)) {
+				stopMusic();
 				_curMusicSoundId = soundId;
+			}
 
 			_track[l].locked = false;
 			_track[l].used = true;
@@ -636,7 +638,10 @@ int32 IMuseDigital::getPosInMs(int soundId) {
 
 int32 IMuseDigital::getCurMusicPosInMs() {
 	debug(5, "IMuseDigital::getCurMusicPosInMs(%d)", _curMusicSoundId);
-	return getPosInMs(_curMusicSoundId);
+
+//	return getPosInMs(_curMusicSoundId);
+//  hack for comi song scene to be completable
+	return 300000;
 }
 
 int32 IMuseDigital::getCurVoiceLipSyncWidth() {
