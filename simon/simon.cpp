@@ -4197,6 +4197,109 @@ void SimonEngine::talk_with_text(uint num_1, uint num_2, const char *string_ptr,
 	}
 }
 
+// Thanks to Stuart Caie for providing the original
+// C conversion upon which this decruncher is based.
+
+#define SD_GETBIT(var) do { \
+if(!bits--){s-=4;if(s<src)return false;bb=READ_BE_UINT32(s);bits=31;}(var)=bb&1;bb>>=1; \
+}while(0)
+
+#define SD_GETBITS(var, nbits) do { \
+bc=(nbits);(var)=0;while(bc--){(var)<<=1;SD_GETBIT(bit);(var)|=bit;} \
+}while(0)
+
+#define SD_TYPE_LITERAL (0)
+#define SD_TYPE_MATCH   (1)
+
+static bool decrunch_file_amiga (byte *src, byte *dst, uint32 size) {
+	byte *s = src + size - 4;
+	uint32 destlen = READ_BE_UINT32 (s);
+	uint32 bb, x, y;
+	byte *d = dst + destlen;
+	byte bc, bit, bits, type;
+
+	// Initialize bit buffer.
+	s -= 4;
+	bb = x = READ_BE_UINT32 (s);
+	bits = 0;
+	do {
+		x >>= 1;
+		bits++;
+	} while (x);
+	bits--;
+
+	while (d > dst) {
+		SD_GETBIT(x);
+		if (x) {
+			SD_GETBITS(x,2);
+			switch (x) {
+			case 0:
+				type = SD_TYPE_MATCH;
+				x = 9;
+				y = 2;
+				break;
+
+			case 1:
+				type = SD_TYPE_MATCH;
+				x = 10;
+				y = 3;
+				break;
+
+			case 2:
+				type = SD_TYPE_MATCH;
+				x = 12;
+				SD_GETBITS(y,8);
+				break;
+
+			default:
+				type = SD_TYPE_LITERAL;
+				x = 8;
+				y = 8;
+			}
+		} else {
+			SD_GETBIT(x);
+			if (x) {
+				type = SD_TYPE_MATCH;
+				x = 8;
+				y = 1;
+			} else {
+				type = SD_TYPE_LITERAL;
+				x = 3;
+				y = 0;
+			}
+		}
+
+		if (type == SD_TYPE_LITERAL) {
+			SD_GETBITS(x,x);
+			y += x;
+			if ((int)(y + 1) > (d - dst))
+				return false; // Overflow?
+			do {
+				SD_GETBITS(x,8);
+				*--d = x;
+			} while (y-- > 0);
+		} else {
+			if ((int)(y + 1) > (d - dst))
+				return false; // Overflow?
+			SD_GETBITS(x,x);
+			if ((d + x) > (dst + destlen))
+				return false; // Offset overflow?
+			do {
+				d--;
+				*d = d[x];
+			} while (y-- > 0);
+		}
+	}
+
+	// Successful decrunch.
+	return true;
+}
+
+#undef SD_GETBIT
+#undef SD_GETBITS
+#undef SD_TYPE_LITERAL
+#undef SD_TYPE_MATCH
+
 void SimonEngine::read_vga_from_datfile_1(uint vga_id) {
 	if (_game & GF_AMIGA || _game == GAME_SIMON1DEMO || _game == GAME_SIMON1DOS) {
 		File in;
@@ -4210,8 +4313,7 @@ void SimonEngine::read_vga_from_datfile_1(uint vga_id) {
 		if (_game == GAME_SIMON1CD32) {
 			sprintf(buf, "0%d.out", vga_id); 
 		} else if (_game == GAME_SIMON1AMIGA) {
-			// TODO Add support for decruncher
-			sprintf(buf, "0%d.pkd.out", vga_id); 
+			sprintf(buf, "0%d.pkd", vga_id);
 		} else {
 			sprintf(buf, "0%d.VGA", vga_id); 
 		}
@@ -4219,12 +4321,18 @@ void SimonEngine::read_vga_from_datfile_1(uint vga_id) {
 		in.open(buf, _gameDataPath);
 		if (in.isOpen() == false)
 			error("read_vga_from_datfile_1: can't open %s", buf);
-
 		size = in.size();
 
-		if (in.read(_vga_buffer_pointers[11].vgaFile2, size) != size)
-			error("read_vga_from_datfile_1: read failed");
-
+		if (_game == GAME_SIMON1AMIGA) {
+			byte *buffer = new byte[size];
+			if (in.read(buffer, size) != size)
+				error("read_vga_from_datfile_1: read failed");
+			decrunch_file_amiga (buffer, _vga_buffer_pointers[11].vgaFile2, size);
+			delete [] buffer;
+		} else {
+			if (in.read(_vga_buffer_pointers[11].vgaFile2, size) != size)
+				error("read_vga_from_datfile_1: read failed");
+		}
 		in.close();
 	} else {
 		uint32 offs_a = _game_offsets_ptr[vga_id];
@@ -4244,8 +4352,7 @@ byte *SimonEngine::read_vga_from_datfile_2(uint id) {
 		if (_game == GAME_SIMON1CD32) {
 			sprintf(buf, "%.3d%d.out", id >> 1, (id & 1) + 1);
 		} else if (_game == GAME_SIMON1AMIGA) {
-			// TODO Add support for decruncher
-			sprintf(buf, "%.3d%d.pkd.out", id >> 1, (id & 1) + 1);
+			sprintf(buf, "%.3d%d.pkd", id >> 1, (id & 1) + 1);
 		} else {
 			sprintf(buf, "%.3d%d.VGA", id >> 1, (id & 1) + 1);
 		}
@@ -4253,14 +4360,19 @@ byte *SimonEngine::read_vga_from_datfile_2(uint id) {
 		in.open(buf, _gameDataPath);
 		if (in.isOpen() == false)
 			error("read_vga_from_datfile_2: can't open %s", buf);
-
 		size = in.size();
 
-		dst = setup_vga_destination(size);
-
-		if (in.read(dst, size) != size)
-			error("read_vga_from_datfile_2: read failed");
-
+		if (_game == GAME_SIMON1AMIGA) {
+			byte *buffer = new byte[size];
+			if (in.read(buffer, size) != size)
+				error("read_vga_from_datfile_2: read failed");
+			dst = setup_vga_destination (READ_BE_UINT32 (buffer + size - 4));
+			decrunch_file_amiga (buffer, dst, size);
+		} else {
+			dst = setup_vga_destination(size);
+			if (in.read(dst, size) != size)
+				error("read_vga_from_datfile_2: read failed");
+		}
 		in.close();
 
 		return dst;
