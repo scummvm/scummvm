@@ -945,7 +945,7 @@ void ScummEngine_v100he::o100_setSpriteGroupInfo() {
 		if (!_curSpriteGroupId)
 			break;
 
-		spriteGroupSet_case180(_curSpriteGroupId);
+		spritesResetGroup(_curSpriteGroupId);
 		break;
 	case 54:
 		// dummy case

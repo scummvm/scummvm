@@ -939,6 +939,7 @@ protected:
 	void spriteInfoSet_setClassFlags(int spriteId, int value1, int value2);
 	void spriteInfoSet_resetClassFlags(int spriteId);
 
+	void redrawSpriteGroup(int spriteGroupId);
 	void spriteGroupSet_case0_0(int spriteGroupId, int value1, int value2);
 	void spriteGroupSet_case0_1(int spriteGroupId, int value);
 	void spriteGroupSet_case0_2(int spriteGroupId, int value);
@@ -957,9 +958,9 @@ protected:
 	void spriteGroupSet_case28(int spriteGroupId, int value1, int value2);
 	void spriteGroupSet_fields_0_4_8_C(int spriteGroupId, int value1, int value2, int value3, int value4);
 	void spriteGroupSet_case56(int spriteGroupId);
-	void spriteGroupSet_case180(int spriteGroupId);
 
 	void spritesAllocTables(int numSprites, int numGroups, int numMaxSprites);
+	void spritesResetGroup(int spriteGroupId);
 	void spritesResetTables(bool refreshScreen);
 	void spriteGroupCheck(int spriteGroupId);
 	void spriteMarkIfInGroup(int spriteGroupId, uint32 flags);

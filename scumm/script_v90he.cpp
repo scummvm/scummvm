@@ -1507,7 +1507,7 @@ void ScummEngine_v90he::o90_setSpriteGroupInfo() {
 		if (!_curSpriteGroupId)
 			break;
 
-		spriteGroupSet_case180(_curSpriteGroupId);
+		spritesResetGroup(_curSpriteGroupId);
 		break;
 	default:
 		error("o90_setSpriteGroupInfo: Unknown case %d", subOp);
