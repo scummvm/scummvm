@@ -121,28 +121,35 @@ void SimonState::show_it(void *buf) {
 }
 
 FILE *SimonState::fopen_maybe_lowercase(const char *filename) {
-	char buf[256], *e;
-
+	FILE *in;
+	char buf[256], dotbuf[256], *e;
 	const char *s = _game_path;
 
-	strcpy(buf, s);
-	e = strchr(buf, 0);
-	strcpy(e, filename);
-
-#if defined(WIN32) || defined(__MORPHOS__)
-	/* win32 is not case sensitive */
-	return fopen(buf, "rb");
-#else
-	/* first try with the original filename */
-	FILE *in = fopen(buf, "rb");
-
+	strcpy(buf, s); strcat(buf, filename);	
+	strcpy(dotbuf, buf); strcat(dotbuf, "."); // '.' appended version
+										   	  // for dumb vfat drivers 
+	
+	/* original filename */
+	in = fopen(buf, "rb");
 	if (in) return in;
-	/* if that fails, convert the filename into lowercase and retry */
 
-	do *e = tolower(*e); while(*e++);
+	/* lowercase original filename */
+	e = buf; do *e = tolower(*e); while(*e++);	
+	in = fopen(buf, "rb");	
+	if (in) return in;
 
-	return fopen(buf, "rb");
-#endif
+	if (strchr(buf, '.'))
+		return NULL;
+
+	/* dot appended original filename */
+	in = fopen(dotbuf, "rb");
+	if (in) return in;
+
+	/* lowercase dot appended */
+	e = dotbuf; do *e = tolower(*e); while(*e++);
+	in = fopen(dotbuf, "rb");
+	warning("loading %s\n", dotbuf);
+	return in;		
 }
 
 
@@ -2098,7 +2105,7 @@ void SimonState::loadTextIntoMem(uint string_id) {
 	while (*p) {
 		for(i=0;*p;p++,i++)
 			filename[i] = *p;
-		filename[i] = 0;
+		filename[i] = 0;		
 		p++;
 
 		base_max = (p[0]<<8) | p[1];
