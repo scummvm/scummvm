@@ -118,7 +118,7 @@ bool isSmartphone() {
 
 extern "C" int scummvm_main(GameDetector &gameDetector, int argc, char **argv);
 
-void handleException(EXCEPTION_POINTERS *exceptionPointers) {
+int handleException(EXCEPTION_POINTERS *exceptionPointers) {
 	CEException::writeException(TEXT("\\scummvmCrash"), exceptionPointers);
 	drawError("Unrecoverable exception occurred - see crash dump in latest \\scummvmCrash file");
 	fclose(stdout_file);
@@ -126,6 +126,7 @@ void handleException(EXCEPTION_POINTERS *exceptionPointers) {
 	CEDevice::end();
 	SDL_Quit();
 	exit(0);
+	return EXCEPTION_EXECUTE_HANDLER;
 }
 
 int SDL_main(int argc, char **argv) {
