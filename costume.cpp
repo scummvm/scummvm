@@ -22,6 +22,7 @@
 #include "engine.h"
 #include "colormap.h"
 #include "keyframe.h"
+#include "material.h"
 #include "model.h"
 #include "lua.h"
 #include "sound.h"
@@ -62,6 +63,10 @@
 //                given by a playing chore
 // update() -- gives the component a chance to update its internal
 //             state once every frame
+// setupTexture() -- sets up animated textures for the object.  This
+//                   is a separate stage from update() since all the
+//                   costumes on screen need to get updated before any
+//                   drawing can start.
 // draw() -- actually draws the component onto the screen
 // reset() -- notifies the component that a chore controlling it
 //            has stopped
@@ -412,6 +417,50 @@ void MeshComponent::update() {
 	node_->update();
 }
 
+class MaterialComponent : public Costume::Component {
+public:
+	MaterialComponent(Costume::Component *parent, int parentID,
+			  const char *filename);
+	void init();
+	void setKey(int val);
+	void setupTexture();
+	void reset();
+	~MaterialComponent() { }
+
+private:
+	ResPtr<Material> mat_;
+	std::string filename_;
+	int num_;
+};
+
+MaterialComponent::MaterialComponent(Costume::Component *parent, int parentID,
+				     const char *filename) :
+	Costume::Component(parent, parentID), filename_(filename), num_(0) {
+	warning("Constructing MaterialComponent %s\n", filename);
+}
+
+void MaterialComponent::init() {
+	warning("MaterialComponent::init on %s\n", filename_.c_str());
+	// The parent model and thus all its textures should have been
+	// loaded by now, so passing an arbitrary colormap here
+	// shouldn't cause problems.
+	ResPtr<CMap> cmap =
+		ResourceLoader::instance()->loadColormap("item.cmp");
+	mat_ = ResourceLoader::instance()->loadMaterial(filename_.c_str(), *cmap);
+}
+
+void MaterialComponent::setKey(int val) {
+	num_ = val;
+}
+
+void MaterialComponent::setupTexture() {
+	mat_->setNumber(num_);
+}
+
+void MaterialComponent::reset() {
+	num_ = 0;
+}
+
 class LuaVarComponent : public Costume::Component {
 public:
 	LuaVarComponent(Costume::Component *parent, int parentID,
@@ -661,7 +710,8 @@ Costume::Component *Costume::loadComponent
 		return new SoundComponent(parent, parentID, name);
 	else if (std::memcmp(tag, "bknd", 4) == 0)
 		return new BitmapComponent(parent, parentID, name);
-
+	else if (std::memcmp(tag, "mat ", 4) == 0)
+		return new MaterialComponent(parent, parentID, name);
 	warning("Unknown tag '%.4s', name '%s'\n", tag, name);
 	return NULL;
 }
@@ -710,6 +760,12 @@ void Costume::setTalkChore(int index, int chore) {
 
 	printf("Setting chore %d(+1) to %d - %s\n", index, chore, chores_[chore].name_);
 	talkChores_[index-1] = chore;
+}
+
+void Costume::setupTextures() {
+	for (int i = 0; i < numComponents_; i++)
+		if (components_[i] != NULL)
+			components_[i]->setupTexture();
 }
 
 void Costume::draw() {

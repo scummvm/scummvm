@@ -245,6 +245,10 @@ void Actor::update() {
 }
 
 void Actor::draw() {
+	for (std::list<Costume *>::iterator i = costumeStack_.begin();
+	     i != costumeStack_.end(); i++)
+		(*i)->setupTextures();
+
 	if (! costumeStack_.empty()) {
 		g_driver->startActorDraw(pos_, yaw_, pitch_, roll_);
 		costumeStack_.back()->draw();

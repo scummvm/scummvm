@@ -48,6 +48,7 @@ public:
 	void setHead( int joint1, int joint2, int joint3, float maxRoll, float maxPitch, float maxYaw );
 
 	void update();
+	void setupTextures();
 	void draw();
 	void setPosRotate( Vector3d pos_, float pitch_, float yaw_, float roll_ );
 
@@ -59,6 +60,7 @@ public:
 		virtual void init() { }
 		virtual void setKey(int /* val */) { }
 		virtual void update() { }
+		virtual void setupTexture() { }
 		virtual void draw() { }
 		virtual void reset() { }
 		virtual ~Component() { }
