@@ -203,12 +203,12 @@ SimonSound::Sound::Sound(SoundMixer *mixer, File *file, uint32 base)
 	uint res = 0;
 	uint32 size;
 
-	_file->seek(base + 4, SEEK_SET);
+	_file->seek(base + sizeof(uint32), SEEK_SET);
 	size = _file->readUint32LE();
 
 	res = size / sizeof(uint32);
 
-	_offsets = (uint32 *)malloc(size + 1);
+	_offsets = (uint32 *)malloc(size + sizeof(uint32));
 
 	_file->seek(base, SEEK_SET);
 
