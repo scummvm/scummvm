@@ -56,7 +56,7 @@ public:
 	virtual void send(uint32 b) = 0;
 
 	// Get or set a property
-	virtual uint32 property(int prop, uint32 param);
+	virtual uint32 property(int prop, uint32 param) { return 0; }
 
 	// Retrieve a string representation of an error code
 	static const char *getErrorName(int error_code);

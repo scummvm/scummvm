@@ -62,6 +62,20 @@ void MidiChannel_MPU401::sysEx_customInstrument(uint32 type, byte *instr) {
 	_owner->sysEx_customInstrument (_channel, type, instr);
 }
 
+const char *MidiDriver::getErrorName(int error_code) {
+	static const char *const midi_errors[] = {
+		"No error",
+		"Cannot connect",
+		"Streaming not available",
+		"Device not available",
+		"Driver already open"
+	};
+
+	if ((uint) error_code >= ARRAYSIZE(midi_errors))
+		return "Unknown Error";
+	return midi_errors[error_code];
+}
+
 MidiDriver_MPU401::MidiDriver_MPU401() : MidiDriver() {
 	uint i;
 	
