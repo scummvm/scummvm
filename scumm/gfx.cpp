@@ -603,23 +603,12 @@ void Scumm::drawFlashlight()
 		                   _flashlight.y, _flashlight.y + _flashlight.h, 0x80000000);
 		
 		if (_flashlight.buffer) {
-
-			offset = _realWidth - _flashlight.w;
 			i = _flashlight.h;
 			do {
-				j = _flashlight.w / 4;
-				do {
-#if defined(SCUMM_NEED_ALIGNMENT)
-					memset(_flashlight.buffer, 0, sizeof(uint32));
-#else		
-					*(uint32 *)_flashlight.buffer = 0;
-#endif
-					_flashlight.buffer += 4;
-				} while (--j);
-				_flashlight.buffer += offset;
+				memset(_flashlight.buffer, 0, _flashlight.w);
+				_flashlight.buffer += _realWidth;
 			} while (--i);
 		}
-
 		_flashlightIsDrawn = false;
 	}
 
