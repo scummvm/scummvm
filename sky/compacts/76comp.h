@@ -255,7 +255,7 @@ uint16 ken_d_to_l[] = {
 	0
 };
 
-uint8 ken_auto[64];
+uint16 ken_auto[32];
 
 uint16 ken_up[] = {
 	2,
@@ -582,7 +582,7 @@ Compact ken = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	KEN_START_LOGIC,	// baseSub
@@ -654,7 +654,7 @@ Compact sc76_floor = {
 	0,
 	0,
 	0,
-	0,
+	{ 0, 0, 0, NULL },
 	0,
 	0,
 	0,
@@ -686,7 +686,7 @@ Compact sc76_light3 = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	SC76_LIGHT3_LOGIC,	// baseSub
@@ -718,7 +718,7 @@ Compact sc76_light9 = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	SC76_LIGHT9_LOGIC,	// baseSub
@@ -838,7 +838,7 @@ Compact sc76_light6 = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	SC76_LIGHT6_LOGIC,	// baseSub
@@ -870,7 +870,7 @@ Compact sc76_board_3 = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	SC76_BOARD_3_LOGIC,	// baseSub
@@ -999,7 +999,7 @@ Compact sc76_light1 = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	SC76_LIGHT1_LOGIC,	// baseSub
@@ -1125,7 +1125,7 @@ Compact sc76_door77 = {
 	0,
 	0,
 	0,
-	0,
+	{ 0, 0, 0, NULL },
 	0,
 	0,
 	0,
@@ -1157,7 +1157,7 @@ Compact sc76_board_1 = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	SC76_BOARD_1_LOGIC,	// baseSub
@@ -1189,7 +1189,7 @@ Compact sc76_light8 = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	SC76_LIGHT8_LOGIC,	// baseSub
@@ -1221,7 +1221,7 @@ Compact sc76_android_1 = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	SC76_ANDROID_1_LOGIC,	// baseSub
@@ -1380,7 +1380,7 @@ Compact sc76_console_2 = {
 	0,
 	0,
 	0,
-	0,
+	{ 0, 0, 0, NULL },
 	0,
 	0,
 	0,
@@ -1444,7 +1444,7 @@ Compact sc76_android_3 = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	SC76_ANDROID_3_LOGIC,	// baseSub
@@ -1476,7 +1476,7 @@ Compact sc76_console_1 = {
 	0,
 	0,
 	0,
-	0,
+	{ 0, 0, 0, NULL },
 	0,
 	0,
 	0,
@@ -1550,7 +1550,7 @@ Compact sc76_android_2 = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	SC76_ANDROID_2_LOGIC,	// baseSub
@@ -1596,7 +1596,7 @@ Compact sc76_light5 = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	SC76_LIGHT5_LOGIC,	// baseSub
@@ -1628,7 +1628,7 @@ Compact sc76_board_2 = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	SC76_BOARD_2_LOGIC,	// baseSub
@@ -1715,7 +1715,7 @@ Compact sc76_light7 = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	SC76_LIGHT7_LOGIC,	// baseSub
@@ -1747,7 +1747,7 @@ Compact sc76_light4 = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	SC76_LIGHT4_LOGIC,	// baseSub
@@ -1999,7 +1999,7 @@ Compact sc76_cabinet_1 = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	SC76_CABINET_1_LOGIC,	// baseSub
@@ -2154,7 +2154,7 @@ Compact sc76_cabinet_3 = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	SC76_CABINET_3_LOGIC,	// baseSub
@@ -2186,7 +2186,7 @@ Compact sc76_console_3 = {
 	0,
 	0,
 	0,
-	0,
+	{ 0, 0, 0, NULL },
 	0,
 	0,
 	0,
@@ -2658,7 +2658,7 @@ Compact sc76_light2 = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	SC76_LIGHT2_LOGIC,	// baseSub
@@ -2751,7 +2751,7 @@ Compact sc76_cabinet_2 = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	SC76_CABINET_2_LOGIC,	// baseSub
@@ -2806,7 +2806,7 @@ Compact sc76_door75 = {
 	0,
 	0,
 	0,
-	0,
+	{ 0, 0, 0, NULL },
 	0,
 	0,
 	0,

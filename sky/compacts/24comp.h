@@ -141,7 +141,7 @@ Compact s24_floor = {
 	0,
 	0,
 	0,
-	0,
+	{ 0, 0, 0, NULL },
 	0,
 	0,
 	0,
@@ -195,7 +195,7 @@ Compact left_exit_24 = {
 	0,
 	0,
 	0,
-	0,
+	{ 0, 0, 0, NULL },
 	0,
 	0,
 	0,
@@ -227,7 +227,7 @@ Compact mural = {
 	0,
 	0,
 	0,
-	0,
+	{ 0, 0, 0, NULL },
 	0,
 	0,
 	0,
@@ -326,7 +326,7 @@ Compact pidgeons = {
 	0,
 	0,
 	0,
-	0,
+	{ 0, 0, 0, NULL },
 	0,
 	0,
 	0,
@@ -971,7 +971,7 @@ Compact trevor = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	0,	// mode
 	TREVOR_LOGIC,	// baseSub
@@ -1003,7 +1003,7 @@ Compact ticket = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	0,	// mode
 	TICKET_LOGIC,	// baseSub
@@ -1035,7 +1035,7 @@ Compact new_york_poster = {
 	0,
 	0,
 	0,
-	0,
+	{ 0, 0, 0, NULL },
 	0,
 	0,
 	0,
@@ -1067,7 +1067,7 @@ Compact london_poster = {
 	0,
 	0,
 	0,
-	0,
+	{ 0, 0, 0, NULL },
 	0,
 	0,
 	0,
@@ -1246,7 +1246,7 @@ Compact globe = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	0,	// mode
 	GLOBE_LOGIC,	// baseSub

@@ -313,3 +313,10 @@ void SkyMouse::fnOpenCloseHand(bool open) {
     spriteMouse(0, 5, 5);
 }
 
+bool SkyMouse::wasClicked(void) {
+	if (_logicClick) {
+		_logicClick = false;
+		return true;
+	}
+	return false;
+}

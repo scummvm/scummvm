@@ -67,7 +67,7 @@ Compact low_lift_2 = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	LOW_LIFT2_LOGIC,	// baseSub
@@ -354,7 +354,7 @@ Compact eye_bolt = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	EYE_BOLT_LOGIC,	// baseSub
@@ -386,7 +386,7 @@ Compact lights1 = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	LIGHTS1_LOGIC,	// baseSub
@@ -434,7 +434,7 @@ Compact convey = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	CONVEY_LOGIC,	// baseSub
@@ -566,7 +566,7 @@ Compact eye_ball = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	EYE_BALL_LOGIC,	// baseSub
@@ -794,7 +794,7 @@ Compact smoulder = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	SMOULDER_LOGIC,	// baseSub
@@ -826,7 +826,7 @@ Compact low_lift_3 = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	LOW_LIFT3_LOGIC,	// baseSub
@@ -863,7 +863,7 @@ Compact furnace = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	FURNACE_LOGIC,	// baseSub
@@ -1033,7 +1033,7 @@ uint16 smoulder_seq[] = {
 	0
 };
 
-uint8 shades_auto[64];
+uint16 shades_auto[32];
 
 uint16 shades_up[] = {
 	2,
@@ -1338,7 +1338,7 @@ Compact shades = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	0,	// mode
 	SHADES_LOGIC,	// baseSub
@@ -1469,7 +1469,7 @@ Compact steve_watch = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	STEVE_SPY_LOGIC,	// baseSub
@@ -1593,7 +1593,7 @@ Compact furnace_door = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	FURNACE_DOOR_LOGIC,	// baseSub
@@ -1625,7 +1625,7 @@ Compact slot = {
 	0,
 	0,
 	0,
-	0,
+	{ 0, 0, 0, NULL },
 	0,
 	0,
 	0,
@@ -1681,7 +1681,7 @@ Compact low_lift = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	LOW_LIFT_LOGIC,	// baseSub
@@ -1713,7 +1713,7 @@ Compact joey_fly = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	FLY_LOGIC,	// baseSub
@@ -1779,7 +1779,7 @@ Compact s3_floor = {
 	0,
 	0,
 	0,
-	0,
+	{ 0, 0, 0, NULL },
 	0,
 	0,
 	0,
@@ -1835,7 +1835,7 @@ Compact low_barrel = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	LOW_BARREL_LOGIC,	// baseSub

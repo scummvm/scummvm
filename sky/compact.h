@@ -30,6 +30,7 @@ namespace SkyCompact {
 	MegaSet *getMegaSet(Compact *cpt, uint16 megaSet);
 	uint16 **getTurnTable(Compact *cpt, uint16 megaSet, uint16 dir);
 	uint16 *getSub(Compact *cpt, uint16 mode);
+	uint16 *getGrafixPtr(Compact *cpt);
 	void *getCompactElem(Compact *cpt, uint32 off);
 	void patchFor288(void);
 
@@ -3232,24 +3233,25 @@ namespace SkyCompact {
 	extern uint16 retina_scan_cdt[];
 	extern Compact forklift_cpt;
 	extern void *data_0[];
-	extern uint8 babs_auto[];
-	extern uint8 burke_auto[];
-	extern uint8 dan_auto[];
-	extern uint8 foreman_auto[];
-	extern uint8 full_ss_auto[];
-	extern uint8 gal_auto[];
-	extern uint8 jobs_auto[];
-	extern uint8 joey_auto[];
-	extern uint8 ken_auto[];
-	extern uint8 lamb_auto[];
-	extern uint8 loader_auto[];
-	extern uint8 medi_auto[];
-	extern uint8 monitor_auto[];
-	extern uint8 radman_auto[];
-	extern uint8 shades_auto[];
-	extern uint8 spu_auto[];
-	extern uint8 ss_auto[];
-	extern uint8 wit_auto[];
+	extern uint16 babs_auto[];
+	extern uint16 burke_auto[];
+	extern uint16 dan_auto[];
+	extern uint16 foreman_auto[];
+	extern uint16 full_ss_auto[];
+	extern uint16 gal_auto[];
+	extern uint16 jobs_auto[];
+	extern uint16 joey_auto[];
+	extern uint16 ken_auto[];
+	extern uint16 lamb_auto[];
+	extern uint16 loader_auto[];
+	extern uint16 medi_auto[];
+	extern uint16 monitor_auto[];
+	extern uint16 radman_auto[];
+	extern uint16 shades_auto[];
+	extern uint16 spu_auto[];
+	extern uint16 ss_auto[];
+	extern uint16 wit_auto[];
+	extern uint16 minif_auto[];
 };
 
 #endif

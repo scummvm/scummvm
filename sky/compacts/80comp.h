@@ -51,7 +51,7 @@ Compact sc80_bubble10 = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	SC80_BUBBLE10_LOGIC,	// baseSub
@@ -493,7 +493,7 @@ Compact sc80_bubble1 = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	SC80_BUBBLE1_LOGIC,	// baseSub
@@ -1316,7 +1316,7 @@ Compact sc80_bubble2 = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	SC80_BUBBLE2_LOGIC,	// baseSub
@@ -1956,7 +1956,7 @@ Compact sc80_bubble11 = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	SC80_BUBBLE11_LOGIC,	// baseSub
@@ -2183,7 +2183,7 @@ Compact sc80_exit = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	SC80_EXIT_LOGIC,	// baseSub
@@ -2215,7 +2215,7 @@ Compact sc80_orifice = {
 	0,
 	0,
 	0,
-	0,
+	{ 0, 0, 0, NULL },
 	0,
 	0,
 	0,
@@ -2247,7 +2247,7 @@ Compact sc80_sample = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	SC80_SAMPLE_LOGIC,	// baseSub
@@ -2456,7 +2456,7 @@ Compact sc80_spout = {
 	0,
 	0,
 	0,
-	0,
+	{ 0, 0, 0, NULL },
 	0,
 	0,
 	0,
@@ -2488,7 +2488,7 @@ Compact sc80_bubble4 = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	SC80_BUBBLE4_LOGIC,	// baseSub
@@ -2594,7 +2594,7 @@ Compact sc80_bubble7 = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	SC80_BUBBLE7_LOGIC,	// baseSub
@@ -2626,7 +2626,7 @@ Compact sc80_bubble9 = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	SC80_BUBBLE9_LOGIC,	// baseSub
@@ -2798,7 +2798,7 @@ Compact sc80_rope = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	SC80_ROPE_LOGIC,	// baseSub
@@ -2830,7 +2830,7 @@ Compact sc80_bubble3 = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	SC80_BUBBLE3_LOGIC,	// baseSub
@@ -2862,7 +2862,7 @@ Compact sc80_bubble8 = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	SC80_BUBBLE8_LOGIC,	// baseSub
@@ -3042,7 +3042,7 @@ Compact sc80_ladder = {
 	0,
 	0,
 	0,
-	0,
+	{ 0, 0, 0, NULL },
 	0,
 	0,
 	0,
@@ -3461,7 +3461,7 @@ Compact sc80_bubble12 = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	SC80_BUBBLE12_LOGIC,	// baseSub
@@ -3493,7 +3493,7 @@ Compact sc80_bubble6 = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	SC80_BUBBLE6_LOGIC,	// baseSub
@@ -3525,7 +3525,7 @@ Compact sc80_bubble5 = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	SC80_BUBBLE5_LOGIC,	// baseSub
@@ -3557,7 +3557,7 @@ Compact sc80_goo = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	SC80_GOO_LOGIC,	// baseSub

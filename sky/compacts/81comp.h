@@ -51,7 +51,7 @@ Compact sc81_big_tent3 = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	SC81_BIG_TENT3_LOGIC,	// baseSub
@@ -334,7 +334,7 @@ Compact sc81_tent5 = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	SC81_TENT5_LOGIC,	// baseSub
@@ -366,7 +366,7 @@ Compact sc81_helmet = {
 	0,
 	0,
 	0,
-	0,
+	{ 0, 0, 0, NULL },
 	0,
 	0,
 	0,
@@ -885,7 +885,7 @@ Compact sc81_tent2 = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	SC81_TENT2_LOGIC,	// baseSub
@@ -958,7 +958,7 @@ Compact sc81_chair = {
 	0,
 	0,
 	0,
-	0,
+	{ 0, 0, 0, NULL },
 	0,
 	0,
 	0,
@@ -1065,7 +1065,7 @@ Compact sc81_ken_sat = {
 	0,
 	0,
 	0,
-	0,
+	{ 0, 0, 0, NULL },
 	0,
 	0,
 	0,
@@ -1194,7 +1194,7 @@ Compact sc81_foster_sat = {
 	0,
 	0,
 	0,
-	0,
+	{ 0, 0, 0, NULL },
 	0,
 	0,
 	0,
@@ -1279,7 +1279,7 @@ Compact sc81_father_sat = {
 	0,
 	0,
 	0,
-	0,
+	{ 0, 0, 0, NULL },
 	0,
 	0,
 	0,
@@ -1558,7 +1558,7 @@ Compact sc81_door = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	SC81_DOOR_LOGIC,	// baseSub
@@ -1590,7 +1590,7 @@ Compact sc81_big_tent1 = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	SC81_BIG_TENT1_LOGIC,	// baseSub
@@ -1622,7 +1622,7 @@ Compact sc81_tent1 = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	SC81_TENT1_LOGIC,	// baseSub
@@ -1654,7 +1654,7 @@ Compact sc81_tent4 = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	SC81_TENT4_LOGIC,	// baseSub
@@ -1718,7 +1718,7 @@ Compact sc81_father = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	SC81_FATHER_CHAIR_LOGIC,	// baseSub
@@ -2178,7 +2178,7 @@ Compact sc81_big_tent2 = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	SC81_BIG_TENT2_LOGIC,	// baseSub
@@ -2210,7 +2210,7 @@ Compact sc81_tent3 = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	SC81_TENT3_LOGIC,	// baseSub
@@ -2295,7 +2295,7 @@ Compact sc81_tent6 = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	SC81_TENT6_LOGIC,	// baseSub

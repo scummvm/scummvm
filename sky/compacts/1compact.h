@@ -828,7 +828,7 @@ Compact smoke2 = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	SMOKE2_LOGIC,	// baseSub
@@ -860,7 +860,7 @@ Compact lfan2 = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	LFAN2_LOGIC,	// baseSub
@@ -1487,7 +1487,7 @@ Compact car_down = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	CAR_LOGIC,	// baseSub
@@ -1593,7 +1593,7 @@ Compact smoke1 = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	SMOKE1_LOGIC,	// baseSub
@@ -1641,7 +1641,7 @@ Compact fire_notice2 = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	NOTICE_LOGIC,	// baseSub
@@ -1673,7 +1673,7 @@ Compact car_up = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	CAR_LOGIC,	// baseSub
@@ -1705,7 +1705,7 @@ Compact fire1 = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	FIRE1_LOGIC,	// baseSub
@@ -1737,7 +1737,7 @@ Compact ss_sign = {
 	0,
 	0,
 	0,
-	0,
+	{ 0, 0, 0, NULL },
 	0,
 	0,
 	0,
@@ -1769,7 +1769,7 @@ Compact lfan1 = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	LFAN1_LOGIC,	// baseSub
@@ -1824,7 +1824,7 @@ Compact fire2 = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	FIRE2_LOGIC,	// baseSub

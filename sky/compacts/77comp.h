@@ -458,7 +458,7 @@ Compact sc77_big_door = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	SC77_BIG_DOOR_LOGIC,	// baseSub
@@ -884,7 +884,7 @@ Compact sc77_tank_1 = {
 	0,
 	0,
 	0,
-	0,
+	{ 0, 0, 0, NULL },
 	0,
 	0,
 	0,
@@ -936,7 +936,7 @@ Compact sc77_tank_2 = {
 	0,
 	0,
 	0,
-	0,
+	{ 0, 0, 0, NULL },
 	0,
 	0,
 	0,
@@ -968,7 +968,7 @@ Compact sc77_floor = {
 	0,
 	0,
 	0,
-	0,
+	{ 0, 0, 0, NULL },
 	0,
 	0,
 	0,
@@ -1000,7 +1000,7 @@ Compact sc77_hand_2 = {
 	0,
 	0,
 	0,
-	0,
+	{ 0, 0, 0, NULL },
 	0,
 	0,
 	0,
@@ -1032,7 +1032,7 @@ Compact sc77_hand_1 = {
 	0,
 	0,
 	0,
-	0,
+	{ 0, 0, 0, NULL },
 	0,
 	0,
 	0,
@@ -1084,7 +1084,7 @@ Compact sc77_door76 = {
 	0,
 	0,
 	0,
-	0,
+	{ 0, 0, 0, NULL },
 	0,
 	0,
 	0,

@@ -51,7 +51,7 @@ Compact sc68_pulse5 = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	SC68_PULSE5_LOGIC,	// baseSub
@@ -114,7 +114,7 @@ Compact sc68_pulse1 = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	SC68_PULSE1_LOGIC,	// baseSub
@@ -146,7 +146,7 @@ Compact sc68_door = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	SC68_DOOR_LOGIC,	// baseSub
@@ -178,7 +178,7 @@ Compact sc68_exit = {
 	0,
 	0,
 	0,
-	0,
+	{ 0, 0, 0, NULL },
 	0,
 	0,
 	0,
@@ -619,7 +619,7 @@ Compact sc68_pulse3 = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	SC68_PULSE3_LOGIC,	// baseSub
@@ -854,7 +854,7 @@ Compact sc68_pulse4 = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	SC68_PULSE4_LOGIC,	// baseSub
@@ -942,7 +942,7 @@ Compact sc68_sensor = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	SC68_SENSOR_LOGIC,	// baseSub
@@ -1088,7 +1088,7 @@ Compact sc68_pulse2 = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	SC68_PULSE2_LOGIC,	// baseSub
@@ -1247,7 +1247,7 @@ Compact sc68_pulse6 = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	SC68_PULSE6_LOGIC,	// baseSub
@@ -1279,7 +1279,7 @@ Compact sc68_grill = {
 	0,
 	0,
 	0,
-	0,
+	{ 0, 0, 0, NULL },
 	0,
 	0,
 	0,
@@ -1311,7 +1311,7 @@ Compact sc68_stairs = {
 	0,
 	0,
 	0,
-	0,
+	{ 0, 0, 0, NULL },
 	0,
 	0,
 	0,
@@ -1377,7 +1377,7 @@ Compact sc68_floor = {
 	0,
 	0,
 	0,
-	0,
+	{ 0, 0, 0, NULL },
 	0,
 	0,
 	0,

@@ -226,7 +226,7 @@ Compact fan3 = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	FAN3_LOGIC,	// baseSub
@@ -402,7 +402,7 @@ Compact fan7 = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	FAN7_LOGIC,	// baseSub
@@ -990,7 +990,7 @@ Compact fan4 = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	FAN4_LOGIC,	// baseSub
@@ -1056,7 +1056,7 @@ Compact load_point = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	LOAD_POINT_LOGIC,	// baseSub
@@ -1858,7 +1858,7 @@ Compact press = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	PRESS_LOGIC,	// baseSub
@@ -2179,7 +2179,7 @@ uint16 push_small[] = {
 	0
 };
 
-uint8 ss_auto[64];
+uint16 ss_auto[32];
 
 uint16 m_ss_l_to_d[] = {
 	41-8+75*64,
@@ -2700,7 +2700,7 @@ Compact fan1 = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	FAN1_LOGIC,	// baseSub
@@ -4183,7 +4183,7 @@ Compact mini_so = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	0,	// mode
 	START_MINI_SS,	// baseSub
@@ -4433,7 +4433,7 @@ uint16 ss_kick[] = {
 
 uint32 *grid1 = 0;
 
-uint8 full_ss_auto[64];
+uint16 full_ss_auto[32];
 
 uint16 f_ss_up[] = {
 	2,
@@ -4710,7 +4710,7 @@ Compact full_so = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	0,	// mode
 	FULL_SS_CUT,	// baseSub
@@ -5201,7 +5201,7 @@ Compact fire_notice = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	NOTICE_LOGIC,	// baseSub
@@ -5565,7 +5565,7 @@ Compact lazer_gun = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	LAZER_GUN_LOGIC,	// baseSub
@@ -6788,7 +6788,7 @@ Compact fan6 = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	FAN6_LOGIC,	// baseSub
@@ -7470,7 +7470,7 @@ Compact fan5 = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	FAN5_LOGIC,	// baseSub
@@ -9023,7 +9023,7 @@ Compact fan2 = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	FAN2_LOGIC,	// baseSub

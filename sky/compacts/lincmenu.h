@@ -51,7 +51,7 @@ Compact playbak_menu = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	0,	// mode
 	LINC_MENU_SCRIPT,	// baseSub
@@ -83,7 +83,7 @@ Compact persona_menu = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	0,	// mode
 	LINC_MENU_SCRIPT,	// baseSub
@@ -115,7 +115,7 @@ Compact info_menu = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	0,	// mode
 	LINC_MENU_SCRIPT,	// baseSub
@@ -147,7 +147,7 @@ Compact decrypt_menu = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	0,	// mode
 	LINC_MENU_SCRIPT,	// baseSub
@@ -229,7 +229,7 @@ Compact kill_menu = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	0,	// mode
 	LINC_MENU_SCRIPT,	// baseSub
@@ -261,7 +261,7 @@ Compact read_menu = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	0,	// mode
 	LINC_MENU_SCRIPT,	// baseSub
@@ -293,7 +293,7 @@ Compact orders_menu = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	0,	// mode
 	LINC_MENU_SCRIPT,	// baseSub
@@ -325,7 +325,7 @@ Compact report_menu = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	0,	// mode
 	LINC_MENU_SCRIPT,	// baseSub
@@ -357,7 +357,7 @@ Compact virus_menu = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	0,	// mode
 	LINC_MENU_SCRIPT,	// baseSub
@@ -389,7 +389,7 @@ Compact adjust_menu = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	0,	// mode
 	LINC_MENU_SCRIPT,	// baseSub
@@ -421,7 +421,7 @@ Compact charon_menu = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	0,	// mode
 	LINC_MENU_SCRIPT,	// baseSub
@@ -453,7 +453,7 @@ Compact orders2_menu = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	0,	// mode
 	LINC_MENU_SCRIPT,	// baseSub
@@ -485,7 +485,7 @@ Compact report2_menu = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	0,	// mode
 	LINC_MENU_SCRIPT,	// baseSub
@@ -517,7 +517,7 @@ Compact oscill_menu = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	0,	// mode
 	LINC_MENU_SCRIPT,	// baseSub
@@ -549,7 +549,7 @@ Compact join_menu = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	0,	// mode
 	LINC_MENU_SCRIPT,	// baseSub
@@ -581,7 +581,7 @@ Compact green_menu = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	0,	// mode
 	LINC_MENU_SCRIPT,	// baseSub
@@ -662,7 +662,7 @@ Compact adjust2_menu = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	0,	// mode
 	LINC_MENU_SCRIPT,	// baseSub
@@ -694,7 +694,7 @@ Compact red_menu = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	0,	// mode
 	LINC_MENU_SCRIPT,	// baseSub
@@ -726,7 +726,7 @@ Compact open_menu = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	0,	// mode
 	LINC_MENU_SCRIPT,	// baseSub
@@ -758,7 +758,7 @@ Compact decomp_menu = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	0,	// mode
 	LINC_MENU_SCRIPT,	// baseSub
@@ -790,7 +790,7 @@ Compact blind_menu = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	0,	// mode
 	LINC_MENU_SCRIPT,	// baseSub

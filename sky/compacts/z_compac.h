@@ -115,7 +115,7 @@ Compact floor = {
 	0,
 	0,
 	0,
-	0,
+	{ 0, 0, 0, NULL },
 	0,
 	0,
 	0,
@@ -193,7 +193,7 @@ Compact r_talk_s2 = {
 	0,
 	0,
 	0,
-	0,
+	{ 0, 0, 0, NULL },
 	0,
 	0,
 	0,
@@ -470,7 +470,7 @@ Compact small_door = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	SMALL_DOOR_LOGIC,	// baseSub
@@ -663,7 +663,7 @@ Compact low_floor = {
 	0,
 	0,
 	0,
-	0,
+	{ 0, 0, 0, NULL },
 	0,
 	0,
 	0,
@@ -799,7 +799,7 @@ uint16 foster_u_to_l[] = {
 	0
 };
 
-uint8 lamb_auto[64];
+uint16 lamb_auto[32];
 
 uint16 lamb_up[] = {
 	2,
@@ -1196,7 +1196,7 @@ Compact lamb = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	LAMB_FACTORY_START,	// baseSub
@@ -1491,7 +1491,7 @@ Compact s2_floor = {
 	0,
 	0,
 	0,
-	0,
+	{ 0, 0, 0, NULL },
 	0,
 	0,
 	0,
@@ -1622,7 +1622,7 @@ Compact text_8 = {
 	0,	// getToFlag
 	0,	// flag
 	0,
-	0,
+	{ 0, 0, 0, NULL },
 	0,
 	0,
 	0,
@@ -1681,7 +1681,7 @@ Compact stairs = {
 	0,
 	0,
 	0,
-	0,
+	{ 0, 0, 0, NULL },
 	0,
 	0,
 	0,
@@ -1893,7 +1893,7 @@ Compact text_1 = {
 	0,	// getToFlag
 	0,	// flag
 	0,
-	0,
+	{ 0, 0, 0, NULL },
 	0,
 	0,
 	0,
@@ -1993,7 +1993,7 @@ Compact r1_door = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	R1EXIT_DOOR,	// baseSub
@@ -2025,7 +2025,7 @@ Compact upstairs = {
 	0,
 	0,
 	0,
-	0,
+	{ 0, 0, 0, NULL },
 	0,
 	0,
 	0,
@@ -2226,7 +2226,7 @@ Compact text_10 = {
 	0,	// getToFlag
 	0,	// flag
 	0,
-	0,
+	{ 0, 0, 0, NULL },
 	0,
 	0,
 	0,
@@ -2265,7 +2265,7 @@ Compact text_5 = {
 	0,	// getToFlag
 	0,	// flag
 	0,
-	0,
+	{ 0, 0, 0, NULL },
 	0,
 	0,
 	0,
@@ -2812,7 +2812,7 @@ Compact outside_ledge = {
 	0,
 	0,
 	0,
-	0,
+	{ 0, 0, 0, NULL },
 	0,
 	0,
 	0,
@@ -2844,7 +2844,7 @@ uint16 ljoey_d_to_l[] = {
 	0
 };
 
-uint8 joey_auto[64];
+uint16 joey_auto[32];
 
 uint16 ljoey_left[] = {
 	2,
@@ -3406,7 +3406,7 @@ Compact joey = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	JOEY_LOGIC,	// baseSub
@@ -3630,7 +3630,7 @@ Compact whole_screen = {
 	0,
 	0,
 	0,
-	0,
+	{ 0, 0, 0, NULL },
 	0,
 	0,
 	0,
@@ -3667,7 +3667,7 @@ Compact bar = {
 	0,
 	0,
 	0,
-	0,
+	{ 0, 0, 0, NULL },
 	0,
 	0,
 	0,
@@ -4036,7 +4036,7 @@ Compact talk2 = {
 	0,
 	0,
 	0,
-	0,
+	{ 0, 0, 0, NULL },
 	0,
 	0,
 	0,
@@ -4068,7 +4068,7 @@ Compact text_4 = {
 	0,	// getToFlag
 	0,	// flag
 	0,
-	0,
+	{ 0, 0, 0, NULL },
 	0,
 	0,
 	0,
@@ -4105,7 +4105,7 @@ Compact door = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	FEXIT_DOOR,	// baseSub
@@ -4126,7 +4126,7 @@ uint16 park_table[] = {
 	65535
 };
 
-uint8 minif_auto[64];
+uint16 minif_auto[32];
 
 uint16 mfoster_up[] = {
 	1,
@@ -4803,7 +4803,7 @@ Compact foster = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	BASE_INTRO,	// baseSub
@@ -4980,7 +4980,7 @@ Compact text_11 = {
 	0,	// getToFlag
 	0,	// flag
 	0,
-	0,
+	{ 0, 0, 0, NULL },
 	0,
 	0,
 	0,
@@ -5012,7 +5012,7 @@ Compact joey_park = {
 	0,
 	0,
 	0,
-	0,
+	{ 0, 0, 0, NULL },
 	0,
 	0,
 	0,
@@ -5044,7 +5044,7 @@ Compact coordinate_test = {
 	0,
 	0,
 	0,
-	0,
+	{ 0, 0, 0, NULL },
 	0,
 	0,
 	0,
@@ -5076,7 +5076,7 @@ Compact text_2 = {
 	0,	// getToFlag
 	0,	// flag
 	0,
-	0,
+	{ 0, 0, 0, NULL },
 	0,
 	0,
 	0,
@@ -5108,7 +5108,7 @@ Compact text_3 = {
 	0,	// getToFlag
 	0,	// flag
 	0,
-	0,
+	{ 0, 0, 0, NULL },
 	0,
 	0,
 	0,
@@ -5140,7 +5140,7 @@ Compact text_6 = {
 	0,	// getToFlag
 	0,	// flag
 	0,
-	0,
+	{ 0, 0, 0, NULL },
 	0,
 	0,
 	0,
@@ -5172,7 +5172,7 @@ Compact text_7 = {
 	0,	// getToFlag
 	0,	// flag
 	0,
-	0,
+	{ 0, 0, 0, NULL },
 	0,
 	0,
 	0,
@@ -5204,7 +5204,7 @@ Compact text_9 = {
 	0,	// getToFlag
 	0,	// flag
 	0,
-	0,
+	{ 0, 0, 0, NULL },
 	0,
 	0,
 	0,
@@ -5301,7 +5301,7 @@ Compact right_exit0 = {
 	0,
 	0,
 	0,
-	0,
+	{ 0, 0, 0, NULL },
 	0,
 	0,
 	0,
@@ -5319,7 +5319,7 @@ uint16 rs_blank[] = {
 	65535
 };
 
-uint8 monitor_auto[64];
+uint16 monitor_auto[32];
 
 uint16 monitor_down[] = {
 	2,
@@ -5518,7 +5518,7 @@ Compact monitor = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	0,	// mode
 	MONITOR_SLEEP,	// baseSub
@@ -5582,7 +5582,7 @@ Compact anita = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	0,	// mode
 	ANITA_WORK,	// baseSub
@@ -5776,7 +5776,7 @@ Compact forklift_cpt = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	FORKLIFT_LOGIC,	// baseSub

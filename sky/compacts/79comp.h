@@ -531,7 +531,7 @@ Compact sc79_exit = {
 	0,
 	0,
 	0,
-	0,
+	{ 0, 0, 0, NULL },
 	0,
 	0,
 	0,
@@ -563,7 +563,7 @@ Compact sc79_rope = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	SC79_ROPE_LOGIC,	// baseSub
@@ -595,7 +595,7 @@ Compact sc79_support = {
 	0,
 	0,
 	0,
-	0,
+	{ 0, 0, 0, NULL },
 	0,
 	0,
 	0,
@@ -1367,7 +1367,7 @@ Compact sc79_knot = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	SC79_KNOT_LOGIC,	// baseSub
@@ -1417,7 +1417,7 @@ Compact sc79_ladder = {
 	0,
 	0,
 	0,
-	0,
+	{ 0, 0, 0, NULL },
 	0,
 	0,
 	0,
@@ -1647,7 +1647,7 @@ Compact sc79_pipe = {
 	0,
 	0,
 	0,
-	0,
+	{ 0, 0, 0, NULL },
 	0,
 	0,
 	0,

@@ -51,7 +51,7 @@ Compact decomp_obj = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	DECOMP_OBJ_LOGIC,	// baseSub
@@ -83,7 +83,7 @@ Compact door_r91 = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	DOOR_R91_LOGIC,	// baseSub
@@ -354,7 +354,7 @@ Compact door_l91f = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	DOOR_L91F_LOGIC,	// baseSub
@@ -421,7 +421,7 @@ Compact report_book = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	REPORT_BOOK_LOGIC,	// baseSub
@@ -522,7 +522,7 @@ Compact sc91_floor = {
 	0,
 	0,
 	0,
-	0,
+	{ 0, 0, 0, NULL },
 	0,
 	0,
 	0,
@@ -554,7 +554,7 @@ Compact bag_91 = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	BAG_91_LOGIC,	// baseSub
@@ -1088,7 +1088,7 @@ Compact door_t91 = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	DOOR_T91_LOGIC,	// baseSub
@@ -1120,7 +1120,7 @@ Compact door_l91 = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	DOOR_L91_LOGIC,	// baseSub
@@ -1267,7 +1267,7 @@ Compact eyeball_91 = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	EYEBALL_91_LOGIC,	// baseSub
@@ -1321,7 +1321,7 @@ Compact door_t91r = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	DOOR_T91R_LOGIC,	// baseSub
@@ -1388,7 +1388,7 @@ Compact decrypt_obj = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	DECRYPT_OBJ_LOGIC,	// baseSub
@@ -1510,7 +1510,7 @@ Compact door_r91f = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	DOOR_R91F_LOGIC,	// baseSub

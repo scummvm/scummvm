@@ -26,6 +26,14 @@
 
 //This file is incomplete, several flags still missing.
 
+// grafixProg pointer types:
+#define PTR_NULL	0
+#define AUTOROUTE	1
+#define COMPACT		2
+#define COMPACTELEM	3 // needed by fnSetToStand
+#define TALKTABLE	4
+#define EVIL_PTR	5 // used for compatibility with 0.5.0 savegames
+
 #define SKY_ENGLISH		0
 #define SKY_GERMAN		1
 #define SKY_FRENCH		2

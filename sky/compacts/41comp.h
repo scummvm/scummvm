@@ -93,7 +93,7 @@ Compact sc41_heat_1 = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	SC41_HEAT_1_LOGIC,	// baseSub
@@ -185,7 +185,7 @@ Compact sc41_heat_2 = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	SC41_HEAT_2_LOGIC,	// baseSub
@@ -229,7 +229,7 @@ Compact sc41_heat_3 = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	SC41_HEAT_3_LOGIC,	// baseSub
@@ -261,7 +261,7 @@ Compact sc41_exit_39 = {
 	0,
 	0,
 	0,
-	0,
+	{ 0, 0, 0, NULL },
 	0,
 	0,
 	0,
@@ -303,7 +303,7 @@ Compact sc41_floor = {
 	0,
 	0,
 	0,
-	0,
+	{ 0, 0, 0, NULL },
 	0,
 	0,
 	0,

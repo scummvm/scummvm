@@ -1008,7 +1008,7 @@ uint16 sc36_palette[] = {
 	16191
 };
 
-uint8 babs_auto[64];
+uint16 babs_auto[32];
 
 uint16 babs_up[] = {
 	2,
@@ -1385,7 +1385,7 @@ Compact sc36_babs = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	SC36_BABS_LOGIC,	// baseSub
@@ -1735,7 +1735,7 @@ Compact sc36_juke_light = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	SC36_JUKE_LIGHT_LOGIC,	// baseSub
@@ -1801,7 +1801,7 @@ Compact sc36_low_floor = {
 	0,
 	0,
 	0,
-	0,
+	{ 0, 0, 0, NULL },
 	0,
 	0,
 	0,
@@ -1886,7 +1886,7 @@ Compact sc36_door = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	SC36_DOOR_LOGIC,	// baseSub
@@ -2045,7 +2045,7 @@ Compact sc36_jukebox = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	SC36_JUKEBOX_LOGIC,	// baseSub
@@ -2585,7 +2585,7 @@ Compact sc36_gal_legs = {
 	0,
 	0,
 	0,
-	0,
+	{ 0, 0, 0, NULL },
 	0,
 	0,
 	0,
@@ -2703,7 +2703,7 @@ Compact sc36_cards = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	SC36_CARDS_LOGIC,	// baseSub
@@ -2890,7 +2890,7 @@ Compact sc36_glass = {
 	0,
 	0,
 	0,
-	0,
+	{ 0, 0, 0, NULL },
 	0,
 	0,
 	0,
@@ -2922,7 +2922,7 @@ Compact sc36_col_feet = {
 	0,
 	0,
 	0,
-	0,
+	{ 0, 0, 0, NULL },
 	0,
 	0,
 	0,
@@ -3018,7 +3018,7 @@ Compact sc36_band = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	SC36_BAND_LOGIC,	// baseSub
@@ -3050,7 +3050,7 @@ Compact sc36_sensor = {
 	0,
 	0,
 	0,
-	0,
+	{ 0, 0, 0, NULL },
 	0,
 	0,
 	0,
@@ -3482,7 +3482,7 @@ Compact sc36_colston = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	SC36_COLSTON_LOGIC,	// baseSub
@@ -3644,7 +3644,7 @@ Compact sc36_gallagher = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	SC36_GALLAGHER_LOGIC,	// baseSub
@@ -3838,7 +3838,7 @@ Compact sc36_floor = {
 	0,
 	0,
 	0,
-	0,
+	{ 0, 0, 0, NULL },
 	0,
 	0,
 	0,
@@ -4229,7 +4229,7 @@ Compact sc36_barman = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	SC36_BARMAN_LOGIC,	// baseSub
@@ -4261,7 +4261,7 @@ Compact sc36_exit_30 = {
 	0,
 	0,
 	0,
-	0,
+	{ 0, 0, 0, NULL },
 	0,
 	0,
 	0,

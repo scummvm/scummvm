@@ -35,11 +35,20 @@ class SkyAutoRoute {
 public:
 	SkyAutoRoute(SkyGrid *pGrid);
 	~SkyAutoRoute(void);
-	uint16 autoRoute(Compact *cpt, uint16 **pSaveRoute);
+	uint16 autoRoute(Compact *cpt);
 private:
 	uint16 checkBlock(uint16 *blockPos);
+	void clipCoordX(uint16 x, uint8 &blkX, int16 &initX);
+	void clipCoordY(uint16 y, uint8 &blkY, int16 &initY);
+    void initWalkGrid(uint8 screen, uint8 width);
+	bool calcWalkGrid(uint8 startX, uint8 startY, uint8 destX, uint8 destY);
+    uint16 *makeRouteData(uint8 startX, uint8 startY, uint8 destX, uint8 destY);
+	uint16 *checkInitMove(uint16 *data, int16 initStaX);
 	SkyGrid *_grid;
 	uint16 *_routeGrid;
+	uint16 *_routeBuf;
+	static const int16 _routeDirections[4];
+    static const uint16 _logicCommands[4];
 };
 
 #endif // AUTOROUTE_H

@@ -58,7 +58,7 @@ uint16 radman_l_to_r[] = {
 	0
 };
 
-uint8 radman_auto[64];
+uint16 radman_auto[32];
 
 uint16 radman_up[] = {
 	2,
@@ -448,7 +448,7 @@ Compact radman = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	0,	// mode
 	RADMAN_LOGIC,	// baseSub
@@ -480,7 +480,7 @@ Compact locker2 = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	LOCKER2_LOGIC,	// baseSub
@@ -534,7 +534,7 @@ Compact fact3_exit_left = {
 	0,
 	0,
 	0,
-	0,
+	{ 0, 0, 0, NULL },
 	0,
 	0,
 	0,
@@ -693,7 +693,7 @@ Compact s14_floor = {
 	0,
 	0,
 	0,
-	0,
+	{ 0, 0, 0, NULL },
 	0,
 	0,
 	0,
@@ -988,7 +988,7 @@ Compact console_14 = {
 	0,
 	0,
 	0,
-	0,
+	{ 0, 0, 0, NULL },
 	0,
 	0,
 	0,
@@ -1566,7 +1566,7 @@ Compact locker3 = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	LOCKER3_LOGIC,	// baseSub
@@ -1598,7 +1598,7 @@ Compact rad_screen = {
 	0,
 	0,
 	0,
-	0,
+	{ 0, 0, 0, NULL },
 	0,
 	0,
 	0,
@@ -1653,7 +1653,7 @@ Compact locker1 = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	LOCKER1_LOGIC,	// baseSub
@@ -1685,7 +1685,7 @@ Compact coat = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	COAT_LOGIC,	// baseSub
@@ -1740,7 +1740,7 @@ Compact machine = {
 	0,
 	0,
 	0,
-	0,
+	{ 0, 0, 0, NULL },
 	0,
 	0,
 	0,
@@ -1806,7 +1806,7 @@ Compact fact3_exit_right = {
 	0,
 	0,
 	0,
-	0,
+	{ 0, 0, 0, NULL },
 	0,
 	0,
 	0,

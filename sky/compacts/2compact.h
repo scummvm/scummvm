@@ -290,7 +290,7 @@ Compact right_exit_rm2 = {
 	0,
 	0,
 	0,
-	0,
+	{ 0, 0, 0, NULL },
 	0,
 	0,
 	0,
@@ -371,7 +371,7 @@ Compact panel = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	PANEL_LOGIC,	// baseSub
@@ -403,7 +403,7 @@ Compact alarm_flash = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	ALARM_LOGIC,	// baseSub
@@ -424,7 +424,7 @@ uint16 sml_loader_l_to_u[] = {
 	0
 };
 
-uint8 loader_auto[64];
+uint16 loader_auto[32];
 
 uint16 loaderb_u_to_r[] = {
 	15+156*64,
@@ -583,7 +583,7 @@ Compact hole = {
 	0,
 	0,
 	0,
-	0,
+	{ 0, 0, 0, NULL },
 	0,
 	0,
 	0,
@@ -710,7 +710,7 @@ Compact robot_shell = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	JOEY_START,	// baseSub
@@ -742,7 +742,7 @@ Compact junk1 = {
 	0,
 	0,
 	0,
-	0,
+	{ 0, 0, 0, NULL },
 	0,
 	0,
 	0,
@@ -898,7 +898,7 @@ Compact dead_loader = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	0,	// mode
 	DEAD_LOGIC,	// baseSub
@@ -1075,7 +1075,7 @@ Compact left_exit_rm2 = {
 	0,
 	0,
 	0,
-	0,
+	{ 0, 0, 0, NULL },
 	0,
 	0,
 	0,
@@ -1583,7 +1583,7 @@ Compact loader = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	0,	// mode
 	LOADER_START,	// baseSub
@@ -1615,7 +1615,7 @@ Compact junk2 = {
 	0,
 	0,
 	0,
-	0,
+	{ 0, 0, 0, NULL },
 	0,
 	0,
 	0,
@@ -1668,7 +1668,7 @@ Compact light_one = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	LIGHT_LOGIC,	// baseSub
@@ -1722,7 +1722,7 @@ Compact top_lift_2 = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	TOP_LIFT_2_LOGIC,	// baseSub
@@ -1754,7 +1754,7 @@ Compact top_lift = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	TOP_LIFT_LOGIC,	// baseSub
@@ -1812,7 +1812,7 @@ Compact top_barrel = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	TOP_BARREL_LOGIC,	// baseSub

@@ -394,7 +394,7 @@ Compact sc32_plant_2 = {
 	0,
 	0,
 	0,
-	0,
+	{ 0, 0, 0, NULL },
 	0,
 	0,
 	0,
@@ -490,7 +490,7 @@ Compact sc32_vincent = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	SC32_VINCENT_LOGIC,	// baseSub
@@ -663,7 +663,7 @@ Compact sc32_exit_31 = {
 	0,
 	0,
 	0,
-	0,
+	{ 0, 0, 0, NULL },
 	0,
 	0,
 	0,
@@ -782,7 +782,7 @@ Compact sc32_buzzer = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	SC32_BUZZER_LOGIC,	// baseSub
@@ -852,7 +852,7 @@ Compact sc32_floor = {
 	0,
 	0,
 	0,
-	0,
+	{ 0, 0, 0, NULL },
 	0,
 	0,
 	0,
@@ -1336,7 +1336,7 @@ Compact sc32_gardener = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	SC32_GARDENER_LOGIC,	// baseSub
@@ -1429,7 +1429,7 @@ Compact sc32_plant_3 = {
 	0,
 	0,
 	0,
-	0,
+	{ 0, 0, 0, NULL },
 	0,
 	0,
 	0,
@@ -1461,7 +1461,7 @@ Compact sc32_terminal = {
 	0,
 	0,
 	0,
-	0,
+	{ 0, 0, 0, NULL },
 	0,
 	0,
 	0,
@@ -1513,7 +1513,7 @@ Compact sc32_plant_1 = {
 	0,
 	0,
 	0,
-	0,
+	{ 0, 0, 0, NULL },
 	0,
 	0,
 	0,
@@ -1796,7 +1796,7 @@ Compact sc32_lift = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	SC32_LIFT_LOGIC,	// baseSub
@@ -1828,7 +1828,7 @@ Compact sc32_exit_33 = {
 	0,
 	0,
 	0,
-	0,
+	{ 0, 0, 0, NULL },
 	0,
 	0,
 	0,

@@ -104,7 +104,7 @@ Compact sarnie_s4 = {
 	0,	// getToFlag
 	0,	// flag
 	0,
-	0,
+	{ 0, 0, 0, NULL },
 	0,
 	0,
 	0,
@@ -202,7 +202,7 @@ Compact r_talk_s4 = {
 	0,
 	0,
 	0,
-	0,
+	{ 0, 0, 0, NULL },
 	0,
 	0,
 	0,
@@ -234,7 +234,7 @@ Compact monitors_s4 = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	MONITOR_LOGIC,	// baseSub
@@ -278,7 +278,7 @@ uint16 m_jobs_down[] = {
 	0
 };
 
-uint8 jobs_auto[64];
+uint16 jobs_auto[32];
 
 uint16 m_jobs_up[] = {
 	1,
@@ -856,7 +856,7 @@ Compact jobsworth = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	0,	// mode
 	START_JOBS,	// baseSub
@@ -888,7 +888,7 @@ Compact notice4 = {
 	0,
 	0,
 	0,
-	0,
+	{ 0, 0, 0, NULL },
 	0,
 	0,
 	0,
@@ -920,7 +920,7 @@ Compact buttons_s4 = {
 	0,
 	0,
 	0,
-	0,
+	{ 0, 0, 0, NULL },
 	0,
 	0,
 	0,
@@ -972,7 +972,7 @@ Compact tv_screens_s4 = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	TV_LOGIC,	// baseSub
@@ -1026,7 +1026,7 @@ Compact postcard = {
 	0,
 	0,
 	0,
-	0,
+	{ 0, 0, 0, NULL },
 	0,
 	0,
 	0,
@@ -1058,7 +1058,7 @@ Compact knob_s4 = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	KNOB_LOGIC,	// baseSub
@@ -1090,7 +1090,7 @@ Compact lazer_s4 = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	LAZER_LOGIC,	// baseSub
@@ -1138,7 +1138,7 @@ Compact sc4_left_exit = {
 	0,
 	0,
 	0,
-	0,
+	{ 0, 0, 0, NULL },
 	0,
 	0,
 	0,
@@ -1170,7 +1170,7 @@ Compact spanner_s4 = {
 	0,	// getToFlag
 	0,	// flag
 	0,
-	0,
+	{ 0, 0, 0, NULL },
 	0,
 	0,
 	0,
@@ -1218,7 +1218,7 @@ Compact chuck_s4 = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	CHUCK_LOGIC,	// baseSub
@@ -1306,7 +1306,7 @@ Compact sc4_floor = {
 	0,
 	0,
 	0,
-	0,
+	{ 0, 0, 0, NULL },
 	0,
 	0,
 	0,
@@ -1338,7 +1338,7 @@ Compact cupboard_s4 = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	CUPBOARD_LOGIC,	// baseSub

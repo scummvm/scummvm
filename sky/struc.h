@@ -48,6 +48,13 @@ struct dataFileHeader {
 	uint16 s_compressed_size;
 };
 
+struct GrafixPtr { // replacement for old grafixProg pointer. More savegame compatible.
+	uint8 ptrType;		// ptr to autoroute / to compact / to turntable
+	uint16 ptrTarget;	// compact / turntable number
+	uint16 pos;			// position
+	uint16 *evilPtr;    // direct pointer for compatibility with 0.5.0 savegames
+};
+
 struct TurnTable {
 	uint16 *turnTableUp[5];
 	uint16 *turnTableDown[5];
@@ -106,7 +113,7 @@ struct ExtCompact {
 	uint16 arTargetX;
 	uint16 arTargetY;
 
-	void *animScratch; // data area for AR
+	uint16 *animScratch; // data area for AR
 
 	uint16 megaSet;
 	MegaSet *megaSet0;
@@ -147,7 +154,7 @@ struct Compact {
 	uint16 flag; // a use any time flag
 
 	uint16 mood; // high level - stood or not
-	uint16 *grafixProg;
+	GrafixPtr grafixProg;
 	uint16 offset;
 
 	uint16 mode; // which mcode block

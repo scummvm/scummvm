@@ -556,7 +556,7 @@ Compact sc69_pulse2 = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	SC69_PULSE2_LOGIC,	// baseSub
@@ -606,7 +606,7 @@ Compact sc69_pulse6 = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	SC69_PULSE6_LOGIC,	// baseSub
@@ -657,7 +657,7 @@ Compact sc69_exit = {
 	0,
 	0,
 	0,
-	0,
+	{ 0, 0, 0, NULL },
 	0,
 	0,
 	0,
@@ -699,7 +699,7 @@ Compact sc69_door = {
 	0,
 	0,
 	0,
-	0,
+	{ 0, 0, 0, NULL },
 	0,
 	0,
 	0,
@@ -731,7 +731,7 @@ Compact sc69_pulse3 = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	SC69_PULSE3_LOGIC,	// baseSub
@@ -763,7 +763,7 @@ Compact sc69_pulse5 = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	SC69_PULSE5_LOGIC,	// baseSub
@@ -851,7 +851,7 @@ Compact sc69_pulse4 = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	SC69_PULSE4_LOGIC,	// baseSub
@@ -883,7 +883,7 @@ Compact sc69_pulse1 = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	SC69_PULSE1_LOGIC,	// baseSub
@@ -971,7 +971,7 @@ Compact sc69_grill = {
 	0,
 	0,
 	0,
-	0,
+	{ 0, 0, 0, NULL },
 	0,
 	0,
 	0,
@@ -1183,7 +1183,7 @@ Compact sc69_floor = {
 	0,
 	0,
 	0,
-	0,
+	{ 0, 0, 0, NULL },
 	0,
 	0,
 	0,

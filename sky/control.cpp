@@ -1117,6 +1117,13 @@ uint16 SkyControl::saveGameToFile(void) {
 	return GAME_SAVED;
 }
 
+bool SkyControl::canSaveV5(void) {
+	for (uint16 cnt = 0; cnt < ARRAYSIZE(_saveLoadCpts); cnt++)
+		if (_saveLoadCpts[cnt]->grafixProg.ptrType == EVIL_PTR)
+			return false;
+	return true;
+}
+
 #define STOSD(ptr, val) { *(uint32 *)(ptr) = TO_LE_32(val); (ptr) += 4; }
 #define STOSW(ptr, val) { *(uint16 *)(ptr) = TO_LE_16(val); (ptr) += 2; }
 
@@ -1130,7 +1137,7 @@ void SkyControl::stosMegaSet(uint8 **destPos, MegaSet *mega) {
 
 void SkyControl::stosGrafStr(uint8 **destPos, Compact *cpt) {
 	uint16 strLen = 0;
-	uint16 *src = cpt->grafixProg;
+	uint16 *src = cpt->grafixProg.evilPtr;
 	if ((cpt->logic == L_AR_ANIM) || (cpt->logic == L_TURNING)) {
 		if ((!src[0]) && (!src[2])) {
 			strLen = 3;
@@ -1157,8 +1164,13 @@ void SkyControl::stosGrafStr(uint8 **destPos, Compact *cpt) {
 
 void SkyControl::stosStr(uint8 **destPos, Compact *cpt, uint16 type) {
 	uint16 strLen = 0;
-	if (type & SAVE_GRAFX)
+	if (type & EVIL_GRAFX)
 		stosGrafStr(destPos, cpt);
+	else if (type & SAVE_GRAFX) {
+		STOSW(*destPos, cpt->grafixProg.ptrType);
+		STOSW(*destPos, cpt->grafixProg.ptrTarget);
+		STOSW(*destPos, cpt->grafixProg.pos);
+	}
 
 	if (type & SAVE_TURNP) {
 		uint16 *src = cpt->extCompact->turnProg;
@@ -1182,7 +1194,10 @@ void SkyControl::stosCompact(uint8 **destPos, Compact *cpt) {
 		if (cpt->extCompact->megaSet3) saveType |= SAVE_MEGA3;
 		if (cpt->extCompact->turnProg) saveType |= SAVE_TURNP;
 	}
-	if (cpt->grafixProg) saveType |= SAVE_GRAFX;
+	if (cpt->grafixProg.ptrType != PTR_NULL)
+		saveType |= SAVE_GRAFX;
+	if (cpt->grafixProg.ptrType == EVIL_PTR)
+		saveType |= EVIL_GRAFX;
 
 	STOSW(*destPos, saveType);
 
@@ -1259,7 +1274,13 @@ uint32 SkyControl::prepareSaveData(uint8 *destBuf) {
 	uint32 cnt;
 	memset(destBuf, 0, 4); // space for data size
 	uint8 *destPos = destBuf + 4;
-	STOSD(destPos, SAVE_FILE_REVISION);
+	if (canSaveV5()) {
+		debug(1, "Going up to V5");
+		STOSD(destPos, 5);
+	} else {
+		debug(1, "Saving in compatibility mode, evil ptrs left");
+		STOSD(destPos, SAVE_FILE_REVISION);
+	}
 
 	STOSD(destPos, SkyState::_systemVars.gameVersion);
 	STOSW(destPos, _skySound->_saveSounds[0]);
@@ -1278,6 +1299,11 @@ uint32 SkyControl::prepareSaveData(uint8 *destBuf) {
 
 	for (cnt = 0; cnt < ARRAYSIZE(_saveLoadCpts); cnt++)
 		stosCompact(&destPos, _saveLoadCpts[cnt]);
+
+	for (cnt = 0; cnt < ARRAYSIZE(_saveLoadARs); cnt++)
+		for (uint8 elemCnt = 0; elemCnt < 32; elemCnt++) {
+			STOSW(destPos, _saveLoadARs[cnt][elemCnt]);
+		}
 
 	for (cnt = 0; cnt < 3; cnt++)
 		STOSW(destPos, SkyCompact::park_table[cnt]);
@@ -1323,7 +1349,7 @@ void SkyControl::lodsMegaSet(uint8 **srcPos, MegaSet *mega) {
 	// anims, stands, turnTable
 }
 
-void SkyControl::lodsCompact(uint8 **srcPos, Compact *cpt) {
+void SkyControl::lodsCompact(uint8 **srcPos, Compact *cpt, uint32 saveRev) {
 
 	uint16 saveType, cnt;
 	LODSW(*srcPos, saveType);
@@ -1338,7 +1364,7 @@ void SkyControl::lodsCompact(uint8 **srcPos, Compact *cpt) {
 	if ((saveType & SAVE_MEGA3) && (cpt->extCompact->megaSet3 == NULL))
 		error("Can't restore! SaveData is SAVE_MEGA3 for Compact");
 
-	if (saveType & SAVE_GRAFX) {
+	if ((saveType & EVIL_GRAFX) || ((saveRev <= 3) && (saveType & SAVE_GRAFX))) {
 		uint16 grafxLen;
 		LODSW(*srcPos, grafxLen);
 		//cpt->grafixProg = (uint16 *)malloc(grafxLen << 1);
@@ -1348,14 +1374,27 @@ void SkyControl::lodsCompact(uint8 **srcPos, Compact *cpt) {
 				 (as all grafixProg data is 0-terminated), so if this condition really can
 				 occur, it should only lead to small graphic glitches, not to crashes.*/
 
-		cpt->grafixProg = (uint16 *)malloc((grafxLen << 1) + 20);
-		memset(cpt->grafixProg + grafxLen, 0, 20); 
-		appendMemList(cpt->grafixProg);
+		cpt->grafixProg.evilPtr = (uint16 *)malloc((grafxLen << 1) + 20);
+		cpt->grafixProg.ptrType = EVIL_PTR;
+		cpt->grafixProg.pos     = 0;
+		memset(cpt->grafixProg.evilPtr + grafxLen, 0, 20); 
+		appendMemList(cpt->grafixProg.evilPtr);
 		for (cnt = 0; cnt < grafxLen; cnt++) {
-			LODSW(*srcPos, cpt->grafixProg[cnt]);
+			LODSW(*srcPos, cpt->grafixProg.evilPtr[cnt]);
 		}
-	} else
-		cpt->grafixProg = NULL;
+	} else if (saveType & SAVE_GRAFX) {
+		uint16 tmp;
+		LODSW(*srcPos, tmp);
+		cpt->grafixProg.ptrType = (uint8)tmp;
+		LODSW(*srcPos, cpt->grafixProg.ptrTarget);
+		LODSW(*srcPos, cpt->grafixProg.pos);
+		cpt->grafixProg.evilPtr = NULL;
+	} else {
+		cpt->grafixProg.ptrType = PTR_NULL;
+		cpt->grafixProg.ptrTarget = 0;
+		cpt->grafixProg.pos = 0;
+		cpt->grafixProg.evilPtr = NULL;
+	}
 
 	if (saveType & SAVE_TURNP) {
 		uint16 turnLen;
@@ -1446,7 +1485,7 @@ uint16 SkyControl::parseSaveData(uint8 *srcBuf) {
 
 	LODSD(srcPos, size);
 	LODSD(srcPos, saveRev);
-	if (saveRev > SAVE_FILE_REVISION) {
+	if (saveRev > 5) {
 		warning("Unknown save file revision (%d)",saveRev);
 		return RESTORE_FAILED;
 	}
@@ -1482,7 +1521,14 @@ uint16 SkyControl::parseSaveData(uint8 *srcBuf) {
 		LODSD(srcPos, reloadList[cnt]);
 
 	for (cnt = 0; cnt < ARRAYSIZE(_saveLoadCpts); cnt++)
-		lodsCompact(&srcPos, _saveLoadCpts[cnt]);
+		lodsCompact(&srcPos, _saveLoadCpts[cnt], saveRev);
+
+	if (saveRev >= 4) {
+		for (cnt = 0; cnt < ARRAYSIZE(_saveLoadARs); cnt++)
+			for (uint8 elemCnt = 0; elemCnt < 32; elemCnt++) {
+				LODSW(srcPos, _saveLoadARs[cnt][elemCnt]);
+			}
+	}
 
 	for (cnt = 0; cnt < 3; cnt++)
 		LODSW(srcPos, SkyCompact::park_table[cnt]);
@@ -1630,8 +1676,8 @@ uint16 *SkyControl::lz77decode(uint16 *data) {
 	return outBuf;
 }
 
-void SkyControl::applyDiff(uint16 *data, uint16 *diffData) {
-	for (uint16 cnt = 0; cnt < 206; cnt++) {
+void SkyControl::applyDiff(uint16 *data, uint16 *diffData, uint16 len) {
+	for (uint16 cnt = 0; cnt < len; cnt++) {
 		data += READ_LE_UINT16(diffData);
 		diffData++;
 		*data = *diffData;
@@ -1644,24 +1690,23 @@ void SkyControl::restartGame(void) {
 	if (SkyState::_systemVars.gameVersion <= 267)
 		return; // no restart for floppy demo
 
-	uint16 *resetData;
-	if (SkyState::isCDVersion())
-		resetData = lz77decode((uint16 *)_resetDataCd);
-	else {
-		resetData = lz77decode((uint16 *)_resetData288);
-		switch (SkyState::_systemVars.gameVersion) {
-			case 303:
-                applyDiff(resetData, (uint16*)_resetDiff303);
-				break;
-			case 331:
-				applyDiff(resetData, (uint16*)_resetDiff331);
-				break;
-			case 348:
-				applyDiff(resetData, (uint16*)_resetDiff348);
-				break;
-			default:
-				break;
-		}
+	uint16 *resetData = lz77decode((uint16 *)_resetData288);
+	switch (SkyState::_systemVars.gameVersion) {
+		case 303:
+			applyDiff(resetData, (uint16*)_resetDiff303, 206);
+			break;
+		case 331:
+			applyDiff(resetData, (uint16*)_resetDiff331, 206);
+			break;
+		case 348:
+			applyDiff(resetData, (uint16*)_resetDiff348, 206);
+			break;
+		case 365:
+		case 368:
+		case 372:
+			applyDiff(resetData, (uint16*)_resetDiffCd, 214);
+		default:
+			break;
 	}
 	// ok, we finally have our savedata
 

@@ -146,7 +146,7 @@ Compact sc96_floor = {
 	0,
 	0,
 	0,
-	0,
+	{ 0, 0, 0, NULL },
 	0,
 	0,
 	0,
@@ -189,7 +189,7 @@ Compact crystal = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	CRYSTAL_LOGIC,	// baseSub
@@ -658,7 +658,7 @@ Compact door_l96f = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	DOOR_L96F_LOGIC,	// baseSub
@@ -690,7 +690,7 @@ Compact virus = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	VIRUS_LOGIC,	// baseSub
@@ -792,7 +792,7 @@ Compact door_l96 = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	DOOR_L96_LOGIC,	// baseSub

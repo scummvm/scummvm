@@ -167,7 +167,7 @@ Compact sc42_sign = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	SC42_SIGN_LOGIC,	// baseSub
@@ -520,7 +520,7 @@ Compact sc42_judge = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	SC42_JUDGE_LOGIC,	// baseSub
@@ -622,7 +622,7 @@ Compact sc42_prosecution = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	SC42_PROSECUTION_LOGIC,	// baseSub
@@ -725,7 +725,7 @@ Compact sc42_clerk = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	SC42_CLERK_LOGIC,	// baseSub
@@ -831,7 +831,7 @@ Compact sc42_jobsworth = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	SC42_JOBSWORTH_LOGIC,	// baseSub

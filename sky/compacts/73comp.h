@@ -56,7 +56,7 @@ Compact sc73_exit = {
 	0,
 	0,
 	0,
-	0,
+	{ 0, 0, 0, NULL },
 	0,
 	0,
 	0,
@@ -176,7 +176,7 @@ uint16 sc73_cham5_anim[] = {
 	0
 };
 
-uint8 gal_auto[64];
+uint16 gal_auto[32];
 
 uint16 gal_up[] = {
 	2,
@@ -528,7 +528,7 @@ Compact gallagher = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	GALLAGHER_LOGIC73,	// baseSub
@@ -949,7 +949,7 @@ Compact sc73_floor = {
 	0,
 	0,
 	0,
-	0,
+	{ 0, 0, 0, NULL },
 	0,
 	0,
 	0,
@@ -1135,7 +1135,7 @@ Compact sc73_door = {
 	0,
 	0,
 	0,
-	0,
+	{ 0, 0, 0, NULL },
 	0,
 	0,
 	0,
@@ -1232,7 +1232,7 @@ Compact sc73_bits = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	SC73_BITS_LOGIC,	// baseSub
@@ -1264,7 +1264,7 @@ Compact sc73_locked_door = {
 	0,
 	0,
 	0,
-	0,
+	{ 0, 0, 0, NULL },
 	0,
 	0,
 	0,
@@ -1311,7 +1311,7 @@ Compact sc73_sensor = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	SC73_SENSOR_LOGIC,	// baseSub
@@ -1343,7 +1343,7 @@ Compact sc73_cham5_light = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	SC73_CHAM5_LIGHT_LOGIC,	// baseSub
@@ -1487,7 +1487,7 @@ Compact sc73_spray = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	SC73_SPRAY_LOGIC,	// baseSub
@@ -1533,7 +1533,7 @@ Compact sc73_bits2 = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	SC73_BITS2_LOGIC,	// baseSub
@@ -1765,7 +1765,7 @@ Compact sc73_chamber4 = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	SC73_CHAMBER4_LOGIC,	// baseSub
@@ -1797,7 +1797,7 @@ Compact sc73_chamber3 = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	SC73_CHAMBER3_LOGIC,	// baseSub
@@ -2216,7 +2216,7 @@ Compact sc73_chamber5 = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	SC73_CHAMBER5_LOGIC,	// baseSub
@@ -2504,7 +2504,7 @@ Compact sc73_big_door = {
 	0,
 	0,
 	0,
-	0,
+	{ 0, 0, 0, NULL },
 	0,
 	0,
 	0,
@@ -2538,7 +2538,7 @@ Compact sc73_cham4_light = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	SC73_CHAM4_LIGHT_LOGIC,	// baseSub

@@ -676,7 +676,7 @@ Compact lift_slot_10 = {
 	0,
 	0,
 	0,
-	0,
+	{ 0, 0, 0, NULL },
 	0,
 	0,
 	0,
@@ -818,7 +818,7 @@ Compact s10_floor = {
 	0,
 	0,
 	0,
-	0,
+	{ 0, 0, 0, NULL },
 	0,
 	0,
 	0,
@@ -862,7 +862,7 @@ Compact terminal_10 = {
 	0,
 	0,
 	0,
-	0,
+	{ 0, 0, 0, NULL },
 	0,
 	0,
 	0,
@@ -1183,7 +1183,7 @@ Compact scanner_10 = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	SCANNER_10_LOGIC,	// baseSub
@@ -1215,7 +1215,7 @@ Compact pod_light = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	POD_LIGHT_LOGIC,	// baseSub
@@ -1247,7 +1247,7 @@ Compact pod = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	POD_LOGIC,	// baseSub
@@ -1279,7 +1279,7 @@ Compact fake_floor_10 = {
 	0,
 	0,
 	0,
-	0,
+	{ 0, 0, 0, NULL },
 	0,
 	0,
 	0,
@@ -1366,7 +1366,7 @@ Compact linc_10 = {
 	0,
 	0,
 	0,
-	0,
+	{ 0, 0, 0, NULL },
 	0,
 	0,
 	0,
@@ -1587,7 +1587,7 @@ Compact monitor_10 = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	ANIMATE_LOGIC,	// baseSub
@@ -1750,7 +1750,7 @@ Compact lift_10 = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	LIFT_10_LOGIC,	// baseSub
@@ -1782,7 +1782,7 @@ Compact litebank = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	ANIMATE_LOGIC,	// baseSub
@@ -1892,7 +1892,7 @@ Compact liyt_3 = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	ANIMATE_LOGIC,	// baseSub
@@ -1924,7 +1924,7 @@ Compact liyt_2 = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	ANIMATE_LOGIC,	// baseSub
@@ -2358,7 +2358,7 @@ Compact liyt_4 = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	ANIMATE_LOGIC,	// baseSub
@@ -2390,7 +2390,7 @@ Compact left_exit_10 = {
 	0,
 	0,
 	0,
-	0,
+	{ 0, 0, 0, NULL },
 	0,
 	0,
 	0,
@@ -2422,7 +2422,7 @@ Compact liyt_1 = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	ANIMATE_LOGIC,	// baseSub

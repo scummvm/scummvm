@@ -111,8 +111,9 @@ class SkyMouse;
 #define SAVE_MEGA3	16
 #define SAVE_GRAFX	32
 #define SAVE_TURNP	64
+#define EVIL_GRAFX	128
 
-#define SAVE_FILE_REVISION 3
+#define SAVE_FILE_REVISION 4
 
 struct AllocedMem {
 	uint16 *mem;
@@ -208,6 +209,7 @@ private:
 
 	uint16 _selectedGame;
 	uint16 saveGameToFile(void);
+	bool canSaveV5(void);
 	void stosMegaSet(uint8 **destPos, MegaSet *mega);
 	void stosCompact(uint8 **destPos, Compact *cpt);
 	void stosGrafStr(uint8 **destPos, Compact *cpt);
@@ -217,19 +219,20 @@ private:
 	bool autoSaveExists(void);
 	uint16 restoreGameFromFile(bool autoSave);
 	void lodsMegaSet(uint8 **srcPos, MegaSet *mega);
-	void lodsCompact(uint8 **srcPos, Compact *cpt);
+	void lodsCompact(uint8 **srcPos, Compact *cpt, uint32 saveRev);
 	void lodsStr(uint8 **srcPos, uint16 *src);
 	uint16 parseSaveData(uint8 *srcBuf);
 
 	const char *_savePath;
 	uint16 *lz77decode(uint16 *data);
-	void applyDiff(uint16 *data, uint16 *diffData);
+	void applyDiff(uint16 *data, uint16 *diffData, uint16 len);
 	static Compact *_saveLoadCpts[833]; //-----------------
-	static uint8 _resetData288[0x39F2];
+	static uint16 *_saveLoadARs[19];
+	static uint8 _resetData288[0x39B8];
 	static uint8 _resetDiff303[824];    // moved to sky/compacts/savedata.cpp
 	static uint8 _resetDiff331[824];
 	static uint8 _resetDiff348[824];
-	static uint8 _resetDataCd[0x3FDC];  //-----------------
+	static uint8 _resetDiffCd[856];  //-----------------
 
 	AllocedMem *_memListRoot;
 	void appendMemList(uint16 *pMem);

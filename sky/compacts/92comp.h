@@ -51,7 +51,7 @@ Compact bridge_e = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	BRIDGE_E_LOGIC,	// baseSub
@@ -83,7 +83,7 @@ Compact door_l92 = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	DOOR_L92_LOGIC,	// baseSub
@@ -129,7 +129,7 @@ Compact slab8 = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	SLAB8_LOGIC,	// baseSub
@@ -207,7 +207,7 @@ Compact slab4 = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	SLAB4_LOGIC,	// baseSub
@@ -403,7 +403,7 @@ Compact slab6 = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	SLAB6_LOGIC,	// baseSub
@@ -435,7 +435,7 @@ Compact door_r92 = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	DOOR_R92_LOGIC,	// baseSub
@@ -467,7 +467,7 @@ Compact bridge_h = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	BRIDGE_H_LOGIC,	// baseSub
@@ -499,7 +499,7 @@ Compact bridge_f = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	BRIDGE_F_LOGIC,	// baseSub
@@ -545,7 +545,7 @@ Compact bridge_a = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	BRIDGE_A_LOGIC,	// baseSub
@@ -651,7 +651,7 @@ Compact bridge_g = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	BRIDGE_G_LOGIC,	// baseSub
@@ -683,7 +683,7 @@ Compact door_l92f = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	DOOR_L92F_LOGIC,	// baseSub
@@ -715,7 +715,7 @@ Compact bridge_b = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	BRIDGE_B_LOGIC,	// baseSub
@@ -773,7 +773,7 @@ Compact slab1 = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	SLAB1_LOGIC,	// baseSub
@@ -805,7 +805,7 @@ Compact red_circle = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	RED_CIRCLE_LOGIC,	// baseSub
@@ -837,7 +837,7 @@ Compact slab2 = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	SLAB2_LOGIC,	// baseSub
@@ -1386,7 +1386,7 @@ Compact slab9 = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	SLAB9_LOGIC,	// baseSub
@@ -1418,7 +1418,7 @@ Compact door_r92r = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	DOOR_R92R_LOGIC,	// baseSub
@@ -1468,7 +1468,7 @@ Compact slab5 = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	SLAB5_LOGIC,	// baseSub
@@ -1500,7 +1500,7 @@ Compact slab7 = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	SLAB7_LOGIC,	// baseSub
@@ -1566,7 +1566,7 @@ Compact green_circle = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	GREEN_CIRCLE_LOGIC,	// baseSub
@@ -1610,7 +1610,7 @@ Compact bridge_c = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	BRIDGE_C_LOGIC,	// baseSub
@@ -1642,7 +1642,7 @@ Compact bridge_d = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	BRIDGE_D_LOGIC,	// baseSub
@@ -1674,7 +1674,7 @@ Compact slab3 = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	SLAB3_LOGIC,	// baseSub

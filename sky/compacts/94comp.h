@@ -169,7 +169,7 @@ Compact sc94_floor = {
 	0,
 	0,
 	0,
-	0,
+	{ 0, 0, 0, NULL },
 	0,
 	0,
 	0,
@@ -237,7 +237,7 @@ Compact door_r94 = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	DOOR_R94_LOGIC,	// baseSub
@@ -359,7 +359,7 @@ Compact door_r94r = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	DOOR_R94R_LOGIC,	// baseSub
@@ -407,7 +407,7 @@ Compact door_l94r = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	DOOR_L94R_LOGIC,	// baseSub
@@ -573,7 +573,7 @@ Compact hologram_b = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	HOLOGRAM_B_LOGIC,	// baseSub
@@ -634,7 +634,7 @@ Compact door_l94 = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	DOOR_L94_LOGIC,	// baseSub
@@ -950,7 +950,7 @@ Compact hologram_pad = {
 	0,
 	0,
 	0,
-	0,
+	{ 0, 0, 0, NULL },
 	0,
 	0,
 	0,
@@ -1369,7 +1369,7 @@ Compact hologram_a = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	HOLOGRAM_A_LOGIC,	// baseSub

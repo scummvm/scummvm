@@ -620,7 +620,7 @@ Compact sc38_dog_tray = {
 	0,
 	0,
 	0,
-	0,
+	{ 0, 0, 0, NULL },
 	0,
 	0,
 	0,
@@ -927,7 +927,7 @@ uint16 dan_r_to_l[] = {
 	0
 };
 
-uint8 dan_auto[64];
+uint16 dan_auto[32];
 
 uint16 sc38_logic_list[] = {
 	ID_FOSTER,
@@ -1057,7 +1057,7 @@ Compact sc38_hand_set = {
 	0,
 	0,
 	0,
-	0,
+	{ 0, 0, 0, NULL },
 	0,
 	0,
 	0,
@@ -1373,7 +1373,7 @@ Compact sc38_floor = {
 	0,
 	0,
 	0,
-	0,
+	{ 0, 0, 0, NULL },
 	0,
 	0,
 	0,
@@ -1905,7 +1905,7 @@ Compact sc38_sofa = {
 	0,
 	0,
 	0,
-	0,
+	{ 0, 0, 0, NULL },
 	0,
 	0,
 	0,
@@ -1986,7 +1986,7 @@ Compact sc38_video = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	SC38_VIDEO_LOGIC,	// baseSub
@@ -2018,7 +2018,7 @@ Compact dog_bark_thing = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	DOG_BARK_LOGIC,	// baseSub
@@ -2167,7 +2167,7 @@ Compact sc38_monitor = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	SC38_MONITOR_LOGIC,	// baseSub
@@ -2392,7 +2392,7 @@ Compact sc38_lift = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	SC38_LIFT_LOGIC,	// baseSub
@@ -2424,7 +2424,7 @@ Compact sc38_biscuits = {
 	0,
 	0,
 	0,
-	0,
+	{ 0, 0, 0, NULL },
 	0,
 	0,
 	0,
@@ -2663,7 +2663,7 @@ uint16 sc38_lift_up[] = {
 	0
 };
 
-uint8 spu_auto[64];
+uint16 spu_auto[32];
 
 uint16 sniff_right[] = {
 	74*64,
@@ -2909,7 +2909,7 @@ Compact sc38_ringer = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	SC38_RINGER_LOGIC,	// baseSub
@@ -2947,7 +2947,7 @@ Compact sc38_statue = {
 	0,
 	0,
 	0,
-	0,
+	{ 0, 0, 0, NULL },
 	0,
 	0,
 	0,
@@ -3418,7 +3418,7 @@ Compact danielle = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	DANIELLE_LOGIC,	// baseSub
@@ -3586,7 +3586,7 @@ Compact spunky = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	SPUNKY_LOGIC,	// baseSub

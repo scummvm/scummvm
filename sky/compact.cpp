@@ -60,7 +60,45 @@
 #define MK32_A5(type, item) MK32(type, item[0]), MK32(type, item[1]), \
 	MK32(type, item[2]), MK32(type, item[3]), MK32(type, item[4])
 
+namespace SkyTalkAnims {
+	extern bool animTalkTableIsPointer[];
+	extern uint16 animTalkTableVal[];
+	extern void *animTalkTablePtr[];
+};
+
 namespace SkyCompact {
+
+uint16 *getGrafixPtr(Compact *cpt) {
+	uint16 *buf;
+	switch (cpt->grafixProg.ptrType) {
+		case PTR_NULL:
+			return NULL;
+		case AUTOROUTE:
+			if (!cpt->extCompact)
+				error("::getGrafixPtr: request for AR pointer, extCompact is NULL, though.");
+			return (cpt->extCompact->animScratch + cpt->grafixProg.pos);
+		case COMPACT:
+			buf = (uint16*)SkyState::fetchCompact(cpt->grafixProg.ptrTarget);
+			if (buf == NULL)
+				error("::getGrafixPtr: request for cpt %d pointer. It's NULL.", cpt->grafixProg.ptrTarget);
+			return (buf + cpt->grafixProg.pos);
+		case COMPACTELEM:
+			buf = *(uint16 **)SkyCompact::getCompactElem(cpt, cpt->grafixProg.ptrTarget);
+			if (buf == NULL)
+				error("::getGrafixPtr: request for elem ptr %d. It's NULL.", cpt->grafixProg.ptrTarget);
+			return buf + cpt->grafixProg.pos;
+		case TALKTABLE:
+			buf = (uint16 *)SkyTalkAnims::animTalkTablePtr[cpt->grafixProg.ptrTarget];
+			if (buf == NULL)
+				warning("::getGrafixPtr: request for TT ptr %d -> NULL", cpt->grafixProg.ptrTarget);
+			return buf + cpt->grafixProg.pos;
+		case EVIL_PTR:
+			return (cpt->grafixProg.evilPtr + cpt->grafixProg.pos);
+		default:
+			error("::getGrafixPtr: unknown grafixProg type for Compact cpt");
+	}
+	return NULL; // never reached
+}
 
 /**
  * Returns the n'th mega set specified by \a megaSet from Compact \a cpt.

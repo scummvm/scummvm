@@ -262,7 +262,7 @@ uint16 glass_scan[] = {
 	0
 };
 
-uint8 burke_auto[64];
+uint16 burke_auto[32];
 
 uint16 put_glass_seq[] = {
 	203*64,
@@ -398,7 +398,7 @@ Compact helmet_cole = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	0,	// mode
 	HELMET_LOGIC,	// baseSub
@@ -801,7 +801,7 @@ Compact gas = {
 	0,
 	0,
 	0,
-	0,
+	{ 0, 0, 0, NULL },
 	0,
 	0,
 	0,
@@ -1008,7 +1008,7 @@ Compact body = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	0,	// mode
 	BODY_SSS,	// baseSub
@@ -1494,7 +1494,7 @@ Compact chart2 = {
 	0,
 	0,
 	0,
-	0,
+	{ 0, 0, 0, NULL },
 	0,
 	0,
 	0,
@@ -1533,7 +1533,7 @@ Compact chart1 = {
 	0,
 	0,
 	0,
-	0,
+	{ 0, 0, 0, NULL },
 	0,
 	0,
 	0,
@@ -2188,7 +2188,7 @@ Compact burke = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	0,	// mode
 	BURKE_LOGIC,	// baseSub
@@ -2777,7 +2777,7 @@ Compact medi_comp = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	0,	// mode
 	MEDIC_LOGIC,	// baseSub
@@ -2809,7 +2809,7 @@ Compact glass_slot = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	0,	// mode
 	GLASS_SLOT_LOGIC,	// baseSub
@@ -3045,7 +3045,7 @@ Compact scanner_27 = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	0,	// mode
 	SCANNER_27_LOGIC,	// baseSub
@@ -3077,7 +3077,7 @@ Compact s27_floor = {
 	0,
 	0,
 	0,
-	0,
+	{ 0, 0, 0, NULL },
 	0,
 	0,
 	0,
@@ -3234,7 +3234,7 @@ Compact right_exit_27 = {
 	0,
 	0,
 	0,
-	0,
+	{ 0, 0, 0, NULL },
 	0,
 	0,
 	0,
@@ -3266,7 +3266,7 @@ Compact chair_27 = {
 	0,
 	0,
 	0,
-	0,
+	{ 0, 0, 0, NULL },
 	0,
 	0,
 	0,

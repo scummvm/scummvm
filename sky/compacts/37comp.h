@@ -302,7 +302,7 @@ Compact sc37_big_box = {
 	0,
 	0,
 	0,
-	0,
+	{ 0, 0, 0, NULL },
 	0,
 	0,
 	0,
@@ -383,7 +383,7 @@ Compact sc37_sensor = {
 	0,
 	0,
 	0,
-	0,
+	{ 0, 0, 0, NULL },
 	0,
 	0,
 	0,
@@ -589,7 +589,7 @@ Compact sc37_wine_rack = {
 	0,
 	0,
 	0,
-	0,
+	{ 0, 0, 0, NULL },
 	0,
 	0,
 	0,
@@ -649,7 +649,7 @@ Compact sc37_holding_lid = {
 	0,
 	0,
 	0,
-	0,
+	{ 0, 0, 0, NULL },
 	0,
 	0,
 	0,
@@ -903,7 +903,7 @@ Compact sc37_lid = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	SC37_LID_LOGIC,	// baseSub
@@ -1322,7 +1322,7 @@ Compact sc37_floor = {
 	0,
 	0,
 	0,
-	0,
+	{ 0, 0, 0, NULL },
 	0,
 	0,
 	0,
@@ -1413,7 +1413,7 @@ Compact sc37_grill = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	SC37_GRILL_LOGIC,	// baseSub
@@ -1567,7 +1567,7 @@ Compact sc37_door = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	SC37_DOOR_LOGIC,	// baseSub
@@ -1754,7 +1754,7 @@ Compact sc37_flimsy_box = {
 	0,
 	0,
 	0,
-	0,
+	{ 0, 0, 0, NULL },
 	0,
 	0,
 	0,

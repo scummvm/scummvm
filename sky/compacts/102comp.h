@@ -62,7 +62,7 @@ Compact restore_butt = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	RESTORE_BUTTON_LOGIC,	// baseSub
@@ -133,7 +133,7 @@ Compact exit_butt = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	EXIT_BUTTON_LOGIC,	// baseSub
@@ -560,7 +560,7 @@ Compact restart_butt = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0, NULL },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	RESTART_BUTTON_LOGIC,	// baseSub
