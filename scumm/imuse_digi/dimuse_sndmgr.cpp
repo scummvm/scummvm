@@ -224,7 +224,7 @@ bool ImuseDigiSndMgr::openMusicBundle(soundStruct *sound, int disk) {
 	sound->bundle = new BundleMgr(_cacheBundleDir);
 	if (_vm->_gameId == GID_CMI) {
 		if (_vm->_features & GF_DEMO) {
-			result = sound->bundle->openFile("music.bun", _vm->getGameDataPath());
+			result = sound->bundle->openFile("music.bun");
 		} else {
 			char musicfile[20];
 			if (disk == -1)
@@ -238,14 +238,14 @@ bool ImuseDigiSndMgr::openMusicBundle(soundStruct *sound, int disk) {
 //				sound->bundle->closeFile();
 //			}
 
-			result = sound->bundle->openFile(musicfile, _vm->getGameDataPath());
+			result = sound->bundle->openFile(musicfile);
 
 			if (result == false)
-				result = sound->bundle->openFile("music.bun", _vm->getGameDataPath());
+				result = sound->bundle->openFile("music.bun");
 			_disk = (byte)_vm->VAR(_vm->VAR_CURRENTDISK);
 		}
 	} else if (_vm->_gameId == GID_DIG)
-		result = sound->bundle->openFile("digmusic.bun", _vm->getGameDataPath());
+		result = sound->bundle->openFile("digmusic.bun");
 	else
 		error("ImuseDigiSndMgr::openMusicBundle() Don't know which bundle file to load");
 
@@ -258,7 +258,7 @@ bool ImuseDigiSndMgr::openVoiceBundle(soundStruct *sound, int disk) {
 	sound->bundle = new BundleMgr(_cacheBundleDir);
 	if (_vm->_gameId == GID_CMI) {
 		if (_vm->_features & GF_DEMO) {
-			result = sound->bundle->openFile("voice.bun", _vm->getGameDataPath());
+			result = sound->bundle->openFile("voice.bun");
 		} else {
 			char voxfile[20];
 			if (disk == -1)
@@ -272,14 +272,14 @@ bool ImuseDigiSndMgr::openVoiceBundle(soundStruct *sound, int disk) {
 //				sound->bundle->closeFile();
 //			}
 
-			result = sound->bundle->openFile(voxfile, _vm->getGameDataPath());
+			result = sound->bundle->openFile(voxfile);
 
 			if (result == false)
-				result = sound->bundle->openFile("voice.bun", _vm->getGameDataPath());
+				result = sound->bundle->openFile("voice.bun");
 			_disk = (byte)_vm->VAR(_vm->VAR_CURRENTDISK);
 		}
 	} else if (_vm->_gameId == GID_DIG)
-		result = sound->bundle->openFile("digvoice.bun", _vm->getGameDataPath());
+		result = sound->bundle->openFile("digvoice.bun");
 	else
 		error("ImuseDigiSndMgr::openVoiceBundle() Don't know which bundle file to load");
 

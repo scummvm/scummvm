@@ -40,14 +40,14 @@ private:
 		int32 numFiles;
 	} _budleDirCache[4];
 	
-	int matchFile(const char *filename, const char *directory);
+	int matchFile(const char *filename);
 
 public:
 	BundleDirCache();
 	~BundleDirCache();
 
-	AudioTable *getTable(const char *filename, const char *directory);
-	int32 getNumFiles(const char *filename, const char *directory);
+	AudioTable *getTable(const char *filename);
+	int32 getNumFiles(const char *filename);
 };
 
 class BundleMgr {
@@ -78,7 +78,7 @@ public:
 	BundleMgr(BundleDirCache *_cache);
 	~BundleMgr();
 
-	bool openFile(const char *filename, const char *directory);
+	bool openFile(const char *filename);
 	void closeFile();
 	int32 decompressSampleByName(const char *name, int32 offset, int32 size, byte **comp_final, bool header_outside);
 	int32 decompressSampleByIndex(int32 index, int32 offset, int32 size, byte **comp_final, int header_size, bool header_outside);

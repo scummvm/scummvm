@@ -40,19 +40,19 @@ BundleDirCache::~BundleDirCache() {
 	}
 }
 
-BundleDirCache::AudioTable *BundleDirCache::getTable(const char *filename, const char *directory) {
-	int slot = matchFile(filename, directory);
+BundleDirCache::AudioTable *BundleDirCache::getTable(const char *filename) {
+	int slot = matchFile(filename);
 	assert(slot != -1);
 	return _budleDirCache[slot].bundleTable;
 }
 
-int32 BundleDirCache::getNumFiles(const char *filename, const char *directory) {
-	int slot = matchFile(filename, directory);
+int32 BundleDirCache::getNumFiles(const char *filename) {
+	int slot = matchFile(filename);
 	assert(slot != -1);
 	return _budleDirCache[slot].numFiles;
 }
 
-int BundleDirCache::matchFile(const char *filename, const char *directory) {
+int BundleDirCache::matchFile(const char *filename) {
 	int32 tag, offset;
 	bool found = false;
 	int freeSlot = -1;
@@ -71,7 +71,7 @@ int BundleDirCache::matchFile(const char *filename, const char *directory) {
 	if (!found) {
 		File file;
 
-		if (file.open(filename, directory) == false) {
+		if (file.open(filename) == false) {
 			warning("BundleDirCache::matchFile() Can't open bundle file: %s", filename);
 			return false;
 		}
@@ -126,18 +126,18 @@ BundleMgr::~BundleMgr() {
 	closeFile();
 }
 
-bool BundleMgr::openFile(const char *filename, const char *directory) {
+bool BundleMgr::openFile(const char *filename) {
 	if (_file.isOpen())
 		return true;
 
-	if (_file.open(filename, directory) == false) {
+	if (_file.open(filename) == false) {
 		warning("BundleMgr::openFile() Can't open bundle file: %s", filename);
 		return false;
 	}
 
-	_numFiles = _cache->getNumFiles(filename, directory);
+	_numFiles = _cache->getNumFiles(filename);
 	assert(_numFiles);
-	_bundleTable = _cache->getTable(filename, directory);
+	_bundleTable = _cache->getTable(filename);
 	assert(_bundleTable);
 	_compTableLoaded = false;
 	_outputSize = 0;
