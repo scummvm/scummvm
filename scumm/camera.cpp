@@ -336,6 +336,15 @@ void Scumm::cameraMoved() {
 #else
 	virtscr[0].xstart = _screenStartStrip << 3;
 #endif
+
+	int dx = camera._cur.x - camera._last.x;
+	int dy = camera._cur.y - camera._last.y;
+	if (dx || dy) {
+		gdi._mask.left -= dx;
+		gdi._mask.right -= dx;
+		gdi._mask.top -= dy;
+		gdi._mask.bottom -= dy;
+	}
 }
 
 void Scumm::panCameraTo(int x, int y) {
