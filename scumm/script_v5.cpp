@@ -876,7 +876,7 @@ void ScummEngine_v5::o5_getStringWidth() {
 
 void ScummEngine_v5::o5_saveLoadVars() {
 	// TODO
-	if (fetchScriptByte() == 1) 
+	if (fetchScriptByte() == 1)
 		saveVars();
 	else
 		loadVars();
@@ -1121,7 +1121,7 @@ void ScummEngine_v5::o5_getActorY() {
 	if ((_gameId == GID_INDY3) && !(_features & GF_MACINTOSH)) {
 		a = getVarOrDirectByte(PARAM_1);
 
-		// WORKAROUND bug #636433 (can't get into Zeppelin) 
+		// WORKAROUND bug #636433 (can't get into Zeppelin)
 		if (_roomResource == 36) {
 			setResult(getObjY(a) - 1);
 			return;
@@ -1159,7 +1159,7 @@ void ScummEngine_v5::o5_saveLoadGame() {
 		// 1 = disk drive
 		result = 0;
 		break;
-	case 0x40: // load 
+	case 0x40: // load
 		if (loadState(slot, _saveLoadCompatible))
 			result = 3; // sucess
 		else
@@ -1204,13 +1204,9 @@ void ScummEngine_v5::o5_getClosestObjActor() {
 	int act;
 	int dist;
 
-	// This is a bit odd: We can't detect any actors farther away than
-	// 255 units (pixels in newer games, characters in older ones.) To
-	// fix this, we also need to change getObjActToObjActDist(), since
-	// it returns 255 to indicate that it can't find the actor, and make
-	// sure we don't break o5_getDist() in the process.
-	//
-	// But we probably won't have to.
+	// This code can't detect any actors farther away than 255 units
+	// (pixels in newer games, characters in older ones.) But this is
+	// perfectly OK, as it is exactly how the original behaved.
 
 	int closest_obj = 0xFF, closest_dist = 0xFF;
 
@@ -1239,8 +1235,12 @@ void ScummEngine_v5::o5_getDist() {
 	r = getObjActToObjActDist(o1, o2);
 
 	// FIXME: MI2 race workaround, see bug #597022
-	if (_gameId == GID_MONKEY2 && vm.slot[_currentScript].number == 40 && r < 60) 
-		r = 60; 
+	if (_gameId == GID_MONKEY2 && vm.slot[_currentScript].number == 40 && r < 60)
+		r = 60;
+
+	// FIXME: Workaround for bug #795937
+	if ((_gameId == GID_MONKEY_EGA || _gameId == GID_PASS) && o1 == 1 && o2 == 307  && vm.slot[_currentScript].number == 205 && r == 2)
+		r = 3;
 
 	setResult(r);
 }
