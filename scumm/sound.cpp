@@ -645,12 +645,22 @@ void Sound::startTalkSound(uint32 offset, uint32 b, int mode, PlayingSoundHandle
 		}
 
 		if (_vm->_features & GF_HUMONGOUS) {
+			int extra = 0;;
 			_sfxMode |= mode;
 
-			// SKIP TALK (8) HSHD (22) and SDAT (8)
-			_sfxFile->seek(offset + 40, SEEK_SET);
+			// SKIP TALK (8) HSHD (24)
+			_sfxFile->seek(offset + 32, SEEK_SET);
+			if (_vm->_heversion >= 80) {
+				// SKIP SBNG
+				_sfxFile->seek(+4, SEEK_CUR);
+				extra = _sfxFile->readUint32BE();
+				_sfxFile->seek(+extra, SEEK_CUR);
+				extra += 8;
+			}
+			// SKIP SDAT (8)
+			_sfxFile->seek(+8, SEEK_CUR);
 
-			size = b - 40;
+			size = b - 40 - extra;
 			sound = (byte *)malloc(size);
 			_sfxFile->read(sound, size);
 			_vm->_mixer->playRaw(handle, sound, size, 11000, SoundMixer::FLAG_UNSIGNED | SoundMixer::FLAG_AUTOFREE);
