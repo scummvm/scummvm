@@ -1618,8 +1618,10 @@ int ScummEngine_v72he::readFileToArray(int slot, int32 size) {
 		size = _hFileTable[slot].size() - _hFileTable[slot].pos();
 
 	writeVar(0, 0);
-
 	ArrayHeader *ah = defineArray(0, kByteArray, 0, 0, 0, size);
+
+	size = (FROM_LE_32(ah->dim1end) - FROM_LE_32(ah->dim1start) + 1) *
+		(FROM_LE_32(ah->dim2end) - FROM_LE_32(ah->dim2start) + 1);
 	_hFileTable[slot].read(ah->data, size);
 
 	return readVar(0);
