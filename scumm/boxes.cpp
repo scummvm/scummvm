@@ -419,7 +419,7 @@ int Scumm::getPathToDestBox(byte from, byte to)
 	}
 
 	while (boxm[0] != 0xFF) {
-		if (boxm[0] <= to && boxm[1] >= to)
+		if (boxm[0] <= to && to <= boxm[1])
 			dest = boxm[2];
 		boxm += 3;
 	}
@@ -566,32 +566,32 @@ bool Scumm::findPathTowards(Actor *a, byte box1nr, byte box2nr, byte box3nr, int
 
 void Scumm::createBoxMatrix()
 {
-	byte *matrix_ptr;
 	int num, i, j;
 	byte flags;
 	int table_1[66], table_2[66];
 	int counter, val;
 	int code;
 
-	PathVertex *vtx;
-	PathNode *node, *node2 = NULL;
 
+	// A heap (an optiimsation to avoid calling malloc/free extremly often)
 	_maxBoxVertexHeap = 1000;
-
-	createResource(rtMatrix, 4, 1000);
-	createResource(rtMatrix, 3, 4160);	//65 items of something of size 64
-	createResource(rtMatrix, 1, BOX_MATRIX_SIZE);
-
-	matrix_ptr = getResourceAddress(rtMatrix, 1);
-
-	_boxMatrixPtr4 = getResourceAddress(rtMatrix, 4);
-	_boxMatrixPtr1 = getResourceAddress(rtMatrix, 1);
+	createResource(rtMatrix, 4, _maxBoxVertexHeap);
+	_boxPathVertexHeap = getResourceAddress(rtMatrix, 4);
+	_boxPathVertexHeapIndex = 1;
+	
+	// Temporary 64*65 distance matrix
+	createResource(rtMatrix, 3, 65 * 64);
 	_boxMatrixPtr3 = getResourceAddress(rtMatrix, 3);
-
-	_boxPathVertexHeapIndex = _boxMatrixItem = 0;
+	
+	// The result "matrix" in the special format used by Scumm.
+	createResource(rtMatrix, 1, BOX_MATRIX_SIZE);
+	_boxMatrixPtr1 = getResourceAddress(rtMatrix, 1);
 
 	num = getNumBoxes();
 
+	// Initialise the distance matrix: each box has distance 0 to itself,
+	// and distance 1 to its direct neighbors. Initially, it has distance
+	// 250 (= infinity) to all other boxes.
 	for (i = 0; i < num; i++) {
 		for (j = 0; j < num; j++) {
 			if (i == j) {
@@ -604,15 +604,18 @@ void Scumm::createBoxMatrix()
 		}
 	}
 
+	// Iterate over all boxes
 	for (j = 0; j < num; j++) {
 		flags = getBoxFlags(j);
 		if (flags & kBoxInvisible) {
+			// Locked/invisible boxes are only reachable from themselves.
 			addToBoxMatrix(0xFF);
 			addToBoxMatrix(j);
 			addToBoxMatrix(j);
 			addToBoxMatrix(j);
 		} else {
-			vtx = addPathVertex();
+			PathNode *node, *node2 = NULL;
+			PathVertex *vtx = addPathVertex();
 			for (i = 0; i < num; i++) {
 				flags = getBoxFlags(j);
 				if (!(flags & kBoxInvisible)) {
@@ -666,26 +669,22 @@ void Scumm::createBoxMatrix()
 			}
 
 			addToBoxMatrix(0xFF);
-			for (i = 1; i < num;) {
+			for (i = 1; i < num; i++) {
 				if (table_2[i - 1] != -1) {
 					addToBoxMatrix(i - 1);	/* lo */
-					if (table_2[i - 1] != table_2[i]) {
-						addToBoxMatrix(i - 1);	/* hi */
-						addToBoxMatrix(table_2[i - 1]);	/* dst */
-					} else {
-						while (table_2[i - 1] == table_2[i]) {
-							if (++i == num)
-								break;
-						}
-						addToBoxMatrix(i - 1);	/* hi */
-						addToBoxMatrix(table_2[i - 1]);	/* dst */
+					while (table_2[i - 1] == table_2[i]) {
+						++i;
+						if (i == num)
+							break;
 					}
-				}
-				if (++i == num && table_2[i - 1] != -1) {
-					addToBoxMatrix(i - 1);	/* lo */
 					addToBoxMatrix(i - 1);	/* hi */
-					addToBoxMatrix(table_2[i - 1]);	/* dest */
+					addToBoxMatrix(table_2[i - 1]);	/* dst */
 				}
+			}
+			if (i == num && table_2[i - 1] != -1) {
+				addToBoxMatrix(i - 1);	/* lo */
+				addToBoxMatrix(i - 1);	/* hi */
+				addToBoxMatrix(table_2[i - 1]);	/* dest */
 			}
 		}
 	}
@@ -725,26 +724,23 @@ PathNode *Scumm::unkMatrixProc2(PathVertex *vtx, int i)
 	if (vtx == NULL)
 		return NULL;
 
+	node = (PathNode *)addToBoxVertexHeap(sizeof(PathNode));
+	node->index = i;
+	node->left = 0;
+	node->right = 0;
+
 	if (!vtx->right) {
-		node = (PathNode *)addToBoxVertexHeap(sizeof(PathNode));
-		vtx->left = vtx->right = node;
-
-		node->index = i;
-		node->left = 0;
-		node->right = 0;
+		vtx->left = node;
 	} else {
-		node = (PathNode *)addToBoxVertexHeap(sizeof(PathNode));
 		vtx->right->left = node;
-
 		node->right = vtx->right;
-		node->index = i;
-		node->left = 0;
-
-		vtx->right = node;
 	}
+
+	vtx->right = node;
 
 	return vtx->right;
 }
+
 
 /* Check if two boxes are neighbours */
 bool Scumm::areBoxesNeighbours(int box1nr, int box2nr)
@@ -866,9 +862,9 @@ void Scumm::addToBoxMatrix(byte b)
 
 void *Scumm::addToBoxVertexHeap(int size)
 {
-	byte *ptr = _boxMatrixPtr4;
+	byte *ptr = _boxPathVertexHeap;
 
-	_boxMatrixPtr4 += size;
+	_boxPathVertexHeap += size;
 	_boxPathVertexHeapIndex += size;
 
 	if (_boxPathVertexHeapIndex >= _maxBoxVertexHeap)
@@ -879,7 +875,7 @@ void *Scumm::addToBoxVertexHeap(int size)
 
 PathVertex *Scumm::addPathVertex()
 {
-	_boxMatrixPtr4 = getResourceAddress(rtMatrix, 4);
+	_boxPathVertexHeap = getResourceAddress(rtMatrix, 4);
 	_boxPathVertexHeapIndex = 0;
 
 	return (PathVertex *)addToBoxVertexHeap(sizeof(PathVertex));

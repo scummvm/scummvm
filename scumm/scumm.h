@@ -846,7 +846,7 @@ public:
 
 	/* Walkbox / Navigation class */
 	int _maxBoxVertexHeap, _boxPathVertexHeapIndex, _boxMatrixItem;
-	byte *_boxMatrixPtr4, *_boxMatrixPtr1, *_boxMatrixPtr3;	
+	byte *_boxPathVertexHeap, *_boxMatrixPtr1, *_boxMatrixPtr3;	
 
 	uint16 _extraBoxFlags[65];
 
