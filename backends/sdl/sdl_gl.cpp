@@ -102,8 +102,23 @@ void OSystem_SDL_OpenGL::load_gfx_mode() {
 	switch(_mode) {
 	case GFX_BILINEAR:
 		_usingOpenGL = true;
+		_mode_flags |= DF_REVERSE_Y;
 		_mode = GFX_NORMAL;
 		break;
+
+	case GFX_NORMAL:
+		_scaleFactor = 1;
+		_scaler_proc = Normal1x;
+		break;
+	case GFX_DOUBLESIZE:
+		_scaleFactor = 2;
+		_scaler_proc = Normal2x;
+		break;
+	case GFX_TRIPLESIZE:
+		_scaleFactor = 3;
+		_scaler_proc = Normal3x;
+		break;
+
 	case GFX_2XSAI:
 		_scaleFactor = 2;
 		_scaler_proc = _2xSaI;
@@ -132,31 +147,16 @@ void OSystem_SDL_OpenGL::load_gfx_mode() {
 		_scaleFactor = 2;
 		_scaler_proc = DotMatrix;
 		break;
-	case GFX_DOUBLESIZE:
-		_scaleFactor = 2;
-		_scaler_proc = Normal2x;
-		break;
 
-	case GFX_TRIPLESIZE:
-		_scaleFactor = 3;
-		_scaler_proc = Normal3x;
-		break;
-
-	case GFX_NORMAL:
-		_scaleFactor = 1; //_usingOpenGL ? 2 : 1;
-		_scaler_proc = Normal1x;
-		break;
 	default:
 		error("unknown gfx mode %d", _mode);
-		_mode = GFX_NORMAL;
-		_scaleFactor = 1;
-		_scaler_proc = Normal1x;
+	}
+	
+	if (_mode != GFX_NORMAL) {
+		_usingOpenGL = false;
+		_mode_flags &= ~DF_REVERSE_Y;
 	}
 
-	if (_mode != GFX_NORMAL) {
-	  _usingOpenGL = false;
-	}
-  
 	//
 	// Create the surface that contains the 8 bit game data
 	//
@@ -630,11 +630,11 @@ uint32 OSystem_SDL_OpenGL::property(int param, Property *value) {
 		}
 
 	} else if (param == PROP_SET_GFX_MODE) {
-
 		if (value->gfx_mode > 10) { // OpenGL modes
 			if (!_usingOpenGL) {
 				_usingOpenGL = true;
 				_mode = GFX_NORMAL;
+				_mode_flags |= DF_REVERSE_Y;
 				_scaleFactor = 1;
 				_scaler_proc = Normal1x;
 				hotswap_gfx_mode();
@@ -655,6 +655,7 @@ uint32 OSystem_SDL_OpenGL::property(int param, Property *value) {
 				if (_usingOpenGL) {
 					_glBilinearFilter = false;
 					_usingOpenGL = false;
+					_mode_flags &= ~DF_REVERSE_Y;
 				}
 				
 				hotswap_gfx_mode();

@@ -149,7 +149,8 @@ protected:
 
 	enum {
 		DF_WANT_RECT_OPTIM			= 1 << 0,
-		DF_UPDATE_EXPAND_1_PIXEL	= 1 << 3
+		DF_UPDATE_EXPAND_1_PIXEL	= 1 << 1,
+		DF_REVERSE_Y				= 1 << 2
 	};
 
 	bool _forceFull; // Force full redraw on next update_screen
@@ -185,9 +186,7 @@ protected:
 		MousePos() : x(0), y(0), w(0), h(0) {}
 	};
 
-	// joystick
-	SDL_Joystick *_joystick;
-
+	// mouse
 	bool _mouseVisible;
 	bool _mouseDrawn;
 	const byte *_mouseData;
@@ -196,6 +195,9 @@ protected:
 	MousePos _mouseOldState;
 	int16 _mouseHotspotX;
 	int16 _mouseHotspotY;
+
+	// joystick
+	SDL_Joystick *_joystick;
 
 	// Shake mode
 	int _currentShakePos;
@@ -213,20 +215,21 @@ protected:
 	void add_dirty_rgn_auto(const byte *buf);
 	void mk_checksums(const byte *buf);
 
-	static void fill_sound(void *userdata, Uint8 * stream, int len);
-	
 	void add_dirty_rect(int x, int y, int w, int h);
 
 	virtual void draw_mouse();
 	virtual void undraw_mouse();
 	/** Set the position of the virtual mouse cursor. */
 	void set_mouse_pos(int x, int y);
+	void fillMouseEvent(Event &event, int x, int y);
 
 
 	virtual void load_gfx_mode() = 0;
 	virtual void unload_gfx_mode() = 0;
 
 	virtual bool save_screenshot(const char *filename) = 0;
+	
+	virtual int effectiveScreenHeight() { return (_adjustAspectRatio ? 240 : _screenHeight) * _scaleFactor; }
 
 	void setup_icon();
 	void kbd_mouse();

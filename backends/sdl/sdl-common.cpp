@@ -529,6 +529,30 @@ static int mapKey(SDLKey key, SDLMod mod, Uint16 unicode)
 	return key;
 }
 
+void OSystem_SDL_Common::fillMouseEvent(Event &event, int x, int y) {
+	event.mouse.x = x;
+	event.mouse.y = y;
+	
+	// FIXME: HACK HACK HACK. This works around an odd problem in the OpenGL
+	// variant of the SDL backend, where the mouse y coordinates are reversed.
+	// Since the OpenGL variants is quite hackish anyway, we have to hard code
+	// here a screen height of 480).
+	if (_mode_flags & DF_REVERSE_Y)
+		event.mouse.y = 480 - event.mouse.y;
+	
+	// Update the "keyboard mouse" coords
+	km.x = event.mouse.x;
+	km.y = event.mouse.y;
+
+	// Adjust for the screen scaling
+	event.mouse.x /= _scaleFactor;
+	event.mouse.y /= _scaleFactor;
+
+	// Optionally perform aspect ratio adjusting
+	if (_adjustAspectRatio)
+		event.mouse.y = aspect2Real(event.mouse.y);
+}
+
 bool OSystem_SDL_Common::poll_event(Event *event) {
 	SDL_Event ev;
 	int axis;
@@ -722,14 +746,7 @@ bool OSystem_SDL_Common::poll_event(Event *event) {
 
 		case SDL_MOUSEMOTION:
 			event->event_code = EVENT_MOUSEMOVE;
-			km.x = event->mouse.x = ev.motion.x;
-			km.y = event->mouse.y = ev.motion.y;
-
-			event->mouse.x /= _scaleFactor;
-			event->mouse.y /= _scaleFactor;
-
-			if (_adjustAspectRatio)
-				event->mouse.y = aspect2Real(event->mouse.y);
+			fillMouseEvent(*event, ev.motion.x, ev.motion.y);
 			
 			set_mouse_pos(event->mouse.x, event->mouse.y);
 			return true;
@@ -747,13 +764,8 @@ bool OSystem_SDL_Common::poll_event(Event *event) {
 #endif
 			else
 				break;
-			km.x = event->mouse.x = ev.button.x;
-			km.y = event->mouse.y = ev.button.y;
-			event->mouse.x /= _scaleFactor;
-			event->mouse.y /= _scaleFactor;
 
-			if (_adjustAspectRatio)
-				event->mouse.y = aspect2Real(event->mouse.y);
+			fillMouseEvent(*event, ev.button.x, ev.button.y);
 
 			return true;
 
@@ -764,13 +776,7 @@ bool OSystem_SDL_Common::poll_event(Event *event) {
 				event->event_code = EVENT_RBUTTONUP;
 			else
 				break;
-			event->mouse.x = ev.button.x;
-			event->mouse.y = ev.button.y;
-			event->mouse.x /= _scaleFactor;
-			event->mouse.y /= _scaleFactor;
-
-			if (_adjustAspectRatio)
-				event->mouse.y = aspect2Real(event->mouse.y);
+			fillMouseEvent(*event, ev.button.x, ev.button.y);
 
 			return true;
 
