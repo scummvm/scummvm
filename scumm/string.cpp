@@ -589,8 +589,13 @@ int ScummEngine::addStringToStack(byte *dst, int dstSize, int var) {
 void ScummEngine::initCharset(int charsetno) {
 	int i;
 
-	if ((_version >= 7 && !isResourceLoaded(rtCharset, charsetno)) || !getResourceAddress(rtCharset, charsetno))
-		loadCharset(charsetno);
+	if (_gameId == GID_FT) {
+		if (!isResourceLoaded(rtCharset, charsetno))
+			loadCharset(charsetno);
+	} else {
+		if (!getResourceAddress(rtCharset, charsetno))
+			loadCharset(charsetno);
+	}
 
 	_string[0]._default.charset = charsetno;
 	_string[1]._default.charset = charsetno;
