@@ -983,6 +983,15 @@ void Cutaway::changeRooms(CutawayObject &object) {
 
 	_logic->oldRoom(_initialRoom);
 
+	// FIXME: this cutaway is played at the end of the command 0x178. This command
+	// setups some persons and associates bob slots to them. They should be hidden
+	// as their y coordinate is > 150, but they aren't ! A (temporary) workaround
+	// is to display the room with the panel area enabled.
+	int16 comPanel = _comPanel;
+	if (strcmp(_basename, "c41f") == 0 && _temporaryRoom == 106 && object.room == 41) {
+		comPanel = 1;
+	}
+
 	RoomDisplayMode mode;
 
 	if (!_logic->joeX() && !_logic->joeY()) {
@@ -996,7 +1005,7 @@ void Cutaway::changeRooms(CutawayObject &object) {
 			mode = RDM_FADE_JOE_XY;
 	}
 
-	_logic->roomDisplay(_logic->currentRoom(), mode, object.scale, _comPanel, true);
+	_logic->roomDisplay(_logic->currentRoom(), mode, object.scale, comPanel, true);
 
 	_currentImage = _logic->numFrames();
 
