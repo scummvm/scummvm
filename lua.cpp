@@ -28,14 +28,21 @@
 #include "sound.h"
 #include "smush.h"
 #include "textobject.h"
+#include "objectstate.h"
 #include <SDL_keysym.h>
 #include <SDL_keyboard.h>
 #include <cstdio>
 #include <cmath>
 
-static int actor_tag, color_tag, sound_tag, text_tag, vbuffer_tag;
+static int actor_tag, color_tag, sound_tag, text_tag, vbuffer_tag, object_tag;
 
 // Yaz: we'll need those later on, you'll see why....
+
+static inline bool isObject(int num) {
+	if(lua_tag(lua_getparam(num)) != object_tag)
+		return false;
+	return true;
+}
 
 static inline bool isActor(int num) {
 	if(lua_tag(lua_getparam(num)) != actor_tag)
@@ -56,6 +63,11 @@ static inline bool isSound(int num) {
 }
 
 // Helper functions to ensure the arguments we get are what we expect
+static inline ObjectState *check_object(int num) {
+	if (lua_tag(lua_getparam(num)) != object_tag)
+		luaL_argerror(num, "objectstate expected");
+	return static_cast<ObjectState *>(lua_getuserdata(lua_getparam(num)));
+}
 
 static inline Actor *check_actor(int num) {
 	if (lua_tag(lua_getparam(num)) != actor_tag)
@@ -1042,6 +1054,34 @@ static void PauseMovie() {
 	g_smush->pause(lua_isnil(lua_getparam(1)) != 0);
 }
 
+// Objectstate functions
+static void NewObjectState() {
+	ObjectState *object = NULL;
+
+	int setupID = check_int(1);		// Setup ID
+	int unk1 = check_int(2);		// ??
+	char *bitmap = luaL_check_string(3);	// Bitmap
+	char *zbitmap;				// Zbuffer Bitmap
+	bool unk2 = getbool(5);			// ?
+	int unk3 = 0;
+
+	if (!lua_isnil(lua_getparam(4)))
+		zbitmap = luaL_check_string(4);
+
+	if (!unk2)
+		unk3 = check_int(6);		// ?
+
+	warning("Stub: newObjectState(%d, %s, %s)", setupID, bitmap, zbitmap);
+	// object = scene.addObjectState;
+	// lua_pushusertag(object, object_tag);
+}
+
+static void FreeObjectState() {
+	ObjectState *object = check_object(1);
+	warning("State: freeObjectState(...)");
+	//scene.deleteObjectState(object);
+}
+
 // Stub function for builtin functions not yet implemented
 
 static void stubWarning() {
@@ -1124,8 +1164,6 @@ static char *stubFuncs[] = {
 	"SendObjectToFront",
 	"SendObjectToBack",
 	"SetObjectType",
-	"FreeObjectState",
-	"NewObjectState",
 	"SetActorShadowValid",
 	"AddShadowPlane",
 	"KillActorShadows",
@@ -1476,6 +1514,8 @@ struct luaL_reg builtins[] = {
 	{ "IsMoviePlaying", IsMoviePlaying },
 	{ "StartFullscreenMovie", StartFullscreenMovie },
 	{ "IsFullscreenMoviePlaying", IsFullscreenMoviePlaying },
+	{ "NewObjectState", NewObjectState }, 
+	{ "FreeObjectState", FreeObjectState }
 };
 
 void register_lua() {
@@ -1485,6 +1525,7 @@ void register_lua() {
 	sound_tag = lua_newtag();  // Yaz: wasn't found in the original engine, maybe I messed it.
 	text_tag = lua_newtag();
 	vbuffer_tag = lua_newtag();
+	object_tag = lua_newtag();
 
 	//Yaz: do we really need a garbage collector ?
 	// Register GC methods
