@@ -240,6 +240,8 @@ static const TargetSettings scumm_settings[] = {
 	 GF_NEW_OPCODES | GF_AFTER_HEV7 | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0},
 	{"bluesabctimedemo", "Blue's ABC Time Activities (Demo)", GID_PJSDEMO, 6, MDT_NONE,
 	 GF_NEW_OPCODES | GF_AFTER_HEV7 | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0},
+	{"blue'sbirthday-yellow", "Blue's Birthday Yellow", GID_PJSDEMO, 6, MDT_NONE,
+	 GF_NEW_OPCODES | GF_AFTER_HEV7 | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0},
 
 	/* Humongous Entertainment Scumm Version ?  engine moved to c++ */
 	{"pj3-demo", "Pajama Sam 3: You Are What You Eat (Demo)", GID_PJSDEMO, 6, MDT_NONE,
