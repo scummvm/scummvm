@@ -89,6 +89,12 @@ public:
 	void proc3();
 	void proc2();
 	void proc1();
+	void proc6_ami();
+	void proc5_ami();
+	void proc4_ami();
+	void proc3_ami();
+	void proc2_ami();
+	void proc1_ami();
 	void proc_special(Actor *a, byte mask);
 	byte mainRoutine(Actor *a, int slot, int frame);
 	void ignorePakCols(int num);
