@@ -124,7 +124,6 @@ protected:
 	byte *_readPtr;
 
 	bool _useOrDecompress;
-	int _numLinesToProcess;
 	byte _currentX;
 	byte _cursorActive;
 
