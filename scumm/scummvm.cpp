@@ -1013,6 +1013,11 @@ void ScummEngine::scummInit() {
 	for (i = 0; i < 256; i++)
 		_roomPalette[i] = i;
 	if (_version == 1) {
+		// Use 17 color table for v1 games to allow
+		// correct color for inventory and sentence
+		// line
+		// Original games used some kind of dynamic
+		// color table remapping between rooms
 		if (_gameId == GID_MANIAC)
 			setupV1ManiacPalette();
 		else
