@@ -1327,9 +1327,24 @@ void CharsetRendererClassic::printChar(int chr) {
 		// any spots where I can test this...
 		if (!_ignoreCharsetMask)
 			warning("This might be broken -- please report where you encountered this to Fingolfin");
-		int h = height;
+
+		// Perform some clipping
+		int w = MIN(width, dstSurface.w - _left);
+		int h = MIN(height, dstSurface.h - drawTop);
+		if (_left < 0) {
+			w += _left;
+			back -= _left;
+			dst -= _left;
+		}
+		if (drawTop < 0) {
+			h += drawTop;
+			back -= drawTop * backSurface.pitch;
+			dst -= drawTop * dstSurface.pitch;
+		}
+		
+		// Blit the image data
 		do {
-			memcpy(back, dst, width);
+			memcpy(back, dst, w);
 			back += backSurface.pitch;
 			dst += dstSurface.pitch;
 		} while (--h);
