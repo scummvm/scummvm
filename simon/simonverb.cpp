@@ -23,18 +23,19 @@
 #include "stdafx.h"
 #include "simon.h"
 
-void SimonState::defocusHitarea() {
+void SimonState::defocusHitarea()
+{
 	HitArea *last;
 	HitArea *ha;
 
 	if ((_game == GAME_SIMON2WIN) || (_game == GAME_SIMON2DOS)) {
-		if (_bit_array[4]&0x8000) {
+		if (_bit_array[4] & 0x8000) {
 			o_unk_120(202);
 			_last_hitarea_2_ptr = NULL;
 			return;
 		}
 	}
-	
+
 	last = _hitarea_ptr_5;
 
 	if (last == _hitarea_ptr_7)
@@ -44,12 +45,11 @@ void SimonState::defocusHitarea() {
 	_hitarea_ptr_7 = last;
 
 	if (last != NULL && _hitarea_unk_6 &&
-			(ha = findHitAreaByID(200)) && (ha->flags&0x40) &&
-		  !(last->flags&0x40))
-			focusVerb(last->id);
+			(ha = findHitAreaByID(200)) && (ha->flags & 0x40) && !(last->flags & 0x40))
+		focusVerb(last->id);
 }
 
-static const char * const verb_names[] = {
+static const char *const verb_names[] = {
 	"Walk to",
 	"Look at",
 	"Open",
@@ -66,50 +66,53 @@ static const char * const verb_names[] = {
 	"Give"
 };
 
-static const char * const verb_prep_names[] = {
-	"","","","",
-	"","","","with what ?",
-	"","","","to whom ?"
+static const char *const verb_prep_names[] = {
+	"", "", "", "",
+	"", "", "", "with what ?",
+	"", "", "", "to whom ?"
 };
 
-void SimonState::focusVerb(uint hitarea_id) {
+void SimonState::focusVerb(uint hitarea_id)
+{
 	uint x;
 	const char *txt;
 
 	hitarea_id -= 101;
 
 	CHECK_BOUNDS(hitarea_id, verb_prep_names);
-	
+
 	if (_show_preposition) {
 		txt = verb_prep_names[hitarea_id];
 	} else {
 		txt = verb_names[hitarea_id];
 	}
 	x = (53 - strlen(txt)) * 3;
-	showActionString(x, (const byte*)txt);
+	showActionString(x, (const byte *)txt);
 
 }
 
-void SimonState::showActionString(uint x, const byte *string) {
+void SimonState::showActionString(uint x, const byte *string)
+{
 	FillOrCopyStruct *fcs;
 
 	fcs = _fcs_ptr_array_3[1];
-	if (fcs ==  NULL || fcs->text_color==0)
+	if (fcs == NULL || fcs->text_color == 0)
 		return;
 
 	fcs->unk1 = x >> 3;
 	fcs->unk3 = x & 7;
 
-	for(;*string;string++)
+	for (; *string; string++)
 		video_putchar(fcs, *string);
 }
 
 
-void SimonState::hitareaChangedHelper() {
+void SimonState::hitareaChangedHelper()
+{
 	FillOrCopyStruct *fcs;
 
 	if ((_game == GAME_SIMON2WIN) || (_game == GAME_SIMON2WIN)) {
-		if (_bit_array[4]&0x8000)
+		if (_bit_array[4] & 0x8000)
 			return;
 	}
 
@@ -121,35 +124,39 @@ void SimonState::hitareaChangedHelper() {
 	_hitarea_ptr_7 = NULL;
 }
 
-HitArea *SimonState::findHitAreaByID(uint hitarea_id) {
+HitArea *SimonState::findHitAreaByID(uint hitarea_id)
+{
 	HitArea *ha = _hit_areas;
 	uint count = ARRAYSIZE(_hit_areas);
-	
-	do{
+
+	do {
 		if (ha->id == hitarea_id)
 			return ha;
-	} while(ha++,--count);
+	} while (ha++, --count);
 	return NULL;
 }
 
-HitArea *SimonState::findEmptyHitArea() {
+HitArea *SimonState::findEmptyHitArea()
+{
 	HitArea *ha = _hit_areas;
 	uint count = ARRAYSIZE(_hit_areas);
-	
-	do{
+
+	do {
 		if (ha->flags == 0)
 			return ha;
-	} while(ha++,--count);
+	} while (ha++, --count);
 	return NULL;
 }
 
-void SimonState::clear_hitarea_bit_0x40(uint hitarea) {
+void SimonState::clear_hitarea_bit_0x40(uint hitarea)
+{
 	HitArea *ha = findHitAreaByID(hitarea);
 	if (ha != NULL)
 		ha->flags &= ~0x40;
 }
 
-void SimonState::set_hitarea_bit_0x40(uint hitarea) {
+void SimonState::set_hitarea_bit_0x40(uint hitarea)
+{
 	HitArea *ha = findHitAreaByID(hitarea);
 	if (ha != NULL) {
 		ha->flags |= 0x40;
@@ -159,7 +166,8 @@ void SimonState::set_hitarea_bit_0x40(uint hitarea) {
 	}
 }
 
-void SimonState::set_hitarea_x_y(uint hitarea, int x, int y) {
+void SimonState::set_hitarea_x_y(uint hitarea, int x, int y)
+{
 	HitArea *ha = findHitAreaByID(hitarea);
 	if (ha != NULL) {
 		ha->x = x;
@@ -167,7 +175,8 @@ void SimonState::set_hitarea_x_y(uint hitarea, int x, int y) {
 	}
 }
 
-void SimonState::delete_hitarea(uint hitarea) {
+void SimonState::delete_hitarea(uint hitarea)
+{
 	HitArea *ha = findHitAreaByID(hitarea);
 	if (ha != NULL) {
 		ha->flags = 0;
@@ -177,16 +186,18 @@ void SimonState::delete_hitarea(uint hitarea) {
 	}
 }
 
-bool SimonState::is_hitarea_0x40_clear(uint hitarea) {
+bool SimonState::is_hitarea_0x40_clear(uint hitarea)
+{
 	HitArea *ha = findHitAreaByID(hitarea);
 	if (ha == NULL)
 		return false;
 	return (ha->flags & 0x40) == 0;
 }
 
-void SimonState::addNewHitArea(int id, int x, int y, int width, int height, 
-	int flags, int unk3,Item *item_ptr) {
-	
+void SimonState::addNewHitArea(int id, int x, int y, int width, int height,
+															 int flags, int unk3, Item *item_ptr)
+{
+
 	HitArea *ha;
 	delete_hitarea(id);
 
@@ -203,13 +214,14 @@ void SimonState::addNewHitArea(int id, int x, int y, int width, int height,
 	_need_hitarea_recalc++;
 }
 
-void SimonState::hitarea_proc_1() {
+void SimonState::hitarea_proc_1()
+{
 	uint id;
 	HitArea *ha;
 
 	if (_game & GAME_SIMON2) {
-		id=2;
-		if (!(_bit_array[4]&0x8000))
+		id = 2;
+		if (!(_bit_array[4] & 0x8000))
 			id = (_mouse_y >= 136) ? 102 : 101;
 	} else {
 		id = (_mouse_y >= 136) ? 102 : 101;
@@ -231,10 +243,11 @@ void SimonState::hitarea_proc_1() {
 	}
 }
 
-void SimonState::handle_verb_hitarea(HitArea *ha) {
+void SimonState::handle_verb_hitarea(HitArea * ha)
+{
 	HitArea *tmp = _hitarea_ptr_5;
 
-	if (ha == tmp) 
+	if (ha == tmp)
 		return;
 
 	if (!(_game & GAME_SIMON2)) {
@@ -248,10 +261,10 @@ void SimonState::handle_verb_hitarea(HitArea *ha) {
 		else
 			video_toggle_colors(ha, 0xdf, 0xda, 0xda, 0xA);
 
-		ha->flags &= ~ (2 + 8);
+		ha->flags &= ~(2 + 8);
 
 	} else {
-		if (ha->id<101)
+		if (ha->id < 101)
 			return;
 		_mouse_cursor = ha->id - 101;
 		_need_hitarea_recalc++;
@@ -261,7 +274,8 @@ void SimonState::handle_verb_hitarea(HitArea *ha) {
 	_hitarea_ptr_5 = ha;
 }
 
-void SimonState::hitarea_leave(HitArea *ha) {
+void SimonState::hitarea_leave(HitArea * ha)
+{
 	if (!(_game & GAME_SIMON2)) {
 		video_toggle_colors(ha, 0xdf, 0xd5, 0xda, 5);
 	} else {
@@ -269,13 +283,15 @@ void SimonState::hitarea_leave(HitArea *ha) {
 	}
 }
 
-void SimonState::leaveHitAreaById(uint hitarea_id) {
+void SimonState::leaveHitAreaById(uint hitarea_id)
+{
 	HitArea *ha = findHitAreaByID(hitarea_id);
 	if (ha)
 		hitarea_leave(ha);
 }
 
-void SimonState::handle_unk2_hitarea(FillOrCopyStruct *fcs) {
+void SimonState::handle_unk2_hitarea(FillOrCopyStruct *fcs)
+{
 	uint index;
 
 	index = get_fcs_ptr_3_index(fcs);
@@ -284,27 +300,27 @@ void SimonState::handle_unk2_hitarea(FillOrCopyStruct *fcs) {
 		return;
 
 	lock();
-	fcs_unk_proc_1(index, fcs->fcs_data->item_ptr, 
-		fcs->fcs_data->unk1-1, fcs->fcs_data->unk2);
+	fcs_unk_proc_1(index, fcs->fcs_data->item_ptr, fcs->fcs_data->unk1 - 1, fcs->fcs_data->unk2);
 	unlock();
 }
 
-void SimonState::handle_unk_hitarea(FillOrCopyStruct *fcs) {
+void SimonState::handle_unk_hitarea(FillOrCopyStruct *fcs)
+{
 	uint index;
 
 	index = get_fcs_ptr_3_index(fcs);
 
 	lock();
-	fcs_unk_proc_1(index, fcs->fcs_data->item_ptr, 
-		fcs->fcs_data->unk1+1, fcs->fcs_data->unk2);
+	fcs_unk_proc_1(index, fcs->fcs_data->item_ptr, fcs->fcs_data->unk1 + 1, fcs->fcs_data->unk2);
 	unlock();
 }
 
-void SimonState::setup_hitarea_from_pos(uint x, uint y, uint mode) {
+void SimonState::setup_hitarea_from_pos(uint x, uint y, uint mode)
+{
 	HitArea *best_ha;
 
 	if (_game & GAME_SIMON2) {
-		if (_bit_array[4]&0x8000 || y < 134) {
+		if (_bit_array[4] & 0x8000 || y < 134) {
 			x += _x_scroll * 8;
 		}
 	}
@@ -318,25 +334,24 @@ void SimonState::setup_hitarea_from_pos(uint x, uint y, uint mode) {
 
 		best_ha = NULL;
 
-		do{
+		do {
 			if (ha->flags & 0x20) {
 				if (!(ha->flags & 0x40)) {
-					if (x_ >= ha->x && y_ >= ha->y && 
-							x_ - ha->x < ha->width && y_- ha->y < ha->height && 
-							layer <= ha->layer) {
-							layer = ha->layer;
-							best_ha = ha;
+					if (x_ >= ha->x && y_ >= ha->y &&
+							x_ - ha->x < ha->width && y_ - ha->y < ha->height && layer <= ha->layer) {
+						layer = ha->layer;
+						best_ha = ha;
 					} else {
 						if (ha->flags & 2) {
 							hitarea_leave(ha);
-							ha->flags &=~2;
+							ha->flags &= ~2;
 						}
 					}
 				} else {
 					ha->flags &= ~2;
 				}
 			}
-		} while(ha++,--count);
+		} while (ha++, --count);
 	}
 
 	if (best_ha == NULL) {
@@ -350,13 +365,13 @@ void SimonState::setup_hitarea_from_pos(uint x, uint y, uint mode) {
 		_variableArray[2] = y;
 	}
 
-	if (best_ha->flags&4) {
+	if (best_ha->flags & 4) {
 		defocusHitarea();
 	} else if (best_ha != _last_hitarea_2_ptr) {
 		new_current_hitarea(best_ha);
 	}
 
-	if (best_ha->flags&8  && !(best_ha->flags&2)) {
+	if (best_ha->flags & 8 && !(best_ha->flags & 2)) {
 		hitarea_leave(best_ha);
 		best_ha->flags |= 2;
 	}
@@ -364,26 +379,28 @@ void SimonState::setup_hitarea_from_pos(uint x, uint y, uint mode) {
 	return;
 }
 
-void SimonState::new_current_hitarea(HitArea *ha) {
+void SimonState::new_current_hitarea(HitArea * ha)
+{
 	bool result;
 
 	hitareaChangedHelper();
 	if (ha->flags & 1) {
-		result = hitarea_proc_2(ha->flags>>8);
+		result = hitarea_proc_2(ha->flags >> 8);
 	} else {
 		result = hitarea_proc_3(ha->item_ptr);
-	}	
+	}
 
 	if (result)
 		_last_hitarea_2_ptr = ha;
 }
 
-bool SimonState::hitarea_proc_2(uint a) {
+bool SimonState::hitarea_proc_2(uint a)
+{
 	uint x;
 	const byte *string_ptr;
 
 	if (_game & GAME_SIMON2) {
-		if (_bit_array[4]&0x8000) {
+		if (_bit_array[4] & 0x8000) {
 			Subroutine *sub;
 			_variableArray[84] = a;
 			sub = getSubroutineByID(5003);
@@ -397,18 +414,19 @@ bool SimonState::hitarea_proc_2(uint a) {
 		return false;
 
 	string_ptr = getStringPtrByID(_stringid_array_2[a]);
-	x = (53 - (strlen((const char*)string_ptr) - 1)) * 3;
+	x = (53 - (strlen((const char *)string_ptr) - 1)) * 3;
 	showActionString(x, string_ptr);
 
 	return true;
 }
 
-bool SimonState::hitarea_proc_3(Item *item) {
+bool SimonState::hitarea_proc_3(Item *item)
+{
 	Child2 *child2;
 	uint x;
 	const byte *string_ptr;
 
-	if (item == 0 || item==&_dummy_item_2 || item == &_dummy_item_3)
+	if (item == 0 || item == &_dummy_item_2 || item == &_dummy_item_3)
 		return false;
 
 	child2 = findChildOfType2(item);
@@ -416,8 +434,7 @@ bool SimonState::hitarea_proc_3(Item *item) {
 		return false;
 
 	string_ptr = getStringPtrByID(child2->string_id);
-	x = (53 - (strlen((const char*)string_ptr) - 1)) * 3;
+	x = (53 - (strlen((const char *)string_ptr) - 1)) * 3;
 	showActionString(x, string_ptr);
 	return true;
 }
-

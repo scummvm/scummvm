@@ -22,53 +22,58 @@
 #include "stdafx.h"
 #include "simon.h"
 
-uint fileReadByte(FILE *in) {
+uint fileReadByte(FILE *in)
+{
 	byte b;
 	fread(&b, sizeof(b), 1, in);
 	return b;
 }
 
-uint fileReadBE16(FILE *in) {
+uint fileReadBE16(FILE *in)
+{
 	byte b[2];
 	fread(b, sizeof(b), 1, in);
-	return (b[0]<<8) | b[1];
+	return (b[0] << 8) | b[1];
 }
 
-uint fileReadLE16(FILE *in) {
+uint fileReadLE16(FILE *in)
+{
 	byte b[2];
 	fread(b, sizeof(b), 1, in);
-	return (b[1]<<8) | b[0];
+	return (b[1] << 8) | b[0];
 }
 
-uint32 fileReadBE32(FILE *in) {
+uint32 fileReadBE32(FILE *in)
+{
 	byte b[4];
 	fread(b, sizeof(b), 1, in);
-	return (b[0]<<24)|(b[1]<<16)|(b[2]<<8)|b[3];
+	return (b[0] << 24) | (b[1] << 16) | (b[2] << 8) | b[3];
 }
 
-uint32 fileReadLE32(FILE *in) {
+uint32 fileReadLE32(FILE *in)
+{
 	byte b[4];
 	fread(b, sizeof(b), 1, in);
-	return (b[3]<<24)|(b[2]<<16)|(b[1]<<8)|b[0];
+	return (b[3] << 24) | (b[2] << 16) | (b[1] << 8) | b[0];
 }
 
 
-void fileWriteBE32(FILE *in, uint32 value) {
-	value = TO_BE_32(value);	
+void fileWriteBE32(FILE *in, uint32 value)
+{
+	value = TO_BE_32(value);
 	fwrite(&value, sizeof(value), 1, in);
 }
 
-void fileWriteBE16(FILE *in, uint16 value) {
+void fileWriteBE16(FILE *in, uint16 value)
+{
 	value = TO_BE_16(value);
 	fwrite(&value, sizeof(value), 1, in);
 }
 
-
-
-
 #ifndef WIN32
 /* GetAsyncKeyState for unix */
-int GetAsyncKeyState(int key) {
+int GetAsyncKeyState(int key)
+{
 	return 0;
 }
 #endif

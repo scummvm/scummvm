@@ -73,7 +73,7 @@ struct Child1 {
 
 struct Child9 {
 	Child hdr;
-	
+
 	uint16 array[4];
 };
 
@@ -86,7 +86,7 @@ struct ThreeValues {
 };
 
 enum {
-    CHILD1_SIZE = sizeof(Child1) - sizeof(uint16),
+	CHILD1_SIZE = sizeof(Child1) - sizeof(uint16),
 	CHILD2_SIZE = sizeof(Child2) - sizeof(int16)
 };
 
@@ -96,16 +96,16 @@ struct Item {
 	uint16 sibling;
 	int16 unk1;
 	int16 unk2;
-	int16 unk3; /* signed int */
+	int16 unk3;										/* signed int */
 	uint16 unk4;
-	uint16 xxx_1; /* unused? */
+	uint16 xxx_1;									/* unused? */
 	Child *children;
 };
 
 struct Subroutine {
-	uint16 id;				/* subroutine ID */
-	uint16 first;			/* offset from subroutine start to first subroutine line */
-	Subroutine *next;	/* next subroutine in linked list */
+	uint16 id;										/* subroutine ID */
+	uint16 first;									/* offset from subroutine start to first subroutine line */
+	Subroutine *next;							/* next subroutine in linked list */
 };
 
 struct FillOrCopyDataEntry {
@@ -126,7 +126,7 @@ struct FillOrCopyStruct {
 	byte mode;
 	byte flags;
 	uint16 x, y;
-	uint16 width,height;
+	uint16 width, height;
 	uint16 unk1, unk2;
 	uint8 unk3, unk6, unk7, fill_color, text_color, unk5;
 	FillOrCopyData *fcs_data;
@@ -172,8 +172,8 @@ struct VgaSprite {
 	uint16 id;
 	uint16 image;
 	uint16 base_color;
-	uint16 x,y; /* actually signed numbers */
-	uint16 unk4,unk5,unk6,unk7;
+	uint16 x, y;									/* actually signed numbers */
+	uint16 unk4, unk5, unk6, unk7;
 };
 
 struct VgaSleepStruct {
@@ -223,10 +223,10 @@ struct VgaFile1Struct0x6 {
 
 /* dummy typedefs to make it compile in *nix */
 #if defined(UNIX) || defined(UNIX_X11) || defined(__MORPHOS__) || defined(__DC__) || defined(macintosh)
-typedef void* HMIDISTRM;
-typedef void* HMIDIOUT;
+typedef void *HMIDISTRM;
+typedef void *HMIDIOUT;
 typedef uint32 UINT;
-typedef void* MIDIHDR;
+typedef void *MIDIHDR;
 typedef uint32 MMRESULT;
 #define CALLBACK
 typedef uint32 DWORD;
@@ -252,7 +252,7 @@ public:
 	void shutdown();
 	void play();
 	void set_driver(MidiDriver *md);
-		
+
 private:
 	struct Track {
 		uint32 a;
@@ -293,7 +293,7 @@ private:
 	uint _midi_var11;
 
 	uint32 _midi_tempo;
-	
+
 	Track *_midi_tick_track_ptr;
 	Track *_midi_track_ptr;
 	int16 _midi_song_id;
@@ -356,7 +356,7 @@ public:
 
 	char *_game_path;
 
-	byte *_vc_ptr; /* video code ptr */
+	byte *_vc_ptr;								/* video code ptr */
 
 	uint32 *_game_offsets_ptr;
 
@@ -400,13 +400,13 @@ public:
 	byte *_tbl_list;
 
 	byte *_code_ptr;
-	
+
 
 	byte **_local_stringtable;
 	uint _string_id_local_min, _string_id_local_max;
 
 	byte *_tablesheap_ptr, *_tablesheap_ptr_org, *_tablesheap_ptr_new;
-	uint _tablesheap_size,_tablesheap_curpos,_tablesheap_curpos_org;
+	uint _tablesheap_size, _tablesheap_curpos, _tablesheap_curpos_org;
 	uint _tablesheap_curpos_new;
 
 	Subroutine *_subroutine_list, *_subroutine_list_org;
@@ -443,7 +443,7 @@ public:
 	bool _vga_var9;
 	int16 _script_unk_1;
 	bool _vga_var6;
-	int _x_scroll,_vga_var1,_vga_var2,_vga_var3,_vga_var5;
+	int _x_scroll, _vga_var1, _vga_var2, _vga_var3, _vga_var5;
 	byte _vga_var8;
 
 	uint16 _vc72_var1, _vc72_var2, _vc72_var3;
@@ -463,8 +463,8 @@ public:
 
 	Item *_hitarea_object_item;
 	HitArea *_last_hitarea;
-	HitArea*_last_hitarea_2_ptr;
-	HitArea*_last_hitarea_3;
+	HitArea *_last_hitarea_2_ptr;
+	HitArea *_last_hitarea_3;
 	byte _left_button_down;
 	Item *_hitarea_subject_item;
 	HitArea *_hitarea_ptr_5, *_hitarea_ptr_7;
@@ -516,7 +516,7 @@ public:
 
 
 	uint _vga_sprite_changed;
-	
+
 	byte *_vga_buf_free_start, *_vga_buf_end, *_vga_buf_start;
 	byte *_vga_file_buf_org, *_vga_file_buf_org_2;
 
@@ -532,7 +532,7 @@ public:
 	uint16 _vga_cur_sprite_id;
 
 	VgaTimerEntry *_next_vga_timer_to_process;
-	
+
 	Item *_vc_item_array[20];
 	Item *_item_array_6[20];
 
@@ -559,7 +559,7 @@ public:
 	HitArea _hit_areas[90];
 
 	VgaPointersEntry _vga_buffer_pointers[180];
-	VgaSprite _vga_sprites[180]; 
+	VgaSprite _vga_sprites[180];
 	VgaSleepStruct _vga_sleep_structs[30];
 
 	uint16 *_pathfind_array[20];
@@ -642,7 +642,9 @@ public:
 
 	Item *getNextItemPtr();
 	uint getNextItemID();
-	uint getItem1ID() { return 1; }
+	uint getItem1ID() {
+		return 1;
+	}
 	Item *getItem1Ptr();
 	Item *getItemPtrB();
 
@@ -698,12 +700,12 @@ public:
 	void set_hitarea_x_y(uint hitarea, int x, int y);
 	bool is_hitarea_0x40_clear(uint hitarea);
 	void delete_hitarea(uint hitarea);
-	void addNewHitArea(int id, int x, int y, int width, int height, 
-		int flags, int unk3,Item *item_ptr);
+	void addNewHitArea(int id, int x, int y, int width, int height,
+										 int flags, int unk3, Item *item_ptr);
 	HitArea *findEmptyHitArea();
 	void hitarea_proc_1();
-	void handle_verb_hitarea(HitArea *ha);
-	void hitarea_leave(HitArea *ha);
+	void handle_verb_hitarea(HitArea * ha);
+	void hitarea_leave(HitArea * ha);
 	void leaveHitAreaById(uint hitarea_id);
 
 	void o_unk_114();
@@ -716,13 +718,13 @@ public:
 	void o_unk_137(uint a);
 	void o_unk_138();
 	void killAllTimers();
-	
+
 	uint getOffsetOfChild2Param(Child2 *child, uint prop);
 	void o_unk_160(uint a);
 	void o_unk_163(uint a);
 	void o_unk_175();
 	void o_unk_176();
-	void o_pathfind(int x,int y,uint var_1,uint var_2);
+	void o_pathfind(int x, int y, uint var_1, uint var_2);
 	void o_unk_179();
 	void o_force_unlock();
 	void o_force_lock();
@@ -775,14 +777,14 @@ public:
 	void showActionString(uint x, const byte *string);
 	void video_putchar(FillOrCopyStruct *fcs, byte c);
 	void video_fill_or_copy_from_3_to_2(FillOrCopyStruct *fcs);
-	void video_toggle_colors(HitArea *ha, byte a, byte b, byte c, byte d);
+	void video_toggle_colors(HitArea * ha, byte a, byte b, byte c, byte d);
 
 	void read_vga_from_datfile_1(uint vga_id);
 
 	uint get_fcs_ptr_3_index(FillOrCopyStruct *fcs);
 
 	void setup_hitarea_from_pos(uint x, uint y, uint mode);
-	void new_current_hitarea(HitArea *ha);
+	void new_current_hitarea(HitArea * ha);
 	bool hitarea_proc_2(uint a);
 	bool hitarea_proc_3(Item *item);
 	void hitarea_stuff();
@@ -795,7 +797,7 @@ public:
 	void draw_icon_c(FillOrCopyStruct *fcs, uint icon, uint x, uint y);
 	bool has_item_childflag_0x10(Item *item);
 	uint item_get_icon_number(Item *item);
-	uint setup_icon_hit_area(FillOrCopyStruct *fcs,uint x, uint y, uint icon_number, Item *item_ptr);
+	uint setup_icon_hit_area(FillOrCopyStruct *fcs, uint x, uint y, uint icon_number, Item *item_ptr);
 	void fcs_unk_proc_2(FillOrCopyStruct *fcs, uint fcs_index);
 
 	void loadIconFile();
@@ -814,7 +816,7 @@ public:
 	void o_set_video_mode(uint mode, uint vga_res);
 	void set_video_mode(uint a, uint b);
 	void set_video_mode_internal(uint mode, uint vga_res_id);
-	
+
 	void ensureVgaResLoadedC(uint vga_res);
 	void ensureVgaResLoaded(uint vga_res);
 
@@ -822,8 +824,9 @@ public:
 	void o_unk26_helper(uint a, uint b, uint c, uint d, uint e, uint f, uint g, uint h);
 	void talk_with_speech(uint speech_id, uint num_1);
 	void talk_with_text(uint num_1, uint num_2, const char *string_ptr, uint a, int b, uint c);
-	FillOrCopyStruct *fcs_alloc(uint x, uint y, uint w, uint h, uint flags, uint fill_color, uint unk4);
-	
+	FillOrCopyStruct *fcs_alloc(uint x, uint y, uint w, uint h, uint flags, uint fill_color,
+															uint unk4);
+
 	void render_string(uint num_1, uint color, uint width, uint height, const char *txt);
 
 	void setup_hit_areas(FillOrCopyStruct *fcs, uint fcs_index);
@@ -831,7 +834,7 @@ public:
 	byte *setup_vga_destination(uint32 size);
 	void vga_buf_unk_proc3(byte *end);
 	void vga_buf_unk_proc1(byte *end);
-	void vga_buf_unk_proc2(uint a,byte *end);
+	void vga_buf_unk_proc2(uint a, byte *end);
 	void delete_memptr_range(byte *end);
 
 	void setup_vga_file_buf_pointers();
@@ -917,7 +920,7 @@ public:
 	void vc_73();
 	void vc_74();
 
-	void delete_vga_timer(VgaTimerEntry *vte);
+	void delete_vga_timer(VgaTimerEntry * vte);
 	void vc_resume_thread(byte *code_ptr, uint16 cur_file, uint16 cur_sprite);
 	int vc_read_var_or_word();
 	uint vc_read_next_word();
@@ -999,7 +1002,7 @@ public:
 
 	byte *vc_10_depack_swap(byte *src, uint w, uint h);
 
-	
+
 	Item *getNextItemPtrStrange();
 
 	bool save_game(uint slot, const char *caption);
@@ -1051,93 +1054,91 @@ public:
 	char *gen_savename(int slot);
 };
 
-	
+
 void NORETURN CDECL error(const char *errmsg, ...);
 void CDECL warning(const char *errmsg, ...);
 
-void _2xSaI (uint8 *srcPtr, uint32 srcPitch, uint8 *deltaPtr, uint8 *dstPtr, uint32 dstPitch, int width, int height);
-int Init_2xSaI (uint32 BitFormat);
-void Super2xSaI (uint8 *srcPtr, uint32 srcPitch,
-		 uint8 *deltaPtr, uint8 *dstPtr, uint32 dstPitch,
-		 int width, int height);
+void _2xSaI(uint8 *srcPtr, uint32 srcPitch, uint8 *deltaPtr, uint8 *dstPtr, uint32 dstPitch,
+						int width, int height);
+int Init_2xSaI(uint32 BitFormat);
+void Super2xSaI(uint8 *srcPtr, uint32 srcPitch,
+								uint8 *deltaPtr, uint8 *dstPtr, uint32 dstPitch, int width, int height);
 void initializeHardware();
 void dx_set_palette(uint32 *colors, uint num);
-void palette_fadeout(uint32 *pal_values,uint num);
+void palette_fadeout(uint32 *pal_values, uint num);
 
 static const GameSpecificSettings simon1_settings = {
-	1, /* VGA_DELAY_BASE */
-	1576/4, /* TABLE_INDEX_BASE */
-	1460/4, /* TEXT_INDEX_BASE */
-	1700/4, /* NUM_GAME_OFFSETS */
-	64, /* NUM_VIDEO_OP_CODES */
-	1000000, /* VGA_MEM_SIZE */
-	50000, /* TABLES_MEM_SIZE */
-	3624, /* NUM_VOICE_RESOURCES */
-	141,  /* NUM_EFFECT_RESOURCES */
-	1316/4, /* MUSIC_INDEX_BASE */
-	0,		/* SOUND_INDEX_BASE */
-	"SIMON.GME",	/* gme_filename */
-	"SIMON.WAV",	/* wav_filename */
-	"SIMON.VOC",	/* wav_filename2 */
-	"EFFECTS.VOC",	/* effects_filename */
-	"GAMEPC",			/* gamepc_filename */
+	1,														/* VGA_DELAY_BASE */
+	1576 / 4,											/* TABLE_INDEX_BASE */
+	1460 / 4,											/* TEXT_INDEX_BASE */
+	1700 / 4,											/* NUM_GAME_OFFSETS */
+	64,														/* NUM_VIDEO_OP_CODES */
+	1000000,											/* VGA_MEM_SIZE */
+	50000,												/* TABLES_MEM_SIZE */
+	3624,													/* NUM_VOICE_RESOURCES */
+	141,													/* NUM_EFFECT_RESOURCES */
+	1316 / 4,											/* MUSIC_INDEX_BASE */
+	0,														/* SOUND_INDEX_BASE */
+	"SIMON.GME",									/* gme_filename */
+	"SIMON.WAV",									/* wav_filename */
+	"SIMON.VOC",									/* wav_filename2 */
+	"EFFECTS.VOC",								/* effects_filename */
+	"GAMEPC",											/* gamepc_filename */
 };
 
 static const GameSpecificSettings simon2_settings = {
-	5, /* VGA_DELAY_BASE */
-	1580/4, /* TABLE_INDEX_BASE */
-	1500/4, /* TEXT_INDEX_BASE */
-	2116/4, /* NUM_GAME_OFFSETS */
-	75, /* NUM_VIDEO_OP_CODES */
-	2000000, /* VGA_MEM_SIZE */
-	100000, /* TABLES_MEM_SIZE */
-	12256, /* NUM_VOICE_RESOURCES */
+	5,														/* VGA_DELAY_BASE */
+	1580 / 4,											/* TABLE_INDEX_BASE */
+	1500 / 4,											/* TEXT_INDEX_BASE */
+	2116 / 4,											/* NUM_GAME_OFFSETS */
+	75,														/* NUM_VIDEO_OP_CODES */
+	2000000,											/* VGA_MEM_SIZE */
+	100000,												/* TABLES_MEM_SIZE */
+	12256,												/* NUM_VOICE_RESOURCES */
 	0,
-	1128/4, /* MUSIC_INDEX_BASE */
-	1660/4,			/* SOUND_INDEX_BASE */
-	"SIMON2.GME", /* gme_filename */
-	"SIMON2.WAV",	/* wav_filename */
+	1128 / 4,											/* MUSIC_INDEX_BASE */
+	1660 / 4,											/* SOUND_INDEX_BASE */
+	"SIMON2.GME",									/* gme_filename */
+	"SIMON2.WAV",									/* wav_filename */
 	NULL,
 	"",
-	"GSPTR30",		/* gamepc_filename */
+	"GSPTR30",										/* gamepc_filename */
 };
 
 static const GameSpecificSettings simon2win_settings = {
-	5, /* VGA_DELAY_BASE */
-	1580/4, /* TABLE_INDEX_BASE */
-	1500/4, /* TEXT_INDEX_BASE */
-	2116/4, /* NUM_GAME_OFFSETS */
-	75, /* NUM_VIDEO_OP_CODES */
-	2000000, /* VGA_MEM_SIZE */
-	100000, /* TABLES_MEM_SIZE */
-	12256, /* NUM_VOICE_RESOURCES */
+	5,														/* VGA_DELAY_BASE */
+	1580 / 4,											/* TABLE_INDEX_BASE */
+	1500 / 4,											/* TEXT_INDEX_BASE */
+	2116 / 4,											/* NUM_GAME_OFFSETS */
+	75,														/* NUM_VIDEO_OP_CODES */
+	2000000,											/* VGA_MEM_SIZE */
+	100000,												/* TABLES_MEM_SIZE */
+	12256,												/* NUM_VOICE_RESOURCES */
 	0,
-	1128/4, /* MUSIC_INDEX_BASE */
-	1660/4,			/* SOUND_INDEX_BASE */
-	"SIMON2.GME", /* gme_filename */
-	"SIMON2.WAV",	/* wav_filename */
+	1128 / 4,											/* MUSIC_INDEX_BASE */
+	1660 / 4,											/* SOUND_INDEX_BASE */
+	"SIMON2.GME",									/* gme_filename */
+	"SIMON2.WAV",									/* wav_filename */
 	NULL,
 	"",
-	"GSPTR30",		/* gamepc_filename */
+	"GSPTR30",										/* gamepc_filename */
 };
 
 static const GameSpecificSettings simon2dos_settings = {
-	5, /* VGA_DELAY_BASE */
-	1580/4, /* TABLE_INDEX_BASE */
-	1500/4, /* TEXT_INDEX_BASE */
-	2116/4, /* NUM_GAME_OFFSETS */
-	75, /* NUM_VIDEO_OP_CODES */
-	2000000, /* VGA_MEM_SIZE */
-	100000, /* TABLES_MEM_SIZE */
-	12256, /* NUM_VOICE_RESOURCES */
+	5,														/* VGA_DELAY_BASE */
+	1580 / 4,											/* TABLE_INDEX_BASE */
+	1500 / 4,											/* TEXT_INDEX_BASE */
+	2116 / 4,											/* NUM_GAME_OFFSETS */
+	75,														/* NUM_VIDEO_OP_CODES */
+	2000000,											/* VGA_MEM_SIZE */
+	100000,												/* TABLES_MEM_SIZE */
+	12256,												/* NUM_VOICE_RESOURCES */
 	0,
-	1128/4, /* MUSIC_INDEX_BASE */
-	1660/4,			/* SOUND_INDEX_BASE */
-	"SIMON2.GME", /* gme_filename */
-	"SIMON2.WAV",	/* wav_filename */
+	1128 / 4,											/* MUSIC_INDEX_BASE */
+	1660 / 4,											/* SOUND_INDEX_BASE */
+	"SIMON2.GME",									/* gme_filename */
+	"SIMON2.WAV",									/* wav_filename */
 	NULL,
 	"",
-	"GAME32",		/* gamepc_filename */
+	"GAME32",											/* gamepc_filename */
 };
-
-
