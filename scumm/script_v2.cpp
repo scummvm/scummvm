@@ -3128,6 +3128,9 @@ void Scumm::o6_getActorPriority()
 }
 
 void Scumm::o6_unknownCD() {
+	// Full Throttle: FIXME
+	//		  Opcode is used when placing the bunny into the
+	//		  mine field. Some kind of drawBlastObject() wrapper
 	int a, b, c, d;
 	a = pop();
 	b = pop();
