@@ -26,11 +26,14 @@
 #include "gameDetector.h"
 #include "gui.h"
 #include "simon/simon.h"
+#include "config-file.h"
 
 GameDetector detector;
 Gui gui;
 
 Scumm *g_scumm;
+
+Config * scummcfg;
 
 
 #if defined(__APPLE__)
@@ -38,6 +41,8 @@ Scumm *g_scumm;
 #elif !defined(__MORPHOS__)
 #undef main
 #endif
+
+#define DEFAULT_CONFIG_FILE "scummvm.ini"
 
 int main(int argc, char *argv[])
 {
@@ -74,7 +79,8 @@ int main(int argc, char *argv[])
 	fclose(argf);
 
 #endif
-
+	scummcfg = new Config(DEFAULT_CONFIG_FILE, "scummvm");
+	scummcfg->set("versioninfo", SCUMMVM_VERSION);
 	if (detector.detectMain(argc, argv))
 		return (-1);
 
@@ -83,7 +89,7 @@ int main(int argc, char *argv[])
 	{
 		char *s = detector.getGameName();
 		system->property(OSystem::PROP_SET_WINDOW_CAPTION, (long)s);
-		free(s);
+		Scumm::free(s);
 	}
 
 	/* Simon the Sorcerer? */
@@ -107,6 +113,8 @@ int main(int argc, char *argv[])
 
 		scumm->go();
 	}
+	
+	delete scummcfg;
 	
 	return 0;
 }

@@ -22,6 +22,7 @@
 #include "scummsys.h"
 #include "system.h"
 #include "sound/mixer.h"
+#include "config-file.h"
 
 #define SCUMMVM_VERSION "0.2.0 devel"
 #define SCUMMVM_CVS "042002"
@@ -1337,7 +1338,9 @@ public:
 	uint fileReadWordBE();
 
 	static byte *alloc(int size);
+	static byte *realloc(void *mem, int size);
 	static void free(void *mem);
+	static char *Strdup(const char *);
 
 	/* Version 5 script opcodes */
 	void o5_actorFollowCamera();
@@ -1847,6 +1850,8 @@ extern uint16 _debugLevel;
 void outputdisplay2(Scumm *s, int disp);
 extern const byte revBitMask[8];
 //void blitToScreen(Scumm *s, byte *src, int x, int y, int w, int h);
+
+extern Config * scummcfg;
 
 #if defined(__GNUC__)
 void CDECL error(const char *s, ...) NORETURN;

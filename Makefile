@@ -1,6 +1,6 @@
 # $Header$
 
-CC      = gcc
+CC      = g++
 CFLAGS  = -g -O -Wall -Wstrict-prototypes -Wuninitialized -Wno-long-long -Wno-multichar 
 DEFINES = -DUNIX
 LDFLAGS :=

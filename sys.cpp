@@ -184,6 +184,33 @@ void Scumm::free(void *mem)
 	}
 }
 
+byte *Scumm::realloc(void *mem, int size)
+{
+	byte * me = (byte *) mem;
+	if (mem) {
+		if (size) {
+			me = (byte *) ::realloc((me - 4), size + 4);
+			return me + 4;
+		} else {
+			free(me);
+			return NULL;
+		}
+	} else {
+		return alloc(size);
+	}
+}
+
+char *Scumm::Strdup(const char *s)
+{
+	if (s) {
+		int l = strlen(s) + 1;
+		char * r = (char *) alloc(l);
+		memcpy(r, s, l);
+		return r;
+	}
+	return NULL;
+}
+
 bool Scumm::checkFixedDisk()
 {
 	return true;

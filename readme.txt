@@ -176,6 +176,10 @@ and you wish to disable subtitles and run in fullscreen:
 
   C:\Games\LucasArts\scummvm.exe -f -n -pD:\resource\ ft
 
+Note that if you run the game once this way, and specify the -w commandline
+parameter (or edit scummvm.ini manually), ScummVM will remember the path,
+and other settings for this game.
+
 The short game name you see at the end of the command line is very
 important. A short list is contained at the top of this file. You can also
 get the current list of games and game names at:
@@ -191,22 +195,23 @@ Command Line Options:
 
         scummvm [OPTIONS] [GAME]
 
-        [GAME]    - Short name of game to load. E.g. monkey for Monkey Island.
+        [GAME]     - Short name of game to load. E.g. monkey for Monkey Island.
         
-        -p<path>  - Path to where the game is installed. Default is Cwd.
-        -b<num>   - Start in room <num>.
-        -c<num>   - Drive to play cd audio from.  E.g., 0 is first drive.
-        -s<num>   - Set the sfx volume, 0-255.    Default is '100'
-        -m<num>   - Set the music volume, 0-100.  Default is '60'
-        -t<num>   - Set music tempo.              Default is '2031616'
-        -e<mode>  - Select sound engine. See below.
-        -g<mode>  - Select graphics scaler. See below.
-        -f        - Full-screen mode.
-        -n        - Disable subtitles. Use with games that have voice.
-        -r        - Enable Roland conversion. Try if music sounds incorrect.
-        -a        - Enable amiga pal conversion, for playing Amiga versions
-        -d[<num>] - Set debug verbosity to <num>
-
+        -p<path>   - Path to where the game is installed. Default is Cwd.
+        -b<num>    - Start in room <num>.
+        -c<num>    - Drive to play cd audio from.  E.g., 0 is first drive.
+        -s<num>    - Set the sfx volume, 0-255.    Default is '100'
+        -m<num>    - Set the music volume, 0-100.  Default is '60'
+        -t<num>    - Set music tempo.              Default is '2031616'
+        -e<mode>   - Select sound engine. See below.
+        -g<mode>   - Select graphics scaler. See below.
+        -f         - Full-screen mode.
+        -n         - Disable subtitles. Use with games that have voice.
+        -r         - Enable Roland conversion. Try if music sounds incorrect.
+        -a         - Enable amiga pal conversion, for playing Amiga versions
+        -d[<num>]  - Set debug verbosity to <num>
+        -w[<file>] - Write configuration file
+        -l<file>   - Load alternate configration file (default: scummvm.ini)
 
 In game Hot Keys:
 -----------------
@@ -376,7 +381,8 @@ Credits:
         Daniel Schepler   - Final MI1 CD music support
         Tim 'realmz'      - Initial MI1 CD music support
         Jonathan 'khalek' - Expert weaver in the Loom
- 
+        Nicolas Noble     - Config file support
+
         And to all the contributors, users, and beta testers we've missed.
         Thanks!
 

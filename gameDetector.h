@@ -56,10 +56,14 @@ public:
 	
 	int _scummVersion;
 	int _cdrom;
+	
+	bool _saveconfig;
 
 	int parseGraphicsMode(const char *s);
 
 	bool parseMusicDriver(const char *s);
+	
+	void updateconfig();
 
 public:
 	OSystem *createSystem();
