@@ -242,9 +242,8 @@ SCUMM
     when Putt-Putt gets off the chair in Cosmic Dust Diner of puttmoon
   - Document and fix AKOS differences in Humongous Entertainment games
 * Humongous entertainment >= v7 titles:
-  - Add support for akos codec 32 (Used in water)
-  - Add support for akos_drawLimb C025 (Used in zoodemo)
-  - Add support for new charset codes
+  - Add support for akos_drawLimb C021 (Used in pajama/pjs-demo/timedemo)
+  - Add support for akos codec 32 (Used in water/socks)
   - Add support for debug strings (Replaces %d & %s with ints/strings from stack list)
   - Add support for various new opcodes
   - Add support for Scummsys.9x and C++ engine MAXS blocks
