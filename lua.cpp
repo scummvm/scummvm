@@ -100,6 +100,13 @@ static inline int check_control(int num) {
 	return val;
 }
 
+static inline ObjectState::Position check_objstate_pos(int num) {
+	int val = check_int(num);
+	if (val < 1 || val > 3)
+		luaL_argerror(num, "object state position out of range");
+	return (ObjectState::Position) val;
+}
+
 static inline bool getbool(int num) {
 	return ! lua_isnil(lua_getparam(num));
 }
@@ -1069,23 +1076,25 @@ static void PauseMovie() {
 
 // Objectstate functions
 static void NewObjectState() {
+	enum ObjectPosition {
+		OBJSTATE_UNDERLAY = 1,
+		OBJSTATE_OVERLAY = 2,
+		OBJSTATE_STATE = 3
+	};
 	ObjectState *object = NULL;
 
 	int setupID = check_int(1);		// Setup ID
-	int unk1 = check_int(2);		// ??
+	ObjectState::Position pos = check_objstate_pos(2); // When to draw
 	char *bitmap = luaL_check_string(3);	// Bitmap
-	char *zbitmap;				// Zbuffer Bitmap
+	char *zbitmap = NULL;			// Zbuffer Bitmap
 	bool unk2 = getbool(5);			// ?
-	int unk3 = 0;
+	bool unk3 = getbool(6);
 
 	if (!lua_isnil(lua_getparam(4)))
 		zbitmap = luaL_check_string(4);
 
-	if (!unk2)
-		unk3 = check_int(6);		// ?
-
 #ifndef OSX
-	warning("Stub: newObjectState(%d, %s, %s)", setupID, bitmap, zbitmap);
+	warning("Stub: newObjectState(%d, %d, %s, %s)", setupID, pos, bitmap, zbitmap);
 #endif
 	// object = scene.addObjectState;
 	// lua_pushusertag(object, object_tag);

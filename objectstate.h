@@ -9,5 +9,12 @@
 
 class ObjectState {
 	public:
+	enum Position {
+		OBJSTATE_UNDERLAY = 1,
+		OBJSTATE_OVERLAY = 2,
+		OBJSTATE_STATE = 3
+	};
 };
+
+
 #endif
