@@ -21,15 +21,17 @@
  */
 
 #include "stdafx.h"
-#include "scumm.h"
+#include "scummsys.h"
+#include "system.h"
 #include "mididrv.h"
-#include "SDL_thread.h"
 #include "gameDetector.h"
 #include "scaler.h"
+#include "scumm.h"	// Only #included for error() and warning()
 
 #include "scummvm.xpm"
 
 #include <SDL.h>
+#include <SDL_thread.h>
 
 #ifdef WIN32
 /* Use OpenGL 1.1 */
@@ -38,9 +40,6 @@
 
 #include "fb2opengl.h"
 
-
-#define MAX(a,b) (((a)<(b)) ? (b) : (a))
-#define MIN(a,b) (((a)>(b)) ? (b) : (a))
 
 class OSystem_SDL : public OSystem {
 public:
@@ -160,7 +159,7 @@ private:
 	Uint32 cd_end_time, cd_stop_time, cd_next_second;
 
 	struct MousePos {
-		int16 x,y,w,h;
+		int16 x, y, w, h;
 	};
 
 	byte *_mouse_data;
@@ -574,7 +573,7 @@ bool OSystem_SDL::poll_event(Event *event) {
 					break;
 				}
 
-				if (b == KBD_CTRL && ev.key.keysym.sym=='z') {
+				if ((b == KBD_CTRL && ev.key.keysym.sym=='z') || (b == KBD_ALT && ev.key.keysym.sym=='x')) {
 					quit();
 					break;
 				}
@@ -689,7 +688,7 @@ void OSystem_SDL::hotswap_gfx_mode() {
 	unload_gfx_mode();
 	load_gfx_mode();
 
-        fb2gl_set_palette(0,256);
+	fb2gl_set_palette(0,256);
 	fb2gl_update(sdl_tmpscreen->pixels,320,200,320,0,_current_shake_pos);
 
 	/* blit image */

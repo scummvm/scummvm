@@ -33,8 +33,6 @@
 #include <SDL.h>
 #include <SDL_thread.h>
 
-#define MAX(a,b) (((a)<(b)) ? (b) : (a))
-#define MIN(a,b) (((a)>(b)) ? (b) : (a))
 
 class OSystem_SDL : public OSystem {
 public:
@@ -960,7 +958,6 @@ bool OSystem_SDL::poll_event(Event *event) {
 			quit();
 		}
 	}
-
 }
 	
 bool OSystem_SDL::set_sound_proc(void *param, SoundProc *proc, byte format) {
