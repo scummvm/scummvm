@@ -481,7 +481,7 @@ static struct substResFileNames {
 	{ "ff2-demo", "FFHSDemo", kGenPC },
 	{ "ff2-demo", "FFHSDemo", kGenMac },
 	{ "footdemo", "FootBall Demo", kGenMac },
-	{ "footdemo", "FootBall2000", kGenPC },
+	{ "footdemo", "FootBall2002", kGenPC },
 	{ "freddemo", "Freddi Demo", kGenMac },
 	{ "freddi", "Freddi Fish", kGenMac },
 	{ "freddi2", "Freddi Fish 2", kGenMac },
