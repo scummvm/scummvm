@@ -74,6 +74,52 @@ enum {
 };
 
 
+enum {
+	ROOM_JUNGLE_BUD_SKIP     =  9,
+	ROOM_JUNGLE_MISSIONARY   =  13,
+	
+	ROOM_AMAZON_ENTRANCE     =  16,
+	ROOM_AMAZON_HIDEOUT      =  17,
+	ROOM_AMAZON_THRONE       =  18,
+	ROOM_AMAZON_JAIL         =  19,
+	
+	ROOM_VILLAGE             =  20,
+	ROOM_TRADER_BOBS         =  21,
+	
+	ROOM_FLODA_OUTSIDE       =  22,
+	ROOM_FLODA_KITCHEN       =  26,
+	ROOM_FLODA_LOCKERROOM    =  27,
+	ROOM_FLODA_OFFICE        =  35,
+	ROOM_FLODA_FRONTDESK     = 103,
+
+	ROOM_TEMPLE_OUTSIDE      =  43,
+	ROOM_TEMPLE_MUMMIES      =  46,
+	ROOM_TEMPLE_ZOMBIES      =  50,
+	ROOM_TEMPLE_SNAKE        =  53,
+	ROOM_TEMPLE_LIZARD_LASER =  55,
+	
+	ROOM_HOTEL_UPSTAIRS      =  70,
+	ROOM_HOTEL_DOWNSTAIRS    =  71,
+	ROOM_HOTEL_LOLA          =  72,
+	ROOM_HOTEL_LOBBY         =  73,
+
+	//special
+	SPARKY_OUTSIDE_HOTEL     =  77,
+	DEATH_MASK               =  79,
+	IBI_LOGO                 =  82,
+	COMIC_1                  =  87,
+	COMIC_2                  =  88,
+	COMIC_3                  =  89,
+	UNUSED_INTRO_1           =  91,
+	UNUSED_INTRO_2           =  92,
+	UNUSED_INTRO_3           =  93,
+	UNUSED_INTRO_4           =  94,
+	FOTAQ_LOGO               =  95,
+	AZURA_1                  = 106,
+	WARNER_LOGO              = 126
+};
+
+
 //! GameState vars
 enum {
 	VAR_DRESSING_MODE  =  19, // 0=normal clothes, 1=underwear, 2=dress

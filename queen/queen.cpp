@@ -128,7 +128,7 @@ void QueenEngine::roomChanged() {
 		// XXX R_MAP();
 		// XXX fadeout(0,223);
 	}
-	else if (_logic->currentRoom() == 95 && _logic->gameState(VAR_INTRO_PLAYED) == 0) {
+	else if (_logic->currentRoom() == FOTAQ_LOGO && _logic->gameState(VAR_INTRO_PLAYED) == 0) {
 		_logic->roomDisplay(_logic->roomName(_logic->currentRoom()), RDM_FADE_NOJOE, 100, 2, true);
 
 		if (_resource->isDemo()) {
@@ -151,7 +151,7 @@ void QueenEngine::roomChanged() {
 			_logic->playCutaway("cred.cut");
 		}
 
-		_logic->currentRoom(73);
+		_logic->currentRoom(ROOM_HOTEL_UPSTAIRS);
 		_logic->entryObj(584);
 
 		_logic->roomDisplay(_logic->roomName(_logic->currentRoom()), RDM_FADE_JOE, 100, 2, true);

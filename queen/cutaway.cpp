@@ -859,7 +859,7 @@ byte *Cutaway::handleAnimation(byte *ptr, CutawayObject &object) {
 	}
 
 	// Boat room hard coded
-	if (_logic->currentRoom() == 43) {
+	if (_logic->currentRoom() == ROOM_TEMPLE_OUTSIDE) {
 		BobSlot *bob = _graphics->bob(0);
 		if (bob->x < 320)
 			_graphics->bobMove(
