@@ -161,7 +161,7 @@ int32 Logic::animate(int32 *params, bool reverse) {
 #endif
 
 		// point to anim header
-		anim_head = g_sword2->fetchAnimHeader(anim_file);
+		anim_head = _vm->fetchAnimHeader(anim_file);
 
 /* #ifdef _SWORD2_DEBUG
 		// check there's at least one frame
@@ -177,7 +177,7 @@ int32 Logic::animate(int32 *params, bool reverse) {
 			ob_graphic->anim_pc = anim_head->noAnimFrames - 1;
 		else
 			ob_graphic->anim_pc = 0;
- 	} else if (Get_sync()) {
+ 	} else if (g_logic->getSync()) {
 		// We've received a sync - return to script immediately
 		debug(5, "**sync stopped %d**", ID);
 
@@ -191,7 +191,7 @@ int32 Logic::animate(int32 *params, bool reverse) {
 
 		// open anim file and point to anim header
 		anim_file = res_man->openResource(ob_graphic->anim_resource);
-		anim_head = g_sword2->fetchAnimHeader(anim_file);
+		anim_head = _vm->fetchAnimHeader(anim_file);
 
 		if (reverse)
 			ob_graphic->anim_pc--;
@@ -284,7 +284,7 @@ int32 Logic::fnSetFrame(int32 *params) {
 #endif
 
 	// set up pointer to the animation header
-	anim_head = g_sword2->fetchAnimHeader(anim_file);
+	anim_head = _vm->fetchAnimHeader(anim_file);
 
 /* #ifdef _SWORD2_DEBUG
 	// check there's at least one frame
@@ -497,7 +497,7 @@ void Logic::createSequenceSpeech(_movieTextObject *sequenceText[]) {
 		local_text = _sequenceTextList[line].textNumber & 0xffff;
 
 		// open text resource & get the line
-		text = g_sword2->fetchTextLine(res_man->openResource(text_res), local_text);
+		text = _vm->fetchTextLine(res_man->openResource(text_res), local_text);
 		wavId = (int32) READ_LE_UINT16(text);
 
 		// now ok to close the text file
@@ -540,7 +540,7 @@ void Logic::createSequenceSpeech(_movieTextObject *sequenceText[]) {
 
 		if (gui->_subtitles || !speechRunning) {
 			// open text resource & get the line
-			text = g_sword2->fetchTextLine(res_man->openResource(text_res), local_text);
+			text = _vm->fetchTextLine(res_man->openResource(text_res), local_text);
 			// make the sprite
 			// 'text+2' to skip the first 2 bytes which form the
 			// line reference number
@@ -551,7 +551,7 @@ void Logic::createSequenceSpeech(_movieTextObject *sequenceText[]) {
 			// When rendering text over a sequence we need a
 			// different colour for the border.
 
-			_sequenceTextList[line].text_mem = fontRenderer.makeTextSprite(text + 2, 600, 255, g_sword2->_speechFontId, 1);
+			_sequenceTextList[line].text_mem = fontRenderer->makeTextSprite(text + 2, 600, 255, _vm->_speechFontId, 1);
 
 			// ok to close the text resource now
 			res_man->closeResource(text_res);
@@ -727,7 +727,7 @@ int32 Logic::fnPlaySequence(int32 *params) {
 
 	MoviePlayer player; 
 
-	if (_sequenceTextLines && !(g_sword2->_features & GF_DEMO))
+	if (_sequenceTextLines && !(_vm->_features & GF_DEMO))
 		rv = player.play(filename, sequenceSpeechArray, leadOut);
 	else
 		rv = player.play(filename, NULL, leadOut);

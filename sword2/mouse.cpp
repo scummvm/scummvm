@@ -321,7 +321,7 @@ void Sword2Engine::dragMouse(void) {
 
 			CLICKED_ID = _mouseTouching;
 
-			setPlayerActionEvent(CUR_PLAYER_ID, _mouseTouching);
+			g_logic->setPlayerActionEvent(CUR_PLAYER_ID, _mouseTouching);
 
 			debug(5, "USED \"%s\" ICON ON %s", fetchObjectName(OBJECT_HELD), fetchObjectName(CLICKED_ID));
 
@@ -359,7 +359,7 @@ void Sword2Engine::dragMouse(void) {
 						// we're dragging
 
 						COMBINE_BASE = _masterMenuList[pos].icon_resource;
-						setPlayerActionEvent(CUR_PLAYER_ID, MENU_MASTER_OBJECT);
+						g_logic->setPlayerActionEvent(CUR_PLAYER_ID, MENU_MASTER_OBJECT);
 
 						// turn off mouse now, to
 						// prevent player trying to
@@ -422,7 +422,7 @@ void Sword2Engine::menuMouse(void) {
 
 					debug(5, "RIGHT-CLICKED ON \"%s\" ICON", fetchObjectName(OBJECT_HELD));
 
-					setPlayerActionEvent(CUR_PLAYER_ID, MENU_MASTER_OBJECT);
+					g_logic->setPlayerActionEvent(CUR_PLAYER_ID, MENU_MASTER_OBJECT);
 
 					// refresh the menu
 					buildMenu();
@@ -626,7 +626,7 @@ void Sword2Engine::normalMouse(void) {
 				EXIT_CLICK_ID = 0;
 				EXIT_FADING = 0;
 
-				setPlayerActionEvent(CUR_PLAYER_ID, _mouseTouching);
+				g_logic->setPlayerActionEvent(CUR_PLAYER_ID, _mouseTouching);
 
 				if (OBJECT_HELD)
 					debug(5, "USED \"%s\" ICON ON %s", fetchObjectName(OBJECT_HELD), fetchObjectName(CLICKED_ID));
@@ -965,7 +965,7 @@ void Sword2Engine::createPointerText(uint32 text_id, uint32 pointer_res) {
 			// 'text+2' to skip the first 2 bytes which form the
 			// line reference number
 
-			_pointerTextBlocNo = fontRenderer.buildNewBloc(
+			_pointerTextBlocNo = fontRenderer->buildNewBloc(
 				text + 2, g_display->_mouseX + xOffset,
 				g_display->_mouseY + yOffset,
 				POINTER_TEXT_WIDTH, POINTER_TEXT_PEN,
@@ -980,7 +980,7 @@ void Sword2Engine::createPointerText(uint32 text_id, uint32 pointer_res) {
 
 void Sword2Engine::clearPointerText(void) {
 	if (_pointerTextBlocNo) {
-		fontRenderer.killTextBloc(_pointerTextBlocNo);
+		fontRenderer->killTextBloc(_pointerTextBlocNo);
 		_pointerTextBlocNo = 0;
 	}
 }
@@ -1055,8 +1055,8 @@ void Sword2Engine::monitorPlayerActivity(void) {
 int32 Logic::fnNoHuman(int32 *params) {
 	// params:	none
 
-	g_sword2->noHuman();
-	g_sword2->clearPointerText();
+	_vm->noHuman();
+	_vm->clearPointerText();
 
 	// must be normal mouse situation or a largely neutral situation -
 	// special menus use noHuman
@@ -1065,9 +1065,9 @@ int32 Logic::fnNoHuman(int32 *params) {
 	if (TALK_FLAG == 0)
 		g_display->hideMenu(RDMENU_BOTTOM);
 
-	if (g_sword2->_mouseMode == MOUSE_system_menu) {
+	if (_vm->_mouseMode == MOUSE_system_menu) {
 		// close menu
-		g_sword2->_mouseMode = MOUSE_normal;
+		_vm->_mouseMode = MOUSE_normal;
 		g_display->hideMenu(RDMENU_TOP);
 	}
 
@@ -1082,9 +1082,9 @@ int32 Logic::fnAddHuman(int32 *params) {
 	MOUSE_AVAILABLE = 1;
 
 	// off
-	if (g_sword2->_mouseStatus) {
-		g_sword2->_mouseStatus = false;	// on
-		g_sword2->_mouseTouching = 1;	// forces engine to choose a cursor
+	if (_vm->_mouseStatus) {
+		_vm->_mouseStatus = false;	// on
+		_vm->_mouseTouching = 1;	// forces engine to choose a cursor
 	}
 
 	//clear this to reset no-second-click system
@@ -1096,7 +1096,7 @@ int32 Logic::fnAddHuman(int32 *params) {
 	// unlock the mouse from possible large object lock situtations - see
 	// syphon in rm 3
 
-	g_sword2->_mouseModeLocked = false;
+	_vm->_mouseModeLocked = false;
 
 	if (OBJECT_HELD) {
 		// was dragging something around
@@ -1104,26 +1104,26 @@ int32 Logic::fnAddHuman(int32 *params) {
 		OBJECT_HELD = 0;
 
 		// and these may also need clearing, just in case
-		g_sword2->_examiningMenuIcon = false;
+		_vm->_examiningMenuIcon = false;
 		COMBINE_BASE = 0;
 
-		g_sword2->setLuggage(0);
+		_vm->setLuggage(0);
 	}
 
 	// if mouse is over menu area
 	if (g_display->_mouseY > 399) {
-		if (g_sword2->_mouseMode != MOUSE_holding) {
+		if (_vm->_mouseMode != MOUSE_holding) {
 			// VITAL - reset things & rebuild the menu
-			g_sword2->_mouseMode = MOUSE_normal;
-			g_sword2->setMouse(NORMAL_MOUSE_ID);
+			_vm->_mouseMode = MOUSE_normal;
+			_vm->setMouse(NORMAL_MOUSE_ID);
 		} else
-			g_sword2->setMouse(NORMAL_MOUSE_ID);
+			_vm->setMouse(NORMAL_MOUSE_ID);
 	}
 
 	// enabled/disabled from console; status printed with on-screen debug
 	// info
 
-	if (g_sword2->_debugger->_testingSnR) {
+	if (_vm->_debugger->_testingSnR) {
 		uint8 black[4] = {   0,  0,    0,   0 };
 		uint8 white[4] = { 255, 255, 255,   0 };
 
@@ -1135,7 +1135,7 @@ int32 Logic::fnAddHuman(int32 *params) {
 		// stops all fx & clears the queue - eg. when leaving a
 		// location
 
-		g_sword2->clearFxQueue();
+		_vm->clearFxQueue();
 
 		// Trash all object resources so they load in fresh & restart
 		// their logic scripts
@@ -1157,7 +1157,7 @@ int32 Logic::fnRegisterMouse(int32 *params) {
 	// params:	0 pointer to Object_mouse or 0 for no write to mouse
 	//		  list
 
-	g_sword2->registerMouse((Object_mouse *) params[0]);
+	_vm->registerMouse((Object_mouse *) params[0]);
 	return IR_CONT;
 }
 
@@ -1168,13 +1168,13 @@ int32 Logic::fnRegisterMouse(int32 *params) {
 int32 Logic::fnRegisterPointerText(int32 *params) {
 	// params:	0 local id of text line to use as pointer text
 
-	assert(g_sword2->_curMouse < TOTAL_mouse_list);
+	assert(_vm->_curMouse < TOTAL_mouse_list);
 
 	// current object id - used for checking pointer_text when mouse area
 	// registered (in fnRegisterMouse and fnRegisterFrame)
 
-	g_sword2->_mouseList[g_sword2->_curMouse].id = ID;
-	g_sword2->_mouseList[g_sword2->_curMouse].pointer_text = params[0];
+	_vm->_mouseList[_vm->_curMouse].id = ID;
+	_vm->_mouseList[_vm->_curMouse].pointer_text = params[0];
 
 	return IR_CONT;
 }
@@ -1188,8 +1188,8 @@ int32 Logic::fnInitFloorMouse(int32 *params) {
 
 	ob_mouse->x1 = 0;
 	ob_mouse->y1 = 0;
-	ob_mouse->x2 = g_sword2->_thisScreen.screen_wide - 1;
-	ob_mouse->y2 = g_sword2->_thisScreen.screen_deep - 1;
+	ob_mouse->x2 = _vm->_thisScreen.screen_wide - 1;
+	ob_mouse->y2 = _vm->_thisScreen.screen_deep - 1;
 	ob_mouse->priority = 9;
 	ob_mouse->pointer = NORMAL_MOUSE_ID;
 
@@ -1207,11 +1207,11 @@ int32 Logic::fnSetScrollLeftMouse(int32 *params) {
 
 	ob_mouse->x1 = 0;
 	ob_mouse->y1 = 0;
-	ob_mouse->x2 = g_sword2->_thisScreen.scroll_offset_x + SCROLL_MOUSE_WIDTH;
-	ob_mouse->y2 = g_sword2->_thisScreen.screen_deep - 1;
+	ob_mouse->x2 = _vm->_thisScreen.scroll_offset_x + SCROLL_MOUSE_WIDTH;
+	ob_mouse->y2 = _vm->_thisScreen.screen_deep - 1;
 	ob_mouse->priority = 0;
 
-	if (g_sword2->_thisScreen.scroll_offset_x > 0) {
+	if (_vm->_thisScreen.scroll_offset_x > 0) {
 		// not fully scrolled to the left
 		ob_mouse->pointer = SCROLL_LEFT_MOUSE_ID;
 	} else {
@@ -1229,13 +1229,13 @@ int32 Logic::fnSetScrollRightMouse(int32 *params) {
 
 	// Highest priority
 
-	ob_mouse->x1 = g_sword2->_thisScreen.scroll_offset_x + g_display->_screenWide - SCROLL_MOUSE_WIDTH;
+	ob_mouse->x1 = _vm->_thisScreen.scroll_offset_x + g_display->_screenWide - SCROLL_MOUSE_WIDTH;
 	ob_mouse->y1 = 0;
-	ob_mouse->x2 = g_sword2->_thisScreen.screen_wide - 1;
-	ob_mouse->y2 = g_sword2->_thisScreen.screen_deep - 1;
+	ob_mouse->x2 = _vm->_thisScreen.screen_wide - 1;
+	ob_mouse->y2 = _vm->_thisScreen.screen_deep - 1;
 	ob_mouse->priority = 0;
 
-	if (g_sword2->_thisScreen.scroll_offset_x < g_sword2->_thisScreen.max_scroll_offset_x) {
+	if (_vm->_thisScreen.scroll_offset_x < _vm->_thisScreen.max_scroll_offset_x) {
 		// not fully scrolled to the right
 		ob_mouse->pointer = SCROLL_RIGHT_MOUSE_ID;
 	} else {
@@ -1249,13 +1249,13 @@ int32 Logic::fnSetScrollRightMouse(int32 *params) {
 int32 Logic::fnSetObjectHeld(int32 *params) {
 	// params:	0 luggage icon to set
 
-	g_sword2->setLuggage(params[0]);
+	_vm->setLuggage(params[0]);
 
 	OBJECT_HELD = params[0];
-	g_sword2->_currentLuggageResource = params[0];
+	_vm->_currentLuggageResource = params[0];
 
 	// mode locked - no menu available
-	g_sword2->_mouseModeLocked = true;
+	_vm->_mouseModeLocked = true;
 
 	return IR_CONT;
 }
@@ -1280,11 +1280,11 @@ int32 Logic::fnCheckPlayerActivity(int32 *params) {
 	uint32 threshold = params[0] * 12;	// in game cycles
 
 	// if the actual delay is at or above the given threshold
-	if (g_sword2->_playerActivityDelay >= threshold) {
+	if (_vm->_playerActivityDelay >= threshold) {
 		// reset activity delay counter, now that we've got a
 		// positive check
 
-		g_sword2->_playerActivityDelay = 0;
+		_vm->_playerActivityDelay = 0;
 		RESULT = 1;
 	} else
 		RESULT = 0;
@@ -1298,7 +1298,7 @@ int32 Logic::fnResetPlayerActivityDelay(int32 *params) {
 
 	// params:	none
 
-	g_sword2->_playerActivityDelay = 0;
+	_vm->_playerActivityDelay = 0;
 	return IR_CONT;
 }
 

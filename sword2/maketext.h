@@ -141,7 +141,7 @@ public:
 	uint32 buildNewBloc(uint8 *ascii, int16 x, int16 y, uint16 width, uint8 pen, uint32 type, uint32 fontRes, uint8 justification);
 };
 
-extern FontRenderer fontRenderer;
+extern FontRenderer *fontRenderer;
 
 } // End of namespace Sword2
 

@@ -641,7 +641,7 @@ bool Display::endRenderCycle(void) {
 	if (_scrollXTarget == _scrollX && _scrollYTarget == _scrollY) {
 		// If we have already reached the scroll target sleep for the
 		// rest of the render cycle.
-		sleepUntil(_totalTime);
+		g_sword2->sleepUntil(_totalTime);
 		_initialTime = SVM_timeGetTime();
 		_totalTime += MILLISECSPERCYCLE;
 		return true;

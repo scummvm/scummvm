@@ -22,8 +22,12 @@
 
 namespace Sword2 {
 
+class Sword2Engine;
+
 class Gui {
 private:
+	Sword2Engine *_vm;
+
 	int _musicVolume[17];
 	int _soundVolume[15];
 
@@ -35,7 +39,7 @@ public:
 	bool _stereoReversed;
 	bool _pointerTextSelected;
 
-	Gui();
+	Gui(Sword2Engine *vm);
 
 	uint32 restoreControl(void);
 	void saveControl(void);

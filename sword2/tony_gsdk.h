@@ -20,11 +20,7 @@
 #ifndef	TONY_GSDK
 #define	TONY_GSDK
 
-#include "sword2/memory.h"
-
 namespace Sword2 {
-
-uint32 Read_file(const char *name, mem **membloc, uint32 uid);
 
 } // End of namespace Sword2
 

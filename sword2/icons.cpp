@@ -31,11 +31,11 @@ namespace Sword2 {
 int32 Logic::fnAddMenuObject(int32 *params) {
 	// params:	0 pointer to a menu_object structure to copy down
 
-	assert(g_sword2->_totalTemp < TOTAL_engine_pockets);
+	assert(_vm->_totalTemp < TOTAL_engine_pockets);
 
 	// copy the structure to our in-the-engine list
-	memcpy(&g_sword2->_tempList[g_sword2->_totalTemp], (uint8 *) params[0], sizeof(menu_object));
-	g_sword2->_totalTemp++;
+	memcpy(&_vm->_tempList[_vm->_totalTemp], (uint8 *) params[0], sizeof(menu_object));
+	_vm->_totalTemp++;
 
 	// script continue
 	return IR_CONT;
@@ -54,9 +54,9 @@ int32 Logic::fnRefreshInventory(int32 *params) {
 
 	// so that the icon in 'object_held' is coloured while the rest are
 	// grey
-	g_sword2->_examiningMenuIcon = true;
-	g_sword2->buildMenu();
-	g_sword2->_examiningMenuIcon = false;
+	_vm->_examiningMenuIcon = true;
+	_vm->buildMenu();
+	_vm->_examiningMenuIcon = false;
 
 	// script continue
 	return IR_CONT;

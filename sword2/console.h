@@ -59,7 +59,7 @@ private:
 	void drawRect(int16 x, int16 y, int16 x2, int16 y2, uint8 pen);
 
 public:
-	Debugger(Sword2Engine *s);
+	Debugger(Sword2Engine *vm);
 
 	int16 _rectX1, _rectY1;
 	int16 _rectX2, _rectY2;

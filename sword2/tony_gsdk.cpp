@@ -28,7 +28,7 @@
 
 namespace Sword2 {
 
-uint32 Read_file(const char *name, mem **membloc, uint32 uid) {
+uint32 Sword2Engine::readFile(const char *name, mem **membloc, uint32 uid) {
 	// read the file in and place into an allocated MEM_float block
 
 	File fh;

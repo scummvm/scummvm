@@ -63,7 +63,7 @@ uint32 Logic::initStartMenu(void) {
 
 	debug(5, "initialising start menu");
 
-	if (!(end = Read_file("startup.inf", &temp, UID_temp))) {
+	if (!(end = _vm->readFile("startup.inf", &temp, UID_temp))) {
 		debug(5, "Init_start_menu cannot open startup.inf");
 		return 0;	// meaning no start menu available
 	}
@@ -191,7 +191,7 @@ void Logic::conStart(int start) {
 
 		// restarting - stop sfx, music & speech!
 
-		g_sword2->clearFxQueue();
+		_vm->clearFxQueue();
 
 		// fade out any music that is currently playing
 		fnStopMusic(NULL);
@@ -214,11 +214,11 @@ void Logic::conStart(int start) {
 		res_man->closeResource(1);
 
 		// free all the route memory blocks from previous game
-		router.freeAllRouteMem();
+		g_logic->_router->freeAllRouteMem();
 
 		// if there was speech text, kill the text block
 		if (_speechTextBlocNo) {
-			fontRenderer.killTextBloc(_speechTextBlocNo);
+			fontRenderer->killTextBloc(_speechTextBlocNo);
 			_speechTextBlocNo = 0;
 		}
 

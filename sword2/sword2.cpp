@@ -75,7 +75,7 @@ GameList Engine_SWORD2_detectGames(const FSList &fslist) {
 	const GameSettings *g;
 	
 	// TODO: It would be nice if we had code here which distinguishes between
-	// the 'sword2' and Ôsword2demoÔ targets. The current code can't do that
+	// the 'sword2' and 'sword2demo' targets. The current code can't do that
 	// since they use the same detectname.
 
 	for (g = sword2_settings; g->gameName; ++g) {
@@ -100,12 +100,6 @@ Engine *Engine_SWORD2_create(GameDetector *detector, OSystem *syst) {
 REGISTER_PLUGIN("Broken Sword II", Engine_SWORD2_gameList, Engine_SWORD2_create, Engine_SWORD2_detectGames);
 
 namespace Sword2 {
-
-uint8 quitGame = 0;
-
-uint8 gamePaused = 0;
-uint8 graphics_level_fudged = 0;
-uint8 stepOneCycle = 0;			// for use while game paused
 
 Sword2Engine *g_sword2 = NULL;
 Sound *g_sound = NULL;
@@ -137,12 +131,12 @@ Sword2Engine::Sword2Engine(GameDetector *detector, OSystem *syst)
 	// away
 
 	memory = new MemoryManager();
-	res_man = new ResourceManager();
-	g_logic = new Logic();
+	res_man = new ResourceManager(this);
+	g_logic = new Logic(this);
+	fontRenderer = new FontRenderer();
+	gui = new Gui(this);
 	g_sound = _sound = new Sound(_mixer);
 	g_display = _display = new Display(640, 480);
-	gui = new Gui();
-
 	_debugger = new Debugger(this);
 
 	_lastPaletteRes = 0;
@@ -189,14 +183,19 @@ Sword2Engine::Sword2Engine(GameDetector *detector, OSystem *syst)
 
 	// used to be a define, but now it's flexible
 	_scrollFraction = 16;
+
+	_gamePaused = false;
+	_stepOneCycle = false;
+	_graphicsLevelFudged = false;
 }
 
 Sword2Engine::~Sword2Engine() {
 	free(_targetName);
-	delete _sound;
-	delete _display;
 	delete _debugger;
+	delete _display;
+	delete _sound;
 	delete gui;
+	delete fontRenderer;
 	delete g_logic;
 	delete res_man;
 	delete memory;
@@ -243,12 +242,6 @@ int32 Sword2Engine::InitialiseGame(void) {
 	debug(5, "CALLING: initialiseFontResourceFlags");
 	initialiseFontResourceFlags();
 
-	debug(5, "CALLING: Init_sync_system");
-	Init_sync_system();
-
-	debug(5, "CALLING: Init_event_system");
-	initEventSystem();
-	
 	// initialise the sound fx queue
 
 	debug(5, "CALLING: Init_fx_queue");
@@ -263,16 +256,13 @@ int32 Sword2Engine::InitialiseGame(void) {
 	return 0;
 }
 
-void Close_game() {
-	debug(5, "Close_game() STARTING:");
-
+void Sword2Engine::closeGame(void) {
 	// Stop music instantly!
-	g_sword2->killMusic();
-
+	killMusic();
 	g_system->quit();
 }
 
-int32 GameCycle(void) {
+void Sword2Engine::gameCycle(void) {
 	// do one game cycle
 
 	// got a screen to run?
@@ -281,34 +271,29 @@ int32 GameCycle(void) {
 		do {
 			// reset the graphic 'buildit' list before a new
 			// logic list (see fnRegisterFrame)
-			g_sword2->resetRenderLists();
+			resetRenderLists();
 
 			// reset the mouse hot-spot list (see fnRegisterMouse
 			// and fnRegisterFrame)
-			g_sword2->resetMouseList();
+			resetMouseList();
 
 			// keep going as long as new lists keep getting put in
 			// - i.e. screen changes
 		} while (g_logic->processSession());
 	} else {
 		// start the console and print the start options perhaps?
-		g_sword2->_debugger->attach("AWAITING START COMMAND: (Enter 's 1' then 'q' to start from beginning)");
+		_debugger->attach("AWAITING START COMMAND: (Enter 's 1' then 'q' to start from beginning)");
 	}
 
 	// if this screen is wide, recompute the scroll offsets every cycle
-	if (g_sword2->_thisScreen.scroll_flag)
-		g_sword2->setScrolling();
+	if (_thisScreen.scroll_flag)
+		setScrolling();
 
-	g_sword2->mouseEngine();
-	g_sword2->processFxQueue();
+	mouseEngine();
+	processFxQueue();
 
 	// update age and calculate previous cycle memory usage
 	res_man->nextCycle();
-
-	if (quitGame)
-		return 1;
-
-	return 0;
 }
 
 void Sword2Engine::go() {
@@ -327,7 +312,7 @@ void Sword2Engine::go() {
 
 	debug(5, "CALLING: InitialiseGame");
 	if (InitialiseGame()) {
-		Close_game();
+		closeGame();
 		return;
 	}
 
@@ -337,10 +322,10 @@ void Sword2Engine::go() {
 		else { // show restore menu
 			setMouse(NORMAL_MOUSE_ID);
 			if (!gui->restoreControl())
-				Start_game();
+				startGame();
 		}
 	} else
-		Start_game();
+		startGame();
 
 	debug(5, "CALLING: initialiseRenderCycle");
 	g_display->initialiseRenderCycle();
@@ -370,9 +355,9 @@ void Sword2Engine::go() {
 		// if we've just stepped forward one cycle while the
 		// game was paused
 
-		if (stepOneCycle) {
-			PauseGame();
-			stepOneCycle = 0;
+		if (_stepOneCycle) {
+			pauseGame();
+			_stepOneCycle = false;
 		}
 #endif
 
@@ -390,10 +375,10 @@ void Sword2Engine::go() {
 			if (c == '~' || c == '#')
 				_debugger->attach();
 
-			if (gamePaused) {	// if currently paused
+			if (_gamePaused) {	// if currently paused
 				if (c == 'P') {
 					// 'P' while paused = unpause!
-					UnpauseGame();
+					unpauseGame();
 				}
 #ifdef _SWORD2_DEBUG
 				// frame-skipping only allowed on
@@ -402,13 +387,13 @@ void Sword2Engine::go() {
 				else if (c == ' ') {
 					// SPACE bar while paused =
 					// step one frame!
-					stepOneCycle = 1;
-					UnpauseGame();
+					_stepOneCycle = true;
+					unpauseGame();
 				}
 #endif
 			} else if (c == 'P') {
 				// 'P' while not paused = pause!
-				PauseGame();
+				pauseGame();
 			} else if (c == 'C' && !(_features & GF_DEMO)) {
 				g_logic->fnPlayCredits(NULL);
 			}
@@ -422,15 +407,11 @@ void Sword2Engine::go() {
 		}
 
 		// skip GameCycle if we're paused
-		if (gamePaused == 0) {
+		if (!_gamePaused) {
 #ifdef _SWORD2_DEBUG
 			_gameCycle++;
 #endif
-
-			if (GameCycle()) {
-				// break out of main game loop
-				break;
-			}
+			gameCycle();
 		}
 
 		// creates the debug text blocks
@@ -441,24 +422,22 @@ void Sword2Engine::go() {
 		// display once every 4 game-cycles
 
 		if (console_status || !_renderSkip || (_gameCycle % 4) == 0)
-			g_sword2->buildDisplay();	// create and flip the screen
+			buildDisplay();	// create and flip the screen
 #else
 		// create and flip the screen
-		g_sword2->buildDisplay();
+		buildDisplay();
 #endif
 	}
 
-	Close_game();		//close engine systems down
-
-	return;			//quit the game
+	closeGame();		// close engine systems down
 }
 
-void Sword2Engine::Start_game(void) {
+void Sword2Engine::startGame(void) {
 	// boot the game straight into a start script
 
 	int screen_manager_id;
 
-	debug(5, "Start_game() STARTING:");
+	debug(5, "startGame() STARTING:");
 
 	// all demos not just web
 	if (_features & GF_DEMO)
@@ -495,14 +474,14 @@ void Sword2Engine::Start_game(void) {
 	// close george
 	res_man->closeResource(8);
 
-	debug(5, "Start_game() DONE.");
+	debug(5, "startGame() DONE.");
 }
 
 // FIXME: Move this to some better place?
 
-void sleepUntil(int32 time) {
+void Sword2Engine::sleepUntil(int32 time) {
 	while ((int32) SVM_timeGetTime() < time) {
-		g_sword2->parseEvents();
+		parseEvents();
 
 		// Make sure menu animations and fades don't suffer
 		g_display->processMenu();
@@ -512,7 +491,7 @@ void sleepUntil(int32 time) {
 	}
 }
 
-void PauseGame(void) {
+void Sword2Engine::pauseGame(void) {
 	// uint8 *text;
 
 	// open text file & get the line "PAUSED"
@@ -525,10 +504,10 @@ void PauseGame(void) {
 	if (g_display->getFadeStatus() != RDFADE_NONE)
 		return;
 	
-	g_sword2->pauseAllSound();
+	pauseAllSound();
 
 	// make a normal mouse
-	g_sword2->clearPointerText();
+	clearPointerText();
 
 	// mouse_mode=MOUSE_normal;
 
@@ -536,52 +515,52 @@ void PauseGame(void) {
 	g_display->setLuggageAnim(NULL, 0);
 
 	// blank cursor
-	g_sword2->setMouse(0);
+	setMouse(0);
 
 	// forces engine to choose a cursor
-	g_sword2->_mouseTouching = 1;
+	_mouseTouching = 1;
 
 	// if level at max, turn down because palette-matching won't work
 	// when dimmed
 
 	if (gui->_currentGraphicsLevel == 3) {
 		gui->updateGraphicsLevel(2);
-		graphics_level_fudged = 1;
+		_graphicsLevelFudged = true;
 	}
 
 	// don't dim it if we're single-stepping through frames
 	// dim the palette during the pause
 
-	if (stepOneCycle == 0)
+	if (!_stepOneCycle)
 		g_display->dimPalette();
 
-	gamePaused = 1;
+	_gamePaused = true;
 }
 
-void UnpauseGame(void) {
+void Sword2Engine::unpauseGame(void) {
 	// removed "PAUSED" from screen
 	// Kill_text_bloc(pause_text_bloc_no);
 
-	if (OBJECT_HELD && g_sword2->_realLuggageItem)
-		g_sword2->setLuggage(g_sword2->_realLuggageItem);
+	if (OBJECT_HELD && _realLuggageItem)
+		setLuggage(_realLuggageItem);
 
-	g_sword2->unpauseAllSound();
+	unpauseAllSound();
 
 	// put back game screen palette; see Build_display.cpp
-	g_sword2->setFullPalette(0xffffffff);
+	setFullPalette(0xffffffff);
 
 	// If graphics level at max, turn up again
- 	if (graphics_level_fudged) {
+ 	if (_graphicsLevelFudged) {
 		gui->updateGraphicsLevel(3);
-		graphics_level_fudged = 0;
+		_graphicsLevelFudged = false;
 	}
 
-	gamePaused = 0;
+	_gamePaused = false;
 	g_logic->_unpauseZone = 2;
 
 	// if mouse is about or we're in a chooser menu
-	if (!g_sword2->_mouseStatus || g_logic->_choosing)
-		g_sword2->setMouse(NORMAL_MOUSE_ID);
+	if (!_mouseStatus || g_logic->_choosing)
+		setMouse(NORMAL_MOUSE_ID);
 }
 
 } // End of namespace Sword2

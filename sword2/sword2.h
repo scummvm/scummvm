@@ -55,13 +55,6 @@ namespace Sword2 {
 
 #define	CD2_LABEL		"RBSII2"
 
-void Close_game();
-
-void PauseGame(void);
-void UnpauseGame(void);
-
-void sleepUntil(int32 time);
-
 // TODO move stuff into class
 
 class Sword2Engine : public Engine {
@@ -140,12 +133,14 @@ private:
 
 	uint32 calcChecksum(uint8 *buffer, uint32 size);
 
+	void pauseGame(void);
+	void unpauseGame(void);
+
 public:
 	Sword2Engine(GameDetector *detector, OSystem *syst);
 	~Sword2Engine();
 	void go(void);
 	void parseEvents(void);
-	void Start_game(void);
 	int32 InitialiseGame(void);
 	GameDetector *_detector;
 	uint32 _features;
@@ -201,18 +196,6 @@ public:
 	bool _renderSkip;
 
 	int32 initBackground(int32 res, int32 new_palette);
-
-	_event_unit _eventList[MAX_events];
-
-	void initEventSystem(void);
-	void sendEvent(uint32 id, uint32 interact_id);
-	void setPlayerActionEvent(uint32 id, uint32 interact_id);
-	void startEvent(void);
-	bool checkEventWaiting(void);
-	void clearEvent(uint32 id);
-	void killAllIdsEvents(uint32 id);
-
-	uint32 countEvents(void);
 
 	// These two are set by fnPassGraph() and fnPassMega().
 	// FIXME: _engineGraph isn't used at all, is it?
@@ -371,6 +354,18 @@ public:
 	void killMusic(void);
 
 	void triggerFx(uint8 j);
+
+	bool _gamePaused;
+	bool _graphicsLevelFudged;
+	bool _stepOneCycle;		// for use while game paused
+
+	void startGame(void);
+	void gameCycle(void);
+	void closeGame(void);
+
+	void sleepUntil(int32 time);
+
+	uint32 readFile(const char *name, mem **membloc, uint32 uid);
 
 	void errorString(const char *buf_input, char *buf_output);
 	void initialiseFontResourceFlags(void);

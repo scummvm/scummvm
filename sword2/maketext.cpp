@@ -60,7 +60,7 @@
 
 namespace Sword2 {
 
-FontRenderer fontRenderer;
+FontRenderer *fontRenderer;
 
 // info for each line of words in the output text sprite
 

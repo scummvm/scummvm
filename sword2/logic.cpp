@@ -185,7 +185,7 @@ int Logic::processSession(void) {
 		// clear any syncs that were waiting for this character - it
 		// has used them or now looses them
 
-		Clear_syncs(ID);
+		clearSyncs(ID);
 
 		if (_pc != 0xffffffff) {
 			// the session is still valid so run the service script
@@ -232,16 +232,16 @@ void Logic::expressChangeSession(uint32 sesh_id) {
 	// in theory sync waiting in the list could be left behind and never
 	// removed - so we trash the lot
 
-	Init_sync_system();
+	memset(_syncList, 0, sizeof(_syncList));
 
 	// reset walkgrid list (see fnRegisterWalkGrid)
-	router.clearWalkGridList();
+	_router->clearWalkGridList();
 
 	// stops all fx & clears the queue
-	g_sword2->clearFxQueue();
+	_vm->clearFxQueue();
 
 	// free all the route memory blocks from previous game
-	router.freeAllRouteMem();
+	_router->freeAllRouteMem();
 }
 
 /**

@@ -1261,7 +1261,7 @@ public:
 					break;
 				}
 
-				saveLoadError((char*) (g_sword2->fetchTextLine(res_man->openResource(textId / SIZE), textId & 0xffff) + 2));
+				saveLoadError((char *) (g_sword2->fetchTextLine(res_man->openResource(textId / SIZE), textId & 0xffff) + 2));
 				result = 0;
 			}
 		} else {
@@ -1333,7 +1333,7 @@ void SaveLoadDialog::saveLoadError(char* text) {
 	g_sword2->removeMsg();
 }
 
-Gui::Gui() : _baseSlot(0) {
+Gui::Gui(Sword2Engine *vm) : _vm(vm), _baseSlot(0) {
 	int i;
 
 	for (i = 0; i < ARRAYSIZE(_musicVolume); i++) {
@@ -1413,8 +1413,7 @@ void Gui::quitControl(void) {
 	}
 
 	// close engine systems down
-	Close_game();
-	exit(0);
+	_vm->closeGame();
 }
 
 void Gui::restartControl(void) {
@@ -1428,7 +1427,7 @@ void Gui::restartControl(void) {
 	}
 
 	// Stop music instantly!
-	g_sword2->killMusic();
+	_vm->killMusic();
 
 	//in case we were dead - well we're not anymore!
 	DEAD = 0;
@@ -1452,20 +1451,20 @@ void Gui::restartControl(void) {
 	DEMO = temp_demo_flag;
 
 	// free all the route memory blocks from previous game
-	router.freeAllRouteMem();
+	g_logic->_router->freeAllRouteMem();
 
 	// call the same function that first started us up
-	g_sword2->Start_game();
+	_vm->startGame();
 
 	// prime system with a game cycle
 
 	// reset the graphic 'buildit' list before a new logic list
 	// (see fnRegisterFrame)
-	g_sword2->resetRenderLists();
+	_vm->resetRenderLists();
 
 	// reset the mouse hot-spot list (see fnRegisterMouse and
 	// fnRegisterFrame)
-	g_sword2->resetMouseList();
+	_vm->resetMouseList();
 
 	g_display->closeMenuImmediately();
 
@@ -1473,7 +1472,7 @@ void Gui::restartControl(void) {
 	// - this is taken from fnInitBackground
 	// switch on scrolling (2 means first time on screen)
 
-	g_sword2->_thisScreen.scroll_flag = 2;
+	_vm->_thisScreen.scroll_flag = 2;
 
 	if (g_logic->processSession())
 		error("restart 1st cycle failed??");
@@ -1481,7 +1480,7 @@ void Gui::restartControl(void) {
 	// So palette not restored immediately after control panel - we want
 	// to fade up instead!
 
-	g_sword2->_thisScreen.new_palette = 99;
+	_vm->_thisScreen.new_palette = 99;
 }
 
 void Gui::optionControl(void) {

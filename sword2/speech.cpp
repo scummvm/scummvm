@@ -189,7 +189,7 @@ int32 Logic::fnChoose(int32 *params) {
 		g_display->showMenu(RDMENU_BOTTOM);
 
 		// lets have the mouse pointer back
-		g_sword2->setMouse(NORMAL_MOUSE_ID);
+		_vm->setMouse(NORMAL_MOUSE_ID);
 
 		_choosing = true;
 
@@ -219,7 +219,7 @@ int32 Logic::fnChoose(int32 *params) {
 
 					// change icons
 					for (j = 0; j < IN_SUBJECT; j++) {
-						debug(5, "%s", g_sword2->fetchObjectName(_subjectList[j].res));
+						debug(5, "%s", _vm->fetchObjectName(_subjectList[j].res));
 
 						// change all others to grey
 						if (j != hit) {
@@ -230,7 +230,7 @@ int32 Logic::fnChoose(int32 *params) {
 					}
 
 
-					debug(5, "Selected: %s", g_sword2->fetchObjectName(_subjectList[hit].res));
+					debug(5, "Selected: %s", _vm->fetchObjectName(_subjectList[hit].res));
 
 					// this is our looping flag
 					_choosing = false;
@@ -238,7 +238,7 @@ int32 Logic::fnChoose(int32 *params) {
 					IN_SUBJECT = 0;
 
 					// blank mouse again
-					g_sword2->setMouse(0);
+					_vm->setMouse(0);
 
 					debug(5, "hit %d - ref %d  ref*8 %d", hit, _subjectList[hit].ref, _subjectList[hit].ref * 8);
 
@@ -287,7 +287,7 @@ int32 Logic::fnEndConversation(int32 *params) {
 
 	if (g_display->_mouseY > 399) {
 		// will wait for cursor to move off the bottom menu
-		g_sword2->_mouseMode = MOUSE_holding;
+		_vm->_mouseMode = MOUSE_holding;
 		debug(5, "   holding");
 	}
 
@@ -543,7 +543,7 @@ int32 Logic::fnTimedWait(int32 *params) {
 
 		// clear the event that hasn't been picked up - in theory,
 		// none of this should ever happen
-		g_sword2->killAllIdsEvents(target);
+		killAllIdsEvents(target);
 
 		debug(5, "EVENT timed out");
 
@@ -931,7 +931,7 @@ int32 Logic::fnISpeak(int32 *params) {
 		} else
 			cycle_skip = 0;
 
-		g_sword2->_debugger->_textNumber = params[S_TEXT];	// for debug info
+		_vm->_debugger->_textNumber = params[S_TEXT];	// for debug info
 
 		// For testing all text & speech!
 		// A script loop can send any text number to fnISpeak and it
@@ -958,7 +958,7 @@ int32 Logic::fnISpeak(int32 *params) {
 				if (head->fileType == TEXT_FILE) {
 					// if it's not an animation file
 					// if line number is out of range
-					if (g_sword2->checkTextLine((uint8*) head, local_text) == 0) {
+					if (_vm->checkTextLine((uint8*) head, local_text) == 0) {
 						// line number out of range
 						RESULT = 2;
 					}
@@ -988,7 +988,7 @@ int32 Logic::fnISpeak(int32 *params) {
 		local_text = params[S_TEXT] & 0xffff;
 
 		// open text file & get the line
-		text = g_sword2->fetchTextLine(res_man->openResource(text_res), local_text);
+		text = _vm->fetchTextLine(res_man->openResource(text_res), local_text);
 		_officialTextNumber = READ_LE_UINT16(text);
 
 		// now ok to close the text file
@@ -1023,7 +1023,7 @@ int32 Logic::fnISpeak(int32 *params) {
 		if (PLAYER_ID != CUR_PLAYER_ID)
 			debug(5, "(%d) Nico: %s", _officialTextNumber, text + 2);
 		else
-			debug(5, "(%d) %s: %s", _officialTextNumber, g_sword2->fetchObjectName(ID), text + 2);
+			debug(5, "(%d) %s: %s", _officialTextNumber, _vm->fetchObjectName(ID), text + 2);
 
 		// Set up the speech animation
 
@@ -1171,7 +1171,7 @@ int32 Logic::fnISpeak(int32 *params) {
 
 		// open the anim file
 		anim_file = res_man->openResource(ob_graphic->anim_resource);
-		anim_head = g_sword2->fetchAnimHeader(anim_file);
+		anim_head = _vm->fetchAnimHeader(anim_file);
 
 		if (!_speechAnimType) {
 			// ANIM IS TO BE LIP-SYNC'ED & REPEATING
@@ -1284,7 +1284,7 @@ int32 Logic::fnISpeak(int32 *params) {
 		// if there is text
 		if (_speechTextBlocNo) {
 			// kill the text block
-			fontRenderer.killTextBloc(_speechTextBlocNo);
+			fontRenderer->killTextBloc(_speechTextBlocNo);
 			_speechTextBlocNo = 0;
 		}
 
@@ -1302,7 +1302,7 @@ int32 Logic::fnISpeak(int32 *params) {
 		ob_logic->looping = 0;
 
 		// reset for debug info
-		g_sword2->_debugger->_textNumber = 0;
+		_vm->_debugger->_textNumber = 0;
 
 		// reset to zero, in case text line not even extracted (since
 		// this number comes from the text line)
@@ -1364,13 +1364,13 @@ void Logic::locateTalker(int32 *params) {
 		// open animation file & set up the necessary pointers
 		file = res_man->openResource(_animId);
 
-		anim_head = g_sword2->fetchAnimHeader(file);
+		anim_head = _vm->fetchAnimHeader(file);
 
 		// '0' means 1st frame
-		cdt_entry = g_sword2->fetchCdtEntry(file, 0);
+		cdt_entry = _vm->fetchCdtEntry(file, 0);
 
 		// '0' means 1st frame
-		frame_head = g_sword2->fetchFrameHeader(file, 0);
+		frame_head = _vm->fetchFrameHeader(file, 0);
 
 		// check if this frame has offsets ie. this is a scalable
 		// mega frame
@@ -1410,8 +1410,8 @@ void Logic::locateTalker(int32 *params) {
 			
 		// adjust the text coords for RDSPR_DISPLAYALIGN
 
-		_textX -= g_sword2->_thisScreen.scroll_offset_x;
-		_textY -= g_sword2->_thisScreen.scroll_offset_y;
+		_textX -= _vm->_thisScreen.scroll_offset_x;
+		_textY -= _vm->_thisScreen.scroll_offset_y;
 
 		// release the anim resource
 		res_man->closeResource(_animId);
@@ -1468,16 +1468,16 @@ void Logic::formText(int32 *params) {
 		local_text = params[S_TEXT] & 0xffff;
 
 		// open text file & get the line
-		text = g_sword2->fetchTextLine(res_man->openResource(text_res), local_text);
+		text = _vm->fetchTextLine(res_man->openResource(text_res), local_text);
 
 		// 'text + 2' to skip the first 2 bytes which form the line
 		// reference number
 
-		_speechTextBlocNo = fontRenderer.buildNewBloc(
+		_speechTextBlocNo = fontRenderer->buildNewBloc(
 			text + 2, _textX, _textY,
 			textWidth, ob_speech->pen,
 			RDSPR_TRANS | RDSPR_DISPLAYALIGN,
-			g_sword2->_speechFontId, POSITION_AT_CENTRE_OF_BASE);
+			_vm->_speechFontId, POSITION_AT_CENTRE_OF_BASE);
 
 		// now ok to close the text file
 		res_man->closeResource(text_res);

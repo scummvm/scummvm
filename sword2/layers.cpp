@@ -44,7 +44,7 @@ int32 Logic::fnInitBackground(int32 *params) {
 	// params:	0 res id of normal background layer - cannot be 0
 	//		1 1 yes 0 no for a new palette
 
-	return g_sword2->initBackground(params[0], params[1]);
+	return _vm->initBackground(params[0], params[1]);
 }
 
 int32 Sword2Engine::initBackground(int32 res, int32 new_palette) {
@@ -115,9 +115,9 @@ int32 Sword2Engine::initBackground(int32 res, int32 new_palette) {
 
 			// need this for sorting - but leave the rest blank,
 			// we'll take from the header at print time
-			g_sword2->_sortList[i].sort_y = layer->y + layer->height;
+			_sortList[i].sort_y = layer->y + layer->height;
 			// signifies a layer
-			g_sword2->_sortList[i].layer_number = i + 1;
+			_sortList[i].layer_number = i + 1;
 
 			debug(5, "init layer %d", i);
 		}

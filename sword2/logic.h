@@ -22,10 +22,13 @@
 #ifndef _LOGIC
 #define _LOGIC
 
+#include "sword2/events.h"
 #include "sword2/header.h"
 #include "sword2/memory.h"
+#include "sword2/router.h"
 #include "sword2/speech.h"
 #include "sword2/startup.h"
+#include "sword2/sync.h"
 #include "sword2/driver/driver96.h"
 
 namespace Sword2 {
@@ -37,8 +40,12 @@ namespace Sword2 {
 
 #define MAX_SEQUENCE_TEXT_LINES 15
 
+class Sword2Engine;
+
 class Logic {
 private:
+	Sword2Engine *_vm;
+
 	// Point to the global variable data
 	int32 *_globals;
 
@@ -161,8 +168,15 @@ private:
 
 	uint32 initStartMenu(void);
 
+	int16 _standbyX;	// see fnSetStandbyCoords()
+	int16 _standbyY;
+	int16 _standbyDir;
+
+	int whatTarget(int startX, int startY, int destX, int destY);
+
 public:
-	Logic() : _globals(NULL), _kills(0), _debugFlag(false),
+	Logic(Sword2Engine *vm) :
+		  _vm(vm), _globals(NULL), _kills(0), _debugFlag(false),
 		  _smackerLeadOut(0), _sequenceTextLines(0), _speechTime(0),
 		  _animId(0), _leftClickDelay(0), _rightClickDelay(0),
 		  _defaultResponseId(0), _totalStartups(0),
@@ -170,6 +184,9 @@ public:
 		  _speechScriptWaiting(0), _speechTextBlocNo(0),
 		  _choosing(false), _unpauseZone(0) {
 		memset(_subjectList, 0, sizeof(_subjectList));
+		memset(_eventList, 0, sizeof(_eventList));
+		memset(_syncList, 0, sizeof(_syncList));
+		_router = new Router();
 		setupOpcodes();
 		initStartMenu();
 	}
@@ -201,6 +218,34 @@ public:
 	int runScript(char *scriptData, char *objectData, uint32 *offset);
 
 	int32 executeOpcode(int op, int32 *params);
+
+	struct _event_unit {
+		uint32 id;
+		uint32 interact_id;
+	};
+
+	_event_unit _eventList[MAX_events];
+
+	void sendEvent(uint32 id, uint32 interact_id);
+	void setPlayerActionEvent(uint32 id, uint32 interact_id);
+	void startEvent(void);
+	bool checkEventWaiting(void);
+	void clearEvent(uint32 id);
+	void killAllIdsEvents(uint32 id);
+
+	uint32 countEvents(void);
+
+	struct _sync_unit {
+		uint32 id;
+		uint32 sync;
+	};
+
+	_sync_unit _syncList[MAX_syncs];
+
+	void clearSyncs(uint32 id);
+	bool getSync(void);
+
+	Router *_router;
 
 	int32 fnTestFunction(int32 *params);
 	int32 fnTestFlags(int32 *params);

@@ -37,10 +37,6 @@
 
 namespace Sword2 {
 
-int16 standby_x;		// see fnSetStandbyCoords
-int16 standby_y;
-uint8 standby_dir;
-
 /**
  * Walk mega to (x,y,dir)
  */
@@ -102,9 +98,9 @@ int32 Logic::fnWalk(int32 *params) {
 		// set up mem for _walkData in route_slots[] & set mega's
 		// 'route_slot_id' accordingly
 
-		router.allocateRouteMem();
+		_router->allocateRouteMem();
 
-		route = (int8) router.routeFinder(ob_mega, ob_walkdata, target_x, target_y, target_dir);
+		route = (int8) _router->routeFinder(ob_mega, ob_walkdata, target_x, target_y, target_dir);
 
 		// 0 = can't make route to target
 		// 1 = created route
@@ -125,7 +121,7 @@ int32 Logic::fnWalk(int32 *params) {
 			// (see fnGetPlayerSaveData() in save_rest.cpp
 		} else {
 			// free up the walkdata mem block
-			router.freeRouteMem();
+			_router->freeRouteMem();
 
 			// 1 means error, no walk created
 			RESULT = 1;
@@ -144,7 +140,7 @@ int32 Logic::fnWalk(int32 *params) {
 		// ok, thats it - back to script and change screen
 
 		ob_logic->looping = 0;	// so script loop stops
-		router.freeRouteMem();	// free up the walkdata mem block
+		_router->freeRouteMem();	// free up the walkdata mem block
 
 		// must clear in-case on the new screen there's a walk
 		// instruction (which would get cut short)
@@ -168,17 +164,17 @@ int32 Logic::fnWalk(int32 *params) {
 	// get pointer to walkanim & current frame position
 
 	// lock the _walkData array
-	walkAnim = router.lockRouteMem();
+	walkAnim = _router->lockRouteMem();
 	walk_pc = ob_mega->walk_pc;
 
 	// if stopping the walk early, overwrite the next step with a
 	// slow-out, then finish
 
-	if (g_sword2->checkEventWaiting()) {
+	if (checkEventWaiting()) {
 		if (walkAnim[walk_pc].step == 0 && walkAnim[walk_pc + 1].step == 1) {
 			// at the beginning of a step
 			ob_walkdata = (Object_walkdata *) params[3];
-			router.earlySlowOut(ob_mega, ob_walkdata);
+			_router->earlySlowOut(ob_mega, ob_walkdata);
 		}
 	}
 
@@ -197,7 +193,7 @@ int32 Logic::fnWalk(int32 *params) {
 	// '512' is end-marker
 	if (walkAnim[walk_pc + 1].frame == 512) {
 		ob_logic->looping = 0;	// so script loop stops
-		router.freeRouteMem();	// free up the walkdata mem block
+		_router->freeRouteMem();	// free up the walkdata mem block
 
 		// finished walk
 		ob_mega->currently_walking = 0;
@@ -213,8 +209,8 @@ int32 Logic::fnWalk(int32 *params) {
 		// was only run if a function that always returned zero
 		// returned non-zero.
 
-		if (g_sword2->checkEventWaiting()) {
-			g_sword2->startEvent();
+		if (checkEventWaiting()) {
+			startEvent();
 			RESULT = 1;		// 1 means didn't finish walk
 			return IR_TERMINATE;
 		} else {
@@ -238,7 +234,7 @@ int32 Logic::fnWalk(int32 *params) {
 	ob_mega->walk_pc++;
 
 	// allow _walkData array to float about memory again
-	router.floatRouteMem();
+	_router->floatRouteMem();
 
 	// stop the script, but repeat this call next cycle
 	return IR_REPEAT;
@@ -269,7 +265,7 @@ int32 Logic::fnWalkToAnim(int32 *params) {
 		anim_file = res_man->openResource(params[4]);
 
 		// point to animation header
-		anim_head = g_sword2->fetchAnimHeader( anim_file );
+		anim_head = _vm->fetchAnimHeader( anim_file );
 
 		pars[4] = anim_head->feetStartX;	// target_x
 		pars[5] = anim_head->feetStartY;	// target_y
@@ -282,11 +278,11 @@ int32 Logic::fnWalkToAnim(int32 *params) {
 		// coords (which should be set beforehand in the script)
 
 		if (pars[4] == 0 && pars[5] == 0) {
-			pars[4] = standby_x;
-			pars[5] = standby_y;
-			pars[6] = standby_dir;
+			pars[4] = _standbyX;
+			pars[5] = _standbyY;
+			pars[6] = _standbyDir;
 
-			debug(5, "WARNING: fnWalkToAnim(%s) used standby coords", g_sword2->fetchObjectName(params[4]));
+			debug(5, "WARNING: fnWalkToAnim(%s) used standby coords", _vm->fetchObjectName(params[4]));
 		}
 
 		if (pars[6] < 0 || pars[6] > 7)
@@ -431,7 +427,7 @@ int32 Logic::fnStandAfterAnim(int32 *params) {
 
 	// open anim file
 	anim_file = res_man->openResource(params[2]);
-	anim_head = g_sword2->fetchAnimHeader(anim_file);
+	anim_head = _vm->fetchAnimHeader(anim_file);
 
 	// set up the parameter list for fnWalkTo()
 
@@ -446,11 +442,11 @@ int32 Logic::fnStandAfterAnim(int32 *params) {
 	// should be set beforehand in the script)
 
 	if (pars[2] == 0 && pars[3] == 0) {
-		pars[2] = standby_x;
-		pars[3] = standby_y;
-		pars[4] = standby_dir;
+		pars[2] = _standbyX;
+		pars[3] = _standbyY;
+		pars[4] = _standbyDir;
 
-		debug(5, "WARNING: fnStandAfterAnim(%s) used standby coords", g_sword2->fetchObjectName(params[2]));
+		debug(5, "WARNING: fnStandAfterAnim(%s) used standby coords", _vm->fetchObjectName(params[2]));
 	}
 
 	if (pars[4] < 0 || pars[4] > 7)
@@ -478,7 +474,7 @@ int32 Logic::fnStandAtAnim(int32 *params) {
 
 	// open anim file
 	anim_file = res_man->openResource(params[2]);
-	anim_head = g_sword2->fetchAnimHeader(anim_file);
+	anim_head = _vm->fetchAnimHeader(anim_file);
 
 	// set up the parameter list for fnWalkTo()
 
@@ -492,12 +488,12 @@ int32 Logic::fnStandAtAnim(int32 *params) {
 	// if start coords not available use the standby coords (which should
 	// be set beforehand in the script)
 
-	if (pars[2] == 0 && pars[3]==0) {
-		pars[2] = standby_x;
-		pars[3] = standby_y;
-		pars[4] = standby_dir;
+	if (pars[2] == 0 && pars[3] == 0) {
+		pars[2] = _standbyX;
+		pars[3] = _standbyY;
+		pars[4] = _standbyDir;
 
-		debug(5, "WARNING: fnStandAtAnim(%s) used standby coords", g_sword2->fetchObjectName(params[2]));
+		debug(5, "WARNING: fnStandAtAnim(%s) used standby coords", _vm->fetchObjectName(params[2]));
 	}
 
 	if (pars[4] < 0 || pars[4] > 7)
@@ -516,7 +512,7 @@ int32 Logic::fnStandAtAnim(int32 *params) {
 #define	diagonalx 36
 #define	diagonaly 8
 
-int What_target(int startX, int startY, int destX, int destY) {
+int Logic::whatTarget(int startX, int startY, int destX, int destY) {
 	int deltaX = destX - startX;
 	int deltaY = destY - startY;
 
@@ -545,7 +541,7 @@ int What_target(int startX, int startY, int destX, int destY) {
 /**
  * turn mega to face point (x,y) on the floor
  * just needs to call fnWalk() with current feet coords & direction computed
- * by What_target()
+ * by whatTarget()
  */
 
 int32 Logic::fnFaceXY(int32 *params) {
@@ -570,7 +566,7 @@ int32 Logic::fnFaceXY(int32 *params) {
 	
 		pars[4] = ob_mega->feet_x;
 		pars[5] = ob_mega->feet_y;
-		pars[6] = What_target(ob_mega->feet_x, ob_mega->feet_y, params[4], params[5]);
+		pars[6] = whatTarget(ob_mega->feet_x, ob_mega->feet_y, params[4], params[5]);
 	}
 
 	// set up the rest of the parameters for fnWalk()
@@ -621,7 +617,7 @@ int32 Logic::fnFaceMega(int32 *params) {
 		pars[3] = params[3];
 		pars[4] = ob_mega->feet_x;
 		pars[5] = ob_mega->feet_y;
-		pars[6] = What_target(ob_mega->feet_x, ob_mega->feet_y, g_sword2->_engineMega.feet_x, g_sword2->_engineMega.feet_y);
+		pars[6] = whatTarget(ob_mega->feet_x, ob_mega->feet_y, _vm->_engineMega.feet_x, _vm->_engineMega.feet_y);
 	}
 
 	pars[0] = params[0];
@@ -682,7 +678,7 @@ int32 Logic::fnWalkToTalkToMega(int32 *params) {
 		// route to
 
 		// stand exactly beside the mega, ie. at same y-coord
-		pars[5] = g_sword2->_engineMega.feet_y;
+		pars[5] = _vm->_engineMega.feet_y;
 
 		// apply scale factor to walk distance
 		// Ay+B gives 256 * scale ie. 256 * 256 * true_scale for even
@@ -693,20 +689,20 @@ int32 Logic::fnWalkToTalkToMega(int32 *params) {
 		mega_separation= (mega_separation * scale) / 256;
 
 		debug(5, "separation %d", mega_separation);
-		debug(5, " target x %d, y %d", g_sword2->_engineMega.feet_x, g_sword2->_engineMega.feet_y);
+		debug(5, " target x %d, y %d", _vm->_engineMega.feet_x, _vm->_engineMega.feet_y);
 
-		if (g_sword2->_engineMega.feet_x < ob_mega->feet_x)
+		if (_vm->_engineMega.feet_x < ob_mega->feet_x)
 		{
 			// Target is left of us, so aim to stand to their
 			// right. Face down_left
 
-			pars[4] = g_sword2->_engineMega.feet_x + mega_separation;
+			pars[4] = _vm->_engineMega.feet_x + mega_separation;
 			pars[6] = 5;
 		} else {
 			// Ok, must be right of us so aim to stand to their
 			// left. Face down_right.
 
-			pars[4] = g_sword2->_engineMega.feet_x - mega_separation;
+			pars[4] = _vm->_engineMega.feet_x - mega_separation;
 			pars[6] = 3;
 		}
 	}
@@ -741,7 +737,7 @@ int32 Logic::fnAddWalkGrid(int32 *params) {
 		fnAddToKillList(params);
 	}
 
-	router.addWalkGrid(params[0]);
+	_router->addWalkGrid(params[0]);
 
 	// Touch the grid, getting it into memory.
 	res_man->openResource(params[0]);
@@ -757,7 +753,7 @@ int32 Logic::fnAddWalkGrid(int32 *params) {
 int32 Logic::fnRemoveWalkGrid(int32 *params) {
 	// params:	0 id of walkgrid resource
 
-	router.removeWalkGrid(params[0]);
+	_router->removeWalkGrid(params[0]);
 	return IR_CONT;
 }
 
@@ -799,9 +795,9 @@ int32 Logic::fnSetStandbyCoords(int32 *params) {
 	if (params[2] < 0 || params[2] > 7)
 		error("Invalid direction (%d) in fnSetStandbyCoords", params[2]);
 
-	standby_x = (int16) params[0];
-	standby_y = (int16) params[1];
-	standby_dir = (uint8) params[2];
+	_standbyX = (int16) params[0];
+	_standbyY = (int16) params[1];
+	_standbyDir = (uint8) params[2];
 
 	return IR_CONT;
 }

@@ -20,13 +20,10 @@
 #ifndef	_SYNC
 #define	_SYNC
 
-#include "sword2/object.h"
+// There won't be many, will there? Probably 2 at most i reckon
+#define	MAX_syncs 10
 
 namespace Sword2 {
-
-void Init_sync_system(void);
-void Clear_syncs(uint32	id);
-bool Get_sync(void);
 
 } // End of namespace Sword2
 

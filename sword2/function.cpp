@@ -139,7 +139,7 @@ int32 Logic::fnRandom(int32 *params) {
 	// params:	0 min
 	//		1 max
 
-	RESULT = g_sword2->_rnd.getRandomNumberRng(params[0], params[1]);
+	RESULT = _vm->_rnd.getRandomNumberRng(params[0], params[1]);
 	return IR_CONT;
 }
 
@@ -204,7 +204,7 @@ int32 Logic::fnPassGraph(int32 *params) {
 
 	// params:	0 pointer to a graphic structure (might not need this?)
 
-	memcpy(&g_sword2->_engineGraph, (uint8 *) params[0], sizeof(Object_graphic));
+	memcpy(&_vm->_engineGraph, (uint8 *) params[0], sizeof(Object_graphic));
 
 	// makes no odds
 	return IR_CONT;
@@ -220,7 +220,7 @@ int32 Logic::fnPassMega(int32 *params) {
 
 	// params: 	0 pointer to a mega structure
 
-	memcpy(&g_sword2->_engineMega, (uint8 *) params[0], sizeof(Object_mega));
+	memcpy(&_vm->_engineMega, (uint8 *) params[0], sizeof(Object_mega));
 
 	// makes no odds
 	return IR_CONT;
@@ -337,9 +337,9 @@ int32 Logic::fnDisplayMsg(int32 *params) {
 	// +2 to skip the encoded text number in the first 2 chars; 3 is
 	// duration in seconds
 
-	g_sword2->displayMsg(g_sword2->fetchTextLine(res_man->openResource(text_res), local_text) + 2, 3);
+	_vm->displayMsg(_vm->fetchTextLine(res_man->openResource(text_res), local_text) + 2, 3);
 	res_man->closeResource(text_res);
-	g_sword2->removeMsg();
+	_vm->removeMsg();
 
 	return IR_CONT;
 }
@@ -372,7 +372,7 @@ int32 Logic::fnResetGlobals(int32 *params) {
 	// - this is taken from fnInitBackground
 
 	// switch on scrolling (2 means first time on screen)
-	g_sword2->_thisScreen.scroll_flag = 2;
+	_vm->_thisScreen.scroll_flag = 2;
 
 	return IR_CONT;
 }
@@ -444,19 +444,15 @@ int32 Logic::fnPlayCredits(int32 *params) {
 		g_display->setPalette(0, 256, oldPal, RDPAL_FADE);
 		g_display->fadeUp();
 		g_display->updateDisplay();
-		g_sword2->buildDisplay();
+		_vm->buildDisplay();
 		g_display->waitForFade();
 
 		g_sound->muteFx(false);
 		g_sound->muteSpeech(false);
 	}
 
-	// FIXME: This probably isn't the correct way of shutting down ScummVM
-	// Anyway, I don't know if we ever call this from the demo.
-
-	if (g_sword2->_features & GF_DEMO) {
-		Close_game();		// close engine systems down
-		exit(0);		// quit the game
+	if (_vm->_features & GF_DEMO) {
+		_vm->closeGame();
 	}
 
 	return IR_CONT;

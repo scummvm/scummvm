@@ -45,9 +45,9 @@ void Debugger::varSet(int var, int val) {
 	Debug_Printf("now %d\n", VAR(var));
 }
 
-Debugger::Debugger(Sword2Engine *s)
+Debugger::Debugger(Sword2Engine *vm)
 	: Common::Debugger<Debugger>() {
-	_vm = s;
+	_vm = vm;
 
 	memset(_debugTextBlocks, 0, sizeof(_debugTextBlocks));
 	memset(_showVar, 0, sizeof(_showVar));
@@ -361,7 +361,7 @@ bool Debugger::Cmd_ListSaveGames(int argc, const char **argv) {
 		uint8 description[SAVE_DESCRIPTION_LEN];
 
 		// if there is a save game print the name
-		if (g_sword2->getSaveDescription(i, description) == SR_OK)
+		if (_vm->getSaveDescription(i, description) == SR_OK)
 			DebugPrintf("%d: \"%s\"\n", i, description);
 	}
 
@@ -380,7 +380,7 @@ bool Debugger::Cmd_SaveGame(int argc, const char **argv) {
 	}
 
 	// if mouse if off, or system menu is locked off
-	if (g_sword2->_mouseStatus || g_sword2->_mouseModeLocked) {
+	if (_vm->_mouseStatus || _vm->_mouseModeLocked) {
 		DebugPrintf("WARNING: Cannot save game while control menu unavailable!\n");
 		return true;
 	}
@@ -405,7 +405,7 @@ bool Debugger::Cmd_SaveGame(int argc, const char **argv) {
 	}
 
 	slotNo = atoi(argv[1]);
-	rv = g_sword2->saveGame(slotNo, (uint8 *) description);
+	rv = _vm->saveGame(slotNo, (uint8 *) description);
 
 	if (rv == SR_OK)
 		DebugPrintf("Saved game \"%s\" to file \"savegame.%.3d\"\n", description, slotNo);
@@ -428,16 +428,16 @@ bool Debugger::Cmd_RestoreGame(int argc, const char **argv) {
 	}
 
 	// if mouse if off, or system menu is locked off
-	if (g_sword2->_mouseStatus || g_sword2->_mouseModeLocked) {
+	if (_vm->_mouseStatus || _vm->_mouseModeLocked) {
 		DebugPrintf("WARNING: Cannot restore game while control menu unavailable!\n");
 		return true;
 	}
 
 	slotNo = atoi(argv[1]);
-	rv = g_sword2->restoreGame(slotNo);
+	rv = _vm->restoreGame(slotNo);
 
 	if (rv == SR_OK) {
-		g_sword2->getSaveDescription(slotNo, description);
+		_vm->getSaveDescription(slotNo, description);
 		DebugPrintf("Restored game \"%s\" from file \"savegame.%.3d\"\n", description, slotNo);
 	} else if (rv == SR_ERR_FILEOPEN)
 		DebugPrintf("ERROR: Cannot open file \"savegame.%.3d\"\n", slotNo);
@@ -667,9 +667,9 @@ bool Debugger::Cmd_Grab(int argc, const char **argv) {
 	DebugPrintf("FIXME: Continuous screen-grabbing not implemented\n");
 
 #if 0
-	g_sword2->_grabbingSequences = !g_sword2->_grabbingSequences;
+	_vm->_grabbingSequences = !_vm->_grabbingSequences;
 
-	if (g_sword2->_grabbingSequences)
+	if (_vm->_grabbingSequences)
 		DebugPrintf("PCX-grabbing enabled\n");
 	else
 		DebugPrintf("PCX-grabbing disabled\n");
@@ -682,12 +682,12 @@ bool Debugger::Cmd_Events(int argc, const char **argv) {
 	DebugPrintf("EVENT LIST:\n");
 
 	for (uint32 i = 0; i < MAX_events; i++) {
-		if (g_sword2->_eventList[i].id) {
-			uint32 target = g_sword2->_eventList[i].id;
-			uint32 script = g_sword2->_eventList[i].interact_id;
+		if (g_logic->_eventList[i].id) {
+			uint32 target = g_logic->_eventList[i].id;
+			uint32 script = g_logic->_eventList[i].interact_id;
 
-			DebugPrintf("slot %d: id = %s (%d)\n", i, g_sword2->fetchObjectName(target), target);
-			DebugPrintf("         script = %s (%d) pos %d\n", g_sword2->fetchObjectName(script / 65536), script / 65536, script % 65536);
+			DebugPrintf("slot %d: id = %s (%d)\n", i, _vm->fetchObjectName(target), target);
+			DebugPrintf("         script = %s (%d) pos %d\n", _vm->fetchObjectName(script / 65536), script / 65536, script % 65536);
 		}
 	}
 
@@ -695,9 +695,9 @@ bool Debugger::Cmd_Events(int argc, const char **argv) {
 }
 
 bool Debugger::Cmd_Sfx(int argc, const char **argv) {
-	g_sword2->_wantSfxDebug = !g_sword2->_wantSfxDebug;
+	_vm->_wantSfxDebug = !_vm->_wantSfxDebug;
 
-	if (g_sword2->_wantSfxDebug)
+	if (_vm->_wantSfxDebug)
 		DebugPrintf("SFX logging activated\n");
 	else
 		DebugPrintf("SFX logging deactivated\n");
@@ -706,19 +706,19 @@ bool Debugger::Cmd_Sfx(int argc, const char **argv) {
 }
 
 bool Debugger::Cmd_English(int argc, const char **argv) {
-	g_sword2->initialiseFontResourceFlags(DEFAULT_TEXT);
+	_vm->initialiseFontResourceFlags(DEFAULT_TEXT);
 	DebugPrintf("Default fonts selected\n");
 	return true;
 }
 
 bool Debugger::Cmd_Finnish(int argc, const char **argv) {
-	g_sword2->initialiseFontResourceFlags(FINNISH_TEXT);
+	_vm->initialiseFontResourceFlags(FINNISH_TEXT);
 	DebugPrintf("Finnish fonts selected\n");
 	return true;
 }
 
 bool Debugger::Cmd_Polish(int argc, const char **argv) {
-	g_sword2->initialiseFontResourceFlags(POLISH_TEXT);
+	_vm->initialiseFontResourceFlags(POLISH_TEXT);
 	DebugPrintf("Polish fonts selected\n");
 	return true;
 }

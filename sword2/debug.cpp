@@ -41,7 +41,7 @@ void Debugger::clearDebugTextBlocks(void) {
 
 	while (blockNo < MAX_DEBUG_TEXT_BLOCKS && _debugTextBlocks[blockNo] > 0) {
 		// kill the system text block
-		fontRenderer.killTextBloc(_debugTextBlocks[blockNo]);
+		fontRenderer->killTextBloc(_debugTextBlocks[blockNo]);
 
 		// clear this element of our array of block numbers
 		_debugTextBlocks[blockNo] = 0;
@@ -58,7 +58,7 @@ void Debugger::makeDebugTextBlock(char *text, int16 x, int16 y) {
 
 	assert(blockNo < MAX_DEBUG_TEXT_BLOCKS);
 
-	_debugTextBlocks[blockNo] = fontRenderer.buildNewBloc((uint8 *) text, x, y, 640 - x, 0, RDSPR_DISPLAYALIGN, CONSOLE_FONT_ID, NO_JUSTIFICATION);
+	_debugTextBlocks[blockNo] = fontRenderer->buildNewBloc((uint8 *) text, x, y, 640 - x, 0, RDSPR_DISPLAYALIGN, CONSOLE_FONT_ID, NO_JUSTIFICATION);
 }
 
 void Debugger::buildDebugText(void) {
@@ -113,7 +113,7 @@ void Debugger::buildDebugText(void) {
 
 	// speed-up indicator
 
-	if (g_sword2->_renderSkip) {		// see sword.cpp
+	if (_vm->_renderSkip) {		// see sword.cpp
 		sprintf(buf, "SKIPPING FRAMES FOR SPEED-UP!");
 		makeDebugTextBlock(buf, 0, 120);
 	}
@@ -129,7 +129,7 @@ void Debugger::buildDebugText(void) {
 		time -= _startTime;
 		sprintf(buf, "Time %.2d:%.2d:%.2d.%.3d", (time / 3600000) % 60, (time / 60000) % 60, (time / 1000) % 60, time % 1000);
 		makeDebugTextBlock(buf, 500, 360);
-		sprintf(buf, "Game %d", g_sword2->_gameCycle);
+		sprintf(buf, "Game %d", _vm->_gameCycle);
 		makeDebugTextBlock(buf, 500, 380);
 	}
 
@@ -178,23 +178,23 @@ void Debugger::buildDebugText(void) {
 		if (CLICKED_ID)
 			sprintf(buf, "last click at %d,%d (id %d: %s)",
 				MOUSE_X, MOUSE_Y, CLICKED_ID,
-				g_sword2->fetchObjectName(CLICKED_ID));
+				_vm->fetchObjectName(CLICKED_ID));
 		else
 			sprintf(buf, "last click at %d,%d (---)",
 				MOUSE_X, MOUSE_Y);
 
  		makeDebugTextBlock(buf, 0, 15);
 
-		if (g_sword2->_mouseTouching)
+		if (_vm->_mouseTouching)
 			sprintf(buf, "mouse %d,%d (id %d: %s)",
-				g_display->_mouseX + g_sword2->_thisScreen.scroll_offset_x,
-				g_display->_mouseY + g_sword2->_thisScreen.scroll_offset_y,
-				g_sword2->_mouseTouching,
-				g_sword2->fetchObjectName(g_sword2->_mouseTouching));
+				g_display->_mouseX + _vm->_thisScreen.scroll_offset_x,
+				g_display->_mouseY + _vm->_thisScreen.scroll_offset_y,
+				_vm->_mouseTouching,
+				_vm->fetchObjectName(_vm->_mouseTouching));
 		else
 			sprintf(buf, "mouse %d,%d (not touching)",
-				g_display->_mouseX + g_sword2->_thisScreen.scroll_offset_x,
-				g_display->_mouseY + g_sword2->_thisScreen.scroll_offset_y);
+				g_display->_mouseX + _vm->_thisScreen.scroll_offset_x,
+				g_display->_mouseY + _vm->_thisScreen.scroll_offset_y);
 
 		makeDebugTextBlock(buf, 0, 30);
 
@@ -203,23 +203,23 @@ void Debugger::buildDebugText(void) {
 
 		if (_playerGraphic.anim_resource)
 			sprintf(buf, "player %d,%d %s (%d) #%d/%d",
-				g_sword2->_thisScreen.player_feet_x,
-				g_sword2->_thisScreen.player_feet_y,
-				g_sword2->fetchObjectName(_playerGraphic.anim_resource),
+				_vm->_thisScreen.player_feet_x,
+				_vm->_thisScreen.player_feet_y,
+				_vm->fetchObjectName(_playerGraphic.anim_resource),
 				_playerGraphic.anim_resource,
 				_playerGraphic.anim_pc,
 				_playerGraphicNoFrames);
 		else
 			sprintf(buf, "player %d,%d --- %d",
-				g_sword2->_thisScreen.player_feet_x,
-				g_sword2->_thisScreen.player_feet_y,
+				_vm->_thisScreen.player_feet_x,
+				_vm->_thisScreen.player_feet_y,
 				_playerGraphic.anim_pc);
 
 		makeDebugTextBlock(buf, 0, 45);
 
  		// frames-per-second counter
 
-		sprintf(buf, "fps %d", g_sword2->_fps);
+		sprintf(buf, "fps %d", _vm->_fps);
 		makeDebugTextBlock(buf, 440, 0);
 
  		// location number
@@ -234,44 +234,44 @@ void Debugger::buildDebugText(void) {
 
  		// no. of events in event list
 
-		sprintf(buf, "events=%d", g_sword2->countEvents());
+		sprintf(buf, "events=%d", g_logic->countEvents());
 		makeDebugTextBlock(buf, 440, 45);
 
 		// sprite list usage
 
-		sprintf(buf, "bgp0: %d/%d", g_sword2->_curBgp0, MAX_bgp0_sprites);
+		sprintf(buf, "bgp0: %d/%d", _vm->_curBgp0, MAX_bgp0_sprites);
 		makeDebugTextBlock(buf, 560, 0);
 
-		sprintf(buf, "bgp1: %d/%d", g_sword2->_curBgp1, MAX_bgp1_sprites);
+		sprintf(buf, "bgp1: %d/%d", _vm->_curBgp1, MAX_bgp1_sprites);
 		makeDebugTextBlock(buf, 560, 15);
 
-		sprintf(buf, "back: %d/%d", g_sword2->_curBack, MAX_back_sprites);
+		sprintf(buf, "back: %d/%d", _vm->_curBack, MAX_back_sprites);
 		makeDebugTextBlock(buf, 560, 30);
 
-		sprintf(buf, "sort: %d/%d", g_sword2->_curSort, MAX_sort_sprites);
+		sprintf(buf, "sort: %d/%d", _vm->_curSort, MAX_sort_sprites);
 		makeDebugTextBlock(buf, 560, 45);
 
-		sprintf(buf, "fore: %d/%d", g_sword2->_curFore, MAX_fore_sprites);
+		sprintf(buf, "fore: %d/%d", _vm->_curFore, MAX_fore_sprites);
 		makeDebugTextBlock(buf, 560, 60);
 
-		sprintf(buf, "fgp0: %d/%d", g_sword2->_curFgp0, MAX_fgp0_sprites);
+		sprintf(buf, "fgp0: %d/%d", _vm->_curFgp0, MAX_fgp0_sprites);
 		makeDebugTextBlock(buf, 560, 75);
 
-		sprintf(buf, "fgp1: %d/%d", g_sword2->_curFgp1, MAX_fgp1_sprites);
+		sprintf(buf, "fgp1: %d/%d", _vm->_curFgp1, MAX_fgp1_sprites);
 		makeDebugTextBlock(buf, 560, 90);
 
 		// largest layer & sprite
 
 		// NB. Strings already constructed in Build_display.cpp
-		makeDebugTextBlock(g_sword2->_largestLayerInfo, 0, 60);
-		makeDebugTextBlock(g_sword2->_largestSpriteInfo, 0, 75);
+		makeDebugTextBlock(_vm->_largestLayerInfo, 0, 60);
+		makeDebugTextBlock(_vm->_largestSpriteInfo, 0, 75);
 
 		// "waiting for person" indicator - set form fnTheyDo and
 		// fnTheyDoWeWait
 
 		if (g_logic->_speechScriptWaiting) {
 			sprintf(buf, "script waiting for %s (%d)",
-				g_sword2->fetchObjectName(g_logic->_speechScriptWaiting),
+				_vm->fetchObjectName(g_logic->_speechScriptWaiting),
 				g_logic->_speechScriptWaiting);
 			makeDebugTextBlock(buf, 0, 90);
 		}
@@ -310,17 +310,17 @@ void Debugger::drawDebugGraphics(void) {
 	// walk-grid
 
 	if (_displayWalkGrid)
-		router.plotWalkGrid(); 
+		g_logic->_router->plotWalkGrid(); 
 
 	// player feet coord marker
 
 	if (_displayPlayerMarker)
-		plotCrossHair(g_sword2->_thisScreen.player_feet_x, g_sword2->_thisScreen.player_feet_y, 215);
+		plotCrossHair(_vm->_thisScreen.player_feet_x, _vm->_thisScreen.player_feet_y, 215);
 
 	// mouse marker & coords
 
 	if (_displayMouseMarker)
-		plotCrossHair(g_display->_mouseX + g_sword2->_thisScreen.scroll_offset_x, g_display->_mouseY + g_sword2->_thisScreen.scroll_offset_y, 215);
+		plotCrossHair(g_display->_mouseX + _vm->_thisScreen.scroll_offset_x, g_display->_mouseY + _vm->_thisScreen.scroll_offset_y, 215);
 
    	// mouse area rectangle / sprite box rectangle when testing anims
 
@@ -355,10 +355,10 @@ void Debugger::drawRect(int16 x1, int16 y1, int16 x2, int16 y2, uint8 pen) {
 void Debugger::printCurrentInfo(void) {
 	// prints general stuff about the screen, etc.
 
-	if (g_sword2->_thisScreen.background_layer_id) {
-		Debug_Printf("background layer id %d\n", g_sword2->_thisScreen.background_layer_id);
-		Debug_Printf("%d wide, %d high\n", g_sword2->_thisScreen.screen_wide, g_sword2->_thisScreen.screen_deep);
-		Debug_Printf("%d normal layers\n", g_sword2->_thisScreen.number_of_layers);
+	if (_vm->_thisScreen.background_layer_id) {
+		Debug_Printf("background layer id %d\n", _vm->_thisScreen.background_layer_id);
+		Debug_Printf("%d wide, %d high\n", _vm->_thisScreen.screen_wide, _vm->_thisScreen.screen_deep);
+		Debug_Printf("%d normal layers\n", _vm->_thisScreen.number_of_layers);
 
 		g_logic->examineRunList();
 	} else

@@ -88,8 +88,6 @@
 
 namespace Sword2 {
 
-Router router;
-
 uint8 Router::returnSlotNo(uint32 megaId) {
 	if (ID == CUR_PLAYER_ID) {
 		// George (8)

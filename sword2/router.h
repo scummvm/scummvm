@@ -216,7 +216,24 @@ private:
 public:
 	Router() :
 		_nExtraBars(0), _nExtraNodes(0), _diagonalx(0),
-		_diagonaly(0) {}
+		_diagonaly(0) {
+		memset(_routeSlots, 0, sizeof(_routeSlots));
+		memset(_bars, 0, sizeof(_bars));
+		memset(_node, 0, sizeof(_node));
+		memset(_walkGridList, 0, sizeof(_walkGridList));
+		memset(_extraBars, 0, sizeof(_extraBars));
+		memset(_extraNode, 0, sizeof(_extraNode));
+		memset(_route, 0, sizeof(_route));
+		memset(_smoothPath, 0, sizeof(_smoothPath));
+		memset(_modularPath, 0, sizeof(_modularPath));
+		memset(_dx, 0, sizeof(_dx));
+		memset(_dy, 0, sizeof(_dy));
+		memset(_modX, 0, sizeof(_modX));
+		memset(_modY, 0, sizeof(_modY));
+		memset(_firstSlowInFrame, 0, sizeof(_firstSlowInFrame));
+		memset(_numberOfSlowInFrames, 0, sizeof(_numberOfSlowInFrames));
+		memset(_leadingLeg, 0, sizeof(_leadingLeg));
+	}
 
 	int32 routeFinder(Object_mega *ob_mega, Object_walkdata *ob_walkdata, int32 x, int32 y, int32 dir);
 
@@ -233,8 +250,6 @@ public:
 
 	void plotWalkGrid(void);
 };
-
-extern Router router;
 
 } // End of namespace Sword2
 

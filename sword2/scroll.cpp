@@ -162,22 +162,22 @@ int32 Logic::fnSetScrollCoordinate(int32 *params) {
 	// params:	0 feet_x value
 	// 		1 feet_y value
 
-	g_sword2->_thisScreen.feet_x = params[0];
-	g_sword2->_thisScreen.feet_y = params[1];
+	_vm->_thisScreen.feet_x = params[0];
+	_vm->_thisScreen.feet_y = params[1];
 	return IR_CONT;
 }
 
 int32 Logic::fnSetScrollSpeedNormal(int32 *params) {
 	// params:	none
 
-	g_sword2->_scrollFraction = 16;
+	_vm->_scrollFraction = 16;
 	return IR_CONT;
 }
 
 int32 Logic::fnSetScrollSpeedSlow(int32 *params) {
 	// params:	none
 
-	g_sword2->_scrollFraction = 32;
+	_vm->_scrollFraction = 32;
 	return IR_CONT;
 }
 

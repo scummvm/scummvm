@@ -27,31 +27,15 @@
 
 namespace Sword2 {
 
-typedef	struct {
-	uint32 id;
-	uint32 sync;
-} _sync_unit;
-
-// there wont be many will there. probably 2 at most i reckon
-#define	MAX_syncs 10
-
-static _sync_unit sync_list[MAX_syncs];
-
-void Init_sync_system(void) {
-	// set list to 0's
-	for (int j = 0; j < MAX_syncs; j++)
-		sync_list[j].id = 0;
-}
-
 int32 Logic::fnSendSync(int32 *params) {
 	// params:	0 sync's recipient
 	//		1 sync value
 
 	for (int i = 0; i < MAX_syncs; i++) {
-		if (sync_list[i].id == 0) {
+		if (_syncList[i].id == 0) {
 			debug(5, " %d sending sync %d to %d", ID, params[1], params[0]);
-			sync_list[i].id = params[0];
-			sync_list[i].sync = params[1];
+			_syncList[i].id = params[0];
+			_syncList[i].sync = params[1];
 			return IR_CONT;
 		}
 	}
@@ -63,27 +47,27 @@ int32 Logic::fnSendSync(int32 *params) {
 	return IR_CONT;
 }
 
-void Clear_syncs(uint32	id) {
+void Logic::clearSyncs(uint32 id) {
 	// clear any syncs registered for this id
 	// call this just after the id has been processed
 	// there could in theory be more than one sync waiting for us so
 	// clear the lot
 
 	for (int i = 0; i < MAX_syncs; i++) {
-		if (sync_list[i].id == id) {
+		if (_syncList[i].id == id) {
 			debug(5, "removing sync %d for %d", i, id);
-			sync_list[i].id = 0;
+			_syncList[i].id = 0;
 		}
 	}
 }
 
-bool Get_sync(void) {
+bool Logic::getSync(void) {
 	// check for a sync waiting for this character
 	// - called from system code eg. from inside fnAnim(), to see if
 	// animation to be quit
 
 	for (int i = 0; i < MAX_syncs; i++) {
-		if (sync_list[i].id == ID) {
+		if (_syncList[i].id == ID) {
 			// means sync found
 			return true;
 		}
@@ -100,9 +84,9 @@ int32 Logic::fnGetSync(int32 *params) {
 	// params:	none
 
 	for (int i = 0; i < MAX_syncs; i++) {
-		if (sync_list[i].id == ID) {
+		if (_syncList[i].id == ID) {
 			// return sync value waiting
-			RESULT = sync_list[i].sync;
+			RESULT = _syncList[i].sync;
 			return IR_CONT;
 		}
 	}
@@ -120,10 +104,10 @@ int32 Logic::fnWaitSync(int32 *params) {
 	debug(5, "fnWaitSync: %d waits", ID);
 
 	for (int i = 0; i < MAX_syncs; i++) {
-		if (sync_list[i].id == ID) {
+		if (_syncList[i].id == ID) {
 			// return sync value waiting
 			debug(5, "fnWaitSync: go");
-			RESULT = sync_list[i].sync;
+			RESULT = _syncList[i].sync;
 			return IR_CONT;
 		}
 	}

@@ -160,7 +160,7 @@ void Sword2Engine::buildDisplay(void) {
 			// text blocks
 
 			// speech blocks and headup debug text
-			fontRenderer.printTextBlocs();
+			fontRenderer->printTextBlocs();
 
 			// menu bar & icons
 
@@ -218,7 +218,7 @@ void Sword2Engine::displayMsg(uint8 *text, int time) {
 	g_display->closeMenuImmediately();
 	g_display->clearScene();
 
-	text_spr = fontRenderer.makeTextSprite(text, 640, 187, g_sword2->_speechFontId);
+	text_spr = fontRenderer->makeTextSprite(text, 640, 187, _speechFontId);
 
 	frame = (_frameHeader *) text_spr->ad;
 
@@ -702,7 +702,7 @@ int32 Logic::fnRegisterFrame(int32 *params) {
 	//		1 pointer to graphic structure
 	//		2 pointer to mega structure or NULL if not a mega
 
-	return g_sword2->registerFrame(params);
+	return _vm->registerFrame(params);
 }
 
 int32 Sword2Engine::registerFrame(int32 *params) {
@@ -790,15 +790,15 @@ int32 Logic::fnUpdatePlayerStats(int32 *params) {
 
 	Object_mega *ob_mega = (Object_mega *) params[0];
 
-	g_sword2->_thisScreen.player_feet_x = ob_mega->feet_x;
-	g_sword2->_thisScreen.player_feet_y = ob_mega->feet_y;
+	_vm->_thisScreen.player_feet_x = ob_mega->feet_x;
+	_vm->_thisScreen.player_feet_y = ob_mega->feet_y;
 
 	// for the script
 	PLAYER_FEET_X = ob_mega->feet_x;
 	PLAYER_FEET_Y = ob_mega->feet_y;
 	PLAYER_CUR_DIR = ob_mega->current_dir;
 
-	SCROLL_OFFSET_X = g_sword2->_thisScreen.scroll_offset_x;
+	SCROLL_OFFSET_X = _vm->_thisScreen.scroll_offset_x;
 
 	debug(5, "fnUpdatePlayerStats: %d %d", ob_mega->feet_x, ob_mega->feet_y);
 
@@ -832,7 +832,7 @@ int32 Logic::fnSetPalette(int32 *params) {
 	// params:	0 resource number of palette file, or 0 if it's to be
 	//		  the palette from the current screen
 
-	g_sword2->setFullPalette(params[0]);
+	_vm->setFullPalette(params[0]);
 	return IR_CONT;
 }
 
@@ -927,13 +927,13 @@ int32 Logic::fnChangeShadows(int32 *params) {
 	// params:	none
 
 	// if last screen was using a shading mask (see below)
-	if (g_sword2->_thisScreen.mask_flag) {
+	if (_vm->_thisScreen.mask_flag) {
 		uint32 rv = g_display->closeLightMask();
 
 		if (rv)
 			error("Driver Error %.8x [%s line %u]", rv);
 
-		g_sword2->_thisScreen.mask_flag = 0;
+		_vm->_thisScreen.mask_flag = 0;
 	}
 
 	return IR_CONT;

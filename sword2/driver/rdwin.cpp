@@ -60,7 +60,7 @@ void Sword2Engine::parseEvents() {
 			LogMouseEvent(RD_RIGHTBUTTONUP);
 			break;
 		case OSystem::EVENT_QUIT:
-			Close_game();
+			g_sword2->closeGame();
 			break;
 		default:
 			break;

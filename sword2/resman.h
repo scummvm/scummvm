@@ -26,9 +26,11 @@ namespace Sword2 {
 
 #define	MAX_res_files	20
 
+class Sword2Engine;
+
 class ResourceManager {
 public:
-	ResourceManager(void);		// read in the config file
+	ResourceManager(Sword2Engine *vm);	// read in the config file
 	~ResourceManager(void);
 
 	// Returns ad of resource. Loads if not in memory. Retains a count.
@@ -77,6 +79,8 @@ public:
 	mem **_resList;
 
 private:
+	Sword2Engine *_vm;
+
 	int _curCd;
 	uint32 _totalResFiles;
 	uint32 _totalClusters;

@@ -29,11 +29,7 @@
 
 namespace Sword2 {
 
-void Sword2Engine::initEventSystem(void) {
-	memset(_eventList, 0, sizeof(_eventList));
-}
-
-uint32 Sword2Engine::countEvents(void) {
+uint32 Logic::countEvents(void) {
 	uint32 count = 0;
 
 	for (int i = 0; i < MAX_events; i++) {
@@ -44,7 +40,7 @@ uint32 Sword2Engine::countEvents(void) {
 	return count;
 }
 
-void Sword2Engine::sendEvent(uint32 id, uint32 interact_id) {
+void Logic::sendEvent(uint32 id, uint32 interact_id) {
 	int i;
 
 	for (i = 0; i < MAX_events; i++) {
@@ -66,12 +62,12 @@ void Sword2Engine::sendEvent(uint32 id, uint32 interact_id) {
 	_eventList[i].interact_id = interact_id;
 }
 
-void Sword2Engine::setPlayerActionEvent(uint32 id, uint32 interact_id) {
+void Logic::setPlayerActionEvent(uint32 id, uint32 interact_id) {
 	// Full script id of action script number 2
 	sendEvent(id, (interact_id << 16) | 2);
 }
 
-bool Sword2Engine::checkEventWaiting(void) {
+bool Logic::checkEventWaiting(void) {
 	for (int i = 0; i < MAX_events; i++) {
 		if (_eventList[i].id == ID)
 			return true;
@@ -80,7 +76,7 @@ bool Sword2Engine::checkEventWaiting(void) {
 	return false;
 }
 
-void Sword2Engine::startEvent(void) {
+void Logic::startEvent(void) {
 	// call this from stuff like fnWalk
 	// you must follow with a return IR_TERMINATE
 
@@ -99,7 +95,7 @@ void Sword2Engine::startEvent(void) {
 	error("Start_event can't find event for id %d", ID);
 }
 
-void Sword2Engine::clearEvent(uint32 id) {
+void Logic::clearEvent(uint32 id) {
 	for (int i = 0; i < MAX_events; i++) {
 		if (_eventList[i].id == id) {
 			// clear the slot
@@ -109,7 +105,7 @@ void Sword2Engine::clearEvent(uint32 id) {
 	}
 }
 
-void Sword2Engine::killAllIdsEvents(uint32 id) {
+void Logic::killAllIdsEvents(uint32 id) {
 	for (int i = 0; i < MAX_events; i++) {
 		if (_eventList[i].id == id) {
 			// clear the slot
@@ -126,7 +122,7 @@ int32 Logic::fnRequestSpeech(int32 *params) {
 	//		  servicing
 
 	// Full script id to interact with - megas run their own 7th script
-	g_sword2->sendEvent(params[0], (params[0] << 16) | 6);
+	sendEvent(params[0], (params[0] << 16) | 6);
 	return IR_CONT;
 }
 
@@ -140,7 +136,7 @@ int32 Logic::fnSetPlayerActionEvent(int32 *params) {
 
 	// params:	0 id to interact with
 
-	g_sword2->setPlayerActionEvent(CUR_PLAYER_ID, params[0]);
+	setPlayerActionEvent(CUR_PLAYER_ID, params[0]);
 	return IR_CONT;
 }
 
@@ -151,7 +147,7 @@ int32 Logic::fnSendEvent(int32 *params) {
 	// params:	0 id to receive event
 	//		1 script to run
 
-	g_sword2->sendEvent(params[0], params[1]);
+	sendEvent(params[0], params[1]);
 	return IR_CONT;
 }
 
@@ -160,7 +156,7 @@ int32 Logic::fnCheckEventWaiting(int32 *params) {
 
 	// params:	none
 
-	if (g_sword2->checkEventWaiting())
+	if (checkEventWaiting())
 		RESULT = 1;
 	else
 		RESULT = 0;
@@ -174,10 +170,10 @@ int32 Logic::fnCheckEventWaiting(int32 *params) {
 int32 Logic::fnCheckForEvent(int32 *params) {
 	// params:	none
 
-	if (!g_sword2->checkEventWaiting())
+	if (!checkEventWaiting())
 		return IR_CONT;
 
-	g_sword2->startEvent();
+	startEvent();
 	return IR_TERMINATE;
 }
 
@@ -194,12 +190,12 @@ int32 Logic::fnPauseForEvent(int32 *params) {
 
 	// first, check for an event
 
-	if (g_sword2->checkEventWaiting()) {
+	if (checkEventWaiting()) {
 		// reset the 'looping' flag
 		ob_logic->looping = 0;
 
 		// start the event - run 3rd script of target object on level 1
-		g_sword2->startEvent();
+		startEvent();
 		return IR_TERMINATE;
 	}
 
@@ -231,14 +227,14 @@ int32 Logic::fnPauseForEvent(int32 *params) {
 int32 Logic::fnClearEvent(int32 *params) {
 	// params:	none
 
-	g_sword2->clearEvent(ID);
+	clearEvent(ID);
 	return IR_CONT;
 }
 
 int32 Logic::fnStartEvent(int32 *params) {
 	// params:	none
 
-	g_sword2->startEvent();
+	startEvent();
 	return IR_TERMINATE;
 }
 

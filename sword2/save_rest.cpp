@@ -560,9 +560,9 @@ int32 Logic::fnPassPlayerSaveData(int32 *params) {
 
 	// copy from player object to savegame header
 
-	memcpy(&g_sword2->g_header.logic, (uint8 *) params[0], sizeof(Object_logic));
-	memcpy(&g_sword2->g_header.graphic, (uint8 *) params[1], sizeof(Object_graphic));
-	memcpy(&g_sword2->g_header.mega, (uint8 *) params[2], sizeof(Object_mega));
+	memcpy(&_vm->g_header.logic, (uint8 *) params[0], sizeof(Object_logic));
+	memcpy(&_vm->g_header.graphic, (uint8 *) params[1], sizeof(Object_graphic));
+	memcpy(&_vm->g_header.mega, (uint8 *) params[2], sizeof(Object_mega));
 
 	// makes no odds
 	return IR_CONT;
@@ -584,9 +584,9 @@ int32 Logic::fnGetPlayerSaveData(int32 *params) {
 
 	// copy from savegame header to player object
 
-	memcpy((uint8 *) ob_logic, &g_sword2->g_header.logic, sizeof(Object_logic));
-	memcpy((uint8 *) ob_graphic, &g_sword2->g_header.graphic, sizeof(Object_graphic));
-	memcpy((uint8 *) ob_mega, &g_sword2->g_header.mega, sizeof(Object_mega));
+	memcpy((uint8 *) ob_logic, &_vm->g_header.logic, sizeof(Object_logic));
+	memcpy((uint8 *) ob_graphic, &_vm->g_header.graphic, sizeof(Object_graphic));
+	memcpy((uint8 *) ob_mega, &_vm->g_header.mega, sizeof(Object_mega));
 
  	// any walk-data must be cleared - the player will be set to stand if
 	// he was walking when saved

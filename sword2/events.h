@@ -24,11 +24,6 @@
 
 namespace Sword2 {
 
-struct _event_unit {
-	uint32 id;
-	uint32 interact_id;
-};
-
 } // End of namespace Sword2
 
 #endif

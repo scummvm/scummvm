@@ -85,7 +85,9 @@ struct _cd_inf {
 	#pragma END_PACK_STRUCTS
 #endif
 
-ResourceManager::ResourceManager(void) {
+ResourceManager::ResourceManager(Sword2Engine *vm) {
+	_vm = vm;
+
 	// We read in the resource info which tells us the names of the
 	// resource cluster files ultimately, although there might be groups
 	// within the clusters at this point it makes no difference. We only
@@ -981,7 +983,7 @@ void ResourceManager::cacheNewCluster(uint32 newCluster) {
 
 	g_logic->fnStopMusic(NULL);
 
-	g_sword2->clearFxQueue();	// stops all fx & clears the queue (James22july97)
+	_vm->clearFxQueue();	// stops all fx & clears the queue (James22july97)
 	getCd(_cdTab[newCluster] & 3);
 
 	// Kick out old cached cluster and load the new one.
@@ -1027,19 +1029,19 @@ void ResourceManager::cacheNewCluster(uint32 newCluster) {
 
 	g_display->clearScene();
 
-	g_sword2->setMouse(0);
-	g_sword2->setLuggage(0);
+	_vm->setMouse(0);
+	_vm->setLuggage(0);
 
 	uint8 *bgfile;
 	bgfile = openResource(2950);	// open the screen resource
 	g_display->initialiseBackgroundLayer(NULL);
 	g_display->initialiseBackgroundLayer(NULL);
-	g_display->initialiseBackgroundLayer(g_sword2->fetchBackgroundLayer(bgfile));
+	g_display->initialiseBackgroundLayer(_vm->fetchBackgroundLayer(bgfile));
 	g_display->initialiseBackgroundLayer(NULL);
 	g_display->initialiseBackgroundLayer(NULL);
-	g_display->setPalette(0, 256, g_sword2->fetchPalette(bgfile), RDPAL_FADE);
+	g_display->setPalette(0, 256, _vm->fetchPalette(bgfile), RDPAL_FADE);
 
-	g_display->renderParallax(g_sword2->fetchBackgroundLayer(bgfile), 2);
+	g_display->renderParallax(_vm->fetchBackgroundLayer(bgfile), 2);
 	closeResource(2950);		// release the screen resource
 
 	// Git rid of read-only status, if it is set.
@@ -1061,7 +1063,7 @@ void ResourceManager::cacheNewCluster(uint32 newCluster) {
 	uint8 *loadingBar;
 	_cdtEntry *cdt;
 
-	text_spr = fontRenderer.makeTextSprite(g_sword2->fetchTextLine(openResource(2283), 8) + 2, 640, 187, g_sword2->_speechFontId);
+	text_spr = fontRenderer->makeTextSprite(_vm->fetchTextLine(openResource(2283), 8) + 2, 640, 187, _vm->_speechFontId);
 
 	frame = (_frameHeader*) text_spr->ad;
 
@@ -1080,8 +1082,8 @@ void ResourceManager::cacheNewCluster(uint32 newCluster) {
 
 	loadingBar = openResource(2951);
 
-	frame = g_sword2->fetchFrameHeader(loadingBar, 0);
-	cdt   = g_sword2->fetchCdtEntry(loadingBar, 0);
+	frame = _vm->fetchFrameHeader(loadingBar, 0);
+	cdt   = _vm->fetchCdtEntry(loadingBar, 0);
 
 	barSprite.x = cdt->x;
 	barSprite.y = cdt->y;
@@ -1097,7 +1099,7 @@ void ResourceManager::cacheNewCluster(uint32 newCluster) {
 	closeResource(2951);
 
 	loadingBar = openResource(2951);
-	frame = g_sword2->fetchFrameHeader(loadingBar, 0);
+	frame = _vm->fetchFrameHeader(loadingBar, 0);
 	barSprite.data = (uint8 *) (frame + 1);
 	closeResource(2951);
 
@@ -1138,11 +1140,11 @@ void ResourceManager::cacheNewCluster(uint32 newCluster) {
 			step = 0;
 			// open the screen resource
 			bgfile = openResource(2950);
-			g_display->renderParallax(g_sword2->fetchBackgroundLayer(bgfile), 2);
+			g_display->renderParallax(_vm->fetchBackgroundLayer(bgfile), 2);
 			// release the screen resource
 			closeResource(2950);
 			loadingBar = openResource(2951);
-			frame = g_sword2->fetchFrameHeader(loadingBar, fr);
+			frame = _vm->fetchFrameHeader(loadingBar, fr);
 			barSprite.data = (uint8 *) (frame + 1);
 			closeResource(2951);
 			g_display->drawSprite(&barSprite);
@@ -1222,7 +1224,7 @@ void ResourceManager::getCd(int cd) {
 
 	// don't ask for CD's in the playable demo downloaded from our
 	// web-site!
-	if (g_sword2->_features & GF_DEMO)
+	if (_vm->_features & GF_DEMO)
 		return;
 
 #ifdef _PCGUIDE
@@ -1285,8 +1287,8 @@ void ResourceManager::getCd(int cd) {
 	g_logic->fnStopMusic(NULL);
 
 	textRes = openResource(2283);
-	g_sword2->displayMsg(g_sword2->fetchTextLine(textRes, 5 + cd) + 2, 0);
-	text_spr = fontRenderer.makeTextSprite(g_sword2->fetchTextLine(textRes, 5 + cd) + 2, 640, 187, g_sword2->_speechFontId);
+	_vm->displayMsg(_vm->fetchTextLine(textRes, 5 + cd) + 2, 0);
+	text_spr = fontRenderer->makeTextSprite(_vm->fetchTextLine(textRes, 5 + cd) + 2, 640, 187, _vm->_speechFontId);
 
 	frame = (_frameHeader*) text_spr->ad;
 
@@ -1338,7 +1340,7 @@ void ResourceManager::getCd(int cd) {
 	} while (!done);
 
 	memory->freeMemory(text_spr);
-	g_sword2->removeMsg();
+	_vm->removeMsg();
 }
 
 } // End of namespace Sword2

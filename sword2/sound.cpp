@@ -168,10 +168,10 @@ int32 Logic::fnPlayFx(int32 *params) {
 	_standardHeader *header;
 #endif
 
-	if (g_sword2->_wantSfxDebug) {
+	if (_vm->_wantSfxDebug) {
 		char type[10];
 
-		switch (params[1]) {	// 'type'
+		switch (params[1]) {
 		case FX_SPOT:
 			strcpy(type, "SPOT");
 			break;
@@ -185,34 +185,34 @@ int32 Logic::fnPlayFx(int32 *params) {
 			strcpy(type, "INVALID");
 		}
 
-		debug(0, "SFX (sample=\"%s\", vol=%d, pan=%d, delay=%d, type=%s)", g_sword2->fetchObjectName(params[0]), params[3], params[4], params[2], type);
+		debug(0, "SFX (sample=\"%s\", vol=%d, pan=%d, delay=%d, type=%s)", _vm->fetchObjectName(params[0]), params[3], params[4], params[2], type);
 	}
 
-	while (j < FXQ_LENGTH && g_sword2->_fxQueue[j].resource != 0)
+	while (j < FXQ_LENGTH && _vm->_fxQueue[j].resource != 0)
 		j++;
 
 	if (j == FXQ_LENGTH)
 		return IR_CONT;
 
-	g_sword2->_fxQueue[j].resource	= params[0];	// wav resource id
-	g_sword2->_fxQueue[j].type = params[1];	// FX_SPOT, FX_LOOP or FX_RANDOM
+	_vm->_fxQueue[j].resource = params[0];	// wav resource id
+	_vm->_fxQueue[j].type = params[1];	// FX_SPOT, FX_LOOP or FX_RANDOM
 
-	if (g_sword2->_fxQueue[j].type == FX_RANDOM) {
+	if (_vm->_fxQueue[j].type == FX_RANDOM) {
 		// 'delay' param is the intended average no. seconds between
 		// playing this effect
-		g_sword2->_fxQueue[j].delay = params[2] * 12;
+		_vm->_fxQueue[j].delay = params[2] * 12;
 	} else {
 		// FX_SPOT or FX_LOOP:
 		//  'delay' is no. frames to wait before playing
-		g_sword2->_fxQueue[j].delay = params[2];
+		_vm->_fxQueue[j].delay = params[2];
 	}
 
-	g_sword2->_fxQueue[j].volume = params[3];	// 0..16
-	g_sword2->_fxQueue[j].pan = params[4];		// -16..16
+	_vm->_fxQueue[j].volume = params[3];	// 0..16
+	_vm->_fxQueue[j].pan = params[4];	// -16..16
 
-	if (g_sword2->_fxQueue[j].type == FX_SPOT) {
+	if (_vm->_fxQueue[j].type == FX_SPOT) {
 		// "pre-load" the sample; this gets it into memory
-		data = res_man->openResource(g_sword2->_fxQueue[j].resource);
+		data = res_man->openResource(_vm->_fxQueue[j].resource);
 
 #ifdef _SWORD2_DEBUG
 		header = (_standardHeader*) data;
@@ -221,14 +221,14 @@ int32 Logic::fnPlayFx(int32 *params) {
 #endif
 
 		// but then releases it to "age" out if the space is needed
-		res_man->closeResource(g_sword2->_fxQueue[j].resource);
+		res_man->closeResource(_vm->_fxQueue[j].resource);
 	} else {
 		// random & looped fx
 
 		id = (uint32) j + 1;	// because 0 is not a valid id
 
 		// load in the sample
-		data = res_man->openResource(g_sword2->_fxQueue[j].resource);
+		data = res_man->openResource(_vm->_fxQueue[j].resource);
 
 #ifdef _SWORD2_DEBUG
 		header = (_standardHeader*)data;
@@ -245,13 +245,13 @@ int32 Logic::fnPlayFx(int32 *params) {
 			debug(5, "SFX ERROR: openFx() returned %.8x", rv);
 
 		// release the sample
-		res_man->closeResource(g_sword2->_fxQueue[j].resource);
+		res_man->closeResource(_vm->_fxQueue[j].resource);
 	}
 
-	if (g_sword2->_fxQueue[j].type == FX_LOOP) {
+	if (_vm->_fxQueue[j].type == FX_LOOP) {
 		// play now, rather than in Process_fx_queue where it was
 		// getting played again & again!
-		g_sword2->triggerFx(j);
+		_vm->triggerFx(j);
 	}
 
 	// in case we want to call fnStopFx() later, to kill this fx
@@ -307,7 +307,7 @@ int32 Logic::fnStopFx(int32 *params) {
 	uint32 id;
 	uint32 rv;
 
-	if (g_sword2->_fxQueue[j].type == FX_RANDOM || g_sword2->_fxQueue[j].type == FX_LOOP) {
+	if (_vm->_fxQueue[j].type == FX_RANDOM || _vm->_fxQueue[j].type == FX_LOOP) {
 		id = (uint32) j + 1;		// because 0 is not a valid id
 
 		// stop fx & remove sample from sound memory
@@ -318,7 +318,7 @@ int32 Logic::fnStopFx(int32 *params) {
 	}
 
 	// remove from queue
-	g_sword2->_fxQueue[j].resource = 0;
+	_vm->_fxQueue[j].resource = 0;
 
 	return IR_CONT;
 }
@@ -330,7 +330,7 @@ int32 Logic::fnStopAllFx(int32 *params) {
 
 	// params:	none
 
-	g_sword2->clearFxQueue();
+	_vm->clearFxQueue();
 	return IR_CONT;
 }
 
@@ -355,18 +355,18 @@ int32 Logic::fnPlayMusic(int32 *params) {
 
 		// keep a note of the id, for restarting after an
 		// interruption to gameplay
-		g_sword2->_loopingMusicId = params[0];
+		_vm->_loopingMusicId = params[0];
 	} else {
  		loopFlag = false;
 
 		// don't need to restart this tune after control panel or
 		// restore
-		g_sword2->_loopingMusicId = 0;
+		_vm->_loopingMusicId = 0;
 	}
 
 	// add the appropriate file extension & play it
 
-	if (g_sword2->_features & GF_DEMO) {
+	if (_vm->_features & GF_DEMO) {
 		// The demo I found didn't come with any music file, but you
 		// could use the music from the first CD of the complete game,
 		// I suppose...
@@ -394,7 +394,7 @@ int32 Logic::fnPlayMusic(int32 *params) {
 int32 Logic::fnStopMusic(int32 *params) {
 	// params:	none
 
-	g_sword2->_loopingMusicId = 0;		// clear the 'looping' flag
+	_vm->_loopingMusicId = 0;		// clear the 'looping' flag
 	g_sound->stopMusic();
 	return IR_CONT;
 }
