@@ -39,7 +39,7 @@ void ScummEngine_v90he::allocateArrays() {
 // spriteInfoGet functions
 //
 int ScummEngine_v90he::findSpriteWithClassOf(int x, int y, int spriteGroupId, int d, int num, int *args) {
-	int classId;
+	int code, classId;
 	debug(1, "findSprite: x %d, y %d, spriteGroup %d, d %d, num %d", x, y, spriteGroupId, d, num);
 
 	for (int i = 0; i < _numSpritesToProcess; ++i) {
@@ -51,10 +51,16 @@ int ScummEngine_v90he::findSpriteWithClassOf(int x, int y, int spriteGroupId, in
 			continue;
 
 		for (int j = 0; j < num; j++) {
-			classId = args[j] & 0x7F;
+			code = classId = args[j];
+			classId &= 0x7F;
 			checkRange(32, 1, classId, "class %d out of range in statement");
-			if (!(spi->class_flags & (1 << classId)))
-				continue;
+			if (code & 0x80) {
+				if ((spi->class_flags & (1 << classId)))
+					return 0;
+			} else {
+				if (!(spi->class_flags & (1 << classId)))
+					return 0;
+			}
 		}
 
 		if (d) {
@@ -146,7 +152,7 @@ int ScummEngine_v90he::spriteInfoGet_classFlags(int spriteId, int classId) {
 }
 
 int ScummEngine_v90he::spriteInfoGet_classFlagsAnd(int spriteId, int num, int *args) {
-	int classId;
+	int code, classId;
 
 	checkRange(_varNumSprites, 1, spriteId, "Invalid sprite %d");
 
@@ -154,10 +160,16 @@ int ScummEngine_v90he::spriteInfoGet_classFlagsAnd(int spriteId, int num, int *a
 		return 1;
 
 	for (int i = 0; i < num; i++) {
-		classId = args[i] & 0x7F;
+		code = classId = args[i];
+		classId &= 0x7F;
 		checkRange(32, 1, classId, "class %d out of range in statement");
-		if (!(_spriteTable[spriteId].class_flags & (1 << classId)))
-			return 0;
+		if (code & 0x80) {
+			if ((_spriteTable[spriteId].class_flags & (1 << classId)))
+				return 0;
+		} else {
+			if (!(_spriteTable[spriteId].class_flags & (1 << classId)))
+				return 0;
+		}
 	}
 
 	return 1;
