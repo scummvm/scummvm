@@ -380,7 +380,7 @@ void Scumm::parseCommandLine(int argc, char **argv) {
 					_fullScreen = true;
 					break;
 				case 'v':
-					printf("ScummVM " SCUMMVM_VERSION "\nBuilt on " __TIMESTAMP__ "\n");
+					printf("ScummVM " SCUMMVM_VERSION "\nBuilt on " __DATE__ " " __TIME__ "\n");
 					exit(1);
 				default:
 ShowHelpAndExit:;
