@@ -488,7 +488,7 @@ Credits:
         Lionel Ulmer       - X11/Linux port
         Nicolas Bacca      - PocketPC/WinCE port
         Mutwin Kraus       - Macintosh port
-        Max Horn           - Macintosh port
+        Max Horn           - Macintosh port, many bug fixes
         Marcus Comstedt    - Dreamcast port
         Ruediger Hanke     - MorphOS port
 
