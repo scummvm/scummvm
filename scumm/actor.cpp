@@ -308,7 +308,7 @@ int Actor::actorWalkStep()
 	direction = updateActorDirection(true);
 	if (!(moving & MF_IN_LEG) || facing != direction) {
 		if (walkFrame != frame || facing != direction) {
-			startWalkAnim(walkFrame == frame ? 2 : 1, direction);
+			startWalkAnim(1, direction);
 		}
 		moving |= MF_IN_LEG;
 	}
