@@ -27,12 +27,6 @@
 #	include "palm.h"
 #endif
 
-#ifdef _MSC_VER
-// Disable "unknown pragma" warning in MSVC 6
-#pragma warning(disable : 4068)
-#endif
-
-
 /*
  * TODO list
  * - get a nicer font which contains diacrits (ŠšŸ§Žˆ etc.)

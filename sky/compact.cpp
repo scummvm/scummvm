@@ -20,15 +20,7 @@
  */
 
 #include "stdafx.h"
-#ifdef _MSC_VER
-// disable warning "truncation of constant value". Some signed
-// fields of the structs are saved as unsigned in the .h files
-#pragma warning(disable : 4305)
-#pragma warning(disable : 4309) 
-#endif
-
 #include "sky/compact.h"
-
 #include "sky/compacts/0compact.h"
 #include "sky/compacts/1compact.h"
 #include "sky/compacts/29comp.h"
@@ -43,11 +35,6 @@
 #include "sky/compacts/linc_gen.h"
 #include "sky/compacts/lincmenu.h"
 #include "sky/compacts/z_compac.h"
-
-#ifdef _MSC_VER
-#pragma warning(default : 4305)
-#pragma warning(default : 4309) 
-#endif
 
 #define COMPACT_SIZE (sizeof(compactOffsets)/sizeof(uint32))
 #define EXTCOMPACT_SIZE (sizeof(extCompactOffsets)/sizeof(uint32))

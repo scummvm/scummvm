@@ -3,6 +3,18 @@ Microsoft Developer Studio Workspace File, Format Version 6.00
 
 ###############################################################################
 
+Project: "bs2"=.\bs2.dsp - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+}}}
+
+###############################################################################
+
 Project: "scumm"=.\scumm.dsp - Package Owner=<4>
 
 Package=<5>
@@ -31,6 +43,9 @@ Package=<4>
     End Project Dependency
     Begin Project Dependency
     Project_Dep_Name sky
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name bs2
     End Project Dependency
 }}}
 

@@ -26,11 +26,6 @@
 #include "common/file.h"
 #include "common/util.h"
 
-#ifdef _MSC_VER
-// Disable "unknown pragma" warning in MSVC 6
-#pragma warning(disable : 4068)
-#endif
-
 template<bool is16Bit, bool isUnsigned>
 static inline int16 readSample(const byte *ptr) {
 	uint16 sample = is16Bit ? READ_BE_UINT16(ptr) : (*ptr << 8);

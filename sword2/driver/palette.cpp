@@ -146,6 +146,7 @@
 
 #define WIN32_LEAN_AND_MEAN
 
+#include "stdafx.h"
 //#include <windows.h>
 //#include <windowsx.h>
 #include <stdio.h>
@@ -156,7 +157,6 @@
 #include "common/engine.h"
 #include "d_draw.h"
 #include "driver96.h"
-#include "stdafx.h"
 #include "../sword2.h"
 
 #define PALTABLESIZE 64*64*64

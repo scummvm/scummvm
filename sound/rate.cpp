@@ -176,12 +176,6 @@ the_end:
 	return (ST_SUCCESS);
 }
 
-
-#ifndef _MSC_VER
-#pragma mark -
-#endif
-
-
 LinearRateConverter::LinearRateConverter(st_rate_t inrate, st_rate_t outrate) {
 	st_rate_start(&effp, inrate, outrate);
 }

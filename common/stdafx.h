@@ -35,6 +35,10 @@
 
 #elif defined(WIN32)
 
+#pragma once
+#pragma warning( disable : 4068 ) // turn off "unknown pragma" warning
+#pragma warning( disable : 4244 ) // turn off "conversion type" warning
+#pragma warning( disable : 4390 ) // turn oof "empty statement" warning for BS2 code
 
 #if !defined(_WIN32_WCE)
 

@@ -36,11 +36,6 @@
 #include "gui/ListWidget.h"
 #include "common/config-file.h"
 
-#ifdef _MSC_VER
-// Disable "unknown pragma" warning in MSVC 6
-#pragma warning(disable : 4068)
-#endif
-
 #ifdef _WIN32_WCE
 #include "gapi_keys.h"
 extern bool _get_key_mapping;
