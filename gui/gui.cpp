@@ -335,36 +335,6 @@ const GuiWidget *Gui::widgetFromPos(int x, int y)
 	return NULL;
 }
 
-void Gui::drawChar(const char str, int xx, int yy)
-{
-	unsigned int buffer = 0, mask = 0, x, y;
-	byte *tmp;
-	int tempc = _color;
-	_color = _textcolor;
-
-	tmp = &guifont[0];
-	tmp += 224 + (str + 1) * 8;
-
-	byte *ptr = getBasePtr(xx, yy);
-	if (ptr == NULL)
-		return;
-
-	for (y = 0; y < 8; y++) {
-		for (x = 0; x < 8; x++) {
-			unsigned char color;
-			if ((mask >>= 1) == 0) {
-				buffer = *tmp++;
-				mask = 0x80;
-			}
-			color = ((buffer & mask) != 0);
-			if (color)
-				ptr[x] = _color;
-		}
-		ptr += _s->_realWidth;
-	}
-	_color = tempc;
-
-}
 void Gui::drawString(const char *str, int x, int y, int w, byte color, bool center)
 {
 	StringTab *st = &_s->string[5];
@@ -375,13 +345,8 @@ void Gui::drawString(const char *str, int x, int y, int w, byte color, bool cent
 	st->ypos = y;
 	st->right = x + w;
 
-	if (_s->_gameId) {						/* If a game is active.. */
-		_s->_messagePtr = (byte *)str;
-		_s->drawString(5);
-	} else {
-		for (uint letter = 0; letter < strlen(str); letter++)
-			drawChar(str[letter], st->xpos + (letter * 8), st->ypos);
-	}
+	_s->_messagePtr = (byte *)str;
+	_s->drawString(5);
 }
 
 void Gui::drawWidget(const GuiWidget *w)
