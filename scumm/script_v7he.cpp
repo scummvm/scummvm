@@ -807,7 +807,7 @@ void ScummEngine_v7he::o7_unknownEF() {
 
 	array = readVar(0);
 
-	if (len = -1) {
+	if (len == -1) {
 		len2 = resStrLen(getStringAddress(array2));
 		len = 0;
 	} else {
