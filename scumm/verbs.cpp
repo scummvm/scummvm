@@ -268,7 +268,7 @@ void ScummEngine::redrawVerbs() {
 	if (_version >= 7 || _cursor.state > 0)
 		verb = checkMouseOver(_mouse.x, _mouse.y);
 
-	for (i = _numVerbs-1; i >= 0; i--) {
+	for (i = 0; i < _numVerbs; i++) {
 		if (i == verb && _verbs[verb].hicolor)
 			drawVerb(i, 1);
 		else
