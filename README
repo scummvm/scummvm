@@ -671,6 +671,8 @@ Credits:
         Vincent Hamm         - Developer (retired)
         Jeremy Newman        - Webmaster
         Ludvig Strigeus      - Original ScummVM author, initial Simon support (retired)
+        Oliver Kiehl         - Lead BASS Developer
+        Joost Peters         - Lead BASS Developer
 
  Developers:
         Torbjorn Andersson   - Many different contributions
@@ -684,12 +686,10 @@ Credits:
         Ruediger Hanke       - MorphOS port
         Travis Howell        - Daily Win32 builds, Simon The Sorcerer work
         Felix Jakschitsch    - His hard work on Zak256
-        Oliver Kiehl         - Simon The Sorcerer work/Beneath a Steel Sky support
         Pawel Kolodziejski   - Added missing Dig/COMI SMUSH codecs, iMuse work
         Mutwin Kraus         - MacOS Carbon port (retired)
         Peter Moraliyski     - GP32 port
         Nicolas Noble        - Config file and ALSA support
-        Joost Peters         - Beneath a Steel Sky support
         Lionel Ulmer         - X11 backend
 
  Contributors:
