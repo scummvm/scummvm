@@ -1337,8 +1337,9 @@ void Cutaway::run(char *nextFilename) {
 			restorePersonData();
 
 			debug(0, "_logic->entryObj() = %i", _logic->entryObj());
-			if (_logic->entryObj() > 0)
+			if (_logic->entryObj() > 0) {
 				_initialRoom = _logic->objectData(_logic->entryObj())->room;
+			}
 			else {
 				// We're not returning to new room, so return to old Joe X,Y coords
 				debug(0, "[Cutaway::run] Moving joe to (%i, %i)", initialJoeX, initialJoeY);
@@ -1354,8 +1355,10 @@ void Cutaway::run(char *nextFilename) {
 				_logic->newRoom(_initialRoom);
 				_logic->display()->fullscreen(true);
 			}
-			_logic->joeX(0);
-			_logic->joeY(0);
+			else {
+				_logic->joeX(0);
+				_logic->joeY(0);
+			}
 		}
 
 		// XXX CUTJOEF=0;
