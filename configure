@@ -214,9 +214,6 @@ CheckNASM()
 	    mingw* | cygwin*)
 		NASMFLAGS="-f win32"
 	    ;;
-	    openbsd*)
-                NASMFLAGS="-f aoutb"
-            ;;
             *)
                 NASMFLAGS="-f elf"
             ;;
