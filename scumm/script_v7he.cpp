@@ -602,10 +602,9 @@ void ScummEngine_v7he::o7_quitPauseRestart() {
 
 	switch (subOp & 0xff) {
 	case 158:		// SO_RESTART
-		// FIXME: check
 		restart();
 		break;
-	case 160:		// SO_QUIT
+	case 160:
 		// FIXME: check
 		shutDown();
 		break;
@@ -616,7 +615,9 @@ void ScummEngine_v7he::o7_quitPauseRestart() {
 	case 253:
 		par1 = pop();
 		warning("stub: o7_quitPauseRestart subOpcode %d", subOp);
-	case 244:
+	case 244:		// SO_QUIT
+		shutDown();
+		break;
 	case 251:
 	case 252:
 		warning("stub: o7_quitPauseRestart subOpcode %d", subOp);
