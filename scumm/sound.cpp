@@ -37,6 +37,7 @@
 #include "sound/mp3.h"
 #include "sound/voc.h"
 #include "sound/vorbis.h"
+#include "sound/flac.h"
 
 
 namespace Scumm {
@@ -49,13 +50,31 @@ struct MP3OffsetTable {					/* Compressed Sound (.SO3) */
 };
 
 
-Sound::Sound(ScummEngine *parent) {
-	memset(this,0,sizeof(Sound));	// palmos
+Sound::Sound(ScummEngine *parent)
+	:
+	_vm(parent),
+	_soundQuePos(0),
+	_soundQue2Pos(0),
+	_sfxFile(0),
+	_offsetTable(0),
+	_numSoundEffects(0),
+	_soundMode(kVOCMode),
+	_talk_sound_a1(0),
+	_talk_sound_a2(0),
+	_talk_sound_b1(0),
+	_talk_sound_b2(0),
+	_talk_sound_mode(0),
+	_talk_sound_frame(0),
+	_mouthSyncMode(false),
+	_endOfMouthSync(false),
+	_curSoundPos(0),
+	_currentCDSound(0),
+	_soundsPaused(false),
+	_sfxMode(0) {
 	
-	_vm = parent;
-	_currentCDSound = 0;
-
-	_sfxFile = 0;
+	memset(_soundQue, 0, sizeof(_soundQue));
+	memset(_soundQue2, 0, sizeof(_soundQue2));
+	memset(_mouthSyncTimes, 0, sizeof(_mouthSyncTimes));
 }
 
 Sound::~Sound() {
@@ -553,11 +572,11 @@ void Sound::startTalkSound(uint32 offset, uint32 b, int mode, PlayingSoundHandle
 			num = (b - 8) >> 1;
 		}
 
-		if (offset_table != NULL) {
+		if (_offsetTable != NULL) {
 			MP3OffsetTable *result = NULL, key;
 	
 			key.org_offset = offset;
-			result = (MP3OffsetTable *)bsearch(&key, offset_table, num_sound_effects,
+			result = (MP3OffsetTable *)bsearch(&key, _offsetTable, _numSoundEffects,
 													sizeof(MP3OffsetTable), compareMP3OffsetTable);
 
 			if (result == NULL) {
@@ -832,19 +851,28 @@ void Sound::pauseSounds(bool pause) {
 
 void Sound::startSfxSound(File *file, int file_size, PlayingSoundHandle *handle, int id) {
 
-	AudioStream *input = 0;
+	AudioStream *input = NULL;
 	
-	if (file_size > 0) {
-		if (_vorbis_mode) {
-#ifdef USE_VORBIS
-			input = makeVorbisStream(file, file_size);
-#endif
-		} else {
+	switch (_soundMode) {
+	case kMP3Mode:
 #ifdef USE_MAD
-			input = makeMP3Stream(file, file_size);
+		assert(file_size > 0);
+		input = makeMP3Stream(file, file_size);
 #endif
-		}
-	} else {
+		break;
+	case kVorbisMode:
+#ifdef USE_VORBIS
+		assert(file_size > 0);
+		input = makeVorbisStream(file, file_size);
+#endif
+		break;
+	case kFlacMode:
+#ifdef USE_FLAC
+		assert(file_size > 0);
+		input = makeFlacStream(file, file_size);
+#endif
+		break;
+	default:
 		input = makeVOCStream(_sfxFile);
 	}
 	
@@ -864,32 +892,51 @@ void Sound::startSfxSound(File *file, int file_size, PlayingSoundHandle *handle,
 File *Sound::openSfxFile() {
 	char buf[256];
 	File *file = new File();
+	_offsetTable = NULL;
+	
+	struct SoundFileExtensions {
+		const char *ext;
+		SoundMode mode;
+	};
+	
+	const SoundFileExtensions extensions[] = {
+#ifdef USE_FLAC
+		{ "sof", kFlacMode },
+#endif
+#ifdef USE_MAD
+		{ "so3", kMP3Mode },
+#endif
+#ifdef USE_VORBIS
+		{ "sog", kVorbisMode },
+#endif
+		{ "sou", kVOCMode },
+		{ 0, kVOCMode }
+	};
 
 	/* Try opening the file <_gameName>.sou first, eg tentacle.sou.
 	 * That way, you can keep .sou files for multiple games in the
 	 * same directory */
-	offset_table = NULL;
-
-#ifdef USE_MAD
-	sprintf(buf, "%s.so3", _vm->getGameName());
-	if (!file->open(buf, _vm->getGameDataPath())) {
-		file->open("monster.so3", _vm->getGameDataPath());
+	
+	int i, j;
+	const char *basename[3] = { 0, 0, 0 };
+	basename[0] = _vm->getGameName();
+	basename[1] = "monster";
+	
+	for (j = 0; basename[j] && !file->isOpen(); ++j) {
+		for (i = 0; extensions[i].ext; ++i) {
+			sprintf(buf, "%s.%s", basename[j], extensions[i].ext);
+			if (file->open(buf)) {
+				_soundMode = extensions[i].mode;
+				break;
+			}
+		}
 	}
-	if (file->isOpen())
-		_vorbis_mode = false;
-#endif
 
-#ifdef USE_VORBIS
 	if (!file->isOpen()) {
-		sprintf(buf, "%s.sog", _vm->getGameName());
-		if (!file->open(buf, _vm->getGameDataPath()))
-			file->open("monster.sog", _vm->getGameDataPath());
-		if (file->isOpen())
-			_vorbis_mode = true;
-	}
-#endif
-
-	if (file->isOpen()) {
+		sprintf(buf, "%s.tlk", _vm->getGameName());
+		file->open(buf, _vm->getGameDataPath(), File::kFileReadMode, 0x69);
+		_soundMode = kVOCMode;
+	} else if (_soundMode != kVOCMode) {
 		/* Now load the 'offset' index in memory to be able to find the MP3 data
 
 		   The format of the .SO3 file is easy :
@@ -907,31 +954,21 @@ File *Sound::openSfxFile() {
 		int size, compressed_offset;
 		MP3OffsetTable *cur;
 		compressed_offset = file->readUint32BE();
-		offset_table = (MP3OffsetTable *) malloc(compressed_offset);
-		num_sound_effects = compressed_offset / 16;
+		_offsetTable = (MP3OffsetTable *) malloc(compressed_offset);
+		_numSoundEffects = compressed_offset / 16;
 
 		size = compressed_offset;
-		cur = offset_table;
+		cur = _offsetTable;
 		while (size > 0) {
-			cur[0].org_offset = file->readUint32BE();
-			cur[0].new_offset = file->readUint32BE() + compressed_offset + 4; /* The + 4 is to take into accound the 'size' field */
-			cur[0].num_tags = file->readUint32BE();
-			cur[0].compressed_size = file->readUint32BE();
+			cur->org_offset = file->readUint32BE();
+			cur->new_offset = file->readUint32BE() + compressed_offset + 4; /* The + 4 is to take into accound the 'size' field */
+			cur->num_tags = file->readUint32BE();
+			cur->compressed_size = file->readUint32BE();
 			size -= 4 * 4;
 			cur++;
 		}
-		return file;
 	}
 
-	sprintf(buf, "%s.sou", _vm->getGameName());
-	if (!file->open(buf, _vm->getGameDataPath())) {
-		file->open("monster.sou", _vm->getGameDataPath());
-	}
-
-	if (!file->isOpen()) {
-		sprintf(buf, "%s.tlk", _vm->getGameName());
-		file->open(buf, _vm->getGameDataPath(), File::kFileReadMode, 0x69);
-	}
 	return file;
 }
 
