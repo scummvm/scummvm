@@ -343,7 +343,7 @@ static inline int clamped_add_16(int a, int b) {
 }
 
 static int16 * mix_signed_mono_8(int16 * data, uint * len_ptr, byte ** s_ptr, uint32 * fp_pos_ptr,
-								int fp_speed, const int16 * vol_tab, byte * s_end) {
+								int fp_speed, const int16 * vol_tab, byte * s_end, bool reverse_stereo) {
 	uint32 fp_pos = *fp_pos_ptr;
 	byte *s = *s_ptr;
 	uint len = *len_ptr;
@@ -382,7 +382,7 @@ static int16 * mix_signed_mono_8(int16 * data, uint * len_ptr, byte ** s_ptr, ui
 }
 
 static int16 * mix_unsigned_mono_8(int16 * data, uint * len_ptr, byte ** s_ptr, uint32 * fp_pos_ptr,
-											int fp_speed, const int16 * vol_tab, byte * s_end) {
+											int fp_speed, const int16 * vol_tab, byte * s_end, bool reverse_stereo) {
 	uint32 fp_pos = *fp_pos_ptr;
 	byte *s = *s_ptr;
 	uint len = *len_ptr;
@@ -421,13 +421,13 @@ static int16 * mix_unsigned_mono_8(int16 * data, uint * len_ptr, byte ** s_ptr, 
 }
 
 static int16 * mix_signed_stereo_8(int16 * data, uint * len_ptr, byte ** s_ptr, uint32 * fp_pos_ptr,
-										int fp_speed, const int16 * vol_tab, byte *s_end) {
+										int fp_speed, const int16 * vol_tab, byte *s_end, bool reverse_stereo) {
 	warning("Mixing stereo signed 8 bit is not supported yet ");
 
 	return data;
 }
 static int16 * mix_unsigned_stereo_8(int16 * data, uint * len_ptr, byte ** s_ptr, uint32 * fp_pos_ptr,
-										int fp_speed, const int16 * vol_tab, byte * s_end) {
+										int fp_speed, const int16 * vol_tab, byte * s_end, bool reverse_stereo) {
 	uint32 fp_pos = *fp_pos_ptr;
 	byte *s = *s_ptr;
 	uint len = *len_ptr;
@@ -438,10 +438,17 @@ static int16 * mix_unsigned_stereo_8(int16 * data, uint * len_ptr, byte ** s_ptr
 
 	do {
 		do {
-			*data = clamped_add_16(*data, left.interpolate(fp_pos));
-			data++;
-			*data = clamped_add_16(*data, right.interpolate(fp_pos));
-			data++;
+			if (reverse_stereo == false) {
+				*data = clamped_add_16(*data, left.interpolate(fp_pos));
+				data++;
+				*data = clamped_add_16(*data, right.interpolate(fp_pos));
+				data++;
+			} else {
+				*data = clamped_add_16(*data, right.interpolate(fp_pos));
+				data++;
+				*data = clamped_add_16(*data, left.interpolate(fp_pos));
+				data++;
+			}
 
 			fp_pos += fp_speed;
 			inc = (fp_pos >> 16) << 1;
@@ -467,7 +474,7 @@ static int16 * mix_unsigned_stereo_8(int16 * data, uint * len_ptr, byte ** s_ptr
 	return data;
 }
 static int16 * mix_signed_mono_16(int16 * data, uint * len_ptr, byte ** s_ptr, uint32 * fp_pos_ptr,
-										 int fp_speed, const int16 * vol_tab, byte * s_end) {
+										 int fp_speed, const int16 * vol_tab, byte * s_end, bool reverse_stereo) {
 	uint32 fp_pos = *fp_pos_ptr;
 	unsigned char volume = ((int)vol_tab[1]) / 8;
 	byte *s = *s_ptr;
@@ -492,13 +499,13 @@ static int16 * mix_signed_mono_16(int16 * data, uint * len_ptr, byte ** s_ptr, u
 	return data;
 }
 static int16 *mix_unsigned_mono_16(int16 *data, uint * len_ptr, byte ** s_ptr, uint32 * fp_pos_ptr,
-										 int fp_speed, const int16 * vol_tab, byte * s_end) {
+										 int fp_speed, const int16 * vol_tab, byte * s_end, bool reverse_stereo) {
 	warning("Mixing mono unsigned 16 bit is not supported yet ");
 
 	return data;
 }
 static int16 *mix_signed_stereo_16(int16 * data, uint * len_ptr, byte ** s_ptr, uint32 * fp_pos_ptr,
-										 int fp_speed, const int16 * vol_tab, byte * s_end) {
+										 int fp_speed, const int16 * vol_tab, byte * s_end, bool reverse_stereo) {
 	uint32 fp_pos = *fp_pos_ptr;
 	unsigned char volume = ((int)vol_tab[1]) / 8;
 	byte *s = *s_ptr;
@@ -506,11 +513,17 @@ static int16 *mix_signed_stereo_16(int16 * data, uint * len_ptr, byte ** s_ptr, 
 	do {
 		fp_pos += fp_speed;
 
-		*data = clamped_add_16(*data, (((int16)(*(s) << 8) | *(s + 1)) * volume) / 32);
-		data++;
-		*data = clamped_add_16(*data, (((int16)(*(s + 2) << 8) | *(s + 3)) * volume) / 32);
-		data++;
-
+		if (reverse_stereo == false) {
+			*data = clamped_add_16(*data, (((int16)(*(s) << 8) | *(s + 1)) * volume) / 32);
+			data++;
+			*data = clamped_add_16(*data, (((int16)(*(s + 2) << 8) | *(s + 3)) * volume) / 32);
+			data++;
+		} else {
+			*data = clamped_add_16(*data, (((int16)(*(s + 2) << 8) | *(s + 3)) * volume) / 32);
+			data++;
+			*data = clamped_add_16(*data, (((int16)(*(s) << 8) | *(s + 1)) * volume) / 32);
+			data++;
+		}
 		s += (fp_pos >> 16) << 2;
 		fp_pos &= 0x0000FFFF;
 	} while ((--len) && (s < s_end));
@@ -522,7 +535,7 @@ static int16 *mix_signed_stereo_16(int16 * data, uint * len_ptr, byte ** s_ptr, 
 	return data;
 }
 static int16 * mix_unsigned_stereo_16(int16 * data, uint * len_ptr, byte ** s_ptr, uint32 * fp_pos_ptr,
-											 int fp_speed, const int16 * vol_tab, byte * s_end) {
+											 int fp_speed, const int16 * vol_tab, byte * s_end, bool reverse_stereo) {
 	warning("Mixing stereo unsigned 16 bit is not supported yet ");
 
 	return data;
@@ -530,7 +543,7 @@ static int16 * mix_unsigned_stereo_16(int16 * data, uint * len_ptr, byte ** s_pt
 
 static int16 * (*mixer_helper_table[8]) (int16 * data, uint * len_ptr, byte ** s_ptr,
 										 uint32 * fp_pos_ptr, int fp_speed, const int16 * vol_tab,
-										 byte * s_end) = { 
+										 byte * s_end, bool reverse_stereo) = { 
 	mix_signed_mono_8, mix_unsigned_mono_8, 
 	mix_signed_stereo_8, mix_unsigned_stereo_8,
 	mix_signed_mono_16, mix_unsigned_mono_16, 
@@ -578,7 +591,7 @@ void SoundMixer::ChannelRaw::mix(int16 * data, uint len) {
 	const uint32 fp_speed = _fpSpeed;
 	const int16 *vol_tab = _mixer->_volumeTable;
 
-	mixer_helper_table[_flags & 0x07] (data, &len, &s, &fp_pos, fp_speed, vol_tab, end);
+	mixer_helper_table[_flags & 0x07] (data, &len, &s, &fp_pos, fp_speed, vol_tab, end, (_flags & FLAG_REVERSE_STEREO) ? true : false);
 
 	_pos = s - (byte *)_ptr;
 	_fpPos = fp_pos;
@@ -667,14 +680,14 @@ void SoundMixer::ChannelStream::mix(int16 * data, uint len) {
 	fp_pos = _fpPos;
 
 	if (_pos < end_of_data) {
-		mixer_helper_table[_flags & 0x07] (data, &len, &_pos, &fp_pos, fp_speed, vol_tab, end_of_data);
+		mixer_helper_table[_flags & 0x07] (data, &len, &_pos, &fp_pos, fp_speed, vol_tab, end_of_data, (_flags & FLAG_REVERSE_STEREO) ? true : false);
 	} else {
-		mixer_helper_table[_flags & 0x07] (data, &len, &_pos, &fp_pos, fp_speed, vol_tab, _endOfBuffer);
+		mixer_helper_table[_flags & 0x07] (data, &len, &_pos, &fp_pos, fp_speed, vol_tab, _endOfBuffer, (_flags & FLAG_REVERSE_STEREO) ? true : false);
 		if (len != 0) {
 			//FIXME: what is wrong ?
 			warning("bad play sound in stream(wrap around)");
 			_pos = _ptr;
-			mixer_helper_table[_flags & 0x07] (data, &len, &_pos, &fp_pos, fp_speed, vol_tab, end_of_data);
+			mixer_helper_table[_flags & 0x07] (data, &len, &_pos, &fp_pos, fp_speed, vol_tab, end_of_data, (_flags & FLAG_REVERSE_STEREO) ? true : false);
 		}
 	}
 	_timeOut = 3;

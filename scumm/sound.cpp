@@ -847,9 +847,12 @@ bool Sound::isSfxFinished() {
 	return !_scumm->_mixer->hasActiveChannel();
 }
 
-uint32 Sound::decode12BitsSample(byte * src, byte ** dst, uint32 size) {
+uint32 Sound::decode12BitsSample(byte * src, byte ** dst, uint32 size, bool stereo = false) {
 	uint32 s_size = (size / 3) * 4;
 	uint32 loop_size = s_size / 4;
+	if (stereo == true) {
+		s_size *= 2;
+	}
 	byte *ptr = *dst = (byte*)malloc(s_size);
 
 	uint32 tmp;
@@ -860,9 +863,17 @@ uint32 Sound::decode12BitsSample(byte * src, byte ** dst, uint32 size) {
 		tmp = ((((v2 & 0x0f) << 8) | v1) << 4) - 0x8000;
 		*ptr++ = (byte)((tmp >> 8) & 0xff);
 		*ptr++ = (byte)(tmp & 0xff);
+		if (stereo == true) {
+			*ptr++ = (byte)((tmp >> 8) & 0xff);
+			*ptr++ = (byte)(tmp & 0xff);
+		}
 		tmp = ((((v2 & 0xf0) << 4) | v3) << 4) - 0x8000;
 		*ptr++ = (byte)((tmp >> 8) & 0xff);
 		*ptr++ = (byte)(tmp & 0xff);
+		if (stereo == true) {
+			*ptr++ = (byte)((tmp >> 8) & 0xff);
+			*ptr++ = (byte)(tmp & 0xff);
+		}
 	}
 	return s_size;
 }

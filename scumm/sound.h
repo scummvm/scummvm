@@ -117,7 +117,7 @@ public:
 	File * openSfxFile();
 	void stopSfxSound();
 	bool isSfxFinished();
-	uint32 decode12BitsSample(byte * src, byte ** dst, uint32 size);
+	uint32 decode12BitsSample(byte * src, byte ** dst, uint32 size, bool stereo);
 	void playBundleMusic(int32 song);
 	void pauseBundleMusic(bool state);
 	void bundleMusicHandler(Scumm * scumm);

@@ -177,6 +177,7 @@ public:
 		FLAG_16BITS = 4,						/* sound is 16 bits wide */
 		FLAG_AUTOFREE = 8,					/* sound buffer is freed automagically at the end of playing */
 		FLAG_FILE = 16,							/* sound is a FILE * that's read from */
+		FLAG_REVERSE_STEREO = 32,		/* sound should be reverse stereo */
 	};
 	int playRaw(PlayingSoundHandle * handle, void * sound, uint32 size, uint rate, byte flags);
 	int playRaw(PlayingSoundHandle * handle, void * sound, uint32 size, uint rate, byte flags, int id);

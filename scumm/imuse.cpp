@@ -4855,7 +4855,7 @@ IMuseDigital::~IMuseDigital() {
 
 void IMuseDigital::handler() {
 	bool new_mixer;
-	int32 l, idx = 0;
+	uint32 l, i, idx = 0;
 
 	for (l = 0; l < MAX_DIGITAL_CHANNELS;l ++) {
 		if (_channel[l]._used) {
@@ -4885,6 +4885,29 @@ void IMuseDigital::handler() {
 			memcpy(buf, _channel[l]._data + _channel[l]._offset, new_size);
 			if ((new_size != _channel[l]._mixerSize) && (_channel[l]._isLoop == true)) {
 				memcpy(buf + new_size, _channel[l]._data + _channel[l]._jump[0]._dest, _channel[l]._mixerSize - new_size);
+			}
+
+			if (_channel[l]._bits == 12) {
+				for(i = 0; i < (mixer_size / 4); i++) {
+					byte sample1 = buf[i * 4 + 0];
+					byte sample2 = buf[i * 4 + 1];
+					byte sample3 = buf[i * 4 + 2];
+					byte sample4 = buf[i * 4 + 3];
+					uint16 sample_a = (uint16)(((int16)((sample1 << 8) | sample2) * _channel[l]._volumeLeft) >> 8);
+					uint16 sample_b = (uint16)(((int16)((sample3 << 8) | sample4) * _channel[l]._volumeRight) >> 8);
+					buf[i * 4 + 0] = (byte)(sample_a >> 8);
+					buf[i * 4 + 1] = (byte)(sample_a & 0xff);
+					buf[i * 4 + 2] = (byte)(sample_b >> 8);
+					buf[i * 4 + 3] = (byte)(sample_b & 0xff);
+				}
+			} else if (_channel[l]._bits == 8) {
+				for(i = 0; i < (mixer_size / 2); i++) {
+					byte sample1 = buf[i * 2 + 0];
+					byte sample2 = buf[i * 2 + 1];
+					uint16 sample_a = (uint16)(((int16)((sample1 << 8) | sample2) * _channel[l]._volumeLeft) >> 8);
+					buf[i * 2 + 0] = (byte)(sample_a >> 8);
+					buf[i * 2 + 1] = (byte)(sample_a & 0xff);
+				}
 			}
 
 			new_mixer = false;
@@ -4937,6 +4960,8 @@ void IMuseDigital::startSound(int sound) {
 			_channel[l]._offset = 0;
 			_channel[l]._numRegions = 0;
 			_channel[l]._numJumps = 0;
+			_channel[l]._volumeLeft = 127;
+			_channel[l]._volumeRight = 127;
 			ptr += 16;
 
 			uint32 tag, size = 0;
@@ -4996,7 +5021,7 @@ void IMuseDigital::startSound(int sound) {
 			if (_channel[l]._bits == 12) {
 				_channel[l]._offsetStop = (_channel[l]._offsetStop / 3) * 4;
 			}
-			uint32 r;
+			uint32 r, t;
 			for (r = 0; r < _channel[l]._numRegions; r++) {
 				_channel[l]._region[r]._offset -= header_size;
 				if (_channel[l]._bits == 12) {
@@ -5015,22 +5040,28 @@ void IMuseDigital::startSound(int sound) {
 				}
 			}
 			_channel[l]._mixerTrack = -1;
-			_channel[l]._mixerSize = 22050 / 5;
-			_channel[l]._mixerFlags = SoundMixer::FLAG_AUTOFREE;
+			_channel[l]._mixerSize = (22050 / 5) * 2;
+			_channel[l]._mixerFlags = SoundMixer::FLAG_AUTOFREE | SoundMixer::FLAG_STEREO | SoundMixer::FLAG_REVERSE_STEREO;
 			if (_channel[l]._bits == 12) {
 				_channel[l]._mixerSize *= 2;
 				_channel[l]._mixerFlags |= SoundMixer::FLAG_16BITS;
-				_channel[l]._size = _scumm->_sound->decode12BitsSample(ptr, &_channel[l]._data, size);
+				_channel[l]._size = _scumm->_sound->decode12BitsSample(ptr, &_channel[l]._data, size, (_channel[l]._channels == 1) ? false : true);
 			}
 			if (_channel[l]._bits == 8) {
 				_channel[l]._mixerFlags |= SoundMixer::FLAG_UNSIGNED;
-				_channel[l]._data = (byte *)malloc(size);
-				memcpy(_channel[l]._data, ptr, size);
+				if (_channel[l]._channels == 1) {
+					size *= 2;
+					_channel[l]._channels = 2;
+					_channel[l]._data = (byte *)malloc(size);
+					for (t = 0; t < size; t++) {
+						*(_channel[l]._data + l * 2 + 0) = *(ptr + l);
+						*(_channel[l]._data + l * 2 + 1) = *(ptr + l);
+					}
+				} else {
+					_channel[l]._data = (byte *)malloc(size);
+					memcpy(_channel[l]._data, ptr, size);
+				}
 				_channel[l]._size = size;
-			}
-			if (_channel[l]._channels == 2) {
-				_channel[l]._mixerSize *= 2;
-				_channel[l]._mixerFlags |= SoundMixer::FLAG_STEREO;
 			}
 			if (_channel[l]._freq == 11025) {
 				_channel[l]._mixerSize /= 2;
@@ -5067,6 +5098,7 @@ int32 IMuseDigital::doCommand(int a, int b, int c, int d, int e, int f, int g, i
 	byte param = a >> 8;
 	byte sample = b;
 	byte sub_cmd = c >> 8;
+	int8 channel = -1, l;
 
 	if (!(cmd || param))
 		return 1;
@@ -5078,11 +5110,33 @@ int32 IMuseDigital::doCommand(int a, int b, int c, int d, int e, int f, int g, i
 			case 5: // param seems always set 0 (maybe reset)
 				debug(1, "IMuseDigital::doCommand stub cmd=%d,param=%d,sample=%d,sub_cmd=%d,params=(%d,%d,%d)", param, cmd, sample, sub_cmd, d, e, f);
 				return 0;
-			case 6: // left pan control (0-127) i think
-				debug(1, "IMuseDigital::doCommand stub cmd=%d,param=%d,sample=%d,sub_cmd=%d,params=(%d,%d,%d)", param, cmd, sample, sub_cmd, d, e, f);
+			case 6: // right pan control (0-127) i think
+				debug(1, "IMuseDigital::doCommand setting right sample(%d), volume(%d)", sample, d);
+				for (l = 0; l < MAX_DIGITAL_CHANNELS; l++) {
+					if ((_channel[l]._idSound == sample) && (_channel[l]._used == true)) {
+						channel = l;
+						break;
+					}
+				}
+				if (channel == -1) {
+					warning("IMuseDigital::doCommand Sample %d not exist", sample);
+					return 1;
+				}
+				_channel[channel]._volumeRight = d;
 				return 0;
-			case 7: // right pan control (0-127) i think
-				debug(1, "IMuseDigital::doCommand stub cmd=%d,param=%d,sample=%d,sub_cmd=%d,params=(%d,%d,%d)", param, cmd, sample, sub_cmd, d, e, f);
+			case 7: // left pan control (0-127) i think
+				debug(1, "IMuseDigital::doCommand setting left sample(%d), volume(%d)", sample, d);
+				for (l = 0; l < MAX_DIGITAL_CHANNELS; l++) {
+					if ((_channel[l]._idSound == sample) && (_channel[l]._used == true)) {
+						channel = l;
+						break;
+					}
+				}
+				if (channel == -1) {
+					warning("IMuseDigital::doCommand Sample %d not exist", sample);
+					return 1;
+				}
+				_channel[channel]._volumeLeft = d;
 				return 0;
 			default:
 				warning("IMuseDigital::doCommand (param=0, cmd=12) default sub command %d", sub_cmd);
@@ -5097,7 +5151,7 @@ int32 IMuseDigital::doCommand(int a, int b, int c, int d, int e, int f, int g, i
 			warning("IMuseDigital::doCommand (param=0) default command %d", cmd);
 			return 1;
 		}
-	} else if (param == 16) { // unknown commands
+	} else if (param == 16) { // maybe music related
 		switch (cmd) {
 		case 0:
 			debug(1, "IMuseDigital::doCommand %d,%d(%d,%d,%d,%d,%d)", param, cmd, b, c, d, e, f);
