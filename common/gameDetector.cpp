@@ -190,10 +190,16 @@ GameDetector::GameDetector() {
 		int skyCount = countVersions(skyVersions);
 		
 		VersionSettings *v = (VersionSettings *)calloc(scummCount + simonCount + skyCount + 1, sizeof(VersionSettings));
-		memcpy(v, scummVersions, scummCount * sizeof(VersionSettings));
-		memcpy(v+scummCount, simonVersions, simonCount * sizeof(VersionSettings));
-		memcpy(v+skyCount, skyVersions, skyCount * sizeof(VersionSettings));
 		version_settings = v;
+
+		memcpy(v, scummVersions, scummCount * sizeof(VersionSettings));
+		v += scummCount;
+
+		memcpy(v, simonVersions, simonCount * sizeof(VersionSettings));
+		v += simonCount;
+
+		memcpy(v, skyVersions, skyCount * sizeof(VersionSettings));
+		v += skyCount;
 	}
 }
 
