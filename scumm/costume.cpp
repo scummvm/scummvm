@@ -69,11 +69,14 @@ byte CostumeRenderer::mainRoutine(int xmoveCur, int ymoveCur) {
 	uint scal;
 	bool use_scaling;
 	byte startScaleIndexX;
+	byte newAmiCost;
 	int ex1, ex2;
 	int y_top, y_bottom;
 	int x_left, x_right;
 	int step;
 	
+	newAmiCost = (_vm->_version == 5) && (_vm->_features & GF_AMIGA);
+
 	CHECK_HEAP
 
 	v1.scaletable = cost_scaleTable;
@@ -205,7 +208,7 @@ byte CostumeRenderer::mainRoutine(int xmoveCur, int ymoveCur) {
 		if (!use_scaling)
 			skip = -v1.x;
 		if (skip > 0) {
-			if (!(_vm->_features & GF_AMIGA)) {
+			if (!newAmiCost) {
 				v1.skip_width -= skip;
 
 				if (_loaded._format == 0x57)
@@ -226,7 +229,7 @@ byte CostumeRenderer::mainRoutine(int xmoveCur, int ymoveCur) {
 		if (!use_scaling)
 			skip = x_right - _vm->_screenWidth;
 		if (skip > 0) {
-			if (!(_vm->_features & GF_AMIGA)) {
+			if (!newAmiCost) {
 				v1.skip_width -= skip;
 
 				if (_loaded._format == 0x57)
@@ -275,7 +278,7 @@ byte CostumeRenderer::mainRoutine(int xmoveCur, int ymoveCur) {
 
 	if (_loaded._format == 0x57)
 		procC64();
-	else if (_vm->_features & GF_AMIGA && _vm->_version == 5)
+	else if (newAmiCost)
 		proc3_ami();
 	else
 		proc3();
