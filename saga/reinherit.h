@@ -32,8 +32,6 @@
 
 #include "base/engine.h"
 
-#include "sys_interface.h"
-
 namespace Saga {
 
 #define R_MAXPATH 512
@@ -45,6 +43,11 @@ namespace Saga {
 #define R_DEBUG_PARANOID 3
 
 #define R_MEMFAIL_MSG "Memory allocation error."
+
+#define R_STDOUT stdout
+#define R_STDERR stderr
+
+#define R_printf fprintf
 
 // Define opaque types
 
