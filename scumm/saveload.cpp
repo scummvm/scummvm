@@ -544,12 +544,20 @@ void ScummEngine::saveOrLoad(Serializer *s, uint32 savegameVersion) {
 		MKEND()
 	};
 
+	// MSVC6 FIX (Jamieson630):
+	// MSVC6 has a problem with any notation that involves
+	// more than one set of double colons ::
+	// The following MKLINE macros expand to such things
+	// as AudioCDManager::Status::playing, and MSVC6 has
+	// a fit with that. This typedef simplifies the notation
+	// to something MSVC6 can grasp.
+	typedef AudioCDManager::Status AudioCDManager_Status;
 	const SaveLoadEntry audioCDEntries[] = {
-		MKLINE(AudioCDManager::Status, playing, sleUint32, VER(24)),
-		MKLINE(AudioCDManager::Status, track, sleInt32, VER(24)),
-		MKLINE(AudioCDManager::Status, start, sleUint32, VER(24)),
-		MKLINE(AudioCDManager::Status, duration, sleUint32, VER(24)),
-		MKLINE(AudioCDManager::Status, numLoops, sleInt32, VER(24)),
+		MKLINE(AudioCDManager_Status, playing, sleUint32, VER(24)),
+		MKLINE(AudioCDManager_Status, track, sleInt32, VER(24)),
+		MKLINE(AudioCDManager_Status, start, sleUint32, VER(24)),
+		MKLINE(AudioCDManager_Status, duration, sleUint32, VER(24)),
+		MKLINE(AudioCDManager_Status, numLoops, sleInt32, VER(24)),
 		MKEND()
 	};
 
