@@ -118,6 +118,11 @@ Please include the following information:
 		- Version of game (Talkie, Floppy...)
 		- Platform and Compiler (Win32, Linux, etc)
 		- Attach a save game if possible
+                - If this bug only occured recently, please note the last
+                  version without the bug, and the first version including
+                  the bug. That way we can fix it quicker by looking at the
+                  changes made.
+
 
 Compiling:
 ----------
