@@ -914,12 +914,12 @@ void ScummEngine_v8::o8_roomOps() {
 		setPalette(a);
 		break;
 	case 0x5D:		// SO_ROOM_SAVE_GAME Save game
-		_saveLoadCompatible = true;
+		_saveTemporaryState = true;
 		_saveLoadSlot = 1;
 		_saveLoadFlag = 1;
 		break;
 	case 0x5E:		// SO_ROOM_LOAD_GAME Load game
-		_saveLoadCompatible = true;
+		_saveTemporaryState = true;
 		_saveLoadSlot = 1;
 		_saveLoadFlag = 2;
 		break;
@@ -1361,7 +1361,7 @@ void ScummEngine_v8::o8_kernelSetFunctions() {
 			// saveGameRead
 		_saveLoadSlot = args[1];
 		_saveLoadFlag = 2;
-		_saveLoadCompatible = false;
+		_saveTemporaryState = false;
 		warning("Sgl: %d", args[1]);
 		break;
 	}

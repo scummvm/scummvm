@@ -1158,13 +1158,13 @@ void ScummEngine_v5::o5_saveLoadGame() {
 		result = 0;
 		break;
 	case 0x40: // load
-		if (loadState(slot, _saveLoadCompatible))
+		if (loadState(slot, _saveTemporaryState))
 			result = 3; // sucess
 		else
 			result = 5; // failed to load
 		break;
 	case 0x80: // save
-		if (saveState(slot, _saveLoadCompatible))
+		if (saveState(slot, _saveTemporaryState))
 			result = 0;
 		else
 			result = 2;
@@ -1899,7 +1899,7 @@ void ScummEngine_v5::o5_roomOps() {
 		_saveLoadFlag = getVarOrDirectByte(PARAM_1);
 		_saveLoadSlot = getVarOrDirectByte(PARAM_2);
 		_saveLoadSlot = 99;					/* use this slot */
-		_saveLoadCompatible = true;
+		_saveTemporaryState = true;
 		break;
 	case 10:	// SO_ROOM_FADE
 		a = getVarOrDirectWord(PARAM_1);

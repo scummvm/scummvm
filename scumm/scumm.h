@@ -468,7 +468,7 @@ protected:
 	// Save/Load class - some of this may be GUI
 	byte _saveLoadFlag, _saveLoadSlot;
 	uint32 _lastSaveTime;
-	bool _saveLoadCompatible;
+	bool _saveTemporaryState;
 	char _saveLoadName[32];
 
 	bool saveState(int slot, bool compat, SaveFileManager *mgr);
@@ -497,7 +497,7 @@ public:
 	bool getSavegameName(int slot, char *desc, SaveFileManager *mgr);
 	void listSavegames(bool *marks, int num, SaveFileManager *mgr);
 	
-	void requestSave(int slot, const char *name);
+	void requestSave(int slot, const char *name, bool compatible = false);
 	void requestLoad(int slot);
 
 protected:

@@ -49,9 +49,9 @@ struct SaveGameHeader {
 };
 
 
-void ScummEngine::requestSave(int slot, const char *name) {
+void ScummEngine::requestSave(int slot, const char *name, bool compatible) {
 	_saveLoadSlot = slot;
-	_saveLoadCompatible = false;
+	_saveTemporaryState = compatible;
 	_saveLoadFlag = 1;		// 1 for save
 	assert(name);
 	strcpy(_saveLoadName, name);
@@ -59,7 +59,7 @@ void ScummEngine::requestSave(int slot, const char *name) {
 
 void ScummEngine::requestLoad(int slot) {
 	_saveLoadSlot = slot;
-	_saveLoadCompatible = false;
+	_saveTemporaryState = false;
 	_saveLoadFlag = 2;		// 2 for load
 }
 
@@ -136,7 +136,7 @@ bool ScummEngine::loadState(int slot, bool compat, SaveFileManager *mgr) {
 	// If we don't have iMUSE at all we may as well stop the sounds. The previous
 	// default behavior here was to stopAllSounds on all state restores.
 
-	if (!_imuse || _saveSound || !_saveLoadCompatible)
+	if (!_imuse || _saveSound || !_saveTemporaryState)
 		_sound->stopAllSounds();
 
 	_sound->stopCD();
@@ -767,7 +767,7 @@ void ScummEngine::saveOrLoad(Serializer *s, uint32 savegameVersion) {
 			AudioCD.play(info.track, info.numLoops, info.start, info.duration);
 	}
 
-	if (_imuse && (_saveSound || !_saveLoadCompatible)) {
+	if (_imuse && (_saveSound || !_saveTemporaryState)) {
 		_imuse->save_or_load(s, this);
 		_imuse->setMasterVolume(ConfMan.getInt("master_volume"));
 		_imuse->set_music_volume(ConfMan.getInt("music_volume"));

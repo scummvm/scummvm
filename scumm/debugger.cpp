@@ -214,9 +214,7 @@ bool ScummDebugger::Cmd_LoadGame(int argc, const char **argv) {
 	if (argc > 1) {
 		int slot = atoi(argv[1]);
 
-		_vm->_saveLoadSlot = slot;
-		_vm->_saveLoadFlag = 2;
-		_vm->_saveLoadCompatible = false;
+		_vm->requestLoad(slot);
 
 		_detach_now = true;
 		return false;
@@ -230,10 +228,7 @@ bool ScummDebugger::Cmd_SaveGame(int argc, const char **argv) {
 	if (argc > 2) {
 		int slot = atoi(argv[1]);
 
-		strcpy(_vm->_saveLoadName, argv[2]);
-		_vm->_saveLoadSlot = slot;
-		_vm->_saveLoadFlag = 1;
-		_vm->_saveLoadCompatible = false;
+		_vm->requestSave(slot, argv[2]);
 	} else
 		DebugPrintf("Syntax: savegame <slotnum> <name>\n");
 

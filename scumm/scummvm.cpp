@@ -374,7 +374,7 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 	_saveLoadFlag = 0;
 	_saveLoadSlot = 0;
 	_lastSaveTime = 0;
-	_saveLoadCompatible = false;
+	_saveTemporaryState = false;
 	memset(_saveLoadName, 0, sizeof(_saveLoadName));
 	_maxHeapThreshold = 0;
 	_minHeapThreshold = 0;
@@ -771,9 +771,7 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 
 	// Load game from specified slot, if any
 	if (ConfMan.hasKey("save_slot")) {
-		_saveLoadSlot = ConfMan.getInt("save_slot");
-		_saveLoadFlag = 2;
-		_saveLoadCompatible = false;
+		requestLoad(ConfMan.getInt("save_slot"));
 	}
 	loadLanguageBundle();
 
@@ -996,7 +994,7 @@ void ScummEngine::launch() {
 
 
 	// If requested, load a save game instead of running the boot script
-	if (_saveLoadFlag != 2 || !loadState(_saveLoadSlot, _saveLoadCompatible)) {
+	if (_saveLoadFlag != 2 || !loadState(_saveLoadSlot, _saveTemporaryState)) {
 		int args[16];
 		memset(args, 0, sizeof(args));
 		args[0] = _bootParam;	
@@ -1390,7 +1388,7 @@ int ScummEngine::scummLoop(int delta) {
 		_saveLoadSlot = 0;
 		sprintf(_saveLoadName, "Autosave %d", _saveLoadSlot);
 		_saveLoadFlag = 1;
-		_saveLoadCompatible = false;
+		_saveTemporaryState = false;
 	}
 
 	if (VAR_GAME_LOADED != 0xFF)
@@ -1402,30 +1400,30 @@ load_game:
 		char filename[256];
 
 		if (_saveLoadFlag == 1) {
-			success = saveState(_saveLoadSlot, _saveLoadCompatible);
+			success = saveState(_saveLoadSlot, _saveTemporaryState);
 			if (!success)
 				errMsg = "Failed to save game state to file:\n\n%s";
 
 			// Ender: Disabled for small_header games, as can overwrite game
 			//  variables (eg, Zak256 cashcard values). Temp disabled for V8
 			// because of odd timing issue with scripts and the variable reset
-			if (success && _saveLoadCompatible && !(_features & GF_SMALL_HEADER) && _version < 8)
+			if (success && _saveTemporaryState && !(_features & GF_SMALL_HEADER) && _version < 8)
 				VAR(VAR_GAME_LOADED) = 201;
 		} else {
-			success = loadState(_saveLoadSlot, _saveLoadCompatible);
+			success = loadState(_saveLoadSlot, _saveTemporaryState);
 			if (!success)
 				errMsg = "Failed to load game state from file:\n\n%s";
 
 			// Ender: Disabled for small_header games, as can overwrite game
 			//  variables (eg, Zak256 cashcard values).
-			if (success && _saveLoadCompatible && !(_features & GF_SMALL_HEADER))
+			if (success && _saveTemporaryState && !(_features & GF_SMALL_HEADER))
 				VAR(VAR_GAME_LOADED) = 203;
 		}
 
-		makeSavegameName(filename, _saveLoadSlot, _saveLoadCompatible);
+		makeSavegameName(filename, _saveLoadSlot, _saveTemporaryState);
 		if (!success) {
 			displayError(false, errMsg, filename);
-		} else if (_saveLoadFlag == 1 && _saveLoadSlot != 0 && !_saveLoadCompatible) {
+		} else if (_saveLoadFlag == 1 && _saveLoadSlot != 0 && !_saveTemporaryState) {
 			// Display "Save successful" message, except for auto saves
 #ifdef __PALM_OS__
 			char buf[256]; // 1024 is too big overflow the stack
@@ -1607,7 +1605,7 @@ void ScummEngine::parseEvents() {
 
 		switch(event.event_code) {
 		case OSystem::EVENT_KEYDOWN:
-			if (event.kbd.keycode >= '0' && event.kbd.keycode<='9'
+			if (event.kbd.keycode >= '0' && event.kbd.keycode <= '9'
 				&& (event.kbd.flags == OSystem::KBD_ALT ||
 					event.kbd.flags == OSystem::KBD_CTRL)) {
 				_saveLoadSlot = event.kbd.keycode - '0';
@@ -1618,7 +1616,7 @@ void ScummEngine::parseEvents() {
 
 				sprintf(_saveLoadName, "Quicksave %d", _saveLoadSlot);
 				_saveLoadFlag = (event.kbd.flags == OSystem::KBD_ALT) ? 1 : 2;
-				_saveLoadCompatible = false;
+				_saveTemporaryState = false;
 			} else if (event.kbd.flags == OSystem::KBD_CTRL) {
 				if (event.kbd.keycode == 'f')
 					_fastMode ^= 1;

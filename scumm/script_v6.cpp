@@ -1685,7 +1685,7 @@ void ScummEngine_v6::o6_roomOps() {
 		break;
 
 	case 180:		// SO_ROOM_SAVEGAME
-		_saveLoadCompatible = true;
+		_saveTemporaryState = true;
 		_saveLoadSlot = pop();
 		_saveLoadFlag = pop();
 		if (_gameId == GID_TENTACLE)
@@ -1768,7 +1768,7 @@ void ScummEngine_v6::o6_roomOps() {
 		_scriptPointer += len + 1;
 		_saveLoadFlag = pop();
 		_saveLoadSlot = 99;
-		_saveLoadCompatible = true;
+		_saveTemporaryState = true;
 		break;
 	default:
 		error("o6_roomOps: default case %d", op);
