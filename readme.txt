@@ -295,9 +295,9 @@ Using MP3 files for CD audio:
 Use LAME or some other mp3 encoder to rip the cd audio tracks to files. Name
 the files track1.mp3 track2.mp3 etc. ScummVM must be compiled with MAD support
 to use this option. You'll need to rip the file from the CD as a WAV file, then
-encode the MP3 files with the following LAME command line:
+encode the MP3 files in Constant Bit Rate sampled at 22 kHz. This can be done with the following LAME command line:
 
-lame -h -t -q 0 --vbr-new -V 9 -b 24 -B 32 --resample 22.05 track1.wav track1.mp3
+lame -t -q 0 -b 96 --resample 22.05 track1.wav track1.mp3
 
 Compressing MONSTER.SOU with MP3:.
 ---------------------------------
