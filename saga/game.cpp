@@ -27,6 +27,7 @@
 
 #include "common/file.h"
 #include "common/md5.h"
+#include "common/map.h"
 #include "base/plugins.h"
 #include "base/gameDetector.h"
 #include "backends/fs/fs.h"
@@ -196,68 +197,69 @@ struct GAME_MD5 {
 	GAME_IDS id;
 	const char *md5;
 	const char *filename;
-	uint32 len;
 };
 
+#define FILE_MD5_BYTES 5000
+
 static GAME_MD5 game_md5[] = {
-	{ GID_ITE_DISK_G,   "8f4315a9bb10ec839253108a032c8b54", "ite.rsc", 5000 },
-	{ GID_ITE_DISK_G,   "516f7330f8410057b834424ea719d1ef", "scripts.rsc", 5000 },
-	{ GID_ITE_DISK_G,   "c46e4392fcd2e89bc91e5567db33b62d", "voices.rsc", 5000 },
+	{ GID_ITE_DISK_G,   "8f4315a9bb10ec839253108a032c8b54", "ite.rsc" },
+	{ GID_ITE_DISK_G,   "516f7330f8410057b834424ea719d1ef", "scripts.rsc" },
+	{ GID_ITE_DISK_G,   "c46e4392fcd2e89bc91e5567db33b62d", "voices.rsc" },
 
-	{ GID_ITE_CD_G,     "8f4315a9bb10ec839253108a032c8b54", "ite.rsc", 5000 },
-	{ GID_ITE_CD_G,     "a891405405edefc69c9d6c420c868b84", "scripts.rsc", 5000 },
-	{ GID_ITE_CD_G,     "e2ccb61c325d6d1ead3be0e731fe29fe", "sounds.rsc", 5000 },
-	{ GID_ITE_CD_G,     "41bb6b95d792dde5196bdb78740895a6", "voices.rsc", 5000 },
+	{ GID_ITE_CD_G,     "8f4315a9bb10ec839253108a032c8b54", "ite.rsc" },
+	{ GID_ITE_CD_G,     "a891405405edefc69c9d6c420c868b84", "scripts.rsc" },
+	{ GID_ITE_CD_G,     "e2ccb61c325d6d1ead3be0e731fe29fe", "sounds.rsc" },
+	{ GID_ITE_CD_G,     "41bb6b95d792dde5196bdb78740895a6", "voices.rsc" },
 
-	{ GID_ITE_DEMO_G,   "986c79c4d2939dbe555576529fd37932", "ite.rsc", 5000 },
-	{ GID_ITE_DEMO_G,   "d5697dd3240a3ceaddaa986c47e1a2d7", "scripts.rsc", 5000 },
-	{ GID_ITE_DEMO_G,   "c58e67c506af4ffa03fd0aac2079deb0", "voices.rsc", 5000 },
+	{ GID_ITE_DEMO_G,   "986c79c4d2939dbe555576529fd37932", "ite.rsc" },
+	{ GID_ITE_DEMO_G,   "d5697dd3240a3ceaddaa986c47e1a2d7", "scripts.rsc" },
+	{ GID_ITE_DEMO_G,   "c58e67c506af4ffa03fd0aac2079deb0", "voices.rsc" },
 
-	{ GID_ITE_MACCD,    "4f7fa11c5175980ed593392838523060", "ite.rsc", 5000 },
-	{ GID_ITE_MACCD,    "adf1f46c1d0589083996a7060c798ad0", "scripts.rsc", 5000 },
-	{ GID_ITE_MACCD,    "1a91cd60169f367ecb6c6e058d899b2f", "music.rsc", 5000 },
-	{ GID_ITE_MACCD,    "95863b89a0916941f6c5e1789843ba14", "sounds.rsc", 5000 },
-	{ GID_ITE_MACCD,    "c14c4c995e7a0d3828e3812a494301b7", "Inherit the Earth Voices", 5000 },
+	{ GID_ITE_MACCD,    "4f7fa11c5175980ed593392838523060", "ite.rsc" },
+	{ GID_ITE_MACCD,    "adf1f46c1d0589083996a7060c798ad0", "scripts.rsc" },
+	{ GID_ITE_MACCD,    "1a91cd60169f367ecb6c6e058d899b2f", "music.rsc" },
+	{ GID_ITE_MACCD,    "95863b89a0916941f6c5e1789843ba14", "sounds.rsc" },
+	{ GID_ITE_MACCD,    "c14c4c995e7a0d3828e3812a494301b7", "Inherit the Earth Voices" },
 
 	// Please, provide md5 of first 5000 bytes of music.rsc
 	// head -c 5000 music.rsc | md5 | mail -s 'linux music.rsc md5' sev
-	{ GID_ITE_LINCD,    "8f4315a9bb10ec839253108a032c8b54", "ite.rsc", 5000 },
-	{ GID_ITE_LINCD,    "a891405405edefc69c9d6c420c868b84", "scripts.rsc", 5000 },
-	{ GID_ITE_LINCD,    "e2ccb61c325d6d1ead3be0e731fe29fe", "sounds.rsc", 5000 },
-	{ GID_ITE_LINCD,    "41bb6b95d792dde5196bdb78740895a6", "voices.rsc", 5000 },
-	{ GID_ITE_LINCD,    "????????????????????????????????", "music.rsc", 5000 },
+	{ GID_ITE_LINCD,    "8f4315a9bb10ec839253108a032c8b54", "ite.rsc" },
+	{ GID_ITE_LINCD,    "a891405405edefc69c9d6c420c868b84", "scripts.rsc" },
+	{ GID_ITE_LINCD,    "e2ccb61c325d6d1ead3be0e731fe29fe", "sounds.rsc" },
+	{ GID_ITE_LINCD,    "41bb6b95d792dde5196bdb78740895a6", "voices.rsc" },
+	{ GID_ITE_LINCD,    "????????????????????????????????", "music.rsc" },
 
-	{ GID_ITE_DISK_DE,  "869fc23c8f38f575979ec67152914fee", "ite.rsc", 5000 },
-	{ GID_ITE_DISK_DE,  "516f7330f8410057b834424ea719d1ef", "scripts.rsc", 5000 },
-	{ GID_ITE_DISK_DE,  "0c9113e630f97ef0996b8c3114badb08", "voices.rsc", 5000 },
+	{ GID_ITE_DISK_DE,  "869fc23c8f38f575979ec67152914fee", "ite.rsc" },
+	{ GID_ITE_DISK_DE,  "516f7330f8410057b834424ea719d1ef", "scripts.rsc" },
+	{ GID_ITE_DISK_DE,  "0c9113e630f97ef0996b8c3114badb08", "voices.rsc" },
 
-	{ GID_ITE_WINDEMO2, "3a450852cbf3c80773984d565647e6ac", "ited.rsc", 5000 },
-	{ GID_ITE_WINDEMO2, "3f12b67fa93e56e1a6be39d2921d80bb", "scriptsd.rsc", 5000 },
-	{ GID_ITE_WINDEMO2, "95a6c148e22e99a8c243f2978223583c", "soundsd.rsc", 5000 },
-	{ GID_ITE_WINDEMO2, "e139d86bab2ee8ba3157337f894a92d4", "voicesd.rsc", 5000 },
+	{ GID_ITE_WINDEMO2, "3a450852cbf3c80773984d565647e6ac", "ited.rsc" },
+	{ GID_ITE_WINDEMO2, "3f12b67fa93e56e1a6be39d2921d80bb", "scriptsd.rsc" },
+	{ GID_ITE_WINDEMO2, "95a6c148e22e99a8c243f2978223583c", "soundsd.rsc" },
+	{ GID_ITE_WINDEMO2, "e139d86bab2ee8ba3157337f894a92d4", "voicesd.rsc" },
 
-	{ GID_ITE_LINDEMO,  "3a450852cbf3c80773984d565647e6ac", "ited.rsc", 5000 },
-	{ GID_ITE_LINDEMO,  "3f12b67fa93e56e1a6be39d2921d80bb", "scriptsd.rsc", 5000 },
-	{ GID_ITE_LINDEMO,  "d6454756517f042f01210458abe8edd4", "musicd.rsc", 5000 },
-	{ GID_ITE_LINDEMO,  "95a6c148e22e99a8c243f2978223583c", "soundsd.rsc", 5000 },
-	{ GID_ITE_LINDEMO,  "e139d86bab2ee8ba3157337f894a92d4", "voicesd.rsc", 5000 },
+	{ GID_ITE_LINDEMO,  "3a450852cbf3c80773984d565647e6ac", "ited.rsc" },
+	{ GID_ITE_LINDEMO,  "3f12b67fa93e56e1a6be39d2921d80bb", "scriptsd.rsc" },
+	{ GID_ITE_LINDEMO,  "d6454756517f042f01210458abe8edd4", "musicd.rsc" },
+	{ GID_ITE_LINDEMO,  "95a6c148e22e99a8c243f2978223583c", "soundsd.rsc" },
+	{ GID_ITE_LINDEMO,  "e139d86bab2ee8ba3157337f894a92d4", "voicesd.rsc" },
 
-	{ GID_ITE_MACDEMO2, "addfc9d82bc2fa1f4cab23743c652c08", "ited.rsc", 5000 },
-	{ GID_ITE_MACDEMO2, "fded5c59b8b7c5976229f960d21e6b0b", "scriptsd.rsc", 5000 },
-	{ GID_ITE_MACDEMO2, "495bdde51fd9f4bea2b9c911091b1ab2", "musicd.rsc", 5000 },
-	{ GID_ITE_MACDEMO2, "b3a831fbed337d1f1300fee1dd474f6c", "soundsd.rsc", 5000 },
-	{ GID_ITE_MACDEMO2, "e139d86bab2ee8ba3157337f894a92d4", "voicesd.rsc", 5000 },
+	{ GID_ITE_MACDEMO2, "addfc9d82bc2fa1f4cab23743c652c08", "ited.rsc" },
+	{ GID_ITE_MACDEMO2, "fded5c59b8b7c5976229f960d21e6b0b", "scriptsd.rsc" },
+	{ GID_ITE_MACDEMO2, "495bdde51fd9f4bea2b9c911091b1ab2", "musicd.rsc" },
+	{ GID_ITE_MACDEMO2, "b3a831fbed337d1f1300fee1dd474f6c", "soundsd.rsc" },
+	{ GID_ITE_MACDEMO2, "e139d86bab2ee8ba3157337f894a92d4", "voicesd.rsc" },
 
-	{ GID_ITE_WINDEMO1, "3a450852cbf3c80773984d565647e6ac", "ited.rsc", 5000 },
-	{ GID_ITE_WINDEMO1, "3f12b67fa93e56e1a6be39d2921d80bb", "scriptsd.rsc", 5000 },
-	{ GID_ITE_WINDEMO1, "a741139dd7365a13f463cd896ff9969a", "soundsd.rsc", 5000 },
-	{ GID_ITE_WINDEMO1, "0759eaf5b64ae19fd429920a70151ad3", "voicesd.rsc", 5000 },
+	{ GID_ITE_WINDEMO1, "3a450852cbf3c80773984d565647e6ac", "ited.rsc" },
+	{ GID_ITE_WINDEMO1, "3f12b67fa93e56e1a6be39d2921d80bb", "scriptsd.rsc" },
+	{ GID_ITE_WINDEMO1, "a741139dd7365a13f463cd896ff9969a", "soundsd.rsc" },
+	{ GID_ITE_WINDEMO1, "0759eaf5b64ae19fd429920a70151ad3", "voicesd.rsc" },
 
-	{ GID_ITE_MACDEMO1, "addfc9d82bc2fa1f4cab23743c652c08", "ited.rsc", 5000 },
-	{ GID_ITE_MACDEMO1, "fded5c59b8b7c5976229f960d21e6b0b", "scriptsd.rsc", 5000 },
-	{ GID_ITE_MACDEMO1, "1a91cd60169f367ecb6c6e058d899b2f", "musicd.rsc", 5000 },
-	{ GID_ITE_MACDEMO1, "b3a831fbed337d1f1300fee1dd474f6c", "soundsd.rsc", 5000 },
-	{ GID_ITE_MACDEMO1, "e139d86bab2ee8ba3157337f894a92d4", "voicesd.rsc", 5000 },
+	{ GID_ITE_MACDEMO1, "addfc9d82bc2fa1f4cab23743c652c08", "ited.rsc" },
+	{ GID_ITE_MACDEMO1, "fded5c59b8b7c5976229f960d21e6b0b", "scriptsd.rsc" },
+	{ GID_ITE_MACDEMO1, "1a91cd60169f367ecb6c6e058d899b2f", "musicd.rsc" },
+	{ GID_ITE_MACDEMO1, "b3a831fbed337d1f1300fee1dd474f6c", "soundsd.rsc" },
+	{ GID_ITE_MACDEMO1, "e139d86bab2ee8ba3157337f894a92d4", "voicesd.rsc" },
 };
 
 static bool gameMD5check(int descNum);
@@ -571,40 +573,63 @@ RSCFILE_CONTEXT *SagaEngine::getFileContext(uint16 type, int param) {
 	return found_ctxt;
 }
 
+
+
 DetectedGameList GAME_ProbeGame(const FSList &fslist) {
 	uint16 game_count = ARRAYSIZE(GameDescs);
 	uint16 game_n;
 	DetectedGameList detectedGames;
+	Common::StringMap filesMD5;
+
+	typedef Common::Map<Common::String, bool> StringSet;
+	StringSet filesList;
 
 	uint16 file_count;
 	uint16 file_n;
 	File test_file;
+	bool file_missing;
 
-	int file_missing = 0;
-	int found_game = 0;
+	Common::String tstr;
+	char md5str[32+1];
+	uint8 md5sum[16];
 
-	for (game_n = 0; (game_n < game_count) && !found_game; game_n++) {
+	// First we compose list of files which we need MD5s for
+	for (int i = 0; i < ARRAYSIZE(game_md5); i++) {
+		tstr = Common::String(game_md5[i].filename);
+		tstr.toLowercase();
+		filesList[tstr] = true;
+	}
+
+	// Now count MD5s for required files
+	for (FSList::const_iterator file = fslist.begin(); file != fslist.end(); ++file) {
+ 		if (!file->isDirectory()) {
+			tstr = file->displayName();
+			tstr.toLowercase();
+
+			if (filesList[tstr] == true) {
+				if (md5_file(file->path().c_str(), md5sum, NULL, FILE_MD5_BYTES)) {
+					for (int j = 0; j < 16; j++) {
+						sprintf(md5str + j*2, "%02x", (int)md5sum[j]);
+					}
+					filesMD5[tstr] = Common::String(md5str);
+				}
+			}
+		}
+	}
+
+	for (game_n = 0; game_n < game_count; game_n++) {
 		file_count = GameDescs[game_n].gd_filect;
-		file_missing = 0;
+		file_missing = false;
 
 		// Try to open all files for this game
 		for (file_n = 0; file_n < file_count; file_n++) {
-			file_missing = 1;
-			// Iterate over all files in the given directory
-			for (FSList::const_iterator file = fslist.begin(); file != fslist.end(); ++file) {
-				if (!file->isDirectory()) {
-					const char *gameName = file->displayName().c_str();
+			tstr = GameDescs[game_n].gd_filedescs[file_n].gf_fname;
+			tstr.toLowercase();
 
-					if (0 == scumm_stricmp(GameDescs[game_n].gd_filedescs[file_n].gf_fname, 
-										gameName)) {
-						file_missing = 0;
-						break;
-					}
-				}
-			}
-
-			if (file_missing)
+			if (!filesMD5.contains(tstr)) {
+				file_missing = true;
 				break;
+			}
 		}
 
 		// Try the next game, couldn't find all files for the current 
@@ -612,7 +637,27 @@ DetectedGameList GAME_ProbeGame(const FSList &fslist) {
 		if (file_missing) {
 			continue;
 		} else {
+			bool match = true;
+
+			debug(5, "Probing game: %s", GameDescs[game_n].gd_title);
+
+			for (int i = 0; i < ARRAYSIZE(game_md5); i++) {
+				if (game_md5[i].id == GameDescs[game_n].gd_game_id) {
+					tstr = game_md5[i].filename;
+					tstr.toLowercase();
+
+					if (strcmp(game_md5[i].md5, filesMD5[tstr].c_str())) {
+						match = false;
+						break;
+					}
+				}
+			}
+			if (!match)
+				continue;
+
+			debug(5, "Found game: %s", GameDescs[game_n].gd_title);
 			detectedGames.push_back(GameDescs[game_n].toGameSettings());
+
 			return detectedGames;
 		}
 	}
@@ -652,12 +697,12 @@ int SagaEngine::detectGame(uint16 *game_n_p) {
 		if (file_missing) {
 			continue;
 		} else {
-			debug(0, "Pre-Found game: %s", GameDescs[game_n].gd_title);
+			debug(5, "Probing game: %s", GameDescs[game_n].gd_title);
 			if (!gameMD5check(game_n))
 				continue;
 		}
 
-		debug(0, "Found game: %s", GameDescs[game_n].gd_title);
+		debug(5, "Found game: %s", GameDescs[game_n].gd_title);
 		*game_n_p = game_n;
 		return SUCCESS;
 	}
@@ -759,7 +804,7 @@ static bool gameMD5check(int descNum) {
 
 	for (int i = 0; i < ARRAYSIZE(game_md5); i++) {
 		if (game_md5[i].id == GameDescs[descNum].gd_game_id) {
-			if (md5_file(game_md5[i].filename, md5sum, NULL, game_md5[i].len)) {
+			if (md5_file(game_md5[i].filename, md5sum, NULL, FILE_MD5_BYTES)) {
 				for (int j = 0; j < 16; j++) {
 					sprintf(md5str + j*2, "%02x", (int)md5sum[j]);
 				}
