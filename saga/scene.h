@@ -154,6 +154,8 @@ struct SCENE_QUEUE {
 	int fadeType;
 };
 
+#define INTRO_STRMAX 512
+
 ///// IHNM-specific stuff
 #define IHNM_PALFADE_TIME    1000
 #define IHNM_INTRO_FRAMETIME 80
@@ -162,8 +164,6 @@ struct SCENE_QUEUE {
 #define IHNM_TITLE_TIME_FM   19500
 
 ///// ITE-specific stuff
-#define INTRO_STRMAX 256
-
 #define ITE_INTRO_FRAMETIME 90
 
 #define INTRO_CAPTION_Y 170

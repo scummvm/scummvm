@@ -369,8 +369,27 @@ int SndRes::getVoiceLength(uint32 voice_rn) {
 		ms_f = (double)length / 14705 * 1000.0;
 		ms_i = (int)ms_f;
 	} else if (res_type == GAME_SOUND_WAV) {
-		// TODO!
-		return -1;
+		// IHNM does not use the same format for all its WAV sounds, so
+		// we just have to load the stupid thing and see what that will
+		// tell us about it.
+
+		SOUNDBUFFER snd_buffer;
+
+		result = load(_voice_ctxt, voice_rn, &snd_buffer);
+		if (result != SUCCESS) {
+			return -1;
+		}
+
+		ms_f = (double)snd_buffer.s_buf_len;
+		if (snd_buffer.s_samplebits == 16) {
+			ms_f /= 2.0;
+		}
+		if (snd_buffer.s_stereo) {
+			ms_f /= 2.0;
+		}
+
+		ms_f = ms_f / snd_buffer.s_freq * 1000.0;
+		ms_i = (int)ms_f;
 	} else {
 		return -1;
 	}

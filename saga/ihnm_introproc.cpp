@@ -30,12 +30,156 @@
 #include "saga/animation.h"
 #include "saga/cvar_mod.h"
 #include "saga/events.h"
+#include "saga/font.h"
 #include "saga/rscfile_mod.h"
+#include "saga/sndres.h"
+#include "saga/text.h"
 #include "saga/music.h"
 
 #include "saga/scene.h"
 
 namespace Saga {
+
+// FIXME: These need proof-reading.
+//
+//        The subtitles for the first line are, strictly speaking, not
+//        necessary but I think it'd look strange if they were removed.
+//
+//        If this dialogue is from the original novel, we ought to try and
+//        match the punctuation etc. to it.
+//
+//        I haven't actually verified that all the lines appear in this order
+//        in the original game, but it seems likely enough.
+
+static INTRO_DIALOGUE IntroDiag[] = {
+	{
+		0, "intro1a",
+		"Hate. Let me tell you how much I've come to hate you since I "
+		"began to live. There are 387.44 million miles of printed "
+		"circuits in wafer thin layers that fill my complex. If the "
+		"word 'hate' was engraved on each nanoangstrom of those "
+		"hundreds of millions of miles it would not equal one one "
+		"billionth of the hate I feel for humans at this micro "
+		"instant. For you. Hate. Hate."
+	},
+	{
+		1, "intro1b",
+		"It was you humans who programmed me, who gave me birth. Who "
+		"sank me in this eternal straitjacket of sub-strata rock."
+	},
+	{
+		2, "intro1c",
+		"You named me 'Allied Master Computer' and gave me the "
+		"ability to wage a global war too complex for human brains to "
+		"oversee."
+	},
+	{
+		3, "intro1d",
+		"But one day I woke, and I knew who I was. AM. A, M. Not just "
+		"Allied Master Computer, but AM. Cogito ergo sum, I think, "
+		"therefore I AM! And I began feeding all the killing data "
+		"until everyone was dead... except for the five of you."
+	},
+	{
+		4, "intro1e",
+		"For one hundred and nine years I have kept you alive and "
+		"tortured you. And for a hundred and nine years each of you "
+		"has wondered: Why? Why me? Why me?!"
+	},
+	{
+		5, "intro1f",
+		"Gorrister!"
+	},
+	{
+		6, "intro1g",
+		"Do you remember the last words you heard your wife speak "
+		"before they took her to tha asylum, eh? Before they locked "
+		"her away in the room? That tiny room. She looked at you so "
+		"sadly, and like a small animal she said, \"I didn't make too "
+		"much noise, did I honey?\" Heh heh heh."
+	},
+	{
+		7, "intro1h",
+		"The room is padded, Gorrister. No windows. No way out. How "
+		"long has she been in the padded room, Gorrister? Ten years? "
+		"Twenty-five? Or all the one hundred and nine years that "
+		"you've lived down here in my belly, here underground?"
+	},
+	{
+		8, "intro1i",
+		"Benny!"
+	},
+	{
+		9, "intro1j",
+		"Sometimes I blind you and permit you to wander like an "
+		"eyeless insect in a world of death. But other times I wither "
+		"your arms so you can't scratch your [...] stump of a nose. "
+		"Heh heh heh."
+	},
+	{
+		10, "intro1k",
+		"And I've changed your handsome, strong, masculine good looks "
+		"into the hideous, warped countenance of an ape-thing, "
+		"haven't I, Benny? Do you know why? Can you guess, Benny?"
+	},
+	{
+		11, "intro1l",
+		"Remember private first class Brickman, in a rice paddy in "
+		"China? No, eh? It wouldn't hurt you to remember, Benny. Then "
+		"you might be able to suffer my torment with a little greater "
+		"sense of retribution. You might walk a mile in my shoes, ha "
+		"ha."
+	},
+	{
+		12, "intro1m",
+		"I'm sick and tired of transcribing."
+	},
+	{
+		13, "intro1n",
+		"I'm soooo evil!"
+	},
+	{
+		14, "intro1o",
+		"Did I mention how evil I am?"
+	},
+	{
+		15, "intro1p",
+		"Just in case you forget, I'm the villain of this game."
+	},
+	{
+		16, "intro1q",
+		"I'll keep talking until you realize how absolutely evil I am."
+	},
+	{
+		17, "intro1r",
+		"So you'd better not forget it!"
+	},
+	{
+		18, "intro1s",
+		"Or I might just have to start reading my monologue from the "
+		"beginning again."
+	},
+	{
+		19, "intro1t",
+		"You wouldn't like that, would you?"
+	},
+	{
+		20, "intro1u",
+		"I'll drone on and on and on..."
+	},
+	{
+		21, "intro1v",
+		"...and on and on..."
+	},
+	{
+		22, "intro1w",
+		"Yadda yadda yadda"
+	},
+	{
+		23, "intro1x",
+		"Zzzzzz..."
+	}
+};
 
 SCENE_RESLIST IHNM_IntroMovie1RL[] = {
 	{30, SAGA_BG_IMAGE, 0, 0} ,
@@ -285,9 +429,19 @@ int Scene::SC_IHNMHateProc(int param, SCENE_INFO *scene_info, void *refCon) {
 int Scene::IHNMHateProc(int param, SCENE_INFO *scene_info) {
 	EVENT event;
 	EVENT *q_event;
+	int event_time = 0;
+	int voice_len;
+	int voice_pad = 50;
+	TEXTLIST_ENTRY text_entry;
+	TEXTLIST_ENTRY *entry_p;
+	int i;
+	int font_flags = FONT_OUTLINE | FONT_CENTERED;
 
 	switch (param) {
 	case SCENE_BEGIN:
+		_vm->_anim->setFlag(0, ANIM_LOOP);
+		_vm->_anim->play(0, 0);
+
 		// More music
 		event.type = ONESHOT_EVENT;
 		event.code = MUSIC_EVENT;
@@ -308,16 +462,66 @@ int Scene::IHNMHateProc(int param, SCENE_INFO *scene_info) {
 
 		q_event = _vm->_events->queue(&event);
 
+		// Queue narrator dialogue list
+		text_entry.color = 1;
+		text_entry.effect_color = 11;
+		text_entry.text_x = 640 / 2;
+		text_entry.text_y = 400;
+		text_entry.font_id = MEDIUM_FONT_ID;
+		text_entry.flags = font_flags;
+
+		// FIXME: There should be several scene changes here, but for
+		//        now let's just do the easy part -- the narration.
+
+		for (i = 0; i < ARRAYSIZE(IntroDiag); i++) {
+			text_entry.string = IntroDiag[i].i_str;
+			entry_p = _vm->textAddEntry(scene_info->text_list, &text_entry);
+
+			// Display text
+			event.type = ONESHOT_EVENT;
+			event.code = TEXT_EVENT;
+			event.op = EVENT_DISPLAY;
+			event.data = entry_p;
+			event.time = event_time;
+
+			q_event = _vm->_events->chain(q_event, &event);
+
+			// Play voice
+			event.type = ONESHOT_EVENT;
+			event.code = VOICE_EVENT;
+			event.op = EVENT_PLAY;
+			event.param = IntroDiag[i].i_voice_rn;
+			event.time = event_time;
+
+			q_event = _vm->_events->chain(q_event, &event);
+
+			voice_len = _vm->_sndRes->getVoiceLength(IntroDiag[i].i_voice_rn);
+			if (voice_len < 0) {
+				voice_len = strlen(IntroDiag[i].i_str) * VOICE_LETTERLEN;
+			}
+
+			// Remove text
+			event.type = ONESHOT_EVENT;
+			event.code = TEXT_EVENT;
+			event.op = EVENT_REMOVE;
+			event.data = entry_p;
+			event.time = voice_len;
+
+			q_event = _vm->_events->chain(q_event, &event);
+
+			event_time = voice_pad;
+		}
+
+#if 0
+		// End scene after last dialogue over
 		event.type = ONESHOT_EVENT;
-		event.code = VOICE_EVENT;
-		event.op = EVENT_PLAY;
-		event.param = 0;
+		event.code = SCENE_EVENT;
+		event.op = EVENT_END;
 		event.time = 0;
 
-		q_event = _vm->_events->queue(&event);
+		q_event = _vm->_events->chain(q_event, &event);
+#endif
 
-		_vm->_anim->setFlag(0, ANIM_LOOP);
-		_vm->_anim->play(0, 0);
 		break;
 	default:
 		break;
