@@ -75,7 +75,7 @@ const TCHAR* WindowsFilesystemNode::toUnicode(const char *x) {
 	return (const TCHAR *)x;
 #else
 	static const TCHAR unicodeString[MAX_PATH];
-	MultiByteToWideChar(CP_ACP, 0, x, strlen(x) + 1, (const TCHAR *)unicodeString, sizeof(unicodeString));
+	MultiByteToWideChar(CP_ACP, 0, x, strlen(x) + 1, (TCHAR *)unicodeString, sizeof(unicodeString));
 	return unicodeString;
 #endif
 }
