@@ -679,6 +679,46 @@ static void IsActorInSector(void) {
   lua_pushnil();
 }
 
+static void MakeSectorActive(void) {
+ lua_Object sectorName = lua_getparam(1);
+ bool visible = !lua_isnil(lua_getparam(2));
+ int i = 0, numSectors;
+
+ // FIXME: This happens on initial load. Are we initting something in the wrong order?
+ if (!Engine::instance()->currScene()) {
+	warning("!!!! Trying to call MakeSectorActive without a scene!");
+	return;
+ }
+
+ numSectors = Engine::instance()->currScene()->getSectorCount();
+
+ if (lua_isstring(sectorName)) {
+  char *name = luaL_check_string(1);
+
+  for (i=0; i<numSectors; i++) {
+   Sector *sector = Engine::instance()->currScene()->getSectorBase(i);
+   if (strstr(sector->name(), name)) {
+     sector->setVisible(visible);
+     return;
+   }     
+  }
+
+ } else if (lua_isnumber(sectorName)) {
+  int id = check_int(1);
+
+  for (i=0; i<numSectors; i++) {
+   Sector *sector = Engine::instance()->currScene()->getSectorBase(i);
+   if (sector->id() == id) {
+     sector->setVisible(visible);
+     return;
+   }     
+  }
+ } else {
+  warning("MakeSectorActive Parameter is not a sector ID or Name");
+  return;
+ }
+}
+
 // Scene functions
 
 static void MakeCurrentSet() {
@@ -1113,7 +1153,6 @@ static char *stubFuncs[] = {
   "PrintActorCostumes",
   "SpewStartup",
   "PreRender",
-  "MakeSectorActive",
   "GetSectorOppositeEdge",
   "FileFindDispose",
   "FileFindNext",
@@ -1390,6 +1429,7 @@ struct luaL_reg builtins[] = {
   { "IsMessageGoing", IsMessageGoing },
   { "GetActorSector", GetActorSector },
   { "IsActorInSector", IsActorInSector },
+  { "MakeSectorActive", MakeSectorActive },
   { "MakeCurrentSet", MakeCurrentSet },
   { "MakeCurrentSetup", MakeCurrentSetup },
   { "GetCurrentSetup", GetCurrentSetup },

@@ -82,6 +82,10 @@ void Sector::load0(TextSplitter &ts, char *name, int id) {
   vertices_[numVertices_] = vertices_[0];
 }
 
+void Sector::setVisible(bool visible) {
+ visible_ = visible;
+}
+
 bool Sector::isPointInSector(Vector3d point) const {
   // The algorithm: for each edge A->B, check whether the z-component
   // of (B-A) x (P-A) is >= 0.  Then the point is at least in the

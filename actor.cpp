@@ -65,7 +65,6 @@ bool Actor::validBoxVector(Vector3d forwardVec, float dist) {
   //       Possibly use a box-aware TraceLine function instead of just checking dest point
   Vector3d tempVec = pos_ + (forwardVec * dist);
   int numSectors = Engine::instance()->currScene()->getSectorCount();
-  printf("%f\n", dist);
 
   for (int i = 0; i < numSectors; i++) {
     Sector *sector = Engine::instance()->currScene()->getSectorBase(i);

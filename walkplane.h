@@ -31,6 +31,8 @@ public:
     void load(TextSplitter &ts);
     void load0(TextSplitter &ts, char *name, int id);
 
+    void setVisible(bool visible);
+
     const char *name() const { return name_.c_str(); }
     const int id() const { return id_; }
     const int type() const { return type_; } // FIXME: Implement type de-masking
