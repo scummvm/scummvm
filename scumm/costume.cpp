@@ -834,7 +834,8 @@ byte LoadedCostume::increaseAnim(Actor *a, int slot) {
 		} else {
 			if (_vm->_version >= 6) {
 				if (nc >= 0x71 && nc <= 0x78) {
-					_vm->_sound->addSoundToQueue2(a->sound[nc - 0x71]);
+					uint sound = (_vm->_features & GF_HUMONGOUS) ? 0x78 - nc : nc - 0x71;
+					_vm->_sound->addSoundToQueue2(a->sound[sound]);
 					if (a->cost.start[slot] != end)
 						continue;
 				}
