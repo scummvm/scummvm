@@ -28,6 +28,10 @@
 
 #include "common/system.h"
 
+#ifdef _WIN32_WCE
+extern bool isSmartphone(void);
+#endif
+
 namespace Simon {
 
 int SimonEngine::runScript() {
@@ -1297,6 +1301,16 @@ void SimonEngine::o_inventory_descriptions() {
 void SimonEngine::o_quit_if_user_presses_y() {
 	for (;;) {
 		delay(1);
+#ifdef _WIN32_WCE
+		if (isSmartphone()) {
+			if (_key_pressed) {
+				if (_key_pressed == 13)
+					shutdown();
+				else
+					break;
+			}
+		}
+#endif
 		if (_key_pressed == 'f' && _language == 20) // Hebrew
 			shutdown();
 		if (_key_pressed == 's' && _language == 5) // Spanish
