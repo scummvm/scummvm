@@ -111,10 +111,10 @@ bool SmushPlayer::parseTag() {
 
 
 void SmushPlayer::parseAHDR() {
-	memcpy(_fluPalette, _block, 0x300);
+//	memcpy(_fluPalette, _block, 0x300);
 	_paletteChanged = true;
 
-	printf("parse AHDR\n");
+//	printf("parse AHDR\n");
 }
 
 
@@ -499,12 +499,14 @@ void SmushPlayer::parseXPAL() {
 		return;
 	}
 
-	for(i=0; i<0x300; i++) {
+	parseNPAL();
+
+/*	for(i=0; i<0x300; i++) {
 		_fluPalMul129[i] += _fluPalWords[i];
 		_fluPalette[i] = _fluPalMul129[i]>>7;
 	}
 
-	_paletteChanged = true;
+	_paletteChanged = true;*/
 }
 
 void SmushPlayer::parseFRME() {

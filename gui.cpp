@@ -672,6 +672,9 @@ const char *Gui::queryString(int stringno, int id) {
 	if (stringno == 0)
 		return NULL;
 
+	if (_s->_features&GF_AFTER_V7)
+		string = _s->_vars[string_map_table_v7[stringno-1].num];
+	else
 	if (_s->_features&GF_AFTER_V6)
 		string = _s->_vars[string_map_table_v6[stringno-1].num];
 	else
