@@ -1821,7 +1821,8 @@ void Gdi::decompressMaskImgOr(byte *dst, const byte *src, int height) const {
 void DecodeNESTileData(const byte *src, byte *dest) {
 	int len = READ_LE_UINT16(src);	src += 2;
 	const byte *end = src + len;
-	int numtiles = *src++;
+	int numtiles;
+	numtiles = *src++; // not currently used
 	while (src < end) {
 		byte data = *src++;
 		for (int j = 0; j < (data & 0x7F); j++)
@@ -1840,7 +1841,7 @@ void Gdi::decodeNESGfx(const byte *room) {
 	const byte *gdata = room + READ_LE_UINT16(room + 0x0A);
 	int tileset = *gdata++;
 	int width = READ_LE_UINT16(room + 0x04);
-	int height = READ_LE_UINT16(room + 0x06);
+	// int height = READ_LE_UINT16(room + 0x06);
 
 	DecodeNESTileData(_vm->getResourceAddress(rtCostume, 37 + tileset), _NESPatTable + _NESBaseTiles * 16);
 	for (int i = 0; i < 16; i++)
