@@ -100,8 +100,6 @@ void SkyText::patchLINCCharset() {
 		charSetPtr[0]++;
 	}
 
-	// NOTE: I have only tested this part of the code with v0.0372
-
 	// Several characters are different in this charset than in the other
 	// two. This is particularly noticeable when using a non-English
 	// version.
