@@ -85,7 +85,7 @@ void OSystem_Dreamcast::play_cdrom(int track, int num_loops, int start_frame, in
   else if(num_loops<0) num_loops=15; // infinity
   if(!find_track(track, first_sec, last_sec))
     return;
-  if(end_frame)
+  if(duration)
     last_sec = first_sec + start_frame + duration;
   first_sec += start_frame;
   play_cdda_sectors(first_sec, last_sec, num_loops);
