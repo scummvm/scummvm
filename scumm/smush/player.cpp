@@ -663,9 +663,10 @@ static StringResource * getStrings(const char * file, const char * directory, bo
 			return getStrings(file, directory, false);
 		}
 		char * old = filebuffer;
-		filebuffer = new char[length - ETRS_HEADER_LENGTH];
+		filebuffer = new char[length - ETRS_HEADER_LENGTH + 1];
 		for(int32 i = ETRS_HEADER_LENGTH; i < length; i++)
 			filebuffer[i - ETRS_HEADER_LENGTH] = old[i] ^ 0xCC;
+		filebuffer[length - ETRS_HEADER_LENGTH] = '\0';
 		delete []old;
 		length -= ETRS_HEADER_LENGTH;
 	}
