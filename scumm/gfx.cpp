@@ -26,6 +26,11 @@
 #include "gui/newgui.h"
 #include "resource.h"
 
+enum {
+	kScrolltime = 500,  // ms scrolling is supposed to take
+	kPictureDelay = 20
+};
+
 void Scumm::getGraphicsPerformance()
 {
 	int i;
@@ -681,16 +686,10 @@ void Scumm::fadeIn(int effect)
 		unkScreenEffect6();
 		break;
 	case 130:
-		scrollEffect(3); // right   unkScreenEffect1();
-		break;
 	case 131:
-		scrollEffect(2); // left     unkScreenEffect2();
-		break;
 	case 132:
-		scrollEffect(1);  // down    unkScreenEffect3();
-		break;
 	case 133:
-		scrollEffect(0);  // up   unkScreenEffect4();
+		scrollEffect(effect - 130);
 		break;
 	case 134:
 		dissolveEffect(1, 1);
@@ -2104,10 +2103,7 @@ void Scumm::scrollEffect(int dir) {
 	else
 		step = vs->width;
 
-#define scrolltime 500  // ms the scroll is supposed to take
-#define picturedelay 20
-
-        step /= (scrolltime/picturedelay);
+	step = (step * kPictureDelay) / kScrolltime;
 
 	switch (dir) {
 	case 0:
@@ -2120,7 +2116,7 @@ void Scumm::scrollEffect(int dir) {
 				0, vs->height - step,
 				vs->width, step);
 			_system->update_screen();
-			waitForTimer(picturedelay);
+			waitForTimer(kPictureDelay);
 
 			y += step;
 		}
@@ -2135,7 +2131,7 @@ void Scumm::scrollEffect(int dir) {
 				0, 0,
 				vs->width, step);
 			_system->update_screen();
-			waitForTimer(picturedelay);
+			waitForTimer(kPictureDelay);
 
 			y += step;
 		}
@@ -2150,7 +2146,7 @@ void Scumm::scrollEffect(int dir) {
 				vs->width - step, 0,
 				step, vs->height);
 			_system->update_screen();
-			waitForTimer(picturedelay);
+			waitForTimer(kPictureDelay);
 
 			x += step;
 		}
@@ -2165,7 +2161,7 @@ void Scumm::scrollEffect(int dir) {
 				0, 0,
 				step, vs->height);
 			_system->update_screen();
-			waitForTimer(picturedelay);
+			waitForTimer(kPictureDelay);
 
 			x += step;
 		}
@@ -2834,7 +2830,7 @@ void Scumm::desaturatePalette()
 	int i;
 
 	cur = _currentPalette;
-    
+
 	for (i = 0; i <= 255; i++)
 	{
 		int max, min;
