@@ -18,7 +18,7 @@ OBJS	= actor.o boxes.o costume.o gfx.o object.o resource.o \
 	saveload.o script.o scummvm.o sound.o string.o \
 	sys.o verbs.o script_v1.o script_v2.o debug.o gui.o \
 	sound/imuse.o sound/fmopl.o sound/mixer.o debugrl.o \
-	akos.o vars.o insane.o  gameDetector.o init.o mp3_cd.o \
+	akos.o vars.o insane.o  gameDetector.o init.o \
 	v3/resource_v3.o v4/resource_v4.o main.o \
 	simon/midi.o simon/simon.o simon/simonsys.o sound/mididrv.o \
 	dcmain.o display.o audio.o input.o selector.o icon.o \
