@@ -105,15 +105,13 @@ private:
 	SDL_Surface *sdl_screen;
 	SDL_Surface *sdl_hwscreen;
 	SDL_Surface *sdl_tmpscreen;
-	SDL_Surface *sdl_palscreen;
 	SDL_CD *cdrom;
 
 	enum {
-		DF_FORCE_FULL_ON_PALETTE = 1,
-		DF_WANT_RECT_OPTIM = 2,
-		DF_2xSAI = 4,
-		DF_SEPARATE_TEMPSCREEN = 8,
-		DF_UPDATE_EXPAND_1_PIXEL = 16,
+		DF_WANT_RECT_OPTIM			= 1 << 0,
+		DF_REAL_8BIT				= 1 << 1,
+		DF_SEPARATE_TEMPSCREEN		= 1 << 2,
+		DF_UPDATE_EXPAND_1_PIXEL	= 1 << 3
 	};
 
 	int _mode;
@@ -127,13 +125,10 @@ private:
 
 	enum {
 		NUM_DIRTY_RECT = 100,
-		//SCREEN_WIDTH = 320,
-		//SCREEN_HEIGHT = 240,
-		//CKSUM_NUM = (SCREEN_WIDTH*SCREEN_HEIGHT/(8*8)),
 
 		MAX_MOUSE_W = 40,
 		MAX_MOUSE_H = 40,
-		MAX_SCALING = 3,
+		MAX_SCALING = 3
 	};
 
 	int SCREEN_WIDTH, SCREEN_HEIGHT, CKSUM_NUM;
@@ -309,7 +304,7 @@ normal_mode:;
 
 	if (_sai_func) {
 		uint16 *tmp_screen = (uint16*)calloc((SCREEN_WIDTH+3)*(SCREEN_HEIGHT+3),sizeof(uint16));
-		_mode_flags = DF_FORCE_FULL_ON_PALETTE | DF_WANT_RECT_OPTIM | DF_2xSAI | DF_SEPARATE_TEMPSCREEN | DF_UPDATE_EXPAND_1_PIXEL;
+		_mode_flags = DF_WANT_RECT_OPTIM | DF_SEPARATE_TEMPSCREEN | DF_UPDATE_EXPAND_1_PIXEL;
 
 		sdl_hwscreen = SDL_SetVideoMode(SCREEN_WIDTH * scaling, SCREEN_HEIGHT * scaling, 16, 
 			_full_screen ? (SDL_FULLSCREEN|SDL_SWSURFACE) : SDL_SWSURFACE
@@ -332,7 +327,6 @@ normal_mode:;
 		if (sdl_tmpscreen == NULL)
 			error("sdl_tmpscreen failed");
 		
-		sdl_palscreen = sdl_screen;
 	} else {
 		switch(scaling) {
 		case 3:
@@ -346,7 +340,7 @@ normal_mode:;
 			break;
 		}
 
-		_mode_flags = DF_WANT_RECT_OPTIM;
+		_mode_flags = DF_WANT_RECT_OPTIM | DF_REAL_8BIT;
 
 		sdl_hwscreen = SDL_SetVideoMode(SCREEN_WIDTH * scaling, SCREEN_HEIGHT * scaling, 8, 
 			_full_screen ? (SDL_FULLSCREEN|SDL_SWSURFACE) : SDL_SWSURFACE
@@ -355,7 +349,6 @@ normal_mode:;
 			error("sdl_hwscreen failed");
 		
 		sdl_tmpscreen = sdl_screen;
-		sdl_palscreen = sdl_hwscreen;
 	}
 }
 
@@ -546,16 +539,15 @@ void OSystem_SDL::update_screen() {
 	/* First make sure the mouse is drawn, if it should be drawn. */
 	draw_mouse();
 	
-
-	if (_palette_changed_last != 0) {
-		SDL_SetColors(sdl_palscreen, _cur_pal + _palette_changed_first, 
+	// Palette update in case we are NOT in "real" 8 bit color mode
+	if (((_mode_flags & DF_REAL_8BIT) == 0) && _palette_changed_last != 0) {
+		SDL_SetColors(sdl_screen, _cur_pal + _palette_changed_first, 
 			_palette_changed_first,
 			_palette_changed_last - _palette_changed_first);
 		
 		_palette_changed_last = 0;
 
-		if (_mode_flags & DF_FORCE_FULL_ON_PALETTE)
-			force_full = true;
+		force_full = true;
 	}
 
 	if (_current_shake_pos != _new_shake_pos) {
@@ -587,7 +579,7 @@ void OSystem_SDL::update_screen() {
 
 
 	/* Convert appropriate parts of the image into 16bpp */
-	if (_mode_flags & DF_2xSAI) {
+	if ((_mode_flags & DF_REAL_8BIT) == 0) {
 		SDL_Rect dst;
 		for(r=dirty_rect_list; r!=last_rect; ++r) {
 			dst = *r;
@@ -604,7 +596,7 @@ void OSystem_SDL::update_screen() {
 	srcPitch = sdl_tmpscreen->pitch;
 	dstPitch = sdl_hwscreen->pitch;
 
-	if (_mode_flags & DF_2xSAI) {
+	if ((_mode_flags & DF_REAL_8BIT) == 0) {
 		for(r=dirty_rect_list; r!=last_rect; ++r) {
 			register int dst_y = r->y + _current_shake_pos;
 			register int dst_h = 0;
@@ -654,8 +646,18 @@ void OSystem_SDL::update_screen() {
 	SDL_UnlockSurface(sdl_tmpscreen);
 	SDL_UnlockSurface(sdl_hwscreen);
 
-	SDL_UpdateRects(sdl_hwscreen, num_dirty_rects, dirty_rect_list);
+	// Palette update in case we are in "real" 8 bit color mode
+	if (_mode_flags & DF_REAL_8BIT && _palette_changed_last != 0) {
+		SDL_SetColors(sdl_hwscreen, _cur_pal + _palette_changed_first, 
+			_palette_changed_first,
+			_palette_changed_last - _palette_changed_first);
+		
+		_palette_changed_last = 0;
+	}
 	
+	// Finally, blit all our changes to the screen
+	SDL_UpdateRects(sdl_hwscreen, num_dirty_rects, dirty_rect_list);
+
 	num_dirty_rects = 0;
 	force_full = false;
 }
@@ -854,7 +856,10 @@ void OSystem_SDL::hotswap_gfx_mode() {
 	force_full = true;
 
 	/* reset palette */
-	SDL_SetColors(sdl_palscreen, _cur_pal, 0, 256);
+	if (_mode_flags & DF_REAL_8BIT)
+		SDL_SetColors(sdl_hwscreen, _cur_pal, 0, 256);
+	else
+		SDL_SetColors(sdl_screen, _cur_pal, 0, 256);
 
 	/* blit image */
 	OSystem_SDL::copy_rect(bak_mem, SCREEN_WIDTH, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
