@@ -25,12 +25,15 @@
 #include <stdio.h>
 #include "common/engine.h"
 #include "common/util.h"
+#include "sound/mixer.h"
+#include "sky/sound.h"
 
 class SkyState : public Engine {
 	void errorString(const char *buf_input, char *buf_output);
 protected:
 	byte _game;
 	bool _isCDVersion;
+	bool _isDemo;
 	byte _key_pressed;
 
 	uint16 _debugMode;
@@ -45,6 +48,8 @@ protected:
 
 	int _numScreenUpdates;
 
+	uint32 _lastLoadedFileSize;
+	
 //	int _timer_id;
 
 	FILE *_dump_file;
@@ -52,13 +57,16 @@ protected:
 	int _number_of_savegames;
 
 	int _sdl_mouse_x, _sdl_mouse_y;
+
+	SkySound *_sound;
 	
 	byte *_workScreen;
 	byte *_backScreen;
 	byte *_tempPal;
 	byte *_workPalette;
 	byte *_halfPalette;
-
+	byte *_scrollAddr;
+	
 	byte *_gameGrid;
 	byte *_gameGrids;
 	
@@ -77,9 +85,15 @@ protected:
 	void initialiseScreen();
 	void initialiseGrids();
 	void setPalette(uint8 *pal);
+	void fn_fade_down(uint8 action);
+	void palette_fadedown_helper(uint32 *pal, uint num);
+	void paletteFadeUp(uint8 *pal);
+	void palette_fadeup_helper(uint32 *realPal, uint32 *desiredPal, int num);
 	uint16 *loadFile(uint16 fileNr, uint8 *dest);
 	uint16 *getFileInfo(uint16 fileNr);
 	void initVirgin();
+	void intro();
+	void doCDIntro();
 	void showScreen();
 
 	static int CDECL game_thread_proc(void *param);

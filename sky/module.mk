@@ -5,8 +5,10 @@ MODULE_OBJS = \
 	sky/disk.o \
 	sky/screen.o \
 	sky/intro.o \
+	sky/cd_intro.o \
 	sky/rnc_deco.o \
 	sky/grid.o \
+	sky/sound.o \
 
 # Include common rules 
 include common.rules

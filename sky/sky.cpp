@@ -53,6 +53,11 @@ SkyState::SkyState(GameDetector *detector, OSystem *syst)
 	
 	_game = detector->_gameId;
 
+	if (!_mixer->bindToSystem(syst))
+			warning("Sound initialisation failed.");
+
+	_mixer->setVolume(detector->_sfx_volume); //unnecessary?
+	
 	_debugMode = detector->_debugMode;
 	_debugLevel = detector->_debugLevel;
 	_language = detector->_language;
@@ -78,7 +83,8 @@ void SkyState::go() {
 		_dump_file = stdout;
 
 	initialise();
-
+	intro();
+	
 	while (1) {
 		delay(100);
 	}
@@ -89,6 +95,9 @@ void SkyState::initialise(void) {
 	//initialise_memory();
 	//init_timer();
 	//init_music(); 
+
+	_sound = new SkySound(_mixer);
+
 	initialiseDisk();
 	initialiseScreen();
 	initVirgin();

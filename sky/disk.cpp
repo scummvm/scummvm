@@ -52,6 +52,11 @@ void SkyState::initialiseDisk() {
 	
 	debug(1, "Entries in dinner table: %d", dinnerTableEntries);
 
+	if (dinnerTableEntries < 400)
+		_isDemo = true;
+	else
+		_isDemo = false;
+	
 	if (dinnerTableEntries > 1600) 
 		_isCDVersion = true;
 	else
@@ -92,7 +97,8 @@ uint16 *SkyState::loadFile(uint16 fileNr, uint8 *dest) {
 
 	fileFlags = READ_LE_UINT32((filePtr + 5));
 	fileSize = fileFlags & 0x03fffff;
-
+	_lastLoadedFileSize = fileSize;
+	
 	fileOffset = READ_LE_UINT32((filePtr + 2)) & 0x0ffffff;
 
 	cflag = (uint8)((fileOffset >> (23)) & 0x1);
@@ -168,6 +174,8 @@ uint16 *SkyState::loadFile(uint16 fileNr, uint8 *dest) {
 				}
 			}
 
+			_lastLoadedFileSize = decompSize; //including header
+			
 			if (fixedDest == NULL)
 				free(fileDest);
 
@@ -191,8 +199,7 @@ uint16 *SkyState::getFileInfo(uint16 fileNr) {
 		}
 	}
 
-	// if file is speech file then return NULL if not found
-	printf("get_file_info() - speech file support not implemented yet!\n");
+	// if file not found return NULL
 	return (uint16 *)NULL;
 }
 

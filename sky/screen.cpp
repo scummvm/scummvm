@@ -25,7 +25,6 @@
 #include "sky/skydefs.h"
 #include "sky/sky.h"
 
-#define FADE_JUMP		2
 #define SCROLL_JUMP		16
 
 #define VGA_COLOURS		256
@@ -94,3 +93,93 @@ void SkyState::convertPalette(uint8 *inPal, uint8* outPal) { //convert 3 byte 0.
 		outPal[4 * i + 3] = 0x00;
 	}
 }
+
+//action = 0, simply fade out
+//action = 1, scroll left
+//action = 2, scroll right
+void SkyState::fn_fade_down(uint8 action) {
+
+	if (action) {
+	
+		//do scroll
+
+	} else {
+	
+		int i = 32;
+
+		do {
+			palette_fadedown_helper((uint32 *)_palette, 256);
+			_system->set_palette(_palette, 0, 256);
+			_system->update_screen();
+			delay(10);
+			
+		} while (--i);
+	
+	}
+
+	
+}
+
+void SkyState::palette_fadedown_helper(uint32 *pal, uint num) {
+	byte *p = (byte *)pal;
+
+	do {
+		if (p[0] >= 8)
+			p[0] -= 8;
+		else
+			p[0] = 0;
+		if (p[1] >= 8)
+			p[1] -= 8;
+		else
+			p[1] = 0;
+		if (p[2] >= 8)
+			p[2] -= 8;
+		else
+			p[2] = 0;
+		p += sizeof(uint32);
+	} while (--num);
+}
+
+void SkyState::paletteFadeUp(uint8 *pal) {
+
+	byte tmpPal[1024];
+	
+	convertPalette(pal, tmpPal);
+
+	int i = 32;
+
+	do {
+
+		palette_fadeup_helper((uint32 *)_palette, (uint32 *)tmpPal, 256);
+		_system->set_palette(_palette, 0, 256);
+		_system->update_screen();
+		delay(10);	
+	} while (--i);
+	
+}
+
+void SkyState::palette_fadeup_helper(uint32 *realPal, uint32 *desiredPal, int num) {
+
+	byte *r = (byte *)realPal;
+	byte *d = (byte *)desiredPal;
+
+	do {
+		if (r[0] < d[0]-8)
+			r[0] += 8;
+		else
+			r[0] = d[0];
+		if (r[1] < d[1]-8)
+			r[1] += 8;
+		else
+			r[1] = d[1];
+		if (r[2] < d[2]-8)
+			r[2] += 8;
+		else
+			r[2] = d[2];
+				
+		r += sizeof(uint32);
+		d += sizeof(uint32);
+	} while (--num);
+	
+}
+

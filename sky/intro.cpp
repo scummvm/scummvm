@@ -232,6 +232,49 @@ void SkyState::initVirgin() {
 	free(_tempPal);
 }
 
+void SkyState::intro(void) {
+
+	_workScreen = (uint8 *)loadFile(60112, NULL); //while virgin screen is up, load rev screen
+	_tempPal = (uint8 *)loadFile(60113, NULL);
+
+	//loadSectionMusic(0);
+	
+	delay(3000); //keep virgin screen up for 3 seconds
+
+	//if (!_isCDVersion)
+	//	fn_start_music();
+	
+	delay(3000); //and another 3 seconds.
+	fn_fade_down(0); //remove virgin screen
+	showScreen();
+	paletteFadeUp(_tempPal);
+	free (_tempPal);
+	free (_workScreen);
+	
+	//while rev is up, load gibbons screen
+	_workScreen = (uint8 *)loadFile(60114, NULL);
+	_tempPal = (uint8 *)loadFile(60115, NULL);
+
+	intro_text_space = (uint8 *)malloc(10000);
+	intro_text_save = (uint8 *)malloc(10000);
+
+	//get_text(77);
+	
+	delay(8000); // keep revolution up for 8 seconds
+
+	fn_fade_down(0);
+	showScreen();
+	paletteFadeUp(_tempPal);
+
+	free (_tempPal);
+	free (_workScreen);
+
+	if (_isCDVersion)
+		doCDIntro();
+	
+	
+}
+
 void SkyState::showScreen(void) {
 	
 	_system->copy_rect(_workScreen, 320, 0, 0, 320, 200);
