@@ -330,10 +330,10 @@ int RunScript ( char * scriptData , char * objectData , uint32 *offset )
 	// FIXME: 'scriptData' and 'variables' used to be const. However,
 	// this code writes into 'variables' so it can not be const.
 	char *variables = scriptData + sizeof(int);
-	const char *code = scriptData + *((int *)scriptData) + sizeof(int);
-	uint32 noScripts = *((const int32 *)code);
+	const char *code = scriptData + (int)READ_LE_UINT32(scriptData) + sizeof(int);
+	uint32 noScripts = (int)READ_LE_UINT32(code);
 	if ( (*offset) < noScripts)
-	{	ip = ((const int *)code)[(*offset)+1];
+	{	ip = (int)READ_LE_UINT32((const int *)code + (*offset) + 1);
 		DEBUG2("Start script %d with offset %d",*offset,ip);
 	}
 	else
@@ -354,7 +354,7 @@ int RunScript ( char * scriptData , char * objectData , uint32 *offset )
 	const int *checksumBlock = (const int *)code;
 	code += sizeof(int) * 3;
 
-	if (checksumBlock[0] != 12345678)
+	if ((int)READ_LE_UINT32(checksumBlock) != 12345678)
 	{
 #ifdef INSIDE_LINC
 		AfxMessageBox(CVString("Invalid script in object %s",header->name));
@@ -363,11 +363,11 @@ int RunScript ( char * scriptData , char * objectData , uint32 *offset )
 #endif
 		return(0);
 	}
-	int codeLen = checksumBlock[1];
+	int codeLen = (int)READ_LE_UINT32(checksumBlock + 1);
 	int checksum = 0;
 	for (int count = 0 ; count < codeLen ; count++)
 		checksum += (unsigned char)code[count];
-	if ( checksum != checksumBlock[2] )
+	if ( checksum != (int)READ_LE_UINT32(checksumBlock + 2) )
 	{
 #ifdef INSIDE_LINC
 		AfxMessageBox(CVString("Checksum error in script %s",header->name));

@@ -206,7 +206,7 @@ uint8 *FetchTextLine(uint8 *file, uint32	text_line)	//Tony24Oct96
 
 	point=(uint32*) text_header+1;	//point to the lookup table
 
-	return( (uint8*) (file+ *(point+text_line)) );
+	return( (uint8*) (file + READ_LE_UINT32(point+text_line)) );
 }
 //---------------------------------------------------------------
 // Used for testing text & speech (see FN_I_speak in speech.cpp)

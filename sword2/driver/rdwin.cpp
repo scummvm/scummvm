@@ -33,7 +33,7 @@
 #include "render.h"
 #include "menu.h"
 #include "d_sound.h"
-#include "../sword2.h"
+#include "bs2/sword2.h"
 
 
 #define MENUDEEP 40		// Temporary, until menu.h is written!
