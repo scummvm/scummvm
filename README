@@ -184,7 +184,7 @@ and the DOS Talkie version in the DOS directory of the CD.
 The filenames of saved games for Simon the Sorcerer 1 & 2 were changed in 0.3.0 too:
 Simon the Sorcerer 1 uses simon1.00x (Where x is the slot number) 
 Simon the Sorcerer 2 uses simon2.00x (Where x is the slot number) 
-So if you have any pre 0.3.0 save games you will need to change their filenames to use them
+So if you have any pre 0.3.0 save games you will need to change their filenames to use them.
 
 
 Reporting Bugs:
