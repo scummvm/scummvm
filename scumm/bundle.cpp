@@ -789,14 +789,18 @@ int32 Bundle::decompressCodec(int32 codec, byte *comp_input, byte *comp_output, 
 		}
 
 		{
+			const int MAX_CHANNELS = 2;
 			int32 left, startPos, origLeft, curTableEntry, destPos, esiReg;
 			int16 firstWord;
-			byte sByte1 = 0, sByte2 = 0;
-			int32 sDWord1 = 0, sDWord2 = 0, sDWord3 = 0, sDWord4 = 0;
+			byte sByte[MAX_CHANNELS] = {0, 0};
+			int32 sDWord1[MAX_CHANNELS] = {0, 0};
+			int32 sDWord2[MAX_CHANNELS] = {0, 0};
 			int32 tableEntrySum, imcTableEntry, curTablePos, outputWord, adder;
 			byte decompTable, otherTablePos, var3b;
 			byte *readPos, *dst;
 			uint16 readWord;
+			
+			assert(0 <= channels && channels <= MAX_CHANNELS);
 
 			src = comp_input;
 			dst = comp_output;
@@ -822,16 +826,11 @@ int32 Bundle::decompressCodec(int32 codec, byte *comp_input, byte *comp_output, 
 				}
 			} else {
 				startPos = 1;
-				sByte1 = *(src++);
-				sDWord1 = READ_BE_UINT32(src);
-				src += 4;
-				sDWord2 = READ_BE_UINT32(src);
-				src += 4;
-				if (channels == 2) {
-					sByte2 = *(src++);
-					sDWord3 = READ_BE_UINT32(src);
+				for (int i = 0; i < channels; i++) {
+					sByte[i] = *(src++);
+					sDWord1[i] = READ_BE_UINT32(src);
 					src += 4;
-					sDWord4 = READ_BE_UINT32(src);
+					sDWord2[i] = READ_BE_UINT32(src);
 					src += 4;
 				}
 			}
@@ -840,18 +839,12 @@ int32 Bundle::decompressCodec(int32 codec, byte *comp_input, byte *comp_output, 
 			tableEntrySum = 0;
 			for (int l = 0; l < channels; l++) {
 				if (startPos != 0) {
-					if (l == 0) {
-						curTablePos = sByte1;
-						imcTableEntry = sDWord1;
-						outputWord = sDWord2;
-					} else {
-						curTablePos = sByte2;
-						imcTableEntry = sDWord3;
-						outputWord = sDWord4;
-					}
+					curTablePos = sByte[l];
+					imcTableEntry = sDWord1[l];
+					outputWord = sDWord2[l];
 				} else {
-					imcTableEntry = 7;
 					curTablePos = 0;
+					imcTableEntry = 7;
 					outputWord = 0;
 				}
 
@@ -879,6 +872,9 @@ int32 Bundle::decompressCodec(int32 codec, byte *comp_input, byte *comp_output, 
 					decompTable = curTableEntry - 2;
 					var3b = (1 << decompTable) << 1;
 					readPos = src + (tableEntrySum >> 3);
+					if (readPos+1 >= (comp_input+input_size)) {
+						printf("Overflow!!! %d >= %d\n", (int)readPos+1, (int)comp_input+input_size);
+					}
 					readWord = (uint16)(READ_BE_UINT16(readPos) << (tableEntrySum & 7));
 					otherTablePos = (byte)(readWord >> (16 - curTableEntry));
 					tableEntrySum += curTableEntry;
