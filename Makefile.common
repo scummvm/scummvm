@@ -28,16 +28,6 @@ DEPDIR := .deps
 
 
 ######################################################################
-# Plugin settings
-######################################################################
-
-# Plugin prefix. Typically "lib" on Unix, and nothing everywhere else
-PLUGIN_PREFIX := lib
-# Plugin suffix. For static/shared libs this is typically ".so"/".a" on Unix,
-# ".dll"/".lib" on Windows, ".bundle"/".a" on OS X, etc.
-PLUGIN_SUFFIX := .so
-
-######################################################################
 # Module settings
 ######################################################################
 

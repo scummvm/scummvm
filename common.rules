@@ -11,8 +11,8 @@ ifdef PLUGIN
 # via the configure script, or put in some 'if' statements to choose from
 # one of several build rules
 PLUGIN-$(MODULE) := $(MODULE)/$(PLUGIN_PREFIX)$(MODULE)$(PLUGIN_SUFFIX)
-$(PLUGIN-$(MODULE)): $(MODULE_OBJS) $(EXECUTABLE)
-	$(CXX) $(PLUGIN_LDFLAGS) $(filter-out $(EXECUTABLE),$+) -o $@
+$(PLUGIN-$(MODULE)): $(MODULE_OBJS) $(PLUGIN_EXTRA_DEPS)
+	$(CXX) $(PLUGIN_LDFLAGS) $(filter-out $(PLUGIN_EXTRA_DEPS),$+) -o $@
 PLUGIN:=
 plugins: $(PLUGIN-$(MODULE))
 
