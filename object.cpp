@@ -17,6 +17,9 @@
  *
  * Change Log:
  * $Log$
+ * Revision 1.4  2001/10/16 12:20:18  strigeus
+ * made files compile on unix
+ *
  * Revision 1.3  2001/10/16 10:01:47  strigeus
  * preliminary DOTT support
  *
@@ -401,10 +404,10 @@ void Scumm::loadRoomObjects() {
 		_objs[i].obj_nr = READ_LE_UINT16(&cdhd->obj_id);
 
 #if defined(DOTT)
-		_objs[i].numstrips = cdhd->w>>3;
-		_objs[i].height = cdhd->h>>3;
-		_objs[i].x_pos = cdhd->x>>3;
-		_objs[i].y_pos = cdhd->y>>3;
+		_objs[i].numstrips = READ_LE_UINT16(&cdhd->w)>>3;
+		_objs[i].height = READ_LE_UINT16(&cdhd->h)>>3;
+		_objs[i].x_pos = ((int16)READ_LE_UINT16(&cdhd->x))>>3;
+		_objs[i].y_pos = ((int16)READ_LE_UINT16(&cdhd->y))>>3;
 #else
 		_objs[i].numstrips = cdhd->w;
 		_objs[i].height = cdhd->h;

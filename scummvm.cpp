@@ -17,6 +17,9 @@
  *
  * Change Log:
  * $Log$
+ * Revision 1.8  2001/10/16 12:20:22  strigeus
+ * made files compile on unix
+ *
  * Revision 1.7  2001/10/16 10:01:48  strigeus
  * preliminary DOTT support
  *
@@ -957,8 +960,10 @@ void CDECL debug(int level, const char *s, ...) {
 }
 
 void checkHeap() {
+#if defined(WIN32)
 	if (_heapchk() != _HEAPOK) {
 		error("Heap is invalid!");
 	}
+#endif
 }
 

@@ -17,6 +17,9 @@
  *
  * Change Log:
  * $Log$
+ * Revision 1.4  2001/10/16 12:20:20  strigeus
+ * made files compile on unix
+ *
  * Revision 1.3  2001/10/16 10:01:47  strigeus
  * preliminary DOTT support
  *
@@ -266,7 +269,7 @@ void Scumm::readIndexFile(int mode) {
 void Scumm::readIndexFile() {
 	uint32 blocktype,itemsize;
 	int numblock = 0;
-	int num;
+	int num, i;
 
 	debug(9, "readIndexFile()");
 
