@@ -30,7 +30,6 @@ SkyMusicBase::SkyMusicBase(SkyDisk *pSkyDisk) {
 
 SkyMusicBase::~SkyMusicBase(void)
 {
-	if (_currentMusic) stopMusic();
 	if (_musicData) free(_musicData);
 }
 

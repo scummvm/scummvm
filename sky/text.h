@@ -33,6 +33,7 @@ struct HuffTree {
 class SkyText {
 public:
 	SkyText(SkyDisk *skyDisk, uint32 gameVersion, uint16 _language);
+	~SkyText(void);
 	void getText(uint32 textNr);
 	struct displayText_t displayText(uint8 *dest, bool centre, uint16 pixelWidth, uint8 color);
 	struct displayText_t displayText(char *textPtr, uint8 *dest, bool centre, uint16 pixelWidth, uint8 color);

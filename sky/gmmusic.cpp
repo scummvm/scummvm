@@ -41,8 +41,9 @@ SkyGmMusic::SkyGmMusic(MidiDriver *pMidiDrv, SkyDisk *pSkyDisk)
 
 SkyGmMusic::~SkyGmMusic(void) {
 
-	_midiDrv->close();
 	_midiDrv->setTimerCallback(NULL, NULL);
+	if (_currentMusic) stopMusic();
+	_midiDrv->close();
 	delete _midiDrv;
 }
 

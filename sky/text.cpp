@@ -46,7 +46,7 @@ SkyText::SkyText(SkyDisk *skyDisk, uint32 gameVersion, uint16 language) {
 	_mainCharacterSet.charSpacing = 0;
 	
 	fnSetFont(0);
-	
+
 	if (!SkyState::isDemo(_gameVersion)) {
 		_controlCharacterSet.addr = _skyDisk->loadFile(60520, NULL);
 		_controlCharacterSet.charHeight = 12;
@@ -55,11 +55,21 @@ SkyText::SkyText(SkyDisk *skyDisk, uint32 gameVersion, uint16 language) {
 		_linkCharacterSet.addr = _skyDisk->loadFile(60521, NULL);
 		_linkCharacterSet.charHeight = 12;
 		_linkCharacterSet.charSpacing = 0;
+	} else {
+		_controlCharacterSet.addr = NULL;
+		_linkCharacterSet.addr = NULL;
 	}
 
 	if (SkyState::isCDVersion(_gameVersion)) {
 		_preAfterTableArea = _skyDisk->loadFile(60522, NULL);
-	}
+	} else _preAfterTableArea = NULL;
+}
+
+SkyText::~SkyText(void) {
+
+	if (_controlCharacterSet.addr) free(_controlCharacterSet.addr);
+	if (_linkCharacterSet.addr) free(_linkCharacterSet.addr);
+	if (_preAfterTableArea) free(_preAfterTableArea);
 }
 
 void SkyText::fnSetFont(uint32 fontNr) { 
