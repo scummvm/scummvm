@@ -46,7 +46,20 @@ struct Point {
 /*! 	@brief simple class for handling a rectangular zone.
 
 	This small class is an helper for rectangles.
-	It is mostly used by the blitter class.
+	Note: This implementation is built around the assumption that (top,left) is
+	part of the rectangle, but (bottom,right) is not! This is reflected in 
+	various methods, including contains(), intersects() and others.
+	
+	Another very wide spread approach to rectangle classes treats (bottom,right)
+	also as a part of the rectangle.
+	
+	Coneptually, both are sound, but the approach we use saves many intermediate
+	computations (like computing the height in our case is done by doing this:
+	  height = bottom - top;
+	while in the alternate system, it would be
+	  height = bottom - top + 1;
+	
+	When writing code using our Rect class, always keep this principle in mind!
 */
 struct Rect {
 	int16 top, left;		//!< The point at the top left of the rectangle (part of the rect).
