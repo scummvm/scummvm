@@ -1547,7 +1547,7 @@ void Script::SF_protectResult(SCRIPTFUNC_PARAMS) {
 	debug(1, "stub: SF_protectResult(), %d args", nArgs);
 }
 
-// Script function #75 (0x4d)
+// Script function #75 (0x4b)
 void Script::sfRand(SCRIPTFUNC_PARAMS) {
 	int16 param = thread->pop();
 
