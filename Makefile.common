@@ -23,15 +23,25 @@ DEPDIR := .deps
 # module.mk of their parents. In fact the only reason they are listed here is to ensure the
 # DEPDIRS directive works correctly.
 MODULES += \
-	scumm common simon sky gui backends sound \
-	scumm/smush backends/fs/posix backends/fs/morphos backends/fs/windows backends/midi
+	scumm \
+	simon \
+	sky \
+	common \
+	gui \
+	backends \
+	sound \
+	scumm/smush \
+	backends/fs/posix \
+	backends/fs/morphos \
+	backends/fs/windows \
+	backends/midi
 
 # Include the build instructions for all modules
 -include $(patsubst %,%/module.mk,$(MODULES))
 
 
 scummvm$(EXEEXT): $(OBJS)
-	$(CXX) $(LDFLAGS) -o $@ $+ $(LIBS)
+	$(CXX) $(LDFLAGS) -o $@ common/engine.o $+ $(LIBS)
 
 clean:
 	$(RM) $(OBJS) scummvm$(EXEEXT)
