@@ -828,12 +828,27 @@ void AdlibPercussionChannel::noteOn (byte note, byte velocity) {
 
 MidiDriver_ADLIB::MidiDriver_ADLIB() {
 	uint i;
+
+	_isOpen = false;
+	_game_SmallHeader = false;
+
+	_adlib_reg_cache = 0;
+	_mixer = 0;
+
+	_timer_proc = 0;
+	_timer_param = 0;
+	
+	_adlib_timer_counter = 0;
+	_voice_index = 0;
+	_next_tick = 0;
+	for (i = 0; i < ARRAYSIZE(curnote_table); ++i) {
+		curnote_table[i] = 0;
+	}
+
 	for (i = 0; i < ARRAYSIZE(_parts); ++i) {
 		_parts[i].init (this, i);
 	}
 	_percussion.init (this, 0);
-	_game_SmallHeader = false;
-	_isOpen = false;
 }
 
 int MidiDriver_ADLIB::open() {
