@@ -585,7 +585,6 @@ protected:
 	void o6_startSound();
 	void o6_roomOps();
 	void o6_actorOps();
-	void o6_verbOps();
 	void o6_wait();
 	void o6_soundKludge();
 	void o6_dummy();
