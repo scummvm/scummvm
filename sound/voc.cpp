@@ -30,13 +30,21 @@
 
 
 int getSampleRateFromVOCRate(int vocSR) {
-	if (vocSR == 0xa5 || vocSR == 0xa6 || vocSR == 0x83) {
+	if (vocSR == 0x83) {
+		// FIXME: This is a special hack added by Kirben on Fri Nov 7 11:11:06 2003 UTC,
+		// with the comment: "Correct voc rate in DOTT demo".
+		// It's not clear to me whether this is indeed a proper workaround for a broken
+		// data file, or just a random fix... ?
+		return 11025;
+	} else if (vocSR == 0xa5 || vocSR == 0xa6) {
 		return 11025;
 	} else if (vocSR == 0xd2 || vocSR == 0xd3) {
 		return 22050;
 	} else {
 		int sr = 1000000L / (256L - vocSR);
-		warning("inexact sample rate used: %i (0x%x)", sr, vocSR);
+		// Inexect% sampling rates occur e.g. in the kitchen in Monkey Island,
+		// very easy to reach right from the start of the game.
+		//warning("inexact sample rate used: %i (0x%x)", sr, vocSR);
 		return sr;
 	}
 }
