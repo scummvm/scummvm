@@ -59,7 +59,13 @@ protected:
 	bool	_caretVisible;
 	uint32	_caretTime;
 	
-	bool	_slideUpAndClose;
+	enum SlideMode {
+		kNoSlideMode,
+		kUpSlideMode,
+		kDownSlideMode
+	};
+		
+	SlideMode	_slideMode;
 	uint32	_slideTime;
 
 	ScrollBarWidget *_scrollBar;

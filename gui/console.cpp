@@ -35,7 +35,7 @@ extern const Graphics::NewFont g_consolefont;
 #define kConsoleLineHeight	(g_consolefont.getFontHeight() + 2)
 
 enum {
-	kConsoleSlideDownDuration = 300	// Time in milliseconds
+	kConsoleSlideDownDuration = 200	// Time in milliseconds
 };
 
 
@@ -65,7 +65,7 @@ ConsoleDialog::ConsoleDialog(float widthPercent, float heightPercent)
 	_caretVisible = false;
 	_caretTime = 0;
 
-	_slideUpAndClose = false;
+	_slideMode = kNoSlideMode;
 	_slideTime = 0;
 
 	// Add scrollbar
@@ -104,9 +104,9 @@ void ConsoleDialog::reflowLayout() {
 }
 
 void ConsoleDialog::slideUpAndClose() {
-	if (!_slideUpAndClose) {
+	if (_slideMode == kNoSlideMode) {
 		_slideTime = g_system->getMillis();
-		_slideUpAndClose = true;
+		_slideMode = kUpSlideMode;
 	}
 }
 
@@ -117,6 +117,7 @@ void ConsoleDialog::open() {
 	// certain period of time. 
 	_y = -_h;
 	_slideTime = g_system->getMillis();
+	_slideMode = kDownSlideMode;
 
 	Dialog::open();
 	if (_promptStartPos == -1) {
@@ -166,20 +167,25 @@ void ConsoleDialog::handleTickle() {
 	}
 	
 	// Perform the "slide animation".
-	if (_slideUpAndClose) {
-		_y = -(int)(_h * (float)(g_system->getMillis() - _slideTime) / kConsoleSlideDownDuration);
-		if (_y <= -_h) {
-			_slideUpAndClose = false;
+	if (_slideMode != kNoSlideMode) {
+		const float tmp = (float)(g_system->getMillis() - _slideTime) / kConsoleSlideDownDuration;
+		if (_slideMode == kUpSlideMode) {
+			_y = (int)(_h * (0.0 - tmp));
+		} else {
+			_y = (int)(_h * (tmp - 1.0));
+		}
+		
+		if (_slideMode == kDownSlideMode && _y > 0) {
+			// End the slide
+			_slideMode = kNoSlideMode;
+			_y = 0;
+			draw();
+		} else if (_slideMode == kUpSlideMode && _y <= -_h) {
+			// End the slide
+			_slideMode = kNoSlideMode;
 			close();
 		} else
 			draw();
-	} else
-	if (_y < 0) {
-		_y = -(int)(_h * (1.0 - (float)(g_system->getMillis() - _slideTime) / kConsoleSlideDownDuration));
-		if (_y > 0)
-			_y = 0;
-
-		draw();
 	}
 }
 
@@ -190,7 +196,7 @@ void ConsoleDialog::handleMouseWheel(int x, int y, int direction) {
 void ConsoleDialog::handleKeyDown(uint16 ascii, int keycode, int modifiers) {
 	int i;
 	
-	if (_slideUpAndClose)
+	if (_slideMode != kNoSlideMode)
 		return;
 
 	switch (keycode) {
