@@ -239,7 +239,7 @@ void Scumm_v8::setupOpcodes()
 		OPCODE(o6_walkActorToObj),
 		/* A0 */
 		OPCODE(o6_walkActorTo),
-		OPCODE(o6_putActorInRoom),
+		OPCODE(o6_putActorInRoom),	// FIXME - this seems to be wrong? at least we get actor indices from 31 to 79 here...
 		OPCODE(o6_putActorAtObject),
 		OPCODE(o6_faceActor),
 		/* A4 */
@@ -697,7 +697,9 @@ void Scumm_v8::o8_cursorCommand()
 	case 0xE4:		// SO_CURSOR_IMAGE Set cursor image
 		{
 			int room, obj = popRoomAndObj(&room);
-			setCursorImg(obj, room, 1);
+			// FIXME
+			printf("setCursorImg(%d, %d, 1)\n", obj, room);
+//			setCursorImg(obj, room, 1);
 		}
 		break;
 	case 0xE5:		// SO_CURSOR_HOTSPOT Set cursor hotspot
@@ -832,6 +834,12 @@ void Scumm_v8::o8_actorOps()
 	byte subOp = fetchScriptByte();
 	Actor *a;
 
+	if (subOp == 0x7A) {
+		_curActor = pop();
+		printf("Setting current actor to %d\n", _curActor);
+		return;
+	}
+
 	a = derefActorSafe(_curActor, "o8_actorOps");
 	if (!a)
 		return;
@@ -898,8 +906,8 @@ void Scumm_v8::o8_verbOps()
 	byte subOp = fetchScriptByte();
 	VerbSlot *vs = NULL;
 
-	if (0 <= _curVerbSlot && _curVerbSlot < _maxVerbs) {}
-	vs = &_verbs[_curVerbSlot];
+	if (0 <= _curVerbSlot && _curVerbSlot < _maxVerbs)
+		vs = &_verbs[_curVerbSlot];
 
 	switch (subOp) {
 	case 0x96:		// SO_VERB_INIT Choose verb number for editing

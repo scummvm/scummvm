@@ -227,7 +227,7 @@ void Scumm::scummInit()
 	setupCursor();
 	
 	/* Allocate and initilise actors */
-	_actors = new Actor[MAX_ACTORS];
+	_actors = new Actor[NUM_ACTORS];
 	for (i = 1, a = getFirstActor(); ++a, i < NUM_ACTORS; i++) {
 		a->number = i;
 		a->initActorClass(this);
@@ -1533,7 +1533,9 @@ void Scumm::launch()
 
 	setupScummVars();
 
-	if ((_features & GF_AFTER_V7) || (_gameId == GID_SAMNMAX))
+	if (_features & GF_AFTER_V8)
+		NUM_ACTORS = 80;
+	else if ((_features & GF_AFTER_V7) || (_gameId == GID_SAMNMAX))
 		NUM_ACTORS = 30;
 	else
 		NUM_ACTORS = 13;

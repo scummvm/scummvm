@@ -51,7 +51,6 @@ enum {
 	NUM_SCRIPT_SLOT = 40,
 	NUM_LOCALSCRIPT = 60,
 	NUM_SHADOW_PALETTE = 8,
-	MAX_ACTORS = 30,
 	KEY_SET_OPTIONS = 3456 // WinCE
 };
 
@@ -365,7 +364,7 @@ public:
 	/* Core class/array definitions */
 	Gdi gdi;
 
-	Actor *_actors;	// Has MAX_ACTORS elements
+	Actor *_actors;	// Has NUM_ACTORS elements
 	
 	uint16 *_inventory;
 	byte *_arrays;

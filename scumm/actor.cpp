@@ -848,7 +848,7 @@ void Scumm::playActorSounds()
 void Scumm::processActors()
 {
 	int i;
-	Actor *actors[MAX_ACTORS], *a, **ac, **ac2, *tmp, **end;
+	Actor *actors[NUM_ACTORS], *a, **ac, **ac2, *tmp, **end;
 	int numactors = 0;
 
 	// Make a list of all actors in this room
