@@ -43,6 +43,7 @@ class Music;
 class Anim;
 class Render;
 class ActionMap;
+class IsoMap;
 class Gfx;
 class SData;
 class Script;
@@ -94,6 +95,7 @@ public:
 	Anim *_anim;
 	Render *_render;
 	ActionMap *_actionMap;
+	IsoMap *_isomap;
 	Gfx *_gfx;
 	SData *_sdata;
 	Script *_script;

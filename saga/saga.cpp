@@ -45,7 +45,7 @@
 #include "game_mod.h"
 #include "game.h"
 #include "interface_mod.h"
-#include "isomap_mod.h"
+#include "isomap.h"
 #include "script.h"
 #include "script_mod.h"
 #include "scene_mod.h"
@@ -154,9 +154,7 @@ void SagaEngine::go() {
 	FONT_Init();
 	SPRITE_Init();
 	_anim = new Anim(this);
-	_actionMap = new ActionMap(this);
 	OBJECTMAP_Init();
-	ISOMAP_Init();
 	_script = new Script();
 	_sdata = new SData();
 	INTERFACE_Init(); // requires script module
@@ -196,6 +194,9 @@ void SagaEngine::go() {
 	if (!_render->initialized()) {
 		return;
 	}
+
+	_isomap = new IsoMap(_gfx);
+	_actionMap = new ActionMap(this);
 
 	// Initialize system specific sound
 	_sound = new Sound(this, _mixer, MainData.sound_enabled);

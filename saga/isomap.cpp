@@ -27,26 +27,22 @@
 #include "game_mod.h"
 #include "gfx.h"
 
-#include "isomap_mod.h"
 #include "isomap.h"
 
 namespace Saga {
 
-static R_ISOMAP_MODULE IsoModule;
-
-int ISOMAP_Init() {
-	IsoModule.init = 1;
-
-	return R_SUCCESS;
+IsoMap::IsoMap(Gfx *gfx) {
+	_gfx = gfx;
+	_init = 1;
 }
 
-int ISOMAP_LoadTileset(const byte *tileres_p, size_t tileres_len) {
+int IsoMap::loadTileset(const byte *tileres_p, size_t tileres_len) {
 	R_ISOTILE_ENTRY first_entry;
 	R_ISOTILE_ENTRY *tile_tbl;
 
 	uint16 i;
 
-	assert((IsoModule.init) && (!IsoModule.tiles_loaded));
+	assert((_init) && (!_tiles_loaded));
 	assert((tileres_p != NULL) && (tileres_len > 0));
 
 	MemoryReadStream readS(tileres_p, tileres_len);
@@ -54,16 +50,16 @@ int ISOMAP_LoadTileset(const byte *tileres_p, size_t tileres_len) {
 	readS.readUint16LE(); // skip
 	first_entry.tile_offset = readS.readUint16LE();
 
-	IsoModule.tile_ct = first_entry.tile_offset / SAGA_ISOTILE_ENTRY_LEN;
+	_tile_ct = first_entry.tile_offset / SAGA_ISOTILE_ENTRY_LEN;
 
 	readS.seek(0);
 
-	tile_tbl = (R_ISOTILE_ENTRY *)malloc(IsoModule.tile_ct * sizeof *tile_tbl);
+	tile_tbl = (R_ISOTILE_ENTRY *)malloc(_tile_ct * sizeof *tile_tbl);
 	if (tile_tbl == NULL) {
 		return R_MEM;
 	}
 
-	for (i = 0; i < IsoModule.tile_ct; i++) {
+	for (i = 0; i < _tile_ct; i++) {
 		tile_tbl[i].tile_h = readS.readByte();
 		tile_tbl[i].unknown01 = readS.readByte();
 		tile_tbl[i].tile_offset = readS.readUint16LE();
@@ -71,21 +67,21 @@ int ISOMAP_LoadTileset(const byte *tileres_p, size_t tileres_len) {
 		tile_tbl[i].unknown06 = readS.readSint16LE();
 	}
 
-	IsoModule.tiles_loaded = 1;
-	IsoModule.tile_tbl = tile_tbl;
-	IsoModule.tileres_p = tileres_p;
-	IsoModule.tileres_len = tileres_len;
+	_tiles_loaded = 1;
+	_tile_tbl = tile_tbl;
+	_tileres_p = tileres_p;
+	_tileres_len = tileres_len;
 
 	return R_SUCCESS;
 }
 
-int ISOMAP_LoadMetaTileset(const byte *mtileres_p, size_t mtileres_len) {
+int IsoMap::loadMetaTileset(const byte *mtileres_p, size_t mtileres_len) {
 	R_ISO_METATILE_ENTRY *mtile_tbl;
 	uint16 mtile_ct;
 	uint16 ct;
 	int i;
 
-	assert(IsoModule.init);
+	assert(_init);
 	assert((mtileres_p != NULL) && (mtileres_len > 0));
 
 	MemoryReadStream readS(mtileres_p, mtileres_len);
@@ -107,44 +103,44 @@ int ISOMAP_LoadMetaTileset(const byte *mtileres_p, size_t mtileres_len) {
 		}
 	}
 
-	IsoModule.mtile_ct = mtile_ct;
-	IsoModule.mtile_tbl = mtile_tbl;
-	IsoModule.mtileres_p = mtileres_p;
-	IsoModule.mtileres_len = mtileres_len;
+	_mtile_ct = mtile_ct;
+	_mtile_tbl = mtile_tbl;
+	_mtileres_p = mtileres_p;
+	_mtileres_len = mtileres_len;
 
-	IsoModule.mtiles_loaded = 1;
+	_mtiles_loaded = 1;
 
 	return R_SUCCESS;
 }
 
-int ISOMAP_LoadMetamap(const byte *mm_res_p, size_t mm_res_len) {
+int IsoMap::loadMetamap(const byte *mm_res_p, size_t mm_res_len) {
 	int i;
 
 	MemoryReadStream readS(mm_res_p, mm_res_len);
-	IsoModule.metamap_n = readS.readSint16LE();
+	_metamap_n = readS.readSint16LE();
 
 	for (i = 0; i < SAGA_METAMAP_SIZE; i++) {
-		IsoModule.metamap_tbl[i] = readS.readUint16LE();
+		_metamap_tbl[i] = readS.readUint16LE();
 	}
 
-	IsoModule.mm_res_p = mm_res_p;
-	IsoModule.mm_res_len = mm_res_len;
-	IsoModule.metamap_loaded = 1;
+	_mm_res_p = mm_res_p;
+	_mm_res_len = mm_res_len;
+	_metamap_loaded = 1;
 
 	return R_SUCCESS;
 }
 
-int ISOMAP_Draw(R_SURFACE *dst_s) {
+int IsoMap::draw(R_SURFACE *dst_s) {
 	R_GAME_DISPLAYINFO disp_info;
 	GAME_GetDisplayInfo(&disp_info);
 	R_RECT iso_rect(disp_info.logical_w - 1, disp_info.scene_h - 1);
-	_vm->_gfx->drawRect(dst_s, &iso_rect, 0);
-	ISOMAP_DrawMetamap(dst_s, -1000, -500);
+	_gfx->drawRect(dst_s, &iso_rect, 0);
+	drawMetamap(dst_s, -1000, -500);
 
 	return R_SUCCESS;
 }
 
-int ISOMAP_DrawMetamap(R_SURFACE *dst_s, int map_x, int map_y) {
+int IsoMap::drawMetamap(R_SURFACE *dst_s, int map_x, int map_y) {
 	int meta_base_x = map_x;
 	int meta_base_y = map_y;
 	int meta_xi;
@@ -158,7 +154,7 @@ int ISOMAP_DrawMetamap(R_SURFACE *dst_s, int map_x, int map_y) {
 		meta_y = meta_base_y;
 		for (meta_xi = SAGA_METAMAP_W - 1; meta_xi >= 0; meta_xi--) {
 			meta_idx = meta_xi + (meta_yi * 16);
-			ISOMAP_DrawMetaTile(dst_s, IsoModule.metamap_tbl[meta_idx], meta_x, meta_y);
+			drawMetaTile(dst_s, _metamap_tbl[meta_idx], meta_x, meta_y);
 			meta_x += 128;
 			meta_y += 64;
 		}
@@ -170,7 +166,7 @@ int ISOMAP_DrawMetamap(R_SURFACE *dst_s, int map_x, int map_y) {
 	return R_SUCCESS;
 }
 
-int ISOMAP_DrawMetaTile(R_SURFACE *dst_s, uint16 mtile_i, int mtile_x, int mtile_y) {
+int IsoMap::drawMetaTile(R_SURFACE *dst_s, uint16 mtile_i, int mtile_x, int mtile_y) {
 	int tile_xi;
 	int tile_yi;
 	int tile_x;
@@ -179,13 +175,13 @@ int ISOMAP_DrawMetaTile(R_SURFACE *dst_s, uint16 mtile_i, int mtile_x, int mtile
 	int tile_base_y;
 	int tile_i;
 	R_ISO_METATILE_ENTRY *mtile_p;
-	assert(IsoModule.init && IsoModule.mtiles_loaded);
+	assert(_init && _mtiles_loaded);
 
-	if (mtile_i >= IsoModule.mtile_ct) {
+	if (mtile_i >= _mtile_ct) {
 		return R_FAILURE;
 	}
 
-	mtile_p = &IsoModule.mtile_tbl[mtile_i];
+	mtile_p = &_mtile_tbl[mtile_i];
 
 	tile_base_x = mtile_x;
 	tile_base_y = mtile_y;
@@ -195,7 +191,7 @@ int ISOMAP_DrawMetaTile(R_SURFACE *dst_s, uint16 mtile_i, int mtile_x, int mtile
 		tile_x = tile_base_x;
 		for (tile_xi = SAGA_METATILE_W - 1; tile_xi >= 0; tile_xi--) {
 			tile_i = tile_xi + (tile_yi * SAGA_METATILE_W);
-			ISOMAP_DrawTile(dst_s, mtile_p->tile_tbl[tile_i], tile_x, tile_y);
+			drawTile(dst_s, mtile_p->tile_tbl[tile_i], tile_x, tile_y);
 			tile_x += SAGA_ISOTILE_WIDTH / 2;
 			tile_y += SAGA_ISOTILE_BASEHEIGHT / 2 + 1;
 		}
@@ -206,7 +202,7 @@ int ISOMAP_DrawMetaTile(R_SURFACE *dst_s, uint16 mtile_i, int mtile_x, int mtile
 	return R_SUCCESS;
 }
 
-int ISOMAP_DrawTile(R_SURFACE *dst_s, uint16 tile_i, int tile_x, int tile_y) {
+int IsoMap::drawTile(R_SURFACE *dst_s, uint16 tile_i, int tile_x, int tile_y) {
 	const byte *tile_p;
 	const byte *read_p;
 	byte *draw_p;
@@ -219,9 +215,9 @@ int ISOMAP_DrawTile(R_SURFACE *dst_s, uint16 tile_i, int tile_x, int tile_y) {
 	int fg_runct;
 	int ct;
 
-	assert(IsoModule.init && IsoModule.tiles_loaded);
+	assert(_init && _tiles_loaded);
 
-	if (tile_i >= IsoModule.tile_ct) {
+	if (tile_i >= _tile_ct) {
 		return R_FAILURE;
 	}
 
@@ -235,8 +231,8 @@ int ISOMAP_DrawTile(R_SURFACE *dst_s, uint16 tile_i, int tile_x, int tile_y) {
 		return R_SUCCESS;
 	}
 
-	tile_p = IsoModule.tileres_p + IsoModule.tile_tbl[tile_i].tile_offset;
-	tile_h = IsoModule.tile_tbl[tile_i].tile_h;
+	tile_p = _tileres_p + _tile_tbl[tile_i].tile_offset;
+	tile_h = _tile_tbl[tile_i].tile_h;
 
 	read_p = tile_p;
 	draw_p = dst_s->buf + tile_x + (tile_y * dst_s->buf_pitch);

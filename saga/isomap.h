@@ -59,30 +59,40 @@ struct R_ISO_METATILE_ENTRY {
 
 #define SAGA_METATILE_ENTRY_LEN 136
 
-struct R_ISOMAP_MODULE {
-	int init;
-	int tiles_loaded;
-	const byte *tileres_p;
-	size_t tileres_len;
-	uint16 tile_ct;
-	R_ISOTILE_ENTRY *tile_tbl;
+class Gfx;
 
-	int mtiles_loaded;
-	const byte *mtileres_p;
-	size_t mtileres_len;
-	uint16 mtile_ct;
-	R_ISO_METATILE_ENTRY *mtile_tbl;
+class IsoMap {
+public:
+	IsoMap(Gfx *gfx);
+	int loadTileset(const byte *, size_t);
+	int loadMetaTileset(const byte *, size_t);
+	int loadMetamap(const byte *mm_res_p, size_t mm_res_len);
+	int draw(R_SURFACE *dst_s);
+private:
+	int drawTile(R_SURFACE *dst_s, uint16 tile_i, int tile_x, int tile_y);
+	int drawMetaTile(R_SURFACE *dst_s, uint16 mtile_i, int mtile_x, int mtile_y);
+	int drawMetamap(R_SURFACE *dst_s, int map_x, int map_y);
+	int _init;
+	int _tiles_loaded;
+	const byte *_tileres_p;
+	size_t _tileres_len;
+	uint16 _tile_ct;
+	R_ISOTILE_ENTRY *_tile_tbl;
 
-	int metamap_loaded;
-	int metamap_n;
-	uint16 metamap_tbl[SAGA_METAMAP_SIZE];
-	const byte *mm_res_p;
-	size_t mm_res_len;
+	int _mtiles_loaded;
+	const byte *_mtileres_p;
+	size_t _mtileres_len;
+	uint16 _mtile_ct;
+	R_ISO_METATILE_ENTRY *_mtile_tbl;
+
+	int _metamap_loaded;
+	int _metamap_n;
+	uint16 _metamap_tbl[SAGA_METAMAP_SIZE];
+	const byte *_mm_res_p;
+	size_t _mm_res_len;
+
+	Gfx *_gfx;
 };
-
-int ISOMAP_DrawTile(R_SURFACE *dst_s, uint16 tile_i, int tile_x, int tile_y);
-int ISOMAP_DrawMetaTile(R_SURFACE *dst_s, uint16 mtile_i, int mtile_x, int mtile_y);
-int ISOMAP_DrawMetamap(R_SURFACE *dst_s, int map_x, int map_y);
 
 } // End of namespace Saga
 

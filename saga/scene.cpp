@@ -32,7 +32,7 @@
 #include "cvar_mod.h"
 #include "events_mod.h"
 #include "actionmap.h"
-#include "isomap_mod.h"
+#include "isomap.h"
 #include "script_mod.h"
 #include "objectmap_mod.h"
 #include "palanim_mod.h"
@@ -636,7 +636,7 @@ int ProcessSceneResources() {
 
 			debug(0, "Loading isometric tileset resource.");
 
-			if (ISOMAP_LoadTileset(res_data, res_data_len) != R_SUCCESS) {
+			if (_vm->_isomap->loadTileset(res_data, res_data_len) != R_SUCCESS) {
 				warning("ProcessSceneResources: Error loading isometric tileset resource");
 				return R_FAILURE;
 			}
@@ -651,7 +651,7 @@ int ProcessSceneResources() {
 
 			debug(0, "Loading isometric metamap resource.");
 
-			if (ISOMAP_LoadMetamap(res_data, res_data_len) != R_SUCCESS) {
+			if (_vm->_isomap->loadMetamap(res_data, res_data_len) != R_SUCCESS) {
 				warning("ProcessSceneResources: Error loading isometric metamap resource");
 				return R_FAILURE;
 			}
@@ -666,7 +666,7 @@ int ProcessSceneResources() {
 
 			debug(0, "Loading isometric metatileset resource.");
 
-			if (ISOMAP_LoadMetaTileset(res_data, res_data_len) != R_SUCCESS) {
+			if (_vm->_isomap->loadMetaTileset(res_data, res_data_len) != R_SUCCESS) {
 				warning("ProcessSceneResources: Error loading isometric tileset resource");
 				return R_FAILURE;
 			}
@@ -736,7 +736,7 @@ int SCENE_Draw(R_SURFACE *dst_s) {
 						MAX(disp_info.scene_h, SceneModule.bg.h), NULL, &bg_pt);
 		break;
 	case R_SCENE_MODE_ISO:
-		ISOMAP_Draw(dst_s);
+		_vm->_isomap->draw(dst_s);
 		break;
 	default:
 		// Unknown scene mode
