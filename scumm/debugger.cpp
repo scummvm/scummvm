@@ -810,16 +810,21 @@ bool ScummDebugger::Cmd_PrintBox(int argc, const char **argv) {
 bool ScummDebugger::Cmd_PrintBoxMatrix(int argc, const char **argv) {
 	byte *boxm = _s->getBoxMatrixBaseAddr();
 	int num = _s->getNumBoxes();
-	int i;
+	int i, j;
 
 	Debug_Printf("Walk matrix:\n");
 	for (i = 0; i < num; i++) {
 		Debug_Printf("%d: ", i);
-		while (*boxm != 0xFF) {
-			Debug_Printf("[%d] ", *boxm);
+		if (_s->_version <= 2) {
+			for (j = 0; j < num; j++)
+				Debug_Printf("[%d] ", *boxm++);
+		} else {
+			while (*boxm != 0xFF) {
+				Debug_Printf("[%d] ", *boxm);
+				boxm++;
+			}
 			boxm++;
 		}
-		boxm++;
 		Debug_Printf("\n");
 	}
 	return true;
