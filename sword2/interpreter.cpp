@@ -609,11 +609,9 @@ int Logic::runScript(char *scriptData, char *objectData, uint32 *offset) {
 
 		case CP_DEBUGON:
 			// Turn debugging on
-			_debugFlag = true;
 			break;
 		case CP_DEBUGOFF:
-			// Turn debugging on
-			_debugFlag = false;
+			// Turn debugging off
 			break;
 		case CP_TEMP_TEXT_PROCESS:
 			// Process a text line

@@ -187,7 +187,6 @@ public:
 	uint32 _frameCount;
 
 	bool _wantSfxDebug;
-	bool _grabbingSequences;
 
 	int32 _gameCycle;
 	bool _renderSkip;

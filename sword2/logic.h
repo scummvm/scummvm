@@ -53,9 +53,6 @@ private:
 	// keeps note of no. of objects in the kill list
 	uint32 _kills;
 
-	// Set this to turn debugging on
-	bool _debugFlag;
-
 	// denotes the res id of the game-object-list in current use
 	uint32 _currentRunList;
 
@@ -66,6 +63,13 @@ private:
 	ObjectHub *_curObjectHub;
 
 	void processKillList(void);
+
+	struct EventUnit {
+		uint32 id;
+		uint32 interact_id;
+	};
+
+	EventUnit _eventList[MAX_events];
 
 	// Stores resource id of the wav to use as lead-out from smacker
 	uint32 _smackerLeadOut;
@@ -160,7 +164,7 @@ private:
 
 public:
 	Logic(Sword2Engine *vm) :
-		  _vm(vm), _kills(0), _debugFlag(false), _smackerLeadOut(0),
+		  _vm(vm), _kills(0), _smackerLeadOut(0),
 		  _sequenceTextLines(0), _speechTime(0), _animId(0),
 		  _speechAnimType(0), _leftClickDelay(0), _rightClickDelay(0),
 		  _defaultResponseId(0), _totalStartups(0),
@@ -209,17 +213,10 @@ public:
 
 	int runScript(char *scriptData, char *objectData, uint32 *offset);
 
-	struct EventUnit {
-		uint32 id;
-		uint32 interact_id;
-	};
-
-	EventUnit _eventList[MAX_events];
-
 	void sendEvent(uint32 id, uint32 interact_id);
 	void setPlayerActionEvent(uint32 id, uint32 interact_id);
 	void startEvent(void);
-	bool checkEventWaiting(void);
+	int checkEventWaiting(void);
 	void clearEvent(uint32 id);
 	void killAllIdsEvents(uint32 id);
 
@@ -374,6 +371,8 @@ public:
 	void totalRestart(void);
 	void examineRunList(void);
 	void resetKillList(void);
+
+	void printEventList(void);
 };
 
 } // End of namespace Sword2

@@ -20,43 +20,25 @@
 #include "common/stdafx.h"
 #include "sword2/sword2.h"
 #include "sword2/defs.h"
+#include "sword2/console.h"
 #include "sword2/interpreter.h"
 #include "sword2/logic.h"
 #include "sword2/resman.h"
 
+#define Debug_Printf _vm->_debugger->DebugPrintf
+
 namespace Sword2 {
 
-uint32 Logic::countEvents(void) {
-	uint32 count = 0;
-
-	for (int i = 0; i < MAX_events; i++) {
-		if (_eventList[i].id)
-			count++;
-	}
-
-	return count;
-}
-
 void Logic::sendEvent(uint32 id, uint32 interact_id) {
-	int i;
-
-	for (i = 0; i < MAX_events; i++) {
-		if (_eventList[i].id == id)
-			break;
-
-		if (!_eventList[i].id)
-			break;
+	for (int i = 0; i < MAX_events; i++) {
+		if (_eventList[i].id == id || !_eventList[i].id) {
+			_eventList[i].id = id;
+			_eventList[i].interact_id = interact_id;
+			return;
+		}
 	}
 
-	assert(i < MAX_events);
-
-	// found that slot
-
-	// id of person to stop
-	_eventList[i].id = id;
-
-	// full script id
-	_eventList[i].interact_id = interact_id;
+	error("sendEvent() ran out of event slots");
 }
 
 void Logic::setPlayerActionEvent(uint32 id, uint32 interact_id) {
@@ -64,13 +46,13 @@ void Logic::setPlayerActionEvent(uint32 id, uint32 interact_id) {
 	sendEvent(id, (interact_id << 16) | 2);
 }
 
-bool Logic::checkEventWaiting(void) {
+int Logic::checkEventWaiting(void) {
 	for (int i = 0; i < MAX_events; i++) {
 		if (_eventList[i].id == _scriptVars[ID])
-			return true;
+			return 1;
 	}
 
-	return false;
+	return 0;
 }
 
 void Logic::startEvent(void) {
@@ -79,23 +61,18 @@ void Logic::startEvent(void) {
 
 	for (int i = 0; i < MAX_events; i++) {
 		if (_eventList[i].id == _scriptVars[ID]) {
-			// run 3rd script of target object on level 1
 			logicOne(_eventList[i].interact_id);
-
-			// clear the slot
 			_eventList[i].id = 0;
 			return;
 		}
 	}
 
-	// oh dear - stop the system
-	error("Start_event can't find event for id %d", _scriptVars[ID]);
+	error("startEvent() can't find event for id %d", _scriptVars[ID]);
 }
 
 void Logic::clearEvent(uint32 id) {
 	for (int i = 0; i < MAX_events; i++) {
 		if (_eventList[i].id == id) {
-			// clear the slot
 			_eventList[i].id = 0;
 			return;
 		}
@@ -104,10 +81,8 @@ void Logic::clearEvent(uint32 id) {
 
 void Logic::killAllIdsEvents(uint32 id) {
 	for (int i = 0; i < MAX_events; i++) {
-		if (_eventList[i].id == id) {
-			// clear the slot
+		if (_eventList[i].id == id)
 			_eventList[i].id = 0;
-		}
 	}
 }
 
@@ -149,15 +124,9 @@ int32 Logic::fnSendEvent(int32 *params) {
 }
 
 int32 Logic::fnCheckEventWaiting(int32 *params) {
-	// returns yes/no in _scriptVars[RESULT]
-
 	// params:	none
 
-	if (checkEventWaiting())
-		_scriptVars[RESULT] = 1;
-	else
-		_scriptVars[RESULT] = 0;
-
+	_scriptVars[RESULT] = checkEventWaiting();
 	return IR_CONT;
 }
 
@@ -167,53 +136,41 @@ int32 Logic::fnCheckEventWaiting(int32 *params) {
 int32 Logic::fnCheckForEvent(int32 *params) {
 	// params:	none
 
-	if (!checkEventWaiting())
-		return IR_CONT;
+	if (checkEventWaiting()) {
+		startEvent();
+		return IR_TERMINATE;
+	}
 
-	startEvent();
-	return IR_TERMINATE;
+	return IR_CONT;
 }
 
 // combination of fnPause and fnCheckForEvent
 // - ie. does a pause, but also checks for event each cycle
 
 int32 Logic::fnPauseForEvent(int32 *params) {
-	// returns yes/no in RESULT
-
 	// params:	0 pointer to object's logic structure
 	//		1 number of game-cycles to pause
 
 	ObjectLogic *ob_logic = (ObjectLogic *) _vm->_memory->intToPtr(params[0]);
 
-	// first, check for an event
-
 	if (checkEventWaiting()) {
-		// reset the 'looping' flag
 		ob_logic->looping = 0;
-
-		// start the event - run 3rd script of target object on level 1
 		startEvent();
 		return IR_TERMINATE;
 	}
 
-	// no event, so do the fnPause bit
-
-	// start the pause
 	if (ob_logic->looping == 0) {
 		ob_logic->looping = 1;
 		ob_logic->pause = params[1];
 	}
 
-	// if non-zero
 	if (ob_logic->pause) {
-		// decrement the pause count
 		ob_logic->pause--;
 		return IR_REPEAT;
-	} else {
-		// pause count is zero
-		ob_logic->looping = 0;
-		return IR_CONT;
 	}
+
+	ob_logic->looping = 0;
+	return IR_CONT;
 }
 
 int32 Logic::fnClearEvent(int32 *params) {
@@ -228,6 +185,33 @@ int32 Logic::fnStartEvent(int32 *params) {
 
 	startEvent();
 	return IR_TERMINATE;
+}
+
+// For the debugger
+
+uint32 Logic::countEvents(void) {
+	uint32 count = 0;
+
+	for (int i = 0; i < MAX_events; i++) {
+		if (_eventList[i].id)
+			count++;
+	}
+
+	return count;
+}
+
+void Logic::printEventList(void) {
+	Debug_Printf("EVENT LIST:\n");
+
+	for (uint32 i = 0; i < MAX_events; i++) {
+		if (_eventList[i].id) {
+			uint32 target = _eventList[i].id;
+			uint32 script = _eventList[i].interact_id;
+
+			Debug_Printf("slot %2d: id = %s (%d)\n", i, _vm->fetchObjectName(target), target);
+			Debug_Printf("         script = %s (%d) pos %d\n", _vm->fetchObjectName(script / 65536), script / 65536, script % 65536);
+		}
+	}
 }
 
 } // End of namespace Sword2

@@ -93,23 +93,15 @@ Debugger::Debugger(Sword2Engine *vm)
 	DCmd_Register("debugon", &Debugger::Cmd_DebugOn);
 	DCmd_Register("debugoff", &Debugger::Cmd_DebugOn);
 	DCmd_Register("saverest", &Debugger::Cmd_SaveRest);
-	DCmd_Register("saves", &Debugger::Cmd_ListSaveGames);
-	DCmd_Register("save", &Debugger::Cmd_SaveGame);
-	DCmd_Register("restore", &Debugger::Cmd_RestoreGame);
-	DCmd_Register("bltfxon", &Debugger::Cmd_BltFxOn);
-	DCmd_Register("bltfxoff", &Debugger::Cmd_BltFxOff);
 	DCmd_Register("timeon", &Debugger::Cmd_TimeOn);
 	DCmd_Register("timeoff", &Debugger::Cmd_TimeOff);
 	DCmd_Register("text", &Debugger::Cmd_Text);
 	DCmd_Register("showvar", &Debugger::Cmd_ShowVar);
 	DCmd_Register("hidevar", &Debugger::Cmd_HideVar);
 	DCmd_Register("version", &Debugger::Cmd_Version);
-	DCmd_Register("soft", &Debugger::Cmd_SoftHard);
-	DCmd_Register("hard", &Debugger::Cmd_SoftHard);
 	DCmd_Register("animtest", &Debugger::Cmd_AnimTest);
 	DCmd_Register("texttest", &Debugger::Cmd_TextTest);
 	DCmd_Register("linetest", &Debugger::Cmd_LineTest);
-	DCmd_Register("grab", &Debugger::Cmd_Grab);
 	DCmd_Register("events", &Debugger::Cmd_Events);
 	DCmd_Register("sfx", &Debugger::Cmd_Sfx);
 	DCmd_Register("english", &Debugger::Cmd_English);
@@ -150,10 +142,7 @@ void Debugger::postEnter() {
 	}
 }
 
-///////////////////////////////////////////////////
-// Now the fun stuff:
-
-// Commands
+// Now the fun stuff: Commands
 
 bool Debugger::Cmd_Exit(int argc, const char **argv) {
 	_detach_now = true;
@@ -161,15 +150,15 @@ bool Debugger::Cmd_Exit(int argc, const char **argv) {
 }
 
 bool Debugger::Cmd_Help(int argc, const char **argv) {
-	// console normally has 39 line width
+	// console normally has 78 line width
 	// wrap around nicely
-	int width = 0, size, i;
+	int width = 0;
 
 	DebugPrintf("Commands are:\n");
-	for (i = 0 ; i < _dcmd_count ; i++) {
-		size = strlen(_dcmds[i].name) + 1;
+	for (int i = 0 ; i < _dcmd_count ; i++) {
+		int size = strlen(_dcmds[i].name) + 1;
 
-		if ((width + size) >= 39) {
+		if (width + size >= 75) {
 			DebugPrintf("\n");
 			width = size;
 		} else
@@ -355,117 +344,6 @@ bool Debugger::Cmd_SaveRest(int argc, const char **argv) {
 	return true;
 }
 
-bool Debugger::Cmd_ListSaveGames(int argc, const char **argv) {
-	DebugPrintf("Savegames:\n");
-
-	for (int i = 0; i < 100; i++) {
-		uint8 description[SAVE_DESCRIPTION_LEN];
-
-		// if there is a save game print the name
-		if (_vm->getSaveDescription(i, description) == SR_OK)
-			DebugPrintf("%d: \"%s\"\n", i, description);
-	}
-
-	return true;
-}
-
-bool Debugger::Cmd_SaveGame(int argc, const char **argv) {
-	char description[SAVE_DESCRIPTION_LEN];
-	int len = 0;
-	uint16 slotNo;
-	uint32 rv;
-
-	if (argc < 3) {
-		DebugPrintf("Usage: %s slot description\n", argv[0]);
-		return true;
-	}
-
-	// if mouse if off, or system menu is locked off
-	if (_vm->_mouseStatus || _vm->_mouseModeLocked) {
-		DebugPrintf("WARNING: Cannot save game while control menu unavailable!\n");
-		return true;
-	}
-
-	description[0] = 0;
-
-	// FIXME: Strange things seem to happen if use too long savegame names,
-	// even when they're shorter than the maximum allowed length
-
-	for (int i = 2; i < argc; i++) {
-		if (len + strlen(argv[i]) + 1 > SAVE_DESCRIPTION_LEN)
-			break;
-
-		if (i == 2) {
-			strcpy(description, argv[i]);
-			len = strlen(argv[i]);
-		} else {
-			strcat(description, " ");
-			strcat(description, argv[i]);
-			len += (strlen(argv[i]) + 1);
-		}
-	}
-
-	slotNo = atoi(argv[1]);
-	rv = _vm->saveGame(slotNo, (uint8 *) description);
-
-	if (rv == SR_OK)
-		DebugPrintf("Saved game \"%s\" to file \"savegame.%.3d\"\n", description, slotNo);
-	else if (rv == SR_ERR_FILEOPEN)
-		DebugPrintf("ERROR: Cannot open file \"savegame.%.3d\"\n", slotNo);
-	else	// SR_ERR_WRITEFAIL
-		DebugPrintf("ERROR: Write error on file \"savegame.%.3d\"\n", slotNo);
-
-	return true;
-}
-
-bool Debugger::Cmd_RestoreGame(int argc, const char **argv) {
-	uint16 slotNo;
-	uint8 description[SAVE_DESCRIPTION_LEN];
-	uint32 rv;
-
-	if (argc != 2) {
-		DebugPrintf("Usage: %s slot\n", argv[0]);
-		return true;
-	}
-
-	// if mouse if off, or system menu is locked off
-	if (_vm->_mouseStatus || _vm->_mouseModeLocked) {
-		DebugPrintf("WARNING: Cannot restore game while control menu unavailable!\n");
-		return true;
-	}
-
-	slotNo = atoi(argv[1]);
-	rv = _vm->restoreGame(slotNo);
-
-	if (rv == SR_OK) {
-		_vm->getSaveDescription(slotNo, description);
-		DebugPrintf("Restored game \"%s\" from file \"savegame.%.3d\"\n", description, slotNo);
-	} else if (rv == SR_ERR_FILEOPEN)
-		DebugPrintf("ERROR: Cannot open file \"savegame.%.3d\"\n", slotNo);
-	else if (rv == SR_ERR_INCOMPATIBLE)
-		DebugPrintf("ERROR: \"savegame.%.3d\" is no longer compatible with current player/variable resources\n", slotNo);
-	else	// SR_ERR_READFAIL
-		DebugPrintf("ERROR: Read error on file \"savegame.%.3d\"\n", slotNo);
-
-	return true;
-}
-
-// FIXME: Replace these with a command to modify the graphics detail setting
-
-bool Debugger::Cmd_BltFxOn(int argc, const char **argv) {
-	// _vm->_graphics->setBltFx();
-	// DebugPrintf("Blit fx enabled\n");
-	DebugPrintf("FIXME: The setBltFx() function no longer exists\n");
-	return true;
-}
-
-bool Debugger::Cmd_BltFxOff(int argc, const char **argv) {
-	// _vm->_graphics->clearBltFx();
-	// DebugPrintf("Blit fx disabled\n");
-	DebugPrintf("FIXME: The clearBltFx() function no longer exists\n");
-	return true;
-}
-
 bool Debugger::Cmd_TimeOn(int argc, const char **argv) {
 	if (argc == 2)
 		_startTime = _vm->_system->get_msecs() - atoi(argv[1]) * 1000;
@@ -550,59 +428,10 @@ bool Debugger::Cmd_HideVar(int argc, const char **argv) {
 }
 
 bool Debugger::Cmd_Version(int argc, const char **argv) {
-
-	// The version string is incomplete, so we may as well remove the code
-	// to extract information from it.
-
-#if 0
-
-	#define HEAD_LEN 8
-
-	// version & owner details
-
-	// So version string is 18 bytes long :
-	// Version String =  <8 byte header,5 character version, \0, INT32 time>
-	uint8 version_string[HEAD_LEN + 10] = { 1, 255, 37, 22, 45, 128, 34, 67 };
-	uint8 unencoded_name[HEAD_LEN + 48] = {
-		76, 185, 205, 23, 44, 34, 24, 34,
-		'R','e','v','o','l','u','t','i','o','n',' ',
-		'S','o','f','t','w','a','r','e',' ','L','t','d',
-		0 };
-
-	struct tm *time;
-	time_t t;
-	char dateStamp[255];
-	char version[6];
-
-	strcpy(version, (char *) version_string + HEAD_LEN);
-	*(((unsigned char *) &t)) = *(version_string + 14);
-	*(((unsigned char *) &t) + 1) = *(version_string + 15);
-	*(((unsigned char *) &t) + 2) = *(version_string + 16);
-	*(((unsigned char *) &t) + 3) = *(version_string + 17);
-
-	time = localtime(&t);
-	sprintf(dateStamp, "%s", asctime(time));
-	dateStamp[24] = 0;	// fudge over the newline character!
-#endif
+	// This function used to print more information, but nothing we
+	// particularly care about.
 
 	DebugPrintf("\"Broken Sword II\" (c) Revolution Software 1997.\n");
-
-#if 0
-	DebugPrintf("v%s created on %s for %s\n", version, dateStamp, unencoded_name + HEAD_LEN);
-#endif
-
-#if 0
-	// THE FOLLOWING LINES ARE TO BE COMMENTED OUT OF THE FINAL VERSION
-	DebugPrintf("This program has a personalised fingerprint encrypted into the code.\n");
-	DebugPrintf("If this CD was not sent directly to you by Virgin Interactive or Revolution Software\n");
-	DebugPrintf("then please contact James Long at Revolution on (+44) 1904 639698.\n");
-#endif
-
-	return true;
-}
-
-bool Debugger::Cmd_SoftHard(int argc, const char **argv) {
-	DebugPrintf("ScummVM doesn't distinguish between software and hardware rendering.\n");
 	return true;
 }
 
@@ -664,34 +493,8 @@ bool Debugger::Cmd_LineTest(int argc, const char **argv) {
 	return true;
 }
 
-bool Debugger::Cmd_Grab(int argc, const char **argv) {
-	DebugPrintf("FIXME: Continuous screen-grabbing not implemented\n");
-
-#if 0
-	_vm->_grabbingSequences = !_vm->_grabbingSequences;
-
-	if (_vm->_grabbingSequences)
-		DebugPrintf("PCX-grabbing enabled\n");
-	else
-		DebugPrintf("PCX-grabbing disabled\n");
-#endif
-
-	return true;
-}
-
 bool Debugger::Cmd_Events(int argc, const char **argv) {
-	DebugPrintf("EVENT LIST:\n");
-
-	for (uint32 i = 0; i < MAX_events; i++) {
-		if (_vm->_logic->_eventList[i].id) {
-			uint32 target = _vm->_logic->_eventList[i].id;
-			uint32 script = _vm->_logic->_eventList[i].interact_id;
-
-			DebugPrintf("slot %d: id = %s (%d)\n", i, _vm->fetchObjectName(target), target);
-			DebugPrintf("         script = %s (%d) pos %d\n", _vm->fetchObjectName(script / 65536), script / 65536, script % 65536);
-		}
-	}
-
+	_vm->_logic->printEventList();
 	return true;
 }
 

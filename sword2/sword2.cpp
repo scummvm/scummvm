@@ -153,7 +153,6 @@ Sword2Engine::Sword2Engine(GameDetector *detector, OSystem *syst)
 	_frameCount = 0;
 
 	_wantSfxDebug = false;
-	_grabbingSequences = false;
 
 	// For the menus
 
@@ -344,13 +343,6 @@ void Sword2Engine::go() {
 	while (1) {
 		if (_debugger->isAttached())
 			_debugger->onFrame();
-
-#ifdef _SWORD2_DEBUG
-// FIXME: If we want this, we should re-work it to use the backend's
-// screenshot functionality.
-//		if (_debugger->_grabbingSequences && !console_status)
-//			GrabScreenShot();
-#endif
 
 		// the screen is build. Mostly because of first scroll
 		// cycle stuff
