@@ -241,7 +241,8 @@ protected:
 	void o2_verbOps();
 	void o2_doSentence();
 	void o2_ifClassOfIs();
-
+	void o2_walkActorTo();
+	void o2_putActor();
 	void o2_isEqual();
 	void o2_isGreater();
 	void o2_isGreaterEqual();

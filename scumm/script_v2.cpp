@@ -34,7 +34,7 @@ void Scumm_v2::setupOpcodes() {
 	static const OpcodeEntryV2 opcodes[256] = {
 		/* 00 */
 		OPCODE(o5_stopObjectCode),
-		OPCODE(o5_putActor),
+		OPCODE(o2_putActor),
 		OPCODE(o5_startMusic),
 		OPCODE(o5_getActorRoom),
 		/* 04 */
@@ -74,7 +74,7 @@ void Scumm_v2::setupOpcodes() {
 		OPCODE(o2_ifState02),
 		/* 20 */
 		OPCODE(o5_stopMusic),
-		OPCODE(o5_putActor),
+		OPCODE(o2_putActor),
 		OPCODE(o5_getAnimCounter),
 		OPCODE(o5_getActorY),
 		/* 24 */
@@ -110,11 +110,11 @@ void Scumm_v2::setupOpcodes() {
 		/* 3C */
 		OPCODE(o5_stopSound),
 		OPCODE(o5_getActorElevation),
-		OPCODE(o5_walkActorTo),
+		OPCODE(o2_walkActorTo),
 		OPCODE(o2_ifNotState01),
 		/* 40 */
 		OPCODE(o5_cutscene),
-		OPCODE(o5_putActor),
+		OPCODE(o2_putActor),
 		OPCODE(o5_startScript),
 		OPCODE(o5_getActorX),
 		/* 44 */
@@ -150,7 +150,7 @@ void Scumm_v2::setupOpcodes() {
 		/* 5C */
 		OPCODE(o5_oldRoomEffect),
 		OPCODE(o2_ifClassOfIs),
-		OPCODE(o5_walkActorTo),
+		OPCODE(o2_walkActorTo),
 		OPCODE(o2_ifNotState02),
 		/* 60 */
 		OPCODE(o5_cursorCommand),
@@ -190,11 +190,11 @@ void Scumm_v2::setupOpcodes() {
 		/* 7C */
 		OPCODE(o5_isSoundRunning),
 		OPCODE(o5_getActorElevation),
-		OPCODE(o5_walkActorTo),
+		OPCODE(o2_walkActorTo),
 		OPCODE(o5_drawBox),
 		/* 80 */
 		OPCODE(o5_breakHere),
-		OPCODE(o5_putActor),
+		OPCODE(o2_putActor),
 		OPCODE(o5_startMusic),
 		OPCODE(o5_getActorRoom),
 		/* 84 */
@@ -230,11 +230,11 @@ void Scumm_v2::setupOpcodes() {
 		/* 9C */
 		OPCODE(o5_startSound),
 		OPCODE(o2_ifClassOfIs),
-		OPCODE(o5_walkActorTo),
+		OPCODE(o2_walkActorTo),
 		OPCODE(o2_ifState02),
 		/* A0 */
 		OPCODE(o5_stopObjectCode),
-		OPCODE(o5_putActor),
+		OPCODE(o2_putActor),
 		OPCODE(o5_getAnimCounter),
 		OPCODE(o5_getActorY),
 		/* A4 */
@@ -270,11 +270,11 @@ void Scumm_v2::setupOpcodes() {
 		/* BC */
 		OPCODE(o5_stopSound),
 		OPCODE(o5_getActorElevation),
-		OPCODE(o5_walkActorTo),
+		OPCODE(o2_walkActorTo),
 		OPCODE(o2_ifNotState01),
 		/* C0 */
 		OPCODE(o5_endCutscene),
-		OPCODE(o5_putActor),
+		OPCODE(o2_putActor),
 		OPCODE(o5_startScript),
 		OPCODE(o5_getActorX),
 		/* C4 */
@@ -310,11 +310,11 @@ void Scumm_v2::setupOpcodes() {
 		/* DC */
 		OPCODE(o5_oldRoomEffect),
 		OPCODE(o2_ifClassOfIs),
-		OPCODE(o5_walkActorTo),
+		OPCODE(o2_walkActorTo),
 		OPCODE(o2_ifNotState02),
 		/* E0 */
 		OPCODE(o5_cursorCommand),
-		OPCODE(o5_putActor),
+		OPCODE(o2_putActor),
 		OPCODE(o5_stopScript),
 		OPCODE(o5_getActorFacing),
 		/* E4 */
@@ -350,7 +350,7 @@ void Scumm_v2::setupOpcodes() {
 		/* FC */
 		OPCODE(o5_isSoundRunning),
 		OPCODE(o5_getActorElevation),
-		OPCODE(o5_walkActorTo),
+		OPCODE(o2_walkActorTo),
 		OPCODE(o2_ifState01)
 	};
 
@@ -881,4 +881,26 @@ void Scumm_v2::o2_ifClassOfIs() {
 	if ((cls & clsop) != clsop) {
 		o5_jumpRelative();
 	}
+}
+
+void Scumm_v2::o2_walkActorTo() {
+	int x, y;
+	Actor *a;
+	a = derefActorSafe(getVarOrDirectByte(0x80), "o2_walkActorTo");
+	x = getVarOrDirectByte(0x40);
+	y = getVarOrDirectByte(0x20);
+	a->startWalkActor(x, y, -1);
+}
+
+void Scumm_v2::o2_putActor() {
+	int x, y;
+	Actor *a;
+
+	a = derefActorSafe(getVarOrDirectByte(0x80), "o2_putActor");
+	if (!a)
+		return;
+	x = getVarOrDirectByte(0x40);
+	y = getVarOrDirectByte(0x20);
+
+	a->putActor(x, y, a->room);
 }
