@@ -52,7 +52,7 @@ bool SaudChannel::handleSubTags(int32 &offset) {
 			case TYPE_STRK:
 				_inData = false;
 				if(available_size >= (size + 8)) {
-					ContChunk c((byte *)_tbuffer + offset);
+					MemoryChunk c((byte *)_tbuffer + offset);
 					handleStrk(c);
 				}
 				else
@@ -61,7 +61,7 @@ bool SaudChannel::handleSubTags(int32 &offset) {
 			case TYPE_SMRK:
 				_inData = false;
 				if(available_size >= (size + 8)) {
-					ContChunk c((byte *)_tbuffer + offset);
+					MemoryChunk c((byte *)_tbuffer + offset);
 					handleSmrk(c);
 				}
 				else
@@ -70,7 +70,7 @@ bool SaudChannel::handleSubTags(int32 &offset) {
 			case TYPE_SHDR:
 				_inData = false;
 				if(available_size >= (size + 8)) {
-					ContChunk c((byte *)_tbuffer + offset);
+					MemoryChunk c((byte *)_tbuffer + offset);
 					handleShdr(c);
 				}
 				else

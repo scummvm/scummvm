@@ -84,61 +84,29 @@ const char *Chunk::ChunkString(Chunk::type t) {
 	return data;
 }
 
-FileChunk::FileChunk() : 
-	_data(0),
+BaseChunk::BaseChunk() : 
 	_type(0),
 	_size(0),
 	_curPos(0) {
 }
 
-FileChunk::~FileChunk() {
-	if(_data)
-		_data->decRef();
-}
-
-FileChunk::FileChunk(const char *fname, const char *directory) {
-	_data = new FilePtr(fname, directory);
-	_data->read(&_type, 4);
-	_type = TO_BE_32(_type);
-	_data->read(&_size, 4);
-	_size = TO_BE_32(_size);
-	_offset = _data->tell();
-	_curPos = 0;
-}
-
-Chunk::type FileChunk::getType() const { 
-	return _type; 
-}
-
-uint32 FileChunk::getSize() const { 
-	return _size; 
-}
-
-Chunk *FileChunk::subBlock() {
-	FileChunk *ptr = new FileChunk;
-	ptr->_data = _data;
-	_data->incRef();
-	_data->seek(_offset + _curPos);
-	uint32 temp;
-	_data->read(&temp, 4);
-	ptr->_type = TO_BE_32(temp);
-	_data->read(&temp, 4);
-	ptr->_size = TO_BE_32(temp);
-	ptr->_offset = _offset + _curPos + 8;
-	ptr->_curPos = 0;
-	seek(8 + ptr->getSize());
-	return ptr;
-}
-
-bool FileChunk::eof() const {
+bool BaseChunk::eof() const {
 	return _curPos >= _size; 
 }
 
-uint32 FileChunk::tell() const {
+uint32 BaseChunk::tell() const {
 	return _curPos; 
 }
 
-bool FileChunk::seek(int32 delta, seek_type dir) {
+Chunk::type BaseChunk::getType() const { 
+	return _type; 
+}
+
+uint32 BaseChunk::getSize() const { 
+	return _size; 
+}
+
+bool BaseChunk::seek(int32 delta, seek_type dir) {
 	switch(dir) {
 		case seek_cur:
 			_curPos += delta;
@@ -160,6 +128,41 @@ bool FileChunk::seek(int32 delta, seek_type dir) {
 		error("invalid seek request : %d > %d (delta == %d)", _curPos, _size, delta);
 	}
 	return true;
+}
+
+FileChunk::FileChunk() : 
+	_data(0) {
+}
+
+FileChunk::FileChunk(const char *fname, const char *directory) {
+	_data = new FilePtr(fname, directory);
+	_data->read(&_type, 4);
+	_type = TO_BE_32(_type);
+	_data->read(&_size, 4);
+	_size = TO_BE_32(_size);
+	_offset = _data->tell();
+	_curPos = 0;
+}
+
+FileChunk::~FileChunk() {
+	if(_data)
+		_data->decRef();
+}
+
+Chunk *FileChunk::subBlock() {
+	FileChunk *ptr = new FileChunk();
+	ptr->_data = _data;
+	_data->incRef();
+	_data->seek(_offset + _curPos);
+	uint32 temp;
+	_data->read(&temp, 4);
+	ptr->_type = TO_BE_32(temp);
+	_data->read(&temp, 4);
+	ptr->_size = TO_BE_32(temp);
+	ptr->_offset = _offset + _curPos + 8;
+	ptr->_curPos = 0;
+	seek(8 + ptr->getSize());
+	return ptr;
 }
 
 bool FileChunk::read(void *buffer, uint32 size) {
@@ -221,7 +224,7 @@ uint32 FileChunk::getDword() {
 	return TO_LE_32(buffer);
 }
 
-ContChunk::ContChunk(byte *data) {
+MemoryChunk::MemoryChunk(byte *data) {
 	if(data == 0)
 		error("Chunk() called with NULL pointer");
 
@@ -231,49 +234,13 @@ ContChunk::ContChunk(byte *data) {
 	_curPos = 0;
 }
 
-Chunk::type ContChunk::getType() const { 
-	return _type; 
-}
-
-uint32 ContChunk::getSize() const { 
-	return _size; 
-}
-
-Chunk *ContChunk::subBlock() {
-	ContChunk *ptr = new ContChunk(_data + _curPos);
+Chunk *MemoryChunk::subBlock() {
+	MemoryChunk *ptr = new MemoryChunk(_data + _curPos);
 	seek(sizeof(Chunk::type) + sizeof(uint32) + ptr->getSize());
 	return ptr;
 }
 
-bool ContChunk::eof() const { 
-	return _curPos >= _size; 
-}
-
-uint32 ContChunk::tell() const { 
-	return _curPos; 
-}
-
-bool ContChunk::seek(int32 delta, seek_type dir) {
-	switch(dir) {
-		case seek_cur:
-			_curPos += delta;
-			break;
-		case seek_start:
-			if(delta < 0) error("invalid seek request");
-			_curPos = (uint32)delta;
-			break;
-		case seek_end:
-			if(delta > 0 || _size < (uint32)-delta) error("invalid seek request");
-			_curPos = (uint32)(_size + delta);
-			break;
-	}
-	if(_curPos > _size) {
-		error("invalid seek request : %d > %d (delta == %d)", _curPos, _size, delta);
-	}
-	return true;
-}
-
-bool ContChunk::read(void *buffer, uint32 size) {
+bool MemoryChunk::read(void *buffer, uint32 size) {
 	if(size <= 0 || (_curPos + size) > _size)
 		error("invalid buffer read request");
 
@@ -282,14 +249,14 @@ bool ContChunk::read(void *buffer, uint32 size) {
 	return true;
 }
 
-int8 ContChunk::getChar() {
+int8 MemoryChunk::getChar() {
 	if(_curPos >= _size)
 		error("invalid char read request");
 
 	return _data[_curPos++];
 }
 
-byte ContChunk::getByte() {
+byte MemoryChunk::getByte() {
 	if(_curPos >= _size)
 		error("invalid byte read request");
 
@@ -298,7 +265,7 @@ byte ContChunk::getByte() {
 	return *ptr;
 }
 
-int16 ContChunk::getShort() {
+int16 MemoryChunk::getShort() {
 	if(_curPos >= _size - 1)
 		error("invalid int16 read request");
 
@@ -306,7 +273,7 @@ int16 ContChunk::getShort() {
 	return *((int16 *)&buffer);
 }
 
-uint16 ContChunk::getWord() {
+uint16 MemoryChunk::getWord() {
 	if(_curPos >= _size - 1)
 		error("invalid word read request");
 
@@ -315,7 +282,7 @@ uint16 ContChunk::getWord() {
 	return READ_LE_UINT16(ptr);
 }
 
-uint32 ContChunk::getDword() {
+uint32 MemoryChunk::getDword() {
 	if(_curPos >= _size - 3)
 		error("invalid dword read request");
 

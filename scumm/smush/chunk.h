@@ -26,7 +26,6 @@
 
 class Chunk {
 public:
-
 	virtual ~Chunk() {};
 	enum seek_type { seek_start, seek_end, seek_cur };
 	typedef uint32 type;
@@ -47,28 +46,35 @@ public:
 
 class FilePtr;
 
-class FileChunk : public Chunk {
-private:
-	FilePtr *_data;
-	type _type;
+// Common functionality for concrete chunks (FileChunk, MemoryChunk)
+class BaseChunk : public Chunk {
+protected:
+	Chunk::type _type;
 	uint32 _size;
-	uint32 _offset;
 	uint32 _curPos;
 
-protected:
-
-	FileChunk();
+	BaseChunk();
 
 public:
-
-	FileChunk(const char *fname, const char *directory);
-	virtual ~FileChunk();
-	type getType() const;
+	Chunk::type getType() const;
 	uint32 getSize() const;
-	Chunk *subBlock();
 	bool eof() const;
 	uint32 tell() const;
 	bool seek(int32 delta, seek_type dir = seek_cur);
+};
+
+class FileChunk : public BaseChunk {
+private:
+	FilePtr *_data;
+	uint32 _offset;
+
+protected:
+	FileChunk();
+
+public:
+	FileChunk(const char *fname, const char *directory);
+	virtual ~FileChunk();
+	Chunk *subBlock();
 	bool read(void *buffer, uint32 size);
 	int8 getChar();
 	byte getByte();
@@ -77,23 +83,13 @@ public:
 	uint32 getDword();
 };
 
-class ContChunk : public Chunk {
+class MemoryChunk : public BaseChunk {
 private:
-
 	byte *_data;
-	Chunk::type _type;
-	uint32 _size;
-	uint32 _curPos;
 
 public:
-
-	ContChunk(byte *data);
-	Chunk::type getType() const;
-	uint32 getSize() const;
+	MemoryChunk(byte *data);
 	Chunk *subBlock();
-	bool eof() const;
-	uint32 tell() const;
-	bool seek(int32 delta, seek_type dir = seek_cur);
 	bool read(void *buffer, uint32 size);
 	int8 getChar();
 	byte getByte();

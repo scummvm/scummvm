@@ -216,7 +216,7 @@ bool ImuseChannel::handleSubTags(int32 &offset) {
 			case TYPE_MAP_: 
 				_inData = false;
 				if(available_size >= (size + 8)) {
-					ContChunk c((byte *)_tbuffer + offset);
+					MemoryChunk c((byte *)_tbuffer + offset);
 					handleMap(c);
 				}
 				break;
