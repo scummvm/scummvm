@@ -1014,7 +1014,7 @@ void Scumm::initRoomSubBlocks() {
 	}
 
 	//
-	// Load sccale data
+	// Load scale data
 	//
 	if (_features & GF_OLD_BUNDLE)
 		ptr = 0;	// TODO ?

@@ -234,18 +234,18 @@ void CharsetRendererOld256::printChar(int chr) {
 	}
 
 	// FIXME
-	if (_left < _strLeft)
+	if (_strLeft > _left)
 		_strLeft = _left;
 
 	_left += getCharWidth(chr);
 
-	if (_left > _strRight) {
+	if (_strRight < _left) {
 		_strRight = _left;
 		if (_dropShadow)
 			_strRight++;
 	}
 
-	if (_top + h > _strBottom)
+	if (_strBottom < _top + h)
 		_strBottom = _top + h;
 }
 
