@@ -242,7 +242,7 @@ void NewGui::line(int x, int y, int x2, int y2, byte color)
 	}
 }
 
-void NewGui::clearArea(int x, int y, int w, int h)
+void NewGui::fillArea(int x, int y, int w, int h, byte color)
 {
 	byte *ptr = getBasePtr(x, y);
 	if (ptr == NULL)
@@ -250,7 +250,7 @@ void NewGui::clearArea(int x, int y, int w, int h)
 
 	while (h--) {
 		for (int i = 0; i < w; i++)
-			ptr[i] = _bgcolor;
+			ptr[i] = color;
 		ptr += 320;
 	}
 }

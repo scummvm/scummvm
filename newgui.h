@@ -95,7 +95,7 @@ public:
 	byte *getBasePtr(int x, int y);
 	void box(int x, int y, int width, int height);
     void line(int x, int y, int x2, int y2, byte color);
-    void clearArea(int x, int y, int w, int h);
+    void fillArea(int x, int y, int w, int h, byte color);
     void setAreaDirty(int x, int y, int w, int h);
 	void drawChar(const char c, int x, int y);
 	void drawString(const char *str, int x, int y, int w, byte color);

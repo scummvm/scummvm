@@ -45,7 +45,7 @@ void Widget::draw()
 
 	// Clear background
 	if (_flags & WIDGET_CLEARBG)
-		gui->clearArea(_x, _y, _w, _h);
+		gui->fillArea(_x, _y, _w, _h, gui->_bgcolor);
 
 	// Draw border
 	if (_flags & WIDGET_BORDER) {
@@ -148,15 +148,16 @@ void CheckboxWidget::drawWidget(bool hilite)
 	if (_state)
 		gui->drawBitmap(checked_img, _x + 3, _y + 3, gui->_textcolor);
 	else
-		gui->clearArea(_x + 3, _y + 3, 8, 8);
+		gui->fillArea(_x + 3, _y + 3, 8, 8, gui->_bgcolor);
 	
 	// Finally draw the label
 	gui->drawString(_text, _x + 20, _y + 3, _w, gui->_textcolor);
 }
 
 #pragma mark -
+
 SliderWidget::SliderWidget(Dialog *boss, int x, int y, int w, int h, const char *label, uint32 cmd, uint8 hotkey)
-	: ButtonWidget(boss, x, y, w, h, label, cmd, hotkey)
+	: ButtonWidget(boss, x, y, w, h, label, cmd, hotkey), _value(0), _old_value(1)
 {
 	_flags = WIDGET_ENABLED | WIDGET_TRACK_MOUSE;
 	_type = kSliderWidget;
@@ -168,9 +169,15 @@ void SliderWidget::drawWidget(bool hilite)
 	
 	// Draw the box
 	gui->box(_x, _y, _w, _h);
+	
+	// Remove old 'bar' if necessary
+	if (_value != _old_value) {
+		gui->fillArea(_x + 2 + ((_w - 5) * _old_value / 100), _y + 2, 2, _h - 4, gui->_bgcolor);
+		_old_value = _value;
+	}
 
 	// Draw the 'bar'
-	gui->line(_x + 2 + ((_w - 5)* _value / 100), _y + 2, _x + 2 + ((_w - 5)* _value / 100), _y + _h - 3, hilite ? gui->_textcolorhi : gui->_textcolor);
+	gui->fillArea(_x + 2 + ((_w - 5) * _value / 100), _y + 2, 2, _h - 4, hilite ? gui->_textcolorhi : gui->_textcolor);
 }
 
 void SliderWidget::handleMouseMoved(int x, int y, int state) { 
@@ -179,7 +186,7 @@ void SliderWidget::handleMouseMoved(int x, int y, int state) {
 
 		if (newvalue != _value) {
 			_value = newvalue; 
-			setFlags(WIDGET_CLEARBG); draw(); clearFlags(WIDGET_CLEARBG);
+			draw();
 		}
 	}
 }

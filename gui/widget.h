@@ -122,9 +122,12 @@ protected:
 /* SliderWidget */
 class SliderWidget : public ButtonWidget {
 protected:
-	int	_value;
+	uint8	_value, _old_value;
 public:
 	SliderWidget(Dialog *boss, int x, int y, int w, int h, const char *label, uint32 cmd = 0, uint8 hotkey = 0);
+	void setValue(uint8 value)	{ _value = value; }
+	uint8 getValue()			{ return _value; }
+
 	void handleMouseMoved(int x, int y, int button);
 
 protected:

@@ -29,7 +29,7 @@ void Dialog::draw()
 {
 	Widget *w = _firstWidget;
 
-	_gui->clearArea(_x, _y, _w, _h);
+	_gui->fillArea(_x, _y, _w, _h, _gui->_bgcolor);
 	_gui->box(_x, _y, _w, _h);
 	_gui->setAreaDirty(_x, _y, _w, _h);
 

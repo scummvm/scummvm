@@ -43,6 +43,7 @@ protected:
 	int16	_x, _y;
 	uint16	_w, _h;
 	Widget	*_mouseWidget;
+
 public:
 	Dialog(NewGui *gui, int x, int y, int w, int h)
 		: _gui(gui), _firstWidget(0), _x(x), _y(y), _w(w), _h(h), _mouseWidget(0)
@@ -66,6 +67,7 @@ protected:
 	void addButton(int x, int y, int w, int h, const char *label, uint32 cmd, char hotkey);
 };
 
+
 class SaveLoadDialog : public Dialog {
 public:
 	SaveLoadDialog(NewGui *gui);
@@ -73,7 +75,17 @@ public:
 	virtual void handleCommand(uint32 cmd);
 };
 
+
+class SoundDialog;
+class KeysDialog;
+class MiscDialog;
+
 class OptionsDialog : public Dialog {
+protected:
+	SoundDialog		*_soundDialog;
+	KeysDialog		*_keysDialog;
+	MiscDialog		*_miscDialog;
+
 public:
 	OptionsDialog(NewGui *gui);
 
