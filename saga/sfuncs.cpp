@@ -78,7 +78,7 @@ void Script::setupScriptFuncList(void) {
 		OPCODE(scriptMoveTo),
 		OPCODE(SF_sceneEq),
 		OPCODE(SF_dropObject),
-		OPCODE(SF_finishBgdAnim),
+		OPCODE(sfFinishBgdAnim),
 		OPCODE(sfSwapActors),
 		OPCODE(sfSimulSpeech),
 		OPCODE(SF_actorWalk),
@@ -96,7 +96,7 @@ void Script::setupScriptFuncList(void) {
 		OPCODE(SF_placard),
 		OPCODE(SF_placardOff),
 		OPCODE(SF_setProtagState),
-		OPCODE(SF_resumeBgdAnim),
+		OPCODE(sfResumeBgdAnim),
 		OPCODE(SF_throwActor),
 		OPCODE(SF_waitWalk),
 		OPCODE(SF_sceneID),
@@ -264,7 +264,7 @@ int Script::sfStartBgdAnim(SCRIPTFUNC_PARAMS) {
 
 // Script function #10 (0x0A)
 int Script::sfStopBgdAnim(SCRIPTFUNC_PARAMS) {
-	ScriptDataWord animId = thread->pop();
+	ScriptDataWord animId = getSWord(thread->pop());
 
 	_vm->_anim->stop(animId);
 
@@ -578,10 +578,12 @@ int Script::SF_dropObject(SCRIPTFUNC_PARAMS) {
 }
 
 // Script function #33 (0x21)
-int Script::SF_finishBgdAnim(SCRIPTFUNC_PARAMS) {
-	ScriptDataWord param = thread->pop();
+int Script::sfFinishBgdAnim(SCRIPTFUNC_PARAMS) {
+	ScriptDataWord animId = getSWord(thread->pop());
 
-	debug(1, "stub: SF_finishBgdAnim(%d)", param);
+	_vm->_anim->finish(animId);
+
+	debug(1, "sfFinishBgdAnim(%d)", animId);
 	return SUCCESS;
 }
 
@@ -926,11 +928,13 @@ int Script::SF_setProtagState(SCRIPTFUNC_PARAMS) {
 }
 
 // Script function #51 (0x33)
-int Script::SF_resumeBgdAnim(SCRIPTFUNC_PARAMS) {
-	for (int i = 0; i < nArgs; i++)
-		thread->pop();
+int Script::sfResumeBgdAnim(SCRIPTFUNC_PARAMS) {
+	int animId = getSWord(thread->pop());
+	int cycles = getSWord(thread->pop());
 
-	debug(1, "stub: SF_resumeBgdAnim(), %d args", nArgs);
+	_vm->_anim->resume(animId, cycles);
+	debug(1, "sfResumeBgdAnimSpeed(%d, %d)", animId, cycles);
+
 	return SUCCESS;
 }
 

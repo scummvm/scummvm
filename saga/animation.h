@@ -90,14 +90,15 @@ struct ANIMATION {
 	size_t cur_frame_len;
 	int frame_time;
 
-	bool playing;
+	int state;
 	int16 link_id;
 	uint16 flags;
 };
 
 enum ANIM_FLAGS {
-	ANIM_LOOP = 0x01,
+	ANIM_PLAYING = 0x01,
 	ANIM_PAUSE = 0x02,
+	ANIM_STOPPING = 0x04,
 	ANIM_ENDSCENE = 0x80	// When animation ends, dispatch scene end event
 };
 
@@ -117,6 +118,8 @@ public:
 	void animInfo(void);
 	void setCycles(uint animId, int cycles);
 	void stop(uint16 animId);
+	void finish(uint16 animId);
+	void resume(uint16 animId, int cycles);
 
 private:
 	int ITE_DecodeFrame(const byte *anim_resource, size_t anim_resource_len, size_t frame_offset, byte *buf, size_t buf_len);

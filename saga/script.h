@@ -331,7 +331,7 @@ private:
 	int scriptMoveTo(SCRIPTFUNC_PARAMS);
 	int SF_sceneEq(SCRIPTFUNC_PARAMS);
 	int SF_dropObject(SCRIPTFUNC_PARAMS);
-	int SF_finishBgdAnim(SCRIPTFUNC_PARAMS);
+	int sfFinishBgdAnim(SCRIPTFUNC_PARAMS);
 	int sfSwapActors(SCRIPTFUNC_PARAMS);
 	int sfSimulSpeech(SCRIPTFUNC_PARAMS);
 	int SF_actorWalk(SCRIPTFUNC_PARAMS);
@@ -349,7 +349,7 @@ private:
 	int SF_placard(SCRIPTFUNC_PARAMS);
 	int SF_placardOff(SCRIPTFUNC_PARAMS);
 	int SF_setProtagState(SCRIPTFUNC_PARAMS);
-	int SF_resumeBgdAnim(SCRIPTFUNC_PARAMS);
+	int sfResumeBgdAnim(SCRIPTFUNC_PARAMS);
 	int SF_throwActor(SCRIPTFUNC_PARAMS);
 	int SF_waitWalk(SCRIPTFUNC_PARAMS);
 	int SF_sceneID(SCRIPTFUNC_PARAMS);

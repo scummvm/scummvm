@@ -327,7 +327,7 @@ int Events::handleOneShot(EVENT *event) {
 	case ANIM_EVENT:
 		switch (event->op) {
 		case EVENT_FRAME:
-			_vm->_anim->play(event->param, event->time);
+			_vm->_anim->play(event->param, event->time, false);
 			break;
 		case EVENT_SETFLAG:
 			_vm->_anim->setFlag(event->param, event->param2);

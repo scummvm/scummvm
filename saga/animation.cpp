@@ -118,7 +118,7 @@ int Anim::load(const byte *anim_resdata, size_t anim_resdata_len, uint16 *anim_i
 	new_anim->frame_time = DEFAULT_FRAME_TIME;
 	new_anim->flags = 0;
 	new_anim->link_id = -1;
-	new_anim->playing = false;
+	new_anim->state = ANIM_PAUSE;
 
 	_anim_tbl[anim_id] = new_anim;
 
@@ -197,9 +197,9 @@ int Anim::play(uint16 anim_id, int vector_time, bool playing) {
 	}
 
 	if (playing)
-		anim->playing = true;
+		anim->state = ANIM_PLAYING;
 
-	if (anim->flags & ANIM_PAUSE)
+	if (anim->state == ANIM_PAUSE)
 		return SUCCESS;
 
 	if (anim->completed < anim->cycles) {
@@ -210,7 +210,7 @@ int Anim::play(uint16 anim_id, int vector_time, bool playing) {
 									disp_info.logical_w * disp_info.logical_h);
 			if (result != SUCCESS) {
 				warning("Anim::play: Error decoding frame %u", anim->current_frame);
-				anim->playing = false;
+				anim->state = ANIM_PAUSE;
 				return FAILURE;
 			}
 		} else {
@@ -223,7 +223,7 @@ int Anim::play(uint16 anim_id, int vector_time, bool playing) {
 									anim->cur_frame_p, anim->cur_frame_len, &nextf_p, &nextf_len);
 			if (result != SUCCESS) {
 				warning("Anim::play: Error decoding frame %u", anim->current_frame);
-				anim->playing = false;
+				anim->state = ANIM_PAUSE;
 				return FAILURE;
 			}
 
@@ -240,8 +240,8 @@ int Anim::play(uint16 anim_id, int vector_time, bool playing) {
 			anim->cur_frame_p = anim->resdata + SAGA_FRAME_HEADER_LEN;
 			anim->cur_frame_len = anim->resdata_len - SAGA_FRAME_HEADER_LEN;
 
-			if (anim->current_frame == -1)
-				anim->playing = false;
+			if (anim->flags & ANIM_STOPPING || anim->current_frame == -1)
+				anim->state = ANIM_PAUSE;
 		}
 
 	} else {
@@ -249,21 +249,21 @@ int Anim::play(uint16 anim_id, int vector_time, bool playing) {
 		if (anim->link_id != -1) {
 			// If this animation has a link, follow it
 			anim->current_frame = 0;
-			anim->playing = false;
+			anim->state = ANIM_PAUSE;
 
 			link_anim_id = anim->link_id;
 			link_anim = _anim_tbl[link_anim_id];
 
 			if (link_anim != NULL) {
 				link_anim->current_frame = 0;
-				link_anim->playing = true;
+				link_anim->state = ANIM_PLAYING;
 			}
 
 			anim_id = link_anim_id;
 		} else {
 			// No link, stop playing
 			anim->current_frame = anim->n_frames - 1;
-			anim->playing = false;
+			anim->state = ANIM_PAUSE;
 
 			if (anim->flags & ANIM_ENDSCENE) {
 				// This animation ends the scene
@@ -277,14 +277,14 @@ int Anim::play(uint16 anim_id, int vector_time, bool playing) {
 		}
 	}
 
-	if (!anim->playing && anim->link_id != -1) {
+	if (anim->state == ANIM_PAUSE && anim->link_id != -1) {
 		// If this animation has a link, follow it
 		link_anim_id = anim->link_id;
 		link_anim = _anim_tbl[link_anim_id];
 
 		if (link_anim != NULL) {
 			link_anim->current_frame = 0;
-			link_anim->playing = true;
+			link_anim->state = ANIM_PLAYING;
 		}
 		anim_id = link_anim_id;
 	}
@@ -306,8 +306,26 @@ void Anim::stop(uint16 animId) {
 		return;
 	}
 	
-	_anim_tbl[animId]->playing = false;
-	_anim_tbl[animId]->flags |= ANIM_PAUSE;
+	_anim_tbl[animId]->state = ANIM_PAUSE;
+}
+
+void Anim::finish(uint16 animId) {
+	if (animId >= _anim_count) {
+		warning("Anim::finish(): wrong animation number (%d)", animId);
+		return;
+	}
+	
+	_anim_tbl[animId]->state = ANIM_STOPPING;
+}
+
+void Anim::resume(uint16 animId, int cycles) {
+	if (animId >= _anim_count) {
+		warning("Anim::resume(): wrong animation number (%d)", animId);
+		return;
+	}
+	
+	_anim_tbl[animId]->cycles += cycles;
+	play(animId, 0, true);
 }
 
 int Anim::reset() {
