@@ -435,7 +435,7 @@ void ScummEngine::restoreVerbBG(int verb) {
 void ScummEngine::drawVerbBitmap(int verb, int x, int y) {
 	VirtScreen *vs;
 	VerbSlot *vst;
-	byte twobufs;
+	bool twobufs;
 	const byte *imptr = 0;
 	int ydiff, xstrip;
 	int imgw, imgh;
@@ -499,7 +499,7 @@ void ScummEngine::drawVerbBitmap(int verb, int x, int y) {
 
 	gdi.enableZBuffer();
 
-	vs->hasTwoBuffers = twobufs != 0;
+	vs->hasTwoBuffers = twobufs;
 }
 
 int ScummEngine::getVerbSlot(int id, int mode) const {
