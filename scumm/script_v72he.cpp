@@ -1526,37 +1526,31 @@ void ScummEngine_v72he::o72_jumpToScript() {
 }
 
 void ScummEngine_v72he::o72_openFile() {
-	int mode, slot, l, r;
+	int mode, slot, l;
 	byte filename[256];
 
 	mode = pop();
 	copyScriptString(filename);
 
+	debug(0,"Original filename %s", filename);
+
 	// HACK Correct incorrect filenames
 	if (!strcmp((char *)filename,".he3")) {
 		memset(filename, 0, sizeof(filename));
 		sprintf((char *)filename, "%s.he3", _gameName.c_str());
+		debug(0,"New filename %s", filename);
+
 	} else if (!strcmp((char *)filename,".he7")) {
 		memset(filename, 0, sizeof(filename));
 		sprintf((char *)filename, "%s.he7", _gameName.c_str());
+		debug(0,"New filename %s", filename);
+
 	} else if (!strcmp((char *)filename,".HE9")) {
 		memset(filename, 0, sizeof(filename));
 		sprintf((char *)filename, "%s.he9", _gameName.c_str());
-	}
+		debug(0,"New filename %s", filename);
 
-	if (_heMacFileNameIndex > 0) {
-		char buf1[128];
-
-		generateMacFileName((char *)filename, buf1, 128, 0, _heMacFileNameIndex);
-		strcpy((char *)filename, buf1);
 	}
-
-	for (r = strlen((char*)filename); r != 0; r--) {
-		if (filename[r - 1] == '\\')
-			break;
-	}
-	
-	debug(0,"Filename %s", filename + r);
 
 	// HACK: Convert paths
 	if (filename[0] == ':') {
@@ -1571,7 +1565,7 @@ void ScummEngine_v72he::o72_openFile() {
 			i++;
 			j++;
 		}
-		debug(0,"Converted Filename %s", filename + r);
+		debug(0,"Converted filename to %s", filename);
 	}
 
 	slot = -1;
@@ -1584,9 +1578,9 @@ void ScummEngine_v72he::o72_openFile() {
 
 	if (slot != -1) {
 		if (mode == 1)
-			_hFileTable[slot].open((char*)filename + r, File::kFileReadMode);
+			_hFileTable[slot].open((char*)filename, File::kFileReadMode);
 		else if (mode == 2)
-			_hFileTable[slot].open((char*)filename + r, File::kFileWriteMode);
+			_hFileTable[slot].open((char*)filename, File::kFileWriteMode);
 		else
 			error("o72_openFile(): wrong open file mode %d", mode);
 
