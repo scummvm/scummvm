@@ -477,9 +477,9 @@ void ScummEngine::drawObject(int obj, int arg) {
 	if (numstrip != 0) {
 		byte flags;
 		if (_version == 8) 
-			flags = (od.flag & 16) == 0;
+			flags = ((od.flag & 16) == 0) ? Gdi::dbAllowMaskOr : 0;
 		else if (_features & GF_HUMONGOUS)
-			flags = (od.flag & 1) != 0;
+			flags = ((od.flag & 1) != 0) ? Gdi::dbAllowMaskOr : 0;
 		else
 			flags = Gdi::dbAllowMaskOr;
 
