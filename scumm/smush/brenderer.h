@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef __BRENDERER_H_
-#define __BRENDERER_H_
+#ifndef BRENDERER_H
+#define BRENDERER_H
 
 #include "config.h"
 

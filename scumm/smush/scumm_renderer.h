@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef __SCUMM_RENDERER_H_
-#define __SCUMM_RENDERER_H_
+#ifndef SCUMM_RENDERER_H
+#define SCUMM_RENDERER_H
 
 #include "config.h"
 

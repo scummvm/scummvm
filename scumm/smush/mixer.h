@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef __MIXER_H_
-#define __MIXER_H_
+#ifndef MIXER_H
+#define MIXER_H
 
 #include "config.h"
 

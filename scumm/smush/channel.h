@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef __CHANNEL_H_
-#define __CHANNEL_H_
+#ifndef CHANNEL_H
+#define CHANNEL_H
 
 #include "config.h"
 

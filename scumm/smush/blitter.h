@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef __BLITTER_H_
-#define __BLITTER_H_
+#ifndef BLITTER_H
+#define BLITTER_H
 
 #include "config.h"
 

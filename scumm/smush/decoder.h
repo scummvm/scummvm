@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef __DECODER_H_
-#define __DECODER_H_
+#ifndef DECODER_H
+#define DECODER_H
 
 #include "config.h"
 

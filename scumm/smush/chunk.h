@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef __CHUNK_H_
-#define __CHUNK_H_
+#ifndef CHUNK_H
+#define CHUNK_H
 
 #include "config.h"
 

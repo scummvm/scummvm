@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef __CODEC1_H_
-#define __CODEC1_H_
+#ifndef CODEC1_H
+#define CODEC1_H
 
 #include "config.h"
 

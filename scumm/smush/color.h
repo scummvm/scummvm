@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef __Chunk_H_
-#define __Chunk_H_
+#ifndef COLOR_H
+#define COLOR_H
 
 #include "config.h"
 

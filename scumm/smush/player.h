@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef __PLAYER_H_
-#define __PLAYER_H_
+#ifndef PLAYER_H
+#define PLAYER_H
 
 #include "config.h"
 

@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef __FRENDERER_H_
-#define __FRENDERER_H_
+#ifndef FRENDERER_H
+#define FRENDERER_H
 
 #include "config.h"
 
@@ -159,6 +159,7 @@ public:
 		@return \c true if everything went fine, \c false otherwise
 	*/
 	bool drawStringAbsolute(const char * str, char * buffer, const Point & size, int x, int y) const;
+
 };
 
 #endif

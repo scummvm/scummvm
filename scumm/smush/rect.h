@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef __RECT_H_
-#define __RECT_H_
+#ifndef RECT_H
+#define RECT_H
 
 #include "config.h"
 

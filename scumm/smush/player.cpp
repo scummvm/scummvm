@@ -258,9 +258,9 @@ void SmushPlayer::handleSkip(Chunk & b) {
 	int code = b.getDword();
 	debug(6, "SmushPlayer::handleSkip(%d)", code);
 	if(code >= 0 && code < 37)
-		_skipNext =_skips[code];
+		_skipNext = _skips[code];
 	else
-		_skipNext =true;
+		_skipNext = true;
 }
 
 void SmushPlayer::handleStore(Chunk & b) {
@@ -589,7 +589,7 @@ void SmushPlayer::handleAnimHeader(Chunk & b) {
 			error("Wrong secondary version number for SMUSH animation");
 		if(_soundFrequency != 0 && _soundFrequency != 11025 && _soundFrequency != 22050)
 			error("Wrong _sound_frequency number for SMUSH animation");
-	}else if(_version > 2) {
+	} else if(_version > 2) {
 		error("Wrong primary version number for SMUSH animation");
 	}
 	if(_outputSound && _soundFrequency) {

@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef __RENDERER_H_
-#define __RENDERER_H_
+#ifndef RENDERER_H
+#define RENDERER_H
 
 #include "config.h"
 

@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef __PALETTE_H_
-#define __PALETTE_H_
+#ifndef PALETTE_H
+#define PALETTE_H
 
 #include "config.h"
 

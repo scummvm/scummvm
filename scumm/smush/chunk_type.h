@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef __CHUNK_TYPE_H
-#define __CHUNK_TYPE_H
+#ifndef CHUNK_TYPE_H
+#define CHUNK_TYPE_H
 
 #include "Chunk.h"
 

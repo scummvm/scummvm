@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef __CODEC37_H_
-#define __CODEC37_H_
+#ifndef CODEC37_H
+#define CODEC37_H
 
 #include "config.h"
 

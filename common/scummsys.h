@@ -237,6 +237,8 @@ typedef signed long int32;
 #endif
 
 
+#define SWAP_BYTES(a) ((((a)>>24)&0xFF) | (((a)>>8)&0xFF00) | (((a)<<8)&0xFF0000) | (((a)<<24)&0xFF000000))
+
 #if defined(SCUMM_LITTLE_ENDIAN)
 
 //#if defined(SCUMM_NEED_ALIGNMENT)
@@ -244,7 +246,7 @@ typedef signed long int32;
 //#endif
 
 
-#define PROTO_MKID(a) ((((a)>>24)&0xFF) | (((a)>>8)&0xFF00) | (((a)<<8)&0xFF0000) | (((a)<<24)&0xFF000000))
+#define PROTO_MKID(a) SWAP_BYTES(a)
 #define PROTO_MKID_BE(a) (a & 0xffffffff)
 
 #if defined(INVERSE_MKID)
@@ -297,7 +299,7 @@ FORCEINLINE uint32 READ_BE_UINT32(void *ptr) {
 #define TO_LE_32(__a__) __a__
 #define TO_LE_16(__a__) __a__
 
-#define TO_BE_32(a) ((((a)>>24)&0xFF) | (((a)>>8)&0xFF00) | (((a)<<8)&0xFF0000) | (((a)<<24)&0xFF000000))
+#define TO_BE_32(a) SWAP_BYTES(a)
 
 uint16 FORCEINLINE TO_BE_16(uint16 a) { return (a>>8) | (a<<8); }
 
@@ -305,7 +307,7 @@ uint16 FORCEINLINE TO_BE_16(uint16 a) { return (a>>8) | (a<<8); }
 
 #define MKID(a) (a)
 #define MKID_BE(a) (a)
-//#define MKID_BE(a) ((((a)>>24)&0xFF) | (((a)>>8)&0xFF00) | (((a)<<8)&0xFF0000) | (((a)<<24)&0xFF000000))
+//#define MKID_BE(a) SWAP_BYTES(a)
 
 uint32 FORCEINLINE FROM_LE_32(uint32 a) {
 	return ((a>>24)&0xFF) + ((a>>8)&0xFF00) + ((a<<8)&0xFF0000) + ((a<<24)&0xFF000000);

@@ -317,9 +317,6 @@ void Codec37Decoder::proc3WithoutFDFE(Blitter & dst, Chunk & src, int next_offs,
 }
 
 void Codec37Decoder::proc4(Blitter & dst, Chunk & src, int next_offs, int bw, int bh) {
-#ifdef DEBUG_CODEC37_PROC4
-	int b_nb = 0;
-#endif
 	do {
 		int i = bw;
 		do {
