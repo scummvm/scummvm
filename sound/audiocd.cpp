@@ -57,6 +57,8 @@ static const TrackFormat TRACK_FORMATS[] = {
 };
 
 
+DECLARE_SINGLETON(AudioCDManager);
+
 AudioCDManager::AudioCDManager() {
 	memset(&_cd, 0, sizeof(_cd));
 	memset(_cached_tracks, 0, sizeof(_cached_tracks));

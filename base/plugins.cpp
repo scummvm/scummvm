@@ -196,6 +196,8 @@ void DynamicPlugin::unloadPlugin() {
 
 #pragma mark -
 
+DECLARE_SINGLETON(PluginManager);
+
 PluginManager::PluginManager() {
 }
 

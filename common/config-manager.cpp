@@ -24,6 +24,8 @@
 
 #include "common/config-manager.h"
 
+DECLARE_SINGLETON(Common::ConfigManager);
+
 #if defined(UNIX)
 #ifdef MACOSX
 #define DEFAULT_CONFIG_FILE "Library/Preferences/ScummVM Preferences"

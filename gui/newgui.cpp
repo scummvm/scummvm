@@ -28,6 +28,8 @@
 //#define NEW_FONT_CODE
 
 
+DECLARE_SINGLETON(GUI::NewGui);
+
 
 namespace GUI {
 

@@ -55,8 +55,12 @@ protected:
 	~Singleton<T>()		{ }
 }; 
 
-template <class T>
-T* Singleton<T>::_singleton=0;
+//TODO: The following poses a problem when building ScummVM with plugins...
+
+//template <class T>
+//T* Singleton<T>::_singleton=0;
+
+#define DECLARE_SINGLETON(T) T* Common::Singleton<T>::_singleton=0
 
 }	// End of namespace Common
 
