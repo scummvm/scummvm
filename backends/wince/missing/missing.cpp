@@ -7,6 +7,7 @@
 #include <windows.h>
 #include <tchar.h>
 #include <string.h>
+#include <stdlib.h>
 #include "sys/stat.h"
 #include "sys/time.h"
 #include "time.h"
@@ -16,6 +17,7 @@
 
 #if _WIN32_WCE < 300
 
+#define _STDAFX_H
 #include "portdefs.h"
 
 #else
@@ -362,10 +364,12 @@ unsigned int clock()
 }
 
 /* And why do people use this? */
+#if _WIN32_WCE >= 300
 void abort()
 {
 	exit(1);
 }
+#endif
 
 /*
 IMHO, no project should use this one, it is not portable at all. This implementation
@@ -457,6 +461,22 @@ FILE *fopen(const char *path, const char *mode) {
 		return (FILE*)result;
 }
 
+FILE * _wfopen(const TCHAR *path, const TCHAR *mode) {
+	HANDLE result;
+	bool writeAccess = (mode[0] == 'W' || mode[0] == 'w');
+	result = CreateFile(path, ( writeAccess ? GENERIC_WRITE : GENERIC_READ), 0, NULL, (writeAccess ? CREATE_ALWAYS : OPEN_EXISTING), FILE_ATTRIBUTE_NORMAL, NULL);
+	if (result == INVALID_HANDLE_VALUE)
+		return NULL;
+	else
+		return (FILE*)result;
+}
+
+FILE *_wfreopen(const TCHAR *path, const TCHAR *mode, FILE *stream) {
+	fclose(stream);
+	stream = _wfopen(path, mode);
+	return stream;
+}
+
 int fclose(FILE *stream) {
 	CloseHandle((HANDLE)stream);
 	return 1;
@@ -493,6 +513,14 @@ size_t fread(void *ptr, size_t size, size_t nmemb, FILE *stream) {
 		return 0;
 }
 
+int fgetc(FILE *stream) {
+	unsigned char c;
+	if (fread(&c, 1, 1, stream) != 1)
+		return -1;
+	else
+		return c;
+}
+
 char *fgets(char *s, int size, FILE *stream) {
 	int i = 0;
 	char tempo[1];
@@ -521,6 +549,10 @@ int feof(FILE *stream) {
 	fileSize = GetFileSize((HANDLE)stream, NULL);
 	filePos = SetFilePointer((HANDLE)stream, 0, 0, FILE_CURRENT);
 	return (filePos == 0xFFFFFFFF || filePos > (fileSize - 1));
+}
+
+int ferror(FILE *stream) {
+	return 0; // FIXME !
 }
 
 int fprintf(FILE *stream, const char *format, ...) {
@@ -590,9 +622,7 @@ long int strtol(const char *nptr, char **endptr, int base) {
 	// not correct but that's all we are using
 
 	long int result;
-
 	sscanf(nptr, "%ld", &result);
-
 	return result;
 }
 		
