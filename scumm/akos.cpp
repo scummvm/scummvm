@@ -589,7 +589,7 @@ void AkosRenderer::codec1_genericDecode() {
 
 #ifdef __PALM_OS__
 const byte *defaultScaleTable;
-const byte *old_scaleTable;
+const byte *oldScaleTable;
 #else
 const byte oldScaleTable[256] = {
 	0xFF, 0xFD, 0x7D, 0xBD, 0x3D, 0xDD, 0x5D, 0x9D,
@@ -1718,10 +1718,12 @@ void ScummEngine::akos_processQueue() {
 
 _GINIT(Akos)
 _GSETPTR(Scumm::defaultScaleTable, GBVARS_DEFAULTSCALETABLE_INDEX, byte, GBVARS_SCUMM)
+_GSETPTR(Scumm::oldScaleTable, GBVARS_OLDSCALETABLE_INDEX, byte, GBVARS_SCUMM)
 _GEND
 
 _GRELEASE(Akos)
 _GRELEASEPTR(GBVARS_DEFAULTSCALETABLE_INDEX, GBVARS_SCUMM)
+_GRELEASEPTR(GBVARS_OLDSCALETABLE_INDEX, GBVARS_SCUMM)
 _GEND
 
 #endif
