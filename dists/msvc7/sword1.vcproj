@@ -96,6 +96,12 @@
 	</Configurations>
 	<Files>
 		<File
+			RelativePath="..\..\sword1\animation.cpp">
+		</File>
+		<File
+			RelativePath="..\..\sword1\animation.h">
+		</File>
+		<File
 			RelativePath="..\..\sword1\collision.h">
 		</File>
 		<File
