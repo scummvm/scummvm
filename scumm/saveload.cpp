@@ -200,6 +200,10 @@ bool ScummEngine::loadState(int slot, bool compat, SaveFileManager *mgr) {
 		_scummVars[VAR_CAMERA_ACCEL_Y] = _scummVars[110];
 	}
 
+	// Sync with current config setting
+	if (_version >= 7)
+		VAR(VAR_VOICE_MODE) = ConfMan.getBool("subtitles");
+
 	// We could simply dirty colours 0-15 for 16-colour games -- nowadays
 	// they handle their palette pretty much like the more recent games
 	// anyway. There was a time, though, when re-initializing was necessary

@@ -1223,6 +1223,7 @@ public:
 	byte VAR_CLICK_AREA;
 
 	byte VAR_BLAST_ABOVE_TEXT;
+	byte VAR_VOICE_MODE;
 };
 
 // This is a constant lookup table of reverse bit masks

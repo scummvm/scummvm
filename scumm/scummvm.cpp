@@ -618,6 +618,7 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 	VAR_CLICK_AREA = 0xFF;
 
 	VAR_BLAST_ABOVE_TEXT = 0xFF;
+	VAR_VOICE_MODE = 0xFF;
 
 	// Use g_scumm from error() ONLY
 	g_scumm = this;
@@ -1200,6 +1201,9 @@ void ScummEngine::initScummVars() {
 		VAR(VAR_CURRENT_LIGHTS) = LIGHTMODE_actor_base | LIGHTMODE_actor_color | LIGHTMODE_screen;
 	}
 	
+	if (_version >= 7)
+		VAR(VAR_VOICE_MODE) = ConfMan.getBool("subtitles");
+
 	VAR(VAR_CHARINC) = 4;
 	talkingActor(0);
 }

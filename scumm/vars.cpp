@@ -194,7 +194,7 @@ void ScummEngine_v7::setupScummVars() {
 	VAR_PERFORMANCE_2 = 27;
 	VAR_GAME_LOADED = 29;
 	VAR_V6_EMSSPACE = 32;
-	//VAR_VOICE_MODE = 33; // 0 is voice, 1 is voice+text, 2 is text only
+	VAR_VOICE_MODE = 33; // 0 is voice, 1 is voice+text, 2 is text only
 	VAR_RANDOM_NR = 34;
 	VAR_NEW_ROOM = 35;
 	VAR_WALKTO_OBJ = 36;
@@ -292,7 +292,7 @@ void ScummEngine_v8::setupScummVars() {
 	VAR_NEW_ROOM = 32;
 	VAR_WALKTO_OBJ = 33;
 
-	//VAR_VOICE_MODE = 39; // 0 is voice, 1 is voice+text, 2 is text only
+	VAR_VOICE_MODE = 39; // 0 is voice, 1 is voice+text, 2 is text only
 	VAR_GAME_LOADED = 40;
 	VAR_LANGUAGE = 41;
 	
