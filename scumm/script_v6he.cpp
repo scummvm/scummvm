@@ -754,11 +754,11 @@ void ScummEngine_v60he::o60_actorOps() {
 		int slot = pop();
 
 		int len = resStrLen(string) + 1;
-		addMessageToStack(string, a->talkQueue[slot].sentence, len);
+		addMessageToStack(string, a->heTalkQueue[slot].sentence, len);
 
-		a->talkQueue[slot].posX = a->talkPosX;
-		a->talkQueue[slot].posY = a->talkPosY;
-		a->talkQueue[slot].color = a->talkColor;
+		a->heTalkQueue[slot].posX = a->talkPosX;
+		a->heTalkQueue[slot].posY = a->talkPosY;
+		a->heTalkQueue[slot].color = a->talkColor;
 		break;
 		}
 	default:

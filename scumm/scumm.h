@@ -855,7 +855,7 @@ public:
 
 public:
 	/* Actor talking stuff */
-	byte _actorToPrintStrFor, _V1_talkingActor;
+	byte _actorToPrintStrFor, _V1TalkingActor;
 	int _sentenceNum;
 	SentenceTab _sentence[NUM_SENTENCE];
 	StringTab _string[6];

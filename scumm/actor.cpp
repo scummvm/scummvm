@@ -62,7 +62,7 @@ void Actor::initActor(int mode) {
 		frame = 0;
 		_walkbox = 0;
 		animProgress = 0;
-		skipLimbs = false;
+		heSkipLimbs = false;
 		drawToBackBuf = false;
 		memset(animVariable, 0, sizeof(animVariable));
 		memset(palette, 0, sizeof(palette));
@@ -71,7 +71,7 @@ void Actor::initActor(int mode) {
 		memset(&walkdata, 0, sizeof(ActorWalkData));
 		walkdata.point3.x = 32000;
 		walkScript = 0;
-		memset(talkQueue, 0, sizeof(talkQueue));
+		memset(heTalkQueue, 0, sizeof(heTalkQueue));
 		
 		mode = 1;
 	}
@@ -82,15 +82,15 @@ void Actor::initActor(int mode) {
 		_pos.x = 0;
 		_pos.y = 0;
 		facing = 180;
-		condMask = 1;
-		noTalkAnimation = 0;
+		heCondMask = 1;
+		heNoTalkAnimation = 0;
 		if (_vm->_version >= 7)
 			visible = false;
-		skipLimbs = false;
+		heSkipLimbs = false;
 	} else if (mode == 2) {
 		facing = 180;
-		condMask = 1;
-		skipLimbs = false;
+		heCondMask = 1;
+		heSkipLimbs = false;
 	}
 	_elevation = 0;
 	width = 24;
@@ -137,14 +137,14 @@ void Actor::initActor(int mode) {
 		_talkStopFrame = 5;
 	}
 
-	_talking = false;
+	_heTalking = false;
 	walkScript = 0;
 	talkScript = 0;
 
 	_clipOverride = _vm->_actorClipOverride;
 
 	auxBlock.visible = false;
-	paletteNum = 0;
+	hePaletteNum = 0;
 
 	_vm->_classData[number] = (_vm->_version >= 7) ? _vm->_classData[0] : 0;
 }
@@ -808,14 +808,14 @@ void Actor::showActor() {
 // an internal variable. Emulate this to prevent overwriting script vars...
 int ScummEngine::getTalkingActor() {
 	if (_gameId == GID_MANIAC && _version == 1)
-		return _V1_talkingActor;
+		return _V1TalkingActor;
 	else
 		return VAR(VAR_TALK_ACTOR);
 }
 
 void ScummEngine::setTalkingActor(int value) {
 	if (_gameId == GID_MANIAC && _version == 1)
-		_V1_talkingActor = value;
+		_V1TalkingActor = value;
 	else
 		VAR(VAR_TALK_ACTOR) = value;
 }
@@ -1079,12 +1079,12 @@ void Actor::drawActorCostume(bool hitTestMode) {
 	bcr->_draw_top = 0x7fffffff;
 	bcr->_draw_bottom = 0;
 
-	bcr->_skipLimbs = (skipLimbs != 0);
-	bcr->_paletteNum = paletteNum;
+	bcr->_skipLimbs = (heSkipLimbs != 0);
+	bcr->_paletteNum = hePaletteNum;
 	
-	if (_vm->_heversion >= 80 && noTalkAnimation == 0) {
-		condMask &= 0xFFFFFC00;
-		condMask |= 1;
+	if (_vm->_heversion >= 80 && heNoTalkAnimation == 0) {
+		heCondMask &= 0xFFFFFC00;
+		heCondMask |= 1;
 		if (_vm->getTalkingActor() == number) {
 			// Checks if talk sound is active?
 			// Otherwise just do rand animation
@@ -1092,7 +1092,7 @@ void Actor::drawActorCostume(bool hitTestMode) {
 			setTalkCondition(rnd);
 		} 
 	}
-	noTalkAnimation = 0;
+	heNoTalkAnimation = 0;
 
 	// If the actor is partially hidden, redraw it next frame.
 	// Only done for pre-AKOS, though.
@@ -1275,7 +1275,7 @@ void ScummEngine::actorTalk(const byte *msg) {
 			if ((_version <= 7 && !_keepText) || (_version == 8 && VAR(VAR_HAVE_MSG)))
 				stopTalk();
 			setTalkingActor(a->number);
-			a->_talking = true;
+			a->_heTalking = true;
 			if (!_string[0].no_talk_anim) {
 				a->runActorTalkScript(a->_talkStartFrame);
 				_useTalkAnims = true;
@@ -1338,7 +1338,7 @@ void ScummEngine::stopTalk() {
 		}
 		if (_version <= 7 && !(_features & GF_HUMONGOUS))
 			setTalkingActor(0xFF);
-		a->_talking = false;
+		a->_heTalking = false;
 	}
 	if (_version == 8 || _features & GF_HUMONGOUS)
 		setTalkingActor(0);
@@ -1352,7 +1352,7 @@ void Actor::setActorCostume(int c) {
 	int i;
 
 	if ((_vm->_features & GF_HUMONGOUS) && (c == -1  || c == -2)) {
-		skipLimbs = (c == -1);
+		heSkipLimbs = (c == -1);
 		needRedraw = true;
 		return;
 	}
@@ -1837,39 +1837,39 @@ void Actor::setUserCondition(int slot, int set) {
 	debug(1, "Actor::setUserCondition(%d, %d)", slot, set);
 	assert(slot >= 1 && slot <= 0x20);
 	if (set == 0) {
-		condMask &= ~(1 << (slot + 0xF));
+		heCondMask &= ~(1 << (slot + 0xF));
 	} else {
-		condMask |= 1 << (slot + 0xF);
+		heCondMask |= 1 << (slot + 0xF);
 	}
-	if (condMask & 0x3FF) {
-		condMask &= ~1;
+	if (heCondMask & 0x3FF) {
+		heCondMask &= ~1;
 	} else {
-		condMask |= 1;
+		heCondMask |= 1;
 	}
 }
 
 bool Actor::isUserConditionSet(int slot) const {
 	assert(slot >= 1 && slot <= 0x20);
-	return (condMask & (1 << (slot + 0xF))) != 0;
+	return (heCondMask & (1 << (slot + 0xF))) != 0;
 }
 
 void Actor::setTalkCondition(int slot) {
 	debug(1, "Actor::setTalkCondition(%d)", slot);
 	assert(slot >= 1 && slot <= 0x10);
-	condMask = (condMask & ~0x3FF) | 1;
+	heCondMask = (heCondMask & ~0x3FF) | 1;
 	if (slot != 1) {
-		condMask |= 1 << (slot - 1);
-		if (condMask & 0x3FF) {
-			condMask &= ~1;
+		heCondMask |= 1 << (slot - 1);
+		if (heCondMask & 0x3FF) {
+			heCondMask &= ~1;
 		} else {
-			condMask |= 1;
+			heCondMask |= 1;
 		}
 	}	
 }
 
 bool Actor::isTalkConditionSet(int slot) const {	
 	assert(slot >= 1 && slot <= 0x10);
-	return (condMask & (1 << (slot - 1))) != 0;
+	return (heCondMask & (1 << (slot - 1))) != 0;
 }
 
 void ScummEngine::preProcessAuxQueue() {
@@ -2017,7 +2017,7 @@ const SaveLoadEntry *Actor::getSaveLoadEntries() {
 		MKLINE(Actor, cost.soundCounter, sleByte, VER(8)),
 		MKLINE(Actor, drawToBackBuf, sleByte, VER(32)),
 		MKLINE(Actor, flip, sleByte, VER(32)),
-		MKLINE(Actor, skipLimbs, sleByte, VER(32)),
+		MKLINE(Actor, heSkipLimbs, sleByte, VER(32)),
 
 		// Actor palette grew from 64 to 256 bytes
 		MKARRAY_OLD(Actor, palette[0], sleByte, 64, VER(8), VER(9)),
@@ -2033,7 +2033,7 @@ const SaveLoadEntry *Actor::getSaveLoadEntries() {
 		MKLINE(Actor, needRedraw, sleByte, VER(8)),
 		MKLINE(Actor, needBgReset, sleByte, VER(8)),
 		MKLINE(Actor, costumeNeedsInit, sleByte, VER(8)),
-		MKLINE(Actor, condMask, sleUint32, VER(38)),
+		MKLINE(Actor, heCondMask, sleUint32, VER(38)),
 
 		MKLINE(Actor, talkPosY, sleInt16, VER(8)),
 		MKLINE(Actor, talkPosX, sleInt16, VER(8)),

@@ -1071,7 +1071,7 @@ void ScummEngine_v72he::o72_actorOps() {
 		break;
 	case 24: // HE 80+
 		k = pop();
-		a->noTalkAnimation = 1;
+		a->heNoTalkAnimation = 1;
 		a->setTalkCondition(k);
 		debug(1,"o72_actorOps: case 24 (%d)", k);
 		break;
@@ -1193,7 +1193,7 @@ void ScummEngine_v72he::o72_actorOps() {
 		a->charset = pop();
 		break;
 	case 175:		// HE 99+
-		a->paletteNum = pop();
+		a->hePaletteNum = pop();
 		break;
 	case 198:		// SO_ACTOR_VARIABLE
 		i = pop();
@@ -1238,11 +1238,11 @@ void ScummEngine_v72he::o72_actorOps() {
 		int slot = pop();
 
 		int len = resStrLen(string) + 1;
-		addMessageToStack(string, a->talkQueue[slot].sentence, len);
+		addMessageToStack(string, a->heTalkQueue[slot].sentence, len);
 
-		a->talkQueue[slot].posX = a->talkPosX;
-		a->talkQueue[slot].posY = a->talkPosY;
-		a->talkQueue[slot].color = a->talkColor;
+		a->heTalkQueue[slot].posX = a->talkPosX;
+		a->heTalkQueue[slot].posY = a->talkPosY;
+		a->heTalkQueue[slot].color = a->talkColor;
 		break;
 		}
 	default:

@@ -132,11 +132,11 @@ public:
 	CostumeData cost;
 
 	/* HE specific */
-	byte paletteNum;
-	bool noTalkAnimation;
-	bool skipLimbs;
-	bool _talking;
-	uint32 condMask;
+	byte hePaletteNum;
+	bool heNoTalkAnimation;
+	bool heSkipLimbs;
+	bool _heTalking;
+	uint32 heCondMask;
 
 	AuxBlock auxBlock;
 
@@ -145,7 +145,7 @@ public:
 		int16 posY;
 		int16 color;
 		byte sentence[128];
-	} talkQueue[16];
+	} heTalkQueue[16];
 
 protected:
 	byte palette[256];

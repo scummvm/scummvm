@@ -464,11 +464,11 @@ byte AkosRenderer::drawLimb(const Actor *a, int limb) {
 					uint32 type = cond & 0xC0000000;
 					cond &= 0x3FFFFFFF;
 					if (type == 0x40000000) {
-						decflag = (a->condMask & cond) ? 1 : 0;
+						decflag = (a->heCondMask & cond) ? 1 : 0;
 					} else if (type == 0x80000000) {
-						decflag = (a->condMask & cond) ? 0 : 1;
+						decflag = (a->heCondMask & cond) ? 0 : 1;
 					} else {
-						decflag = (a->condMask & cond) ? 1 : 0;
+						decflag = (a->heCondMask & cond) ? 1 : 0;
 					}
 				}
 			}
@@ -1536,13 +1536,13 @@ bool ScummEngine::akos_increaseAnim(Actor *a, int chan, const byte *aksq, const 
 			akos_queCommand(8, a, GB(2), 0);
 			continue;
 		case AKC_C0A1:
-			if (a->_talking) {
+			if (a->_heTalking) {
 				curpos = GUW(2);
 				break;
 			}
 			continue;
 		case AKC_C0A2:
-			if (!a->_talking) {
+			if (!a->_heTalking) {
 				curpos = GUW(2);
 				break;
 			}
@@ -1677,12 +1677,12 @@ void ScummEngine::akos_processQueue() {
 			if (_heversion >= 71) {
 				_actorToPrintStrFor = a->number;
 
-				a->talkPosX = a->talkQueue[param_1].posX;
-				a->talkPosY = a->talkQueue[param_1].posY;
-				a->talkColor = a->talkQueue[param_1].color;
+				a->talkPosX = a->heTalkQueue[param_1].posX;
+				a->talkPosY = a->heTalkQueue[param_1].posY;
+				a->talkColor = a->heTalkQueue[param_1].color;
 
 				_string[0].loadDefault();
-				actorTalk(a->talkQueue[param_1].sentence);
+				actorTalk(a->heTalkQueue[param_1].sentence);
 
 			} else if (param_1 != 0) {
 				if (_imuseDigital) {
