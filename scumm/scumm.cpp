@@ -2299,6 +2299,10 @@ void ScummEngine::startScene(int room, Actor *a, int objectNr) {
 		stopCycle(0);
 	_sound->processSoundQues();
 
+	// Clear the room variables
+	if (_heversion >= 80)
+		memset(_roomVars, 0, sizeof(_roomVars));
+
 	for (i = 1; i < _numActors; i++) {
 		_actors[i].hideActor();
 	}
