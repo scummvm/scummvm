@@ -689,11 +689,9 @@ protected:
 	void convertADResource(int type, int index, byte *ptr, int size);
 	int readSoundResourceSmallHeader(int type, int index);
 	bool isResourceInUse(int type, int i) const;
-	void initRoomSubBlocks();
+	virtual void initRoomSubBlocks();
 	void clearRoomObjects();
-	void loadRoomObjects();
-	void loadRoomObjectsSmall();
-	void loadRoomObjectsOldBundle();
+	virtual void loadRoomObjects();
 
 	virtual void readArrayFromIndexFile();
 	virtual void readMAXS(int blockSize);

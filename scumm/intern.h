@@ -187,13 +187,14 @@ protected:
 	void o5_walkActorToObject();
 };
 
-class ScummEngine_v3 : public ScummEngine_v5 {
+class ScummEngine_v4 : public ScummEngine_v5 {
 public:
-	ScummEngine_v3(GameDetector *detector, OSystem *syst, const ScummGameSettings &gs, uint8 md5sum[16]) : ScummEngine_v5(detector, syst, gs, md5sum) {}
+	ScummEngine_v4(GameDetector *detector, OSystem *syst, const ScummGameSettings &gs, uint8 md5sum[16]);
 
 protected:
 	void readIndexFile();
 	void loadCharset(int no);
+	void loadRoomObjects();
 	void readMAXS();
 	
 	void readGlobalObjects();
@@ -201,15 +202,25 @@ protected:
 	void setupRoomObject(ObjectData *od, const byte *room, const byte *searchptr = NULL);
 };
 
-class ScummEngine_v4 : public ScummEngine_v3 {
+class ScummEngine_v3 : public ScummEngine_v4 {
 public:
-	ScummEngine_v4(GameDetector *detector, OSystem *syst, const ScummGameSettings &gs, uint8 md5sum[16]) : ScummEngine_v3(detector, syst, gs, md5sum) {}
+	ScummEngine_v3(GameDetector *detector, OSystem *syst, const ScummGameSettings &gs, uint8 md5sum[16]);
 
 protected:
 	void loadCharset(int no);
 };
 
-class ScummEngine_v2 : public ScummEngine_v3 {
+class ScummEngine_v3old : public ScummEngine_v3 {
+public:
+	ScummEngine_v3old(GameDetector *detector, OSystem *syst, const ScummGameSettings &gs, uint8 md5sum[16]);
+
+protected:
+	void readIndexFile();
+	void initRoomSubBlocks();
+	void loadRoomObjects();
+};
+
+class ScummEngine_v2 : public ScummEngine_v3old {
 protected:
 	void readIndexFile();
 	void readClassicIndexFile();	// V1
@@ -226,7 +237,7 @@ protected:
 	const OpcodeEntryV2 *_opcodesV2;
 
 public:
-	ScummEngine_v2(GameDetector *detector, OSystem *syst, const ScummGameSettings &gs, uint8 md5sum[16]) : ScummEngine_v3(detector, syst, gs, md5sum) {}
+	ScummEngine_v2(GameDetector *detector, OSystem *syst, const ScummGameSettings &gs, uint8 md5sum[16]);
 
 	virtual void scummInit();
 

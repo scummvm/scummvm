@@ -625,7 +625,7 @@ void ScummEngine::loadRoomObjects() {
 	CHECK_HEAP
 }
 
-void ScummEngine::loadRoomObjectsOldBundle() {
+void ScummEngine_v3old::loadRoomObjects() {
 	int i;
 	ObjectData *od;
 	const byte *room, *ptr;
@@ -665,7 +665,7 @@ void ScummEngine::loadRoomObjectsOldBundle() {
 	CHECK_HEAP
 }
 
-void ScummEngine::loadRoomObjectsSmall() {
+void ScummEngine_v4::loadRoomObjects() {
 	int i, j;
 	ObjectData *od;
 	const byte *ptr;
@@ -725,7 +725,7 @@ void ScummEngine::loadRoomObjectsSmall() {
 	CHECK_HEAP
 }
 
-void ScummEngine_v3::setupRoomObject(ObjectData *od, const byte *room, const byte *searchptr) {
+void ScummEngine_v4::setupRoomObject(ObjectData *od, const byte *room, const byte *searchptr) {
 	assert(room);
 	const byte *ptr = room + od->OBCDoffset;
 
