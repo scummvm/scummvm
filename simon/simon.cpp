@@ -173,19 +173,201 @@ SimonState::SimonState(GameDetector *detector, OSystem *syst)
 	: Engine(detector, syst), midi (syst) {
 	MidiDriver *driver = detector->createMidi();
 	
+	_stripped_txt_mem = 0;
+	_text_size = 0;
+	_stringtab_num = 0;
+	_stringtab_pos = 0;
+	_stringtab_numalloc = 0;
+	_stringtab_ptr = 0;
+
+	_itemarray_ptr = 0;
+	_itemarray_size = 0;
+	_itemarray_inited = 0;
+
+	_itemheap_ptr = 0;
+	_itemheap_curpos = 0;
+	_itemheap_size = 0;
+
+	_icon_file_ptr = 0;
+
+	_tbl_list = 0;
+
+	_code_ptr = 0;
+
+
+	_local_stringtable = 0;
+	_string_id_local_min = 0;
+	_string_id_local_max = 0;
+
+	_tablesheap_ptr = 0;
+	_tablesheap_ptr_org = 0;
+	_tablesheap_ptr_new = 0;
+	_tablesheap_size = 0;
+	_tablesheap_curpos = 0;
+	_tablesheap_curpos_org = 0;
+	_tablesheap_curpos_new = 0;
+
 	_subroutine_list = 0;
 	_subroutine_list_org = 0;
-	
+
+	_dx_surface_pitch = 0;
+
+	_recursion_depth = 0;
+
+	_last_vga_tick = 0;
+
+	_op_189_flags = 0;
+
+	_scriptvar_2 = 0;
+	_run_script_return_1 = 0;
+	_skip_vga_wait = 0;
+	_no_parent_notify = 0;
+	_vga_res_328_loaded = 0;
+	_hitarea_unk_3 = 0;
+	_mortal_flag = 0;
+	_sync_flag_1 = 0;
+	_video_var_8 = 0;
+	_use_palette_delay = 0;
+	_sync_flag_2 = 0;
+	_hitarea_unk_6 = 0;
+	_in_callback = 0;
+	_cepe_flag = 0;
+	_copy_partial_mode = 0;
+	_fast_mode = 0;
+	_dx_use_3_or_4_for_lock = 0;
+
+	_mouse_pos_changed = 0;
+	_debugMode = 0;
+	_debugLevel = 0;
+	_language = 0;
+	_start_mainscript = 0;
+	_continous_mainscript = 0;
+	_continous_vgascript = 0;
+	_draw_images_debug = 0;
+	_subtitles = 0;
+	_mouse_cursor = 0;
+	_vga_var9 = 0;
+	_script_unk_1 = 0;
+	_vga_var6 = 0;
+	_x_scroll = 0;
+	_vga_var1 = 0;
+	_vga_var2 = 0;
+	_vga_var3 = 0;
+	_vga_var5 = 0;
+	_vga_var8 = 0;
+
+	_vc72_var1 = 0;
+	_vc72_var2 = 0;
+	_vc72_var3 = 0;
+	_vc70_var1 = 0;
+	_vc70_var2 = 0;
+	_vga_var7 = 0;
+
+	_script_cond_a = 0;
+	_script_cond_b = 0;
+	_script_cond_c = 0;
+
+	_fcs_unk_1 = 0;
+	_fcs_ptr_1 = 0;
+
+	_subject_item = 0;
+	_object_item = 0;
+	_item_1_ptr = 0;
+	_item_ptr_B = 0;
+	_item_1 = 0;
+
+	_hitarea_object_item = 0;
+	_last_hitarea = 0;
+	_last_hitarea_2_ptr = 0;
+	_last_hitarea_3 = 0;
+	_left_button_down = 0;
+	_hitarea_subject_item = 0;
+	_hitarea_ptr_5 = 0;
+	_hitarea_ptr_7 = 0;
+	_need_hitarea_recalc = 0;
+	_verb_hitarea = 0;
+	_hitarea_unk_4 = 0;
+	_lock_counter = 0;
+
+	_video_palette_mode = 0;
+
+	_print_char_unk_1 = 0;
+	_print_char_unk_2 = 0;
+	_num_letters_to_print = 0;
+
+	_last_time = 0;
+
 	_first_time_struct = 0;
 	_pending_delete_time_event = 0;
 	
-	_dump_file = 0;
+	_base_time = 0;
 
+	_mouse_x = 0;
+	_mouse_y = 0;
+	_mouse_x_old = 0;
+	_mouse_y_old = 0;
+	
 	_dummy_item_1 = new Item();
 	_dummy_item_2 = new Item();
 	_dummy_item_3 = new Item();
 
+	_lock_word = 0;
+	_scroll_up_hit_area = 0;
+	_scroll_down_hit_area = 0;
+
+	_video_var_7 = 0;
+	_palette_color_count = 0;
+
+	_video_var_4 = 0;
+	_video_var_5 = 0;
+	_video_var_3 = 0;
+	_unk_pal_flag = 0;
+	_exit_cutscene = 0;
+	_skip_speech = 0;
+	_video_var_9 = 0;
+
+	_midi_sfx = 0;
+	_last_music_played = 0;
+	_next_music_to_play = 0;
+
+	_show_preposition = 0;
+	_showmessage_flag = 0;
+
+	_video_num_pal_colors = 0;
+
+	_invoke_timer_callback = 0;
+
+	_vga_sprite_changed = 0;
+
+	_vga_buf_free_start = 0;
+	_vga_buf_end = 0;
+	_vga_buf_start = 0;
+	_vga_file_buf_org = 0;
+	_vga_file_buf_org_2 = 0;
+
+	_cur_vga_file_1 = 0;
+	_cur_vga_file_2 = 0;
+
+	_timer_1 = 0;
+	_timer_5 = 0;
+	_timer_4 = 0;
+
+	_vga_base_delay = 0;
+
+	_vga_cur_file_2 = 0;
+	_vga_wait_for = 0;
+	_vga_cur_file_id = 0;
+	_vga_cur_sprite_id = 0;
+
+	_next_vga_timer_to_process = 0;
+
+//... TODO: init more member vars
+
 	_fcs_list = new FillOrCopyStruct[16];
+
+	_free_string_slot = 0;
+	
+	_dump_file = 0;
 
 	// Setup midi driver
 	if (!driver)
@@ -723,7 +905,7 @@ const byte *SimonState::getStringPtrByID(uint string_id) {
 		string_ptr = getLocalStringByID(string_id);
 	}
 
-	dst = &_stringReturnBuffer[_free_string_slot][0];
+	dst = _stringReturnBuffer[_free_string_slot];
 	strcpy((char *)dst, (const char *)string_ptr);
 	return dst;
 }
