@@ -32,6 +32,7 @@
 #ifdef USE_CONSOLE
 #include "gui/console.h"
 #define printf	_s->_debuggerDialog->printf
+#warning console enabled
 #else
 #ifdef HAVE_READLINE
 #include "debugrl.h"
@@ -235,11 +236,13 @@ void ScummDebugger::on_frame()
 
 void ScummDebugger::detach()
 {
+#ifdef USE_CONSOLE
+	if (_s->_debuggerDialog)
+		_s->_debuggerDialog->setInputeCallback(0, 0);
+#endif
+
 	_s->_debugger = NULL;
 	_s = NULL;
-#ifdef USE_CONSOLE
-	_s->_debuggerDialog->setInputeCallback(0, 0);
-#endif
 }
 
 struct DebuggerCommands {
