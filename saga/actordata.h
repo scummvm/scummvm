@@ -29,10 +29,10 @@
 namespace Saga {
 
 struct R_ACTORTABLE {
-	byte unknown4_;
-	byte unknown5_; 
+	byte unknown4;
+	byte unknown5; 
 	byte name_index;
-	int32 unknown8_; // 1
+	int32 unknown8; // 1
 	int16 x; // x
 	int16 y; // y
 	int16 unknown10; // 4
