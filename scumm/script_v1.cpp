@@ -1250,10 +1250,17 @@ void Scumm::o5_getActorRoom()
 
 void Scumm::o5_getActorScale()
 {
+	// INDY3 uses this opcode as a wait_for_actor();
 	if (_gameId == GID_INDY3_256) {
-		getVarOrDirectByte(0x80);		/*FIXME: missing stuff here */
-		return;
+	        byte *oldaddr = _scriptPointer - 1;
+
+                if (derefActorSafe(getVarOrDirectByte(0x80), "o5_wait")->moving) {
+	        	_scriptPointer = oldaddr;
+        		o5_breakHere();
+		}
+                return;
 	}
+
 	getResultPos();
 	setResult(derefActorSafe(getVarOrDirectByte(0x80), "o5_getActorScale")->scalex);
 }
