@@ -164,7 +164,7 @@ void IMuseDigital::flushTracks() {
 	for (int l = 0; l < MAX_DIGITAL_TRACKS + MAX_DIGITAL_FADETRACKS; l++) {
 		Track *track = _track[l];
 		if (track->used && (track->readyToRemove || 
-				(_vm->_insaneRunning && track->toBeRemoved)) { // INSANE hack for sync timer mode
+				(_vm->_insaneRunning && track->toBeRemoved))) { // INSANE hack for sync timer mode
 			if (track->stream) {
 				if (!track->stream->endOfStream()) {
 	 				track->stream->finish();
