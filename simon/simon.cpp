@@ -147,7 +147,7 @@ static const GameSpecificSettings simon2mac_settings = {
 };
 
 static const GameSpecificSettings simon2dos_settings = {
-	1,										// VGA_DELAY_BASE
+	5,										// VGA_DELAY_BASE
 	1580 / 4,									// TABLE_INDEX_BASE
 	1500 / 4,									// TEXT_INDEX_BASE
 	75,										// NUM_VIDEO_OP_CODES
