@@ -203,7 +203,7 @@ void Scumm::CHARSET_1()
 	_charset->addLinebreaks(0, buffer, 0, t);
 
 	if (_charset->_center) {
-		_charset->_nextLeft -= _charset->getStringWidth(0, buffer, 0) >> 1;
+		_charset->_nextLeft -= _charset->getStringWidth(0, buffer) >> 1;
 		if (_charset->_nextLeft < 0)
 			_charset->_nextLeft = 0;
 	}
@@ -228,9 +228,9 @@ void Scumm::CHARSET_1()
 			} else {
 				_charset->_nextLeft = _string[0].xpos;
 				if (_charset->_center) {
-					_charset->_nextLeft -= _charset->getStringWidth(0, buffer, 0) >> 1;
+					_charset->_nextLeft -= _charset->getStringWidth(0, buffer) >> 1;
 				}
-				_charset->_nextTop += _charset->getFontPtr()[1];
+				_charset->_nextTop += _charset->getFontHeight();
 				_charset->_disableOffsX = true;
 				continue;
 			}
@@ -299,13 +299,13 @@ void Scumm::CHARSET_1()
 			buffer += 2;
 			break;
 		case 14: {
-			int oldy = _charset->getFontPtr()[1];
+			int oldy = _charset->getFontHeight();
 
 			_charset->setCurID(*buffer++);
 			buffer += 2;
 			for (i = 0; i < 4; i++)
 				_charset->_colorMap[i] = _charsetData[_charset->getCurID()][i];
-			_charset->_nextTop -= _charset->getFontPtr()[1] - oldy;
+			_charset->_nextTop -= _charset->getFontHeight() - oldy;
 			break;
 			}
 		default:
@@ -341,7 +341,7 @@ void Scumm::description()
 
 	buffer = _charset->_buffer;
 	_string[0].ypos = camera._cur.y + 88;
-	_string[0].xpos = (_realWidth / 2) - (_charset->getStringWidth(0, buffer, 0) >> 1);
+	_string[0].xpos = (_realWidth / 2) - (_charset->getStringWidth(0, buffer) >> 1);
 	if (_string[0].xpos < 0)
 		_string[0].xpos = 0;
 
@@ -402,7 +402,7 @@ void Scumm::drawDescString(byte *msg)
 	_charset->_nextTop = _string[0].ypos;
 
 	// Center text
-	_charset->_nextLeft -= _charset->getStringWidth(0, buffer, 0) >> 1;
+	_charset->_nextLeft -= _charset->getStringWidth(0, buffer) >> 1;
 	if (_charset->_nextLeft < 0)
 		_charset->_nextLeft = 0;
 
@@ -455,7 +455,7 @@ void Scumm::drawString(int a)
 		for (i = 0; i < 4; i++)
 			_charset->_colorMap[i] = _charsetData[_charset->getCurID()][i];
 
-		fontHeight = _charset->getFontPtr()[1];
+		fontHeight = _charset->getFontHeight();
 	}
 
 	_msgPtrToAdd = buf;
@@ -474,7 +474,7 @@ void Scumm::drawString(int a)
 	if (space)
 		*space = '\0';
 	if (_charset->_center) {
-		_charset->_left -= _charset->getStringWidth(a, buf, 0) >> 1;
+		_charset->_left -= _charset->getStringWidth(a, buf) >> 1;
 	}
 
 	if (!(_features & GF_AFTER_V7))
@@ -506,7 +506,7 @@ void Scumm::drawString(int a)
 			case 1:
 			case 8:
 				if (_charset->_center) {
-					_charset->_left = _charset->_startLeft - _charset->getStringWidth(a, buf, i);
+					_charset->_left = _charset->_startLeft - _charset->getStringWidth(a, buf + i);
 				} else {
 					_charset->_left = _charset->_startLeft;
 				}
@@ -757,6 +757,7 @@ void Scumm::initCharset(int charsetno)
 	for (i = 0; i < 16; i++)
 		_charset->_colorMap[i] = _charsetData[_charset->getCurID()][i];
 }
+
 void Scumm::loadLanguageBundle() {
 	File file;
 

@@ -58,22 +58,21 @@ protected:
 	byte *_charPtr;
 
 	void drawBits(VirtScreen *vs, byte *dst, byte *mask, int drawTop, int width, int height);
+	byte *getFontPtr(byte id);
 
 public:
-
 	CharsetRenderer(Scumm *vm) : _vm(vm) {}
 
 	void printChar(int chr);
 	void printCharOld(int chr);
 	int getSpacing(byte chr, byte *charset);
-	int getStringWidth(int a, byte *str, int pos);
+	int getStringWidth(int a, byte *str);
 	void addLinebreaks(int a, byte *str, int pos, int maxwidth);
 	
 	void setCurID(byte id);
 	int getCurID() { return _curId; }
 	
-	byte *getFontPtr() { return _fontPtr; }
-	byte *getFontPtr(byte id);
+	int getFontHeight() { return _fontPtr[1]; }
 };
 
 

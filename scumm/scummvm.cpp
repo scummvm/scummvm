@@ -178,24 +178,18 @@ Scumm::Scumm (GameDetector *detector, OSystem *syst)
 Scumm::~Scumm ()
 {
 	delete [] _actors;
-
-	if (_pauseDialog)
-		delete _pauseDialog;
-	if (_optionsDialog)
-		delete _optionsDialog;
-	if (_saveLoadDialog)
-		delete _saveLoadDialog;
+	
+	delete _charset;
+	delete _pauseDialog;
+	delete _optionsDialog;
+	delete _saveLoadDialog;
 
 	delete _bundle;
 	delete _sound;
-	if (_imuse)
-		delete _imuse;
-	if (_imuseDigital)
-		delete _imuseDigital;
-	if (_existLanguageFile)
-		delete _languageBuffer;
-	if (_audioNames)
-		delete _audioNames;
+	delete _imuse;
+	delete _imuseDigital;
+	delete _languageBuffer;
+	delete _audioNames;
 }
 
 void Scumm::scummInit()

@@ -80,8 +80,7 @@ struct MemBlkHeader {
 
 struct VerbSlot;
 
-class ObjectData {
-public:
+struct ObjectData {
 	uint32 offs_obim_to_room;
 	uint32 offs_obcd_to_room;
 	int16 walk_x, walk_y;

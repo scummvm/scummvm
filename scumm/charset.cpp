@@ -67,8 +67,9 @@ int CharsetRenderer::getSpacing(byte chr, byte *charset)
 	return spacing;
 }
 
-int CharsetRenderer::getStringWidth(int arg, byte *text, int pos)
+int CharsetRenderer::getStringWidth(int arg, byte *text)
 {
+	int pos = 0;
 	byte *ptr;
 	int width;
 	byte chr;
