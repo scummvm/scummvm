@@ -1216,7 +1216,7 @@ void ScummEngine_v90he::spritesProcessWiz(bool arg) {
 				pts[2].y = pts[3].y = h / 2 - 1;
 
 				// transform points
-				if (zoom) {
+				if (spi->flags & kSFZoomed) {
 					for (int j = 0; j < 4; ++j) {
 						pts[j].x = pts[i].x * zoom / 256;
 						pts[j].y = pts[i].y * zoom / 256;
