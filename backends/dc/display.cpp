@@ -190,6 +190,8 @@ void OSystem_Dreamcast::initSize(uint w, uint h)
   _overlay_dirty = true;
   *(volatile unsigned int *)(0xa05f80e4) = SCREEN_W/32; //stride
   //  dc_reset_screen(0, 0);
+  memset(screen, 0, SCREEN_W*SCREEN_H);
+  memset(overlay, 0, OVL_W*OVL_H*sizeof(unsigned short));
 }
 
 void OSystem_Dreamcast::copyRectToScreen(const byte *buf, int pitch, int x, int y,
