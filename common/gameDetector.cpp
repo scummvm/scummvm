@@ -103,6 +103,7 @@ static const struct GraphicsMode gfx_modes[] = {
 #else
 	{"flipping", "Page Flipping", GFX_FLIPPING},
 	{"dbuffer", "Double Buffer", GFX_DOUBLEBUFFER},
+	{"wide", "Wide (HiRes+ only)", GFX_WIDE},
 #endif
 	{0, 0, 0}
 };
