@@ -801,7 +801,7 @@ void Sword2Engine::setLuggage(uint32 res) {
 		byte *icon = _resman->openResource(res) + sizeof(StandardHeader);
 		uint32 len = _resman->fetchLen(res) - sizeof(StandardHeader);
 
-		_graphics->setLuggageAnim(icon + sizeof(StandardHeader), len);
+		_graphics->setLuggageAnim(icon, len);
 		_resman->closeResource(res);
 	} else
 		_graphics->setLuggageAnim(NULL, 0);
