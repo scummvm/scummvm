@@ -54,10 +54,6 @@ int Compression::decode80(const uint8* image_in, uint8* image_out) {
     uint16 code;
     uint16 count;
 
-#ifdef SCUMM_BIG_ENDIAN
-    uint16 bigend; /* temporary big endian var */
-#endif
-
     while (1) 
     {
         code = *readp++;
@@ -92,52 +88,31 @@ int Compression::decode80(const uint8* image_in, uint8* image_out) {
                     //command 2 (11cccccc p p): copy
                     count += 3;
 
-#ifdef SCUMM_BIG_ENDIAN
-                    memcpy(&bigend, readp, 2);
-                    copyp = (const uint8*)&image_out[*(const_cast<uint16*>((const uint16*)SWAP_BYTES_16(bigend))];
-#else
-                    copyp = (const uint8*)&image_out[*(const_cast<uint16*>((const uint16*)readp))];
-#endif
-
+                    copyp = (const uint8*)&image_out[READ_LE_UINT16(readp)];
                     readp += 2;
-                    while (count--)
-                        *writep++ = *copyp++;
+
+                    memcpy(writep, copyp, count);
+                    writep += count;
+                    copyp += count;
                 }
                 else if (count == 0x3e) 
                 {
                     //command 3 (11111110 c c v): fill
 
-#ifdef SCUMM_BIG_ENDIAN
-                    memset(&count, 0, sizeof(uint32));
-                    memcpy(&count, readp, 2);
-                    count = const_cast<uint16*>((const uint16*)SWAP_BYTES_16(count));
-#else
-                    count = *(const_cast<uint16*>((const uint16*)readp));
-#endif
+                    count = READ_LE_UINT16(readp);
                     readp += 2;
                     code = *readp++;
-                    while (count--)
-                        *writep++ = code;
+                    memset(writep, code, count);
+                    writep += count;
                 }
                 else 
                 {
                     //command 4 (copy 11111111 c c p p): copy
 
-#ifdef SCUMM_BIG_ENDIAN
-                    memset(&count, 0, sizeof(uint32));
-                    memcpy(&count, readp, 2);
-                    count = const_cast<uint16*>((const uint16*)SWAP_BYTES_16(count));
-#else
-                    count = *(const_cast<uint16*>((const uint16*)readp));
-#endif
+                    count = READ_LE_UINT16(readp);
                     readp += 2;
 
-#ifdef SCUMM_BIG_ENDIAN
-                    memcpy(&bigend, readp, 2);
-                    copyp = (const uint8*)&image_out[*(const_cast<uint16*>((const uint16*)SWAP_BYTES_16(bigend))];
-#else
-                    copyp = (const uint8*)&image_out[*(const_cast<uint16*>((const uint16*)readp))];
-#endif
+                    copyp = (const uint8*)&image_out[READ_LE_UINT16(readp)];
                     readp += 2;
                     while (count--)
                         *writep++ = *copyp++;
@@ -197,13 +172,7 @@ int Compression::decode40(const uint8* image_in, uint8* image_out) {
             if (!(count = code & 0x7f)) 
             {
 
-#ifdef SCUMM_BIG_ENDIAN
-                memset(&count, 0, sizeof(uint32));
-                memcpy(&count, readp, 2);
-                count = const_cast<uint16*>((const uint16*)SWAP_BYTES_16(count));
-#else
-                count = *(const_cast<uint16*>((const uint16*)readp));
-#endif
+                count = READ_LE_UINT16(readp);
                 readp += 2;
                 code = count >> 8;
                 if (~code & 0x80) 
@@ -271,11 +240,7 @@ int Compression::decode3(const uint8* image_in, uint8* image_out, int size)
         }
         else if (code == 0) // Fill(1) 
         {
-        	count = *(const_cast<uint16*>((const uint16*)readp));
-
-#ifdef SCUMM_LITTLE_ENDIAN      	
-        	count = SWAP_BYTES_16(count);
-#endif        	
+        	count = READ_BE_UINT16(readp);
  
         	readp += 2;
         	code = *readp++;
