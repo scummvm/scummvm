@@ -1077,7 +1077,6 @@ ChannelVorbis::ChannelVorbis(SoundMixer *mixer, OggVorbis_File *ov_file, int dur
 void ChannelVorbis::mix(int16 *data, uint len) {
 
 	if (_eof_flag) {
-		memset(data, 0, sizeof(int16) * 2 * len);
 		return;
 	}
 
@@ -1099,21 +1098,18 @@ void ChannelVorbis::mix(int16 *data, uint len) {
 		if (result == 0) {
 			_eof_flag = true;
 			memset(read_pos, 0, len_left);
-			break;
-		}
-		else if (result == OV_HOLE) {
+			len_left = 0;
+		} else if (result == OV_HOLE) {
 			// Possibly recoverable, just warn about it
 			warning("Corrupted data in Vorbis file");
-		}
-		else if (result < 0) {
+		} else if (result < 0) {
 			debug(1, "Decode error %d in Vorbis file", result);
 			// Don't delete it yet, that causes problems in
 			// the CD player emulation code.
 			_eof_flag = true;
 			memset(read_pos, 0, len_left);
-			break;
-		}
-		else {
+			len_left = 0;
+		} else {
 			len_left -= result;
 			read_pos += result;
 		}
