@@ -193,9 +193,9 @@ void SkyState::initVirgin() {
 
 void SkyState::escDelay(uint32 pDelay) {
 
-	pDelay /= 50;
+	pDelay /= 500;
 	while (pDelay) {
-		delay(50);
+		delay(500);
 		if (_key_pressed == 27) pDelay = 0;
 		else pDelay--;
 	}
@@ -463,7 +463,8 @@ void SkyState::showIntroText(uint32 *&cmdPtr) {
 	}
 
 	cmdPtr += 4; 
-
+	_system->copy_rect(_workScreen + startPos, GAME_SCREEN_WIDTH, xPos, yPos, width, height);
+	_system->update_screen();
 }
 
 void SkyState::removeText(uint32 *&cmdPtr) {
@@ -482,6 +483,8 @@ void SkyState::removeText(uint32 *&cmdPtr) {
 	}
 
 	cmdPtr += 2;
+	_system->copy_rect(_workScreen + startPos, GAME_SCREEN_WIDTH, startPos % GAME_SCREEN_WIDTH, startPos / GAME_SCREEN_WIDTH, width, height);
+	_system->update_screen();
 }
 #undef _workScreen
 
