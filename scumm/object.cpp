@@ -38,9 +38,6 @@ bool Scumm::getClass(int obj, int cls)
 
 		if (cls == 32)							// CLASS_TOUCHABLE
 			cls = 24;
-
-		if (_gameId == GID_INDY3_256 && cls == 22 && _currentRoom == 76)			// Masking fix for Indy3
-			cls = 21;
 	}
 	return (_classData[obj] & (1 << (cls - 1))) != 0;
 }
@@ -59,8 +56,12 @@ void Scumm::putClass(int obj, int cls, bool set)
 		if (cls == 32)							// CLASS_TOUCHABLE
 			cls = 24;
 
-		if (_gameId == GID_INDY3_256 && cls == 22 && _currentRoom == 76)			// Masking fix for Indy3
-			cls = 21;
+		// FIXME: It isn't enough for the Indy3 intro to make the
+		// little trains ignore boxes (class 22), they have to always
+		// clip (class 21) as well. Is this yet another walkbox 0
+		// error?
+		if (_gameId == GID_INDY3_256 && cls == 22 && _currentRoom == 76)
+			putClass(obj, 21, set);
 	}
 
 	if (set)
