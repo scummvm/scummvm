@@ -285,7 +285,7 @@ void Scumm::CHARSET_1() {
 	}
 
 	buffer = charset._buffer + charset._bufPos;
-	if(_gameId==GID_ZAK256) {
+	if(_features & GF_OLD256) {
 		debug(1, "CHARSET_1: %s", buffer);
 		return;
 	}
@@ -446,7 +446,7 @@ void Scumm::drawString(int a) {
 		_msgPtrToAdd++;
 	}
 	if(space) *space='\0';
-	if(_gameId==GID_ZAK256) {
+	if(_features & GF_OLD256) {
 		debug(1, "DRAWSTRING: %s", buf);
 		return;
 	}

@@ -1294,7 +1294,7 @@ void Scumm::o5_resourceRoutines() {
 	_opcode = fetchScriptByte();
 	if (_opcode != 17)
 		res = getVarOrDirectByte(0x80);
-	if(_gameId == GID_ZAK256) /*FIXME: find a better way to implement this */
+	if(_features & GF_OLD256) /*FIXME: find a better way to implement this */
 		_opcode&=0x3F;
 	switch(_opcode&0x1F) {
 	case 1: /* load script */
@@ -1307,7 +1307,7 @@ void Scumm::o5_resourceRoutines() {
 		ensureResourceLoaded(rtCostume, res);
 		break;
 	case 4: /* load room */
-		if(_gameId == GID_ZAK256)
+		if(_features & GF_OLD256)
 			ensureResourceLoaded(rtScript, res & 0x7F); /*FIXME: missing stuff...*/
 		else
 			ensureResourceLoaded(rtRoom, res);
@@ -1382,6 +1382,13 @@ void Scumm::o5_roomOps() {
 	{
 		a = getVarOrDirectByte(0x80);
 		b = getVarOrDirectByte(0x40);
+		if(_gameId == GID_INDY3_256 && a == 16 && b == 0) /* FIXME*/
+		{
+			fetchScriptByte();
+			fetchScriptByte();
+			fetchScriptByte();
+			return;
+		}
 	}
 	
 	_opcode = fetchScriptByte();
@@ -1677,6 +1684,12 @@ void Scumm::o5_startObject() {
 	obj = getVarOrDirectWord(0x80);
 	script = getVarOrDirectByte(0x40);
 
+	if(_gameId == GID_INDY3_256) /*FIXME*/
+	{
+		fetchScriptByte();
+		return;
+	}
+	
 	getWordVararg(data);
 	runVerbCode(obj, script, 0, 0, data);
 }

@@ -786,6 +786,9 @@ void Scumm::cost_decodeData(Actor *a, int frame, uint usemask) {
 	int anim;
 	LoadedCostume lc;
 
+	if(_features & GF_OLD256) /*FIXME*/
+		return;
+	
 	loadCostume(&lc, a->costume);
 
 	anim = cost_frameToAnim(a, frame);

@@ -90,7 +90,7 @@ void Scumm::processSoundQues() {
 
 void Scumm::playSound(int sound) {
         SoundEngine *se = (SoundEngine*)_soundEngine;
-        if (_gameId == GID_ZAK256) return; /* FIXME */
+        if (_features & GF_OLD256) return; /* FIXME */
 
 	if (se) {
 		getResourceAddress(rtSound, sound);

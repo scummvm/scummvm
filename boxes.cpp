@@ -46,7 +46,7 @@ Box *Scumm::getBoxBaseAddr(int box) {
         byte *ptr = getResourceAddress(rtMatrix, 2);
 	checkRange(ptr[0]-1, 0, box, "Illegal box %d");
         if(_features & GF_SMALL_HEADER) {
-		if (_gameId == GID_ZAK256) 
+		if (_features & GF_OLD256) 
 			return (Box*)(ptr + box*(SIZEOF_BOX-2) + 1);		
 		else
                         return (Box*)(ptr + box*SIZEOF_BOX + 1);
