@@ -67,21 +67,26 @@ Sound *Sound::giveSound(SoundMixer *mixer, QueenEngine *vm, uint8 compression) {
 	}
 }
 
-void Sound::waitSfxFinished() {
-	while(_sfxHandle.isActive())
-		_vm->input()->delay(10);
+void Sound::waitFinished(bool isSpeech) {
+	if (isSpeech)
+		while(_speechHandle.isActive())
+			_vm->input()->delay(10);
+	else
+		while(_sfxHandle.isActive())
+			_vm->input()->delay(10);
 }
 
-void Sound::playSfx(uint16 sfx) {
+void Sound::playSfx(uint16 sfx, bool isSpeech) {
 	if (sfx != 0) {
 		char name[13];
 		strcpy(name, _sfxName[sfx - 1]);
 		strcat(name, ".SB");
-		sfxPlay(name);
+		waitFinished(isSpeech);
+		sfxPlay(name, isSpeech);
 	}
 }
 
-void Sound::playSfx(const char *base) {
+void Sound::playSfx(const char *base, bool isSpeech) {
 	char name[13];
 	strcpy(name, base);
 	// alter filename to add zeros and append ".SB"
@@ -90,7 +95,8 @@ void Sound::playSfx(const char *base) {
 			name[i] = '0';
 	}
 	strcat(name, ".SB");
-	sfxPlay(name);
+	waitFinished(isSpeech);
+	sfxPlay(name, isSpeech);
 }
 
 void Sound::playSong(int16 songNum) {
@@ -112,7 +118,7 @@ void Sound::playSong(int16 songNum) {
 
 	if (_tune[newTune].sfx[0]) {
 		if (sfxOn())
-			playSfx(_tune[newTune].sfx[0]);
+			playSfx(_tune[newTune].sfx[0], false);
 		return;
 	}
 
@@ -148,30 +154,27 @@ void Sound::loadState(uint32 ver, byte *&ptr) {
 }
 
 
-void SBSound::playSound(byte *sound, uint32 size) {
+void SBSound::playSound(byte *sound, uint32 size, bool isSpeech) {
 	byte flags = SoundMixer::FLAG_UNSIGNED | SoundMixer::FLAG_AUTOFREE;
-	_mixer->playRaw(&_sfxHandle, sound, size, 11025, flags);
+	_mixer->playRaw(isSpeech ? &_speechHandle : &_sfxHandle, sound, size, 11025, flags);
 }
 
-void SBSound::sfxPlay(const char *name) {
-	waitSfxFinished();	
+void SBSound::sfxPlay(const char *name, bool isSpeech) {
 	if (_vm->resource()->fileExists(name)) 
-		playSound(_vm->resource()->loadFileMalloc(name, SB_HEADER_SIZE), _vm->resource()->fileSize(name) - SB_HEADER_SIZE);
+		playSound(_vm->resource()->loadFileMalloc(name, SB_HEADER_SIZE), _vm->resource()->fileSize(name) - SB_HEADER_SIZE, isSpeech);
 }
 
 #ifdef USE_MAD
-void MP3Sound::sfxPlay(const char *name) {
-	waitSfxFinished();
+void MP3Sound::sfxPlay(const char *name, bool isSpeech) {
 	if (_vm->resource()->fileExists(name)) 
-		_mixer->playMP3(&_sfxHandle, _vm->resource()->giveCompressedSound(name), _vm->resource()->fileSize(name));
+		_mixer->playMP3(isSpeech ? &_speechHandle : &_sfxHandle, _vm->resource()->giveCompressedSound(name), _vm->resource()->fileSize(name));
 }
 #endif
 
 #ifdef USE_VORBIS
-void OGGSound::sfxPlay(const char *name) {
-	waitSfxFinished();	
+void OGGSound::sfxPlay(const char *name, bool isSpeech) {
 	if (_vm->resource()->fileExists(name))
-		_mixer->playVorbis(&_sfxHandle, _vm->resource()->giveCompressedSound(name), _vm->resource()->fileSize(name));
+		_mixer->playVorbis(isSpeech ? &_speechHandle : &_sfxHandle, _vm->resource()->giveCompressedSound(name), _vm->resource()->fileSize(name));
 }
 #endif
 

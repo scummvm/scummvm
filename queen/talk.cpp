@@ -780,7 +780,7 @@ void Talk::stringAnimation(const SpeechParameters *parameters, int startFrame, i
 
 		if (frame > 500) {
 			frame -= 500;
-			_vm->sound()->playSfx(_vm->logic()->currentRoomSfx());
+			_vm->sound()->playSfx(_vm->logic()->currentRoomSfx(), false);
 		}
 
 		if (torso) {
@@ -902,7 +902,7 @@ void Talk::defaultAnimation(
 			// Skip through text more quickly
 			if (_vm->input()->keyVerb() == VERB_SKIP_TEXT) {
 				_vm->input()->clearKeyVerb();
-				_vm->sound()->stopSfx();
+				_vm->sound()->stopSpeech();
 				break;
 			}
 		}
@@ -940,7 +940,7 @@ void Talk::speakSegment(
 	// play it. This voice was used in room 30 (N8) when talking to Klunk.
 	if (!(_vm->resource()->getLanguage() == FRENCH && !strcmp(voiceFileName, "c30e_102"))
 		&& _vm->sound()->speechOn())
-		_vm->sound()->playSfx(voiceFileName);
+		_vm->sound()->playSfx(voiceFileName, true);
 
 	int faceDirectionCommand = 0;
 

@@ -53,13 +53,12 @@ class Sound {
 public:
 	Sound(SoundMixer *mixer, QueenEngine *vm);
 	virtual ~Sound(); 
-	virtual void sfxPlay(const char *name) = 0;
+	virtual void sfxPlay(const char *name, bool isSpeech) = 0;
 	static Sound *giveSound(SoundMixer *mixer, QueenEngine *vm, uint8 compression);
-	void waitSfxFinished();
-	void playSfx(uint16 sfx);
-	void playSfx(const char *base);
+	void playSfx(uint16 sfx, bool isSpeech);
+	void playSfx(const char *base, bool isSpeech);
 	void playSong(int16 songNum);
-	void stopSfx()			{ _mixer->stopHandle(_sfxHandle); }
+	void stopSpeech()		{ _mixer->stopHandle(_speechHandle); }
 	
 	bool sfxOn()			{ return _sfxToggle; }
 	void sfxToggle(bool val)	{ _sfxToggle = val; }
@@ -86,6 +85,8 @@ public:
 	static const int16 _jungleList[];
 
 protected:
+	void waitFinished(bool isSpeech);
+
 	SoundMixer *_mixer;
 	QueenEngine *_vm;
 
@@ -100,27 +101,28 @@ protected:
 	int16 _previousSong;
 	int16 _previousSongNum;
 	PlayingSoundHandle _sfxHandle;
+	PlayingSoundHandle _speechHandle;
 };
 
 class SilentSound : public Sound {
 public:
 	SilentSound(SoundMixer *mixer, QueenEngine *vm) : Sound(mixer, vm) {};
-	void sfxPlay(const char *name) { }
+	void sfxPlay(const char *name, bool isSpeech) { }
 };
 
 class SBSound : public Sound {
 public:
 	SBSound(SoundMixer *mixer, QueenEngine *vm) : Sound(mixer, vm) {};
-	void sfxPlay(const char *name);
+	void sfxPlay(const char *name, bool isSpeech);
 protected:
-	void playSound(byte *sound, uint32 size);
+	void playSound(byte *sound, uint32 size, bool isSpeech);
 };
 
 #ifdef USE_MAD
 class MP3Sound : public Sound {
 public:
 	MP3Sound(SoundMixer *mixer, QueenEngine *vm) : Sound(mixer, vm) {};
-	void sfxPlay(const char *name);
+	void sfxPlay(const char *name, bool isSpeech);
 };
 #endif
 
