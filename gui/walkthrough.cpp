@@ -64,8 +64,10 @@ bool WalkthroughDialog::loadWalkthroughText() {
 
 	sprintf(filename, "%s.wkt", _gameName);
 	file->open(filename);
-	if (!file->isOpen())
+	if (!file->isOpen()) {
+		delete file;
 		return false;
+	}
 	int bufferSize = file->size();
 	byte *buffer = (byte *)malloc(bufferSize);
 	file->read(buffer, bufferSize);
