@@ -93,7 +93,7 @@ FILE *File::fopenNoCase(const char *filename, const char *directory, const char 
 	}
 	file = fopen(buf, mode);
 
-	return NULL;
+	return file;
 }
 
 void File::addDefaultDirectory(const Common::String &directory) {
