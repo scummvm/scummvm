@@ -1357,11 +1357,6 @@ int32 DrawSprite(_spriteInfo *s) {
 	bool clipped = false;
 	ScummVM::Rect rd, rs;
 
-	// FIXME: There are still a few minor details that I think the
-	// original did. Off-hand, I know that at the highest graphics
-	// quality setting sprites should be anti-aliased when they are
-	// upscaled.
-
 	// -----------------------------------------------------------------
 	// Decompression and mirroring
 	// -----------------------------------------------------------------

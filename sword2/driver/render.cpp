@@ -353,10 +353,14 @@ static uint16 yScale[SCALE_MAXHEIGHT];
 // DrawSprite() where it wasn't obvious if the sprite should grow or shrink,
 // which caused crashes.
 //
-// Maybe the functions can be merged later?
+// Keeping them separate might be a good idea anyway, for readability.
 //
 // The code is based on the original DrawSprite() code, so apart from not
 // knowing if I got it right, I don't know how good the original really is.
+//
+// The backbuf parameter points to the buffer where the image will eventually
+// be drawn. This is only used at the highest graphics detail setting (and not
+// always even then) and is used to help anti-alias the image.
 
 void SquashImage(byte *dst, uint16 dstPitch, uint16 dstWidth, uint16 dstHeight, byte *src, uint16 srcPitch, uint16 srcWidth, uint16 srcHeight, byte *backbuf) {
 	int32 ince, incne, d;
@@ -402,7 +406,7 @@ void SquashImage(byte *dst, uint16 dstPitch, uint16 dstWidth, uint16 dstHeight, 
 		yScale[y] = x;
 	}
 
-	// Copy the image
+	// Copy the image (with or without anti-aliasing)
 
 	if (backbuf) {
 		for (y = 0; y < dstHeight; y++) {
@@ -454,6 +458,7 @@ void SquashImage(byte *dst, uint16 dstPitch, uint16 dstWidth, uint16 dstHeight, 
 }
 
 void StretchImage(byte *dst, uint16 dstPitch, uint16 dstWidth, uint16 dstHeight, byte *src, uint16 srcPitch, uint16 srcWidth, uint16 srcHeight, byte *backbuf) {
+	byte *origDst = dst;
 	int32 ince, incne, d;
 	int16 x, y, i, j, k;
 
@@ -498,8 +503,6 @@ void StretchImage(byte *dst, uint16 dstPitch, uint16 dstWidth, uint16 dstHeight,
 
 	// Copy the image
 
-	// FIXME: If backbuf != NULL the image should be anti-aliased
-
 	for (y = 0; y < srcHeight; y++) {
 		for (j = yScale[y]; j < yScale[y + 1]; j++) {
 			k = 0;
@@ -510,6 +513,85 @@ void StretchImage(byte *dst, uint16 dstPitch, uint16 dstWidth, uint16 dstHeight,
 			}
 			dst += dstPitch;
 		}
+	}
+
+	// Anti-aliasing
+
+	if (backbuf) {
+		byte *newDst = (byte *) malloc(dstWidth * dstHeight);
+		if (!newDst)
+			return;
+
+		memcpy(newDst, origDst, dstWidth);
+
+		for (y = 1; y < dstHeight - 1; y++) {
+			src = origDst + y * dstPitch;
+			dst = newDst + y * dstWidth;
+			*dst++ = *src++;
+			for (x = 1; x < dstWidth - 1; x++) {
+				byte pt[5];
+				byte *p = backbuf + y * 640 + x;
+				int count = 0;
+
+				if (*src) {
+					count++;
+					pt[0] = *src;
+				} else
+					pt[0] = *p;
+
+				pt[1] = *(src - dstPitch);
+				if (pt[1] == 0)
+					pt[1] = *(p - 640);
+				else
+					count++;
+
+				pt[2] = *(src - 1);
+				if (pt[2] == 0)
+					pt[2] = *(p - 1);
+				else
+					count++;
+
+				pt[3] = *(src + 1);
+				if (pt[3] == 0)
+					pt[3] = *(p + 1);
+				else
+					count++;
+
+				pt[4] = *(src + dstPitch);
+				if (pt[4] == 0)
+					pt[4] = *(p + 640);
+				else
+					count++;
+
+				if (count) {
+					int red = palCopy[pt[0]][0] << 2;
+					int green = palCopy[pt[0]][1] << 2;
+					int blue = palCopy[pt[0]][2] << 2;
+					for (i = 1; i < 5; i++) {
+						red += palCopy[pt[i]][0];
+						green += palCopy[pt[i]][1];
+						blue += palCopy[pt[i]][2];
+					}
+
+					*dst++ = QuickMatch((uint8) (red >> 3), (uint8) (green >> 3), (uint8) (blue >> 3));
+				} else
+					*dst++ = 0;
+				src++;
+			}
+			*dst++ = *src++;
+		}
+		memcpy(dst, src, dstWidth);
+
+		src = newDst;
+		dst = origDst;
+
+		for (i = 0; i < dstHeight; i++) {
+			memcpy(dst, src, dstWidth);
+			dst += dstPitch;
+			src += dstWidth;
+		}
+
+		free(newDst);
 	}
 }
 
