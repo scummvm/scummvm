@@ -1467,7 +1467,7 @@ void SmushPlayer::startVideo(short int arg, byte *videoFile) {
 			for (idx = 0; idx < MAX_STREAMER; idx++) {
 				if (_imusTrk[idx] != 0) {
 					if (_imusNewMixer[idx]) {
-						_scumm->_mixer->play_stream(NULL, idx, _imusBuf[idx], _imusFinalSize[idx], _imusRate[idx], _imusFlags[idx]);
+						_scumm->_mixer->playStream(NULL, idx, _imusBuf[idx], _imusFinalSize[idx], _imusRate[idx], _imusFlags[idx]);
 					} else {
 						_scumm->_mixer->append(idx, _imusBuf[idx], _imusFinalSize[idx], _imusRate[idx], _imusFlags[idx]);
 					}
@@ -1479,7 +1479,7 @@ void SmushPlayer::startVideo(short int arg, byte *videoFile) {
 			for (idx = 0; idx < MAX_STREAMER; idx++) {
 				if (_psadTrk[idx] != 0) {
 					if (_strkNewMixer[idx]) {
-						_scumm->_mixer->play_stream(NULL, idx, _strkBuf[idx], _strkFinalSize[idx], _strkRate[idx], SoundMixer::FLAG_UNSIGNED | SoundMixer::FLAG_AUTOFREE);
+						_scumm->_mixer->playStream(NULL, idx, _strkBuf[idx], _strkFinalSize[idx], _strkRate[idx], SoundMixer::FLAG_UNSIGNED | SoundMixer::FLAG_AUTOFREE);
 					} else {
 						_scumm->_mixer->append(idx, _strkBuf[idx], _strkFinalSize[idx], _strkRate[idx], SoundMixer::FLAG_UNSIGNED | SoundMixer::FLAG_AUTOFREE);
 					}

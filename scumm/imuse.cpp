@@ -3302,7 +3302,7 @@ void IMuseAdlib::init(IMuseInternal *eng, OSystem *syst)
 	adlib_write(0xBD, 0x00);
 	create_lookup_table();
 
-	_mixer->setup_premix(this, premix_proc);
+	_mixer->setupPremix(this, premix_proc);
 }
 
 void IMuseAdlib::adlib_write(byte port, byte value)

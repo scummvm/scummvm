@@ -30,110 +30,112 @@
 #endif
 
 typedef uint32 PlayingSoundHandle;
+
 class SoundMixer {
 private:
 	class Channel {
 	public:
-		bool _to_be_destroyed;
+		bool _toBeDestroyed;
 		virtual void mix(int16 *data, uint len) = 0;
 		void destroy() {
-			_to_be_destroyed = true;
-		} virtual void real_destroy() = 0;
+			_toBeDestroyed = true;
+		}
+		virtual void realDestroy() = 0;
 		virtual void append(void *sound, uint32 size);
 #ifdef COMPRESSED_SOUND_FILE
-		virtual bool sound_finished();
+		virtual bool soundFinished();
 #endif
 	};
 
-	class Channel_RAW:public Channel {
-		SoundMixer *_mixer;
-		void *_ptr;
+	class ChannelRaw : public Channel {
+		SoundMixer * _mixer;
+		void * _ptr;
 		uint32 _pos;
 		uint32 _size;
-		uint32 _fp_speed;
-		uint32 _fp_pos;
-		uint32 _realsize, _rate;
+		uint32 _fpSpeed;
+		uint32 _fpPos;
+		uint32 _realSize, _rate;
 		byte _flags;
 
-
 	public:
-		void mix(int16 *data, uint len);
-		  Channel_RAW(SoundMixer *mixer, void *sound, uint32 size, uint rate, byte flags);
-		void real_destroy();
+		ChannelRaw(SoundMixer * mixer, void * sound, uint32 size, uint rate, byte flags);
+		void mix(int16 * data, uint len);
+		void realDestroy();
 	};
 
-	class Channel_STREAM:public Channel {
-		SoundMixer *_mixer;
-		byte *_ptr;
-		byte *_end_of_data;
-		byte *_pos;
-		uint32 _fp_speed;
-		uint32 _fp_pos;
-		uint32 _buffer_size;
+	class ChannelStream : public Channel {
+		SoundMixer * _mixer;
+		byte * _ptr;
+		byte * _endOfData;
+		byte * _pos;
+		uint32 _fpSpeed;
+		uint32 _fpPos;
+		uint32 _bufferSize;
 		uint32 _rate;
 		byte _flags;
 
 	public:
-		void append(void *sound, uint32 size);
-		void mix(int16 *data, uint len);
-		  Channel_STREAM(SoundMixer *mixer, void *sound, uint32 size, uint rate, byte flags);
-		void real_destroy();
+		ChannelStream(SoundMixer * mixer, void * sound, uint32 size, uint rate, byte flags);
+		void append(void * sound, uint32 size);
+		void mix(int16 * data, uint len);
+		void realDestroy();
 	};
 
 #ifdef COMPRESSED_SOUND_FILE
 
-	class Channel_MP3:public Channel {
-		SoundMixer *_mixer;
+	class ChannelMP3 : public Channel {
+		SoundMixer * _mixer;
 		void *_ptr;
 		struct mad_stream _stream;
 		struct mad_frame _frame;
 		struct mad_synth _synth;
-		uint32 _silence_cut;
-		uint32 _pos_in_frame;
+		uint32 _silenceCut;
+		uint32 _posInFrame;
 		uint32 _position;
 		uint32 _size;
 		byte _flags;
 
 	public:
-		void mix(int16 *data, uint len);
-		  Channel_MP3(SoundMixer *mixer, void *sound, uint size, byte flags);
-		void real_destroy();
+		ChannelMP3(SoundMixer * mixer, void *sound, uint size, byte flags);
+		void mix(int16 * data, uint len);
+		void realDestroy();
 
 	};
 
-	class Channel_MP3_CDMUSIC:public Channel {
-		SoundMixer *_mixer;
-		void *_ptr;
+	class ChannelMP3CDMusic:public Channel {
+		SoundMixer * _mixer;
+		void * _ptr;
 		struct mad_stream _stream;
 		struct mad_frame _frame;
 		struct mad_synth _synth;
-		uint32 _pos_in_frame;
+		uint32 _posInFrame;
 		uint32 _size;
-		uint32 _buffer_size;
+		uint32 _bufferSize;
 		mad_timer_t _duration;
-		FILE *_file;
+		FILE * _file;
 		bool _initialized;
+
 	public:
-		void mix(int16 *data, uint len);
-		  Channel_MP3_CDMUSIC(SoundMixer *mixer, FILE * file, mad_timer_t duration);
-		void real_destroy();
-		bool sound_finished();
+		ChannelMP3CDMusic(SoundMixer * mixer, FILE * file, mad_timer_t duration);
+		void mix(int16 * data, uint len);
+		void realDestroy();
+		bool soundFinished();
 	};
 
 #endif
 
-	static void on_generate_samples(void *s, byte *samples, int len);
+	static void onGenerateSamples(void * s, byte * samples, int len);
 
 public:
-	typedef void PremixProc (void *param, int16 *data, uint len);
+	typedef void PremixProc (void * param, int16 * data, uint len);
 
-	OSystem *_syst;
-	void *_mutex;
+	OSystem * _syst;
+	void * _mutex;
 
-	uint _output_rate;
+	uint _outputRate;
 
-	int16 *_volume_table;
-	int _music_volume;
+	int16 * _volumeTable;
+	int _musicVolume;
 
 	bool _paused;
 
@@ -141,18 +143,18 @@ public:
 		NUM_CHANNELS = 16,
 	};
 
-	void *_premix_param;
-	PremixProc *_premix_proc;
+	void * _premixParam;
+	PremixProc * _premixProc;
 
-	Channel *_channels[NUM_CHANNELS];
-	PlayingSoundHandle *_handles[NUM_CHANNELS];
+	Channel * _channels[NUM_CHANNELS];
+	PlayingSoundHandle * _handles[NUM_CHANNELS];
 
 	SoundMixer();
 	~SoundMixer();
 
-	int insert_at(PlayingSoundHandle *handle, int index, Channel * chan);
-	void append(void *data, uint32 len);
-	void uninsert(Channel * chan);
+	int insertAt(PlayingSoundHandle * handle, int index, Channel * chan);
+	void append(void * data, uint32 len);
+	void unInsert(Channel * chan);
 
 	/* start playing a raw sound */
 	enum {
@@ -163,41 +165,41 @@ public:
 		FLAG_AUTOFREE = 8,					/* sound buffer is freed automagically at the end of playing */
 		FLAG_FILE = 16,							/* sound is a FILE * that's read from */
 	};
-	int play_raw(PlayingSoundHandle *handle, void *sound, uint32 size, uint rate, byte flags);
-	int play_stream(PlayingSoundHandle *handle, int index, void *sound, uint32 size, uint rate,
+	int playRaw(PlayingSoundHandle * handle, void * sound, uint32 size, uint rate, byte flags);
+	int playStream(PlayingSoundHandle * handle, int index, void * sound, uint32 size, uint rate,
 									byte flags);
 #ifdef COMPRESSED_SOUND_FILE
-	int play_mp3(PlayingSoundHandle *handle, void *sound, uint32 size, byte flags);
-	int play_mp3_cdtrack(PlayingSoundHandle *handle, FILE * file, mad_timer_t duration);
+	int playMP3(PlayingSoundHandle * handle, void * sound, uint32 size, byte flags);
+	int playMP3CDTrack(PlayingSoundHandle * handle, FILE * file, mad_timer_t duration);
 #endif
 
 	/* Premix procedure, useful when using fmopl adlib */
-	void setup_premix(void *param, PremixProc *proc);
+	void setupPremix(void * param, PremixProc * proc);
 
 	/* mix */
-	void mix(int16 *buf, uint len);
+	void mix(int16 * buf, uint len);
 
 	/* stop all currently playing sounds */
-	void stop_all();
+	void stopAll();
 
 	/* stop playing a specific sound */
 	void stop(PlayingSoundHandle psh);
 	void stop(int index);
 
 	/* append to existing sound */
-	int append(int index, void *sound, uint32 size, uint rate, byte flags);
+	int append(int index, void * sound, uint32 size, uint rate, byte flags);
 
 	/* is any channel active? */
-	bool has_active_channel();
+	bool hasActiveChannel();
 
 	/* bind to the OSystem object => mixer will be
 	 * invoked automatically when samples need
 	 * to be generated */
-	bool bind_to_system(OSystem *syst);
+	bool bindToSystem(OSystem *syst);
 
 	/* set the volume, 0-256 */
-	void set_volume(int volume);
-	void set_music_volume(int volume);
+	void setVolume(int volume);
+	void setMusicVolume(int volume);
 
 	/* pause - unpause */
 	void pause(bool paused);

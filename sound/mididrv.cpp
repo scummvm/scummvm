@@ -1075,7 +1075,7 @@ MidiDriver_MIDIEMU::MidiDriver_MIDIEMU()
 int MidiDriver_MIDIEMU::open(int mode)
 {
 	_opl = OPLCreate(OPL_TYPE_YM3812, 3579545, g_system->property(OSystem::PROP_GET_SAMPLE_RATE, 0));
-	g_mixer->setup_premix((void *)this, premix_proc);
+	g_mixer->setupPremix((void *)this, premix_proc);
 	if (_stream_proc)
 		g_system->create_thread(midiemu_callback_thread, this);
 	return 0;

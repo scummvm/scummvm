@@ -1367,7 +1367,7 @@ void SimonState::vc_28()
 
 void SimonState::vc_29_stop_all_sounds()
 {
-	_mixer->stop_all();
+	_mixer->stopAll();
 }
 
 void SimonState::vc_30_set_base_delay()

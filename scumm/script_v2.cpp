@@ -24,7 +24,8 @@
 #include "stdafx.h"
 #include "scumm.h"
 #include "actor.h"
-#include "smush.h"
+#include "smush/player.h"
+#include "smush/scumm_renderer.h"
 
 #include "sound/mididrv.h"
 #include "scumm/imuse.h"
@@ -2699,7 +2700,6 @@ void Scumm::o6_miscOps()
 	Actor *a;
 
 	IMuse *se = _imuse;						//yazoo: not very nice
-	SmushPlayer * sp;
 
 	getStackList(args, sizeof(args) / sizeof(args[0]));
 
@@ -2708,11 +2708,15 @@ void Scumm::o6_miscOps()
 		case 4:
 			grabCursor(args[1], args[2], args[3], args[4]);
 			break;
-		case 6:
-			sp = new SmushPlayer(this);
-			sp->startVideo(args[1], getStringAddressVar(VAR_VIDEONAME));
-			delete sp;
-			break;
+		case 6: { 
+ 				ScummRenderer sr(this);
+ 				SmushPlayer sp(&sr);
+ 				char filename[512];
+ 				strcpy(filename, _gameDataPath);
+ 				strcat(filename, "video/");
+ 				strcat(filename, (char*)getStringAddressVar(VAR_VIDEONAME));
+ 				sp.play(filename);
+ 			}
 		case 7:
 			warning("o6_miscOps: stub7()");
 			break;

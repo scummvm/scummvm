@@ -489,8 +489,8 @@ void SoundDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data)
 		
 		scumm->_imuse->set_music_volume(_soundVolumeMusic);
 		scumm->_imuse->set_master_volume(_soundVolumeMaster);
-		scumm->_mixer->set_volume(_soundVolumeSfx);
-		scumm->_mixer->set_music_volume(_soundVolumeMusic);
+		scumm->_mixer->setVolume(_soundVolumeSfx);
+		scumm->_mixer->setMusicVolume(_soundVolumeMusic);
 		
 		scummcfg->set("master_volume", _soundVolumeMaster);
 		scummcfg->set("music_volume", _soundVolumeMusic);

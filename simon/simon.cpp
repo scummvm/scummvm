@@ -128,7 +128,7 @@ SimonState::SimonState(GameDetector *detector, OSystem *syst)
 	_game = detector->_gameId;
 
 	/* Setup mixer */
-	if (!_mixer->bind_to_system(syst))
+	if (!_mixer->bindToSystem(syst))
 		warning("Sound initialization failed. "
 						"Features of the game that depend on sound synchronization will most likely break");
 	set_volume(detector->_sfx_volume);
@@ -3296,7 +3296,7 @@ void SimonState::readSfxFile(const char *filename)
 		fseek(in, 0, SEEK_SET);
 
 		/* stop all sounds */
-		_mixer->stop_all();
+		_mixer->stopAll();
 
 		if (_sfx_heap)
 			free(_sfx_heap);
@@ -4038,12 +4038,11 @@ void SimonState::read_vga_from_datfile_1(uint vga_id)
 		FILE *in;
 		char buf[50];
 		uint32 size;
-
-        // FIXME - weird hack to make the beard show up when wearing it (see bug #590800)
-        if (vga_id == 328)
-            sprintf(buf, "0119.VGA");
-        else
-		sprintf(buf, "%.3d%d.VGA", vga_id >> 1, (vga_id & 1) + 1);
+		// FIXME - weird hack to make the beard show up when wearing it (see bug #590800) 
+		if (vga_id == 328) 
+			sprintf(buf, "0119.VGA"); 
+		else 
+			sprintf(buf, "%.3d%d.VGA", vga_id >> 1, (vga_id & 1) + 1);
 
 		in = fopen_maybe_lowercase(buf);
 		if (in == NULL) {
@@ -4798,7 +4797,7 @@ void SimonState::playVoice(uint voice)
 		byte *buffer = (byte *)malloc(data[1]);
 		fread(buffer, data[1], 1, _voice_file);
 
-		_mixer->play_raw(&_voice_sound, buffer, data[1], READ_LE_UINT32(&wave_hdr.samples_per_sec),
+		_mixer->playRaw(&_voice_sound, buffer, data[1], READ_LE_UINT32(&wave_hdr.samples_per_sec),
 										 SoundMixer::FLAG_UNSIGNED);
 	} else {											/* VOC audio */
 		VocHeader voc_hdr;
@@ -4821,7 +4820,7 @@ void SimonState::playVoice(uint voice)
 		byte *buffer = (byte *)malloc(size);
 		fread(buffer, size, 1, _voice_file);
 
-		_mixer->play_raw(&_voice_sound, buffer, size, samples_per_sec, SoundMixer::FLAG_UNSIGNED);
+		_mixer->playRaw(&_voice_sound, buffer, size, samples_per_sec, SoundMixer::FLAG_UNSIGNED);
 	}
 }
 
@@ -4854,7 +4853,7 @@ void SimonState::playSound(uint sound)
 			byte *buffer = (byte *)malloc(size);
 			fread(buffer, size, 1, _effects_file);
 
-			_mixer->play_raw(&_effects_sound, buffer, size, samples_per_sec, SoundMixer::FLAG_UNSIGNED);
+			_mixer->playRaw(&_effects_sound, buffer, size, samples_per_sec, SoundMixer::FLAG_UNSIGNED);
 		} else {
 			byte *p;
 
@@ -4880,7 +4879,7 @@ void SimonState::playSound(uint sound)
 				p++;
 			}
 
-			_mixer->play_raw(&_playing_sound, p + 8, READ_LE_UINT32(p + 4), 22050,
+			_mixer->playRaw(&_playing_sound, p + 8, READ_LE_UINT32(p + 4), 22050,
 											 SoundMixer::FLAG_UNSIGNED);
 		}
 	} else {
@@ -4938,7 +4937,7 @@ void SimonState::dx_unlock_attached()
 
 void SimonState::set_volume(byte volume)
 {
-	_mixer->set_volume(volume);
+	_mixer->setVolume(volume);
 }
 
 

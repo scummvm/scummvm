@@ -137,19 +137,19 @@ void Sound::processSoundQues() {
 						byte * buffer = (byte*)malloc (size);
 						memcpy(buffer, ptr, size);
 						if (chan == 1) {
-							_scumm->_mixer->play_raw(NULL, buffer, size, rate, SoundMixer::FLAG_AUTOFREE | SoundMixer::FLAG_UNSIGNED);
+							_scumm->_mixer->playRaw(NULL, buffer, size, rate, SoundMixer::FLAG_AUTOFREE | SoundMixer::FLAG_UNSIGNED);
 						}
 						else if (chan == 2) {
-							_scumm->_mixer->play_raw(NULL, buffer, size, rate, SoundMixer::FLAG_AUTOFREE | SoundMixer::FLAG_UNSIGNED | SoundMixer::FLAG_STEREO);
+							_scumm->_mixer->playRaw(NULL, buffer, size, rate, SoundMixer::FLAG_AUTOFREE | SoundMixer::FLAG_UNSIGNED | SoundMixer::FLAG_STEREO);
 						}
 					} else if (bits == 12) {
 						byte * buffer = NULL;
 						uint32 final_size = decode12BitsSample(ptr, &buffer, size);
 						if (chan == 1) {
-							_scumm->_mixer->play_raw(NULL, buffer, final_size, rate, SoundMixer::FLAG_AUTOFREE | SoundMixer::FLAG_16BITS);
+							_scumm->_mixer->playRaw(NULL, buffer, final_size, rate, SoundMixer::FLAG_AUTOFREE | SoundMixer::FLAG_16BITS);
 						}
 						else if (chan == 2) {
-							_scumm->_mixer->play_raw(NULL, buffer, final_size, rate, SoundMixer::FLAG_AUTOFREE | SoundMixer::FLAG_16BITS | SoundMixer::FLAG_STEREO);
+							_scumm->_mixer->playRaw(NULL, buffer, final_size, rate, SoundMixer::FLAG_AUTOFREE | SoundMixer::FLAG_16BITS | SoundMixer::FLAG_STEREO);
 						}
 					}
 				}
@@ -249,7 +249,7 @@ void Sound::playSound(int sound) {
 		// Allocate a sound buffer, copy the data into it, and play
 		char *sound = (char*)malloc(size);
 		memcpy(sound, ptr, size);
-		_scumm->_mixer->play_raw(NULL, sound, size, rate, SoundMixer::FLAG_UNSIGNED | SoundMixer::FLAG_AUTOFREE);
+		_scumm->_mixer->playRaw(NULL, sound, size, rate, SoundMixer::FLAG_UNSIGNED | SoundMixer::FLAG_AUTOFREE);
 		return;
 	}
 	// Support for Putt-Putt sounds - very hackish, too 8-)
@@ -265,15 +265,15 @@ void Sound::playSound(int sound) {
 		
 		// Allocate a sound buffer, copy the data into it, and play
 		char *sound = (char*)malloc(size);
-		memcpy(sound, ptr+8, size);
-		_scumm->_mixer->play_raw(NULL, sound, size, rate, SoundMixer::FLAG_UNSIGNED | SoundMixer::FLAG_AUTOFREE);
+		memcpy(sound, ptr + 8, size);
+		_scumm->_mixer->playRaw(NULL, sound, size, rate, SoundMixer::FLAG_UNSIGNED | SoundMixer::FLAG_AUTOFREE);
 		return;
 	}
 	else if (ptr != NULL && READ_UINT32_UNALIGNED(ptr) == MKID('Crea')) {
 		int size, rate;
 		char * sound = read_creative_voc_file(ptr, size, rate);
 		if(sound != NULL) {
-			_scumm->_mixer->play_raw(NULL, sound, size, rate, SoundMixer::FLAG_UNSIGNED | SoundMixer::FLAG_AUTOFREE);
+			_scumm->_mixer->playRaw(NULL, sound, size, rate, SoundMixer::FLAG_UNSIGNED | SoundMixer::FLAG_AUTOFREE);
 		}
 		return;
 	}
@@ -310,7 +310,7 @@ void Sound::playSound(int sound) {
 		// Allocate a sound buffer, copy the data into it, and play
 		char *sound = (char*)malloc(size);
 		memcpy(sound, ptr + 33, size);
-		_scumm->_mixer->play_raw(NULL, sound, size, rate, SoundMixer::FLAG_UNSIGNED | SoundMixer::FLAG_AUTOFREE);
+		_scumm->_mixer->playRaw(NULL, sound, size, rate, SoundMixer::FLAG_UNSIGNED | SoundMixer::FLAG_AUTOFREE);
 		return;
 	}
 
@@ -386,7 +386,7 @@ void Sound::playSound(int sound) {
 
 		// FIXME: Something in the header signifies looping. Need to track it down and add a 
 		//	  mixer flag or something.
-		_scumm->_mixer->play_raw(NULL, sound, size, 11000, SoundMixer::FLAG_UNSIGNED | SoundMixer::FLAG_AUTOFREE);
+		_scumm->_mixer->playRaw(NULL, sound, size, 11000, SoundMixer::FLAG_UNSIGNED | SoundMixer::FLAG_AUTOFREE);
 		return;
 	}
 
@@ -676,8 +676,8 @@ void Sound::setupSound() {
 
 		_scumm->_imuse->set_master_volume(_sound_volume_master);
 		_scumm->_imuse->set_music_volume(_sound_volume_music);
-		_scumm->_mixer->set_volume(_sound_volume_sfx);
-		_scumm->_mixer->set_music_volume(_sound_volume_music);
+		_scumm->_mixer->setVolume(_sound_volume_sfx);
+		_scumm->_mixer->setMusicVolume(_sound_volume_music);
 	}
 	_sfxFile = openSfxFile();
 }
@@ -833,12 +833,12 @@ void * Sound::openSfxFile() {
 }
 
 void Sound::stopSfxSound() {
-	_scumm->_mixer->stop_all();
+	_scumm->_mixer->stopAll();
 }
 
 
 bool Sound::isSfxFinished() {
-	return !_scumm->_mixer->has_active_channel();
+	return !_scumm->_mixer->hasActiveChannel();
 }
 
 uint32 Sound::decode12BitsSample(byte * src, byte ** dst, uint32 size) {
@@ -985,7 +985,7 @@ void Sound::bundleMusicHandler(Scumm * scumm) {
 
 	byte * buffer = NULL;
 	uint32 final_size = decode12BitsSample(ptr, &buffer, size);
-	_scumm->_mixer->play_raw(NULL, buffer, final_size, rate, SoundMixer::FLAG_AUTOFREE | SoundMixer::FLAG_16BITS | SoundMixer::FLAG_STEREO);
+	_scumm->_mixer->playRaw(NULL, buffer, final_size, rate, SoundMixer::FLAG_AUTOFREE | SoundMixer::FLAG_16BITS | SoundMixer::FLAG_STEREO);
 }
 
 void Sound::playBundleSound(char *sound) {
@@ -1042,7 +1042,7 @@ void Sound::playBundleSound(char *sound) {
 	
 	byte * final = (byte *)malloc(size);
 	memcpy(final, ptr, size);
-	_scumm->_mixer->play_raw(NULL, final, size, rate, SoundMixer::FLAG_UNSIGNED | SoundMixer::FLAG_AUTOFREE);
+	_scumm->_mixer->playRaw(NULL, final, size, rate, SoundMixer::FLAG_UNSIGNED | SoundMixer::FLAG_AUTOFREE);
 }
 
 int Sound::playSfxSound(void *sound, uint32 size, uint rate, bool isUnsigned) {
@@ -1051,14 +1051,14 @@ int Sound::playSfxSound(void *sound, uint32 size, uint rate, bool isUnsigned) {
 	byte flags = SoundMixer::FLAG_AUTOFREE;
 	if (isUnsigned)
 		flags |= SoundMixer::FLAG_UNSIGNED;
-	return _scumm->_mixer->play_raw(NULL, sound, size, rate, flags);
+	return _scumm->_mixer->playRaw(NULL, sound, size, rate, flags);
 }
 
 int Sound::playSfxSound_MP3(void *sound, uint32 size) {
 #ifdef COMPRESSED_SOUND_FILE
 	if (_soundsPaused)
 		return -1;
-	return _scumm->_mixer->play_mp3(NULL, sound, size, SoundMixer::FLAG_AUTOFREE);
+	return _scumm->_mixer->playMP3(NULL, sound, size, SoundMixer::FLAG_AUTOFREE);
 #endif
 	return -1;
 }
@@ -1200,7 +1200,7 @@ int Sound::playMP3CDTrack(int track, int num_loops, int start, int delay) {
 
 	if (_mp3_cd_playing == true)
 		_scumm->_mixer->stop(_mp3_index);		
-	_mp3_index = _scumm->_mixer->play_mp3_cdtrack(NULL, _mp3_tracks[index], duration);
+	_mp3_index = _scumm->_mixer->playMP3CDTrack(NULL, _mp3_tracks[index], duration);
 	_mp3_cd_playing = true;
 	return 0;
 }
@@ -1229,7 +1229,7 @@ int Sound::updateMP3CD() {
 		return -1;
 	}
 
-	if (_scumm->_mixer->_channels[_mp3_index]->sound_finished())
+	if (_scumm->_mixer->_channels[_mp3_index]->soundFinished())
 		stopMP3CD();
 	return 0;
 }
