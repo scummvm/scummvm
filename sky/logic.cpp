@@ -1333,31 +1333,43 @@ bool SkyLogic::fnAssignBase(uint32 id, uint32 scr, uint32 c) {
 }
 
 bool SkyLogic::fnDiskMouse(uint32 a, uint32 b, uint32 c) {
-	return _skyMouse->fnDiskMouse();
+	_skyMouse->spriteMouse(MOUSE_DISK, 11, 11);
+	return true;
 }
 
 bool SkyLogic::fnNormalMouse(uint32 a, uint32 b, uint32 c) {
-	return _skyMouse->fnNormalMouse();
+	_skyMouse->spriteMouse(MOUSE_NORMAL, 0, 0);
+	return true;
 }
 
 bool SkyLogic::fnBlankMouse(uint32 a, uint32 b, uint32 c) {
-	return _skyMouse->fnBlankMouse();
+	_skyMouse->spriteMouse(MOUSE_BLANK, 0, 0);
+	return true;
 }
 
 bool SkyLogic::fnCrossMouse(uint32 a, uint32 b, uint32 c) {
-	error("Stub: fnCrossMouse");
+	_skyMouse->spriteMouse(MOUSE_CROSS, 11, 11);
+	return true;
 }
 
 bool SkyLogic::fnCursorRight(uint32 a, uint32 b, uint32 c) {
-	error("Stub: fnCursorRight");
+	_skyMouse->spriteMouse(MOUSE_RIGHT, 9, 4);
+	return true;
 }
 
 bool SkyLogic::fnCursorLeft(uint32 a, uint32 b, uint32 c) {
-	error("Stub: fnCursorLeft");
+	_skyMouse->spriteMouse(MOUSE_LEFT, 0, 5);
+	return true;
 }
 
 bool SkyLogic::fnCursorDown(uint32 a, uint32 b, uint32 c) {
-	error("Stub: fnCursorDown");
+	_skyMouse->spriteMouse(MOUSE_DOWN, 9, 4);
+	return true;
+}
+
+bool SkyLogic::fnCursorUp(uint32 a, uint32 b, uint32 c) {
+	_skyMouse->spriteMouse(MOUSE_UP, 9, 4);
+	return true;
 }
 
 bool SkyLogic::fnOpenHand(uint32 a, uint32 b, uint32 c) {
@@ -2068,10 +2080,6 @@ bool SkyLogic::fnEyeball(uint32 id, uint32 b, uint32 c) {
 
 	_scriptVariables[RESULT] = eyeTable[x + y] + S91;
 	return true;
-}
-
-bool SkyLogic::fnCursorUp(uint32 a, uint32 b, uint32 c) {
-	error("Stub: fnCursorUp");
 }
 
 bool SkyLogic::fnLeaveSection(uint32 sectionNo, uint32 b, uint32 c) {

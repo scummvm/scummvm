@@ -4290,14 +4290,14 @@
 #define MF_SAVED	(1 << 2)	// set when saved data is valid
 #define MF_GOT_INT	(1 << 3)	// set when mouse interrupt received
 
-#define MOUSE_NORMAL	(1 << 1)	// normal mouse
-#define MOUSE_DISK	(1 << 2)	// disk mouse
-#define MOUSE_DOWN	(1 << 3)
-#define MOUSE_RIGHT	(1 << 4)	// right pointer
-#define MOUSE_LEFT	(1 << 5)	// left pointer
-#define MOUSE_BLANK	(1 << 6)	// blank mouse
-#define MOUSE_CROSS	(1 << 7)	// angry mouse
-#define MOUSE_UP	(1 << 8)	// mouse up
+#define MOUSE_NORMAL	1	// normal mouse
+#define MOUSE_DISK		2	// disk mouse
+#define MOUSE_DOWN		3
+#define MOUSE_RIGHT		4	// right pointer
+#define MOUSE_LEFT		5	// left pointer
+#define MOUSE_BLANK		6	// blank mouse
+#define MOUSE_CROSS		7	// angry mouse
+#define MOUSE_UP		8	// mouse up
 
 #endif
 

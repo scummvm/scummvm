@@ -112,7 +112,7 @@ void SkyMouse::replaceMouseCursors(uint16 fileNo) {
 	_skyDisk->loadFile(fileNo, _objectMouseData);
 }
 
-bool SkyMouse::fnBlankMouse(void) {
+/*bool SkyMouse::fnBlankMouse(void) {
 	_mouseXOff = 0;	//re-align mouse
 	spriteMouse(MOUSE_BLANK, 0, 0);
 	return true;
@@ -127,7 +127,7 @@ bool SkyMouse::fnDiskMouse(void) {
 bool SkyMouse::fnNormalMouse(void) {
 	spriteMouse(MOUSE_NORMAL, 0, 0);
 	return true;
-}
+}*/
 
 bool SkyMouse::fnAddHuman(void) {
 	//reintroduce the mouse so that the human can control the player
@@ -152,7 +152,7 @@ bool SkyMouse::fnAddHuman(void) {
 		if (getOff)
 			_skyLogic->script((uint16)(getOff & 0xFFFF), (uint16)(getOff >> 16));
 	
-		SkyLogic::_scriptVariables[SPECIAL_ITEM] = 0xFFFFFFFF;  //0?
+		SkyLogic::_scriptVariables[SPECIAL_ITEM] = 0xFFFFFFFF;
 		SkyLogic::_scriptVariables[GET_OFF] = RESET_MOUSE;
 	}
 
@@ -187,8 +187,9 @@ void SkyMouse::spriteMouse(uint16 frameNum, uint16 mouseX, uint16 mouseY) {
 	_mouseOffsetY = mouseY;
 
 	//restoreMouseData(frameNum);
+	printf("drawing mouse %d\n",frameNum);
 	byte *mouseData = _miceData;
-	uint32 pos = ((struct dataFileHeader *)mouseData)->s_sp_size * ((struct dataFileHeader *)mouseData)->s_sp_size;
+	uint32 pos = ((struct dataFileHeader *)mouseData)->s_sp_size * frameNum;
 	pos += sizeof(struct dataFileHeader);
 	_mouseData2 = mouseData + pos;	
 
@@ -196,10 +197,9 @@ void SkyMouse::spriteMouse(uint16 frameNum, uint16 mouseX, uint16 mouseY) {
 	_mouseHeight = ((struct dataFileHeader *)mouseData)->s_height;
 
 	_system->set_mouse_cursor(_mouseData2, _mouseWidth, _mouseHeight, mouseX, mouseY);
-	if (frameNum == MOUSE_BLANK) 
-		_system->show_mouse(false);
-	else
-		_system->show_mouse(true);
+	if (frameNum == MOUSE_BLANK) _system->show_mouse(false);
+	else _system->show_mouse(true);
+
 	//drawNewMouse();
 
 	SkyState::_systemVars.mouseFlag &= ~MF_IN_INT;

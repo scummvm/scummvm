@@ -37,9 +37,7 @@ public:
 	~SkyMouse(void);
 
 	void replaceMouseCursors(uint16 fileNo);
-	bool fnBlankMouse(void);
-	bool fnDiskMouse(void);
-	bool fnNormalMouse(void);
+	//void setMouseSprite(uint8 sprNum, uint16 mouseX, uint16 mouseY);
 	bool fnAddHuman(void);
 	void lockMouse(void);
 	void unlockMouse(void);
