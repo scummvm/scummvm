@@ -116,8 +116,6 @@ class PauseDialog : public Dialog {
 public:
 	PauseDialog(NewGui *gui);
 
-	virtual void draw();
-
 	virtual void handleMouseDown(int x, int y, int button, int clickCount)
 		{ close(); }
 	virtual void handleKeyDown(char key, int modifiers)
