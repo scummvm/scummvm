@@ -276,9 +276,9 @@ public:
 
 	void cmdActorWalkTo(int argc, const char **argv);
 
-	bool validActorId(uint16 id) { return (id == 1) || ((id >= 0x2000) && (id < (0x2000 | _actorsCount))); }
-	int actorIdToIndex(uint16 id) { return (id == 1 ) ? 0 : (id & ~0x2000); }
-	uint16 actorIndexToId(int index) { return (index == 0 ) ? 1 : (index | 0x2000); }
+	bool validActorId(uint16 id) { return (id == ID_PROTAG) || ((id > OBJECT_TYPE_MASK) && (id < objectIndexToId(kGameObjectActor, _actorsCount))); }
+	int actorIdToIndex(uint16 id) { return (id == ID_PROTAG ) ? 0 : objectIdToIndex(id); }
+	uint16 actorIndexToId(int index) { return (index == 0 ) ? ID_PROTAG : objectIndexToId(kGameObjectActor, index); }
 
 	int direct(int msec);
 	int drawActors();

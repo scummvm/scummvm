@@ -51,6 +51,7 @@
 #include "saga/sound.h"
 #include "saga/music.h"
 #include "saga/palanim.h"
+#include "saga/objectmap.h"
 
 static const GameSettings saga_games[] = {
 	{"ite", "Inherit the Earth", 0},
@@ -316,45 +317,46 @@ int SagaEngine::go() {
 
 void SagaEngine::loadStrings(StringsTable &stringsTable, const byte *stringsPointer, size_t stringsLength) {
 	uint16 stringsCount;
-	uint16 i;
 	size_t offset;
+	int i;
 	
-
 	stringsTable.stringsPointer = (byte*)malloc(stringsLength);
 	memcpy(stringsTable.stringsPointer, stringsPointer, stringsLength);
 
+	
 	MemoryReadStreamEndian scriptS(stringsTable.stringsPointer, stringsLength, IS_BIG_ENDIAN);
 
 	offset = scriptS.readUint16();
-	if (offset > stringsLength) {
-		error("Invalid string offset");
-	}
-
-	stringsCount = offset / 2 - 2;
-	stringsTable.stringsCount = stringsCount;
-
-	stringsTable.strings = (const char **)malloc(stringsCount * sizeof(const char *));
-	if (stringsTable.strings == NULL) {
-		error("No enough memory for strings Table");
-	}
-
+	stringsCount = offset / 2;
+	stringsTable.strings = (const char **)malloc(stringsCount * sizeof(*stringsTable.strings));
+	i = 0;	
 	scriptS.seek(0);
-	for (i = 0; i < stringsCount; i++) {
+	while (i < stringsCount) {
 		offset = scriptS.readUint16();
+		if (offset == stringsLength) {
+			stringsCount = i;
+			stringsTable.strings = (const char **)realloc(stringsTable.strings, stringsCount * sizeof(*stringsTable.strings));
+			break;
+		}
 		if (offset > stringsLength) {
-			error("invalid string offset");
+			error("SagaEngine::loadStrings wrong strings table");
 		}
 		stringsTable.strings[i] = (const char *)stringsTable.stringsPointer + offset;
 		debug(9, "string[%i]=%s", i, stringsTable.strings[i]);
+		i++;
 	}
+	stringsTable.stringsCount = stringsCount;
 }
 
 const char *SagaEngine::getObjectName(uint16 objectId) {
-	
-	switch (objectIdType(objectId)) {
+	const HitZone *hitZone;
+	switch (objectTypeId(objectId)) {
 		case kGameObjectActor: 
 							return _actor->getActorName(objectId);
 							break;
+		case kGameObjectHitZone:
+							hitZone = _vm->_scene->_objectMap->getHitZone(objectIdToIndex(objectId));
+							return _vm->_scene->_sceneStrings.getString(hitZone->getNameIndex());
 	}
 	//todo: object name & etc
 	return NULL;
@@ -362,7 +364,7 @@ const char *SagaEngine::getObjectName(uint16 objectId) {
 
 int SagaEngine::getObjectScriptEntrypointNumber(uint16 objectId) {
 	ActorData *actor;
-	switch (objectIdType(objectId)) {
+	switch (objectTypeId(objectId)) {
 		case kGameObjectActor: 
 			actor = _vm->_actor->getActor(objectId);
 			return actor->scriptEntrypointNumber;
@@ -374,7 +376,7 @@ int SagaEngine::getObjectScriptEntrypointNumber(uint16 objectId) {
 
 int SagaEngine::getObjectFlags(uint16 objectId) {
 	ActorData *actor;
-	if (objectIdType(objectId) == kGameObjectActor) {
+	if (objectTypeId(objectId) == kGameObjectActor) {
 			actor = _vm->_actor->getActor(objectId);
 			return actor->flags;
 	}

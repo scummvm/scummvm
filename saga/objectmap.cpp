@@ -36,7 +36,7 @@
 
 namespace Saga {
 
-HitZone::HitZone(MemoryReadStreamEndian *readStream) {
+HitZone::HitZone(MemoryReadStreamEndian *readStream, int index): _index(index) {
 	int i, j;
 	HitZone::ClickArea *clickArea;
 	Point *point;
@@ -45,7 +45,7 @@ HitZone::HitZone(MemoryReadStreamEndian *readStream) {
 	_clickAreasCount = readStream->readByte();
 	_rightButtonVerb = readStream->readByte();
 	readStream->readByte(); // pad
-	_nameNumber = readStream->readUint16();
+	_nameIndex = readStream->readUint16();
 	_scriptNumber = readStream->readUint16();
 
 	_clickAreas = (HitZone::ClickArea *)malloc(_clickAreasCount * sizeof(*_clickAreas));
@@ -80,6 +80,22 @@ HitZone::~HitZone() {
 	free(_clickAreas);
 }
 
+bool HitZone::getSpecialPoint(Point &specialPoint) const {
+	int i, pointsCount;
+	HitZone::ClickArea *clickArea;
+	Point *points;
+
+	for (i = 0; i < _clickAreasCount; i++) {
+		clickArea = &_clickAreas[i];
+		pointsCount = clickArea->pointsCount;
+		points = clickArea->points;
+		if (pointsCount == 1) {
+			specialPoint = points[0];
+			return true;
+		}
+	}
+	return false;
+}
 bool HitZone::hitTest(const Point &testPoint) {
 	int i, pointsCount;
 	HitZone::ClickArea *clickArea;
@@ -157,7 +173,7 @@ void ObjectMap::load(const byte *resourcePointer, size_t resourceLength) {
 	}
 
 	for (i = 0; i < _hitZoneListCount; i++) {
-		_hitZoneList[i] = new HitZone(&readS);
+		_hitZoneList[i] = new HitZone(&readS, i);
 	}
 }
 

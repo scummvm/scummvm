@@ -72,6 +72,8 @@ class PalAnim;
 
 #define ID_NOTHING 0
 #define ID_PROTAG 1
+#define OBJECT_TYPE_SHIFT 13
+#define OBJECT_TYPE_MASK ((1 << OBJECT_TYPE_SHIFT) - 1)
 
 struct RSCFILE_CONTEXT;
 struct StringList;
@@ -195,7 +197,7 @@ struct StringsTable {
 	const char **strings;
 
 	const char *getString(int index) const {
-		if (stringsCount <= index)
+		if ((stringsCount <= index) || (index < 0))
 			error("StringList::getString wrong index 0x%X", index);
 		return strings[index];
 	}
@@ -393,9 +395,18 @@ inline int integerCompare(int i1, int i2) {
 	return ((i1) > (i2) ? 1 : ((i1) < (i2) ? -1 : 0));
 }
 
-inline int objectIdType(uint16 objectId) {
-	return objectId >> 13;
+inline int objectTypeId(uint16 objectId) {
+	return objectId >> OBJECT_TYPE_SHIFT;
 }
+
+inline int objectIdToIndex(uint16 objectId) {
+	return OBJECT_TYPE_MASK & objectId;
+}
+
+inline uint16 objectIndexToId(int type, int index) {
+	return (type << OBJECT_TYPE_SHIFT) | (OBJECT_TYPE_MASK & index);
+}
+
 
 DetectedGameList GAME_ProbeGame(const FSList &fslist);
 

@@ -292,7 +292,6 @@ class Scene {
 	SCENE_IMAGE _bg;
 	SCENE_IMAGE _bgMask;
 	
-	StringsTable _sceneStrings;
 	int _sceneDoors[SCENE_DOORS_MAX];
 
 	static int SC_defaultScene(int param, SCENE_INFO *scene_info, void *refCon);
@@ -302,6 +301,7 @@ class Scene {
 	ObjectMap *_actionMap;
 	ObjectMap *_objectMap;
 	SceneEntryList _entryList;
+	StringsTable _sceneStrings;
 
  private:
 	int IHNMStartProc();

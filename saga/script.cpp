@@ -577,7 +577,7 @@ void Script::showVerb() {
 	
 	verbName = _mainStrings.getString(_leftButtonVerb - 1);
 
-	if (objectIdType(_currentObject[0]) == kGameObjectNone) {
+	if (objectTypeId(_currentObject[0]) == kGameObjectNone) {
 		_vm->_interface->setStatusText(verbName);
 		return;
 	}
@@ -591,7 +591,7 @@ void Script::showVerb() {
 	}
 
 	
-	if (objectIdType(_currentObject[1]) != kGameObjectNone) {
+	if (objectTypeId(_currentObject[1]) != kGameObjectNone) {
 		object2Name = _vm->getObjectName(_currentObject[1]);
 	} else {
 		object2Name = "";
@@ -638,7 +638,7 @@ void Script::setLeftButtonVerb(int verb) {
 }
 
 void Script::setRightButtonVerb(int verb) {
-	int		oldVerb = _currentVerb;
+	int		oldVerb = _rightButtonVerb;
 
 	_rightButtonVerb = verb;
 
@@ -658,8 +658,9 @@ void Script::doVerb() {
 	EVENT event;
 	const char *excuseText;
 	int excuseSampleResourceId;
+	const HitZone *hitZone;
 
-	objectType = objectIdType(_pendingObject[0]);
+	objectType = objectTypeId(_pendingObject[0]);
 
 	if (_pendingVerb == kVerbGive) {
 		scriptEntrypointNumber = _vm->getObjectScriptEntrypointNumber(_pendingObject[1]);
@@ -670,15 +671,19 @@ void Script::doVerb() {
 		}
 	} else {
 		if (_pendingVerb == kVerbUse) {
-			if ((objectIdType(_pendingObject[1]) > kGameObjectNone) && (objectType < objectIdType(_pendingObject[1]))) {
+			if ((objectTypeId(_pendingObject[1]) > kGameObjectNone) && (objectType < objectTypeId(_pendingObject[1]))) {
 				SWAP(_pendingObject[0], _pendingObject[1]);
-				objectType = objectIdType(_pendingObject[0]);
+				objectType = objectTypeId(_pendingObject[0]);
 			}
 		}
 
 		if (objectType == kGameObjectHitZone) {
 			scriptModuleNumber = _vm->_scene->getScriptModuleNumber();
-			//TODO: check HitZone Exit
+			hitZone = _vm->_scene->_objectMap->getHitZone(objectIdToIndex(_pendingObject[0]));
+			if ((hitZone->getFlags() & kHitZoneExit) == 0) {
+				scriptEntrypointNumber = hitZone->getScriptNumber();
+			}
+			
 		} else {
 			if (objectType & (kGameObjectActor | kGameObjectObject)) {
 				scriptEntrypointNumber = _vm->getObjectScriptEntrypointNumber(_pendingObject[0]);
@@ -794,6 +799,7 @@ void Script::hitObject(bool leftButton) {
 void Script::playfieldClick(const Point& mousePoint, bool leftButton) {
 	Location pickLocation;
 	const HitZone *hitZone;
+	Point specialPoint;
 
 	_vm->_actor->abortSpeech();
 
@@ -826,11 +832,11 @@ void Script::playfieldClick(const Point& mousePoint, bool leftButton) {
 
 	hitZone = NULL;
 
-	if (objectIdType(_pendingObject[0]) == kGameObjectHitZone) {
-		// hitZone = _vm->_scene->_objectMap _pendingObject[0]; //TODO:
+	if (objectTypeId(_pendingObject[0]) == kGameObjectHitZone) {
+		 hitZone = _vm->_scene->_objectMap->getHitZone(objectIdToIndex(_pendingObject[0]));
 	} else {
-		if ((_pendingVerb == kVerbUse) && (objectIdType(_pendingObject[1]) == kGameObjectHitZone)) {
-			// hitZone = _vm->_scene->_objectMap _pendingObject[1]; //TODO:
+		if ((_pendingVerb == kVerbUse) && (objectTypeId(_pendingObject[1]) == kGameObjectHitZone)) {
+			hitZone = _vm->_scene->_objectMap->getHitZone(objectIdToIndex(_pendingObject[1]));			
 		}
 	}
 
@@ -842,7 +848,16 @@ void Script::playfieldClick(const Point& mousePoint, bool leftButton) {
 		}
 
 		if (hitZone->getFlags() & kHitZoneProject) {
-			//TODO: do it
+			if (!hitZone->getSpecialPoint(specialPoint)) {
+				error("Script::playfieldClick SpecialPoint not found");
+			}
+			
+			// tiled stuff
+			if (_vm->_scene->getFlags() & kSceneFlagISO) {
+				//todo: it
+			} else {
+				pickLocation.fromScreenPoint(specialPoint);
+			}
 		}
 	}
 
@@ -856,7 +871,7 @@ void Script::playfieldClick(const Point& mousePoint, bool leftButton) {
 			break;
 
 		case kVerbLookAt:
-			if (objectIdType(_pendingObject[0]) != kGameObjectActor ) {
+			if (objectTypeId(_pendingObject[0]) != kGameObjectActor ) {
 				_vm->_actor->actorWalkTo(ID_PROTAG, pickLocation);
 			} else {
 				doVerb();
@@ -879,8 +894,8 @@ void Script::whichObject(const Point& mousePoint) {
 	uint16 newObjectId;
 	ActorData *actor;
 	Location pickLocation;
-	int hitZoneId;
-	HitZone * hitZone;
+	int hitZoneIndex;
+	const HitZone * hitZone;
 
 	objectId = ID_NOTHING;
 	objectFlags = 0;
@@ -892,7 +907,7 @@ void Script::whichObject(const Point& mousePoint) {
 		newObjectId = _vm->_actor->testHit(mousePoint);
 
 		if (newObjectId != ID_NOTHING) {
-			if (objectIdType(newObjectId) == kGameObjectObject) {
+			if (objectTypeId(newObjectId) == kGameObjectObject) {
 				objectId = newObjectId;
 				objectFlags = 0;
 				newRightButtonVerb = kVerbLookAt;
@@ -918,11 +933,7 @@ void Script::whichObject(const Point& mousePoint) {
 			}
 		}
 
-		if (newObjectId == ID_NOTHING) {
-/*			struct HitZone	far *newZone = NULL;
-			UWORD		zone;*/
-			
-
+		if (newObjectId == ID_NOTHING) {		
 			if (_vm->_scene->getFlags() & kSceneFlagISO) {
 				//todo: it
 			} else {
@@ -931,11 +942,11 @@ void Script::whichObject(const Point& mousePoint) {
 				pickLocation.z = 0;
 			}
 			
-			hitZoneId = _vm->_scene->_objectMap->hitTest(mousePoint);
+			hitZoneIndex = _vm->_scene->_objectMap->hitTest(mousePoint);
 		
-			if ((hitZoneId != -1) && 0) { //TODO: do it
-				//hitZone = _vm->_scene->_objectMap->getZone(hitZoneId);
-				//objectId = hitZone->objectId;
+			if ((hitZoneIndex != -1)) {
+				hitZone = _vm->_scene->_objectMap->getHitZone(hitZoneIndex);
+				objectId = hitZone->getHitZoneId();
 				objectFlags = 0;
 				newRightButtonVerb = hitZone->getRightButtonVerb() & 0x7f;
 

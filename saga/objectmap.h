@@ -39,11 +39,14 @@ private:
 	};
 public:
 	
-	HitZone(MemoryReadStreamEndian *readStream);
+	HitZone(MemoryReadStreamEndian *readStream, int index);
 	~HitZone();
-
+	
+	int getNameIndex() const {
+		return _nameIndex;
+	}
 	int getSceneNumber() const {
-		return _nameNumber;
+		return _nameIndex;
 	}
 	int getActorsEntrance() const {
 		return _scriptNumber;
@@ -60,14 +63,22 @@ public:
 	int getDirection() const {
 		return ((_flags >> 4) & 0xF);
 	}
+	uint16 getHitZoneId() const {
+		return objectIndexToId(kGameObjectHitZone, _index);
+	}
+	uint16 getStepZoneId() const {
+		return objectIndexToId(kGameObjectStepZone, _index);
+	}
+	bool getSpecialPoint(Point &specialPoint) const;
 	void draw(SURFACE *ds, int color);	
 	bool hitTest(const Point &testPoint);
 private:
-	int _flags;				// HitZoneFlags
+	int _flags;				// Saga::HitZoneFlags 
 	int _clickAreasCount;
 	int _rightButtonVerb;
-	int _nameNumber;
+	int _nameIndex;
 	int _scriptNumber;
+	int _index;
 
 	ClickArea *_clickAreas;
 };

@@ -124,8 +124,6 @@ private:
 	PanelButton *verbHitTest(const Point& mousePoint);
 	void handleCommandUpdate(SURFACE *ds, const Point& mousePoint);
 	void handleCommandClick(SURFACE *ds, const Point& mousePoint);
-	int handlePlayfieldUpdate(SURFACE *ds, const Point& imousePt);
-	int handlePlayfieldClick(SURFACE *ds, const Point& imousePt);
 	
 	void lockMode() { _lockedMode = _panelMode; }
 	void unlockMode() { _panelMode = _lockedMode; }
