@@ -174,6 +174,8 @@ static bool isGame(const char *fn, char *base)
 #else
   char *dot;
   if((dot = strchr(fn, '.'))!=NULL) {
+    if(!strcasecmp(dot, ".SAN"))
+      return false;
     strcpy(base, fn);
     base[dot-fn]='\0';
     if(checkName(base))
