@@ -1705,7 +1705,6 @@ void SimonEngine::vc_61_sprite_change() {
 
 void SimonEngine::vc_62_palette_thing() {
 	uint i;
-	byte *vc_ptr_org = _vc_ptr;
 
 	vc_29_stop_all_sounds();
 
@@ -1724,10 +1723,11 @@ void SimonEngine::vc_62_palette_thing() {
 			delay(5);
 		}
 
-		if (!(_game & GF_SIMON2)) {
+		if (_game == GAME_SIMON1WIN) {
 			uint16 params[5];						/* parameters to vc_10_draw */
 			VgaSprite *vsp;
 			VgaPointersEntry *vpe;
+			byte *vc_ptr_org = _vc_ptr;
 
 			vsp = _vga_sprites;
 			while (vsp->id != 0) {
@@ -1756,11 +1756,10 @@ void SimonEngine::vc_62_palette_thing() {
 				}
 				vsp++;
 			}
+			_vc_ptr = vc_ptr_org;
 		}
 
 		dx_clear_surfaces(_video_palette_mode == 4 ? 134 : 200);
-
-		_vc_ptr = vc_ptr_org;
 	}
 	if (_game & GF_SIMON2) {
 		if (_next_music_to_play != -1)
@@ -1785,11 +1784,11 @@ void SimonEngine::vc_64_skip_if_no_speech() {
 
 void SimonEngine::vc_65_palette_thing_3() {
 	// Simon2
-	_palette_color_count = 0x270;
-	_video_num_pal_colors = 0x0D0;
+	_palette_color_count = 624;
+	_video_num_pal_colors = 208;
 	if (_video_palette_mode != 4) {
-		_palette_color_count = 0x300;
-		_video_num_pal_colors = 0x100;
+		_palette_color_count = 768;
+		_video_num_pal_colors = 256;
 	}
 	_palette_color_count |= 0x8000;
 	_video_var_3 = false;
