@@ -97,7 +97,7 @@ public:
 	uint32 property(int param, Property *value);
 
 	// Add a callback timer
-	void set_timer(int timer, void* callback);
+	void set_timer(int timer, int (*callback)(int));
 
 	static OSystem *create(int gfx_mode, bool full_screen);
 
@@ -229,7 +229,7 @@ OSystem *OSystem_SDL::create(int gfx_mode, bool full_screen) {
 	return syst;
 }
 
-void OSystem_SDL::set_timer(int timer, void* callback) {
+void OSystem_SDL::set_timer(int timer, int (*callback)(int)) {
 	SDL_SetTimer(timer, (SDL_TimerCallback) callback);
 }
 OSystem *OSystem_SDL_create(int gfx_mode, bool full_screen) {

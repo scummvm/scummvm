@@ -137,7 +137,7 @@ public:
 	virtual void update_cdrom() = 0;
 
 	// Add a new callback timer
-	virtual void set_timer(int timer, void* callback) = 0;
+	virtual void set_timer(int timer, int (*callback)(int)) = 0;
 
 	// Quit
 	virtual void quit() = 0;
