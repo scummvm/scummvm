@@ -258,10 +258,6 @@ SOURCE=.\sound\fmopl.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\sound\mididrv.cpp
-# End Source File
-# Begin Source File
-
 SOURCE=.\sound\mididrv.h
 # End Source File
 # Begin Source File
@@ -437,19 +433,7 @@ SOURCE=.\backends\midi\adlib.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\backends\midi\alsa.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\backends\midi\coreaudio.cpp
-# End Source File
-# Begin Source File
-
 SOURCE=.\backends\midi\null.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\backends\midi\quicktime.cpp
 # End Source File
 # Begin Source File
 
