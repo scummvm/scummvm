@@ -157,7 +157,7 @@ protected:
 
 	byte *_tbl_list;
 
-	byte *_code_ptr;
+	const byte *_code_ptr;
 
 
 	byte **_local_stringtable;
@@ -212,7 +212,7 @@ protected:
 	bool _vga_var9;
 	int16 _script_unk_1;
 	bool _vga_var6;
-	int _x_scroll, _vga_var1, _vga_var2, _vga_var3, _vga_var5;
+	int _x_scroll, _vga_var1, _vga_var2, _xscroll_step, _sprite_height;
 	const byte *_vga_var7;
 	byte _vga_var8;
 
@@ -415,7 +415,7 @@ protected:
 	void dumpSubroutines();
 	void dumpSubroutine(Subroutine *sub);
 	void dumpSubroutineLine(SubroutineLine *sl, Subroutine *sub);
-	byte *dumpOpcode(byte *p);
+	const byte *dumpOpcode(const byte *p);
 
 	int startSubroutine(Subroutine *sub);
 	int startSubroutineEx(Subroutine *sub);

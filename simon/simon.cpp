@@ -495,8 +495,8 @@ SimonEngine::SimonEngine(GameDetector *detector, OSystem *syst)
 	_x_scroll = 0;
 	_vga_var1 = 0;
 	_vga_var2 = 0;
-	_vga_var3 = 0;
-	_vga_var5 = 0;
+	_xscroll_step = 0;
+	_sprite_height = 0;
 	_vga_var7 = 0;
 	_vga_var8 = 0;
 
@@ -727,6 +727,18 @@ int SimonEngine::init(GameDetector &detector) {
 }
 
 SimonEngine::~SimonEngine() {
+	delete _game_file;
+
+	midi.close();
+
+	free(_stringtab_ptr);
+	free(_itemarray_ptr);
+	free(_itemheap_ptr - _itemheap_curpos);
+	free(_tablesheap_ptr - _tablesheap_curpos);
+	free(_tbl_list);
+	free(_icon_file_ptr);
+	free(_game_offsets_ptr);
+
 	delete _dummy_item_1;
 	delete _dummy_item_2;
 	delete _dummy_item_3;
@@ -1018,8 +1030,9 @@ void SimonEngine::setItemUnk3(Item *item, int value) {
 }
 
 int SimonEngine::getNextWord() {
+	int16 a = (int16)READ_BE_UINT16(_code_ptr);
 	_code_ptr += 2;
-	return (int16)((_code_ptr[-2] << 8) | _code_ptr[-1]);
+	return a;
 }
 
 uint SimonEngine::getNextStringID() {
@@ -1034,7 +1047,7 @@ uint SimonEngine::getVarOrByte() {
 }
 
 uint SimonEngine::getVarOrWord() {
-	uint a = (_code_ptr[0] << 8) | _code_ptr[1];
+	uint a = READ_BE_UINT16(_code_ptr);
 	_code_ptr += 2;
 	if (a >= 30000 && a < 30512)
 		return readVariable(a - 30000);
@@ -1348,7 +1361,7 @@ void SimonEngine::loadTablesIntoMem(uint subr_id) {
 		}
 	}
 
-		debug(1,"loadTablesIntoMem: didn't find %d", subr_id);
+	debug(1,"loadTablesIntoMem: didn't find %d", subr_id);
 }
 
 void SimonEngine::playSting(uint a) {
@@ -1718,10 +1731,10 @@ void SimonEngine::handle_mouse_moved() {
 			if (_vga_var2 == 0) {
 				if (_mouse_x >= 631 / 2) {
 					if (_x_scroll != _vga_var1)
-						_vga_var3 = 1;
+						_xscroll_step = 1;
 				} else if (_mouse_x < 8) {
 					if (_x_scroll != 0)
-						_vga_var3 = -1;
+						_xscroll_step = -1;
 				}
 			}
 		} else {
@@ -2469,8 +2482,8 @@ void SimonEngine::set_video_mode_internal(uint mode, uint vga_res_id) {
 		_x_scroll = 0;
 		_vga_var1 = 0;
 		_vga_var2 = 0;
-		_vga_var3 = 0;
-		_vga_var5 = 134;
+		_xscroll_step = 0;
+		_sprite_height = 134;
 		if (_variableArray[34] != -1)
 			_variableArray[251] = 0;
 	}
@@ -2586,14 +2599,14 @@ void SimonEngine::scroll_timeout() {
 		return;
 
 	if (_vga_var2 < 0) {
-		if (_vga_var3 != -1) {
-			_vga_var3 = -1;
+		if (_xscroll_step != -1) {
+			_xscroll_step = -1;
 			if (++_vga_var2 == 0)
 				return;
 		}
 	} else {
-		if (_vga_var3 != 1) {
-			_vga_var3 = 1;
+		if (_xscroll_step != 1) {
+			_xscroll_step = 1;
 			if (--_vga_var2 == 0)
 				return;
 		}
@@ -2718,7 +2731,7 @@ void SimonEngine::timer_vga_sprites() {
 	if (_video_var_9 == 2)
 		_video_var_9 = 1;
 
-	if (_game & GF_SIMON2 && _vga_var3) {
+	if (_game & GF_SIMON2 && _xscroll_step) {
 		timer_vga_sprites_helper();
 	}
 
@@ -2762,34 +2775,34 @@ void SimonEngine::timer_vga_sprites_helper() {
 	const byte *src;
 	uint x;
 
-	if (_vga_var3 < 0) {
-		memmove(dst + 8, dst, 320 * _vga_var5 - 8);
+	if (_xscroll_step < 0) {
+		memmove(dst + 8, dst, 320 * _sprite_height - 8);
 	} else {
-		memmove(dst, dst + 8, 320 * _vga_var5 - 8);
+		memmove(dst, dst + 8, 320 * _sprite_height - 8);
 	}
 
 	x = _x_scroll - 1;
 
-	if (_vga_var3 > 0) {
+	if (_xscroll_step > 0) {
 		dst += 320 - 8;
 		x += 41;
 	}
 
 	src = _vga_var7 + x * 4;
-	decodeStripA(dst, src + READ_BE_UINT32(src), _vga_var5);
+	decodeStripA(dst, src + READ_BE_UINT32(src), _sprite_height);
 
 	dx_unlock_2();
 
 
 	memcpy(_sdl_buf_attached, _sdl_buf, 320 * 200);
-	dx_copy_from_attached_to_3(_vga_var5);
+	dx_copy_from_attached_to_3(_sprite_height);
 
 
-	_x_scroll += _vga_var3;
+	_x_scroll += _xscroll_step;
 
 	vc_write_var(0xfB, _x_scroll);
 
-	_vga_var3 = 0;
+	_xscroll_step = 0;
 }
 
 void SimonEngine::timer_vga_sprites_2() {
@@ -4018,16 +4031,18 @@ int SimonEngine::go() {
 }
 
 void SimonEngine::shutdown() {
-	if (_game_file) {
-		delete _game_file;
-		_game_file = NULL;
-	}
+	delete _game_file;
+
+	midi.close();
 
 	free(_stringtab_ptr);
 	free(_itemarray_ptr);
 	free(_itemheap_ptr - _itemheap_curpos);
 	free(_tablesheap_ptr - _tablesheap_curpos);
-	midi.close();
+	free(_tbl_list);
+	free(_icon_file_ptr);
+	free(_game_offsets_ptr);
+
 	_system->quit();
 }
 

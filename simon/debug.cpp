@@ -30,7 +30,7 @@
 
 namespace Simon {
 
-byte *SimonEngine::dumpOpcode(byte *p) {
+const byte *SimonEngine::dumpOpcode(const byte *p) {
 	byte opcode;
 	const char *s, *st;
 
@@ -133,7 +133,7 @@ byte *SimonEngine::dumpOpcode(byte *p) {
 }
 
 void SimonEngine::dumpSubroutineLine(SubroutineLine *sl, Subroutine *sub) {
-	byte *p;
+	const byte *p;
 
 	printf("; ****\n");
 

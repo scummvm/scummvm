@@ -1085,7 +1085,7 @@ int SimonEngine::runScript() {
 int SimonEngine::startSubroutine(Subroutine *sub) {
 	int result = -1;
 	SubroutineLine *sl;
-	byte *old_code_ptr;
+	const byte *old_code_ptr;
 
 	if (_start_mainscript)
 		dumpSubroutine(sub);

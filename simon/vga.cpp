@@ -648,7 +648,7 @@ void SimonEngine::vc_10_draw() {
 
 		_vga_var1 = width * 2 - 40;
 		_vga_var7 = state.depack_src;
-		_vga_var5 = height;
+		_sprite_height = height;
 		if (_variableArray[34] == -1)
 			state.x = _variableArray[251];
 
@@ -1099,7 +1099,7 @@ void SimonEngine::vc_19_chain_to_script() {
 /* helper routines */
 
 void SimonEngine::vc_20_set_code_word() {
-	/* FIXME: This pücode is somewhat strange: it first reads a BE word from 
+	/* FIXME: This opcode is somewhat strange: it first reads a BE word from 
 	 * the script (advancing the script pointer in doing so); then it writes
 	 * back the same word, this time as LE, into the script.
 	 */
@@ -1400,7 +1400,7 @@ void SimonEngine::vc_40_var_add() {
 				goto no_scroll;
 			_vga_var2 = 0;
 		} else {
-			if (_vga_var3 != 0)
+			if (_xscroll_step != 0)
 				goto no_scroll;
 		}
 
@@ -1429,7 +1429,7 @@ void SimonEngine::vc_41_var_sub() {
 				goto no_scroll;
 			_vga_var2 = 0;
 		} else {
-			if (_vga_var3 != 0)
+			if (_xscroll_step != 0)
 				goto no_scroll;
 		}
 
