@@ -119,8 +119,13 @@ void MidiDriver_MPU401::setTimerCallback (void *timer_param, void (*timer_proc) 
 	if (!_timer_proc || !timer_proc) {
 		_timer_proc = (TimerCallback *) timer_proc;
 		_timer_param = timer_param;
-		if (!_started_thread && timer_proc)
+		if (!_started_thread && timer_proc) {
+			// TODO: This is the only place in ScummVM where create_thread is
+			// being used. And it's used for a timer like thread. So if we
+			// could convert it to use the timer API instead, we could get
+			// rid of create_thread completely.
 			g_system->create_thread(midi_driver_thread, this);
+		}
 		_started_thread = true;
 	}
 }
