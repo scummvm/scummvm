@@ -30,20 +30,15 @@
 #define MAXLINELEN 256
 
 static char *ltrim(char *t) {
-	for (; *t && (*t == ' '); t++);
+	while (*t == ' ')
+		t++;
 	return t;
 }
 
 static char *rtrim(char *t) {
-	int l;
-
-	for (l = strlen(t) - 1; l; l--) {
-		if (t[l] == ' ') {
-			*t = 0;
-		} else {
-			return t;
-		}
-	}
+	int l = strlen(t) - 1;
+	while (l >= 0 && t[l] == ' ')
+		t[l--] = 0;
 	return t;
 }
 

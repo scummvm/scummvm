@@ -35,12 +35,14 @@
 #define MAX(a,b) (((a) > (b)) ? (a) : (b))
 #endif
 
-static inline void SWAP(int &a, int &b) { int tmp = a; a = b; b = tmp; }
-#define ARRAYSIZE(x) (sizeof(x) / sizeof(x[0]))
+template<class T>
+static inline void SWAP(T &a, T &b) { T tmp = a; a = b; b = tmp; }
+
+#define ARRAYSIZE(x) ((int)(sizeof(x) / sizeof(x[0])))
 
 int RGBMatch(byte *palette, int r, int g, int b);
 int Blend(int src, int dst, byte *palette);
-void ClearBlendCache(byte *palette, int weight);
+void ClearBlendCache();
 
 /*
  * Print hexdump of the data passed in

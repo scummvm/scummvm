@@ -71,16 +71,16 @@ FILE *File::fopenNoCase(const char *filename, const char *directory, const char 
 
 		ptr = buf + len;
 		do
-			*ptr++ = toupper(*ptr);
-		while (*ptr);
+			*ptr = toupper(*ptr);
+		while (*ptr++);
 		file = fopen(buf, mode);
 		if (file)
 			return file;
 
 		ptr = buf + len;
 		do
-			*ptr++ = tolower(*ptr);
-		while (*ptr);
+			*ptr = tolower(*ptr);
+		while (*ptr++);
 		file = fopen(buf, mode);
 		if (file)
 			return file;
@@ -273,6 +273,9 @@ uint32 File::write(void *ptr, uint32 len) {
 		return 0;
 
 	if (_encbyte != 0) {
+		// Maybe FIXME: while it's efficient to do the encoding here,
+		// it not really nice for a write function to modify its input.
+		// Maybe we should work on a copy here...
 		uint32 t_size = len;
 		do {
 			*ptr2++ ^= _encbyte;

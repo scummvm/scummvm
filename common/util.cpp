@@ -85,7 +85,7 @@ int Blend(int src, int dst, byte *palette) {
 //
 // Reset the blending cache
 //
-void ClearBlendCache(byte *palette, int weight) {
+void ClearBlendCache() {
 #ifndef NEWGUI_256
 	for (int i = 0; i < 256; i++)
 		for (int j = 0 ; j < 256 ; j++)
