@@ -456,7 +456,7 @@ void Gdi::drawStripToScreen(VirtScreen *vs, int x, int width, int top, int botto
 	assert(_textSurface.pixels);
 	assert(_compositeBuf);
 	
-	if (width > vs->w - x);
+	if (width > vs->w - x)
 		width = vs->w - x;
 
 	// Clip to the visible part of the scene
