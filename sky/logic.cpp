@@ -1552,7 +1552,7 @@ uint32 SkyLogic::fnEnterSection(uint32 sectionNo, uint32 b, uint32 c) {
 			_saveCurrentSection = sectionNo;
 
 			sectionNo++;
-			_skyMusic->loadSectionMusic(sectionNo);
+			_skyMusic->loadSectionMusic((byte)sectionNo);
 			_skyGrid->loadGrids();
 
 		}
