@@ -1189,13 +1189,10 @@ void Scumm::setCursorImg(uint img, uint room, uint imgindex)
 	if (_features & GF_AFTER_V8) {
 		dataptr = findResource(MKID('IMAG'), foir.obim);
 		assert(dataptr);
-
 		dataptr = findResource(MKID('WRAP'), dataptr);
 		assert(dataptr);
-
 		dataptr = findResource(MKID('OFFS'), dataptr);
 		assert(dataptr);
-
 		dataptr += READ_LE_UINT32(dataptr + 4 + 4*imgindex);
 		// TODO - distinguish between SMAP and BOMP here?
 

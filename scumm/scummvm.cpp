@@ -752,7 +752,7 @@ void Scumm::initRoomSubBlocks()
 		assert(ptr);
 		ptr = findResource(MKID('OFFS'), ptr);
 		assert(ptr);
-		// Get the first SMAP resource (corresponds to IM00)
+		// Get the address of the first SMAP (corresponds to IM00)
 		ptr += READ_LE_UINT32(ptr + 8);
 		_IM00_offs = ptr - roomptr;
 	} else
