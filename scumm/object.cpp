@@ -183,10 +183,13 @@ int ScummEngine::getObjectImageCount(int object) {
 	if (!imhd)
 		return 0;
 
-	if (_version == 8)
+	if (_version == 8) {
 		return (READ_LE_UINT32(&imhd->v8.image_count));
-	else
+	} else if (_version == 7) {
+		return(READ_LE_UINT16(&imhd->v7.image_count));
+	} else {
 		return (READ_LE_UINT16(&imhd->old.image_count));
+	}
 }
 
 int ScummEngine::whereIsObject(int object) const {
@@ -1373,12 +1376,27 @@ void ScummEngine::setObjectState(int obj, int state, int x, int y) {
 		return;
 	}
 
-	if (x != -1) {
+	if (x != -1 && x != 0x7FFFFFFF) {
 		_objs[i].x_pos = x * 8;
 		_objs[i].y_pos = y * 8;
 	}
 
 	addObjectToDrawQue(i);
+	if (_version >= 7) {
+		int imagecount;
+		if (state == 0xFF) {
+			state = getState(obj);
+			imagecount = getObjectImageCount(obj);
+
+			if (state < imagecount)
+				state++;
+			else
+				state = 1;
+		}
+
+		if (state == 0xFE)
+			state = _rnd.getRandomNumber(getObjectImageCount(obj));
+	}
 	putState(obj, state);
 }
 

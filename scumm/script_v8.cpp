@@ -1501,35 +1501,7 @@ void ScummEngine_v8::o8_drawObject() {
 	int y = pop();
 	int x = pop();
 	int obj = pop();
-	int objnum = getObjectIndex(obj);
-	int imagecount;
-	ObjectData *od;
-
-	if (objnum == -1)
-		return;
-
-	od = &_objs[objnum];
-	if (x != 0x7FFFFFFF) {
-		od->x_pos = x;
-		od->y_pos = y;
-	}
-
-	addObjectToDrawQue(objnum);
-
-	if (state == 0xFF) {
-		state = getState(obj);
-		imagecount = getObjectImageCount(obj);
-
-		if (state < imagecount)
-			state++;
-		else
-			state = 1;
-	}
-
-	if (state == 0xFE)
-		state = _rnd.getRandomNumber(getObjectImageCount(obj));
-
-	putState(obj, state);
+	setObjectState(obj, state, x, y);
 }
 
 } // End of namespace Scumm
