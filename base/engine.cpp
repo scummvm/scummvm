@@ -47,13 +47,14 @@ Engine::~Engine() {
 }
 
 const char *Engine::getSavePath() const {
-	const char *dir = NULL;
 
 #ifdef _WIN32_WCE
-	dir = _gameDataPath;
+	return _gameDataPath;
 #elif defined(__PALM_OS__)
-	dir = SCUMMVM_SAVEPATH;
+	return SCUMMVM_SAVEPATH;
 #else
+
+	const char *dir = NULL;
 
 #if !defined(MACOS_CARBON)
 	dir = getenv("SCUMMVM_SAVEPATH");
@@ -66,9 +67,9 @@ const char *Engine::getSavePath() const {
 	// If no save path was specified, use no directory prefix
 	if (dir == NULL)
 		dir = "";
-#endif
 
 	return dir;
+#endif
 }
 
 void NORETURN CDECL error(const char *s, ...) {
