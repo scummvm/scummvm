@@ -51,6 +51,9 @@ class MusicPlayer : public MidiDriver {
 public:
 	MusicPlayer(MidiDriver *driver);
 	~MusicPlayer();
+
+	bool isPlaying() { return _isPlaying; }
+
 	void setVolume(int volume);
 	int getVolume() { return _masterVolume; }
 
@@ -59,7 +62,7 @@ public:
 	void playMusic();
 	void stopMusic();
 	void setLoop(bool loop) { _looping = loop; }
-	void setPassThrough(bool b)		{ _passThrough = b; }
+	void setPassThrough(bool b) { _passThrough = b; }
 
 	void setGM(bool isGM) { _isGM = isGM; }
 
@@ -110,6 +113,7 @@ public:
 	void setAdlib(bool b)		{ _adlib = b; }
 	bool hasAdlib()			{ return _adlib; }
 	void setPassThrough(bool b)	{ _player->setPassThrough(b); }
+	bool isPlaying(void);
 
 	int play(uint32 music_rn, uint16 flags = MUSIC_DEFAULT);
 	int pause(void);
@@ -122,6 +126,7 @@ private:
 
 	MusicPlayer *_player;
 	PlayingSoundHandle _musicHandle;
+	uint32 _trackNumber;
 
 	static const MUSIC_MIDITABLE _midiTableITECD[26];
 	MUSIC_DIGITABLE _digiTableITECD[27];

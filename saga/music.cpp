@@ -349,6 +349,10 @@ Music::~Music() {
 	delete _player;
 }
 
+bool Music::isPlaying() {
+	return _musicHandle.isActive() || _player->isPlaying();
+}
+
 // The Wyrmkeep release of Inherit The Earth features external MIDI files, so
 // we need a mapping from resource number to filename.
 //
@@ -396,6 +400,12 @@ int Music::play(uint32 music_rn, uint16 flags) {
 	if (!_enabled) {
 		return SUCCESS;
 	}
+
+	if (isPlaying() && _trackNumber == music_rn) {
+		return SUCCESS;
+	}
+
+	_trackNumber = music_rn;
 
 	_player->stopMusic();
 
