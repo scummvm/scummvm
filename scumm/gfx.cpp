@@ -1459,7 +1459,6 @@ static bool calcClipRects(int dst_w, int dst_h, int src_x, int src_y, int src_w,
 	srcRect = Common::Rect(0, 0, src_w - 1, src_h - 1);
 	dstRect = Common::Rect(src_x, src_y, src_x + src_w - 1, src_y + src_h - 1);
 	Common::Rect r3;
-	int diff;
 
 	if (rect) {
 		r3 = *rect;
@@ -1472,31 +1471,9 @@ static bool calcClipRects(int dst_w, int dst_h, int src_x, int src_y, int src_w,
 	} else {
 		r3 = Common::Rect(0, 0, dst_w - 1, dst_h - 1);
 	}
-	diff = dstRect.left - r3.left;
-	if (diff < 0) {
-		srcRect.left -= diff;
-		dstRect.left -= diff;
-	}
-	diff = dstRect.right - r3.right;
-	if (diff > 0) {
-		srcRect.right -= diff;
-		dstRect.right -= diff;
-	}
-	diff = dstRect.top - r3.top;
-	if (diff < 0) {
-		srcRect.top -= diff;
-		dstRect.top -= diff;
-	}
-	diff = dstRect.bottom - r3.bottom;
-	if (diff > 0) {
-		srcRect.bottom -= diff;
-		dstRect.bottom -= diff;
-	}
-	// TODO/FIXME: At this point, unless I am mistaken, srcRect == dstRect.moveTo(0, 0)
-	// As such the code above could be simplified (i.e. srcRect could be removed,
-	// and then the uses of the diff variables can be folded in).
-	// In fact it looks to me as if the code above just does some simple clipping...
-	// Since I don't have the HE games in questions, I can't test this, though.
+	dstRect.clip(r3);
+	srcRect = dstRect;
+	srcRect.moveTo(0, 0);
 	return true;
 }
 

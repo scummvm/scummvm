@@ -1218,35 +1218,13 @@ byte AkosRenderer::codec32(int xmoveCur, int ymoveCur) {
 		dst.left = _actorX + xmoveCur;
 	}
 
-	src.top = src.left = 0;
-	src.right = _width - 1;
-	src.bottom = _height - 1;
-
 	dst.top = _actorY + ymoveCur;
 	dst.right = dst.left + _width - 1;
 	dst.bottom = dst.top + _height - 1;
 
-	int diff;
-	diff = dst.left - _clipOverride.left;
-	if (diff < 0) {
-		src.left -= diff;
-		dst.left -= diff;
-	}
-	diff = dst.right - _clipOverride.right;
-	if (diff > 0) {
-		src.right -= diff;
-		dst.right -= diff;
-	}
-	diff = dst.top - _clipOverride.top;
-	if (diff < 0) {
-		src.top -= diff;
-		dst.top -= diff;
-	}
-	diff = dst.bottom - _clipOverride.bottom;
-	if (diff > 0) {
-		src.bottom -= diff;
-		dst.bottom -= diff;
-	}	
+	dst.clip(_clipOverride);
+	src = dst;
+	src.moveTo(0, 0);
 
 	_vm->markRectAsDirty(kMainVirtScreen, dst);
 
