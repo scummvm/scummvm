@@ -365,4 +365,6 @@ char *strdup(const char *s);
 /* Initialized operator new */
 void * operator new(size_t size);
 
+void operator delete(void *ptr);
+
 #endif

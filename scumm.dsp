@@ -412,10 +412,6 @@ SOURCE=.\scumm\string.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\scumm\sys.cpp
-# End Source File
-# Begin Source File
-
 SOURCE=.\scumm\vars.cpp
 # End Source File
 # Begin Source File

@@ -144,3 +144,12 @@ int main(int argc, char *argv[])
 	
 	return 0;
 }
+
+void *operator new(size_t size) {
+	return calloc(size, 1);
+}
+
+void operator delete(void *ptr) {
+	free(ptr);
+}
+

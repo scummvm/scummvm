@@ -1561,3 +1561,7 @@ void Scumm::setupGUIColors() {
 		_newgui->_shadowcolor = _gui->_shadowcolor;
 	}
 }
+
+bool Scumm::checkFixedDisk() {
+	return true;
+}
