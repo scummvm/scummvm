@@ -934,12 +934,7 @@ byte AkosRenderer::codec16(int xmoveCur, int ymoveCur) {
 	Common::Rect clip;
 	int32 maxw, maxh;
 	int32 skip_x, skip_y, cur_x, cur_y;
-	byte transparency;
-	//FIXME There should be better method to determine transparency in HE games
-	if (_vm->_features & GF_HUMONGOUS) {
-		transparency = (_vm->_gameId == GID_FBEAR) ? 5 : 0;
-	} else
-		transparency = 255;
+	byte transparency = (_vm->_features & GF_HUMONGOUS) ? palette[0] : 255;
 
 	if (_actorHitMode) {
 		warning("codec16: _actorHitMode not yet implemented");

@@ -290,7 +290,6 @@ SCUMM
   - Document and fix AKOS differences in Humongous Entertainment games
   - Support various newer Humongous Entertainment games
 * Humongous entertainment >= v7 titles:
-  - Determine when AKOS codec16 should use 0 or 255 for transparency colour
   - Fix palette for AKOS (seems to be codec 1 only?)
   - Fix inventory flashing at times
   - Add support for PCM music
