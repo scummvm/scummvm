@@ -49,7 +49,7 @@ static const char USAGE_STRING[] =
 	"\t-e<mode>   - set music engine (see readme.txt for details)\n"
 	"\t-r         - emulate roland mt32 instruments\n"
 	"\t-f         - fullscreen mode\n"
-	"\t-g<mode>   - graphics mode (normal,2x,3x,2xsai,super2xsai,supereagle.advmame2x)\n"
+	"\t-g<mode>   - graphics mode (normal,2x,3x,2xsai,super2xsai,supereagle,advmame2x)\n"
 	"\t-a         - specify game is amiga version\n"
 #if defined(UNIX) || defined(UNIX_X11)
 	"\t-w[<file>] - write to config file [~/.scummvmrc]\n"
@@ -92,15 +92,23 @@ void GameDetector::updateconfig()
                         _mt32emulate = true;
                 else
                         _mt32emulate = false;
+	
+	if ((val = scummcfg->get("nosubtitles")))
+		if (!scumm_stricmp(val, "true"))
+			_noSubtitles = true;
+		else
+			_noSubtitles = false;
 
         if ((val = scummcfg->get("music_driver")))
                 if (!parseMusicDriver(val)) {
+			printf("Error in the config file: invalid music_driver.\n");
                         printf(USAGE_STRING);
                         exit(-1);
                 }
 
         if ((val = scummcfg->get("gfx_mode")))
                 if ((_gfx_mode = parseGraphicsMode(val)) == -1) {
+		    printf("Error in the config file: invalid gfx_mode.\n");
                     printf(USAGE_STRING);
                     exit(-1);
                 }
@@ -169,7 +177,7 @@ void GameDetector::parseCommandLine(int argc, char **argv)
 					_gfx_mode = parseGraphicsMode(s);
 					if (_gfx_mode == -1)
 						goto ShowHelpAndExit;
-					scummcfg->set("gfx_mode", _gfx_mode, "scummvm");
+					scummcfg->set("gfx_mode", s, "scummvm");
 					goto NextArg;
 				case 'l':
 				    s = GET_VALUE();
