@@ -38,13 +38,13 @@ byte *SimonEngine::dumpOpcode(byte *p) {
 	if (opcode == 255)
 		return NULL;
 	if (_game & GF_SIMON2 && _game & GF_TALKIE) {
-	st = s = simon2talkie_opcode_name_table[opcode];
+		st = s = simon2talkie_opcode_name_table[opcode];
 	} else if (_game & GF_TALKIE) {
-	st = s = simon1talkie_opcode_name_table[opcode];
+		st = s = simon1talkie_opcode_name_table[opcode];
 	} else if (_game & GF_SIMON2) {
-	st = s = simon2dos_opcode_name_table[opcode];
+		st = s = simon2dos_opcode_name_table[opcode];
 	} else {
-	st = s = simon1dos_opcode_name_table[opcode];
+		st = s = simon1dos_opcode_name_table[opcode];
 	}
 	if (s == NULL) {
 		error("INVALID OPCODE %d\n", opcode);
@@ -187,9 +187,9 @@ void SimonEngine::dump_video_script(byte *src, bool one_opcode_only) {
 		}
 
 		if (!(_game & GF_SIMON2)) {
-		strn = str = simon1_video_opcode_name_table[opcode];
+			strn = str = simon1_video_opcode_name_table[opcode];
 		} else {
-		strn = str = simon2_video_opcode_name_table[opcode];
+			strn = str = simon2_video_opcode_name_table[opcode];
 		}
 		
 		while (*strn != '|')
