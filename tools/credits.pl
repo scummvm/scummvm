@@ -98,9 +98,7 @@ sub begin_credits {
 	if ($mode eq "TEXT") {
 		#print html_entities_to_ascii($title)."\n";
 	} elsif ($mode eq "RTF") {
-		# TODO: The following is somewhat Mac/Cocoa specific and could probably
-		# be changed to be more portable... ?
-		print '{\rtf1\mac\ansicpg10000\cocoartf102' . "\n";
+		print '{\rtf1\mac\ansicpg10000' . "\n";
 		print '{\fonttbl\f0\fswiss\fcharset77 Helvetica-Bold;\f1\fswiss\fcharset77 Helvetica;}' . "\n";
 		print '{\colortbl;\red255\green255\blue255;\red0\green128\blue0;}' . "\n";
 		print '\vieww6920\viewh15480\viewkind0' . "\n";
@@ -153,9 +151,6 @@ sub begin_section {
 		print '\pard\qc' . "\n";
 		print '\f0\b\fs28 \cf2 ' . $title . "\n";
 		print '\f1\b0\fs24 \cf0 \\' . "\n";
-#		print '\pard\tx565\li574\fi-574\ql\qnatural' . "\n";
-		# Switch back to base font
-		print '\cf0' . "\n";
 	} elsif ($mode eq "CPP") {
 		$title = html_entities_to_ascii($title);
 		print '"\\\\C\\\\c1""'.$title.':",' . "\n";
