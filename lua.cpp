@@ -646,8 +646,8 @@ static void SetActorFollowBoxes() {
 }
 
 static void SetActorConstrain() {
-	Actor *act = check_actor(1);
-	bool constrain = !lua_isnil(lua_getparam(2));
+//	Actor *act = check_actor(1);
+//	bool constrain = !lua_isnil(lua_getparam(2));
 
 	// that below should be enabled, but for now it's disabled realated to 
 	// above func SetActorFollowBoxes.
