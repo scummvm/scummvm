@@ -748,8 +748,6 @@ void SimonEngine::vc_10_draw() {
 
 		vc_10_skip_cols(&state);
 
-		/* XXX: implement transparency */
-
 		w = 0;
 		do {
 			mask = vc_10_depack_column(&state);	/* esi */
@@ -757,15 +755,33 @@ void SimonEngine::vc_10_draw() {
 			dst = state.surf_addr + w * 2;	/* edi */
 
 			h = state.draw_height;
-			do {
-				if (mask[0] & 0xF0)
-					dst[0] = src[0];
-				if (mask[0] & 0x0F)
-					dst[1] = src[1];
-				mask++;
-				dst += state.surf_pitch;
-				src += state.surf2_pitch;
-			} while (--h);
+			if (!(_game & GF_SIMON2) && vc_get_bit(88)) {
+				/* transparency */
+				do {
+					if (mask[0] & 0xF0) {
+						if ((dst[0] & 0x0F0) == 0x20)
+							dst[0] = src[0];
+					}
+					if (mask[0] & 0x0F) {
+						if ((dst[1] & 0x0F0) == 0x20)
+							dst[1] = src[1];
+					}
+					mask++;
+					dst += state.surf_pitch;
+					src += state.surf2_pitch;
+				} while (--h);
+			} else {
+				/* no transparency */
+				do {
+					if (mask[0] & 0xF0)
+						dst[0] = src[0];
+					if (mask[0] & 0x0F)
+						dst[1] = src[1];
+					mask++;
+					dst += state.surf_pitch;
+					src += state.surf2_pitch;
+				} while (--h);
+			}
 		} while (++w != state.draw_width);
 
 		/* vc_10_helper_5 */
