@@ -383,12 +383,6 @@
 			RelativePath="..\..\saga\transitions.cpp">
 		</File>
 		<File
-			RelativePath="..\..\saga\ys_binread.cpp">
-		</File>
-		<File
-			RelativePath="..\..\saga\ys_binwrite.cpp">
-		</File>
-		<File
 			RelativePath="..\..\saga\ys_dl_list.cpp">
 		</File>
 		<File
