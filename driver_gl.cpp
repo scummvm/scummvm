@@ -154,9 +154,9 @@ void Driver::drawModelPolygonPointsDebug(const Model::Mesh *model) {
 	for (i = 0; i < model->_numFaces; i++) {
 		Vector3d v;
 		Matrix4 tempMatrix = model->_matrix;
-		float* pVertices;
+		float *pVertices;
 
-		for(j = 0; j < model->_faces[i]._numVertices; j++ ) {
+		for (j = 0; j < model->_faces[i]._numVertices; j++) {
 			pVertices = model->_vertices + 3 * model->_faces[i]._vertices[j];
 
 			v.set(*(pVertices), *(pVertices + 1), *(pVertices + 2));
@@ -179,8 +179,10 @@ void Driver::drawModelFace(const Model::Face *face, float *vertices, float *vert
 	glBegin(GL_POLYGON);
 	for (int i = 0; i < face->_numVertices; i++) {
 		glNormal3fv(vertNormals + 3 * face->_vertices[i]);
+
 		if (face->_texVertices != NULL)
 			glTexCoord2fv(textureVerts + 2 * face->_texVertices[i]);
+
 		glVertex3fv(vertices + 3 * face->_vertices[i]);
 	}
 	glEnd();
@@ -203,6 +205,7 @@ void Driver::drawHierachyNode(const Model::HierNode *node) {
 			glMatrixMode(GL_MODELVIEW);
 			glPopMatrix();
 		}
+
 		if (node->_child != NULL) {
 			node->_child->draw();
 			glMatrixMode(GL_MODELVIEW);
