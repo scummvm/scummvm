@@ -3011,7 +3011,9 @@ void ScummEngine_v6::shuffleArray(int num, int minIdx, int maxIdx) {
 }
 
 void ScummEngine_v6::o6_shuffle() {
-	shuffleArray(fetchScriptWord(), pop(), pop());
+	int a = pop();
+	int b = pop();
+	shuffleArray(fetchScriptWord(), a, b);
 }
 
 void ScummEngine_v6::o6_pickVarRandom() {
