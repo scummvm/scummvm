@@ -746,10 +746,7 @@ void CharsetRenderer::restoreCharsetBg() {
 		byte *screenBuf = vs->getPixels(0, 0);
 
 		if (vs->hasTwoBuffers && _vm->_currentRoom != 0 && _vm->isLightOn()) {
-			if (vs->number == kMainVirtScreen) {
-				// Clean out the charset mask
-				memset(_vm->gdi._textSurface.pixels, CHARSET_MASK_TRANSPARENCY, _vm->gdi._textSurface.pitch * _vm->gdi._textSurface.h);
-			} else {
+			if (vs->number != kMainVirtScreen) {
 				// Restore from back buffer
 				const byte *backBuf = vs->getBackPixels(0, 0);
 				blit(screenBuf, vs->pitch, backBuf, vs->pitch, vs->w, vs->h);
@@ -757,6 +754,11 @@ void CharsetRenderer::restoreCharsetBg() {
 		} else {
 			// Clear area
 			memset(screenBuf, 0, vs->h * vs->pitch);
+		}
+
+		if (vs->hasTwoBuffers) {
+			// Clean out the charset mask
+			memset(_vm->gdi._textSurface.pixels, CHARSET_MASK_TRANSPARENCY, _vm->gdi._textSurface.pitch * _vm->gdi._textSurface.h);
 		}
 	}
 }
