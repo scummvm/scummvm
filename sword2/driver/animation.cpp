@@ -168,7 +168,7 @@ void MoviePlayer::drawTextObject(AnimationState *anim, MovieTextObject *obj) {
  * @param musicOut lead-out music
  */
 
-int32 MoviePlayer::play(const char *filename, MovieTextObject *text[], byte *musicOut) {
+int32 MoviePlayer::play(const char *filename, MovieTextObject *text[], byte *musicOut, uint32 musicOutLen) {
 	// This happens if the user quits during the "eye" smacker
 	if (_vm->_quit)
 		return RD_OK;
@@ -188,7 +188,7 @@ int32 MoviePlayer::play(const char *filename, MovieTextObject *text[], byte *mus
 	if (!anim->init(filename)) {
 		delete anim;
 		// Missing Files? Use the old 'Narration Only' hack
-		playDummy(filename, text, musicOut);
+		playDummy(filename, text, musicOut, musicOutLen);
 		return RD_OK;
 	}
 
@@ -253,7 +253,7 @@ int32 MoviePlayer::play(const char *filename, MovieTextObject *text[], byte *mus
 		frameCounter++;
 
 		if (frameCounter == leadOutFrame && musicOut)
-			_vm->_sound->playFx(0, musicOut, 0, 0, RDSE_FXLEADOUT);
+			_vm->_sound->playFx(0, musicOutLen, musicOut, 0, 0, RDSE_FXLEADOUT);
 
 		OSystem::Event event;
 		while (_sys->pollEvent(event)) {
@@ -334,7 +334,7 @@ int32 MoviePlayer::play(const char *filename, MovieTextObject *text[], byte *mus
 	return RD_OK;
 #else
 	// No MPEG2? Use the old 'Narration Only' hack
-	playDummy(filename, text, musicOut);
+	playDummy(filename, text, musicOut, musicOutLen);
 	return RD_OK;
 #endif
 }
@@ -344,7 +344,7 @@ int32 MoviePlayer::play(const char *filename, MovieTextObject *text[], byte *mus
  * are missing.
  */
 
-int32 MoviePlayer::playDummy(const char *filename, MovieTextObject *text[], byte *musicOut) {
+int32 MoviePlayer::playDummy(const char *filename, MovieTextObject *text[], byte *musicOut, uint32 musicOutLen) {
 	int frameCounter = 0, textCounter = 0;
 	if (text) {
 		byte oldPal[256 * 4];
@@ -484,7 +484,7 @@ int32 MoviePlayer::playDummy(const char *filename, MovieTextObject *text[], byte
 		// that have subtitles.
 
 		if (!skipCutscene && musicOut) {
-			_vm->_sound->playFx(0, musicOut, 0, 0, RDSE_FXLEADOUT);
+			_vm->_sound->playFx(0, musicOutLen, musicOut, 0, 0, RDSE_FXLEADOUT);
 			_vm->_sound->waitForLeadOut();
 		}
 

@@ -896,55 +896,6 @@ int32 Sound::playCompSpeech(uint32 speechid, uint8 vol, int8 pan) {
 // ----------------------------------------------------------------------------
 
 /**
- * Retrieve information about an in-memory WAV file.
- * @param data The WAV data
- * @param wavInfo Pointer to the WavInfo structure to fill with information.
- * @return True if the data appears to be a WAV file, otherwise false.
- */
-
-bool Sound::getWavInfo(byte *data, WavInfo *wavInfo) {
-	uint32 wavLength;
-	uint32 offset;
-
-	if (READ_UINT32(data) != MKID('RIFF')) {
-		warning("getWavInfo: No 'RIFF' header");
-		return false;
-	}
-
-	wavLength = READ_LE_UINT32(data + 4) + 8;
-
-	if (READ_UINT32(data + 8) != MKID('WAVE')) {
-		warning("getWavInfo: No 'WAVE' header");
-		return false;
-	}
-
-	if (READ_UINT32(data + 12) != MKID('fmt ')) {
-		warning("getWavInfo: No 'fmt' header");
-		return false;
-	}
-
-	wavInfo->channels = READ_LE_UINT16(data + 22);
-	wavInfo->rate = READ_LE_UINT16(data + 24);
-
-	offset = READ_LE_UINT32(data + 16) + 20;
-
-	// It's almost certainly a WAV file, but we still need to find its
-	// 'data' chunk.
-
-	while (READ_UINT32(data + offset) != MKID('data')) {
-		if (offset >= wavLength) {
-			warning("getWavInfo: Can't find 'data' chunk");
-			return false;
-		}
-		offset += (READ_LE_UINT32(data + offset + 4) + 8);
-	}
-
-	wavInfo->samples = READ_LE_UINT32(data + offset + 4);
-	wavInfo->data = data + offset + 8;
-	return true;
-}
-
-/**
  * @return the index of the sound effect with the ID passed in.
  */
 
@@ -1112,7 +1063,7 @@ int32 Sound::stopFx(int32 id) {
  * @warning Zero is not a valid id
  */
 
-int32 Sound::playFx(int32 id, byte *data, uint8 vol, int8 pan, uint8 type) {
+int32 Sound::playFx(int32 id, uint32 len, byte *data, uint8 vol, int8 pan, uint8 type) {
 	if (!_soundOn)
 		return RD_OK;
 
@@ -1128,19 +1079,11 @@ int32 Sound::playFx(int32 id, byte *data, uint8 vol, int8 pan, uint8 type) {
 		soundType = SoundMixer::kMusicAudioDataType;
 	}
 
-	WavInfo wavInfo;
-
-	// TODO: use loadWAVFromStream to load the WAVE data!
-	/*
+	Common::MemoryReadStream stream(data, len);
 	int rate, size;
-	bye flags;
-	// FIXME: Instead of passing an arbitrary large size for the memory stream
-	// here, we should instead determine the real size of the memory area.
-	Common::MemoryReadStream stream(data, 10000000);
-	isValidWAV = loadWAVFromStream(stream, size, rate, flags);
-	*/
+	byte flags;
 
-	if (!getWavInfo(data, &wavInfo)) {
+	if (!loadWAVFromStream(stream, size, rate, flags)) {
 		warning("playFx: Not a valid WAV file");
 		return RDERR_INVALIDWAV;
 	}
@@ -1176,12 +1119,6 @@ int32 Sound::playFx(int32 id, byte *data, uint8 vol, int8 pan, uint8 type) {
 	if (_fx[fxi]._handle.isActive())
 		return RDERR_FXALREADYOPEN;
 
-	uint32 flags = SoundMixer::FLAG_16BITS | SoundMixer::FLAG_LITTLE_ENDIAN;
-
-	if (wavInfo.channels == 2)
-		flags |= SoundMixer::FLAG_STEREO;
-
-
 	if (type == RDSE_FXLOOP)
 		flags |= SoundMixer::FLAG_LOOP;
 	else 
@@ -1191,7 +1128,7 @@ int32 Sound::playFx(int32 id, byte *data, uint8 vol, int8 pan, uint8 type) {
 
 	int8 p = _panTable[pan + 16];
 
-	_vm->_mixer->playRaw(&_fx[fxi]._handle, wavInfo.data, wavInfo.samples, wavInfo.rate, flags, -1, volume, p, 0, 0, soundType);
+	_vm->_mixer->playRaw(&_fx[fxi]._handle, data + stream.pos(), size, rate, flags, -1, volume, p, 0, 0, soundType);
 
 	return RD_OK;
 }

@@ -199,61 +199,19 @@ int SndRes::loadVocSound(byte *snd_res, size_t snd_res_len, SOUNDBUFFER *snd_buf
 }
 
 int SndRes::loadWavSound(byte *snd_res, size_t snd_res_len, SOUNDBUFFER *snd_buf_i) {
-	// TODO: This function should, perhaps, be made more robust.
-
-	// TODO: use loadWAVFromStream to load the WAVE data!
-	/*
+	Common::MemoryReadStream readS(snd_res, snd_res_len);
 	int rate, size;
-	bye flags;
-	bool isValidWAV;
-	Common::MemoryReadStream stream(snd_res, snd_res_len);
-	isValidWAV = loadWAVFromStream(stream, size, rate, flags);
-	*/
+	byte flags;
 
-	MemoryReadStreamEndian readS(snd_res, snd_res_len, IS_BIG_ENDIAN);
-
-	byte buf[4];
-
-	readS.read(buf, sizeof(buf));
-	if (memcmp(buf, "RIFF", sizeof(buf)) != 0) {
+	if (!loadWAVFromStream(readS, size, rate, flags)) {
 		return FAILURE;
 	}
 
-	readS.readUint32();
-
-	readS.read(buf, sizeof(buf));
-	if (memcmp(buf, "WAVE", sizeof(buf)) != 0) {
-		return FAILURE;
-	}
-
-	readS.read(buf, sizeof(buf));
-	if (memcmp(buf, "fmt ", sizeof(buf)) != 0) {
-		return FAILURE;
-	}
-
-	uint32 len = readS.readUint32();
-	uint32 pos = readS.pos();
-
-	readS.readUint16();
-
-	snd_buf_i->s_stereo = (readS.readUint16() == 2) ? 1 : 0;
-	snd_buf_i->s_freq = readS.readUint16();
+	snd_buf_i->s_stereo = ((flags & SoundMixer::FLAG_STEREO) != 0);
+	snd_buf_i->s_freq = rate;
 	snd_buf_i->s_samplebits = 16;
 	snd_buf_i->s_signed = 1;
-
-	readS.seek(pos + len);
-
-	for (;;) {
-		readS.read(buf, sizeof(buf));
-		if (memcmp(buf, "data", sizeof(buf)) == 0) {
-			break;
-		}
-
-		len = readS.readUint32();
-		readS.seek(len, SEEK_CUR);
-	}
-
-	snd_buf_i->s_buf_len = readS.readUint32();
+	snd_buf_i->s_buf_len = size;
 
 	byte *data = (byte *)malloc(snd_buf_i->s_buf_len);
 	if (!data) {

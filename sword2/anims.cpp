@@ -462,18 +462,16 @@ void Logic::clearSequenceSpeech(MovieTextObject *sequenceText[]) {
 }
 
 int32 Logic::fnSmackerLeadIn(int32 *params) {
-	byte *leadIn;
-	uint32 rv;
-
 	// params:	0 id of lead-in music
-	leadIn = _vm->_resman->openResource(params[0]);
+	byte *leadIn = _vm->_resman->openResource(params[0]);
 
 	StandardHeader *header = (StandardHeader *) leadIn;
 	assert(header->fileType == WAV_FILE);
 
 	leadIn += sizeof(StandardHeader);
-	// wav data gets copied to sound memory
-	rv = _vm->_sound->playFx(0, leadIn, 0, 0, RDSE_FXLEADIN);
+
+	uint32 len = _vm->_resman->fetchLen(params[0]) - sizeof(StandardHeader);
+	uint32 rv = _vm->_sound->playFx(0, len, leadIn, 0, 0, RDSE_FXLEADIN);
 
 	if (rv)
 		debug(5, "SFX ERROR: playFx() returned %.8x", rv);
@@ -500,6 +498,7 @@ int32 Logic::fnPlaySequence(int32 *params) {
 	char filename[30];
 	MovieTextObject *sequenceSpeechArray[MAX_SEQUENCE_TEXT_LINES + 1];
 	byte *leadOut = NULL;
+	uint32 leadOutLen = 0;
 
 	// The original code had some #ifdef blocks for skipping or muting the
 	// cutscenes - fondly described as "the biggest fudge in the history
@@ -529,9 +528,9 @@ int32 Logic::fnPlaySequence(int32 *params) {
 		assert(header->fileType == WAV_FILE);
 
 		leadOut += sizeof(StandardHeader);
-	}
 
-	// play the smacker
+		leadOutLen = _vm->_resman->fetchLen(_smackerLeadOut) - sizeof(StandardHeader);
+	}
 
 	// don't want to carry on streaming game music when smacker starts!
 	fnStopMusic(NULL);
@@ -543,9 +542,9 @@ int32 Logic::fnPlaySequence(int32 *params) {
  	uint32 rv;
 
 	if (_sequenceTextLines && !_scriptVars[DEMO])
-		rv = player.play(filename, sequenceSpeechArray, leadOut);
+		rv = player.play(filename, sequenceSpeechArray, leadOut, leadOutLen);
 	else
-		rv = player.play(filename, NULL, leadOut);
+		rv = player.play(filename, NULL, leadOut, leadOutLen);
 
 	// check the error return-value
 	if (rv)

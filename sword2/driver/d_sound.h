@@ -41,13 +41,6 @@ enum {
 
 extern void sword2_sound_handler(void *refCon);
 
-struct WavInfo {
-	uint8 channels;
-	uint16 rate;
-	uint32 samples;
-	uint8 *data;
-};
-
 struct FxHandle {
 	int32 _id;
 	bool _paused;
@@ -97,8 +90,6 @@ public:
 
 	void buildPanTable(bool reverse);
 
-	bool getWavInfo(uint8 *data, WavInfo *wavInfo);
-
 	void muteMusic(bool mute);
 	bool isMusicMute(void);
 	void pauseMusic(void);
@@ -126,7 +117,7 @@ public:
 	void pauseFxForSequence(void);
 	void unpauseFx(void);
 	bool isFxPlaying(int32 id);
-	int32 playFx(int32 id, uint8 *data, uint8 vol, int8 pan, uint8 type);
+	int32 playFx(int32 id, uint32 len, uint8 *data, uint8 vol, int8 pan, uint8 type);
 	int32 stopFx(int32 id);
 	void clearAllFx(void);
 };

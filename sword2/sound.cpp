@@ -128,7 +128,9 @@ void Sword2Engine::triggerFx(uint8 i) {
 	else
 		type = RDSE_FXSPOT;
 
-	uint32 rv = _sound->playFx(i + 1, fxQueue[i].data, fxQueue[i].volume, fxQueue[i].pan, type);
+	uint32 len = _resman->fetchLen(fxQueue[i].resource) - sizeof(StandardHeader);
+	uint32 rv = _sound->playFx(i + 1, len, fxQueue[i].data,	fxQueue[i].volume, fxQueue[i].pan, type);
+
 	if (rv)
 		debug(5, "SFX ERROR: playFx() returned %.8x", rv);
 }
