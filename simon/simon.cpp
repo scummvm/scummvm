@@ -172,6 +172,14 @@ Engine *Engine_SIMON_create(GameDetector *detector, OSystem *syst) {
 SimonState::SimonState(GameDetector *detector, OSystem *syst)
 	: Engine(detector, syst), midi (syst) {
 	MidiDriver *driver = detector->createMidi();
+	
+	_subroutine_list = 0;
+	_subroutine_list_org = 0;
+	
+	_first_time_struct = 0;
+	_pending_delete_time_event = 0;
+	
+	_dump_file = 0;
 
 	_dummy_item_1 = new Item();
 	_dummy_item_2 = new Item();
