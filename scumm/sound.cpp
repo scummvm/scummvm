@@ -80,7 +80,7 @@ void Sound::processSoundQues() {
 	int i = 0, d, num;
 	int data[16];
 
-//	processSfxQueues();
+	processSfxQueues();
 
 	if (_scumm->_features & GF_DIGI_IMUSE)
 		return;
