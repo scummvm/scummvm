@@ -875,7 +875,7 @@ void ScummEngine_v8::o8_roomOps() {
 		c = pop();
 		b = pop();
 		a = pop();
-		warning("o8_roomOps: unimplemented case SO_ROOM_TRANSFORM(%d,%d,%d,%d)", a, b, c, d);
+		palManipulateInit(a, b, c, d);
 		break;
 	case 0x5A:		// SO_ROOM_CYCLE_SPEED Set palette cycling speed
 	case 0x5B:		// SO_ROOM_COPY_PALETTE Copy palette
