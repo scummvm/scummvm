@@ -881,7 +881,7 @@ void Scumm::clearDrawObjectQueue() {
 	_drawObjectQueNr = 0;
 }
 
-byte *Scumm::getObjOrActorName(int obj) {
+const byte *Scumm::getObjOrActorName(int obj) {
 	byte *objptr;
 	int i;
 
@@ -915,50 +915,7 @@ byte *Scumm::getObjOrActorName(int obj) {
 		return (objptr + offset);
 	}
 
-#if 0
 	return findResourceData(MKID('OBNA'), objptr);
-#else
-	// FIXME: we can't use findResourceData anymore, because it returns const
-	// data, while this function *must* return a non-const pointer. That is so
-	// because in o2_setObjectName / o5_setObjectName we directly modify this
-	// data. Now, we could add a non-const version of findResourceData, too
-	// (C++ makes that easy); but this here is really the *only* place in all
-	// of ScummVM where it wold be needed! That seems kind of a waste...
-	//
-	// So for now, I duplicate some code from findResourceData / findResource
-	// here. However, a much nicer solution might be (with stress on "might")
-	// to use the same technique as in V6 games: that is, use a seperate
-	// resource for changed names. That would be the cleanest solution, but
-	// might proof to be infeasible, as it might lead to unforseen regressions.
-	
-	uint32 tag = MKID('OBNA');
-	byte *searchin = objptr;
-	uint32 curpos, totalsize, size;
-
-	assert(searchin);
-
-	searchin += 4;
-	totalsize = READ_BE_UINT32_UNALIGNED(searchin);
-	curpos = 8;
-	searchin += 4;
-
-	while (curpos < totalsize) {
-		if (READ_UINT32_UNALIGNED(searchin) == tag)
-			return searchin + _resourceHeaderSize;
-
-		size = READ_BE_UINT32_UNALIGNED(searchin + 4);
-		if ((int32)size <= 0) {
-			error("(%c%c%c%c) Not found in %d... illegal block len %d",
-						tag & 0xFF, (tag >> 8) & 0xFF, (tag >> 16) & 0xFF, (tag >> 24) & 0xFF, 0, size);
-			return NULL;
-		}
-
-		curpos += size;
-		searchin += size;
-	}
-
-	return NULL;
-#endif
 }
 
 uint32 Scumm::getOBCDOffs(int object) {

@@ -1879,33 +1879,81 @@ void Scumm_v5::o5_setObjectName() {
 	if (obj < _numActors)
 		error("Can't set actor %d name with new-name-of", obj);
 
-	if (!getOBCDFromObject(obj)) {
+	// TODO: Would be nice if we used rtObjectName resource for pre-V6
+	// games, too. The only problem with that which I can see is that this
+	// would break savegames. I.e. it would require yet another change to
+	// the save/load system.
+
+	byte *objptr;
+	objptr = getOBCDFromObject(obj);
+	if (objptr == NULL) {
 		// FIXME: Bug 587553. This is an odd one and looks more like
 		// an actual bug in the original script. Usually we would error
 		warning("Can't find OBCD to rename object %d to %s", obj, work);
 		return;
 	}
 
-	name = getObjOrActorName(obj);
-	if (name == NULL)
-		return;	// Silently abort
-
 	if (_features & GF_SMALL_HEADER) {
-		// FIXME this is hack to make MonkeyVGA work. needed at least for the german
-		// version but possibly for others as well. There is no apparent other
-		// way to determine the available space that works in all cases...
-		byte *objptr;
 		byte offset = 0;
 
-		objptr = getOBCDFromObject(obj);
 		if (_features & GF_OLD_BUNDLE)
 			offset = *(objptr + 16);
 		else
 			offset = READ_LE_UINT16(objptr + 18);
+
 		size = READ_LE_UINT16(objptr) - offset;
+		name = objptr + offset;
 	} else {
+		name = 0;
+#if 0
+		name = findResourceData(MKID('OBNA'), objptr);
+#else
+		// FIXME: we can't use findResourceData anymore, because it returns const
+		// data, while this function *must* return a non-const pointer. That is so
+		// because in o2_setObjectName / o5_setObjectName we directly modify this
+		// data. Now, we could add a non-const version of findResourceData, too
+		// (C++ makes that easy); but this here is really the *only* place in all
+		// of ScummVM where it wold be needed! That seems kind of a waste...
+		//
+		// So for now, I duplicate some code from findResourceData / findResource
+		// here. However, a much nicer solution might be (with stress on "might")
+		// to use the same technique as in V6 games: that is, use a seperate
+		// resource for changed names. That would be the cleanest solution, but
+		// might proof to be infeasible, as it might lead to unforseen regressions.
+		
+		uint32 tag = MKID('OBNA');
+		byte *searchin = objptr;
+		uint32 curpos, totalsize;
+	
+		assert(searchin);
+	
+		searchin += 4;
+		totalsize = READ_BE_UINT32_UNALIGNED(searchin);
+		curpos = 8;
+		searchin += 4;
+	
+		while (curpos < totalsize) {
+			if (READ_UINT32_UNALIGNED(searchin) == tag) {
+				name = searchin + _resourceHeaderSize;
+				break;
+			}
+	
+			size = READ_BE_UINT32_UNALIGNED(searchin + 4);
+			if ((int32)size <= 0) {
+				error("(%c%c%c%c) Not found in %d... illegal block len %d",
+							tag & 0xFF, (tag >> 8) & 0xFF, (tag >> 16) & 0xFF, (tag >> 24) & 0xFF, 0, size);
+			}
+	
+			curpos += size;
+			searchin += size;
+		}
+#endif
 		size = getResourceDataSize(name);
 	}
+	
+	if (name == 0)
+		return;		// Silently bail out
+	
 
 	if (i >= size) {
 		warning("New name of object %d too long (old *%s* new *%s*)", obj, name, work);

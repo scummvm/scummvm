@@ -683,7 +683,7 @@ public:
 	int getObjectOrActorXY(int object, int &x, int &y);	// Used in actor.cpp, hence public
 protected:
 	int getObjActToObjActDist(int a, int b); // Not sure how to handle
-	byte *getObjOrActorName(int obj);		 // these three..
+	const byte *getObjOrActorName(int obj);		 // these three..
 
 	void addObjectToDrawQue(int object);
 	void clearDrawObjectQueue();

@@ -1316,9 +1316,18 @@ void Scumm_v2::o2_setObjectName() {
 	if (obj < _numActors)
 		error("Can't set actor %d name with new-name-of", obj);
 
-	name = getObjOrActorName(obj);
-	if (name == NULL)
-		return;	// Silently abort
+	// TODO: Would be nice if we used rtObjectName resource for pre-V6
+	// games, too. The only problem with that which I can see is that this
+	// would break savegames. I.e. it would require yet another change to
+	// the save/load system.
+
+	// FIXME: This is rather nasty code.
+	// Find the object name in the OBCD resource.
+	byte *objptr;
+	objptr = getOBCDFromObject(obj);
+	if (objptr == NULL)
+		return;	// Silently fail for now
+	name = objptr + *(objptr + 14);
 
 	while(name[size++])
 		;

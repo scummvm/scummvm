@@ -675,7 +675,7 @@ void Scumm::addVerbToStack(int var)
 void Scumm::addNameToStack(int var)
 {
 	int num;
-	byte *ptr = 0;
+	const byte *ptr = 0;
 
 	num = readVar(var);
 	if (num)
