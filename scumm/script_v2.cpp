@@ -871,7 +871,7 @@ void Scumm_v2::o2_ifClassOfIs() {
 	int act = getVarOrDirectWord(0x80);
 	int clsop = getVarOrDirectByte(0x40);
 
-	if (getObjectIndex(act) != 0xFF) {
+	if (getObjectIndex(act) == -1) {
 		o5_jumpRelative();
 		return;
 	}
