@@ -674,7 +674,7 @@ protected:
 #endif
 
 	const OpcodeEntryV72he *_opcodesV72he;
-	WizImage _wizImages[20];
+	WizImage _wizImages[255];
 	uint16 _wizImagesNum;
 
 public:
