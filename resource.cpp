@@ -113,13 +113,14 @@ Block *ResourceLoader::getFileBlock(const char *filename) const {
     return l->getFileBlock(filename);
 }
 
-//std::FILE *ResourceLoader::openNewStream(const char *filename) const {
-//  const Lab *l = findFile(filename);
-//  if (l == NULL)
-//    return NULL;
-//  else
-//    return l->openNewStream(filename);
-//}
+std::FILE *ResourceLoader::openNewStream(const char *filename) const {
+  const Lab *l = findFile(filename);
+
+  if (l == NULL)
+    return NULL;
+  else
+    return l->openNewStream(filename);
+}
 
 int ResourceLoader::fileLength(const char *filename) const {
   const Lab *l = findFile(filename);
