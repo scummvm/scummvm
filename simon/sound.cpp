@@ -387,6 +387,9 @@ void SimonSound::readSfxFile(const char *filename, const char *gameDataPath) {
 		}
 	}
 
+	if (_effects)
+		delete _effects;
+
 	if (_game == GAME_SIMON1CD32) {
 		_effects = new VocSound(_mixer, file, 0, SOUND_BIG_ENDIAN);
 	} else
