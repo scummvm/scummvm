@@ -224,15 +224,18 @@ void NewGui::runLoop() {
 #pragma mark -
 
 void NewGui::saveState() {
-	int sys_height = _system->get_height();
-	int sys_width = _system->get_width();
 
 	// Backup old cursor
 	_oldCursorMode = _system->show_mouse(true);
 
+	// Enable the overlay
 	_system->show_overlay();
-	// TODO - add getHeight & getWidth methods to OSystem.
-	_screen = (NewGuiColor*)calloc(sys_width*sys_height,sizeof(NewGuiColor));
+
+	// Create a screen buffer for the overlay data, and fill it with
+	// whatever is visible on the screen rught now.
+	int sys_height = _system->get_overlay_height();
+	int sys_width = _system->get_overlay_width();
+	_screen = (NewGuiColor*)calloc(sys_width * sys_height, sizeof(NewGuiColor));
 	_screenPitch = sys_width;
 	_system->grab_overlay(_screen, _screenPitch);
 
