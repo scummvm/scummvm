@@ -69,6 +69,7 @@ void ActionMap::freeMem() {
 		}
 
 		free(_stepZoneList);
+		_stepZoneList = NULL;
 	}
 }
 

@@ -370,11 +370,11 @@ ActorData *Actor::getActor(uint16 actorId) {
 }
 
 bool Actor::validFollowerLocation(const ActorLocation &location) {
-	Point point;
+	Point point;	
 	location.toScreenPointXY(point);
 	
 	if ((point.x < 5) || (point.x >= _vm->getDisplayWidth() - 5) ||
-		(point.y < 0) || (point.y >= _vm->getStatusYOffset())) {
+		(point.y < 0) || (point.y > _vm->getStatusYOffset())) {
 		return false;
 	}
 	
@@ -1379,7 +1379,11 @@ void Actor::findActorPath(ActorData *actor, const Point &fromPoint, const Point 
 
 	for (iteratorPoint.y = 0; iteratorPoint.y < _yCellCount; iteratorPoint.y++) {
 		for (iteratorPoint.x = 0; iteratorPoint.x < _xCellCount; iteratorPoint.x++) {
-			maskType = _vm->_scene->getBGMaskType(iteratorPoint);
+			if (_vm->_scene->validBGMaskPoint(iteratorPoint)) {
+				maskType = _vm->_scene->getBGMaskType(iteratorPoint);
+			} else {
+				maskType = 1;
+			}			
 			setPathCell(iteratorPoint,  maskType ? kPathCellBarrier : kPathCellEmpty);			
 		}
 	}

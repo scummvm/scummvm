@@ -409,15 +409,14 @@ bool Scene::offscreenPath(Point &testPoint) {
 		return false;
 	}
 
-
-	first.x = clamp( 0, testPoint.x, _vm->getDisplayWidth() - 1 );
-	first.y = clamp( 0, testPoint.y, _vm->getDisplayHeight() - 1 );
+	first.x = clamp( 0, testPoint.x, _bgMask.w - 1 );
+	first.y = clamp( 0, testPoint.y, _bgMask.h - 1 );
 	if (first == testPoint) {
 		return false;
 	}
 
-	if (first.y >= _vm->getDisplayHeight() - 1) {
-		first.y = 200 -1 - 1;
+	if (first.y >= _bgMask.h - 1) {
+		first.y = _bgMask.h - 2;
 	}
 	testPoint = first;
 
@@ -432,12 +431,12 @@ bool Scene::offscreenPath(Point &testPoint) {
 					break;
 				}
 			} else {
-				if (third.x >= _vm->getDisplayWidth()) {
+				if (third.x >= _bgMask.w) {
 					return false;
 				}
 			}
 
-			if (third.x < _vm->getDisplayWidth()) {
+			if (third.x < _bgMask.w) {
 				maskType = getBGMaskType(third);
 				if (getDoorState(maskType) == 0) {
 					testPoint.x = third.x + 1;
@@ -458,12 +457,12 @@ bool Scene::offscreenPath(Point &testPoint) {
 					break;
 				}
 			} else {
-				if (third.y > _vm->getDisplayHeight() - 1) {
+				if (third.y >= _bgMask.h) {
 					return false;
 				}
 			}
 
-			if (third.y <= _vm->getDisplayHeight() - 1) {
+			if (third.y < _bgMask.h) {
 				maskType = getBGMaskType(third);
 				if (getDoorState(maskType) == 0) {
 					testPoint.y = third.y + 1;
@@ -809,6 +808,7 @@ int Scene::processSceneResources() {
 			_bgMask.loaded = 1;
 			_vm->decodeBGImage(_bgMask.res_buf, _bgMask.res_len, &_bgMask.buf,
 							&_bgMask.buf_len, &_bgMask.w, &_bgMask.h);
+			debug(0, "BACKGROUND MASK width=%d height=%d length=%d", _bgMask.w, _bgMask.h, _bgMask.buf_len);
 			break;
 		case SAGA_OBJECT_NAME_LIST:
 			debug(0, "Loading object name list resource...");
