@@ -84,6 +84,7 @@ Resource::~Resource() {
 	if(_resourceTable != _resourceTablePEM10) 
 		delete[] _resourceTable;
 	delete[] _JAS2Ptr;
+	delete _saveFileManager;
 }
 
 int32 Resource::resourceIndex(const char *filename) {
