@@ -48,6 +48,23 @@ BaseAnimationState::~BaseAnimationState() {
 
 
 
+bool BaseAnimationState::checkPaletteSwitch() {
+#ifdef BACKEND_8BIT
+	// if we have reached the last image with this palette, switch to new one
+	if (framenum == palettes[palnum].end) {
+		unsigned char *l = lut2;
+		palnum++;
+		setPalette(palettes[palnum].pal);
+		lutcalcnum = (BITDEPTH + palettes[palnum].end - (framenum + 1) + 2) / (palettes[palnum].end - (framenum + 1) + 2);
+		lut2 = lut;
+		lut = l;
+		return true;
+	}
+#endif
+
+	return false;
+}
+
 #ifdef BACKEND_8BIT
 
 /**
@@ -98,21 +115,6 @@ void BaseAnimationState::buildLookup(int p, int lines) {
 		if (cr > BITDEPTH)
 			return;
 	}
-}
-
-bool BaseAnimationState::checkPaletteSwitch() {
-	// if we have reached the last image with this palette, switch to new one
-	if (framenum == palettes[palnum].end) {
-		unsigned char *l = lut2;
-		palnum++;
-		setPalette(palettes[palnum].pal);
-		lutcalcnum = (BITDEPTH + palettes[palnum].end - (framenum + 1) + 2) / (palettes[palnum].end - (framenum + 1) + 2);
-		lut2 = lut;
-		lut = l;
-		return true;
-	}
-
-	return false;
 }
 
 #else

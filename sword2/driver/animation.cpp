@@ -222,41 +222,18 @@ bool AnimationState::decodeFrame() {
 				if (bgSoundStream && !bgSound.isActive())
 					return false;
 
-#ifdef BACKEND_8BIT
 				if (checkPaletteSwitch() || (bgSoundStream == NULL) ||
-					((_snd->getChannelElapsedTime(bgSound) * 12) / 1000 < framenum + 1) || frameskipped > 10) {
+					((_snd->getChannelElapsedTime(bgSound) * 12) / 1000 < framenum + 1) ||
+					frameskipped > 10) {
 					if (frameskipped > 10) {
 						warning("force frame %i redraw", framenum);
 						frameskipped = 0;
 					}
+#ifdef BACKEND_8BIT
 					_vm->_graphics->plotYUV(lut, sequence_i->width, sequence_i->height, info->display_fbuf->buf);
-
-					if (bgSoundStream) {
-						while ((_snd->getChannelElapsedTime(bgSound) * 12) / 1000 < framenum)
-							_sys->delay_msecs(10);
-					} else {
-						ticks += 83;
-						_vm->sleepUntil(ticks);
-					}
-
-					_vm->_graphics->setNeedFullRedraw();
-
-				} else {
-					warning("dropped frame %i", framenum);
-					frameskipped++;
-				}
-
-				buildLookup(palnum + 1, lutcalcnum);
-
 #else
-
-				if ((bgSoundStream == NULL) ||
-					((_snd->getChannelElapsedTime(bgSound) * 12) / 1000 < framenum + 1) || frameskipped > 10) {
-					if (frameskipped > 10) {
-						warning("force frame %i redraw", framenum);
-						frameskipped = 0;
-					}
 					plotYUV(lookup, sequence_i->width, sequence_i->height, info->display_fbuf->buf);
+#endif
 
 					if (bgSoundStream) {
 						while ((_snd->getChannelElapsedTime(bgSound) * 12) / 1000 < framenum)
@@ -266,11 +243,17 @@ bool AnimationState::decodeFrame() {
 						_vm->sleepUntil(ticks);
 					}
 
+#ifdef BACKEND_8BIT
+					_vm->_graphics->setNeedFullRedraw();
+#endif
+
 				} else {
 					warning("dropped frame %i", framenum);
 					frameskipped++;
 				}
 
+#ifdef BACKEND_8BIT
+				buildLookup(palnum + 1, lutcalcnum);
 #endif
 
 				framenum++;

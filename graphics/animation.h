@@ -123,9 +123,9 @@ public:
 	virtual ~BaseAnimationState();
 
 protected:
+	bool checkPaletteSwitch();
 #ifdef BACKEND_8BIT
 	void buildLookup(int p, int lines);
-	bool checkPaletteSwitch();
 	virtual void setPalette(byte *pal) = 0;
 #else
 	void buildLookup(void);
