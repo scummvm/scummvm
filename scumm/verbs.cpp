@@ -131,7 +131,9 @@ void Scumm::drawVerb(int verb, int mode)
 			drawVerbBitmap(verb, vs->x, vs->y);
 			return;
 		}
-		restoreVerbBG(verb);
+		
+		if (_gameId != GID_CMI)
+			restoreVerbBG(verb);
 
 		_string[4].charset = vs->charset_nr;
 		_string[4].xpos = vs->x;
