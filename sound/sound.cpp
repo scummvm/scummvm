@@ -105,56 +105,7 @@ void Sound::processSoundQues() {
 			if ((_scumm->_gameId == GID_DIG) && (data[0] == 4096)){
 					playBundleMusic(data[1] - 1);
 			}
-			if ((_scumm->_gameId == GID_DIG) && ((data[0] == 12) || (data[0] == 14))){
-				uint32 size = 0, rate = 0, tag, chan = 0, bits = 0;
-				uint8 * ptr = _scumm->getResourceAddress(rtSound, data[1]);
-				if (ptr != NULL) {
-					ptr+=16;       /* Skip header */
-					for (;;) {
-				    		tag = READ_BE_UINT32(ptr);  ptr+=4;
-						switch(tag) {
-							case MKID_BE('FRMT'):
-								size = READ_BE_UINT32(ptr); ptr+=12;
-								bits = READ_BE_UINT32(ptr); ptr+=4;
-								rate = READ_BE_UINT32(ptr); ptr+=4;
-								chan = READ_BE_UINT32(ptr); ptr+=4;
-							break;
-							case MKID_BE('TEXT'):
-							case MKID_BE('REGN'):
-							case MKID_BE('STOP'):
-							case MKID_BE('JUMP'):
-								size = READ_BE_UINT32(ptr); ptr+=size+4;
-							break;
-							case MKID_BE('DATA'):
-								size = READ_BE_UINT32(ptr); ptr+=4;
-							break;
-							default:
-								error("Unknown sfx header %c%c%c%c", tag>>24, tag>>16, tag>>8, tag);
-						}
-						if (tag == MKID_BE('DATA')) break;
-					}
-					if (bits == 8) {
-						byte * buffer = (byte*)malloc (size);
-						memcpy(buffer, ptr, size);
-						if (chan == 1) {
-							_scumm->_mixer->playRaw(NULL, buffer, size, rate, SoundMixer::FLAG_AUTOFREE | SoundMixer::FLAG_UNSIGNED);
-						}
-						else if (chan == 2) {
-							_scumm->_mixer->playRaw(NULL, buffer, size, rate, SoundMixer::FLAG_AUTOFREE | SoundMixer::FLAG_UNSIGNED | SoundMixer::FLAG_STEREO);
-						}
-					} else if (bits == 12) {
-						byte * buffer = NULL;
-						uint32 final_size = decode12BitsSample(ptr, &buffer, size);
-						if (chan == 1) {
-							_scumm->_mixer->playRaw(NULL, buffer, final_size, rate, SoundMixer::FLAG_AUTOFREE | SoundMixer::FLAG_16BITS);
-						}
-						else if (chan == 2) {
-							_scumm->_mixer->playRaw(NULL, buffer, final_size, rate, SoundMixer::FLAG_AUTOFREE | SoundMixer::FLAG_16BITS | SoundMixer::FLAG_STEREO);
-						}
-					}
-				}
-			}
-																										    																																						
+
 			if (!(_scumm->_features & GF_AFTER_V7)) {
 				if (se)
 					_scumm->_vars[_scumm->VAR_SOUNDRESULT] =

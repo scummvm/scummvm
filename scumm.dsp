@@ -234,10 +234,6 @@ SOURCE=.\scumm\smush\mixer.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\scumm\smush\palette.cpp
-# End Source File
-# Begin Source File
-
 SOURCE=.\scumm\smush\palette.h
 # End Source File
 # Begin Source File
@@ -247,10 +243,6 @@ SOURCE=.\scumm\smush\player.cpp
 # Begin Source File
 
 SOURCE=.\scumm\smush\player.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\scumm\smush\rect.cpp
 # End Source File
 # Begin Source File
 
@@ -404,10 +396,6 @@ SOURCE=.\scumm\scummvm.cpp
 # Begin Source File
 
 SOURCE=.\scumm\smush.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\scumm\sound.h
 # End Source File
 # Begin Source File
 

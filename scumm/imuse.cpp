@@ -39,6 +39,7 @@
 
 #define MDPG_TAG "MDpg"
 #define MDHD_TAG "MDhd"
+#define MAP_TAG "MAP "
 
 
 /* Roland to General Midi patch table. Still needs some work. */
@@ -770,8 +771,7 @@ byte *IMuseInternal::findTag(int sound, char *tag, int index)
 		ptr = _base_sounds[sound];
 
 	if (ptr == NULL) {
-		//  debug(1, "IMuseInternal::findTag completely failed finding sound %d",
-		//        sound);
+		  debug(1, "IMuseInternal::findTag completely failed finding sound %d", sound);
 		return NULL;
 
 	}
@@ -829,8 +829,61 @@ bool IMuseInternal::start_sound(int sound)
 	if (!mdhd) {
 		mdhd = findTag(sound, MDPG_TAG, 0);
 		if (!mdhd) {
-			warning("SE::start_sound failed: Couldn't find %s", MDHD_TAG);
-			return false;
+			mdhd = findTag(sound, MAP_TAG, 0);
+			if (!mdhd) {
+				warning("SE::start_sound failed: Couldn't find %s", MDHD_TAG);
+				return false;
+			}
+			else {
+				uint32 size = 0, rate = 0, tag, chan = 0, bits = 0;
+				uint8 * ptr = g_scumm->getResourceAddress(rtSound, sound);
+				if (ptr != NULL) {
+					ptr+=16;
+					for (;;) {
+				    		tag = READ_BE_UINT32(ptr);  ptr+=4;
+						switch(tag) {
+							case MKID_BE('FRMT'):
+								size = READ_BE_UINT32(ptr); ptr+=12;
+								bits = READ_BE_UINT32(ptr); ptr+=4;
+								rate = READ_BE_UINT32(ptr); ptr+=4;
+								chan = READ_BE_UINT32(ptr); ptr+=4;
+							break;
+							case MKID_BE('TEXT'):
+							case MKID_BE('REGN'):
+							case MKID_BE('STOP'):
+							case MKID_BE('JUMP'):
+								size = READ_BE_UINT32(ptr); ptr+=size+4;
+							break;
+							case MKID_BE('DATA'):
+								size = READ_BE_UINT32(ptr); ptr+=4;
+							break;
+							default:
+								error("Unknown sfx header %c%c%c%c", tag>>24, tag>>16, tag>>8, tag);
+						}
+						if (tag == MKID_BE('DATA')) break;
+					}
+					if (bits == 8) {
+						byte * buffer = (byte*)malloc (size);
+						memcpy(buffer, ptr, size);
+						if (chan == 1) {
+							g_scumm->_mixer->playRaw(NULL, buffer, size, rate, SoundMixer::FLAG_AUTOFREE | SoundMixer::FLAG_UNSIGNED);
+						}
+						else if (chan == 2) {
+							g_scumm->_mixer->playRaw(NULL, buffer, size, rate, SoundMixer::FLAG_AUTOFREE | SoundMixer::FLAG_UNSIGNED | SoundMixer::FLAG_STEREO);
+						}
+					} else if (bits == 12) {
+						byte * buffer = NULL;
+						uint32 final_size = g_scumm->_sound->decode12BitsSample(ptr, &buffer, size);
+						if (chan == 1) {
+							g_scumm->_mixer->playRaw(NULL, buffer, final_size, rate, SoundMixer::FLAG_AUTOFREE | SoundMixer::FLAG_16BITS);
+						}
+						else if (chan == 2) {
+							g_scumm->_mixer->playRaw(NULL, buffer, final_size, rate, SoundMixer::FLAG_AUTOFREE | SoundMixer::FLAG_16BITS | SoundMixer::FLAG_STEREO);
+						}
+					}
+				}
+				return true;
+			}
 		}
 	}
 	player = allocate_player(128);
@@ -1743,8 +1796,8 @@ bool Player::start_sound(int sound)
 	if (mdhd == NULL) {
 		mdhd = _se->findTag(sound, MDPG_TAG, 0);
 		if (mdhd == NULL) {
-			warning("P::start_sound failed: Couldn't find %s", MDHD_TAG);
-			return false;
+				warning("P::start_sound failed: Couldn't find %s", MDHD_TAG);
+				return false;
 		}
 	}
 
