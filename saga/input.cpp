@@ -20,15 +20,15 @@
  * $Header$
  *
  */
-#include "saga.h"
-#include "reinherit.h"
+#include "saga/saga.h"
+#include "saga/reinherit.h"
 
-#include "actor_mod.h"
-#include "console_mod.h"
-#include "interface_mod.h"
-#include "render_mod.h"
-#include "scene_mod.h"
-#include "script_mod.h"
+#include "saga/actor_mod.h"
+#include "saga/console_mod.h"
+#include "saga/interface_mod.h"
+#include "saga/render_mod.h"
+#include "saga/scene_mod.h"
+#include "saga/script_mod.h"
 
 namespace Saga {
 

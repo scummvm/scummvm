@@ -67,6 +67,7 @@ int GFX_Init(OSystem *system, int width, int height) {
 	GfxModule.black_index = -1;
 
 	// For now, always show the mouse cursor.
+	GFX_SetCursor(1);
 	SYSINPUT_ShowMouse();
 
 	return R_SUCCESS;
