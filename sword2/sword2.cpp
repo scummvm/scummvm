@@ -17,7 +17,6 @@
  * $Header$
  */
 
-//------------------------------------------------------------------------------------
 #include "stdafx.h"
 
 #include "base/gameDetector.h"
@@ -49,39 +48,31 @@
 #include "bs2/driver/driver96.h"
 #include "bs2/driver/palette.h"
 
-#define MAX_PATH 260
-
-int  RunningFromCd();
-
 uint8 quitGame = 0;
 
-//------------------------------------------------------------------------------------
 // version & owner details
 
-//So version string is 18 bytes long :
-//Version String =  <8 byte header,5 character version, \0, INT32 time>
+// So version string is 18 bytes long :
+// Version String =  <8 byte header,5 character version, \0, INT32 time>
 
-uint8 version_string[HEAD_LEN+10]	=	{1, 255, 37, 22, 45, 128, 34, 67};
+uint8 version_string[HEAD_LEN + 10] = { 1, 255, 37, 22, 45, 128, 34, 67 };
 
-uint8 unencoded_name[HEAD_LEN+48]	=	{76, 185, 205, 23, 44, 34, 24, 34,
-										'R','e','v','o','l','u','t','i','o','n',' ',
-										'S','o','f','t','w','a','r','e',' ','L','t','d',
-										0};
+uint8 unencoded_name[HEAD_LEN + 48] = {
+	76, 185, 205, 23, 44, 34, 24, 34,
+	'R','e','v','o','l','u','t','i','o','n',' ',
+	'S','o','f','t','w','a','r','e',' ','L','t','d',
+	0 };
 
-uint8 encoded_name[HEAD_LEN+48]		=	{44, 32, 190, 222, 123, 65, 233, 99,
-										179, 209, 225, 157, 222, 238, 219, 209, 143, 224, 133, 190,
-										232, 209, 162, 177, 198, 228, 202, 146, 180, 232, 214, 65,
-										65, 65, 116, 104, 116, 114, 107, 104, 32, 49, 64, 35, 123,
-										125, 61, 45, 41, 40, 163, 36, 49, 123, 125, 10};
+uint8 encoded_name[HEAD_LEN + 48] = {
+	44, 32, 190, 222, 123, 65, 233, 99,
+	179, 209, 225, 157, 222, 238, 219, 209, 143, 224, 133, 190,
+	232, 209, 162, 177, 198, 228, 202, 146, 180, 232, 214, 65,
+	65, 65, 116, 104, 116, 114, 107, 104, 32, 49, 64, 35, 123,
+	125, 61, 45, 41, 40, 163, 36, 49, 123, 125, 10 };
 
-//------------------------------------------------------------------------------------
-
-uint8 gamePaused=0;			// James17jun97
-//uint32 pause_text_bloc_no=0;	// James17jun97
-uint8 graphics_level_fudged=0;	// James10july97
-uint8 stepOneCycle=0;	// for use while game paused
-
-//------------------------------------------------------------------------------------
+uint8 gamePaused = 0;
+uint8 graphics_level_fudged = 0;
+uint8 stepOneCycle = 0;			// for use while game paused
 
 static const TargetSettings sword2_settings[] = {
 	/* Broken Sword 2 */
@@ -126,158 +117,167 @@ Sword2State::Sword2State(GameDetector *detector, OSystem *syst)
 	File::setDefaultDirectory(_gameDataPath);
 }
 
-
 void Sword2State::errorString(const char *buf1, char *buf2) {
 	strcpy(buf2, buf1);
 }
 
-int32 Sword2State::InitialiseGame(void)
-{
-//init engine drivers
+int32 Sword2State::InitialiseGame(void) {
+	// init engine drivers
 
-	uint8	*file;
+	uint8 *file;
 
-	Zdebug("CALLING: Init_memory_manager");
-	Init_memory_manager();		// get some falling RAM and put it in your pocket, never let it slip away
-	Zdebug("RETURNED.");
+	// get some falling RAM and put it in your pocket, never let it slip
+	// away
+	// Zdebug("CALLING: Init_memory_manager");
+	Init_memory_manager();
+	// Zdebug("RETURNED.");
 
-	Zdebug("CALLING: res_man.InitResMan");
-	res_man.InitResMan();		// initialise the resource manager
+	// initialise the resource manager
+	// Zdebug("CALLING: res_man.InitResMan");
+	res_man.InitResMan();
 	Zdebug("RETURNED from res_man.InitResMan");
 
-								// initialise global script variables
-	file=res_man.Res_open(1);	// res 1 is the globals list
-	Zdebug("CALLING: SetGlobalInterpreterVariables");
-	SetGlobalInterpreterVariables((int32*)(file+sizeof(_standardHeader)));
-	Zdebug("RETURNED.");
-//	res_man.Res_close(1);		// DON'T CLOSE VARIABLES RESOURCE - KEEP IT OPEN AT VERY START OF MEMORY SO IT CAN'T MOVE!
+	// initialise global script variables
+	// res 1 is the globals list
+	file = res_man.Res_open(1);
+	// Zdebug("CALLING: SetGlobalInterpreterVariables");
+	SetGlobalInterpreterVariables((int32 * ) (file + sizeof(_standardHeader)));
+	// Zdebug("RETURNED.");
+	// DON'T CLOSE VARIABLES RESOURCE - KEEP IT OPEN AT VERY START OF
+	// MEMORY SO IT CAN'T MOVE!
+	// res_man.Res_close(1);
 
-	file=res_man.Res_open(8);	// DON'T CLOSE PLAYER OBJECT RESOURCE - KEEP IT OPEN IN MEMORY SO IT CAN'T MOVE!
+	// DON'T CLOSE PLAYER OBJECT RESOURCE - KEEP IT OPEN IN MEMORY SO IT
+	// CAN'T MOVE!
+	file = res_man.Res_open(8);
 
-	//----------------------------------------
-	Zdebug("CALLING: InitialiseFontResourceFlags");
-	InitialiseFontResourceFlags();	// Set up font resource variables for this language version (James31july97)
-									// Also set the windows application name to the proper game name
-	Zdebug("RETURNED.");
-	//----------------------------------------
+	// Set up font resource variables for this language version
+	// (James31july97)
+	// Zdebug("CALLING: InitialiseFontResourceFlags");
+	InitialiseFontResourceFlags();
+	// Also set the windows application name to the proper game name
+	// Zdebug("RETURNED.");
 
-	Zdebug("CALLING: Init_console");
-	Init_console();				// set up the console system
-	Zdebug("RETURNED.");
+	// set up the console system
+	// Zdebug("CALLING: Init_console");
+	Init_console();
+	// Zdebug("RETURNED.");
 
-	#ifdef _SWORD2_DEBUG
-		Zdebug("CALLING: Init_start_menu");
-		Init_start_menu();			// read in all the startup information
-		Zdebug("RETURNED from Init_start_menu");
-	#endif	// _SWORD2_DEBUG
+#ifdef _SWORD2_DEBUG
+	// read in all the startup information
+	// Zdebug("CALLING: Init_start_menu");
+	Init_start_menu();
+	// Zdebug("RETURNED from Init_start_menu");
+#endif
 
+	// no blocs live
+	// Zdebug("CALLING: Init_text_bloc_system");
+	Init_text_bloc_system();
+	// Zdebug("RETURNED.");
 
-
-	Zdebug("CALLING: Init_text_bloc_system");
-	Init_text_bloc_system();	// no blocs live
-	Zdebug("RETURNED.");
-
-	Zdebug("CALLING: Init_sync_system");
+	// Zdebug("CALLING: Init_sync_system");
 	Init_sync_system();
-	Zdebug("RETURNED.");
+	// Zdebug("RETURNED.");
 
-	Zdebug("CALLING: Init_event_system");
+	// Zdebug("CALLING: Init_event_system");
 	Init_event_system();
-	Zdebug("RETURNED.");
+	// Zdebug("RETURNED.");
 	
-	Zdebug("CALLING: Init_fx_queue");
-	Init_fx_queue();			// initialise the sound fx queue
-	Zdebug("RETURNED.");
+	// initialise the sound fx queue
+	// Zdebug("CALLING: Init_fx_queue");
+	Init_fx_queue();
+	// Zdebug("RETURNED.");
 
 	// all demos (not just web)
-	if (_gameId == GID_SWORD2_DEMO)
-		DEMO=1;		// set script variable
-
-	return(0);
-}
-//------------------------------------------------------------------------------------
-void	Close_game()	//Tony11Oct96
-{
-	Zdebug("Close_game() STARTING:");
-	EraseBackBuffer();
-
-	Kill_music();			// Stop music instantly! (James22aug97)
-	Close_memory_manager();	// free the memory again
-	res_man.Close_ResMan();
-
-	Zdebug("Close_game() DONE.");
-}
-//------------------------------------------------------------------------------------
-int32 GameCycle(void)
-{
-//do one game cycle
-
-
-	{
-		if	(LLogic.Return_run_list())	//got a screen to run?
-		{
-			do	//run the logic session UNTIL a full loop has been performed
-			{
-				Reset_render_lists();	// reset the graphic 'buildit' list before a new logic list (see FN_register_frame)
-				Reset_mouse_list();		// reset the mouse hot-spot list (see FN_register_mouse & FN_register_frame)
-			}
-			while(LLogic.Process_session());	//keep going as long as new lists keep getting put in - i.e. screen changes
-		}
-		else	//start the console and print the start options perhaps?
-		{
-			StartConsole();
-			Print_to_console("AWAITING START COMMAND: (Enter 's 1' then 'q' to start from beginning)");
-		}
+	if (_gameId == GID_SWORD2_DEMO) {
+		// set script variable
+		DEMO = 1;
 	}
 
-	if (this_screen.scroll_flag)	// if this screen is wide
-		Set_scrolling();			// recompute the scroll offsets every game-cycle
+	return 0;
+}
 
-	Mouse_engine();	//check the mouse
+void Close_game() {	// Tony11Oct96
+	// Zdebug("Close_game() STARTING:");
+	EraseBackBuffer();
 
+	// Stop music instantly! (James22aug97)
+	Kill_music();
+
+	// free the memory again
+	Close_memory_manager();
+	res_man.Close_ResMan();
+
+	// Zdebug("Close_game() DONE.");
+}
+
+int32 GameCycle(void) {
+	// do one game cycle
+
+	//got a screen to run?
+	if (LLogic.Return_run_list()) {
+		//run the logic session UNTIL a full loop has been performed
+		do {
+			// reset the graphic 'buildit' list before a new
+			// logic list (see FN_register_frame)
+			Reset_render_lists();
+
+			// reset the mouse hot-spot list (see FN_register_mouse
+			// & FN_register_frame)
+			Reset_mouse_list();
+
+			// keep going as long as new lists keep getting put in
+			// - i.e. screen changes
+		} while (LLogic.Process_session());
+	} else {
+		// start the console and print the start options perhaps?
+		StartConsole();
+		Print_to_console("AWAITING START COMMAND: (Enter 's 1' then 'q' to start from beginning)");
+	}
+
+	// if this screen is wide, recompute the scroll offsets every cycle
+	if (this_screen.scroll_flag)
+		Set_scrolling();
+
+	Mouse_engine();
 	Process_fx_queue();
 
-	res_man.Res_next_cycle();	// update age and calculate previous cycle memory usage
+	// update age and calculate previous cycle memory usage
+	res_man.Res_next_cycle();
 
 	if (quitGame)
-		return(1);
-	else
-		return(0);
+		return 1;
+
+	return 0;
 }
-//------------------------------------------------------------------------------------
-// int main(int argc, char *argv[])
-// int PASCAL WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
-void Sword2State::go()
-{
+
+void Sword2State::go() {
 	OSystem::Property prop;
 	uint32 rv;
 	uint8  breakOut = 0;
 	char	c;
 
-//	Zdebug("[%s]", lpCmdLine);
+	// Zdebug("[%s]", lpCmdLine);
 
+#ifndef _SWORD2_DEBUG
+	// so cannot use Ctrl-Q from the release versions (full game or demo)
+	DisableQuitKey();
+#endif
 
-	#ifndef _SWORD2_DEBUG
-	DisableQuitKey();	// so cannot use Ctrl-Q from the release versions (full game or demo)
-	#endif
+	// Call the application "Revolution" until the resource manager is
+	// ready to dig the name out of a text file. See InitialiseGame()
+	// which calls InitialiseFontResourceFlags() in maketext.cpp
+	//
+	// Have to do it like this since we cannot really fire up the resource
+	// manager until a window has been created as any errors are displayed
+	// via a window, thus time becomes a loop.
 
-
-	if	(RunningFromCd())	//stop this game being run from CD
-		exit(-1);
-
-
-
-	// Call the application "Revolution" until the resource manager is ready to dig the name out of a text file
-	// See InitialiseGame() which calls InitialiseFontResourceFlags() in maketext.cpp
-	// Have to do it like this since we cannot really fire up the resource manager until a window
-	// has been created as any errors are displayed via a window, thus time becomes a loop.
-
-	Zdebug("CALLING: InitialiseWindow");
+	// Zdebug("CALLING: InitialiseWindow");
 	// rv = InitialiseWindow(hInstance, hPrevInstance, lpCmdLine, nCmdShow, "Revolution");
 	rv = RD_OK;
- 	Zdebug("RETURNED with rv = %.8x", rv);
-	if (rv != RD_OK)
-	{
+	// Zdebug("RETURNED with rv = %.8x", rv);
+
+	if (rv != RD_OK) {
 		// ReportDriverError(rv);
 		return;
 	}
@@ -288,7 +288,7 @@ void Sword2State::go()
 		_system->property(OSystem::PROP_SET_GFX_MODE, &prop);
 	}
 
-	Zdebug("CALLING: InitialiseDisplay");
+	// Zdebug("CALLING: InitialiseDisplay");
 	_system->init_size(640, 480);
 	rv = InitialiseDisplay(640, 480, 8, RD_FULLSCREEN);
 
@@ -298,26 +298,26 @@ void Sword2State::go()
 			_system->property(OSystem::PROP_TOGGLE_FULLSCREEN, 0);
 	}
 		
-	Zdebug("RETURNED with rv = %.8x", rv);
-	if (rv != RD_OK)
-	{
+	// Zdebug("RETURNED with rv = %.8x", rv);
+
+	if (rv != RD_OK) {
 		// ReportDriverError(rv);
 		CloseAppWindow();
 		return;
 	}
 
-	Zdebug("CALLING: ReadOptionSettings");
+	// Zdebug("CALLING: ReadOptionSettings");
 	ReadOptionSettings();	//restore the menu settings
-  	Zdebug("RETURNED.");
-	Zdebug("CALLING: InitialiseGame");
-	if (InitialiseGame())
-	{
-	  	Zdebug("RETURNED from InitialiseGame - closing game");
+	// Zdebug("RETURNED.");
+	// Zdebug("CALLING: InitialiseGame");
+
+	if (InitialiseGame()) {
+		Zdebug("RETURNED from InitialiseGame - closing game");
 		CloseAppWindow();
 		return;
 	}
-   	Zdebug("RETURNED from InitialiseGame - ok");
 
+ 	// Zdebug("RETURNED from InitialiseGame - ok");
 
 	if (_saveSlot != -1) {
 		if (SaveExists(_saveSlot))
@@ -330,144 +330,127 @@ void Sword2State::go()
 	} else
 		Start_game();
 
-
-	Zdebug("CALLING: InitialiseRenderCycle");
+	// Zdebug("CALLING: InitialiseRenderCycle");
 	InitialiseRenderCycle();
-  	Zdebug("RETURNED.");
+	// Zdebug("RETURNED.");
 
-	while (TRUE)
-	{
+	while (TRUE) {
 		ServiceWindows();
-		
-		// check for events
-		parseEvents();
+
 #ifdef _SWORD2_DEBUG
-		if (grabbingSequences && (!console_status))
+		if (grabbingSequences && !console_status)
 			GrabScreenShot();
 #endif
 
-		if (breakOut)	// if we are closing down the game
-			break;		// break out of main game loop
-
-//-----
+		// if we are closing down the game, break out of main game loop
+		if (breakOut)
+			break;
 
 #ifdef _SWORD2_DEBUG
-		if	(console_status)
-		{
-			if	(One_console())
-			{
+		if (console_status) {
+			if (One_console()) {
 				EndConsole();
 				UnpauseAllSound();	// see sound.cpp
 			}
 		}
 #endif
 
-		if	(!console_status)	//not in console mode - if the console is quit we want to get a logic cycle in before
-		{							//the screen is build. Mostly because of first scroll cycle stuff
+		// not in console mode - if the console is quit we want to get
+		// a logic cycle in before
+
+		if (!console_status) {
+			// the screen is build. Mostly because of first scroll
+			// cycle stuff
+
 #ifdef _SWORD2_DEBUG
-			if (stepOneCycle)	// if we've just stepped forward one cycle while the game was paused
-			{
+			// if we've just stepped forward one cycle while the
+			// game was paused
+
+			if (stepOneCycle) {
 				PauseGame();
-				stepOneCycle=0;
+				stepOneCycle = 0;
 			}
 #endif
-			if (KeyWaiting())
-			{
+
+			if (KeyWaiting()) {
 				ReadKey(&c);
 #ifdef _SWORD2_DEBUG
-				if (c==27)					// ESC whether paused or not
-				{
-					PauseAllSound();					// see sound.cpp
-					StartConsole();						// start the console
-				}
-				else
+				// ESC whether paused or not
+				if (c == 27) {
+					PauseAllSound(); // see sound.cpp
+					StartConsole();	 // start the console
+				} else
 #endif
-					if (gamePaused)					// if currently paused
-					{
-						if (toupper(c)=='P')				// 'P' while paused = unpause!
-						{
-							UnpauseGame();
-						}
-#ifdef _SWORD2_DEBUG
-						else if (toupper(c)==' ')			// SPACE bar while paused = step one frame!
-						{
-							stepOneCycle=1;					// step through one game cycle
-							UnpauseGame();
-						}
-#endif	// _SWORD2_DEBUG
+				if (gamePaused) {	// if currently paused
+					if (toupper(c) == 'P') {
+						// 'P' while paused = unpause!
+						UnpauseGame();
 					}
-				else if (toupper(c)=='P')	// 'P' while not paused = pause!
-				{
+#ifdef _SWORD2_DEBUG
+					// frame-skipping only allowed on
+					// debug version
+
+					else if (toupper(c) == ' ') {
+						// SPACE bar while paused =
+						// step one frame!
+						stepOneCycle = 1;
+						UnpauseGame();
+					}
+#endif
+				} else if (toupper(c) == 'P') {
+					// 'P' while not paused = pause!
 					PauseGame();
 				}
-#ifdef _SWORD2_DEBUG	// frame-skipping only allowed on debug version
-				else if (toupper(c)=='S')	// 'S' toggles speed up (by skipping display rendering)
-				{
+#ifdef _SWORD2_DEBUG
+				else if (toupper(c) == 'S') {
+					// 'S' toggles speed up (by skipping
+					// display rendering)
 					renderSkip = 1 - renderSkip;
 				}
-#endif	// _SWORD2_DEBUG
+#endif
 			}
 
-			if (gamePaused==0)	// skip GameCycle if we're paused
-			{
+			// skip GameCycle if we're paused
+			if (gamePaused == 0) {
 #ifdef _SWORD2_DEBUG
-				gameCycle += 1;
+				gameCycle++;
 #endif
 
-				if (GameCycle())
-					break;		// break out of main game loop
+				if (GameCycle()) {
+					// break out of main game loop
+					break;
+				}
 			}
 
 #ifdef _SWORD2_DEBUG
-			Build_debug_text();			// creates the debug text blocks
-#endif	// _SWORD2_DEBUG
+			// creates the debug text blocks
+			Build_debug_text();
+#endif
 		}
-//-----
 
 		// James (24mar97)
 
 #ifdef _SWORD2_DEBUG
-		if ((console_status)||(renderSkip==0)||(gameCycle%4 == 0))	// if not in console & 'renderSkip' is set, only render display once every 4 game-cycles
+		// if not in console & 'renderSkip' is set, only render
+		// display once every 4 game-cycles
+
+		if (console_status || renderSkip == 0 || (gameCycle % 4) == 0)
 			Build_display();	// create and flip the screen
 #else
-		Build_display();	// create and flip the screen
-#endif	// _SWORD2_DEBUG
-
+		// create and flip the screen
+		Build_display();
+#endif
 	}
 
-	Close_game();	//close engine systems down
+	Close_game();		//close engine systems down
 	CloseAppWindow();
 
-	return;	//quit the game
+	return;			//quit the game
 }
-//------------------------------------------------------------------------------------
-int RunningFromCd()
-{
-/*
-   char  sCDName[MAX_PATH];
-   char  sRoot[MAX_PATH];
-   DWORD dwMaxCompLength, dwFSFlags;
-   GetModuleFileName(NULL , sRoot, _MAX_PATH);
-   *(strchr(sRoot,'\\')+1) = '\0';
 
-   if (!GetVolumeInformation(sRoot, sCDName,_MAX_PATH, NULL, &dwMaxCompLength, &dwFSFlags, NULL, 0))
-      return -1;
-   if (!scumm_strnicmp(sCDName,CD1_LABEL,6))
-      return 1;
-   if (!scumm_strnicmp(sCDName,CD2_LABEL,6))
-      return 2;
-*/
-   return 0;
-}
-//------------------------------------------------------------------------------------
-//------------------------------------------------------------------------------------
-//------------------------------------------------------------------------------------
+void Sword2State::Start_game(void) {	//Tony29May97
+	// boot the game straight into a start script
 
-
-//------------------------------------------------------------------------------------
-void	Sword2State::Start_game(void)	//Tony29May97
-{
-//boot the game straight into a start script
 	int screen_manager_id;
 
 	Zdebug("Start_game() STARTING:");
@@ -480,85 +463,104 @@ void	Sword2State::Start_game(void)	//Tony29May97
 
 	// FIXME this could be validated against startup.inf for valid numbers
 	// to stop people shooting themselves in the foot
+
 	if (_bootParam != 0)
 		screen_manager_id = _bootParam;
 	
-	char	*raw_script;
-	char	*raw_data_ad;
-	uint32	null_pc=1;	// the required start-scripts are both script #1 in the respective ScreenManager objects
+	char *raw_script;
+	char *raw_data_ad;
 
-	raw_data_ad	= (char*) (res_man.Res_open(8));					// open george object, ready for start script to reference
-	raw_script	= (char*) (res_man.Res_open(screen_manager_id));	// open the ScreenManager object
+	// the required start-scripts are both script #1 in the respective
+	// ScreenManager objects
 
-	RunScript ( raw_script, raw_data_ad, &null_pc );			// run the start script now (because no console)
+	uint32 null_pc = 1;
 
-	res_man.Res_close(screen_manager_id);						// close the ScreenManager object
-	res_man.Res_close(8);										// close george
+	// open george object, ready for start script to reference
+	raw_data_ad = (char *) res_man.Res_open(8);
+
+	// open the ScreenManager object
+	raw_script = (char *) res_man.Res_open(screen_manager_id);
+
+	// run the start script now (because no console)
+	RunScript(raw_script, raw_data_ad, &null_pc);
+
+	// close the ScreenManager object
+	res_man.Res_close(screen_manager_id);
+
+	// close george
+	res_man.Res_close(8);
 
 	Zdebug("Start_game() DONE.");
 }
-//------------------------------------------------------------------------------------
-//------------------------------------------------------------------------------------
-void PauseGame(void)		// James17jun97
-{
-//	uint8	*text;
 
-//	text = FetchTextLine( res_man.Res_open(3258), 449 );	// open text file & get the line "PAUSED"
-//	pause_text_bloc_no = Build_new_block(text+2, 320, 210, 640, 184, RDSPR_TRANS+RDSPR_DISPLAYALIGN, SPEECH_FONT_ID, POSITION_AT_CENTRE_OF_BASE);
-//	res_man.Res_close(3258);	// now ok to close the text file
+void PauseGame(void) {		// James17jun97
+	// uint8 *text;
 
-	//---------------------------
+	// open text file & get the line "PAUSED"
+	// text = FetchTextLine(res_man.Res_open(3258), 449);
+	// pause_text_bloc_no = Build_new_block(text + 2, 320, 210, 640, 184, RDSPR_TRANS | RDSPR_DISPLAYALIGN, SPEECH_FONT_ID, POSITION_AT_CENTRE_OF_BASE);
+	// now ok to close the text file
+	// res_man.Res_close(3258);
+
 	// don't allow Pause while screen fading or while black (James 03sep97)
-	if(GetFadeStatus()!=RDFADE_NONE)
+	if (GetFadeStatus() != RDFADE_NONE)
 		return;
-	//---------------------------
 	
   	PauseAllSound();
 
-//make a normal mouse
+	//make a normal mouse
 	ClearPointerText();
-//	mouse_mode=MOUSE_normal;
-	SetLuggageAnim(NULL, 0);	//this is the only place allowed to do it this way
-	Set_mouse(0);			// blank cursor
-	mouse_touching=1;	//forces engine to choose a cursor
 
-	if (current_graphics_level==3)	// if level at max
-	{
-		UpdateGraphicsLevel(2);	// turn down because palette-matching won't work when dimmed
-		graphics_level_fudged=1;
+	// mouse_mode=MOUSE_normal;
+
+	//this is the only place allowed to do it this way
+	SetLuggageAnim(NULL, 0);
+
+	// blank cursor
+	Set_mouse(0);
+
+	// forces engine to choose a cursor
+	mouse_touching = 1;
+
+	// if level at max, turn down because palette-matching won't work
+	// when dimmed
+
+	if (current_graphics_level == 3) {
+		UpdateGraphicsLevel(2);
+		graphics_level_fudged = 1;
 	}
 
-	if (stepOneCycle==0)	// don't dim it if we're single-stepping through frames
-	{
-  		DimPalette();				// dim the palette during the pause (James26jun97)
-	}
+	// don't dim it if we're single-stepping through frames
+	// dim the palette during the pause (James26jun97)
 
-	gamePaused=1;
+	if (stepOneCycle == 0)
+  		DimPalette();
+
+	gamePaused = 1;
 }
-//------------------------------------------------------------------------------------
-void UnpauseGame(void)		// James17jun97
-{
-//	Kill_text_bloc(pause_text_bloc_no);	// removed "PAUSED" from screen
 
-	if	((OBJECT_HELD)&&(real_luggage_item))
+void UnpauseGame(void) {	// James17jun97
+	// removed "PAUSED" from screen
+	// Kill_text_bloc(pause_text_bloc_no);
+
+	if (OBJECT_HELD && real_luggage_item)
 		Set_luggage(real_luggage_item);
 
 	UnpauseAllSound();
 
-	SetFullPalette(0xffffffff);	// put back game screen palette; see Build_display.cpp (James26jun97)
+	// put back game screen palette; see Build_display.cpp (James26jun97)
+	SetFullPalette(0xffffffff);
 
- 	if (graphics_level_fudged)	// if level at max
-	{
-		UpdateGraphicsLevel(3);	// turn up again
-		graphics_level_fudged=0;
+	// If graphics level at max, turn up again
+ 	if (graphics_level_fudged) {
+		UpdateGraphicsLevel(3);
+		graphics_level_fudged = 0;
 	}
 
-	gamePaused=0;
-	unpause_zone=2;
+	gamePaused = 0;
+	unpause_zone = 2;
 
-	if	((!mouse_status)||(choosing))	//if mouse is about or we're in a chooser menu
+	// if mouse is about or we're in a chooser menu
+	if (!mouse_status || choosing)
 		Set_mouse(NORMAL_MOUSE_ID);
 }
-//------------------------------------------------------------------------------------
-//------------------------------------------------------------------------------------
-
