@@ -1091,8 +1091,7 @@ int ScummEngine::init(GameDetector &detector) {
 	if (_imuse) {
 		_imuse->setBase(res.address[rtSound]);
 
-		_imuse->setMasterVolume(ConfMan.getInt("master_volume"));
-		_imuse->set_music_volume(ConfMan.getInt("music_volume"));
+		_imuse->setMusicVolume(ConfMan.getInt("music_volume"));
 	}
 	_sound->setupSound();
 
@@ -1326,16 +1325,10 @@ void ScummEngine::setupMusic(int midi) {
 			warning("MIDI driver depends on sound mixer, switching to null MIDI driver");
 		}
 	}
-	_mixer->setVolume(ConfMan.getInt("sfx_volume") * ConfMan.getInt("master_volume") / 255);
-	_mixer->setMusicVolume(ConfMan.getInt("music_volume"));
 
 	// Init iMuse
 	if (_features & GF_DIGI_IMUSE) {
 		_musicEngine = _imuseDigital = new IMuseDigital(this, 10);
-		_mixer->setVolume(ConfMan.getInt("master_volume"));
-		_imuseDigital->setGroupMusicVolume(ConfMan.getInt("music_volume") / 2);
-		_imuseDigital->setGroupSfxVolume(ConfMan.getInt("sfx_volume") / 2);
-		_imuseDigital->setGroupVoiceVolume(ConfMan.getInt("speech_volume") / 2);
 	} else if ((_features & GF_AMIGA) && (_version == 2)) {
 		_musicEngine = new Player_V2A(this);
 	} else if ((_features & GF_AMIGA) && (_version == 3)) {
@@ -1367,11 +1360,41 @@ void ScummEngine::setupMusic(int midi) {
 			}
 			if (midi == MDT_TOWNS)
 				_imuse->property(IMuse::PROP_DIRECT_PASSTHROUGH, 1);
-			_imuse->set_music_volume(ConfMan.getInt("music_volume"));
 		}
 	}
+
+	setupVolumes();
+
 #endif // ph0x-hack
 }
+
+void ScummEngine::setupVolumes() {
+
+	// Sync the engine with the config manager
+	int soundVolumeMaster = ConfMan.getInt("master_volume");
+	int soundVolumeMusic = ConfMan.getInt("music_volume");
+	int soundVolumeSfx = ConfMan.getInt("sfx_volume");
+	int soundVolumeSpeech = ConfMan.getInt("speech_volume");
+
+	if (_imuse) {
+		_imuse->setMusicVolume(soundVolumeMusic);
+	}
+
+	if (_musicEngine) {
+		_musicEngine->setMusicVolume(soundVolumeMusic);
+	}
+
+	_mixer->setVolume(soundVolumeSfx * soundVolumeMaster / 255);
+	_mixer->setMusicVolume(soundVolumeMusic);
+
+	if (_imuseDigital) {
+		_mixer->setVolume(soundVolumeMaster);
+		_imuseDigital->setGroupMusicVolume(soundVolumeMusic / 2);
+		_imuseDigital->setGroupSfxVolume(soundVolumeSfx / 2);
+		_imuseDigital->setGroupVoiceVolume(soundVolumeSpeech / 2);
+	}
+}
+
 
 
 #pragma mark -

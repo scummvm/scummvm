@@ -45,7 +45,7 @@ public:
 	 * Set the output volume.
 	 * @param vol		the new output volume
 	 */
-	virtual void setMasterVolume(int vol) = 0;
+	virtual void setMusicVolume(int vol) = 0;
 
 	/**
 	 * Start playing the sound with the given id.

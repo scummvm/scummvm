@@ -566,13 +566,13 @@ int IMuseInternal::query_queue(int param) {
 	}
 }
 
-int IMuseInternal::set_music_volume(uint vol) {
+int IMuseInternal::setMusicVolume(uint vol) {
 	if (vol > 255)
 		vol = 255;
 	if (_music_volume == vol)
 		return 0;
 	_music_volume = vol;
-	vol = vol * _master_volume / 255;
+	vol = _master_volume * _music_volume / 255;
 	for (uint i = 0; i < ARRAYSIZE(_channel_volume); i++) {
 		_channel_volume_eff[i] = _channel_volume[i] * vol / 255;
 	}
@@ -581,13 +581,13 @@ int IMuseInternal::set_music_volume(uint vol) {
 	return 0;
 }
 
-int IMuseInternal::setMasterVolume(uint vol) {
+int IMuseInternal::setImuseMasterVolume(uint vol) {
 	if (vol > 255)
 		vol = 255;
 	if (_master_volume == vol)
 		return 0;
 	_master_volume = vol;
-	vol = vol * _music_volume / 255;
+	vol = _master_volume * _music_volume / 255;
 	for (uint i = 0; i < ARRAYSIZE(_channel_volume); i++) {
 		_channel_volume_eff[i] = _channel_volume[i] * vol / 255;
 	}
@@ -685,8 +685,8 @@ int32 IMuseInternal::doCommand (int numargs, int a[]) {
 			if (a[1] > 127)
 				return -1;
 			else {
-				warning ("IMuse doCommand(6) - setMasterVolume (%d)", a[1]);
-				return setMasterVolume((a[1] << 1) |(a[1] ? 0 : 1)); // Convert from 0-127 to 0-255
+				warning ("IMuse doCommand(6) - setImuseMasterVolume (%d)", a[1]);
+				return setImuseMasterVolume((a[1] << 1) |(a[1] ? 0 : 1)); // Convert from 0-127 to 0-255
 			}
 		case 7:
 			warning ("IMuse doCommand(7) - getMasterVolume (%d)", a[1]);
@@ -1378,7 +1378,7 @@ int IMuseInternal::save_or_load(Serializer *ser, ScummEngine *scumm) {
 		// Load all sounds that we need
 		fix_players_after_load(scumm);
 		fix_parts_after_load();
-		setMasterVolume(_master_volume);
+		setImuseMasterVolume(_master_volume);
 
 		if (_midi_native)
 			reallocateMidiChannels(_midi_native);
@@ -1745,8 +1745,7 @@ inline void IMuse::out() const { _system->unlockMutex(_mutex); }
 void IMuse::on_timer(MidiDriver *midi) { in(); _target->on_timer(midi); out(); }
 void IMuse::pause(bool paused) { in(); _target->pause(paused); out(); }
 int IMuse::save_or_load(Serializer *ser, ScummEngine *scumm) { in(); int ret = _target->save_or_load(ser, scumm); out(); return ret; }
-int IMuse::set_music_volume(uint vol) { in(); int ret = _target->set_music_volume(vol); out(); return ret; }
-void IMuse::setMasterVolume(int vol) { in(); _target->setMasterVolume(vol); out(); }
+void IMuse::setMusicVolume(int vol) { in(); _target->setMusicVolume(vol); out(); }
 void IMuse::startSound(int sound) { in(); _target->startSound(sound); out(); }
 void IMuse::stopSound(int sound) { in(); _target->stopSound(sound); out(); }
 void IMuse::stopAllSounds() { in(); _target->stopAllSounds(); out(); }

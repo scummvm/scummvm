@@ -61,8 +61,7 @@ public:
 	void on_timer(MidiDriver *midi);
 	void pause(bool paused);
 	int save_or_load(Serializer *ser, ScummEngine *scumm);
-	int set_music_volume(uint vol);
-	void setMasterVolume(int vol);
+	void setMusicVolume(int vol);
 	void startSound(int sound);
 	void stopSound(int sound);
 	void stopAllSounds();

@@ -78,7 +78,7 @@ public:
 	Player_V2(ScummEngine *scumm, bool pcjr);
 	virtual ~Player_V2();
 
-	virtual void setMasterVolume(int vol);
+	virtual void setMusicVolume(int vol);
 	virtual void startSound(int sound);
 	virtual void stopSound(int sound);
 	virtual void stopAllSounds();

@@ -154,7 +154,7 @@ public:
 	void setVolume(int soundId, int volume);
 	void setPan(int soundId, int pan);
 	void setFade(int soundId, int destVolume, int delay60HzTicks);
-	void setMasterVolume(int vol) {}
+	void setMusicVolume(int vol) {}
 	void stopSound(int sound);
 	void stopAllSounds();
 	void pause(bool pause);

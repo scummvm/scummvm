@@ -43,7 +43,7 @@ public:
 	Player_V2A(ScummEngine *scumm);
 	virtual ~Player_V2A();
 
-	virtual void setMasterVolume(int vol);
+	virtual void setMusicVolume(int vol);
 	virtual void startSound(int sound);
 	virtual void stopSound(int sound);
 	virtual void stopAllSounds();

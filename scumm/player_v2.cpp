@@ -374,7 +374,7 @@ Player_V2::Player_V2(ScummEngine *scumm, bool pcjr) {
 	_RNG = NG_PRESET;
 
 	set_pcjr(pcjr);
-	setMasterVolume(255);
+	setMusicVolume(255);
 
 	_mixer->setupPremix(this);
 }
@@ -416,7 +416,7 @@ void Player_V2::set_pcjr(bool pcjr) {
 	mutex_down();
 }
 
-void Player_V2::setMasterVolume (int vol) {
+void Player_V2::setMusicVolume (int vol) {
 	if (vol > 255)
 		vol = 255;
 

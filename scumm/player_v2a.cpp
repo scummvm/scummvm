@@ -1178,8 +1178,8 @@ Player_V2A::~Player_V2A() {
 #endif
 }
 
-void Player_V2A::setMasterVolume (int vol) {
-	_mod->setMasterVolume(vol);
+void Player_V2A::setMusicVolume (int vol) {
+	_mod->setMusicVolume(vol);
 }
 
 int Player_V2A::getSoundSlot (int id) const {

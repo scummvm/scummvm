@@ -59,7 +59,7 @@ Player_MOD::~Player_MOD() {
 	}
 }
 
-void Player_MOD::setMasterVolume(int vol) {
+void Player_MOD::setMusicVolume(int vol) {
 	_maxvol = vol;
 }
 

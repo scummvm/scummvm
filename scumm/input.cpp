@@ -382,15 +382,13 @@ void ScummEngine::processKbd(bool smushMode) {
 			vol -= 16;
 		vol = vol & 0xF0;
 		ConfMan.set("music_volume", vol);
-		if (_imuse)
-			_imuse->set_music_volume (vol);
+		setupVolumes();
 	} else if (_lastKeyHit == ']') { // ] Music volume up
 		int vol = ConfMan.getInt("music_volume");
 		vol = (vol + 16) & 0xFF0;
 		if (vol > 255) vol = 255;
 		ConfMan.set("music_volume", vol);
-		if (_imuse)
-			_imuse->set_music_volume (vol);
+		setupVolumes();
 	} else if (_lastKeyHit == '-') { // - text speed down
 		if (_defaultTalkDelay < 9)
 			_defaultTalkDelay++;

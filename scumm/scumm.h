@@ -393,6 +393,7 @@ public:
 
 	void loadCJKFont();
 	void setupMusic(int midi);
+	void setupVolumes();
 
 	// Scumm main loop
 	int scummLoop(int delta);

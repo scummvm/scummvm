@@ -38,7 +38,7 @@ class Player_MOD : public AudioStream {
 public:
 	Player_MOD(ScummEngine *scumm);
 	virtual ~Player_MOD();
-	virtual void setMasterVolume(int vol);
+	virtual void setMusicVolume(int vol);
 
 	virtual void startChannel(int id, void *data, int size, int rate, uint8 vol, int loopStart = 0, int loopEnd = 0, int8 pan = 0);
 	virtual void stopChannel(int id);

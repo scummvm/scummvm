@@ -75,8 +75,8 @@ Player_V3A::~Player_V3A() {
 	}
 }
 
-void Player_V3A::setMasterVolume (int vol) {
-	_mod->setMasterVolume(vol);
+void Player_V3A::setMusicVolume (int vol) {
+	_mod->setMusicVolume(vol);
 }
 
 int Player_V3A::getMusChan (int id) const {

@@ -1159,7 +1159,7 @@ void ScummEngine_v60he::o60_soundOps() {
 	int arg = pop();
 	switch (subOp) {
 	case 0xde:
-		_imuse->set_music_volume(arg);
+		_imuse->setMusicVolume(arg);
 		break;
 	case 0xdf:
 		// Used in fbear introduction
