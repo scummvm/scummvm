@@ -310,6 +310,3 @@ float revmodel::getmode() {
 	else
 		return 0;
 }
-
-//ends
-
