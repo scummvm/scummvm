@@ -23,9 +23,11 @@
 /* The bare pure X11 port done by Lionel 'BBrox' Ulmer */
 
 #include "common/stdafx.h"
-#include "backends/intern.h"
+#include "common/scummsys.h"
+#include "common/system.h"
 #include "common/util.h"
-#include "base/engine.h"	// Only #included for error() and warning()
+
+#include "backends/intern.h"
 
 #include <stdio.h>
 #include <assert.h>
@@ -39,6 +41,7 @@
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
 #include <X11/extensions/XShm.h>
+
 #ifdef __linux__
 #include <linux/soundcard.h>
 #else
@@ -55,6 +58,27 @@
 
 class OSystem_X11:public OSystem {
 public:
+	// Determine whether the backend supports the specified feature.
+	bool hasFeature(Feature f);
+
+	// En-/disable the specified feature.
+	void setFeatureState(Feature f, bool enable);
+
+	// Query the state of the specified feature.
+	bool getFeatureState(Feature f);
+
+	// Retrieve a list of all graphics modes supported by this backend.
+	const GraphicsMode *getSupportedGraphicsModes() const;
+
+	// Return the ID of the 'default' graphics mode.
+	int getDefaultGraphicsMode() const;
+
+	// Switch to the specified graphics mode.
+	bool setGraphicsMode(int mode);
+
+	// Determine which graphics mode is currently active.
+	int getGraphicsMode() const;
+
 	// Set colors of the palette
 	void setPalette(const byte *colors, uint start, uint num);
 
@@ -100,9 +124,15 @@ public:
 
 	// Set function that generates samples 
 	bool setSoundCallback(SoundProc proc, void *param);
-	
 	void clearSoundCallback();
-	
+
+	// Determine the output sample rate. Audio data provided by the sound
+	// callback will be played using this rate.
+	int getOutputSampleRate() const;
+
+	// Initialise the specified CD drive for audio playback.
+	bool openCD(int drive);
+
 	// Poll cdrom status
 	// Returns true if cd audio is playing
 	bool poll_cdrom();
@@ -119,9 +149,6 @@ public:
 	// Quit
 	void quit();
 
-	// Set a parameter
-	uint32 property(int param, Property *value);
-
 	// Add a callback timer
 	void setTimerCallback(TimerProc callback, int interval);
 
@@ -131,7 +158,7 @@ public:
 	void unlockMutex(MutexRef mutex);
 	void deleteMutex(MutexRef mutex);
 
-        // Overlay handling for the new menu system
+	// Overlay handling for the new menu system
 	void show_overlay();
 	void hide_overlay();
 	void clear_overlay();
@@ -139,6 +166,10 @@ public:
 	void copy_rect_overlay(const int16 *, int, int, int, int, int);
 	virtual int16 getHeight();
 	virtual int16 getWidth();
+
+	// Set a window caption or any other comparable status display to the
+	// given value.
+	void setWindowCaption(const char *caption);
 
 
 	static OSystem *create(int gfx_mode, bool full_screen);
@@ -208,8 +239,7 @@ typedef struct {
 #undef CAPTURE_SOUND
 
 #define FRAG_SIZE 4096
-static void *sound_and_music_thread(void *params)
-{
+static void *sound_and_music_thread(void *params) {
 	/* Init sound */
 	int sound_fd, param, frag_size;
 	uint8 sound_buffer[FRAG_SIZE];
@@ -292,8 +322,7 @@ static void *sound_and_music_thread(void *params)
 }
 
 /* Function used to hide the mouse cursor */
-void OSystem_X11::create_empty_cursor()
-{
+void OSystem_X11::create_empty_cursor() {
 	XColor bg;
 	Pixmap pixmapBits;
 	Cursor cursor = None;
@@ -308,19 +337,16 @@ void OSystem_X11::create_empty_cursor()
 	XDefineCursor(display, window, cursor);
 }
 
-OSystem *OSystem_X11_create()
-{
+OSystem *OSystem_X11_create() {
 	return OSystem_X11::create(0, 0);
 }
 
-OSystem *OSystem_X11::create(int gfx_mode, bool full_screen)
-{
+OSystem *OSystem_X11::create(int gfx_mode, bool full_screen) {
 	OSystem_X11 *syst = new OSystem_X11();
 	return syst;
 }
 
-OSystem_X11::OSystem_X11()
-{
+OSystem_X11::OSystem_X11() {
 	char buf[512];
 	XWMHints *wm_hints;
 	XGCValues values;
@@ -408,16 +434,42 @@ out_of_loop:
 	gettimeofday(&start_time, NULL);
 }
 
-uint32 OSystem_X11::get_msecs()
-{
+bool OSystem_X11::hasFeature(Feature f) {
+	return false;
+}
+
+void OSystem_X11::setFeatureState(Feature f, bool enable) {
+}
+
+bool OSystem_X11::getFeatureState(Feature f) {
+	return false;
+}
+
+const OSystem::GraphicsMode *OSystem_X11::getSupportedGraphicsModes() const {
+	return NULL;	// TODO / FIXME
+}
+
+int OSystem_X11::getDefaultGraphicsMode() const {
+	return 0;
+}
+
+bool OSystem_X11::setGraphicsMode(int mode) {
+	return (mode == 0);
+}
+
+int OSystem_X11::getGraphicsMode() const {
+	return 0;
+}
+
+
+uint32 OSystem_X11::get_msecs() {
 	struct timeval current_time;
 	gettimeofday(&current_time, NULL);
 	return (uint32)(((current_time.tv_sec - start_time.tv_sec) * 1000) +
 	                ((current_time.tv_usec - start_time.tv_usec) / 1000));
 }
 
-void OSystem_X11::initSize(uint w, uint h)
-{
+void OSystem_X11::initSize(uint w, uint h) {
 	static XShmSegmentInfo shminfo;
 
 	fb_width = w;
@@ -455,8 +507,7 @@ void OSystem_X11::initSize(uint w, uint h)
 	palette = (uint16 *)calloc(256, sizeof(uint16));
 }
 
-bool OSystem_X11::setSoundCallback(SoundProc proc, void *param)
-{
+bool OSystem_X11::setSoundCallback(SoundProc proc, void *param) {
 	static THREAD_PARAM thread_param;
 
 	/* And finally start the music thread */
@@ -477,8 +528,7 @@ void OSystem_X11::clearSoundCallback() {
 }
 
 
-void OSystem_X11::setPalette(const byte *colors, uint start, uint num)
-{
+void OSystem_X11::setPalette(const byte *colors, uint start, uint num) {
 	const byte *data = colors;
 	uint16 *pal = &(palette[start]);
 
@@ -500,8 +550,7 @@ void OSystem_X11::setPalette(const byte *colors, uint start, uint num)
     num_of_dirty_square++;					\
   }
 
-void OSystem_X11::copy_rect(const byte *buf, int pitch, int x, int y, int w, int h)
-{
+void OSystem_X11::copy_rect(const byte *buf, int pitch, int x, int y, int w, int h) {
 	uint8 *dst;
 
 	if (y < 0) {
@@ -563,8 +612,7 @@ void OSystem_X11::move_screen(int dx, int dy, int height) {
 	}
 }
 
-void OSystem_X11::blit_convert(const dirty_square * d, uint16 *dst, int pitch)
-{
+void OSystem_X11::blit_convert(const dirty_square * d, uint16 *dst, int pitch) {
 	uint8 *ptr_src  = local_fb + (fb_width * d->y) + d->x;
 	uint16 *ptr_dst = dst + (fb_width * d->y) + d->x;
 	int x, y;
@@ -578,8 +626,7 @@ void OSystem_X11::blit_convert(const dirty_square * d, uint16 *dst, int pitch)
 	}
 }
 
-void OSystem_X11::updateScreen_helper(const dirty_square * d, dirty_square * dout)
-{
+void OSystem_X11::updateScreen_helper(const dirty_square * d, dirty_square * dout) {
 	if (_overlay_visible == false) {
 		blit_convert(d, (uint16 *) image->data, fb_width);
 	} else {
@@ -603,8 +650,7 @@ void OSystem_X11::updateScreen_helper(const dirty_square * d, dirty_square * dou
 		dout->h = d->y + d->h;
 }
 
-void OSystem_X11::updateScreen()
-{
+void OSystem_X11::updateScreen() {
 	bool full_redraw = false;
 	bool need_redraw = false;
 	static const dirty_square ds_full = { 0, 0, fb_width, fb_height };
@@ -667,18 +713,18 @@ bool OSystem_X11::show_mouse(bool visible)
 	return last;
 }
 
-void OSystem_X11::quit()
-{
+void OSystem_X11::quit() {
 	exit(0);
 }
 
-void OSystem_X11::undraw_mouse()
-{
+void OSystem_X11::setWindowCaption(const char *caption) {
+}
+
+void OSystem_X11::undraw_mouse() {
 	AddDirtyRec(old_state.x, old_state.y, old_state.w, old_state.h);
 }
 
-void OSystem_X11::draw_mouse(dirty_square *dout)
-{
+void OSystem_X11::draw_mouse(dirty_square *dout) {
 	_mouse_state_changed = false;
 
 	if (_mouse_visible == false)
@@ -747,8 +793,7 @@ void OSystem_X11::draw_mouse(dirty_square *dout)
 	}
 }
 
-void OSystem_X11::set_mouse_pos(int x, int y)
-{
+void OSystem_X11::set_mouse_pos(int x, int y) {
 	if ((x != cur_state.x) || (y != cur_state.y)) {
 		cur_state.x = x;
 		cur_state.y = y;
@@ -759,13 +804,11 @@ void OSystem_X11::set_mouse_pos(int x, int y)
 	}
 }
 
-void OSystem_X11::warp_mouse(int x, int y)
-{
+void OSystem_X11::warp_mouse(int x, int y) {
 	set_mouse_pos(x, y);
 }
 
-void OSystem_X11::set_mouse_cursor(const byte *buf, uint w, uint h, int hotspot_x, int hotspot_y)
-{
+void OSystem_X11::set_mouse_cursor(const byte *buf, uint w, uint h, int hotspot_x, int hotspot_y) {
 	cur_state.w = w;
 	cur_state.h = h;
 	cur_state.hot_x = hotspot_x;
@@ -778,8 +821,7 @@ void OSystem_X11::set_mouse_cursor(const byte *buf, uint w, uint h, int hotspot_
 	_mouse_state_changed = true;
 }
 
-void OSystem_X11::set_shake_pos(int shake_pos)
-{
+void OSystem_X11::set_shake_pos(int shake_pos) {
 	if (new_shake_pos != shake_pos) {
 		if (_mouse_state_changed == false) {
 			undraw_mouse();
@@ -789,42 +831,32 @@ void OSystem_X11::set_shake_pos(int shake_pos)
 	new_shake_pos = shake_pos;
 }
 
-uint32 OSystem_X11::property(int param, Property *value)
-{
-	switch (param) {
-	case PROP_GET_SAMPLE_RATE:
-		return SAMPLES_PER_SEC;
-	case PROP_GET_FULLSCREEN:
-		return 0;
-	}
-	warning("Property not implemented yet (%d) ", param);
-	return 0;
+int OSystem_X11::getOutputSampleRate() const {
+	return SAMPLES_PER_SEC;
 }
 
-bool OSystem_X11::poll_cdrom()
-{
+bool OSystem_X11::openCD(int drive) {
 	return false;
 }
 
-void OSystem_X11::play_cdrom(int track, int num_loops, int start_frame, int duration)
-{
+bool OSystem_X11::poll_cdrom() {
+	return false;
 }
 
-void OSystem_X11::stop_cdrom()
-{
+void OSystem_X11::play_cdrom(int track, int num_loops, int start_frame, int duration) {
 }
 
-void OSystem_X11::update_cdrom()
-{
+void OSystem_X11::stop_cdrom() {
 }
 
-void OSystem_X11::delay_msecs(uint msecs)
-{
+void OSystem_X11::update_cdrom() {
+}
+
+void OSystem_X11::delay_msecs(uint msecs) {
 	usleep(msecs * 1000);
 }
 
-bool OSystem_X11::poll_event(Event *scumm_event)
-{
+bool OSystem_X11::poll_event(Event *scumm_event) {
 	/* First, handle timers */
 	uint32 current_msecs = get_msecs();
 
@@ -1033,8 +1065,7 @@ bool OSystem_X11::poll_event(Event *scumm_event)
 	return false;
 }
 
-void OSystem_X11::setTimerCallback(TimerProc callback, int interval)
-{
+void OSystem_X11::setTimerCallback(TimerProc callback, int interval) {
 	if (callback != NULL) {
 		_timer_duration = interval;
 		_timer_next_expiry = get_msecs() + interval;
@@ -1045,25 +1076,21 @@ void OSystem_X11::setTimerCallback(TimerProc callback, int interval)
 	}
 }
 
-OSystem::MutexRef OSystem_X11::createMutex(void)
-{
+OSystem::MutexRef OSystem_X11::createMutex(void) {
 	pthread_mutex_t *mutex = (pthread_mutex_t *) malloc(sizeof(pthread_mutex_t));
 	pthread_mutex_init(mutex, NULL);
 	return (MutexRef)mutex;
 }
 
-void OSystem_X11::lockMutex(MutexRef mutex)
-{
+void OSystem_X11::lockMutex(MutexRef mutex) {
 	pthread_mutex_lock((pthread_mutex_t *) mutex);
 }
 
-void OSystem_X11::unlockMutex(MutexRef mutex)
-{
+void OSystem_X11::unlockMutex(MutexRef mutex) {
 	pthread_mutex_unlock((pthread_mutex_t *) mutex);
 }
 
-void OSystem_X11::deleteMutex(MutexRef mutex)
-{
+void OSystem_X11::deleteMutex(MutexRef mutex) {
 	pthread_mutex_destroy((pthread_mutex_t *) mutex);
 	free(mutex);
 }
