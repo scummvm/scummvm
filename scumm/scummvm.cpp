@@ -1325,7 +1325,7 @@ void Scumm::processKbd() {
 	int saveloadkey;
 	getKeyInput();
 
-	if ((_features & GF_OLD256) || (_gameId == GID_CMI)) /* FIXME: Support ingame screen */
+	if ((_features & GF_OLD256) || (_gameId == GID_CMI) || (_features & GF_OLD_BUNDLE)) /* FIXME: Support ingame screen */
 		saveloadkey = 319;
 	else
 		saveloadkey = _vars[VAR_SAVELOADDIALOG_KEY];
