@@ -916,6 +916,7 @@ void ScummEngine_v90he::spriteGroupSet_scale_x_ratio_mul(int spriteGroupId, int 
 	if (_spriteGroups[spriteGroupId].scale_x_ratio_mul != value) {
 		_spriteGroups[spriteGroupId].scale_x_ratio_mul = value;
 		_spriteGroups[spriteGroupId].scale_x = _spriteGroups[spriteGroupId].scale_x_ratio_mul / _spriteGroups[spriteGroupId].scale_x_ratio_div;
+
 		spriteGroupSet_scaling(spriteGroupId);
 		redrawSpriteGroup(spriteGroupId);
 	}
