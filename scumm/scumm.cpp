@@ -850,6 +850,7 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 	VAR_NUM_UNK = 0xFF;
 	VAR_POLYGONS_ONLY = 0xFF;
 	VAR_WINDOWS_VERSION = 0xFF;
+	VAR_KEY_STATE = 0xFF;
 	VAR_WIZ_TCOLOR = 0xFF;
 
 	// Use g_scumm from error() ONLY
@@ -1089,7 +1090,7 @@ void ScummEngine::mainInit() {
 	if (VAR_DEBUGMODE != 0xFF) {
 		// This is NOT for the Mac version of Indy3/Loom
 		VAR(VAR_DEBUGMODE) = _debugMode;
-		if (_heversion >= 80)
+		if (_heversion >= 80 && _debugMode)
 			VAR(85) = 1;
 	}
 

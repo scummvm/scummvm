@@ -97,6 +97,31 @@ void ScummEngine::parseEvents() {
 				_keyPressed = event.kbd.ascii;	// Normal key press, pass on to the game.
 			}
 
+			if (_heversion >= 80) {
+				// Keyboard is controlled via variable
+				int _keyState = 0;
+
+				if (event.kbd.ascii == 276) // Left
+					_keyState = 1;
+
+				if (event.kbd.ascii == 275) // Right
+					_keyState |= 2;
+
+				if (event.kbd.ascii == 273) // Up
+					_keyState |= 4;
+
+				if (event.kbd.ascii == 274) // Down
+					_keyState |= 8;
+
+				if (event.kbd.flags == OSystem::KBD_SHIFT)
+					_keyState |= 16;
+
+				if (event.kbd.flags == OSystem::KBD_CTRL)
+					_keyState |= 32;
+
+				VAR(VAR_KEY_STATE) = _keyState;
+			}
+
 			if (_keyPressed >= 512)
 				debugC(DEBUG_GENERAL, "_keyPressed > 512 (%d)", _keyPressed);
 			else

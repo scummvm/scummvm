@@ -548,7 +548,7 @@ int ScummEngine::readVar(uint var) {
 			var &= 0xFFF;
 		}
 
-		if (_heversion >= 72)
+		if (_heversion >= 80)
 			checkRange(25, 0, var, "Local variable %d out of range(r)");
 		else
 			checkRange(20, 0, var, "Local variable %d out of range(r)");
@@ -627,7 +627,7 @@ void ScummEngine::writeVar(uint var, int value) {
 			var &= 0xFFF;
 		}
 
-		if (_heversion >= 72)
+		if (_heversion >= 80)
 			checkRange(25, 0, var, "Local variable %d out of range(w)");
 		else
 			checkRange(20, 0, var, "Local variable %d out of range(w)");

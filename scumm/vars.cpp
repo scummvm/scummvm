@@ -263,6 +263,7 @@ void ScummEngine_v72he::setupScummVars() {
 
 	if (_heversion >= 80)
 		VAR_WINDOWS_VERSION = 79;
+		VAR_KEY_STATE = 86;
 	if (_heversion >= 90) {
 		VAR_NUM_SPRITES = 106;
 		VAR_WIZ_TCOLOR = 117;
@@ -491,7 +492,7 @@ void ScummEngine::initScummVars() {
 		VAR(VAR_V6_EMSSPACE) = 10000;
 		VAR(VAR_NUM_GLOBAL_OBJS) = _numGlobalObjects - 1;
 	} else if (_heversion >= 70) {
-		VAR(VAR_NUM_SOUND_CHANNELS) = 3;
+		VAR(VAR_NUM_SOUND_CHANNELS) = 8;
 		VAR(VAR_MUSIC_CHANNEL) = 1;
 		VAR(VAR_SOUND_CHANNEL) = 2;
 

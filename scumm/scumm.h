@@ -1335,6 +1335,7 @@ public:
 	byte VAR_NUM_UNK;
 	byte VAR_POLYGONS_ONLY;
 	byte VAR_WINDOWS_VERSION;
+	byte VAR_KEY_STATE;
 	byte VAR_WIZ_TCOLOR;
 };
 
