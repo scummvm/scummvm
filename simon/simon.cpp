@@ -148,6 +148,7 @@ SimonState::SimonState(GameDetector *detector, OSystem *syst)
 	if (!_mixer->bindToSystem(syst))
 		warning("Sound initialization failed. "
 						"Features of the game that depend on sound synchronization will most likely break");
+	midi.set_volume(detector->_music_volume);
 	set_volume(detector->_sfx_volume);
 
 	_effects_paused = false;
