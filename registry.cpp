@@ -21,7 +21,7 @@
 
 Registry::Registry() : dirty_(false) {
   #ifdef WIN32
-    std::string filename = "C:\residual.ini";
+    std::string filename = "C:\\residual.ini";
   #else
     std::string filename = std::string(std::getenv("HOME")) + "/.residualrc";
   #endif
