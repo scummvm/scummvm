@@ -63,17 +63,6 @@ static void MainFormInit()
  *
  ***********************************************************************/
 
-static void MainFormAbout() {
-	FormPtr frmP;
-	FormLabelType *versionP;
-
-	frmP = FrmInitForm(AboutForm);
-	versionP = FrmNewLabel(&frmP, 1120, gScummVMVersion, 4, 126, stdFont);
-	versionP = FrmNewLabel(&frmP, 1121, gScummVMBuildDate, 4, 136, stdFont);
-	FrmDoDialog (frmP);					// Display the About Box.
-	FrmDeleteForm (frmP);
-}
-
 static Boolean MainFormDoCommand(UInt16 command)
 {
 	Boolean handled = false;
@@ -81,11 +70,6 @@ static Boolean MainFormDoCommand(UInt16 command)
 	switch (command) {
 		case MainGamesMemoryCard:
 			FrmPopupForm(CardSlotForm);
-			handled = true;
-			break;
-
-		case MainOptionsViewMemory:
-			FrmPopupForm(SystemInfoForm);
 			handled = true;
 			break;
 
@@ -103,7 +87,7 @@ static Boolean MainFormDoCommand(UInt16 command)
 			break;
 
 		case MainOptionsAbout:
- 			MainFormAbout();
+ 			FrmPopupForm(InfoForm);
  			handled = true;
 			break;
 		
@@ -241,7 +225,7 @@ Boolean MainFormHandleEvent(EventPtr eventP)
 					break;
 			
 				case MainAboutButton:
-					MainFormAbout();
+		 			FrmPopupForm(InfoForm);
 					break;
 				
 //				case MainListTypeSelTrigger:
@@ -269,6 +253,11 @@ Boolean MainFormHandleEvent(EventPtr eventP)
 						case skinButtonGameAdd:
 							gFormEditMode = edtModeAdd;
 							FrmPopupForm(GameEditForm);
+							handled = true;
+							break;
+
+						case skinButtonGameAudio:
+							FrmPopupForm(MusicForm);
 							handled = true;
 							break;
 
@@ -313,6 +302,7 @@ Boolean MainFormHandleEvent(EventPtr eventP)
 					case skinButtonGameParams:
 					case skinButtonGameStart:
 					case skinButtonGameDelete:
+					case skinButtonGameAudio:
 						SknSetState(skinDBP, sknLastOn, sknStateSelected);
 						SknShowObject(skinDBP, sknLastOn);				
 						if (gPrefs->soundClick)
