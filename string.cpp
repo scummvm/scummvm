@@ -310,7 +310,10 @@ newLine:;
 			if (charset._center) {
 				charset._xpos2 -= charset.getStringWidth(0, buffer, 0)>>1;
 			}
-			charset._ypos2 += getResourceAddress(rtCharset,charset._curId)[30];
+			if(_features & GF_SMALL_HEADER)
+				charset._ypos2 += getResourceAddress(rtCharset,charset._curId)[18];
+			else
+				charset._ypos2 += getResourceAddress(rtCharset,charset._curId)[30];
 			charset._disableOffsX = 1;
 			continue;
 		}
