@@ -1810,7 +1810,7 @@ void SimonState::vc_69() {
 	if (_debugMode)
 		warning("vc_69(%d,%d): music stuff?", a, b);
 
-	if (_vc72_var1 == 999 || _vc72_var1 == 0xFFFF) {
+	if (_vc72_var1 == 999 || _vc72_var1 == -1) {
 		_vc70_var2 = b;
 		midi_play (a);
 		_vc72_var1 = a;
