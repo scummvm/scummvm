@@ -48,9 +48,17 @@ CXXFLAGS+= -Wwrite-strings -fcheck-new -Wctor-dtor-privacy -Wnon-virtual-dtor
 # Compile options - you can modify these to tweak ScummVM compilation #
 #######################################################################
 
+# Uncomment this to activate the MPEG2 lib for Broken Sword II cut scenes
+# DEFINES += -DUSE_MPEG2
+# LIBS    += -lmpeg2
+
+# Uncomment this to activate the ZLIB lib for compressed save game files
+# DEFINES += -DUSE_ZLIB
+# LIBS    += -lz
+
 # Uncomment this to activate the MAD lib for compressed sound files
-DEFINES += -DUSE_MAD
-LIBS    += -lmad
+# DEFINES += -DUSE_MAD
+# LIBS    += -lmad
 
 # Uncomment this to activate the Ogg Vorbis lib for compressed sound files
 # DEFINES += -DUSE_VORBIS
@@ -116,7 +124,10 @@ scummvm-static: $(OBJS)
 		/sw/lib/libSDLmain.a /sw/lib/libSDL.a \
 		/sw/lib/libmad.a \
 		/sw/lib/libvorbisfile.a /sw/lib/libvorbis.a /sw/lib/libogg.a \
+		/sw/lib/libmpeg2.a \
+		-lz \
 		-framework Cocoa -framework Carbon -framework IOKit \
-		-framework QuickTime -framework AudioUnit -framework AudioToolbox
+		-framework OpenGL -framework AGL -framework QuickTime \
+		-framework AudioUnit -framework AudioToolbox
 
 .PHONY: deb bundle
