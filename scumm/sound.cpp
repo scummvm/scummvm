@@ -432,8 +432,9 @@ void Sound::playSound(int soundID) {
 		// in these games, only music. Once we add SFX support, we'll have to
 		// revise it / replace it by a proper fix.
 		static int lastSound = -1;
-		if (lastSound > 0 && ptr) {
-			stopSound(lastSound);
+		if (ptr) {
+			if (lastSound > 0)
+				stopSound(lastSound);
 			lastSound = soundID;
 		}
 	}
