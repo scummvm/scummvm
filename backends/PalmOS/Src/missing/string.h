@@ -36,6 +36,7 @@
 #define strncmp			StrNCompare
 #define strstr			StrStr
 
+void *memchr(const void *s, int c, UInt32 n);
 Char *strtok(Char *str, const Char *sep);
 Char *strrchr(const Char *s, int c);
 Char *strdup(const Char *strSource);

@@ -24,6 +24,8 @@
 #include "extend.h"
 #include "string.h"
 #include "palm.h"
+
+const Char *SCUMMVM_SAVEPATH = "/PALM/Programs/ScummVM/Saved/";
 /*
 //Sony clie PalmOS<5
 void BmpDrawDDBitmap(const FormType *formP, DmResID bitmapID)

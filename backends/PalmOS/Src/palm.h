@@ -24,30 +24,7 @@
 #define PALM_H
 
 #include <SonyClie.h>
-#include "SonySndLib.h"
-#include "vibrate.h"
-#include "globals.h"
 #include "system.h"
-/*
-typedef struct {
-
-	UInt16 HRrefNum;
-	UInt16 volRefNum;
-	FileRef	logFile;
-
-	Boolean screenLocked;
-	Boolean vibrator;
-
-} GlobalsDataType;
-*/
-//extern UInt16 gHRrefNum;
-//extern Boolean gVibrator;
-//extern Boolean gFlipping;
-//extern Boolean gScreenLocked;
-//extern GlobalsDataType *gVars;
-
-//Err CheckHRmode();
-
 
 Err HwrDisplayPalette(UInt8 operation, Int16 startIndex, 
 			 	  			 UInt16 paletteEntries, RGBColorType *tableP)
@@ -157,53 +134,37 @@ public:
 	static OSystem *create(UInt16 gfx_mode);
 
 	UInt8 _sndHandle;
-	Boolean _isPlaying;
+	Boolean _isSndPlaying;
 
 protected:
 	bool _overlay_visible;
 
 private:
-	struct {
-		Int16 state;
-		Int16 position;
-		UInt32 time;
-		UInt32 wait;
-		UInt8 color;
-		Char text[100];
-	} _msg;
-
-	void addMessage(const Char *msg);
-	void drawMessage();
-	void deleteMessage();
-	
 	typedef void (OSystem_PALMOS::*RendererProc)(void);
 	RendererProc _renderer_proc;
 
-	UInt8 *_sndData;
+	UInt8 *_sndDataP, *_sndTempP;
 
 	void update_screen__flipping();
 	void update_screen__dbuffer();
 	void update_screen__direct();
 
-	WinHandle h_palm_screen;
-	WinHandle h_palm_offscreen;
-//	WinHandle h_palm_tmpscreen;
-	MemHandle tmpScreenHandle;
+	WinHandle _screenH;
+	WinHandle _offScreenH;
 	
-	byte *palm_screen;
-	byte *palm_offscreen;
-//	byte *palm_tmpscreen;
-	byte *tmpScreen;
+	byte *_screenP;
+	byte *_offScreenP;
+	byte *_tmpScreenP;
 
-	bool _mouse_visible;
-	bool _mouse_drawn;
+	bool _mouseVisible;
+	bool _mouseDrawn;
 
 	enum {
-		MAX_MOUSE_W = 40,
+		MAX_MOUSE_W = 40,	// must be 80x80 with 640x480 games
 		MAX_MOUSE_H = 40
 	};
 
-	int SCREEN_WIDTH, SCREEN_HEIGHT;
+	int _screenWidth, _screenHeight;
 	bool _overlaySaved;
 
 	struct MousePos {
@@ -211,12 +172,12 @@ private:
 	};
 
 	UInt16 _mode;
-	byte *_mouse_data;
-	byte *_mouse_backup;
-	MousePos _mouse_cur_state;
-	MousePos _mouse_old_state;
-	int16 _mouse_hotspot_x;
-	int16 _mouse_hotspot_y;
+	byte *_mouseDataP;
+	byte *_mouseBackupP;
+	MousePos _mouseCurState;
+	MousePos _mouseOldState;
+	int16 _mouseHotspotX;
+	int16 _mouseHotspotY;
 	int _current_shake_pos;
 	int _new_shake_pos;
 	
@@ -270,11 +231,6 @@ private:
 	UInt8 lastKeyModifier;
 
 	eventsEnum lastEvent;
-
-	// sound support
-	SndPcmFormatType _snd_format;
-	SndPcmOptionsType _snd_options;
-	
 
 	OSystem_PALMOS();
 

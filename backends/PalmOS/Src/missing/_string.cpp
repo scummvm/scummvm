@@ -21,11 +21,18 @@
  */
 
 #include "string.h"
-
-Char *StrTokNext;
 ///////////////////////////////////////////////////////////////////////////////
-Char *strtok(Char *str, const Char *sep)
-{
+void *memchr(const void *s, int c, UInt32 n) {
+	UInt32 chr;
+	for(chr = 0; chr < n;chr++,((UInt8 *)s)++)
+		if ( *((UInt8 *)s) == c)
+			return (void *)s;
+	
+	return NULL;
+} 
+///////////////////////////////////////////////////////////////////////////////
+Char *StrTokNext;
+Char *strtok(Char *str, const Char *sep) {
 	Char	*position = NULL,
 			*found,
 			*end;
@@ -67,8 +74,7 @@ Char *strtok(Char *str, const Char *sep)
 	return str;
 }
 ///////////////////////////////////////////////////////////////////////////////
-Char *strpbrk(const Char *s1, const Char *s2)
-{
+Char *strpbrk(const Char *s1, const Char *s2) {
 	Char *found;
 	UInt32 n;
 	
@@ -81,8 +87,7 @@ Char *strpbrk(const Char *s1, const Char *s2)
 	return NULL;
 }
 ///////////////////////////////////////////////////////////////////////////////
-Char *strrchr(const Char *s, int c)
-{
+Char *strrchr(const Char *s, int c) {
 	UInt32 chr;
 	UInt32 n = StrLen(s);
 
@@ -93,8 +98,7 @@ Char *strrchr(const Char *s, int c)
 	return NULL;
 } 
 ///////////////////////////////////////////////////////////////////////////////
-Char *strdup(const Char *s1)
-{
+Char *strdup(const Char *s1) {
 	Char* buf = (Char *)MemPtrNew(StrLen(s1)+1);
 
 	if(buf)
