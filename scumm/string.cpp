@@ -852,7 +852,7 @@ void Scumm::translateText(byte *text, byte *trans_buff) {
 			for (;;) {
 				if(buf[pos] == 0) {
 					trans_buff[0] = '\0';
-					return;
+					break;
 				}
 				l = 0;
 				do {
