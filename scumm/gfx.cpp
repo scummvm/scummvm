@@ -1958,6 +1958,8 @@ void Scumm::setCameraAt(int pos_x, int pos_y) {
 		clampCameraPos(&camera._cur);
 
 		camera._dest = camera._cur;
+		_vars[VAR_CAMERA_DEST_X] = camera._dest.x;
+		_vars[VAR_CAMERA_DEST_Y] = camera._dest.y;
 
 		assert(camera._cur.x >= (_realWidth / 2) && camera._cur.y >= (_realHeight / 2));
 
@@ -1996,6 +1998,7 @@ void Scumm::setCameraFollows(Actor *a) {
 		int ax, ay;
 
 		camera._follows = a->number;
+		_vars[VAR_CAMERA_FOLLOWED_ACTOR] = a->number;
 
 		if (!a->isInCurrentRoom()) {
 			startScene(a->getRoom(), 0, 0);
@@ -2072,8 +2075,8 @@ void Scumm::moveCamera() {
 		}
 
 		if (camera._movingToActor) {
-			camera._dest.x = a->x;
-			camera._dest.y = a->y;
+			_vars[VAR_CAMERA_DEST_X] = camera._dest.x = a->x;
+			_vars[VAR_CAMERA_DEST_Y] = camera._dest.y = a->y;
 		}
 
 		assert(camera._cur.x >= (_realWidth / 2) && camera._cur.y >= (_realHeight / 2));
@@ -2130,12 +2133,6 @@ void Scumm::moveCamera() {
 		if (camera._cur.x != old.x || camera._cur.y != old.y) {
 			_vars[VAR_CAMERA_POS_X] = camera._cur.x;
 			_vars[VAR_CAMERA_POS_Y] = camera._cur.y;
-
-			_vars[VAR_CAMERA_DEST_X] = camera._dest.x;
-
-			_vars[VAR_CAMERA_DEST_Y] = camera._dest.y;
-
-			_vars[VAR_CAMERA_FOLLOWED_ACTOR] = camera._follows;
 
 			if (_vars[VAR_SCROLL_SCRIPT])
 				runScript(_vars[VAR_SCROLL_SCRIPT], 0, 0, 0);
@@ -2252,9 +2249,9 @@ void Scumm::cameraMoved() {
 void Scumm::panCameraTo(int x, int y) {
 	if (_features & GF_AFTER_V7) {
 
-		camera._follows = 0;
-		camera._dest.x = x;
-		camera._dest.y = y;
+		_vars[VAR_CAMERA_FOLLOWED_ACTOR] = camera._follows = 0;
+		_vars[VAR_CAMERA_DEST_X] = camera._dest.x = x;
+		_vars[VAR_CAMERA_DEST_Y] = camera._dest.y = y;
 	} else {
 
 		camera._dest.x = x;

@@ -1348,7 +1348,9 @@ void Scumm_v5::o5_loadRoomWithEgo() {
 	startScene(a->room, a, obj);
 	_vars[VAR_WALKTO_OBJ] = 0;
 
-	camera._dest.x = camera._cur.x = a->x;
+	// FIXME: Can this be removed?
+	camera._cur.x = a->x;
+
 	setCameraAt(a->x, a->y);
 	setCameraFollows(a);
 
