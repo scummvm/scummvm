@@ -3303,7 +3303,7 @@ void SimonState::readSfxFile(const char *filename)
 		vc_29_stop_all_sounds();
 
 		_effects_file->seek(4, SEEK_SET);
-		_effects_file->read(&size, sizeof(uint32));
+		size = _effects_file->readUint32LE();
 
 		num = size / sizeof(uint32);
 
