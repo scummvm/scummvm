@@ -64,7 +64,7 @@ bool CEDevice::enableHardwareKeyMapping() {
 	GAPIOpenInput();
 	_portrait_keys = GAPIGetDefaultKeys(GX_NORMALKEYS);
 	_hasGAPIMapping = true;
-	CloseHandle(GAPI_handle);
+	FreeLibrary(GAPI_handle);
 	return true;
 }
 
@@ -79,7 +79,7 @@ bool CEDevice::disableHardwareKeyMapping() {
 	if (!GAPICloseInput)
 		return false;
 	GAPICloseInput();
-	CloseHandle(GAPI_handle);
+	FreeLibrary(GAPI_handle);
 	return true;
 }
 
