@@ -543,10 +543,13 @@ SimonEngine::SimonEngine(GameDetector *detector, OSystem *syst)
 	_debugLevel = ConfMan.getInt("debuglevel");
 	_language = Common::parseLanguage(ConfMan.get("language"));
 
+	if ((_game & GF_SIMON2) && ConfMan.hasKey("speech") && ConfMan.getBool("speech") == 0)
+		_speech = 0;
+
 	if (!(_game & GF_SIMON2) && _language > 1) {
 		if (ConfMan.hasKey("subtitles") && ConfMan.getBool("subtitles") == 0)
 			_subtitles = 0;
-	} else
+	} else if (_speech)
 		_subtitles = ConfMan.getBool("subtitles");
 
 	if (ConfMan.hasKey("fade") && ConfMan.getBool("fade") == 0)
@@ -554,8 +557,6 @@ SimonEngine::SimonEngine(GameDetector *detector, OSystem *syst)
 	if (ConfMan.hasKey("slow_down") && ConfMan.getInt("slow_down") >= 1)
 		_speed = ConfMan.getInt("slow_down");
 
-	if ((_game & GF_SIMON2) && ConfMan.hasKey("speech") && ConfMan.getBool("speech") == 0)
-		_speech = 0;
 
 	_system->init_size(320, 200);
 
