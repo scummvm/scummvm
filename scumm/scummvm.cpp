@@ -2102,7 +2102,7 @@ void ScummEngine::startScene(int room, Actor *a, int objectNr) {
 			a->putActor(x, y, _currentRoom);
 			a->moving = 0;
 		}
-	} else {
+	} else if (_version >= 7) {
 		if (a) {
 			// FIXME: This hack mostly is there to fix the tomb/statue room
 			// in The Dig. What happens there is that when you enter, you are
