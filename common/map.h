@@ -39,7 +39,15 @@ protected:
 	
 	Node *_root;
 	Node *_header;
-	public:
+
+	Map<Key, Value>(const Map<Key, Value> &map) {
+		error("No copy constructor!");
+	}
+	Map<Key, Value> &operator =(const Map<Key, Value> &map) {
+		error("No copy operator!");
+	}
+
+public:
 	class Iterator {
 	protected:
 		Node *_node;
