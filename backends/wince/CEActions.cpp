@@ -47,16 +47,20 @@ CEActions::~CEActions() {
 void CEActions::init(GameDetector &detector) {
 	if (!CEDevice::hasSmartphoneResolution())
 		CEActionsPocket::init(detector);
-#ifdef WIN32_PLATFORM_WFSP
+//#ifdef WIN32_PLATFORM_WFSP
 	else
 		CEActionsSmartphone::init(detector);
-#endif
+//#endif
 }
 
-void CEActions::initInstance(OSystem_WINCE3 *mainSystem) {
+void CEActions::initInstanceMain(OSystem_WINCE3 *mainSystem) {
 	_mainSystem = mainSystem;
+}
+
+void CEActions::initInstanceGame() {
 	_instance->_initialized = true;
 }
+
 
 bool CEActions::initialized() {
 	return _initialized;
@@ -82,7 +86,7 @@ bool CEActions::performMapped(unsigned int keyCode, bool pushed) {
 	int i;
 	
 	for (i=0; i<size(); i++) {
-		if (_action_mapping[i] == keyCode) 
+		if (_action_mapping[i] == keyCode && _action_enabled[i]) 
 				return perform((ActionType)i, pushed);
 	}
 

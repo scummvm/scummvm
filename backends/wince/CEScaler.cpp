@@ -120,7 +120,7 @@ void PocketPCHalfZoom(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint3
 	}
 }
 
-#ifdef WIN32_PLATFORM_WFSP
+//#ifdef WIN32_PLATFORM_WFSP
 void SmartphoneLandscape(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, int width, int height) {
 	uint8 *work;
 	int i;
@@ -151,5 +151,5 @@ void SmartphoneLandscape(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, ui
 		}
 	}
 }	
-#endif
+//#endif
 

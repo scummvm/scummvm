@@ -31,7 +31,7 @@
 #define KEY_INBOX 0xc3
 #define KEY_TASK 0xc4
 
-#ifdef WIN32_PLATFORM_WFSP
+//#ifdef WIN32_PLATFORM_WFSP
 const char* SMARTPHONE_KEYS_NAME[] = {
 	"1", "2", "3","4", "5", "6", "7", "8", "9", "*", "0", "#",
 	"Home", "Back", "Up", "Down", "Left", "Right", "Action", "Hang up", "Call",
@@ -39,32 +39,99 @@ const char* SMARTPHONE_KEYS_NAME[] = {
 	0
 };
 
+// Old mapping from the previous (non SDL) version. To be forgotten.
+/*
 const int SMARTPHONE_KEYS_MAPPING[] = {
         '1', '2', '3', '4', '5', '6', '7', '8', '9', VK_F8, '0', VK_F9,
         VK_LWIN, VK_ESCAPE, VK_UP, VK_DOWN, VK_LEFT, VK_RIGHT, VK_RETURN, VK_F4, VK_F3,
         VK_F1, VK_F2, VK_F18, VK_F6, VK_F7, VK_F10, 0xff, 0
 };
-#endif
+*/
 
+// FIXME : Home and Record are not mapped
+const int SMARTPHONE_KEYS_MAPPING[] = {
+		'1', '2', '3', '4', '5', '6', '7', '8', '9', VK_F9, '0', VK_F10,
+		0xFF, VK_ESCAPE, 0x113, 0x114, 0x111, 0x112, VK_RETURN, 0x11D, 0x11C,
+		0x11A, 0x11B, 0x11D, 0x11F, 0x120, 0xFF, 0
+};
+
+static void (WINAPI* _SHIdleTimerReset)(void) = NULL;
+static HANDLE (WINAPI* _SetPowerRequirement)(PVOID,int,ULONG,PVOID,ULONG) = NULL;
+static DWORD (WINAPI* _ReleasePowerRequirement)(HANDLE) = NULL;
+static HANDLE _hPowerManagement = NULL;
+static DWORD _lastTime = 0;
+
+#define TIMER_TRIGGER 9000
+
+//#endif
+
+// Power management code borrowed from MoDaCo & Betaplayer. Thanks !
+void CEDevice::init() {
+	HINSTANCE dll = LoadLibrary(TEXT("aygshell.dll"));
+	if (dll) {
+		*(FARPROC*)&_SHIdleTimerReset = GetProcAddress(dll, MAKEINTRESOURCE(2006));
+	}
+	dll = LoadLibrary(TEXT("coredll.dll"));
+	if (dll) {
+		*(FARPROC*)&_SetPowerRequirement = GetProcAddress(dll, TEXT("SetPowerRequirement"));
+		*(FARPROC*)&_ReleasePowerRequirement = GetProcAddress(dll, TEXT("ReleasePowerRequirement"));
+
+	}
+	if (_SetPowerRequirement)
+		_hPowerManagement = _SetPowerRequirement(TEXT("BKL1:"), 0, 1, NULL, 0);
+	_lastTime = GetTickCount();
+}
+
+void CEDevice::end() {
+	if (_ReleasePowerRequirement && _hPowerManagement) {
+		_ReleasePowerRequirement(_hPowerManagement);
+	}
+}
+
+void CEDevice::wakeUp() {
+	DWORD currentTime = GetTickCount();
+	if (currentTime > _lastTime + TIMER_TRIGGER) {
+		_lastTime = currentTime;
+		SystemIdleTimerReset();
+		if (_SHIdleTimerReset)
+			_SHIdleTimerReset();
+	}
+}
 
 bool CEDevice::hasPocketPCResolution() {
+#ifdef SIMU_SMARTPHONE
+	return false;
+#else
 	if (OSystem_WINCE3::isOzone() && hasWideResolution())
 		return true;
 	return (OSystem_WINCE3::getScreenWidth() < 320 && OSystem_WINCE3::getScreenWidth() >= 240);
+#endif
 }
 
 bool CEDevice::hasDesktopResolution() {
+#ifdef SIMU_SMARTPHONE
+	return false;
+#else
 	if (OSystem_WINCE3::isOzone() && hasWideResolution())
 		return true;
 	return (OSystem_WINCE3::getScreenWidth() >= 320);
+#endif
 }
 
 bool CEDevice::hasWideResolution() {
+#ifdef SIMU_SMARTPHONE
+	return false;
+#else
 	return (OSystem_WINCE3::getScreenWidth() >= 640 || OSystem_WINCE3::getScreenHeight() >= 640);
+#endif
 }
 
 bool CEDevice::hasSmartphoneResolution() {
+#ifdef SIMU_SMARTPHONE
+	return true;
+#else
 	return (OSystem_WINCE3::getScreenWidth() < 240);
+#endif
 }
 
 Common::String CEDevice::getKeyName(unsigned int keyCode) {
@@ -90,7 +157,7 @@ Common::String CEDevice::getKeyName(unsigned int keyCode) {
 	if (keyCode == SDLK_F4) 
 		return "F4 (hard 4)";
 
-#ifdef WIN32_PLATFORM_WFSP
+//#ifdef WIN32_PLATFORM_WFSP
 	if (hasSmartphoneResolution()) {
 		int i = 0;
 		while (SMARTPHONE_KEYS_MAPPING[i]) {
@@ -99,7 +166,7 @@ Common::String CEDevice::getKeyName(unsigned int keyCode) {
 			i++;
 		}
 	}
-#endif
+//#endif
 
 	sprintf(key_name, "Key %.4x", keyCode);
 	return key_name;	

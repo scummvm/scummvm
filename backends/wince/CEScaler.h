@@ -31,9 +31,9 @@
 DECLARE_SCALER(PocketPCPortrait);
 DECLARE_SCALER(PocketPCHalf);
 DECLARE_SCALER(PocketPCHalfZoom);
-#ifdef WIN32_PLATFORM_WFSP
+//#ifdef WIN32_PLATFORM_WFSP
 DECLARE_SCALER(SmartphoneLandscape);
-#endif
+//#endif
 
 void initCEScaler(void);
 

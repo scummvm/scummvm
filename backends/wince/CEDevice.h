@@ -31,15 +31,14 @@
 
 class CEDevice {
 	public:
+		static void init();
+		static void end();
+		static void wakeUp();
 		static bool hasPocketPCResolution();
 		static bool hasDesktopResolution();
 		static bool hasWideResolution();
 		static bool hasSmartphoneResolution();
-		static Common::String getKeyName(unsigned int keyCode);
-	private:
-		typedef int (*tGXVoidFunction)(void);
-		typedef struct GXKeyList (*tGXGetDefaultKeys)(int);
-
+		static Common::String getKeyName(unsigned int keyCode);	
 };
 
 #endif

@@ -58,8 +58,10 @@ class CEActionsPocket : public CEActions {
 		bool perform(ActionType action, bool pushed = true);
 		String actionName(ActionType action);
 		int size();
+
 		static void init(GameDetector &detector);
-		void initInstance(OSystem_WINCE3 *mainSystem);
+		void initInstanceMain(OSystem_WINCE3 *mainSystem);
+		void initInstanceGame();
 
 		// Action domain
 		String domain();
