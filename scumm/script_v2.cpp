@@ -51,7 +51,7 @@ void Scumm_v2::setupOpcodes() {
 		OPCODE(o2_resourceRoutines),
 		OPCODE(o5_walkActorToActor),
 		OPCODE(o5_putActorAtObject),
-		OPCODE(o5_getObjectState),
+		OPCODE(o2_ifNotState08),
 		/* 10 */
 		OPCODE(o5_getObjectOwner),
 		OPCODE(o5_animateActor),
@@ -69,7 +69,7 @@ void Scumm_v2::setupOpcodes() {
 		OPCODE(o2_setBitVar),
 		/* 1C */
 		OPCODE(o5_startSound),
-		OPCODE(o5_ifClassOfIs),
+		OPCODE(o2_ifClassOfIs),
 		OPCODE(o5_walkActorTo),
 		OPCODE(o2_ifState02),
 		/* 20 */
@@ -149,7 +149,7 @@ void Scumm_v2::setupOpcodes() {
 		OPCODE(o2_setBitVar),
 		/* 5C */
 		OPCODE(o5_oldRoomEffect),
-		OPCODE(o5_ifClassOfIs),
+		OPCODE(o2_ifClassOfIs),
 		OPCODE(o5_walkActorTo),
 		OPCODE(o2_ifNotState02),
 		/* 60 */
@@ -229,7 +229,7 @@ void Scumm_v2::setupOpcodes() {
 		OPCODE(o2_setBitVar),
 		/* 9C */
 		OPCODE(o5_startSound),
-		OPCODE(o5_ifClassOfIs),
+		OPCODE(o2_ifClassOfIs),
 		OPCODE(o5_walkActorTo),
 		OPCODE(o2_ifState02),
 		/* A0 */
@@ -309,7 +309,7 @@ void Scumm_v2::setupOpcodes() {
 		OPCODE(o5_divide),
 		/* DC */
 		OPCODE(o5_oldRoomEffect),
-		OPCODE(o5_ifClassOfIs),
+		OPCODE(o2_ifClassOfIs),
 		OPCODE(o5_walkActorTo),
 		OPCODE(o2_ifNotState02),
 		/* E0 */
@@ -867,3 +867,18 @@ void Scumm_v2::o2_printEgo() {
 	//_scriptPointer = _messagePtr;
 }
 
+void Scumm_v2::o2_ifClassOfIs() {
+	int act = getVarOrDirectWord(0x80);
+	int clsop = getVarOrDirectByte(0x40);
+
+	if (getObjectIndex(act) != 0xFF) {
+		o5_jumpRelative();
+		return;
+	}
+
+	ObjectData *od = &_objs[getObjectIndex(act)];
+	byte cls = *(getResourceAddress(rtRoom, _currentRoom) + od->OBCDoffset + 10);
+	if ((cls & clsop) != clsop) {
+		o5_jumpRelative();
+	}
+}
