@@ -57,7 +57,9 @@ int CEActions::size() {
 }
 
 CEActions::CEActions(OSystem_WINCE3 *mainSystem, GameDetector &detector) :
-	_mainSystem(mainSystem), _mapping_active(false), _right_click_needed(false) {
+	_mainSystem(mainSystem), _mapping_active(false), _right_click_needed(false),
+	_hide_toolbar_needed(false) 
+{
 	int i;
 	bool is_simon = (strcmp(detector._targetName.c_str(), "simon") == 0);
 	bool is_sword1 = (detector._targetName == "sword1");
@@ -72,6 +74,10 @@ CEActions::CEActions(OSystem_WINCE3 *mainSystem, GameDetector &detector) :
 	if (is_sword1 || is_sword2 || is_sky || is_queen || detector._targetName == "comi" ||
 		detector._targetName == "samnmax")
 		_right_click_needed = true;
+
+	// See if a "hide toolbar" mapping could be needed
+	if (is_sword1 || is_sword2 || is_queen)
+		_hide_toolbar_needed = true;
 
 	// Initialize keys for different actions
 	// Pause
@@ -247,4 +253,11 @@ bool CEActions::needsRightClickMapping() {
 		return (_action_mapping[ACTION_RIGHTCLICK] == 0);
 }
 
-CEActions *CEActions::_instance = NULL;
+bool CEActions::needsHideToolbarMapping() {
+	if (!_hide_toolbar_needed)
+		return false;
+	else
+		return (_action_mapping[ACTION_HIDE] == 0);
+}
+
+CEActions *CEActions::_instance = NULL;    

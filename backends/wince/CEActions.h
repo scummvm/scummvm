@@ -74,6 +74,7 @@ class CEActions {
 
 		// Utility
 		bool needsRightClickMapping();
+		bool needsHideToolbarMapping();
 
 		~CEActions();
 	private:
@@ -86,6 +87,7 @@ class CEActions {
 		unsigned int _action_mapping[ACTION_LAST];
 		bool _mapping_active;
 		bool _right_click_needed;
+		bool _hide_toolbar_needed;
 	};	
 
 #endif
