@@ -724,7 +724,7 @@ temporary folder. Then run:
 
   simon2mp3 effects.voc (For simon1talkie)
   simon2mp3 simon.voc   (For simon1talkie)
-  simon2mp3 simon.voc   (For simon1win)
+  simon2mp3 simon.wav   (For simon1win)
   simon2mp3 simon2.voc  (For simon2talkie)
   simon2mp3 simon2.wav  (For simon2win) 
 
