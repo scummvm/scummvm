@@ -76,6 +76,8 @@ class CharsetRendererCommon : public CharsetRenderer {
 protected:
 	byte *_fontPtr;
 
+	void drawBits1(VirtScreen *vs, byte *dst, const byte *src, byte *mask, int drawTop, int width, int height);
+
 public:
 	CharsetRendererCommon(Scumm *vm) : CharsetRenderer(vm) {}
 
@@ -86,11 +88,9 @@ public:
 
 class CharsetRendererClassic : public CharsetRendererCommon {
 protected:
-	byte _bpp;
-	byte *_charPtr;
-
 	int getCharWidth(byte chr);
-	void drawBits(VirtScreen *vs, byte *dst, byte *mask, int drawTop, int width, int height);
+
+	void drawBitsN(VirtScreen *vs, byte *dst, const byte *src, byte *mask, byte bpp, int drawTop, int width, int height);
 
 public:
 	CharsetRendererClassic(Scumm *vm) : CharsetRendererCommon(vm) {}

@@ -22,6 +22,7 @@
 #include "scumm.h"
 #include "nut_renderer.h"
 
+
 NutRenderer::NutRenderer(Scumm *vm) {
 	_vm = vm;
 	_initialized = false;
@@ -133,7 +134,10 @@ int32 NutRenderer::getCharWidth(byte c) {
 		return 0;
 	}
 
-	return READ_LE_UINT16(_dataSrc + _offsets[c] + 6);
+	if(c & 0x80 && _vm->_CJKMode)
+		return 8;
+	else
+		return READ_LE_UINT16(_dataSrc + _offsets[c] + 6) + 2;
 }
 
 int32 NutRenderer::getCharHeight(byte c) {
@@ -143,7 +147,10 @@ int32 NutRenderer::getCharHeight(byte c) {
 		return 0;
 	}
 
-	return READ_LE_UINT16(_dataSrc + _offsets[c] + 8);
+	if(c & 0x80 && _vm->_CJKMode)
+		return 16;
+	else
+		return READ_LE_UINT16(_dataSrc + _offsets[c] + 8);
 }
 
 int32 NutRenderer::getStringWidth(const byte *string) {
@@ -208,23 +215,11 @@ void NutRenderer::drawChar(byte c, int32 x, int32 y, byte color, bool useMask) {
 				byte pixel = *src++;
 				if (x + tx < 0 || x + tx >= _vm->_screenWidth || y + ty < 0 || y + ty >= _vm->_screenHeight)
 					continue;
-#if 1
 				if (pixel != 0) {
 					dst[tx] = color;
 					if (useMask)
 						mask[maskpos] |= maskmask;
 				}
-#else
-				if (pixel != 0) {
-					if (pixel == 0x01)
-						pixel = (color == 0) ? 0xf : color;
-					if (pixel == 0xff)
-						pixel = 0x0;
-					dst[tx] = pixel;
-					if (useMask)
-						mask[maskpos] |= maskmask;
-				}
-#endif
 				maskmask >>= 1;
 				if (maskmask == 0) {
 					maskmask = 0x80;
@@ -237,5 +232,56 @@ void NutRenderer::drawChar(byte c, int32 x, int32 y, byte color, bool useMask) {
 	
 		x -= offsetX[i];
 		y -= offsetY[i];
+	}
+}
+
+void NutRenderer::draw2byte(int c, int32 x, int32 y, byte color, bool useMask) {
+	if (_loaded == false) {
+		debug(2, "NutRenderer::draw2byte() Font is not loaded");
+		return;
+	}
+
+	int width = g_scumm->_2byteWidth;
+	int height = g_scumm->_2byteHeight;
+	byte *src = g_scumm->get2byteCharPtr(c);
+	byte bits = 0;
+
+	byte *dst, *mask = NULL;
+	byte maskmask;
+	int maskpos;
+	
+	dst = _vm->virtscr[0].screenPtr + y * _vm->_screenWidth + x + _vm->virtscr[0].xstart;
+	mask = _vm->getMaskBuffer(x, y, 0);
+
+//	drawBits1(&_vm->virtscr[0], dst, src, mask, ?, width, height);
+	for (int ty = 0; ty < height; ty++) {
+		maskmask = revBitMask[x & 7];
+		maskpos = 0;
+		for (int tx = 0; tx < width; tx++) {
+			if((tx % 8) == 0)
+				bits = *src++;
+			if (x + tx < 0 || x + tx >= _vm->_screenWidth || y + ty < 0 || y + ty >= _vm->_screenHeight)
+				continue;
+			if (bits & revBitMask[tx % 8]) {
+				dst[tx] = color;
+				dst[tx+1] = 0;
+				if (useMask) {
+					mask[maskpos] |= maskmask;
+					if (maskmask == 1) {
+						mask[maskpos + 1] |= 0x80;
+					} else {
+						mask[maskpos] |= (maskmask >> 1);
+					}
+				}
+			}
+
+			maskmask >>= 1;
+			if (maskmask == 0) {
+				maskmask = 0x80;
+				maskpos++;
+			}
+		}
+		dst += _vm->_screenWidth;
+		mask += _vm->gdi._numStrips;
 	}
 }

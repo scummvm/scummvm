@@ -50,6 +50,7 @@ protected:
 	int getStringWidth(char *str);
 	int getCharHeight(byte c);
 	int getStringHeight(char *str);
+	int draw2byte(byte *buffer, int dst_width, int x, int y, int idx);
 	int drawChar(byte *buffer, int dst_width, int x, int y, byte chr);
 	void drawSubstring(char *str, byte *buffer, int dst_width, int x, int y);
 	void decodeCodec(byte *dst, byte *src, int length);
@@ -60,7 +61,7 @@ public:
 	void setColor(byte c) { _color = c; }
 	void drawStringCentered(char *str, byte *buffer, int dst_width, int dst_height, int y, int xmin, int width, int offset);
 	void drawStringWrap(char *str, byte *buffer, int dst_width, int dst_height, int x, int y, int width);
-	void drawStringWrapCentered(char *str, byte *buffer, int dst_width, int dst_height, int x, int32 y, int width);
+	void drawStringWrapCentered(char *str, byte *buffer, int dst_width, int dst_height, int x, int y, int width);
 	void drawStringAbsolute(char *str, byte *buffer, int dst_width, int x, int y);
 };
 

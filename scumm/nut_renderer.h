@@ -41,6 +41,7 @@ public:
 	~NutRenderer();
 
 	bool loadFont(const char *filename, const char *dir);
+	void draw2byte(int c, int32 x, int32 y, byte color, bool useMask);
 	void drawChar(byte c, int32 x, int32 y, byte color, bool useMask);
 //	void drawString(const char *string, int32 x, int32 y, byte color, int32 mode);
 	int32 getCharWidth(byte c);

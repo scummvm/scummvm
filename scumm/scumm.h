@@ -1065,6 +1065,14 @@ protected:
 	void loadLanguageBundle();
 public:
 	void translateText(const byte *text, byte *trans_buff);	// Used by class ScummDialog
+
+	// Somewhat hackish stuff for 2 byte support (Chinese/Japanese/Korean)
+	bool _CJKMode;
+	int _2byteHeight;
+	int _2byteWidth;
+	byte *get2byteCharPtr(int idx);
+	
+	
 protected:
 
 #if defined(SCUMM_LITTLE_ENDIAN)

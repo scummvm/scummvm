@@ -79,7 +79,7 @@ bool SmushFont::loadFont(const char *filename, const char *directory) {
 	}
 	
 	_nbChars = READ_LE_UINT16(_dataSrc + 10);
-	int32 offset = READ_BE_UINT32(_dataSrc + 4) + 8;
+	int offset = READ_BE_UINT32(_dataSrc + 4) + 8;
 	for (int l = 0; l < _nbChars; l++) {
 		if (READ_BE_UINT32(_dataSrc + offset) == 'FRME') {
 			offset += 8;
@@ -105,6 +105,14 @@ bool SmushFont::loadFont(const char *filename, const char *directory) {
 }
 
 int SmushFont::getCharWidth(byte v) {
+	if(v >= 0x80 && g_scumm->_CJKMode) {
+		if(g_scumm->_gameId == GID_CMI)
+			return 8;
+		if(g_scumm->_gameId == GID_DIG)
+			return 6;
+		return 0;
+	}
+
 	if(v >= _nbChars)
 		error("invalid character in SmushFont::charWidth : %d (%d)", v, _nbChars);
 
@@ -112,6 +120,14 @@ int SmushFont::getCharWidth(byte v) {
 }
 
 int SmushFont::getCharHeight(byte v) {
+	if(v >= 0x80 && g_scumm->_CJKMode) {
+		if(g_scumm->_gameId == GID_CMI)
+			return 16;
+		if(g_scumm->_gameId == GID_DIG)
+			return 10;
+		return 0;
+	}
+
 	if(v >= _nbChars)
 		error("invalid character in SmushFont::charHeight : %d (%d)", v, _nbChars);
 
@@ -179,8 +195,8 @@ int SmushFont::drawChar(byte *buffer, int dst_width, int x, int y, byte chr) {
 	byte *dst = buffer + dst_width * y + x;
 
 	if(_original) {
-		for(int32 j = 0; j < h; j++) {
-			for(int32 i = 0; i < w; i++) {
+		for(int j = 0; j < h; j++) {
+			for(int i = 0; i < w; i++) {
 				char value = *src++;
 				if(value) dst[i] = value;
 			}
@@ -188,7 +204,7 @@ int SmushFont::drawChar(byte *buffer, int dst_width, int x, int y, byte chr) {
 		}
 	} else {
 		char color = (_color != -1) ? _color : 1;
-		if (_new_colors == true) {
+		if (_new_colors) {
 			for(int j = 0; j < h; j++) {
 				for(int i = 0; i < w; i++) {
 					char value = *src++;
@@ -219,6 +235,41 @@ int SmushFont::drawChar(byte *buffer, int dst_width, int x, int y, byte chr) {
 	return w;
 }
 
+int SmushFont::draw2byte(byte *buffer, int dst_width, int x, int y, int idx) {
+	int w = g_scumm->_2byteWidth;
+	int h = g_scumm->_2byteHeight;
+
+	byte *src = g_scumm->get2byteCharPtr(idx);
+	byte *dst = buffer + dst_width * (y + (g_scumm->_gameId == GID_CMI ? 7 : 2)) + x;
+	byte bits = 0;
+
+	if(_original) {
+		for(int j = 0; j < h; j++) {
+			for(int i = 0; i < w; i++) {
+				char value = 1;//*src++;
+				if(value) dst[i] = value;
+			}
+			dst += dst_width;
+		}
+	} else {
+		char color = (_color != -1) ? _color : 1;
+		if (_new_colors)
+			color = 0xff; //FIXME;
+		for(int j = 0; j < h; j++) {
+			for(int i = 0; i < w; i++) {
+				if((i % 8) == 0)
+					bits = *src++;
+				if (bits & revBitMask[i % 8]) {
+					dst[i + 1] = 0;
+					dst[i] = color;
+				}
+			}
+			dst += dst_width;
+		}
+	}
+	return w + 1;
+}
+
 static char **split(char *str, char sep) {
 	char **ret = new char *[62];
 	int n = 0;
@@ -243,8 +294,13 @@ static char **split(char *str, char sep) {
 }
 
 void SmushFont::drawSubstring(char *str, byte *buffer, int dst_width, int x, int y) {
-	for(int i = 0; str[i] != 0; i++)
-		x += drawChar(buffer, dst_width, x, y, str[i]);
+	for(int i = 0; str[i] != 0; i++) {
+		if((byte)str[i] >= 0x80 && g_scumm->_CJKMode) {
+			x += draw2byte(buffer, dst_width, x, y, (byte)str[i] + 256 * (byte)str[i+1]);
+			i++;
+		} else
+			x += drawChar(buffer, dst_width, x, y, str[i]);
+	}
 }
 
 void SmushFont::drawStringAbsolute(char *str, byte *buffer, int dst_width, int x, int y) {
@@ -419,7 +475,7 @@ void SmushFont::drawStringWrap(char *str, byte *buffer, int dst_width, int dst_h
 	delete []substrings;
 }
 
-void SmushFont::drawStringWrapCentered(char *str, byte *buffer, int dst_width, int dst_height, int x, int32 y, int width) {
+void SmushFont::drawStringWrapCentered(char *str, byte *buffer, int dst_width, int dst_height, int x, int y, int width) {
 	debug(9, "SmushFont::drawStringWrapCentered(%s, %d, %d)", str, x, y);
 	
 	int max_substr_width = 0;

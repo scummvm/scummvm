@@ -242,6 +242,8 @@ void Scumm::CHARSET_1() {
 		if (c != 0xFF) {
 			_charset->_left = _charset->_nextLeft;
 			_charset->_top = _charset->_nextTop;
+			if(c & 0x80 && _CJKMode)
+				c += *buffer++ * 256;
 			if (_features & GF_AFTER_V2 || _features & GF_AFTER_V3) {
 				_charset->printChar(c);
 			} else if (_features & GF_AFTER_V6) {
@@ -339,8 +341,8 @@ void Scumm::CHARSET_1() {
 void Scumm::drawString(int a) {
 	byte buf[256];
 	byte *space;
-	int i;
-	byte fontHeight = 0, chr;
+	int i, c;
+	byte fontHeight = 0;
 	uint color;
 
 	_msgPtrToAdd = buf;
@@ -396,10 +398,10 @@ void Scumm::drawString(int a) {
 		buf[1] = 0;
 	}
 
-	for (i = 0; (chr = buf[i++]) != 0;) {
-		if (chr == 0xFE || chr == 0xFF) {
-			chr = buf[i++];
-			switch (chr) {
+	for (i = 0; (c = buf[i++]) != 0;) {
+		if (c == 0xFE || c == 0xFF) {
+			c = buf[i++];
+			switch (c) {
 			case 9:
 			case 10:
 			case 13:
@@ -429,7 +431,9 @@ void Scumm::drawString(int a) {
 				if (_string[a].no_talk_anim == 0)
 					_charset->_blitAlso = true;
 			}
-			_charset->printChar(chr);
+			if(c >= 0x80 && _CJKMode)
+				c += buf[i++] * 256;
+			_charset->printChar(c);
 			_charset->_blitAlso = false;
 		}
 	}
@@ -701,7 +705,7 @@ void Scumm::drawBlastTexts() {
 	// FIXME
 
 	byte *buf;
-	byte c;
+	int c;
 	int i;
 
 	_charset->_ignoreCharsetMask = true;
@@ -731,6 +735,8 @@ void Scumm::drawBlastTexts() {
 			if (c != 0 && c != 0xFF) {
 				_charset->_left = _charset->_nextLeft;
 				_charset->_top = _charset->_nextTop;
+ 				if(c >= 0x80 && _CJKMode)
+ 					c += *buf++ * 256;
 				_charset->printChar(c);
 				_charset->_nextLeft = _charset->_left;
 				_charset->_nextTop = _charset->_top;

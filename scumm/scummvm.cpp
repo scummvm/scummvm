@@ -56,6 +56,26 @@ extern void drawError(char*);
 Scumm *g_scumm = 0;
 ScummDebugger *g_debugger;
 
+byte *_2byteFontPtr;
+int _2byteWidth;
+int _2byteHeight;
+bool _CJKMode;
+
+byte *Scumm::get2byteCharPtr(int idx) {
+	/*
+		switch(language)
+		case korean:
+			return ( (idx % 256) - 0xb0) * 94 + (idx / 256) - 0xa1;
+		case japanese:
+			...
+		case taiwan:
+			...
+	*/
+	idx = ( (idx % 256) - 0xb0) * 94 + (idx / 256) - 0xa1; // only for korean
+	return 	_2byteFontPtr + 2 * _2byteHeight * idx;
+}
+
+
 extern NewGui *g_gui;
 extern uint16 _debugLevel;
 
@@ -636,6 +656,52 @@ Scumm::Scumm (GameDetector *detector, OSystem *syst)
 		_saveLoadCompatible = false;
 	}
 	loadLanguageBundle();
+
+	// Load CJK font
+	if((_gameId == GID_DIG || _gameId == GID_CMI) && (_language == KO_KOR || _language == JA_JPN || _language == ZH_TWN)) {
+		File fp;
+		const char *fontFile = NULL;
+		_CJKMode = false;
+		switch(_language) {
+		case KO_KOR:
+			_CJKMode = true;
+			fontFile = "korean.fnt";
+			break;
+		case JA_JPN:
+			_CJKMode = true;
+			fontFile = (_gameId == GID_DIG) ? "kanji16.fnt" : "japanese.fnt";
+			break;
+		case ZH_TWN:
+			if(_gameId == GID_CMI) {
+				_CJKMode = true;
+				fontFile = "chinese.fnt";
+			}
+			break;
+		}
+		if(_CJKMode && fp.open(fontFile, getGameDataPath(), 1)) {
+			debug(2, "Loading CJK Font");
+			fp.seek(2,SEEK_CUR);
+			_2byteWidth = fp.readByte(); //FIXME: is this correct?
+			_2byteHeight = fp.readByte();
+
+			int numChar = 0;
+			switch(_language) {
+			case KO_KOR:
+				numChar = 2350;
+				break;
+			case JA_JPN:
+				numChar = (_gameId == GID_DIG) ? 1 : 1; //FIXME
+				break;
+			case ZH_TWN:
+				numChar = 1; //FIXME
+				break;
+			}
+			_2byteFontPtr = new byte[2 * _2byteHeight * numChar];
+			fp.read(_2byteFontPtr, 2 * _2byteHeight * numChar);
+			fp.close();
+		}
+	}
+
 	_audioNames = NULL;
 }
 
@@ -643,6 +709,7 @@ Scumm::~Scumm ()
 {
 	delete [] _actors;
 	
+	delete _2byteFontPtr;
 	delete _charset;
 	delete _pauseDialog;
 	delete _optionsDialog;
