@@ -139,7 +139,7 @@ void CDECL warning(const char *s, ...) {
 	va_list va;
 
 	va_start(va, s);
-	vsprintf(buf, s, va);
+	vsnprintf(buf, STRINGBUFLEN, s, va);
 	va_end(va);
 
 #ifdef __GP32__ //ph0x FIXME: implement fprint?

@@ -461,7 +461,7 @@ void CDECL debug(int level, const char *s, ...) {
 		return;
 
 	va_start(va, s);
-	vsprintf(buf, s, va);
+	vsnprintf(buf, STRINGBUFLEN, s, va);
 	va_end(va);
 	
 	debugHelper(buf);
@@ -472,7 +472,7 @@ void CDECL debug(const char *s, ...) {
 	va_list va;
 
 	va_start(va, s);
-	vsprintf(buf, s, va);
+	vsnprintf(buf, STRINGBUFLEN, s, va);
 	va_end(va);
 
 	debugHelper(buf);
