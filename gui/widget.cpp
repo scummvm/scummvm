@@ -153,3 +153,33 @@ void CheckboxWidget::drawWidget(bool hilite)
 	// Finally draw the label
 	gui->drawString(_text, _x + 20, _y + 3, _w, gui->_textcolor);
 }
+
+#pragma mark -
+SliderWidget::SliderWidget(Dialog *boss, int x, int y, int w, int h, const char *label, uint32 cmd, uint8 hotkey)
+	: ButtonWidget(boss, x, y, w, h, label, cmd, hotkey)
+{
+	_flags = WIDGET_ENABLED | WIDGET_TRACK_MOUSE;
+	_type = kSliderWidget;
+}
+
+void SliderWidget::drawWidget(bool hilite)
+{
+	NewGui *gui = _boss->getGui();
+	
+	// Draw the box
+	gui->box(_x, _y, _w, _h);
+
+	// Draw the 'bar'
+	gui->line(_x + 2 + ((_w - 5)* _value / 100), _y + 2, _x + 2 + ((_w - 5)* _value / 100), _y + _h - 3, hilite ? gui->_textcolorhi : gui->_textcolor);
+}
+
+void SliderWidget::handleMouseMoved(int x, int y, int state) { 
+	if (state == 1) {
+		int newvalue = x * 100 / _w;
+
+		if (newvalue != _value) {
+			_value = newvalue; 
+			setFlags(WIDGET_CLEARBG); draw(); clearFlags(WIDGET_CLEARBG);
+		}
+	}
+}

@@ -33,12 +33,14 @@ enum {
 	WIDGET_BORDER		= 1 << 3,
 	WIDGET_CLEARBG		= 1 << 4,
 	WIDGET_WANT_TICKLE	= 1 << 5,
+	WIDGET_TRACK_MOUSE  = 1 << 6
 };
 
 enum {
 	kStaticTextWidget	= 'TEXT',
 	kButtonWidget		= 'BTTN',
 	kCheckboxWidget		= 'CHKB',
+	kSliderWidget		= 'SLDE'
 };
 
 /* Widget */
@@ -58,6 +60,7 @@ public:
 	virtual void handleClick(int button)		{}
 	virtual void handleMouseEntered(int button)	{}
 	virtual void handleMouseLeft(int button)	{}
+	virtual void handleMouseMoved(int x, int y, int button) {}
 	void draw();
 
 	void setFlags(int flags)	{ _flags |= flags; }
@@ -115,6 +118,19 @@ public:
 protected:
 	void drawWidget(bool hilite);
 };
+
+/* SliderWidget */
+class SliderWidget : public ButtonWidget {
+protected:
+	int	_value;
+public:
+	SliderWidget(Dialog *boss, int x, int y, int w, int h, const char *label, uint32 cmd = 0, uint8 hotkey = 0);
+	void handleMouseMoved(int x, int y, int button);
+
+protected:
+	void drawWidget(bool hilite);
+};
+
 
 
 #endif

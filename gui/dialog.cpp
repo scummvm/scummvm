@@ -67,12 +67,17 @@ void Dialog::handleKey(char key, int modifiers)
 void Dialog::handleMouseMoved(int x, int y, int button)
 {
 	Widget *w = findWidget(x - _x, y - _y);
+	if (!w)
+		return;
+
 	if (_mouseWidget != w) {
 		if (_mouseWidget)
 			_mouseWidget->handleMouseLeft(button);
 		if (w)
 			w->handleMouseEntered(button);
 		_mouseWidget = w;
+	} else if (w->getFlags() & WIDGET_TRACK_MOUSE) {
+		w->handleMouseMoved(x - _x - w->_x, y - _y - w->_y, button);
 	}
 }
 
@@ -147,6 +152,9 @@ SaveLoadDialog::SaveLoadDialog(NewGui *gui)
 	
 	// FIXME - test
 	new CheckboxWidget(this, 50, 20, 100, 16, "Toggle me", 0);
+
+	// FIXME - test
+	new SliderWidget(this, 50, 50, 100, 16, "Volume", 0);
 }
 
 void SaveLoadDialog::handleCommand(uint32 cmd)

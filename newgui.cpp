@@ -84,12 +84,12 @@ void NewGui::loop()
 	}
 	_s->animateCursor();
 	_s->getKeyInput(0);
-	if (_s->_mouseButStat & MBS_LEFT_CLICK) {
+	if (_s->_mouseButStat & MBS_LEFT_CLICK) {		
 		activeDialog->handleClick(_s->mouse.x, _s->mouse.y, _s->_mouseButStat);
 	} else if (_s->_lastKeyHit) {
 		activeDialog->handleKey(_s->_lastKeyHit, 0);
 	} else if (_old_mouse.x != _s->mouse.x || _old_mouse.y != _s->mouse.y) {
-		activeDialog->handleMouseMoved(_s->mouse.x, _s->mouse.y, _s->_mouseButStat);
+		activeDialog->handleMouseMoved(_s->mouse.x, _s->mouse.y, _s->_leftBtnPressed);
 		_old_mouse.x = _s->mouse.x;
 		_old_mouse.y = _s->mouse.y;
 	}
