@@ -418,6 +418,12 @@ void ScummEngine_v90he::o90_unknown1C() {
 	subOp -= 46;
 
 	switch (subOp) {
+		case -14: // HE99+
+			pop();
+			break;
+		case -13: // HE99+
+			pop();
+			break;
 		case 0:
 			pop();
 			break;
@@ -480,10 +486,22 @@ void ScummEngine_v90he::o90_unknown1C() {
 			pop();
 			pop();
 			break;
+		case 87: // HE99+
+			pop();
+			pop();
+			pop();
+			pop();
+			pop();
+			break;
+		case 91: // HE99+
+			pop();
+			break;
+		case 171: // HE99+
+			break;
 		case 209:
 			break;
 		default:
-			warning("o90_unknown1C: unhandled case %d", subOp);
+			error("o90_unknown1C: unhandled case %d", subOp);
 	}
 
 	debug(1,"o90_unknown1C stub (%d)", subOp);
@@ -628,6 +646,9 @@ void ScummEngine_v90he::o90_unknown26() {
 			pop();
 			if (_gameId == GID_FREDDI4 || _heversion >= 99)
 				pop();
+			break;
+		case 28: // HE99+
+			pop();
 			break;
 		case 29:
 			pop();
@@ -895,7 +916,7 @@ void ScummEngine_v90he::o90_unknown37() {
 }
 
 void ScummEngine_v90he::o90_unknown3A() {
-	// Array related
+	// Sorts array via qsort
 	int subOp = fetchScriptByte();
 
 	switch (subOp) {
@@ -975,7 +996,7 @@ void ScummEngine_v90he::o90_unknown9E() {
 			pop();
 			pop();
 			break;
-		case 19:
+		case 19: //HE99+
 			pop();
 			break;
 		case 29:
