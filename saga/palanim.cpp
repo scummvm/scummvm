@@ -254,7 +254,7 @@ int PALANIM_Free(void)
 
 	}
 
-	R_printf(R_STDOUT, "PALANIM_Free(): Freeing entries.\n", i);
+	R_printf(R_STDOUT, "PALANIM_Free(): Freeing entries.\n");
 
 	free(PAnimData.entries);
 
