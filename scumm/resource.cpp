@@ -243,15 +243,21 @@ void ScummEngine::askForDisk(const char *filename, int disknum) {
 
 		result = displayMessage("Quit", buf);
 		if (result == 2) {
-			//error("Cannot find file: '%s'", filename);
+#ifdef __PALM_OS__
+			error("Cannot find file: '%s'", filename);
+#else
 			_system->quit();
+#endif
 		}
 	} else { 
 		sprintf(buf, "Cannot find file: '%s'", filename);
 		InfoDialog dialog(this, (char*)buf);
 		runDialog(dialog);
-		//error("Cannot find file: '%s'", filename);
+#ifdef __PALM_OS__
+		error("Cannot find file: '%s'", filename);
+#else
 		_system->quit();
+#endif
 	}
 }
 
