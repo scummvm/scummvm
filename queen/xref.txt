@@ -77,11 +77,11 @@ CUTAWAY
 action_special_move			Cutaway::actionSpecialMove
 CUTAWAY()					Cutaway::run
 MAKE_COMPLEX_ANIM()			Cutaway::makeComplexAnimation
-SCENE_START()
-SCENE_END()
+SCENE_START()				Logic::sceneStart
+SCENE_END()					Logic::sceneStop
 -
 CUTJOEF
-CUTON
+CUTON						Input::_cutawayRunning
 CUTQUIT						Cutaway::_quit (rename and move to Logic?)
 FINAL_ROOM					Cutaway::_finalRoom
 IROOM						Cutaway::_initialRoom
@@ -89,7 +89,7 @@ OBJ_CUT
 OBJ_ANIM
 OLDBANK
 PERSON_DATA
-SCENE
+SCENE						Logic::_scene
 TROOM						Cutaway::_temporaryRoom
 
 

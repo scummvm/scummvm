@@ -313,11 +313,12 @@ void Display::palFadeOut(int start, int end, uint16 roomNum) {
 
 void Display::palFadePanel() {
 
-	int i;
+	int i, j;
 	uint8 tempPal[256 * 3];
-	for (i = 224 * 3; i <= 255 * 3; ++i) {
-		tempPal[i] = _pals.screen[i] * 2 / 3;
-	}
+	for (i = 224; i < 256; ++i)
+		for (j = 0; j < 3; j++)
+			tempPal[i * 3 + j] = _pals.screen[i * 3 + 1] * 2 / 3;
+
 	palSet(tempPal, 224, 255, true);
 }
 

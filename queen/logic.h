@@ -279,6 +279,8 @@ public:
 	void inventoryDeleteItem(uint16 itemNum, bool refresh = true);
 	void inventoryScroll(uint16 count, bool up);
 
+	void sceneStart(bool showMouseCursor);
+	void sceneStop(bool showMouseCursor);
 
 	//! Copy data from dummy object to object
 	void objectCopy(int dummyObjectIndex, int objectIndex);
@@ -421,6 +423,9 @@ protected:
 
 	//! Inventory items
 	int16 _inventoryItem[4];
+
+	//! scene counter
+	int _scene;
 
 	Resource *_resource;
 	Graphics *_graphics;

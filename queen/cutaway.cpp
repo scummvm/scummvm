@@ -1198,8 +1198,8 @@ void Cutaway::run(char *nextFilename) {
 
 	_initialRoom = _temporaryRoom = _logic->currentRoom();
 
-	// XXX if (_comPanel == 0 || _comPanel == 2)
-	// XXX	SCENE_START(0);
+	if (_comPanel == 0 || _comPanel == 2)
+		_logic->sceneStart(false);
 
 	byte *ptr = _objectData;
 
@@ -1302,7 +1302,7 @@ void Cutaway::run(char *nextFilename) {
 	talk(nextFilename);
 
 	if (_comPanel == 0 || (_comPanel == 2 && !_anotherCutaway)) {
-		// XXX 	SCENE_END(1);
+		_logic->sceneStop(true);
 		_comPanel = 0;
 	}
 

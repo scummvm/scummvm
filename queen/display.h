@@ -79,6 +79,7 @@ public:
 	void palCustomColors(uint16 roomNum); // check_colors
 	void palCustomScroll(uint16 roomNum); // check_pal_scroll
 	void palCustomFlash(); // flashspecial()
+	void palSetAllDirty() { _pals.dirtyMin = 0; _pals.dirtyMax = 255; }
 
 	void screenMode(int comPanel, bool inCutaway);
 
@@ -101,6 +102,8 @@ public:
 
 	void fullscreen(bool fs) { _fullscreen = fs; }
 	bool fullscreen() const { return _fullscreen; }
+
+	void panel(bool on) { _panel = on; }
 
 	void handleTimer();
 	void waitForTimer();

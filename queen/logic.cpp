@@ -381,7 +381,7 @@ void Logic::initialise() {
 		_settings.speechToggle = true;
 
 	_cmd->clear(false);
-	// XXX SCENE = 0
+	_scene = 0;
 	memset(_gameState, 0, sizeof(_gameState));
 	_graphics->loadPanel();
 	_graphics->bobSetupControl();
@@ -2302,7 +2302,7 @@ void Logic::handlePinnacleRoom() {
 	_graphics->cameraBob(0);
 
 	// XXX COMPANEL=1;
-	// XXX panelflag=1;
+	_display->panel(true);
 }
 
 
@@ -2315,6 +2315,30 @@ void Logic::update() {
 	_input->checkKeys();
 }
 
+void Logic::sceneStart(bool showMouseCursor) {
+	_scene++;
+
+	_display->mouseCursorShow(showMouseCursor);
+
+	if (1 == _scene && _input->cutawayRunning()) {
+		_display->panel(false);
+		_display->palFadePanel();
+	}
+	
+	update();
+}
+
+void Logic::sceneStop(bool showMouseCursor) {
+	_scene--;
+
+	if (_scene > 0)
+		return;
+
+	_display->palSetAllDirty();
+	_display->panel(true);
+	_display->mouseCursorShow(showMouseCursor);
+	zoneSetupPanel();
+}
 
 } // End of namespace Queen
 
