@@ -902,11 +902,22 @@ protected:
 	void spriteInfoSet_field_7C(int spriteId, int value);
 	void spriteInfoSet_field_80(int spriteId, int value);
 	void spriteInfoSet_case183(int spriteId);
+	void spriteInfoSet_resState(int spriteNum, int value);
+	void spriteInfoSet_tx_ty(int spriteNum, int value1, int value2);
+	void spriteInfoSet_groupNum(int spriteNum, int value);
+	void spriteInfoSet_field_2C_30(int spriteNum, int value1, int value2);
+	void spriteInfoSet_field_54(int spriteNum, int value);
+	void spriteInfoSet_field_44(int spriteNum, int value1, int value2);
+	void spriteInfoSet_field_18(int spriteNum, int value);
+	void spriteInfoSet_Inc_tx_ty(int spriteNum, int value1, int value2);
+	void spriteInfoSet_zoom(int spriteNum, int value);
 
 	void spritesAllocTables(int numSprites, int numGroups, int numImgSprites);
 	void spritesResetTables(bool refreshScreen);
 	void spriteGroupCheck(int sprGrpId);
 	void spriteMarkIfInGroup(int sprGrpId, uint32 flags);
+
+	void spriteInfoSet_addImageToList(int spriteNum, int imageNum, int *spriteIdptr);
 
 	/* HE version 90 script opcodes */
 	void o90_dup();

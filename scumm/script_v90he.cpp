@@ -940,21 +940,53 @@ void ScummEngine_v90he::o90_setSpriteInfo() {
 		pop();
 		break;
 	case 3:
-		pop();
+		args[0] = pop();
+		if (_curSpriteId > _curMaxSpriteId)
+			break;
+		spriteId = _curSpriteId;
+		if (!spriteId)
+			spriteId++;
+
+		for (; spriteId <= _curMaxSpriteId; spriteId++)
+			spriteInfoSet_groupNum(spriteId, args[0]);
 		break;
 	case 8:
 		pop();
 		pop();
 		break;
 	case 9:
-		pop();
+		args[0] = pop();
+		if (_curSpriteId > _curMaxSpriteId)
+			break;
+		spriteId = _curSpriteId;
+		if (!spriteId)
+			spriteId++;
+
+		for (; spriteId <= _curMaxSpriteId; spriteId++)
+			spriteInfoSet_field_18(spriteId, args[0]);
 		break;
 	case 10:
-		pop();
-		pop();
+		args[1] = pop();
+		args[0] = pop();
+		if (_curSpriteId > _curMaxSpriteId)
+			break;
+		spriteId = _curSpriteId;
+		if (!spriteId)
+			spriteId++;
+
+		for (; spriteId <= _curMaxSpriteId; spriteId++)
+			spriteInfoSet_Inc_tx_ty(spriteId, args[0], args[1]);
 		break;
 	case 18:
-		pop();
+		args[0] = pop();
+		if (_curSpriteId > _curMaxSpriteId)
+			break;
+		spriteId = _curSpriteId;
+		if (!spriteId)
+			spriteId++;
+
+		for (; spriteId <= _curMaxSpriteId; spriteId++)
+			spriteInfoSet_resState(spriteId, args[0]);
 		break;
 	case 19:
 		pop();
@@ -983,18 +1015,42 @@ void ScummEngine_v90he::o90_setSpriteInfo() {
 			spriteInfoSet_field_7C(spriteId, args[0]);
 		break;
 	case 29:
-		pop();
+		args[0] = pop();
+		if (_curSpriteId > _curMaxSpriteId)
+			break;
+		spriteId = _curSpriteId;
+		if (!spriteId)
+			spriteId++;
+
+		for (; spriteId <= _curMaxSpriteId; spriteId++)
+			spriteInfoSet_addImageToList(spriteId, 1, &args[0]);
 		break;
 	case 31:
-		pop();
-		pop();
+		args[1] = pop();
+		args[0] = pop();
+		if (_curSpriteId > _curMaxSpriteId)
+			break;
+		spriteId = _curSpriteId;
+		if (!spriteId)
+			spriteId++;
+
+		for (; spriteId <= _curMaxSpriteId; spriteId++)
+			spriteInfoSet_tx_ty(spriteId, args[0], args[1]);
 		break;
 	case 34:
 		pop();
 		break;
 	case 43:
-		pop();
-		pop();
+		args[1] = pop();
+		args[0] = pop();
+		if (_curSpriteId > _curMaxSpriteId)
+			break;
+		spriteId = _curSpriteId;
+		if (!spriteId)
+			spriteId++;
+
+		for (; spriteId <= _curMaxSpriteId; spriteId++)
+			spriteInfoSet_field_2C_30(spriteId, args[0], args[1]);
 		break;
 	case 48:
 		pop();
@@ -1011,13 +1067,29 @@ void ScummEngine_v90he::o90_setSpriteInfo() {
 			spriteInfoSet_field_14(spriteId, args[0]);
 		break;
 	case 58: // HE 99+
-		pop();
+		args[0] = pop();
+		if (_curSpriteId > _curMaxSpriteId)
+			break;
+		spriteId = _curSpriteId;
+		if (!spriteId)
+			spriteId++;
+
+		for (; spriteId <= _curMaxSpriteId; spriteId++)
+			spriteInfoSet_zoom(spriteId, args[0]);
 		break;
 	case 63: // HE 98+
 		pop();
 		break;
 	case 64:
-		pop();
+		args[0] = pop();
+		if (_curSpriteId > _curMaxSpriteId)
+			break;
+		spriteId = _curSpriteId;
+		if (!spriteId)
+			spriteId++;
+
+		for (; spriteId <= _curMaxSpriteId; spriteId++)
+			spriteInfoSet_field_54(spriteId, args[0]);
 		break;
 	case 90:
 		pop();
@@ -1043,11 +1115,18 @@ void ScummEngine_v90he::o90_setSpriteInfo() {
 	case 124:
 		break;
 	case 164:
-		pop();
-		pop();
+		args[1] = pop();
+		args[0] = pop();
+		if (_curSpriteId > _curMaxSpriteId)
+			break;
+		spriteId = _curSpriteId;
+		if (!spriteId)
+			spriteId++;
+
+		for (; spriteId <= _curMaxSpriteId; spriteId++)
+			spriteInfoSet_field_44(spriteId, args[0], args[1]);
 		break;
 	case 183:
-		args[0] = pop();
 		if (_curSpriteId > _curMaxSpriteId)
 			break;
 		spriteId = _curSpriteId;
