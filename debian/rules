@@ -32,7 +32,7 @@ install: build
 	dh_clean -k
 	dh_installdirs
 	cp scummvm		debian/scummvm/usr/bin
-        cp scummvm.6            debian/scummvm/usr/share/man/man6
+	cp scummvm.6		debian/scummvm/usr/share/man/man6
 
 
 # Build architecture-independent files here.
