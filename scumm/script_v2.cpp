@@ -1333,8 +1333,14 @@ void Scumm_v2::o2_roomOps() {
 		VAR(VAR_CAMERA_MAX_X) = b;
 		break;
 	case 2:											/* room color */
-		_shadowPalette[b] = a;
-		_fullRedraw = true;
+		if (_version == 1) {
+			_shadowPalette[0] = 255;
+			_shadowPalette[1] = a;
+			_shadowPalette[2] = b;
+		} else {
+			_shadowPalette[b] = a;
+			_fullRedraw = true;
+		}
 		break;
 	}
 }

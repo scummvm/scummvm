@@ -1346,6 +1346,11 @@ void Gdi::drawStripC64Background(byte *dst, int stripnr, int height) {
 	height >>= 3;
 	for (int y = 0; y < height; y++) {
 		_C64Colors[3] = (_C64ColorMap[y + stripnr * height] & 7);
+		if (_vm->_shadowPalette[0] == 255) {
+			_vm->_shadowPalette[0] = 0;
+			_C64Colors[2] = _vm->_shadowPalette[2];
+			_C64Colors[1] = _vm->_shadowPalette[1];
+		}
 		charIdx = _C64PicMap[y + stripnr * height] * 8;
 		for (int i = 0; i < 8; i++) {
 			byte c = _C64CharMap[charIdx + i];
@@ -3339,7 +3344,7 @@ void Scumm::updatePalette() {
 	for (i = _palDirtyMin; i <= _palDirtyMax; i++) {
 		byte *data;
 
-		if (_features & GF_SMALL_HEADER)
+		if (_features & GF_SMALL_HEADER && _version > 1)
 			data = _currentPalette + _shadowPalette[i] * 3;
 		else
 			data = _currentPalette + i * 3;
