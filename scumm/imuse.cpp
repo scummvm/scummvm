@@ -3026,6 +3026,7 @@ int IMuseInternal::save_or_load(Serializer *ser, Scumm *scumm) {
 		MKEND()
 	};
 
+	// VolumeFader is obsolete.
 	const SaveLoadEntry volumeFaderEntries[] = {
 		MK_OBSOLETE_REF(VolumeFader, player, TYPE_PLAYER, VER_V8, VER_V16),
 		MK_OBSOLETE(VolumeFader, active, sleUint8, VER_V8, VER_V16),
@@ -3036,6 +3037,15 @@ int IMuseInternal::save_or_load(Serializer *ser, Scumm *scumm) {
 		MK_OBSOLETE(VolumeFader, direction, sleInt8, VER_V8, VER_V16),
 		MK_OBSOLETE(VolumeFader, speed_lo, sleInt8, VER_V8, VER_V16),
 		MK_OBSOLETE(VolumeFader, speed_lo_counter, sleUint16, VER_V8, VER_V16),
+		MKEND()
+	};
+
+	const SaveLoadEntry parameterFaderEntries[] = {
+		MKLINE(ParameterFader, param,        sleInt16,  VER_V17),
+		MKLINE(ParameterFader, start,        sleInt16,  VER_V17),
+		MKLINE(ParameterFader, end,          sleInt16,  VER_V17),
+		MKLINE(ParameterFader, total_time,   sleUint32, VER_V17),
+		MKLINE(ParameterFader, current_time, sleUint32, VER_V17),
 		MKEND()
 	};
 
@@ -3071,16 +3081,21 @@ int IMuseInternal::save_or_load(Serializer *ser, Scumm *scumm) {
 
 #endif
 
+	int i;
+
 	ser->_ref_me = this;
 	ser->_save_ref = saveReference;
 	ser->_load_ref = loadReference;
 
 	ser->saveLoadEntries(this, mainEntries);
-	ser->saveLoadArrayOf(_players, ARRAYSIZE(_players), sizeof(_players[0]), playerEntries);
+	for (i = 0; i < ARRAYSIZE(_players); ++i) {
+		ser->saveLoadEntries (&_players[i], playerEntries);
+		ser->saveLoadArrayOf (_players[i]._parameterFaders, ARRAYSIZE(_players[i]._parameterFaders),
+		                      sizeof(ParameterFader), parameterFaderEntries);
+	}
 	ser->saveLoadArrayOf(_parts, ARRAYSIZE(_parts), sizeof(_parts[0]), partEntries);
 
 	{ // Load/save the instrument definitions, which were revamped with V11.
-		int i;
 		Part *part = &_parts[0];
 		if (ser->getVersion() >= VER_V11) {
 			for (i = ARRAYSIZE(_parts); i; --i, ++part) {
@@ -3093,11 +3108,8 @@ int IMuseInternal::save_or_load(Serializer *ser, Scumm *scumm) {
 	}
 
 	// VolumeFader has been replaced with the more generic ParameterFader.
-	{
-		int i;
-		for (i = 0; i < 8; ++i)
-			ser->saveLoadEntries (0, volumeFaderEntries);
-	}
+	for (i = 0; i < 8; ++i)
+		ser->saveLoadEntries (0, volumeFaderEntries);
 
 	if (!ser->isSaving()) {
 		// Load all sounds that we need
