@@ -1455,7 +1455,7 @@ void Scumm::o5_ifClassOfIs()
 		if (cls)
 			b = getClass(act, cls);
 		else
-			error("FIXME! Ender forgot why he added this.");
+			error("FIXME! Ender forgot why he added this. Please report this as a bug code %d", cls);
 
 		if (cls & 0x80 && !b || !(cls & 0x80) && b)
 			cond = false;
