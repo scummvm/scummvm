@@ -1477,21 +1477,14 @@ void Scumm::o6_pickupObject()
 void Scumm::o6_loadRoomWithEgo()
 {
 	Actor *a;
-	int room, obj, x, y;
-
-	/* Begin: Autosave 
-	   _saveLoadSlot = 0;
-	   sprintf(_saveLoadName, "Autosave", _saveLoadSlot);
-	   _saveLoadFlag = 1;
-	   _saveLoadCompatible = false;
-	   End: Autosave */
+	int obj, room, x, y;
 
 	y = pop();
 	x = pop();
 
 	obj = popRoomAndObj(&room);
 
-	a = derefActorSafe(_vars[VAR_EGO], "o_loadRoomWithEgo");
+	a = derefActorSafe(_vars[VAR_EGO], "o6_loadRoomWithEgo");
 
 	a->putActor(0, 0, room);
 	_egoPositioned = false;
@@ -1506,7 +1499,9 @@ void Scumm::o6_loadRoomWithEgo()
 		setCameraAt(a->x, a->y);
 		setCameraFollows(a);
 	}
+
 	_fullRedraw = 1;
+
 	if (x != -1) {
 		a->startWalkActor(x, y, -1);
 	}

@@ -257,49 +257,47 @@ void Scumm::setCameraAt(int pos_x, int pos_y)
 {
 
 	if (_features & GF_AFTER_V7) {
-		CameraData *cd = &camera;
 		ScummPoint old;
 
-		old = cd->_cur;
+		old = camera._cur;
 
-		cd->_cur.x = pos_x;
-		cd->_cur.y = pos_y;
+		camera._cur.x = pos_x;
+		camera._cur.y = pos_y;
 
-		clampCameraPos(&cd->_cur);
+		clampCameraPos(&camera._cur);
 
-		cd->_dest = cd->_cur;
+		camera._dest = camera._cur;
 
-		assert(cd->_cur.x >= 160 && cd->_cur.y >= 100);
+		assert(camera._cur.x >= 160 && camera._cur.y >= 100);
 
-		if ((cd->_cur.x != old.x || cd->_cur.y != old.y)
+		if ((camera._cur.x != old.x || camera._cur.y != old.y)
 				&& _vars[VAR_SCROLL_SCRIPT]) {
-			_vars[VAR_CAMERA_POS_X] = cd->_cur.x;
-			_vars[VAR_CAMERA_POS_Y] = cd->_cur.y;
+			_vars[VAR_CAMERA_POS_X] = camera._cur.x;
+			_vars[VAR_CAMERA_POS_Y] = camera._cur.y;
 			runScript(_vars[VAR_SCROLL_SCRIPT], 0, 0, 0);
 		}
 	} else {
 		int t;
-		CameraData *cd = &camera;
 
-		if (cd->_mode != CM_FOLLOW_ACTOR || abs(pos_x - cd->_cur.x) > 160) {
-			cd->_cur.x = pos_x;
+		if (camera._mode != CM_FOLLOW_ACTOR || abs(pos_x - camera._cur.x) > 160) {
+			camera._cur.x = pos_x;
 		}
-		cd->_dest.x = pos_x;
+		camera._dest.x = pos_x;
 
 		t = _vars[VAR_CAMERA_MIN_X];
-		if (cd->_cur.x < t)
-			cd->_cur.x = t;
+		if (camera._cur.x < t)
+			camera._cur.x = t;
 
 		t = _vars[VAR_CAMERA_MAX_X];
-		if (cd->_cur.x > t)
-			cd->_cur.x = t;
+		if (camera._cur.x > t)
+			camera._cur.x = t;
 
 		if (_vars[VAR_SCROLL_SCRIPT]) {
-			_vars[VAR_CAMERA_POS_X] = cd->_cur.x;
+			_vars[VAR_CAMERA_POS_X] = camera._cur.x;
 			runScript(_vars[VAR_SCROLL_SCRIPT], 0, 0, 0);
 		}
 
-		if (cd->_cur.x != cd->_last.x && charset._hasMask)
+		if (camera._cur.x != camera._last.x && charset._hasMask)
 			stopTalk();
 	}
 }
@@ -307,18 +305,17 @@ void Scumm::setCameraAt(int pos_x, int pos_y)
 void Scumm::setCameraFollows(Actor *a)
 {
 	if (_features & GF_AFTER_V7) {
-		CameraData *cd = &camera;
-		byte oldfollow = cd->_follows;
+		byte oldfollow = camera._follows;
 		int ax, ay;
 
-		cd->_follows = a->number;
+		camera._follows = a->number;
 
 		if (!a->isInCurrentRoom()) {
 			startScene(a->getRoom(), 0, 0);
 		}
 
-		ax = abs(a->x - cd->_cur.x);
-		ay = abs(a->y - cd->_cur.y);
+		ax = abs(a->x - camera._cur.x);
+		ay = abs(a->y - camera._cur.y);
 
 		if (ax > _vars[VAR_CAMERA_THRESHOLD_X] || ay > _vars[VAR_CAMERA_THRESHOLD_Y] || ax > 160 || ay > 100) {
 			setCameraAt(a->x, a->y);
@@ -328,21 +325,20 @@ void Scumm::setCameraFollows(Actor *a)
 			runHook(0);
 	} else {
 		int t, i;
-		CameraData *cd = &camera;
 
-		cd->_mode = CM_FOLLOW_ACTOR;
-		cd->_follows = a->number;
+		camera._mode = CM_FOLLOW_ACTOR;
+		camera._follows = a->number;
 
 		if (!a->isInCurrentRoom()) {
 			startScene(a->getRoom(), 0, 0);
-			cd->_mode = CM_FOLLOW_ACTOR;
-			cd->_cur.x = a->x;
-			setCameraAt(cd->_cur.x, 0);
+			camera._mode = CM_FOLLOW_ACTOR;
+			camera._cur.x = a->x;
+			setCameraAt(camera._cur.x, 0);
 		}
 
 		t = (a->x >> 3);
 
-		if (t - _screenStartStrip < cd->_leftTrigger || t - _screenStartStrip > cd->_rightTrigger)
+		if (t - _screenStartStrip < camera._leftTrigger || t - _screenStartStrip > camera._rightTrigger)
 			setCameraAt(a->x, 0);
 
 		for (i = 1, a = getFirstActor(); ++a, i < NUM_ACTORS; i++) {
@@ -672,11 +668,10 @@ void Scumm::redrawBGAreas()
 {
 	int i;
 	int val;
-	CameraData *cd = &camera;
 	int diff;
 
 	if (!(_features & GF_AFTER_V7))
-		if (cd->_cur.x != cd->_last.x && charset._hasMask)
+		if (camera._cur.x != camera._last.x && charset._hasMask)
 			stopTalk();
 
 	val = 0;
@@ -690,7 +685,7 @@ void Scumm::redrawBGAreas()
 	}
 
 	if (_features & GF_AFTER_V7) {
-		diff = (cd->_cur.x >> 3) - (cd->_last.x >> 3);
+		diff = (camera._cur.x >> 3) - (camera._last.x >> 3);
 		if (_fullRedraw == 0 && diff == 1) {
 			val = 2;
 			redrawBGStrip(39, 1);
@@ -703,13 +698,13 @@ void Scumm::redrawBGAreas()
 			redrawBGStrip(0, 40);
 		}
 	} else {
-		if (_fullRedraw == 0 && cd->_cur.x - cd->_last.x == 8) {
+		if (_fullRedraw == 0 && camera._cur.x - camera._last.x == 8) {
 			val = 2;
 			redrawBGStrip(39, 1);
-		} else if (_fullRedraw == 0 && cd->_cur.x - cd->_last.x == -8) {
+		} else if (_fullRedraw == 0 && camera._cur.x - camera._last.x == -8) {
 			val = 1;
 			redrawBGStrip(0, 1);
-		} else if (_fullRedraw != 0 || cd->_cur.x != cd->_last.x) {
+		} else if (_fullRedraw != 0 || camera._cur.x != camera._last.x) {
 			_BgNeedsRedraw = false;
 			redrawBGStrip(0, 40);
 		}
@@ -1938,70 +1933,69 @@ void Scumm::clampCameraPos(ScummPoint *pt)
 void Scumm::moveCamera()
 {
 	if (_features & GF_AFTER_V7) {
-		CameraData *cd = &camera;
-		ScummPoint old = cd->_cur;
+		ScummPoint old = camera._cur;
 		Actor *a = NULL;
 
-		if (cd->_follows) {
-			a = derefActorSafe(cd->_follows, "moveCamera");
-			if (abs(cd->_cur.x - a->x) > _vars[VAR_CAMERA_THRESHOLD_X] ||
-					abs(cd->_cur.y - a->y) > _vars[VAR_CAMERA_THRESHOLD_Y]) {
-				cd->_movingToActor = true;
+		if (camera._follows) {
+			a = derefActorSafe(camera._follows, "moveCamera");
+			if (abs(camera._cur.x - a->x) > _vars[VAR_CAMERA_THRESHOLD_X] ||
+					abs(camera._cur.y - a->y) > _vars[VAR_CAMERA_THRESHOLD_Y]) {
+				camera._movingToActor = true;
 				if (_vars[VAR_CAMERA_THRESHOLD_X] == 0)
-					cd->_cur.x = a->x;
+					camera._cur.x = a->x;
 				if (_vars[VAR_CAMERA_THRESHOLD_Y] == 0)
-					cd->_cur.y = a->y;
-				clampCameraPos(&cd->_cur);
+					camera._cur.y = a->y;
+				clampCameraPos(&camera._cur);
 			}
 		} else {
-			cd->_movingToActor = false;
+			camera._movingToActor = false;
 		}
 
-		if (cd->_movingToActor) {
-			cd->_dest.x = a->x;
-			cd->_dest.y = a->y;
+		if (camera._movingToActor) {
+			camera._dest.x = a->x;
+			camera._dest.y = a->y;
 		}
 
-		assert(cd->_cur.x >= 160 && cd->_cur.y >= 100);
+		assert(camera._cur.x >= 160 && camera._cur.y >= 100);
 
-		clampCameraPos(&cd->_dest);
+		clampCameraPos(&camera._dest);
 
-		if (cd->_cur.x < cd->_dest.x) {
-			cd->_cur.x += _vars[VAR_CAMERA_SPEED_X];
-			if (cd->_cur.x > cd->_dest.x)
-				cd->_cur.x = cd->_dest.x;
+		if (camera._cur.x < camera._dest.x) {
+			camera._cur.x += _vars[VAR_CAMERA_SPEED_X];
+			if (camera._cur.x > camera._dest.x)
+				camera._cur.x = camera._dest.x;
 		}
 
-		if (cd->_cur.x > cd->_dest.x) {
-			cd->_cur.x -= _vars[VAR_CAMERA_SPEED_X];
-			if (cd->_cur.x < cd->_dest.x)
-				cd->_cur.x = cd->_dest.x;
+		if (camera._cur.x > camera._dest.x) {
+			camera._cur.x -= _vars[VAR_CAMERA_SPEED_X];
+			if (camera._cur.x < camera._dest.x)
+				camera._cur.x = camera._dest.x;
 		}
 
-		if (cd->_cur.y < cd->_dest.y) {
-			cd->_cur.y += _vars[VAR_CAMERA_SPEED_Y];
-			if (cd->_cur.y > cd->_dest.y)
-				cd->_cur.y = cd->_dest.y;
+		if (camera._cur.y < camera._dest.y) {
+			camera._cur.y += _vars[VAR_CAMERA_SPEED_Y];
+			if (camera._cur.y > camera._dest.y)
+				camera._cur.y = camera._dest.y;
 		}
 
-		if (cd->_cur.y > cd->_dest.y) {
-			cd->_cur.y -= _vars[VAR_CAMERA_SPEED_Y];
-			if (cd->_cur.y < cd->_dest.y)
-				cd->_cur.y = cd->_dest.y;
+		if (camera._cur.y > camera._dest.y) {
+			camera._cur.y -= _vars[VAR_CAMERA_SPEED_Y];
+			if (camera._cur.y < camera._dest.y)
+				camera._cur.y = camera._dest.y;
 		}
 
-		if (cd->_cur.x == cd->_dest.x && cd->_cur.y == cd->_dest.y) {
+		if (camera._cur.x == camera._dest.x && camera._cur.y == camera._dest.y) {
 
-			cd->_movingToActor = false;
-			cd->_accel.x = cd->_accel.y = 0;
+			camera._movingToActor = false;
+			camera._accel.x = camera._accel.y = 0;
 			_vars[VAR_CAMERA_SPEED_X] = _vars[VAR_CAMERA_SPEED_Y] = 0;
 		} else {
 
-			cd->_accel.x += _vars[VAR_CAMERA_ACCEL_X];
-			cd->_accel.y += _vars[VAR_CAMERA_ACCEL_Y];
+			camera._accel.x += _vars[VAR_CAMERA_ACCEL_X];
+			camera._accel.y += _vars[VAR_CAMERA_ACCEL_Y];
 
-			_vars[VAR_CAMERA_SPEED_X] += cd->_accel.x / 100;
-			_vars[VAR_CAMERA_SPEED_Y] += cd->_accel.y / 100;
+			_vars[VAR_CAMERA_SPEED_X] += camera._accel.x / 100;
+			_vars[VAR_CAMERA_SPEED_Y] += camera._accel.y / 100;
 
 			if (_vars[VAR_CAMERA_SPEED_X] < 8)
 				_vars[VAR_CAMERA_SPEED_X] = 8;
@@ -2013,91 +2007,90 @@ void Scumm::moveCamera()
 
 		cameraMoved();
 
-		if (cd->_cur.x != old.x || cd->_cur.y != old.y) {
-			_vars[VAR_CAMERA_POS_X] = cd->_cur.x;
-			_vars[VAR_CAMERA_POS_Y] = cd->_cur.y;
+		if (camera._cur.x != old.x || camera._cur.y != old.y) {
+			_vars[VAR_CAMERA_POS_X] = camera._cur.x;
+			_vars[VAR_CAMERA_POS_Y] = camera._cur.y;
 
-			_vars[VAR_CAMERA_DEST_X] = cd->_dest.x;
+			_vars[VAR_CAMERA_DEST_X] = camera._dest.x;
 
-			_vars[VAR_CAMERA_DEST_Y] = cd->_dest.y;
+			_vars[VAR_CAMERA_DEST_Y] = camera._dest.y;
 
-			_vars[VAR_CAMERA_FOLLOWED_ACTOR] = cd->_follows;
+			_vars[VAR_CAMERA_FOLLOWED_ACTOR] = camera._follows;
 
 			if (_vars[VAR_SCROLL_SCRIPT])
 				runScript(_vars[VAR_SCROLL_SCRIPT], 0, 0, 0);
 		}
 	} else {
-		CameraData *cd = &camera;
-		int pos = cd->_cur.x;
+		int pos = camera._cur.x;
 		int actorx, t;
 		Actor *a = NULL;
 
-		cd->_cur.x &= 0xFFF8;
+		camera._cur.x &= 0xFFF8;
 
-		if (cd->_cur.x < _vars[VAR_CAMERA_MIN_X]) {
+		if (camera._cur.x < _vars[VAR_CAMERA_MIN_X]) {
 			if (_vars[VAR_CAMERA_FAST_X])
-				cd->_cur.x = _vars[VAR_CAMERA_MIN_X];
+				camera._cur.x = _vars[VAR_CAMERA_MIN_X];
 			else
-				cd->_cur.x += 8;
+				camera._cur.x += 8;
 			cameraMoved();
 			return;
 		}
 
-		if (cd->_cur.x > _vars[VAR_CAMERA_MAX_X]) {
+		if (camera._cur.x > _vars[VAR_CAMERA_MAX_X]) {
 			if (_vars[VAR_CAMERA_FAST_X])
-				cd->_cur.x = _vars[VAR_CAMERA_MAX_X];
+				camera._cur.x = _vars[VAR_CAMERA_MAX_X];
 			else
-				cd->_cur.x -= 8;
+				camera._cur.x -= 8;
 			cameraMoved();
 			return;
 		}
 
-		if (cd->_mode == CM_FOLLOW_ACTOR) {
-			a = derefActorSafe(cd->_follows, "moveCamera");
+		if (camera._mode == CM_FOLLOW_ACTOR) {
+			a = derefActorSafe(camera._follows, "moveCamera");
 
 			actorx = a->x;
 			t = (actorx >> 3) - _screenStartStrip;
 
-			if (t < cd->_leftTrigger || t > cd->_rightTrigger) {
+			if (t < camera._leftTrigger || t > camera._rightTrigger) {
 				if (_vars[VAR_CAMERA_FAST_X]) {
 					if (t > 35)
-						cd->_dest.x = actorx + 80;
+						camera._dest.x = actorx + 80;
 					if (t < 5)
-						cd->_dest.x = actorx - 80;
+						camera._dest.x = actorx - 80;
 				} else
-					cd->_movingToActor = 1;
+					camera._movingToActor = 1;
 			}
 		}
 
-		if (cd->_movingToActor) {
-			a = derefActorSafe(cd->_follows, "moveCamera(2)");
-			cd->_dest.x = a->x;
+		if (camera._movingToActor) {
+			a = derefActorSafe(camera._follows, "moveCamera(2)");
+			camera._dest.x = a->x;
 		}
 
-		if (cd->_dest.x < _vars[VAR_CAMERA_MIN_X])
-			cd->_dest.x = _vars[VAR_CAMERA_MIN_X];
+		if (camera._dest.x < _vars[VAR_CAMERA_MIN_X])
+			camera._dest.x = _vars[VAR_CAMERA_MIN_X];
 
-		if (cd->_dest.x > _vars[VAR_CAMERA_MAX_X])
-			cd->_dest.x = _vars[VAR_CAMERA_MAX_X];
+		if (camera._dest.x > _vars[VAR_CAMERA_MAX_X])
+			camera._dest.x = _vars[VAR_CAMERA_MAX_X];
 
 		if (_vars[VAR_CAMERA_FAST_X]) {
-			cd->_cur.x = cd->_dest.x;
+			camera._cur.x = camera._dest.x;
 		} else {
-			if (cd->_cur.x < cd->_dest.x)
-				cd->_cur.x += 8;
-			if (cd->_cur.x > cd->_dest.x)
-				cd->_cur.x -= 8;
+			if (camera._cur.x < camera._dest.x)
+				camera._cur.x += 8;
+			if (camera._cur.x > camera._dest.x)
+				camera._cur.x -= 8;
 		}
 
 		/* a is set a bit above */
-		if (cd->_movingToActor && cd->_cur.x >> 3 == a->x >> 3) {
-			cd->_movingToActor = 0;
+		if (camera._movingToActor && camera._cur.x >> 3 == a->x >> 3) {
+			camera._movingToActor = 0;
 		}
 
 		cameraMoved();
 
-		if (pos != cd->_cur.x && _vars[VAR_SCROLL_SCRIPT]) {
-			_vars[VAR_CAMERA_POS_X] = cd->_cur.x;
+		if (pos != camera._cur.x && _vars[VAR_SCROLL_SCRIPT]) {
+			_vars[VAR_CAMERA_POS_X] = camera._cur.x;
 			runScript(_vars[VAR_SCROLL_SCRIPT], 0, 0, 0);
 		}
 	}
@@ -2106,27 +2099,24 @@ void Scumm::moveCamera()
 void Scumm::cameraMoved()
 {
 	if (_features & GF_AFTER_V7) {
-		CameraData *cd = &camera;
 
-		assert(cd->_cur.x >= 160 && cd->_cur.y >= 100);
+		assert(camera._cur.x >= 160 && camera._cur.y >= 100);
 
-		_screenStartStrip = (cd->_cur.x - 160) >> 3;
+		_screenStartStrip = (camera._cur.x - 160) >> 3;
 		_screenEndStrip = _screenStartStrip + 39;
 		virtscr[0].xstart = _screenStartStrip << 3;
 
-		_screenLeft = cd->_cur.x - 160;
-		_screenTop = cd->_cur.y - 100;
+		_screenLeft = camera._cur.x - 160;
+		_screenTop = camera._cur.y - 100;
 	} else {
 
-		CameraData *cd = &camera;
-
-		if (cd->_cur.x < 160) {
-			cd->_cur.x = 160;
-		} else if (cd->_cur.x + 160 >= _scrWidth) {
-			cd->_cur.x = _scrWidth - 160;
+		if (camera._cur.x < 160) {
+			camera._cur.x = 160;
+		} else if (camera._cur.x + 160 >= _scrWidth) {
+			camera._cur.x = _scrWidth - 160;
 		}
 
-		_screenStartStrip = (cd->_cur.x >> 3) - 20;
+		_screenStartStrip = (camera._cur.x >> 3) - 20;
 		_screenEndStrip = _screenStartStrip + 39;
 		virtscr[0].xstart = _screenStartStrip << 3;
 	}
@@ -2135,16 +2125,15 @@ void Scumm::cameraMoved()
 void Scumm::panCameraTo(int x, int y)
 {
 	if (_features & GF_AFTER_V7) {
-		CameraData *cd = &camera;
-		cd->_follows = 0;
-		cd->_dest.x = x;
-		cd->_dest.y = y;
+
+		camera._follows = 0;
+		camera._dest.x = x;
+		camera._dest.y = y;
 	} else {
 
-		CameraData *cd = &camera;
-		cd->_dest.x = x;
-		cd->_mode = CM_PANNING;
-		cd->_movingToActor = 0;
+		camera._dest.x = x;
+		camera._mode = CM_PANNING;
+		camera._movingToActor = 0;
 	}
 }
 
@@ -2152,33 +2141,31 @@ void Scumm::actorFollowCamera(int act)
 {
 	if (!(_features & GF_AFTER_V7)) {
 		int old;
-		CameraData *cd = &camera;
 
 		/* mi1 compatibilty */
 		if (act == 0) {
-			cd->_mode = CM_NORMAL;
-			cd->_follows = 0;
-			cd->_movingToActor = 0;
+			camera._mode = CM_NORMAL;
+			camera._follows = 0;
+			camera._movingToActor = 0;
 			return;
 		}
 
-		old = cd->_follows;
+		old = camera._follows;
 		setCameraFollows(derefActorSafe(act, "actorFollowCamera"));
-		if (cd->_follows != old)
+		if (camera._follows != old)
 			runHook(0);
 
-		cd->_movingToActor = 0;
+		camera._movingToActor = 0;
 	}
 }
 
 void Scumm::setCameraAtEx(int at)
 {
 	if (!(_features & GF_AFTER_V7)) {
-		CameraData *cd = &camera;
-		cd->_mode = CM_NORMAL;
-		cd->_cur.x = at;
+		camera._mode = CM_NORMAL;
+		camera._cur.x = at;
 		setCameraAt(at, 0);
-		cd->_movingToActor = 0;
+		camera._movingToActor = 0;
 	}
 }
 
