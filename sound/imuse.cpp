@@ -40,11 +40,8 @@ int num_mix;
 #define TRIGGER_ID 0
 #define COMMAND_ID 1
 
-#ifdef SAMNMAX
-	#define MDHD_TAG "MDpg"
-#else
-      #define MDHD_TAG "MDhd"
-#endif
+#define MDPG_TAG "MDpg"
+#define MDHD_TAG "MDhd"
 
 int clamp(int val, int min, int max) {
 	if (val<min)
@@ -180,10 +177,13 @@ bool SoundEngine::start_sound(int sound) {
 	Player *player;
 	void *mdhd;
 
-        mdhd = findTag(sound, MDHD_TAG, 0);
-        if (!mdhd)  {
-		warning("SE::start_sound failed: Couldn't find %s", MDHD_TAG);
-		return false;
+    mdhd = findTag(sound, MDHD_TAG, 0);
+    if (!mdhd)  {
+		mdhd = findTag(sound, MDPG_TAG, 0);
+		if (!mdhd) {
+			warning("SE::start_sound failed: Couldn't find %s", MDHD_TAG);
+			return false;
+		}
 	}
 	player = allocate_player(128);
 	if (!player)
@@ -1019,8 +1019,11 @@ bool Player::start_sound(int sound) {
 	
 	mdhd = _se->findTag(sound, MDHD_TAG, 0);
 	if (mdhd==NULL) {
-		warning("P::start_sound failed: Couldn't find %s", MDHD_TAG);
-		return false;
+		mdhd = _se->findTag(sound, MDPG_TAG, 0);
+		if (mdhd==NULL) {
+			warning("P::start_sound failed: Couldn't find %s", MDHD_TAG);
+			return false;
+		}
 	}
 	_parts = NULL;
 	_active = true;
