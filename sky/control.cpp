@@ -391,29 +391,19 @@ void SkyControl::drawMainPanel(void) {
 	_statusBar->drawToScreen();
 }
 
-void SkyControl::restartGame(void) {
-	if (SkyState::isDemo() && (!SkyState::isCDVersion()))
-		return; // I don't think this can happen
-
-	/*parseSaveData(_restartData);
-
-	_skyScreen->forceRefresh();
-	_skyScreen->setPalette((uint8 *)SkyState::fetchCompact(SkyState::_systemVars.currentPalette));
-	_skyMouse->spriteMouse(_savedMouse, 0, 0);
-	SkyState::_systemVars.pastIntro = true;*/
-}
-
 void SkyControl::doLoadSavePanel(void) {
 	if (SkyState::isDemo())
 		return; // I don't think this can even happen
 	initPanel();
 	_skyScreen->clearScreen();
-	if ((!SkyState::isCDVersion()) && (SkyState::_systemVars.gameVersion != 348)) 
+	if (SkyState::_systemVars.gameVersion < 331)
 		_skyScreen->setPalette(60509);
 	else
 		_skyScreen->setPalette(60510);
 
 	_savedMouse = _skyMouse->giveCurrentMouseType();
+	_savedCharSet = _skyText->giveCurrentCharSet();
+	_skyText->fnSetFont(0);
 	_skyMouse->spriteMouse(MOUSE_NORMAL,0,0);
 	_lastButton = -1;
 	_curButtonText = 0;
@@ -428,6 +418,7 @@ void SkyControl::doLoadSavePanel(void) {
 	_skyScreen->setPalette((uint8 *)SkyState::fetchCompact(SkyState::_systemVars.currentPalette));
 	removePanel();
 	_skyMouse->spriteMouse(_savedMouse, 0, 0);
+	_skyText->fnSetFont(_savedCharSet);
 }
 
 void SkyControl::doControlPanel(void) {
@@ -1383,8 +1374,10 @@ uint16 SkyControl::parseSaveData(uint8 *srcBuf) {
 	if (srcPos - srcBuf != (int32)size)
 		error("Restore failed! Savegame data = %d bytes. Expected size: %d.\n", srcPos-srcBuf, size);
 
-	_skyLogic->fnLeaveSection(oldSection, 0, 0);
-	_skyLogic->fnEnterSection(SkyLogic::_scriptVariables[CUR_SECTION], 0, 0);
+	if (!SkyState::isDemo()) {
+		_skyLogic->fnLeaveSection(oldSection, 0, 0);
+		_skyLogic->fnEnterSection(SkyLogic::_scriptVariables[CUR_SECTION], 0, 0);
+	}
 	_skyDisk->refreshFilesList(reloadList);
 	_skyMusic->startMusic((uint16)music);
 	_savedMouse = (uint16)mouseType;
@@ -1426,10 +1419,92 @@ uint16 SkyControl::restoreGameFromFile(void) {
 	}
 
 	uint16 res = parseSaveData(saveData);
+	SkyState::_systemVars.pastIntro = true;
 	inf->close();
 	delete inf;
 	free(saveData);
 	return res;
+}
+
+uint16 *SkyControl::lz77decode(uint16 *data) {
+	uint32 size = READ_LE_UINT32(data);
+	data += 2;
+	uint16 *outBuf = (uint16*)malloc(size << 1);
+	uint32 outPos = 0;
+	uint16 lzPos;
+	uint16 lzBuf[0x1000];
+	memset(lzBuf + 0xF00, 0, 0x200);
+	for (lzPos = 0; lzPos < 0xF00; lzPos++)
+		lzBuf[lzPos] = 0xF00 - lzPos;
+	lzPos = 0;
+	uint32 indic = 0;
+	while (outPos < size) {
+		if (!(indic >> 16)) {
+			indic = READ_LE_UINT16(data) | 0xFFFF0000;
+			data++;
+		}
+		if (indic & 1) {
+			lzBuf[lzPos] = outBuf[outPos] = *data;
+			outPos++;
+			lzPos = (lzPos + 1) & 0xFFF;
+		} else {
+			uint16 lzFrom = READ_LE_UINT16(data) >> 4;
+			uint16 lzLen = (READ_LE_UINT16(data) & 0xF) + 2;
+			for (uint16 cnt = 0; cnt < lzLen; cnt++)
+				outBuf[outPos + cnt] = lzBuf[(lzPos + cnt) & 0xFFF] = lzBuf[(lzFrom + cnt) & 0xFFF];
+			
+			outPos += lzLen;
+			lzPos = (lzPos + lzLen) & 0xFFF;
+		}
+		data++;
+		indic >>= 1;
+	}
+	return outBuf;
+}
+
+void SkyControl::applyDiff(uint16 *data, uint16 *diffData) {
+	for (uint16 cnt = 0; cnt < 206; cnt++) {
+		data += READ_LE_UINT16(diffData);
+		diffData++;
+		*data = *diffData;
+		diffData++;
+		data++;
+	}
+}
+
+void SkyControl::restartGame(void) {
+	if (SkyState::_systemVars.gameVersion == 267)
+		return; // no restart for floppy demo
+
+	uint16 *resetData;
+	if (SkyState::isCDVersion())
+		resetData = lz77decode((uint16 *)_resetDataCd);
+	else {
+		resetData = lz77decode((uint16 *)_resetData288);
+		switch (SkyState::_systemVars.gameVersion) {
+			case 303:
+                applyDiff(resetData, (uint16*)_resetDiff303);
+				break;
+			case 331:
+				applyDiff(resetData, (uint16*)_resetDiff331);
+				break;
+			case 348:
+				applyDiff(resetData, (uint16*)_resetDiff348);
+				break;
+			default:
+				break;
+		}
+	}
+	// ok, we finally have our savedata
+
+	parseSaveData((uint8*)resetData);
+	free(resetData);
+	_skyScreen->forceRefresh();
+	memset(_skyScreen->giveCurrent(), GAME_SCREEN_WIDTH * FULL_SCREEN_HEIGHT, 0);
+	//_skyScreen->showScreen(_skyScreen->giveCurrent());
+	_skyScreen->setPalette((uint8 *)SkyState::fetchCompact(SkyState::_systemVars.currentPalette));
+	_skyMouse->spriteMouse(_savedMouse, 0, 0);
+	SkyState::_systemVars.pastIntro = true;
 }
 
 void SkyControl::delay(unsigned int amount) {

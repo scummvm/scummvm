@@ -2262,8 +2262,7 @@ bool SkyLogic::fnRestoreGame(uint32 a, uint32 b, uint32 c) {
 
 bool SkyLogic::fnRestartGame(uint32 a, uint32 b, uint32 c) {
 	
-	error("Stub: fnRestartGame()");
-	//_skyControl->restartGame();
+	_skyControl->restartGame();
 	return false;
 }
 

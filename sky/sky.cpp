@@ -116,7 +116,7 @@ void SkyState::go() {
 	initialise();
 
 	bool introSkipped;
-	if (!isDemo() || isCDVersion())
+	if (_systemVars.gameVersion != 267) // don't do intro for floppydemo
 		introSkipped = !intro();
 	else introSkipped = false;
 
@@ -126,8 +126,8 @@ void SkyState::go() {
 
 	_paintGrid = false;
 
-	/*if (introSkipped)
-		_skyControl->restartGame();*/
+	if (introSkipped)
+		_skyControl->restartGame();
 
 	while (1) {
 		delay(_systemVars.gameSpeed);
@@ -148,8 +148,10 @@ void SkyState::go() {
 			_key_pressed = 0;
 			_skyControl->doControlPanel();
 		}			
-		/*if ((_key_pressed == 27) && (!_systemVars.pastIntro))
-			_skyControl->restartGame();*/
+		if ((_key_pressed == 27) && (!_systemVars.pastIntro)) {
+			_skyControl->restartGame();
+			_key_pressed = 0;
+		}
 
 		_skySound->checkFxQueue();
 		_skyMouse->mouseEngine((uint16)_sdl_mouse_x, (uint16)_sdl_mouse_y);

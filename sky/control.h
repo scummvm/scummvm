@@ -215,9 +215,15 @@ private:
 	void lodsStr(uint8 **srcPos, uint16 *src);
 	uint16 parseSaveData(uint8 *srcBuf);
 
-	static Compact *_saveLoadCpts[833]; // moved to sky/compacts/savedata.cpp
-	//static uint8 _restartData[0xCC10];
 	const char *_savePath;
+	uint16 *lz77decode(uint16 *data);
+	void applyDiff(uint16 *data, uint16 *diffData);
+	static Compact *_saveLoadCpts[833]; //-----------------
+	static uint8 _resetData288[0x39F2];
+	static uint8 _resetDiff303[824];    // moved to sky/compacts/savedata.cpp
+	static uint8 _resetDiff331[824];
+	static uint8 _resetDiff348[824];
+	static uint8 _resetDataCd[0x3FDC];  //-----------------
 
 	AllocedMem *_memListRoot;
 	void appendMemList(uint16 *pMem);
