@@ -483,7 +483,7 @@ void Actor::startAnimActor(int f) {
 void Actor::animateActor(int anim) {
 	int cmd, dir;
 
-	if (_vm->_features & GF_NEW_COSTUMES) {
+	if ((_vm->_features & GF_NEW_COSTUMES) && !(_vm->_features & GF_HUMONGOUS)) {
 
 		if (anim == 0xFF)
 			anim = 2000;
