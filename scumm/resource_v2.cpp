@@ -107,7 +107,7 @@ void Scumm_v2::readClassicIndexFile() {
 void Scumm_v2::readEnhancedIndexFile() {
 
 	if (!(_features & GF_AMIGA))
-		_playerV2 = new Player_V2(this);
+		_musicEngine = _playerV2 = new Player_V2(this);
 
 	_numGlobalObjects = _fileHandle.readUint16LE();
 	_fileHandle.seek(_numGlobalObjects, SEEK_CUR); // Skip object flags
