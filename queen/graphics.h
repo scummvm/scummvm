@@ -93,6 +93,14 @@ struct BobSlot {
 };
 
 
+struct TextSlot {
+	uint16 x;
+	uint8 color;
+	char *text;
+	bool outlined;
+};
+
+
 //class Display;
 
 class Graphics {
@@ -119,15 +127,30 @@ public:
 	void bobClearAll(); // clearallbobs()
 	BobSlot *bob(int index);
 
+	void textCurrentColor(uint8 color); // ink()
+	void textSet(uint16 x, uint16 y, const char *text, bool outlined = true); // text()
+	void textDrawAll(); // drawtext()
+	void textClear(uint16 y1, uint16 y2); // blanktexts()
+	uint16 textLength(const char* text); // textlen()
+
 	void frameErase(uint32 fslot);
 	void frameEraseAll(bool joe); // freeframes, freeallframes
 
-	void loadBackdrop(const char* name, uint16 room); // loadbackdrop
-	void loadPanel(); // loadpanel
+	void backdropLoad(const char* name, uint16 room); // loadbackdrop
+//	void backdropDraw();
+
+	void panelLoad(); // loadpanel
+//	void panelDraw();
 
 	void useJournal();
 	void journalBobSetup(uint32 bobnum, uint16 x, uint16 y, uint16 frame);
 	void journalBobPreDraw();
+
+	void update();
+
+	void displayText(const TextSlot *pts, uint16 y); // FIXME: move to Display class
+	void displayChar(uint8 *dst, uint16 dstPitch, uint16 x, uint16 y, uint8 color, const uint8 *chr); // FIXME: move to Display class
+	static void displayBlit(uint8 *dst_buf, uint16 dst_x, uint16 dst_y, uint16 dst_pitch, const uint8 *src_buf, uint16 src_w, uint16 src_h, uint16 src_pitch, bool xflip, bool masked); // FIXME: move to Display class
 
 
 private:
@@ -145,20 +168,44 @@ private:
 		uint8 *data;
 	};
 
-	BobFrame _frames[MAX_FRAMES_NUMBER]; //! unbanked bob frames
-	PackedBank _banks[MAX_BANKS_NUMBER]; //! banked bob frames
+	//! unbanked bob frames
+	BobFrame _frames[MAX_FRAMES_NUMBER];
+
+	 //! banked bob frames
+	PackedBank _banks[MAX_BANKS_NUMBER];
+
 	BobSlot _bobs[MAX_BOBS_NUMBER];
-	BobSlot *_sortedBobs[MAX_BOBS_NUMBER]; //! bobs displayed
-	BobFrame _shrinkBuffer; //! used to scale a BobFrame
+
+	//! bobs to display
+	BobSlot *_sortedBobs[MAX_BOBS_NUMBER];
+
 	uint16 _sortedBobsCount;
 
+	//! used to scale a BobFrame
+	BobFrame _shrinkBuffer;
+
+	TextSlot _texts[GAME_SCREEN_HEIGHT];
+	uint8 _curTextColor;
+
 	uint16 _cameraBob; // cambob
-	uint16 _backdropWidth, _backdropHeight; //! current room dimensions
-	uint8 *_backdrop; //! current room bitmap
-	uint8 *_panel; //! panel storage area
+
+	//! current room dimensions
+	uint16 _backdropWidth, _backdropHeight; // BDxres, BDyres
+
+	 //! current room bitmap
+	uint8 *_backdrop;
+
+	//! panel storage area
+	uint8 *_panel;
 
 	Resource *_resource;
 //	Display *_display;
+
+	//! font used to render the text
+	static const uint8 FONT[]; // FIXME: move to Display class
+
+	//! font justification values
+	static const uint8 FONT_SIZES[]; // FIXME: move to Display class
 
 	void readPCX(const uint8 *src, uint8 *dst, uint16 dstPitch, uint16 w, uint16 h);
 

@@ -49,12 +49,19 @@ enum {
 
 
 enum {
-	INK_BG_PANEL    = 0xE2,
-	INK_SELECT      = 17,
-	INK_JOURNAL     = 16,
-	INK_NORMAL      = 1,
-	INK_TALK_NORMAL = 1,
-	INK_JOE         = 17
+	INK_BG_PANEL      = 0xE2,
+	INK_SELECT        = 17,
+	INK_JOURNAL       = 16,
+	INK_NORMAL        = 1,
+	INK_TALK_NORMAL   = 1,
+	INK_JOE           = 17,
+	INK_OUTLINED_TEXT = 16
+};
+
+
+enum {
+	ZONE_ROOM  = 0,
+	ZONE_PANEL = 1
 };
 
 
