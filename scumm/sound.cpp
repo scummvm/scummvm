@@ -443,7 +443,7 @@ void Sound::processSfxQueues() {
 
 		if (act != 0 && (uint) act < 0x80 && !_scumm->_string[0].no_talk_anim) {
 			a = _scumm->derefActor(act, "processSfxQueues");
-			if (a->room == _scumm->_currentRoom && (finished || !_endOfMouthSync)) {
+			if (a->isInCurrentRoom() && (finished || !_endOfMouthSync)) {
 				b = true;
 				if (!finished)
 					b = isMouthSyncOff(_curSoundPos);

@@ -175,7 +175,7 @@ void Scumm_v3::loadCharset(int no) {
 
 	sprintf(buf, "%02d.LFL", 99 - no);
 	
-	file.open(buf, _gameDataPath);
+	file.open(buf, getGameDataPath());
 		
 	if (file.isOpen() == false) {
 		error("loadCharset(%d): Missing file charset: %s", no, buf);

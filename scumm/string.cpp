@@ -765,9 +765,9 @@ void Scumm::loadLanguageBundle() {
 	int32 size;
 
 	if (_gameId == GID_DIG) {
-		file.open("language.bnd", _gameDataPath);
+		file.open("language.bnd", getGameDataPath());
 	} else if (_gameId == GID_CMI) {
-		file.open("language.tab", _gameDataPath);
+		file.open("language.tab", getGameDataPath());
 	} else {
 		return;
 	}
@@ -865,7 +865,7 @@ void Scumm::translateText(const byte *text, byte *trans_buff) {
 			if (found != NULL) {
 				File file;
 
-				file.open("language.tab", _gameDataPath);
+				file.open("language.tab", getGameDataPath());
 				if (file.isOpen()) {
 					byte *ptr = trans_buff;
 					byte c;
