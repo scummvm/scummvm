@@ -2477,9 +2477,9 @@ void Scumm_v6::o6_miscOps()
 				if (strcmp((char*)getStringAddressVar(VAR_VIDEONAME), "sq3.san") == 0)
 	 				speed = 71;
 				else {
-					if (_insaneFlag == 0) 
-						_insaneFlag = 14;
-					speed = 1000 / _insaneFlag;
+					if (_smushFrameRate == 0) 
+						_smushFrameRate = 14;
+					speed = 1000 / _smushFrameRate;
 				}
 				
 				debug(1, "INSANE Arg: %d", args[1]);
@@ -2572,7 +2572,7 @@ void Scumm_v6::o6_miscOps()
 			derefActorSafe(args[1], "o6_miscOps:14")->remapActorPalette(args[2], args[3], args[4], args[5]);
 			break;
 		case 15:
-			_insaneFlag = args[1];
+			_smushFrameRate = args[1];
 			break;
 		case 16:
 			if (_gameId == GID_DIG) {

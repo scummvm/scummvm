@@ -320,7 +320,7 @@ public:
 
 	/* _insane vars */
 
-	int _insaneFlag;
+	int _smushFrameRate;
 	bool _insaneState;
 	bool _videoFinished;
 	
