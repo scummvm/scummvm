@@ -1076,8 +1076,8 @@ int Scumm::convertADResource(int type, int idx, byte * src_ptr, int size) {
 			
 		track = src_ptr;
 		
-		// Conver the ticks into a MIDI tempo. 
-		dw = (500000 * 256) / ticks;
+		// Convert the ticks into a MIDI tempo. 
+		dw = 0x7300000 / ticks;
 		debug(4, "  ticks = %d, speed = %ld", ticks, dw);
 			
 		// Write a tempo change SysEx
@@ -1175,12 +1175,12 @@ int Scumm::convertADResource(int type, int idx, byte * src_ptr, int size) {
 			
 			// Now insert the jump. The jump offset is measured in ticks, and 
 			// each instrument definition spans 4 ticks... so we jump to tick
-			// 8*4, although jumping to tick 0 would probably work fine, too.
+			// num_instr*4, although jumping to tick 0 would probably work fine, too.
 			// Note: it's possible that some musics don't loop from the start...
 			// in that case we'll have to figure out how the loop range is specified
 			// and then how to handle it appropriately (if it's specified in
 			// ticks, we are fine; but if it's a byte offset, it'll be nasty).
-			const int jump_offset = 8 * 4;
+			const int jump_offset = num_instr * 4;
 			memcpy(ptr, "\xf0\x13\x7d\x30\00", 5); ptr += 5;	// maybe_jump
 			memcpy(ptr, "\x00\x00", 2); ptr += 2;			// cmd -> 0 means always jump
 			memcpy(ptr, "\x00\x00\x00\x00", 4); ptr += 4;	// track -> there is only one track, 0
@@ -1207,6 +1207,14 @@ int Scumm::convertADResource(int type, int idx, byte * src_ptr, int size) {
 
 	int track_ctr = 0;
 	byte chunk_type = 0;
+
+	// Write a tempo change SysEx:
+	// 473 / 4 Hz, 480 pulses per quarternote, convert to micro seconds.
+	memcpy(ptr, "\x00\xFF\x51\x03", 4); ptr += 4;
+	dw = 1000000 * 480 * 4 / 473;
+	*ptr++ = (byte)((dw >> 16) & 0xFF);
+	*ptr++ = (byte)((dw >> 8) & 0xFF);
+	*ptr++ = (byte)(dw & 0xFF);
 
 	for (i = 0; i < 3; i++) {
 		track_time[i] = -1;
@@ -1366,10 +1374,6 @@ int Scumm::convertADResource(int type, int idx, byte * src_ptr, int size) {
 			}
 			*ptr++ = olddelay;
 
-
-			/* FIXME:  delay factor found by try and error */
-			delay = delay * 8;
-			
 			{
 				int freq = ((current_instr[ch][1] & 3) << 8)
 					| current_instr[ch][0];
