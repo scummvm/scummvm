@@ -927,6 +927,7 @@ uint32 Scumm::getOBCDOffs(int object) const {
 
 byte *Scumm::getOBCDFromObject(int obj) {
 	int i;
+	byte *ptr;
 
 	if (_objectOwnerTable[obj] != OF_OWNER_ROOM) {
 		for (i = 0; i < _maxInventoryItems; i++) {
@@ -936,12 +937,15 @@ byte *Scumm::getOBCDFromObject(int obj) {
 	} else {
 		for (i = (_numLocalObjects-1); i > 0; --i) {
 			if (_objs[i].obj_nr == obj) {
-				if (_objs[i].fl_object_index)
-					return getResourceAddress(rtFlObject, _objs[i].fl_object_index) + 8;
-				if (_version == 8)
-					return getResourceAddress(rtRoomScripts, _roomResource) + _objs[i].OBCDoffset;
+				if (_objs[i].fl_object_index) {
+					assert(_objs[i].OBCDoffset == 8);
+					ptr = getResourceAddress(rtFlObject, _objs[i].fl_object_index);
+				} else if (_version == 8)
+					ptr = getResourceAddress(rtRoomScripts, _roomResource);
 				else
-					return getResourceAddress(rtRoom, _roomResource) + _objs[i].OBCDoffset;
+					ptr = getResourceAddress(rtRoom, _roomResource);
+				assert(ptr);
+				return ptr + _objs[i].OBCDoffset;
 			}
 		}
 	}
@@ -1044,7 +1048,7 @@ void Scumm::findObjectInRoom(FindObjectInRoom *fo, byte findWhat, uint id, uint 
 			error("findObjectInRoom foCheckAlreadyLoaded NYI for GF_OLD_BUNDLE (id = %d, room = %d)", id, room);
 		}
 		fo->obcd = obcdptr = getOBCDFromObject(id);
-		assert((const byte *)obcdptr > (byte *)256);
+		assert(obcdptr);
 		fo->obim = obimptr = obcdptr + RES_SIZE(obcdptr);
 		fo->cdhd = (const CodeHeader *)findResourceData(MKID('CDHD'), obcdptr);
 		fo->imhd = (const ImageHeader *)findResourceData(MKID('IMHD'), obimptr);
