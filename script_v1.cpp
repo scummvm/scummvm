@@ -2256,6 +2256,10 @@ void Scumm::o5_verbOps() {
 void Scumm::o5_wait() {
 	byte *oldaddr;
 
+	 // Fixme: Indy3
+	if ((_opcode == 0xAE) && (_gameId == GID_INDY3_256))
+          return;
+
 	oldaddr = _scriptPointer - 1;
 	
 	_opcode = fetchScriptByte();

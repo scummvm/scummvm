@@ -241,13 +241,14 @@ void Scumm::CHARSET_1() {
 	charset._right = string[0].right;
 	charset._color = _charsetColor;
 	_bkColor = 0;
-
-	for (i=0; i<4; i++)
+	
+	if(!(_features & GF_OLD256))	// FIXME
+		for (i=0; i<4; i++)
                 if(_features & GF_SMALL_HEADER)
                         charset._colorMap[i] = _charsetData[charset._curId][i-12];
                 else
                         charset._colorMap[i] = _charsetData[charset._curId][i];
-
+	
 	if (_keepText) {
 		charset._strLeft = gdi._mask_left;
 		charset._strRight = gdi._mask_right;
@@ -418,7 +419,7 @@ void Scumm::drawString(int a) {
 	_bkColor = 0;
 	charset._unk12 = 1;
 	charset._disableOffsX = 1;
-
+	if(!(_features & GF_OLD256)) {
 	charsetptr = getResourceAddress(rtCharset, charset._curId);
 	assert(charsetptr);
 	charsetptr += 29;
@@ -432,7 +433,7 @@ void Scumm::drawString(int a) {
                         charset._colorMap[i] = _charsetData[charset._curId][i];
 
 	byte1 = charsetptr[1];
-	
+	}
 	_msgPtrToAdd = buf;
 
 	/* trim from the right */
@@ -653,6 +654,7 @@ void Scumm::unkAddMsgToStack5(int var) {
 
 void Scumm::initCharset(int charsetno) {
 	int i;
+	if(_features & GF_OLD256) return; // FIXME
 
         if (_features & GF_SMALL_HEADER)
                 loadCharset(charsetno);
