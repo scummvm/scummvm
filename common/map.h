@@ -25,6 +25,17 @@
 
 namespace Common {
 
+/**
+ * Template based map (aka dictionary) class which uniquely maps elements of
+ * class Key to elements of class Value.
+ *
+ * @todo This implementation is fairly limited. In particular, the tree is not
+ *       balanced. Ultimately this template should be reimplemented, e.g. using
+ *       a red-black tree. Or if one day using Std C++ lib becomes acceptable,
+ *       we can use that.
+ * @todo Having unit tests for class map would be very desirable. There are a 
+ *       big number of things which can go wrong in this code.
+ */
 template <class Key, class Value>
 class Map {
 protected:
