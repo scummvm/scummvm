@@ -99,12 +99,24 @@ int CharsetRenderer::getStringWidth(int arg, const byte *text) {
 	int width = 1;
 	byte chr;
 	int oldID = getCurID();
+	int code = (_vm->_gameId == GID_PAJAMA) ? 127 : 64;
 
 	while ((chr = text[pos++]) != 0) {
+		if (_vm->_heversion >= 72 && chr == code) {
+			chr = text[pos++];
+			if (chr == 84) {  // Strings of speech offset/size
+				while(chr != code)
+					chr = text[pos++];
+				continue;
+			}
+			if (chr == 119) // 'Wait'
+				break;
+			if (chr == 104|| chr == 110) // 'Newline'
+				break;
+		} else if (chr == '@')
+			continue;
 		if (chr == 0xD)
 			break;
-		if (chr == '@')
-			continue;
 		if (chr == 254 || chr == 255) {
 			chr = text[pos++];
 			if (chr == 3)	// 'WAIT'
@@ -142,9 +154,25 @@ void CharsetRenderer::addLinebreaks(int a, byte *str, int pos, int maxwidth) {
 	int curw = 1;
 	byte chr;
 	int oldID = getCurID();
+	int code = (_vm->_gameId == GID_PAJAMA) ? 127 : 64;
 
 	while ((chr = str[pos++]) != 0) {
-		if (chr == '@')
+		if (_vm->_heversion >= 72 && chr == code) {
+			chr = str[pos++];
+			if (chr == 84) {  // Strings of speech offset/size
+				while(chr != code)
+					chr = str[pos++];
+				continue;
+			}
+			if (chr == 119) // 'Wait'
+				break;
+			if (chr == 110) { // 'Newline'
+				curw = 1;
+				continue;
+			}
+			if (chr == 104) // 'Don't terminate with \n'
+				break;
+		} else if (chr == '@')
 			continue;
 		if (chr == 254 || chr == 255) {
 			chr = str[pos++];
