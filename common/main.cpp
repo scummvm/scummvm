@@ -31,7 +31,6 @@
 Config *g_config = 0;
 NewGui *g_gui = 0;
 
-
 #if defined(QTOPIA)
 // FIXME - why exactly is this needed?
 extern "C" int main(int argc, char *argv[]);
@@ -99,8 +98,7 @@ static void do_memory_test(void) {
 
 #endif
 
-static void launcherDialog(GameDetector &detector, OSystem *system)
-{
+static void launcherDialog(GameDetector &detector, OSystem *system) {
 	// FIXME - we need to call init_size() here so that we can display for example
 	// the launcher dialog. But the Engine object will also call it again (possibly
 	// with a different widht/height!9 However, this method is not for all OSystem 
@@ -143,8 +141,7 @@ static void launcherDialog(GameDetector &detector, OSystem *system)
 	dlg.runModal();
 }
 
-int main(int argc, char *argv[])
-{
+int main(int argc, char *argv[]) {
 	GameDetector detector;
 	OSystem::Property prop;
 
@@ -157,12 +154,12 @@ int main(int argc, char *argv[])
 		sprintf(scummhome,"%s/%s", getenv("HOME"), DEFAULT_CONFIG_FILE);
 	else strcpy(scummhome,DEFAULT_CONFIG_FILE);
 #else
-    char scummhome[256];
+	char scummhome[256];
 	#if defined (WIN32) && !defined(_WIN32_WCE)
 		GetWindowsDirectory(scummhome, 256);
 		strcat(scummhome, "\\");
 		strcat(scummhome, DEFAULT_CONFIG_FILE);
-	#else	
+	#else
 		strcpy(scummhome, DEFAULT_CONFIG_FILE);
 	#endif
 #endif
@@ -170,7 +167,7 @@ int main(int argc, char *argv[])
 	// Read the config file
 	g_config = new Config(scummhome, "scummvm");
 	g_config->set("versioninfo", SCUMMVM_VERSION);
-	
+
 	// Parse the command line information
 	detector._saveconfig = false;
 	detector.updateconfig();
@@ -193,9 +190,9 @@ int main(int argc, char *argv[])
 	// Verify the given game name
 	if (detector.detectMain()) {
 		system->quit();
-		return (-1);
+		return -1;
 	}
-	
+
 	// Set the window caption to the game name
 	prop.caption = detector.getGameName().c_str();
 	system->property(OSystem::PROP_SET_WINDOW_CAPTION, &prop);
@@ -205,15 +202,15 @@ int main(int argc, char *argv[])
 
 	// Run the game engine
 	engine->go();
-	
+
 	// Free up memory
 	delete engine;
 	delete g_gui;
 	delete g_config;
-	
+
 	// ...and quit (the return 0 should never be reached)
 	system->quit();
-	
+
 	return 0;
 }
 

@@ -182,24 +182,20 @@ public:
 
 	// Methods that convert RBG to/from colors suitable for the overlay.
 	// Default implementation assumes 565 mode.
-	virtual int16 RBGToColor(uint8 r, uint8 g, uint8 b)
-	{
-		return ((((r>>3)&0x1F) << 11) | (((g>>2)&0x3F) << 5) | ((b>>3)&0x1F));
+	virtual int16 RBGToColor(uint8 r, uint8 g, uint8 b) {
+		return ((((r >> 3) & 0x1F) << 11) | (((g >> 2) & 0x3F) << 5) | ((b >> 3) & 0x1F));
 	}
-	virtual void colorToRBG(int16 color, uint8 &r, uint8 &g, uint8 &b)
-	{
-		r = (((color>>11)&0x1F) << 3);
-		g = (((color>>5)&0x3F) << 2);
+	virtual void colorToRBG(int16 color, uint8 &r, uint8 &g, uint8 &b) {
+		r = (((color >> 11) & 0x1F) << 3);
+		g = (((color >> 5) & 0x3F) << 2);
 		b = ((color&0x1F) << 3);
 	}
 
 	// Savefile management
-	virtual SaveFileManager *get_savefile_manager()
-	{
+	virtual SaveFileManager *get_savefile_manager() {
 		return new SaveFileManager();
 	}
 };
-
 
 /* Factory functions. This means we don't have to include the
  * OSystem_SDL header file. (which in turn would require the SDL headers)

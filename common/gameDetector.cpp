@@ -20,13 +20,11 @@
  *
  */
 
-
 #include "stdafx.h"
 #include "sound/mididrv.h"
 #include "common/engine.h"
 #include "common/gameDetector.h"
 #include "common/config-file.h"
-
 
 #define CHECK_OPTION() if ((current_option != NULL) || (*s != '\0')) goto ShowHelpAndExit
 #define HANDLE_OPTION() if ((*s == '\0') && (current_option == NULL)) goto ShowHelpAndExit;  \
@@ -75,11 +73,8 @@ static const char USAGE_STRING[] =
 	"\t-u         - dump scripts\n"
 ;
 
-
-
 // This contains a pointer to a list of all supported games.
 const VersionSettings *version_settings = NULL;
-
 
 static const struct GraphicsModes gfx_modes[] = {
 	{"normal", "Normal (no scaling)", GFX_NORMAL},
@@ -122,17 +117,14 @@ static const struct MusicDrivers music_drivers[] = {
 	{0, 0, 0}
 };
 
-
-static int countVersions(const VersionSettings *v)
-{
+static int countVersions(const VersionSettings *v) {
 	int count;
 	for (count = 0; v->filename; v++, count++)
 		;
 	return count;
 }
 
-GameDetector::GameDetector()
-{
+GameDetector::GameDetector() {
 	_fullScreen = false;
 	_gameId = 0;
 
@@ -205,9 +197,8 @@ GameDetector::GameDetector()
 	}
 }
 
-void GameDetector::updateconfig()
-{
-	const char * val;
+void GameDetector::updateconfig() {
+	const char *val;
 
 	_amiga = g_config->getBool("amiga", _amiga);
 
@@ -260,12 +251,9 @@ void GameDetector::updateconfig()
 		_gameTempo = strtol(val, NULL, 0);
 
 	_talkSpeed = g_config->getInt("talkspeed", _talkSpeed);
-
-
 }
 
-void GameDetector::list_games()
-{
+void GameDetector::list_games() {
 	const VersionSettings *v = version_settings;
 	char config[4] = "";
 
@@ -292,8 +280,7 @@ void GameDetector::list_games()
 		
 }
 
-void GameDetector::parseCommandLine(int argc, char **argv)
-{
+void GameDetector::parseCommandLine(int argc, char **argv) {
 	int i;
 	char *s;
 	char *current_option = NULL;
@@ -354,7 +341,7 @@ void GameDetector::parseCommandLine(int argc, char **argv)
 			case 'l':
 				HANDLE_OPTION();
 				{
-					Config * newconfig = new Config(option, "scummvm");
+					Config *newconfig = new Config(option, "scummvm");
 					g_config->merge_config(*newconfig);
 					delete newconfig;
 					updateconfig();
@@ -431,7 +418,7 @@ void GameDetector::parseCommandLine(int argc, char **argv)
 				break;
 			case 'y':
 				HANDLE_OPTION();
-				_talkSpeed = atoi(option);				
+				_talkSpeed = atoi(option);
 				g_config->setInt("talkspeed", _talkSpeed);
 				break;
 			case 'z':
@@ -458,13 +445,12 @@ void GameDetector::parseCommandLine(int argc, char **argv)
 
 	return;
 
- ShowHelpAndExit:
+ShowHelpAndExit:
 	printf(USAGE_STRING);
 	exit(1);
 }
 
-void GameDetector::setGame(const String &name)
-{
+void GameDetector::setGame(const String &name) {
 	_gameFileName = name;
 	g_config->set_domain(name);
 	g_config->rename_domain(name, "game-specific");
@@ -472,8 +458,7 @@ void GameDetector::setGame(const String &name)
 	updateconfig();
 }
 
-int GameDetector::parseGraphicsMode(const char *s)
-{
+int GameDetector::parseGraphicsMode(const char *s) {
 	const GraphicsModes *gm = gfx_modes;
 	while(gm->name) {
 		if (!scumm_stricmp(gm->name, s))
@@ -484,8 +469,7 @@ int GameDetector::parseGraphicsMode(const char *s)
 	return -1;
 }
 
-int GameDetector::parseLanguage(const char *s)
-{
+int GameDetector::parseLanguage(const char *s) {
 	const Languages *l = languages;
 	while(l->name) {
 		if (!scumm_stricmp(l->name, s))
@@ -496,41 +480,38 @@ int GameDetector::parseLanguage(const char *s)
 	return -1;
 }
 
-bool GameDetector::isMusicDriverAvailable(int drv)
-{
+bool GameDetector::isMusicDriverAvailable(int drv) {
 	switch(drv) {
 	case MD_AUTO:
-	case MD_NULL:		return true;
-	case MD_ADLIB:		return true;
+	case MD_NULL: return true;
+	case MD_ADLIB: return true;
 #if defined(WIN32) && !defined(_WIN32_WCE)
-	case MD_WINDOWS:	return true;
+	case MD_WINDOWS: return true;
 #endif
 #if defined(__MORPHOS__)
-	case MD_ETUDE:		return true;
+	case MD_ETUDE: return true;
 #endif
 #if defined(UNIX) && !defined(__BEOS__) && !defined(MACOSX)
-	case MD_SEQ:		return true;
+	case MD_SEQ: return true;
 #endif
 #if defined(MACOSX) || defined(macintosh)
-	case MD_QTMUSIC:	return true;
+	case MD_QTMUSIC: return true;
 #endif
 #if defined(MACOSX)
-	case MD_COREAUDIO:	return true;
+	case MD_COREAUDIO: return true;
 #endif
 #if defined(UNIX) && defined(USE_ALSA)
-	case MD_ALSA:		return true;
+	case MD_ALSA: return true;
 #endif
 	}
 	return false;
 }
 
-const MusicDrivers *GameDetector::getMusicDrivers()
-{
+const MusicDrivers *GameDetector::getMusicDrivers() {
 	return music_drivers;
 }
 
-bool GameDetector::parseMusicDriver(const char *s)
-{
+bool GameDetector::parseMusicDriver(const char *s) {
 	const MusicDrivers *md = music_drivers;
 
 	while (md->name) {
@@ -545,15 +526,14 @@ bool GameDetector::parseMusicDriver(const char *s)
 	return false;
 }
 
-bool GameDetector::detectGame()
-{
+bool GameDetector::detectGame() {
 	const VersionSettings *gnl = version_settings;
 	char *realGame;
 	_gameId = 0;
 	_gameText.clear();
 
-	if (!(realGame = (char*)g_config->get("gameid")))
-		realGame = (char*)_gameFileName.c_str();
+	if (!(realGame = (char *)g_config->get("gameid")))
+		realGame = (char *)_gameFileName.c_str();
 	printf("Looking for %s\n", realGame);
 
 	do {
@@ -576,8 +556,7 @@ bool GameDetector::detectGame()
 	return false;
 }
 
-const ScummVM::String& GameDetector::getGameName()
-{
+const ScummVM::String& GameDetector::getGameName() {
 	if (_gameText.isEmpty()) {
 		_gameText = "Unknown game: \"";
 		_gameText += _gameFileName;
@@ -586,8 +565,7 @@ const ScummVM::String& GameDetector::getGameName()
 	return _gameText;
 }
 
-int GameDetector::detectMain()
-{
+int GameDetector::detectMain() {
 	if (_gameFileName.isEmpty()) {
 		warning("No game was specified...");
 		return (-1);

@@ -33,21 +33,20 @@ static uint32 redblueMask = 0xF81F;
 static uint32 greenMask = 0x7E0;
 
 static const uint16 dotmatrix_565[16] = {
-  0x01E0, 0x0007, 0x3800, 0x0000,
-  0x39E7, 0x0000, 0x39E7, 0x0000,
-  0x3800, 0x0000, 0x01E0, 0x0007,
-  0x39E7, 0x0000, 0x39E7, 0x0000
+	0x01E0, 0x0007, 0x3800, 0x0000,
+	0x39E7, 0x0000, 0x39E7, 0x0000,
+	0x3800, 0x0000, 0x01E0, 0x0007,
+	0x39E7, 0x0000, 0x39E7, 0x0000
 };
 static const uint16 dotmatrix_555[16] = {
-  0x00E0, 0x0007, 0x1C00, 0x0000,
-  0x1CE7, 0x0000, 0x1CE7, 0x0000,
-  0x1C00, 0x0000, 0x00E0, 0x0007,
-  0x1CE7, 0x0000, 0x1CE7, 0x0000
+	0x00E0, 0x0007, 0x1C00, 0x0000,
+	0x1CE7, 0x0000, 0x1CE7, 0x0000,
+	0x1C00, 0x0000, 0x00E0, 0x0007,
+	0x1CE7, 0x0000, 0x1CE7, 0x0000
 };
 static const uint16 *dotmatrix;
 
-int Init_2xSaI(uint32 BitFormat)
-{
+int Init_2xSaI(uint32 BitFormat) {
 	if (BitFormat == 565) {
 		colorMask = 0xF7DEF7DE;
 		lowPixelMask = 0x08210821;
@@ -71,8 +70,7 @@ int Init_2xSaI(uint32 BitFormat)
 	return 1;
 }
 
-static inline int GetResult1(uint32 A, uint32 B, uint32 C, uint32 D, uint32 /* E */ )
-{
+static inline int GetResult1(uint32 A, uint32 B, uint32 C, uint32 D, uint32 /* E */ ) {
 	int x = 0;
 	int y = 0;
 	int r = 0;
@@ -92,8 +90,7 @@ static inline int GetResult1(uint32 A, uint32 B, uint32 C, uint32 D, uint32 /* E
 	return r;
 }
 
-static inline int GetResult2(uint32 A, uint32 B, uint32 C, uint32 D, uint32 /* E */ )
-{
+static inline int GetResult2(uint32 A, uint32 B, uint32 C, uint32 D, uint32 /* E */ ) {
 	int x = 0;
 	int y = 0;
 	int r = 0;
@@ -113,8 +110,7 @@ static inline int GetResult2(uint32 A, uint32 B, uint32 C, uint32 D, uint32 /* E
 	return r;
 }
 
-static inline int GetResult(uint32 A, uint32 B, uint32 C, uint32 D)
-{
+static inline int GetResult(uint32 A, uint32 B, uint32 C, uint32 D) {
 	int x = 0;
 	int y = 0;
 	int r = 0;
@@ -134,16 +130,14 @@ static inline int GetResult(uint32 A, uint32 B, uint32 C, uint32 D)
 	return r;
 }
 
-static inline uint32 INTERPOLATE(uint32 A, uint32 B)
-{
+static inline uint32 INTERPOLATE(uint32 A, uint32 B) {
 	if (A != B) {
 		return (((A & colorMask) >> 1) + ((B & colorMask) >> 1) + (A & B & lowPixelMask));
 	} else
 		return A;
 }
 
-static inline uint32 Q_INTERPOLATE(uint32 A, uint32 B, uint32 C, uint32 D)
-{
+static inline uint32 Q_INTERPOLATE(uint32 A, uint32 B, uint32 C, uint32 D) {
 	register uint32 x = ((A & qcolorMask) >> 2) +
 		((B & qcolorMask) >> 2) + ((C & qcolorMask) >> 2) + ((D & qcolorMask) >> 2);
 	register uint32 y = (A & qlowpixelMask) +
@@ -162,8 +156,7 @@ static inline uint32 Q_INTERPOLATE(uint32 A, uint32 B, uint32 C, uint32 D)
 #define GREEN_MASK555 0x03E003E0
 
 void Super2xSaI(uint8 *srcPtr, uint32 srcPitch,
-								uint8 *deltaPtr, uint8 *dstPtr, uint32 dstPitch, int width, int height)
-{
+								uint8 *deltaPtr, uint8 *dstPtr, uint32 dstPitch, int width, int height) {
 	uint16 *bP;
 	uint8 *dP;
 	uint32 inc_bP;
@@ -281,8 +274,7 @@ void Super2xSaI(uint8 *srcPtr, uint32 srcPitch,
 }
 
 void SuperEagle(uint8 *srcPtr, uint32 srcPitch, uint8 *deltaPtr,
-								uint8 *dstPtr, uint32 dstPitch, int width, int height)
-{
+								uint8 *dstPtr, uint32 dstPitch, int width, int height) {
 	uint8 *dP;
 	uint16 *bP;
 	uint32 inc_bP;
@@ -401,12 +393,10 @@ void SuperEagle(uint8 *srcPtr, uint32 srcPitch, uint8 *deltaPtr,
 }
 
 void _2xSaI(uint8 *srcPtr, uint32 srcPitch, uint8 *deltaPtr,
-						uint8 *dstPtr, uint32 dstPitch, int width, int height)
-{
+						uint8 *dstPtr, uint32 dstPitch, int width, int height) {
 	uint8 *dP;
 	uint16 *bP;
 	uint32 inc_bP;
-
 
 	{
 		inc_bP = 1;
@@ -554,8 +544,7 @@ void _2xSaI(uint8 *srcPtr, uint32 srcPitch, uint8 *deltaPtr,
 	}
 }
 
-static uint32 Bilinear(uint32 A, uint32 B, uint32 x)
-{
+static uint32 Bilinear(uint32 A, uint32 B, uint32 x) {
 	unsigned long areaA, areaB;
 	unsigned long result;
 
@@ -571,11 +560,9 @@ static uint32 Bilinear(uint32 A, uint32 B, uint32 x)
 	result = ((areaA * A) + (areaB * B)) >> 5;
 
 	return (result & redblueMask) | ((result >> 16) & greenMask);
-
 }
 
-static uint32 Bilinear4(uint32 A, uint32 B, uint32 C, uint32 D, uint32 x, uint32 y)
-{
+static uint32 Bilinear4(uint32 A, uint32 B, uint32 C, uint32 D, uint32 x, uint32 y) {
 	unsigned long areaA, areaB, areaC, areaD;
 	unsigned long result, xy;
 
@@ -600,8 +587,7 @@ static uint32 Bilinear4(uint32 A, uint32 B, uint32 C, uint32 D, uint32 x, uint32
 
 void Scale_2xSaI(uint8 *srcPtr, uint32 srcPitch, uint8 * /* deltaPtr */ ,
 								 uint8 *dstPtr, uint32 dstPitch,
-								 uint32 dstWidth, uint32 dstHeight, int width, int height)
-{
+								 uint32 dstWidth, uint32 dstHeight, int width, int height) {
 	uint8 *dP;
 	uint16 *bP;
 
@@ -732,8 +718,7 @@ void Scale_2xSaI(uint8 *srcPtr, uint32 srcPitch, uint8 * /* deltaPtr */ ,
 }
 
 void AdvMame2x(uint8 *srcPtr, uint32 srcPitch, uint8 *null, uint8 *dstPtr, uint32 dstPitch,
-							 int width, int height)
-{
+							 int width, int height) {
 	unsigned int nextlineSrc = srcPitch / sizeof(short);
 	short *p = (short *)srcPtr;
 
@@ -762,10 +747,8 @@ void AdvMame2x(uint8 *srcPtr, uint32 srcPitch, uint8 *null, uint8 *dstPtr, uint3
 	}
 }
 
-
 void Normal1x(uint8 *srcPtr, uint32 srcPitch, uint8 *null, uint8 *dstPtr, uint32 dstPitch,
-							int width, int height)
-{
+							int width, int height) {
 	while (height--) {
 		memcpy(dstPtr, srcPtr, 2 * width);
 		srcPtr += srcPitch;
@@ -774,8 +757,7 @@ void Normal1x(uint8 *srcPtr, uint32 srcPitch, uint8 *null, uint8 *dstPtr, uint32
 }
 
 void Normal2x(uint8 *srcPtr, uint32 srcPitch, uint8 *null, uint8 *dstPtr, uint32 dstPitch,
-							int width, int height)
-{
+							int width, int height) {
 	uint8 *r;
 
 	while (height--) {
@@ -794,8 +776,7 @@ void Normal2x(uint8 *srcPtr, uint32 srcPitch, uint8 *null, uint8 *dstPtr, uint32
 }
 
 void Normal3x(uint8 *srcPtr, uint32 srcPitch, uint8 *null, uint8 *dstPtr, uint32 dstPitch,
-							int width, int height)
-{
+							int width, int height) {
 	uint8 *r;
 	uint32 dstPitch2 = dstPitch * 2;
 	uint32 dstPitch3 = dstPitch * 3;
@@ -821,8 +802,7 @@ void Normal3x(uint8 *srcPtr, uint32 srcPitch, uint8 *null, uint8 *dstPtr, uint32
 }
 
 void TV2x(uint8 *srcPtr, uint32 srcPitch, uint8 *null, uint8 *dstPtr, uint32 dstPitch, 
-					int width, int height)
-{
+					int width, int height) {
 	unsigned int nextlineSrc = srcPitch / sizeof(uint16);
 	uint16 *p = (uint16 *)srcPtr;
 

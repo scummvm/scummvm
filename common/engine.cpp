@@ -30,8 +30,7 @@ OSystem *g_system = 0;
 SoundMixer *g_mixer = 0;
 
 Engine::Engine(GameDetector *detector, OSystem *syst)
-	: _system(syst)
-{
+	: _system(syst) {
 	_mixer = new SoundMixer();
 
 	_gameDataPath = detector->_gameDataPath;
@@ -43,14 +42,12 @@ Engine::Engine(GameDetector *detector, OSystem *syst)
 	_timer->init();
 }
 
-Engine::~Engine()
-{
+Engine::~Engine() {
 	delete _mixer;
 	delete _timer;
 }
 
-const char *Engine::getSavePath() const
-{
+const char *Engine::getSavePath() const {
 	const char *dir = NULL;
 
 #ifdef _WIN32_WCE
@@ -77,8 +74,7 @@ const char *Engine::getSavePath() const
 	return dir;
 }
 
-Engine *Engine::createFromDetector(GameDetector *detector, OSystem *syst)
-{
+Engine *Engine::createFromDetector(GameDetector *detector, OSystem *syst) {
 	Engine *engine = NULL;
 
 	if (detector->_gameId >= GID_SIMON_FIRST && detector->_gameId <= GID_SIMON_LAST) {
@@ -97,8 +93,7 @@ Engine *Engine::createFromDetector(GameDetector *detector, OSystem *syst)
 	return engine;
 }
 
-void CDECL warning(const char *s, ...)
-{
+void CDECL warning(const char *s, ...) {
 	char buf[1024];
 	va_list va;
 
@@ -119,8 +114,7 @@ void CDECL warning(const char *s, ...)
 
 uint16 _debugLevel = 1;
 
-void CDECL debug(int level, const char *s, ...)
-{
+void CDECL debug(int level, const char *s, ...) {
 	char buf[1024];
 	va_list va;
 
@@ -140,8 +134,7 @@ void CDECL debug(int level, const char *s, ...)
 	fflush(stdout);
 }
 
-void checkHeap()
-{
+void checkHeap() {
 #if defined(WIN32)
 	if (_heapchk() != _HEAPOK) {
 		error("Heap is invalid!");

@@ -49,20 +49,19 @@ protected:
 
 public:
 	ConstString() : _str(0), _len(0) {}
-	ConstString(const char *str, int len = -1) : _str((char*)str) { _len = str ? (len >= 0 ? len : strlen(str)) : 0; }
+	ConstString(const char *str, int len = -1) : _str((char *)str) { _len = str ? (len >= 0 ? len : strlen(str)) : 0; }
 	virtual ~ConstString() {}
 	
-	bool operator ==(const ConstString& x) const;
-	bool operator ==(const char* x) const;
-	bool operator !=(const ConstString& x) const;
-	bool operator !=(const char* x) const;
-	bool operator <(const ConstString& x) const;
-	bool operator <=(const ConstString& x) const;
-	bool operator >(const ConstString& x) const;
-	bool operator >=(const ConstString& x) const;
+	bool operator ==(const ConstString &x) const;
+	bool operator ==(const char *x) const;
+	bool operator !=(const ConstString &x) const;
+	bool operator !=(const char *x) const;
+	bool operator <(const ConstString &x) const;
+	bool operator <=(const ConstString &x) const;
+	bool operator >(const ConstString &x) const;
+	bool operator >=(const ConstString &x) const;
 
-	char operator [](int idx) const
-	{
+	char operator [](int idx) const {
 		assert(_str && idx >= 0 && idx < _len);
 		return _str[idx];
 	}
@@ -85,26 +84,24 @@ public:
 	String(const String &str);
 	virtual ~String();
 	
-	String& operator  =(const char* str);
+	String &operator  =(const char *str);
 // TODO - We should use RTTI here - that is, not real C++ RTTI but maybe some magic
 // constant in each string object. We want to be able to optimize the case when
 // a real 'String' object is passed to a function as a ConstString obj and then
 // assigned to a 'String' object.
 // An alternative would be to add private clone() and cloneMutable methods that 
 // would do the right thing.
-	String& operator  =(const String& str);
-	String& operator +=(const char* str);
-	String& operator +=(const String& str);
-	String& operator +=(char c);
+	String &operator  =(const String &str);
+	String &operator +=(const char *str);
+	String &operator +=(const String &str);
+	String &operator +=(char c);
 
-	char operator [](int idx) const
-	{
+	char operator [](int idx) const {
 		assert(_str && idx >= 0 && idx < _len);
 		return _str[idx];
 	}
 
-	char &operator [](int idx)
-	{
+	char &operator [](int idx) {
 		assert(_str && idx >= 0 && idx < _len);
 		return _str[idx];
 	}
@@ -113,7 +110,7 @@ public:
 	void deleteChar(int p);
 	void clear();
 	void insertChar(char c, int p);
-	
+
 	void toLowercase();
 	void toUppercase();
 
@@ -123,25 +120,22 @@ protected:
 };
 
 // Some useful additional comparision operators for Strings
-bool operator == (const char* x, const ConstString& y);
-bool operator != (const char* x, const ConstString& y);
+bool operator == (const char *x, const ConstString &y);
+bool operator != (const char *x, const ConstString &y);
 
 class StringList : public List<String> {
 public:
-	void push_back(const char* str)
-	{
+	void push_back(const char *str) {
 		ensureCapacity(_size + 1);
 		_data[_size++] = str;
 	}
 
-	void push_back(const ConstString& str)
-	{
+	void push_back(const ConstString &str) {
 		ensureCapacity(_size + 1);
 		_data[_size++] = str;
 	}
 	
-	void push_back(const String& str)
-	{
+	void push_back(const String &str) {
 		ensureCapacity(_size + 1);
 		_data[_size++] = str;
 	}

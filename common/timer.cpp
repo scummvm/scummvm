@@ -36,8 +36,7 @@ Timer::~Timer() {
 	release();
 }
 
-static int timer_handler (int t)
-{
+static int timer_handler (int t) {
 	eng->_timer->handler(&t);
 	return t;
 }
@@ -68,9 +67,9 @@ bool Timer::init() {
 	int32 l;
 
 	if (_engine->_system == NULL) {
- 		printf("Timer: OSystem not initialized !\n");
- 		return false;
- 	}
+	printf("Timer: OSystem not initialized !\n");
+	return false;
+}
 
 	if (_initialized == true) 
 		return true;

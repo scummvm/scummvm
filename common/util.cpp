@@ -30,8 +30,7 @@ static int BlendCache[256][256];
 // Find the entry in the given palette which matches the color defined by
 // the tripel (r,b,g) most closely.
 //
-int RGBMatch(byte *palette, int r, int g, int b)
-{
+int RGBMatch(byte *palette, int r, int g, int b) {
 	int i, bestidx = 0, besterr = 0xFFFFFF;
 	int error = 0;
 
@@ -54,49 +53,45 @@ int RGBMatch(byte *palette, int r, int g, int b)
 //
 // Blend two 8 bit colors into a third, all colors being defined by palette indices.
 //
-int Blend(int src, int dst, byte *palette)
-{
+int Blend(int src, int dst, byte *palette) {
 	int r, g, b;
 	int alpha = 128;	// Level of transparency [0-256]
-	byte *srcpal = palette + (dst  * 3);
+	byte *srcpal = palette + (dst * 3);
 	byte *dstpal = palette + (src * 3);
 
 	if (BlendCache[dst][src] > -1)
 		return BlendCache[dst][src];
 
 	r =  (*srcpal++ * alpha);
-    r += (*dstpal++ * (256-alpha));
-    r /= 256;
+	r += (*dstpal++ * (256 - alpha));
+	r /= 256;
 
-    g =  (*srcpal++ * alpha);
-    g += (*dstpal++ * (256-alpha));
-    g /= 256;
+	g =  (*srcpal++ * alpha);
+	g += (*dstpal++ * (256 - alpha));
+	g /= 256;
 
-    b =  (*srcpal++ * alpha);
-    b += (*dstpal++  * (256-alpha));
-    b /= 256;
-       
+	b =  (*srcpal++ * alpha);
+	b += (*dstpal++  * (256 - alpha));
+	b /= 256;
+
 	return (BlendCache[dst][src] = RGBMatch(palette, r , g , b ));
 }
 
 //
 // Reset the blending cache
 //
-void ClearBlendCache(byte *palette, int weight)
-{
+void ClearBlendCache(byte *palette, int weight) {
 	for (int i = 0; i < 256; i++)
-		for (int j = 0 ; j < 256 ; j++)			
+		for (int j = 0 ; j < 256 ; j++)
 //			BlendCache[i][j] = i;	// No alphablending
 //			BlendCache[i][j] = j;	// 100% translucent
 			BlendCache[i][j] = -1;	// Enable alphablending
 }
 
-
 //
 // Print hexdump of the data passed in, 8 bytes a row
 //
-void hexdump(const byte * data, int len)
-{
+void hexdump(const byte * data, int len) {
 	int i;
 	byte c;
 	while (len >= 8) {
@@ -133,26 +128,22 @@ void hexdump(const byte * data, int len)
 	printf("|\n");
 }
 
-RandomSource::RandomSource(uint32 seed)
-{
+RandomSource::RandomSource(uint32 seed) {
 	_randSeed = seed;
 }
 
-void RandomSource::setSeed(uint32 seed)
-{
+void RandomSource::setSeed(uint32 seed) {
 	_randSeed = seed;
 }
 
-uint RandomSource::getRandomNumber(uint max)
-{
+uint RandomSource::getRandomNumber(uint max) {
 	/* TODO: my own random number generator */
 	_randSeed = 0xDEADBF03 * (_randSeed + 1);
 	_randSeed = (_randSeed >> 13) | (_randSeed << 19);
 	return _randSeed % (max + 1);
 }
 
-uint RandomSource::getRandomNumberRng(uint min, uint max)
-{
+uint RandomSource::getRandomNumberRng(uint min, uint max) {
 	return getRandomNumber(max - min) + min;
 }
 

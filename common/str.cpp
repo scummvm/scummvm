@@ -30,8 +30,7 @@
 
 namespace ScummVM {
 
-String::String(const char *str, int len)
-{
+String::String(const char *str, int len) {
 	_refCount = new int(1);
 	if (str && len != 0) {
 		if (len > 0)
@@ -47,8 +46,7 @@ String::String(const char *str, int len)
 	}
 }
 
-String::String(const ConstString &str)
-{
+String::String(const ConstString &str) {
 	printf("String::String(const ConstString &str)\n");
 	_refCount = new int(1);
 	if (str._str) {		
@@ -61,8 +59,7 @@ String::String(const ConstString &str)
 	}
 }
 
-String::String(const String &str)
-{
+String::String(const String &str) {
 	++(*str._refCount);
 
 	_refCount = str._refCount;
@@ -71,13 +68,11 @@ String::String(const String &str)
 	_str = str._str;
 }
 
-String::~String()
-{
+String::~String() {
 	decRefCount();
 }
 
-void String::decRefCount()
-{
+void String::decRefCount() {
 	--(*_refCount);
 	if (*_refCount <= 0) {
 		delete _refCount;
@@ -86,17 +81,16 @@ void String::decRefCount()
 	}
 }
 
-String& String::operator  =(const char* str)
-{	
+String& String::operator  =(const char *str) {
 	int len = strlen(str);
 	if (len > 0) {
 		ensureCapacity(len, false);
-		
+
 		_len = len;
 		memcpy(_str, str, _len + 1);
 	} else if (_len > 0) {
 		decRefCount();
-		
+
 		_refCount = new int(1);
 		_capacity = 0;
 		_len = 0;
@@ -105,12 +99,11 @@ String& String::operator  =(const char* str)
 	return *this;
 }
 
-String& String::operator  =(const String& str)
-{
+String &String::operator  =(const String &str) {
 	++(*str._refCount);
 
 	decRefCount();
-	
+
 	_refCount = str._refCount;
 	_capacity = str._capacity;
 	_len = str._len;
@@ -119,8 +112,7 @@ String& String::operator  =(const String& str)
 	return *this;
 }
 
-String& String::operator +=(const char* str)
-{
+String &String::operator +=(const char *str) {
 	int len = strlen(str);
 	if (len > 0) {
 		ensureCapacity(_len + len, true);
@@ -131,8 +123,7 @@ String& String::operator +=(const char* str)
 	return *this;
 }
 
-String& String::operator +=(const String& str)
-{
+String &String::operator +=(const String &str) {
 	int len = str._len;
 	if (len > 0) {
 		ensureCapacity(_len + len, true);
@@ -143,10 +134,9 @@ String& String::operator +=(const String& str)
 	return *this;
 }
 
-String& String::operator +=(char c)
-{
+String &String::operator += (char c) {
 	ensureCapacity(_len + 1, true);
-	
+
 	_str[_len++] = c;
 	_str[_len] = 0;
 
@@ -160,8 +150,7 @@ void String::deleteLastChar() {
 	}
 }
 
-void String::deleteChar(int p)
-{
+void String::deleteChar(int p) {
 	if (p >= 0 && p < _len) {
 		ensureCapacity(_len - 1, true);
 		while (p++ < _len)
@@ -170,11 +159,10 @@ void String::deleteChar(int p)
 	}
 }
 
-void String::clear()
-{
+void String::clear() {
 	if (_capacity) {
 		decRefCount();
-		
+
 		_refCount = new int(1);
 		_capacity = 0;
 		_len = 0;
@@ -182,8 +170,7 @@ void String::clear()
 	}
 }
 
-void String::insertChar(char c, int p)
-{
+void String::insertChar(char c, int p) {
 	if (p >= 0 && p <= _len) {
 		ensureCapacity(++_len, true);
 		for (int i = _len; i > p; i--) {
@@ -193,26 +180,23 @@ void String::insertChar(char c, int p)
 	}
 }
 
-void String::toLowercase()
-{
+void String::toLowercase() {
 	if (_str == 0 || _len == 0)
 		return;
-	
+
 	for (int i = 0; i < _len; ++i)
 		_str[i] = tolower(_str[i]);
 }
 
-void String::toUppercase()
-{
+void String::toUppercase() {
 	if (_str == 0 || _len == 0)
 		return;
-	
+
 	for (int i = 0; i < _len; ++i)
 		_str[i] = toupper(_str[i]);
 }
 
-void String::ensureCapacity(int new_len, bool keep_old)
-{
+void String::ensureCapacity(int new_len, bool keep_old) {
 	// If there is not enough space, or if we are not the only owner 
 	// of the current data, then we have to reallocate it.
 	if (new_len <= _capacity && *_refCount == 1)
@@ -227,23 +211,19 @@ void String::ensureCapacity(int new_len, bool keep_old)
 		_len = 0;
 
 	decRefCount();
-	
+
 	_refCount = new int(1);
 	_capacity = newCapacity;
 	_str = newStr;
 }
 
-
 #pragma mark -
 
-
-bool ConstString::operator ==(const ConstString& x) const
-{
+bool ConstString::operator ==(const ConstString &x) const {
 	return (_len == x._len) && ((_len == 0) || (0 == strcmp(_str, x._str)));
 }
 
-bool ConstString::operator ==(const char* x) const
-{
+bool ConstString::operator ==(const char *x) const {
 	if (_str == 0)
 		return (x == 0) || (*x == 0);
 	if (x == 0)
@@ -251,13 +231,11 @@ bool ConstString::operator ==(const char* x) const
 	return (0 == strcmp(_str, x));
 }
 
-bool ConstString::operator !=(const ConstString& x) const
-{
+bool ConstString::operator !=(const ConstString &x) const {
 	return (_len != x._len) || ((_len != 0) && (0 != strcmp(_str, x._str)));
 }
 
-bool ConstString::operator !=(const char* x) const
-{
+bool ConstString::operator !=(const char *x) const {
 	if (_str == 0)
 		return (x != 0) && (*x != 0);
 	if (x == 0)
@@ -265,37 +243,31 @@ bool ConstString::operator !=(const char* x) const
 	return (0 != strcmp(_str, x));
 }
 
-bool ConstString::operator < (const ConstString& x) const
-{
+bool ConstString::operator < (const ConstString &x) const {
 	if (!_len || !x._len)	// Any or both empty?
 		return !_len && x._len;	// Less only if this string is empty and the other isn't
 	return scumm_stricmp(_str, x._str) < 0;
 }
 
-bool ConstString::operator <= (const ConstString& x) const
-{
+bool ConstString::operator <= (const ConstString &x) const {
 	if (!_len || !x._len)	// Any or both empty?
 		return !_len;	// Less or equal unless the other string is empty and this one isn't
 	return scumm_stricmp(_str, x._str) <= 0;
 }
 
-bool ConstString::operator > (const ConstString& x) const
-{
+bool ConstString::operator > (const ConstString &x) const {
 	return (x < *this);
 }
 
-bool ConstString::operator >= (const ConstString& x) const
-{
+bool ConstString::operator >= (const ConstString &x) const {
 	return (x <= *this);
 }
 
-bool operator == (const char* y, const ConstString& x)
-{
+bool operator == (const char* y, const ConstString &x) {
 	return (x == y);
 }
 
-bool operator != (const char* y, const ConstString& x)
-{
+bool operator != (const char* y, const ConstString &x) {
 	return x != y;
 }
 

@@ -50,7 +50,7 @@ public:
 
 	// Invoke the main engine loop using this method
 	virtual void go() = 0;
-	
+
 	// Get the save game dir path
 	const char *getSavePath() const;
 

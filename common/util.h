@@ -24,19 +24,19 @@
 #include "scummsys.h"
 
 #ifndef ABS
-#define ABS(x) ((x)>=0?(x):-(x))
+#define ABS(x) ((x) >= 0 ? (x) : -(x))
 #endif
 
 #ifndef MIN
-#define	MIN(a,b) (((a)<(b))?(a):(b))
+#define MIN(a,b) (((a) < (b)) ? (a) : (b))
 #endif
 
 #ifndef MAX
-#define	MAX(a,b) (((a)>(b))?(a):(b))
+#define MAX(a,b) (((a) > (b)) ? (a) : (b))
 #endif
 
-static inline void SWAP(int &a, int &b) { int tmp=a; a=b; b=tmp; }
-#define ARRAYSIZE(x) (sizeof(x)/sizeof(x[0]))
+static inline void SWAP(int &a, int &b) { int tmp = a; a = b; b = tmp; }
+#define ARRAYSIZE(x) (sizeof(x) / sizeof(x[0]))
 
 int RGBMatch(byte *palette, int r, int g, int b);
 int Blend(int src, int dst, byte *palette);

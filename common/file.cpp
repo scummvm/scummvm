@@ -56,7 +56,7 @@ FILE *File::fopenNoCase(const char *filename, const char *directory, const char 
 		strcpy(buf, directory);
 		if (directory[0] != 0) {
 #ifdef __MORPHOS__
-			if (buf[strlen(buf)-1] != ':' && buf[strlen(buf)-1] != '/')
+			if (buf[strlen(buf) - 1] != ':' && buf[strlen(buf) - 1] != '/')
 #endif
 			strcat(buf, "/");
 		}
@@ -97,7 +97,6 @@ File::~File() {
 }
 
 bool File::open(const char *filename, const char *directory, int mode, byte encbyte) {
-
 	if (_handle) {
 		debug(2, "File %s already opened", filename);
 		return false;
@@ -127,7 +126,7 @@ bool File::open(const char *filename, const char *directory, int mode, byte encb
 	}
 
 	_encbyte = encbyte;
-	
+
 	int len = strlen(filename);
 	_name = new char[len+1];
 	memcpy(_name, filename, len+1);
@@ -181,7 +180,7 @@ uint32 File::size() {
 	fseek(_handle, 0, SEEK_END);
 	uint32 length = ftell(_handle);
 	fseek(_handle, oldPos, SEEK_SET);
-	
+
 	return length;
 }
 

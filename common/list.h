@@ -29,35 +29,31 @@ namespace ScummVM {
 template <class T>
 class List {
 protected:
-	int		_capacity;
-	int		_size;
-	T		*_data;
+	int _capacity;
+	int _size;
+	T *_data;
 
 public:
 	List<T>() : _capacity(0), _size(0), _data(0) {}
-	List<T>(const List<T>& list) : _capacity(0), _size(0), _data(0)
-	{
+	List<T>(const List<T>& list) : _capacity(0), _size(0), _data(0) {
 		_size = list._size;
 		_capacity = _size + 32;
 		_data = new T[_capacity];
 		for (int i = 0; i < _size; i++)
 			_data[i] = list._data[i];
 	}
-	
-	~List<T>()
-	{
+
+	~List<T>() {
 		if (_data)
 			delete [] _data;
 	}
-	
-	void push_back(const T& element)
-	{
+
+	void push_back(const T& element) {
 		ensureCapacity(_size + 1);
 		_data[_size++] = element;
 	}
-	
-	void insert_at(int idx, const T& element)
-	{
+
+	void insert_at(int idx, const T& element) {
 		assert(idx >= 0 && idx <= _size);
 		ensureCapacity(_size + 1);
 		// The following loop is not efficient if you can just memcpy things around.
@@ -70,23 +66,20 @@ public:
 		_size++;
 	}
 
-	
+
 	// TODO: insert, remove, ...
-	
-	T& operator [](int idx)
-	{
+
+	T& operator [](int idx) {
 		assert(idx >= 0 && idx < _size);
 		return _data[idx];
 	}
 
-	const T& operator [](int idx) const
-	{
+	const T& operator [](int idx) const {
 		assert(idx >= 0 && idx < _size);
 		return _data[idx];
 	}
 
-	List<T>& operator  =(const List<T>& list)
-	{
+	List<T>& operator  =(const List<T>& list) {
 		if (_data)
 			delete [] _data;
 		_size = list._size;
@@ -98,10 +91,11 @@ public:
 		return *this;
 	}
 
-	int size() const	{ return _size; }
+	int size() const {
+		return _size;
+	}
 
-	void clear()
-	{
+	void clear() {
 		if (_data) {
 			delete [] _data;
 			_data = 0;
@@ -110,18 +104,19 @@ public:
 		_capacity = 0;
 	}
 	
-	bool isEmpty() const	{ return (_size == 0); }
+	bool isEmpty() const { 
+		return (_size == 0);
+	}
 
 protected:
-	void ensureCapacity(int new_len)
-	{
+	void ensureCapacity(int new_len) {
 		if (new_len <= _capacity)
 			return;
-	
+
 		T *old_data = _data;
 		_capacity = new_len + 32;
 		_data = new T[_capacity];
-	
+
 		if (old_data) {
 			// Copy old data
 			for (int i = 0; i < _size; i++)
@@ -131,7 +126,6 @@ protected:
 	}
 };
 
-
-};	// End of namespace ScummVM
+};// End of namespace ScummVM
 
 #endif

@@ -29,14 +29,12 @@
 
 #define MAXLINELEN 256
 
-static char *ltrim(char *t)
-{
+static char *ltrim(char *t) {
 	for (; *t && (*t == ' '); t++);
 	return t;
 }
 
-static char *rtrim(char *t)
-{
+static char *rtrim(char *t) {
 	int l;
 
 	for (l = strlen(t) - 1; l; l--) {
@@ -52,8 +50,7 @@ static char *rtrim(char *t)
 // The config-class itself.
 
 Config::Config (const String &cfg, const String &d)
- : filename(cfg), defaultDomain(d), willwrite(false)
-{
+ : filename(cfg), defaultDomain(d), willwrite(false) {
 	FILE *cfg_file;
 	char t[MAXLINELEN];
 
@@ -103,8 +100,7 @@ Config::Config (const String &cfg, const String &d)
 	}
 }
 
-const char *Config::get(const String &key, const String &d) const
-{
+const char *Config::get(const String &key, const String &d) const {
 	String domain;
 
 	if (d.isEmpty())
@@ -119,26 +115,23 @@ const char *Config::get(const String &key, const String &d) const
 	return 0;
 }
 
-const int Config::getInt(const String &key, int def, const String &d) const
-{
+const int Config::getInt(const String &key, int def, const String &d) const {
 	const char *value = get(key, d);
-	
+
 	if (value)
 		return atoi(value);
 	return def;
 }
 
-const bool Config::getBool(const String &key, bool def, const String &d) const
-{
+const bool Config::getBool(const String &key, bool def, const String &d) const {
 	const char *value = get(key, d);
-	
+
 	if (value)
 		return !scumm_stricmp(value, "true");
 	return def;
 }
 
-void Config::set(const String &key, const String &value, const String &d)
-{
+void Config::set(const String &key, const String &value, const String &d) {
 	String domain(d);
 
 	if (domain.isEmpty())
@@ -148,34 +141,29 @@ void Config::set(const String &key, const String &value, const String &d)
 	domains[domain][key] = value;
 }
 
-void Config::setInt(const String &key, int value_i, const String &d)
-{
+void Config::setInt(const String &key, int value_i, const String &d) {
 	char value[MAXLINELEN];
 	sprintf(value, "%i", value_i);
 	set(key, String(value), d);
 }
 
-void Config::setBool(const String &key, bool value_b, const String &d)
-{
+void Config::setBool(const String &key, bool value_b, const String &d) {
 	String value(value_b ? "true" : "false");
 	set(key, value, d);
 }
 
-void Config::set_domain(const String &d)
-{
+void Config::set_domain(const String &d) {
 	defaultDomain = d;
 	defaultDomain.toLowercase();
 }
 
-bool Config::has_domain(const String &d) const
-{
+bool Config::has_domain(const String &d) const {
 	String temp(d);
 	temp.toLowercase();
 	return domains.contains(temp);
 }
 
-void Config::flush() const
-{
+void Config::flush() const {
 	FILE *cfg_file;
 
 	if (!willwrite)
@@ -187,7 +175,7 @@ void Config::flush() const
 		DomainMap::Iterator d;
 		for (d = domains.begin(); d != domains.end(); ++d) {
 			fprintf(cfg_file, "[%s]\n", d->_key.c_str());
-			
+
 			const StringMap &data = d->_value;
 			StringMap::Iterator x;
 			for (x = data.begin(); x != data.end(); ++x) {
@@ -201,8 +189,7 @@ void Config::flush() const
 	}
 }
 
-void Config::rename_domain(const String &oldD, const String &newD)
-{
+void Config::rename_domain(const String &oldD, const String &newD) {
 	String oldDomain(oldD);
 	String newDomain(newD);
 	oldDomain.toLowercase();
@@ -219,29 +206,24 @@ void Config::rename_domain(const String &oldD, const String &newD)
 	domains.remove(oldDomain);
 }
 
-void Config::delete_domain(const String &d)
-{
+void Config::delete_domain(const String &d) {
 	String domain(d);
 	domain.toLowercase();
-
 	domains.remove(d);
 }
 
-void Config::set_filename(const String &f)
-{
+void Config::set_filename(const String &f) {
 	filename = f;
 }
 
-void Config::merge_config(const Config &c)
-{
+void Config::merge_config(const Config &c) {
 	DomainMap::Iterator d, end(c.domains.end());
 	for (d = c.domains.begin(); d != end; ++d) {
 		domains[d->_key].merge(d->_value);
 	}
 }
 
-void Config::set_writing(bool w)
-{
+void Config::set_writing(bool w) {
 	willwrite = w;
 }
 
@@ -260,7 +242,7 @@ ScummVM::StringList Config::get_domains() {
 	for (d = domains.begin(); d != end; ++d) {
 		domainNames.push_back(d->_key);
 	}
-	
+
 	return domainNames;
 }
 
