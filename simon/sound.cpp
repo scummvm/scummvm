@@ -145,7 +145,6 @@ void SimonSound::readSfxFile(const char *filename, const char *gameDataPath) {
 void SimonSound::loadSfxTable(File *gameFile, uint32 base) {
 	stopAll();
 
-	delete _effects;
 	if (_game & GF_WIN)
 		_effects = new WavSound(_mixer, gameFile, base);
 	else
