@@ -2996,7 +2996,7 @@ void ScummEngine_v6::o6_shuffle() {
 void ScummEngine_v6::o6_pickVarRandom() {
 	int num;
 	int args[100];
-	int var_C, var_A;
+	int dim1;
 
 	num = getStackList(args, ARRAYSIZE(args));
 	int value = fetchScriptWord();
@@ -3018,18 +3018,12 @@ void ScummEngine_v6::o6_pickVarRandom() {
 
 	num = readArray(value, 0, 0);
 
-	byte *ptr = getResourceAddress(rtString, readVar(value));
-	if (_version >= 7) {
-		var_A = READ_LE_UINT32(ptr + 4);
-		var_C = READ_LE_UINT32(ptr + 8);
-	} else {
-		var_A = READ_LE_UINT16(ptr + 2);
-		var_C = READ_LE_UINT16(ptr + 4);
-	}
+	ArrayHeader *ah = (ArrayHeader *)getResourceAddress(rtString, readVar(value));
+	dim1 = FROM_LE_16(ah->dim1) - 1;
 
-	if (var_A-1 <= num) {
+	if (dim1 <= num) {
 		int16 var_2 = readArray(value, 0, num - 1);
-		shuffleArray(value, 1, var_A - 1);
+		shuffleArray(value, 1, dim1);
 		if (readArray(value, 0, 1) == var_2) {
 			num = 2;
 		} else {
