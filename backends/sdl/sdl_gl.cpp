@@ -519,7 +519,6 @@ bool OSystem_SDL_OpenGL::poll_event(Event *event) {
 */
 
 uint32 OSystem_SDL_OpenGL::property(int param, Property *value) {
-	int i;
 
 	if (param == PROP_TOGGLE_FULLSCREEN) {
 		if (!_usingOpenGL)
@@ -561,32 +560,7 @@ uint32 OSystem_SDL_OpenGL::property(int param, Property *value) {
 		switch(value->gfx_mode) {
 			case GFX_BILINEAR: // Bilinear Filtering (on/off)
 				_glBilinearFilter ^= true;
-				for (i = 0; i < 2; i++) {
-					glBindTexture(GL_TEXTURE_2D, i);
-					if (_glBilinearFilter) {
-						glTexParameteri(
-						    GL_TEXTURE_2D, 
-						    GL_TEXTURE_MAG_FILTER, 
-						    GL_LINEAR
-						);
-						glTexParameteri(
-						    GL_TEXTURE_2D, 
-						    GL_TEXTURE_MIN_FILTER, 
-						    GL_LINEAR
-						);
-					} else {
-						glTexParameteri(
-						    GL_TEXTURE_2D, 
-						    GL_TEXTURE_MAG_FILTER, 
-						    GL_NEAREST
-						);
-						glTexParameteri(
-						    GL_TEXTURE_2D, 
-						    GL_TEXTURE_MIN_FILTER, 
-						    GL_NEAREST
-						);
-					}
-				}
+				fb2gl.setBilinearMode(_glBilinearFilter);
 				break;
 			case GFX_ASPECTRATIO: 
 				_glAspectRatio ^= true;

@@ -88,7 +88,21 @@ class FB2GL {
 		void setPalette(int first, int ncolors);
 		void blit16(SDL_Surface *fb, int num_rect, SDL_Rect *rectlist, int xskip, int yskip);
 		void display();
+		void setBilinearMode(bool bilinear);
 };
+
+void FB2GL::setBilinearMode(bool bilinear) {
+	GLuint mode = bilinear ? GL_LINEAR : GL_NEAREST;
+	glBindTexture(GL_TEXTURE_2D, texture1);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, mode);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, mode);
+
+	if (flags & FB2GL_320) {
+		glBindTexture(GL_TEXTURE_2D, texture2);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, mode);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, mode);
+	}
+}
 
 void FB2GL::makeTextures() {
 	glGenTextures(0,&texture1);
@@ -142,8 +156,13 @@ void FB2GL::makeDisplayList(int xf, int yf) {
 	double xfix = (double)xf / 128; // 128 = 256/2 (half texture => 0.0 to 1.0)
 	double yfix = (double)yf / 128;
 	// End of 256x256 (from -1.0 to 1.0)
-	double texend = (double)96 / 160; // 160=320/2 (== 0.0), 256-160=96.
+	double texend;
 
+	if (flags & FB2GL_320)
+		texend = 96.0 / 160.0; // 160=320/2 (== 0.0), 256-160=96.
+	else
+		texend = 1.0;
+	
 	if (glIsList(displayList)) 
 		glDeleteLists(displayList, 1);
 
@@ -154,31 +173,18 @@ void FB2GL::makeDisplayList(int xf, int yf) {
 
 	glBindTexture(GL_TEXTURE_2D, texture1);
 
-	if (!(flags & FB2GL_320)) { // Normal 256x256
-		glBegin(GL_QUADS);
-		// upper left
-		glTexCoord2f(0.0, 1.0); glVertex2f(-1.0, -1.0 - yfix);
-		// lower left
-		glTexCoord2f(0.0, 0.0); glVertex2f(-1.0, 1.0);
-		// lower right
-		glTexCoord2f(1.0, 0.0); glVertex2f(1.0 + xfix, 1.0);
-		// upper right 
-		glTexCoord2f(1.0, 1.0); glVertex2f(1.0 + xfix, -1.0 - yfix);		glEnd();
-	}
-	else { // 320x256 
+	glBegin(GL_QUADS);
+	// upper left
+	glTexCoord2f(0.0, 1.0); glVertex2f(-1.0, -1.0 - yfix);
+	// lower left
+	glTexCoord2f(0.0, 0.0); glVertex2f(-1.0, 1.0);
+	// lower right
+	glTexCoord2f(1.0, 0.0); glVertex2f(texend + xfix, 1.0);
+	// upper right
+	glTexCoord2f(1.0, 1.0); glVertex2f(texend + xfix, -1.0 - yfix);
+	glEnd();
 
-		// First, the 256x256 texture 
-		glBegin(GL_QUADS);
-		// upper left
-		glTexCoord2f(0.0, 1.0); glVertex2f( -1.0, -1.0 - yfix);
-		// lower left
-		glTexCoord2f(0.0, 0.0); glVertex2f(-1.0, 1.0);
-		// lower right
-		glTexCoord2f(1.0, 0.0); glVertex2f(texend + xfix, 1.0);
-		// upper right
-		glTexCoord2f(1.0, 1.0); glVertex2f(texend + xfix, -1.0 - yfix);
-		glEnd();
-
+	if (flags & FB2GL_320) {
 		// 64x256 
 		glBindTexture(GL_TEXTURE_2D, texture2);
 
