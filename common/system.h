@@ -69,7 +69,8 @@ public:
 		PROP_SET_GFX_MODE = 4,
 		PROP_SHOW_DEFAULT_CURSOR = 5,
 		PROP_GET_SAMPLE_RATE = 6,
-		PROP_GET_FULLSCREEN = 7
+		PROP_GET_FULLSCREEN = 7,
+		PROP_OVERLAY_IS_565 = 8
 	};
 	union Property {
 		const char *caption;
