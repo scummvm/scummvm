@@ -48,6 +48,7 @@ enum {
 	kSliderWidget		= 'SLDE',
 	kListWidget			= 'LIST',
 	kScrollBarWidget	= 'SCRB',
+	kPopUpWidget		= 'POPU',
 	kTabWidget			= 'TABW'
 };
 
@@ -190,9 +191,9 @@ protected:
 	int		_value, _oldValue;
 	int		_valueMin, _valueMax;
 	bool	_isDragging;
-	int		_labelWidth;
+	uint	_labelWidth;
 public:
-	SliderWidget(GuiObject *boss, int x, int y, int w, int h, const String &label = String::emptyString, int labelWidth = 0, uint32 cmd = 0, uint8 hotkey = 0);
+	SliderWidget(GuiObject *boss, int x, int y, int w, int h, const String &label = String::emptyString, uint labelWidth = 0, uint32 cmd = 0, uint8 hotkey = 0);
 	void setValue(int value)	{ _value = value; }
 	int getValue() const		{ return _value; }
 

@@ -38,8 +38,6 @@ static uint32 up_down_arrows[8] = {
 	0x00001000,
 };
 
-const Common::String PopUpWidget::emptyStr;
-
 //
 // PopUpDialog
 //
@@ -56,12 +54,10 @@ public:
 	
 	void drawDialog();
 
-//	void handleMouseDown(int x, int y, int button, int clickCount);
 	void handleMouseUp(int x, int y, int button, int clickCount);
 	void handleMouseWheel(int x, int y, int direction);	// Scroll through entries with scroll wheel
 	void handleMouseMoved(int x, int y, int button);	// Redraw selections depending on mouse position
 	void handleKeyDown(uint16 ascii, int keycode, int modifiers);	// Scroll through entries with arrow keys etc.
-//	void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);
 
 protected:
 	void drawMenuEntry(int entry, bool hilite);
@@ -81,10 +77,10 @@ PopUpDialog::PopUpDialog(PopUpWidget *boss, int clickX, int clickY)
 	_selection = _popUpBoss->_selectedItem;
 
 	// Calculate real popup dimensions
-	_x = _popUpBoss->getAbsX();
+	_x = _popUpBoss->getAbsX() + _popUpBoss->_labelWidth;
 	_y = _popUpBoss->getAbsY() - _popUpBoss->_selectedItem * kLineHeight;
 	_h = _popUpBoss->_entries.size() * kLineHeight + 2;
-	_w = _popUpBoss->_w - 10;
+	_w = _popUpBoss->_w - 10 - _popUpBoss->_labelWidth;
 	
 	// Perform clipping / switch to scrolling mode if we don't fit on the screen
 	// FIXME - hard coded screen height 200. We really need an API in OSystem to query the
@@ -271,10 +267,10 @@ void PopUpDialog::drawMenuEntry(int entry, bool hilite) {
 // PopUpWidget
 //
 
-PopUpWidget::PopUpWidget(GuiObject *boss, int x, int y, int w, int h)
-	: Widget(boss, x, y - 1, w, h + 2), CommandSender(boss) {
+PopUpWidget::PopUpWidget(GuiObject *boss, int x, int y, int w, int h, const String &label, uint labelWidth)
+	: Widget(boss, x, y - 1, w, h + 2), CommandSender(boss), _label(label), _labelWidth(labelWidth) {
 	_flags = WIDGET_ENABLED | WIDGET_CLEARBG | WIDGET_RETAIN_FOCUS;
-	_type = 'POPU';
+	_type = kPopUpWidget;
 
 	_selectedItem = -1;
 }
@@ -316,20 +312,25 @@ void PopUpWidget::setSelected(int item) {
 
 void PopUpWidget::drawWidget(bool hilite) {
 	NewGui	*gui = &g_gui;
+	int x = _x + _labelWidth;
+	int w = _w - _labelWidth;
+
+	// Draw the label, if any
+	if (_labelWidth > 0)
+		gui->drawString(_label, _x, _y + 2, _labelWidth, isEnabled() ? gui->_textcolor : gui->_color, kTextAlignRight);
 
 	// Draw a thin frame around us.
-	// TODO - should look different than the EditTextWidget fram
-	gui->hLine(_x, _y, _x + _w - 1, gui->_color);
-	gui->hLine(_x, _y +_h-1, _x + _w - 1, gui->_shadowcolor);
-	gui->vLine(_x, _y, _y+_h-1, gui->_color);
-	gui->vLine(_x + _w - 1, _y, _y +_h - 1, gui->_shadowcolor);
+	gui->hLine(x, _y, x + w - 1, gui->_color);
+	gui->hLine(x, _y +_h-1, x + w - 1, gui->_shadowcolor);
+	gui->vLine(x, _y, _y+_h-1, gui->_color);
+	gui->vLine(x + w - 1, _y, _y +_h - 1, gui->_shadowcolor);
 
 	// Draw an arrow pointing down at the right end to signal this is a dropdown/popup
-	gui->drawBitmap(up_down_arrows, _x+_w - 10, _y+2, !isEnabled() ? gui->_color : hilite ? gui->_textcolorhi : gui->_textcolor);
+	gui->drawBitmap(up_down_arrows, x+w - 10, _y+2, !isEnabled() ? gui->_color : hilite ? gui->_textcolorhi : gui->_textcolor);
 
 	// Draw the selected entry, if any
 	if (_selectedItem >= 0) {
-		int align = (gui->getStringWidth(_entries[_selectedItem].name) > _w-6) ? kTextAlignRight : kTextAlignLeft;
-		gui->drawString(_entries[_selectedItem].name, _x+2, _y+3, _w-6, !isEnabled() ? gui->_color : gui->_textcolor, align);
+		int align = (gui->getStringWidth(_entries[_selectedItem].name) > w-6) ? kTextAlignRight : kTextAlignLeft;
+		gui->drawString(_entries[_selectedItem].name, x+2, _y+3, w-6, !isEnabled() ? gui->_color : gui->_textcolor, align);
 	}
 }

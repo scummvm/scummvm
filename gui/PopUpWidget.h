@@ -29,8 +29,8 @@ enum {
 	kPopUpItemSelectedCmd	= 'POPs'
 };
 
-/* PopUpWidget
- * A popup or dropdown widget which, when clicked, "pop up" a list of items and
+/**
+ * Popup or dropdown widget which, when clicked, "pop up" a list of items and
  * lets the user pick on of them.
  *
  * Implementation wise, when the user selects an item, then a kPopUpItemSelectedCmd 
@@ -46,30 +46,23 @@ class PopUpWidget : public Widget, public CommandSender {
 	};
 	typedef Common::List<Entry> EntryList;
 protected:
-	static const String emptyStr;
-
 	EntryList		_entries;
 	int				_selectedItem;
 
+	String			_label;
+	uint			_labelWidth;
+
 public:
-	PopUpWidget(GuiObject *boss, int x, int y, int w, int h);
+	PopUpWidget(GuiObject *boss, int x, int y, int w, int h, const String &label, uint labelWidth);
 
 	void handleMouseDown(int x, int y, int button, int clickCount);
-/*
-	void handleMouseUp(int x, int y, int button, int clickCount);
-//	void handleMouseWheel(int x, int y, int direction);	// Scroll through entries with scroll wheel
-	void handleMouseMoved(int x, int y, int button);	// Redraw selections depending on mouse position
-//	bool handleKeyDown(uint16 ascii, int keycode, int modifiers);	// Scroll through entries with arrow keys etc.
-//	void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);
-*/
 
 	void appendEntry(const String &entry, uint32 tag = (uint32)-1);
-//	void setEntries(const EntryList &entries);
 	void clearEntries();
 
 	void setSelected(int item);
 	int getSelected() const						{ return _selectedItem; }
-	const String& getSelectedString() const		{ return (_selectedItem >= 0) ? _entries[_selectedItem].name : emptyStr; }
+	const String& getSelectedString() const		{ return (_selectedItem >= 0) ? _entries[_selectedItem].name : String::emptyString; }
 
 protected:
 	void drawWidget(bool hilite);
