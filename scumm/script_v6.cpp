@@ -396,24 +396,111 @@ int ScummEngine_v6::popRoomAndObj(int *room) {
 	return obj;
 }
 
+ArrayHeader *ScummEngine_v6::defineArray(int array, int type, int dim2, int dim1) {
+	int id;
+	int size;
+	ArrayHeader *ah;
 
-int ScummEngine::readArray(int array, int idx, int base) {
+	if (type != 4)
+		type = 5;
+
+	nukeArray(array);
+
+	id = findFreeArrayId();
+
+	if (_version == 8) {
+		if (array & 0x40000000) {
+		}
+	
+		if (array & 0x80000000) {
+			error("Can't define bit variable as array pointer");
+		}
+
+		size = (type == 5) ? 32 : 8;
+	} else {
+		if (array & 0x4000) {
+		}
+	
+		if (array & 0x8000) {
+			error("Can't define bit variable as array pointer");
+		}
+
+		size = (type == 5) ? 16 : 8;
+	}
+
+	writeVar(array, id);
+
+	size *= dim2 + 1;
+	size *= dim1 + 1;
+	size >>= 3;
+
+	ah = (ArrayHeader *)createResource(rtString, id, size + sizeof(ArrayHeader));
+
+	ah->type = TO_LE_16(type);
+	ah->dim1 = TO_LE_16(dim1 + 1);
+	ah->dim2 = TO_LE_16(dim2 + 1);
+
+	return ah;
+}
+
+void ScummEngine_v6::nukeArray(int a) {
+	int data;
+
+	data = readVar(a);
+
+	if (data)
+		nukeResource(rtString, data);
+
+	writeVar(a, 0);
+}
+
+int ScummEngine_v6::findFreeArrayId() {
+	byte **addr = _baseArrays;
+	int i;
+
+	for (i = 1; i < _numArray; i++) {
+		if (!addr[i])
+			return i;
+	}
+	error("Out of array pointers, %d max", _numArray);
+	return -1;
+}
+
+ArrayHeader *ScummEngine_v6::getArray(int array) {
 	ArrayHeader *ah = (ArrayHeader *)getResourceAddress(rtString, readVar(array));
+	if (!ah)
+		return 0;
+	
+	// Workaround for a long standing bug where we save array headers in native
+	// endianess, instead of a fixed endianess. We try to detect savegames
+	// which were created on a big endian system and convert them to little
+	// endian.
+	if ((ah->dim1 & 0xF000) || (ah->dim2 & 0xF000) || (ah->type & 0xFF00)) {
+		SWAP_BYTES_16(ah->dim1);
+		SWAP_BYTES_16(ah->dim2);
+		SWAP_BYTES_16(ah->type);
+	}
+	
+	return ah;
+}
+
+int ScummEngine_v6::readArray(int array, int idx, int base) {
+	ArrayHeader *ah = getArray(array);
 
 	if (ah == NULL || ah->data == NULL) {
 		error("readArray: invalid array %d (%d)", array, readVar(array));
 	}
 
-	base += idx * ah->dim1_size;
+	base += idx * FROM_LE_16(ah->dim1);
 
 	// FIXME: comment this for the time being as it was causing ft to crash
 	// in the minefeild
 	// FIX THE FIXME: fixing an assert by commenting out is bad. It's evil.
 	// It's wrong. Find the proper cause, or at least, silently return
 	// from the function, but don't just go on overwriting memory!
-	assert(base >= 0 && base < ah->dim1_size * ah->dim2_size);
+	assert(base >= 0 && base < FROM_LE_16(ah->dim1) * FROM_LE_16(ah->dim2));
 
-	if (ah->type == 4) {
+	if (FROM_LE_16(ah->type) == 4) {
 		return ah->data[base];
 	} else if (_version == 8) {
 		return (int32)READ_LE_UINT32(ah->data + base * 4);
@@ -422,15 +509,15 @@ int ScummEngine::readArray(int array, int idx, int base) {
 	}
 }
 
-void ScummEngine::writeArray(int array, int idx, int base, int value) {
-	ArrayHeader *ah = (ArrayHeader *)getResourceAddress(rtString, readVar(array));
+void ScummEngine_v6::writeArray(int array, int idx, int base, int value) {
+	ArrayHeader *ah = getArray(array);
 	if (!ah)
 		return;
-	base += idx * ah->dim1_size;
+	base += idx * FROM_LE_16(ah->dim1);
 
-	assert(base >= 0 && base < ah->dim1_size * ah->dim2_size);
+	assert(base >= 0 && base < FROM_LE_16(ah->dim1) * FROM_LE_16(ah->dim2));
 
-	if (ah->type == 4) {
+	if (FROM_LE_16(ah->type) == 4) {
 		ah->data[base] = value;
 	} else if (_version == 8) {
 #if defined(SCUMM_NEED_ALIGNMENT)
@@ -446,6 +533,21 @@ void ScummEngine::writeArray(int array, int idx, int base, int value) {
 #else
 		((uint16 *)ah->data)[base] = TO_LE_16(value);
 #endif
+	}
+}
+
+void ScummEngine_v6::readArrayFromIndexFile() {
+	int num;
+	int a, b, c;
+
+	while ((num = _fileHandle.readUint16LE()) != 0) {
+		a = _fileHandle.readUint16LE();
+		b = _fileHandle.readUint16LE();
+		c = _fileHandle.readUint16LE();
+		if (c == 1)
+			defineArray(num, 1, a, b);
+		else
+			defineArray(num, 5, a, b);
 	}
 }
 
@@ -2024,8 +2126,7 @@ void ScummEngine_v6::o6_arrayOps() {
 	case 205:		// SO_ASSIGN_STRING
 		b = pop();
 		len = resStrLen(_scriptPointer);
-		c = defineArray(array, 4, 0, len + 1);
-		ah = (ArrayHeader *)getResourceAddress(rtString, c);
+		ah = defineArray(array, 4, 0, len + 1);
 		copyScriptString(ah->data + b);
 		break;
 	case 208:		// SO_ASSIGN_INT_LIST

@@ -31,6 +31,13 @@ struct ResHdr {
 	uint32 tag, size;
 } GCC_PACK;
 
+struct ArrayHeader {
+	int16 dim1;
+	int16 type;
+	int16 dim2;
+	byte data[1];
+} GCC_PACK;
+
 #if !defined(__GNUC__)
 	#pragma END_PACK_STRUCTS
 #endif
@@ -49,15 +56,6 @@ enum {
 	RF_LOCK = 0x80,
 	RF_USAGE = 0x7F,
 	RF_USAGE_MAX = RF_USAGE
-};
-
-
-#define ARRAY_HDR_SIZE 6
-struct ArrayHeader {
-	int16 dim1_size;
-	int16 type;
-	int16 dim2_size;
-	byte data[1];
 };
 
 

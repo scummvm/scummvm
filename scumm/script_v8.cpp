@@ -535,6 +535,27 @@ void ScummEngine_v8::decodeParseString(int m, int n) {
 	}
 }
 
+void ScummEngine_v8::readArrayFromIndexFile() {
+	int num;
+	int a, b;
+
+	while ((num = _fileHandle.readUint32LE()) != 0) {
+		a = _fileHandle.readUint32LE();
+		b = _fileHandle.readUint32LE();
+		
+		// FIXME - seems the COMI scripts have a bug related to array 436.
+		// and visible in script 2015, room 20. Basically, the dimensions
+		// are swapped in the definition of the array, but its obvious
+		// that this must be a script bug simply by looking at the defintions
+		// of other arrays and how they are used.
+		// Talk to fingolfin if you have questions about this :-)
+		if (num == 436)
+			defineArray(num, 5, b, a);
+		else
+			defineArray(num, 5, a, b);
+	}
+}
+
 void ScummEngine_v8::o8_mod() {
 	int a = pop();
 	push(pop() % a);
@@ -646,8 +667,7 @@ void ScummEngine_v8::o8_arrayOps() {
 	case 0x14:		// SO_ASSIGN_STRING
 		b = pop();
 		len = resStrLen(_scriptPointer);
-		c = defineArray(array, 4, 0, len + 1);
-		ah = (ArrayHeader *)getResourceAddress(rtString, c);
+		ah = defineArray(array, 4, 0, len + 1);
 		copyScriptString(ah->data + b);
 		break;
 	case 0x15:		// SO_ASSIGN_SCUMMVAR_LIST

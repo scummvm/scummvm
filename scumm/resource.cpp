@@ -437,36 +437,7 @@ void ScummEngine::readIndexFile() {
 }
 
 void ScummEngine::readArrayFromIndexFile() {
-	int num;
-	int a, b, c;
-
-	if (_version == 8) {
-		while ((num = _fileHandle.readUint32LE()) != 0) {
-			a = _fileHandle.readUint32LE();
-			b = _fileHandle.readUint32LE();
-			
-			// FIXME - seems the COMI scripts have a bug related to array 436.
-			// and visible in script 2015, room 20. Basically, the dimensions
-			// are swapped in the definition of the array, but its obvious
-			// that this must be a script bug simply by looking at the defintions
-			// of other arrays and how they are used.
-			// Talk to fingolfin if you have questions about this :-)
-			if (num == 436)
-				defineArray(num, 5, b, a);
-			else
-				defineArray(num, 5, a, b);
-		}
-	} else {
-		while ((num = _fileHandle.readUint16LE()) != 0) {
-			a = _fileHandle.readUint16LE();
-			b = _fileHandle.readUint16LE();
-			c = _fileHandle.readUint16LE();
-			if (c == 1)
-				defineArray(num, 1, a, b);
-			else
-				defineArray(num, 5, a, b);
-		}
-	}
+	error("readArrayFromIndexFile() not supported in pre-V6 games");
 }
 
 void ScummEngine::readResTypeList(int id, uint32 tag, const char *name) {

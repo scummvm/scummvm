@@ -29,6 +29,7 @@
 namespace Scumm {
 
 class NutRenderer; // V8 Font Renderer
+struct ArrayHeader;
 
 class ScummEngine_v5 : public ScummEngine {
 protected:
@@ -348,11 +349,20 @@ protected:
 
 	virtual void setupScummVars();
 	virtual void decodeParseString(int a, int b);
+	virtual void readArrayFromIndexFile();
 
 	virtual void palManipulateInit(int resID, int start, int end, int time);
 
 	int getStackList(int *args, uint maxnum);
 	int popRoomAndObj(int *room);
+
+	ArrayHeader *getArray(int array);
+	ArrayHeader *defineArray(int array, int type, int dim2, int dim1);
+	int findFreeArrayId();
+	void nukeArray(int array);
+	int readArray(int array, int index, int base);
+	void writeArray(int array, int index, int base, int value);
+
 	void shuffleArray(int num, int minIdx, int maxIdx);
 	void unknownEA_func(int a, int b, int c, int d, int e);
 	int readFileToArray(int slot, int32 size);
@@ -575,6 +585,7 @@ protected:
 
 	virtual void setupScummVars();
 	virtual void decodeParseString(int m, int n);
+	virtual void readArrayFromIndexFile();
 
 	virtual uint fetchScriptWord();
 	virtual int fetchScriptWordSigned();

@@ -635,7 +635,7 @@ protected:
 	void loadRoomObjectsSmall();
 	void loadRoomObjectsOldBundle();
 
-	void readArrayFromIndexFile();
+	virtual void readArrayFromIndexFile();
 	virtual void readMAXS();
 	virtual void readIndexFile();
 	virtual void loadCharset(int i);
@@ -648,12 +648,6 @@ public:
 	void dumpResource(const char *tag, int index, const byte *ptr, int length = -1);
 
 protected:
-	int getArrayId();
-	void nukeArray(int a);
-	int defineArray(int a, int b, int c, int d);
-	int readArray(int array, int index, int base);
-	void writeArray(int array, int index, int base, int value);
-
 	void resourceStats();
 	void expireResources(uint32 size);
 	void freeResources();
