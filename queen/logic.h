@@ -204,7 +204,7 @@ public:
 
 	void changeRoom();
 
-	void useJournal();
+	virtual void useJournal() = 0;
 
 	void executeSpecialMove(uint16 sm);
 
@@ -367,24 +367,36 @@ protected:
 
 class LogicDemo : public Logic {
 public:
+
 	LogicDemo(QueenEngine *vm) : Logic(vm) {}
+	void useJournal();
+
 protected:
+
 	bool preChangeRoom();
 	bool handleSpecialMove(uint16 sm);
 };
 
 class LogicInterview : public Logic {
 public:
+
 	LogicInterview(QueenEngine *vm) : Logic(vm) {}
+	void useJournal();
+
 protected:
+
 	bool preChangeRoom();
 	bool handleSpecialMove(uint16 sm);
 };
 
 class LogicGame : public Logic {
 public:
+
 	LogicGame(QueenEngine *vm) : Logic(vm) {}
+	void useJournal();
+
 protected:
+
 	bool preChangeRoom();
 	bool handleSpecialMove(uint16 sm);
 };

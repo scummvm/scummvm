@@ -1535,18 +1535,6 @@ void Logic::changeRoom() {
 }
 
 
-void Logic::useJournal() {
-	if (_vm->resource()->isDemo()) {
-		makePersonSpeak("This is a demo, so I can't load or save games*14", NULL, "");
-	} else if (!_vm->resource()->isInterview()) {
-		_vm->command()->clear(false);
-		_journal->use();
-		_vm->walk()->stopJoe();
-		// XXX TALKQUIT=CUTQUIT=0; Make sure that we turn off cut stuff in case we use Journal during cutaways
-	}
-}
-
-
 void Logic::executeSpecialMove(uint16 sm) {
 	debug(6, "Special move: %d", sm);
 	if (!handleSpecialMove(sm))
@@ -2194,6 +2182,10 @@ void Logic::stopCredits() {
 }
 
 
+void LogicDemo::useJournal() {
+	makePersonSpeak("This is a demo, so I can't load or save games*14", NULL, "");
+}
+
 bool LogicDemo::preChangeRoom() {
 	if (currentRoom() == FOTAQ_LOGO && gameState(VAR_INTRO_PLAYED) == 0) {
 		currentRoom(79);
@@ -2212,6 +2204,26 @@ bool LogicDemo::preChangeRoom() {
 	return false;
 }
 
+bool LogicDemo::handleSpecialMove(uint16 sm) {
+	switch (sm) {
+	case 4:
+		asmMakeJoeUseUnderwear();
+		break;
+	case 5:
+		asmSwitchToDressPalette();
+		break;
+	case 14:
+		asmEndDemo();
+		break;
+	default:
+		return false;
+	}
+	return true;
+}
+
+void LogicInterview::useJournal() {
+	// no-op
+}
 
 bool LogicInterview::preChangeRoom() {
 	if (currentRoom() == 2 && gameState(2) == 0) {
@@ -2226,6 +2238,26 @@ bool LogicInterview::preChangeRoom() {
 	return false;
 }
 
+bool LogicInterview::handleSpecialMove(uint16 sm) {
+	switch (sm) {
+	case 1:
+		asmInterviewIntro();
+		break;
+	case 2:
+		asmEndInterview();
+		break;
+	default:
+		return false;
+	}
+	return true;
+}
+
+void LogicGame::useJournal() {
+	_vm->command()->clear(false);
+	_journal->use();
+	_vm->walk()->stopJoe();
+	// XXX TALKQUIT=CUTQUIT=0; Make sure that we turn off cut stuff in case we use Journal during cutaways
+}
 
 bool LogicGame::preChangeRoom() {
 	if (currentRoom() == ROOM_JUNGLE_PINNACLE) {
@@ -2259,93 +2291,59 @@ bool LogicGame::preChangeRoom() {
 	return false;
 }
 
-
-bool LogicDemo::handleSpecialMove(uint16 sm) {
-	switch (sm) {
-	case 4:
-		asmMakeJoeUseUnderwear();
-		break;
-	case 5:
-		asmSwitchToDressPalette();
-		break;
-	case 14:
-		asmEndDemo();
-		break;
-	default:
-		return false;
-	}
-	return true;
-}
-
-
-bool LogicInterview::handleSpecialMove(uint16 sm) {
-	switch (sm) {
-	case 1:
-		asmInterviewIntro();
-		break;
-	case 2:
-		asmEndInterview();
-		break;
-	default:
-		return false;
-	}
-	return true;
-}
-
-
 bool LogicGame::handleSpecialMove(uint16 sm) {
 	typedef void (Logic::*SpecialMoveProc)();
 	static const SpecialMoveProc asmTable[] = {
 		/* 00 */
 		0,
 		0,
-		&LogicGame::asmMakeJoeUseDress,
-		&LogicGame::asmMakeJoeUseNormalClothes,
+		&Logic::asmMakeJoeUseDress,
+		&Logic::asmMakeJoeUseNormalClothes,
 		/* 04 */
-		&LogicGame::asmMakeJoeUseUnderwear,
-		&LogicGame::asmSwitchToDressPalette,
-		&LogicGame::asmSwitchToNormalPalette,
-		&LogicGame::asmStartCarAnimation,       // room 74
+		&Logic::asmMakeJoeUseUnderwear,
+		&Logic::asmSwitchToDressPalette,
+		&Logic::asmSwitchToNormalPalette,
+		&Logic::asmStartCarAnimation,       // room 74
 		/* 08 */
-		&LogicGame::asmStopCarAnimation,        // room 74
-		&LogicGame::asmStartFightAnimation,     // room 69
-		&LogicGame::asmWaitForFrankPosition,    // c69e.cut
-		&LogicGame::asmMakeFrankGrowing,        // c69z.cut
+		&Logic::asmStopCarAnimation,        // room 74
+		&Logic::asmStartFightAnimation,     // room 69
+		&Logic::asmWaitForFrankPosition,    // c69e.cut
+		&Logic::asmMakeFrankGrowing,        // c69z.cut
 		/* 12 */
-		&LogicGame::asmMakeRobotGrowing,        // c69z.cut
-		&LogicGame::asmShrinkRobot,
-		&LogicGame::asmEndGame,
-		&LogicGame::asmPutCameraOnDino,
+		&Logic::asmMakeRobotGrowing,        // c69z.cut
+		&Logic::asmShrinkRobot,
+		&Logic::asmEndGame,
+		&Logic::asmPutCameraOnDino,
 		/* 16 */
-		&LogicGame::asmPutCameraOnJoe,
-		&LogicGame::asmAltIntroPanRight,        // cintr.cut
-		&LogicGame::asmAltIntroPanLeft,         // cintr.cut
-		&LogicGame::asmSetAzuraInLove,
+		&Logic::asmPutCameraOnJoe,
+		&Logic::asmAltIntroPanRight,        // cintr.cut
+		&Logic::asmAltIntroPanLeft,         // cintr.cut
+		&Logic::asmSetAzuraInLove,
 		/* 20 */
-		&LogicGame::asmPanRightFromJoe,
-		&LogicGame::asmSetLightsOff,
-		&LogicGame::asmSetLightsOn,
-		&LogicGame::asmSetManequinAreaOn,
+		&Logic::asmPanRightFromJoe,
+		&Logic::asmSetLightsOff,
+		&Logic::asmSetLightsOn,
+		&Logic::asmSetManequinAreaOn,
 		/* 24 */
-		&LogicGame::asmPanToJoe,
-		&LogicGame::asmTurnGuardOn,
-		&LogicGame::asmPanLeft320To144,
-		&LogicGame::asmSmooch,
+		&Logic::asmPanToJoe,
+		&Logic::asmTurnGuardOn,
+		&Logic::asmPanLeft320To144,
+		&Logic::asmSmooch,
 		/* 28 */
-		&LogicGame::asmMakeLightningHitPlane,
-		&LogicGame::asmScaleBlimp,
-		&LogicGame::asmScaleEnding,
-		&LogicGame::asmWaitForCarPosition,
+		&Logic::asmMakeLightningHitPlane,
+		&Logic::asmScaleBlimp,
+		&Logic::asmScaleEnding,
+		&Logic::asmWaitForCarPosition,
 		/* 32 */
-		&LogicGame::asmShakeScreen,
-		&LogicGame::asmAttemptPuzzle,
-		&LogicGame::asmScaleTitle,
+		&Logic::asmShakeScreen,
+		&Logic::asmAttemptPuzzle,
+		&Logic::asmScaleTitle,
 		0,
 		/* 36 */
-		&LogicGame::asmPanRightToHugh,
-		&LogicGame::asmMakeWhiteFlash,
-		&LogicGame::asmPanRightToJoeAndRita,
-		&LogicGame::asmPanLeftToBomb            // cdint.cut
+		&Logic::asmPanRightToHugh,
+		&Logic::asmMakeWhiteFlash,
+		&Logic::asmPanRightToJoeAndRita,
+		&Logic::asmPanLeftToBomb            // cdint.cut
 	};
 	if (sm >= ARRAYSIZE(asmTable) || asmTable[sm] == 0)
 		return false;
@@ -2353,6 +2351,4 @@ bool LogicGame::handleSpecialMove(uint16 sm) {
 	return true;
 }
 
-
 } // End of namespace Queen
-
