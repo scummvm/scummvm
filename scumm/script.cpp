@@ -103,7 +103,7 @@ void Scumm::stopScriptNr(int script) {
 	if (_numNestedScripts == 0)
 		return;
 
-	nest = &vm.nest[0];
+	nest = vm.nest;
 	num = _numNestedScripts;
 
 	do {
@@ -141,7 +141,7 @@ void Scumm::stopObjectScript(int script) {
 	if (_numNestedScripts == 0)
 		return;
 
-	nest = &vm.nest[0];
+	nest = vm.nest;
 	num = _numNestedScripts;
 
 	do {
@@ -187,7 +187,7 @@ void Scumm::runScriptNested(int script) {
 		nest->slot = _currentScript;
 	}
 
-	if (++_numNestedScripts > sizeof(vm.nest) / sizeof(vm.nest[0]))
+	if (++_numNestedScripts > ARRAYSIZE(vm.nest))
 		error("Too many nested scripts");
 
 	_currentScript = script;
@@ -1049,7 +1049,7 @@ void Scumm::cutscene(int *args) {
 	int scr = _currentScript;
 	vm.slot[scr].cutsceneOverride++;
 
-	if (++vm.cutSceneStackPointer > sizeof(vm.cutSceneData) / sizeof(vm.cutSceneData[0]))
+	if (++vm.cutSceneStackPointer > ARRAYSIZE(vm.cutSceneData))
 		error("Cutscene stack overflow");
 
 	vm.cutSceneData[vm.cutSceneStackPointer] = args[0];

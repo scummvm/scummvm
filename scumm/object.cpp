@@ -827,7 +827,7 @@ void Scumm::removeObjectFromRoom(int obj) {
 
 void Scumm::addObjectToDrawQue(int object) {
 	_drawObjectQue[_drawObjectQueNr++] = object;
-	if ((unsigned int)_drawObjectQueNr > sizeof(_drawObjectQue) / sizeof(_drawObjectQue[0]))
+	if ((unsigned int)_drawObjectQueNr > ARRAYSIZE(_drawObjectQue))
 		error("Draw Object Que overflow");
 }
 

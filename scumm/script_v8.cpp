@@ -750,7 +750,7 @@ void Scumm_v8::o8_arrayOps() {
 		break;
 	case 0x15:		// SO_ASSIGN_SCUMMVAR_LIST
 		b = pop();
-		len = getStackList(list, sizeof(list) / sizeof(list[0]));
+		len = getStackList(list, ARRAYSIZE(list));
 		d = readVar(array);
 		if (d == 0) {
 			defineArray(array, 5, 0, b + len);
@@ -761,7 +761,7 @@ void Scumm_v8::o8_arrayOps() {
 		break;
 	case 0x16:		// SO_ASSIGN_2DIM_LIST
 		b = pop();
-		len = getStackList(list, sizeof(list) / sizeof(list[0]));
+		len = getStackList(list, ARRAYSIZE(list));
 		d = readVar(array);
 		if (d == 0)
 			error("Must DIM a two dimensional array before assigning");
@@ -838,7 +838,7 @@ void Scumm_v8::o8_cursorCommand() {
 		break;
 	}
 	case 0xE8:		// SO_CHARSET_COLOR
-		getStackList(args, sizeof(args) / sizeof(args[0]));
+		getStackList(args, ARRAYSIZE(args));
 		for (i = 0; i < 16; i++)
 			_charsetColorMap[i] = _charsetData[_string[1].t_charset][i] = (unsigned char)args[i];
 		break;
@@ -1318,7 +1318,7 @@ void Scumm_v8::o8_verbOps() {
 
 void Scumm_v8::o8_soundKludge() {
 	int args[16];
-	int num = getStackList(args, sizeof(args) / sizeof(args[0]));
+	int num = getStackList(args, ARRAYSIZE(args));
 
 	_sound->soundKludge(args, num);
 }
@@ -1355,7 +1355,7 @@ void Scumm_v8::o8_kernelSetFunctions() {
 	// TODO
 	Actor *a;
 	int args[30];
-	int len = getStackList(args, sizeof(args) / sizeof(args[0]));
+	int len = getStackList(args, ARRAYSIZE(args));
 
 	switch (args[0]) {
 	case 11: {	// lockObject
@@ -1499,7 +1499,7 @@ void Scumm_v8::o8_kernelSetFunctions() {
 void Scumm_v8::o8_kernelGetFunctions() {
 	// TODO
 	int args[30];
-	int len = getStackList(args, sizeof(args) / sizeof(args[0]));
+	int len = getStackList(args, ARRAYSIZE(args));
 
 	switch (args[0]) {
 	case 0x73:	// getWalkBoxAt

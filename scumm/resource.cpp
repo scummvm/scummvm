@@ -522,7 +522,7 @@ void Scumm::readResTypeList(int id, uint32 tag, const char *name) {
 
 void Scumm::allocResTypeData(int id, uint32 tag, int num, const char *name, int mode) {
 	debug(9, "allocResTypeData(%s/%s,%x,%d,%d)", resTypeFromId(id), name, FROM_LE_32(tag), num, mode);
-	assert(id >= 0 && id < (int)(sizeof(res.mode) / sizeof(res.mode[0])));
+	assert(id >= 0 && id < (int)(ARRAYSIZE(res.mode)));
 
 	if (num >= 2000) {
 		error("Too many %ss (%d) in directory", name, num);

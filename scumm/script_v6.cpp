@@ -683,7 +683,7 @@ void Scumm_v6::o6_startScriptEx() {
 	int args[16];
 	int script, flags;
 
-	getStackList(args, sizeof(args) / sizeof(args[0]));
+	getStackList(args, ARRAYSIZE(args));
 	script = pop();
 	flags = pop();
 	runScript(script, flags & 1, flags & 2, args);
@@ -693,7 +693,7 @@ void Scumm_v6::o6_jumpToScript() {
 	int args[16];
 	int script, flags;
 
-	getStackList(args, sizeof(args) / sizeof(args[0]));
+	getStackList(args, ARRAYSIZE(args));
 	script = pop();
 	flags = pop();
 	stopObjectCode();
@@ -703,7 +703,7 @@ void Scumm_v6::o6_jumpToScript() {
 void Scumm_v6::o6_startScript() {
 	int args[16];
 	int script;
-	getStackList(args, sizeof(args) / sizeof(args[0]));
+	getStackList(args, ARRAYSIZE(args));
 	script = pop();
 	runScript(script, 0, 0, args);
 }
@@ -711,7 +711,7 @@ void Scumm_v6::o6_startScript() {
 void Scumm_v6::o6_startScriptQuick() {
 	int args[16];
 	int script;
-	getStackList(args, sizeof(args) / sizeof(args[0]));
+	getStackList(args, ARRAYSIZE(args));
 	script = pop();
 	runScript(script, 0, 1, args);
 }
@@ -720,7 +720,7 @@ void Scumm_v6::o6_startObjectEx() {
 	int args[16];
 	int script, entryp;
 	int flags;
-	getStackList(args, sizeof(args) / sizeof(args[0]));
+	getStackList(args, ARRAYSIZE(args));
 	entryp = pop();
 	script = pop();
 	flags = pop();
@@ -730,7 +730,7 @@ void Scumm_v6::o6_startObjectEx() {
 void Scumm_v6::o6_startObjectQuick() {
 	int args[16];
 	int script, entryp;
-	getStackList(args, sizeof(args) / sizeof(args[0]));
+	getStackList(args, ARRAYSIZE(args));
 	entryp = pop();
 	script = pop();
 	runVerbCode(script, entryp, 0, 1, args);
@@ -764,7 +764,7 @@ void Scumm_v6::o6_endCutscene() {
 
 void Scumm_v6::o6_cutscene() {
 	int args[16];
-	getStackList(args, sizeof(args) / sizeof(args[0]));
+	getStackList(args, ARRAYSIZE(args));
 	cutscene(args);
 }
 
@@ -828,7 +828,7 @@ void Scumm_v6::o6_cursorCommand() {
 		initCharset(pop());
 		break;
 	case 0x9D:										/* set charset colors */
-		getStackList(args, sizeof(args) / sizeof(args[0]));
+		getStackList(args, ARRAYSIZE(args));
 		for (i = 0; i < 16; i++)
 			_charsetColorMap[i] = _charsetData[_string[1].t_charset][i] = (unsigned char)args[i];
 		break;
@@ -854,7 +854,7 @@ void Scumm_v6::o6_ifClassOfIs() {
 	bool b;
 	int cond = 1;
 
-	num = getStackList(args, sizeof(args) / sizeof(args[0]));
+	num = getStackList(args, ARRAYSIZE(args));
 	obj = pop();
 
 	while (--num >= 0) {
@@ -870,7 +870,7 @@ void Scumm_v6::o6_setClass() {
 	int args[16];
 	int num, obj, cls;
 
-	num = getStackList(args, sizeof(args) / sizeof(args[0]));
+	num = getStackList(args, ARRAYSIZE(args));
 	obj = pop();
 
 	while (--num >= 0) {
@@ -1341,7 +1341,7 @@ void Scumm_v6::o6_setBoxFlags() {
 	int num, value;
 
 	value = pop();
-	num = getStackList(table, sizeof(table) / sizeof(table[0]));
+	num = getStackList(table, ARRAYSIZE(table));
 
 	while (--num >= 0) {
 		setBoxFlags(table[num], value);
@@ -1612,7 +1612,7 @@ void Scumm_v6::o6_actorOps() {
 		a->setActorWalkSpeed(i, j);
 		break;
 	case 78:											/* actor-sound */
-		k = getStackList(args, sizeof(args) / sizeof(args[0]));
+		k = getStackList(args, ARRAYSIZE(args));
 		for (i = 0; i < k; i++)
 			a->sound[i] = args[i];
 		break;
@@ -1892,7 +1892,7 @@ void Scumm_v6::o6_pseudoRoom() {
 	int list[100];
 	int num, a, value;
 
-	num = getStackList(list, sizeof(list) / sizeof(list[0]));
+	num = getStackList(list, ARRAYSIZE(list));
 	value = pop();
 
 	while (--num >= 0) {
@@ -1936,7 +1936,7 @@ void Scumm_v6::o6_arrayOps() {
 		break;
 	case 212:
 		b = pop();
-		len = getStackList(list, sizeof(list) / sizeof(list[0]));
+		len = getStackList(list, ARRAYSIZE(list));
 		d = readVar(array);
 		if (d == 0)
 			error("Must DIM a two dimensional array before assigning");
@@ -2088,7 +2088,7 @@ void Scumm_v6::o6_wait() {
 
 void Scumm_v6::o6_soundKludge() {
 	int list[16];
-	int num = getStackList(list, sizeof(list) / sizeof(list[0]));
+	int num = getStackList(list, ARRAYSIZE(list));
 
 	_sound->soundKludge(list, num);
 }
@@ -2098,7 +2098,7 @@ void Scumm_v6::o6_isAnyOf() {
 	int num;
 	int16 val;
 
-	num = getStackList(list, sizeof(list) / sizeof(list[0]));
+	num = getStackList(list, ARRAYSIZE(list));
 	val = pop();
 
 	while (--num >= 0) {
@@ -2321,7 +2321,7 @@ void Scumm_v6::o6_drawBlastObject() {
 	int args[16];
 	int a, b, c, d, e;
 
-	getStackList(args, sizeof(args) / sizeof(args[0]));
+	getStackList(args, ARRAYSIZE(args));
 	e = pop();
 	d = pop();
 	c = pop();
@@ -2348,7 +2348,7 @@ void Scumm_v6::o6_kernelSetFunctions() {
 	int args[30];
 	Actor *a;
 
-	getStackList(args, sizeof(args) / sizeof(args[0]));
+	getStackList(args, ARRAYSIZE(args));
 
 	if (_features & GF_AFTER_V7) {
 		switch (args[0]) {
@@ -2656,7 +2656,7 @@ void Scumm_v6::o6_kernelGetFunctions() {
 	int i;
 	Actor *a;
 
-	getStackList(args, sizeof(args) / sizeof(args[0]));
+	getStackList(args, ARRAYSIZE(args));
 
 	switch (args[0]) {
 	case 113:
@@ -2767,7 +2767,7 @@ void Scumm_v6::o6_pickOneOf() {
 	int args[100];
 	int i, num;
 
-	num = getStackList(args, sizeof(args) / sizeof(args[0]));
+	num = getStackList(args, ARRAYSIZE(args));
 	i = pop();
 	if (i < 0 || i >= num)
 		error("o6_pickOneOf: out of range");
@@ -2779,7 +2779,7 @@ void Scumm_v6::o6_pickOneOfDefault() {
 	int i, num, def;
 
 	def = pop();
-	num = getStackList(args, sizeof(args) / sizeof(args[0]));
+	num = getStackList(args, ARRAYSIZE(args));
 	i = pop();
 	if (i < 0 || i >= num)
 		i = def;
@@ -2896,7 +2896,7 @@ void Scumm_v6::o6_pickVarRandom() {
 	int args[100];
 	int var_C, var_A;
 
-	num = getStackList(args, sizeof(args) / sizeof(args[0]));
+	num = getStackList(args, ARRAYSIZE(args));
 	int value = fetchScriptWord();
 
 	if (readVar(value) == 0) {
