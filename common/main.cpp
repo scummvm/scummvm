@@ -143,6 +143,7 @@ static void launcherDialog(GameDetector &detector, OSystem *system)
 int main(int argc, char *argv[])
 {
 	GameDetector detector;
+	OSystem::Property prop;
 
 #if defined(UNIX)
 	/* On Unix, do a quick endian / alignement check before starting */
@@ -175,8 +176,12 @@ int main(int argc, char *argv[])
 	// Create the system object
 	OSystem *system = detector.createSystem();
 
+	// Set initial window caption
+	prop.caption = "ScummVM";
+	system->property(OSystem::PROP_SET_WINDOW_CAPTION, &prop);
+
+
 	// Create the GUI manager
-	// TODO - move this up for the launcher dialog?
 	g_gui = new NewGui(system);
 
 	// Unless a game was specified, show the launcher dialog
@@ -189,8 +194,7 @@ int main(int argc, char *argv[])
 		return (-1);
 	}
 	
-	// Set the window caption (for OSystems that support it)
-	OSystem::Property prop;
+	// Set the window caption to the game name
 	prop.caption = detector.getGameName().c_str();
 	system->property(OSystem::PROP_SET_WINDOW_CAPTION, &prop);
 
