@@ -101,7 +101,7 @@ void Sound::processSoundQues() {
 				data[j] = _soundQue[i + j];
 			i += num;
 
-			debug(5, "processSoundQues(%d,%d,%d,%d,%d,%d,%d,%d,%d)",
+			debugC(DEBUG_IMUSE, "processSoundQues(%d,%d,%d,%d,%d,%d,%d,%d,%d)",
 						data[0] >> 8, data[0] & 0xFF,
 						data[1], data[2], data[3], data[4], data[5], data[6], data[7]);
 
@@ -120,7 +120,9 @@ void Sound::playSound(int soundID) {
 	int rate;
 	byte flags = SoundMixer::FLAG_UNSIGNED | SoundMixer::FLAG_AUTOFREE;
 	
-	debug(3, "playSound #%d (room %d)", soundID, _vm->getResourceRoomNr(rtSound, soundID));
+	debugC(DEBUG_SOUND, "playSound #%d (room %d)", soundID, 
+		_vm->getResourceRoomNr(rtSound, soundID));
+
 	ptr = _vm->getResourceAddress(rtSound, soundID);
 	if (!ptr) {
 		return;

@@ -1951,7 +1951,7 @@ void ScummEngine::startScene(int room, Actor *a, int objectNr) {
 	int i, where;
 
 	CHECK_HEAP;
-	debug(1, "Loading room %d", room);
+	debugC(DEBUG_GENERAL, "Loading room %d", room);
 
 	clearMsgQueue();
 

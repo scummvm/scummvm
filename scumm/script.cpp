@@ -411,7 +411,7 @@ void ScummEngine::executeScript() {
 		}
 		_opcode = fetchScriptByte();
 		vm.slot[_currentScript].didexec = 1;
-		debug(7, "Script %d, offset 0x%x: [%X] %s()",
+		debugC(DEBUG_OPCODES, "Script %d, offset 0x%x: [%X] %s()",
 				vm.slot[_currentScript].number,
 				_scriptPointer - _scriptOrgPointer,
 				_opcode,
@@ -460,7 +460,7 @@ int ScummEngine::readVar(uint var) {
 	else
 		copyprotbypassed = true;
 
-	debug(9, "readvar(%d)", var);
+	debug(DEBUG_VARS, "readvar(%d)", var);
 
 	if (var & 0x2000 && !(_features & GF_NEW_OPCODES)) {
 		a = fetchScriptWord();

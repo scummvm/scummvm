@@ -121,11 +121,14 @@ struct dbgChannelDesc {
 };
 
 enum {
-	DEBUG_SCRIPTS	=	1 << 0,		// Track script execution (start/stop/pause)
-	DEBUG_OPCODES	=	1 << 1,		// Track opcode invocations
-	DEBUG_IMUSE	=	1 << 2,		// Track iMUSE events
-	DEBUG_RESOURCE	=	1 << 3,		// Track resource loading / allocation
-	DEBUG_VARS	=	1 << 4		// Track variable changes
+	DEBUG_GENERAL	=	1 << 0,		// General debug
+	DEBUG_SCRIPTS	=	1 << 2,		// Track script execution (start/stop/pause)
+	DEBUG_OPCODES	=	1 << 3,		// Track opcode invocations
+	DEBUG_VARS	=	1 << 4,		// Track variable changes
+	DEBUG_RESOURCE	=	1 << 5,		// Track resource loading / allocation
+	DEBUG_IMUSE	=	1 << 6,		// Track iMUSE events
+	DEBUG_SOUND	=	1 << 7,		// General Sound Debug
+	DEBUG_ACTORS	=	1 << 8		// General Actor Debug
 };
 
 
@@ -135,7 +138,8 @@ static const dbgChannelDesc debugChannels[] = {
 	{"OPCODES", "Track opcode execution", DEBUG_OPCODES},
 	{"IMUSE", "Track iMUSE events", DEBUG_IMUSE},
 	{"RESOURCE", "Track resource loading/management", DEBUG_RESOURCE},
-	{"VARS", "Track variable changes", DEBUG_VARS}
+	{"VARS", "Track variable changes", DEBUG_VARS},
+	{"ACTORS", "Actor-related debug", DEBUG_ACTORS}
 };
 
 struct MemBlkHeader {

@@ -47,7 +47,9 @@ void CDECL debugC(int channel, const char *s, ...) {
 #endif
         va_list va;
 
-        if (!(g_scumm->_debugFlags & channel))
+	// FIXME: Still spew all debug at -d9, for crashes in startup etc.
+	//	  Add setting from commandline ( / abstract channel interface)
+        if (!(g_scumm->_debugFlags & channel) && (g_debugLevel < 9))
                 return;
 
         va_start(va, s);

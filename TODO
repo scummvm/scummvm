@@ -141,6 +141,7 @@ SCUMM
   increments of 8 pixels). See bug #629417.
 * Implement o6_actorOps case 218 as used in Humongous games
 * Implement localizeArray opcode as used in Humongous games
+* Add method of setting initial debug channels from command-line
 
 Broken Sword 2
 ==============

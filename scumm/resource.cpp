@@ -46,7 +46,7 @@ void ScummEngine::openRoom(int room) {
 	char buf2[128] = "";
 	byte encByte = 0;
 
-	debug(9, "openRoom(%d)", room);
+	debugC(DEBUG_GENERAL, "openRoom(%d)", room);
 	assert(room >= 0);
 
 	/* Don't load the same room again */
@@ -210,7 +210,7 @@ void ScummEngine::readRoomsOffsets() {
 }
 
 bool ScummEngine::openResourceFile(const char *filename, byte encByte) {
-	debug(9, "openResourceFile(%s)", filename);
+	debugC(DEBUG_GENERAL, "openResourceFile(%s)", filename);
 
 	if (_fileHandle.isOpen()) {
 		_fileHandle.close();
@@ -252,7 +252,7 @@ void ScummEngine::readIndexFile() {
 	int num, i;
 	bool stop = false;
 
-	debug(9, "readIndexFile()");
+	debugC(DEBUG_GENERAL, "readIndexFile()");
 
 	closeRoom();
 	openRoom(0);
@@ -550,7 +550,7 @@ void ScummEngine::loadCharset(int no) {
 	int i;
 	byte *ptr;
 
-	debug(9, "loadCharset(%d)", no);
+	debugC(DEBUG_GENERAL, "loadCharset(%d)", no);
 
 	/* FIXME - hack around crash in Indy4 (occurs if you try to load after dieing) */
 	if (_gameId == GID_INDY4 && no == 0)
@@ -577,7 +577,7 @@ void ScummEngine::nukeCharset(int i) {
 void ScummEngine::ensureResourceLoaded(int type, int i) {
 	void *addr = NULL;
 
-	debug(9, "ensureResourceLoaded(%s,%d)", resTypeFromId(type), i);
+	debugC(DEBUG_RESOURCE, "ensureResourceLoaded(%s,%d)", resTypeFromId(type), i);
 
 	if (type == rtRoom && i > 0x7F && _version < 7) {
 		i = _resourceMapper[i & 0x7F];
@@ -615,7 +615,7 @@ int ScummEngine::loadResource(int type, int idx) {
 	uint32 fileOffs;
 	uint32 size, tag;
 
-	debug(2, "loadResource(%s,%d)", resTypeFromId(type),idx);
+	debugC(DEBUG_RESOURCE, "loadResource(%s,%d)", resTypeFromId(type),idx);
 
 	if (type == rtCharset && (_features & GF_SMALL_HEADER)) {
 		loadCharset(idx);
@@ -698,7 +698,7 @@ int ScummEngine::readSoundResource(int type, int idx) {
 	int pri, best_pri;
 	uint32 best_size = 0, best_offs = 0;
 
-	debug(9, "readSoundResource(%s,%d)", resTypeFromId(type), idx);
+	debugC(DEBUG_RESOURCE, "readSoundResource(%s,%d)", resTypeFromId(type), idx);
 
 	pos = 0;
 
@@ -707,7 +707,7 @@ int ScummEngine::readSoundResource(int type, int idx) {
 	basetag = fileReadDword();
 	total_size = _fileHandle.readUint32BE();
 
-	debug(8, "  basetag: %s, total_size=%d", tag2str(TO_BE_32(basetag)), total_size);
+	debugC(DEBUG_RESOURCE, "  basetag: %s, total_size=%d", tag2str(TO_BE_32(basetag)), total_size);
 
 	if (basetag == MKID('MIDI') || basetag == MKID('iMUS')) {
 		if (_midiDriver != MD_PCSPK && _midiDriver != MD_PCJR) {
@@ -760,7 +760,7 @@ int ScummEngine::readSoundResource(int type, int idx) {
 			if ((_midiDriver == MD_PCSPK || _midiDriver == MD_PCJR) && pri != 11)
 				pri = -1;
 
-			debug(8, "    tag: %s, total_size=%d, pri=%d", tag2str(TO_BE_32(tag)), size, pri);
+			debugC(DEBUG_RESOURCE, "    tag: %s, total_size=%d, pri=%d", tag2str(TO_BE_32(tag)), size, pri);
 
 
 			if (pri > best_pri) {
@@ -793,8 +793,8 @@ int ScummEngine::readSoundResource(int type, int idx) {
 		return 1;
 	} else if (basetag == MKID('DIGI')) {
 		// Use in Putt-Putt Demo
-		debug(1, "Found base tag DIGI in sound %d, size %d", idx, total_size);
-		debug(1, "It was at position %d", _fileHandle.pos());
+		debugC(DEBUG_SOUND, "Found base tag DIGI in sound %d, size %d", idx, total_size);
+		debugC(DEBUG_SOUND, "It was at position %d", _fileHandle.pos());
 
 		_fileHandle.seek(-12, SEEK_CUR);
 		total_size = _fileHandle.readUint32BE();
@@ -807,8 +807,8 @@ int ScummEngine::readSoundResource(int type, int idx) {
 		int i = 0;
 		File dmuFile;
 		char buffer[128];
-		debug(1, "Found base tag FMUS in sound %d, size %d", idx, total_size);
-		debug(1, "It was at position %d", _fileHandle.pos());
+		debugC(DEBUG_SOUND, "Found base tag FMUS in sound %d, size %d", idx, total_size);
+		debugC(DEBUG_SOUND, "It was at position %d", _fileHandle.pos());
 		
 		_fileHandle.seek(4, SEEK_CUR);
 		// HSHD size
@@ -823,7 +823,7 @@ int ScummEngine::readSoundResource(int type, int idx) {
 			buffer[i] = _fileHandle.readByte();
 		}
 		buffer[tmpsize - 11] = '\0';
-		debug(1, "FMUS file %s", buffer);
+		debugC(DEBUG_SOUND, "FMUS file %s", buffer);
 		if (dmuFile.open(buffer, getGameDataPath()) == false) {
 			warning("Can't open music file %s*", buffer);
 			res.roomoffs[type][idx] = 0xFFFFFFFF;
@@ -831,7 +831,7 @@ int ScummEngine::readSoundResource(int type, int idx) {
 		}
 		dmuFile.seek(4, SEEK_SET);
 		total_size = dmuFile.readUint32BE();
-		debug(1, "dmu file size %d", total_size);
+		debugC(DEBUG_SOUND, "dmu file size %d", total_size);
 		dmuFile.seek(-8, SEEK_CUR);
 		dmuFile.read(createResource(type, idx, total_size), total_size);
 		dmuFile.close();
@@ -1275,7 +1275,7 @@ void ScummEngine::convertADResource(int type, int idx, byte *src_ptr, int size) 
 		} else {
 			dw = 500000 * 256 / ticks;
 		}
-		debug(4, "  ticks = %d, speed = %ld", ticks, dw);
+		debugC(DEBUG_SOUND, "  ticks = %d, speed = %ld", ticks, dw);
 			
 		// Write a tempo change Meta event
 		memcpy(ptr, "\x00\xFF\x51\x03", 4); ptr += 4;
@@ -1297,7 +1297,7 @@ void ScummEngine::convertADResource(int type, int idx, byte *src_ptr, int size) 
 			if (instr[i*16 + 13])
 				warning("Sound %d instrument %d uses percussion", idx, i);
 
-			debug(4, "Sound %d: instrument %d on channel %d.", idx, i, ch);
+			debugC(DEBUG_SOUND, "Sound %d: instrument %d on channel %d.", idx, i, ch);
 
 			memcpy(ptr, ADLIB_INSTR_MIDI_HACK, sizeof(ADLIB_INSTR_MIDI_HACK));
 
@@ -1537,7 +1537,7 @@ void ScummEngine::convertADResource(int type, int idx, byte *src_ptr, int size) 
 				{
 					delay = convert_extraflags(ptr + 30 + 22, src_ptr + 1);
 					delay2 = convert_extraflags(ptr + 30 + 40, src_ptr + 6);
-					debug(4, "delays: %d / %d", delay, delay2);
+					debugC(DEBUG_SOUND, "delays: %d / %d", delay, delay2);
 					if (delay2 >= 0 && delay2 < delay)
 						delay = delay2;
 					if (delay == -1)
@@ -1565,13 +1565,13 @@ void ScummEngine::convertADResource(int type, int idx, byte *src_ptr, int size) 
 						note += 12;
 						freq >>= 1;
 					}
-					debug(4, "Freq: %d (%x) Note: %d", freq, freq, note);
+					debugC(DEBUG_SOUND, "Freq: %d (%x) Note: %d", freq, freq, note);
 					if (freq < 0x80)
 						note = 0;
 					else
 						note += freq2note[freq - 0x80];
 	
-					debug(4, "Note: %d", note);
+					debugC(DEBUG_SOUND, "Note: %d", note);
 					if (note <= 0)
 						note = 1;
 					else if (note > 127)
@@ -1740,7 +1740,7 @@ byte *ScummEngine::getResourceAddress(int type, int idx) {
 		return NULL;
 
 	if (!res.address[type]) {
-		debug(9, "getResourceAddress(%s,%d), res.address[type] == NULL", resTypeFromId(type), idx);
+		debugC(DEBUG_RESOURCE, "getResourceAddress(%s,%d), res.address[type] == NULL", resTypeFromId(type), idx);
 		return NULL;
 	}
 
@@ -1749,13 +1749,13 @@ byte *ScummEngine::getResourceAddress(int type, int idx) {
 	}
 
 	if (!(ptr = (byte *)res.address[type][idx])) {
-		debug(9, "getResourceAddress(%s,%d) == NULL", resTypeFromId(type), idx);
+		debugC(DEBUG_RESOURCE, "getResourceAddress(%s,%d) == NULL", resTypeFromId(type), idx);
 		return NULL;
 	}
 
 	setResourceCounter(type, idx, 1);
 
-	debug(9, "getResourceAddress(%s,%d) == %p", resTypeFromId(type), idx, ptr + sizeof(MemBlkHeader));
+	debug(DEBUG_RESOURCE, "getResourceAddress(%s,%d) == %p", resTypeFromId(type), idx, ptr + sizeof(MemBlkHeader));
 	return ptr + sizeof(MemBlkHeader);
 }
 
@@ -1797,7 +1797,7 @@ byte *ScummEngine::createResource(int type, int idx, uint32 size) {
 	byte *ptr;
 
 	CHECK_HEAP
-	debug(9, "createResource(%s,%d,%d)", resTypeFromId(type), idx, size);
+	debugC(DEBUG_RESOURCE, "createResource(%s,%d,%d)", resTypeFromId(type), idx, size);
 
 	if (!validateResource("allocating", type, idx))
 		return NULL;
@@ -1844,7 +1844,7 @@ void ScummEngine::nukeResource(int type, int idx) {
 	assert(idx >= 0 && idx < res.num[type]);
 
 	if ((ptr = res.address[type][idx]) != NULL) {
-		debug(9, "nukeResource(%s,%d)", resTypeFromId(type), idx);
+		debugC(DEBUG_RESOURCE, "nukeResource(%s,%d)", resTypeFromId(type), idx);
 		res.address[type][idx] = 0;
 		res.flags[type][idx] = 0;
 		_allocatedSize -= ((MemBlkHeader *)ptr)->size;
@@ -1962,7 +1962,7 @@ void ScummEngine::expireResources(uint32 size) {
 
 	increaseResourceCounter();
 
-	debug(5, "Expired resources, mem %d -> %d", oldAllocatedSize, _allocatedSize);
+	debugC(DEBUG_RESOURCE, "Expired resources, mem %d -> %d", oldAllocatedSize, _allocatedSize);
 }
 
 void ScummEngine::freeResources() {
