@@ -100,6 +100,7 @@ private:
 	void handleAnimHeader(Chunk &);
 	void handleFrame(Chunk &);
 	void handleNewPalette(Chunk &);
+	void handleZlibFrameObject(Chunk &b);
 	void handleFrameObject(Chunk &);
 	void handleSoundBuffer(int32, int32, int32, int32, int32, int32, Chunk &, int32);
 	void handleSoundFrame(Chunk &);

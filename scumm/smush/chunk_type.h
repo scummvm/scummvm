@@ -32,6 +32,7 @@ static const Chunk::type TYPE_AHDR = 'AHDR';
 static const Chunk::type TYPE_FRME = 'FRME';
 static const Chunk::type TYPE_NPAL = 'NPAL';
 static const Chunk::type TYPE_FOBJ = 'FOBJ';
+static const Chunk::type TYPE_ZFOB = 'ZFOB';
 static const Chunk::type TYPE_PSAD = 'PSAD';
 static const Chunk::type TYPE_TRES = 'TRES';
 static const Chunk::type TYPE_XPAL = 'XPAL';

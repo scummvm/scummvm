@@ -48,6 +48,10 @@
 #include <png.h>
 #endif
 
+#ifdef USE_ZLIB
+#include <zlib.h>
+#endif
+
 namespace Scumm {
 
 const int MAX_STRINGS = 200;
@@ -673,6 +677,78 @@ void SmushPlayer::handleNewPalette(Chunk &b) {
 
 void smush_decode_codec1(byte *dst, byte *src, int left, int top, int height, int width, int dstWidth);
 
+#ifdef USE_ZLIB
+void SmushPlayer::handleZlibFrameObject(Chunk &b) {
+	if (_skipNext) {
+		_skipNext = false;
+		return;
+	}
+
+	int32 chunkSize = b.getSize();
+	byte *chunkBuffer = (byte *)malloc(chunkSize);
+	assert(chunkBuffer);
+	b.read(chunkBuffer, chunkSize);
+
+	unsigned long decompressedSize = READ_BE_UINT32(chunkBuffer);
+	byte *fobjBuffer = (byte *)malloc(decompressedSize);
+	int result = uncompress(fobjBuffer, &decompressedSize, chunkBuffer + 4, chunkSize - 4);
+	if (result != Z_OK)
+		error("SmushPlayer::handleZlibFrameObject() Zlib uncompress error");
+	free(chunkBuffer);
+
+	byte *ptr = fobjBuffer;
+	int codec = READ_LE_UINT16(ptr); ptr += 2;
+	int left = READ_LE_UINT16(ptr); ptr += 2;
+	int top = READ_LE_UINT16(ptr); ptr += 2;
+	int width = READ_LE_UINT16(ptr); ptr += 2;
+	int height = READ_LE_UINT16(ptr); ptr += 2;
+
+	if ((height == 242) && (width == 384)) {
+		_dst = _specialBuffer = (byte *)malloc(242 * 384);
+	} else if ((height > _vm->_screenHeight) || (width > _vm->_screenWidth))
+		return;
+	// FT Insane uses smaller frames to draw overlays with moving objects
+	// Other .san files do have them as well but their purpose in unknown
+	// and often it causes memory overdraw. So just skip those frames
+	else if (!_insanity && ((height != _vm->_screenHeight) || (width != _vm->_screenWidth)))
+		return;
+
+	if (!_alreadyInit) {
+		_codec37.init(width, height);
+		_codec47.init(width, height);
+		_alreadyInit = true;
+	}
+
+	_width = width;
+	_height = height;
+
+	switch (codec) {
+	case 1:
+	case 3:
+		smush_decode_codec1(_dst, fobjBuffer + 14, left, top, height, width, _vm->_screenWidth);
+		break;
+	case 37:
+		_codec37.decode(_dst, fobjBuffer + 14);
+		break;
+	case 47:
+		_codec47.decode(_dst, fobjBuffer + 14);
+		break;
+	default:
+		error("Invalid codec for frame object : %d", (int)codec);
+	}
+
+	if (_storeFrame) {
+		if (_frameBuffer == NULL) {
+			_frameBuffer = (byte *)malloc(_width * _height);
+		}
+		memcpy(_frameBuffer, _dst, _width * _height);
+		_storeFrame = false;
+	}
+
+	free(fobjBuffer);
+}
+#endif
+
 void SmushPlayer::handleFrameObject(Chunk &b) {
 	checkBlock(b, TYPE_FOBJ, 14);
 	if (_skipNext) {
@@ -760,6 +836,11 @@ void SmushPlayer::handleFrame(Chunk &b) {
 		case TYPE_FOBJ:
 			handleFrameObject(*sub);
 			break;
+#ifdef USE_ZLIB
+		case TYPE_ZFOB:
+			handleZlibFrameObject(*sub);
+			break;
+#endif
 		case TYPE_PSAD:
 			handleSoundFrame(*sub);
 			break;
