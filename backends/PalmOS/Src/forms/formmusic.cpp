@@ -59,7 +59,7 @@ static void MusicTabInit() {
 	CtlSetValue(cck1P, musicInfoP->sound.music);
 	CtlSetValue(cck2P, musicInfoP->sound.multiMidi);
 
-	if (musicInfoP->sound.drvMusic > 4)
+	if (musicInfoP->sound.drvMusic > 5)
 		musicInfoP->sound.drvMusic = 0;
 
 	LstSetSelection(list1P, musicInfoP->sound.drvMusic);
