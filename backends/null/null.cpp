@@ -24,6 +24,8 @@
 #include "system.h"
 
 
+#if defined(USE_NULL_DRIVER)
+
 /* NULL video driver */
 class OSystem_NULL : public OSystem {
 public:
@@ -90,3 +92,5 @@ OSystem *OSystem_NULL_create() {
 OSystem *OSystem_NULL_create() {
 	return NULL;
 }
+
+#endif
