@@ -112,6 +112,11 @@ int SoundMixer::playStream(PlayingSoundHandle * handle, int idx, void * sound, u
 }
 
 void SoundMixer::stopChannel(int index) {
+	if (index < 0) {
+		warning("soundMixer::stopChannel has invalid index %d", index);
+		return;
+	}
+
 	if (_channels[index] == NULL) {
 		_channels[index]->_toBeDestroyed = true;
 	}
