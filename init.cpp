@@ -4,17 +4,17 @@
 Scumm::Scumm(void)
 {	
 	/* Initilize all our stuff */
-	ZeroMemory(&res, sizeof(res));
-	ZeroMemory(&vm, sizeof(vm));
-	ZeroMemory(&camera, sizeof(camera));
-	ZeroMemory(&mouse, sizeof(mouse));
-	ZeroMemory(&string, sizeof(string));
-	ZeroMemory(&_mixer_channel, sizeof(_mixer_channel));
-	ZeroMemory(&charset, sizeof(charset));
+	memset(&res, 0, sizeof(res));
+	memset(&vm, 0, sizeof(vm));
+	memset(&camera, 0, sizeof(camera));
+	memset(&mouse, 0, sizeof(mouse));
+	memset(&string, 0, sizeof(string));
+	memset(&_mixer_channel, 0, sizeof(_mixer_channel));
+	memset(&charset, 0, sizeof(charset));
 	
-	//ZeroMemory(_objs, sizeof(_objs));
-	ZeroMemory(_colorCycle, sizeof(_colorCycle));        
-	ZeroMemory(_mouthSyncTimes, sizeof(_mouthSyncTimes));        
+	//memset(_objs, 0, sizeof(_objs));
+	memset(_colorCycle, 0, sizeof(_colorCycle));        
+	memset(_mouthSyncTimes, 0, sizeof(_mouthSyncTimes));        
 
 		_resFilePath=0;
         _resFilePrefix=0;
