@@ -251,7 +251,6 @@ SCUMM
   Or constantly (well, at least whenever the camera moves) redraw the text.
   That would require buffering the text; maybe the blast text code could be
   reused for this...
-* Finish formating stuff in subtitles/translation code in the dig.
 * Add tool and support for compress *.la* file resources (ex. sounds) to fit
   on small devices 
 * Fix codec44 for nut fonts
