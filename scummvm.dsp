@@ -248,14 +248,6 @@ SOURCE=.\sound\mixer.cpp
 
 SOURCE=.\sound\mixer.h
 # End Source File
-# Begin Source File
-
-SOURCE=.\sound\sound.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\sound\sound.h
-# End Source File
 # End Group
 # Begin Group "gui"
 

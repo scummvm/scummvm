@@ -340,6 +340,7 @@ SOURCE=.\scumm\imuse.h
 # Begin Source File
 
 SOURCE=.\scumm\insane.cpp
+# PROP Exclude_From_Build 1
 # End Source File
 # Begin Source File
 
@@ -356,6 +357,10 @@ SOURCE=.\scumm\resource.cpp
 # Begin Source File
 
 SOURCE=.\scumm\resource.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\scumm\resource_v2.cpp
 # End Source File
 # Begin Source File
 
@@ -396,6 +401,14 @@ SOURCE=.\scumm\scummvm.cpp
 # Begin Source File
 
 SOURCE=.\scumm\smush.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\scumm\sound.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\scumm\sound.h
 # End Source File
 # Begin Source File
 
