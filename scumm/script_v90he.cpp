@@ -1750,6 +1750,7 @@ void ScummEngine_v90he::o90_getPolygonOverlap() {
 	case 7:
 	case 8:
 	case 9:
+	case 10:
 		push(0);
 		break;
 	default:
