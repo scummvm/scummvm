@@ -83,7 +83,7 @@ public:
 
 	// start playing a raw sound
 	int playRaw(PlayingSoundHandle *handle, void *sound, uint32 size, uint rate, byte flags,
-				int id = -1, uint32 loopStart = 0, uint32 loopEnd = 0);
+				byte volume, int8 pan, int id = -1, uint32 loopStart = 0, uint32 loopEnd = 0);
 #ifdef USE_MAD
 	int playMP3(PlayingSoundHandle *handle, File *file, uint32 size);
 	int playMP3CDTrack(PlayingSoundHandle *handle, File *file, mad_timer_t duration);
@@ -107,10 +107,14 @@ public:
 	/** stop playing the channel for the given handle */
 	void stopHandle(PlayingSoundHandle handle);
 
+	void setChannelVolume(PlayingSoundHandle handle, byte volume);
+
+	void setChannelPan(PlayingSoundHandle handle, int8 pan);
+
 	bool isChannelActive(PlayingSoundHandle handle);
 
 	/** Start a new stream. */
-	int newStream(void *sound, uint32 size, uint rate, byte flags, uint32 buffer_size);
+	int newStream(void *sound, uint32 size, uint rate, byte flags, uint32 buffer_size, byte volume, int8 pan);
 
 	/** Append to an existing stream. */
 	void appendStream(int index, void *sound, uint32 size);

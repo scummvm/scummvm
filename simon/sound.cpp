@@ -174,7 +174,7 @@ int WavSound::playSound(uint sound, PlayingSoundHandle *handle, byte flags) {
 	byte *buffer = (byte *)malloc(data[1]);
 	_file->read(buffer, data[1]);
 
-	return _mixer->playRaw(handle, buffer, data[1], FROM_LE_32(wave_hdr.samples_per_sec), flags);
+	return _mixer->playRaw(handle, buffer, data[1], FROM_LE_32(wave_hdr.samples_per_sec), flags, 127, 0);
 }
 
 int VocSound::playSound(uint sound, PlayingSoundHandle *handle, byte flags) {
@@ -212,7 +212,7 @@ int VocSound::playSound(uint sound, PlayingSoundHandle *handle, byte flags) {
 	byte *buffer = (byte *)malloc(size);
 	_file->read(buffer, size);
 
-	return _mixer->playRaw(handle, buffer, size, samples_per_sec, flags);
+	return _mixer->playRaw(handle, buffer, size, samples_per_sec, flags, 127, 0);
 }
 
 int RawSound::playSound(uint sound, PlayingSoundHandle *handle, byte flags) {
@@ -226,7 +226,7 @@ int RawSound::playSound(uint sound, PlayingSoundHandle *handle, byte flags) {
 	byte *buffer = (byte *)malloc(size);
 	_file->read(buffer, size);
 
-	return _mixer->playRaw(handle, buffer, size, 22050, flags);
+	return _mixer->playRaw(handle, buffer, size, 22050, flags, 127, 0);
 }
 
 #ifdef USE_MAD

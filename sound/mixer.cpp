@@ -44,6 +44,9 @@ protected:
 	PlayingSoundHandle *_handle;
 	RateConverter *_converter;
 	AudioInputStream *_input;
+	byte _volume;
+	int8 _pan;
+
 public:
 	int _id;
 
@@ -54,6 +57,12 @@ public:
 	virtual ~Channel();
 	void destroy();
 	virtual void mix(int16 *data, uint len);
+	virtual void setChannelVolume(const byte volume) {
+		_volume = volume;
+	}
+	virtual void setChannelPan(const int8 pan) {
+		_pan = pan;
+	}
 	virtual int getVolume() const {
 		return isMusicChannel() ? _mixer->getMusicVolume() : _mixer->getVolume();
 	}
@@ -63,7 +72,7 @@ public:
 class ChannelRaw : public Channel {
 	byte *_ptr;
 public:
-	ChannelRaw(SoundMixer *mixer, PlayingSoundHandle *handle, void *sound, uint32 size, uint rate, byte flags, int id, uint32 loopStart, uint32 loopEnd);
+	ChannelRaw(SoundMixer *mixer, PlayingSoundHandle *handle, void *sound, uint32 size, uint rate, byte flags, byte volume, int8 pan, int id, uint32 loopStart, uint32 loopEnd);
 	~ChannelRaw();
 	bool isMusicChannel() const		{ return false; }
 };
@@ -71,7 +80,7 @@ public:
 class ChannelStream : public Channel {
 	bool _finished;
 public:
-	ChannelStream(SoundMixer *mixer, PlayingSoundHandle *handle, void *sound, uint32 size, uint rate, byte flags, uint32 buffer_size);
+	ChannelStream(SoundMixer *mixer, PlayingSoundHandle *handle, void *sound, uint32 size, uint rate, byte flags, uint32 buffer_size, byte volume, int8 pan);
 	void mix(int16 *data, uint len);
 	void append(void *sound, uint32 size);
 	bool isMusicChannel() const		{ return true; }
@@ -135,9 +144,9 @@ SoundMixer::~SoundMixer() {
 	_syst->delete_mutex(_mutex);
 }
 
-int SoundMixer::newStream(void *sound, uint32 size, uint rate, byte flags, uint32 buffer_size) {
+int SoundMixer::newStream(void *sound, uint32 size, uint rate, byte flags, uint32 buffer_size, byte volume, int8 pan) {
 	StackLock lock(_mutex);
-	return insertChannel(NULL, new ChannelStream(this, 0, sound, size, rate, flags, buffer_size));
+	return insertChannel(NULL, new ChannelStream(this, 0, sound, size, rate, flags, buffer_size, volume, pan));
 }
 
 void SoundMixer::appendStream(int index, void *sound, uint32 size) {
@@ -195,7 +204,7 @@ int SoundMixer::insertChannel(PlayingSoundHandle *handle, Channel *chan) {
 	return index;
 }
 
-int SoundMixer::playRaw(PlayingSoundHandle *handle, void *sound, uint32 size, uint rate, byte flags, int id, uint32 loopStart, uint32 loopEnd) {
+int SoundMixer::playRaw(PlayingSoundHandle *handle, void *sound, uint32 size, uint rate, byte flags, byte volume, int8 pan, int id, uint32 loopStart, uint32 loopEnd) {
 	StackLock lock(_mutex);
 
 	// Prevent duplicate sounds
@@ -205,7 +214,7 @@ int SoundMixer::playRaw(PlayingSoundHandle *handle, void *sound, uint32 size, ui
 				return -1;
 	}
 
-	return insertChannel(handle, new ChannelRaw(this, handle, sound, size, rate, flags, id, loopStart, loopEnd));
+	return insertChannel(handle, new ChannelRaw(this, handle, sound, size, rate, flags, volume, pan, id, loopStart, loopEnd));
 }
 
 #ifdef USE_MAD
@@ -314,6 +323,40 @@ void SoundMixer::stopHandle(PlayingSoundHandle handle) {
 		_channels[index]->destroy();
 }
 
+void SoundMixer::setChannelVolume(PlayingSoundHandle handle, byte volume) {
+	StackLock lock(_mutex);
+	
+	if (handle == 0)
+		return;
+
+	int index = handle - 1;
+
+	if ((index < 0) || (index >= NUM_CHANNELS)) {
+		warning("soundMixer::setChannelVolume has invalid index %d", index);
+		return;
+	}
+
+	if (_channels[index])
+		_channels[index]->setChannelVolume(volume);
+}
+
+void SoundMixer::setChannelPan(PlayingSoundHandle handle, int8 pan) {
+	StackLock lock(_mutex);
+	
+	if (handle == 0)
+		return;
+
+	int index = handle - 1;
+
+	if ((index < 0) || (index >= NUM_CHANNELS)) {
+		warning("soundMixer::setChannelVolume has invalid index %d", index);
+		return;
+	}
+
+	if (_channels[index])
+		_channels[index]->setChannelPan(pan);
+}
+
 bool SoundMixer::isChannelActive(PlayingSoundHandle handle) {
 	StackLock lock(_mutex);
 	
@@ -398,7 +441,17 @@ void Channel::destroy() {
 	delete this;
 }
 
-	
+static void changeVolumeAndPan(int16 *data, uint len, byte volume, int8 pan) {
+	byte volumeLeft = abs(pan - 128);
+	byte volumeRight = abs(pan + 128);
+	for (uint32 i = 0; i < len; i++) {
+		int16 sampleL = data[i * 2 + 0];
+		int16 sampleR = data[i * 2 + 1];
+		data[i * 2 + 0] = (sampleL * volume * volumeLeft) / (256 * 256);
+		data[i * 2 + 1] = (sampleR * volume * volumeRight) / (256 * 256);
+	}
+}
+
 /* len indicates the number of sample *pairs*. So a value of
    10 means that the buffer contains twice 10 sample, each
    16 bits, for a total of 40 bytes.
@@ -412,13 +465,16 @@ void Channel::mix(int16 *data, uint len) {
 		assert(_converter);
 		_converter->flow(*_input, data, len, getVolume());
 	}
+	changeVolumeAndPan(data, len, _volume, _pan);
 }
 
 /* RAW mixer */
-ChannelRaw::ChannelRaw(SoundMixer *mixer, PlayingSoundHandle *handle, void *sound, uint32 size, uint rate, byte flags, int id, uint32 loopStart, uint32 loopEnd)
+ChannelRaw::ChannelRaw(SoundMixer *mixer, PlayingSoundHandle *handle, void *sound, uint32 size, uint rate, byte flags, byte volume, int8 pan, int id, uint32 loopStart, uint32 loopEnd)
 	: Channel(mixer, handle) {
 	_id = id;
 	_ptr = (byte *)sound;
+	_volume = volume;
+	_pan = pan;
 	
 	// Create the input stream
 	if (flags & SoundMixer::FLAG_LOOP) {
@@ -445,8 +501,10 @@ ChannelRaw::~ChannelRaw() {
 
 ChannelStream::ChannelStream(SoundMixer *mixer, PlayingSoundHandle *handle,
                              void *sound, uint32 size, uint rate,
-                             byte flags, uint32 buffer_size)
+                             byte flags, uint32 buffer_size, byte volume, int8 pan)
 	: Channel(mixer, handle) {
+	_volume = volume;
+	_pan = pan;
 	assert(size <= buffer_size);
 
 	// Create the input stream
@@ -483,6 +541,7 @@ void ChannelStream::mix(int16 *data, uint len) {
 
 	assert(_converter);
 	_converter->flow(*_input, data, len, getVolume());
+	changeVolumeAndPan(data, len, _volume, _pan);
 }
 
 #ifdef USE_MAD

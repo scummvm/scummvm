@@ -812,7 +812,7 @@ void IMuseDigital::handler() {
 			if (_scumm->_silentDigitalImuse == false) {
 				if (_channel[l]._mixerChannel == -1) {
 					_channel[l]._mixerChannel = _scumm->_mixer->newStream(buf, mixer_size,
-					                           _channel[l]._freq, _channel[l]._mixerFlags, 100000);
+					                           _channel[l]._freq, _channel[l]._mixerFlags, 100000, 127, 0);
 				} else {
 					_scumm->_mixer->appendStream(_channel[l]._mixerChannel, buf, mixer_size);
 				}

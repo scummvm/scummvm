@@ -214,7 +214,7 @@ void Sound::playSound(int soundID) {
 			// Allocate a sound buffer, copy the data into it, and play
 			sound = (char *)malloc(size);
 			memcpy(sound, ptr, size);
-			_scumm->_mixer->playRaw(NULL, sound, size, rate, flags, soundID);
+			_scumm->_mixer->playRaw(NULL, sound, size, rate, flags, 127, 0, soundID);
 			return;
 		}
 		// Support for Putt-Putt sounds - very hackish, too 8-)
@@ -232,7 +232,7 @@ void Sound::playSound(int soundID) {
 			// Allocate a sound buffer, copy the data into it, and play
 			sound = (char *)malloc(size);
 			memcpy(sound, ptr + 8, size);
-			_scumm->_mixer->playRaw(NULL, sound, size, rate, flags, soundID);
+			_scumm->_mixer->playRaw(NULL, sound, size, rate, flags, 127, 0, soundID);
 			return;
 		}
 		else if (READ_UINT32(ptr) == MKID('MRAW')) {
@@ -249,7 +249,7 @@ void Sound::playSound(int soundID) {
 			// Allocate a sound buffer, copy the data into it, and play
 			sound = (char *)malloc(size);
 			memcpy(sound, ptr + 8, size);
-			_scumm->_mixer->playRaw(NULL, sound, size, rate, flags, soundID);
+			_scumm->_mixer->playRaw(NULL, sound, size, rate, flags, 127, 0, soundID);
 			
 			return;
 		}	
@@ -318,7 +318,7 @@ void Sound::playSound(int soundID) {
 			// Allocate a sound buffer, copy the data into it, and play
 			sound = (char *)malloc(size);
 			memcpy(sound, ptr + 33, size);
-			_scumm->_mixer->playRaw(NULL, sound, size, rate, flags, soundID);
+			_scumm->_mixer->playRaw(NULL, sound, size, rate, flags, 127, 0, soundID);
 			return;
 		} else if (_scumm->_features & GF_FMTOWNS) {
 			size = READ_LE_UINT32(ptr);
@@ -361,7 +361,7 @@ void Sound::playSound(int soundID) {
 							}
 						}
 
-						_scumm->_mixer->playRaw(NULL, sound, waveSize, rate, flags, soundID, loopStart, loopEnd);
+						_scumm->_mixer->playRaw(NULL, sound, waveSize, rate, flags, 127, 0, soundID, loopStart, loopEnd);
 					}
 					break;
 				}
@@ -445,9 +445,11 @@ void Sound::playSound(int soundID) {
 			if ((_scumm->_features & GF_AMIGA) && (READ_BE_UINT16(ptr + 16) || READ_BE_UINT16(ptr + 6))) {
 				// the first check is for pitch-bending looped sounds (i.e. "pouring liquid", "biplane dive", etc.)
 				// the second check is for simple looped sounds
-				_scumm->_mixer->playRaw(NULL,sound,size,rate,SoundMixer::FLAG_AUTOFREE | SoundMixer::FLAG_LOOP,soundID,READ_BE_UINT16(ptr + 10) - READ_BE_UINT16(ptr + 8),READ_BE_UINT16(ptr + 14));
+				_scumm->_mixer->playRaw(NULL, sound, size, rate,
+							SoundMixer::FLAG_AUTOFREE | SoundMixer::FLAG_LOOP, 127, 0, soundID,
+							READ_BE_UINT16(ptr + 10) - READ_BE_UINT16(ptr + 8),READ_BE_UINT16(ptr + 14));
 			} else {
-				_scumm->_mixer->playRaw(NULL,sound,size,rate,SoundMixer::FLAG_AUTOFREE,soundID);
+				_scumm->_mixer->playRaw(NULL, sound, size, rate, SoundMixer::FLAG_AUTOFREE, 127, 0, soundID);
 			}
 			return;
 		}
@@ -460,7 +462,7 @@ void Sound::playSound(int soundID) {
 			rate = 11000;
 			sound = (char *)malloc(size);
 			memcpy(sound,ptr + 100,size);
-			_scumm->_mixer->playRaw(NULL,sound,size,rate,SoundMixer::FLAG_AUTOFREE,soundID);
+			_scumm->_mixer->playRaw(NULL, sound, size, rate, SoundMixer::FLAG_AUTOFREE, 127, 0, soundID);
 			return;
 		}
 	}
@@ -559,7 +561,7 @@ void Sound::startTalkSound(uint32 offset, uint32 b, int mode, PlayingSoundHandle
 		_sfxFile->seek(offset + 48, SEEK_SET);
 		sound = (byte *)malloc(b - 64);
 		_sfxFile->read(sound, b - 64);
-		_scumm->_mixer->playRaw(handle, sound, b - 64, 11025, SoundMixer::FLAG_UNSIGNED | SoundMixer::FLAG_AUTOFREE);
+		_scumm->_mixer->playRaw(handle, sound, b - 64, 11025, SoundMixer::FLAG_UNSIGNED | SoundMixer::FLAG_AUTOFREE, 127, 0);
 		return;
 	}
 
@@ -1248,7 +1250,7 @@ void Sound::bundleMusicHandler(Scumm *scumm) {
 	_bundleMusicPosition += final_size;
 	if (_bundleMusicTrack == -1) {
 		_bundleMusicTrack = _scumm->_mixer->newStream(buffer, final_size, rate,
-															SoundMixer::FLAG_16BITS | SoundMixer::FLAG_STEREO, 300000);
+															SoundMixer::FLAG_16BITS | SoundMixer::FLAG_STEREO, 300000, 127, 0);
 	} else {
 		_scumm->_mixer->appendStream(_bundleMusicTrack, buffer, final_size);
 	}
@@ -1355,12 +1357,12 @@ void Sound::playBundleSound(char *sound, PlayingSoundHandle *handle) {
 		_scumm->_mixer->stopHandle(*handle);
 
 	if (bits == 8) {
-		_scumm->_mixer->playRaw(handle, final, size, rate, SoundMixer::FLAG_UNSIGNED | SoundMixer::FLAG_AUTOFREE);
+		_scumm->_mixer->playRaw(handle, final, size, rate, SoundMixer::FLAG_UNSIGNED | SoundMixer::FLAG_AUTOFREE, 127, 0);
 	} else if (bits == 16) {
 		// FIXME: For some weird reasons, sometimes we get an odd size, even though
 		// the data is supposed to be in 16 bit format... that makes no sense...
 		size &= ~1;
-		_scumm->_mixer->playRaw(handle, final, size, rate, SoundMixer::FLAG_16BITS | SoundMixer::FLAG_AUTOFREE);
+		_scumm->_mixer->playRaw(handle, final, size, rate, SoundMixer::FLAG_16BITS | SoundMixer::FLAG_AUTOFREE, 127, 0);
 	} else {
 		warning("Sound::playBundleSound() to do more options to playRaw...");
 	}
@@ -1373,7 +1375,7 @@ void Sound::playSfxSound(void *sound, uint32 size, uint rate, bool isUnsigned, P
 	byte flags = SoundMixer::FLAG_AUTOFREE;
 	if (isUnsigned)
 		flags |= SoundMixer::FLAG_UNSIGNED;
-	_scumm->_mixer->playRaw(handle, sound, size, rate, flags);
+	_scumm->_mixer->playRaw(handle, sound, size, rate, flags, 127, 0);
 }
 
 #ifdef USE_VORBIS
