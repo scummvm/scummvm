@@ -735,10 +735,9 @@ int ScummEngine::getPathToDestBox(byte from, byte to) {
 
 	// WORKAROUND #2: In addition to the above, we have to add this special
 	// case to fix the scene in Indy3 where Indy meets Hitler in Berlin.
-	// It's one of the places (or maybe even the only one?). See bug #770690
-	// and also bug #774783.
+	// See bug #770690 and also bug #774783.
 	if ((_gameId == GID_INDY3) && _roomResource == 46 && from == 1 && to == 0)
-		return 1;
+		return 0;
 
 	// Skip up to the matrix data for box 'from'
 	for (i = 0; i < from && boxm < end; i++) {
@@ -1137,24 +1136,28 @@ bool ScummEngine::areBoxesNeighbours(int box1nr, int box2nr) {
 	return result;
 }
 
-void Actor::findPathTowardsOld(byte trap1, byte trap2, byte final_trap, Common::Point &p2, Common::Point &p3) {
+void Actor::findPathTowardsOld(byte box1, byte box2, byte finalBox, Common::Point &p2, Common::Point &p3) {
 	Common::Point pt;
 	Common::Point gateA[2];
 	Common::Point gateB[2];
 
-	_vm->getGates(trap1, trap2, gateA, gateB);
+	_vm->getGates(box1, box2, gateA, gateB);
 
 	p2.x = 32000;
 	p3.x = 32000;
 
-	// next box (trap2) = final box?
-	if (trap2 == final_trap) {
-		// Is the actor (x,y) between both gates?
-		if (compareSlope(_pos.x, _pos.y, walkdata.dest.x, walkdata.dest.y, gateA[0].x, gateA[0].y) !=
-				compareSlope(_pos.x, _pos.y, walkdata.dest.x, walkdata.dest.y, gateB[0].x, gateB[0].y) &&
-				compareSlope(_pos.x, _pos.y, walkdata.dest.x, walkdata.dest.y, gateA[1].x, gateA[1].y) !=
-				compareSlope(_pos.x, _pos.y, walkdata.dest.x, walkdata.dest.y, gateB[1].x, gateB[1].y)) {
-			return;
+	// next box (box2) = final box?
+	if (box2 == finalBox) {
+		// In Indy3, the masks (= z-level) have to match, too -- needed for the
+		// 'maze' in the zeppeling (see bug #1032964).
+		if (_vm->_gameId != GID_INDY3 || _vm->getMaskFromBox(box1) == _vm->getMaskFromBox(box2)) {
+			// Is the actor (x,y) between both gates?
+			if (compareSlope(_pos.x, _pos.y, walkdata.dest.x, walkdata.dest.y, gateA[0].x, gateA[0].y) !=
+					compareSlope(_pos.x, _pos.y, walkdata.dest.x, walkdata.dest.y, gateB[0].x, gateB[0].y) &&
+					compareSlope(_pos.x, _pos.y, walkdata.dest.x, walkdata.dest.y, gateA[1].x, gateA[1].y) !=
+					compareSlope(_pos.x, _pos.y, walkdata.dest.x, walkdata.dest.y, gateB[1].x, gateB[1].y)) {
+				return;
+			}
 		}
 	}
 
@@ -1172,13 +1175,13 @@ void Actor::findPathTowardsOld(byte trap1, byte trap2, byte final_trap, Common::
 
 /**
  * Compute the "gate" between two boxes. The gate is a pair of two lines which
- * both start on box 'trap1' and end on 'trap2'. For both lines, one of its
+ * both start on box 'box1' and end on 'box2'. For both lines, one of its
  * end points is the corner point of one of the two boxes. The other end point
  * is a point on the other point closest to first end point.
  * This way the lines bound a 'corridor' between the two boxes, through which
- * the actor has to walk to get from trap1 to trap2.
+ * the actor has to walk to get from box1 to box2.
  */
-void ScummEngine::getGates(int trap1, int trap2, Common::Point gateA[2], Common::Point gateB[2]) {
+void ScummEngine::getGates(int box1, int box2, Common::Point gateA[2], Common::Point gateB[2]) {
 	int i, j;
 	int dist[8];
 	int minDist[3];
@@ -1191,23 +1194,23 @@ void ScummEngine::getGates(int trap1, int trap2, Common::Point gateA[2], Common:
 
 	// For all corner coordinates of the first box, compute the point closest 
 	// to them on the second box (and also compute the distance of these points).
-	getBoxCoordinates(trap1, &coords);
+	getBoxCoordinates(box1, &coords);
 	boxCorner[0] = coords.ul;
 	boxCorner[1] = coords.ur;
 	boxCorner[2] = coords.lr;
 	boxCorner[3] = coords.ll;
 	for (i = 0; i < 4; i++) {
-		dist[i] = getClosestPtOnBox(trap2, boxCorner[i].x, boxCorner[i].y, closestPoint[i].x, closestPoint[i].y);
+		dist[i] = getClosestPtOnBox(box2, boxCorner[i].x, boxCorner[i].y, closestPoint[i].x, closestPoint[i].y);
 	}
 
 	// Now do the same but with the roles of the first and second box swapped.
-	getBoxCoordinates(trap2, &coords);
+	getBoxCoordinates(box2, &coords);
 	boxCorner[4] = coords.ul;
 	boxCorner[5] = coords.ur;
 	boxCorner[6] = coords.lr;
 	boxCorner[7] = coords.ll;
 	for (i = 4; i < 8; i++) {
-		dist[i] = getClosestPtOnBox(trap1, boxCorner[i].x, boxCorner[i].y, closestPoint[i].x, closestPoint[i].y);
+		dist[i] = getClosestPtOnBox(box1, boxCorner[i].x, boxCorner[i].y, closestPoint[i].x, closestPoint[i].y);
 	}
 
 	// Find the three closest "close" points between the two boxes.

@@ -37,12 +37,15 @@ enum MoveFlags {
 };
 
 struct ActorWalkData {
-	Common::Point dest;						// Final destination
-	byte destbox;
-	int16 destdir;
-	Common::Point cur;										// Current position
-	byte curbox;
-	Common::Point next;							// Next position on our way to the destination
+	Common::Point dest;           // Final destination point
+	byte destbox;                 // Final destination box
+	int16 destdir;                // Final destination, direction to face at
+
+	Common::Point cur;            // Last position
+	byte curbox;                  // Last box
+
+	Common::Point next;           // Next position on our way to the destination, i.e. our intermediate destination
+
 	Common::Point point3;
 	int32 deltaXFactor, deltaYFactor;
 	uint16 xfrac, yfrac;

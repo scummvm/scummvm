@@ -1663,6 +1663,12 @@ void Actor::walkActorOld() {
 			break;
 
 		next_box = _vm->getPathToDestBox(_walkbox, walkdata.destbox);
+
+		// WORKAROUND: To fully fix bug #774783, we add a special case 
+		// here, resulting in a different next_box value for Hitler.
+		if ((_vm->_gameId == GID_INDY3) && _vm->_roomResource == 46 && _walkbox == 1 && walkdata.destbox == 0 && number == 9)
+			next_box = 1;
+
 		if (next_box < 0) {
 			moving |= MF_LAST_LEG;
 			return;
@@ -1701,18 +1707,11 @@ void Actor::walkActorOld() {
 		if (calcMovementFactor(p3))
 			return;
 
-		// FIXME: Fingolfin changed the destbox to curbox, matching walkActor.
-		// Motivation for this was comparision with some MI EGA disasm...
-		// However, that caused a regression in Indy3 (bug #809547).
-		// On the other hand, curbox is needed to fix bug #830106... <sigh>
-		if (_vm->_version >= 3)
-			setBox(walkdata.destbox);
-		else
-			setBox(walkdata.curbox);
+		setBox(walkdata.destbox);
 
 		// FIXME: Ender added this recursion counter as a hack around
 		//        a infinite loop in Maniac V1 - see bug #862245
-		if (loopCtr > 10000) {
+		if (loopCtr > 100) {
 			moving |= MF_LAST_LEG;
 			return;
 		}
