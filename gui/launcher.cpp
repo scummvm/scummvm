@@ -94,7 +94,9 @@ protected:
 EditGameDialog::EditGameDialog(const String &domain, GameSettings target)
 	: Dialog(8, 50, 320 - 2 * 8, 200 - 2 * 40),
 	  _domain(domain) {
-        const int vBorder = 5;	// Tab border
+
+	const int vBorder = 5;	// Tab border
+	int yoffset;
 
 	// GAME: Path to game data (r/o)
 	String path(ConfMan.get("path", _domain));
@@ -105,54 +107,60 @@ EditGameDialog::EditGameDialog(const String &domain, GameSettings target)
 		description = target.description;
 	}
 
-        // GUI:  Add tab widget
-        TabWidget *tab = new TabWidget(this, 0, vBorder, _w, _h - 24 - 2*vBorder);
+	// GUI:  Add tab widget
+	TabWidget *tab = new TabWidget(this, 0, vBorder, _w, _h - 24 - 2*vBorder);
+
 	tab->addTab("Game");
+	yoffset = vBorder;
 
 	// GUI:  Label & edit widget for the game ID
-	new StaticTextWidget(tab, 10, 10, 40, kLineHeight, "ID: ", kTextAlignRight);
-	_domainWidget = new EditTextWidget(tab, 50, 10, _w - 50 - 10, kLineHeight, _domain);
+	new StaticTextWidget(tab, 10, yoffset+2, 40, kLineHeight, "ID: ", kTextAlignRight);
+	_domainWidget = new EditTextWidget(tab, 50, yoffset, _w - 50 - 10, kLineHeight, _domain);
+	yoffset += 16;
 
 	// GUI:  Label & edit widget for the description
-	new StaticTextWidget(tab, 10, 26, 40, kLineHeight, "Name: ", kTextAlignRight);
-	_descriptionWidget = new EditTextWidget(tab, 50, 26, _w - 50 - 10, kLineHeight, description);
+	new StaticTextWidget(tab, 10, yoffset+2, 40, kLineHeight, "Name: ", kTextAlignRight);
+	_descriptionWidget = new EditTextWidget(tab, 50, yoffset, _w - 50 - 10, kLineHeight, description);
+	yoffset += 16;
 
 	// GUI:  Label for the game path
  	// TODO: Allow editing, and clip to the RIGHT on long paths (to keep meaningful portions)
-	new StaticTextWidget(tab, 10, 42, 40, kLineHeight, "Path: ", kTextAlignRight);
-	new StaticTextWidget(tab, 50, 42, _w - 50 - 10, kLineHeight, path, kTextAlignLeft);
+	new StaticTextWidget(tab, 10, yoffset, 40, kLineHeight, "Path: ", kTextAlignRight);
+	new StaticTextWidget(tab, 50, yoffset, _w - 50 - 10, kLineHeight, path, kTextAlignLeft);
 
 	// TODO: Platform and language dropdowns (?)
 
 	// GUI:  Add Graphics tab
 	tab->addTab("Graphics");
+	yoffset = vBorder;
 
-        // The GFX mode popup & a label
-        // TODO - add an API to query the list of available GFX modes, and to get/set the mode
-        PopUpWidget *gfxPopUp;
-        gfxPopUp = new PopUpWidget(tab, 5, vBorder, 280, kLineHeight, "Graphics mode: ", 100);
-        gfxPopUp->appendEntry("<global default>");
-        gfxPopUp->appendEntry("");
-        gfxPopUp->appendEntry("Normal (no scaling)");
-        gfxPopUp->appendEntry("2x");
-        gfxPopUp->appendEntry("3x");
-        gfxPopUp->appendEntry("2xSAI");
-        gfxPopUp->appendEntry("Super2xSAI");
-        gfxPopUp->appendEntry("SuperEagle");
-        gfxPopUp->appendEntry("AdvMAME2x");
-        gfxPopUp->appendEntry("TV2x");
-        gfxPopUp->appendEntry("DotMatrix");
-        gfxPopUp->setSelected(0);
+	// The GFX mode popup & a label
+	// TODO - add an API to query the list of available GFX modes, and to get/set the mode
+	PopUpWidget *gfxPopUp;
+	gfxPopUp = new PopUpWidget(tab, 5, yoffset, 280, kLineHeight, "Graphics mode: ", 100);
+	yoffset += 16;
+	gfxPopUp->appendEntry("<global default>");
+	gfxPopUp->appendEntry("");
+	gfxPopUp->appendEntry("Normal (no scaling)");
+	gfxPopUp->appendEntry("2x");
+	gfxPopUp->appendEntry("3x");
+	gfxPopUp->appendEntry("2xSAI");
+	gfxPopUp->appendEntry("Super2xSAI");
+	gfxPopUp->appendEntry("SuperEagle");
+	gfxPopUp->appendEntry("AdvMAME2x");
+	gfxPopUp->appendEntry("TV2x");
+	gfxPopUp->appendEntry("DotMatrix");
+	gfxPopUp->setSelected(0);
 
-        // FIXME - disable GFX popup for now
-        gfxPopUp->setEnabled(false);
+	// FIXME - disable GFX popup for now
+	gfxPopUp->setEnabled(false);
 
 	// GUI:  Full screen checkbox
-	_fullscreenCheckbox = new CheckboxWidget(tab, 15, 62, 200, 16, "Use Fullscreen Mode", 0, 'F');
+	_fullscreenCheckbox = new CheckboxWidget(tab, 15, yoffset, 200, 16, "Use Fullscreen Mode", 0, 'F');
 	_fullscreenCheckbox->setState(ConfMan.getBool("fullscreen", _domain));
 
-        // Activate the first tab
-        tab->setActiveTab(0);
+	// Activate the first tab
+	tab->setActiveTab(0);
 
 	// GUI:  Add OK & Cancel buttons
 	addButton(_w - 2 * (kButtonWidth + 10), _h - 24, "Cancel", kCloseCmd, 0);
