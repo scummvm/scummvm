@@ -113,7 +113,7 @@ void MidiDriver::midiInitSeq() {
 
 int MidiDriver::open_sequencer_device() {
 	int device = 0;
-#if !define(__APPLE__CW)		// No getenv support on Apple Carbon
+#if !defined(__APPLE__CW)		// No getenv support on Apple Carbon
 	char *device_name = getenv("SCUMMVM_MIDI");
 	if (device_name != NULL) {
 		device = (open((device_name), O_RDWR, 0));
@@ -136,7 +136,7 @@ int MidiDriver::open_sequencer_device() {
 /*********** Timidity		*/
 int MidiDriver::connect_to_timidity(int port) {
 	int s = 0;
-#if !define(__APPLE__CW)		// No socket support on Apple Carbon
+#if !defined(__APPLE__CW)		// No socket support on Apple Carbon
 	struct hostent *serverhost;
 	struct sockaddr_in sadd;	
 
