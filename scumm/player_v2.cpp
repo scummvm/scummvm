@@ -262,6 +262,38 @@ static const int8 freqmod_table[0x502] = {
   -123,  62, 105,  21,  -8,  70, 106,   4,
   -106, 115,  14, -39,  22,  47, 103, 104,
    -44,  -9,  74,  74, -48,  87, 104, 118,
+    -6,  22, -69,  17, -83, -82,  36,-120,
+   121,  -2,  82, -37,  37,  67, -27,  60,
+   -12,  69, -45, -40,  40, -50,  11, -11,
+   -59,  96,  89,  61,-105,  39,-118,  89,
+   118,  45, -48, -62, -55, -51, 104, -44,
+    73, 106, 121,  37,   8,  97,  64,  20,
+   -79,  59, 106, -91,  17,  40, -63,-116,
+   -42, -87,  11,-121,-105,-116,  47, -15,
+    21,  29,-102,-107, -63,-101, -31, -64,
+   126, -23, -88,-102, -89,-122, -62, -75,
+    84, -65,-102, -25, -39,  35, -47,  85,
+  -112,  56,  40, -47, -39, 108, -95, 102,
+    94,  78, -31,  48,-100,  -2, -39, 113,
+   -97, -30, -91, -30,  12,-101, -76,  71,
+   101,  56,  42,  70,-119, -87,-126, 121,
+   122, 118, 120, -62,  99, -79,  38, -33,
+   -38,  41, 109,  62,  98, -32,-106,  18,
+    52, -65,  57, -90,  63,-119,  94, -15,
+   109,  14, -29, 108,  40, -95,  30,  32,
+    29, -53, -62,   3,  63,  65,   7,-124,
+    15,  20,   5, 101,  27,  40,  97, -55,
+   -59, -25,  44,-114,  70,  54,   8, -36,
+   -13, -88,-115,  -2, -66, -14, -21, 113,
+    -1, -96, -48,  59, 117,   6,-116, 126,
+  -121, 120, 115,  77, -48, -66,-126, -66,
+   -37, -62,  70,  65,  43,-116,  -6,  48,
+   127, 112, -16, -89,  84,-122,  50,-107,
+   -86,  91, 104,  19,  11, -26,  -4, -11,
+   -54, -66, 125, -97,-119,-118,  65,  27,
+    -3, -72,  79, 104, -10, 114, 123,  20,
+  -103, -51, -45,  13, -16,  68,  58, -76,
+   -90, 102,  83,  51,  11, -53, -95,  16
 };
 
 static const uint16  spk_freq_table[12] = {
@@ -447,14 +479,14 @@ void Player_V2::execute_cmd(ChannelInfo *channel) {
 		if (opcode >= 0xf8) {
 			switch (opcode) {
 			case 0xf8: // set hull curve
-				debug(9, "channels[%d]: hull curve %2d\n", 
+				debug(9, "channels[%d]: hull curve %2d", 
 				channel - channels, *script_ptr);
 				channel->d.hull_curve = hull_offsets[*script_ptr/2];
 				script_ptr++;
 				break;
 
 			case 0xf9: // set freqmod curve
-				debug(9, "channels[%d]: freqmod curve %2d\n", 
+				debug(9, "channels[%d]: freqmod curve %2d", 
 				channel - channels, *script_ptr);
 				channel->d.freqmod_table = freqmod_offsets[*script_ptr/4];
 				channel->d.freqmod_modulo = freqmod_lengths[*script_ptr/4];
@@ -463,14 +495,14 @@ void Player_V2::execute_cmd(ChannelInfo *channel) {
 
 			case 0xfd: // clear other channel
 				value = READ_LE_UINT16 (script_ptr);
-				debug(9, "clear channel %d\n", value/50);
+				debug(9, "clear channel %d", value/50);
 				script_ptr += 2;
 				channel = &channels[value / sizeof(ChannelInfo)];
 				// fall through
 
 			case 0xfa: // clear current channel
 				if (opcode == 0xfa)
-					debug(9, "clear channel\n");
+					debug(9, "clear channel");
 				channel->d.next_cmd   = 0;
 				channel->d.base_freq  = 0;
 				channel->d.freq_delta = 0;
@@ -490,13 +522,13 @@ void Player_V2::execute_cmd(ChannelInfo *channel) {
 				break;
 
 			case 0xfb: // ret from subroutine
-				debug(9, "ret from sub\n");
+				debug(9, "ret from sub");
 				script_ptr = retaddr;
 				break;
 
 			case 0xfc: // call subroutine
 				offset = READ_LE_UINT16 (script_ptr);
-				debug(9, "subroutine %d\n", offset);
+				debug(9, "subroutine %d", offset);
 				script_ptr += 2;
 				retaddr = script_ptr;
 				script_ptr = current_data + offset;
@@ -507,7 +539,7 @@ void Player_V2::execute_cmd(ChannelInfo *channel) {
 				opcode = *script_ptr++;
 				offset = READ_LE_UINT16 (script_ptr);
 				script_ptr += 2;
-				debug(9, "loop if %d to %d\n", opcode, offset);
+				debug(9, "loop if %d to %d", opcode, offset);
 				if (!channel->array[opcode/2] || --channel->array[opcode/2])
 					script_ptr += offset;
 				break;
@@ -516,7 +548,7 @@ void Player_V2::execute_cmd(ChannelInfo *channel) {
 				opcode = *script_ptr++;
 				value = READ_LE_UINT16 (script_ptr);
 				channel->array[opcode/2] = value;
-				debug(9, "channels[%d]: set param %2d = %5d\n", 
+				debug(9, "channels[%d]: set param %2d = %5d", 
 				channel - &channels[0], opcode, value);
 				script_ptr+=2;
 				if (opcode == 0)
@@ -553,7 +585,7 @@ void Player_V2::execute_cmd(ChannelInfo *channel) {
 				}
 
 
-				debug(9, "channels[%d]: @%04x note: %3d+%d len: %2d hull: %d mod: %d/%d/%d %s\n", 
+				debug(9, "channels[%d]: @%04x note: %3d+%d len: %2d hull: %d mod: %d/%d/%d %s", 
 				      dest_channel - channel, script_ptr ? script_ptr - current_data - 2 : 0,
 				      note, (signed short) dest_channel->d.transpose, channel->d.time_left,
 				      dest_channel->d.hull_curve, dest_channel->d.freqmod_table,
@@ -620,13 +652,11 @@ void Player_V2::next_freqs(ChannelInfo *channel) {
 		* (int) channel->d.freqmod_multiplier / 256
 		+ channel->d.base_freq;
 
-#if 0
-	debug(9, "Freq: %d/%d, %d/%d/%d*%d %d\n",
+	debug(9, "Freq: %d/%d, %d/%d/%d*%d %d",
 	      channel->d.base_freq, (int16)channel->d.freq_delta,
 	      channel->d.freqmod_table, channel->d.freqmod_offset,
 	      channel->d.freqmod_incr, channel->d.freqmod_multiplier,
 	      channel->d.freq);
-#endif
 
 	if (channel->d.note_length && !--channel->d.note_length) {
 		channel->d.hull_offset += 16;
@@ -638,7 +668,7 @@ void Player_V2::next_freqs(ChannelInfo *channel) {
 	}
 
 #if 0
-	debug(9, "channels[%d]: freq %d hull %d/%d/%d\n", 
+	debug(9, "channels[%d]: freq %d hull %d/%d/%d", 
 	      channel - &channels[0], channel->d.freq,
 	      channel->d.hull_curve, channel->d.hull_offset,
 	      channel->d.hull_counter);
