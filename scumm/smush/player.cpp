@@ -731,6 +731,15 @@ bool SmushPlayer::play(const char * file, const char * directory) {
 			}
 		}
 	}
+
+	File test;
+	test.open(file, directory);
+	if (!test.isOpen()) {
+		warning("Missing smush file %s", file);
+		return true;
+	}
+	test.close();
+
 	FileChunk base = FileChunk(file, directory);
 
 	checkBlock(base, TYPE_ANIM); 
