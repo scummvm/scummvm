@@ -60,6 +60,7 @@ char *getcwd(char *buf, int size);
 #include <ctype.h>
 #include <Winuser.h>
 #include <direct.h>
+#include <time.h>
 
 void drawError(char*);
 
