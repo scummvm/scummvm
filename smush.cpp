@@ -272,9 +272,7 @@ zlibFile::~zlibFile() {
 
 bool zlibFile::open(const char *filename) {
 	char flags = 0;
-	printf("allocing: ");
 	_inBuf = (char *)calloc(1, 16385);
-	printf("alloced\n");
 
 	if (_handle) {
 		warning("File %s already opened", filename);
@@ -283,8 +281,6 @@ bool zlibFile::open(const char *filename) {
 
 	if (filename == NULL || *filename == 0)
 		return false;
-
-	warning("Opening zlibFile %s...", filename);
 
 	_handle = ResourceLoader::instance()->openNewStream(filename);
 	if (!_handle) {
@@ -323,14 +319,11 @@ bool zlibFile::open(const char *filename) {
 	_stream.avail_in = 0;
 	_stream.avail_out = 16384;
 
-	warning("Opened zlibFile %s...", filename);
-
 	return true;
 }
 
 void zlibFile::close() {
 	_handle = NULL;
-	printf("Closing..\n");
 	if (_inBuf) {
  		free(_inBuf);
  		_inBuf = NULL;
