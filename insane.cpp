@@ -109,7 +109,7 @@ bool SmushPlayer::parseTag() {
 
 
 void SmushPlayer::parseAHDR() {
-//	memcpy(_fluPalette, _block, 0x300);
+	memcpy(_fluPalette, _block, 0x300);
 	_paletteChanged = true;
 
 	printf("parse AHDR\n");
@@ -591,7 +591,7 @@ void SmushPlayer::startVideo(short int arg, byte* videoFile)
 	if(_in==NULL)
 		return;
 
-    if (fileReadBE32() != 'ANIM')
+	if (fileReadBE32() != 'ANIM')
 		error("file is not an anim");
 
 	fileSize=fileReadBE32();
@@ -612,8 +612,8 @@ void SmushPlayer::startVideo(short int arg, byte* videoFile)
 		blitToScreen(sm,sm->_videoBuffer, 0, 0, 320 ,200);
 		updateScreen(sm);
 
-		waitForTimer(sm,20);
-
+		sm->delta = sm->_system->waitTick(sm->delta);
+		
 		if(sm->_keyPressed == sm->_vars[sm->VAR_CUTSCENEEXIT_KEY])
 			return;
 	} while (1);

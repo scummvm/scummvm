@@ -87,7 +87,7 @@ void Scumm::initVirtScreen(int slot, int top, int height, bool twobufs, bool fou
 		size += 320*4;
 //	createResource(rtBuffer, slot+1, size);
 
-	vs->screenPtr = _videoBuffer+320*top;
+	vs->screenPtr = _videoBuffer+328*top;
 
 	if (twobufs) {
 		createResource(rtBuffer, slot+5, size);

@@ -1332,3 +1332,13 @@ void checkHeap() {
 #endif
 }
 
+void Scumm::mainRun() {
+	
+	delta=0;
+	
+	do
+	{
+		_system->waitTick(delta);
+		delta = scummLoop(delta);
+	}while(1);
+}

@@ -35,6 +35,7 @@ static unsigned int scale;
 Scumm scumm;
 ScummDebugger debugger;
 Gui gui;
+OSystem _system;
 
 SoundEngine sound;
 SOUND_DRIVER_TYPE snd_driv;
@@ -922,25 +923,17 @@ int main(int argc, char* argv[]) {
 	scumm._gui = &gui;
 	gui.init(&scumm);
 	sound.initialize(&scumm, &snd_driv);
-    scumm.scummMain(argc, argv);
+    
+	scumm.delta=0;
+	scumm._system = &_system;
+	
+	scumm.scummMain(argc, argv); // Todo: need to change that as well
+	
 	gui.init(&scumm);	/* Reinit GUI after loading a game */
 
-	last_time = SDL_GetTicks();
-	delta = 0;
-	do {
-		updateScreen(&scumm);
-
-		new_time = SDL_GetTicks();
-		waitForTimer(&scumm, delta * 15 + last_time - new_time);
-		last_time = SDL_GetTicks();
-
-		if (gui._active) {
-			gui.loop();
-			delta = 5;
-		} else {
-			delta = scumm.scummLoop(delta);
-		}
-	} while(1);
+	_system.last_time = SDL_GetTicks();
+	
+	scumm.mainRun();
 
 	return 0;
 }
@@ -1957,4 +1950,21 @@ void Scale_2xSaI (uint8 *srcPtr, uint32 srcPitch, uint8 * /* deltaPtr */,
 	}
 	dstPtr += dstPitch;
     }
+}
+
+
+/********* ScummVM call back functions **********/
+
+int OSystem::waitTick(int delta)
+{
+	updateScreen(&scumm);
+	new_time = SDL_GetTicks();
+	waitForTimer(&scumm, delta * 15 + last_time - new_time);
+	last_time = SDL_GetTicks();
+	if (gui._active) { 
+		gui.loop();
+		delta = 5;
+	}
+
+	return(delta);
 }

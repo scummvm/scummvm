@@ -24,6 +24,8 @@
 #include <mad.h>
 #endif
 
+#include "system.h"
+
 #if defined(macintosh) && !defined(__APPLE__CW)
 	#define Point SCUMM_Point
 #endif
@@ -923,11 +925,20 @@ public:
 
 	/* video buffer */
 
-	byte _videoBuffer[320*200];
-	byte _svideoBuffer[320*200+4*320];
+	byte _videoBuffer[328*200]; // main video buffer
+
+	/* system call object */
+
+	OSystem *_system;
+
+	/* Scumm main loop */
+
+	void mainRun();
+	int delta; // global time
+
 	
 	void scummInit();
-	void scummMain(int argc, char **argv);
+	void scummMain(int argc, char **argv); // is it still used ?
 	int scummLoop(int delta);
 	void initScummVars();
 
