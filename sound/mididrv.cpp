@@ -799,6 +799,12 @@ void MidiDriver_QT::send(uint32 b)
 			for (int i = 0; i < 128; i++)
 				NAPlayNote(qtNoteAllocator, qtNoteChannel[chanID], i, 0);
 			break;
+		case 0x64:
+		case 0x65:
+		case 0x06:
+		case 0x26:
+			// pitch bend changes - ignore those for now
+			break;
 
 		default:
 			error("Unknown MIDI effect: %08x\n", (int)b);
