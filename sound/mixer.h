@@ -46,12 +46,6 @@ public:
 
 class SoundMixer {
 public:
-	typedef void PremixProc (void *param, int16 *data, uint len);
-
-	enum {
-		NUM_CHANNELS = 16
-	};
-
 	enum {
 		/** unsigned samples (default: signed) */
 		FLAG_UNSIGNED = 1 << 0,
@@ -76,6 +70,10 @@ public:
 	};
 
 private:
+	enum {
+		NUM_CHANNELS = 16
+	};
+
 	OSystem *_syst;
 	OSystem::MutexRef _mutex;
 
