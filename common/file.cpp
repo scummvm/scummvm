@@ -22,7 +22,7 @@
 #include "file.h"
 #include "engine.h"	// For debug/warning/error
 
-FILE *File::fopenNoCase(const char *filename, const char * directory, const char *mode) {
+FILE *File::fopenNoCase(const char *filename, const char *directory, const char *mode) {
 	FILE *file;
 	char buf[256];
 	char *ptr;
