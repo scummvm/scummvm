@@ -1,5 +1,5 @@
 ScummVM README
-Last updated:    2003-12-11
+Last updated:    2003-12-20
 Release version: 0.5.7-cvs
 ------------------------------------------------------------------------
 
@@ -129,7 +129,9 @@ The following games should be completable, but have some critical problems that
 prevent them from being fully supported at this time. Please do not file bug
 reports about them.
         
+     Flight of the Amazon Queen                    [Game: queen]
      Full Throttle                                 [Game: ft]
+     Broken Sword I                                [Game: sword1]
      Broken Sword II                               [Game: sword2]
 
 The following games should load, but are not yet fully playable. Play these at
@@ -853,6 +855,13 @@ Broken Sword II adds the following non-standard keywords:
         sfx_mute        bool     If true, sound effects are muted
         speech_mute     bool     If true, speech is muted
         speech_volume   number   The speech volume setting (0-255)
+
+Simon the Sorcerer 1 & 2 add the following non-standard keywords:
+
+        fade            bool     If true, fades are instant
+        slow_down       number   Makes games slower (1- 10)
+        speech          bool     If true, speech is enabled
+                                 [Simon the Sorcerer 2 only]
 
 9.0 Compiling:
 --- ----------

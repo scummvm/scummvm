@@ -3,6 +3,7 @@ For a more comprehensive changelog for the latest experimental CVS code, see:
 
 0.5.7(CVS) (2003-??-??)
  New Games:
+   - Added Broken Sword 1 engine, unsupported Work in Progress
    - Added Broken Sword 2 engine, game is supported and completable (?)
    - Added Flight of the Amazon Queen engine, unsupported Work in Progress
    - Added support for V1 SCUMM games 'Maniac Mansion' and 'Zak McKracken'
@@ -23,6 +24,7 @@ For a more comprehensive changelog for the latest experimental CVS code, see:
   - Added support for inventory graphics in Amiga versions.
   - Fixed brief freezes in simon1dos
   - Fixed minor glitches in load/save dialog in non-English versions
+  - Fixed missing inventory arrows in some versions of Simon the Sorcerer 1
 
  SCUMM:
    - Many, Many, Many SCUMM game engine fixes. Many of them. And that's a lot.
