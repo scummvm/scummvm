@@ -124,7 +124,21 @@ bool ScummEngine::loadState(int slot, bool compat, SaveFileManager *mgr) {
 
 	memcpy(_saveLoadName, hdr.name, sizeof(hdr.name));
 
-	_sound->stopAllSounds();
+	// Unless specifically requested with _saveSound, we do not save the iMUSE
+	// state for temporary state saves - such as certain cutscenes in DOTT,
+	// FOA, Sam and Max, etc.
+	//
+	// Thusly, we should probably not stop music when restoring from one of 
+	// these saves. This change stops the Mole Man theme from going quiet in
+	// Sam & Max when Doug tells you about the Ball of Twine, as mentioned in
+	// patch #886058.
+	//
+	// If we don't have iMUSE at all we may as well stop the sounds. The previous
+	// default behavior here was to stopAllSounds on all state restores.
+
+	if (!_imuse || _saveSound || !_saveLoadCompatible)
+		_sound->stopAllSounds();
+
 	_sound->stopCD();
 
 	_sound->pauseSounds(true);
