@@ -268,8 +268,6 @@ static const ScummGameSettings scumm_settings[] = {
 
 	{"balloon", "Putt-Putt and Pep's Balloon-O-Rama", GID_HEGAME, 6, 80, 60, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES | GF_MULTIPLE_VERSIONS, 0, 0},
-	{"dog", "Putt-Putt and Pep's Dog on a Stick", GID_HEGAME, 6, 80, 30, MDT_NONE,
-	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
 	{"maze", "Freddi Fish and Luther's Maze Madness", GID_HEGAME, 6, 80, 60, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
 	{"socks", "Pajama Sam's Sock Works", GID_HEGAME, 6, 80, 56, MDT_NONE,
@@ -323,6 +321,8 @@ static const ScummGameSettings scumm_settings[] = {
 
 	// Global scripts increased to 2048
 	{"500demo", "Putt-Putt Enters the Race (Demo)", GID_FREDDI4, 6, 98, 61, MDT_NONE,
+	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
+	{"dog", "Putt-Putt and Pep's Dog on a Stick", GID_HEGAME, 6, 98, 30, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
 	{"freddi4", "Freddi Fish 4: The Case of the Hogfish Rustlers of Briny Gulch", GID_FREDDI4, 6, 98, 57, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
