@@ -1661,7 +1661,7 @@ void Scumm_v8::o8_getActorChore() {
 
 void Scumm_v8::o8_getActorZPlane() {
 	int actnum = pop();
-	Actor *a = derefActor(actnum, "o8_getActorChore");
+	Actor *a = derefActor(actnum, "o8_getActorZPlane");
 
 	int z = a->forceClip;
 	if (z == 100) {

@@ -3366,6 +3366,7 @@ void SimonState::processSpecialKeys() {
 		case 'i':
 			if (_debugMode)
 				_draw_images_debug ^= 1;
+			break;
 	}
 	
 	_key_pressed = 0;
