@@ -313,7 +313,7 @@ bool AnimationState::decodeFrame() {
 					_scr->plotYUV(lut, sequence_i->width, sequence_i->height, info->display_fbuf->buf);
 
 					if (bgSoundStream) {
-						while ((bgSoundStream->getSamplesPlayed()*12/bgSoundStream->getRate()) < framenum+1);
+						while ((bgSoundStream->getSamplesPlayed()*12/bgSoundStream->getRate()) < framenum+1)
 							_sys->delay_msecs(10);
 					} else {
 						ticks += 83;
@@ -334,7 +334,7 @@ bool AnimationState::decodeFrame() {
 					plotYUV(lookup2, sequence_i->width, sequence_i->height, info->display_fbuf->buf);
 
 					if (bgSoundStream) {
-						while ((bgSoundStream->getSamplesPlayed()*12/bgSoundStream->getRate()) < framenum+1);
+						while ((bgSoundStream->getSamplesPlayed()*12/bgSoundStream->getRate()) < framenum+1)
 							_sys->delay_msecs(10);
 					} else {
 						ticks += 83;
