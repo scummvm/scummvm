@@ -678,7 +678,11 @@ static int cd_track, cd_num_loops = 0, cd_start_frame, cd_end_frame;
 static Uint32 cd_end_time, cd_stop_time, cd_next_second;
 
 void cd_play(Scumm *s, int track, int num_loops, int start_frame, int end_frame) {
+
 	scumm->_vars[14] = 0;
+
+	if (!start_frame && !end_frame)
+		return;
 
 #ifdef COMPRESSED_SOUND_FILE
 
