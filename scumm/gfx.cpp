@@ -544,9 +544,7 @@ void ScummEngine::redrawBGStrip(int start, int num) {
 
 void ScummEngine::restoreBG(Common::Rect rect, byte backColor) {
 	VirtScreen *vs;
-	int topline, height, width;
 	byte *backbuff;
-	bool lightsOn;
 
 	if (rect.top < 0)
 		rect.top = 0;
@@ -559,8 +557,9 @@ void ScummEngine::restoreBG(Common::Rect rect, byte backColor) {
 	if (rect.left > vs->width)
 		return;
 
-	topline = vs->topline;
+	const int topline = vs->topline;
 
+	// Move rect up
 	rect.top -= topline;
 	rect.bottom -= topline;
 
@@ -571,16 +570,18 @@ void ScummEngine::restoreBG(Common::Rect rect, byte backColor) {
 	int offset = rect.top * vs->width + vs->xstart + rect.left;
 	backbuff = vs->screenPtr + offset;
 
-	height = rect.height();
-	width = rect.width();
+	const int height = rect.height();
+	const int width = rect.width();
 
-	// Check whether lights are turned on or not
-	lightsOn = isLightOn();
-
-	if (vs->hasTwoBuffers && _currentRoom != 0 && lightsOn ) {
+	if (vs->hasTwoBuffers && _currentRoom != 0 && isLightOn()) {
 		blit(backbuff, vs->backBuf + offset, width, height);
 		if (vs->number == kMainVirtScreen && _charset->_hasMask && height) {
 			byte *mask;
+
+			// Move rect back
+			rect.top += topline;
+			rect.bottom += topline;
+
 			// Note: At first sight it may look as if this could
 			// be optimized to (rect.right - rect.left) / 8 and
 			// thus to width / 8, but that's not the case since
@@ -591,8 +592,6 @@ void ScummEngine::restoreBG(Common::Rect rect, byte backColor) {
 				mask_width++;
 
 			mask = getMaskBuffer(rect.left, rect.top + topline, 0);
-			if (vs->number == kMainVirtScreen)
-				mask += vs->topline * gdi._numStrips;
 
 			do {
 				memset(mask, 0, mask_width);
