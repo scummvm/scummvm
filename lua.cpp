@@ -443,15 +443,12 @@ static void GetActorPuckVector() {
 
 static void WalkActorTo() {
 	Actor *act = check_actor(1);
-	double x = luaL_check_number(2);
-	double y = luaL_check_number(3);
-	double z = luaL_check_number(4);
-	#ifdef SYSTEM_BIG_ENDIAN
-	//is this okay? treating the double as a float
+	float x = luaL_check_number(2);
+	float y = luaL_check_number(3);
+	float z = luaL_check_number(4);
 	x = get_float((const char *)&x);
 	y = get_float((const char *)&y);
 	z = get_float((const char *)&z);
-	#endif	
 	act->walkTo(Vector3d(x, y, z));
 }
 
