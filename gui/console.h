@@ -22,6 +22,7 @@
 #define CONSOLE_DIALOG_H
 
 #include "dialog.h"
+#include "newgui.h"
 #include "common/str.h"
 #include "common/list.h"
 
@@ -52,6 +53,7 @@ protected:
 
 	bool	_caretVisible;
 	uint32	_caretTime;
+	byte	_caretBuf[kLineHeight * kCharWidth * 2];
 	
 	ScrollBarWidget	*_scrollBar;
 
@@ -72,6 +74,7 @@ public:
 
 protected:
 	void drawCaret(bool erase);
+	void putcharIntern(int c);
 	void print(const char *str);
 	void nextLine();
 	void updateScrollBar();

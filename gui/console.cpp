@@ -20,7 +20,6 @@
 
 #include "stdafx.h"
 #include "console.h"
-#include "newgui.h"
 #include "ScrollBarWidget.h"
 
 #include "common/engine.h"
@@ -127,18 +126,22 @@ void ConsoleDialog::handleKeyDown(uint16 ascii, int keycode, int modifiers)
 	switch (keycode) {
 		case '\n':	// enter/return
 		case '\r':
+			if (_caretVisible)
+				drawCaret(true);
+		
 			nextLine();
 			print(PROMPT);
 			_promptStartPos = _promptEndPos = _currentPos;
 			
-			if (_caretVisible)
-				drawCaret(true);
 			draw();
 			break;
 		case 27:	// escape
 			close();
 			break;
 		case 8:		// backspace
+			if (_caretVisible)
+				drawCaret(true);
+		
 			if (_currentPos > _promptStartPos) {
 				_currentPos--;
 				for (int i = _currentPos; i < _promptEndPos; i++)
@@ -146,8 +149,6 @@ void ConsoleDialog::handleKeyDown(uint16 ascii, int keycode, int modifiers)
 				_buffer[_promptEndPos % kBufferSize] = ' ';
 				_promptEndPos--;
 			}
-			if (_caretVisible)
-				drawCaret(true);
 			draw();	// FIXME - not nice to redraw the full console just for one char!
 			break;
 /*
@@ -186,19 +187,13 @@ void ConsoleDialog::handleKeyDown(uint16 ascii, int keycode, int modifiers)
 		default:
 			if (ascii == '~' || ascii == '#') {
 				close();
-			} else if (modifiers == OSystem::KBD_CTRL) { // CTRL
+			} else if (modifiers == OSystem::KBD_CTRL) {
 				specialKeys(keycode);
 			} else if (isprint((char)ascii)) {
 				for (int i = _promptEndPos-1; i >= _currentPos; i--)
 					_buffer[(i+1) % kBufferSize] = _buffer[i % kBufferSize];
-				_buffer[_currentPos % kBufferSize] = (char)ascii;
-				_currentPos++;
 				_promptEndPos++;
-				if ((_scrollLine + 1) * _lineWidth == _currentPos) {
-					_scrollLine++;
-					updateScrollBar();
-				}
-				draw();	// FIXME - not nice to redraw the full console just for one char!
+				putchar((char)ascii);
 			}
 	}
 }
@@ -298,6 +293,16 @@ int ConsoleDialog::vprintf(const char *format, va_list argptr)
 
 void ConsoleDialog::putchar(int c)
 {
+	if (_caretVisible)
+		drawCaret(true);
+
+	putcharIntern(c);
+
+	draw();	// FIXME - not nice to redraw the full console just for one char!
+}
+
+void ConsoleDialog::putcharIntern(int c)
+{
 	if (c == '\n')
 		nextLine();
 	else {
@@ -308,31 +313,41 @@ void ConsoleDialog::putchar(int c)
 			updateScrollBar();
 		}
 	}
-	draw();	// FIXME - not nice to redraw the full console just for one char!
 }
 
 void ConsoleDialog::print(const char *str)
 {
+	if (_caretVisible)
+		drawCaret(true);
+
 	while (*str)
-		putchar(*str++);
+		putcharIntern(*str++);
+
+	draw();
 }
 
 void ConsoleDialog::drawCaret(bool erase)
 {
-	// Only draw if item is visible
-	if (!isVisible())
-		return;
-	
 	int line = _currentPos / _lineWidth;
 	int displayLine = line - _scrollLine + _linesPerPage - 1;
 
-	if (displayLine < 0 || displayLine >= _linesPerPage)
+	// Only draw caret if visible
+	if (!isVisible() || displayLine < 0 || displayLine >= _linesPerPage) {
+		_caretVisible = false;
 		return;
+	}
 
 	int x = _x + 1 + (_currentPos % _lineWidth) * kCharWidth;
 	int y = _y + displayLine * kLineHeight;
 
-	_gui->fillRect(x, y, kCharWidth, kLineHeight, erase ? _gui->_bgcolor : _gui->_textcolor);
+	char c = _buffer[getBufferPos()];
+	if (erase) {
+		_gui->fillRect(x, y, kCharWidth, kLineHeight, _gui->_bgcolor);
+		_gui->drawChar(c, x, y+2, _gui->_textcolor);
+	} else {
+		_gui->fillRect(x, y, kCharWidth, kLineHeight, _gui->_textcolor);
+		_gui->drawChar(c, x, y+2, _gui->_bgcolor);
+	}
 	_gui->addDirtyRect(x, y, kCharWidth, kLineHeight);
 	
 	_caretVisible = !erase;
