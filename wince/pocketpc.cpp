@@ -736,12 +736,13 @@ LRESULT CALLBACK OSystem_WINCE3::WndProc(HWND hWnd, UINT message, WPARAM wParam,
 				else
 				if (x>=186 && y>=(200 + offset_y) && x<=255) {
 				   // Numeric selection
-				   if (monkey2_keyboard)
+					if (monkey2_keyboard) {
 					   monkey2_keyboard_count++;
-				   if (monkey2_keyboard_count == 4) {
-					   monkey2_keyboard = false;
-					   draw_keyboard = false;
-					   toolbar_drawn = false;
+					   if (monkey2_keyboard_count == 4) {
+						   monkey2_keyboard = false;
+						   draw_keyboard = false;
+						   toolbar_drawn = false;
+					   }
 				   }
 				   wm->_event.event_code = EVENT_KEYDOWN;
 				   wm->_event.kbd.ascii =
@@ -829,6 +830,8 @@ LRESULT CALLBACK OSystem_WINCE3::WndProc(HWND hWnd, UINT message, WPARAM wParam,
 						break;
 					case ToolbarMode:
 						SetScreenMode(!GetScreenMode());
+						scummcfg->set("DisplayMode", GetScreenMode(), "wince");
+						scummcfg->flush();
 						if (!hide_toolbar)
 							toolbar_drawn = false;
 						break;
@@ -1059,6 +1062,7 @@ void keypad_close() {
 
 /************* OSystem Main **********************/
 OSystem *OSystem_WINCE3::create(int gfx_mode, bool full_screen) {
+	const char *display_mode;
 	OSystem_WINCE3 *syst = new OSystem_WINCE3();
 	syst->_mode = gfx_mode;
 	syst->_full_screen = full_screen;
@@ -1126,6 +1130,11 @@ OSystem *OSystem_WINCE3::create(int gfx_mode, bool full_screen) {
 
 	Cls();
 	drawWait();
+
+	// Set mode, portrait or landscape
+	display_mode = scummcfg->get("DisplayMode", "wince");
+	if (display_mode)
+		SetScreenMode(atoi(display_mode));
 
 	return syst;
 }
