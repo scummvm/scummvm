@@ -33,7 +33,7 @@
 #include "saga/objectmap.h"
 #include "saga/rscfile_mod.h"
 #include "saga/script_mod.h"
-#include "saga/sprite_mod.h"
+#include "saga/sprite.h"
 
 #include "saga/interface_mod.h"
 #include "saga/interface.h"
@@ -191,9 +191,9 @@ int INTERFACE_Init(void) {
 		return R_FAILURE;
 	}
 
-	SPRITE_LoadList(ITE_COMMAND_BUTTONSPRITES, &IfModule.c_panel.sprites);
+	_vm->_sprite->loadList(ITE_COMMAND_BUTTONSPRITES, &IfModule.c_panel.sprites);
 
-	SPRITE_LoadList(ITE_DEFAULT_PORTRAITS, &IfModule.def_portraits);
+	_vm->_sprite->loadList(ITE_DEFAULT_PORTRAITS, &IfModule.def_portraits);
 
 	_vm->decodeBGImage(IfModule.c_panel.res, IfModule.c_panel.res_len, &IfModule.c_panel.img,
 					&IfModule.c_panel.img_len, &IfModule.c_panel.img_w, &IfModule.c_panel.img_h);
@@ -294,7 +294,7 @@ int INTERFACE_Draw() {
 	lportrait_x = xbase + IfModule.i_desc.lportrait_x;
 	lportrait_y = ybase + IfModule.i_desc.lportrait_y;
 
-	SPRITE_Draw(back_buf, IfModule.def_portraits, IfModule.active_portrait, lportrait_x, lportrait_y);
+	_vm->_sprite->draw(back_buf, IfModule.def_portraits, IfModule.active_portrait, lportrait_x, lportrait_y);
 
 	return R_SUCCESS;
 }
@@ -402,7 +402,7 @@ int HandleCommandClick(R_SURFACE *ds, R_POINT *imouse_pt) {
 			button_x = x_base + IfModule.c_panel.buttons[set_button].x1;
 			button_y = y_base + IfModule.c_panel.buttons[set_button].y1;
 
-			SPRITE_Draw(ds, IfModule.c_panel.sprites, IfModule.c_panel.buttons[set_button].
+			_vm->_sprite->draw(ds, IfModule.c_panel.sprites, IfModule.c_panel.buttons[set_button].
 						active_sprite - 1, button_x, button_y);
 		}
 
@@ -410,7 +410,7 @@ int HandleCommandClick(R_SURFACE *ds, R_POINT *imouse_pt) {
 			button_x = x_base + IfModule.c_panel.buttons[old_set_button].x1;
 			button_y = y_base + IfModule.c_panel.buttons[old_set_button].y1;
 
-			SPRITE_Draw(ds, IfModule.c_panel.sprites, IfModule.c_panel.buttons[old_set_button].
+			_vm->_sprite->draw(ds, IfModule.c_panel.sprites, IfModule.c_panel.buttons[old_set_button].
 						inactive_sprite - 1, button_x, button_y);
 		}
 	}
@@ -464,7 +464,7 @@ int HandleCommandUpdate(R_SURFACE *ds, R_POINT *imouse_pt) {
 				color, IfModule.i_desc.cmd_txt_shadowcol, FONT_SHADOW);
 
 		if ((i == IfModule.c_panel.set_button) && (IfModule.c_panel.buttons[i].flags & BUTTON_BITMAP)) {
-			SPRITE_Draw(ds, IfModule.c_panel.sprites, IfModule.c_panel.buttons[i].active_sprite - 1,
+			_vm->_sprite->draw(ds, IfModule.c_panel.sprites, IfModule.c_panel.buttons[i].active_sprite - 1,
 						button_x, button_y);
 		}
 	}

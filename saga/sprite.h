@@ -56,14 +56,28 @@ struct R_SPRITELIST_tag {
 	byte *sprite_data[R_APPENDMAX];
 };
 
-struct R_SPRITE_MODULE {
-	int init;
-	R_RSCFILE_CONTEXT *sprite_ctxt;
-	byte *decode_buf;
-	size_t decode_buf_len;
-};
+typedef struct R_SPRITELIST_tag R_SPRITELIST;
 
-int DecodeRLESprite(const byte *inbuf, size_t inbuf_len, byte *outbuf, size_t outbuf_len);
+class Sprite {
+ public:
+	Sprite(SagaEngine *vm);
+	~Sprite(void);
+	int loadList(int resource_num, R_SPRITELIST **sprite_list_p);
+	int appendList(int resource_num, R_SPRITELIST *spritelist);
+	int getListLen(R_SPRITELIST *spritelist);
+	int freeSprite(R_SPRITELIST *spritelist);
+	int draw(R_SURFACE *ds, R_SPRITELIST *sprite_list, int sprite_num, int spr_x, int spr_y);
+	int drawOccluded(R_SURFACE *ds, R_SPRITELIST *sprite_list, int sprite_num, int spr_x, int spr_y);
+
+ private:
+	int decodeRLESprite(const byte *inbuf, size_t inbuf_len, byte *outbuf, size_t outbuf_len);
+
+	SagaEngine *_vm;
+	bool _initialized;
+	R_RSCFILE_CONTEXT *_spriteContext;
+	byte *_decodeBuf;
+	size_t _decodeBufLen;
+};
 
 } // End of namespace Saga
 

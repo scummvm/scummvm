@@ -32,7 +32,6 @@
 #include "saga/game_mod.h"
 #include "saga/interface_mod.h"
 #include "saga/scene_mod.h"
-#include "saga/sprite_mod.h"
 #include "saga/text.h"
 
 #include "saga/actionmap.h"

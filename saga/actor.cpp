@@ -31,7 +31,7 @@
 #include "saga/rscfile_mod.h"
 #include "saga/script_mod.h"
 #include "saga/sndres.h"
-#include "saga/sprite_mod.h"
+#include "saga/sprite.h"
 #include "saga/font.h"
 #include "saga/text.h"
 #include "saga/sound.h"
@@ -224,7 +224,7 @@ int Actor::drawList() {
 		o_idx = ActorOrientationLUT[actor->orient];
 		sprite_num = actor->act_tbl[actor->action].dir[o_idx].frame_index;
 		sprite_num += actor->action_frame;
-		SPRITE_DrawOccluded(back_buf, actor->sl_p, sprite_num, actor->s_pt.x, actor->s_pt.y);
+		_vm->_sprite->drawOccluded(back_buf, actor->sl_p, sprite_num, actor->s_pt.x, actor->s_pt.y);
 
 		// If actor's current intent is to speak, oblige him by 
 		// displaying his dialogue 
@@ -342,13 +342,13 @@ int Actor::addActor(R_ACTOR * actor) {
 
 	loadActorSpriteIndex(actor, actor->si_rn, &last_frame);
 
-	if (SPRITE_LoadList(actor->sl_rn, &actor->sl_p) != R_SUCCESS) {
+	if (_vm->_sprite->loadList(actor->sl_rn, &actor->sl_p) != R_SUCCESS) {
 		return R_FAILURE;
 	}
 
-	if (last_frame >= SPRITE_GetListLen(actor->sl_p)) {
+	if (last_frame >= _vm->_sprite->getListLen(actor->sl_p)) {
 		debug(0, "Appending to sprite list %d.", actor->sl_rn);
-		if (SPRITE_AppendList(actor->sl_rn + 1,
+		if (_vm->_sprite->appendList(actor->sl_rn + 1,
 			actor->sl_p) != R_SUCCESS) {
 			return R_FAILURE;
 		}
@@ -718,7 +718,7 @@ int Actor::deleteActor(int index) {
 	node = _tbl[index];
 	actor = (R_ACTOR *)ys_dll_get_data(node);
 
-	SPRITE_Free(actor->sl_p);
+	_vm->_sprite->freeSprite(actor->sl_p);
 
 	ys_dll_delete(node);
 

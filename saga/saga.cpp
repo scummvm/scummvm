@@ -51,7 +51,7 @@
 #include "saga/scene_mod.h"
 #include "saga/sdata.h"
 #include "saga/sndres.h"
-#include "saga/sprite_mod.h"
+#include "saga/sprite.h"
 #include "saga/objectmap.h"
 #include "saga/sound.h"
 #include "saga/music.h"
@@ -149,7 +149,7 @@ void SagaEngine::go() {
 	_sndRes = new SndRes(this);
 	EVENT_Init();
 	_font = new Font(this);
-	SPRITE_Init();
+	_sprite = new Sprite(this);
 	_anim = new Anim(this);
 	_script = new Script();
 	_sdata = new SData();
@@ -245,7 +245,7 @@ void SagaEngine::shutdown() {
 	SCENE_Shutdown();
 	delete _actor;
 	delete _script;
-	SPRITE_Shutdown();
+	delete _sprite;
 	delete _font;
 	CON_Shutdown();
 	CVAR_Shutdown();

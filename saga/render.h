@@ -26,7 +26,7 @@
 #ifndef SAGA_RENDER_H_
 #define SAGA_RENDER_H_
 
-#include "saga/sprite_mod.h"
+#include "saga/sprite.h"
 
 namespace Saga {
 

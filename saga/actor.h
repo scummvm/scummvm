@@ -27,7 +27,7 @@
 #define SAGA_ACTOR_H__
 
 #include "saga/yslib.h"
-#include "saga/sprite_mod.h"
+#include "saga/sprite.h"
 
 namespace Saga {
 
