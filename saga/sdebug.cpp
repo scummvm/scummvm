@@ -70,7 +70,7 @@ int Script::SDebugPrintInstr(ScriptThread *thread) {
 							 thread->_moduleBaseSize 
 							 - thread->_instructionOffset);
 	in_char = readS.readByte();
-	sprintf(tmp_buf, "%04lX | %02X | ", thread->_instructionOffset, in_char);
+	sprintf(tmp_buf, "%04X | %02X | ", thread->_instructionOffset, in_char);
 	strncat(disp_buf, tmp_buf, SD_DISPLAY_LEN);
 
 	switch (in_char) {
