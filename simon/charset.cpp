@@ -82,6 +82,8 @@ void SimonEngine::render_string(uint num_1, uint color, uint width, uint height,
 	dst += READ_BE_UINT32(p);
 
 	memset(dst, 0, count);
+	if (_language == 20)
+		dst += width - 1; // For Hebrew, start at the right edge, not the left.
 
 	dst_org = dst;
 	while ((chr = *txt++) != 0) {
@@ -89,12 +91,14 @@ void SimonEngine::render_string(uint num_1, uint color, uint width, uint height,
 			dst_org += width * 10;
 			dst = dst_org;
 		} else if ((chr -= ' ') == 0) {
-			dst += 6;
+			dst += (_language == 20 ? -6 : 6); // Hebrew moves to the left, all others to the right
 		} else {
 			byte *img_hdr = src + 48 + chr * 4;
 			uint img_height = img_hdr[2];
 			uint img_width = img_hdr[3], i;
 			byte *img = src + READ_LE_UINT16(img_hdr);
+			if (_language == 20)
+				dst -= img_width - 1; // For Hebrew, move from right edge to left edge of image.
 			byte *cur_dst = dst;
 
 			if (_game == GAME_SIMON1AMIGA) {
@@ -122,7 +126,8 @@ void SimonEngine::render_string(uint num_1, uint color, uint width, uint height,
 				cur_dst += width;
 			} while (--img_height);
 
-			dst += img_width - 1;
+			if (_language != 20) // Hebrew character movement is done higher up
+				dst += img_width - 1;
 		}
 	}
 }
