@@ -363,10 +363,10 @@ bool ScummDebugger::Cmd_PrintActor(int argc, const char **argv) {
 bool ScummDebugger::Cmd_Help(int argc, const char **argv) {
 	// console normally has 39 line width
 	// wrap around nicely
-	int width = 0, size;
+	int width = 0, size, i;
 	
 	Debug_Printf("Commands are:\n");
-	for (int i=0 ; i < _dcmd_count ; i++) {
+	for (i = 0 ; i < _dcmd_count ; i++) {
 		size = strlen(_dcmds[i].name) + 1;
 				
 		if ((width + size) >= 39) {
@@ -381,7 +381,7 @@ bool ScummDebugger::Cmd_Help(int argc, const char **argv) {
 	width = 0;
 	
 	Debug_Printf("\n\nVariables are:\n");
-	for (int i=0 ; i < _dvar_count ; i++) {
+	for (i = 0 ; i < _dvar_count ; i++) {
 		size = strlen(_dvars[i].name) + 1;
 				
 		if ((width + size) >= 39) {
