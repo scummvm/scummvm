@@ -40,9 +40,9 @@
 extern "C" struct WBStartup *_WBenchMsg;
 
 // For command line parsing
-static STRPTR usageTemplate = "STORY/A,DATAPATH/K,WBWINDOW/S,SCALER/K,AMIGA/S,MIDIUNIT/K/N,MUSIC/K,VOLUME/K/N,TEMPO/K/N,ROLANDEMU/S,NOSUBTITLES=NST/S";
-typedef enum 					{ USG_STORY = 0,	USG_DATAPATH, 	USG_WBWINDOW,	USG_SCALER, 	USG_AMIGA,	USG_MIDIUNIT,	USG_MUSIC,	 USG_VOLUME,	 USG_TEMPO,	  USG_ROLANDEMU, USG_NOSUBTITLES } usageFields;
-static LONG	  args[ 11 ] =  { (ULONG)NULL, 	 (ULONG)NULL,	 FALSE, 			 (ULONG)NULL,	false,      (ULONG)NULL,   (ULONG)NULL, (ULONG)NULL,	 (ULONG)NULL, false, false };
+static STRPTR usageTemplate = "STORY/A,DATAPATH/K,WBWINDOW/S,SCALER/K,AMIGA/S,MIDIUNIT/K/N,MUSIC/K,VOLUME/K/N,TEMPO/K/N,NOSUBTITLES=NST/S";
+typedef enum 					{ USG_STORY = 0,	USG_DATAPATH, 	USG_WBWINDOW,	USG_SCALER, 	USG_AMIGA,	USG_MIDIUNIT,	USG_MUSIC,	 USG_VOLUME,	 USG_TEMPO,	  USG_NOSUBTITLES } usageFields;
+static LONG	  args[ 11 ] =  { (ULONG)NULL, 	 (ULONG)NULL,	 FALSE, 			 (ULONG)NULL,	false,      (ULONG)NULL,   (ULONG)NULL, (ULONG)NULL,	 (ULONG)NULL, false };
 static struct RDArgs *ScummArgs = NULL;
 
 static char*ScummStory = NULL;
@@ -113,9 +113,10 @@ static STRPTR FindMusicDriver( STRPTR argval )
 {
 	if( !stricmp( argval, "off" ) )   return "-enull";
 	if( !stricmp( argval, "midi" ) )	 return "-eamidi";
+	if( !stricmp( argval, "midiemu" ) )	 return "-emidiemu";
 	if( !stricmp( argval, "adlib" ) ) return "-eadlib";
 
-	error( "No such music driver supported. Possible values are off, Midi and Adlib." );
+	error( "No such music driver supported. Possible values are off, Midi, MidiEmu and Adlib." );
 	return NULL;
 }
 
@@ -195,14 +196,6 @@ static void ReadToolTypes( struct WBArg *OfFile )
 		args[ USG_TEMPO ] = (ULONG)&ScummMidiTempo;
 	}
 
-	if( ToolValue = (char *)FindToolType( dobj->do_ToolTypes, "ROLANDEMU" ) )
-	{
-		if( MatchToolValue( ToolValue, "YES" ) )
-			args[ USG_ROLANDEMU ] = FALSE;
-		else if( MatchToolValue( ToolValue, "NO" ) )
-			args[ USG_ROLANDEMU ] = TRUE;
-	}
-
 	if( ToolValue = (char *)FindToolType( dobj->do_ToolTypes, "SUBTITLES" ) )
 	{
 		if( MatchToolValue( ToolValue, "YES" ) )
@@ -230,7 +223,7 @@ int main()
 	int last_time, new_time;
 	char *argv[ 15 ];
 	char volume[ 6 ], tempo[ 12 ], scaler[ 14 ];
-	char *SVMScalers[] = { "", "normal", "2x", "supereagle", "super2xsai" };
+	char *SVMScalers[] = { "", "normal", "2x", "advmame2x", "supereagle", "super2xsai" };
 	int argc = 0;
 
 	InitSemaphore( &ScummSoundThreadRunning );
@@ -308,11 +301,9 @@ int main()
 	}
 
 	argv[ argc++ ] = "ScummVM";
-	argv[ argc++ ] = ScummStory;
 	if( ScummPath ) 					argv[ argc++ ] = ScummPath;
 	if( !args[ USG_WBWINDOW ]   ) argv[ argc++ ] = "-f";
 	if( args[ USG_NOSUBTITLES ] ) argv[ argc++ ] = "-n";
-	if( args[ USG_ROLANDEMU ] 	 ) argv[ argc++ ] = "-r";
 	if( args[ USG_AMIGA ]		 ) argv[ argc++ ] = "-a";
 	if( args[ USG_MUSIC ]	    ) argv[ argc++ ] = ScummMusicDriver;
 	if( ScummGfxScaler != OSystem_MorphOS::ST_INVALID )
@@ -332,6 +323,7 @@ int main()
 		sprintf( tempo, "-t%lx", ScummMidiTempo );
 		argv[ argc++ ] = tempo;
 	}
+	argv[ argc++ ] = ScummStory;
 
 	return morphos_main( argc, argv );
 }
