@@ -63,8 +63,7 @@ public:
 
 	void				removeKey(const String &key, const String &dom);
 
-	const String &		get(const String &key) const;
-	const String &		get(const String &key, const String &dom) const;
+	const String &		get(const String &key, const String &dom = String::emptyString) const;
 	int					getInt(const String &key, const String &dom = String::emptyString) const;
 	bool				getBool(const String &key, const String &dom = String::emptyString) const;
 

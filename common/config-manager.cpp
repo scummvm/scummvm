@@ -213,7 +213,7 @@ bool ConfigManager::hasKey(const String &key) const {
 	
 //	if (_transientDomain.contain(key))
 //		return true;
-	
+
 	if (!_activeDomain.isEmpty() && _gameDomains[_activeDomain].contains(key))
 		return true;
 	
@@ -222,7 +222,7 @@ bool ConfigManager::hasKey(const String &key) const {
 		if (iter->_value.contains(key))
 			return true;
 	}
-	
+
 	return false;
 }
 
@@ -252,10 +252,6 @@ void ConfigManager::removeKey(const String &key, const String &dom) {
 #pragma mark -
 
 
-const String & ConfigManager::get(const String &key) const {
-	return get(key, _activeDomain);
-}
-
 const String & ConfigManager::get(const String &key, const String &dom) const {
 	// Search the domains in the following order:
 	// 1) Run time domain
@@ -266,8 +262,11 @@ const String & ConfigManager::get(const String &key, const String &dom) const {
 //	if (_transientDomain.contain(key))
 //		return true;
 	
-	if (!dom.isEmpty() && _gameDomains.contains(dom) && _gameDomains[dom].contains(key))
-		return _gameDomains[dom][key];
+	if (!dom.isEmpty()) {
+		if (_gameDomains.contains(dom) && _gameDomains[dom].contains(key))
+			return _gameDomains[dom][key];
+	} else if (!_activeDomain.isEmpty() && _gameDomains[_activeDomain].contains(key))
+		return _gameDomains[_activeDomain][key];
 
 	DomainMap::ConstIterator iter;
 	for (iter = _globalDomains.begin(); iter != _globalDomains.end(); ++iter) {
@@ -282,10 +281,7 @@ int ConfigManager::getInt(const String &key, const String &dom) const {
 	String value(get(key, dom));
 	// Convert the string to an integer.
 	// TODO: We should perform some error checking.
-	if (value.c_str())
-		return (int)strtol(value.c_str(), 0, 10);
-	else
-		return 0;
+	return (int)strtol(value.c_str(), 0, 10);
 }
 
 bool ConfigManager::getBool(const String &key, const String &dom) const {
