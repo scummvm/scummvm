@@ -70,6 +70,7 @@ public:
 	uint size() const				{ return _len; }
 
 	bool isEmpty() const	{ return (_len == 0); }
+	char lastChar() const	{ return (_len > 0) ? _str[_len-1] : 0; }
 };
 
 class String : public ConstString {
@@ -94,6 +95,7 @@ public:
 // An alternative would be to add private clone() and cloneMutable methods that 
 // would do the right thing.
 	String &operator  =(const String &str);
+	String &operator  =(char c);
 	String &operator +=(const char *str);
 	String &operator +=(const String &str);
 	String &operator +=(char c);
@@ -108,7 +110,6 @@ public:
 		return _str[idx];
 	}
 
-	char lastChar() const;
 	void deleteLastChar();
 	void deleteChar(int p);
 	void clear();

@@ -108,6 +108,14 @@ String &String::operator  =(const String &str) {
 	return *this;
 }
 
+String& String::operator  =(char c) {
+	ensureCapacity(1, false);
+	_len = 1;
+	_str[0] = c;
+	_str[1] = 0;
+	return *this;
+}
+
 String &String::operator +=(const char *str) {
 	int len = strlen(str);
 	if (len > 0) {
@@ -137,10 +145,6 @@ String &String::operator += (char c) {
 	_str[_len] = 0;
 
 	return *this;
-}
-
-char String::lastChar() const {
-	return (_len > 0) ? _str[_len-1] : 0;
 }
 
 void String::deleteLastChar() {
