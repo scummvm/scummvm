@@ -187,7 +187,7 @@ void ResMan::dumpRes(uint32 id) {
 	char outn[30];
 	sprintf(outn, "DUMP%08X.BIN", id);
 	File outf;
-	if (outf.open(outn, File::kFileWriteMode, "")) {
+	if (outf.open(outn, File::kFileWriteMode)) {
 		resOpen(id);
 		MemHandle *memHandle = resHandle(id);
 		outf.write(memHandle->data, memHandle->size);

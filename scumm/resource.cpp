@@ -62,8 +62,8 @@ void ScummFile::resetSubfile() {
 	seek(0, SEEK_SET);
 }
 
-bool ScummFile::open(const char *filename, AccessMode mode, const char *directory) {
-	if (File::open(filename, mode, directory)) {
+bool ScummFile::open(const char *filename, AccessMode mode) {
+	if (File::open(filename, mode)) {
 		resetSubfile();
 		return true;
 	} else {
@@ -2482,7 +2482,7 @@ void ScummEngine::dumpResource(const char *tag, int idx, const byte *ptr, int le
 	sprintf(buf, "dumps/%s%d.dmp", tag, idx);
 #endif
 
-	out.open(buf, File::kFileWriteMode, "");
+	out.open(buf, File::kFileWriteMode);
 	if (out.isOpen() == false)
 		return;
 	out.write(ptr, size);

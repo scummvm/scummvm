@@ -72,7 +72,7 @@ public:
 	void setSubfileRange(uint32 start, uint32 len);
 	void resetSubfile();
 
-	bool open(const char *filename, AccessMode mode = kFileReadMode, const char *directory = NULL);
+	bool open(const char *filename, AccessMode mode = kFileReadMode);
 	bool openSubFile(const char *filename);
 
 	bool eof();
