@@ -1260,6 +1260,7 @@ int32 CloseBackgroundLayer(void)
 				if (blockSurfaces[j][i])
 					delete blockSurfaces[j][i];
 			free(blockSurfaces[j]);
+			blockSurfaces[j] = NULL;
 		}
 	}
 
