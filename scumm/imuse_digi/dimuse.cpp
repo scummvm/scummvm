@@ -203,19 +203,6 @@ void IMuseDigital::callback() {
 			track->mixerVol = vol;
 			track->mixerPan = pan;
 
-			if (track->stream2) {
-				if (_vm->_mixer->isReady()) {
-					if (!track->started) {
-						track->started = true;
-						_vm->_mixer->playInputStream(&track->handle, track->stream2, false, vol, pan, -1, false);
-					} else {
-						_vm->_mixer->setChannelVolume(track->handle, vol);
-						_vm->_mixer->setChannelBalance(track->handle, pan);
-					}
-					continue;
-				}
-			}
-
 			if (track->stream) {
 				byte *data = NULL;
 				int32 result = 0;
@@ -296,6 +283,16 @@ void IMuseDigital::callback() {
 					mixer_size -= result;
 					assert(mixer_size >= 0);
 				} while (mixer_size != 0);
+			} else if (track->stream2) {
+				if (_vm->_mixer->isReady()) {
+					if (!track->started) {
+						track->started = true;
+						_vm->_mixer->playInputStream(&track->handle, track->stream2, false, vol, pan, -1, false);
+					} else {
+						_vm->_mixer->setChannelVolume(track->handle, vol);
+						_vm->_mixer->setChannelBalance(track->handle, pan);
+					}
+				}
 			}
 		}
 	}
