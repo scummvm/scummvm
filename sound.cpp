@@ -534,9 +534,6 @@ void Scumm::setupSound()
 
 void Scumm::pauseSounds(bool pause)
 {
-	/* Arisme : do not pause iMuse as this will disable synch events */
-	/* the sound is really "paused" in the mixer					 */
-
 	IMuse *se = _imuse;
 	if (se)
 		se->pause(pause);
