@@ -1,6 +1,6 @@
 CXX = i586-mingw32msvc-g++
 SDL_CFLAGS=-I/usr/i586-mingw32msvc/include/SDL
-SDL_LIBS=-L/usr/i586-mingw32msvc/lib -lSDLmain -lSDL
+SDL_LIBS=-L/usr/i586-mingw32msvc/lib -lSDL
 
 CXXFLAGS = -W -Wall -Ilua/include $(SDL_CFLAGS) # -O2 
 LDFLAGS = -W -Wall # -O2 

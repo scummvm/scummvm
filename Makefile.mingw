@@ -1,6 +1,6 @@
 ### Modify these paths
 SDL_CFLAGS=-I$(SRC)sdl/include
-SDL_LIBS=-L$(SRC)sdl/lib -lSDLmain -lSDL
+SDL_LIBS=-L$(SRC)sdl/lib -lSDL
 
 CXX = g++
 CXXFLAGS = -g -W -Wall -Ilua/include $(SDL_CFLAGS) # -O2 

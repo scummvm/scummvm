@@ -26,10 +26,16 @@
 #include "engine.h"
 #include "mixer.h"
 #include <unistd.h>
-
+//#include <windows.h>
 static void saveRegistry() {
   Registry::instance()->save();
 }
+
+#ifdef WIN32
+int PASCAL WinMain(HINSTANCE hInst, HINSTANCE hPrevInst,  LPSTR lpCmdLine, int iShowCmd) {
+ main(0, NULL);
+}
+#endif
 
 int main(int /* argc */, char ** /* argv */) {
   char 	GLDriver[1024];
