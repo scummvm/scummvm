@@ -197,9 +197,9 @@ void SaudChannel::recalcVolumeTable() {
 	if (volume_right > 128)
 		volume_right = 128;
 	for (int i = 0; i < 256; i++) {
-		int16 value = volume_left * i;
+		int16 value = volume_left * (int8)i;
 		_voltable[0][i] = TO_BE_16(value);
-		value = volume_right * i;
+		value = volume_right * (int8)i;
 		_voltable[1][i] = TO_BE_16(value);
 	}
 }
