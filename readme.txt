@@ -349,10 +349,11 @@ Credits:
         Claudio Matsuoka  - Daily builds (http://scummvm.sf.net/daily/)
         Janne Huttunen    - Zak256/Indy256/LoomCD actor mask support
         Jeroen Janssen    - Numerous readability and bugfix patches
+        Edward Rudd       - Fixes for playing MP3 versions of MI1/Loom Audio
         Daniel Schepler   - Final MI1 CD music support
         Tim 'realmz'      - Initial MI1 CD music support
         Jonathan 'khalek' - Expert weaver in the Loom
-
+        
         And to all the contributors, users, and beta testers we've missed.
         Thanks!
 

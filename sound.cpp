@@ -106,8 +106,13 @@ void Scumm::playSound(int sound)
 	ptr = getResourceAddress(rtSound, sound);
 	if (ptr != NULL && READ_UINT32_UNALIGNED(ptr) == MKID('SOUN')) {
 		ptr += 8;
-		_system->play_cdrom(ptr[16], ptr[17] == 0xff ? -1 : ptr[17],
+#ifdef COMPRESSED_SOUND_FILE
+		playMP3CDTrack(ptr[16], ptr[17] == 0xff ? -1 : ptr[17],
 						(ptr[18] * 60 + ptr[19]) * 75 + ptr[20], 0);
+#else
+ 		_system->play_cdrom(ptr[16], ptr[17] == 0xff ? -1 : ptr[17],
+ 						(ptr[18] * 60 + ptr[19]) * 75 + ptr[20], 0);
+#endif
 		current_cd_sound = sound;
 		return;
 	}
@@ -717,7 +722,7 @@ void Scumm::playMP3CDTrack(int track, int num_loops, int start, int delay) {
 	if (_soundsPaused)
 		return;
 
-	if (!start && !delay) {
+	if (!num_loops && !start) {
 		_mixer->stop(_mp3_handle);
 		return;
 	}
@@ -728,11 +733,17 @@ void Scumm::playMP3CDTrack(int track, int num_loops, int start, int delay) {
 
 	// Calc offset
 	frame_size = 144 * _mad_header[index].bitrate / _mad_header[index].samplerate;
-	offset = (long)((float)start / (float)75 * 1000 /
-	       			(float)((float)1152 / (float)_mad_header[index].samplerate *
-									  	  1000) * (float)(frame_size + 0.5));
+	offset = (long)( (float)start / (float)75 * ((float)_mad_header[index].bitrate/(float)8));
+	
 	// Calc delay
-	mad_timer_set(&duration, 0, delay, 75);
+	if (!delay) {
+		struct stat file_stat;
+		fstat(fileno(_mp3_tracks[index]),&file_stat);		
+		mad_timer_set(&duration, 0,file_stat.st_size, (_mad_header[index].bitrate/8));
+	} else {
+		mad_timer_set(&duration, 0, delay, 75);
+	}	
+
 	// Go
 	fseek(_mp3_tracks[index], offset, SEEK_SET);
 
