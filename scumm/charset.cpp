@@ -1128,7 +1128,8 @@ void CharsetRendererClassic::printChar(int chr) {
 		// once to each of the two buffers. That should hypothetically yield
 		// identical results, though I didn't try it and right now I don't know
 		// any spots where I can test this...
-		warning("This is broken?!");
+		if (!_ignoreCharsetMask)
+			warning("This might be broken -- please report where you encountered this to Fingolfin");
 		int h = height;
 		do {
 			memcpy(back, dst, width);
