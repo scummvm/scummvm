@@ -917,8 +917,6 @@ void Cutaway::run(char *nextFilename) {
 
 	stop();
 
-	_vm->input()->cutawayQuitReset();
-
 	updateGameState();
 
 	_vm->bankMan()->close(CUTAWAY_BANK);
@@ -987,9 +985,11 @@ void Cutaway::run(char *nextFilename) {
 	joeBob->moving    = 0;
 
 	// if the cutaway has been cancelled, we must stop the speech and the sfx as well
-	if (_vm->sound()->speechOn())
-		_vm->sound()->stopSpeech();
-	_vm->sound()->stopSfx();
+	if (_vm->input()->cutawayQuit()) {
+		if (_vm->sound()->speechOn())
+			_vm->sound()->stopSpeech();
+		_vm->sound()->stopSfx();
+	}
 	
 	_vm->input()->cutawayRunning(false);
 	_vm->input()->cutawayQuitReset();
