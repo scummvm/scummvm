@@ -931,23 +931,26 @@ void Scumm::initRoomSubBlocks() {
 	//
 	// Look for an exit script
 	//
-	if (_features & GF_AFTER_V2)
+	int EXCD_len = -1;
+	if (_features & GF_AFTER_V2) {
 		_EXCD_offs = READ_LE_UINT16(roomptr + 0x18);
-	else if (_features & GF_OLD_BUNDLE)
+		EXCD_len = READ_LE_UINT16(roomptr + 0x1A) - _EXCD_offs + _resourceHeaderSize;	// HACK
+	} else if (_features & GF_OLD_BUNDLE) {
 		_EXCD_offs = READ_LE_UINT16(roomptr + 0x19);
-	else {
+		EXCD_len = READ_LE_UINT16(roomptr + 0x1B) - _EXCD_offs + _resourceHeaderSize;	// HACK
+	} else {
 		ptr = findResourceData(MKID('EXCD'), roomResPtr);
 		if (ptr)
 			_EXCD_offs = ptr - roomResPtr;
 	}
 	if (_dumpScripts && _EXCD_offs)
-		dumpResource("exit-", _roomResource, roomResPtr + _EXCD_offs - _resourceHeaderSize);
+		dumpResource("exit-", _roomResource, roomResPtr + _EXCD_offs - _resourceHeaderSize, EXCD_len);
 
 	//
 	// Look for an entry script
 	//
 	if (_features & GF_AFTER_V2)
-		_ENCD_offs = READ_LE_UINT16(roomptr + 0x1C);
+		_ENCD_offs = READ_LE_UINT16(roomptr + 0x1A);
 	else if (_features & GF_OLD_BUNDLE)
 		_ENCD_offs = READ_LE_UINT16(roomptr + 0x1B);
 	else {
@@ -1210,12 +1213,14 @@ void Scumm::setScaleSlot(int slot, int x1, int y1, int scale1, int x2, int y2, i
 	_scaleSlots[slot-1].scale1 = scale1;
 }
 
-void Scumm::dumpResource(char *tag, int idx, byte *ptr) {
+void Scumm::dumpResource(char *tag, int idx, byte *ptr, int length) {
 	char buf[256];
 	File out;
 
 	uint32 size;
-	if (_features & GF_OLD_BUNDLE)
+	if (length >= 0)
+		size = length;
+	else if (_features & GF_OLD_BUNDLE)
 		size = READ_LE_UINT16(ptr);
 	else if (_features & GF_SMALL_HEADER)
 		size = READ_LE_UINT32(ptr);

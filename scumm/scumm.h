@@ -627,7 +627,7 @@ protected:
 	void expireResources(uint32 size);
 	void freeResources();
 	void destroy();
-	void dumpResource(char *tag, int index, byte *ptr);
+	void dumpResource(char *tag, int index, byte *ptr, int length = -1);
 
 public:
 	/* Should be in Object class */
