@@ -4881,7 +4881,7 @@ void SimonState::playMusic(uint music)
 			return;
 		}
 		midi.read_all_songs_old(f);
-		f->close();
+		delete f;
 	}
 
 	midi.initialize();
