@@ -53,14 +53,7 @@ void Actor::initActor(int mode) {
 	talkPosY = 0;
 	scaley = scalex = 0xFF;
 	charset = 0;
-	sound[0] = 0;
-	sound[1] = 0;
-	sound[2] = 0;
-	sound[3] = 0;
-	sound[4] = 0;
-	sound[5] = 0;
-	sound[6] = 0;
-	sound[7] = 0;
+	memset(sound, 0, sizeof(sound));
 	newDirection = 0;
 
 	stopActorMoving();
@@ -74,6 +67,7 @@ void Actor::initActor(int mode) {
 	ignoreBoxes = 0;
 	forceClip = 0;
 	ignoreTurns = false;
+	
 	initFrame = 1;
 	walkFrame = 2;
 	standFrame = 3;
@@ -83,15 +77,14 @@ void Actor::initActor(int mode) {
 	walk_script = 0;
 	talk_script = 0;
 
-	if (_vm->_features & GF_AFTER_V7) {
-		_vm->_classData[number] = _vm->_classData[0];
-	} else {
-		_vm->_classData[number] = 0;
+	if (_vm) {
+		_vm->_classData[number] = (_vm->_features & GF_AFTER_V7) ? _vm->_classData[0] : 0;
 	}
 }
 
 void Actor::stopActorMoving() {
-	_vm->stopScriptNr(walk_script);
+	if (_vm)
+		_vm->stopScriptNr(walk_script);
 	moving = 0;
 }
 

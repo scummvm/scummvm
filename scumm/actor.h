@@ -109,8 +109,22 @@ public:
 
 	// Constructor, sets all data to 0
 	Actor() {
-		memset(this, 0, sizeof(Actor));
-	} void initActorClass(Scumm *scumm) {
+		top = bottom = 0;
+		number = 0;
+		needRedraw = needBgReset = costumeNeedsInit = visible = false;
+		flip = false;
+		frame = 0;
+		walkbox = 0;
+		animProgress = 0;
+		memset(animVariable, 0, sizeof(animVariable));
+		memset(palette, 0, sizeof(palette));
+
+		walk_script = 0;
+
+		initActor(1);
+	}
+	
+	void initActorClass(Scumm *scumm) {
 		_vm = scumm;
 	}
 //protected:
