@@ -201,6 +201,7 @@ static const ScummGameSettings scumm_settings[] = {
 	{"digdemo", "The Dig (Demo)", GID_DIG, 7, MDT_NONE,
 	 GF_NEW_OPCODES | GF_NEW_COSTUMES | GF_NEW_CAMERA | GF_DIGI_IMUSE | GF_DEMO, "dig"},
 
+#ifndef __PALM_OS__
 	/* Scumm Version 8 */
 	{"comi", "The Curse of Monkey Island", GID_CMI, 8, MDT_NONE,
 	 GF_NEW_OPCODES | GF_NEW_COSTUMES | GF_NEW_CAMERA | GF_DIGI_IMUSE | GF_DEFAULT_TO_1X_SCALER, 0},
@@ -312,6 +313,7 @@ static const ScummGameSettings scumm_settings[] = {
 	// GF_NEW_OPCODES | GF_AFTER_HEV7 | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0},
 	//{"spyozon", "Spyfox 3: Operation Ozone", GID_PJSDEMO, 6, MDT_NONE,
 	// GF_NEW_OPCODES | GF_AFTER_HEV7 | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0},
+#endif
 	{NULL, NULL, 0, 0, MDT_NONE, 0, 0}
 };
 
@@ -2979,9 +2981,11 @@ Engine *Engine_SCUMM_create(GameDetector *detector, OSystem *syst) {
 	case 6:
 		if (game.features & GF_HUMONGOUS) {
 			// TODO: probably use another variable with version number
+#ifndef __PALM_OS__
 			if (game.features & GF_AFTER_HEV7)
 				engine = new ScummEngine_v7he(detector, syst, game);
 			else
+#endif
 				engine = new ScummEngine_v6he(detector, syst, game);
 		} else {
 			engine = new ScummEngine_v6(detector, syst, game);
@@ -2990,9 +2994,11 @@ Engine *Engine_SCUMM_create(GameDetector *detector, OSystem *syst) {
 	case 7:
 		engine = new ScummEngine_v7(detector, syst, game);
 		break;
+#ifndef __PALM_OS__
 	case 8:
 		engine = new ScummEngine_v8(detector, syst, game);
 		break;
+#endif
 	default:
 		error("Engine_SCUMM_create(): Unknown version of game engine");
 	}
