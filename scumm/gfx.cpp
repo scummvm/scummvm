@@ -415,7 +415,6 @@ void Gdi::updateDirtyScreen(VirtScreen *vs) {
  * specified by top/bottom coordinate in the virtual screen.
  */
 void Gdi::drawStripToScreen(VirtScreen *vs, int x, int width, int top, int bottom) {
-	const int height = bottom - top;
 
 	if (bottom <= top)
 		return;
@@ -424,23 +423,28 @@ void Gdi::drawStripToScreen(VirtScreen *vs, int x, int width, int top, int botto
 		return;
 
 	assert(top >= 0 && bottom <= vs->height);	// Paranoia checks
-
-	// We don't clip height and width here, rather we rely on the backend to
-	// perform any needed clipping.
-	const int y = vs->topline + top - _vm->_screenTop;
-	const byte *src = vs->screenPtr + (x + vs->xstart) + top * vs->width;
-
+	assert(x >= 0 && width <= vs->width);
 	assert(_textSurface.pixels);
 	assert(_compositeBuf);
-	Common::Rect r(x, y, x+width, y+height);
-	r.clip(Common::Rect(_textSurface.w, _textSurface.h));
-	// TODO: is this enough clipping?
 
+	// Clip to the visible part of the scene
+	if (top < _vm->_screenTop)
+		top = _vm->_screenTop;
+	if (bottom > _vm->_screenTop + _vm->_screenHeight)
+		bottom = _vm->_screenTop + _vm->_screenHeight;
+
+	// Convert the vertical coordinates to real screen coords
+	const int y = vs->topline + top - _vm->_screenTop;
+	const int height = bottom - top;
+	
+	// Compute screen etc. buffer pointers 
+	const byte *src = vs->screenPtr + (x + vs->xstart) + top * vs->width;
 	byte *dst = _compositeBuf + x + y * _vm->_screenWidth;
 	const byte *text = (byte *)_textSurface.pixels + x + y * _textSurface.pitch;
 
-	for (int h = 0; h < r.height(); ++h) {
-		for (int w = 0; w < r.width(); ++w) {
+	// Compose the text over the game graphics
+	for (int h = 0; h < height; ++h) {
+		for (int w = 0; w < width; ++w) {
 			if (text[w] == CHARSET_MASK_TRANSPARENCY) 
 				dst[w] = src[w];
 			else
@@ -451,6 +455,7 @@ void Gdi::drawStripToScreen(VirtScreen *vs, int x, int width, int top, int botto
 		text += _textSurface.pitch;
 	}
 	
+	// Finally blit the whole thing to the screen
 	_vm->_system->copyRectToScreen(_compositeBuf + x + y * _vm->_screenWidth, _vm->_screenWidth, x, y, width, height);
 }
 
