@@ -364,7 +364,7 @@ Command Line Options:
 
         -p<path>       - Path to where the game is installed. Default is CWD.
         -x[<num>]      - Save game slot to load (default: autosave)
-        -f             - Full-screen mode.
+        -f             - Full-screen mode. (-F forces window mode.)
         -g<mode>       - Select graphics scaler. See below.
         -e<mode>       - Select sound engine. See below.
         -a             - Enable amiga pal conversion, for playing Amiga
@@ -385,9 +385,10 @@ Command Line Options:
         -d[<num>]      - Set debug verbosity to <num>
         -u             - Dump scripts if a directory called 'dumps' exists in
                          current directory
-        --multi-midi   - enable combination Adlib and native MIDI
-        --native-mt32  - true Roland MT-32 (disable GM emulation)
-        --aspect-ratio - enable aspect ratio correction
+        --multi-midi   - Enable combination Adlib and native MIDI
+        --native-mt32  - True Roland MT-32 (disable GM emulation)
+        --fullscreen   - Full-screen mode (same as -f)
+        --aspect-ratio - Enable aspect ratio correction
         --demo-mode    - Start demo mode of Maniac Mansion (Classic version)
         --floppy-intro - Use floppy version intro for Beneath a Steel Sky CD
 

@@ -399,6 +399,7 @@ void GameDetector::parseCommandLine(int argc, char **argv) {
 			case 'f':
 				CHECK_OPTION();
 				_fullScreen = (c == 'f');
+				g_config->setBool("fullscreen", _fullScreen);
 				g_config->setBool("fullscreen", _fullScreen, "scummvm");
 				break;
 			case 'g':
@@ -406,6 +407,7 @@ void GameDetector::parseCommandLine(int argc, char **argv) {
 				_gfx_mode = parseGraphicsMode(option);
 				if (_gfx_mode == -1)
 					goto ShowHelpAndExit;
+				g_config->set("gfx_mode", option);
 				g_config->set("gfx_mode", option, "scummvm");
 				break;
 			// case 'h': reserved for help
@@ -500,6 +502,7 @@ void GameDetector::parseCommandLine(int argc, char **argv) {
 					s += 3;
 				} else
 					long_option_value = true;
+
 				if (!strcmp (s, "multi-midi")) {
 					_multi_midi = long_option_value;
 					g_config->setBool ("multi_midi", _multi_midi);
@@ -509,6 +512,10 @@ void GameDetector::parseCommandLine(int argc, char **argv) {
 				} else if (!strcmp (s, "aspect-ratio")) {
 					_aspectRatio = long_option_value;
 					g_config->setBool ("aspect_ratio", _aspectRatio);
+				} else if (!strcmp (s, "fullscreen")) {
+					_fullScreen = long_option_value;
+					g_config->setBool("fullscreen", _fullScreen);
+					g_config->setBool("fullscreen", _fullScreen, "scummvm");
 #ifndef DISABLE_SCUMM
 				} else if (!strcmp (s, "demo-mode")) {
 					_demo_mode = long_option_value;
