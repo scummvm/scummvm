@@ -280,8 +280,6 @@ SCUMM
     garage and rock animations near rocket.
   - Fix freezes when letting butterfly into fireworks factory and playing alien
     tag in puttmoon
-  - Fix bugs in actorOps case 218 implementation, actor backgrounds should not
-    be reset
   - Fix creature behind garage door disappearing in moondemo
   - Fix remaining masking issues, when cars come out of garages in puttputt and
     when Putt-Putt gets off the chair in Cosmic Dust Diner of puttmoon
