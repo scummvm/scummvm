@@ -197,7 +197,6 @@ MidiDriver *IMuseInternal::getBestMidiDriver(int sound) {
 	} else {
 		driver = _midi_adlib;
 	}
-	assert(driver);
 	return driver;
 }
 
