@@ -416,11 +416,38 @@ void SkyLogic::listen() {
 }
 
 void SkyLogic::stopped() {
-	error("Stub: SkyLogic::stopped");
+	// waiting for another mega to move or give-up trying
+
+	// this mode will always be set up from a special script
+	// that will be one level higher than the script we
+	// would wish to restart from
+
+	Compact *cpt = SkyState::fetchCompact(_compact->extCompact->waitingFor);
+
+	if (!cpt->mood && collide(cpt))
+		return;
+
+	// we are free, continue processing the script
+
+	// restart script one level below
+	*(uint16 *)SkyCompact::getCompactElem(_compact, C_BASE_SUB + _compact->mode - 2) = 0;
+	_compact->extCompact->waitingFor = 0xffff;
+
+	_compact->logic = L_SCRIPT;
+	logicScript();
 }
 
 void SkyLogic::choose() {
-	error("Stub: SkyLogic::choose");
+	// Remain in this mode until player selects some text
+	if (!_scriptVariables[THE_CHOSEN_ONE])
+		return;
+
+	fnNoHuman(0, 0, 0); // kill mouse again
+
+	// system_flags &= ~(1 << SF_CHOOSING); // restore save/restore
+
+	_compact->logic = L_SCRIPT; // and continue script
+	logicScript();
 }
 
 void SkyLogic::frames() {
@@ -1289,7 +1316,7 @@ uint32 SkyLogic::fnNoHuman(uint32 a, uint32 b, uint32 c) {
 	if (!_scriptVariables[MOUSE_STOP]) {
 		_scriptVariables[MOUSE_STOP] &= 1;
 		runGetOff();
-		fnBlankMouse(a, b, c);
+		fnBlankMouse(0, 0, 0);
 	}
 	return 1;
 }
@@ -1859,8 +1886,9 @@ uint32 SkyLogic::fnTextKill2(uint32 a, uint32 b, uint32 c) {
 	return 1;
 }
 
-uint32 SkyLogic::fnSetFont(uint32 a, uint32 b, uint32 c) {
-	error("Stub: fnSetFont");
+uint32 SkyLogic::fnSetFont(uint32 font, uint32 b, uint32 c) {
+	_skyText->fnSetFont(font);
+	return 1;
 }
 
 uint32 SkyLogic::fnStartFx(uint32 a, uint32 b, uint32 c) {

@@ -39,10 +39,10 @@ public:
 	struct displayText_t displayText(char *textPtr, uint8 *dest, bool centre, uint16 pixelWidth, uint8 color);
 	void makeGameCharacter(char textChar, uint8 *charSetPtr, uint8 *&data, uint8 color);
 	struct lowTextManager_t lowTextManager(uint32 textNum, uint16 width, uint16 logicNum, uint8 color, bool centre);
+	void fnSetFont(uint32 fontNr);
 
 protected:
 	bool getTBit();
-	void fnSetFont(uint32 fontNr);
 	void initHuffTree();
 	char getTextChar();
 
