@@ -21,6 +21,7 @@
  */
 
 #include "stdafx.h"
+#include "backends/intern.h"
 #include "sound/mididrv.h"
 #include "engine.h"
 #include "gameDetector.h"

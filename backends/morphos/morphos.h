@@ -31,6 +31,7 @@
 #include <libraries/cdda.h>
 #include <proto/exec.h>
 
+#include "backends/intern.h"
 #include "morphos_scaler.h"
 
 class OSystem_MorphOS : public OSystem

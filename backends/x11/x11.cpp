@@ -22,6 +22,7 @@
 
 /* The bare pure X11 port done by Lionel 'BBrox' Ulmer */
 
+#include "backends/intern.h"
 #include "common/util.h"
 #include "common/engine.h"	// Only #included for error() and warning()
 
@@ -254,13 +255,13 @@ static void *sound_and_music_thread(void *params)
 		error("Stereo mode not supported !\n");
 		exit(1);
 	}
-	param = 22050;
+	param = SAMPLES_PER_SEC;
 	if (ioctl(sound_fd, SNDCTL_DSP_SPEED, &param) == -1) {
 		perror("Error in the SNDCTL_DSP_SPEED ioctl !\n");
 		exit(1);
 	}
-	if (param != 22050) {
-		error("22050 kHz not supported !\n");
+	if (param != SAMPLES_PER_SEC) {
+		error("%d kHz not supported !\n", SAMPLES_PER_SEC);
 		exit(1);
 	}
 	if (ioctl(sound_fd, SNDCTL_DSP_GETOSPACE, &info) != 0) {
@@ -788,7 +789,7 @@ uint32 OSystem_X11::property(int param, Property *value)
 {
 	switch (param) {
 	case PROP_GET_SAMPLE_RATE:
-		return 22050;
+		return SAMPLES_PER_SEC;
 	case PROP_GET_FULLSCREEN:
 		return 0;
 	}

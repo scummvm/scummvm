@@ -25,6 +25,7 @@
 #include "stdafx.h"
 #include "scummsys.h"
 #include "system.h"
+#include "backends/intern.h"
 
 #include <SDL.h>
 #include <SDL_thread.h>

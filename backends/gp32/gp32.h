@@ -19,6 +19,7 @@
  */
 
 
+#include "backends/intern.h"
 #include "common/stdafx.h"
 #include "common/scummsys.h"
 #include "common/system.h"

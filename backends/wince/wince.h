@@ -20,7 +20,7 @@
  */
 
 #include "stdafx.h"
-#include <assert.h>
+#include "backends/intern.h"
 
 //#include "commctrl.h"
 

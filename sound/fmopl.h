@@ -23,9 +23,18 @@
  */
 
 
-#ifndef __FMOPL_H_
-#define __FMOPL_H_
+#ifndef FMOPL_H_
+#define FMOPL_H_
+
 #include "scummsys.h"
+
+enum {
+	FMOPL_ENV_BITS_HQ = 16,
+	FMOPL_ENV_BITS_LQ = 8,
+	FMOPL_EG_ENT_HQ = 4096,
+	FMOPL_EG_ENT_LQ = 128
+};
+
 
 typedef void (*OPL_TIMERHANDLER)(int channel,double interval_Sec);
 typedef void (*OPL_IRQHANDLER)(int param,int irq);

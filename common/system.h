@@ -362,33 +362,4 @@ public:
 	//@}
 };
 
-/* Factory functions. This means we don't have to include the headers for
- * all backends.
- */
-extern OSystem *OSystem_SDL_create(int gfx_driver, bool full_screen, bool aspect_ratio);
-extern OSystem *OSystem_NULL_create();
-extern OSystem *OSystem_MorphOS_create(int game_id, int gfx_driver, bool full_screen);
-extern OSystem *OSystem_Dreamcast_create();
-extern OSystem *OSystem_WINCE3_create();
-extern OSystem *OSystem_X11_create();
-extern OSystem *OSystem_MAC_create(int gfx_mode, bool full_screen);
-extern OSystem *OSystem_GP32_create(int gfx_mode, bool full_screen); //ph0x 
-extern OSystem *OSystem_PALMOS_create(int gfx_mode);
-
-#ifdef _WIN32_WCE
-#define SAMPLES_PER_SEC_OLD 11025
-#define SAMPLES_PER_SEC_NEW 22050
-#else
-//#define SAMPLES_PER_SEC 11025
-#define SAMPLES_PER_SEC 22050
-//#define SAMPLES_PER_SEC 44100
-#endif
-
-enum {
-	FMOPL_ENV_BITS_HQ = 16,
-	FMOPL_ENV_BITS_LQ = 8,
-	FMOPL_EG_ENT_HQ = 4096,
-	FMOPL_EG_ENT_LQ = 128
-};
-
 #endif 
