@@ -1217,23 +1217,6 @@ void Gdi::unkDecode6() {
 	} while (--_currentX);
 }
 
-void Gdi::unkDecode7() {
-	byte *src = _smap_ptr;
-	byte *dst = _bgbak_ptr;
-	int height = _numLinesToProcess;
-	do {
-		/* Endian safe */
-#if defined(SCUMM_NEED_ALIGNMENT)
-		memcpy(dst, src, 8);
-#else
-		((uint32*)dst)[0] = ((uint32*)src)[0];
-		((uint32*)dst)[1] = ((uint32*)src)[1];
-#endif
-		dst += 320;
-		src += 8;
-	} while (--height);
-}
-
 /* Ender - Zak256/Indy256 decoders */
 #define READ_256BIT \
  if ((mask <<= 1) == 256) {buffer = *src++;  mask = 1;}     \
@@ -1247,6 +1230,40 @@ void Gdi::unkDecode7() {
                         dst -= _vertStripNextInc;               \
                         h = _numLinesToProcess;                 \
                 }
+
+void Gdi::unkDecode7() {
+	byte *src = _smap_ptr;
+	byte *dst = _bgbak_ptr;
+	int height = _numLinesToProcess;
+	uint h = _numLinesToProcess;
+	
+	
+	if(_vm->_features & GF_OLD256)
+	{
+       		_currentX = 8;
+       		for(;;) {
+
+        		byte color = *src++;
+        
+   
+             			*dst = color;
+				NEXT_ROW
+		}
+       		return;
+	}
+	
+	do {
+		/* Endian safe */
+#if defined(SCUMM_NEED_ALIGNMENT)
+		memcpy(dst, src, 8);
+#else
+		((uint32*)dst)[0] = ((uint32*)src)[0];
+		((uint32*)dst)[1] = ((uint32*)src)[1];
+#endif
+		dst += 320;
+		src += 8;
+	} while (--height);
+}
 
 void Gdi::unkDecode8() {
        byte *src = _smap_ptr;
