@@ -454,6 +454,15 @@ int IMuseInternal::get_queue_sound_status(int sound) {
 			return 2;
 		i = (i + 1) &(ARRAYSIZE(_cmd_queue) - 1);
 	}
+
+	for (i = 0; i < ARRAYSIZE (_deferredCommands); ++i) {
+		if (_deferredCommands[i].time_left && _deferredCommands[i].a == 8 &&
+		    _deferredCommands[i].b == sound)
+		{
+			return 2;
+		}
+	}
+
 	return 0;
 }
 

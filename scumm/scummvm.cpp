@@ -1743,6 +1743,7 @@ void Scumm::startScene(int room, Actor *a, int objectNr) {
 	killScriptsAndResources();
 	clearEnqueue();
 	stopCycle(0);
+	_sound->processSoundQues();
 
 	for (i = 1; i < _numActors; i++) {
 		_actors[i].hideActor();
