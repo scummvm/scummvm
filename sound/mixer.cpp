@@ -48,8 +48,10 @@ public:
 		assert(mixer);
 	}
 	virtual ~Channel() {
+#ifdef SOX_HACK
 		delete _converter;
 		delete _input;
+#endif
 		if (_handle)
 			*_handle = 0;
 	}
