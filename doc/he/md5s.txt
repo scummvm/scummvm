@@ -64,7 +64,7 @@ c0e6ea1d47493cca09fc674c3d097836  airdemo.he3
 42161ad979949daf67924b5227b94f2d  airdemo.he4
 765492059d83bc0ae8c30a4feef50a6a  airdemo.he9
 
-(spyfox cd/pjs cd/puttzoo cd/he classics cd/freddi2 cd)
+(spyfox cd/pjs cd/puttzoo cd/he classics cd/freddi2 cd/baseball cd)
 khalek, sev
 7.0.0 (Jul  5 1995 14:46:05)
 a5459bfe36183cf1f4ced00fe325aa90  airdemo.w32
@@ -115,6 +115,16 @@ a194f15f51ee62badab74b9e7da97693  bb2demo.HE0
 0b3a9ff634f2fabb695358aa591154b3  bb2demo.he4
 17255b19a57a1ba0c35802b1b01792f7  BB2demo.HE9
 
+(baseball cd)
+sev
+D:\Scummsys.90\sputm.90\*.c
+cf8d13446ec6cb6222287a925fd47c1d baseball.he0
+a37e1eb72b969d1461075b7f3d9dd323 baseball.he1
+c37abed5add924975fad0df9417a8885 baseball.he2
+cb029eb006c1758aa992e28af7e036db baseball.he4
+91b6158bc7ec68da700f90e0fabab4b8 baseball.he9
+7989c98adce2b84cd710818c950616ac baseball.w32
+
 (baseball2003 cd)
 sev
 c:\Build\SRC\SPUTM\Src\SrcPWin\*.cpp
@@ -128,6 +138,20 @@ fe816c17a87ed5420f1440c85e34f72e baseball2003.he4
 7f06715731111bfe639cde435ec3b650 baseball2003.he9
 b2e1d0e25ed9dbe0ea47ef1a5204ac4a DATA/infogrames.da2
 755a5cf5515610e30370a0afb7d1bc7b DATA/intro.da2
+
+(football cd)
+sev
+C:\Dev\Project\SPUTM\Src\*.cpp
+435ae8ebf6998b1ea395a5989457985f FOOTBALL.(A)
+7df3c5eb3575aef947729213d6c3a877 FOOTBALL.(B)
+7fc6cdb46b4c9d384c52327f4bca6416 FOOTBALL.HE0
+6c33bde70c28c2eac78de8b9f3add1b4 FOOTBALL.HE2
+e03725ba7069e7a94c28168b70dc99c4 FOOTBALL.R32
+07656b959c7febb6359c8de5fd6b6f76 FOOTBALL.U32
+1671f9302d4eca3bfcccc7d68d75d42a FOOTBALL.W32
+b9e149d859b6b4ab1906ea670c4c7449 football.esk
+8d02e9002b8033c00bbaf3d71bb695cc football.he4
+a7e708342776af913fb70c842310379f football.mmz
 
 (putsfunshop cd/pj3 cd/spyozon cd/freddi5 cd)
 sev
@@ -155,6 +179,16 @@ C:\SRC_RELEASE\SPUTM\Src\SrcPWin\*.cpp
 2234bbc4d12a09fadf8540343eb1c00e  football2002.exe
 2e85f7aa054930c692a5b1bed1dfc295  Football2002.HE0
 20aca400df5f580e4d3c019c3386d361  Football2002.(b)
+
+(soccer cd)
+sev
+D:\scummsys.98\sputm.98\*.c
+a70431a271fd64eb958bab0a75b9db5b SOCCER.(A)
+701246819d1a70573f41bf33fc19214f SOCCER.HE0
+6b8840d83784dbceb44f9d8694fce9d4 SOCCER.HE2
+b50ac4df3a13b7ccc73e68dae5851d36 SOCCER.HE4
+6a89ce2925a36a1d9e0d9e9f7060c533 SOCCER.HE9
+db16386ae24902866ec908c31f58dd6c Soccer.w32
 
 (soccer MLS cd)
 sev
@@ -288,7 +322,7 @@ faca7509c38beabb37b2347b8b6bb1ea  freddemo.he2
 6daf76c1fe724ce6bf2e4c5175f39352  freddemo.he3
 a8c3ced34ecb16ad1b0eed5b464ad61e  freddemo.he4
 
-(spyfox cd/pjs cd/puttzoo cd/he classics cd/freddi2 cd)
+(spyfox cd/pjs cd/puttzoo cd/he classics cd/freddi2 cd/baseball cd)
 khalek, sev
 7.0.0 (Jul  5 1995 14:46:05)
 25003798cd5f4b51bc1f4d02c6a2e218  freddemo.w32
@@ -487,7 +521,7 @@ b4c292854d70ff6cf89e20030630c5e0 FREDDICOVE.EXE
 a9f9f4a7ad25a3efda4626d4b6c80ffb FREDDICOVE.HE3
 dfbd9adb0d406184383dd069a64c8757 FREDDICOVE.HE4
 
-(spyfox cd/pjs cd/puttzoo cd/he classics cd/pj2 cd/freddi3 cd)
+(spyfox cd/pjs cd/puttzoo cd/he classics cd/pj2 cd/freddi3 cd/baseball cd)
 khalek, sev
 1996-10-17 03:54 ff2-demo.w32
 D:\Scummsrc.80\Sputm\*.c
@@ -506,7 +540,7 @@ fc8d197a22146e74766e9cb0cfcaf1da  Freddi Fish 2 Demo (0)
 f96261232a8a7ae6bc7478d8c1c5a49c  Freddi Fish 2 Demo (2)
 a97bf54bcae67fabb8d6e4a1e506efef  Freddi Fish 2 Demo (4)
 
-(humongous ftp/puttrace cd)
+(humongous ftp/puttrace cd/soccer cd)
 1997-10-28 12:42 f3-mdemo.w32
 khalek, sev
 D:\Scummsys.90\sputm.90\*.c
@@ -536,7 +570,7 @@ a2fde75fcbd2376f057f4a40f9893cbe f3-mdemo.he1
 b90004518ba5bb4dc473170f5c975568 f3-mdemo.he4
 c0c0934580cde95879bef0b6a5a49c29 f3-mdemo.d32
 
-(humongous ftp/pj3 cd/spyfox2 cd)
+(humongous ftp/pj3 cd/spyfox2 cd/football cd)
 1999-02-08 19:21 F4-demo.w32
 khalek, sev
 D:\scummsys.98\sputm.98\*.c
@@ -619,7 +653,7 @@ c0e6ea1d47493cca09fc674c3d097836 jungle.he3
 222ad352670c1d94366a8511af846f49 jungle.he4
 f80c48c622ba21d46fc518630f324cf7 jungle.he9
 
-(ftp/pj2 cd/puttrace cd/freddi3 cd)
+(ftp/pj2 cd/puttrace cd/freddi3 cd/soccer cd)
 1997-09-03 18:32 kinddemo.w32
 khalek, sev
 D:\Scummsys.90\sputm.90\*.c
@@ -749,7 +783,7 @@ khalek
 147be86929b5969224c72edac30896fd  Pajama Sam (4)
 2546d42491fa61ac8e2d20d68d264fce  Pajama Sam (7)
 
-(spyfox cd/puttzoo cd/he classics cd/pj2 cd/freddi2 cd/freddi3 cd)
+(spyfox cd/puttzoo cd/he classics cd/pj2 cd/freddi2 cd/freddi3 cd/baseball cd)
 khalek, sev
 1996-10-31 22:34 pjs-demo.w32
 D:\Scummsrc.80\Sputm\*.c
@@ -854,7 +888,7 @@ f69c2ce78a6f2a70bf43f0cf665ac075  data/world-1/levels/level-8.ot2
 049b95a44520347dabf1d14b1cd9b9f4  data/world-1/levels/level-9.ot1
 b6087413d0aac4078203a1ef5fd88cb8  data/world-1/levels/level-9.ot2
 
-(ftp/puttrace cd/putt dog cd/spyfox2 cd/putttime cd)
+(ftp/puttrace cd/putt dog cd/spyfox2 cd/putttime cd/football cd/soccer cd)
 1998-05-09 20:27 PJ2DEMO.W32
 khalek
 D:\scummsys.95\sputm.95\*.c
@@ -1047,7 +1081,7 @@ a030210d465ed001953df89e3df1e558  RACEDEMO.W32
 07e92dfae14eb6ef3afc6d40ba98fcd2  RACEDEMO.HE2
 e80168dc9bfca4577b4e2bbdd70db60b  RACEDEMO.HE4
 
-(pj3 cd/putt dog cd/spyfox2 cd/puttcircus cd/putttime cd)
+(pj3 cd/putt dog cd/spyfox2 cd/puttcircus cd/putttime cd/football cd)
 sev
 D:\scummsys.98\sputm.98\*.c
 8e1d77b06c92662ef5128b087f84f229 racedemo.exe
@@ -1066,7 +1100,7 @@ a30dd1cd2b58b2c5c6eb1aa970f5a3c2 PuttTime.w32
 802147789449535e375c7c4f2e666b96 PuttTime.he2
 15d5f719ebc6bcd4fe674587a8fa8596 PuttTime.he4
 
-(pj2 cd/puttrace cd)
+(pj2 cd/puttrace cd/soccer cd)
 sev
 D:\Scummsys.90\sputm.90\*.c
 4c33312418b27bfe8ad307a6e14604e9 timedemo.w32
@@ -1150,7 +1184,7 @@ khalek
 225991e6f8d3d6ac5e519413392c34f3  Putt-Putt Saves the Zoo (2)
 d3235443d88751acd3412c1b0c6cec35  Putt-Putt Saves the Zoo (4)
 
-(spyfox cd/pjs cd/he classics cd/freddi2 cd)
+(spyfox cd/pjs cd/he classics cd/freddi2 cd/baseball cd)
 khalek
 7.0.0 (Jun  4 1995 15:47:12)
 f3324cfe3dec0288fd38197cf88962af  zoodemo.w32
@@ -1189,7 +1223,7 @@ e0cde64b0c37a188c97a0bc93225cce9  Puttzoo Demo (1)
 a0cd041eb6c1a289a23549ef8740ff17  Puttzoo Demo (2)
 86dc7e6f520dbabe79b324ae64456686  Puttzoo Demo (4)
 
-(ftp/putt dog cd/spyfox2 cd/putttime cd)
+(ftp/putt dog cd/spyfox2 cd/putttime cd/football cd)
 1999-05-17 12:21 spydemo.w32
 khalek
 D:\Scummsys.90\sputm.90\*.c

@@ -300,6 +300,8 @@ static const ScummGameSettings scumm_settings[] = {
 	// there is also a C++ engine version of spydemo
 	{"Spydemo", "Spyfox 1: Dry Cereal (Demo)", GID_HEGAME, 6, 90, 61, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES | GF_MULTIPLE_VERSIONS, 0, 0},
+	{"baseball", "Backyard Baseball", GID_HEGAME, 6, 90, 61, MDT_NONE, // FIXME: number of actors
+	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
 
 	// Humongous Entertainment Scumm Version 9.5 ?  Scummsys.95
 	{"pj2demo", "Pajama Sam 2: Thunder and Lightning Aren't so Frightening (Demo)", GID_HEGAME, 6, 90, 61, MDT_NONE,
@@ -319,6 +321,8 @@ static const ScummGameSettings scumm_settings[] = {
 	{"puttrace", "Putt-Putt Enters the Race", GID_HEGAME, 6, 98, 61, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
 	{"BluesABCTimeDemo", "Blue's ABC Time (Demo)", GID_HEGAME, 6, 98, 61, MDT_NONE,
+	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
+	{"soccer", "Backyard Soccer", GID_HEGAME, 6, 98, 61, MDT_NONE, // FIXME: number of actors
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
 
 	// Global scripts increased to 2048
@@ -340,6 +344,8 @@ static const ScummGameSettings scumm_settings[] = {
 	{"spyfox2", "Spyfox 2: Some Assembly Required", GID_HEGAME, 6, 99, 61, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
 	{"mustard", "Spy Fox in Hold the Mustard", GID_HEGAME, 6, 99, 61, MDT_NONE,
+	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
+	{"football", "Backyard Football", GID_HEGAME, 6, 99, 61, MDT_NONE, // FIXME: number of actors
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
 
 	// Humongous Entertainment Scumm Version ?
@@ -497,10 +503,12 @@ static SubstResFileNames substResFileNameTable[] = {
 	{ "Spydemo", "FoxDemo", kGenMac },
 	{ "airdemo", "Airport Demo", kGenMac},
 	{ "balloon", "Balloon-O-Rama", kGenMac},
+	{ "baseball", "BaseBall", kGenMac},
 	{ "chase", "Cheese Chase", kGenMac},
 	{ "circdemo", "Putt Circus Demo", kGenMac},
 	{ "dog", "Dog on a Stick", kGenMac},
 	{ "f3-mdemo", "F3-Mdemo", kGenMac },
+	{ "f3-mdemo", "F3-mdemo", kGenMac },
 	{ "f4-demo", "Freddi 4 Demo", kGenMac },
 	{ "f4-demo", "ff4demo", kGenPC }, // FIXME: check this with joostp. Used by NL version?
 	{ "farmdemo", "Farm Demo", kGenMac},
@@ -510,6 +518,7 @@ static SubstResFileNames substResFileNameTable[] = {
 	{ "ff2-demo", "FFHSDemo", kGenPC },
 	{ "ff2-demo", "FFHSDemo", kGenMac },
 	{ "footdemo", "FootBall Demo", kGenMac },
+	{ "football", "FootBall", kGenMac },
 	{ "footdemo", "FootBall2002", kGenPC },
 	{ "freddemo", "Freddi Demo", kGenMac },
 	{ "freddi", "Freddi Fish", kGenMac },
@@ -522,6 +531,7 @@ static SubstResFileNames substResFileNameTable[] = {
 	{ "freddicove", "FreddiCove", kGenMac },
 	{ "freddicove", "FreddiCCC", kGenPC },
 	{ "kinddemo", "Kinddemo", kGenMac },
+	{ "kinddemo", "KindDemo", kGenMac },
 	{ "lost", "Lost and Found", kGenMac},
 	{ "maze", "Maze Madness", kGenMac},
 	{ "moondemo", "Putt-Putt Moon Demo", kGenMacNoParens },
@@ -550,7 +560,9 @@ static SubstResFileNames substResFileNameTable[] = {
 	{ "sf2-demo", "Spy Fox 2 - Demo", kGenMac },
 	{ "sf2-demo", "sf2demo", kGenPC }, // FIXME: check this with joostp. Used by NL version?
 	{ "sf3-demo", "Spy Ozone Demo", kGenMac },
+	{ "soccer", "Soccer", kGenMac },
 	{ "socks", "SockWorks", kGenMac },
+	{ "spydemo", "FoxDemo", kGenMac },
 	{ "spyfox", "SPYFox", kGenMac },
 	{ "spyfox", "SPYFoxDC", kGenPC },
 	{ "spyfox2", "Spy Fox 2", kGenMac },

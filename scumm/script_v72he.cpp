@@ -1571,6 +1571,11 @@ void ScummEngine_v72he::o72_kernelGetFunctions() {
 		push((int)(cos(a) * 100000));
 		}
 		break;
+	case 2001:
+		// Used in football
+		push(0);
+		warning("o72_kernelGetFunctions: unhandled case 2001");
+		break;
 	default:
 		error("o72_kernelGetFunctions: default case %d", args[0]);
 	}
