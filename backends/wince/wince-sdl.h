@@ -36,6 +36,8 @@
 
 #include <SDL.h>
 
+
+
 #define TOTAL_ZONES 3
 
 class OSystem_WINCE3 : public OSystem_SDL {
@@ -74,6 +76,7 @@ public:
 
 //#ifdef WIN32_PLATFORM_WFSP
 	// Smartphone actions
+
 	void initZones();
 	void loadSmartphoneConfigurationElement(String element, int &value, int defaultValue);
 	void loadSmartphoneConfiguration();
@@ -190,15 +193,13 @@ private:
 	int _currentZone;
 
 	typedef struct zoneDesc {
-		    int x;
-	        int y;
-			int width;
-			int height;
+		int x;
+		int y;
+		int width;
+		int height;
 	} zoneDesc;
 
 	static zoneDesc _zones[TOTAL_ZONES];
-
-
 };
 
 #endif

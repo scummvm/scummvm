@@ -733,24 +733,24 @@ void OSystem_WINCE3::update_game_settings() {
 	get_sample_rate();
 }
 
-void OSystem_WINCE3::initSize(uint w, uint h, int overlaySize) {
+void OSystem_WINCE3::initSize(uint w, uint h, int overlayScale) {
 
-		if (_isSmartphone && h == 240)
-			h = 200;  // mainly for the launcher
+	if (_isSmartphone && h == 240)
+		h = 200;  // mainly for the launcher
 
-        switch (_transactionMode) {
-			case kTransactionActive:
-                _transactionDetails.w = w;
-                _transactionDetails.wChanged = true;
-                _transactionDetails.h = h;
-                _transactionDetails.hChanged = true;
-                return;
-                break;
-			case kTransactionCommit:
-                break;
-			default:
-                break;
-        }
+	switch (_transactionMode) {
+		case kTransactionActive:
+			_transactionDetails.w = w;
+			_transactionDetails.h = h;
+			_transactionDetails.overlayScale = overlayScale;
+			_transactionDetails.sizeChanged = true;
+			return;
+			break;
+		case kTransactionCommit:
+			break;
+		default:
+			break;
+	}
 
 	if (w == 320 && h == 200 && !_isSmartphone)
 		h = 240; // use the extra 40 pixels height for the toolbar
