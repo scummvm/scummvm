@@ -90,33 +90,3 @@ void OSystem::displayMessageOnOSD(const char *msg) {
 SaveFileManager *OSystem::getSavefileManager() {
 	return new DefaultSaveFileManager();
 }
-
-#pragma mark -
-
-
-namespace Common {
-
-StackLock::StackLock(OSystem::MutexRef mutex, const char *mutexName)
-	: _mutex(mutex), _mutexName(mutexName) {
-	lock();
-}
-
-StackLock::~StackLock() {
-	unlock();
-}
-
-void StackLock::lock() {
-	if (_mutexName != NULL)
-		debug(6, "Locking mutex %s", _mutexName);
-	
-	g_system->lockMutex(_mutex);
-}
-
-void StackLock::unlock() {
-	if (_mutexName != NULL)
-		debug(6, "Unlocking mutex %s", _mutexName);
-
-	g_system->unlockMutex(_mutex);
-}
-
-}	// End of namespace Common
