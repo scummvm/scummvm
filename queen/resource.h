@@ -58,14 +58,16 @@ struct GameVersion {
 class Resource {
 
 public:
-	Resource(const Common::String &datafilePath);
+	Resource(const Common::String &datafilePath, const char *datafileName);
 	~Resource(void);
 	uint8 *loadFile(const char *filename, uint32 skipBytes = 0, byte *dstBuf = NULL);
 	char *getJAS2Line();
 	bool exists(const char *filename);
 	bool isDemo();
 	bool isFloppy();
+	uint8 compression()	{ return _compression; }
 	uint32 fileSize(const char *filename);
+	File *giveMP3(const char *filename);
 	Language getLanguage();
 	const char *JASVersion();
 
@@ -73,6 +75,7 @@ protected:
 	File *_resourceFile;
 	char *_JAS2Ptr;
 	uint32 _JAS2Pos;
+	uint8 _compression;
 	const Common::String _datafilePath;
 	const GameVersion *_gameVersion;
 	uint32 _resourceEntries;
@@ -83,6 +86,7 @@ protected:
 	int32 resourceIndex(const char *filename);
 	uint32 fileOffset(const char *filename);
 	bool readTableFile();
+	void readTableCompResource();
 	static const GameVersion *detectGameVersion(uint32 dataFilesize);
 };
 

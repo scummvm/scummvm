@@ -44,6 +44,7 @@ extern bool draw_keyboard;
 static const GameSettings queen_settings[] = {
 	/* Flight of the Amazon Queen */
 	{ "queen", "Flight of the Amazon Queen", GID_QUEEN_FIRST, 99, MDT_ADLIB | MDT_NATIVE | MDT_PREFER_NATIVE, 0, "queen.1" },
+	{ "queencomp", "Flight of the Amazon Queen", GID_QUEEN_FIRST, 99, MDT_ADLIB | MDT_NATIVE | MDT_PREFER_NATIVE, 0, "queen.1c" },
 	{ NULL, NULL, 0, 0, MDT_NONE, 0, NULL} 
 };
 
@@ -59,15 +60,18 @@ GameList Engine_QUEEN_detectGames(const FSList &fslist) {
 	GameList detectedGames;
 	const GameSettings *g = &queen_settings[0];
 
-	// Iterate over all files in the given directory
-	for (FSList::ConstIterator file = fslist.begin(); file != fslist.end(); ++file) {
-		const char *gameName = file->displayName().c_str();
+	while(g->detectname) {
+		// Iterate over all files in the given directory
+		for (FSList::ConstIterator file = fslist.begin(); file != fslist.end(); ++file) {
+			const char *gameName = file->displayName().c_str();
 
-		if (0 == scumm_stricmp(g->detectname, gameName)) {
-			// Match found, add to list of candidates, then abort inner loop.
-			detectedGames.push_back(*g);
-			break;
+			if (0 == scumm_stricmp(g->detectname, gameName)) {
+				// Match found, add to list of candidates, then abort inner loop.
+				detectedGames.push_back(*g);
+				break;
+			}
 		}
+		g++;
 	}
 	return detectedGames;
 }
@@ -213,7 +217,7 @@ void QueenEngine::go() {
 }
 
 void QueenEngine::initialise(void) {
-	_resource = new Resource(_gameDataPath);
+	_resource = new Resource(_gameDataPath, _detector->_game.detectname);
 	_display = new Display(_system);
 	_graphics = new Graphics(_display, _resource);
 	_logic = new Logic(_resource, _graphics, _display);

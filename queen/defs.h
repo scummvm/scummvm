@@ -28,6 +28,12 @@ namespace Queen {
 #define InRange(x,l,h)     ((x)<=(h) && (x)>=(l)) /* X in [l..h] */
 
 enum {
+	COMPRESSION_NONE  = 0,
+	COMPRESSION_MP3   = 1,	
+	COMPRESSION_OGG   = 2
+};
+
+enum {
 	GAME_SCREEN_WIDTH  = 320,
 	GAME_SCREEN_HEIGHT = 200,
 	ROOM_ZONE_HEIGHT   = 150,

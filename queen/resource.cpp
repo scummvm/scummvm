@@ -27,7 +27,6 @@ namespace Queen {
 #define	DEMO_JAS_VERSION_OFFSET	0x119A8
 #define JAS_VERSION_OFFSET	0x12484
 
-static const char *dataFilename = "queen.1";
 static const char *tableFilename = "queen.tbl";
 
 const GameVersion Resource::_gameVersions[] = {
@@ -43,28 +42,30 @@ const GameVersion Resource::_gameVersions[] = {
 	{ "PE100", true,  true,  0x000B40F5 }
 };
 
-Resource::Resource(const Common::String &datafilePath)
+Resource::Resource(const Common::String &datafilePath, const char *datafileName)
 	: _JAS2Pos(0), _datafilePath(datafilePath), _resourceEntries(0), _resourceTable(NULL) {
 
 	_resourceFile = new File();
-	_resourceFile->open(dataFilename, _datafilePath);
+	_resourceFile->open(datafileName, _datafilePath);
 	if (_resourceFile->isOpen() == false)
-		error("Could not open resource file '%s%s'", _datafilePath.c_str(), dataFilename);
-
+		error("Could not open resource file '%s%s'", _datafilePath.c_str(), datafileName);
 	
-	_gameVersion = detectGameVersion(_resourceFile->size());
+	if (_resourceFile->readUint32BE() == 'QTBL') {
+		readTableCompResource();
+	} else {
+		_gameVersion = detectGameVersion(_resourceFile->size());
 	
-	if (!readTableFile()) {
-		//check if it is the english floppy version, for which we have a hardcoded version of the tables
-		if (!strcmp(_gameVersion->versionString, _gameVersions[VER_ENG_FLOPPY].versionString)) {
-			_gameVersion = &_gameVersions[VER_ENG_FLOPPY];
-			_resourceEntries = 1076;
-			_resourceTable = _resourceTablePEM10;
-		} else {
-			error("Couldn't find tablefile '%s%s'",  _datafilePath.c_str(), tableFilename);
+		if (!readTableFile()) {
+			//check if it is the english floppy version, for which we have a hardcoded version of the tables
+			if (!strcmp(_gameVersion->versionString, _gameVersions[VER_ENG_FLOPPY].versionString)) {
+				_gameVersion = &_gameVersions[VER_ENG_FLOPPY];
+				_resourceEntries = 1076;
+				_resourceTable = _resourceTablePEM10;
+			} else {
+				error("Couldn't find tablefile '%s%s'",  _datafilePath.c_str(), tableFilename);
+			}
 		}
 	}
-
 	if (strcmp(_gameVersion->versionString, JASVersion()))
 		error("Verifying game version failed! (expected: '%s', found: '%s')", _gameVersion->versionString, JASVersion());
 
@@ -248,6 +249,33 @@ bool Resource::readTableFile() {
 		return true;
 	}
 	return false;
+}
+
+void Resource::readTableCompResource() {
+	GameVersion *gv = new GameVersion;
+	_resourceFile->read(gv->versionString, 6);
+	gv->isFloppy = _resourceFile->readByte() != 0;
+	gv->isDemo = _resourceFile->readByte() != 0;
+	_compression = _resourceFile->readByte();
+	_resourceEntries = _resourceFile->readUint16BE();
+	_gameVersion = gv;
+	
+	_resourceFile->seek(15, SEEK_SET);
+	_resourceTable = new ResourceEntry[_resourceEntries];
+	ResourceEntry *pre = _resourceTable;
+	for (uint32 i = 0; i < _resourceEntries; ++i, ++pre) {
+		_resourceFile->read(pre->filename, 12);
+		pre->filename[12] = '\0';
+		pre->inBundle = _resourceFile->readByte();
+		pre->offset = _resourceFile->readUint32BE();
+		pre->size = _resourceFile->readUint32BE();
+	}
+}
+
+File *Resource::giveMP3(const char *filename) {
+	assert(strstr(filename, ".SB"));
+	_resourceFile->seek(fileOffset(filename), SEEK_SET);
+	return _resourceFile;
 }
 
 } // End of namespace Queen
