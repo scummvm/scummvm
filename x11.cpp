@@ -70,6 +70,7 @@ static bool has_mouse, hide_mouse;
 static unsigned int scale;
 static int fake_right_mouse = 0;
 static int report_presses = 1;
+static int current_shake_pos = 0;
 
 #define MAX_NUMBER_OF_DIRTY_SQUARES 32
 typedef struct {
@@ -290,8 +291,82 @@ void setWindowName(Scumm *s) {
 		   NULL /* argv */, 0 /* argc */, NULL /* size hints */, NULL /* WM hints */, NULL /* class hints */ );  
 }
 
+/* This simply shifts up or down the screen by 'shake pos' */
 void setShakePos(Scumm *s, int shake_pos) {
-  warning("Unimplemented shaking !");
+  if (shake_pos != current_shake_pos) {
+    int dirty_top = 0, dirty_height = 0;
+    int line;
+
+    /* This is to provoke a full redraw */
+    num_of_dirty_square = MAX_NUMBER_OF_DIRTY_SQUARES;
+
+    /* Update the mouse to prevent 'mouse droppings' */
+    old_mouse_y += shake_pos - current_shake_pos;
+		
+    /* Handle the 'dirty part' of the screen */
+    if (shake_pos > current_shake_pos) {
+      for (line = 199 + shake_pos; line >= -shake_pos; line--) {
+	int cur_pos, new_pos;
+	int cur_OK, new_OK;
+	
+	cur_pos = line + current_shake_pos;
+	new_pos = line + shake_pos;
+	
+	cur_OK = (cur_pos >= 0) && (cur_pos < 200);
+	new_OK = (new_pos >= 0) && (new_pos < 200);
+	if (cur_OK && new_OK)
+	  memcpy(local_fb + new_pos * 320, local_fb + cur_pos * 320, 320);
+	else if (cur_OK)
+	  memset(local_fb + cur_pos * 320, 0, 320);
+	else if (new_OK)
+	  memset(local_fb + new_pos * 320, 0, 320);
+      }
+      
+      if (current_shake_pos < 0) {
+	dirty_top = -shake_pos;
+	dirty_height = shake_pos - current_shake_pos;
+	if (dirty_top < 0) {
+	  dirty_height += dirty_top;
+	  dirty_top = 0;
+	}
+	if ((dirty_height + dirty_top) > 200)
+	  dirty_height = 200 - dirty_top;
+      } else {
+	dirty_height = 0;
+      }
+    } else {
+      for (line = -current_shake_pos; line < 200 + current_shake_pos; line++) {
+	int cur_pos, new_pos;
+	int cur_OK, new_OK;
+	
+	cur_pos = line + current_shake_pos;
+	new_pos = line + shake_pos;
+	cur_OK = (cur_pos >= 0) && (cur_pos < 200);
+	new_OK = (new_pos >= 0) && (new_pos < 200);
+	
+	if (cur_OK && new_OK)
+	  memcpy(local_fb + new_pos * 320, local_fb + cur_pos * 320, 320);
+	else if (cur_OK)
+	  memset(local_fb + cur_pos * 320, 0, 320);
+	else if (new_OK)
+	  memset(local_fb + new_pos * 320, 0, 320);
+      }
+
+      if (current_shake_pos <= 0) {
+	dirty_height = 0;
+      } else {
+	dirty_top = 200 - current_shake_pos;
+	dirty_height = current_shake_pos - shake_pos;
+	if ((dirty_height + dirty_top) > 200)
+	  dirty_height = 200 - dirty_top;
+      }
+    }
+
+    /* And save the new shake position */
+    current_shake_pos = shake_pos;
+    if (dirty_height > 0)
+      s->redrawLines(dirty_top, dirty_top + dirty_height);
+  }
 }
 
 #define AddDirtyRec(xi,yi,wi,hi) 				\
@@ -303,7 +378,19 @@ void setShakePos(Scumm *s, int shake_pos) {
     num_of_dirty_square++;					\
   }
 void blitToScreen(Scumm *s, byte *src, int x, int y, int w, int h) {
-  unsigned char *dst = local_fb + 320 * y + x;
+  unsigned char *dst;
+
+  y += current_shake_pos;
+  if (y < 0) {	
+    h += y;
+    src -= y * 320;
+    y = 0; 
+  }
+  if (h > (200 - y)) { 
+    h = 200 - y; 
+  }
+
+  dst = local_fb + 320 * y + x;
 
   if (h<=0)	return;
 
@@ -326,6 +413,8 @@ unsigned char old_backup[BAK_WIDTH * BAK_HEIGHT];
 
 void drawMouse(Scumm *s, int xdraw, int ydraw, int w, int h, byte *buf, bool visible) {
   unsigned char *dst,*bak;
+
+  ydraw += current_shake_pos;
 
   if ((xdraw >= 320) || ((xdraw + w) <= 0) ||
       (ydraw >= 200) || ((ydraw + h) <= 0)) {
@@ -466,7 +555,7 @@ void updateScreen(Scumm *s) {
     update_palette(s);
     full_redraw = true;
     num_of_dirty_square = 0;
-  } else if (num_of_dirty_square > MAX_NUMBER_OF_DIRTY_SQUARES) {
+  } else if (num_of_dirty_square >= MAX_NUMBER_OF_DIRTY_SQUARES) {
     full_redraw = true;
     num_of_dirty_square = 0;
   }
