@@ -1223,8 +1223,8 @@ bool SkySound::startSpeech(uint16 textNum) {
 		return false;
 	}
 
-	uint32 speechSize = ((dataFileHeader*)speechData)->s_tot_size;
-	uint8 *playBuffer = (uint8*)malloc(speechSize);
+	uint32 speechSize = ((dataFileHeader *)speechData)->s_tot_size;
+	uint8 *playBuffer = (uint8 *)malloc(speechSize);
 	memcpy(playBuffer, speechData + sizeof(dataFileHeader), speechSize);
 
 	free(speechData);

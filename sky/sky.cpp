@@ -278,7 +278,7 @@ void **SkyState::fetchItem(uint32 num) {
 
 void SkyState::timerHandler(void *ptr) {
 
-	((SkyState*)ptr)->gotTimerTick();
+	((SkyState *)ptr)->gotTimerTick();
 }
 
 void SkyState::gotTimerTick(void) {

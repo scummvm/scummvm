@@ -234,7 +234,7 @@ void SkyMouse::pointerEngine(void) {
 	uint32 currentListNum = SkyLogic::_scriptVariables[MOUSE_LIST_NO];
 	uint16 *currentList;
 	do {
-		currentList = (uint16*)SkyState::fetchCompact(currentListNum);
+		currentList = (uint16 *)SkyState::fetchCompact(currentListNum);
 		while ((*currentList != 0) && (*currentList != 0xFFFF)) {
 			uint16 itemNum = *currentList;
 			Compact *itemData = SkyState::fetchCompact(itemNum);

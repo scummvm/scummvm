@@ -50,8 +50,8 @@ SkyScreen::SkyScreen(OSystem *pSystem, SkyDisk *pDisk) {
 	uint8 tmpPal[1024];
 
 	_system->init_size(FULL_SCREEN_WIDTH, FULL_SCREEN_HEIGHT);
-	_gameGrid = (uint8*)malloc(GRID_X * GRID_Y * 2);
-	_backScreen = (uint8*)malloc(GAME_SCREEN_WIDTH * GAME_SCREEN_HEIGHT);
+	_gameGrid = (uint8 *)malloc(GRID_X * GRID_Y * 2);
+	_backScreen = (uint8 *)malloc(GAME_SCREEN_WIDTH * GAME_SCREEN_HEIGHT);
 	forceRefresh();
 
 	_currentScreen = NULL;
@@ -152,7 +152,7 @@ void SkyScreen::recreate(void) {
 	// check the game grid for changed blocks
 	if (!SkyLogic::_scriptVariables[LAYER_0_ID]) return ;
 	uint8 *gridPos = _gameGrid;
-	uint8 *screenData = (uint8*)SkyState::fetchItem(SkyLogic::_scriptVariables[LAYER_0_ID]);
+	uint8 *screenData = (uint8 *)SkyState::fetchItem(SkyLogic::_scriptVariables[LAYER_0_ID]);
 	if (!screenData) {
 		error("SkyScreen::recreate():\nSkyState::fetchItem(SkyLogic::_scriptVariables[LAYER_0_ID](%X)) returned NULL",SkyLogic::_scriptVariables[LAYER_0_ID]);
 	}
@@ -235,7 +235,7 @@ void SkyScreen::fnFadeDown(uint32 scroll) {
 	if (scroll && (!(SkyState::_systemVars.systemFlags & SF_NO_SCROLL))) {
 		// scrolling is performed by fnFadeUp. It's just prepared here
 		_scrollScreen = _currentScreen;
-		_currentScreen = (uint8*)malloc(FULL_SCREEN_WIDTH * FULL_SCREEN_HEIGHT);
+		_currentScreen = (uint8 *)malloc(FULL_SCREEN_WIDTH * FULL_SCREEN_HEIGHT);
 		// the game will draw the new room into _currentScreen which
 		// will be scrolled into the visible screen by fnFadeUp
 		// fnFadeUp also frees the _scrollScreen
@@ -305,7 +305,7 @@ void SkyScreen::fnFadeUp(uint32 palNum, uint32 scroll) {
 	}
 
 	if ((scroll == 0) || (SkyState::_systemVars.systemFlags & SF_NO_SCROLL)) {
-		uint8 *palette = (uint8*)SkyState::fetchCompact(palNum);
+		uint8 *palette = (uint8 *)SkyState::fetchCompact(palNum);
 		if (palette == NULL)
 			error("SkyScreen::fnFadeUp: can't fetch compact %X.\n", palNum);
 #ifdef SCUMM_BIG_ENDIAN
@@ -382,7 +382,7 @@ void SkyScreen::startSequence(uint16 fileNum) {
 
 void SkyScreen::startSequenceItem(uint16 itemNum) {
 
-	_seqInfo.seqData = (uint8*)SkyState::fetchItem(itemNum);
+	_seqInfo.seqData = (uint8 *)SkyState::fetchItem(itemNum);
 	_seqInfo.framesLeft = _seqInfo.seqData[0] - 1;
 	_seqInfo.seqDataPos = _seqInfo.seqData + 1;
 	_seqInfo.delay = SEQ_DELAY;
@@ -488,7 +488,7 @@ void SkyScreen::sortSprites(void) {
 		currDrawList++;
 
 		do { // a_new_draw_list:
-			uint16 *drawListData = (uint16*)SkyState::fetchCompact(loadDrawList);
+			uint16 *drawListData = (uint16 *)SkyState::fetchCompact(loadDrawList);
 			nextDrawList = false;
 			while ((!nextDrawList) && (drawListData[0])) {
 				if (drawListData[0] == 0xFFFF) {
@@ -500,7 +500,7 @@ void SkyScreen::sortSprites(void) {
 					if ((spriteComp->status & 4) && // is it sortable playfield?(!?!)
 						(spriteComp->screen == SkyLogic::_scriptVariables[SCREEN])) { // on current screen
 							dataFileHeader *spriteData = 
-								(dataFileHeader*)SkyState::fetchItem(spriteComp->frame >> 6);
+								(dataFileHeader *)SkyState::fetchItem(spriteComp->frame >> 6);
 							if (!spriteData) {
 								printf("Missing file %d!\n",spriteComp->frame >> 6);
 								//getchar();
@@ -534,7 +534,7 @@ void SkyScreen::sortSprites(void) {
 					}
 		}
 		for (uint32 cnt = 0; cnt < spriteCnt; cnt++) {
-			drawSprite((uint8*)sortList[cnt].sprite, sortList[cnt].compact);
+			drawSprite((uint8 *)sortList[cnt].sprite, sortList[cnt].compact);
 			if (sortList[cnt].compact->status & 8) vectorToGame(0x81);
 			else vectorToGame(1);
 			if (!(sortList[cnt].compact->status & 0x200)) verticalMask();
@@ -551,7 +551,7 @@ void SkyScreen::doSprites(uint8 layer) {
 		idNum = SkyLogic::_scriptVariables[drawListNum];
 		drawListNum++;
 
-		drawList = (uint16*)SkyState::fetchCompact(idNum);
+		drawList = (uint16 *)SkyState::fetchCompact(idNum);
 		while(drawList[0]) {
 			// new_draw_list:
 			while ((drawList[0] != 0) && (drawList[0] != 0xFFFF)) {
@@ -561,7 +561,7 @@ void SkyScreen::doSprites(uint8 layer) {
 				drawList++;
 				if ((spriteData->status & (1 << layer)) && 
 						(spriteData->screen == SkyLogic::_scriptVariables[SCREEN])) {
-					uint8 *toBeDrawn = (uint8*)SkyState::fetchItem(spriteData->frame >> 6);
+					uint8 *toBeDrawn = (uint8 *)SkyState::fetchItem(spriteData->frame >> 6);
 					if (!toBeDrawn) {
 						printf("Spritedata %d not loaded!\n",spriteData->frame >> 6);
 						spriteData->status = 0;
@@ -574,7 +574,7 @@ void SkyScreen::doSprites(uint8 layer) {
 				}
 			}
 			while (drawList[0] == 0xFFFF)
-				drawList = (uint16*)SkyState::fetchCompact(drawList[1]);
+				drawList = (uint16 *)SkyState::fetchCompact(drawList[1]);
 		}
 	}
 }
@@ -685,7 +685,7 @@ void SkyScreen::vertMaskSub(uint16 *grid, uint32 gridOfs, uint8 *screenPtr, uint
 			if (!(FROM_LE_16(grid[gridOfs]) & 0x8000)) {
 				uint32 gridVal = FROM_LE_16(grid[gridOfs]) - 1;
 				gridVal *= GRID_W * GRID_H;
-				uint8 *dataSrc = (uint8*)SkyState::fetchItem(SkyLogic::_scriptVariables[layerId]) + gridVal;
+				uint8 *dataSrc = (uint8 *)SkyState::fetchItem(SkyLogic::_scriptVariables[layerId]) + gridVal;
 				uint8 *dataTrg = screenPtr;
 				for (uint32 grdCntY = 0; grdCntY < GRID_H; grdCntY++) {
 					for (uint32 grdCntX = 0; grdCntX < GRID_W; grdCntX++)
@@ -713,7 +713,7 @@ void SkyScreen::verticalMask(void) {
 			uint32 nLayerCnt = layerCnt;
 			while (SkyLogic::_scriptVariables[nLayerCnt + 3]) {
 				uint16 *scrGrid;
-				scrGrid = (uint16*)SkyState::fetchItem(SkyLogic::_scriptVariables[layerCnt + 3]);
+				scrGrid = (uint16 *)SkyState::fetchItem(SkyLogic::_scriptVariables[layerCnt + 3]);
 				if (scrGrid[gridOfs]) {
 					vertMaskSub(scrGrid, gridOfs, screenPtr, layerCnt);
 					break;
@@ -745,7 +745,7 @@ void SkyScreen::showGrid(uint8 *gridBuf) {
 		for (uint16 cntx = 0; cntx < GAME_SCREEN_WIDTH >> 3; cntx++) {
 			if (!bitsLeft) {
 				bitsLeft = 32;
-				gridData = *(uint32*)gridBuf;
+				gridData = *(uint32 *)gridBuf;
 				gridBuf += 4;
 			}
 			if (gridData & 0x80000000)

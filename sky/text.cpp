@@ -97,7 +97,7 @@ void SkyText::fnSetFont(uint32 fontNr) {
 void SkyText::fnTextModule(uint32 textInfoId, uint32 textNo) {
 
 	fnSetFont(1);
-	uint16* msgData = (uint16*)SkyState::fetchCompact(textInfoId);
+	uint16* msgData = (uint16 *)SkyState::fetchCompact(textInfoId);
 	lowTextManager_t textId = lowTextManager(textNo, msgData[1], msgData[2], 209, false);
 	SkyLogic::_scriptVariables[RESULT] = textId.compactNum;
 	Compact *textCompact = SkyState::fetchCompact(textId.compactNum);
@@ -243,7 +243,7 @@ displayText_t SkyText::displayText(char *textPtr, uint8 *dest, bool centre, uint
 		textChar -= 0x20;
 		if (textChar == 0) {
 			lastSpace = curPos; //keep track of last space
-			*(uint32*)centerTblPtr = TO_LE_32(lineWidth);
+			*(uint32 *)centerTblPtr = TO_LE_32(lineWidth);
 		}
 		
 		lineWidth += *(_characterSet+textChar);	//add character width
@@ -411,7 +411,7 @@ lowTextManager_t SkyText::lowTextManager(uint32 textNum, uint16 width, uint16 lo
 
 void SkyText::changeTextSpriteColour(uint8 *sprData, uint8 newCol) {
 
-	dataFileHeader *header = (dataFileHeader*)sprData;
+	dataFileHeader *header = (dataFileHeader *)sprData;
 	sprData += sizeof(dataFileHeader);
 	for (uint16 cnt = 0; cnt < header->s_sp_size; cnt++)
 		if (sprData[cnt] >= 241) sprData[cnt] = newCol;

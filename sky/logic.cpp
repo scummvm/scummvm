@@ -1685,9 +1685,9 @@ bool SkyLogic::fnChooser(uint32 a, uint32 b, uint32 c) {
 
 		// stipple the text
 		
-		uint32 size = ((dataFileHeader *)data)->s_height * ((dataFileHeader*)data)->s_width;
+		uint32 size = ((dataFileHeader *)data)->s_height * ((dataFileHeader *)data)->s_width;
 		uint32 index = 0;
-		uint32 width = ((dataFileHeader*)data)->s_width;
+		uint32 width = ((dataFileHeader *)data)->s_width;
 
 		data += sizeof(dataFileHeader);
 
@@ -1725,7 +1725,7 @@ bool SkyLogic::fnHighlight(uint32 itemNo, uint32 pen, uint32 c) {
 	pen ^= 1;
 	pen += 241;
 	Compact *textCompact = SkyState::fetchCompact(itemNo);
-	uint8 *sprData = (uint8*)SkyState::fetchItem(textCompact->flag);
+	uint8 *sprData = (uint8 *)SkyState::fetchItem(textCompact->flag);
 	_skyText->changeTextSpriteColour(sprData, (uint8)pen);
 	return true;
 }
@@ -2152,7 +2152,7 @@ bool SkyLogic::fnCustomJoey(uint32 id, uint32 b, uint32 c) {
 }
 
 bool SkyLogic::fnSetPalette(uint32 a, uint32 b, uint32 c) {
-	_skyScreen->setPalette((uint8*)SkyState::fetchCompact(a));
+	_skyScreen->setPalette((uint8 *)SkyState::fetchCompact(a));
 	SkyState::_systemVars.currentPalette = a;
 	return true;
 }

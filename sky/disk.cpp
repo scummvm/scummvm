@@ -156,7 +156,7 @@ uint8 *SkyDisk::loadFile(uint16 fileNr, uint8 *dest) {
 
 	//if cflag == 0 then file is compressed, 1 == uncompressed
 
-	if ((!cflag) && ((FROM_LE_16(((dataFileHeader*)_fileDest)->flag) >> 7)&1)) {
+	if ((!cflag) && ((FROM_LE_16(((dataFileHeader *)_fileDest)->flag) >> 7)&1)) {
 		debug(2, "File is RNC compressed.");
 
 		memcpy(&fileHeader, _fileDest, sizeof(struct dataFileHeader));
@@ -278,7 +278,7 @@ void SkyDisk::fnCacheChip(uint32 list) {
 	// fnCacheChip is called after fnCacheFast
 	uint16 cnt = 0;
 	while (_buildList[cnt]) cnt++;
-	uint16 *fList = (uint16*)SkyState::fetchCompact(list);
+	uint16 *fList = (uint16 *)SkyState::fetchCompact(list);
 	uint16 fCnt = 0;
 	do {
 		_buildList[cnt + fCnt] = fList[fCnt] & 0x7FFFU;
@@ -291,7 +291,7 @@ void SkyDisk::fnCacheFast(uint32 list) {
 
 	if (list == 0) return;
 	uint8 cnt = 0;
-	uint16 *fList = (uint16*)SkyState::fetchCompact(list);
+	uint16 *fList = (uint16 *)SkyState::fetchCompact(list);
 	do {
 		_buildList[cnt] = fList[cnt] & 0x7FFFU;
 		cnt++;

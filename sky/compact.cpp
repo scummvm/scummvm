@@ -546,7 +546,7 @@ void patchFor288(void) {
 	((Compact *)SkyCompact::data_3[280])->baseSub = 0x30BD; // globe
 	((Compact *)SkyCompact::data_3[283])->baseSub = 0x3094; // inner_reich_door
 	((Compact *)SkyCompact::data_3[286])->baseSub = 0x310B; // glass_slot
-	((uint16*)SkyCompact::data_3[13])[13] = 0x3138; // rs_lamb_28
+	((uint16 *)SkyCompact::data_3[13])[13] = 0x3138; // rs_lamb_28
 	((Compact *)SkyCompact::data_3[300])->actionScript = 0x3140; // cable_29
 	((Compact *)SkyCompact::data_3[313])->actionScript = 0x3018; // cable_fall
 	((Compact *)SkyCompact::data_3[313])->baseSub = 0x3014;
