@@ -23,13 +23,65 @@
 #define QUEENMUSIC_H
 
 #include "common/util.h"
+#include "sound/mididrv.h"
 
-class MidiDriver;
 class MidiParser;
 
 namespace Queen {
 
 class QueenEngine;
+
+class MusicPlayer : public MidiDriver {
+public:
+	MusicPlayer(MidiDriver *driver, byte *data, uint32 size);
+	~MusicPlayer();
+	
+	void playMusic();
+	void stopMusic();
+	void setLoop(bool loop)		{ _looping = loop; }
+	bool queueSong(uint16 songNum);
+	void queueClear();
+	
+	//MidiDriver interface implementation
+	int open();
+	void close();
+	void send(uint32 b);
+	
+	void metaEvent(byte type, byte *data, uint16 length);
+	
+	void setTimerCallback(void *timerParam, void (*timerProc)(void *)) { }
+	uint32 getBaseTempo(void)	{ return _driver ? _driver->getBaseTempo() : 0; }
+	
+	//Channel allocation functions
+	MidiChannel *allocateChannel()		{ return 0; }
+	MidiChannel *getPercussionChannel()	{ return 0; }
+	
+protected:
+
+	enum {
+		MUSIC_QUEUE_SIZE	=	8
+	};
+
+	void queueUpdatePos();
+	static void onTimer(void *data);
+	uint32 songOffset(uint16 songNum);
+	uint32 songLength(uint16 songNum);
+
+	MidiDriver *_driver;
+	MidiParser *_parser;
+	MidiChannel *_channel[16];
+	byte _channelVolume[16];
+		
+	bool _isPlaying;
+	bool _looping;
+	byte _volume;
+	uint8 _queuePos;
+	int16 _songQueue[MUSIC_QUEUE_SIZE];
+	
+	uint16 _numSongs;
+	byte *_musicData;
+	uint32 _musicDataSize;
+};
 	
 class Music {
 public:
@@ -37,20 +89,12 @@ public:
 	~Music();
 	void playSong(uint16 songNum);
 	void stopSong();
-	void loop(bool val)	{ _loop = val; }
+	void loop(bool val)	{ return _player->setLoop(val); }
 	
 protected:
-	bool _isPlaying;
-	bool _loop;
 	byte *_musicData;
-	uint16 _numSongs;
 	uint32 _musicDataSize;
-	MidiDriver *_driver;
-	MidiParser *_midi;
-
-	static void myTimerProc(void *refCon);	
-	uint32 songOffset(uint16 songNum);
-	uint32 songLength(uint16 songNum);
+	MusicPlayer *_player;
 };
 
 } // End of namespace Queen

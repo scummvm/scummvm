@@ -24,20 +24,144 @@
 #include "queen/queen.h"
 #include "queen/resource.h"
 
-#include "sound/mididrv.h"
 #include "sound/midiparser.h"
 
 namespace Queen {
 
-	Music::Music(MidiDriver *driver, QueenEngine *vm) : _isPlaying(false), _loop(false), _driver(driver) {
-		_midi = MidiParser::createParser_SMF();
-		_midi->setMidiDriver(_driver);
+	MusicPlayer::MusicPlayer(MidiDriver *driver, byte *data, uint32 size) : _driver(driver), _isPlaying(false), _looping(false), _volume(255), _queuePos(0), _musicData(data), _musicDataSize(size) {
+		queueClear();
+		_parser = MidiParser::createParser_SMF();
+		_parser->setMidiDriver(this);
+		_parser->setTimerRate(_driver->getBaseTempo());
+		
+		_numSongs = READ_LE_UINT16(_musicData);
+		this->open();
+	}
+	
+	MusicPlayer::~MusicPlayer() {
+		_driver->setTimerCallback(NULL, NULL);
+		_parser->unloadMusic();
+		this->close();
+		delete _parser;
+	}
+	
+	bool MusicPlayer::queueSong(uint16 songNum) {
+		uint8 emptySlots = 0;
+		for (int i = 0; i < MUSIC_QUEUE_SIZE; i++)
+			if (!_songQueue[i])
+				emptySlots++;
+		
+		if (!emptySlots)
+			return false;
+			
+		_songQueue[MUSIC_QUEUE_SIZE - emptySlots] = songNum;
+		return true;
+	}
+	
+	void MusicPlayer::queueClear() {
+		_queuePos = 0;
+		memset(_songQueue, 0, sizeof(_songQueue));
+	}
+	
+	int MusicPlayer::open() {
+		// Don't ever call open without first setting the output driver!
+		if (!_driver)
+			return 255;
+			
 		int ret = _driver->open();
 		if (ret)
-			warning("MIDI Player init failed: \"%s\"", _driver->getErrorName(ret));
-		_midi->setTimerRate(_driver->getBaseTempo());
-		_driver->setTimerCallback(this, myTimerProc);			
+			return ret;
+		_driver->setTimerCallback(this, &onTimer);
+		return 0;
+	}
+	
+	void MusicPlayer::close() {
+		stopMusic();
+		if (_driver)
+			_driver->close();
+		_driver = 0;
+	}
+	
+	void MusicPlayer::send(uint32 b) {
+		byte channel = (byte)(b & 0x0F);
+		if ((b & 0xFFF0) == 0x07B0) {
+			// Adjust volume changes by master volume
+			byte volume = (byte)((b >> 16) & 0x7F);
+			_channelVolume[channel] = volume;
+			//volume = volume * _masterVolume / 255;
+			b = (b & 0xFF00FFFF) | (volume << 16);
+		} 
+		else if ((b & 0xFFF0) == 0x007BB0) {
+			//Only respond to All Notes Off if this channel
+			//has currently been allocated
+			if (_channel[b & 0x0F])
+				return;
+		}
 		
+		
+		if (!_channel[channel])
+			_channel[channel] = (channel == 9) ? _driver->getPercussionChannel() : _driver->allocateChannel();
+		
+		if (_channel[channel])
+			_channel[channel]->send(b);
+	}
+	
+	void MusicPlayer::metaEvent(byte type, byte *data, uint16 length) {
+		//Only thing we care about is End of Track.
+		if (type != 0x2F)
+			return;
+		
+		if (_looping || _songQueue[1]) 
+			playMusic();
+		else
+			stopMusic();
+	}
+	
+	void MusicPlayer::onTimer(void *refCon) {
+		MusicPlayer *music = (MusicPlayer *)refCon;
+		if (music->_isPlaying)
+			music->_parser->onTimer();
+	}
+	
+	void MusicPlayer::playMusic() {
+		if (!_queuePos && !_songQueue[_queuePos]) {
+			debug(5, "MusicPlayer::playMusic - Music queue is empty!");
+			return;
+		}
+		
+		uint16 songNum = _songQueue[_queuePos];
+		_parser->loadMusic(_musicData + songOffset(songNum), songLength(songNum));
+		_parser->setTrack(0);	
+		//debug(0, "Playing song %d [queue position: %d]", songNum, _queuePos);
+		_isPlaying = true;
+		queueUpdatePos();
+	}
+	
+	void MusicPlayer::queueUpdatePos() {
+		if (_queuePos < (MUSIC_QUEUE_SIZE - 1) && _songQueue[_queuePos + 1])
+			_queuePos++;
+		else
+			_queuePos = 0;
+	}
+	
+	void MusicPlayer::stopMusic() {
+		_isPlaying = false;
+		_parser->unloadMusic();
+	}
+
+	uint32 MusicPlayer::songOffset(uint16 songNum) {
+		uint16 offsLo = READ_LE_UINT16(_musicData + (songNum * 4) + 2);
+		uint16 offsHi = READ_LE_UINT16(_musicData + (songNum * 4) + 4);
+		return (offsHi << 4) | offsLo;
+	}
+
+	uint32 MusicPlayer::songLength(uint16 songNum) {
+		if (songNum < _numSongs)
+			return (songOffset(songNum + 1) - songOffset(songNum));
+		return (_musicDataSize - songOffset(songNum));
+	}
+
+	Music::Music(MidiDriver *driver, QueenEngine *vm) {
 		if (vm->resource()->isDemo()) {
 			_musicData = vm->resource()->loadFile("AQ8.RL", 0, NULL);
 			_musicDataSize = vm->resource()->fileSize("AQ8.RL");
@@ -45,49 +169,23 @@ namespace Queen {
 			_musicData = vm->resource()->loadFile("AQ.RL", 0, NULL);
 			_musicDataSize = vm->resource()->fileSize("AQ.RL");
 		}
-		_numSongs = READ_LE_UINT16(_musicData);
+		
+		_player = new MusicPlayer(driver, _musicData, _musicDataSize);
 	}
 
 	Music::~Music() {
-		_driver->setTimerCallback(NULL, NULL);
-		_midi->unloadMusic();
-		_driver->close();
-		delete _midi;
+		delete _player;
 		delete[] _musicData;	
 	}
 
 	void Music::playSong(uint16 songNum) {
-		if (_loop)
-			_midi->property(MidiParser::mpAutoLoop, 1);
-		else
-			_midi->property(MidiParser::mpAutoLoop, 0);
-		
-		_isPlaying = true;
-		_midi->loadMusic(_musicData + songOffset(songNum), songLength(songNum));
-		_midi->setTrack(0);		
+		_player->queueClear();
+		_player->queueSong(songNum);
+		_player->playMusic();				
 	}
 
 	void Music::stopSong() {
-		_isPlaying = false;
-		_midi->unloadMusic();
-	}
-
-	void Music::myTimerProc(void *refCon) {
-		Music *music = (Music *)refCon;
-		if (music->_isPlaying)
-			music->_midi->onTimer();
-	}
-	
-	uint32 Music::songOffset(uint16 songNum) {
-		uint16 offsLo = READ_LE_UINT16(_musicData + (songNum * 4) + 2);
-		uint16 offsHi = READ_LE_UINT16(_musicData + (songNum * 4) + 4);
-		return (offsHi << 4) | offsLo;
-	}
-
-	uint32 Music::songLength(uint16 songNum) {
-		if (songNum < _numSongs)
-			return (songOffset(songNum + 1) - songOffset(songNum));
-		return (_musicDataSize - songOffset(songNum));
+		return _player->stopMusic();
 	}
 	
 } // End of namespace Queen
