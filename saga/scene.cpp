@@ -991,7 +991,7 @@ int Scene::defaultScene(int param, R_SCENE_INFO *scene_info) {
 			}
 
 			_startScriptThread->threadVars[kVarAction] = 0;
-			_startScriptThread->threadVars[kVarObject] = _sceneNumber;
+			_startScriptThread->threadVars[kVarObject] = TO_LE_16(_sceneNumber);
 			_startScriptThread->threadVars[kVarWithObject] = 0; // TOTO: entrance
 			_startScriptThread->threadVars[kVarActor] = 0;
 
@@ -1022,7 +1022,7 @@ int Scene::defaultScene(int param, R_SCENE_INFO *scene_info) {
 			}
 
 			_sceneScriptThread->threadVars[kVarAction] = 0;
-			_sceneScriptThread->threadVars[kVarObject] = _sceneNumber;
+			_sceneScriptThread->threadVars[kVarObject] = TO_LE_16(_sceneNumber);
 			_sceneScriptThread->threadVars[kVarWithObject] = 0; // TODO: entrance
 			_sceneScriptThread->threadVars[kVarActor] = 0; // TODO: VERB_ENTER
 
