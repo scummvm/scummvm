@@ -374,8 +374,12 @@ void SkyScreen::fnFadeUp(uint32 palNum, uint32 scroll) {
 void SkyScreen::waitForTimer(void) {
 
 	_gotTick = false;
-	while (!_gotTick)
+	while (!_gotTick) {
+		OSystem::Event event;
+
 		_system->delay_msecs(10);
+		while (_system->poll_event(&event));
+	}
 }
 
 void SkyScreen::handleTimer(void) {
