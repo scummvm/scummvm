@@ -243,6 +243,7 @@ SCUMM
 * Humongous entertainment >= v7 titles:
   - Add support for local script offsets used in HE98+ games
   - Add support for additional drawWizImage flags
+  - Add support for WizPolygon rendering (cyx)
   - Add support for new akos animation code used by cut scenes (cyx)
   - Complete support for akos codec 32
   - Fix debug strings (Reports incorrect values) (Kirben)

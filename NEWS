@@ -7,7 +7,7 @@ For a more comprehensive changelog for the latest experimental CVS code, see:
      and "Inherit the Earth")
 
  General:
-   - Added support for FLAC (losless) encoded audio files
+   - Added support for FLAC (lossless) encoded audio files
    - Added an 'On Screen Display' to the SDL backend
    - Partially rewrote the backend API
    - Comments in config files are preserved now
@@ -29,7 +29,7 @@ For a more comprehensive changelog for the latest experimental CVS code, see:
    - Fixed ship-to-ship graphic glitches in COMI
 
  Queen:
-   - Various fixes [TODO: Somebody of the Queen team please fill this in]
+   - Fixed some issues with the Dreamcast backend.
 
  Sword2:
    - Simplified memory/resource management
