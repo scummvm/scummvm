@@ -47,7 +47,7 @@
 
 namespace Saga {
 
-Snd::Snd(void) {
+SndRes::SndRes(void) {
 	int result;
 
 	/* Load sound module resource file contexts */
@@ -68,7 +68,7 @@ Snd::Snd(void) {
 	_init = 1;
 }
 
-int Snd::playVoice(ulong voice_rn) {
+int SndRes::playVoice(ulong voice_rn) {
 	R_SOUNDBUFFER snd_buffer;
 	int result;
 
@@ -82,7 +82,7 @@ int Snd::playVoice(ulong voice_rn) {
 	return R_SUCCESS;
 }
 
-int Snd::load(R_RSCFILE_CONTEXT *snd_ctxt, ulong snd_rn, R_SOUNDBUFFER *snd_buf_i) {
+int SndRes::load(R_RSCFILE_CONTEXT *snd_ctxt, ulong snd_rn, R_SOUNDBUFFER *snd_buf_i) {
 	uchar *snd_res;
 	size_t snd_res_len;
 
@@ -132,7 +132,7 @@ int Snd::load(R_RSCFILE_CONTEXT *snd_ctxt, ulong snd_rn, R_SOUNDBUFFER *snd_buf_
 	return R_SUCCESS;
 }
 
-int Snd::loadVocSound(const uchar *snd_res, size_t snd_res_len, R_SOUNDBUFFER *snd_buf_i) {
+int SndRes::loadVocSound(const uchar *snd_res, size_t snd_res_len, R_SOUNDBUFFER *snd_buf_i) {
 	R_VOC_HEADER_BLOCK voc_hb;
 	R_VOC_GENBLOCK voc_gb;
 	R_VOC_BLOCK1 voc_b1;
@@ -225,7 +225,7 @@ int Snd::loadVocSound(const uchar *snd_res, size_t snd_res_len, R_SOUNDBUFFER *s
 	return R_SUCCESS;
 }
 
-int Snd::getVoiceLength(ulong voice_rn) {
+int SndRes::getVoiceLength(ulong voice_rn) {
 	ulong length;
 
 	double ms_f;
@@ -257,7 +257,7 @@ int Snd::getVoiceLength(ulong voice_rn) {
 	return ms_i;
 }
 
-int Snd::ITEVOC_Resample(long src_freq, long dst_freq, uchar *src_buf, 
+int SndRes::ITEVOC_Resample(long src_freq, long dst_freq, uchar *src_buf, 
 						size_t src_buf_len, uchar **dst_buf, size_t *dst_buf_len) {
 	uchar *resamp_buf;
 	size_t resamp_len;

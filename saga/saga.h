@@ -34,7 +34,7 @@
 
 namespace Saga {
 
-class Snd;
+class SndRes;
 
 #define R_PBOUNDS(n,max) (((n)>=(0))&&((n)<(max)))
 
@@ -54,7 +54,7 @@ class SagaEngine:public Engine {
  public:
 	SagaEngine(GameDetector * detector, OSystem * syst);
 	virtual ~SagaEngine();
-	Snd *_snd;
+	SndRes *_sndRes;
 };
 
 // FIXME: Global var. We use it until everything will be turned into objects

@@ -211,7 +211,7 @@ void SagaEngine::go() {
 
 	/* Initialize engine modules
 	 * \*------------------------------------------------------------- */
-	_snd = new Snd();
+	_sndRes = new SndRes();
 	EVENT_Init();
 	FONT_Init();
 	SPRITE_Init();

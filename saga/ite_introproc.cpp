@@ -350,7 +350,7 @@ int ITE_IntroCave1Proc(int param, R_SCENE_INFO * scene_info)
 			q_event = EVENT_Chain(q_event, &event);
 
 			voice_len =
-			    _vm->_snd->getVoiceLength(IntroDiag[i].i_voice_rn);
+			    _vm->_sndRes->getVoiceLength(IntroDiag[i].i_voice_rn);
 			if (voice_len < 0) {
 				voice_len = strlen(IntroDiag[i].i_str) *
 				    VOICE_LETTERLEN;
@@ -470,7 +470,7 @@ int ITE_IntroCave2Proc(int param, R_SCENE_INFO * scene_info)
 			q_event = EVENT_Chain(q_event, &event);
 
 			voice_len =
-			    _vm->_snd->getVoiceLength(IntroDiag[i].i_voice_rn);
+			    _vm->_sndRes->getVoiceLength(IntroDiag[i].i_voice_rn);
 			if (voice_len < 0) {
 				voice_len = strlen(IntroDiag[i].i_str) *
 				    VOICE_LETTERLEN;
@@ -588,7 +588,7 @@ int ITE_IntroCave3Proc(int param, R_SCENE_INFO * scene_info)
 			q_event = EVENT_Chain(q_event, &event);
 
 			voice_len =
-			    _vm->_snd->getVoiceLength(IntroDiag[i].i_voice_rn);
+			    _vm->_sndRes->getVoiceLength(IntroDiag[i].i_voice_rn);
 			if (voice_len < 0) {
 				voice_len = strlen(IntroDiag[i].i_str) *
 				    VOICE_LETTERLEN;
@@ -705,7 +705,7 @@ int ITE_IntroCave4Proc(int param, R_SCENE_INFO * scene_info)
 			q_event = EVENT_Chain(q_event, &event);
 
 			voice_len =
-			    _vm->_snd->getVoiceLength(IntroDiag[i].i_voice_rn);
+			    _vm->_sndRes->getVoiceLength(IntroDiag[i].i_voice_rn);
 			if (voice_len < 0) {
 				voice_len = strlen(IntroDiag[i].i_str) *
 				    VOICE_LETTERLEN;

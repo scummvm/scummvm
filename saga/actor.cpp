@@ -679,7 +679,7 @@ HandleSpeakIntent(R_ACTOR * actor,
 		if (!a_dialogue->d_playing) {
 			/* Dialogue voice hasn't played yet - play it now */
 
-			_vm->_snd->playVoice(a_dialogue->d_voice_rn);
+			_vm->_sndRes->playVoice(a_dialogue->d_voice_rn);
 			a_dialogue->d_playing = 1;
 		}
 
@@ -733,7 +733,7 @@ int ACTOR_GetSpeechTime(const char *d_string, uint d_voice_rn)
 {
 	int voice_len;
 
-	voice_len = _vm->_snd->getVoiceLength(d_voice_rn);
+	voice_len = _vm->_sndRes->getVoiceLength(d_voice_rn);
 
 	if (voice_len < 0) {
 		voice_len = strlen(d_string) * ACTOR_DIALOGUE_LETTERTIME;

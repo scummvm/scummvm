@@ -310,7 +310,7 @@ static int HandleOneShot(R_EVENT * event)
 
 	case R_VOICE_EVENT:
 
-		_vm->_snd->playVoice(event->param);
+		_vm->_sndRes->playVoice(event->param);
 		break;
 
 	case R_MUSIC_EVENT:

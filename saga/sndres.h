@@ -62,10 +62,10 @@ struct R_VOC_BLOCK1 {
 	int pack_method;	/* BYTE */
 };
 
-class Snd {
+class SndRes {
  public:
 
-	Snd(void);
+	SndRes(void);
 
 	int loadSound(ulong sound_rn);
 	int playVoice(ulong voice_rn);
