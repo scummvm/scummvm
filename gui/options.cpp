@@ -58,7 +58,7 @@ OptionsDialog::OptionsDialog(const String &domain, int x, int y, int w, int h)
 	_enableGraphicSettings(false),
 	_gfxPopUp(0), _fullscreenCheckbox(0), _aspectCheckbox(0),
 	_enableAudioSettings(false),
-	_multiMidiCheckbox(0), _mt32Checkbox(0),
+	_multiMidiCheckbox(0), _mt32Checkbox(0), _subCheckbox(0),
 	_enableVolumeSettings(false),
 	_masterVolumeSlider(0), _masterVolumeLabel(0),
 	_musicVolumeSlider(0), _musicVolumeLabel(0),
@@ -120,6 +120,9 @@ void OptionsDialog::open() {
 
 		// Native mt32 setting
 		_mt32Checkbox->setState(ConfMan.getBool("native_mt32", _domain));
+
+		// Subtitles setting
+		_subCheckbox->setState(ConfMan.getBool("subtitles", _domain));
 	}
 
 	if (_masterVolumeSlider) {
@@ -171,7 +174,7 @@ void OptionsDialog::close() {
 			if (_enableAudioSettings) {
 				ConfMan.set("multi_midi", _multiMidiCheckbox->getState(), _domain);
 				ConfMan.set("native_mt32", _mt32Checkbox->getState(), _domain);
-
+				ConfMan.set("subtitles", _subCheckbox->getState(), _domain); 
 				const MidiDriverDescription *md = getAvailableMidiDrivers();
 				while (md->name && md->id != (int)_midiPopUp->getSelectedTag())
 					md++;
@@ -183,6 +186,7 @@ void OptionsDialog::close() {
 				ConfMan.removeKey("multi_midi", _domain);
 				ConfMan.removeKey("native_mt32", _domain);
 				ConfMan.removeKey("music_driver", _domain);
+				ConfMan.removeKey("subtitles", _domain); 
 			}
 		}
 
@@ -230,6 +234,7 @@ void OptionsDialog::setAudioSettingsState(bool enabled) {
 	_midiPopUp->setEnabled(enabled);
 	_multiMidiCheckbox->setEnabled(enabled);
 	_mt32Checkbox->setEnabled(enabled);
+	_subCheckbox->setEnabled(enabled);
 }
 
 void OptionsDialog::setVolumeSettingsState(bool enabled) {
@@ -300,6 +305,10 @@ int OptionsDialog::addMIDIControls(GuiObject *boss, int yoffset) {
 	
 	// Native mt32 setting
 	_mt32Checkbox = new CheckboxWidget(boss, x, yoffset, w, 16, "True Roland MT-32 (disable GM emulation)");
+	yoffset += 16;
+
+	// Subtitles on/off
+	_subCheckbox = new CheckboxWidget(boss, x, yoffset, w, 16, "Display subtitles");
 	yoffset += 16;
 	
 	_enableAudioSettings = true;

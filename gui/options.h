@@ -70,12 +70,13 @@ private:
 	CheckboxWidget *_aspectCheckbox;
 
 	//
-	// MIDI controls
+	// Audio controls
 	//
 	bool _enableAudioSettings;
 	PopUpWidget *_midiPopUp;
 	CheckboxWidget *_multiMidiCheckbox;
 	CheckboxWidget *_mt32Checkbox;
+	CheckboxWidget *_subCheckbox;
 
 	//
 	// Volume controls
