@@ -25,9 +25,13 @@ LIBS	:=
 OBJS	:=
 
 # Turn on useful warnings
-CXXFLAGS+= -Wall -W -pedantic -ansi -Wpointer-arith -Wcast-qual -Wcast-align -Wconversion
+CXXFLAGS+= -Wall -W -pedantic -Wpointer-arith -Wcast-qual -Wcast-align -Wconversion
 CXXFLAGS+= -Wshadow -Wstrict-prototypes -Wuninitialized
-CXXFLAGS+= -Wno-long-long -Wno-multichar -Wno-unknown-pragmas -Wno-unused-parameter -Wno-reorder
+CXXFLAGS+= -Wno-long-long -Wno-multichar -Wno-unknown-pragmas -Wno-reorder
+# Seems GCC 2.95 doesn't support the following, so we do not yet turn them
+# on by default (but I'd strongly recommend to all GCC 2.95 users to update
+# to a better compiler like GCC 3.x).
+# CXXFLAGS+= -ansi -Wno-unused-parameter
 
 # Load the build rules & settings for the chosen backend
 -include build.rules
