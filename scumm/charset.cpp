@@ -24,7 +24,7 @@
 #include "nut_renderer.h"
 
 void CharsetRendererCommon::setCurID(byte id) {
-	_vm->checkRange(_vm->_maxCharsets - 1, 0, _curId, "Printing with bad charset %d");
+	_vm->checkRange(_vm->_maxCharsets - 1, 0, id, "Printing with bad charset %d");
 
 	_curId = id;
 
@@ -39,7 +39,7 @@ void CharsetRendererCommon::setCurID(byte id) {
 }
 
 void CharsetRendererV3::setCurID(byte id) {
-	_vm->checkRange(_vm->_maxCharsets - 1, 0, _curId, "Printing with bad charset %d");
+	_vm->checkRange(_vm->_maxCharsets - 1, 0, id, "Printing with bad charset %d");
 
 	_curId = id;
 
