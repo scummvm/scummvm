@@ -561,6 +561,7 @@ public:
 	void loadFlObject(uint object, uint room);
 	void nukeFlObjects(int min, int max);
 	int findFlObjectSlot();
+	int findLocalObjectSlot();
 	void addObjectToInventory(uint obj, uint room);
 	void fixObjectFlags();
 	bool getClass(int obj, int cls);

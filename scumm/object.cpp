@@ -110,6 +110,9 @@ int Scumm::getObjectIndex(int object)
 {
 	int i;
 
+	if (object < 1)
+		return -1;
+
 	/* OF_OWNER_ROOM should be 0xFF for full throttle, else 0xF */
 	if (_objectOwnerTable[object] != OF_OWNER_ROOM) {
 		for (i = 0; i < _maxInventoryItems; i++)
@@ -117,7 +120,7 @@ int Scumm::getObjectIndex(int object)
 				return i;
 		return -1;
 	} else {
-		for (i = _numObjectsInRoom; i > 0; i--) {
+		for (i = _numLocalObjects; i > 0; i--) {
 			if (_objs[i].obj_nr == object)
 				return i;
 		}
@@ -141,6 +144,9 @@ int Scumm::whereIsObject(int object)
 	if (object >= _numGlobalObjects)
 		return WIO_NOT_FOUND;
 
+	if (object < 1)
+		return WIO_NOT_FOUND;
+
 	if (_objectOwnerTable[object] != OF_OWNER_ROOM) {
 		for (i = 0; i < _maxInventoryItems; i++)
 			if (_inventory[i] == object)
@@ -148,7 +154,7 @@ int Scumm::whereIsObject(int object)
 		return WIO_NOT_FOUND;
 	}
 
-	for (i = _numObjectsInRoom; i > 0; i--)
+	for (i = _numLocalObjects; i > 0; i--)
 		if (_objs[i].obj_nr == object) {
 			if (_objs[i].fl_object_index)
 				return WIO_FLOBJECT;
@@ -268,8 +274,8 @@ int Scumm::findObject(int x, int y)
 	int i, b;
 	byte a;
 
-	for (i = 1; i <= _numObjectsInRoom; i++) {
-		if (!_objs[i].obj_nr || getClass(_objs[i].obj_nr, 32))
+	for (i = 1; i <= _numLocalObjects; i++) {
+		if ((_objs[i].obj_nr < 1) || getClass(_objs[i].obj_nr, 32))
 			continue;
 		b = i;
 		do {
@@ -292,7 +298,7 @@ void Scumm::drawRoomObject(int i, int arg)
 	byte a;
 
 	od = &_objs[i];
-	if (!od->obj_nr || !od->state)
+	if ((i < 1) || (od->obj_nr < 1) || !od->state)
 		return;
 
 	do {
@@ -310,11 +316,13 @@ void Scumm::drawRoomObjects(int arg)
 	int i;
 
 	if (_features & GF_DRAWOBJ_OTHER_ORDER) {
-		for (i = 1; i <= _numObjectsInRoom; i++)
-			drawRoomObject(i, arg);
+		for (i = 1; i <= _numLocalObjects; i++)
+			if (_objs[i].obj_nr > 0)
+				drawRoomObject(i, arg);
 	} else {
-		for (i = _numObjectsInRoom; i != 0; i--)
-			drawRoomObject(i, arg);
+		for (i = _numLocalObjects; i != 0; i--)
+			if (_objs[i].obj_nr > 0)
+				drawRoomObject(i, arg);
 	}
 }
 
@@ -349,6 +357,9 @@ void Scumm::drawObject(int obj, int arg)
 		arg = 0;
 
 	od = &_objs[obj];
+
+	if (od->obj_nr == 0)
+		return;
 
 	xpos = od->x_pos >> 3;
 	ypos = od->y_pos;
@@ -439,14 +450,22 @@ void Scumm::loadRoomObjects()
 	if (_numObjectsInRoom > _numLocalObjects)
 		error("More than %d objects in room %d", _numLocalObjects, _roomResource);
 
-	od = &_objs[1];
 	if (_features & GF_AFTER_V8)
 		searchptr = rootptr = getResourceAddress(rtRoomScripts, _roomResource);
 	else
 		searchptr = rootptr = room;
 	assert(searchptr);
 
-	for (i = 0; i < _numObjectsInRoom; i++, od++) {
+	// Clear out old room objects (FIXME: Locking/FlObjects stuff?)
+	for (i = 0; i <= _numLocalObjects; i++) {
+		_objs[i].obj_nr = 0;
+		_objs[i].fl_object_index = 0;
+	}
+
+	// Load in new room objects
+	for (i = 0; i < _numObjectsInRoom; i++) {
+		od = &_objs[findLocalObjectSlot()];
+
 		ptr = findResource(MKID('OBCD'), searchptr);
 		if (ptr == NULL)
 			error("Room %d missing object code block(s)", _roomResource);
@@ -489,15 +508,17 @@ void Scumm::loadRoomObjects()
 		else
 			obim_id = READ_LE_UINT16(&imhd->old.obj_id);
 
-		for (j = 1; j <= _numObjectsInRoom; j++) {
+		for (j = 1; j <= _numLocalObjects; j++) {
 			if (_objs[j].obj_nr == obim_id)
 				_objs[j].OBIMoffset = ptr - room;
 		}
 		searchptr = NULL;
 	}
 
-	for (i = 1; i <= _numObjectsInRoom; i++) {
-		setupRoomObject(&_objs[i], room);
+	// ENDERFIXME: Switch this one over to numLocals also
+	for (i = 1; i <= _numLocalObjects; i++) {
+		if (_objs[i].obj_nr)
+			setupRoomObject(&_objs[i], room);
 	}
 
 	CHECK_HEAP
@@ -524,9 +545,10 @@ void Scumm::loadRoomObjectsSmall()
 	if (_numObjectsInRoom > _numLocalObjects)
 		error("More than %d objects in room %d", _numLocalObjects, _roomResource);
 
-	od = &_objs[1];
 	searchptr = room;
-	for (i = 0; i < _numObjectsInRoom; i++, od++) {
+	for (i = 0; i < _numObjectsInRoom; i++) {
+		od = &_objs[findLocalObjectSlot()];
+
 		ptr = findResourceSmall(MKID('OBCD'), searchptr);
 		if (ptr == NULL)
 			error("Room %d missing object code block(s)", _roomResource);
@@ -551,15 +573,17 @@ void Scumm::loadRoomObjectsSmall()
 
 		obim_id = READ_LE_UINT16(ptr + 6);
 
-		for (j = 1; j <= _numObjectsInRoom; j++) {
+		for (j = 1; j <= _numLocalObjects; j++) {
 			if (_objs[j].obj_nr == obim_id)
 				_objs[j].OBIMoffset = ptr - room;
 		}
 		searchptr = NULL;
 	}
 
-	for (i = 1; i <= _numObjectsInRoom; i++) {
-		setupRoomObject(&_objs[i], room);
+	// ENDERFIXME: Switch to numLocals
+	for (i = 1; i <= _numLocalObjects; i++) {
+		if (_objs[i].obj_nr)
+			setupRoomObject(&_objs[i], room);
 	}
 
 	CHECK_HEAP
@@ -676,8 +700,9 @@ void Scumm::fixObjectFlags()
 {
 	int i;
 	ObjectData *od = &_objs[1];
-	for (i = 1; i <= _numObjectsInRoom; i++, od++) {
-		od->state = _objectStateTable[od->obj_nr];
+	for (i = 1; i <= _numLocalObjects; i++, od++) {
+		if (od->obj_nr > 0)
+			od->state = _objectStateTable[od->obj_nr];
 	}
 }
 
@@ -709,7 +734,7 @@ void Scumm::clearOwnerOf(int obj)
 				_objs[i].obj_nr = 0;
 				_objs[i].fl_object_index = 0;
 			}
-		} while (++i <= _numObjectsInRoom);
+		} while (++i <= _numLocalObjects);
 		return;
 	}
 
@@ -739,7 +764,7 @@ void Scumm::removeObjectFromRoom(int obj)
 	int i, cnt;
 	uint32 *ptr;
 
-	for (i = 1; i <= _numObjectsInRoom; i++) {
+	for (i = 1; i <= _numLocalObjects; i++) {
 		if (_objs[i].obj_nr == (uint16)obj) {
 			if (_objs[i].width != 0) {
 				ptr = &gfxUsageBits[_objs[i].x_pos >> 3];
@@ -806,7 +831,7 @@ uint32 Scumm::getOBCDOffs(int object)
 
 	if (_objectOwnerTable[object] != OF_OWNER_ROOM)
 		return 0;
-	for (i = _numObjectsInRoom; i > 0; i--) {
+	for (i = _numLocalObjects; i > 0; i--) {
 		if (_objs[i].obj_nr == object) {
 			if (_objs[i].fl_object_index != 0)
 				return 8;
@@ -826,7 +851,7 @@ byte *Scumm::getOBCDFromObject(int obj)
 				return getResourceAddress(rtInventory, i);
 		}
 	} else {
-		for (i = _numObjectsInRoom; i > 0; --i) {
+		for (i = _numLocalObjects; i > 0; --i) {
 			if (_objs[i].obj_nr == obj) {
 				if (_objs[i].fl_object_index)
 					return getResourceAddress(rtFlObject, _objs[i].fl_object_index) + 8;
@@ -1234,7 +1259,7 @@ void Scumm::nukeFlObjects(int min, int max)
 
 	warning("nukeFlObjects(%d,%d)", min, max);
 
-	for (i = _numObjectsInRoom, od = _objs; --i >= 0; od++)
+	for (i = _numLocalObjects, od = _objs; --i >= 0; od++)
 		if (od->fl_object_index && od->obj_nr >= min && od->obj_nr <= max) {
 			nukeResource(rtFlObject, od->fl_object_index);
 			od->obj_nr = 0;
@@ -1596,6 +1621,20 @@ void Scumm::removeBlastObject(BlastObject *eo)
 	updateDirtyRect(0, left, right, top, bottom, 0x40000000);
 }
 
+int Scumm::findLocalObjectSlot()
+{
+	int i;
+
+        for (i = 1; i <= _numLocalObjects; i++) {
+                if (!_objs[i].obj_nr) {
+			printf("Returning slot %d\n", i);
+			return i;
+		}
+	}
+
+	return -1;
+}
+
 int Scumm::findFlObjectSlot()
 {
 	int i;
@@ -1610,7 +1649,7 @@ int Scumm::findFlObjectSlot()
 void Scumm::loadFlObject(uint object, uint room)
 {
 	FindObjectInRoom foir;
-	int slot;
+	int slot, objslot;
 	ObjectData *od;
 	byte *flob, *roomptr;
 	uint32 obcd_size, obim_size, flob_size;
@@ -1623,9 +1662,10 @@ void Scumm::loadFlObject(uint object, uint room)
 	findObjectInRoom(&foir, foImageHeader | foCodeHeader, object, room);
 
 	// Add an entry for the new floating object in the local object table
-	if (++_numObjectsInRoom > _numLocalObjects)
+	if (!(objslot = findLocalObjectSlot()))
 		error("loadFlObject: Local Object Table overflow");
-	od = &_objs[_numObjectsInRoom];
+
+	od = &_objs[objslot];
 
 	// Setup sizes
 	obcd_size = READ_BE_UINT32_UNALIGNED(foir.obcd + 4);
