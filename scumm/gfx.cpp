@@ -898,6 +898,9 @@ void Gdi::drawBitmap(byte *ptr, VirtScreen *vs, int x, int y, int h,
 		if (vs->scrollable)
 			sx -= vs->xstart >> 3;
 
+		if (sx < 0)
+			goto next_iter;
+
 		if (sx >= _numStrips)
 			return;
 
@@ -993,6 +996,8 @@ void Gdi::drawBitmap(byte *ptr, VirtScreen *vs, int x, int y, int h,
 				}
 			}
 		}
+
+next_iter:
 		CHECK_HEAP;
 		x++;
 		stripnr++;
