@@ -845,6 +845,16 @@ The following keywords are recognized:
         debug_level     number   Enable debug output. The higher number, the
                                  more verbose output.
 
+Broken Sword II adds the following non-standard keywords:
+
+        gfx_details     number   Graphics details setting (0-3)
+        music_mute      bool     If true, music is muted
+        object_labels   bool     If true, object labels are enabled
+        reverse_stereo  bool     If true, stereo channels are reversed
+        sfx_mute        bool     If true, sound effects are muted
+        speech_mute     bool     If true, speech is muted
+        speech_volume   number   The speech volume setting (0-255)
+
 9.0 Compiling:
 --- ----------
 You need SDL-1.2.2 or newer (older versions may work, but are unsupported), and
