@@ -402,19 +402,14 @@ public:
 	int32& scummVar(byte var, const char *varName, const char *file, int line)
 	{
 		if (var == 0xFF) {
-			warning("Illegal access to variable %s in file %s, line %d", varName, file, line);
-			// Return a fake memory location, so that at least no innocent variable
-			// gets overwritten.
-			static int32 fake;
-			fake = 0;
-			return fake;
+			error("Illegal access to variable %s in file %s, line %d", varName, file, line);
 		}
 		return _scummVars[var];
 	}
 	int32 scummVar(byte var, const char *varName, const char *file, int line) const
 	{
 		if (var == 0xFF) {
-			warning("Illegal access to variable %s in file %s, line %d", varName, file, line);
+			error("Illegal access to variable %s in file %s, line %d", varName, file, line);
 		}
 		return _scummVars[var];
 	}
