@@ -449,6 +449,7 @@ MidiDriver *GameDetector::createMidi() {
 #ifdef __MORPHOS__
 	case MD_AMIDI:		return MidiDriver_AMIDI_create();
 #endif
+        case MD_SEQ:        return MidiDriver_SEQ_create();
 	}
 
 	error("Invalid midi driver selected");

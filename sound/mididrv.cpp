@@ -347,6 +347,137 @@ MidiDriver *MidiDriver_AMIDI_create() {
 
 #endif // __MORPHOS__
 
+#define SEQ_MIDIPUTC    5
+#define SPECIAL_CHANNEL 9
+#define DEVICE_NUM 1
+
+class MidiDriver_SEQ : public MidiDriver {
+public:
+        MidiDriver_SEQ();
+	void destroy();
+	int open(int mode);
+	void close();
+	void send(uint32 b);
+	void pause(bool pause);
+	void set_stream_callback(void *param, StreamCallback *sc);
+
+private:
+	StreamCallback *_stream_proc;
+	void  *_stream_param;
+	int 	 _mode;
+	uint16 _time_div;
+	int device;
+	uint32 property(int prop, uint32 param);
+};
+
+MidiDriver_SEQ::MidiDriver_SEQ(){
+  _mode=0;
+  device=0;
+}
+
+int MidiDriver_SEQ::open(int mode) {
+        if (_mode != 0)
+		return MERR_ALREADY_OPEN;
+	device = 0;
+	_mode=mode;
+	if (mode!=MO_SIMPLE) return MERR_STREAMING_NOT_AVAILABLE;
+#if !defined(__APPLE__CW)		// No getenv support on Apple Carbon
+	char *device_name = getenv("SCUMMVM_MIDI");
+	if (device_name != NULL) {
+		device = (::open((device_name), O_RDWR, 0));
+	} else {
+		warning("You need to set-up the SCUMMVM_MIDI environment variable properly (see readme.txt) ");
+	}
+	if ((device_name == NULL) || (device < 0)) {
+		if (device_name == NULL)
+			warning("Opening /dev/null (no music will be heard) ");
+		else
+			warning("Cannot open rawmidi device %s - using /dev/null (no music will be heard) ", device_name);
+		device = (::open(("/dev/null"), O_RDWR, 0));
+		if (device < 0)
+			error("Cannot open /dev/null to dump midi output");
+	}
+#endif
+	return 0;
+}
+
+void MidiDriver_SEQ::close() {
+        ::close(device);
+	_mode = 0;
+}
+
+
+void MidiDriver_SEQ::send(uint32 b)
+{
+	unsigned char buf[256];
+	int position = 0;
+
+	switch (b & 0xF0) {
+	case 0x80:
+	case 0x90:
+	case 0xA0:
+	case 0xB0:
+	case 0xE0:
+		buf[position++] = SEQ_MIDIPUTC;
+		buf[position++] = b;
+		buf[position++] = DEVICE_NUM;
+		buf[position++] = 0;
+		buf[position++] = SEQ_MIDIPUTC;
+		buf[position++] = (b >> 8) & 0x7F;
+		buf[position++] = DEVICE_NUM;
+		buf[position++] = 0;
+		buf[position++] = SEQ_MIDIPUTC;
+		buf[position++] = (b >> 16) & 0x7F;
+		buf[position++] = DEVICE_NUM;
+		buf[position++] = 0;
+		break;
+	case 0xC0:
+	case 0xD0:
+		buf[position++] = SEQ_MIDIPUTC;
+		buf[position++] = b;
+		buf[position++] = DEVICE_NUM;
+		buf[position++] = 0;
+		buf[position++] = SEQ_MIDIPUTC;
+		buf[position++] = (b >> 8) & 0x7F;
+		buf[position++] = DEVICE_NUM;
+		buf[position++] = 0;
+		break;
+	default:
+		fprintf(stderr, "Unknown : %08x\n", (int) b);
+		break;
+	}
+	write(device, buf, position);
+}
+
+void MidiDriver_SEQ::pause(bool pause) {
+	if (_mode == MO_STREAMING) {
+	}
+}
+
+void MidiDriver_SEQ::set_stream_callback(void *param, StreamCallback *sc) {
+	_stream_param = param;
+	_stream_proc = sc;
+}
+
+MidiDriver *MidiDriver_SEQ_create() {
+	return new MidiDriver_SEQ();
+}
+
+void MidiDriver_SEQ::destroy() {
+	close();
+	delete this;
+}
+
+uint32 MidiDriver_SEQ::property(int prop, uint32 param) {
+	switch(prop) {
+	/* 16-bit time division according to standard midi specification */
+	case PROP_TIMEDIV:
+		_time_div = (uint16)param;
+		return 1;
+	}
+
+	return 0;
+}
 
 /* NULL driver */
 class MidiDriver_NULL : public MidiDriver {
