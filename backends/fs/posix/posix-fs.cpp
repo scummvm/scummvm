@@ -82,11 +82,9 @@ AbstractFilesystemNode *FilesystemNode::getRoot() {
 	return new POSIXFilesystemNode();
 }
 
-#ifdef MACOSX
 AbstractFilesystemNode *FilesystemNode::getNodeForPath(const String &path) {
 	return new POSIXFilesystemNode(path);
 }
-#endif
 
 POSIXFilesystemNode::POSIXFilesystemNode() {
 #ifndef __DC__

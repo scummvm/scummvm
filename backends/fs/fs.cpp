@@ -55,12 +55,10 @@ FilesystemNode::FilesystemNode(const FilesystemNode &node)
 	++(*_refCount);
 }
 
-#ifdef MACOSX
 FilesystemNode::FilesystemNode(const String &p) {
 	_realNode = getNodeForPath(p);
 	_refCount = new int(1);
 }
-#endif
 
 FilesystemNode::~FilesystemNode() {
 	decRefCount();

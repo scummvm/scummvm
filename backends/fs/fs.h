@@ -166,23 +166,25 @@ private:
 	 */
 	static AbstractFilesystemNode *getRoot();
 
-#ifdef MACOSX
 	/*
 	 * Construct a node based on a path; the path is in the same format as it
 	 * would be for calls to fopen().
 	 *
 	 * I.e. getNodeForPath(oldNode.path()) should create a new node identical to oldNode.
+	 *
+	 * @TODO: This is of course a place where non-portable code easily will sneak
+	 *        in, because the format of the path used here is not well-defined.
+	 *        So we really should reconsider this API and try to come up with
+	 *        something which is more portable but still flexible enough for our
+	 *        purposes.
 	 */
 	static AbstractFilesystemNode *getNodeForPath(const String &path);
-#endif
 
 
 public:
 	FilesystemNode();
 	FilesystemNode(const FilesystemNode &node);
-#ifdef MACOSX
 	FilesystemNode(const String &path);
-#endif
 	~FilesystemNode();
 
 	FilesystemNode &operator  =(const FilesystemNode &node);
