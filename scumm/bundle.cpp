@@ -221,7 +221,7 @@ int32 Bundle::decompressVoiceSampleByName(char *name, byte *comp_final) {
 	return final_size;
 }
 
-int32 Bundle::decompressMusicSampleByName(char *name, int32 number, byte *comp_final, bool fuzzy=false) {
+int32 Bundle::decompressMusicSampleByName(char *name, int32 number, byte *comp_final, bool fuzzy) {
 	int32 final_size = 0, i;
 
 	if (!name) {
@@ -261,7 +261,7 @@ int32 Bundle::getNumberOfMusicSamplesByIndex(int32 index) {
 	return _musicFile.readUint32BE();
 }
 
-int32 Bundle::getNumberOfMusicSamplesByName(char *name, bool fuzzy = false) {
+int32 Bundle::getNumberOfMusicSamplesByName(char *name, bool fuzzy) {
 	int32 number = 0, i;
 
 	if (_musicFile.isOpen() == false) {
