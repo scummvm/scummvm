@@ -250,25 +250,26 @@ SCUMM
   - Add rename/delete file support, to make file opcodes function correctly
   - Fix nukeArrays, it is nuking wrong arrays in stopObjectCode() sometimes
 * Humongous entertainment >= v7 titles:
-  - Add support for palette slots (_numPalettes * 1024) in HE99+ games.(For ff5demo/freddicove)
+  - Add support for palette slots (_numPalettes * 1024) in HE99+ games.(For ff5demo/freddicove/pajama3)
   - Add mask support to akos codec32, charset shouldn't be drawn under moving actors
   - Add support for song sync. in HE80+ games. (Used in ff2-demo/freddi2/pajama)
   - Add support for SBNG sound resources for songs (Used in ff2-demo/freddi2/pajama)
   - Add support for processWizImage mode 6 (For lost/smaller)
   - Add support for processWizImage mode 9 (For freddicove/bb2demo/footdemo)
   - Add support for additional drawWizImage flags (cyx)
+  - Add support for drawWizComplexPolygon (For Ski Ride & Credits of pajama3)
   - Add shadows support for akos codecs in HE90+ games, uses XMAP resources.
   - Add arrayOps case 127 (For chase/lost/smaller/bb2demo/footdemo).
   - Add support for array sorting (Used in lost/smaller).
-  - Fix actor glitches in pajama2
+  - Fix actor parts disappearing in pajama2/racedemo (Requires to XMAP support?)
   - Fix cursor transparency in puzzle of pajama2
   - Fix sprites graphical glitches
   - Fix inventory background/items disappearing in puttzoo/zoodemo/putttime/timedemo
   - Add support for o90_getPolygonOverlap case9 (Used in lost/smaller)
   - Add support for o90_getPolygonOverlap case10 (Used in Caramel Pit of pajama3)
   - Add support for floodState (For puzzle in pajama2)
-  - Add support for o80_unknownE0 (For binoculars in pajama2 and black board in freddi2)
-  - Add support for various new opcodes
+  - Add support for o80_unknownE0 type1 (For binoculars in pajama2)
+  - Add support for o80_unknownE0 type2 (For black board in freddi2 and paper in spyfox)
 
 Broken Sword 2
 ==============

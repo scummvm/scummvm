@@ -1073,6 +1073,7 @@ protected:
 	void o100_dim2dimArray();
 	void o100_redim2dimArray();
 	void o100_dimArray();
+	void o100_unknownE0();
 	void o100_drawObject();
 	void o100_setSpriteGroupInfo();
 	void o100_resourceRoutines();

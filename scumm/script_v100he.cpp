@@ -88,7 +88,7 @@ void ScummEngine_v100he::setupOpcodes() {
 		/* 24 */
 		OPCODE(o72_drawWizImage),
 		OPCODE(o80_drawWizPolygon),
-		OPCODE(o6_invalid),
+		OPCODE(o100_unknownE0),
 		OPCODE(o100_drawObject),
 		/* 28 */
 		OPCODE(o6_dup),
@@ -810,6 +810,64 @@ void ScummEngine_v100he::o100_dimArray() {
 	}
 
 	defineArray(fetchScriptWord(), data, 0, 0, 0, pop());
+}
+
+void ScummEngine_v100he::o100_unknownE0() {
+	// wizImage related
+	int b, c, d, num, x1, y1, type = 0;
+
+	b = pop();
+	num = pop();
+	c = pop();
+	d = pop();
+	y1 = pop();
+	x1 = pop();
+
+	byte subOp = fetchScriptByte();
+
+	switch (subOp) {
+	case 1:
+		{
+		Actor *a = derefActorSafe(num, "o100_unknownE0");
+		int top_actor = a->top;
+		int bottom_actor = a->bottom;
+		a->drawToBackBuf = true;
+		a->needRedraw = true;
+		a->drawActorCostume();
+		a->drawToBackBuf = false;
+		a->needRedraw = true;
+		a->drawActorCostume();
+		a->needRedraw = false;
+
+		if (a->top > top_actor)
+			a->top = top_actor;
+		if (a->bottom < bottom_actor)
+			a->bottom = bottom_actor;
+
+		type = 2;
+		}
+		break;
+	case 20:
+		type = 1;
+		break;
+	case 40:
+		{
+		WizImage wi;
+		wi.flags = 0;
+		wi.y1 = y1;
+		wi.x1 = x1;
+		wi.resNum = num;
+		wi.state = 0;
+		displayWizImage(&wi);
+
+		type = 3;
+		}
+		break;
+	default:
+		error("o100_unknownE0: default case %d", subOp);
+	}
+
+	debug(1,"o100_unknownE0 stub: type %d (%d, num %d, %d, %d, y %d, x %d)", type, b, num, c, d, y1, x1);	
 }
 
 void ScummEngine_v100he::o100_drawObject() {
