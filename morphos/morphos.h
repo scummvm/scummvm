@@ -67,6 +67,12 @@ class OSystem_MorphOS : public OSystem
 		// Add a new callback timer
 		virtual void set_timer(int timer, int (*callback)(int));
 
+		// Mutex handling
+		virtual void *create_mutex(void);
+		virtual void lock_mutex(void *mutex);
+		virtual void unlock_mutex(void *mutex);
+		virtual void delete_mutex(void *mutex);
+
 		// Create a thread
 		virtual void *create_thread(ThreadProc *proc, void *param);
 

@@ -277,6 +277,31 @@ void *OSystem_MorphOS::create_thread(ThreadProc *proc, void *param)
 	return ScummMusicThread;
 }
 
+void *OSystem_MorphOS::create_mutex(void)
+{
+	struct SignalSemaphore *sem = (struct SignalSemaphore *)AllocVec( sizeof( struct SignalSemaphore ), MEMF_PUBLIC );
+
+	if( sem )
+		InitSemaphore( sem );
+
+	return sem;
+}
+
+void OSystem_MorphOS::lock_mutex(void *mutex)
+{
+	ObtainSemaphore( (struct SignalSemaphore *)mutex );
+}
+
+void OSystem_MorphOS::unlock_mutex(void *mutex)
+{
+	ReleaseSemaphore( (struct SignalSemaphore *)mutex );
+}
+
+void OSystem_MorphOS::delete_mutex(void *mutex)
+{
+	FreeVec( mutex );
+}
+
 uint32 OSystem_MorphOS::property(int param, Property *value)
 {
 	switch( param )
