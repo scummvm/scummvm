@@ -735,6 +735,7 @@ void Scumm_v2::o2_resourceRoutines() {
 			return;
 		case 49:
 			ensureResourceLoaded(rtRoom, resid);
+			return;
 		default:
 			error("o2_resourceRoutines: unknown load/nuke opcode");
 		}
