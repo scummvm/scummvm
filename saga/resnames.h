@@ -55,6 +55,8 @@ namespace Saga {
 
 #define RID_ITE_SETUP_PANEL 5
 #define RID_ITE_MAIN_SPRITES 6
+#define RID_ITE_MAIN_STRINGS 35 //main strings
+#define RID_ITE_ACTOR_NAMES 36 //actors names
 #define RID_ITE_COMMAND_BUTTONSPRITES 7
 #define RID_ITE_DEFAULT_PORTRAITS 125
 

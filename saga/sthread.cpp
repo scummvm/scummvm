@@ -754,7 +754,7 @@ void Script::runThread(SCRIPT_THREAD *thread, int instr_limit) {
 				data = first = thread->stackTop();
 				for (i = 0; i < stringsCount; i++) {
 					 data = thread->pop();
-					 strings[i] = getString(data);
+					 strings[i] = getScriptString(data);
 				}
 				// now data contains last string index
 

@@ -52,6 +52,8 @@ Sprite::Sprite(SagaEngine *vm) : _vm(vm), _initialized(false) {
 		return;
 	}
 
+	loadList(RID_ITE_MAIN_SPRITES, &_mainSprites); //fixme: IHNM may have no such list
+
 	_initialized = true;
 }
 
@@ -65,8 +67,8 @@ Sprite::~Sprite(void) {
 	free(_decodeBuf);
 }
 
-int Sprite::loadList(int resource_num, SPRITELIST **sprite_list_p) {
-	SPRITELIST *new_slist;
+int Sprite::loadList(int resource_num, SpriteList **sprite_list_p) {
+	SpriteList *new_slist;
 	byte *spritelist_data;
 	size_t spritelist_len;
 	uint16 sprite_count;
@@ -83,7 +85,7 @@ int Sprite::loadList(int resource_num, SPRITELIST **sprite_list_p) {
 
 	sprite_count = readS.readUint16();
 
-	new_slist = (SPRITELIST *)malloc(sizeof(*new_slist));
+	new_slist = (SpriteList *)malloc(sizeof(*new_slist));
 	if (new_slist == NULL) {
 		return MEM;
 	}
@@ -113,7 +115,7 @@ int Sprite::loadList(int resource_num, SPRITELIST **sprite_list_p) {
 	return SUCCESS;
 }
 
-int Sprite::appendList(int resource_num, SPRITELIST *spritelist) {
+int Sprite::appendList(int resource_num, SpriteList *spritelist) {
 	byte *spritelist_data;
 	size_t spritelist_len;
 	void *test_p;
@@ -157,11 +159,11 @@ int Sprite::appendList(int resource_num, SPRITELIST *spritelist) {
 	return SUCCESS;
 }
 
-int Sprite::getListLen(SPRITELIST *spritelist) {
+int Sprite::getListLen(SpriteList *spritelist) {
 	return spritelist->sprite_count;
 }
 
-int Sprite::freeSprite(SPRITELIST *spritelist) {
+int Sprite::freeSprite(SpriteList *spritelist) {
 	int i;
 
 	for (i = 0; i <= spritelist->append_count; i++) {
@@ -175,7 +177,7 @@ int Sprite::freeSprite(SPRITELIST *spritelist) {
 	return SUCCESS;
 }
 
-int Sprite::draw(SURFACE *ds, SPRITELIST *sprite_list, int sprite_num, const Point &screenCoord, int scale) {
+int Sprite::draw(SURFACE *ds, SpriteList *sprite_list, int sprite_num, const Point &screenCoord, int scale) {
 	int offset;
 	int offset_idx;
 	byte *sprite_p;
@@ -266,7 +268,7 @@ int Sprite::draw(SURFACE *ds, SPRITELIST *sprite_list, int sprite_num, const Poi
 	return SUCCESS;
 }
 
-int Sprite::drawOccluded(SURFACE *ds, SPRITELIST *sprite_list, int sprite_num, const Point &screenCoord, int scale, int depth) {
+int Sprite::drawOccluded(SURFACE *ds, SpriteList *sprite_list, int sprite_num, const Point &screenCoord, int scale, int depth) {
 	int offset;
 	int offset_idx;
 	byte *sprite_p;

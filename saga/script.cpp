@@ -30,6 +30,7 @@
 
 #include "saga/script.h"
 #include "saga/stream.h"
+#include "saga/interface.h"
 
 namespace Saga {
 
@@ -38,11 +39,14 @@ namespace Saga {
 Script::Script() {
 	GAME_RESOURCEDESC gr_desc;
 	RSCFILE_CONTEXT *s_lut_ctxt;
+	RSCFILE_CONTEXT *resourceContext;
 	byte *rsc_ptr;
 	size_t rsc_len;
 	int prevTell;
 	int result;
 	int i, j;
+	byte *stringsPointer;
+	size_t stringsLength;
 
 	//initialize member variables
 	_dbg_thread = 0;
@@ -53,6 +57,11 @@ Script::Script() {
 	_currentScript = 0;
 	_abortEnabled = true;
 	_skipSpeeches = false;
+
+	_currentVerb = kVerbNone;
+	_stickyVerb = kVerbWalkTo;
+	_leftButtonVerb = kVerbNone;
+	_rightButtonVerb = kVerbNone;
 
 	_dataBuf[0].data = _dataBuf[1].data = (ScriptDataWord *)calloc(SCRIPT_DATABUF_LEN, sizeof(ScriptDataWord));;
 	_dataBuf[0].length = _dataBuf[1].length = SCRIPT_DATABUF_LEN;
@@ -131,6 +140,16 @@ Script::Script() {
 
 	setupScriptFuncList();
 
+	resourceContext = _vm->getFileContext(GAME_RESOURCEFILE, 0);
+
+	result = RSC_LoadResource(resourceContext, RID_ITE_MAIN_STRINGS, &stringsPointer, &stringsLength); // fixme: IHNM
+	if ((result != SUCCESS) || (stringsLength == 0)) {
+		error("Error loading strings list resource");
+	}
+
+	_vm->loadStrings(_mainStrings, stringsPointer, stringsLength);
+	RSC_FreeResource(stringsPointer);
+
 	_initialized = true;
 }
 
@@ -142,6 +161,8 @@ Script::~Script() {
 	}
 
 	debug(0, "Shutting down scripting subsystem.");
+	
+	_mainStrings.freeMem();
 
 	// Free script lookup table
 	free(_scriptLUT);
@@ -238,7 +259,7 @@ int Script::getBit(int bufNumber, ScriptDataWord bitNumber, int *bitState) {
 
 // Loads a script; including script bytecode and dialogue list 
 int Script::loadScript(int script_num) {
-	SCRIPTDATA *script_data;
+	ScriptData *script_data;
 	byte *bytecode_p;
 	size_t bytecode_len;
 	uint32 scriptl_rn;
@@ -266,15 +287,14 @@ int Script::loadScript(int script_num) {
 	// Initialize script data structure
 	debug(0, "Loading script data for script #%d", script_num);
 
-	script_data = (SCRIPTDATA *)malloc(sizeof(*script_data));
+	script_data = (ScriptData *)malloc(sizeof(*script_data));
 	if (script_data == NULL) {
 		error("Memory allocation failed");
 	}
 
 	script_data->loaded = 0;
 
-	// Initialize script pointers
-	script_data->strings = NULL;
+	// Initialize script pointers	
 	script_data->bytecode = NULL;
 	script_data->voice = NULL;
 
@@ -304,8 +324,9 @@ int Script::loadScript(int script_num) {
 	}
 	
 	// Convert strings list resource to logical strings list
-	loadStrings(stringsPointer, stringsLength, script_data->strings);
-	
+	_vm->loadStrings(script_data->strings, stringsPointer, stringsLength);
+	RSC_FreeResource(stringsPointer);
+
 	// Load voice resource lookup table
 	if (_voiceLUTPresent) {
 		voicelut_rn = _scriptLUT[script_num].voice_lut_rn;
@@ -343,10 +364,7 @@ int Script::freeScript() {
 	debug(0, "Releasing script data.");
 
 	// Finish initialization
-	if (_currentScript->strings != NULL) {
-		free(_currentScript->strings->strings);
-	}
-	free(_currentScript->strings);
+	_currentScript->strings.freeMem();
 
 	if (_currentScript->bytecode != NULL) {
 		free(_currentScript->bytecode->entrypoints);
@@ -446,59 +464,10 @@ SCRIPT_BYTECODE *Script::loadBytecode(byte *bytecode_p, size_t bytecode_len) {
 	return bc_new_data;
 }
 
-const char *Script::getString(int index) {
-	if (_currentScript->strings->stringsCount <= index)
-		error("Script::getString wrong index 0x%X", index);
-	return _currentScript->strings->strings[index];
-}
-
-// Reads a logical strings list from a strings list resource in memory.
-// Returns NULL on failure.
-void Script::loadStrings(const byte *stringsPointer, size_t stringsLength, StringsList *&strings) {
-	uint16 stringsCount;
-	uint16 i;
-	size_t offset;
-
-	debug(9, "Loading strings list...");
-
-	// Allocate dialogue list structure
-	strings = (StringsList *)malloc(sizeof(*strings));
-	if (strings == NULL) {
-		error("No enough memory for strings list");
-	}
-
-	MemoryReadStreamEndian scriptS(stringsPointer, stringsLength, IS_BIG_ENDIAN);
-
-	// First uint16 is the offset of the first string
-	offset = scriptS.readUint16();
-	if (offset > stringsLength) {
-		error("Invalid string offset");
-	}
-
-	// Calculate table length
-	stringsCount = offset / 2;
-	strings->stringsCount = stringsCount;
-
-	// Allocate table of string pointers
-	strings->strings = (const char **)malloc(stringsCount * sizeof(const char *));
-	if (strings->strings == NULL) {
-		error("No enough memory for strings list");
-	}
-	
-	// Read in tables from dialogue list resource
-	scriptS.seek(0);
-	for (i = 0; i < stringsCount; i++) {
-		offset = scriptS.readUint16();
-		if (offset > stringsLength) {
-			error("invalid string offset");
-		}
-		strings->strings[i] = (const char *)stringsPointer + offset;
-	}
-}
 
 // Reads a logical voice LUT from a voice LUT resource in memory.
 // Returns NULL on failure.
-VOICE_LUT *Script::loadVoiceLUT(const byte *voicelut_p, size_t voicelut_len, SCRIPTDATA *script) {
+VOICE_LUT *Script::loadVoiceLUT(const byte *voicelut_p, size_t voicelut_len, ScriptData *script) {
 	VOICE_LUT *voice_lut;
 
 	uint16 i;
@@ -509,7 +478,7 @@ VOICE_LUT *Script::loadVoiceLUT(const byte *voicelut_p, size_t voicelut_len, SCR
 	}
 
 	voice_lut->n_voices = voicelut_len / 2;
-	if (voice_lut->n_voices != script->strings->stringsCount) {
+	if (voice_lut->n_voices != script->strings.stringsCount) {
 		warning("Error: Voice LUT entries do not match dialogue entries");
 		return NULL;
 	}
@@ -588,6 +557,74 @@ void Script::scriptExec(int argc, const char **argv) {
 	SThreadExecute(_dbg_thread, ep_num);
 }
 
+// verb
+void Script::showVerb() {
+	const char *verbName;
+	const char *object1Name;
+	const char *object2Name;
+	char statusString[STATUS_TEXT_LEN];
+
+
+	if (_leftButtonVerb == kVerbNone) {
+		_vm->_interface->setStatusText("");
+		return;
+	}
+	
+	verbName = _mainStrings.getString(_leftButtonVerb - 1);
+
+	if (objectIdType(_currentObject[0]) == kGameObjectNone) {
+		_vm->_interface->setStatusText(verbName);
+		return;
+	}
+
+	object1Name = _vm->getObjectName(_currentObject[0]);
+
+	if (!_secondObjectNeeded) {
+		snprintf(statusString, STATUS_TEXT_LEN, "%s %s", verbName, object1Name);
+		_vm->_interface->setStatusText(statusString);
+		return;
+	}
+
+	
+	if (objectIdType(_currentObject[1]) != kGameObjectNone) {
+		object2Name = _vm->getObjectName(_currentObject[1]);
+	} else {
+		object2Name = "";
+	}
+
+	if (_leftButtonVerb == kVerbGive) {
+		snprintf(statusString, STATUS_TEXT_LEN, "Give %s to %s", object1Name, object2Name);
+		_vm->_interface->setStatusText(statusString);
+	} else {
+		if (_leftButtonVerb == kVerbUse) {
+			snprintf(statusString, STATUS_TEXT_LEN, "Use %s with %s", object1Name, object2Name);
+			_vm->_interface->setStatusText(statusString);
+		} else {
+			snprintf(statusString, STATUS_TEXT_LEN, "%s %s", verbName, object1Name);
+			_vm->_interface->setStatusText(statusString);
+		}
+	}
+}
+
+void Script::setVerb(int verb) {
+	_pendingObject[0] = ID_NOTHING;
+	_currentObject[0] = ID_NOTHING;
+	_pendingObject[1] = ID_NOTHING;
+	_currentObject[1] = ID_NOTHING;
+	_firstObjectSet = false;
+	_secondObjectNeeded = false;
+
+	setLeftButtonVerb( verb );
+	showVerb();
+}
+
+void Script::setLeftButtonVerb(int verb) {
+}
+
+void Script::doVerb() {
+}
+
+// console wrappers
 void Script::CF_script_togglestep() {
 	_dbg_singlestep = !_dbg_singlestep;
 }

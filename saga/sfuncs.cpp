@@ -135,7 +135,7 @@ void Script::setupScriptFuncList(void) {
 int Script::SF_putString(SCRIPTFUNC_PARAMS) {
 	ScriptDataWord param = thread->pop();
 
-	_vm->_console->DebugPrintf(getString(param));
+	_vm->_console->DebugPrintf(getScriptString(param));
 	return SUCCESS;
 }
 
@@ -189,7 +189,7 @@ int Script::SF_objectIsCarried(SCRIPTFUNC_PARAMS) {
 int Script::sfStatusBar(SCRIPTFUNC_PARAMS) {
 	ScriptDataWord param = thread->pop();
 
-	return _vm->_interface->setStatusText(getString(param));
+	return _vm->_interface->setStatusText(getScriptString(param));
 }
 
 // Script function #5 (0x05)
@@ -352,7 +352,7 @@ int Script::sfSetFollower(SCRIPTFUNC_PARAMS) {
 	actorId = getSWord(thread->pop());
 	targetObject = getSWord(thread->pop());
 
-	debug(1, "sfSetFollower(%d, %d) [%d]", actorId, targetObject, ACTOR_ID_TO_INDEX(actorId));
+	debug(1, "sfSetFollower(%d, %d) [%d]", actorId, targetObject, _vm->_actor->actorIdToIndex(actorId));
 	
 	actor = _vm->_actor->getActor(actorId);
 	actor->targetObject = targetObject;
@@ -738,7 +738,7 @@ int Script::sfSimulSpeech(SCRIPTFUNC_PARAMS) {
 	for (i = 0; i < actorsCount; i++)
 		actorsIds[i] = getSWord(thread->pop());
 	
-	string = getString(stringId);
+	string = getScriptString(stringId);
 
 	_vm->_actor->simulSpeech(string, actorsIds, actorsCount, 0);
 	return SUCCESS;
@@ -1080,7 +1080,7 @@ int Script::sfPlacard(SCRIPTFUNC_PARAMS) {
 	text_entry.text_y = (disp.scene_h - _vm->_font->getHeight(MEDIUM_FONT_ID)) / 2;
 	text_entry.font_id = MEDIUM_FONT_ID;
 	text_entry.flags = FONT_OUTLINE | FONT_CENTERED;
-	text_entry.string = getString(stringId);
+	text_entry.string = getScriptString(stringId);
 
 	placardTextEntry = _vm->textAddEntry(scene_info.text_list, &text_entry);
 

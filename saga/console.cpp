@@ -47,10 +47,7 @@ Console::Console(SagaEngine *vm) : Common::Debugger<Console>() {
 	// CVAR_Register_I(&_musicEnabled, "music", NULL, CVAR_CFG, 0, 1);
 
 	// Actor commands
-	DCmd_Register("actor_move", &Console::Cmd_ActorMove);
-	DCmd_Register("actor_moverel", &Console::Cmd_ActorMoveRel);
-	DCmd_Register("actor_seto", &Console::Cmd_ActorSetO);
-	DCmd_Register("actor_setact", &Console::Cmd_ActorSetAct);
+	DCmd_Register("actor_walk_to", &Console::cmdActorWalkTo);
 
 	// Animation commands
 	DCmd_Register("anim_info", &Console::Cmd_AnimInfo);
@@ -135,37 +132,14 @@ bool Console::Cmd_Help(int argc, const char **argv) {
 	return true;
 }
 
-bool Console::Cmd_ActorMove(int argc, const char **argv) {
-/*	if (argc != 4)
+bool Console::cmdActorWalkTo(int argc, const char **argv) {
+	if (argc != 4)
 		DebugPrintf("Usage: %s <Actor id> <lx> <ly>\n", argv[0]);
 	else
-		_vm->_actor->CF_actor_move(argc, argv);*/
+		_vm->_actor->cmdActorWalkTo(argc, argv);
 	return true;
 }
 
-bool Console::Cmd_ActorMoveRel(int argc, const char **argv) {
-/*	if (argc != 4)
-		DebugPrintf("Usage: %s <Actor id> <lx> <ly>\n", argv[0]);
-	else
-		_vm->_actor->CF_actor_moverel(argc, argv);*/
-	return true;
-}
-
-bool Console::Cmd_ActorSetO(int argc, const char **argv) {
-/*	if (argc != 3)
-		DebugPrintf("Usage: %s <Actor id> <Orientation>\n", argv[0]);
-	else
-		_vm->_actor->CF_actor_seto(argc, argv);*/
-	return true;
-}
-
-bool Console::Cmd_ActorSetAct(int argc, const char **argv) {
-/*	if (argc != 3)
-		DebugPrintf("Usage: %s <Actor id> <Action #>\n", argv[0]);
-	else
-		_vm->_actor->CF_actor_setact(argc, argv);*/
-	return true;
-}
 
 bool Console::Cmd_AnimInfo(int argc, const char **argv) {
 	_vm->_anim->animInfo();

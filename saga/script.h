@@ -199,20 +199,15 @@ struct SCRIPT_BYTECODE {
 	PROC_TBLENTRY *entrypoints;
 };
 
-struct StringsList {
-	int stringsCount;
-	const char **strings;
-};
-
 struct VOICE_LUT {
 	int n_voices;
 	int *voices;
 };
 
-struct SCRIPTDATA {
+struct ScriptData {
 	int loaded;
 	SCRIPT_BYTECODE *bytecode;
-	StringsList *strings;
+	StringsList strings;
 	VOICE_LUT *voice;
 };
 
@@ -239,19 +234,23 @@ public:
 	int loadScript(int scriptNum);
 	int freeScript();
 	SCRIPT_BYTECODE *loadBytecode(byte *bytecode_p, size_t bytecode_len);
-	void loadStrings(const byte *stringsList, size_t stringsLength, StringsList *&strings);
-	VOICE_LUT *loadVoiceLUT(const byte *voicelut_p, size_t voicelut_len, SCRIPTDATA *script);
+	VOICE_LUT *loadVoiceLUT(const byte *voicelut_p, size_t voicelut_len, ScriptData *script);
 	int disassemble(SCRIPT_BYTECODE *script_list, StringsList *strings);
 
 	bool isInitialized() const { return _initialized;  }
 	bool isVoiceLUTPresent() const { return _voiceLUTPresent; }
-	SCRIPTDATA *currentScript() { return _currentScript; }
+	ScriptData *currentScript() { return _currentScript; }
 	ScriptDataBuf *dataBuffer(int idx) { return &_dataBuf[idx]; }
 	int getWord(int bufNumber, int wordNumber, ScriptDataWord *data);
 	int putWord(int bufNumber, int wordNumber, ScriptDataWord data);
 	int setBit(int bufNumber, ScriptDataWord bitNumber, int bitState);
 	int getBit(int bufNumber, ScriptDataWord bitNumber, int *bitState);	
-	const char *getString(int index);
+	const char * getScriptString(int index) const { return _currentScript->strings.getString(index); }
+
+	void doVerb();
+	void showVerb();
+	void setVerb(int verb);
+	void setLeftButtonVerb(int verb);
 
 	void scriptInfo();
 	void scriptExec(int argc, const char **argv);
@@ -263,10 +262,22 @@ protected:
 	SCRIPT_LUT_ENTRY *_scriptLUT;
 	int _scriptLUTMax;
 	uint16 _scriptLUTEntryLen;
-	SCRIPTDATA *_currentScript;
+	ScriptData *_currentScript;
 	ScriptDataBuf _dataBuf[SCRIPT_DATABUF_NUM];
 	ScriptThreadList _threadList;
+	StringsList _mainStrings;
 
+//verb	
+	bool _firstObjectSet;
+	bool _secondObjectNeeded;
+	uint16 _currentObject[2];
+	uint16 _pendingObject[2];
+	int _currentVerb;
+	int _stickyVerb;
+	int _leftButtonVerb;
+	int _rightButtonVerb;
+	int _pendingVerb;
+	
 
 public:
 	bool _skipSpeeches;

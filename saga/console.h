@@ -43,10 +43,7 @@ private:
 	bool Cmd_Exit(int argc, const char **argv);
 	bool Cmd_Help(int argc, const char **argv);
 
-	bool Cmd_ActorMove(int argc, const char **argv);
-	bool Cmd_ActorMoveRel(int argc, const char **argv);
-	bool Cmd_ActorSetO(int argc, const char **argv);
-	bool Cmd_ActorSetAct(int argc, const char **argv);
+	bool cmdActorWalkTo(int argc, const char **argv);
 
 	bool Cmd_AnimInfo(int argc, const char **argv);
 

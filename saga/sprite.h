@@ -48,7 +48,7 @@ struct SPRITELIST_OFFSET {
 	uint32 offset;
 };
 
-struct SPRITELIST {
+struct SpriteList {
 	int append_count;
 	int sprite_count;
 	SPRITELIST_OFFSET *offset_list;
@@ -58,17 +58,19 @@ struct SPRITELIST {
 
 
 class Sprite {
- public:
+public:
+	SpriteList *_mainSprites;
+
 	Sprite(SagaEngine *vm);
 	~Sprite(void);
-	int loadList(int resource_num, SPRITELIST **sprite_list_p);
-	int appendList(int resource_num, SPRITELIST *spritelist);
-	int getListLen(SPRITELIST *spritelist);
-	int freeSprite(SPRITELIST *spritelist);
-	int draw(SURFACE *ds, SPRITELIST *sprite_list, int sprite_num, const Point &screenCoord, int scale);
-	int drawOccluded(SURFACE *ds, SPRITELIST *sprite_list, int sprite_num, const Point &screenCoord, int scale, int depth);
+	int loadList(int resource_num, SpriteList **sprite_list_p);
+	int appendList(int resource_num, SpriteList *spritelist);
+	int getListLen(SpriteList *spritelist);
+	int freeSprite(SpriteList *spritelist);
+	int draw(SURFACE *ds, SpriteList *sprite_list, int sprite_num, const Point &screenCoord, int scale);
+	int drawOccluded(SURFACE *ds, SpriteList *sprite_list, int sprite_num, const Point &screenCoord, int scale, int depth);
 
- private:
+private:
 	int decodeRLESprite(const byte *inbuf, size_t inbuf_len, byte *outbuf, size_t outbuf_len);
 	void scaleSprite(byte *buf, int width, int height, int scale);
 	void scaleSpriteCoords(int scale, int *width, int *height, int *x_align, int *y_align);

@@ -758,7 +758,7 @@ void Interface::drawInventory() {
 		drawPoint.x = x + col * width;
 		drawPoint.y = y + row * height;
 
-		_vm->_sprite->draw(back_buf, _vm->_mainSprites,
+		_vm->_sprite->draw(back_buf, _vm->_sprite->_mainSprites,
 			ObjectTable[_inventory[i]].spritelistRn,
 			drawPoint, 256);
 

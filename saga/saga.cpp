@@ -219,8 +219,6 @@ int SagaEngine::go() {
 
 	_previousTicks = _system->getMillis();
 
-	_sprite->loadList(RID_ITE_MAIN_SPRITES, &_mainSprites);
-
 	// Begin Main Engine Loop
 
 	_scene->startScene();
@@ -283,6 +281,51 @@ void SagaEngine::shutdown() {
 	delete _anim;
 
 	_system->quit();
+}
+
+void SagaEngine::loadStrings(StringsList &stringsList, const byte *stringsPointer, size_t stringsLength) {
+	uint16 stringsCount;
+	uint16 i;
+	size_t offset;
+	
+
+	stringsList.stringsPointer = (byte*)malloc(stringsLength);
+	memcpy(stringsList.stringsPointer, stringsPointer, stringsLength);
+
+	MemoryReadStreamEndian scriptS(stringsList.stringsPointer, stringsLength, IS_BIG_ENDIAN);
+
+	offset = scriptS.readUint16();
+	if (offset > stringsLength) {
+		error("Invalid string offset");
+	}
+
+	stringsCount = offset / 2;
+	stringsList.stringsCount = stringsCount;
+
+	stringsList.strings = (const char **)malloc(stringsCount * sizeof(const char *));
+	if (stringsList.strings == NULL) {
+		error("No enough memory for strings list");
+	}
+
+	scriptS.seek(0);
+	for (i = 0; i < stringsCount; i++) {
+		offset = scriptS.readUint16();
+		if (offset > stringsLength) {
+			error("invalid string offset");
+		}
+		stringsList.strings[i] = (const char *)stringsList.stringsPointer + offset;
+	}
+}
+
+const char *SagaEngine::getObjectName(uint16 objectId) {
+	
+	switch (objectIdType(objectId)) {
+		case kGameObjectActor: 
+							return _actor->getActorName(objectId);
+							break;
+	}
+	//todo: object name & etc
+	return NULL;
 }
 
 } // End of namespace Saga

@@ -83,7 +83,7 @@ private:
 	int _tmp_buf_w;
 	int _tmp_buf_h;
 
-	SPRITELIST *_test_sprite;
+	SpriteList *_test_sprite;
 
 	unsigned int _fps;
 	unsigned int _framecount;

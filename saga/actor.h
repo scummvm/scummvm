@@ -29,10 +29,11 @@
 #include "saga/sprite.h"
 #include "saga/actordata.h"
 #include "saga/list.h"
+#include "saga/saga.h"
 
 namespace Saga {
 
-//#define ACTOR_DEBUG
+#define ACTOR_DEBUG
 
 #define ACTOR_BARRIERS_MAX 16
 
@@ -55,16 +56,6 @@ namespace Saga {
 #define ACTOR_SPEECH_ACTORS_MAX 8
 
 #define PATH_NODE_EMPTY -1
-
-
-#define ID_NOTHING 0
-#define ID_PROTAG 1
-
-#define IS_VALID_ACTOR_INDEX(index) ((index >= 0) && (index < ACTORCOUNT))
-#define IS_VALID_ACTOR_ID(id) ((id == 1) || (id >= 0x2000) && (id < (0x2000 | ACTORCOUNT)))
-#define ACTOR_ID_TO_INDEX(id) ((((uint16)id) == 1 ) ? 0 : (int)(((uint16)id) & ~0x2000))
-#define ACTOR_INDEX_TO_ID(index) ((((int)index) == 0 ) ? 1 : (uint16)(((int)index) | 0x2000))
-
 
 enum ActorActions {
 	kActionWait = 0,
@@ -207,7 +198,7 @@ struct ActorData {
 	uint8 cycleTimeCount;
 	uint8 cycleFlags;
 
-	SPRITELIST *spriteList;		// Actor's sprite list data
+	SpriteList *spriteList;		// Actor's sprite list data
 	int spriteListResourceId;	// Actor's sprite list resource id
 
 	ActorFrameSequence *frames;	// Actor's frames
@@ -275,18 +266,20 @@ public:
 
 	Actor(SagaEngine *vm);
 	~Actor();
-/*
-	void CF_actor_move(int argc, const char **argv);
-	void CF_actor_moverel(int argc, const char **argv);
-	void CF_actor_seto(int argc, const char **argv);
-	void CF_actor_setact(int argc, const char **argv);
-*/
+
+	void cmdActorWalkTo(int argc, const char **argv);
+
+	bool validActorId(uint16 id) { return (id == 1) || ((id >= 0x2000) && (id < (0x2000 | ACTORCOUNT))); }
+	int actorIdToIndex(uint16 id) { return (id == 1 ) ? 0 : (id & ~0x2000); }
+	uint16 actorIndexToId(int index) { return (index == 0 ) ? 1 : (index | 0x2000); }
+
 	int direct(int msec);
 	int drawActors();
 	void updateActorsScene();			// calls from scene loading to update Actors info
 
 	void drawPathTest();
 
+	const char * getActorName(uint16 actorId);
 	bool actorEndWalk(uint16 actorId, bool recurse);
 	bool actorWalkTo(uint16 actorId, const ActorLocation &toLocation);
 	ActorData *getActor(uint16 actorId);
@@ -350,6 +343,7 @@ private:
 	ActorOrderList _drawOrderList;
 	ActorData _actors[ACTORCOUNT];
 	SpeechData _activeSpeech;
+	StringsList _actorsStrings;
 
 //path stuff
 	Rect _barrierList[ACTOR_BARRIERS_MAX];

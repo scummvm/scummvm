@@ -150,7 +150,7 @@ struct INTERFACE_PANEL {
 	int set_button;
 	int nbuttons;
 	INTERFACE_BUTTON *buttons;
-	SPRITELIST *sprites;
+	SpriteList *sprites;
 };
 
 struct INTERFACE_DESC {
@@ -252,8 +252,8 @@ private:
 	char _statusText[STATUS_TEXT_LEN];
 	int _leftPortrait;
 	int _rightPortrait;
-	SPRITELIST *_defPortraits;
-	SPRITELIST *_scenePortraits;
+	SpriteList *_defPortraits;
+	SpriteList *_scenePortraits;
 	int _activeVerb;
 	SCRIPT_THREAD *_iThread;
 

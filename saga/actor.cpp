@@ -130,6 +130,9 @@ int tileDirectionLUT[8][2] = {
 
 Actor::Actor(SagaEngine *vm) : _vm(vm) {
 	int i;
+	int result;
+	byte *stringsPointer;
+	size_t stringsLength;
 	ActorData *actor;
 	debug(9, "Actor::Actor()");
 
@@ -168,10 +171,18 @@ Actor::Actor(SagaEngine *vm) : _vm(vm) {
 	if (_actorContext == NULL) {
 		error("Actor::Actor(): Couldn't load actor module resource context.");
 	}
+	
+	result = RSC_LoadResource(_actorContext, RID_ITE_ACTOR_NAMES, &stringsPointer, &stringsLength); // fixme: IHNM
+	if ((result != SUCCESS) || (stringsLength == 0)) {
+		error("Error loading strings list resource");
+	}
+	
+	_vm->loadStrings(_actorsStrings, stringsPointer, stringsLength);
+	RSC_FreeResource(stringsPointer);
 
 	for (i = 0; i < ACTORCOUNT; i++) {
 		actor = &_actors[i];
-		actor->actorId = ACTOR_INDEX_TO_ID(i);
+		actor->actorId = actorIndexToId(i);
 		actor->index = i;
 		debug(9, "init actorId=%d index=%d", actor->actorId, actor->index);
 		actor->nameIndex = ActorTable[i].nameIndex;
@@ -212,6 +223,7 @@ Actor::~Actor() {
 	free(_newPathNodeList);
 	free(_pathList);
 	free(_pathCell);
+	_actorsStrings.freeMem();
 	//release resources
 	for (i = 0; i < ACTORCOUNT; i++) {
 		actor = &_actors[i];
@@ -307,7 +319,7 @@ void Actor::realLocation(ActorLocation &location, uint16 objectId, uint16 walkFl
 	}
 
 	if (objectId != ID_NOTHING) {
-		if (IS_VALID_ACTOR_ID(objectId)) {
+		if (validActorId(objectId)) {
 			actor = getActor(objectId);
 			location.add( actor->location);
 		} else {
@@ -340,7 +352,7 @@ void Actor::actorFaceTowardsPoint(uint16 actorId, const ActorLocation &toLocatio
 void Actor::actorFaceTowardsObject(uint16 actorId, uint16 objectId) {
 	ActorData *actor;
 
-	if (IS_VALID_ACTOR_ID(objectId)) {
+	if (validActorId(objectId)) {
 		actor = getActor(objectId);
 		actorFaceTowardsPoint(actorId, actor->location);
 	} else {
@@ -348,10 +360,16 @@ void Actor::actorFaceTowardsObject(uint16 actorId, uint16 objectId) {
 	}
 }
 
+const char * Actor::getActorName(uint16 actorId) {
+	ActorData *actor;
+	actor = getActor(actorId);
+	return _actorsStrings.getString(actor->nameIndex);
+}
+
 ActorData *Actor::getActor(uint16 actorId) {
 	ActorData *actor;
 	
-	if (!IS_VALID_ACTOR_ID(actorId))
+	if (!validActorId(actorId))
 		error("Actor::getActor Wrong actorId 0x%X", actorId);
 
 	if (actorId == ID_PROTAG) {
@@ -361,7 +379,7 @@ ActorData *Actor::getActor(uint16 actorId) {
 		return _protagonist;
 	}
 
-	actor = &_actors[ACTOR_ID_TO_INDEX(actorId)];
+	actor = &_actors[actorIdToIndex(actorId)];
 
 	if (actor->disabled)
 		error("Actor::getActor disabled actorId 0x%X", actorId);
@@ -907,7 +925,7 @@ int Actor::drawActors() {
 	ActorOrderList::iterator actorDrawOrderIterator;
 	ActorData *actor;
 	int frameNumber;
-	SPRITELIST *spriteList;
+	SpriteList *spriteList;
 
 	SURFACE *back_buf;
 
@@ -924,7 +942,7 @@ int Actor::drawActors() {
 				continue;
 			}
 			frameNumber = 8;			
-			spriteList = _vm->_mainSprites;
+			spriteList = _vm->_sprite->_mainSprites;
 		} else {
 			frameNumber = actor->frameNumber;			
 			spriteList = actor->spriteList;
@@ -1871,77 +1889,24 @@ void Actor::drawPathTest() {
 #endif
 }
 
-/*
 // Console wrappers - must be safe to run
-// TODO - checkup ALL arguments, cause wrong arguments may fall function with "error"
 
-void Actor::CF_actor_move(int argc, const char **argv) {
+void Actor::cmdActorWalkTo(int argc, const char **argv) {
 	uint16 actorId = (uint16) atoi(argv[1]);
+	ActorLocation location;
 	Point movePoint;
 
 	movePoint.x = atoi(argv[2]);
 	movePoint.y = atoi(argv[3]);
 
-	if (!IS_VALID_ACTOR_ID(actorId)) {
-		_vm->_console->DebugPrintf("Actor::CF_actor_move Invalid actorId 0x%X.\n", actorId);
+	location.fromScreenPoint(movePoint);
+
+	if (!validActorId(actorId)) {
+		_vm->_console->DebugPrintf("Actor::cmActorWalkTo Invalid actorId 0x%X.\n", actorId);
 		return;
 	}
 
-	move(actorId, movePoint);
+	actorWalkTo(actorId, location);
 }
 
-void Actor::CF_actor_moverel(int argc, const char **argv) {
-	uint16 actorId = (uint16) atoi(argv[1]);
-	Point movePoint;
-
-	movePoint.x = atoi(argv[2]);
-	movePoint.y = atoi(argv[3]);
-
-	if (!IS_VALID_ACTOR_ID(actorId)) {
-		_vm->_console->DebugPrintf("Actor::CF_actor_moverel Invalid actorId 0x%X.\n", actorId);
-		return;
-	}
-
-	moveRelative(actorId, movePoint);
-}
-
-void Actor::CF_actor_seto(int argc, const char **argv) {
-	uint16 actorId = (uint16) atoi(argv[1]);
-	int orient;
-
-	orient = atoi(argv[2]);
-//TODO orient check
-	if (!IS_VALID_ACTOR_ID(actorId)) {
-		_vm->_console->DebugPrintf("Actor::CF_actor_seto Invalid actorId 0x%X.\n",actorId);
-		return;
-	}
-
-}
-
-void Actor::CF_actor_setact(int argc, const char **argv) {
-	uint16 actorId = (uint16) atoi(argv[1]);
-	int action_n = 0;
-
-	action_n = atoi(argv[2]);
-
-	if (!IS_VALID_ACTOR_ID(actorId)) {
-		_vm->_console->DebugPrintf("Actor::CF_actor_setact Invalid actorId 0x%X.\n",actorId);
-		return;
-	}
-
-//TODO action_n check
-	if ((action_n < 0) || (action_n >= actor->action_ct)) {
-		_vm->_console->DebugPrintf("Invalid action number.\n");
-		return;
-	}
-
-	_vm->_console->DebugPrintf("Action frame counts: %d %d %d %d.\n",
-			actor->act_tbl[action_n].dir[0].frame_count,
-			actor->act_tbl[action_n].dir[1].frame_count,
-			actor->act_tbl[action_n].dir[2].frame_count,
-			actor->act_tbl[action_n].dir[3].frame_count);
-
-	setAction(actorId, action_n, ACTION_LOOP);
-}
-*/
 } // End of namespace Saga

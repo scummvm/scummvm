@@ -39,6 +39,7 @@
 
 #include "saga/text.h"
 #include "saga/gfx.h"
+#include "saga/list.h"
 
 namespace Saga {
 
@@ -63,8 +64,13 @@ class PalAnim;
 #define PBOUNDS(n,max) (((n)>=(0))&&((n)<(max)))
 #define MAXPATH 512
 
+#define IS_BIG_ENDIAN ((_vm->_features & GF_BIG_ENDIAN_DATA) != 0)
+
+#define ID_NOTHING 0
+#define ID_PROTAG 1
+
 struct RSCFILE_CONTEXT;
-struct SPRITELIST;
+struct StringList;
 
 enum ERRORCODE {
 	MEM = -2,
@@ -75,6 +81,14 @@ enum ERRORCODE {
 enum SAGAGameType {
 	GType_ITE,
 	GType_IHNM
+};
+
+enum GameObjectTypes {
+	kGameObjectNone = 0,
+	kGameObjectActor = 1,
+	kGameObjectObject = 2,
+	kGameObjectHitZone = 3,
+	kGameObjectStepZone = 4
 };
 
 enum scriptTimings {
@@ -109,14 +123,32 @@ enum HitZoneFlags {
 	kHitZoneTerminus = (1 << 3)
 };
 
+struct StringsList {
+	byte *stringsPointer;
+	int stringsCount;
+	const char **strings;
+
+	const char *getString(int index) const {
+		if (stringsCount <= index)
+			error("StringList::getString wrong index 0x%X", index);
+		return strings[index];
+	}
+
+	void freeMem() {
+		free(strings);
+		free(stringsPointer);
+		memset(this, 0, sizeof(*this));
+	}
+
+	StringsList() {
+		memset(this, 0, sizeof(*this));
+	}
+};
+
 struct CLICKAREA {
 	int n_points;
 	Point *points;
 };
-
-
-#define IS_BIG_ENDIAN ((_vm->_features & GF_BIG_ENDIAN_DATA) != 0)
-
 
 enum GAME_IDS {
 	// Dreamers Guild
@@ -236,6 +268,10 @@ inline int integerCompare(int i1, int i2) {
 	return ((i1) > (i2) ? 1 : ((i1) < (i2) ? -1 : 0));
 }
 
+inline int objectIdType(uint16 objectId) {
+	return objectId >> 13;
+}
+
 class SagaEngine : public Engine {
 	void errorString(const char *buf_input, char *buf_output);
 
@@ -273,7 +309,6 @@ public:
 	Events *_events;
 	PalAnim *_palanim;
 
-	SPRITELIST *_mainSprites;
 
 	/** Random number generator */
 	Common::RandomSource _rnd;
@@ -288,6 +323,8 @@ public:
 	int decodeBGImage(const byte *image_data, size_t image_size,
 						byte **output_buf, size_t *output_buf_len, int *w, int *h);
 	const byte *getImagePal(const byte *image_data, size_t image_size);
+	void loadStrings(StringsList &stringsList, const byte *stringsPointer, size_t stringsLength);
+	const char *getObjectName(uint16 objectId);
 
 public:
 	TEXTLIST *textCreateList();
