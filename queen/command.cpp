@@ -26,6 +26,7 @@
 #include "queen/graphics.h"
 #include "queen/logic.h"
 #include "queen/sound.h"
+#include "queen/state.h"
 #include "queen/talk.h"
 #include "queen/walk.h"
 

@@ -280,32 +280,6 @@ enum Language {
 };
 
 
-enum StateTalk {
-	STATE_TALK_TALK,
-	STATE_TALK_MUTE
-};
-
-
-enum StateGrab {
-	STATE_GRAB_NONE,
-	STATE_GRAB_DOWN,
-	STATE_GRAB_UP,
-	STATE_GRAB_MID
-};
-
-
-enum StateOn {
-	STATE_ON_ON,
-	STATE_ON_OFF
-};
-
-
-enum StateUse {
-	STATE_USE,
-	STATE_USE_ON
-};
-
-
 enum JoeWalkMode {
 	JWM_NORMAL  = 0,
 	JWM_MOVE    = 1,

@@ -25,6 +25,7 @@
 #include "common/util.h"
 #include "queen/defs.h"
 #include "queen/structs.h"
+#include "queen/state.h" // for joeGrabDirection()
 #include "queen/verb.h"
 
 namespace Queen {
@@ -40,63 +41,6 @@ struct ZoneSlot {
 	bool valid;
 	Box box;
 };
-
-
-/*!
-	Each object/item in game has a state field. 
-	(refer to ObjectData and ItemData).
-	
-	<table>
-		<tr>
-			<td>Name</td>
-			<td>Bits</td>
-			<td>Description</td>
-		</tr>	
-		<tr>
-			<td>USE</td>
-			<td>10</td>
-			<td>Use</td>
-		</tr>
-		<tr>
-			<td>TALK</td>
-			<td>9</td>
-			<td>Talk</td>
-		</tr>
-		<tr>
-			<td>ON</td>
-			<td>8</td>
-			<td>On/Off</td>
-		</tr>
-		<tr>
-			<td>DEF</td>
-			<td>7,6,5,4</td>
-			<td>Default verb command</td>
-		</tr>
-		<tr>
-			<td>DIR</td>
-			<td>3,2</td>
-			<td>Direction faced</td>
-		</tr>
-		<tr>
-			<td>GRAB</td>
-			<td>1,0</td>
-			<td>Grab Direction</td>
-		</tr>
-	</table>
-*/
-struct State {
-
-	static Direction findDirection(uint16 state);
-	static StateTalk findTalk(uint16 state);
-	static StateGrab findGrab(uint16 state);
-	static StateOn   findOn(uint16 state);
-	static Verb      findDefaultVerb(uint16 state);
-	static StateUse  findUse(uint16 state);
-
-	static void alterOn(uint16 *objState, StateOn state);
-	static void alterDefaultVerb(uint16 *objState, Verb v);
-};
-
 
 class Command;
 class Debug;

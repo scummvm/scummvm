@@ -27,6 +27,7 @@
 #include "queen/logic.h"
 #include "queen/resource.h"
 #include "queen/sound.h"
+#include "queen/state.h"
 
 namespace Queen {
 
