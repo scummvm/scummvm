@@ -24,8 +24,8 @@
 #include "scummsys.h"
 #include "system.h"
 
-#define SCUMMVM_VERSION "0.3.0"
-#define SCUMMVM_CVS "2002-12-01"
+#define SCUMMVM_VERSION "0.3.0b"
+#define SCUMMVM_CVS "2002-12-??"
 
 class SoundMixer;
 class GameDetector;

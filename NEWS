@@ -1,7 +1,7 @@
 For a more comprehensive changelog for the latest experimental CVS code, see:
         http://scummvm.sourceforge.net/daily/ChangeLog
 
-0.3.0 (2002-12-01)
+0.3.0b (2002-12-??)
 - massive cleanup work for iMUSE. Sam and Max music now plays correctly
 - many bugfixes for Zak256, + sound and music support
 - music support for Simon the Sorcerer on any platform with real MIDI
