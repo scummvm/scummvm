@@ -418,90 +418,90 @@ void ScummEngine_v90he::o90_unknown1C() {
 	subOp -= 46;
 
 	switch (subOp) {
-		case -14: // HE99+
-			pop();
-			break;
-		case -13: // HE99+
-			pop();
-			break;
-		case 0:
-			pop();
-			break;
-		case 1:
-			pop();
-			pop();
-			pop();
-			pop();
-			break;
-		case 2:
-			//Sets a variable to 1
-			break;
-		case 3:
-			//Gets a script string
-			break;
-		case 4:
-			//Gets a script string
-			pop();
-			break;
-		case 5:
-			pop();
-			pop();
-			pop();
-			pop();
-			pop();
-			break;
-		case 6:
-			pop();
-			break;
-		case 7:
-			pop();
-			break;
-		case 8:
-			pop();
-			break;
-		case 10:
-		{
-			int flags = pop();
-			int state = pop();
-			int y1 = pop();
-			int x1 = pop();
-			int resnum = pop();
-			if (_fullRedraw) {
-				assert(_wizImagesNum < ARRAYSIZE(_wizImages));
-				WizImage *pwi = &_wizImages[_wizImagesNum];
-				pwi->resnum = resnum;
-				pwi->x1 = x1;
-				pwi->y1 = y1;
-				pwi->flags = flags;
-				++_wizImagesNum;
-			} else {
-				drawWizImage(rtImage, resnum, state, x1, y1, flags);
-			}
+	case -14: // HE99+
+		pop();
+		break;
+	case -13: // HE99+
+		pop();
+		break;
+	case 0:
+		pop();
+		break;
+	case 1:
+		pop();
+		pop();
+		pop();
+		pop();
+		break;
+	case 2:
+		//Sets a variable to 1
+		break;
+	case 3:
+		//Gets a script string
+		break;
+	case 4:
+		//Gets a script string
+		pop();
+		break;
+	case 5:
+		pop();
+		pop();
+		pop();
+		pop();
+		pop();
+		break;
+	case 6:
+		pop();
+		break;
+	case 7:
+		pop();
+		break;
+	case 8:
+		pop();
+		break;
+	case 10:
+	{
+		int flags = pop();
+		int state = pop();
+		int y1 = pop();
+		int x1 = pop();
+		int resnum = pop();
+		if (_fullRedraw) {
+			assert(_wizImagesNum < ARRAYSIZE(_wizImages));
+			WizImage *pwi = &_wizImages[_wizImagesNum];
+			pwi->resnum = resnum;
+			pwi->x1 = x1;
+			pwi->y1 = y1;
+			pwi->flags = flags;
+			++_wizImagesNum;
+		} else {
+			drawWizImage(rtImage, resnum, state, x1, y1, flags);
 		}
-			break;
-		case 11:
-			pop();
-			break;
-		case 19:
-			pop();
-			pop();
-			break;
-		case 87: // HE99+
-			pop();
-			pop();
-			pop();
-			pop();
-			pop();
-			break;
-		case 91: // HE99+
-			pop();
-			break;
-		case 171: // HE99+
-			break;
-		case 209:
-			break;
-		default:
-			error("o90_unknown1C: unhandled case %d", subOp);
+	}
+		break;
+	case 11:
+		pop();
+		break;
+	case 19:
+		pop();
+		pop();
+		break;
+	case 87: // HE99+
+		pop();
+		pop();
+		pop();
+		pop();
+		pop();
+		break;
+	case 91: // HE99+
+		pop();
+		break;
+	case 171: // HE99+
+		break;
+	case 209:
+		break;
+	default:
+		error("o90_unknown1C: unhandled case %d", subOp);
 	}
 
 	debug(1,"o90_unknown1C stub (%d)", subOp);
@@ -514,95 +514,95 @@ void ScummEngine_v90he::o90_unknown25() {
 
 	debug(1,"o90_unknown25 stub (%d)", subOp);
 	switch (subOp) {
-		case 0:
-			pop();
-			break;
-		case 1:
-			pop();
-			break;
-		case 2:
-			pop();
-			break;
-		case 3:
-			pop();
-			break;
-		case 4:
-			pop();
-			break;
-		case 5:
-			pop();
-			break;
-		case 6:
-			pop();
-			break;
-		case 7:
-			pop();
-			break;
-		case 8:
-			pop();
-			break;
-		case 9:
-			pop();
-			break;
-		case 12:
-			pop();
-			pop();
-			break;
-		case 13:
-			pop();
-			break;
-		case 15:
-			if (_heversion == 99) {
-				getStackList(args, ARRAYSIZE(args));
-				pop();
-				pop();
-				pop();
-				pop();
-			} else if (_heversion == 98) {
-				pop();
-				pop();
-				pop();
-				pop();
-			} else {
-				pop();
-				pop();
-				pop();
-			}
-			break;
-		case 22:
-			pop();
-			break;
-		case 33:
-			pop();
-			break;
-		case 38:
-			pop();
-			break;
-		case 52:
-			pop();
-			break;
-		case 62:
-			pop();
-			break;
-		case 67:
-			pop();
-			break;
-		case 68:
-			pop();
-			break;
-		case 94:
-			pop();
-			break;
-		case 95:
+	case 0:
+		pop();
+		break;
+	case 1:
+		pop();
+		break;
+	case 2:
+		pop();
+		break;
+	case 3:
+		pop();
+		break;
+	case 4:
+		pop();
+		break;
+	case 5:
+		pop();
+		break;
+	case 6:
+		pop();
+		break;
+	case 7:
+		pop();
+		break;
+	case 8:
+		pop();
+		break;
+	case 9:
+		pop();
+		break;
+	case 12:
+		pop();
+		pop();
+		break;
+	case 13:
+		pop();
+		break;
+	case 15:
+		if (_heversion == 99) {
 			getStackList(args, ARRAYSIZE(args));
 			pop();
-			break;
-		case 168:
 			pop();
 			pop();
-			break;
-		default:
-			error("o90_unknown25: Unknown case %d", subOp);
+			pop();
+		} else if (_heversion == 98) {
+			pop();
+			pop();
+			pop();
+			pop();
+		} else {
+			pop();
+			pop();
+			pop();
+		}
+		break;
+	case 22:
+		pop();
+		break;
+	case 33:
+		pop();
+		break;
+	case 38:
+		pop();
+		break;
+	case 52:
+		pop();
+		break;
+	case 62:
+		pop();
+		break;
+	case 67:
+		pop();
+		break;
+	case 68:
+		pop();
+		break;
+	case 94:
+		pop();
+		break;
+	case 95:
+		getStackList(args, ARRAYSIZE(args));
+		pop();
+		break;
+	case 168:
+		pop();
+		pop();
+		break;
+	default:
+		error("o90_unknown25: Unknown case %d", subOp);
 	}
 	push(0);
 
@@ -616,83 +616,83 @@ void ScummEngine_v90he::o90_unknown26() {
 	subOp -= 34;
 
 	switch (subOp) {
-		case 0:
+	case 0:
+		pop();
+		break;
+	case 1:
+		pop();
+		break;
+	case 3:
+		pop();
+		break;
+	case 8:
+		pop();
+		pop();
+		break;
+	case 9:
+		pop();
+		break;
+	case 10:
+		pop();
+		pop();
+		break;
+	case 18:
+		pop();
+		break;
+	case 19:
+		pop();
+		break;
+	case 23:
+		pop();
+		if (_gameId == GID_FREDDI4 || _heversion >= 99)
 			pop();
-			break;
-		case 1:
-			pop();
-			break;
-		case 3:
-			pop();
-			break;
-		case 8:
-			pop();
-			pop();
-			break;
-		case 9:
-			pop();
-			break;
-		case 10:
-			pop();
-			pop();
-			break;
-		case 18:
-			pop();
-			break;
-		case 19:
-			pop();
-			break;
-		case 23:
-			pop();
-			if (_gameId == GID_FREDDI4 || _heversion >= 99)
-				pop();
-			break;
-		case 28: // HE99+
-			pop();
-			break;
-		case 29:
-			pop();
-			break;
-		case 31:
-			pop();
-			pop();
-			break;
-		case 34:
-			pop();
-			break;
-		case 43:
-			pop();
-			pop();
-			break;
-		case 48:
-			pop();
-			break;
-		case 52: // HE 98+
-			pop();
-			break;
-		case 64:
-			pop();
-			break;
-		case 90:
-			pop();
-			break;
-		case 91:
-			getStackList(args, ARRAYSIZE(args));
-			break;
-		case 105: // HE99+
-			pop();
-			pop();
-			break;
-		case 124:
-			break;
-		case 164:
-			pop();
-			pop();
-			break;
-		case 183:
-			break;
-		default:
-			error("o90_unknown26: Unknown case %d", subOp);
+		break;
+	case 28: // HE99+
+		pop();
+		break;
+	case 29:
+		pop();
+		break;
+	case 31:
+		pop();
+		pop();
+		break;
+	case 34:
+		pop();
+		break;
+	case 43:
+		pop();
+		pop();
+		break;
+	case 48:
+		pop();
+		break;
+	case 52: // HE 98+
+		pop();
+		break;
+	case 64:
+		pop();
+		break;
+	case 90:
+		pop();
+		break;
+	case 91:
+		getStackList(args, ARRAYSIZE(args));
+		break;
+	case 105: // HE99+
+		pop();
+		pop();
+		break;
+	case 124:
+		break;
+	case 164:
+		pop();
+		pop();
+		break;
+	case 183:
+		break;
+	default:
+		error("o90_unknown26: Unknown case %d", subOp);
 	}
 	debug(1,"o90_unknown26 stub (%d)", subOp);
 }
@@ -700,17 +700,17 @@ void ScummEngine_v90he::o90_unknown26() {
 void ScummEngine_v90he::o90_unknown27() {
 	int subOp = fetchScriptByte();
 	switch (subOp) {
-		case 30:
-			pop();
-			break;
-		case 31:
-			pop();
-			break;
-		case 43:
-			pop();
-			break;
-		default:
-			error("o90_unknown27: Unknown case %d", subOp);
+	case 30:
+		pop();
+		break;
+	case 31:
+		pop();
+		break;
+	case 43:
+		pop();
+		break;
+	default:
+		error("o90_unknown27: Unknown case %d", subOp);
 	}
 	push(0);
 
@@ -723,30 +723,30 @@ void ScummEngine_v90he::o90_unknown28() {
 	subOp -= 37;
 
 	switch (subOp) {
-		case 6:
-			pop();
-			break;
-		case 7:
-			pop();
-			pop();
-			break;
-		case 20:
-			pop();
-			break;
-		case 28:
-			pop();
-			pop();
-			break;
-		case 30:
-			pop();
-			pop();
-			pop();
-			pop();
-			break;
-		case 180:
-			break;
-		default:
-			error("o90_unknown28: Unknown case %d", subOp);
+	case 6:
+		pop();
+		break;
+	case 7:
+		pop();
+		pop();
+		break;
+	case 20:
+		pop();
+		break;
+	case 28:
+		pop();
+		pop();
+		break;
+	case 30:
+		pop();
+		pop();
+		pop();
+		pop();
+		break;
+	case 180:
+		break;
+	default:
+		error("o90_unknown28: Unknown case %d", subOp);
 	}
 	debug(1,"o90_unknown28 stub (%d)", subOp);
 }
@@ -756,47 +756,47 @@ void ScummEngine_v90he::o90_unknown29() {
 	subOp -= 30;
 
 	switch (subOp) {
-		case 0:
-			pop();
-			pop();
-			break;
-		case 1:
-			pop();
-			pop();
-			break;
-		case 2:
-			pop();
-			pop();
-			break;
-		case 3:
-			pop();
-			pop();
-			break;
-		case 6:
-			pop();
-			break;
-		case 15:
-			pop();
-			pop();
-			pop();
-			pop();
-			break;
-		case 36:
-			pop();
-			pop();
-			pop();
-			pop();
-			break;
-		case 100:
-			pop();
-			pop();
-			pop();
-			pop();
-			pop();
-			pop();
-			break;
-		default:
-			error("o90_unknown29: Unknown case %d", subOp);
+	case 0:
+		pop();
+		pop();
+		break;
+	case 1:
+		pop();
+		pop();
+		break;
+	case 2:
+		pop();
+		pop();
+		break;
+	case 3:
+		pop();
+		pop();
+		break;
+	case 6:
+		pop();
+		break;
+	case 15:
+		pop();
+		pop();
+		pop();
+		pop();
+		break;
+	case 36:
+		pop();
+		pop();
+		pop();
+		pop();
+		break;
+	case 100:
+		pop();
+		pop();
+		pop();
+		pop();
+		pop();
+		pop();
+		break;
+	default:
+		error("o90_unknown29: Unknown case %d", subOp);
 	}
 	push(0);
 
@@ -808,28 +808,28 @@ void ScummEngine_v90he::o90_unknown2F() {
 	subOp -= 54;
 
 	switch (subOp) {
-		case 0:
-			pop();
-			break;
-		case 3:
-			break;
-		case 11:
-			pop();
-			pop();
-			break;
-		case 12:
-			pop();
-			break;
-		case 13:
-			pop();
-			pop();
-			pop();
-			pop();
-			break;
-		case 201:
-			break;
-		default:
-			error("o90_unknown28: Unknown case %d", subOp);
+	case 0:
+		pop();
+		break;
+	case 3:
+		break;
+	case 11:
+		pop();
+		pop();
+		break;
+	case 12:
+		pop();
+		break;
+	case 13:
+		pop();
+		pop();
+		pop();
+		pop();
+		break;
+	case 201:
+		break;
+	default:
+		error("o90_unknown28: Unknown case %d", subOp);
 	}
 	debug(1,"o90_unknown2F stub (%d)", subOp);
 }
@@ -920,16 +920,16 @@ void ScummEngine_v90he::o90_unknown3A() {
 	int subOp = fetchScriptByte();
 
 	switch (subOp) {
-		case 129:
-			fetchScriptWord();
-			pop();
-			pop();
-			pop();
-			pop();
-			pop();
-			break;
-		default:
-			error("o90_unknown3A: Unknown case %d", subOp);
+	case 129:
+		fetchScriptWord();
+		pop();
+		pop();
+		pop();
+		pop();
+		pop();
+		break;
+	default:
+		error("o90_unknown3A: Unknown case %d", subOp);
 	}
 	debug(1,"o90_unknown3A stub (%d)", subOp);
 }
@@ -939,34 +939,34 @@ void ScummEngine_v90he::o90_unknown94() {
 	subOp -= 45;
 
 	switch (subOp) {
-		case 0:
-			pop();
-			pop();
-			pop();
-			pop();
-			pop();
-			pop();
-			break;
-		case 7:
-			pop();
-			pop();
-			pop();
-			break;
-		case 21:
-			pop();
-			pop();
-			break;
-		case 87:
-			pop();
-			pop();
-			break;
-		case 172:
-			pop();
-			pop();
-			pop();
-			break;
-		default:
-			error("o90_unknown94: Unknown case %d", subOp);
+	case 0:
+		pop();
+		pop();
+		pop();
+		pop();
+		pop();
+		pop();
+		break;
+	case 7:
+		pop();
+		pop();
+		pop();
+		break;
+	case 21:
+		pop();
+		pop();
+		break;
+	case 87:
+		pop();
+		pop();
+		break;
+	case 172:
+		pop();
+		pop();
+		pop();
+		break;
+	default:
+		error("o90_unknown94: Unknown case %d", subOp);
 	}
 	push(0);
 	debug(1,"o90_unknown94 stub (%d)", subOp);
@@ -977,41 +977,41 @@ void ScummEngine_v90he::o90_unknown9E() {
 	subOp -= 57;
 
 	switch (subOp) {
-		case 0:
-			pop();
-			break;
-		case 6:
-			pop();
-			pop();
-			break;
-		case 9:
-			pop();
-			pop();
-			pop();
-			pop();
-			pop();
-			break;
-		case 13:
-			pop();
-			pop();
-			pop();
-			break;
-		case 19: //HE99+
-			pop();
-			break;
-		case 29:
-			pop();
-			break;
-		case 118:
-			pop();
-			pop();
-			break;
-		case 160:
-			break;
-		case 198:
-			break;
-		default:
-			error("o90_unknown9E: Unknown case %d", subOp);
+	case 0:
+		pop();
+		break;
+	case 6:
+		pop();
+		pop();
+		break;
+	case 9:
+		pop();
+		pop();
+		pop();
+		pop();
+		pop();
+		break;
+	case 13:
+		pop();
+		pop();
+		pop();
+		break;
+	case 19: //HE99+
+		pop();
+		break;
+	case 29:
+		pop();
+		break;
+	case 118:
+		pop();
+		pop();
+		break;
+	case 160:
+		break;
+	case 198:
+		break;
+	default:
+		error("o90_unknown9E: Unknown case %d", subOp);
 	}
 	debug(1,"o90_unknown9E stub (%d)", subOp);
 }
