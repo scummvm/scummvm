@@ -60,6 +60,7 @@ protected:
 	byte _dialog;
 	int _clickWidget;
 	char *_queryMess;
+	bool _old_soundsPaused;
 	
 	// mouse cursor state
 	bool _old_cursor_mode;

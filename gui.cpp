@@ -950,6 +950,7 @@ void Gui::loop()
 	if (_active && !_inited) {
 		_inited = true;
 		draw(0, 200);								// was 100		
+		_old_soundsPaused = _s->_soundsPaused;
 		_s->pauseSounds(true);
 
 		// Backup old cursor
@@ -1004,7 +1005,7 @@ void Gui::close()
 
 	_s->_system->show_mouse(_old_cursor_mode);
 
-	_s->pauseSounds(false);
+	_s->pauseSounds(_old_soundsPaused);
 	_active = false;
 	_inited = false;
 
