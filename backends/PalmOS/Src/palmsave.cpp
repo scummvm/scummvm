@@ -32,10 +32,10 @@
 
 class PalmSaveFile : public SaveFile {
 public:
-	PalmSaveFile(const char *filename, const char *mode);
+	PalmSaveFile(const char *filename, bool saveOrLoad);
 	~PalmSaveFile();
 	
-	bool is_open() { return file != NULL; }
+	bool isOpen() const { return file != NULL; }
 protected:
 	int fread(void *buf, int size, int cnt);
 	int fwrite(const void *buf, int size, int cnt);
@@ -47,12 +47,12 @@ private :
 	bool _needDump;
 };
 
-PalmSaveFile::PalmSaveFile(const char *filename, const char *mode) {
+PalmSaveFile::PalmSaveFile(const char *filename, bool saveOrLoad) {
 	_readWriteData = NULL;
 	_readWritePos = 0;
 	_needDump = false;
 
-	file = ::fopen(filename, mode);
+	file = ::fopen(filename, (saveOrLoad ? "wb" : "rb"));
 }
 
 PalmSaveFile::~PalmSaveFile() {
@@ -97,25 +97,12 @@ int PalmSaveFile::fwrite(const void *buf, int size, int cnt) {
 // SaveFileManager class
 
 class PalmSaveFileManager : public SaveFileManager {
-
 public:
-	SaveFile *open_savefile(const char *filename, const char *dirname, bool saveOrLoad);
 	void list_savefiles(const char *prefix, const char *directory, bool *marks, int num);
+
+protected:
+	SaveFile *makeSaveFile(const char *filename, bool saveOrLoad);
 };
-
-SaveFile *PalmSaveFileManager::open_savefile(const char *filename, const char *dirname, bool saveOrLoad) {
-	char buf[256];
-
-	join_paths(filename, dirname, buf, sizeof(buf));
-	PalmSaveFile *sf = new PalmSaveFile(buf, (saveOrLoad? "wb":"rb"));
-
-	if(!sf->is_open()) {
-		delete sf;
-		sf = NULL;
-	}
-
-	return sf;
-}
 
 void PalmSaveFileManager::list_savefiles(const char *prefix, const char *directory, bool *marks, int num) {
 	FileRef fileRef;
@@ -154,6 +141,10 @@ void PalmSaveFileManager::list_savefiles(const char *prefix, const char *directo
 	}
 
 	VFSFileClose(fileRef);
+}
+
+SaveFile *SaveFileManager::makeSaveFile(const char *filename, bool saveOrLoad) {
+	return new PalmSaveFile(filename, saveOrLoad);
 }
 
 // OSystem

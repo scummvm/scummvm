@@ -237,6 +237,8 @@ public:
 
   ~VMSave();
 
+  bool isOpen() const { return true; }
+
   bool readSaveGame()
   { return ::readSaveGame(buffer, size, filename); }
 

@@ -23,12 +23,22 @@
 #include "common/util.h"
 #include "common/savefile.h"
 
+
+// FIXME HACK
+//#define USE_ZLIB
+
+
+#ifdef USE_ZLIB
+#include <zlib.h>
+#endif
+
 uint32 SaveFile::read(void *ptr, uint32 size) {
 	return fread(ptr, 1, size);
 }
 
 byte SaveFile::readByte() {
 	byte b;
+	// TODO: Proper error handling
 	if (fread(&b, 1, 1) != 1)
 		return 0;
 	return b;
@@ -86,14 +96,63 @@ void SaveFile::writeUint32BE(uint32 value) {
 	writeUint16BE((uint16)(value & 0xffff));
 }
 
+
+class StdioSaveFile : public SaveFile {
+private:
+	FILE *fh;
+public:
+	StdioSaveFile(const char *filename, bool saveOrLoad)
+		{ fh = ::fopen(filename, (saveOrLoad? "wb" : "rb")); }
+	~StdioSaveFile()
+		{ if(fh) ::fclose(fh); }
+
+	bool isOpen() const { return fh != 0; }
+
+protected:
+	int fread(void *buf, int size, int cnt)
+		{ return ::fread(buf, size, cnt, fh); }
+	int fwrite(const void *buf, int size, int cnt)
+		{ return ::fwrite(buf, size, cnt, fh); }
+};
+
+
+#ifdef USE_ZLIB
+class GzipSaveFile : public SaveFile {
+private:
+	gzFile fh;
+public:
+	GzipSaveFile(const char *filename, bool saveOrLoad)
+		{ fh = ::gzopen(filename, (saveOrLoad? "wb" : "rb")); }
+	~GzipSaveFile()
+		{ if(fh) ::gzclose(fh); }
+
+	bool isOpen() const { return fh != 0; }
+
+protected:
+	int fread(void *buf, int size, int cnt) {
+		return ::gzread(fh, buf, size * cnt);
+	}
+	int fwrite(const void *buf, int size, int cnt) {
+		// Due to a "bug" in the zlib headers (or maybe I should say,
+		// a bug in the C++ spec? Whatever <g>) we have to be a bit
+		// hackish here and remove the const qualifier.
+		// Note that gzwrite's buf param is declared as "const voidp"
+		// which you might think is the same as "const void *" but it
+		// is not - rather it is equal to "void const *" which is the 
+		// same as "void *". Hrmpf
+		return ::gzwrite(fh, const_cast<void *>(buf), size * cnt);
+	}
+};
+#endif
+
+
 SaveFile *SaveFileManager::open_savefile(const char *filename, const char *directory, bool saveOrLoad) {
 	char buf[256];
 	join_paths(filename, directory, buf, sizeof(buf));
-	StdioSaveFile *sf = new StdioSaveFile(buf,
-							(saveOrLoad? "wb":"rb"));
-	if (!sf->is_open()) {
+	SaveFile *sf = makeSaveFile(buf, saveOrLoad);
+	if (!sf->isOpen()) {
 		delete sf;
-		sf = NULL;
+		sf = 0;
 	}
 	return sf;
 }
@@ -122,4 +181,8 @@ void SaveFileManager::join_paths(const char *filename, const char *directory,
 #endif
 	}
 	strncat(buf, filename, bufsize-1);
+}
+
+SaveFile *SaveFileManager::makeSaveFile(const char *filename, bool saveOrLoad) {
+	return new StdioSaveFile(filename, saveOrLoad);
 }
