@@ -89,7 +89,7 @@ public:
 
 namespace BundleCodecs {
 
-uint32 decode12BitsSample(byte *src, byte **dst, uint32 size);
+uint32 decode12BitsSample(const byte *src, byte **dst, uint32 size);
 void initializeImcTables();
 #ifdef __PALM_OS__
 void releaseImcTables();

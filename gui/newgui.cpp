@@ -133,7 +133,7 @@ void NewGui::runLoop() {
 				break;
 			// We don't distinguish between mousebuttons (for now at least)
 			case OSystem::EVENT_LBUTTONDOWN:
-			case OSystem::EVENT_RBUTTONDOWN: {
+			case OSystem::EVENT_RBUTTONDOWN:
 				if (_lastClick.count && (time < _lastClick.time + kDoubleClickDelay)
 							&& ABS(_lastClick.x - event.mouse.x) < 3
 							&& ABS(_lastClick.y - event.mouse.y) < 3) {
@@ -144,7 +144,6 @@ void NewGui::runLoop() {
 					_lastClick.count = 1;
 				}
 				_lastClick.time = time;
-				}
 				activeDialog->handleMouseDown(event.mouse.x - activeDialog->_x, event.mouse.y - activeDialog->_y, 1, _lastClick.count);
 				break;
 			case OSystem::EVENT_LBUTTONUP:
