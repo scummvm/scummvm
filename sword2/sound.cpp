@@ -415,7 +415,7 @@ int32 FN_play_music(int32 *params)		// updated by James on 10apr97
 	else
 		sprintf(filename,"%sCLUSTERS\\MUSIC.CLU", res_man.GetCdPath());
 
-	rv = g_sword2->_sound->StreamCompMusic(filename, params[0], loopFlag);
+	rv = g_sword2->_sound->StreamCompMusic(filename, g_sword2->getGameDataPath(), params[0], loopFlag);
 
 	#ifdef _SWORD2_DEBUG
 		if (rv)

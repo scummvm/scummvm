@@ -38,11 +38,12 @@
 #ifndef D_SOUND_H
 #define D_SOUND_H
 
-class SoundMixer;
+#include "sound/mixer.h"
+#include "common/file.h"
 
 class Sword2Sound {
 	public:
-		Sword2Sound(void);
+		Sword2Sound(SoundMixer *mixer);
 		void FxServer(void);
 		int32 InitialiseSound(uint16 freq, uint16 channels, uint16 bitDepth);
 		int32 PlaySpeech(uint8 *data, uint8 vol, int8 pan);
@@ -64,7 +65,7 @@ class Sword2Sound {
 		int32 PauseMusic(void);
 		int32 UnpauseMusic(void);
 		int32 StreamMusic(uint8 *filename, int32 looping);
-		int32 StreamCompMusic(const char *filename,uint32 musicId, int32 looping);
+		int32 StreamCompMusic(const char *filename, const char *directory, uint32 musicId, int32 looping);
 		int32 MusicTimeRemaining();
 		int32 ReverseStereo(void);
 		uint8 GetFxVolume(void);
@@ -117,7 +118,11 @@ class Sword2Sound {
 
 		//DSBUFFERDESC dsbdMus[MAXMUS];
 		//LPDIRECTSOUNDBUFFER lpDsbMus[MAXMUS];
-		FILE *fpMus[MAXMUS];
+		PlayingSoundHandle musicHandle[MAXMUS];
+		int musicChannels[MAXMUS];
+		uint16 *lpDsbMus[MAXMUS];
+		File fpMus[MAXMUS];
+		//FILE *fpMus[MAXMUS];
 		//PCMWAVEFORMAT wfMus[MAXMUS];
 		int32 streamCursor[MAXMUS];
 		char musFilename[MAXMUS][256];

@@ -106,6 +106,14 @@ Sword2State::Sword2State(GameDetector *detector, OSystem *syst)
 	g_sword2 = this;
 	_features = detector->_game.features;
 	_gameId = detector->_game.id;
+
+	// Setup mixer
+	if (!_mixer->bindToSystem(syst))
+		warning("Sound initialization failed");
+
+	_mixer->setVolume(kDefaultSFXVolume * kDefaultMasterVolume / 255);
+
+	_sound = new Sword2Sound(_mixer);
 }
 
 
@@ -166,8 +174,6 @@ int32 Sword2State::InitialiseGame(void)
 	Zdebug("CALLING: Init_event_system");
 	Init_event_system();
 	Zdebug("RETURNED.");
-	
-	_sound = new Sword2Sound;
 	
 	Zdebug("CALLING: Init_fx_queue");
 	Init_fx_queue();			// initialise the sound fx queue

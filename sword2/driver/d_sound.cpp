@@ -405,7 +405,7 @@ int32 musicVolTable[17] = {
 
 
 
-Sword2Sound::Sword2Sound(void) {
+Sword2Sound::Sword2Sound(SoundMixer *mixer) {
 
 	soundOn = 0;
 	speechStatus = 0;
@@ -421,6 +421,7 @@ Sword2Sound::Sword2Sound(void) {
 	volMusic[1] = 16;
 	musicMuted = 0;
 
+	_mixer = mixer;
 }
 
 /*  not used seemingly - khalek
@@ -590,6 +591,25 @@ int32 Sword2Sound::InitialiseSound(uint16 freq, uint16 channels, uint16 bitDepth
 
 {
 	warning("stub InitaliseSound( %d, %d, %d )", freq, channels, bitDepth);
+
+	memset(fxId,		0, sizeof(fxId));
+	memset(fxCached,	0, sizeof(fxCached));
+	memset(fxiPaused,	0, sizeof(fxiPaused));
+	memset(fxLooped, 	0, sizeof(fxLooped));
+
+ 	memset(musStreaming,	0, sizeof(musStreaming));
+	memset(musicPaused,	0, sizeof(musicPaused));
+	memset(musCounter, 	0, sizeof(musCounter));
+	memset(musFading, 	0, sizeof(musFading));
+
+	memset(musLooping,	0, sizeof(musLooping));
+
+	memset(streamCursor,	0, sizeof(streamCursor));
+	memset(musFilePos,	0, sizeof(musFilePos));
+	memset(musEnd,		0, sizeof(musEnd));
+	memset(musLastSample,	0, sizeof(musLastSample));
+	memset(musId,		0, sizeof(musId));
+
 /*
 	int32			i;
 	HRESULT			hrz;
@@ -1718,7 +1738,7 @@ void Sword2Sound::StartMusicFadeDown(int i)
 //	IDirectSoundBuffer_Release(lpDsbMus[i]);
 	musFading[i] = -16;
 //	musStreaming[i] = 0;
-	fclose(fpMus[i]);
+	fpMus[i].close();
 
 }
 
@@ -2122,9 +2142,174 @@ void Sword2Sound::UpdateSampleStreaming(void)
 
 
 
-int32 Sword2Sound::StreamCompMusic(const char *filename, uint32 musicId, int32 looping)
-{
+int32 Sword2Sound::StreamCompMusic(const char *filename, const char *directory, uint32 musicId, int32 looping) {
+	// FIXME: Find a good buffer size. The original code mentions three
+	// seconds, but I believe that's after ADPCM-decoding.
+	uint32	buffer_size = 32768;
+	uint32	i, j;
+	int32	v0, v1;
+	uint16	*data16;
+	uint8	*data8;
+
 	warning("stub StreamCompMusic( %s, %d, %d )", filename, musicId, looping);
+
+	// Do not allow compressed and uncompressed music to be streamed at
+	// the same time.
+	if (compressedMusic == 2)
+		return RDERR_FXFUCKED;
+
+	compressedMusic = 1;
+
+	if (musStreaming[0] + musStreaming[1] == 2) {
+		// Both streams in use, try to find a fading stream
+		if (musFading[0])
+			i = 0;
+		else
+			i = 1;
+			
+		musFading[i] = 0;
+		_mixer->stop(musicChannels[i]);
+		musStreaming[i] = 0;
+	}
+
+	if (musStreaming[0] + musStreaming[1] == 1) {
+		// Set i to the free channel
+		i = musStreaming[0];
+	} else {
+		// No music streaming at present
+		i = 0;
+	}
+
+	musLooping[i] = looping;		// Save looping info
+	strcpy(musFilename[i], filename);	// And tune id's
+	musId[i] = musicId;
+
+	// Don't start streaming if the volume is off.
+	if (IsMusicMute())
+		return RD_OK;
+
+	// Always use fpMus[0] (all music in one cluster)
+	// musFilePos[i] for different pieces of music.
+	if (!fpMus[0].isOpen()) {
+		if (!fpMus[0].open(filename, directory))
+			return RDERR_INVALIDFILENAME;
+	}
+
+	if (musStreaming[0] + musStreaming[1] == 1) {
+		// Start other music stream fading out
+		if (!musFading[i - 1])
+			musFading[i - 1] = -16;
+
+		// Restart the streaming cursor for this sample
+		streamCursor[i] = 0;
+	}
+
+	// Seek to music index
+	fpMus[0].seek((musicId + 1) * 8);
+
+	musFilePos[i] = fpMus[0].readUint32LE();
+	musEnd[i] = fpMus[0].readUint32LE();
+
+	// Check that music is valid (has length & offset)
+	if (!musEnd[i] || !musFilePos[i]) {
+		fpMus[0].close();
+		return RDERR_INVALIDID;
+	}
+
+	// Calculate the file position of the end of the music
+	musEnd[i] += musFilePos[i];
+
+	// Reset streaming cursor and store looping flag
+	streamCursor[i] = 0;
+
+	// Allocate a temporary buffer for compressed data
+	data8 = (uint8 *) malloc(buffer_size / 2);
+	if (!data8) {
+		fpMus[0].close();
+		return RDERR_OUTOFMEMORY;
+	}
+
+	// Allocate a sound buffer large enough for 3 seconds
+	data16 = (uint16 *) malloc(buffer_size);
+	if (!data16) {
+		fpMus[0].close();
+		free(data8);
+		return RDERR_OUTOFMEMORY;
+	}
+
+	lpDsbMus[i] = data16;
+
+	// Seek to start of the compressed music
+	fpMus[0].seek(musFilePos[i]);
+
+	// Read the compressed data in to the buffer
+	if (fpMus[0].read(data8, buffer_size / 2) != buffer_size / 2) {
+		fpMus[0].close();
+		free(data8);
+		free(data16);
+		return RDERR_INVALIDID;
+	}
+
+	// Store the current position in the file for future streaming
+	musFilePos[i] = fpMus[0].pos();
+
+	// Decompress the sound into the buffer
+
+	// First sample value
+	data16[0] = READ_LE_UINT16(data8);
+	j = 1;
+
+	while (j < (buffer_size / 2) - 1) {
+		if (GetCompressedSign(data8[j + 1]))
+			data16[j] = data16[j - 1] - (GetCompressedAmplitude(data8[j + 1]) << GetCompressedShift(data8[j + 1]));
+		else
+			data16[j] = data16[j - 1] + (GetCompressedAmplitude(data8[j + 1]) << GetCompressedShift(data8[j + 1]));
+		j++;
+	}
+
+	// Store the value of the last sample ready for next batch of
+	// decompression
+	musLastSample[i] = data16[j - 1];
+
+	// Free the decompression buffer
+	free(data8);
+
+	// Modify the volume according to the master volume and music
+	// mute state
+	if (musicMuted)
+		v0 = v1 = 0;
+	else {
+		v0 = volMusic[0];
+		v1 = volMusic[1];
+	}
+
+#if 0
+	if (v0 > v1) {
+		IDirectSoundBuffer_SetVolume(lpDsbMus[i], musicVolTable[v0]);
+		IDirectSoundBuffer_SetPan(lpDsbMus[i], musicVolTable[v1*16/v0]);
+	} else if (v1 > v0) {
+		IDirectSoundBuffer_SetVolume(lpDsbMus[i], musicVolTable[v1]);
+		IDirectSoundBuffer_SetPan(lpDsbMus[i], -musicVolTable[v0*16/v1]);
+	} else {
+	        IDirectSoundBuffer_SetVolume(lpDsbMus[i], musicVolTable[v1]);
+		IDirectSoundBuffer_SetPan(lpDsbMus[i], 0);
+	}
+#else
+	warning("FIXME: Implement volume and panning");
+#endif
+
+	// Start the sound effect playing
+#if 0
+	musicChannels[i] = _mixer->playADPCM(&musicHandle[i], lpDsbMus[i], buffer_size, 22050, SoundMixer::FLAG_16BITS | SoundMixer::FLAG_AUTOFREE);
+#else
+	warning("FIXME: Implement ADPCM-decoding");
+	free(lpDsbMus[i]);
+#endif
+
+	// Record the last variables for streaming and looping
+	musStreaming[i] = 1;
+	musCounter[i] = 250;
+
 /*
 	HRESULT		hr;
 	LPVOID		lpv1, lpv2;
@@ -2861,11 +3046,8 @@ void Sword2Sound::StopMusic(void)
 				musLooping[i] = 0;
 		}
 
-		if (fpMus[0])
-		{
-			fclose(fpMus[0]);
-			fpMus[0] = 0;
-		}
+		if (fpMus[0].isOpen())
+			fpMus[0].close();
 		break;
 	case 2:
 		for (i = 0; i<MAXMUS; i++)
