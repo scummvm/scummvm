@@ -161,12 +161,12 @@ void MidiPlayer::onTimer (void *data) {
 			p->_current = &p->_music;
 			p->_music.parser->onTimer();
 		}
-		if (p->_sfx.parser) {
-			p->_current = &p->_sfx;
-			p->_sfx.parser->onTimer();
-		}
-		p->_current = 0;
 	}
+	if (p->_sfx.parser) {
+		p->_current = &p->_sfx;
+		p->_sfx.parser->onTimer();
+	}
+	p->_current = 0;
 	p->_system->unlock_mutex (p->_mutex);
 }
 
