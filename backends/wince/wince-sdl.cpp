@@ -1303,7 +1303,7 @@ bool OSystem_WINCE3::pollEvent(Event &event) {
 	Event temp_event;
 
 	memset(&temp_event, 0, sizeof(Event));
-	//memset(event, 0, sizeof(Event));
+	memset(&event, 0, sizeof(Event));
 
 	handleKbdMouse();
 	
