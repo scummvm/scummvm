@@ -20,6 +20,9 @@
  *
  */
 
+#ifndef DC_LABEL_H
+#define DC_LABEL_H
+
 class Label
 {
  private:
@@ -31,3 +34,5 @@ class Label
   void draw(float x, float y, unsigned int argb = 0xffffffff,
 	    float scale = 1.0);
 };
+
+#endif /* DC_LABEL_H */

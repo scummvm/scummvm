@@ -20,6 +20,9 @@
  *
  */
 
+#ifndef DC_ICON_H
+#define DC_ICON_H
+
 class Icon
 {
  private:
@@ -40,3 +43,5 @@ class Icon
 	    unsigned argb = 0xffffffff);
   void create_vmicon(void *buffer);
 };
+
+#endif /* DC_ICON_H */
