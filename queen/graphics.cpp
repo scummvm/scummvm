@@ -412,7 +412,7 @@ void Graphics::bobShrink(const BobFrame *bf, uint16 percentage) {
 void Graphics::bobClear(uint32 bobnum) {
 	BobSlot *pbs = &_bobs[bobnum];
 	pbs->clear();
-	if (_vm->display()->fullscreen() || bobnum == 16) { // FIXME: does bob number 16 really used ?
+	if (_vm->display()->fullscreen()) {
 		pbs->box.y2 = GAME_SCREEN_HEIGHT - 1;
 	}
 }
