@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef MIXER_H
-#define MIXER_H
+#ifndef SMUSH_MIXER_H
+#define SMUSH_MIXER_H
 
 #include "config.h"
 

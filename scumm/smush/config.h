@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef CONFIG_H
-#define CONFIG_H
+#ifndef SMUSH_CONFIG_H
+#define SMUSH_CONFIG_H
 
 #include <stdafx.h>
 #include <scumm.h>

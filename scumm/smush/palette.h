@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef PALETTE_H
-#define PALETTE_H
+#ifndef SMUSH_PALETTE_H
+#define SMUSH_PALETTE_H
 
 #include "config.h"
 

@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef RECT_H
-#define RECT_H
+#ifndef SMUSH_RECT_H
+#define SMUSH_RECT_H
 
 #include "config.h"
 
