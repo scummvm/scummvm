@@ -45,9 +45,7 @@
 #include "SDL_timer.h"
 #include "SDL_thread.h"
 
-#define POCKETSCUMM_BUILD "031402"
-
-#define VERSION "Build " POCKETSCUMM_BUILD " (VM " SCUMMVM_CVS ")"
+#define VERSION "(VM " SCUMMVM_CVS ")"
 
 #define SHMenuBar_GetMenu(hWndMB,ID_MENU) (HMENU)SendMessage((hWndMB), SHCMBM_GETSUBMENU, (WPARAM)0, (LPARAM)ID_MENU)
 

@@ -62,7 +62,7 @@ static const ScummGame GameList[] = {
 	},
 	{
 		 "Monkey Island 1 (VGA)",
-		 "Working well, perhaps completable ?",
+		 "Completable, no music",
 		 "", "MONKEY.000", "MONKEY.001",
 		 "monkey",
 		 0
