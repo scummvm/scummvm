@@ -31,6 +31,24 @@
 
 namespace Queen {
 
+const Verb Logic::PANEL_VERBS[] = {
+	VERB_NONE,
+	VERB_OPEN,
+	VERB_CLOSE,
+	VERB_MOVE,
+	VERB_GIVE,
+	VERB_LOOK_AT,
+	VERB_PICK_UP,
+	VERB_TALK_TO,
+	VERB_USE,
+	VERB_SCROLL_UP,
+	VERB_SCROLL_DOWN,
+	VERB_DIGIT_1, // inventory item 1
+	VERB_DIGIT_2, // inventory item 2
+	VERB_DIGIT_3, // inventory item 3
+	VERB_DIGIT_4, // inventory item 4
+};
+
 
 Direction State::findDirection(uint16 state) {
 	// queen.c l.4014-4021
@@ -146,7 +164,8 @@ void State::alterDefaultVerb(uint16 *objState, Verb v) {
 
 Logic::Logic(Resource *resource, Graphics *graphics, Display *theDisplay, Input *input, Sound *sound)
 	: _resource(resource), _graphics(graphics), _display(theDisplay), 
-	_input(input), _sound(sound), _talkSpeed(DEFAULT_TALK_SPEED) {
+	_input(input), _sound(sound) {
+	_settings.talkSpeed = DEFAULT_TALK_SPEED;
 	_jas = _resource->loadFile("QUEEN.JAS", 20);
 	_joe.x = _joe.y = 0;
 	_joe.scale = 100;
@@ -339,6 +358,7 @@ void Logic::initialise() {
 	}
 	
 	/*
+		// FIXME: move to Input class ?
 		switch (_resource->getLanguage()) {
 			case	ENGLISH:
 					_keyLanguage = _keyCommands[KEYS_ENGLISH];
@@ -403,11 +423,11 @@ void Logic::initialise() {
 	for (i = 1; i <= _numAFile; i++)
 		_aFile[i] = _resource->getJAS2Line();
 
-	_textToggle = true;	
+	_settings.textToggle = true;	
 	if (_resource->isFloppy())
-		_speechToggle = false;
+		_settings.speechToggle = false;
 	else
-		_speechToggle = true;
+		_settings.speechToggle = true;
 
 	_graphics->loadPanel();
 	_graphics->bobSetupControl();
@@ -729,14 +749,14 @@ void Logic::zoneSet(uint16 screen, uint16 zone, const Box& box) {
 }
 
 
-uint16 Logic::zoneIn(uint16 screen, uint16 x, uint16 y) {
+uint16 Logic::zoneIn(uint16 screen, uint16 x, uint16 y) const {
 
 	int i;
 	if (screen == ZONE_PANEL) {
 		y -= ROOM_ZONE_HEIGHT;
 	}
 	for(i = 1; i < MAX_ZONES_NUMBER; ++i) {
-		ZoneSlot *pzs = &_zones[screen][i];
+		const ZoneSlot *pzs = &_zones[screen][i];
 		if (pzs->valid && pzs->box.contains(x, y)) {
 			return i;
 		}
@@ -745,7 +765,8 @@ uint16 Logic::zoneIn(uint16 screen, uint16 x, uint16 y) {
 }
 
 
-uint16 Logic::zoneInArea(uint16 screen, uint16 x, uint16 y) {
+uint16 Logic::zoneInArea(uint16 screen, uint16 x, uint16 y) const {
+
 	uint16 zone = zoneIn(screen, x, y);
 	if (zone <= _objMax[_currentRoom]) {
 		zone = 0;
@@ -795,23 +816,22 @@ void Logic::zoneSetup() {
 
 void Logic::zoneSetupPanel() {
 
-	int i;
-
 	// verbs 
+	int i;
 	for (i = 0; i <= 7; ++i) {
 		int x = i * 20;
 		zoneSet(ZONE_PANEL, i + 1, x, 10, x + 19, 49);
 	}
 
 	// inventory scrolls
-	zoneSet(ZONE_PANEL, PANEL_AREA_INV_UP,   160, 10, 179, 29);
-	zoneSet(ZONE_PANEL, PANEL_AREA_INV_DOWN, 160, 30, 179, 49);
+	zoneSet(ZONE_PANEL,  9, 160, 10, 179, 29);
+	zoneSet(ZONE_PANEL, 10, 160, 30, 179, 49);
 
 	// inventory items
-	zoneSet(ZONE_PANEL, PANEL_AREA_INV_1, 180, 10, 213, 49);
-	zoneSet(ZONE_PANEL, PANEL_AREA_INV_2, 214, 10, 249, 49);
-	zoneSet(ZONE_PANEL, PANEL_AREA_INV_3, 250, 10, 284, 49);
-	zoneSet(ZONE_PANEL, PANEL_AREA_INV_4, 285, 10, 320, 49);
+	zoneSet(ZONE_PANEL, 11, 180, 10, 213, 49);
+	zoneSet(ZONE_PANEL, 12, 214, 10, 249, 49);
+	zoneSet(ZONE_PANEL, 13, 250, 10, 284, 49);
+	zoneSet(ZONE_PANEL, 14, 285, 10, 320, 49);
 }
 
 
@@ -1897,6 +1917,12 @@ const char* Logic::objectOrItemName(int16 obj) const {
 	}
 	return _objName[name];
 
+}
+
+
+Verb Logic::findVerb(int16 cursorx, int16 cursory) const {
+
+	return PANEL_VERBS[zoneIn(ZONE_PANEL, cursorx, cursory)];
 }
 
 

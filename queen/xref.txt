@@ -14,7 +14,7 @@ unpack()					Graphics::bankUnpack
 
 COMMAND
 =======
-ALTER_DEFAULT()
+ALTER_DEFAULT()				Command::alterDefault
 CLEAR_COMMAND()				Command::clear
 EXECUTE_ACTION()			Command::executeCurrentAction
 FIND_DEFAULT()				Command::findDefault
@@ -23,10 +23,10 @@ P1_SET_CONDITIONS()			Command::setConditions
 P2_SET_AREAS()				Command::setAreas
 P3_SET_OBJECTS()			Command::setObjects
 P4_SET_ITEMS()				Command::setItems
-SELECT()
-SELECT_ITEM()
-SELECT_NOUN()
-SELECT_VERB()
+SELECT()					Command::grabCurrentSelection
+SELECT_ITEM()				Command::grabSelectedItem
+SELECT_NOUN()				Command::grabSelectedNoun
+SELECT_VERB()				Command::grabSelectedVerb
 -
 ACTION,ACTION2				Command::_action*
 CLEVEL						Command::_commandLevel
@@ -90,12 +90,12 @@ GAME SETTINGS
 =============
 -
 config_request
-MUSICTOGGLE
-SFXTOGGLE
-TALKSPD						Logic::_talkSpeed
-TEXTTOGGLE
+MUSICTOGGLE					GameSettings::musicToggle
+SFXTOGGLE					GameSettings::sfxToggle
+TALKSPD						GameSettings::talkSpeed
+TEXTTOGGLE					GameSettings::textToggle
 VersionStr					Logic::language (add more functions if needed)
-VOICETOGGLE
+VOICETOGGLE					GameSettings::speechToggle
 
 
 GRAPHICS
@@ -195,7 +195,7 @@ FIND_BOB()					Logic::findBob
 FIND_FRAME()				Logic::findFrame
 FIND_GRAPHIC()				Logic::graphicData
 FIND_SCALE()				Logic::findScale
-FIND_VERB()
+FIND_VERB()					Logic::findVerb
 LOOK()
 LOOK_ICON()
 LOOK_ITEM()
@@ -300,7 +300,7 @@ SCREEN
 ======
 changejoepal()				Display::palSetJoe
 check_colors()				Display::palCustomColors
-dynalum()					Display::dynalumUpdate
+dynalum()					Dynalum::update
 fadein()					Display::palFadeIn
 fadeout()					Display::palFadeOut
 flashspecial()				Display::palCustomFlash

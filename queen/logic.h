@@ -49,6 +49,15 @@ struct Command_ {
 	uint16 noun, noun2;
 };
 
+struct GameSettings {
+	int musicVolume;
+	bool musicToggle;
+	bool sfxToggle;
+	bool textToggle;
+	bool speechToggle;
+	int talkSpeed;
+};
+
 struct State {
 
 	//! FIND_STATE(state, "DIR");
@@ -96,10 +105,10 @@ public:
 	uint16 newRoom() const { return _newRoom; }
 	void newRoom(uint16 room) { _newRoom = room; }
 
-	ObjectData* objectData(int index);
+	ObjectData *objectData(int index);
 	uint16 roomData(int room);
 	uint16 objMax(int room);
-	GraphicData* graphicData(int index);
+	GraphicData *graphicData(int index);
 
 	uint16 findBob(uint16 obj);
 	uint16 findFrame(uint16 obj);
@@ -135,12 +144,13 @@ public:
 
 	uint16 numFrames() { return _numFrames; }
 
+	int talkSpeed() const { return _settings.talkSpeed; }
 	Language language()	{ return _resource->getLanguage(); } 
 
 	void zoneSet(uint16 screen, uint16 zone, uint16 x1, uint16 y1, uint16 x2, uint16 y2);
 	void zoneSet(uint16 screen, uint16 zone, const Box& box);
-	uint16 zoneIn(uint16 screen, uint16 x, uint16 y);
-	uint16 zoneInArea(uint16 screen, uint16 x, uint16 y);
+	uint16 zoneIn(uint16 screen, uint16 x, uint16 y) const;
+	uint16 zoneInArea(uint16 screen, uint16 x, uint16 y) const;
 	void zoneClearAll(uint16 screen);
 	void zoneSetup();
 	void zoneSetupPanel();
@@ -164,10 +174,6 @@ public:
 	uint16 animCreate(uint16 curImage, const Person *person); // CREATE_ANIM
 	void animErase(uint16 bobNum);
 	void animSetup(const GraphicData *gd, uint16 firstImage, uint16 bobNum, bool visible); // FIND_GRAPHIC_ANIMS
-
-	Walk *walk()	{ return _walk; }
-
-	int talkSpeed() { return _talkSpeed; }
 
 	void joeSetupFromBanks(const char *animBank, const char *standBank);
 
@@ -202,14 +208,20 @@ public:
 
 	const char* objectOrItemName(int16 obj) const;
 
+	//! return selected verb in panel
+	Verb findVerb(int16 cursorx, int16 cursory) const;
+
+	Walk *walk() { return _walk; }
 	Display *display() { return _display; }
 
 	void update();
 
 protected:
-	bool _textToggle;
-	bool _speechToggle;
-	
+
+	GameSettings _settings;
+
+	void initialise();
+
 	uint8 *_jas;
 	uint16 _numRooms;
 	uint16 _currentRoom;
@@ -305,9 +317,8 @@ protected:
 	Sound *_sound;
 	Walk *_walk;
 
-	int _talkSpeed;	// TALKSPD
-
-	void initialise();
+	//! Verbs (in order) available in panel
+	static const Verb PANEL_VERBS[];
 
 	friend class Command; // TEMP
 };

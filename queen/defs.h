@@ -81,24 +81,6 @@ enum {
 };
 
 
-enum {
-	PANEL_AREA_OPEN     = 1,
-	PANEL_AREA_CLOSE    = 2,
-	PANEL_AREA_MOVE     = 3,
-	PANEL_AREA_GIVE     = 4,
-	PANEL_AREA_LOOKAT   = 5,
-	PANEL_AREA_PICKUP   = 6,
-	PANEL_AREA_TALKTO   = 7,
-	PANEL_AREA_USE      = 8,
-	PANEL_AREA_INV_UP   = 9,
-	PANEL_AREA_INV_DOWN = 10,
-	PANEL_AREA_INV_1    = 11,
-	PANEL_AREA_INV_2    = 12,
-	PANEL_AREA_INV_3    = 13,
-	PANEL_AREA_INV_4    = 14
-};
-
-
 enum Language {
 	ENGLISH  = 'E',
 	FRENCH   = 'F',
