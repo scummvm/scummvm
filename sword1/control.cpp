@@ -317,7 +317,7 @@ uint8 SwordControl::handleButtonClick(uint8 id, uint8 mode, uint8 *retVal) {
 				return id;
 			else if (id == BUTTON_TEXT) {
 				SwordEngine::_systemVars.showText ^= 1;
-				_buttons[6]->setSelected(SwordEngine::_systemVars.showText);
+				_buttons[5]->setSelected(SwordEngine::_systemVars.showText);
 			}
 			break;
 		case BUTTON_SAVE_PANEL:
@@ -365,8 +365,8 @@ void SwordControl::setupMainPanel(void) {
 	if (SwordEngine::_systemVars.deathScreenFlag)
 		createButtons(_deathButtons, 3);		
 	else {
-		createButtons(_panelButtons, 8);
-		_buttons[6]->setSelected(SwordEngine::_systemVars.showText);
+		createButtons(_panelButtons, 7);
+		_buttons[5]->setSelected(SwordEngine::_systemVars.showText);
 	}
 
 	if (SwordEngine::_systemVars.deathScreenFlag == 2) // end of game
@@ -379,9 +379,8 @@ void SwordControl::setupMainPanel(void) {
 		renderText(_lStrings[STR_RESTART], 180, 260 + 40, TEXT_LEFT_ALIGN);
 		renderText(_lStrings[STR_QUIT], 180, 296 + 40, TEXT_LEFT_ALIGN);
 
-		renderText(_lStrings[STR_SPEED], 460, 188 + 40, TEXT_RIGHT_ALIGN);
-		renderText(_lStrings[STR_VOLUME], 460, 224 + 40, TEXT_RIGHT_ALIGN);
-		renderText(_lStrings[STR_TEXT], 460, 260 + 40, TEXT_RIGHT_ALIGN);
+		renderText(_lStrings[STR_VOLUME], 460, 188 + 40, TEXT_RIGHT_ALIGN);
+		renderText(_lStrings[STR_TEXT], 460, 224 + 40, TEXT_RIGHT_ALIGN);
 	} else {
 		renderText(_lStrings[STR_RESTORE], 285, 224 + 40, TEXT_LEFT_ALIGN);
 		if (SwordEngine::_systemVars.deathScreenFlag == 3) // just started game
@@ -794,14 +793,13 @@ const ButtonInfo SwordControl::_deathButtons[3] = {
 	{250, 296 + 40, SR_BUTTON, BUTTON_QUIT }
 };
 
-const ButtonInfo SwordControl::_panelButtons[8] = {
+const ButtonInfo SwordControl::_panelButtons[7] = {
 	{145, 188 + 40, SR_BUTTON, BUTTON_SAVE_PANEL },
 	{145, 224 + 40, SR_BUTTON, BUTTON_RESTORE_PANEL },
 	{145, 260 + 40, SR_BUTTON, BUTTON_RESTART },
 	{145, 296 + 40, SR_BUTTON, BUTTON_QUIT },
-	{475, 188 + 40, SR_BUTTON, BUTTON_SPEED },
-	{475, 224 + 40, SR_BUTTON, BUTTON_VOLUME_PANEL },
-	{475, 260 + 40, SR_TEXT_BUTTON, BUTTON_TEXT },
+	{475, 188 + 40, SR_BUTTON, BUTTON_VOLUME_PANEL },
+	{475, 224 + 40, SR_TEXT_BUTTON, BUTTON_TEXT },
 	{475, 332 + 40, SR_BUTTON, BUTTON_DONE }
 };
 

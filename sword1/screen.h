@@ -78,7 +78,7 @@ public:
 	void fadeUpPalette(void);
 	void fnSetPalette(uint8 start, uint16 length, uint32 id, bool fadeUp);
 	bool stillFading(void);
-	void refreshPalette(void);
+	void fullRefresh(void);
 
 	void updateScreen(void);
 	void showFrame(uint16 x, uint16 y, uint32 resId, uint32 frameNo, const byte *fadeMask = NULL, int8 fadeStatus = 0);

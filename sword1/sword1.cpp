@@ -1144,7 +1144,7 @@ uint8 SwordEngine::mainLoop(void) {
 			else if (((_keyPressed == 63) && (SwordLogic::_scriptVars[MOUSE_STATUS] & 1)) || (_systemVars.deathScreenFlag)) {
 				retCode = _control->runPanel();
 				if (!retCode)
-					_screen->refreshPalette();
+					_screen->fullRefresh();
 			}
 
 			// do something smart here to implement pausing the game. If we even want that, that is.
