@@ -159,6 +159,9 @@ void SoundMixer::appendStream(int index, void *sound, uint32 size) {
 void SoundMixer::endStream(int index) {
 	StackLock lock(_mutex);
 
+	if (index == -1)
+		return;
+
 	ChannelStream *chan;
 #if !defined(_WIN32_WCE) && !defined(__PALM_OS__)
 	chan = dynamic_cast<ChannelStream *>(_channels[index]);
@@ -188,7 +191,7 @@ int SoundMixer::insertChannel(PlayingSoundHandle *handle, Channel *chan) {
 
 	_channels[index] = chan;
 	if (handle)
-		*handle = index + 1;
+		*handle = index;
 	return index;
 }
 
@@ -297,10 +300,11 @@ void SoundMixer::stopHandle(PlayingSoundHandle handle) {
 	StackLock lock(_mutex);
 	
 	// Simply ignore stop requests for handles of sounds that already terminated
-	if (handle == 0)
+	if (handle == -1)
 		return;
 
-	int index = handle - 1;
+	int index = handle;
+
 	if ((index < 0) || (index >= NUM_CHANNELS)) {
 		warning("soundMixer::stopHandle has invalid index %d", index);
 		return;
@@ -310,6 +314,23 @@ void SoundMixer::stopHandle(PlayingSoundHandle handle) {
 		_channels[index]->destroy();
 }
 
+bool SoundMixer::isChannelActive(PlayingSoundHandle handle) {
+	StackLock lock(_mutex);
+	
+	if (handle == -1)
+		return false;
+
+	int index = handle;
+	if ((index < 0) || (index >= NUM_CHANNELS)) {
+		warning("soundMixer::isChannelActive has invalid index %d", index);
+		return false;
+	}
+	
+	if (_channels[index])
+		return _channels[index] != NULL;
+	else
+		return false;
+}
 
 void SoundMixer::pause(bool paused) {
 	_paused = paused;
@@ -367,7 +388,7 @@ Channel::~Channel() {
 	delete _converter;
 	delete _input;
 	if (_handle)
-		*_handle = 0;
+		*_handle = -1;
 }
 
 void Channel::destroy() {

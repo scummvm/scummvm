@@ -107,6 +107,8 @@ public:
 	/** stop playing the channel for the given handle */
 	void stopHandle(PlayingSoundHandle handle);
 
+	bool isChannelActive(PlayingSoundHandle handle);
+
 	/** Start a new stream. */
 	int newStream(void *sound, uint32 size, uint rate, byte flags, uint32 buffer_size);
 
