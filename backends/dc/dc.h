@@ -6,12 +6,16 @@
 class OSystem_Dreamcast : public OSystem {
 
  public:
+  OSystem_Dreamcast();
+
   // Set colors of the palette
   void set_palette(const byte *colors, uint start, uint num);
 
   // Set the size of the video bitmap.
   // Typically, 320x200
   void init_size(uint w, uint h);
+  int16 get_height() { return _screen_h; }
+  int16 get_width() { return _screen_w; }
 
   // Draw a bitmap to screen.
   // The screen will not be updated to reflect the new bitmap
@@ -49,6 +53,7 @@ class OSystem_Dreamcast : public OSystem {
   
   // Set function that generates samples 
   bool set_sound_proc(SoundProc *proc, void *param, SoundFormat format);
+  void clear_sound_proc();
 		
   // Poll cdrom status
   // Returns true if cd audio is playing

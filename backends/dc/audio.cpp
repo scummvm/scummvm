@@ -49,10 +49,19 @@ bool OSystem_Dreamcast::set_sound_proc(SoundProc *proc, void *param, SoundFormat
   return true;
 }
 
+void OSystem_Dreamcast::clear_sound_proc()
+{
+  _sound_proc = NULL;
+  _sound_proc_param = NULL;
+}
+
 void OSystem_Dreamcast::checkSound()
 {
   int n;
   int curr_ring_buffer_samples;
+
+  if(!_sound_proc)
+    return;
 
   if(read_sound_int(&SOUNDSTATUS->mode) != MODE_PLAY)
     start_sound();

@@ -42,6 +42,16 @@ OSystem *OSystem_Dreamcast::create() {
 	return syst;
 }
 
+OSystem_Dreamcast::OSystem_Dreamcast()
+  : screen(NULL), mouse(NULL), overlay(NULL), _ms_buf(NULL),
+    _sound_proc(NULL), _timer_active(false)
+{
+  memset(screen_tx, 0, sizeof(screen_tx));
+  memset(mouse_tx, 0, sizeof(screen_tx));
+  memset(ovl_tx, 0, sizeof(screen_tx));
+}
+
+
 /* CD Audio */
 static bool find_track(int track, int &first_sec, int &last_sec)
 {
