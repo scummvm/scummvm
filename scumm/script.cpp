@@ -354,8 +354,8 @@ void ScummEngine::nukeArrays(int script) {
 	if (_heversion < 60 || !script)
 		return;
 
-	//FIXME Nukes wrong arrays in fbear
-	if (_gameId == GID_FBEAR)
+	//FIXME Nukes wrong arrays in other
+	if (_gameId != GID_PUTTMOON)
 		return;
 
 	for (i = 1; i < _numArray; i++) {

@@ -770,9 +770,12 @@ void ScummEngine_v72he::o72_setTimer() {
 }
 
 void ScummEngine_v72he::o72_unknown5A() {
-	int value = pop();
-	push(4);
-	debug(1,"o72_unknown5A stub (%d)", value);
+	// Seems to get length of sound already played
+	int snd = pop();
+	int r = _mixer->getChannelElapsedTime(_sound->_musicChannelHandle);
+
+	push(r * 10);
+	debug(1,"o72_unknown5A stub (%d)", snd);
 }
 
 void ScummEngine_v72he::o72_wordArrayDec() {

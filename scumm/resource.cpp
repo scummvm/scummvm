@@ -2309,7 +2309,7 @@ void ScummEngine::readMAXS(int blockSize) {
 		_numGlobalObjects = _fileHandle.readUint16LE();
 		_numImages = _fileHandle.readUint16LE();
 		_numSprites = _fileHandle.readUint16LE();
-		_numLocalScriptOffsets = _fileHandle.readUint16LE();
+		_numLocalScripts = _fileHandle.readUint16LE();
 		_fileHandle.readUint16LE(); // heap related
 		_fileHandle.readUint16LE(); // _numPalettes?
 		_fileHandle.readUint16LE(); // _numSmacker?
@@ -2338,13 +2338,16 @@ void ScummEngine::readMAXS(int blockSize) {
 		_numGlobalObjects = _fileHandle.readUint16LE();
 		_numImages = _fileHandle.readUint16LE();
 		_numSprites = _fileHandle.readUint16LE();
-		_numLocalScriptOffsets = _fileHandle.readUint16LE();
+		_numLocalScripts = _fileHandle.readUint16LE();
 		_fileHandle.readUint16LE(); // heap releated
 		_numNewNames = 10;
 
 		_objectRoomTable = (byte *)calloc(_numGlobalObjects, 1);
 		_numRoomVariables = 64;
-		_numGlobalScripts = 200;
+		if (_gameId == GID_FREDDI4)
+			_numGlobalScripts = 2048;
+		else
+			_numGlobalScripts = 200;
 
 	} else if (_heversion >= 70 && blockSize > 38) { // sputm7.2
 		if (blockSize != 32 + 8)

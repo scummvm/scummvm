@@ -135,7 +135,7 @@ void ScummEngine_v80he::setupOpcodes() {
 		OPCODE(o6_invalid),
 		OPCODE(o72_wordArrayWrite),
 		/* 48 */
-		OPCODE(o6_invalid),
+		OPCODE(o80_unknown48),
 		OPCODE(o80_unknown49),
 		OPCODE(o80_unknown4A),
 		OPCODE(o72_wordArrayIndexedWrite),
@@ -399,6 +399,23 @@ void ScummEngine_v80he::o80_unknown45() {
 		warning("o80_unknown45: default type %d", subOp);
 	}
 	debug(1,"o80_unknown45 stub (%d)",subOp);
+}
+
+void ScummEngine_v80he::o80_unknown48() {
+	int id, len, val;
+	byte *addr;
+	char string[100];
+
+	id = pop();
+
+	addr = getStringAddress(id);
+	if (!addr)
+		error("o80_unknown48: Reference to zeroed array pointer (%d)", id);
+
+	len = resStrLen(getStringAddress(id)) + 1;
+	memcpy(string, addr, len);
+	val = atoi(string);
+	push(val);
 }
 
 void ScummEngine_v80he::o80_unknown49() {

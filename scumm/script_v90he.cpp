@@ -135,7 +135,7 @@ void ScummEngine_v90he::setupOpcodes() {
 		OPCODE(o6_invalid),
 		OPCODE(o72_wordArrayWrite),
 		/* 48 */
-		OPCODE(o6_invalid),
+		OPCODE(o80_unknown48),
 		OPCODE(o80_unknown49),
 		OPCODE(o80_unknown4A),
 		OPCODE(o72_wordArrayIndexedWrite),
@@ -534,8 +534,13 @@ void ScummEngine_v90he::o90_unknown25() {
 			pop();
 			break;
 		case 15:
-			if (_heversion >= 99) {
+			if (_heversion == 99) {
 				getStackList(args, ARRAYSIZE(args));
+				pop();
+				pop();
+				pop();
+				pop();
+			} else if (_heversion == 98) {
 				pop();
 				pop();
 				pop();
@@ -621,7 +626,7 @@ void ScummEngine_v90he::o90_unknown26() {
 			break;
 		case 23:
 			pop();
-			if (_heversion >= 99)
+			if (_gameId == GID_FREDDI4 || _heversion >= 99)
 				pop();
 			break;
 		case 29:
@@ -883,8 +888,6 @@ void ScummEngine_v90he::o90_unknown37() {
 	}
 
 	defineArray(fetchScriptWord(), data, dim2start, dim2end, dim1start, dim1end);
-
-	debug(1,"o90_unknown37 stub");
 }
 
 void ScummEngine_v90he::o90_unknown3A() {

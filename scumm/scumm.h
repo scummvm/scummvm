@@ -257,7 +257,8 @@ enum ScummGameId {
 	GID_PUTTDEMO,
 	GID_PUTTMOON,
 	GID_FBEAR,
-	GID_FUNPACK
+	GID_FUNPACK,
+	GID_FREDDI4
 };
 
 #define _baseRooms res.address[rtRoom]
@@ -490,9 +491,9 @@ protected:
 	int _numInventory;
 	int _numNewNames, _numGlobalScripts;
 	int _numActors, _numRoomVariables;
-	int _numLocalScriptOffsets, _numSprites, _numTalkies;
+	int _numSprites, _numTalkies;
 public:
-	int _numImages, _numRooms, _numScripts, _numSounds;	// Used by VARS in HE games
+	int _numLocalScripts, _numImages, _numRooms, _numScripts, _numSounds;	// Used by HE games
 	int _numCostumes;	// FIXME - should be protected, used by Actor::remapActorPalette
 	int _numCharsets;	// FIXME - should be protected, used by CharsetRenderer
 
