@@ -386,6 +386,9 @@ const char *Gui::queryString(int string, int id) {
 		return namebuf;
 	}
 
+	if (string == 0)
+		return NULL;
+
 	if (_s->_features&GF_AFTER_V6) {
 		string = _s->_vars[string_map_table_v6[string-1]];
 	} else {
