@@ -854,6 +854,9 @@ void Gdi::drawBitmap(byte *ptr, VirtScreen *vs, int x, int y, const int h,
 	assert(smap_ptr);
 
 	numzbuf = _disable_zbuffer ? 0 : _numZBuffer;
+	if (_vm->_features & GF_OLD_BUNDLE) { // FIXME make masks decompress properly
+		numzbuf = 0;
+	}
 	assert(numzbuf <= (int)ARRAYSIZE(zplane_list));
 
 	if (_vm->_features & GF_OLD_BUNDLE) {
