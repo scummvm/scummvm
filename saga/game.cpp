@@ -516,6 +516,7 @@ int LoadGame(const char *game_dir, uint16 game_n) {
 		return R_MEM;
 	}
 
+	File::addDefaultDirectory(game_dir);
 	GameModule.gfile_n = game_filect;
 
 	// Load game resource files

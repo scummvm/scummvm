@@ -35,6 +35,7 @@ R_RSCFILE_CONTEXT *RSC_CreateContext() {
 	empty_context.rc_file_loaded = 0;
 	empty_context.rc_res_table = NULL;
 	empty_context.rc_res_ct = 0;
+	empty_context.rc_file = new File();
 	R_RSCFILE_CONTEXT *new_context;
 
 	new_context = (R_RSCFILE_CONTEXT *)malloc(sizeof *new_context);
@@ -48,11 +49,11 @@ R_RSCFILE_CONTEXT *RSC_CreateContext() {
 }
 
 int RSC_OpenContext(R_RSCFILE_CONTEXT *rsc_context, const char *fspec) {
-	if (rsc_context->rc_file.isOpen()) {
+	if (rsc_context->rc_file->isOpen()) {
 		return R_FAILURE;
 	}
 
-	if (!rsc_context->rc_file.open(fspec)) {
+	if (!rsc_context->rc_file->open(fspec)) {
 		return R_FAILURE;
 	}
 
@@ -68,8 +69,8 @@ int RSC_OpenContext(R_RSCFILE_CONTEXT *rsc_context, const char *fspec) {
 }
 
 int RSC_CloseContext(R_RSCFILE_CONTEXT *rsc_context) {
-	if (rsc_context->rc_file.isOpen()) {
-		rsc_context->rc_file.close();
+	if (rsc_context->rc_file->isOpen()) {
+		rsc_context->rc_file->close();
 	}
 
 	RSC_FreeRSC(rsc_context);
@@ -102,14 +103,14 @@ int RSC_LoadRSC(R_RSCFILE_CONTEXT *rsc) {
 
 	R_RSCFILE_RESOURCE *rsc_restbl;
 
-	if (rsc->rc_file.size() < RSC_MIN_FILESIZE) {
+	if (rsc->rc_file->size() < RSC_MIN_FILESIZE) {
 		return R_FAILURE;
 	}
 
 	// Read resource table info from the rear end of file
-	rsc->rc_file.seek((long)(rsc->rc_file.size() - 8), SEEK_SET);
+	rsc->rc_file->seek((long)(rsc->rc_file->size() - 8), SEEK_SET);
 
-	if (rsc->rc_file.read(tblinfo_buf, RSC_TABLEINFO_SIZE) != RSC_TABLEINFO_SIZE) {
+	if (rsc->rc_file->read(tblinfo_buf, RSC_TABLEINFO_SIZE) != RSC_TABLEINFO_SIZE) {
 		return R_FAILURE;
 	}
 
@@ -119,7 +120,7 @@ int RSC_LoadRSC(R_RSCFILE_CONTEXT *rsc) {
 	res_tbl_ct = readS.readUint32LE();
 
 	// Check for sane table offset
-	if (res_tbl_offset != rsc->rc_file.size() - RSC_TABLEINFO_SIZE - RSC_TABLEENTRY_SIZE * res_tbl_ct) {
+	if (res_tbl_offset != rsc->rc_file->size() - RSC_TABLEINFO_SIZE - RSC_TABLEENTRY_SIZE * res_tbl_ct) {
 
 		return R_FAILURE;
 	}
@@ -132,9 +133,9 @@ int RSC_LoadRSC(R_RSCFILE_CONTEXT *rsc) {
 		return R_FAILURE;
 	}
 
-	rsc->rc_file.seek((long)res_tbl_offset, SEEK_SET);
+	rsc->rc_file->seek((long)res_tbl_offset, SEEK_SET);
 
-	if (rsc->rc_file.read(tbl_buf, tbl_len) != tbl_len) {
+	if (rsc->rc_file->read(tbl_buf, tbl_len) != tbl_len) {
 		free(tbl_buf);
 		return R_FAILURE;
 	}
@@ -150,7 +151,7 @@ int RSC_LoadRSC(R_RSCFILE_CONTEXT *rsc) {
 	for (i = 0; i < res_tbl_ct; i++) {
 		rsc_restbl[i].res_offset = readS1.readUint32LE();
 		rsc_restbl[i].res_size = readS1.readUint32LE();
-		if ((rsc_restbl[i].res_offset > rsc->rc_file.size()) || (rsc_restbl[i].res_size > rsc->rc_file.size())) {
+		if ((rsc_restbl[i].res_offset > rsc->rc_file->size()) || (rsc_restbl[i].res_size > rsc->rc_file->size())) {
 			free(tbl_buf);
 			free(rsc_restbl);
 			return R_FAILURE;
@@ -169,6 +170,9 @@ int RSC_FreeRSC(R_RSCFILE_CONTEXT *rsc) {
 	if (!rsc->rc_file_loaded) {
 		return R_FAILURE;
 	}
+
+	delete rsc->rc_file;
+	rsc->rc_file = NULL;
 
 	free(rsc->rc_res_table);
 
@@ -223,14 +227,14 @@ int RSC_LoadResource(R_RSCFILE_CONTEXT *rsc, uint32 res_num, byte **res_p, size_
 	res_offset = rsc->rc_res_table[res_num].res_offset;
 	res_size = rsc->rc_res_table[res_num].res_size;
 
-	rsc->rc_file.seek((long)res_offset, SEEK_SET);
+	rsc->rc_file->seek((long)res_offset, SEEK_SET);
 
 	res_buf = (byte *)malloc(res_size);
 	if (res_buf == NULL) {
 		return R_MEM;
 	}
 
-	if (rsc->rc_file.read(res_buf, res_size) != res_size) {
+	if (rsc->rc_file->read(res_buf, res_size) != res_size) {
 		free(res_buf);
 		return R_FAILURE;
 	}

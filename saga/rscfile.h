@@ -26,6 +26,7 @@
 #ifndef SAGA_RSCFILE_H__
 #define SAGA_RSCFILE_H__
 
+#include "backends/fs/fs.h"
 #include "common/file.h"
 
 namespace Saga {
@@ -43,7 +44,7 @@ struct R_RSCFILE_RESOURCE {
 
 struct R_RSCFILE_CONTEXT {
 	const char *rc_file_fspec;
-	File rc_file;
+	File *rc_file;
 	int rc_file_loaded;
 	R_RSCFILE_RESOURCE *rc_res_table;
 	size_t rc_res_ct;

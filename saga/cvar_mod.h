@@ -40,25 +40,25 @@ typedef char cv_char_t;
 typedef void (*cv_func_t) (int cv_argc, char *cv_argv[], void *refCon);
 /******************************************/
 
-typedef struct R_CVAR_tag *R_CVAR_P;	// opaque typedef
+typedef struct R_CVAR *R_CVAR_P;	// opaque typedef
 
-typedef enum R_CVAR_TYPES_tag {
+enum R_CVAR_TYPES {
 	R_CVAR_INVALID,
 	R_CVAR_INT,
 	R_CVAR_UINT,
 	R_CVAR_FLOAT,
 	R_CVAR_STRING,
 	R_CVAR_FUNC
-} R_CVAR_TYPES;
+};
 
-typedef enum R_CVAR_FLAGS_tag {
+enum R_CVAR_FLAGS {
 	R_CVAR_NONE,
 	R_CVAR_READONLY,
 	R_CVAR_LBOUND,
 	R_CVAR_UBOUND,
 	R_CVAR_CFG,
 	R_CVAR_SECTION
-} R_CVAR_FLAGS;
+};
 
 #define R_CVAR_BOUNDED ( R_CVAR_LBOUND | R_CVAR_UBOUND )
 

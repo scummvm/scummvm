@@ -61,7 +61,7 @@ struct R_SUBCVAR_FUNC {
 	int max_args;
 };
 
-typedef struct R_CVAR_tag {
+struct R_CVAR {
 	int type;
 	const char *name;
 	const char *section;
@@ -76,9 +76,9 @@ typedef struct R_CVAR_tag {
 		R_SUBCVAR_FUNC func;
 	} t;
 
-	struct R_CVAR_tag *next;
+	R_CVAR *next;
 
-} R_CVAR;
+};
 
 } // End of namespace Saga
 

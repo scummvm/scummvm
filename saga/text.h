@@ -34,7 +34,7 @@ namespace Saga {
 #define R_TEXT_MARGIN 10
 #define R_TEXT_LINESPACING 2
 
-struct R_TEXTLIST_tag {
+struct R_TEXTLIST {
 	YS_DL_LIST *list;
 };
 
@@ -43,8 +43,8 @@ enum R_TEXT_FLAGS {
 };
 
 struct R_TEXTLIST_ENTRY {
-	struct R_TEXTLIST_ENTRY_tag *next;
-	struct R_TEXTLIST_ENTRY_tag *prev;
+	R_TEXTLIST_ENTRY *next;
+	R_TEXTLIST_ENTRY *prev;
 	int display;
 	int id;
 	int text_x;
@@ -58,7 +58,6 @@ struct R_TEXTLIST_ENTRY {
 	R_TEXTLIST_ENTRY() { memset(this, 0, sizeof(*this)); }
 };
 
-typedef struct R_TEXTLIST_tag R_TEXTLIST;
 
 }				// End of namespace Saga
 #endif

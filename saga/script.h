@@ -71,7 +71,7 @@ struct R_SEMAPHORE {
 	int hold_count;
 };
 
-struct R_SCRIPT_THREAD_tag {
+struct R_SCRIPT_THREAD {
 	int executing;
 
 	int sleep_time;
@@ -82,8 +82,6 @@ struct R_SCRIPT_THREAD_tag {
 	R_SEMAPHORE sem;
 	Common::Stack<SDataWord_T> *stack;
 };
-
-typedef struct R_SCRIPT_THREAD_tag R_SCRIPT_THREAD;
 
 struct R_PROC_TBLENTRY {
 	size_t name_offset;

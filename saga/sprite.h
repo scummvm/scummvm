@@ -48,7 +48,7 @@ struct R_SPRITELIST_OFFSET {
 	size_t offset;
 };
 
-struct R_SPRITELIST_tag {
+struct R_SPRITELIST {
 	int append_count;
 	int sprite_count;
 	R_SPRITELIST_OFFSET *offset_list;
@@ -56,7 +56,6 @@ struct R_SPRITELIST_tag {
 	byte *sprite_data[R_APPENDMAX];
 };
 
-typedef struct R_SPRITELIST_tag R_SPRITELIST;
 
 class Sprite {
  public:
