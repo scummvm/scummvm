@@ -907,7 +907,7 @@ int Logic::fnSetPaletteToCut(Object *cpt, int32 id, int32 c, int32 d, int32 e, i
 
 int Logic::fnPlaySequence(Object *cpt, int32 id, int32 sequenceId, int32 d, int32 e, int32 f, int32 z, int32 x) {
 
-  static char *sequence_list[20] = {
+  static const char *sequence_list[20] = {
     "ferrari",  // 0  CD2   ferrari running down fitz in sc19
     "ladder",   // 1  CD2   george walking down ladder to dig sc24->sc$
     "steps",    // 2  CD2   george walking down steps sc23->sc24
