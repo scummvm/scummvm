@@ -210,7 +210,7 @@ void ScummEngine_v80he::setupOpcodes() {
 		OPCODE(o6_animateActor),
 		OPCODE(o6_doSentence),
 		/* 84 */
-		OPCODE(o72_pickupObject),
+		OPCODE(o7_pickupObject),
 		OPCODE(o6_loadRoomWithEgo),
 		OPCODE(o6_invalid),
 		OPCODE(o6_getRandomNumber),

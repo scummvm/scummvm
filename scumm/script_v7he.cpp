@@ -554,10 +554,12 @@ void ScummEngine_v7he::o7_pickupObject() {
 
 	addObjectToInventory(obj, room);
 	putOwner(obj, VAR(VAR_EGO));
-	putClass(obj, kObjectClassUntouchable, 1);
-	putState(obj, 1);
-	markObjectRectAsDirty(obj);
-	clearDrawObjectQueue();
+	if (_heversion <= 70) {
+		putClass(obj, kObjectClassUntouchable, 1);
+		putState(obj, 1);
+		markObjectRectAsDirty(obj);
+		clearDrawObjectQueue();
+	}
 	runInventoryScript(obj);									/* Difference */
 }
 

@@ -210,7 +210,7 @@ void ScummEngine_v72he::setupOpcodes() {
 		OPCODE(o6_animateActor),
 		OPCODE(o6_doSentence),
 		/* 84 */
-		OPCODE(o72_pickupObject),
+		OPCODE(o7_pickupObject),
 		OPCODE(o6_loadRoomWithEgo),
 		OPCODE(o6_invalid),
 		OPCODE(o6_getRandomNumber),
@@ -824,19 +824,6 @@ void ScummEngine_v72he::o72_getNumFreeArrays() {
 	}
 
 	push (num);
-}
-
-void ScummEngine_v72he::o72_pickupObject() {
-	int obj, room;
-
-	room = pop();
-	obj = pop();
-	if (room == 0)
-		room = getObjectRoom(obj);
-
-	addObjectToInventory(obj, room);
-	putOwner(obj, VAR(VAR_EGO));
-	runInventoryScript(obj);
 }
 
 void ScummEngine_v72he::o72_actorOps() {
