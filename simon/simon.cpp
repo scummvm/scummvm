@@ -3110,6 +3110,8 @@ void SimonEngine::timer_proc1() {
 	_lock_word |= 2;
 
 	if (!(_lock_word & 0x10)) {
+		// We currently use this section for both Simon1 and Simon2 games
+		// since Simon2 section causes slow down for unknown reasons.
 		//if (!(_game & GF_SIMON2)) {
 			expire_vga_timers();
 			expire_vga_timers();
