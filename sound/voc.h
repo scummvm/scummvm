@@ -52,11 +52,11 @@ struct VocBlockHeader {
 static inline int getSampleRateFromVOCRate(int vocSR) {
 	if (vocSR == 0xa6) {
 		return 11025;
-	} else if (vocSR == 0xd2) {
+	} else if (vocSR == 0xd2 || vocSR == 0xd3) {
 		return 22050;
 	} else {
 		int sr = 1000000L / (256L - vocSR);
-		warning("inexact sample rate used: %i", sr);
+		warning("inexact sample rate used: %i (0x%x)", sr, vocSR);
 		return sr;
 	}
 }
