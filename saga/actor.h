@@ -123,7 +123,7 @@ enum PathCellType {
 
 struct PathDirectionData {
 	int direction;
-	int	x;
+	int x;
 	int y;
 };
 
