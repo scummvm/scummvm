@@ -63,7 +63,7 @@ Gfx::Gfx(OSystem *system, int width, int height, GameDetector &detector) : _syst
 	_black_index = -1;
 
 	// For now, always show the mouse cursor.
-	setCursor(1);
+	setCursor();
 	_system->showMouse(true);
 }
 
@@ -828,13 +828,6 @@ int Gfx::setPalette(SURFACE *surface, PALENTRY *pal) {
 		}
 	}
 
-	// When the palette changes, make sure the cursor colours are still
-	// correct. We may have to reconsider this code later, but for now
-	// there is only one cursor image.
-	if (_white_index != best_windex) {
-		setCursor(best_windex);
-	}
-
 	// Set whitest and blackest color indices
 	_white_index = best_windex;
 	_black_index = best_bindex;
@@ -974,13 +967,6 @@ int Gfx::blackToPal(SURFACE *surface, PALENTRY *src_pal, double percent) {
 		}
 	}
 
-	// When the palette changes, make sure the cursor colours are still
-	// correct. We may have to reconsider this code later, but for now
-	// there is only one cursor image.
-	if (_white_index != best_windex) {
-		setCursor(best_windex);
-	}
-
 	_system->setPalette(_cur_pal, 0, PAL_ENTRIES);
 
 	return SUCCESS;
@@ -991,29 +977,19 @@ void Gfx::showCursor(bool state) {
 	g_system->showMouse(state);
 }
 
-void Gfx::setCursor(int best_white) {
-	int i;
-	byte keycolor = (best_white == 0) ? 1 : 0;
-
+void Gfx::setCursor() {
 	// Set up the mouse cursor
 	byte cursor_img[CURSOR_W * CURSOR_H] = {
-		  0,   0,   0, 255,   0,   0,   0,
-		  0,   0,   0, 255,   0,   0,   0,
-		  0,   0,   0,   0,   0,   0,   0,
-		255, 255,   0,   0,   0, 255, 255,
-		  0,   0,   0,   0,   0,   0,   0,
-		  0,   0,   0, 255,   0,   0,   0,
-		  0,   0,   0, 255,   0,   0,   0,
+		0, 0, 0, 4, 0, 0, 0,
+		0, 0, 0, 4, 0, 0, 0,
+		0, 0, 0, 4, 0, 0, 0,
+		4, 4, 4, 2, 4, 4, 4,
+		0, 0, 0, 4, 0, 0, 0,
+		0, 0, 0, 4, 0, 0, 0,
+		0, 0, 0, 4, 0, 0, 0,
 	};
 
-	for (i = 0; i < CURSOR_W * CURSOR_H; i++) {
-		if (cursor_img[i] != 0)
-			cursor_img[i] = best_white;
-		else
-			cursor_img[i] = keycolor;
-	}
-
-	_system->setMouseCursor(cursor_img, CURSOR_W, CURSOR_H, 4, 4, keycolor);
+	_system->setMouseCursor(cursor_img, CURSOR_W, CURSOR_H, 3, 3, 0);
 }
 
 bool hitTestPoly(const Point *points, unsigned int npoints, const Point& test_point) {
