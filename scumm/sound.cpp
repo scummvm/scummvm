@@ -657,7 +657,11 @@ int Sound::isSoundRunning(int sound) const {
 		return pollCD();
 
 	if (_vm->_features & GF_HUMONGOUS) {
-		if (sound == -2) {
+		if (sound == 10000)
+			// FIXME: Music resources in HE7 games are currently unsupported,
+			// so prevent music restart attempt
+			return 1;
+		else if (sound == -2) {
 			return isSfxFinished();
 		} else if (sound == -1) {
 			// getSoundStatus(), with a -1, will return the

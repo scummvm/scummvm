@@ -578,7 +578,7 @@ void ScummEngine::ensureResourceLoaded(int type, int i) {
 
 	debugC(DEBUG_RESOURCE, "ensureResourceLoaded(%s,%d)", resTypeFromId(type), i);
 
-	if ((type == rtRoom || _heversion >= 70) && i > 0x7F && _version < 7) {
+	if ((type == rtRoom) && i > 0x7F && _version < 7) {
 		i = _resourceMapper[i & 0x7F];
 	}
 
