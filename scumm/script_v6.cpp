@@ -1653,6 +1653,34 @@ void ScummEngine_v6::o6_resourceRoutines() {
 			// QL_QueGlobForLoad(1, resid, 1);
 			break;
 		}
+	case 201:
+		{
+			if (_heversion < 70)
+				error("o6_resourceRoutines: default case %d", op);
+
+			resid = pop();
+			ensureResourceLoaded(rtImage, resid);
+			break;
+		}
+	case 202:
+		{
+			if (_heversion < 70)
+				error("o6_resourceRoutines: default case %d", op);
+
+			resid = pop();
+			lock(rtImage, resid);
+			break;
+		}
+	case 203:
+		{
+			if (_heversion < 70)
+				error("o6_resourceRoutines: default case %d", op);
+
+			resid = pop();
+			debug(1,"stub stub queueload resource 19, %d", resid);
+			// QL_QueGlobForLoad(19, resid, 1);
+			break;
+		}
 	case 233:
 		resid = pop();
 		debug(1,"stub o6_resourceRoutines resource %d, 1", resid);

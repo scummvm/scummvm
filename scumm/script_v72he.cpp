@@ -41,23 +41,17 @@
 
 namespace Scumm {
 
-// Compatibility notes:
-//
-// FREDDEMO (freddemo)
-//     stringLen is completely different
-//     unknownF4 is completely different
+#define OPCODE(x)	{ &ScummEngine_v72he::x, #x }
 
-#define OPCODE(x)	{ &ScummEngine_v7he::x, #x }
-
-void ScummEngine_v7he::setupOpcodes() {
-	static const OpcodeEntryV7he opcodes[256] = {
+void ScummEngine_v72he::setupOpcodes() {
+	static const OpcodeEntryV72he opcodes[256] = {
 		/* 00 */
 		OPCODE(o6_pushByte),
 		OPCODE(o6_pushWord),
 		OPCODE(o6_pushByteVar),
 		OPCODE(o6_pushWordVar),
 		/* 04 */
-		OPCODE(o6_invalid),
+		OPCODE(o7_getString),
 		OPCODE(o6_invalid),
 		OPCODE(o6_byteArrayRead),
 		OPCODE(o6_wordArrayRead),
@@ -157,8 +151,8 @@ void ScummEngine_v7he::setupOpcodes() {
 		OPCODE(o6_byteArrayInc),
 		OPCODE(o6_wordArrayInc),
 		/* 54 */
-		OPCODE(o6_invalid),
-		OPCODE(o6_invalid),
+		OPCODE(o7_objectX),
+		OPCODE(o7_objectY),
 		OPCODE(o6_byteVarDec),
 		OPCODE(o6_wordVarDec),
 		/* 58 */
@@ -169,13 +163,13 @@ void ScummEngine_v7he::setupOpcodes() {
 		/* 5C */
 		OPCODE(o6_if),
 		OPCODE(o6_ifNot),
-		OPCODE(o6_startScript),
+		OPCODE(o7_startScript),
 		OPCODE(o6_startScriptQuick),
 		/* 60 */
 		OPCODE(o6_startObject),
 		OPCODE(o6_drawObject),
 		OPCODE(o6_drawObjectAt),
-		OPCODE(o6_invalid),
+		OPCODE(o7_unknown63),
 		/* 64 */
 		OPCODE(o6_invalid),
 		OPCODE(o6_stopObjectCode),
@@ -257,7 +251,7 @@ void ScummEngine_v7he::setupOpcodes() {
 		OPCODE(o6_getActorElevation),
 		OPCODE(o6_getVerbEntrypoint),
 		/* A4 */
-		OPCODE(o6_arrayOps),
+		OPCODE(o7_arrayOps),
 		OPCODE(o6_saveRestoreVerbs),
 		OPCODE(o6_drawBox),
 		OPCODE(o6_pop),
@@ -287,12 +281,12 @@ void ScummEngine_v7he::setupOpcodes() {
 		OPCODE(o6_talkActor),
 		OPCODE(o6_talkEgo),
 		/* BC */
-		OPCODE(o6_dimArray),
+		OPCODE(o7_dimArray),
 		OPCODE(o6_dummy),
 		OPCODE(o6_startObjectQuick),
 		OPCODE(o6_startScriptQuick2),
 		/* C0 */
-		OPCODE(o6_dim2dimArray),
+		OPCODE(o7_dim2dimArray),
 		OPCODE(o6_invalid),
 		OPCODE(o6_invalid),
 		OPCODE(o6_invalid),
@@ -318,7 +312,7 @@ void ScummEngine_v7he::setupOpcodes() {
 		OPCODE(o6_invalid),
 		/* D4 */
 		OPCODE(o6_shuffle),
-		OPCODE(o6_jumpToScript),
+		OPCODE(o7_jumpToScript),
 		OPCODE(o6_band),
 		OPCODE(o6_bor),
 		/* D8 */
@@ -373,27 +367,65 @@ void ScummEngine_v7he::setupOpcodes() {
 		OPCODE(o6_invalid),
 	};
 
-	_opcodesV7he = opcodes;
+	_opcodesV72he = opcodes;
 }
 
-void ScummEngine_v7he::executeOpcode(byte i) {
-	OpcodeProcV7he op = _opcodesV7he[i].proc;
+void ScummEngine_v72he::executeOpcode(byte i) {
+	OpcodeProcV72he op = _opcodesV72he[i].proc;
 	(this->*op) ();
 }
 
-const char *ScummEngine_v7he::getOpcodeDesc(byte i) {
-	return _opcodesV7he[i].desc;
+const char *ScummEngine_v72he::getOpcodeDesc(byte i) {
+	return _opcodesV72he[i].desc;
 }
 
 
-void ScummEngine_v7he::o7_unknownFA() {
-	int num = fetchScriptByte();
-	int len = resStrLen(_scriptPointer);
-	warning("stub o7_unknownFA(%d, \"%s\")", num, _scriptPointer);
-	_scriptPointer += len + 1;
+void ScummEngine_v72he::o7_objectX() {
+	int object = pop();
+	int objnum = getObjectIndex(object);
+
+	if (objnum == -1) {
+		push(0);
+		return;
+	}
+
+	push(_objs[objnum].x_pos);
 }
 
-void ScummEngine_v7he::o7_stringLen() {
+
+void ScummEngine_v72he::o7_objectY() {
+	int object = pop();
+	int objnum = getObjectIndex(object);
+
+	if (objnum == -1) {
+		push(0);
+		return;
+	}
+
+	push(_objs[objnum].y_pos);
+}
+
+void ScummEngine_v72he::o7_getString() {
+	int len;
+	
+	len = resStrLen(_scriptPointer);
+	warning("stub o7_getString(\"%s\")", _scriptPointer);
+	_scriptPointer += len;
+	fetchScriptWord();
+	fetchScriptWord();
+}
+
+void ScummEngine_v72he::o7_unknown63() {
+	int a = fetchScriptByte();
+	warning("o7_unknown63 stub (%d)", a);
+	push(1);
+}
+
+void ScummEngine_v72he::o7_unknownFA() {
+	warning("stub o7_unknownFA(%d)", fetchScriptByte());
+}
+
+void ScummEngine_v72he::o7_stringLen() {
 	int a, len;
 	byte *addr;
 
@@ -407,51 +439,21 @@ void ScummEngine_v7he::o7_stringLen() {
 		return;
 	}
 
-	len = stringLen(addr);
+	len = strlen((char *)getStringAddress(a));
 	push(len);
 }
 
-byte ScummEngine_v7he::stringLen(byte *ptr) {
-	byte len;
-	byte c;
-	if (!ptr) {
-		//ptr = _someGlobalPtr;
-		error("ScummEngine_v7he::stringLen(): zero ptr. Undimplemented behaviour");
-		return 1;
-	}
-
-	len = 0;
-	c = *ptr++;
-
-	if (len == c)
-		return 0;
-
-	do {
-		len++;
-		if (c == 0xff) {
-			ptr += 3;
-			len += 3;
-		}
-		c = *ptr++;
-	} while (c);
-
-	return len;
-}
-
-void ScummEngine_v7he::o7_readINI() {
-	int len;
+void ScummEngine_v72he::o7_readINI() {
 	int type;
 	int retval;
 
 	// we pretend that we don't have .ini file
-	len = resStrLen(_scriptPointer);
-	_scriptPointer += len + 1;
-	type = pop();
+	type = fetchScriptByte();
 	switch (type) {
-	case 1: // number
+	case 6: // number
 		push(0);
 		break;
-	case 2: // string
+	case 7: // string
 		defineArray(0, kStringArray, 0, 0);
 		retval = readVar(0);
 		writeArray(0, 0, 0, 0);
@@ -462,58 +464,28 @@ void ScummEngine_v7he::o7_readINI() {
 	}
 }
 
-void ScummEngine_v7he::o7_unknownF4() {
-	int a, b;
-	byte filename1[256], filename2[256];
+void ScummEngine_v72he::o7_unknownF4() {
+	byte b;
 	int len;
-
-	
-	b = pop();
-	a = pop();
+	b = fetchScriptByte();
 
 	switch (b) {
-	case 1:
-		addMessageToStack(_scriptPointer, filename1, sizeof(filename1));
-
+	case 6:
+		pop();
 		len = resStrLen(_scriptPointer);
 		_scriptPointer += len + 1;
-		debug(1, "o7_unknownF4(%d, %d, \"%s\")", a, b, filename1);
 		break;
-	case 2:
-		addMessageToStack(_scriptPointer, filename1, sizeof(filename1));
-
+	case 7:
 		len = resStrLen(_scriptPointer);
 		_scriptPointer += len + 1;
-
-		addMessageToStack(_scriptPointer, filename2, sizeof(filename2));
-
 		len = resStrLen(_scriptPointer);
 		_scriptPointer += len + 1;
-		debug(1, "o7_unknownF4(%d, %d, \"%s\", \"%s\")", a, b, filename1, filename2);
 		break;
 	}
 	warning("o7_unknownF4 stub");
 }
 
-void ScummEngine_v7he::o7_unknownF9() {
-	// File related
-	int len, r;
-	byte filename[100];
-
-	addMessageToStack(_scriptPointer, filename, sizeof(filename));
-
-	len = resStrLen(_scriptPointer);
-	_scriptPointer += len + 1;
-
-	for (r = strlen((char*)filename); r != 0; r--) {
-		if (filename[r - 1] == '\\')
-			break;
-	}
-
-	warning("stub o7_unknownF9(\"%s\")", filename + r);
-}
-
-void ScummEngine_v7he::o7_unknownFB() {
+void ScummEngine_v72he::o7_unknownFB() {
 	byte b;
 	b = fetchScriptByte();
 
@@ -538,167 +510,149 @@ void ScummEngine_v7he::o7_unknownFB() {
 	warning("o7_unknownFB stub");
 }
 
-void ScummEngine_v7he::o7_quitPauseRestart() {
+void ScummEngine_v72he::o7_dim2dimArray() {
+	if (_heversion <= 71) {
+		ScummEngine_v6::o6_dim2dimArray();
+		return;
+	}
+
+	int a, b, data;
+	int type = fetchScriptByte();
+	switch (type - 2) {
+	case 0:		// SO_INT_ARRAY
+		data = kIntArray;
+		break;
+	case 1:		// SO_BIT_ARRAY
+		data = kBitArray;
+		break;
+	case 2:		// SO_NIBBLE_ARRAY
+		data = kNibbleArray;
+		break;
+	case 3:		// SO_BYTE_ARRAY
+		data = kByteArray;
+		break;
+	case 4:		// SO_STRING_ARRAY
+		data = kStringArray;
+		break;
+	default:
+		error("o7_dim2dimArray: default case %d", type);
+	}
+
+	b = pop();
+	a = pop();
+	defineArray(fetchScriptWord(), data, a, b);
+}
+
+void ScummEngine_v72he::o7_dimArray() {
+	if (_heversion <= 71) {
+		ScummEngine_v6::o6_dimArray();
+		return;
+	}
+
+	int data;
+	int type = fetchScriptByte();
+
+	switch (type) {
+	case 5:		// SO_INT_ARRAY
+		data = kIntArray;
+		break;
+	case 2:		// SO_BIT_ARRAY
+		data = kBitArray;
+		break;
+	case 3:		// SO_NIBBLE_ARRAY
+		data = kNibbleArray;
+		break;
+	case 4:		// SO_BYTE_ARRAY
+		data = kByteArray;
+		break;
+	case 7:		// SO_STRING_ARRAY
+		data = kStringArray;
+		break;
+	case 204:		// SO_UNDIM_ARRAY
+		nukeArray(fetchScriptWord());
+		return;
+	default:
+		error("o7_dimArray: default case %d", type);
+	}
+
+	defineArray(fetchScriptWord(), data, 0, pop());
+}
+
+void ScummEngine_v72he::o7_arrayOps() {
 	byte subOp = fetchScriptByte();
-	int par1;
-
-	switch (subOp & 0xff) {
-	case 158:		// SO_RESTART
-		restart();
-		break;
-	case 160:
-		// FIXME: check
-		shutDown();
-		break;
-	case 250:
-		par1 = pop();
-		warning("stub: o7_quitPauseRestart subOpcode %d", subOp);
-		break;
-	case 253:
-		par1 = pop();
-		warning("stub: o7_quitPauseRestart subOpcode %d", subOp);
-	case 244:		// SO_QUIT
-		shutDown();
-		break;
-	case 251:
-	case 252:
-		warning("stub: o7_quitPauseRestart subOpcode %d", subOp);
-		break;
-	default:
-		error("o7_quitPauseRestart invalid case %d", subOp);
-	}
-}
-
-void ScummEngine_v7he::o7_pickupObject() {
-	int obj, room;
-
-	room = pop();
-	obj = pop();
-	if (room == 0)
-		room = getObjectRoom(obj);
-
-	addObjectToInventory(obj, room);
-	putOwner(obj, VAR(VAR_EGO));
-	putClass(obj, kObjectClassUntouchable, 1);
-	putState(obj, 1);
-	markObjectRectAsDirty(obj);
-	clearDrawObjectQueue();
-	runInventoryScript(obj);									/* Difference */
-}
-
-
-void ScummEngine_v7he::o7_getActorRoom() {
-	int act = pop();
-
-	if (act < _numActors) {
-		Actor *a = derefActor(act, "o7_getActorRoom");
-		push(a->room);
-	} else
-		push(getObjectRoom(act));
-}
-
-void ScummEngine_v7he::o7_startSound() {
-	byte op;
-	op = fetchScriptByte();
-
-	switch (op) {
-	case 224:
-		_heSndSoundFreq = pop();
-		break;
-
-	case 230:
-		_heSndTimer = pop();
-		break;
-
-	case 231:
-		_heSndOffset = pop();
-		break;
-
-	case 232:
-		_heSndSoundId = pop();
-		_heSndOffset = 0;
-		_heSndSoundFreq = 11025;
-		_heSndTimer = VAR(VAR_MUSIC_TIMER);
-		break;
-
-	case 245:
-		_heSndLoop |= 1;
-		break;
-
-	case 255:
-		// _sound->addSoundToQueue(_heSndSoundId, _heSndOffset, _heSndTimer, _heSndLoop);
-		_sound->addSoundToQueue(_heSndSoundId, _heSndOffset);
-		debug(2, "o7_startSound stub (%d, %d, %d, %d)", _heSndSoundId, _heSndOffset, _heSndTimer, _heSndLoop);
-		_heSndLoop = 0;
-		break;
-
-	default:
-		break;
-	}
-}
-
-
-void ScummEngine_v7he::o7_cursorCommand() {
-	int a, i;
-	int args[16];
-	int subOp = fetchScriptByte();
+	int array = fetchScriptWord();
+	int b, c, d, len;
+	ArrayHeader *ah;
+	int list[128];
 
 	switch (subOp) {
-	case 0x90:		// SO_CURSOR_ON Turn cursor on
-		_cursor.state = 1;
-		verbMouseOver(0);
+	case 7:			// SO_ASSIGN_STRING
+		len = resStrLen(_scriptPointer);
+		ah = defineArray(array, kStringArray, 0, len + 1);
+		copyScriptString(ah->data);
 		break;
-	case 0x91:		// SO_CURSOR_OFF Turn cursor off
-		_cursor.state = 0;
-		verbMouseOver(0);
+	case 205:		// SO_ASSIGN_STRING
+		b = pop();
+		len = resStrLen(_scriptPointer);
+		ah = defineArray(array, kStringArray, 0, len + 1);
+		copyScriptString(ah->data + b);
 		break;
-	case 0x92:		// SO_USERPUT_ON
-		_userPut = 1;
+	case 208:		// SO_ASSIGN_INT_LIST
+		b = pop();
+		c = pop();
+		d = readVar(array);
+		if (d == 0) {
+			defineArray(array, kIntArray, 0, b + c);
+		}
+		while (c--) {
+			writeArray(array, 0, b + c, pop());
+		}
 		break;
-	case 0x93:		// SO_USERPUT_OFF
-		_userPut = 0;
-		break;
-	case 0x94:		// SO_CURSOR_SOFT_ON Turn soft cursor on
-		_cursor.state++;
-		if (_cursor.state > 1)
-			error("Cursor state greater than 1 in script");
-		verbMouseOver(0);
-		break;
-	case 0x95:		// SO_CURSOR_SOFT_OFF Turn soft cursor off
-		_cursor.state--;
-		verbMouseOver(0);
-		break;
-	case 0x96:		// SO_USERPUT_SOFT_ON
-		_userPut++;
-		break;
-	case 0x97:		// SO_USERPUT_SOFT_OFF
-		_userPut--;
-		break;
-	case 0x99: 		// SO_CURSOR_IMAGE Set cursor image
-		_Win32ResExtractor->setCursor(pop()); 				/* Difference */
-		break;
-	case 0x9A:		// SO_CURSOR_HOTSPOT Set cursor hotspot
-		a = pop();
-		setCursorHotspot(pop(), a);
-		break;
-	case 0x9C:		// SO_CHARSET_SET
-		initCharset(pop());
-		break;
-	case 0x9D:		// SO_CHARSET_COLOR
-		getStackList(args, ARRAYSIZE(args));
-		for (i = 0; i < 16; i++)
-			_charsetColorMap[i] = _charsetData[_string[1]._default.charset][i] = (unsigned char)args[i];
-		break;
-	case 0xD6:		// SO_CURSOR_TRANSPARENT Set cursor transparent color
-		setCursorTransparency(pop());
+	case 212:		// SO_ASSIGN_2DIM_LIST
+		b = pop();
+		len = getStackList(list, ARRAYSIZE(list));
+		d = readVar(array);
+		if (d == 0)
+			error("Must DIM a two dimensional array before assigning");
+		c = pop();
+		while (--len >= 0) {
+			writeArray(array, c, b + len, list[len]);
+		}
 		break;
 	default:
-		error("o7_cursorCommand: default case %x", subOp);
+		error("o7_arrayOps: default case %d (array %d)", subOp, array);
 	}
-
-	VAR(VAR_CURSORSTATE) = _cursor.state;
-	VAR(VAR_USERPUT) = _userPut;
 }
 
+void ScummEngine_v72he::o7_jumpToScript() {
+	if (_heversion <= 71) {
+		ScummEngine_v6::o6_jumpToScript();
+		return;
+	}
+	int args[16];
+	int script, flags;
+
+	getStackList(args, ARRAYSIZE(args));
+	script = pop();
+	flags = fetchScriptByte();
+	stopObjectCode();
+	runScript(script, (flags == 199 || flags == 200), (flags == 195 || flags == 200), args);
+}
+
+void ScummEngine_v72he::o7_startScript() {
+	if (_heversion <= 71) {
+		ScummEngine_v6::o6_startScript();
+		return;
+	}
+
+	int args[16];
+	int script, flags;
+
+	getStackList(args, ARRAYSIZE(args));
+	script = pop();
+	flags = fetchScriptByte();
+	
+	runScript(script, (flags == 199 || flags == 200), (flags == 195 || flags == 200), args);
+}
 
 } // End of namespace Scumm

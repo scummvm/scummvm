@@ -623,8 +623,6 @@ protected:
 
 	/* Version 7 script opcodes */
 	void o7_getString();
-	void o7_objectX();
-	void o7_objectY();
 	void o7_stringLen();
 	void o7_readINI();
 	void o7_unknownF4();
@@ -634,12 +632,47 @@ protected:
 	void o7_quitPauseRestart();
 	void o7_getActorRoom();
 	void o7_pickupObject();
+	void o7_startSound();
+	void o7_cursorCommand();
+};
+
+class ScummEngine_v72he : public ScummEngine_v7he {
+protected:
+	typedef void (ScummEngine_v72he::*OpcodeProcV72he)();
+	struct OpcodeEntryV72he {
+		OpcodeProcV72he proc;
+		const char *desc;
+	};
+	
+	const OpcodeEntryV72he *_opcodesV72he;
+
+public:
+	ScummEngine_v72he(GameDetector *detector, OSystem *syst, const ScummGameSettings &gs);
+
+protected:
+	virtual void setupScummVars();
+
+	virtual void setupOpcodes();
+	virtual void executeOpcode(byte i);
+	virtual const char *getOpcodeDesc(byte i);
+
+	byte stringLen(byte *);
+
+	/* Version 7 script opcodes */
+	void o7_getString();
+	void o7_objectX();
+	void o7_objectY();
+	void o7_stringLen();
+	void o7_readINI();
+	void o7_unknownF4();
+	void o7_unknownFA();
+	void o7_unknownFB();
 	void o7_arrayOps();
 	void o7_dimArray();
 	void o7_jumpToScript();
 	void o7_startScript();
-	void o7_startSound();
-	void o7_cursorCommand();
+	void o7_unknown63();
+	void o7_dim2dimArray();
 };
 
 class ScummEngine_v7 : public ScummEngine_v6 {
