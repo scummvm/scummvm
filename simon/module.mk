@@ -5,7 +5,7 @@ MODULE_OBJS = \
 	simon/items.o \
 	simon/midi.o \
 	simon/res.o \
-	simon/simonsound.o \
+	simon/sound.o \
 	simon/simon.o \
 	simon/verb.o \
 	simon/vga.o \

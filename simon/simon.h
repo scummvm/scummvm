@@ -26,7 +26,7 @@
 #include "common/engine.h"
 #include "simon/midi.h"
 #include "sound/mixer.h"
-#include "simon/simonsound.h"
+#include "simon/sound.h"
 
 /* Various other settings */
 //#define DRAW_IMAGES_DEBUG
