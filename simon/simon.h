@@ -476,6 +476,7 @@ public:
 	void o_unk_127();
 	void o_save_game();
 	void o_load_game();
+	void o_quit_if_user_presses_y();
 	void o_unk_137(uint a);
 	void o_unk_138();
 	void killAllTimers();
