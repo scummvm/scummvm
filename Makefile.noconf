@@ -117,7 +117,6 @@ scummvm-static: $(OBJS)
 		/sw/lib/libmad.a \
 		/sw/lib/libvorbisfile.a /sw/lib/libvorbis.a /sw/lib/libogg.a \
 		-framework Cocoa -framework Carbon -framework IOKit \
-		-framework OpenGL -framework AGL -framework QuickTime \
-		-framework AudioUnit -framework AudioToolbox
+		-framework QuickTime -framework AudioUnit -framework AudioToolbox
 
 .PHONY: deb bundle

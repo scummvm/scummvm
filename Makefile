@@ -103,7 +103,6 @@ scummvm-static: $(OBJS)
 		/sw/lib/libmpeg2.a \
 		-lz \
 		-framework Cocoa -framework Carbon -framework IOKit \
-		-framework OpenGL -framework AGL -framework QuickTime \
-		-framework AudioUnit -framework AudioToolbox
+		-framework QuickTime -framework AudioUnit -framework AudioToolbox
 
 .PHONY: deb bundle test
