@@ -32,8 +32,8 @@ static void saveRegistry() {
 }
 
 #ifdef WIN32
-int PASCAL WinMain(HINSTANCE hInst, HINSTANCE hPrevInst,  LPSTR lpCmdLine, int iShowCmd) {
- main(0, NULL);
+	int PASCAL WinMain(HINSTANCE /*hInst*/, HINSTANCE /*hPrevInst*/,  LPSTR /*lpCmdLine*/, int /*iShowCmd*/) {
+	return main(0, NULL);
 }
 #endif
 
