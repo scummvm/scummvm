@@ -25,7 +25,7 @@ SCUMM_OBJS = scumm/actor.o scumm/akos.o scumm/boxes.o scumm/bundle.o \
 #	scumm/insane.o
 
 SIMON_OBJS = simon/debug.o simon/items.o simon/midi.o simon/res.o simon/simon.o \
-	simon/sys.o simon/verb.o simon/vga.o
+	simon/verb.o simon/vga.o
 
 SMUSH_OBJS = scumm/smush/blitter.o \
 	scumm/smush/brenderer.o \

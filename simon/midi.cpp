@@ -27,34 +27,7 @@
 #include "sound/mixer.h"
 #include "simon/simon.h"
 
-void MidiPlayer::read_from_file(void *dst, uint size)
-{
-	if (fread(dst, size, 1, _input) != 1)
-		error("Midi read error");
-}
-
-byte MidiPlayer::read_byte_from_file()
-{
-	byte num;
-	read_from_file(&num, 1);
-	return num;
-}
-
-uint32 MidiPlayer::read_uint32_from_file()
-{
-	uint32 num;
-	read_from_file(&num, 4);
-	return READ_BE_UINT32(&num);
-}
-
-uint16 MidiPlayer::read_uint16_from_file()
-{
-	uint16 num;
-	read_from_file(&num, 2);
-	return READ_BE_UINT16(&num);
-}
-
-void MidiPlayer::read_all_songs(FILE *in)
+void MidiPlayer::read_all_songs(File *in)
 {
 	uint i, num;
 
@@ -62,14 +35,14 @@ void MidiPlayer::read_all_songs(FILE *in)
 
 	_midi_cur_song_ptr = _midi_songs;
 
-	num = read_byte_from_file();
+	num = _input->readByte();
 
 	for (i = 0; i != num; i++) {
 		read_one_song(&_midi_songs[i]);
 	}
 }
 
-void MidiPlayer::read_all_songs_old(FILE *in)
+void MidiPlayer::read_all_songs_old(File *in)
 {
 	uint i, num;
 
@@ -89,18 +62,18 @@ void MidiPlayer::read_mthd(Song *s, bool old)
 	uint i;
 
 	if (!old) {
-		if (read_uint32_from_file() != 6)
+		if (_input->readDwordBE() != 6)
 			error("Invalid 'MThd' chunk size");
-		s->midi_format = read_uint16_from_file();
-		s->num_tracks = read_uint16_from_file();
-		s->ppqn = read_uint16_from_file();
+		s->midi_format = _input->readWordBE();
+		s->num_tracks = _input->readWordBE();
+		s->ppqn = _input->readWordBE();
 	} else {
 		s->midi_format = 0;
 		s->num_tracks = 1;
 		s->ppqn = 0xc0;
 
-		read_uint16_from_file();
-		read_byte_from_file();
+		_input->readWordBE();
+		_input->readByte();
 	}
 
 	s->tracks = t = (Track *)calloc(s->num_tracks, sizeof(Track));
@@ -109,15 +82,15 @@ void MidiPlayer::read_mthd(Song *s, bool old)
 
 	for (i = 0; i != s->num_tracks; i++, t++) {
 		if (!old) {
-			if (read_uint32_from_file() != 'MTrk')
+			if (_input->readDwordBE() != 'MTrk')
 				error("Midi track has no 'MTrk'");
 
-			t->data_size = read_uint32_from_file();
+			t->data_size = _input->readDwordLE();
 		} else {
-			uint32 pos = ftell(_input);
-			fseek(_input, 0, SEEK_END);
-			uint32 end = ftell(_input);
-			fseek(_input, pos, SEEK_SET);
+			uint32 pos = _input->pos();
+			_input->seek(0, SEEK_END);
+			uint32 end = _input->pos();
+			_input->seek(pos, SEEK_SET);
 			t->data_size = end - pos;
 		}
 
@@ -125,7 +98,7 @@ void MidiPlayer::read_mthd(Song *s, bool old)
 		if (t->data_ptr == NULL)
 			error("Out of memory when allocating MIDI track data");
 
-		read_from_file(t->data_ptr, t->data_size);
+		_input->read(t->data_ptr, t->data_size);
 
 		t->data_cur_size = t->data_size;
 		t->data_cur_ptr = t->data_ptr;
@@ -152,7 +125,7 @@ void MidiPlayer::read_one_song(Song *s)
 	s->num_tracks = 0;
 	s->tracks = NULL;
 
-	uint32 id = read_uint32_from_file();
+	uint32 id = _input->readDwordBE();
 
 	switch (id) {
 	case 'MThd':

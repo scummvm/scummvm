@@ -26,6 +26,7 @@
 #include "engine.h"
 #include "simon/midi.h"
 #include "sound/mixer.h"
+#include "file.h"
 
 /* Various other settings */
 //#define DUMP_CONTINOUS_MAINSCRIPT
@@ -39,14 +40,7 @@
 //#define DUMP_BITMAPS_FILE_NR 8
 //#define DUMP_DRAWN_BITMAPS
 
-uint fileReadByte(FILE *in);
-uint fileReadBE16(FILE *in);
-uint fileReadLE16(FILE *in);
-uint32 fileReadBE32(FILE *in);
-uint32 fileReadLE32(FILE *in);
-void fileWriteBE32(FILE *in, uint32 value);
-void fileWriteBE16(FILE *in, uint16 value);
-uint fileReadItemID(FILE *in);
+uint fileReadItemID(File *in);
 
 #define ARRAYSIZE(x) (sizeof(x)/sizeof(x[0]))
 #define CHECK_BOUNDS(x,y) assert((uint)(x)<ARRAYSIZE(y))
@@ -130,10 +124,10 @@ public:
 	};
 
 
-	FILE *_game_file;
-	FILE *_voice_file;
+	File *_game_file;
+	File *_voice_file;
 	uint32 *_voice_offsets;
-	FILE *_effects_file;
+	File *_effects_file;
 	uint32 *_effects_offsets;
 
 	byte *_stripped_txt_mem;
@@ -357,16 +351,16 @@ public:
 	SimonState(GameDetector *detector, OSystem *syst);
 	virtual ~SimonState();
 
-	int allocGamePcVars(FILE *in);
+	int allocGamePcVars(File *in);
 	Item *allocItem1();
 	void loginPlayerHelper(Item *item, int a, int b);
 	void loginPlayer();
 	void allocateStringTable(int num);
 	void setupStringTable(byte *mem, int num);
 	void setupLocalStringTable(byte *mem, int num);
-	void readGamePcText(FILE *in);
-	void readItemChildren(FILE *in, Item *item, uint tmp);
-	void readItemFromGamePc(FILE *in, Item *item);
+	void readGamePcText(File *in);
+	void readItemChildren(File *in, Item *item, uint tmp);
+	void readItemFromGamePc(File *in, Item *item);
 	bool loadGamePcFile(const char *filename);
 
 	byte *allocateItem(uint size);
@@ -380,11 +374,11 @@ public:
 	void allocTablesHeap();
 
 	Subroutine *createSubroutine(uint a);
-	void readSubroutine(FILE *in, Subroutine *sub);
+	void readSubroutine(File *in, Subroutine *sub);
 	SubroutineLine *createSubroutineLine(Subroutine *sub, int a);
-	void readSubroutineLine(FILE *in, SubroutineLine *new_table, Subroutine *sub);
-	byte *readSingleOpcode(FILE *in, byte *ptr);
-	void readSubroutineBlock(FILE *in);
+	void readSubroutineLine(File *in, SubroutineLine *new_table, Subroutine *sub);
+	byte *readSingleOpcode(File *in, byte *ptr);
+	void readSubroutineBlock(File *in);
 
 	Subroutine *getSubroutineByID(uint subroutine_id);
 
@@ -509,16 +503,16 @@ public:
 
 
 	uint loadTextFile(const char *filename, byte *dst);
-	FILE *openTablesFile(const char *filename);
-	void closeTablesFile(FILE *in);
+	File *openTablesFile(const char *filename);
+	void closeTablesFile(File *in);
 
 	uint loadTextFile_simon1(const char *filename, byte *dst);
-	FILE *openTablesFile_simon1(const char *filename);
-	void closeTablesFile_simon1(FILE *in);
+	File *openTablesFile_simon1(const char *filename);
+	void closeTablesFile_simon1(File *in);
 
 	uint loadTextFile_gme(const char *filename, byte *dst);
-	FILE *openTablesFile_gme(const char *filename);
-	void closeTablesFile_gme(FILE *in);
+	File *openTablesFile_gme(const char *filename);
+	void closeTablesFile_gme(File *in);
 
 	void readSfxFile(const char *filename);
 
@@ -796,8 +790,6 @@ public:
 	void set_dummy_cursor();
 
 	void set_volume(byte volume);
-
-	FILE *fopen_maybe_lowercase(const char *filename);
 
 	void save_or_load_dialog(bool load);
 	void o_unk_132_helper_3();

@@ -23,12 +23,13 @@
 #define SIMON_MIDI_H
 
 class MidiDriver;
+class File;
 struct MidiEvent;
 
 class MidiPlayer {
 public:
-	void read_all_songs(FILE *in);
-	void read_all_songs_old(FILE *in);
+	void read_all_songs(File *in);
+	void read_all_songs_old(File *in);
 	void initialize();
 	void shutdown();
 	void play();
@@ -63,7 +64,7 @@ private:
 
 	MidiDriver *_md;
 
-	FILE *_input;
+	File *_input;
 
 	uint _midi_var10, _midi_5;
 	bool _midi_var9;
@@ -91,9 +92,6 @@ private:
 
 	void read_from_file(void *dst, uint size);
 	void read_one_song(Song *s);
-	byte read_byte_from_file();
-	uint32 read_uint32_from_file();
-	uint16 read_uint16_from_file();
 
 	static uint32 track_read_gamma(Track *t);
 	static byte track_read_byte(Track *t);

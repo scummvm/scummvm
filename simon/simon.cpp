@@ -208,16 +208,16 @@ byte *SimonState::allocateTable(uint size)
 	return org;
 }
 
-int SimonState::allocGamePcVars(FILE *in)
+int SimonState::allocGamePcVars(File *in)
 {
 	uint item_array_size, item_array_inited, stringtable_num;
 	uint32 version;
 	uint i;
 
-	item_array_size = fileReadBE32(in);
-	version = fileReadBE32(in);
-	item_array_inited = fileReadBE32(in);
-	stringtable_num = fileReadBE32(in);
+	item_array_size = in->readDwordBE();
+	version = in->readDwordBE();
+	item_array_inited = in->readDwordBE();
+	stringtable_num = in->readDwordBE();
 
 	item_array_inited += 2;				/* first two items are predefined */
 	item_array_size += 2;
@@ -315,20 +315,20 @@ void SimonState::setupLocalStringTable(byte *mem, int num)
 	}
 }
 
-void SimonState::readSubroutineLine(FILE *in, SubroutineLine *sl, Subroutine *sub)
+void SimonState::readSubroutineLine(File *in, SubroutineLine *sl, Subroutine *sub)
 {
 	byte line_buffer[1024], *q = line_buffer;
 	int size;
 
 	if (sub->id == 0) {
-		sl->cond_a = fileReadBE16(in);
-		sl->cond_b = fileReadBE16(in);
-		sl->cond_c = fileReadBE16(in);
+		sl->cond_a = in->readWordBE();
+		sl->cond_b = in->readWordBE();
+		sl->cond_c = in->readWordBE();
 	}
 
-	while ((*q = fileReadByte(in)) != 0xFF) {
+	while ((*q = in->readByte()) != 0xFF) {
 		if (*q == 87) {
-			fileReadBE16(in);
+			in->readWordBE();
 		} else {
 			q = readSingleOpcode(in, q);
 		}
@@ -373,9 +373,9 @@ SubroutineLine *SimonState::createSubroutineLine(Subroutine *sub, int where)
 	return sl;
 }
 
-void SimonState::readSubroutine(FILE *in, Subroutine *sub)
+void SimonState::readSubroutine(File *in, Subroutine *sub)
 {
-	while (fileReadBE16(in) == 0) {
+	while (in->readWordBE() == 0) {
 		readSubroutineLine(in, createSubroutineLine(sub, 0xFFFF), sub);
 	}
 }
@@ -394,10 +394,10 @@ Subroutine *SimonState::createSubroutine(uint id)
 	return sub;
 }
 
-void SimonState::readSubroutineBlock(FILE *in)
+void SimonState::readSubroutineBlock(File *in)
 {
-	while (fileReadBE16(in) == 0) {
-		readSubroutine(in, createSubroutine(fileReadBE16(in)));
+	while (in->readWordBE() == 0) {
+		readSubroutine(in, createSubroutine(in->readWordBE()));
 	}
 }
 
@@ -780,7 +780,7 @@ void SimonState::loadTablesIntoMem(uint subr_id)
 	int i;
 	uint min_num, max_num;
 	char filename[30];
-	FILE *in;
+	File *in;
 
 	p = _tbl_list;
 	if (p == NULL)
@@ -866,7 +866,7 @@ uint SimonState::loadTextFile_gme(const char *filename, byte *dst)
 	return size;
 }
 
-FILE *SimonState::openTablesFile_gme(const char *filename)
+File *SimonState::openTablesFile_gme(const char *filename)
 {
 	uint res;
 	uint32 offs;
@@ -874,11 +874,11 @@ FILE *SimonState::openTablesFile_gme(const char *filename)
 	res = atoi(filename + 6) + gss->TABLE_INDEX_BASE - 1;
 	offs = _game_offsets_ptr[res];
 
-	fseek(_game_file, offs, SEEK_SET);
+	_game_file->seek(offs, SEEK_SET);
 	return _game_file;
 }
 
-void SimonState::closeTablesFile_gme(FILE *in)
+void SimonState::closeTablesFile_gme(File *in)
 {
 	/* not needed */
 }
@@ -886,35 +886,37 @@ void SimonState::closeTablesFile_gme(FILE *in)
 /* Simon1DOS load tables file */
 uint SimonState::loadTextFile_simon1(const char *filename, byte *dst)
 {
-	FILE *fo = fopen_maybe_lowercase(filename);
+	File fo;
+	fo.open(filename, _gameDataPath);
 	uint32 size;
 
-	if (fo == NULL)
+	if (fo.isOpen() == false)
 		error("loadTextFile: Cannot open '%s'", filename);
 
-	fseek(fo, 0, SEEK_END);
-	size = ftell(fo);
-	fseek(fo, 0, SEEK_SET);
+	fo.seek(0, SEEK_END);
+	size = fo.pos();
+	fo.seek(0, SEEK_SET);
 
-	if (fread(dst, size, 1, fo) != 1)
+	if (fo.read(dst, size) != size)
 		error("loadTextFile: fread failed");
-	fclose(fo);
+	fo.close();
 
 	return size;
 }
 
 
-FILE *SimonState::openTablesFile_simon1(const char *filename)
+File *SimonState::openTablesFile_simon1(const char *filename)
 {
-	FILE *fo = fopen_maybe_lowercase(filename);
-	if (fo == NULL)
+	File *fo = new File();
+	fo->open(filename, _gameDataPath);
+	if (fo->isOpen() == false)
 		error("openTablesFile: Cannot open '%s'", filename);
 	return fo;
 }
 
-void SimonState::closeTablesFile_simon1(FILE *in)
+void SimonState::closeTablesFile_simon1(File *in)
 {
-	fclose(in);
+	in->close();
 }
 
 uint SimonState::loadTextFile(const char *filename, byte *dst)
@@ -925,7 +927,7 @@ uint SimonState::loadTextFile(const char *filename, byte *dst)
 		return loadTextFile_gme(filename, dst);
 }
 
-FILE *SimonState::openTablesFile(const char *filename)
+File *SimonState::openTablesFile(const char *filename)
 {
 	if (_game == GAME_SIMON1DOS)
 		return openTablesFile_simon1(filename);
@@ -933,7 +935,7 @@ FILE *SimonState::openTablesFile(const char *filename)
 		return openTablesFile_gme(filename);
 }
 
-void SimonState::closeTablesFile(FILE *in)
+void SimonState::closeTablesFile(File *in)
 {
 	if (_game == GAME_SIMON1DOS)
 		closeTablesFile_simon1(in);
@@ -1436,23 +1438,24 @@ uint SimonState::item_get_icon_number(Item *item)
 
 void SimonState::loadIconFile()
 {
-	FILE *in = fopen_maybe_lowercase("ICON.DAT");
+	File in;
+	in.open("ICON.DAT", _gameDataPath);
 	uint size;
 
-	if (in == NULL)
+	if (in.isOpen() == false)
 		error("Cannot open icon.dat");
 
-	fseek(in, 0, SEEK_END);
-	size = ftell(in);
+	in.seek(0, SEEK_END);
+	size = in.pos();
 
 	_icon_file_ptr = (byte *)malloc(size);
 	if (_icon_file_ptr == NULL)
 		error("Out of icon memory");
 
-	fseek(in, 0, SEEK_SET);
+	in.seek(0, SEEK_SET);
 
-	fread(_icon_file_ptr, size, 1, in);
-	fclose(in);
+	in.read(_icon_file_ptr, size);
+	in.close();
 }
 
 
@@ -2282,7 +2285,7 @@ void SimonState::o_load_game()
 int SimonState::display_savegame_list(int curpos, bool load, char *dst)
 {
 	int slot, last_slot;
-	FILE *in;
+	File in;
 
 	showMessageFormat("\xC");
 
@@ -2291,12 +2294,12 @@ int SimonState::display_savegame_list(int curpos, bool load, char *dst)
 	slot = curpos;
 
 	while (curpos + 6 > slot) {
-		in = fopen(gen_savename(slot), "rb");
-		if (!in)
+		in.open(gen_savename(slot), getSavePath());
+		if (in.isOpen() == false)
 			break;
 
-		fread(dst, 1, 18, in);
-		fclose(in);
+		in.read(dst, 18);
+		in.close();
 		last_slot = slot;
 		if (slot < 10)
 			showMessageFormat(" ");
@@ -2316,10 +2319,10 @@ int SimonState::display_savegame_list(int curpos, bool load, char *dst)
 		}
 	} else {
 		if (curpos + 6 == slot) {
-			in = fopen(gen_savename(slot), "rb");
-			if (in != NULL) {
+			in.open(gen_savename(slot), getSavePath());
+			if (in.isOpen() == true) {
 				slot++;
-				fclose(in);
+				in.close();
 			}
 		}
 	}
@@ -3287,20 +3290,20 @@ void SimonState::showmessage_helper_2()
 void SimonState::readSfxFile(const char *filename)
 {
 	if (!(_game & GAME_SIMON2)) {
-		FILE *in;
+		File in;
 		uint32 size;
 
-		in = fopen_maybe_lowercase(filename);
+		in.open(filename, _gameDataPath);
 
-		if (in == NULL) {
+		if (in.isOpen() == false) {
 			warning("readSfxFile: Cannot load sfx file %s", filename);
 			return;
 		}
 
-		fseek(in, 0, SEEK_END);
-		size = ftell(in);
+		in.seek(0, SEEK_END);
+		size = in.pos();
 
-		fseek(in, 0, SEEK_SET);
+		in.seek(0, SEEK_SET);
 
 		/* stop all sounds */
 		_mixer->stopAll();
@@ -3313,9 +3316,9 @@ void SimonState::readSfxFile(const char *filename)
 		if (_sfx_heap == NULL)
 			error("readSfxFile: Not enough SFX memory");
 
-		fread(_sfx_heap, size, 1, in);
+		in.read(_sfx_heap, size);
 
-		fclose(in);
+		in.close();
 	} else {
 		int res;
 		uint32 offs;
@@ -4042,7 +4045,7 @@ void SimonState::print_char_helper_6(uint i)
 void SimonState::read_vga_from_datfile_1(uint vga_id)
 {
 	if (_game == GAME_SIMON1DOS) {
-		FILE *in;
+		File in;
 		char buf[50];
 		uint32 size;
 		// FIXME - weird hack to make the beard show up when wearing it (see bug #590800) 
@@ -4051,20 +4054,20 @@ void SimonState::read_vga_from_datfile_1(uint vga_id)
 		else 
 			sprintf(buf, "%.3d%d.VGA", vga_id >> 1, (vga_id & 1) + 1);
 
-		in = fopen_maybe_lowercase(buf);
-		if (in == NULL) {
+		in.open(buf, _gameDataPath);
+		if (in.isOpen() == false) {
 			warning("read_vga_from_datfile_1: cannot open %s", buf);
 			return;
 		}
 
-		fseek(in, 0, SEEK_END);
-		size = ftell(in);
-		fseek(in, 0, SEEK_SET);
+		in.seek(0, SEEK_END);
+		size = in.pos();
+		in.seek(0, SEEK_SET);
 
-		if (fread(_vga_buffer_pointers[11].vgaFile2, size, 1, in) != 1)
+		if (in.read(_vga_buffer_pointers[11].vgaFile2, size) != size)
 			error("read_vga_from_datfile_1: read failed");
 
-		fclose(in);
+		in.close();
 	} else {
 		uint32 offs_a = _game_offsets_ptr[vga_id];
 		uint32 size = _game_offsets_ptr[vga_id + 1] - offs_a;
@@ -4076,27 +4079,27 @@ void SimonState::read_vga_from_datfile_1(uint vga_id)
 byte *SimonState::read_vga_from_datfile_2(uint id)
 {
 	if (_game == GAME_SIMON1DOS) {
-		FILE *in;
+		File in;
 		char buf[50];
 		uint32 size;
 		byte *dst;
 
 		sprintf(buf, "%.3d%d.VGA", id >> 1, (id & 1) + 1);
 
-		in = fopen_maybe_lowercase(buf);
-		if (in == NULL)
+		in.open(buf, _gameDataPath);
+		if (in.isOpen() == false)
 			error("read_vga_from_datfile_2: cannot open %s", buf);
 
-		fseek(in, 0, SEEK_END);
-		size = ftell(in);
-		fseek(in, 0, SEEK_SET);
+		in.seek(0, SEEK_END);
+		size = in.pos();
+		in.seek(0, SEEK_SET);
 
 		dst = setup_vga_destination(size);
 
-		if (fread(dst, size, 1, in) != 1)
+		if (in.read(dst, size) != size)
 			error("read_vga_from_datfile_2: read failed");
 
-		fclose(in);
+		in.close();
 
 		return dst;
 	} else {
@@ -4113,9 +4116,8 @@ byte *SimonState::read_vga_from_datfile_2(uint id)
 
 void SimonState::resfile_read(void *dst, uint32 offs, uint32 size)
 {
-	if (fseek(_game_file, offs, SEEK_SET) != 0)
-		error("resfile_read(%d,%d) seek failed", offs, size);
-	if (fread(dst, size, 1, _game_file) != 1)
+	_game_file->seek(offs, SEEK_SET);
+	if (_game_file->read(dst, size) != size)
 		error("resfile_read(%d,%d) read failed", offs, size);
 }
 
@@ -4123,9 +4125,9 @@ void SimonState::resfile_read(void *dst, uint32 offs, uint32 size)
 void SimonState::openGameFile()
 {
 	if (_game != GAME_SIMON1DOS) {
-		_game_file = fopen_maybe_lowercase(gss->gme_filename);
+		_game_file->open(gss->gme_filename, _gameDataPath);
 
-		if (_game_file == NULL)
+		if (_game_file->isOpen() == false)
 			error("cannot open game file '%s'", gss->gme_filename);
 
 		_game_offsets_ptr = (uint32 *)malloc(gss->NUM_GAME_OFFSETS * sizeof(uint32));
@@ -4377,7 +4379,7 @@ void SimonState::go()
 void SimonState::shutdown()
 {
 	if (_game_file) {
-		fclose(_game_file);
+		delete _game_file;
 		_game_file = NULL;
 	}
 }
@@ -4451,7 +4453,7 @@ void SimonState::delay(uint delay)
 
 bool SimonState::save_game(uint slot, const char *caption)
 {
-	FILE *f;
+	File f;
 	uint item_index, num_item, i;
 	TimeEvent *te;
 
@@ -4461,42 +4463,42 @@ bool SimonState::save_game(uint slot, const char *caption)
 	errno = 0;
 #endif
 
-	f = fopen(gen_savename(slot), "wb");
-	if (f == NULL) {
+	f.open(gen_savename(slot), getSavePath(), 2);
+	if (f.isOpen() == false) {
 		_lock_word &= ~0x100;
 		return false;
 	}
 
-	fwrite(caption, 1, 0x12, f);
+	f.write((char*)caption, 0x12);
 
-	fileWriteBE32(f, _itemarray_inited - 1);
-	fileWriteBE32(f, 0xFFFFFFFF);
-	fileWriteBE32(f, 0);
-	fileWriteBE32(f, 0);
+	f.writeDwordBE(_itemarray_inited - 1);
+	f.writeDwordBE(0xFFFFFFFF);
+	f.writeDwordBE(0);
+	f.writeDwordBE(0);
 
 	i = 0;
 	for (te = _first_time_struct; te; te = te->next)
 		i++;
 
-	fileWriteBE32(f, i);
+	f.writeDwordBE(i);
 	for (te = _first_time_struct; te; te = te->next) {
-		fileWriteBE32(f, te->time + _base_time);
-		fileWriteBE16(f, te->subroutine_id);
+		f.writeDwordBE(te->time + _base_time);
+		f.writeWordBE(te->subroutine_id);
 	}
 
 	item_index = 1;
 	for (num_item = _itemarray_inited - 1; num_item; num_item--) {
 		Item *item = _itemarray_ptr[item_index++];
 
-		fileWriteBE16(f, item->parent);
-		fileWriteBE16(f, item->sibling);
-		fileWriteBE16(f, item->unk3);
-		fileWriteBE16(f, item->unk4);
+		f.writeWordBE(item->parent);
+		f.writeWordBE(item->sibling);
+		f.writeWordBE(item->unk3);
+		f.writeWordBE(item->unk4);
 
 		{
 			Child1 *child1 = findChildOfType1(item);
 			if (child1) {
-				fileWriteBE16(f, child1->fr2);
+				f.writeWordBE(child1->fr2);
 			}
 		}
 
@@ -4505,12 +4507,12 @@ bool SimonState::save_game(uint slot, const char *caption)
 			uint i, j;
 
 			if (child2) {
-				fileWriteBE32(f, child2->avail_props);
+				f.writeDwordBE(child2->avail_props);
 				i = child2->avail_props & 1;
 
 				for (j = 1; j < 16; j++) {
 					if ((1 << j) & child2->avail_props) {
-						fileWriteBE16(f, child2->array[i++]);
+						f.writeWordBE(child2->array[i++]);
 					}
 				}
 			}
@@ -4521,7 +4523,7 @@ bool SimonState::save_game(uint slot, const char *caption)
 			if (child9) {
 				uint i;
 				for (i = 0; i != 4; i++) {
-					fileWriteBE16(f, child9->array[i]);
+					f.writeWordBE(child9->array[i]);
 				}
 			}
 		}
@@ -4529,19 +4531,19 @@ bool SimonState::save_game(uint slot, const char *caption)
 
 	/* write the 255 variables */
 	for (i = 0; i != 255; i++) {
-		fileWriteBE16(f, readVariable(i));
+		f.writeWordBE(readVariable(i));
 	}
 
 	/* write the items in array 6 */
 	for (i = 0; i != 10; i++) {
-		fileWriteBE16(f, itemPtrToID(_item_array_6[i]));
+		f.writeWordBE(itemPtrToID(_item_array_6[i]));
 	}
 
 	/* Write the bits in array 1 & 2 */
 	for (i = 0; i != 32; i++)
-		fileWriteBE16(f, _bit_array[i]);
+		f.writeWordBE(_bit_array[i]);
 
-	fclose(f);
+	f.close();
 
 	_lock_word &= ~0x100;
 
@@ -4551,16 +4553,15 @@ bool SimonState::save_game(uint slot, const char *caption)
 char *SimonState::gen_savename(int slot)
 {
 	static char buf[256];
-	const char *dir = getSavePath();
 
-	sprintf(buf, "%sSAVE.%.3d", dir, slot);
+	sprintf(buf, "SAVE.%.3d", slot);
 	return buf;
 }
 
 bool SimonState::load_game(uint slot)
 {
 	char ident[18];
-	FILE *f;
+	File f;
 	uint num, item_index, i;
 
 	_lock_word |= 0x100;
@@ -4569,33 +4570,32 @@ bool SimonState::load_game(uint slot)
 	errno = 0;
 #endif
 
-	f = fopen(gen_savename(slot), "rb");
-	if (f == NULL) {
+	f.open(gen_savename(slot), getSavePath(), 1);
+	if (f.isOpen() == false) {
 		_lock_word &= ~0x100;
 		return false;
 	}
 
-	fread(ident, 1, 18, f);
+	f.read(ident, 18);
 
-	num = fileReadBE32(f);
+	num = f.readDwordBE();
 
-	if (fileReadBE32(f) != 0xFFFFFFFF || num != _itemarray_inited - 1) {
-		fclose(f);
+	if (f.readDwordBE() != 0xFFFFFFFF || num != _itemarray_inited - 1) {
+		f.close();
 		_lock_word &= ~0x100;
 		return false;
 	}
 
-	fileReadBE32(f);
-	fileReadBE32(f);
-
+	f.readDwordBE();
+	f.readDwordBE();
 	_no_parent_notify = true;
 
 
 	/* add all timers */
 	killAllTimers();
-	for (num = fileReadBE32(f); num; num--) {
-		uint32 timeout = fileReadBE32(f);
-		uint16 func_to_call = fileReadBE16(f);
+	for (num = f.readDwordBE(); num; num--) {
+		uint32 timeout = f.readDwordBE();
+		uint16 func_to_call = f.readWordBE();
 		addTimeEvent(timeout, func_to_call);
 	}
 
@@ -4603,8 +4603,8 @@ bool SimonState::load_game(uint slot)
 	for (num = _itemarray_inited - 1; num; num--) {
 		Item *item = _itemarray_ptr[item_index++], *parent_item;
 
-		uint parent = fileReadBE16(f);
-		uint sibling = fileReadBE16(f);
+		uint parent = f.readWordBE();
+		uint sibling = f.readWordBE();
 
 		parent_item = derefItem(parent);
 
@@ -4615,13 +4615,13 @@ bool SimonState::load_game(uint slot)
 			item->sibling = sibling;
 		}
 
-		item->unk3 = fileReadBE16(f);
-		item->unk4 = fileReadBE16(f);
+		item->unk3 = f.readWordBE();
+		item->unk4 = f.readWordBE();
 
 		{
 			Child1 *child1 = findChildOfType1(item);
 			if (child1 != NULL) {
-				child1->fr2 = fileReadBE16(f);
+				child1->fr2 = f.readWordBE();
 			}
 		}
 
@@ -4629,12 +4629,12 @@ bool SimonState::load_game(uint slot)
 			Child2 *child2 = findChildOfType2(item);
 			uint i, j;
 			if (child2 != NULL) {
-				child2->avail_props = fileReadBE32(f);
+				child2->avail_props = f.readDwordBE();
 				i = child2->avail_props & 1;
 
 				for (j = 1; j < 16; j++) {
 					if ((1 << j) & child2->avail_props) {
-						child2->array[i++] = fileReadBE16(f);
+						child2->array[i++] = f.readWordBE();
 					}
 				}
 			}
@@ -4645,7 +4645,7 @@ bool SimonState::load_game(uint slot)
 			if (child9) {
 				uint i;
 				for (i = 0; i != 4; i++) {
-					child9->array[i] = fileReadBE16(f);
+					child9->array[i] = f.readWordBE();
 				}
 			}
 		}
@@ -4654,19 +4654,19 @@ bool SimonState::load_game(uint slot)
 
 	/* read the 255 variables */
 	for (i = 0; i != 255; i++) {
-		writeVariable(i, fileReadBE16(f));
+		writeVariable(i, f.readWordBE());
 	}
 
 	/* write the items in array 6 */
 	for (i = 0; i != 10; i++) {
-		_item_array_6[i] = derefItem(fileReadBE16(f));
+		_item_array_6[i] = derefItem(f.readWordBE());
 	}
 
 	/* Write the bits in array 1 & 2 */
 	for (i = 0; i != 32; i++)
-		_bit_array[i] = fileReadBE16(f);
+		_bit_array[i] = f.readWordBE();
 
-	fclose(f);
+	f.close();
 
 	_no_parent_notify = false;
 
@@ -4690,12 +4690,13 @@ void SimonState::initSound()
 
 		_voice_offsets = NULL;
 
-		_voice_file = fopen_maybe_lowercase(s);
-		if (_voice_file == NULL) {
+		_voice_file = new File();
+		_voice_file->open(s, _gameDataPath);
+		if (_voice_file->isOpen() == false) {
 			warning("Cannot open voice file %s, trying %s", s, s2);
 			if (s2) {
-				_voice_file = fopen_maybe_lowercase(s2);
-				if (_voice_file == NULL) {
+				_voice_file->open(s2, _gameDataPath);
+				if (_voice_file->isOpen() == false) {
 					warning("Cannot open voice file %s", s2);
 					return;
 				}
@@ -4707,18 +4708,19 @@ void SimonState::initSound()
 		if (_voice_offsets == NULL)
 			error("Out of memory for voice offsets");
 
-		if (fread(_voice_offsets, gss->NUM_VOICE_RESOURCES * sizeof(uint32), 1, _voice_file) != 1)
+		if (_voice_file->read(_voice_offsets, gss->NUM_VOICE_RESOURCES * sizeof(uint32)) != gss->NUM_VOICE_RESOURCES * sizeof(uint32))
 			error("Cannot read voice offsets");
 
 		_effects_offsets = NULL;
-		_effects_file = fopen_maybe_lowercase(e);
-		if (_effects_file != NULL)
+		_effects_file = new File();
+		_effects_file->open(e, _gameDataPath);
+		if (_effects_file->isOpen() == true)
 		{
 			_effects_offsets = (uint32 *)malloc(gss->NUM_EFFECTS_RESOURCES * sizeof(uint32));
 			if (_effects_offsets == NULL)
 				error("Out of memory for effects offsets");
 
-			if (fread(_effects_offsets, gss->NUM_EFFECTS_RESOURCES * sizeof(uint32), 1, _effects_file) != 1)
+			if (_effects_file->read(_effects_offsets, gss->NUM_EFFECTS_RESOURCES * sizeof(uint32)) != gss->NUM_EFFECTS_RESOURCES * sizeof(uint32))
 				error("Cannot read effects offsets");
 		}
 
@@ -4777,13 +4779,13 @@ struct VocBlockHeader {
 void SimonState::playVoice(uint voice)
 {
 	_mixer->stop(_voice_sound);
-	fseek(_voice_file, _voice_offsets[voice], SEEK_SET);
+	_voice_file->seek(_voice_offsets[voice], SEEK_SET);
 
 	if (!_effects_offsets) {			/* WAVE audio */
 		WaveHeader wave_hdr;
 		uint32 data[2];
 
-		if (fread(&wave_hdr, sizeof(wave_hdr), 1, _voice_file) != 1 ||
+		if (_voice_file->read(&wave_hdr, sizeof(wave_hdr)) != sizeof(wave_hdr) ||
 				wave_hdr.riff != MKID('RIFF') || wave_hdr.wave != MKID('WAVE')
 				|| wave_hdr.fmt != MKID('fmt ') || READ_LE_UINT16(&wave_hdr.format_tag) != 1
 				|| READ_LE_UINT16(&wave_hdr.channels) != 1
@@ -4792,10 +4794,10 @@ void SimonState::playVoice(uint voice)
 			return;
 		}
 
-		fseek(_voice_file, READ_LE_UINT32(&wave_hdr.size) - sizeof(wave_hdr) + 20, SEEK_CUR);
+		_voice_file->seek(READ_LE_UINT32(&wave_hdr.size) - sizeof(wave_hdr) + 20, SEEK_CUR);
 
-		data[0] = fileReadLE32(_voice_file);
-		data[1] = fileReadLE32(_voice_file);
+		data[0] = _voice_file->readDwordLE();
+		data[1] = _voice_file->readDwordLE();
 		if (												//fread(data, sizeof(data), 1, _voice_file) != 1 ||
 				 data[0] != 'atad') {
 			warning("playVoice(%d): cannot read data header", voice);
@@ -4803,7 +4805,7 @@ void SimonState::playVoice(uint voice)
 		}
 
 		byte *buffer = (byte *)malloc(data[1]);
-		fread(buffer, data[1], 1, _voice_file);
+		_voice_file->read(buffer, data[1]);
 
 		_mixer->playRaw(&_voice_sound, buffer, data[1], READ_LE_UINT32(&wave_hdr.samples_per_sec),
 										 SoundMixer::FLAG_UNSIGNED);
@@ -4812,21 +4814,21 @@ void SimonState::playVoice(uint voice)
 		VocBlockHeader voc_block_hdr;
 		uint32 size;
 
-		if (fread(&voc_hdr, sizeof(voc_hdr), 1, _voice_file) != 1 ||
+		if (_voice_file->read(&voc_hdr, sizeof(voc_hdr)) != sizeof(voc_hdr) ||
 				strncmp((char *)voc_hdr.desc, "Creative Voice File\x1A", 10) != 0) {
 			warning("playVoice(%d): cannot read voc header", voice);
 			return;
 		}
 
-		fread(&size, 4, 1, _voice_file);
+		_voice_file->read(&size, 4);
 		size = size & 0xffffff;
-		fseek(_voice_file, -1, SEEK_CUR);
-		fread(&voc_block_hdr, sizeof(voc_block_hdr), 1, _voice_file);
+		_voice_file->seek(-1, SEEK_CUR);
+		_voice_file->read(&voc_block_hdr, sizeof(voc_block_hdr));
 
 		uint32 samples_per_sec = 1000000L / (256L - (long)voc_block_hdr.tc);
 
 		byte *buffer = (byte *)malloc(size);
-		fread(buffer, size, 1, _voice_file);
+		_voice_file->read(buffer, size);
 
 		_mixer->playRaw(&_voice_sound, buffer, size, samples_per_sec, SoundMixer::FLAG_UNSIGNED);
 	}
@@ -4842,24 +4844,24 @@ void SimonState::playSound(uint sound)
 			uint32 size;
 
 			_mixer->stop(_effects_sound);
-			fseek(_effects_file, _effects_offsets[sound], SEEK_SET);
+			_effects_file->seek(_effects_offsets[sound], SEEK_SET);
 
 
-			if (fread(&voc_hdr, sizeof(voc_hdr), 1, _effects_file) != 1 ||
+			if (_effects_file->read(&voc_hdr, sizeof(voc_hdr)) != sizeof(voc_hdr) ||
 					strncmp((char *)voc_hdr.desc, "Creative Voice File\x1A", 10) != 0) {
 				warning("playSound(%d): cannot read voc header", sound);
 				return;
 			}
 
-			fread(&size, 4, 1, _effects_file);
+			_effects_file->read(&size, 4);
 			size = size & 0xffffff;
-			fseek(_effects_file, -1, SEEK_CUR);
-			fread(&voc_block_hdr, sizeof(voc_block_hdr), 1, _effects_file);
+			_effects_file->seek(-1, SEEK_CUR);
+			_effects_file->read(&voc_block_hdr, sizeof(voc_block_hdr));
 
 			uint32 samples_per_sec = 1000000L / (256L - (long)voc_block_hdr.tc);
 
 			byte *buffer = (byte *)malloc(size);
-			fread(buffer, size, 1, _effects_file);
+			_effects_file->read(buffer, size);
 
 			_mixer->playRaw(&_effects_sound, buffer, size, samples_per_sec, SoundMixer::FLAG_UNSIGNED);
 		} else {
@@ -4897,26 +4899,24 @@ void SimonState::playSound(uint sound)
 
 void SimonState::playMusic(uint music)
 {
-	FILE *f;
-
 	midi.shutdown();
 
 	/* FIXME: not properly implemented */
 	if (_game & GAME_WIN) {
-		fseek(_game_file, _game_offsets_ptr[gss->MUSIC_INDEX_BASE + music] - 1, SEEK_SET);
-		f = _game_file;
-
+		_game_file->seek(_game_offsets_ptr[gss->MUSIC_INDEX_BASE + music] - 1, SEEK_SET);
+		File *f = _game_file;
 		midi.read_all_songs(f);
 	} else {
 		char buf[50];
+		File *f = new File();
 		sprintf(buf, "MOD%d.MUS", music);
-		f = fopen_maybe_lowercase(buf);
-		if (f == NULL) {
+		f->open(buf, _gameDataPath);
+		if (f->isOpen() == false) {
 			warning("Cannot load music from '%s'", buf);
 			return;
 		}
 		midi.read_all_songs_old(f);
-		fclose(f);
+		f->close();
 	}
 
 	midi.initialize();

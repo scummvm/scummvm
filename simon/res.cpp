@@ -93,62 +93,15 @@ static const char *const opcode_arg_table_simon2dos[256] = {
 	" ", " ", "BT ", " ", "B "
 };
 
-FILE *SimonState::fopen_maybe_lowercase(const char *filename)
-{
-	FILE *in;
-	char buf[256], dotbuf[256], *e;
-	const char *s = _gameDataPath;
-
-	if (filename == NULL || *filename == '\0')
-		return NULL;
-
-	strcpy(buf, s);
-	strcat(buf, filename);
-	strcpy(dotbuf, buf);
-	strcat(dotbuf, ".");					// '.' appended version
-								// for dumb vfat drivers 
-
-	/* original filename */
-	in = fopen(buf, "rb");
-	if (in)
-		return in;
-
-	/* lowercase original filename */
-	e = buf + strlen(s);
-	do
-		*e = tolower(*e);
-	while (*e++);
-	in = fopen(buf, "rb");
-	if (in)
-		return in;
-
-	if (strchr(buf, '.'))
-		return NULL;
-
-	/* dot appended original filename */
-	in = fopen(dotbuf, "rb");
-	if (in)
-		return in;
-
-	/* lowercase dot appended */
-	e = dotbuf + strlen(s);
-	do
-		*e = tolower(*e);
-	while (*e++);
-	in = fopen(dotbuf, "rb");
-
-	return in;
-}
-
 bool SimonState::loadGamePcFile(const char *filename)
 {
-	FILE *in;
+	File * in = new File();
 	int num_inited_objects;
 	int i, file_size;
 
 	/* read main gamepc file */
-	in = fopen_maybe_lowercase(filename);
-	if (in == NULL)
+	in->open(filename, _gameDataPath);
+	if (in->isOpen() == false)
 		return false;
 
 	num_inited_objects = allocGamePcVars(in);
@@ -163,22 +116,22 @@ bool SimonState::loadGamePcFile(const char *filename)
 
 	readSubroutineBlock(in);
 
-	fclose(in);
+	in->close();
 
 	/* Read list of TABLE resources */
-	in = fopen_maybe_lowercase("TBLLIST");
-	if (in == NULL)
+	in->open("TBLLIST", _gameDataPath);
+	if (in->isOpen() == false)
 		return false;
 
-	fseek(in, 0, SEEK_END);
-	file_size = ftell(in);
+	in->seek(0, SEEK_END);
+	file_size = in->pos();
 
 	_tbl_list = (byte *)malloc(file_size);
 	if (_tbl_list == NULL)
 		error("Out of memory for strip table list");
-	fseek(in, 0, SEEK_SET);
-	fread(_tbl_list, file_size, 1, in);
-	fclose(in);
+	in->seek(0, SEEK_SET);
+	in->read(_tbl_list, file_size);
+	in->close();
 
 	/* Remember the current state */
 	_subroutine_list_org = _subroutine_list;
@@ -186,64 +139,64 @@ bool SimonState::loadGamePcFile(const char *filename)
 	_tablesheap_curpos_org = _tablesheap_curpos;
 
 	/* Read list of TEXT resources */
-	in = fopen_maybe_lowercase("STRIPPED.TXT");
-	if (in == NULL)
+	in->open("STRIPPED.TXT", _gameDataPath);
+	if (in->isOpen() == false)
 		return false;
 
-	fseek(in, 0, SEEK_END);
-	file_size = ftell(in);
+	in->seek(0, SEEK_END);
+	file_size = in->pos();
 	_stripped_txt_mem = (byte *)malloc(file_size);
 	if (_stripped_txt_mem == NULL)
 		error("Out of memory for strip text list");
-	fseek(in, 0, SEEK_SET);
-	fread(_stripped_txt_mem, file_size, 1, in);
-	fclose(in);
+	in->seek(0, SEEK_SET);
+	in->read(_stripped_txt_mem, file_size);
+	in->close();
 
 	return true;
 }
 
-void SimonState::readGamePcText(FILE *in)
+void SimonState::readGamePcText(File *in)
 {
 	uint text_size;
 	byte *text_mem;
 
-	_text_size = text_size = fileReadBE32(in);
+	_text_size = text_size = in->readDwordBE();
 	text_mem = (byte *)malloc(text_size);
 	if (text_mem == NULL)
 		error("Out of text memory");
 
-	fread(text_mem, text_size, 1, in);
+	in->read(text_mem, text_size);
 
 	setupStringTable(text_mem, _stringtab_num);
 }
 
-void SimonState::readItemFromGamePc(FILE *in, Item *item)
+void SimonState::readItemFromGamePc(File *in, Item *item)
 {
 	uint32 type;
 
-	item->unk2 = fileReadBE16(in);
-	item->unk1 = fileReadBE16(in);
-	item->unk3 = fileReadBE16(in);
+	item->unk2 = in->readWordBE();
+	item->unk1 = in->readWordBE();
+	item->unk3 = in->readWordBE();
 	item->sibling = (uint16)fileReadItemID(in);
 	item->child = (uint16)fileReadItemID(in);
 	item->parent = (uint16)fileReadItemID(in);
-	fileReadBE16(in);
-	item->unk4 = fileReadBE16(in);
+	in->readWordBE();
+	item->unk4 = in->readWordBE();
 	item->children = NULL;
 
-	type = fileReadBE32(in);
+	type = in->readDwordBE();
 	while (type) {
-		type = fileReadBE16(in);
+		type = in->readWordBE();
 		if (type != 0)
 			readItemChildren(in, item, type);
 	}
 }
 
-void SimonState::readItemChildren(FILE *in, Item *item, uint type)
+void SimonState::readItemChildren(File *in, Item *item, uint type)
 {
 	if (type == 1) {
-		uint fr1 = fileReadBE16(in);
-		uint fr2 = fileReadBE16(in);
+		uint fr1 = in->readWordBE();
+		uint fr2 = in->readWordBE();
 		uint i, size;
 		uint j, k;
 		Child1 *child;
@@ -261,7 +214,7 @@ void SimonState::readItemChildren(FILE *in, Item *item, uint type)
 			if (j & 3)
 				child->array[k++] = (uint16)fileReadItemID(in);
 	} else if (type == 2) {
-		uint32 fr = fileReadBE32(in);
+		uint32 fr = in->readDwordBE();
 		uint i, k, size;
 		Child2 *child;
 
@@ -275,27 +228,27 @@ void SimonState::readItemChildren(FILE *in, Item *item, uint type)
 
 		k = 0;
 		if (fr & 1) {
-			child->array[k++] = (uint16)fileReadBE32(in);
+			child->array[k++] = (uint16)in->readDwordBE();
 		}
 		for (i = 1; i != 16; i++)
 			if (fr & (1 << i))
-				child->array[k++] = fileReadBE16(in);
+				child->array[k++] = in->readWordBE();
 
-		child->string_id = (uint16)fileReadBE32(in);
+		child->string_id = (uint16)in->readDwordBE();
 	} else {
 		error("readItemChildren: invalid mode");
 	}
 }
 
-uint fileReadItemID(FILE *in)
+uint fileReadItemID(File *in)
 {
-	uint32 val = fileReadBE32(in);
+	uint32 val = in->readDwordBE();
 	if (val == 0xFFFFFFFF)
 		return 0;
 	return val + 2;
 }
 
-byte *SimonState::readSingleOpcode(FILE *in, byte *ptr)
+byte *SimonState::readSingleOpcode(File *in, byte *ptr)
 {
 	int i, l;
 	const char *string_ptr;
@@ -339,20 +292,20 @@ byte *SimonState::readSingleOpcode(FILE *in, byte *ptr)
 		case 'n':
 		case 'p':
 		case 'v':
-			val = fileReadBE16(in);
+			val = in->readWordBE();
 			*ptr++ = val >> 8;
 			*ptr++ = val & 255;
 			break;
 
 		case 'B':
-			*ptr++ = fileReadByte(in);
+			*ptr++ = in->readByte();
 			if (ptr[-1] == 0xFF) {
-				*ptr++ = fileReadByte(in);
+				*ptr++ = in->readByte();
 			}
 			break;
 
 		case 'I':
-			val = fileReadBE16(in);
+			val = in->readWordBE();
 			switch (val) {
 			case 1:
 				val = 0xFFFF;
@@ -377,7 +330,7 @@ byte *SimonState::readSingleOpcode(FILE *in, byte *ptr)
 			break;
 
 		case 'T':
-			val = fileReadBE16(in);
+			val = in->readWordBE();
 			switch (val) {
 			case 0:
 				val = 0xFFFF;
@@ -386,7 +339,7 @@ byte *SimonState::readSingleOpcode(FILE *in, byte *ptr)
 				val = 0xFFFD;
 				break;
 			default:
-				val = (uint16)fileReadBE32(in);
+				val = (uint16)in->readDwordBE();
 				break;
 			}
 			*ptr++ = val >> 8;
