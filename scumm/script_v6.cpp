@@ -2484,7 +2484,6 @@ void Scumm_v6::o6_kernelSetFunctions() {
 				char *t_ptr = (char *)ptr;
 				_msgPtrToAdd = buf_input;
 				buf_output[0] = 0;
-				setStringVars(0);
 				addMessageToStack(getStringAddressVar(VAR_STRING2DRAW));
 				while (true) {
 					if (*t_ptr == '/') {
@@ -2503,19 +2502,27 @@ void Scumm_v6::o6_kernelSetFunctions() {
 					if (t_ptr == NULL)
 						break;
 				}
+#if 0
+				setStringVars(0);
 				_string[0].charset = (byte)args[1];
 				_string[0].color = (byte)args[2];
 				_string[0].xpos = args[3];
 				_string[0].ypos = args[4];
 				drawDescString(buf_output);
+#else
+				enqueueText(buf_output, args[3], args[4] + camera._cur.y - (_screenHeight / 2), args[2], args[1], true);
+#endif
 			} else { 
+#if 0
 				setStringVars(0);
-
 				_string[0].charset = (byte)args[1];
 				_string[0].color = (byte)args[2];
 				_string[0].xpos = args[3];
 				_string[0].ypos = args[4];
 				drawDescString(getStringAddressVar(VAR_STRING2DRAW));
+#else
+				enqueueText(getStringAddressVar(VAR_STRING2DRAW) + camera._cur.y - (_screenHeight / 2), args[3], args[4], args[2], args[1], true);
+#endif
 			}
 			break;
 		case 20:
