@@ -8,8 +8,6 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "bits.h"
-
 #include "lauxlib.h"
 #include "ldo.h"
 #include "lfunc.h"
@@ -30,7 +28,7 @@
 
 #define skip_word(pc)	(pc+=2)
 
-#define get_word(pc)	READ_LE_UINT16(pc)
+#define get_word(pc)	((*((pc)+1)<<8)|(*(pc)))
 
 #define next_word(pc)   (pc+=2, get_word(pc-2))
 
