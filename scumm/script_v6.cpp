@@ -2433,8 +2433,11 @@ void ScummEngine_v6::o6_kernelSetFunctions() {
 				} else if (_gameId == GID_FT) {
 					const int insaneVarNum = (_features & GF_DEMO) ? 232 : 233;
 
+					// PC demo uses different INSANE
+					if (!(_features & GF_DEMO)) {
 					_insane->setSmushParams(speed);
 					_insane->runScene(insaneVarNum);
+					}
 				}
 				delete sp;
 			}
