@@ -403,8 +403,16 @@ fi
 #
 
 if test "$_cxx_major" -ge "3" ; then
+    hosttype=`uname -s`
+    case $hosttype in
+	MINGW32* | CYGWIN*)
+	CXXFLAGS="$CXXFLAGS -W -Wno-unused-parameter"
+	    ;;
+	*)
 	CXXFLAGS="$CXXFLAGS -ansi -W -Wno-unused-parameter"
-	_make_def_HAVE_GCC3='HAVE_GCC3 = 1'
+	    ;;
+    esac
+    _make_def_HAVE_GCC3='HAVE_GCC3 = 1'
 fi;
 
 #
