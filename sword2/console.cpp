@@ -466,9 +466,9 @@ bool Debugger::Cmd_BltFxOff(int argc, const char **argv) {
 
 bool Debugger::Cmd_TimeOn(int argc, const char **argv) {
 	if (argc == 2)
-		_startTime = SVM_timeGetTime() - atoi(argv[1]) * 1000;
+		_startTime = g_system->get_msecs() - atoi(argv[1]) * 1000;
 	else if (_startTime == 0)
-		_startTime = SVM_timeGetTime();
+		_startTime = g_system->get_msecs();
 	_displayTime = true;
 	DebugPrintf("Timer display on\n");
 	return true;

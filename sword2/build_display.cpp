@@ -173,11 +173,11 @@ void Sword2Engine::buildDisplay(void) {
 			// update our fps reading
 
 			_frameCount++;
-			if (SVM_timeGetTime() > _cycleTime) {
+			if (_system->get_msecs() > _cycleTime) {
 				_fps = _frameCount;
 				debug(2, "FPS: %d", _fps);
 				_frameCount = 0;
-				_cycleTime = SVM_timeGetTime() + 1000;
+				_cycleTime = _system->get_msecs() + 1000;
 			}
 
 			// Check if we've got time to render the screen again
@@ -255,7 +255,7 @@ void Sword2Engine::displayMsg(uint8 *text, int time) {
 
 	g_graphics->waitForFade();
 
-	uint32 targetTime = SVM_timeGetTime() + (time * 1000);
+	uint32 targetTime = _system->get_msecs() + (time * 1000);
 
 	// Keep the message there even when the user task swaps.
 	rv = g_graphics->drawSprite(&spriteInfo);

@@ -23,10 +23,6 @@
 
 namespace Sword2 {
 
-uint32 SVM_timeGetTime(void) {
-	return g_system->get_msecs();
-}
-
 void SVM_SetFileAttributes(char *file, uint32 atrib) {
 	warning("stub SetFileAttributes");
 }

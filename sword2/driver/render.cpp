@@ -575,7 +575,7 @@ void Graphics::renderParallax(_parallax *p, int16 l) {
  */
 
 void Graphics::initialiseRenderCycle(void) {
-	_initialTime = SVM_timeGetTime();
+	_initialTime = g_system->get_msecs();
 	_totalTime = _initialTime + MILLISECSPERCYCLE;
 }
 
@@ -588,7 +588,7 @@ void Graphics::startRenderCycle(void) {
 	_scrollXOld = _scrollX;
 	_scrollYOld = _scrollY;
 
-	_startTime = SVM_timeGetTime();
+	_startTime = g_system->get_msecs();
 
 	if (_startTime + _renderAverageTime >= _totalTime)	{
 		_scrollX = _scrollXTarget;
@@ -614,7 +614,7 @@ bool Graphics::endRenderCycle(void) {
 	static int32 renderCountIndex = 0;
 	int32 time;
 
-	time = SVM_timeGetTime();
+	time = g_system->get_msecs();
 	renderTimeLog[renderCountIndex] = time - _startTime;
 	_startTime = time;
 	_renderAverageTime = (renderTimeLog[0] + renderTimeLog[1] + renderTimeLog[2] + renderTimeLog[3]) >> 2;
@@ -640,7 +640,7 @@ bool Graphics::endRenderCycle(void) {
 		// If we have already reached the scroll target sleep for the
 		// rest of the render cycle.
 		g_sword2->sleepUntil(_totalTime);
-		_initialTime = SVM_timeGetTime();
+		_initialTime = g_system->get_msecs();
 		_totalTime += MILLISECSPERCYCLE;
 		return true;
 	}

@@ -65,10 +65,10 @@ void Graphics::processMenu(void) {
 	static int32 lastTime = 0;
 
 	if (lastTime == 0) {
-		lastTime = SVM_timeGetTime();
+		lastTime = g_system->get_msecs();
 		frameCount = 1;
 	} else {
-		delta = SVM_timeGetTime() - lastTime;
+		delta = g_system->get_msecs() - lastTime;
 		if (delta > 250) {
 			lastTime += delta;
 			delta = 250;

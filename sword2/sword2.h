@@ -364,7 +364,7 @@ public:
 	void gameCycle(void);
 	void closeGame(void);
 
-	void sleepUntil(int32 time);
+	void sleepUntil(uint32 time);
 
 	uint32 readFile(const char *name, mem **membloc, uint32 uid);
 

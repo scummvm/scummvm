@@ -120,7 +120,7 @@ void Debugger::buildDebugText(void) {
 	// debug info at top of screen - enabled/disabled as one complete unit
 
 	if (_displayTime) {
-		int32 time = SVM_timeGetTime();
+		int32 time = g_system->get_msecs();
 
 		if ((time - _startTime) / 1000 >= 10000)
 			_startTime = time;

@@ -477,8 +477,8 @@ void Sword2Engine::startGame(void) {
 
 // FIXME: Move this to some better place?
 
-void Sword2Engine::sleepUntil(int32 time) {
-	while ((int32) SVM_timeGetTime() < time) {
+void Sword2Engine::sleepUntil(uint32 time) {
+	while (_system->get_msecs() < time) {
 		// Make sure menu animations and fades don't suffer
 		_graphics->processMenu();
 		_graphics->updateDisplay();

@@ -141,7 +141,7 @@ int32 Graphics::fadeUp(float time) {
 
 	_fadeTotalTime = (int32) (time * 1000);
 	_fadeStatus = RDFADE_UP;
-	_fadeStartTime = SVM_timeGetTime();
+	_fadeStartTime = g_system->get_msecs();
 
 	return RD_OK;
 }
@@ -157,7 +157,7 @@ int32 Graphics::fadeDown(float time) {
 
 	_fadeTotalTime = (int32) (time * 1000);
 	_fadeStatus = RDFADE_DOWN;
-	_fadeStartTime = SVM_timeGetTime();
+	_fadeStartTime = g_system->get_msecs();
 
 	return RD_OK;
 }
@@ -196,7 +196,7 @@ void Graphics::fadeServer(void) {
 
 	// I don't know if this is necessary, but let's limit how often the
 	// palette is updated, just to be safe.
-	currentTime = SVM_timeGetTime();
+	currentTime = g_system->get_msecs();
 	if (currentTime - previousTime <= 25)
 		return;
 
