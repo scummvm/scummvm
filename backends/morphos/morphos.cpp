@@ -22,6 +22,7 @@
  */
 
 #include "stdafx.h"
+#include "engine.h"
 #include "common/util.h"
 #include "scumm/scumm.h"
 
@@ -54,9 +55,6 @@
 #include "morphos_sound.h"
 #include "morphos_scaler.h"
 
-static TagItem FindCDTags[] = { { CDFA_VolumeName, 0 },
-										  { TAG_DONE,        0 }
-										};
 static TagItem PlayTags[] =   { { CDPA_StartTrack, 1 },
 										  { CDPA_StartFrame, 0 },
 										  { CDPA_EndTrack,   1 },
@@ -64,6 +62,11 @@ static TagItem PlayTags[] =   { { CDPA_StartTrack, 1 },
 										  { CDPA_Loops,      1 },
 										  { TAG_DONE,		   0 }
 										};
+
+static CONST_STRPTR MonkeyCDIDs[] = { "ID2500496F035CBC", "ID250040360345DB", NULL };
+static CONST_STRPTR LoomCDIDs[]   = { NULL };
+static CONST_STRPTR MonkeyNames[] = { "Monkey1CD", "Madness", NULL };
+static CONST_STRPTR LoomNames[]   = { "LoomCD", NULL };
 
 #define BLOCKSIZE_X	32
 #define BLOCKSIZE_Y	8
@@ -352,16 +355,54 @@ uint32 OSystem_MorphOS::property(int param, Property *value)
 			return 1;
 
 		case PROP_OPEN_CD:
-			FindCDTags[0].ti_Data = (ULONG) ((GameID == GID_LOOM256) ? "LoomCD" : "Monkey1CD");
+		{
+			CONST_STRPTR *ids = NULL, *names = NULL;
+
+			switch (GameID)
+			{
+				case GID_MONKEY:
+					ids = MonkeyCDIDs;
+					names = MonkeyNames;
+					break;
+
+				case GID_LOOM256:
+					ids = LoomCDIDs;
+					names = LoomNames;
+					break;
+			}
+
 			if (!CDDABase) CDDABase = OpenLibrary("cdda.library", 2);
 			if (CDDABase)
 			{
-				CDrive = CDDA_FindNextDriveA(NULL, FindCDTags);
-				if (!CDrive && GameID == GID_MONKEY)
+				CDrive = NULL;
+				if (ids)
 				{
-					FindCDTags[0].ti_Data = (ULONG) "Madness";
-					CDrive = CDDA_FindNextDriveA(NULL, FindCDTags);
+					int i = 0;
+
+					while (ids[i] && !CDrive)
+					{
+						TagItem FindCDTags[] =  { { CDFA_CDID, (ULONG) ids[i] },
+														  { TAG_DONE,  0      }
+														};
+						CDrive = CDDA_FindNextDriveA(NULL, FindCDTags);
+						i++;
+					}
 				}
+
+				if (!CDrive && names)
+				{
+					int i = 0;
+
+					while (names[i] && !CDrive)
+					{
+						TagItem FindCDTags[] =  { { CDFA_VolumeName, (ULONG) names[i] },
+														  { TAG_DONE,        0        }
+														};
+						CDrive = CDDA_FindNextDriveA(NULL, FindCDTags);
+						i++;
+					}
+				}
+
 				if (CDrive)
 				{
 					if (!CDDA_ObtainDriveA(CDrive, CDDA_SHARED_ACCESS, NULL))
@@ -384,6 +425,7 @@ uint32 OSystem_MorphOS::property(int param, Property *value)
 			else
 				warning( "Failed to open cdda.library - cd audio will not play" );
 			break;
+		}
 
 		case PROP_SHOW_DEFAULT_CURSOR:
 			if (value->show_cursor)
@@ -809,7 +851,7 @@ bool OSystem_MorphOS::poll_event(Event *event)
 					}
 
 					event->kbd.ascii = charbuf;
-					event->kbd.keycode = event->kbd.ascii;
+					event->kbd.keycode = charbuf;
 				}
 				break;
 			}
@@ -1506,11 +1548,6 @@ void OSystem_MorphOS::grab_overlay(int16 *buf, int pitch)
 
 	do
 	{
-/*		  for (x = 0; x < ScummBufferWidth; x++)
-		{
-			*buf++ = (src[0]*31/255 << 11) | (src[1]*63/255 << 5) | src[2]*31/255;
-			src += 3;
-		}*/
 		for (x = 0; x < pitch; x++)
 		{
 			*buf++ = (src[0]*31/255 << 11) | (src[1]*63/255 << 5) | src[2]*31/255;
@@ -1528,7 +1565,6 @@ void OSystem_MorphOS::copy_rect_overlay(const int16 *ovl, int pitch, int x, int 
 	LONG last_col[2] = { -1, -1 };
 	LONG last_pen[2] = { -1, -1 };
 
-	printf("copy_rect_overlay(%d, %d, %d, %d, %d)\n", pitch, x, y, w, h);
 	if (w > pitch) w = pitch;
 	bmap = (UBYTE*) AllocVec(w*h, MEMF_ANY);
 	if (bmap)

@@ -35,6 +35,7 @@
 
 #include "stdafx.h"
 #include "scumm/scumm.h"
+#include "common/scaler.h"
 #include "sound/mididrv.h"
 #include "morphos.h"
 #include "morphos_scaler.h"

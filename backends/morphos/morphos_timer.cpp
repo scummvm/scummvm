@@ -40,7 +40,7 @@ Timer::Timer(Engine * engine)
 	TimerServiceThread = CreateNewProcTags(NP_Entry, 	 (ULONG) TimerService,
 														NP_CodeType, CODETYPE_PPC,
 														NP_Name,  	 (ULONG) "ScummVM Timer Service",
-														NP_Priority, 50,
+														NP_Priority, 20,
 														NP_PPC_Arg1, (ULONG) this,
 														NP_PPC_Arg2, (ULONG) engine,
 														TAG_DONE
