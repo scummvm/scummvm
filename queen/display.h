@@ -26,6 +26,8 @@
 #include "common/util.h"
 #include "queen/defs.h"
 
+class OSystem;
+
 namespace Queen {
 
 class QueenEngine;
