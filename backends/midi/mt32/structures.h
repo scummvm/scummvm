@@ -208,8 +208,13 @@ struct sampleTable {
 union soundaddr {
 	Bit32u pcmabs;
 	struct offsets {
+#if defined(SCUMM_LITTLE_ENDIAN)
 		Bit16u pcmoffset;
 		Bit16u pcmplace;
+#else
+		Bit16u pcmplace;
+		Bit16u pcmoffset;
+#endif
 	} pcmoffs;
 };
 
