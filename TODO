@@ -1,6 +1,6 @@
 Here is a list of things we plan to do for the future. Note that we
 don't promise to do any of these, nor when we will do them. It's just a
-list  of what we hope to be able to do one day.
+list of what we hope to be able to do one day.
 
 If you want to dig in, this is the stuff where you might make the most
 useful contribution. Note that this list is never complete, and may be
@@ -11,6 +11,9 @@ Before you start work on something, you might want to talk to somebody
 from the team. This will help us to prevent double work, i.e. several
 people working on the same stuff at once without knowing about each
 other.
+
+Finally, always make sure to check out our bug tracker and our feature
+request tracker for things that need work
 
 
 #######################################################################
@@ -39,7 +42,7 @@ README / Manual
   Some candidates:
   - DocBook
   - texinfo
-  - nroff/troff + PolyglotMan  (http://polyglotman.sourceforge.net/)
+  - nroff/troff + PolyglotMan (http://polyglotman.sourceforge.net/)
   - tbook (http://tbookdtd.sourceforge.net/)
   - xml2doc (http://xml2doc.sourceforge.net/)
   - ...
@@ -215,6 +218,9 @@ SCUMM
 =====
 * Make it possible to restart games properly
 * Add method of setting initial debug channels from command-line
+* Possible implement a new resource manager, which then also could be shared
+  by ScummEX. [Jamieson has some ideas about this and might work on it|
+
 * Figure out how to extract resources from Apple II and Commodore 64 versions
 * Figure out how to extract resources from Turbografx/PC Engine version of Loom
 * Indiana Jones and the Last Crusade EGA: Add inventory support for Macintosh version
@@ -228,35 +234,11 @@ SCUMM
   second plane at 640x480), text uses Shift_JIS encoding
   [implementation now that currently depends on font rom, not needing the rom
    would be preferable]
+
 * Fix C64 costume code
-* Humongous Entertainment Games
-  - Add proper handling of sound and speech in Humongous games
-  - Add support for returning the correct music status for the digital music
-    used in 3DO versions of Humongous games.
-  - Add sound pitch support and fix missing sound effects for piano mini game
-    in fbear
-  - Add support kernelSetFunctions/kernelGetFunctions, used for displaying 
-    images on birthday cake in fbear and images in painting game of fbpack.
-  - Add rename/delete file support, to make file opcodes function correctly
-  - Fix akos asserts in puttmoon, caused by butterfly at start, robot near
-    garage and rock animations near rocket.
-  - Fix freezes when letting butterfly into fireworks factory and playing alien
-    tag in puttmoon
-  - Fix bugs in actorOps case 218 implementation, actor backgrounds should not
-    be reset
-  - Fix creature behind garage door disappearing in moondemo
-  - Fix remaining masking issues, when cars come out of garages in puttputt and
-    when Putt-Putt gets off the chair in Cosmic Dust Diner of puttmoon
-  - Fix missing sound effects in puttdemo
-  - Fix 'costume x undefined x x' errors in veggie head mini game of fbear
-  - Fix tangrams game on fbpack, only centre item can selected at the moment
-  - Document and fix AKOS differences in Humongous Entertainment games
-  - Support various newer Humongous Entertainment games
 * Add support for TFMX music format in Amiga version of Monkey Island 1
   Check http://darkstar.tabu.uni-bonn.de/~neo/audio.html for music format
   details
-* Possible implement a new resource manager, which then also could be shared
-  by ScummEX. [Jamieson has some ideas about this and might work on it|
 * COMI: Fix setActorChoreLimbFrame opcode (see bug #754419, "Wally's Fake
   piratehook still on ground after pick up")
 * V7-8 games: Implement smooth horizontal scrolling (instead of scrolling in
@@ -303,6 +285,29 @@ SCUMM
   - Cleanup channel mess
   - Make code more clear in some places (subtiles code for ex.)
   - Add code for MP3 encoded sound tracks (distant future)
+* Humongous Entertainment Games
+  - Add proper handling of sound and speech in Humongous games
+  - Add support for returning the correct music status for the digital music
+    used in 3DO versions of Humongous games.
+  - Add sound pitch support and fix missing sound effects for piano mini game
+    in fbear
+  - Add support kernelSetFunctions/kernelGetFunctions, used for displaying 
+    images on birthday cake in fbear and images in painting game of fbpack.
+  - Add rename/delete file support, to make file opcodes function correctly
+  - Fix akos asserts in puttmoon, caused by butterfly at start, robot near
+    garage and rock animations near rocket.
+  - Fix freezes when letting butterfly into fireworks factory and playing alien
+    tag in puttmoon
+  - Fix bugs in actorOps case 218 implementation, actor backgrounds should not
+    be reset
+  - Fix creature behind garage door disappearing in moondemo
+  - Fix remaining masking issues, when cars come out of garages in puttputt and
+    when Putt-Putt gets off the chair in Cosmic Dust Diner of puttmoon
+  - Fix missing sound effects in puttdemo
+  - Fix 'costume x undefined x x' errors in veggie head mini game of fbear
+  - Fix tangrams game on fbpack, only centre item can selected at the moment
+  - Document and fix AKOS differences in Humongous Entertainment games
+  - Support various newer Humongous Entertainment games
 
 Broken Sword 1 & 2
 ==================
@@ -344,12 +349,16 @@ General
 * Add API to query backend for a list of available music engines
   Useful for Options dialog
 * Sony PS2 Port
+* Update PalmOS port to run on PalmOS based Zodiac handheld 
+  [Chrilith is working on this via a Zodiac simulator]
 * EPOC32/Symbian port. Might be able to start based on existing P800 port,
   however that code seems to be old and would need extensive work to be
   usable in post-0.6.0 ScummVM. Note: NGage uses Symbian OS, too...
-* MS DOS port using Allegro and DJGPP?
-* Intent port (already done by David Given, merge?)
+* MS DOS port using Allegro <http://www.talula.demon.co.uk/allegro/> and
+  DJGPP <http://www.delorie.com/djgpp/> ?
+* Intent <http://withintent.biz/> port (already done by David Given, merge?)
 * Digita OS port? (play games on a select few digital cameras...)
+  <http://digita.mame.net/reviews.htm>
 
 X11 backend
 ===========
