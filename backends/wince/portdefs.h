@@ -45,7 +45,6 @@ char *strpbrk(const char *s, const char *accept);
 
 void *bsearch(const void *, const void *, size_t, size_t, int (*x) (const void *, const void *));
 char *getcwd(char *buf, int size);
-
 #include <windows.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -63,5 +62,8 @@ char *getcwd(char *buf, int size);
 #include <time.h>
 
 void drawError(char*);
+
+#define vsnprintf _vsnprintf
+
 
 #endif

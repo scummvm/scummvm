@@ -184,7 +184,8 @@ SkyCompact::SkyCompact(void) {
 	uint16 *dlincPos = dlincBuf;
 	_cptFile->read(dlincBuf, numDlincs * 2 * sizeof(uint16));
 	// these compacts don't actually exist but only point to other ones...
-	for (uint16 cnt = 0; cnt < numDlincs; cnt++) {
+	uint16 cnt;
+	for (cnt = 0; cnt < numDlincs; cnt++) {
 		uint16 dlincId = READ_LE_UINT16(dlincPos++);
 		uint16 destId = READ_LE_UINT16(dlincPos++);
 		assert(((dlincId >> 12) < _numDataLists) && ((dlincId & 0xFFF) < _dataListLen[dlincId >> 12]) && (_compacts[dlincId >> 12][dlincId & 0xFFF] == NULL));
@@ -219,7 +220,7 @@ SkyCompact::SkyCompact(void) {
 	_numSaveIds = _cptFile->readUint16LE();
 	_saveIds = (uint16*)malloc(_numSaveIds * sizeof(uint16));
 	_cptFile->read(_saveIds, _numSaveIds * sizeof(uint16));
-	for (uint16 cnt = 0; cnt < _numSaveIds; cnt++)
+	for (cnt = 0; cnt < _numSaveIds; cnt++)
         _saveIds[cnt] = FROM_LE_16(_saveIds[cnt]);
 	_resetDataPos = _cptFile->pos();
 }
