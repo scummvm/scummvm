@@ -80,8 +80,8 @@ SCUMM
 * Try to remove all use of MAD/Ogg code from scumm/sound.cpp:
   Ideally, only code in sound/ should access these libs. This will
   become important for loadable module support
-* Add support for Mac0 music format used in Monkey Island Mac
-  See https://sourceforge.net/tracker/index.php?func=detail&aid=781797&group_id=37116&atid=418823
+* Add support for TFMX music format in Amiga version of Monkey Island 1
+  Check http://darkstar.tabu.uni-bonn.de/~neo/audio.html for music format details
 * Add support for sound effects format found in Sega CD version of Monkey Island
 * Rename scummvm.cpp to scumm.cpp for consistency. [Fingolfin is working on
   this, please don't do anything about this before talking to him].
@@ -105,7 +105,8 @@ Broken Sword 2
 
 SIMON
 =====
-* Add support for Amiga decompressor and music
+* Add support for Protracker music format used in Amiga versions
+* Add support for decoding main graphics correctly in Amiga versions
 
 Descumm
 =======
