@@ -82,6 +82,48 @@ void ClearBlendCache(byte *palette, int weight)
 
 #pragma mark -
 
+/*
+ * Print hexdump of the data passed in, 8 bytes a row
+ */
+void hexdump(const byte * data, int len)
+{
+	int i;
+	byte c;
+	while (len >= 8) {
+		for (i = 0; i < 8; i++)
+			printf("%02x ", data[i]);
+		printf(" |");
+		for (i = 0; i < 8; i++) {
+			c = data[i];
+			if (c < 32 || c > 127)
+				c = '.';
+			printf("%c", c);
+		}
+		printf("|\n");
+		data += 8;
+		len -= 8;
+	}
+
+	for (i = 0; i < len; i++)
+		printf("%02x ", data[i]);
+	for (; i < 8; i++)
+		printf("   ");
+	printf(" |");
+	for (i = 0; i < len; i++) {
+		c = data[i];
+		if (c < 32 || c > 127)
+			c = '.';
+		printf("%c", c);
+	}
+	for (; i < 8; i++)
+		printf(" ");
+	printf("|\n");
+}
+
+
+#pragma mark -
+
+
 namespace ScummVM {
 
 String::String(const char *str)

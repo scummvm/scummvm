@@ -27,6 +27,11 @@ int RGBMatch(byte *palette, int r, int g, int b);
 int Blend(int src, int dst, byte *palette);
 void ClearBlendCache(byte *palette, int weight);
 
+/*
+ * Print hexdump of the data passed in, 8 bytes a row
+ */
+void hexdump(const byte * data, int len);
+
 
 namespace ScummVM {
 

@@ -224,7 +224,45 @@ void Scumm::playSound(int sound)
 	if ((_features & GF_OLD256) && (ptr != NULL)) {
 		char *sound;
 		int size = READ_LE_UINT32(ptr);
-		ptr+=0x16;
+		
+#if 1
+		// FIXME - this is just some debug output for Zak256
+		if (size != 30) {
+			char name[9];
+			memcpy(name, ptr+22, 8);
+			name[8] = 0;
+			printf("Going to play Zak256 sound '%s':\n", name);
+			hexdump(ptr, 0x40);
+		}
+		/*
+		There seems to be some pattern in the Zak256 sound data. Two typical
+		examples are these:
+		
+		d7 10 00 00 53 4f d1 10  |....SO..|
+		00 00 00 00 04 00 ff 00  |........|
+		64 00 00 00 01 00 64 6f  |d.....do|
+		6f 72 6f 70 65 6e 40 a8  |oropen@.|
+		57 14 a1 10 00 00 50 08  |W.....P.|
+		00 00 00 00 00 00 b3 07  |........|
+		00 00 3c 00 00 00 04 80  |..<.....|
+		03 02 0a 01 8c 82 87 81  |........|
+
+		5b 07 00 00 53 4f 55 07  |[...SOU.|
+		00 00 00 00 04 00 ff 00  |........|
+		64 00 00 00 01 00 64 72  |d.....dr|
+		77 6f 70 65 6e 00 53 a8  |wopen.S.|
+		57 14 25 07 00 00 92 03  |W.%.....|
+		00 00 00 00 00 00 88 03  |........|
+		00 00 3c 00 00 00 82 82  |..<.....|
+		83 84 86 88 89 8b 89 89  |........|
+		
+		As you can see, there are quite some patterns, e.g.
+		the 00 00 00 3c - the sound data seems to start at
+		offset 54.
+		*/
+#endif
+		
+		ptr += 0x16;
 
 		if (size == 30) {
 #ifdef COMPRESSED_SOUND_FILE
@@ -234,15 +272,16 @@ void Scumm::playSound(int sound)
 			return;
 		}
 
-		sound = (char*)malloc(size-0x36);
-		for (int x=0; x<(size-0x36); x++) {
+		size -= 0x36;
+		sound = (char*)malloc(size);
+		for (int x = 0; x < size; x++) {
 			int bit = *ptr++;
 			if (bit<0x80) sound[x] = 0x7F-bit; else sound[x] = bit;
 		}
 
 		// FIXME: Something in the header signifies looping. Need to track it down and add a 
 		//	  mixer flag or something.
-		_mixer->play_raw(NULL, sound, size-0x36, 11000, SoundMixer::FLAG_UNSIGNED | SoundMixer::FLAG_AUTOFREE);
+		_mixer->play_raw(NULL, sound, size, 11000, SoundMixer::FLAG_UNSIGNED | SoundMixer::FLAG_AUTOFREE);
 		return;
 	}
 
