@@ -1248,6 +1248,13 @@ int Scumm::scummLoop(int delta) {
 	if (VAR_EGO != 0xFF)
 		oldEgo = VAR(VAR_EGO);
 
+	// In V1-V3 games, CHARSET_1 is called much earlier than in newer games.
+	// See also bug #770042 for a case were this makes a difference.
+	// FIXME: Actually I am only sure that this is correct for V1-V2 and Loom.
+	// We should also check Indy3 & Zak256.
+	if (_version <= 3)
+		CHARSET_1();
+
 	processKbd();
 
 	if (_features & GF_NEW_CAMERA) {
@@ -1385,13 +1392,15 @@ load_game:
 	}
 	
 	if (_currentRoom == 0) {
-		CHARSET_1();
+		if (_version > 3)
+			CHARSET_1();
 		drawDirtyScreenParts();
 	} else {
 		walkActors();
 		moveCamera();
 		fixObjectFlags();
-		CHARSET_1();
+		if (_version > 3)
+			CHARSET_1();
 
 		if (camera._cur.x != camera._last.x || _BgNeedsRedraw || _fullRedraw
 				|| ((_features & GF_NEW_CAMERA) && camera._cur.y != camera._last.y)) {
