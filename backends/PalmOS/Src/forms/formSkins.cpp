@@ -3,7 +3,7 @@
 #include "start.h"
 #include "forms.h"
 #include "skin.h"
-
+#include "globals.h"
 
 static Int16 SkinsFormCompare(SkinInfoType *a, SkinInfoType *b, SortRecordInfoPtr, SortRecordInfoPtr, MemHandle) {
 	return StrCompare(a->nameP, b->nameP);
@@ -121,11 +121,23 @@ static void SkinsFormExit(Boolean bSave) {
 
 	if (bSave) {
 		ControlType *cck1P;
-
+	
 		StrCopy(gPrefs->skin.nameP, skinsInfo[selected].nameP);
 		gPrefs->skin.cardNo = skinsInfo[selected].cardNo;
 		gPrefs->skin.dbID =  skinsInfo[selected].dbID;
+		
+/*		DmOpenRef skinDB = SknOpenSkin();
+		UInt32 depth = SknGetDepth(skinDB);
+		SknCloseSkin(skinDB);
 
+		if (depth != 8 && depth != 16) depth = 8;
+		
+		if (depth == 16 && !OPTIONS_TST(kOptMode16Bit)) {
+			FrmCustomAlert(FrmInfoAlert, "You can only use 8bit skin on your device.", 0, 0);
+			gPrefs->skin.cardNo	= cardNo;
+			gPrefs->skin.dbID	= dbID;
+		}
+*/
 		cck1P = (ControlType *)GetObjectPtr(SkinsSoundClickCheckbox);
 		gPrefs->soundClick = CtlGetValue(cck1P);
 	}
