@@ -126,7 +126,7 @@ struct ActorLocation {
 	int y;					// 
 	int z;					// 
 	int distance(const ActorLocation &location) {
-		return max(abs(x - location.x), abs(y - location.y));
+		return MAX(abs(x - location.x), abs(y - location.y));
 	}
 };
 struct ActorData {
