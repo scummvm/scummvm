@@ -109,7 +109,7 @@ public:
 
 private:
 
-	void executeCommand(uint16 comId, int16 condResult);
+	int16 executeCommand(uint16 comId, int16 condResult);
 
 	int16 makeJoeWalkTo(int16 x, int16 y, int16 objNum, const Verb &v, bool mustWalk);
 

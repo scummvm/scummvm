@@ -1908,6 +1908,7 @@ void Logic::playCutaway(const char *cutFile, char *next) {
 	if (next == NULL) {
 		next = nextFile;
 	}
+	_graphics->textClear(CmdText::COMMAND_Y_POS, CmdText::COMMAND_Y_POS);
 	Cutaway::run(cutFile, next, _graphics, _input, this, _resource, _sound);
 }
 

@@ -247,14 +247,12 @@ void Command::executeCurrentAction(bool walk) {
 		}
 		else if (cond >= 0) {
 			// we've had a successful Gamestate check, so we must now exit
-			executeCommand(comId, cond);
+			cond = executeCommand(comId, cond);
 			break;
 		}
 	}
 
-
-	if (_selCmd.action.value() == VERB_LOOK_AT) {
-		// Look At, do standard look at routine
+	if (cond <= 0 && _selCmd.action.value() == VERB_LOOK_AT) {
 		look();
 	}
 	else {
@@ -358,7 +356,7 @@ void Command::readCommandsFrom(byte *&ptr) {
 }
 
 
-void Command::executeCommand(uint16 comId, int16 condResult) {
+int16 Command::executeCommand(uint16 comId, int16 condResult) {
 
 	// execute.c l.313-452
 	debug(0, "Command::executeCommand() - cond = %X, com = %X", condResult, comId);
@@ -448,7 +446,7 @@ void Command::executeCommand(uint16 comId, int16 condResult) {
 	switch (com->specialSection) {
 	case 1:
 		_logic->useJournal();
-		return;
+		return condResult;
 	case 2:
 		_logic->joeUseDress(true);
 		break;
@@ -477,6 +475,7 @@ void Command::executeCommand(uint16 comId, int16 condResult) {
 	if (condResult > 0) {
 		_logic->joeSpeak(condResult, true);
 	}
+	return condResult;
 }
 
 
