@@ -783,12 +783,16 @@ int stretch200To240(uint8 *buf, uint32 pitch, int width, int height, int srcX, i
 				memcpy(dstPtr, srcPtr, width * 2);
 			break;
 		case 1:
-		case 4:
 			interpolate5Line<1>((uint16 *)dstPtr, (const uint16 *)(srcPtr - pitch), (const uint16 *)srcPtr, width);
 			break;
 		case 2:
-		case 3:
 			interpolate5Line<2>((uint16 *)dstPtr, (const uint16 *)(srcPtr - pitch), (const uint16 *)srcPtr, width);
+			break;
+		case 3:
+			interpolate5Line<2>((uint16 *)dstPtr, (const uint16 *)srcPtr, (const uint16 *)(srcPtr - pitch), width);
+			break;
+		case 4:
+			interpolate5Line<1>((uint16 *)dstPtr, (const uint16 *)srcPtr, (const uint16 *)(srcPtr - pitch), width);
 			break;
 		}
 #endif

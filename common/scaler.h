@@ -46,7 +46,7 @@ FORCEINLINE int real2Aspect(int y) {
 }
 
 FORCEINLINE int aspect2Real(int y) {
-	return (y * 5 + 3) / 6;
+	return (y * 5 + 4) / 6;
 }
 
 extern void makeRectStretchable(int &x, int &y, int &w, int &h);
