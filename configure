@@ -23,7 +23,9 @@
 # * ....
 
 
+#
 # Check whether the given command is a working C++ compiler
+#
 test_compiler ()
 {
 cat <<EOF >tmp_cxx_compiler.cpp
@@ -37,26 +39,45 @@ int main(int argc, char **argv)
 	return 0;
 }
 EOF
-eval "$1 -o tmp_cxx_compiler tmp_cxx_compiler.cpp 2> /dev/null" && eval "./tmp_cxx_compiler 2> /dev/null"
+eval "$1 -o tmp_cxx_compiler tmp_cxx_compiler.cpp 2> /dev/null" && eval "./tmp_cxx_compiler 2> /dev/null" && rm tmp_cxx_compiler tmp_cxx_compiler.cpp
 }
 
+#
+# Determine a data type with the given length
+#
+find_type_with_size ()
+{
+cat <<EOF >tmp_find_type_with_size.cpp
+#include <stdio.h>
+int main(int argc, char **argv)
+{
+	int size = argv[1][0] - '0';
+	if (size == sizeof(int))
+		printf("int\n");
+	else if (size == sizeof(short))
+		printf("short\n");
+	else if (size == sizeof(char))
+		printf("char\n");
+	else if (size == sizeof(long))
+		printf("long\n");
+	else {
+		printf("unknown\n");
+		return 1;
+	}
 
-#
-# Check any parameters we received
-#
-# TOOD: allow for multi value params, e.g. --target=dreamcast or --backend=morphos
-#
-USE_MAD=0;
-DUMP_SCRIPTS=0;
-
-for x in $@; do
-    case x$x in
-      x--enable-mad)
-        USE_MAD=1;;
-      x--enable-dump-scripts)
-        DUMP_SCRIPTS=1;;
-    esac;
-done;
+	return 0;
+}
+EOF
+if eval "$CXX -o tmp_find_type_with_size tmp_find_type_with_size.cpp"; then
+  datatype=`./tmp_find_type_with_size $1`
+  if test "$datatype" = "unknown"; then
+	echo "couldn't find data type with $1 bytes"
+	exit 1
+  fi
+fi
+rm tmp_find_type_with_size tmp_find_type_with_size.cpp
+echo $datatype
+}
 
 #
 # Greet user
@@ -64,6 +85,28 @@ done;
 echo "Running ScummVM configure..."
 echo -n > config.h
 
+
+#
+# Check any parameters we received
+#
+# TOOD: allow for multi value params, e.g. --target=dreamcast or --backend=morphos
+#
+
+for x in $@; do
+    case x$x in
+      x--with-alsa)
+		echo "#define USE_ALSA" >> config.h
+		LIBS="$LIBS -lasound"
+		;;
+      x--with-mad)
+		echo "#define COMPRESSED_SOUND_FILE" >> config.h
+		LIBS="$LIBS -lmad"
+		;;
+      x--enable-dump-scripts)
+		echo "#define DUMP_SCRIPTS" >> config.h
+		;;
+    esac;
+done;
 
 #
 # Determine the C++ compiler
@@ -134,5 +177,31 @@ case $endianess in
 		exit 1
 		;;
 esac
+rm tmp_endianess_check tmp_endianess_check.cpp
 
+#
+# Determine data type sizes
+# TODO: proper error checking
+#
+echo -n "Type with 1 byte... "
+type_1_byte=`find_type_with_size 1`
+echo "$type_1_byte"
 
+echo -n "Type with 2 bytes... "
+type_2_byte=`find_type_with_size 2`
+echo "$type_2_byte"
+
+echo -n "Type with 4 bytes... "
+type_4_byte=`find_type_with_size 4`
+echo "$type_4_byte"
+
+echo >> config.h
+echo "// Data types" >> config.h
+echo "typedef unsigned $type_1_byte byte;" >> config.h
+echo "typedef unsigned int uint;" >> config.h
+echo "typedef unsigned $type_1_byte uint8;" >> config.h
+echo "typedef unsigned $type_2_byte uint16;" >> config.h
+echo "typedef unsigned $type_3_byte uint32;" >> config.h
+echo "typedef signed $type_1_byte int8;" >> config.h
+echo "typedef signed $type_2_byte int16;" >> config.h
+echo "typedef signed $type_4_byte int32;" >> config.h
