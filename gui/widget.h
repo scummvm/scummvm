@@ -99,7 +99,7 @@ public:
 	virtual void handleKeyUp(char key, int modifiers) {}
 	virtual void handleTickle() {}
 	void draw();
-	void recievedFocus() { _hasFocus = true; recievedFocusWidget(); }
+	void receivedFocus() { _hasFocus = true; receivedFocusWidget(); }
 	void lostFocus() { _hasFocus = false; lostFocusWidget(); }
 
 	void setFlags(int flags)	{ _flags |= flags; }
@@ -109,7 +109,7 @@ public:
 protected:
 	virtual void drawWidget(bool hilite) {}
 
-	virtual void recievedFocusWidget() {}
+	virtual void receivedFocusWidget() {}
 	virtual void lostFocusWidget() {}
 };
 

@@ -84,7 +84,7 @@ void Dialog::handleMouseDown(int x, int y, int button)
 	
 		// Tell the new focused widget (if any) that it just gained the focus.
 		if (w)
-			w->recievedFocus();
+			w->receivedFocus();
 	
 		_focusedWidget = w;
 	}

@@ -2770,7 +2770,7 @@ void Scumm::o5_pickupObjectOld()
 
 	// FIXME: Zak256 (Zaire): Why does this happen at all?
 	if (obj < 1) {
-		warning("pickupObjectOld recieved negative index");
+		warning("pickupObjectOld received negative index");
 		return;
 	}
 
