@@ -80,7 +80,7 @@ public:
 	bool appendData(Chunk &b, int32 size);
 	int32 availableSoundData() const;
 	void getSoundData(int16 *sound_buffer, int32 size);
-	void getSoundData(int8 *sound_buffer, int32 size) { error("16bit request for SAUD channel should never happen"); };
+	void getSoundData(int8 *sound_buffer, int32 size) { error("8bit request for SAUD channel should never happen"); };
 	int32 getRate() { return _frequency; }
 	bool getParameters(int32 &rate, bool &stereo, bool &is_16bit) { 
 		rate = _frequency;

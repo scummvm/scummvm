@@ -419,9 +419,7 @@ void SmushPlayer::handleIACT(Chunk &b) {
 		byte *d_src = src;
 		byte value;
 
-		do {
-			if (bsize == 0)
-				break;
+		while (bsize > 0) {
 			if (_IACTpos >= 2) {
 				int32 len = READ_BE_UINT16(_IACToutput) + 2;
 				len -= _IACTpos;
@@ -468,26 +466,16 @@ void SmushPlayer::handleIACT(Chunk &b) {
 					_IACTpos = 0;
 				}
 			} else {
-				if (bsize == 1) {
-					if (_IACTpos != 0) {
-						*(_IACToutput + 1) = *d_src++;
-						_IACTpos = 2;
-						bsize--;
-						continue;
-					}
-					bsize = 0;
-					*(_IACToutput + 0) = *d_src;
-					_IACTpos = 1;
-					continue;
-				} else if (_IACTpos == 0) {
+				if (bsize > 1 && _IACTpos == 0) {
 					*(_IACToutput + 0) = *d_src++;
+					_IACTpos = 1;
 					bsize--;
 				}
-				*(_IACToutput + 1) = *d_src++;
-				_IACTpos = 2;
+				*(_IACToutput + _IACTpos) = *d_src++;
+				_IACTpos++;
 				bsize--;
 			}	
-		} while (bsize != 0);
+		}
 	
 		free(src);
 	}
