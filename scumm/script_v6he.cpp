@@ -715,6 +715,7 @@ void ScummEngine_v6he::o6_actorOps() {
 		break;
 	case 225:
 		i = pop(); // talkie slot
+		resStrLen(_scriptPointer);
 		warning("o6_actorOps: stub case %d", b);
 		break;
 	default:
