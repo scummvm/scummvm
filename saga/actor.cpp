@@ -928,7 +928,10 @@ int Actor::handleWalkIntent(R_ACTOR *actor, R_WALKINTENT *a_walkint, int *comple
 		endpoint.x = (int)new_a_x / R_ACTOR_LMULT;
 		endpoint.y = (int)new_a_y / R_ACTOR_LMULT;
 		if ((exitNum = _vm->_scene->_actionMap->hitTest(endpoint)) != -1) {
-			_vm->_scene->changeScene(_vm->_scene->_actionMap->getExitScene(exitNum));
+			// WORKAROUND: Only change room if the actor is Rif
+			// himself. We need to fix this properly later.
+			if (actor->id == 0)
+				_vm->_scene->changeScene(_vm->_scene->_actionMap->getExitScene(exitNum));
 		}
 		*complete_p = 1;
 		return R_FAILURE;

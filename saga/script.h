@@ -236,8 +236,8 @@ private:
 	int SF_sleep(R_SCRIPTFUNC_PARAMS);
 	int SF_takeObject(R_SCRIPTFUNC_PARAMS);
 	int SF_objectIsCarried(R_SCRIPTFUNC_PARAMS);
-	int SF_setCommandText(R_SCRIPTFUNC_PARAMS);
-	int SF_mainMode(R_SCRIPTFUNC_PARAMS);
+	int SF_setStatusText(R_SCRIPTFUNC_PARAMS);
+	int SF_commandMode(R_SCRIPTFUNC_PARAMS);
 	int SF_actorWalkTo(R_SCRIPTFUNC_PARAMS);
 	int SF_setFacing(R_SCRIPTFUNC_PARAMS);
 	int SF_startBgdAnim(R_SCRIPTFUNC_PARAMS);

@@ -58,6 +58,7 @@ Script::Script() {
 	int i, j;
 
 	//initialize member variables
+	_dbg_thread = 0;
 	_scriptContext = 0;
 	_voiceLUTPresent = false;
 	_scriptLUTEntryLen = 0;

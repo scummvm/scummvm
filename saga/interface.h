@@ -56,6 +56,8 @@ enum INTERFACE_UPDATE_FLAGS {
 
 #define ITE_LPORTRAIT_X 5
 #define ITE_LPORTRAIT_Y 4
+#define ITE_RPORTRAIT_X 274
+#define ITE_RPORTRAIT_Y 4
 
 // IHNMAIMS interface values
 #define IHNM_STATUS_Y      304
@@ -71,6 +73,8 @@ enum INTERFACE_UPDATE_FLAGS {
 
 #define IHNM_LPORTRAIT_X 5
 #define IHNM_LPORTRAIT_Y 4
+#define IHNM_RPORTRAIT_X -1
+#define IHNM_RPORTRAIT_Y -1
 
 enum R_PANEL_MODES {
 	PANEL_COMMAND,
@@ -127,6 +131,8 @@ struct R_INTERFACE_DESC {
 	int cmd_defaultbutton;
 	int lportrait_x;
 	int lportrait_y;
+	int rportrait_x;
+	int rportrait_y;
 };
 
 struct R_INTERFACE_MODULE {
@@ -158,7 +164,11 @@ class Interface {
 	int registerLang();
 	int activate();
 	int deactivate();
+	int setMode(R_PANEL_MODES mode);
 	int setStatusText(const char *new_txt);
+	int loadScenePortraits(int res);
+	int setLeftPortrait(int portrait);
+	int setRightPortrait(int portrait);
 	int draw();
 	int update(const Point& imousePt, int update_flag);
 
@@ -182,8 +192,10 @@ class Interface {
 	R_INTERFACE_PANEL _cPanel;
 	R_INTERFACE_PANEL _dPanel;
 	char _statusText[R_STATUS_TEXT_LEN];
-	int _activePortrait;
+	int _leftPortrait;
+	int _rightPortrait;
 	R_SPRITELIST *_defPortraits;
+	R_SPRITELIST *_scenePortraits;
 	int _activeVerb;
 	R_SCRIPT_THREAD *_iThread;
 };

@@ -30,6 +30,7 @@
 #include "saga/animation.h"
 #include "saga/console.h"
 #include "saga/cvar_mod.h"
+#include "saga/interface.h"
 #include "saga/events.h"
 #include "saga/actionmap.h"
 #include "saga/isomap.h"
@@ -789,7 +790,7 @@ int Scene::processSceneResources() {
 			warning("Scene::ProcessSceneResources(): Loading scene entries is not implemented");
 			break;
 		case SAGA_FACES:
-			warning("Scene::ProcessSceneResources(): Loading scene faces is not implemented");
+			_vm->_interface->loadScenePortraits(_resList[i].res_number);
 			break;
 		default:
 			warning("Scene::ProcessSceneResources(): Encountered unknown resource type: %d", _resList[i].res_type);

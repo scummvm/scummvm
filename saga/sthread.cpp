@@ -726,7 +726,7 @@ int Script::SThreadRun(R_SCRIPT_THREAD *thread, int instr_limit, int msec) {
 					} else {
 						voice_rn = currentScript()->voice->voices[data];
 					}
-					_vm->_actor->speak(a_index, currentScript()->diag-> str[data], voice_rn, &thread->sem);
+					_vm->_actor->speak(a_index, currentScript()->diag->str[data], voice_rn, &thread->sem);
 				}
 			}
 			break;

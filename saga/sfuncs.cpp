@@ -47,8 +47,8 @@ void Script::setupScriptFuncList(void) {
 		{1, 1, OPCODE(SF_sleep)},
 		{2, 1, OPCODE(SF_takeObject)},
 		{3, 1, OPCODE(SF_objectIsCarried)},
-		{4, 1, OPCODE(SF_setCommandText)},
-		{5, 0, OPCODE(SF_mainMode)},
+		{4, 1, OPCODE(SF_setStatusText)},
+		{5, 0, OPCODE(SF_commandMode)},
 		{6, 3, OPCODE(SF_actorWalkTo)},
 		{7, 4, OPCODE(SF_doAction)},
 		{8, 2, OPCODE(SF_setFacing)},
@@ -163,18 +163,15 @@ int Script::SF_objectIsCarried(R_SCRIPTFUNC_PARAMS) {
 // Script function #4 (0x04) nonblocking
 // Set the command display to the specified text string
 // Param1: dialogue index of string
-int Script::SF_setCommandText(R_SCRIPTFUNC_PARAMS) {
-	SDataWord_T s_idx_parm;
+int Script::SF_setStatusText(R_SCRIPTFUNC_PARAMS) {
+	SDataWord_T param = thread->pop();
 
-	s_idx_parm = thread->pop();
-	// INCOMPLETE
-
-	return R_SUCCESS;
+	return _vm->_interface->setStatusText(currentScript()->diag->str[param]);
 }
 
 // Script function #5 (0x05)
-int Script::SF_mainMode(R_SCRIPTFUNC_PARAMS) {
-	return R_SUCCESS;
+int Script::SF_commandMode(R_SCRIPTFUNC_PARAMS) {
+	return _vm->_interface->setMode(PANEL_COMMAND);
 }
 
 // Script function #6 (0x06) blocking
@@ -279,7 +276,7 @@ int Script::SF_freezeInterface(R_SCRIPTFUNC_PARAMS) {
 // Script function #12 (0x0C)
 // Disables mouse input, etc.
 int Script::SF_dialogMode(R_SCRIPTFUNC_PARAMS) {
-	return R_SUCCESS;
+	return _vm->_interface->setMode(PANEL_DIALOGUE);
 }
 
 // Script function #14 (0x0E)
@@ -533,15 +530,17 @@ int Script::SF_setFrame(R_SCRIPTFUNC_PARAMS) {
 // Script function #39 (0x27)
 // Sets the right-hand portrait
 int Script::SF_setRightPortrait(R_SCRIPTFUNC_PARAMS) {
-	thread->pop();
-	return R_SUCCESS;
+	SDataWord_T param = thread->pop();
+
+	return _vm->_interface->setRightPortrait(param);
 }
 
 // Script function #40 (0x28)
 // Sets the left-hand portrait
 int Script::SF_setLeftPortrait(R_SCRIPTFUNC_PARAMS) {
-	thread->pop();
-	return R_SUCCESS;
+	SDataWord_T param = thread->pop();
+
+	return _vm->_interface->setLeftPortrait(param);
 }
 
 // Script function #41 (0x29) nonblocking

@@ -67,7 +67,9 @@ static R_INTERFACE_DESC ITE_interface = {
 	COMMAND_DEFAULT_BUTTON,
 
 	ITE_LPORTRAIT_X,
-	ITE_LPORTRAIT_Y
+	ITE_LPORTRAIT_Y,
+	ITE_RPORTRAIT_X,
+	ITE_RPORTRAIT_Y
 };
 
 static R_INTERFACE_BUTTON ITE_c_buttons[] = {
@@ -109,7 +111,9 @@ static R_INTERFACE_DESC IHNM_interface = {
 	COMMAND_DEFAULT_BUTTON,
 
 	IHNM_LPORTRAIT_X,
-	IHNM_LPORTRAIT_Y
+	IHNM_LPORTRAIT_Y,
+	IHNM_RPORTRAIT_X,
+	IHNM_RPORTRAIT_Y
 };
 
 static R_INTERFACE_BUTTON IHNM_c_buttons[] = {
@@ -207,7 +211,9 @@ Interface::Interface(SagaEngine *vm) : _vm(vm), _initialized(false) {
 	_dPanel.y = 149;
 
 	_cPanel.set_button = COMMAND_DEFAULT_BUTTON;
-	_activePortrait = 0;
+	_scenePortraits = 0;
+	_leftPortrait = 0;
+	_rightPortrait = 0;
 
 	_activeVerb = I_VERB_WALKTO;
 
@@ -235,10 +241,40 @@ int Interface::deactivate() {
 	return R_SUCCESS;
 }
 
+int Interface::setMode(R_PANEL_MODES mode) {
+	// TODO: Is this where we should hide/show the mouse cursor?
+
+	_panelMode = mode;
+	draw();
+
+	return R_SUCCESS;
+}
+
 int Interface::setStatusText(const char *new_txt) {
 	assert(new_txt != NULL);
 
 	strncpy(_statusText, new_txt, R_STATUS_TEXT_LEN);
+
+	return R_SUCCESS;
+}
+
+int Interface::loadScenePortraits(int res) {
+	if (_scenePortraits)
+		_vm->_sprite->freeSprite(_scenePortraits);
+
+	return _vm->_sprite->loadList(res, &_scenePortraits);
+}
+
+int Interface::setLeftPortrait(int portrait) {
+	_leftPortrait = portrait;
+	draw();
+
+	return R_SUCCESS;
+}
+
+int Interface::setRightPortrait(int portrait) {
+	_rightPortrait = portrait;
+	draw();
 
 	return R_SUCCESS;
 }
@@ -251,6 +287,8 @@ int Interface::draw() {
 	int ybase;
 	int lportrait_x;
 	int lportrait_y;
+	int rportrait_x;
+	int rportrait_y;
 
 	Rect rect;
 	Point origin;
@@ -298,7 +336,14 @@ int Interface::draw() {
 	lportrait_x = xbase + _iDesc.lportrait_x;
 	lportrait_y = ybase + _iDesc.lportrait_y;
 
-	_vm->_sprite->draw(back_buf, _defPortraits, _activePortrait, lportrait_x, lportrait_y);
+	_vm->_sprite->draw(back_buf, _defPortraits, _leftPortrait, lportrait_x, lportrait_y);
+
+	if (_panelMode == PANEL_DIALOGUE && _iDesc.rportrait_x >= 0) {
+		rportrait_x = xbase + _iDesc.rportrait_x;
+		rportrait_y = ybase + _iDesc.rportrait_y;
+
+		_vm->_sprite->draw(back_buf, _scenePortraits, _rightPortrait, rportrait_x, rportrait_y);
+	}
 
 	return R_SUCCESS;
 }
@@ -322,21 +367,23 @@ int Interface::update(const Point& imousePt, int update_flag) {
 	// Get game display info
 	GAME_GetDisplayInfo(&g_di);
 
-	// Update playfield space ( only if cursor is inside )
-	if (imouse_y < g_di.scene_h) {
-		// Mouse is in playfield space
-		if (update_flag == UPDATE_MOUSEMOVE) {
-			handlePlayfieldUpdate(back_buf, imousePt);
-		} else if (update_flag == UPDATE_MOUSECLICK) {
-			handlePlayfieldClick(back_buf, imousePt);
+	if (_panelMode == PANEL_COMMAND) {
+		// Update playfield space ( only if cursor is inside )
+		if (imouse_y < g_di.scene_h) {
+			// Mouse is in playfield space
+			if (update_flag == UPDATE_MOUSEMOVE) {
+				handlePlayfieldUpdate(back_buf, imousePt);
+			} else if (update_flag == UPDATE_MOUSECLICK) {
+				handlePlayfieldClick(back_buf, imousePt);
+			}
 		}
-	}
 
-	// Update command space
-	if (update_flag == UPDATE_MOUSEMOVE) {
-		handleCommandUpdate(back_buf, imousePt);
-	} else if (update_flag == UPDATE_MOUSECLICK) {
-		handleCommandClick(back_buf, imousePt);
+		// Update command space
+		if (update_flag == UPDATE_MOUSEMOVE) {
+			handleCommandUpdate(back_buf, imousePt);
+		} else if (update_flag == UPDATE_MOUSECLICK) {
+			handleCommandClick(back_buf, imousePt);
+		}
 	}
 
 	drawStatusBar(back_buf);
