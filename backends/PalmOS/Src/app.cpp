@@ -4,6 +4,7 @@
 #include "Pa1Lib.h"
 
 #include "StarterRsc.h"
+#include "palmdefs.h"
 #include "start.h"
 #include "globals.h"
 #include "rumble.h"
@@ -12,6 +13,10 @@
 #include "formCards.h"
 #include "games.h"
 #include "extend.h"
+
+#include "modules.h"
+#include "init_mathlib.h"
+#include "init_sony.h"
 
 #ifndef DISABLE_TAPWAVE
 #define __TWKEYS_H__
@@ -152,35 +157,25 @@ static Err AppStartLoadSkin() {
 	return err;
 }
 
-static Err AppStartCheckMathLib()
-{
-	Err error = errNone;
-
-	if ((error = SysLibFind(MathLibName, &MathLibRef)))
-		if (error == sysErrLibNotFound)									// couldn't find lib
-			error = SysLibLoad( LibType, MathLibCreator, &MathLibRef);
-
-	if (!error) {// Now we can use lib. Executes Open library.
-		error = MathLibOpen(MathLibRef, MathLibVersion);
-		if (error)
+static Err AppStartCheckMathLib() {
+	Err e = MathlibInit();
+	
+	switch (e) {
+		case errNone:
+			break;
+		case sysErrLibNotFound:
+			FrmCustomAlert(FrmErrorAlert,"Can't find MathLib !",0,0);
+			break;
+		default:
 			FrmCustomAlert(FrmErrorAlert,"Can't open MathLib !",0,0);
-
-	} else {
-		FrmCustomAlert(FrmErrorAlert,"Can't find MathLib.\nPlease install it first.",0,0);
+			break;
 	}
-
-	return error;
+	
+	return e;
 }
 
 static void AppStopMathLib() {
-	UInt16 useCount;
-
-	if (MathLibRef != sysInvalidRefNum) {
-		MathLibClose(MathLibRef, &useCount);
-		
-		if (!useCount)
-			SysLibRemove(MathLibRef);
-	}
+	MathlibRelease();
 }
 
 // Set the screen pitch for direct screen access
@@ -240,9 +235,9 @@ void PINGetScreenDimensions() {
 	gVars->pinUpdate = true;
 }
 
-static Err AppStartCheckScreenSize() {
-	SonySysFtrSysInfoP sonySysFtrSysInfoP;
-	Err error = errNone;
+static void AppStartCheckScreenSize() {
+	UInt32 version;
+	UInt16 slkRefNum;
 
 	gVars->screenWidth = 320;
 	gVars->screenHeight = 320;
@@ -251,55 +246,36 @@ static Err AppStartCheckScreenSize() {
 	gVars->screenFullHeight = gVars->screenHeight;
 
 	// Sony HiRes+
-	if (!(error = FtrGet(sonySysFtrCreator, sonySysFtrNumSysInfoP, (UInt32*)&sonySysFtrSysInfoP))) {
-		if (sonySysFtrSysInfoP->libr & sonySysFtrSysInfoLibrSilk) {
+	slkRefNum = SilkInit(&version);
+	gVars->slkRefNum = slkRefNum;
+	gVars->slkVersion = version;
 
-			if ((error = SysLibFind(sonySysLibNameSilk, &gVars->slkRefNum)))
-				if (error == sysErrLibNotFound)	
-					error = SysLibLoad( sonySysFileTSilkLib, sonySysFileCSilkLib, &gVars->slkRefNum);
+	if (slkRefNum != sysInvalidRefNum) {
+		if (version == vskVersionNum1) {
+			SilkLibEnableResize(slkRefNum);
+			SilkLibResizeDispWin(slkRefNum, silkResizeMax);
+			HRWinGetWindowExtent(gVars->HRrefNum, &gVars->screenFullWidth, &gVars->screenFullHeight);
+			SilkLibResizeDispWin(slkRefNum, silkResizeNormal);
+			SilkLibDisableResize(slkRefNum);			
 
-			if (!error) {
-				error = FtrGet(sonySysFtrCreator, sonySysFtrNumVskVersion, &gVars->slkVersion);
-				// Get screen size
-				if (error) {
-					// v1 = NR
-				 	error = SilkLibOpen(gVars->slkRefNum);
-					if(!error) {
-						gVars->slkVersion = vskVersionNum1;
-						SilkLibEnableResize(gVars->slkRefNum);
-						SilkLibResizeDispWin(gVars->slkRefNum, silkResizeMax);
-						HRWinGetWindowExtent(gVars->HRrefNum, &gVars->screenFullWidth, &gVars->screenFullHeight);
-						SilkLibResizeDispWin(gVars->slkRefNum, silkResizeNormal);
-						SilkLibDisableResize(gVars->slkRefNum);
-					}
-				} else {
-					// v2 = NX/NZ
-					// v3 = UX
-				 	error = VskOpen(gVars->slkRefNum);
-					if(!error) {
-						VskSetState(gVars->slkRefNum, vskStateEnable, (gVars->slkVersion == vskVersionNum2 ? vskResizeVertically : vskResizeHorizontally));
-						VskSetState(gVars->slkRefNum, vskStateResize, vskResizeNone);
-						HRWinGetWindowExtent(gVars->HRrefNum, &gVars->screenFullWidth, &gVars->screenFullHeight);
-						VskSetState(gVars->slkRefNum, vskStateResize, vskResizeMax);
-						VskSetState(gVars->slkRefNum, vskStateEnable, vskResizeDisable);
-						OPTIONS_SET((gVars->slkVersion == vskVersionNum3 ? kOptModeLandscape : kOptNone));
-					}
-				}
-			}
-
-			if (error)
-				gVars->slkRefNum = sysInvalidRefNum;
-			else
-				OPTIONS_SET(kOptModeWide);
+		} else {
+			VskSetState(slkRefNum, vskStateEnable, (gVars->slkVersion == vskVersionNum2 ? vskResizeVertically : vskResizeHorizontally));
+			VskSetState(slkRefNum, vskStateResize, vskResizeNone);
+			HRWinGetWindowExtent(gVars->HRrefNum, &gVars->screenFullWidth, &gVars->screenFullHeight);
+			VskSetState(slkRefNum, vskStateResize, vskResizeMax);
+			VskSetState(slkRefNum, vskStateEnable, vskResizeDisable);
+			OPTIONS_SET((version == vskVersionNum3 ? kOptModeLandscape : kOptNone));
 		}
-	}
-	// Tapwave Zodiac and other DIA API compatible devies
-	// get max screen size
-	if (error)
-		PINGetScreenDimensions();
+		
+		OPTIONS_SET(kOptModeWide);
 
+	// Tapwave Zodiac and other DIA API compatible devices
+	// get max screen size
+	} else {
+		PINGetScreenDimensions();
+	}
+	
 	WinScreenGetPitch();
-	return error;
 }
 
 static void AppStopSilk() {
@@ -346,6 +322,9 @@ Err AppStart(void) {
 	Boolean color;
 	Err error;
 
+	// delete old databases
+ 	ModDelete();
+ 
 	// allocate global variables space
 	dataSize = sizeof(GlobalsDataType);
 	gVars = (GlobalsDataType *)MemPtrNew(dataSize);
@@ -418,7 +397,7 @@ Err AppStart(void) {
 		gPrefs->autoOff = true;
 		gPrefs->vibrator = RumbleExists();
 		gPrefs->debug = false;
-
+		gPrefs->exitLauncher = true;
 		gPrefs->stdPalette = OPTIONS_TST(kOptDeviceOS5);
 		
 	} else {
@@ -515,11 +494,6 @@ void AppStop(void) {
 	AppStopMathLib();
 	AppStopHRMode();
 
-	// reset if needed
-	if (gVars) {
-		Boolean autoReset = gVars->autoReset;
+	if (!bLaunched)
 		MemPtrFree(gVars);
-		if (autoReset)
-			SysReset();
-	}
 }
