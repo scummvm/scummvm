@@ -29,10 +29,18 @@
 
 class File : public Common::ReadStream, public Common::WriteStream {
 private:
-
-	FILE * _handle;
+	/** POSIX file handle to the actual file; 0 if no file is open. */
+	FILE *_handle;
+	
+	/** Status flag which tells about recent I/O failures. */
 	bool _ioFailed;
-	char *_name;	// For debugging
+	
+	/** Simple ref-counter for File objects. */
+	int32 _refcount;
+
+	/** The name of this file, for debugging. */
+	char *_name;
+
 
 	static FILE *fopenNoCase(const char *filename, const char *directory, const char *mode);
 	
@@ -49,6 +57,10 @@ public:
 	
 	File();
 	virtual ~File();
+
+	void incRef();
+	void decRef();
+
 	bool open(const char *filename, AccessMode mode = kFileReadMode, const char *directory = NULL);
 	void close();
 	bool isOpen() const;

@@ -24,6 +24,8 @@
 
 #include "common/scummsys.h"
 
+class File;
+
 namespace Scumm {
 
 class Chunk {
@@ -46,8 +48,6 @@ public:
 	virtual uint32 getDword()= 0;
 };
 
-class FilePtr;
-
 // Common functionality for concrete chunks (FileChunk, MemoryChunk)
 class BaseChunk : public Chunk {
 protected:
@@ -67,7 +67,7 @@ public:
 
 class FileChunk : public BaseChunk {
 private:
-	FilePtr *_data;
+	File *_data;
 	uint32 _offset;
 
 protected:

@@ -104,16 +104,35 @@ void File::resetDefaultDirectories() {
 	_defaultDirectories.clear();
 }
 
-File::File() {
-	_handle = NULL;
-	_ioFailed = false;
-	_name = 0;
+File::File()
+ : _handle(0), _ioFailed(false), _refcount(1), _name(0) {
 }
 
+//#define DEBUG_FILE_REFCOUNT
+
 File::~File() {
+#ifdef DEBUG_FILE_REFCOUNT
+	warning("File::~File on file '%s'", _name);
+#endif
 	close();
 	delete [] _name;
 }
+void File::incRef() {
+#ifdef DEBUG_FILE_REFCOUNT
+	warning("File::incRef on file '%s'", _name);
+#endif
+	_refcount++;
+}
+
+void File::decRef() {
+#ifdef DEBUG_FILE_REFCOUNT
+	warning("File::decRef on file '%s'", _name);
+#endif
+	if (--_refcount == 0) {
+		delete this;
+	}
+}
+
 
 bool File::open(const char *filename, AccessMode mode, const char *directory) {
 	if (_handle) {
@@ -155,6 +174,10 @@ bool File::open(const char *filename, AccessMode mode, const char *directory) {
 		delete [] _name;
 	_name = new char[len+1];
 	memcpy(_name, filename, len+1);
+
+#ifdef DEBUG_FILE_REFCOUNT
+	warning("File::open on file '%s'", _name);
+#endif
 
 	return true;
 }

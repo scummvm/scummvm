@@ -28,33 +28,6 @@
 
 namespace Scumm {
 
-class FilePtr : public File {
-	Common::String _filename;
-	int32 _refcount;
-public:
-	FilePtr(const char *fname) :
-		_filename(fname),
-		_refcount(1) {
-			debug(9, "FilePtr created for %s", fname);
-			open(fname);
-			if (isOpen() == false)
-				error("FilePtr unable to read file %s", fname);
-		}
-
-	~FilePtr() {
-		debug(9, "FilePtr destroyed for %s", _filename.c_str());
-	}
-
-	void incRef() {
-		_refcount++;
-	}
-
-	void decRef() {
-		if (--_refcount == 0)
-			delete this;
-	}
-};
-
 const char *Chunk::ChunkString(Chunk::type t) {
 	static char data[5];
 	data[0] = (char)((t >> 24) & 0xFF);
@@ -116,7 +89,10 @@ FileChunk::FileChunk() :
 }
 
 FileChunk::FileChunk(const char *fname) {
-	_data = new FilePtr(fname);
+	_data = new File();
+	if (!_data->open(fname))
+		error("FileChunk: Unable to open file %s", fname);
+
 	_type = _data->readUint32BE();
 	_size = _data->readUint32BE();
 	_offset = sizeof(Chunk::type) + sizeof(uint32);
