@@ -152,7 +152,13 @@ const EventTypeSpec kCmdEvents[] =
 	{ kEventClassMouse, kEventMouseUp },
 	{ kEventClassMouse, kEventMouseMoved },
 	{ kEventClassKeyboard, kEventRawKeyDown },
-	{ kEventClassCommand, kEventProcessCommand },
+	{ kEventClassCommand, kEventProcessCommand }
+};
+
+const EventTypeSpec kWindowEvents[] =
+{
+	{ kEventClassWindow, kEventWindowDrawContent },
+	{ kEventClassWindow, kEventWindowHandleContentClick },
 	{ kEventClassWindow, kEventWindowClose }
 };
 
@@ -160,6 +166,34 @@ pascal OSErr QuitEventHandler(const AppleEvent *theEvent, AppleEvent *theReply, 
 {
 	Quit();
 	return(noErr);
+}
+
+static pascal OSStatus WindowEventHandler( EventHandlerCallRef inCallRef, EventRef inEvent, void* userData )
+{
+	OSStatus		result = eventNotHandledErr;
+	
+	if(GetEventClass(inEvent) == kEventClassWindow)
+	{
+		switch(GetEventKind(inEvent))
+		{
+			case kEventWindowDrawContent:
+				wm->writeToScreen();
+			break;
+			
+			case kEventWindowHandleContentClick:
+				//debug(1, "Sending MouseDown");
+				if(CommandKeyDown())
+					wm->_scumm->_rightBtnPressed |= msClicked|msDown;
+				else
+					wm->_scumm->_leftBtnPressed |= msClicked|msDown;
+			break;
+			
+			case kEventWindowClose:
+				Quit();
+			break;
+		}
+	}
+	return result;
 }
 
 static pascal OSStatus EventHandler( EventHandlerCallRef inCallRef, EventRef inEvent, void* userData )
@@ -173,12 +207,6 @@ static pascal OSStatus EventHandler( EventHandlerCallRef inCallRef, EventRef inE
 	
 	switch(GetEventClass(inEvent))
 	{
-		case kEventClassWindow:
-			WindowRef	theWin;
-			GetEventParameter( inEvent, kEventParamDirectObject, typeWindowRef, NULL,
-				sizeof( WindowRef ), NULL, &theWin );
-			if(theWin == wm->wPtr)
-				Quit();
 		case kEventClassCommand:
 			switch(command.commandID)
 			{
@@ -224,42 +252,15 @@ static pascal OSStatus EventHandler( EventHandlerCallRef inCallRef, EventRef inE
 		
 		case kEventClassMouse:
 		switch(GetEventKind(inEvent))
-		{
-			
+		{			
 			case kEventMouseDown:
-				WindowPtr window;
-				int part;
+				WindowRef theWin;
 				
-				GetEventParameter(inEvent, kEventParamMouseLocation, typeQDPoint, NULL, sizeof(Point), NULL, &mouse);
-				part = FindWindow(mouse, &window);
-				switch(part)
+				GetEventParameter(inEvent, kEventParamDirectObject, typeWindowRef, NULL, sizeof(WindowRef),
+					NULL, &theWin);
+				if(theWin != FrontWindow())
 				{
-					case inContent:
-						if((window != FrontWindow() && window == wm->wPtr))
-						{
-							SelectWindow(window);
-							BringToFront(window);
-						}
-						if(window == wm->wPtr)
-						{
-							if(CommandKeyDown())
-								wm->_scumm->_rightBtnPressed |= msClicked|msDown;
-							else
-								wm->_scumm->_leftBtnPressed |= msClicked|msDown;
-						}
-					break;
-					
-					case inDrag:
-						BitMap	qdscreenbits;
-						
-						GetQDGlobalsScreenBits(&qdscreenbits);
-						DragWindow(window, mouse, &qdscreenbits.bounds);
-					break;
-					
-					case inGoAway:
-						if(TrackGoAway(window, mouse) && window == wm->wPtr)
-							Quit();
-					break;
+					ActivateWindow(theWin, true);
 				}
 			break;
 			
@@ -268,24 +269,23 @@ static pascal OSStatus EventHandler( EventHandlerCallRef inCallRef, EventRef inE
 				wm->_scumm->_leftBtnPressed &= ~msDown;
 			break;
 			
-			case kEventMouseMoved:
-				Point mouse2;
+			case kEventMouseMoved:				
+				GetEventParameter(inEvent, kEventParamMouseLocation, typeQDPoint, NULL, sizeof(Point), NULL, &mouse);
+				Rect winRect;
 				
-				GetEventParameter(inEvent, kEventParamMouseLocation, typeQDPoint, NULL, sizeof(Point), NULL, &mouse2);
-				
-				CGrafPtr oldPort;
-				GetPort(&oldPort);
-				SetPortWindowPort(wm->wPtr);
-				Rect wRect;
-				GetPortBounds(GetWindowPort(wm->wPtr), &wRect);
-				if(PtInRect(mouse2, &wRect))
+				GetWindowBounds(wm->wPtr, kWindowContentRgn, &winRect);
+				if(PtInRect(mouse, &winRect))
 				{
-					GlobalToLocal(&mouse2);
+					CGrafPtr oldPort;
 					
-					wm->_scumm->mouse.x = mouse2.h/wm->scale;
-					wm->_scumm->mouse.y = mouse2.v/wm->scale+25;
+					GetPort(&oldPort);
+					SetPortWindowPort(wm->wPtr);
+					GlobalToLocal(&mouse);
+					scumm.mouse.x = mouse.h/wm->scale;
+					scumm.mouse.y = mouse.v/wm->scale;
+					
+					//debug(1, "Mouse X:%i Y:%i", scumm.mouse.x, scumm.mouse.y);
 				}
-				SetPort(oldPort);
 			break;
 		}
 		break;
@@ -349,8 +349,8 @@ void WndMan::init()
 	DrawMenuBar();
 	
 	SetRect(&rectWin, 0, 0, DEST_WIDTH, DEST_HEIGHT);
-	UInt32 WinAttrib = (kWindowCloseBoxAttribute | kWindowFullZoomAttribute |
-				kWindowCollapseBoxAttribute | kWindowInWindowMenuAttribute);
+	UInt32 WinAttrib = (kWindowCloseBoxAttribute | kWindowCollapseBoxAttribute |
+				kWindowInWindowMenuAttribute | kWindowStandardHandlerAttribute);
 	
 	if(noErr != CreateNewWindow(kDocumentWindowClass, WinAttrib, &rectWin, &wPtr))
 	{
@@ -367,17 +367,20 @@ void WndMan::init()
 	
 	SetRect(&dstRect, 0, 0, DEST_WIDTH, DEST_HEIGHT);
 	SetRect(&srcRect, 0, 0, SRC_WIDTH, SRC_HEIGHT);	
-	
-	//InstallStandardEventHandler(GetWindowEventTarget(wPtr));
 
 	InstallApplicationEventHandler(NewEventHandlerUPP(EventHandler),
 				GetEventTypeCount(kCmdEvents), kCmdEvents, 0, NULL);
+	InstallStandardEventHandler(GetWindowEventTarget(wPtr));
+	InstallWindowEventHandler(wPtr, NewEventHandlerUPP(WindowEventHandler),
+				GetEventTypeCount(kWindowEvents), kWindowEvents, 0, NULL);
 	
 	OSStatus err = AEInstallEventHandler(kCoreEventClass, kAEQuitApplication, NewAEEventHandlerUPP(QuitEventHandler), 0L, false);
 	
 	EventLoopTimerRef theTimer;
 	InstallEventLoopTimer(GetCurrentEventLoop(), 0, 0, NewEventLoopTimerUPP(DoGameLoop),
 						NULL, &theTimer);
+	
+	NewGWorldFromPtr(&screenBuf, 8, &srcRect, pal, nil, 0, (char *)_vgabuf, SRC_WIDTH);
 }
 
 void WndMan::ChangeScaling(short scaling)
@@ -418,7 +421,7 @@ void WndMan::run()
 
 void WndMan::writeToScreen()
 {
-	NewGWorldFromPtr(&screenBuf, 8, &srcRect, pal, nil, 0, (char *)_vgabuf, SRC_WIDTH);
+	//NewGWorldFromPtr(&screenBuf, 8, &srcRect, pal, nil, 0, (char *)_vgabuf, SRC_WIDTH);
 	CopyBits(GetPortBitMapForCopyBits(screenBuf),
 			GetPortBitMapForCopyBits(GetWindowPort(wPtr)), 
 			&srcRect, &dstRect, srcCopy, 0L);
@@ -454,6 +457,7 @@ void WndMan::setPalette(byte *ctab, int first, int num)
 		(*pal)->ctTable[i].rgb.green = ctab[1]<<8;
 		(*pal)->ctTable[i].rgb.blue = ctab[2]<<8;
 	}
+	NewGWorldFromPtr(&screenBuf, 8, &srcRect, pal, nil, 0, (char *)_vgabuf, SRC_WIDTH);
 }
 
 void blitToScreen(Scumm *s, byte *src,int x, int y, int w, int h)
@@ -910,7 +914,7 @@ void Preferences()
 
 /* FIXME: CD Music Stubs */
 void cd_playtrack(int track, int offset, int delay) {;}
-void cd_play(int track, int num_loops, int start_frame) {;}
+void cd_play(int track, int num_loops, int start_frame, int end_frame) {;}
 void cd_stop() {;}
 int cd_is_running() {return 0;}
 
