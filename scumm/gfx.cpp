@@ -1430,13 +1430,13 @@ void Gdi::drawBMAPObject(const byte *ptr, VirtScreen *vs, int obj, int x, int y,
 	bmap_ptr = _vm->findResourceData(MKID('BMAP'), ptr);
 	assert(bmap_ptr);
 
-	byte code = *ptr++;
+	byte code = *bmap_ptr++;
 	int scrX = _vm->_screenStartStrip * 8;
 
 	if (code == 8 || code == 9) {
 		Common::Rect rScreen(0, 0, vs->w, vs->h);
 		byte *dst = (byte *)_vm->virtscr[0].backBuf + scrX;
-		copyWizImage(dst, ptr, vs->w, vs->h, x - scrX, y, w, h, &rScreen);
+		copyWizImage(dst, bmap_ptr, vs->w, vs->h, x - scrX, y, w, h, &rScreen);
 	}
 
 	Common::Rect rect1(x, y, x + w, y + h);
