@@ -39,13 +39,11 @@ BrowserDialog::BrowserDialog(NewGui *gui, const char *title)
 	: Dialog(gui, 20, 10, 320 -2 * 20, 200 - 2 * 10),
 	  _node(0), _nodeContent(0) {
 
-#ifdef __PALM_OS__
 	_fileList = NULL;
 	_currentPath = NULL;
 	_node = NULL;
 	_nodeContent = NULL;
 	_choice = NULL;
-#endif
 
 	// Headline - TODO: should be customizable during creation time
 	new StaticTextWidget(this, 10, 8, _w-2 * 10, kLineHeight, title, kTextAlignCenter);
