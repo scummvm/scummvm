@@ -16,9 +16,7 @@
    Copyright 1991, 1998 The Open Group
 */
 
-namespace GUI {
-
-using namespace Graphics;
+namespace Graphics {
 
 /* Font character bitmap data. */
 static const bitmap_t _font_bits[] = {
@@ -4781,4 +4779,4 @@ static const FontDesc desc = {
 
 extern const NewFont g_consolefont(desc);
 
-} // End of namespace GUI
+} // End of namespace Graphics

@@ -21,10 +21,6 @@
 #include "graphics/fontman.h"
 //#include "gui/consolefont.h"
 
-namespace GUI {
-	extern const Graphics::NewFont g_consolefont;
-}
-
 DECLARE_SINGLETON(Graphics::FontManager);
 
 namespace Graphics {
@@ -32,6 +28,7 @@ namespace Graphics {
 const ScummFont g_scummfont;
 extern const NewFont g_sysfont;
 extern const NewFont g_sysfont_big;
+extern const NewFont g_consolefont;
 
 
 FontManager::FontManager() {
@@ -45,7 +42,7 @@ const Font *FontManager::getFontByUsage(FontUsage usage) const {
 	case kOSDFont:
 		return &g_scummfont;
 	case kConsoleFont:
-		return &GUI::g_consolefont;
+		return &g_consolefont;
 	case kGUIFont:
 		return &g_sysfont;
 	case kBigGUIFont:

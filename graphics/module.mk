@@ -2,11 +2,12 @@ MODULE := graphics
 
 MODULE_OBJS := \
 	graphics/animation.o \
-	graphics/scummfont.o \
+	graphics/consolefont.o \
 	graphics/font.o \
 	graphics/fontman.o \
 	graphics/newfont.o \
 	graphics/newfont_big.o \
+	graphics/scummfont.o \
 	graphics/surface.o
 
 MODULE_DIRS += \

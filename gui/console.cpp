@@ -29,9 +29,12 @@
 
 #include "graphics/font.h"
 
-namespace GUI {
+namespace Graphics {
+extern const NewFont g_consolefont;
+}
+using Graphics::g_consolefont;
 
-extern const Graphics::NewFont g_consolefont;
+namespace GUI {
 
 #define kConsoleCharWidth	(g_consolefont.getMaxCharWidth())
 #define kConsoleLineHeight	(g_consolefont.getFontHeight() + 2)
