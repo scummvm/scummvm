@@ -789,14 +789,14 @@ static void codec47_subgfx_lev3() {
 		byte val = *(d_src + 2);
 		int16 * tmp_ptr2 = (int16*)tmp_ptr;
 		do {
-			*(d_dst + *(tmp_ptr2)) = val;
+			*(d_dst + READ_LE_UINT16(tmp_ptr2)) = val;
 			tmp_ptr2++;
 		} while (--l > 0);
 		l = *(tmp_ptr + 97);
 		val = *(d_src + 3);
 		tmp_ptr2 = (int16*)(tmp_ptr + 32);
 		do {
-			*(d_dst + *(tmp_ptr2)) = val;
+			*(d_dst + READ_LE_UINT16(tmp_ptr2)) = val;
 			tmp_ptr2++;
 		} while (--l > 0);
 		d_src += 4;
@@ -891,14 +891,14 @@ static void codec47_subgfx_lev2() {
 		byte val = *(d_src + 2);
 		int16 * tmp_ptr2 = (int16*)tmp_ptr;
 		do {
-			*(d_dst + *(tmp_ptr2)) = val;
+			*(d_dst + READ_LE_UINT16(tmp_ptr2)) = val;
 			tmp_ptr2++;
 		} while (--l > 0);
 		l = *(tmp_ptr + 385);
 		val = *(d_src + 3);
 		tmp_ptr2 = (int16*)(tmp_ptr + 128);
 		do {
-			*(d_dst + *(tmp_ptr2)) = val;
+			*(d_dst + READ_LE_UINT16(tmp_ptr2)) = val;
 			tmp_ptr2++;
 		} while (--l > 0);
 		d_src += 4;
