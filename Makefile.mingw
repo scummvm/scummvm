@@ -7,17 +7,15 @@ VPATH=$(SRC):$(SRC)/sound:$(SRC)/simon:$(SRC)/v3:$(SRC)/v4
 SDL_CFLAGS=-I$(SRC)/sdl/include
 SDL_LIBS=-L$(SRC)/sdl/lib -lSDLmain -lSDL
 
+# If MAD (MPEG Audio Decoder) header and library isn't installed remove -lmad and -DCOMPRESSED_SOUND_FILE
 CC      = gcc
 CFLAGS  = -g -O -Wall -Wstrict-prototypes -Wuninitialized -Wno-long-long -Wno-multichar 
 DEFINES = -DCOMPRESSED_SOUND_FILE
-LDFLAGS :=
+LDFLAGS :=-mwindows -mconsole
 INCLUDES:= $(SDL_CFLAGS) -I./ -I./sound
 CPPFLAGS= $(DEFINES) $(INCLUDES)
-LIBS	= -lmingw32 -lwinmm -lwsock32 $(SDL_LIBS) -lmad -mwindows -mconsole
-
+LIBS	= -lmingw32 -lwinmm -lwsock32 $(SDL_LIBS) -lmad
 EXEC=scummvm.exe
-
-INCS	= scumm.h scummsys.h stdafx.h
 
 OBJS	= actor.o boxes.o costume.o gfx.o object.o resource.o \
 	saveload.o script.o scummvm.o sound.o string.o \
@@ -43,9 +41,9 @@ install:   $(EXEC)
 	strip $(EXEC) -o $(SCUMMVMPATH)/$(EXEC)
 
 dist:   install
-	cp copying.txt $(SCUMMVMPATH)/copying.txt
-	cp readme.txt $(SCUMMVMPATH)/readme.txt
-	cp whatsnew.txt $(SCUMMVMPATH)/whatsnew.txt
-	cp SDL/README-SDL.txt $(SCUMMVMPATH)/README-SDL.txt
-	cp SDL/lib/SDL.dll $(SCUMMVMPATH)/SDL.dll
-	u2d $(SCUMMVMPATH)/readme.txt
+	cp copying.txt $(SCUMMVMPATH)
+	cp readme.txt $(SCUMMVMPATH)
+	cp whatsnew.txt $(SCUMMVMPATH)
+	cp SDL/README-SDL.txt $(SCUMMVMPATH)
+	cp SDL/lib/SDL.dll $(SCUMMVMPATH)
+	u2d $(SCUMMVMPATH)/*.txt
