@@ -53,6 +53,7 @@ void ScummEngine::setupScummVars() {
 	VAR_LAST_SOUND = 23;
 	VAR_CUTSCENEEXIT_KEY = 24;
 	VAR_TALK_ACTOR = 25;
+	VAR_CAMERA_FAST_X = 26;
 	VAR_SCROLL_SCRIPT = 27;
 	VAR_ENTRY_SCRIPT = 28;
 	VAR_ENTRY_SCRIPT2 = 29;
@@ -139,7 +140,6 @@ void ScummEngine_v5::setupScummVars() {
 	ScummEngine::setupScummVars();
 
 	VAR_CURRENT_LIGHTS = 9;
-	VAR_CAMERA_FAST_X = 26;
 	VAR_V5_TALK_STRING_Y = 54;
 }
 
