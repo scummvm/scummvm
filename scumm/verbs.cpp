@@ -264,8 +264,10 @@ void ScummEngine::redrawVerbs() {
 	if (_version <= 2 && !(_userState & 128)) // Don't draw verbs unless active
 		return;
 
-	int i;
-	int verb = (_cursor.state > 0 ? checkMouseOver(_mouse.x, _mouse.y) : 0);
+	int i, verb = 0;
+	if ((_gameId == GID_FT) || _cursor.state > 0)
+		verb = checkMouseOver(_mouse.x, _mouse.y);
+
 	for (i = _numVerbs-1; i >= 0; i--) {
 		if (i == verb && _verbs[verb].hicolor)
 			drawVerb(i, 1);
@@ -323,6 +325,9 @@ void ScummEngine::verbMouseOver(int verb) {
 	if (_version <= 2 && !(_userState & 128))
 		return;
 
+	if (_gameId == GID_FT)
+		return;
+
 	if (_verbMouseOver == verb)
 		return;
 
@@ -374,7 +379,8 @@ void ScummEngine::drawVerb(int verb, int mode) {
 			return;
 		}
 		
-		restoreVerbBG(verb);
+		if (_gameId != GID_FT)
+			restoreVerbBG(verb);
 
 		_string[4].charset = vs->charset_nr;
 		_string[4].xpos = vs->curRect.left;
@@ -408,8 +414,8 @@ void ScummEngine::drawVerb(int verb, int mode) {
 		vs->curRect.bottom = _charset->_str.bottom;
 		vs->oldRect = _charset->_str;
 		_charset->_str.left = _charset->_str.right;
-	} else {
-		restoreVerbBG(verb);
+	} else if (_gameId != GID_FT) {
+		//restoreVerbBG(verb);
 	}
 }
 
@@ -513,10 +519,10 @@ void ScummEngine::killVerb(int slot) {
 
 	nukeResource(rtVerb, slot);
 
-	if (vs->saveid == 0) {
-		drawVerb(slot, 0);
-		verbMouseOver(0);
-	}
+	//if (vs->saveid == 0) {
+	//	drawVerb(slot, 0);
+	//	verbMouseOver(0);
+	//}
 	vs->saveid = 0;
 }
 

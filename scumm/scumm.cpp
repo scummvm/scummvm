@@ -1635,7 +1635,8 @@ load_game:
 
 		processDrawQue();
 
-		if (_verbRedraw) {
+		// Full Throttle always redraws verbs and draws verbs before actors
+		if ((_gameId == GID_FT) || _verbRedraw) {
 			redrawVerbs();
 		}
 	
@@ -1649,12 +1650,6 @@ load_game:
 			setActorRedrawFlags();
 		}
 
-		// Full Throttle needs to draw verbs before actors, to prevent
-		// flickering with overlapped actors. See bug #778281
-
-		if (_gameId == GID_FT && !_verbRedraw && _cursor.state > 0)
-			verbMouseOver(checkMouseOver(_mouse.x, _mouse.y));
-
 		processActors();
 		_fullRedraw = false;
 		cyclePalette();
@@ -1666,7 +1661,7 @@ load_game:
 			clearClickedStatus();
 		}
 
-		if (_gameId != GID_FT && !_verbRedraw && _cursor.state > 0)
+		if (!_verbRedraw && _cursor.state > 0)
 			verbMouseOver(checkMouseOver(_mouse.x, _mouse.y));
 
 		_verbRedraw = false;
