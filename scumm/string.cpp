@@ -583,6 +583,14 @@ const byte *Scumm::addMessageToStack(const byte *msg) {
 				if (_features & GF_AFTER_V8) {
 					addStringToStack(READ_LE_UINT32(ptr + num));
 					num += 4;
+				} else if (_features & GF_AFTER_V2) {
+					int var = READ_LE_UINT16(ptr + num);
+					num += 2;
+					char c;
+					while ((c = _scummVars[var])) {
+						if (c != '@')
+							*_msgPtrToAdd++ = c;
+					}
 				} else {
 					addStringToStack(READ_LE_UINT16(ptr + num));
 					num += 2;
@@ -625,27 +633,10 @@ const byte *Scumm::addMessageToStack(const byte *msg) {
 }
 
 void Scumm::addIntToStack(int var) {
-	int num, max;
-	byte flag;
+	int num;
 
 	num = readVar(var);
-	if (num < 0) {
-		*_msgPtrToAdd++ = '-';
-		num = -num;
-	}
-
-	flag = 0;
-	max = 10000;
-	do {
-		if (num >= max || flag) {
-			*_msgPtrToAdd++ = num / max + '0';
-			num -= (num / max) * max;
-			flag = 1;
-		}
-		max /= 10;
-		if (max == 1)
-			flag = 1;
-	} while (max);
+	_msgPtrToAdd += sprintf((char *)_msgPtrToAdd, "%d", num);
 }
 
 void Scumm::addVerbToStack(int var)
