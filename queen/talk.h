@@ -46,8 +46,8 @@ class Talk {
 		const char *voiceFilePrefix,
 		QueenEngine *vm);
 
-	//! Read a string from ptr and return new ptr
-	static byte *getString(byte *ptr, char *str, int maxLength, int align = 2);
+	//! Read a string from ptr and update offset
+	static void getString(const byte *ptr, uint16 &offset, char *str, int maxLength, int align = 2);
 
 private:
 	//!  Collection of constants used by Talk
@@ -131,16 +131,16 @@ private:
 	int16 _itemNumber[2];
 
 	//! String data
-	byte *_person1Ptr;
+	uint16 _person1PtrOff;
 
 	//! Cutaway data
-	byte *_cutawayPtr;
+	uint16 _cutawayPtrOff;
 
 	//! Data used if we have talked to the person before
-	byte *_person2Ptr;
+	uint16 _person2PtrOff;
 
 	//! Data used if we haven't talked to the person before
-	byte *_joePtr;
+	uint16 _joePtrOff;
 
 	//! Is a talking head
 	bool _talkHead;
@@ -176,7 +176,7 @@ private:
 	void initialTalk();
 
 	//! Find a string in the dialogue tree
-	void findDialogueString(byte *ptr, int16 id, int16 max, char *str);
+	void findDialogueString(uint16 offset, int16 id, int16 max, char *str);
 
 	//! Get TalkSelected struct for this talk
 	TalkSelected *talkSelected();

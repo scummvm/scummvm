@@ -146,7 +146,7 @@ void Talk::talk(const char *filename, int personInRoom, char *cutawayFilename) {
 		if (hasTalkedTo() && head == 1)
 			strcpy(_talkString[0], _person2String);
 		else
-			findDialogueString(_person1Ptr, head, _pMax, _talkString[0]);
+			findDialogueString(_person1PtrOff, head, _pMax, _talkString[0]);
 
 		if (hasTalkedTo() && head == 1)
 			sprintf(otherVoiceFilePrefix, "%2dXXXXP", _talkKey);
@@ -154,14 +154,14 @@ void Talk::talk(const char *filename, int personInRoom, char *cutawayFilename) {
 			sprintf(otherVoiceFilePrefix, "%2d%4xP", _talkKey, head);
 
 		if (_talkString[0][0] == '\0' && retval > 1) {
-			findDialogueString(_person1Ptr, retval, _pMax, _talkString[0]);
+			findDialogueString(_person1PtrOff, retval, _pMax, _talkString[0]);
 			sprintf(otherVoiceFilePrefix,"%2d%4xP", _talkKey, retval);
 		}
 
 		// Joe dialogue
 
 		for (i = 1; i <= 4; i++) {
-			findDialogueString(_joePtr, _dialogueTree[level][i].head, _jMax, _talkString[i]);
+			findDialogueString(_joePtrOff, _dialogueTree[level][i].head, _jMax, _talkString[i]);
 
 			int16 index = _dialogueTree[level][i].gameStateIndex;
 
@@ -267,7 +267,7 @@ void Talk::talk(const char *filename, int personInRoom, char *cutawayFilename) {
 
 		// check to see if person has something final to say
 		if (-1 == retval) {
-			findDialogueString(_person1Ptr, head, _pMax, _talkString[0]);
+			findDialogueString(_person1PtrOff, head, _pMax, _talkString[0]);
 			if (_talkString[0][0] != '\0') {
 				sprintf(otherVoiceFilePrefix, "%2d%4xP", _talkKey, head);
 				if (speak(_talkString[0], &person, otherVoiceFilePrefix))
@@ -291,13 +291,13 @@ void Talk::talk(const char *filename, int personInRoom, char *cutawayFilename) {
 	
 	_vm->grid()->setupPanel();
 
-	uint8 *ptr = _cutawayPtr;
+	uint16 offset = _cutawayPtrOff;
 
-	int16 cutawayGameState = (int16)READ_BE_INT16(ptr); ptr += 2;
-	int16 cutawayTestValue = (int16)READ_BE_INT16(ptr); ptr += 2;
+	int16 cutawayGameState = (int16)READ_BE_INT16(_fileData + offset); offset += 2;
+	int16 cutawayTestValue = (int16)READ_BE_INT16(_fileData + offset); offset += 2;
 
 	if (_vm->logic()->gameState(cutawayGameState) == cutawayTestValue) {
-		getString(ptr, cutawayFilename, 20);
+		getString(_fileData, offset, cutawayFilename, 20);
 		if (cutawayFilename[0]) {
 			//CR 2 - 7/3/95, If we're executing a cutaway scene, then make sure
 			// Joe can talk, so set TALKQUIT to 0 just in case we exit on the
@@ -348,19 +348,18 @@ void Talk::disableSentence(int oldLevel, int selectedSentence) {
 	_dialogueTree[oldLevel][selectedSentence].dialogueNodeValue1 = -1;
 }
 
-void Talk::findDialogueString(byte *ptr, int16 id, int16 max, char *str) {
+void Talk::findDialogueString(uint16 offset, int16 id, int16 max, char *str) {
 	str[0] = '\0';
-
 	for (int i = 1; i <= max; i++) {
-		ptr += 2;
-		int16 currentId = (int16)READ_BE_INT16(ptr); ptr += 2;
+		offset += 2;
+		int16 currentId = (int16)READ_BE_INT16(_fileData + offset);
+		offset += 2;
 		if (id == currentId) {
-			ptr = getString(ptr, str, MAX_STRING_LENGTH, 4);
-			//debug(6, "Found string with ID %i: '%s'", id, str);
+			getString(_fileData, offset, str, MAX_STRING_LENGTH, 4);
 			break;
+		} else {
+			getString(_fileData, offset, NULL, MAX_STRING_LENGTH, 4);
 		}
-		else
-			ptr = getString(ptr, NULL, MAX_STRING_LENGTH, 4);
 	}
 }
 
@@ -403,9 +402,9 @@ void Talk::load(const char *filename) {
 	if (_levelMax < 0) {
 		_levelMax = -_levelMax;
 		canQuit = false;
-	}
-	else
+	} else {
 		canQuit = true;
+	}
 
 	_uniqueKey      = (int16)READ_BE_INT16(ptr); ptr += 2;
 	_talkKey        = (int16)READ_BE_INT16(ptr); ptr += 2;
@@ -418,19 +417,13 @@ void Talk::load(const char *filename) {
 		_itemNumber[i] = (int16)READ_BE_INT16(ptr); ptr += 2;
 	}
 
-	_person1Ptr = _fileData + READ_BE_UINT16(ptr); ptr += 2;
-	_cutawayPtr = _fileData + READ_BE_UINT16(ptr); ptr += 2;
-	_person2Ptr = _fileData + READ_BE_UINT16(ptr); ptr += 2;
-
-	if (ptr != (_fileData + 28))
-		error("ptr != (_fileData + 28))");
-	
-	byte *dataPtr    = _fileData + 32;
-	_joePtr          = dataPtr + _levelMax * 96;
+	_person1PtrOff = READ_BE_UINT16(ptr); ptr += 2;
+	_cutawayPtrOff = READ_BE_UINT16(ptr); ptr += 2;
+	_person2PtrOff = READ_BE_UINT16(ptr); ptr += 2;	
+	_joePtrOff     = 32 + _levelMax * 96;
 	
 	// Load dialogue tree
-	ptr = dataPtr;
-
+	ptr = _fileData + 32;
 	memset(&_dialogueTree[0], 0, sizeof(_dialogueTree[0]));
 	for (i = 1; i <= _levelMax; i++)
 		for (int j = 0; j <= 5; j++) {
@@ -448,22 +441,20 @@ void Talk::load(const char *filename) {
 void Talk::initialTalk() {
 	// Lines 848-903 in talk.c 
 
-	byte *ptr = _joePtr + 2;
-	
-	uint16 hasNotString = READ_BE_UINT16(ptr); ptr += 2;
+	uint16 offset = _joePtrOff + 2;
+	uint16 hasNotString = READ_BE_UINT16(_fileData + offset); offset += 2;
 
 	char joeString[MAX_STRING_SIZE];
 	if (!hasNotString) {
-		ptr = getString(ptr, joeString, MAX_STRING_LENGTH);
+		getString(_fileData, offset, joeString, MAX_STRING_LENGTH);
 	} else {
 		joeString[0] = '\0';
 	}
 
-	ptr = _person2Ptr;
-	ptr = getString(ptr, _person2String, MAX_STRING_LENGTH);
-
+	offset = _person2PtrOff;
 	char joe2String[MAX_STRING_SIZE];
-	ptr = getString(ptr, joe2String, MAX_STRING_LENGTH);
+	getString(_fileData, offset, _person2String, MAX_STRING_LENGTH);
+	getString(_fileData, offset, joe2String, MAX_STRING_LENGTH);
 
 	if (!hasTalkedTo()) {		
 		// Not yet talked to this person		
@@ -487,33 +478,33 @@ int Talk::getSpeakCommand(const Person *person, const char *sentence, unsigned &
 	int commandCode = SPEAK_DEFAULT;
 	uint16 id = (sentence[index] << 8) | sentence[index + 1];
 	switch (id) {
-	case MKID_BE('AO'):
+	case 'AO':
 		commandCode = SPEAK_AMAL_ON;
 		break;			
-	case MKID_BE('FL'):
+	case 'FL':
 		commandCode = SPEAK_FACE_LEFT;
 		break;
-	case MKID_BE('FF'):
+	case 'FF':
 		commandCode = SPEAK_FACE_FRONT;
 		break;
-	case MKID_BE('FB'):
+	case 'FB':
 		commandCode = SPEAK_FACE_BACK;
 		break;
-	case MKID_BE('FR'):
+	case 'FR':
 		commandCode = SPEAK_FACE_RIGHT;
 		break;
-	case MKID_BE('GD'):
+	case 'GD':
 		_vm->logic()->joeGrab(STATE_GRAB_DOWN);
 		commandCode = SPEAK_NONE;
 		break;
-	case MKID_BE('GM'):
+	case 'GM':
 		_vm->logic()->joeGrab(STATE_GRAB_MID);
 		commandCode = SPEAK_NONE;
 		break; 
-	case MKID_BE('WT'):
+	case 'WT':
 		commandCode = SPEAK_PAUSE;
 		break;			
-	case MKID_BE('XY'):
+	case 'XY':
 		// For example *XY00(237,112)
 		{
 			commandCode = atoi(sentence + index + 2);
@@ -1081,27 +1072,20 @@ const Talk::SpeechParameters *Talk::findSpeechParameters(
 	return iterator;
 }
 
-byte *Talk::getString(byte *ptr, char *str, int maxLength, int align) {
-	int length = *ptr;
-	ptr++;
+void Talk::getString(const byte *ptr, uint16 &offset, char *str, int maxLength, int align) {
+	assert((align & 1) == 0);
+	int length = *(ptr + offset);
+	++offset;
 
 	if (length > maxLength) {
-		error("String too long. Length = %i, maxLength = %i, str = '%*s'",
-				length, maxLength, length, (const char*)ptr);
+		error("String too long. Length = %i, maxLength = %i", length, maxLength, length);
+	} else if (length) {
+		if (str) {
+			memcpy(str, ptr + offset, length);
+			str[length] = '\0';
+		}
+		offset = (offset + length + (align - 1)) & ~(align - 1);
 	}
-	else if (length) {
-		if (str)
-			memcpy(str, (const char*)ptr, length);
-		ptr += length;
-
-		while ((int)ptr % align)
-			ptr++;
-	}
-
-	if (str)
-		str[length] = '\0';
-
-	return ptr;
 }
 
 TalkSelected *Talk::talkSelected() {

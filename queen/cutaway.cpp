@@ -106,19 +106,18 @@ void Cutaway::load(const char *filename) {
 		 Pointers to other places in the cutaway data
 	 */
 
-	_gameStatePtr       = _fileData + READ_BE_UINT16(ptr);
+	_gameStatePtr = _fileData + READ_BE_UINT16(ptr);
 	ptr += 2;
 
-	_nextSentence       = _fileData + READ_BE_UINT16(ptr);
+	_nextSentenceOff = READ_BE_UINT16(ptr);
 	ptr += 2;
 
-	byte *bankNamesPtr  = _fileData + READ_BE_UINT16(ptr);
+	uint16 bankNamesOff = READ_BE_UINT16(ptr);
 	ptr += 2;
-	debug(6, "Bank name file offset = %08x", 20 + bankNamesPtr - _fileData);
 
 	_objectData = ptr;
 
-	loadStrings(bankNamesPtr);
+	loadStrings(bankNamesOff);
 
 	if (_bankNames[0][0]) {
 		debug(6, "Loading bank '%s'", _bankNames[0]);
@@ -126,7 +125,7 @@ void Cutaway::load(const char *filename) {
 	}
 
 	char entryString[MAX_STRING_SIZE];
-	_nextSentence = Talk::getString(_nextSentence, entryString, MAX_STRING_LENGTH);
+	Talk::getString(_fileData, _nextSentenceOff, entryString, MAX_STRING_LENGTH);
 	debug(6, "Entry string = '%s'", entryString);
 
 	_vm->logic()->joeCutFacing(_vm->logic()->joeFacing());
@@ -153,11 +152,11 @@ void Cutaway::load(const char *filename) {
 
 }
 
-void Cutaway::loadStrings(byte *ptr) {
+void Cutaway::loadStrings(uint16 offset) {
 	int i,j;
 
-	int bankNameCount = READ_BE_UINT16(ptr);
-	ptr += 2;
+	int bankNameCount = READ_BE_UINT16(_fileData + offset);
+	offset += 2;
 
 	debug(6, "Bank name count = %i", bankNameCount);
 
@@ -167,8 +166,7 @@ void Cutaway::loadStrings(byte *ptr) {
 	 */
 
 	for (i = 0, j = 0; i < bankNameCount; i++) {
-		ptr = Talk::getString(ptr, _bankNames[j], MAX_FILENAME_LENGTH);
-
+		Talk::getString(_fileData, offset, _bankNames[j], MAX_FILENAME_LENGTH);
 		if (_bankNames[j][0]) {
 			debug(6, "Bank name %i = '%s'", j, _bankNames[j]);
 			j++;
@@ -176,17 +174,16 @@ void Cutaway::loadStrings(byte *ptr) {
 	}
 
 	debug(6, "Getting talk file");
-	ptr = Talk::getString(ptr, _talkFile, MAX_FILENAME_LENGTH);
+	Talk::getString(_fileData, offset, _talkFile, MAX_FILENAME_LENGTH);
 	debug(6, "Talk file = '%s'", _talkFile);
 
-	_talkTo = (int16)READ_BE_INT16(ptr);
-	ptr += 2;
+	_talkTo = (int16)READ_BE_INT16(_fileData + offset);
 	debug(6, "_talkTo = %i", _talkTo);
 }
 
-byte *Cutaway::getCutawayObject(byte *ptr, CutawayObject &object)
+const byte *Cutaway::getCutawayObject(const byte *ptr, CutawayObject &object)
 {
-	byte *oldPtr = ptr;
+	const byte *oldPtr = ptr;
 
 	object.objectNumber = (int16)READ_BE_INT16(ptr); ptr += 2;
 	object.moveToX      = (int16)READ_BE_INT16(ptr); ptr += 2;
@@ -261,7 +258,7 @@ void Cutaway::dumpCutawayObject(int index, CutawayObject &object)
 }
 
 
-byte *Cutaway::turnOnPeople(byte *ptr, CutawayObject &object) {
+const byte *Cutaway::turnOnPeople(const byte *ptr, CutawayObject &object) {
 	// Lines 1248-1259 in cutaway.c
 	object.personCount = (int16)READ_BE_INT16(ptr);
 	ptr += 2;
@@ -471,7 +468,7 @@ Cutaway::ObjectType Cutaway::getObjectType(CutawayObject &object) {
 	return objectType;
 }
 
-byte *Cutaway::getCutawayAnim(byte *ptr, int header, CutawayAnim &anim) {
+const byte *Cutaway::getCutawayAnim(const byte *ptr, int header, CutawayAnim &anim) {
 	// lines 1531-1607 in cutaway.c
 
 	//debug(6, "[Cutaway::getCutawayAnim] header=%i", header);
@@ -564,7 +561,7 @@ void Cutaway::dumpCutawayAnim(CutawayAnim &anim) {
 	if (anim.song) debug(6, "song = %i", anim.song);
 }
 
-byte *Cutaway::handleAnimation(byte *ptr, CutawayObject &object) {
+const byte *Cutaway::handleAnimation(const byte *ptr, CutawayObject &object) {
 	// lines 1517-1770 in cutaway.c
 	int frameCount = 0;
 	int header = 0;
@@ -828,7 +825,7 @@ void Cutaway::run(char *nextFilename) {
 	memset(_personFace, 0, sizeof(_personFace));
 	_personFaceCount = 0;
 
-	byte *ptr = _objectData;
+	const byte *ptr = _objectData;
 
 	for (i = 0; i < _cutawayObjectCount; i++) {
 		CutawayObject object;
@@ -857,7 +854,7 @@ void Cutaway::run(char *nextFilename) {
 		limitBob(object);
 
 		char sentence[MAX_STRING_SIZE];
-		_nextSentence = Talk::getString(_nextSentence, sentence, MAX_STRING_LENGTH);
+		Talk::getString(_fileData, _nextSentenceOff, sentence, MAX_STRING_LENGTH);
 
 		if (OBJECT_ROOMFADE == object.objectNumber) {
 			_roomFade = true;
@@ -1267,8 +1264,6 @@ void Cutaway::handleText(
 		CutawayObject &object,
 		const char *sentence) {
 	// lines 1776-1863 in cutaway.c
-
-	//debug(6, "----- Write '%s' ----", sentence);
 
 	int spaces = countSpaces(type, sentence);
 

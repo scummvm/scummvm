@@ -216,7 +216,7 @@ void QueenEngine::saveGameState(uint16 slot, const char *desc) {
 		// write header
 		GameStateHeader header;
 		memset(&header, 0, sizeof(header));
-		file->writeUint32BE(MKID_BE('SCVM'));
+		file->writeUint32BE('SCVM');
 		header.version = TO_BE_32(SAVESTATE_CUR_VER);
 		header.flags = TO_BE_32(0);
 		header.dataSize = TO_BE_32(dataSize);
@@ -260,7 +260,7 @@ SaveFile *QueenEngine::readGameStateHeader(uint16 slot, GameStateHeader *gsh) {
 	char name[20];
 	makeGameStateName(slot, name);
 	SaveFile *file = _saveFileMan->open_savefile(name, getSavePath(), false);
-	if (file && file->readUint32BE() == MKID_BE('SCVM')) {
+	if (file && file->readUint32BE() == 'SCVM') {
 		gsh->version = file->readUint32BE();
 		gsh->flags = file->readUint32BE();
 		gsh->dataSize = file->readUint32BE();

@@ -50,7 +50,6 @@ Sound *Sound::giveSound(SoundMixer *mixer, QueenEngine *vm, uint8 compression) {
 					return new SilentSound(mixer, vm);
 				#else
 					return new MP3Sound(mixer, vm);
-
 				#endif
 				break;
 		case COMPRESSION_OGG:

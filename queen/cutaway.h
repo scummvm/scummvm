@@ -142,7 +142,7 @@ class Cutaway {
 		byte *_objectData;
 
 		//! Pointer to next sentence string in _fileData
-		byte *_nextSentence;
+		uint16 _nextSentenceOff;
 
 		//! ???
 		bool _roomFade;
@@ -205,10 +205,10 @@ class Cutaway {
 		void load(const char *filename);
 
 		//! Used by load to read string data
-		void loadStrings(byte *ptr);
+		void loadStrings(uint16 offset);
 
 		//! Get persons
-		byte *turnOnPeople(byte *ptr, CutawayObject &object);
+		const byte *turnOnPeople(const byte *ptr, CutawayObject &object);
 
 		//! Limit the BOB
 		void limitBob(CutawayObject &object);
@@ -220,7 +220,7 @@ class Cutaway {
 		ObjectType getObjectType(CutawayObject &object);
 
 		//! Perform actions for an animation
-		byte *handleAnimation(byte *ptr, CutawayObject &object);
+		const byte *handleAnimation(const byte *ptr, CutawayObject &object);
 
 		//! Perform actions for a person record
 		void handlePersonRecord(
@@ -248,13 +248,13 @@ class Cutaway {
 		void talk(char *nextFilename);
 
 		//! Get CutawayAnim data from ptr and return new ptr
-		byte *getCutawayAnim(byte *ptr, int header, CutawayAnim &anim);
+		const byte *getCutawayAnim(const byte *ptr, int header, CutawayAnim &anim);
 
 		//! Special animation
 		int makeComplexAnimation(int16 currentImage, CutawayAnim *objAnim, int frameCount);
 
 		//! Read a CutawayObject from ptr and return new ptr
-		static byte *getCutawayObject(byte *ptr, CutawayObject &object);
+		static const byte *getCutawayObject(const byte *ptr, CutawayObject &object);
 
 		//! Dump a CutawayObject with debug()
 		void dumpCutawayObject(int index, CutawayObject &object);
