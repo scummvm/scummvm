@@ -286,10 +286,10 @@ void NewGui::line(int x, int y, int x2, int y2, int16 color)
 	int16 *ptr;
 
 	if (x2 < x)
-		x2 ^= x ^= x2 ^= x;					// Swap x2 and x
+		SWAP(x2, x);
 
 	if (y2 < y)
-		y2 ^= y ^= y2 ^= y;					// Swap y2 and y
+		SWAP(y2, y);
 
 	ptr = getBasePtr(x, y);
 
