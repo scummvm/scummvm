@@ -105,19 +105,12 @@ void Talk::talk(const char *filename, int personInRoom, char *cutawayFilename) {
 
 	if (data->entryObj > 0)
 		return;
-	
-	// XXX R=ROOM_DATA[ROOM];
-	// XXX if(OBJECT_DATA[NOUN2+R][0]<=0) return;
-	// XXX if(OBJECT_DATA[NOUN2+R][4]>0) return;
-	// XXX strcpy(Pstr,FIND_STATE(OBJECT_DATA[NOUN2+R][6],"TALK"));
 
-	// I cant talk to that.
-
-	// XXX if(seq(Pstr,"MUTE")) {
-	// XXX 	k=24+Rnd(2);
-	// XXX 	SPEAK(JOE_RESPstr[k],"JOE",find_cd_desc(k));
-	// XXX 	return;
-	// XXX }
+	if (State::findTalk(data->state) == STATE_TALK_MUTE) {
+		// 'I can't talk to that'
+		_logic->joeSpeak(24 + Logic::randomizer.getRandomNumber(2));
+		return;
+	}
 
 	load(filename);
 
