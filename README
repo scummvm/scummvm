@@ -254,9 +254,21 @@ please see the section on Reporting Bugs.
           - MIDI support requires the Roland update from LucasArts
 
      Beneath a Steel Sky:
+          - Floppy demos aren't supported
           - Not a bug: CD version is missing speech for some dialog, this is
             normal.
 
+     Broken Sword 1:
+          - Macintosh version isn't supported
+
+     Simon the Sorcerer 2:
+          - Combined speech and subtitles will often cause speech to be
+            cut off early, this is a limitation of the original game.
+          - Only default language (English) in data files is supported 
+            in Amiga and Macintosh versions.
+
+     FM-TOWNS versions:
+          - The Kanji versions require the FM-TOWNS Font ROM
 
 4.0) Supported Platforms:
 ---- --------------------
