@@ -900,8 +900,8 @@ public:
 protected:
 	/* Should be in Graphics class? */
 	uint16 _screenB, _screenH;
-	int _roomHeight, _roomWidth;
 public:
+	int _roomHeight, _roomWidth;
 	int _screenHeight, _screenWidth;
 	VirtScreen virtscr[4];		// Virtual screen areas
 	CameraData camera;			// 'Camera' - viewport
