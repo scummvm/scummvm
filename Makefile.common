@@ -54,6 +54,7 @@ CXXFLAGS += -DDYNAMIC_MODULES
 # Uncomment these for Linux
 CXXFLAGS += -fpic
 PLUGIN_LDFLAGS := -shared
+LDFLAGS += --export-dynamic
 LIBS += -ldl
 
 endif
