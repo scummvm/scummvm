@@ -116,7 +116,7 @@ Scumm::Scumm (GameDetector *detector, OSystem *syst)
 	/* Initialize backend */
 	syst->init_size(_realWidth, _realHeight);
 	prop.cd_num = detector->_cdrom;
-	if (prop.cd_num >= 0)
+	if (prop.cd_num >= 0 && (_features & GF_AUDIOTRACKS))
 		syst->property(OSystem::PROP_OPEN_CD, &prop);
 
 	/* Bind the mixer to the system => mixer will be invoked
