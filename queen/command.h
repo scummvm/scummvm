@@ -69,8 +69,8 @@ public:
 
 	void readCommandsFrom(byte *&ptr);
 
-	Verb selectedAction() const { return _selectedAction; }
-	int16 selectedNoun() const { return _selectedNoun; }
+	Verb selectedAction() const { return _selCmd.action; }
+	int16 selectedNoun() const { return _selCmd.noun; }
 	bool parse() const { return _parse; }
 
 private:
@@ -80,8 +80,8 @@ private:
 	void grabSelectedNoun();
 	void grabSelectedVerb();
 
-	bool executeIfCutaway(const char* description);
-	bool executeIfDialog(const char* description);
+	bool executeIfCutaway(const char *description);
+	bool executeIfDialog(const char *description);
 	
 	uint16 countAssociatedCommands(const Verb& verb, int16 subj1, int16 subj2);
 	bool handleBadCommand(bool walk);
@@ -107,7 +107,7 @@ private:
 	//! Inserts/deletes items (inventory) - P4_SET_ITEMS
 	void setItems(uint16 command);
 
-	uint16 nextObjectDescription(ObjectDescription* objDesc, uint16 firstDesc);
+	uint16 nextObjectDescription(ObjectDescription *objDesc, uint16 firstDesc);
 
 	//! Look at Objects/Items and speak their description
 	void look();
@@ -134,32 +134,24 @@ private:
 	//! Textual form of the command (displayed between room and panel areas)
 	CmdText _cmdText;
 	
-	//! Locked verb (using 2nd mouse button)
-	Verb _defaultVerb;
-
-	//! OLDVERB, VERB
-	Verb _oldVerb, _verb;
-	
-	//! OLDNOUN, NOUN
-	int16 _oldNoun, _noun;
-
 	//! If true, command string is executed
 	bool _parse;
 
-	//! Current level of the command (max=2 for GIVE and USE verbs)
-	int _commandLevel;
-	
-	//! Object selected for action
-	int16 _selectedNoun;
-	
-	//! Last selected action
-	Verb _currentAction;
+	struct {
+		Verb oldVerb, verb;
+		Verb action;
+		int16 oldNoun, noun;
+		//! Current level of the command (max=2 for GIVE and USE verbs)
+		int commandLevel;
+	} _curCmd;
 
-	//! Action to perform
-	Verb _selectedAction;
-		
-	//! SUBJECT[3]
-	int16 _subject1, _subject2;
+	struct {
+		//! Locked verb (using 2nd mouse button)
+		Verb defaultVerb;
+		Verb action;
+		int16 noun;
+		int16 subject1, subject2;
+	} _selCmd;
 
 	//! MKEY
 	int _mouseKey;
