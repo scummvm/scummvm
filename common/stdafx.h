@@ -99,6 +99,7 @@
 #if !defined(macintosh)
 #include <sys/types.h>
 #include <sys/uio.h>
+#include <sys/param.h>
 #endif
 #if !defined (__BEOS__)
 #include <unistd.h>
@@ -117,6 +118,10 @@
 #include <math.h>
 
 
+#endif
+
+#ifndef MAXPATHLEN
+#define MAXPATHLEN 256
 #endif
 
 #endif

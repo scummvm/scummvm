@@ -25,7 +25,6 @@
 #include "common/config-manager.h"
 
 #if defined(UNIX)
-#include <sys/param.h>
 #ifdef MACOSX
 #define DEFAULT_CONFIG_FILE "Library/Preferences/ScummVM Preferences"
 #else
@@ -33,10 +32,6 @@
 #endif
 #else
 #define DEFAULT_CONFIG_FILE "scummvm.ini"
-#endif
-
-#ifndef MAXPATHLEN
-#define MAXPATHLEN 256
 #endif
 
 #define MAXLINELEN 256
