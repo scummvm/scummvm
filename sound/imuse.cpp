@@ -4411,6 +4411,13 @@ void IMuseGM::part_changed(Part *part, byte what)
 	if (!(mc = part->_mc->gm()))
 		return;
 
+	if (part->_player == NULL) {	/* No player, so dump phantom channel */
+		part->_mc = NULL;
+		mc->_part = NULL;
+		memset(mc->_actives, 0, sizeof(mc->_actives));
+		return;
+	}
+
 	if (what & pcMod)
 		midiPitchBend(mc->_chan,
 									clamp(part->_pitchbend + part->_detune_eff +
