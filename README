@@ -15,7 +15,8 @@ Table of Contents:
 3.0) Supported Games
  * 3.1 Copy Protection
  * 3.2 Simon the Sorcerer notes
- * 3.3 Known Bugs
+ * 3.3 Broken Sword notes
+ * 3.4 Known Bugs
 4.0) Supported Platforms
 5.0) Running ScummVM
  * 5.1 Command Line Options
@@ -38,11 +39,13 @@ X.X) Credits
 1.0) About:
 ---- ------ 
 ScummVM is a collection of interpreters, capable of emulating several
-adventure game engines. ScummVM mainly supports engines created using 
+adventure game engines. ScummVM mainly supports games created using 
 SCUMM (Script Creation Utility for Maniac Mansion), used in various
 LucasArts games such as Monkey Island, Day of the Tentacle, and others.
-ScummVM also contains interpreters for several non-SCUMM games, currently
-these are Beneath a Steel Sky, Broken Sword II and Simon the Sorcerer 1 & 2
+
+ScummVM also contains interpreters for several non-SCUMM games. Currently
+these are are Beneath a Steel Sky, Broken Sword 1 & 2, and Simon the 
+Sorcerer 1 & 2.
 
 At this time ScummVM should be considered beta software, and is still
 under heavy development. Be aware that whilst we attempt to make sure
@@ -112,9 +115,13 @@ SCUMM Games:
      Day of the Tentacle                             [Game: tentacle]
      Sam & Max                                       [Game: samnmax]
      The Dig                                         [Game: dig]
+     Full Throttle                                   [Game: ft]
      Curse of Monkey Island                          [Game: comi]
 
 Other Games:
+     Flight of the Amazon Queen                      [Game: queen]
+     Broken Sword I                                  [Game: sword1]
+     Broken Sword II                                 [Game: sword2]
      Beneath a Steel Sky                             [Game: sky]
      Simon the Sorcerer 1                            [Game: simon1acorn/
                                                             simon1dos/
@@ -129,10 +136,7 @@ The following games should be completable, but have some critical problems that
 prevent them from being fully supported at this time. Please do not file bug
 reports about them.
         
-     Flight of the Amazon Queen                    [Game: queen]
-     Full Throttle                                 [Game: ft]
-     Broken Sword I                                [Game: sword1]
-     Broken Sword II                               [Game: sword2]
+     Putt-Putt Joins the Parade                    [Game: puttputt]
 
 The following games should load, but are not yet fully playable. Play these at
 your own risk, and please do not file bug reports about them. If you want
@@ -146,8 +150,7 @@ compatibility chart.
 
 The following games are SCUMM engine, but NOT supported by ScummVM (yet).
 
-     Putt-Putt Joins the Parade
-     Most other Humongous Entertainment titles
+     Most Humongous Entertainment titles
 
 Please be aware that the engine may contain bugs and unimplemented features
 that sometimes make it impossible to finish the game. Save often, and please
@@ -196,7 +199,23 @@ If you have the dual version of Simon the Sorcerer 1 or 2 on CD,
 then you will find the Windows version in the main directory of CD
 and the DOS Talkie version in the DOS directory of the CD.
 
-3.3) Known Problems in ScummVM 0.5.5-cvs
+3.3) Broken Sword notes
+---- ------------------
+Broken Sword 1 and 2 both come with in-game cutscenes compressed using 
+RAD Game Tools legacy Smacker(tm) format. As RAD is unwilling to open
+the older legacy versions of this format to us, and have requested we not
+reverse engineer it, Revolution Software has kindly allowed us to provide
+re-encoded Broken Sword cutscenes for download on our website.
+
+These cutscenes are provided in MPEG2 format with OGG Vorbis audio.
+Viewing these cutscenes thus requires a version of ScummVM compiled 
+with both libmpeg2 (preferably 0.4.0 or greater) and libVorbis support.
+
+The cutscenes should be placed in the main game data directory. Note that
+currently this requires either copying the game to harddisk or reburning
+customised versions of the game CDs.
+
+3.4) Known Problems in ScummVM 0.5.7-CVS
 ---- -----------------------------------
 This release has the following known problems. There is no need to report them,
 although patches to fix them are welcome. If you discover a bug that is not
@@ -210,17 +229,8 @@ the section on Reporting Bugs.
        Indiana Jones & the Last Crusade (256):
                 - In some rooms Indy may be able to walk to odd places
 
-       FM Towns versions:
-                - Kanji versions require the FM Towns Font ROM
-                - All the FM Towns versions of games are extremely rare,
-                  And as the ScummVM team does not encourage piracy in any
-                  way, we don't know where to buy or download a copy of these
-                  games. Petition LucasArts to re-release them :)
-
-       Loom (EGA):
-                - MIDI support requires the Roland update from LucasArts
-
        Monkey Island 1 (EGA):
+       Loom (EGA):
                 - MIDI support requires the Roland update from LucasArts
 
        Sam and Max:
@@ -242,8 +252,14 @@ the section on Reporting Bugs.
                   original game
 
        Curse of Monkey Island
-                - The "Pirate Song" scene does not play correctly
                 - Some minor graphical glitches remain
+
+       FM Towns versions:
+                - Kanji versions require the FM Towns Font ROM
+                - All the FM Towns versions of games are extremely rare,
+                  And as the ScummVM team does not encourage piracy in any
+                  way, we don't know where to buy or download a copy of these
+                  games. Petition LucasArts to re-release them :)
 
        All CD games:
                - If you are experiencing random crashes, and your game
