@@ -178,7 +178,7 @@ private:
 
 	void updateRect(Common::Rect *r);
 
-	void blitBlockSurface(BlockSurface *s, Common::Rect *r, Common::Rect *clip_rect);
+	void blitBlockSurface(BlockSurface *s, Common::Rect *r, Common::Rect *clipRect);
 
 	void mirrorSprite(uint8 *dst, uint8 *src, int16 w, int16 h);
 	int32 decompressRLE256(uint8 *dest, uint8 *source, int32 decompSize);

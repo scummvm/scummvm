@@ -35,24 +35,24 @@ void Graphics::updateRect(Common::Rect *r) {
 		r->bottom - r->top);
 }
 
-void Graphics::blitBlockSurface(BlockSurface *s, Common::Rect *r, Common::Rect *clip_rect) {
-	if (r->top > clip_rect->bottom || r->left > clip_rect->right || r->bottom <= clip_rect->top || r->right <= clip_rect->left)
+void Graphics::blitBlockSurface(BlockSurface *s, Common::Rect *r, Common::Rect *clipRect) {
+	if (!r->intersects(*clipRect))
 		return;
 
 	byte *src = s->data;
 
-	if (r->top < clip_rect->top) {
-		src -= BLOCKWIDTH * (r->top - clip_rect->top);
-		r->top = clip_rect->top;
+	if (r->top < clipRect->top) {
+		src -= BLOCKWIDTH * (r->top - clipRect->top);
+		r->top = clipRect->top;
 	}
-	if (r->left < clip_rect->left) {
-		src -= (r->left - clip_rect->left);
-		r->left = clip_rect->left;
+	if (r->left < clipRect->left) {
+		src -= (r->left - clipRect->left);
+		r->left = clipRect->left;
 	}
-	if (r->bottom > clip_rect->bottom)
-		r->bottom = clip_rect->bottom;
-	if (r->right > clip_rect->right)
-		r->right = clip_rect->right;
+	if (r->bottom > clipRect->bottom)
+		r->bottom = clipRect->bottom;
+	if (r->right > clipRect->right)
+		r->right = clipRect->right;
 
 	byte *dst = _buffer + r->top * _screenWide + r->left;
 	int i, j;
@@ -73,9 +73,6 @@ void Graphics::blitBlockSurface(BlockSurface *s, Common::Rect *r, Common::Rect *
 			dst += _screenWide;
 		}
 	}
-
-	// UploadRect(r);
-	// setNeedFullRedraw();
 }
 
 // I've made the scaling two separate functions because there were cases from
@@ -541,14 +538,14 @@ void Graphics::renderParallax(Parallax *p, int16 l) {
 	else
 		y = ((int32) ((p->h - (_screenDeep - MENUDEEP * 2)) * _scrollY) / (int32) (_locationDeep - (_screenDeep - MENUDEEP * 2)));
 
-	Common::Rect clip_rect;
+	Common::Rect clipRect;
 
 	// Leave enough space for the top and bottom menues
 
-	clip_rect.left = 0;
-	clip_rect.right = _screenWide;
-	clip_rect.top = MENUDEEP;
-	clip_rect.bottom = _screenDeep - MENUDEEP;
+	clipRect.left = 0;
+	clipRect.right = _screenWide;
+	clipRect.top = MENUDEEP;
+	clipRect.bottom = _screenDeep - MENUDEEP;
 
 	for (int j = 0; j < _yBlocks[l]; j++) {
 		for (int i = 0; i < _xBlocks[l]; i++) {
@@ -557,7 +554,7 @@ void Graphics::renderParallax(Parallax *p, int16 l) {
 				r.right = r.left + BLOCKWIDTH;
 				r.top = j * BLOCKHEIGHT - y + 40;
 				r.bottom = r.top + BLOCKHEIGHT;
-				blitBlockSurface(_blockSurfaces[l][i + j * _xBlocks[l]], &r, &clip_rect);
+				blitBlockSurface(_blockSurfaces[l][i + j * _xBlocks[l]], &r, &clipRect);
 			}
 		}
 	}
