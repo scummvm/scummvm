@@ -241,6 +241,7 @@ SmushPlayer::SmushPlayer(ScummEngine_v6 *scumm, int speed) {
 	_height = 0;
 	_IACTpos = 0;
 	_soundFrequency = 22050;
+	_initDone = false;
 	_speed = speed;
 	_insanity = false;
 	_middleAudio = false;
@@ -248,7 +249,8 @@ SmushPlayer::SmushPlayer(ScummEngine_v6 *scumm, int speed) {
 }
 
 SmushPlayer::~SmushPlayer() {
-	release();
+	if (_initDone)
+		release();
 }
 
 void SmushPlayer::init() {
@@ -271,9 +273,12 @@ void SmushPlayer::init() {
 	
 	_smixer = new SmushMixer(_vm->_mixer);
 	g_timer->installTimerProc(&timerCallback, _speed, this);
+
+	_initDone = true;
 }
 
 void SmushPlayer::release() {
+	
 	_vm->_timer->removeTimerProc(&timerCallback);
 
 	_vm->_smushVideoShouldFinish = true;

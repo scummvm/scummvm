@@ -65,6 +65,7 @@ private:
 	bool _storeFrame;
 	int _soundFrequency;
 	bool _alreadyInit;
+	bool _initDone;
 	int _speed;
 	bool _outputSound;
 
