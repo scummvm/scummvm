@@ -219,8 +219,8 @@ bool Scumm::getSavegameName(int slot, char *desc, SaveFileManager *mgr)
 void Scumm::saveOrLoad(Serializer *s, uint32 savegameVersion)
 {
 	const SaveLoadEntry objectEntries[] = {
-		MKLINE(ObjectData, offs_obim_to_room, sleUint32, VER_V8),
-		MKLINE(ObjectData, offs_obcd_to_room, sleUint32, VER_V8),
+		MKLINE(ObjectData, OBIMoffset, sleUint32, VER_V8),
+		MKLINE(ObjectData, OBCDoffset, sleUint32, VER_V8),
 		MKLINE(ObjectData, walk_x, sleUint16, VER_V8),
 		MKLINE(ObjectData, walk_y, sleUint16, VER_V8),
 		MKLINE(ObjectData, obj_nr, sleUint16, VER_V8),

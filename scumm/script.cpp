@@ -878,10 +878,7 @@ int Scumm::getVerbEntrypoint(int obj, int entry)
 	else
 		verbptr = findResource(MKID('VERB'), objptr);
 
-	if (verbptr == NULL) { // FIXME: Hacked from an error() for CMI
-		warning("No verb block in object %d", obj);
-		return 0;
-	}
+	assert(verbptr);
 
 	verboffs = verbptr - objptr;
 

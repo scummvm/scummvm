@@ -81,8 +81,8 @@ struct MemBlkHeader {
 struct VerbSlot;
 
 struct ObjectData {
-	uint32 offs_obim_to_room;
-	uint32 offs_obcd_to_room;
+	uint32 OBIMoffset;
+	uint32 OBCDoffset;
 	int16 walk_x, walk_y;
 	uint16 obj_nr;
 	int16 x_pos;

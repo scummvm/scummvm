@@ -192,7 +192,7 @@ void Scumm::getObjectXYPos(int object, int &x, int &y, int &dir)
 				ptr = findResource(MKID('OBIM'), ptr);
 			} else {
 				ptr = getResourceAddress(rtRoom, _roomResource);
-				ptr += od->offs_obim_to_room;
+				ptr += od->OBIMoffset;
 			}
 			assert(ptr);
 			imhd = (ImageHeader *)findResourceData(MKID('IMHD'), ptr);
@@ -355,7 +355,7 @@ void Scumm::drawObject(int obj, int arg)
 		ptr = findResource(MKID('OBIM'), ptr);
 	} else {
 		ptr = getResourceAddress(rtRoom, _roomResource);
-		ptr = ptr + od->offs_obim_to_room;
+		ptr = ptr + od->OBIMoffset;
 	}
 
 	if (_features & GF_SMALL_HEADER)
@@ -431,7 +431,7 @@ void Scumm::loadRoomObjects()
 		if (ptr == NULL)
 			error("Room %d missing object code block(s)", _roomResource);
 
-		od->offs_obcd_to_room = ptr - rootptr;
+		od->OBCDoffset = ptr - rootptr;
 		cdhd = (CodeHeader *)findResourceData(MKID('CDHD'), ptr);
 
 		if (_features & GF_AFTER_V7)
@@ -469,7 +469,7 @@ void Scumm::loadRoomObjects()
 
 		for (j = 1; j <= _numObjectsInRoom; j++) {
 			if (_objs[j].obj_nr == obim_id)
-				_objs[j].offs_obim_to_room = ptr - room;
+				_objs[j].OBIMoffset = ptr - room;
 		}
 		searchptr = NULL;
 	}
@@ -508,7 +508,7 @@ void Scumm::loadRoomObjectsSmall()
 		if (ptr == NULL)
 			error("Room %d missing object code block(s)", _roomResource);
 
-		od->offs_obcd_to_room = ptr - room;
+		od->OBCDoffset = ptr - room;
 		od->obj_nr = READ_LE_UINT16(ptr + 6);
 
 #ifdef DUMP_SCRIPTS
@@ -531,7 +531,7 @@ void Scumm::loadRoomObjectsSmall()
 
 		for (j = 1; j <= _numObjectsInRoom; j++) {
 			if (_objs[j].obj_nr == obim_id)
-				_objs[j].offs_obim_to_room = ptr - room;
+				_objs[j].OBIMoffset = ptr - room;
 		}
 		searchptr = NULL;
 	}
@@ -552,7 +552,7 @@ void Scumm::setupRoomObject(ObjectData *od, byte *room)
 
 	if (_features & GF_SMALL_HEADER) {
 
-		byte *ptr = room + od->offs_obcd_to_room;
+		byte *ptr = room + od->OBCDoffset;
 
 		od->obj_nr = READ_LE_UINT16(ptr + 6);	// ok
 
@@ -583,7 +583,7 @@ void Scumm::setupRoomObject(ObjectData *od, byte *room)
 	else
 		searchptr = room;
 
-	cdhd = (CodeHeader *)findResourceData(MKID('CDHD'), searchptr + od->offs_obcd_to_room);
+	cdhd = (CodeHeader *)findResourceData(MKID('CDHD'), searchptr + od->OBCDoffset);
 	if (cdhd == NULL)
 		error("Room %d missing CDHD blocks(s)", _roomResource);
 
@@ -593,7 +593,7 @@ void Scumm::setupRoomObject(ObjectData *od, byte *room)
 		od->parent = cdhd->v7.parent;
 		od->parentstate = cdhd->v7.parentstate;
 
-		imhd = (ImageHeader *)findResourceData(MKID('IMHD'), room + od->offs_obim_to_room);
+		imhd = (ImageHeader *)findResourceData(MKID('IMHD'), room + od->OBIMoffset);
 		od->x_pos = (int)READ_LE_UINT32(&imhd->v8.x_pos);
 		od->y_pos = (int)READ_LE_UINT32(&imhd->v8.y_pos);
 		od->width = (uint)READ_LE_UINT32(&imhd->v8.width);
@@ -606,7 +606,7 @@ void Scumm::setupRoomObject(ObjectData *od, byte *room)
 		od->parent = cdhd->v7.parent;
 		od->parentstate = cdhd->v7.parentstate;
 
-		imhd = (ImageHeader *)findResourceData(MKID('IMHD'), room + od->offs_obim_to_room);
+		imhd = (ImageHeader *)findResourceData(MKID('IMHD'), room + od->OBIMoffset);
 		od->x_pos = READ_LE_UINT16(&imhd->v7.x_pos);
 		od->y_pos = READ_LE_UINT16(&imhd->v7.y_pos);
 		od->width = READ_LE_UINT16(&imhd->v7.width);
@@ -786,7 +786,7 @@ uint32 Scumm::getOBCDOffs(int object)
 		if (_objs[i].obj_nr == object) {
 			if (_objs[i].fl_object_index != 0)
 				return 8;
-			return _objs[i].offs_obcd_to_room;
+			return _objs[i].OBCDoffset;
 		}
 	}
 	return 0;
@@ -806,7 +806,10 @@ byte *Scumm::getOBCDFromObject(int obj)
 			if (_objs[i].obj_nr == obj) {
 				if (_objs[i].fl_object_index)
 					return getResourceAddress(rtFlObject, _objs[i].fl_object_index) + 8;
-				return getResourceAddress(rtRoom, _roomResource) + _objs[i].offs_obcd_to_room;
+				if (_features & GF_AFTER_V8)
+					return getResourceAddress(rtRoomScripts, _roomResource) + _objs[i].OBCDoffset;
+				else
+					return getResourceAddress(rtRoom, _roomResource) + _objs[i].OBCDoffset;
 			}
 		}
 	}
@@ -1281,7 +1284,7 @@ void Scumm::drawBlastObject(BlastObject *eo)
 	} else {
 		idx = getObjectIndex(eo->number);
 		assert(idx != -1);
-		ptr = getResourceAddress(1, _roomResource) + _objs[idx].offs_obim_to_room;
+		ptr = getResourceAddress(1, _roomResource) + _objs[idx].OBIMoffset;
 	}
 	if (!ptr)
 		error("BlastObject object %d image not found", eo->number);
@@ -1603,8 +1606,8 @@ void Scumm::loadFlObject(uint object, uint room)
 
 	/* Setup sizes */
 	obcd_size = READ_BE_UINT32_UNALIGNED(foir.obcd + 4);
-	od->offs_obcd_to_room = 8;
-	od->offs_obim_to_room = obcd_size + 8;
+	od->OBCDoffset = 8;
+	od->OBIMoffset = obcd_size + 8;
 	obim_size = READ_BE_UINT32_UNALIGNED(foir.obim + 4);
 	flob_size = obcd_size + obim_size + 8;
 
