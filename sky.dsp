@@ -175,7 +175,23 @@ SOURCE=.\sky\sky.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\sky\skychannel.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\sky\skychannel.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\sky\skydefs.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\sky\skymusic.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\sky\skymusic.h
 # End Source File
 # Begin Source File
 
