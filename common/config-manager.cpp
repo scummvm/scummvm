@@ -26,9 +26,6 @@
 
 #if defined(UNIX)
 #include <sys/param.h>
-#ifndef MAXPATHLEN
-#define MAXPATHLEN 256
-#endif
 #ifdef MACOSX
 #define DEFAULT_CONFIG_FILE "Library/Preferences/ScummVM Preferences"
 #else
@@ -36,6 +33,10 @@
 #endif
 #else
 #define DEFAULT_CONFIG_FILE "scummvm.ini"
+#endif
+
+#ifndef MAXPATHLEN
+#define MAXPATHLEN 256
 #endif
 
 #define MAXLINELEN 256
@@ -67,20 +68,18 @@ const String falseStr("false");
 
 ConfigManager::ConfigManager() {
 
-#if defined(UNIX)
 	char configFile[MAXPATHLEN];
+#if defined(UNIX)
 	if(getenv("HOME") != NULL)
 		sprintf(configFile,"%s/%s", getenv("HOME"), DEFAULT_CONFIG_FILE);
-	else strcpy(configFile,DEFAULT_CONFIG_FILE);
+	else
+		strcpy(configFile, DEFAULT_CONFIG_FILE);
 #else
-	char configFile[256];
 	#if defined (WIN32) && !defined(_WIN32_WCE)
-		GetWindowsDirectory(configFile, 256);
-		strcat(configFile, "\\");
-		strcat(configFile, DEFAULT_CONFIG_FILE);
+		GetWindowsDirectory(configFile, MAXPATHLEN);
+		strcat(configFile, "\\" DEFAULT_CONFIG_FILE);
 	#elif defined(__PALM_OS__)
-		strcpy(configFile,"/PALM/Programs/ScummVM/");
-		strcat(configFile, DEFAULT_CONFIG_FILE);
+		strcpy(configFile,"/PALM/Programs/ScummVM/" DEFAULT_CONFIG_FILE);
 	#else
 		strcpy(configFile, DEFAULT_CONFIG_FILE);
 	#endif
