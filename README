@@ -1,5 +1,5 @@
 ScummVM README
-Last updated:    2003-07-31
+Last updated:    2003-08-02
 Release version: 0.5.0-Pre(CVS)
 ------------------------------------------------------------------------
 
@@ -117,8 +117,10 @@ ScummVM and wish to commit it into the main CVS, feel free to contact us!
         PalmOS          - custom backend
         UNIX            - SDL           (Linux, Solaris, IRIX, *BSD)
 
-The Dreamcast and Palm ports do not support The Dig, Curse of Monkey Island
-nor any Simon the Sorcerer games. The PalmOS port also lacks support for
+Neither the Dreamcast nor Palm ports support Curse of Monkey Island or
+either Simon the Sorcerer game. The Dig is also currently unsupported
+on the Dreamcast port, and will only work on some Palm devices (those
+with a large dynamic heap). The PalmOS port also lacks support for
 Beneath a Steel Sky.
 
 Copy Protection:
@@ -828,7 +830,7 @@ Credits:
  The ScummVM team:
         James Brown          - Lead Developer
         Max Horn             - Lead Developer
-        Robert Goeffringmann - Engine: Beneath a Steel Sky
+        Robert Goeffringmann - Engine: Beneath a Steel Sky (maintainer)
         Jonathan Gray        - Engine: SCUMM
         Oliver Kiehl         - Engine: Beneath a Steel Sky, Simon
         Pawel Kolodziejski   - Engine: SCUMM (Codecs, iMUSE, Smush, etc.)
@@ -837,7 +839,7 @@ Credits:
         Nicolas Bacca        - Port: PocketPC/WinCE port
         Marcus Comstedt      - Port: Dreamcast
         Ruediger Hanke       - Port: MorphOS
-        Travis Howell        - Port: Win32, Engine: Simon
+        Travis Howell        - Port: Win32, Engine: Simon (maintainer)
         Peter Moraliyski     - Port: GP32
         Lionel Ulmer         - Port: X11
         Torbjorn Andersson   - Generic Bugfixer and Patch Submitter
