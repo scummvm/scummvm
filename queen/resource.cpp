@@ -246,20 +246,22 @@ File *Resource::giveCompressedSound(const char *filename) {
 	return _resourceFile;
 }
 
-LineReader::LineReader(char *buffer) : _buffer(buffer), _current(0) {
+LineReader::LineReader(char *buffer, uint32 bufsize) : _buffer(buffer), _bufSize(bufsize), _current(0) {
 }
 
 LineReader::~LineReader() {
 	delete[] _buffer;
 }
 
-char* LineReader::nextLine() {
+char *LineReader::nextLine() {
 	char *startOfLine = _buffer + _current;
 	char *curPos = startOfLine;
-	while (*curPos++ != 0xd) ;
-	*(curPos - 1) = '\0';     // '\r'
-	*curPos = '\0';           // '\n'
-	_current = (curPos - _buffer) + 1;
+	while (curPos < _buffer + _bufSize && *curPos++ != 0xd) ;
+	*(curPos - 1) = '\0'; // '\r'
+	if (curPos < _buffer + _bufSize) {
+		*curPos = '\0'; // '\n'
+		_current = (curPos - _buffer) + 1;
+	}
 	return startOfLine;
 }
 

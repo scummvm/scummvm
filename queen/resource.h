@@ -64,12 +64,13 @@ struct GameVersion {
 class LineReader {
 
 public:
-	LineReader(char *buffer);
+	LineReader(char *buffer, uint32 bufsize);
 	~LineReader();
-	char* nextLine();
+	char *nextLine();
 
 private:
 	char *_buffer;
+	uint32 _bufSize;
 	int _current;
 };
 

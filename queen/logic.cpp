@@ -187,7 +187,9 @@ void Logic::initialise() {
 
 	// Step 2 : read queen2.jas and grab all description texts
 
-	_queen2jas = new LineReader((char*)_vm->resource()->loadFile("QUEEN2.JAS"));
+	_queen2jas = new LineReader(
+		(char *)_vm->resource()->loadFile("QUEEN2.JAS"),
+		_vm->resource()->fileSize("QUEEN2.JAS"));
 	
 	_objDescription = new char*[_numDescriptions + 1];
 	_objDescription[0] = 0;
