@@ -630,64 +630,6 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 	// differing from the regular version(s) of that game.
 	_gameName = ConfMan.hasKey("basename") ? ConfMan.get("basename") : gs.baseFilename ? gs.baseFilename : gs.name;
 
-#if 1
-	// HACK HACK HACK
-	// This is not how, and where, MD5 computation should be done in the
-	// real world. Rather this is meant as a proof-of-concept hack. 
-	// It's quick, it's dirty, and it'll go again eventually :-)
-	char buf[1024];
-	uint8 md5sum[16];
-	
-	if (!(_features & GF_SMALL_HEADER)) {
-
-		if (_features & GF_AFTER_HEV7) {
-			sprintf(buf, "%s.he0", _gameName.c_str());
-		} else if ((_gameId == GID_FT) && (_features & GF_PC) && (_features & GF_DEMO)) {
-			sprintf(buf, "%s.000", _gameName.c_str());
-		} else if (_version >= 7) {
-			sprintf(buf, "%s.la0", _gameName.c_str());
-		} else if (_features & GF_HUMONGOUS)
-			sprintf(buf, "%s.he0", _gameName.c_str());
-		else {
-			sprintf(buf, "%s.000",  _gameName.c_str());
-//			if (_gameId == GID_SAMNMAX)
-//				sprintf(buf2, "%s.sm0",  _gameName.c_str());
-		}
-	} else if (!(_features & GF_SMALL_NAMES)) {
-		sprintf(buf, "000.lfl");
-	} else {
-		sprintf(buf, "00.lfl");
-	}
-	
-	if (md5_file(buf, md5sum)) {
-		// HACK : changed to this code since PalmOS doesn't handle correctly %02x.
-		// It returns only 8 chars string in upper case so i need to use hex[],
-		// copy last 2 chars to md5str and convert result to lower case
-		int j;
-		char md5str[32+1];
-		char hex[8+1];
-		for (j = 0; j < 16; j++) {
-			sprintf(hex, "%02x", (int)md5sum[j]);
-			memcpy(md5str+j*2, hex + strlen(hex) - 2, 2);
-		}
-
-		for (j = 0; j < 32; j++)
-			md5str[j] = tolower(md5str[j]);
-		// --
-		
-		md5str[32] = 0;
-		printf("%s  %s\n", md5str, buf);
-		const MD5Table *elem;
-		elem = (const MD5Table *)bsearch(md5str, md5table, ARRAYSIZE(md5table)-1, sizeof(MD5Table), compareMD5Table);
-		if (elem)
-			printf("Match found in database: target %s, language %s, platform %s\n",
-				elem->target, Common::getLanguageDescription(elem->language), Common::getPlatformDescription(elem->platform));
-		else
-			printf("Unknown MD5! Please report the details (language, platform, etc.) of this game to the ScummVM team\n");
-
-	}
-#endif
-
 	_midiDriver = GameDetector::detectMusicDriver(gs.midi);
 
 	_copyProtection = ConfMan.getBool("copy_protection");
