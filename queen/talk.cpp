@@ -21,6 +21,7 @@
 
 #include "stdafx.h"
 #include "queen/talk.h"
+#include "queen/display.h"
 #include "queen/graphics.h"
 #include "queen/logic.h"
 #include "queen/sound.h"
@@ -116,8 +117,9 @@ void Talk::talk(const char *filename, int personInRoom, char *cutawayFilename) {
 	// XXX }
 	// XXX panelflag=0;
 
+	_wasFullscren = _logic->display()->fullscreen();
+	_logic->display()->fullscreen(true);
 
-	
 	load(filename);
 
 	Person person;
@@ -295,6 +297,26 @@ void Talk::talk(const char *filename, int personInRoom, char *cutawayFilename) {
 			}
 		}
 	}
+
+// TALK_PROC_EXIT:
+	
+	// XXX: missing some code here!
+
+	if (cutawayFilename[0] == '\0') {
+		BobSlot *pbs = _graphics->bob(person.actor->bobNum);
+
+		pbs->x = person.actor->x;
+		pbs->y = person.actor->y;
+		
+		_logic->display()->fullscreen(_wasFullscren);
+
+		// XXX if (P_ANIMstr[0] != '\0')
+			// Better kick start the persons anim sequence
+		// XXX 	stringanim(BNUM,NEW_ANIM[BNUM]);
+	}
+
+	_talkHead = false;
+	_logic->joeWalk(0);
 }
 		
 void Talk::disableSentence(int oldLevel, int selectedSentence) {
@@ -801,8 +823,7 @@ void Talk::defaultAnimation(
 				if (_input->talkQuit())
 					break;
 
-				// XXX CHECK_PLAYER();
-				_logic->update(); // XXX call it ourselves as CHECK_PLAYER is not called
+				_logic->checkPlayer();
 
 				if (_logic->joeWalk() == 2)
 					// Selected a command, so exit
@@ -1138,6 +1159,8 @@ int16 Talk::selectSentence() {
 	int startOption = 1;
 	int optionLines = 0;
 	char optionText[5][MAX_STRING_SIZE];
+	int talkZone[5];
+	int i;
 
 	// Change NORMAL_INK -> TALK_NORMAL_INK
 
@@ -1145,20 +1168,20 @@ int16 Talk::selectSentence() {
 
 	// These bobs are up and down arrows
 
-	BobSlot *bob1 = _graphics->bob(SENTENCE_BOB_1);
-	BobSlot *bob2 = _graphics->bob(SENTENCE_BOB_2);
+	BobSlot *arrowBobUp 	= _graphics->bob(ARROW_BOB_UP);
+	BobSlot *arrowBobDown = _graphics->bob(ARROW_BOB_DOWN);
 
-	bob1->x         = 303 + 8 + scrollX;
-	bob1->y         = 150 + 1;
-	bob1->frameNum  = 3;
-	bob1->box.y2    = 199;
-	bob1->active    = false;
+	arrowBobUp->x         = 303 + 8 + scrollX;
+	arrowBobUp->y         = 150 + 1;
+	arrowBobUp->frameNum  = 3;
+	arrowBobUp->box.y2    = 199;
+	arrowBobUp->active    = false;
 
-	bob2->x         = 303 + scrollX;
-	bob2->y         = 175;
-	bob2->frameNum  = 4;
-	bob2->box.y2    = 199;
-	bob2->active    = false;
+	arrowBobDown->x         = 303 + scrollX;
+	arrowBobDown->y         = 175;
+	arrowBobDown->frameNum  = 4;
+	arrowBobDown->box.y2    = 199;
+	arrowBobDown->active    = false;
 
 	bool rezone = true;
 
@@ -1166,11 +1189,12 @@ int16 Talk::selectSentence() {
 		rezone = false;
 
 		// Set zones for UP/DOWN text arrows when not English version
-		// XXX ClearZones(1);
+
+		_logic->zoneClearAll(ZONE_SCREEN);
 
 		if (_logic->language() != ENGLISH) {
-			// XXX SetZone(1,5,MAXTEXTLEN+1, 0,319,24);
-			// XXX SetZone(1,6,MAXTEXTLEN+1,25,319,49);
+			_logic->zoneSet(ZONE_SCREEN, ARROW_ZONE_UP,   MAX_TEXT_WIDTH + 1, 0,  319, 24);
+			_logic->zoneSet(ZONE_SCREEN, ARROW_ZONE_DOWN, MAX_TEXT_WIDTH + 1, 25, 319, 49);
 		}
 
 		_graphics->textClear(151,199);
@@ -1178,8 +1202,9 @@ int16 Talk::selectSentence() {
 		int sentenceCount = 0;
 		int yOffset = 1;
 
-		for (int i = startOption; i <= 4; i++) {
-			// XXX TALK_ZONE[I] = 0;
+		for (i = startOption; i <= 4; i++) {
+			talkZone[i] = 0;
+
 			if (_talkString[i][0] != '\0') {
 				sentenceCount++;
 
@@ -1187,27 +1212,29 @@ int16 Talk::selectSentence() {
 				strcpy(temp, _talkString[i]);
 				optionLines = splitOption(removeStar(temp), optionText);
 
-				if (yOffset < 5)
-					/* XXX SetZone(
-						 1, 
-						 I, 
-						 0, 
-						 (yofs * 10) - PUSHUP, 
-						 (VersionStr[1] =='E') ? 319 : MAX_TEXT_WIDTH,
-						 10 * optionLines + (yOffset * 10) - PUSHUP) */;
+				if (yOffset < 5) {
+					_logic->zoneSet(
+							ZONE_SCREEN,
+							i,
+							0,
+							yOffset * LINE_HEIGHT - PUSHUP,
+							(_logic->language() == ENGLISH) ? 319 : MAX_TEXT_WIDTH,
+							(yOffset + optionLines) * LINE_HEIGHT - PUSHUP);
+				}
 
-					for (int j = 0; j < optionLines; j++) {
-						if (yOffset < 5) {
-							debug(0, "Draw text '%s'", optionText[j]);
-							_graphics->textSet(
-									(j == 0) ? 0 : 24, 
-									150 - PUSHUP + yOffset * 10, 
-									optionText[j]);
-						}
-						yOffset++;
+				int j;
+				for (j = 0; j < optionLines; j++) {
+					if (yOffset < 5) {
+						debug(0, "Draw text '%s'", optionText[j]);
+						_graphics->textSet(
+								(j == 0) ? 0 : 24, 
+								150 - PUSHUP + yOffset * LINE_HEIGHT, 
+								optionText[j]);
 					}
+					yOffset++;
+				}
 
-				// XXX TALK_ZONE[i] = sentenceCount;
+				talkZone[i] = sentenceCount;
 			}
 		}
 
@@ -1216,8 +1243,8 @@ int16 Talk::selectSentence() {
 		// Up and down dialogue arrows
 
 		if (_logic->language() != ENGLISH) {
-			bob1->active = (startOption > 1);
-			bob2->active = (yOffset > 4);
+			arrowBobUp->active    = (startOption > 1);
+			arrowBobDown->active  = (yOffset > 4);
 		}
 
 		_input->clearKeyVerb();
@@ -1233,24 +1260,28 @@ int16 Talk::selectSentence() {
 
 				_logic->update();
 
-				// XXX zone = zone(1, mouseX, mouseY);
+				zone = _logic->zoneIn(ZONE_SCREEN, _input->mousePosX(), _input->mousePosY());
 
 				if (5 == zone || 6 == zone) {
 					// XXX Arrow zones
+					debug(0, "Arrow zones");
 				}
 				else {
 					if (oldZone != zone) {
 						// Changed zone, change text colors
+						int y;
+
+						debug(0, "Changed zone. oldZone = %i, zone = %i",
+								oldZone, zone);
 
 						if (zone > 0) {
-
-							// XXX for (int i = zones[1][zone].y1; i < zones[1][zone].y2; i += 10)
-							// XXX 	texts[i + 150].col = INK_JOE;
+							for (y = _logic->zoneBox(ZONE_SCREEN, zone).y1; y < _logic->zoneBox(ZONE_SCREEN, zone).y2; y += 10)
+								_graphics->textColor(y, INK_JOE);
 						}
 
 						if (oldZone > 0) {
-							// XXX 	for (int i = zones[1][oldZone].y1; i < zones[1][oldZone].y2; i += 10)
-							// XXX 		texts[i + 150].col = INK_TALK_NORMAL;
+							for (y = _logic->zoneBox(ZONE_SCREEN, oldZone).y1; y < _logic->zoneBox(ZONE_SCREEN, oldZone).y2; y += 10)
+								_graphics->textColor(y, INK_TALK_NORMAL);
 						}
 
 						oldZone = zone;
@@ -1258,8 +1289,26 @@ int16 Talk::selectSentence() {
 
 				}
 
-				// XXX make the loop exit as we can't get any input yet
-				selectedSentence = 1;
+				int mouseButton = _input->mouseButton();
+				_input->clearMouseButton();
+
+				if (_input->keyVerb().isDigit()) {
+					for (i = 1; i <= 4; i++)
+					{
+						if (talkZone[i] == _input->keyVerb().digit())
+						{
+							selectedSentence = i;
+							break;
+						}
+					}
+
+					_input->clearKeyVerb();
+				}
+				else if (mouseButton) {
+					selectedSentence = zone;
+					break;
+				}
+
 			} // while()
 		}
 	}
@@ -1267,7 +1316,7 @@ int16 Talk::selectSentence() {
 
 	// XXX Begin debug stuff
 	// debug(0, "----- Select a sentence of these -----");
-	for (int i = 1; i <= 4; i++) {
+	for (i = 1; i <= 4; i++) {
 		if (_talkString[i][0] != '\0') {
 			// XXX debug(0, "%i: %s", i, _talkString[i]);
 			if (!selectedSentence)
@@ -1279,8 +1328,8 @@ int16 Talk::selectSentence() {
 
 	debug(0, "Selected sentence %i", selectedSentence);
 
-	bob1->active = false;
-	bob2->active = false;
+	arrowBobUp->active    = false;
+	arrowBobDown->active  = false;
 
 	if (selectedSentence > 0) {
 		_graphics->textClear(0,198);

@@ -185,6 +185,7 @@ public:
 	void zoneClearAll(uint16 screen);
 	void zoneSetup();
 	void zoneSetupPanel();
+	Box &zoneBox(uint16 screen, uint16 index) { return _zones[screen][index].box; } 
 
 	void roomErase();
 	void roomSetupFurniture(); // SETUP_FURNITURE()
@@ -229,6 +230,7 @@ public:
 
 	void joeSpeak(uint16 descNum, bool objectType = false);
 
+	void dialogue(const char *dlgFile, int personInRoom, char *cutaway);
 	void playCutaway(const char *cutFile, char *next = NULL);
 
 	const char *objectOrItemName(int16 obj) const;

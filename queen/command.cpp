@@ -25,6 +25,7 @@
 #include "queen/input.h"
 #include "queen/graphics.h"
 #include "queen/logic.h"
+#include "queen/talk.h"
 #include "queen/walk.h"
 
 namespace Queen {
@@ -856,19 +857,27 @@ bool Command::executeIfCutaway(const char *description) {
 
 bool Command::executeIfDialog(const char *description) {
 
-	warning("Command::executeIfDialog(%s) unimplemented", description);
+  if (strlen(description) > 4 && 
+      scumm_stricmp(description + strlen(description) - 4, ".dog") == 0) {
+    char cutaway[20];
 
-	if (strlen(description) > 4 && 
-		scumm_stricmp(description + strlen(description) - 4, ".dog") == 0) {
-		/* XXX
-		talk(Kstr);
-		strcpy(Kstr,Paramstr);
-		while(Kstr[0]) {
-			CUTAWAY(Kstr);
-			strcpy(Kstr,Paramstr);
-		}*/
-		return true;
-	}
+    _logic->dialogue(description, _curCmd.noun, cutaway);
+
+    while (cutaway[0] != '\0') {
+      char currentCutaway[20];
+      strcpy(currentCutaway, cutaway);
+      _logic->playCutaway(currentCutaway, cutaway);
+    }
+
+    /* XXX
+       talk(Kstr);
+       strcpy(Kstr,Paramstr);
+       while(Kstr[0]) {
+       CUTAWAY(Kstr);
+       strcpy(Kstr,Paramstr);
+       }*/
+    return true;
+  }
 	return false;
 }
 

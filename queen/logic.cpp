@@ -1804,6 +1804,16 @@ void Logic::joeUseUnderwear() {
 }
 
 
+void Logic::dialogue(const char *dlgFile, int personInRoom, char *cutaway) {
+
+	char cutawayFile[20];
+	if (cutaway == NULL) {
+		cutaway = cutawayFile;
+	}
+	Talk::talk(dlgFile, personInRoom, cutaway, _graphics, _input, this, _resource, _sound);
+}
+
+
 void Logic::playCutaway(const char *cutFile, char *next) {
 
 	char nextFile[20];

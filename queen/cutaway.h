@@ -259,8 +259,8 @@ class Cutaway {
 		//! Restore QueenLogic::_objectData from _personData
 		void restorePersonData();
 
-		//! Go to the final room
-		void goToFinalRoom();
+		//! Stop the cutaway
+		void stop();
 
 		//! Update game state after cutaway
 		void updateGameState();

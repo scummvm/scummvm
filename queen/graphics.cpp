@@ -565,6 +565,13 @@ void Graphics::bobClearAll() {
 }
 
 
+void Graphics::bobStopAll() {
+	for(int32 i = 0; i < ARRAYSIZE(_bobs); ++i) {
+		_bobs[i].moving = false;
+	}
+}
+
+
 BobSlot *Graphics::bob(int index) {
 
 	if (index < MAX_BOBS_NUMBER)

@@ -134,6 +134,7 @@ public:
 	void bobSortAll(); // sortbobs()
 	void bobDrawAll(); // drawbobs()
 	void bobClearAll(); // clearallbobs()
+	void bobStopAll();
 	BobSlot *bob(int index);
 	void bobCustomParallax(uint16 roomNum); // CHECK_PARALLAX()
 
@@ -150,6 +151,7 @@ public:
 	void textClear(uint16 y1, uint16 y2); // blanktexts()
 	uint16 textWidth(const char *text) const; // textlen()
 	int textCenterX(const char *text) const; // MIDDLE()
+	void textColor(uint16 y, uint8 color) { _texts[y].color = color; }
 
 	void frameErase(uint32 fslot);
 	void frameEraseAll(bool joe); // freeframes, freeallframes

@@ -33,25 +33,14 @@ namespace Queen {
 /*
    TODO soon
 
-   - Implement CUTAWAY_SCALE
-
    - Implement SCENE_START and SCENE_END
 
-   - Finish Cutaway::handleAnimation
-
    - Finish Cutaway::actionSpecialMove
-
-   - Support the remaining cutaway object types:
-	   OBJECT_TYPE_TEXT_SPEAK
-	   OBJECT_TYPE_TEXT_DISPLAY_AND_SPEAK
-	   OBJECT_TYPE_TEXT_DISPLAY
-
-   - Find out why one digit is missing in the voice file names
 
 
    TODO later
 
-   - Finish Cutaway::goToFinalRoom
+   - Finish Cutaway::stop
 
    - Show credits
 
@@ -122,18 +111,21 @@ void Cutaway::load(const char *filename) {
 	else
 		_input->canQuit(true);
 
-	int flags1 = READ_BE_UINT16(ptr);
+	int16 flags1 = (int16)READ_BE_UINT16(ptr);
 	ptr += 2;
-	debug(0, "flags1 = %i", (int16)flags1);
+	debug(0, "flags1 = %i", flags1);
 
 	if (flags1 < 0) {
-		/* ENTRY_OBJ = 0 */
+		_logic->entryObj(0);
 		_finalRoom = -flags1;
 	}
 	else
 		_finalRoom = PREVIOUS_ROOM;
 
 	_anotherCutaway = (flags1 == 1);
+
+	debug(0, "[Cutaway::load] _finalRoom      = %i", _finalRoom);
+	debug(0, "[Cutaway::load] _anotherCutaway = %i", _anotherCutaway);
 
 	/*
 		 Pointers to other places in the cutaway data
@@ -165,6 +157,7 @@ void Cutaway::load(const char *filename) {
 	if (entryString[0] == '*' &&
 			entryString[1] == 'F' &&
 			entryString[3] == '\0') {
+		warning("[Cutaway::load] CUTJOEF not handled");
 		switch (entryString[2]) {
 			case 'L':
 				/* CUTJOEF = LEFT; */
@@ -291,9 +284,18 @@ void Cutaway::dumpCutawayObject(int index, CutawayObject &object)
 }
 
 void Cutaway::actionSpecialMove(int index) {
+
+	if (index <= 0)
+		return;
+	
 	debug(0, "Special move: %i", index);
 
 	switch (index) {
+
+		// cdint.cut - put camera on Joe
+		case 16:
+			_graphics->cameraBob(0);
+			break;
 
 		// cred.cut - scale title
 		case 34:
@@ -689,7 +691,6 @@ byte *Cutaway::getCutawayAnim(byte *ptr, int header, CutawayAnim &anim) {
 
 	//debug(0, "[Cutaway::getCutawayAnim] header=%i", header);
 
-
 	anim.currentFrame = 0;
 	anim.originalFrame = 0;
 
@@ -701,7 +702,8 @@ byte *Cutaway::getCutawayAnim(byte *ptr, int header, CutawayAnim &anim) {
 		anim.originalFrame = 29 + FRAMES_JOE_XTRA;
 		
 		// 21/9/94, Make sure that bobs are clipped on 150 screens
-		// XXX if(FULLSCREEN) bobs[0].y2=199;
+		if (_logic->display()->fullscreen())
+			_graphics->bob(0)->box.y2 = 199;
 	}
 	else {
 		//warning("Stuff not yet implemented in Cutaway::getCutawayAnim()");
@@ -1055,17 +1057,22 @@ void Cutaway::handlePersonRecord(
 }
 
 void Cutaway::run(char *nextFilename) {
+	int i;
 	nextFilename[0] = '\0';
 
 	byte *ptr = _objectData;
+
+	int initialJoeX = _logic->joeX();
+	int initialJoeY = _logic->joeY();
 
 	_input->cutawayRunning(true);
 
 	_initialRoom = _temporaryRoom = _logic->currentRoom();
 
-	// XXX if(COMPANEL==0 || COMPANEL==2) SCENE_START(0);
+	// XXX if (_comPanel == 0 || _comPanel == 2)
+	// XXX	SCENE_START(0);
 
-	for (int i = 0; i < _cutawayObjectCount; i++) {
+	for (i = 0; i < _cutawayObjectCount; i++) {
 		CutawayObject object;
 		ptr = getCutawayObject(ptr, object);
 		//dumpCutawayObject(i, object);
@@ -1155,7 +1162,7 @@ void Cutaway::run(char *nextFilename) {
 #endif 
 	} // for()
 
-	goToFinalRoom();
+	stop();
 
 	_input->cutawayQuitReset();
 
@@ -1165,14 +1172,71 @@ void Cutaway::run(char *nextFilename) {
 
 	talk(nextFilename);
 
-	// XXX if(COMPANEL==0 || (COMPANEL==2 && ANOTHER_CUT==0)) {
-	// XXX 	SCENE_END(1);
-	// XXX 	COMPANEL=0;
-	// XXX }
+	if (_comPanel == 0 || (_comPanel == 2 && !_anotherCutaway)) {
+		// XXX 	SCENE_END(1);
+		_comPanel = 0;
+	}
 
 	if (nextFilename[0] == '\0' && !_anotherCutaway) {
 		// Lines 2138-2182 in cutaway.c
-		warning("Clean-up stuff needed but not yet implemented");
+		if (_finalRoom) {
+			_logic->newRoom(0);
+			_logic->entryObj(0);
+		}
+		else {
+			/// No need to stay in current room, so return to previous room
+			//  if one exists. Reset Joe's X,Y coords to those when first entered 
+
+			restorePersonData();
+
+			if (_logic->entryObj() > 0)
+				_initialRoom = _logic->objectData(_logic->entryObj())->room;
+			else {
+				// We're not returning to new room, so return to old Joe X,Y coords
+				_logic->joeX(initialJoeX);
+				_logic->joeX(initialJoeY);
+			}
+
+			if (_logic->currentRoom() != _initialRoom) {
+				_logic->currentRoom(_initialRoom);
+				// XXX should call SETUP_ROOM here but that would introduce a circual dependency...
+				// if (_logic->currentRoom() == _logic->newRoom())
+				//	_logic->newRoom(0);
+				// XXX so I try to set newRoom to the room instead
+				_logic->newRoom(_initialRoom);
+			}
+		}
+
+		// XXX CUTJOEF=0;
+		_comPanel = 0;
+		_logic->display()->fullscreen(false);
+
+		// XXX some string animations
+		int k = 0;
+		for (i = _logic->roomData(_logic->currentRoom());
+				i <= _logic->roomData(_logic->currentRoom() + 1); i++) {
+
+			ObjectData *object = _logic->objectData(i);
+			
+			if (object->image == -3 || object->image == -4) {
+				k++;
+				// XXX if (object->name > 0 && _logic->newAnim(
+			}
+		}
+
+		// function CUTAWAY_SPECIAL(), lines 885-896 in cutaway.c
+		if (_logic->currentRoom() == 1 && _logic->gameState(3) == 0) {
+			// XXX hard-coded room and inventory items
+			_logic->inventoryDeleteItem(54, false);
+			_logic->inventoryDeleteItem(56, false);
+			_logic->inventoryDeleteItem(58, false);
+			_logic->inventoryDeleteItem(59, false);
+			_logic->inventoryDeleteItem(60, false);
+			_logic->inventoryDeleteItem(61, false);
+			_logic->gameState(3, 1);
+			_logic->inventoryRefresh();
+		}
+
 	}
 
 	BobSlot *joeBob = _graphics->bob(0);
@@ -1190,7 +1254,7 @@ void Cutaway::run(char *nextFilename) {
 		/* XXX playsong(_lastSong) */ ;
 }
 
-void Cutaway::goToFinalRoom() {
+void Cutaway::stop() {
 	// Lines 1901-2032 in cutaway.c
 	byte *ptr = _gameStatePtr;
 
@@ -1201,13 +1265,16 @@ void Cutaway::goToFinalRoom() {
 
 	// Get the final room and Joe's final position
 
-	uint16 joeRoom = READ_BE_UINT16(ptr); ptr += 2;
-	uint16 joeX    = READ_BE_UINT16(ptr); ptr += 2;
-	uint16 joeY    = READ_BE_UINT16(ptr); ptr += 2;
+	int16 joeRoom = READ_BE_UINT16(ptr); ptr += 2;
+	int16 joeX    = READ_BE_UINT16(ptr); ptr += 2;
+	int16 joeY    = READ_BE_UINT16(ptr); ptr += 2;
 
 	if ((!_input->cutawayQuit() || (!_anotherCutaway && joeRoom == _finalRoom)) &&
 			joeRoom != _temporaryRoom &&
 			joeRoom != 0) {
+
+		debug(0, "[Cutaway::stop] Changing room to %i and moving Joe to (%i, %i)", 
+				joeRoom, joeX, joeY);
 
 		_logic->joeX(joeX);
 		_logic->joeY(joeX);
@@ -1218,35 +1285,88 @@ void Cutaway::goToFinalRoom() {
 
 	if (_input->cutawayQuit()) {
 		// Lines 1927-2032 in cutaway.c
+		int i;
 		
 		// Stop the credits from running
 		// XXX CFlag = 0;
 		
-		// Stop all moving bobs
-		warning("Not stopping moving bobs yet");
+		_graphics->bobStopAll();
 
-		// XXX Loop person faces
+		for (i = 1; i <= _personFaceCount; i++) {
+			int index =  _personFace[i].index;
+			if (index > 0) {
+				_logic->objectData(_personFace[i].index)->image = _personFace[i].image;
+				
+				_graphics->bob(_logic->findBob(index))->xflip = 
+					(_personFace[i].image != -4);
+			}
+		}
 
 		int quitObjectCount = (int16)READ_BE_UINT16(ptr); ptr += 2;
 
-		for (int i = 0; i < quitObjectCount; i++) {
+		for (i = 0; i < quitObjectCount; i++) {
 			int16 objectIndex  = (int16)READ_BE_UINT16(ptr); ptr += 2;
-			int16 from    = (int16)READ_BE_UINT16(ptr); ptr += 2;
-			/*int16 x       = (int16)READ_BE_UINT16(ptr);*/ ptr += 2;
-			/*int16 y       = (int16)READ_BE_UINT16(ptr);*/ ptr += 2;
+			int16 fromIndex    = (int16)READ_BE_UINT16(ptr); ptr += 2;
+			int16 x       = (int16)READ_BE_UINT16(ptr); ptr += 2;
+			int16 y       = (int16)READ_BE_UINT16(ptr); ptr += 2;
 			int16 room    = (int16)READ_BE_UINT16(ptr); ptr += 2;
-			/*int16 frame   = (int16)READ_BE_UINT16(ptr);*/ ptr += 2;
+			int16 frame   = (int16)READ_BE_UINT16(ptr); ptr += 2;
+			int16 bank    = (int16)READ_BE_UINT16(ptr); ptr += 2;
 
-			// XXX int bob = _logic->findBob(objectIndex);
+			int bobIndex = _logic->findBob(objectIndex);
+			ObjectData *object = _logic->objectData(objectIndex);
 
-			if (from > 0) {
-				// XXX
+			if (fromIndex > 0) {
+				if (fromIndex == objectIndex) {
+					// Enable object
+					object->name = abs(object->name);
+				}
+				else {
+					_logic->objectCopy(fromIndex, objectIndex);
+
+					ObjectData *from = _logic->objectData(fromIndex);
+					if (object->image && !from->image && bobIndex && _logic->currentRoom() == object->room)
+						_graphics->bobClear(bobIndex);
+				}
+
+				if (_logic->currentRoom() == room)
+					_logic->roomRefreshObject(objectIndex);
 			}
 
-			ObjectData *objectData = _logic->objectData(objectIndex);
+			if (_logic->currentRoom() == object->room) {
+				BobSlot *pbs = _graphics->bob(bobIndex);
 
-			if (objectData->room == room) {
-				// XXX
+				if (x || y) {
+					pbs->x = x;
+					pbs->y = y;
+					if (InRange(object->image, -4, -3))
+						pbs->scale = _logic->findScale(x, y);
+				}
+
+				if (frame) {
+					if (0 == bank)
+						bank = 15;
+					else if (bank != 13) {
+						// XXX if(bank != oldBank) {
+						_graphics->bankLoad(_bankNames[bank-1], 8);
+						// XXX	oldBank = bank;
+						// XXX }
+						bank = 8;
+					}
+
+					int objectFrame = _logic->findFrame(objectIndex);
+
+					if (objectFrame == 1000) {
+						_graphics->bobClear(bobIndex);
+					}
+					else if (objectFrame) {
+						_graphics->bankUnpack(abs(frame), objectFrame, bank);
+						pbs->frameNum = objectFrame;
+						if (frame < 0)
+							pbs->xflip = true;
+							
+					}
+				}
 			}
 		} // for()
 		

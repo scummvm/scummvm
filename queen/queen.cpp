@@ -196,7 +196,7 @@ void QueenEngine::go() {
 			_logic->oldRoom(_logic->currentRoom());
 			_logic->currentRoom(_logic->newRoom());
 			roomChanged();
-			// XXX _logic->fullScreen(false);
+			_display->fullscreen(false);
 			if (_logic->currentRoom() == _logic->newRoom()) {
 				_logic->newRoom(0);
 			}
@@ -214,7 +214,6 @@ void QueenEngine::go() {
 				_logic->checkPlayer();
 			}
 		}
-		break; // XXX don't loop yet
 	}
 }
 

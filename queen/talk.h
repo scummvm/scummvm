@@ -63,13 +63,17 @@ class Talk {
   private:
 	//!  Collection of constants used by Talk
 	enum {
+	  LINE_HEIGHT = 10,
 	  MAX_STRING_LENGTH = 255,
 	  MAX_STRING_SIZE = (MAX_STRING_LENGTH + 1),
 	  MAX_TEXT_WIDTH = (320-18),
 	  PUSHUP = 4,
 	  TALK_SELECTED_COUNT = 86,
-	  SENTENCE_BOB_1 = 62,
-	  SENTENCE_BOB_2 = 63
+	  ZONE_SCREEN = 1,
+	  ARROW_BOB_UP = 62,
+	  ARROW_BOB_DOWN = 63,
+	  ARROW_ZONE_UP   = 5,
+	  ARROW_ZONE_DOWN = 6
 	};
 
 	//! Special commands for speech
@@ -112,6 +116,8 @@ class Talk {
 	Logic     *_logic;
 	Resource  *_resource;
 	Sound     *_sound;
+
+	bool _wasFullscren;
 
 	//! Raw .dog file data (without 20 byte header)
 	byte *_fileData;
