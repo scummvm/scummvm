@@ -23,7 +23,6 @@
 
 #include "scummsys.h"
 
-
 class Dialog;
 
 enum {

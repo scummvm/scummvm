@@ -40,6 +40,7 @@ protected:
 	int				_numberingMode;
 	int				_currentPos;
 	int				_entriesPerPage;
+	int				_selectedItem;
 	ScrollBarWidget	*_scrollBar;
 public:
 	ListWidget(Dialog *boss, int x, int y, int w, int h);
@@ -47,7 +48,7 @@ public:
 	
 	void setList(const StringList& list)	{ _list = list; }
 	const StringList& getList()	const		{ return _list; }
-	
+	const int getSelected()	 {return _selectedItem;}
 	void setNumberingMode(int numberingMode)	{ _numberingMode = numberingMode; }
 	
 	virtual void handleClick(int x, int y, int button);

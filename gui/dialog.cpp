@@ -205,7 +205,7 @@ SaveLoadDialog::SaveLoadDialog(NewGui *gui)
 	new SliderWidget(this, 110, 20, 80, 16, "Volume", 0);
 	
 	// FIXME - test
-	new ListWidget(this, 10, 40, 180, 74);
+	_savegameList = new ListWidget(this, 10, 40, 180, 74);
 }
 
 void SaveLoadDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data)
@@ -214,6 +214,7 @@ void SaveLoadDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 	case kSaveCmd:
 		break;
 	case kLoadCmd:
+		//printf("Saving game in slot %d\n", _savegameList->getSelected());
 		break;
 	case kPlayCmd:
 		close();

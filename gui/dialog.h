@@ -77,6 +77,8 @@ public:
 	SaveLoadDialog(NewGui *gui);
 
 	virtual void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);
+protected:
+	Widget* _savegameList;
 };
 
 

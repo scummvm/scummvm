@@ -48,7 +48,7 @@ ListWidget::ListWidget(Dialog *boss, int x, int y, int w, int h)
 	_numberingMode = kListNumberingOne;
 	_entriesPerPage = (_h - 4) / LINE_HEIGHT;
 	_currentPos = 3;
-	
+	_selectedItem = -1;
 	_scrollBar = new ScrollBarWidget(boss, _x + _w, _y, kScrollBarWidth, _h);
 	_scrollBar->setTarget(this);
 	
@@ -86,6 +86,8 @@ ListWidget::~ListWidget()
 void ListWidget::handleClick(int x, int y, int button)
 {
 	if (_flags & WIDGET_ENABLED) {
+		_selectedItem = (y / LINE_HEIGHT) + _currentPos;
+		draw();
 	}
 }
 
@@ -121,6 +123,9 @@ void ListWidget::drawWidget(bool hilite)
 		} else
 			buffer = "";
 		buffer += _list[pos];
-		gui->drawString(buffer, _x+5, _y+2 + LINE_HEIGHT * i, _w - 10, gui->_textcolor);
+		if (_selectedItem == pos)
+			gui->drawString(buffer, _x+5, _y+2 + LINE_HEIGHT * i, _w - 10, gui->_textcolorhi);
+		else
+			gui->drawString(buffer, _x+5, _y+2 + LINE_HEIGHT * i, _w - 10, gui->_textcolor);
 	}
 }
