@@ -123,7 +123,9 @@ enum {
 	MD_COREAUDIO = 7,
 	MD_MIDIEMU = 8,
 	MD_ALSA = 9,
-	MD_ADLIB = 10
+	MD_ADLIB = 10,
+	
+	MD_YPA1 = 100	// palmos
 };
 
 // Factory functions, for faster compile
@@ -135,5 +137,6 @@ extern MidiDriver *MidiDriver_QT_create();
 extern MidiDriver *MidiDriver_CORE_create();
 extern MidiDriver *MidiDriver_ETUDE_create();
 extern MidiDriver *MidiDriver_ALSA_create();
+extern MidiDriver *MidiDriver_YamahaPa1_create();
 
 #endif

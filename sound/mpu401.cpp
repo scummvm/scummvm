@@ -64,6 +64,11 @@ void MidiChannel_MPU401::sysEx_customInstrument(uint32 type, byte *instr) {
 
 MidiDriver_MPU401::MidiDriver_MPU401() : MidiDriver() {
 	uint i;
+	
+	_started_thread = false;	// palmos
+	_timer_proc = NULL;			// palmos
+	_timer_param = NULL;		// palmos
+	
 	for (i = 0; i < ARRAYSIZE(_midi_channels); ++i) {
 		_midi_channels [i].init (this, i);
 	}
@@ -95,7 +100,7 @@ void MidiDriver_MPU401::setTimerCallback (void *timer_param, void (*timer_proc) 
 	}
 }
 
-#if !defined(__MORPHOS__)
+#if !defined(__MORPHOS__) && !defined(__PALM_OS__)
 int MidiDriver_MPU401::midi_driver_thread(void *param) {
 	MidiDriver_MPU401 *mid = (MidiDriver_MPU401 *)param;
 	int old_time, cur_time;

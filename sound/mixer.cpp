@@ -26,6 +26,8 @@
 #include "common/file.h"
 
 SoundMixer::SoundMixer() {
+	memset(this,0,sizeof(SoundMixer)); // palmos
+
 	_volumeTable = (int16 *)calloc(256 * sizeof(int16), 1);
 	_beginSlots = 0;
 	for (int i = 0; i != NUM_CHANNELS; i++) {
