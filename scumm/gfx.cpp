@@ -1067,7 +1067,7 @@ void Gdi::decodeStripEGA(byte *dst, byte *src, int height) {
 				}
 			}
 			if (color != 0xff) {
-				*dst++ = color;
+				*dst = color;
 				*(dst + 1) = color2;
 				dst += _vm->_realWidth;
 			}
