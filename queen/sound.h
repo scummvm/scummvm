@@ -60,6 +60,7 @@ public:
 	void playSong(int16 songNum);
 	void playLastSong()		{ playSong(_lastOverride); }
 	void stopSpeech()		{ _mixer->stopHandle(_speechHandle); }
+	void stopSfx()			{ _mixer->stopHandle(_sfxHandle); }
 	
 	bool sfxOn() const		{ return _sfxToggle; }
 	void sfxToggle(bool val)	{ _sfxToggle = val; }
