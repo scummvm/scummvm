@@ -995,7 +995,9 @@ void Cutaway::run(char *nextFilename) {
 
 	_vm->input()->cutawayRunning(false);
 	_vm->input()->cutawayQuitReset();
-
+	_vm->input()->quickSaveReset();
+	_vm->input()->quickLoadReset();
+	
 	if (_songBeforeComic > 0)
 		_vm->sound()->playSong(_songBeforeComic);
 	else if (_lastSong > 0)
