@@ -101,9 +101,9 @@ int32 FN_walk(int32 *params) {
 		// set up mem for _walkData in route_slots[] & set mega's
 		// 'route_slot_id' accordingly
 
-		AllocateRouteMem();
+		router.allocateRouteMem();
 
-		route = (int8) RouteFinder(ob_mega, ob_walkdata, target_x, target_y, target_dir);
+		route = (int8) router.routeFinder(ob_mega, ob_walkdata, target_x, target_y, target_dir);
 
 		// 0 = can't make route to target
 		// 1 = created route
@@ -124,7 +124,7 @@ int32 FN_walk(int32 *params) {
 			// (see FN_get_player_savedata() in save_rest.cpp
 		} else {
 			// free up the walkdata mem block
-			FreeRouteMem();
+			router.freeRouteMem();
 
 			// 1 means error, no walk created
 			RESULT = 1;
@@ -143,7 +143,7 @@ int32 FN_walk(int32 *params) {
 		// ok, thats it - back to script and change screen
 
 		ob_logic->looping = 0;	// so script loop stops
-		FreeRouteMem();		// free up the walkdata mem block
+		router.freeRouteMem();	// free up the walkdata mem block
 
 		// must clear in-case on the new screen there's a walk
 		// instruction (which would get cut short)
@@ -167,7 +167,7 @@ int32 FN_walk(int32 *params) {
 	// get pointer to walkanim & current frame position
 
 	// lock the _walkData array
-	walkAnim = LockRouteMem();
+	walkAnim = router.lockRouteMem();
 	walk_pc = ob_mega->walk_pc;
 
 	// if stopping the walk early, overwrite the next step with a
@@ -177,7 +177,7 @@ int32 FN_walk(int32 *params) {
 		if (walkAnim[walk_pc].step == 0 && walkAnim[walk_pc + 1].step == 1) {
 			// at the beginning of a step
 			ob_walkdata = (Object_walkdata *) params[3];
-			EarlySlowOut(ob_mega, ob_walkdata);
+			router.earlySlowOut(ob_mega, ob_walkdata);
 		}
 	}
 
@@ -196,7 +196,7 @@ int32 FN_walk(int32 *params) {
 	// '512' is end-marker
 	if (walkAnim[walk_pc + 1].frame == 512) {
 		ob_logic->looping = 0;	// so script loop stops
-		FreeRouteMem();		// free up the walkdata mem block
+		router.freeRouteMem();	// free up the walkdata mem block
 
 		// finished walk
 		ob_mega->currently_walking = 0;
@@ -237,7 +237,7 @@ int32 FN_walk(int32 *params) {
 	ob_mega->walk_pc++;
 
 	// allow _walkData array to float about memory again
-	FloatRouteMem();
+	router.floatRouteMem();
 
 	// stop the script, but repeat this call next cycle
 	return IR_REPEAT;
@@ -299,7 +299,7 @@ int32 FN_walk_to_anim(int32 *params) {
 	pars[2] = params[2];
 	pars[3] = params[3];
 
-	// walkdata (param 3) is needed for EarlySlowOut if player clicks
+	// walkdata (param 3) is needed for earlySlowOut if player clicks
 	// elsewhere during the walk
 
 	// call FN_walk() with target coords set to anim start position
@@ -739,7 +739,7 @@ int32 FN_add_walkgrid(int32 *params) {
 		FN_add_to_kill_list(params);
 	}
 
-	AddWalkGrid(params[0]);
+	router.addWalkGrid(params[0]);
 
 	// Touch the grid, getting it into memory.
 	res_man.open(params[0]);
@@ -755,7 +755,7 @@ int32 FN_add_walkgrid(int32 *params) {
 int32 FN_remove_walkgrid(int32 *params) {
 	// params:	0 id of walkgrid resource
 
-	RemoveWalkGrid(params[0]);
+	router.removeWalkGrid(params[0]);
 	return IR_CONT;
 }
 

@@ -23,6 +23,14 @@
 #include "bs2/memory.h"
 #include "bs2/object.h"
 
+// This used to be a variable, but it was never set. Actually, it wasn't even
+// initialised!
+//
+// Define this to force the use of slidy router (so solid path not used when
+// ending walk in ANY direction)
+//
+// #define FORCE_SLIDY
+
 namespace Sword2 {
 
 #if !defined(__GNUC__)
@@ -48,7 +56,8 @@ struct _barData {
 	int16 ymax;
 	int16 dx;	// x2 - x1
 	int16 dy;	// y2 - y1
-	int32 co;	// co = (y1 *dx)- (x1*dy) from an equation for a line y*dx = x*dy + co
+	int32 co;	// co = (y1 * dx) - (x1 * dy) from an equation for a
+			// line y * dx = x * dy + co
 } GCC_PACK;
 
 struct _nodeData {
@@ -63,22 +72,173 @@ struct _nodeData {
 	#pragma END_PACK_STRUCTS
 #endif
 
-int32 RouteFinder(Object_mega *ob_mega, Object_walkdata *ob_walkdata, int32 x, int32 y, int32 dir);
+// because we only have 2 megas in the game!
+#define TOTAL_ROUTE_SLOTS	2
 
-void EarlySlowOut(Object_mega *ob_mega, Object_walkdata *ob_walkdata);
+#define MAX_FRAMES_PER_CYCLE	16
+#define NO_DIRECTIONS		8
+#define MAX_FRAMES_PER_CHAR	(MAX_FRAMES_PER_CYCLE * NO_DIRECTIONS)
+#define ROUTE_END_FLAG		255
 
-void AllocateRouteMem(void);
-_walkData* LockRouteMem(void);
-void FloatRouteMem(void);
-void FreeRouteMem(void);
-void FreeAllRouteMem(void);
-void AddWalkGrid(int32 gridResource);
-void RemoveWalkGrid(int32 gridResource);
-void ClearWalkGridList(void);
+#define MAX_WALKGRIDS		10
+
+#define	O_WALKANIM_SIZE		600	// max number of nodes in router output
+#define	O_GRID_SIZE		200	// max 200 lines & 200 points
+#define	EXTRA_GRID_SIZE		20	// max 20 lines & 20 points
+#define	O_ROUTE_SIZE		50	// max number of modules in a route
+
+typedef	struct {
+	int32 x;
+	int32 y;
+	int32 dirS;
+	int32 dirD;
+} _routeData;
+
+typedef	struct {
+	int32 x;
+	int32 y;
+	int32 dir;
+	int32 num;
+} _pathData;
+
+class Router {
+private:
+	// stores pointers to mem blocks containing routes created & used by
+	// megas (NULL if slot not in use)
+	mem *_routeSlots[TOTAL_ROUTE_SLOTS];
+
+	// because extra bars will be copied into here afer walkgrid loaded
+	_barData _bars[O_GRID_SIZE + EXTRA_GRID_SIZE];
+	_nodeData _node[O_GRID_SIZE + EXTRA_GRID_SIZE];
+
+	int32 _walkGridList[MAX_WALKGRIDS];
+
+	int32 _nbars;
+	int32 _nnodes;
+
+	// area for extra route data to block parts of floors and enable
+	// routing round mega charaters
+
+	int32 _nExtraBars;
+	int32 _nExtraNodes;
+	_barData _extraBars[EXTRA_GRID_SIZE];
+	_nodeData _extraNode[EXTRA_GRID_SIZE];
+
+	int32 _startX;
+	int32 _startY;
+	int32 _startDir;
+	int32 _targetX;
+	int32 _targetY;
+	int32 _targetDir;
+	int32 _scaleA;
+	int32 _scaleB;
+	_routeData _route[O_ROUTE_SIZE];
+	_pathData _smoothPath[O_ROUTE_SIZE];
+	_pathData _modularPath[O_ROUTE_SIZE];
+	int32 _routeLength;
+
+	int32 _framesPerStep;
+	int32 _framesPerChar;
+
+	uint8 _nWalkFrames;			// no. of frames per walk cycle
+	uint8 _usingStandingTurnFrames;		// any standing turn frames?
+	uint8 _usingWalkingTurnFrames;		// any walking turn frames?
+	uint8 _usingSlowInFrames;		// any slow-in frames?
+	uint8 _usingSlowOutFrames;		// any slow-out frames?
+	int32 _dx[NO_DIRECTIONS + MAX_FRAMES_PER_CHAR];
+	int32 _dy[NO_DIRECTIONS + MAX_FRAMES_PER_CHAR];
+	int8 _modX[NO_DIRECTIONS];
+	int8 _modY[NO_DIRECTIONS];
+	int32 _diagonalx;
+	int32 _diagonaly;
+
+	int32 _firstStandFrame;
+
+	int32 _firstStandingTurnLeftFrame;
+	int32 _firstStandingTurnRightFrame;
+
+	int32 _firstWalkingTurnLeftFrame;	// left walking turn
+	int32 _firstWalkingTurnRightFrame;	// right walking turn
+
+	uint32 _firstSlowInFrame[NO_DIRECTIONS];
+	uint32 _numberOfSlowInFrames[NO_DIRECTIONS];
+
+	uint32 _leadingLeg[NO_DIRECTIONS];
+
+	int32 _firstSlowOutFrame;
+
+	// number of slow-out frames on for each leading-leg in each direction
+	// ie. total number of slow-out frames = (numberOfSlowOutFrames * 2 *
+	// NO_DIRECTIONS)
+
+	int32 _numberOfSlowOutFrames;
+
+	int32 _stepCount;
+
+	int32 _moduleX;
+	int32 _moduleY;
+	int32 _currentDir;
+	int32 _lastCount;
+	int32 _frame;
+
+	uint8 returnSlotNo(uint32 megaId);
+
+	int32 getRoute(void);
+	void extractRoute(void);
+	void loadWalkGrid(void);
+	void setUpWalkGrid(Object_mega *ob_mega, int32 x, int32 y, int32 dir);
+	void loadWalkData(Object_walkdata *ob_walkdata);
+	int32 scan(int32 level);
+
+	int32 newCheck(int32 status, int32 x1, int32 y1, int32 x2, int32 y2);
+	int32 lineCheck(int32 x1, int32 x2, int32 y1, int32 y2);
+	int32 vertCheck(int32 x, int32 y1, int32 y2);
+	int32 horizCheck(int32 x1, int32 y, int32 x2);
+	int32 check(int32 x1, int32 y1, int32 x2, int32 y2);
+	int32 checkTarget(int32 x, int32 y);
+
+	int32 smoothestPath(void);
+	int32 slidyPath(void);
+
+	int32 smoothCheck(int32 best, int32 p, int32 dirS, int32 dirD);
+
+	int32 addSlowInFrames(_walkData *walkAnim);
+	void addSlowOutFrames(_walkData *walkAnim);
+	void slidyWalkAnimator(_walkData *walkAnim);
+
+#ifndef FORCE_SLIDY
+	int32 solidPath(void);
+	int32 solidWalkAnimator(_walkData *walkAnim);
+#endif
+
+#ifdef _SWORD2_DEBUG
+	void plotCross(int16 x, int16 y, uint8 colour);
+#endif
+
+public:
+	Router() :
+		_nExtraBars(0), _nExtraNodes(0), _diagonalx(0),
+		_diagonaly(0) {}
+
+	int32 routeFinder(Object_mega *ob_mega, Object_walkdata *ob_walkdata, int32 x, int32 y, int32 dir);
+
+	void earlySlowOut(Object_mega *ob_mega, Object_walkdata *ob_walkdata);
+
+	void allocateRouteMem(void);
+	_walkData* lockRouteMem(void);
+	void floatRouteMem(void);
+	void freeRouteMem(void);
+	void freeAllRouteMem(void);
+	void addWalkGrid(int32 gridResource);
+	void removeWalkGrid(int32 gridResource);
+	void clearWalkGridList(void);
 
 #ifdef _SWORD2_DEBUG 
-void PlotWalkGrid(void);
-#endif 
+	void plotWalkGrid(void);
+#endif
+};
+
+extern Router router;
 
 } // End of namespace Sword2
 

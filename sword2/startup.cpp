@@ -272,7 +272,7 @@ uint32 Con_start(uint8 *input) {
 			res_man.close(1);
 
 			// free all the route memory blocks from previous game
-			FreeAllRouteMem();
+			router.freeAllRouteMem();
 
 			// if there was speech text, kill the text block
 			if (speech_text_bloc_no) {

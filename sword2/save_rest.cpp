@@ -241,7 +241,7 @@ uint32 SaveData(uint16 slotNo, uint8 *buffer, uint32 bufferSize) {
 	SaveFileManager *mgr = g_system->get_savefile_manager();
 
 	// construct filename
-	sprintf(saveFileName, "%s.%.3d", g_sword2->_game_name, slotNo);
+	sprintf(saveFileName, "%s.%.3d", g_sword2->_gameName, slotNo);
 	
 	if (!(out = mgr->open_savefile(saveFileName, g_sword2->getSavePath(), true))) {
 		// error: couldn't open file
@@ -304,7 +304,7 @@ uint32 RestoreData(uint16 slotNo, uint8 *buffer, uint32 bufferSize) {
  	uint32 itemsRead;
 
 	// construct filename
-	sprintf(saveFileName, "%s.%.3d", g_sword2->_game_name, slotNo);
+	sprintf(saveFileName, "%s.%.3d", g_sword2->_gameName, slotNo);
 
 	if (!(in = mgr->open_savefile(saveFileName, g_sword2->getSavePath(), false))) {
 		// error: couldn't open file
@@ -469,7 +469,7 @@ uint32 GetSaveDescription(uint16 slotNo, uint8 *description) {
 	SaveFileManager *mgr = g_system->get_savefile_manager();
 
 	// construct filename
-	sprintf(saveFileName, "%s.%.3d", g_sword2->_game_name, slotNo);
+	sprintf(saveFileName, "%s.%.3d", g_sword2->_gameName, slotNo);
 
 	if (!(in = mgr->open_savefile(saveFileName, g_sword2->getSavePath(), false))) {
 		// error: couldn't open file
@@ -492,7 +492,7 @@ bool SaveExists(uint16 slotNo) {
 	SaveFile *in;
 
 	// construct filename
-	sprintf(saveFileName, "%s.%.3d", g_sword2->_game_name, slotNo);
+	sprintf(saveFileName, "%s.%.3d", g_sword2->_gameName, slotNo);
 
 	if (!(in = mgr->open_savefile(saveFileName, g_sword2->getSavePath(), false))) {
 		delete mgr;

@@ -104,7 +104,7 @@ Sword2Engine::Sword2Engine(GameDetector *detector, OSystem *syst)
 	g_sword2 = this;
 	_features = detector->_game.features;
 	_gameId = detector->_game.id;
-	_game_name = strdup(detector->_gameFileName.c_str());
+	_gameName = strdup(detector->_gameFileName.c_str());
 	_bootParam = ConfMan.getInt("boot_param");
 	_saveSlot = ConfMan.getInt("save_slot");
 	_debugLevel = ConfMan.getInt("debuglevel");
@@ -120,6 +120,11 @@ Sword2Engine::Sword2Engine(GameDetector *detector, OSystem *syst)
 	_mixer->setMusicVolume(256);
 
 	g_sound = _sound = new Sound(_mixer);
+}
+
+Sword2Engine::~Sword2Engine() {
+	free(_gameName);
+	delete _sound;
 }
 
 void Sword2Engine::errorString(const char *buf1, char *buf2) {

@@ -60,8 +60,14 @@ extern uint8 unencoded_name[];
 // TODO move stuff into class
 
 class Sword2Engine : public Engine {
+private:
+	bool _quit;
+	uint32 _bootParam;
+	int32 _saveSlot;
+
 public:
 	Sword2Engine(GameDetector *detector, OSystem *syst);
+	~Sword2Engine();
 	void go(void);
 	void parseEvents(void);
 	void Start_game(void);
@@ -69,7 +75,7 @@ public:
 	GameDetector *_detector;
 	uint32 _features;
 	byte _gameId;
-	char *_game_name; // target name for saves
+	char *_gameName; // target name for saves
 	Sound *_sound;
 	Common::RandomSource _rnd;
 
@@ -77,12 +83,6 @@ public:
 	uint32 _controlsFontId;
 	uint32 _redFontId;
 
-private:
-	bool _quit;
-	uint32 _bootParam;
-	int32 _saveSlot;
-
-public:
 	void errorString(const char *buf_input, char *buf_output);
 	void initialiseFontResourceFlags(void);
 	void initialiseFontResourceFlags(uint8 language);

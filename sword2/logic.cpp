@@ -23,7 +23,7 @@
 #include "bs2/debug.h"
 #include "bs2/interpreter.h"
 #include "bs2/logic.h"
-#include "bs2/router.h"		// for ClearWalkGridList()
+#include "bs2/router.h"		// for clearWalkGridList()
 #include "bs2/sound.h"
 #include "bs2/sync.h"
 
@@ -237,13 +237,13 @@ void logic::expressChangeSession(uint32 sesh_id) {
 	Init_sync_system();
 
 	// reset walkgrid list (see FN_register_walkgrid)
-	ClearWalkGridList();
+	router.clearWalkGridList();
 
 	// stops all fx & clears the queue
 	Clear_fx_queue();
 
 	// free all the route memory blocks from previous game
-	FreeAllRouteMem();
+	router.freeAllRouteMem();
 }
 
 void logic::naturalChangeSession(uint32 sesh_id) {

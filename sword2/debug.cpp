@@ -34,7 +34,7 @@
 #include "bs2/mouse.h"
 #include "bs2/protocol.h"
 #include "bs2/resman.h"
-#include "bs2/router.h"			// for PlotWalkGrid()
+#include "bs2/router.h"			// for plotWalkGrid()
 #include "bs2/speech.h"			// for 'officialTextNumber' and
 					// 'speechScriptWaiting'
 
@@ -358,7 +358,7 @@ void Draw_debug_graphics(void) {
 	// walk-grid
 
 	if (displayWalkGrid)
-		PlotWalkGrid(); 
+		router.plotWalkGrid(); 
 
 	// player feet coord marker
 

@@ -893,7 +893,7 @@ int32 OptionsDialog::writeOptionSettings(void) {
 	SaveFile *fp;
 	SaveFileManager *mgr = g_system->get_savefile_manager();
 	
-	sprintf(filename, "%s-settings.dat", g_sword2->_game_name);
+	sprintf(filename, "%s-settings.dat", g_sword2->_gameName);
 
 	buff[0] = g_sound->getMusicVolume();
 	buff[1] = g_sound->getSpeechVolume();
@@ -1435,7 +1435,7 @@ void Gui::restartControl(void) {
 	DEMO = temp_demo_flag;
 
 	// free all the route memory blocks from previous game
-	FreeAllRouteMem();
+	router.freeAllRouteMem();
 
 	// call the same function that first started us up
 	g_sword2->Start_game();
@@ -1483,7 +1483,7 @@ int32 Gui::readOptionSettings(void) {
 	SaveFile *fp;
 	SaveFileManager *mgr = g_system->get_savefile_manager();
 	
-	sprintf(filename, "%s-settings.dat", g_sword2->_game_name);
+	sprintf(filename, "%s-settings.dat", g_sword2->_gameName);
 
 	if (!(fp = mgr->open_savefile(filename, g_sword2->getSavePath(), false)))
 		return 1;
