@@ -38,10 +38,21 @@
 #ifdef _MSC_VER
 #pragma once
 #pragma warning( disable : 4068 ) // turn off "unknown pragma" warning
+#pragma warning( disable : 4100 ) // turn off "unreferenced formal parameter" warning
+#pragma warning( disable : 4127 ) // turn off "conditional expression is constant" warning
+#pragma warning( disable : 4201 ) // turn off "nonstandard extension used : nameless struct/union" warning
 #pragma warning( disable : 4244 ) // turn off "conversion type" warning
+#pragma warning( disable : 4310 ) // turn off "cast truncates constant value" warning
 #pragma warning( disable : 4355 ) // turn off "base member init" warning
 #pragma warning( disable : 4390 ) // turn off "empty statement" warning for BS2 code
+#pragma warning( disable : 4121 ) // turn off "alignment of a member was sensitive to packing" warning
 #pragma warning( disable : 4506 ) // turn off "no definition for inline function" warning
+#pragma warning( disable : 4511 ) // turn off "copy constructor could not be generated" warning
+#pragma warning( disable : 4512 ) // turn off "assignment operator could not be generated" warning
+
+// FIXME: 4702 & 4706 - may be enabled
+#pragma warning( disable : 4702 ) // turn off "unreachable code" warning
+#pragma warning( disable : 4706 ) // turn off "assignment within conditional expression" warning
 #endif
 
 #if !defined(_WIN32_WCE)
