@@ -29,6 +29,8 @@
 #include "grid.h"
 #include "skydefs.h"
 
+class SkyGrid;
+
 class SkyAutoRoute {
 public:
 	SkyAutoRoute(SkyGrid *pGrid);

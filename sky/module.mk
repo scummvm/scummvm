@@ -16,6 +16,7 @@ MODULE_OBJS = \
 	sky/sound.o \
 	sky/skychannel.o \
 	sky/skymusic.o \
+	sky/autoroute.o \
 
 # Include common rules 
 include common.rules

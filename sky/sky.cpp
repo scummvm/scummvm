@@ -117,6 +117,7 @@ void SkyState::initialise(void) {
 	//initialiseRouter();
 	_skyText = getSkyText();
 	_grid = new SkyGrid(_skyDisk);
+	_autoRoute = new SkyAutoRoute(_grid);
 	_skyLogic = new SkyLogic(_skyDisk, _grid);
 }
 

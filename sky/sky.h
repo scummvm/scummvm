@@ -33,9 +33,11 @@
 #include "sky/struc.h"
 #include "sky/skymusic.h"
 #include "sky/grid.h"
+#include "sky/autoroute.h"
 
 class SkyLogic;
 class SkyGrid;
+class SkyAutoRoute;
 
 class SkyState : public Engine {
 	void errorString(const char *buf_input, char *buf_output);
@@ -75,6 +77,7 @@ protected:
 	SkyGrid *_grid;
 	SkyLogic *_skyLogic;
 	SkyMusic *_music;
+	SkyAutoRoute *_autoRoute;
 	
 	byte *_workScreen;
 	byte *_backScreen;
