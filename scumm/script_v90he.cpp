@@ -959,7 +959,6 @@ void ScummEngine_v90he::o90_unknown25() {
 }
 
 void ScummEngine_v90he::o90_unknown26() {
-	// Incomplete
 	int args[16];
 	byte subOp = fetchScriptByte();
 	subOp -= 34;
@@ -1121,7 +1120,7 @@ void ScummEngine_v90he::o90_unknown28() {
 			pop();
 			break;
 		default:
-			error("o90_unknown28 subOp 38: Unknown case %d", subOp);
+			error("o90_unknown28 subOp 0: Unknown case %d", subOp);
 		}
 		break;
 	case 5:
