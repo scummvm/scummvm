@@ -45,8 +45,8 @@ typedef StarterAppInfoType* StarterAppInfoPtr;
 #define appPrefID				0x00
 #define appPrefVersionNum		0x01
 
-// Define the minimum OS version we support (2.0 for now).
-#define ourMinVersion	sysMakeROMVersion(2,0,0,sysROMStageRelease,0)
+// Define the minimum OS version we support.
+#define ourMinVersion	sysMakeROMVersion(3,5,0,sysROMStageRelease,0)
 #define kPalmOS10Version	sysMakeROMVersion(1,0,0,sysROMStageRelease,0)
 
 
