@@ -456,32 +456,46 @@ void resMan::convertEndian(uint8 *file) {
 			}
 
 			// FIXME: byte swapping should be done here instead of in protocol.cpp
-/*
+
 			// backgroundParallaxLayer
 			_parallax *parallax;
-			parallax = (_parallax *) ((uint8 *) mscreenHeader + mscreenHeader->bg_parallax[0]);
-			parallax->w = SWAP_BYTES_16(parallax->w);
-			parallax->h = SWAP_BYTES_16(parallax->h);
+			int offset;
+			offset = mscreenHeader->bg_parallax[0];
+			if (offset > 0) {
+				parallax = (_parallax *) ((uint8 *) mscreenHeader + offset);
+				parallax->w = SWAP_BYTES_16(parallax->w);
+				parallax->h = SWAP_BYTES_16(parallax->h);
+			}
 
-			parallax = (_parallax *) ((uint8 *) mscreenHeader + mscreenHeader->bg_parallax[1]);
-			parallax->w = SWAP_BYTES_16(parallax->w);
-			parallax->h = SWAP_BYTES_16(parallax->h);
+			offset = mscreenHeader->bg_parallax[1];
+			if (offset > 0) {
+				parallax = (_parallax *) ((uint8 *) mscreenHeader + offset);
+				parallax->w = SWAP_BYTES_16(parallax->w);
+				parallax->h = SWAP_BYTES_16(parallax->h);
+			}
 
 			// backgroundLayer
-			parallax = (_parallax *) ((uint8 *) mscreenHeader + mscreenHeader->screen + sizeof(_screenHeader));
-			parallax->w = SWAP_BYTES_16(parallax->w);
-			parallax->h = SWAP_BYTES_16(parallax->h);
+			offset = mscreenHeader->screen + (int)sizeof(_screenHeader);
+			if (offset > 0) {
+				parallax = (_parallax *) ((uint8 *) mscreenHeader + offset);
+				parallax->w = SWAP_BYTES_16(parallax->w);
+				parallax->h = SWAP_BYTES_16(parallax->h);
+			}
 
 			// foregroundParallaxLayer
-			parallax = (_parallax *) ((uint8 *) mscreenHeader + mscreenHeader->fg_parallax[0]);
-			parallax->w = SWAP_BYTES_16(parallax->w);
-			parallax->h = SWAP_BYTES_16(parallax->h);
+			offset = mscreenHeader->fg_parallax[0];
+			if (offset > 0) {
+				parallax = (_parallax *) ((uint8 *) mscreenHeader + offset);
+				parallax->w = SWAP_BYTES_16(parallax->w);
+				parallax->h = SWAP_BYTES_16(parallax->h);
+			}
 
-			parallax = (_parallax *) ((uint8 *) mscreenHeader + mscreenHeader->fg_parallax[1]);
-			parallax->w = SWAP_BYTES_16(parallax->w);
-			parallax->h = SWAP_BYTES_16(parallax->h);
-*/
-
+			offset = mscreenHeader->fg_parallax[1];
+			if (offset > 0) {
+				parallax = (_parallax *) ((uint8 *) mscreenHeader + offset);
+				parallax->w = SWAP_BYTES_16(parallax->w);
+				parallax->h = SWAP_BYTES_16(parallax->h);
+			}
 			break;
 		}
 		case GAME_OBJECT: {

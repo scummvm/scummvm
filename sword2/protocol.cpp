@@ -162,12 +162,6 @@ _parallax *FetchBackgroundParallaxLayer(uint8 *screenFile, int layer) // Chris 0
 
 	_parallax *parallax = (_parallax *) ((uint8 *) mscreenHeader + mscreenHeader->bg_parallax[layer]);
 	
-// FIXME: this shouldn't be here
-#if defined(SCUMM_BIG_ENDIAN)
-	parallax->w = SWAP_BYTES_16(parallax->w);
-	parallax->h = SWAP_BYTES_16(parallax->h);
-#endif
-	
 	return parallax;
 }
 //---------------------------------------------------------------
@@ -182,12 +176,6 @@ _parallax *FetchBackgroundLayer(uint8 *screenFile) // Chris 04Oct96
 
 	_parallax *parallax = (_parallax *) ((uint8 *) mscreenHeader + mscreenHeader->screen + sizeof(_screenHeader));
 	
-// FIXME: this shouldn't be here
-#if defined(SCUMM_BIG_ENDIAN)
-	parallax->w = SWAP_BYTES_16(parallax->w);
-	parallax->h = SWAP_BYTES_16(parallax->h);
-#endif
-
 	return parallax;
 }
 //---------------------------------------------------------------
@@ -201,12 +189,6 @@ _parallax *FetchForegroundParallaxLayer(uint8 *screenFile, int layer) // Chris 0
 #endif
 
 	_parallax *parallax = (_parallax *) ((uint8 *) mscreenHeader + mscreenHeader->fg_parallax[layer]);
-	
-// FIXME: this shouldn't be here
-#if defined(SCUMM_BIG_ENDIAN)
-	parallax->w = SWAP_BYTES_16(parallax->w);
-	parallax->h = SWAP_BYTES_16(parallax->h);
-#endif
 	
 	return parallax;
 }
