@@ -568,6 +568,7 @@ int Scumm::loadResource(int type, int idx) {
 
 	if (_features & GF_OLD_BUNDLE) {
 		size = _fileHandle.readUint16LE();
+		_fileHandle.seek(-2, SEEK_CUR);
 	} else if (_features & GF_SMALL_HEADER) {
 		if (!(_features & GF_SMALL_NAMES))
 			_fileHandle.seek(8, SEEK_CUR);

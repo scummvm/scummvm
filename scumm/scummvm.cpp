@@ -1719,7 +1719,7 @@ void Scumm::launch() {
 	}
 
 	if (_features & GF_OLD_BUNDLE)
-		_resourceHeaderSize = 2; // FIXME - to be rechecked
+		_resourceHeaderSize = 4; // FIXME - to be rechecked
 	else if (_features & GF_SMALL_HEADER)
 		_resourceHeaderSize = 6;
 	else
