@@ -443,6 +443,22 @@ SOURCE=.\sky\compacts\z_compac.h
 # End Group
 # Begin Source File
 
+SOURCE=.\sky\adlibchannel.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\sky\adlibchannel.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\sky\adlibmusic.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\sky\adlibmusic.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\sky\autoroute.cpp
 # End Source File
 # Begin Source File
@@ -479,6 +495,22 @@ SOURCE=.\sky\disk.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\sky\gmchannel.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\sky\gmchannel.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\sky\gmmusic.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\sky\gmmusic.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\sky\grid.cpp
 # End Source File
 # Begin Source File
@@ -496,6 +528,14 @@ SOURCE=.\sky\logic.cpp
 # Begin Source File
 
 SOURCE=.\sky\logic.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\sky\musicbase.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\sky\musicbase.h
 # End Source File
 # Begin Source File
 
@@ -519,23 +559,7 @@ SOURCE=.\sky\sky.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\sky\skychannel.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\sky\skychannel.h
-# End Source File
-# Begin Source File
-
 SOURCE=.\sky\skydefs.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\sky\skymusic.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\sky\skymusic.h
 # End Source File
 # Begin Source File
 
