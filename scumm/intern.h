@@ -963,7 +963,7 @@ protected:
 	void spriteGroupSet_case56(int spriteGroupId);
 
 	void spritesAllocTables(int numSprites, int numGroups, int numMaxSprites);
-	void spritesResetSpriteGroup(int spriteGroupId);
+	void spritesResetGroup(int spriteGroupId);
 	void spritesResetTables(bool refreshScreen);
 	void spriteGroupCheck(int spriteGroupId);
 	void spriteMarkIfInGroup(int spriteGroupId, uint32 flags);
