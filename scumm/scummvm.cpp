@@ -1952,7 +1952,7 @@ void Scumm::processKbd() {
 
 	if (_version <= 2)
 		saveloadkey = 5;	// F5
-	else if ((_features & GF_OLD256) || (_gameId == GID_CMI)) /* FIXME: Support ingame screen ? */
+	else if ((_features & GF_OLD256) || (_gameId == GID_CMI) || (_features & GF_16COLOR)) /* FIXME: Support ingame screen ? */
 		saveloadkey = 319;	// F5
 	else
 		saveloadkey = VAR(VAR_SAVELOADDIALOG_KEY);
