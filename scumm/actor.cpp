@@ -1215,6 +1215,9 @@ void Actor::setActorCostume(int c) {
 	if (_vm->_features & GF_NEW_COSTUMES) {
 		for (i = 0; i < 256; i++)
 			palette[i] = 0xFF;
+	} else if (_vm->_features & GF_OLD_BUNDLE) {
+		for (i = 0; i < 16; i++)
+			palette[i] = i;
 	} else {
 		for (i = 0; i < 32; i++)
 			palette[i] = 0xFF;

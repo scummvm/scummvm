@@ -1333,6 +1333,9 @@ void CostumeRenderer::setPalette(byte *palette) {
 	int i;
 	byte color;
 
+	if (_vm->_features & GF_OLD_BUNDLE)
+		palette[_loaded._ptr[8]] = palette[0];
+	
 	for (i = 0; i < _loaded._numColors; i++) {
 		if ((_vm->_vars[_vm->VAR_CURRENT_LIGHTS] & LIGHTMODE_actor_color) || (_vm->_features & GF_AFTER_V6)) {
 			color = palette[i];
