@@ -46,121 +46,90 @@ void Logic::resetScriptVars(void) {
  */
 
 int Logic::processSession(void) {
-	uint32 run_list;
-	uint32 ret, script;
-	uint32 *game_object_list;
-	char *raw_script_ad;
-	char *raw_data_ad;
-	uint32 null_pc;
-	StandardHeader *head;
-	StandardHeader *far_head;
-	uint32 id;
-
 	// might change during the session, so take a copy here
-	run_list = _currentRunList;
+	uint32 run_list = _currentRunList;
 
-	// point to first object in list
-	_pc = 0;
+	_pc = 0;	// first object in list
 
 	// by minusing the pc we can cause an immediate cessation of logic
 	// processing on the current list
 
 	while (_pc != 0xffffffff) {
-		head = (StandardHeader *) _vm->_resman->openResource(run_list);
+		uint32 ret, script;
+		char *raw_script_ad;
 
-		if (head->fileType != RUN_LIST)
-			error("processSession: %d not a run_list", run_list);
+		StandardHeader *head = (StandardHeader *) _vm->_resman->openResource(run_list);
+		assert(head->fileType == RUN_LIST);
 
-		game_object_list = (uint32 *) (head + 1);
+		uint32 *game_object_list = (uint32 *) (head + 1);
 
 		// read the next id
-		_scriptVars[ID] = game_object_list[_pc++];
-		id = _scriptVars[ID];
+		uint id = game_object_list[_pc++];
+		_scriptVars[ID] = id;
 
-		// release the list again so it can float in memory - at this
+		// Release the list again so it can float in memory - at this
 		// point not one thing should be locked
 
 		_vm->_resman->closeResource(run_list);
 
-		debug(5, "%d", _scriptVars[ID]);
-
-		// null terminated
 		if (!_scriptVars[ID]) {
-			// end the session naturally
+			// End of list - end the session naturally
 			return 0;
 		}
 
 		head = (StandardHeader *) _vm->_resman->openResource(_scriptVars[ID]);
-
-		if (head->fileType != GAME_OBJECT)
-			error("processSession: %d not an object", _scriptVars[ID]);
+		assert(head->fileType == GAME_OBJECT);
 
 		_curObjectHub = (ObjectHub *) (head + 1);
 
-		debug(5, " %d id(%d) pc(%d)",
+		debug(5, "Level %d id(%d) pc(%d)",
 			LEVEL,
 			_curObjectHub->script_id[LEVEL],
 			_curObjectHub->script_pc[LEVEL]);
 
-		// do the logic for this object
-		// we keep going until a function says to stop - remember,
-		// system operations are run via function calls to drivers now
+		// Do the logic for this object. We keep going until a function
+		// says to stop - remember, system operations are run via
+		// function calls to drivers now.
 
 		do {
-			// get the script id as we may be running a script
-			// from another object...
+			// There is a distinction between running one of our
+			// own scripts and that of another object.
 
 			script = _curObjectHub->script_id[LEVEL];
 
-			// there is a distinction between running one of our
-			// own scripts and that of another object
 			if (script / SIZE == _scriptVars[ID]) {
-				// its our script
+				// It's our own script
 
-				debug(5, "run script %d pc%d",
+				debug(5, "Run script %d pc=%d",
 					script / SIZE,
 					_curObjectHub->script_pc[LEVEL]);
 
-				// this is the script data
-				// raw_script_ad = (char *) (_curObjectHub + 1);
+				// This is the script data. Script and data
+				// object are the same.
 
 				raw_script_ad = (char *) head;
 
-				// script and data object are us/same
 				ret = runScript(raw_script_ad, raw_script_ad, &_curObjectHub->script_pc[LEVEL]);
 			} else {
-				// we're running the script of another game
-				// object - get our data object address
+				// We're running the script of another game
+				// object - get our data object address.
 
-				// get the foreign objects script data address
-
-				raw_data_ad = (char *) head;
-
-				far_head = (StandardHeader *) _vm->_resman->openResource(script / SIZE);
-
-				if (far_head->fileType != GAME_OBJECT && far_head->fileType != SCREEN_MANAGER)
-					error("processSession: %d not a far object (its a %d)", script / SIZE, far_head->fileType);
-
-				// raw_script_ad = (char *) (head + 1) + sizeof(StandardHeader);
-
-				// get our objects data address
-				// raw_data_ad = (char *) (_curObjectHub + 1);
+				StandardHeader *far_head = (StandardHeader *) _vm->_resman->openResource(script / SIZE);
+				assert(far_head->fileType == GAME_OBJECT || far_head->fileType == SCREEN_MANAGER);
 
 				raw_script_ad = (char *) far_head;
+				char *raw_data_ad = (char *) head;
 
 				ret = runScript(raw_script_ad, raw_data_ad, &_curObjectHub->script_pc[LEVEL]);
 
-				// close foreign object again
 				_vm->_resman->closeResource(script / SIZE);
 
 				// reset to us for service script
 				raw_script_ad = raw_data_ad;
 			}
 
-			// this script has finished - drop down a level
-
 			if (ret == 1) {
-				// check that it's not already on level 0 !
+				// The script finished - drop down a level
 				if (LEVEL)
 					LEVEL--;
 				else {
@@ -168,12 +137,13 @@ int Logic::processSession(void) {
 					// be different this time and simply
 					// let it restart next go :-)
 
-					debug(5, "**WARNING object %d script 0 terminated!", id);
+					// Note that this really does happen a
+					// lot, so don't make it a warning.
 
-					// reset to rerun
+					debug(5, "object %d script 0 terminated!", id);
+
+					// reset to rerun, drop out for a cycle
 					_curObjectHub->script_pc[LEVEL] = _curObjectHub->script_id[LEVEL] & 0xffff;
-
-					// cause us to drop out for a cycle
 					ret = 0;
 				}
 			} else if (ret > 2) {
@@ -186,36 +156,32 @@ int Logic::processSession(void) {
 			// keep processing scripts until 0 for quit is returned
 		} while (ret);
 
-		// any post logic system requests to go here
+		// Any post logic system requests to go here
 
-		// clear any syncs that were waiting for this character - it
+		// Clear any syncs that were waiting for this character - it
 		// has used them or now looses them
 
 		clearSyncs(_scriptVars[ID]);
 
 		if (_pc != 0xffffffff) {
-			// the session is still valid so run the service script
-			null_pc = 0;
-
-			// call the base script - this is the graphic/mouse
-			// service call
-
+			// The session is still valid so run the graphics/mouse
+			// service script
+			uint32 null_pc = 0;
 			runScript(raw_script_ad, raw_script_ad, &null_pc);
 		}
-
-		// made for all live objects
 
 		// and that's it so close the object resource
 
 		_vm->_resman->closeResource(_scriptVars[ID]);
 	}
 
-	// leaving a room so remove all ids that must reboot correctly
-	processKillList();
+	// Leaving a room so remove all ids that must reboot correctly. Then
+	// restart the loop.
 
-	debug(5, "RESTART the loop");
+	for (uint32 i = 0; i < _kills; i++)
+		_vm->_resman->remove(_objectKillList[i]);
 
-	// means restart the loop
+	resetKillList();
 	return 1;
 }
 
@@ -225,40 +191,22 @@ int Logic::processSession(void) {
  */
 
 void Logic::expressChangeSession(uint32 sesh_id) {
-	//set to new
+	// Set new session and force the old one to quit.
 	_currentRunList = sesh_id;
-
-	//causes session to quit
 	_pc = 0xffffffff;
 
-	// reset now in case we double-clicked an exit prior to changing screen
+	// Reset now in case we double-clicked an exit prior to changing screen
 	_scriptVars[EXIT_FADING] = 0;
 
-	// we're trashing the list - presumably to change room
-	// in theory sync waiting in the list could be left behind and never
-	// removed - so we trash the lot
-
+	// We're trashing the list - presumably to change room. In theory,
+	// sync waiting in the list could be left behind and never removed -
+	// so we trash the lot
 	memset(_syncList, 0, sizeof(_syncList));
 
-	// reset walkgrid list (see fnRegisterWalkGrid)
+	// Various clean-ups
 	_router->clearWalkGridList();
-
-	// stops all fx & clears the queue
 	_vm->clearFxQueue();
-
-	// free all the route memory blocks from previous game
 	_router->freeAllRouteMem();
-}
-
-/**
- * A new session will begin next game cycle. The current cycle will conclude
- * and build the screen and flip into view as normal.
- *
- * @note This functino doesn't seem to be used anywhere.
- */
-
-void Logic::naturalChangeSession(uint32 sesh_id) {
-	_currentRunList = sesh_id;
 }
 
 /**
@@ -269,9 +217,11 @@ uint32 Logic::getRunList(void) {
 	return _currentRunList;
 }
 
-int32 Logic::fnSetSession(int32 *params) {
-	// used by player invoked start scripts
+/**
+ * This function is by start scripts.
+ */
 
+int32 Logic::fnSetSession(int32 *params) {
 	// params:	0 id of new run list
 
 	expressChangeSession(params[0]);
@@ -301,19 +251,13 @@ int32 Logic::fnEndSession(int32 *params) {
  */
 
 void Logic::logicUp(uint32 new_script) {
-	// going up a level - and we'll keeping going this cycle
-	LEVEL++;
-
-	// can be 0, 1, 2
-	if (LEVEL == 3)
-		error("logicUp id %d has run off script tree! :-O", _scriptVars[ID]);
-
-	// setup new script on next level (not the current level)
-
 	debug(5, "new pc = %d", new_script & 0xffff);
 
-	_curObjectHub->script_id[LEVEL] = new_script;
-	_curObjectHub->script_pc[LEVEL] = new_script & 0xffff;
+	// going up a level - and we'll keep going this cycle
+	LEVEL++;
+
+	assert(LEVEL < 3);	// Can be 0, 1, 2
+	logicReplace(new_script);
 }
 
 /**
@@ -322,10 +266,7 @@ void Logic::logicUp(uint32 new_script) {
 
 void Logic::logicOne(uint32 new_script) {
 	LEVEL = 1;
-
-	// setup new script on level 1
-	_curObjectHub->script_id[1] = new_script;
-	_curObjectHub->script_pc[1] = new_script & 0xffff;
+	logicReplace(new_script);
 }
 
 /**
@@ -334,7 +275,6 @@ void Logic::logicOne(uint32 new_script) {
  */
 
 void Logic::logicReplace(uint32 new_script) {
-	// setup new script on this level
 	_curObjectHub->script_id[LEVEL] = new_script;
 	_curObjectHub->script_pc[LEVEL] = new_script & 0xffff;
 }
@@ -364,20 +304,14 @@ void Logic::examineRunList(void) {
  * Reset the object and restart script 1 on level 0
  */
 
-void Logic::totalRestart(void) {
-	LEVEL = 0;
-
-	// reset to rerun
-	_curObjectHub->script_pc[0] = 1;
-}
-
 int32 Logic::fnTotalRestart(int32 *params) {
 	// mega runs this to restart its base logic again - like being cached
 	// in again
 
 	// params:	none
 
-	totalRestart();
+	LEVEL = 0;
+	_curObjectHub->script_pc[0] = 1;
 	return IR_TERMINATE;
 }
 
@@ -394,45 +328,29 @@ int32 Logic::fnTotalRestart(int32 *params) {
 int32 Logic::fnAddToKillList(int32 *params) {
 	// params:	none
 
-	uint32 entry;
-
 	// DON'T EVER KILL GEORGE!
-	if (_scriptVars[ID] != 8) {
-		// first, scan list to see if this object is already included
+	if (_scriptVars[ID] == 8)
+		return IR_CONT;
 
-		entry = 0;
-		while (entry < _kills && _objectKillList[entry] != _scriptVars[ID])
-			entry++;
+	// Scan the list to see if it's already included
 
-		// if this ID isn't already in the list, then add it,
-		// (otherwise finish)
-
-		if (entry == _kills) {
-			// no room at the inn
-			assert(_kills < OBJECT_KILL_LIST_SIZE);
-
-			// add this 'ID' to the kill list
-			_objectKillList[_kills] = _scriptVars[ID];
-			_kills++;
-
-			// "another one bites the dust"
-
-			// when we leave the screen, all these object
-			// resources are to be cleaned out of memory and the
-			// kill list emptied by doing '_kills = 0', ensuring
-			// that all resources are in fact still in memory &
-			// more importantly closed before killing!
-		}
+	for (uint32 i = 0; i < _kills; i++) {
+		if (_objectKillList[i] == _scriptVars[ID])
+			return IR_CONT;
 	}
 
+	assert(_kills < OBJECT_KILL_LIST_SIZE);	// no room at the inn
+
+	_objectKillList[_kills++] = _scriptVars[ID];
+
+	// "another one bites the dust"
+
+	// When we leave the screen, all these object resources are to be
+	// cleaned out of memory and the kill list emptied by doing
+	// '_kills = 0', ensuring that all resources are in fact still in
+	// memory and, more importantly, closed before killing!
+
 	return IR_CONT;
-}
-
-void Logic::processKillList(void) {
-	for (uint32 i = 0; i < _kills; i++)
-		_vm->_resman->remove(_objectKillList[i]);
-
-	_kills = 0;
 }
 
 void Logic::resetKillList(void) {

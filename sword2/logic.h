@@ -62,8 +62,6 @@ private:
 	// each object has one of these tacked onto the beginning
 	ObjectHub *_curObjectHub;
 
-	void processKillList(void);
-
 	struct EventUnit {
 		uint32 id;
 		uint32 interact_id;
@@ -358,9 +356,6 @@ public:
 	// cause the logic loop to terminate and drop out
 	void expressChangeSession(uint32 sesh_id);
 
-	// new logic begins next cycle
-	void naturalChangeSession(uint32 sesh_id);
-
 	uint32 getRunList(void);
 
 	// setup script_id and script_pc in _curObjectHub - called by fnGosub()
@@ -368,7 +363,6 @@ public:
 
 	void logicReplace(uint32 new_script);
 	void logicOne(uint32 new_script);
-	void totalRestart(void);
 	void examineRunList(void);
 	void resetKillList(void);
 

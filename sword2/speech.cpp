@@ -273,10 +273,6 @@ int32 Logic::fnEndConversation(int32 *params) {
 	}
 
 	_scriptVars[TALK_FLAG] = 0;	// in-case DC forgets
-
-	// restart george's base script
-	// totalRestart();
-
 	return IR_CONT;
 }
 
