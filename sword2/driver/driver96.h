@@ -1247,13 +1247,17 @@ typedef int BOOL;
 #define TRUE 1
 #define FALSE 0
 
-// FIXME: Temporary (?) surface class to replace LPDIRECTDRAWSURFACE for now.
-// Actually, this class should be used as little as possible since it
-// introduces an extra layer of data copying. It should only be used where we
-// decode something once and draw it many times, such as the parallax layers.
+// Surface class to help replace LPDIRECTDRAWSURFACE.
+//
+// This class should be used as little as possible since it introduces an
+// extra layer of data copying. It should only be used where we decode
+// something once and draw it many times, such as the parallax layers.
 //
 // Even then it's only necessary if we also need to keep track of the
-// surface's coordinates.
+// surface's dimensions.
+//
+// Since the building blocks of the parallax layers have constant size,
+// expect this class to go away.
 
 class Surface {
 public:
