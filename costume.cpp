@@ -360,21 +360,20 @@ byte CostumeRenderer::mainRoutine(Actor *a, int slot, int frame)
 
 void CostumeRenderer::proc6()
 {
-	byte len;
 	byte *src, *dst;
-	byte width, height, pcolor;
-	int color;
+	byte len, height, pcolor, width;
 	uint y;
+	int color;
 	uint scrheight;
 
 	y = _ypos;
-	len = _replen;
 	src = _srcptr;
 	dst = _backbuff_ptr;
+	len = _replen;
 	color = _repcolor;
+	height = _height2;
 	scrheight = _outheight;
 	width = _width2;
-	height = _height2;
 
 	if (_docontinue)
 		goto StartPos;
@@ -390,7 +389,7 @@ void CostumeRenderer::proc6()
 			if (color && y < scrheight) {
 				pcolor = _palette[color];
 				if (pcolor == 13) {
-					pcolor = _transEffect[*dst];
+					pcolor = _shadow_table[*dst];
 				}
 				*dst = pcolor;
 			}
@@ -423,8 +422,8 @@ void CostumeRenderer::proc5()
 	dst = _backbuff_ptr;
 	len = _replen;
 	color = _repcolor;
-	scrheight = _outheight;
 	height = _height2;
+	scrheight = _outheight;
 
 	if (_docontinue)
 		goto StartPos;
@@ -440,7 +439,7 @@ void CostumeRenderer::proc5()
 			if (color && y < scrheight && !(*mask & maskbit)) {
 				pcolor = _palette[color];
 				if (pcolor == 13)
-					pcolor = _transEffect[*dst];
+					pcolor = _shadow_table[*dst];
 				*dst = pcolor;
 			}
 			dst += 320;
@@ -486,8 +485,8 @@ void CostumeRenderer::proc4()
 	dst = _backbuff_ptr;
 	len = _replen;
 	color = _repcolor;
-	scrheight = _outheight;
 	height = _height2;
+	scrheight = _outheight;
 
 	if (_docontinue)
 		goto StartPos;
@@ -503,7 +502,7 @@ void CostumeRenderer::proc4()
 			if (color && y < scrheight && !((*mask | mask[_imgbufoffs]) & maskbit)) {
 				pcolor = _palette[color];
 				if (pcolor == 13)
-					pcolor = _transEffect[*dst];
+					pcolor = _shadow_table[*dst];
 				*dst = pcolor;
 			}
 			dst += 320;
@@ -543,14 +542,14 @@ void CostumeRenderer::proc3()
 	uint y;
 
 	mask = _mask_ptr_dest;
-	dst = _backbuff_ptr;
-	height = _height2;
-	width = _width2;
-	len = _replen;
-	color = _repcolor;
-	src = _srcptr;
 	maskbit = revBitMask[_xpos & 7];
 	y = _ypos;
+	src = _srcptr;
+	dst = _backbuff_ptr;
+	len = _replen;
+	color = _repcolor;
+	height = _height2;
+	width = _width2;
 
 	if (_docontinue)
 		goto StartPos;
@@ -561,12 +560,13 @@ void CostumeRenderer::proc3()
 		len &= _maskval;
 		if (!len)
 			len = *src++;
+
 		do {
 			if (cost_scaleTable[_scaleIndexY++] < _scaleY) {
 				if (color && y < _outheight && !((*mask | mask[_imgbufoffs]) & maskbit)) {
 					pcolor = _palette[color];
 					if (pcolor == 13)
-						pcolor = _transEffect[*dst];
+						pcolor = _shadow_table[*dst];
 					*dst = pcolor;
 				}
 				dst += 320;
@@ -604,14 +604,14 @@ void CostumeRenderer::proc2()
 	uint y;
 
 	mask = _mask_ptr_dest;
-	dst = _backbuff_ptr;
-	height = _height2;
-	width = _width2;
-	len = _replen;
-	color = _repcolor;
-	src = _srcptr;
 	maskbit = revBitMask[_xpos & 7];
 	y = _ypos;
+	src = _srcptr;
+	dst = _backbuff_ptr;
+	len = _replen;
+	color = _repcolor;
+	height = _height2;
+	width = _width2;
 
 	if (_docontinue)
 		goto StartPos;
@@ -622,12 +622,13 @@ void CostumeRenderer::proc2()
 		len &= _maskval;
 		if (!len)
 			len = *src++;
+
 		do {
 			if (cost_scaleTable[_scaleIndexY++] < _scaleY) {
 				if (color && y < _outheight && !(*mask & maskbit)) {
 					pcolor = _palette[color];
 					if (pcolor == 13)
-						pcolor = _transEffect[*dst];
+						pcolor = _shadow_table[*dst];
 					*dst = pcolor;
 				}
 				dst += 320;
@@ -661,20 +662,18 @@ void CostumeRenderer::proc1()
 {
 	byte *mask, *src, *dst, *dstorg;
 	byte maskbit, len, height, pcolor, width;
+	int color, t;
 	uint y;
-	int color;
-	int t;
 
 	mask = _mask_ptr = _mask_ptr_dest;
 	maskbit = revBitMask[_xpos & 7];
 	y = _ypos;
-
+	src = _srcptr;
 	dstorg = dst = _backbuff_ptr;
-	height = _height2;
-	width = _width2;
 	len = _replen;
 	color = _repcolor;
-	src = _srcptr;
+	height = _height2;
+	width = _width2;
 
 	if (_docontinue)
 		goto StartPos;
@@ -691,7 +690,7 @@ void CostumeRenderer::proc1()
 				if (color && y < _outheight) {
 					pcolor = _palette[color];
 					if (pcolor == 13)
-						pcolor = _transEffect[*dst];
+						pcolor = _shadow_table[*dst];
 					*dst = pcolor;
 				}
 				dst += 320;
@@ -748,7 +747,7 @@ void CostumeRenderer::proc6_ami()
 			if (color && x >= 0 && x < 320) {
 				pcolor = _palette[color];
 /*				  if (pcolor == 13) {
-					pcolor = _transEffect[*dst];
+					pcolor = _shadow_table[*dst];
 				}*/
 				*dst = pcolor;
 			}
@@ -798,7 +797,7 @@ void CostumeRenderer::proc5_ami()
 			if (color && x >=0 && x < 320 && !(*mask & maskbit)) {
 				pcolor = _palette[color];
 /*				  if (pcolor == 13)
-					pcolor = _transEffect[*dst];*/
+					pcolor = _shadow_table[*dst];*/
 				*dst = pcolor;
 			}
 			dst += step;
@@ -864,7 +863,7 @@ void CostumeRenderer::proc4_ami()
 			if (color && x >= 0 && x < 320 && !((*mask | mask[_imgbufoffs]) & maskbit)) {
 				pcolor = _palette[color];
 /*				  if (pcolor == 13)
-					pcolor = _transEffect[*dst];*/
+					pcolor = _shadow_table[*dst];*/
 				*dst = pcolor;
 			}
 			dst += step;
@@ -928,7 +927,7 @@ void CostumeRenderer::proc3_ami()
 				if (color && _xpos >= 0 && _xpos < 320 && !((*mask | mask[_imgbufoffs]) & maskbit)) {
 					pcolor = _palette[color];
 /*					  if (pcolor == 13)
-						pcolor = _transEffect[*dst];*/
+						pcolor = _shadow_table[*dst];*/
 					*dst = pcolor;
 				}
 
@@ -993,7 +992,7 @@ void CostumeRenderer::proc2_ami()
 				if (color && _xpos >= 0 && _xpos < 320 && !(*mask & maskbit)) {
 					pcolor = _palette[color];
 /*					  if (pcolor == 13)
-						pcolor = _transEffect[*dst];*/
+						pcolor = _shadow_table[*dst];*/
 					*dst = pcolor;
 				}
 				t = _scaleIndexX;
@@ -1062,7 +1061,7 @@ void CostumeRenderer::proc1_ami()
 				if (color && _xpos >= 0 && _xpos < 320) {
 					pcolor = _palette[color];
 /*					  if (pcolor == 13)
-						pcolor = _transEffect[*dst];*/
+						pcolor = _shadow_table[*dst];*/
 					*dst = pcolor;
 				}
 

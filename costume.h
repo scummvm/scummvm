@@ -81,7 +81,6 @@ public:
 	byte _repcolor;
 	byte _replen;
 	byte _palette[32];
-	byte _transEffect[0x100];
 
 	void proc6();
 	void proc5();
