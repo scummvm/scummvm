@@ -1160,15 +1160,7 @@ void action_save() {
 	if (is_bass)
 		mainClass->addEventKeyPressed(63);
 	else
-	if (g_scumm->_version <= 2)
-		mainClass->addEventKeyPressed(5);
-	else
-	if ((g_scumm->_features & GF_OLD256) || (g_scumm->_gameId == GID_CMI) || (g_scumm->_features & GF_16COLOR))
-		//system->addEventKeyPressed(319);
-		mainClass->addEventKeyPressed(319);
-	else
-		//system->addEventKeyPressed(g_scumm->VAR(g_scumm->VAR_SAVELOADDIALOG_KEY));
-		mainClass->addEventKeyPressed(g_scumm->VAR(g_scumm->VAR_SAVELOADDIALOG_KEY));
+		mainClass->addEventKeyPressed(319); // "F5"
 }
 
 void action_quit() {
