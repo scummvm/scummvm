@@ -23,7 +23,7 @@
 //#include	"src\driver96.h"
 
 
-char	*Fetch_mem_owner(uint32	uid);
+const char	*Fetch_mem_owner(uint32	uid);
 void	Console_mem_display(void);					// Tony (13Aug96)
 void	Create_mem_string( char *string );			// James (21oct96 updated 4dec96)
 

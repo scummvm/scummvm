@@ -167,7 +167,7 @@ void	Console_mem_display(void)	//Tony13Aug96
 }
 //--------------------------------------------------------------------------------------
 //--------------------------------------------------------------------------------------
-char	*Fetch_mem_owner(uint32	uid)	//Tony3June96
+const char	*Fetch_mem_owner(uint32	uid)	//Tony3June96
 {
 
 	switch(uid)

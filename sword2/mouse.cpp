@@ -104,10 +104,8 @@ uint32	real_luggage_item=0;	//last minute for pause mode
 
 //uint8 Check_sprite_pixel( uint32 j );
 void CreatePointerText(uint32 TextId, uint32 pointerRes);	// James16jun97
-void ClearPointerText(void);		// James16jun97
 void Monitor_player_activity(void);	// James23july97
 
-int32 FN_no_human(int32 *params);
 void	No_human(void);
 
 //------------------------------------------------------------------------------------

@@ -30,9 +30,9 @@ uint32	One_console(void);	//Tony12Aug96
 void	StartConsole(void);	//Tony12Aug96
 void	EndConsole(void);	//Tony9Oct96
 
-void	Con_fatal_error(char *format,...);
-void	Print_to_console(char *format,...);	//Tony13Aug96
-void	Temp_print_to_console(char *format,...);	//Tony13Aug96
+void	Con_fatal_error(const char *format,...);
+void	Print_to_console(const char *format,...);	//Tony13Aug96
+void	Temp_print_to_console(const char *format,...);	//Tony13Aug96
 void	Scroll_console(void);	//Tony13Aug96
 void	Clear_console_line(void);	//Tony13Aug96
 
@@ -66,8 +66,8 @@ void	EndConsole(void);
 //#define	Temp_print_to_console	NULL
 //#define	Clear_console_line		NULL
 //#define	Scroll_console			NULL
-void	Print_to_console(char *format,...);
-void	Temp_print_to_console(char *format,...);
+void	Print_to_console(const char *format,...);
+void	Temp_print_to_console(const char *format,...);
 void	Clear_console_line(void);
 void	Scroll_console(void);
 //#define	Var_check			NULL

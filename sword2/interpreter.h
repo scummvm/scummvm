@@ -61,9 +61,9 @@ extern int g_debugFlag;
 
 
 	// Get parameter fix so that the playstation version can handle words not on word boundaries
-#define Read16ip(var)			{var = *((int16 *)(code+ip));ip+=sizeof(int16);}
-#define Read32ip(var)			{var = *((int32 *)(code+ip));ip+=sizeof(int32);}
-#define Read32ipLeaveip(var)		{var = *((int32 *)(code+ip));}
+#define Read16ip(var)			{var = *((const int16 *)(code+ip));ip+=sizeof(int16);}
+#define Read32ip(var)			{var = *((const int32 *)(code+ip));ip+=sizeof(int32);}
+#define Read32ipLeaveip(var)		{var = *((const int32 *)(code+ip));}
 
 void SetGlobalInterpreterVariables(int32 *vars);
 

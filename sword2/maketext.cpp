@@ -362,7 +362,8 @@ _frameHeader* FindChar( uint8 ch, uint8 *charSet )
 	// then the offset table (an int32 offset for each sprite)
 	//  - each offset counting from the start of the file
 
-	if( (ch<FIRST_CHAR) || (ch>LAST_CHAR) )		// if 'ch' out of range
+	if( (ch<FIRST_CHAR) )		// if 'ch' out of range
+//	if( (ch<FIRST_CHAR) || (ch>LAST_CHAR) )		// if 'ch' out of range
 		ch = DUD;								// then print the 'dud' character (chequered flag)
 
 	// address of char = address of charSet + offset to char
@@ -422,7 +423,7 @@ void CopyChar( _frameHeader *charPtr, uint8 *spritePtr, uint16 spriteWidth, uint
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-#if _DEBUG
+#ifdef _DEBUG
 #define	MAX_text_blocs	MAX_DEBUG_TEXT_BLOCKS+1	// allow enough for all the debug text blocks (see debug.cpp)
 #else
 #define	MAX_text_blocs	2	// only need one for speech, and possibly one for "PAUSED"
