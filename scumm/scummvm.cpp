@@ -1358,9 +1358,9 @@ void Scumm::initRoomSubBlocks() {
 			createResource(rtMatrix, 2, size);
 			memcpy(getResourceAddress(rtMatrix, 2), ptr, size);
 			ptr += size;
-			if (_features & GF_AFTER_V2)
-				size = (READ_LE_UINT16(roomptr + 0x0A) - *(roomptr + 0x15)) - size;
-			else if (_features & GF_OLD_BUNDLE)
+			if (_features & GF_AFTER_V2) {
+				size = numOfBoxes * (numOfBoxes + 1);
+			} else if (_features & GF_OLD_BUNDLE)
 				// FIXME. This is an evil HACK!!!
 				size = (READ_LE_UINT16(roomptr + 0x0A) - READ_LE_UINT16(roomptr + 0x15)) - size;
 			else

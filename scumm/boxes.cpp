@@ -566,11 +566,21 @@ int Scumm::getPathToDestBox(byte from, byte to) {
 	byte *boxm;
 	byte i;
 	int dest = -1;
-
+	const int numOfBoxes = getNumBoxes();
+	
 	if (from == to)
 		return to;
 
+	assert(from < numOfBoxes);
+	assert(to < numOfBoxes);
+
 	boxm = getBoxMatrixBaseAddr();
+
+	if (_features & GF_AFTER_V2) {
+		i = boxm[from];
+		boxm += numOfBoxes;
+		return boxm[to];
+	}
 
 	i = 0;
 	while (i != from) {
