@@ -1,12 +1,17 @@
 #include <PalmOS.h>
 #include <Sonyclie.h>
 #include "StarterRsc.h"
+
 #include "stdio.h"
+#include "unistd.h"
+
 #include "games.h"
 #include "start.h"
 #include "vibrate.h"
 #include "pa1lib.h"
 #include "extend.h"
+#include "globals.h"
+
 
 // need to move this on a .h file
 #define sonySysFileCSystem      'SsYs'  /* Sony overall System */
@@ -153,7 +158,7 @@ Boolean StartScummVM() {
 		}
 		// not a PC version
 		if (gameInfoP->setPlatform) {
-			switch (gPrefs->sound.driver) {
+			switch (gameInfoP->platform) {
 				case 0:
 					AddArg(&argvP[argc], "--platform=", "amiga", &argc);
 					break;
@@ -197,7 +202,7 @@ Boolean StartScummVM() {
 		// music driver
 		musicDriver = gPrefs->sound.music;
 		if (musicDriver) {
-			switch (gPrefs->sound.driver) {
+			switch (gPrefs->sound.drvMusic) {
 				case 0:	// NULL
 					AddArg(&argvP[argc], "-e", "null", &argc);
 					break;
@@ -230,6 +235,8 @@ Boolean StartScummVM() {
 		AddArg(&argvP[argc], "-s", num, &argc);
 		StrIToA(num, gPrefs->volume.music);
 		AddArg(&argvP[argc], "-m", num, &argc);
+		StrIToA(num, gPrefs->volume.speech);
+		AddArg(&argvP[argc], "-r", num, &argc);
 
 		// game name
 		AddArg(&argvP[argc], gameInfoP->gameP, NULL, &argc);
@@ -237,8 +244,8 @@ Boolean StartScummVM() {
 		MemHandleUnlock(recordH);
 	}
 
-//	if (argc > MAX_ARG)
-//		FrmCustomAlert(FrmErrorAlert, "Too many parameters.",0,0);
+	if (argc > MAX_ARG)
+		FrmCustomAlert(FrmErrorAlert, "Too many parameters.",0,0);
 
 	gVars->skinSet = false;
 	gVars->pinUpdate = false;
@@ -253,16 +260,28 @@ Boolean StartScummVM() {
 
 	// gVars values
 	//gVars->HRrefNum defined in checkHRmode on Clié OS4
-	//gVars->logFile defined bellow
 	gVars->screenLocked = false;
 	gVars->volRefNum = gPrefs->card.volRefNum;
 	gVars->vibrator = gPrefs->vibrator;
 	gVars->stdPalette = gPrefs->stdPalette;
 	gVars->autoReset = gPrefs->autoReset;
-	gVars->music.MP3 = gPrefs->sound.MP3;
-	gVars->music.setDefaultTrackLength = gPrefs->sound.setDefaultTrackLength;
-	gVars->music.defaultTrackLength = gPrefs->sound.defaultTrackLength;
-	gVars->music.firstTrack = gPrefs->sound.firstTrack;
+	gVars->CD.enable = gPrefs->sound.CD;
+	gVars->CD.driver = gPrefs->sound.drvCD;
+	gVars->CD.setDefaultTrackLength = gPrefs->sound.setDefaultTrackLength;
+	gVars->CD.defaultTrackLength = gPrefs->sound.defaultTrackLength;
+	gVars->CD.firstTrack = gPrefs->sound.firstTrack;
+	
+	// use sound
+	if (!gPrefs->sound.sfx) {
+		OPTIONS_RST(kOptSonyPa1LibAPI);
+		OPTIONS_RST(kOptPalmSoundAPI);
+	}
+
+	// user params
+	if (!gPrefs->arm) {
+		OPTIONS_RST(kOptDeviceARM);
+		OPTIONS_RST(kOptDeviceProcX86);
+	}
 
 	// TODO : support tapwave rumble
 	if (gVars->vibrator)
@@ -284,15 +303,15 @@ Boolean StartScummVM() {
 	}
 	
 	// create file for printf, warnings, etc...
-	VFSFileDelete(gVars->volRefNum,"PALM/Programs/ScummVM/scumm.log");
-	VFSFileCreate(gVars->volRefNum,"PALM/Programs/ScummVM/scumm.log");
-	VFSFileOpen(gVars->volRefNum,"PALM/Programs/ScummVM/scumm.log",vfsModeWrite, &gVars->logFile);
+	void DrawStatus(Boolean show);
+	StdioInit(gVars->volRefNum, "PALM/Programs/ScummVM/scumm.log", DrawStatus);
+	gUnistdCWD = SCUMMVM_SAVEPATH;
 
 	// TODO : move this to ypa1.cpp (?)
 	void *sndStateOnFuncP = NULL,
 		 *sndStateOffFuncP = NULL;
 
-	if (musicDriver == 1 || musicDriver == sysInvalidRefNum) {
+	if (musicDriver == 1 || musicDriver == 3 || musicDriver == 4 || musicDriver == sysInvalidRefNum) {
 
 		Pa1Lib_Open();
 
@@ -301,15 +320,14 @@ Boolean StartScummVM() {
 		FtrGet(sonySysFtrCreatorSystem, sonySysFtrNumSystemAOutSndStateOffHandlerP, (UInt32*) &sndStateOffFuncP);
 
 		if (sndStateOnFuncP && sndStateOffFuncP) {
-			((sndStateOnType)(sndStateOnFuncP))(aOutSndKindSp, gPrefs->volume.headphone, gPrefs->volume.headphone);
-			((sndStateOnType)(sndStateOnFuncP))(aOutSndKindHp, gPrefs->volume.speaker, gPrefs->volume.speaker);
-
+			((sndStateOnType)(sndStateOnFuncP))(aOutSndKindSp, 31, 31);
+			((sndStateOnType)(sndStateOnFuncP))(aOutSndKindHp, 31, 31);
 		}
 
-		Pa1Lib_devHpVolume(gPrefs->volume.headphone, gPrefs->volume.headphone);
-		Pa1Lib_devSpVolume(gPrefs->volume.speaker);
+		Pa1Lib_devHpVolume(31, 31);
+		Pa1Lib_devSpVolume(31);
 	}
-	//
+	// -------------
 
 	SavePrefs();	// free globals pref memory
 	GlbOpen();
@@ -317,7 +335,7 @@ Boolean StartScummVM() {
 	GlbClose();
 
 	// TODO : move this to ypa1.cpp (?)
-	if (musicDriver == 1 || musicDriver == sysInvalidRefNum) {
+	if (musicDriver == 1 || musicDriver == 3 || musicDriver == 4 || musicDriver == sysInvalidRefNum) {
 		if (sndStateOnFuncP && sndStateOffFuncP) {
 			((sndStateOffType)(sndStateOffFuncP))(aOutSndKindSp);
 			((sndStateOffType)(sndStateOffFuncP))(aOutSndKindHp);
@@ -325,10 +343,10 @@ Boolean StartScummVM() {
 
 		Pa1Lib_Close();
 	}
-	//
+	// -------------
 
 	// close log file
-	VFSFileClose(gVars->logFile);
+	StdioRelease();
 
 	for(count = 0; count < MAX_ARG; count++)
 		if (argvP[count])
