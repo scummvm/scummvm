@@ -46,7 +46,7 @@ class FB2GL {
     // Framebuffer for 8 bpp
     unsigned char ogl_fb[256][256];
     unsigned char ogl_fbb[256][64];
-    // Framebuffer for RGBA */ 
+    // Framebuffer for RGBA
     unsigned char ogl_fb1[256][256][4];
     unsigned char ogl_fb2[256][64][4];
     // Framebuffer for the blit function (SDL Blitting)
@@ -134,7 +134,10 @@ void FB2GL::makedlist(int xf, int yf)
   double yfix=(double)yf/128;
   // End of 256x256 (from -1.0 to 1.0)
   double texend = (double)96/160; // 160=320/2 (== 0.0), 256-160=96.
-  
+ 
+  if (glIsList(dlist)) 
+    glDeleteLists(dlist,1);
+      
   dlist=glGenLists(1);
   glNewList(dlist,GL_COMPILE);
 
@@ -211,7 +214,8 @@ int FB2GL::init(int width, int height, int xfix, int yfix, char _flags)
     }
   }
   
-  maketex();
+  if (width>0 && height>0) 
+    maketex();
   makedlist(xfix, yfix);
 
 /*  glEnable(GL_ALPHA_TEST);

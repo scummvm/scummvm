@@ -31,11 +31,10 @@ int glGetColorTable(int, int, int, void *) { return 0; }
 #endif
 
 #include "fb2opengl.h"
-int _screenStart = 20;
 
 class OSystem_SDL_Normal : public OSystem_SDL_Common {
 public:
-	OSystem_SDL_Normal() : sdl_tmpscreen(0), sdl_hwscreen(0), _overlay_visible(false) {}
+	OSystem_SDL_Normal() : sdl_tmpscreen(0), sdl_hwscreen(0), _overlay_visible(false) { _glScreenStart = 0; }
 
 	// Set colors of the palette
 	void set_palette(const byte *colors, uint start, uint num);
@@ -55,8 +54,11 @@ public:
 
 protected:
 	FB2GL fb2gl;
+	int gl_flags;
+	int _glScreenStart;
 	SDL_Surface *tmpSurface; // Used for black rectangles blitting 
 	SDL_Rect tmpBlackRect; // Black rectangle at end of the GL screen
+
 	typedef void ScalerProc(uint8 *srcPtr, uint32 srcPitch, uint8 *deltaPtr,
 								uint8 *dstPtr, uint32 dstPitch, int width, int height);
 
@@ -222,7 +224,6 @@ void OSystem_SDL_Normal::load_gfx_mode() {
 
 	sdl_tmpscreen = NULL;
 	TMP_SCREEN_WIDTH = (_screenWidth + 3);
-//	TMP_SCREEN_WIDTH = (_screenWidth);
 	
 	//
 	// Create the surface that contains the 8 bit game data
@@ -236,10 +237,13 @@ void OSystem_SDL_Normal::load_gfx_mode() {
 	// Create the surface that contains the scaled graphics in 16 bit mode
 	//
 
-	int gl_flags =  FB2GL_320 | FB2GL_RGBA | FB2GL_16BIT;
-        if (_full_screen) gl_flags |= (FB2GL_FS);
+	gl_flags =  FB2GL_320 | FB2GL_RGBA | FB2GL_16BIT;
+        if (_full_screen) {
+	  gl_flags |= (FB2GL_FS);
+	  _glScreenStart = 0;
+	}
 	// 640x480 screen resolution
-	fb2gl.init(640,480,0,_screenStart? 15: 70,gl_flags);
+	fb2gl.init(640,480,0,_glScreenStart? 15: 70,gl_flags);
 
 	SDL_SetGamma(1.25,1.25,1.25);
 
@@ -261,7 +265,7 @@ void OSystem_SDL_Normal::load_gfx_mode() {
 	
 	tmpSurface = SDL_CreateRGBSurface(SDL_SWSURFACE, _screenWidth, 
 						// 320x256 texture (black end)
-						256-_screenHeight-_screenStart,
+						256-_screenHeight-_glScreenStart,
 						16,
 						Rmask,
 						Gmask,
@@ -271,7 +275,7 @@ void OSystem_SDL_Normal::load_gfx_mode() {
 	tmpBlackRect.x = 0;
 	tmpBlackRect.y = 0;
 	tmpBlackRect.w = _screenWidth;
-	tmpBlackRect.h = 256-_screenHeight-_screenStart;
+	tmpBlackRect.h = 256-_screenHeight-_glScreenStart;
 	
 	if (sdl_tmpscreen == NULL)
 		error("sdl_tmpscreen failed");
@@ -290,11 +294,6 @@ void OSystem_SDL_Normal::unload_gfx_mode() {
 		_screen = NULL; 
 	}
 
-	if (sdl_hwscreen) {
-		SDL_FreeSurface(sdl_hwscreen); 
-		sdl_hwscreen = NULL;
-	}
-	
 	if (sdl_tmpscreen) {
 		free((uint16*)sdl_tmpscreen->pixels);
 		SDL_FreeSurface(sdl_tmpscreen);
@@ -306,7 +305,7 @@ void OSystem_SDL_Normal::update_screen() {
 	
 	// If the shake position changed, fill the dirty area with blackness
 	if (_currentShakePos != _newShakePos) {
-		SDL_Rect blackrect = {0, _screenStart, _screenWidth, _newShakePos+_screenStart};
+		SDL_Rect blackrect = {0, _glScreenStart, _screenWidth, _newShakePos+_glScreenStart};
 		
 		SDL_FillRect(tmpSurface, &blackrect, 0);
 		fb2gl.blit16(tmpSurface,1,&blackrect,0,0);
@@ -361,11 +360,11 @@ void OSystem_SDL_Normal::update_screen() {
 
 		// Almost the same thing as SDL_UpdateRects
 		fb2gl.blit16(sdl_tmpscreen,_num_dirty_rects,_dirty_rect_list,0,
-		    _currentShakePos+_screenStart);
+		    _currentShakePos+_glScreenStart);
 
 		
 		SDL_FillRect(tmpSurface, &tmpBlackRect, 0);
-		fb2gl.blit16(tmpSurface,1,&tmpBlackRect,0,_screenHeight+_screenStart);
+		fb2gl.blit16(tmpSurface,1,&tmpBlackRect,0,_screenHeight+_glScreenStart);
 
 		fb2gl.display();
 	}
@@ -400,20 +399,31 @@ void OSystem_SDL_Normal::hotswap_gfx_mode() {
 uint32 OSystem_SDL_Normal::property(int param, Property *value) {
 
 	if (param == PROP_TOGGLE_FULLSCREEN) {
-//		assert(sdl_hwscreen != 0);
 		_full_screen ^= true;
-
-//		if (!SDL_WM_ToggleFullScreen(sdl_hwscreen)) {
-			// if ToggleFullScreen fails, achieve the same effect with hotswap gfx mode
-//			hotswap_gfx_mode();
-		  
-//		}
+	
 		SDL_WM_ToggleFullScreen(fb2gl.screen);
 		return 1;
 	} else if (param == PROP_OVERLAY_IS_565) {
 		assert(sdl_tmpscreen != 0);
 		return (sdl_tmpscreen->format->Rmask != 0x7C00);
 	}
+	else if (param == PROP_SET_GFX_MODE) {
+		if (value->gfx_mode==0) {
+		  fb2gl.init(0,0,0,15,gl_flags);
+		  _glScreenStart = 20;
+		  SDL_FillRect(tmpSurface,&tmpBlackRect,0);
+		  fb2gl.blit16(tmpSurface,1,&tmpBlackRect,0,0);
+		}
+		else {
+		  fb2gl.init(0,0,0,70,gl_flags);
+		  _glScreenStart = 0;
+		}
+		SDL_Rect full = {0,0,_screenWidth,_screenHeight};
+		fb2gl.blit16(sdl_tmpscreen,1,&full,0,_glScreenStart);
+		fb2gl.display();
+		return 1;
+	}
+	
 	
 	return OSystem_SDL_Common::property(param, value);
 }
