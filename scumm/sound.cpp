@@ -486,6 +486,26 @@ void Sound::playSound(int soundID) {
 		return;
 	}
 	
+	if ((_scumm->_features & GF_AMIGA) && (_scumm->_version == 3))
+	{
+		// experimental support for Indy3 Amiga sound effects
+		if (READ_BE_UINT16(ptr + 26) == 0x00FF)		// looped sound
+			// TODO: support looping sounds
+			// ptr + 14 seems to be looping duration
+			flags = 0;
+		else if (READ_BE_UINT16(ptr + 26) == 0x0001)	// nonlooped sound
+			flags = 0;	// 
+		else if (READ_BE_UINT16(ptr + 26) == 0x0101)	// background music
+			// TODO: support music
+			return;
+		else
+			debug(3,"Unknown sound type detected!");
+		size = READ_BE_UINT16(ptr + 12);
+		rate = 11000;
+		_scumm->_mixer->playRaw(NULL, ptr + 28, size, rate, flags, soundID);
+		return;
+	}
+
 	if (_scumm->_features & GF_OLD_BUNDLE) {
 		//TODO: support maniac v1 sounds
 		if ((_scumm->_version == 1) && (_scumm->_gameId == GID_MANIAC)) 
