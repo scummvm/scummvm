@@ -855,7 +855,7 @@ void ScummEngine::cost_decodeNESCostumeGfx() {
 		byte *patTable = getResourceAddress(rtCostume, v1MMNEScostTables[n][4]);
 		int j = 0;
 		int i = 3;
-		int maxSprites = 256; //patTable[3];
+		int maxSprites = 257; //patTable[3];
 		int len = READ_LE_UINT16(patTable);
 
 		if (maxSprites == 0)

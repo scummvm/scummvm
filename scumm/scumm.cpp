@@ -1583,7 +1583,7 @@ void ScummEngine::setupMusic(int midi) {
 		_musicEngine = new Player_V2A(this);
 	} else if ((_features & GF_AMIGA) && (_version == 3)) {
 		_musicEngine = new Player_V3A(this);
-	} else if ((_features & GF_AMIGA) && (_version < 5)) {
+	} else if (((_features & GF_AMIGA) && (_version < 5)) || (_features & GF_NES)) {
 		_musicEngine = NULL;
 	} else if (((_midiDriver == MD_PCJR) || (_midiDriver == MD_PCSPK)) && ((_version > 2) && (_version < 5))) {
 		_musicEngine = new Player_V2(this, _midiDriver != MD_PCSPK);
