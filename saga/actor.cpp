@@ -65,7 +65,7 @@ int actorDirectectionsLUT[8] = {
 	ACTOR_DIRECTION_LEFT,	// kDirUpLeft
 };
 
-PathDirectionData pathDirectionLUT[8][4] = {
+PathDirectionData pathDirectionLUT[8][3] = {
 	{{0,  0, -1}, {7, -1, -1}, {4,  1, -1}},
 	{{1,  1,  0}, {4,  1, -1}, {5,  1,  1}},
 	{{2,  0,  1}, {5,  1,  1}, {6, -1,  1}},
@@ -1141,8 +1141,8 @@ bool Actor::actorWalkTo(uint16 actorId, const ActorLocation &toLocation) {
 
 
 					anotherActorScreenPosition = anotherActor->screenPosition;
-					testBox.left = (anotherActorScreenPosition.x - collision.x) & ~1;
-					testBox.right = (anotherActorScreenPosition.x + collision.x) & ~1;
+					testBox.left = anotherActorScreenPosition.x - collision.x;
+					testBox.right = anotherActorScreenPosition.x + collision.x;
 					testBox.top = anotherActorScreenPosition.y - collision.y;
 					testBox.bottom = anotherActorScreenPosition.y + collision.y;
 					testBox2 = testBox;
@@ -1320,7 +1320,7 @@ void Actor::findActorPath(ActorData *actor, const Point &fromPoint, const Point 
 		actor->addWalkStepPoint(toPoint);
 		return;
 	}
-		
+
 	for (iteratorPoint.y = 0; iteratorPoint.y < _yCellCount; iteratorPoint.y++) {
 		for (iteratorPoint.x = 0; iteratorPoint.x < _xCellCount; iteratorPoint.x++) {
 			maskType = _vm->_scene->getBGMaskType(iteratorPoint);
@@ -1328,7 +1328,7 @@ void Actor::findActorPath(ActorData *actor, const Point &fromPoint, const Point 
 			setPathCell(iteratorPoint, cellValue);
 		}
 	}
-	
+
 	for (i = 0; i < _barrierCount; i++) {
 		intersect.left = MAX(_pathRect.left, _barrierList[i].left);
 		intersect.top = MAX(_pathRect.top, _barrierList[i].top);
@@ -1353,6 +1353,29 @@ void Actor::findActorPath(ActorData *actor, const Point &fromPoint, const Point 
 	
 
 	i = fillPathArray(fromPoint, toPoint, bestPoint);
+
+#if 0
+	{
+		Point iteratorPoint;
+		int cellValue;
+		FILE	*fp =	fopen("d:\\FINDPATH.DAT", "w");
+		char	c;
+
+		fprintf(fp, "from = (%d,%d)\n", fromPoint.x, fromPoint.y);
+		fprintf(fp, "to = (%d,%d)\n", toPoint.x, toPoint.y);
+		fprintf(fp, "bestPoint = (%d,%d)\n", bestPoint.x, bestPoint.y);
+
+		for (iteratorPoint.y = 0; iteratorPoint.y < _yCellCount; iteratorPoint.y++) {
+			for (iteratorPoint.x = 0; iteratorPoint.x < _xCellCount; iteratorPoint.x++) {
+				cellValue = getPathCell(iteratorPoint);
+				c = (cellValue < 0) ? ' ' : (cellValue == kPathCellBarrier) ? kPathCellBarrier : (cellValue < 8) ? "^>v<?jLP"[cellValue] : '.';
+				putc(c, fp);
+			}
+			putc('\n', fp);
+		}
+		fclose(fp);
+	}
+#endif
 
 	if (fromPoint == bestPoint) {
 		actor->addWalkStepPoint(bestPoint);
@@ -1449,7 +1472,7 @@ int Actor::fillPathArray(const Point &fromPoint, const Point &toPoint, Point &be
 
 	do {
 		pathDirection = pathDirectionIterator.operator->();
-		for (directionCount = 0; directionCount < 4; directionCount++) {
+		for (directionCount = 0; directionCount < 3; directionCount++) {
 			samplePathDirection = &pathDirectionLUT[pathDirection->direction][directionCount];
 			Point nextPoint;
 			nextPoint.x = samplePathDirection->x + pathDirection->x;
@@ -1465,8 +1488,7 @@ int Actor::fillPathArray(const Point &fromPoint, const Point &toPoint, Point &be
 				pathDirection->direction = samplePathDirection->direction;
 				++pointCounter;
 				if (nextPoint == toPoint) {
-					bestPoint.x = toPoint.x & ~1;
-					bestPoint.y = toPoint.y;
+					bestPoint = toPoint;
 					return pointCounter;
 				}
 				currentRating = quickDistance(nextPoint, toPoint);
@@ -1490,14 +1512,6 @@ void Actor::setActorPath(ActorData *actor, const Point &fromPoint, const Point &
 	PathNode *node;
 	int i, last;
 
-/*	pathFromPoint.x = fromPoint.x >> 1;
-	pathFromPoint.y = fromPoint.y - _vm->getPathYOffset();
-
-	pathToPoint.x = toPoint.x >> 1;
-	pathToPoint.y = toPoint.y - _vm->getPathYOffset();*/
-
-
-
 	_pathList[0] = toPoint;
 	nextPoint = toPoint;
 	_pathListIndex = 0;
@@ -1511,7 +1525,7 @@ void Actor::setActorPath(ActorData *actor, const Point &fromPoint, const Point &
 		point++;
 		direction = getPathCell(nextPoint);
 		if ((direction < 0) || (direction > 8)) {
-			error("Actor::setActorPath error direction");
+			error("Actor::setActorPath error direction 0x%X", direction);
 		}
 		nextPoint.x -= pathDirectionLUT2[direction][0];
 		nextPoint.y -= pathDirectionLUT2[direction][1];

@@ -368,7 +368,7 @@ int Scene::getBGMaskType(const Point &testPoint) {
 	if (!_bgMask.loaded) {
 		return 0;
 	}
-	offset = testPoint.x + testPoint.y * _vm->getDisplayWidth();
+	offset = testPoint.x + testPoint.y * _bgMask.w;
 	if (offset >= _bgMask.buf_len) {
 		error("Scene::getBGMaskType offset 0x%X exceed bufferLength 0x%X", offset, _bgMask.buf_len);
 	}
