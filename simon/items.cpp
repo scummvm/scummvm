@@ -1291,8 +1291,7 @@ void SimonEngine::o_inventory_descriptions() {
 				}
 			}
 
-			if (_subtitles)
-				talk_with_speech(var200, vga_struct_id);
+			talk_with_speech(var200, vga_struct_id);
 		}
 
 	} else if (_game & GF_TALKIE) {
