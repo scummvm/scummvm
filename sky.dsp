@@ -185,6 +185,10 @@ SOURCE=.\sky\sound.h
 
 SOURCE=.\sky\struc.h
 # End Source File
+# Begin Source File
+
+SOURCE=.\sky\timer.cpp
+# End Source File
 # End Group
 # End Target
 # End Project
