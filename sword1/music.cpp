@@ -285,9 +285,9 @@ void Music::giveVolume(uint8 *volL, uint8 *volR) {
 }
 
 void Music::startMusic(int32 tuneId, int32 loopFlag) {
-	Common::StackLock lock(_mutex);
 	if (strlen(_tuneList[tuneId]) > 0) {
 		int newStream = 0;
+		_mutex.lock();
 		if (_handles[0].streaming() && _handles[1].streaming()) {
 			int streamToStop;
 			// Both streams playing - one must be forced to stop.
@@ -318,15 +318,25 @@ void Music::startMusic(int32 tuneId, int32 loopFlag) {
 			_handles[1].fadeDown();
 			newStream = 0;
 		}
+		delete _converter[newStream];
+		_converter[newStream] = NULL;
+		_mutex.unlock();
+
+		/* The handle will load the music file now. It can take a while, so unlock
+		   the mutex before, to have the soundthread playing normally. 
+		   As the corresponding _converter is NULL, the handle will be ignored by the playing thread */
 		if (_handles[newStream].play(_tuneList[tuneId], loopFlag != 0)) {
-			delete _converter[newStream];
+			_mutex.lock();
 			_converter[newStream] = makeRateConverter(_handles[newStream].getRate(), _mixer->getOutputRate(), _handles[newStream].isStereo(), false);
+			_mutex.unlock();
 		}
 	} else {
+		_mutex.lock();
 		if (_handles[0].streaming())
 			_handles[0].fadeDown();
 		if (_handles[1].streaming())
 			_handles[1].fadeDown();
+		_mutex.unlock();
 	}
 }
 
