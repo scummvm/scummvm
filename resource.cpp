@@ -476,7 +476,7 @@ int Scumm::readSoundResource(int type, int index) {
 		return 1;
 	}
 #else
-	best_pri = 0;
+	best_pri = -1;
 	while (pos < total_size) {
 		tag = fileReadDword();
 		size = fileReadDwordBE() + 8;
