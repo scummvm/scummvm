@@ -153,7 +153,7 @@ void ScummEngine_v90he::setupOpcodes() {
 		/* 58 */
 		OPCODE(o72_getTimer),
 		OPCODE(o72_setTimer),
-		OPCODE(o72_getSoundElapsedTimeOfSound),
+		OPCODE(o72_getSoundElapsedTime),
 		OPCODE(o6_wordArrayDec),
 		/* 5C */
 		OPCODE(o6_if),
@@ -746,7 +746,7 @@ void ScummEngine_v90he::o90_getSpriteInfo() {
 	byte subOp = fetchScriptByte();
 	subOp -= 30;
 
-	debug(0,"o90_getSpriteInfo (%d)", subOp);
+	debug(1,"o90_getSpriteInfo (%d)", subOp);
 	switch (subOp) {
 	case 0:
 		spriteId = pop();
@@ -1001,7 +1001,7 @@ void ScummEngine_v90he::o90_setSpriteInfo() {
 	byte subOp = fetchScriptByte();
 	subOp -= 34;
 
-	debug(0,"o90_setSpriteInfo (%d)", subOp);
+	debug(1,"o90_setSpriteInfo (%d)", subOp);
 	switch (subOp) {
 	case 0:
 		args[0] = pop();
@@ -1332,7 +1332,7 @@ void ScummEngine_v90he::o90_getSpriteGroupInfo() {
 
 	byte subOp = fetchScriptByte();
 
-	debug(0,"o90_getSpriteGroupInfo (%d)", subOp);
+	debug(1,"o90_getSpriteGroupInfo (%d)", subOp);
 	switch (subOp) {
 	case 8: // HE 99+
 		spriteGroupId = pop();
@@ -1414,7 +1414,7 @@ void ScummEngine_v90he::o90_setSpriteGroupInfo() {
 	byte subOp = fetchScriptByte();
 	subOp -= 37;
 
-	debug(0,"o90_setSpriteGroupInfo (%d)", subOp);
+	debug(1,"o90_setSpriteGroupInfo (%d)", subOp);
 	switch (subOp) {
 	case 0:
 		type = pop() - 1;

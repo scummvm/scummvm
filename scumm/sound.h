@@ -85,6 +85,7 @@ protected:
 	int16 _currentMusic;
 public:
 	SoundHandle _talkChannelHandle;	// Handle of mixer channel actor is talking on
+	SoundHandle _heSoundChannels[8];
 
 	bool _soundsPaused;
 	byte _sfxMode;
@@ -100,6 +101,7 @@ public:
 	void startTalkSound(uint32 offset, uint32 b, int mode, SoundHandle *handle = NULL);
 	void stopTalkSound();
 	bool isMouthSyncOff(uint pos);
+	int getSoundElapsedTime(int sound) const;
 	int isSoundRunning(int sound) const;
 	bool isSoundInUse(int sound) const;
 	void stopSound(int sound);

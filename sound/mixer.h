@@ -205,9 +205,17 @@ public:
 	bool isSoundIDActive(int id);
 
 	/**
+	 * Get the sound ID of handle sound
+	 *
+	 * @param handle sound to query
+	 * @return sound ID if active
+	 */
+	int getActiveChannelSoundID(SoundHandle handle);
+
+	/**
 	 * Check if a sound with the given hANDLE is active.
 	 *
-	 * @param handle the sound to query
+	 * @param handle sound to query
 	 * @return true if the sound is active
 	 */
 	bool isSoundHandleActive(SoundHandle handle);

@@ -156,7 +156,7 @@ void ScummEngine_v72he::setupOpcodes() {
 		/* 58 */
 		OPCODE(o72_getTimer),
 		OPCODE(o72_setTimer),
-		OPCODE(o72_getSoundElapsedTimeOfSound),
+		OPCODE(o72_getSoundElapsedTime),
 		OPCODE(o6_wordArrayDec),
 		/* 5C */
 		OPCODE(o6_if),
@@ -562,6 +562,7 @@ void ScummEngine_v72he::decodeScriptString(byte *dst, bool scriptString) {
 			switch(chr) {
 			case 'b':
 				// byte
+				error("decodeScriptString: byte unhandled");
 				break;
 			case 'c':
 				*dst++ = args[val--];
@@ -574,6 +575,7 @@ void ScummEngine_v72he::decodeScriptString(byte *dst, bool scriptString) {
 				break;
 			case 'x':
 				// hexadecimal
+				error("decodeScriptString: hexadecimal unhandled");
 				break;
 			default:
 				error("decodeScriptString: Unknown type %d", chr);
@@ -811,10 +813,10 @@ void ScummEngine_v72he::o72_setTimer() {
 	}
 }
 
-void ScummEngine_v72he::o72_getSoundElapsedTimeOfSound() {
+void ScummEngine_v72he::o72_getSoundElapsedTime() {
 	int snd = pop();
-	push(_mixer->getSoundElapsedTimeOfSoundID(snd) * 10);
-	debug(1,"o72_getSoundElapsedTimeOfSound (%d)", snd);
+	push(_sound->getSoundElapsedTime(snd) * 10);
+	debug(1,"o72_getSoundElapsedTime (%d)", snd);
 }
 
 void ScummEngine_v72he::o72_startScript() {

@@ -916,12 +916,13 @@ uint8 *ScummEngine_v72he::drawWizImage(int resNum, int state, int x1, int y1, in
 			cw = width;
 			ch = height;
 		} else {
+			VirtScreen *pvs = &virtscr[kMainVirtScreen];
 			if (dstPtr) {
 				cw  = READ_LE_UINT32(dstPtr + 0x4);
 				ch = READ_LE_UINT32(dstPtr + 0x8);
+				assert(cw <= pvs->w  && ch <= pvs->h);
 				dst = dstPtr;
 			} else {
-				VirtScreen *pvs = &virtscr[kMainVirtScreen];
 				if (flags & kWIFMarkBufferDirty) {
 					dst = pvs->getPixels(0, pvs->topline);
 				} else {

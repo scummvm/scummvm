@@ -33,12 +33,14 @@
 #include "common/util.h"
 
 #include "sound/audiocd.h"
+#include "sound/flac.h"
 #include "sound/mididrv.h"
 #include "sound/mixer.h"
 #include "sound/mp3.h"
 #include "sound/voc.h"
 #include "sound/vorbis.h"
-#include "sound/flac.h"
+#include "sound/wave.h"
+
 
 
 namespace Scumm {
@@ -159,6 +161,7 @@ void Sound::setOverrideFreq(int freq) {
 }
 
 void Sound::playSound(int soundID, int heOffset, int heChannel, int heFlags) {
+	debug(5,"playSound: soundID %d heOffset %d heChannel %d heFlags %d\n", soundID, heOffset, heChannel, heFlags);
 	byte *mallocedPtr = NULL;
 	byte *ptr;
 	char *sound;
@@ -166,6 +169,9 @@ void Sound::playSound(int soundID, int heOffset, int heChannel, int heFlags) {
 	int rate;
 	byte flags = SoundMixer::FLAG_UNSIGNED | SoundMixer::FLAG_AUTOFREE;
 
+	if (heChannel == -1) {
+		heChannel = 1;
+	}
 	if (_vm->_heversion >= 70 && soundID > _vm->_numSounds) {
 		debug(1, "playSound #%d", soundID);
 
@@ -218,9 +224,7 @@ void Sound::playSound(int soundID, int heOffset, int heChannel, int heFlags) {
 		size = musicFile.readUint32LE();
 
 		if (music_offs > total_size || (size + music_offs > total_size) || size < 0) {
-			warning("playSound: Invalid music offset (%d) in music %d", soundID);
-			musicFile.close();
-			return;
+			error("playSound: Invalid music offset (%d) in music %d", soundID);
 		}
 
 		musicFile.seek(music_offs, SEEK_SET);
@@ -231,7 +235,7 @@ void Sound::playSound(int soundID, int heOffset, int heChannel, int heFlags) {
 		_vm->_mixer->stopID(_currentMusic);
 		_currentMusic = soundID;
 		if (_vm->_heversion == 70) {
-			_vm->_mixer->playRaw(NULL, ptr, size, 11025, flags, soundID);
+			_vm->_mixer->playRaw(&_heSoundChannels[heChannel], ptr, size, 11025, flags, soundID);
 			return;
 		}
 
@@ -266,7 +270,18 @@ void Sound::playSound(int soundID, int heOffset, int heChannel, int heFlags) {
 	}
 	// Support for later Backyard sports games sounds
 	else if (READ_UINT32(ptr) == MKID('RIFF')) {
-		// TODO: Play WAV, with set sound ID
+		size = READ_BE_UINT32(ptr + 4);
+		Common::MemoryReadStream stream(ptr, size);
+
+		if (!loadWAVFromStream(stream, size, rate, flags)) {
+			warning("playSound: Not a valid WAV file");
+			return;
+		}
+
+		// Allocate a sound buffer, copy the data into it, and play
+		sound = (char *)malloc(size);
+		memcpy(sound, ptr + stream.pos(), size);
+		_vm->_mixer->playRaw(&_heSoundChannels[heChannel], sound, size, rate, flags, soundID);
 	}
 	// Support for Putt-Putt sounds - very hackish, too 8-)
 	else if (READ_UINT32(ptr) == MKID('DIGI') || READ_UINT32(ptr) == MKID('TALK') || READ_UINT32(ptr) == MKID('HSHD')) {
@@ -280,14 +295,9 @@ void Sound::playSound(int soundID, int heOffset, int heChannel, int heFlags) {
 
 		if (READ_UINT32(ptr) == MKID('SBNG')) {
 			ptr += READ_BE_UINT32(ptr + 4);
-			debug(2, "playSound: Skipped SBNG block");
 		}
 
-		if (READ_UINT32(ptr) != MKID('SDAT')) {
-			warning("playSound: Invalid sound %d", soundID);
-			return;	// abort
-		}
-
+		assert(READ_UINT32(ptr) == MKID('SDAT'));
 		size = READ_BE_UINT32(ptr+4) - 8;
 		if (heOffset < 0 || heOffset > size) {
 			warning("playSound: Invalid sound offset (%d) in sound %d", heOffset, soundID);
@@ -301,13 +311,15 @@ void Sound::playSound(int soundID, int heOffset, int heChannel, int heFlags) {
 			_overrideFreq = 0;
 		}
 
-		// TODO: Set sound channel based on heChannel
-		//       Set sound looping based on heFlags
+		if (heFlags & 1) {
+			_vm->_mixer->stopHandle(_heSoundChannels[heChannel]);
+			flags |= SoundMixer::FLAG_LOOP;
+		}
 
 		// Allocate a sound buffer, copy the data into it, and play
 		sound = (char *)malloc(size);
 		memcpy(sound, ptr + heOffset + 8, size);
-		_vm->_mixer->playRaw(NULL, sound, size, rate, flags, soundID);
+		_vm->_mixer->playRaw(&_heSoundChannels[heChannel], sound, size, rate, flags, soundID);
 	}
 	else if (READ_UINT32(ptr) == MKID('MRAW')) {
 		// pcm music in 3DO humongous games
@@ -666,26 +678,26 @@ void Sound::startTalkSound(uint32 offset, uint32 b, int mode, SoundHandle *handl
 		}
 
 		if (_vm->_features & GF_HUMONGOUS) {
-			int extra = 0;
 			_sfxMode |= mode;
 
 			// Skip the TALK (8) and HSHD (24) chunks
 			_sfxFile->seek(offset + 32, SEEK_SET);
 
 			if (_sfxFile->readUint32LE() == TO_LE_32(MKID('SBNG'))) {
-				debug(2, "startTalkSound: Skipped SBNG block");
 				// Skip the SBNG, so we end up at the SDAT chunk
-				extra = _sfxFile->readUint32BE();
-				_sfxFile->seek(extra - 4, SEEK_CUR);
-				size = _sfxFile->readUint32BE() - 8;
-			} else {
-				_sfxFile->seek(+4, SEEK_CUR);
-				size = b - 40;
+				size = _sfxFile->readUint32BE() - 4;
+				_sfxFile->seek(size, SEEK_CUR);
 			}
-
+			size = _sfxFile->readUint32BE() - 8;
 			sound = (byte *)malloc(size);
 			_sfxFile->read(sound, size);
-			_vm->_mixer->playRaw(handle, sound, size, 11000, SoundMixer::FLAG_UNSIGNED | SoundMixer::FLAG_AUTOFREE);
+
+			if (_vm->_heversion >= 70) {
+				int channel = _vm->VAR(_vm->VAR_SOUND_CHANNEL);
+				_vm->_mixer->playRaw(&_heSoundChannels[channel], sound, size, 11000, SoundMixer::FLAG_UNSIGNED | SoundMixer::FLAG_AUTOFREE, 1);
+			} else {
+				_vm->_mixer->playRaw(handle, sound, size, 11000, SoundMixer::FLAG_UNSIGNED | SoundMixer::FLAG_AUTOFREE);
+			}
 			return;
 		}
 
@@ -780,7 +792,9 @@ void Sound::startTalkSound(uint32 offset, uint32 b, int mode, SoundHandle *handl
 void Sound::stopTalkSound() {
 	if (_sfxMode & 2) {
 		if (_vm->_imuseDigital) {
-			_vm->_imuseDigital->stopSound(kTalkSoundID);
+			_vm->_mixer->stopID(kTalkSoundID);
+		} else if (_vm->_heversion >= 70) {
+			_vm->_imuseDigital->stopSound(1);
 		} else {
 			_vm->_mixer->stopHandle(_talkChannelHandle);
 		}
@@ -806,6 +820,15 @@ bool Sound::isMouthSyncOff(uint pos) {
 }
 
 
+int Sound::getSoundElapsedTime(int sound) const {
+	if (sound >= 10000) {
+		int channel = sound - 10000;
+		return _vm->_mixer->getSoundElapsedTime(_heSoundChannels[channel]);
+	} else {
+		return _vm->_mixer->getSoundElapsedTimeOfSoundID(sound);
+	}
+}
+
 int Sound::isSoundRunning(int sound) const {
 	if (_vm->_imuseDigital)
 		return (_vm->_imuseDigital->getSoundStatus(sound) != 0);
@@ -824,12 +847,9 @@ int Sound::isSoundRunning(int sound) const {
 			else if (_vm->_imuse)
 				return (_vm->_imuse->getSoundStatus(sound));
 		} else if (sound >= 10000) {
-			// TODO report sound ID on channel
-			// channel = sound - 10000
-			if (sound == 10000)
-				return (_vm->_mixer->isSoundIDActive(_currentMusic) ? _currentMusic : 0);
-			else if (sound == 10001)
-				return _vm->_mixer->isSoundHandleActive(_talkChannelHandle);
+			int channel = sound - 10000;
+			if (_vm->_mixer->isSoundHandleActive(_heSoundChannels[channel]))
+				return _vm->_mixer->getActiveChannelSoundID(_heSoundChannels[channel]);
 			else
 				return 0;
 		}
@@ -915,10 +935,8 @@ void Sound::stopSound(int sound) {
 			else if (_vm->_imuse)
 				_vm->_imuse->stopSound(_vm->_imuse->getSoundStatus(-1));
 		} else if ( sound >= 10000) {
-			// TODO: Stop sound channel
-			// channel = sound - 10000
-			if (sound == 10000)
-				_vm->_mixer->stopID(_currentMusic);
+			int channel = sound - 10000;
+			_vm->_mixer->stopHandle(_heSoundChannels[channel]);
 		}
 	}
 

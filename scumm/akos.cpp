@@ -1676,7 +1676,7 @@ void ScummEngine::akos_processQueue() {
 				if (_features & GF_DIGI_IMUSE)
 					_imuseDigital->startSfx(param_1, 63);
 				else
-					_sound->addSoundToQueue(param_1);
+					_sound->addSoundToQueue(param_1, 0, -1, 0);
 			}
 			break;
 		case 4:
