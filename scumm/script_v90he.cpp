@@ -480,11 +480,11 @@ void ScummEngine_v90he::o90_wizImageOps() {
 
 	switch (subOp) {
 	case -14: // HE99+
-		_wizParams.processFlags |= 0x20;
+		_wizParams.processFlags |= 0x2000;
 		pop();
 		break;
 	case -13: // HE99+
-		_wizParams.processFlags |= 0x40;
+		_wizParams.processFlags |= 0x4000;
 		pop();
 		break;
 	case 0:
@@ -577,11 +577,8 @@ void ScummEngine_v90he::o90_wizImageOps() {
 		_wizParams.box.top = pop();
 		_wizParams.box.left = pop();
 		break;
-	case 31: // HE99+
-		_wizParams.processFlags |= 2;
-		break;
 	case 40: // HE99+
-		_wizParams.processFlags |= 0x80;
+		_wizParams.processFlags |= 0x8000;
 		pop();
 		break;
 	case 46:

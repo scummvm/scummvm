@@ -971,7 +971,7 @@ void ScummEngine_v100he::o100_resourceRoutines() {
 }
 
 void ScummEngine_v100he::o100_wizImageOps() {
-	// Incomplete
+	int a, b;
 	byte subOp = fetchScriptByte();
 
 	switch (subOp) {
@@ -982,10 +982,18 @@ void ScummEngine_v100he::o100_wizImageOps() {
 		_wizParams.remapNum = 0;
 		_wizParams.img.flags = 0;
 		break;
+	case 2:
+		_wizParams.processFlags |= 0x10;
+		_wizParams.angle = pop();
+		break;
 	case 6:
 		_wizParams.processFlags |= 1;
 		_wizParams.img.y1 = pop();
 		_wizParams.img.x1 = pop();
+		break;
+	case 7:
+		_wizParams.processFlags |= 0x80000;
+		pop();
 		break;
 	case 11:
 		_wizParams.processFlags |= 0x300;
@@ -996,15 +1004,55 @@ void ScummEngine_v100he::o100_wizImageOps() {
 		_wizParams.box.left = pop();
 		_wizParams.compType = pop();
 		break;
+	case 18:
+		_wizParams.processFlags |= 0x200;
+		_wizParams.box.bottom = pop();
+		_wizParams.box.right = pop();
+		_wizParams.box.top = pop();
+		_wizParams.box.left = pop();
+		break;
+	case 21:
+		b = pop();
+		a = pop();
+		_wizParams.processFlags |= 0x40;
+		_wizParams.processMode = 6;
+		if (_wizParams.remapNum == 0) {
+			memset(_wizParams.remapIndex, 0, sizeof(_wizParams.remapIndex));
+		} else {
+			assert(_wizParams.remapNum < ARRAYSIZE(_wizParams.remapIndex));
+			_wizParams.remapIndex[_wizParams.remapNum] = a;
+			_wizParams.remapColor[a] = b;
+			++_wizParams.remapNum;
+		}
+		break;
 	case 29:
 		_wizParams.processMode = 1;
 		break;
-	case 39:
-		_wizParams.processFlags |= 0x40;
+	case 36:
+		_wizParams.box.bottom = pop();
+		_wizParams.box.right = pop();
+		_wizParams.box.top = pop();
+		_wizParams.box.left = pop();
+		break;
+	case 37:
 		pop();
+		break;
+	case 39:
+		_wizParams.processFlags |= 0x4000;
+		pop();
+		break;
+	case 47:
+		_wizParams.processFlags |= 0x800;
+		_wizParams.processMode = 3;
+		copyScriptString(_wizParams.filename);
 		break;
 	case 53:
 		_wizParams.processMode = 8;
+		break;
+	case 54:
+		_wizParams.processFlags |= 0x10000;
+		pop();
+		pop();
 		break;
 	case 55:
 		_wizParams.img.flags = pop();
@@ -1014,19 +1062,106 @@ void ScummEngine_v100he::o100_wizImageOps() {
 		_wizParams.img.resNum = pop();
 		displayWizImage(&_wizParams.img);
 		break;
+	case 57:
+		_wizParams.processFlags |= 0x8000;
+		pop();
+		break;
+	case 58:
+		_wizParams.processFlags |= 0x1102;
+		_wizParams.processMode = 7;
+		pop();
+		pop();
+		_wizParams.compType = pop();
+	case 64:
+		_wizParams.processFlags |= 0x800;
+		_wizParams.processMode = 4;
+		copyScriptString(_wizParams.filename);
+		_wizParams.unk_14C = pop();
+		break;
+	case 65:
+		_wizParams.processFlags |= 8;
+		_wizParams.zoom = pop();
+		break;
 	case 67:
 		_wizParams.processFlags |= 0x20;
 		_wizParams.img.flags = pop();
 		break;
+	case 68:
+		_wizParams.processFlags |= 0x23;
+		_wizParams.img.flags |= 0x40;
+		_wizParams.unk_160 = _wizParams.img.y1 = _wizParams.img.x1 = pop();
+		break;
+	case 70:
+		_wizParams.processFlags |= 4;
+		_wizParams.unk_15C = pop();
+		break;
+	case 73:
+		_wizParams.processFlags |= 0x400;
+		_wizParams.img.state = pop();
+		break;
 	case 84:
-		_wizParams.processFlags |= 0x20;
-		_wizParams.img.flags = pop();
+		_wizParams.processFlags |= 0x2000;
+		pop();
 		break;
 	case 92:
 		processWizImage(&_wizParams);
 		break;
+	case 128:
+		pop();
+		pop();
+		pop();
+		pop();
+		//copyScriptString(?.filename);
+		_wizParams.processMode = 15;
+		break;
+	case 129:
+		_wizParams.processMode = 14;
+		break;
+	case 130:
+		_wizParams.processMode = 16;
+		pop();
+		pop();
+		//copyScriptString(?.filename);
+		break;
+	case 131:
+		_wizParams.processMode = 13;
+		break;
+	case 133:
+		_wizParams.processMode = 16;
+		pop();
+		pop();
+		pop();
+		pop();
+		pop();
+		pop();
+		pop();
+		pop();
+		break;
+	case 134:
+		_wizParams.processFlags |= 0x60000;
+		_wizParams.processMode = 12;
+		pop();
+		pop();
+		pop();
+		break;
 	case 135:
 		_wizParams.processFlags |= 0x10000;
+		pop();
+		break;
+	case 136:
+		_wizParams.processFlags |= 0x60000;
+		_wizParams.processMode = 10;
+		pop();
+		pop();
+		pop();
+		pop();
+		pop();
+		break;
+	case 137:
+		_wizParams.processFlags |= 0x60000;
+		_wizParams.processMode = 11;
+		pop();
+		pop();
 		pop();
 		break;
 	case 138:
