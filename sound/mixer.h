@@ -202,7 +202,6 @@ public:
 	void stopAll();
 
 	/* stop playing a specific sound */
-	void stop(PlayingSoundHandle psh);
 	void stop(int index);
 
 	/* append to existing sound */

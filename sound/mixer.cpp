@@ -193,11 +193,6 @@ void SoundMixer::stopAll() {
 			_channels[i]->destroy();
 }
 
-void SoundMixer::stop(PlayingSoundHandle psh) {
-	if (psh && _channels[psh - 1])
-		_channels[psh - 1]->destroy();
-}
-
 void SoundMixer::stop(int index) {
 	if ((index < 0) || (index >= NUM_CHANNELS)) {
 		warning("soundMixer::stop has invalid index %d", index);
