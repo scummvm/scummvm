@@ -106,7 +106,7 @@ void Imuse::playMusic(const ImuseTable *table, int atribPos, bool sequence) {
 				else
 					hookId = 100;
 			}
-			startMusic(table->filename, hookId, table->volume, table->pan);
+			startMusic(table->filename, hookId, table->volume, 64/*table->pan*/);
 		}
 	}
 }
