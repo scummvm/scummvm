@@ -547,7 +547,7 @@ int Scumm::scummLoop(int delta) {
 		}
 	} else if (_features & GF_AUDIOTRACKS) {
 		_vars[VAR_MI1_TIMER] = _sound->readCDTimer();
-	} else if (_features & GF_OLD256) {
+	} else if ((_features & GF_OLD256) || (_gameId == GID_MONKEY_EGA)) {
 
 		if(tempMusic == 3) {
 			tempMusic = 0;
