@@ -1079,8 +1079,6 @@ void SimonEngine::loadTablesIntoMem(uint subr_id) {
 				if (_game == GAME_SIMON1WIN) {
 					memcpy(filename, "SFXXXX", 6);
 					_sound->readSfxFile(filename, _gameDataPath);
-				} else if (_game == GAME_SIMON1CD32) {
-					//TODO Add loading of simon1cd32 sound effects and voice files.
 				} else if (_game & GF_SIMON2) {
 					_sound->loadSfxTable(_game_file, _game_offsets_ptr[atoi(filename + 6) - 1 + gss->SOUND_INDEX_BASE]);
 				}
@@ -4745,10 +4743,10 @@ void SimonEngine::loadMusic (uint music) {
 		if (_game & GF_AMIGA) {
 			if (_game != GAME_SIMON1CD32) {
 				// TODO Add support for decruncher
-				debug(1,"playMusic - Decrunch %dtune attempt", music);
+				debug(5,"playMusic - Decrunch %dtune attempt", music);
 			}
 			// TODO Add Protracker support for simon1amiga/cd32
-			debug(1,"playMusic - Load %dtune attempt", music);
+			debug(5,"playMusic - Load %dtune attempt", music);
 		} else {
 			midi.stop();
 			midi.setLoop (true); // Must do this BEFORE loading music. (GMF may have its own override.)

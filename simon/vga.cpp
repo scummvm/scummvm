@@ -658,7 +658,7 @@ void SimonEngine::vc_10_draw() {
 	} else if (state.e & 1) {
 		// FIXME: vc_10_no_depack_swap should be called but is currently not supported
 		//state.depack_src = vc_10_no_depack_swap(state.depack_src);
-		debug(1,"vc_10_no_depack_swap unimpl");
+		debug(5,"vc_10_no_depack_swap unimpl");
 		state.depack_src = vc_10_depack_swap(state.depack_src, width, height);
 	}
 

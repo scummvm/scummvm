@@ -54,6 +54,7 @@ public:
 	
 	void readSfxFile(const char *filename, const char *gameDataPath);
 	void loadSfxTable(File *gameFile, uint32 base);
+	void readVoiceFile(const char *filename, const char *gameDataPath);
 
 	void playVoice(uint sound);
 	void playEffects(uint sound);

@@ -1049,7 +1049,15 @@ int SimonEngine::runScript() {
 		case 185:{									/* midi sfx file number */
 				if (_game & GF_SIMON2)
 					goto invalid_opcode;
-				_midi_sfx = getVarOrWord();
+					_midi_sfx = getVarOrWord();
+				if (_game == GAME_SIMON1CD32) {
+					char buf[10];
+					sprintf(buf, "%d%s", _midi_sfx, "Effects");
+					_sound->readSfxFile(buf, _gameDataPath);
+					sprintf(buf, "%d%s", _midi_sfx, "simon");
+					_sound->readVoiceFile(buf, _gameDataPath);
+				}
+
 			}
 			break;
 
@@ -1374,6 +1382,9 @@ int SimonEngine::o_unk_132_helper(bool *b, char *buf) {
 start_over:;
 	_key_pressed = 0;
 
+	if (_game == GAME_SIMON1CD32)
+		goto start_over_3;
+
 start_over_2:;
 	_last_hitarea = _last_hitarea_3 = 0;
 
@@ -1419,6 +1430,49 @@ start_over_2:;
 	if (ha->id >= 214)
 		goto start_over_2;
 	return ha->id - 208;
+
+//FIXME Hack to allow load and save file selection in simon1cd32
+//      Uses the follow keys for moving around
+//      1 - 6 to select slot to load/save
+//      Up Arrow to move up slots
+//      Down Arrow to move down slots
+//      X to exit
+start_over_3:;
+	if (_saveload_flag) {
+		*b = false;
+		delay(1);
+		return _key_pressed;
+	}
+
+	if (_key_pressed == 17) {
+		if (_saveload_row_curpos == 1)
+			goto start_over_3;
+		if (_saveload_row_curpos < 7)
+			_saveload_row_curpos = 1;
+		else
+			_saveload_row_curpos -= 6;
+
+		goto strange_jump;
+	}
+
+	if (_key_pressed == 18) {
+		if (!_savedialog_flag)
+			goto start_over_3;
+		_saveload_row_curpos += 6;
+		goto strange_jump;
+	}
+
+	if (_key_pressed == 120)
+		return 205;
+
+	if (_key_pressed > 48 && _key_pressed < 55) {
+		return _key_pressed - 49;
+	}
+
+
+	delay(1);
+	goto start_over_3;
+
 }
 
 void SimonEngine::o_unk_132_helper_3() {
