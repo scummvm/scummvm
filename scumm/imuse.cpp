@@ -50,40 +50,6 @@
 // they will only be used from this file, so it will reduce
 // compile time.
 
-// IMuseMonitor serves as a front-end to IMuseInternal and
-// ensures that only one thread accesses the object at a time.
-// This is necessary to prevent scripts and the MIDI parser
-// from yanking objects out from underneath each other.
-class IMuseMonitor : public IMuse {
-private:
-	OSystem *_system;
-	IMuse *_target;
-	void *_mutex;
-
-	void in() { _system->lock_mutex (_mutex); }
-	void out() { _system->unlock_mutex (_mutex); }
-public:
-	IMuseMonitor (OSystem *system, IMuse *target) : _system (system), _target (target) { _mutex = system->create_mutex(); }
-	virtual ~IMuseMonitor() { _system->delete_mutex (_mutex); };
-
-	void on_timer() { in(); _target->on_timer(); out(); }
-	void pause(bool paused) { in(); _target->pause (paused); out(); }
-	int save_or_load(Serializer *ser, Scumm *scumm) { in(); int ret = _target->save_or_load (ser, scumm); out(); return ret; }
-	int set_music_volume(uint vol) { in(); int ret = _target->set_music_volume (vol); out(); return ret; }
-	int get_music_volume() { in(); int ret = _target->get_music_volume(); out(); return ret; }
-	int set_master_volume(uint vol) { in(); int ret = _target->set_master_volume (vol); out(); return ret; }
-	int get_master_volume() { in(); int ret = _target->get_master_volume(); out(); return ret; }
-	bool start_sound(int sound) { in(); bool ret = _target->start_sound (sound); out(); return ret; }
-	int stop_sound(int sound) { in(); int ret = _target->stop_sound (sound); out(); return ret; }
-	int stop_all_sounds() { in(); int ret = _target->stop_all_sounds(); out(); return ret; }
-	int get_sound_status(int sound) { in(); int ret = _target->get_sound_status (sound); out(); return ret; }
-	bool get_sound_active(int sound) { in(); bool ret = _target->get_sound_active (sound); out(); return ret; }
-	int32 do_command(int a, int b, int c, int d, int e, int f, int g, int h) { in(); int32 ret = _target->do_command (a,b,c,d,e,f,g,h); out(); return ret; }
-	int clear_queue() { in(); int ret = _target->clear_queue(); out(); return ret; }
-	void setBase(byte **base) { in(); _target->setBase (base); out(); }
-	uint32 property(int prop, uint32 value) { in(); uint32 ret = _target->property (prop, value); out(); return ret; }
-};
-
 class IMuseDriver;
 struct Part;
 
@@ -385,8 +351,9 @@ public:
 // WARNING: This is the internal variant of the IMUSE class.
 // imuse.h contains a public version of the same class.
 // the public version, only contains a set of methods.
-class IMuseInternal : public IMuse {
+class IMuseInternal {
 	friend struct Player;
+
 private:
 	IMuseDriver * _driver;
 
@@ -396,7 +363,6 @@ private:
 	byte _hardware_type;
 
 private:
-
 	bool _paused;
 	bool _active_volume_faders;
 	bool _initialized;
@@ -413,11 +379,11 @@ private:
 
 	byte _queue_marker;
 	byte _queue_cleared;
-	byte _master_volume;					// Master volume. 0-255
-	byte _music_volume;						// Global music volume. 0-255
+	byte _master_volume; // Master volume. 0-255
+	byte _music_volume; // Global music volume. 0-255
 
 	uint16 _trigger_count;
-	ImTrigger _snm_triggers[16];	// Sam & Max triggers
+	ImTrigger _snm_triggers[16]; // Sam & Max triggers
 	uint16 _snm_trigger_index;
 
 	uint16 _channel_volume[8];
@@ -3778,15 +3744,49 @@ void IMuseDriver::part_off(Part *part)
 
 
 
+////////////////////////////////////////////////////////////
+//
+// IMuse implementation
+//
+// IMuse actually serves as a concurency monitor front-end
+// to IMuseInternal and ensures that only one thread
+// accesses the object at a time. This is necessary to
+// prevent scripts and the MIDI parser from yanking objects
+// out from underneath each other.
+//
+////////////////////////////////////////////////////////////
+
+IMuse::IMuse (OSystem *system, IMuseInternal *target) : _system (system), _target (target) { _mutex = system->create_mutex(); }
+IMuse::~IMuse() { if (_mutex) _system->delete_mutex (_mutex); if (_target) delete _target; }
+inline void IMuse::in() { _system->lock_mutex (_mutex); }
+inline void IMuse::out() { _system->unlock_mutex (_mutex); }
+
+void IMuse::on_timer() { in(); _target->on_timer(); out(); }
+void IMuse::pause(bool paused) { in(); _target->pause (paused); out(); }
+int IMuse::save_or_load(Serializer *ser, Scumm *scumm) { in(); int ret = _target->save_or_load (ser, scumm); out(); return ret; }
+int IMuse::set_music_volume(uint vol) { in(); int ret = _target->set_music_volume (vol); out(); return ret; }
+int IMuse::get_music_volume() { in(); int ret = _target->get_music_volume(); out(); return ret; }
+int IMuse::set_master_volume(uint vol) { in(); int ret = _target->set_master_volume (vol); out(); return ret; }
+int IMuse::get_master_volume() { in(); int ret = _target->get_master_volume(); out(); return ret; }
+bool IMuse::start_sound(int sound) { in(); bool ret = _target->start_sound (sound); out(); return ret; }
+int IMuse::stop_sound(int sound) { in(); int ret = _target->stop_sound (sound); out(); return ret; }
+int IMuse::stop_all_sounds() { in(); int ret = _target->stop_all_sounds(); out(); return ret; }
+int IMuse::get_sound_status(int sound) { in(); int ret = _target->get_sound_status (sound); out(); return ret; }
+bool IMuse::get_sound_active(int sound) { in(); bool ret = _target->get_sound_active (sound); out(); return ret; }
+int32 IMuse::do_command(int a, int b, int c, int d, int e, int f, int g, int h) { in(); int32 ret = _target->do_command (a,b,c,d,e,f,g,h); out(); return ret; }
+int IMuse::clear_queue() { in(); int ret = _target->clear_queue(); out(); return ret; }
+void IMuse::setBase(byte **base) { in(); _target->setBase (base); out(); }
+uint32 IMuse::property(int prop, uint32 value) { in(); uint32 ret = _target->property (prop, value); out(); return ret; }
+
 // The IMuse::create method provides a front-end factory
 // for creating IMuseInternal without exposing that class
 // to the client.
-IMuse *IMuse::create(OSystem *syst, MidiDriver *midi, SoundMixer *mixer)
+IMuse *IMuse::create (OSystem *syst, MidiDriver *midi, SoundMixer *mixer)
 {
-	IMuse *engine = (IMuse *) IMuseInternal::create (syst, midi, mixer);
+	IMuseInternal *engine = IMuseInternal::create (syst, midi, mixer);
 	if (midi)
 		midi->property (MidiDriver::PROP_SMALLHEADER, (g_scumm->_features & GF_SMALL_HEADER) ? 1 : 0);
-	return (IMuse *) new IMuseMonitor (syst, engine);
+	return new IMuse (syst, engine);
 }
 
 

@@ -31,40 +31,42 @@ class Serializer;
 class SoundMixer;
 
 class IMuse {
+private:
+	OSystem *_system;
+	IMuseInternal *_target;
+	void *_mutex;
+
+	IMuse (OSystem *system, IMuseInternal *target);
+	void in();
+	void out();
+
 public:
+	~IMuse();
+
 	enum {
 		PROP_TEMPO_BASE = 1,
 	};
 
-	IMuse() { }
-	virtual ~IMuse() { };
-
-	virtual void on_timer() = 0; // For the MacOS 9 port only
-	virtual void pause(bool paused) = 0;
-	virtual int save_or_load(Serializer *ser, Scumm *scumm) = 0;
-	virtual int set_music_volume(uint vol) = 0;
-	virtual int get_music_volume() = 0;
-	virtual int set_master_volume(uint vol) = 0;
-	virtual int get_master_volume() = 0;
-	virtual bool start_sound(int sound) = 0;
-	virtual int stop_sound(int sound) = 0;
-	virtual int stop_all_sounds() = 0;
-	virtual int get_sound_status(int sound) = 0;
-	virtual bool get_sound_active(int sound) = 0;
-	virtual int32 do_command(int a, int b, int c, int d, int e, int f, int g, int h) = 0;
-	virtual int clear_queue() = 0;
-	virtual void setBase(byte **base) = 0;
-	virtual uint32 property(int prop, uint32 value) = 0;
+	void on_timer();
+	void pause(bool paused);
+	int save_or_load(Serializer *ser, Scumm *scumm);
+	int set_music_volume(uint vol);
+	int get_music_volume();
+	int set_master_volume(uint vol);
+	int get_master_volume();
+	bool start_sound(int sound);
+	int stop_sound(int sound);
+	int stop_all_sounds();
+	int get_sound_status(int sound);
+	bool get_sound_active(int sound);
+	int32 do_command(int a, int b, int c, int d, int e, int f, int g, int h);
+	int clear_queue();
+	void setBase(byte **base);
+	uint32 property(int prop, uint32 value);
 
 	// Factory methods
 	static IMuse *create(OSystem *syst, MidiDriver *midi, SoundMixer *mixer);
-
-	static IMuse *create_adlib(OSystem *syst, SoundMixer *mixer) {
-		return create(syst, NULL, mixer);
-	}
-	static IMuse *create_midi(OSystem *syst, MidiDriver *midi) {
-		return create(syst, midi, NULL);
-	}
+	static IMuse *create_midi(OSystem *syst, MidiDriver *midi) { return create(syst, midi, NULL); }
 };
 
 #define MAX_DIGITAL_CHANNELS 8
