@@ -32,6 +32,10 @@
 #include "resource.h"
 #include "string.h"
 
+#ifdef _WIN32_WCE
+extern void GraphicsOff(void);
+#endif
+
 int autosave(int interval)	/* Not in class to prevent being bound */
 {
 	g_scumm->_doAutosave = true;
@@ -1166,8 +1170,11 @@ int Scumm::normalizeAngle(int angle)
 void NORETURN CDECL error(const char *s, ...)
 {
 	char buf[1024];
-#if defined( USE_WINDBG )
+#if defined( USE_WINDBG ) || defined ( _WIN32_WCE )
 	char buf2[1024];
+#if defined( _WIN32_WCE )
+	TCHAR buf2w[2048];
+#endif
 #endif
 
 	va_list va;
@@ -1182,20 +1189,32 @@ void NORETURN CDECL error(const char *s, ...)
 						g_scumm->_roomResource,
 						ss->number,
 						g_scumm->_scriptPointer - g_scumm->_scriptOrgPointer, buf);
-#if defined( USE_WINDBG )
+#if defined( USE_WINDBG ) || defined( _WIN32_WCE )
 		sprintf(buf2, "Error(%d:%d:0x%X): %s!\n",
 			g_scumm->_roomResource,
 			ss->number,
 			g_scumm->_scriptPointer - g_scumm->_scriptOrgPointer,
 			buf);
-		OutputDebugString(buf2);
+#if defined ( _WIN32_WCE )	
+			MultiByteToWideChar(CP_ACP, 0, buf2, strlen(buf2) + 1, buf2w, sizeof(buf2w));
+			GraphicsOff();
+			MessageBox(NULL, buf2w, TEXT("ScummVM error"), MB_OK);
+#else
+			OutputDebugString(buf2);
+#endif
 #endif
 
 	} else {
 		fprintf(stderr, "Error: %s!\n", buf);
-#if defined( USE_WINDBG )
+#if defined( USE_WINDBG ) || defined( _WIN32_WCE )
 		sprintf(&buf[strlen(buf)], "\n");
-		OutputDebugString(buf);
+#if defined ( _WIN32_WCE )	
+			MultiByteToWideChar(CP_ACP, 0, buf, strlen(buf) + 1, buf2w, sizeof(buf2w));
+			GraphicsOff();
+			MessageBox(NULL, buf2w, TEXT("ScummVM error"), MB_OK);
+#else
+			OutputDebugString(buf);
+#endif
 #endif
 	}
 	// Doesn't wait for any keypress!! Is it intended to?
