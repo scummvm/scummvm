@@ -127,6 +127,7 @@ void SwordEngine::initialize(void) {
 		_systemVars.gamePaused = 0;
 	_systemVars.deathScreenFlag = 3;
 	_systemVars.forceRestart = false;
+	_systemVars.wantFade = true;
 
 	switch (Common::parseLanguage(ConfMan.get("language"))) {
 	case Common::DE_DEU:
