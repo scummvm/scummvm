@@ -721,7 +721,7 @@ end:
 
 	channel->d.next_cmd = 0;
 	int i;
-	for (i = 0; i< 4; i++) {
+	for (i = 0; i < 4; i++) {
 		if (_channels[i].d.time_left)
 			goto finish;
 	}
