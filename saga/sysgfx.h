@@ -32,7 +32,6 @@ namespace Saga {
 #define R_BLUE_WEIGHT 0.114
 
 struct R_SYSGFX_MODULE {
-
 	int init;
 
 	SDL_Surface *sdl_screen;	/* Screen surface */
@@ -43,7 +42,6 @@ struct R_SYSGFX_MODULE {
 
 	int white_index;
 	int black_index;
-
 };
 
 } // End of namespace Saga

@@ -72,7 +72,6 @@ void MusicPlayer::setVolume(int volume) {
 
 	for (int i = 0; i < 16; ++i) {
 		if (_channel[i]) {
-			debug(0, "%d %d", _channelVolume[i], _masterVolume);
 			_channel[i]->volume(_channelVolume[i] * _masterVolume / 255);
 		}
 	}
