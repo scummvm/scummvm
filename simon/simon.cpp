@@ -4473,7 +4473,7 @@ static bool decrunch_file_amiga (byte *src, byte *dst, uint32 size) {
 void SimonEngine::read_vga_from_datfile_1(uint vga_id) {
 	if (_game & GF_OLD_BUNDLE) {
 		File in;
-		char buf[50];
+		char buf[15];
 		uint32 size;
 		if (vga_id == 23) 
 			vga_id = 112;
@@ -4515,7 +4515,7 @@ void SimonEngine::read_vga_from_datfile_1(uint vga_id) {
 byte *SimonEngine::read_vga_from_datfile_2(uint id) {
 	if (_game & GF_OLD_BUNDLE) {
 		File in;
-		char buf[50];
+		char buf[15];
 		uint32 size;
 		byte *dst;
 
@@ -4852,7 +4852,7 @@ void SimonEngine::quick_load_or_save() {
 		return;
 
 	bool success;
-	char buf[256];
+	char buf[50];
 
 	char *filename = gen_savename(_saveLoadSlot);
 	if (_saveLoadFlag == 2) {
@@ -5086,7 +5086,7 @@ bool SimonEngine::save_game(uint slot, char *caption) {
 }
 
 char *SimonEngine::gen_savename(int slot) {
-	static char buf[256];
+	static char buf[15];
 
 	if (_game & GF_SIMON2) {
 	sprintf(buf, "simon2.%.3d", slot);
@@ -5253,7 +5253,7 @@ void SimonEngine::loadMusic (uint music) {
 				_game_file->seek(_game_offsets_ptr[MUSIC_INDEX_BASE + music], SEEK_SET);
 				midi.loadSMF (_game_file, music);
 			} else {
-				char buf[50];
+				char buf[15];
 				File f;
 				sprintf(buf, "MOD%d.MUS", music);
 				f.open(buf, _gameDataPath);
