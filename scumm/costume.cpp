@@ -325,11 +325,15 @@ void CostumeRenderer::c64_ignorePakCols(int num) {
 	}
 }
 
-static const int v1_mm_actor_palatte_1[] = { 8, 8, 8, 8, 4, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 0 };
-static const int v1_mm_actor_palatte_2[] = { 0, 7, 2, 6, 9, 1, 3, 7, 7, 1, 1, 9, 1, 4, 5, 5, 4, 1, 0, 5, 4, 2, 2, 7, 7, 0 };
+static const int v1_mm_actor_palatte_1[25] = {
+	8, 8, 8, 8, 4, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8
+};
+static const int v1_mm_actor_palatte_2[25] = {
+	0, 7, 2, 6, 9, 1, 3, 7, 7, 1, 1, 9, 1, 4, 5, 5, 4, 1, 0, 5, 4, 2, 2, 7, 7
+};
 
 #define MASK_AT(xoff) \
-	(mask && ((mask[(v1.x+xoff) >> 3] | mask[((v1.x+xoff) >> 3) + v1.imgbufoffs]) & revBitMask[(v1.x+xoff) & 7]))
+	(mask && (mask[((v1.x+xoff) >> 3) + v1.imgbufoffs] & revBitMask[(v1.x+xoff) & 7]))
 #define LINE(c,p) \
 	pcolor = (color >> c) & 3; \
 	if (pcolor) { \
@@ -354,11 +358,10 @@ void CostumeRenderer::procC64(int actor) {
 	color = v1.repcolor;
 	height = _height;
 
-	// TODO:
-	// * test masking (once we implement any masking for V1 games)
+	v1.skip_width >>= 3;
 
+	// Set up the palette data
 	byte palette[4] = { 0, 0, 0, 0 };
-
 	if (!(_vm->VAR(_vm->VAR_CURRENT_LIGHTS) & LIGHTMODE_actor_color)) {
 		palette[2] = 11;
 		palette[3] = 11;
@@ -369,8 +372,6 @@ void CostumeRenderer::procC64(int actor) {
 		palette[1] = 10;
 		palette[2] = _palette[actor];
 	}
-
-	v1.skip_width >>= 3;
 	mask = v1.mask_ptr;
 
 	if (len)
