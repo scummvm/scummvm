@@ -48,6 +48,8 @@ protected:
 	virtual void executeOpcode(byte i);
 	virtual const char *getOpcodeDesc(byte i);
 
+	virtual void setupScummVars();
+
 	virtual void decodeParseString();
 	int getWordVararg(int *ptr);
 	void saveVars();

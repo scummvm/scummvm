@@ -37,7 +37,6 @@ void ScummEngine::setupScummVars() {
 	VAR_MACHINE_SPEED = 6;
 	VAR_ME = 7;
 	VAR_NUM_ACTOR = 8;
-	VAR_CURRENT_LIGHTS = 9;
 	VAR_CURRENTDRIVE = 10;
 	VAR_TMR_1 = 11;
 	VAR_TMR_2 = 12;
@@ -138,8 +137,15 @@ void ScummEngine_v2::setupScummVars() {
 	VAR_TALK_ACTOR = 41;
 }
 
+void ScummEngine_v5::setupScummVars() {
+	// Many vars are the same as in V5 & V6 games, so just call the inherited method first
+	ScummEngine::setupScummVars();
+
+	VAR_CURRENT_LIGHTS = 9;
+}
+
 void ScummEngine_v6::setupScummVars() {
-	// Many vars are the same as in V5 games, so just call the inherited method first
+	// Many vars are the same as in V5 & V6 games, so just call the inherited method first
 	ScummEngine::setupScummVars();
 
 	VAR_V6_SCREEN_WIDTH = 41;
