@@ -2519,8 +2519,9 @@ void ScummEngine_v6::o6_kernelSetFunctions() {
 	} else {
 		switch (args[0]) {
 		case 1:
-			//func(args[1], args[2], args[3], args[4], args[5]);
-			warning("o6_kernelSetFunctions: nothing in 1");
+			// Used to restore images when decorating cake in
+			// Fatty Bear's Birthday Surprise
+			warning("o6_kernelSetFunctions: stub1()");
 			break;
 		case 3:
 			warning("o6_kernelSetFunctions: nothing in 3");
@@ -2627,6 +2628,12 @@ void ScummEngine_v6::o6_kernelGetFunctions() {
 	getStackList(args, ARRAYSIZE(args));
 
 	switch (args[0]) {
+	case 1:
+		// Used to store images when decorating cake in
+		// Fatty Bear's Birthday Surprise
+		warning("o6_kernelGetFunctions: stub1()");
+		push(0);
+		break;
 	case 113:
 		// This is used for the Sam & Max paint-by-numbers mini-game
 		// to find out what color to change. I think that what we have
