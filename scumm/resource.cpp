@@ -470,8 +470,8 @@ void Scumm::loadCharset(int no)
 	assert(no < (int)sizeof(_charsetData) / 16);
 	checkRange(_maxCharsets - 1, 1, no, "Loading illegal charset %d");
 
-//  ensureResourceLoaded(6, no);
-	ptr = getResourceAddress(6, no);
+//  ensureResourceLoaded(rtCharset, no);
+	ptr = getResourceAddress(rtCharset, no);
 
 	for (i = 0; i < 15; i++) {
 		_charsetData[no][i + 1] = ptr[i + 14];
@@ -537,54 +537,52 @@ int Scumm::loadResource(int type, int idx)
 			return 0;
 	}
 
-	do {
-		for (i = 0; i < 5; i++) {
-			openRoom(roomNr);
+	for (i = 0; i < 5; i++) {
+		openRoom(roomNr);
 
-			fileSeek(_fileHandle, fileOffs + _fileOffset, SEEK_SET);
+		fileSeek(_fileHandle, fileOffs + _fileOffset, SEEK_SET);
 
-			if (_features & GF_OLD_BUNDLE) {
-				size = fileReadWordLE();
-			} else if (_features & GF_SMALL_HEADER) {
-				if (!(_features & GF_SMALL_NAMES))
-					fileSeek(_fileHandle, 8, SEEK_CUR);
-				size = fileReadDwordLE();
-				tag = fileReadWordLE();
-				fileSeek(_fileHandle, -6, SEEK_CUR);
-			} else {
-				if (type == rtSound) {
-					fileReadDwordLE();
-					fileReadDwordLE();
-					return readSoundResource(type, idx);
-				}
-
-				tag = fileReadDword();
-
-				if (tag != res.tags[type]) {
-					error("%s %d not in room %d at %d+%d", res.name[type], type, roomNr, _fileOffset, fileOffs);
-				}
-
-				size = fileReadDwordBE();
-				fileSeek(_fileHandle, -8, SEEK_CUR);
+		if (_features & GF_OLD_BUNDLE) {
+			size = fileReadWordLE();
+		} else if (_features & GF_SMALL_HEADER) {
+			if (!(_features & GF_SMALL_NAMES))
+				fileSeek(_fileHandle, 8, SEEK_CUR);
+			size = fileReadDwordLE();
+			tag = fileReadWordLE();
+			fileSeek(_fileHandle, -6, SEEK_CUR);
+		} else {
+			if (type == rtSound) {
+				fileReadDwordLE();
+				fileReadDwordLE();
+				return readSoundResource(type, idx);
 			}
-			fileRead(_fileHandle, createResource(type, idx, size), size);
 
-			/* dump the resource */
+			tag = fileReadDword();
+
+			if (tag != res.tags[type]) {
+				error("%s %d not in room %d at %d+%d", res.name[type], type, roomNr, _fileOffset, fileOffs);
+			}
+
+			size = fileReadDwordBE();
+			fileSeek(_fileHandle, -8, SEEK_CUR);
+		}
+		fileRead(_fileHandle, createResource(type, idx, size), size);
+
+		/* dump the resource */
 #ifdef DUMP_SCRIPTS
-			if (type == rtScript) {
-				dumpResource("script-", idx, getResourceAddress(rtScript, idx));
-			}
+		if (type == rtScript) {
+			dumpResource("script-", idx, getResourceAddress(rtScript, idx));
+		}
 #endif
 
-			if (!fileReadFailed(_fileHandle)) {
-				return 1;
-			}
-
-			nukeResource(type, idx);
+		if (!fileReadFailed(_fileHandle)) {
+			return 1;
 		}
 
-		error("Cannot read resource");
-	} while (1);
+		nukeResource(type, idx);
+	}
+
+	error("Cannot read resource");
 }
 
 int Scumm::readSoundResource(int type, int idx)
@@ -763,10 +761,9 @@ byte *Scumm::getResourceAddress(int type, int idx)
 {
 	byte *ptr;
 
-
 	CHECK_HEAP validateResource("getResourceAddress", type, idx);
 	if (!res.address[type]) {
-		debug(9, "getResourceAddress(%s,%d) == NULL", resTypeFromId(type), idx);
+		debug(1, "getResourceAddress(%s,%d), res.address[type] == NULL", resTypeFromId(type), idx);
 		return NULL;
 	}
 
@@ -774,9 +771,8 @@ byte *Scumm::getResourceAddress(int type, int idx)
 		ensureResourceLoaded(type, idx);
 	}
 
-
 	if (!(ptr = (byte *)res.address[type][idx])) {
-		debug(9, "getResourceAddress(%s,%d) == NULL", resTypeFromId(type), idx);
+		debug(1, "getResourceAddress(%s,%d) == NULL", resTypeFromId(type), idx);
 		return NULL;
 	}
 
@@ -857,9 +853,8 @@ void Scumm::nukeResource(int type, int idx)
 {
 	byte *ptr;
 
-
 	CHECK_HEAP if (!res.address[type])
-		  return;
+		return;
 
 	assert(idx >= 0 && idx < res.num[type]);
 
@@ -874,17 +869,14 @@ void Scumm::nukeResource(int type, int idx)
 
 byte *Scumm::findResourceData(uint32 tag, byte *ptr)
 {
-	if (_features & GF_SMALL_HEADER) {
+	if (_features & GF_SMALL_HEADER)
 		ptr = findResourceSmall(tag, ptr, 0);
-		if (ptr == NULL)
-			return NULL;
-		return ptr + 6;
-	}
+	else
+		ptr = findResource(tag, ptr, 0);
 
-	ptr = findResource(tag, ptr, 0);
 	if (ptr == NULL)
 		return NULL;
-	return ptr + 8;
+	return ptr + _resourceHeaderSize;
 }
 
 int Scumm::getResourceDataSize(byte *ptr)

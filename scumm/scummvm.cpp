@@ -780,14 +780,13 @@ void Scumm::initRoomSubBlocks()
 		}
 	}
 
-	if (_features & GF_SMALL_HEADER)
-		ptr = findResourceSmall(MKID('EPAL'), roomptr);
-	else
-		ptr = findResource(MKID('EPAL'), roomptr);
-
-	if (ptr)
-		_EPAL_offs = ptr - roomptr;
-
+	// FIXME - we could simply always call findResourceData here, it will
+	// do the right thing even if GF_SMALL_HEADER is set. But then, we have
+	// to change setPaletteFromPtr() (easy). The problematic bit is save game
+	// compatibility - _CLUT_offs is stored in the save game after all.
+	// Of course we could just decide to not use _CLUT_offs anymore, and change
+	// setPaletteFromRes() to invoke findResourceData() each time
+	// (and also getPalettePtr()).
 	if (_features & GF_SMALL_HEADER)
 		ptr = findResourceSmall(MKID('CLUT'), roomptr);
 	else
@@ -806,13 +805,10 @@ void Scumm::initRoomSubBlocks()
 		}
 	}
 
-	if (_features & GF_SMALL_HEADER)
-		ptr = findResourceData(MKID('CYCL'), roomptr);
-	else
-		ptr = findResourceData(MKID('CYCL'), roomptr);
+	ptr = findResourceData(MKID('CYCL'), roomptr);
 
 	if (ptr)
-		initCycl(findResourceData(MKID('CYCL'), roomptr));
+		initCycl(ptr);
 
 	ptr = findResourceData(MKID('TRNS'), roomptr);
 	if (ptr)
@@ -895,125 +891,6 @@ int Scumm::checkKeyHit()
 	int a = _keyPressed;
 	_keyPressed = 0;
 	return a;
-}
-
-void Scumm::unkRoomFunc3(int unk1, int unk2, int rfact, int gfact, int bfact)
-{
-	byte *pal = _currentPalette;
-	byte *table = _shadowPalette;
-	int i;
-
-	warning("unkRoomFunc3(%d,%d,%d,%d,%d): not fully implemented", unk1, unk2, rfact, gfact, bfact);
-
-	// TODO - correctly implement this function (see also patch #588501)
-	//
-	// Some "typical" examples of how this function is being invoked in real life:
-	//
-	// unkRoomFunc3(16, 255, 200, 200, 200)
-	//
-	// FOA: Sets up the colors for the boat and submarine shadows in the
-	// diving scene. Are the shadows too light? Maybe unk1 is used to
-	// darken the colors?
-	//
-	// unkRoomFunc3(0, 255, 700, 700, 700)
-	//
-	// FOA: Sets up the colors for the subway car headlight when it first
-	// goes on. This seems to work ok.
-	//
-	// unkRoomFunc3(160, 191, 300, 300, 300)
-	// unkRoomFunc3(160, 191, 289, 289, 289)
-	//     ...
-	// unkRoomFunc3(160, 191, 14, 14, 14)
-	// unkRoomFunc3(160, 191, 3, 3, 3)
-	//
-	// FOA: Sets up the colors for the subway car headlight for the later
-	// half of the trip, where it fades out. This currently doesn't work
-	// at all. The colors are too dark to be brightened. At first I thought
-	// unk1 and unk2 were used to tell which color interval to manipulate,
-	// but as far as I can tell the colors 160-191 aren't used at all to
-	// draw the light, that can't be it. Apparently unk1 and/or unk2 are
-	// used to brighten the colors.
-	
-	for (i = 0; i <= 255; i++) {
-		int r = (int) (*pal++ * rfact) >> 8;
-		int g = (int) (*pal++ * gfact) >> 8;
-		int b = (int) (*pal++ * bfact) >> 8;
-
-		*table++ = remapPaletteColor(r, g, b, (uint) -1);
-	}
-}
-
-
-void Scumm::palManipulate(int start, int end, int d, int time, int e)
-{
-	// TODO - correctly implement this function (see also bug #558245)
-	//
-	// The only place I know of where this function is being called is in the 
-	// FOA extro, to change the color to match the sinking sun. The following
-	// three calls (with some pauses between them) are issued:
-	//
-	// palManipulate(16, 190, 32, 180, 1)
-	// palManipulate(16, 190, 32, 1, 1)
-	// palManipulate(16, 190, 32, 800, 1)
-	//
-	// The first two parameters seem to specify a palette range (as the colors
-	// from 16 to 190 are the ones that make up water & sky).
-	//
-	// Maybe the change has to be done over a period of time, possibly specified
-	// by the second last parameter - between call 1 and 2, about 17-18 seconds
-	// seem to pass (well using get_msecs, I measured 17155 ms, 17613 ms, 17815 ms).
-	//
-	// No clue about the third and fifth parameter right now, they just always
-	// are 32 and 1 - possibly finding another example of this function being
-	// used would help a lot. Also, I can't currently compare it with the original,
-	// doing that (and possibly, taking screenshots of it for analysis!) would 
-	// help a lot.
-	
-	static int sys_time = 0;
-	int new_sys_time = _system->get_msecs();
-	
-	warning("palManipulate(%d, %d, %d, %d, %d): not implemented", start, end, d, time, e);
-	if (sys_time != 0)
-		printf("Time since last call: %d\n", new_sys_time-sys_time);
-	sys_time = new_sys_time;
-	
-	{
-		int redScale = 0xFF;
-		int greenScale = 0xFF - d;
-		int blueScale = 0xFF - d;
-		byte *cptr;
-		byte *cur;
-		int num;
-		int color;
-	
-		cptr = _currentPalette + start * 3;
-		cur = _currentPalette + start * 3;
-		num = end - start + 1;
-
-		do {
-			color = *cptr++;
-			if (redScale != 0xFF)
-				color = color * redScale / 0xFF;
-			if (color > 255)
-				color = 255;
-			*cur++ = color;
-
-			color = *cptr++;
-			if (greenScale != 0xFF)
-				color = color * greenScale / 0xFF;
-			if (color > 255)
-				color = 255;
-			*cur++ = color;
-
-			color = *cptr++;
-			if (blueScale != 0xFF)
-				color = color * blueScale / 0xFF;
-			if (color > 255)
-				color = 255;
-			*cur++ = color;
-		} while (--num);
-		setDirtyColors(start, end);
-	}
 }
 
 void Scumm::pauseGame(bool user)

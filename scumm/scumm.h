@@ -461,8 +461,6 @@ public:
 	byte _numObjectsInRoom;
 	int8 _userPut;
 	int _resourceHeaderSize;
-	void unkRoomFunc3(int a, int b, int c, int d, int e);
-	void palManipulate(int a, int b, int c, int d, int e);
 	void setScaleItem(int slot, int a, int b, int c, int d);
 	void clearClickedStatus();
 	void startManiac();
@@ -796,7 +794,9 @@ public:
 	void swapPalColors(int a, int b);
 	void cyclePalette();
 	void stopCycle(int i);
+	void palManipulateInit(int a, int b, int c, int d, int e);
 	void palManipulate();
+	void unkRoomFunc3(int a, int b, int c, int d, int e);
 	int remapPaletteColor(int r, int g, int b, uint threshold);
 	void moveMemInPalRes(int start, int end, byte direction);
 	void setupShadowPalette(int slot, int rfact, int gfact, int bfact, int from, int to);

@@ -337,6 +337,7 @@ void Scumm::saveOrLoad(Serializer *s)
 		MKLINE(Scumm, _EXCD_offs, sleUint32),
 		MKLINE(Scumm, _IM00_offs, sleUint32),
 		MKLINE(Scumm, _CLUT_offs, sleUint32),
+		/* XXX Remove _EPAL_offs next time format changes */
 		MKLINE(Scumm, _EPAL_offs, sleUint32),
 		MKLINE(Scumm, _PALS_offs, sleUint32),
 		MKLINE(Scumm, _curPalIndex, sleByte),
@@ -441,6 +442,7 @@ void Scumm::saveOrLoad(Serializer *s)
 		MKLINE(Scumm, _EXCD_offs, sleUint32),
 		MKLINE(Scumm, _IM00_offs, sleUint32),
 		MKLINE(Scumm, _CLUT_offs, sleUint32),
+		/* XXX Remove _EPAL_offs next time format changes */
 		MKLINE(Scumm, _EPAL_offs, sleUint32),
 		MKLINE(Scumm, _PALS_offs, sleUint32),
 		MKLINE(Scumm, _curPalIndex, sleByte),

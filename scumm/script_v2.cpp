@@ -1878,7 +1878,7 @@ void Scumm::o6_roomOps()
 		c = pop();
 		b = pop();
 		a = pop();
-		palManipulate(a, b, c, d, 1);
+		palManipulateInit(a, b, c, d, 1);
 		break;
 
 	case 187:										/* color cycle delay */
