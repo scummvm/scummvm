@@ -135,6 +135,10 @@ void OSystem_SDL_OpenGL::load_gfx_mode() {
 		_scaleFactor = 2;
 		_scaler_proc = AdvMame2x;
 		break;
+	case GFX_ADVMAME3X:
+		_scaleFactor = 3;
+		_scaler_proc = AdvMame3x;
+		break;
 	case GFX_TV2X:
 		_scaleFactor = 2;
 		_scaler_proc = TV2x;
