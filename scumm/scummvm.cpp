@@ -673,7 +673,7 @@ Scumm::Scumm (GameDetector *detector, OSystem *syst)
 
 	// Load CJK font
 	_CJKMode = false;
-	if((_gameId == GID_DIG || _gameId == GID_CMI) && (_language == KO_KOR || _language == JA_JPN || _language == ZH_TWN)) {
+	if ((_gameId == GID_DIG || _gameId == GID_CMI) && (_language == KO_KOR || _language == JA_JPN || _language == ZH_TWN)) {
 		File fp;
 		const char *fontFile = NULL;
 		switch(_language) {
@@ -686,13 +686,13 @@ Scumm::Scumm (GameDetector *detector, OSystem *syst)
 			fontFile = (_gameId == GID_DIG) ? "kanji16.fnt" : "japanese.fnt";
 			break;
 		case ZH_TWN:
-			if(_gameId == GID_CMI) {
+			if (_gameId == GID_CMI) {
 				_CJKMode = true;
 				fontFile = "chinese.fnt";
 			}
 			break;
 		}
-		if(_CJKMode && fp.open(fontFile, getGameDataPath(), 1)) {
+		if (_CJKMode && fp.open(fontFile, getGameDataPath(), 1)) {
 			debug(2, "Loading CJK Font");
 			fp.seek(2,SEEK_CUR);
 			_2byteWidth = fp.readByte(); //FIXME: is this correct?
@@ -1432,7 +1432,7 @@ void Scumm::initRoomSubBlocks() {
 	//
 	if (_version == 1) {
 		_IM00_offs = 0;
-		for(i = 0; i < 4; i++){
+		for (i = 0; i < 4; i++){
 			gdi._C64Colors[i] = roomptr[6 + i];
 		}
 		gdi.decodeC64Gfx(roomptr + READ_LE_UINT16(roomptr + 10), gdi._C64CharMap, 2048);
@@ -1921,7 +1921,7 @@ void Scumm::processKbd() {
 
 	_virtualMouse.x = _mouse.x + virtscr[0].xstart;
 
-	if(_features & GF_NEW_CAMERA)
+	if (_features & GF_NEW_CAMERA)
 		_virtualMouse.y = _mouse.y + camera._cur.y - (_screenHeight / 2);
 	else
 		_virtualMouse.y = _mouse.y;
@@ -2399,7 +2399,7 @@ void Scumm::mainRun() {
 	int delta = 0;
 	int diff = _system->get_msecs();
 
-	for(;;) {
+	for (;;) {
 #ifdef __PALM_OS__
 	if (_quit)	// palmfixme : need to check for autosave on exit
 		return;

@@ -242,7 +242,7 @@ void Scumm::CHARSET_1() {
 		if (c != 0xFF) {
 			_charset->_left = _charset->_nextLeft;
 			_charset->_top = _charset->_nextTop;
-			if(c & 0x80 && _CJKMode)
+			if (c & 0x80 && _CJKMode)
 				c += *buffer++ * 256;
 			if (_version <= 3) {
 				_charset->printChar(c);
@@ -431,7 +431,7 @@ void Scumm::drawString(int a) {
 				if (_string[a].no_talk_anim == 0)
 					_charset->_blitAlso = true;
 			}
-			if(c >= 0x80 && _CJKMode)
+			if (c >= 0x80 && _CJKMode)
 				c += buf[i++] * 256;
 			_charset->printChar(c);
 			_charset->_blitAlso = false;
@@ -735,7 +735,7 @@ void Scumm::drawBlastTexts() {
 			if (c != 0 && c != 0xFF) {
 				_charset->_left = _charset->_nextLeft;
 				_charset->_top = _charset->_nextTop;
- 				if(c >= 0x80 && _CJKMode)
+ 				if (c >= 0x80 && _CJKMode)
  					c += *buf++ * 256;
 				_charset->printChar(c);
 				_charset->_nextLeft = _charset->_left;
@@ -775,7 +775,7 @@ void Scumm::loadLanguageBundle() {
 	} else {
 		return;
 	}
-	if(file.isOpen() == false) {
+	if (file.isOpen() == false) {
 		_existLanguageFile = false;
 		return;
 	}

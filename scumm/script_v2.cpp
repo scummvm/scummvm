@@ -1338,7 +1338,7 @@ void Scumm_v2::o2_setObjectName() {
 		return;	// Silently fail for now
 	name = objptr + *(objptr + 14);
 
-	while(name[size++])
+	while (name[size++])
 		;
 
 	if (i > size) {

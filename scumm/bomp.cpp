@@ -97,7 +97,7 @@ void bompDecodeLineReverse(byte *dst, const byte *src, int size) {
 }
 
 void bompApplyMask(byte *line_buffer, byte *mask, byte maskbit, int32 size, byte transparency) {
-	while(1) {
+	while (1) {
 		do {
 			if (size-- == 0) 
 				return;
@@ -129,7 +129,7 @@ void bompApplyShadow(int shadowMode, const byte *shadowPalette, const byte *line
 	}
 }
 void bompApplyShadow0(const byte *line_buffer, byte *dst, int32 size, byte transparency) {
-	while(size-- > 0) {
+	while (size-- > 0) {
 		byte tmp = *line_buffer++;
 		if (tmp != transparency) {
 			*dst = tmp;
@@ -139,7 +139,7 @@ void bompApplyShadow0(const byte *line_buffer, byte *dst, int32 size, byte trans
 }
 
 void bompApplyShadow1(const byte *shadowPalette, const byte *line_buffer, byte *dst, int32 size, byte transparency) {
-	while(size-- > 0) {
+	while (size-- > 0) {
 		byte tmp = *line_buffer++;
 		if (tmp != transparency) {
 			if (tmp == 13) {
@@ -152,7 +152,7 @@ void bompApplyShadow1(const byte *shadowPalette, const byte *line_buffer, byte *
 }
 
 void bompApplyShadow3(const byte *shadowPalette, const byte *line_buffer, byte *dst, int32 size, byte transparency) {
-	while(size-- > 0) {
+	while (size-- > 0) {
 		byte tmp = *line_buffer++;
 		if (tmp != transparency) {
 			if (tmp < 8) {
@@ -424,7 +424,7 @@ int32 setupBompScale(byte * scaling, int32 size, byte scale) {
 	byte * tmp_scaling = scaling;
 	byte a = 0;
 
-	while((count--) != 0) {
+	while ((count--) != 0) {
 		tmp = *(tmp_ptr + 3);
 		a <<= 1;
 		if (scale < tmp) {
@@ -477,7 +477,7 @@ int32 setupBompScale(byte * scaling, int32 size, byte scale) {
 
 	count = (size + 7) >> 3;
 	byte ret_value = 0;
-	while(count--) {
+	while (count--) {
 		tmp = *scaling++;
 		assert(tmp < sizeof(_bompBitsTable));
 		ret_value += _bompBitsTable[tmp];

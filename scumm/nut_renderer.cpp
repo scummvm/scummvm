@@ -29,13 +29,13 @@ NutRenderer::NutRenderer(Scumm *vm) :
 	_loaded(false),
 	_nbChars(0) {
 	
-	for(int i = 0; i < 256; i++)
+	for (int i = 0; i < 256; i++)
 		_chars[i].src = NULL;
 }
 
 NutRenderer::~NutRenderer() {
-	for(int i = 0; i < _nbChars; i++) {
-		if(_chars[i].src)
+	for (int i = 0; i < _nbChars; i++) {
+		if (_chars[i].src)
 			delete []_chars[i].src;
 	}
 }
@@ -134,15 +134,15 @@ int NutRenderer::getCharWidth(byte c) {
 		return 0;
 	}
 
-	if(c >= 0x80 && _vm->_CJKMode) {
-		if(_vm->_gameId == GID_CMI)
+	if (c >= 0x80 && _vm->_CJKMode) {
+		if (_vm->_gameId == GID_CMI)
 			return 8;
-		if(_vm->_gameId == GID_DIG)
+		if (_vm->_gameId == GID_DIG)
 			return 6;
 		return 0;
 	}
 
-	if(c >= _nbChars)
+	if (c >= _nbChars)
 		error("invalid character in NutRenderer::getCharWidth : %d (%d)", c, _nbChars);
 
 	return _chars[c].width;
@@ -155,15 +155,15 @@ int NutRenderer::getCharHeight(byte c) {
 		return 0;
 	}
 
-	if(c >= 0x80 && _vm->_CJKMode) {
-		if(_vm->_gameId == GID_CMI)
+	if (c >= 0x80 && _vm->_CJKMode) {
+		if (_vm->_gameId == GID_CMI)
 			return 16;
-		if(_vm->_gameId == GID_DIG)
+		if (_vm->_gameId == GID_DIG)
 			return 10;
 		return 0;
 	}
 
-	if(c >= _nbChars)
+	if (c >= _nbChars)
 		error("invalid character in NutRenderer::getCharHeight : %d (%d)", c, _nbChars);
 
 	return _chars[c].height;
@@ -199,7 +199,7 @@ void NutRenderer::drawShadowChar(int c, int x, int y, byte color, bool useMask) 
 		if (useMask)
 			mask = _vm->getMaskBuffer(x, y, 0);
 		
-		if(c >= 256 && _vm->_CJKMode)
+		if (c >= 256 && _vm->_CJKMode)
 			draw2byte(dst, mask, c, x, y, color);
 		else
 			drawChar(dst, mask, (byte)c, x, y, color);
@@ -260,7 +260,7 @@ void NutRenderer::draw2byte(byte *dst, byte *mask, int c, int x, int y, byte col
 		maskmask = revBitMask[x & 7];
 		maskpos = 0;
 		for (int tx = 0; tx < width; tx++) {
-			if((tx % 8) == 0)
+			if ((tx % 8) == 0)
 				bits = *src++;
 			if (x + tx < 0 || x + tx >= _vm->_screenWidth || y + ty < 0 || y + ty >= _vm->_screenHeight)
 				continue;

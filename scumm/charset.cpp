@@ -79,7 +79,7 @@ void CharsetRendererV3::setCurID(byte id) {
 
 // do spacing for variable width old-style font
 int CharsetRendererClassic::getCharWidth(byte chr) {
-	if(chr >= 0x80 && _vm->_CJKMode)
+	if (chr >= 0x80 && _vm->_CJKMode)
 		return 6;
 	int spacing = 0;
 
@@ -605,7 +605,7 @@ void CharsetRendererClassic::printChar(int chr) {
 
 	_vm->_charsetColorMap[1] = _color;
 	
-	if(is2byte) {
+	if (is2byte) {
 		_dropShadow = true;
 		charPtr = g_scumm->get2byteCharPtr(chr);
 		width = g_scumm->_2byteWidth;
@@ -691,7 +691,7 @@ void CharsetRendererClassic::printChar(int chr) {
 			+ vs->xstart + drawTop * _vm->_screenWidth + _left;
 	}
 
-	if(is2byte) {
+	if (is2byte) {
 		drawBits1(vs, dst, charPtr, mask, drawTop, origWidth, origHeight);
 	} else {
 		byte bpp = *_fontPtr;
@@ -776,7 +776,7 @@ void CharsetRendererCommon::drawBits1(VirtScreen *vs, byte *dst, const byte *src
 		maskpos = 0;
 
 		for (x = 0; x < width; x++) {
-			if((x % 8) == 0)
+			if ((x % 8) == 0)
 				bits = *src++;
 			if (bits & revBitMask[x % 8]) {
 				if (_dropShadow) {
@@ -866,7 +866,7 @@ void CharsetRendererNut::printChar(int chr) {
 	int width = _current->getCharWidth(chr);
 	int height = _current->getCharHeight(chr);
 
-	if(chr >= 256 && _vm->_CJKMode)
+	if (chr >= 256 && _vm->_CJKMode)
 		width = 16;
 
 	_hasMask = true;

@@ -1387,7 +1387,7 @@ void Actor::walkActorOld() {
 			return;
 
 		walkbox = walkdata.destbox;
-	} while(1);
+	} while (1);
 
 	moving |= MF_LAST_LEG;
 	calcMovementFactor(walkdata.destx, walkdata.desty);

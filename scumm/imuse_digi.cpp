@@ -33,7 +33,7 @@
 
 static void imus_digital_handler(void *engine) {
 	// Avoid race condition
-	if(engine && ((Scumm *)engine)->_imuseDigital)
+	if (engine && ((Scumm *)engine)->_imuseDigital)
 		((Scumm *)engine)->_imuseDigital->handler();
 }
 
@@ -747,7 +747,7 @@ void IMuseDigital::handler() {
 			}
 
 			if (_channel[l]._bits == 12) {
-				for(i = 0; i < (mixer_size / 4); i++) {
+				for (i = 0; i < (mixer_size / 4); i++) {
 					byte sample1 = buf[i * 4 + 0];
 					byte sample2 = buf[i * 4 + 1];
 					byte sample3 = buf[i * 4 + 2];
@@ -760,7 +760,7 @@ void IMuseDigital::handler() {
 					buf[i * 4 + 3] = (byte)(sample_b & 0xff);
 				}
 			} else if (_channel[l]._bits == 8) {
-				for(i = 0; i < (mixer_size / 2); i++) {
+				for (i = 0; i < (mixer_size / 2); i++) {
 					buf[i * 2 + 0] = (byte)(((int8)(buf[i * 2 + 0] ^ 0x80) * _channel[l]._volumeRight) >> 8) ^ 0x80;
 					buf[i * 2 + 1] = (byte)(((int8)(buf[i * 2 + 1] ^ 0x80) * _channel[l]._volume) >> 8) ^ 0x80;
 				}
@@ -783,11 +783,11 @@ void IMuseDigital::startSound(int sound) {
 	debug(5, "IMuseDigital::startSound(%d)", sound);
 	int32 l;
 
-	for(l = 0; l < MAX_DIGITAL_CHANNELS; l++) {
-		if(_channel[l]._used == false) {
+	for (l = 0; l < MAX_DIGITAL_CHANNELS; l++) {
+		if (_channel[l]._used == false) {
 			byte *ptr = _scumm->getResourceAddress(rtSound, sound);
 			byte *s_ptr = ptr;
-			if(ptr == NULL) {
+			if (ptr == NULL) {
 				warning("IMuseDigital::startSound(%d) NULL resource pointer", sound);
 				return;
 			}
@@ -1064,7 +1064,7 @@ int32 IMuseDigital::doCommand(int a, int b, int c, int d, int e, int f, int g, i
 		case 0: // play music (state)
 			debug(5, "IMuseDigital::doCommand 0x1000 (%d)", b);
 			if (_scumm->_gameId == GID_DIG) {
-				for(l = 0;; l++) {
+				for (l = 0;; l++) {
 					if (_digStateMusicMap[l].room == -1) {
 						return 1;
 					}
@@ -1084,7 +1084,7 @@ int32 IMuseDigital::doCommand(int a, int b, int c, int d, int e, int f, int g, i
 					return 0;
 				}
 
-				for(l = 0;; l++) {
+				for (l = 0;; l++) {
 					if (_comiStateMusicTable[l].index == -1) {
 						return 1;
 					}
@@ -1097,14 +1097,14 @@ int32 IMuseDigital::doCommand(int a, int b, int c, int d, int e, int f, int g, i
 					}
 				}
 			} else if (_scumm->_gameId == GID_FT) {
-				for(l = 0;; l++) {
+				for (l = 0;; l++) {
 					if (_ftStateMusicTable[l].index == -1) {
 						return 1;
 					}
 					if (_ftStateMusicTable[l].index == b) {
 						debug(5, "Play imuse music: %s, %s", _ftStateMusicTable[l].name, _ftStateMusicTable[l].audioname);
 						if (_ftStateMusicTable[l].audioname[0] != 0) {
-							for(r = 0; r < _scumm->_numAudioNames; r++) {
+							for (r = 0; r < _scumm->_numAudioNames; r++) {
 								if (strcmp(_ftStateMusicTable[l].audioname, &_scumm->_audioNames[r * 9]) == 0) {
 									startSound(r);
 									doCommand(12, r, 1536, _ftStateMusicTable[l].volume, 0, 0, 0, 0);
@@ -1118,7 +1118,7 @@ int32 IMuseDigital::doCommand(int a, int b, int c, int d, int e, int f, int g, i
 		case 1: // play music (seq)
 			debug(5, "IMuseDigital::doCommand 0x1001 (%d)", b);
 			if (_scumm->_gameId == GID_DIG) {
-				for(l = 0;; l++) {
+				for (l = 0;; l++) {
 					if (_digSeqMusicTable[l].index == -1) {
 						return 1;
 					}
@@ -1131,7 +1131,7 @@ int32 IMuseDigital::doCommand(int a, int b, int c, int d, int e, int f, int g, i
 					}
 				}
 			} else if (_scumm->_gameId == GID_CMI) {
-				for(l = 0;; l++) {
+				for (l = 0;; l++) {
 					if (_comiSeqMusicTable[l].index == -1) {
 						return 1;
 					}
@@ -1144,14 +1144,14 @@ int32 IMuseDigital::doCommand(int a, int b, int c, int d, int e, int f, int g, i
 					}
 				}
 			} else if (_scumm->_gameId == GID_FT) {
-				for(l = 0;; l++) {
+				for (l = 0;; l++) {
 					if (_ftSeqMusicTable[l].index == -1) {
 						return 1;
 					}
 					if (_ftSeqMusicTable[l].index == b) {
 						debug(5, "Play imuse music: %s, %s", _ftSeqMusicTable[l].name, _ftSeqMusicTable[l].audioname);
 						if (_ftSeqMusicTable[l].audioname[0] != 0) {
-							for(r = 0; r < _scumm->_numAudioNames; r++) {
+							for (r = 0; r < _scumm->_numAudioNames; r++) {
 								if (strcmp(_ftSeqMusicTable[l].audioname, &_scumm->_audioNames[r * 9]) == 0) {
 									startSound(r);
 									doCommand(12, r, 1536, _ftSeqMusicTable[l].volume, 0, 0, 0, 0);

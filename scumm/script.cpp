@@ -546,7 +546,7 @@ void Scumm::writeVar(uint var, int value) {
 			int bit = var & 0xF;
 			var = (var >> 4) & 0xFF;
 			checkRange(_numVariables - 1, 0, var, "Variable %d out of range(wzb)");
-			if(value)
+			if (value)
 				_scummVars[var] |= ( 1 << bit );
 			else
 				_scummVars[var] &= ~( 1 << bit );

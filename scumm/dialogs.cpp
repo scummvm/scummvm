@@ -327,7 +327,7 @@ void SaveLoadDialog::fillList() {
 
 	_scumm->listSavegames(avail_saves, ARRAYSIZE(avail_saves), mgr);
 	for (; i < ARRAYSIZE(avail_saves); i++) {
-		if(avail_saves[i])
+		if (avail_saves[i])
 			_scumm->getSavegameName(i, name, mgr);
 		else
 			name[0] = 0;

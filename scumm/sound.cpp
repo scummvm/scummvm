@@ -58,7 +58,7 @@ void Sound::addSoundToQueue(int sound) {
 		_scumm->ensureResourceLoaded(rtSound, sound);
 		addSoundToQueue2(sound);
 	} else {
-		// WARNING ! This may break something, maybe this sould be put inside if(_gameID == GID_FT) ? 
+		// WARNING ! This may break something, maybe this sould be put inside if (_gameID == GID_FT) ? 
 		// But why addSoundToQueue should not queue sound ?
 		_scumm->ensureResourceLoaded(rtSound, sound);
 		addSoundToQueue2(sound);
@@ -128,7 +128,7 @@ byte *Sound::readCreativeVocFile(byte *ptr, uint32 &size, uint32 &rate, uint32 &
 	assert(code == ~version + 0x1234);
 	bool quit = 0;
 	byte *ret_sound = 0; size = 0, loops = 0;
-	while(!quit) {
+	while (!quit) {
 		int len = READ_LE_UINT32(ptr + offset);
 		offset += 4;
 		code = len & 0xFF;
@@ -141,8 +141,8 @@ byte *Sound::readCreativeVocFile(byte *ptr, uint32 &size, uint32 &rate, uint32 &
 				len -= 2;
 				rate = 1000000L / (256L - time_constant);
 				debug(9, "VOC Data Bloc : %d, %d, %d", rate, packing, len);
-				if(packing == 0) {
-					if(size) {
+				if (packing == 0) {
+					if (size) {
 						ret_sound = (byte *)realloc(ret_sound, size + len);
 					} else {
 						ret_sound = (byte *)malloc(len);
@@ -964,7 +964,7 @@ uint32 Sound::decode12BitsSample(byte *src, byte **dst, uint32 size, bool stereo
 	byte *ptr = *dst = (byte *)malloc(s_size);
 
 	uint32 tmp;
-	while(loop_size--) {
+	while (loop_size--) {
 		byte v1 = *src++;
 		byte v2 = *src++;
 		byte v3 = *src++;
@@ -1098,7 +1098,7 @@ void Sound::bundleMusicHandler(Scumm *scumm) {
 			}
 
 			ptr += 12;
-			while(tag != MKID_BE('DATA')) {
+			while (tag != MKID_BE('DATA')) {
 				tag = READ_BE_UINT32(ptr);  ptr += 4;
 				switch(tag) {
 				case MKID_BE('FRMT'):
@@ -1227,7 +1227,7 @@ int Sound::playBundleSound(char *sound) {
 	}
 
 	ptr += 12;
-	while(tag != MKID_BE('DATA')) {
+	while (tag != MKID_BE('DATA')) {
 		tag = READ_BE_UINT32(ptr); ptr += 4;
 		switch(tag) {
 			case MKID_BE('FRMT'):

@@ -1383,12 +1383,12 @@ void Gdi::decodeC64Gfx(const byte *src, byte *dst, int size) {
 	int x, z;
 	byte color, run, common[4];
 
-	for(z = 0; z < 4; z++) {
+	for (z = 0; z < 4; z++) {
 		common[z] = *src++;
 	}
 
 	x = 0;
-	while(x < size){
+	while (x < size){
 		color = *src++;
 		if (color < 0x40) {
 			for (z = 0; z <= color; z++) {
@@ -1414,37 +1414,37 @@ void Gdi::decodeStripEGA(byte *dst, const byte *src, int height) {
 	byte color = 0;
 	int run = 0, x = 0, y = 0, z;
 
-	while(x < 8) {
+	while (x < 8) {
 		color = *src++;
 		
-		if(color & 0x80) {
+		if (color & 0x80) {
 			run = color & 0x3f;
 
-			if(color & 0x40) {
+			if (color & 0x40) {
 				color = *src++;
 
-				if(run == 0) {
+				if (run == 0) {
 					run = *src++;
 				}
-				for(z = 0; z < run; z++) {
+				for (z = 0; z < run; z++) {
 					*(dst + y * _vm->_screenWidth + x) = (z&1) ? (color & 0xf) : (color >> 4);
 
 					y++;
-					if(y >= height) {
+					if (y >= height) {
 						y = 0;
 						x++;
 					}
 				}
 			} else {
-				if(run == 0) {
+				if (run == 0) {
 					run = *src++;
 				}
 
-				for(z = 0; z < run; z++) {
+				for (z = 0; z < run; z++) {
 					*(dst + y * _vm->_screenWidth + x) = *(dst + y * _vm->_screenWidth + x - 1);
 
 					y++;
-					if(y >= height) {
+					if (y >= height) {
 						y = 0;
 						x++;
 					}
@@ -1452,15 +1452,15 @@ void Gdi::decodeStripEGA(byte *dst, const byte *src, int height) {
 			}
 		} else {
 			run = color >> 4;
-			if(run == 0) {
+			if (run == 0) {
 				run = *src++;
 			}
 			
-			for(z = 0; z < run; z++) {
+			for (z = 0; z < run; z++) {
 				*(dst + y * _vm->_screenWidth + x) = color & 0xf;
 
 				y++;
-				if(y >= height) {
+				if (y >= height) {
 					y = 0;
 					x++;
 				}

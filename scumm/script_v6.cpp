@@ -2693,24 +2693,24 @@ void Scumm_v6::o6_kernelGetFunctions() {
 		 */
 
 
-		if((args[1] == 27) && (_lastKeyHit == 27)) {
+		if ((args[1] == 27) && (_lastKeyHit == 27)) {
 			push(1); // abort
 			return;
 		}
 
-		if( ((args[1] == 328) || (args[1] == 336) || (args[1] == 13)) &&
+		if ( ((args[1] == 328) || (args[1] == 336) || (args[1] == 13)) &&
 			((VAR(VAR_LEFTBTN_HOLD)) || (_lastKeyHit == 13) || (_lastKeyHit == 274) ||
 			(_lastKeyHit == 273)) ) {
 			push(1); // thrust
 			return;
 		}
 
-		if(((args[1] == 97) || (args[1] == 331)) && (_lastKeyHit == 276)) {
+		if (((args[1] == 97) || (args[1] == 331)) && (_lastKeyHit == 276)) {
 			push(1); // left
 			return;
 		}
 		
-		if(((args[1] == 115) || (args[1] == 333)) && (_lastKeyHit == 275)) {
+		if (((args[1] == 115) || (args[1] == 333)) && (_lastKeyHit == 275)) {
 			push(1); // right
 			return;
 		}
@@ -2845,7 +2845,7 @@ void Scumm_v6::o6_findAllObjects() {
 	defineArray(0, 5, 0, _numLocalObjects + 1);
 	writeArray(0, 0, 0, _numLocalObjects);
 	
-	while(i < _numLocalObjects) {
+	while (i < _numLocalObjects) {
 		writeArray(0, 0, i, _objs[i].obj_nr);
 		i++;
 	}

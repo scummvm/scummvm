@@ -1506,7 +1506,7 @@ void Scumm_v5::o5_resourceRoutines() {
 		// FIXME - this probably can be removed eventually, I don't think the following
 		// check will ever be triggered, but then I could be wrong and it's better
 		// to play it safe.
-		if((_opcode & 0x3F) != (_opcode & 0x1F))
+		if ((_opcode & 0x3F) != (_opcode & 0x1F))
 			error("Oops, this shouldn't happen: o5_resourceRoutines opcode %d", _opcode);
 	}
 

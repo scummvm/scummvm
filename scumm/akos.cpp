@@ -924,7 +924,7 @@ byte AkosRenderer::codec16(int xmoveCur, int ymoveCur) {
 	int32 skip_x, skip_y, cur_x, cur_y;
 	const byte transparency = (_vm->_features & GF_HUMONGOUS) ? 0 : 255;
 	
-	if(!_mirror) {
+	if (!_mirror) {
 		clip_left = (_actorX - xmoveCur - _width) + 1;
 	} else {
 		clip_left = _actorX + xmoveCur;
@@ -948,17 +948,17 @@ byte AkosRenderer::codec16(int xmoveCur, int ymoveCur) {
 		clip_left = 0;
 	}
 
-	if(clip_right > maxw) {
+	if (clip_right > maxw) {
 		cur_x -= clip_right - maxw;
 		clip_right = maxw;
 	}
 
-	if(clip_top < 0) {
+	if (clip_top < 0) {
 		skip_y -= clip_top;
 		clip_top = 0;
 	}
 
-	if(clip_bottom > maxh) {
+	if (clip_bottom > maxh) {
 		cur_y -= clip_bottom - maxh;
 		clip_bottom = maxh;
 	}
@@ -999,7 +999,7 @@ byte AkosRenderer::codec16(int xmoveCur, int ymoveCur) {
 	out_height++;
 
 	cur_x -= skip_x;
-	if(cur_x < 0) {
+	if (cur_x < 0) {
 		cur_x = -cur_x;
 	}
 	cur_x++;

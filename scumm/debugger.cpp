@@ -225,7 +225,7 @@ void ScummDebugger::enter() {
 
 		if (i == 0)
 			continue;
-	} while(RunCommand(buf));
+	} while (RunCommand(buf));
 
 #endif
 }
@@ -246,7 +246,7 @@ bool ScummDebugger::RunCommand(const char *inputOrig) {
 		param[num_params++] = input;
 	}
 
-	for(i=0; i < _dcmd_count; i++) {
+	for (i=0; i < _dcmd_count; i++) {
 		if (!strcmp(_dcmds[i].name, param[0])) {
 			bool result = (this->*_dcmds[i].function)(num_params, param);
 			free(input);
@@ -255,7 +255,7 @@ bool ScummDebugger::RunCommand(const char *inputOrig) {
 	}
 
 	// It's not a command, so things get a little tricky for variables. Do fuzzy matching to ignore things like subscripts.
-	for(i = 0; i < _dvar_count; i++) {
+	for (i = 0; i < _dvar_count; i++) {
 		if (!strncmp(_dvars[i].name, param[0], strlen(_dvars[i].name))) {
 			if (num_params > 1) {
 				// Alright, we need to check the TYPE of the variable to deref and stuff... the array stuff is a bit ugly :)
@@ -1003,7 +1003,7 @@ bool ScummDebugger::TabComplete(const char *input, char*& completion) {
 	unsigned int matchlen = 0;
 	char match[30]; // the max. command name is 30 chars
 
-	for(int i=0; i < _dcmd_count; i++) {
+	for (int i=0; i < _dcmd_count; i++) {
 		if (!strncmp(_dcmds[i].name, input, inputlen)) {
 			unsigned int commandlen = strlen(_dcmds[i].name);
 			if (commandlen == inputlen) { // perfect match
