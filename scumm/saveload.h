@@ -38,7 +38,7 @@
 // current reality (many of our complex structs are non-POD; for an explanation of 
 // what POD means refer to http://www-cpd.fnal.gov/personal/wb/boost/ISOcxx/doc/POD.html)
 
-#define OFFS(type,item) (((int)(&((type*)42)->type::item))-42)
+#define OFFS(type,item) (((long)(&((type*)42)->type::item))-42)
 #define SIZE(type,item) sizeof(((type*)42)->type::item)
 
 // Any item that is still in use automatically gets a maxVersion equal to CURRENT_VER

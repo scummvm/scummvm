@@ -146,7 +146,7 @@ void OSystem_SDL_Common::copy_rect(const byte *buf, int pitch, int x, int y, int
 
 	StackLock lock(_graphicsMutex, this);	// Lock the mutex until this function ends
 	
-	if (((uint32)buf & 3) == 0 && pitch == _screenWidth && x==0 && y==0 &&
+	if (((long)buf & 3) == 0 && pitch == _screenWidth && x==0 && y==0 &&
 			w==_screenWidth && h==_screenHeight && _mode_flags&DF_WANT_RECT_OPTIM) {
 		/* Special, optimized case for full screen updates.
 		 * It tries to determine what areas were actually changed,
@@ -331,7 +331,7 @@ void OSystem_SDL_Common::mk_checksums(const byte *buf) {
 #undef ROL
 
 void OSystem_SDL_Common::add_dirty_rgn_auto(const byte *buf) {
-	assert(((uint32)buf & 3) == 0);
+	assert(((long)buf & 3) == 0);
 	
 	/* generate a table of the checksums */
 	mk_checksums(buf);
