@@ -264,12 +264,24 @@ void Scumm::playSound(int sound)
 #endif
 		
 		ptr += 0x16;
-
 		if (size == 30) {
+			int result = 0;
+			int track = *ptr;
+
+			if (track == current_cd_sound)
 #ifdef COMPRESSED_SOUND_FILE
-        	        if (playMP3CDTrack(*ptr, 0, 0, 0) == -1)
+				if (pollMP3CD())
+					result = 1;
+				else
 #endif
-	                _system->play_cdrom(*ptr, 0, 0, 0);
+				result = _system->poll_cdrom();
+			if (result == 1) return;
+
+#ifdef COMPRESSED_SOUND_FILE
+        	        if (playMP3CDTrack(track, 1, 1, 0) == -1)
+#endif
+	                _system->play_cdrom(track, 0, 0, 0);
+	                current_cd_sound = track;
 			return;
 		}
 
@@ -1203,10 +1215,12 @@ int Scumm::getCachedTrack(int track) {
 		}
 	current_index = _current_cache++;
 	_current_cache %= CACHE_TRACKS;
+
 	// Not found, see if it exists
 	sprintf(track_name, "%strack%d.mp3", _gameDataPath, track);
 	file = fopen(track_name, "rb");
 	_cached_tracks[current_index] = track;
+
 	/* First, close the previous file */
 	if (_mp3_tracks[current_index])
 		fclose(_mp3_tracks[current_index]);
@@ -1286,7 +1300,6 @@ int Scumm::playMP3CDTrack(int track, int num_loops, int start, int delay) {
 	int index;
 	unsigned int offset;
 	mad_timer_t duration;
-
 	_vars[VAR_MI1_TIMER] = 0;
 
 	if (_soundsPaused)
