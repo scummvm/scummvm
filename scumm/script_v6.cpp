@@ -346,7 +346,7 @@ void Scumm_v6::setupOpcodes() {
 		OPCODE(o6_invalid),
 		OPCODE(o6_invalid),
 		OPCODE(o6_invalid),
-		OPCODE(o6_invalid),
+		OPCODE(o6_readINI),
 		/* F4 */
 		OPCODE(o6_invalid),
 		OPCODE(o6_invalid),
@@ -3019,7 +3019,7 @@ void Scumm_v6::o6_unknownEA() {
 	edi = pop();
 	esi = pop();
 
-	if (edi == 0) {
+	if ((edi | esi) ==  0) {
 		eax = esi;
 		esi = edi;
 		edi = eax;
@@ -3040,6 +3040,17 @@ void Scumm_v6::o6_unknownEA() {
 
 void Scumm_v6::unknownEA_func(int a, int b, int c, int d, int e) {
 	warning("unknownEA_func(%d, %d, %d, %d, %d) stub", a, b, c, d, e);
+}
+
+void Scumm_v6::o6_readINI() {
+	int len;
+
+	len = resStrLen(_scriptPointer);
+	warning("stub o6_readINI(\"%s\")", _scriptPointer);
+	_scriptPointer += len + 1;
+	pop();
+	push(0);
+	
 }
 
 void Scumm_v6::o6_localizeArray() {
@@ -3116,6 +3127,6 @@ void Scumm_v6::decodeParseString(int m, int n) {
 		_string[m].t_charset = _string[m].charset;
 		return;
 	default:
-		error("decodeParseString: default case");
+		error("decodeParseString: default case 0x%x", b);
 	}
 }

@@ -514,6 +514,7 @@ protected:
 	void o6_shuffle();
 	void o6_unknownFA();
 	void o6_unknownEA();
+	void o6_readINI();
 
 	byte VAR_VIDEONAME;
 
