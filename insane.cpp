@@ -31,59 +31,70 @@
 #include "scumm.h"
 #include "smush.h"
 
-//#define SWAP2(a) ((((a)>>24)&0xFF) | (((a)>>8)&0xFF00) | (((a)<<8)&0xFF0000) | (((a)<<24)&0xFF000000))
 #define MAX_STREAMER 10
 
-byte * SmushPlayer::loadTres()
-{
+static SmushPlayer * h_sp;
+
+SmushPlayer::SmushPlayer(Scumm * parent) {
+	_scumm = parent;
+	h_sp = this;
+}
+
+SmushPlayer::~SmushPlayer() {
+}
+
+static int smush_handler (int t) {
+	h_sp->update();
+	return t;
+}
+
+byte * SmushPlayer::loadTres() {
 	byte buf[100];
 	FILE * f_tres;
 	uint32 tmp, l;
 
-	sprintf((char *)buf, "%sVIDEO/%sTXT.TRS", (char *)sm->_gameDataPath, 
-			(char *)sm->_exe_name);
-	f_tres = fopen((char *)buf, "rb");
+	sprintf((char *)buf, "%sVIDEO/DIGTXT.TRS", (byte *)_scumm->_gameDataPath);
+	f_tres = (FILE*)_scumm->fileOpen((char *)&buf, 1);
 	
 	if (f_tres == NULL) {
-		sprintf((char *)buf, "%svideo/%stxt.trs", (char *)sm->_gameDataPath,
-				(char *)sm->_exe_name);
-		f_tres = fopen((char *)buf, "rb");
-		if (f_tres == NULL) 
+		sprintf((char *)buf, "%svideo/digtxt.trs", (byte *)_scumm->_gameDataPath);
+		f_tres = (FILE*)_scumm->fileOpen((char *)&buf, 1);
+		if (f_tres == NULL)
 			return NULL;
 	}
 
-	if (fread(&tmp, 4, 1, f_tres) != 1) // read tag
-		error("error while reading TRES");
+	_scumm->fileRead(f_tres, &tmp, 4); // read tag
+	if (_scumm->_fileReadFailed)
+		error("SP: error while reading TRES");
 	
 	tmp = READ_BE_UINT32(&tmp); 
 	if (tmp == 'ETRS')
 	{
-		fread(&tmp, 4, 1, f_tres); // read length
+		_scumm->fileRead(f_tres, &tmp, 4); // read length
 		tmp = READ_BE_UINT32(&tmp);
 		tmp -= 8;
-		_buffer_tres = (byte*)malloc (tmp + 1);
-		fread(_buffer_tres, 8, 1, f_tres); // skip 8 bytes
-		fread(_buffer_tres, tmp, 1, f_tres);
+		_bufferTres = (byte*)malloc (tmp + 1);
+		_scumm->fileRead(f_tres, _bufferTres, 8); // skip 8 bytes
+		_scumm->fileRead(f_tres, _bufferTres, tmp);
 		for (l = 0; l < tmp; l++) 
-			*(_buffer_tres + l) ^= 0xcc;
-		_buffer_tres[tmp] = 0;
+			*(_bufferTres + l) ^= 0xcc;
+		_bufferTres[tmp] = 0;
 	}
 	else
 	{
-		fseek(f_tres, 0, SEEK_END); // assume file is unencrypted
+		_scumm->fileSeek(f_tres, 0, SEEK_END); // assume file is unencrypted
 		tmp = ftell(f_tres);
-		fseek(f_tres, 0, SEEK_SET);
-		_buffer_tres = (byte*)malloc (tmp + 1);
-		fread(_buffer_tres, tmp, 1, f_tres);
-		_buffer_tres[tmp] = 0;
+		_scumm->fileSeek(f_tres, 0, SEEK_SET);
+		_bufferTres = (byte*)malloc (tmp + 1);
+		fread(_bufferTres, tmp, 1, f_tres);
+		_bufferTres[tmp] = 0;
 	}
-	fclose (f_tres);
+	_scumm->fileClose(f_tres);
 
-	return _buffer_tres;
+	return _bufferTres;
 }
 
-void SmushPlayer::loadFonts()
-{
+void SmushPlayer::loadFonts() {
 	byte buf[100];
 	FILE * f_tres;
 	uint32 tmp;
@@ -93,46 +104,45 @@ void SmushPlayer::loadFonts()
 	for (l = 0; l < SP_MAX_FONTS; l++)
 	{
 		_fonts [l] = NULL;
-		sprintf((char *)buf, "%sVIDEO/FONT%d.NUT", (char *)sm->_gameDataPath, l);
-		f_tres = fopen((char *)buf, "rb");
+		sprintf((char *)buf, "%sVIDEO/FONT%d.NUT", (char *)_scumm->_gameDataPath, l);
+		f_tres = (FILE*)_scumm->fileOpen((char *)buf, 1);
 
 		if (f_tres == NULL) {
-			sprintf((char *)buf, "%svideo/font%d.nut", (char *)sm->_gameDataPath, l);
-			f_tres = fopen((char *)buf, "rb");
+			sprintf((char *)buf, "%svideo/font%d.nut", (char *)_scumm->_gameDataPath, l);
+			f_tres = (FILE*)_scumm->fileOpen((char *)buf, 1);
 			if (f_tres == NULL) 
 				continue;
 		}
 
-		fread(&tmp, 4, 1, f_tres); // read tag
+		_scumm->fileRead(f_tres, &tmp, 4); // read tag
 		tmp = READ_BE_UINT32(&tmp);
 		if (tmp == 'ANIM') {
-			fread(&tmp, 4, 1, f_tres); // read length
+			_scumm->fileRead(f_tres, &tmp, 4); // read length
 			tmp = READ_BE_UINT32(&tmp);
 			buffer = (byte *)malloc(tmp);
-			fread(buffer, tmp, 1, f_tres);
+			_scumm->fileRead(f_tres, buffer, tmp);
 			_fonts[l] = buffer;
 		}
-		fclose (f_tres);
+		_scumm->fileClose(f_tres);
 	}
 }
 
-byte * SmushPlayer::getStringTRES(int32 number)
-{
+byte * SmushPlayer::getStringTRES(int32 number) {
 	byte * txt = NULL;
 	uint32 l, i, j;
 
 	for (l = 0;; l++) {
-		char t = *(_buffer_tres + l);
+		char t = *(_bufferTres + l);
 		if (t == 0)
 			break;
 		if (t == '#') {
 			byte buf[10];
-			strncpy ((char*)buf, (char*)_buffer_tres + l + 1, 9);
+			strncpy ((char*)buf, (char*)_bufferTres + l + 1, 9);
 			buf[9] = 0;
 			if (strcmp ((char*)buf, "define a ") == 0) {
 				l += 10;
 				for (i = 0; i < 5; i++) {
-					buf[i] = *(_buffer_tres + l + i);
+					buf[i] = *(_bufferTres + l + i);
 					if (buf[i] == 0x0d)
 					{
 						buf[i] = 0;
@@ -142,12 +152,12 @@ byte * SmushPlayer::getStringTRES(int32 number)
 				}
 				if (atol((char*)buf) == number) {
 					for (j = 0; j < 200; j++) {
-						t = *(_buffer_tres + l + j + i);
+						t = *(_bufferTres + l + j + i);
 						if ((t == 0) || (t == '#'))
 							break;
 					}
 					txt = (byte *)malloc(j + 1);
-					strncpy((char*)txt, (char*)_buffer_tres + l + i, j);
+					strncpy((char*)txt, (char*)_bufferTres + l + i, j);
 					txt[j] = 0;
 					return txt;
 				}
@@ -158,8 +168,7 @@ byte * SmushPlayer::getStringTRES(int32 number)
 	return txt;
 }
 
-uint32 SmushPlayer::getFontHeight(uint8 c_font)
-{
+uint32 SmushPlayer::getFontHeight(uint8 c_font) {
 	byte * font = _fonts[c_font];
 	uint32 offset = 0, t_offset = 0;
 	
@@ -181,8 +190,7 @@ uint32 SmushPlayer::getFontHeight(uint8 c_font)
 	return READ_LE_UINT16(font + t_offset + 8);
 }
 
-uint32 SmushPlayer::getCharWidth(uint8 c_font, byte txt)
-{
+uint32 SmushPlayer::getCharWidth(uint8 c_font, byte txt) {
 	byte * font = _fonts[c_font];
 	uint32 offset = 0, t_offset = 0, l;
 	
@@ -209,8 +217,7 @@ uint32 SmushPlayer::getCharWidth(uint8 c_font, byte txt)
 	return READ_LE_UINT16(font + t_offset + 6);
 }
 
-void SmushPlayer::drawStringTRES(uint32 x, uint32 y, byte * txt)
-{
+void SmushPlayer::drawStringTRES(uint32 x, uint32 y, byte * txt) {
 	char buf[4];
 	uint32 c_line = 0, l = 0, i, tmp_x, x_pos, last_l, t_width, t_height;
 	uint8 c_font = 0, c_color = 0, last_j;
@@ -321,8 +328,7 @@ exit_loop: ;
 
 }
 
-void codec44_depack(byte *dst, byte *src, uint32 len)
-{
+void SmushPlayer::codec44Depack(byte *dst, byte *src, uint32 len) {
 	byte val;
 	uint16 size_line;
 	uint16 num;
@@ -355,8 +361,7 @@ void codec44_depack(byte *dst, byte *src, uint32 len)
 	} while (len > 1);
 }
 
-void SmushPlayer::drawCharTRES(uint32 * x, uint32 y, uint32 c_line, uint8 c_font, uint8 color, uint8 txt)
-{
+void SmushPlayer::drawCharTRES(uint32 * x, uint32 y, uint32 c_line, uint8 c_font, uint8 color, uint8 txt) {
 	byte * font = _fonts[c_font];
 	uint32 offset = 0, t_offset = 0, l, width, height, length = 0;
 	
@@ -385,9 +390,7 @@ void SmushPlayer::drawCharTRES(uint32 * x, uint32 y, uint32 c_line, uint8 c_font
 	byte * dst = (byte*)malloc (1000);
 	byte * src = (byte*)(font + t_offset + 0x0e);
 
-	memset (dst, 0, 1000);
-	
-	codec44_depack (dst, src, length);
+	codec44Depack (dst, src, length);
 
 	width = READ_LE_UINT16(font + t_offset + 6);
 	height = READ_LE_UINT16(font + t_offset + 8);
@@ -415,61 +418,28 @@ void SmushPlayer::drawCharTRES(uint32 * x, uint32 y, uint32 c_line, uint8 c_font
 	free (dst);
 }
 
-void invalidblock(uint32 tag)
-{
-	error("Encountered invalid block %c%c%c%c", tag >> 24, tag >> 16, tag >> 8, tag);
-}
-
-int _frameChanged;
-int _mixer_num;
-
-uint32 SmushPlayer::nextBE32()
-{
+uint32 SmushPlayer::nextBE32() {
 	uint32 a = READ_BE_UINT32(_cur);
 	_cur += sizeof(uint32);
 
 	return a;
 }
 
-void SmushPlayer::fileRead(void *mem, int len)
-{
-	if (fread(mem, len, 1, _in) != 1)
-		error("EOF while reading");
-
-}
-
-uint32 SmushPlayer::fileReadBE32()
-{
-	byte b[4];
-	fread(b, sizeof(b), 1, _in);
-	return (b[0]<<24)|(b[1]<<16)|(b[2]<<8)|b[3];
-}
-
-uint32 SmushPlayer::fileReadLE32()
-{
-	byte b[4];
-	fread(b, sizeof(b), 1, _in);
-	return (b[3]<<24)|(b[2]<<16)|(b[1]<<8)|b[0];
-}
-
-void SmushPlayer::openFile(byte *fileName)
-{
+void SmushPlayer::openFile(byte *fileName) {
 	byte buf[100];
 
-	sprintf((char *)buf, "%sVIDEO/%s", (char *)sm->_gameDataPath, (char *)fileName);
-	_in = fopen((char *)buf, "rb");
+	sprintf((char *)buf, "%sVIDEO/%s", (char *)_scumm->_gameDataPath, (char *)fileName);
+	_in = (FILE*)_scumm->fileOpen((char *)buf, 1);
 
 	if (_in == NULL) {
-		sprintf((char *)buf, "%svideo/%s", (char *)sm->_gameDataPath, (char *)fileName);
-		_in = fopen((char *)buf, "rb");
-
+		sprintf((char *)buf, "%svideo/%s", (char *)_scumm->_gameDataPath, (char *)fileName);
+		_in = (FILE*)_scumm->fileOpen((char *)buf, 1);
 	}
 }
 
-void SmushPlayer::nextBlock()
-{
-	_blockTag = fileReadBE32();
-	_blockSize = fileReadBE32();
+void SmushPlayer::nextBlock() {
+	_blockTag = _scumm->fileReadDwordBE(_in);
+	_blockSize = _scumm->fileReadDwordBE(_in);
 
 	if (_block != NULL)
 		free(_block);
@@ -477,13 +447,12 @@ void SmushPlayer::nextBlock()
 	_block = (byte *)malloc(_blockSize);
 
 	if (_block == NULL)
-		error("cannot allocate memory");
+		error("SP: cannot allocate memory");
 
-	fileRead(_block, _blockSize);
+	_scumm->fileRead(_in, _block, _blockSize);
 }
 
-bool SmushPlayer::parseTag()
-{
+bool SmushPlayer::parseTag() {
 	switch (nextBlock(), _blockTag) {
 
 	case 'AHDR':
@@ -495,26 +464,20 @@ bool SmushPlayer::parseTag()
 		break;
 
 	default:
-		invalidblock(_blockTag);
+		error("SP: Encountered invalid block %c%c%c%c", _blockTag >> 24, _blockTag >> 16, _blockTag >> 8, _blockTag);
 	}
 
 	return true;
 }
 
-
-
-void SmushPlayer::parseAHDR()
-{
+void SmushPlayer::parseAHDR() {
 	memcpy(_fluPalette, _block + 6, 0x300);
 	_paletteChanged = true;
-
-//  printf("parse AHDR\n");
 }
 
-
-void SmushPlayer::parseIACT()
-{
-	unsigned int pos, bpos, tag, sublen, subpos, trk, idx, flags;
+void SmushPlayer::parseIACT() {
+	uint32 pos, bpos, tag, sublen, subpos, trk, idx;
+	byte flags;
 	bool new_mixer = false;
 	byte *buf;
 
@@ -547,7 +510,7 @@ void SmushPlayer::parseIACT()
 		return;
 	}
 
-	pos += 8;											/* FIXME: what are these ? */
+	pos += 8;	/* FIXME: what are these ? */
 
 	while (pos < _frmeSize) {
 
@@ -661,17 +624,12 @@ void SmushPlayer::parseIACT()
 	}
 }
 
-void SmushPlayer::parseNPAL()
-{
+void SmushPlayer::parseNPAL() {
 	memcpy(_fluPalette, _cur, 0x300);
-
 	_paletteChanged = true;
 }
 
-
-
-void codec1(CodecData * cd)
-{
+void SmushPlayer::codec1(CodecData * cd) {
 	uint y = cd->y;
 	byte *src = cd->src;
 	byte *dest = cd->out;
@@ -706,14 +664,14 @@ void codec1(CodecData * cd)
 
 			if (code & 1) {
 				color = *src++;
-//        if ((color = *src++)!=0) {
+//				if ((color = *src++)!=0) {
 				do {
 					if ((uint) x < (uint) cd->outwidth)
 						dest[x] = color;
 				} while (++x, --num);
-//        } else {
-//          x += num;
-//        }
+//			} else {
+//				x += num;
+//			}
 			} else {
 				do {
 					color = *src++;
@@ -725,13 +683,10 @@ void codec1(CodecData * cd)
 	} while (dest += cd->pitch, y++, --h);
 }
 
-
-
-void codec37_bompdepack(byte *dst, byte *src, int len)
-{
+void SmushPlayer::codec37BompDepack(byte *dst, byte *src, int32 len) {
 	byte code;
 	byte color;
-	int num;
+	int32 num;
 
 	do {
 		code = *src++;
@@ -749,14 +704,13 @@ void codec37_bompdepack(byte *dst, byte *src, int len)
 	} while (len -= num);
 }
 
-void codec37_proc4(byte *dst, byte *src, int next_offs, int bw, int bh, int pitch, int16 *table)
-{
+void SmushPlayer::codec37Proc4(byte *dst, byte *src, int32 next_offs, int32 bw, int32 bh, int32 pitch, int16 *table) {
 	byte code, *tmp;
-	int i;
+	int32 i;
 	uint32 t;
 
 	if (pitch != 320) {
-		warning("invalid pitch");
+		warning("SP: invalid pitch");
 		return;
 	}
 
@@ -877,15 +831,14 @@ void codec37_proc4(byte *dst, byte *src, int next_offs, int bw, int bh, int pitc
 }
 
 
-void codec37_proc5(int game, byte *dst, byte *src, int next_offs, int bw, int bh,
-									 int pitch, int16 *table)
-{
+void SmushPlayer::codec37Proc5(int32 game, byte *dst, byte *src, int32 next_offs, int32 bw, int32 bh, 
+				  int32 pitch, int16 *table) {
 	byte code, *tmp;
-	int i;
+	int32 i;
 	uint32 t;
 
 	if (pitch != 320) {
-		warning("invalid pitch");
+		warning("SP: invalid pitch");
 		return;
 	}
 
@@ -975,7 +928,6 @@ void codec37_proc5(int game, byte *dst, byte *src, int next_offs, int bw, int bh
 		dst += 320 * 4 - 320;
 	} while (--bh);
 }
-
 
 // this table is the same in FT and Dig
 static const int8 maketable_bytes[] = {
@@ -1077,9 +1029,8 @@ static const int8 maketable_bytes[] = {
 	-12, 19, 13, 19, -6, 22, 6, 22, 0, 23,
 };
 
-void codec37_maketable(PersistentCodecData37 * pcd, int pitch, byte idx)
-{
-	int i, j;
+void SmushPlayer::codec37Maketable(PersistentCodecData37 * pcd, int32 pitch, byte idx) {
+	int32 i, j;
 
 	if (pcd->table_last_pitch == pitch && pcd->table_last_flags == idx)
 		return;
@@ -1087,7 +1038,7 @@ void codec37_maketable(PersistentCodecData37 * pcd, int pitch, byte idx)
 	pcd->table_last_pitch = pitch;
 	pcd->table_last_flags = idx;
 
-	assert(idx * 255 + 254 < (int)(sizeof(maketable_bytes) / 2));
+	assert(idx * 255 + 254 < (int32)(sizeof(maketable_bytes) / 2));
 
 	for (i = 0; i < 255; i++) {
 		j = i + idx * 255;
@@ -1095,14 +1046,11 @@ void codec37_maketable(PersistentCodecData37 * pcd, int pitch, byte idx)
 	}
 }
 
-
-
-int codec37(int game, CodecData * cd, PersistentCodecData37 * pcd)
-{
-	int width_in_blocks, height_in_blocks;
-	int src_pitch;
+bool SmushPlayer::codec37(int32 game, CodecData * cd, PersistentCodecData37 * pcd) {
+	int32 width_in_blocks, height_in_blocks;
+	int32 src_pitch;
 	byte *curbuf;
-	uint size;
+	int32 size;
 	bool result = false;
 
 	_frameChanged = 1;
@@ -1111,7 +1059,7 @@ int codec37(int game, CodecData * cd, PersistentCodecData37 * pcd)
 	height_in_blocks = (cd->h + 3) >> 2;
 	src_pitch = width_in_blocks * 4;
 
-	codec37_maketable(pcd, src_pitch, cd->src[1]);
+	codec37Maketable(pcd, src_pitch, cd->src[1]);
 
 	switch (cd->src[0]) {
 	case 0:{
@@ -1127,7 +1075,7 @@ int codec37(int game, CodecData * cd, PersistentCodecData37 * pcd)
 			size = READ_LE_UINT32(cd->src + 4);
 			curbuf = pcd->deltaBufs[pcd->curtable];
 			if (size == 64000)
-				codec37_bompdepack(curbuf, cd->src + 16, size);
+				codec37BompDepack(curbuf, cd->src + 16, size);
 			else
 				return (1);
 
@@ -1152,7 +1100,7 @@ int codec37(int game, CodecData * cd, PersistentCodecData37 * pcd)
 				pcd->curtable ^= 1;
 			}
 
-			codec37_proc5(game, pcd->deltaBufs[pcd->curtable], cd->src + 16,
+			codec37Proc5(game, pcd->deltaBufs[pcd->curtable], cd->src + 16,
 										pcd->deltaBufs[pcd->curtable ^ 1] -
 										pcd->deltaBufs[pcd->curtable], width_in_blocks,
 										height_in_blocks, src_pitch, pcd->table1);
@@ -1175,7 +1123,7 @@ int codec37(int game, CodecData * cd, PersistentCodecData37 * pcd)
 				pcd->curtable ^= 1;
 			}
 
-			codec37_proc4(pcd->deltaBufs[pcd->curtable], cd->src + 16,
+			codec37Proc4(pcd->deltaBufs[pcd->curtable], cd->src + 16,
 										pcd->deltaBufs[pcd->curtable ^ 1] -
 										pcd->deltaBufs[pcd->curtable], width_in_blocks,
 										height_in_blocks, src_pitch, pcd->table1);
@@ -1183,11 +1131,11 @@ int codec37(int game, CodecData * cd, PersistentCodecData37 * pcd)
 		}
 
 	case 1:
-		warning("code %d", cd->src[0]);
+		warning("SP: code %d", cd->src[0]);
 		return (1);
 
 	default:
-		error("codec37 default case");
+		error("SP: codec37 default case");
 	}
 
 	pcd->flags = READ_LE_UINT16(cd->src + 2);
@@ -1201,8 +1149,7 @@ int codec37(int game, CodecData * cd, PersistentCodecData37 * pcd)
 	return (_frameChanged);
 }
 
-void codec37_init(PersistentCodecData37 * pcd, int width, int height)
-{
+void SmushPlayer::codec37Init(PersistentCodecData37 * pcd, int32 width, int32 height) {
 	pcd->width = width;
 	pcd->height = height;
 	pcd->deltaSize = width * height * 2 + 0x3E00 + 0xBA00;
@@ -1213,8 +1160,7 @@ void codec37_init(PersistentCodecData37 * pcd, int width, int height)
 	pcd->table1 = (int16 *)calloc(255, sizeof(uint16));
 }
 
-void SmushPlayer::parseFOBJ()
-{
+void SmushPlayer::parseFOBJ() {
 	byte codec;
 	CodecData cd;
 
@@ -1235,16 +1181,15 @@ void SmushPlayer::parseFOBJ()
 		codec1(&cd);
 		break;
 	case 37:
-		_frameChanged = codec37(sm->_gameId, &cd, &pcd37);
+		_frameChanged = codec37(_scumm->_gameId, &cd, &pcd37);
 		break;
 	default:
-		error("invalid codec %d", codec);
+		error("SP: invalid codec %d", codec);
 	}
 }
 
-void SmushPlayer::parsePSAD()		// FIXME: Needs to append to
-{																//      a sound buffer
-	unsigned int pos, sublen, tag, idx, trk;
+void SmushPlayer::parsePSAD() {		// FIXME: Needs to append to a sound buffer
+	uint32 pos, sublen, tag, idx, trk;
 	bool new_mixer = false;
 	byte *buf;
 	pos = 0;
@@ -1332,26 +1277,21 @@ void SmushPlayer::parsePSAD()		// FIXME: Needs to append to
 	}
 }
 
-void SmushPlayer::parseTRES()
-{
-       // FIXME: Doesn't work for Full Throttle
-       if (sm->_gameId != GID_DIG) {  
-               printf("getStringTRES(%d)\n", READ_LE_UINT16(_cur + 16));
-               return;
-       }
-	if ((sm->_noSubtitles) && (READ_LE_UINT16(_cur + 4) != 0))
-		return;
+void SmushPlayer::parseTRES() {
+    if (_scumm->_gameId == GID_DIG) {  
+		if ((_scumm->_noSubtitles) && (READ_LE_UINT16(_cur + 4) != 0))
+			return;
 	
-	byte * txt = getStringTRES (READ_LE_UINT16(_cur + 16));
-	drawStringTRES (READ_LE_UINT16(_cur), READ_LE_UINT16(_cur + 2), txt);
-	if (txt != NULL)
-		free (txt);
+		byte * txt = getStringTRES (READ_LE_UINT16(_cur + 16));
+		drawStringTRES (READ_LE_UINT16(_cur), READ_LE_UINT16(_cur + 2), txt);
+		if (txt != NULL)
+			free (txt);
+	}
 }
 
-void SmushPlayer::parseXPAL()
-{
-	int num;
-	int i;
+void SmushPlayer::parseXPAL() {
+	int32 num;
+	int32 i;
 
 	num = READ_LE_UINT16(_cur + 2);
 	if (num == 0 || num == 0x200) {
@@ -1375,8 +1315,7 @@ void SmushPlayer::parseXPAL()
 	_paletteChanged = true;
 }
 
-void SmushPlayer::parseFRME()
-{
+void SmushPlayer::parseFRME() {
 	_cur = _block;
 
 	do {
@@ -1407,17 +1346,16 @@ void SmushPlayer::parseFRME()
 			break;
 
 		default:
-			invalidblock(_frmeTag);
+			error("SP: Encountered invalid block %c%c%c%c", _frmeTag >> 24, _frmeTag >> 16, _frmeTag >> 8, _frmeTag);
 		}
 
 		_cur += (_frmeSize + 1) & ~1;
 	} while (_cur + 4 < _block + _blockSize);
 }
 
-void SmushPlayer::init()
-{
-	_renderBitmap = sm->_videoBuffer;
-	codec37_init(&pcd37, 320, 200);
+void SmushPlayer::init() {
+	_renderBitmap = _scumm->_videoBuffer;
+	codec37Init(&pcd37, 320, 200);
 
 	memset(_saudSize, 0, sizeof(_saudSize));
 	memset(_saudSubSize, 0, sizeof(_saudSubSize));
@@ -1430,23 +1368,23 @@ void SmushPlayer::init()
 	memset(_imusPos, 0, sizeof(_imusPos));
 	memset(_imusChan, 0, sizeof(_imusChan));
 	
-	if (sm->_gameId == GID_DIG)
+	if (_scumm->_gameId == GID_DIG)
 	{
 		for (uint8 l = 0; l < SP_MAX_FONTS; l++) {
 			_fonts[l] = NULL;
 		}
-		_buffer_tres = NULL;
+		_bufferTres = NULL;
 		loadTres();
 		loadFonts();
 	}
+	_scumm->_timer->installProcedure(&smush_handler, 83);
 }
 
-void SmushPlayer::deinit()
-{
-	if (sm->_gameId == GID_DIG)
+void SmushPlayer::deinit() {
+	if (_scumm->_gameId == GID_DIG)
 	{
-		if (_buffer_tres != NULL)
-			free (_buffer_tres);
+		if (_bufferTres != NULL)
+			free (_bufferTres);
 
 		for (int l = 0; l < SP_MAX_FONTS; l++) {
 			if (_fonts[l] != NULL) {
@@ -1455,17 +1393,16 @@ void SmushPlayer::deinit()
 			}
 		}
 	}
+	_scumm->_timer->releaseProcedure(&smush_handler);
 }
 
-void SmushPlayer::go()
-{
+void SmushPlayer::go() {
 	while (parseTag()) {
 	}
 }
 
-void SmushPlayer::setPalette()
-{
-	int i;
+void SmushPlayer::setPalette() {
+	int32 i;
 	byte palette_colors[1024];
 	byte *p = palette_colors;
 	byte *data = _fluPalette;
@@ -1477,15 +1414,18 @@ void SmushPlayer::setPalette()
 		p[3] = 0;
 	}
 
-	sm->_system->set_palette(palette_colors, 0, 256);
+	_scumm->_system->set_palette(palette_colors, 0, 256);
 }
 
-void SmushPlayer::startVideo(short int arg, byte *videoFile)
-{
-	int frameIndex = 0;
+void SmushPlayer::update() {
+	_lock = false;
+}
+
+void SmushPlayer::startVideo(short int arg, byte *videoFile) {
+	int32 frameIndex = 0;
 
 	_in = NULL;
-	_paletteChanged = 0;
+	_paletteChanged = false;
 	_block = NULL;
 	_blockTag = 0;
 	_blockSize = 0;
@@ -1496,38 +1436,27 @@ void SmushPlayer::startVideo(short int arg, byte *videoFile)
 	_frmeSize = 0;
 	_deltaBuf = NULL;
 	_deltaBufSize = 0;
+	_lock = true;
 
-	pcd37.deltaBuf = NULL;
-	pcd37.deltaBufs[0] = NULL;
-	pcd37.deltaBufs[1] = NULL;
-	pcd37.deltaSize = 0;
-	pcd37.width = 0;
-	pcd37.height = 0;
-	pcd37.curtable = 0;
-	pcd37.unk2 = 0;
-	pcd37.unk3 = 0;
-	pcd37.flags = 0;
-	pcd37.table1 = NULL;
-	pcd37.table_last_pitch = 0;
-	pcd37.table_last_flags = 0;
+	memset (&pcd37, 0, sizeof (PersistentCodecData37));
 
-	sm->pauseBundleMusic(true);
+	_scumm->pauseBundleMusic(true);
 	init();
 	openFile(videoFile);
 
 	if (_in == NULL)
 		return;
 
-	if (fileReadBE32() != 'ANIM')
-		error("file is not an anim");
+	if (_scumm->fileReadDwordBE(_in) != 'ANIM')
+		error("SP: file is not an anim");
 
-	fileSize = fileReadBE32();
+	fileSize = _scumm->fileReadDwordBE(_in);
 
-	sm->videoFinished = 0;
-	sm->_insaneState = 1;
+	_scumm->videoFinished = 0;
+	_scumm->_insaneState = 1;
 
 	do {
-		_frameChanged = 1;
+		_frameChanged = true;
 
 		if (ftell(_in) >= fileSize)
 			break;
@@ -1541,26 +1470,26 @@ void SmushPlayer::startVideo(short int arg, byte *videoFile)
 		if (_paletteChanged) {
 			_paletteChanged = false;
 			setPalette();
-			sm->setDirtyColors(0, 255);
+			_scumm->setDirtyColors(0, 255);
 		}
 
 		if (_frameChanged) {
-			/* FIXME: not properly implemented after switch to new gfx code */
-
-			sm->_system->copy_rect(sm->_videoBuffer, 320, 0, 0, 320, 200);
-			sm->_system->update_screen();
-			sm->waitForTimer(60);
-
-			//sm->delta = sm->_system->waitTick(sm->delta);
+			_scumm->_system->copy_rect(_scumm->_videoBuffer, 320, 0, 0, 320, 200);
+			_scumm->_system->update_screen();
 		}
 
-		sm->processKbd();
+		do {
+			_scumm->waitForTimer(10);
+		} while (_lock);
+		_lock = true;
 
-	} while (!sm->videoFinished);
+		_scumm->processKbd();
+
+	} while (!_scumm->videoFinished);
 
 	deinit();
 
-	sm->_insaneState = 0;
-	sm->exitCutscene();
-	sm->pauseBundleMusic(false);
+	_scumm->_insaneState = 0;
+	_scumm->exitCutscene();
+	_scumm->pauseBundleMusic(false);
 }

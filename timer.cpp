@@ -43,13 +43,8 @@ static int timer_handler (int t)
 
 int Timer::handler(int * t) {
 	uint32 interval, l;
-	uint32 beginTime, endTime;
-
-	if (_timerRunning == false) 
-		return *t;
 
 	_osystem->lock_mutex(_mutex);
-	beginTime = _osystem->get_msecs();
 
 	if (_timerRunning) {
 		_lastTime = _thisTime;
@@ -67,13 +62,7 @@ int Timer::handler(int * t) {
 		}
 	}
 
-	endTime = _osystem->get_msecs();
-	interval = endTime - beginTime;
-	if (interval < 10) interval = 10;
-	if (interval > 10000) interval = 10000;
 	_osystem->unlock_mutex(_mutex);
-
-//	_osystem->set_timer (interval, &timer_handler);
 
 	return *t;
 }
@@ -98,7 +87,7 @@ bool Timer::init() {
 
 	_mutex = _osystem->create_mutex();
 	_thisTime = _osystem->get_msecs();
-	_osystem->set_timer (1000, &timer_handler);
+	_osystem->set_timer (10, &timer_handler);
 
 	_timerRunning = true;
 	_initialized = true;

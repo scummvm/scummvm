@@ -2704,6 +2704,7 @@ void Scumm::o6_miscOps()
 	Actor *a;
 
 	IMuse *se = _imuse;						//yazoo: not very nice
+	SmushPlayer * sp;
 
 	getStackList(args, sizeof(args) / sizeof(args[0]));
 
@@ -2713,9 +2714,9 @@ void Scumm::o6_miscOps()
 			grabCursor(args[1], args[2], args[3], args[4]);
 			break;
 		case 6:
-			SmushPlayer localSp;
-			localSp.sm = this;
-			localSp.startVideo(args[1], getStringAddressVar(VAR_VIDEONAME));
+			sp = new SmushPlayer(this);
+			sp->startVideo(args[1], getStringAddressVar(VAR_VIDEONAME));
+			delete sp;
 			break;
 		case 7:
 			warning("o6_miscOps: stub7()");

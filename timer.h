@@ -23,7 +23,7 @@
 
 #include "scummsys.h"
 
-#define MAX_TIMERS 5
+#define MAX_TIMERS 3
 
 class OSystem;
 
