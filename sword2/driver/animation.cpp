@@ -52,15 +52,12 @@ AnimationState::~AnimationState() {
 bool AnimationState::init(const char *name) {
 #ifdef USE_MPEG2
 
-	char basename[512], tempFile[512];
+	char tempFile[512];
 
 	decoder = NULL;
 	mpgfile = NULL;
 	sndfile = NULL;
         bgSoundStream = NULL;
-
-	strcpy(basename, name);
-	basename[strlen(basename) - 4] = 0;	// FIXME: hack to remove extension
 
 #ifdef BACKEND_8BIT
 
@@ -68,11 +65,11 @@ bool AnimationState::init(const char *name) {
 
 	// Load lookup palettes
 	// TODO: Binary format so we can use File class
-	sprintf(tempFile, "%s/%s.pal", _vm->getGameDataPath(), basename);
+	sprintf(tempFile, "%s/%s.pal", _vm->getGameDataPath(), name);
 	FILE *f = fopen(tempFile, "r");
 
 	if (!f) {
-		warning("Cutscene: %s.pal palette missing", basename);
+		warning("Cutscene: %s.pal palette missing", name);
 		return false;
 	}
 
@@ -117,7 +114,7 @@ bool AnimationState::init(const char *name) {
 
 	// Open MPEG2 stream
 	mpgfile = new File();
-	sprintf(tempFile, "%s.mp2", basename);
+	sprintf(tempFile, "%s.mp2", name);
 	if (!mpgfile->open(tempFile)) {
 		warning("Cutscene: Could not open %s", tempFile);
 		return false;
@@ -141,7 +138,7 @@ bool AnimationState::init(const char *name) {
 	// MP3, or any other format the mixer might support one day... is
 	// there?
 	sndfile = new File;
-	sprintf(tempFile, "%s.ogg", basename);
+	sprintf(tempFile, "%s.ogg", name);
 	if (sndfile->open(tempFile)) {
 		bgSoundStream = makeVorbisStream(sndfile, sndfile->size());
 		_vm->_mixer->playInputStream(&bgSound, bgSoundStream, false, 255, 0, -1);
@@ -401,7 +398,7 @@ int32 MoviePlayer::play(const char *filename, MovieTextObject *text[], uint8 *mu
 	PlayingSoundHandle handle;
 	bool skipCutscene = false, textVisible = false;
 	uint32 flags = SoundMixer::FLAG_16BITS;
-  bool startNextText = false;
+	bool startNextText = false;
 
 	uint8 oldPal[1024];
 	memcpy(oldPal, _vm->_graphics->_palCopy, 1024);
@@ -422,21 +419,20 @@ int32 MoviePlayer::play(const char *filename, MovieTextObject *text[], uint8 *mu
 #endif
 
 	while (anim->decodeFrame()) {
-
 		if (text && text[textCounter]) {                      
 			if (frameCounter == text[textCounter]->startFrame) {
 				openTextObject(text[textCounter]);
 				textVisible = true;
 
-        if (text[textCounter]->speech) {
-          startNextText = true;
+				if (text[textCounter]->speech) {
+					startNextText = true;
 				}
-      }
+			}
 
-      if (startNextText && !handle.isActive()) {
-        _vm->_mixer->playRaw(&handle, text[textCounter]->speech, text[textCounter]->speechBufferSize, 22050, flags);
-        startNextText = false;
-      }
+			if (startNextText && !handle.isActive()) {
+				_vm->_mixer->playRaw(&handle, text[textCounter]->speech, text[textCounter]->speechBufferSize, 22050, flags);
+				startNextText = false;
+			}
 
 			if (frameCounter == text[textCounter]->endFrame) {
 				closeTextObject(text[textCounter]);
@@ -481,19 +477,6 @@ int32 MoviePlayer::play(const char *filename, MovieTextObject *text[], uint8 *mu
 	_vm->_graphics->clearScene();
 	_vm->_graphics->setNeedFullRedraw();
 
-/*
-	// HACK: Remove the instructions created above
-	Common::Rect r;
-
-	memset(_vm->_graphics->_buffer, 0, _vm->_graphics->_screenWide * MENUDEEP);
-	r.left = r.top = 0;
-	r.right = _vm->_graphics->_screenWide;
-	r.bottom = MENUDEEP;
-	_vm->_graphics->updateRect(&r);
-*/
-
-	// FIXME: For now, only play the lead-out music for cutscenes
-	// that have subtitles.
 	if (!skipCutscene)
 		_vm->_sound->playLeadOut(musicOut);
 

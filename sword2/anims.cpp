@@ -639,7 +639,7 @@ int32 Logic::fnPlaySequence(int32 *params) {
 
 	// add the appropriate file extension & play it
 
-	sprintf(filename, "%s.smk", (const char *) _vm->_memory->intToPtr(params[0]));
+	strcpy(filename, (const char *) _vm->_memory->intToPtr(params[0]));
 
 	// Write to walkthrough file (zebug0.txt)
  	debug(5, "PLAYING SEQUENCE \"%s\"", filename);
