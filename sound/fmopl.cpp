@@ -1147,6 +1147,11 @@ FM_OPL *makeAdlibOPL(int rate) {
 		env_bits = FMOPL_ENV_BITS_HQ;
 		eg_ent = FMOPL_EG_ENT_HQ;
 	}
+	else
+	if (ConfMan.hasKey("FM_medium_quality") && ConfMan.getBool("FM_medium_quality")) {
+		env_bits = FMOPL_ENV_BITS_MQ;
+		eg_ent = FMOPL_EG_ENT_MQ;
+	}
 	else {
 		env_bits = FMOPL_ENV_BITS_LQ;
 		eg_ent = FMOPL_EG_ENT_LQ;
