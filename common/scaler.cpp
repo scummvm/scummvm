@@ -655,7 +655,7 @@ static inline uint16 interpolate5(uint16 A, uint16 B, int scale) {
 	uint16 g = (uint16)(((A & greenMask) * scale + (B & greenMask) * (5 - scale)) / 5);
 	uint16 b = (uint16)(((A & blueMask) * scale + (B & blueMask) * (5 - scale)) / 5);
 
-	return (r & redMask) | (g & greenMask) | (b & blueMask);
+	return (uint16)((r & redMask) | (g & greenMask) | (b & blueMask));
 }
 
 static inline void interpolate5Line(uint16 *dst, const uint16 *srcA, const uint16 *srcB, int scale, int width) {
