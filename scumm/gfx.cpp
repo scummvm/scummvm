@@ -484,6 +484,8 @@ void Gdi::resetBackground(int top, int bottom, int strip) {
 	byte *backbuff_ptr, *bgbak_ptr;
 	int offs, numLinesToProcess;
 
+	assert(0 <= strip && strip < _numStrips);
+
 	if (top < vs->tdirty[strip])
 		vs->tdirty[strip] = top;
 

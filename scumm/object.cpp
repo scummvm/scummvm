@@ -1655,7 +1655,7 @@ void Scumm::removeBlastObject(BlastObject *eo) {
 		right = vs->width;
 
 	left_strip = left >> 3;
-	right_strip = (right >> 3) + 1;
+	right_strip = (right - 1) >> 3;
 
 	if (left_strip < 0)
 		left_strip = 0;
