@@ -327,7 +327,7 @@ uint8 *ArcFile::decompressFile(uint32 fileId) {
 		dstPos += len;
 		srcPos += 2;
 		if (srcPos < srcBuf + size) {
-			uint8 len = *srcPos++;
+			len = *srcPos++;
 			memcpy(dstPos, srcPos, len);
 			dstPos += len;
 			srcPos += len;
