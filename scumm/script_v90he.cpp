@@ -481,13 +481,14 @@ void ScummEngine_v90he::o90_wizImageOps() {
 	switch (subOp) {
 	case -14: // HE99+
 		_wizParams.processFlags |= kWPFUseDefImgWidth;
-		pop();
+		_wizParams.resDefImgW = pop();
 		break;
 	case -13: // HE99+
 		_wizParams.processFlags |= kWPFUseDefImgHeight;
-		pop();
+		_wizParams.resDefImgH = pop();
 		break;
 	case 0:
+		// Dummy case
 		pop();
 		break;
 	case 1:
@@ -548,7 +549,7 @@ void ScummEngine_v90he::o90_wizImageOps() {
 		break;
 	case 16: // HE99+
 		_wizParams.processFlags |= 0x80000;
-		pop();
+		_wizParams.unk_178  = pop();
 		break;
 	case 19:
 		_wizParams.processFlags |= 1;
@@ -579,7 +580,7 @@ void ScummEngine_v90he::o90_wizImageOps() {
 		break;
 	case 40: // HE99+
 		_wizParams.processFlags |= 0x8000;
-		pop();
+		_wizParams.unk_174 = pop();
 		break;
 	case 46:
 		_wizParams.processFlags |= kWPFZoom;
@@ -592,48 +593,48 @@ void ScummEngine_v90he::o90_wizImageOps() {
 	case 85: // HE99+
 		_wizParams.processFlags |= 0x1102;
 		_wizParams.processMode = 7;
-		pop();
-		pop();
+		_wizParams.unk_164 = pop();
+		_wizParams.unk_160 = pop();
 		_wizParams.compType = pop();
 		break;
 	case 87: // HE99+
 		_wizParams.processFlags |= 0x60000;
 		_wizParams.processMode = 9;
-		pop();
-		pop();
-		pop();
-		pop();
-		pop();
+		_wizParams.fillColor = pop();
+		_wizParams.box2.bottom = pop();
+		_wizParams.box2.right = pop();
+		_wizParams.box2.top = pop();
+		_wizParams.box2.left = pop();
 		break;
 	case 88: // HE99+
 		_wizParams.processFlags |= 0x60000;
 		_wizParams.processMode = 10;
-		pop();
-		pop();
-		pop();
-		pop();
-		pop();
+		_wizParams.fillColor = pop();
+		_wizParams.box2.bottom = pop();
+		_wizParams.box2.right = pop();
+		_wizParams.box2.top = pop();
+		_wizParams.box2.left = pop();
 		break;
 	case 89: // HE99+
 		_wizParams.processFlags |= 0x60000;
 		_wizParams.processMode = 11;
-		pop();
-		pop();
-		pop();
+		_wizParams.fillColor = pop();
+		_wizParams.box2.top = _wizParams.box2.bottom = pop();
+		_wizParams.box2.left = _wizParams.box2.right = pop();
 		break;
 	case 90: // HE99+
 		_wizParams.processFlags |= 0x60000;
 		_wizParams.processMode = 12;
-		pop();
-		pop();
-		pop();
+		_wizParams.fillColor = pop();
+		_wizParams.box2.top = _wizParams.box2.bottom = pop();
+		_wizParams.box2.left = _wizParams.box2.right = pop();
 		break;
 	case 91: // HE99+
 		_wizParams.processFlags |= 0x10000;
-		pop();
+		_wizParams.unk_380 = pop();
 		break;
 	case 108:
-		_wizParams.processFlags |= 1;
+		_wizParams.processFlags |= kWPFSetPos;
 		_wizParams.img.y1 = pop();
 		_wizParams.img.x1 = pop();
 		break;

@@ -1087,7 +1087,9 @@ void ScummEngine_v100he::o100_resourceRoutines() {
 }
 
 void ScummEngine_v100he::o100_wizImageOps() {
+	byte filename[256];
 	int a, b;
+
 	byte subOp = fetchScriptByte();
 
 	switch (subOp) {
@@ -1099,17 +1101,17 @@ void ScummEngine_v100he::o100_wizImageOps() {
 		_wizParams.img.flags = 0;
 		break;
 	case 2:
-		_wizParams.processFlags |= 0x10;
+		_wizParams.processFlags |= kWPFRotate;
 		_wizParams.angle = pop();
 		break;
 	case 6:
-		_wizParams.processFlags |= 1;
+		_wizParams.processFlags |= kWPFSetPos;
 		_wizParams.img.y1 = pop();
 		_wizParams.img.x1 = pop();
 		break;
 	case 7:
 		_wizParams.processFlags |= 0x80000;
-		pop();
+		_wizParams.unk_178  = pop();
 		break;
 	case 11:
 		_wizParams.processFlags |= 0x300;
@@ -1121,7 +1123,7 @@ void ScummEngine_v100he::o100_wizImageOps() {
 		_wizParams.compType = pop();
 		break;
 	case 18:
-		_wizParams.processFlags |= 0x200;
+		_wizParams.processFlags |= kWPFClipBox;
 		_wizParams.box.bottom = pop();
 		_wizParams.box.right = pop();
 		_wizParams.box.top = pop();
@@ -1151,14 +1153,15 @@ void ScummEngine_v100he::o100_wizImageOps() {
 		_wizParams.box.left = pop();
 		break;
 	case 37:
+		// Dummy case
 		pop();
 		break;
 	case 39:
-		_wizParams.processFlags |= 0x4000;
-		pop();
+		_wizParams.processFlags |= kWPFUseDefImgHeight;
+		_wizParams.resDefImgH = pop();
 		break;
 	case 47:
-		_wizParams.processFlags |= 0x800;
+		_wizParams.processFlags |= kWPFUseFile;
 		_wizParams.processMode = 3;
 		copyScriptString(_wizParams.filename);
 		break;
@@ -1167,6 +1170,8 @@ void ScummEngine_v100he::o100_wizImageOps() {
 		break;
 	case 54:
 		_wizParams.processFlags |= 0x10000;
+		//_wizParams.unk_17C = pop();
+		//_wizParams.unk_180 = pop();
 		pop();
 		pop();
 		break;
@@ -1180,32 +1185,32 @@ void ScummEngine_v100he::o100_wizImageOps() {
 		break;
 	case 57:
 		_wizParams.processFlags |= 0x8000;
-		pop();
+		_wizParams.unk_174 = pop();
 		break;
 	case 58:
 		_wizParams.processFlags |= 0x1102;
 		_wizParams.processMode = 7;
-		pop();
-		pop();
+		_wizParams.unk_164 = pop();
+		_wizParams.unk_160 = pop();
 		_wizParams.compType = pop();
 		break;
 	case 64:
-		_wizParams.processFlags |= 0x800;
+		_wizParams.processFlags |= kWPFUseFile;
 		_wizParams.processMode = 4;
 		copyScriptString(_wizParams.filename);
 		_wizParams.unk_14C = pop();
 		break;
 	case 65:
-		_wizParams.processFlags |= 8;
+		_wizParams.processFlags |= kWPFZoom;
 		_wizParams.zoom = pop();
 		break;
 	case 67:
-		_wizParams.processFlags |= 0x20;
+		_wizParams.processFlags |= kWPFNewFlags;
 		_wizParams.img.flags = pop();
 		break;
 	case 68:
-		_wizParams.processFlags |= 0x23;
-		_wizParams.img.flags |= 0x40;
+		_wizParams.processFlags |= kWPFNewFlags | kWPFSetPos | 2;
+		_wizParams.img.flags |= kWIFIsPolygon;
 		_wizParams.unk_160 = _wizParams.img.y1 = _wizParams.img.x1 = pop();
 		break;
 	case 70:
@@ -1213,12 +1218,12 @@ void ScummEngine_v100he::o100_wizImageOps() {
 		_wizParams.unk_15C = pop();
 		break;
 	case 73:
-		_wizParams.processFlags |= 0x400;
+		_wizParams.processFlags |= kWPFNewState;
 		_wizParams.img.state = pop();
 		break;
 	case 84:
-		_wizParams.processFlags |= 0x2000;
-		pop();
+		_wizParams.processFlags |= kWPFUseDefImgWidth;
+		_wizParams.resDefImgW = pop();
 		break;
 	case 92:
 		processWizImage(&_wizParams);
@@ -1228,7 +1233,7 @@ void ScummEngine_v100he::o100_wizImageOps() {
 		pop();
 		pop();
 		pop();
-		//copyScriptString(?.filename);
+		copyScriptString(filename);
 		_wizParams.processMode = 15;
 		break;
 	case 129:
@@ -1238,13 +1243,13 @@ void ScummEngine_v100he::o100_wizImageOps() {
 		_wizParams.processMode = 16;
 		pop();
 		pop();
-		//copyScriptString(?.filename);
+		copyScriptString(filename);
 		break;
 	case 131:
 		_wizParams.processMode = 13;
 		break;
 	case 133:
-		_wizParams.processMode = 16;
+		_wizParams.processMode = 17;
 		pop();
 		pop();
 		pop();
@@ -1257,38 +1262,38 @@ void ScummEngine_v100he::o100_wizImageOps() {
 	case 134:
 		_wizParams.processFlags |= 0x60000;
 		_wizParams.processMode = 12;
-		pop();
-		pop();
-		pop();
+		_wizParams.fillColor = pop();
+		_wizParams.box2.top = _wizParams.box2.bottom = pop();
+		_wizParams.box2.left = _wizParams.box2.right = pop();
 		break;
 	case 135:
 		_wizParams.processFlags |= 0x10000;
-		pop();
+		_wizParams.unk_380 = pop();
 		break;
 	case 136:
 		_wizParams.processFlags |= 0x60000;
 		_wizParams.processMode = 10;
-		pop();
-		pop();
-		pop();
-		pop();
-		pop();
+		_wizParams.fillColor = pop();
+		_wizParams.box2.bottom = pop();
+		_wizParams.box2.right = pop();
+		_wizParams.box2.top = pop();
+		_wizParams.box2.left = pop();
 		break;
 	case 137:
 		_wizParams.processFlags |= 0x60000;
 		_wizParams.processMode = 11;
-		pop();
-		pop();
-		pop();
+		_wizParams.fillColor = pop();
+		_wizParams.box2.top = _wizParams.box2.bottom = pop();
+		_wizParams.box2.left = _wizParams.box2.right = pop();
 		break;
 	case 138:
 		_wizParams.processFlags |= 0x60000;
 		_wizParams.processMode = 9;
-		pop();
-		pop();
-		pop();
-		pop();
-		pop();
+		_wizParams.fillColor = pop();
+		_wizParams.box2.bottom = pop();
+		_wizParams.box2.right = pop();
+		_wizParams.box2.top = pop();
+		_wizParams.box2.left = pop();
 		break;
 	default:
 		error("o100_wizImageOps: Unknown case %d", subOp);
