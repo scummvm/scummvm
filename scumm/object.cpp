@@ -38,6 +38,8 @@ bool Scumm::getClass(int obj, int cls)
 
 		if (cls == 32)							// CLASS_TOUCHABLE
 			cls = 24;
+		if (cls == 22)
+			cls = 21;
 	}
 	return (_classData[obj] & (1 << (cls - 1))) != 0;
 }
@@ -55,6 +57,8 @@ void Scumm::putClass(int obj, int cls, bool set)
 
 		if (cls == 32)							// CLASS_TOUCHABLE
 			cls = 24;
+		if (cls == 22)
+			cls = 21;
 	}
 
 	if (set)
