@@ -1500,96 +1500,302 @@ void ScummEngine_v100he::o100_startSound() {
 
 void ScummEngine_v100he::o100_setSpriteInfo() {
 	int args[16];
+	int spriteId, tmp[2];
+	static int storedFields[2];
 	byte string[80];
 
 	byte subOp = fetchScriptByte();
 
 	switch (subOp) {
 	case 0:
-		pop();
-		pop();
+		_curMaxSpriteId = pop();
+		_curSpriteId = pop();
+		
+		if (_curSpriteId > _curMaxSpriteId)
+			SWAP(_curSpriteId, _curMaxSpriteId);
 		break;
 	case 2:
-		pop();
+		args[0] = pop();
+		if (_curSpriteId > _curMaxSpriteId)
+			break;
+		spriteId = _curSpriteId;
+		if (!spriteId)
+			spriteId++;
+
+		for (; spriteId <= _curMaxSpriteId; spriteId++)
+			spriteInfoSet_rotAngle(spriteId, args[0]);
 		break;
 	case 3:
-		pop();
+		args[0] = pop();
+		if (_curSpriteId > _curMaxSpriteId)
+			break;
+		spriteId = _curSpriteId;
+		if (!spriteId)
+			spriteId++;
+
+		for (; spriteId <= _curMaxSpriteId; spriteId++)
+			spriteInfoSet_flag22(spriteId, args[0]);
 		break;
 	case 4:
-		pop();
+		args[0] = pop();
+		if (_curSpriteId > _curMaxSpriteId)
+			break;
+		spriteId = _curSpriteId;
+		if (!spriteId)
+			spriteId++;
+
+		for (; spriteId <= _curMaxSpriteId; spriteId++)
+			spriteInfoSet_field_78_64(spriteId, args[0]);
 		break;
 	case 6:
-		pop();
-		pop();
+		args[1] = pop();
+		args[0] = pop();
+		if (_curSpriteId > _curMaxSpriteId)
+			break;
+		spriteId = _curSpriteId;
+		if (!spriteId)
+			spriteId++;
+
+		for (; spriteId <= _curMaxSpriteId; spriteId++)
+			spriteInfoSet_tx_ty(spriteId, args[0], args[1]);
 		break;
 	case 7:
-		pop();
+		args[0] = pop();
+		if (_curSpriteId > _curMaxSpriteId)
+			break;
+		spriteId = _curSpriteId;
+		if (!spriteId)
+			spriteId++;
+
+		for (; spriteId <= _curMaxSpriteId; spriteId++)
+			spriteInfoSet_field_7C(spriteId, args[0]);
 		break;
 	case 16:
 		getStackList(args, ARRAYSIZE(args));
 		break;
 	case 32:
-		pop();
+		args[0] = pop();
+		if (_curSpriteId > _curMaxSpriteId)
+			break;
+		spriteId = _curSpriteId;
+		if (!spriteId)
+			spriteId++;
+
+		for (; spriteId <= _curMaxSpriteId; spriteId++)
+			spriteInfoSet_flag31(spriteId, args[0]);
 		break;
 	case 38:
-		pop();
+		args[0] = pop();
+		if (_curSpriteId > _curMaxSpriteId)
+			break;
+		spriteId = _curSpriteId;
+		if (!spriteId)
+			spriteId++;
+
+		for (; spriteId <= _curMaxSpriteId; spriteId++)
+			spriteInfoSet_groupNum(spriteId, args[0]);
 		break;
 	case 40:
-		pop();
+		args[0] = pop();
+		if (_curSpriteId > _curMaxSpriteId)
+			break;
+		spriteId = _curSpriteId;
+		if (!spriteId)
+			spriteId++;
+
+		for (; spriteId <= _curMaxSpriteId; spriteId++)
+			spriteInfoSet_addImageToList(spriteId, 1, &args[0]);
 		break;
 	case 48:
-		pop();
+		args[0] = pop();
+		if (_curSpriteId > _curMaxSpriteId)
+			break;
+		spriteId = _curSpriteId;
+		if (!spriteId)
+			spriteId++;
+
+		for (; spriteId <= _curMaxSpriteId; spriteId++)
+			spriteInfoSet_field_80(spriteId, args[0]);
 		break;
 	case 49:
-		pop();
-		pop();
+		args[1] = pop();
+		args[0] = pop();
+		if (_curSpriteId > _curMaxSpriteId)
+			break;
+		spriteId = _curSpriteId;
+		if (!spriteId)
+			spriteId++;
+
+		for (; spriteId <= _curMaxSpriteId; spriteId++)
+			spriteInfoSet_Inc_tx_ty(spriteId, args[0], args[1]);
 		break;
 	case 52:
 		copyScriptString(string);
 		break;
 	case 53:
+		if (_curSpriteId > _curMaxSpriteId)
+			break;
+		spriteId = _curSpriteId;
+		if (!spriteId)
+			spriteId++;
+
+		for (; spriteId <= _curMaxSpriteId; spriteId++)
+			spriteInfoSet_case183(spriteId);
 		break;
 	case 54:
 		pop();
 		pop();
 		break;
 	case 57:
-		pop();
+		args[0] = pop();
+		if (_curSpriteId > _curMaxSpriteId)
+			break;
+		spriteId = _curSpriteId;
+		if (!spriteId)
+			spriteId++;
+
+		for (; spriteId <= _curMaxSpriteId; spriteId++)
+			spriteInfoSet_field_14(spriteId, args[0]);
 		break;
 	case 59:
-		pop();
+		args[0] = pop();
+		if (_curSpriteId > _curMaxSpriteId)
+			break;
+		spriteId = _curSpriteId;
+		if (!spriteId)
+			spriteId++;
+
+		for (; spriteId <= _curMaxSpriteId; spriteId++)
+			spriteInfoSet_field_18(spriteId, args[0]);
 		break;
 	case 60:
-		pop();
-		pop();
+		args[1] = pop();
+		args[0] = pop();
+		if (_curSpriteId > _curMaxSpriteId)
+			break;
+		spriteId = _curSpriteId;
+		if (!spriteId)
+			spriteId++;
+
+		for (; spriteId <= _curMaxSpriteId; spriteId++)
+			switch(args[1]) {
+			case 0:
+				spriteInfoSet_flag7(spriteId, args[0]);
+				break;
+			case 1:
+				spriteInfoSet_flagRotated(spriteId, args[0]);
+				break;
+			case 2:
+				spriteInfoSet_flag8(spriteId, args[0]);
+				break;
+			case 3:
+				spriteInfoSet_flagZoomed(spriteId, args[0]);
+				break;
+			case 4:
+				spriteInfoSet_flag20(spriteId, args[0]);
+				break;
+			default:
+				break;
+			}
 		break;
 	case 61:
+		spritesResetTables(true);
 		break;
 	case 65:
-		pop();
+		args[0] = pop();
+		if (_curSpriteId > _curMaxSpriteId)
+			break;
+		spriteId = _curSpriteId;
+		if (!spriteId)
+			spriteId++;
+
+		for (; spriteId <= _curMaxSpriteId; spriteId++)
+			spriteInfoSet_zoom(spriteId, args[0]);
 		break;
 	case 70:
-		pop();
+		args[0] = pop();
+		if (_curSpriteId > _curMaxSpriteId)
+			break;
+		spriteId = _curSpriteId;
+		if (!spriteId)
+			spriteId++;
+
+		for (; spriteId <= _curMaxSpriteId; spriteId++)
+			spriteInfoSet_field_54(spriteId, args[0]);
 		break;
 	case 73:
-		pop();
+		args[0] = pop();
+		if (_curSpriteId > _curMaxSpriteId)
+			break;
+		spriteId = _curSpriteId;
+		if (!spriteId)
+			spriteId++;
+
+		for (; spriteId <= _curMaxSpriteId; spriteId++)
+			spriteInfoSet_resState(spriteId, args[0]);
 		break;
 	case 74:
-		pop();
-		pop();
+		args[1] = pop();
+		args[0] = pop();
+		if (_curSpriteId > _curMaxSpriteId)
+			break;
+		spriteId = _curSpriteId;
+		if (!spriteId)
+			spriteId++;
+
+		for (; spriteId <= _curMaxSpriteId; spriteId++)
+			spriteInfoSet_field_2C_30(spriteId, args[0], args[1]);
 		break;
 	case 75:
-		pop();
+		args[0] = pop();
+		if (_curSpriteId > _curMaxSpriteId)
+			break;
+		spriteId = _curSpriteId;
+		if (!spriteId)
+			spriteId++;
+
+		for (; spriteId <= _curMaxSpriteId; spriteId++) {
+			spriteInfoGet_field_2C_30(spriteId, tmp[0], tmp[1]);
+			storedFields[0] = tmp[0];
+			spriteInfoSet_field_2C_30(spriteId, args[0], tmp[1]);
+		}
 		break;
 	case 76:
-		pop();
+		args[0] = pop();
+		if (_curSpriteId > _curMaxSpriteId)
+			break;
+		spriteId = _curSpriteId;
+		if (!spriteId)
+			spriteId++;
+
+		for (; spriteId <= _curMaxSpriteId; spriteId++) {
+			spriteInfoGet_field_2C_30(spriteId, tmp[0], tmp[1]);
+			storedFields[1] = tmp[1];
+			spriteInfoSet_field_2C_30(spriteId, tmp[0], args[0]);
+		}
 		break;
 	case 82:
-		pop();
+		args[0] = pop();
+		if (_curSpriteId > _curMaxSpriteId)
+			break;
+		spriteId = _curSpriteId;
+		if (!spriteId)
+			spriteId++;
+
+		for (; spriteId <= _curMaxSpriteId; spriteId++)
+			spriteInfoSet_flags23_26(spriteId, args[0]);
 		break;
 	case 83:
-		pop();
-		pop();
+		args[1] = pop();
+		args[0] = pop();
+		if (_curSpriteId > _curMaxSpriteId)
+			break;
+		spriteId = _curSpriteId;
+		if (!spriteId)
+			spriteId++;
+
+		for (; spriteId <= _curMaxSpriteId; spriteId++)
+			spriteInfoSet_field_44(spriteId, args[0], args[1]);
 		break;
 	case 88:
 		pop();
