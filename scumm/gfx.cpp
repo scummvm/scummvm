@@ -570,8 +570,8 @@ void ScummEngine::restoreBG(Common::Rect rect, byte backColor) {
 	int offset = rect.top * vs->width + vs->xstart + rect.left;
 	backbuff = vs->screenPtr + offset;
 
-	const int height = rect.height();
-	const int width = rect.width();
+	int height = rect.height();
+	int width = rect.width();
 
 	if (vs->hasTwoBuffers && _currentRoom != 0 && isLightOn()) {
 		blit(backbuff, vs->backBuf + offset, width, height);
