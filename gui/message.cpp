@@ -142,11 +142,12 @@ int MessageDialog::addLine(StringList &lines, const char *line, int size) {
 }
 
 void MessageDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
+	// FIXME: It's a really bad thing that we use two arbitrary constants 
 	if (cmd == kOkCmd) {
-		setResult(1);
+		setResult(kMessageOK);
 		close();
 	} else if (cmd == kCancelCmd) {
-		setResult(2);
+		setResult(kMessageCancel);
 		close();
 	} else {
 		Dialog::handleCommand(sender, cmd, data);

@@ -26,6 +26,12 @@
 
 namespace GUI {
 
+enum {
+	kMessageOK = 1,
+	kMessageCancel = 0
+};
+
+
 /**
  * Simple message dialog ("alert box"): presents a text message in a dialog with up to two buttons.
  */

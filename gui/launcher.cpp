@@ -581,7 +581,7 @@ void LauncherDialog::addGame() {
 void LauncherDialog::removeGame(int item) {
 	MessageDialog alert("Do you really want to remove this game configuration?", "Yes", "No");
 	
-	if (alert.runModal() > 0) {
+	if (alert.runModal() == GUI::kMessageOK) {
 		// Remove the currently selected game from the list
 		assert(item >= 0);
 		ConfMan.removeGameDomain(_domains[item]);

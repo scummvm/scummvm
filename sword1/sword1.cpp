@@ -1078,7 +1078,7 @@ void SwordEngine::checkCdFiles(void) { // check if we're running from cd, hdd or
 			test.close();
 		} else {
 			const char msg[] = "Unable to find the game files.\nPlease read the ScummVM documentation";
-                        GUI::MessageDialog dialog(msg);
+			GUI::MessageDialog dialog(msg);
 			dialog.runModal();
 			error(msg);
 		}

@@ -187,7 +187,7 @@ bool CEActionsPocket::perform(ActionType action, bool pushed) {
 			return true;
 		case POCKET_ACTION_QUIT:
 			GUI::MessageDialog alert("Do you want to quit ?", "Yes", "No");
-			if (alert.runModal() == 1)
+			if (alert.runModal() == GUI::kMessageOK)
 				_mainSystem->quit();
 			return true;
 	}
