@@ -210,11 +210,11 @@ SOURCE=..\..\common\scaler\intern.h
 # End Group
 # Begin Source File
 
-SOURCE="..\..\common\config-file.cpp"
+SOURCE="..\..\common\config-manager.cpp"
 # End Source File
 # Begin Source File
 
-SOURCE="..\..\common\config-file.h"
+SOURCE="..\..\common\config-manager.h"
 # End Source File
 # Begin Source File
 
