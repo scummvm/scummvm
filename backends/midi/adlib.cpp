@@ -626,7 +626,6 @@ private:
 
 	AdlibVoice *allocate_voice(byte pri);
 
-	void reset_tick();
 	void mc_off(AdlibVoice * voice);
 
 	static void link_mc(AdlibPart *part, AdlibVoice *voice);
@@ -863,14 +862,14 @@ int MidiDriver_ADLIB::open() {
 
 	_adlib_reg_cache = (byte *)calloc(256, 1);
 
-	_opl = makeAdlibOPL(_mixer->getOutputRate());
+	_opl = makeAdlibOPL(getRate());
 
 	adlib_write(1, 0x20);
 	adlib_write(8, 0x40);
 	adlib_write(0xBD, 0x00);
 	create_lookup_table();
 
-	_samples_per_tick = (_mixer->getOutputRate() << FIXP_SHIFT) / BASE_FREQ;
+	_samples_per_tick = (getRate() << FIXP_SHIFT) / BASE_FREQ;
 
 	_mixer->setupPremix(this);
 
@@ -1027,15 +1026,11 @@ void MidiDriver_ADLIB::generate_samples(int16 *data, int len) {
 			if (_timer_proc)
 				(*_timer_proc)(_timer_param);
 			on_timer();
-			reset_tick();
+			_next_tick += _samples_per_tick;
 		}
 		data += step;
 		len -= step;
 	} while (len);
-}
-
-void MidiDriver_ADLIB::reset_tick() {
-	_next_tick += _samples_per_tick;
 }
 
 void MidiDriver_ADLIB::on_timer() {

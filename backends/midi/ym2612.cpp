@@ -742,7 +742,7 @@ _mixer(mixer) {
 	_timer_proc = 0;
 	_timer_param = 0;
 	_next_tick = 0;
-	_samples_per_tick = (_mixer->getOutputRate() << FIXP_SHIFT) / BASE_FREQ;
+	_samples_per_tick = (getRate() << FIXP_SHIFT) / BASE_FREQ;
 	_next_voice = 0;
 
 	createLookupTables();
@@ -750,7 +750,7 @@ _mixer(mixer) {
 	int i;
 	for (i = 0; i < ARRAYSIZE(_channel); i++)
 		_channel[i] = new MidiChannel_YM2612;
-	rate(_mixer->getOutputRate());
+	rate(getRate());
 }
 
 MidiDriver_YM2612::~MidiDriver_YM2612() {
