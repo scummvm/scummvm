@@ -634,18 +634,12 @@ void ClassicCostumeLoader::loadCostume(int id) {
 
 byte NESCostumeRenderer::drawLimb(const Actor *a, int limb) {
 	const byte darkpalette[16] = {0x00,0x00,0x2D,0x3D,0x00,0x00,0x2D,0x3D,0x00,0x00,0x2D,0x3D,0x00,0x00,0x2D,0x3D};
-	const byte *palette;
-	const byte *src;
-	int offset, numSprites;
-	const byte *table, *ptr, *spritesDefs, *spritesOffsetTab, *numSpritesTab;
 	const CostumeData &cost = a->_cost;
-	int anim = cost.frame[limb];
-	int frameNum = cost.curpos[limb];
-	byte *bgTransBuf = _vm->getMaskBuffer(0, 0, 0);
-	byte *gfxMaskBuf = _vm->getMaskBuffer(0, 0, 1);
+	const byte *palette, *src, *sprdata;
+	int anim, frameNum, frame, offset, numSprites;
 
 	// If the specified limb is stopped or not existing, do nothing.
-	if (cost.curpos[limb] == 0xFFFF || cost.stopped & (1 << limb))
+	if (cost.curpos[limb] == 0xFFFF)
 		return 0;
 
 	if (_vm->VAR(_vm->VAR_CURRENT_LIGHTS) & LIGHTMODE_actor_color)
@@ -654,35 +648,34 @@ byte NESCostumeRenderer::drawLimb(const Actor *a, int limb) {
 		palette = darkpalette;
 
 	src = _loaded._dataOffsets;
+	anim = 4 * cost.frame[limb] + newDirToOldDir(a->getFacing());
+	frameNum = cost.curpos[limb];
+	frame = src[src[2 * anim] + frameNum];
 
-	// Cost(a)
-	int frame = src[src[8*anim + 2 * newDirToOldDir(a->getFacing())] + frameNum];
+	offset = READ_LE_UINT16(_vm->_NEScostdesc + v1MMNESLookup[_loaded._id] * 2);
+	numSprites = _vm->_NEScostlens[offset + frame] + 1;
+	sprdata = _vm->_NEScostdata + READ_LE_UINT16(_vm->_NEScostoffs + 2 * (offset + frame)) + numSprites * 3;
+
 	bool flipped = (newDirToOldDir(a->getFacing()) == 1);
-
-	// Lookup & desc
-	table = _vm->_NEScostdesc;
-	offset = READ_LE_UINT16(table + v1MMNESLookup[_loaded._id] * 2);
-
-	// lens
-	numSpritesTab = _vm->_NEScostlens + offset;
-	// offs
-	spritesOffsetTab = _vm->_NEScostoffs + offset*2;
-	// data
-	spritesDefs = _vm->_NEScostdata;
-
-	ptr = spritesDefs + READ_LE_UINT16(spritesOffsetTab + frame*2);
-	numSprites = numSpritesTab[frame] + 1;
-
 	int left = 239, right = 0, top = 239, bottom = 0;
+	byte *bgTransBuf = _vm->getMaskBuffer(0, 0, 0);
+	byte *gfxMaskBuf = _vm->getMaskBuffer(0, 0, 1);
 
 	for (int spr = 0; spr < numSprites; spr++) {
-		byte mask = (ptr[0] & 0x80) ? 0x01 : 0x80;
-		int8 y = ptr[0] << 1;	y >>= 1;
-		byte tile = ptr[1];
-		byte sprpal = (ptr[2] & 0x03) << 2;
-		int8 x = ptr[2];	x >>= 2;
+		byte mask, tile, sprpal;
+		int8 y, x;
 
-		ptr += 3;
+		sprdata -= 3;
+
+		mask = (sprdata[0] & 0x80) ? 0x01 : 0x80;
+		y = sprdata[0] << 1;
+		y >>= 1;
+
+		tile = sprdata[1];
+
+		sprpal = (sprdata[2] & 0x03) << 2;
+		x = sprdata[2];
+		x >>= 2;
 
 		if (flipped) {
 			mask = (mask == 0x80) ? 0x01 : 0x80;
@@ -717,14 +710,10 @@ byte NESCostumeRenderer::drawLimb(const Actor *a, int limb) {
 					*((byte *)_out.pixels + my * _out.pitch + mx) = palette[c];
 			}
 		}
-		if (left > _actorX + x)
-			left = _actorX + x;
-		if (right < _actorX + x + 8)
-			right = _actorX + x + 8;
-		if (top > _actorY + y)
-			top = _actorY + y;
-		if (bottom < _actorY + y + 8)
-			bottom = _actorY + y + 8;
+		left = MIN(left, _actorX + x);
+		right = MAX(right, _actorX + x + 8);
+		top = MIN(top, _actorY + y);
+		bottom = MAX(bottom, _actorY + y + 8);
 	}
 
 	_draw_top = top;
@@ -978,27 +967,10 @@ byte ClassicCostumeLoader::increaseAnim(Actor *a, int slot) {
  * costume ID -> v1MMNESLookup[] -> desc -> lens & offs -> data -> Gfx & pal
  */
 void NESCostumeLoader::loadCostume(int id) {
-	const byte *src;
-	int frameset, framenum;
-	int offset;
-
 	_id = id;
 	_baseptr = _vm->getResourceAddress(rtCostume, id);
-
 	_dataOffsets = _baseptr + 2;
-
-	frameset = 0;
-	framenum = 0;
-
-	src = _dataOffsets;
-
-	// Lookup & desc
-	offset = READ_LE_UINT16(_vm->_NEScostdesc + v1MMNESLookup[_id] * 2);
-	if (v1MMNESLookup[_id] * 2 + 2 < READ_LE_UINT16(_vm->_NEScostdesc - 2)) {
-		_numAnim = (READ_LE_UINT16(_vm->_NEScostdesc + v1MMNESLookup[_id] * 2 + 2) - offset);
-	} else {
-		_numAnim = ((READ_LE_UINT16(_vm->_NEScostlens - 2) - 2) - offset);
-	}
+	_numAnim = 0x17;
 }
 
 void NESCostumeLoader::costumeDecodeData(Actor *a, int frame, uint usemask) {
@@ -1006,7 +978,7 @@ void NESCostumeLoader::costumeDecodeData(Actor *a, int frame, uint usemask) {
 
 	loadCostume(a->_costume);
 
-	anim = newDirToOldDir(a->getFacing()) + frame * 4;
+	anim = 4 * frame + newDirToOldDir(a->getFacing());
 
 	if (anim > _numAnim) {
 		return;
@@ -1014,7 +986,7 @@ void NESCostumeLoader::costumeDecodeData(Actor *a, int frame, uint usemask) {
 
 	a->_cost.curpos[0] = 0;
 	a->_cost.start[0] = 0;
-	a->_cost.end[0] = _baseptr[2 + 8 * frame + 2 * newDirToOldDir(a->getFacing()) + 1];
+	a->_cost.end[0] = _dataOffsets[2 * anim + 1];
 	a->_cost.frame[0] = frame;
 }
 
@@ -1030,10 +1002,10 @@ byte NESCostumeLoader::increaseAnims(Actor *a) {
 }
 
 byte NESCostumeLoader::increaseAnim(Actor *a, int slot) {
-	a->_cost.curpos[slot]++;
+	int oldframe = a->_cost.curpos[slot]++;
 	if (a->_cost.curpos[slot] >= a->_cost.end[slot])
 		a->_cost.curpos[slot] = a->_cost.start[slot];
-	return 0;
+	return (a->_cost.curpos[slot] != oldframe);
 }
 
 
