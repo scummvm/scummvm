@@ -157,7 +157,9 @@ bool Scumm::loadState(int slot, bool compat, SaveFileManager *mgr) {
 	initScreens(0, sb, _realWidth, sh);
 
 	_completeScreenRedraw = true;
-	setDirtyColors(0, 255);
+	
+	if (!(_features & GF_16COLOR))
+		setDirtyColors(0, 255);
 
 	_lastCodePtr = NULL;
 
