@@ -123,7 +123,7 @@ static const struct GraphicsMode gfx_modes[] = {
 	{"dotmatrix", "DotMatrix", GFX_DOTMATRIX},
 #else
 	{"flipping", "Page Flipping", GFX_FLIPPING},
-	{"dbuffer", "Double Buffer", GFX_DOUBLEBUFFER},
+	{"buffered", "Buffered", GFX_BUFFERED},
 	{"wide", "Wide (HiRes+ only)", GFX_WIDE},
 #endif
 	{0, 0, 0}
