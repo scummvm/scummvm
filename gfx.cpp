@@ -951,9 +951,9 @@ void Scumm::redrawBGStrip(int start, int num) {
 		warning("Screen Y size %d < Room height %d",
 			_curVirtScreen->height,
 			_scrHeight);
-		_curVirtScreen->height = _scrHeight; // FIXME: Indy3 Hack
 	}
-	
+	_curVirtScreen->height = _scrHeight; // FIXME: Indy3 Hack
+
 	gdi.drawBitmap(getResourceAddress(rtRoom, _roomResource)+_IM00_offs,
 		_curVirtScreen, s, 0, _curVirtScreen->height, s, num, 0);
 }
