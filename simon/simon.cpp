@@ -4944,9 +4944,9 @@ void SimonState::playSound(uint sound)
 	if (_effects_sound != 0)
 		_mixer->stop(_effects_sound);
 
-	if ((_game & GAME_SIMON2) && !(_game & GAME_WIN))  {			/* VOC sound simon2talkie */
+	if ((_game & GAME_SIMON2) && !(_game & GAME_WIN))  {			/* VOC sound simon2dos/talkie */
 		playVoc(_game_file, _effects_offsets, sound, &_effects_sound);
-	} else if (!(_game & GAME_WIN)) {			/* VOC sound simon1talkie/win */
+	} else if (_game == GAME_SIMON1TALKIE) {			/* VOC sound simon1talkie */
 #ifdef USE_MAD
 		if (_effects_type == FORMAT_MP3) {
 			playMP3(_effects_file, _effects_offsets, sound, &_effects_sound);
@@ -4956,7 +4956,7 @@ void SimonState::playSound(uint sound)
 #ifdef USE_MAD
 		}
 #endif
-	} else 	if ((_game & GAME_SIMON2) && (_game & GAME_WIN)) { 		/* sound simon2win */
+	} else 	if (_game & GAME_WIN) { 		/* sound simon1/2win */
 		byte *p;
 
 		if (_playing_sound != 0)
