@@ -428,12 +428,25 @@ void ScummEngine_v2::decodeParseString() {
 	actorTalk();
 }
 
+#ifndef BYPASS_COPY_PROT
+#define BYPASS_COPY_PROT
+#endif
+
 int ScummEngine_v2::readVar(uint var) {
 	if (var >= 14 && var <= 16)
 		var = _scummVars[var];
 
 	checkRange(_numVariables - 1, 0, var, "Variable %d out of range(r)");
 	debug(6, "readvar(%d) = %d", var, _scummVars[var]);
+
+#if defined(BYPASS_COPY_PROT)
+	// The Enchanced version of Zak McKracken included in the
+	// SelectWare Classic Collection bundle has no copy protection 
+	// and doesn't include the codes.
+	if (_gameId == GID_ZAK && var == 244)
+		return 0;
+#endif
+
 	return _scummVars[var];
 }
 
