@@ -32,13 +32,17 @@
 #include "common/scaler.h"
 #include "sound/mididrv.h"
 
-#if (!( defined(__DC__) || defined(__GP32__)) && !defined(_MSC_VER))
+#if (!( defined(__PALM_OS__) || defined(__DC__) || defined(__GP32__)) && !defined(_MSC_VER))
 #include <sys/param.h>
 #include <unistd.h>
 #endif
 
 #if !(defined(MAXPATHLEN))
+#ifndef __PALM_OS__
 #define MAXPATHLEN 1024
+#else
+#define MAXPATHLEN 256
+#endif
 #endif
 
 namespace GUI {
