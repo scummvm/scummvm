@@ -308,14 +308,16 @@ void CostumeRenderer::procC64() {
 	const byte *src;
 	byte *dst;
 	byte len;
-	int y;
-	byte color;
+	uint y, height;
+	byte color, pcolor;
+	bool rep;
 
-	y = 0;
+	y = v1.y;
 	src = _srcptr;
 	dst = v1.destptr;
 	len = v1.replen;
 	color = v1.repcolor;
+	height = _height;
 
 	// TODO:
 	// * figure out how to get the right colors/palette
@@ -326,57 +328,48 @@ void CostumeRenderer::procC64() {
 //	const byte *palette = _palette;
 
 	v1.skip_width >>= 3;
+
+	if (len)
+		goto StartPos;
+
 	do {
-		color = *src++;
-		if (color & 0x80) {
-			len = color & 0x7f;
+		len = *src++;
+		if (len & 0x80)
 			color = *src++;
-			while (len--) {
-				if (!_mirror) {
-					if ((color >> 6) & 3) dst[6] = dst[7] = palette[(color >> 6) & 3];
-					if ((color >> 4) & 3) dst[4] = dst[5] = palette[(color >> 4) & 3];
-					if ((color >> 2) & 3) dst[2] = dst[3] = palette[(color >> 2) & 3];
-					if ((color >> 0) & 3) dst[0] = dst[1] = palette[(color >> 0) & 3];
-				} else {
-					if ((color >> 6) & 3) dst[0] = dst[1] = palette[(color >> 6) & 3];
-					if ((color >> 4) & 3) dst[2] = dst[3] = palette[(color >> 4) & 3];
-					if ((color >> 2) & 3) dst[4] = dst[5] = palette[(color >> 2) & 3];
-					if ((color >> 0) & 3) dst[6] = dst[7] = palette[(color >> 0) & 3];
-				}
-				dst += _outwidth;
-				y++;
-				if (y >= _height) {
-					if (!--v1.skip_width)
-						return;
-					y = 0;
-					v1.destptr += 8 * v1.scaleXstep;
-					dst = v1.destptr;
-				}
-			}
-		} else {
-			len = color;
-			while (len--) {
+	StartPos:;
+		rep = (len & 0x80) != 0;
+		len &= 0x7f;
+		while (len--) {
+			if (!rep)
 				color = *src++;
+			
+			if (y < _outheight) {
+#define MASK_AT(xoff)	(v1.mask_ptr && ((v1.mask_ptr[(v1.x+xoff) >> 3] | v1.mask_ptr[((v1.x+xoff) >> 3) + v1.imgbufoffs]) & revBitMask[(v1.x+xoff) & 7]))
 				if (!_mirror) {
-					if ((color >> 6) & 3) dst[6] = dst[7] = palette[(color >> 6) & 3];
-					if ((color >> 4) & 3) dst[4] = dst[5] = palette[(color >> 4) & 3];
-					if ((color >> 2) & 3) dst[2] = dst[3] = palette[(color >> 2) & 3];
-					if ((color >> 0) & 3) dst[0] = dst[1] = palette[(color >> 0) & 3];
+					pcolor = (color >> 0) & 3; if (pcolor) { if (!MASK_AT(0)) dst[0] = palette[pcolor]; if (!MASK_AT(1)) dst[1] = palette[pcolor]; }
+					pcolor = (color >> 2) & 3; if (pcolor) { if (!MASK_AT(2)) dst[2] = palette[pcolor]; if (!MASK_AT(3)) dst[3] = palette[pcolor]; }
+					pcolor = (color >> 4) & 3; if (pcolor) { if (!MASK_AT(4)) dst[4] = palette[pcolor]; if (!MASK_AT(5)) dst[5] = palette[pcolor]; }
+					pcolor = (color >> 6) & 3; if (pcolor) { if (!MASK_AT(6)) dst[6] = palette[pcolor]; if (!MASK_AT(7)) dst[7] = palette[pcolor]; }
 				} else {
-					if ((color >> 6) & 3) dst[0] = dst[1] = palette[(color >> 6) & 3];
-					if ((color >> 4) & 3) dst[2] = dst[3] = palette[(color >> 4) & 3];
-					if ((color >> 2) & 3) dst[4] = dst[5] = palette[(color >> 2) & 3];
-					if ((color >> 0) & 3) dst[6] = dst[7] = palette[(color >> 0) & 3];
+					pcolor = (color >> 6) & 3; if (pcolor) { if (!MASK_AT(0)) dst[0] = palette[pcolor]; if (!MASK_AT(1)) dst[1] = palette[pcolor]; }
+					pcolor = (color >> 4) & 3; if (pcolor) { if (!MASK_AT(2)) dst[2] = palette[pcolor]; if (!MASK_AT(3)) dst[3] = palette[pcolor]; }
+					pcolor = (color >> 2) & 3; if (pcolor) { if (!MASK_AT(4)) dst[4] = palette[pcolor]; if (!MASK_AT(5)) dst[5] = palette[pcolor]; }
+					pcolor = (color >> 0) & 3; if (pcolor) { if (!MASK_AT(6)) dst[6] = palette[pcolor]; if (!MASK_AT(7)) dst[7] = palette[pcolor]; }
 				}
-				dst += _outwidth;
-				y++;
-				if (y >= _height) {
-					if (!--v1.skip_width)
-						return;
-					y = 0;
-					v1.destptr += 8 * v1.scaleXstep;
-					dst = v1.destptr;
-				}
+#undef MASK_AT
+			}
+			dst += _outwidth;
+			y++;
+			if (!--height) {
+				if (!--v1.skip_width)
+					return;
+				height = _height;
+				y = v1.y;
+				v1.x += 8 * v1.scaleXstep;
+				if (v1.x < 0 || v1.x >= _vm->_screenWidth)
+					return;
+				v1.destptr += 8 * v1.scaleXstep;
+				dst = v1.destptr;
 			}
 		}
 	} while(1);
