@@ -61,6 +61,11 @@ const char *Registry::get(const char *key) const {
 }
 
 void Registry::set(const char *key, const char *val) {
+  // Hack: Don't save these, so we can run in good_times mode
+  // without new games being bogus.
+  if (strstr(key, "GrimLastSet") || strstr(key, "GrimMannyState"))
+   return;
+
   settings_[key] = val;
   dirty_ = true;
 }
