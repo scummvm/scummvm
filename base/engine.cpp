@@ -54,6 +54,8 @@ Engine::~Engine() {
 
 	delete _mixer;
 	delete _saveFileMan;
+
+	g_engine = 0;
 }
 
 const char *Engine::getSavePath() const {
