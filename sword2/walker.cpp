@@ -49,7 +49,7 @@ int32 Logic::fnWalk(int32 *params) {
 	int16 target_x;
 	int16 target_y;
 	uint8 target_dir;
-	int8 route;
+	int32 route;
 	int32 walk_pc;
 	WalkData *walkAnim;
 
@@ -92,7 +92,7 @@ int32 Logic::fnWalk(int32 *params) {
 
 		_router->allocateRouteMem();
 
-		route = (int8) _router->routeFinder(ob_mega, ob_walkdata, target_x, target_y, target_dir);
+		route = _router->routeFinder(ob_mega, ob_walkdata, target_x, target_y, target_dir);
 
 		// 0 = can't make route to target
 		// 1 = created route
