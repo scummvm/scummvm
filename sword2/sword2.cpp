@@ -27,7 +27,6 @@
 #include "driver/palette.h"
 #include "common/gameDetector.h"
 #include "common/config-file.h"
-#include "common/timer.h"
 #include "build_display.h"
 #include "console.h"
 #include "controls.h"
