@@ -244,7 +244,7 @@ void ScummEngine_v72he::setupOpcodes() {
 		OPCODE(o72_verbOps),
 		OPCODE(o6_getActorFromXY),
 		/* A0 */
-		OPCODE(o70_findObject),
+		OPCODE(o72_findObject),
 		OPCODE(o6_pseudoRoom),
 		OPCODE(o6_getActorElevation),
 		OPCODE(o6_getVerbEntrypoint),
@@ -652,6 +652,44 @@ byte *ScummEngine_v72he::findWrappedBlock(uint32 tag, byte *ptr, int state, bool
 	} else {
 		return heFindResourceData(tag, ptr);
 	}
+}
+
+int ScummEngine_v72he::findObject(int x, int y, int num, int *args) {
+	int b, cls, i, result;
+
+	for (i = 1; i < _numLocalObjects; i++) {
+		result = 0;
+		if ((_objs[i].obj_nr < 1) || getClass(_objs[i].obj_nr, kObjectClassUntouchable))
+			continue;
+
+		// Check polygon bounds
+		if (_wiz.polygonDefined(_objs[i].obj_nr)) {
+			if (_wiz.polygonHit(_objs[i].obj_nr, x, y))
+				result = _objs[i].obj_nr;
+			else if (VAR_POLYGONS_ONLY != 0xFF && VAR(VAR_POLYGONS_ONLY))
+				continue;
+		}
+
+		if (!result) {
+			// Check object bounds
+			if (_objs[i].x_pos <= x && _objs[i].width + _objs[i].x_pos > x &&
+			    _objs[i].y_pos <= y && _objs[i].height + _objs[i].y_pos > y)
+					result = _objs[i].obj_nr;
+		}
+
+		if (result) {
+			if (!num)
+				return result;
+
+			// Check object class
+			cls = args[0];
+			b = getClass(i, cls);
+			if ((cls & 0x80 && b) || (!(cls & 0x80) && !b))
+				return result;
+		}
+	}
+
+	return 0;
 }
 
 void ScummEngine_v72he::o72_pushDWord() {
@@ -1332,6 +1370,13 @@ void ScummEngine_v72he::o72_verbOps() {
 	default:
 		error("o72_verbops: default case %d", op);
 	}
+}
+
+void ScummEngine_v72he::o72_findObject() {
+	int y = pop();
+	int x = pop();
+	int r = findObject(x, y, 0, 0);
+	push(r);
 }
 
 void ScummEngine_v72he::o72_arrayOps() {

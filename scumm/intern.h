@@ -666,8 +666,6 @@ protected:
 	virtual int setupStringArray(int size);
 	void appendSubstring(int dst, int src, int len2, int len);
 
-	int findObject(int x, int y, int num, int *args);
-
 	virtual void setCursorFromImg(uint img, uint room, uint imgindex);
 
 	/* HE version 70 script opcodes */
@@ -675,7 +673,6 @@ protected:
 	void o70_pickupObject();
 	void o70_getActorRoom();
 	void o70_resourceRoutines();
-	void o70_findObject();
 	void o70_quitPauseRestart();
 	void o70_kernelSetFunctions();
 	void o70_copyString();
@@ -757,6 +754,7 @@ protected:
 	byte *heFindResourceData(uint32 tag, byte *ptr);
 	byte *heFindResource(uint32 tag, byte *ptr);
 	byte *findWrappedBlock(uint32 tag, byte *ptr, int state, bool flagError);
+	int findObject(int x, int y, int num, int *args);
 
 	/* HE version 72 script opcodes */
 	void o72_pushDWord();
@@ -779,6 +777,7 @@ protected:
 	void o72_roomOps();
 	void o72_actorOps();
 	void o72_verbOps();
+	void o72_findObject();
 	void o72_arrayOps();
 	void o72_talkActor();
 	void o72_talkEgo();

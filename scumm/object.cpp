@@ -24,6 +24,7 @@
 #include "scumm/scumm.h"
 #include "scumm/actor.h"
 #include "scumm/bomp.h"
+#include "scumm/intern.h"
 #include "scumm/object.h"
 #include "scumm/resource.h"
 #include "scumm/usage_bits.h"
@@ -358,6 +359,10 @@ int ScummEngine::findObject(int x, int y) {
 			a = _objs[b].parentstate;
 			b = _objs[b].parent;
 			if (b == 0) {
+				if (_heversion >= 70) {
+					if (((ScummEngine_v70he *)this)->_wiz.polygonHit(_objs[i].obj_nr, x, y))
+						return _objs[i].obj_nr;
+				}
 				if (_objs[i].x_pos <= x && _objs[i].width + _objs[i].x_pos > x &&
 				    _objs[i].y_pos <= y && _objs[i].height + _objs[i].y_pos > y)
 					return _objs[i].obj_nr;
