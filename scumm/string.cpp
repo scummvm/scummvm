@@ -299,7 +299,7 @@ void ScummEngine::CHARSET_1() {
 			if (_version <= 3) {
 				_charset->printChar(c);
 			} else {
-				if (!ConfMan.getBool("subtitles") && (_imuseDigital && _sound->isSoundRunning(kTalkSoundID))) {
+				if ((_imuseDigital && _sound->isSoundRunning(kTalkSoundID)) && (!ConfMan.getBool("subtitles") || VAR(VAR_VOICE_MODE) == 0)) {
 					// Special case for games using imuse digital.for sound
 				} else if ((_gameId == GID_LOOM256) && !ConfMan.getBool("subtitles") && (_sound->pollCD())) {
 					// Special case for loomcd, since it only uses CD audio.for sound
