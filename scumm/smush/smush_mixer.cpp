@@ -30,8 +30,8 @@
 
 SmushMixer::SmushMixer(SoundMixer *m) :
 	_mixer(m),
-	_soundFrequency(22050),
-	_nextIndex(_mixer->_beginSlots)	{
+	_nextIndex(_mixer->_beginSlots),
+	_soundFrequency(22050) {
 	for(int32 i = _mixer->_beginSlots; i < SoundMixer::NUM_CHANNELS; i++) {
 		_channels[i].id = -1;
 		_channels[i].chan = NULL;
