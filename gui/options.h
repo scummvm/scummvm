@@ -27,6 +27,7 @@
 
 class BrowserDialog;
 class GameDetector;
+class PopUpWidget;
 
 class GlobalOptionsDialog : public Dialog {
 	typedef ScummVM::String String;
@@ -43,6 +44,8 @@ protected:
 
 	BrowserDialog	*_browser;
 	StaticTextWidget*_savePath;
+
+	PopUpWidget *_midiPopUp;
 
 	int _soundVolumeMaster;
 	int _soundVolumeMusic;

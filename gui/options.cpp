@@ -74,21 +74,30 @@ GlobalOptionsDialog::GlobalOptionsDialog(NewGui *gui, GameDetector &detector)
 	gfxPopUp->appendEntry("TV2x");
 	gfxPopUp->appendEntry("DotMatrix");
 	gfxPopUp->setSelected(0);
+	
+	// FIXME - disable GFX popup for now
+	gfxPopUp->setEnabled(false);
+	
 
 	// The MIDI mode popup & a label
-	new StaticTextWidget(this, 5, 26+1, 100, kLineHeight, "Music driver: ", kTextAlignRight);
-	PopUpWidget *midiPopUp;
-	midiPopUp = new PopUpWidget(this, 105, 26, 180, kLineHeight);
+	StaticTextWidget *foo = new StaticTextWidget(this, 5, 26+1, 100, kLineHeight, "Music driver: ", kTextAlignRight);
+	foo->setEnabled(false);
+	_midiPopUp = new PopUpWidget(this, 105, 26, 180, kLineHeight);
+	int midiSelected = 0, i = 0;;
 	
 	// Populate it
 	const MusicDriver *md = GameDetector::getMusicDrivers();
 	while (md->name) {
-		if (GameDetector::isMusicDriverAvailable(md->id))
-			midiPopUp->appendEntry(md->description, md->id);
+		if (GameDetector::isMusicDriverAvailable(md->id)) {
+			_midiPopUp->appendEntry(md->description, md->id);
+			if (md->id == _detector._midi_driver)
+				midiSelected = i;
+			i++;
+		}
 		md++;
 	}
-	midiPopUp->setSelected(0);
-
+	_midiPopUp->setSelected(midiSelected);
+	
 	//
 	// Sound controllers
 	//
@@ -187,6 +196,12 @@ void GlobalOptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 		_soundVolumeSfx = _sfxVolumeSlider->getValue();
 		_sfxVolumeLabel->setValue(_soundVolumeSfx);
 		_sfxVolumeLabel->draw();
+		break;
+	case kPopUpItemSelectedCmd:
+		if (sender == _midiPopUp) {
+			_detector._midi_driver = (int)data;
+			printf("Setting _detector._midi_driver to %d\n", _detector._midi_driver);
+		}
 		break;
 	case kOKCmd:
 		// TODO Write back changes made to config object
