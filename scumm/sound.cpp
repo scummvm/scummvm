@@ -322,6 +322,7 @@ void Sound::playSound(int soundID) {
 			return;
 		} else if (_scumm->_features & GF_FMTOWNS) {
 			size = READ_LE_UINT32(ptr);
+			hexdump(ptr, size);
 			rate = 11025;
 			int type = *(ptr + 0x0D);
 
@@ -433,23 +434,22 @@ void Sound::playSound(int soundID) {
 		return;
 	}
 	
-	if ((_scumm->_features & GF_AMIGA) && (_scumm->_version == 3)) {
-		if (READ_BE_UINT16(ptr + 26) & 0x0100) {
-			// TODO: support Amiga music
+
+	if (((_scumm->_features & GF_OLD_BUNDLE) && (_scumm->_gameId == GID_INDY3)) || ((_scumm->_features & GF_AMIGA) && (_scumm->_version == 3))) {
+		if ((READ_BE_UINT16(ptr + 26) == 0x0001) || READ_BE_UINT16(ptr + 26) == 0x00FF) {
+			size = READ_BE_UINT16(ptr + 12);
+			rate = 11000;
+			sound = (char *)malloc(size);
+			memcpy(sound,ptr + READ_BE_UINT16(ptr + 8),size);
+			if (READ_BE_UINT16(ptr + 16) || READ_BE_UINT16(ptr + 6)) {
+				// the first check is for pitch-bending looped sounds (i.e. "pouring liquid", "biplane dive", etc.)
+				// the second check is for simple looped sounds
+				_scumm->_mixer->playRaw(NULL,sound,size,rate,SoundMixer::FLAG_AUTOFREE | SoundMixer::FLAG_LOOP,soundID,READ_BE_UINT16(ptr + 10) - READ_BE_UINT16(ptr + 8),READ_BE_UINT16(ptr + 14));
+			} else {
+				_scumm->_mixer->playRaw(NULL,sound,size,rate,SoundMixer::FLAG_AUTOFREE,soundID);
+			}
 			return;
 		}
-		size = READ_BE_UINT16(ptr + 12);
-		rate = 11000;
-		sound = (char *)malloc(size);
-		memcpy(sound,ptr + READ_BE_UINT16(ptr + 8),size);
-		if (READ_BE_UINT16(ptr + 16) || READ_BE_UINT16(ptr + 6)) {
-			// the first check is for pitch-bending looped sounds (i.e. "pouring liquid", "biplane dive", etc.)
-			// the second check is for simple looped sounds
-			_scumm->_mixer->playRaw(NULL,sound,size,rate,SoundMixer::FLAG_AUTOFREE | SoundMixer::FLAG_LOOP,soundID,READ_BE_UINT16(ptr + 10) - READ_BE_UINT16(ptr + 8),READ_BE_UINT16(ptr + 14));
-		} else {
-			_scumm->_mixer->playRaw(NULL,sound,size,rate,SoundMixer::FLAG_AUTOFREE,soundID);
-		}
-		return;
 	}
 
 	if (_scumm->_gameId == GID_MONKEY_VGA || _scumm->_gameId == GID_MONKEY_EGA) {
@@ -743,7 +743,7 @@ void Sound::stopSound(int a) {
 		_scumm->_imuse->stopSound(a);
 	} else if (_scumm->_playerV2) {
 		_scumm->_playerV2->stopSound (a);
-	} else if ((_scumm->_features & GF_AMIGA) && (_scumm->_version == 3)) {
+	} else 	if (((_scumm->_features & GF_OLD_BUNDLE) && (_scumm->_gameId == GID_INDY3)) || ((_scumm->_features & GF_AMIGA) && (_scumm->_version == 3))) {
 		// this handles stopping looped sounds for now
 		_scumm->_mixer->stopID(a);
 	}
