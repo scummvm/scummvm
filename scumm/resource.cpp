@@ -905,7 +905,7 @@ static byte ADLIB_INSTR_MIDI_HACK[95] = {
 	0x00, 0x00, 0x03,              // part/channel  (offset  5)
 	0x00, 0x00, 0x07, 0x0f, 0x00, 0x00, 0x08, 0x00, 
 	0x00, 0x00, 0x00, 0x02, 0x00, 0x00, 0xf7,
-	0x04, 0xf0, 0x41, 0x7d, 0x10,  // sysex 16: set instrument
+	0x00, 0xf0, 0x41, 0x7d, 0x10,  // sysex 16: set instrument
 	0x00, 0x01,                    // part/channel  (offset 28)
 	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
 	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
@@ -1020,6 +1020,7 @@ int Scumm::convertADResource(int type, int idx, byte * src_ptr, int size) {
 	byte num_instr;
 	byte *channel, *instr, *track;
 	byte *tracks[3];
+	int ppqn;
 	int delay, delay2, olddelay;
 	int i, ch;
 	int total_size = 8 + 16 + 14 + 8 + 7 + 8*sizeof(ADLIB_INSTR_MIDI_HACK) + size;
@@ -1041,9 +1042,14 @@ int Scumm::convertADResource(int type, int idx, byte * src_ptr, int size) {
 	
 	// We will ignore the PPQN in the original resource, because
 	// it's invalid anyway. We use a constant PPQN of 480.
-	// memcpy(ptr, &ticks, 2); ptr += 2;
-	*ptr++ = 480 >> 8;
-	*ptr++ = 480 & 0xFF;
+	// For Indy it is actually 240.
+	if (_gameId == GID_INDY3) {
+	    ppqn = 240;
+	} else {
+	    ppqn = 480;
+	}
+	*ptr++ = ppqn >> 8;
+	*ptr++ = ppqn & 0xFF;
 	
 	memcpy(ptr, "MTrk", 4); ptr += 4;
 	dw = READ_BE_UINT32(&total_size);
@@ -1077,7 +1083,16 @@ int Scumm::convertADResource(int type, int idx, byte * src_ptr, int size) {
 		track = src_ptr;
 		
 		// Convert the ticks into a MIDI tempo. 
-		dw = 0x7300000 / ticks;
+		// Unfortunate LOOM and INDY3 have different interpretation
+		// of the ticks value.
+		if (_gameId == GID_INDY3) {
+			// From my disassembly this would be correct:
+			// dw = 1000000 * 256 / 473 * ppqn / 2 / ticks;
+			// But this seems closer to original???
+			dw = 73000000 / ticks;
+		} else {
+			dw = 1000000 * ppqn / 4 / 2 / ticks;
+		}
 		debug(4, "  ticks = %d, speed = %ld", ticks, dw);
 			
 		// Write a tempo change Meta event
@@ -1094,6 +1109,8 @@ int Scumm::convertADResource(int type, int idx, byte * src_ptr, int size) {
 		/* now fill in the instruments */
 		for (i = 0; i < num_instr; i++) {
 			ch = channel[i] - 1;
+			if (ch < 0 || ch > 15)
+				continue;
 			
 			debug(4, "Sound %d: instrument %d on channel %d.", 
 				  idx, i, ch);
@@ -1151,7 +1168,10 @@ int Scumm::convertADResource(int type, int idx, byte * src_ptr, int size) {
 			ptr += sizeof(ADLIB_INSTR_MIDI_HACK);
 		}
 		
-		*ptr++ = 0;  // delay 0;
+		// There is a constant delay of ppqn/3 before the music starts.
+		if (ppqn / 3 >= 128)
+			*ptr++ = (ppqn / 3 >> 7) | 0x80;  
+		*ptr++ = ppqn / 3 & 0x7f;
 		
 		// Now copy the actual music data 
 		memcpy(ptr, track, size);
@@ -1173,14 +1193,10 @@ int Scumm::convertADResource(int type, int idx, byte * src_ptr, int size) {
 			}
 			assert(ptr < end);
 			
-			// Now insert the jump. The jump offset is measured in ticks, and 
-			// each instrument definition spans 4 ticks... so we jump to tick
-			// num_instr*4, although jumping to tick 0 would probably work fine, too.
-			// Note: it's possible that some musics don't loop from the start...
-			// in that case we'll have to figure out how the loop range is specified
-			// and then how to handle it appropriately (if it's specified in
-			// ticks, we are fine; but if it's a byte offset, it'll be nasty).
-			const int jump_offset = num_instr * 4;
+			// Now insert the jump. The jump offset is measured in ticks.
+			// We have ppqn/3 ticks before the first note.
+
+			const int jump_offset = ppqn / 3;
 			memcpy(ptr, "\xf0\x13\x7d\x30\00", 5); ptr += 5;	// maybe_jump
 			memcpy(ptr, "\x00\x00", 2); ptr += 2;			// cmd -> 0 means always jump
 			memcpy(ptr, "\x00\x00\x00\x00", 4); ptr += 4;	// track -> there is only one track, 0
@@ -1209,9 +1225,9 @@ int Scumm::convertADResource(int type, int idx, byte * src_ptr, int size) {
 	byte chunk_type = 0;
 
 	// Write a tempo change Meta event
-	// 473 / 4 Hz, 480 pulses per quarternote, convert to micro seconds.
+	// 473 / 4 Hz, convert to micro seconds.
 	memcpy(ptr, "\x00\xFF\x51\x03", 4); ptr += 4;
-	dw = 1000000 * 480 * 4 / 473;
+	dw = 1000000 * ppqn * 4 / 473;
 	*ptr++ = (byte)((dw >> 16) & 0xFF);
 	*ptr++ = (byte)((dw >> 8) & 0xFF);
 	*ptr++ = (byte)(dw & 0xFF);
