@@ -182,7 +182,27 @@ SOURCE=.\simon\simon.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\simon\simondebug.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\simon\simonitems.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\simon\simonres.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\simon\simonsys.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\simon\simonverb.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\simon\simonvga.cpp
 # End Source File
 # End Group
 # Begin Source File
