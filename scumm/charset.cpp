@@ -928,7 +928,7 @@ int CharsetRendererV3::getCharWidth(byte chr) {
 void CharsetRendererV3::setColor(byte color)
 {
 	_color = color;
-	_shadowColor = (_vm->_features & GF_OLD256) ? 8 : 0;
+	_shadowColor = (_vm->_features & GF_FMTOWNS) ? 8 : 0;
 	if (_vm->_features & GF_OLD256) {
 		_dropShadow = ((_color & 0x80) != 0);
 		_color &= 0x7f;
