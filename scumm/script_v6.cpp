@@ -2828,11 +2828,18 @@ void Scumm_v6::o6_stopTalking() {
 
 void Scumm_v6::o6_openFile() {
 	int a, len;
-	a = pop();
+	byte filename[100];
+
+	_msgPtrToAdd = filename;
+	_messagePtr =_scriptPointer;
+	addMessageToStack(_messagePtr);
+
 	len = resStrLen(_scriptPointer);
-	warning("stub o6_openFile(\"%s\", %d)", _scriptPointer, a);
 	_scriptPointer += len + 1;
-	// -1 open failed, otherwise file handle?
+
+	a = pop();
+	warning("stub o6_openFile(\"%s\", %d)", filename, a);
+	// -1 open failed, otherwise file slot
 	push(0);
 }
 
@@ -2843,9 +2850,16 @@ void Scumm_v6::o6_closeFile() {
 
 void Scumm_v6::o6_deleteFile() {
 	int len;
+	byte filename[100];
+
+	_msgPtrToAdd = filename;
+	_messagePtr =_scriptPointer;
+	addMessageToStack(_messagePtr);
+
 	len = resStrLen(_scriptPointer);
-	warning("stub o6_deleteFile(\"%s\")", _scriptPointer);
 	_scriptPointer += len + 1;
+
+	warning("stub o6_deleteFile(\"%s\")", filename);
 }
 
 void Scumm_v6::o6_readFile() {
