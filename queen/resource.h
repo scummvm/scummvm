@@ -19,12 +19,12 @@
  *
  */
 
-#ifndef QUEEN_RESOURCE_H
-#define QUEEN_RESOURCE_H
+#ifndef QUEENRESOURCE_H
+#define QUEENRESOURCE_H
 
 #include "common/file.h"
-#include "common/savefile.h"
-#include "defs.h"
+#include "common/util.h"
+#include "queen/defs.h"
 
 namespace Queen {
 

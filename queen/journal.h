@@ -22,9 +22,15 @@
 #ifndef QUEENJOURNAL_H
 #define QUEENJOURNAL_H
 
-#include "queen/queen.h"
+#include "common/util.h"
 
 namespace Queen {
+
+class Logic;
+class Graphics;
+class Display;
+class Sound;
+struct GameConfig;
 
 class Journal {
 public:

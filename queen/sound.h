@@ -22,9 +22,9 @@
 #ifndef QUEENSOUND_H
 #define QUEENSOUND_H
 
+#include "common/util.h"
 #include "sound/mixer.h"
 #include "queen/defs.h"
-#include "common/str.h"
 
 namespace Queen {
 

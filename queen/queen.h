@@ -22,13 +22,7 @@
 #ifndef QUEEN_H
 #define QUEEN_H
 
-#include <stdio.h>
 #include "base/engine.h"
-#include "common/util.h"
-#include "common/timer.h"
-#include "sound/mixer.h"
-#include "queen/resource.h"
-#include "queen/logic.h"
 
 class GameDetector;
 
@@ -36,6 +30,7 @@ namespace Queen {
 
 class Graphics;
 class Input;
+class Resource;
 class Logic;
 class Display;
 class Sound;

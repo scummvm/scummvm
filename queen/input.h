@@ -22,11 +22,9 @@
 #ifndef INPUT_H
 #define INPUT_H
 
+#include "common/util.h"
 #include "queen/defs.h"
 #include "queen/verb.h"
-#include "common/scummsys.h"
-
-class OSystem;
 
 namespace Queen {
 

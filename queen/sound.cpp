@@ -20,11 +20,9 @@
  */
 
 #include "stdafx.h"
-#include "common/file.h"
-#include "common/util.h"
+#include "queen/sound.h"
 #include "queen/input.h"
 #include "queen/resource.h"
-#include "queen/sound.h"
 
 #define	SB_HEADER_SIZE	110
 #define	STOP_MUSIC	-1

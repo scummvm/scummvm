@@ -22,12 +22,13 @@
 #ifndef QUEENCUTAWAY_H
 #define QUEENCUTAWAY_H
 
-#include "queen/queen.h"
-#include "queen/graphics.h"
+#include "common/util.h"
+#include "queen/structs.h"
 
 namespace Queen {
 
 class Graphics;
+class Input;
 class Logic;
 class Resource;
 class Sound;

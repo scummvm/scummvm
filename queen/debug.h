@@ -22,7 +22,7 @@
 #ifndef QUEENDEBUG_H
 #define QUEENDEBUG_H
 
-#include "queen/queen.h"
+#include "common/util.h"
 
 namespace Queen {
 

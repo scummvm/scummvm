@@ -22,9 +22,8 @@
 #ifndef QUEENDISPLAY_H
 #define QUEENDISPLAY_H
 
-#include "queen/queen.h"
+#include "common/util.h"
 #include "queen/defs.h"
-#include "queen/structs.h"
 
 namespace Queen {
 
@@ -34,7 +33,6 @@ enum RenderingBuffer {
 	RB_PANEL    = 1,
 	RB_SCREEN   = 2
 };
-
 
 enum JoePalette {
 	JP_CLOTHES = 0,
@@ -60,6 +58,8 @@ struct TextRenderer {
 	static const uint8 _font[];
 };
 
+class Input;
+class Resource;
 
 class Display {
 public:

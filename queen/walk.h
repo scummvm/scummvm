@@ -22,7 +22,7 @@
 #ifndef QUEENWALK_H
 #define QUEENWALK_H
 
-#include "queen/queen.h"
+#include "common/util.h"
 #include "queen/structs.h"
 
 namespace Queen {

@@ -20,7 +20,6 @@
  */
 
 #include "stdafx.h"
-#include "queen/queen.h"
 #include "queen/resource.h"
 
 namespace Queen {

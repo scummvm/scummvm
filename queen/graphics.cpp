@@ -21,7 +21,9 @@
 
 #include "stdafx.h"
 #include "queen/graphics.h"
+#include "queen/logic.h"
 #include "queen/display.h"
+#include "queen/resource.h"
 
 
 namespace Queen {

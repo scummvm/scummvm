@@ -1,4 +1,4 @@
- /* ScummVM - Scumm Interpreter
+/* ScummVM - Scumm Interpreter
  * Copyright (C) 2003 The ScummVM project
  *
  * This program is free software; you can redistribute it and/or
@@ -22,8 +22,8 @@
 #ifndef QUEENCOMMAND_H
 #define QUEENCOMMAND_H
 
-#include "queen/queen.h"
-#include "queen/defs.h"
+#include "common/util.h"
+#include "queen/structs.h"
 #include "queen/verb.h"
 
 namespace Queen {
@@ -32,7 +32,7 @@ class Logic;
 class Graphics;
 class Input;
 class Walk;
-
+class Sound;
 
 struct CmdText {
 

@@ -29,6 +29,7 @@
 #include "queen/graphics.h"
 #include "queen/input.h"
 #include "queen/journal.h"
+#include "queen/resource.h"
 #include "queen/sound.h"
 #include "queen/talk.h"
 #include "queen/walk.h"

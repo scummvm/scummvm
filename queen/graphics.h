@@ -22,9 +22,9 @@
 #ifndef QUEENGRAPHICS_H
 #define QUEENGRAPHICS_H
 
-#include "queen/queen.h"
-#include "queen/input.h"
+#include "common/str.h"
 #include "queen/defs.h"
+#include "common/util.h"
 #include "queen/structs.h"
 
 namespace Queen {
@@ -131,6 +131,7 @@ struct BamData {
 
 class Display;
 class Input;
+class Resource;
 
 class Graphics {
 public:

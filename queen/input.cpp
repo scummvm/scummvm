@@ -21,8 +21,6 @@
 
 #include "stdafx.h"
 #include "queen/input.h"
-#include "common/system.h"
-#include "common/util.h"
 
 namespace Queen {
 

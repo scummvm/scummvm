@@ -22,7 +22,7 @@
 #ifndef QUEENLOGIC_H
 #define QUEENLOGIC_H
 
-#include "queen/queen.h"
+#include "common/util.h"
 #include "queen/defs.h"
 #include "queen/structs.h"
 #include "queen/verb.h"
@@ -202,7 +202,6 @@ public:
 	uint16 numFrames() { return _numFrames; }
 
 	int talkSpeed() const { return _settings.talkSpeed; }
-	Language language()	{ return _resource->getLanguage(); } 
 
 	void zoneSet(uint16 screen, uint16 zone, uint16 x1, uint16 y1, uint16 x2, uint16 y2);
 	void zoneSet(uint16 screen, uint16 zone, const Box& box);

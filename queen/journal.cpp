@@ -20,10 +20,12 @@
  */
 
 #include "stdafx.h"
+#include "base/engine.h" // For g_engine
 #include "queen/journal.h"
 #include "queen/display.h"
 #include "queen/graphics.h"
 #include "queen/logic.h"
+#include "queen/resource.h"
 #include "queen/sound.h"
 
 namespace Queen {

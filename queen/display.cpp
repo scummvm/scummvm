@@ -21,7 +21,6 @@
 
 #include "stdafx.h"
 #include "queen/display.h"
-#include "queen/defs.h"
 #include "queen/input.h"
 #include "queen/logic.h" // For RandomSource
 #include "queen/resource.h"

@@ -22,11 +22,13 @@
 #ifndef QUEEN_TALK_H
 #define QUEEN_TALK_H
 
-#include "queen/queen.h"
+#include "common/util.h"
+#include "queen/structs.h"
 
 namespace Queen {
 
 class Graphics;
+class Input;
 class Logic;
 class Resource;
 class Sound;

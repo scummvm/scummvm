@@ -23,7 +23,9 @@
 #include "queen/talk.h"
 #include "queen/display.h"
 #include "queen/graphics.h"
+#include "queen/input.h"
 #include "queen/logic.h"
+#include "queen/resource.h"
 #include "queen/sound.h"
 
 namespace Queen {
@@ -1246,7 +1248,7 @@ int16 Talk::selectSentence() {
 
 		_logic->zoneClearAll(ZONE_PANEL);
 
-		if (_logic->language() != ENGLISH) {
+		if (_logic->resource()->getLanguage() != ENGLISH) {
 			_logic->zoneSet(ZONE_PANEL, ARROW_ZONE_UP,   MAX_TEXT_WIDTH + 1, 0,  319, 24);
 			_logic->zoneSet(ZONE_PANEL, ARROW_ZONE_DOWN, MAX_TEXT_WIDTH + 1, 25, 319, 49);
 		}
@@ -1272,7 +1274,7 @@ int16 Talk::selectSentence() {
 							i,
 							0,
 							yOffset * LINE_HEIGHT - PUSHUP,
-							(_logic->language() == ENGLISH) ? 319 : MAX_TEXT_WIDTH,
+							(_logic->resource()->getLanguage() == ENGLISH) ? 319 : MAX_TEXT_WIDTH,
 							(yOffset + optionLines) * LINE_HEIGHT - PUSHUP);
 				}
 
@@ -1296,7 +1298,7 @@ int16 Talk::selectSentence() {
 
 		// Up and down dialogue arrows
 
-		if (_logic->language() != ENGLISH) {
+		if (_logic->resource()->getLanguage() != ENGLISH) {
 			arrowBobUp->active    = (startOption > 1);
 			arrowBobDown->active  = (yOffset > 4);
 		}

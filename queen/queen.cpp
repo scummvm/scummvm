@@ -20,17 +20,24 @@
  */
 
 #include "stdafx.h"
+
 #include "backends/fs/fs.h"
+
 #include "base/gameDetector.h"
 #include "base/plugins.h"
+
 #include "common/config-manager.h"
 #include "common/file.h"
+#include "common/timer.h"
+
+#include "queen/queen.h"
 #include "queen/command.h"
 #include "queen/cutaway.h"
 #include "queen/display.h"
 #include "queen/graphics.h"
 #include "queen/input.h"
-#include "queen/queen.h"
+#include "queen/logic.h"
+#include "queen/resource.h"
 #include "queen/sound.h"
 #include "queen/talk.h"
 #include "queen/walk.h"
