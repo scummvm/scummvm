@@ -906,27 +906,34 @@ void Scumm_v2::o2_doSentence() {
 	st->preposition = (st->objectB != 0);
 	st->freezeCount = 0;
 	
-	// TODO
-	switch(fetchScriptByte()) {
+	// Execute or print the sentence
+	_opcode = fetchScriptByte();
+	switch(_opcode) {
+	case 0:
+		// Do nothing (besides setting up the sentence above)
+		break;
 	case 1:
 		// Execute the sentence
 		_sentenceNum--;
 		
 		if (st->verb == 254) {
-			stopObjectScript(st->objectA, true);
+			Scumm::stopObjectScript(st->objectA);
 		} else if (st->verb != 253 && st->verb != 250) {
 			VAR(VAR_ACTIVE_VERB) = st->verb;
 			VAR(VAR_ACTIVE_OBJECT1) = st->objectA;	
 			VAR(VAR_ACTIVE_OBJECT2) = st->objectB;
 
+			stopObjectScript(st->objectA, false);
 			runObjectScript(st->objectA, st->verb, false, false, NULL);
-		} else
-			runObjectScript(st->objectA, 253, (st->verb == 250), true, NULL);
+		} else {
+			bool isBackgroundScript = (st->verb == 250);
+			stopObjectScript(st->objectA, isBackgroundScript);
+			runObjectScript(st->objectA, 253, isBackgroundScript, false, NULL);
+		}
 		break;
 	case 2:
 		// Print the sentence
 		_sentenceNum--;
-		//warning("TODO o2_doSentence(%d, %d, %d): print", st->verb, st->objectA, st->objectB);
 		
 		VAR(VAR_SENTENCE_VERB) = st->verb;
 		VAR(VAR_SENTENCE_OBJECT1) = st->objectA;
@@ -934,6 +941,8 @@ void Scumm_v2::o2_doSentence() {
 
 		o2_drawSentence();
 		break;
+	default:
+		error("o2_doSentence: unknown subopcode %d", _opcode);
 	}
 }
 
@@ -1548,47 +1557,8 @@ enum {
 	ssRunning = 2
 };
 
-void Scumm_v2::runObjectScript(int object, int entry, bool freezeResistant, bool recursive, int *vars) {
-	ScriptSlot *s;
-	uint32 obcd;
-	int slot, where, offs;
-
-	if (!object)
-		return;
-
-	stopObjectScript(object, recursive);
-
-	where = whereIsObject(object);
-
-	if (where == WIO_NOT_FOUND) {
-		warning("Code for object %d not in room %d", object, _roomResource);
-		return;
-	}
-
-	obcd = getOBCDOffs(object);
-	slot = getScriptSlot();
-
-	offs = getVerbEntrypoint(object, entry);
-	if (offs == 0)
-		return;
-
-	s = &vm.slot[slot];
-	s->number = object;
-	s->offs = obcd + offs;
-	s->status = ssRunning;
-	s->where = where;
-	s->freezeResistant = freezeResistant;
-	s->recursive = recursive;
-	s->freezeCount = 0;
-	s->delayFrameCount = 0;
-
-	initializeLocals(slot, vars);
-
-	runScriptNested(slot);
-}
-
 /* Stop an object script 'script'*/
-void Scumm_v2::stopObjectScript(int script, bool recursive) {
+void Scumm_v2::stopObjectScript(int script, bool background) {
 	ScriptSlot *ss;
 	NestedScript *nest;
 	int i, num;
@@ -1596,25 +1566,10 @@ void Scumm_v2::stopObjectScript(int script, bool recursive) {
 	if (script == 0)
 		return;
 
-	nest = vm.nest;
-	num = _numNestedScripts;
-
-	while (num > 0) {
-		if (nest->number == script &&
-			vm.slot[nest->slot].recursive == recursive && 
-		    (nest->where == WIO_ROOM || nest->where == WIO_INVENTORY || nest->where == WIO_FLOBJECT)) {
-			nest->number = 0xFF;
-			nest->slot = 0xFF;
-			nest->where = 0xFF;
-		}
-		nest++;
-		num--;
-	}
-
 	ss = vm.slot;
 	for (i = 0; i < NUM_SCRIPT_SLOT; i++, ss++) {
 		if (script == ss->number && ss->status != ssDead &&
-		    ss->recursive == recursive &&
+		    ss->freezeResistant == background &&
 		    (ss->where == WIO_ROOM || ss->where == WIO_INVENTORY || ss->where == WIO_FLOBJECT)) {
 			if (ss->cutsceneOverride)
 				error("Object %d stopped with active cutscene/override", script);
@@ -1623,5 +1578,20 @@ void Scumm_v2::stopObjectScript(int script, bool recursive) {
 			if (_currentScript == i)
 				_currentScript = 0xFF;
 		}
+	}
+
+	nest = vm.nest;
+	num = _numNestedScripts;
+
+	while (num > 0) {
+		if (nest->number == script &&
+			vm.slot[nest->slot].freezeResistant == background && 
+		    (nest->where == WIO_ROOM || nest->where == WIO_INVENTORY || nest->where == WIO_FLOBJECT)) {
+			nest->number = 0xFF;
+			nest->slot = 0xFF;
+			nest->where = 0xFF;
+		}
+		nest++;
+		num--;
 	}
 }

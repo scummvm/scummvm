@@ -220,8 +220,7 @@ protected:
 	void resetSentence();
 	void setUserState(byte state);
 
-	void runObjectScript(int object, int entry, bool freezeResistant, bool recursive, int *vars);
-	void stopObjectScript(int script, bool recursive);
+	void stopObjectScript(int script, bool background);
 
 	/* Version 2 script opcodes */
 	void o2_actorFromPos();
