@@ -529,7 +529,12 @@ void ScummEngine_v6he::o6_roomOps() {
 		_saveLoadSlot = 1;
 		_saveTemporaryState = true;
 		break;
-	case 234:
+	case 234:		// HE 7.2
+		b = pop();
+		a = pop();
+		warning("o6_roomOps: case %d (%d, %d)", op, b, a);
+		break;
+	case 236:		// HE 7.2
 		b = pop();
 		a = pop();
 		warning("o6_roomOps: case %d (%d, %d)", op, b, a);
@@ -738,15 +743,6 @@ void ScummEngine_v6he::o6_wait() {
 
 	_scriptPointer += offs;
 	o6_breakHere();
-}
-
-void ScummEngine_v6he::o6_soundKludge() {
-	int list[16];
-	getStackList(list, ARRAYSIZE(list));
-}
-
-void ScummEngine_v6he::o6_dummy() {
-	stopObjectCode();
 }
 
 void ScummEngine_v6he::o6_kernelSetFunctions() {
@@ -1230,7 +1226,7 @@ void ScummEngine_v6he::redimArray(int arrayId, int newX, int newY, int type) {
 void ScummEngine_v6he::decodeParseString(int m, int n) {
 	byte b;
 	int i, color;
-	int args[16];
+	int args[31];
 
 	b = fetchScriptByte();
 
@@ -1265,7 +1261,26 @@ void ScummEngine_v6he::decodeParseString(int m, int n) {
 		_string[m].no_talk_anim = true;
 		break;
 	case 75:		// SO_TEXTSTRING
+		switch (m) {
+		case 0:
+			actorTalk(_scriptPointer);
+			break;
+		case 1:
+			drawString(1, _scriptPointer);
+			break;
+		case 2:
+			unkMessage1(_scriptPointer);
+			break;
+		case 3:
+			unkMessage2(_scriptPointer);
+			break;
+		}
+		_scriptPointer += resStrLen(_scriptPointer) + 1;
+
+		break;
 	case 194:		// HE 7.2
+		getStackList(args, ARRAYSIZE(args));
+		pop();
 		switch (m) {
 		case 0:
 			actorTalk(_scriptPointer);

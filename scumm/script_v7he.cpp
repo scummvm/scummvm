@@ -245,7 +245,7 @@ void ScummEngine_v7he::setupOpcodes() {
 		OPCODE(o6_isSoundRunning),
 		OPCODE(o6_setBoxFlags),
 		OPCODE(o6_invalid),
-		OPCODE(o6_resourceRoutines),
+		OPCODE(o7_resourceRoutines),
 		/* 9C */
 		OPCODE(o6_roomOps),
 		OPCODE(o6_actorOps),
@@ -541,6 +541,137 @@ void ScummEngine_v7he::o7_getActorRoom() {
 		push(a->room);
 	} else
 		push(getObjectRoom(act));
+}
+
+void ScummEngine_v7he::o7_resourceRoutines() {
+	int resid, op;
+	op = fetchScriptByte();
+
+	switch (op) {
+	case 100:		// SO_LOAD_SCRIPT
+		resid = pop();
+		ensureResourceLoaded(rtScript, resid);
+		break;
+	case 101:		// SO_LOAD_SOUND
+		resid = pop();
+		ensureResourceLoaded(rtSound, resid);
+		break;
+	case 102:		// SO_LOAD_COSTUME
+		resid = pop();
+		ensureResourceLoaded(rtCostume, resid);
+		break;
+	case 103:		// SO_LOAD_ROOM
+		resid = pop();
+		ensureResourceLoaded(rtRoom, resid);
+		break;
+	case 104:		// SO_NUKE_SCRIPT
+		resid = pop();
+		setResourceCounter(rtScript, resid, 0x7F);
+		break;
+	case 105:		// SO_NUKE_SOUND
+		resid = pop();
+		setResourceCounter(rtSound, resid, 0x7F);
+		break;
+	case 106:		// SO_NUKE_COSTUME
+		resid = pop();
+		setResourceCounter(rtCostume, resid, 0x7F);
+		break;
+	case 107:		// SO_NUKE_ROOM
+		resid = pop();
+		setResourceCounter(rtRoom, resid, 0x7F);
+		break;
+	case 108:		// SO_LOCK_SCRIPT
+		resid = pop();
+		if (resid >= _numGlobalScripts)
+			break;
+		lock(rtScript, resid);
+		break;
+	case 109:		// SO_LOCK_SOUND
+		resid = pop();
+		lock(rtSound, resid);
+		break;
+	case 110:		// SO_LOCK_COSTUME
+		resid = pop();
+		lock(rtCostume, resid);
+		break;
+	case 111:		// SO_LOCK_ROOM
+		resid = pop();
+		if (resid > 0x7F)
+			resid = _resourceMapper[resid & 0x7F];
+		lock(rtRoom, resid);
+		break;
+	case 112:		// SO_UNLOCK_SCRIPT
+		resid = pop();
+		if (resid >= _numGlobalScripts)
+			break;
+		unlock(rtScript, resid);
+		break;
+	case 113:		// SO_UNLOCK_SOUND
+		resid = pop();
+		unlock(rtSound, resid);
+		break;
+	case 114:		// SO_UNLOCK_COSTUME
+		resid = pop();
+		unlock(rtCostume, resid);
+		break;
+	case 115:		// SO_UNLOCK_ROOM
+		resid = pop();
+		if (resid > 0x7F)
+			resid = _resourceMapper[resid & 0x7F];
+		unlock(rtRoom, resid);
+		break;
+	case 116:		// SO_CLEAR_HEAP
+		/* this is actually a scumm message */
+		error("clear heap not working yet");
+		break;
+	case 117:		// SO_LOAD_CHARSET
+		resid = pop();
+		loadCharset(resid);
+		break;
+	case 118:		// SO_NUKE_CHARSET
+		resid = pop();
+		nukeCharset(resid);
+		break;
+	case 119:		// SO_LOAD_OBJECT
+		{
+			int room, obj = popRoomAndObj(&room);
+			loadFlObject(obj, room);
+			break;
+		}
+	case 120: 					/* queue for load */
+	case 121:
+	case 122:
+	case 123:
+	case 203:
+		debug(1,"stub queueload (%d) resource %d", op, pop());
+		break;
+	case 159:
+		resid = pop();
+		unlock(rtImage, resid);
+		break;
+	case 192:
+		resid = pop();
+		nukeResource(rtImage, resid);
+		break;
+	case 201:
+		resid = pop();
+		ensureResourceLoaded(rtImage, resid);
+		break;
+	case 202:
+		resid = pop();
+		lock(rtImage, resid);
+		break;
+	case 233:
+		resid = pop();
+		debug(1,"stub o7_resourceRoutines lock object %d", resid);
+		break;
+	case 235:
+		resid = pop();
+		debug(1,"stub o7_resourceRoutines unlock object %d", resid);
+		break;
+	default:
+		error("o7_resourceRoutines: default case %d", op);
+	}
 }
 
 void ScummEngine_v7he::o7_quitPauseRestart() {

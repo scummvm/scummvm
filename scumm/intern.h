@@ -580,8 +580,6 @@ protected:
 	void o6_roomOps();
 	void o6_actorOps();
 	void o6_wait();
-	void o6_soundKludge();
-	void o6_dummy();
 	void o6_kernelSetFunctions();
 	void o6_kernelGetFunctions();
 	void o6_openFile();
@@ -624,6 +622,7 @@ protected:
 	void o7_startSound();
 	void o7_pickupObject();
 	void o7_getActorRoom();
+	void o7_resourceRoutines();
 	void o7_quitPauseRestart();
 	void o7_stringLen();
 	void o7_readINI();
@@ -656,8 +655,7 @@ protected:
 
 	/* Version 7 script opcodes */
 	void o72_getString();
-	void o72_objectX();
-	void o72_objectY();
+	void o72_compareStackList();
 	void o72_startScript();
 	void o72_startObject();
 	void o72_drawObject();
@@ -667,6 +665,7 @@ protected:
 	void o72_dimArray();
 	void o72_dim2dimArray();
 	void o72_jumpToScript();
+	void o72_getPixel();
 	void o72_stringLen();
 	void o72_readINI();
 	void o72_unknownF4();

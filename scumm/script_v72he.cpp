@@ -79,7 +79,7 @@ void ScummEngine_v72he::setupOpcodes() {
 		OPCODE(o6_land),
 		OPCODE(o6_lor),
 		OPCODE(o6_pop),
-		OPCODE(o6_invalid),
+		OPCODE(o72_compareStackList),
 		/* 1C */
 		OPCODE(o6_invalid),
 		OPCODE(o6_invalid),
@@ -151,8 +151,8 @@ void ScummEngine_v72he::setupOpcodes() {
 		OPCODE(o6_invalid),
 		OPCODE(o6_wordArrayInc),
 		/* 54 */
-		OPCODE(o72_objectX),
-		OPCODE(o72_objectY),
+		OPCODE(o6_getObjectX),
+		OPCODE(o6_getObjectY),
 		OPCODE(o6_byteVarDec),
 		OPCODE(o6_wordVarDec),
 		/* 58 */
@@ -327,7 +327,7 @@ void ScummEngine_v72he::setupOpcodes() {
 		OPCODE(o6_rename),
 		/* E0 */
 		OPCODE(o6_soundOps),
-		OPCODE(o6_getPixel),
+		OPCODE(o72_getPixel),
 		OPCODE(o6_localizeArray),
 		OPCODE(o6_pickVarRandom),
 		/* E4 */
@@ -390,29 +390,21 @@ void ScummEngine_v72he::o72_getString() {
 	fetchScriptWord();
 }
 
-void ScummEngine_v72he::o72_objectX() {
-	int object = pop();
-	int objnum = getObjectIndex(object);
+void ScummEngine_v72he::o72_compareStackList() {
+	int args[128], i;
+	int num = getStackList(args, ARRAYSIZE(args));
+	int value = pop();
 
-	if (objnum == -1) {
+	if (num) {
+		for (i = 1; i < 128; i++) {
+			if (args[i] = value) {
+				push(1);
+				break;
+			}
+		}
+	} else {
 		push(0);
-		return;
 	}
-
-	push(_objs[objnum].x_pos);
-}
-
-
-void ScummEngine_v72he::o72_objectY() {
-	int object = pop();
-	int objnum = getObjectIndex(object);
-
-	if (objnum == -1) {
-		push(0);
-		return;
-	}
-
-	push(_objs[objnum].y_pos);
 }
 
 void ScummEngine_v72he::o72_startScript() {
@@ -483,9 +475,11 @@ void ScummEngine_v72he::o72_unknown62() {
 }
 
 void ScummEngine_v72he::o72_unknown63() {
-	int a = fetchScriptByte();
-	warning("o72_unknown63 stub (%d)", a);
-	push(1);
+	int subOp = fetchScriptByte();
+	//int arrayId = readVar(fetchScriptWord());
+
+	warning("o72_unknown63 stub (%d)", subOp);
+	push(0);
 }
 
 void ScummEngine_v72he::o72_arrayOps() {
@@ -608,6 +602,28 @@ void ScummEngine_v72he::o72_jumpToScript() {
 	flags = fetchScriptByte();
 	stopObjectCode();
 	runScript(script, (flags == 199 || flags == 200), (flags == 195 || flags == 200), args);
+}
+
+void ScummEngine_v72he::o72_getPixel() {
+	byte area;
+	int x = pop();
+	int y = pop();
+	int subOp = fetchScriptByte();
+
+	if (subOp != 218 && subOp != 219)
+		return;
+
+	VirtScreen *vs = findVirtScreen(y);
+	if (vs == NULL || x > _screenWidth - 1 || x < 0) {
+		push(-1);
+		return;
+	}
+
+	if (subOp == 218)
+		area = *vs->getBackPixels(x, y - vs->topline);
+	else
+		area = *vs->getPixels(x, y - vs->topline);
+	push(area);
 }
 
 void ScummEngine_v72he::o72_stringLen() {

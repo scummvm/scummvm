@@ -349,6 +349,9 @@ void ScummEngine::updateScriptPtr() {
 
 /* Nuke arrays based on script */
 void ScummEngine::nukeArrays(int script) {
+	//FIXME
+	return;
+
 	int i;
 
 	if (!(_features & GF_HUMONGOUS) || !script)
