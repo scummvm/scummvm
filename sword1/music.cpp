@@ -52,38 +52,32 @@ bool SwordMusicHandle::endOfData() const {
 }
 
 int SwordMusicHandle::readBuffer(int16 *buffer, const int numSamples) {
-	// TODO: merge the read() code into readBuffer(), for higher efficency;
-	// we then can remove read() (as it isn't needed for anything anymore).
 	int samples;
-	for (samples = 0; samples < numSamples && !endOfData(); samples++)
-		*buffer++ = read();
+	for (samples = 0; samples < numSamples && !endOfData(); samples++) {
+		int16 sample = _file.readUint16LE();
+		if (_file.ioFailed()) {
+			if (!_looping) {
+				stop();
+				sample = 0;
+			} else {
+				_file.clearIOFailed();
+				_file.seek(WAVEHEADERSIZE);
+				sample = _file.readUint16LE();
+			}
+		}
+		if (_fading > 0) {
+			if (--_fading == 0) {
+				_looping = false;
+				_file.close();
+			}
+			sample = (sample * _fading) / _fadeSamples;
+		} else if (_fading < 0) {
+			_fading++;
+			sample = (sample * (_fadeSamples + _fading)) / _fadeSamples;
+		}
+		*buffer++ = sample;
+	}
 	return samples;
-}
-
-int16 SwordMusicHandle::read() {
-	if (!streaming())
-		return 0;
-	int16 sample = _file.readUint16LE();
-	if (_file.ioFailed()) {
-		if (!_looping) {
-			stop();
-			return 0;
-		}
-		_file.clearIOFailed();
-		_file.seek(WAVEHEADERSIZE);
-		sample = _file.readUint16LE();
-	}
-	if (_fading > 0) {
-		if (--_fading == 0) {
-			_looping = false;
-			_file.close();
-		}
-		sample = (sample * _fading) / _fadeSamples;
-	} else if (_fading < 0) {
-		_fading++;
-		sample = (sample * (_fadeSamples + _fading)) / _fadeSamples;
-	}
-	return sample;
 }
 
 bool SwordMusicHandle::play(const char *filename, bool loop) {

@@ -45,7 +45,6 @@ private:
 public:
 	SwordMusicHandle() : _looping(false), _fading(0) {}
 	virtual int readBuffer(int16 *buffer, const int numSamples);
-	int16 read();
 	bool play(const char *filename, bool loop);
 	void stop();
 	void fadeUp();
