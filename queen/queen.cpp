@@ -52,13 +52,34 @@
 
 
 /* Flight of the Amazon Queen */
-static const GameSettings queen_setting =
-	{ "queen", "Flight of the Amazon Queen", 0 };
+static const GameSettings queen_setting[] = {
+	{ "queen", "Flight of the Amazon Queen", 0 },
+	{ "queen", "Flight of the Amazon Queen (Demo)", 0 },
+	{ "queen", "Flight of the Amazon Queen (Interview)", 0 },
+	{ 0, 0, 0 }
+};
 
 GameList Engine_QUEEN_gameList() {
 	GameList games;
-	games.push_back(queen_setting);
+	const GameSettings *g = queen_setting;
+
+	while (g->name) {
+		games.push_back(*g);
+		g++;
+	}
 	return games;
+}
+
+bool isDemo(uint32 size) {
+	switch(size) {
+		case 1915913:	//interview
+		case 3724538:
+		case 3732177:
+			return true;
+		default:
+			return false;
+	}
+	return false;
 }
 
 DetectedGameList Engine_QUEEN_detectGames(const FSList &fslist) {
@@ -71,7 +92,35 @@ DetectedGameList Engine_QUEEN_detectGames(const FSList &fslist) {
 
 			if (0 == scumm_stricmp("queen.1", gameName) || 0 == scumm_stricmp("queen.1c", gameName)) {
 				// Match found, add to list of candidates, then abort loop.
-				detectedGames.push_back(queen_setting);
+			
+				File dataFile;
+				dataFile.open(file->path().c_str());
+				assert(dataFile.isOpen());
+				
+				if (0 == scumm_stricmp("queen.1", gameName)) {	//an unmodified file
+					if (isDemo(dataFile.size())) { //is it a demo?
+						uint8 whichDemo = dataFile.size() == 1915913 ? 2 : 1;
+						detectedGames.push_back(queen_setting[whichDemo]);
+					} else { //must be a full game then
+						detectedGames.push_back(queen_setting[0]);
+					}
+				} else if (0 == scumm_stricmp("queen.1c", gameName)) { //oh joy, it's a rebuilt file
+					char header[9];
+					dataFile.read(header, 9);
+					if (0 == scumm_strnicmp("QTBL", header, 4)) { //check validity
+						uint8 version = 0;	//default to full/normal version
+
+						if (0 == scumm_strnicmp("PE100", header + 4, 5)) //One of the 2 regular demos
+							version = 1;
+						if (0 == scumm_strnicmp("PEint", header + 4, 5)) //Interview demo
+							version = 2;
+
+						detectedGames.push_back(queen_setting[version]);
+					}
+				}
+
+				dataFile.close();
+				
 				break;
 			}
 		}
