@@ -832,7 +832,7 @@ int Player::scan(uint totrack, uint tobeat, uint totick) {
 	// the current track so that our state when starting the
 	// new track is fully up to date.
 	if (totrack != _track_index)
-		_parser->jumpToTick (-1, true);
+		_parser->jumpToTick ((uint32) -1, true);
 	_parser->setTrack(totrack);
 	if (!_parser->jumpToTick((tobeat - 1) * TICKS_PER_BEAT + totick, true)) {
 		_scanning = false;
