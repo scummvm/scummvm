@@ -895,14 +895,17 @@ bool IMuseInternal::start_sound(int sound)
 		}
 	}
 
-	// Make sure the requested sound is not already playing.
-	// FIXME: This should NEVER happen, but until we get all of the
-	// Sam & Max iMuse issues resolved, it does happen occasionally.
-	// This hack is just to make playtesting tolerable.
+	// If the requested sound is already playing, start it over
+	// from scratch. This was originally a hack to prevent Sam & Max
+	// iMuse messiness while upgrading the iMuse engine, but it
+	// is apparently necessary to deal with fade-and-restart
+	// race conditions that were observed in MI2. Reference
+	// Bug #590511 and Patch #607175 (which was reversed to fix
+	// an FOA regression: Bug #622606).
 	int i;
 	for (i = ARRAYSIZE(_players), player = _players; i != 0; i--, player++) {
 		if (player->_active && player->_id == sound)
-			return true; // break;
+			break;
 	}
 
 	if (!i)
@@ -1220,17 +1223,14 @@ int IMuseInternal::get_sound_status(int sound)
 {
 	int i;
 	Player *player;
-
 	for (i = ARRAYSIZE(_players), player = _players; i != 0; i--, player++) {
 		if (player->_active && player->_id == (uint16)sound) {
 			// Assume that anyone asking for the sound status is
 			// really asking "is it ok if I start playing this
 			// sound now?" So if the sound is about to fade out,
-			// shut it down and pretend it wasn't playing.
-			if (player->is_fading_out()) {
-				player->clear();
+			// pretend it's not playing.
+			if (player->is_fading_out())
 				continue;
-			}
 			return 1;
 		}
 	}
