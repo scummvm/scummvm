@@ -125,9 +125,9 @@ osxsnap: bundle
 	rm -rf ScummVM-snapshot
 
 # Special target to create a win32 snapshot binary
-win32dist: scummvm
+win32dist: scummvm$(EXEEXT)
 	mkdir -p $(WIN32PATH)
-	strip scummvm.exe -o $(WIN32PATH)/scummvm.exe
+	strip scummvm.exe -o $(WIN32PATH)/scummvm$(EXEEXT)
 	cp COPYING $(WIN32PATH)/copying.txt
 	cp README $(WIN32PATH)/readme.txt
 	cp NEWS $(WIN32PATH)/news.txt
