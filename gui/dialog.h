@@ -46,11 +46,12 @@ protected:
 	Widget	*_mouseWidget;
 	Widget  *_focusedWidget;
 	byte	*_screenBuf;
+	bool	_visible;
 
 public:
 	Dialog(NewGui *gui, int x, int y, int w, int h)
 		: _gui(gui), _x(x), _y(y), _w(w), _h(h), _firstWidget(0),
-		  _mouseWidget(0), _focusedWidget(0), _screenBuf(0)
+		  _mouseWidget(0), _focusedWidget(0), _screenBuf(0), _visible(false)
 		{}
 	virtual ~Dialog();
 
@@ -71,6 +72,8 @@ public:
 	
 	virtual void	setupScreenBuf();
 	virtual void	teardownScreenBuf();
+
+	bool isVisible() const		{ return _visible; }
 
 protected:
 	Widget* findWidget(int x, int y); // Find the widget at pos x,y if any

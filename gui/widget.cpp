@@ -37,7 +37,7 @@ void Widget::draw()
 {
 	NewGui *gui = _boss->getGui();
 	
-	if (_flags & WIDGET_INVISIBLE)
+	if (!isVisible() || !_boss->isVisible())
 		return;
 
 	// Account for our relative position in the dialog

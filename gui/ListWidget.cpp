@@ -25,17 +25,13 @@
 #include "newgui.h"
 
 
-// Height of one entry
-#define	LINE_HEIGHT		10
-
-
 ListWidget::ListWidget(Dialog *boss, int x, int y, int w, int h)
 	: Widget(boss, x, y, w - kScrollBarWidth, h), CommandSender(boss)
 {
 	_flags = WIDGET_ENABLED | WIDGET_CLEARBG | WIDGET_RETAIN_FOCUS | WIDGET_WANT_TICKLE;
 	_type = kListWidget;
 	_numberingMode = kListNumberingOne;
-	_entriesPerPage = (_h - 4) / LINE_HEIGHT;
+	_entriesPerPage = (_h - 2) / kLineHeight;
 	_currentPos = 0;
 	_selectedItem = -1;
 	_scrollBar = new ScrollBarWidget(boss, _x + _w, _y, kScrollBarWidth, _h);
@@ -65,7 +61,7 @@ void ListWidget::handleMouseDown(int x, int y, int button, int clickCount)
 	int oldSelectedItem = _selectedItem;
 
 	if (_flags & WIDGET_ENABLED) {
-		_selectedItem = (y - 2) / LINE_HEIGHT + _currentPos;
+		_selectedItem = (y - 1) / kLineHeight + _currentPos;
 
 		if (_editMode && oldSelectedItem != _selectedItem) {
 			// undo any changes made
@@ -80,7 +76,7 @@ void ListWidget::handleMouseUp(int x, int y, int button, int clickCount)
 {
 	// If this was a double click and the mouse is still over the selected item,
 	// send the double click command
-	if (clickCount > 1 && (_selectedItem == (y - 2) / LINE_HEIGHT + _currentPos)) {
+	if (clickCount > 1 && (_selectedItem == (y - 1) / kLineHeight + _currentPos)) {
 		sendCommand(kListItemDoubleClickedCmd, _selectedItem);
 	}
 }
@@ -220,6 +216,11 @@ void ListWidget::drawWidget(bool hilite)
 	int				i, pos, len = _list.size();
 	ScummVM::String	buffer;
 
+	// Draw a thin frame around the list.
+	gui->hline(_x, _y, _x+_w-1, gui->_color);
+	gui->hline(_x, _y+_h-1, _x+_w-1, gui->_shadowcolor);
+	gui->vline(_x, _y, _y+_h-1, gui->_color);
+
 	// Draw the list items
 	for (i = 0, pos = _currentPos; i < _entriesPerPage && pos < len; i++, pos++) {
 		if (_numberingMode == kListNumberingZero || _numberingMode == kListNumberingOne) {
@@ -230,9 +231,15 @@ void ListWidget::drawWidget(bool hilite)
 			buffer = "";
 
 		buffer += _list[pos];
-	
-		gui->drawString(buffer.c_str(), _x+5, _y+2 + LINE_HEIGHT * i, _w - 10,
-							(_selectedItem == pos && _hasFocus) ? gui->_textcolorhi : gui->_textcolor);
+		
+		if (_selectedItem == pos) {
+			if (_hasFocus)
+				gui->fillRect(_x+1, _y+1 + kLineHeight * i, _w - 1, kLineHeight, gui->_textcolorhi);
+			else
+				gui->frameRect(_x+1, _y+1 + kLineHeight * i, _w - 1, kLineHeight, gui->_textcolorhi);
+		}
+		gui->drawString(buffer.c_str(), _x+2, _y+3 + kLineHeight * i, _w - 4,
+							(_selectedItem == pos && _hasFocus) ? gui->_bgcolor : gui->_textcolor);
 	}
 }
 

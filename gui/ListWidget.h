@@ -32,6 +32,11 @@ enum {
 	kListNumberingOne	= 1
 };
 
+// Height of a signle entry line
+enum {
+	kLineHeight			= 11
+};
+
 // Some special commands
 enum {
 	kListItemDoubleClickedCmd	= 'LIdb',	// 'data' will be item index
@@ -68,6 +73,8 @@ public:
 	virtual bool handleKeyDown(char key, int modifiers);
 	virtual bool handleKeyUp(char key, int modifiers);
 	virtual void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);
+
+	virtual bool wantsFocus() { return true; };
 
 	void scrollBarRecalc();
 

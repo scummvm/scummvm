@@ -110,12 +110,11 @@ void ScrollBarWidget::handleMouseMoved(int x, int y, int button)
 		if (_sliderPos < UP_DOWN_BOX_HEIGHT)
 			_sliderPos = UP_DOWN_BOX_HEIGHT;
 
-		if (_sliderPos > _h - UP_DOWN_BOX_HEIGHT - _sliderHeight + 1)
-			_sliderPos = _h - UP_DOWN_BOX_HEIGHT - _sliderHeight + 1;
+		if (_sliderPos > _h - UP_DOWN_BOX_HEIGHT - _sliderHeight)
+			_sliderPos = _h - UP_DOWN_BOX_HEIGHT - _sliderHeight;
 
 		_currentPos =
-			(_sliderPos - UP_DOWN_BOX_HEIGHT) * (_numEntries - _entriesPerPage) / (_h - _sliderHeight -
-																																						 2 * UP_DOWN_BOX_HEIGHT);
+			(_sliderPos - UP_DOWN_BOX_HEIGHT) * (_numEntries - _entriesPerPage) / (_h - 2 * UP_DOWN_BOX_HEIGHT - _sliderHeight);
 		checkBounds(old_pos);
 	} else {
 		int old_part = _part;
@@ -178,8 +177,7 @@ void ScrollBarWidget::recalc()
 		_sliderHeight = UP_DOWN_BOX_HEIGHT;
 
 	_sliderPos =
-		UP_DOWN_BOX_HEIGHT + (_h - 2 * UP_DOWN_BOX_HEIGHT - _sliderHeight + 1) * _currentPos / (_numEntries -
-																																														_entriesPerPage);
+		UP_DOWN_BOX_HEIGHT + (_h - 2 * UP_DOWN_BOX_HEIGHT - _sliderHeight) * _currentPos / (_numEntries - _entriesPerPage);
 	if (_sliderPos < 0)
 		_sliderPos = 0;
 }
@@ -201,8 +199,8 @@ void ScrollBarWidget::drawWidget(bool hilite)
 									(hilite && _part == kUpArrowPart) ? gui->_textcolorhi : gui->_textcolor);
 
 	// Down arrow
-	gui->frameRect(_x, bottomY - UP_DOWN_BOX_HEIGHT + 1, _w, UP_DOWN_BOX_HEIGHT, gui->_color);
-	gui->drawBitmap(down_arrow, _x, bottomY - UP_DOWN_BOX_HEIGHT + 1,
+	gui->frameRect(_x, bottomY - UP_DOWN_BOX_HEIGHT, _w, UP_DOWN_BOX_HEIGHT, gui->_color);
+	gui->drawBitmap(down_arrow, _x, bottomY - UP_DOWN_BOX_HEIGHT,
 									(hilite && _part == kDownArrowPart) ? gui->_textcolorhi : gui->_textcolor);
 
 	// Slider

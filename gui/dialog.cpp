@@ -74,11 +74,28 @@ void Dialog::teardownScreenBuf()
 
 void Dialog::open()
 {
+	Widget *w = _firstWidget;
+	
+	_visible = true;
 	_gui->openDialog(this);
+	
+	// Search for the first objects that wantsFocus() (if any) and give it the focus
+	while (w && !w->wantsFocus()) {
+		w = w->_next;
+	}
+	
+	if (w) {
+		printf("Setting default focus\n");
+		w->receivedFocus();
+		_focusedWidget = w;
+	}
 }
 
 void Dialog::close()
 {
+	_visible = false;
+	_gui->closeTopDialog();
+
 	if (_mouseWidget) {
 		_mouseWidget->handleMouseLeft(0);
 		_mouseWidget = 0;
@@ -87,12 +104,14 @@ void Dialog::close()
 		_focusedWidget->lostFocus();
 		_focusedWidget = 0;
 	}
-	_gui->closeTopDialog();
 }
 
 void Dialog::draw()
 {
 	Widget *w = _firstWidget;
+	
+	if (!isVisible())
+		return;
 
 	if (_screenBuf) {
 		_gui->blitFrom(_screenBuf, _x, _y, _w, _h); 
@@ -113,7 +132,14 @@ void Dialog::handleMouseDown(int x, int y, int button, int clickCount)
 	Widget *w;
 	w = findWidget(x, y);
 
-	if (w != _focusedWidget) {
+	// If the click occured inside a widget which is not the currently
+	// focused one, change the focus to that widget.
+	// TODO: use the wantsFocus() method to objects, so that only fields
+	// that want it get the focus (like edit fields, list field...)
+	// However, right now we "abuse" the focus also for the click&drag
+	// behaviour of buttons. This should probably be changed by adding
+	// a nother field, e.g. _clickedWidget or _dragWidget.
+	if (w && w != _focusedWidget) {
 		// The focus will change. Tell the old focused widget (if any)
 		// that it lost the focus.
 		if (_focusedWidget)
@@ -126,7 +152,7 @@ void Dialog::handleMouseDown(int x, int y, int button, int clickCount)
 		_focusedWidget = w;
 	}
 
-	if (_focusedWidget)
+	if (w == _focusedWidget)
 		_focusedWidget->handleMouseDown(x - _focusedWidget->_x, y - _focusedWidget->_y, button, clickCount);
 }
 
@@ -302,7 +328,7 @@ SaveLoadDialog::SaveLoadDialog(NewGui *gui)
 	addButton(200, 80, 54, 16, CUSTOM_STRING(17), kOptionsCmd, 'O');	// Options
 	addButton(200, 100, 54, 16, RES_STRING(8), kQuitCmd, 'Q');	// Quit
 	
-	_savegameList = new ListWidget(this, 10, 20, 180, 94);
+	_savegameList = new ListWidget(this, 10, 20, 180, 90);
 	_savegameList->setNumberingMode(kListNumberingZero);
 	
 	// Get savegame names
