@@ -78,7 +78,7 @@ StaticTextWidget::StaticTextWidget(Dialog *boss, int x, int y, int w, int h, con
 
 void StaticTextWidget::drawWidget(bool hilite)
 {
-	NewGui *gui = _boss->_gui;
+	NewGui *gui = _boss->getGui();
 	gui->drawString(_text, _x, _y, _w, hilite ? gui->_textcolorhi : gui->_textcolor);
 }
 
@@ -94,6 +94,55 @@ ButtonWidget::ButtonWidget(Dialog *boss, int x, int y, int w, int h, const char 
 
 void ButtonWidget::handleClick(int button)
 {
-	if (_flags & WIDGET_ENABLED)
+	if (_flags & WIDGET_ENABLED && _cmd)
 		_boss->handleCommand(_cmd);
+}
+
+
+#pragma mark -
+
+
+/* 8x8 checkbox bitmap */
+static uint32 checked_img[8] = {
+	0x00000000,
+	0x01000010,
+	0x00100100,
+	0x00011000,
+	0x00011000,
+	0x00100100,
+	0x01000010,
+	0x00000000,
+};
+
+CheckboxWidget::CheckboxWidget(Dialog *boss, int x, int y, int w, int h, const char *label, uint32 cmd)
+	: ButtonWidget(boss, x, y, w, h, label, cmd), _state(false)
+{
+	_flags = WIDGET_ENABLED;
+}
+
+void CheckboxWidget::handleClick(int button)
+{
+	if (_flags & WIDGET_ENABLED) {
+		_state = !_state;
+		draw();
+		if (_cmd)
+			_boss->handleCommand(_cmd);
+	}
+}
+
+void CheckboxWidget::drawWidget(bool hilite)
+{
+	NewGui *gui = _boss->getGui();
+	
+	// Draw the box
+	gui->box(_x, _y, 14, 14);
+	
+	// If checked, draw cross inside the box
+	if (_state)
+		gui->drawBitmap(checked_img, _x + 3, _y + 3, gui->_textcolor);
+	else
+		gui->clearArea(_x + 3, _y + 3, 8, 8);
+	
+	// Finally draw the label
+	gui->drawString(_text, _x + 20, _y + 3, _w, gui->_textcolor);
 }

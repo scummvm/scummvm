@@ -179,11 +179,14 @@ const char *NewGui::queryCustomString(int stringno)
 	return string_map_table_custom[stringno];
 }
 
+
 #pragma mark -
 
-byte *NewGui::getBasePtr(int x, int y)
+
+byte *NewGui::getBasePtr(int x, int y, VirtScreen *vs)
 {
-	VirtScreen *vs = _s->findVirtScreen(y);
+	if (vs == NULL)
+		vs = _s->findVirtScreen(y);
 
 	if (vs == NULL)
 		return NULL;
@@ -237,7 +240,7 @@ void NewGui::line(int x, int y, int x2, int y2, byte color)
 void NewGui::clearArea(int x, int y, int w, int h)
 {
 	VirtScreen *vs = _s->findVirtScreen(y);
-	byte *ptr = getBasePtr(x, y);
+	byte *ptr = getBasePtr(x, y, vs);
 	if (ptr == NULL)
 		return;
 
@@ -280,6 +283,7 @@ void NewGui::drawChar(const char str, int xx, int yy)
 	_color = tempc;
 
 }
+
 void NewGui::drawString(const char *str, int x, int y, int w, byte color)
 {
 	StringTab *st = &_s->string[5];
@@ -298,4 +302,27 @@ void NewGui::drawString(const char *str, int x, int y, int w, byte color)
 		for (uint letter = 0; letter < len; letter++)
 			drawChar(str[letter], st->xpos + (letter * 8), st->ypos);
 	}
+}
+
+/*
+ * Draw an 8x8 bitmap at location (x,y)
+ */
+void NewGui::drawBitmap(uint32 bitmap[8], int x, int y, byte color)
+{
+	VirtScreen *vs = _s->findVirtScreen(y);
+	byte *ptr = getBasePtr(x, y, vs);
+	if (ptr == NULL)
+		return;
+
+	for (int y2 = 0; y2 < 8; y2++) {
+		uint32 mask = 0xF0000000;
+		for (int x2 = 0; x2 < 8; x2++) {
+			if (bitmap[y2] & mask)
+				ptr[x2] = color;
+			mask >>= 4;
+		}
+		ptr += 320;
+	}
+
+	_s->setVirtscreenDirty(vs, x, y, x + 8, y + 8);
 }

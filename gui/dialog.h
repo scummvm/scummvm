@@ -37,7 +37,6 @@ enum {
 
 class Dialog {
 	friend class Widget;
-	friend class StaticTextWidget;
 protected:
 	NewGui	*_gui;
 	Widget	*_firstWidget;
@@ -57,6 +56,8 @@ public:
 		{ if (key == 27) close(); }
 	virtual void handleMouseMoved(int x, int y, int button);
 	virtual void handleCommand(uint32 cmd);
+	
+	NewGui	*getGui()	{ return _gui; }
 
 protected:
 	Widget* findWidget(int x, int y); // Find the widget at pos x,y if any

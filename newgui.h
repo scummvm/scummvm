@@ -23,8 +23,9 @@
 
 #include "scummsys.h"
 
-class Scumm;
 class Dialog;
+class Scumm;
+class VirtScreen;
 
 // Extremly simple stack class, doesn't even do any error checking (for now)
 class DialogStack {
@@ -92,12 +93,13 @@ protected:
 
 public:
 	// Drawing
-	byte *getBasePtr(int x, int y);
+	byte *getBasePtr(int x, int y, VirtScreen *vs = 0);
 	void box(int x, int y, int width, int height);
     void line(int x, int y, int x2, int y2, byte color);
     void clearArea(int x, int y, int w, int h);
 	void drawChar(const char c, int x, int y);
 	void drawString(const char *str, int x, int y, int w, byte color);
+	void drawBitmap(uint32 bitmap[8], int x, int y, byte color);
 
 	// Query a string from the resources
 	const char *queryResString(int stringno);

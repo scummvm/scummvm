@@ -83,12 +83,29 @@ protected:
 	uint8	_hotkey;
 public:
 	ButtonWidget(Dialog *boss, int x, int y, int w, int h, const char *label, uint32 cmd);
-	void setCmd(uint32 cmd);
-	uint32 getCmd();
-	void handleClick(int button);
+	void setCmd(uint32 cmd)	{ _cmd = cmd; }
+	uint32 getCmd()			{ return _cmd; }
 
+	void handleClick(int button);
 	void handleMouseEntered(int button)	{ setFlags(WIDGET_HILITED); draw(); }
 	void handleMouseLeft(int button)	{ clearFlags(WIDGET_HILITED); draw(); }
+};
+
+/* CheckboxWidget */
+class CheckboxWidget : public ButtonWidget {
+protected:
+	bool	_state;
+public:
+	CheckboxWidget(Dialog *boss, int x, int y, int w, int h, const char *label, uint32 cmd);
+	void setState(bool state)	{ _state = state; }
+	bool getState()				{ return _state; }
+
+	void handleClick(int button);
+	virtual void handleMouseEntered(int button)	{}
+	virtual void handleMouseLeft(int button)	{}
+
+protected:
+	void drawWidget(bool hilite);
 };
 
 

@@ -124,6 +124,9 @@ SaveLoadDialog::SaveLoadDialog(NewGui *gui)
 	addButton(200, 60, 54, 16, 'P', RES_STRING(6), kPlayCmd);	// Play
 	addButton(200, 80, 54, 16, 'O', CUSTOM_STRING(17), kOptionsCmd);	// Options
 	addButton(200, 100, 54, 16, 'Q', RES_STRING(8), kQuitCmd);	// Quit
+	
+	// FIXME - test
+	new CheckboxWidget(this, 50, 20, 100, 16, "Toggle me", 0);
 }
 
 void SaveLoadDialog::handleCommand(uint32 cmd)
