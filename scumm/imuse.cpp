@@ -6,17 +6,18 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
- *
+
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- *
+
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
  * $Header$
+ *
  */
 
 #include "stdafx.h"
@@ -38,31 +39,31 @@
 ////////////////////////////////////////
 
 IMuseInternal::IMuseInternal() :
-_old_adlib_instruments (false),
-_enable_multi_midi (false),
-_midi_adlib (0),
-_midi_native (0),
-_base_sounds (0),
-_paused (false),
-_initialized (false),
-_tempoFactor (0),
-_player_limit (ARRAYSIZE(_players)),
-_recycle_players (false),
-_queue_end (0),
-_queue_pos (0),
-_queue_sound (0),
-_queue_adding (0),
-_queue_marker (0),
-_queue_cleared (0),
-_master_volume (0),
-_music_volume (0),
-_trigger_count (0),
-_snm_trigger_index (0)
+_old_adlib_instruments(false),
+_enable_multi_midi(false),
+_midi_adlib(0),
+_midi_native(0),
+_base_sounds(0),
+_paused(false),
+_initialized(false),
+_tempoFactor(0),
+_player_limit(ARRAYSIZE(_players)),
+_recycle_players(false),
+_queue_end(0),
+_queue_pos(0),
+_queue_sound(0),
+_queue_adding(0),
+_queue_marker(0),
+_queue_cleared(0),
+_master_volume(0),
+_music_volume(0),
+_trigger_count(0),
+_snm_trigger_index(0)
 {
-	memset (_channel_volume,0,sizeof(_channel_volume));
-	memset (_channel_volume_eff,0,sizeof(_channel_volume_eff));
-	memset (_volchan_table,0,sizeof(_volchan_table));
-	memset (_active_notes,0,sizeof(_active_notes));
+	memset(_channel_volume,0,sizeof(_channel_volume));
+	memset(_channel_volume_eff,0,sizeof(_channel_volume_eff));
+	memset(_volchan_table,0,sizeof(_volchan_table));
+	memset(_active_notes,0,sizeof(_active_notes));
 }
 
 IMuseInternal::~IMuseInternal() {
@@ -78,7 +79,7 @@ MidiDriver *IMuseInternal::getMidiDriver() {
 		// Route it through Adlib anyway.
 		if (!_midi_adlib) {
 			_midi_adlib = MidiDriver_ADLIB_create();
-			initMidiDriver (_midi_adlib);
+			initMidiDriver(_midi_adlib);
 		}
 		driver = _midi_adlib;
 	}
@@ -86,7 +87,7 @@ MidiDriver *IMuseInternal::getMidiDriver() {
 	return driver;
 }
 
-byte *IMuseInternal::findStartOfSound (int sound) {
+byte *IMuseInternal::findStartOfSound(int sound) {
 	byte *ptr = NULL;
 	int32 size, pos;
 
@@ -94,7 +95,7 @@ byte *IMuseInternal::findStartOfSound (int sound) {
 		ptr = _base_sounds[sound];
 
 	if (ptr == NULL) {
-		debug (1, "IMuseInternal::findStartOfSound(): Sound %d doesn't exist!", sound);
+		debug(1, "IMuseInternal::findStartOfSound(): Sound %d doesn't exist!", sound);
 		return NULL;
 	}
 
@@ -103,11 +104,11 @@ byte *IMuseInternal::findStartOfSound (int sound) {
 	ptr += 4;
 
 	// Okay, we're looking for one of those things: either
-	// an 'MThd' tag (for SMF), or a 'FORM' tag (for XMIDI).
+	// an 'MThd' tag(for SMF), or a 'FORM' tag(for XMIDI).
 	size = 48; // Arbitrary; we should find our tag within the first 48 bytes of the resource
 	pos = 0;
 	while (pos < size) {
-		if (!memcmp (ptr + pos, "MThd", 4) || !memcmp (ptr + pos, "FORM", 4))
+		if (!memcmp(ptr + pos, "MThd", 4) || !memcmp(ptr + pos, "FORM", 4))
 			return ptr + pos;
 		++pos; // We could probably iterate more intelligently
 	}
@@ -176,24 +177,24 @@ bool IMuseInternal::isGM(int sound) {
 	return false;
 }
 
-MidiDriver *IMuseInternal::getBestMidiDriver (int sound) {
+MidiDriver *IMuseInternal::getBestMidiDriver(int sound) {
 	MidiDriver *driver = NULL;
 
-	if (isGM (sound)) {
+	if (isGM(sound)) {
 		if (_midi_native) {
 			driver = _midi_native;
 		} else {
 			// Route it through Adlib anyway.
 			if (!_midi_adlib) {
 				_midi_adlib = MidiDriver_ADLIB_create();
-				initMidiDriver (_midi_adlib);
+				initMidiDriver(_midi_adlib);
 			}
 			driver = _midi_adlib;
 		}
 	} else {
-		if (!_midi_adlib && (_enable_multi_midi || !_midi_native)) {
+		if (!_midi_adlib &&(_enable_multi_midi || !_midi_native)) {
 			_midi_adlib = MidiDriver_ADLIB_create();
-			initMidiDriver (_midi_adlib);
+			initMidiDriver(_midi_adlib);
 		}
 		driver = _midi_adlib;
 	}
@@ -212,16 +213,16 @@ bool IMuseInternal::startSound(int sound) {
 	// occurs.
 	int i;
 	ImTrigger *trigger = _snm_triggers;
-	for (i = ARRAYSIZE (_snm_triggers); i; --i, ++trigger) {
+	for (i = ARRAYSIZE(_snm_triggers); i; --i, ++trigger) {
 		if (trigger->sound && trigger->id && trigger->command[0] == 8 && trigger->command[1] == sound)
 			return false;
 	}
 
 	// Not sure exactly what the old code was doing,
 	// but we'll go ahead and do a similar check.
-	mdhd = findStartOfSound (sound);
+	mdhd = findStartOfSound(sound);
 	if (!mdhd) {
-		debug (2, "IMuseInternal::startSound(): Couldn't find sound %d!", sound);
+		debug(2, "IMuseInternal::startSound(): Couldn't find sound %d!", sound);
 		return false;
 	}
 /*
@@ -229,7 +230,7 @@ bool IMuseInternal::startSound(int sound) {
 	if (!mdhd) {
 		mdhd = findTag(sound, MDPG_TAG, 0);
 		if (!mdhd) {
-			debug (2, "SE::startSound failed: Couldn't find sound %d", sound);
+			debug(2, "SE::startSound failed: Couldn't find sound %d", sound);
 			return false;
 		}
 	}
@@ -237,7 +238,7 @@ bool IMuseInternal::startSound(int sound) {
 
 	// Check which MIDI driver this track should use.
 	// If it's NULL, it ain't something we can play.
-	MidiDriver *driver = getBestMidiDriver (sound);
+	MidiDriver *driver = getBestMidiDriver(sound);
 	if (!driver)
 		return false;
 
@@ -246,16 +247,16 @@ bool IMuseInternal::startSound(int sound) {
 	// iMuse messiness while upgrading the iMuse engine, but it
 	// is apparently necessary to deal with fade-and-restart
 	// race conditions that were observed in MI2. Reference
-	// Bug #590511 and Patch #607175 (which was reversed to fix
+	// Bug #590511 and Patch #607175(which was reversed to fix
 	// an FOA regression: Bug #622606).
-	player = findActivePlayer (sound);
+	player = findActivePlayer(sound);
 	if (!player)
 		player = allocate_player(128);
 	if (!player)
 		return false;
 
 	player->clear();
-	return player->startSound (sound, driver);
+	return player->startSound(sound, driver);
 }
 
 
@@ -302,7 +303,7 @@ void IMuseInternal::init_parts() {
 
 int IMuseInternal::stopSound(int sound) {
 	int r = -1;
-	Player *player = findActivePlayer (sound);
+	Player *player = findActivePlayer(sound);
 	if (player) {
 		player->clear();
 		r = 0;
@@ -321,16 +322,16 @@ int IMuseInternal::stop_all_sounds() {
 	return 0;
 }
 
-void IMuseInternal::on_timer (MidiDriver *midi) {
+void IMuseInternal::on_timer(MidiDriver *midi) {
 	if (_paused)
 		return;
 
 	if (midi == _midi_native || !_midi_native)
-		handleDeferredCommands (midi);
-	sequencer_timers (midi);
+		handleDeferredCommands(midi);
+	sequencer_timers(midi);
 }
 
-void IMuseInternal::sequencer_timers (MidiDriver *midi) {
+void IMuseInternal::sequencer_timers(MidiDriver *midi) {
 	Player *player = _players;
 	int i;
 
@@ -362,19 +363,19 @@ void IMuseInternal::handle_marker(uint id, byte data) {
 		p = _cmd_queue[pos].array;
 		if (p[0] == TRIGGER_ID && p[1] == id && p[2] == data)
 			break;
-		pos = (pos + 1) & (ARRAYSIZE(_cmd_queue) - 1);
+		pos = (pos + 1) &(ARRAYSIZE(_cmd_queue) - 1);
 	}
 
 	if (pos == _queue_pos)
 		return;
 
 	if (pos != _queue_end)
-		warning ("Skipping entries in iMuse command queue to reach marker");
+		warning("Skipping entries in iMuse command queue to reach marker");
 
 	_trigger_count--;
 	_queue_cleared = false;
 	do {
-		pos = (pos + 1) & (ARRAYSIZE(_cmd_queue) - 1);
+		pos = (pos + 1) &(ARRAYSIZE(_cmd_queue) - 1);
 		if (_queue_pos == pos)
 			break;
 		p = _cmd_queue[pos].array;
@@ -398,7 +399,7 @@ int IMuseInternal::get_channel_volume(uint a) {
 	return (_master_volume * _music_volume / 255) >> 1;
 }
 
-Part *IMuseInternal::allocate_part (byte pri, MidiDriver *midi) {
+Part *IMuseInternal::allocate_part(byte pri, MidiDriver *midi) {
 	Part *part, *best = NULL;
 	int i;
 
@@ -413,26 +414,26 @@ Part *IMuseInternal::allocate_part (byte pri, MidiDriver *midi) {
 
 	if (best) {
 		best->uninit();
-		reallocateMidiChannels (midi);
+		reallocateMidiChannels(midi);
 	} else {
 		debug(1, "Denying part request");
 	}
 	return best;
 }
 
-int IMuseInternal::getSoundStatus (int sound, bool ignoreFadeouts) {
+int IMuseInternal::getSoundStatus(int sound, bool ignoreFadeouts) {
 	Player *player;
 	if (sound == -1) {
 		player = _players;
 		for (int i = ARRAYSIZE(_players); i; --i, ++player) {
-			if (player->isActive() && (!ignoreFadeouts || !player->isFadingOut()))
+			if (player->isActive() &&(!ignoreFadeouts || !player->isFadingOut()))
 				return player->getID();
 		}
 		return 0;
 	}
 
-	player = findActivePlayer (sound);
-	if (player && (!ignoreFadeouts || !player->isFadingOut()))
+	player = findActivePlayer(sound);
+	if (player &&(!ignoreFadeouts || !player->isFadingOut()))
 		return 1;
 	return get_queue_sound_status(sound);
 }
@@ -448,7 +449,7 @@ int IMuseInternal::get_queue_sound_status(int sound) {
 		a = _cmd_queue[i].array;
 		if (a[0] == COMMAND_ID && a[1] == 8 && a[2] == (uint16)sound)
 			return 2;
-		i = (i + 1) & (ARRAYSIZE(_cmd_queue) - 1);
+		i = (i + 1) &(ARRAYSIZE(_cmd_queue) - 1);
 	}
 	return 0;
 }
@@ -464,10 +465,10 @@ int IMuseInternal::set_volchan(int sound, int volchan) {
 		return -1;
 
 	if (r >= 8) {
-		player = findActivePlayer (sound);
+		player = findActivePlayer(sound);
 		if (player && player->_vol_chan != (uint16)volchan) {
 			player->_vol_chan = volchan;
-			player->setVolume (player->getVolume());
+			player->setVolume(player->getVolume());
 			return 0;
 		}
 		return -1;
@@ -491,7 +492,7 @@ int IMuseInternal::set_volchan(int sound, int volchan) {
 		if (num >= r)
 			best->clear();
 		player->_vol_chan = volchan;
-		player->setVolume (player->getVolume());
+		player->setVolume(player->getVolume());
 		return 0;
 	}
 }
@@ -530,13 +531,13 @@ int IMuseInternal::enqueue_command(int a, int b, int c, int d, int e, int f, int
 	p[6] = f;
 	p[7] = g;
 
-	i = (i + 1) & (ARRAYSIZE(_cmd_queue) - 1);
+	i = (i + 1) &(ARRAYSIZE(_cmd_queue) - 1);
 
 	if (_queue_end != i) {
 		_queue_pos = i;
 		return 0;
 	} else {
-		_queue_pos = (i - 1) & (ARRAYSIZE(_cmd_queue) - 1);
+		_queue_pos = (i - 1) &(ARRAYSIZE(_cmd_queue) - 1);
 		return -1;
 	}
 }
@@ -569,7 +570,7 @@ int IMuseInternal::set_music_volume(uint vol) {
 		return 0;
 	_music_volume = vol;
 	vol = vol * _master_volume / 255;
-	for (uint i = 0; i < ARRAYSIZE (_channel_volume); i++) {
+	for (uint i = 0; i < ARRAYSIZE(_channel_volume); i++) {
 		_channel_volume_eff[i] = _channel_volume[i] * vol / 255;
 	}
 	if (!_paused)
@@ -577,14 +578,14 @@ int IMuseInternal::set_music_volume(uint vol) {
 	return 0;
 }
 
-int IMuseInternal::set_master_volume (uint vol) {
+int IMuseInternal::set_master_volume(uint vol) {
 	if (vol > 255)
 		vol = 255;
 	if (_master_volume == vol)
 		return 0;
 	_master_volume = vol;
 	vol = vol * _music_volume / 255;
-	for (uint i = 0; i < ARRAYSIZE (_channel_volume); i++) {
+	for (uint i = 0; i < ARRAYSIZE(_channel_volume); i++) {
 		_channel_volume_eff[i] = _channel_volume[i] * vol / 255;
 	}
 	if (!_paused)
@@ -625,9 +626,9 @@ int IMuseInternal::enqueue_trigger(int sound, int marker) {
 	p[1] = sound;
 	p[2] = marker;
 
-	pos = (pos + 1) & (ARRAYSIZE(_cmd_queue) - 1);
+	pos = (pos + 1) &(ARRAYSIZE(_cmd_queue) - 1);
 	if (_queue_end == pos) {
-		_queue_pos = (pos - 1) & (ARRAYSIZE(_cmd_queue) - 1);
+		_queue_pos = (pos - 1) &(ARRAYSIZE(_cmd_queue) - 1);
 		return -1;
 	}
 
@@ -644,11 +645,11 @@ int32 IMuseInternal::doCommand(int a, int b, int c, int d, int e, int f, int g, 
 	byte param = a >> 8;
 	Player *player = NULL;
 
-	if (!_initialized && (cmd || param))
+	if (!_initialized &&(cmd || param))
 		return -1;
 
 #ifdef IMUSE_DEBUG
-	debug (0, "doCommand - %d (%d/%d), %d, %d, %d, %d, %d, %d, %d", a, (int) param, (int) cmd, b, c, d, e, f, g, h);
+	debug(0, "doCommand - %d(%d/%d), %d, %d, %d, %d, %d, %d, %d", a, (int) param, (int) cmd, b, c, d, e, f, g, h);
 #endif
 
 	if (param == 0) {
@@ -657,7 +658,7 @@ int32 IMuseInternal::doCommand(int a, int b, int c, int d, int e, int f, int g, 
 			if (b > 127)
 				return -1;
 			else
-				return set_master_volume ((b << 1) | (b ? 0 : 1)); // Convert b from 0-127 to 0-255
+				return set_master_volume((b << 1) |(b ? 0 : 1)); // Convert b from 0-127 to 0-255
 		case 7:
 			return _master_volume >> 1; // Convert from 0-255 to 0-127
 		case 8:
@@ -670,32 +671,32 @@ int32 IMuseInternal::doCommand(int a, int b, int c, int d, int e, int f, int g, 
 			return stop_all_sounds();
 		case 12:
 			// Sam & Max: Player-scope commands
-			player = findActivePlayer (b);
+			player = findActivePlayer(b);
 			if (!player)
 				return -1;
 
 			switch (d) {
 			case 6:
 				// Set player volume.
-				return player->setVolume (e);
+				return player->setVolume(e);
 			default:
-				warning("IMuseInternal::doCommand (6) unsupported sub-command %d", d);
+				warning("IMuseInternal::doCommand(6) unsupported sub-command %d", d);
 			}
 			return -1;
 		case 13:
 			return getSoundStatus(b);
 		case 14:
 			// Sam and Max: Parameter fade
-			player = this->findActivePlayer (b);
+			player = this->findActivePlayer(b);
 			if (player)
-				return player->addParameterFader (d, e, f);
+				return player->addParameterFader(d, e, f);
 			return -1;
 
 		case 15:
 			// Sam & Max: Set hook for a "maybe" jump
-			player = findActivePlayer (b);
+			player = findActivePlayer(b);
 			if (player) {
-				player->setHook (0, d, 0);
+				player->setHook(0, d, 0);
 				return 0;
 			}
 			return -1;
@@ -706,9 +707,9 @@ int32 IMuseInternal::doCommand(int a, int b, int c, int d, int e, int f, int g, 
 				return set_channel_volume(b, c);
 			} else {
 				if (e || f || g || h) 
-					return ImSetTrigger (b, d, e, f, g, h);
+					return ImSetTrigger(b, d, e, f, g, h);
 				else
-					return ImClearTrigger (b, d);
+					return ImClearTrigger(b, d);
 			}
 		case 18:
 			if (g_scumm->_gameId != GID_SAMNMAX) {
@@ -722,7 +723,7 @@ int32 IMuseInternal::doCommand(int a, int b, int c, int d, int e, int f, int g, 
 				a = 0;
 				for (i = 0; i < 16; ++i) {
 					if (_snm_triggers [i].sound == b && _snm_triggers [i].id &&
-					    (d == -1 || _snm_triggers [i].id == d))
+					   (d == -1 || _snm_triggers [i].id == d))
 					{
 						++a;
 					}
@@ -732,25 +733,25 @@ int32 IMuseInternal::doCommand(int a, int b, int c, int d, int e, int f, int g, 
 		case 19:
 			// Sam & Max: ImClearTrigger
 			// This should clear a trigger that's been set up
-			// with ImSetTrigger (cmd == 17). Seems to work....
-			return ImClearTrigger (b, d);
+			// with ImSetTrigger(cmd == 17). Seems to work....
+			return ImClearTrigger(b, d);
 		case 20:
 			// Sam & Max: Deferred Command
-			// warning ("[--] doCommand (20): %3d %3d %3d %3d %3d %3d  (%d)", c, d, e, f, g, h, b);
-			addDeferredCommand (b, c, d, e, f, g, h);
+			// warning("[--] doCommand(20): %3d %3d %3d %3d %3d %3d (%d)", c, d, e, f, g, h, b);
+			addDeferredCommand(b, c, d, e, f, g, h);
 			return 0;
 		case 2:
 		case 3:
 			return 0;
 		default:
-			warning("doCommand (%d [%d/%d], %d, %d, %d, %d, %d, %d, %d) unsupported", a, param, cmd, b, c, d, e, f, g, h);
+			warning("doCommand(%d [%d/%d], %d, %d, %d, %d, %d, %d, %d) unsupported", a, param, cmd, b, c, d, e, f, g, h);
 		}
 	} else if (param == 1) {
-		if ((1 << cmd) & (0x783FFF)) {
+		if ((1 << cmd) &(0x783FFF)) {
 			player = findActivePlayer(b);
 			if (!player)
 				return -1;
-			if ((1 << cmd) & (1 << 11 | 1 << 22)) {
+			if ((1 << cmd) &(1 << 11 | 1 << 22)) {
 				assert(c >= 0 && c <= 15);
 				player = (Player *) player->getPart(c);
 				if (!player)
@@ -771,7 +772,7 @@ int32 IMuseInternal::doCommand(int a, int b, int c, int d, int e, int f, int g, 
 			}
 		case 1:
 			if (g_scumm->_gameId == GID_SAMNMAX)
-				player->jump (d - 1, (e - 1) * 4 + f, ((g * player->getTicksPerBeat()) >> 2) + h);
+				player->jump(d - 1, (e - 1) * 4 + f, ((g * player->getTicksPerBeat()) >> 2) + h);
 			else
 				player->setPriority(c);
 			return 0;
@@ -803,7 +804,7 @@ int32 IMuseInternal::doCommand(int a, int b, int c, int d, int e, int f, int g, 
 		case 12:
 			return player->setHook(c, d, e);
 		case 13:
-			return player->addParameterFader (ParameterFader::pfVolume, c, d);
+			return player->addParameterFader(ParameterFader::pfVolume, c, d);
 		case 14:
 			return enqueue_trigger(b, c);
 		case 15:
@@ -824,7 +825,7 @@ int32 IMuseInternal::doCommand(int a, int b, int c, int d, int e, int f, int g, 
 		case 24:
 			return 0;
 		default:
-			warning("doCommand (%d [%d/%d], %d, %d, %d, %d, %d, %d, %d) unsupported", a, param, cmd, b, c, d, e, f, g, h);
+			warning("doCommand(%d [%d/%d], %d, %d, %d, %d, %d, %d, %d) unsupported", a, param, cmd, b, c, d, e, f, g, h);
 			return -1;
 		}
 	}
@@ -832,19 +833,19 @@ int32 IMuseInternal::doCommand(int a, int b, int c, int d, int e, int f, int g, 
 	return -1;
 }
 
-int32 IMuseInternal::ImSetTrigger (int sound, int id, int a, int b, int c, int d) {
+int32 IMuseInternal::ImSetTrigger(int sound, int id, int a, int b, int c, int d) {
 	// Sam & Max: ImSetTrigger.
 	// Sets a trigger for a particular player and
 	// marker ID, along with doCommand parameters
 	// to invoke at the marker. The marker is
-	// represented by MIDI SysEx block 00 xx (F7)
+	// represented by MIDI SysEx block 00 xx(F7)
 	// where "xx" is the marker ID.
 	uint16 oldest_trigger = 0;
 	ImTrigger *oldest_ptr = NULL;
 
 	int i;
 	ImTrigger *trig = _snm_triggers;
-	for (i = ARRAYSIZE (_snm_triggers); i; --i, ++trig) {
+	for (i = ARRAYSIZE(_snm_triggers); i; --i, ++trig) {
 		if (!trig->id)
 			break;
 		if (trig->id == id && trig->sound == sound)
@@ -879,12 +880,12 @@ int32 IMuseInternal::ImSetTrigger (int sound, int id, int a, int b, int c, int d
 
 	// If the command is to start a sound, stop that sound if it's already playing.
 	// This fixes some carnival music problems.
-	if (trig->command [0] == 8 && getSoundStatus (trig->command [1]))
-		stopSound (trig->command [1]);
+	if (trig->command [0] == 8 && getSoundStatus(trig->command [1]))
+		stopSound(trig->command [1]);
 	return 0;
 }
 
-int32 IMuseInternal::ImClearTrigger (int sound, int id) {
+int32 IMuseInternal::ImClearTrigger(int sound, int id) {
 	int count = 0;
 	int i;
 	for (i = 0; i < 16; ++i) {
@@ -898,7 +899,7 @@ int32 IMuseInternal::ImClearTrigger (int sound, int id) {
 	return (count > 0) ? 0 : -1;
 }
 
-int32 IMuseInternal::ImFireAllTriggers (int sound) {
+int32 IMuseInternal::ImFireAllTriggers(int sound) {
 	if (!sound) return 0;
 	int count = 0;
 	int i;
@@ -906,7 +907,7 @@ int32 IMuseInternal::ImFireAllTriggers (int sound) {
 		if (_snm_triggers [i].sound == sound)
 		{
 			_snm_triggers [i].sound = _snm_triggers [i].id = 0;
-			doCommand (_snm_triggers [i].command [0],
+			doCommand(_snm_triggers [i].command [0],
 			           _snm_triggers [i].command [1],
 			           _snm_triggers [i].command [2],
 			           _snm_triggers [i].command [3],
@@ -934,7 +935,7 @@ void IMuseInternal::update_volumes() {
 
 	for (i = ARRAYSIZE(_players), player = _players; i != 0; i--, player++) {
 		if (player->isActive())
-			player->setVolume (player->getVolume());
+			player->setVolume(player->getVolume());
 	}
 }
 
@@ -1005,7 +1006,7 @@ int HookDatas::set(byte cls, byte value, byte chan) {
 	return 0;
 }
 
-Player *IMuseInternal::findActivePlayer (int id) {
+Player *IMuseInternal::findActivePlayer(int id) {
 	int i;
 	Player *player;
 
@@ -1027,13 +1028,13 @@ uint32 IMuseInternal::property(int prop, uint32 value) {
 	case IMuse::PROP_TEMPO_BASE:
 		// This is a specified as a percentage of normal
 		// music speed. The number must be an integer
-		// ranging from 50 to 200 (for 50% to 200% normal speed).
+		// ranging from 50 to 200(for 50% to 200% normal speed).
 		if (value >= 50 && value <= 200)
 			_tempoFactor = value;
 		break;
 
 	case IMuse::PROP_NATIVE_MT32:
-		Instrument::nativeMT32 (value > 0);
+		Instrument::nativeMT32(value > 0);
 		break;
 
 	case IMuse::PROP_MULTI_MIDI:
@@ -1071,7 +1072,7 @@ void IMuseInternal::setBase(byte **base) {
 	_base_sounds = base;
 }
 
-IMuseInternal *IMuseInternal::create (OSystem *syst, MidiDriver *native_midi) {
+IMuseInternal *IMuseInternal::create(OSystem *syst, MidiDriver *native_midi) {
 	IMuseInternal *i = new IMuseInternal;
 	i->initialize(syst, native_midi);
 	return i;
@@ -1083,7 +1084,7 @@ int IMuseInternal::initialize(OSystem *syst, MidiDriver *native_midi) {
 	_midi_native = native_midi;
 	_midi_adlib = NULL;
 	if (native_midi)
-		initMidiDriver (_midi_native);
+		initMidiDriver(_midi_native);
 
 	if (!_tempoFactor) _tempoFactor = 100;
 	_master_volume = 255;
@@ -1102,7 +1103,7 @@ int IMuseInternal::initialize(OSystem *syst, MidiDriver *native_midi) {
 	return 0;
 }
 
-void IMuseInternal::initMidiDriver (MidiDriver *midi) {
+void IMuseInternal::initMidiDriver(MidiDriver *midi) {
 	// Open MIDI driver
 	midi->property(MidiDriver::PROP_OLD_ADLIB, _old_adlib_instruments ? 1 : 0);
 
@@ -1117,12 +1118,12 @@ void IMuseInternal::initMidiDriver (MidiDriver *midi) {
 	midi->setTimerCallback(midi, &IMuseInternal::midiTimerCallback);
 }
 
-void IMuseInternal::initMT32 (MidiDriver *midi) {
+void IMuseInternal::initMT32(MidiDriver *midi) {
 	byte buffer[32] = "\x41\x10\x16\x12\x00\x00\x00                        ";
 	char info[256] = "ScummVM ";
 	int len;
 	
-	// Compute version string (truncated to 20 chars max.)
+	// Compute version string(truncated to 20 chars max.)
 	strcat(info, gScummVMVersion);
 	len = strlen(info);
 	if (len > 20)
@@ -1135,12 +1136,12 @@ void IMuseInternal::initMT32 (MidiDriver *midi) {
 	// Display a welcome message on MT-32 displays.
 	memcpy(&buffer[4], "\x20\x00\x00", 3);
 	memcpy(&buffer[7], "                    ", 20);
-	memcpy(buffer + 7 + (20 - len) / 2, info, len);
+	memcpy(buffer + 7 +(20 - len) / 2, info, len);
 	byte checksum = 0;
 	for (int i = 4; i < 27; ++i)
 		checksum -= buffer[i];
 	buffer[27] = checksum;
-	midi->sysEx (buffer, 28);
+	midi->sysEx(buffer, 28);
 }
 
 void IMuseInternal::init_queue() {
@@ -1160,7 +1161,7 @@ void IMuseInternal::pause(bool paused) {
 	_paused = paused;
 }
 
-void IMuseInternal::handleDeferredCommands (MidiDriver *midi) {
+void IMuseInternal::handleDeferredCommands(MidiDriver *midi) {
 	uint32 advance = midi->getBaseTempo();
 
 	DeferredCommand *ptr = &_deferredCommands[0];
@@ -1179,7 +1180,7 @@ void IMuseInternal::handleDeferredCommands (MidiDriver *midi) {
 // "time" is interpreted as hundredths of a second.
 // FIXME: Is that correct?
 // We convert it to microseconds before prceeding
-void IMuseInternal::addDeferredCommand (int time, int a, int b, int c, int d, int e, int f) {
+void IMuseInternal::addDeferredCommand(int time, int a, int b, int c, int d, int e, int f) {
 	DeferredCommand *ptr = &_deferredCommands[0];
 	int i;
 	for (i = ARRAYSIZE(_deferredCommands); i; --i, ++ptr) {
@@ -1303,14 +1304,14 @@ int IMuseInternal::save_or_load(Serializer *ser, Scumm *scumm) {
 
 	ser->saveLoadEntries(this, mainEntries);
 	for (i = 0; i < ARRAYSIZE(_players); ++i)
-		_players[i].save_or_load (ser);
+		_players[i].save_or_load(ser);
 	ser->saveLoadArrayOf(_parts, ARRAYSIZE(_parts), sizeof(_parts[0]), partEntries);
 
 	{ // Load/save the instrument definitions, which were revamped with V11.
 		Part *part = &_parts[0];
 		if (ser->getVersion() >= VER_V11) {
 			for (i = ARRAYSIZE(_parts); i; --i, ++part) {
-				part->_instrument.saveOrLoad (ser);
+				part->_instrument.saveOrLoad(ser);
 			}
 		} else {
 			for (i = ARRAYSIZE(_parts); i; --i, ++part)
@@ -1320,18 +1321,18 @@ int IMuseInternal::save_or_load(Serializer *ser, Scumm *scumm) {
 
 	// VolumeFader has been replaced with the more generic ParameterFader.
 	for (i = 0; i < 8; ++i)
-		ser->saveLoadEntries (0, volumeFaderEntries);
+		ser->saveLoadEntries(0, volumeFaderEntries);
 
 	if (!ser->isSaving()) {
 		// Load all sounds that we need
 		fix_players_after_load(scumm);
 		fix_parts_after_load();
-		set_master_volume (_master_volume);
+		set_master_volume(_master_volume);
 
 		if (_midi_native)
-			reallocateMidiChannels (_midi_native);
+			reallocateMidiChannels(_midi_native);
 		if (_midi_adlib)
-			reallocateMidiChannels (_midi_adlib);
+			reallocateMidiChannels(_midi_adlib);
 	}
 
 	return 0;
@@ -1367,7 +1368,7 @@ void IMuseInternal::fix_players_after_load(Scumm *scumm) {
 void Part::set_detune(int8 detune) {
 	_detune_eff = clamp((_detune = detune) + _player->getDetune(), -128, 127);
 	if (_mc) {
-		_mc->pitchBend (clamp(_pitchbend +
+		_mc->pitchBend(clamp(_pitchbend +
 						(_detune_eff * 64 / 12) +
 						(_transpose_eff * 8192 / 12), -8192, 8191));
 	}
@@ -1376,7 +1377,7 @@ void Part::set_detune(int8 detune) {
 void Part::set_pitchbend(int value) {
 	_pitchbend = value;
 	if (_mc) {
-		_mc->pitchBend (clamp(_pitchbend +
+		_mc->pitchBend(clamp(_pitchbend +
 						(_detune_eff * 64 / 12) +
 						(_transpose_eff * 8192 / 12), -8192, 8191));
 	}
@@ -1385,25 +1386,25 @@ void Part::set_pitchbend(int value) {
 void Part::setVolume(uint8 vol) {
 	_vol_eff = ((_vol = vol) + 1) * _player->getEffectiveVolume() >> 7;
 	if (_mc)
-		_mc->volume (_vol_eff);
+		_mc->volume(_vol_eff);
 }
 
 void Part::set_pri(int8 pri) {
 	_pri_eff = clamp((_pri = pri) + _player->getPriority(), 0, 255);
 	if (_mc)
-		_mc->priority (_pri_eff);
+		_mc->priority(_pri_eff);
 }
 
 void Part::set_pan(int8 pan) {
 	_pan_eff = clamp((_pan = pan) + _player->getPan(), -64, 63);
 	if (_mc)
-		_mc->panPosition (_pan_eff + 0x40);
+		_mc->panPosition(_pan_eff + 0x40);
 }
 
 void Part::set_transpose(int8 transpose) {
 	_transpose_eff = transpose_clamp((_transpose = transpose) + _player->getTranspose(), -12, 12);
 	if (_mc) {
-		_mc->pitchBend (clamp(_pitchbend +
+		_mc->pitchBend(clamp(_pitchbend +
 						(_detune_eff * 64 / 12) +
 						(_transpose_eff * 8192 / 12), -8192, 8191));
 	}
@@ -1412,26 +1413,26 @@ void Part::set_transpose(int8 transpose) {
 void Part::set_pedal(bool value) {
 	_pedal = value;
 	if (_mc)
-		_mc->sustain (_pedal);
+		_mc->sustain(_pedal);
 }
 
 void Part::set_modwheel(uint value) {
 	_modwheel = value;
 	if (_mc)
-		_mc->modulationWheel (_modwheel);
+		_mc->modulationWheel(_modwheel);
 }
 
 void Part::set_chorus(uint chorus) {
 	_chorus = chorus;
 	if (_mc)
-		_mc->chorusLevel (_effect_level);
+		_mc->chorusLevel(_effect_level);
 }
 
 void Part::set_effect_level(uint level)
 {
 	_effect_level = level;
 	if (_mc)
-		_mc->effectLevel (_effect_level);
+		_mc->effectLevel(_effect_level);
 }
 
 void Part::fix_after_load() {
@@ -1449,7 +1450,7 @@ void Part::set_pitchbend_factor(uint8 value) {
 	set_pitchbend(0);
 	_pitchbend_factor = value;
 	if (_mc)
-		_mc->pitchBendFactor (_pitchbend_factor);
+		_mc->pitchBendFactor(_pitchbend_factor);
 }
 
 void Part::set_onoff(bool on) {
@@ -1458,56 +1459,56 @@ void Part::set_onoff(bool on) {
 		if (!on)
 			off();
 		if (!_percussion)
-			_player->_se->reallocateMidiChannels (_player->getMidiDriver());
+			_player->_se->reallocateMidiChannels(_player->getMidiDriver());
 	}
 }
 
 void Part::set_instrument(byte * data) {
-	_instrument.adlib (data);
+	_instrument.adlib(data);
 	if (clearToTransmit())
-		_instrument.send (_mc);
+		_instrument.send(_mc);
 }
 
-void Part::load_global_instrument (byte slot) {
-	_player->_se->copyGlobalAdlibInstrument (slot, &_instrument);
+void Part::load_global_instrument(byte slot) {
+	_player->_se->copyGlobalAdlibInstrument(slot, &_instrument);
 	if (clearToTransmit())
-		_instrument.send (_mc);
+		_instrument.send(_mc);
 }
 
 void Part::key_on(byte note, byte velocity) {
 	MidiChannel *mc = _mc;
-	_actives[note >> 4] |= (1 << (note & 0xF));
+	_actives[note >> 4] |= (1 <<(note & 0xF));
 
 	// DEBUG
 	if (_unassigned_instrument && !_percussion) {
 		_unassigned_instrument = false;
 		if (!_instrument.isValid()) {
-			warning ("[%02d] No instrument specified", (int) _chan);
+			warning("[%02d] No instrument specified", (int) _chan);
 			return;
 		}
 	}
 
 	if (mc && _instrument.isValid()) {
-		mc->noteOn (note, velocity);
+		mc->noteOn(note, velocity);
 	} else if (_percussion) {
 		mc = _player->getMidiDriver()->getPercussionChannel();
 		if (!mc)
 			return;
-		mc->volume (_vol_eff);
-		mc->programChange (_bank);
-		mc->noteOn (note, velocity);
+		mc->volume(_vol_eff);
+		mc->programChange(_bank);
+		mc->noteOn(note, velocity);
 	}
 }
 
 void Part::key_off(byte note) {
 	MidiChannel *mc = _mc;
-	_actives[note >> 4] &= ~(1 << (note & 0xF));
+	_actives[note >> 4] &= ~(1 <<(note & 0xF));
 	if (mc) {
-		mc->noteOff (note);
+		mc->noteOff(note);
 	} else if (_percussion) {
 		mc = _player->getMidiDriver()->getPercussionChannel();
 		if (mc)
-			mc->noteOff (note);
+			mc->noteOff(note);
 	}
 }
 
@@ -1516,7 +1517,7 @@ void Part::init() {
 	_next = NULL;
 	_prev = NULL;
 	_mc = NULL;
-	memset(_actives, 0, sizeof (_actives));
+	memset(_actives, 0, sizeof(_actives));
 }
 
 void Part::setup(Player *player) {
@@ -1528,7 +1529,7 @@ void Part::setup(Player *player) {
 	_pri = 0;
 	_vol = 127;
 	_vol_eff = player->getEffectiveVolume();
-	_pan = clamp (player->getPan(), -64, 63);
+	_pan = clamp(player->getPan(), -64, 63);
 	_transpose_eff = player->getTranspose();
 	_transpose = 0;
 	_detune = 0;
@@ -1549,7 +1550,7 @@ void Part::uninit() {
 	if (!_player)
 		return;
 	off();
-	_player->removePart (this);
+	_player->removePart(this);
 	_player = NULL;
 }
 
@@ -1559,30 +1560,30 @@ void Part::off() {
 		_mc->release();
 		_mc = NULL;
 	}
-	memset (_actives, 0, sizeof(_actives));
+	memset(_actives, 0, sizeof(_actives));
 }
 
 bool Part::clearToTransmit() {
 	if (_mc) return true;
-	if (_instrument.isValid()) _player->_se->reallocateMidiChannels (_player->getMidiDriver());
+	if (_instrument.isValid()) _player->_se->reallocateMidiChannels(_player->getMidiDriver());
 	return false;
 }
 
 void Part::sendAll() {
 	if (!clearToTransmit()) return;
-	_mc->pitchBendFactor (_pitchbend_factor);
-	_mc->pitchBend (clamp(_pitchbend +
-	                (_detune_eff * 64 / 12) +
-	                (_transpose_eff * 8192 / 12), -8192, 8191));
-	_mc->volume (_vol_eff);
-	_mc->sustain (_pedal);
-	_mc->modulationWheel (_modwheel);
-	_mc->panPosition (_pan_eff + 0x40);
-	_mc->effectLevel (_effect_level);
+	_mc->pitchBendFactor(_pitchbend_factor);
+	_mc->pitchBend(clamp(_pitchbend +
+	               (_detune_eff * 64 / 12) +
+	               (_transpose_eff * 8192 / 12), -8192, 8191));
+	_mc->volume(_vol_eff);
+	_mc->sustain(_pedal);
+	_mc->modulationWheel(_modwheel);
+	_mc->panPosition(_pan_eff + 0x40);
+	_mc->effectLevel(_effect_level);
 	if (_instrument.isValid())
-		_instrument.send (_mc);
-	_mc->chorusLevel (_effect_level);
-	_mc->priority (_pri_eff);
+		_instrument.send(_mc);
+	_mc->chorusLevel(_effect_level);
+	_mc->priority(_pri_eff);
 }
 
 int Part::update_actives(uint16 *active) {
@@ -1611,23 +1612,23 @@ int Part::update_actives(uint16 *active) {
 
 void Part::set_program(byte program) {
 	_bank = 0;
-	_instrument.program (program, _player->isMT32());
+	_instrument.program(program, _player->isMT32());
 	if (clearToTransmit())
-		_instrument.send (_mc);
+		_instrument.send(_mc);
 }
 
 void Part::set_instrument(uint b) {
 	_bank = (byte)(b >> 8);
-	_instrument.program ((byte) b, _player->isMT32());
+	_instrument.program((byte) b, _player->isMT32());
 	if (clearToTransmit())
-		_instrument.send (_mc);
+		_instrument.send(_mc);
 }
 
 void Part::silence() {
 	if (!_mc)
 		return;
 	_mc->allNotesOff();
-	memset (_actives, 0, sizeof (_actives));
+	memset(_actives, 0, sizeof(_actives));
 }
 
 ////////////////////////////////////////
@@ -1636,13 +1637,13 @@ void Part::silence() {
 //
 ////////////////////////////////////////
 
-void IMuseInternal::midiTimerCallback (void *data) {
+void IMuseInternal::midiTimerCallback(void *data) {
 	MidiDriver *driver = (MidiDriver *) data;
 	if (g_scumm->_imuse)
-		g_scumm->_imuse->on_timer (driver);
+		g_scumm->_imuse->on_timer(driver);
 }
 
-void IMuseInternal::reallocateMidiChannels (MidiDriver *midi) {
+void IMuseInternal::reallocateMidiChannels(MidiDriver *midi) {
 	Part *part, *hipart;
 	int i;
 	byte hipri, lopri;
@@ -1685,16 +1686,16 @@ void IMuseInternal::reallocateMidiChannels (MidiDriver *midi) {
 	}
 }
 
-void IMuseInternal::setGlobalAdlibInstrument (byte slot, byte *data) {
+void IMuseInternal::setGlobalAdlibInstrument(byte slot, byte *data) {
 	if (slot < 32) {
-		_global_adlib_instruments[slot].adlib (data);
+		_global_adlib_instruments[slot].adlib(data);
 	}
 }
 
-void IMuseInternal::copyGlobalAdlibInstrument (byte slot, Instrument *dest) {
+void IMuseInternal::copyGlobalAdlibInstrument(byte slot, Instrument *dest) {
 	if (slot >= 32)
 		return;
-	_global_adlib_instruments[slot].copy_to (dest);
+	_global_adlib_instruments[slot].copy_to(dest);
 }
 
 ////////////////////////////////////////////////////////////
@@ -1709,33 +1710,33 @@ void IMuseInternal::copyGlobalAdlibInstrument (byte slot, Instrument *dest) {
 //
 ////////////////////////////////////////////////////////////
 
-IMuse::IMuse (OSystem *system, IMuseInternal *target) : _system (system), _target (target) { _mutex = system->create_mutex(); }
-IMuse::~IMuse() { if (_mutex) _system->delete_mutex (_mutex); if (_target) delete _target; }
-inline void IMuse::in() { _system->lock_mutex (_mutex); }
-inline void IMuse::out() { _system->unlock_mutex (_mutex); }
+IMuse::IMuse(OSystem *system, IMuseInternal *target) : _system(system), _target(target) { _mutex = system->create_mutex(); }
+IMuse::~IMuse() { if (_mutex) _system->delete_mutex(_mutex); if (_target) delete _target; }
+inline void IMuse::in() { _system->lock_mutex(_mutex); }
+inline void IMuse::out() { _system->unlock_mutex(_mutex); }
 
-void IMuse::on_timer (MidiDriver *midi) { in(); _target->on_timer (midi); out(); }
-void IMuse::pause(bool paused) { in(); _target->pause (paused); out(); }
-int IMuse::save_or_load(Serializer *ser, Scumm *scumm) { in(); int ret = _target->save_or_load (ser, scumm); out(); return ret; }
-int IMuse::set_music_volume(uint vol) { in(); int ret = _target->set_music_volume (vol); out(); return ret; }
+void IMuse::on_timer(MidiDriver *midi) { in(); _target->on_timer(midi); out(); }
+void IMuse::pause(bool paused) { in(); _target->pause(paused); out(); }
+int IMuse::save_or_load(Serializer *ser, Scumm *scumm) { in(); int ret = _target->save_or_load(ser, scumm); out(); return ret; }
+int IMuse::set_music_volume(uint vol) { in(); int ret = _target->set_music_volume(vol); out(); return ret; }
 int IMuse::get_music_volume() { in(); int ret = _target->get_music_volume(); out(); return ret; }
-int IMuse::set_master_volume(uint vol) { in(); int ret = _target->set_master_volume (vol); out(); return ret; }
+int IMuse::set_master_volume(uint vol) { in(); int ret = _target->set_master_volume(vol); out(); return ret; }
 int IMuse::get_master_volume() { in(); int ret = _target->get_master_volume(); out(); return ret; }
-bool IMuse::startSound(int sound) { in(); bool ret = _target->startSound (sound); out(); return ret; }
-int IMuse::stopSound(int sound) { in(); int ret = _target->stopSound (sound); out(); return ret; }
+bool IMuse::startSound(int sound) { in(); bool ret = _target->startSound(sound); out(); return ret; }
+int IMuse::stopSound(int sound) { in(); int ret = _target->stopSound(sound); out(); return ret; }
 int IMuse::stop_all_sounds() { in(); int ret = _target->stop_all_sounds(); out(); return ret; }
-int IMuse::getSoundStatus(int sound) { in(); int ret = _target->getSoundStatus (sound, true); out(); return ret; }
-bool IMuse::get_sound_active(int sound) { in(); bool ret = _target->getSoundStatus (sound, false) ? 1 : 0; out(); return ret; }
-int32 IMuse::doCommand(int a, int b, int c, int d, int e, int f, int g, int h) { in(); int32 ret = _target->doCommand (a,b,c,d,e,f,g,h); out(); return ret; }
+int IMuse::getSoundStatus(int sound) { in(); int ret = _target->getSoundStatus(sound, true); out(); return ret; }
+bool IMuse::get_sound_active(int sound) { in(); bool ret = _target->getSoundStatus(sound, false) ? 1 : 0; out(); return ret; }
+int32 IMuse::doCommand(int a, int b, int c, int d, int e, int f, int g, int h) { in(); int32 ret = _target->doCommand(a,b,c,d,e,f,g,h); out(); return ret; }
 int IMuse::clear_queue() { in(); int ret = _target->clear_queue(); out(); return ret; }
-void IMuse::setBase(byte **base) { in(); _target->setBase (base); out(); }
-uint32 IMuse::property(int prop, uint32 value) { in(); uint32 ret = _target->property (prop, value); out(); return ret; }
+void IMuse::setBase(byte **base) { in(); _target->setBase(base); out(); }
+uint32 IMuse::property(int prop, uint32 value) { in(); uint32 ret = _target->property(prop, value); out(); return ret; }
 MidiDriver *IMuse::getMidiDriver() { in(); MidiDriver *ret = _target->getMidiDriver(); out(); return ret; }
 
 // The IMuse::create method provides a front-end factory
 // for creating IMuseInternal without exposing that class
 // to the client.
-IMuse *IMuse::create (OSystem *syst, MidiDriver *midi) {
-	IMuseInternal *engine = IMuseInternal::create (syst, midi);
-	return new IMuse (syst, engine);
+IMuse *IMuse::create(OSystem *syst, MidiDriver *midi) {
+	IMuseInternal *engine = IMuseInternal::create(syst, midi);
+	return new IMuse(syst, engine);
 }

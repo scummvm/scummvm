@@ -39,7 +39,7 @@ private:
 	IMuseInternal *_target;
 	OSystem::MutexRef _mutex;
 
-	IMuse (OSystem *system, IMuseInternal *target);
+	IMuse(OSystem *system, IMuseInternal *target);
 	void in();
 	void out();
 
@@ -55,7 +55,7 @@ public:
 		PROP_RECYCLE_PLAYERS = 6
 	};
 
-	void on_timer (MidiDriver *midi);
+	void on_timer(MidiDriver *midi);
 	void pause(bool paused);
 	int save_or_load(Serializer *ser, Scumm *scumm);
 	int set_music_volume(uint vol);

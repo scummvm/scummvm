@@ -48,29 +48,29 @@ static uint read_word(byte *a) {
 //////////////////////////////////////////////////
 
 Player::Player() :
-_midi (0),
-_parser (0),
-_parts (0),
-_active (false),
-_scanning (false),
-_id (0),
-_priority (0),
-_volume (0),
-_pan (0),
-_transpose (0),
-_detune (0),
-_vol_eff (0),
-_track_index (0),
-_loop_to_beat (0),
-_loop_from_beat (0),
-_loop_counter (0),
-_loop_to_tick (0),
-_loop_from_tick (0),
-_speed (128),
-_isMT32 (false),
-_isGM (false),
-_se (0),
-_vol_chan (0)
+_midi(0),
+_parser(0),
+_parts(0),
+_active(false),
+_scanning(false),
+_id(0),
+_priority(0),
+_volume(0),
+_pan(0),
+_transpose(0),
+_detune(0),
+_vol_eff(0),
+_track_index(0),
+_loop_to_beat(0),
+_loop_from_beat(0),
+_loop_counter(0),
+_loop_to_tick(0),
+_loop_from_tick(0),
+_speed(128),
+_isMT32(false),
+_isGM(false),
+_se(0),
+_vol_chan(0)
 { }
 
 Player::~Player() {
@@ -80,15 +80,15 @@ Player::~Player() {
 	}
 }
 
-bool Player::startSound (int sound, MidiDriver *midi) {
+bool Player::startSound(int sound, MidiDriver *midi) {
 	void *mdhd;
 	int i;
 
 	// Not sure what the old code was doing,
 	// but we'll go ahead and do a similar check.
-	mdhd = _se->findStartOfSound (sound);
+	mdhd = _se->findStartOfSound(sound);
 	if (!mdhd) {
-			warning ("Player::startSound(): Couldn't find start of sound %d!", sound);
+			warning("Player::startSound(): Couldn't find start of sound %d!", sound);
 			return false;
 	}
 /*
@@ -144,7 +144,7 @@ void Player::clear() {
 	if (_parser)
 		_parser->unloadMusic();
 	uninit_parts();
-	_se->ImFireAllTriggers (_id);
+	_se->ImFireAllTriggers(_id);
 	_active = false;
 	_midi = NULL;
 }
@@ -153,7 +153,7 @@ void Player::hook_clear() {
 	memset(&_hook, 0, sizeof(_hook));
 }
 
-int Player::start_seq_sound (int sound, bool reset_vars) {
+int Player::start_seq_sound(int sound, bool reset_vars) {
 	byte *ptr;
 
 	if (reset_vars) {
@@ -165,21 +165,21 @@ int Player::start_seq_sound (int sound, bool reset_vars) {
 		_loop_from_tick = 0;
 	}
 
-	ptr = _se->findStartOfSound (sound);
+	ptr = _se->findStartOfSound(sound);
 	if (ptr == NULL)
 		return -1;
 	if (_parser)
 		delete _parser;
 
-	if (!memcmp (ptr, "FORM", 4))
+	if (!memcmp(ptr, "FORM", 4))
 		_parser = MidiParser::createParser_XMIDI();
 	else
 		_parser = MidiParser::createParser_SMF();
-	_parser->setMidiDriver (this);
-	_parser->property (MidiParser::mpSmartJump, 1);
-	_parser->loadMusic (ptr, 0);
-	_parser->setTrack (_track_index);
-	setSpeed (reset_vars ? 128 : _speed);
+	_parser->setMidiDriver(this);
+	_parser->property(MidiParser::mpSmartJump, 1);
+	_parser->loadMusic(ptr, 0);
+	_parser->setTrack(_track_index);
+	setSpeed(reset_vars ? 128 : _speed);
 
 	return 0;
 }
@@ -192,67 +192,67 @@ void Player::uninit_parts() {
 
 	// In case another player is waiting to allocate parts
 	if (_midi)
-		_se->reallocateMidiChannels (_midi);
+		_se->reallocateMidiChannels(_midi);
 }
 
 void Player::setSpeed(byte speed) {
 	_speed = speed;
 	if (_parser)
-		_parser->setTimerRate (((_midi->getBaseTempo() * speed) >> 7) * _se->_tempoFactor / 100);
+		_parser->setTimerRate(((_midi->getBaseTempo() * speed) >> 7) * _se->_tempoFactor / 100);
 }
 
-void Player::send (uint32 b) {
-	byte cmd = (byte) (b & 0xF0);
-	byte chan = (byte) (b & 0x0F);
-	byte param1 = (byte) ((b >> 8) & 0xFF);
-	byte param2 = (byte) ((b >> 16) & 0xFF);
+void Player::send(uint32 b) {
+	byte cmd = (byte)(b & 0xF0);
+	byte chan = (byte)(b & 0x0F);
+	byte param1 = (byte)((b >> 8) & 0xFF);
+	byte param2 = (byte)((b >> 16) & 0xFF);
 	Part *part;
 
 	switch (cmd >> 4) {
 	case 0x8: // Key Off
 		if (!_scanning)
-			key_off (chan, param1);
+			key_off(chan, param1);
 		else
-			clear_active_note (chan, param1);
+			clear_active_note(chan, param1);
 		break;
 
 	case 0x9: // Key On
 		if (!_scanning)
-			key_on (chan, param1, param2);
+			key_on(chan, param1, param2);
 		else
-			set_active_note (chan, param1);
+			set_active_note(chan, param1);
 		break;
 
 	case 0xB: // Control Change
-		part = (param1 == 123 ? getActivePart (chan) : getPart (chan));
+		part = (param1 == 123 ? getActivePart(chan) : getPart(chan));
 		if (!part)
 			break;
 
 		switch (param1) {
 		case 1: // Modulation Wheel
-			part->set_modwheel (param2);
+			part->set_modwheel(param2);
 			break;
 		case 7: // Volume
-			part->setVolume (param2);
+			part->setVolume(param2);
 			break;
 		case 10: // Pan Position
-			part->set_pan (param2 - 0x40);
+			part->set_pan(param2 - 0x40);
 			break;
-		case 16: // Pitchbend Factor (non-standard)
-			part->set_pitchbend_factor (param2);
+		case 16: // Pitchbend Factor(non-standard)
+			part->set_pitchbend_factor(param2);
 			break;
 		case 17: // GP Slider 2
-			part->set_detune (param2 - 0x40);
+			part->set_detune(param2 - 0x40);
 			break;
 		case 18: // GP Slider 3
-			part->set_pri (param2 - 0x40);
-			_se->reallocateMidiChannels (_midi);
+			part->set_pri(param2 - 0x40);
+			_se->reallocateMidiChannels(_midi);
 			break;
 		case 64: // Sustain Pedal
-			part->set_pedal (param2 != 0);
+			part->set_pedal(param2 != 0);
 			break;
 		case 91: // Effects Level
-			part->set_effect_level (param2);
+			part->set_effect_level(param2);
 			break;
 		case 93: // Chorus Level
 			part->set_chorus(param2);
@@ -266,22 +266,22 @@ void Player::send (uint32 b) {
 		break;
 
 	case 0xC: // Program Change
-		part = getPart (chan);
+		part = getPart(chan);
 		if (part) {
 			if (_isGM) {
 				if (param1 < 128)
-					part->set_program (param1);
+					part->set_program(param1);
 			} else {
 				if (param1 < 32)
-					part->load_global_instrument (param1);
+					part->load_global_instrument(param1);
 			}
 		}
 		break;
 
 	case 0xE: // Pitch Bend
-		part = getPart (chan);
+		part = getPart(chan);
 		if (part)
-			part->set_pitchbend (((param2 << 7) | param1) - 0x2000);
+			part->set_pitchbend(((param2 << 7) | param1) - 0x2000);
 		break;
 
 	case 0xA: // Aftertouch
@@ -291,14 +291,14 @@ void Player::send (uint32 b) {
 
 	default:
 		if (!_scanning) {
-			warning ("Player::send(): Invalid command %d", cmd);
+			warning("Player::send(): Invalid command %d", cmd);
 			clear();
 		}
 	}
 	return;
 }
 
-void Player::sysEx (byte *p, uint16 len) {
+void Player::sysEx(byte *p, uint16 len) {
 	byte code;
 	byte a;
 	uint b;
@@ -312,14 +312,14 @@ void Player::sysEx (byte *p, uint16 len) {
 	if (a != IMUSE_SYSEX_ID) {
 		if (a == ROLAND_SYSEX_ID) {
 			// Roland custom instrument definition.
-			part = getPart (p[0] & 0x0F);
+			part = getPart(p[0] & 0x0F);
 			if (part) {
-				part->_instrument.roland (p - 1);
+				part->_instrument.roland(p - 1);
 				if (part->clearToTransmit())
-					part->_instrument.send (part->_mc);
+					part->_instrument.send(part->_mc);
 			}
 		} else {
-			warning ("Unknown SysEx manufacturer 0x%02X", (int) a);
+			warning("Unknown SysEx manufacturer 0x%02X", (int) a);
 		}
 		return;
 	}
@@ -331,14 +331,14 @@ void Player::sysEx (byte *p, uint16 len) {
 
 #ifdef IMUSE_DEBUG
 	for (a = 0; a < len + 1 && a < 19; ++a) {
-		sprintf ((char *)&buf[a*3], " %02X", p[a]);
+		sprintf((char *)&buf[a*3], " %02X", p[a]);
 	} // next for
 	if (a < len + 1) {
 		buf[a*3] = buf[a*3+1] = buf[a*3+2] = '.';
 		++a;
 	} // end if
 	buf[a*3] = '\0';
-	debug (0, "[%02d] SysEx:%s", _id, buf);
+	debug(0, "[%02d] SysEx:%s", _id, buf);
 #endif
 
 	switch (code = *p++) {
@@ -348,21 +348,21 @@ void Player::sysEx (byte *p, uint16 len) {
 			// what we've read so far. All we know about them is
 			// as follows:
 			//   BYTE 00: Channel #
-			//   BYTE 02: BIT 01 (0x01): Part on? (1 = yes)
-			//   BYTE 05: Volume (upper 4 bits) [guessing]
-			//   BYTE 06: Volume (lower 4 bits) [guessing]
-			//   BYTE 09: BIT 04 (0x08): Percussion? (1 = yes)
-			//   BYTE 15: Program (upper 4 bits)
-			//   BYTE 16: Program (lower 4 bits)
-			part = getPart (p[0] & 0x0F);
+			//   BYTE 02: BIT 01(0x01): Part on?(1 = yes)
+			//   BYTE 05: Volume(upper 4 bits) [guessing]
+			//   BYTE 06: Volume(lower 4 bits) [guessing]
+			//   BYTE 09: BIT 04(0x08): Percussion?(1 = yes)
+			//   BYTE 15: Program(upper 4 bits)
+			//   BYTE 16: Program(lower 4 bits)
+			part = getPart(p[0] & 0x0F);
 			if (part) {
-				part->set_onoff (p[2] & 0x01);
-				part->setVolume ((p[5] & 0x0F) << 4 | (p[6] & 0x0F));
-				part->_percussion = _isGM ? ((p[9] & 0x08) > 0) : false;
+				part->set_onoff(p[2] & 0x01);
+				part->setVolume((p[5] & 0x0F) << 4 |(p[6] & 0x0F));
+				part->_percussion = _isGM ?((p[9] & 0x08) > 0) : false;
 				if (part->_percussion) {
 					if (part->_mc) {
 						part->off();
-						_se->reallocateMidiChannels (_midi);
+						_se->reallocateMidiChannels(_midi);
 					}
 				} else {
 					// Even in cases where a program does not seem to be specified,
@@ -371,13 +371,13 @@ void Player::sysEx (byte *p, uint16 len) {
 					// cases, a regular program change message always seems to follow
 					// anyway.
 					if (_isGM)
-						part->_instrument.program ((p[15] & 0x0F) << 4 | (p[16] & 0x0F), _isMT32);
+						part->_instrument.program((p[15] & 0x0F) << 4 |(p[16] & 0x0F), _isMT32);
 					part->sendAll();
 				}
 			}
 		} else {
 			// Sam & Max: Trigger Event
-			// Triggers are set by doCommand (ImSetTrigger).
+			// Triggers are set by doCommand(ImSetTrigger).
 			// When a SysEx marker is encountered whose sound
 			// ID and marker ID match what was set by ImSetTrigger,
 			// something magical is supposed to happen....
@@ -386,7 +386,7 @@ void Player::sysEx (byte *p, uint16 len) {
 				    _se->_snm_triggers [a].id == *p)
 				{
 					_se->_snm_triggers [a].sound = _se->_snm_triggers [a].id = 0;
-					_se->doCommand (_se->_snm_triggers [a].command [0],
+					_se->doCommand(_se->_snm_triggers [a].command [0],
 					                 _se->_snm_triggers [a].command [1],
 					                 _se->_snm_triggers [a].command [2],
 					                 _se->_snm_triggers [a].command [3],
@@ -401,13 +401,13 @@ void Player::sysEx (byte *p, uint16 len) {
 		// This SysEx is used in Sam & Max for maybe_jump.
 		if (_scanning)
 			break;
-		maybe_jump (p[0], p[1] - 1, (read_word (p + 2) - 1) * 4 + p[4], ((p[5] * TICKS_PER_BEAT) >> 2) + p[6]);
+		maybe_jump(p[0], p[1] - 1, (read_word(p + 2) - 1) * 4 + p[4], ((p[5] * TICKS_PER_BEAT) >> 2) + p[6]);
 		break;
 
 	case 2: // Start of song. Ignore for now.
 		break;
 
-	case 16: // Adlib instrument definition (Part)
+	case 16: // Adlib instrument definition(Part)
 		a = *p++ & 0x0F;
 		++p; // Skip hardware type
 		part = getPart(a);
@@ -417,16 +417,16 @@ void Player::sysEx (byte *p, uint16 len) {
 				part->set_instrument((byte *) buf);
 			} else {
 				// SPK tracks have len == 49 here, and are not supported
-				part->set_program (254); // Must be invalid, but not 255 (which is reserved)
+				part->set_program(254); // Must be invalid, but not 255(which is reserved)
 			}
 		}
 		break;
 
-	case 17: // Adlib instrument definition (Global)
+	case 17: // Adlib instrument definition(Global)
 		p += 2; // Skip hardware type and... whatever came right before it
 		a = *p++;
 		decode_sysex_bytes(p, buf, len - 4);
-		_se->setGlobalAdlibInstrument (a, buf);
+		_se->setGlobalAdlibInstrument(a, buf);
 		break;
 
 	case 33: // Parameter adjust
@@ -442,7 +442,7 @@ void Player::sysEx (byte *p, uint16 len) {
 		if (_scanning)
 			break;
 		decode_sysex_bytes(p + 1, buf, len - 2);
-		maybe_jump (buf[0], read_word (buf + 1), read_word (buf + 3), read_word (buf + 5));
+		maybe_jump(buf[0], read_word(buf + 1), read_word(buf + 3), read_word(buf + 5));
 		break;
 
 	case 49: // Hook - global transpose
@@ -495,25 +495,25 @@ void Player::sysEx (byte *p, uint16 len) {
 
 	case 96: // Set instrument
 		part = getPart(p[0] & 0x0F);
-		b = (p[1] & 0x0F) << 12 | (p[2] & 0x0F) << 8 | (p[4] & 0x0F) << 4 | (p[4] & 0x0F);
+		b = (p[1] & 0x0F) << 12 |(p[2] & 0x0F) << 8 |(p[4] & 0x0F) << 4 |(p[4] & 0x0F);
 		if (part)
 			part->set_instrument(b);
 		break;
 
 	default:
-		warning ("Unknown SysEx command %d", (int) code);
+		warning("Unknown SysEx command %d", (int) code);
 	}
 }
 
 void Player::decode_sysex_bytes(byte *src, byte *dst, int len) {
 	while (len >= 0) {
-		*dst++ = (src[0] << 4) | (src[1] & 0xF);
+		*dst++ = (src[0] << 4) |(src[1] & 0xF);
 		src += 2;
 		len -= 2;
 	}
 }
 
-void Player::maybe_jump (byte cmd, uint track, uint beat, uint tick) {
+void Player::maybe_jump(byte cmd, uint track, uint beat, uint tick) {
 	// Is this the hook I'm waiting for?
 	if (cmd && _hook._jump[0] != cmd)
 		return;
@@ -524,7 +524,7 @@ void Player::maybe_jump (byte cmd, uint track, uint beat, uint tick) {
 		_hook._jump[1] = 0;
 	}
 
-	jump (track, beat, tick);
+	jump(track, beat, tick);
 }
 
 void Player::maybe_set_transpose(byte *data) {
@@ -698,9 +698,9 @@ void Player::key_off(uint8 chan, byte note) {
 bool Player::jump(uint track, uint beat, uint tick) {
 	if (!_parser)
 		return false;
-	if (_parser->setTrack (track))
+	if (_parser->setTrack(track))
 		_track_index = track;
-	if (!_parser->jumpToTick ((beat - 1) * TICKS_PER_BEAT + tick))
+	if (!_parser->jumpToTick((beat - 1) * TICKS_PER_BEAT + tick))
 		return false;
 	turn_off_pedals();
 	return true;
@@ -736,7 +736,7 @@ void Player::turn_off_pedals() {
 	}
 }
 
-Part *Player::getActivePart (uint8 chan) {
+Part *Player::getActivePart(uint8 chan) {
 	Part *part = _parts;
 	while (part) {
 		if (part->_chan == chan)
@@ -747,11 +747,11 @@ Part *Player::getActivePart (uint8 chan) {
 }
 
 Part *Player::getPart(uint8 chan) {
-	Part *part = getActivePart (chan);
+	Part *part = getActivePart(chan);
 	if (part)
 		return part;
 
-	part = _se->allocate_part (_priority, _midi);
+	part = _se->allocate_part(_priority, _midi);
 	if (!part) {
 		warning("no parts available");
 		return NULL;
@@ -785,17 +785,17 @@ uint Player::update_actives() {
 	return count;
 }
 
-void Player::setPriority (int pri) {
+void Player::setPriority(int pri) {
 	Part *part;
 
 	_priority = pri;
 	for (part = _parts; part; part = part->_next) {
 		part->set_pri(part->_pri);
 	}
-	_se->reallocateMidiChannels (_midi);
+	_se->reallocateMidiChannels(_midi);
 }
 
-void Player::setPan (int pan) {
+void Player::setPan(int pan) {
 	Part *part;
 
 	_pan = pan;
@@ -804,7 +804,7 @@ void Player::setPan (int pan) {
 	}
 }
 
-void Player::setDetune (int detune) {
+void Player::setDetune(int detune) {
 	Part *part;
 
 	_detune = detune;
@@ -824,14 +824,14 @@ int Player::scan(uint totrack, uint tobeat, uint totick) {
 	clear_active_notes();
 	_scanning = true;
 
-	_parser->setTrack (totrack);
-	if (!_parser->jumpToTick ((tobeat - 1) * TICKS_PER_BEAT + totick, true)) {
+	_parser->setTrack(totrack);
+	if (!_parser->jumpToTick((tobeat - 1) * TICKS_PER_BEAT + totick, true)) {
 		_scanning = false;
 		return -1;
 	}
 
 	_scanning = false;
-	_se->reallocateMidiChannels (_midi);
+	_se->reallocateMidiChannels(_midi);
 	play_active_notes();
 
 	if (_track_index != totrack) {
@@ -846,7 +846,7 @@ void Player::turn_off_parts() {
 
 	for (part = _parts; part; part = part->_next)
 		part->off();
-	_se->reallocateMidiChannels (_midi);
+	_se->reallocateMidiChannels(_midi);
 }
 
 void Player::play_active_notes() {
@@ -870,7 +870,7 @@ int Player::setVolume(byte vol) {
 		return -1;
 
 	_volume = vol;
-	_vol_eff = _se->get_channel_volume(_vol_chan) * (vol + 1) >> 7;
+	_vol_eff = _se->get_channel_volume(_vol_chan) *(vol + 1) >> 7;
 
 	for (part = _parts; part; part = part->_next) {
 		part->setVolume(part->_vol);
@@ -938,7 +938,7 @@ int Player::query_part_param(int param, byte chan) {
 			case 15:
 				return part->_vol;
 			case 16:
-				return (int) part->_instrument;
+				return (int)part->_instrument;
 			case 17:
 				return part->_transpose;
 			default:
@@ -965,11 +965,11 @@ void Player::onTimer() {
 	uint beat_index = target_tick / TICKS_PER_BEAT + 1;
 	uint tick_index = target_tick % TICKS_PER_BEAT;
 
-	if (_loop_counter && (beat_index > _loop_from_beat ||
-	    (beat_index == _loop_from_beat && tick_index >= _loop_from_tick)))
+	if (_loop_counter &&(beat_index > _loop_from_beat ||
+	   (beat_index == _loop_from_beat && tick_index >= _loop_from_tick)))
 	{
 		_loop_counter--;
-		jump (_track_index, _loop_to_beat, _loop_to_tick);
+		jump(_track_index, _loop_to_beat, _loop_to_tick);
 	}
 	_parser->onTimer();
 }
@@ -977,7 +977,7 @@ void Player::onTimer() {
 // "time" is referenced as hundredths of a second.
 // IS THAT CORRECT??
 // We convert it to microseconds before prceeding
-int Player::addParameterFader (int param, int target, int time) {
+int Player::addParameterFader(int param, int target, int time) {
 	int start;
 
 	switch (param) {
@@ -988,7 +988,7 @@ int Player::addParameterFader (int param, int target, int time) {
 		// music being cleared inappropriately
 		// in S&M when playing with the Dinosaur.
 		if (!target && !time) {
-			setVolume (0);
+			setVolume(0);
 			return 0;
 		}
 
@@ -999,7 +999,7 @@ int Player::addParameterFader (int param, int target, int time) {
 	case ParameterFader::pfTranspose:
 		// FIXME: Is this transpose? And what's the scale?
 		// It's set to fade to -2400 in the tunnel of love.
-		warning ("parameterTransition(3) outside Tunnel of Love?");
+		warning("parameterTransition(3) outside Tunnel of Love?");
 		start = _transpose;
 		target /= 200;
 		break;
@@ -1017,7 +1017,7 @@ int Player::addParameterFader (int param, int target, int time) {
 		return 0;
 
 	default:
-		warning ("Player::addParameterFader(): Unknown parameter %d", param);
+		warning("Player::addParameterFader(): Unknown parameter %d", param);
 		return 0; // Should be -1, but we'll let the script think it worked.
 	}
 
@@ -1044,7 +1044,7 @@ int Player::addParameterFader (int param, int target, int time) {
 			best->total_time = (uint32) time * 10000;
 		best->current_time = 0;
 	} else {
-		warning ("IMuse Player %d: Out of parameter faders", _id);
+		warning("IMuse Player %d: Out of parameter faders", _id);
 		return -1;
 	}
 
@@ -1064,7 +1064,7 @@ void Player::transitionParameters() {
 		ptr->current_time += advance;
 		if (ptr->current_time > ptr->total_time)
 			ptr->current_time = ptr->total_time;
-		value = (int32) ptr->start + (int32) (ptr->end - ptr->start) * (int32) ptr->current_time / (int32) ptr->total_time;
+		value = (int32) ptr->start +(int32)(ptr->end - ptr->start) *(int32) ptr->current_time /(int32) ptr->total_time;
 
 		switch (ptr->param) {
 		case ParameterFader::pfVolume:
@@ -1073,17 +1073,17 @@ void Player::transitionParameters() {
 				clear();
 				return;
 			}
-			setVolume ((byte) value);
+			setVolume((byte) value);
 			break;
 
 		case ParameterFader::pfSpeed:
 			// Speed.
-			setSpeed ((byte) value);
+			setSpeed((byte) value);
 			break;
 
 		case ParameterFader::pfTranspose:
 			// FIXME: Is this really transpose?
-			setTranspose (0, value);
+			setTranspose(0, value);
 			break;
 		}
 
@@ -1093,10 +1093,10 @@ void Player::transitionParameters() {
 }
 
 uint Player::getBeatIndex() {
-	return (_parser ? (_parser->getTick() / TICKS_PER_BEAT + 1) : 0);
+	return (_parser ?(_parser->getTick() / TICKS_PER_BEAT + 1) : 0);
 }
 
-void Player::removePart (Part *part) {
+void Player::removePart(Part *part) {
 	// Unlink
 	if (part->_next)
 		part->_next->_prev = part->_prev;
@@ -1108,16 +1108,16 @@ void Player::removePart (Part *part) {
 }
 
 void Player::fixAfterLoad() {
-	_midi = _se->getBestMidiDriver (_id);
+	_midi = _se->getBestMidiDriver(_id);
 	if (!_midi) {
 		clear();
 	} else {
-		start_seq_sound (_id, false);
-		setSpeed (_speed);
+		start_seq_sound(_id, false);
+		setSpeed(_speed);
 		if (_parser)
-			_parser->jumpToTick (_music_tick); // start_seq_sound already switched tracks
-		_isMT32 = _se->isMT32 (_id);
-		_isGM = _se->isGM (_id);
+			_parser->jumpToTick(_music_tick); // start_seq_sound already switched tracks
+		_isMT32 = _se->isMT32(_id);
+		_isGM = _se->isGM(_id);
 	}
 }
 
@@ -1125,7 +1125,7 @@ uint32 Player::getBaseTempo() {
 	return (_midi ? _midi->getBaseTempo() : 0);
 }
 
-void Player::metaEvent (byte type, byte *msg, uint16 len) {
+void Player::metaEvent(byte type, byte *msg, uint16 len) {
 	if (type == 0x2F) {
 		_parser->unloadMusic();
 		clear();
@@ -1198,8 +1198,8 @@ int Player::save_or_load(Serializer *ser) {
 	}
 	_music_tick = _parser ? _parser->getTick() : 0;
 
-	ser->saveLoadEntries (this, playerEntries);
-	ser->saveLoadArrayOf (_parameterFaders, ARRAYSIZE(_parameterFaders),
+	ser->saveLoadEntries(this, playerEntries);
+	ser->saveLoadArrayOf(_parameterFaders, ARRAYSIZE(_parameterFaders),
 		                  sizeof(ParameterFader), parameterFaderEntries);
 	return 0;
 }

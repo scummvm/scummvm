@@ -75,17 +75,17 @@ class OSystem;
 ////////////////////////////////////////
 
 inline int clamp(int val, int min, int max) {
-	if (val < min)
+	if(val < min)
 		return min;
-	if (val > max)
+	if(val > max)
 		return max;
 	return val;
 }
 
 inline int transpose_clamp(int a, int b, int c) {
-	if (b > a)
+	if(b > a)
 		a += (b - a + 11) / 12 * 12;
-	if (c < a)
+	if(c < a)
 		a -= (a - c + 11) / 12 * 12;
 	return a;
 }
@@ -108,7 +108,7 @@ struct HookDatas {
 
 	int query_param(int param, byte chan);
 	int set(byte cls, byte value, byte chan);
-	HookDatas() { memset (this, 0, sizeof (HookDatas)); }
+	HookDatas() { memset(this, 0, sizeof(HookDatas)); }
 };
 
 struct ParameterFader {
@@ -131,7 +131,7 @@ struct ParameterFader {
 struct DeferredCommand {
 	uint32 time_left;
 	int a, b, c, d, e, f;
-	DeferredCommand() { memset (this, 0, sizeof (DeferredCommand)); }
+	DeferredCommand() { memset(this, 0, sizeof(DeferredCommand)); }
 };
 
 struct ImTrigger {
@@ -139,12 +139,12 @@ struct ImTrigger {
 	byte id;
 	uint16 expire;
 	byte command [4];
-	ImTrigger() { memset (this, 0, sizeof (ImTrigger)); }
+	ImTrigger() { memset(this, 0, sizeof(ImTrigger)); }
 };
 
 struct CommandQueue {
 	uint16 array[8];
-	CommandQueue() { memset (this, 0, sizeof (CommandQueue)); }
+	CommandQueue() { memset(this, 0, sizeof(CommandQueue)); }
 };
 
 class Player : public MidiDriver {
@@ -193,7 +193,7 @@ protected:
 	void key_on(uint8 chan, byte data, byte velocity);
 	void part_set_transpose(uint8 chan, byte relative, int8 b);
 	void parse_sysex(byte *p, uint len);
-	void maybe_jump (byte cmd, uint track, uint beat, uint tick);
+	void maybe_jump(byte cmd, uint track, uint beat, uint tick);
 	void maybe_set_transpose(byte *data);
 	void maybe_part_onoff(byte *data);
 	void maybe_set_volume(byte *data);
@@ -214,7 +214,7 @@ protected:
 	void clear_active_notes();
 
 	// Sequencer part
-	int start_seq_sound (int sound, bool reset_vars = true);
+	int start_seq_sound(int sound, bool reset_vars = true);
 	int query_param(int param);
 
 public:
@@ -225,19 +225,19 @@ public:
 	Player();
 	virtual ~Player();
 
-	int    addParameterFader (int param, int target, int time);
+	int    addParameterFader(int param, int target, int time);
 	void   clear();
 	void   clearLoop();
 	void   fixAfterLoad();
-	Part * getActivePart (uint8 part);
+	Part * getActivePart(uint8 part);
 	uint   getBeatIndex();
 	int8   getDetune() { return _detune; }
 	byte   getEffectiveVolume() { return _vol_eff; }
 	int    getID() { return _id; }
 	MidiDriver *getMidiDriver() { return _midi; }
-	int    getParam (int param, byte chan);
+	int    getParam(int param, byte chan);
 	int8   getPan() { return _pan; }
-	Part * getPart (uint8 part);
+	Part * getPart(uint8 part);
 	byte   getPriority() { return _priority; }
 	uint   getTicksPerBeat() { return TICKS_PER_BEAT; }
 	int8   getTranspose() { return _transpose; }
@@ -246,30 +246,30 @@ public:
 	bool   isFadingOut();
 	bool   isGM() { return _isGM; }
 	bool   isMT32() { return _isMT32; }
-	bool   jump (uint track, uint beat, uint tick);
+	bool   jump(uint track, uint beat, uint tick);
 	void   onTimer();
-	void   removePart (Part *part);
-	int    scan (uint totrack, uint tobeat, uint totick);
-	int    save_or_load (Serializer *ser);
-	int    setHook (byte cls, byte value, byte chan) { return _hook.set (cls, value, chan); }
-	void   setDetune (int detune);
-	bool   setLoop (uint count, uint tobeat, uint totick, uint frombeat, uint fromtick);
-	void   setPan (int pan);
-	void   setPriority (int pri);
-	void   setSpeed (byte speed);
+	void   removePart(Part *part);
+	int    scan(uint totrack, uint tobeat, uint totick);
+	int    save_or_load(Serializer *ser);
+	int    setHook(byte cls, byte value, byte chan) { return _hook.set(cls, value, chan); }
+	void   setDetune(int detune);
+	bool   setLoop(uint count, uint tobeat, uint totick, uint frombeat, uint fromtick);
+	void   setPan(int pan);
+	void   setPriority(int pri);
+	void   setSpeed(byte speed);
 	int    setTranspose(byte relative, int b);
-	int    setVolume (byte vol);
-	bool   startSound (int sound, MidiDriver *midi);
+	int    setVolume(byte vol);
+	bool   startSound(int sound, MidiDriver *midi);
 
 public:
 	// MidiDriver interface
 	int open() { return 0; }
 	void close() { }
-	void send (uint32 b);
-	const char *getErrorName (int error_code) { return "Unknown"; }
-	void sysEx (byte *msg, uint16 length);
-	void metaEvent (byte type, byte *data, uint16 length);
-	void setTimerCallback (void *timer_param, void (*timer_proc) (void *)) { }
+	void send(uint32 b);
+	const char *getErrorName(int error_code) { return "Unknown"; }
+	void sysEx(byte *msg, uint16 length);
+	void metaEvent(byte type, byte *data, uint16 length);
+	void setTimerCallback(void *timer_param, void(*timer_proc)(void *)) { }
 	uint32 getBaseTempo();
 	MidiChannel *allocateChannel() { return 0; }
 	MidiChannel *getPercussionChannel() { return 0; }
@@ -314,7 +314,7 @@ struct Part {
 	void silence();
 	void set_instrument(uint b);
 	void set_instrument(byte *data);
-	void load_global_instrument (byte b);
+	void load_global_instrument(byte b);
 
 	void set_transpose(int8 transpose);
 	void setVolume(uint8 volume);
@@ -389,35 +389,35 @@ private:
 	CommandQueue _cmd_queue[64];
 	DeferredCommand _deferredCommands[4];
 
-	byte *findStartOfSound (int sound);
+	byte *findStartOfSound(int sound);
 	bool isMT32(int sound);
 	bool isGM(int sound);
 	int get_queue_sound_status(int sound);
 	void handle_marker(uint id, byte data);
 	int get_channel_volume(uint a);
-	void initMidiDriver (MidiDriver *midi);
-	void initMT32 (MidiDriver *midi);
+	void initMidiDriver(MidiDriver *midi);
+	void initMT32(MidiDriver *midi);
 	void init_players();
 	void init_parts();
 	void init_queue();
 
-	void sequencer_timers (MidiDriver *midi);
+	void sequencer_timers(MidiDriver *midi);
 
-	MidiDriver *getBestMidiDriver (int sound);
+	MidiDriver *getBestMidiDriver(int sound);
 	Player *allocate_player(byte priority);
 	Part *allocate_part(byte pri, MidiDriver *midi);
 
-	int32 ImSetTrigger (int sound, int id, int a, int b, int c, int d);
-	int32 ImClearTrigger (int sound, int id);
-	int32 ImFireAllTriggers (int sound);
+	int32 ImSetTrigger(int sound, int id, int a, int b, int c, int d);
+	int32 ImClearTrigger(int sound, int id);
+	int32 ImFireAllTriggers(int sound);
 
-	void addDeferredCommand (int time, int a, int b, int c, int d, int e, int f);
-	void handleDeferredCommands (MidiDriver *midi);
+	void addDeferredCommand(int time, int a, int b, int c, int d, int e, int f);
+	void handleDeferredCommands(MidiDriver *midi);
 
 	int enqueue_command(int a, int b, int c, int d, int e, int f, int g);
 	int enqueue_trigger(int sound, int marker);
 	int query_queue(int param);
-	Player *findActivePlayer (int id);
+	Player *findActivePlayer(int id);
 
 	int get_volchan_entry(uint a);
 	int set_volchan_entry(uint a, uint b);
@@ -433,20 +433,20 @@ private:
 	static int saveReference(void *me_ref, byte type, void *ref);
 	static void *loadReference(void *me_ref, byte type, int ref);
 
-	static void midiTimerCallback (void *data);
+	static void midiTimerCallback(void *data);
 
 public:
 	IMuseInternal();
 	~IMuseInternal();
 
 	int initialize(OSystem *syst, MidiDriver *midi);
-	void reallocateMidiChannels (MidiDriver *midi);
-	void setGlobalAdlibInstrument (byte slot, byte *data);
-	void copyGlobalAdlibInstrument (byte slot, Instrument *dest);
+	void reallocateMidiChannels(MidiDriver *midi);
+	void setGlobalAdlibInstrument(byte slot, byte *data);
+	void copyGlobalAdlibInstrument(byte slot, Instrument *dest);
 
 	// IMuse interface
 
-	void on_timer (MidiDriver *midi);
+	void on_timer(MidiDriver *midi);
 	void pause(bool paused);
 	int terminate();
 	int save_or_load(Serializer *ser, Scumm *scumm);
@@ -457,7 +457,7 @@ public:
 	bool startSound(int sound);
 	int stopSound(int sound);
 	int stop_all_sounds();
-	int getSoundStatus (int sound, bool ignoreFadeouts = true);
+	int getSoundStatus(int sound, bool ignoreFadeouts = true);
 	int32 doCommand(int a, int b, int c, int d, int e, int f, int g, int h);
 	int clear_queue();
 	void setBase(byte **base);
