@@ -1077,7 +1077,7 @@ static byte akos16_shift;
 static int32 akos16_bits;
 static int32 akos16_numbits;
 static byte * akos16_dataptr;
-static int32 _bitMask[] = {0, 1, 3, 7, 15, 31, 127, 255};
+static int32 _bitMask[] = {0, 1, 3, 7, 15, 31, 63, 127, 255};
 static byte akos16_buffer[336];
 
 void AkosRenderer::akos16SetupBitReader(byte *src) {
