@@ -1,4 +1,4 @@
-CXXFLAGS = -g -W -Wall `sdl-config --cflags` -DUNIX
+CXXFLAGS = -g -W -Wall `sdl-config --cflags`
 RANLIB=ranlib
 AR= ar rcu
 
