@@ -51,25 +51,25 @@ private:
 		int32 volFadeDelay;	//
 		bool volFadeUsed;	//
 
-		int soundId;
+		int32 soundId;
 		char soundName[15];
 		bool used;
 		bool toBeRemoved;
 		bool started;
 		bool souStream;
-		int priority;
+		int32 priority;
 		int32 regionOffset;
 		int32 trackOffset;
 		int32 dataOffset;
-		int curRegion;
-		int curHookId;
-		int volGroupId;
-		int soundType;
-		int iteration;
-		int mod;
+		int32 curRegion;
+		int32 curHookId;
+		int32 volGroupId;
+		int32 soundType;
+		int32 iteration;
+		int32 mod;
 		int32 mixerFlags;
-		int mixerVol;
-		int mixerPan;
+		int32 mixerVol;
+		int32 mixerPan;
 
 		ImuseDigiSndMgr::soundStruct *soundHandle;
 		PlayingSoundHandle handle;
