@@ -32,6 +32,7 @@ Logic::Logic(Resource *resource, Graphics *graphics, Display *display)
 	: _resource(resource), _graphics(graphics), _display(display), _talkSpeed(DEFAULT_TALK_SPEED) {
 	_jas = _resource->loadFile("QUEEN.JAS", 20);
 	_joe.x = _joe.y = 0;
+	_joe.scale = 100;
 	_walk = new Walk(this, _graphics);
 	memset(_gameState, 0, sizeof(_gameState));
 	initialise();
@@ -1002,7 +1003,7 @@ uint16 Logic::roomRefreshObject(uint16 obj) {
 	// check the object is in the current room
 	if (pod->room != _currentRoom) {
 		warning("Logic::roomRefreshObject() - Trying to display an object (%i=%s) that is not in room (object room=%i, current room=%i)",
-				obj, _objName[obj], pod->room, _currentRoom);
+				obj, _objName[_objectData[obj].name], pod->room, _currentRoom);
 		return curImage;
 	}
 
