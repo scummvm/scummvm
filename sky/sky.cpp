@@ -67,8 +67,7 @@ SkyState::SkyState(GameDetector *detector, OSystem *syst)
 	_mixer->setVolume(detector->_sfx_volume); //unnecessary?
 	
 	_debugMode = detector->_debugMode;
-	//_debugLevel = detector->_debugLevel;
-	_debugLevel = 9;
+	_debugLevel = detector->_debugLevel;
 	_systemVars.language = detector->_language;
 	_detector = detector;
 
