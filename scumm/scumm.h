@@ -1111,7 +1111,6 @@ public:
 	byte VAR_NEW_ROOM;
 	byte VAR_VERSION;
 
-	byte VAR_V5_DRAWFLAGS;
 	byte VAR_MI1_TIMER;
 	byte VAR_V5_TALK_STRING_Y;
 	byte VAR_V5_CHARFLAG;

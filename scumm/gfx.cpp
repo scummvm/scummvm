@@ -611,6 +611,9 @@ void Scumm::drawFlashlight() {
 	_flashlight.x = x - _flashlight.w / 2 - _screenStartStrip * 8;
 	_flashlight.y = y - _flashlight.h / 2;
 
+	if (_gameId == GID_LOOM || _gameId == GID_LOOM256)
+		_flashlight.y -= 12;
+
 	// Clip the flashlight at the borders
 	if (_flashlight.x < 0)
 		_flashlight.x = 0;
@@ -737,6 +740,7 @@ void Scumm::restoreBG(int left, int top, int right, int bottom, byte backColor) 
 	VirtScreen *vs;
 	int topline, height, width;
 	byte *backbuff, *bgbak;
+	bool lightsOn;
 
 	if (left == right || top == bottom)
 		return;
@@ -769,7 +773,10 @@ void Scumm::restoreBG(int left, int top, int right, int bottom, byte backColor) 
 	height = bottom - top;
 	width = right - left;
 
-	if (vs->alloctwobuffers && _currentRoom != 0 /*&& _vars[VAR_V5_DRAWFLAGS]&2 */ ) {
+	// Check whether lights are turned on or not
+	lightsOn = (_features & GF_AFTER_V6) || (vs->number != 0) || (_vars[VAR_CURRENT_LIGHTS] & LIGHTMODE_screen);
+
+	if (vs->alloctwobuffers && _currentRoom != 0 && lightsOn ) {
 		blit(backbuff, bgbak, width, height);
 		if (vs->number == 0 && _charset->_hasMask && height) {
 			byte *mask;

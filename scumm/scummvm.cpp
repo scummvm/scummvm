@@ -694,7 +694,6 @@ void Scumm::initScummVars() {
 		if (_features & GF_AFTER_V6)
 			_vars[VAR_V6_EMSSPACE] = 10000;
 
-		_vars[VAR_V5_DRAWFLAGS] = 11;
 		_vars[VAR_59] = 3;
 
 		// Setup light

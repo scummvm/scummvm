@@ -94,7 +94,6 @@ void Scumm::setupScummVars() {
 	VAR_NEW_ROOM = 72;	// Zak256 Note: Cashcard for Leslie
 	VAR_VERSION = 75;
 
-	VAR_V5_DRAWFLAGS = 9;
 	VAR_MI1_TIMER = 14;
 
 	VAR_V5_TALK_STRING_Y = 54;
@@ -199,7 +198,6 @@ void Scumm_v7::setupScummVars() {
 	VAR_VIDEONAME = 123;
 	VAR_CUSTOMSCALETABLE = 131;
 
-	//VAR_V5_DRAWFLAGS = 9;
 	VAR_MI1_TIMER = 14;
 	VAR_V5_TALK_STRING_Y = 54;
 	VAR_V5_CHARFLAG = 60;
