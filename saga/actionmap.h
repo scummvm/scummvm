@@ -31,7 +31,7 @@ namespace Saga {
 struct R_ACTIONMAP_ENTRY {
 	int unknown00;
 	int unknown02;
-	int exit_scene;
+	int exitScene;
 	int unknown06;
 
 	int pt_count;
@@ -41,26 +41,18 @@ struct R_ACTIONMAP_ENTRY {
 class ActionMap {
  public:
 	int reg(void);
-	ActionMap(SagaEngine *vm);
+	ActionMap(SagaEngine *vm, const byte *exmap_res, size_t exmap_res_len);
 	~ActionMap(void);
 
-	int loadMap(const byte *exmap_res, size_t exmap_res_len);
 	int draw(R_SURFACE *ds, int color);
 
-	int freeMap(void);
-	int shutdown(void);
-
-	void actionInfo(int argc, char *argv[]);
+	void info(void);
 
 private:
 	SagaEngine *_vm;
 
-	bool _initialized;
-	int _exits_loaded;
-	int _n_exits;
-	R_ACTIONMAP_ENTRY *_exits_tbl;
-	const byte *_exmap_res;
-	size_t _exmap_res_len;
+	int _nExits;
+	R_ACTIONMAP_ENTRY *_exitsTbl;
 };
 
 } // End of namespace Saga

@@ -45,7 +45,6 @@ class Sound;
 class Music;
 class Anim;
 class Render;
-class ActionMap;
 class IsoMap;
 class ObjectMap;
 class Gfx;
@@ -100,7 +99,6 @@ public:
 	Music *_music;
 	Anim *_anim;
 	Render *_render;
-	ActionMap *_actionMap;
 	IsoMap *_isoMap;
 	ObjectMap *_objectMap;
 	Gfx *_gfx;

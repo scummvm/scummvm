@@ -40,7 +40,6 @@
 #include "saga/console.h"
 #include "saga/cvar_mod.h"
 #include "saga/events.h"
-#include "saga/actionmap.h"
 #include "saga/font.h"
 #include "saga/game_mod.h"
 #include "saga/game.h"
@@ -185,7 +184,6 @@ void SagaEngine::go() {
 	_gfx = new Gfx(_system, disp_info.logical_w, disp_info.logical_h);
 
 	_isoMap = new IsoMap(_gfx);
-	_actionMap = new ActionMap(this);
 	_objectMap = new ObjectMap(_gfx);
 	
 	_render = new Render(this, _system, _gfx, _objectMap);
@@ -207,7 +205,6 @@ void SagaEngine::go() {
 	_script->reg();
 	_render->reg();
 	_anim->reg();
-	_actionMap->reg();
 	_objectMap->reg();
 
 	_previousTicks = _system->getMillis();
@@ -256,7 +253,6 @@ void SagaEngine::shutdown() {
 
 	delete _interface;
 	delete _render;
-	delete _actionMap;
 	delete _isoMap;
 	delete _objectMap;
 	delete _sndRes;

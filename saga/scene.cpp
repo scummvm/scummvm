@@ -48,11 +48,15 @@ namespace Saga {
 
 static void CF_scenechange(int argc, char *argv[], void *refCon);
 static void CF_sceneinfo(int argc, char *argv[], void *refCon);
+static void CF_actioninfo(int argc, char *argv[], void *refCon);
+
 
 int Scene::reg() {
 	CVAR_Register_I(&_sceneNumber, "scene", NULL, R_CVAR_READONLY, 0, 0);
 	CVAR_RegisterFunc(CF_scenechange, "scene_change", "<Scene number>", R_CVAR_NONE, 1, 1, this);
 	CVAR_RegisterFunc(CF_sceneinfo, "scene_info", NULL, R_CVAR_NONE, 0, 0, this);
+	CVAR_RegisterFunc(CF_actioninfo,
+					  "action_info", NULL, R_CVAR_NONE, 0, 0, this);
 
 	return R_SUCCESS;
 }
@@ -678,10 +682,7 @@ int Scene::processSceneResources() {
 			break;
 		case SAGA_ACTION_MAP:
 			debug(0, "Loading exit map resource...");
-			if (_vm->_actionMap->loadMap(res_data, res_data_len) != R_SUCCESS) {
-				warning("Scene::ProcessSceneResources(): Error loading exit map resource");
-				return R_FAILURE;
-			}
+			_actionMap = new ActionMap(_vm, res_data, res_data_len);
 			break;
 		case SAGA_ISO_TILESET:
 			if (_sceneMode == R_SCENE_MODE_NORMAL) {
@@ -851,7 +852,7 @@ int Scene::endScene() {
 
 	_vm->_palanim->freePalAnim();
 	_vm->_objectMap->freeMem();
-	_vm->_actionMap->freeMap();
+	delete _actionMap;
 
 	ys_dll_destroy(_animList);
 
@@ -914,6 +915,13 @@ static void CF_sceneinfo(int argc, char *argv[], void *refCon) {
 
 int Scene::SC_defaultScene(int param, R_SCENE_INFO *scene_info, void *refCon) {
 	return ((Scene *)refCon)->defaultScene(param, scene_info);
+}
+
+static void CF_actioninfo(int argc, char *argv[], void *refCon) {
+	(void)(argc);
+	(void)(argv);
+
+	((Scene *)refCon)->_actionMap->info();
 }
 
 int Scene::defaultScene(int param, R_SCENE_INFO *scene_info) {

@@ -34,7 +34,6 @@
 #include "saga/scene.h"
 #include "saga/text.h"
 
-#include "saga/actionmap.h"
 #include "saga/objectmap.h"
 
 #include "saga/render.h"
@@ -137,7 +136,7 @@ int Render::drawScene() {
 	// Display scene maps, if applicable
 	if (getFlags() & RF_OBJECTMAP_TEST) {
 		_omap->draw(backbuf_surface, &mouse_pt, _gfx->getWhite(), _gfx->getBlack());
-		_vm->_actionMap->draw(backbuf_surface, _gfx->matchColor(R_RGB_RED));
+		_vm->_scene->drawActionMap(backbuf_surface, _gfx->matchColor(R_RGB_RED));
 	}
 
 	// Draw queued actors

@@ -906,9 +906,8 @@ int Actor::handleWalkIntent(R_ACTOR *actor, R_WALKINTENT *a_walkint, int *comple
 	new_a_x = path_x + a_walkint->org.x;
 	new_a_y = path_y + a_walkint->org.y;
 
-	if (a_walkint->x_dir == 1) {
-
-		if (new_a_x >= node_p->node_pt.x) {
+	if (((a_walkint->x_dir == 1) && new_a_x >= node_p->node_pt.x) ||
+		((a_walkint->x_dir != 1) && (new_a_x <= node_p->node_pt.x))) {
 			debug(2, "Path complete.");
 			ys_dll_delete(walk_p);
 			a_walkint->wi_active = 0;
@@ -922,23 +921,6 @@ int Actor::handleWalkIntent(R_ACTOR *actor, R_WALKINTENT *a_walkint, int *comple
 			actor->action = ACTION_IDLE;
 			*complete_p = 1;
 			return R_FAILURE;
-		}
-	} else {
-		if (new_a_x <= node_p->node_pt.x) {
-			debug(2, "Path complete.");
-			ys_dll_delete(walk_p);
-			a_walkint->wi_active = 0;
-
-			// Release path semaphore
-			if (a_walkint->sem != NULL) {
-				_vm->_script->SThreadReleaseSem(a_walkint->sem);
-			}
-
-			actor->action_frame = 0;
-			actor->action = ACTION_IDLE;
-			*complete_p = 1;
-			return R_FAILURE;
-		}
 	}
 
 	actor_x = (int)new_a_x;

@@ -27,6 +27,7 @@
 #define SAGA_SCENE_H
 
 #include "saga/text.h"
+#include "saga/actionmap.h"
 
 namespace Saga {
 
@@ -235,6 +236,8 @@ class Scene {
 	void sceneInfoCmd(int argc, char *argv[]);
 	void sceneChangeCmd(int argc, char *argv[]);
 
+	void drawActionMap(R_SURFACE *ds, int color) { _actionMap->draw(ds, color); }
+
  private:
 	int loadScene(int scene, int load_flag, R_SCENE_PROC scene_proc, R_SCENE_DESC *, 
 				  int fadeIn);
@@ -270,6 +273,9 @@ class Scene {
 
 	static int SC_defaultScene(int param, R_SCENE_INFO *scene_info, void *refCon);
 	int defaultScene(int param, R_SCENE_INFO *scene_info);
+
+ public:
+	ActionMap *_actionMap;
 
  private:
 	int IHNMStartProc();

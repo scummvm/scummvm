@@ -32,30 +32,7 @@
 
 namespace Saga {
 
-static void CF_action_info(int argc, char *argv[], void *refCon);
-
-int ActionMap::reg(void) {
-	CVAR_RegisterFunc(CF_action_info,
-					  "action_info", NULL, R_CVAR_NONE, 0, 0, this);
-	return R_SUCCESS;
-}
-
-ActionMap::ActionMap(SagaEngine *vm) : _vm(vm) {
-	debug(0, "ACTIONMAP Module: Initializing...");
-
-	_exits_loaded = 0;
-	_exits_tbl = NULL;
-	_n_exits = 0;
-
-	_initialized = true;
-}
-
-ActionMap::~ActionMap(void) {
-	freeMap();
-}
-
-
-int ActionMap::loadMap(const byte * exmap_res, size_t exmap_res_len) {
+ActionMap::ActionMap(SagaEngine *vm, const byte * exmap_res, size_t exmap_res_len) : _vm(vm) {
 	// Loads exit map data from specified exit map resource
 	R_ACTIONMAP_ENTRY *exmap_entry;
 	Point *exmap_pt_tbl;
@@ -63,7 +40,6 @@ int ActionMap::loadMap(const byte * exmap_res, size_t exmap_res_len) {
 	int exit_ct;
 	int i, pt;
 
-	assert(_initialized);
 	assert(exmap_res != NULL);
 
 	MemoryReadStream readS(exmap_res, exmap_res_len);
@@ -71,31 +47,31 @@ int ActionMap::loadMap(const byte * exmap_res, size_t exmap_res_len) {
 	// Load exits
 	exit_ct = readS.readSint16LE();
 	if (exit_ct < 0) {
-		return R_FAILURE;
+		return;
 	}
 
 	exmap_entry = (R_ACTIONMAP_ENTRY *)malloc(exit_ct * sizeof *exmap_entry);
 	if (exmap_entry == NULL) {
 		warning("Memory allocation failure");
-		return R_MEM;
+		return;
 	}
 
 	for (i = 0; i < exit_ct; i++) {
 		exmap_entry[i].unknown00 = readS.readSint16LE();
 		exmap_entry[i].unknown02 = readS.readSint16LE();
-		exmap_entry[i].exit_scene = readS.readSint16LE();
+		exmap_entry[i].exitScene = readS.readSint16LE();
 		exmap_entry[i].unknown06 = readS.readSint16LE();
 
 		exmap_entry[i].pt_count = readS.readSint16LE();
 		if (exmap_entry[i].pt_count < 0) {
 			free(exmap_entry);
-			return R_FAILURE;
+			return;
 		}
 
 		exmap_pt_tbl = (Point *)malloc(exmap_entry[i].pt_count * sizeof *exmap_pt_tbl);
 		if (exmap_pt_tbl == NULL) {
 			warning("Memory allocation failure");
-			return R_MEM;
+			return;
 		}
 
 		for (pt = 0; pt < exmap_entry[i].pt_count; pt++) {
@@ -106,103 +82,66 @@ int ActionMap::loadMap(const byte * exmap_res, size_t exmap_res_len) {
 		exmap_entry[i].pt_tbl = exmap_pt_tbl;
 	}
 
-	_exits_loaded = 1;
-	_n_exits = exit_ct;
-	_exits_tbl = exmap_entry;
-
-	_exmap_res = exmap_res;
-	_exmap_res_len = exmap_res_len;
-
-	return R_SUCCESS;
+	_nExits = exit_ct;
+	_exitsTbl = exmap_entry;
 }
 
-int ActionMap::freeMap(void) {
+ActionMap::~ActionMap(void) {
 	// Frees the currently loaded exit map data
 	R_ACTIONMAP_ENTRY *exmap_entry;
 	int i;
 
-	if (!_exits_loaded) {
-		return R_SUCCESS;
-	}
-
-	if (_exits_tbl) {
-		for (i = 0; i < _n_exits; i++) {
-			exmap_entry = &_exits_tbl[i];
+	if (_exitsTbl) {
+		for (i = 0; i < _nExits; i++) {
+			exmap_entry = &_exitsTbl[i];
 
 			if (exmap_entry != NULL)
 				free(exmap_entry->pt_tbl);
 		}
 
-		free(_exits_tbl);
+		free(_exitsTbl);
 	}
-
-	_exits_loaded = 0;
-	_exits_tbl = NULL;
-	_n_exits = 0;
-
-	return R_SUCCESS;
 }
 
-int ActionMap::shutdown(void) {
-	return R_SUCCESS;
-}
-
-int ActionMap::draw(R_SURFACE * ds, int color) {
+int ActionMap::draw(R_SURFACE *ds, int color) {
 	int i;
 
-	assert(_initialized);
-
-	if (!_exits_loaded) {
-		return R_FAILURE;
-	}
-
-	for (i = 0; i < _n_exits; i++) {
-		if (_exits_tbl[i].pt_count == 2) {
+	for (i = 0; i < _nExits; i++) {
+		if (_exitsTbl[i].pt_count == 2) {
 			_vm->_gfx->drawFrame(ds,
-				&_exits_tbl[i].pt_tbl[0],
-				&_exits_tbl[i].pt_tbl[1], color);
-		} else if (_exits_tbl[i].pt_count > 2) {
-			_vm->_gfx->drawPolyLine(ds, _exits_tbl[i].pt_tbl,
-							 _exits_tbl[i].pt_count, color);
+				&_exitsTbl[i].pt_tbl[0],
+				&_exitsTbl[i].pt_tbl[1], color);
+		} else if (_exitsTbl[i].pt_count > 2) {
+			_vm->_gfx->drawPolyLine(ds, _exitsTbl[i].pt_tbl,
+							 _exitsTbl[i].pt_count, color);
 		}
 	}
 
 	return R_SUCCESS;
 }
 
-void ActionMap::actionInfo(int argc, char *argv[]) {
+void ActionMap::info(void) {
 	Point *pt;
 
 	int i;
 	int pt_i;
 
-	(void)(argc);
-	(void)(argv);
+	_vm->_console->print("%d exits loaded.\n", _nExits);
 
-	if (!_exits_loaded) {
-		return;
-	}
-
-	_vm->_console->print("%d exits loaded.\n", _n_exits);
-
-	for (i = 0; i < _n_exits; i++) {
+	for (i = 0; i < _nExits; i++) {
 		_vm->_console->print ("Action %d: Exit to: %d; Pts: %d; Unk0: %d Unk2: %d Scr_N: %d",
-				   i, _exits_tbl[i].exit_scene,
-				   _exits_tbl[i].pt_count,
-				   _exits_tbl[i].unknown00,
-				   _exits_tbl[i].unknown02,
-				   _exits_tbl[i].unknown06);
+				   i, _exitsTbl[i].exitScene,
+				   _exitsTbl[i].pt_count,
+				   _exitsTbl[i].unknown00,
+				   _exitsTbl[i].unknown02,
+				   _exitsTbl[i].unknown06);
 
-		for (pt_i = 0; pt_i < _exits_tbl[i].pt_count; pt_i++) {
-			pt = &_exits_tbl[i].pt_tbl[pt_i];
+		for (pt_i = 0; pt_i < _exitsTbl[i].pt_count; pt_i++) {
+			pt = &_exitsTbl[i].pt_tbl[pt_i];
 
 			_vm->_console->print("   pt: %d (%d, %d)", pt_i, pt->x, pt->y);
 		}
 	}
-}
-
-static void CF_action_info(int argc, char *argv[], void *refCon) {
-	((ActionMap *)refCon)->actionInfo(argc, argv);
 }
 
 } // End of namespace Saga
