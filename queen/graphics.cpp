@@ -42,7 +42,7 @@ Graphics::Graphics(Display *display, Input *input, Resource *resource)
 Graphics::~Graphics() {
 	uint32 i;
 	for(i = 0; i < ARRAYSIZE(_banks); ++i) {
-		delete _banks[i].data;
+		delete[] _banks[i].data;
 	}
 	frameEraseAll(true);
 	delete[] _shrinkBuffer.data;
