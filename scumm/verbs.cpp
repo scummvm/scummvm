@@ -199,6 +199,15 @@ void Scumm::redrawV2Inventory() {
 
 		_messagePtr = getObjOrActorName(obj);
 		assert(_messagePtr);
+
+		// Prevent inventory entries from overflowing by truncating the text
+		// after 144/8 = 18 chars
+		byte msg[18 + 1];
+		memcpy(msg, _messagePtr, 18),
+		msg[18] = 0;
+		_messagePtr = msg;
+		
+		// Draw it
 		drawString(1);
 	}
 
