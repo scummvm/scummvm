@@ -770,42 +770,35 @@ void Actor::showActor() {
 
 void Scumm::showActors() {
 	int i;
-	Actor *a;
 
 	for (i = 1; i < _numActors; i++) {
-		a = derefActor(i);
-		if (a->isInCurrentRoom())
-			a->showActor();
+		if (_actors[i].isInCurrentRoom())
+			_actors[i].showActor();
 	}
 }
 
 void Scumm::walkActors() {
 	int i;
-	Actor *a;
 
 	for (i = 1; i < _numActors; i++) {
-		a = derefActor(i);
-		if (a->isInCurrentRoom())
+		if (_actors[i].isInCurrentRoom())
 			if (_features & GF_AFTER_V2 || _features & GF_AFTER_V3)
-				a->walkActorOld();
+				_actors[i].walkActorOld();
 			else
-				a->walkActor();
+				_actors[i].walkActor();
 	}
 }
 
 /* Used in Scumm v5 only. Play sounds associated with actors */
 void Scumm::playActorSounds() {
 	int i;
-	Actor *a;
 
 	for (i = 1; i < _numActors; i++) {
-		a = derefActor(i);
-		if (a->cost.animCounter2 && a->isInCurrentRoom() && a->sound) {
+		if (_actors[i].cost.animCounter2 && _actors[i].isInCurrentRoom() && _actors[i].sound) {
 			_currentScript = 0xFF;
-			_sound->addSoundToQueue(a->sound[0]);
+			_sound->addSoundToQueue(_actors[i].sound[0]);
 			for (i = 1; i < _numActors; i++) {
-				a = derefActor(i);
-				a->cost.animCounter2 = 0;
+				_actors[i].cost.animCounter2 = 0;
 			}
 			return;
 		}
@@ -824,11 +817,10 @@ void Scumm::processActors() {
 	
 	// Make a list of all actors in this room
 	for (i = 1; i < _numActors; i++) {
-		a = derefActor(i);
-		if ((_features & GF_AFTER_V8) && a->layer < 0)
+		if ((_features & GF_AFTER_V8) && _actors[i].layer < 0)
 			continue;
-		if (a->isInCurrentRoom())
-			actors[numactors++] = a;
+		if (_actors[i].isInCurrentRoom())
+			actors[numactors++] = &_actors[i];
 	}
 	if (!numactors) {
 		delete [] actors;
@@ -866,16 +858,14 @@ void Scumm::processActors() {
 // Used in Scumm v8, to allow the verb coin to be drawn over the inventory
 // chest. I'm assuming that draw order won't matter here.
 void Scumm::processUpperActors() {
-	Actor *a;
 	int i;
 
 	for (i = 1; i < _numActors; i++) {
-		a = derefActor(i);
-		if (a->isInCurrentRoom() && a->costume && a->layer < 0) {
+		if (_actors[i].isInCurrentRoom() && _actors[i].costume && _actors[i].layer < 0) {
 			CHECK_HEAP
-			a->drawActorCostume();
+			_actors[i].drawActorCostume();
 			CHECK_HEAP
-			a->animateCostume();
+			_actors[i].animateCostume();
 		}
 	}
 }
@@ -1038,9 +1028,8 @@ void Scumm::setActorRedrawFlags(bool fg, bool bg) {
 
 	if (_fullRedraw) {
 		for (j = 1; j < _numActors; j++) {
-			Actor *a = derefActor(j);
-			a->needRedraw |= fg;
-			a->needBgReset |= bg;
+			_actors[j].needRedraw |= fg;
+			_actors[j].needBgReset |= bg;
 		}
 	} else {
 		for (i = 0; i < gdi._numStrips; i++) {
@@ -1048,10 +1037,8 @@ void Scumm::setActorRedrawFlags(bool fg, bool bg) {
 			if (testGfxAnyUsageBits(strip)) {
 				for (j = 1; j < _numActors; j++) {
 					if (testGfxUsageBit(strip, j) && testGfxOtherUsageBits(strip, j)) {
-						Actor *a = derefActor(j);
-						assert(a->number == j);
-						a->needRedraw |= fg;
-						a->needBgReset |= bg;
+						_actors[j].needRedraw |= fg;
+						_actors[j].needBgReset |= bg;
 					}
 				}
 			}
@@ -1065,10 +1052,8 @@ int Scumm::getActorFromPos(int x, int y) {
 	if (!testGfxAnyUsageBits(x >> 3))
 		return 0;
 	for (i = 1; i < _numActors; i++) {
-		Actor *a = derefActor(i);
-		assert(a->number == i);
 		if (testGfxUsageBit(x >> 3, i) && !getClass(i, kObjectClassUntouchable)
-			&& y >= a->top && y <= a->bottom) {
+			&& y >= _actors[i].top && y <= _actors[i].bottom) {
 			return i;
 		}
 	}
@@ -1088,8 +1073,7 @@ void Scumm::actorTalk() {
 		VAR(VAR_TALK_ACTOR) = 0xFF;
 	} else {
 		int oldact;
-		a = derefActorSafe(_actorToPrintStrFor, "actorTalk");
-		assert(a);
+		a = derefActor(_actorToPrintStrFor, "actorTalk");
 		if (!a->isInCurrentRoom() && !(_features & GF_NEW_COSTUMES)) {
 			oldact = 0xFF;
 		} else {
@@ -1109,7 +1093,7 @@ void Scumm::actorTalk() {
 	if (VAR(VAR_TALK_ACTOR) > 0x7F) {
 		_charsetColor = (byte)_string[0].color;
 	} else {
-		a = derefActorSafe(VAR(VAR_TALK_ACTOR), "actorTalk(2)");
+		a = derefActor(VAR(VAR_TALK_ACTOR), "actorTalk(2)");
 		_charsetColor = a->talkColor;
 	}
 	_charsetBufPos = 0;
@@ -1131,7 +1115,7 @@ void Scumm::stopTalk() {
 
 	act = VAR(VAR_TALK_ACTOR);
 	if (act && act < 0x80) {
-		Actor *a = derefActorSafe(act, "stopTalk");
+		Actor *a = derefActor(act, "stopTalk");
 		if ((a->isInCurrentRoom() && _useTalkAnims) || (_features & GF_NEW_COSTUMES)) {
 			a->startAnimActor(a->talkStopFrame);
 			_useTalkAnims = false;
@@ -1506,18 +1490,16 @@ void Scumm::resetActorBgs() {
 	for (i = 0; i < gdi._numStrips; i++) {
 		int strip = _screenStartStrip + i;
 		for (j = 1; j < _numActors; j++) {
-			a = derefActor(j);
-			if (testGfxUsageBit(strip, j) && a->top != 0xFF && a->needBgReset) {
+			if (testGfxUsageBit(strip, j) && _actors[j].top != 0xFF && _actors[j].needBgReset) {
 				clearGfxUsageBit(strip, j);
-				if ((a->bottom - a->top) >= 0)
-					gdi.resetBackground(a->top, a->bottom, i);
+				if ((_actors[j].bottom - _actors[j].top) >= 0)
+					gdi.resetBackground(_actors[j].top, _actors[j].bottom, i);
 			}
 		}
 	}
 
 	for (i = 1; i < _numActors; i++) {
-		a = derefActor(i);
-		a->needBgReset = false;
+		_actors[i].needBgReset = false;
 	}
 }
 

@@ -718,7 +718,7 @@ protected:
 
 public:
 	/* Should be in Actor class */
-	Actor *derefActor(int id);
+	Actor *derefActor(int id, const char *errmsg = 0);
 	Actor *derefActorSafe(int id, const char *errmsg);
 	void showActors();
 

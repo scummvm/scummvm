@@ -655,7 +655,6 @@ Scumm::~Scumm ()
 
 void Scumm::scummInit() {
 	int i;
-	Actor *a;
 
 	tempMusic = 0;
 	debug(9, "scummInit");
@@ -696,9 +695,8 @@ void Scumm::scummInit() {
 	Actor::initActorClass(this);
 	_actors = new Actor[_numActors];
 	for (i = 1; i < _numActors; i++) {
-		a = derefActor(i);
-		a->number = i;
-		a->initActor(1);
+		_actors[i].number = i;
+		_actors[i].initActor(1);
 	}
 
 	_numNestedScripts = 0;
@@ -1085,7 +1083,6 @@ load_game:
 
 void Scumm::startScene(int room, Actor * a, int objectNr) {
 	int i, where;
-	Actor *at;
 
 	CHECK_HEAP;
 	debug(1, "Loading room %d", room);
@@ -1119,8 +1116,7 @@ void Scumm::startScene(int room, Actor * a, int objectNr) {
 	stopCycle(0);
 
 	for (i = 1; i < _numActors; i++) {
-		at = derefActor(i);
-		at->hideActor();
+		_actors[i].hideActor();
 	}
 
 	if (!(_features & GF_AFTER_V7)) {
@@ -1218,7 +1214,7 @@ void Scumm::startScene(int room, Actor * a, int objectNr) {
 		}
 	} else {
 		if (camera._follows) {
-			a = derefActorSafe(camera._follows, "startScene: follows");
+			a = derefActor(camera._follows, "startScene: follows");
 			setCameraAt(a->x, a->y);
 		}
 	}
@@ -1892,17 +1888,23 @@ void Scumm::convertKeysToClicks() {
 	}
 }
 
-Actor *Scumm::derefActor(int id) {
+Actor *Scumm::derefActor(int id, const char *errmsg) {
+	if (id < 1 || id >= _numActors || _actors[id].number != id) {
+		if (errmsg)
+			error("Invalid actor %d in %s", id, errmsg);
+		else
+			error("Invalid actor %d", id);
+	}
 	return &_actors[id];
 }
 
 Actor *Scumm::derefActorSafe(int id, const char *errmsg) {
-	if (id < 1 || id >= _numActors) {
+	if (id < 1 || id >= _numActors || _actors[id].number != id) {
 		debug(2, "Invalid actor %d in %s (script %d, opcode 0x%x) - This is potentially a BIG problem.",
 			 id, errmsg, vm.slot[_curExecScript].number, _opcode);
 		return NULL;
 	}
-	return derefActor(id);
+	return &_actors[id];
 }
 
 void Scumm::setStringVars(int slot) {
