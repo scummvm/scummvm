@@ -682,10 +682,10 @@ Using MP3 files for CD audio:
 Use LAME or some other mp3 encoder to rip the cd audio tracks to files. Name
 the files track1.mp3 track2.mp3 etc. ScummVM must be compiled with MAD support
 to use this option. You'll need to rip the file from the CD as a WAV file,
-then encode the MP3 files in Constant Bit Rate sampled at 22 kHz. This can
-be done with the following LAME command line:
+then encode the MP3 files in Constant Bit Rate. This can be done with the following 
+LAME command line:
 
-  lame -t -q 0 -b 96 --resample 22.05 track1.wav track1.mp3
+  lame -t -q 0 -b 96 track1.wav track1.mp3
 
 
 Using Ogg Vorbis files for CD audio:
@@ -693,11 +693,10 @@ Using Ogg Vorbis files for CD audio:
 Use oggenc or some other vorbis encoder to encode the audio tracks to files.
 Name the files track1.ogg track2.ogg etc. ScummVM must be compiled with vorbis
 support to use this option. You'll need to rip the files from the CD as a WAV
-file, then encode the vorbis files to be sampled at 22 kHz. This can be done
-with the following oggenc command line with the value after q specifying 
-the desired quality from 0 to 10:
+file, then encode the vorbis files. This can be done with the following oggenc
+command line with the value after q specifying the desired quality from 0 to 10:
 
-  oggenc -q 5 --resample 22050 track1.wav
+  oggenc -q 5 track1.wav
 
 
 Compressing MONSTER.SOU with MP3:
