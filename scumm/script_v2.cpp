@@ -415,7 +415,7 @@ void Scumm_v2::decodeParseString() {
 	_string[textSlot].center = false;
 	_string[textSlot].overhead = false;
 
-	// V1 Mansion Mansion uses static color table for subtitles
+	// V1 Mansion Mansion uses dynamic color table for subtitles
 	if ((_gameId == GID_MANIAC) && (_version == 1)) {
 		// Demo mode doesn't set subtitle color before display first subtitle.
 		if (_demo_mode && _actorToPrintStrFor == 0xFF)
