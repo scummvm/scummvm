@@ -97,11 +97,10 @@ QueenEngine::QueenEngine(GameDetector *detector, OSystem *syst)
 
 	_debugLevel = ConfMan.getInt("debuglevel");
 
-	_system->init_size(320, 200);
+	_system->init_size(GAME_SCREEN_WIDTH, GAME_SCREEN_HEIGHT);
 }
 
 QueenEngine::~QueenEngine() {
-
 	_timer->removeTimerProc(&timerHandler);
 	delete _bam;
 	delete _resource;
@@ -122,7 +121,6 @@ void QueenEngine::errorString(const char *buf1, char *buf2) {
 
 
 void QueenEngine::go() {
-
 	initialise();
 	
 	_logic->registerDefaultSettings();
@@ -143,13 +141,11 @@ void QueenEngine::go() {
 			if (_logic->currentRoom() == _logic->newRoom()) {
 				_logic->newRoom(0);
 			}
-		}
-		else {
+		} else {
 			if (_logic->joeWalk() == JWM_EXECUTE) {
 				_logic->joeWalk(JWM_NORMAL);
 				_command->executeCurrentAction();
-			}
-			else {
+			} else {
 //				if (_command->parse()) {
 //					_command->clear(true);
 //				}
@@ -161,7 +157,6 @@ void QueenEngine::go() {
 }
 
 void QueenEngine::initialise(void) {
-
 	_bam = new BamScene(this);
 	_resource = new Resource(_gameDataPath, _system->get_savefile_manager(), getSavePath());
 	_command = new Command(this);
@@ -178,13 +173,11 @@ void QueenEngine::initialise(void) {
 
 
 void QueenEngine::timerHandler(void *ptr) {
-
 	((QueenEngine *)ptr)->gotTimerTick();
 }
 
 
 void QueenEngine::gotTimerTick() {
-
 	_display->handleTimer();
 }
 

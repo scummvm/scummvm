@@ -52,20 +52,17 @@ Debugger::Debugger(QueenEngine *vm)
 
 
 void Debugger::preEnter() {
-	
 	// XXX mute all sounds
 }
 
 
 void Debugger::postEnter() {
-	
 	// XXX un-mute all sounds
 	_vm->graphics()->bobSetupControl(); // re-init mouse cursor
 }
 
 
 bool Debugger::Cmd_Exit(int argc, const char **argv) {
-	
 	_detach_now = true;
 	return false;	
 }
@@ -94,7 +91,6 @@ bool Debugger::Cmd_Help(int argc, const char **argv) {
 
 
 bool Debugger::Cmd_Asm(int argc, const char **argv) {
-	
 	if (argc == 2) {
 		uint16 sm = atoi(argv[1]);
 		DebugPrintf("Executing special move %d\n", sm);
@@ -107,7 +103,6 @@ bool Debugger::Cmd_Asm(int argc, const char **argv) {
 
 
 bool Debugger::Cmd_Areas(int argc, const char **argv) {
-
 	_drawAreas = !_drawAreas;
 	DebugPrintf("Room areas display %s\n", _drawAreas ? "on" : "off");
 	return true;
@@ -115,7 +110,6 @@ bool Debugger::Cmd_Areas(int argc, const char **argv) {
 
 
 bool Debugger::Cmd_GameState(int argc, const char **argv) {
-	
 	uint16 slot;
 	switch (argc) {
 	case 2:
@@ -139,7 +133,6 @@ bool Debugger::Cmd_GameState(int argc, const char **argv) {
 
 
 bool Debugger::Cmd_Info(int argc, const char **argv) {
-	
 	DebugPrintf("Version: %s\n", _vm->resource()->JASVersion());
 	DebugPrintf("Room number: %d\n", _vm->logic()->currentRoom());
 	DebugPrintf("Room name: %s\n", _vm->logic()->roomName(_vm->logic()->currentRoom()));	
@@ -148,7 +141,6 @@ bool Debugger::Cmd_Info(int argc, const char **argv) {
 
 
 bool Debugger::Cmd_Items(int argc, const char **argv) {
-	
 	int n = _vm->logic()->itemDataCount();
 	ItemData *item = _vm->logic()->itemData(1);
 	while (n--) {
@@ -161,7 +153,6 @@ bool Debugger::Cmd_Items(int argc, const char **argv) {
 
 
 bool Debugger::Cmd_Room(int argc, const char **argv) {
-	
 	if (argc == 2) {
 		uint16 roomNum = atoi(argv[1]);
 		_vm->logic()->joeX(0);
@@ -176,7 +167,6 @@ bool Debugger::Cmd_Room(int argc, const char **argv) {
 }
 
 bool Debugger::Cmd_Song(int argc, const char **argv) {
-	
 	if (argc == 2) {
 		int16 songNum = atoi(argv[1]);
 		_vm->sound()->playSong(songNum);

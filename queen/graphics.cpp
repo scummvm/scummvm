@@ -32,7 +32,6 @@ namespace Queen {
 
 
 void BobSlot::curPos(int16 xx, int16 yy) {
-
 	active = true;
 	x = xx;
 	y = yy;
@@ -40,7 +39,6 @@ void BobSlot::curPos(int16 xx, int16 yy) {
 
 
 void BobSlot::move(int16 dstx, int16 dsty, int16 spd) {
-
 	active = true;
 	moving = true;
 
@@ -53,8 +51,7 @@ void BobSlot::move(int16 dstx, int16 dsty, int16 spd) {
 	if (deltax < 0) {
 		dx   = -deltax;
 		xdir = -1;
-	}
-	else {
+	} else {
 		dx   = deltax;
 		xdir = 1;
 	}
@@ -62,8 +59,7 @@ void BobSlot::move(int16 dstx, int16 dsty, int16 spd) {
 	if (deltay < 0) {
 		dy   = -deltay;
 		ydir = -1;
-	}
-	else {
+	} else {
 		dy   = deltay;
 		ydir = 1;
 	}
@@ -71,8 +67,7 @@ void BobSlot::move(int16 dstx, int16 dsty, int16 spd) {
 	if (dx > dy) {
 		total = dy / 2;
 		xmajor = true;
-	}
-	else {
+	} else {
 		total = dx / 2;
 		xmajor = false;
 	}
@@ -83,13 +78,11 @@ void BobSlot::move(int16 dstx, int16 dsty, int16 spd) {
 
 
 void BobSlot::moveOneStep() {
-
 	if(xmajor) {
 		if(x == endx) {
 			y = endy;
 			moving = false;
-		}
-		else {
+		} else {
 			x += xdir;
 			total += dy;
 			if(total > dx) {
@@ -97,13 +90,11 @@ void BobSlot::moveOneStep() {
 				total -= dx;
 			}
 		}
-	}
-	else {
+	} else {
 		if(y == endy) {
 			x = endx;
 			moving = false;
-		}
-		else {
+		} else {
 			y += ydir;
 			total += dx;
 			if(total > dy) {
@@ -116,7 +107,6 @@ void BobSlot::moveOneStep() {
 
 
 void BobSlot::animOneStep() {
-
 	if (anim.string.buffer != NULL) {
 		--anim.speed;
 		if(anim.speed <= 0) {
@@ -126,14 +116,12 @@ void BobSlot::animOneStep() {
 			if (nextFrame == 0) {
 				anim.string.curPos = anim.string.buffer;
 				frameNum = anim.string.curPos->frame;
-			}
-			else {
+			} else {
 				frameNum = nextFrame;
 			}
 			anim.speed = anim.string.curPos->speed / 4;
 		}
-	}
-	else {
+	} else {
 		// normal looping animation
 		--anim.speed;
 		if(anim.speed == 0) {
@@ -143,8 +131,7 @@ void BobSlot::animOneStep() {
 			if (nextFrame > anim.normal.lastFrame || nextFrame < anim.normal.firstFrame) {
 				if (anim.normal.rebound) {
 					frameDir *= -1;
-				}
-				else {
+				} else {
 					frameNum = anim.normal.firstFrame - 1;
 				}
 			}
@@ -155,7 +142,6 @@ void BobSlot::animOneStep() {
 
 
 void BobSlot::animString(const AnimFrame *animBuf) {
-
 	active = true;
 	animating = true;
 	anim.string.buffer = animBuf;
@@ -166,7 +152,6 @@ void BobSlot::animString(const AnimFrame *animBuf) {
 
 
 void BobSlot::animNormal(uint16 firstFrame, uint16 lastFrame, uint16 spd, bool rebound, bool flip) {
-
 	active = true;
 	animating = true;
 	frameNum = firstFrame;
@@ -182,7 +167,6 @@ void BobSlot::animNormal(uint16 firstFrame, uint16 lastFrame, uint16 spd, bool r
 
 
 void BobSlot::clear() {
-
 	active = false;
 	xflip  = false;
 	animating = false;
@@ -198,7 +182,6 @@ void BobSlot::clear() {
 
 Graphics::Graphics(QueenEngine *vm)
 	: _cameraBob(0), _vm(vm) {
-		
 	memset(_frames, 0, sizeof(_frames));
 	memset(_banks, 0, sizeof(_banks));
 	memset(_bobs, 0, sizeof(_bobs));
@@ -209,7 +192,6 @@ Graphics::Graphics(QueenEngine *vm)
 
 
 Graphics::~Graphics() {
-
 	uint32 i;
 	for(i = 0; i < ARRAYSIZE(_banks); ++i) {
 		delete[] _banks[i].data;
@@ -220,7 +202,6 @@ Graphics::~Graphics() {
 
 
 void Graphics::bankLoad(const char *bankname, uint32 bankslot) {
-		
 	bankErase(bankslot);
 	_banks[bankslot].data = _vm->resource()->loadFile(bankname);
 	if (!_banks[bankslot].data) {
@@ -248,7 +229,6 @@ void Graphics::bankLoad(const char *bankname, uint32 bankslot) {
 
 
 void Graphics::bankUnpack(uint32 srcframe, uint32 dstframe, uint32 bankslot) {
-	
 	debug(9, "Graphics::bankUnpack(%d, %d, %d)", srcframe, dstframe, bankslot);
 
 	uint8 *p = _banks[bankslot].data + _banks[bankslot].indexes[srcframe];
@@ -273,7 +253,6 @@ void Graphics::bankUnpack(uint32 srcframe, uint32 dstframe, uint32 bankslot) {
 
 
 void Graphics::bankOverpack(uint32 srcframe, uint32 dstframe, uint32 bankslot) {
-	
 	debug(9, "Graphics::bankOverpack(%d, %d, %d)", srcframe, dstframe, bankslot);
 
 	uint8 *p = _banks[bankslot].data + _banks[bankslot].indexes[srcframe];
@@ -283,8 +262,7 @@ void Graphics::bankOverpack(uint32 srcframe, uint32 dstframe, uint32 bankslot) {
 	// unpack if destination frame is smaller than source one
 	if (_frames[dstframe].width < src_w || _frames[dstframe].height < src_h) {
 		bankUnpack(srcframe, dstframe, bankslot);
-	}
-	else {
+	} else {
 		// copy data 'over' destination frame (without changing frame header)
 		memcpy(_frames[dstframe].data, p + 8, src_w * src_h);
 	}
@@ -292,7 +270,6 @@ void Graphics::bankOverpack(uint32 srcframe, uint32 dstframe, uint32 bankslot) {
 
 
 void Graphics::bankErase(uint32 bankslot) {
-
 	debug(9, "Graphics::bankErase(%d)", bankslot);
 	delete[] _banks[bankslot].data;
 	_banks[bankslot].data = 0;	
@@ -300,7 +277,6 @@ void Graphics::bankErase(uint32 bankslot) {
 
 
 void Graphics::bobSetupControl() {
-
 	bankLoad("control.BBK",17);
 	bankUnpack(1, 1, 17); // Mouse pointer
 	bankUnpack(3, 3, 17); // Up arrow dialogue
@@ -313,7 +289,6 @@ void Graphics::bobSetupControl() {
 
 
 void Graphics::bobDraw(const BobSlot *bs, int16 x, int16 y) {
-
 	uint16 w, h;
 
 	debug(9, "Graphics::bobDraw(%d, %d, %d)", bs->frameNum, x, y);
@@ -361,8 +336,7 @@ void Graphics::bobDraw(const BobSlot *bs, int16 x, int16 y) {
 		if (!bs->xflip) {
 			src += x_skip;
 			_vm->display()->blit(RB_SCREEN, x, y, src, w_new, h_new, w, bs->xflip, true);
-		}
-		else {
+		} else {
 			src += w - w_new - x_skip;
 			x += w_new - 1;
 			_vm->display()->blit(RB_SCREEN, x, y, src, w_new, h_new, w, bs->xflip, true);
@@ -373,12 +347,10 @@ void Graphics::bobDraw(const BobSlot *bs, int16 x, int16 y) {
 
 
 void Graphics::bobDrawInventoryItem(uint32 bobnum, uint16 x, uint16 y) {
-
 	if (bobnum == 0) {
 		// clear panel area
 		_vm->display()->fill(RB_PANEL, x, y, 32, 32, INK_BG_PANEL);
-	}
-	else {
+	} else {
 		BobFrame *pbf = &_frames[bobnum];
 		_vm->display()->blit(RB_PANEL, x, y, pbf->data, pbf->width, pbf->height, pbf->width, false, false);
 	}
@@ -386,7 +358,6 @@ void Graphics::bobDrawInventoryItem(uint32 bobnum, uint16 x, uint16 y) {
 
 
 void Graphics::bobPaste(uint32 frameNum, int16 x, int16 y) {
-
 	BobFrame *pbf = &_frames[frameNum];
 	_vm->display()->blit(RB_BACKDROP, x, y, pbf->data, pbf->width, pbf->height, pbf->width, false, true);
 	frameErase(frameNum);
@@ -394,7 +365,6 @@ void Graphics::bobPaste(uint32 frameNum, int16 x, int16 y) {
 
 
 void Graphics::bobShrink(const BobFrame *bf, uint16 percentage) {
-
 	// computing new size, rounding to upper value
 	uint16 new_w = (bf->width  * percentage + 50) / 100;
 	uint16 new_h = (bf->height * percentage + 50) / 100;
@@ -440,7 +410,6 @@ void Graphics::bobShrink(const BobFrame *bf, uint16 percentage) {
 
 
 void Graphics::bobClear(uint32 bobnum) {
-
 	BobSlot *pbs = &_bobs[bobnum];
 	pbs->clear();
 	if (_vm->display()->fullscreen() || bobnum == 16) { // FIXME: does bob number 16 really used ?
@@ -450,7 +419,6 @@ void Graphics::bobClear(uint32 bobnum) {
 
 
 void Graphics::bobSortAll() {
-
 	_sortedBobsCount = 0;
 
 	// animate/move the bobs
@@ -494,7 +462,6 @@ void Graphics::bobSortAll() {
 
 
 void Graphics::bobDrawAll() {
-
 	int i;
 	for (i = 0; i < _sortedBobsCount; ++i) {
 		BobSlot *pbs = _sortedBobs[i];
@@ -527,7 +494,6 @@ void Graphics::bobDrawAll() {
 
 
 void Graphics::bobClearAll() {
-
 	for(int32 i = 0; i < ARRAYSIZE(_bobs); ++i) {
 		bobClear(i);
 	}
@@ -535,7 +501,6 @@ void Graphics::bobClearAll() {
 
 
 void Graphics::bobStopAll() {
-
 	for(int32 i = 0; i < ARRAYSIZE(_bobs); ++i) {
 		_bobs[i].moving = false;
 	}
@@ -543,7 +508,6 @@ void Graphics::bobStopAll() {
 
 
 BobSlot *Graphics::bob(int index) {
-
 	if (index < MAX_BOBS_NUMBER)
 		return _bobs + index;
 	else {
@@ -554,7 +518,6 @@ BobSlot *Graphics::bob(int index) {
 
 
 void Graphics::bobCustomParallax(uint16 roomNum) {
-	
 	int i;
 	uint16 screenScroll = _vm->display()->horizontalScroll();
 	switch (roomNum) {
@@ -624,13 +587,11 @@ void Graphics::bobCustomParallax(uint16 roomNum) {
 
 
 void Graphics::textCurrentColor(uint8 color) {
-
 	_curTextColor = color;
 }
 
 
 void Graphics::textSet(uint16 x, uint16 y, const char *text, bool outlined) {
-
 	if (y < GAME_SCREEN_HEIGHT) {
 		if (x == 0) x = 1;
 		if (y == 0) y = 1;
@@ -645,14 +606,12 @@ void Graphics::textSet(uint16 x, uint16 y, const char *text, bool outlined) {
 
 
 void Graphics::textSetCentered(uint16 y, const char *text, bool outlined) {
-
 	uint16 x = (GAME_SCREEN_WIDTH - textWidth(text)) / 2;
 	textSet(x, y, text, outlined);
 }
 
 
 void Graphics::textDrawAll() {
-
 	int y;
 	for (y = GAME_SCREEN_HEIGHT - 1; y > 0; --y) {
 		const TextSlot *pts = &_texts[y];
@@ -664,7 +623,6 @@ void Graphics::textDrawAll() {
 
 
 void Graphics::textClear(uint16 y1, uint16 y2) {
-
 	while (y1 <= y2) {
 		_texts[y1].text.clear();
 		++y1;
@@ -673,13 +631,11 @@ void Graphics::textClear(uint16 y1, uint16 y2) {
 
 
 uint16 Graphics::textWidth(const char* text) const {
-
 	return _vm->display()->textWidth(text);
 }
 
 
 void Graphics::frameErase(uint32 fslot) {
-
 	BobFrame *pbf = &_frames[fslot];
 	pbf->width  = 0;
 	pbf->height = 0;
@@ -689,7 +645,6 @@ void Graphics::frameErase(uint32 fslot) {
 
 
 void Graphics::frameEraseAll(bool joe) {
-
     int i = 0;
 	if (!joe) {
 		i = FRAMES_JOE + FRAMES_JOE_XTRA;
@@ -702,7 +657,6 @@ void Graphics::frameEraseAll(bool joe) {
 
 
 void Graphics::loadBackdrop(const char* name, uint16 room) {
-
 	char roomPrefix[20];
 	strcpy(roomPrefix, name);
 	roomPrefix[ strlen(roomPrefix) - 4 ] = '\0';
@@ -723,7 +677,6 @@ void Graphics::loadBackdrop(const char* name, uint16 room) {
 
 
 void Graphics::loadPanel() {
-
 	uint8 *pcxbuf = _vm->resource()->loadFile("panel.pcx");
 	if (pcxbuf == NULL) {
 		error("Unable to open panel file");
@@ -735,7 +688,6 @@ void Graphics::loadPanel() {
 
 
 void BamScene::updateCarAnimation() {
-
 	if (_flag != F_STOP) {
 		const BamDataBlock *bdb = &_carData[_index];
 
@@ -770,7 +722,6 @@ void BamScene::updateCarAnimation() {
 
 
 void BamScene::updateFightAnimation() {
-
 	if (_flag != F_STOP) {
 		const BamDataBlock *bdb = &_fightData[_index];
 
@@ -831,7 +782,6 @@ void BamScene::updateFightAnimation() {
 
 
 void Graphics::update(uint16 room) {
-
 	bobSortAll();
 	if (_cameraBob >= 0) {
 		_vm->display()->horizontalScrollUpdate(_bobs[_cameraBob].x);
@@ -917,8 +867,7 @@ void Graphics::bobSetText(
 		y = textY;
 
 		width = 0;
-	}
-	else {
+	} else {
 		x = pbs->x;
 		y = pbs->y;
 
@@ -939,8 +888,7 @@ void Graphics::bobSetText(
 			x += width / 2;
 		else
 			x -= width / 2 + maxLineWidth;
-	}
-	else if (!flags)
+	} else if (!flags)
 		x -= maxLineWidth / 2;
 
 	if (x < 0)
@@ -970,7 +918,6 @@ BamScene::BamScene(QueenEngine *vm)
 
 
 void BamScene::prepareAnimation() {
-	
 	_obj1 = _vm->graphics()->bob(BOB_OBJ1);
 	_vm->graphics()->bobClear(BOB_OBJ1);
 	_obj1->active = true;

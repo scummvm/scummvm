@@ -40,7 +40,6 @@ Journal::Journal(QueenEngine *vm)
 
 
 void Journal::use() {
-
 	BobSlot *joe = _vm->graphics()->bob(0);
 	_prevJoeX = joe->x;
 	_prevJoeY = joe->y;
@@ -97,7 +96,6 @@ void Journal::use() {
 
 
 void Journal::prepare() {
-
 	_vm->display()->horizontalScroll(0);
 	_vm->display()->fullscreen(true);
 
@@ -142,7 +140,6 @@ void Journal::prepare() {
 
 
 void Journal::restore() {
-
 	_vm->display()->fullscreen(false);
 
 	_vm->logic()->joeX(_prevJoeX);
@@ -156,7 +153,6 @@ void Journal::restore() {
 
 
 void Journal::redraw() {
-
 	drawNormalPanel();
 	drawConfigPanel();
 	drawSaveSlot();
@@ -165,7 +161,6 @@ void Journal::redraw() {
 
 
 void Journal::update() {
-
 	_vm->graphics()->update(JOURNAL_ROOM);
 	if (_edit.enable) {
 		int16 x = 136 + _edit.posCursor;
@@ -177,7 +172,6 @@ void Journal::update() {
 
 
 void Journal::showBob(int bobNum, int16 x, int16 y, int frameNum) {
-
 	BobSlot *bob = _vm->graphics()->bob(bobNum);
 	bob->curPos(x, y);
 	bob->frameNum = JOURNAL_FRAMES + frameNum;
@@ -185,13 +179,11 @@ void Journal::showBob(int bobNum, int16 x, int16 y, int frameNum) {
 
 
 void Journal::hideBob(int bobNum) {
-
 	_vm->graphics()->bob(bobNum)->active = false;
 }
 
 
 void Journal::findSaveDescriptions() {
-
 	SaveFileManager *mgr = OSystem::instance()->get_savefile_manager();
 	char filename[256];
 	makeSavegameName(filename);
@@ -215,7 +207,6 @@ void Journal::findSaveDescriptions() {
 
 
 void Journal::drawSaveDescriptions() {
-
 	int i;
 	for (i = 0; i < SAVE_PER_PAGE; ++i) {
 		int n = _currentSavePage * 10 + i;
@@ -231,13 +222,11 @@ void Journal::drawSaveDescriptions() {
 
 
 void Journal::drawSaveSlot() {
-
 	showBob(BOB_SAVE_DESC, 130, 6 + _currentSaveSlot * 13, 17);
 }
 
 
 void Journal::enterYesNoMode(int16 zoneNum, int titleNum) {
-
 	_mode = M_YES_NO;
 	_prevZoneNum = zoneNum;
 	drawYesNoPanel(titleNum);
@@ -245,7 +234,6 @@ void Journal::enterYesNoMode(int16 zoneNum, int titleNum) {
 
 
 void Journal::exitYesNoMode() {
-
 	_mode = M_NORMAL;
 	if (_prevZoneNum == ZN_MAKE_ENTRY) {
 		_edit.enable = false;
@@ -255,60 +243,47 @@ void Journal::exitYesNoMode() {
 
 
 void Journal::handleNormalMode(int16 zoneNum, int x) {
-
 	if (zoneNum == ZN_REVIEW_ENTRY) {
 		enterYesNoMode(zoneNum, TXT_REVIEW_ENTRY);
-	}
-	else if (zoneNum == ZN_MAKE_ENTRY) {
+	} else if (zoneNum == ZN_MAKE_ENTRY) {
 		initEditBuffer(_saveDescriptions[_currentSavePage * 10 + _currentSaveSlot]);
 		enterYesNoMode(zoneNum, TXT_MAKE_ENTRY);
-	}
-	else if (zoneNum == ZN_CLOSE) {
+	} else if (zoneNum == ZN_CLOSE) {
 		_quit = true;
-	}
-	else if (zoneNum == ZN_GIVEUP) {
+	} else if (zoneNum == ZN_GIVEUP) {
 		enterYesNoMode(zoneNum, TXT_GIVE_UP);
 	}
 	if (zoneNum == ZN_TEXT_SPEED) {
 		_vm->logic()->talkSpeed((x - 136) * 100 / 130);
 		drawConfigPanel();
-	}
-	else if (zoneNum == ZN_SFX_TOGGLE) {
+	} else if (zoneNum == ZN_SFX_TOGGLE) {
 		_vm->sound()->toggleSfx();
 		drawConfigPanel();
-	}
-	else if (zoneNum == ZN_MUSIC_VOLUME) {
+	} else if (zoneNum == ZN_MUSIC_VOLUME) {
 		// int val = (x - 136) * 100 / 130;
 		// XXX alter_current_volume();
 		drawConfigPanel();
-	}
-	else if (zoneNum >= ZN_DESC_FIRST && zoneNum <= ZN_DESC_LAST) {
+	} else if (zoneNum >= ZN_DESC_FIRST && zoneNum <= ZN_DESC_LAST) {
 		_currentSaveSlot = zoneNum - ZN_DESC_FIRST;
 		drawSaveSlot();
-	}
-	else if (zoneNum >= ZN_PAGE_FIRST && zoneNum <= ZN_PAGE_LAST) {
+	} else if (zoneNum >= ZN_PAGE_FIRST && zoneNum <= ZN_PAGE_LAST) {
 		_currentSavePage = zoneNum - ZN_PAGE_FIRST;
 		drawSaveDescriptions();
-	}
-	else if (zoneNum == ZN_INFO_BOX) {
+	} else if (zoneNum == ZN_INFO_BOX) {
 		_mode = M_INFO_BOX;
 		showInformationBox();
-	}
-	else if (zoneNum == ZN_MUSIC_TOGGLE) {
+	} else if (zoneNum == ZN_MUSIC_TOGGLE) {
 		_vm->sound()->toggleMusic();
 		if (_vm->sound()->musicOn()) {
 			// XXX playsong(lastoverride);
-		}
-		else {
+		} else {
 			// XXX playsong(-1);
 		}
 		drawConfigPanel();
-	}
-	else if (zoneNum == ZN_VOICE_TOGGLE) {
+	} else if (zoneNum == ZN_VOICE_TOGGLE) {
 		_vm->sound()->toggleSpeech();
 		drawConfigPanel();
-	}
-	else if (zoneNum == ZN_TEXT_TOGGLE) {
+	} else if (zoneNum == ZN_TEXT_TOGGLE) {
 		_vm->logic()->subtitles(!_vm->logic()->subtitles());
 		drawConfigPanel();
 	}
@@ -316,14 +291,12 @@ void Journal::handleNormalMode(int16 zoneNum, int x) {
 
 
 void Journal::handleInfoBoxMode(int16 zoneNum) {
-
 	hideInformationBox();
 	_mode = M_NORMAL;
 }
 
 
 void Journal::handleYesNoMode(int16 zoneNum) {
-	
 	if (zoneNum == ZN_YES) {
 		_mode = M_NORMAL;
 		int currentSlot = _currentSavePage * 10 + _currentSaveSlot;
@@ -337,8 +310,7 @@ void Journal::handleYesNoMode(int16 zoneNum) {
 				// XXX walkgameload=1;
 				_quit = true;
 				_quitCleanly = false;
-			}
-			else {
+			} else {
 				exitYesNoMode();
 			}
 			break;
@@ -346,8 +318,7 @@ void Journal::handleYesNoMode(int16 zoneNum) {
 			if (_edit.text[0]) {
 				saveState(currentSlot, _edit.text);
 				_quit = true;
-			}
-			else {
+			} else {
 				exitYesNoMode();
 			}
 			break;
@@ -355,8 +326,7 @@ void Journal::handleYesNoMode(int16 zoneNum) {
 			OSystem::instance()->quit();
 			break;
 		}
-	}
-	else if (zoneNum == ZN_NO) {
+	} else if (zoneNum == ZN_NO) {
 		exitYesNoMode();
 	}
 }
@@ -382,11 +352,9 @@ void Journal::handleMouseDown(int x, int y) {
 	int16 zone = _vm->logic()->zoneIn(ZONE_ROOM, x, y);
 	if (_mode == M_INFO_BOX) {
 		handleInfoBoxMode(_mode);
-	}
-	else if (_mode == M_YES_NO) {
+	} else if (_mode == M_YES_NO) {
 		handleYesNoMode(zone);
-	}
-	else if (_mode == M_NORMAL) {
+	} else if (_mode == M_NORMAL) {
 		handleNormalMode(zone, x);
 	}
 	update();
@@ -398,12 +366,10 @@ void Journal::handleKeyDown(uint16 ascii, int keycode) {
 	if (_mode == M_YES_NO) {
 		if (keycode == 27) { // escape
 			handleYesNoMode(ZN_NO);
-		}
-		else if (_edit.enable) {
+		} else if (_edit.enable) {
 			updateEditBuffer(ascii, keycode);
 		}
-	}
-	else if (_mode == M_NORMAL) {
+	} else if (_mode == M_NORMAL) {
 		handleNormalMode(ZN_CLOSE, 0);
 	}
 }
@@ -427,8 +393,7 @@ void Journal::drawPanelText(int y, const char *text) {
 		int x = (128 - _vm->graphics()->textWidth(s)) / 2;
 		_vm->graphics()->textSet(x, y, s, false);
 		_panelTextY[_panelTextCount++] = y;
-	}
-	else {
+	} else {
 		*p++ = '\0';
 		drawPanelText(y - 5, s);
 		drawPanelText(y + 5, p);
@@ -440,21 +405,18 @@ void Journal::drawCheckBox(bool active, int bobNum, int16 x, int16 y, int frameN
 
 	if (active) {
 		showBob(bobNum, x, y, frameNum);
-	}
-	else {
+	} else {
 		hideBob(bobNum);
 	}
 }
 
 
 void Journal::drawSlideBar(int value, int hi, int lo, int bobNum, int16 x, int16 y, int frameNum) {
-
 	showBob(bobNum, x + value * hi / lo, y, frameNum);
 }
 
 
 void Journal::drawPanel(const int *frames, const int *titles, int n) { 
-
 	clearPanelTexts();
 	_panelTextCount = 0;
 	int bobNum = 1;
@@ -468,7 +430,6 @@ void Journal::drawPanel(const int *frames, const int *titles, int n) {
 
 
 void Journal::drawNormalPanel() {
-
 	int frames[] = { FRAME_BLUE_1, FRAME_BLUE_2, FRAME_BLUE_1, FRAME_ORANGE };
 	int titles[] = { TXT_REVIEW_ENTRY, TXT_MAKE_ENTRY, TXT_CLOSE, TXT_GIVE_UP };
 	drawPanel(frames, titles, 4);
@@ -476,7 +437,6 @@ void Journal::drawNormalPanel() {
 
 
 void Journal::drawYesNoPanel(int titleNum) {
-
 	int frames[] = { FRAME_GREY, FRAME_BLUE_1, FRAME_BLUE_2 };
 	int titles[] = { titleNum, TXT_YES, TXT_NO };
 	drawPanel(frames, titles, 3);
@@ -492,7 +452,6 @@ void Journal::drawYesNoPanel(int titleNum) {
 
 
 void Journal::drawConfigPanel() {
-
 	_vm->logic()->checkOptionSettings();
 
 	drawSlideBar(_vm->logic()->talkSpeed(), 130, 100, BOB_TALK_SPEED, 136 - 4, 164, FRAME_BLUE_PIN);
@@ -507,7 +466,6 @@ void Journal::drawConfigPanel() {
 
 
 void Journal::showInformationBox() {
-
 	_vm->graphics()->textClear(0, GAME_SCREEN_HEIGHT - 1);
 	showBob(BOB_INFO_BOX, 72, 221, FRAME_INFO_BOX);
 
@@ -550,7 +508,6 @@ void Journal::showInformationBox() {
 
 
 void Journal::hideInformationBox() {
-
 	_vm->graphics()->textClear(0, GAME_SCREEN_HEIGHT - 1);
 	hideBob(BOB_INFO_BOX);
 	redraw();
@@ -558,7 +515,6 @@ void Journal::hideInformationBox() {
 
 
 void Journal::initEditBuffer(const char *desc) {
-
 	_edit.enable = true;
 	_edit.posCursor = _vm->graphics()->textWidth(desc);
 	_edit.textCharsCount = strlen(desc);
@@ -568,7 +524,6 @@ void Journal::initEditBuffer(const char *desc) {
 
 
 void Journal::updateEditBuffer(uint16 ascii, int keycode) {
-
 	bool dirty = false;
 	switch (keycode) {
 	case 8: // backspace
@@ -601,25 +556,21 @@ void Journal::updateEditBuffer(uint16 ascii, int keycode) {
 
 
 void Journal::makeSavegameName(char *buf, int slot) {
-
 	if (slot >= 0) {
 		sprintf(buf, "queensav.%03d", slot); // "queen.s%02d"
-	}
-	else {
+	} else {
 		sprintf(buf, "queensav."); // "queen.s"
 	}
 }
 
 
 void Journal::saveState(int slot, const char *desc) {
-
 	warning("Journal::saveState(%d, %s)", slot, desc);
 	_vm->logic()->gameSave(slot, desc);
 }
 
 
 void Journal::loadState(int slot) {
-
 	warning("Journal::loadState(%d)", slot);
 	_vm->logic()->gameLoad(slot);
 }

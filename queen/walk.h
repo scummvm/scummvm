@@ -42,7 +42,6 @@ struct MovePersonAnim {
 
 
 struct WalkData {
-//	int16 sign; // never used
 	int16 dx, dy;
 	const Area *area;
 	uint16 areaNum; // extra stuff for customMoveJoe

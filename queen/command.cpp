@@ -36,25 +36,21 @@ namespace Queen {
 
 
 void CmdText::clear() {
-
 	memset(_command, 0, sizeof(_command));
 }
 
 
 void CmdText::display(uint8 color) {
-
 	_vm->graphics()->textCurrentColor(color);
 	_vm->graphics()->textSetCentered(COMMAND_Y_POS, _command, false);
 }
 
 
 void CmdText::displayTemp(uint8 color, bool locked, Verb v, const char *name) {
-
 	char temp[MAX_COMMAND_LEN];
 	if (locked) {
 		sprintf(temp, "%s%s", _vm->logic()->joeResponse(39), _vm->logic()->verbName(v));
-	}
-	else {
+	} else {
 		strcpy(temp, _vm->logic()->verbName(v));
 	}
 	if (name != NULL) {
@@ -67,7 +63,6 @@ void CmdText::displayTemp(uint8 color, bool locked, Verb v, const char *name) {
 
 
 void CmdText::displayTemp(uint8 color, const char *name) {
-	
 	char temp[MAX_COMMAND_LEN];
 	sprintf(temp, "%s %s", _command, name);
 	_vm->graphics()->textCurrentColor(color);
@@ -76,20 +71,17 @@ void CmdText::displayTemp(uint8 color, const char *name) {
 
 
 void CmdText::setVerb(Verb v) {
-
 	strcpy(_command, _vm->logic()->verbName(v));
 }
 
 
 void CmdText::addLinkWord(Verb v) {
-
 	strcat(_command, " ");
 	strcat(_command, _vm->logic()->verbName(v));
 }
 
 
 void CmdText::addObject(const char *objName) {
-
 	strcat(_command, " ");
 	strcat(_command, objName);
 }
@@ -101,7 +93,6 @@ bool CmdText::isEmpty() const {
 
 
 void CmdState::init() {
-
 	commandLevel = 1;
 	oldVerb = verb = action = VERB_NONE;
 	oldNoun = noun = subject[0] = subject[1] = 0;
@@ -113,12 +104,12 @@ void CmdState::init() {
 
 Command::Command(QueenEngine *vm)
 	: _vm(vm) {
+
 	_cmdText._vm = vm;
 }
 
 
 void Command::clear(bool clearTexts) {
-
 	_cmdText.clear();
 	if (clearTexts) {
 		_vm->graphics()->textClear(CmdText::COMMAND_Y_POS, CmdText::COMMAND_Y_POS);
@@ -129,7 +120,6 @@ void Command::clear(bool clearTexts) {
 
 
 void Command::executeCurrentAction() {
-
 	_vm->logic()->entryObj(0);
 
 //	if (_state.commandLevel == 2 && _mouseKey == Input::MOUSE_RBUTTON) {
@@ -201,14 +191,12 @@ void Command::executeCurrentAction() {
 			// only exit on a condition fail if at last command
 			// Joe hasnt spoken, so do normal LOOK command
 			break;
-		}
-		else if (cond == -2 && i == comMax) {
+		} else if (cond == -2 && i == comMax) {
 			// only exit on a condition fail if at last command
 			// Joe has spoken, so skip LOOK command
 			cleanupCurrentAction();
 			return;
-		}
-		else if (cond >= 0) {
+		} else if (cond >= 0) {
 			// we've had a successful Gamestate check, so we must now exit
 			cond = executeCommand(comId, cond);
 			break;
@@ -217,8 +205,7 @@ void Command::executeCurrentAction() {
 
 	if (cond <= 0 && _state.selAction == VERB_LOOK_AT) {
 		lookAtSelectedObject();
-	}
-	else {
+	} else {
 		// only play song if it's a PLAY AFTER type
 		if (com->song < 0) {
 			_vm->sound()->playSong(-com->song);
@@ -230,7 +217,6 @@ void Command::executeCurrentAction() {
 
 
 void Command::updatePlayer() {	
-
 	if (_vm->logic()->joeWalk() != JWM_MOVE) {
 		int16 cx = _vm->input()->mousePosX();
 		int16 cy = _vm->input()->mousePosY();
@@ -243,8 +229,7 @@ void Command::updatePlayer() {
 		if (_vm->input()->keyVerb() == VERB_USE_JOURNAL) {
 			_vm->input()->clearKeyVerb();
 			_vm->logic()->useJournal();
-		}
-		else if (_vm->input()->keyVerb() != VERB_SKIP_TEXT) {
+		} else if (_vm->input()->keyVerb() != VERB_SKIP_TEXT) {
 			_state.verb = _vm->input()->keyVerb();
 			if (isVerbInv(_state.verb)) {
 				_state.noun = _state.selNoun = 0;
@@ -255,8 +240,7 @@ void Command::updatePlayer() {
 				_state.oldNoun = 0;
 				_state.oldVerb = VERB_NONE;
 				grabSelectedItem();
-			}
-			else {
+			} else {
 				grabSelectedVerb();
 			}
 			_vm->input()->clearKeyVerb();
@@ -272,7 +256,6 @@ void Command::updatePlayer() {
 
 
 void Command::readCommandsFrom(byte *&ptr) {
-
 	uint16 i;
 
 	_numCmdList = READ_BE_UINT16(ptr); ptr += 2;
@@ -313,7 +296,6 @@ void Command::readCommandsFrom(byte *&ptr) {
 
 
 ObjectData *Command::findObjectData(uint16 objRoomNum) const {
-
 	ObjectData *od = NULL;
 	if (objRoomNum != 0) {
 		objRoomNum += _vm->logic()->currentRoomData();
@@ -324,7 +306,6 @@ ObjectData *Command::findObjectData(uint16 objRoomNum) const {
 
 
 ItemData *Command::findItemData(Verb invNum) const {
-
 	ItemData *id = NULL;
 	uint16 itNum = _vm->logic()->findInventoryItem(invNum - VERB_INV_FIRST);
 	if (itNum != 0) {
@@ -335,7 +316,6 @@ ItemData *Command::findItemData(Verb invNum) const {
 
 
 int16 Command::executeCommand(uint16 comId, int16 condResult) {
-
 	// execute.c l.313-452
 	debug(0, "Command::executeCommand() - cond = %X, com = %X", condResult, comId);
 
@@ -366,8 +346,7 @@ int16 Command::executeCommand(uint16 comId, int16 condResult) {
 		if (executeIfCutaway(desc)) {
 			condResult = 0;
 			cutDone = true;
-		}
-		else if (executeIfDialog(desc)) {
+		} else if (executeIfDialog(desc)) {
 			condResult = 0;
 		}
 	}
@@ -395,13 +374,11 @@ int16 Command::executeCommand(uint16 comId, int16 condResult) {
 				// make sure that object is not already updated
 				od->image = -(od->image + 10);
 			}
-		}
-		else {
+		} else {
 			od->image = com->imageOrder;
 		}
 		_vm->logic()->roomRefreshObject(_state.subject[0]);
-	}
-	else {
+	} else {
 		// this object is not being updated by command list, see if
 		// it has another image copied to it
 		if (_state.subject[0] > 0) {
@@ -437,9 +414,8 @@ int16 Command::executeCommand(uint16 comId, int16 condResult) {
 		break;
 	}
 
-	if (_state.subject[0] > 0) {
+	if (_state.subject[0] > 0)
 		changeObjectState(_state.selAction, _state.subject[0], com->song, cutDone);
-	}
 
 	// execute.c l.533-548
 	// FIXME: useless test, as .dog has already been played
@@ -461,7 +437,6 @@ int16 Command::executeCommand(uint16 comId, int16 condResult) {
 
 
 int16 Command::makeJoeWalkTo(int16 x, int16 y, int16 objNum, Verb v, bool mustWalk) {
-
 	// Check to see if object is actually an exit to another
 	// room. If so, then set up new room
 	ObjectData *objData = _vm->logic()->objectData(objNum);
@@ -482,8 +457,7 @@ int16 Command::makeJoeWalkTo(int16 x, int16 y, int16 objNum, Verb v, bool mustWa
 				y = wod->y;
 			}
 		}
-	}
-	else {
+	} else {
 		_vm->logic()->entryObj(0);
 		_vm->logic()->newRoom(0);
 	}
@@ -499,8 +473,7 @@ int16 Command::makeJoeWalkTo(int16 x, int16 y, int16 objNum, Verb v, bool mustWa
 		if (x == bobJoe->x && y == bobJoe->y) {
 			_vm->logic()->joeFacing(facing);
 			_vm->logic()->joeFace();
-		}
-		else {
+		} else {
 			p = _vm->walk()->moveJoe(facing, x, y, false);
 			if (p != 0) {
 				_vm->logic()->newRoom(0); // cancel makeJoeWalkTo, that should be equivalent to cr10 fix
@@ -514,7 +487,6 @@ int16 Command::makeJoeWalkTo(int16 x, int16 y, int16 objNum, Verb v, bool mustWa
 
 
 void Command::grabCurrentSelection() {
-	
 	_selPosX = _vm->input()->mousePosX();
 	_selPosY = _vm->input()->mousePosY();
 
@@ -528,17 +500,13 @@ void Command::grabCurrentSelection() {
 		// move through inventory (by four if right mouse button)
 		uint16 scroll = (_mouseKey == Input::MOUSE_RBUTTON) ? 4 : 1;
 		_vm->logic()->inventoryScroll(scroll, _state.verb == VERB_SCROLL_UP);
-	}
-	else if (isVerbAction(_state.verb)) {
+	} else if (isVerbAction(_state.verb)) {
 		grabSelectedVerb();
-	}
-	else if (isVerbInv(_state.verb)) {
+	} else if (isVerbInv(_state.verb)) {
 		grabSelectedItem();
-	}
-	else if (_state.noun != 0) { // 0 && _state.noun <= _vm->logic()->currentRoomObjMax()) {
+	} else if (_state.noun != 0) { // 0 && _state.noun <= _vm->logic()->currentRoomObjMax()) {
 		grabSelectedNoun();
-	}
-	else if (_selPosY < ROOM_ZONE_HEIGHT && _state.verb == VERB_NONE) {
+	} else if (_selPosY < ROOM_ZONE_HEIGHT && _state.verb == VERB_NONE) {
 		// select without a command, do a WALK
 		clear(true);
 		_vm->logic()->joeWalk(JWM_EXECUTE);
@@ -547,7 +515,6 @@ void Command::grabCurrentSelection() {
 
 
 void Command::grabSelectedObject(int16 objNum, uint16 objState, uint16 objName) {
-
 	if (_state.action != VERB_NONE) {
 		_cmdText.addObject(_vm->logic()->objectName(objName));
 	}
@@ -562,20 +529,17 @@ void Command::grabSelectedObject(int16 objNum, uint16 objState, uint16 objName) 
 			_cmdText.addLinkWord(VERB_PREP_WITH);
 			_cmdText.display(INK_CMD_NORMAL);
 			_parse = false;
-		}
-		else {
+		} else {
 //			_cmdText.display(INK_CMD_SELECT);
 			_parse = true;
 		}
-	}
-	else if (_state.action == VERB_GIVE && _state.commandLevel == 1) {
+	} else if (_state.action == VERB_GIVE && _state.commandLevel == 1) {
 		// command not fully constructed
 		_state.commandLevel = 2;
 		_cmdText.addLinkWord(VERB_PREP_TO);		 
 		_cmdText.display(INK_CMD_NORMAL);
 		_parse = false;
-	}
-	else {
+	} else {
 //		_cmdText.display(INK_CMD_SELECT);
 		_parse = true;
 	}
@@ -591,7 +555,6 @@ void Command::grabSelectedObject(int16 objNum, uint16 objState, uint16 objName) 
 
 
 void Command::grabSelectedItem() {
-
 //	_parse = true;
 
 	ItemData *id = findItemData(_state.verb);
@@ -617,8 +580,7 @@ void Command::grabSelectedItem() {
 					_cmdText.setVerb(VERB_LOOK_AT);
 				}
 				_state.action = _state.verb;
-			}
-			else {
+			} else {
 				// Action>0 ONLY if command has been constructed 
 				// Left Mouse Button pressed just do Look At     
 				_state.action = VERB_LOOK_AT;
@@ -626,8 +588,7 @@ void Command::grabSelectedItem() {
 			}
 		}
 		_state.verb = VERB_NONE;
-	}
-	else {
+	} else {
 //		if (_vm->logic()->joeWalk() == JWM_MOVE) {
 //			_cmdText.clear();
 //			_state.commandLevel = 1;
@@ -647,20 +608,16 @@ void Command::grabSelectedItem() {
 			_state.verb = VERB_LOOK_AT;
 			_state.action = VERB_LOOK_AT;
 			_cmdText.setVerb(VERB_LOOK_AT);
-		}
-		else {
-			if (_state.commandLevel == 2 && _parse) {
+		} else {
+			if (_state.commandLevel == 2 && _parse)
 				_state.verb = _state.action;
-			}
-			else {
+			else
 				_state.verb = State::findDefaultVerb(id->state);
-			}
 			if (_state.verb == VERB_NONE) {
 				// No match made, so command not yet completed. Redefine as LOOK AT
 				_state.action = VERB_LOOK_AT;
 				_cmdText.setVerb(VERB_LOOK_AT);
-			}
-			else {
+			} else {
 				_state.action = _state.verb;
 			}
 			_state.verb = VERB_NONE;
@@ -672,7 +629,6 @@ void Command::grabSelectedItem() {
 
 
 void Command::grabSelectedNoun() {
-
 	// if the NOUN has been selected from screen then it is positive
 	// otherwise it has been selected from inventory and is negative
 	// set PARSE to TRUE, default FALSE if command half complete
@@ -699,8 +655,7 @@ void Command::grabSelectedNoun() {
 					_state.action = VERB_WALK_TO;
 					_cmdText.setVerb(VERB_WALK_TO);
 			}
-		}
-		else if (_mouseKey == Input::MOUSE_RBUTTON) {
+		} else if (_mouseKey == Input::MOUSE_RBUTTON) {
 
 			// rmb pressed, do default if one exists
 			if (_state.defaultVerb != VERB_NONE) {
@@ -717,13 +672,11 @@ void Command::grabSelectedNoun() {
 				_state.selAction = (_state.verb == VERB_NONE) ? VERB_WALK_TO : _state.verb;
 				_cmdText.setVerb(_state.selAction);
 				_cmdText.addObject(_vm->logic()->objectName(od->name));
-			}
-			else {
+			} else {
 				_state.verb = VERB_NONE;
 				if ((_state.commandLevel == 2 && !_parse) || _state.action != VERB_NONE) {
 					_state.verb = _state.action;
-				}
-				else {
+				} else {
 					_state.verb = State::findDefaultVerb(od->state);
 				}
 				_state.action = (_state.verb == VERB_NONE) ? VERB_WALK_TO : _state.verb;
@@ -739,7 +692,6 @@ void Command::grabSelectedNoun() {
 
 
 void Command::grabSelectedVerb() {
-
 	_state.action = _state.verb;
 	_state.subject[0] = 0;
 	_state.subject[1] = 0;
@@ -764,7 +716,6 @@ void Command::grabSelectedVerb() {
 
 
 bool Command::executeIfCutaway(const char *description) {
-
 	if (strlen(description) > 4 && 
 		scumm_stricmp(description + strlen(description) - 4, ".cut") == 0) {
 
@@ -783,7 +734,6 @@ bool Command::executeIfCutaway(const char *description) {
 
 
 bool Command::executeIfDialog(const char *description) {
-
 	if (strlen(description) > 4 && 
 		scumm_stricmp(description + strlen(description) - 4, ".dog") == 0) {
 
@@ -805,7 +755,6 @@ bool Command::executeIfDialog(const char *description) {
 
 
 bool Command::handleWrongAction() {
-
 	// l.96-141 execute.c
 	uint16 objMax = _vm->logic()->currentRoomObjMax();
 	uint16 roomData = _vm->logic()->currentRoomData();
@@ -849,7 +798,6 @@ bool Command::handleWrongAction() {
 
 
 void Command::sayInvalidAction(Verb action, int16 subj1, int16 subj2) {
-
 	// l.158-272 execute.c
 	switch (action) {
 
@@ -867,12 +815,10 @@ void Command::sayInvalidAction(Verb action, int16 subj1, int16 subj2) {
 			uint16 k = _vm->logic()->itemData(-subj1)->sfxDescription;
 			if (k > 0) {
 				_vm->logic()->joeSpeak(k, true);
-			}
-			else {
+			} else {
 				_vm->logic()->joeSpeak(2);
 			}
-		}
-		else {
+		} else {
 			_vm->logic()->joeSpeak(2);
 		}
 		break;
@@ -891,12 +837,10 @@ void Command::sayInvalidAction(Verb action, int16 subj1, int16 subj2) {
 			int16 img = _vm->logic()->objectData(subj1)->image;
 			if (img == -4 || img == -3) {
 				_vm->logic()->joeSpeak(18);
-			}
-			else {
+			} else {
 				_vm->logic()->joeSpeak(3);
 			}
-		}
-		else {
+		} else {
 			_vm->logic()->joeSpeak(3);
 		}
 		break;
@@ -909,12 +853,10 @@ void Command::sayInvalidAction(Verb action, int16 subj1, int16 subj2) {
 				if (img == -4 || img == -3) {
 					_vm->logic()->joeSpeak(27 + _vm->randomizer.getRandomNumber(2));
 				}
-			}
-			else {
+			} else {
 				_vm->logic()->joeSpeak(11);
 			}
-		}
-		else {
+		} else {
 			_vm->logic()->joeSpeak(12);
 		}
 		break;
@@ -922,14 +864,12 @@ void Command::sayInvalidAction(Verb action, int16 subj1, int16 subj2) {
 	case VERB_PICK_UP:
 		if (subj1 < 0) {
 			_vm->logic()->joeSpeak(14);
-		}
-		else {
+		} else {
 			int16 img = _vm->logic()->objectData(subj2)->image;
 			if (img == -4 || img == -3) {
 				// Trying to get a person
 				_vm->logic()->joeSpeak(20);
-			}
-			else {
+			} else {
 				// 5 : 'I can't pick that up'
 				// 6 : 'I don't think I need that'
 				// 7 : 'I'd rather leave it here'
@@ -946,7 +886,6 @@ void Command::sayInvalidAction(Verb action, int16 subj1, int16 subj2) {
 
 
 void Command::changeObjectState(Verb action, int16 obj, int16 song, bool cutDone) {
-
 	// l.456-533 execute.c
 	ObjectData *objData = _vm->logic()->objectData(obj);
 
@@ -965,13 +904,11 @@ void Command::changeObjectState(Verb action, int16 obj, int16 song, bool cutDone
 				openOrCloseAssociatedObject(action, ABS(objData->entryObj));
 				objData->entryObj = ABS(objData->entryObj);
 			}
-		}
-		else {
+		} else {
 			// 'it's already open !'
 			_vm->logic()->joeSpeak(9);
 		}
-	}
-	else if (action == VERB_CLOSE && !cutDone) {
+	} else if (action == VERB_CLOSE && !cutDone) {
 		if (State::findOn(objData->state) == STATE_ON_OFF) {
 			State::alterOn(&objData->state, STATE_ON_ON);
 			State::alterDefaultVerb(&objData->state, VERB_OPEN);
@@ -986,19 +923,16 @@ void Command::changeObjectState(Verb action, int16 obj, int16 song, bool cutDone
 				openOrCloseAssociatedObject(action, ABS(objData->entryObj));
 				objData->entryObj = -ABS(objData->entryObj);
 			}
-		}
-		else {
+		} else {
 			// 'it's already closed !'
 			_vm->logic()->joeSpeak(10);
 		}
-	}
-	else if (action == VERB_MOVE) {
+	} else if (action == VERB_MOVE) {
 		State::alterOn(&objData->state, STATE_ON_OFF);
 	}
 }
 
 void Command::cleanupCurrentAction() {
-
 	// l.595-597 execute.c
 	_vm->logic()->joeFace();
 	_state.oldNoun = 0;
@@ -1007,7 +941,6 @@ void Command::cleanupCurrentAction() {
 
 
 void Command::openOrCloseAssociatedObject(Verb action, int16 otherObj) {
-
 	CmdListData *cmdList = &_cmdList[1];
 	uint16 com = 0;
 	uint16 i;
@@ -1026,8 +959,7 @@ void Command::openOrCloseAssociatedObject(Verb action, int16 otherObj) {
 						}
 					}
 				}
-			}
-			else {
+			} else {
 				com = i;
 				break;
 			}
@@ -1051,8 +983,7 @@ void Command::openOrCloseAssociatedObject(Verb action, int16 otherObj) {
 				State::alterDefaultVerb(&objData->state, VERB_NONE);
 				objData->entryObj = ABS(objData->entryObj);
 			}
-		}
-		else if (action == VERB_CLOSE) {
+		} else if (action == VERB_CLOSE) {
 			if (State::findOn(objData->state) == STATE_ON_OFF) {
 				State::alterOn(&objData->state, STATE_ON_ON);
 				State::alterDefaultVerb(&objData->state, VERB_OPEN);
@@ -1064,7 +995,6 @@ void Command::openOrCloseAssociatedObject(Verb action, int16 otherObj) {
 
 
 int16 Command::setConditions(uint16 command, bool lastCmd) {
-
 	debug(9, "Command::setConditions(%d, %d)", command, lastCmd);
 	// Test conditions, if FAIL write &&  exit, Return -1
 	// if(Joe speaks before he returns, -2 is returned
@@ -1086,8 +1016,7 @@ int16 Command::setConditions(uint16 command, bool lastCmd) {
 					ret = i;
 					break;
 				}
-			}
-			else {
+			} else {
 				temp[tempInd] = i;
 				++tempInd;
 			}
@@ -1104,12 +1033,10 @@ int16 Command::setConditions(uint16 command, bool lastCmd) {
 				_vm->logic()->joeSpeak(cmdGs->speakValue, true);
 			}
 			ret = -2;
-		}
-		else {
+		} else {
 			ret = -1;
 		}
-	}
-	else {
+	} else {
 		ret = 0;
 		// all tests were okay, now set gamestates
 		for (i = 0; i < tempInd; ++i) {
@@ -1124,7 +1051,6 @@ int16 Command::setConditions(uint16 command, bool lastCmd) {
 
 
 void Command::setAreas(uint16 command) {
-
 	debug(9, "Command::setAreas(%d)", command);
 
 	CmdArea *cmdArea = &_cmdArea[1];
@@ -1136,8 +1062,7 @@ void Command::setAreas(uint16 command) {
 			if (cmdArea->area > 0) {
 				// turn on area
 				area->mapNeighbours = ABS(area->mapNeighbours);
-			}
-			else {
+			} else {
 				// turn off area
 				area->mapNeighbours = -ABS(area->mapNeighbours);
 			}
@@ -1147,7 +1072,6 @@ void Command::setAreas(uint16 command) {
 
 
 void Command::setObjects(uint16 command) {
-
 	debug(9, "Command::setObjects(%d)", command);
 
 	CmdObject *cmdObj = &_cmdObject[1];
@@ -1205,8 +1129,7 @@ void Command::setObjects(uint16 command) {
 					// is not current object then update it
 					_vm->logic()->roomRefreshObject(dstObj);
 				}
-			}
-			else {
+			} else {
 				// hide the object
 				if (objData->name > 0) {
 					objData->name = -objData->name;
@@ -1222,7 +1145,6 @@ void Command::setObjects(uint16 command) {
 
 
 void Command::setItems(uint16 command) {
-
 	debug(9, "Command::setItems(%d)", command);
 
 	CmdInventory *cmdInv = &_cmdInventory[1];
@@ -1235,22 +1157,19 @@ void Command::setItems(uint16 command) {
 			if (cmdInv->dstItem > 0) {
 				// add item to inventory
 				if (cmdInv->srcItem > 0) {
-					// copy data from source item to item
+					// copy data from source item to item, then enable it
 					items[dstItem] = items[cmdInv->srcItem];
-					// enable it
 					items[dstItem].name = ABS(items[dstItem].name);
 				}
 				_vm->logic()->inventoryInsertItem(cmdInv->dstItem);
-			}
-			else {
+			} else {
 				// delete item
 				if (items[dstItem].name > 0) {
 					_vm->logic()->inventoryDeleteItem(dstItem);
 				}
 				if (cmdInv->srcItem > 0) {
-					// copy data from source item to item
+					// copy data from source item to item, then disable it
 					items[dstItem] = items[cmdInv->srcItem];
-					// disable it
 					items[dstItem].name = -ABS(items[dstItem].name);
 				}
 			}
@@ -1260,7 +1179,6 @@ void Command::setItems(uint16 command) {
 
 
 uint16 Command::nextObjectDescription(ObjectDescription* objDesc, uint16 firstDesc) {
-
 	// l.69-103 select.c
 	uint16 i;
 	uint16 diff = objDesc->lastDescription - firstDesc;
@@ -1300,7 +1218,6 @@ uint16 Command::nextObjectDescription(ObjectDescription* objDesc, uint16 firstDe
 
 
 void Command::lookAtSelectedObject() {
-
 //	if (_state.selNoun > 0 && _state.selNoun <= _vm->logic()->currentRoomObjMax()) {
 //		uint16 objNum = _vm->logic()->currentRoomData() + _state.selNoun;
 //		if (_vm->logic()->objectData(objNum)->entryObj == 0) {
@@ -1314,8 +1231,7 @@ void Command::lookAtSelectedObject() {
 	uint16 desc;
 	if (_state.subject[0] < 0) {
 		desc = _vm->logic()->itemData(-_state.subject[0])->description;
-	}
-	else {
+	} else {
 		ObjectData *objData = _vm->logic()->objectData(_state.subject[0]);
 		if (objData->name <= 0) {
 			return;
@@ -1364,7 +1280,6 @@ void Command::lookAtSelectedObject() {
 
 
 void Command::lookForCurrentObject(int16 cx, int16 cy) {
-
 	uint16 obj = _vm->logic()->findObjectUnderCursor(cx, cy);
 	_state.noun = _vm->logic()->findObjectNumber(obj);
 
@@ -1395,8 +1310,7 @@ void Command::lookForCurrentObject(int16 cx, int16 cy) {
 		_vm->graphics()->textClear(CmdText::COMMAND_Y_POS, CmdText::COMMAND_Y_POS);
 		if (_state.defaultVerb != VERB_NONE) {
 			_cmdText.displayTemp(INK_CMD_LOCK, true, _state.defaultVerb);
-		}
-		else if (_state.action != VERB_NONE) {
+		} else if (_state.action != VERB_NONE) {
 			_cmdText.display(INK_CMD_NORMAL);
 		}
 		return;
@@ -1413,8 +1327,7 @@ void Command::lookForCurrentObject(int16 cx, int16 cy) {
 	const char *name = _vm->logic()->objectName(od->name);
 	if (_state.defaultVerb != VERB_NONE) {
 		_cmdText.displayTemp(INK_CMD_LOCK, true, _state.defaultVerb, name);
-	}
-	else {
+	} else {
 		_cmdText.displayTemp(INK_CMD_NORMAL, name);
 	}
 	_state.oldNoun = _state.noun;
@@ -1422,7 +1335,6 @@ void Command::lookForCurrentObject(int16 cx, int16 cy) {
 
 
 void Command::lookForCurrentIcon(int16 cx, int16 cy) {
-
 	_state.verb = _vm->logic()->findVerbUnderCursor(cx, cy);
 	if (_state.oldVerb != _state.verb) {
 
@@ -1441,19 +1353,15 @@ void Command::lookForCurrentIcon(int16 cx, int16 cy) {
 				const char *name = _vm->logic()->objectName(id->name);
 				if (_state.defaultVerb != VERB_NONE) {
 					_cmdText.displayTemp(INK_CMD_LOCK, true, _state.defaultVerb, name);
-				}
-				else {
+				} else {
 					_cmdText.displayTemp(INK_CMD_NORMAL, name);
 				}
 			}
-		}
-		else if (isVerbAction(_state.verb)) {
+		} else if (isVerbAction(_state.verb)) {
 			_cmdText.displayTemp(INK_CMD_NORMAL, false, _state.verb);
-		}
-		else if (_state.verb == VERB_NONE) {
+		} else if (_state.verb == VERB_NONE) {
 			_cmdText.display(INK_CMD_NORMAL);
 		}
-
 		_state.oldVerb = _state.verb;
 	}
 }

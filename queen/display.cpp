@@ -30,7 +30,6 @@ namespace Queen {
 
 
 void TextRenderer::init() {
-
 	// calculate font justification sizes
 	uint16 i, y, x;
 
@@ -52,7 +51,6 @@ void TextRenderer::init() {
 
 
 void TextRenderer::drawString(uint8 *dstBuf, uint16 dstPitch, uint16 x, uint16 y, uint8 color, const char *text, bool outlined) {
-
 	const uint8 *str = (const uint8*)text;
 	while (*str && x < dstPitch) {
 
@@ -78,7 +76,6 @@ void TextRenderer::drawString(uint8 *dstBuf, uint16 dstPitch, uint16 x, uint16 y
 
 
 void TextRenderer::drawChar(uint8 *dstBuf, uint16 dstPitch, uint16 x, uint16 y, uint8 color, const uint8 *chr) {
-
 	dstBuf += dstPitch * y + x;
 	uint16 j, i;
 	for (j = 0; j < 8; ++j) {
@@ -100,8 +97,7 @@ void TextRenderer::drawChar(uint8 *dstBuf, uint16 dstPitch, uint16 x, uint16 y, 
 
 
 Display::Display(QueenEngine *vm, Language language, OSystem *system)
-	: _system(system), _vm(vm) {
-
+	: _system(system), _vm(vm), _horizontalScroll(0), _curBlankingEffect(0) {
 	_dynalum.prevColMask = 0xFF;
 	_textRenderer._lang = language;
 	_textRenderer.init();
@@ -126,14 +122,10 @@ Display::Display(QueenEngine *vm, Language language, OSystem *system)
 	_pal.dirtyMin = 0;
 	_pal.dirtyMax = 255;
 	_pal.scrollable = true;
-	
-	_horizontalScroll = 0;
-	_curBlankingEffect = 0;
 }
 
 
 Display::~Display() {
-
 	delete[] _buffer[RB_BACKDROP];
 	delete[] _buffer[RB_PANEL];
 	delete[] _buffer[RB_SCREEN];
@@ -145,7 +137,6 @@ Display::~Display() {
 
 
 void Display::dynalumInit(const char *roomName, uint16 roomNum) {
-
 	debug(9, "Display::dynalumInit(%s, %d)", roomName, roomNum);
 	memset(_dynalum.msk, 0, sizeof(_dynalum.msk));
 	memset(_dynalum.lum, 0, sizeof(_dynalum.lum));
@@ -168,20 +159,17 @@ void Display::dynalumInit(const char *roomName, uint16 roomNum) {
 
 
 void Display::dynalumUpdate(int16 x, int16 y) {
-
 	if (!_dynalum.valid)
 		return;
 
 	if (x < 0) {
 		x = 0;
-	}
-	else if (x >= _bdWidth) {
+	} else if (x >= _bdWidth) {
 		x = _bdWidth;
 	}
 	if (y < 0) {
 		y = 0;
-	}
-	else if (y >= ROOM_ZONE_HEIGHT - 1) {
+	} else if (y >= ROOM_ZONE_HEIGHT - 1) {
 		y = ROOM_ZONE_HEIGHT - 1;
 	}
 
@@ -202,8 +190,7 @@ void Display::dynalumUpdate(int16 x, int16 y) {
 				int16 c = (int16)(_pal.room[i * 3 + j] + _dynalum.lum[colMask * 3 + j] * 4);
 				if (c < 0) {
 					c = 0;
-				}
-				else if (c > 255) {
+				} else if (c > 255) {
 					c = 255;
 				}
 				_pal.screen[i * 3 + j] = (uint8)c;
@@ -217,7 +204,6 @@ void Display::dynalumUpdate(int16 x, int16 y) {
 
 
 void Display::palConvert(uint8 *outPal, const uint8 *inPal, int start, int end) {
-
 	int i;
 	for (i = start; i <= end; i++) {
 		outPal[4 * i + 0] = inPal[3 * i + 0];
@@ -229,7 +215,6 @@ void Display::palConvert(uint8 *outPal, const uint8 *inPal, int start, int end) 
 
 
 void Display::palSet(const uint8 *pal, int start, int end, bool updateScreen) {
-
 	debug(9, "Display::palSet(%d, %d)", start, end);
 	uint8 tempPal[256 * 4];
 	palConvert(tempPal, pal, start, end);
@@ -242,7 +227,6 @@ void Display::palSet(const uint8 *pal, int start, int end, bool updateScreen) {
 
 
 void Display::palSetJoe(JoePalette pal) {
-
 	debug(9, "Display::palSetJoe(%d)", pal);
 	const uint8 *palJoe = NULL;
 	switch (pal) {
@@ -260,7 +244,6 @@ void Display::palSetJoe(JoePalette pal) {
 
 
 void Display::palFadeIn(int start, int end, uint16 roomNum, bool dynalum, int16 dynaX, int16 dynaY) {
-
 	debug(9, "Display::palFadeIn(%d, %d)", start, end);
 	memcpy(_pal.screen, _pal.room, 256 * 3);
 	if (!(IS_ALT_INTRO_ROOM(roomNum) || IS_CD_INTRO_ROOM(roomNum))) {
@@ -289,15 +272,13 @@ void Display::palFadeIn(int start, int end, uint16 roomNum, bool dynalum, int16 
 
 
 void Display::palFadeOut(int start, int end, uint16 roomNum) {
-
 	debug(9, "Display::palFadeOut(%d, %d)", start, end);
 	_pal.scrollable = false;
 	int n = end - start + 1;
 	if (IS_ALT_INTRO_ROOM(roomNum) || IS_CD_INTRO_ROOM(roomNum)) {
 		memset(_pal.screen + start * 3, 0, n * 3);
 		palSet(_pal.screen, start, end, true);
-	}
-	else {
+	} else {
 		uint8 tempPal[256 * 3];
 		memcpy(tempPal + start * 3, _pal.screen + start * 3, n * 3);
 		int i;
@@ -317,7 +298,6 @@ void Display::palFadeOut(int start, int end, uint16 roomNum) {
 
 
 void Display::palFadePanel() {
-
 	int i;
 	uint8 tempPal[256 * 3];
 	for (i = 224 * 3; i < 256 * 3; i += 3) {
@@ -330,7 +310,6 @@ void Display::palFadePanel() {
 
 
 void Display::palScroll(int start, int end) {
-
 	debug(9, "Display::palScroll(%d, %d)", start, end);
 
 	uint8 *palEnd = _pal.screen + end * 3;
@@ -353,7 +332,6 @@ void Display::palScroll(int start, int end) {
 
 
 void Display::palCustomColors(uint16 roomNum) {
-
 	debug(9, "Display::palCustomColors(%d)", roomNum);
 	int i;
 	switch (roomNum) {
@@ -386,7 +364,6 @@ void Display::palCustomColors(uint16 roomNum) {
 
 
 void Display::palCustomScroll(uint16 roomNum) {
-
 	debug(9, "Display::palCustomScroll(%d)", roomNum);
 	static int16 scrollx = 0;
 
@@ -426,8 +403,7 @@ void Display::palCustomScroll(uint16 roomNum) {
 				if (_vm->randomizer.getRandomNumber(1)) {
 					if (ABS(jdir) == 1) {
 						jdir *= 2;
-					}
-					else {
+					} else {
 						jdir /= 2;
 					}
 				}
@@ -597,7 +573,6 @@ void Display::palCustomScroll(uint16 roomNum) {
 
 
 void Display::palCustomFlash() {
-
 	uint8 tempPal[256 * 3];
 	int i = 0;
 	while (i < 17 * 3) {
@@ -620,7 +595,6 @@ void Display::palCustomFlash() {
 
 
 void Display::palCustomLightsOff(uint16 roomNum) {
-
 	int end = 223;
 	int start = (roomNum == ROOM_FLODA_FRONTDESK) ? 32 : 16;
 	int n = end - start + 1;
@@ -633,7 +607,6 @@ void Display::palCustomLightsOff(uint16 roomNum) {
 
 
 void Display::palCustomLightsOn(uint16 roomNum) {
-
 	int end = 223;
 	int start = (roomNum == ROOM_FLODA_FRONTDESK) ? 32 : 0;
 	int n = end - start + 1;
@@ -648,7 +621,6 @@ void Display::palCustomLightsOn(uint16 roomNum) {
 
 
 void Display::screenMode(int comPanel, bool inCutaway) {
-
 	debug(0, "Display::screenMode(%d, %d)", comPanel, inCutaway);
 
 	// FIXME: this is temporary, just to see if my theory is right
@@ -658,15 +630,13 @@ void Display::screenMode(int comPanel, bool inCutaway) {
 
 	if (comPanel == 2 && inCutaway) {
 		_fullscreen = (_bdHeight == GAME_SCREEN_HEIGHT);
-	}
-	else if (comPanel == 1) {
+	} else if (comPanel == 1) {
 		_fullscreen = false;
 	}
 }
 
 
 void Display::prepareUpdate() {
-
 	if (!_fullscreen) {
 		// draw the panel
 		memcpy(_buffer[RB_SCREEN] + _bufPitch[RB_SCREEN] * ROOM_ZONE_HEIGHT, 
@@ -687,7 +657,6 @@ void Display::prepareUpdate() {
 
 
 void Display::update(bool dynalum, int16 dynaX, int16 dynaY) {
-
 	if (_pal.scrollable && dynalum) {
 		dynalumUpdate(dynaX, dynaY);
 	}
@@ -701,7 +670,6 @@ void Display::update(bool dynalum, int16 dynaX, int16 dynaY) {
 
 
 void Display::blit(RenderingBuffer dst, uint16 dstX, uint16 dstY, const uint8 *srcBuf, uint16 srcW, uint16 srcH, uint16 srcPitch, bool xflip, bool masked) {
-
 	uint16 dstPitch = _bufPitch[dst];
 	uint8 *dstBuf = _buffer[dst] + dstPitch * dstY + dstX;
 
@@ -711,8 +679,7 @@ void Display::blit(RenderingBuffer dst, uint16 dstX, uint16 dstY, const uint8 *s
 			srcBuf += srcPitch;
 			dstBuf += dstPitch;
 		}
-	}
-	else if (!xflip) { // Masked bitmap unflipped
+	} else if (!xflip) { // Masked bitmap unflipped
 		while (srcH--) {
 			int i;
 			for(i = 0; i < srcW; ++i) {
@@ -724,8 +691,7 @@ void Display::blit(RenderingBuffer dst, uint16 dstX, uint16 dstY, const uint8 *s
 			srcBuf += srcPitch;
 			dstBuf += dstPitch;
 		}
-	}
-	else { // Masked bitmap flipped
+	} else { // Masked bitmap flipped
 		while (srcH--) {
 			int i;
 			for(i = 0; i < srcW; ++i) {
@@ -742,7 +708,6 @@ void Display::blit(RenderingBuffer dst, uint16 dstX, uint16 dstY, const uint8 *s
 
 
 void Display::fill(RenderingBuffer dst, uint16 x, uint16 y, uint16 w, uint16 h, uint8 color) {
-
 	assert(w <= _bufPitch[dst]);
 	uint16 dstPitch = _bufPitch[dst];
 	uint8 *dstBuf = _buffer[dst] + dstPitch * y + x;
@@ -754,7 +719,6 @@ void Display::fill(RenderingBuffer dst, uint16 x, uint16 y, uint16 w, uint16 h, 
 
 
 void Display::readPCX(uint8 *dst, uint16 dstPitch, const uint8 *src, uint16 w, uint16 h) {
-
 	while (h--) {
 		uint8 *p = dst;
 		while (p < dst + w ) {
@@ -763,8 +727,7 @@ void Display::readPCX(uint8 *dst, uint16 dstPitch, const uint8 *src, uint16 w, u
 				uint8 len = col & 0x3F;
 				memset(p, *src++, len);
 				p += len;
-			}
-			else {
+			} else {
 				*p++ = col;
 			}
 		}
@@ -774,7 +737,6 @@ void Display::readPCX(uint8 *dst, uint16 dstPitch, const uint8 *src, uint16 w, u
 
 
 void Display::readPCXBackdrop(const uint8 *pcxBuf, uint32 size, bool useFullPal) {
-
 	_bdWidth  = READ_LE_UINT16(pcxBuf + 12);
 	_bdHeight = READ_LE_UINT16(pcxBuf + 14);
 	readPCX(_buffer[RB_BACKDROP], _bufPitch[RB_BACKDROP], pcxBuf + 128, _bdWidth, _bdHeight);
@@ -783,7 +745,6 @@ void Display::readPCXBackdrop(const uint8 *pcxBuf, uint32 size, bool useFullPal)
 
 
 void Display::readPCXPanel(const uint8 *pcxBuf, uint32 size) {
-
 	uint8 *dst = _buffer[RB_PANEL] + PANEL_W * 10;
 	readPCX(dst, PANEL_W, pcxBuf + 128, PANEL_W, PANEL_H - 10);
 	memcpy(_pal.room + 144 * 3, pcxBuf + size - 768 + 144 * 3, (256 - 144) * 3);
@@ -791,14 +752,12 @@ void Display::readPCXPanel(const uint8 *pcxBuf, uint32 size) {
 
 
 void Display::horizontalScrollUpdate(int16 xCamera) {
-
 	debug(9, "Display::horizontalScrollUpdate(%d)", xCamera);
 	_horizontalScroll = 0;
 	if (_bdWidth > 320) {
 		if (xCamera > 160 && xCamera < 480) {
 			_horizontalScroll = xCamera - 160;
-		}
-		else if (xCamera >= 480) {
+		} else if (xCamera >= 480) {
 			_horizontalScroll = 320;
 		}
 	}
@@ -806,19 +765,16 @@ void Display::horizontalScrollUpdate(int16 xCamera) {
 
 
 void Display::horizontalScroll(int16 scroll) {
-
 	_horizontalScroll = scroll;
 }
 
 
 void Display::handleTimer() {
-
 	_gotTick = true;
 }
 
 
 void Display::waitForTimer() {
-
 	_gotTick = false;
 	while (!_gotTick) {
 		_vm->input()->delay(10);
@@ -827,15 +783,13 @@ void Display::waitForTimer() {
 
 
 void Display::setMouseCursor(uint8 *buf, uint16 w, uint16 h, uint16 xhs, uint16 yhs) {
-
 	// change transparency color match the one expected by the backend (0xFF)
 	uint16 size = w * h;
 	uint8 *p = buf;
 	while (size--) {
 		if (*p == 255) {
 			*p = 254;
-		}
-		else if (*p == 0) {
+		} else if (*p == 0) {
 			*p = 255;
 		}
 		++p;
@@ -845,13 +799,11 @@ void Display::setMouseCursor(uint8 *buf, uint16 w, uint16 h, uint16 xhs, uint16 
 
 
 void Display::showMouseCursor(bool show) {
-
 	_system->show_mouse(show);
 }
 
 
 uint16 Display::textWidth(const char *text) const {
-
 	uint16 len = 0;
 	while (*text) {
 		len += _textRenderer._charWidth[ (uint8)*text ];
@@ -862,14 +814,12 @@ uint16 Display::textWidth(const char *text) const {
 
 
 void Display::drawText(uint16 x, uint16 y, uint8 color, const char *text, bool outlined) {
-
 	debug(9, "Display::drawText(%s)", text);
 	_textRenderer.drawString(_buffer[RB_SCREEN], _bufPitch[RB_SCREEN], x, y, color, text, outlined);
 }
 
 
 void Display::drawBox(int16 x1, int16 y1, int16 x2, int16 y2, uint8 col) {
-
 	uint8 *p = _buffer[RB_SCREEN];
 	uint16 pitch = _bufPitch[RB_SCREEN];
 
@@ -884,7 +834,6 @@ void Display::drawBox(int16 x1, int16 y1, int16 x2, int16 y2, uint8 col) {
 
 
 void Display::drawScreen() {
-
 	_system->copy_rect(_buffer[RB_SCREEN], _bufPitch[RB_SCREEN], 0, 0, SCREEN_W, SCREEN_H);
 	_system->update_screen();
 	waitForTimer();
@@ -893,7 +842,6 @@ void Display::drawScreen() {
 
 
 void Display::blankScreen() {
-
 	typedef void (Display::*BlankerEffect)();
 	static const BlankerEffect effects[] = {
 		&Display::blankScreenEffect1,
@@ -906,7 +854,6 @@ void Display::blankScreen() {
 
 
 void Display::blankScreenEffect1() {
-
 	while (_vm->input()->idleTime() >= Input::DELAY_SCREEN_BLANKER) {
 		for(int i = 0; i < 2; ++i) {    
 			uint16 x = _vm->randomizer.getRandomNumber(SCREEN_W - MINI_W - 2) + 1;
@@ -931,7 +878,6 @@ void Display::blankScreenEffect1() {
 
 
 void Display::blankScreenEffect2() {
-
 	while (_vm->input()->idleTime() >= Input::DELAY_SCREEN_BLANKER) {
 		uint16 x = _vm->randomizer.getRandomNumber(SCREEN_W - 2);
 		uint16 y = _vm->randomizer.getRandomNumber(SCREEN_H - 2);
@@ -964,7 +910,6 @@ void Display::blankScreenEffect2() {
 
 
 void Display::blankScreenEffect3() {
-
 	uint32 i = 0;
 	while (_vm->input()->idleTime() >= Input::DELAY_SCREEN_BLANKER) {
 		uint16 x = _vm->randomizer.getRandomNumber(SCREEN_W - 2);

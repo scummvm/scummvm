@@ -319,7 +319,7 @@ clothespal					Display::_palJoeClothes
 COMPANEL					*not needed* (argument)
 dresspal					Display::_palJoeDress
 font						TextRenderer::_font
-font_sizes					TextRenderer::charWidth
+font_sizes					TextRenderer::_charWidth
 FULLSCREEN					Display::_fullscreen
 nopalscroll					Display::_pal.scrollable
 palette						Display::_pal.room

@@ -70,8 +70,7 @@ void Walk::animateJoePrepare() {
 
 		if (pwd->dx < 0) {
 			pwd->anim.set(11, 16 + FRAMES_JOE_XTRA, DIR_LEFT);
-		}
-		else {
+		} else {
 			pwd->anim.set(11, 16 + FRAMES_JOE_XTRA, DIR_RIGHT);
 		}
 
@@ -85,16 +84,13 @@ void Walk::animateJoePrepare() {
 			if (pwd->dy < 0) {
 				if (ds < 0) {
 					pwd->anim.set(17 + FRAMES_JOE_XTRA, 22 + FRAMES_JOE_XTRA, DIR_FRONT);
-				}
-				else {
+				} else {
 					pwd->anim.set(23 + FRAMES_JOE_XTRA, 28 + FRAMES_JOE_XTRA, DIR_BACK);
 				}
-			}
-			else if (pwd->dy > 0) {
+			} else if (pwd->dy > 0) {
 				if (ds < 0) {
 					pwd->anim.set(23 + FRAMES_JOE_XTRA, 28 + FRAMES_JOE_XTRA, DIR_BACK);
-				}
-				else {
+				} else {
 					pwd->anim.set(17 + FRAMES_JOE_XTRA, 22 + FRAMES_JOE_XTRA, DIR_FRONT);
 				}
 			}
@@ -135,8 +131,7 @@ void Walk::animateJoe() {
 			_vm->logic()->joeScale(pbs->scale);
 			if (pbs->xmajor) {
 				pbs->speed = pbs->scale * 6 / 100;
-			}
-			else {
+			} else {
 				pbs->speed = pbs->scale * 3 / 100;
 			}
 			if (pbs->speed == 0) {
@@ -166,21 +161,17 @@ void Walk::animatePersonPrepare(const MovePersonData *mpd, int direction) {
 
 		if (pwd->dx < 0) {
 			pwd->anim.set(mpd->walkLeft1, mpd->walkLeft2, DIR_LEFT);
-		}
-		else if (pwd->dx > 0) {
+		} else if (pwd->dx > 0) {
 			pwd->anim.set(mpd->walkRight1, mpd->walkRight2, DIR_RIGHT);
-		}
-		else {
+		} else {
 			if (ABS(mpd->walkLeft1) == ABS(mpd->walkRight1)) {
 				pwd->anim.set(mpd->walkRight1, mpd->walkRight2, DIR_RIGHT);
-			}
-			else {
+			} else {
 				// we have specific moves for this actor, see what direction they were last facing
 				if (direction == -3) {
 					// previously facing right
 					pwd->anim.set(mpd->walkLeft1, mpd->walkLeft2, DIR_LEFT);
-				}
-				else {
+				} else {
 					// previously facing left
 					pwd->anim.set(mpd->walkRight1, mpd->walkRight2, DIR_RIGHT);
 				}
@@ -197,33 +188,26 @@ void Walk::animatePersonPrepare(const MovePersonData *mpd, int direction) {
 			if (pwd->dy < 0) {
 				if (mpd->walkBack1 > 0) {
 					pwd->anim.set(mpd->walkBack1, mpd->walkBack2, DIR_BACK);
-				}
-				else if (pwd->dx < 0) {
+				} else if (pwd->dx < 0) {
 					pwd->anim.set(mpd->walkLeft1, mpd->walkLeft2, DIR_BACK);
-				}
-				else {
+				} else {
 					pwd->anim.set(mpd->walkRight1, mpd->walkRight2, DIR_BACK);
 				}
-			}
-			else if (pwd->dy > 0) {
+			} else if (pwd->dy > 0) {
 				if (mpd->walkFront1 > 0) {
 					pwd->anim.set(mpd->walkFront1, mpd->walkFront2, DIR_FRONT);
-				}
-				else if(ABS(mpd->walkLeft1) == ABS(mpd->walkRight1)) {
+				} else if(ABS(mpd->walkLeft1) == ABS(mpd->walkRight1)) {
 					if (pwd->dx < 0) {
 						pwd->anim.set(mpd->walkLeft1, mpd->walkLeft2, DIR_FRONT);
-					}
-					else {
+					} else {
 						pwd->anim.set(mpd->walkRight1, mpd->walkRight2, DIR_FRONT);
 					}
-				}
-				else {
+				} else {
 					// we have a special move for left/right, so select that instead!
 					if (direction == -3) {
 						// previously facing right
 						pwd->anim.set(mpd->walkLeft1, mpd->walkLeft2, DIR_FRONT);
-					}
-					else {
+					} else {
 						// previously facing left
 						pwd->anim.set(mpd->walkRight1, mpd->walkRight2, DIR_FRONT);
 					}
@@ -236,14 +220,12 @@ void Walk::animatePersonPrepare(const MovePersonData *mpd, int direction) {
 
 void Walk::animatePerson(const MovePersonData *mpd, uint16 image, uint16 bobNum, uint16 bankNum, int direction) {
 	// queen.c l.2572-2651
-
 	BobSlot *pbs = _vm->graphics()->bob(bobNum);
 
 	// check to see which way person should be facing
 	if (mpd->walkLeft1 == mpd->walkRight1) {
 		pbs->xflip = (direction == -3);
-	}
-	else {
+	} else {
 		// they have special walk for left and right, so don't flip
 		pbs->xflip = false;
 	}
@@ -263,8 +245,7 @@ void Walk::animatePerson(const MovePersonData *mpd, uint16 image, uint16 bobNum,
 		// pass across bobs direction ONLY if walk is a mirror flip!
 		if (ABS(mpd->walkLeft1) == ABS(mpd->walkRight1)) {
 			pbs->animNormal(image, dstFrame - 1, mpd->animSpeed, false, pbs->xflip);
-		}
-		else {
+		} else {
 			pbs->animNormal(image, dstFrame - 1, mpd->animSpeed, false, false);
 		}
 
@@ -283,8 +264,7 @@ void Walk::animatePerson(const MovePersonData *mpd, uint16 image, uint16 bobNum,
 			pbs->scale = scale;
 			if (pbs->xmajor) {
 				pbs->speed = scale * mpd->moveSpeed / 100;
-			}
-			else {
+			} else {
 				pbs->speed = scale * (mpd->moveSpeed / 2) / 100;
 			}
 			if (pbs->speed == 0) {
@@ -297,7 +277,6 @@ void Walk::animatePerson(const MovePersonData *mpd, uint16 image, uint16 bobNum,
 
 
 int16 Walk::moveJoe(int direction, int16 endx, int16 endy, bool inCutaway) {
-
 	_joeInterrupted = false;
 	_joeMoveBlock = false;
 	int16 can = 0;
@@ -316,8 +295,7 @@ int16 Walk::moveJoe(int direction, int16 endx, int16 endy, bool inCutaway) {
 	// if in cutaway, allow Joe to walk anywhere
 	if(newPos == 0 && inCutaway) {
 		incWalkData(oldx, oldy, endx, endy, oldPos);
-	}
-	else {
+	} else {
 		if (calc(oldPos, newPos, oldx, oldy, endx, endy)) {
 			if (_walkDataCount > 0) {
 				animateJoePrepare();
@@ -326,8 +304,7 @@ int16 Walk::moveJoe(int direction, int16 endx, int16 endy, bool inCutaway) {
 					can = -1;
 				}
 			}
-		}
-		else {
+		} else {
 			// path has been blocked, make Joe say so
 			_vm->logic()->joeSpeak(4);
 			can = -1;
@@ -341,8 +318,7 @@ int16 Walk::moveJoe(int direction, int16 endx, int16 endy, bool inCutaway) {
 	if (_joeMoveBlock) {
 		can = -2;
 		_joeMoveBlock = false;
-	}
-	else if (direction > 0) {
+	} else if (direction > 0) {
 		_vm->logic()->joeFacing(direction);
 	}
 	_vm->logic()->joePrevFacing(_vm->logic()->joeFacing());
@@ -352,7 +328,6 @@ int16 Walk::moveJoe(int direction, int16 endx, int16 endy, bool inCutaway) {
 
 
 int16 Walk::movePerson(const Person *pp, int16 endx, int16 endy, uint16 curImage, int direction) {
-
 	if (endx == 0 && endy == 0) {
 		warning("Walk::movePerson() - endx == 0 && endy == 0");
 		return 0;
@@ -386,8 +361,7 @@ int16 Walk::movePerson(const Person *pp, int16 endx, int16 endy, uint16 curImage
 			animatePersonPrepare(mpd, direction);
 			animatePerson(mpd, curImage, bobNum, bankNum, direction);
 		}
-	}
-	else {
+	} else {
 		can = -1;
 	}
 
@@ -401,16 +375,14 @@ int16 Walk::movePerson(const Person *pp, int16 endx, int16 endy, uint16 curImage
 	pbs->scale = _walkData[_walkDataCount].area->calcScale(endy);
 	if (_walkData[_walkDataCount].anim.facing == DIR_BACK) {
 		_vm->graphics()->bankUnpack(mpd->backStandingFrame, standingFrame, bankNum);
-	}
-	else {
+	} else {
 		_vm->graphics()->bankUnpack(mpd->frontStandingFrame, standingFrame, bankNum);
 	}
 	uint16 obj = _vm->logic()->objectForPerson(bobNum);
 	if (_walkData[_walkDataCount].dx < 0) {
 		_vm->logic()->objectData(obj)->image = -3;
 		pbs->xflip = true;
-	}
-	else {
+	} else {
 		_vm->logic()->objectData(obj)->image = -4;
 		pbs->xflip = false;
 	}
@@ -420,14 +392,12 @@ int16 Walk::movePerson(const Person *pp, int16 endx, int16 endy, uint16 curImage
 
 
 void Walk::stopJoe() {
-
 	_vm->graphics()->bob(0)->moving = false;
 	_joeInterrupted = true;
 }
 
 
 bool Walk::calc(uint16 oldPos, uint16 newPos, int16 oldx, int16 oldy, int16 x, int16 y) {
-	
 	// if newPos is outside of an AREA then traverse Y axis until an AREA is found
 	if (newPos == 0) { 
 		newPos = findAreaPosition(&x, &y, true);
@@ -442,8 +412,7 @@ bool Walk::calc(uint16 oldPos, uint16 newPos, int16 oldx, int16 oldy, int16 x, i
 	if (oldPos == newPos) {
 		incWalkData(oldx, oldy, x, y, newPos);
 		return true;
-	}
-	else if (calcPath(oldPos, newPos)) {
+	} else if (calcPath(oldPos, newPos)) {
 		uint16 i;
 		int16 px = oldx;
 		int16 py = oldy;
@@ -466,14 +435,12 @@ bool Walk::calc(uint16 oldPos, uint16 newPos, int16 oldx, int16 oldy, int16 x, i
 
 
 int16 Walk::calcC(int16 c1, int16 c2, int16 c3, int16 c4, int16 lastc) {
-
 	int16 s1 = MAX(c1, c3);
 	int16 s2 = MIN(c2, c4);
 	int16 c;
 	if ((lastc >= s1 && lastc <= s2) || (lastc >= s2 && lastc <= s1)) {
 		c = lastc;
-	}
-	else {
+	} else {
 		c = (s1 + s2) / 2;
 	}
 	return c;
@@ -509,11 +476,9 @@ int16 Walk::findAreaPosition(int16 *x, int16 *y, bool recalibrate) {
 		uint32 dist = minDist;
 		if (!inX && !inY) {
 			dist = csx * csx + csy * csy;
-		}
-		else if (inX) {
+		} else if (inX) {
 			dist = csy * csy;
-		}
-		else if (inY) {
+		} else if (inY) {
 			dist = csx * csx;
 		}
 
@@ -536,7 +501,6 @@ int16 Walk::findAreaPosition(int16 *x, int16 *y, bool recalibrate) {
 
 
 uint16 Walk::findFreeArea(uint16 area) const {
-
 	uint16 testArea;
 	uint16 freeArea = 0;
 	uint16 map = ABS(_vm->logic()->currentRoomArea(area)->mapNeighbours);
@@ -556,7 +520,6 @@ uint16 Walk::findFreeArea(uint16 area) const {
 
 
 bool Walk::isAreaStruck(uint16 area) const {
-
 	uint16 i;
 	bool found = false;
 	for (i = 1; i <= _areaStrikeCount; ++i) {
@@ -570,7 +533,6 @@ bool Walk::isAreaStruck(uint16 area) const {
 
 
 bool Walk::calcPath(uint16 oldArea, uint16 newArea) {
-
 	debug(9, "Walk::calcPath(%d, %d)", oldArea, newArea);
 	_areaList[1] = _areaStrike[1] = oldArea;
 	_areaListCount = _areaStrikeCount = 1;	
@@ -582,8 +544,7 @@ bool Walk::calcPath(uint16 oldArea, uint16 newArea) {
 			_areaList[_areaListCount] = 0;
 			--_areaListCount;
 			area = _areaList[_areaListCount];	
-		}
-		else {
+		} else {
 			++_areaListCount;
 			_areaList[_areaListCount] = area;
 			if(!isAreaStruck(area)) {
@@ -597,7 +558,6 @@ bool Walk::calcPath(uint16 oldArea, uint16 newArea) {
 
 
 void Walk::initWalkData() {
-
 	_walkDataCount = 0;
 	memset(_walkData, 0, sizeof(_walkData));
 	_areaStrikeCount = 0;
@@ -608,7 +568,6 @@ void Walk::initWalkData() {
 
 
 void Walk::incWalkData(int16 px, int16 py, int16 x, int16 y, uint16 areaNum) {
-
 	debug(9, "Walk::incWalkData(%d, %d, %d)", (x - px), (y - py), areaNum);
 
 	if (px != x || py != y) {
@@ -618,7 +577,6 @@ void Walk::incWalkData(int16 px, int16 py, int16 x, int16 y, uint16 areaNum) {
 		pwd->dy = y - py;
 		pwd->area = _vm->logic()->currentRoomArea(areaNum);
 		pwd->areaNum = areaNum;
-//		pwd->sign = ((pwd->dx < 0) ? -1 : ((pwd->dx > 0) ? 1 : 0)) ;
 	}
 }
 
