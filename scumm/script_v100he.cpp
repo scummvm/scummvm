@@ -1009,7 +1009,7 @@ void ScummEngine_v100he::o100_setSpriteGroupInfo() {
 		if (!_curSpriteGroupId)
 			break;
 
-		spriteGroupSet_field_20(_curSpriteGroupId, value1);
+		spriteGroupSet_dstResNum(_curSpriteGroupId, value1);
 		break;
 	case 49:
 		value2 = pop();
@@ -1747,7 +1747,7 @@ void ScummEngine_v100he::o100_setSpriteInfo() {
 			spriteId++;
 
 		for (; spriteId <= _curMaxSpriteId; spriteId++)
-			spriteInfoSet_rotAngle(spriteId, args[0]);
+			spriteInfoSet_angle(spriteId, args[0]);
 		break;
 	case 3:
 		args[0] = pop();
@@ -1758,7 +1758,7 @@ void ScummEngine_v100he::o100_setSpriteInfo() {
 			spriteId++;
 
 		for (; spriteId <= _curMaxSpriteId; spriteId++)
-			spriteInfoSet_flag22(spriteId, args[0]);
+			spriteInfoSet_flagDelayed(spriteId, args[0]);
 		break;
 	case 4:
 		args[0] = pop();
@@ -1966,7 +1966,7 @@ void ScummEngine_v100he::o100_setSpriteInfo() {
 			spriteId++;
 
 		for (; spriteId <= _curMaxSpriteId; spriteId++)
-			spriteInfoSet_field_54(spriteId, args[0]);
+			spriteInfoSet_xmapNum(spriteId, args[0]);
 		break;
 	case 73:
 		args[0] = pop();
@@ -2281,7 +2281,7 @@ void ScummEngine_v100he::o100_getSpriteGroupInfo() {
 	case 40:
 		spriteGroupId = pop();
 		if (spriteGroupId)
-			push(spriteGroupGet_field_20(spriteGroupId));
+			push(spriteGroupGet_dstResNum(spriteGroupId));
 		else
 			push(0);
 		break;
@@ -2511,7 +2511,7 @@ void ScummEngine_v100he::o100_getSpriteInfo() {
 	case 3:
 		spriteId = pop();
 		if (spriteId)
-			push(spriteInfoGet_flags_22(spriteId));
+			push(spriteInfoGet_flagDelayed(spriteId));
 		else
 			push(0);
 		break;
@@ -2661,7 +2661,7 @@ void ScummEngine_v100he::o100_getSpriteInfo() {
 	case 70:
 		spriteId = pop();
 		if (spriteId)
-			push(spriteInfoGet_field_54(spriteId));
+			push(spriteInfoGet_xmapNum(spriteId));
 		else
 			push(0);
 		break;

@@ -2061,21 +2061,20 @@ void ScummEngine_v72he::copyArrayHelper(ArrayHeader *ah, int idx2, int idx1, int
 	case kStringArray:
 		*num = len1 - idx1 + 1;
 		*size = pitch;
-		*data = ah->data + offset;
+		*data = ah->data + offset + 1;
 		break;
 	case kIntArray:
-		*num = (len1 - idx1 + 1) * 2;
+		*num = (len1 - idx1) * 2;
 		*size = pitch * 2;
 		*data = ah->data + offset * 2;
 		break;
 	case kDwordArray:
-		*num = (len1 - idx1 + 1) * 4;
+		*num = (len1 - idx1) * 4;
 		*size = pitch * 4;
 		*data = ah->data + offset * 4;
 		break;
 	default:
 		error("Invalid array type", FROM_LE_32(ah->type));
-		break;
 	}
 }
 

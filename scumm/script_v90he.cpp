@@ -916,7 +916,7 @@ void ScummEngine_v90he::o90_getSpriteInfo() {
 	case 52:
 		spriteId = pop();
 		if (spriteId)
-			push(spriteInfoGet_flags_22(spriteId));
+			push(spriteInfoGet_flagDelayed(spriteId));
 		else
 			push(0);
 		break;
@@ -944,7 +944,7 @@ void ScummEngine_v90he::o90_getSpriteInfo() {
 	case 68:
 		spriteId = pop();
 		if (spriteId)
-			push(spriteInfoGet_field_54(spriteId));
+			push(spriteInfoGet_xmapNum(spriteId));
 		else
 			push(0);
 		break;
@@ -1113,7 +1113,7 @@ void ScummEngine_v90he::o90_setSpriteInfo() {
 			spriteId++;
 
 		for (; spriteId <= _curMaxSpriteId; spriteId++)
-			spriteInfoSet_rotAngle(spriteId, args[0]);
+			spriteInfoSet_angle(spriteId, args[0]);
 		break;
 	case 23:
 		if (_gameId == GID_FREDDI4 || _heversion >= 99) {
@@ -1193,7 +1193,7 @@ void ScummEngine_v90he::o90_setSpriteInfo() {
 			spriteId++;
 
 		for (; spriteId <= _curMaxSpriteId; spriteId++)
-			spriteInfoSet_flag22(spriteId, args[0]);
+			spriteInfoSet_flagDelayed(spriteId, args[0]);
 		break;
 	case 52: // HE 98+
 		args[0] = pop();
@@ -1237,7 +1237,7 @@ void ScummEngine_v90he::o90_setSpriteInfo() {
 			spriteId++;
 
 		for (; spriteId <= _curMaxSpriteId; spriteId++)
-			spriteInfoSet_field_54(spriteId, args[0]);
+			spriteInfoSet_xmapNum(spriteId, args[0]);
 		break;
 	case 90:
 		args[0] = pop();
@@ -1393,7 +1393,7 @@ void ScummEngine_v90he::o90_getSpriteGroupInfo() {
 	case 63: // HE 99+
 		spriteGroupId = pop();
 		if (spriteGroupId)
-			push(spriteGroupGet_field_20(spriteGroupId));
+			push(spriteGroupGet_dstResNum(spriteGroupId));
 		else
 			push(0);
 		break;
@@ -1525,7 +1525,7 @@ void ScummEngine_v90he::o90_setSpriteGroupInfo() {
 		if (!_curSpriteGroupId)
 			break;
 
-		spriteGroupSet_field_20(_curSpriteGroupId, value1);
+		spriteGroupSet_dstResNum(_curSpriteGroupId, value1);
 		break;
 	case 28:
 		value2 = pop();
@@ -2053,7 +2053,6 @@ void ScummEngine_v90he::sortArray(int array, int dim2start, int dim2end, int dim
 		break;
 	default:
 		error("Invalid array type", FROM_LE_32(ah->type));
-		break;
 	}
 }
 

@@ -928,7 +928,7 @@ protected:
 	int spriteInfoGet_flagXFlipped(int spriteId);
 	int spriteInfoGet_flagActive(int spriteId);
 	int spriteInfoGet_flagNeedPaletteRemap(int spriteId);
-	int spriteInfoGet_flags_22(int spriteId);
+	int spriteInfoGet_flagDelayed(int spriteId);
 	int spriteInfoGet_flagMarkDirty(int spriteId);	
 	int spriteInfoGet_flagHasImage(int spriteId);
 	int spriteInfoGet_resId(int spriteId);
@@ -939,7 +939,7 @@ protected:
 	int spriteInfoGet_grp_tx(int spriteId);
 	int spriteInfoGet_grp_ty(int spriteId);
 	int spriteInfoGet_field_44(int spriteId);
-	int spriteInfoGet_field_54(int spriteId);
+	int spriteInfoGet_xmapNum(int spriteId);
 	int spriteInfoGet_wizSize(int spriteId);
 	int spriteInfoGet_zoom(int spriteId);
 	int spriteInfoGet_delayAmount(int spriteId);
@@ -952,7 +952,7 @@ protected:
 
 	int spriteGroupGet_allocateGroupSpritesList(int spriteGroupId);
 	int spriteGroupGet_zorderPriority(int spriteGroupId);
-	int spriteGroupGet_field_20(int spriteGroupId);
+	int spriteGroupGet_dstResNum(int spriteGroupId);
 	int spriteGroupGet_scale_x_ratio_mul(int spriteGroupId);
 	int spriteGroupGet_scale_x_ratio_div(int spriteGroupId);
 	int spriteGroupGet_scale_y_ratio_mul(int spriteGroupId);
@@ -967,18 +967,18 @@ protected:
 	void spriteInfoSet_tx_ty(int spriteId, int value1, int value2);
 	void spriteInfoSet_groupNum(int spriteId, int value);
 	void spriteInfoSet_dx_dy(int spriteId, int value1, int value2);
-	void spriteInfoSet_field_54(int spriteId, int value);
+	void spriteInfoSet_xmapNum(int spriteId, int value);
 	void spriteInfoSet_field_44(int spriteId, int value1, int value2);
 	void spriteInfoSet_zorderPriority(int spriteId, int value);
 	void spriteInfoSet_Inc_tx_ty(int spriteId, int value1, int value2);
 	void spriteInfoSet_zoom(int spriteId, int value);
-	void spriteInfoSet_rotAngle(int spriteId, int value);
+	void spriteInfoSet_angle(int spriteId, int value);
 	void spriteInfoSet_flagDoubleBuffered(int spriteId, int value);
 	void spriteInfoSet_flagYFlipped(int spriteId, int value);
 	void spriteInfoSet_flagXFlipped(int spriteId, int value);
 	void spriteInfoSet_flagActive(int spriteId, int value);
 	void spriteInfoSet_flagNeedPaletteRemap(int spriteId, int value);
-	void spriteInfoSet_flag22(int spriteId, int value);
+	void spriteInfoSet_flagDelayed(int spriteId, int value);
 	void spriteInfoSet_flagMarkDirty(int spriteId, int value);
 	void spriteInfoSet_flagHasImage(int spriteId, int value);
 	void spriteInfoSet_delay(int spriteId, int value);
@@ -1000,7 +1000,7 @@ protected:
 	void spriteGroupSet_zorderPriority(int spriteGroupId, int value);
 	void spriteGroupSet_tx_ty(int spriteGroupId, int value1, int value2);
 	void spriteGroupSet_inc_tx_ty(int spriteGroupId, int value1, int value2);
-	void spriteGroupSet_field_20(int spriteGroupId, int value);
+	void spriteGroupSet_dstResNum(int spriteGroupId, int value);
 	void spriteGroupSet_scaling(int spriteGroupId);
 	void spriteGroupSet_scale_x_ratio_mul(int spriteGroupId, int value);
 	void spriteGroupSet_scale_x_ratio_div(int spriteGroupId, int value);

@@ -71,7 +71,7 @@ struct SpriteInfo {
 	int zoom;
 	int delayCount;
 	int curAngle;
-	int cur_zoom;
+	int curZoom;
 	int imgFlags;
 	int field_74;
 	int delayAmount;
