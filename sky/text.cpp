@@ -39,6 +39,8 @@ SkyText::SkyText(SkyDisk *skyDisk, uint32 gameVersion, uint16 language) {
 	_language = language;
 	_gameVersion = gameVersion;
 
+	initHuffTree();
+
 	_mainCharacterSet.addr = _skyDisk->loadFile(CHAR_SET_FILE, NULL);
 	_mainCharacterSet.charHeight = MAIN_CHAR_HEIGHT;
 	_mainCharacterSet.charSpacing = 0;
@@ -1428,36 +1430,40 @@ static const HuffTree huffTree_00372[] = {
 	{ 0, 0, '!' },
 };
 
-char SkyText::traverseTree(const HuffTree *huffTree) {
-	int pos = 0;
-	for (;;) {
-		if (getTBit() == 0)
-			pos = huffTree[pos].lChild;
-		else
-			pos = huffTree[pos].rChild;
-		if (huffTree[pos].lChild == 0 && huffTree[pos].rChild == 0) {
-			return huffTree[pos].value;
-		}
+void SkyText::initHuffTree() {
+	switch (_gameVersion) {
+	case 267:
+		_huffTree = huffTree_00267;
+		break;
+	case 288:
+		_huffTree = huffTree_00288;
+		break;
+	case 303:
+		_huffTree = huffTree_00303;
+		break;
+	case 331:
+		_huffTree = huffTree_00331;
+		break;
+	case 365:
+	case 368:
+	case 372:
+		_huffTree = huffTree_00372;
+		break;
+	default:
+		error("Unknown game version");
 	}
 }
 
-char SkyText_v00267::getTextChar() {
-	return traverseTree(huffTree_00267);
-}
-
-char SkyText_v00288::getTextChar() {
-	return traverseTree(huffTree_00288);
-}
-
-char SkyText_v00303::getTextChar() {
-	return traverseTree(huffTree_00303);
-}
-
-char SkyText_v00331::getTextChar() {
-	return traverseTree(huffTree_00331);
-}
-
-char SkyText_v00372::getTextChar() {
-	return traverseTree(huffTree_00372);
+char SkyText::getTextChar() {
+	int pos = 0;
+	for (;;) {
+		if (getTBit() == 0)
+			pos = _huffTree[pos].lChild;
+		else
+			pos = _huffTree[pos].rChild;
+		if (_huffTree[pos].lChild == 0 && _huffTree[pos].rChild == 0) {
+			return _huffTree[pos].value;
+		}
+	}
 }
 
