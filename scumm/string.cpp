@@ -468,6 +468,15 @@ int ScummEngine::addMessageToStack(const byte *msg, byte *dst, int dstSize) {
 			break;
 		if (chr == 0xFF) {
 			chr = src[num++];
+
+			// WORKAROUND for bug #985948, a script bug in Indy3. Apparently,
+			// a german 'sz' was encoded incorrectly as 0xFF2E. We replace
+			// this by the correct encoding here. See also ScummEngine::resStrLen().
+			if (_gameId == GID_INDY3 && chr == 0x2E) {
+				*dst++ = 0xE1;
+				continue;
+			}
+
 			if (chr == 1 || chr == 2 || chr == 3 || chr == 8) {
 				// Simply copy these special codes
 				*dst++ = 0xFF;

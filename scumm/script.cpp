@@ -1059,6 +1059,12 @@ int ScummEngine::resStrLen(const byte *src) const {
 			chr = *src++;
 			num++;
 
+			// WORKAROUND for bug #985948, a script bug in Indy3. See also
+			// the corresponding code in ScummEngine::addMessageToStack().
+			if (_gameId == GID_INDY3 && chr == 0x2E) {
+				continue;
+			}
+
 			if (chr != 1 && chr != 2 && chr != 3 && chr != 8) {
 				if (_version == 8) {
 					src += 4;
