@@ -176,7 +176,7 @@ StackLock::~StackLock() {
 	unlock_mutex(_mutex);
 }
 
-MutexRef create_mutex() {
+MutexRef createMutex() {
 	return (MutexRef)SDL_CreateMutex();
 }
 
@@ -188,6 +188,6 @@ void unlock_mutex(MutexRef mutex) {
 	SDL_mutexV((SDL_mutex *)mutex);
 }
 
-void delete_mutex(MutexRef mutex) {
+void deleteMutex(MutexRef mutex) {
 	SDL_DestroyMutex((SDL_mutex *)mutex);
 }

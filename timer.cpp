@@ -28,7 +28,7 @@ Timer::Timer() :
 	_timerHandler(0),
 	_lastTime(0) {
 
-	_mutex = create_mutex();
+	_mutex = createMutex();
 
 	g_timer = this;
 
@@ -56,7 +56,7 @@ Timer::~Timer() {
 		}
 	}
 
-	delete_mutex(_mutex);
+	deleteMutex(_mutex);
 }
 
 int Timer::timer_handler(int t) {

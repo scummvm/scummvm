@@ -21,6 +21,7 @@
 #include "../stdafx.h"
 #include "../bits.h"
 
+
 /**
  * Generic input stream for the resampling code.
  */
@@ -39,11 +40,6 @@ public:
 	 */
 	virtual int readBuffer(int16 *buffer, const int numSamples) = 0;
 
-	/**
-	 * Read a single (16 bit signed) sample from the stream.
-	 */
-//	virtual int16 read() = 0;
-	
 	/** Is this a stereo stream? */
 	virtual bool isStereo() const = 0;
 	
@@ -68,19 +64,6 @@ public:
 
 	/** Sample rate of the stream. */
 	virtual int getRate() const = 0;
-
-	/**
-	 * This function returns the number of samples that were delivered to
-	 * the mixer which is a rough estimate of how moch time of the stream
-	 * has been played.
-	 * The exact value is not available as it needs information from the
-	 * audio device on how many samples have been already played
-	 * As our buffer is relatively short the estimate is exact enough
-	 * The return -1 is kind of a hack as this function is only required
-	 * for the video audio sync in the bs2 cutscenes I am to lazy to
-	 * implement it for all subclasses
-	 */
-	virtual int getSamplesPlayed() const { return -1; }
 };
 
 class AppendableAudioStream : public AudioStream {
@@ -100,7 +83,6 @@ public:
 		_len -= samples;
 		return samples;
 	}
-	int16 read() { assert(_len > 0); _len--; return 0; }
 	bool isStereo() const { return false; }
 	bool eos() const { return _len <= 0; }
 	

@@ -20,11 +20,6 @@
 #include "mixer.h"
 #include "audiostream.h"
 
-// This used to be an inline template function, but
-// buggy template function handling in MSVC6 forced
-// us to go with the macro approach. So far this is
-// the only template function that MSVC6 seemed to
-// compile incorrectly. Knock on wood.
 #define READSAMPLE(is16Bit, isUnsigned, ptr) \
 	((is16Bit ? READ_BE_UINT16(ptr) : (*ptr << 8)) ^ (isUnsigned ? 0x8000 : 0))
 
@@ -66,16 +61,6 @@ public:
 	}
 	int readBuffer(int16 *buffer, const int numSamples);
 
-	int16 read() {
-		//assert(_ptr < _end);
-		int16 val = READ_ENDIAN_SAMPLE(is16Bit, isUnsigned, _ptr, isLE);
-		_ptr += (is16Bit ? 2 : 1);
-		if (_loopPtr && eosIntern()) {
-			_ptr = _loopPtr;
-			_end = _loopEnd;
-		}
-		return val;
-	}
 	bool isStereo() const		{ return stereo; }
 	bool endOfData() const		{ return eosIntern(); }
 
@@ -104,9 +89,11 @@ int LinearMemoryStream<stereo, is16Bit, isUnsigned, isLE>::readBuffer(int16 *buf
 /**
  * Wrapped memory stream.
  */
-template<bool stereo, bool is16Bit, bool isUnsigned>
+template<bool stereo, bool is16Bit, bool isUnsigned, bool isLE>
 class AppendableMemoryStream : public AppendableAudioStream {
 protected:
+	MutexRef _mutex;
+
 	byte *_bufferStart;
 	byte *_bufferEnd;
 	byte *_pos;
@@ -117,10 +104,9 @@ protected:
 	inline bool eosIntern() const { return _end == _pos; };
 public:
 	AppendableMemoryStream(int rate, uint bufferSize);
-	~AppendableMemoryStream()		{ free(_bufferStart); }
+	~AppendableMemoryStream();
 	int readBuffer(int16 *buffer, const int numSamples);
 
-	int16 read();
 	bool isStereo() const		{ return stereo; }
 	bool endOfStream() const	{ return _finalized && eosIntern(); }
 	bool endOfData() const		{ return eosIntern(); }
@@ -131,10 +117,9 @@ public:
 	void finish()				{ _finalized = true; }
 };
 
-
-template<bool stereo, bool is16Bit, bool isUnsigned>
-AppendableMemoryStream<stereo, is16Bit, isUnsigned>::AppendableMemoryStream(int rate, uint bufferSize)
- : _finalized(false), _rate(rate) {
+template<bool stereo, bool is16Bit, bool isUnsigned, bool isLE>
+AppendableMemoryStream<stereo, is16Bit, isUnsigned, isLE>::AppendableMemoryStream(int rate, uint bufferSize)
+	: _finalized(false), _rate(rate) {
 
 	// Verify the buffer size is sane
 	if (is16Bit && stereo)
@@ -145,24 +130,20 @@ AppendableMemoryStream<stereo, is16Bit, isUnsigned>::AppendableMemoryStream(int 
 	_bufferStart = (byte *)malloc(bufferSize);
 	_pos = _end = _bufferStart;
 	_bufferEnd = _bufferStart + bufferSize;
+
+	_mutex = createMutex();
 }
 
-template<bool stereo, bool is16Bit, bool isUnsigned>
-inline int16 AppendableMemoryStream<stereo, is16Bit, isUnsigned>::read() {
-	assert(!eosIntern());
-
-	// Wrap around?
-	if (_pos >= _bufferEnd)
-		_pos = _pos - (_bufferEnd - _bufferStart);
-
-	int16 val = READSAMPLE(is16Bit, isUnsigned, _pos);
-	_pos += (is16Bit ? 2 : 1);
-
-	return val;
+template<bool stereo, bool is16Bit, bool isUnsigned, bool isLE>
+AppendableMemoryStream<stereo, is16Bit, isUnsigned, isLE>::~AppendableMemoryStream() {
+	free(_bufferStart);
+	deleteMutex(_mutex);
 }
 
-template<bool stereo, bool is16Bit, bool isUnsigned>
-int AppendableMemoryStream<stereo, is16Bit, isUnsigned>::readBuffer(int16 *buffer, const int numSamples) {
+template<bool stereo, bool is16Bit, bool isUnsigned, bool isLE>
+int AppendableMemoryStream<stereo, is16Bit, isUnsigned, isLE>::readBuffer(int16 *buffer, const int numSamples) {
+	StackLock lock(_mutex);
+
 	int samples = 0;
 	while (samples < numSamples && !eosIntern()) {
 		// Wrap around?
@@ -172,16 +153,18 @@ int AppendableMemoryStream<stereo, is16Bit, isUnsigned>::readBuffer(int16 *buffe
 		const byte *endMarker = (_pos > _end) ? _bufferEnd : _end;
 		const int len = MIN(numSamples, samples + (int)(endMarker - _pos) / (is16Bit ? 2 : 1));
 		while (samples < len) {
-			*buffer++ = READSAMPLE(is16Bit, isUnsigned, _pos);
+			*buffer++ = READ_ENDIAN_SAMPLE(is16Bit, isUnsigned, _pos, isLE);
 			_pos += (is16Bit ? 2 : 1);
 			samples++;
 		}
 	}
+
 	return samples;
 }
 
-template<bool stereo, bool is16Bit, bool isUnsigned>
-void AppendableMemoryStream<stereo, is16Bit, isUnsigned>::append(const byte *data, uint32 len) {
+template<bool stereo, bool is16Bit, bool isUnsigned, bool isLE>
+void AppendableMemoryStream<stereo, is16Bit, isUnsigned, isLE>::append(const byte *data, uint32 len) {
+	StackLock lock(_mutex);
 
 	// Verify the buffer size is sane
 	if (is16Bit && stereo)
@@ -212,39 +195,6 @@ void AppendableMemoryStream<stereo, is16Bit, isUnsigned>::append(const byte *dat
 		_end += len;
 	}
 }
-
-
-#if 0
-// Work in progress!!! Not yet usable/finished/working/anything :-)
-
-class ProcInputStream : public AudioStream {
-public:
-	typedef void InputProc (void *refCon, int16 *data, uint len);
-
-private:
-	const int _rate;
-	const bool _isStereo;
-	InputProc *_proc;
-	void *_refCon;
-
-public:
-	ProcInputStream(int rate, bool stereo, InputProc *proc, void *refCon)
-		: _rate(rate), _isStereo(stereo), _proc(proc), _refCon(refCon) { }
-	int readBuffer(int16 *buffer, const int numSamples) {
-		(_proc)(_refCon, buffer, numSamples);
-		return numSamples;
-	}
-	int16 read() {
-		int16 sample;
-		(_proc)(_refCon, &sample, 1);
-		return sample;
-	}
-	bool isStereo() const { return _isStereo; }
-	bool endOfData() const { return false; }
-	
-	int getRate() const { return _rate; }
-};
-#endif
 
 #define MAKE_LINEAR(STEREO, UNSIGNED) \
 		if (is16Bit) { \
@@ -278,15 +228,19 @@ AudioStream *makeLinearInputStream(int rate, byte _flags, const byte *ptr, uint3
 }
 
 #define MAKE_WRAPPED(STEREO, UNSIGNED) \
-		if (is16Bit) \
-			return new AppendableMemoryStream<STEREO, true, UNSIGNED>(rate, len); \
-		else \
-			return new AppendableMemoryStream<STEREO, false, UNSIGNED>(rate, len)
+		if (is16Bit) { \
+			if (isLE) \
+				return new AppendableMemoryStream<STEREO, true, UNSIGNED, true>(rate, len); \
+			else  \
+				return new AppendableMemoryStream<STEREO, true, UNSIGNED, false>(rate, len); \
+		} else \
+			return new AppendableMemoryStream<STEREO, false, UNSIGNED, false>(rate, len)
 
 AppendableAudioStream *makeAppendableAudioStream(int rate, byte _flags, uint32 len) {
 	const bool isStereo = (_flags & SoundMixer::FLAG_STEREO) != 0;
 	const bool is16Bit = (_flags & SoundMixer::FLAG_16BITS) != 0;
 	const bool isUnsigned = (_flags & SoundMixer::FLAG_UNSIGNED) != 0;
+	const bool isLE       = (_flags & SoundMixer::FLAG_LITTLE_ENDIAN) != 0;
 	
 	if (isStereo) {
 		if (isUnsigned) {

@@ -83,7 +83,7 @@ public:
 };
 
 SoundMixer::SoundMixer() {
-	_mutex = create_mutex();
+	_mutex = createMutex();
 	_premixParam = NULL;
 	_premixProc = NULL;
 	_outputRate = 22050;
@@ -99,7 +99,7 @@ SoundMixer::SoundMixer() {
 SoundMixer::~SoundMixer() {
 	SDL_CloseAudio();
 	stopAll();
-	delete_mutex(_mutex);
+	deleteMutex(_mutex);
 }
 
 bool SoundMixer::setSoundProc(SoundProc proc, void *param) {

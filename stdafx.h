@@ -28,10 +28,10 @@ public:
 	~StackLock();
 };
 
-MutexRef create_mutex();
+MutexRef createMutex();
 void lock_mutex(MutexRef mutex);
 void unlock_mutex(MutexRef mutex);
-void delete_mutex(MutexRef mutex);
+void deleteMutex(MutexRef mutex);
 
 #if defined(WIN32)
 
