@@ -791,152 +791,6 @@ void Scumm::playActorSounds()
 }
 
 
-void Actor::startWalkAnim(int cmd, int angle)
-{
-	if (angle == -1)
-		angle = facing;
-
-/*FIXME: (yazoo): the walk script are buggy in dig causing
- * troubles while walking. It's disabled until I can
- * find a proper fix
- * note: walk scripts aren't required to make the game
- * work as usual */
-
-/*	int16 args[16];
-
-	if (walk_script != 0) {
-		args[2] = angle;
-		args[0] = number;
-		args[1] = cmd;
-		_vm->runScript(walk_script, 1, 0, args);
-	} else*/  {
-		switch (cmd) {
-		case 1:										/* start walk */
-			setActorDirection(angle);
-			startAnimActor(walkFrame);
-			break;
-		case 2:										/* change dir only */
-			setActorDirection(angle);
-			break;
-		case 3:										/* stop walk */
-			turnToDirection(angle);
-			startAnimActor(standFrame);
-			break;
-		}
-	}
-}
-
-void Actor::walkActor()
-{
-	int j;
-
-	if (!moving)
-		return;
-
-	if (!(moving & MF_NEW_LEG)) {
-		if (moving & MF_IN_LEG && actorWalkStep())
-			return;
-
-		if (moving & MF_LAST_LEG) {
-			moving = 0;
-			setActorBox(walkdata.destbox);
-			startWalkAnim(3, walkdata.destdir);
-			return;
-		}
-
-		if (moving & MF_TURN) {
-			j = updateActorDirection();
-			if (facing != j)
-				setActorDirection(j);
-			else
-				moving = 0;
-			return;
-		}
-
-		setActorBox(walkdata.curbox);
-		moving &= MF_IN_LEG;
-	}
-#if OLD
-	moving &= ~MF_NEW_LEG;
-
-	if (!walkbox) {
-		walkbox = walkdata.destbox;
-		walkdata.curbox = walkdata.destbox;
-		moving |= MF_LAST_LEG;
-		calcMovementFactor(walkdata.destx, walkdata.desty);
-		return;
-	}
-
-	if (ignoreBoxes || walkbox == walkdata.destbox) {
-		walkdata.curbox = walkbox;
-		moving |= MF_LAST_LEG;
-		calcMovementFactor(walkdata.destx, walkdata.desty);
-		return;
-	}
-	j = getPathToDestBox(walkbox, walkdata.destbox);
-	if (j == -1) {
-		error("walkActor: no path found between %d and %d", walkbox, walkdata.destbox);
-	}
-
-	walkdata.curbox = j;
-
-	if (_vm->findPathTowards(this, walkbox, j, walkdata.destbox)) {
-		moving |= MF_LAST_LEG;
-		calcMovementFactor(walkdata.destx, walkdata.desty);
-		return;
-	}
-	calcMovementFactor(_foundPathX, _foundPathY);
-#endif
-#if 1
-	do {
-		moving &= ~MF_NEW_LEG;
-		if ((!walkbox && (!(_vm->_features & GF_SMALL_HEADER)))) {
-			setActorBox(walkdata.destbox);
-			walkdata.curbox = walkdata.destbox;
-			break;
-		}
-		if (walkbox == walkdata.destbox)
-			break;
-		j = _vm->getPathToDestBox(walkbox, walkdata.destbox);
-		if (j == -1 || j > 0xF0) {
-			walkdata.destbox = walkbox;
-			moving |= MF_LAST_LEG;
-			return;
-		}
-		walkdata.curbox = j;
-		if (_vm->_features & GF_OLD256) {
-			_vm->findPathTowardsOld(this, walkbox, j, walkdata.destbox);
-			if (_vm->gateLoc[2].x == 32000 && _vm->gateLoc[3].x == 32000) {
-				moving |= MF_LAST_LEG;
-				calcMovementFactor(walkdata.destx, walkdata.desty);
-				return;
-			}
-
-			if (_vm->gateLoc[2].x != 32000) {
-				if (calcMovementFactor(_vm->gateLoc[2].x, _vm->gateLoc[2].y)) {
-					walkdata.destx = _vm->gateLoc[3].x;
-					walkdata.desty = _vm->gateLoc[3].y;
-					return;
-				}
-			}
-
-			if (calcMovementFactor(_vm->gateLoc[3].x, _vm->gateLoc[3].y))
-				return;
-
-		} else {
-			if (_vm->findPathTowards(this, walkbox, j, walkdata.destbox))
-				break;
-			if (calcMovementFactor(_vm->_foundPathX, _vm->_foundPathY))
-				return;
-		}
-
-		setActorBox(walkdata.curbox);
-	} while (1);
-	moving |= MF_LAST_LEG;
-	calcMovementFactor(walkdata.destx, walkdata.desty);
-#endif
-}
-
 #define DRAW_ORDER(x)	((x)->y - ((x)->layer << 11))
 
 void Scumm::processActors()
@@ -1255,6 +1109,196 @@ void Actor::startWalkActor(int destX, int destY, int dir)
 	walkdata.curbox = walkbox;
 }
 
+void Actor::startWalkAnim(int cmd, int angle)
+{
+	if (angle == -1)
+		angle = facing;
+
+/*FIXME: (yazoo): the walk script are buggy in dig causing
+ * troubles while walking. It's disabled until I can
+ * find a proper fix
+ * note: walk scripts aren't required to make the game
+ * work as usual */
+
+/*	int16 args[16];
+
+	if (walk_script != 0) {
+		args[2] = angle;
+		args[0] = number;
+		args[1] = cmd;
+		_vm->runScript(walk_script, 1, 0, args);
+	} else*/  {
+		switch (cmd) {
+		case 1:										/* start walk */
+			setActorDirection(angle);
+			startAnimActor(walkFrame);
+			break;
+		case 2:										/* change dir only */
+			setActorDirection(angle);
+			break;
+		case 3:										/* stop walk */
+			turnToDirection(angle);
+			startAnimActor(standFrame);
+			break;
+		}
+	}
+}
+
+void Actor::walkActor()
+{
+	int j;
+
+	if (!moving)
+		return;
+
+	if (!(moving & MF_NEW_LEG)) {
+		if (moving & MF_IN_LEG && actorWalkStep())
+			return;
+
+		if (moving & MF_LAST_LEG) {
+			moving = 0;
+			setActorBox(walkdata.destbox);
+			startWalkAnim(3, walkdata.destdir);
+			return;
+		}
+
+		if (moving & MF_TURN) {
+			j = updateActorDirection();
+			if (facing != j)
+				setActorDirection(j);
+			else
+				moving = 0;
+			return;
+		}
+
+		setActorBox(walkdata.curbox);
+		moving &= MF_IN_LEG;
+	}
+
+	do {
+		moving &= ~MF_NEW_LEG;
+		if ((!walkbox && (!(_vm->_features & GF_SMALL_HEADER)))) {
+			setActorBox(walkdata.destbox);
+			walkdata.curbox = walkdata.destbox;
+			break;
+		}
+		if (walkbox == walkdata.destbox)
+			break;
+		j = _vm->getPathToDestBox(walkbox, walkdata.destbox);
+		if (j == -1 || j > 0xF0) {
+			walkdata.destbox = walkbox;
+			moving |= MF_LAST_LEG;
+			return;
+		}
+		walkdata.curbox = j;
+
+		if (_vm->findPathTowards(this, walkbox, j, walkdata.destbox))
+			break;
+		if (calcMovementFactor(_vm->_foundPathX, _vm->_foundPathY))
+			return;
+
+		setActorBox(walkdata.curbox);
+	} while (1);
+
+	moving |= MF_LAST_LEG;
+	calcMovementFactor(walkdata.destx, walkdata.desty);
+}
+
+void Actor::walkActorOld()
+{
+	ScummPoint gateLoc[5];	// Gate locations
+	int new_dir, next_box;
+
+	if (!moving)
+		return;
+
+	if (moving & MF_NEW_LEG) {
+	restart:
+		moving &= ~MF_NEW_LEG;
+
+		if (walkbox == 0xFF) {
+			walkbox = walkdata.destbox;
+			walkdata.curbox = walkdata.destbox;
+			moving |= MF_LAST_LEG;
+			calcMovementFactor(walkdata.destx, walkdata.desty);
+			return;
+		}
+
+		if (walkbox == walkdata.destbox) {
+			moving |= MF_LAST_LEG;
+			calcMovementFactor(walkdata.destx, walkdata.desty);
+			return;
+		}
+
+		next_box = _vm->getPathToDestBox(walkbox, walkdata.destbox);
+
+		if (next_box == -1) {
+			moving |= MF_LAST_LEG;
+			return;
+		}
+
+		walkdata.curbox = next_box;
+
+		_vm->findPathTowardsOld(this, walkbox, next_box, walkdata.destbox, gateLoc);
+		if (gateLoc[2].x == 32000 && gateLoc[3].x == 32000) {
+			moving |= MF_LAST_LEG;
+			calcMovementFactor(walkdata.destx, walkdata.desty);
+			return;
+		}
+
+		if (gateLoc[2].x != 32000) {
+			if (calcMovementFactor(gateLoc[2].x, gateLoc[2].y)) {
+				walkdata.point3x = gateLoc[3].x; 
+				walkdata.point3y = gateLoc[3].y;
+				return;
+			}
+		}
+
+		if (calcMovementFactor(gateLoc[3].x, gateLoc[3].y))
+			return;
+
+		walkbox = walkdata.destbox;
+		mask = _vm->getMaskFromBox(walkbox);
+		goto restart;
+
+	}
+
+	if (moving & MF_IN_LEG) {
+		if (actorWalkStep())
+			return;
+	}
+
+	if (moving & MF_LAST_LEG) {
+		moving = 0;
+		startWalkAnim(3, walkdata.destdir);
+		return;
+	}
+
+	if (moving & MF_TURN) {
+		new_dir = updateActorDirection();
+		if (facing != new_dir) {
+			setActorDirection(new_dir);
+			return;
+		}
+		moving = 0;
+		return;
+	}
+
+	if (walkdata.point3x != 32000) {
+		if (calcMovementFactor(walkdata.point3x, walkdata.point3y)) {
+			walkdata.point3x = 32000;
+			return;
+		}
+		walkdata.point3x = 32000;
+	}
+
+	walkbox = walkdata.curbox;
+	mask = _vm->getMaskFromBox(walkbox);
+	moving &= MF_IN_LEG;
+	moving |= MF_NEW_LEG;
+	goto restart;
+}
+
 byte *Actor::getActorName()
 {
 	byte *ptr = _vm->getResourceAddress(rtActorName, number);
@@ -1316,100 +1360,6 @@ void Actor::remapActor(int r_fact, int g_fact, int b_fact, int threshold)
 			palette[i] = _vm->remapPaletteColor(r, g, b, threshold);
 		}
 	}
-}
-
-void Actor::walkActorOld()
-{
-	int new_dir, next_box;
-
-	if (!moving)
-		return;
-
-	if (moving & MF_NEW_LEG) {
-	restart:
-		moving &= ~MF_NEW_LEG;
-
-		if (walkbox == 0xFF) {
-			walkbox = walkdata.destbox;
-			walkdata.curbox = walkdata.destbox;
-			moving |= MF_LAST_LEG;
-			calcMovementFactor(walkdata.destx, walkdata.desty);
-			return;
-		}
-
-		if (walkbox == walkdata.destbox) {
-			moving |= MF_LAST_LEG;
-			calcMovementFactor(walkdata.destx, walkdata.desty);
-			return;
-		}
-
-		next_box = _vm->getPathToDestBox(walkbox, walkdata.destbox);
-
-		if (next_box == -1) {
-			moving |= MF_LAST_LEG;
-			return;
-		}
-
-		walkdata.curbox = next_box;
-
-		_vm->findPathTowardsOld(this, walkbox, next_box, walkdata.destbox);
-		if (_vm->gateLoc[2].x == 32000 && _vm->gateLoc[3].x == 32000) {
-			moving |= MF_LAST_LEG;
-			calcMovementFactor(walkdata.destx, walkdata.desty);
-			return;
-		}
-
-		if (_vm->gateLoc[2].x != 32000) {
-			if (calcMovementFactor(_vm->gateLoc[2].x, _vm->gateLoc[2].y)) {
-				walkdata.point3x = _vm->gateLoc[3].x; 
-				walkdata.point3y = _vm->gateLoc[3].y;
-				return;
-			}
-		}
-
-		if (calcMovementFactor(_vm->gateLoc[3].x, _vm->gateLoc[3].y))
-			return;
-
-		walkbox = walkdata.destbox;
-		mask = _vm->getMaskFromBox(walkbox);
-		goto restart;
-
-	}
-
-	if (moving & MF_IN_LEG) {
-		if (actorWalkStep())
-			return;
-	}
-
-	if (moving & MF_LAST_LEG) {
-		moving = 0;
-		startWalkAnim(3, walkdata.destdir);
-		return;
-	}
-
-	if (moving & MF_TURN) {
-		new_dir = updateActorDirection();
-		if (facing != new_dir) {
-			setActorDirection(new_dir);
-			return;
-		}
-		moving = 0;
-		return;
-	}
-
-	if (walkdata.point3x != 32000) {
-		if (calcMovementFactor(walkdata.point3x, walkdata.point3y)) {
-			walkdata.point3x = 32000;
-			return;
-		}
-		walkdata.point3x = 32000;
-	}
-
-	walkbox = walkdata.curbox;
-	mask = _vm->getMaskFromBox(walkbox);
-	moving &= MF_IN_LEG;
-	moving |= MF_NEW_LEG;
-	goto restart;
 }
 
 void Scumm::resetActorBgs()

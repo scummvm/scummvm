@@ -1163,23 +1163,18 @@ public:
 	
 
 
-
 	/* Walkbox / Navigation class */
 	int _maxBoxVertexHeap, _boxPathVertexHeapIndex, _boxMatrixItem;
 	byte *_boxMatrixPtr4, *_boxMatrixPtr1, *_boxMatrixPtr3;	
 
-	ScummPoint gateLoc[5];	/* Gate locations */
-	int gate1ax, gate1ay, gate1bx, gate1by, gate2ax, gate2ay, gate2bx, gate2by;
 	uint16 _extraBoxFlags[65];
 	int16 _foundPathX, _foundPathY;
-	int CloX[8], CloY[8];
 
 	PathVertex *unkMatrixProc1(PathVertex *vtx, PathNode *node);
 	PathNode *unkMatrixProc2(PathVertex *vtx, int i);
 	bool areBoxesNeighbours(int i, int j);
 	void addToBoxMatrix(byte b);
 	bool compareSlope(int X1, int Y1, int X2, int Y2, int X3, int Y3);
-	void SetGate(int line1, int line2, int polyx[8], int polyy[8]);
 	void *addToBoxVertexHeap(int size);
 	PathVertex *addPathVertex();
 	bool checkXYInBoxBounds(int box, int x, int y);
@@ -1194,8 +1189,8 @@ public:
 	byte *getBoxMatrixBaseAddr();
 	int getPathToDestBox(byte from, byte to);
 	int findPathTowards(Actor *a, byte box, byte box2, byte box3);
-	int findPathTowardsOld(Actor *a, byte box, byte box2, byte box3);
-	void GetGates(int trap1, int trap2);
+	int findPathTowardsOld(Actor *a, byte box, byte box2, byte box3, ScummPoint gateLoc[5]);
+	void getGates(int trap1, int trap2, ScummPoint gateA[2], ScummPoint gateB[2]);
 	bool inBoxQuickReject(int box, int x, int y, int threshold);
 	AdjustBoxResult getClosestPtOnBox(int box, int x, int y);
 	int getSpecialBox(int param1, int param2);
@@ -1254,7 +1249,7 @@ public:
 	uint32 fileReadDword(void *handle) { return fileReadDwordLE(handle); }
 #elif defined(SCUMM_BIG_ENDIAN)
 	uint32 fileReadDword() { return fileReadDwordBE(); }
-	uint32 fileReadDword(void *handle) {return fileReadDwordBE(handle);}
+	uint32 fileReadDword(void *handle) { return fileReadDwordBE(handle); }
 #endif
 	uint fileReadWordLE();
 	uint fileReadWordBE();

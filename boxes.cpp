@@ -118,11 +118,8 @@ bool Scumm::checkXYInBoxBounds(int b, int x, int y)
 	if (y > box.ul.y && y > box.ur.y && y > box.ll.y && y > box.lr.y)
 		return 0;
 
-	if (box.ul.x == box.ur.x &&
-			box.ul.y == box.ur.y &&
-			box.ll.x == box.lr.x &&
-			box.ll.y == box.lr.y ||
-			box.ul.x == box.lr.x && box.ul.y == box.lr.y && box.ur.x == box.ll.x && box.ur.y == box.ll.y) {
+	if (box.ul.x == box.ur.x && box.ul.y == box.ur.y && box.ll.x == box.lr.x && box.ll.y == box.lr.y ||
+		box.ul.x == box.lr.x && box.ul.y == box.lr.y && box.ur.x == box.ll.x && box.ur.y == box.ll.y) {
 
 		ScummPoint pt;
 		pt = closestPtOnLine(box.ul.x, box.ul.y, box.ll.x, box.ll.y, x, y);
@@ -852,12 +849,13 @@ PathVertex *Scumm::addPathVertex()
 	return (PathVertex *)addToBoxVertexHeap(sizeof(PathVertex));
 }
 
-int Scumm::findPathTowardsOld(Actor *a, byte trap1, byte trap2, byte final_trap)
+int Scumm::findPathTowardsOld(Actor *actor, byte trap1, byte trap2, byte final_trap, ScummPoint gateLoc[5])
 {
-	GetGates(trap1, trap2);
 	ScummPoint pt;
-	// FIXME - is parameter "a" ignored on purpose?!?
-	Actor *actor = getFirstActor();
+	ScummPoint gateA[2];
+	ScummPoint gateB[2];
+
+	getGates(trap1, trap2, gateA, gateB);
 
 	gateLoc[1].x = actor->x;
 	gateLoc[1].y = actor->y;
@@ -870,22 +868,22 @@ int Scumm::findPathTowardsOld(Actor *a, byte trap1, byte trap2, byte final_trap)
 		gateLoc[4].y = actor->walkdata.desty;
 
 		if (getMaskFromBox(trap1) == getMaskFromBox(trap2) || 1) {
-			if (compareSlope(gateLoc[1].x, gateLoc[1].y, gateLoc[4].x, gateLoc[4].y, gate1ax, gate1ay) !=
-					compareSlope(gateLoc[1].x, gateLoc[1].y, gateLoc[4].x, gateLoc[4].y, gate1bx, gate1by) &&
-					compareSlope(gateLoc[1].x, gateLoc[1].y, gateLoc[4].x, gateLoc[4].y, gate2ax, gate2ay) !=
-					compareSlope(gateLoc[1].x, gateLoc[1].y, gateLoc[4].x, gateLoc[4].y, gate2bx, gate2by)) {
+			if (compareSlope(gateLoc[1].x, gateLoc[1].y, gateLoc[4].x, gateLoc[4].y, gateA[0].x, gateA[0].y) !=
+					compareSlope(gateLoc[1].x, gateLoc[1].y, gateLoc[4].x, gateLoc[4].y, gateB[0].x, gateB[0].y) &&
+					compareSlope(gateLoc[1].x, gateLoc[1].y, gateLoc[4].x, gateLoc[4].y, gateA[1].x, gateA[1].y) !=
+					compareSlope(gateLoc[1].x, gateLoc[1].y, gateLoc[4].x, gateLoc[4].y, gateB[1].x, gateB[1].y)) {
 				return 0;								/* same zplane and between both gates? */
 			}
 		}
 	}
 
-	pt = closestPtOnLine(gate2ax, gate2ay, gate2bx, gate2by, gateLoc[1].x, gateLoc[1].y);
+	pt = closestPtOnLine(gateA[1].x, gateA[1].y, gateB[1].x, gateB[1].y, gateLoc[1].x, gateLoc[1].y);
 	gateLoc[3].x = pt.x;
 	gateLoc[3].y = pt.y;
 
-	if (compareSlope(gateLoc[1].x, gateLoc[1].y, gateLoc[3].x, gateLoc[3].y, gate1ax, gate1ay) ==
-			compareSlope(gateLoc[1].x, gateLoc[1].y, gateLoc[3].x, gateLoc[3].y, gate1bx, gate1by)) {
-		closestPtOnLine(gate1ax, gate1ay, gate1bx, gate1by, gateLoc[1].x, gateLoc[1].y);
+	if (compareSlope(gateLoc[1].x, gateLoc[1].y, gateLoc[3].x, gateLoc[3].y, gateA[0].x, gateA[0].y) ==
+			compareSlope(gateLoc[1].x, gateLoc[1].y, gateLoc[3].x, gateLoc[3].y, gateB[0].x, gateB[0].y)) {
+		closestPtOnLine(gateA[0].x, gateA[0].y, gateB[0].x, gateB[0].y, gateLoc[1].x, gateLoc[1].y);
 		gateLoc[2].x = pt.x;				/* if point 2 between gates, ignore! */
 		gateLoc[2].y = pt.y;
 	}
@@ -893,138 +891,114 @@ int Scumm::findPathTowardsOld(Actor *a, byte trap1, byte trap2, byte final_trap)
 	return 0;
 }
 
-void Scumm::GetGates(int trap1, int trap2)
+void Scumm::getGates(int trap1, int trap2, ScummPoint gateA[2], ScummPoint gateB[2])
 {
-	int i;
-	int Closest1 = 0, Closest2 = 0, Closest3 = 0;
+	int i, j;
 	int Dist[8];
-	int Dist1, Dist2, Dist3;
-	int Box1, Box2, Box3;
+	int MinDist[3];
+	int Closest[3];
+	int Box[3];
 	BoxCoords box;
-	int polyx[8];
-	int polyy[8];
-	AdjustBoxResult pt;
+	ScummPoint Clo[8];
+	ScummPoint poly[8];
+	AdjustBoxResult abr;
+	int line1, line2;
 
+	// For all corner coordinates of the first box, compute the point cloest 
+	// to them on the second box (and also compute the distance of these points).
 	getBoxCoordinates(trap1, &box);
-	polyx[0] = box.ul.x;
-	polyy[0] = box.ul.y;
-	polyx[1] = box.ur.x;
-	polyy[1] = box.ur.y;
-	polyx[2] = box.ll.x;
-	polyy[2] = box.ll.y;
-	polyx[3] = box.lr.x;
-	polyy[3] = box.lr.y;
+	poly[0] = box.ul;
+	poly[1] = box.ur;
+	poly[2] = box.ll;
+	poly[3] = box.lr;
 	for (i = 0; i < 4; i++) {
-		pt = getClosestPtOnBox(trap2, polyx[i], polyy[i]);
-		Dist[i] = pt.dist;
-		CloX[i] = pt.x;
-		CloY[i] = pt.y;
+		abr = getClosestPtOnBox(trap2, poly[i].x, poly[i].y);
+		Dist[i] = abr.dist;
+		Clo[i].x = abr.x;
+		Clo[i].y = abr.y;
 	}
 
+	// Now do the same but with the roles of the first and second box swapped.
 	getBoxCoordinates(trap2, &box);
-	polyx[4] = box.ul.x;
-	polyy[4] = box.ul.y;
-	polyx[5] = box.ur.x;
-	polyy[5] = box.ur.y;
-	polyx[6] = box.ll.x;
-	polyy[6] = box.ll.y;
-	polyx[7] = box.lr.x;
-	polyy[7] = box.lr.y;
+	poly[4] = box.ul;
+	poly[5] = box.ur;
+	poly[6] = box.ll;
+	poly[7] = box.lr;
 	for (i = 4; i < 8; i++) {
-		pt = getClosestPtOnBox(trap1, polyx[i], polyy[i]);
-		Dist[i] = pt.dist;
-		CloX[i] = pt.x;
-		CloY[i] = pt.y;
+		abr = getClosestPtOnBox(trap1, poly[i].x, poly[i].y);
+		Dist[i] = abr.dist;
+		Clo[i].x = abr.x;
+		Clo[i].y = abr.y;
 	}
 
-
-	Dist1 = 0xFFFF;
-	for (i = 0; i < 8; i++) {
-		if (Dist[i] < Dist1) {
-			Dist1 = Dist[i];
-			Closest1 = i;
+	// Find the three closest "close" points between the two boxes.
+	for (j = 0; j < 3; j++) {
+		MinDist[j] = 0xFFFF;
+		for (i = 0; i < 8; i++) {
+			if (Dist[i] < MinDist[j]) {
+				MinDist[j] = Dist[i];
+				Closest[j] = i;
+			}
 		}
-	}
-	Dist[Closest1] = 0xFFFF;
-
-	Dist2 = 0xFFFF;
-	for (i = 0; i < 8; i++) {
-		if (Dist[i] < Dist2) {
-			Dist2 = Dist[i];
-			Closest2 = i;
-		}
-	}
-	Dist[Closest2] = 0xFFFF;
-
-	Dist3 = 0xFFFF;
-	for (i = 0; i < 8; i++) {
-		if (Dist[i] < Dist3) {
-			Dist3 = Dist[i];
-			Closest3 = i;
-		}
+		Dist[Closest[j]] = 0xFFFF;
+		MinDist[j] = (int)sqrt((double)MinDist[j]);
+		Box[j] = (Closest[j] > 3);	// Is the poin on the first or on the second box?
 	}
 
-	Box1 = (Closest1 > 3);
-	Box2 = (Closest2 > 3);
-	Box3 = (Closest3 > 3);
 
-	Dist1 = (int)sqrt((double)Dist1);
-	Dist2 = (int)sqrt((double)Dist2);
-	Dist3 = (int)sqrt((double)Dist3);
+	// Finally, compute the "gate". That's a pair of two points that are
+	// in the same box (actually, on the border of that box), which both have
+	// "minimal" distance to the other box in a certain sense.
 
-	if (Box1 == Box2 && abs(Dist1 - Dist2) < 4) {
-		SetGate(Closest1, Closest2, polyx, polyy);
+	if (Box[0] == Box[1] && abs(MinDist[0] - MinDist[1]) < 4) {
+		line1 = Closest[0];
+		line2 = Closest[1];
 
-	} else if (Box1 == Box2 && Dist1 == Dist2) {	/* parallel */
-		SetGate(Closest1, Closest2, polyx, polyy);
-	} else if (Box1 == Box3 && Dist1 == Dist3) {	/* parallel */
-		SetGate(Closest1, Closest3, polyx, polyy);
-	} else if (Box2 == Box3 && Dist2 == Dist3) {	/* parallel */
-		SetGate(Closest2, Closest3, polyx, polyy);
+	} else if (Box[0] == Box[1] && MinDist[0] == MinDist[1]) {	/* parallel */
+		line1 = Closest[0];
+		line2 = Closest[1];
+	} else if (Box[0] == Box[2] && MinDist[0] == MinDist[2]) {	/* parallel */
+		line1 = Closest[0];
+		line2 = Closest[2];
+	} else if (Box[1] == Box[2] && MinDist[1] == MinDist[2]) {	/* parallel */
+		line1 = Closest[1];
+		line2 = Closest[2];
 
-
-	} else if (Box1 == Box3 && abs(Dist1 - Dist3) < 4) {
-		SetGate(Closest1, Closest3, polyx, polyy);
-	} else if (abs(Dist1 - Dist3) < 4) {	/* if 1 close to 3 then use 2-3 */
-		SetGate(Closest2, Closest3, polyx, polyy);
-	} else if (abs(Dist1 - Dist2) < 4) {
-		SetGate(Closest1, Closest2, polyx, polyy);
+	} else if (Box[0] == Box[2] && abs(MinDist[0] - MinDist[2]) < 4) {
+		line1 = Closest[0];
+		line2 = Closest[2];
+	} else if (abs(MinDist[0] - MinDist[2]) < 4) {	/* if 1 close to 3 then use 2-3 */
+		line1 = Closest[1];
+		line2 = Closest[2];
+	} else if (abs(MinDist[0] - MinDist[1]) < 4) {
+		line1 = Closest[0];
+		line2 = Closest[1];
 	} else {
-		SetGate(Closest1, Closest1, polyx, polyy);
+		line1 = Closest[0];
+		line2 = Closest[0];
+	}
+
+	// Set the gate
+	if (line1 < 4) {							/* from box 1 to box 2 */
+		gateA[0] = poly[line1];
+		gateA[1] = Clo[line1];
+
+	} else {
+		gateA[1] = poly[line1];
+		gateA[0] = Clo[line1];
+	}
+
+	if (line2 < 4) {							/* from box */
+		gateB[0] = poly[line2];
+		gateB[1] = Clo[line2];
+
+	} else {
+		gateB[1] = poly[line2];
+		gateB[0] = Clo[line2];
 	}
 }
 
 bool Scumm::compareSlope(int X1, int Y1, int X2, int Y2, int X3, int Y3)
 {
 	return (Y2 - Y1) * (X3 - X1) <= (Y3 - Y1) * (X2 - X1);
-}
-
-void Scumm::SetGate(int line1, int line2, int polyx[8], int polyy[8])
-{
-
-	if (line1 < 4) {							/* from box 1 to box 2 */
-		gate1ax = polyx[line1];
-		gate1ay = polyy[line1];
-		gate2ax = CloX[line1];
-		gate2ay = CloY[line1];
-
-	} else {
-		gate2ax = polyx[line1];
-		gate2ay = polyy[line1];
-		gate1ax = CloX[line1];
-		gate1ay = CloY[line1];
-	}
-
-	if (line2 < 4) {							/* from box */
-		gate1bx = polyx[line2];
-		gate1by = polyy[line2];
-		gate2bx = CloX[line2];
-		gate2by = CloY[line2];
-
-	} else {
-		gate2bx = polyx[line2];
-		gate2by = polyy[line2];
-		gate1bx = CloX[line2];
-		gate1by = CloY[line2];
-	}
 }
