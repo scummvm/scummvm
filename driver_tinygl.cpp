@@ -269,7 +269,7 @@ void DriverTinyGL::setupLight(Scene::Light *light, int lightId) {
 //		tglLightf(TGL_LIGHT0 + lightId, TGL_LINEAR_ATTENUATION, light->_intensity);
 		tglEnable(TGL_LIGHT0 + lightId);
 	} else {
-		error("Scene::setupLights() Unknown type of light: %s", light->_type);
+		error("Scene::setupLights() Unknown type of light: %s", light->_type.c_str());
 	}
 }
 
