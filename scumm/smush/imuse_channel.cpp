@@ -63,6 +63,7 @@ bool ImuseChannel::setParameters(int32 nb, int32 size, int32 flags, int32 unk1, 
 	} else {
 		error("ImuseChannel::setParameters(): bad flags: %d", flags);
 	}
+	_pan = 0;
 	return true;
 }
 
@@ -324,15 +325,9 @@ int32 ImuseChannel::availableSoundData(void) const {
 void ImuseChannel::getSoundData(int16 *snd, int32 size) {
 	if (_dataSize <= 0 || _bitsize <= 8) error("invalid call to imuse_channel::read_sound_data()");
 	if (_channels == 2) size *= 2;
-	byte * buf = (byte*)snd;
 
-	for (int32 i = 0; i < size; i++){
-		byte sample1 = *(_sbuffer + i * 2);
-		byte sample2 = *(_sbuffer + i * 2 + 1);
-		uint16 sample = (uint16)(((int16)((sample1 << 8) | sample2) * _volume) >> 8);
-		buf[i * 2 + 0] = (byte)(sample >> 8);
-		buf[i * 2 + 1] = (byte)(sample & 0xff);
-	}
+	memcpy(snd, _sbuffer, size * 2);
+
 	delete []_sbuffer;
 	assert(_sbufferSize == 2 * size);
 	_sbuffer = 0;
@@ -344,9 +339,8 @@ void ImuseChannel::getSoundData(int8 *snd, int32 size) {
 	if (_dataSize <= 0 || _bitsize > 8) error("invalid call to imuse_channel::read_sound_data()");
 	if (_channels == 2) size *= 2;
 
-	for (int32 i = 0; i < size; i++){
-		snd[i] = (int8)(((int8)(_sbuffer[i] ^ 0x80) * _volume) >> 8) ^ 0x80;
-	}
+	memcpy(snd, _sbuffer, size);
+
 	delete []_sbuffer;
 	_sbuffer = 0;
 	_sbufferSize = 0;

@@ -183,59 +183,30 @@ bool SaudChannel::isTerminated() const {
 	return (_markReached && _dataSize == 0 && _sbuffer == 0);
 }
 
-void SaudChannel::recalcVolumeTable() {
-	const int MAX_BALANCE = 100;
-	int volume_left, volume_right;
-	if (_balance < -MAX_BALANCE || _balance > MAX_BALANCE) {
-		warning("balance is out of range ! : %d", _balance);
-		return;
-	}
-	int left_multiplier = MAX_BALANCE - _balance;
-	int right_multiplier = MAX_BALANCE + _balance;
-	volume_left = _volume * left_multiplier / (MAX_BALANCE * 2);
-	volume_right = _volume * right_multiplier / (MAX_BALANCE * 2);
-	if (volume_left < 0)
-		volume_left = 0;
-	if (volume_left > 128)
-		volume_left = 128;
-	if (volume_right < 0)
-		volume_right = 0;
-	if (volume_right > 128)
-		volume_right = 128;
-	for (int i = 0; i < 256; i++) {
-		int16 value = volume_left * (int8)i;
-		_voltable[0][i] = TO_BE_16(value);
-		value = volume_right * (int8)i;
-		_voltable[1][i] = TO_BE_16(value);
-	}
-}
-
-bool SaudChannel::setParameters(int32 nb, int32 flags, int32 volume, int32 balance, int32 index) {
+bool SaudChannel::setParameters(int32 nb, int32 flags, int32 volume, int32 pan, int32 index) {
 	_nbframes = nb;
 	_flags = flags; // bit 7 == IS_VOICE, bit 6 == IS_BACKGROUND_MUSIC, other ??
 	_volume = volume;
-	_balance = balance;
+	_pan = pan;
 	_index = index;
 	if (index != 0) {
 		_dataSize = -2;
 		_keepSize = true;
 		_inData = true;
 	}
-	recalcVolumeTable();
 	return true;
 }
 
-bool SaudChannel::checkParameters(int32 index, int32 nb, int32 flags, int32 volume, int32 balance) {
+bool SaudChannel::checkParameters(int32 index, int32 nb, int32 flags, int32 volume, int32 pan) {
 	if (++_index != index)
 		error("invalid index in SaudChannel::checkParameters()");
 	if (_nbframes != nb)
 		error("invalid duration in SaudChannel::checkParameters()");
 	if (_flags != flags)
 		error("invalid flags in SaudChannel::checkParameters()");
-	if (_volume != volume || _balance != balance) {
+	if (_volume != volume || _pan != pan) {
 		_volume = volume;
-		_balance = balance;
-		recalcVolumeTable();
+		_pan = pan;
 	}
 	return true;
 }
@@ -277,8 +248,8 @@ int32 SaudChannel::availableSoundData(void) const {
 
 void SaudChannel::getSoundData(int16 *snd, int32 size) {
 	for (int32 i = 0; i < size; i++) {
-		snd[2 * i] = _voltable[0][_sbuffer[i] ^ 0x80];
-		snd[2 * i + 1] = _voltable[1][_sbuffer[i] ^ 0x80];
+		snd[2 * i] = _sbuffer[i] ^ 0x80;
+		snd[2 * i + 1] = _sbuffer[i] ^ 0x80;
 	}
 	if (!_keepSize)
 		_dataSize -= size;

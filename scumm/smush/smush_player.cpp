@@ -298,7 +298,7 @@ void SmushPlayer::checkBlock(const Chunk &b, Chunk::type type_expected, uint32 m
 	}
 }
 
-void SmushPlayer::handleSoundBuffer(int32 track_id, int32 index, int32 max_frames, int32 flags, int32 vol, int32 bal, Chunk &b, int32 size) {
+void SmushPlayer::handleSoundBuffer(int32 track_id, int32 index, int32 max_frames, int32 flags, int32 vol, int32 pan, Chunk &b, int32 size) {
 	debug(6, "SmushPlayer::handleSoundBuffer(%d, %d)", track_id, index);
 //	if ((flags & 128) == 128) {
 //		return;
@@ -313,11 +313,11 @@ void SmushPlayer::handleSoundBuffer(int32 track_id, int32 index, int32 max_frame
 	}
 
 	if ((_middleAudio) && (index != 0)) {
-		c->setParameters(max_frames, flags, vol, bal, index);
+		c->setParameters(max_frames, flags, vol, pan, index);
 	} else if (index == 0) {
-		c->setParameters(max_frames, flags, vol, bal, index);
+		c->setParameters(max_frames, flags, vol, pan, index);
 	} else {
-		c->checkParameters(index, max_frames, flags, vol, bal);
+		c->checkParameters(index, max_frames, flags, vol, pan);
 	}
 	_middleAudio = false;
 	c->appendData(b, size);
@@ -332,12 +332,12 @@ void SmushPlayer::handleSoundFrame(Chunk &b) {
 	int32 max_frames = b.getWord();
 	int32 flags = b.getWord();
 	int32 vol = b.getByte();
-	int32 bal = b.getChar();
+	int32 pan = b.getChar();
 	if (index == 0) {
-		debug(5, "track_id == %d, max_frames == %d, %d, %d, %d", track_id, max_frames, flags, vol, bal);
+		debug(5, "track_id:%d, max_frames:%d, flags:%d, vol:%d, pan:%d", track_id, max_frames, flags, vol, pan);
 	}
 	int32 size = b.getSize() - 10;
-	handleSoundBuffer(track_id, index, max_frames, flags, vol, bal, b, size);
+	handleSoundBuffer(track_id, index, max_frames, flags, vol, pan, b, size);
 }
 
 void SmushPlayer::handleSkip(Chunk &b) {

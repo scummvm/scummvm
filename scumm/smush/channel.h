@@ -41,7 +41,7 @@ public:
 	virtual void getSoundData(int16 *sound_buffer, int32 size) = 0;
 	virtual void getSoundData(int8 *sound_buffer, int32 size) = 0;
 	virtual int32 getRate() = 0;
-	virtual bool getParameters(int32 &rate, bool &stereo, bool &is_16bit) = 0;
+	virtual bool getParameters(int32 &rate, bool &stereo, bool &is_16bit, int32 &vol, int32 &pan) = 0;
 	virtual int32 getTrackIdentifier() const = 0;
 };
 
@@ -55,9 +55,8 @@ private:
 	bool _markReached;
 	int32 _flags;
 	int32 _volume;
-	int32 _balance;
+	int32 _pan;
 	int32 _index;
-	int16 _voltable[2][256];
 	byte *_tbuffer;
 	int32 _tbufferSize;
 	byte *_sbuffer;
@@ -70,7 +69,6 @@ protected:
 	void handleShdr(Chunk &c);
 	bool handleSubTags(int32 &offset);
 	bool processBuffer();
-	void recalcVolumeTable();
 
 public:
 	SaudChannel(int32 track, int32 freq);
@@ -83,10 +81,12 @@ public:
 	void getSoundData(int16 *sound_buffer, int32 size);
 	void getSoundData(int8 *sound_buffer, int32 size) { error("8bit request for SAUD channel should never happen"); };
 	int32 getRate() { return _frequency; }
-	bool getParameters(int32 &rate, bool &stereo, bool &is_16bit) { 
+	bool getParameters(int32 &rate, bool &stereo, bool &is_16bit, int32 &vol, int32 &pan) { 
 		rate = _frequency;
 		stereo = true;
 		is_16bit = true;
+		vol = _volume;
+		pan = _pan;
 		return true;
 	};
 	virtual int32 getTrackIdentifier() const { return _track; };
@@ -104,6 +104,7 @@ private:
 	int32 _dataSize;			//!< remaining size of sound data in the iMUS buffer
 	bool _inData;
 	int32 _volume;
+	int32 _pan;
 
 	int32 _bitsize;			//!< the bitsize of the original data
 	int32 _rate;				//!< the sampling rate of the original data
@@ -131,10 +132,12 @@ public:
 	void getSoundData(int16 *sound_buffer, int32 size);
 	void getSoundData(int8 *sound_buffer, int32 size);
 	int32 getRate() { return _rate; }
-	bool getParameters(int32 &rate, bool &stereo, bool &is_16bit) {
+	bool getParameters(int32 &rate, bool &stereo, bool &is_16bit, int32 &vol, int32 &pan) {
 		rate = _rate;
 		stereo = (_channels == 2);
 		is_16bit = (_bitsize > 8);
+		vol = _volume;
+		pan = _pan;
 		return true;
 	};
 	virtual int32 getTrackIdentifier() const { return _track; };

@@ -95,11 +95,11 @@ bool SmushMixer::handleFrame() {
 				_channels[i].chan = NULL;
 				_mixer->endStream(_channels[i].handle);
 			} else {
-				int32 rate;
+				int32 rate, vol, pan;
 				bool stereo, is_16bit;
 				void *data;
 
-				_channels[i].chan->getParameters(rate, stereo, is_16bit);
+				_channels[i].chan->getParameters(rate, stereo, is_16bit, vol, pan);
 				int32 size = _channels[i].chan->availableSoundData();
 				byte flags = stereo ? SoundMixer::FLAG_STEREO : 0;
 
@@ -121,6 +121,8 @@ bool SmushMixer::handleFrame() {
 				if (_mixer->isReady()) {
 					if (!_channels[i].handle.isActive())
 						_mixer->newStream(&_channels[i].handle, rate, flags, 400000);
+					_mixer->setChannelVolume(_channels[i].handle, vol);
+					_mixer->setChannelPan(_channels[i].handle, pan);
 					_mixer->appendStream(_channels[i].handle, data, size);
 				}
 				free(data);
