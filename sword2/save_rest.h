@@ -29,6 +29,7 @@
 uint32	SaveGame(uint16 slotNo, uint8 *description);
 uint32	RestoreGame(uint16 slotNo);
 uint32	GetSaveDescription(uint16 slotNo, uint8 *description);
+bool	SaveExists(uint16 slotNo);
 void	FillSaveBuffer(mem *buffer, uint32 size, uint8 *desc);
 uint32	RestoreFromBuffer(mem *buffer, uint32 size);
 uint32	FindBufferSize( void );

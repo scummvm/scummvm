@@ -310,10 +310,15 @@ void Sword2State::go()
    	Zdebug("RETURNED from InitialiseGame - ok");
 
 
-
-	if (_saveSlot != -1)
-		RestoreGame(_saveSlot);
-	else
+	if (_saveSlot != -1) {
+		if (SaveExists(_saveSlot))
+			RestoreGame(_saveSlot);
+		else { // show restore menu
+			Set_mouse(NORMAL_MOUSE_ID);
+			if (!Restore_control())
+				Start_game();
+		}
+	} else
 		Start_game();
 
 

@@ -468,6 +468,19 @@ uint32 GetSaveDescription(uint16 slotNo, uint8 *description)		// (James05feb97)
 	return(SR_OK);
 }
 
+bool SaveExists(uint16 slotNo) {
+	char saveFileName[MAX_FILENAME_LEN];
+	SaveFileManager *mgr = g_system->get_savefile_manager();
+
+	sprintf(saveFileName, "%s.%.3d", g_sword2->_game_name, slotNo);	// construct filename
+
+	if (!(mgr->open_savefile(saveFileName, g_sword2->getSavePath(), false)))
+		return(false);
+	delete mgr;
+
+	return(true);
+}
+
 //------------------------------------------------------------------------------------
 //------------------------------------------------------------------------------------
 void GetPlayerStructures(void)		// James27feb97
