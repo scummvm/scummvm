@@ -1483,7 +1483,9 @@ void ScummEngine_v8::o8_kernelGetFunctions() {
 		// scripts. Probably a wrong push/pop somewhere. For now override to correct value.
 		array = 658;
 		ArrayHeader *ah = (ArrayHeader *)getResourceAddress(rtString, readVar(array));
-		if (!strcmp((char *)ah->data, "Saveload Page") || !strcmp((char *)ah->data, "Object Names"))
+		if (!strcmp((char *)ah->data, "Text Status"))
+			push(ConfMan.getBool("subtitles"));
+		else if (!strcmp((char *)ah->data, "Saveload Page") || !strcmp((char *)ah->data, "Object Names"))
 			push(1);
 		else
 			push(0);

@@ -1204,7 +1204,7 @@ void ScummEngine::initScummVars() {
 	if (_gameId == GID_MONKEY || _gameId == GID_MONKEY_SEGA)
 		_scummVars[74] = 1225;
 
-	if (_version >= 7)
+	if (_version == 7)
 		VAR(VAR_VOICE_MODE) = ConfMan.getBool("subtitles");
 
 	VAR(VAR_CHARINC) = 4;
