@@ -226,7 +226,8 @@ static const ScummGameSettings scumm_settings[] = {
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0},
 	{"jungle", "Let's Explore the Jungle with Buzzy", GID_HEGAME, 6, 70, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0},
-	{"puttzoo", "Putt-Putt Saves the Zoo", GID_HEGAME, 6, 70, MDT_NONE,
+	/* needs the MAXS reading code for >= 72 but is still 320x200? */
+	{"puttzoo", "Putt-Putt Saves the Zoo", GID_HEGAME, 6, 72, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0},
 
 	// First 640x480 game, hence version 7.1
@@ -293,6 +294,8 @@ static const ScummGameSettings scumm_settings[] = {
 	{"racedemo", "Putt-Putt Enters the Race (Demo)", GID_HEGAME, 6, 72, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES | GF_WINDOWS, 0},
 	{"puttrace", "Putt-Putt Enters the Race", GID_HEGAME, 6, 72, MDT_NONE,
+	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES | GF_WINDOWS, 0},
+	{"bluesabctimedemo", "Blue's ABC Time Demo", GID_HEGAME, 6, 72, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES | GF_WINDOWS, 0},
 
 	// Humongous Entertainment Scumm Version 9.9 ?  Scummsys.99
