@@ -259,11 +259,11 @@ int Actor::updateActorDirection(bool is_walking)
 	int num;
 	bool shouldInterpolate;
 
-	dirType = (_vm->_features & GF_AFTER_V7) ? _vm->akos_hasManyDirections(this) : false;
+	dirType = (_vm->_features & GF_NEW_COSTUMES) ? _vm->akos_hasManyDirections(this) : false;
 
 	from = toSimpleDir(dirType, facing);
 	dir = remapDirection(newDirection, is_walking);
-	if (_vm->_features & GF_AFTER_V7)
+	if (_vm->_features & GF_NEW_COSTUMES)
 		// Direction interpolation interfers with walk scripts in Dig; they perform
 		// (much better) interpolation themselves.
 		shouldInterpolate = false;	
@@ -486,7 +486,7 @@ void Actor::animateActor(int anim)
 {
 	int cmd, dir;
 
-	if (_vm->_features & GF_AFTER_V7) {
+	if (_vm->_features & GF_NEW_COSTUMES) {
 
 		if (anim == 0xFF)
 			anim = 2000;
@@ -540,7 +540,7 @@ void Actor::setDirection(int direction)
 		vald = cost.frame[i];
 		if (vald == 0xFFFF)
 			continue;
-		if (_vm->_features & GF_AFTER_V7)
+		if (_vm->_features & GF_NEW_COSTUMES)
 			_vm->akos_decodeData(this, vald, aMask);
 		else
 			_vm->cost_decodeData(this, vald, aMask);
@@ -709,7 +709,7 @@ void Actor::adjustActorPos()
 	moving = 0;
 	cost.animCounter2 = 0;
 
-	if (_vm->_features & GF_AFTER_V7) {
+	if (_vm->_features & GF_NEW_COSTUMES) {
 		stopActorMoving();
 	}
 
@@ -803,7 +803,7 @@ void Scumm::stopTalk()
 	act = _vars[VAR_TALK_ACTOR];
 	if (act && act < 0x80) {
 		Actor *a = derefActorSafe(act, "stopTalk");
-		if ((a->isInCurrentRoom() && _useTalkAnims) || (_features & GF_AFTER_V7)) {
+		if ((a->isInCurrentRoom() && _useTalkAnims) || (_features & GF_NEW_COSTUMES)) {
 			a->startAnimActor(a->talkFrame2);
 			_useTalkAnims = false;
 		}
@@ -912,7 +912,7 @@ void Actor::drawActorCostume()
 
 	setupActorScale();
 
-	if (!(_vm->_features & GF_AFTER_V7)) {
+	if (!(_vm->_features & GF_NEW_COSTUMES)) {
 		CostumeRenderer cr(_vm);
 
 		cr._actorX = x - _vm->virtscr[0].xstart;
@@ -1044,7 +1044,7 @@ void Actor::animateCostume()
 	if (animProgress >= animSpeed) {
 		animProgress = 0;
 
-		if (_vm->_features & GF_AFTER_V7) {
+		if (_vm->_features & GF_NEW_COSTUMES) {
 			byte *akos = _vm->getResourceAddress(rtCostume, costume);
 			assert(akos);
 			if (_vm->akos_increaseAnims(akos, this)) {
@@ -1162,7 +1162,7 @@ void Scumm::actorTalk()
 		oldact = 0;
 	} else {
 		a = derefActorSafe(_actorToPrintStrFor, "actorTalk");
-		if (!a->isInCurrentRoom() && !(_features & GF_AFTER_V7)) {
+		if (!a->isInCurrentRoom() && !(_features & GF_NEW_COSTUMES)) {
 			oldact = 0xFF;
 		} else {
 			if (!_keepText)
@@ -1207,7 +1207,7 @@ void Actor::setActorCostume(int c)
 		cost.reset();
 	}
 
-	if (_vm->_features & GF_AFTER_V7) {
+	if (_vm->_features & GF_NEW_COSTUMES) {
 		for (i = 0; i < 256; i++)
 			palette[i] = 0xFF;
 	} else {
