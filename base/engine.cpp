@@ -50,6 +50,8 @@ Engine::Engine(OSystem *syst)
 Engine::~Engine() {
 	delete _mixer;
 	delete _timer;
+
+	g_engine = 0;
 }
 
 const char *Engine::getSavePath() const {
