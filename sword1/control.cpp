@@ -261,8 +261,12 @@ uint8 Control::runPanel(void) {
 					setupMainPanel();
 				break;
 			case BUTTON_SAVE_PANEL:
-				if (fullRefresh)
+				if (fullRefresh) {
+					OSystem::Property prop;
+					prop.show_keyboard = true;
+					_system->property(OSystem::PROP_TOGGLE_VIRTUAL_KEYBOARD, &prop);
 					setupSaveRestorePanel(true);
+				}
 				if (_keyPressed)
 					handleSaveKey(_keyPressed);
 				break;
@@ -364,6 +368,10 @@ uint8 Control::handleButtonClick(uint8 id, uint8 mode, uint8 *retVal) {
 				saveNameSelect(id, mode == BUTTON_SAVE_PANEL);
 			else if (id == BUTTON_SAVE_RESTORE_OKAY) {
 				if (mode == BUTTON_SAVE_PANEL) {
+					OSystem::Property prop;
+					prop.show_keyboard = false;
+					_system->property(OSystem::PROP_TOGGLE_VIRTUAL_KEYBOARD, &prop);
+
 					if (saveToFile()) // don't go back to main panel if save fails.
 						return BUTTON_MAIN_PANEL;
 				} else {
@@ -372,8 +380,14 @@ uint8 Control::handleButtonClick(uint8 id, uint8 mode, uint8 *retVal) {
 						return BUTTON_MAIN_PANEL;
 					}
 				}
-			} else if (id == BUTTON_SAVE_CANCEL)
+			} else if (id == BUTTON_SAVE_CANCEL) {
+				if (mode == BUTTON_SAVE_PANEL) {
+					OSystem::Property prop;
+					prop.show_keyboard = false;
+					_system->property(OSystem::PROP_TOGGLE_VIRTUAL_KEYBOARD, &prop);
+				}
 				return BUTTON_MAIN_PANEL; // mode down to main panel
+			}
 			break;
 		case BUTTON_VOLUME_PANEL:
 			return id;
