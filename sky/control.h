@@ -114,7 +114,7 @@ class SkyMouse;
 
 #define SAVE_FILE_REVISION 5
 // skipping revision 4, that one will be used for messy downward compatibility in 0.5.0 branch
-#define OLD_SAVEGAME_TYPE 3
+#define OLD_SAVEGAME_TYPE 4
 
 struct AllocedMem {
 	uint16 *mem;
