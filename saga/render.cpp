@@ -135,7 +135,7 @@ int Render::drawScene() {
 	}
 
 	// Draw queued actors
-	_vm->_actor->drawList();
+	_vm->_actor->drawActors();
 
 	// Draw queued text strings
 	_vm->_scene->getInfo(&scene_info);

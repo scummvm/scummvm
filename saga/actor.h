@@ -177,24 +177,29 @@ struct ACTORINTENT {
 typedef Common::List<ACTORINTENT> ActorIntentList;
 
 struct ActorData {
-	bool _disabled;
-	int _index;		// Actor index
-	uint16 _actorId;	// Actor id
+	bool disabled;				// Actor disabled in init section
+	int index;					// Actor index
+	uint16 actorId;				// Actor id
+	int nameIndex;				// Actor's index in actor name string list
+	byte speechColor;			// Actor dialogue color
+	uint16 flags;				// Actor flags
+	int sceneNumber;			// scene of actor
 
-	int name_i;		// Actor's index in actor name string list
-	uint16 flags;
+	int currentAction;		
+	int facingDirection;
+	int actionDirection;
+	
+	SPRITELIST *spriteList;		// Actor's sprite list data
+	int spriteListResourceId;	// Actor's sprite list resource id
+
+	ActorFrame *frames;			// Actor's frames
+	int framesCount;			// Actor's frames count
+	int frameListResourceId;	// Actor's frame list resource id
+
 
 	Point a_pt;		// Actor's logical coordinates
 	Point s_pt;		// Actor's screen coordinates
 
-	SPRITELIST *spriteList;			// Actor's sprite list data
-	int spriteListResourceId;		// Actor's sprite list resource id
-
-	ActorFrame *frames;				// Actor's frames
-	int frameCount;					// Actor's frames count
-	int frameListResourceId;		// Actor's frame list resource id
-
-	byte speechColor;		// Actor dialogue color
 
 	int idle_time;
 	int orient;
@@ -220,20 +225,24 @@ struct ActorData {
 
 
 	ActorData() {
-		_disabled = false;
-		_index = 0;
-		_actorId = 0;
-		name_i = 0;
-		flags = 0;
+		disabled = false;
+		index = 0;
+		actorId = 0;
+		nameIndex = 0;
+		currentAction = 0;
+		facingDirection = 0;
+		actionDirection = 0;
+		speechColor = 0;
 		frames = NULL;
-		frameCount = 0;
+		framesCount = 0;
 		frameListResourceId = 0;
 		spriteList = NULL;
 		spriteListResourceId = 0;
+		flags = 0;
+
 		idle_time = 0;
 		orient = 0;
 		speaking = 0;
-		speechColor = 0;
 		def_action = 0;
 		def_action_flags = 0;
 		action = 0;
@@ -263,8 +272,9 @@ public:
 	void CF_actor_setact(int argc, const char **argv);
 
 	int direct(int msec);
+	int drawActors();
+	void updateActorsScene();			// calls from scene loading to update Actors info
 
-	int drawList();
 	void AtoS(Point &screenPoint, const Point &actorPoint);
 	void StoA(Point &actorPoint, const Point &screenPoint);
 
@@ -282,7 +292,7 @@ public:
 	void setAction(uint16 actorId, int action_n, uint16 action_flags);
 	void setDefaultAction(uint16 actorId, int action_n, uint16 action_flags);
 
-
+	
 private:
 	int handleWalkIntent(ActorData *actor, WALKINTENT *a_walk_int, int *complete_p, int msec);
 	int handleSpeakIntent(ActorData *actor, SPEAKINTENT *a_speakint, int *complete_p, int msec);
@@ -292,14 +302,11 @@ private:
 
 	bool loadActorResources(ActorData * actor);
 	
-	ActorOrderList::iterator getActorOrderIterator(const ActorData *actor);
-	void reorderActorUp(ActorData *actor);
-	void reorderActorDown(ActorData *actor);
-
+	void createDrawOrderList();
 
 	SagaEngine *_vm;
 	RSCFILE_CONTEXT *_actorContext;
-	ActorOrderList _orderList;
+	ActorOrderList _drawOrderList;
 	ActorData _actors[ACTORCOUNT];
 };
 

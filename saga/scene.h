@@ -137,7 +137,6 @@ struct SCENE_IMAGE {
 struct SCENE_ANIMINFO {
 	int anim_res_number;
 	int anim_handle;
-	//SCENE_ANIMINFO *next;
 };
 
 typedef SortedList<SCENE_ANIMINFO> SceneAnimInfoList;

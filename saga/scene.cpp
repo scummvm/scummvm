@@ -43,6 +43,7 @@
 
 #include "saga/scene.h"
 #include "saga/stream.h"
+#include "saga/actor.h"
 
 namespace Saga {
 
@@ -552,6 +553,8 @@ int Scene::loadScene(int scene_num, int load_flag, SCENE_PROC scene_proc, SCENE_
 	getInfo(&scene_info);
 
 	_sceneProc(SCENE_BEGIN, &scene_info, this);
+	
+	_vm->_actor->updateActorsScene();
 
 	return SUCCESS;
 }

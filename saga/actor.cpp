@@ -70,13 +70,16 @@ Actor::Actor(SagaEngine *vm) : _vm(vm) {
 
 	for (i = 0; i < ACTORCOUNT; i++) {
 		actor = &_actors[i];
-		actor->_actorId = ACTOR_INDEX_TO_ID(i);
-		actor->_index = i;
-		debug(0, "init actorId=0x%X index=0x%X", actor->_actorId, actor->_index);
+		actor->actorId = ACTOR_INDEX_TO_ID(i);
+		actor->index = i;
+		debug(0, "init actorId=0x%X index=0x%X", actor->actorId, actor->index);
+		actor->nameIndex = ActorTable[i].nameIndex;
 		actor->spriteListResourceId = ActorTable[i].spriteListResourceId;
 		actor->frameListResourceId = ActorTable[i].frameListResourceId;
-		actor->flags = ActorTable[i].flags;
 		actor->speechColor = ActorTable[i].speechColor;
+		actor->sceneNumber = ActorTable[i].sceneIndex;
+	
+		actor->flags = ActorTable[i].flags;
 		actor->orient = ACTOR_DEFAULT_ORIENT;
 		actor->def_action = 0;
 		actor->def_action_flags = 0;
@@ -84,13 +87,11 @@ Actor::Actor(SagaEngine *vm) : _vm(vm) {
 		actor->action_flags = 0;
 		actor->action_time = 0;
 		actor->action_frame = 0;
-		actor->_disabled = !loadActorResources(actor);
-		if (actor->_disabled) {
-			warning("Disabling actorId=0x%X index=0x%X", actor->_actorId, actor->_index);
-		} else {
-			_orderList.push_back(actor);
-		}
 
+		actor->disabled = !loadActorResources(actor);
+		if (actor->disabled) {
+			warning("Disabling actorId=0x%X index=0x%X", actor->actorId, actor->index);
+		} 
 	}
 }
 
@@ -110,7 +111,7 @@ Actor::~Actor() {
 bool Actor::loadActorResources(ActorData * actor) {
 	byte *resourcePointer;
 	size_t resourceLength;
-	int frameCount;
+	int framesCount;
 	ActorFrame *framesPointer;
 	int lastFrame;
 	int i, orient;
@@ -123,10 +124,10 @@ bool Actor::loadActorResources(ActorData * actor) {
 		return false;
 	}
 
-	frameCount = resourceLength / 16;
-	debug(0, "Frame resource contains %d frames", frameCount);
+	framesCount = resourceLength / 16;
+	debug(0, "Frame resource contains %d frames", framesCount);
 	
-	framesPointer = (ActorFrame *)malloc(sizeof(ActorFrame) * frameCount);
+	framesPointer = (ActorFrame *)malloc(sizeof(ActorFrame) * framesCount);
 	if (framesPointer == NULL) {
 		error("Couldn't allocate memory for sprite frames");
 	}
@@ -135,7 +136,7 @@ bool Actor::loadActorResources(ActorData * actor) {
 
 	lastFrame = 0;
 
-	for (i = 0; i < frameCount; i++) {
+	for (i = 0; i < framesCount; i++) {
 		for (orient = 0; orient < ACTOR_ORIENTATION_COUNT; orient++) {
 			// Load all four orientations
 			framesPointer[i].dir[orient].frameIndex = readS.readUint16();
@@ -149,7 +150,7 @@ bool Actor::loadActorResources(ActorData * actor) {
 	RSC_FreeResource(resourcePointer);
 
 	actor->frames = framesPointer;
-	actor->frameCount = frameCount;
+	actor->framesCount = framesCount;
 
 
 	debug(0, "Loading sprite resource id 0x%X", actor->spriteListResourceId);
@@ -179,39 +180,26 @@ ActorData *Actor::getActor(uint16 actorId) {
 
 	actor = &_actors[ACTOR_ID_TO_INDEX(actorId)];
 
-	if (actor->_disabled)
+	if (actor->disabled)
 		error("Actor::getActor disabled actorId 0x%X", actorId);
 
 	return actor;
 }
 
-ActorOrderList::iterator Actor::getActorOrderIterator(const ActorData *actor) {
-	ActorOrderList::iterator actorOrderIterator;
+void Actor::updateActorsScene() {
+	int i;
+	ActorData *actor;
 
-	for (actorOrderIterator = _orderList.begin(); actorOrderIterator != _orderList.end(); ++actorOrderIterator)
-		if (actor == actorOrderIterator.operator*()) {
-			return actorOrderIterator;
+	for (i = 0; i < ACTORCOUNT; i++) {
+		actor = &_actors[i];
+		if (actor->flags & (kProtagonist | kFollower)) {
+			actor->sceneNumber = _vm->_scene->currentSceneNumber();
 		}
-
-	error("Actor::getActorOrderIterator actor");
-}
-
-void Actor::reorderActorUp(ActorData *actor) {
-	ActorOrderList::iterator actorOrderIterator;
-
-    actorOrderIterator = getActorOrderIterator(actor);
-	actorOrderIterator = _orderList.reorderUp(actorOrderIterator, actorCompare);
-}
-
-void Actor::reorderActorDown(ActorData *actor) {
-	ActorOrderList::iterator actorOrderIterator;
-
-	actorOrderIterator = getActorOrderIterator(actor);
-	actorOrderIterator = _orderList.reorderDown(actorOrderIterator, actorCompare);
+	}
 }
 
 int Actor::direct(int msec) {
-	ActorOrderList::iterator actorOrderIterator;
+	int i;
 	ActorData *actor;
 
 	ActorIntentList::iterator actorIntentIterator;
@@ -221,8 +209,9 @@ int Actor::direct(int msec) {
 	int action_tdelta;
 
 	// Walk down the actor list and direct each actor
-	for (actorOrderIterator = _orderList.begin(); actorOrderIterator != _orderList.end(); ++actorOrderIterator) {
-		actor =  actorOrderIterator.operator*();
+	for (i = 0; i < ACTORCOUNT; i++) {
+		actor = &_actors[i];
+		if (actor->disabled) continue;
 
 		// Process the actor intent list
 		actorIntentIterator = actor->a_intentlist.begin();
@@ -236,7 +225,6 @@ int Actor::direct(int msec) {
 				// Actor intends to go somewhere. Well good for him
 				{
 					handleWalkIntent(actor, &a_intent->walkIntent, &a_intent->a_idone, msec);
-					actorOrderIterator = getActorOrderIterator(actor);
 				}
 				break;
 			case INTENT_SPEAK:
@@ -289,8 +277,22 @@ int Actor::direct(int msec) {
 	return SUCCESS;
 }
 
-int Actor::drawList() {
-	ActorOrderList::iterator actorOrderIterator;
+void Actor::createDrawOrderList() {
+	int i;
+	ActorData *actor;
+
+	_drawOrderList.clear();
+	for (i = 0;i < ACTORCOUNT;i++) {
+		actor = &_actors[i];
+		if (actor->disabled) continue;
+
+		if (actor->sceneNumber == _vm->_scene->currentSceneNumber())
+			_drawOrderList.pushBack(actor, actorCompare);
+	}
+}
+
+int Actor::drawActors() {
+	ActorOrderList::iterator actorDrawOrderIterator;
 	ActorData *actor;
 
 	ActorIntentList::iterator actorIntentIterator;
@@ -308,14 +310,16 @@ int Actor::drawList() {
 
 	back_buf = _vm->_gfx->getBackBuffer();
 
-	for (actorOrderIterator = _orderList.begin(); actorOrderIterator != _orderList.end(); ++actorOrderIterator) {
-		actor =  actorOrderIterator.operator*();
-		if(actor->frameCount == 0) continue;
+	createDrawOrderList();
+
+	for (actorDrawOrderIterator = _drawOrderList.begin(); actorDrawOrderIterator != _drawOrderList.end(); ++actorDrawOrderIterator) {
+		actor =  actorDrawOrderIterator.operator*();
+		if (actor->framesCount == 0) continue;
 
 		o_idx = ActorOrientationLUT[actor->orient];
 		sprite_num = actor->frames[actor->action].dir[o_idx].frameIndex;
 		sprite_num += actor->action_frame;
-		if(actor->spriteList->sprite_count <= sprite_num) continue;
+		if (actor->spriteList->sprite_count <= sprite_num) continue;
 		_vm->_sprite->drawOccluded(back_buf, actor->spriteList, sprite_num, actor->s_pt.x, actor->s_pt.y);
 
 		// If actor's current intent is to speak, oblige him by 
@@ -345,7 +349,7 @@ int Actor::drawList() {
 // dialogue entry if there is a current speak intent present.
 
 int Actor::skipDialogue() {
-	ActorOrderList::iterator actorOrderIterator;
+	int i;
 	ActorData *actor;
 
 	ActorIntentList::iterator actorIntentIterator;
@@ -354,8 +358,9 @@ int Actor::skipDialogue() {
 	ActorDialogList::iterator actorDialogIterator;
 	ACTORDIALOGUE *a_dialogue;
 
-	for (actorOrderIterator = _orderList.begin(); actorOrderIterator != _orderList.end(); ++actorOrderIterator) {
-		actor =  actorOrderIterator.operator*();
+	for (i = 0; i < ACTORCOUNT; i++) {
+		actor = &_actors[i];
+		if (actor->disabled) continue;
 		// Check the actor's current intent for a speak intent
 		actorIntentIterator = actor->a_intentlist.begin();
 		if (actorIntentIterator != actor->a_intentlist.end()) {
@@ -526,7 +531,7 @@ void Actor::setAction(uint16 actorId, int action_n, uint16 action_flags) {
 
 	actor = getActor(actorId);
 
-	if ((action_n < 0) || (action_n >= actor->frameCount)) {
+	if ((action_n < 0) || (action_n >= actor->framesCount)) {
 		error("Actor::setAction wrong action_n 0x%X", action_n);
 	}
 
@@ -542,7 +547,7 @@ void Actor::setDefaultAction(uint16 actorId, int action_n, uint16 action_flags) 
 
 	actor = getActor(actorId);
 
-	if ((action_n < 0) || (action_n >= actor->frameCount)) {
+	if ((action_n < 0) || (action_n >= actor->framesCount)) {
 		error("Actor::setDefaultAction wrong action_n 0x%X", action_n);
 	}
 
@@ -571,6 +576,8 @@ void Actor::walkTo(uint16 actorId, const Point *walk_pt, uint16 flags, SEMAPHORE
 	actor_intent.walkIntent.dst_pt = *walk_pt;
 
 	actor->a_intentlist.push_back(actor_intent);
+	int is = actor->a_intentlist.size();
+	debug(0, "actor->a_intentlist.size() %i", is);
 
 	if (sem != NULL) {
 		_vm->_script->SThreadHoldSem(sem);
@@ -620,7 +627,7 @@ int Actor::handleWalkIntent(ActorData *actor, WALKINTENT *a_walkint, int *comple
 	// Initialize walk intent 
 	if (!a_walkint->wi_init) {
 		setPathNode(a_walkint, &actor->a_pt, &a_walkint->dst_pt, a_walkint->sem);
-		setDefaultAction(actor->_actorId, ACTION_IDLE, ACTION_NONE);
+		setDefaultAction(actor->actorId, ACTION_IDLE, ACTION_NONE);
 		a_walkint->wi_init = 1;
 	}
 
@@ -741,12 +748,6 @@ int Actor::handleWalkIntent(ActorData *actor, WALKINTENT *a_walkint, int *comple
 	actor->s_pt.x = actor->a_pt.x >> 2;
 	actor->s_pt.y = actor->a_pt.y >> 2;
 
-	if (path_slope < 0) {
-		reorderActorUp(actor);
-	} else {
-		reorderActorDown(actor);
-	}
-
 	return SUCCESS;
 }
 
@@ -764,13 +765,6 @@ void Actor::move(uint16 actorId, const Point &movePoint) {
 	actor->a_pt = movePoint;
 
 	AtoS(actor->s_pt, actor->a_pt);
-
- 	if (moveUp) {
-		reorderActorUp(actor);
-	} else {
-		reorderActorDown(actor);
-	}
-
 }
 
 void Actor::moveRelative(uint16 actorId, const Point &movePoint) {
@@ -782,12 +776,6 @@ void Actor::moveRelative(uint16 actorId, const Point &movePoint) {
 	actor->a_pt.y += movePoint.y;
 
 	AtoS(actor->s_pt, actor->a_pt);
-
-	if (actor->a_pt.y < 0) {
-		reorderActorUp(actor);
-	} else {
-		reorderActorDown(actor);
-	}
 }
 
 void Actor::AtoS(Point &screenPoint, const Point &actorPoint) {

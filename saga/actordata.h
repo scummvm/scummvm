@@ -29,18 +29,18 @@
 namespace Saga {
 
 enum {
-	kProtagonist	= 0x01, // Actor is protagonist
-	kFollower	= 0x02, // Actor is follower
-	kCycle		= 0x04, // Actor stand has a cycle
-	kFaster		= 0x08, // Actor is fast
-	kFastest	= 0x10, // Actor is faster
-	kExtended	= 0x20  // Actor uses extended sprites
+	kProtagonist	= 0x01,	// Actor is protagonist
+	kFollower		= 0x02,	// Actor is follower
+	kCycle			= 0x04, // Actor stand has a cycle
+	kFaster			= 0x08, // Actor is fast
+	kFastest		= 0x10, // Actor is faster
+	kExtended		= 0x20  // Actor uses extended sprites
 };
 
 // TODO: This doesn't quite correspond to the original Actor struct, so I'm not
 // sure if I got it right.
 
-struct ACTORTABLE {
+struct ActorTableData {
 	byte flags;
 	byte nameIndex;
 	int32 sceneIndex;
@@ -59,7 +59,7 @@ struct ACTORTABLE {
 #define ACTORCOUNT 181
 
 extern int ActorOrientationLUT[];
-extern ACTORTABLE ActorTable[ACTORCOUNT];
+extern ActorTableData ActorTable[ACTORCOUNT];
 
 } // End of namespace Saga
 
