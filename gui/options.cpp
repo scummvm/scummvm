@@ -77,7 +77,7 @@ GlobalOptionsDialog::GlobalOptionsDialog(GameDetector &detector)
 
 	// The GFX mode popup & a label
 	// TODO - add an API to query the list of available GFX modes, and to get/set the mode
-	new StaticTextWidget(tab, vBorder, vBorder+2, 100, kLineHeight, "Graphics mode: ", kTextAlignRight);
+	new StaticTextWidget(tab, 5, vBorder+2, 100, kLineHeight, "Graphics mode: ", kTextAlignRight);
 	PopUpWidget *gfxPopUp;
 	gfxPopUp = new PopUpWidget(tab, 105, vBorder, 180, kLineHeight);
 	gfxPopUp->appendEntry("<default>");
