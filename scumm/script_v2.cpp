@@ -75,7 +75,7 @@ void Scumm_v2::setupOpcodes() {
 		/* 20 */
 		OPCODE(o5_stopMusic),
 		OPCODE(o2_putActor),
-		OPCODE(o2_saveLoadGame),
+		OPCODE(o5_saveLoadGame),
 		OPCODE(o2_getActorY),
 		/* 24 */
 		OPCODE(o2_loadRoomWithEgo),
@@ -235,7 +235,7 @@ void Scumm_v2::setupOpcodes() {
 		/* A0 */
 		OPCODE(o5_stopObjectCode),
 		OPCODE(o2_putActor),
-		OPCODE(o2_saveLoadGame),
+		OPCODE(o5_saveLoadGame),
 		OPCODE(o2_getActorY),
 		/* A4 */
 		OPCODE(o2_loadRoomWithEgo),
@@ -1157,14 +1157,6 @@ void Scumm_v2::o2_findObject() {
 	int x = getVarOrDirectByte(0x80) * 8;
 	int y = getVarOrDirectByte(0x40) * 2;
 	setResult(findObject(x, y));
-}
-
-void Scumm_v2::o2_saveLoadGame() {
-	getResultPos();
-	byte a = getVarOrDirectByte(0x80);
-
-	warning("TODO: o2_saveLoadGame(%d)", a);
-	setResult(0);
 }
 
 void Scumm_v2::o2_getActorX() {

@@ -134,6 +134,7 @@ protected:
 	void o5_quitPauseRestart();
 	void o5_resourceRoutines();
 	void o5_roomOps();
+	void o5_saveLoadGame();
 	void o5_saveLoadVars();
 	void o5_saveRestoreVerbs();
 	void o5_setCameraAt();
@@ -273,7 +274,6 @@ protected:
 	void o2_resourceRoutines();
 	void o2_restart();
 	void o2_roomOps();
-	void o2_saveLoadGame();
 	void o2_getActorElevation();
 	void o2_setActorElevation();
 	void o2_setBitVar();

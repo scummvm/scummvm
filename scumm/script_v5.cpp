@@ -1083,50 +1083,55 @@ void Scumm_v5::o5_getActorY() {
 	setResult(getObjY(a));
 }
 
-void Scumm_v5::o5_getAnimCounter() {
+void Scumm_v5::o5_saveLoadGame() {
 	getResultPos();
-	// Loom uses this opcode in its load/save screen.
-	//if (_gameId == GID_LOOM) {
-	if (_version <= 3) {
-		byte a = getVarOrDirectByte(0x80);
-		byte slot = a & 0x1F;
-		byte result = 0;
+	byte a = getVarOrDirectByte(0x80);
+	byte slot = a & 0x1F;
+	byte result = 0;
 		
-		switch(a & 0xE0) {
-			case 0x00: // num slots available
-				result = 100;
-				break;
-			case 0x20: // dos drive?
+	switch(a & 0xE0) {
+		case 0x00: // num slots available
+			result = 100;
+			break;
+		case 0x20: // dos drive?
+			result = 0;
+			break;
+		case 0x40: // load 
+			if (loadState(slot, _saveLoadCompatible))
+				result = 3; // sucess
+			else
+				result = 5; // failed to load
+			break;
+		case 0x80: // save
+			if (saveState(slot, _saveLoadCompatible))
 				result = 0;
-				break;
-			case 0x40: // load 
-				if (loadState(slot, _saveLoadCompatible))
-					result = 3; // sucess
-				else
-					result = 5; // failed to load
-				break;
-			case 0x80: // save
-				if (saveState(slot, _saveLoadCompatible))
-					result = 0;
-				else
-					result = 2;
-			case 0xC0: // test if save exists
-				bool avail_saves[100];
-				SaveFileManager *mgr = _system->get_savefile_manager();
-				listSavegames(avail_saves, ARRAYSIZE(avail_saves), mgr);
-				delete mgr;
-				if (avail_saves[slot])
-					result = 6; // save file exists
-				else
-					result = 7; // save file does not exist
-				break;
-		}
-		setResult(result);
-	} else {
-		int act = getVarOrDirectByte(0x80);
-		Actor *a = derefActor(act, "o5_getAnimCounter");
-		setResult(a->cost.animCounter);
+			else
+				result = 2;
+		case 0xC0: // test if save exists
+			bool avail_saves[100];
+			SaveFileManager *mgr = _system->get_savefile_manager();
+			listSavegames(avail_saves, ARRAYSIZE(avail_saves), mgr);
+			delete mgr;
+			if (avail_saves[slot])
+				result = 6; // save file exists
+			else
+				result = 7; // save file does not exist
+			break;
 	}
+	setResult(result);
+}
+		
+void Scumm_v5::o5_getAnimCounter() {
+	if (_version == 3) {
+		o5_saveLoadGame();
+		return;
+	}
+		
+	getResultPos();
+
+	int act = getVarOrDirectByte(0x80);
+	Actor *a = derefActor(act, "o5_getAnimCounter");
+	setResult(a->cost.animCounter);
 }
 
 void Scumm_v5::o5_getClosestObjActor() {
