@@ -1180,19 +1180,69 @@ void Scumm_v8::o8_kludge()
 	switch (args[0]) {
 	case 11:
 		warning("o8_kludge: ObjectsFindObjectRelNum(%d)", args[1]);
-		// TODO
+		break;
+	case 12:
+		warning("o8_kludge: ObjectsFindObjectRelNum(%d)", args[1]);
+		break;
+	case 13:
+			derefActorSafe(args[1], "o8_kludge:13")->remapActorPalette(args[2], args[3], args[4], -1);
+		break;
+	case 14:
+			derefActorSafe(args[1], "o8_kludge:14")->remapActorPalette(args[2], args[3], args[4], args[5]);
 		break;
 	case 15:
-		// not used
+		// not used anymore (was smush frame rate)
+		break;
+	case 20:
+		setBoxScale(args[1], args[2]);
+		break;
+	case 21:
+		warning("o8_kludge: WalkboxSetScaleSlot(%d, %d, %d, %d, %d, %d, %d)", args[1], args[2], args[3], args[4], args[5], args[6], args[7]);
 		break;
 	case 22:
 //		warning("o8_kludge: BannerSetBannerColor(%d, %d, %d, %d)", args[1], args[2], args[3], args[4]);
 		break;
+	case 23:
+		warning("o8_kludge: ChoreSetActorChoreLimbFrame(%d, %d, %d, %d)", args[1], args[2], args[3], args[4]);
+		break;
+	case 24:
+		warning("o8_kludge: opcode 24 ()");
+		break;
+	case 25:
+		warning("o8_kludge: opcode 25 (%d, %d)", args[1], args[2]);
+		break;
+	case 26:
+		warning("o8_kludge: opcode 26 (%d, %d)", args[1], args[2]);
+		break;
+	case 27:
+		warning("o8_kludge: opcode 27 (%d)", args[1]);
+		break;
+	case 28:
+		warning("o8_kludge: StampShotEnqueue(%d, %d, %d, %d, %d, %d)", args[1], args[2], args[3], args[4], args[5], args[6]);
+		break;
 	case 29:
 		warning("o8_kludge: opcode 29 (%d, %d)", args[1], args[2]);
 		break;
+	case 30:
+		warning("o8_kludge: opcode 30 ()");
+		break;
+	case 31:
+		warning("o8_kludge: opcode 31 ()");
+		break;
+	case 32:
+		warning("o8_kludge: opcode 32 (%d, %d)", args[1], args[2]);
+		break;
+	case 33:
+		warning("o8_kludge: opcode 33 (%d, %d)", args[1], args[2]);
+		break;
+	case 34:
+		warning("o8_kludge: opcode 34 ()");
+		break;
 	case 108:
-//		warning("o8_kludge: PaletteBuildRedirection(%d, %d, %d, %d, %d, %d)", args[1], args[2], args[3], args[4], args[5], args[6]);
+		setupShadowPalette(args[1], args[2], args[3], args[4], args[5], args[6]);
+		break;
+	case 109:
+		setupShadowPalette(0, args[1], args[2], args[3], args[4], args[5]);
 		break;
 	case 118:
 		enqueueObject(args[1], args[2], args[3], args[4], args[5], args[6], args[7], args[8], 3);
@@ -1201,23 +1251,6 @@ void Scumm_v8::o8_kludge()
 		enqueueObject(args[1], args[2], args[3], args[4], args[5], args[6], args[7], args[8], 0);
 		break;
 
-	case 12:
-	case 13:
-	case 14:
-	case 20:
-	case 21:
-	case 23:
-	case 24:
-	case 25:
-	case 26:
-	case 27:
-	case 28:
-	case 30:
-	case 31:
-	case 32:
-	case 33:
-	case 34:
-	case 109:
 	default:
 		warning("o8_kludge: default case (len = %d)", len);
 	}
