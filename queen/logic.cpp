@@ -1930,7 +1930,7 @@ void Logic::inventorySetup() {
 
 	_graphics->bankLoad("objects.BBK", 14);
 	_inventoryItem[0] = ITEM_BAT;
-	_inventoryItem[1] = _resource->isDemo() ? ITEM_JOURNAL_DEMO : ITEM_JOURNAL;
+	_inventoryItem[1] = ITEM_JOURNAL;
 	_inventoryItem[2] = ITEM_NONE;
 	_inventoryItem[3] = ITEM_NONE;
 }
