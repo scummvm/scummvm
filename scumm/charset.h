@@ -22,8 +22,8 @@
 #define CHARSET_H
 
 #include "common/scummsys.h"
-#include "common/rect.h"
 #include "common/util.h"
+#include "common/rect.h"
 #include "scumm/gfx.h"
 
 namespace Scumm {

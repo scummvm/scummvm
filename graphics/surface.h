@@ -22,6 +22,7 @@
 #define GRAPHICS_SURFACE_H
 
 #include "common/scummsys.h"
+#include "common/util.h"
 #include "common/rect.h"
 
 namespace Graphics {

@@ -18,6 +18,7 @@
  */
 
 #include "common/stdafx.h"
+#include "common/util.h"
 #include "common/rect.h"
 #include "common/config-manager.h"
 #include "common/system.h"
