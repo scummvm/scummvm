@@ -633,14 +633,14 @@ else
 fi
 echo "$_vorbis"
 
-echocheck "FLAC"
+echocheck "FLAC >= 1.0.1"
 if test "$_flac" = auto ; then
   _flac=no
   cat > $TMPC << EOF
 #include <FLAC/seekable_stream_decoder.h>
 int main(void) { FLAC__seekable_stream_decoder_init( 0 ); return 0; }
 EOF
-  cc_check $LDFLAGS $CXXFLAGS $FLAC_CFLAGS $FLAY_LIBS \
+  cc_check $LDFLAGS $CXXFLAGS $FLAC_CFLAGS $FLAC_LIBS \
   -lFLAC -lm && _flac=yes
 fi
 if test "$_flac" = yes ; then
