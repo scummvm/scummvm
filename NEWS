@@ -4,6 +4,7 @@ For a more comprehensive changelog for the latest experimental CVS code, see:
 0.5.5(CVS) (2003-??-??)
  General:
    - Added Broken Sword 2 engine
+   - Added Flight of the Amazon Queen engine
    - Added HQ2x and HQ3x scalers
    - Improved native MT32 support
    - Adlib GM emulation table revamped, providing more accurate software MIDI
@@ -16,6 +17,7 @@ For a more comprehensive changelog for the latest experimental CVS code, see:
    - Many, Many, Many SCUMM game engine fixes. Many of them. And that's a lot.
    - Added option to choose between Adlib, PCjr and PC Speaker in earlier games.
    - Added Adlib support for indy3ega and loom (ega)
+   - Added MIDI support for loom (ega), monkeyega and monkeyvga.
    - Added sound effects support for indy3/monkeyega/monkeyvga/pass
    - Added FM Towns targets for Loom and Indy3
    - Rewrote in-game menu (F5) to be easier to use
@@ -25,6 +27,8 @@ For a more comprehensive changelog for the latest experimental CVS code, see:
    - Improved music/sound for various Amiga versions
    - Improved compression of Fate of Atlantis and Simon the Sorcerer 2 sound files
    - Keyboard fighting in Fate of Atlantis now works
+   - Keyboard support for cannon battle in Curse of Monkey Island
+   - Keyboard support for derby scene in Full Throttle
 
 0.5.1 (2003-08-06) 
 - Rewrote Beneath a Steel Sky savegame code (see note in READMEs 'Known Bugs')
