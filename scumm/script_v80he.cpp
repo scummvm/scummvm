@@ -419,9 +419,10 @@ void ScummEngine_v80he::o80_getSoundVar() {
 	// Checks sound variable
 	int var = pop();
 	int snd = pop();
+	int rnd = _rnd.getRandomNumberRng(1, 3);
 
 	checkRange(27, 0, var, "Illegal sound variable %d");
-	push (_rnd.getRandomNumber(3));
+	push (rnd);
 	debug(1,"o80_getSoundVar stub (snd %d, var %d)", snd, var);
 }
 
