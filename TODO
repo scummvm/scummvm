@@ -3,7 +3,6 @@ Residual TODO list (in rough order of priority):
 Assigned tasks:
  * Add LAF font and text drawing support (aquadran)
  * Implement drawing 2D objects (ender)
- * Fix position of overlay SMUSH movies (aquadran)
 
 Unassigned (help wanted):
  * Add OpenGL lighting (ender, possibly)
