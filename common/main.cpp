@@ -135,9 +135,8 @@ static void launcherDialog(GameDetector &detector, OSystem *system)
 	extern OSystem *g_system;
 	g_system = system;
 
-	Dialog *dlg = new LauncherDialog(g_gui, detector);
-	dlg->runModal();
-	delete dlg;
+	LauncherDialog dlg(g_gui, detector);
+	dlg.runModal();
 }
 
 int main(int argc, char *argv[])
