@@ -28,7 +28,7 @@ void Scumm::setupOpcodes() {
 	/* 00 */
 	&Scumm::o5_stopObjectCode,
 	&Scumm::o5_putActor,
-	&Scumm::o5_tartMusic,
+	&Scumm::o5_startMusic,
 	&Scumm::o5_getActorRoom,
 	/* 04 */
 	&Scumm::o5_isGreaterEqual,
