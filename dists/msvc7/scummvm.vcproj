@@ -448,6 +448,9 @@
 				Name="fs"
 				Filter="">
 				<File
+					RelativePath="..\..\backends\fs\fs.cpp">
+				</File>
+				<File
 					RelativePath="..\..\backends\fs\fs.h">
 				</File>
 				<File
@@ -623,9 +626,6 @@
 			</File>
 			<File
 				RelativePath="..\..\gui\options.h">
-			</File>
-			<File
-				RelativePath="..\..\gui\walkthrough.cpp">
 			</File>
 			<File
 				RelativePath="..\..\gui\walkthrough.h">

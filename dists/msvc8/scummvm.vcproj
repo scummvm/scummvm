@@ -609,6 +609,10 @@
 				Name="fs"
 				>
 				<File
+					RelativePath="..\..\backends\fs\fs.cpp"
+					>
+				</File>
+				<File
 					RelativePath="..\..\backends\fs\fs.h"
 					>
 				</File>
@@ -839,10 +843,6 @@
 			</File>
 			<File
 				RelativePath="..\..\gui\TabWidget.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\gui\walkthrough.cpp"
 				>
 			</File>
 			<File
