@@ -36,17 +36,22 @@ public:
 	// The remaining methods all have default implementations
 
 	void writeByte(byte value);
+	void writeSByte(int8 value);
 
 	void writeUint16LE(uint16 value);
+	void writeUint24LE(uint32 value);
 	void writeUint32LE(uint32 value);
 
 	void writeUint16BE(uint16 value);
+	void writeUint24BE(uint32 value);
 	void writeUint32BE(uint32 value);
 
 	void writeSint16LE(int16 value);
+	void writeSint24LE(int32 value);
 	void writeSint32LE(int32 value);
 
 	void writeSint16BE(int16 value);
+	void writeSint24BE(int32 value);
 	void writeSint32BE(int32 value);
 };
 
@@ -58,17 +63,22 @@ public:
 	// The remaining methods all have default implementations
 
 	byte readByte();
+	int8 readSByte();
 
 	uint16 readUint16LE();
+	uint32 readUint24LE();
 	uint32 readUint32LE();
 
 	uint16 readUint16BE();
+	uint32 readUint24BE();
 	uint32 readUint32BE();
 
 	int16 readSint16LE();
+	int32 readSint24LE();
 	int32 readSint32LE();
 
 	int16 readSint16BE();
+	int32 readSint24BE();
 	int32 readSint32BE();
 };
 
@@ -109,9 +119,12 @@ public:
 class MemoryReadStream : public ReadStream {
 private:
 	const byte *_ptr;
+	const byte *_ptrOrig;
 	uint32 _size;
+	uint32 _sizeOrig;
+	uint32 _pos;
 public:
-	MemoryReadStream(const byte *ptr, uint32 size) : _ptr(ptr), _size(size) {}
+	MemoryReadStream(const byte *ptr, uint32 size) : _ptr(ptr), _ptrOrig(ptr), _size(size), _sizeOrig(size), _pos(0) {}
 
 	uint32 read(void *ptr, uint32 size) {
 		if (size > _size)
@@ -119,7 +132,16 @@ public:
 		memcpy(ptr, _ptr, size);
 		_size -= size;
 		_ptr += size;
+		_pos += size;
 		return size;
+	}
+
+	uint32 tell() { return _pos; }
+
+	void rewind() {
+		_ptr = _ptrOrig;
+		_size = _sizeOrig;
+		_pos = 0;
 	}
 };
 
