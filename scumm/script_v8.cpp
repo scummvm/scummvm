@@ -1494,7 +1494,7 @@ void Scumm_v8::o8_kernelSetFunctions()
 	}
 	case 27: {	// FIXME: This doesn't work
 			// saveGameRead
-		_saveLoadSlot = 0;
+		_saveLoadSlot = args[1];
 		_saveLoadFlag = 2;
 		_saveLoadCompatible = false;
 		warning("Sgl: %d\n", args[1]);
