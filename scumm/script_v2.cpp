@@ -1079,7 +1079,7 @@ void ScummEngine_v2::o2_walkActorTo() {
 	a = derefActor(getVarOrDirectByte(PARAM_1), "o2_walkActorTo");
 
 	x = getVarOrDirectByte(PARAM_2) * 8;
-	y = getVarOrDirectByte(PARAM_1) * 2;
+	y = getVarOrDirectByte(PARAM_3) * 2;
 
 	a->startWalkActor(x, y, -1);
 }
@@ -1092,7 +1092,7 @@ void ScummEngine_v2::o2_putActor() {
 	a = derefActor(act, "o2_putActor");
 
 	x = getVarOrDirectByte(PARAM_2) * 8;
-	y = getVarOrDirectByte(PARAM_1) * 2;
+	y = getVarOrDirectByte(PARAM_3) * 2;
 
 	a->putActor(x, y, a->room);
 }
