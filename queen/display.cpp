@@ -648,7 +648,7 @@ void Display::update(bool dynalum, int16 dynaX, int16 dynaY) {
 
 void Display::setupPanel() {
 	uint32 size;
-	const uint8 *pcxBuf = _vm->resource()->loadFile("panel.pcx", 0, &size);
+	uint8 *pcxBuf = _vm->resource()->loadFile("panel.pcx", 0, &size);
 	uint8 *dst = _panelBuf + PANEL_W * 10;
 	readPCX(dst, PANEL_W, pcxBuf + 128, PANEL_W, PANEL_H - 10);
 	const uint8 *pal = pcxBuf + size - 768 + 144 * 3;
@@ -663,7 +663,7 @@ void Display::setupNewRoom(const char *name, uint16 room) {
 	uint32 size;
 	char filename[20];
 	sprintf(filename, "%s.PCX", name);
-	const uint8 *pcxBuf = _vm->resource()->loadFile(filename, 0, &size);
+	uint8 *pcxBuf = _vm->resource()->loadFile(filename, 0, &size);
 	_bdWidth  = READ_LE_UINT16(pcxBuf + 12);
 	_bdHeight = READ_LE_UINT16(pcxBuf + 14);
 	readPCX(_backdropBuf, BACKDROP_W, pcxBuf + 128, _bdWidth, _bdHeight);

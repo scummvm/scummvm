@@ -62,18 +62,21 @@ public:
 	void stopSpeech()		{ _mixer->stopHandle(_speechHandle); }
 	void stopSfx()			{ _mixer->stopHandle(_sfxHandle); }
 	
-	bool sfxOn() const		{ return _sfxToggle; }
+	bool sfxOn() const			{ return _sfxToggle; }
 	void sfxToggle(bool val)	{ _sfxToggle = val; }
-	void toggleSfx()		{ _sfxToggle ^= true; }
+	void toggleSfx()			{ _sfxToggle ^= true; }
 
 	bool speechOn()	const		{ return _speechToggle; }
 	void speechToggle(bool val)	{ _speechToggle = val; }
-	void toggleSpeech()		{ _speechToggle ^= true; }
+	void toggleSpeech()			{ _speechToggle ^= true; }
 	
 	bool musicOn() const		{ return _musicToggle; }
 	void musicToggle(bool val)	{ _musicToggle = val; }
-	void toggleMusic()		{ _musicToggle ^= true; }
+	void toggleMusic()			{ _musicToggle ^= true; }
 
+	bool isSpeechActive() const	{ return _speechHandle.isActive(); }
+	bool isSfxActive() const 	{ return _sfxHandle.isActive(); }
+	
 	int16 lastOverride() const	{ return _lastOverride; }
 
 	void saveState(byte *&ptr);

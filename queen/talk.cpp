@@ -613,7 +613,7 @@ int Talk::countSpaces(const char *segment) {
 void Talk::headStringAnimation(const SpeechParameters *parameters, int bobNum, int bankNum) {
 	// talk.c lines 1612-1635
 	BobSlot *bob2 = _vm->graphics()->bob(2);
-	
+
 	if (parameters->animation[0] == 'E') {
 		int offset = 1;
 	
@@ -702,11 +702,8 @@ void Talk::defaultAnimation(
 		// Why on earth would someone name a variable qzx?
 		short qzx = 0;
 
-		int spaces = countSpaces(segment);
-
-		int i;
-		for (i = 0; i < (spaces + 1) /* || sfxflag == 0*/; i++) {
-
+		int len = countSpaces(segment);
+		while (1) {
 			if (parameters != NULL) {
 
 				int bf;
@@ -743,7 +740,7 @@ void Talk::defaultAnimation(
 
 			if (_vm->input()->talkQuit())
 				break;
-			
+						
 			if (_vm->logic()->joeWalk() == JWM_SPEAK) {
 				_vm->update();
 			} else {
@@ -758,6 +755,19 @@ void Talk::defaultAnimation(
 				_vm->input()->clearKeyVerb();
 				_vm->sound()->stopSpeech();
 				break;
+			}
+			
+			if (_vm->sound()->speechOn()) {
+				// sfx is finished, stop the speak animation
+				if (!_vm->sound()->isSpeechActive()) {
+					break;
+				}
+			} else {
+				// no sfx, stop the animation when speak segment 'length' is 0
+				--len;
+				if (len <= 0) {
+					break;
+				}
 			}
 		}
 	}
@@ -840,33 +850,16 @@ void Talk::speakSegment(
 
 	if (_talkHead) {
 		// talk.c lines 1491-1533
-		if (isJoe) {
-			switch (_vm->logic()->currentRoom()) {
-			case FAYE_HEAD:
-			case AZURA_HEAD:
-				textX = 15;
-				break;
-
-			default:
-				textX = 150;
-				break;
-			}
-			textY = 30;
-		} else {
-			// XXX spaces = (spaces * 5) / 2;
-			switch (_vm->logic()->currentRoom()) {
-			case FAYE_HEAD:
-			case AZURA_HEAD:
-				textX = 15;
-				textY = 60;
-				break;
-
-			default: 			// Frank
-				textX = 150;
-				textY = 60;
-				break;
-			}
+		switch (_vm->logic()->currentRoom()) {
+		case FAYE_HEAD:
+		case AZURA_HEAD:
+			textX = 15;
+			break;
+		default: // FRANK_HEAD
+			textX = 150;
+			break;
 		}
+		textY = isJoe ? 30 : 60;
 	} else {
 		textX = bob->x;
 		textY = bob->y;
