@@ -28,51 +28,34 @@
 namespace Queen {
 
 
-const MovePersonData Walk::_moveData[] = {
-   {"COMPY",       -1, -6, 1, 6, 0, 0, 0, 0,12,12,1,14},
-   {"DEINO",       -1, -8, 1, 8, 0, 0, 0, 0,11,11,1,10},
-   {"FAYE",        -1, -6, 1, 6,13,18, 7,12,19,22,2, 5},
-   {"GUARDS",      -1, -6, 1, 6, 0, 0, 0, 0, 7, 7,2, 5},
-   {"PRINCESS1",   -1, -6, 1, 6,13,18, 7,12,19,21,2, 5},
-   {"PRINCESS2",   -1, -6, 1, 6,13,18, 7,12,19,21,2, 5},
-   {"AMGUARD",     -1, -6, 1, 6,13,18, 7,12,19,21,2, 5},
-   {"SPARKY",      -1, -6, 1, 6,13,18, 7,12,21,20,2, 5},
-   {"LOLA_SHOWER", -1, -6,55,60, 0, 0, 0, 0, 7, 7,2, 5},
-   {"LOLA",       -24,-29,24,29, 0, 0, 0, 0,30,30,2, 5},
-   {"BOB",        -15,-20,15,20,21,26, 0, 0,27,29,2, 5},
-   {"CHEF",        -1, -4, 1, 4, 0, 0, 0, 0, 1, 5,2, 4},
-   {"HENRY",       -1, -6, 1, 6, 0, 0, 0, 0, 7, 7,2, 6},
-   {"ANDERSON",    -1, -6, 1, 6, 0, 0, 0, 0, 7, 7,2, 5},
-   {"JASPAR",      -4, -9, 4, 9,16,21,10,15, 1, 3,1,10},
-   {"PYGMY",       -7,-12, 7,12, 0, 0, 0, 0,27,27,2, 5},
-   {"FRANK",        7, 12, 1, 6, 0, 0, 0, 0,13,13,2, 4},
-   {"WEDGEWOOD",  -20,-25,20,25, 0, 0, 0, 0, 1, 1,1, 5},
-   {"TMPD",        -1, -6, 1, 6,13,18, 7,12,19,21,2, 5},
-   {"IAN",         -1, -6, 1, 6, 0, 0, 0, 0, 7, 7,2, 6},
-   {"*",            0,  0, 0, 0, 0, 0, 0, 0, 0, 0,0, 0}
+const MovePersonData Walk::MOVE_DATA[] = {
+   {"COMPY",       -1,  -6,  1,  6,  0,  0,  0,  0, 12, 12, 1, 14},
+   {"DEINO",       -1,  -8,  1,  8,  0,  0,  0,  0, 11, 11, 1, 10},
+   {"FAYE",        -1,  -6,  1,  6, 13, 18,  7, 12, 19, 22, 2,  5},
+   {"GUARDS",      -1,  -6,  1,  6,  0,  0,  0,  0,  7,  7, 2,  5},
+   {"PRINCESS1",   -1,  -6,  1,  6, 13, 18,  7, 12, 19, 21, 2,  5},
+   {"PRINCESS2",   -1,  -6,  1,  6, 13, 18,  7, 12, 19, 21, 2,  5},
+   {"AMGUARD",     -1,  -6,  1,  6, 13, 18,  7, 12, 19, 21, 2,  5},
+   {"SPARKY",      -1,  -6,  1,  6, 13, 18,  7, 12, 21, 20, 2,  5},
+   {"LOLA_SHOWER", -1,  -6, 55, 60,  0,  0,  0,  0,  7,  7, 2,  5},
+   {"LOLA",       -24, -29, 24, 29,  0,  0,  0,  0, 30, 30, 2,  5},
+   {"BOB",        -15, -20, 15, 20, 21, 26,  0,  0, 27, 29, 2,  5},
+   {"CHEF",        -1,  -4,  1,  4,  0,  0,  0,  0,  1,  5, 2,  4},
+   {"HENRY",       -1,  -6,  1,  6,  0,  0,  0,  0,  7,  7, 2,  6},
+   {"ANDERSON",    -1,  -6,  1,  6,  0,  0,  0,  0,  7,  7, 2,  5},
+   {"JASPAR",      -4,  -9,  4,  9, 16, 21, 10, 15,  1,  3, 1, 10},
+   {"PYGMY",       -7, -12,  7, 12,  0,  0,  0,  0, 27, 27, 2,  5},
+   {"FRANK",        7,  12,  1,  6,  0,  0,  0,  0, 13, 13, 2,  4},
+   {"WEDGEWOOD",  -20, -25, 20, 25,  0,  0,  0,  0,  1,  1, 1,  5},
+   {"TMPD",        -1,  -6,  1,  6, 13, 18,  7, 12, 19, 21, 2,  5},
+   {"IAN",         -1,  -6,  1,  6,  0,  0,  0,  0,  7,  7, 2,  6},
+   {"*",            0,   0,  0,  0,  0,  0,  0,  0,  0,  0, 0,  0}
 };
 
 
 
 Walk::Walk(Logic *logic, Graphics *graphics)
 	: _logic(logic), _graphics(graphics) {
-}
-
-
-void Walk::joeMoveBlock(int facing, uint16 areaNum, uint16 walkDataNum) {
-
-	warning("Walk::moveJoeBlock() partially implemented");
-	_graphics->bob(0)->animating = false;
-
-    // Make Joe face the right direction
-	_joeMoveBlock = true;
-	_logic->joeFacing(facing);
-	_logic->joeFace();
-
-	_logic->newRoom(0);
-	_logic->entryObj(0);
-
-	// XXX cutaway calls
 }
 
 
@@ -133,7 +116,9 @@ bool Walk::animateJoe() {
 
 		// area has been turned off, see if we should execute a cutaway
 		if (pwd->area->mapNeighbours < 0) {
-			joeMoveBlock(pwd->anim.facing, pwd->areaNum, i);
+			// queen.c l.2838-2911
+			_logic->customMoveJoe(pwd->anim.facing, pwd->areaNum, i);
+			_joeMoveBlock = true;
 			return interrupted;
 		}
 		if (lastDirection != pwd->anim.facing) {
@@ -157,7 +142,7 @@ bool Walk::animateJoe() {
 				pbs->speed = 1;
 			}
 			_logic->checkPlayer();
-			if (_logic->joeWalk() == 2) { // || cutQuit 
+			if (_logic->joeWalk() == 2) { // XXX || cutQuit 
 				// we are about to do something else, so stop walking
 				interrupted = true;
 				pbs->moving = false;
@@ -299,7 +284,7 @@ void Walk::animatePerson(const MovePersonData *mpd, uint16 image, uint16 bobNum,
 			else {
 				pbs->speed = scale * (mpd->moveSpeed / 2) / 100;
 			}
-//			if (cutQuit)
+			// XXX if (cutQuit)
 		}
 	}
 }
@@ -386,7 +371,7 @@ int16 Walk::personMove(const Person *pp, uint16 endx, uint16 endy, uint16 curIma
 	calc(oldPos, newPos, oldx, oldy, endx, endy);
 
 	// find MovePersonData associated to Person
-	const MovePersonData *mpd = _moveData;
+	const MovePersonData *mpd = MOVE_DATA;
 	while (mpd->name[0] != '*') {
 		if (scumm_stricmp(mpd->name, pp->name) == 0) {
 			break;

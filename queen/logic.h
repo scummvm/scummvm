@@ -226,18 +226,13 @@ public:
 	//! GRAB_DIR
 	void joeGrabDirection(StateGrab grab, uint16 speed);
 
-	//! USE_DRESS
 	void joeUseDress(bool showCut);
-
-	//! USE_CLOTHES
 	void joeUseClothes(bool showCut);
-
-	//! USE_UNDERWEAR
 	void joeUseUnderwear();
 
 	void joeSpeak(uint16 descNum, bool objectType = false);
 
-	void playCutaway(const char* cutFile);
+	void playCutaway(const char *cutFile, char *next = NULL);
 
 	const char* objectOrItemName(int16 obj) const;
 
@@ -268,6 +263,8 @@ public:
 	void objectCopy(int dummyObjectIndex, int objectIndex);
 
 	void checkPlayer();
+
+	void customMoveJoe(int facing, uint16 areaNum, uint16 walkDataNum);
 
 	void update();
 

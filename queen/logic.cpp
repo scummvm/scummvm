@@ -1923,9 +1923,12 @@ void Logic::joeUseUnderwear() {
 }
 
 
-void Logic::playCutaway(const char* cutFile) {
+void Logic::playCutaway(const char *cutFile, char *next) {
 
-	char next[20];
+	char nextFile[20];
+	if (next == NULL) {
+		next = nextFile;
+	}
 	Cutaway::run(cutFile, next, _graphics, _input, this, _resource, _sound);
 }
 
@@ -2189,6 +2192,127 @@ void Logic::objectCopy(int dummyObjectIndex, int realObjectIndex) {
 void Logic::checkPlayer() {
 	update();
 	_cmd->updatePlayer();
+}
+
+
+void Logic::customMoveJoe(int facing, uint16 areaNum, uint16 walkDataNum) {
+
+	// queen.c l.2838-2911
+	debug(9, "customMoveJoe(%d, %d, %d)\n", facing, areaNum, walkDataNum);
+
+	// Stop animating Joe
+	_graphics->bob(0)->animating = false;
+
+    // Make Joe face the right direction
+	joeFacing(facing);
+	joeFace();
+
+	_newRoom = 0;
+	_entryObj = 0;
+
+	char nextCut[20];
+	memset(nextCut, 0, sizeof(nextCut));
+
+	switch (_currentRoom) {
+	case 4:
+		joeSpeak(16);
+		break;
+	case 6:
+		playCutaway("c6c.CUT", nextCut);
+		break;
+	case 14:
+		playCutaway("c14b.CUT", nextCut);
+		break;
+    case 16:
+		if (areaNum == 3) {
+			playCutaway("c16a.CUT", nextCut);
+		}
+		break;
+	case 17:
+		if (walkDataNum == 4) {
+			playCutaway("c17a.CUT", nextCut);
+		}
+		else if (walkDataNum == 2) {
+			playCutaway("c17b.CUT", nextCut);
+		}
+		break;
+    case 22:
+		playCutaway("c22a.CUT", nextCut);
+		break;
+    case 26:
+		playCutaway("c26b.CUT", nextCut);
+		break;
+    case 30:
+		playCutaway("c30a.CUT", nextCut);
+		break;
+    case 32:
+		playCutaway("c32c.CUT", nextCut);
+		break;
+    case 50:
+		if (areaNum == 6) {
+			if (_gameState[21] == 0) {
+				playCutaway("c50d.CUT", nextCut);
+				while (nextCut[0] != '\0') {
+					playCutaway(nextCut, nextCut);
+				}
+			    _gameState[21] = 1;
+			} else {
+				playCutaway("c50h.CUT", nextCut);
+			}
+		}
+		break;
+    case 53:
+		playCutaway("c53b.CUT", nextCut);
+		break;
+    case 55:
+		joeSpeak(19);
+		break;
+    case 71:
+		joeSpeak(21);
+		break;
+    case 73:
+		// don't play next Cutaway
+		if (_gameState[VAR_ROOM73_CUTAWAY] == 0) {
+			playCutaway("c73a.CUT"); 
+			_gameState[VAR_ROOM73_CUTAWAY] = 1;
+			joeUseUnderwear();
+			joeFace();
+		}
+		else if (_gameState[VAR_ROOM73_CUTAWAY] == 1) {
+			playCutaway("c73b.CUT");
+			_gameState[VAR_ROOM73_CUTAWAY] = 2;
+		}
+		else if (_gameState[VAR_ROOM73_CUTAWAY] == 2) {
+			playCutaway("c73c.CUT");
+		}
+		break;
+    case 100:
+		if (areaNum == 7) {
+			joeSpeak(17);
+		}
+		break;
+	case 101:
+		if (areaNum == 5 && _gameState[187] == 0) {
+			playCutaway("c101b.CUT", nextCut);
+		}
+		break;
+    case 103:
+		if (areaNum == 3) {
+			if (_gameState[35] == 1) {
+				playCutaway("c103e.CUT", nextCut);
+			}
+			else if (_gameState[35] == 0) {
+				playCutaway("c103b.CUT", nextCut);
+				_gameState[35] = 1;
+			}
+		}
+		break;
+	}
+
+	while (strlen(nextCut) > 4 && 
+			scumm_stricmp(nextCut + strlen(nextCut) - 4, ".cut") == 0) {
+		playCutaway(nextCut, nextCut);
+	}
 }
 
 

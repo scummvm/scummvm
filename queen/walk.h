@@ -28,9 +28,6 @@
 namespace Queen {
 
 
-#define MAX_AREAS 11
-
-
 struct MovePersonAnim {
 	int16 firstFrame;
 	int16 lastFrame;
@@ -48,7 +45,7 @@ struct WalkData {
 //	int16 sign; // never used
 	int16 dx, dy;
 	const Area *area;
-	uint16 areaNum; // extra stuff for joeMoveBlock
+	uint16 areaNum; // extra stuff for customMoveJoe
 	MovePersonAnim anim;
 };
 
@@ -72,18 +69,17 @@ class Graphics;
 class Walk {
 public:
 
-	Walk(Logic* logic, Graphics* graphics);
+	Walk(Logic *logic, Graphics *graphics);
 
-	//! MOVE_JOE()
 	int16 joeMove(int direction, uint16 endx, uint16 endy, bool inCutaway);
 	
-	//! MOVE_OTHER
 	int16 personMove(const Person *pp, uint16 endx, uint16 endy, uint16 curImage, int direction);
 
+	enum {
+		MAX_WALK_DATA = 16
+	};
 
 private:
-
-	void joeMoveBlock(int facing, uint16 areaNum, uint16 walkDataNum);
 
 	void animateJoePrepare();
 	bool animateJoe();
@@ -91,46 +87,48 @@ private:
 	void animatePersonPrepare(const MovePersonData *mpd, int direction);
 	void animatePerson(const MovePersonData *mpd, uint16 image, uint16 bobNum, uint16 bankNum, int direction);
 
-	//! CALC_X, CALC_Y
+	//! compute transition coordinate
 	static uint16 calcC(uint16 c1, uint16 c2, uint16 c3, uint16 c4, uint16 lastc);
 	
-	//! FIND_OLDP, FIND_NEWP
+	//! find area for position
 	int16 findAreaPosition(uint16 *x, uint16 *y, bool recalibrate);
 
-	//! FIND_FREE_AREA, find an area not already struck
+	//! find an area not already struck
 	uint16 findFreeArea(uint16 area) const;
 
-	//! 
+	//! return true if the area is already on the walking path
 	bool isAreaStruck(uint16 area) const;
 
-	//! CALC_PATH, calculates the path list from oldArea to newArea
+	//! calculates the path list from oldArea to newArea
 	bool calcPath(uint16 oldArea, uint16 newArea);
 	
 	//! resets path computed in calcPath()
 	void initWalkData();
 	
-	//! CALC_WALK
+	//! add an area to the path
 	void incWalkData(uint16 px, uint16 py, uint16 x, uint16 y, uint16 area);
 	
-	//! equivalent to l.2432,2469 MOVE_OTHER() and l.2696,2744 MOVE_JOE()
+	//! compute path (and populates _walkData) from current position to the new one
     void calc(uint16 oldPos, uint16 newPos, uint16 oldx, uint16 oldy, uint16 x, uint16 y);
 
-	static const MovePersonData _moveData[];
 
+	WalkData _walkData[MAX_WALK_DATA];	
 	uint16 _walkDataCount;
-	WalkData _walkData[16];	
 	
+	uint16 _areaStrike[MAX_WALK_DATA];
 	uint16 _areaStrikeCount;
-	uint16 _areaStrike[MAX_AREAS + 1];
-	uint16 _areaListCount;
-	uint16 _areaList[MAX_AREAS + 1];
 
-	//! set if joeMoveBlock() is called in joeAnimate()
+	uint16 _areaList[MAX_WALK_DATA];
+	uint16 _areaListCount;
+
+	//! set if customMoveJoe() is called in joeAnimate()
 	bool _joeMoveBlock;
 
 	Logic *_logic;
 	Graphics *_graphics;
 
+
+	static const MovePersonData MOVE_DATA[];
 };
 
 
