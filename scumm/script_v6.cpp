@@ -2263,8 +2263,8 @@ void ScummEngine_v6::o6_isAnyOf() {
 			return;
 		}
 	}
+
 	push(0);
-	return;
 }
 
 void ScummEngine_v6::o6_quitPauseRestart() {

@@ -802,7 +802,7 @@ void ScummEngine_v100he::o100_dimArray() {
 
 void ScummEngine_v100he::o100_drawObject() {
 	byte subOp = fetchScriptByte();
-	int state = 0, y = -1, x = -1;
+	int state, y, x;
 
 	switch (subOp) {
 	case 6:
@@ -819,6 +819,7 @@ void ScummEngine_v100he::o100_drawObject() {
 		state = pop();
 		if (state == 0)
 			state = 1;
+		y = x = -100;
 		break;
 	default:
 		error("o100_drawObject: default case %d", subOp);
@@ -829,7 +830,7 @@ void ScummEngine_v100he::o100_drawObject() {
 	if (objnum == -1)
 		return;
 
-	if (y != -1 && x != -1) {
+	if (y != -100 && x != -100) {
 		_objs[objnum].x_pos = x * 8;
 		_objs[objnum].y_pos = y * 8;
 	}

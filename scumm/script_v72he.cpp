@@ -640,16 +640,17 @@ void ScummEngine_v72he::o72_addMessageToStack() {
 }
 
 void ScummEngine_v72he::o72_isAnyOf() {
-	int args[128], i = 0;
-	int num = getStackList(args, ARRAYSIZE(args));
-	int value = pop();
+	int args[128];
+	int num, value;
 
-	while (i < num) {
+	num = getStackList(args, ARRAYSIZE(args));
+	value = pop();
+
+	for (int i = 0; i < num; i++) {
 		if (args[i] == value) {
 			push(1);
 			return;
 		}
-		i++;
 	}
 
 	push(0);
@@ -765,7 +766,7 @@ void ScummEngine_v72he::o72_startObject() {
 
 void ScummEngine_v72he::o72_drawObject() {
 	byte subOp = fetchScriptByte();
-	int state = 0, y = -1, x = -1;
+	int state, y, x;
 
 	switch (subOp) {
 	case 62:
@@ -777,6 +778,7 @@ void ScummEngine_v72he::o72_drawObject() {
 		state = pop();
 		if (state == 0)
 			state = 1;
+		y = x = -100;
 		break;
 	case 65:
 		state = 1;
@@ -792,7 +794,7 @@ void ScummEngine_v72he::o72_drawObject() {
 	if (objnum == -1)
 		return;
 
-	if (y != -1 && x != -1) {
+	if (y != -100 && x != -100) {
 		_objs[objnum].x_pos = x * 8;
 		_objs[objnum].y_pos = y * 8;
 	}
