@@ -25,11 +25,11 @@ namespace Sword2 {
 // Interpreter return codes
 
 enum {
-	IR_STOP		= 0,
-	IR_CONT		= 1,
-	IR_TERMINATE	= 2,
-	IR_REPEAT	= 3,
-	IR_GOSUB	= 4
+	IR_STOP		= 0,	// Quit for a cycle
+	IR_CONT		= 1,	// Continue as normal
+	IR_TERMINATE	= 2,	// Return without updating the offset
+	IR_REPEAT	= 3,	// Return; offset at start of function call
+	IR_GOSUB	= 4	// Return with updated offset
 };
 
 // Get parameter fix so that the playstation version can handle words not on

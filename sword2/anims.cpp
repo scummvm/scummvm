@@ -303,8 +303,6 @@ int32 Logic::fnNoSprite(int32 *params) {
 	// remove previous status (but don't affect the shading upper-word)
 	ob_graphic->type &= 0xffff0000;
 	ob_graphic->type |= NO_SPRITE;
-
-	// continue script
 	return IR_CONT;
 }
 
@@ -316,8 +314,6 @@ int32 Logic::fnBackPar0Sprite(int32 *params) {
 	// remove previous status (but don't affect the shading upper-word)
 	ob_graphic->type &= 0xffff0000;
 	ob_graphic->type |= BGP0_SPRITE;
-
-	// continue script
 	return IR_CONT;
 }
 
@@ -329,8 +325,6 @@ int32 Logic::fnBackPar1Sprite(int32 *params) {
 	// remove previous status (but don't affect the shading upper-word)
 	ob_graphic->type &= 0xffff0000;
 	ob_graphic->type |= BGP1_SPRITE;
-
-	// continue script
 	return IR_CONT;
 }
 
@@ -342,8 +336,6 @@ int32 Logic::fnBackSprite(int32 *params) {
 	// remove previous status (but don't affect the shading upper-word)
 	ob_graphic->type &= 0xffff0000;
 	ob_graphic->type |= BACK_SPRITE;
-
-	// continue script
 	return IR_CONT;
 }
 
@@ -355,8 +347,6 @@ int32 Logic::fnSortSprite(int32 *params) {
 	// remove previous status (but don't affect the shading upper-word)
 	ob_graphic->type &= 0xffff0000;
 	ob_graphic->type |= SORT_SPRITE;
-
-	// continue script
 	return IR_CONT;
 }
 
@@ -368,8 +358,6 @@ int32 Logic::fnForeSprite(int32 *params) {
 	// remove previous status (but don't affect the shading upper-word)
 	ob_graphic->type &= 0xffff0000;
 	ob_graphic->type |= FORE_SPRITE;
-
-	// continue script
 	return IR_CONT;
 }
 
@@ -381,8 +369,6 @@ int32 Logic::fnForePar0Sprite(int32 *params) {
 	// remove previous status (but don't affect the shading upper-word)
 	ob_graphic->type &= 0xffff0000;
 	ob_graphic->type |= FGP0_SPRITE;
-
-	// continue script
 	return IR_CONT;
 }
 
@@ -394,8 +380,6 @@ int32 Logic::fnForePar1Sprite(int32 *params) {
 	// remove previous status (but don't affect the shading upper-word)
 	ob_graphic->type &= 0xffff0000;
 	ob_graphic->type |= FGP1_SPRITE;
-
-	// continue script
 	return IR_CONT;
 }
 
@@ -405,13 +389,10 @@ int32 Logic::fnShadedSprite(int32 *params) {
 	ObjectGraphic *ob_graphic = (ObjectGraphic *) _vm->_memory->intToPtr(params[0]);
 
 	// remove previous status (but don't affect the shading upper-word)
-	ob_graphic->type &= 0x0000ffff;
-	ob_graphic->type |= SHADED_SPRITE;
-
 	// note that drivers may still shade mega frames automatically, even
 	// when not sent 'RDSPR_SHADOW'
-
-	// continue script
+	ob_graphic->type &= 0x0000ffff;
+	ob_graphic->type |= SHADED_SPRITE;
 	return IR_CONT;
 }
 
@@ -423,25 +404,8 @@ int32 Logic::fnUnshadedSprite(int32 *params) {
 	// remove previous status (but don't affect the shading upper-word)
 	ob_graphic->type &= 0x0000ffff;
 	ob_graphic->type |= UNSHADED_SPRITE;
-
-	// continue script
 	return IR_CONT;
 }
-
-// Notes on PlaySmacker()
-
-// 1st param is filename of sequence file
-// 2nd param is a pointer to a null-terminated array of pointers to
-// MovieTextObject structures
-
-//int32 PlaySmacker(char *filename, MovieTextObject *textObjects[]);
-
-//	struct MovieTextObject {
-//		uint16 startFrame;
-//		uint16 endFrame;
-//		SpriteInfo *textSprite;
-//		_wavHeader *speech;
-//	};
 
 int32 Logic::fnAddSequenceText(int32 *params) {
 	// params:	0 text number
@@ -454,8 +418,6 @@ int32 Logic::fnAddSequenceText(int32 *params) {
 	_sequenceTextList[_sequenceTextLines].startFrame = params[1];
 	_sequenceTextList[_sequenceTextLines].endFrame = (uint16) params[2];
 	_sequenceTextLines++;
-
-	// continue script
 	return IR_CONT;
 }
 
@@ -637,8 +599,6 @@ int32 Logic::fnSmackerLeadIn(int32 *params) {
 
 	// fade out any music that is currently playing
 	fnStopMusic(NULL);
-
-	// continue script
 	return IR_CONT;
 }
 
@@ -647,8 +607,6 @@ int32 Logic::fnSmackerLeadOut(int32 *params) {
 
 	// ready for use in fnPlaySequence
 	_smackerLeadOut = params[0];
-
-	// continue script
 	return IR_CONT;
 }
 
@@ -751,8 +709,6 @@ int32 Logic::fnPlaySequence(int32 *params) {
 	_vm->_graphics->setPalette(0, 256, (uint8 *) pal, RDPAL_INSTANT);
 
 	debug(5, "fnPlaySequence FINISHED");
-
-	// continue script
 	return IR_CONT;
 }
 

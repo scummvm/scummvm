@@ -109,7 +109,6 @@ int32 Logic::fnWaitSync(int32 *params) {
 		}
 	}
 
-	// back again next cycle
 	return IR_REPEAT;
 }
 

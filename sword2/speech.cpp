@@ -173,8 +173,6 @@ int32 Logic::fnChoose(int32 *params) {
 		_vm->setMouse(NORMAL_MOUSE_ID);
 
 		_choosing = true;
-
-		// again next cycle
 		return IR_REPEAT;
 	}
 
@@ -272,7 +270,6 @@ int32 Logic::fnEndConversation(int32 *params) {
 	// restart george's base script
 	// totalRestart();
 
-	//drop out without saving pc and go around again
 	return IR_CONT;
 }
 
@@ -420,8 +417,6 @@ int32 Logic::fnTheyDoWeWait(int32 *params) {
 
 	// debug flag to indicate who we're waiting for - see debug.cpp
 	_speechScriptWaiting = target;
-
-	// see ya next cycle
 	return IR_REPEAT;
 }
 
@@ -595,7 +590,6 @@ int32 Logic::fnSpeechProcess(int32 *params) {
 				ob_speech->wait_state = 1;
 			}
 
-			// come back again next cycle
 			return IR_REPEAT;
 		case INS_turn:
 			pars[0] = params[2];		// ob_logic
@@ -612,7 +606,6 @@ int32 Logic::fnSpeechProcess(int32 *params) {
 				ob_speech->wait_state = 1;
 			}
 
-			// come back again next cycle
 			return IR_REPEAT;
 		case INS_face:
 			pars[0] = params[2];		// ob_logic
@@ -629,7 +622,6 @@ int32 Logic::fnSpeechProcess(int32 *params) {
 				ob_speech->wait_state = 1;
 			}
 
-			// come back again next cycle
 			return IR_REPEAT;
 		case INS_anim:
 			pars[0] = params[2];		// ob_logic
@@ -644,7 +636,6 @@ int32 Logic::fnSpeechProcess(int32 *params) {
 				ob_speech->wait_state = 1;
 			}
 
-			// come back again next cycle
 			return IR_REPEAT;
 		case INS_reverse_anim:
 			pars[0] = params[2];		// ob_logic
@@ -659,7 +650,6 @@ int32 Logic::fnSpeechProcess(int32 *params) {
 				ob_speech->wait_state = 1;
 			}
 
-			// come back again next cycle
 			return IR_REPEAT;
 		case INS_table_anim:
 			pars[0] = params[2];		// ob_logic
@@ -675,7 +665,6 @@ int32 Logic::fnSpeechProcess(int32 *params) {
 				ob_speech->wait_state = 1;
 			}
 
-			// come back again next cycle
 			return IR_REPEAT;
 		case INS_reverse_table_anim:
 			pars[0] = params[2];		// ob_logic
@@ -691,7 +680,6 @@ int32 Logic::fnSpeechProcess(int32 *params) {
 				ob_speech->wait_state = 1;
 			}
 
-			// come back again next cycle
 			return IR_REPEAT;
 		case INS_no_sprite:
 			fnNoSprite(params);		// ob_graphic
@@ -732,7 +720,6 @@ int32 Logic::fnSpeechProcess(int32 *params) {
 				ob_speech->wait_state = 1;
 			}
 
-			// come back again next cycle
 			return IR_REPEAT;
 		case INS_walk_to_anim:
 			pars[0] = params[2];		// ob_logic
@@ -751,7 +738,6 @@ int32 Logic::fnSpeechProcess(int32 *params) {
 				ob_speech->wait_state = 1;
 			}
 
-			// come back again next cycle
 			return IR_REPEAT;
 		case INS_stand_after_anim:
 			pars[0] = params[0];		// ob_graphic
@@ -760,7 +746,7 @@ int32 Logic::fnSpeechProcess(int32 *params) {
 			fnStandAfterAnim(pars);
 			ob_speech->command = 0;		// command finished
 			ob_speech->wait_state = 1;	// waiting for command
-			return IR_REPEAT;		// come back again next cycle
+			return IR_REPEAT;
 		case INS_set_frame:
 			pars[0] = params[0];		// ob_graphic
 			pars[1] = ob_speech->ins1;	// anim_resource
@@ -768,7 +754,7 @@ int32 Logic::fnSpeechProcess(int32 *params) {
 			fnSetFrame(pars);
 			ob_speech->command = 0;		// command finished
 			ob_speech->wait_state = 1;	// waiting for command
-			return IR_REPEAT;		// come back again next cycle
+			return IR_REPEAT;
 		case INS_quit:
 			debug(5, "speech-process - quit");
 
@@ -814,8 +800,6 @@ int32 Logic::fnSpeechProcess(int32 *params) {
 
 			// now free
 			ob_speech->wait_state = 1;
-
-			// come back again next cycle
 			return IR_REPEAT;
 		}
 	}
@@ -1273,7 +1257,6 @@ int32 Logic::fnISpeak(int32 *params) {
  	if (_rightClickDelay)
 		_rightClickDelay--;
 
-	// back again next cycle
 	return IR_REPEAT;
 }
 

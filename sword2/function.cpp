@@ -56,8 +56,6 @@ int32 Logic::fnNewScript(int32 *params) {
 	PLAYER_ACTION = 0;
 
 	logicReplace(params[0]);
-
-	// drop out no pc save - and around again
 	return IR_TERMINATE;
 }
 
@@ -153,13 +151,9 @@ int32 Logic::fnPause(int32 *params) {
 	if (ob_logic->pause) {
 		// decrement the pause count
 		ob_logic->pause--;
-
-		// drop out of script, but call this again next cycle
 		return IR_REPEAT;
 	} else {
 		ob_logic->looping = 0;
-
-		// continue script
 		return IR_CONT;
 	}
 }
@@ -227,8 +221,6 @@ int32 Logic::fnSetValue(int32 *params) {
 	ObjectMega *ob_mega = (ObjectMega *) _vm->_memory->intToPtr(params[0]);
 
 	ob_mega->megaset_res = params[1];
-
-	// continue script
 	return IR_CONT;
 }
 

@@ -227,8 +227,6 @@ int32 Logic::fnWalk(int32 *params) {
 
 	// allow _walkData array to float about memory again
 	_router->floatRouteMem();
-
-	// stop the script, but repeat this call next cycle
 	return IR_REPEAT;
 }
 

@@ -33,7 +33,6 @@ int32 Logic::fnAddMenuObject(int32 *params) {
 	memcpy(&_vm->_tempList[_vm->_totalTemp], _vm->_memory->intToPtr(params[0]), sizeof(MenuObject));
 	_vm->_totalTemp++;
 
-	// script continue
 	return IR_CONT;
 }
 
@@ -54,7 +53,6 @@ int32 Logic::fnRefreshInventory(int32 *params) {
 	_vm->buildMenu();
 	_vm->_examiningMenuIcon = false;
 
-	// script continue
 	return IR_CONT;
 }
 

@@ -199,7 +199,6 @@ int32 Logic::fnPauseForEvent(int32 *params) {
 	// start the pause
 	if (ob_logic->looping == 0) {
 		ob_logic->looping = 1;
-		// no. of game cycles
 		ob_logic->pause = params[1];
 	}
 
@@ -207,14 +206,10 @@ int32 Logic::fnPauseForEvent(int32 *params) {
 	if (ob_logic->pause) {
 		// decrement the pause count
 		ob_logic->pause--;
-
-		// drop out of script, but call this again next cycle
 		return IR_REPEAT;
 	} else {
-		// pause count is zerp
+		// pause count is zero
 		ob_logic->looping = 0;
-
-		// continue script
 		return IR_CONT;
 	}
 }

@@ -365,8 +365,6 @@ int32 Logic::fnTotalRestart(int32 *params) {
 	// params:	none
 
 	totalRestart();
-
-	// drop out without saving pc and go around again
 	return IR_TERMINATE;
 }
 
@@ -397,11 +395,8 @@ int32 Logic::fnAddToKillList(int32 *params) {
 		// (otherwise finish)
 
 		if (entry == _kills) {
-#ifdef _SWORD2_DEBUG
 			// no room at the inn
-			if (_kills == OBJECT_KILL_LIST_SIZE)
-				error("List full in fnAddToKillList(%u)", ID);
-#endif
+			assert(_kills < OBJECT_KILL_LIST_SIZE);
 
 			// add this 'ID' to the kill list
 			_objectKillList[_kills] = ID;
@@ -417,7 +412,6 @@ int32 Logic::fnAddToKillList(int32 *params) {
 		}
 	}
 
-	// continue script
 	return IR_CONT;
 }
 
