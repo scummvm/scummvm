@@ -1189,7 +1189,7 @@ void ScummEngine_v90he::drawWizComplexPolygon(int resnum, int state, int po_x, i
 		pts[i].y += po_y;
 	}
 
-	// XXX drawWizPolygonPoints(resnum, state, pts, r, VAR(117));
+	// XXX drawWizPolygonPoints(resnum, state, pts, r, VAR(VAR_WIZ_TCOLOR));
 	warning("ScummEngine_v90he::drawWizComplexPolygon() partially implemented");
 }
 
@@ -1239,7 +1239,7 @@ void ScummEngine_v90he::displayWizComplexImage(const WizParameters *params) {
 	} else if (params->processFlags & 0x18) {
 		drawWizComplexPolygon(params->img.resNum, state, po_x, po_y, unk, rotationAngle, zoom, r);
 	} else if (flags & kWIFIsPolygon) {
-		drawWizPolygon(params->img.resNum, state, po_x, flags); // XXX , VAR(117));
+		drawWizPolygon(params->img.resNum, state, po_x, flags); // XXX , VAR(VAR_WIZ_TCOLOR));
 	} else {
 		if ((flags & 0x200) || (flags & 0x24)) {
 			warning("ScummEngine_v90he::displayWizComplexImage() unhandled flags = 0x%X", flags);
