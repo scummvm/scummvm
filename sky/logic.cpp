@@ -58,7 +58,6 @@ void SkyLogic::engine() {
 			continue;
 		}
 
-		// Process id eax
 		//cur_id = compact2->logic;
 		_compact = SkyState::fetchCompact(compact2->logic);
 
@@ -359,6 +358,132 @@ static  McodeTable mcodeTable[] = {
 	&SkyLogic::fnPrintf,
 };
 
+static const uint32 forward_list1b[] = {
+	JOBS_SPEECH,
+	JOBS_S4,
+	JOBS_ALARMED,
+	JOEY_RECYCLE,
+	SHOUT_SSS,
+	JOEY_MISSION,
+	TRANS_MISSION,
+	SLOT_MISSION,
+	CORNER_MISSION,
+	JOEY_LOGIC,
+	GORDON_SPEECH,
+	JOEY_BUTTON_MISSION,
+	LOB_DAD_SPEECH,
+	LOB_SON_SPEECH,
+	GUARD_SPEECH,
+	MANTRACH_SPEECH,
+	WRECK_SPEECH,
+	ANITA_SPEECH,
+	LAMB_FACTORY,
+	FORE_SPEECH,
+	JOEY_42_MISS,
+	JOEY_JUNCTION_MISS,
+	WELDER_MISSION,
+	JOEY_WELD_MISSION,
+	RADMAN_SPEECH,
+	LINK_7_29,
+	LINK_29_7,
+	LAMB_TO_3,
+	LAMB_TO_2,
+	BURKE_SPEECH,
+	BURKE_1,
+	BURKE_2,
+	DR_BURKE_1,
+	JASON_SPEECH,
+	JOEY_BELLEVUE,
+	ANCHOR_SPEECH,
+	ANCHOR_MISSION,
+	JOEY_PC_MISSION,
+	HOOK_MISSION,
+	TREVOR_SPEECH,
+	JOEY_FACTORY,
+	HELGA_SPEECH,
+	JOEY_HELGA_MISSION,
+	GALL_BELLEVUE,
+	GLASS_MISSION,
+	LAMB_FACT_RETURN,
+	LAMB_LEAVE_GARDEN,
+	LAMB_START_29,
+	LAMB_BELLEVUE,
+	CABLE_MISSION,
+	FOSTER_TOUR,
+	LAMB_TOUR,
+	FOREMAN_LOGIC,
+	LAMB_LEAVE_FACTORY,
+	LAMB_BELL_LOGIC,
+	LAMB_FACT_2,
+	START90,
+	0,
+	0,
+	LINK_28_31,
+	LINK_31_28,
+	EXIT_LINC,
+	DEATH_SCRIPT,
+};
+
+static const uint32 forward_list2b[] = {
+	STD_ON,
+	STD_EXIT_LEFT_ON,
+	STD_EXIT_RIGHT_ON,
+	ADVISOR_188,
+	SHOUT_ACTION,
+	MEGA_CLICK,
+	MEGA_ACTION,
+};
+
+static const uint32 forward_list3b[] = {
+	DANI_SPEECH,
+	DANIELLE_GO_HOME,
+	SPUNKY_GO_HOME,
+	HENRI_SPEECH,
+	BUZZER_SPEECH,
+	FOSTER_VISIT_DANI,
+	DANIELLE_LOGIC,
+	JUKEBOX_SPEECH,
+	VINCENT_SPEECH,
+	EDDIE_SPEECH,
+	BLUNT_SPEECH,
+	DANI_ANSWER_PHONE,
+	SPUNKY_SEE_VIDEO,
+	SPUNKY_BARK_AT_FOSTER,
+	SPUNKY_SMELLS_FOOD,
+	BARRY_SPEECH,
+	COLSTON_SPEECH,
+	GALL_SPEECH,
+	BABS_SPEECH,
+	CHUTNEY_SPEECH,
+	FOSTER_ENTER_COURT,
+};
+
+static const uint32 forward_list4b[] = {
+	WALTER_SPEECH,
+	JOEY_MEDIC,
+	JOEY_MED_LOGIC,
+	JOEY_MED_MISSION72,
+	KEN_LOGIC,
+	KEN_SPEECH,
+	KEN_MISSION_HAND,
+	SC70_IRIS_OPENED,
+	SC70_IRIS_CLOSED,
+	FOSTER_ENTER_BOARDROOM,
+	BORED_ROOM,
+	FOSTER_ENTER_NEW_BOARDROOM,
+	HOBS_END,
+	SC82_JOBS_SSS,
+};
+
+static const uint32 forward_list5b[] = {
+	SET_UP_INFO_WINDOW,
+	SLAB_ON,
+	UP_MOUSE,
+	DOWN_MOUSE,
+	LEFT_MOUSE,
+	RIGHT_MOUSE,
+};
+
 #define RESULT 1
 void SkyLogic::initScriptVariables() {
 	for (int i = 0; i < 838; i++)
@@ -391,6 +516,12 @@ void SkyLogic::initScriptVariables() {
 	_scriptVariables[820] = 1;
 	_scriptVariables[821] = 1;
 	_scriptVariables[822] = 1;
+
+	memcpy(_scriptVariables + 353, forward_list1b, sizeof(forward_list1b));
+	memcpy(_scriptVariables + 657, forward_list2b, sizeof(forward_list2b));
+	memcpy(_scriptVariables + 722, forward_list3b, sizeof(forward_list3b));
+	memcpy(_scriptVariables + 664, forward_list4b, sizeof(forward_list4b));
+	memcpy(_scriptVariables + 506, forward_list5b, sizeof(forward_list5b));
 }
 
 uint32 SkyLogic::script(Compact *compact, uint16 scriptNo, uint16 offset) {
@@ -398,13 +529,12 @@ script:
 	// process a script
 	// low level interface to interpreter
 
-	// script:
+	// scriptNo:
 	// Bit  0-11 - Script number
 	// Bit 12-15 - Module number
-	// Bit 16-31 - Script offset (if any)
 
 	uint16 moduleNo = (uint16)((scriptNo & 0xff00) >> 12);
-	printf("scriptNo: %d, moduleNo: %d\n", scriptNo, moduleNo);
+	printf("scriptNo: %d, moduleNo: %d, offset: %d\n", scriptNo, moduleNo, offset);
 	uint16 *scriptData = _moduleList[moduleNo]; // get module address
 
 	printf("File: %d\n", moduleNo + f_module_0);
