@@ -220,7 +220,7 @@ REDISP_OBJECT()				Logic::roomRefreshObject
 restart_game()
 SETUP_BOBS()				Graphics::bobSetupControl
 SETUP_FURNITURE()			Logic::roomSetupFurniture
-SETUP_ROOM()				QueenEngine::roomChanged
+SETUP_ROOM()				Logic::changeRoom
 SETUP_SCREENS()				*not needed* (only calls Graphics::loadPanel)
 SETUP_VARS()				*not needed* (equivalent to Command::clear(), SCENE=0, clear(gamestate))
 update() 					Logic::update

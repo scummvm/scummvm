@@ -45,9 +45,6 @@ protected:
 
 	void errorString(const char *buf_input, char *buf_output);
 
-	//! Called when we go from one room to another
-	void roomChanged(); // SETUP_ROOM
-
 	void go();
 
 	void initialise();
@@ -55,7 +52,6 @@ protected:
 	static void timerHandler(void *ptr);
 	void gotTimerTick();
 
-	
 	Graphics *_graphics;
 	Input *_input;
 	Resource *_resource;

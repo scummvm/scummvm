@@ -400,6 +400,10 @@ void Logic::initialise() {
 
 
 ObjectData* Logic::objectData(int index) const {
+
+	if (index < 0) {
+		warning("Logic::objectData() called with negative object index: %i", index);
+	}
 	index = ABS(index); // cyx: is that really necessary ?
 	if (index <= _numObjects)
 		return &_objectData[index];
@@ -2568,6 +2572,63 @@ void Logic::sceneStop() {
 	_display->palSetAllDirty();
 	_display->showMouseCursor(true);
 	zoneSetupPanel();
+}
+
+
+void Logic::changeRoom() {
+
+	if (currentRoom() == ROOM_JUNGLE_PINNACLE) {
+		handlePinnacleRoom();
+	}
+	else if (currentRoom() == FOTAQ_LOGO && gameState(VAR_INTRO_PLAYED) == 0) {
+		// FIXME: this should be rewritten in a more elegant way
+		bool pcGamesDemo = _resource->isDemo() && !_resource->exists("pclogo.cut");
+
+		if (pcGamesDemo) {
+			currentRoom(79);
+		}
+		roomDisplay(currentRoom(), RDM_FADE_NOJOE, 100, 2, true);
+
+		if (_resource->isDemo()) {
+			if (pcGamesDemo) {
+				playCutaway("clogo.cut");
+			}
+			else {
+				playCutaway("pclogo.cut");
+			}
+		}
+		else {
+			playCutaway("copy.cut");
+			playCutaway("clogo.cut");
+
+			// TODO enable talking for talkie version
+
+			playCutaway("cdint.cut");
+
+			// restore palette colors ranging from 144 to 256
+			_graphics->loadPanel();
+			
+			playCutaway("cred.cut");
+		}
+
+		// Ugly fix from original code
+		sceneReset();
+
+		currentRoom(ROOM_HOTEL_LOBBY);
+		entryObj(584);
+
+		roomDisplay(currentRoom(), RDM_FADE_JOE, 100, 2, true);
+		playCutaway("c70d.cut");
+
+		gameState(VAR_INTRO_PLAYED, 1);
+
+		inventorySetup();
+		inventoryRefresh();
+	}
+	else {
+		roomDisplay(currentRoom(), RDM_FADE_JOE, 100, 1, false);
+	}
+	_display->showMouseCursor(true); // _drawMouseFlag = 1;
 }
 
 

@@ -290,7 +290,6 @@ class Cutaway {
 		//! Dump CutawayAnum data with debug()
 		static void dumpCutawayAnim(CutawayAnim &anim);
 
-
 };
 
 } // End of namespace Queen

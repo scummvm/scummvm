@@ -150,6 +150,9 @@ void Cutaway::load(const char *filename) {
 	_nextSentence = Talk::getString(_nextSentence, entryString, MAX_STRING_LENGTH);
 	debug(0, "Entry string = '%s'", entryString);
 
+	_logic->joeCutFacing(_logic->joeFacing());
+	_logic->joeFace();
+
 	if (entryString[0] == '*' &&
 			entryString[1] == 'F' &&
 			entryString[3] == '\0') {
@@ -401,6 +404,12 @@ void Cutaway::changeRooms(CutawayObject &object) {
 	int16 comPanel = _comPanel;
 	if (strcmp(_basename, "c41f") == 0 && _temporaryRoom == 106 && object.room == 41) {
 		comPanel = 1;
+	}
+
+	// FIXME: in the original engine, panel is hidden after displaying head. We do
+	// it before.
+	if(object.room == FAYE_HEAD || object.room == AZURA_HEAD || object.room == FRANK_HEAD) {
+		comPanel = 2;
 	}
 
 	RoomDisplayMode mode;
@@ -865,17 +874,7 @@ void Cutaway::run(char *nextFilename) {
 
 	_input->cutawayRunning(true);
 
-	_logic->joeCutFacing(_logic->joeFacing());
-	_logic->joeFace();
-
 	_initialRoom = _temporaryRoom = _logic->currentRoom();
-
-	// FIXME: hack to hide the panel *before* displaying a talking head.
-	// This was not handled in the original game, but I think it is 
-	// better like that.
-	if (_talkTo != 0) {
-		_comPanel = 2;
-	}
 
 	_logic->display()->screenMode(_comPanel, true);
 
@@ -1012,17 +1011,14 @@ void Cutaway::run(char *nextFilename) {
 			}
 
 			if (_logic->currentRoom() != _initialRoom) {
-				// XXX should call SETUP_ROOM here but that would introduce a
-				// circual dependency, so we try to set newRoom to the room
-				// instead
-				debug(0, "[Cutaway::run] Not calling SETUP_ROOM here, just setting newRoom to %i", _initialRoom);
-				_logic->newRoom(_initialRoom);
-				_logic->display()->fullscreen(true);
+				_logic->currentRoom(_initialRoom);
+				_logic->changeRoom();
+				if (_logic->currentRoom() == _logic->newRoom()) {
+					_logic->newRoom(0);
+				}
 			}
-			else {
-				_logic->joeX(0);
-				_logic->joeY(0);
-			}
+			_logic->joeX(0);
+			_logic->joeY(0);
 		}
 
 		_logic->joeCutFacing(0);

@@ -296,6 +296,8 @@ public:
 	//! Stop making a scene
 	void sceneStop();
 
+	void changeRoom();
+
 	void useJournal();
 
 	void executeSpecialMove(uint16 sm);

@@ -122,70 +122,17 @@ void QueenEngine::errorString(const char *buf1, char *buf2) {
 	strcpy(buf2, buf1);
 }
 
-void QueenEngine::roomChanged() {
-	// queen.c function SETUP_ROOM, lines 398-428
-
-	// This function uses lots of variables in logic, but we can't move it to
-	// logic because that would cause a circular dependency between Cutaway and
-	// Logic... :-(
-
-	if (_logic->currentRoom() == ROOM_JUNGLE_PINNACLE) {
-		_logic->handlePinnacleRoom();
-	}
-	else if (_logic->currentRoom() == FOTAQ_LOGO && _logic->gameState(VAR_INTRO_PLAYED) == 0) {
-		bool pcGamesDemo = _resource->isDemo() && !_resource->exists("pclogo.cut");
-
-		if (pcGamesDemo) {
-			_logic->currentRoom(79);
-		}
-		_logic->roomDisplay(_logic->currentRoom(), RDM_FADE_NOJOE, 100, 2, true);
-
-		if (_resource->isDemo()) {
-			if (pcGamesDemo) {
-				_logic->playCutaway("clogo.cut");
-			}
-			else {
-				_logic->playCutaway("pclogo.cut");
-			}
-		}
-		else {
-			_logic->playCutaway("copy.cut");
-			_logic->playCutaway("clogo.cut");
-
-			// TODO enable talking for talkie version
-
-			_logic->playCutaway("cdint.cut");
-
-			// restore palette colors ranging from 144 to 256
-			_graphics->loadPanel();
-			
-			_logic->playCutaway("cred.cut");
-		}
-
-		// Ugly fix from original code
-		_logic->sceneReset();
-
-		_logic->currentRoom(ROOM_HOTEL_LOBBY);
-		_logic->entryObj(584);
-
-		_logic->roomDisplay(_logic->currentRoom(), RDM_FADE_JOE, 100, 2, true);
-		_logic->playCutaway("c70d.cut");
-
-		_logic->gameState(VAR_INTRO_PLAYED, 1);
-
-		_logic->inventorySetup();
-		_logic->inventoryRefresh();
-	}
-	else {
-		_logic->roomDisplay(_logic->currentRoom(), RDM_FADE_JOE, 100, 1, false);
-	}
-	_display->showMouseCursor(true); // _drawMouseFlag = 1;
-}
-
 
 void QueenEngine::go() {
 
 	initialise();
+
+_input->fastMode(true);
+
+//_logic->currentRoom(69);
+//_logic->roomDisplay(_logic->currentRoom(), RDM_FADE_JOE, 100, 2, true);
+//_graphics->initFightBamScene();
+//_logic->playCutaway("c69g.CUT");
 
 	_logic->oldRoom(0);
 	_logic->newRoom(_logic->currentRoom());
@@ -197,7 +144,7 @@ void QueenEngine::go() {
 			_logic->update();
 			_logic->oldRoom(_logic->currentRoom());
 			_logic->currentRoom(_logic->newRoom());
-			roomChanged();
+			_logic->changeRoom();
 			_display->fullscreen(false);
 			if (_logic->currentRoom() == _logic->newRoom()) {
 				_logic->newRoom(0);
