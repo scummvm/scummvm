@@ -453,6 +453,18 @@ void Sound::playSound(int soundID) {
 		}
 	}
 
+	if ((_scumm->_features & GF_AMIGA) && (_scumm->_version <= 2)) {
+		// Some very basic sound effects support
+		if (READ_BE_UINT16(ptr + 14) == 0x0880) {
+			size = READ_BE_UINT16(ptr + 6);
+			rate = 11000;
+			sound = (char *)malloc(size);
+			memcpy(sound,ptr + 100,size);
+			_scumm->_mixer->playRaw(NULL,sound,size,rate,SoundMixer::FLAG_AUTOFREE,soundID);
+			return;
+		}
+	}
+
 	if (_scumm->_gameId == GID_MONKEY_VGA || _scumm->_gameId == GID_MONKEY_EGA) {
 		// Sound is currently not supported at all in the amiga versions of these games
 		if (_scumm->_features & GF_AMIGA)
