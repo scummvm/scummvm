@@ -117,9 +117,9 @@ int16 scen_loadStatic(char search) {
 	ptr->pieces = (Scen_PieceDesc **)malloc(sizeof(Scen_PieceDesc *) * picsCount);
 
 	for (i = 0; i < ptr->layersCount; i++) {
-		offset = ((int16 *)dataPtr)[i];
+		offset = (int16)READ_LE_UINT16(&((int16 *)dataPtr)[i]);
 		ptr->layers[i] = (Scen_StaticLayer *)(dataPtr + offset - 2);
-		ptr->layers[i]->backResId = *backsPtr;
+		ptr->layers[i]->backResId = (int16)READ_LE_UINT16(backsPtr);
 		backsPtr++;
 	}
 
@@ -419,7 +419,7 @@ int16 scen_loadAnim(char search) {
 	    picsCount);
 
 	for (i = 0; i < ptr->layersCount; i++) {
-		offset = ((int16 *)dataPtr)[i];
+		offset = (int16)READ_LE_UINT16(&((int16 *)dataPtr)[i]);
 		ptr->layers[i] = (Scen_AnimLayer *) (dataPtr + offset - 2);
 	}
 
