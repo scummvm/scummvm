@@ -59,7 +59,10 @@ void GmChannel::updateVolume(uint16 pVolume) {
 
 void GmChannel::stopNote(void) {
 
+	// All Notes Off
 	_midiDrv->send((0xB0 | _channelData.midiChannelNumber) | 0x7B00 | 0 | 0x79000000);
+	// Pitch Wheel
+	_midiDrv->send((0xE0 | _channelData.midiChannelNumber) | 0x400000);
 }
 
 int32 GmChannel::getNextEventTime(void) {
