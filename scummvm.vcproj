@@ -381,6 +381,12 @@
 					RelativePath=".\gui\ScrollBarWidget.h">
 				</File>
 				<File
+					RelativePath="gui\about.cpp">
+				</File>
+				<File
+					RelativePath="gui\about.h">
+				</File>
+				<File
 					RelativePath=".\gui\browser.cpp">
 				</File>
 				<File
