@@ -1039,16 +1039,16 @@ void ScummEngine_v90he::spritesBlitToScreen() {
 					firstLoop = false;
 					refreshScreen = true;
 				} else {
-					if (xmin < spi->bbox.left) {
+					if (xmin > spi->bbox.left) {
 						xmin = spi->bbox.left;
 					}
-					if (ymin < spi->bbox.top) {
+					if (ymin > spi->bbox.top) {
 						ymin = spi->bbox.top;
 					}
-					if (xmax > spi->bbox.right) {
+					if (xmax < spi->bbox.right) {
 						xmax = spi->bbox.right;
 					}
-					if (ymax > spi->bbox.bottom) {
+					if (ymax < spi->bbox.bottom) {
 						ymax = spi->bbox.bottom;
 					}
 					refreshScreen = true;
