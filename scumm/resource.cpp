@@ -1246,7 +1246,10 @@ void Scumm::convertADResource(int type, int idx, byte *src_ptr, int size) {
 			ch = channel[i] - 1;
 			if (ch < 0 || ch > 15)
 				continue;
-			
+
+			if (instr[i*16 + 13])
+				warning("Sound %d instrument %d uses percussion", idx, i);
+
 			debug(4, "Sound %d: instrument %d on channel %d.", 
 				  idx, i, ch);
 			
@@ -1305,7 +1308,7 @@ void Scumm::convertADResource(int type, int idx, byte *src_ptr, int size) {
 		
 		// There is a constant delay of ppqn/3 before the music starts.
 		if (ppqn / 3 >= 128)
-			*ptr++ = (ppqn / 3 >> 7) | 0x80;  
+			*ptr++ = (ppqn / 3 >> 7) | 0x80;
 		*ptr++ = ppqn / 3 & 0x7f;
 		
 		// Now copy the actual music data 
@@ -1488,7 +1491,6 @@ void Scumm::convertADResource(int type, int idx, byte *src_ptr, int size) {
 				delay = mintime - curtime;
 				curtime = mintime;
 	
-				
 				{
 					delay = convert_extraflags(ptr + 30 + 22, src_ptr + 1);
 					delay2 = convert_extraflags(ptr + 30 + 40, src_ptr + 6);
@@ -1512,6 +1514,8 @@ void Scumm::convertADResource(int type, int idx, byte *src_ptr, int size) {
 				{
 					int freq = ((current_instr[ch][1] & 3) << 8)
 						| current_instr[ch][0];
+					if (!freq)
+						freq = 0x80;
 					freq <<= ((current_instr[ch][1] >> 2) & 7) + 1;
 					int note = -11;
 					while (freq >= 0x100) {
