@@ -91,6 +91,7 @@ protected:
 	void palette_fadeup_helper(uint32 *realPal, uint32 *desiredPal, int num);
 	uint16 *loadFile(uint16 fileNr, uint8 *dest);
 	uint16 *getFileInfo(uint16 fileNr);
+	void dumpFile(uint16 fileNr);
 	void initVirgin();
 	void intro();
 	void doCDIntro();
