@@ -146,29 +146,29 @@ void OSystem_SDL_Common::init_size(uint w, uint h) {
 	load_gfx_mode();
 }
 
-void OSystem_SDL_Common::copy_rect(const byte *buf, int pitch, int x, int y, int w, int h) {
+void OSystem_SDL_Common::copy_rect(const byte *src, int pitch, int x, int y, int w, int h) {
 	if (_screen == NULL)
 		return;
 
 	StackLock lock(_graphicsMutex, this);	// Lock the mutex until this function ends
 	
-	if (((long)buf & 3) == 0 && pitch == _screenWidth && x==0 && y==0 &&
+	if (((long)src & 3) == 0 && pitch == _screenWidth && x==0 && y==0 &&
 			w==_screenWidth && h==_screenHeight && _mode_flags&DF_WANT_RECT_OPTIM) {
 		/* Special, optimized case for full screen updates.
 		 * It tries to determine what areas were actually changed,
 		 * and just updates those, on the actual display. */
-		add_dirty_rgn_auto(buf);
+		add_dirty_rgn_auto(src);
 	} else {
 		/* Clip the coordinates */
 		if (x < 0) {
 			w += x;
-			buf -= x;
+			src -= x;
 			x = 0;
 		}
 
 		if (y < 0) {
 			h += y;
-			buf -= y * pitch;
+			src -= y * pitch;
 			y = 0;
 		}
 
@@ -191,21 +191,23 @@ void OSystem_SDL_Common::copy_rect(const byte *buf, int pitch, int x, int y, int
 	if (_mouseDrawn)
 		undraw_mouse();
 
+	// Try to lock the screen surface
 	if (SDL_LockSurface(_screen) == -1)
 		error("SDL_LockSurface failed: %s.\n", SDL_GetError());
 
 	byte *dst = (byte *)_screen->pixels + y * _screenWidth + x;
 
 	if (_screenWidth==pitch && pitch==w) {
-		memcpy(dst, buf, h*w);
+		memcpy(dst, src, h*w);
 	} else {
 		do {
-			memcpy(dst, buf, w);
+			memcpy(dst, src, w);
+			src += pitch;
 			dst += _screenWidth;
-			buf += pitch;
 		} while (--h);
 	}
 
+	// Unlock the screen surface
 	SDL_UnlockSurface(_screen);
 }
 
@@ -216,6 +218,9 @@ void OSystem_SDL_Common::move_screen(int dx, int dy, int height) {
 	if ((dx == 0 && dy == 0) || height <= 0)
 		return;
 	
+	StackLock lock(_graphicsMutex, this);	// Lock the mutex until this function ends
+
+	byte *src, *dst;
 	int x, y;
 	
 	// We'll have to do a full screen redraw anyway, so set the flag.
@@ -225,34 +230,58 @@ void OSystem_SDL_Common::move_screen(int dx, int dy, int height) {
 	if (_mouseDrawn)
 		undraw_mouse();
 
-	// FIXME - calling copy_rect repeatedly is horribly inefficient, as it (un)locks the surface repeatedly
-	// and it performs unneeded clipping checks etc.
-	// Furthermore, this code is not correct, techincally: the pixels members of an SDLSource may be 0
-	// while it is not locked (e.g. for HW surfaces which are stored in the graphic card's VRAM).
-	
+	// Try to lock the screen surface
+	if (SDL_LockSurface(_screen) == -1)
+		error("SDL_LockSurface failed: %s.\n", SDL_GetError());
+
 	// vertical movement
 	if (dy > 0) {
 		// move down - copy from bottom to top
-		for (y = height - 1; y >= dy; y--)
-			copy_rect((byte *)_screen->pixels + _screenWidth * (y - dy), _screenWidth, 0, y, _screenWidth, 1);
+		dst = (byte *)_screen->pixels + (height - 1) * _screenWidth;
+		src = dst - dy * _screenWidth;
+		for (y = dy; y < height; y++) {
+			memcpy(dst, src, _screenWidth);
+			src -= _screenWidth;
+			dst -= _screenWidth;
+		}
 	} else if (dy < 0) {
 		// move up - copy from top to bottom
-		dy = -dy;
-		for (y = dy; y < height; y++)
-			copy_rect((byte *)_screen->pixels + _screenWidth * y, _screenWidth, 0, y - dy, _screenWidth, 1);
+		dst = (byte *)_screen->pixels;
+		src = dst - dy * _screenWidth;
+		for (y = -dy; y < height; y++) {
+			memcpy(dst, src, _screenWidth);
+			src += _screenWidth;
+			dst += _screenWidth;
+		}
 	}
 
 	// horizontal movement
 	if (dx > 0) {
 		// move right - copy from right to left
-		for (x = _screenWidth - 1; x >= dx; x--)
-			copy_rect((byte *)_screen->pixels + x - dx, _screenWidth, x, 0, 1, height);
+		dst = (byte *)_screen->pixels + (_screenWidth - 1);
+		src = dst - dx;
+		for (y = 0; y < height; y++) {
+			for (x = dx; x < _screenWidth; x++) {
+				*dst-- = *src--;
+			}
+			src += _screenWidth + (_screenWidth-dx);
+			dst += _screenWidth + (_screenWidth-dx);
+		}
 	} else if (dx < 0)  {
 		// move left - copy from left to right
-		dx = -dx;
-		for (x = dx; x < _screenWidth; x++)
-			copy_rect((byte *)_screen->pixels + x, _screenWidth, x - dx, 0, 1, height);
+		dst = (byte *)_screen->pixels;
+		src = dst - dx;
+		for (y = 0; y < height; y++) {
+			for (x = -dx; x < _screenWidth; x++) {
+				*dst++ = *src++;
+			}
+			src += _screenWidth - (_screenWidth+dx);
+			dst += _screenWidth - (_screenWidth+dx);
+		}
 	}
+
+	// Unlock the screen surface
+	SDL_UnlockSurface(_screen);
 }
 
 void OSystem_SDL_Common::add_dirty_rect(int x, int y, int w, int h) {
