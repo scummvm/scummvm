@@ -19,12 +19,13 @@
  *
  */
 
-#ifndef SKYCHANNEL_H
-#define SKYCHANNEL_H
+#ifndef ADLIBCHANNEL_H
+#define ADLIBCHANNEL_H
 
 #include "stdafx.h"
 #include "sound/fmopl.h"
 #include "common/engine.h"
+#include "sky/musicbase.h"
 
 typedef struct {
 	uint8 ad_Op1, ad_Op2;
@@ -55,19 +56,19 @@ typedef struct {
 	uint8 freqDataSize;
 	uint8 freqOffset;
 	uint16 frequency;
-} ChannelType;
+} AdlibChannelType;
 
-class SkyChannel {
+class SkyAdlibChannel : public SkyChannelBase {
 public:
-	SkyChannel(uint8 *pMusicData, uint16 startOfData, FM_OPL *pOpl);
-	void stopNote(void);
-	uint8 process(uint16 aktTime);
-	void updateVolume(uint16 pVolume);
+	SkyAdlibChannel(uint8 *pMusicData, uint16 startOfData, FM_OPL *pOpl);
+	virtual void stopNote(void);
+	virtual uint8 process(uint16 aktTime);
+	virtual void updateVolume(uint16 pVolume);
 private:
 	uint8 *_musicData;
 	uint16 _musicVolume;
 	FM_OPL *_opl;
-	ChannelType _channelData;
+	AdlibChannelType _channelData;
 	//-
 	InstrumentStruct *_instruments;
 	uint16 *_frequenceTable;
@@ -98,4 +99,4 @@ private:
 	//void com90_do_two_Lodsb(void);    // 13
 };
 
-#endif //SKYCHANNEL_H
+#endif //ADLIBCHANNEL_H

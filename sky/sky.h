@@ -31,8 +31,10 @@
 #include "sky/text.h"
 #include "sky/disk.h"
 #include "sky/struc.h"
-#include "sky/skymusic.h"
 #include "sky/grid.h"
+#include "sky/musicbase.h"
+#include "sky/adlibmusic.h"
+#include "sky/gmmusic.h"
 
 class SkyLogic;
 class SkyGrid;
@@ -87,7 +89,9 @@ protected:
 	SkyText *_skyText;
 	SkyGrid *_skyGrid;
 	SkyLogic *_skyLogic;
-	SkyMusic *_skyMusic;
+
+	SkyMusicBase *_skyMusic;
+	GameDetector *_detector; // necessary for music
 	
 	byte *_workScreen;
 	byte *_backScreen;

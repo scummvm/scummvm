@@ -66,6 +66,7 @@ SkyState::SkyState(GameDetector *detector, OSystem *syst)
 	_debugMode = detector->_debugMode;
 	_debugLevel = detector->_debugLevel;
 	_language = detector->_language;
+	_detector = detector;
 }
 
 SkyState::~SkyState() {
@@ -107,7 +108,24 @@ void SkyState::initialise(void) {
 
 	_skySound = new SkySound(_mixer);
 	_skyDisk = new SkyDisk(_gameDataPath);
-	_skyMusic = new SkyMusic(_mixer, _skyDisk);
+	
+	// FIXME: This is *ugly* (and maybe even incorrect?)
+	// We need to know if we have to use adlib for midi or not.
+
+	if (_detector->_midi_driver == MD_ADLIB) {
+        _skyMusic = new SkyAdlibMusic(_mixer, _skyDisk);
+	} else {
+		if (_detector->_midi_driver == MD_AUTO) {
+#if defined (_WIN32_WCE) || defined(UNIX) || defined(X11_BACKEND)
+			_skyMusic = new SkyAdlibMusic(_mixer, _skyDisk);
+#else
+			_skyMusic = new SkyGmMusic(_detector->createMidi(), _skyDisk);
+#endif
+		} else {
+			_skyMusic = new SkyGmMusic(_detector->createMidi(), _skyDisk);
+		}
+	}
+
 	_gameVersion = _skyDisk->determineGameVersion();
 	_skyText = getSkyText();
 	
