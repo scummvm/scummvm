@@ -19,6 +19,7 @@
 
 #include "stdafx.h"
 #include "bs2/sword2.h"
+#include "bs2/defs.h"
 #include "bs2/build_display.h"
 #include "bs2/console.h"
 #include "bs2/debug.h"
@@ -34,17 +35,11 @@ Logic g_logic;
 
 #define LEVEL (_curObjectHub->logic_level)
 
-// this must allow for the largest number of objects in a screen
-#define OBJECT_KILL_LIST_SIZE	50
-
-uint32 object_kill_list[OBJECT_KILL_LIST_SIZE];
-
-// keeps note of no. of objects in the kill list
-uint32 kills = 0;
+/**
+ * Do one cycle of the current session.
+ */
 
 int Logic::processSession(void) {
-	// do one cycle of the current session
-
 	uint32 run_list;
 	uint32 ret, script;
 	uint32 *game_object_list;
@@ -218,10 +213,12 @@ int Logic::processSession(void) {
 	return 1;
 }
 
-void Logic::expressChangeSession(uint32 sesh_id) {
-	// a game-object can bring an immediate halt to the session and cause
-	// a new one to start without a screen update
+/**
+ * Bring an immediate halt to the session and cause a new one to start without
+ * a screen update.
+ */
 
+void Logic::expressChangeSession(uint32 sesh_id) {
 	//set to new
 	_currentRunList = sesh_id;
 
@@ -247,17 +244,22 @@ void Logic::expressChangeSession(uint32 sesh_id) {
 	router.freeAllRouteMem();
 }
 
+/**
+ * A new session will begin next game cycle. The current cycle will conclude
+ * and build the screen and flip into view as normal.
+ *
+ * @note This functino doesn't seem to be used anywhere.
+ */
+
 void Logic::naturalChangeSession(uint32 sesh_id) {
-	// FIXME: This function doesn't seem to be used anywhere
-
-	// A new session will begin next game cycle. The current cycle will
-	// conclude and build the screen and flip into view as normal
-
 	_currentRunList = sesh_id;
 }
 
+/**
+ * @return The private _currentRunList variable.
+ */
+
 uint32 Logic::getRunList(void) {
-	// pass back the private _currentRunList variable
 	return _currentRunList;
 }
 
@@ -270,11 +272,13 @@ int32 Logic::fnSetSession(int32 *params) {
 	return IR_CONT;
 }
 
-int32 Logic::fnEndSession(int32 *params) {
-	// causes no more objects in this logic loop to be processed
-	// the logic engine will restart at the beginning of the new list
-	// !!the current screen will not be drawn!!
+/**
+ * Causes no more objects in this logic loop to be processed. The logic engine
+ * will restart at the beginning of the new list. The current screen will not
+ * be drawn!
+ */
 
+int32 Logic::fnEndSession(int32 *params) {
 	// params:	0 id of new run-list
 
 	// terminate current and change to next run-list
@@ -285,11 +289,12 @@ int32 Logic::fnEndSession(int32 *params) {
 	return IR_STOP;
 }
 
-void Logic::logicUp(uint32 new_script) {
-	// move the current object up a level
-	// called by fnGosub command - remember, only the logic object has
-	// access to _curObjectHub
+/**
+ * Move the current object up a level. Called by fnGosub command. Remember:
+ * only the logic object has access to _curObjectHub.
+ */
 
+void Logic::logicUp(uint32 new_script) {
 	// going up a level - and we'll keeping going this cycle
 	LEVEL++;
 
@@ -305,9 +310,11 @@ void Logic::logicUp(uint32 new_script) {
 	_curObjectHub->script_pc[LEVEL] = new_script & 0xffff;
 }
 
-void Logic::logicOne(uint32 new_script) {
-	// force to level one
+/**
+ * Force the level to one.
+ */
 
+void Logic::logicOne(uint32 new_script) {
 	LEVEL = 1;
 
 	// setup new script on level 1
@@ -315,10 +322,12 @@ void Logic::logicOne(uint32 new_script) {
 	_curObjectHub->script_pc[1] = new_script & 0xffff;
 }
 
-void Logic::logicReplace(uint32 new_script) {
-	// change current logic - script must quit with a TERMINATE directive
-	// - which does not write to &pc
+/**
+ * Change current logic. Script must quit with a TERMINATE directive, which
+ * does not write to &pc
+ */
 
+void Logic::logicReplace(uint32 new_script) {
 	// setup new script on this level
 	_curObjectHub->script_id[LEVEL] = new_script;
 	_curObjectHub->script_pc[LEVEL] = new_script & 0xffff;
@@ -336,10 +345,10 @@ uint32 Logic::examineRunList(void) {
 
 		Print_to_console("runlist number %d", _currentRunList);
 
-		while(*(game_object_list)) {
-			file_header = (_standardHeader*) res_man.open(*(game_object_list));
-			Print_to_console(" %d %s", *(game_object_list), file_header->name);
-			res_man.close(*(game_object_list++));
+		for (int i = 0; game_object_list[i]; i++) {
+			file_header = (_standardHeader *) res_man.open(game_object_list[i]);
+			Print_to_console(" %d %s", game_object_list[i], file_header->name);
+			res_man.close(game_object_list[i]);
 
 			scrolls++;
 			Build_display();
@@ -373,11 +382,12 @@ uint32 Logic::examineRunList(void) {
 	return 1;
 }
 
-void Logic::totalRestart(void) {
-	// reset the object restart script 1 on level 0
+/**
+ * Reset the object and restart script 1 on level 0
+ */
 
+void Logic::totalRestart(void) {
 	LEVEL = 0;
-	// _curObjectHub->script_id[0] = 1;
 
 	// reset to rerun
 	_curObjectHub->script_pc[0] = 1;
@@ -395,15 +405,17 @@ int32 Logic::fnTotalRestart(int32 *params) {
 	return IR_TERMINATE;
 }
 
+/**
+ * Mark this object for killing - to be killed when player leaves this screen.
+ * Object reloads and script restarts upon re-entry to screen, which causes
+ * this object's startup logic to be re-run every time we enter the screen.
+ * "Which is nice."
+ *
+ * @note Call ONCE from object's logic script, i.e. in startup code, so not
+ * re-called every time script frops off and restarts!
+ */
+
 int32 Logic::fnAddToKillList(int32 *params) {
-	// call *once* from object's logic script - ie. in startup code
-	// - so not re-called every time script drops off & restarts!
-
-	// Mark this object for killing - to be killed when player leaves
-	// this screen. Object reloads & script restarts upon re-entry to
-	// screen, which causes this object's startup logic to be re-run
-	// every time we enter the screen. "Which is nice"
-
 	// params:	none
 
 	uint32 entry;
@@ -413,28 +425,28 @@ int32 Logic::fnAddToKillList(int32 *params) {
 		// first, scan list to see if this object is already included
 
 		entry = 0;
-		while (entry < kills && object_kill_list[entry] != ID)
+		while (entry < _kills && _objectKillList[entry] != ID)
 			entry++;
 
 		// if this ID isn't already in the list, then add it,
 		// (otherwise finish)
 
-		if (entry == kills) {
+		if (entry == _kills) {
 #ifdef _SWORD2_DEBUG
 			// no room at the inn
-			if (kills == OBJECT_KILL_LIST_SIZE)
+			if (_kills == OBJECT_KILL_LIST_SIZE)
 				Con_fatal_error("List full in fnAddToKillList(%u)", ID);
 #endif
 
 			// add this 'ID' to the kill list
-			object_kill_list[kills] = ID;
-			kills++;
+			_objectKillList[_kills] = ID;
+			_kills++;
 
 			// "another one bites the dust"
 
 			// when we leave the screen, all these object
 			// resources are to be cleaned out of memory and the
-			// kill list emptied by doing 'kills = 0', ensuring
+			// kill list emptied by doing '_kills = 0', ensuring
 			// that all resources are in fact still in memory &
 			// more importantly closed before killing!
 		}
@@ -445,14 +457,14 @@ int32 Logic::fnAddToKillList(int32 *params) {
 }
 
 void Logic::processKillList(void) {
-	for (uint32 j = 0; j < kills; j++)
-		res_man.remove(object_kill_list[j]);
+	for (uint32 i = 0; i < _kills; i++)
+		res_man.remove(_objectKillList[i]);
 
-	kills = 0;
+	_kills = 0;
 }
 
 void Logic::resetKillList(void) {
-	kills = 0;
+	_kills = 0;
 }
 
 } // End of namespace Sword2

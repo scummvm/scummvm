@@ -36,11 +36,6 @@ namespace Sword2 {
 
 #define MAX_FN_NUMBER	117
 
-// Point to the global variable data
-int32 *globalInterpreterVariables2 = NULL;
-
-int g_debugFlag = 0;	// Set this to turn debugging on
-
 #define OPCODE(x, y)	{ x, &Logic::y, #y }
 
 void Logic::setupOpcodes(void) {
@@ -216,7 +211,7 @@ int32 Logic::executeOpcode(int i, int32 *params) {
 #define DOOPERATION(x) { stack2[stackPointer2 - 2] = (x); stackPointer2--; CHECKSTACKPOINTER2 }
 
 void Logic::setGlobalInterpreterVariables(int32 *vars) {
-	globalInterpreterVariables2 = vars;
+	_globals = vars;
 }
 
 int Logic::runScript(char *scriptData, char *objectData, uint32 *offset) {
@@ -310,9 +305,9 @@ int Logic::runScript(char *scriptData, char *objectData, uint32 *offset) {
 		case CP_PUSH_GLOBAL_VAR32:
 			// Push a global variable
 			Read16ip(parameter);
-			debug(5, "Push global var %d (%d)", parameter, globalInterpreterVariables2[parameter]);
-			assert(globalInterpreterVariables2);
-			PUSHONSTACK(globalInterpreterVariables2[parameter]);
+			assert(_globals);
+			debug(5, "Push global var %d (%d)", parameter, _globals[parameter]);
+			PUSHONSTACK(_globals[parameter]);
 			break;
 		case CP_POP_LOCAL_VAR32:
 			// Pop a value into a local word variable
@@ -444,7 +439,7 @@ int Logic::runScript(char *scriptData, char *objectData, uint32 *offset) {
 			TRACEGLOBALVARIABLESET(parameter, value);
 #endif
 
-			globalInterpreterVariables2[parameter] = value;
+			_globals[parameter] = value;
 			break;
 		case CP_ADDNPOP_GLOBAL_VAR32:
 			// Add and pop a global variable
@@ -452,23 +447,23 @@ int Logic::runScript(char *scriptData, char *objectData, uint32 *offset) {
 			// parameter = *((int16_TYPE *) (code + ip));
 			// ip += 2;
 			POPOFFSTACK(value);
-			globalInterpreterVariables2[parameter] += value;
+			_globals[parameter] += value;
 			debug(5, "+= %d into global var %d->%d", value, parameter, *(int32 *) (variables + parameter));
 			break;
 		case CP_SUBNPOP_GLOBAL_VAR32:
 			// Sub and pop a global variable
 			Read16ip(parameter);
 			POPOFFSTACK(value);
-			globalInterpreterVariables2[parameter] -= value;
+			_globals[parameter] -= value;
 			debug(5, "-= %d into global var %d->%d", value, parameter, *(int32 *) (variables + parameter));
 			break;
 		case CP_DEBUGON:
 			// Turn debugging on
-			g_debugFlag = 1;
+			_debugFlag = true;
 			break;
 		case CP_DEBUGOFF:
 			// Turn debugging on
-			g_debugFlag = 0;
+			_debugFlag = false;
 			break;
 		case CP_QUIT:
 			// Quit out for a cycle

@@ -22,16 +22,28 @@
 #ifndef _LOGIC
 #define _LOGIC
 
-#include "bs2/defs.h"
+// #include "bs2/defs.h"
 #include "bs2/header.h"
 
 namespace Sword2 {
 
 #define	TREE_SIZE 3
 
+// This must allow for the largest number of objects in a screen
+#define OBJECT_KILL_LIST_SIZE 50
+
 class Logic {
 private:
-	void setupOpcodes(void);
+	// Point to the global variable data
+	int32 *_globals;
+
+	uint32 _objectKillList[OBJECT_KILL_LIST_SIZE];
+
+	// keeps note of no. of objects in the kill list
+	uint32 _kills;
+
+	// Set this to turn debugging on
+	bool _debugFlag;
 
 	// FIXME: Some opcodes pass pointers in integer variables. I don't
 	// think that's entirely portable.
@@ -48,16 +60,17 @@ private:
 	// denotes the res id of the game-object-list in current use
 	uint32 _currentRunList;
 
-	void processKillList(void);
-
 	//pc during logic loop
 	uint32 _pc;
 
 	// each object has one of these tacked onto the beginning
 	_object_hub *_curObjectHub;
 
+	void setupOpcodes(void);
+	void processKillList(void);
+
 public:
-	Logic() {
+	Logic() : _globals(NULL), _kills(0), _debugFlag(false) {
 		setupOpcodes();
 	}
 
