@@ -1254,6 +1254,7 @@ void Scumm::waitForTimer(int msec_delay) {
 
 	for(;;) {
 		while (_system->poll_event(&event)) {
+
 			switch(event.event_code) {
 			case OSystem::EVENT_KEYDOWN:
 				if (event.kbd.keycode >= '0' && event.kbd.keycode<='9'
@@ -1309,6 +1310,12 @@ void Scumm::waitForTimer(int msec_delay) {
 				_rightBtnPressed &= ~msDown;
 				break;
 			}
+
+			// if newgui is running, copy event to EventList, and let the GUI handle it itself
+			// we might consider this approach for ScummLoop as well, and clean up the current mess
+			if (_newgui->isActive())
+				_newgui->handleEvent(event);
+
 		}
 #ifdef COMPRESSED_SOUND_FILE
 		if (updateMP3CD() == -1)
@@ -1557,12 +1564,11 @@ void Scumm::setupGUIColors() {
 		_gui->_textcolor = getDefaultGUIColor(2);
 		_gui->_textcolorhi = getDefaultGUIColor(6);
 		_gui->_shadowcolor = getDefaultGUIColor(8);
-#if 0
-		_newgui->_bgcolor = getDefaultGUIColor(0);
-		_newgui->_color = getDefaultGUIColor(1);
-		_newgui->_textcolor = getDefaultGUIColor(2);
-		_newgui->_textcolorhi = getDefaultGUIColor(6);
-		_newgui->_shadowcolor = getDefaultGUIColor(8);
-#endif
+
+		_newgui->_bgcolor = _gui->_bgcolor;
+		_newgui->_color = _gui->_color;
+		_newgui->_textcolor = _gui->_textcolor;
+		_newgui->_textcolorhi = _gui->_textcolorhi;
+		_newgui->_shadowcolor = _gui->_shadowcolor;
 	}
 }

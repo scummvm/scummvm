@@ -86,11 +86,13 @@ public:
 	Widget(Dialog *boss, int x, int y, int w, int h);
 	virtual ~Widget() {}
 
-	virtual void handleClick(int x, int y, int button) {}
+	virtual void handleMouseDown(int x, int y, int button) {}
+	virtual void handleMouseUp(int x, int y, int button) {}
 	virtual void handleMouseEntered(int button) {}
 	virtual void handleMouseLeft(int button) {}
 	virtual void handleMouseMoved(int x, int y, int button) {}
-	virtual void handleKey(char key, int modifiers) {}
+	virtual void handleKeyDown(char key, int modifiers) {}
+	virtual void handleKeyUp(char key, int modifiers) {}
 	void draw();
 
 	void setFlags(int flags)	{ _flags |= flags; }
@@ -130,7 +132,7 @@ public:
 	void setCmd(uint32 cmd)					{ _cmd = cmd; }
 	uint32 getCmd() const					{ return _cmd; }
 
-	void handleClick(int x, int y, int button);
+	void handleMouseDown(int x, int y, int button);
 	void handleMouseEntered(int button)	{ setFlags(WIDGET_HILITED); draw(); }
 	void handleMouseLeft(int button)	{ clearFlags(WIDGET_HILITED); draw(); }
 };
@@ -144,7 +146,7 @@ public:
 	void setState(bool state)	{ _state = state; }
 	bool getState() const		{ return _state; }
 
-	void handleClick(int x, int y, int button);
+	void handleMouseDown(int x, int y, int button);
 	virtual void handleMouseEntered(int button)	{}
 	virtual void handleMouseLeft(int button)	{}
 
@@ -156,12 +158,15 @@ protected:
 class SliderWidget : public ButtonWidget {
 protected:
 	uint8	_value, _old_value;
+	bool	_isDragging;
 public:
 	SliderWidget(Dialog *boss, int x, int y, int w, int h, const char *label, uint32 cmd = 0, uint8 hotkey = 0);
 	void setValue(uint8 value)	{ _value = value; }
 	uint8 getValue() const		{ return _value; }
 
 	void handleMouseMoved(int x, int y, int button);
+	void handleMouseDown(int x, int y, int button);
+	void handleMouseUp(int x, int y, int button);
 
 protected:
 	void drawWidget(bool hilite);

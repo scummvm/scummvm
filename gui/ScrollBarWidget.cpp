@@ -68,7 +68,7 @@ ScrollBarWidget::ScrollBarWidget(Dialog *boss, int x, int y, int w, int h)
 
 }
 
-void ScrollBarWidget::handleClick(int x, int y, int button)
+void ScrollBarWidget::handleMouseDown(int x, int y, int button)
 {
 	int old_pos = _currentPos;
 
@@ -97,11 +97,14 @@ void ScrollBarWidget::handleClick(int x, int y, int button)
 	}
 }
 
+void ScrollBarWidget::handleMouseUp(int x, int y, int button)
+{
+	if (_isDraggingSlider)
+		_isDraggingSlider = false;
+}
+
 void ScrollBarWidget::handleMouseMoved(int x, int y, int button)
 {
-	if (button == 0)
-		_isDraggingSlider = false;
-
 	if (_isDraggingSlider) {
 		int old_pos = _currentPos;
 		_sliderPos = y - _sliderDeltaMouseDownPos;

@@ -53,8 +53,10 @@ public:
 	virtual void draw();
 
 	//virtual void handleIdle(); // Called periodically
-	virtual void handleClick(int x, int y, int button);
-	virtual void handleKey(char key, int modifiers); // modifiers = alt/shift/ctrl etc.
+	virtual void handleMouseDown(int x, int y, int button);
+	virtual void handleMouseUp(int x, int y, int button);
+	virtual void handleKeyDown(char key, int modifiers); // modifiers = alt/shift/ctrl etc.
+	virtual void handleKeyUp(char key, int modifiers); // modifiers = alt/shift/ctrl etc.
 	virtual void handleMouseMoved(int x, int y, int button);
 	virtual void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);
 	
@@ -102,14 +104,14 @@ class PauseDialog : public Dialog {
 public:
 	PauseDialog(NewGui *gui);
 
-	virtual void handleClick(int x, int y, int button)
+	virtual void handleMouseDown(int x, int y, int button)
 		{ close(); }
-	virtual void handleKey(char key, int modifiers)
+	virtual void handleKeyDown(char key, int modifiers)
 		{
 			if (key == 32)
 				close();
 			else
-				Dialog::handleKey(key, modifiers);
+				Dialog::handleKeyDown(key, modifiers);
 		}
 };
 

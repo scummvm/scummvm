@@ -83,7 +83,7 @@ ListWidget::~ListWidget()
 {
 }
 
-void ListWidget::handleClick(int x, int y, int button)
+void ListWidget::handleMouseDown(int x, int y, int button)
 {
 	if (_flags & WIDGET_ENABLED) {
 		_selectedItem = (y - 2) / LINE_HEIGHT + _currentPos;
@@ -91,7 +91,7 @@ void ListWidget::handleClick(int x, int y, int button)
 	}
 }
 
-void ListWidget::handleKey(char key, int modifiers)
+void ListWidget::handleKeyDown(char key, int modifiers)
 {
 }
 

@@ -51,8 +51,8 @@ public:
 	int getSelected() const						{ return _selectedItem; }
 	void setNumberingMode(int numberingMode)	{ _numberingMode = numberingMode; }
 	
-	virtual void handleClick(int x, int y, int button);
-	virtual void handleKey(char key, int modifiers);
+	virtual void handleMouseDown(int x, int y, int button);
+	virtual void handleKeyDown(char key, int modifiers);
 	virtual void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);
 
 protected:

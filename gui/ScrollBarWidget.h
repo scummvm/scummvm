@@ -54,13 +54,14 @@ public:
 	int		_currentPos;
 public:
 	ScrollBarWidget(Dialog *boss, int x, int y, int w, int h);
-//	virtual ~ScrollBarWidget();
 
-	void handleClick(int x, int y, int button);
+	void handleMouseDown(int x, int y, int button);
+	void handleMouseUp(int x, int y, int button);
 	void handleMouseMoved(int x, int y, int button);
 	void handleMouseEntered(int button)	{ setFlags(WIDGET_HILITED); }
-	void handleMouseLeft(int button)	{ clearFlags(WIDGET_HILITED); _part = kNoPart; _isDraggingSlider = false; draw(); }
+	void handleMouseLeft(int button)	{ clearFlags(WIDGET_HILITED); _part = kNoPart; draw(); }
 
+	// FIXME: Shouldn't these be private?
 	void recalc();
 
 protected:

@@ -81,16 +81,16 @@ void NewGui::loop()
 		if (_use_alpha_blending)
 			activeDialog->setupScreenBuf();
 #if 1
-	// FIXME - hack to encode our own custom GUI colors. Since we have to live
-	// with a given 8 bit palette, the result is not always as nice as one
-	// would wish, but this is just an experiment after all.
-	_bgcolor = RGBMatch(_s->_currentPalette, 0, 0, 0);
-
-	_color = RGBMatch(_s->_currentPalette, 80, 80, 80);
-	_shadowcolor = RGBMatch(_s->_currentPalette, 64, 64, 64);
-
-	_textcolor = RGBMatch(_s->_currentPalette, 32, 192, 32);
-	_textcolorhi = RGBMatch(_s->_currentPalette, 0, 256, 0);
+		// FIXME - hack to encode our own custom GUI colors. Since we have to live
+		// with a given 8 bit palette, the result is not always as nice as one
+		// would wish, but this is just an experiment after all.
+		_bgcolor = RGBMatch(_s->_currentPalette, 0, 0, 0);
+	
+		_color = RGBMatch(_s->_currentPalette, 80, 80, 80);
+		_shadowcolor = RGBMatch(_s->_currentPalette, 64, 64, 64);
+	
+		_textcolor = RGBMatch(_s->_currentPalette, 32, 192, 32);
+		_textcolorhi = RGBMatch(_s->_currentPalette, 0, 256, 0);
 #endif
 		_prepare_for_gui = false;
 	}
@@ -101,19 +101,41 @@ void NewGui::loop()
 	}
 	
 	_s->animateCursor();
-	_s->getKeyInput(0);
-	if (_s->_mouseButStat & MBS_LEFT_CLICK) {		
-		activeDialog->handleClick(_s->mouse.x, _s->mouse.y, _s->_mouseButStat);
-	} else if (_s->_lastKeyHit) {
-		activeDialog->handleKey(_s->_lastKeyHit, 0);
-	} else if (_old_mouse.x != _s->mouse.x || _old_mouse.y != _s->mouse.y) {
-		activeDialog->handleMouseMoved(_s->mouse.x, _s->mouse.y, _s->_leftBtnPressed);
-		_old_mouse.x = _s->mouse.x;
-		_old_mouse.y = _s->mouse.y;
+
+	if (_eventList.size() > 0)
+	{
+		OSystem::Event t;
+		
+		for (int i = 0; i < _eventList.size(); i++)
+		{
+			t = _eventList.getEvent(i);
+		
+			switch(t.event_code) {
+				case OSystem::EVENT_KEYDOWN:
+					activeDialog->handleKeyDown(t.kbd.ascii, t.kbd.flags);
+					break;
+//				case OSystem::EVENT_KEYUP:
+//					activeDialog->handleKeyUp(t.kbd.ascii, t.kbd.flags);
+					break;
+				case OSystem::EVENT_MOUSEMOVE:
+					activeDialog->handleMouseMoved(t.mouse.x, t.mouse.y, 0);
+					break;
+				// We don't distinguish between mousebuttons (for now at least)
+				case OSystem::EVENT_LBUTTONDOWN:
+				case OSystem::EVENT_RBUTTONDOWN:
+					activeDialog->handleMouseDown(t.mouse.x, t.mouse.y, 1);
+					break;
+				case OSystem::EVENT_LBUTTONUP:
+				case OSystem::EVENT_RBUTTONUP:
+					activeDialog->handleMouseUp(t.mouse.x, t.mouse.y, 1);
+					break;
+			}
+		}
+
+		_eventList.clear();
 	}
 
 	_s->drawDirtyScreenParts();
-	_s->_mouseButStat = 0;
 }
 
 #pragma mark -

@@ -80,25 +80,38 @@ void Dialog::draw()
 	}
 }
 
-void Dialog::handleClick(int x, int y, int button)
+void Dialog::handleMouseDown(int x, int y, int button)
+{
+	// FIXME: If outside focused widget, widget loses focus
+
+	Widget *w = findWidget(x - _x, y - _y);
+	if (w)
+		w->handleMouseDown(x - _x - w->_x, y - _y - w->_y, button);
+}
+
+void Dialog::handleMouseUp(int x, int y, int button)
 {
 	Widget *w = findWidget(x - _x, y - _y);
 	if (w)
-		w->handleClick(x - _x - w->_x, y - _y - w->_y, button);
+		w->handleMouseUp(x - _x - w->_x, y - _y - w->_y, button);
 }
 
-void Dialog::handleKey(char key, int modifiers)
+void Dialog::handleKeyDown(char key, int modifiers)
 {
 	// ESC closes all dialogs by default
 	if (key == 27)
 		close();
 	
+	// FIXME: Only if not focused widget
+
 	// Hotkey handling
 	Widget *w = _firstWidget;
 	key = toupper(key);
 	while (w) {
 		if (w->_type == kButtonWidget && key == toupper(((ButtonWidget *)w)->_hotkey)) {
-			w->handleClick(0, 0, 1);
+			// FIXME: Calling both handlers is bad style, but we don't really know which one we're supposed to call
+			w->handleMouseDown(0, 0, 1);
+			w->handleMouseUp(0, 0, 1);
 			break;
 		}
 		w = w->_next;
@@ -107,6 +120,11 @@ void Dialog::handleKey(char key, int modifiers)
 	// TODO - introduce the notion of a "focused" widget which receives
 	// key events (by calling its handleKey method). Required for editfields
 	// and also for an editable list widget.
+}
+
+void Dialog::handleKeyUp(char key, int modifiers)
+{
+	// FIXME: Focused widget recieves keyup
 }
 
 void Dialog::handleMouseMoved(int x, int y, int button)
@@ -127,6 +145,8 @@ void Dialog::handleMouseMoved(int x, int y, int button)
 	if (w->getFlags() & WIDGET_TRACK_MOUSE) {
 		w->handleMouseMoved(x - _x - w->_x, y - _y - w->_y, button);
 	}
+
+	//FIXME: Focused widget recieves mouseup
 }
 
 

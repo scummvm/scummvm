@@ -127,7 +127,7 @@ ButtonWidget::~ButtonWidget()
 	}
 }
 
-void ButtonWidget::handleClick(int x, int y, int button)
+void ButtonWidget::handleMouseDown(int x, int y, int button)
 {
 	if (_flags & WIDGET_ENABLED)
 		sendCommand(_cmd, 0);
@@ -155,7 +155,7 @@ CheckboxWidget::CheckboxWidget(Dialog *boss, int x, int y, int w, int h, const c
 	_type = kCheckboxWidget;
 }
 
-void CheckboxWidget::handleClick(int x, int y, int button)
+void CheckboxWidget::handleMouseDown(int x, int y, int button)
 {
 	if (_flags & WIDGET_ENABLED) {
 		_state = !_state;
@@ -190,8 +190,8 @@ SliderWidget::SliderWidget(Dialog *boss, int x, int y, int w, int h, const char 
 	_type = kSliderWidget;
 }
 
-void SliderWidget::handleMouseMoved(int x, int y, int state) { 
-	if (state == 1) {
+void SliderWidget::handleMouseMoved(int x, int y, int button) { 
+	if (_isDragging) {
 		int newvalue = x * 100 / _w;
 
 		if (newvalue != _value) {
@@ -216,4 +216,19 @@ void SliderWidget::drawWidget(bool hilite)
 
 	// Draw the 'bar'
 	gui->fillRect(_x + 2 + ((_w - 5) * _value / 100), _y + 2, 2, _h - 4, hilite ? gui->_textcolorhi : gui->_textcolor);
+}
+
+void SliderWidget::handleMouseDown(int x, int y, int button) {
+	int barx;
+
+	barx=2 + ((_w - 5) * _old_value / 100);
+	
+	// only start dragging if mouse is over bar
+	if (x > (barx-3) && x < (barx+3))
+		_isDragging=true;
+}
+
+void SliderWidget::handleMouseUp(int x, int y, int button) {
+	if (_isDragging)
+		_isDragging=false;
 }
