@@ -2253,13 +2253,14 @@ void Scumm::o5_verbOps() {
 void Scumm::o5_wait() {
 	byte *oldaddr;
 
-	 // Fixme: Indy3
-	if ((_opcode == 0xAE) && (_gameId == GID_INDY3_256))
-          return;
 
 	oldaddr = _scriptPointer - 1;
+
+	if(_opcode == 0xAE && _gameId == GID_INDY3_256) {
+		_opcode = 2;
+	} else
+		_opcode = fetchScriptByte();
 	
-	_opcode = fetchScriptByte();
 	switch(_opcode&0x1F) {
 	case 1: /* wait for actor */
 		if (derefActorSafe(getVarOrDirectByte(0x80), "o5_wait")->moving)
