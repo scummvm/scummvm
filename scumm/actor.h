@@ -58,6 +58,10 @@ struct CostumeData {
 	uint16 end[16];
 	uint16 frame[16];
 
+	uint16 seq1[16];
+	uint16 seq2[16];
+	uint32 seq3[16];
+
 	void reset() {
 		stopped = 0;
 		for (int i = 0; i < 16; i++) {
@@ -119,6 +123,7 @@ public:
 	int8 layer;
 	uint16 sound[32];
 	CostumeData cost;
+	uint32 condMask; // XXX save/load
 protected:
 	byte palette[256];
 	int elevation;
@@ -234,6 +239,12 @@ public:
 	}
 
 	void classChanged(int cls, bool value);
+	
+	void setUserCondition(int slot, int set);
+	bool isUserConditionSet(int slot);
+
+	void setTalkCondition(int slot);
+	bool isTalkConditionSet(int slot);
 	
 	// Used by the save/load syste:
 	static const SaveLoadEntry *getSaveLoadEntries();

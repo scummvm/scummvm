@@ -132,11 +132,11 @@ public:
 	virtual void setCostume(int costume) = 0;
 
 
-	byte drawCostume(const VirtScreen &vs, const CostumeData &cost, bool drawToBackBuf);
+	byte drawCostume(const VirtScreen &vs, const Actor *a, bool drawToBackBuf);
 
 protected:
 
-	virtual byte drawLimb(const CostumeData &cost, int limb) = 0;
+	virtual byte drawLimb(const Actor *a, int limb) = 0;
 
 	void codec1_ignorePakCols(int num);
 };

@@ -594,10 +594,11 @@ void LoadedCostume::loadCostume(int id) {
 	_animCmds = _baseptr + READ_LE_UINT16(ptr);
 }
 
-byte CostumeRenderer::drawLimb(const CostumeData &cost, int limb) {
+byte CostumeRenderer::drawLimb(const Actor *a, int limb) {
 	int i;
 	int code;
 	const byte *frameptr;
+	const CostumeData &cost = a->cost;
 
 	// If the specified limb is stopped or not existing, do nothing.
 	if (cost.curpos[limb] == 0xFFFF || cost.stopped & (1 << limb))

@@ -51,6 +51,8 @@ protected:
 	const byte *akpl, *akci, *aksq;
 	const AkosOffset *akof;
 	const byte *akcd;
+	
+	const byte *akct;
 
 	struct {
 		byte unk5;
@@ -73,6 +75,7 @@ public:
 		aksq = 0;
 		akof = 0;
 		akcd = 0;
+		akct = 0;
 		_actorHitMode = false;
 	}
 
@@ -85,13 +88,11 @@ public:
 	void setCostume(int costume);
 
 protected:
-	byte drawLimb(const CostumeData &cost, int limb);
+	byte drawLimb(const Actor *a, int limb);
 
 	byte codec1(int xmoveCur, int ymoveCur);
 	void codec1_genericDecode();
-
 	byte codec5(int xmoveCur, int ymoveCur);
-
 	byte codec16(int xmoveCur, int ymoveCur);
 	void akos16SetupBitReader(const byte *src);
 	void akos16SkipData(int32 numskip);

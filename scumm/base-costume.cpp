@@ -25,7 +25,7 @@
 
 namespace Scumm {
 
-byte BaseCostumeRenderer::drawCostume(const VirtScreen &vs, const CostumeData &cost, bool drawToBackBuf) {
+byte BaseCostumeRenderer::drawCostume(const VirtScreen &vs, const Actor *a, bool drawToBackBuf) {
 	int i;
 	byte result = 0;
 
@@ -48,7 +48,7 @@ byte BaseCostumeRenderer::drawCostume(const VirtScreen &vs, const CostumeData &c
 		_xmove = _ymove = 0;
 	}
 	for (i = 0; i < 16; i++)
-		result |= drawLimb(cost, i);
+		result |= drawLimb(a, i);
 	return result;
 }
 

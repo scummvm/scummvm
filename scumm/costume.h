@@ -69,7 +69,7 @@ public:
 	void setCostume(int costume);
 
 protected:
-	byte drawLimb(const CostumeData &cost, int limb);
+	byte drawLimb(const Actor *a, int limb);
 
 	void proc3();
 	void proc3_ami();

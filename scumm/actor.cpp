@@ -82,7 +82,7 @@ void Actor::initActor(int mode) {
 	} else if (mode == 2) {
 		facing = 180;
 	}
-
+	condMask = 1;
 	elevation = 0;
 	skipLimb = false;
 	width = 24;
@@ -1068,7 +1068,7 @@ void Actor::drawActorCostume(bool hitTestMode) {
 	
 	// If the actor is partially hidden, redraw it next frame.
 	// Only done for pre-AKOS, though.
-	if (bcr->drawCostume(_vm->virtscr[0], cost, drawToBackBuf) & 1) {
+	if (bcr->drawCostume(_vm->virtscr[0], this, drawToBackBuf) & 1) {
 		needRedraw = (_vm->_version <= 6);
 	}
 
@@ -1814,6 +1814,45 @@ bool Actor::isPlayer() {
 		return _vm->VAR(42) <= number && number <= _vm->VAR(43);
 	else
 		return isInClass(kObjectClassPlayer);
+}
+
+void Actor::setUserCondition(int slot, int set) {
+	debug(1, "Actor::setUserCondition(%d, %d)", slot, set);
+	assert(slot >= 1 && slot <= 0x20);
+	if (set == 0) {
+		condMask &= ~(1 << (slot + 0xF));
+	} else {
+		condMask |= 1 << (slot + 0xF);
+	}
+	if (condMask & 0x3FF) {
+		condMask &= ~1;
+	} else {
+		condMask |= 1;
+	}
+}
+
+bool Actor::isUserConditionSet(int slot) {
+	assert(slot >= 1 && slot <= 0x20);
+	return condMask & (1 << (slot + 0xF));
+}
+
+void Actor::setTalkCondition(int slot) {
+	debug(1, "Actor::setTalkCondition(%d)", slot);
+	assert(slot >= 1 && slot <= 0x10);
+	condMask = (condMask & ~0x3FF) | 1;
+	if (slot != 1) {
+		condMask |= 1 << (slot - 1);
+		if (condMask & 0x3FF) {
+			condMask &= ~1;
+		} else {
+			condMask |= 1;
+		}
+	}	
+}
+
+bool Actor::isTalkConditionSet(int slot) {	
+	assert(slot >= 1 && slot <= 0x10);
+	return condMask & (1 << (slot - 1));
 }
 
 
