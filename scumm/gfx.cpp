@@ -458,10 +458,20 @@ void Scumm::setPaletteFromPtr(byte *ptr)
 
 	dest = _currentPalette;
 
-	for (i = 0; i < numcolor * 3; i++) {
-		*dest++ = *ptr++;
-	}
+	for (i = 0; i < numcolor; i++) {
+		r = *ptr++;
+		g = *ptr++;
+		b = *ptr++;
 
+		// This comparison might look wierd, but it's what the disassembly (DOTT) says!
+		if ((_features & GF_AFTER_V7) || (<= 15 || r < 252 || g < 252 || b < 252)) {
+			*dest++ = r;
+			*dest++ = g;
+			*dest++ = b;
+		} else {
+			dest += 3;
+		}
+	}
 	setDirtyColors(0, numcolor - 1);
 }
 
