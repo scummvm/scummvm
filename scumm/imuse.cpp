@@ -3689,51 +3689,6 @@ void IMuseGM::part_key_off(Part *part, byte note)
 	}
 }
 
-#if !defined(__MORPHOS__)
-#else
-#include <proto/exec.h>
-#include <proto/dos.h>
-#include "morphos.h"
-#include "morphos_sound.h"
-int IMuseGM::midi_driver_thread(void *param)
-{
-	IMuseGM *mid = (IMuseGM *) param;
-	int old_time, cur_time;
-	MsgPort *music_timer_port = NULL;
-	timerequest *music_timer_request = NULL;
-
-	ObtainSemaphore(&ScummMusicThreadRunning);
-
-	if (!OSystem_MorphOS::OpenATimer(&music_timer_port, (IORequest **) &music_timer_request, UNIT_MICROHZ, false)) {
-		warning("Could not open a timer - music will not play");
-		Wait(SIGBREAKF_CTRL_C);
-	}
-	else {
-		old_time = mid->_system->get_msecs();
-
-		for (;;) {
-			music_timer_request->tr_node.io_Command = TR_ADDREQUEST;
-			music_timer_request->tr_time.tv_secs = 0;
-			music_timer_request->tr_time.tv_micro = 10000;
-			DoIO((struct IORequest *)music_timer_request);
-
-			if (CheckSignal(SIGBREAKF_CTRL_C))
-				break;
-
-			cur_time = mid->_system->get_msecs();
-			while (old_time < cur_time) {
-				old_time += 10;
-				mid->_se->on_timer();
-			}
-		}
-	}
-
-	ReleaseSemaphore(&ScummMusicThreadRunning);
-	RemTask(NULL);
-	return 0;
-}
-#endif
-
 void IMuseGM::init(IMuseInternal *eng, OSystem *syst)
 {
 	int i;
