@@ -903,7 +903,7 @@ void AkosRenderer::codec5()
 	_vm->updateDirtyRect(0, left, right + 1, top, bottom + 1, 1 << dirty_id);
 
 	bdd.dataptr = srcptr;
-	bdd.out = vs->screenPtr;
+	bdd.out = outptr;
 	bdd.outheight = outheight;
 	bdd.outwidth = outwidth;
 	bdd.scale_x = 0xFF;
