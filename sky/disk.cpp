@@ -52,15 +52,7 @@ void SkyState::initialiseDisk() {
 	
 	debug(1, "Entries in dinner table: %d", dinnerTableEntries);
 
-	if (dinnerTableEntries < 400)
-		_isDemo = true;
-	else
-		_isDemo = false;
-	
-	if (dinnerTableEntries > 1600) 
-		_isCDVersion = true;
-	else
-		_isCDVersion = false;
+	determineGameVersion(dinnerTableEntries);
 		
 	dinnerTableArea = (uint8 *)malloc(dinnerTableEntries * 8);
 	entriesRead = dnrHandle->read(dinnerTableArea, 8 * dinnerTableEntries) / 8;
@@ -201,6 +193,55 @@ uint8 *SkyState::getFileInfo(uint16 fileNr) {
 
 	// if file not found return NULL
 	return (uint8 *)NULL;
+}
+
+void SkyState::determineGameVersion(uint32 dnrEntries) {
+
+	//determine game version based on number of entries in dinner table
+	
+	switch (dnrEntries) {
+
+	case 247:	
+		//floppy demo (v0.0267)
+		_isDemo = true;
+		_isCDVersion = false;
+		_gameVersion = 267;
+		break;
+		
+	case 1404:
+		//floppy (v0.0288)
+		_isDemo = false;
+		_isCDVersion = false;
+		_gameVersion = 288;
+		break;
+	
+	case 1445:
+		//floppy (v0.0331)
+		_isDemo = false;
+		_isCDVersion = false;
+		_gameVersion = 331;
+		break;
+	
+	case 1711:
+		//cd demo (v0.0365)
+		_isDemo = true;
+		_isCDVersion = true;
+		_gameVersion = 365;
+		break;
+		
+	case 5099:
+		//cd (v0.0368)
+		_isDemo = false;
+		_isCDVersion = true;
+		_gameVersion = 368;
+		break;
+	
+	default:
+		//unknown version
+		warning("Unknown game version!");
+		break;
+	}
+	
 }
 
 void SkyState::dumpFile(uint16 fileNr) {

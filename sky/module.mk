@@ -5,6 +5,7 @@ MODULE_OBJS = \
 	sky/disk.o \
 	sky/screen.o \
 	sky/timer.o \
+	sky/text.o \
 	sky/intro.o \
 	sky/cd_intro.o \
 	sky/rnc_deco.o \

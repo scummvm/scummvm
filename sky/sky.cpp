@@ -83,7 +83,7 @@ void SkyState::go() {
 		_dump_file = stdout;
 
 	initialise();
-	if (!_isDemo)
+	if (!_isDemo || _isCDVersion)
 		intro();
 	
 	while (1) {
@@ -100,10 +100,39 @@ void SkyState::initialise(void) {
 	_sound = new SkySound(_mixer);
 
 	initialiseDisk();
+	setupVersionSpecifics(_gameVersion);	//_gameVersion is initialised in initialiseDisk();
 	initialiseScreen();
 	initVirgin();
 	//initMouse();
+	initItemList();
+	//initScript();
 	initialiseGrids();
+	//initialiseRouter();
+	initialiseText();
+}
+
+void SkyState::initItemList() {
+	
+	//See List.asm for (cryptic) item # descriptions
+
+	for (int i = 0; i < 300; i++)
+		_itemList[i] = (void*)NULL;
+
+	//init the non-null items
+	/*
+	_itemList[119] = (void*)data_0; // Compacts - Section 0
+	_itemList[120] = (void*)data_1; // Compacts - Section 1
+	
+	if (_isDemo) {
+		_itemList[121] = _itemList[122] = _itemList[123] = _itemList[124] = _itemList[125] = (void*)data_0;
+	} else {
+		_itemList[121] = (void*)data_2; // Compacts - Section 2
+		_itemList[122] = (void*)data_3; // Compacts - Section 3
+		_itemList[123] = (void*)data_4; // Compacts - Section 4
+		_itemList[124] = (void*)data_5; // Compacts - Section 5
+		_itemList[125] = (void*)data_6; // Compacts - Section 6
+	}
+	*/
 }
 
 void SkyState::delay(uint amount) { //copied and mutilated from Simon.cpp
