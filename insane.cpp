@@ -73,7 +73,8 @@ void SmushPlayer::loadFonts()
 {
 	byte buf[100];
 	FILE * f_tres;
-	uint32 tmp, l;
+	uint32 tmp;
+	int l;
 	byte * buffer = NULL;
 
 	for (l = 0; l < SP_MAX_FONTS; l++)
@@ -232,7 +233,7 @@ void codec44_depack(byte *dst, byte *src, uint32 len, uint8 color)
 void SmushPlayer::drawCharTRES(uint32 * x, uint32 y, uint32 c_line, uint8 color, uint8 txt)
 {
 	byte * font = _fonts[_c_font];
-	uint32 offset = 0, t_offset, l, width, height, length;
+	uint32 offset = 0, t_offset = 0, l, width, height, length = 0;
 	
 	if (font == NULL)
 		return;
