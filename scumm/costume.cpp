@@ -95,7 +95,7 @@ byte CostumeRenderer::mainRoutine(int xmoveCur, int ymoveCur) {
 		if (ex1 != 0xFF || ex2 != 0xFF) {
 printf("Funky! Tell Fingolfin where you saw this\n");
 			ex1 = READ_LE_UINT16(_loaded._frameOffsets + ex1 * 2);
-			_srcptr = _loaded._baseptr + READ_LE_UINT16(_loaded._ptr-8 + ex1 + ex2 * 2) + 14;
+			_srcptr = _loaded._baseptr + READ_LE_UINT16(_loaded._baseptr + ex1 + ex2 * 2) + 14;
 		}
 	}
 
@@ -507,8 +507,7 @@ void LoadedCostume::loadCostume(int id) {
 	_numAnim = _ptr[6];
 	_format = _ptr[7] & 0x7F;
 	_mirror = (_ptr[7] & 0x80) != 0;
-	_ptr += 8;
-	_palette = _ptr;
+	_palette = _ptr + 8;
 	switch (_format) {
 	case 0x57:				// Only used in V1 games
 		_numColors = 0;
@@ -528,24 +527,19 @@ void LoadedCostume::loadCostume(int id) {
 	default:
 		error("Costume %d is invalid", id);
 	}
+
 	
 	// In GF_OLD_BUNDLE games, there is no actual palette, just a single color byte. 
 	// Don't forget, these games were designed around a fixed 16 color HW palette :-)
 	// In addition, all offsets are shifted by 2; we accomodate that via a seperate
 	// _baseptr value (instead of adding tons of if's throughout the code).
-	if (_vm->_version == 1) {
+	if (_vm->_features & GF_OLD_BUNDLE) {
+		_numColors = (_vm->_version == 1) ? 0 : 1;
 		_baseptr += 2;
-		_frameOffsets = _ptr + 2;
-		_dataptr = _baseptr + READ_LE_UINT16(_ptr);
-	} else {
-		if (_vm->_features & GF_OLD_BUNDLE) {
-			_numColors = 1;
-			_baseptr += 2;
-		}
-		_frameOffsets = _ptr + _numColors + 2;
-		_dataptr = _baseptr + READ_LE_UINT16(_ptr + _numColors);
 	}
-	
+	_ptr += 8 + _numColors;
+	_frameOffsets = _ptr + 2;
+	_dataptr = _baseptr + READ_LE_UINT16(_ptr);
 }
 
 byte CostumeRenderer::drawLimb(const CostumeData &cost, int limb) {
@@ -626,17 +620,14 @@ void Scumm::cost_decodeData(Actor *a, int frame, uint usemask) {
 	}
 
 	if (_version == 1) {
-		// FIXME: lc._numColors is 0 for C64 codec...
-		// Is this code here really correct? If I compare V1 and V2 maniac,
-		// looking at the case Actor 1, frame 1, anim 6, I notice that for V1,
-		// there are 3 bytes / entry (i.e. the offsets) increase in steps of 3)
-		// But for V2 there are 10 bytes / entry. That makes me wonder if the
-		// following decoder is correct *at all* for the C64 data
-		r = lc._baseptr + READ_LE_UINT16(lc._ptr + anim * 2 + lc._numColors + 22);
+		// FIXME
+//printf("Offset table:\n");
+//hexdump(lc._ptr + anim * 2 + 34 - 0x10, 0x20);
+		r = lc._baseptr + READ_LE_UINT16(lc._ptr + 20 + anim * 2);
 	} else {
-		r = lc._baseptr + READ_LE_UINT16(lc._ptr + anim * 2 + lc._numColors + 34);
+		r = lc._baseptr + READ_LE_UINT16(lc._ptr + 34 + anim * 2);
 	}
-//printf("actor %d, frame %d, anim %d:\n", a->number, frame, anim);
+//printf("actor %d, costum %d, frame %d, anim %d:\n", a->number, lc._id, frame, anim);
 //hexdump(r, 0x20);
 
 	if (r == lc._baseptr) {
@@ -644,8 +635,15 @@ void Scumm::cost_decodeData(Actor *a, int frame, uint usemask) {
 	}
 
 	dataptr = lc._dataptr;
-	mask = READ_LE_UINT16(r);
-	r += 2;
+	// FIXME: Maybe V1 only ready one byte here? At least it seems by comparing the
+	// V1 and V2 data that there is a 1-byte len difference.
+/*	if (_version == 1) {
+		mask = *r++;
+	} else {
+*/
+		mask = READ_LE_UINT16(r);
+		r += 2;
+//	}
 	i = 0;
 	do {
 		if (mask & 0x8000) {
