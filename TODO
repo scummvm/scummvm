@@ -226,6 +226,8 @@ Plugins
   and possibly a filename.
   Justification: This API would make it possible to directly load savegames
   from the launcher.
+* This savegame API could return additional (optional) information for each
+  savegame entry: name; creation date; thumbnail screenshot
 
 #######################################################################
 # Engines / frontends
