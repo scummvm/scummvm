@@ -1349,7 +1349,7 @@ void Scumm::o6_walkActorToObj()
 		a2 = derefActorSafe(obj, "o6_walkActorToObj(2)");
 		if (!a2)
 			return;
-		if (!a->isInCurrentRoom() || !a->isInCurrentRoom())
+		if (!a->isInCurrentRoom() || !a2->isInCurrentRoom())
 			return;
 		if (dist == 0) {
 			dist = a2->scalex * a2->width / 0xFF;
