@@ -2466,7 +2466,6 @@ void Scumm_v6::o6_setBlastObjectWindow()
 void Scumm_v6::o6_kernelSetFunctions()
 {
 	int args[30];
-	int i;
 	Actor *a;
 
 	getStackList(args, sizeof(args) / sizeof(args[0]));
@@ -2657,8 +2656,7 @@ void Scumm_v6::o6_kernelSetFunctions()
 		case 6:
 			_fullRedraw = 1;
 			redrawBGAreas();
-			for (i = 1; i < NUM_ACTORS; i++)
-				derefActor(i)->needRedraw = true;
+			setActorRedrawFlags(true, false);
 			processActors();
 			fadeIn(args[1]);
 			break;

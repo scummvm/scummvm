@@ -693,7 +693,6 @@ void Scumm::redrawBGAreas()
 			redrawBGStrip(0, 1);
 		} else if (_fullRedraw != 0 || diff != 0) {
 			_BgNeedsRedraw = false;
-			_fullRedraw = false;
 			redrawBGStrip(0, gdi._numStrips);
 		}
 	} else {

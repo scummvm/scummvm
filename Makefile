@@ -32,8 +32,8 @@ OBJS	:=
 #######################################################################
 
 # Uncomment this to activate the MAD lib for compressed sound files
-DEFINES += -DUSE_MAD
-LIBS    += -lmad
+#DEFINES += -DUSE_MAD
+#LIBS    += -lmad
 
 # Uncomment this to activate the Ogg Vorbis lib for compressed sound files
 # DEFINES += -DUSE_VORBIS
