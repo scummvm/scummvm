@@ -103,7 +103,7 @@ static const VersionSettings scumm_settings[] = {
 	 GF_SMALL_HEADER | GF_USE_KEY | GF_AUDIOTRACKS, "000.LFL"},
 	{"monkey", "Monkey Island 1", GID_MONKEY, 5, /*MDT_PCSPK |*/ MDT_ADLIB,
 	 GF_USE_KEY | GF_AUDIOTRACKS, 0},
-	{"monkey1", "Monkey Island 1 (alt)", GID_MONKEY, 5, MDT_PCSPK | MDT_ADLIB | MDT_NATIVE,
+	{"monkey1", "Monkey Island 1 (alt)", GID_MONKEY, 5, /*MDT_PCSPK |*/ MDT_ADLIB | MDT_NATIVE,
 	 GF_USE_KEY | GF_AUDIOTRACKS, 0},
 	{"game", "Monkey Island 1 (SegaCD version)", GID_MONKEY_SEGA, 5, MDT_NONE,
 	 GF_USE_KEY | GF_AUDIOTRACKS, 0},
