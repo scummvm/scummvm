@@ -65,7 +65,9 @@ enum {
 GlobalOptionsDialog::GlobalOptionsDialog(GameDetector &detector)
 	: Dialog(10, 20, 320 - 2 * 10, 200 - 2 * 20) {
 
+	CheckboxWidget *check;
 	const int vBorder = 5;
+	int yoffset;
 
 	// The tab widget
 	TabWidget *tab = new TabWidget(this, 0, vBorder, _w, _h - 24 - 2*vBorder);
@@ -74,12 +76,14 @@ GlobalOptionsDialog::GlobalOptionsDialog(GameDetector &detector)
 	// 1) The graphics tab
 	//
 	tab->addTab("Graphics");
+	yoffset = vBorder;
 
 	// The GFX mode popup & a label
 	// TODO - add an API to query the list of available GFX modes, and to get/set the mode
 	//new StaticTextWidget(tab, 5, vBorder+2, 100, kLineHeight, "Graphics mode: ", kTextAlignRight);
 	PopUpWidget *gfxPopUp;
-	gfxPopUp = new PopUpWidget(tab, 5, vBorder, 280, kLineHeight, "Graphics mode: ", 100);
+	gfxPopUp = new PopUpWidget(tab, 5, yoffset, 280, kLineHeight, "Graphics mode: ", 100);
+	yoffset += 16;
 
 	// Ender: We don't really want a <default> here at all, we want to setSelected to the current global
 	gfxPopUp->appendEntry("<default>");
@@ -91,6 +95,9 @@ GlobalOptionsDialog::GlobalOptionsDialog(GameDetector &detector)
 	gfxPopUp->appendEntry("Super2xSAI");
 	gfxPopUp->appendEntry("SuperEagle");
 	gfxPopUp->appendEntry("AdvMAME2x");
+	gfxPopUp->appendEntry("AdvMAME3x");
+	gfxPopUp->appendEntry("hq2x");
+	gfxPopUp->appendEntry("hq3x");
 	gfxPopUp->appendEntry("TV2x");
 	gfxPopUp->appendEntry("DotMatrix");
 	gfxPopUp->setSelected(0);
@@ -98,18 +105,29 @@ GlobalOptionsDialog::GlobalOptionsDialog(GameDetector &detector)
 	// FIXME - disable GFX popup for now
 	gfxPopUp->setEnabled(false);
 	
+#if 1
 	// TODO: Aspect ratio setting
 	// TODO: Fullscreen setting
+	check = new CheckboxWidget(tab, 10, yoffset, 280, 16, "Fullscreen mode");
+	check->setState(ConfMan.getBool("fullscreen"));
+	yoffset += 16;
+
+	check = new CheckboxWidget(tab, 10, yoffset, 280, 16, "Aspect ratio correction");
+	check->setState(ConfMan.getBool("aspect_ratio"));
+	yoffset += 16;
+#endif
 
 
 	//
 	// 2) The audio tab
 	//
 	tab->addTab("Audio");
+	yoffset = vBorder;
 
 	// The MIDI mode popup & a label
 	//new StaticTextWidget(tab, 5, vBorder+2, 100, kLineHeight, "Music driver: ", kTextAlignRight);
-	_midiPopUp = new PopUpWidget(tab, 5, vBorder, 280, kLineHeight, "Music driver: ", 100);
+	_midiPopUp = new PopUpWidget(tab, 5, yoffset, 280, kLineHeight, "Music driver: ", 100);
+	yoffset += 16;
 	
 	// Populate it
 	const MidiDriverDescription *md = getAvailableMidiDrivers();
@@ -125,8 +143,6 @@ GlobalOptionsDialog::GlobalOptionsDialog(GameDetector &detector)
 	_midiPopUp->setSelected(midiSelected);
 	
 	// Volume controllers
-	int yoffset = vBorder + 16;
-
 	_masterVolumeSlider = new SliderWidget(tab, 5, yoffset, 185, 12,  "Master volume: ", 100, kMasterVolumeChanged);
 	_masterVolumeLabel = new StaticTextWidget(tab, 200, yoffset+2, 24, 16, "100%", kTextAlignLeft);
 	_masterVolumeSlider->setMinValue(0); _masterVolumeSlider->setMaxValue(255);
@@ -145,21 +161,31 @@ GlobalOptionsDialog::GlobalOptionsDialog(GameDetector &detector)
 	_sfxVolumeLabel->setFlags(WIDGET_CLEARBG);
 	yoffset += 16;
 	
+#if 1
 	// TODO: cd drive setting
 	// TODO: multi midi setting
 	// TODO: native mt32 setting
+	check = new CheckboxWidget(tab, 10, yoffset, 280, 16, "Mixed Adlib/MIDI mode");
+	check->setState(ConfMan.getBool("multi_midi"));
+	yoffset += 16;
+
+	check = new CheckboxWidget(tab, 10, yoffset, 280, 16, "True Roland MT-32 (disable GM emulation)");
+	check->setState(ConfMan.getBool("native_mt32"));
+	yoffset += 16;
+#endif
 
 
 	//
 	// 3) The miscellaneous tab
 	//
 	tab->addTab("Misc");
+	yoffset = vBorder;
 
 #if !( defined(__DC__) || defined(__GP32__) )
 	// Save game path
-	new StaticTextWidget(tab, 5, vBorder+2, 100, kLineHeight, "Savegame path: ", kTextAlignRight);
-	_savePath = new StaticTextWidget(tab, 105, vBorder+2, 180, kLineHeight, "/foo/bar", kTextAlignLeft);
-	new ButtonWidget(tab, 105, vBorder+14, 64, 16, "Choose...", kChooseSaveDirCmd, 0);
+	new StaticTextWidget(tab, 5, yoffset+2, 100, kLineHeight, "Savegame path: ", kTextAlignRight);
+	_savePath = new StaticTextWidget(tab, 105, yoffset+2, 180, kLineHeight, "/foo/bar", kTextAlignLeft);
+	new ButtonWidget(tab, 105, yoffset+14, 64, 16, "Choose...", kChooseSaveDirCmd, 0);
 	
 // TODO: set _savePath to the current save path
 	Common::String dir(ConfMan.get("savepath"));

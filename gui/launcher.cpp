@@ -110,6 +110,9 @@ EditGameDialog::EditGameDialog(const String &domain, GameSettings target)
 	// GUI:  Add tab widget
 	TabWidget *tab = new TabWidget(this, 0, vBorder, _w, _h - 24 - 2*vBorder);
 
+	//
+	// 1) The game tab
+	//
 	tab->addTab("Game");
 	yoffset = vBorder;
 
@@ -130,7 +133,9 @@ EditGameDialog::EditGameDialog(const String &domain, GameSettings target)
 
 	// TODO: Platform and language dropdowns (?)
 
-	// GUI:  Add Graphics tab
+	//
+	// 2) The graphics tab
+	//
 	tab->addTab("Graphics");
 	yoffset = vBorder;
 
@@ -148,6 +153,9 @@ EditGameDialog::EditGameDialog(const String &domain, GameSettings target)
 	gfxPopUp->appendEntry("Super2xSAI");
 	gfxPopUp->appendEntry("SuperEagle");
 	gfxPopUp->appendEntry("AdvMAME2x");
+	gfxPopUp->appendEntry("AdvMAME3x");
+	gfxPopUp->appendEntry("hq2x");
+	gfxPopUp->appendEntry("hq3x");
 	gfxPopUp->appendEntry("TV2x");
 	gfxPopUp->appendEntry("DotMatrix");
 	gfxPopUp->setSelected(0);
@@ -156,8 +164,19 @@ EditGameDialog::EditGameDialog(const String &domain, GameSettings target)
 	gfxPopUp->setEnabled(false);
 
 	// GUI:  Full screen checkbox
-	_fullscreenCheckbox = new CheckboxWidget(tab, 15, yoffset, 200, 16, "Use Fullscreen Mode", 0, 'F');
+	_fullscreenCheckbox = new CheckboxWidget(tab, 15, yoffset, 200, 16, "Fullscreen mode", 0, 'F');
 	_fullscreenCheckbox->setState(ConfMan.getBool("fullscreen", _domain));
+
+
+	//
+	// 3) The audio tab
+	//
+	tab->addTab("Audio");
+	yoffset = vBorder;
+	
+	// TODO: Volume/driver/midi/... settings
+
+
 
 	// Activate the first tab
 	tab->setActiveTab(0);
