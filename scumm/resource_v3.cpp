@@ -153,7 +153,7 @@ void ScummEngine_v3::readIndexFile() {
 				break;
 
 			default:
-				// FIXME: this is a little hack because Indy3 FM Towns has
+				// FIXME: this is a little hack because Indy3 FM-TOWNS has
 				// 32 extra bytes of unknown meaning appended to 00.LFL
 				if (!(_gameId == GID_INDY3 && _features & GF_FMTOWNS))
 					error("Bad ID %c%c found in directory!", blocktype & 0xFF, blocktype >> 8);

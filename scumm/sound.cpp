@@ -435,7 +435,7 @@ void Sound::playSound(int soundID, int offset) {
 			}
 			break;
 		case 1:
-		case 255:	// 255 is the type used in Indy3 FMTowns
+		case 255:	// 255 is the type used in Indy3 FM-TOWNS
 			// Music (Euphony format)
 			if (_vm->_musicEngine)
 				_vm->_musicEngine->startSound(soundID);

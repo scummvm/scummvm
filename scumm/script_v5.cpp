@@ -1774,15 +1774,15 @@ void ScummEngine_v5::o5_resourceRoutines() {
 
 	// TODO: For the following see also Hibarnatus' information on bug #805691.
 	case 32:
-		// TODO (apparently never used in FM Towns)
+		// TODO (apparently never used in FM-TOWNS)
 		warning("o5_resourceRoutines %d not yet handled (script %d)", _opcode & 0x3F,  vm.slot[_currentScript].number);
 		break;
 	case 33:
-		// TODO (apparently never used in FM Towns)
+		// TODO (apparently never used in FM-TOWNS)
 		warning("o5_resourceRoutines %d not yet handled (script %d)", _opcode & 0x3F,  vm.slot[_currentScript].number);
 		break;
 	case 35:
-		// TODO: Might be used to set CD volume in FM Towns Loom
+		// TODO: Might be used to set CD volume in FM-TOWNS Loom
 		foo = getVarOrDirectByte(PARAM_2);
 		warning("o5_resourceRoutines %d not yet handled (script %d)", _opcode & 0x3F,  vm.slot[_currentScript].number);
 		break;
@@ -2095,7 +2095,7 @@ void ScummEngine_v5::o5_setVarRange() {
 
 void ScummEngine_v5::o5_startMusic() {
 	if (_features & GF_FMTOWNS && _version == 3) {
-		// In FM Towns games this is some kind of Audio CD status query function.
+		// In FM-TOWNS games this is some kind of Audio CD status query function.
 		// See also bug #762589 (thanks to Hibernatus for providing the information).
 		getResultPos();
 		int b = getVarOrDirectByte(PARAM_1);
@@ -2114,7 +2114,7 @@ void ScummEngine_v5::o5_startMusic() {
 			result = _sound->getCurrentCDSound();
 			break;
 		case 0xFF:
-			// TODO: Might return current CD volume in FM Towns Loom. See also bug #805691.
+			// TODO: Might return current CD volume in FM-TOWNS Loom. See also bug #805691.
 			break;
 		default:
 			// TODO: return track length in seconds. We'll have to extend Sound and OSystem for this.

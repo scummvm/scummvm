@@ -70,15 +70,15 @@ void ScummEngine::loadCJKFont() {
 			fp.read(_2byteFontPtr, ((_2byteWidth + 7) / 8) * _2byteHeight * numChar);
 			fp.close();
 		}
-	} else if (_language == Common::JA_JPN && _version == 5) { //FM Towns Kanji
+	} else if (_language == Common::JA_JPN && _version == 5) { // FM-TOWNS Kanji
 		File fp;
 		int numChar = 256 * 32;
 		_2byteWidth = 16;
 		_2byteHeight = 16;
-		//use FM Towns font rom, since game files don't have kanji font resources
+		// use FM-TOWNS font rom, since game files don't have kanji font resources
 		if (fp.open("fmt_fnt.rom")) { 
 			_useCJKMode = true;
-			debug(2, "Loading FM Towns Kanji rom");
+			debug(2, "Loading FM-TOWNS Kanji rom");
 			_2byteFontPtr = new byte[((_2byteWidth + 7) / 8) * _2byteHeight * numChar];
 			fp.read(_2byteFontPtr, ((_2byteWidth + 7) / 8) * _2byteHeight * numChar);
 			fp.close();
@@ -1116,7 +1116,7 @@ void CharsetRendererV3::setColor(byte color)
 {
 	_color = color;
 	_shadowColor = (_vm->_features & GF_FMTOWNS) ? 8 : 0;
-	// FM Towns version of Loom uses old colour method as well
+	// FM-TOWNS version of Loom uses old colour method as well
 	if ((_vm->_version >= 2) && (_vm->_features & GF_16COLOR || _vm->_gameId == GID_LOOM)) {
 		_dropShadow = ((_color & 0xF0) != 0);
 		_color &= 0x0f;

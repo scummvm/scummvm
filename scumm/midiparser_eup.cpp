@@ -28,7 +28,7 @@
 namespace Scumm {
 
 /**
- * The FM Towns Euphony version of MidiParser.
+ * The FM-TOWNS Euphony version of MidiParser.
  */
 class MidiParser_EUP : public MidiParser {
 protected:
@@ -70,7 +70,7 @@ void MidiParser_EUP::parseNextEvent (EventInfo &info) {
 	// in the music header. We're sending fixed GM
 	// program changes to get a reasonable "one-size-
 	// fits-all" sound until we actually support the
-	// FM synthesis capabilities of FM Towns.
+	// FM synthesis capabilities of FM-TOWNS.
 	for (; _presend < 12; ++_presend) {
 		if (_instr_to_channel[_presend >> 1] >= 16)
 			continue;

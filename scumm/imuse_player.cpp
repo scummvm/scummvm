@@ -196,7 +196,7 @@ int Player::start_seq_sound(int sound, bool reset_vars) {
 		// Old style 'RO' resource
 		_parser = MidiParser_createRO();
 	} else if (!memcmp (ptr, "SO", 2)) {
-		// Euphony (FM Towns) resource
+		// Euphony (FM-TOWNS) resource
 		_parser = MidiParser_createEUP();
 	} else if (!memcmp(ptr, "FORM", 4)) {
 		// Humongous Games XMIDI resource
@@ -368,7 +368,7 @@ void Player::sysEx(byte *p, uint16 len) {
 					part->_instrument.send(part->_mc);
 			}
 		} else if (a == YM2612_SYSEX_ID) {
-			// FM-Towns custom instrument definition
+			// FM-TOWNS custom instrument definition
 			_midi->sysEx_customInstrument (p[0], 'EUP ', p + 1);
 		} else {
 			warning("Unknown SysEx manufacturer 0x%02X", (int) a);
