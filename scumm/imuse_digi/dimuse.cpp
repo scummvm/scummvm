@@ -208,19 +208,6 @@ void IMuseDigital::callback() {
 
 void IMuseDigital::switchToNextRegion(int track) {
 	int num_regions = _sound->getNumRegions(_track[track].soundHandle);
-	int num_jumps = _sound->getNumJumps(_track[track].soundHandle);
-	if (_vm->_gameId == GID_FT) {
-		if (_track[track].curRegion == -1) {
-			_track[track].curRegion = 0;
-			_track[track].regionOffset = 0;
-			return;
-		}
-		if (num_jumps != 0)
-			_track[track].regionOffset = 0;
-		else
-			_track[track].toBeRemoved = true;
-		return;
-	}
 
 	if (++_track[track].curRegion == num_regions) {
 		_track[track].toBeRemoved = true;
@@ -296,8 +283,13 @@ void IMuseDigital::startSound(int soundId, const char *soundName, int soundType,
 				assert(channels == 1 || channels == 2);
 				assert(0 < freq && freq <= 65535);
 
-				freq /= 25;
-				freq *= 25;
+				// Round the frequency to a multiple of 25. This is done to 
+				// ensure we don't run into data under-/overflows (this is a
+				// design limitation of the current IMuseDigital code, which
+				// pushes data 'blindly' into the mixer, instead of providing
+				// a pull based interface, i.e. a custom AudioInputStream
+				// subclass).
+				freq -= (freq % 25);
 
 				_track[l].iteration = _track[l].pullSize = freq * channels;
 
