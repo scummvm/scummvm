@@ -22,6 +22,7 @@ Supported Games:
 At the moment the following games have been reported to work, and should
 be playable to the end:
 
+        Loom (256 color CD version)
 	Monkey Island 1 (CD version)
 	Monkey Island 2
 	Indiana Jones And The Fate Of Atlantis
@@ -32,7 +33,6 @@ The following games should load, but are not yet fully playable. If you want
 the latest updates on game compatability, visit our website and view the
 compatability chart.
 
-	Loom (256 color CD version)
 	Zak McKraken (256 color FM Towns version)
 	Indiana Jones and the Last Crusade (256 color version)
         Full Throttle
@@ -83,6 +83,10 @@ although patches to fix them are welcome.
        Day of the Tentacle:
                 - German talkie version may crash when talking to Thomas
                   Jefferson.
+       Loom (256 Talkie):
+                - CD music and voices are not correctly syncronised
+                - Some voices may be skipped altogether
+                - Staff notes draw incorrectly
 
 Reporting Bugs:
 ---------------
