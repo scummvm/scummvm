@@ -140,7 +140,7 @@ String &String::operator += (char c) {
 	return *this;
 }
 
-char lastChar() const {
+char String::lastChar() const {
 	return (_len > 0) ? _str[_len-1] : 0;
 }
 
