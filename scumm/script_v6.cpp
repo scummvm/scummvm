@@ -1737,9 +1737,6 @@ void Scumm::o6_actorSet()
 	case 228:										/* walk script */
 		a->walk_script = pop();
 		break;
-	case 235:										/* talk_script */
-		a->talk_script = pop();
-		break;
 	case 229:										/* stand */
 		a->stopActorMoving();
 		a->startAnimActor(a->standFrame);
@@ -1756,6 +1753,9 @@ void Scumm::o6_actorSet()
 		break;
 	case 234:										/* unfreeze actor */
 		a->moving &= ~0x7f;
+		break;
+	case 235:										/* talk_script */
+		a->talk_script = pop();
 		break;
 	default:
 		error("o6_actorset: default case %d", b);
@@ -2080,7 +2080,6 @@ void Scumm::o6_wait()
 			int actnum = pop();
 			Actor *a = derefActorSafe(actnum, "o6_wait:226");
 			int offs = (int16)fetchScriptWord();
-			
 			if (a && a->isInCurrentRoom() && a->needRedraw) {
 				_scriptPointer += offs;
 				o6_breakHere();
@@ -2088,7 +2087,9 @@ void Scumm::o6_wait()
 			return;
 		}
 	case 232:{										/* wait until actor stops turning */
-			Actor *a = derefActorSafe(pop(), "o6_wait:226");
+			int actnum = pop();
+			Actor *a = derefActorSafe(actnum, "o6_wait:232");
+			printf("
 			int offs = (int16)fetchScriptWord();
 			if (a && a->isInCurrentRoom() && a->moving & MF_TURN) {
 				_scriptPointer += offs;
@@ -2788,7 +2789,7 @@ void Scumm::o6_kernelFunction()
 		break;
 	case 212:
 		a = derefActorSafe(args[1], "o6_kernelFunction:212");
-		// FIXME - frame is never set and thus always 0! See actor.h comment
+		// This is used by walk scripts
 		push(a->frame);
 		break;
 	case 215:

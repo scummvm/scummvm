@@ -263,7 +263,6 @@ void Scumm::saveOrLoad(Serializer *s, uint32 savegameVersion)
 		MK_OBSOLETE(Actor, mask, sleByte, VER_V8, VER_V9),
 		MKLINE(Actor, shadow_mode, sleByte, VER_V8),
 		MKLINE(Actor, visible, sleByte, VER_V8),
-		// FIXME - frame is never set and thus always 0! See actor.h comment
 		MKLINE(Actor, frame, sleByte, VER_V8),
 		MKLINE(Actor, animSpeed, sleByte, VER_V8),
 		MKLINE(Actor, animProgress, sleByte, VER_V8),
