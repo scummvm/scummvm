@@ -302,7 +302,7 @@ void Scumm::setupOpcodes()
 		&Scumm::o5_add,
 		&Scumm::o5_divide,
 		/* DC */
-		&Scumm::o5_badOpcode,
+		&Scumm::o5_oldRoomEffect,
 		&Scumm::o5_actorSetClass,
 		&Scumm::o5_walkActorTo,
 		&Scumm::o5_isActorInBox,
@@ -625,7 +625,7 @@ void Scumm::setupOpcodes()
 		"o5_add",
 		"o5_divide",
 		/* DC */
-		"o5_badOpcode",
+		"o5_oldRoomEffect",
 		"o5_actorSetClass",
 		"o5_walkActorTo",
 		"o5_isActorInBox",
