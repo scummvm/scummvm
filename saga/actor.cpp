@@ -729,7 +729,7 @@ int Actor::deleteActor(int index) {
 	return R_SUCCESS;
 }
 
-int Actor::walkTo(int id, Point *walk_pt, uint16 flags, R_SEMAPHORE *sem) {
+int Actor::walkTo(int id, const Point *walk_pt, uint16 flags, R_SEMAPHORE *sem) {
 	R_ACTORINTENT actor_intent;
 	R_WALKINTENT *walk_intent;
 	R_WALKINTENT zero_intent;
@@ -953,7 +953,7 @@ int Actor::handleWalkIntent(R_ACTOR *actor, R_WALKINTENT *a_walkint, int *comple
 	return R_SUCCESS;
 }
 
-int Actor::move(int index, Point *move_pt) {
+int Actor::move(int index, const Point *move_pt) {
 	YS_DL_NODE *node;
 	R_ACTOR *actor;
 
@@ -985,7 +985,7 @@ int Actor::move(int index, Point *move_pt) {
 	return R_SUCCESS;
 }
 
-int Actor::moveRelative(int index, Point *move_pt) {
+int Actor::moveRelative(int index, const Point *move_pt) {
 	YS_DL_NODE *node;
 	R_ACTOR *actor;
 

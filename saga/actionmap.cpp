@@ -120,7 +120,7 @@ const int ActionMap::getExitScene(int exitNum) {
 }
 
 
-int ActionMap::hitTest(Point imouse) {
+int ActionMap::hitTest(const Point& imouse) {
 	R_ACTIONMAP_ENTRY *exmap_entry;
 	R_CLICKAREA *clickarea;
 	Point *points;

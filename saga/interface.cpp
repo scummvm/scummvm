@@ -303,7 +303,7 @@ int Interface::draw() {
 	return R_SUCCESS;
 }
 
-int Interface::update(Point imousePt, int update_flag) {
+int Interface::update(const Point& imousePt, int update_flag) {
 	R_GAME_DISPLAYINFO g_di;
 
 	R_SURFACE *back_buf;
@@ -369,7 +369,7 @@ int Interface::drawStatusBar(R_SURFACE *ds) {
 	return R_SUCCESS;
 }
 
-int Interface::handleCommandClick(R_SURFACE *ds, Point imousePt) {
+int Interface::handleCommandClick(R_SURFACE *ds, const Point& imousePt) {
 	int hit_button;
 	int ibutton_num;
 
@@ -420,7 +420,7 @@ int Interface::handleCommandClick(R_SURFACE *ds, Point imousePt) {
 	return R_SUCCESS;
 }
 
-int Interface::handleCommandUpdate(R_SURFACE *ds, Point imousePt) {
+int Interface::handleCommandUpdate(R_SURFACE *ds, const Point& imousePt) {
 	int hit_button;
 	int ibutton_num;
 
@@ -474,7 +474,7 @@ int Interface::handleCommandUpdate(R_SURFACE *ds, Point imousePt) {
 	return R_SUCCESS;
 }
 
-int Interface::handlePlayfieldClick(R_SURFACE *ds, Point imousePt) {
+int Interface::handlePlayfieldClick(R_SURFACE *ds, const Point& imousePt) {
 	int objectNum;
 	uint16 object_flags = 0;
 
@@ -511,7 +511,7 @@ int Interface::handlePlayfieldClick(R_SURFACE *ds, Point imousePt) {
 	return R_SUCCESS;
 }
 
-int Interface::handlePlayfieldUpdate(R_SURFACE *ds, Point imousePt) {
+int Interface::handlePlayfieldUpdate(R_SURFACE *ds, const Point& imousePt) {
 	const char *object_name;
 	int objectNum;
 	uint16 object_flags = 0;
@@ -546,7 +546,7 @@ int Interface::handlePlayfieldUpdate(R_SURFACE *ds, Point imousePt) {
 	return R_SUCCESS;
 }
 
-int Interface::hitTest(Point imousePt, int *ibutton) {
+int Interface::hitTest(const Point& imousePt, int *ibutton) {
 	R_INTERFACE_BUTTON *buttons;
 
 	int nbuttons;

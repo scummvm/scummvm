@@ -415,7 +415,7 @@ int Gfx::drawRect(R_SURFACE *ds, Rect *dst_rect, int color) {
 	return R_SUCCESS;
 }
 
-int Gfx::drawFrame(R_SURFACE *ds, Point *p1, Point *p2, int color) {
+int Gfx::drawFrame(R_SURFACE *ds, const Point *p1, const Point *p2, int color) {
 	int left, top, right, bottom;
 
 	int min_x;
@@ -457,8 +457,8 @@ int Gfx::drawFrame(R_SURFACE *ds, Point *p1, Point *p2, int color) {
 	return R_SUCCESS;
 }
 
-int Gfx::drawPolyLine(R_SURFACE *ds, Point *pts, int pt_ct, int draw_color) {
-	Point *first_pt = pts;
+int Gfx::drawPolyLine(R_SURFACE *ds, const Point *pts, int pt_ct, int draw_color) {
+	const Point *first_pt = pts;
 	int last_i = 1;
 	int i;
 
@@ -634,7 +634,7 @@ int Gfx::clipLine(R_SURFACE *ds, const Point *src_p1, const Point *src_p2,
 // Coriolis Group Books, 1997
 //
 // Performs no clipping
-void Gfx::drawLine(R_SURFACE *ds, Point *p1, Point *p2, int color) {
+void Gfx::drawLine(R_SURFACE *ds, const Point *p1, const Point *p2, int color) {
 	byte *write_p;
 	int clip_result;
 	int temp;
@@ -1076,14 +1076,14 @@ void Gfx::setCursor(int best_white) {
 	_system->setMouseCursor(cursor_img, R_CURSOR_W, R_CURSOR_H, 4, 4, keycolor);
 }
 
-bool Gfx::hitTestPoly(Point *points, unsigned int npoints, Point test_point) {
+bool Gfx::hitTestPoly(const Point *points, unsigned int npoints, const Point& test_point) {
 	int yflag0;
 	int yflag1;
 	bool inside_flag = false;
 	unsigned int pt;
 
-	Point *vtx0 = &points[npoints - 1];
-	Point *vtx1 = &points[0];
+	const Point *vtx0 = &points[npoints - 1];
+	const Point *vtx1 = &points[0];
 
 	yflag0 = (vtx0->y >= test_point.y);
 	for (pt = 0; pt < npoints; pt++, vtx1++) {

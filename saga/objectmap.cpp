@@ -246,7 +246,7 @@ const int ObjectMap::getEPNum(int object) {
 
 // Uses Gfx::drawLine to display all clickareas for each object in the 
 // currently loaded object map resource.
-int ObjectMap::draw(R_SURFACE *ds, Point imousePt, int color, int color2) {
+int ObjectMap::draw(R_SURFACE *ds, const Point& imousePt, int color, int color2) {
 	R_OBJECTMAP_ENTRY *object_map;
 	R_CLICKAREA *clickarea;
 
@@ -301,7 +301,7 @@ int ObjectMap::draw(R_SURFACE *ds, Point imousePt, int color, int color2) {
 	return R_SUCCESS;
 }
 
-int ObjectMap::hitTest(Point imousePt) {
+int ObjectMap::hitTest(const Point& imousePt) {
 	Point imouse;
 	R_OBJECTMAP_ENTRY *object_map;
 	R_CLICKAREA *clickarea;

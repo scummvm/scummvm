@@ -59,7 +59,7 @@ class ActionMap {
 	~ActionMap(void);
 
 	const int getExitScene(int exitNum);
-	int hitTest(Point imousePt);
+	int hitTest(const Point& imousePt);
 	int draw(R_SURFACE *ds, int color);
 
 	void info(void);

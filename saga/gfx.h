@@ -92,11 +92,11 @@ public:
 	int bufToBuffer(byte * dst_buf, int dst_w, int dst_h, const byte *src,
 		int src_w, int src_h, Rect *src_rect, Point *dst_pt);
 	int drawRect(R_SURFACE *ds, Rect *dst_rect, int color);
-	int drawFrame(R_SURFACE *ds, Point *p1, Point *p2, int color);
-	int drawPolyLine(R_SURFACE *ds, Point *pts, int pt_ct, int draw_color);
+	int drawFrame(R_SURFACE *ds, const Point *p1, const Point *p2, int color);
+	int drawPolyLine(R_SURFACE *ds, const Point *pts, int pt_ct, int draw_color);
 	int getClipInfo(R_CLIPINFO *clipinfo);
 	int clipLine(R_SURFACE *ds, const Point *src_p1, const Point *src_p2, Point *dst_p1, Point *dst_p2);
-	void drawLine(R_SURFACE * ds, Point *p1, Point *p2, int color);
+	void drawLine(R_SURFACE * ds, const Point *p1, const Point *p2, int color);
 
 	Gfx(OSystem *system, int width, int height);
 	R_SURFACE *getBackBuffer();
@@ -107,7 +107,7 @@ public:
 	int getCurrentPal(PALENTRY *src_pal);
 	int palToBlack(R_SURFACE *surface, PALENTRY *src_pal, double percent);
 	int blackToPal(R_SURFACE *surface, PALENTRY *src_pal, double percent);
-	bool hitTestPoly(Point *points, unsigned int npoints, Point test_point);
+	bool hitTestPoly(const Point *points, unsigned int npoints, const Point& test_point);
 
 private:
 	void setCursor(int best_white);

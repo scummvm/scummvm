@@ -199,10 +199,10 @@ class Actor {
 	int AtoS(Point *logical, const Point *actor);
 	int StoA(Point *actor, const Point screen);
 
-	int move(int index, Point *move_pt);
-	int moveRelative(int index, Point *move_pt);
+	int move(int index, const Point *move_pt);
+	int moveRelative(int index, const Point *move_pt);
 
-	int walkTo(int index, Point *walk_pt, uint16 flags, R_SEMAPHORE *sem);
+	int walkTo(int index, const Point *walk_pt, uint16 flags, R_SEMAPHORE *sem);
 	
 	int getActorIndex(uint16 actor_id);
 	
