@@ -375,14 +375,14 @@ extern OSystem *OSystem_MAC_create(int gfx_mode, bool full_screen);
 extern OSystem *OSystem_GP32_create(int gfx_mode, bool full_screen); //ph0x 
 extern OSystem *OSystem_PALMOS_create(int gfx_mode);
 
-enum {
 #ifdef _WIN32_WCE
-	SAMPLES_PER_SEC_OLD =  11025,
-	SAMPLES_PER_SEC_NEW =  22050
+#define SAMPLES_PER_SEC_OLD 11025
+#define SAMPLES_PER_SEC_NEW 22050
 #else
-	SAMPLES_PER_SEC =  22050
+//#define SAMPLES_PER_SEC 11025
+#define SAMPLES_PER_SEC 22050
+//#define SAMPLES_PER_SEC 44100
 #endif
-};
 
 enum {
 	FMOPL_ENV_BITS_HQ = 16,
