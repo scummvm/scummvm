@@ -1,6 +1,7 @@
 MODULE := simon
 
 MODULE_OBJS = \
+	simon/charset.o \
 	simon/debug.o \
 	simon/items.o \
 	simon/midi.o \
