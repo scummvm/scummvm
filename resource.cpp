@@ -590,7 +590,7 @@ byte *Scumm::createResource(int type, int index, uint32 size) {
 
 void Scumm::validateResource(const char *str, int type, int index) {
 	if (type<rtFirst || type>rtLast || (uint)index >= (uint)res.num[type]) {
-		error("%d Illegal Glob type %d num %d", str, type, index);
+		error("%s Illegal Glob type %d num %d", str, type, index);
 	}
 }
 
