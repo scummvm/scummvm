@@ -66,30 +66,14 @@ GameSettings Plugin::findGame(const char *gameName) const {
 #pragma mark -
 
 
-/**
- * Auxillary class to simplify transition from old plugin interface to the
- * new one (which provides an API for game detection). To be removed once
- * the transition is complete.
- */
-class GameSettingsPlugin : public Plugin {
-protected:
-	GameList _games;
-public:
-	GameSettingsPlugin() { }
-	GameSettingsPlugin(GameList games) : _games(games) { }
-	GameList getSupportedGames() const { return _games; }
-};
-
-#pragma mark -
-
-
-class StaticPlugin : public GameSettingsPlugin {
+class StaticPlugin : public Plugin {
 	const char *_name;
 	EngineFactory _ef;
 	DetectFunc _df;
+	GameList _games;
 public:
 	StaticPlugin(const char *name, GameList games, EngineFactory ef, DetectFunc df)
-		: GameSettingsPlugin(games), _name(name), _ef(ef), _df(df) {
+		: _name(name), _ef(ef), _df(df), _games(games) {
 	}
 
 	const char *getName() const					{ return _name; }
@@ -98,6 +82,7 @@ public:
 		return (*_ef)(detector, syst);
 	}
 
+	GameList getSupportedGames() const { return _games; }
 	GameList detectGames(const FSList &fslist) const {
 		return (*_df)(fslist);
 	}
@@ -109,19 +94,20 @@ public:
 
 #ifdef DYNAMIC_MODULES
 
-class DynamicPlugin : public GameSettingsPlugin {
+class DynamicPlugin : public Plugin {
 	void *_dlHandle;
 	Common::String _filename;
 
 	Common::String _name;
 	EngineFactory _ef;
 	DetectFunc _df;
+	GameList _games;
 	
 	void *findSymbol(const char *symbol);
 
 public:
 	DynamicPlugin(const char *filename)
-		: GameSettingsPlugin(), _dlHandle(0), _filename(filename), _ef(0), _df(0) {}
+		: _dlHandle(0), _filename(filename), _ef(0), _df(0), _games(0) {}
 	
 	const char *getName() const					{ return _name.c_str(); }
 
@@ -130,6 +116,7 @@ public:
 		return (*_ef)(detector, syst);
 	}
 
+	GameList getSupportedGames() const { return _games; }
 	GameList detectGames(const FSList &fslist) const {
 		assert(_df);
 		return (*_df)(fslist);
@@ -289,4 +276,3 @@ bool PluginManager::tryLoadPlugin(Plugin *plugin) {
 		return false;
 	}
 }
-
