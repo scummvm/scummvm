@@ -210,7 +210,7 @@ void Sound::playSound(int soundID, int offset) {
 		size = musicFile.readUint32LE();
 
 		if (music_offs > total_size || (size + music_offs) > total_size) {
-			warning("Bad music offsets");
+			warning("playSound: Bad music offsets");
 			musicFile.close();
 			return;
 		}
@@ -269,7 +269,13 @@ void Sound::playSound(int soundID, int offset) {
 		if (READ_UINT32(ptr) != MKID('SDAT'))
 			return;	// abort
 
-		size = READ_BE_UINT32(ptr+4) - offset - 8;
+		size = READ_BE_UINT32(ptr+4) - 8;
+		if (offset > size) {
+			warning("playSound: Bad sound offset");
+			offset = 0;
+		} 
+		size -= offset;
+
 		if (_overrideFreq) {
 			// Used by the piano in Fatty Bear's Birthday Surprise
 			rate = _overrideFreq;
