@@ -27,6 +27,14 @@
 #include <ronin/soundcommon.h>
 
 EXTERN_C void *memcpy4(void *s1, const void *s2, unsigned int n);
+short temp_sound_buffer[RING_BUFFER_SAMPLES];
+
+void initSound()
+{
+  stop_sound();
+  do_sound_command(CMD_SET_FREQ(0));
+  do_sound_command(CMD_SET_BUFFER(0));
+}
 
 void checkSound(Scumm *s)
 {

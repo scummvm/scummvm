@@ -82,6 +82,8 @@ int main()
   dc_setup_ta();
   init_arm();
 
+  initSound();
+
   if(!selectGame(&scumm, argv[1], icon))
     exit(0);
 
