@@ -385,14 +385,25 @@ void ScummEngine_v90he::o90_unknown1C() {
 	value -= 46;
 
 	if (value == 10) {
-		pop();
-		pop();
-		pop();
-		pop();
-		pop();
+		int flags = pop();
+		int unk = pop();
+		int y1 = pop();
+		int x1 = pop();
+		int resnum = pop();
+		if (_fullRedraw) {
+			assert(_wizImagesNum < ARRAYSIZE(_wizImages));
+			WizImage *pwi = &_wizImages[_wizImagesNum];
+			pwi->resnum = resnum;
+			pwi->x1 = x1;
+			pwi->y1 = y1;
+			pwi->flags = flags;
+			++_wizImagesNum;
+		} else {
+			drawWizImage(rtImage, resnum, x1, y1, flags);
+		}
 	}
 
-	warning("o90_unknown1C stub (%d)", value);
+	debug(1,"o90_unknown1C stub (%d)", value);
 }
 
 void ScummEngine_v90he::o90_unknown25() {
