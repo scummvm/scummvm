@@ -325,10 +325,9 @@ int32 BS2_SetPalette(int16 startEntry, int16 noEntries, uint8 *colourTable, uint
 		return RD_OK;
 	}
 
-	// FIXME: Handle the fadeNow parameter
-
 	memcpy(&palCopy[startEntry][0], colourTable, noEntries * 4);
-	g_sword2->_system->set_palette((byte *) palCopy, startEntry, noEntries);
+	if (fadeNow == RDPAL_INSTANT)
+		g_sword2->_system->set_palette((byte *) palCopy, startEntry, noEntries);
 
 /*
 
