@@ -24,7 +24,6 @@
 
 #include "common/util.h"
 #include "queen/defs.h"
-#include "queen/verb.h"
 
 namespace Queen {
 

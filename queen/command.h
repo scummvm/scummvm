@@ -23,8 +23,8 @@
 #define QUEENCOMMAND_H
 
 #include "common/util.h"
+#include "queen/defs.h"
 #include "queen/structs.h"
-#include "queen/verb.h"
 
 namespace Queen {
 
@@ -34,10 +34,10 @@ struct CmdText {
 
 	void clear();
 	void display(uint8 color);
-	void displayTemp(uint8 color, bool locked, const Verb& v, const char *name = NULL);
+	void displayTemp(uint8 color, bool locked, Verb v, const char *name = NULL);
 	void displayTemp(uint8 color, const char *name);
-	void setVerb(const Verb& v);
-	void addLinkWord(const Verb& v);
+	void setVerb(Verb v);
+	void addLinkWord(Verb v);
 	void addObject(const char *objName);
 	bool isEmpty() const;
 
@@ -105,7 +105,7 @@ private:
 
 	int16 executeCommand(uint16 comId, int16 condResult);
 
-	int16 makeJoeWalkTo(int16 x, int16 y, int16 objNum, const Verb &v, bool mustWalk);
+	int16 makeJoeWalkTo(int16 x, int16 y, int16 objNum, Verb v, bool mustWalk);
 
 	void grabCurrentSelection();
 	void grabSelectedObject(int16 objNum, uint16 objState, uint16 objName);
@@ -117,18 +117,18 @@ private:
 	bool executeIfDialog(const char *description);
 	
 	bool handleDefaultCommand(bool walk);
-	void executeStandardStuff(const Verb& action, int16 subj1, int16 subj2);
-	void changeObjectState(const Verb& action, int16 obj, int16 song, bool cutDone);
+	void executeStandardStuff(Verb action, int16 subj1, int16 subj2);
+	void changeObjectState(Verb action, int16 obj, int16 song, bool cutDone);
 	void cleanupCurrentAction();
 
 	//! find default verb action for specified object
 	Verb findDefault(uint16 obj, bool itemType);
 
 	//! alter default verb action for specified object and update command display
-	void alterDefault(const Verb& def, bool itemType);
+	void alterDefault(Verb def, bool itemType);
 	
 	//! OPEN_CLOSE_OTHER(OBJECT_DATA[S][4])
-	void openOrCloseAssociatedObject(const Verb& action, int16 obj);
+	void openOrCloseAssociatedObject(Verb action, int16 obj);
 	
 	//! update gamestates - P1_SET_CONDITIONS
 	int16 setConditions(uint16 command, bool lastCmd);
@@ -151,7 +151,10 @@ private:
 	void lookCurrentRoom();
 	void lookCurrentIcon();
 
-
+	bool isVerbPanel(Verb v) const { return v >= VERB_PANEL_COMMAND_FIRST && v <= VERB_PANEL_COMMAND_LAST; };
+	bool isVerbInv(Verb v) const { return v >= VERB_INV_FIRST && v <= VERB_INV_LAST; }
+	bool isVerbScrollInv(Verb v) const { return v == VERB_SCROLL_UP || v == VERB_SCROLL_DOWN; }
+ 
 	CmdListData *_cmdList;
 	uint16 _numCmdList;
 

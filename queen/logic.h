@@ -25,7 +25,6 @@
 #include "common/util.h"
 #include "queen/defs.h"
 #include "queen/structs.h"
-#include "queen/verb.h"
 
 namespace Queen {
 
@@ -126,6 +125,7 @@ public:
 	void joePrevFacing(uint16 dir);
 	
 	const char *joeResponse(int i) const { return _joeResponse[i]; }
+	const char *verbName(Verb v) const { return _verbName[v]; }
 
 	int16 gameState(int index);
 	void gameState(int index, int16 newValue);
@@ -370,6 +370,8 @@ protected:
 	//! Room name, prefix for data files (PCX, LUM...)
 	char **_roomName;	//ROOM_NAMEstr	
 
+	char *_verbName[13];
+
 	char *_joeResponse[JOE_RESPONSE_MAX + 1];	//JOE_RESPstr
 
 	//! Actor animation string
@@ -427,7 +429,7 @@ protected:
 	QueenEngine *_vm;
 
 	//! Verbs (in order) available in panel
-	static const VerbEnum PANEL_VERBS[];
+	static const Verb PANEL_VERBS[];
 };
 
 

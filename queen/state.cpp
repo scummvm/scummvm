@@ -26,7 +26,6 @@ namespace Queen {
 
 
 Direction State::findDirection(uint16 state) {
-	// queen.c l.4014-4021
 	static const Direction sd[] = {
 		DIR_BACK,
 		DIR_RIGHT,
@@ -43,14 +42,13 @@ StateTalk State::findTalk(uint16 state) {
 
 
 StateGrab State::findGrab(uint16 state) {
-	// queen.c l.4022-4029
-	static const StateGrab gd[] = {
+	static const StateGrab sg[] = {
 		STATE_GRAB_NONE,
 		STATE_GRAB_DOWN,
 		STATE_GRAB_UP,
 		STATE_GRAB_MID
 	};
-	return gd[state & 3];
+	return sg[state & 3];
 }
 
 
@@ -60,37 +58,28 @@ StateOn State::findOn(uint16 state) {
 
 
 Verb State::findDefaultVerb(uint16 state) {
-	Verb v;
-	switch((state >> 4) & 0xF) {
-	case 1:
-		v = Verb(VERB_OPEN);
-		break;
-	case 3:
-		v = Verb(VERB_CLOSE);
-		break;
-	case 7:
-		v = Verb(VERB_MOVE);
-		break;
-	case 8:
-		v = Verb(VERB_GIVE);
-		break;
-	case 12:
-		v = Verb(VERB_USE);
-		break;
-	case 14:
-		v = Verb(VERB_PICK_UP);
-		break;
-	case 9:
-		v = Verb(VERB_TALK_TO);
-		break;
-	case 6:
-		v = Verb(VERB_LOOK_AT);
-		break;
-	default:
-		v = Verb(VERB_NONE);
-		break;
-	}
-	return v;
+	static const Verb sdv[] = {
+		VERB_NONE,
+		VERB_OPEN,
+		VERB_NONE,
+		VERB_CLOSE,
+
+		VERB_NONE,
+		VERB_NONE,
+		VERB_LOOK_AT,
+		VERB_MOVE,
+
+		VERB_GIVE,
+		VERB_TALK_TO,
+		VERB_NONE,
+		VERB_NONE,
+
+		VERB_USE,
+		VERB_NONE,
+		VERB_PICK_UP,
+		VERB_NONE
+	};
+	return sdv[(state >> 4) & 0xF];
 }
 
 
@@ -113,7 +102,7 @@ void State::alterOn(uint16 *objState, StateOn state) {
 
 void State::alterDefaultVerb(uint16 *objState, Verb v) {
 	uint16 val;
-	switch (v.value()) {
+	switch (v) {
 	case VERB_OPEN:
 		val = 1;
 		break;

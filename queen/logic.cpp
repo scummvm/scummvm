@@ -41,7 +41,7 @@
 
 namespace Queen {
 
-const VerbEnum Logic::PANEL_VERBS[] = {
+const Verb Logic::PANEL_VERBS[] = {
 	VERB_NONE,
 	VERB_OPEN,
 	VERB_CLOSE,
@@ -58,9 +58,6 @@ const VerbEnum Logic::PANEL_VERBS[] = {
 	VERB_DIGIT_3, // inventory item 3
 	VERB_DIGIT_4, // inventory item 4
 };
-
-
-char* Verb::_verbName[13];
 
 
 Logic::Logic(QueenEngine *vm)
@@ -246,9 +243,9 @@ void Logic::initialise() {
 	for (i = 1; i <= _numRooms; i++)
 		_roomName[i] = _vm->resource()->getJAS2Line();
 
-	Verb::initName(0, NULL);
+	_verbName[0] = 0;
 	for (i = 1; i <= 12; i++)
-		Verb::initName(i, _vm->resource()->getJAS2Line());
+		_verbName[i] = _vm->resource()->getJAS2Line();
 
 	_joeResponse[0] = 0;
 	for (i = 1; i <= JOE_RESPONSE_MAX; i++)
@@ -2195,7 +2192,7 @@ void Logic::handlePinnacleRoom() {
 			if (objData->name > 0) {
 				_entryObj = objData->entryObj;
 				char textCmd[CmdText::MAX_COMMAND_LEN];
-				sprintf(textCmd, "%s %s", Verb(VERB_WALK_TO).name(), _objName[objData->name]);
+				sprintf(textCmd, "%s %s", verbName(VERB_WALK_TO), _objName[objData->name]);
 				_vm->graphics()->textCurrentColor(INK_PINNACLE_ROOM);
 				_vm->graphics()->textSetCentered(5, textCmd);
 			}

@@ -22,7 +22,7 @@
 #ifndef QUEENSTRUCTS_H
 #define QUEENSTRUCTS_H
 
-#include "queen/verb.h"
+#include "queen/defs.h"
 
 namespace Queen {
 
@@ -411,7 +411,7 @@ struct CmdListData {
 	int16 specialSection;
 
 	void readFrom(byte *&ptr) {
-		verb = Verb((VerbEnum)READ_BE_UINT16(ptr)); ptr += 2;
+		verb = (Verb)READ_BE_UINT16(ptr); ptr += 2;
 		nounObj1 = (int16)READ_BE_UINT16(ptr); ptr += 2;
 		nounObj2 = (int16)READ_BE_UINT16(ptr); ptr += 2;
 		song = (int16)READ_BE_UINT16(ptr); ptr += 2;

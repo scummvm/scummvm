@@ -871,7 +871,7 @@ void Talk::defaultAnimation(
 			}
 
 			// Skip through text more quickly
-			if (_vm->input()->keyVerb().isSkipText()) {
+			if (_vm->input()->keyVerb() == VERB_SKIP_TEXT) {
 				_vm->input()->clearKeyVerb();
 				break;
 			}
@@ -1332,11 +1332,11 @@ int16 Talk::selectSentence() {
 				int mouseButton = _vm->input()->mouseButton();
 				_vm->input()->clearMouseButton();
 
-				if (_vm->input()->keyVerb().isDigit()) {
-					for (i = 1; i <= 4; i++)
-					{
-						if (talkZone[i] == _vm->input()->keyVerb().digit())
-						{
+				Verb v = _vm->input()->keyVerb();
+				if (v >= VERB_DIGIT_FIRST && v <= VERB_DIGIT_LAST) {
+					int n = v - VERB_DIGIT_FIRST + 1;
+					for (i = 1; i <= 4; i++) {
+						if (talkZone[i] == n) {
 							selectedSentence = i;
 							break;
 						}

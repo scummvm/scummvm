@@ -24,7 +24,6 @@
 
 #include "common/util.h"
 #include "queen/defs.h"
-#include "queen/verb.h"
 
 namespace Queen {
 
@@ -57,7 +56,7 @@ class Input {
 		int checkKeys();
 
 		//! use instead of KEYVERB=0
-		void clearKeyVerb()  { _keyVerb = Verb(VERB_NONE); }
+		void clearKeyVerb()  { _keyVerb = VERB_NONE; }
 
 		void canQuit(bool cq)             { _canQuit = cq; }
 
