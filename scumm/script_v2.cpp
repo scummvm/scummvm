@@ -1340,12 +1340,8 @@ void Scumm_v2::o2_beginOverride() {
 
 void Scumm_v2::o2_chainScript() {
 	int data = getVarOrDirectByte(0x80);
-	int cur = _currentScript;
-
-	vm.slot[cur].number = 0;
-	vm.slot[cur].status = 0;
+	stopScript(vm.slot[_currentScript].number);
 	_currentScript = 0xFF;
-
 	runScript(data, 0, 0, 0);
 }
 

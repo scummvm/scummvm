@@ -959,8 +959,7 @@ void Scumm_v8::o8_actorOps() {
 		a->standFrame = pop();
 		break;
 	case 0x6C:		// SO_ACTOR_ANIMATION_SPEED Set speed of animation
-		a->animSpeed = pop();
-		a->animProgress = 0;
+		a->setAnimSpeed(pop());
 		break;
 	case 0x6D:		// SO_ACTOR_DEFAULT
 		// FIXME - is this right? Or maybe a->initActor(2) ?

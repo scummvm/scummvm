@@ -1241,7 +1241,7 @@ int Scumm::getObjOldDir(int obj) {
 int Scumm::getObjNewDir(int obj) {
 	int dir;
 	if (obj < _numActors) {
-		dir = derefActor(obj, "getObjNewDir")->facing;
+		dir = derefActor(obj, "getObjNewDir")->getFacing();
 	} else {
 		int x, y;
 		getObjectXYPos(obj, x, y, dir);

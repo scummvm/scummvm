@@ -1717,8 +1717,7 @@ void Scumm_v6::o6_actorOps() {
 			a->putActor(a->x, a->y, a->room);
 		break;
 	case 97:
-		a->animSpeed = pop();
-		a->animProgress = 0;
+		a->setAnimSpeed(pop());
 		break;
 	case 98:
 		a->shadow_mode = pop();

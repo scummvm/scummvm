@@ -596,18 +596,18 @@ bool ScummDebugger::Cmd_PrintActor(int argc, const char **argv) {
 	int i;
 	Actor *a;
 
-	Debug_Printf("+--------------------------------------------------------------------+\n");
-	Debug_Printf("|# |room|  x |  y |elev|cos|width|box|mov| zp|frame|scale|spd|dir|cls|\n");
-	Debug_Printf("+--+----+----+----+----+---+-----+---+---+---+-----+-----+---+---+---+\n");
+	Debug_Printf("+----------------------------------------------------------------+\n");
+	Debug_Printf("|# |room|  x |  y |elev|cos|width|box|mov| zp|frame|scale|dir|cls|\n");
+	Debug_Printf("+--+----+----+----+----+---+-----+---+---+---+-----+-----+---+---+\n");
 	for (i = 1; i < _s->_numActors; i++) {
 		a = &_s->_actors[i];
 		if (a->visible)
-			Debug_Printf("|%2d|%4d|%4d|%4d|%4d|%3d|%5d|%3d|%3d|%3d|%5d|%5d|%3d|%3d|$%02x|\n",
+			Debug_Printf("|%2d|%4d|%4d|%4d|%4d|%3d|%5d|%3d|%3d|%3d|%5d|%5d|%3d|$%02x|\n",
 						 a->number, a->room, a->x, a->y, a->elevation, a->costume,
 						 a->width, a->walkbox, a->moving, a->forceClip, a->frame,
-						 a->scalex, a->speedx, a->facing, int(_s->_classData[a->number]&0xFF));
+						 a->scalex, a->getFacing(), int(_s->_classData[a->number]&0xFF));
 	}
-	Debug_Printf("+--------------------------------------------------------------------+\n");
+	Debug_Printf("+----------------------------------------------------------------+\n");
 	return true;
 }
 

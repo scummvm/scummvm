@@ -51,11 +51,7 @@ void Actor::initActor(int mode) {
 		x = 0;
 		y = 0;
 		facing = 180;
-		newDirection = 180;
-		talkFrequency = 256;
 	} else if (mode == 2) {
-		facing = 180;
-		newDirection = 180;
 	}
 
 	elevation = 0;
@@ -66,7 +62,7 @@ void Actor::initActor(int mode) {
 	scaley = scalex = 0xFF;
 	charset = 0;
 	memset(sound, 0, sizeof(sound));
-	newDirection = 0;
+	targetFacing = facing;
 
 	stopActorMoving();
 
@@ -181,7 +177,7 @@ int Actor::calcMovementFactor(int newX, int newY) {
 	walkdata.xfrac = 0;
 	walkdata.yfrac = 0;
 
-	newDirection = _vm->getAngleFromPos(deltaXFactor, deltaYFactor);
+	targetFacing = _vm->getAngleFromPos(deltaXFactor, deltaYFactor);
 
 	return actorWalkStep();
 }
@@ -284,7 +280,7 @@ int Actor::updateActorDirection(bool is_walking) {
 	dirType = (_vm->_features & GF_NEW_COSTUMES) ? _vm->akos_hasManyDirections(this) : false;
 
 	from = toSimpleDir(dirType, facing);
-	dir = remapDirection(newDirection, is_walking);
+	dir = remapDirection(targetFacing, is_walking);
 
 	if (_vm->_features & GF_NEW_COSTUMES)
 		// Direction interpolation interfers with walk scripts in Dig; they perform
@@ -324,14 +320,14 @@ int Actor::actorWalkStep() {
 	int tmpX, tmpY;
 	int actorX, actorY;
 	int distX, distY;
-	int direction;
+	int nextFacing;
 
 	needRedraw = true;
 
-	direction = updateActorDirection(true);
-	if (!(moving & MF_IN_LEG) || facing != direction) {
-		if (walkFrame != frame || facing != direction) {
-			startWalkAnim(1, direction);
+	nextFacing = updateActorDirection(true);
+	if (!(moving & MF_IN_LEG) || facing != nextFacing) {
+		if (walkFrame != frame || facing != nextFacing) {
+			startWalkAnim(1, nextFacing);
 		}
 		moving |= MF_IN_LEG;
 	}
@@ -536,14 +532,18 @@ void Actor::setDirection(int direction) {
 	int i;
 	uint16 vald;
 
+	// Do nothing if actor is already facing in the given direction
 	if (facing == direction)
 		return;
 
+	// Normalize the angle
 	facing = normalizeAngle(direction);
 
+	// If there is no costume set for this actor, we are finished
 	if (costume == 0)
 		return;
 
+	// Update the costume for the new direction (and mark the actor for redraw)
 	aMask = 0x8000;
 	for (i = 0; i < 16; i++, aMask >>= 1) {
 		vald = cost.frame[i];
@@ -736,7 +736,7 @@ void Actor::turnToDirection(int newdir) {
 			moving = MF_TURN;
 		else
 			moving |= MF_TURN;
-		newDirection = newdir;
+		targetFacing = newdir;
 	}
 }
 
@@ -1575,7 +1575,7 @@ const SaveLoadEntry *Actor::getSaveLoadEntries() {
 		MKLINE(Actor, charset, sleByte, VER_V8),
 		MKARRAY(Actor, sound[0], sleByte, 8, VER_V8),
 		MKARRAY(Actor, animVariable[0], sleUint16, 8, VER_V8),
-		MKLINE(Actor, newDirection, sleUint16, VER_V8),
+		MKLINE(Actor, targetFacing, sleUint16, VER_V8),
 		MKLINE(Actor, moving, sleByte, VER_V8),
 		MKLINE(Actor, ignoreBoxes, sleByte, VER_V8),
 		MKLINE(Actor, forceClip, sleByte, VER_V8),

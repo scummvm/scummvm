@@ -705,7 +705,6 @@ int Scumm::readSoundResource(int type, int idx) {
 				(char)((basetag >> 16) & 0xff),
 				(char)((basetag >> 8) & 0xff), (char)(basetag & 0xff), total_size);
 
-	//if (_gameId == GID_SAMNMAX || _features & GF_AFTER_V7) {
 	if (basetag == MKID('MIDI') || basetag == MKID('iMUS')) {
 		_fileHandle.seek(-8, SEEK_CUR);
 		_fileHandle.read(createResource(type, idx, total_size + 8), total_size + 8);

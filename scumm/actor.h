@@ -86,14 +86,12 @@ public:
 	int elevation;
 	uint width;
 	byte number;
-	uint16 facing;
 	uint16 costume;
 	byte room;
 	byte talkColor;
 	int talkFrequency;
 	byte scalex, scaley;
 	byte charset;
-	int16 newDirection;
 	byte moving;
 	bool ignoreBoxes;
 	byte forceClip;
@@ -101,10 +99,8 @@ public:
 	bool needRedraw, needBgReset, visible;
 	byte shadow_mode;
 	bool flip;
-	uint speedx, speedy;
 	byte frame;
 	byte walkbox;
-	byte animProgress, animSpeed;
 	int16 talkPosX, talkPosY;
 	uint16 talkScript, walkScript;
 	bool ignoreTurns;	// TODO - we do not honor this flag at all currently!
@@ -113,6 +109,10 @@ public:
 	CostumeData cost;
 	byte palette[256];
 protected:
+	uint16 facing;
+	uint16 targetFacing;
+	uint speedx, speedy;
+	byte animProgress, animSpeed;
 	bool costumeNeedsInit;
 	ActorWalkData walkdata;
 	int16 animVariable[16];
@@ -188,10 +188,14 @@ public:
 		return room == _vm->_currentRoom;
 	}
 	
-	int getActorXYPos(int &x, int &y) const ;
+	int getActorXYPos(int &x, int &y) const;
 
 	int getRoom() const {
 		return room;
+	}
+	
+	int getFacing() const {
+		return facing;
 	}
 
 	int getAnimVar(byte var) const {
@@ -199,6 +203,11 @@ public:
 	}
 	void setAnimVar(byte var, int value) {
 		animVariable[var] = value;
+	}
+	
+	void setAnimSpeed(byte newAnimSpeed) {
+		animSpeed = newAnimSpeed;
+		animProgress = 0;
 	}
 	
 	void classChanged(int cls, bool value);

@@ -524,8 +524,7 @@ void Scumm_v5::o5_actorSet() {
 			break;
 
 		case 22:										/* animspeed */
-			a->animSpeed = getVarOrDirectByte(0x80);
-			a->animProgress = 0;
+			a->setAnimSpeed(getVarOrDirectByte(0x80));
 			break;
 		case 23:										/* shadow mode */
 			a->shadow_mode = getVarOrDirectByte(0x80);
@@ -942,7 +941,7 @@ void Scumm_v5::o5_getActorFacing() {
 	getResultPos();
 	int act = getVarOrDirectByte(0x80);
 	Actor *a = derefActor(act, "o5_getActorFacing");
-	setResult(newDirToOldDir(a->facing));
+	setResult(newDirToOldDir(a->getFacing()));
 }
 
 void Scumm_v5::o5_getActorMoving() {

@@ -125,9 +125,9 @@ bool Scumm::akos_hasManyDirections(Actor *a) {
 
 int Scumm::akos_frameToAnim(Actor *a, int frame) {
 	if (akos_hasManyDirections(a))
-		return toSimpleDir(1, a->facing) + frame * 8;
+		return toSimpleDir(1, a->getFacing()) + frame * 8;
 	else
-		return newDirToOldDir(a->facing) + frame * 4;
+		return newDirToOldDir(a->getFacing()) + frame * 4;
 }
 
 void Scumm::akos_decodeData(Actor *a, int frame, uint usemask) {
@@ -243,7 +243,7 @@ void AkosRenderer::setCostume(int costume) {
 }
 
 void AkosRenderer::setFacing(Actor *a) {
-	_mirror = (newDirToOldDir(a->facing) != 0 || akhd->flags & 1);
+	_mirror = (newDirToOldDir(a->getFacing()) != 0 || akhd->flags & 1);
 	if (a->flip)
 		_mirror = !_mirror;
 }

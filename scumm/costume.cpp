@@ -641,7 +641,7 @@ byte CostumeRenderer::drawLimb(const CostumeData &cost, int limb) {
 }
 
 int Scumm::cost_frameToAnim(Actor *a, int frame) {
-	return newDirToOldDir(a->facing) + frame * 4;
+	return newDirToOldDir(a->getFacing()) + frame * 4;
 }
 
 void Scumm::cost_decodeData(Actor *a, int frame, uint usemask) {
@@ -746,7 +746,7 @@ void CostumeRenderer::setPalette(byte *palette) {
 }
 
 void CostumeRenderer::setFacing(Actor *a) {
-	_mirror = newDirToOldDir(a->facing) != 0 || _loaded._mirror;
+	_mirror = newDirToOldDir(a->getFacing()) != 0 || _loaded._mirror;
 }
 
 void CostumeRenderer::setCostume(int costume) {
