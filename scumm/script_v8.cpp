@@ -370,7 +370,7 @@ const char *Scumm_v8::getOpcodeDesc(int i)
 	return _opcodesV8[i].desc;
 }
 
-uint32 Scumm_v8::fetchScriptDword()
+uint32 Scumm_v8::fetchScriptUint32()
 {
 	int a;
 	if (*_lastCodePtr + sizeof(MemBlkHeader) != _scriptOrgPointer) {
@@ -383,9 +383,9 @@ uint32 Scumm_v8::fetchScriptDword()
 	return a;
 }
 
-int Scumm_v8::fetchScriptDwordSigned()
+int Scumm_v8::fetchScriptInt32()
 {
-	return (int32)fetchScriptDword();
+	return (int32)fetchScriptUint32();
 }
 
 void Scumm_v8::o8_invalid()
