@@ -719,6 +719,7 @@ void Scumm::clearDrawObjectQueue()
 byte *Scumm::getObjOrActorName(int obj)
 {
 	byte *objptr;
+	int i;
 
 	if (obj < NUM_ACTORS)
 		return derefActorSafe(obj, "getObjOrActorName")->getActorName();
@@ -730,6 +731,16 @@ byte *Scumm::getObjOrActorName(int obj)
 		if (objptr)
 			offset = *(objptr + 18);
 		return (objptr + offset);
+	}
+
+	if (_features & GF_AFTER_V6) {
+		for (i = 1; i < 50; i++) {
+			if (_newNames[i] == obj) {
+				debug(5, "Found new name for object %d at _newNames[i]", obj, i);
+				return getResourceAddress(rtObjectName, i);
+				break;
+			}
+		}
 	}
 
 	objptr = getOBCDFromObject(obj);

@@ -1293,9 +1293,13 @@ void Scumm::o5_getActorScale()
 
 void Scumm::o5_getActorWalkBox()
 {
+	Actor *a;
 	getResultPos();
-	setResult(derefActorSafe(getVarOrDirectByte(0x80), "o5_getActorWalkbox")->
-						walkbox);
+	a = derefActorSafe(getVarOrDirectByte(0x80), "o5_getActorWalkbox");
+	if (a) // FIXME - bug 572977 workaround
+		setResult(a->walkbox);
+	else
+		setResult(0);
 }
 
 void Scumm::o5_getActorWidth()
