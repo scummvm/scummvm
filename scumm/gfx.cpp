@@ -844,9 +844,13 @@ void Scumm::restoreBG(ScummVM::Rect rect, byte backColor) {
 		blit(backbuff, bgbak, width, height);
 		if (vs->number == 0 && _charset->_hasMask && height) {
 			byte *mask;
-			int mask_width = (width >> 3);
+			// Note: At first sight it may look as if this could
+			// be optimized to (rect.right - rect.left) >> 3 and
+			// thus to width >> 3, but that's not the case since
+			// we are dealing with integer math here.
+			int mask_width = (rect.right >> 3) - (rect.left >> 3);
 
-			if (width & 0x07)
+			if (rect.right & 0x07)
 				mask_width++;
 
 			mask = getResourceAddress(rtBuffer, 9) + rect.top * gdi._numStrips + (rect.left >> 3) + _screenStartStrip;
