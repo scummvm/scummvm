@@ -507,10 +507,6 @@ SOURCE=.\sky\autoroute.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\sky\cd_intro.cpp
-# End Source File
-# Begin Source File
-
 SOURCE=.\sky\compact.cpp
 # End Source File
 # Begin Source File
@@ -556,6 +552,14 @@ SOURCE=.\sky\hufftext.cpp
 # Begin Source File
 
 SOURCE=.\sky\intro.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\sky\intro.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\sky\introimg.cpp
 # End Source File
 # Begin Source File
 
@@ -612,6 +616,10 @@ SOURCE=.\sky\sound.h
 # Begin Source File
 
 SOURCE=.\sky\struc.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\sky\talks.h
 # End Source File
 # Begin Source File
 
