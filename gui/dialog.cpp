@@ -115,8 +115,8 @@ enum {
 	kQuitCmd = 'QUIT'
 };
 
-SaveLoadDialog::SaveLoadDialog(NewGui * gui)
-:Dialog(gui, 30, 20, 260, 124)
+SaveLoadDialog::SaveLoadDialog(NewGui *gui)
+:Dialog (gui, 30, 20, 260, 124)
 {
 	addResText(10, 7, 240, 16, 1);
 //  addResText(10, 7, 240, 16, 2);
@@ -151,8 +151,8 @@ void SaveLoadDialog::handleCommand(uint32 cmd)
 #pragma mark -
 
 
-PauseDialog::PauseDialog(NewGui * gui)
-:Dialog(gui, 50, 80, 220, 16)
+PauseDialog::PauseDialog(NewGui *gui)
+:Dialog (gui, 50, 80, 220, 16)
 {
 	addResText(2, 2, 220, 16, 10);
 }

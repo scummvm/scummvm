@@ -24,8 +24,8 @@
 #include "newgui.h"
 
 
-Widget::Widget(Dialog * boss, int x, int y, int w, int h)
-:_boss(boss), _x(x), _y(y), _w(w), _h(h), _id(0), _flags(0)
+Widget::Widget (Dialog *boss, int x, int y, int w, int h)
+: _boss(boss), _x(x), _y(y), _w(w), _h(h), _id(0), _flags(0)
 {
 	// Insert into the widget list of the boss
 	_next = _boss->_firstWidget;
@@ -67,8 +67,8 @@ void Widget::draw()
 #pragma mark -
 
 
-StaticTextWidget::StaticTextWidget(Dialog * boss, int x, int y, int w, int h, const char *text)
-:Widget(boss, x, y, w, h)
+StaticTextWidget::StaticTextWidget(Dialog *boss, int x, int y, int w, int h, const char *text)
+:Widget (boss, x, y, w, h)
 {
 	// FIXME - maybe we should make a real copy of the string?
 	_text = text;
@@ -84,7 +84,7 @@ void StaticTextWidget::drawWidget(bool hilite)
 #pragma mark -
 
 
-ButtonWidget::ButtonWidget(Dialog * boss, int x, int y, int w, int h, const char *label, uint32 cmd)
+ButtonWidget::ButtonWidget(Dialog *boss, int x, int y, int w, int h, const char *label, uint32 cmd)
 :StaticTextWidget(boss, x, y, w, h, label), _cmd(cmd), _hotkey(0)
 {
 	_flags = WIDGET_ENABLED | WIDGET_BORDER /* | WIDGET_CLEARBG */ ;
