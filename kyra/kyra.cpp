@@ -45,14 +45,13 @@ DetectedGameList Engine_KYRA_detectGames(const FSList &fslist) {
 	DetectedGameList detectedGames;
 	File test_file;
 
-	printf("Detecting Kyra...\n");
-
 	// Iterate over all files in the given directory
 	for (FSList::const_iterator file = fslist.begin(); file != fslist.end(); ++file) {
 		const char *name = file->displayName().c_str();
 		if ((0 == scumm_stricmp("chapter1.vrm", name))  ||
 		    (0 == scumm_stricmp("chapter5.vrm", name))) {
 			detectedGames.push_back(kyra_setting);
+			printf("Detecting Kyra...\n");
 			break;
 		}
 	}
