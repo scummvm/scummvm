@@ -2316,9 +2316,9 @@ restart:;
 		name_len = 0;
 		while (name[name_len]) {
 			fcs->unk6++;
-			fcs->unk3 += 4;
+			fcs->unk3 += 6;
 			if (name[name_len] == 'i' || name[name_len] == 'l')
-				fcs->unk3 += 2;
+				fcs->unk3 -= 2;
 			if (fcs->unk3 >= 8) {
 				fcs->unk3 -= 8;
 				fcs->unk1++;
@@ -3263,9 +3263,9 @@ void SimonState::video_putchar(FillOrCopyStruct *fcs, byte c)
 		video_putchar_helper_2(fcs, fcs->unk1 + fcs->x, fcs->unk2 * 8 + fcs->y, c);
 
 		fcs->unk6++;
-		fcs->unk3 += 4;
-		if (c != 'i' && c != 'l')
-			fcs->unk3 += 2;
+		fcs->unk3 += 6;
+		if (c == 'i' || c == 'l')
+			fcs->unk3 -= 2;
 
 		if (fcs->unk3 >= 8) {
 			fcs->unk3 -= 8;
