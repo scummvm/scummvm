@@ -489,9 +489,10 @@ void Scumm::startScene(int room, Actor * a, int objectNr)
 		if (where != WIO_ROOM && where != WIO_FLOBJECT)
 			error("startScene: Object %d is not in room %d", objectNr,
 						_currentRoom);
-		getObjectXYPos(objectNr);
-		putActor(a, _xPos, _yPos, _currentRoom);
-		a->setActorDirection(_dir + 180);
+		int x, y, dir;
+		getObjectXYPos(objectNr, x, y, dir);
+		putActor(a, x, y, _currentRoom);
+		a->setActorDirection(dir + 180);
 		a->moving = 0;
 	}
 
@@ -502,8 +503,9 @@ void Scumm::startScene(int room, Actor * a, int objectNr)
 
 	if (!(_features & GF_AFTER_V7)) {
 		if (a && !_egoPositioned) {
-			getObjectXYPos(objectNr);
-			putActor(a, _xPos, _yPos, _currentRoom);
+			int x, y;
+			getObjectXYPos(objectNr, x, y);
+			putActor(a, x, y, _currentRoom);
 			a->moving = 0;
 		}
 	} else {

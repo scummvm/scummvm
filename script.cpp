@@ -855,17 +855,15 @@ void Scumm::cutscene(int16 *args)
 
 void Scumm::faceActorToObj(int act, int obj)
 {
-	int x, dir;
+	int x, x2, y, dir;
 
-	if (getObjectOrActorXY(act) == -1)
+	if (getObjectOrActorXY(act, x, y) == -1)
 		return;
 
-	x = _xPos;
-
-	if (getObjectOrActorXY(obj) == -1)
+	if (getObjectOrActorXY(obj, x2, y) == -1)
 		return;
 
-	dir = (_xPos > x) ? 90 : 270;
+	dir = (x2 > x) ? 90 : 270;
 	derefActorSafe(act, "faceActorToObj")->turnToDirection(dir);
 }
 

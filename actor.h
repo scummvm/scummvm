@@ -131,6 +131,7 @@ public:
 
 	int updateActorDirection();
 	void setActorDirection(int direction);
+	int getActorXYPos(int &x, int &y);
 
 	AdjustBoxResult adjustXYToBeInBox(int dstX, int dstY, int pathfrom);
 	void adjustActorPos();

@@ -135,34 +135,33 @@ int Scumm::whereIsObject(int object)
 	return WIO_NOT_FOUND;
 }
 
-int Scumm::getObjectOrActorXY(int object)
+int Scumm::getObjectOrActorXY(int object, int &x, int &y)
 {
 	if (object < NUM_ACTORS)
-		return getActorXYPos(derefActorSafe(object, "getObjectOrActorXY"));
+		return derefActorSafe(object, "getObjectOrActorXY")->getActorXYPos(x, y);
 
 	switch (whereIsObject(object)) {
 	case WIO_NOT_FOUND:
 		return -1;
 	case WIO_INVENTORY:
 		if (_objectOwnerTable[object] < NUM_ACTORS)
-			return getActorXYPos(derefActorSafe(_objectOwnerTable[object], "getObjectOrActorXY(2)"));
+			return derefActorSafe(_objectOwnerTable[object], "getObjectOrActorXY(2)")->getActorXYPos(x, y);
 		else
 			return 0xFF;
 	}
-	getObjectXYPos(object);
+	getObjectXYPos(object, x, y);
 	return 0;
 }
 
 /* Return the position of an object.
    Returns X, Y and direction in angles
  */
-void Scumm::getObjectXYPos(int object)
+void Scumm::getObjectXYPos(int object, int &x, int &y, int &dir)
 {
 	ObjectData *od = &_objs[getObjectIndex(object)];
 	int state;
 	byte *ptr;
 	ImageHeader *imhd;
-	int x, y;
 
 	if (!(_features & GF_SMALL_HEADER)) {
 		if (_features & GF_AFTER_V6) {
@@ -190,22 +189,17 @@ void Scumm::getObjectXYPos(int object)
 			x = od->walk_x;
 			y = od->walk_y;
 		}
-		_xPos = x;
-		_yPos = y;
-		_dir = oldDirToNewDir(od->actordir & 3);
+		dir = oldDirToNewDir(od->actordir & 3);
 	} else {
 		x = od->walk_x;
 		y = od->walk_y;
-		_xPos = x;
-		_yPos = y;
-		_dir = oldDirToNewDir(od->actordir & 3);
-
+		dir = oldDirToNewDir(od->actordir & 3);
 	}
 }
 
 int Scumm::getObjActToObjActDist(int a, int b)
 {
-	int x, y;
+	int x, y, x2, y2;
 	Actor *acta = NULL;
 	Actor *actb = NULL;
 
@@ -218,23 +212,20 @@ int Scumm::getObjActToObjActDist(int a, int b)
 	if (acta && actb && acta->getRoom() == actb->getRoom() && acta->getRoom() && !acta->isInCurrentRoom())
 		return 0;
 
-	if (getObjectOrActorXY(a) == -1)
+	if (getObjectOrActorXY(a, x, y) == -1)
 		return 0xFF;
 
-	x = _xPos;
-	y = _yPos;
-
-	if (getObjectOrActorXY(b) == -1)
+	if (getObjectOrActorXY(b, x2, y2) == -1)
 		return 0xFF;
 
 	if (acta) {
-		AdjustBoxResult r = acta->adjustXYToBeInBox(_xPos, _yPos, -1);
-		_xPos = r.x;
-		_yPos = r.y;
+		AdjustBoxResult r = acta->adjustXYToBeInBox(x2, y2, -1);
+		x2 = r.x;
+		y2 = r.y;
 	}
 
-	y = abs(y - _yPos);
-	x = abs(x - _xPos);
+	y = abs(y - y2);
+	x = abs(x - x2);
 
 	if (y > x)
 		x = y;
@@ -965,8 +956,9 @@ int Scumm::getObjX(int obj)
 	} else {
 		if (whereIsObject(obj) == WIO_NOT_FOUND)
 			return -1;
-		getObjectOrActorXY(obj);
-		return _xPos;
+		int x, y;
+		getObjectOrActorXY(obj, x, y);
+		return x;
 	}
 }
 
@@ -979,8 +971,9 @@ int Scumm::getObjY(int obj)
 	} else {
 		if (whereIsObject(obj) == WIO_NOT_FOUND)
 			return -1;
-		getObjectOrActorXY(obj);
-		return _yPos;
+		int x, y;
+		getObjectOrActorXY(obj, x, y);
+		return y;
 	}
 }
 
@@ -989,8 +982,9 @@ int Scumm::getObjOldDir(int obj)
 	if (obj < NUM_ACTORS) {
 		return newDirToOldDir(derefActorSafe(obj, "getObjOldDir")->facing);
 	} else {
-		getObjectXYPos(obj);
-		return _dir;
+		int x, y, dir;
+		getObjectXYPos(obj, x, y, dir);
+		return dir;
 	}
 }
 
@@ -999,8 +993,9 @@ int Scumm::getObjNewDir(int obj)
 	if (obj < NUM_ACTORS) {
 		return derefActorSafe(obj, "getObjNewDir")->facing;
 	} else {
-		getObjectXYPos(obj);
-		return oldDirToNewDir(_dir);
+		int x, y, dir;
+		getObjectXYPos(obj, x, y, dir);
+		return oldDirToNewDir(dir);
 	}
 }
 
@@ -1064,24 +1059,20 @@ int Scumm::getDistanceBetween(bool is_obj_1, int b, int c, bool is_obj_2, int e,
 	j = i = 0xFF;
 
 	if (is_obj_1) {
-		if (getObjectOrActorXY(b) == -1)
+		if (getObjectOrActorXY(b, x, y) == -1)
 			return -1;
 		if (b < NUM_ACTORS)
 			i = derefActorSafe(b, "unkObjProc1")->scalex;
-		x = _xPos;
-		y = _yPos;
 	} else {
 		x = b;
 		y = c;
 	}
 
 	if (is_obj_2) {
-		if (getObjectOrActorXY(e) == -1)
+		if (getObjectOrActorXY(e, x2, y2) == -1)
 			return -1;
 		if (e < NUM_ACTORS)
 			j = derefActorSafe(e, "unkObjProc1(2)")->scalex;
-		x2 = _xPos;
-		y2 = _yPos;
 	} else {
 		x2 = e;
 		y2 = f;

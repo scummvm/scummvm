@@ -1732,18 +1732,18 @@ void Scumm::o5_putActor()
 
 void Scumm::o5_putActorAtObject()
 {
-	int obj;
+	int obj, x, y;
 	Actor *a;
 
 	a = derefActorSafe(getVarOrDirectByte(0x80), "o5_putActorAtObject");
 	obj = getVarOrDirectWord(0x40);
 	if (whereIsObject(obj) != WIO_NOT_FOUND)
-		getObjectXYPos(obj);
+		getObjectXYPos(obj, x, y);
 	else {
-		_xPos = 240;
-		_yPos = 120;
+		x = 240;
+		y = 120;
 	}
-	putActor(a, _xPos, _yPos, a->room);
+	putActor(a, x, y, a->room);
 }
 
 void Scumm::o5_putActorInRoom()
@@ -2611,8 +2611,9 @@ void Scumm::o5_walkActorToObject()
 	a = derefActorSafe(getVarOrDirectByte(0x80), "o5_walkActorToObject");
 	obj = getVarOrDirectWord(0x40);
 	if (whereIsObject(obj) != WIO_NOT_FOUND) {
-		getObjectXYPos(obj);
-		a->startWalkActor(_xPos, _yPos, _dir);
+		int x, y, dir;
+		getObjectXYPos(obj, x, y, dir);
+		a->startWalkActor(x, y, dir);
 	}
 }
 

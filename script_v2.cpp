@@ -1341,8 +1341,9 @@ void Scumm::o6_walkActorToObj()
 	if (obj >= NUM_ACTORS) {
 		if (whereIsObject(obj) == WIO_NOT_FOUND)
 			return;
-		getObjectXYPos(obj);
-		a->startWalkActor(_xPos, _yPos, _dir);
+		int x, y, dir;
+		getObjectXYPos(obj, x, y, dir);
+		a->startWalkActor(x, y, dir);
 	} else {
 		a2 = derefActorSafe(obj, "o6_walkActorToObj(2)");
 		if (!a2)
@@ -1397,16 +1398,14 @@ void Scumm::o6_putActorInRoom()
 
 void Scumm::o6_putActorAtObject()
 {
-	int room, obj, x, y;
+	int room, obj, x, y, dir;
 	Actor *a;
 
 	obj = popRoomAndObj(&room);
 
 	a = derefActorSafe(pop(), "o6_putActorAtObject");
 	if (whereIsObject(obj) != WIO_NOT_FOUND) {
-		getObjectXYPos(obj);
-		x = _xPos;
-		y = _yPos;
+		getObjectXYPos(obj, x, y);
 	} else {
 		x = 160;
 		y = 120;

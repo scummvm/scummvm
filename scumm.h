@@ -565,7 +565,6 @@ public:
 	VirtScreen *_curVirtScreen;
 
 	bool _egoPositioned;
-	int _xPos, _yPos, _dir;
 	int _keyPressed;
 	uint16 _lastKeyHit;
 	uint16 _mouseButStat;
@@ -788,14 +787,15 @@ public:
 	int getObjectRoom(int obj);
 	int getObjX(int obj);
 	int getObjY(int obj);
-	void getObjectXYPos(int object);
+	void getObjectXYPos(int object, int &x, int &y)	{ int dir; getObjectXYPos(object, x, y, dir); }
+	void getObjectXYPos(int object, int &x, int &y, int &dir);
 	int getObjOldDir(int obj);
 	int getObjNewDir(int obj);
 	int getObjectIndex(int object);
 	int whereIsObject(int object);
 	int findObject(int x, int y);
 	void findObjectInRoom(FindObjectInRoom *fo, byte findWhat, uint object, uint room);	
-	int getObjectOrActorXY(int object);		 // Object and Actor...
+	int getObjectOrActorXY(int object, int &x, int &y);		 // Object and Actor...
 	int getObjActToObjActDist(int a, int b); // Not sure how to handle
 	byte *getObjOrActorName(int obj);		 // these three..
 
@@ -935,7 +935,6 @@ public:
 	void startAnimActorEx(Actor *a, int frame, int direction);
 	int getProgrDirChange(Actor *a, int mode);
 
-	int getActorXYPos(Actor *a);
 	void walkActors();
 	void playActorSounds();
 	void setActorRedrawFlags();

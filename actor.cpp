@@ -548,15 +548,13 @@ void Scumm::putActor(Actor *a, int dstX, int dstY, byte room)
 	}
 }
 
-int Scumm::getActorXYPos(Actor *a)
+int Actor::getActorXYPos(int &xPos, int &yPos)
 {
-	if (!a)
+	if (!isInCurrentRoom())
 		return -1;
 
-	if (!a->isInCurrentRoom())
-		return -1;
-	_xPos = a->x;
-	_yPos = a->y;
+	xPos = x;
+	yPos = y;
 	return 0;
 }
 
