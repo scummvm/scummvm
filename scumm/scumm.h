@@ -1262,6 +1262,8 @@ public:
 	byte VAR_BLAST_ABOVE_TEXT;
 	byte VAR_VOICE_MODE;
 	byte VAR_NUM_GLOBAL_OBJS;
+	byte VAR_MUSIC_BUNDLE_LOADED;
+	byte VAR_VOICE_BUNDLE_LOADED;
 };
 
 // This is a constant lookup table of reverse bit masks

@@ -727,6 +727,8 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 	VAR_BLAST_ABOVE_TEXT = 0xFF;
 	VAR_VOICE_MODE = 0xFF;
 	VAR_NUM_GLOBAL_OBJS = 0xFF;
+	VAR_MUSIC_BUNDLE_LOADED = 0xFF;
+	VAR_VOICE_BUNDLE_LOADED = 0xFF;
 
 	// Use g_scumm from error() ONLY
 	g_scumm = this;
