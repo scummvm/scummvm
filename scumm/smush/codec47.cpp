@@ -519,7 +519,7 @@ void Codec47Decoder::init(int width, int height) {
 
 	_frameSize = _width * _height;
 	_deltaSize = _frameSize * 3;
-	_deltaBuf = new byte[_deltaSize];
+	_deltaBuf = (byte *)malloc(_deltaSize);
 	_deltaBufs[0] = _deltaBuf;
 	_deltaBufs[1] = _deltaBuf + _frameSize;
 	_curBuf = _deltaBuf + _frameSize * 2;
@@ -534,7 +534,7 @@ Codec47Decoder::Codec47Decoder() {
 void Codec47Decoder::deinit() {
 	_lastTableWidth = -1;
 	if (_deltaBuf) {
-		delete []_deltaBuf;
+		free(_deltaBuf);
 		_deltaSize = 0;
 		_deltaBuf = 0;
 		_deltaBufs[0] = 0;
