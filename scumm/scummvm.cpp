@@ -1041,7 +1041,7 @@ void ScummEngine::scummInit() {
 		_actors[i].initActor(1);
 	
 		// this is from IDB
-		if (_version == 1)
+		if ((_version == 1) || (_version == 2 && _demoMode))
 			_actors[i].setActorCostume(i);
 	}
 
