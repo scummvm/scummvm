@@ -1006,6 +1006,8 @@ static void MakeTextObject() {
 			height = atoi(lua_getstring(lua_getresult(2)));
 		else if (strstr(key_text, "width"))
 			width = atoi(lua_getstring(lua_getresult(2)));
+		else if (strstr(key_text, "center"))
+			warning("MakeTextObject key center not implemented");
 		else
 			error("Unknown MakeTextObject key %s\n", key_text);
 	}
