@@ -1362,13 +1362,19 @@ bool Debugger::Cmd_ShowCompact(int argc, const char **argv) {
 
 	if (cpt) {
 		DebugPrintf("------Compact %d ('%s')------\n", i, section_0_compacts[i]);
-		DebugPrintf("logic     : %d\n", cpt->logic);
-		DebugPrintf("status    : %d\n", cpt->status);
-		DebugPrintf("sync      : %d\n", cpt->sync);
-		DebugPrintf("screen    : %d\n", cpt->screen);
-		DebugPrintf("x/y       : %d/%d\n", cpt->xcood, cpt->ycood);
-		DebugPrintf("getToFlag : %d\n", cpt->getToFlag);
-		DebugPrintf("mode      : %d\n", cpt->mode);
+		DebugPrintf("logic      : %d\n", cpt->logic);
+		DebugPrintf("status     : %d\n", cpt->status);
+		DebugPrintf("sync       : %d\n", cpt->sync);
+		DebugPrintf("screen     : %d\n", cpt->screen);
+		DebugPrintf("x/y        : %d/%d\n", cpt->xcood, cpt->ycood);
+		DebugPrintf("place cpt  : %d\n", cpt->place);
+		DebugPrintf("getToFlag  : %d\n", cpt->getToFlag);
+		DebugPrintf("mode       : %d\n", cpt->mode);
+		// Mega / extCompact info
+		if (cpt->extCompact) {
+			DebugPrintf("waitingFor : %d\n", cpt->extCompact->waitingFor);
+			DebugPrintf("arTargetX/Y: %d/%d\n", cpt->extCompact->arTargetX, cpt->extCompact->arTargetY);
+		}
 	} else {
 		DebugPrintf("Unknown compact: '%s'\n", argv[1]);
 	}
