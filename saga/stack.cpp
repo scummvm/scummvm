@@ -101,6 +101,7 @@ int ISTACK_PushNull(R_ISTACK stack)
 
 	stack->top++;
 
+	return STACK_SUCCESS;
 }
 
 int ISTACK_Push(R_ISTACK stack, int value)
