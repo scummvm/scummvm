@@ -583,15 +583,13 @@ void ScummEngine::initBGBuffers(int height) {
  */
 void ScummEngine::redrawBGAreas() {
 	int i;
-	int val;
 	int diff;
+	int val = 0;;
 	bool cont = true;
 
 	if (!(_features & GF_NEW_CAMERA))
 		if (camera._cur.x != camera._last.x && _charset->_hasMask && (_version > 3 && _gameId != GID_PASS))
 			stopTalk();
-
-	val = 0;
 
 	if (_heversion >= 70) {
 		byte *room = getResourceAddress(rtRoomImage, _roomResource) + _IM00_offs;
@@ -1479,6 +1477,9 @@ void Gdi::copyWizImage(uint8 *dst, const uint8 *src, int dstw, int dsth, int src
 	if (calcClipRects(dstw, dsth, srcx, srcy, srcw, srch, rect, r1, r2)) {
 		if (r1.isValidRect() && r2.isValidRect()) {
 			uint8 *dstPtr = dst + r2.left + r2.top * dstw;
+			for (int i = 0; i < 256; i++)
+				_wizImagePalette[i] = i;
+
 			decompressWizImage(dstPtr, dstw, r2, src, r1);
 		}
 	}
@@ -1491,6 +1492,7 @@ void Gdi::decompressWizImage(uint8 *dst, int dstPitch, const Common::Rect &dstRe
 	uint8 databit;
 	int h, w, xoff;
 	uint16 off;
+	int color;
 	
 	dstPtr = dst;
 	dataPtr = src;
@@ -1558,26 +1560,28 @@ void Gdi::decompressWizImage(uint8 *dst, int dstPitch, const Common::Rect &dstRe
 			databit = code & 1;
 			code >>= 1;
 			if (databit) {
-dec_sub1:		dstPtr += code;
+dec_sub1:			dstPtr += code;
 				w -= code;
 			} else {
 				databit = code & 1;
 				code = (code >> 1) + 1;
 				if (databit) {
-dec_sub2:			w -= code;
+dec_sub2:				w -= code;
 					if (w < 0) {
 						code += w;
 					}
-					memset(dstPtr, *dataPtr++, code);
+					color = _wizImagePalette[*dataPtr++];
+					memset(dstPtr, color, code);
 					dstPtr += code;
 				} else {
-dec_sub3:			w -= code;
+dec_sub3:				w -= code;
 					if (w < 0) {
 						code += w;
 					}
-					memcpy(dstPtr, dataPtr, code);
-					dstPtr += code;
-					dataPtr += code;
+					while (code--) {
+						color = _wizImagePalette[*dataPtr++];
+						*dstPtr++ = color;
+					}
 				}
 			}
 		}

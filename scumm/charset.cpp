@@ -1331,6 +1331,9 @@ void CharsetRendererClassic::printChar(int chr) {
 		src = dst;
 		src.moveTo(0, 0);
 
+		memset(_vm->gdi._wizImagePalette, 255, sizeof(_vm->gdi._wizImagePalette));
+		memcpy(_vm->gdi._wizImagePalette, _vm->_charsetColorMap, 16);
+
 		_vm->gdi.decompressWizImage(dstPtr, vs->w, dst, charPtr, src);
 
 		if (_blitAlso && vs->hasTwoBuffers)

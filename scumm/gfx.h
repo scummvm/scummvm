@@ -207,6 +207,8 @@ class Gdi {
 	ScummEngine *_vm;
 
 public:
+	byte _wizImagePalette[256];
+
 	int _numZBuffer;
 	int _imgBufOffs[8];
 	int32 _numStrips;
