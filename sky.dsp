@@ -551,6 +551,10 @@ SOURCE=.\sky\grid.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\sky\hufftext.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\sky\intro.cpp
 # End Source File
 # Begin Source File
