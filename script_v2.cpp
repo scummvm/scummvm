@@ -2987,6 +2987,15 @@ void Scumm::o6_pickOneOfDefault()
 	push(i);
 }
 
+void Scumm::o6_getActorPriority()
+{
+	Actor *a;
+
+	a = derefActorSafe(pop(), "getActorPriority");
+
+	push(a->layer);
+}
+
 void Scumm::decodeParseString2(int m, int n)
 {
 	byte b;
@@ -3071,11 +3080,30 @@ void Scumm::decodeParseString2(int m, int n)
 	}
 }
 
-void Scumm::o6_getActorPriority()
+void Scumm::setupShadowPalette(int slot, int rfact, int gfact, int bfact,
+															 int from, int to)
 {
-	Actor *a;
+	byte *table;
+	int i, num;
+	byte *curpal;
 
-	a = derefActorSafe(pop(), "getActorPriority");
+	if (slot < 0 || slot > 7)
+		error("setupShadowPalette: invalid slot %d", slot);
 
-	push(a->layer);
+	if (from < 0 || from > 255 || to < 0 || from > 255 || to < from)
+		error("setupShadowPalette: invalid range from %d to %d", from, to);
+
+	table = _shadowPalette + slot * 256;
+	for (i = 0; i < 256; i++)
+		table[i] = i;
+
+	table += from;
+	curpal = _currentPalette + from * 3;
+	num = to - from + 1;
+	do {
+		*table++ = remapPaletteColor((curpal[0] * rfact) >> 8,
+																 curpal[1] * gfact >> 8,
+																 curpal[2] * bfact >> 8, (uint) - 1);
+		curpal += 3;
+	} while (--num);
 }

@@ -1287,34 +1287,6 @@ void Actor::remapActor(int r_fact, int g_fact, int b_fact,
 	}
 }
 
-void Scumm::setupShadowPalette(int slot, int rfact, int gfact, int bfact,
-															 int from, int to)
-{
-	byte *table;
-	int i, num;
-	byte *curpal;
-
-	if (slot < 0 || slot > 7)
-		error("setupShadowPalette: invalid slot %d", slot);
-
-	if (from < 0 || from > 255 || to < 0 || from > 255 || to < from)
-		error("setupShadowPalette: invalid range from %d to %d", from, to);
-
-	table = _shadowPalette + slot * 256;
-	for (i = 0; i < 256; i++)
-		table[i] = i;
-
-	table += from;
-	curpal = _currentPalette + from * 3;
-	num = to - from + 1;
-	do {
-		*table++ = remapPaletteColor((curpal[0] * rfact) >> 8,
-																 curpal[1] * gfact >> 8,
-																 curpal[2] * bfact >> 8, (uint) - 1);
-		curpal += 3;
-	} while (--num);
-}
-
 void Actor::walkActorOld()
 {
 	int new_dir, next_box;
