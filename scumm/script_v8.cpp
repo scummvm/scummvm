@@ -925,13 +925,19 @@ void Scumm_v8::o8_roomOps()
 		darkenPalette(a, b, c, d, e);
 		break;
 	case 0x59:		// SO_ROOM_TRANSFORM Transform room
+		d = pop();
+		c = pop();
+		b = pop();
+		a = pop();
+		warning("o8_roomOps: unimplemented case SO_ROOM_TRANSFORM(%d,%d,%d,%d)", a, b, c, d);
+		break;
 	case 0x5A:		// SO_ROOM_CYCLE_SPEED Set palette cycling speed
 	case 0x5B:		// SO_ROOM_COPY_PALETTE Copy palette
 		error("o8_roomOps: unimplemented case %d", subOp);
 		break;
-	case 0x5C:		// SO_ROOM_NEW_PALETTE Create new palette
-		warning("o8_roomOps: SO_ROOM_NEW_PALETTE - tell ender if this looks ok :)");
-		setPalette(pop());	// fixme: i think this is right
+	case 0x5C:		// SO_ROOM_NEW_PALETTE New palette
+		// FIXME: Used in the Crypt scene
+		warning("o8_roomOps: unimplemented case SO_ROOM_NEW_PALETTE(%d)", pop());
 		break;
 	case 0x5D:		// SO_ROOM_SAVE_GAME Save game
 		_saveLoadCompatible = true;
