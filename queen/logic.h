@@ -39,6 +39,13 @@ enum {
 	BACK = 4
 };
 
+enum Language {
+	ENGLISH  = 'E',
+	FRENCH   = 'F',
+	GERMAN   = 'G',
+	ITALIAN  = 'I'
+};
+
 class Logic {
 
 public:
@@ -70,6 +77,8 @@ public:
 	
 	int16 gameState(int index);
 	void gameState(int index, int16 newValue);
+
+	Language language() { return ENGLISH; } // FIXME: get from queen.jas
 
 protected:
 	uint8 *_jas;
