@@ -265,9 +265,12 @@ void ScummEngine_v72he::setupScummVars() {
 		VAR_WINDOWS_VERSION = 79;
 		VAR_KEY_STATE = 86;
 	if (_heversion >= 90) {
+		VAR_NUM_ACTIVE_SOUND_CHANNELS = 88;
+
 		VAR_SCRIPT_CYCLE = 103;
 		VAR_NUM_SCRIPT_CYCLES = 104;
 
+		VAR_NUM_SPRITE_GROUPS = 105;
 		VAR_NUM_SPRITES = 106;
 		VAR_WIZ_TCOLOR = 117;
 	}
@@ -511,10 +514,14 @@ void ScummEngine::initScummVars() {
 		if (_heversion >= 80)
 			VAR(VAR_WINDOWS_VERSION) = 40;
 		if (_heversion >= 90) {
+			VAR(VAR_NUM_ACTIVE_SOUND_CHANNELS) = 8;
+
 			VAR(VAR_SCRIPT_CYCLE) = 1;
 			VAR(VAR_NUM_SCRIPT_CYCLES) = 1;
-			VAR(VAR_WIZ_TCOLOR) = 5;
+
+			VAR(VAR_NUM_SPRITE_GROUPS) = MAX(64, _numSprites / 4) - 1;
 			VAR(VAR_NUM_SPRITES) = _numSprites - 1;
+			VAR(VAR_WIZ_TCOLOR) = 5;
 		}
 		if (_heversion >= 99) {
 			VAR(VAR_NUM_PALETTES) = _numPalettes;
