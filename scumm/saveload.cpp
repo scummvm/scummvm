@@ -715,8 +715,11 @@ void Scumm::saveOrLoad(Serializer *s)
 		}
 	}
 
-	if (_imuse)
+	if (_imuse) {
 		_imuse->save_or_load(s, this);
+		_imuse->set_master_volume (_sound->_sound_volume_master);
+		_imuse->set_music_volume (_sound->_sound_volume_music);
+	}
 }
 
 void Scumm::saveLoadResource(Serializer *ser, int type, int idx)
