@@ -113,11 +113,11 @@ int IMG_DecodeBGImage(const byte * image_data, size_t image_size,
 int DecodeBGImageRLE(const byte *inbuf, size_t inbuf_len, byte *outbuf, size_t outbuf_len) {
 	const byte *inbuf_ptr;
 	byte *outbuf_ptr;
-	uint16 inbuf_remain;
+	uint32 inbuf_remain;
 
 	const byte *inbuf_end;
 	byte *outbuf_end;
-	uint16 outbuf_remain;
+	uint32 outbuf_remain;
 
 	byte mark_byte;
 	int test_byte;
