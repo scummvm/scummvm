@@ -842,7 +842,7 @@ void ScummEngine_v72he::displayWizImage(const WizImage *pwi) {
 		assert(_wiz._imagesNum < ARRAYSIZE(_wiz._images));
 		memcpy(&_wiz._images[_wiz._imagesNum], pwi, sizeof(WizImage));
 		++_wiz._imagesNum;
-	} else if (pwi->flags & 0x40) {
+	} else if (pwi->flags & kWIFIsPolygon) {
 		drawWizPolygon(pwi->resNum, pwi->state, pwi->x1, pwi->flags);
 	} else {
 		drawWizImage(rtImage, pwi);
@@ -889,12 +889,12 @@ uint8 *ScummEngine_v72he::drawWizImage(int restype, const WizImage *pwi) {
 			warning("drawWizImage() unhandled flag 0x2");
 			// XXX modify 'RMAP' buffer
 		}
-		if (pwi->flags & 4) {
+		if (pwi->flags & kWIFPrint) {
 			warning("WizImage printing is unimplemented");
 			return NULL;
 		}
 		uint32 cw, ch;
-		if (pwi->flags & 0x20) {
+		if (pwi->flags & kWIFBlitToMemBuffer) {
 			dst = (uint8 *)malloc(width * height);
 			int color = 255; // FIXME: should be (VAR_WIZ_TCOLOR != 0xFF) ? VAR(VAR_WIZ_TCOLOR) : 5;
 			memset(dst, color, width * height);
@@ -932,11 +932,11 @@ uint8 *ScummEngine_v72he::drawWizImage(int restype, const WizImage *pwi) {
 			warning("unhandled wiz compression type %d", comp);
 		}
 
-		if (!(pwi->flags & 0x20)) {
+		if (!(pwi->flags & kWIFBlitToMemBuffer)) {
 			Common::Rect rImage(pwi->x1, pwi->y1, pwi->x1 + width, pwi->y1 + height);
 			if (rImage.intersects(rScreen)) {
 				rImage.clip(rScreen);
-				if (!(pwi->flags & 8) && pwi->flags & 0x18) {
+				if (!(pwi->flags & kWIFBlitToFrontVideoBuffer) && pwi->flags & 0x18) {
 					++rImage.bottom;
 					markRectAsDirty(kMainVirtScreen, rImage);
 				} else {
@@ -1196,24 +1196,24 @@ void ScummEngine_v90he::drawWizComplexPolygon(int resnum, int state, int po_x, i
 void ScummEngine_v90he::displayWizComplexImage(const WizParameters *params) {
 	// XXX merge with ScummEngine_v72he::displayWizImage
 	int zoom = 256;
-	if (params->processFlags & 0x8) {
+	if (params->processFlags & kWPFZoom) {
 		zoom = params->zoom;
 	}
 	int rotationAngle = 0;
-	if (params->processFlags & 0x10) {
+	if (params->processFlags & kWPFRotate) {
 		rotationAngle = params->angle;
 	}
 	int state = 0;
-	if (params->processFlags & 0x400) {
+	if (params->processFlags & kWPFNewState) {
 		state = params->img.state;
 	}
 	int flags = 0;
-	if (params->processFlags & 0x20) {
+	if (params->processFlags & kWPFNewFlags) {
 		flags = params->img.flags;
 	}
 	int po_x = 0;
 	int po_y = 0;
-	if (params->processFlags & 0x1) {
+	if (params->processFlags & kWPFSetPos) {
 		po_x = params->img.x1;
 		po_y = params->img.y1;
 	}
@@ -1222,7 +1222,7 @@ void ScummEngine_v90he::displayWizComplexImage(const WizParameters *params) {
 		unk = params->unk_15C;
 	}
 	const Common::Rect *r = NULL;
-	if (params->processFlags & 0x200) {
+	if (params->processFlags & kWPFClipBox) {
 		r = &params->box;
 	}
 
@@ -1238,7 +1238,7 @@ void ScummEngine_v90he::displayWizComplexImage(const WizParameters *params) {
 		++_wiz._imagesNum;
 	} else if (params->processFlags & 0x18) {
 		drawWizComplexPolygon(params->img.resNum, state, po_x, po_y, unk, rotationAngle, zoom, r);
-	} else if (flags & 0x40) {
+	} else if (flags & kWIFIsPolygon) {
 		drawWizPolygon(params->img.resNum, state, po_x, flags); // XXX , VAR(117));
 	} else {
 		if ((flags & 0x200) || (flags & 0x24)) {
@@ -1257,6 +1257,7 @@ void ScummEngine_v90he::displayWizComplexImage(const WizParameters *params) {
 }
 
 void ScummEngine_v90he::createWizEmptyImage(const WizParameters *params) {
+	debug(1, "ScummEngine_v90he::createWizEmptyImage(%d, %d, %d)", params->img.resNum, params->resDefImgW, params->resDefImgH);
 	int img_w = 640;
 	if (params->processFlags & kWPFUseDefImgWidth) {
 		img_w = params->resDefImgW;
@@ -1283,6 +1284,7 @@ void ScummEngine_v90he::createWizEmptyImage(const WizParameters *params) {
 		res_size += 0x10C;
 	}
 	res_size += 8 + img_w * img_h;
+	
 	uint8 *res_data = createResource(rtImage, params->img.resNum, res_size);
 	if (!res_data) {
 		VAR(119) = -1;
@@ -1315,7 +1317,49 @@ void ScummEngine_v90he::createWizEmptyImage(const WizParameters *params) {
 			}
 		}
 		WRITE_BE_UINT32(res_data, 'WIZD'); res_data += 4;
-		WRITE_BE_UINT32(res_data, img_w * img_h); res_data += 4;
+		WRITE_BE_UINT32(res_data, 8 + img_w * img_h); res_data += 4;
+	}
+}
+
+void ScummEngine_v90he::fillWizRect(const WizParameters *params) {
+	int state = 0;
+	if (params->processFlags & kWPFNewState) {
+		state = params->img.state;
+	}
+	const uint8 *dataPtr = getResourceAddress(rtImage, params->img.resNum);
+	if (dataPtr) {	
+		const uint8 *wizh = findWrappedBlock(MKID('WIZH'), dataPtr, state, 0);
+		assert(wizh);
+		uint32 ic = READ_LE_UINT32(wizh + 0x0);
+		uint32 iw = READ_LE_UINT32(wizh + 0x4);
+		uint32 ih = READ_LE_UINT32(wizh + 0x8);
+		assert(ic == 0 || ic == 2 || ic == 3);	
+		Common::Rect r1(iw, ih);
+		if (params->processFlags & kWPFClipBox) {
+			if (!r1.intersects(params->box)) {
+				return;
+			}
+			r1.clip(params->box);
+		}
+		if (params->processFlags & 0x40000) {
+			r1.clip(params->box2);
+		}
+		uint8 color;
+		if (params->processFlags & 0x20000) {
+			color = params->fillColor;
+		} else {
+			color = VAR(93);
+		}
+		// XXX
+//		uint8 *wizd = findWrappedBlock(MKID('WIZD'), dataPtr, state, 0);
+//		assert(wizd);
+//		int dx = r1.width();
+//		int dy = r1.height();
+//		wizd += r1.top * iw + r1.left;
+//		while (dy--) {
+//			memset(wizd, color, dx);
+//			wizd += iw;
+//		}
 	}
 }
 
@@ -1329,7 +1373,7 @@ void ScummEngine_v90he::processWizImage(const WizParameters *params) {
  		captureWizImage(rtImage, params->img.resNum, params->box, (params->img.flags & kWIFBlitToFrontVideoBuffer) == kWIFBlitToFrontVideoBuffer, params->compType);
 		break;
 	case 3:
-		if (params->processFlags & 0x800) {
+		if (params->processFlags & kWPFUseFile) {
 			File f;
 			if (!f.open((const char *)params->filename, File::kFileReadMode)) {
 				warning("Unable to open for read '%s'", params->filename);
@@ -1354,7 +1398,7 @@ void ScummEngine_v90he::processWizImage(const WizParameters *params) {
 		}
 		break;
 	case 4:
-		if (params->processFlags & 0x800) {
+		if (params->processFlags & kWPFUseFile) {
 			if (params->unk_14C != 0) {
 				VAR(119) = -1;
 			} else {
@@ -1376,20 +1420,16 @@ void ScummEngine_v90he::processWizImage(const WizParameters *params) {
 			}
 		}
 		break;
+	// HE 99+
 	case 8:
 		createWizEmptyImage(params);
 		break;
-	case 6:
-	// HE 99+
-	case 7:
 	case 9:
-	case 10:
-	case 11:
-	case 12:
-		warning("Unhandled processWizImage mode %d", params->processMode);
+		fillWizRect(params);
 		break;
 	default:
-		debug(1, "Invalid processWizImage mode %d", params->processMode);
+		warning("Unhandled processWizImage mode %d", params->processMode);
+		break;
 	}
 }
 
@@ -1425,10 +1465,10 @@ int ScummEngine_v90he::isWizPixelNonTransparent(int restype, int resnum, int sta
 	const uint8 *wizd = findWrappedBlock(MKID('WIZD'), data, state, 0);
 	assert(wizd);
 	if (x >= 0 && x < w && y >= 0 && y < h) {
-		if (flags & 0x400) {
+		if (flags & kWIFFlipX) {
 			x = w - x - 1;
 		}
-		if (flags & 0x800) {
+		if (flags & kWIFFlipY) {
 			y = h - y - 1;
 		}
 		if (c == 1) {

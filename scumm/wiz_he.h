@@ -72,6 +72,8 @@ struct WizParameters {
 	uint8 remapIndex[256];
 	int remapNum;
 	int unk_380;
+	byte fillColor;
+	Common::Rect box2;
 	WizImage img;
 };
 
