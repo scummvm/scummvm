@@ -2348,10 +2348,12 @@ void Scumm_v5::o5_wait()
 		_opcode = fetchScriptByte();
 
 	switch (_opcode & 0x1F) {
-	case 1:											/* wait for actor */
-		if (derefActorSafe(getVarOrDirectByte(0x80), "o5_wait")->moving)
-			break;
-		return;
+	case 1:	{										/* wait for actor */
+			Actor *a = derefActorSafe(getVarOrDirectByte(0x80), "o5_wait");
+			if (a && a->isInCurrentRoom() && a->moving)
+				break;
+			return;
+		}
 	case 2:											/* wait for message */
 		if (_vars[VAR_HAVE_MSG])
 			break;
