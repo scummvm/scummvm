@@ -29,6 +29,8 @@
 #include "gui/options.h"
 #include "gui/EditTextWidget.h"
 #include "gui/ListWidget.h"
+#include "gui/TabWidget.h"
+#include "gui/PopUpWidget.h"
 
 #include "backends/fs/fs.h"
 
@@ -92,34 +94,65 @@ protected:
 EditGameDialog::EditGameDialog(const String &domain, GameSettings target)
 	: Dialog(8, 50, 320 - 2 * 8, 200 - 2 * 40),
 	  _domain(domain) {
+        const int vBorder = 5;	// Tab border
 
-	// Determine the description string
+	// GAME: Path to game data (r/o)
+	String path(ConfMan.get("path", _domain));
+
+	// GAME: Determine the description string
 	String description(ConfMan.get("description", domain));
 	if (description.isEmpty() && target.description) {
 		description = target.description;
 	}
 
-	
-	// Label & edit widget for the game ID
-	new StaticTextWidget(this, 10, 10, 40, kLineHeight, "ID: ", kTextAlignRight);
-	_domainWidget =
-		new EditTextWidget(this, 50, 10, _w - 50 - 10, kLineHeight, _domain);
+        // GUI:  Add tab widget
+        TabWidget *tab = new TabWidget(this, 0, vBorder, _w, _h - 24 - 2*vBorder);
+	tab->addTab("Game");
 
-	// Label & edit widget for the description
-	new StaticTextWidget(this, 10, 26, 40, kLineHeight, "Name: ", kTextAlignRight);
-	_descriptionWidget =
-		new EditTextWidget(this, 50, 26, _w - 50 - 10, kLineHeight, description);
+	// GUI:  Label & edit widget for the game ID
+	new StaticTextWidget(tab, 10, 10, 40, kLineHeight, "ID: ", kTextAlignRight);
+	_domainWidget = new EditTextWidget(tab, 50, 10, _w - 50 - 10, kLineHeight, _domain);
 
-	// Path to game data (view only)
-	String path(ConfMan.get("path", _domain));
-	new StaticTextWidget(this, 10, 42, 40, kLineHeight, "Path: ", kTextAlignRight);
-	new StaticTextWidget(this, 50, 42, _w - 50 - 10, kLineHeight, path, kTextAlignLeft);
+	// GUI:  Label & edit widget for the description
+	new StaticTextWidget(tab, 10, 26, 40, kLineHeight, "Name: ", kTextAlignRight);
+	_descriptionWidget = new EditTextWidget(tab, 50, 26, _w - 50 - 10, kLineHeight, description);
 
-	// Full screen checkbox
-	_fullscreenCheckbox = new CheckboxWidget(this, 15, 62, 200, 16, "Use Fullscreen Mode", 0, 'F');
+	// GUI:  Label for the game path
+ 	// TODO: Allow editing, and clip to the RIGHT on long paths (to keep meaningful portions)
+	new StaticTextWidget(tab, 10, 42, 40, kLineHeight, "Path: ", kTextAlignRight);
+	new StaticTextWidget(tab, 50, 42, _w - 50 - 10, kLineHeight, path, kTextAlignLeft);
+
+	// TODO: Platform and language dropdowns (?)
+
+	// GUI:  Add Graphics tab
+	tab->addTab("Graphics");
+
+        // The GFX mode popup & a label
+        // TODO - add an API to query the list of available GFX modes, and to get/set the mode
+        PopUpWidget *gfxPopUp;
+        gfxPopUp = new PopUpWidget(tab, 5, vBorder, 280, kLineHeight, "Graphics mode: ", 100);
+        gfxPopUp->appendEntry("<global default>");
+        gfxPopUp->appendEntry("");
+        gfxPopUp->appendEntry("Normal (no scaling)");
+        gfxPopUp->appendEntry("2x");
+        gfxPopUp->appendEntry("3x");
+        gfxPopUp->appendEntry("2xSAI");
+        gfxPopUp->appendEntry("Super2xSAI");
+        gfxPopUp->appendEntry("SuperEagle");
+        gfxPopUp->appendEntry("AdvMAME2x");
+        gfxPopUp->appendEntry("TV2x");
+        gfxPopUp->appendEntry("DotMatrix");
+        gfxPopUp->setSelected(0);
+
+        // FIXME - disable GFX popup for now
+        gfxPopUp->setEnabled(false);
+
+	// GUI:  Full screen checkbox
+	_fullscreenCheckbox = new CheckboxWidget(tab, 15, 62, 200, 16, "Use Fullscreen Mode", 0, 'F');
 	_fullscreenCheckbox->setState(ConfMan.getBool("fullscreen", _domain));
 
-	// Add OK & Cancel buttons
+
+	// GUI:  Add OK & Cancel buttons
 	addButton(_w - 2 * (kButtonWidth + 10), _h - 24, "Cancel", kCloseCmd, 0);
 	addButton(_w - (kButtonWidth + 10), _h - 24, "OK", kOKCmd, 0);
 }

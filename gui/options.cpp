@@ -55,11 +55,11 @@ This just looks like an option dialog, but it doesn't change any actual settings
 // - aspect ratio, language, platform, subtitles, debug mode/level, cd drive, joystick, multi midi, native mt32
 
 enum {
-	kMasterVolumeChanged	= 'mavc',
+	kMasterVolumeChanged		= 'mavc',
 	kMusicVolumeChanged		= 'muvc',
 	kSfxVolumeChanged		= 'sfvc',
 	kChooseSaveDirCmd		= 'chos',
-	kOKCmd					= 'ok  '
+	kOKCmd				= 'ok  '
 };
 
 GlobalOptionsDialog::GlobalOptionsDialog(GameDetector &detector)
@@ -80,6 +80,8 @@ GlobalOptionsDialog::GlobalOptionsDialog(GameDetector &detector)
 	//new StaticTextWidget(tab, 5, vBorder+2, 100, kLineHeight, "Graphics mode: ", kTextAlignRight);
 	PopUpWidget *gfxPopUp;
 	gfxPopUp = new PopUpWidget(tab, 5, vBorder, 280, kLineHeight, "Graphics mode: ", 100);
+
+	// Ender: We don't really want a <default> here at all, we want to setSelected to the current global
 	gfxPopUp->appendEntry("<default>");
 	gfxPopUp->appendEntry("");
 	gfxPopUp->appendEntry("Normal (no scaling)");
