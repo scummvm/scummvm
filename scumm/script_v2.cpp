@@ -752,7 +752,8 @@ void Scumm_v2::o2_verbOps() {
 		int x = fetchScriptByte() << 3;
 		int y = fetchScriptByte() << 3;
 		slot = getVarOrDirectByte(0x80) + 1;
-		int unk = fetchScriptByte(); // ?
+		// int unk = fetchScriptByte(); // ?
+		fetchScriptByte();
 		
 		VerbSlot *vs;
 		assert(0 < slot && slot < _maxVerbs);
