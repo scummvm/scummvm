@@ -203,28 +203,28 @@ void Blitter::putBlock(Chunk & src) {
 void Blitter::blockCopy(int32 offset) {
 	if(_cur.getX() + 3 < _src.right() && _cur.getY() + 3 < _src.bottom()) {// This is clipping
 		byte * dst = _offset;
-#ifndef _WIN32_WCE
-		*((uint32 *)dst) = *((uint32 *)(dst + offset));
-#else
+#if defined(SCUMM_NEED_ALIGNMENT)
 		memcpy(dst, dst + offset, sizeof(uint32));
+#else
+		*((uint32 *)dst) = *((uint32 *)(dst + offset));
 #endif
 		dst += _clip.getX();
-#ifndef _WIN32_WCE
-		*((uint32 *)dst) = *((uint32 *)(dst + offset));
-#else
+#if defined(SCUMM_NEED_ALIGNMENT)
 		memcpy(dst, dst + offset, sizeof(uint32));
+#else
+		*((uint32 *)dst) = *((uint32 *)(dst + offset));
 #endif
 		dst += _clip.getX();
-#ifndef _WIN32_WCE
-		*((uint32 *)dst) = *((uint32 *)(dst + offset));
-#else
+#if defined(SCUMM_NEED_ALIGNMENT)
 		memcpy(dst, dst + offset, sizeof(uint32));
+#else
+		*((uint32 *)dst) = *((uint32 *)(dst + offset));
 #endif
 		dst += _clip.getX();
-#ifndef _WIN32_WCE
-		*((uint32 *)dst) = *((uint32 *)(dst + offset));
-#else
+#if defined(SCUMM_NEED_ALIGNMENT)
 		memcpy(dst, dst + offset, sizeof(uint32));
+#else
+		*((uint32 *)dst) = *((uint32 *)(dst + offset));
 #endif
 #ifdef DEBUG_CLIPPER
 	} else {
