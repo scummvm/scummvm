@@ -1471,8 +1471,10 @@ void Scumm_v8::o8_kernelGetFunctions()
 			eo = &_enqueuedObjects[i];
 			if (eo->posX <= args[1] && eo->width + eo->posX > args[1] &&
 			    eo->posY <= args[2] && eo->height + eo->posY > args[2]) {
-				push(eo->number);
-				return;
+                		if (!getClass(eo->number, 32)) {
+					push(eo->number);
+					return;
+				}
 			}
 		}
 
