@@ -148,7 +148,7 @@ bool MidiParser_SMF::loadMusic (byte *data, uint32 size) {
 		pos += 4;
 		len = read4high (pos);
 		if (len != 6) {
-			printf ("Warning: MThd length 6 expected but found %d\n", (int) len);
+			warning("MThd length 6 expected but found %d", (int) len);
 			return false;
 		}
 
@@ -158,7 +158,7 @@ bool MidiParser_SMF::loadMusic (byte *data, uint32 size) {
 		_num_tracks = pos[2] << 8 | pos[3];
 		midi_type = pos[1];
 		if (midi_type > 2 /*|| (midi_type < 2 && _num_tracks > 1)*/) {
-			printf ("Warning: No support for a Type %d MIDI with %d tracks\n", (int) midi_type, (int) _num_tracks);
+			warning("No support for a Type %d MIDI with %d tracks", (int) midi_type, (int) _num_tracks);
 			return false;
 		}
 		_ppqn = pos[4] << 8 | pos[5];
@@ -172,13 +172,13 @@ bool MidiParser_SMF::loadMusic (byte *data, uint32 size) {
 		_ppqn = 192;
 		pos += 7; // 'GMD\x1' + 3 bytes of useless (translate: unknown) information
 	} else {
-		printf ("Expected MThd or GMD header but found '%c%c%c%c' instead.\n", pos[0], pos[1], pos[2], pos[3]);
+		warning("Expected MThd or GMD header but found '%c%c%c%c' instead", pos[0], pos[1], pos[2], pos[3]);
 		return false;
 	}
 
 	// Now we identify and store the location for each track.
 	if (_num_tracks > ARRAYSIZE(_tracks)) {
-		printf ("Can only handle %d tracks but was handed %d\n", (int) ARRAYSIZE(_tracks), (int) _num_tracks);
+		warning("Can only handle %d tracks but was handed %d", (int) ARRAYSIZE(_tracks), (int) _num_tracks);
 		return false;
 	}
 
@@ -186,8 +186,8 @@ bool MidiParser_SMF::loadMusic (byte *data, uint32 size) {
 	int tracks_read = 0;
 	while (tracks_read < _num_tracks) {
 		if (memcmp (pos, "MTrk", 4) && !isGMF) {
-			printf ("Position: %p ('%c')\n", pos, *pos);
-			printf ("Hit invalid block '%c%c%c%c' while scanning for track locations\n", pos[0], pos[1], pos[2], pos[3]);
+			warning("Position: %p ('%c')", pos, *pos);
+			warning("Hit invalid block '%c%c%c%c' while scanning for track locations", pos[0], pos[1], pos[2], pos[3]);
 			return false;
 		}
 
@@ -265,7 +265,7 @@ void MidiParser_SMF::compressToType0() {
 				best_i = i;
 		}
 		if (best_i == 255) {
-			printf ("Premature end of tracks!\n");
+			warning("Premature end of tracks");
 			break;
 		}
 
@@ -310,7 +310,7 @@ void MidiParser_SMF::compressToType0() {
 			if (event == 0x2F)
 				--active_tracks;
 		} else {
-			printf ("Bad MIDI command %02X!\n", (int) event);
+			warning("Bad MIDI command %02X", (int) event);
 			track_pos[best_i] = 0;
 		}
 
