@@ -29,6 +29,7 @@
 class SkyMouse {
 
 public:
+
 	SkyMouse(SkyDisk *skyDisk);
 	~SkyMouse(void);
 
@@ -40,8 +41,8 @@ public:
 	void drawNewMouse(void);
 	void spriteMouse(uint16 frameNum, uint16 mouseX, uint16 mouseY);
 
-
 protected:
+
 	uint16 _aMouseX;	//actual mouse coordinates
 	uint16 _aMouseY;	
 
@@ -69,16 +70,15 @@ protected:
 
 	byte *_miceData;	//address of mouse sprites
 	byte *_objectMouseData;	//address of object mouse sprites
-	
+
 	uint16	_tMouseX;
 	uint16	_tMouseY;
 
 	uint16	_mouseXOff;
-	
-	static uint32 _mouseObjectList[];
-	
-	SkyDisk *_skyDisk;
 
+	static uint32 _mouseObjectList[];
+
+	SkyDisk *_skyDisk;
 };
 
 #endif //SKYMOUSE_H

@@ -27,7 +27,6 @@
 #define NO_LINC_OBJECTS	21
 
 uint32 _mouseObjectList[] = {
-
 	65,
 	9,
 	66,
@@ -85,6 +84,7 @@ SkyMouse::SkyMouse(SkyDisk *skyDisk) {
 	_mouseHeight = 6;
 	_maskWidth = 6;
 	_maskHeight = 6;
+
 	
 	_miceData = _skyDisk->loadFile(MICE_FILE, NULL);
 	_mouseData2 = _miceData;
@@ -98,12 +98,11 @@ SkyMouse::SkyMouse(SkyDisk *skyDisk) {
 	_objectMouseData = _skyDisk->loadFile(MICE_FILE + 1, NULL);
 	_mouseWidth = 1;
 	_mouseHeight = 1;
-		
 	//_systemFlags |= SF_MOUSE;;
-
 }
 
 SkyMouse::~SkyMouse( ){
+
 	free (_miceData);
 	free (_savedData);
 	free (_objectMouseData);
@@ -112,7 +111,6 @@ SkyMouse::~SkyMouse( ){
 void SkyMouse::replaceMouseCursors(uint16 fileNo) {
 
 	_skyDisk->loadFile(fileNo, _objectMouseData);
-
 }
 
 uint32 SkyMouse::fnBlankMouse(void) {
@@ -121,28 +119,27 @@ uint32 SkyMouse::fnBlankMouse(void) {
 	spriteMouse(MOUSE_BLANK, 0, 0);
 
 	return 1;
-
 }
 
 void SkyMouse::lockMouse(void) {
 
 	_lockMouseX = _aMouseX;
 	_lockMouseY = _aMouseY;
-
 }
 
 void SkyMouse::unlockMouse(void) {
 
 	_aMouseX = _lockMouseX;
 	_aMouseY = _lockMouseY;
-
 }
 
 void SkyMouse::restoreMouseData(uint16 frameNum) {
+
 	warning("Stub: SkyMouse::restoreMouseData");
 }
 
 void SkyMouse::drawNewMouse() {
+
 	warning("Stub: SkyMouse::drawNewMouse");
 	//calculateMouseValues();
 	//saveMouseData();
@@ -157,7 +154,6 @@ void SkyMouse::spriteMouse(uint16 frameNum, uint16 mouseX, uint16 mouseY) {
 	_mouseOffsetY = mouseY;
 
 	restoreMouseData(frameNum);
-
 	byte *mouseData = _miceData;
 	uint32 pos = ((struct dataFileHeader *)mouseData)->s_sp_size * ((struct dataFileHeader *)mouseData)->s_sp_size;
 	pos += sizeof(struct dataFileHeader);
