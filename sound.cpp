@@ -192,6 +192,8 @@ int Scumm::startTalkSound(uint32 offset, uint32 b, int mode)
 	byte file_byte, file_byte_2;
 	int size;
 
+	debug(1, "Starting sound %d.", offset);
+
 	if (!_sfxFile) {
 		warning("startTalkSound: SFX file is not open");
 		return -1;
@@ -232,6 +234,7 @@ int Scumm::startTalkSound(uint32 offset, uint32 b, int mode)
 		fileRead((FILE *) _sfxFile, &file_byte, sizeof(file_byte));
 		fileRead((FILE *) _sfxFile, &file_byte_2, sizeof(file_byte_2));
 		_mouthSyncTimes[i++] = file_byte | (file_byte_2 << 8);
+		debug(1, " - %d (0x%08x)", _mouthSyncTimes[i - 1], _mouthSyncTimes[i - 1]);
 		num--;
 	}
 	_mouthSyncTimes[i] = 0xFFFF;
@@ -273,6 +276,8 @@ int Scumm::isSoundRunning(int sound)
 {
 	IMuse *se;
 	int i;
+
+	debug(1, " -> %d", sound);
 
 	if (sound == current_cd_sound)
 		return _system->poll_cdrom();
@@ -664,7 +669,7 @@ int Scumm::getCachedTrack(int track) {
 			if (bytes <= 0) {
 				if (bytes == -1) {
 					warning("Invalid format for track %d", track);
-					return -1;
+					goto error;
 				}
 				break;
 			}
@@ -691,14 +696,14 @@ int Scumm::getCachedTrack(int track) {
 			break;
 
 		memmove(buffer, stream.next_frame,
-						buflen = &buffer[buflen] - stream.next_frame);
+		        buflen = &buffer[buflen] - stream.next_frame);
 	}
 
 	if (count)
 		memcpy(&_mad_header[current_index], &frame.header, sizeof(mad_header));
 	else {
 		warning("Invalid format for track %d", track);
-		return -1;
+		goto error;
 	}
 
 	mad_frame_finish(&frame);
@@ -711,8 +716,13 @@ int Scumm::getCachedTrack(int track) {
 		_mp3_buffer = malloc(MP3_BUFFER_SIZE);
 	
 	return current_index;
+
+ error:
+	mad_frame_finish(&frame);
+	mad_stream_finish(&stream);
+
+	return -1;
 }
-		
 
 int Scumm::playMP3CDTrack(int track, int num_loops, int start, int delay) {
 	int index;

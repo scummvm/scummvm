@@ -310,6 +310,8 @@ void SoundMixer::Channel_MP3::destroy() {
 	mad_frame_finish(&_frame);
 	mad_stream_finish(&_stream);
 
+	debug(1, "Sound finished");
+
 	delete this;
 }
 
@@ -339,7 +341,7 @@ void SoundMixer::Channel_MP3_CDMUSIC::mix(int16 *data, uint len) {
 	if (!_initialized) {
 		int skip_loop;
 		// just skipped
-		memset(_ptr, 0,_buffer_size + MAD_BUFFER_GUARD);
+		memset(_ptr, 0,_buffer_size);
 		_size = fread(_ptr, 1, _buffer_size, _file);
 		if (!_size) {
 				destroy();
@@ -350,18 +352,18 @@ void SoundMixer::Channel_MP3_CDMUSIC::mix(int16 *data, uint len) {
 		skip_loop = 2;
 		while (skip_loop != 0) {
 			if (mad_frame_decode(&_frame,&_stream) == 0) {
-					/* Do not decrease duration - see if it's a problem */
-					skip_loop--;
-					if (skip_loop == 0) {
-						mad_synth_frame(&_synth, &_frame);
-					}
+				/* Do not decrease duration - see if it's a problem */
+				skip_loop--;
+				if (skip_loop == 0) {
+					mad_synth_frame(&_synth, &_frame);
+				}
 			} else {
-						if (!MAD_RECOVERABLE(_stream.error)) {
-								debug(1, "Unrecoverable error while skipping !");
-								destroy();
-								return;
-						}
-					}
+				if (!MAD_RECOVERABLE(_stream.error)) {
+					debug(1, "Unrecoverable error while skipping !");
+					destroy();
+					return;
+				}
+			}
 		}
 		// We are supposed to be in synch
 		mad_frame_mute(&_frame);
@@ -372,9 +374,9 @@ void SoundMixer::Channel_MP3_CDMUSIC::mix(int16 *data, uint len) {
 			_initialized = true;
 		} 
 		else {
-				debug(1, "Cannot resume decoding");
-				destroy();
-				return;
+			debug(1, "Cannot resume decoding");
+			destroy();
+			return;
 		}
 	}
 
@@ -396,40 +398,34 @@ void SoundMixer::Channel_MP3_CDMUSIC::mix(int16 *data, uint len) {
 		mad_timer_negate(&frame_duration);
 		mad_timer_add(&_duration, frame_duration);
 		if (mad_timer_compare(_duration, mad_timer_zero) < 0) {					
-					destroy();
-					return;
+			destroy();
+			return;
 		}		
 		if (mad_frame_decode(&_frame, &_stream) == -1) {
-					if (_stream.error == MAD_ERROR_BUFLEN) {
-						int not_decoded;
+			if (_stream.error == MAD_ERROR_BUFLEN) {
+				int not_decoded;
 
-						if (!_stream.next_frame) {
-							memset(_ptr, 0, _buffer_size + MAD_BUFFER_GUARD);
-							_size =
-								fread(_ptr, 1, _buffer_size, _file);
-							not_decoded = 0;
-						} 
-						else {
-							not_decoded = _stream.bufend - _stream.next_frame;
-							memcpy(_ptr, _stream.next_frame, not_decoded);
-							_size =
-								fread((unsigned char *)_ptr + not_decoded, 1,
-										_buffer_size - not_decoded, _file);
-						}
-						_stream.error = MAD_ERROR_NONE;
-						// Restream
-						mad_stream_buffer(&_stream, (unsigned char *)_ptr, _size + not_decoded);
-						if (mad_frame_decode(&_frame, &_stream) == -1) {
-							debug(1, "Error decoding after restream %d !",
-										_stream.error);
-						}
-					} else if (!MAD_RECOVERABLE(_stream.error)) {
-						error("MAD frame decode error in MP3 CDMUSIC !");
-					}
+				if (!_stream.next_frame) {
+					memset(_ptr, 0, _buffer_size + MAD_BUFFER_GUARD);
+					_size =	fread(_ptr, 1, _buffer_size, _file);
+					not_decoded = 0;
+				} else {
+					not_decoded = _stream.bufend - _stream.next_frame;
+					memcpy(_ptr, _stream.next_frame, not_decoded);
+					_size =	fread((unsigned char *)_ptr + not_decoded, 1, _buffer_size - not_decoded, _file);
+				}
+				_stream.error = MAD_ERROR_NONE;
+				// Restream
+				mad_stream_buffer(&_stream, (unsigned char *)_ptr, _size + not_decoded);
+				if (mad_frame_decode(&_frame, &_stream) == -1) {
+					debug(1, "Error decoding after restream %d !", _stream.error);
+				}
+			} else if (!MAD_RECOVERABLE(_stream.error)) {
+				error("MAD frame decode error in MP3 CDMUSIC !");
+			}
 		}
 		mad_synth_frame(&_synth, &_frame);
 		_pos_in_frame = 0;
-		
 	}
 }
 
