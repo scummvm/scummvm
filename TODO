@@ -232,6 +232,18 @@ Plugins
   from the launcher.
 * This savegame API could return additional (optional) information for each
   savegame entry: name; creation date; thumbnail screenshot
+* When building with the fake static plugins: instead of hardcoding the list
+  of plugins, plugins should automatically be "hooked in". This can be achieved
+  by modifying REGISTER_PLUGIN to insert special code into the plugins.
+* Likewise, when building with real dynamic plugins: instead of hardcoding
+  plugin names and pathes, we should scan in specific locations for all
+  available plugins, etc.. For example, try to load all "plugins/lib*.so"
+  files. To this end consider special file names for the plugins
+* On OSX: Support a plugin build in the bundle target: *.plugin files should
+  be put into ScummVM.app/Contents/PlugIns/; this also means that the loader
+  needs to search in the plugin dir of the active bundle. So use the 
+  CF bundle API, inside a #ifdef MACOSX block.
+
 
 #######################################################################
 # Engines / frontends
