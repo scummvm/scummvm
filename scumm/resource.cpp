@@ -2335,7 +2335,7 @@ void ScummEngine::readMAXS(int blockSize) {
 				error("MAXS block of size %d not supported, please report", blockSize);
 		_numVariables = _fileHandle.readUint16LE();
 		_fileHandle.readUint16LE();
-		_numBitVariables = _fileHandle.readUint16LE();
+		_numBitVariables = _numRoomVariables = _fileHandle.readUint16LE();
 		_numLocalObjects = _fileHandle.readUint16LE();
 		_numArray = _fileHandle.readUint16LE();
 		_fileHandle.readUint16LE();
@@ -2429,7 +2429,7 @@ void ScummEngine::allocateArrays() {
 	_inventory = (uint16 *)calloc(_numInventory, sizeof(uint16));
 	_verbs = (VerbSlot *)calloc(_numVerbs, sizeof(VerbSlot));
 	_objs = (ObjectData *)calloc(_numLocalObjects, sizeof(ObjectData));
-	_roomVars = (int32 *)calloc(_numBitVariables, sizeof(int32));
+	_roomVars = (int32 *)calloc(_numRoomVariables, sizeof(int32));
 	_scummVars = (int32 *)calloc(_numVariables, sizeof(int32));
 	_bitVars = (byte *)calloc(_numBitVariables >> 3, 1);
 	_images = (uint16 *)calloc(_numImages, sizeof(uint16));

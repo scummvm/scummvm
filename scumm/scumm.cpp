@@ -496,6 +496,7 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 	_bitVars = NULL;
 	_numVariables = 0;
 	_numBitVariables = 0;
+	_numRoomVariables = 0;
 	_numLocalObjects = 0;
 	_numGlobalObjects = 0;
 	_numArray = 0;

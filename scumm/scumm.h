@@ -481,7 +481,7 @@ protected:
 	int _numGlobalObjects, _numArray, _numVerbs, _numFlObject;
 	int _numInventory, _numRooms, _numScripts, _numSounds;
 	int _numNewNames, _numGlobalScripts;
-	int _numActors, _numImages;
+	int _numActors, _numImages, _numRoomVariables;
 public:
 	int _numCostumes;	// FIXME - should be protected, used by Actor::remapActorPalette
 	int _numCharsets;	// FIXME - should be protected, used by CharsetRenderer

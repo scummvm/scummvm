@@ -518,7 +518,7 @@ int ScummEngine::readVar(uint var) {
 	if (var & 0x8000) {
 		if (_gameId == GID_PAJAMA) {
 			var &= 0xFFF;
-			checkRange(_numBitVariables, 0, var, "Room variable %d out of range(w)");
+			checkRange(_numRoomVariables - 1, 0, var, "Room variable %d out of range(w)");
 			return _roomVars[var];
 
 		} else if ((_gameId == GID_ZAK256) || (_features & GF_OLD_BUNDLE) || 
@@ -601,7 +601,7 @@ void ScummEngine::writeVar(uint var, int value) {
 	if (var & 0x8000) {
 		if (_gameId == GID_PAJAMA) {
 			var &= 0xFFF;
-			checkRange(_numBitVariables, 0, var, "Room variable %d out of range(w)");
+			checkRange(_numRoomVariables - 1, 0, var, "Room variable %d out of range(w)");
 			_roomVars[var] = value;
 
 		} else if ((_gameId == GID_ZAK256) || (_features & GF_OLD_BUNDLE) ||
