@@ -573,11 +573,6 @@ void Scumm::writeVar(uint var, int value) {
 			var &= 0x7FFF;
 			checkRange(_numBitVariables - 1, 0, var, "Bit variable %d out of range(w)");
 	
-			// FIXME: Enable Indy4 mousefighting by default. 
-			// is there a better place to put this?
-			if (_gameId == GID_INDY4 && var == 107 && vm.slot[_currentScript].number == 1)
-				value = 1;
-	
 			if (value)
 				_bitVars[var >> 3] |= (1 << (var & 7));
 			else

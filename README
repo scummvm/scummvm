@@ -185,10 +185,6 @@ the section on Reporting Bugs.
        Monkey Island 1 (EGA):
                 - MIDI support requires the Roland update from LucasArts
 
-       Indiana Jones and the Fate of Atlantis:
-                - Keyboard fighting does not work. ScummVM now defaults to
-                  using mouse fighting.
-
        Sam and Max:
                 - Highway subgame does not behave correctly.
 
@@ -215,7 +211,7 @@ the section on Reporting Bugs.
 
        Curse of Monkey Island
                 - The "Pirate Song" scene does not play correctly
-                - 
+
        All CD games:
                - If you are experiencing random crashes, and your game
                  plays music from CD, you have encountered a Windows bug.

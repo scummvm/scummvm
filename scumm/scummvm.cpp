@@ -1497,7 +1497,7 @@ void Scumm::parseEvents() {
 				sprintf(_saveLoadName, "Quicksave %d", _saveLoadSlot);
 				_saveLoadFlag = (event.kbd.flags == OSystem::KBD_ALT) ? 1 : 2;
 				_saveLoadCompatible = false;
-			} else if (event.kbd.flags==OSystem::KBD_CTRL) {
+			} else if (event.kbd.flags == OSystem::KBD_CTRL) {
 				if (event.kbd.keycode == 'f')
 					_fastMode ^= 1;
 				else if (event.kbd.keycode == 'g')
@@ -1513,16 +1513,27 @@ void Scumm::parseEvents() {
 				// because that's what MI2 looks for in
 				// its "instant win" cheat.
 				_keyPressed = event.kbd.keycode + 154;
-			// FIXME support in game screen
-			// this remaps F1 to F5 for comi
-			} else if (event.kbd.ascii == 315 && _gameId == GID_CMI)
+			} else if (event.kbd.ascii == 315 && _gameId == GID_CMI) {
+				// FIXME: support in-game menu screen. For now, this remaps F1 to F5 in COMI
 				_keyPressed = 319;
-			// don't let game have arrow keys as we currently steal them
-			// for keyboard cursor control
-			// this fixes bug with up arrow (273) corresponding to
-			// "instant win" cheat in MI2 mentioned above
-			else if (event.kbd.ascii < 273 || event.kbd.ascii > 276)
+			} else if (_gameId == GID_INDY4 && event.kbd.ascii >= '0' && event.kbd.ascii <= '9') {
+				// To support keyboard fighting in FOA, we need to remap the number keys.
+				// FOA apparently expects PC scancode values (see script 46 if you want
+				// to know where I got these numbers from).
+				static const int numpad[10] = {
+						'0',
+						335, 336, 337,
+						331, 332, 333,
+						327, 328, 329
+					};
+				_keyPressed = numpad[event.kbd.ascii - '0'];
+			} else if (event.kbd.ascii < 273 || event.kbd.ascii > 276) {
+				// don't let game have arrow keys as we currently steal them
+				// for keyboard cursor control
+				// this fixes bug with up arrow (273) corresponding to
+				// "instant win" cheat in MI2 mentioned above
 				_keyPressed = event.kbd.ascii;	// Normal key press, pass on to the game.
+			}
 			break;
 
 		case OSystem::EVENT_MOUSEMOVE:
