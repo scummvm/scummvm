@@ -253,7 +253,7 @@ void Scumm::CHARSET_1()
 	if (!(_features & GF_OLD256))	// FIXME
 		for (i = 0; i < 4; i++)
 			if (_features & GF_SMALL_HEADER)
-				charset._colorMap[i] = _charsetData[charset._curId][i - 12];
+				charset._colorMap[i] = _charsetData[charset._curId][i - 12];	// FIXME - do we really want to access index -12 to -9 ?
 			else
 				charset._colorMap[i] = _charsetData[charset._curId][i];
 
@@ -343,7 +343,7 @@ void Scumm::CHARSET_1()
 					charset._xpos2 -= charset.getStringWidth(0, buffer, 0) >> 1;
 				}
 				if (_features & GF_SMALL_HEADER)
-					charset._ypos2 += getResourceAddress(rtCharset, charset._curId)[18];
+					charset._ypos2 += getResourceAddress(rtCharset, charset._curId)[30 - 12];
 				else
 					charset._ypos2 += getResourceAddress(rtCharset, charset._curId)[30];
 				charset._disableOffsX = 1;
@@ -418,7 +418,7 @@ void Scumm::CHARSET_1()
 		case 14: {
 			int oldy;
 			if (_features & GF_SMALL_HEADER)
-				oldy = getResourceAddress(rtCharset, charset._curId)[18];
+				oldy = getResourceAddress(rtCharset, charset._curId)[30 - 12];
 			else
 				oldy = getResourceAddress(rtCharset, charset._curId)[30];
 
@@ -426,11 +426,11 @@ void Scumm::CHARSET_1()
 			buffer += 2;
 			for (i = 0; i < 4; i++)
 				if (_features & GF_SMALL_HEADER)
-					charset._colorMap[i] = _charsetData[charset._curId][i - 12];
+					charset._colorMap[i] = _charsetData[charset._curId][i - 12];	// FIXME - do we really want to access index -12 to -9 ?
 				else
 					charset._colorMap[i] = _charsetData[charset._curId][i];
 			if (_features & GF_SMALL_HEADER)
-				charset._ypos2 -= getResourceAddress(rtCharset, charset._curId)[18] - oldy;
+				charset._ypos2 -= getResourceAddress(rtCharset, charset._curId)[30 - 12] - oldy;
 			else
 				charset._ypos2 -= getResourceAddress(rtCharset, charset._curId)[30] - oldy;
 			break;
@@ -596,7 +596,7 @@ void Scumm::drawString(int a)
 
 		for (i = 0; i < 4; i++)
 			if (_features & GF_SMALL_HEADER)
-				charset._colorMap[i] = _charsetData[charset._curId][i - 12];
+				charset._colorMap[i] = _charsetData[charset._curId][i - 12];	// FIXME - do we really want to access index -12 to -9 ?
 			else
 				charset._colorMap[i] = _charsetData[charset._curId][i];
 
@@ -876,7 +876,7 @@ void Scumm::initCharset(int charsetno)
 
 	for (i = 0; i < 0x10; i++)
 		if (_features & GF_SMALL_HEADER)
-			charset._colorMap[i] = _charsetData[charset._curId][i - 12];
+			charset._colorMap[i] = _charsetData[charset._curId][i - 12];	// FIXME - do we really want to access index -12 to -9 ?
 		else
 			charset._colorMap[i] = _charsetData[charset._curId][i];
 }
@@ -1159,7 +1159,7 @@ void Scumm::translateText(char * text, char * trans_buff) {
 		number[2] = *(text + l + 3);
 		number[3] = 0;
 		num = atol(number);
-		sprintf(num_s, "%ld", num);
+		sprintf(num_s, "%d", num);
 
 		char * buf = _languageBuffer;
 		pos = 0;

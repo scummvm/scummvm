@@ -4794,7 +4794,7 @@ void SimonState::playSound(uint sound)
 
 			_effects_file->read(&size, 4);
 			// FIXME - do we really want to read a block of 4 bytes, ignoring endian issues?
-			printf("FOO %08lx 7 %ld \n", size, size & 0xffffff);
+			printf("FOO %08x / %d (please report this to Fingolfin)\n", size, size & 0xffffff);
 			size = size & 0xffffff;
 			_effects_file->seek(-1, SEEK_CUR);
 			_effects_file->read(&voc_block_hdr, sizeof(voc_block_hdr));

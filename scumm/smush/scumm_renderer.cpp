@@ -111,7 +111,7 @@ bool ScummMixer::addChannel(_Channel * c) {
 	fprintf(stderr, "_nextIndex == %d\n", _nextIndex);
 
 	for(i = _mixer->_beginSlots; i < SoundMixer::NUM_CHANNELS; i++) {
-		fprintf(stderr, "channel %d : %p(%ld, %d) %d %d\n", i, _channels[i].chan, 
+		fprintf(stderr, "channel %d : %p(%d, %d) %d %d\n", i, _channels[i].chan, 
 			_channels[i].chan ? _channels[i].chan->getTrackIdentifier() : -1, 
 			_channels[i].chan ? _channels[i].chan->isTerminated() : 1, 
 			_channels[i].first, _channels[i].mixer_index);
