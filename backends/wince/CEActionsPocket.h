@@ -33,7 +33,7 @@
 
 #include "CEActions.h"
 
-#define POCKET_ACTION_VERSION 3
+#define POCKET_ACTION_VERSION 4
 
 enum pocketActionType {
         POCKET_ACTION_PAUSE = 0,
@@ -48,6 +48,7 @@ enum pocketActionType {
         POCKET_ACTION_FREELOOK,
 		POCKET_ACTION_ZOOM_UP,
 		POCKET_ACTION_ZOOM_DOWN,
+		POCKET_ACTION_FT_CHEAT,
 
 		POCKET_ACTION_LAST
 };
