@@ -141,9 +141,6 @@ Audio
 =====
 * Get the high quality resample code to work
    [Fingolfin has started work on this]
-* Add a command line/config file option for the output sample rate (to allow
-  for output sample rates other than 22050 Hz, e.g. 44100). Code should do
-  sanity checking (e.g. restrict to rates between 8000 - 65535 Hz)
 * Clean up the "premixer mess": instead of having a custome premixer hook, add
   a "callback channel" or something like this. This removes special cases from
   the code, and it also makes it possible to apply sound rate conversion to
@@ -172,24 +169,12 @@ Files
   - convert said string representation back to FSNode
   Of course that can be added w/o a FileManager class, too - but it might be
   nice to have all of these integrated.
-* Get rid of the hardcoded (sub)directory list in the File class. At the very
-  least, that list should be set by the engine (since not all engines need all
-  of the subdirs). Better would be to introduce a somewhat higher level API,
-  a replacement for File::open() which (optionally) takes a list of subdirs.
-  E.g. for Scumm, only certain files are to be expected in the VIDEO subdir).
 
 Game Detector
 =============
 * Improve the detector for games with all datafiles in subdirs (i.e.
-  Broken Sword 1 & 2). This could work by letting the detector proc recurse
-  into sub directories...
-
-Graphics
-========
-* The Scale2x folks have an optimized version of the Scale2x (= AdvMame2x)
-  filter, which we might want to adapt - if there is a benefit, that is. Asked
-  the other way around: Are there any systems on which AdvMame2x is too slow?
-  Same goes for AdvMame3x.
+  Broken Sword 1 & 2). To allow this, we could pass also directories to the
+  detect functions; those then could optionally scan sub directories.
 
 GUI
 ===
@@ -277,14 +262,6 @@ SCUMM
 * Humongous entertainment >= v7 titles:
   - Add variables for _heversion > 72
   - Add support for Scummsys.9x and C++ engine MAXS blocks
-  
-Broken Sword 1 & 2
-==================
-* Currently BS1 & BS2 duplicate some code for MPEG2 playback. It would seem
-  logical to share that code (for all the usual good reasons).
-  We might even want to add a "video" dir (analog to "sound") for the shared
-  code, if it can be rewritten so that it's reusable.
-  DO NOT ADD SUCH A DIR without first consulting with Ender and Fingolfin !
 
 Broken Sword 2
 ==============
@@ -309,7 +286,6 @@ SAGA
 * Transition console to use ScummVM one
 * Remove any traces of the additional level of abstraction reinherit used
 * Change printf calls to warning/debug calls
-* Merge reinherit.h with saga.h
 * Investigate why the fair scene in the ITE intro isn't working (used to
   work in reinherit)
 * Remove homerolled high level data structures like stacks that should
