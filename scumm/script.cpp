@@ -323,26 +323,29 @@ void Scumm::runScriptNested(int script) {
 		nest->number = 0xFF;
 		nest->where = 0xFF;
 	} else {
+		// Store information about the currently running script
 		slot = &vm.slot[_currentScript];
 		nest->number = slot->number;
 		nest->where = slot->where;
 		nest->slot = _currentScript;
 	}
 
-	if (++_numNestedScripts > ARRAYSIZE(vm.nest))
+	_numNestedScripts++;
+	
+	if (_numNestedScripts > ARRAYSIZE(vm.nest))
 		error("Too many nested scripts");
 
 	_currentScript = script;
-
 	getScriptBaseAddress();
 	getScriptEntryPoint();
 	executeScript();
 
 	_numNestedScripts--;
 
-	nest = &vm.nest[_numNestedScripts];
-
 	if (nest->number != 0xFF) {
+		// Try to resume the script which called us, if its status has not changed
+		// since it invoked us. In particular, we only resume it if it hasn't been
+		// stopped in the meantime, and if it did not already move on.
 		slot = &vm.slot[nest->slot];
 		if (slot->number == nest->number && slot->where == nest->where &&
 				slot->status != ssDead && slot->freezeCount == 0) {
