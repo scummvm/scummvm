@@ -459,14 +459,14 @@ void Sound::playSound(int soundID) {
 		// Some very basic sound effects support
 		if (READ_BE_UINT16(ptr + 14) == 0x0880) {
 			size = READ_BE_UINT16(ptr + 6);
-			// Not sure if this is correct start point
 			int start = READ_BE_UINT16(ptr + 8);
+			start +=10;
 			rate = 11000;
 			sound = (char *)malloc(size);
 			memcpy(sound,ptr + start,size);
 
 			// Experimental sound looping support
-			if (start == 98 | start == 96)
+			if (start == 108 | start == 106)
 				_scumm->_mixer->playRaw(NULL, sound, size, rate,
 						SoundMixer::FLAG_AUTOFREE | SoundMixer::FLAG_LOOP, 127, 0, soundID,
 						start,size);
