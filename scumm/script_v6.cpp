@@ -1025,7 +1025,6 @@ void ScummEngine_v6::o6_getOwner() {
 
 void ScummEngine_v6::o6_startSound() {
 	int offset = 0;
-	int snd = pop();
 
 	// In Fatty Bear's Birthday Surprise the piano uses offsets 1 - 23 to
 	// indicate which note to play, but only when using the standard piano
@@ -1034,9 +1033,9 @@ void ScummEngine_v6::o6_startSound() {
 		offset = pop();
 		
 	if (_features & GF_DIGI_IMUSE)
-		_imuseDigital->startSfx(snd, 64);
+		_imuseDigital->startSfx(pop(), 64);
 	else 
-		_sound->addSoundToQueue(snd, offset);
+		_sound->addSoundToQueue(pop(), offset);
 }
 
 void ScummEngine_v6::o6_stopSound() {
