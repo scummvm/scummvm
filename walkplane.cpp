@@ -22,7 +22,15 @@
 void Sector::load(TextSplitter &ts) {
   char buf[256];
   int id = 0;
-  ts.scanString(" sector %256s", 1, buf);
+
+  // Sector NAMES can be null, but ts isn't flexible enough
+  if (strlen(ts.currentLine()) > strlen(" sector"))
+   ts.scanString(" sector %256s", 1, buf);
+  else {
+   ts.nextLine();
+   strcpy(buf, "");
+  }
+
   ts.scanString(" id %d", 1, &id);
   load0(ts, buf, id);
 }

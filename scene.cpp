@@ -65,7 +65,15 @@ Scene::Scene(const char *name, const char *buf, int len) :
   ts.expectString("section: sectors");
   if (ts.eof()) 	// Sectors are optional, but section: doesn't seem to be
 	return;
-  ts.scanString(" sector %256s", 1, tempBuf);
+
+ // Sector NAMES can be null, but ts doesn't seem flexible enough to allow this
+ if (strlen(ts.currentLine()) > strlen(" sector"))
+   ts.scanString(" sector %256s", 1, tempBuf);
+  else {
+   ts.nextLine();
+   strcpy(tempBuf, "");
+  }
+
   ts.scanString(" id %d", 1, &numSectors_);
   sectors_ = new Sector[numSectors_];
   // FIXME: This would be nicer if we could rewind the textsplitter
