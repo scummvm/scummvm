@@ -144,10 +144,9 @@ void SkyLogic::arAnim() {
 }
 
 void SkyLogic::arTurn() {
-	_compact->frame = *(uint16 *)(_compact->extCompact->turnProg);
-	((uint16 *)(_compact->extCompact->turnProg))++;
+	_compact->frame = *_compact->extCompact->turnProg++;
 
-	if (!*(uint16 *)(_compact->extCompact->turnProg)) { // turn done?
+	if (!*_compact->extCompact->turnProg) { // turn done?
 		// Back to ar mode
 		_compact->extCompact->arAnimIndex = 0;
 		_compact->logic = L_AR_ANIM;
@@ -170,9 +169,8 @@ void SkyLogic::anim() {
 }
 
 void SkyLogic::turn() {
-	if (*(uint16 *)(_compact->extCompact->turnProg)) {
-		_compact->frame = *(uint16 *)(_compact->extCompact->turnProg);
-		((uint16 *)(_compact->extCompact->turnProg))++;
+	if (*_compact->extCompact->turnProg) {
+		_compact->frame = *_compact->extCompact->turnProg++;
 		return;
 	}
 

@@ -66,7 +66,7 @@ struct ExtCompact {
 	uint16 spTime;
 
 	uint16 arAnimIndex;
-	void *turnProg;
+	uint16 *turnProg;
 
 	uint16 waitingFor;
 
