@@ -639,9 +639,9 @@ void DotMatrix(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPi
 
 
 static inline uint32 interpolate5(uint16 A, uint16 B, int scale) {
-	uint16 r = ((A & redMask) * scale + (B & redMask) * (5 - scale)) / 5;
-	uint16 g = ((A & greenMask) * scale + (B & greenMask) * (5 - scale)) / 5;
-	uint16 b = ((A & blueMask) * scale + (B & blueMask) * (5 - scale)) / 5;
+	uint16 r = (uint16)(((A & redMask) * scale + (B & redMask) * (5 - scale)) / 5);
+	uint16 g = (uint16)(((A & greenMask) * scale + (B & greenMask) * (5 - scale)) / 5);
+	uint16 b = (uint16)(((A & blueMask) * scale + (B & blueMask) * (5 - scale)) / 5);
 
 	return (r & redMask) | (g & greenMask) | (b & blueMask);
 }
@@ -650,7 +650,7 @@ static inline void interpolate5Line(uint16 *dst, const uint16 *srcA, const uint1
 #if 1
 	// Accurate but slightly slower code
 	while (width--) {
-		*dst++ = interpolate5(*srcA++, *srcB++, scale);
+		*dst++ = (uint16)interpolate5(*srcA++, *srcB++, scale);
 	}
 #else
 	// Not fully accurate, but a bit faster

@@ -160,8 +160,9 @@ SoundMixer::SoundMixer() {
 
 	_premixParam = 0;
 	_premixProc = 0;
+	int i = 0;
 
-	for (int i = 0; i != NUM_CHANNELS; i++)
+	for (i = 0; i != NUM_CHANNELS; i++)
 		_handles[i] = NULL;
 	
 	_outputRate = 0;
@@ -171,7 +172,7 @@ SoundMixer::SoundMixer() {
 
 	_paused = false;
 
-	for (int i = 0; i != NUM_CHANNELS; i++)
+	for (i = 0; i != NUM_CHANNELS; i++)
 		_channels[i] = NULL;
 }
 
