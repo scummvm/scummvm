@@ -95,8 +95,8 @@ void Script::setupScriptFuncList(void) {
 		OPCODE(SF_walkRelative),
 		OPCODE(SF_moveRelative),
 		OPCODE(SF_simulSpeech2),
-		OPCODE(SF_placard),
-		OPCODE(SF_placardOff),
+		OPCODE(sfPlacard),
+		OPCODE(sfPlacardOff),
 		OPCODE(SF_setProtagState),
 		OPCODE(sfResumeBgdAnim),
 		OPCODE(SF_throwActor),
@@ -921,7 +921,7 @@ int Script::SF_simulSpeech2(SCRIPTFUNC_PARAMS) {
 }
 
 // Script function #48 (0x30)
-int Script::SF_placard(SCRIPTFUNC_PARAMS) {
+int Script::sfPlacard(SCRIPTFUNC_PARAMS) {
 	GAME_DISPLAYINFO disp_info;
 	SURFACE *back_buf = _vm->_gfx->getBackBuffer();
 	PALENTRY cur_pal[PAL_ENTRIES];
@@ -955,7 +955,7 @@ int Script::SF_placard(SCRIPTFUNC_PARAMS) {
 }
 
 // Script function #49 (0x31)
-int Script::SF_placardOff(SCRIPTFUNC_PARAMS) {
+int Script::sfPlacardOff(SCRIPTFUNC_PARAMS) {
 	SURFACE *back_buf = _vm->_gfx->getBackBuffer();
 	PALENTRY cur_pal[PAL_ENTRIES];
 	PALENTRY *pal;

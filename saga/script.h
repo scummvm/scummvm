@@ -353,8 +353,8 @@ private:
 	int SF_walkRelative(SCRIPTFUNC_PARAMS);
 	int SF_moveRelative(SCRIPTFUNC_PARAMS);
 	int SF_simulSpeech2(SCRIPTFUNC_PARAMS);
-	int SF_placard(SCRIPTFUNC_PARAMS);
-	int SF_placardOff(SCRIPTFUNC_PARAMS);
+	int sfPlacard(SCRIPTFUNC_PARAMS);
+	int sfPlacardOff(SCRIPTFUNC_PARAMS);
 	int SF_setProtagState(SCRIPTFUNC_PARAMS);
 	int sfResumeBgdAnim(SCRIPTFUNC_PARAMS);
 	int SF_throwActor(SCRIPTFUNC_PARAMS);
