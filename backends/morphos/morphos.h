@@ -24,6 +24,7 @@
 #ifndef MORPHOS_MORPHOS_H
 #define MORPHOS_MORPHOS_H
 
+#include <dos/dosextens.h>
 #include <graphics/regions.h>
 #include <intuition/intuition.h>
 #include <intuition/screens.h>

@@ -35,7 +35,7 @@
 #include <proto/icon.h>
 
 #include "stdafx.h"
-#include "scumm.h"
+#include "scumm/scumm.h"
 #include "morphos.h"
 #include "morphos_scaler.h"
 #include "morphos_sound.h"

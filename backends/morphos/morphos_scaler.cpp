@@ -19,7 +19,7 @@
  */
 
 #include "stdafx.h"
-#include "scumm.h"
+#include "engine.h"
 
 #include <exec/types.h>
 #include <cybergraphics/cybergraphics.h>
