@@ -979,6 +979,7 @@ void ScummEngine_v90he::spritesBlitToScreen() {
 	xmax = ymax = -1234; 
 	bool firstLoop = true;
 	bool refreshScreen = false;
+
 	for (int i = 0; i < _numSpritesToProcess; ++i) {
 		SpriteInfo *spi = _activeSpritesTable[i];
 		if (!(spi->flags & kSF31) && (spi->flags & kSF01)) {
@@ -1156,17 +1157,18 @@ void ScummEngine_v90he::spritesProcessWiz(bool arg) {
 	for (int i = 0; i < _numSpritesToProcess; i++) {
 		SpriteInfo *spi = _activeSpritesTable[i];
 
-		if (!(spi->flags & kSFNeedRedraw))
-			continue;
+		if (!(spi->flags & kSFNeedRedraw)) {
+			//continue; // HACK
+		}
 
 		spr_flags = spi->flags;
 
 		if (arg) {
 			if (spi->field_0)
-				return;
+				; //return; // HACK
 		} else {
 			if (spi->field_0 < 0)
-				continue;
+				; //continue; // HACK
 		}
 		
 		spi->flags &= ~(kSF01 | kSFNeedRedraw);
@@ -1188,7 +1190,7 @@ void ScummEngine_v90he::spritesProcessWiz(bool arg) {
 			wiz.img.x1 = spi->tx - spr_wiz_x;
 			wiz.img.y1 = spi->ty - spr_wiz_y;
 		}
-		
+
 		spi->field_48 = wiz.img.state = res_state;
 		spi->field_4C = wiz.img.resNum = res_id;
 		wiz.processFlags = 0x401;
