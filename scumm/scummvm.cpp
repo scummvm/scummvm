@@ -145,7 +145,7 @@ static const VersionSettings scumm_settings[] = {
 
 	{"samdemo", "Sam & Max (Demo)", GID_SAMNMAX, 6, VersionSettings::ADLIB_PREFERRED,
 	 GF_NEW_OPCODES | GF_USE_KEY  | GF_DRAWOBJ_OTHER_ORDER | GF_ADLIB_DEFAULT, 0},
-	{"snmdemo", "Sam & Max (Demo)", GID_SAMNMAX, 6, VersionSettings::ADLIB_PREFERRED,
+	{"snmdemo", "Sam & Max (Demo)", GID_SAMNMAX, 6, VersionSettings::ADLIB_DONT_CARE,
 	 GF_NEW_OPCODES | GF_USE_KEY  | GF_DRAWOBJ_OTHER_ORDER | GF_ADLIB_DEFAULT, 0},
 	{"snmidemo", "Sam & Max (Interactive WIP Demo)", GID_SAMNMAX, 6, VersionSettings::ADLIB_PREFERRED,
 	 GF_NEW_OPCODES | GF_USE_KEY  | GF_DRAWOBJ_OTHER_ORDER | GF_ADLIB_DEFAULT, 0},
