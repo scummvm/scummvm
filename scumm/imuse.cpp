@@ -28,9 +28,9 @@
 #include "scumm/sound.h"
 #include "common/util.h"
 
-/*
- * Some constants
- */
+//
+// Some constants
+//
 #define TICKS_PER_BEAT 480
 
 // #define FORCE_MT32_SOUNDS // Use only if you are driving an actual MT-32 or compatible
@@ -57,7 +57,7 @@ static const byte mt32_to_gmidi[128] = {
 	112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127  // 7x
 };
 #else
-/* Roland to General Midi patch table. Still needs some work. */
+// Roland to General Midi patch table. Still needs some work.
 static const byte mt32_to_gmidi[128] = {
 //    0    1    2    3    4    5    6    7    8    9    A    B    C    D    E    F
 	  0,   1,   0,   2,   4,   4,   5,   3,  16,  17,  18,  16,  16,  19,  20,  21, // 0x
@@ -72,9 +72,9 @@ static const byte mt32_to_gmidi[128] = {
 #endif
 
 
-/* Put IMUSE specific classes here, instead of in a .h file
- * they will only be used from this file, so it will reduce
- * compile time */
+// Put IMUSE specific classes here, instead of in a .h file
+// they will only be used from this file, so it will reduce
+// compile time.
 
 // IMuseMonitor serves as a front-end to IMuseInternal and
 // ensures that only one thread accesses the object at a time.
@@ -154,24 +154,23 @@ struct Player {
 	uint _loop_to_tick;
 	uint _loop_from_tick;
 	uint32 _tempo;
-	uint32 _tempo_eff;						/* NoSave */
+	uint32 _tempo_eff; // No Save
 	uint32 _cur_pos;
 	uint32 _next_pos;
 	uint32 _song_offset;
-	uint32 _timer_speed;					/* NoSave */
+	uint32 _timer_speed; // No Save
 	uint _tick_index;
 	uint _beat_index;
 	uint _ticks_per_beat;
-	byte _speed;									/* NoSave */
+	byte _speed; // No Save
 	bool _abort;
 
 	HookDatas _hook;
-	byte _marker;	// Sam & Max: SysEx marker
 
 	bool _mt32emulate;
 	bool _isGM;
 
-	/* Player part */
+	// Player part
 	void hook_clear();
 	void clear();
 	bool start_sound(int sound);
@@ -207,7 +206,7 @@ struct Player {
 	void set_active_note(int chan, byte note);
 	void clear_active_notes();
 
-	/* Sequencer part */
+	// Sequencer part
 	bool set_loop(uint count, uint tobeat, uint totick, uint frombeat, uint fromtick);
 	void clear_loop();
 	void set_speed(byte speed);
@@ -331,7 +330,7 @@ struct ImTrigger {
 	byte command [4];
 };
 
-/* Abstract IMuseInternal driver class */
+// Abstract IMuseInternal driver class
 class IMuseDriver {
 public:
 	enum {
@@ -405,7 +404,7 @@ private:
 	uint16 _snm_trigger_index;
 
 	uint16 _channel_volume[8];
-	uint16 _channel_volume_eff[8];	/* NoSave */
+	uint16 _channel_volume_eff[8]; // No Save
 	uint16 _volchan_table[8];
 
 	Player _players[8];
@@ -473,7 +472,7 @@ public:
 	
 	int initialize(OSystem *syst, MidiDriver *midi, SoundMixer *mixer);
 
-	/* Public interface */
+	// Public interface
 
 	void on_timer();
 	void pause(bool paused);
@@ -522,7 +521,7 @@ struct Instrument {
 	byte duration;
 };
 
-/* IMuseGM classes */
+// IMuseGM classes
 
 class IMuseGM : public IMuseDriver {
 	IMuseInternal *_se;
@@ -586,10 +585,11 @@ public:
 
 
 
-//*********************************
-//**** IMUSE helper functions ****
-//*********************************
-
+////////////////////////////////////////
+//
+//  IMUSE helper functions
+//
+////////////////////////////////////////
 
 static int clamp(int val, int min, int max)
 {
@@ -660,13 +660,13 @@ static int is_note_cmd(byte **a, IsNoteCmdData * isnote)
 	code = *s++;
 
 	switch (code >> 4) {
-	case 8:											/* key off */
+	case 8: // Key Off
 		isnote->chan = code & 0xF;
 		isnote->note = *s++;
 		isnote->vel = *s++;
 		*a = s;
 		return 1;
-	case 9:											/* key on */
+	case 9: // Key On
 		isnote->chan = code & 0xF;
 		isnote->note = *s++;
 		isnote->vel = *s++;
@@ -695,7 +695,11 @@ static int is_note_cmd(byte **a, IsNoteCmdData * isnote)
 	return 0;
 }
 
-/**********************************************************************/
+////////////////////////////////////////
+//
+//  IMuseInternal implementation
+//
+////////////////////////////////////////
 
 IMuseInternal::~IMuseInternal() {
 	terminate();
@@ -1063,7 +1067,7 @@ void IMuseInternal::expire_sustain_notes()
 		if (sn->pos >= sn->off_pos) {
 			player->key_off(sn->chan, sn->note);
 
-			/* Unlink the node */
+			// Unlink the node
 			if (next)
 				next->prev = sn->prev;
 			if (sn->prev)
@@ -1071,7 +1075,7 @@ void IMuseInternal::expire_sustain_notes()
 			else
 				_sustain_notes_head = next;
 
-			/* And put it in the free list */
+			// And put it in the free list
 			sn->next = _sustain_notes_free;
 			_sustain_notes_free = sn;
 		}
@@ -1303,13 +1307,13 @@ int IMuseInternal::enqueue_command(int a, int b, int c, int d, int e, int f, int
 int IMuseInternal::query_queue(int param)
 {
 	switch (param) {
-	case 0:											/* get trigger count */
+	case 0: // Get trigger count
 		return _trigger_count;
-	case 1:											/* get trigger type */
+	case 1: // Get trigger type
 		if (_queue_end == _queue_pos)
 			return -1;
 		return _cmd_queue[_queue_end].array[1];
-	case 2:											/* get trigger sound */
+	case 2: // Get trigger sound
 		if (_queue_end == _queue_pos)
 			return 0xFF;
 		return _cmd_queue[_queue_end].array[2];
@@ -1374,7 +1378,7 @@ int IMuseInternal::terminate()
 		_driver = NULL;
 	}
 	return 0;
-	/* not implemented */
+	// Not implemented
 }
 
 
@@ -1537,7 +1541,6 @@ int32 IMuseInternal::do_command(int a, int b, int c, int d, int e, int f, int g,
 		case 0:
 			if (g_scumm->_gameId == GID_SAMNMAX) {
 				if (d == 1) // Measure number
-					// return player->_marker;
 					return ((player->_beat_index - 1) >> 2) + 1;
 				else if (d == 2) // Beat number
 					return player->_beat_index;
@@ -1884,7 +1887,11 @@ void IMuseInternal::pause(bool paused)
 }
 
 
-/*************************************************************************/
+////////////////////////////////////////
+//
+//  Player implementation
+//
+////////////////////////////////////////
 
 int Player::fade_vol(byte vol, int time)
 {
@@ -2074,17 +2081,17 @@ byte *Player::parse_midi(byte *s)
 	chan = cmd & 0xF;
 
 	switch (cmd >> 4) {
-	case 0x8:										/* key off */
+	case 0x8: // Key Off
 		note = *s++;
 		if (!_scanning) {
 			key_off(chan, note);
 		} else {
 			clear_active_note(chan, note);
 		}
-		s++;												/* skip velocity */
+		s++; // Skip velocity
 		break;
 
-	case 0x9:										/* key on */
+	case 0x9: // Key On
 		note = *s++;
 		velocity = *s++;
 		if (velocity) {
@@ -2100,11 +2107,11 @@ byte *Player::parse_midi(byte *s)
 		}
 		break;
 
-	case 0xA:										/* aftertouch */
+	case 0xA: // Aftertouch
 		s += 2;
 		break;
 
-	case 0xB:										/* control change */
+	case 0xB: // Control Change
 		control = *s++;
 		value = *s++;
 		part = get_part(chan);
@@ -2112,32 +2119,32 @@ byte *Player::parse_midi(byte *s)
 			break;
 
 		switch (control) {
-		case 1:										/* modulation wheel */
+		case 1: // Modulation Wheel
 			part->set_modwheel(value);
 			break;
-		case 7:										/* volume */
+		case 7: // Volume
 			part->set_vol(value);
 			break;
-		case 10:										/* pan position */
+		case 10: // Pan Position
 			part->set_pan(value - 0x40);
 			break;
-		case 16:										/* pitchbend factor */
+		case 16: // Pitchbend Factor (non-standard)
 			part->set_pitchbend_factor(value);
 			break;
-		case 17:										/* gp slider 2 */
+		case 17: // GP Slider 2
 			part->set_detune(value - 0x40);
 			break;
-		case 18:										/* gp slider 3 */
+		case 18: // GP Slider 3
 			part->set_pri(value - 0x40);
 			_se->_driver->update_pris();
 			break;
-		case 64:										/* hold pedal */
+		case 64: // Sustain Pedal
 			part->set_pedal(value != 0);
 			break;
-		case 91:										/* effects level */
+		case 91: // Effects Level
 			part->set_effect_level(value);
 			break;
-		case 93:										/* chorus */
+		case 93: // Chorus Level
 			part->set_chorus(value);
 			break;
 		default:
@@ -2145,18 +2152,18 @@ byte *Player::parse_midi(byte *s)
 		}
 		break;
 
-	case 0xC:										/* program change */
+	case 0xC: // Program Change
 		value = *s++;
 		part = get_part(chan);
 		if (part)
 			part->set_program(value);
 		break;
 
-	case 0xD:										/* channel pressure */
+	case 0xD: // Channel Pressure
 		s++;
 		break;
 
-	case 0xE:										/* pitch bend */
+	case 0xE: // Pitch Bend
 		part = get_part(chan);
 		if (part)
 			part->set_pitchbend(((s[1] << 7) | s[0]) - 0x2000);
@@ -2171,7 +2178,7 @@ byte *Player::parse_midi(byte *s)
 		} else if (chan == 0xF) {
 			cmd = *s++;
 			if (cmd == 47)
-				goto Error;							/* end of song */
+				goto Error; // End of song
 			if (cmd == 81) {
 				set_tempo((s[1] << 16) | (s[2] << 8) | s[3]);
 				s += 4;
@@ -2347,11 +2354,11 @@ void Player::parse_sysex(byte *p, uint len)
 				}
 			}
 		} else {
-			// Sam & Max seems to use this as a marker for
-			// ImSetTrigger. When a marker is encountered whose sound
-			// ID and (presumably) marker ID match what was set by
-			// ImSetTrigger, something magical is supposed to happen....
-			_marker = *p;
+			// Sam & Max: Trigger Event
+			// Triggers are set by do_command (ImSetTrigger).
+			// When a SysEx marker is encountered whose sound
+			// ID and marker ID match what was set by ImSetTrigger,
+			// something magical is supposed to happen....
 			for (a = 0; a < 16; ++a) {
 				if (_se->_snm_triggers [a].sound == _id &&
 				    _se->_snm_triggers [a].id == *p)
@@ -2378,7 +2385,7 @@ void Player::parse_sysex(byte *p, uint len)
 	case 2: // Start of song. Ignore for now.
 		break;
 
-	case 16:											/* set instrument in part */
+	case 16: // Adlib instrument definition (Part)
 		a = *p++ & 0x0F;
 		if (_se->_hardware_type != *p++ && false)
 			break;
@@ -2388,7 +2395,7 @@ void Player::parse_sysex(byte *p, uint len)
 			part->set_instrument((Instrument *) buf);
 		break;
 
-	case 17:											/* set global instrument */
+	case 17: // Adlib instrument definition (Global)
 		p++;
 		if (_se->_hardware_type != *p++ && false)
 			break;
@@ -2397,7 +2404,7 @@ void Player::parse_sysex(byte *p, uint len)
 		_se->_driver->set_instrument(a, buf);
 		break;
 
-	case 33:											/* param adjust */
+	case 33: // Parameter adjust
 		a = *p++ & 0x0F;
 		if (_se->_hardware_type != *p++ && false)
 			break;
@@ -2407,43 +2414,43 @@ void Player::parse_sysex(byte *p, uint len)
 			part->set_param(read_word(buf), read_word(buf + 2));
 		break;
 
-	case 48:											/* hook - jump */
+	case 48: // Hook - jump
 		if (_scanning)
 			break;
 		decode_sysex_bytes(p + 1, buf, len - 2);
 		maybe_jump (buf[0], read_word (buf + 1), read_word (buf + 3), read_word (buf + 5));
 		break;
 
-	case 49:											/* hook - global transpose */
+	case 49: // Hook - global transpose
 		decode_sysex_bytes(p + 1, buf, len - 2);
 		maybe_set_transpose(buf);
 		break;
 
-	case 50:											/* hook - part on/off */
+	case 50: // Hook - part on/off
 		buf[0] = *p++ & 0x0F;
 		decode_sysex_bytes(p, buf + 1, len - 2);
 		maybe_part_onoff(buf);
 		break;
 
-	case 51:											/* hook - set volume */
+	case 51: // Hook - set volume
 		buf[0] = *p++ & 0x0F;
 		decode_sysex_bytes(p, buf + 1, len - 2);
 		maybe_set_volume(buf);
 		break;
 
-	case 52:											/* hook - set program */
+	case 52: // Hook - set program
 		buf[0] = *p++ & 0x0F;
 		decode_sysex_bytes(p, buf + 1, len - 2);
 		maybe_set_program(buf);
 		break;
 
-	case 53:											/* hook - set transpose */
+	case 53: // Hook - set transpose
 		buf[0] = *p++ & 0x0F;
 		decode_sysex_bytes(p, buf + 1, len - 2);
 		maybe_set_transpose_part(buf);
 		break;
 
-	case 64:											/* marker */
+	case 64: // Marker
 		p++;
 		len -= 2;
 		while (len--) {
@@ -2451,18 +2458,18 @@ void Player::parse_sysex(byte *p, uint len)
 		}
 		break;
 
-	case 80:											/* loop */
+	case 80: // Loop
 		decode_sysex_bytes(p + 1, buf, len - 2);
 		set_loop(read_word(buf),
 						 read_word(buf + 2), read_word(buf + 4), read_word(buf + 6), read_word(buf + 8)
 			);
 		break;
 
-	case 81:											/* end loop */
+	case 81: // End loop
 		clear_loop();
 		break;
 
-	case 96:											/* set instrument */
+	case 96: // Set instrument
 		part = get_part(p[0] & 0x0F);
 		b = (p[1] & 0x0F) << 12 | (p[2] & 0x0F) << 8 | (p[4] & 0x0F) << 4 | (p[4] & 0x0F);
 		if (part)
@@ -2485,11 +2492,11 @@ void Player::decode_sysex_bytes(byte *src, byte *dst, int len)
 
 void Player::maybe_jump (byte cmd, uint track, uint beat, uint tick)
 {
-	/* is this the hook i'm waiting for? */
+	// Is this the hook I'm waiting for?
 	if (cmd && _hook._jump != cmd)
 		return;
 
-	/* reset hook? */
+	// Reset hook?
 	if (cmd != 0 && cmd < 0x80)
 		_hook._jump = 0;
 
@@ -2502,11 +2509,11 @@ void Player::maybe_set_transpose(byte *data)
 
 	cmd = data[0];
 
-	/* is this the hook i'm waiting for? */
+	// Is this the hook I'm waiting for?
 	if (cmd && _hook._transpose != cmd)
 		return;
 
-	/* reset hook? */
+	// Reset hook?
 	if (cmd != 0 && cmd < 0x80)
 		_hook._transpose = 0;
 
@@ -2524,7 +2531,7 @@ void Player::maybe_part_onoff(byte *data)
 
 	p = &_hook._part_onoff[chan];
 
-	/* is this the hook i'm waiting for? */
+	// Is this the hook I'm waiting for?
 	if (cmd && *p != cmd)
 		return;
 
@@ -2548,11 +2555,11 @@ void Player::maybe_set_volume(byte *data)
 
 	p = &_hook._part_volume[chan];
 
-	/* is this the hook i'm waiting for? */
+	// Is this the hook I'm waiting for?
 	if (cmd && *p != cmd)
 		return;
 
-	/* reset hook? */
+	// Reset hook?
 	if (cmd != 0 && cmd < 0x80)
 		*p = 0;
 
@@ -2571,7 +2578,7 @@ void Player::maybe_set_program(byte *data)
 	cmd = data[1];
 	chan = data[0];
 
-	/* is this the hook i'm waiting for? */
+	// Is this the hook I'm waiting for?
 	p = &_hook._part_program[chan];
 
 	if (cmd && *p != cmd)
@@ -2594,13 +2601,13 @@ void Player::maybe_set_transpose_part(byte *data)
 	cmd = data[1];
 	chan = data[0];
 
-	/* is this the hook i'm waiting for? */
+	// Is this the hook I'm waiting for?
 	p = &_hook._part_transpose[chan];
 
 	if (cmd && *p != cmd)
 		return;
 
-	/* reset hook? */
+	// Reset hook?
 	if (cmd != 0 && cmd < 0x80)
 		*p = 0;
 
@@ -2745,7 +2752,7 @@ bool Player::set_loop(uint count, uint tobeat, uint totick, uint frombeat, uint 
 	if (tobeat == 0)
 		tobeat = 1;
 
-	_loop_counter = 0;						/* because of possible interrupts */
+	_loop_counter = 0; // Because of possible interrupts
 	_loop_to_beat = tobeat;
 	_loop_to_tick = totick;
 	_loop_from_beat = frombeat;
@@ -2783,16 +2790,15 @@ void Player::find_sustaining_notes(byte *a, byte *b, uint32 l)
 
 	num_active = update_actives();
 
-	/* pos contains number of ticks since current position */
+	// pos contains number of ticks since current position
 	pos = _next_pos - _cur_pos;
 	if ((int32)pos < 0)
 		pos = 0;
 
-	/* locate the positions where the notes are turned off.
-	 * remember each note that was turned off
-	 */
+	// Locate the positions where the notes are turned off.
+	// Remember each note that was turned off.
 	while (num_active != 0) {
-		/* is note off? */
+		// Is note off?
 		j = is_note_cmd(&a, &isnote);
 		if (j == -1)
 			break;
@@ -2802,12 +2808,12 @@ void Player::find_sustaining_notes(byte *a, byte *b, uint32 l)
 			if (*bitlist_ptr & mask) {
 				*bitlist_ptr &= ~mask;
 				num_active--;
-				/* Get a node from the free list */
+				// Get a node from the free list
 				if ((sn = _se->_sustain_notes_free) == NULL)
 					return;
 				_se->_sustain_notes_free = sn->next;
 
-				/* Insert it in the beginning of the used list */
+				// Insert it in the beginning of the used list
 				sn->next = _se->_sustain_notes_used;
 				_se->_sustain_notes_used = sn;
 				sn->prev = NULL;
@@ -2825,7 +2831,7 @@ void Player::find_sustaining_notes(byte *a, byte *b, uint32 l)
 		pos += get_delta_time(&a);
 	}
 
-	/* find the maximum position where a note was turned off */
+	// Find the maximum position where a note was turned off
 	max_off_pos = 0;
 	for (sn = _se->_sustain_notes_used; sn; sn = sn->next) {
 		_se->_active_notes[sn->note] |= (1 << sn->chan);
@@ -2834,7 +2840,7 @@ void Player::find_sustaining_notes(byte *a, byte *b, uint32 l)
 		}
 	}
 
-	/* locate positions where notes are turned on */
+	// locate positions where notes are turned on
 	pos = l;
 	while (pos < max_off_pos) {
 		j = is_note_cmd(&b, &isnote);
@@ -2850,14 +2856,14 @@ void Player::find_sustaining_notes(byte *a, byte *b, uint32 l)
 					next = sn->next;
 					if (sn->note == isnote.note && sn->chan == isnote.chan && pos < sn->off_pos) {
 						*bitlist_ptr &= ~mask;
-						/* Unlink from the sustain list */
+						// Unlink from the sustain list
 						if (next)
 							next->prev = sn->prev;
 						if (sn->prev)
 							sn->prev->next = next;
 						else
 							_se->_sustain_notes_used = next;
-						/* Insert into the free list */
+						// Insert into the free list
 						sn->next = _se->_sustain_notes_free;
 						_se->_sustain_notes_free = sn;
 					}
@@ -2868,7 +2874,7 @@ void Player::find_sustaining_notes(byte *a, byte *b, uint32 l)
 		pos += get_delta_time(&b);
 	}
 
-	/* Concatenate head and used list */
+	// Concatenate head and used list
 	if (!_se->_sustain_notes_head) {
 		_se->_sustain_notes_head = _se->_sustain_notes_used;
 		_se->_sustain_notes_used = NULL;
@@ -3159,7 +3165,7 @@ void Player::sequencer_timer()
 	}
 }
 
-/*******************************************************************/
+////////////////////////////////////////////////////////////
 
 enum {
 	TYPE_PART = 1,
@@ -3280,7 +3286,7 @@ int IMuseInternal::save_or_load(Serializer *ser, Scumm *scumm)
 		MKEND()
 	};
 
-#ifdef _WIN32_WCE								// Don't break savegames made with andys' build
+#ifdef _WIN32_WCE // Don't break savegames made with andys' build
 	if (!ser->isSaving() && ser->checkEOFLoadStream())
 		return 0;
 #endif
@@ -3293,10 +3299,10 @@ int IMuseInternal::save_or_load(Serializer *ser, Scumm *scumm)
 	ser->saveLoadArrayOf(_players, ARRAYSIZE(_players), sizeof(_players[0]), playerEntries);
 	ser->saveLoadArrayOf(_parts, ARRAYSIZE(_parts), sizeof(_parts[0]), partEntries);
 	ser->saveLoadArrayOf(_volume_fader, ARRAYSIZE(_volume_fader),
-											 sizeof(_volume_fader[0]), volumeFaderEntries);
+		                 sizeof(_volume_fader[0]), volumeFaderEntries);
 
 	if (!ser->isSaving()) {
-		/* Load all sounds that we need */
+		// Load all sounds that we need
 		fix_players_after_load(scumm);
 		init_sustaining_notes();
 		_active_volume_faders = true;
@@ -3322,8 +3328,8 @@ void IMuseInternal::fix_parts_after_load()
 	}
 }
 
-/* Only call this routine from the main thread,
- * since it uses getResourceAddress */
+// Only call this routine from the main thread,
+// since it uses getResourceAddress
 void IMuseInternal::fix_players_after_load(Scumm *scumm)
 {
 	Player *player = _players;
@@ -3470,7 +3476,7 @@ void Part::setup(Player *player)
 {
 	_player = player;
 
-	/* Insert first into player's list */
+	// Insert first into player's list
 	_prev = NULL;
 	_next = player->_parts;
 	if (player->_parts)
@@ -3508,7 +3514,7 @@ void Part::uninit()
 		return;
 	off();
 
-	/* unlink */
+	// Unlink
 	if (_next)
 		_next->_prev = _prev;
 	if (_prev)
@@ -3562,9 +3568,11 @@ void Part::set_instrument(uint b)
 }
 
 
-//********************************************
-//** GENERAL MIDI PART OF IMUSE STARTS HERE **
-//********************************************
+////////////////////////////////////////
+//
+// General MIDI implementation of iMuse
+//
+////////////////////////////////////////
 
 IMuseGM::IMuseGM (MidiDriver *midi)
 {
@@ -3968,9 +3976,12 @@ IMuse *IMuse::create(OSystem *syst, MidiDriver *midi, SoundMixer *mixer)
 
 
 
-/*
- *  IMUSE Digital Implementation, for SCUMM v7 and higher.
- */
+////////////////////////////////////////
+//
+// iMuse Digital Implementation
+//   for SCUMM v7 and higher
+//
+////////////////////////////////////////
 
 static void imus_digital_handler(void *engine) {
 	// Avoid race condition
