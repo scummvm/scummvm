@@ -442,6 +442,13 @@ void ScummEngine_v90he::wizDraw(const WizParameters *params) {
 	case 3:
 	case 4:
 	case 6:
+	// HE 99+
+	case 7:
+	case 8:
+	case 9:
+	case 10:
+	case 11:
+	case 12:
 		warning("unhandled wizDraw mode %d", params->drawMode);
 		break;
 	default:
@@ -456,9 +463,11 @@ void ScummEngine_v90he::o90_wizImageOps() {
 
 	switch (subOp) {
 	case -14: // HE99+
+		_wizParams.drawFlags |= 0x20;
 		pop();
 		break;
 	case -13: // HE99+
+		_wizParams.drawFlags |= 0x40;
 		pop();
 		break;
 	case 0:
@@ -520,12 +529,17 @@ void ScummEngine_v90he::o90_wizImageOps() {
 		_wizParams.remapPos = 0;
 		_wizParams.img.flags = 0;
 		break;
+	case 16: // HE99+
+		_wizParams.drawFlags |= 0x80000;
+		pop();
+		break;
 	case 19:
 		_wizParams.drawFlags |= 1;
 		_wizParams.img.y1 = pop();
 		_wizParams.img.x1 = pop();
 		break;
 	case 20:
+	case 203: // HE98+
 		b = pop();
 		a = pop();
 		_wizParams.drawFlags |= 0x40;
@@ -546,7 +560,11 @@ void ScummEngine_v90he::o90_wizImageOps() {
 		_wizParams.box.top = pop();
 		_wizParams.box.left = pop();
 		break;
+	case 31: // HE99+
+		_wizParams.drawFlags |= 2;
+		break;
 	case 40: // HE99+
+		_wizParams.drawFlags |= 0x80;
 		pop();
 		break;
 	case 46:
@@ -557,14 +575,44 @@ void ScummEngine_v90he::o90_wizImageOps() {
 		_wizParams.drawFlags |= 4;
 		_wizParams.unk_15C = pop();
 		break;
+	case 85: // HE99+
+		_wizParams.drawFlags |= 0x1102;
+		_wizParams.drawMode = 7;
+		break;
 	case 87: // HE99+
+		_wizParams.drawFlags |= 0x60000;
+		_wizParams.drawMode = 9;
 		pop();
 		pop();
 		pop();
 		pop();
 		pop();
 		break;
+	case 88: // HE99+
+		_wizParams.drawFlags |= 0x60000;
+		_wizParams.drawMode = 10;
+		pop();
+		pop();
+		pop();
+		pop();
+		pop();
+		break;
+	case 89: // HE99+
+		_wizParams.drawFlags |= 0x60000;
+		_wizParams.drawMode = 11;
+		pop();
+		pop();
+		pop();
+		break;
+	case 90: // HE99+
+		_wizParams.drawFlags |= 0x60000;
+		_wizParams.drawMode = 12;
+		pop();
+		pop();
+		pop();
+		break;
 	case 91: // HE99+
+		_wizParams.drawFlags |= 0x10000;
 		pop();
 		break;
 	case 108:
@@ -573,15 +621,12 @@ void ScummEngine_v90he::o90_wizImageOps() {
 		_wizParams.img.x1 = pop();
 		break;
 	case 171: // HE99+
+		_wizParams.drawMode = 8;
 		break;
 	case 200:
 		_wizParams.drawFlags |= 0x23;
 		_wizParams.img.flags |= 0x40;
 		_wizParams.unk_160 = _wizParams.img.y1 = _wizParams.img.x1 = pop();
-		break;
-	case 203: // HE98+
-		pop();
-		pop();
 		break;
 	case 209:
 		wizDraw(&_wizParams);
