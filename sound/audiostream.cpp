@@ -22,6 +22,7 @@
 #include "audiostream.h"
 #include "mixer.h"
 #include "common/engine.h"
+#include "common/util.h"
 
 
 template<bool is16Bit, bool isUnsigned>
@@ -150,6 +151,104 @@ void WrappedMemoryStream<stereo, is16Bit, isUnsigned>::append(const byte *data, 
 		_end += len;
 	}
 }
+
+
+#pragma mark -
+#pragma mark --- MP3 (MAD) stream ---
+#pragma mark -
+
+
+#ifdef USE_MAD
+class MP3InputStream : public AudioInputStream {
+	struct mad_stream _stream;
+	struct mad_frame _frame;
+	struct mad_synth _synth;
+	uint32 _posInFrame;
+public:
+	// TODO
+};
+#endif
+
+
+#pragma mark -
+#pragma mark --- Ogg Vorbis stream ---
+#pragma mark -
+
+
+#ifdef USE_VORBIS
+
+#ifdef CHUNKSIZE
+#define VORBIS_TREMOR
+#endif
+
+
+VorbisInputStream::VorbisInputStream(OggVorbis_File *file, int duration) 
+	: _ov_file(file) {
+	_pos = _buffer + ARRAYSIZE(_buffer);
+	_channels = ov_info(_ov_file, -1)->channels;
+
+	if (duration)
+		_end_pos = ov_pcm_tell(_ov_file) + duration;
+	else
+		_end_pos = ov_pcm_total(_ov_file, -1);
+
+	_eof_flag = false;
+}
+
+int16 VorbisInputStream::read() {
+	if (_pos >= _buffer + ARRAYSIZE(_buffer)) {
+		refill();
+	}
+	return *_pos++;
+}
+
+int VorbisInputStream::size() const {
+	if (_eof_flag)
+		return 0;
+	return _end_pos - ov_pcm_tell(_ov_file);
+}
+
+void VorbisInputStream::refill() {
+	// Read the samples
+	uint len_left = sizeof(_buffer);
+	char *read_pos = (char *)_buffer;
+
+	while (len_left > 0) {
+		long result = ov_read(_ov_file, read_pos, len_left,
+#ifndef VORBIS_TREMOR
+#ifdef SCUMM_BIG_ENDIAN
+				      1,
+#else
+				      0,
+#endif
+				      2,	// 16 bit
+				      1,	// signed
+#endif
+					  NULL);
+		if (result == 0) {
+			_eof_flag = true;
+			memset(read_pos, 0, len_left);
+			break;
+		} else if (result == OV_HOLE) {
+			// Possibly recoverable, just warn about it
+			warning("Corrupted data in Vorbis file");
+		} else if (result < 0) {
+			debug(1, "Decode error %d in Vorbis file", result);
+			// Don't delete it yet, that causes problems in
+			// the CD player emulation code.
+			_eof_flag = true;
+			memset(read_pos, 0, len_left);
+			break;
+		} else {
+			len_left -= result;
+			read_pos += result;
+		}
+	}
+
+	_pos = _buffer;
+}
+
+#endif
 
 
 #pragma mark -

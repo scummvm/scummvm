@@ -24,6 +24,9 @@
 
 #include "scummsys.h"
 #include <assert.h>
+#ifdef USE_VORBIS
+#include <vorbis/vorbisfile.h>
+#endif
 
 // TODO:
 // * maybe make readIntern return 16.16 or 24.8 fixed point values
@@ -62,5 +65,28 @@ public:
 
 AudioInputStream *makeLinearInputStream(byte _flags, const byte *ptr, uint32 len);
 WrappedAudioInputStream *makeWrappedInputStream(byte _flags, uint32 len);
+
+
+
+#ifdef USE_VORBIS
+class VorbisInputStream : public AudioInputStream {
+	OggVorbis_File *_ov_file;
+	int _end_pos;
+	bool _eof_flag;
+	int _channels;
+	int16 _buffer[4096];
+	int16 *_pos;
+	
+	void refill();
+public:
+	// TODO
+	VorbisInputStream(OggVorbis_File *file, int duration);
+	int16 read();
+	int size() const;
+	bool isStereo() const { return _channels >= 2; }
+};
+#endif
+
+
 
 #endif
