@@ -151,7 +151,7 @@ protected:
 
 public:
 	void adjustActorPos();
-	AdjustBoxResult adjustXYToBeInBox(int dstX, int dstY, int pathfrom);
+	AdjustBoxResult adjustXYToBeInBox(int dstX, int dstY);
 
 	void setDirection(int direction);
 	void faceToObject(int obj);

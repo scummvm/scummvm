@@ -593,7 +593,7 @@ int Actor::getActorXYPos(int &xPos, int &yPos) {
 	return 0;
 }
 
-AdjustBoxResult Actor::adjustXYToBeInBox(int dstX, int dstY, int pathfrom) {
+AdjustBoxResult Actor::adjustXYToBeInBox(int dstX, int dstY) {
 	const uint thresholdTable[] = { 30, 80, 0 };
 	AdjustBoxResult abr, tmp;
 	uint threshold;
@@ -628,32 +628,6 @@ AdjustBoxResult Actor::adjustXYToBeInBox(int dstX, int dstY, int pathfrom) {
 			if (flags & kBoxInvisible && (!(flags & kBoxPlayerOnly) || isInClass(31)))
 				continue;
 			
-			// FIXME: the following is essentially a hack to fix issues in Zak256
-			// and possibly elsewhere; but it seems the original did nothing like this
-			// so hopefully one day we'll find a 'proper' solution and can remove
-			// this hack.
-			if (pathfrom >= firstValidBox) {
-
-				if (flags & kBoxLocked && (!(flags & kBoxPlayerOnly)))
-					continue;
-
-				int i = _vm->getPathToDestBox(pathfrom, box);
-				if (i == -1)
-					continue;
-
-				if (_vm->_features & GF_OLD256) {
-					// FIXME - we check here if the box suggested by getPathToDestBox
-					// is locked or not. This prevents us from walking thru
-					// closed doors in some cases in Zak256. However a better fix
-					// would be to recompute the box matrix whenever flags change.
-					flags = _vm->getBoxFlags(i);
-					if (flags & kBoxLocked && (!(flags & kBoxPlayerOnly)))
-						continue;
-					if (flags & kBoxInvisible && (!(flags & kBoxPlayerOnly) || isInClass(31)))
-						continue;
-				}
-			}
-
 			// For increased performance, we perform a quick test if
 			// the coordinates can even be within a distance of 'threshold'
 			// pixels of the box.
@@ -700,7 +674,7 @@ AdjustBoxResult Actor::adjustXYToBeInBox(int dstX, int dstY, int pathfrom) {
 void Actor::adjustActorPos() {
 	AdjustBoxResult abr;
 
-	abr = adjustXYToBeInBox(x, y, -1);
+	abr = adjustXYToBeInBox(x, y);
 
 	x = abr.x;
 	y = abr.y;
@@ -1196,7 +1170,7 @@ void Actor::startWalkActor(int destX, int destY, int dir) {
 		abr.x = destX;
 		abr.y = destY;
 	} else {
-		abr = adjustXYToBeInBox(destX, destY, walkbox);
+		abr = adjustXYToBeInBox(destX, destY);
 	}
 
 	if (!isInCurrentRoom()) {
@@ -1214,7 +1188,7 @@ void Actor::startWalkActor(int destX, int destY, int dir) {
 		if (_vm->checkXYInBoxBounds(walkdata.destbox, abr.x, abr.y)) {
 			abr.dist = walkdata.destbox;
 		} else {
-			abr = adjustXYToBeInBox(abr.x, abr.y, walkbox);
+			abr = adjustXYToBeInBox(abr.x, abr.y);
 		}
 		if (moving && walkdata.destdir == dir && walkdata.destx == abr.x && walkdata.desty == abr.y)
 			return;
@@ -1290,7 +1264,7 @@ void Actor::walkActor() {
 		}
 	}
 
-	if (moving == 0)
+	if (!moving)
 		return;
 
 	if (!(moving & MF_NEW_LEG)) {
@@ -1319,6 +1293,7 @@ void Actor::walkActor() {
 
 	do {
 		moving &= ~MF_NEW_LEG;
+
 		if (walkbox == INVALID_BOX) {
 			setBox(walkdata.destbox);
 			walkdata.curbox = walkdata.destbox;
@@ -1358,7 +1333,6 @@ void Actor::walkActorOld() {
 		return;
 
 	if (!(moving & MF_NEW_LEG)) {
-	
 		if (moving & MF_IN_LEG && actorWalkStep())
 			return;
 	
@@ -1387,7 +1361,6 @@ void Actor::walkActorOld() {
 	
 		walkbox = walkdata.curbox;
 		moving &= MF_IN_LEG;
-		moving |= MF_NEW_LEG;
 	}
 
 	do {
@@ -1408,6 +1381,15 @@ void Actor::walkActorOld() {
 			moving |= MF_LAST_LEG;
 			return;
 		}
+
+		// FIXME: not sure if this is needed in non-Zak games, but I think it shouldn't
+		// hurt there either.
+		int flags = _vm->getBoxFlags(next_box);
+		if (flags & kBoxLocked && (!(flags & kBoxPlayerOnly) || isInClass(31))) {
+			moving |= MF_LAST_LEG;
+			return;
+		}
+
 
 		walkdata.curbox = next_box;
 
