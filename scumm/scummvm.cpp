@@ -2504,6 +2504,7 @@ void ScummEngine::restart() {
 
 void ScummEngine::startManiac() {
 	warning("stub startManiac()");
+	displayError("Alright", "Usually, Maniac Mansion would start now. But ScummVM doesn't do that yet. To play it, go to 'Add Game' in the ScummVM start menu and select the 'Maniac' directory inside the Tentacle game directory.");
 }
 
 #pragma mark -
