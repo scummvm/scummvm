@@ -806,7 +806,7 @@ int32 Sword2Sound::OpenFx(int32 id, uint8 *data) {
 int32 Sword2Sound::PlayFx(int32 id, uint8 *data, uint8 vol, int8 pan, uint8 type) {
 	int32 i, loop;
 	HRESULT hr;
-return RD_OK;
+
 	if (type == RDSE_FXLOOP)
 		loop = 1;
 	else
