@@ -22,7 +22,6 @@ COMMON_OBJS = \
 
 GUI_OBJS = \
 	gui/dialog.o \
-	gui/gui.o \
 	gui/launcher.o \
 	gui/ListWidget.o \
 	gui/message.o \
