@@ -56,8 +56,12 @@ protected:
 	ScrollBarWidget	*_scrollBar;
 	int				_currentKeyDown;
 	String			_backupString;
+
 	bool			_caretVisible;
 	uint32			_caretTime;
+	
+	String			_quickSelectStr;
+	uint32			_quickSelectTime;
 public:
 	ListWidget(GuiObject *boss, int x, int y, int w, int h);
 	virtual ~ListWidget();

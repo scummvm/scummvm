@@ -41,6 +41,8 @@ ListWidget::ListWidget(GuiObject *boss, int x, int y, int w, int h)
 
 	_caretVisible = false;
 	_caretTime = 0;
+	
+	_quickSelectTime = 0;
 
 	// FIXME: This flag should come from widget definition
 	_editable = true;
@@ -125,48 +127,94 @@ void ListWidget::handleMouseWheel(int x, int y, int direction) {
 	_scrollBar->handleMouseWheel(x, y, direction);
 }
 
+
+static int matchingCharsIgnoringCase(const char *x, const char *y, bool &stop) {
+	int match = 0;
+	while (*x && *y && toupper(*x) == toupper(*y)) {
+		++x;
+		++y;
+		++match;
+	}
+	stop = !*y || (*x && (toupper(*x) >= toupper(*y)));
+	return match;
+}
+
 bool ListWidget::handleKeyDown(uint16 ascii, int keycode, int modifiers) {
 	bool handled = true;
 	bool dirty = false;
 	int oldSelectedItem = _selectedItem;
 
-	if (_editMode) {
+	if (!_editMode && isprint((char)ascii)) {
+		// Quick selection mode: Go to first list item starting with this key
+		// (or a substring accumulated from the last couple key presses).
+		// Only works in a useful fashion if the list entries are sorted.
+		// TODO: Maybe this should be off by default, and instead we add a
+		// method "enableQuickSelect()" or so ?
+		uint32 time = g_system->get_msecs();
+		if (_quickSelectTime < time) {
+			_quickSelectStr = (char)ascii;
+		} else {
+			_quickSelectStr += (char)ascii;
+		}
+		_quickSelectTime = time + 300;	// TODO: Turn this into a proper constant (kQuickSelectDelay ?)
+		
+
+		// FIXME: This is bad slow code (it scans the list linearly each time a
+		// key is pressed); it could be much faster. Only of importance if we have
+		// quite big lists to deal with -- so for now we can live with this lazy
+		// implementation :-)
+		int newSelectedItem = 0;
+		int bestMatch = 0;
+		bool stop;
+		for (StringList::const_iterator i = _list.begin(); i != _list.end(); ++i) {
+			const int match = matchingCharsIgnoringCase(i->c_str(), _quickSelectStr.c_str(), stop);
+			if (match > bestMatch || stop) {
+				_selectedItem = newSelectedItem;
+				bestMatch = match;
+				if (stop)
+					break;
+			}
+			newSelectedItem++;
+		}
+
+		scrollToCurrent();
+	} else if (_editMode) {
 
 		if (_caretVisible)
 			drawCaret(true);
 
 		switch (keycode) {
-			case '\n':	// enter/return
-			case '\r':
-				// enter, confirm edit and exit editmode
-				_editMode = false;
+		case '\n':	// enter/return
+		case '\r':
+			// confirm edit and exit editmode
+			_editMode = false;
+			dirty = true;
+			sendCommand(kListItemActivatedCmd, _selectedItem);
+			break;
+		case 27:	// escape
+			// abort edit and exit editmode
+			_editMode = false;
+			dirty = true;
+			_list[_selectedItem] = _backupString;
+			break;
+		case 8:		// backspace
+			_list[_selectedItem].deleteLastChar();
+			dirty = true;
+			break;
+		default:
+			if (isprint((char)ascii)) {
+				_list[_selectedItem] += (char)ascii;
 				dirty = true;
-				sendCommand(kListItemActivatedCmd, _selectedItem);
-				break;
-			case 27:	// escape
-				// ESC, abort edit and exit editmode
-				_editMode = false;
-				dirty = true;
-				_list[_selectedItem] = _backupString;
-				break;
-			case 8:		// backspace
-				_list[_selectedItem].deleteLastChar();
-				dirty = true;
-				break;
-			default:
-				if (isprint((char)ascii)) {
-					_list[_selectedItem] += (char)ascii;
-					dirty = true;
-				} else {
-					handled = false;
-				}
+			} else {
+				handled = false;
+			}
 		}
 
 	} else {
 		// not editmode
 
 		switch (keycode) {
-		case '\n':	// enter
+		case '\n':	// enter/return
 		case '\r':
 			if (_selectedItem >= 0) {
 				// override continuous enter keydown
