@@ -294,7 +294,6 @@ void Scumm::CHARSET_1()
 	}
 
 	if (a && !string[0].no_talk_anim) {
-//		a->startAnimActor(a->talkFrame1);
 		has_anim = true;
 		_useTalkAnims = true;
 	}

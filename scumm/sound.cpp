@@ -382,10 +382,11 @@ void Sound::processSfxQueues() {
 	bool b, finished;
 
 	if (_talk_sound_mode != 0) {
-		if (_talk_sound_mode == 2)
-			_talkChannel = startTalkSound(_talk_sound_a, _talk_sound_b, _talk_sound_mode);
-		else
-			startTalkSound(_talk_sound_a, _talk_sound_b, _talk_sound_mode);
+		if (_talk_sound_mode & 1)
+
+			startTalkSound(_talk_sound_a1, _talk_sound_b1, 1);
+		if (_talk_sound_mode & 2)
+			_talkChannel = startTalkSound(_talk_sound_a2, _talk_sound_b2, 2);
 		_talk_sound_mode = 0;
 	}
 
@@ -623,10 +624,16 @@ void Sound::soundKludge(int16 * list) {
 }
 
 void Sound::talkSound(uint32 a, uint32 b, int mode, int frame) {
-	_talk_sound_a = a;
-	_talk_sound_b = b;
-	_talk_sound_mode = mode;
+	if (mode == 1) {
+		_talk_sound_a1 = a;
+		_talk_sound_b1 = b;
+	} else {
+		_talk_sound_a2 = a;
+		_talk_sound_b2 = b;
+	}
+
 	_talk_sound_frame = frame;
+	_talk_sound_mode |= mode;
 }
 
 /* The sound code currently only supports General Midi.
