@@ -725,8 +725,10 @@ Scumm::Scumm (GameDetector *detector, OSystem *syst)
 	_musicEngine = NULL;
 	if (_features & GF_DIGI_IMUSE) {
 		_musicEngine = _imuseDigital = new IMuseDigital(this);
+#ifndef __PALM_OS__
 	} else if ((_features & GF_AMIGA) && (_version == 2)) {
 		_musicEngine = _playerV2A = new Player_V2A(this);
+#endif
 	} else if ((_features & GF_AMIGA) && (_version == 3)) {
 		_musicEngine = _playerV3A = new Player_V3A(this);
 	} else if ((_features & GF_AMIGA) && (_version < 5)) {
