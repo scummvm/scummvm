@@ -946,8 +946,7 @@ void CharsetRendererV3::printChar(int chr) {
 	// Indy3 / Zak256 / Loom
 	VirtScreen *vs;
 	byte *char_ptr, *dest_ptr, *mask_ptr;
-	bool useMask;
-	int w, h;
+	int width, height;
 	int drawTop;
 
 	checkRange(_vm->_numCharsets - 1, 0, _curId, "Printing with bad charset %d");
@@ -966,21 +965,20 @@ void CharsetRendererV3::printChar(int chr) {
 		_firstChar = false;
 	}
 
-	w = h = 8;
+	width = height = 8;
 	if (_dropShadow) {
-		w++;
-		h++;
+		width++;
+		height++;
 	}
 
 	drawTop = _top - vs->topline;
 	char_ptr = _fontPtr + chr * 8;
 	dest_ptr = vs->screenPtr + vs->xstart + drawTop * vs->width + _left;
 	mask_ptr = _vm->getMaskBuffer(_left, drawTop, 0);
-	useMask = (vs->number == kMainVirtScreen && !_ignoreCharsetMask);
 
-	_vm->markRectAsDirty(vs->number, _left, _left + w, drawTop, drawTop + h);
+	_vm->markRectAsDirty(vs->number, _left, _left + width, drawTop, drawTop + height);
 	
-	if (vs->number == kMainVirtScreen)
+	if (vs->number == kMainVirtScreen && !_ignoreCharsetMask)
 		_hasMask = true;
 
 	drawBits1(vs, dest_ptr, char_ptr, mask_ptr, drawTop, 8, 8);
@@ -996,8 +994,8 @@ void CharsetRendererV3::printChar(int chr) {
 			_str.right++;
 	}
 
-	if (_str.bottom < _top + h)
-		_str.bottom = _top + h;
+	if (_str.bottom < _top + height)
+		_str.bottom = _top + height;
 }
 
 void CharsetRendererClassic::printChar(int chr) {
@@ -1086,8 +1084,6 @@ void CharsetRendererClassic::printChar(int chr) {
 
 	_vm->markRectAsDirty(vs->number, _left, _left + width, drawTop, drawTop + height + offsY);
 
-	if (!vs->hasTwoBuffers)
-		_blitAlso = false;
 	if (vs->number == kMainVirtScreen && !_ignoreCharsetMask)
 		_hasMask = true;
 
@@ -1096,7 +1092,7 @@ void CharsetRendererClassic::printChar(int chr) {
 	byte *dst = vs->screenPtr + vs->xstart + drawTop * vs->width + _left;
 
 	byte *back = dst;
-	if (_blitAlso) {
+	if (_blitAlso && vs->hasTwoBuffers) {
 		dst = vs->backBuf + vs->xstart + drawTop * vs->width + _left;
 	}
 
@@ -1107,7 +1103,7 @@ void CharsetRendererClassic::printChar(int chr) {
 		drawBitsN(vs, dst, charPtr, mask, bpp, drawTop, origWidth, origHeight);
 	}
 
-	if (_blitAlso) {
+	if (_blitAlso && vs->hasTwoBuffers) {
 		int h = height;
 		do {
 			memcpy(back, dst, width);
