@@ -50,6 +50,7 @@ Revision History:
 */
 
 #include "stdafx.h"
+#include "scummsys.h"
 #include <math.h>
 #include "fmopl.h"
 
