@@ -431,7 +431,7 @@ uint8 *ResourceManager::openResource(uint32 res, bool dump) {
 			// playing a demo, then we're in trouble if the file
 			// can't be found!
 
-			if (DEMO || (_cdTab[parent_res_file] & LOCAL_PERM))
+			if ((_vm->_features & GF_DEMO) || (_cdTab[parent_res_file] & LOCAL_PERM))
 				error("Could not find '%s'", _resourceFiles[parent_res_file]);
 
 			getCd(_cdTab[parent_res_file] & 3);
