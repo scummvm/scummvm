@@ -625,7 +625,7 @@ Scumm::Scumm (GameDetector *detector, OSystem *syst)
 			_playerV2 = NULL;
 		} else {
 			_playerV2 = new Player_V2(this);
-			if (_midiDriver == MD_PCJR)
+			if (_midiDriver == MD_PCSPK)
 				_playerV2->set_pcjr(false);
 		}
 	} else {
