@@ -121,20 +121,14 @@ GRAPHICS
 ========
 bob()						Graphics::bobDraw
 Box()
-calc_screen_scroll()		Display::horizontalScrollUpdate
 CHECK_PARALLAX()			Graphics::bobCustomParallax
 clearallbobs()				Graphics::bobClearAll
 clearbob()					Graphics::bobClear
-clearpanel()				Display::prepareUpdate
 drawbobs()					Graphics::bobDrawAll
-drawbackdrop()				Display::prepareUpdate
-drawpanel()					Display::prepareUpdate
-drawscreen()				Display::update
 freeallframes()				Graphics::frameEraseAll(true)
 freeframes()				Graphics::frameEraseAll(false)
 invbob()					Graphics::bobDrawInventoryItem
 loadbackdrop()				Graphics::loadBackdrop
-loadfont()					TextRenderer::init
 loadpanel()					Graphics::loadPanel
 MAKE_SPEAK_BOB				Graphics::bobSetText
 makeanim()					Graphics::bobAnimNormal
@@ -147,8 +141,6 @@ stringanim()				Graphics::bobAnimString
 -
 bobs						Graphics::_bobs
 cambob						Graphics::_cameraBob
-clothespal					Display::PAL_JOE_CLOTHES
-dresspal					Display::PAL_JOE_DRESS
 sortedbobs					Graphics::_sortedBobs
 
 
@@ -300,27 +292,36 @@ tseek() 					*not needed*
 
 SCREEN
 ======
+calc_screen_scroll()		Display::horizontalScrollUpdate
 changejoepal()				Display::palSetJoe
 check_colors()				Display::palCustomColors
+clearpanel()				Display::prepareUpdate
+drawbackdrop()				Display::prepareUpdate
+drawpanel()					Display::prepareUpdate
+drawscreen()				Display::update
 dynalum()					Dynalum::update
+fade_panel()				Display::palFadePanel
 fadein()					Display::palFadeIn
 fadeout()					Display::palFadeOut
 flashspecial()				Display::palCustomFlash
+loadfont()					TextRenderer::init
 palscroll()					Display::palScroll
 putcharacter()				TextRenderer::drawChar
 setpal()					Display::palSet
 -
 BDxres						Display::_bdWidth
 BDyres						Display::_bdHeight
-COMPANEL
+clothespal					Display::PAL_JOE_CLOTHES
+COMPANEL					*not needed ?*
+dresspal					Display::PAL_JOE_DRESS
 font						TextRenderer::FONT
 font_sizes					TextRenderer::charWidth
-FULLSCREEN					Graphics::_fullscreen
+FULLSCREEN					Display::_fullscreen
 nopalscroll					Display::_pals.scrollable
-palette						Graphics::_paletteRoom
-panelflag					Graphics::_panelFlag
+palette						Display::_pals.room
+panelflag					Display::_panel
 scrollx						Display::_horizontalScroll
-tpal						Graphics::_paletteScreen
+tpal						Display::_pals.screen
 
 
 SOUND
