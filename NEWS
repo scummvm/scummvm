@@ -37,7 +37,8 @@ For a more comprehensive changelog for the latest experimental CVS code, see:
    - Rewrote in-game menu (F5) to be easier to use
    - Improved FM Towns SFX support (YM2612 emulation, looping)
    - Classic V1 versions of Maniac Mansion and Zak McKracken are now supported and completable
-   - Several iMUSE music system bugs fixed
+   - Rewrote Digital iMUSE music system
+   - Several Analog iMUSE music system bugs fixed
    - Improved music/sound for various Amiga versions
    - Improved compression of Fate of Atlantis and Simon the Sorcerer 2 sound files
    - Keyboard fighting in Fate of Atlantis now works
