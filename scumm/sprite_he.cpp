@@ -532,36 +532,39 @@ void ScummEngine_v90he::spriteInfoSet_rotAngle(int spriteId, int value) {
 void ScummEngine_v90he::spriteInfoSet_flag13(int spriteId, int value) {
 	checkRange(_varNumSprites, 1, spriteId, "Invalid sprite %d");
 
+	int oldFlags = _spriteTable[spriteId].flags;
 	if (value)
 		_spriteTable[spriteId].flags |= kSF13;
 	else
 		_spriteTable[spriteId].flags &= ~(kSF09 | kSF13);
 
-	if (_spriteTable[spriteId].res_id)
+	if (_spriteTable[spriteId].res_id && _spriteTable[spriteId].flags != oldFlags)
 		_spriteTable[spriteId].flags |= kSFChanged | kSFNeedRedraw;
 }
 
 void ScummEngine_v90he::spriteInfoSet_flag14(int spriteId, int value) {
 	checkRange(_varNumSprites, 1, spriteId, "Invalid sprite %d");
 
+	int oldFlags = _spriteTable[spriteId].flags;
 	if (value)
 		_spriteTable[spriteId].flags |= kSF14;
 	else
 		_spriteTable[spriteId].flags &= ~(kSF09 | kSF14);
 
-	if (_spriteTable[spriteId].res_id)
+	if (_spriteTable[spriteId].res_id && _spriteTable[spriteId].flags != oldFlags)
 		_spriteTable[spriteId].flags |= kSFChanged | kSFNeedRedraw;
 }
 
 void ScummEngine_v90he::spriteInfoSet_flag15(int spriteId, int value) {
 	checkRange(_varNumSprites, 1, spriteId, "Invalid sprite %d");
 
+	int oldFlags = _spriteTable[spriteId].flags;
 	if (value)
 		_spriteTable[spriteId].flags |= kSF15;
 	else
 		_spriteTable[spriteId].flags &= ~(kSF09 | kSF15);
 
-	if (_spriteTable[spriteId].res_id)
+	if (_spriteTable[spriteId].res_id && _spriteTable[spriteId].flags != oldFlags)
 		_spriteTable[spriteId].flags |= kSFChanged | kSFNeedRedraw;
 }
 
@@ -577,12 +580,13 @@ void ScummEngine_v90he::spriteInfoSet_flagActive(int spriteId, int value) {
 void ScummEngine_v90he::spriteInfoSet_flag20(int spriteId, int value) {
 	checkRange(_varNumSprites, 1, spriteId, "Invalid sprite %d");
 
+	int oldFlags = _spriteTable[spriteId].flags;
 	if (value)
 		_spriteTable[spriteId].flags |= kSF20;
 	else
 		_spriteTable[spriteId].flags &= ~(kSFChanged | kSF20);
 
-	if (_spriteTable[spriteId].res_id)
+	if (_spriteTable[spriteId].res_id && _spriteTable[spriteId].flags != oldFlags)
 		_spriteTable[spriteId].flags |= kSFChanged | kSFNeedRedraw;
 }
 
