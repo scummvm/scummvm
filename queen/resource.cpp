@@ -43,7 +43,7 @@ const GameVersion Resource::_gameVersions[] = {
 	{ "PE100", true,  true,  0x000B40F5 }
 };
 
-Resource::Resource(char *datafilePath)
+Resource::Resource(const char *datafilePath)
 	: _resourceEntries(0), _resourceTable(NULL) {
 
 	_datafilePath = datafilePath;

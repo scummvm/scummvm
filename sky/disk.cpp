@@ -31,7 +31,7 @@
 static const char *dataFilename = "sky.dsk";
 static const char *dinnerFilename = "sky.dnr";
 
-SkyDisk::SkyDisk(char *gameDataPath) {
+SkyDisk::SkyDisk(const char *gameDataPath) {
 	_prefRoot = NULL;
 
 	// Set default file directory

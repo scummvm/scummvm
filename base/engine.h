@@ -67,7 +67,7 @@ public:
 	Timer * _timer;
 
 protected:
-	char *_gameDataPath;
+	const char *_gameDataPath;
 
 public:
 	Engine(GameDetector *detector, OSystem *syst);

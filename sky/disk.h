@@ -38,7 +38,7 @@ struct PrefFile {
 
 class SkyDisk {
 public:
-	SkyDisk(char *gameDataPath);
+	SkyDisk(const char *gameDataPath);
 	~SkyDisk(void);
 
 	uint8 *loadFile(uint16 fileNr, uint8 *dest);
