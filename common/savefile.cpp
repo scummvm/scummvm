@@ -58,7 +58,7 @@ const char *SaveFileManager::getSavePath() const {
 
 #ifdef _WIN32_WCE
 	if (dir[0] == 0)
-		dir = _gameDataPath.c_str();
+		dir = ConfMan.get("path").c_str();
 #endif
 
 	assert(dir);
