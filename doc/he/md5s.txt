@@ -1310,6 +1310,16 @@ d601630d0dcf6b3084ecd42b6c8c5a33 SPYFOX2.HE4
 0b381fa8531972edca34f9b631638148 spyfox2.he9
 77179b054447bb7080aff0ec343588c6 Spyfox2.w32
 
+(russian spyfox2 updated)
+sev
+C:\HESystems\SPUTM\Src\*.cpp
+dda8932e4ddd10c538086df4eaa965d2 SPYFOXSR.w32
+4ecc3a54d961a23b80239e191309bb2a spyfoxsr.(a)
+cea91e3dd47f2518ea418e41611aa77f spyfoxsr.he0
+2e73380e32fb1960de5e9871042c6b2e spyfoxsr.he2
+42e883fdae113021eaa30bca3a7bfd2c spyfoxsr.he4
+0b381fa8531972edca34f9b631638148 spyfoxsr.he9
+
 (putsfunshop cd/pj3 cd/puttcircus cd/spyozon cd/soccerMLS cd)
 sev
 C:\Dev\Project\SPUTM\Src\*.cpp
@@ -1338,6 +1348,16 @@ a76f985eb0fe5b9600dd8563cd5ac7d8 spyozon.w32
 eec7f697ba008211d12be2108f9e6b56 SPYOZON.HE2
 2f238b51cfad1b8b5c179468a19aa29b SPYOZON.HE3
 6654406759193503d618405b075322e4 SPYOZON.HE4
+
+(russian spyozon updated)
+sev
+C:\Spyfox3Sputm\Src\SrcPWin\*.cpp
+efab08f94696fc1a7404ba366c6629d3 SPYFoxOZU.he2
+2f238b51cfad1b8b5c179468a19aa29b SPYFoxOZU.he3
+eb03a8bd9e7654d5d06635d934f2059b SPYFoxOzu.(a)
+96a3069a3c63caa7329588ce1fef41ee SPYFoxOzu.he0
+64531d4b40f2b932c8434b5c2c0f3547 SPYFoxOzu.he4
+194af4195ddb1f3a6017fbd6b27a92aa spyfoxozu.exe
 
 (freddi5 cd)
 sev

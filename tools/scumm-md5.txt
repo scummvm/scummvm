@@ -447,11 +447,13 @@ Spy Fox 1: Dry Cereal
 
 Spy Fox 2: Some Assembly Required
 	-	All	en	f79e60c17cca601e411f1f75e8ee9b5a	spyfox2	Kirben
+	-	All	ru	cea91e3dd47f2518ea418e41611aa77f	spyfox2	sev
 	Demo	All	en	7222f260253f325c21fcfa68b5bfab67	sf2-demo	Kirben
 	Demo	All	nl	1c792d28376d45e145cb916bca0400a2	sf2-demo	joostp
 
 Spy Fox 3: Operation Ozone
 	-	All	en	600abd3e9f47e63e670188b7e4e86ac7	spyozon	Kirben
+	-	All	ru	96a3069a3c63caa7329588ce1fef41ee	spyozon	sev
 	Demo	All	en	ebd0b2c8a387f18887282afe6cad894a	sf3-demo	Kirben
 
 Spy Fox in Cheese Chase Game
