@@ -311,6 +311,8 @@ void Player_V3A::playMusic() {
 		if (oct > 5)
 			oct = 5;
 		int rate = 3579545 / note_freqs[_wavetable[inst]->_oct[oct]][pit];
+		if (!_wavetable[inst]->_llen[oct])
+			dur = _wavetable[inst]->_ilen[oct] * 60 / rate;
 		char *data = (char *)malloc(_wavetable[inst]->_ilen[oct] + _wavetable[inst]->_llen[oct]);
 		if (_wavetable[inst]->_idat[oct])
 			memcpy(data, _wavetable[inst]->_idat[oct], _wavetable[inst]->_ilen[oct]);

@@ -51,7 +51,7 @@ public:
 
 private:
 	enum {
-		V3A_MAXMUS = 16,
+		V3A_MAXMUS = 24,
 		V3A_MAXSFX = 16
 	};
 
