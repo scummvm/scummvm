@@ -1238,8 +1238,11 @@ CharsetRendererNut::CharsetRendererNut(ScummEngine *vm)
 }
 
 CharsetRendererNut::~CharsetRendererNut() {
-	for (int i = 0; i < 5; i++)
+	for (int i = 0; i < 5; i++) {
+		if ((_vm->_gameId == GID_CMI) && (_vm->_features & GF_DEMO) && (i == 4))
+			break;
 		delete _fr[i];
+	}
 }
 
 void CharsetRendererNut::setCurID(byte id) {

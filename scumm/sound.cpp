@@ -1242,10 +1242,10 @@ void Sound::playBundleSound(char *sound, PlayingSoundHandle *handle) {
 		return;	
 
 	if (_scumm->_gameId == GID_CMI) {
-		char voxfile[20];
 		if (_scumm->_features & GF_DEMO) {
 			result = _bundle->openVoiceFile("voice.bun", _scumm->getGameDataPath());
 		} else {
+			char voxfile[20];
 			sprintf(voxfile, "voxdisk%d.bun", _scumm->VAR(_scumm->VAR_CURRENTDISK));
 			if (_voiceDisk != _scumm->VAR(_scumm->VAR_CURRENTDISK))
 				_bundle->closeVoiceFile();
@@ -1270,7 +1270,7 @@ void Sound::playBundleSound(char *sound, PlayingSoundHandle *handle) {
 	if (_scumm->_gameId == GID_CMI) {
 		char name[20];
 		strcpy(name, sound);
-		if (_scumm->_maxRooms != 6) // CMI demo does not have .IMX for voice but does for music...
+		if (!(_scumm->_features & GF_DEMO)) // CMI demo does not have .IMX for voice but does for music...
 			strcat(name, ".IMX");
 		output_size = _bundle->decompressVoiceSampleByName(name, &ptr);
 	} else {
