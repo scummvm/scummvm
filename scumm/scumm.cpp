@@ -566,7 +566,6 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 	_PALS_offs = 0;
 	_fullRedraw = false;
 	_BgNeedsRedraw = false;
-	_verbRedraw = false;
 	_screenEffectFlag = false;
 	_completeScreenRedraw = false;
 	memset(&_cursor, 0, sizeof(_cursor));
@@ -1053,8 +1052,6 @@ void ScummEngine::launch() {
 		_maxHeapThreshold = 550000;
 #endif
 	_minHeapThreshold = 400000;
-
-	_verbRedraw = false;
 
 	allocResTypeData(rtBuffer, MKID('NONE'), 10, "buffer", 0);
 
@@ -1650,7 +1647,6 @@ load_game:
 			checkV2MouseOver(_mouse);
 		}
 
-		_verbRedraw = false;
 		_fullRedraw = true;
 	}
 
@@ -1688,9 +1684,8 @@ load_game:
 		processDrawQue();
 
 		// Full Throttle always redraws verbs and draws verbs before actors
-		if ((_gameId == GID_FT) || _verbRedraw) {
+		if (_gameId == GID_FT)
 			redrawVerbs();
-		}
 	
 		setActorRedrawFlags();
 		resetActorBgs();
@@ -1707,6 +1702,8 @@ load_game:
 		if (_version >= 4 && _heversion <= 60)
 			cyclePalette();
 		palManipulate();
+		if (_gameId == GID_DIG || _gameId == GID_CMI)
+			redrawVerbs();
 
 		if (_doEffect) {
 			_doEffect = false;
@@ -1714,10 +1711,8 @@ load_game:
 			clearClickedStatus();
 		}
 
-		if (!_verbRedraw && _cursor.state > 0)
+		if (_cursor.state > 0)
 			verbMouseOver(checkMouseOver(_mouse.x, _mouse.y));
-
-		_verbRedraw = false;
 
 		if (_version <= 2) {
 			if (oldEgo != VAR(VAR_EGO)) {

@@ -860,7 +860,7 @@ protected:
 	StripTable *_roomStrips;
 
 	//ender: fullscreen
-	bool _fullRedraw, _BgNeedsRedraw, _verbRedraw;
+	bool _fullRedraw, _BgNeedsRedraw;
 	bool _screenEffectFlag, _completeScreenRedraw;
 
 	struct {

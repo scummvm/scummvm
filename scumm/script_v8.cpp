@@ -1082,8 +1082,6 @@ void ScummEngine_v8::o8_verbOps() {
 	VerbSlot *vs = NULL;
 	int slot, a, b;
 
-	_verbRedraw = true;
-
 	if (subOp == 0x96) {
 		_curVerb = pop();
 		_curVerbSlot = getVerbSlot(_curVerb, 0);
