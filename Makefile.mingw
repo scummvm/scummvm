@@ -47,6 +47,15 @@ LIBS    += -lvorbisfile -lvorbis -logg
 # CXXFLAGS+= -Wshadow -Werror
 
 #######################################################################
+# Control which modules are built - uncomment any to disable module   #
+#######################################################################
+
+# DISABLE_SCUMM = 1
+# DISABLE_SIMON = 1
+# DISABLE_SKY = 1
+
+
+#######################################################################
 # Misc stuff - you should normally never have to edit this            #
 #######################################################################
 
