@@ -62,7 +62,7 @@ struct Instrument {
 };
 
 class AdlibPart : public MidiChannel {
-	friend MidiDriver_ADLIB;
+	friend class MidiDriver_ADLIB;
 
 private:
 //	AdlibPart *_prev, *_next;
@@ -493,7 +493,7 @@ typedef void TimerCallback (void *);
 ////////////////////////////////////////
 
 class MidiDriver_ADLIB : public MidiDriver {
-	friend AdlibPart;
+	friend class AdlibPart;
 
 public:
 	MidiDriver_ADLIB();

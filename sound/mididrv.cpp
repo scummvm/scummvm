@@ -48,7 +48,7 @@ typedef void TimerCallback (void *);
 class MidiDriver_MPU401;
 
 class MidiChannel_MPU401 : public MidiChannel {
-	friend MidiDriver_MPU401;
+	friend class MidiDriver_MPU401;
 
 private:
 	MidiDriver_MPU401 *_owner;
@@ -125,7 +125,7 @@ void MidiChannel_MPU401::sysEx_customInstrument (uint32 type, byte *instr) { _ow
 
 MidiDriver_MPU401::MidiDriver_MPU401() : MidiDriver()
 {
-	int i;
+	uint i;
 	for (i = 0; i < ARRAYSIZE(_midi_channels); ++i) {
 		_midi_channels [i].init (this, i);
 	}
