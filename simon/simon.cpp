@@ -4475,6 +4475,7 @@ void SimonEngine::shutdown() {
 		delete _game_file;
 		_game_file = NULL;
 	}
+	midi.close();
 	_system->quit();
 }
 
