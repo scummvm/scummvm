@@ -261,6 +261,8 @@ void Sound::playSound(int soundID) {
 				parser = MidiParser::createParser_XMIDI();
 				parser->setMidiDriver (driver);
 				parser->setTimerRate (driver->getBaseTempo());
+				if (_scumm->_gameId != GID_PUTTDEMO)
+					parser->property (MidiParser::mpAutoLoop, 1);
 				parser->loadMusic (ptr, size);
 				driver->open();
 				driver->setTimerCallback (parser, &MidiParser::timerCallback);
