@@ -10,6 +10,7 @@ MODULE_OBJS := \
 	scumm/camera.o \
 	scumm/charset.o \
 	scumm/costume.o \
+	scumm/cursor.o \
 	scumm/debugger.o \
 	scumm/dialogs.o \
 	scumm/gfx.o \
@@ -22,6 +23,7 @@ MODULE_OBJS := \
 	scumm/midiparser_eup.o \
 	scumm/nut_renderer.o \
 	scumm/object.o \
+	scumm/palette.o \
 	scumm/player_mod.o \
 	scumm/player_v1.o \
 	scumm/player_v2.o \

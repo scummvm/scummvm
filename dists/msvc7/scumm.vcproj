@@ -210,6 +210,9 @@
 			RelativePath="..\..\scumm\costume.h">
 		</File>
 		<File
+			RelativePath="..\..\scumm\cursor.cpp">
+		</File>
+		<File
 			RelativePath="..\..\scumm\debugger.cpp">
 		</File>
 		<File
@@ -280,6 +283,9 @@
 		</File>
 		<File
 			RelativePath="..\..\scumm\object.h">
+		</File>
+		<File
+			RelativePath="..\..\scumm\palette.cpp">
 		</File>
 		<File
 			RelativePath="..\..\scumm\player_mod.cpp">

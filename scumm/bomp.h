@@ -22,6 +22,8 @@
 #ifndef BOMP_H
 #define BOMP_H
 
+#include "common/scummsys.h"
+
 namespace Scumm {
 
 int32 setupBompScale(byte *scaling, int32 size, byte scale);

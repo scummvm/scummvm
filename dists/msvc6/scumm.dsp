@@ -279,6 +279,10 @@ SOURCE=..\..\scumm\costume.h
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\scumm\cursor.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\scumm\debugger.cpp
 # End Source File
 # Begin Source File
@@ -372,6 +376,10 @@ SOURCE=..\..\scumm\object.cpp
 # Begin Source File
 
 SOURCE=..\..\scumm\object.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\scumm\palette.cpp
 # End Source File
 # Begin Source File
 
