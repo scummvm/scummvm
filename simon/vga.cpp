@@ -1121,6 +1121,11 @@ void SimonEngine::vc_23_set_sprite_priority() {
 	uint16 pri = vc_read_next_word();
 	VgaSprite bak;
 
+	if (vsp->id == 0) {
+		debug(1,"Tried to set pri for unknown id %d", _vga_cur_sprite_id);
+		return;
+	}
+
 	memcpy(&bak, vsp, sizeof(bak));
 	bak.priority = pri;
 	bak.unk6 |= 0x8000;
