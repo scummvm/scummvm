@@ -433,7 +433,7 @@ being ran faster than their normal speed, as scripts will loose synchronisation
 
 Language options:
 -----------------
-ScummVM includes a language option for Maniac Mansion, Zak KcKracken, the
+ScummVM includes a language option for Maniac Mansion, Zak KcKracken, The Dig,
 Curse of Monkey Island, Beneath a Steel Sky.and Simon the Sorcerer 1 & 2.
 
 Maniac Mansion and Zak McKracken
@@ -443,6 +443,12 @@ Maniac Mansion and Zak McKracken
         fr  - French
         it  - Italian
         es  - Spanish
+
+The Dig
+
+        jp  - Japanese
+        zh  - Chinese
+        kr  - Korean
 
 Curse of Monkey Island
 
