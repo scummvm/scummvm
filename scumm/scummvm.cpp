@@ -327,6 +327,7 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 	_optionsDialog = NULL;
 	_mainMenuDialog = NULL;
 	_confirmExitDialog = NULL;
+	_confirmRestartDialog = NULL;
 	_fastMode = 0;
 	_actors = NULL;
 	_inventory = NULL;
@@ -862,6 +863,7 @@ ScummEngine::~ScummEngine() {
 	delete _optionsDialog;
 	delete _mainMenuDialog;
 	delete _confirmExitDialog;
+	delete _confirmRestartDialog;
 
 	delete _sound;
 	if (_musicEngine) {
@@ -1844,7 +1846,7 @@ void ScummEngine::processKbd() {
 #endif
 
 	if (VAR_RESTART_KEY != 0xFF && _lastKeyHit == VAR(VAR_RESTART_KEY)) {
-		restart();
+		confirmrestartDialog();
 		return;
 	}
 
@@ -2580,6 +2582,15 @@ void ScummEngine::confirmexitDialog() {
 
 	if (runDialog(*_confirmExitDialog)) {
 		_quit = true;
+	}
+}
+
+void ScummEngine::confirmrestartDialog() {
+	if (!_confirmRestartDialog)
+		_confirmRestartDialog = new ConfirmRestartDialog(this);
+
+	if (runDialog(*_confirmRestartDialog)) {
+		restart();
 	}
 }
 

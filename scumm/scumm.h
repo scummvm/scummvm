@@ -352,10 +352,12 @@ protected:
 	Dialog *_optionsDialog;
 	Dialog *_mainMenuDialog;
 	Dialog *_confirmExitDialog;
+	Dialog *_confirmRestartDialog;
 
 protected:
 	int runDialog(Dialog &dialog);
 	void confirmexitDialog();
+	void confirmrestartDialog();
 	void pauseDialog();
 	void mainMenuDialog();
 public:

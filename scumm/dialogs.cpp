@@ -621,6 +621,21 @@ void ConfirmExitDialog::handleKeyDown(uint16 ascii, int keycode, int modifiers) 
 		ScummDialog::handleKeyDown(ascii, keycode, modifiers);
 }
 
+ConfirmRestartDialog::ConfirmRestartDialog(ScummEngine *scumm)
+	: InfoDialog(scumm, "Do you really want to quit (y/n)?") {
+}
+
+void ConfirmRestartDialog::handleKeyDown(uint16 ascii, int keycode, int modifiers) {
+	if (tolower(ascii) == 'n') { // Close exit dialog if n key is pressed
+		setResult(0);
+		close();
+	} else if (tolower(ascii) == 'y') { // Quit if y key is pressed
+		setResult(1);
+		close();
+	} else
+		ScummDialog::handleKeyDown(ascii, keycode, modifiers);
+}
+
 #ifdef _WIN32_WCE
 
 #pragma mark -

@@ -157,6 +157,12 @@ public:
 	virtual void handleKeyDown(uint16 ascii, int keycode, int modifiers);
 };
 
+class ConfirmRestartDialog : public InfoDialog {
+public:
+	ConfirmRestartDialog(ScummEngine *scumm);
+	virtual void handleKeyDown(uint16 ascii, int keycode, int modifiers);
+};
+
 #ifdef _WIN32_WCE
 
 class KeysDialog : public ScummDialog {
