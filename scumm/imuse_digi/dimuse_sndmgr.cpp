@@ -589,9 +589,9 @@ int32 ImuseDigiSndMgr::getDataFromRegion(soundStruct *soundHandle, int region, b
 #ifdef USE_VORBIS
 				if (oggMode)
 					soundHandle->compressedStream = makeVorbisStream(cmpFile, len);
-				else
 #endif
 #ifdef USE_MAD
+				if (!oggMode)
 					soundHandle->compressedStream = makeMP3Stream(cmpFile, len);
 #endif
 				assert(soundHandle->compressedStream);
