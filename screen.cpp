@@ -95,7 +95,7 @@ void screenBlocksAddRectangle( int top, int right, int left, int bottom, float d
 
 	if(top < 0)
 		top = 0;
-	if(top > =SCREEN_HEIGHT)
+	if(top >= SCREEN_HEIGHT)
 		top = SCREEN_HEIGHT - 1;
 
 	if(bottom < 0)
