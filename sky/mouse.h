@@ -63,7 +63,6 @@ protected:
 
 	void pointerEngine(uint16 xPos, uint16 yPos);
 	void buttonEngine1(void);
-	void fixMouseTransparency(byte *mouseData, uint32 size);
 
 	bool _logicClick;
 	

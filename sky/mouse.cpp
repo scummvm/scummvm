@@ -93,11 +93,9 @@ Mouse::Mouse(OSystem *system, Disk *skyDisk) {
 	_currentCursor = 6;
 	
 	_miceData = _skyDisk->loadFile(MICE_FILE, NULL);
-	fixMouseTransparency(_miceData, _skyDisk->_lastLoadedFileSize);
 
 	//load in the object mouse file
 	_objectMouseData = _skyDisk->loadFile(MICE_FILE + 1, NULL);
-	fixMouseTransparency(_objectMouseData, _skyDisk->_lastLoadedFileSize);
 }
 
 Mouse::~Mouse( ){
@@ -107,7 +105,6 @@ Mouse::~Mouse( ){
 
 void Mouse::replaceMouseCursors(uint16 fileNo) {
 	_skyDisk->loadFile(fileNo, _objectMouseData);
-	fixMouseTransparency(_objectMouseData, _skyDisk->_lastLoadedFileSize);
 }
 
 bool Mouse::fnAddHuman(void) {
@@ -177,25 +174,6 @@ void Mouse::waitMouseNotPressed(void) {
 	}
 }
 
-//original sky uses different colors for transparency than our backends do,
-//so we simply swap our "transparent"-white with another one.
-void Mouse::fixMouseTransparency(byte *mouseData, uint32 size) {
-	uint32 curPos = sizeof(struct dataFileHeader);
-	uint32 cursorSize = ((struct dataFileHeader *)mouseData)->s_sp_size;
-
-	while (curPos < size) {
-		byte *cursor = mouseData + curPos;
-		for (uint32 i = 0; i < cursorSize; i++) {
-			if (cursor[i] == 255)
-				cursor[i] = 242;
-			else
-				if (cursor[i] == 0)
-					cursor[i] = 255;
-		}
-		curPos += cursorSize;
-	}
-}
-
 void Mouse::spriteMouse(uint16 frameNum, uint8 mouseX, uint8 mouseY) {
 	
 	_currentCursor = frameNum;
@@ -207,7 +185,7 @@ void Mouse::spriteMouse(uint16 frameNum, uint8 mouseX, uint8 mouseY) {
 	uint16 mouseWidth = ((struct dataFileHeader *)_miceData)->s_width;
 	uint16 mouseHeight = ((struct dataFileHeader *)_miceData)->s_height;
 
-	_system->setMouseCursor(newCursor, mouseWidth, mouseHeight, mouseX, mouseY);
+	_system->setMouseCursor(newCursor, mouseWidth, mouseHeight, mouseX, mouseY, 0);
 	if (frameNum == MOUSE_BLANK) _system->showMouse(false);
 	else _system->showMouse(true);
 }
