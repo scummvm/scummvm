@@ -2054,7 +2054,6 @@ void ScummEngine_v100he::decodeParseString(int m, int n) {
 	byte name[1024];
 
 	byte b = fetchScriptByte();
-	printf("decodeParseString %d\n", b);
 
 	switch (b) {
 	case 6:		// SO_AT
