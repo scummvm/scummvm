@@ -23,17 +23,28 @@
 #define ADLIBMUSIC_H
 
 #include "sky/music/musicbase.h"
+#include "sound/audiostream.h"
 #include "sound/fmopl.h"
 
 class SoundMixer;
 
 namespace Sky {
 
-class AdlibMusic : public MusicBase {
+class AdlibMusic : public AudioStream, public MusicBase {
 public:
 	AdlibMusic(SoundMixer *pMixer, Disk *pDisk, OSystem *system);
 	~AdlibMusic(void);
 	virtual void setVolume(uint8 volume);
+
+	// AudioStream API
+	int readBuffer(int16 *buffer, const int numSamples) {
+		premixerCall(buffer, numSamples / 2);
+		return numSamples;
+	}
+	bool isStereo() const { return true; }
+	bool endOfData() const { return false; }
+	int getRate() const { return _sampleRate; }
+
 private:
 	FM_OPL *_opl;
 	SoundMixer *_mixer;
@@ -44,7 +55,6 @@ private:
 	virtual void startDriver(void);
 
 	void premixerCall(int16 *buf, uint len);
-	static void passMixerFunc(void *param, int16 *buf, uint len);
 };
 
 } // End of namespace Sky

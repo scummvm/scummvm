@@ -233,7 +233,8 @@ void MusicHandle::stop() {
 Music::Music(OSystem *system, SoundMixer *pMixer) {
 	_system = system;
 	_mixer = pMixer;
-	_mixer->setupPremix(passMixerFunc, this);
+	_sampleRate = pMixer->getOutputRate();
+	_mixer->setupPremix(this);
 	_mutex = _system->createMutex();
 	_converter[0] = NULL;
 	_converter[1] = NULL;
@@ -248,12 +249,9 @@ Music::~Music() {
 		_system->deleteMutex(_mutex);
 }
 
-void Music::passMixerFunc(void *param, int16 *buf, uint len) {
-	((Music*)param)->mixer(buf, len);
-}
-
 void Music::mixer(int16 *buf, uint32 len) {
 	Common::StackLock lock(_mutex);
+	memset(buf, 0, 2 * len * sizeof(int16));
 	for (int i = 0; i < ARRAYSIZE(_handles); i++)
 		if (_handles[i].streaming() && _converter[i])
 			_converter[i]->flow(_handles[i], buf, len, _volumeL, _volumeR);

@@ -26,11 +26,6 @@
 
 namespace Sky {
 
-void AdlibMusic::passMixerFunc(void *param, int16 *buf, uint len) {
-
-	((AdlibMusic*)param)->premixerCall(buf, len);
-}
-
 AdlibMusic::AdlibMusic(SoundMixer *pMixer, Disk *pDisk, OSystem *system)
 	: MusicBase(pDisk, system) {
 	
@@ -40,7 +35,7 @@ AdlibMusic::AdlibMusic(SoundMixer *pMixer, Disk *pDisk, OSystem *system)
 	
 	_opl = makeAdlibOPL(_sampleRate);
 
-	_mixer->setupPremix(passMixerFunc, this);
+	_mixer->setupPremix(this);
 }
 
 AdlibMusic::~AdlibMusic(void) {

@@ -83,7 +83,7 @@ public:
 	int getRate() const;
 };
 
-class Music {
+class Music : public AudioStream {
 public:
 	Music(OSystem *system, SoundMixer *pMixer);
 	~Music();
@@ -91,15 +91,28 @@ public:
 	void fadeDown();
 	void setVolume(uint8 volL, uint8 volR);
 	void giveVolume(uint8 *volL, uint8 *volR);
+
+	// AudioStream API
+	int readBuffer(int16 *buffer, const int numSamples) {
+		mixer(buffer, numSamples / 2);
+		return numSamples;
+	}
+	bool isStereo() const { return true; }
+	bool endOfData() const { return false; }
+	int getRate() const { return _sampleRate; }
+
 private:
 	st_volume_t _volumeL, _volumeR;
 	MusicHandle _handles[2];
 	RateConverter *_converter[2];
 	OSystem *_system;
 	SoundMixer *_mixer;
+	uint32 _sampleRate;
 	OSystem::MutexRef _mutex;
+
 	static void passMixerFunc(void *param, int16 *buf, uint len);
 	void mixer(int16 *buf, uint32 len);
+
 	static const char _tuneList[TOTAL_TUNES][8]; // in staticres.cpp
 };
 
