@@ -228,12 +228,13 @@ static byte smush_buf_small[32768];
 static int16 smush_table[256];
 
 void Codec47Decoder::makeTables37(int32 param) {
-	int32 variable1, variable2, variable4, count_1, count_2;
-	int32 tmp_param, tmp_param_tmp, tmp_value1, tmp_value2, b1, b2;
+	int32 variable1, variable2, variable3, variable4;
+	int32 tmp_param, b1, b2;
 	int32 * tmp_table37_1_2, * tmp_table37_1_1, * tmp_table37_2_2, * tmp_table37_2_1;
-	int32 value_table37_1_1, value_table37_1_2;
-	int32 table[64], tmp_a, tmp_c, tmp_d, s, p, d, tmp_ib, tmp;
+	int32 value_table37_1_2, value_table37_1_1, value_table37_2_2, value_table37_2_1;
+	int32 table[64], tmp_a, tmp_c, s;
 	int32 * table37_1 = 0, * table37_2 = 0, * table_ptr, l;
+	int i, x, y;
 	byte * ptr;
 
 	if (param == 8) {
@@ -267,58 +268,54 @@ void Codec47Decoder::makeTables37(int32 param) {
 	}
 
 	s = 0;
-	p = 0;
 	tmp_param = param * param;
 	tmp_table37_1_1 = table37_1;
 	tmp_table37_2_1 = table37_2;
-	count_1 = 16;
-	while (count_1--) {
+	for (x = 0; x < 16; x++) {
 		tmp_table37_1_2 = table37_1;
 		tmp_table37_2_2 = table37_2;
-		count_2 = 16;
-		while(count_2--) {
-			tmp = *(tmp_table37_2_1);
-			tmp_value1 = tmp;
-			if (tmp == 0) {
+
+		value_table37_1_1 = *tmp_table37_1_1;
+		value_table37_2_1 = *tmp_table37_2_1;
+		for(y = 0; y < 16; y++) {
+			value_table37_1_2 = *tmp_table37_1_2;
+			value_table37_2_2 = *tmp_table37_2_2;
+
+			if (value_table37_2_1 == 0) {
 				b1 = 0;
-			} else if (param == tmp + 1) {
+			} else if (param == value_table37_2_1 + 1) {
 				b1 = 1;
 			} else {
-				tmp = *(tmp_table37_1_1);
-				if (tmp == 0) {
+				if (value_table37_1_1 == 0) {
 					b1 = 2;
-				} else if (param == tmp + 1) {
+				} else if (param == value_table37_1_1 + 1) {
 					b1 = 3;
 				} else {
 					b1 = 4;
 				}
 			}
-			tmp = *(tmp_table37_2_2);
-			tmp_value2 = tmp;
-			if (tmp == 0) {
+
+			if (value_table37_2_2 == 0) {
 				b2 = 0;
-			} else if (param == tmp + 1) {
+			} else if (param == value_table37_2_2 + 1) {
 				b2 = 1;
 			} else {
-				tmp = *(tmp_table37_1_2);
-				if (tmp == 0) {
+				if (value_table37_1_2 == 0) {
 					b2 = 2;
-				} else if (param == tmp + 1) {
+				} else if (param == value_table37_1_2 + 1) {
 					b2 = 3;
 				} else {
 					b2 = 4;
 				}
 			}
-			tmp_param_tmp = tmp_param - 1;
-			d = tmp_param_tmp;
-			if(tmp_param != 0) {
+			i = tmp_param - 1;
+			if(i != 0) {
 				do {
-					table[d] = 0;
-				} while (d-- != 0);
+					table[i] = 0;
+				} while (i-- != 0);
 			}
-			value_table37_1_1 = *(tmp_table37_1_1);
-			value_table37_1_2 = *(tmp_table37_1_2);
-			tmp_c = abs(tmp_value2 - tmp_value1);
+
+			tmp_c = abs(value_table37_2_2 - value_table37_2_1);
 			tmp_a = abs(value_table37_1_2 - value_table37_1_1);
 			if (tmp_c <= tmp_a) {
 				tmp_c = tmp_a;
@@ -327,88 +324,81 @@ void Codec47Decoder::makeTables37(int32 param) {
 			variable2 = tmp_c + 1;
 			for (variable1 = 0; variable1 < variable2; variable1++) {
 				if (variable2 > 1) {
-					int32 variable3;
+					int32 xyz, tmp_ib;
 
+					// This code linearly interpolates between value_table37_1_1 and value_table37_1_2
+					// respectively value_table37_2_1 and value_table37_2_2.
 					tmp_c = variable2 - variable1 - 1;
-					tmp_ib = variable2 - 1;
-					tmp_d = value_table37_1_1;
-					tmp_ib >>= 1;
-					variable3 = variable2 - 1;
-					tmp_d *= variable1;
-					tmp_a = value_table37_1_2 * tmp_c + tmp_d + tmp_ib;
-					variable4 = tmp_a / variable3;
-					tmp_d = tmp_value2 * tmp_c + tmp_value1 * variable1 + tmp_ib;
-					tmp_a = tmp_d / variable3;
+					tmp_ib = (variable2 - 1) / 2;
+					xyz = variable2 - 1;
+					variable4 = (value_table37_1_1 * variable1 + value_table37_1_2 * tmp_c + tmp_ib) / xyz;
+					variable3 = (value_table37_2_1 * variable1 + value_table37_2_2 * tmp_c + tmp_ib) / xyz;
 				} else {
 					variable4 = value_table37_1_1;
-					tmp_a = tmp_value1;
+					variable3 = value_table37_2_1;
 				}
-				table_ptr = &table[param * tmp_a + variable4];
-				*(table_ptr) = 1;
+				table_ptr = &table[param * variable3 + variable4];
+				*table_ptr = 1;
 
 				if ((b1 == 2 && b2 == 3) || (b2 == 2 && b1 == 3) ||
 				    (b1 == 0 && b2 != 1) || (b2 == 0 && b1 != 1)) {
-					if (tmp_a >= 0) {
-						d = tmp_a + 1;
-						while (d--) {
+					if (variable3 >= 0) {
+						i = variable3 + 1;
+						while (i--) {
 							*table_ptr = 1;
 							table_ptr -= param;
 						}
 					}
 				} else if ((b2 != 0 && b1 == 1) || (b1 != 0 && b2 == 1)) {
-					if (param > tmp_a) {
-						d = param - tmp_a;
-						while (d--) {
+					if (param > variable3) {
+						i = param - variable3;
+						while (i--) {
 							*table_ptr = 1;
 							table_ptr += param;
+						}
+					}
+				} else if ((b1 == 2 && b2 != 3) || (b2 == 2 && b1 != 3)) {
+					if (variable4 >= 0) {
+						i = variable4 + 1;
+						while(i--) {
+							*(table_ptr--) = 1;
 						}
 					}
 				} else if ((b1 == 0 && b2 == 1) || (b2 == 0 && b1 == 1) ||
 				           (b1 == 3 && b2 != 2) || (b2 == 3 && b1 != 2)) {
 					if (param > variable4) {
-						d = param - variable4;
-						while(d--) {
+						i = param - variable4;
+						while(i--) {
 							*(table_ptr++) = 1;
-						}
-					}
-				} else if ((b1 == 2 && b2 != 3) || (b2 == 2 && b1 != 3)) {
-					if (variable4 >= 0) {
-						d = variable4 + 1;
-						while(d--) {
-							*(table_ptr--) = 1;
 						}
 					}
 				}
 			}
 
-			if (tmp_param != 0) {
-				if (param == 8) {
-					tmp_c = tmp_param_tmp;
-					do {
-						if (table[tmp_c] != 0) {
-							smush_buf_big[256 + s + smush_buf_big[384 + s]] = (byte)tmp_c;
-							smush_buf_big[384 + s]++;
-						} else {
-							smush_buf_big[320 + s + smush_buf_big[385 + s]] = (byte)tmp_c;
-							smush_buf_big[385 + s]++;
-						}
-					} while (tmp_c-- != 0);
+			if (param == 8) {
+				for (i = 64 - 1; i >= 0; i--) {
+					if (table[i] != 0) {
+						smush_buf_big[256 + s + smush_buf_big[384 + s]] = (byte)i;
+						smush_buf_big[384 + s]++;
+					} else {
+						smush_buf_big[320 + s + smush_buf_big[385 + s]] = (byte)i;
+						smush_buf_big[385 + s]++;
+					}
 				}
-				if (param == 4) {
-					tmp_c = tmp_param_tmp;
-					do {
-						if (table[tmp_c] != 0) {
-							smush_buf_small[64 + p + smush_buf_small[96 + p]] = (byte)tmp_c;
-							smush_buf_small[96 + p]++;
-						} else {
-							smush_buf_small[80 + p + smush_buf_small[97 + p]] = (byte)tmp_c;
-							smush_buf_small[97 + p]++;
-						}
-					} while (tmp_c-- != 0);
-				}
+				s += 388;
 			}
-			p += 128;
-			s += 388;
+			if (param == 4) {
+				for (i = 16 - 1; i >= 0; i--) {
+					if (table[i] != 0) {
+						smush_buf_small[64 + s + smush_buf_small[96 + s]] = (byte)i;
+						smush_buf_small[96 + s]++;
+					} else {
+						smush_buf_small[80 + s + smush_buf_small[97 + s]] = (byte)i;
+						smush_buf_small[97 + s]++;
+					}
+				}
+				s += 128;
+			}
 			tmp_table37_1_2++;
 			tmp_table37_2_2++;
 		}
