@@ -37,9 +37,6 @@
 #include <config.h>
 #endif
 
-#define HAVE_ALLOCA 1
-#define HAVE_ALLOCA_H 1
-
 #include "scale2x.h"
 #include "scale3x.h"
 
