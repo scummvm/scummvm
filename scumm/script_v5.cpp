@@ -803,7 +803,7 @@ void Scumm_v5::o5_drawObject() {
 	w = od->width;
 	h = od->height;
 
-	i = _numLocalObjects;
+	i = _numLocalObjects - 1;
 	do {
 		if (_objs[i].obj_nr && _objs[i].x_pos == x && _objs[i].y_pos == y && _objs[i].width == w && _objs[i].height == h)
 			putState(_objs[i].obj_nr, 0);
