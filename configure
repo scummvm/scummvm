@@ -656,7 +656,7 @@ echocheck "Plugin support"
 _mak_plugins=
 if test "$_build_plugins" = yes ; then
     case $_host_os in
-	linux)
+	linux*)
 _mak_plugins='
 BUILD_PLUGINS := 1
 CXXFLAGS      += -DDYNAMIC_MODULES
@@ -667,7 +667,7 @@ POST_OBJS_FLAGS := -Wl,-no-whole-archive
 LIBS            += -ldl
 '
 	    ;;
-	darwin)
+	darwin*)
 _mak_plugins='
 BUILD_PLUGINS := 1
 CXXFLAGS      += -DDYNAMIC_MODULES
