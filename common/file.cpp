@@ -71,6 +71,10 @@ FILE *File::fopenNoCase(const char *filename, const char *directory, const char 
 		"DATA/",
 		"resource/",
 		"RESOURCE/",
+		// Simon the Sorcerer 1 Acorn
+		"execute/",
+		"EXECUTE/",
+		// Simon the Sorcerer 2 Amiga/Mac
 		"voices/",
 		"VOICES/",
 		// sword2 stuff if user just copied files without putting

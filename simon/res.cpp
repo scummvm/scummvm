@@ -147,7 +147,10 @@ void SimonEngine::loadGamePcFile(const char *filename) {
 	_tablesheap_curpos_org = _tablesheap_curpos;
 
 	/* Read list of TEXT resources */
-	in.open("STRIPPED.TXT", _gameDataPath);
+	if (_game == GAME_SIMON1ACORN)
+		in.open("STRIPPED", _gameDataPath);
+	else
+		in.open("STRIPPED.TXT", _gameDataPath);
 	if (in.isOpen() == false)
 		error("Can't open text resources file 'STRIPPED.TXT'");
 
@@ -259,6 +262,7 @@ byte *SimonEngine::readSingleOpcode(File *in, byte *ptr) {
 	case GAME_SIMON1TALKIE:
 	case GAME_SIMON1WIN:
 	case GAME_SIMON1CD32:
+	case GAME_SIMON1ACORN:
 		table = opcode_arg_table_simon1win;
 		break;
 	case GAME_SIMON2DOS:

@@ -312,7 +312,7 @@ SimonSound::SimonSound(const byte game, const GameSpecificSettings *gss, const c
 	}
 #endif
 
-	if (_game == GAME_SIMON1TALKIE) {
+	if (_game == GAME_SIMON1ACORN || _game == GAME_SIMON1TALKIE) {
 		file = new File();
 #ifdef USE_MAD
 		file->open(gss->mp3_effects_filename, gameDataPath);

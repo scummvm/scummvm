@@ -47,6 +47,7 @@ extern bool draw_keyboard;
 
 static const TargetSettings simon_settings[] = {
 	// Simon the Sorcerer 1 & 2 (not SCUMM games)
+	{"simon1acorn", "Simon the Sorcerer 1 (Acorn)", GID_SIMON_FIRST, 99, MDT_ADLIB | MDT_NATIVE, GAME_SIMON1ACORN, "DATA"},
 	{"simon1dos", "Simon the Sorcerer 1 (DOS)", GID_SIMON_FIRST, 99, MDT_ADLIB | MDT_NATIVE, GAME_SIMON1DOS, "GAMEPC"},
 	{"simon1amiga", "Simon the Sorcerer 1 (Amiga)", GID_SIMON_FIRST, 99, MDT_NONE, GAME_SIMON1AMIGA, "gameamiga"},
 	{"simon2dos", "Simon the Sorcerer 2 (DOS)", GID_SIMON_FIRST, 99, MDT_ADLIB | MDT_NATIVE, GAME_SIMON2DOS, "GAME32"},
@@ -87,6 +88,24 @@ static const GameSpecificSettings simon1_settings = {
 	"EFFECTS.VOC",									// voc_effects_filename
 	"EFFECTS.MP3",									// mp3_effects_filename
 	"GAMEPC",									// gamepc_filename
+};
+
+static const GameSpecificSettings simon1acorn_settings = {
+	1,										// VGA_DELAY_BASE
+	1576 / 4,									// TABLE_INDEX_BASE
+	1460 / 4,									// TEXT_INDEX_BASE
+	64,										// NUM_VIDEO_OP_CODES
+	1000000,									// VGA_MEM_SIZE
+	50000,										// TABLES_MEM_SIZE
+	1316 / 4,									// MUSIC_INDEX_BASE
+	0,										// SOUND_INDEX_BASE
+	"DATA",										// gme_filename
+	"",										// wav_filename
+	"SIMON",									// voc_filename
+	"SIMON.MP3",									// mp3_filename
+	"EFFECTS",									// voc_effects_filename
+	"EFFECTS.MP3",									// mp3_effects_filename
+	"GAMEBASE",									// gamepc_filename
 };
 
 static const GameSpecificSettings simon1amiga_settings = {
@@ -197,6 +216,8 @@ SimonEngine::SimonEngine(GameDetector *detector, OSystem *syst)
 		gss = &simon2win_settings;
 	} else if (_game == GAME_SIMON2DOS) {
 		gss = &simon2dos_settings;
+	} else if (_game == GAME_SIMON1ACORN) {
+		gss =&simon1acorn_settings;
 	} else if (_game & GF_AMIGA) {
 		gss = &simon1amiga_settings;
 	} else if (_game == GAME_SIMON1DEMO) {
@@ -1697,7 +1718,9 @@ uint SimonEngine::item_get_icon_number(Item *item) {
 
 void SimonEngine::loadIconFile() {
 	File in;
-	if (_game & GF_AMIGA)
+	if (_game & GF_ACORN)
+		in.open("ICONDATA", _gameDataPath);
+	else if (_game & GF_AMIGA)
 		in.open("icon.pkd", _gameDataPath);
 	else
 		in.open("ICON.DAT", _gameDataPath);
@@ -2092,6 +2115,7 @@ void SimonEngine::o_print_str() {
 	case GAME_SIMON1TALKIE:
 	case GAME_SIMON1WIN:
 	case GAME_SIMON1CD32:
+	case GAME_SIMON1ACORN:
 		if (speech_id != 0)
 			talk_with_speech(speech_id, num_1);
 		if (string_ptr != NULL && (speech_id == 0 || _subtitles))
@@ -4834,7 +4858,7 @@ void SimonEngine::loadMusic (uint music) {
 		if (_game & GF_AMIGA) {
 			if (_game != GAME_SIMON1CD32) {
 				// TODO Add support for decruncher
-				debug(5,"playMusic - Decrunch %dtune attempt", music);
+				debug(5,"loadMusic - Decrunch %dtune attempt", music);
 			}
 			// TODO Add Protracker support for simon1amiga/cd32
 			debug(5,"playMusic - Load %dtune attempt", music);
