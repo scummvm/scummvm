@@ -348,7 +348,7 @@ void Scumm::initBGBuffers() {
                 ptr = findResource(MKID('RMIH'), findResource(MKID('RMIM'), room));
                 gdi._numZBuffer = READ_LE_UINT16(ptr+8) + 1;
         }
-	assert(gdi._numZBuffer>=1 && gdi._numZBuffer<=4);
+	assert(gdi._numZBuffer>=1 && gdi._numZBuffer<=5);
 	
 	itemsize = (_scrHeight + 4) * 40;
 	size = itemsize * gdi._numZBuffer;
