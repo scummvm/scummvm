@@ -1423,7 +1423,11 @@ void Scumm::parseEvents() {
 				// because that's what MI2 looks for in
 				// its "instant win" cheat.
 				_keyPressed = event.kbd.keycode + 154;
-			} else
+			// FIXME support in game screen
+			// this remaps F1 to F5 for comi
+			} else if (event.kbd.ascii == 315 && _gameId == GID_CMI)
+				_keyPressed = 319;
+			else
 				_keyPressed = event.kbd.ascii;	// Normal key press, pass on to the game.
 			break;
 
