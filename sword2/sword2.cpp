@@ -312,11 +312,25 @@ void Sword2Engine::go() {
 	if (_saveSlot != -1) {
 		if (saveExists(_saveSlot))
 			restoreGame(_saveSlot);
-		else { // show restore menu
+		else {
 			setMouse(NORMAL_MOUSE_ID);
 			if (!_gui->restoreControl())
 				startGame();
 		}
+	} else if (saveExists()) {
+		int32 pars[2] = { 221, FX_LOOP };
+		bool result;
+
+		setMouse(NORMAL_MOUSE_ID);
+		_logic->fnPlayMusic(pars);
+		result = _gui->startControl();
+		_logic->fnStopMusic(NULL);
+
+		if (_quit)
+			return;
+
+		if (result)
+			startGame();
 	} else
 		startGame();
 

@@ -65,6 +65,10 @@ struct CdInf {
 ResourceManager::ResourceManager(Sword2Engine *vm) {
 	_vm = vm;
 
+	// Until proven differently, assume we're on CD 1. This is so the start
+	// dialog will be able to play any music at all.
+	_curCd = 1;
+
 	// We read in the resource info which tells us the names of the
 	// resource cluster files ultimately, although there might be groups
 	// within the clusters at this point it makes no difference. We only
@@ -99,7 +103,7 @@ ResourceManager::ResourceManager(Sword2Engine *vm) {
 	// all the files now extract the filenames
 	do {
 		// item must have an #0d0a
-		while(temp->ad[j] != 13) {
+		while (temp->ad[j] != 13) {
 			_resourceFiles[_totalClusters][pos] = temp->ad[j];
 			j++;
 			pos++;

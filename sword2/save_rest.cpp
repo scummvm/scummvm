@@ -438,6 +438,13 @@ uint32 Sword2Engine::getSaveDescription(uint16 slotNo, uint8 *description) {
 	return SR_OK;
 }
 
+bool Sword2Engine::saveExists(void) {
+	for (int i = 0; i <= 99; i++)
+		if (saveExists(i))
+			return true;
+	return false;
+}
+
 bool Sword2Engine::saveExists(uint16 slotNo) {
 	char saveFileName[MAX_FILENAME_LEN];
 	SaveFileManager *mgr = _system->get_savefile_manager();

@@ -43,6 +43,7 @@ public:
 
 	uint32 restoreControl(void);
 	void saveControl(void);
+	bool startControl(void);
 	void quitControl(void);
 	void restartControl(void);
 	void optionControl(void);
