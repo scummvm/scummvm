@@ -477,8 +477,6 @@ void OSystem_X11::set_palette(const byte *colors, uint start, uint num) {
 void OSystem_X11::copy_rect(const byte *buf, int pitch, int x, int y, int w, int h) {
 	unsigned char *dst;
 
-	fprintf(stderr, "%d %d %d %d %d %p\n", pitch, x, y, w, h, buf);
-
 	if (y < 0) {
 		h += y;
 		buf -= y * pitch;
@@ -498,7 +496,6 @@ void OSystem_X11::copy_rect(const byte *buf, int pitch, int x, int y, int w, int
 
 	AddDirtyRec(x, y, w, h);
 	while (h-- > 0) {
-	  fprintf(stderr, " => %d %p\n", h, buf);
 		memcpy(dst, buf, w);
 		dst += fb_width;
 		buf += pitch;
