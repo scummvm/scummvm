@@ -21,12 +21,9 @@
  */
 #include <PalmOS.h>
 
-#include "start.h"
+#include "palmdefs.h"
 #include "globals.h"
 #include "scumm_globals.h"
-
-#include "stdafx.h"
-#include "scumm.h"
 
 static void GlbInitAll() {
 	if (gVars->globals[GBVARS_COMMON]) {
@@ -49,6 +46,11 @@ static void GlbInitAll() {
 	if (gVars->globals[GBVARS_SIMON]) {
 		CALL_INIT(Simon_Simon)
 		CALL_INIT(Simon_Charset)
+	}
+#endif
+#ifndef DISABLE_SWORD1
+	if (gVars->globals[GBVARS_SWORD1]) {
+		CALL_INIT(Sword1_fxList)
 	}
 #endif
 #ifndef DISABLE_QUEEN
@@ -85,6 +87,11 @@ static void GlbReleaseAll() {
 		CALL_RELEASE(Simon_Charset)
 	}
 #endif
+#ifndef DISABLE_SWORD1
+	if (gVars->globals[GBVARS_SWORD1]) {
+		CALL_RELEASE(Sword1_fxList)
+	}
+#endif
 #ifndef DISABLE_QUEEN
 	if (gVars->globals[GBVARS_QUEEN]) {
 		CALL_RELEASE(Queen_Talk)
@@ -112,6 +119,7 @@ static DmOpenRef GlbOpenInternal(const Char *nameP) {
 void GlbOpen() {
 	gVars->globals[GBVARS_COMMON]= GlbOpenInternal("Glbs::Common");
 	gVars->globals[GBVARS_SCUMM] = GlbOpenInternal("Glbs::Scumm");
+	gVars->globals[GBVARS_SWORD1]= GlbOpenInternal("Glbs::Sword1");
 	gVars->globals[GBVARS_SIMON] = GlbOpenInternal("Glbs::Simon");
 	gVars->globals[GBVARS_QUEEN] = GlbOpenInternal("Glbs::Queen");
 
@@ -127,6 +135,8 @@ void GlbClose() {
 		DmCloseDatabase(gVars->globals[GBVARS_SCUMM]);
 	if (gVars->globals[GBVARS_SIMON])
 		DmCloseDatabase(gVars->globals[GBVARS_SIMON]);
+	if (gVars->globals[GBVARS_SWORD1])
+		DmCloseDatabase(gVars->globals[GBVARS_SWORD1]);
 	if (gVars->globals[GBVARS_QUEEN])
 		DmCloseDatabase(gVars->globals[GBVARS_QUEEN]);
 }

@@ -75,6 +75,11 @@ PROTO_GLOBALS(Queen_Restables)
 PROTO_GLOBALS(Queen_Musicdata)
 #endif
 
+// Sword1 stuffs
+#ifndef DISABLE_SWORD1
+PROTO_GLOBALS(Sword1_fxList)
+#endif
+
 #undef PROTO_GLOBALS
 
 #endif
