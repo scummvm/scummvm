@@ -334,7 +334,7 @@ void ScummEngine_v72he::setupOpcodes() {
 		OPCODE(o6_setBoxSet),
 		OPCODE(o6_invalid),
 		OPCODE(o6_invalid),
-		OPCODE(o7_unknownEF),
+		OPCODE(o6_invalid),
 		/* E8 */
 		OPCODE(o6_invalid),
 		OPCODE(o6_seekFilePos),
@@ -344,7 +344,7 @@ void ScummEngine_v72he::setupOpcodes() {
 		OPCODE(o6_invalid),
 		OPCODE(o6_invalid),
 		OPCODE(o7_stringLen),
-		OPCODE(o6_invalid),
+		OPCODE(o72_unknownEF),
 		/* F0 */
 		OPCODE(o6_invalid),
 		OPCODE(o72_unknownF1),
@@ -1213,6 +1213,54 @@ void ScummEngine_v72he::redimArray(int arrayId, int newDim2start, int newDim2end
 }
 
 
+void ScummEngine_v72he::o72_unknownEF() {
+	int value;
+	int array, array2, len, len2, len3, offset;
+	int b, size;
+	len = pop();
+	b = pop();
+	array2 = pop();
+
+	size = len - b + 2;
+
+	defineArray(0, kStringArray, 0, 0, 0, size);
+	writeArray(0, 0, 0, 0);
+
+	array = readVar(0);
+
+	len2 = len;
+	if (len == -1) {
+		len2 = resStrLen(getStringAddress(array2));
+		len = 0;
+	} else {
+		len = b;
+	}
+	len3 = resStrLen(getStringAddress(array));
+
+	offset = 0;
+	len2 -= len;
+	len2++;
+	while (offset < len2) {
+		writeVar(0, array2);
+		value = readArray(0, 0, offset + len);
+		writeVar(0, array);
+		writeArray(0, 0, offset + len3, value);
+		offset++;
+	}
+
+	writeArray(0, 0, len3 + offset, 0);
+
+	push(array);
+	debug(1,"stub o72_unknownEF (array %d, array2 %d)", array, array2);
+}
+
+void ScummEngine_v72he::o72_unknownF1() {
+	int a = pop();
+	int b = pop();
+	debug(1,"o7_unknownF1 stub (%d, %d)", b, a);
+	push(-1);
+}
+
 void ScummEngine_v72he::o72_readINI() {
 	byte name[100];
 	int type;
@@ -1235,13 +1283,6 @@ void ScummEngine_v72he::o72_readINI() {
 		warning("o72_readINI( read-ini string not implemented", type);
 	}
 	debug(1, "o72_readINI (%d) %s", type, name);
-}
-
-void ScummEngine_v72he::o72_unknownF1() {
-	int a = pop();
-	int b = pop();
-	debug(1,"o7_unknownF1 stub (%d, %d)", b, a);
-	push(-1);
 }
 
 void ScummEngine_v72he::o72_unknownF4() {

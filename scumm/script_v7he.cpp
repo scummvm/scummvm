@@ -826,7 +826,6 @@ void ScummEngine_v7he::o7_unknownEF() {
 
 	size = len - b + 2;
 
-
 	defineArray(0, kStringArray, 0, size);
 	writeArray(0, 0, 0, 0);
 
