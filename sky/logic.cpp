@@ -1649,7 +1649,10 @@ uint32 SkyLogic::fnMoveItems(uint32 listNo, uint32 screenNo, uint32 c) {
 }
 
 uint32 SkyLogic::fnNewList(uint32 a, uint32 b, uint32 c) {
-	error("Stub: fnNewList");
+	// Reset the chooser list
+	for (int i = 0; i < 16; i++)
+		_scriptVariables[TEXT1 + i] = 0;
+	return 1;
 }
 
 uint32 SkyLogic::fnAskThis(uint32 textNo, uint32 animNo, uint32 c) {
@@ -1691,7 +1694,9 @@ uint32 SkyLogic::fnFetchX(uint32 a, uint32 b, uint32 c) {
 }
 
 uint32 SkyLogic::fnFetchY(uint32 a, uint32 b, uint32 c) {
-	error("Stub: fnFetchY");
+	Compact *cpt = SkyState::fetchCompact(a);
+	_scriptVariables[RESULT] = cpt->ycood;
+	return 1;
 }
 
 uint32 SkyLogic::fnTestList(uint32 a, uint32 b, uint32 c) {
@@ -1714,8 +1719,10 @@ uint32 SkyLogic::fnTextModule(uint32 a, uint32 b, uint32 c) {
 	error("Stub: fnTextModule");
 }
 
-uint32 SkyLogic::fnChangeName(uint32 a, uint32 b, uint32 c) {
-	error("Stub: fnChangeName");
+uint32 SkyLogic::fnChangeName(uint32 id, uint32 textNo, uint32 c) {
+	Compact *cpt = SkyState::fetchCompact(id);
+	cpt->cursorText = textNo;
+	return 1;
 }
 
 uint32 SkyLogic::fnMiniLoad(uint32 a, uint32 b, uint32 c) {
@@ -1742,16 +1749,36 @@ uint32 SkyLogic::fnRemoveGrid(uint32 a, uint32 b, uint32 c) {
 	error("Stub: fnRemoveGrid");
 }
 
-uint32 SkyLogic::fnEyeball(uint32 a, uint32 b, uint32 c) {
-	error("Stub: fnEyeball");
+uint32 SkyLogic::fnEyeball(uint32 id, uint32 b, uint32 c) {
+	// set 'result' to frame no. pointing to foster, according to table used
+	// eg. FN_eyeball (id_eye_90_table);
+
+	uint16 *eyeTable = (uint16 *)SkyState::fetchCompact(id);
+	Compact *cpt = SkyState::fetchCompact(ID_BLUE_FOSTER);
+
+	uint32 x = cpt->xcood; // 168 < x < 416
+	x -= 168;
+	x >>= 3;
+
+	uint32 y = cpt->ycood; // 256 < y < 296
+	y -= 256;
+	y <<= 2;
+
+	_scriptVariables[RESULT] = eyeTable[x + y] + S91;
 }
 
 uint32 SkyLogic::fnCursorUp(uint32 a, uint32 b, uint32 c) {
 	error("Stub: fnCursorUp");
 }
 
-uint32 SkyLogic::fnLeaveSection(uint32 a, uint32 b, uint32 c) {
-	error("Stub: fnLeaveSection");
+uint32 SkyLogic::fnLeaveSection(uint32 sectionNo, uint32 b, uint32 c) {
+	if (SkyState::isDemo(_gameVersion))
+		error("End of demo");
+	
+	if (sectionNo == 5) //linc section - has different mouse icons
+		_skyMouse->replaceMouseCursors(60302);
+
+	return 1;
 }
 
 uint32 SkyLogic::fnEnterSection(uint32 sectionNo, uint32 b, uint32 c) {
@@ -1819,7 +1846,16 @@ uint32 SkyLogic::fnLincTextModule(uint32 a, uint32 b, uint32 c) {
 }
 
 uint32 SkyLogic::fnTextKill2(uint32 a, uint32 b, uint32 c) {
-	error("Stub: fnTextKill2");
+	// Kill all text items
+
+	uint32 id = FIRST_TEXT_COMPACT;
+
+	for (int i = 10; i > 0; i--) {
+		Compact *cpt = SkyState::fetchCompact(id);
+		cpt->status = 0;
+		id++;
+	}
+	return 1;
 }
 
 uint32 SkyLogic::fnSetFont(uint32 a, uint32 b, uint32 c) {
@@ -1864,6 +1900,7 @@ uint32 SkyLogic::fnUnPauseFx(uint32 a, uint32 b, uint32 c) {
 }
 
 uint32 SkyLogic::fnPrintf(uint32 a, uint32 b, uint32 c) {
-	error("Stub: fnPrintf");
+	printf("fnPrintf: %d\n", a);
+	return 1;
 }
 
