@@ -116,7 +116,7 @@ static const GameSpecificSettings *simon2win_settings;
 static const GameSpecificSettings *simon2mac_settings;
 static const GameSpecificSettings *simon2dos_settings;
 #else
-#define PTR(a) &a;
+#define PTR(a) &a
 static const GameSpecificSettings simon1_settings = {
 	1,										// VGA_DELAY_BASE
 	1576 / 4,									// TABLE_INDEX_BASE

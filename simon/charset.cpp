@@ -944,13 +944,6 @@ void SimonEngine::video_putchar_drawchar(FillOrCopyStruct *fcs, uint x, uint y, 
 
 } // End of namespace Simon
 
-static const byte *french_video_font;
-static const byte *german_video_font;
-static const byte *hebrew_video_font;
-static const byte *italian_video_font;
-static const byte *spanish_video_font;
-static const byte *video_font;
-
 #ifdef __PALM_OS__
 #include "scumm_globals.h"
 
