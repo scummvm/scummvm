@@ -446,7 +446,10 @@ void Scumm::drawString(int a) {
 		_msgPtrToAdd++;
 	}
 	if(space) *space='\0';
-
+	if(_gameId==GID_ZAK256) {
+		debug(1, "DRAWSTRING: %s", buf);
+		return;
+	}
 	if (charset._center) {
 		charset._left -= charset.getStringWidth(a, buf, 0) >> 1;
 	}
