@@ -2726,7 +2726,6 @@ void Scumm::decodeParseString()
 					offset = 0;
 				delay = (int)((getVarOrDirectWord(0x40) & 0xffff) * 7.5);
 				if (_gameId == GID_LOOM256) {					
-					_vars[VAR_MUSIC_FLAG] = 0;
 #ifdef COMPRESSED_SOUND_FILE
 					playMP3CDTrack(1, 0, offset, delay);
 #else
