@@ -46,13 +46,16 @@
 // tovista1.san
 // tovista2.san
 
-// TODO:
+// TODO (in no particular order):
+// o After third crash Ben disappears
 // o Check why ftmacdemo doesn't finish insane scene
 // o Proper SAN seeking/switching. Now it just crashes
 // o TRS file support. Everything is in place, I just need to figure out function parameters
 // o FLU files support
+// o IACT
 // o Kill bugs
 // o Code review/cleanup
+// o DOS demo INSANE
 
 namespace Scumm {
 
@@ -93,7 +96,7 @@ Insane::Insane(ScummEngine *scumm) {
 	_smush_bencutNut = new NutRenderer(_scumm);
 	_smush_bencutNut->loadFont("bencut.nut", _scumm->getGameDataPath());
 
-	// FIXME: implement things
+	// FIXME: implement
 	//openManyResource(0, 4, "specfnt.nut", "titlfnt.nut", "techfnt.nut", "scummfnt.nut");
 }
 
@@ -872,7 +875,7 @@ int32 Insane::enemy2handler(int32 actor1, int32 actor2, int32 probability) {
 					}
 				}
 			} else {
-				if (weaponMaxRange(actor2) < dist) {
+				if (weaponMaxRange(actor2) >= dist) {
 					if (act2x < act1x)
 						_actor[1].field_14 = 101;
 					else
@@ -1101,7 +1104,7 @@ int32 Insane::enemyBenHandler(int32 actor1, int32 actor2, int32 probability) {
 	int32 retval;
 	int32 tmp;
 
-	retval = func75();
+	retval = processMouse();
 	
 	// Joystick support
 	// if (func77())
@@ -1123,9 +1126,16 @@ int32 Insane::enemyBenHandler(int32 actor1, int32 actor2, int32 probability) {
 	return retval & 3;
 }
 
-int32 Insane::func75(void) {
-	// FIXME: implement
-	return 0;
+int32 Insane::processMouse(void) {
+	int32 buttons = 0;
+
+	_enemyState[EN_BEN][0] = _scumm->_mouse.x;
+	_enemyState[EN_BEN][1] = _scumm->_mouse.y;
+
+	buttons = _scumm->_mouseButStat & MBS_LEFT_CLICK ? 1 : 0;
+	buttons |= _scumm->_mouseButStat & MBS_RIGHT_CLICK ? 2 : 0;
+
+	return buttons;
 }
 
 int32 Insane::processKeyboard(void) {
@@ -1473,8 +1483,8 @@ void Insane::smush_proc41(void) {
 	warning("stub Insane::smush_proc41");
 }
 
-void Insane::smush_setupSomething(int x, int y, int flag) {
-	// FIXME: implement
+void Insane::smush_setupSomething(int x, int y, int buttons) {
+	_scumm->_system->warp_mouse(x, y);
 }
 
 void Insane::putActors(void) {
@@ -3073,6 +3083,7 @@ void Insane::func11(int32 arg_0) {
 		queueSceneSwitch(18, 0, "fishgogg.san", 64, 0, 0, 0);
 	} else if (_actor[0].field_8 == 1) {
 		tmp = _actor[0].field_14 / 22;
+
 		switch (_currSceneId) {
 		case 17:
 			if (arg_0 != 1) {
@@ -4223,7 +4234,7 @@ void Insane::actor02Reaction(int32 buttons) {
 		if (!smlayer_actorNeedRedraw(0, 2)) {
 			setBenState();
 			_actor[0].act[2].tilt = 0;
-			// heh, for some reason there is no break at this
+			// for some reason there is no break at this
 			// place, so tilt gets overriden on next line
 		}
 		_actor[0].act[2].tilt = calcTilt(_actor[0].speed);
@@ -6372,6 +6383,8 @@ void Insane::actor12Reaction(int32 buttons) {
 		if (!smlayer_actorNeedRedraw(1, 2)) {
 			setEnemyState();
 			_actor[1].act[2].tilt = 0;
+			// for some reason there is no break at this
+			// place, so tilt gets overriden on next line
 		}
 		_actor[1].act[2].tilt = calcTilt(_actor[1].speed);
 		break;
