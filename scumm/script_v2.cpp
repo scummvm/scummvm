@@ -1174,6 +1174,8 @@ void Scumm_v2::o2_roomOps() {
 	_opcode = fetchScriptByte();
 	switch (_opcode & 0x1F) {
 	case 1:											/* room scroll */
+		a *= 8;
+		b *= 8;
 		if (a < (_screenWidth / 2))
 			a = (_screenWidth / 2);
 		if (b < (_screenWidth / 2))
