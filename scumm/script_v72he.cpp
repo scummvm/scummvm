@@ -93,7 +93,7 @@ void ScummEngine_v72he::setupOpcodes() {
 		/* 24 */
 		OPCODE(o6_invalid),
 		OPCODE(o6_invalid),
-		OPCODE(o72_unknown26),
+		OPCODE(o6_invalid),
 		OPCODE(o6_invalid),
 		/* 28 */
 		OPCODE(o6_invalid),
@@ -211,7 +211,7 @@ void ScummEngine_v72he::setupOpcodes() {
 		OPCODE(o6_animateActor),
 		OPCODE(o6_doSentence),
 		/* 84 */
-		OPCODE(o7_pickupObject),
+		OPCODE(o72_pickupObject),
 		OPCODE(o6_loadRoomWithEgo),
 		OPCODE(o6_invalid),
 		OPCODE(o6_getRandomNumber),
@@ -297,7 +297,7 @@ void ScummEngine_v72he::setupOpcodes() {
 		OPCODE(o6_distPtPt),
 		/* C8 */
 		OPCODE(o6_kernelGetFunctions),
-		OPCODE(o6_kernelSetFunctions),
+		OPCODE(o7_kernelSetFunctions),
 		OPCODE(o6_delayFrames),
 		OPCODE(o6_pickOneOf),
 		/* CC */
@@ -563,8 +563,11 @@ void ScummEngine_v72he::o72_compareStackList() {
 }
 
 void ScummEngine_v72he::o72_unknown1C() {
-	// For Pajame Sam 2
-	// Maybe HE 7.3?
+	// HE 90+ specific
+	if (_heversion < 90)
+		error("Invalid opcode '%x' at %x", _opcode, _scriptPointer - _scriptOrgPointer);
+
+	// For Pajame Sam 2 demo
 	// Incomplete
 	int value = fetchScriptByte();
 	value -= 46;
@@ -578,55 +581,6 @@ void ScummEngine_v72he::o72_unknown1C() {
 	}
 
 	warning("o72_unknown1C stub (%d)", value);
-}
-
-void ScummEngine_v72he::o72_unknown26() {
-	// Maybe HE 7.3?
-	// Incomplete
-	int args[16];
-	int subOp = fetchScriptByte();
-	switch (subOp) {
-		case 30:
-		case 31:
-		case 32:
-		case 33:
-		case 34:
-		case 35:
-		case 36:
-		case 37:
-		case 38:
-		case 39:
-		case 43:
-		case 52:
-		case 63:
-		case 68:
-		case 82:
-		case 92:
-		case 97:
-		case 98:
-		case 124:
-			pop();
-			break;
-		case 42:
-		case 198:
-			pop();
-			pop();
-			break;
-		case 45:
-			pop();
-			pop();
-			pop();
-			break;
-		case 125:
-			getStackList(args, ARRAYSIZE(args));
-			pop();
-			break;
-		default:
-			error("o72_unknown26: Unknown case %d", subOp);
-	}
-	push(0);
-
-	warning("o72_unknown26 stub (%d)", subOp);
 }
 
 void ScummEngine_v72he::o72_wordArrayWrite() {
@@ -813,6 +767,19 @@ void ScummEngine_v72he::o72_getNumFreeArrays() {
 	}
 
 	push (num);
+}
+
+void ScummEngine_v72he::o72_pickupObject() {
+	int obj, room;
+
+	room = pop();
+	obj = pop();
+	if (room == 0)
+		room = getObjectRoom(obj);
+
+	addObjectToInventory(obj, room);
+	putOwner(obj, VAR(VAR_EGO));
+	runInventoryScript(obj);
 }
 
 void ScummEngine_v72he::o72_arrayOps() {

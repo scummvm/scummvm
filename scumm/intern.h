@@ -623,6 +623,7 @@ protected:
 	void o7_getActorRoom();
 	void o7_resourceRoutines();
 	void o7_quitPauseRestart();
+	void o7_kernelSetFunctions();
 	void o7_unknownED();
 	void o7_stringLen();
 	void o7_unknownEF();
@@ -690,7 +691,6 @@ protected:
 	void o72_wordArrayIndexedWrite();
 	void o72_compareStackList();
 	void o72_unknown1C();
-	void o72_unknown26();
 	void o72_unknown50();
 	void o72_wordArrayInc();
 	void o72_objectX();
@@ -704,6 +704,7 @@ protected:
 	void o72_unknown62();
 	void o72_getArrayDimSize();
 	void o72_getNumFreeArrays();
+	void o72_pickupObject();
 	void o72_arrayOps();
 	void o72_dimArray();
 	void o72_dim2dimArray();

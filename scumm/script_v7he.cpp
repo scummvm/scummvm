@@ -297,7 +297,7 @@ void ScummEngine_v7he::setupOpcodes() {
 		OPCODE(o6_distPtPt),
 		/* C8 */
 		OPCODE(o6_kernelGetFunctions),
-		OPCODE(o6_kernelSetFunctions),
+		OPCODE(o7_kernelSetFunctions),
 		OPCODE(o6_delayFrames),
 		OPCODE(o6_pickOneOf),
 		/* CC */
@@ -538,7 +538,6 @@ void ScummEngine_v7he::o7_pickupObject() {
 	runInventoryScript(obj);									/* Difference */
 }
 
-
 void ScummEngine_v7he::o7_getActorRoom() {
 	int act = pop();
 
@@ -718,6 +717,45 @@ void ScummEngine_v7he::o7_unknownED() {
 	c = pop();
 	push(-1);
 	warning("stub o7_unknownED (%d, %d, %d)", c, b, a);
+}
+
+void ScummEngine_v7he::o7_kernelSetFunctions() {
+	int args[29];
+	int num;
+
+	num = getStackList(args, ARRAYSIZE(args));
+
+	switch (args[0]) {
+	case 1:
+		// Used to restore images when decorating cake in
+		// Fatty Bear's Birthday Surprise
+		virtScreenLoad(args[1], args[2], args[3], args[4], args[5]);
+		break;
+	case 20:
+		// Clear/stop unknown animation queue
+		break;
+	case 21:
+		_skipDrawObject = 1;
+		break;
+	case 22:
+		_skipDrawObject = 0;
+		break;
+	case 23:
+		_charset->clearCharsetMask();
+		_fullRedraw = 1;
+		break;
+	case 24:
+		_skipProcessActors = 1;
+		_fullRedraw = 1;
+		break;
+	case 25:
+		_skipProcessActors = 0;
+		_fullRedraw = 1;
+		break;
+	default:
+		error("o6_kernelSetFunctions: default case %d (param count %d)", args[0], num);
+		break;
+	}
 }
 
 void ScummEngine_v7he::o7_stringLen() {

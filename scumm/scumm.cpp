@@ -654,6 +654,7 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 	_V1_talkingActor = 0;
 
 	_skipDrawObject = 0;
+	_skipProcessActors = 0;
 	_heSndSoundId = 0;
 	_heSndOffset = 0;
 	_heSndTimer = 0;

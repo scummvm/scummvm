@@ -778,16 +778,6 @@ void ScummEngine_v6he::o6_kernelSetFunctions() {
 	case 5:
 		//Used before mini games in 3DO versions, seems safe to ignore.
 		break;
-	case 21:
-		_skipDrawObject = 1;
-		break;
-	case 22:
-		_skipDrawObject = 0;
-		break;
-	case 23:
-		_charset->clearCharsetMask();
-		_fullRedraw = 1;
-		break;
 	default:
 		warning("o6_kernelSetFunctions: default case %d (param count %d)", args[0], num);
 		break;

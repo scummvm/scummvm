@@ -928,6 +928,9 @@ static int compareDrawOrder(const void* a, const void* b)
 }
 
 void ScummEngine::processActors() {
+	if (_skipProcessActors)
+		return;
+
 	int numactors = 0;
 
 	// TODO : put this actors as a member array. It never has to grow or shrink
