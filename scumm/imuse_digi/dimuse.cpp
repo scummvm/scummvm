@@ -203,9 +203,13 @@ void IMuseDigital::switchToNextRegion(int track) {
 		return;
 	}
 
-	int region = checkJumpByRegion(track, _track[track].curRegion);
-	if (region != -1)
-		_track[track].curRegion = region;
+	int hookid = _sound->getJumpIdByRegion(_track[track].soundHandle, _track[track].curRegion);
+	if (hookid == _track[track].curHookId) {
+		int region = checkJumpByRegion(track, _track[track].curRegion);
+		if ((region != -1) && (_track[track].soundGroup != IMUSE_MUSIC))
+			_track[track].curRegion = region;
+	}
+
 	_track[track].regionOffset = 0;
 }
 
@@ -268,9 +272,6 @@ void IMuseDigital::startSound(int soundId, const char *soundName, int soundType,
 					error("IMuseDigital::startSound(): Can't handle %d bit samples", bits);
 
 				_track[l].pullSize /= 25;	// We want a "frame rate" of 25 audio blocks per second
-
-				if (soundGroup == IMUSE_MUSIC)
-					_curMusicId = soundId;
 			}
 
 			if (input) {
@@ -280,6 +281,11 @@ void IMuseDigital::startSound(int soundId, const char *soundName, int soundType,
 				_track[l].stream2 = NULL;
 				_track[l].stream = makeAppendableAudioStream(freq, mixerFlags, 100000);
 				_scumm->_mixer->playInputStream(&_track[l].handle, _track[l].stream, true, _track[l].vol / 1000, _track[l].pan, -1);
+			}
+
+			if (soundGroup == IMUSE_MUSIC) {
+				stopMusic();
+				_curMusicId = soundId;
 			}
 
 			_track[l].used = true;
@@ -324,6 +330,7 @@ void IMuseDigital::stopAllSounds() {
 				_scumm->_mixer->stopHandle(_track[l].handle);
 		}
 	}
+	_curMusicId = -1;
 }
 
 void IMuseDigital::pause(bool p) {

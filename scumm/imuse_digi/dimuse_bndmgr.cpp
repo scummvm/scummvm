@@ -211,7 +211,6 @@ int32 BundleMgr::decompressSampleByIndex(int32 index, int32 offset, int32 size, 
 	comp_input[0x2000-1] = 0;
 
 	for (i = first_block; i <= last_block; i++) {
-		assert(size);
 		assert(0x2000 >= _compTable[i].size + 1);
 
 		byte *curBuf;
@@ -239,6 +238,9 @@ int32 BundleMgr::decompressSampleByIndex(int32 index, int32 offset, int32 size, 
 
 		final_size += output_size;
 		size -= output_size;
+		assert(size >= 0);
+		if (size == 0)
+			break;
 		skip = 0;
 	}
 	free(comp_input);

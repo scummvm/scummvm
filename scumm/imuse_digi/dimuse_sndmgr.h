@@ -30,7 +30,6 @@ namespace Scumm {
 
 class ScummEngine;
 class BundleMgr;
-class ImuseDigital;
 
 class ImuseDigiSndMgr {
 public:
@@ -78,6 +77,7 @@ public:
 		byte *allData;
 		int32 offsetData;
 		byte *resPtr;
+		char name[30];
 		bool freeResPtr;
 		BundleMgr *_bundle;
 		_region region[MAX_IMUSE_REGIONS];
