@@ -81,7 +81,7 @@ static void addGfx_transitionEffects() {
 
 		// Inverse iris effect, specially tailored for V1/V2 games
 		{
-			8,		// Number of iterations
+			9,		// Number of iterations
 			{
 				-1, -1,  1, -1,
 				-1,  1,  1,  1,
