@@ -1069,7 +1069,6 @@ void Scumm_v8::o8_actorOps() {
 	case 0x6E:		// SO_ACTOR_ELEVATION
 		a->elevation = pop();
 		a->needRedraw = true;
-		a->needBgReset = true;
 		break;
 	case 0x6F:		// SO_ACTOR_PALETTE Set actor palette
 		j = pop();
@@ -1090,7 +1089,6 @@ void Scumm_v8::o8_actorOps() {
 	case 0x73:		// SO_ACTOR_SCALE Set scaling of actor
 		a->scalex = a->scaley = pop();
 		a->needRedraw = true;
-		a->needBgReset = true;
 		break;
 	case 0x74:		// SO_ACTOR_NEVER_ZCLIP ?
 		a->forceClip = 0;

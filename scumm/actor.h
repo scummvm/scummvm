@@ -93,7 +93,7 @@ public:
 	bool ignoreBoxes;
 	byte forceClip;
 	byte initFrame, walkFrame, standFrame, talkStartFrame, talkStopFrame;
-	bool needRedraw, needBgReset, costumeNeedsInit, visible;
+	bool needRedraw, needBgReset, visible;
 	byte shadow_mode;
 	bool flip;
 	uint speedx, speedy;
@@ -108,6 +108,7 @@ public:
 	CostumeData cost;
 	byte palette[256];
 protected:
+	bool costumeNeedsInit;
 	ActorWalkData walkdata;
 	int16 animVariable[16];
 

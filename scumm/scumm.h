@@ -730,7 +730,7 @@ public:
 protected:
 	void walkActors();
 	void playActorSounds();
-	void setActorRedrawFlags(bool fg, bool bg);
+	void setActorRedrawFlags();
 	void showActors();
 	void resetActorBgs();
 	void processActors();

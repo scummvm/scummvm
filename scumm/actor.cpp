@@ -326,7 +326,6 @@ int Actor::actorWalkStep() {
 	int direction;
 
 	needRedraw = true;
-	needBgReset = true;
 
 	direction = updateActorDirection(true);
 	if (!(moving & MF_IN_LEG) || facing != direction) {
@@ -452,7 +451,6 @@ void Actor::startAnimActor(int f) {
 		if (costume != 0) {
 			animProgress = 0;
 			needRedraw = true;
-			needBgReset = true;
 			if (f == initFrame)
 				cost.reset();
 			_vm->akos_decodeData(this, f, (uint) - 1);
@@ -488,8 +486,6 @@ void Actor::startAnimActor(int f) {
 				cost.reset();
 			_vm->cost_decodeData(this, f, (uint) - 1);
 		}
-
-		needBgReset = true;
 	}
 }
 
@@ -559,7 +555,6 @@ void Actor::setDirection(int direction) {
 	}
 
 	needRedraw = true;
-	needBgReset = true;
 }
 
 void Actor::putActor(int dstX, int dstY, byte newRoom) {
@@ -571,7 +566,6 @@ void Actor::putActor(int dstX, int dstY, byte newRoom) {
 	y = dstY;
 	room = newRoom;
 	needRedraw = true;
-	needBgReset = true;
 
 	if (_vm->VAR(_vm->VAR_EGO) == number) {
 		_vm->_egoPositioned = true;
@@ -947,7 +941,6 @@ void Actor::drawActorCostume() {
 		// games, either. So maybe this code isn't the correct way to do what
 		// it does (which is to fix actor draw problems, see also patch #699980).
 		// Would be nice to figure out what the original code does...
-		needBgReset = true;
 		needRedraw = true;
 	}
 
@@ -975,14 +968,12 @@ void Actor::animateCostume() {
 			assert(akos);
 			if (_vm->akos_increaseAnims(akos, this)) {
 				needRedraw = true;
-				needBgReset = true;
 			}
 		} else {
 			LoadedCostume lc(_vm);
 			lc.loadCostume(costume);
 			if (lc.increaseAnims(this)) {
 				needRedraw = true;
-				needBgReset = true;
 			}
 		}
 	}
@@ -1023,13 +1014,12 @@ void Actor::animateLimb(int limb, int f) {
 	}
 }
 
-void Scumm::setActorRedrawFlags(bool fg, bool bg) {
+void Scumm::setActorRedrawFlags() {
 	int i, j;
 
 	if (_fullRedraw) {
 		for (j = 1; j < _numActors; j++) {
-			_actors[j].needRedraw |= fg;
-			_actors[j].needBgReset |= bg;
+			_actors[j].needRedraw = true;
 		}
 	} else {
 		for (i = 0; i < gdi._numStrips; i++) {
@@ -1037,8 +1027,7 @@ void Scumm::setActorRedrawFlags(bool fg, bool bg) {
 			if (testGfxAnyUsageBits(strip)) {
 				for (j = 1; j < _numActors; j++) {
 					if (testGfxUsageBit(strip, j) && testGfxOtherUsageBits(strip, j)) {
-						_actors[j].needRedraw |= fg;
-						_actors[j].needBgReset |= bg;
+						_actors[j].needRedraw = true;
 					}
 				}
 			}
@@ -1489,7 +1478,8 @@ void Scumm::resetActorBgs() {
 	for (i = 0; i < gdi._numStrips; i++) {
 		int strip = _screenStartStrip + i;
 		for (j = 1; j < _numActors; j++) {
-			if (testGfxUsageBit(strip, j) && _actors[j].top != 0xFF && _actors[j].needBgReset) {
+			if (testGfxUsageBit(strip, j) &&
+				((_actors[j].top != 0xFF || _actors[j].needRedraw) || _actors[j].needBgReset)) {
 				clearGfxUsageBit(strip, j);
 				if ((_actors[j].bottom - _actors[j].top) >= 0)
 					gdi.resetBackground(_actors[j].top, _actors[j].bottom, i);

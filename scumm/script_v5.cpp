@@ -454,7 +454,6 @@ void Scumm_v5::o5_actorSet() {
 		case 9:										/* elevation */
 			a->elevation = getVarOrDirectWord(0x80);
 			a->needRedraw = true;
-			a->needBgReset = true;
 			break;
 		case 10:										/* defaultanims */
 			a->initFrame = 1;
@@ -505,7 +504,6 @@ void Scumm_v5::o5_actorSet() {
 			}
 
 			a->needRedraw = true;
-			a->needBgReset = true;
 			break;
 		case 18:										/* neverzclip */
 			a->forceClip = 0;

@@ -1655,7 +1655,6 @@ void Scumm_v6::o6_actorOps() {
 	case 84:											/* actor-elevation */
 		a->elevation = pop();
 		a->needRedraw = true;
-		a->needBgReset = true;
 		break;
 	case 85:											/* actor-defaultanims */
 		a->initFrame = 1;
@@ -1686,7 +1685,6 @@ void Scumm_v6::o6_actorOps() {
 	case 92:
 		a->scalex = a->scaley = pop();
 		a->needRedraw = true;
-		a->needBgReset = true;
 		break;
 	case 93:
 		a->forceClip = 0;
@@ -2530,7 +2528,6 @@ void Scumm_v6::o6_kernelSetFunctions() {
 		case 107:
 			a = derefActor(args[1], "o6_kernelSetFunctions: 107");
 			a->scalex = (unsigned char)args[2];
-			a->needBgReset = true;
 			a->needRedraw = true;
 			break;
 		case 108:
@@ -2572,7 +2569,7 @@ void Scumm_v6::o6_kernelSetFunctions() {
 		case 6:
 			_fullRedraw = 1;
 			redrawBGAreas();
-			setActorRedrawFlags(true, false);
+			setActorRedrawFlags();
 			processActors();
 			fadeIn(args[1]);
 			break;
@@ -2588,7 +2585,6 @@ void Scumm_v6::o6_kernelSetFunctions() {
 		case 107:									/* set actor scale */
 			a = derefActor(args[1], "o6_kernelSetFunctions: 107");
 			a->scalex = (unsigned char)args[2];
-			a->needBgReset = true;
 			a->needRedraw = true;
 			break;
 		case 108:									/* create proc_special_palette */

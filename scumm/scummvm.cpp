@@ -1041,14 +1041,14 @@ load_game:
 			redrawVerbs();
 		}
 		
-		setActorRedrawFlags(true, true);
+		setActorRedrawFlags();
 		resetActorBgs();
 
 		if (!(_features & GF_AFTER_V7) &&
 		    !(VAR(VAR_CURRENT_LIGHTS) & LIGHTMODE_screen) &&
 		      VAR(VAR_CURRENT_LIGHTS) & LIGHTMODE_flashlight) {
 			drawFlashlight();
-			setActorRedrawFlags(true, false);
+			setActorRedrawFlags();
 		}
 
 		processActors();
