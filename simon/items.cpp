@@ -32,7 +32,7 @@ extern void force_keyboard(bool);
 
 #endif
 
-int SimonState::runScript() {
+int SimonEngine::runScript() {
 	byte opcode;
 	bool flag, condition;
 
@@ -1092,7 +1092,7 @@ int SimonState::runScript() {
 	return 0;
 }
 
-int SimonState::startSubroutine(Subroutine *sub) {
+int SimonEngine::startSubroutine(Subroutine *sub) {
 	int result = -1;
 	SubroutineLine *sl;
 	byte *old_code_ptr;
@@ -1138,12 +1138,12 @@ int SimonState::startSubroutine(Subroutine *sub) {
 	return result;
 }
 
-int SimonState::startSubroutineEx(Subroutine *sub) {
+int SimonEngine::startSubroutineEx(Subroutine *sub) {
 	_item_1_ptr = _item_1;
 	return startSubroutine(sub);
 }
 
-bool SimonState::checkIfToRunSubroutineLine(SubroutineLine *sl, Subroutine *sub) {
+bool SimonEngine::checkIfToRunSubroutineLine(SubroutineLine *sl, Subroutine *sub) {
 	if (sub->id)
 		return true;
 
@@ -1162,7 +1162,7 @@ bool SimonState::checkIfToRunSubroutineLine(SubroutineLine *sl, Subroutine *sub)
 	return true;
 }
 
-void SimonState::o_83_helper() {
+void SimonEngine::o_83_helper() {
 		if (_exit_cutscene) {
 			if (vc_get_bit(9)) {
 				startSubroutine170();
@@ -1172,7 +1172,7 @@ void SimonState::o_83_helper() {
 		}
 }
 
-void SimonState::o_190_helper(uint i) {
+void SimonEngine::o_190_helper(uint i) {
 	_exit_cutscene = false;
 	while (!(_op_189_flags & (1 << i))) {
 		if (_exit_cutscene) {
@@ -1189,7 +1189,7 @@ void SimonState::o_190_helper(uint i) {
 }
 
 
-bool SimonState::o_unk_23(uint a) {
+bool SimonEngine::o_unk_23(uint a) {
 	if (a == 0)
 		return 0;
 
@@ -1218,7 +1218,7 @@ bool SimonState::o_unk_23(uint a) {
 	return 0;
 }
 
-void SimonState::o_inventory_descriptions() {
+void SimonEngine::o_inventory_descriptions() {
 	uint a = getVarOrByte();
 	uint b = getVarOrByte();
 	const char *s = NULL;
@@ -1304,7 +1304,7 @@ void SimonState::o_inventory_descriptions() {
 	}
 }
 
-void SimonState::o_quit_if_user_presses_y() {
+void SimonEngine::o_quit_if_user_presses_y() {
 	for (;;) {
 		delay(1);
 		if (_key_pressed == 'f' && _language == 20) // Hebrew
@@ -1325,7 +1325,7 @@ void SimonState::o_quit_if_user_presses_y() {
 get_out:;
 }
 
-void SimonState::o_unk_137(uint fcs_index) {
+void SimonEngine::o_unk_137(uint fcs_index) {
 	FillOrCopyStruct *fcs;
 
 	fcs = _fcs_ptr_array_3[fcs_index & 7];
@@ -1334,27 +1334,27 @@ void SimonState::o_unk_137(uint fcs_index) {
 	fcs_unk_proc_1(fcs_index, fcs->fcs_data->item_ptr, fcs->fcs_data->unk1, fcs->fcs_data->unk2);
 }
 
-void SimonState::o_unk_138() {
+void SimonEngine::o_unk_138() {
 	_vga_buf_start = _vga_buf_free_start;
 	_vga_file_buf_org = _vga_buf_free_start;
 }
 
-void SimonState::o_unk_186() {
+void SimonEngine::o_unk_186() {
 	_vga_buf_free_start = _vga_file_buf_org_2;
 	_vga_buf_start = _vga_file_buf_org_2;
 	_vga_file_buf_org = _vga_file_buf_org_2;
 }
 
-void SimonState::o_unk_175() {
+void SimonEngine::o_unk_175() {
 	_vga_buf_start = _vga_buf_free_start;
 }
 
-void SimonState::o_unk_176() {
+void SimonEngine::o_unk_176() {
 	_vga_buf_free_start = _vga_file_buf_org;
 	_vga_buf_start = _vga_file_buf_org;
 }
 
-int SimonState::o_unk_132_helper(bool *b, char *buf) {
+int SimonEngine::o_unk_132_helper(bool *b, char *buf) {
 	HitArea *ha;
 	*b = true;
 
@@ -1414,12 +1414,12 @@ start_over_2:;
 	return ha->id - 208;
 }
 
-void SimonState::o_unk_132_helper_3() {
+void SimonEngine::o_unk_132_helper_3() {
 	for (int i = 208; i != 208 + 6; i++)
 		set_hitarea_bit_0x40(i);
 }
 
-void SimonState::o_unk_132_helper_2(FillOrCopyStruct *fcs, int x) {
+void SimonEngine::o_unk_132_helper_2(FillOrCopyStruct *fcs, int x) {
 	byte old_text;
 
 	video_putchar(fcs, x);
@@ -1435,7 +1435,7 @@ void SimonState::o_unk_132_helper_2(FillOrCopyStruct *fcs, int x) {
 	video_putchar(fcs, 8);
 }
 
-void SimonState::o_play_music_resource() {
+void SimonEngine::o_play_music_resource() {
 	int music = getVarOrWord();
 	int track = getVarOrWord();
 
@@ -1464,7 +1464,7 @@ void SimonState::o_play_music_resource() {
 	}
 }
 
-void SimonState::o_unk_120(uint a) {
+void SimonEngine::o_unk_120(uint a) {
 	uint16 id = TO_BE_16(a);
 	if (_game & GF_SIMON2) {
 		_lock_word |= 0x8000;
@@ -1479,25 +1479,25 @@ void SimonState::o_unk_120(uint a) {
 	}
 }
 
-void SimonState::o_unk_163(uint a) {
+void SimonEngine::o_unk_163(uint a) {
 	if (_game == GAME_SIMON1DOS)
 		playSting(a);
 	else
 		_sound->playEffects(a);
 }
 
-void SimonState::o_unk_160(uint a) {
+void SimonEngine::o_unk_160(uint a) {
 	fcs_setTextColor(_fcs_ptr_array_3[_fcs_unk_1], a);
 }
 
-void SimonState::o_unk_103() {
+void SimonEngine::o_unk_103() {
 	lock();
 	fcs_unk1(_fcs_unk_1);
 	showMessageFormat("\x0C");
 	unlock();
 }
 
-void SimonState::o_kill_sprite_simon1(uint a) {
+void SimonEngine::o_kill_sprite_simon1(uint a) {
 	uint16 b = TO_BE_16(a);
 	_lock_word |= 0x4000;
 	_vc_ptr = (byte *)&b;
@@ -1505,7 +1505,7 @@ void SimonState::o_kill_sprite_simon1(uint a) {
 	_lock_word &= ~0x4000;
 }
 
-void SimonState::o_kill_sprite_simon2(uint a, uint b) {
+void SimonEngine::o_kill_sprite_simon2(uint a, uint b) {
 	uint16 items[2];
 
 	items[0] = TO_BE_16(a);
@@ -1518,7 +1518,7 @@ void SimonState::o_kill_sprite_simon2(uint a, uint b) {
 }
 
 /* OK */
-void SimonState::o_unk26_helper(uint a, uint b, uint c, uint d, uint e, uint f, uint g, uint h) {
+void SimonEngine::o_unk26_helper(uint a, uint b, uint c, uint d, uint e, uint f, uint g, uint h) {
 	a &= 7;
 
 	if (_fcs_ptr_array_3[a])

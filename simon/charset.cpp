@@ -23,7 +23,7 @@
 #include "simon/simon.h"
 #include "simon/intern.h"
 
-void SimonState::print_char_helper_1(const byte *src, uint len) {
+void SimonEngine::print_char_helper_1(const byte *src, uint len) {
 	uint ind;
 
 	if (_fcs_ptr_1 == NULL)
@@ -41,13 +41,13 @@ void SimonState::print_char_helper_1(const byte *src, uint len) {
 	}
 }
 
-void SimonState::print_char_helper_5(FillOrCopyStruct *fcs) {
+void SimonEngine::print_char_helper_5(FillOrCopyStruct *fcs) {
 	uint index = get_fcs_ptr_3_index(fcs);
 	print_char_helper_6(index);
 	_fcs_data_1[index] = 0;
 }
 
-void SimonState::print_char_helper_6(uint i) {
+void SimonEngine::print_char_helper_6(uint i) {
 	FillOrCopyStruct *fcs;
 
 	if (_fcs_data_2[i]) {
@@ -59,7 +59,7 @@ void SimonState::print_char_helper_6(uint i) {
 	}
 }
 
-void SimonState::render_string(uint num_1, uint color, uint width, uint height, const char *txt) {
+void SimonEngine::render_string(uint num_1, uint color, uint width, uint height, const char *txt) {
 	VgaPointersEntry *vpe = &_vga_buffer_pointers[2];
 	byte *src, *dst, *p, *dst_org, chr;
 	uint count;
@@ -127,7 +127,7 @@ void SimonState::render_string(uint num_1, uint color, uint width, uint height, 
 	}
 }
 
-void SimonState::showMessageFormat(const char *s, ...) {
+void SimonEngine::showMessageFormat(const char *s, ...) {
 	char buf[1024], *str;
 	va_list va;
 
@@ -150,7 +150,7 @@ void SimonState::showMessageFormat(const char *s, ...) {
 		showmessage_print_char(*str);
 }
 
-void SimonState::showmessage_print_char(byte chr) {
+void SimonEngine::showmessage_print_char(byte chr) {
 	if (chr == 12) {
 		_num_letters_to_print = 0;
 		_print_char_unk_1 = 0;
@@ -190,20 +190,20 @@ void SimonState::showmessage_print_char(byte chr) {
 	}
 }
 
-void SimonState::showmessage_helper_2() {
+void SimonEngine::showmessage_helper_2() {
 	if (_fcs_ptr_1)
 		return;
 
 	_fcs_ptr_1 = fcs_alloc(8, 0x90, 0x18, 6, 1, 0, 0xF);
 }
 
-void SimonState::showmessage_helper_3(uint a, uint b) {
+void SimonEngine::showmessage_helper_3(uint a, uint b) {
 	_print_char_unk_1 = a;
 	_print_char_unk_2 = b;
 	_num_letters_to_print = 0;
 }
 
-void SimonState::video_putchar(FillOrCopyStruct *fcs, byte c) {
+void SimonEngine::video_putchar(FillOrCopyStruct *fcs, byte c) {
 	if (c == 0xC) {
 		video_fill_or_copy_from_3_to_2(fcs);
 	} else if (c == 0xD || c == 0xA) {
@@ -240,7 +240,7 @@ void SimonState::video_putchar(FillOrCopyStruct *fcs, byte c) {
 	}
 }
 
-void SimonState::video_putchar_newline(FillOrCopyStruct *fcs) {
+void SimonEngine::video_putchar_newline(FillOrCopyStruct *fcs) {
 	fcs->textColumnOffset = 0;
 	fcs->textLength = 0;
 	fcs->textColumn = 0;
@@ -855,7 +855,7 @@ static const byte video_font[] = {
 	240, 240, 240, 240, 240, 240, 240, 240,
 };
 
-void SimonState::video_putchar_drawchar(FillOrCopyStruct *fcs, uint x, uint y, byte chr) {
+void SimonEngine::video_putchar_drawchar(FillOrCopyStruct *fcs, uint x, uint y, byte chr) {
 	const byte *src;
 	byte color, *dst;
 	uint h, i;

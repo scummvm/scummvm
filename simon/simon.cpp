@@ -166,10 +166,10 @@ static const GameSpecificSettings simon2dos_settings = {
 
 
 Engine *Engine_SIMON_create(GameDetector *detector, OSystem *syst) {
-	return new SimonState(detector, syst);
+	return new SimonEngine(detector, syst);
 }
 
-SimonState::SimonState(GameDetector *detector, OSystem *syst)
+SimonEngine::SimonEngine(GameDetector *detector, OSystem *syst)
 	: Engine(detector, syst), midi (syst) {
 	MidiDriver *driver = detector->createMidi();
 	
@@ -432,7 +432,7 @@ SimonState::SimonState(GameDetector *detector, OSystem *syst)
 	_language = detector->_language;
 }
 
-SimonState::~SimonState() {
+SimonEngine::~SimonEngine() {
 	delete _dummy_item_1;
 	delete _dummy_item_2;
 	delete _dummy_item_3;
@@ -440,7 +440,7 @@ SimonState::~SimonState() {
 	delete [] _fcs_list;
 }
 
-void SimonState::errorString(const char *buf1, char *buf2) {
+void SimonEngine::errorString(const char *buf1, char *buf2) {
 	strcpy(buf2, buf1);
 }
 
@@ -464,7 +464,7 @@ void palette_fadeout(uint32 *pal_values, uint num) {
 	} while (--num);
 }
 
-byte *SimonState::allocateItem(uint size) {
+byte *SimonEngine::allocateItem(uint size) {
 	byte *org = _itemheap_ptr;
 	size = (size + 3) & ~3;
 
@@ -477,14 +477,14 @@ byte *SimonState::allocateItem(uint size) {
 	return org;
 }
 
-void SimonState::alignTableMem() {
+void SimonEngine::alignTableMem() {
 	if ((uint32)_tablesheap_ptr & 3) {
 		_tablesheap_ptr += 2;
 		_tablesheap_curpos += 2;
 	}
 }
 
-byte *SimonState::allocateTable(uint size) {
+byte *SimonEngine::allocateTable(uint size) {
 	byte *org = _tablesheap_ptr;
 
 	size = (size + 1) & ~1;
@@ -498,7 +498,7 @@ byte *SimonState::allocateTable(uint size) {
 	return org;
 }
 
-int SimonState::allocGamePcVars(File *in) {
+int SimonEngine::allocGamePcVars(File *in) {
 	uint item_array_size, item_array_inited, stringtable_num;
 	uint32 version;
 	uint i;
@@ -532,13 +532,13 @@ int SimonState::allocGamePcVars(File *in) {
 	return item_array_inited;
 }
 
-Item *SimonState::allocItem1() {
+Item *SimonEngine::allocItem1() {
 	Item *item = (Item *)allocateItem(sizeof(Item));
 	_itemarray_ptr[1] = item;
 	return item;
 }
 
-void SimonState::loginPlayerHelper(Item *item, int a, int b) {
+void SimonEngine::loginPlayerHelper(Item *item, int a, int b) {
 	Child9 *child;
 
 	child = (Child9 *) findChildOfType(item, 9);
@@ -550,7 +550,7 @@ void SimonState::loginPlayerHelper(Item *item, int a, int b) {
 		child->array[a] = b;
 }
 
-void SimonState::loginPlayer() {
+void SimonEngine::loginPlayer() {
 	Item *item;
 	Child *child;
 
@@ -566,13 +566,13 @@ void SimonState::loginPlayer() {
 	loginPlayerHelper(item, 0, 0);
 }
 
-void SimonState::allocateStringTable(int num) {
+void SimonEngine::allocateStringTable(int num) {
 	_stringtab_ptr = (byte **)calloc(num, sizeof(byte *));
 	_stringtab_pos = 0;
 	_stringtab_numalloc = num;
 }
 
-void SimonState::setupStringTable(byte *mem, int num) {
+void SimonEngine::setupStringTable(byte *mem, int num) {
 	int i = 0;
 	for (;;) {
 		_stringtab_ptr[i++] = mem;
@@ -585,7 +585,7 @@ void SimonState::setupStringTable(byte *mem, int num) {
 	_stringtab_pos = i;
 }
 
-void SimonState::setupLocalStringTable(byte *mem, int num) {
+void SimonEngine::setupLocalStringTable(byte *mem, int num) {
 	int i = 0;
 	for (;;) {
 		_local_stringtable[i++] = mem;
@@ -596,7 +596,7 @@ void SimonState::setupLocalStringTable(byte *mem, int num) {
 	}
 }
 
-void SimonState::readSubroutineLine(File *in, SubroutineLine *sl, Subroutine *sub) {
+void SimonEngine::readSubroutineLine(File *in, SubroutineLine *sl, Subroutine *sub) {
 	byte line_buffer[1024], *q = line_buffer;
 	int size;
 
@@ -619,7 +619,7 @@ void SimonState::readSubroutineLine(File *in, SubroutineLine *sl, Subroutine *su
 	memcpy(allocateTable(size), line_buffer, size);
 }
 
-SubroutineLine *SimonState::createSubroutineLine(Subroutine *sub, int where) {
+SubroutineLine *SimonEngine::createSubroutineLine(Subroutine *sub, int where) {
 	SubroutineLine *sl, *cur_sl = NULL, *last_sl = NULL;
 
 	if (sub->id == 0)
@@ -652,13 +652,13 @@ SubroutineLine *SimonState::createSubroutineLine(Subroutine *sub, int where) {
 	return sl;
 }
 
-void SimonState::readSubroutine(File *in, Subroutine *sub) {
+void SimonEngine::readSubroutine(File *in, Subroutine *sub) {
 	while (in->readUint16BE() == 0) {
 		readSubroutineLine(in, createSubroutineLine(sub, 0xFFFF), sub);
 	}
 }
 
-Subroutine *SimonState::createSubroutine(uint id) {
+Subroutine *SimonEngine::createSubroutine(uint id) {
 	Subroutine *sub;
 
 	alignTableMem();
@@ -671,13 +671,13 @@ Subroutine *SimonState::createSubroutine(uint id) {
 	return sub;
 }
 
-void SimonState::readSubroutineBlock(File *in) {
+void SimonEngine::readSubroutineBlock(File *in) {
 	while (in->readUint16BE() == 0) {
 		readSubroutine(in, createSubroutine(in->readUint16BE()));
 	}
 }
 
-Child *SimonState::findChildOfType(Item *i, uint type) {
+Child *SimonEngine::findChildOfType(Item *i, uint type) {
 	Child *child = i->children;
 	for (; child; child = child->next)
 		if (child->type == type)
@@ -685,15 +685,15 @@ Child *SimonState::findChildOfType(Item *i, uint type) {
 	return NULL;
 }
 
-bool SimonState::hasChildOfType1(Item *item) {
+bool SimonEngine::hasChildOfType1(Item *item) {
 	return findChildOfType(item, 1) != NULL;
 }
 
-bool SimonState::hasChildOfType2(Item *item) {
+bool SimonEngine::hasChildOfType2(Item *item) {
 	return findChildOfType(item, 2) != NULL;
 }
 
-uint SimonState::getOffsetOfChild2Param(Child2 *child, uint prop) {
+uint SimonEngine::getOffsetOfChild2Param(Child2 *child, uint prop) {
 	uint m = 1;
 	uint offset = 0;
 	while (m != prop) {
@@ -704,7 +704,7 @@ uint SimonState::getOffsetOfChild2Param(Child2 *child, uint prop) {
 	return offset;
 }
 
-Child *SimonState::allocateChildBlock(Item *i, uint type, uint size) {
+Child *SimonEngine::allocateChildBlock(Item *i, uint type, uint size) {
 	Child *child = (Child *)allocateItem(size);
 	child->next = i->children;
 	i->children = child;
@@ -712,39 +712,39 @@ Child *SimonState::allocateChildBlock(Item *i, uint type, uint size) {
 	return child;
 }
 
-void SimonState::allocItemHeap() {
+void SimonEngine::allocItemHeap() {
 	_itemheap_size = 10000;
 	_itemheap_curpos = 0;
 	_itemheap_ptr = (byte *)calloc(10000, 1);
 }
 
-void SimonState::allocTablesHeap() {
+void SimonEngine::allocTablesHeap() {
 	_tablesheap_size = gss->TABLES_MEM_SIZE;
 	_tablesheap_curpos = 0;
 	_tablesheap_ptr = (byte *)calloc(gss->TABLES_MEM_SIZE, 1);
 }
 
-void SimonState::setItemUnk3(Item *item, int value) {
+void SimonEngine::setItemUnk3(Item *item, int value) {
 	item->unk3 = value;
 }
 
-int SimonState::getNextWord() {
+int SimonEngine::getNextWord() {
 	_code_ptr += 2;
 	return (int16)((_code_ptr[-2] << 8) | _code_ptr[-1]);
 }
 
-uint SimonState::getNextStringID() {
+uint SimonEngine::getNextStringID() {
 	return (uint16)getNextWord();
 }
 
-uint SimonState::getVarOrByte() {
+uint SimonEngine::getVarOrByte() {
 	uint a = *_code_ptr++;
 	if (a != 255)
 		return a;
 	return readVariable(*_code_ptr++);
 }
 
-uint SimonState::getVarOrWord() {
+uint SimonEngine::getVarOrWord() {
 	uint a = (_code_ptr[0] << 8) | _code_ptr[1];
 	_code_ptr += 2;
 	if (a >= 30000 && a < 30512)
@@ -752,7 +752,7 @@ uint SimonState::getVarOrWord() {
 	return a;
 }
 
-Item *SimonState::getNextItemPtr() {
+Item *SimonEngine::getNextItemPtr() {
 	int a = getNextWord();
 	switch (a) {
 	case -1:
@@ -770,7 +770,7 @@ Item *SimonState::getNextItemPtr() {
 	}
 }
 
-Item *SimonState::getNextItemPtrStrange() {
+Item *SimonEngine::getNextItemPtrStrange() {
 	int a = getNextWord();
 	switch (a) {
 	case -1:
@@ -788,7 +788,7 @@ Item *SimonState::getNextItemPtrStrange() {
 	}
 }
 
-uint SimonState::getNextItemID() {
+uint SimonEngine::getNextItemID() {
 	int a = getNextWord();
 	switch (a) {
 	case -1:
@@ -806,40 +806,40 @@ uint SimonState::getNextItemID() {
 	}
 }
 
-Item *SimonState::getItem1Ptr() {
+Item *SimonEngine::getItem1Ptr() {
 	if (_item_1_ptr)
 		return _item_1_ptr;
 	return _dummy_item_1;
 }
 
-Item *SimonState::getItemPtrB() {
+Item *SimonEngine::getItemPtrB() {
 	error("getItemPtrB: is this code ever used?");
 	if (_item_ptr_B)
 		return _item_ptr_B;
 	return _dummy_item_1;
 }
 
-uint SimonState::getNextVarContents() {
+uint SimonEngine::getNextVarContents() {
 	return (uint16)readVariable(getVarOrByte());
 }
 
-uint SimonState::readVariable(uint variable) {
+uint SimonEngine::readVariable(uint variable) {
 	if (variable >= 255)
 		error("Variable %d out of range in read", variable);
 	return _variableArray[variable];
 }
 
-void SimonState::writeNextVarContents(uint16 contents) {
+void SimonEngine::writeNextVarContents(uint16 contents) {
 	writeVariable(getVarOrByte(), contents);
 }
 
-void SimonState::writeVariable(uint variable, uint16 contents) {
+void SimonEngine::writeVariable(uint variable, uint16 contents) {
 	if (variable >= 256)
 		error("Variable %d out of range in write", variable);
 	_variableArray[variable] = contents;
 }
 
-void SimonState::setItemParent(Item *item, Item *parent) {
+void SimonEngine::setItemParent(Item *item, Item *parent) {
 	Item *old_parent = derefItem(item->parent);
 
 	if (item == parent)
@@ -853,7 +853,7 @@ void SimonState::setItemParent(Item *item, Item *parent) {
 	itemChildrenChanged(parent);
 }
 
-void SimonState::itemChildrenChanged(Item *item) {
+void SimonEngine::itemChildrenChanged(Item *item) {
 	int i;
 	FillOrCopyStruct *fcs;
 
@@ -877,7 +877,7 @@ void SimonState::itemChildrenChanged(Item *item) {
 	unlock();
 }
 
-void SimonState::unlinkItem(Item *item) {
+void SimonEngine::unlinkItem(Item *item) {
 	Item *first, *parent, *next;
 
 	// can't unlink item without parent
@@ -913,7 +913,7 @@ void SimonState::unlinkItem(Item *item) {
 	}
 }
 
-void SimonState::linkItem(Item *item, Item *parent) {
+void SimonEngine::linkItem(Item *item, Item *parent) {
 	uint id;
 	// Don't allow that an item that is already linked is relinked
 	if (item->parent)
@@ -930,7 +930,7 @@ void SimonState::linkItem(Item *item, Item *parent) {
 	}
 }
 
-const byte *SimonState::getStringPtrByID(uint string_id) {
+const byte *SimonEngine::getStringPtrByID(uint string_id) {
 	const byte *string_ptr;
 	byte *dst;
 
@@ -947,14 +947,14 @@ const byte *SimonState::getStringPtrByID(uint string_id) {
 	return dst;
 }
 
-const byte *SimonState::getLocalStringByID(uint string_id) {
+const byte *SimonEngine::getLocalStringByID(uint string_id) {
 	if (string_id < _string_id_local_min || string_id >= _string_id_local_max) {
 		loadTextIntoMem(string_id);
 	}
 	return _local_stringtable[string_id - _string_id_local_min];
 }
 
-void SimonState::loadTextIntoMem(uint string_id) {
+void SimonEngine::loadTextIntoMem(uint string_id) {
 	byte *p;
 	char filename[30];
 	int i;
@@ -1004,7 +1004,7 @@ void SimonState::loadTextIntoMem(uint string_id) {
 	error("loadTextIntoMem: didn't find %d", string_id);
 }
 
-void SimonState::loadTablesIntoMem(uint subr_id) {
+void SimonEngine::loadTablesIntoMem(uint subr_id) {
 	byte *p;
 	int i;
 	uint min_num, max_num;
@@ -1067,7 +1067,7 @@ void SimonState::loadTablesIntoMem(uint subr_id) {
 		warning("loadTablesIntoMem: didn't find %d", subr_id);
 }
 
-void SimonState::playSting(uint a) {
+void SimonEngine::playSting(uint a) {
 	if (!midi._enable_sfx)
 		return;
 
@@ -1094,7 +1094,7 @@ void SimonState::playSting(uint a) {
 	midi.startTrack (0);
 }
 
-Subroutine *SimonState::getSubroutineByID(uint subroutine_id) {
+Subroutine *SimonEngine::getSubroutineByID(uint subroutine_id) {
 	Subroutine *cur;
 
 	for (cur = _subroutine_list; cur; cur = cur->next) {
@@ -1114,7 +1114,7 @@ Subroutine *SimonState::getSubroutineByID(uint subroutine_id) {
 	return NULL;
 }
 
-uint SimonState::loadTextFile_gme(const char *filename, byte *dst) {
+uint SimonEngine::loadTextFile_gme(const char *filename, byte *dst) {
 	uint res;
 	uint32 offs;
 	uint32 size;
@@ -1128,7 +1128,7 @@ uint SimonState::loadTextFile_gme(const char *filename, byte *dst) {
 	return size;
 }
 
-File *SimonState::openTablesFile_gme(const char *filename) {
+File *SimonEngine::openTablesFile_gme(const char *filename) {
 	uint res;
 	uint32 offs;
 
@@ -1139,11 +1139,11 @@ File *SimonState::openTablesFile_gme(const char *filename) {
 	return _game_file;
 }
 
-void SimonState::closeTablesFile_gme(File *in) {
+void SimonEngine::closeTablesFile_gme(File *in) {
 	// not needed
 }
 
-uint SimonState::loadTextFile_simon1(const char *filename, byte *dst) {
+uint SimonEngine::loadTextFile_simon1(const char *filename, byte *dst) {
 	File fo;
 	fo.open(filename, _gameDataPath);
 	uint32 size;
@@ -1160,7 +1160,7 @@ uint SimonState::loadTextFile_simon1(const char *filename, byte *dst) {
 	return size;
 }
 
-File *SimonState::openTablesFile_simon1(const char *filename) {
+File *SimonEngine::openTablesFile_simon1(const char *filename) {
 	File *fo = new File();
 	fo->open(filename, _gameDataPath);
 	if (fo->isOpen() == false)
@@ -1168,32 +1168,32 @@ File *SimonState::openTablesFile_simon1(const char *filename) {
 	return fo;
 }
 
-void SimonState::closeTablesFile_simon1(File *in) {
+void SimonEngine::closeTablesFile_simon1(File *in) {
 	in->close();
 }
 
-uint SimonState::loadTextFile(const char *filename, byte *dst) {
+uint SimonEngine::loadTextFile(const char *filename, byte *dst) {
 	if (_game & GF_AMIGAS || _game == GAME_SIMON1DEMO || _game == GAME_SIMON1DOS)
 		return loadTextFile_simon1(filename, dst);
 	else
 		return loadTextFile_gme(filename, dst);
 }
 
-File *SimonState::openTablesFile(const char *filename) {
+File *SimonEngine::openTablesFile(const char *filename) {
 	if (_game & GF_AMIGAS || _game == GAME_SIMON1DEMO || _game == GAME_SIMON1DOS)
 		return openTablesFile_simon1(filename);
 	else
 		return openTablesFile_gme(filename);
 }
 
-void SimonState::closeTablesFile(File *in) {
+void SimonEngine::closeTablesFile(File *in) {
 	if (_game & GF_AMIGAS || _game == GAME_SIMON1DEMO || _game == GAME_SIMON1DOS)
 		closeTablesFile_simon1(in);
 	else
 		closeTablesFile_gme(in);
 }
 
-void SimonState::addTimeEvent(uint timeout, uint subroutine_id) {
+void SimonEngine::addTimeEvent(uint timeout, uint subroutine_id) {
 	TimeEvent *te = (TimeEvent *)malloc(sizeof(TimeEvent)), *first, *last = NULL;
 	time_t cur_time;
 
@@ -1228,7 +1228,7 @@ void SimonState::addTimeEvent(uint timeout, uint subroutine_id) {
 	}
 }
 
-void SimonState::delTimeEvent(TimeEvent *te) {
+void SimonEngine::delTimeEvent(TimeEvent *te) {
 	TimeEvent *cur;
 
 	if (te == _pending_delete_time_event)
@@ -1256,7 +1256,7 @@ void SimonState::delTimeEvent(TimeEvent *te) {
 	}
 }
 
-void SimonState::killAllTimers() {
+void SimonEngine::killAllTimers() {
 	TimeEvent *cur, *next;
 
 	for (cur = _first_time_struct; cur; cur = next) {
@@ -1265,7 +1265,7 @@ void SimonState::killAllTimers() {
 	}
 }
 
-bool SimonState::kickoffTimeEvents() {
+bool SimonEngine::kickoffTimeEvents() {
 	time_t cur_time;
 	TimeEvent *te;
 	bool result = false;
@@ -1286,7 +1286,7 @@ bool SimonState::kickoffTimeEvents() {
 	return result;
 }
 
-void SimonState::invokeTimeEvent(TimeEvent *te) {
+void SimonEngine::invokeTimeEvent(TimeEvent *te) {
 	Subroutine *sub;
 
 	_script_cond_a = 0;
@@ -1298,7 +1298,7 @@ void SimonState::invokeTimeEvent(TimeEvent *te) {
 	_run_script_return_1 = false;
 }
 
-void SimonState::o_setup_cond_c() {
+void SimonEngine::o_setup_cond_c() {
 	Item *item = _item_1;
 
 	setup_cond_c_helper();
@@ -1319,7 +1319,7 @@ void SimonState::o_setup_cond_c() {
 	}
 }
 
-void SimonState::setup_cond_c_helper() {
+void SimonEngine::setup_cond_c_helper() {
 	HitArea *last;
 
 	if (_game & GF_SIMON2) {
@@ -1372,7 +1372,7 @@ out_of_here:
 	_hitarea_unk_6 = false;
 }
 
-void SimonState::startSubroutine170() {
+void SimonEngine::startSubroutine170() {
 	Subroutine *sub;
 
 	_sound->stopVoice();
@@ -1384,7 +1384,7 @@ void SimonState::startSubroutine170() {
 	_run_script_return_1 = true;
 }
 
-uint SimonState::get_fcs_ptr_3_index(FillOrCopyStruct *fcs) {
+uint SimonEngine::get_fcs_ptr_3_index(FillOrCopyStruct *fcs) {
 	uint i;
 
 	for (i = 0; i != ARRAYSIZE(_fcs_ptr_array_3); i++)
@@ -1394,11 +1394,11 @@ uint SimonState::get_fcs_ptr_3_index(FillOrCopyStruct *fcs) {
 	error("get_fcs_ptr_3_index: not found");
 }
 
-void SimonState::lock() {
+void SimonEngine::lock() {
 	_lock_counter++;
 }
 
-void SimonState::unlock() {
+void SimonEngine::unlock() {
 	_lock_word |= 1;
 
 	if (_lock_counter != 0)
@@ -1407,7 +1407,7 @@ void SimonState::unlock() {
 	_lock_word &= ~1;
 }
 
-void SimonState::handle_mouse_moved() {
+void SimonEngine::handle_mouse_moved() {
 	uint x;
 
 	if (_lock_counter) {
@@ -1480,7 +1480,7 @@ get_out:
 	_need_hitarea_recalc = 0;
 }
 
-void SimonState::fcs_unk_proc_1(uint fcs_index, Item *item_ptr, int unk1, int unk2) {
+void SimonEngine::fcs_unk_proc_1(uint fcs_index, Item *item_ptr, int unk1, int unk2) {
 	Item *item_ptr_org = item_ptr;
 	FillOrCopyStruct *fcs_ptr;
 	uint width_div_3, height_div_3;
@@ -1578,14 +1578,14 @@ void SimonState::fcs_unk_proc_1(uint fcs_index, Item *item_ptr, int unk1, int un
 	}
 }
 
-void SimonState::fcs_unk_proc_2(FillOrCopyStruct *fcs, uint fcs_index) {
+void SimonEngine::fcs_unk_proc_2(FillOrCopyStruct *fcs, uint fcs_index) {
 	setup_hit_areas(fcs, fcs_index);
 
 	fcs->fcs_data->unk3 = _scroll_up_hit_area;
 	fcs->fcs_data->unk4 = _scroll_down_hit_area;
 }
 
-void SimonState::setup_hit_areas(FillOrCopyStruct *fcs, uint fcs_index) {
+void SimonEngine::setup_hit_areas(FillOrCopyStruct *fcs, uint fcs_index) {
 	HitArea *ha;
 
 	ha = findEmptyHitArea();
@@ -1643,12 +1643,12 @@ void SimonState::setup_hit_areas(FillOrCopyStruct *fcs, uint fcs_index) {
 }
 
 
-bool SimonState::has_item_childflag_0x10(Item *item) {
+bool SimonEngine::has_item_childflag_0x10(Item *item) {
 	Child2 *child = (Child2 *)findChildOfType(item, 2);
 	return child && (child->avail_props & 0x10) != 0;
 }
 
-uint SimonState::item_get_icon_number(Item *item) {
+uint SimonEngine::item_get_icon_number(Item *item) {
 	Child2 *child = (Child2 *)findChildOfType(item, 2);
 	uint offs;
 
@@ -1659,7 +1659,7 @@ uint SimonState::item_get_icon_number(Item *item) {
 	return child->array[offs];
 }
 
-void SimonState::loadIconFile() {
+void SimonEngine::loadIconFile() {
 	File in;
 	if (_game & GF_AMIGAS)
 		in.open("icon.pkd", _gameDataPath);
@@ -1680,7 +1680,7 @@ void SimonState::loadIconFile() {
 	in.close();
 }
 
-uint SimonState::setup_icon_hit_area(FillOrCopyStruct *fcs, uint x, uint y, uint icon_number,
+uint SimonEngine::setup_icon_hit_area(FillOrCopyStruct *fcs, uint x, uint y, uint icon_number,
 																		 Item *item_ptr) {
 	HitArea *ha;
 
@@ -1711,7 +1711,7 @@ uint SimonState::setup_icon_hit_area(FillOrCopyStruct *fcs, uint x, uint y, uint
 	return ha - _hit_areas;
 }
 
-void SimonState::f10_key() {
+void SimonEngine::f10_key() {
 	HitArea *ha;
 	uint count;
 	uint y_, x_;
@@ -1789,7 +1789,7 @@ void SimonState::f10_key() {
 	_lock_word &= ~0x8000;
 }
 
-void SimonState::hitarea_stuff() {
+void SimonEngine::hitarea_stuff() {
 	HitArea *ha;
 	uint id;
 
@@ -1861,7 +1861,7 @@ startOver:
 	_need_hitarea_recalc++;
 }
 
-void SimonState::hitarea_stuff_helper() {
+void SimonEngine::hitarea_stuff_helper() {
 	time_t cur_time;
 
 	if (!(_game & GF_SIMON2)) {
@@ -1890,7 +1890,7 @@ void SimonState::hitarea_stuff_helper() {
 }
 
 // Simon 2 specific
-void SimonState::hitarea_stuff_helper_2() {
+void SimonEngine::hitarea_stuff_helper_2() {
 	uint subr_id;
 	Subroutine *sub;
 
@@ -1919,7 +1919,7 @@ void SimonState::hitarea_stuff_helper_2() {
 	_run_script_return_1 = false;
 }
 
-void SimonState::startUp_helper_2() {
+void SimonEngine::startUp_helper_2() {
 	if (!_mortal_flag) {
 		_mortal_flag = true;
 		startUp_helper_3();
@@ -1932,16 +1932,16 @@ void SimonState::startUp_helper_2() {
 	}
 }
 
-void SimonState::startUp_helper_3() {
+void SimonEngine::startUp_helper_3() {
 	showmessage_print_char(0);
 }
 
-void SimonState::pollMouseXY() {
+void SimonEngine::pollMouseXY() {
 	_mouse_x = _sdl_mouse_x;
 	_mouse_y = _sdl_mouse_y;
 }
 
-void SimonState::handle_verb_clicked(uint verb) {
+void SimonEngine::handle_verb_clicked(uint verb) {
 	Subroutine *sub;
 	int result;
 
@@ -1997,7 +1997,7 @@ void SimonState::handle_verb_clicked(uint verb) {
 	startUp_helper_2();
 }
 
-ThreeValues *SimonState::getThreeValues(uint a) {
+ThreeValues *SimonEngine::getThreeValues(uint a) {
 	switch (a) {
 	case 1:
 		return &_threevalues_1;
@@ -2014,7 +2014,7 @@ ThreeValues *SimonState::getThreeValues(uint a) {
 	}
 }
 
-void SimonState::o_print_str() {
+void SimonEngine::o_print_str() {
 	uint num_1 = getVarOrByte();
 	uint num_2 = getVarOrByte();
 	uint string_id = getNextStringID();
@@ -2068,13 +2068,13 @@ void SimonState::o_print_str() {
 	}
 }
 
-void SimonState::ensureVgaResLoadedC(uint vga_res) {
+void SimonEngine::ensureVgaResLoadedC(uint vga_res) {
 	_lock_word |= 0x80;
 	ensureVgaResLoaded(vga_res);
 	_lock_word &= ~0x80;
 }
 
-void SimonState::ensureVgaResLoaded(uint vga_res) {
+void SimonEngine::ensureVgaResLoaded(uint vga_res) {
 	VgaPointersEntry *vpe;
 
 	CHECK_BOUNDS(vga_res, _vga_buffer_pointers);
@@ -2088,7 +2088,7 @@ void SimonState::ensureVgaResLoaded(uint vga_res) {
 
 }
 
-byte *SimonState::setup_vga_destination(uint32 size) {
+byte *SimonEngine::setup_vga_destination(uint32 size) {
 	byte *dest, *end;
 
 	_video_var_4 = 0;
@@ -2115,7 +2115,7 @@ byte *SimonState::setup_vga_destination(uint32 size) {
 	}
 }
 
-void SimonState::setup_vga_file_buf_pointers() {
+void SimonEngine::setup_vga_file_buf_pointers() {
 	byte *alloced;
 
 	alloced = (byte *)malloc(gss->VGA_MEM_SIZE);
@@ -2127,7 +2127,7 @@ void SimonState::setup_vga_file_buf_pointers() {
 	_vga_buf_end = alloced + gss->VGA_MEM_SIZE;
 }
 
-void SimonState::vga_buf_unk_proc3(byte *end) {
+void SimonEngine::vga_buf_unk_proc3(byte *end) {
 	VgaPointersEntry *vpe;
 
 	if (_video_var_7 == 0xFFFF)
@@ -2148,7 +2148,7 @@ void SimonState::vga_buf_unk_proc3(byte *end) {
 	}
 }
 
-void SimonState::vga_buf_unk_proc1(byte *end) {
+void SimonEngine::vga_buf_unk_proc1(byte *end) {
 	VgaSprite *vsp;
 	if (_lock_word & 0x20)
 		return;
@@ -2160,7 +2160,7 @@ void SimonState::vga_buf_unk_proc1(byte *end) {
 	}
 }
 
-void SimonState::delete_memptr_range(byte *end) {
+void SimonEngine::delete_memptr_range(byte *end) {
 	uint count = ARRAYSIZE(_vga_buffer_pointers);
 	VgaPointersEntry *vpe = _vga_buffer_pointers;
 	do {
@@ -2174,7 +2174,7 @@ void SimonState::delete_memptr_range(byte *end) {
 	} while (++vpe, --count);
 }
 
-void SimonState::vga_buf_unk_proc2(uint a, byte *end) {
+void SimonEngine::vga_buf_unk_proc2(uint a, byte *end) {
 	VgaPointersEntry *vpe;
 
 	vpe = &_vga_buffer_pointers[a];
@@ -2189,7 +2189,7 @@ void SimonState::vga_buf_unk_proc2(uint a, byte *end) {
 	}
 }
 
-void SimonState::o_clear_vgapointer_entry(uint a) {
+void SimonEngine::o_clear_vgapointer_entry(uint a) {
 	VgaPointersEntry *vpe;
 
 	vpe = &_vga_buffer_pointers[a];
@@ -2199,7 +2199,7 @@ void SimonState::o_clear_vgapointer_entry(uint a) {
 	vpe->vgaFile2 = NULL;
 }
 
-void SimonState::o_set_video_mode(uint mode, uint vga_res) {
+void SimonEngine::o_set_video_mode(uint mode, uint vga_res) {
 	if (mode == 4)
 		vc_29_stop_all_sounds();
 
@@ -2211,7 +2211,7 @@ void SimonState::o_set_video_mode(uint mode, uint vga_res) {
 	}
 }
 
-void SimonState::set_video_mode_internal(uint mode, uint vga_res_id) {
+void SimonEngine::set_video_mode_internal(uint mode, uint vga_res_id) {
 	uint num;
 	VgaPointersEntry *vpe;
 	byte *bb, *b;
@@ -2307,7 +2307,7 @@ void SimonState::set_video_mode_internal(uint mode, uint vga_res_id) {
 	}
 }
 
-void SimonState::set_video_mode(uint mode, uint vga_res_id) {
+void SimonEngine::set_video_mode(uint mode, uint vga_res_id) {
 	if (_lock_counter == 0) {
 		lock();
 		if (_lock_word == 0) {
@@ -2329,7 +2329,7 @@ void SimonState::set_video_mode(uint mode, uint vga_res_id) {
 	set_video_mode_internal(mode, vga_res_id);
 }
 
-void SimonState::o_fade_to_black() {
+void SimonEngine::o_fade_to_black() {
 	uint i;
 
 	memcpy(_video_buf_1, _palette_backup, 256 * sizeof(uint32));
@@ -2349,7 +2349,7 @@ void SimonState::o_fade_to_black() {
 	memcpy(_palette, _video_buf_1, 256 * sizeof(uint32));
 }
 
-void SimonState::delete_vga_timer(VgaTimerEntry * vte) {
+void SimonEngine::delete_vga_timer(VgaTimerEntry * vte) {
 	_lock_word |= 1;
 
 	if (vte + 1 <= _next_vga_timer_to_process) {
@@ -2364,7 +2364,7 @@ void SimonState::delete_vga_timer(VgaTimerEntry * vte) {
 	_lock_word &= ~1;
 }
 
-void SimonState::expire_vga_timers() {
+void SimonEngine::expire_vga_timers() {
 	if (_game & GF_SIMON2) {
 		VgaTimerEntry *vte = _vga_timer_list;
 
@@ -2415,7 +2415,7 @@ void SimonState::expire_vga_timers() {
 }
 
 // Simon2 specific
-void SimonState::scroll_timeout() {
+void SimonEngine::scroll_timeout() {
 	if (_vga_var2 == 0)
 		return;
 
@@ -2436,7 +2436,7 @@ void SimonState::scroll_timeout() {
 	add_vga_timer(10, NULL, 0, 0);
 }
 
-void SimonState::vc_resume_sprite(byte *code_ptr, uint16 cur_file, uint16 cur_sprite) {
+void SimonEngine::vc_resume_sprite(byte *code_ptr, uint16 cur_file, uint16 cur_sprite) {
 	VgaPointersEntry *vpe;
 
 	_vga_cur_sprite_id = cur_sprite;
@@ -2453,7 +2453,7 @@ void SimonState::vc_resume_sprite(byte *code_ptr, uint16 cur_file, uint16 cur_sp
 	run_vga_script();
 }
 
-void SimonState::add_vga_timer(uint num, byte *code_ptr, uint cur_sprite, uint cur_file) {
+void SimonEngine::add_vga_timer(uint num, byte *code_ptr, uint cur_sprite, uint cur_file) {
 	VgaTimerEntry *vte;
 
 	_lock_word |= 1;
@@ -2469,13 +2469,13 @@ void SimonState::add_vga_timer(uint num, byte *code_ptr, uint cur_sprite, uint c
 	_lock_word &= ~1;
 }
 
-void SimonState::o_force_unlock() {
+void SimonEngine::o_force_unlock() {
 	if (_game & GF_SIMON2 && _bit_array[4] & 0x8000)
 		_mouse_cursor = 0;
 	_lock_counter = 0;
 }
 
-void SimonState::o_force_lock() {
+void SimonEngine::o_force_lock() {
 	if (_game & GF_SIMON2) {
 		_lock_word |= 0x8000;
 		vc_34_force_lock();
@@ -2487,15 +2487,15 @@ void SimonState::o_force_lock() {
 	}
 }
 
-void SimonState::o_save_game() {
+void SimonEngine::o_save_game() {
 	save_or_load_dialog(false);
 }
 
-void SimonState::o_load_game() {
+void SimonEngine::o_load_game() {
 	save_or_load_dialog(true);
 }
 
-int SimonState::display_savegame_list(int curpos, bool load, char *dst) {
+int SimonEngine::display_savegame_list(int curpos, bool load, char *dst) {
 	int slot, last_slot;
 	File in;
 
@@ -2542,7 +2542,7 @@ int SimonState::display_savegame_list(int curpos, bool load, char *dst) {
 	return slot - curpos;
 }
 
-void SimonState::savegame_dialog(char *buf) {
+void SimonEngine::savegame_dialog(char *buf) {
 	int i;
 
 	o_unk_132_helper_3();
@@ -2566,7 +2566,7 @@ void SimonState::savegame_dialog(char *buf) {
 	} while (--i);
 }
 
-void SimonState::save_or_load_dialog(bool load) {
+void SimonEngine::save_or_load_dialog(bool load) {
 	time_t save_time;
 	int num = _number_of_savegames;
 	int i;
@@ -2723,7 +2723,7 @@ get_out:;
 #endif
 }
 
-void SimonState::o_wait_for_vga(uint a) {
+void SimonEngine::o_wait_for_vga(uint a) {
 	_vga_wait_for = a;
 	_timer_1 = 0;
 	_exit_cutscene = false;
@@ -2760,7 +2760,7 @@ void SimonState::o_wait_for_vga(uint a) {
 	}
 }
 
-void SimonState::skip_speech() {
+void SimonEngine::skip_speech() {
 	_sound->stopVoice();
 	if (!(_bit_array[1] & 0x1000)) {
 		_bit_array[0] |= 0x4000;
@@ -2771,7 +2771,7 @@ void SimonState::skip_speech() {
 	}       
 }
 
-void SimonState::timer_vga_sprites() {
+void SimonEngine::timer_vga_sprites() {
 	VgaSprite *vsp;
 	VgaPointersEntry *vpe;
 	byte *vc_ptr_org = _vc_ptr;
@@ -2821,7 +2821,7 @@ void SimonState::timer_vga_sprites() {
 	_vc_ptr = vc_ptr_org;
 }
 
-void SimonState::timer_vga_sprites_helper() {
+void SimonEngine::timer_vga_sprites_helper() {
 	byte *dst = dx_lock_2(), *src;
 	uint x;
 
@@ -2855,7 +2855,7 @@ void SimonState::timer_vga_sprites_helper() {
 	_vga_var3 = 0;
 }
 
-void SimonState::timer_vga_sprites_2() {
+void SimonEngine::timer_vga_sprites_2() {
 	VgaSprite *vsp;
 	VgaPointersEntry *vpe;
 	byte *vc_ptr_org = _vc_ptr;
@@ -2894,7 +2894,7 @@ void SimonState::timer_vga_sprites_2() {
 	_vc_ptr = vc_ptr_org;
 }
 
-void SimonState::timer_proc1() {
+void SimonEngine::timer_proc1() {
 	_timer_4++;
 
 	if (_game & GF_SIMON2) {
@@ -2958,7 +2958,7 @@ void SimonState::timer_proc1() {
 	_lock_word &= ~2;
 }
 
-void SimonState::timer_callback() {
+void SimonEngine::timer_callback() {
 //	uint32 start, end;
 
 	if (_timer_5 != 0) {
@@ -2975,11 +2975,11 @@ void SimonState::timer_callback() {
 	}
 }
 
-void SimonState::fcs_setTextColor(FillOrCopyStruct *fcs, uint value) {
+void SimonEngine::fcs_setTextColor(FillOrCopyStruct *fcs, uint value) {
 	fcs->text_color = value;
 }
 
-void SimonState::o_vga_reset() {
+void SimonEngine::o_vga_reset() {
 	if (_game & GF_SIMON2) {
 		_lock_word |= 0x8000;
 		vc_27_reset();
@@ -2991,7 +2991,7 @@ void SimonState::o_vga_reset() {
 	}	
 }
 
-bool SimonState::itemIsSiblingOf(uint16 a) {
+bool SimonEngine::itemIsSiblingOf(uint16 a) {
 	Item *item;
 
 	CHECK_BOUNDS(a, _vc_item_array);
@@ -3003,7 +3003,7 @@ bool SimonState::itemIsSiblingOf(uint16 a) {
 	return getItem1Ptr()->parent == item->parent;
 }
 
-bool SimonState::itemIsParentOf(uint16 a, uint16 b) {
+bool SimonEngine::itemIsParentOf(uint16 a, uint16 b) {
 	Item *item_a, *item_b;
 
 	CHECK_BOUNDS(a, _vc_item_array);
@@ -3018,7 +3018,7 @@ bool SimonState::itemIsParentOf(uint16 a, uint16 b) {
 	return derefItem(item_a->parent) == item_b;
 }
 
-bool SimonState::vc_maybe_skip_proc_1(uint16 a, int16 b) {
+bool SimonEngine::vc_maybe_skip_proc_1(uint16 a, int16 b) {
 	Item *item;
 
 	CHECK_BOUNDS(a, _vc_item_array);
@@ -3030,7 +3030,7 @@ bool SimonState::vc_maybe_skip_proc_1(uint16 a, int16 b) {
 }
 
 // OK
-void SimonState::fcs_delete(uint a) {
+void SimonEngine::fcs_delete(uint a) {
 	if (_fcs_ptr_array_3[a] == NULL)
 		return;
 	fcs_unk1(a);
@@ -3043,7 +3043,7 @@ void SimonState::fcs_delete(uint a) {
 }
 
 // OK
-void SimonState::fcs_unk_2(uint a) {
+void SimonEngine::fcs_unk_2(uint a) {
 	a &= 7;
 
 	if (_fcs_ptr_array_3[a] == NULL || _fcs_unk_1 == a)
@@ -3057,7 +3057,7 @@ void SimonState::fcs_unk_2(uint a) {
 }
 
 // OK
-FillOrCopyStruct *SimonState::fcs_alloc(uint x, uint y, uint w, uint h, uint flags, uint fill_color,
+FillOrCopyStruct *SimonEngine::fcs_alloc(uint x, uint y, uint w, uint h, uint flags, uint fill_color,
 																				uint unk4) {
 	FillOrCopyStruct *fcs;
 
@@ -3080,13 +3080,13 @@ FillOrCopyStruct *SimonState::fcs_alloc(uint x, uint y, uint w, uint h, uint fla
 	return fcs;
 }
 
-Item *SimonState::derefItem(uint item) {
+Item *SimonEngine::derefItem(uint item) {
 	if (item >= _itemarray_size)
 		error("derefItem: invalid item %d", item);
 	return _itemarray_ptr[item];
 }
 
-uint SimonState::itemPtrToID(Item *id) {
+uint SimonEngine::itemPtrToID(Item *id) {
 	uint i;
 	for (i = 0; i != _itemarray_size; i++)
 		if (_itemarray_ptr[i] == id)
@@ -3094,7 +3094,7 @@ uint SimonState::itemPtrToID(Item *id) {
 	error("itemPtrToID: not found");
 }
 
-void SimonState::o_pathfind(int x, int y, uint var_1, uint var_2) {
+void SimonEngine::o_pathfind(int x, int y, uint var_1, uint var_2) {
 	uint16 *p;
 	uint i, j;
 	uint prev_i;
@@ -3133,7 +3133,7 @@ void SimonState::o_pathfind(int x, int y, uint var_1, uint var_2) {
 }
 
 // ok
-void SimonState::fcs_unk1(uint fcs_index) {
+void SimonEngine::fcs_unk1(uint fcs_index) {
 	FillOrCopyStruct *fcs;
 	uint16 fcsunk1;
 	uint16 i;
@@ -3169,7 +3169,7 @@ void SimonState::fcs_unk1(uint fcs_index) {
 }
 
 // ok
-void SimonState::fcs_unk_5(FillOrCopyStruct *fcs, uint fcs_index) {
+void SimonEngine::fcs_unk_5(FillOrCopyStruct *fcs, uint fcs_index) {
 	if (_game == GAME_SIMON1WIN) {
 		o_kill_sprite_simon1(0x80);
 	} else if (!(_game & GF_SIMON2)) {
@@ -3178,19 +3178,19 @@ void SimonState::fcs_unk_5(FillOrCopyStruct *fcs, uint fcs_index) {
 	}
 }
 
-void SimonState::delete_hitarea_by_index(uint index) {
+void SimonEngine::delete_hitarea_by_index(uint index) {
 	CHECK_BOUNDS(index, _hit_areas);
 	_hit_areas[index].flags = 0;
 }
 
 // ok
-void SimonState::fcs_putchar(uint a) {
+void SimonEngine::fcs_putchar(uint a) {
 	if (_fcs_ptr_1 != _fcs_ptr_array_3[0])
 		video_putchar(_fcs_ptr_1, a);
 }
 
 // ok
-void SimonState::video_fill_or_copy_from_3_to_2(FillOrCopyStruct *fcs) {
+void SimonEngine::video_fill_or_copy_from_3_to_2(FillOrCopyStruct *fcs) {
 	if (fcs->flags & 0x10)
 		copy_img_from_3_to_2(fcs);
 	else
@@ -3203,7 +3203,7 @@ void SimonState::video_fill_or_copy_from_3_to_2(FillOrCopyStruct *fcs) {
 }
 
 // ok
-void SimonState::copy_img_from_3_to_2(FillOrCopyStruct *fcs) {
+void SimonEngine::copy_img_from_3_to_2(FillOrCopyStruct *fcs) {
 	_lock_word |= 0x8000;
 
 	if (!(_game & GF_SIMON2)) {
@@ -3220,7 +3220,7 @@ void SimonState::copy_img_from_3_to_2(FillOrCopyStruct *fcs) {
 	_lock_word &= ~0x8000;
 }
 
-void SimonState::video_erase(FillOrCopyStruct *fcs) {
+void SimonEngine::video_erase(FillOrCopyStruct *fcs) {
 	byte *dst;
 	uint h;
 
@@ -3239,7 +3239,7 @@ void SimonState::video_erase(FillOrCopyStruct *fcs) {
 	_lock_word &= ~0x8000;
 }
 
-VgaSprite *SimonState::find_cur_sprite() {
+VgaSprite *SimonEngine::find_cur_sprite() {
 	VgaSprite *vsp = _vga_sprites;
 	while (vsp->id) {
 		if (_game & GF_SIMON2) {
@@ -3254,7 +3254,7 @@ VgaSprite *SimonState::find_cur_sprite() {
 	return vsp;
 }
 
-bool SimonState::has_vgastruct_with_id(uint16 id, uint16 file) {
+bool SimonEngine::has_vgastruct_with_id(uint16 id, uint16 file) {
 	VgaSprite *vsp = _vga_sprites;
 	while (vsp->id) {
 		if (_game & GF_SIMON2) {
@@ -3269,7 +3269,7 @@ bool SimonState::has_vgastruct_with_id(uint16 id, uint16 file) {
 	return false;
 }
 
-void SimonState::processSpecialKeys() {
+void SimonEngine::processSpecialKeys() {
 	switch (_key_pressed) {
 		case 27: // escape
 			_exit_cutscene = true;
@@ -3535,7 +3535,7 @@ static const byte _simon2_cursors[10][256] = {
 	  0xff,0xff,0xff,0xff,0xff,0xff,0xe5,0xe5,0xe5,0xff,0xff,0xff,0xff,0xff,0xff,0xff },
 }; 
 
-void SimonState::draw_mouse_pointer() {
+void SimonEngine::draw_mouse_pointer() {
 	if (_game & GF_SIMON2)
 		_system->set_mouse_cursor(_simon2_cursors[_mouse_cursor], 16, 16, 7, 7);
 	else
@@ -3602,7 +3602,7 @@ void decompress_icon(byte *dst, byte *src, uint w, uint h_org, byte base, uint p
 }
 
 
-void SimonState::draw_icon_c(FillOrCopyStruct *fcs, uint icon, uint x, uint y) {
+void SimonEngine::draw_icon_c(FillOrCopyStruct *fcs, uint icon, uint x, uint y) {
 	byte *dst;
 	byte *src;
 
@@ -3635,7 +3635,7 @@ void SimonState::draw_icon_c(FillOrCopyStruct *fcs, uint icon, uint x, uint y) {
 	_lock_word &= ~0x8000;
 }
 
-void SimonState::video_toggle_colors(HitArea * ha, byte a, byte b, byte c, byte d) {
+void SimonEngine::video_toggle_colors(HitArea * ha, byte a, byte b, byte c, byte d) {
 	byte *src, color;
 	uint w, h, i;
 
@@ -3672,13 +3672,13 @@ void SimonState::video_toggle_colors(HitArea * ha, byte a, byte b, byte c, byte 
 	_lock_word &= ~0x8000;
 }
 
-void SimonState::video_copy_if_flag_0x8_c(FillOrCopyStruct *fcs) {
+void SimonEngine::video_copy_if_flag_0x8_c(FillOrCopyStruct *fcs) {
 	if (fcs->flags & 8)
 		copy_img_from_3_to_2(fcs);
 	fcs->mode = 0;
 }
 
-void SimonState::start_vga_code(uint b, uint vga_res, uint vga_struct_id, uint c, uint d, uint f) {
+void SimonEngine::start_vga_code(uint b, uint vga_res, uint vga_struct_id, uint c, uint d, uint f) {
 	VgaSprite *vsp;
 	VgaPointersEntry *vpe;
 	byte *p, *pp;
@@ -3739,7 +3739,7 @@ void SimonState::start_vga_code(uint b, uint vga_res, uint vga_struct_id, uint c
 	_lock_word &= ~0x40;
 }
 
-void SimonState::talk_with_speech(uint speech_id, uint num_1) {
+void SimonEngine::talk_with_speech(uint speech_id, uint num_1) {
 	if (!(_game & GF_SIMON2)) {
 		if (speech_id == 9999) {
 			if (!(_bit_array[0] & 0x4000) && !(_bit_array[1] & 0x1000)) {
@@ -3785,7 +3785,7 @@ void SimonState::talk_with_speech(uint speech_id, uint num_1) {
 	}
 }
 
-void SimonState::talk_with_text(uint num_1, uint num_2, const char *string_ptr, uint threeval_a, int threeval_b, uint width) {
+void SimonEngine::talk_with_text(uint num_1, uint num_2, const char *string_ptr, uint threeval_a, int threeval_b, uint width) {
 	char print_str_buf[0x140];
 	char *char_buf;
 	const char *string_ptr_2, *string_ptr_3;
@@ -4047,7 +4047,7 @@ void SimonState::talk_with_text(uint num_1, uint num_2, const char *string_ptr, 
 	}
 }
 
-void SimonState::read_vga_from_datfile_1(uint vga_id) {
+void SimonEngine::read_vga_from_datfile_1(uint vga_id) {
 	if (_game & GF_AMIGAS || _game == GAME_SIMON1DEMO || _game == GAME_SIMON1DOS) {
 		File in;
 		char buf[50];
@@ -4084,7 +4084,7 @@ void SimonState::read_vga_from_datfile_1(uint vga_id) {
 	}
 }
 
-byte *SimonState::read_vga_from_datfile_2(uint id) {
+byte *SimonEngine::read_vga_from_datfile_2(uint id) {
 	if (_game & GF_AMIGAS || _game == GAME_SIMON1DEMO || _game == GAME_SIMON1DOS) {
 		File in;
 		char buf[50];
@@ -4126,13 +4126,13 @@ byte *SimonState::read_vga_from_datfile_2(uint id) {
 	}
 }
 
-void SimonState::resfile_read(void *dst, uint32 offs, uint32 size) {
+void SimonEngine::resfile_read(void *dst, uint32 offs, uint32 size) {
 	_game_file->seek(offs, SEEK_SET);
 	if (_game_file->read(dst, size) != size)
 		error("resfile_read(%d,%d) read failed", offs, size);
 }
 
-void SimonState::openGameFile() {
+void SimonEngine::openGameFile() {
 	if (!(_game & GF_AMIGAS) && _game != GAME_SIMON1DEMO && _game != GAME_SIMON1DOS) {
 		_game_file = new File();
 		_game_file->open(gss->gme_filename, _gameDataPath);
@@ -4160,17 +4160,17 @@ void SimonState::openGameFile() {
 	startUp(1);
 }
 
-void SimonState::startUp(uint a) {
+void SimonEngine::startUp(uint a) {
 	if (a == 1)
 		startUp_helper();
 }
 
-void SimonState::startUp_helper() {
+void SimonEngine::startUp_helper() {
 	runSubroutine101();
 	startUp_helper_2();
 }
 
-void SimonState::runSubroutine101() {
+void SimonEngine::runSubroutine101() {
 	Subroutine *sub;
 
 	sub = getSubroutineByID(101);
@@ -4180,7 +4180,7 @@ void SimonState::runSubroutine101() {
 	startUp_helper_2();
 }
 
-void SimonState::dx_copy_rgn_from_3_to_2(uint b, uint r, uint y, uint x) {
+void SimonEngine::dx_copy_rgn_from_3_to_2(uint b, uint r, uint y, uint x) {
 	byte *dst, *src;
 	uint i;
 
@@ -4201,7 +4201,7 @@ void SimonState::dx_copy_rgn_from_3_to_2(uint b, uint r, uint y, uint x) {
 	dx_unlock_2();
 }
 
-void SimonState::dx_clear_surfaces(uint num_lines) {
+void SimonEngine::dx_clear_surfaces(uint num_lines) {
 	memset(_sdl_buf_attached, 0, num_lines * 320);
 
 	_system->copy_rect(_sdl_buf_attached, 320, 0, 0, 320, 200);
@@ -4212,11 +4212,11 @@ void SimonState::dx_clear_surfaces(uint num_lines) {
 	}
 }
 
-void SimonState::dx_clear_attached_from_top(uint lines) {
+void SimonEngine::dx_clear_attached_from_top(uint lines) {
 	memset(_sdl_buf_attached, 0, lines * 320);
 }
 
-void SimonState::dx_copy_from_attached_to_2(uint x, uint y, uint w, uint h) {
+void SimonEngine::dx_copy_from_attached_to_2(uint x, uint y, uint w, uint h) {
 	uint offs = x + y * 320;
 	byte *s = _sdl_buf_attached + offs;
 	byte *d = _sdl_buf + offs;
@@ -4228,7 +4228,7 @@ void SimonState::dx_copy_from_attached_to_2(uint x, uint y, uint w, uint h) {
 	} while (--h);
 }
 
-void SimonState::dx_copy_from_2_to_attached(uint x, uint y, uint w, uint h) {
+void SimonEngine::dx_copy_from_2_to_attached(uint x, uint y, uint w, uint h) {
 	uint offs = x + y * 320;
 	byte *s = _sdl_buf + offs;
 	byte *d = _sdl_buf_attached + offs;
@@ -4240,11 +4240,11 @@ void SimonState::dx_copy_from_2_to_attached(uint x, uint y, uint w, uint h) {
 	} while (--h);
 }
 
-void SimonState::dx_copy_from_attached_to_3(uint lines) {
+void SimonEngine::dx_copy_from_attached_to_3(uint lines) {
 	memcpy(_sdl_buf_3, _sdl_buf_attached, lines * 320);
 }
 
-void SimonState::dx_update_screen_and_palette() {
+void SimonEngine::dx_update_screen_and_palette() {
 	_num_screen_updates++;
 
 	if (_palette_color_count == 0 && _video_var_9 == 1) {
@@ -4273,7 +4273,7 @@ void SimonState::dx_update_screen_and_palette() {
 	}
 }
 
-void SimonState::realizePalette() {
+void SimonEngine::realizePalette() {
 	_video_var_9 = false;
 	memcpy(_palette_backup, _palette, 256 * 4);
 
@@ -4286,7 +4286,7 @@ void SimonState::realizePalette() {
 	_palette_color_count = 0;
 }
 
-void SimonState::fadeUpPalette() {
+void SimonEngine::fadeUpPalette() {
 	bool done;
 
 	_palette_color_count = (_palette_color_count & 0x7fff) / 4;
@@ -4345,7 +4345,7 @@ void SimonState::fadeUpPalette() {
  	} while (!done);
 }
 
-void SimonState::go() {
+void SimonEngine::go() {
 	if (!_dump_file)
 		_dump_file = stdout;
 
@@ -4415,7 +4415,7 @@ void SimonState::go() {
 	}
 }
 
-void SimonState::shutdown() {
+void SimonEngine::shutdown() {
 	if (_game_file) {
 		delete _game_file;
 		_game_file = NULL;
@@ -4423,7 +4423,7 @@ void SimonState::shutdown() {
 	_system->quit();
 }
 
-void SimonState::delay(uint amount) {
+void SimonEngine::delay(uint amount) {
 	OSystem::Event event;
 
 	uint32 start = _system->get_msecs();
@@ -4505,7 +4505,7 @@ void SimonState::delay(uint amount) {
 	} while (cur < start + amount);
 }
 
-bool SimonState::save_game(uint slot, char *caption) {
+bool SimonEngine::save_game(uint slot, char *caption) {
 	File f;
 	uint item_index, num_item, i, j;
 	TimeEvent *te;
@@ -4594,7 +4594,7 @@ bool SimonState::save_game(uint slot, char *caption) {
 	return true;
 }
 
-char *SimonState::gen_savename(int slot) {
+char *SimonEngine::gen_savename(int slot) {
 	static char buf[256];
 
 	if (_game & GF_SIMON2) {
@@ -4605,7 +4605,7 @@ char *SimonState::gen_savename(int slot) {
 	return buf;
 }
 
-bool SimonState::load_game(uint slot) {
+bool SimonEngine::load_game(uint slot) {
 	char ident[18];
 	File f;
 	uint num, item_index, i, j;
@@ -4718,7 +4718,7 @@ bool SimonState::load_game(uint slot) {
 	return true;
 }
 
-void SimonState::loadMusic (uint music) {
+void SimonEngine::loadMusic (uint music) {
 	if (_game & GF_SIMON2) {        // Simon 2 music
 		midi.stop();
 		_game_file->seek(_game_offsets_ptr[gss->MUSIC_INDEX_BASE + music - 1], SEEK_SET);
@@ -4777,26 +4777,26 @@ void SimonState::loadMusic (uint music) {
 	}
 }
 
-byte *SimonState::dx_lock_2() {
+byte *SimonEngine::dx_lock_2() {
 	_dx_surface_pitch = 320;
 	return _sdl_buf;
 }
 
-void SimonState::dx_unlock_2() {
+void SimonEngine::dx_unlock_2() {
 }
 
-byte *SimonState::dx_lock_attached() {
+byte *SimonEngine::dx_lock_attached() {
 	_dx_surface_pitch = 320;
 	return _dx_use_3_or_4_for_lock ? _sdl_buf_3 : _sdl_buf_attached;
 }
 
-void SimonState::dx_unlock_attached() {
+void SimonEngine::dx_unlock_attached() {
 }
 
-void SimonState::set_volume(byte volume) {
+void SimonEngine::set_volume(byte volume) {
 	_mixer->setVolume(volume);
 }
 
-byte SimonState::getByte() {
+byte SimonEngine::getByte() {
 	return *_code_ptr++;
 }

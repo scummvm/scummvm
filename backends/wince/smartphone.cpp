@@ -306,7 +306,7 @@ void SmartfonSave(OSystem_WINCE3 *wm, BOOL repeat) {
 void SmartfonSkip(OSystem_WINCE3 *wm, BOOL repeat) {
 
 		if (is_simon) {
-			((SimonState*)engine)->_exit_cutscene = true;
+			((SimonEngine*)engine)->_exit_cutscene = true;
 			return;
 		}
 		wm->_event.event_code = OSystem::EVENT_KEYDOWN;

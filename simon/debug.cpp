@@ -30,7 +30,7 @@
 #include <sys/stat.h>
 #endif
 
-byte *SimonState::dumpOpcode(byte *p) {
+byte *SimonEngine::dumpOpcode(byte *p) {
 	byte opcode;
 	const char *s, *st;
 
@@ -132,7 +132,7 @@ byte *SimonState::dumpOpcode(byte *p) {
 	}
 }
 
-void SimonState::dumpSubroutineLine(SubroutineLine *sl, Subroutine *sub) {
+void SimonEngine::dumpSubroutineLine(SubroutineLine *sl, Subroutine *sub) {
 	byte *p;
 
 	printf("; ****\n");
@@ -150,7 +150,7 @@ void SimonState::dumpSubroutineLine(SubroutineLine *sl, Subroutine *sub) {
 	}
 }
 
-void SimonState::dumpSubroutine(Subroutine *sub) {
+void SimonEngine::dumpSubroutine(Subroutine *sub) {
 	SubroutineLine *sl;
 
 	fprintf(_dump_file, "\n******************************************\n;Subroutine, ID=%d:\nSUB_%d:\n", sub->id, sub->id);
@@ -162,14 +162,14 @@ void SimonState::dumpSubroutine(Subroutine *sub) {
 	fflush(_dump_file);
 }
 
-void SimonState::dumpSubroutines() {
+void SimonEngine::dumpSubroutines() {
 	Subroutine *sub = _subroutine_list;
 	for (; sub; sub = sub->next) {
 		dumpSubroutine(sub);
 	}
 }
 
-void SimonState::dump_video_script(byte *src, bool one_opcode_only) {
+void SimonEngine::dump_video_script(byte *src, bool one_opcode_only) {
 	uint opcode;
 	const char *str, *strn;
 
@@ -233,7 +233,7 @@ void SimonState::dump_video_script(byte *src, bool one_opcode_only) {
 	} while (!one_opcode_only);
 }
 
-void SimonState::dump_vga_file(byte *vga) {
+void SimonEngine::dump_vga_file(byte *vga) {
 	{
 		byte *pp;
 		byte *p;
@@ -351,7 +351,7 @@ void dump_bitmap(const char *filename, byte *offs, int w, int h, int flags, cons
 	free(b);
 }
 
-void SimonState::dump_single_bitmap(int file, int image, byte *offs, int w, int h, byte base) {
+void SimonEngine::dump_single_bitmap(int file, int image, byte *offs, int w, int h, byte base) {
 /* Only supported for win32 atm. mkdir doesn't work otherwise. */
 #if defined (WIN32) && !defined(_WIN32_WCE)
 	char buf[255], buf2[255];
@@ -389,7 +389,7 @@ void pal_load(byte *pal, const byte *vga1, int a, int b) {
 	} while (--num);
 }
 
-void SimonState::dump_vga_bitmaps(byte *vga, byte *vga1, int res) {
+void SimonEngine::dump_vga_bitmaps(byte *vga, byte *vga1, int res) {
 /* Only supported for win32 atm. mkdir doesn't work otherwise. */
 #if defined (WIN32) && !defined(_WIN32_WCE)
 
@@ -444,14 +444,14 @@ void SimonState::dump_vga_bitmaps(byte *vga, byte *vga1, int res) {
 #endif
 }
 
-void SimonState::dump_vga_script_always(byte *ptr, uint res, uint sprite_id) {
+void SimonEngine::dump_vga_script_always(byte *ptr, uint res, uint sprite_id) {
 	fprintf(_dump_file, "; address=%x, vgafile=%d  vgasprite=%d\n",
 					ptr - _vga_buffer_pointers[res].vgaFile1, res, sprite_id);
 	dump_video_script(ptr, false);
 	fprintf(_dump_file, "; end\n");
 }
 
-void SimonState::dump_vga_script(byte *ptr, uint res, uint sprite_id) {
+void SimonEngine::dump_vga_script(byte *ptr, uint res, uint sprite_id) {
 	dump_vga_script_always(ptr, res, sprite_id);
 }
 

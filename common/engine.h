@@ -58,7 +58,7 @@ public:
 	virtual const char *getGameDataPath() const { return _gameDataPath; }
 
 	// Create a new engine object based on the detector - either 
-	// a Scumm or a SimonState object currently.
+	// a Scumm or a SimonEngine object currently.
 	static Engine *createFromDetector(GameDetector *detector, OSystem *syst);
 	
 	// Specific for each engine preparare of erroe string

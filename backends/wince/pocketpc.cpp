@@ -235,7 +235,7 @@ BOOL PPCWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, OSystem_W
 						if (is_demo)
 							do_quit();
 						if (is_simon) {
-							((SimonState*)engine)->_exit_cutscene = true;
+							((SimonEngine*)engine)->_exit_cutscene = true;
 							break;
 						}
 						wm->_event.event_code = OSystem::EVENT_KEYDOWN;

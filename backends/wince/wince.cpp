@@ -360,7 +360,7 @@ Engine *engine;
 bool is_simon;
 NewGui *g_gui;
 extern Scumm *g_scumm;
-//extern SimonState *g_simon;
+//extern SimonEngine *g_simon;
 //OSystem *g_system;
 //SoundMixer *g_mixer;
 Config *g_config;

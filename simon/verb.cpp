@@ -77,7 +77,7 @@ static const char *const english_verb_prep_names[] = {
 	"", "", "", "to whom ?"
 };
 
-void SimonState::defocusHitarea() {
+void SimonEngine::defocusHitarea() {
 	HitArea *last;
 	HitArea *ha;
 
@@ -102,7 +102,7 @@ void SimonState::defocusHitarea() {
 		focusVerb(last->id);
 }
 
-void SimonState::focusVerb(uint hitarea_id) {
+void SimonEngine::focusVerb(uint hitarea_id) {
 	uint x;
 	const char *txt;
 	const char * const *verb_prep_names;
@@ -128,7 +128,7 @@ void SimonState::focusVerb(uint hitarea_id) {
 	showActionString(x, (const byte *)txt);
 }
 
-void SimonState::showActionString(uint x, const byte *string) {
+void SimonEngine::showActionString(uint x, const byte *string) {
 	FillOrCopyStruct *fcs;
 
 	fcs = _fcs_ptr_array_3[1];
@@ -142,7 +142,7 @@ void SimonState::showActionString(uint x, const byte *string) {
 		video_putchar(fcs, *string);
 }
 
-void SimonState::hitareaChangedHelper() {
+void SimonEngine::hitareaChangedHelper() {
 	FillOrCopyStruct *fcs;
 
 	if (_game & GF_SIMON2) {
@@ -158,7 +158,7 @@ void SimonState::hitareaChangedHelper() {
 	_hitarea_ptr_7 = NULL;
 }
 
-HitArea *SimonState::findHitAreaByID(uint hitarea_id) {
+HitArea *SimonEngine::findHitAreaByID(uint hitarea_id) {
 	HitArea *ha = _hit_areas;
 	uint count = ARRAYSIZE(_hit_areas);
 
@@ -169,7 +169,7 @@ HitArea *SimonState::findHitAreaByID(uint hitarea_id) {
 	return NULL;
 }
 
-HitArea *SimonState::findEmptyHitArea() {
+HitArea *SimonEngine::findEmptyHitArea() {
 	HitArea *ha = _hit_areas;
 	uint count = ARRAYSIZE(_hit_areas);
 
@@ -180,13 +180,13 @@ HitArea *SimonState::findEmptyHitArea() {
 	return NULL;
 }
 
-void SimonState::clear_hitarea_bit_0x40(uint hitarea) {
+void SimonEngine::clear_hitarea_bit_0x40(uint hitarea) {
 	HitArea *ha = findHitAreaByID(hitarea);
 	if (ha != NULL)
 		ha->flags &= ~0x40;
 }
 
-void SimonState::set_hitarea_bit_0x40(uint hitarea) {
+void SimonEngine::set_hitarea_bit_0x40(uint hitarea) {
 	HitArea *ha = findHitAreaByID(hitarea);
 	if (ha != NULL) {
 		ha->flags |= 0x40;
@@ -196,7 +196,7 @@ void SimonState::set_hitarea_bit_0x40(uint hitarea) {
 	}
 }
 
-void SimonState::set_hitarea_x_y(uint hitarea, int x, int y) {
+void SimonEngine::set_hitarea_x_y(uint hitarea, int x, int y) {
 	HitArea *ha = findHitAreaByID(hitarea);
 	if (ha != NULL) {
 		ha->x = x;
@@ -204,7 +204,7 @@ void SimonState::set_hitarea_x_y(uint hitarea, int x, int y) {
 	}
 }
 
-void SimonState::delete_hitarea(uint hitarea) {
+void SimonEngine::delete_hitarea(uint hitarea) {
 	HitArea *ha = findHitAreaByID(hitarea);
 	if (ha != NULL) {
 		ha->flags = 0;
@@ -214,14 +214,14 @@ void SimonState::delete_hitarea(uint hitarea) {
 	}
 }
 
-bool SimonState::is_hitarea_0x40_clear(uint hitarea) {
+bool SimonEngine::is_hitarea_0x40_clear(uint hitarea) {
 	HitArea *ha = findHitAreaByID(hitarea);
 	if (ha == NULL)
 		return false;
 	return (ha->flags & 0x40) == 0;
 }
 
-void SimonState::addNewHitArea(int id, int x, int y, int width, int height, int flags, int unk3, Item *item_ptr) {
+void SimonEngine::addNewHitArea(int id, int x, int y, int width, int height, int flags, int unk3, Item *item_ptr) {
 	HitArea *ha;
 	delete_hitarea(id);
 
@@ -238,7 +238,7 @@ void SimonState::addNewHitArea(int id, int x, int y, int width, int height, int 
 	_need_hitarea_recalc++;
 }
 
-void SimonState::hitarea_proc_1() {
+void SimonEngine::hitarea_proc_1() {
 	uint id;
 	HitArea *ha;
 
@@ -265,7 +265,7 @@ void SimonState::hitarea_proc_1() {
 	}
 }
 
-void SimonState::handle_verb_hitarea(HitArea *ha) {
+void SimonEngine::handle_verb_hitarea(HitArea *ha) {
 	HitArea *tmp = _hitarea_ptr_5;
 
 	if (ha == tmp)
@@ -293,7 +293,7 @@ void SimonState::handle_verb_hitarea(HitArea *ha) {
 	_hitarea_ptr_5 = ha;
 }
 
-void SimonState::hitarea_leave(HitArea *ha) {
+void SimonEngine::hitarea_leave(HitArea *ha) {
 	if (!(_game & GF_SIMON2)) {
 		video_toggle_colors(ha, 0xdf, 0xd5, 0xda, 5);
 	} else {
@@ -301,13 +301,13 @@ void SimonState::hitarea_leave(HitArea *ha) {
 	}
 }
 
-void SimonState::leaveHitAreaById(uint hitarea_id) {
+void SimonEngine::leaveHitAreaById(uint hitarea_id) {
 	HitArea *ha = findHitAreaByID(hitarea_id);
 	if (ha)
 		hitarea_leave(ha);
 }
 
-void SimonState::handle_uparrow_hitarea(FillOrCopyStruct *fcs) {
+void SimonEngine::handle_uparrow_hitarea(FillOrCopyStruct *fcs) {
 	uint index;
 
 	index = get_fcs_ptr_3_index(fcs);
@@ -320,7 +320,7 @@ void SimonState::handle_uparrow_hitarea(FillOrCopyStruct *fcs) {
 	unlock();
 }
 
-void SimonState::handle_downarrow_hitarea(FillOrCopyStruct *fcs) {
+void SimonEngine::handle_downarrow_hitarea(FillOrCopyStruct *fcs) {
 	uint index;
 
 	index = get_fcs_ptr_3_index(fcs);
@@ -330,7 +330,7 @@ void SimonState::handle_downarrow_hitarea(FillOrCopyStruct *fcs) {
 	unlock();
 }
 
-void SimonState::setup_hitarea_from_pos(uint x, uint y, uint mode) {
+void SimonEngine::setup_hitarea_from_pos(uint x, uint y, uint mode) {
 	HitArea *best_ha;
 	HitArea *ha = _hit_areas;
 	uint count = ARRAYSIZE(_hit_areas);
@@ -390,7 +390,7 @@ void SimonState::setup_hitarea_from_pos(uint x, uint y, uint mode) {
 	return;
 }
 
-void SimonState::new_current_hitarea(HitArea *ha) {
+void SimonEngine::new_current_hitarea(HitArea *ha) {
 	bool result;
 
 	hitareaChangedHelper();
@@ -404,7 +404,7 @@ void SimonState::new_current_hitarea(HitArea *ha) {
 		_last_hitarea_2_ptr = ha;
 }
 
-bool SimonState::hitarea_proc_2(uint a) {
+bool SimonEngine::hitarea_proc_2(uint a) {
 	uint x;
 	const byte *string_ptr;
 
@@ -433,7 +433,7 @@ bool SimonState::hitarea_proc_2(uint a) {
 	return true;
 }
 
-bool SimonState::hitarea_proc_3(Item *item) {
+bool SimonEngine::hitarea_proc_3(Item *item) {
 	Child2 *child2;
 	uint x;
 	const byte *string_ptr;

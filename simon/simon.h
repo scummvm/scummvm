@@ -101,7 +101,7 @@ struct VgaTimerEntry {
 
 struct GameSpecificSettings;
 
-class SimonState : public Engine {
+class SimonEngine : public Engine {
 	void errorString(const char *buf_input, char *buf_output);
 public:
 	File *_mus_file;
@@ -356,8 +356,8 @@ public:
 	RandomSource _rnd;
 
 
-	SimonState(GameDetector *detector, OSystem *syst);
-	virtual ~SimonState();
+	SimonEngine(GameDetector *detector, OSystem *syst);
+	virtual ~SimonEngine();
 
 	int allocGamePcVars(File *in);
 	Item *allocItem1();
