@@ -135,6 +135,10 @@ static const VersionSettings scumm_settings[] = {
 
 	{"test", "Test demo game", GID_SAMNMAX, 6, 6, 6, GF_NEW_OPCODES | GF_AFTER_V6, 0},
 
+	/* Humongous Entertainment Scumm Version 7 */
+	{"farmdemo", "Let's Explore the Farm with Buzzy (Demo)", GID_SAMNMAX, 7, 0, 0,
+	 GF_NEW_OPCODES | GF_AFTER_V6 | GF_AFTER_HEV7 | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0},
+
 	/* Scumm Version 7 */
 	{"ft", "Full Throttle", GID_FT, 7, 3, 0,
 	 GF_NEW_OPCODES | GF_AFTER_V6 | GF_AFTER_V7 | GF_NEW_COSTUMES, 0},
