@@ -1,35 +1,35 @@
 OBJS =\
-        actor.o \
-        bitmap.o \
-        blocky16.o \
-        costume.o \
-        debug.o \
-        driver_gl.o \
-        engine.o \
-        keyframe.o \
-        lab.o \
-        localize.o \
-        lua.o \
-        main.o \
-        material.o \
-        matrix3.o \
-        matrix4.o \
-        model.o \
-        objectstate.o \
-        registry.o \
-        resource.o \
-        scene.o \
-        screen.o \
-        smush.o \
-        sound.o \
-        textobject.o \
-        textsplit.o \
-        timer.o \
-        vima.o \
-        walkplane.o \
-        mixer/mixer.o \
-        mixer/rate.o \
-        mixer/audiostream.o
+	actor.o \
+	bitmap.o \
+	blocky16.o \
+	costume.o \
+	debug.o \
+	driver_gl.o \
+	engine.o \
+	keyframe.o \
+	lab.o \
+	localize.o \
+	lua.o \
+	main.o \
+	material.o \
+	matrix3.o \
+	matrix4.o \
+	model.o \
+	objectstate.o \
+	registry.o \
+	resource.o \
+	scene.o \
+	screen.o \
+	smush.o \
+	sound.o \
+	textobject.o \
+	textsplit.o \
+	timer.o \
+	vima.o \
+	walkplane.o \
+	mixer/mixer.o \
+	mixer/rate.o \
+	mixer/audiostream.o
 
 DEPS = $(OBJS:.o=.d)
 
