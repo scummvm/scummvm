@@ -298,6 +298,8 @@ SAGA
   rewrite path finder
 * IHNM intro is very uncomplete
 * Support various demo versions
+* Change SData so that its buffers point to the appropriate data.
+  (eriktorbjorn)
 
 #######################################################################
 # Backends
