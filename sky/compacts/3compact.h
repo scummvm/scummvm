@@ -1189,7 +1189,7 @@ uint16 shades_r_to_l[] = {
 	0,
 };
 
-uint16 *shades_turnTable0[5][5] = {
+TurnTable shades_turnTable0 = {
 	{ // turnTableUp
 		0,
 		shades_u_to_d,
@@ -1241,7 +1241,7 @@ MegaSet shades_megaSet0 = {
 	shades_st_left,	// standLeft
 	shades_st_right,	// standRight
 	shades_st_talk,	// standTalk
-	shades_turnTable0,
+	&shades_turnTable0,
 };
 
 ExtCompact shades_ext = {

@@ -394,7 +394,7 @@ uint16 medi_r_to_l[] = {
 	0,
 };
 
-uint16 *medi_turnTable0[5][5] = {
+TurnTable medi_turnTable0 = {
 	{ // turnTableUp
 		0,
 		medi_u_to_d,
@@ -446,7 +446,7 @@ MegaSet medi_megaSet0 = {
 	medi_st_left,	// standLeft
 	medi_st_right,	// standRight
 	0,	// standTalk
-	medi_turnTable0,
+	&medi_turnTable0,
 };
 
 ExtCompact medi_ext = {

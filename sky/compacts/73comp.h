@@ -406,7 +406,7 @@ uint16 gal_r_to_l[] = {
 	0,
 };
 
-uint16 *gallagher_turnTable0[5][5] = {
+TurnTable gallagher_turnTable0 = {
 	{ // turnTableUp
 		0,
 		gal_u_to_d,
@@ -458,7 +458,7 @@ MegaSet gallagher_megaSet0 = {
 	gal_st_left,	// standLeft
 	gal_st_right,	// standRight
 	0,	// standTalk
-	gallagher_turnTable0,
+	&gallagher_turnTable0,
 };
 
 ExtCompact gallagher_ext = {

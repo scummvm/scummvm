@@ -2107,7 +2107,7 @@ uint16 wit_t_to_l[] = {
 	0,
 };
 
-uint16 *witness_turnTable0[5][5] = {
+TurnTable witness_turnTable0 = {
 	{ // turnTableUp
 		0,
 		wit_u_to_d,
@@ -2159,7 +2159,7 @@ MegaSet witness_megaSet0 = {
 	wit_st_left,	// standLeft
 	wit_st_right,	// standRight
 	wit_st_talk,	// standTalk
-	witness_turnTable0,
+	&witness_turnTable0,
 };
 
 ExtCompact witness_ext = {

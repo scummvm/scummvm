@@ -1259,7 +1259,7 @@ uint16 sml_loaderb_l_to_d[] = {
 	0,
 };
 
-uint16 *loader_turnTable0[5][5] = {
+TurnTable loader_turnTable0 = {
 	{ // turnTableUp
 		0,
 		loader_u_to_d,
@@ -1297,7 +1297,7 @@ uint16 *loader_turnTable0[5][5] = {
 	},
 };
 
-uint16 *loader_turnTable1[5][5] = {
+TurnTable loader_turnTable1 = {
 	{ // turnTableUp
 		0,
 		loaderb_u_to_d,
@@ -1335,7 +1335,7 @@ uint16 *loader_turnTable1[5][5] = {
 	},
 };
 
-uint16 *loader_turnTable2[5][5] = {
+TurnTable loader_turnTable2 = {
 	{ // turnTableUp
 		0,
 		sml_loader_u_to_d,
@@ -1373,7 +1373,7 @@ uint16 *loader_turnTable2[5][5] = {
 	},
 };
 
-uint16 *loader_turnTable3[5][5] = {
+TurnTable loader_turnTable3 = {
 	{ // turnTableUp
 		0,
 		sml_loaderb_u_to_d,
@@ -1425,7 +1425,7 @@ MegaSet loader_megaSet0 = {
 	loader_st_left,	// standLeft
 	loader_st_right,	// standRight
 	0,	// standTalk
-	loader_turnTable0,
+	&loader_turnTable0,
 };
 
 MegaSet loader_megaSet1 = {
@@ -1442,7 +1442,7 @@ MegaSet loader_megaSet1 = {
 	loaderb_st_left,	// standLeft
 	loaderb_st_right,	// standRight
 	0,	// standTalk
-	loader_turnTable1,
+	&loader_turnTable1,
 };
 
 MegaSet loader_megaSet2 = {
@@ -1459,7 +1459,7 @@ MegaSet loader_megaSet2 = {
 	sml_loader_st_left,	// standLeft
 	sml_loader_st_right,	// standRight
 	0,	// standTalk
-	loader_turnTable2,
+	&loader_turnTable2,
 };
 
 MegaSet loader_megaSet3 = {
@@ -1476,7 +1476,7 @@ MegaSet loader_megaSet3 = {
 	sml_loaderb_st_left,	// standLeft
 	sml_loaderb_st_right,	// standRight
 	0,	// standTalk
-	loader_turnTable3,
+	&loader_turnTable3,
 };
 
 ExtCompact loader_ext = {

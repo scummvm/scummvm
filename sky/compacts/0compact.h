@@ -4066,7 +4066,7 @@ uint16 m_ss_r_to_l[] = {
 	0,
 };
 
-uint16 *mini_so_turnTable0[5][5] = {
+TurnTable mini_so_turnTable0 = {
 	{ // turnTableUp
 		0,
 		m_ss_u_to_d,
@@ -4118,7 +4118,7 @@ MegaSet mini_so_megaSet0 = {
 	m_ss_st_left,	// standLeft
 	m_ss_st_right,	// standRight
 	m_ss_st_talk,	// standTalk
-	mini_so_turnTable0,
+	&mini_so_turnTable0,
 };
 
 ExtCompact mini_so_ext = {
@@ -4590,7 +4590,7 @@ uint16 f_ss_r_to_l[] = {
 	0,
 };
 
-uint16 *full_so_turnTable0[5][5] = {
+TurnTable full_so_turnTable0 = {
 	{ // turnTableUp
 		0,
 		f_ss_u_to_d,
@@ -4642,7 +4642,7 @@ MegaSet full_so_megaSet0 = {
 	f_ss_st_left,	// standLeft
 	f_ss_st_right,	// standRight
 	0,	// standTalk
-	full_so_turnTable0,
+	&full_so_turnTable0,
 };
 
 ExtCompact full_so_ext = {

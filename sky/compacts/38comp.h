@@ -3172,7 +3172,7 @@ uint16 sex_u_to_l[] = {
 	0,
 };
 
-uint16 *danielle_turnTable0[5][5] = {
+TurnTable danielle_turnTable0 = {
 	{ // turnTableUp
 		0,
 		dan_u_to_d,
@@ -3210,7 +3210,7 @@ uint16 *danielle_turnTable0[5][5] = {
 	},
 };
 
-uint16 *danielle_turnTable1[5][5] = {
+TurnTable danielle_turnTable1 = {
 	{ // turnTableUp
 		0,
 		sex_u_to_d,
@@ -3262,7 +3262,7 @@ MegaSet danielle_megaSet0 = {
 	dan_st_left,	// standLeft
 	dan_st_right,	// standRight
 	dan_st_talk,	// standTalk
-	danielle_turnTable0,
+	&danielle_turnTable0,
 };
 
 MegaSet danielle_megaSet1 = {
@@ -3279,7 +3279,7 @@ MegaSet danielle_megaSet1 = {
 	sex_st_left,	// standLeft
 	sex_st_right,	// standRight
 	sex_st_talk,	// standTalk
-	danielle_turnTable1,
+	&danielle_turnTable1,
 };
 
 ExtCompact danielle_ext = {
@@ -3393,7 +3393,7 @@ uint16 spu_st_up[] = {
 	0,
 };
 
-uint16 *spunky_turnTable0[5][5] = {
+TurnTable spunky_turnTable0 = {
 	{ // turnTableUp
 		0,
 		spu_u_to_d,
@@ -3445,7 +3445,7 @@ MegaSet spunky_megaSet0 = {
 	spu_st_left,	// standLeft
 	spu_st_right,	// standRight
 	spu_st_talk,	// standTalk
-	spunky_turnTable0,
+	&spunky_turnTable0,
 };
 
 ExtCompact spunky_ext = {

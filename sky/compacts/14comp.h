@@ -337,7 +337,7 @@ uint16 radman_r_to_l[] = {
 	0,
 };
 
-uint16 *radman_turnTable0[5][5] = {
+TurnTable radman_turnTable0 = {
 	{ // turnTableUp
 		0,
 		radman_u_to_d,
@@ -389,7 +389,7 @@ MegaSet radman_megaSet0 = {
 	radman_st_left,	// standLeft
 	radman_st_right,	// standRight
 	radman_st_talk,	// standTalk
-	radman_turnTable0,
+	&radman_turnTable0,
 };
 
 ExtCompact radman_ext = {

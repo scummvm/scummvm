@@ -471,7 +471,7 @@ uint16 ken_r_to_l[] = {
 	0,
 };
 
-uint16 *ken_turnTable0[5][5] = {
+TurnTable ken_turnTable0 = {
 	{ // turnTableUp
 		0,
 		ken_u_to_d,
@@ -523,7 +523,7 @@ MegaSet ken_megaSet0 = {
 	ken_st_left,	// standLeft
 	ken_st_right,	// standRight
 	0,	// standTalk
-	ken_turnTable0,
+	&ken_turnTable0,
 };
 
 ExtCompact ken_ext = {

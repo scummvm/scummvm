@@ -2367,7 +2367,7 @@ uint16 foreman_r_to_d[] = {
 	0,
 };
 
-uint16 *foreman_turnTable0[5][5] = {
+TurnTable foreman_turnTable0 = {
 	{ // turnTableUp
 		0,
 		foreman_u_to_d,
@@ -2419,7 +2419,7 @@ MegaSet foreman_megaSet0 = {
 	foreman_st_left,	// standLeft
 	foreman_st_right,	// standRight
 	foreman_st_talk,	// standTalk
-	foreman_turnTable0,
+	&foreman_turnTable0,
 };
 
 ExtCompact foreman_ext = {

@@ -1039,7 +1039,7 @@ uint16 lamb_r_to_l[] = {
 	0,
 };
 
-uint16 *lamb_turnTable0[5][5] = {
+TurnTable lamb_turnTable0 = {
 	{ // turnTableUp
 		0,
 		lamb_u_to_d,
@@ -1091,7 +1091,7 @@ MegaSet lamb_megaSet0 = {
 	lamb_st_left,	// standLeft
 	lamb_st_right,	// standRight
 	lamb_st_talk,	// standTalk
-	lamb_turnTable0,
+	&lamb_turnTable0,
 };
 
 ExtCompact lamb_ext = {
@@ -3063,7 +3063,7 @@ uint16 sjoey_r_to_l[] = {
 	0,
 };
 
-uint16 *joey_turnTable0[5][5] = {
+TurnTable joey_turnTable0 = {
 	{ // turnTableUp
 		0,
 		ljoey_u_to_d,
@@ -3101,7 +3101,7 @@ uint16 *joey_turnTable0[5][5] = {
 	},
 };
 
-uint16 *joey_turnTable1[5][5] = {
+TurnTable joey_turnTable1 = {
 	{ // turnTableUp
 		0,
 		wjoey_u_to_d,
@@ -3139,7 +3139,7 @@ uint16 *joey_turnTable1[5][5] = {
 	},
 };
 
-uint16 *joey_turnTable2[5][5] = {
+TurnTable joey_turnTable2 = {
 	{ // turnTableUp
 		0,
 		sjoey_u_to_d,
@@ -3191,7 +3191,7 @@ MegaSet joey_megaSet0 = {
 	ljoey_st_left,	// standLeft
 	ljoey_st_right,	// standRight
 	0,	// standTalk
-	joey_turnTable0,
+	&joey_turnTable0,
 };
 
 MegaSet joey_megaSet1 = {
@@ -3208,7 +3208,7 @@ MegaSet joey_megaSet1 = {
 	wjoey_st_left,	// standLeft
 	wjoey_st_right,	// standRight
 	0,	// standTalk
-	joey_turnTable1,
+	&joey_turnTable1,
 };
 
 MegaSet joey_megaSet2 = {
@@ -3225,7 +3225,7 @@ MegaSet joey_megaSet2 = {
 	sjoey_st_left,	// standLeft
 	sjoey_st_right,	// standRight
 	0,	// standTalk
-	joey_turnTable2,
+	&joey_turnTable2,
 };
 
 ExtCompact joey_ext = {
@@ -4350,7 +4350,7 @@ uint16 bfoster_l_to_r[] = {
 	0,
 };
 
-uint16 *foster_turnTable0[5][5] = {
+TurnTable foster_turnTable0 = {
 	{ // turnTableUp
 		0,
 		mfoster_u_to_d,
@@ -4388,7 +4388,7 @@ uint16 *foster_turnTable0[5][5] = {
 	},
 };
 
-uint16 *foster_turnTable1[5][5] = {
+TurnTable foster_turnTable1 = {
 	{ // turnTableUp
 		0,
 		foster_u_to_d,
@@ -4426,7 +4426,7 @@ uint16 *foster_turnTable1[5][5] = {
 	},
 };
 
-uint16 *foster_turnTable2[5][5] = {
+TurnTable foster_turnTable2 = {
 	{ // turnTableUp
 		0,
 		fradman_u_to_d,
@@ -4464,7 +4464,7 @@ uint16 *foster_turnTable2[5][5] = {
 	},
 };
 
-uint16 *foster_turnTable3[5][5] = {
+TurnTable foster_turnTable3 = {
 	{ // turnTableUp
 		0,
 		bfoster_u_to_d,
@@ -4516,7 +4516,7 @@ MegaSet foster_megaSet0 = {
 	mfoster_st_left,	// standLeft
 	mfoster_st_right,	// standRight
 	0,	// standTalk
-	foster_turnTable0,
+	&foster_turnTable0,
 };
 
 MegaSet foster_megaSet1 = {
@@ -4533,7 +4533,7 @@ MegaSet foster_megaSet1 = {
 	foster_st_left,	// standLeft
 	foster_st_right,	// standRight
 	foster_st_talk,	// standTalk
-	foster_turnTable1,
+	&foster_turnTable1,
 };
 
 MegaSet foster_megaSet2 = {
@@ -4550,7 +4550,7 @@ MegaSet foster_megaSet2 = {
 	fradman_st_left,	// standLeft
 	fradman_st_right,	// standRight
 	fradman_st_talk,	// standTalk
-	foster_turnTable2,
+	&foster_turnTable2,
 };
 
 MegaSet foster_megaSet3 = {
@@ -4567,7 +4567,7 @@ MegaSet foster_megaSet3 = {
 	bfoster_st_left,	// standLeft
 	bfoster_st_right,	// standRight
 	0,	// standTalk
-	foster_turnTable3,
+	&foster_turnTable3,
 };
 
 ExtCompact foster_ext = {
@@ -5142,7 +5142,7 @@ uint16 monitor_r_to_l[] = {
 	0,
 };
 
-uint16 *monitor_turnTable0[5][5] = {
+TurnTable monitor_turnTable0 = {
 	{ // turnTableUp
 		0,
 		monitor_u_to_d,
@@ -5194,7 +5194,7 @@ MegaSet monitor_megaSet0 = {
 	monitor_st_left,	// standLeft
 	monitor_st_right,	// standRight
 	monitor_st_talk,	// standTalk
-	monitor_turnTable0,
+	&monitor_turnTable0,
 };
 
 ExtCompact monitor_ext = {

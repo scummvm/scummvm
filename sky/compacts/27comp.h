@@ -2039,7 +2039,7 @@ uint16 burke_d_to_r[] = {
 	0,
 };
 
-uint16 *burke_turnTable0[5][5] = {
+TurnTable burke_turnTable0 = {
 	{ // turnTableUp
 		0,
 		burke_u_to_d,
@@ -2091,7 +2091,7 @@ MegaSet burke_megaSet0 = {
 	burke_st_left,	// standLeft
 	burke_st_right,	// standRight
 	burke_st_talk,	// standTalk
-	burke_turnTable0,
+	&burke_turnTable0,
 };
 
 ExtCompact burke_ext = {

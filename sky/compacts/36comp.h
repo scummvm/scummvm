@@ -1274,7 +1274,7 @@ uint16 babs_t_to_r[] = {
 	0,
 };
 
-uint16 *sc36_babs_turnTable0[5][5] = {
+TurnTable sc36_babs_turnTable0 = {
 	{ // turnTableUp
 		0,
 		babs_u_to_d,
@@ -1326,7 +1326,7 @@ MegaSet sc36_babs_megaSet0 = {
 	babs_st_left,	// standLeft
 	babs_st_right,	// standRight
 	babs_st_talk,	// standTalk
-	sc36_babs_turnTable0,
+	&sc36_babs_turnTable0,
 };
 
 ExtCompact sc36_babs_ext = {
