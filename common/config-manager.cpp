@@ -253,6 +253,10 @@ void ConfigManager::removeKey(const String &key, const String &dom) {
 
 
 const String & ConfigManager::get(const String &key) const {
+	return get(key, _activeDomain);
+}
+
+const String & ConfigManager::get(const String &key, const String &dom) const {
 	// Search the domains in the following order:
 	// 1) Run time domain
 	// 2) Active game domain (if any)
@@ -262,9 +266,9 @@ const String & ConfigManager::get(const String &key) const {
 //	if (_transientDomain.contain(key))
 //		return true;
 	
-	if (!_activeDomain.isEmpty() && _gameDomains[_activeDomain].contains(key))
-		return _gameDomains[_activeDomain][key];
-	
+	if (!dom.isEmpty() && _gameDomains.contains(dom) && _gameDomains[dom].contains(key))
+		return _gameDomains[dom][key];
+
 	DomainMap::ConstIterator iter;
 	for (iter = _globalDomains.begin(); iter != _globalDomains.end(); ++iter) {
 		if (iter->_value.contains(key))
@@ -272,32 +276,6 @@ const String & ConfigManager::get(const String &key) const {
 	}
 	
 	return _defaultsDomain.get(key);
-}
-
-const String & ConfigManager::get(const String &key, const String &dom) const {
-	if (dom.isEmpty())
-		return get(key);
-
-	// TODO: How exactly should we handle the case were the domain 'dom'
-	// is not found, or were dom is found, but doesn't contain 'key' ?
-	// Right now we just return an empty string. But might want to print
-	// out a warning, or even error out?
-	if (_gameDomains.contains(dom)) {
-		// Return the value, if any; defaults to the empty string if the key is
-		// not present in the domain. We purposely do not return the registered
-		// default value.
-		// 
-		return _gameDomains[dom].get(key);
-	} else if (_globalDomains.contains(dom)) {
-		if (_globalDomains[dom].contains(key))
-			return _globalDomains[dom].get(key);
-		// For global domains, we *do* use the registered default value.
-		return _defaultsDomain.get(key);
-	} else {
-		// Domain was not found. Do *not* return the registered default
-		// value, see above for the reasons.
-		return String::emptyString;
-	}
 }
 
 int ConfigManager::getInt(const String &key, const String &dom) const {
