@@ -511,10 +511,26 @@ byte *SimonEngine::vc_10_depack_swap(byte *src, uint w, uint h) {
 	return _video_buf_1;
 }
 
-byte *vc_10_no_depack_swap(byte *src) {
-	// TODO Add vc_10_no_depack_swap support, should be very similar to 
-	// vc_10_depack_swap but without the depacking
-	return NULL;
+byte *SimonEngine::vc_10_no_depack_swap(byte *src, uint w, uint h) {
+	if (src == _vc_10_base_ptr_old)
+		return _video_buf_1;
+
+	_vc_10_base_ptr_old = src;
+	h *= 8;
+	byte *dst = _video_buf_1 + h - 1;
+
+	// loc_40F57F
+	uint h_cur = h;
+	do {
+		do {
+			*dst = *src << 4;
+			(*dst--) |= (*src++) >> 4;
+		} while (--h_cur != 0);
+		h_cur = h;
+		dst += h * 2;
+	} while (--w != 0);
+
+	return _video_buf_1;
 }
 
 /* must not be const */
@@ -656,10 +672,7 @@ void SimonEngine::vc_10_draw() {
 	if (state.e & 0x10) {
 		state.depack_src = vc_10_depack_swap(state.depack_src, width, height);
 	} else if (state.e & 1) {
-		// FIXME: vc_10_no_depack_swap should be called but is currently not supported
-		//state.depack_src = vc_10_no_depack_swap(state.depack_src);
-		debug(5,"vc_10_no_depack_swap unimpl");
-		state.depack_src = vc_10_depack_swap(state.depack_src, width, height);
+		state.depack_src = vc_10_no_depack_swap(state.depack_src, width, height);
 	}
 
 	vlut = &_video_windows[_video_palette_mode * 4];
@@ -1292,9 +1305,8 @@ void SimonEngine::vc_27_reset() {
 }
 
 void SimonEngine::vc_28_dummy_op() {
-	/* dummy opcode */
+	/* unused */
 	_vc_ptr += 8;
-	warning("vc_28 - Please report error message and where in game it occured");
 }
 
 void SimonEngine::vc_29_stop_all_sounds() {
@@ -1337,12 +1349,9 @@ void SimonEngine::vc_34_force_lock() {
 }
 
 void SimonEngine::vc_35() {
-	/* unknown function is simon1dos/simon2dos */
-	/* dummy op in simon1win/simon2win */
-	/* not used? */
+	/* unused */
 	_vc_ptr += 4;
 	_vga_sprite_changed++;
-	warning("vc_35 - Please report error message and where in game it occured");
 }
 
 void SimonEngine::vc_36_saveload_thing() {
@@ -1546,15 +1555,13 @@ void SimonEngine::vc_52_play_sound() {
 }
 
 void SimonEngine::vc_53_no_op() {
-	/* dummy op in simon1dos/talkie */
-	/* no op in simon1win */
-	warning("vc_53 - Please report error message and where in game it occured");
+	/* unused */
+	_vc_ptr += 4;
 }
 
 void SimonEngine::vc_54_no_op() {
-	/* dummy op in simon1dos/talkie */
-	/* no op in simon1win */
-	warning("vc_54 - Please report error message and where in game it occured");
+	/* unused */
+	_vc_ptr += 6;
 }
 
 void SimonEngine::vc_55_offset_hit_area() {
@@ -1579,7 +1586,6 @@ void SimonEngine::vc_55_offset_hit_area() {
 }
 
 void SimonEngine::vc_56() {
-	/* no op in simon1 */
 	if (_game & GF_SIMON2) {
 		uint num = vc_read_var_or_word() * _vga_base_delay;
 
@@ -1588,8 +1594,6 @@ void SimonEngine::vc_56() {
 
 		add_vga_timer(num + gss->VGA_DELAY_BASE, _vc_ptr, _vga_cur_sprite_id, _vga_cur_file_id);
 		_vc_ptr = (byte *)&vc_get_out_of_code;
-	} else {
-		warning("vc_56 - Please report error message and where in game it occured");
 	}
 }
 
@@ -1609,10 +1613,6 @@ void SimonEngine::vc_59() {
 }
 
 void SimonEngine::vc_58() {
-	/* no op in simon1dos */
-	/* not used in simon1win? */
-	if (!(_game & GF_SIMON2))
-		warning("vc_58 - Please report error message and where in game it occured");
 	uint sprite = _vga_cur_sprite_id;
 	uint file = _vga_cur_file_id;
 	byte *vc_ptr;
@@ -1633,10 +1633,7 @@ void SimonEngine::vc_58() {
 }
 
 void SimonEngine::vc_57_no_op() {
-	/* unknown function in simon1dos/simon2dos */
-	/* no op in simon1win/simon2win */
-	/* not used? */
-		warning("vc_57 - Please report error message and where in game it occured");
+	/* unused */
 }
 
 void SimonEngine::vc_kill_sprite(uint file, uint sprite) {

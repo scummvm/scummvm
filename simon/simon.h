@@ -334,8 +334,6 @@ protected:
 
 	FILE *_dump_file;
 
-	int _number_of_savegames;
-
 	int _saveload_row_curpos;
 	int _num_savegame_rows;
 	bool _savedialog_flag;
@@ -350,6 +348,8 @@ protected:
 
 	RandomSource _rnd;
 
+	byte *_vc_10_base_ptr_old;
+	byte _hebrew_char_widths[32];
 
 public:
 	SimonEngine(GameDetector *detector, OSystem *syst);
@@ -752,6 +752,7 @@ protected:
 	void shutdown();
 
 	byte *vc_10_depack_swap(byte *src, uint w, uint h);
+	byte *vc_10_no_depack_swap(byte *src, uint w, uint h);
 
 	Item *getNextItemPtrStrange();
 

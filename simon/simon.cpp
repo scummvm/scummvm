@@ -424,7 +424,6 @@ SimonEngine::SimonEngine(GameDetector *detector, OSystem *syst)
 
 	_dump_file = 0;
 
-	_number_of_savegames = 0;
 	_saveload_row_curpos = 0;
 	_num_savegame_rows = 0;
 	_savedialog_flag = false;
@@ -437,6 +436,10 @@ SimonEngine::SimonEngine(GameDetector *detector, OSystem *syst)
 	_sdl_buf_3 = 0;
 	_sdl_buf = 0;
 	_sdl_buf_attached = 0;
+
+	_vc_10_base_ptr_old = 0;
+	memcpy (_hebrew_char_widths,
+		"\x5\x5\x4\x6\x5\x3\x4\x5\x6\x3\x5\x5\x4\x6\x5\x3\x4\x6\x5\x6\x6\x6\x5\x5\x5\x6\x5\x6\x6\x6\x6\x6", 32);
 
 
 	// Setup midi driver
@@ -2063,7 +2066,7 @@ void SimonEngine::o_print_str() {
 	case GAME_SIMON1CD32:
 		if (speech_id != 0)
 			talk_with_speech(speech_id, num_1);
-		if (string_ptr != NULL && (_subtitles || speech_id == 0))
+		if (string_ptr != NULL && (speech_id == 0 || _subtitles))
 			talk_with_text(num_1, num_2, (const char *)string_ptr, tv->a, tv->b, tv->c);
 		break;
 
@@ -2077,16 +2080,14 @@ void SimonEngine::o_print_str() {
 	case GAME_SIMON2TALKIE:
 	case GAME_SIMON2WIN:
 	case GAME_SIMON2MAC:
-		if (speech_id != 0 && num_1 == 1 && !_subtitles)
+		if (speech_id != 0 && num_1 == 1 && (_language == 20 || !_subtitles))
 			talk_with_speech(speech_id, num_1);
-
-		if (speech_id != 0 && !_subtitles)
-			return;
 
 		if ((_game & GF_TALKIE) && (speech_id == 0))
 			o_kill_sprite_simon2(2, num_1 + 2);
 
-		talk_with_text(num_1, num_2, (const char *)string_ptr, tv->a, tv->b, tv->c);
+		if (string_ptr != NULL && (speech_id == 0 || _subtitles))
+			talk_with_text(num_1, num_2, (const char *)string_ptr, tv->a, tv->b, tv->c);
 		break;
 	}
 }
@@ -2606,7 +2607,7 @@ void SimonEngine::savegame_dialog(char *buf) {
 
 void SimonEngine::save_or_load_dialog(bool load) {
 	time_t save_time;
-	int num = _number_of_savegames;
+	int number_of_savegames;
 	int i;
 	int unk132_result;
 	FillOrCopyStruct *fcs;
@@ -2621,18 +2622,18 @@ void SimonEngine::save_or_load_dialog(bool load) {
 
 	_copy_partial_mode = 1;
 
-	_number_of_savegames = num = count_savegames();
+	number_of_savegames = count_savegames();
 	if (!load)
-		num++;
-	num -= 6;
-	if (num < 0)
-		num = 0;
-	num++;
-	_num_savegame_rows = num;
+		number_of_savegames++;
+	number_of_savegames -= 6;
+	if (number_of_savegames < 0)
+		number_of_savegames = 0;
+	number_of_savegames++;
+	_num_savegame_rows = number_of_savegames;
 
 	_saveload_row_curpos = 1;
 	if (!load)
-		_saveload_row_curpos = num;
+		_saveload_row_curpos = number_of_savegames;
 
 	_saveload_flag = false;
 
@@ -2657,25 +2658,44 @@ restart:;
 
 		fcs->textRow = unk132_result;
 
-		// init x offset with a 2 character savegame number + a period (18 pix)
-		fcs->textColumn = 2;
-		fcs->textColumnOffset = 2;
-		fcs->textLength = 3;
+		if (_language == 20) { //Hebrew
+			// init x offset with a 2 character savegame number + a period (18 pix)
+			fcs->textColumn = 3;
+			fcs->textColumnOffset = 6;
+			fcs->textLength = 3;
+		} else {
+			// init x offset with a 2 character savegame number + a period (18 pix)
+			fcs->textColumn = 2;
+			fcs->textColumnOffset = 2;
+			fcs->textLength = 3;
+		}
 
 		name = buf + i * 18;
 
 		// now process entire savegame name to get correct x offset for cursor
 		name_len = 0;
 		while (name[name_len]) {
-			fcs->textLength++;
-			fcs->textColumnOffset += 6;
-			if (name[name_len] == 'i' || name[name_len] == 'l')
-				fcs->textColumnOffset -= 2;
-			if (fcs->textColumnOffset >= 8) {
-				fcs->textColumnOffset -= 8;
-				fcs->textColumn++;
+			if (_language == 20) { //Hebrew
+				byte width = 6;
+				if (name[name_len] >= 64 && name[name_len] < 91)
+					width = _hebrew_char_widths [name[name_len]-64];
+				fcs->textLength++;
+				fcs->textColumnOffset -= width;
+				if (fcs->textColumnOffset >= width) {
+					fcs->textColumnOffset += 8;
+					fcs->textColumn++;
+				}
+			} else {
+				fcs->textLength++;
+				fcs->textColumnOffset += 6;
+				if (name[name_len] == 'i' || name[name_len] == 'l')
+					fcs->textColumnOffset -= 2;
+				if (fcs->textColumnOffset >= 8) {
+					fcs->textColumnOffset -= 8;
+					fcs->textColumn++;
+				}
+				name_len++;
 			}
-			name_len++;
 		}
 		// while_1_end
 
