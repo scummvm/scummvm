@@ -237,9 +237,7 @@ class Scene {
 	bool isInDemo() { return !_inGame; }
 	
 	void getBGMaskInfo(int &width, int &height, byte *&buffer, size_t &bufferLength);
-	int isBGMaskPresent() {
-		return _bgMask.loaded;
-	}
+	int isBGMaskPresent() { return _bgMask.loaded; }
 	int getBGMaskType(const Point &testPoint);
 	bool validBGMaskPoint(const Point &testPoint);
 	bool canWalk(const Point &testPoint);

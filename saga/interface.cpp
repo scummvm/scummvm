@@ -303,9 +303,9 @@ int Interface::setMode(int mode, bool force) {
 	// TODO: Is this where we should hide/show the mouse cursor?
 	int newmode = mode;
 
-	if (_panelMode == kPanelConverse)
+	if (mode == kPanelConverse)
 		_inMainMode = false;
-	else if (_panelMode == kPanelInventory) {
+	else if (mode == kPanelInventory) {
 		_inMainMode = true;
 		newmode = kPanelMain;
 	}
@@ -366,9 +366,8 @@ int Interface::draw() {
 
 	back_buf = _vm->_gfx->getBackBuffer();
 
-	if (!_active) {
+	if (_vm->_scene->isInDemo() || _panelMode == kPanelFade)
 		return SUCCESS;
-	}
 
 	// Get game display info
 	_vm->getDisplayInfo(&g_di);
@@ -424,9 +423,8 @@ int Interface::update(const Point& imousePt, int update_flag) {
 
 	int imouse_x, imouse_y;
 
-	if (!_active) {
+	if (_vm->_scene->isInDemo() || _panelMode == kPanelFade)
 		return SUCCESS;
-	}
 
 	imouse_x = imousePt.x;
 	imouse_y = imousePt.y;
