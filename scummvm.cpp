@@ -436,7 +436,7 @@ static const VersionSettings version_settings[] = {
 
         /* Scumm Version 3 */
         {"indy3",       "Indiana Jones and the Last Crusade (256)",     GID_INDY3_256,  3, 0, 22, GF_SMALL_HEADER|GF_USE_KEY|GF_SMALL_NAMES|GF_OLD256},
-        {"zak256",      "Zak McKracken and the Alien Mindbenders (256)",GID_ZAK256,     3, 0, 0,  GF_SMALL_HEADER|GF_USE_KEY|GF_SMALL_NAMES|GF_OLD256},
+        {"zak256",      "Zak McKracken and the Alien Mindbenders (256)",GID_ZAK256,     3, 0, 0,  GF_SMALL_HEADER|GF_USE_KEY|GF_SMALL_NAMES|GF_OLD256|GF_AUDIOTRACKS},
         {"loom",        "Loom",                                         GID_LOOM,       3, 5, 40, GF_SMALL_HEADER|GF_USE_KEY|GF_SMALL_NAMES|GF_OLD_BUNDLE|GF_16COLOR},
 
         /* Scumm Version 4 */
