@@ -275,7 +275,12 @@ int Scumm::isSoundRunning(int sound)
 	int i;
 
 	if (sound == current_cd_sound)
-		return _system->poll_cdrom();
+#ifdef COMPRESSED_SOUND_FILE
+		if (pollMP3CD())
+			return 1;
+		else
+#endif
+			return _system->poll_cdrom();
 
 	i = _soundQue2Pos;
 	while (i--) {
@@ -323,7 +328,10 @@ void Scumm::stopSound(int a)
 
 	if (a == current_cd_sound) {
 		current_cd_sound = 0;
-		_system->stop_cdrom();
+#ifdef COMPRESSED_SOUND_FILE
+		if (stopMP3CD() == -1)
+#endif
+			_system->stop_cdrom();
 	}
 
 	se = _imuse;
@@ -341,7 +349,10 @@ void Scumm::stopAllSounds()
 
 	if (current_cd_sound != 0) {
 		current_cd_sound = 0;
-		_system->stop_cdrom();
+#ifdef COMPRESSED_SOUND_FILE
+		if (stopMP3CD() == -1)
+#endif
+			_system->stop_cdrom();
 	}
 
 	if (se) {
@@ -723,11 +734,12 @@ int Scumm::playMP3CDTrack(int track, int num_loops, int start, int delay) {
 	float frame_size;
 	mad_timer_t duration;
 
+	g_scumm->_vars[g_scumm->VAR_MI1_TIMER] = 0;
+
 	if (_soundsPaused)
 		return 0;
 
-	if (!num_loops && !start) {
-		_mixer->stop(_mp3_index);
+	if ((num_loops == 0) && (start == 0)) {
 		return 0;
 	}
 
@@ -749,8 +761,39 @@ int Scumm::playMP3CDTrack(int track, int num_loops, int start, int delay) {
 	// Go
 	fseek(_mp3_tracks[index], offset, SEEK_SET);
 
-	_mp3_index = _mixer->play_mp3_cdtrack(NULL, _mp3_index, _mp3_tracks[index], duration);
+	if (_mp3_cd_playing == true)
+		_mixer->stop(_mp3_index);		
+	_mp3_index = _mixer->play_mp3_cdtrack(NULL, _mp3_tracks[index], duration);
+	_mp3_cd_playing = true;
 	return 0;
 }
 
+int Scumm::stopMP3CD() {
+	if (_mp3_cd_playing == true) {
+		_mixer->stop(_mp3_index);
+		_mp3_cd_playing = false;
+		return 0;
+	}
+	return -1;
+}
+
+int Scumm::pollMP3CD() {
+	if (_mp3_cd_playing == true)
+		return 1;
+	return 0;
+}
+
+int Scumm::updateMP3CD() {
+	if (_mp3_cd_playing == false)
+		return -1;
+
+	if (_mixer->_channels[_mp3_index] == NULL) {
+		warning("Error in MP3 decoding");
+		return -1;
+	}
+
+	if (_mixer->_channels[_mp3_index]->sound_finished())
+		stopMP3CD();
+	return 0;
+}
 #endif

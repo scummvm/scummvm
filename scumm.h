@@ -976,15 +976,19 @@ public:
 
 	/* used for mp3 CD music */
 
-	int	_current_cache;
+	int _current_cache;
 	int _cached_tracks[CACHE_TRACKS];
 	struct mad_header _mad_header[CACHE_TRACKS];
 	long _mp3_size[CACHE_TRACKS];
 	FILE* _mp3_tracks[CACHE_TRACKS];
 	int _mp3_index;
+	bool _mp3_cd_playing;
 
 	int getCachedTrack(int track);
 	int playMP3CDTrack(int track, int num_loops, int start, int delay);
+	int stopMP3CD();
+	int updateMP3CD();
+	int pollMP3CD();
 #endif
 
 	int16 _soundQuePos, _soundQue[0x100];

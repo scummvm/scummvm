@@ -72,8 +72,6 @@ keys(0), values(0), nkeys(0)
 
 hashconfig::~hashconfig()
 {
-	int i;
-
 	Scumm::free(domain);
 }
 

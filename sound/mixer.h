@@ -36,6 +36,9 @@ private:
 		virtual void mix(int16 *data, uint len) = 0;
 		void destroy() { _to_be_destroyed = true; }
 		virtual void real_destroy() = 0;
+#ifdef COMPRESSED_SOUND_FILE
+		virtual bool sound_finished();
+#endif
 	};
 
 	class Channel_RAW : public Channel {
@@ -91,6 +94,7 @@ private:
 		void mix(int16 *data, uint len);
 		Channel_MP3_CDMUSIC(SoundMixer *mixer, FILE* file, mad_timer_t duration);
 		void real_destroy();		
+		bool sound_finished();
 	};
 
 #endif
@@ -126,7 +130,7 @@ public:
 	int play_raw(PlayingSoundHandle *handle, void *sound, uint32 size, uint rate, byte flags);
 #ifdef COMPRESSED_SOUND_FILE
 	int play_mp3(PlayingSoundHandle *handle, void *sound, uint32 size, byte flags);
-	int play_mp3_cdtrack(PlayingSoundHandle *handle, int index, FILE* file, mad_timer_t duration);
+	int play_mp3_cdtrack(PlayingSoundHandle *handle, FILE* file, mad_timer_t duration);
 #endif
 
 	/* Premix procedure, useful when using fmopl adlib */

@@ -64,9 +64,8 @@ int SoundMixer::play_raw(PlayingSoundHandle *handle, void *sound, uint32 size, u
 int SoundMixer::play_mp3(PlayingSoundHandle *handle, void *sound, uint32 size, byte flags) {
 	return insert(handle, new Channel_MP3(this, sound, size, flags));
 }
-int SoundMixer::play_mp3_cdtrack(PlayingSoundHandle *handle, int index, FILE* file, mad_timer_t duration) {
+int SoundMixer::play_mp3_cdtrack(PlayingSoundHandle *handle, FILE* file, mad_timer_t duration) {
 	/* Stop the previously playing CD track (if any) */
-	stop(index);
 	return insert(handle, new Channel_MP3_CDMUSIC(this, file, duration));
 }
 #endif
@@ -135,6 +134,12 @@ void SoundMixer::set_volume(int volume) {
 		_volume_table[i] =((int8)i) * volume;
 }
 
+#ifdef COMPRESSED_SOUND_FILE
+bool SoundMixer::Channel::sound_finished() {
+	warning("Should never be called on a non-MP3 mixer ");
+	return false;
+}
+#endif
 
 /* RAW mixer */
 SoundMixer::Channel_RAW::Channel_RAW(SoundMixer *mixer, void *sound, uint32 size, uint rate, byte flags) {
@@ -418,10 +423,6 @@ void SoundMixer::Channel_MP3_CDMUSIC::mix(int16 *data, uint len) {
 		frame_duration = _frame.header.duration;
 		mad_timer_negate(&frame_duration);
 		mad_timer_add(&_duration, frame_duration);
-		if (mad_timer_compare(_duration, mad_timer_zero) < 0) {					
-			real_destroy();
-			return;
-		}		
 		if (mad_frame_decode(&_frame, &_stream) == -1) {
 			if (_stream.error == MAD_ERROR_BUFLEN) {
 				int not_decoded;
@@ -448,6 +449,10 @@ void SoundMixer::Channel_MP3_CDMUSIC::mix(int16 *data, uint len) {
 		mad_synth_frame(&_synth, &_frame);
 		_pos_in_frame = 0;
 	}
+}
+
+bool SoundMixer::Channel_MP3_CDMUSIC::sound_finished() {
+	return mad_timer_compare(_duration, mad_timer_zero) <= 0;
 }
 
 void SoundMixer::Channel_MP3_CDMUSIC::real_destroy() {
