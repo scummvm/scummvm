@@ -8,10 +8,6 @@ OBJS	 += backends/sdl/sdl-common.o
 # The normal (non OpenGL-accelerated) SDL backend
 OBJS	 += backends/sdl/sdl.o 
 
-# Uncomment these lines (instead of the above) to use SDL with OpenGL
-# OBJS	   += backends/sdl/sdl_gl.o
-# LIBS     += -lGL
-
 # Uncomment this in addition to the above if you compile on Mac OS X
 # DEFINES += -DMACOSX
 # LIBS	+= -framework QuickTime -framework AudioUnit
