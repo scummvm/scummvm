@@ -41,6 +41,9 @@
 #include "gui/TabWidget.h"
 #include "gui/PopUpWidget.h"
 
+#include "sound/mididrv.h"
+
+
 using Common::ConfigManager;
 
 enum {
@@ -73,40 +76,32 @@ enum {
  * - Maybe SFX/Master/Music volumes?
  */
 
-enum {
-	kOKCmd = 'OK  '
-};
-
-class EditGameDialog : public Dialog {
+class EditGameDialog : public OptionsDialog {
 	typedef Common::String String;
 	typedef Common::StringList StringList;
 public:
 	EditGameDialog(const String &domain, GameSettings target);
 
+	void open();
+	void close();
 	virtual void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);
 
 protected:
-	const String &_domain;
 	EditTextWidget *_descriptionWidget;
 	EditTextWidget *_domainWidget;
+
 	PopUpWidget *_langPopUp;
 	PopUpWidget *_platformPopUp;
-
-	PopUpWidget *_gfxPopUp;
-	CheckboxWidget *_fullscreenCheckbox;
-	CheckboxWidget *_aspectCheckbox;
-
-	CheckboxWidget *_multiMidiCheckbox;
-	CheckboxWidget *_mt32Checkbox;
 };
 
 EditGameDialog::EditGameDialog(const String &domain, GameSettings target)
-	: Dialog(8, 50, 320 - 2 * 8, 140),
-	  _domain(domain) {
+	: OptionsDialog(domain, 10, 50, 320 - 2 * 10, 140) {
 
+	const int x = 5;
+	const int w = _w - 15;
+	const int labelWidth = 65;
 	const int vBorder = 5;	// Tab border
 	int yoffset;
-	int sel;
 
 	// GAME: Path to game data (r/o)
 	String path(ConfMan.get("path", _domain));
@@ -127,37 +122,32 @@ EditGameDialog::EditGameDialog(const String &domain, GameSettings target)
 	yoffset = vBorder;
 
 	// GUI:  Label & edit widget for the game ID
-	new StaticTextWidget(tab, 10, yoffset+2, 40, kLineHeight, "ID: ", kTextAlignRight);
-	_domainWidget = new EditTextWidget(tab, 50, yoffset, _w - 50 - 10, kLineHeight, _domain);
+	new StaticTextWidget(tab, x, yoffset+2, labelWidth, kLineHeight, "ID: ", kTextAlignRight);
+	_domainWidget = new EditTextWidget(tab, x+labelWidth, yoffset, _w - labelWidth - 10, kLineHeight, _domain);
 	yoffset += 16;
 
 	// GUI:  Label & edit widget for the description
-	new StaticTextWidget(tab, 10, yoffset+2, 40, kLineHeight, "Name: ", kTextAlignRight);
-	_descriptionWidget = new EditTextWidget(tab, 50, yoffset, _w - 50 - 10, kLineHeight, description);
+	new StaticTextWidget(tab, x, yoffset+2, labelWidth, kLineHeight, "Name: ", kTextAlignRight);
+	_descriptionWidget = new EditTextWidget(tab, x+labelWidth, yoffset, _w - labelWidth - 10, kLineHeight, description);
 	yoffset += 16;
 
 	// GUI:  Label for the game path
-	new StaticTextWidget(tab, 10, yoffset, 40, kLineHeight, "Path: ", kTextAlignRight);
-	new StaticTextWidget(tab, 50, yoffset, _w - 50 - 10, kLineHeight, path, kTextAlignLeft);
+	new StaticTextWidget(tab, x, yoffset, labelWidth, kLineHeight, "Path: ", kTextAlignRight);
+	new StaticTextWidget(tab, x+labelWidth, yoffset, _w - labelWidth - 10, kLineHeight, path, kTextAlignLeft);
 	yoffset += 16;
 
 	// Languag popup
-	_langPopUp = new PopUpWidget(tab, 5, yoffset, 280, kLineHeight, "Language: ", 100);
+	_langPopUp = new PopUpWidget(tab, x, yoffset, w, kLineHeight, "Language: ", labelWidth);
 	yoffset += 16;
 	_langPopUp->appendEntry("<default>");
 	_langPopUp->appendEntry("");
 	const Common::LanguageDescription *l = Common::g_languages;
-	int lang = Common::parseLanguage(ConfMan.get("language", _domain));
-	sel = 0;
-	for (int i = 0; l->name; ++l, ++i) {
+	for (; l->name; ++l) {
 		_langPopUp->appendEntry(l->description, l->id);
-		if (lang == l->id)
-			sel = i + 2;
 	}
-	_langPopUp->setSelected(sel);
 
 	// Platform popup
-	_platformPopUp = new PopUpWidget(tab, 5, yoffset, 280, kLineHeight, "Platform: ", 100);
+	_platformPopUp = new PopUpWidget(tab, x, yoffset, w, kLineHeight, "Platform: ", labelWidth);
 	yoffset += 16;
 	_platformPopUp->appendEntry("<default>");
 	_platformPopUp->appendEntry("");
@@ -165,6 +155,53 @@ EditGameDialog::EditGameDialog(const String &domain, GameSettings target)
 	_platformPopUp->appendEntry("Atari ST", Common::kPlatformAtariST);
 	_platformPopUp->appendEntry("Macintosh", Common::kPlatformMacintosh);
 	_platformPopUp->appendEntry("PC", Common::kPlatformPC);
+
+	//
+	// 2) The graphics tab
+	//
+	tab->addTab("Graphics");
+	yoffset = vBorder;
+	yoffset = addGraphicControls(tab, yoffset);
+
+	//
+	// 3) The audio tab
+	//
+	tab->addTab("Audio");
+	yoffset = vBorder;
+	yoffset = addMIDIControls(tab, yoffset);
+
+	//
+	// 3) The volume tab
+	//
+	tab->addTab("Volume");
+	yoffset = vBorder;
+	yoffset = addVolumeControls(tab, yoffset);
+
+
+	// Activate the first tab
+	tab->setActiveTab(0);
+
+	// Add OK & Cancel buttons
+	addButton(_w - 2 * (kButtonWidth + 10), _h - 24, "Cancel", kCloseCmd, 0);
+	addButton(_w - (kButtonWidth + 10), _h - 24, "OK", kOKCmd, 0);
+}
+
+void EditGameDialog::open() {
+	OptionsDialog::open();
+
+	int sel = 0;
+	
+	// TODO: game path
+
+	const Common::LanguageDescription *l = Common::g_languages;
+	int lang = Common::parseLanguage(ConfMan.get("language", _domain));
+	for (int i = 0; l->name; ++l, ++i) {
+		if (lang == l->id)
+			sel = i + 2;
+	}
+	_langPopUp->setSelected(sel);
+
+
 	switch (Common::parsePlatform(ConfMan.get("platform", _domain))) {
 	case Common::kPlatformPC:			sel = 5; break;
 	case Common::kPlatformAmiga:		sel = 2; break;
@@ -173,72 +210,26 @@ EditGameDialog::EditGameDialog(const String &domain, GameSettings target)
 	default:							sel = 0; break;
 	}
 	_platformPopUp->setSelected(sel);
-
-	//
-	// 2) The graphics tab
-	//
-	tab->addTab("Graphics");
-	yoffset = vBorder;
-
-	// The GFX mode popup & a label
-	// TODO - add an API to query the list of available GFX modes, and to get/set the mode
-	_gfxPopUp = new PopUpWidget(tab, 5, yoffset, 280, kLineHeight, "Graphics mode: ", 100);
-	yoffset += 16;
-	_gfxPopUp->appendEntry("<global default>");
-	_gfxPopUp->appendEntry("");
-	_gfxPopUp->appendEntry("Normal (no scaling)");
-	_gfxPopUp->appendEntry("2x");
-	_gfxPopUp->appendEntry("3x");
-	_gfxPopUp->appendEntry("2xSAI");
-	_gfxPopUp->appendEntry("Super2xSAI");
-	_gfxPopUp->appendEntry("SuperEagle");
-	_gfxPopUp->appendEntry("AdvMAME2x");
-	_gfxPopUp->appendEntry("AdvMAME3x");
-	_gfxPopUp->appendEntry("hq2x");
-	_gfxPopUp->appendEntry("hq3x");
-	_gfxPopUp->appendEntry("TV2x");
-	_gfxPopUp->appendEntry("DotMatrix");
-	_gfxPopUp->setSelected(0);
-
-	// FIXME - disable GFX popup for now
-	_gfxPopUp->setEnabled(false);
-
-	// GUI:  Full screen checkbox
-	_fullscreenCheckbox = new CheckboxWidget(tab, 15, yoffset, 200, 16, "Fullscreen mode", 0, 'F');
-	_fullscreenCheckbox->setState(ConfMan.getBool("fullscreen", _domain));
-	yoffset += 16;
-
-	_aspectCheckbox = new CheckboxWidget(tab, 15, yoffset, 200, 16, "Aspect ratio correction");
-	_aspectCheckbox->setState(ConfMan.getBool("aspect_ratio", _domain));
-	yoffset += 16;
-
-	//
-	// 3) The audio tab
-	//
-	tab->addTab("Audio");
-	yoffset = vBorder;
-	
-	// Multi midi setting
-	_multiMidiCheckbox = new CheckboxWidget(tab, 10, yoffset, 280, 16, "Mixed Adlib/MIDI mode");
-	_multiMidiCheckbox->setState(ConfMan.getBool("multi_midi", _domain));
-	yoffset += 16;
-
-	// Native mt32 setting
-	_mt32Checkbox = new CheckboxWidget(tab, 10, yoffset, 280, 16, "True Roland MT-32 (disable GM emulation)");
-	_mt32Checkbox->setState(ConfMan.getBool("native_mt32", _domain));
-	yoffset += 16;
-
-	
-	// TODO: Volume/driver/midi/... settings
+}
 
 
+void EditGameDialog::close() {
+	if (getResult()) {
+		ConfMan.set("description", _descriptionWidget->getLabel(), _domain);
 
-	// Activate the first tab
-	tab->setActiveTab(0);
+		Common::Language lang = (Common::Language)_langPopUp->getSelectedTag();
+		if (lang < 0)
+			ConfMan.removeKey("language", _domain);
+		else
+			ConfMan.set("language", Common::getLanguageString(lang), _domain);
 
-	// GUI:  Add OK & Cancel buttons
-	addButton(_w - 2 * (kButtonWidth + 10), _h - 24, "Cancel", kCloseCmd, 0);
-	addButton(_w - (kButtonWidth + 10), _h - 24, "OK", kOKCmd, 0);
+		Common::Platform platform = (Common::Platform)_platformPopUp->getSelectedTag();
+		if (platform < 0)
+			ConfMan.removeKey("platform", _domain);
+		else
+			ConfMan.set("platform", Common::getPlatformString(platform), _domain);
+	}
+	OptionsDialog::close();
 }
 
 void EditGameDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
@@ -252,31 +243,15 @@ void EditGameDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 				return;
 			}
 			ConfMan.renameGameDomain(_domain, newDomain);
+			_domain = newDomain;
 		}
-		ConfMan.set("description", _descriptionWidget->getLabel(), newDomain);
-		ConfMan.set("fullscreen", _fullscreenCheckbox->getState(), newDomain);
-		ConfMan.set("aspect_ratio", _aspectCheckbox->getState(), newDomain);
-		ConfMan.set("multi_midi", _multiMidiCheckbox->getState(), newDomain);
-		ConfMan.set("native_mt32", _mt32Checkbox->getState(), newDomain);
-
-		Common::Language lang = (Common::Language)_langPopUp->getSelectedTag();
-		if (lang < 0)
-			ConfMan.removeKey("language", newDomain);
-		else
-			ConfMan.set("language", Common::getLanguageString(lang), newDomain);
-
-		Common::Platform platform = (Common::Platform)_platformPopUp->getSelectedTag();
-		if (platform < 0)
-			ConfMan.removeKey("platform", newDomain);
-		else
-			ConfMan.set("platform", Common::getPlatformString(platform), newDomain);
-
-		setResult(1);
-		close();
-	} else {
-		Dialog::handleCommand(sender, cmd, data);
 	}
+	OptionsDialog::handleCommand(sender, cmd, data);
 }
+
+
+#pragma mark -
+
 
 LauncherDialog::LauncherDialog(GameDetector &detector)
 	: Dialog(0, 0, 320, 200), _detector(detector) {
@@ -323,21 +298,6 @@ LauncherDialog::~LauncherDialog() {
 	delete _browser;
 }
 
-void LauncherDialog::open() {
-	Dialog::open();
-/* FIXME / TODO: config rewrite
-	g_config->set_writing(true);
-*/
-}
-
-void LauncherDialog::close() {
-	ConfMan.flushToDisk();
-/* FIXME / TODO: config rewrite
-	g_config->set_writing(false);
-*/
-	Dialog::close();
-}
-
 void LauncherDialog::updateListing() {
 	Common::StringList l;
 
@@ -372,144 +332,148 @@ void LauncherDialog::updateListing() {
 	updateButtons();
 }
 
+void LauncherDialog::addGame() {
+	// Allow user to add a new game to the list.
+	// 1) show a dir selection dialog which lets the user pick the directory
+	//    the game data resides in.
+	// 2) try to auto detect which game is in the directory, if we cannot
+	//    determine it uniquely preent a list of candidates to the user 
+	//    to pick from
+	// 3) Display the 'Edit' dialog for that item, letting the user specify
+	//    an alternate description (to distinguish multiple versions of the
+	//    game, e.g. 'Monkey German' and 'Monkey English') and set default
+	//    options for that game.
+	
+	if (_browser->runModal()) {
+		// User made his choice...
+		FilesystemNode *dir = _browser->getResult();
+		FSList *files = dir->listDir(FilesystemNode::kListFilesOnly);
+
+		// ...so let's determine a list of candidates, games that
+		// could be contained in the specified directory.
+		GameList candidates;
+	
+		// Iterate over all known games and for each check if it might be
+		// the game in the presented directory.
+		const PluginList &plugins = PluginManager::instance().getPlugins();
+		PluginList::ConstIterator iter = plugins.begin();
+		for (iter = plugins.begin(); iter != plugins.end(); ++iter) {
+			candidates.push_back((*iter)->detectGames(*files));
+		}
+
+		int idx;
+		if (candidates.isEmpty()) {
+			// No game was found in the specified directory
+			MessageDialog alert("ScummVM could not find any game in the specified directory!");
+			alert.runModal();
+			idx = -1;
+		} else if (candidates.size() == 1) {
+			// Exact match
+			idx = 0;
+		} else {
+			// Display the candidates to the user and let her/him pick one
+			StringList list;
+			for (idx = 0; idx < candidates.size(); idx++)
+				list.push_back(candidates[idx].description);
+			
+			ChooserDialog dialog("Pick the game:", list);
+			idx = dialog.runModal();
+		}
+		if (0 <= idx && idx < candidates.size()) {
+			GameSettings result = candidates[idx];
+
+			// The auto detector or the user made a choice.
+			// Pick a domain name which does not yet exist (after all, we
+			// are *adding* a game to the config, not replacing).
+			String domain(result.gameName);
+			if (ConfMan.hasGameDomain(domain)) {
+				char suffix = 'a';
+				domain += suffix;
+				while (ConfMan.hasGameDomain(domain)) {
+					assert(suffix < 'z');
+					domain.deleteLastChar();
+					suffix++;
+					domain += suffix;
+				}
+				ConfMan.set("gameid", result.gameName, domain);
+				ConfMan.set("description", result.description, domain);
+			}
+			ConfMan.set("path", dir->path(), domain);
+			
+			// Display edit dialog for the new entry
+			EditGameDialog editDialog(domain, result);
+			if (editDialog.runModal()) {
+				// User pressed OK, so make changes permanent
+
+				// Write config to disk
+				ConfMan.flushToDisk();
+				
+				// Update the ListWidget and force a redraw
+				updateListing();
+				draw();
+			} else {
+				// User aborted, remove the the new domain again
+				ConfMan.removeGameDomain(domain);
+			}
+		}
+	}
+}
+
+void LauncherDialog::removeGame(int item) {
+	MessageDialog alert("Do you really want to remove this game configuration?", "Yes", "No");
+	
+	if (alert.runModal() == 1) {
+		// Remove the currently selected game from the list
+		assert(item >= 0);
+		ConfMan.removeGameDomain(_domains[item]);
+
+		// Write config to disk
+		ConfMan.flushToDisk();
+		
+		// Update the ListWidget and force a redraw
+		updateListing();
+		draw();
+	}
+}
+
+void LauncherDialog::editGame(int item) {
+	// Set game specifc options. Most of these should be "optional", i.e. by 
+	// default set nothing and use the global ScummVM settings. E.g. the user
+	// can set here an optional alternate music volume, or for specific games
+	// a different music driver etc.
+	// This is useful because e.g. MonkeyVGA needs Adlib music to have decent
+	// music support etc.
+	assert(item >= 0);
+	String gameId(ConfMan.get("gameid", _domains[item]));
+	if (gameId.isEmpty())
+		gameId = _domains[item];
+	EditGameDialog editDialog(_domains[item], GameDetector::findGame(gameId));
+	if (editDialog.runModal()) {
+		// User pressed OK, so make changes permanent
+
+		// Write config to disk
+		ConfMan.flushToDisk();
+		
+		// Update the ListWidget and force a redraw
+		updateListing();
+		draw();
+	}
+}
+
 void LauncherDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
 	int item =  _list->getSelected();
 
 	switch (cmd) {
 	case kAddGameCmd:
-		// Allow user to add a new game to the list.
-		// 1) show a dir selection dialog which lets the user pick the directory
-		//    the game data resides in.
-		// 2) try to auto detect which game is in the directory, if we cannot
-		//    determine it uniquely preent a list of candidates to the user 
-		//    to pick from
-		// 3) Display the 'Edit' dialog for that item, letting the user specify
-		//    an alternate description (to distinguish multiple versions of the
-		//    game, e.g. 'Monkey German' and 'Monkey English') and set default
-		//    options for that game.
-		
-		if (_browser->runModal()) {
-			// User made his choice...
-			FilesystemNode *dir = _browser->getResult();
-			FSList *files = dir->listDir(FilesystemNode::kListFilesOnly);
-
-			// ...so let's determine a list of candidates, games that
-			// could be contained in the specified directory.
-			GameList candidates;
-		
-			// Iterate over all known games and for each check if it might be
-			// the game in the presented directory.
-			const PluginList &plugins = PluginManager::instance().getPlugins();
-			PluginList::ConstIterator iter = plugins.begin();
-			for (iter = plugins.begin(); iter != plugins.end(); ++iter) {
-				candidates.push_back((*iter)->detectGames(*files));
-			}
-
-			int idx;
-			if (candidates.isEmpty()) {
-				// No game was found in the specified directory
-				MessageDialog alert("ScummVM could not find any game in the specified directory!");
-				alert.runModal();
-				idx = -1;
-			} else if (candidates.size() == 1) {
-				// Exact match
-				idx = 0;
-			} else {
-				// Display the candidates to the user and let her/him pick one
-				StringList list;
-				for (idx = 0; idx < candidates.size(); idx++)
-					list.push_back(candidates[idx].description);
-				
-				ChooserDialog dialog("Pick the game:", list);
-				idx = dialog.runModal();
-			}
-			if (0 <= idx && idx < candidates.size()) {
-				GameSettings result = candidates[idx];
-
-				// The auto detector or the user made a choice.
-				// Pick a domain name which does not yet exist (after all, we
-				// are *adding* a game to the config, not replacing).
-				String domain(result.gameName);
-				if (ConfMan.hasGameDomain(domain)) {
-					char suffix = 'a';
-					domain += suffix;
-					while (ConfMan.hasGameDomain(domain)) {
-						assert(suffix < 'z');
-						domain.deleteLastChar();
-						suffix++;
-						domain += suffix;
-					}
-					ConfMan.set("gameid", result.gameName, domain);
-					ConfMan.set("description", result.description, domain);
-				}
-				ConfMan.set("path", dir->path(), domain);
-				
-				// Display edit dialog for the new entry
-				EditGameDialog editDialog(domain, result);
-				if (editDialog.runModal()) {
-					// User pressed OK, so make changes permanent
-
-					// Write config to disk
-					ConfMan.flushToDisk();
-					
-					// Update the ListWidget and force a redraw
-					updateListing();
-					draw();
-				} else {
-					// User aborted, remove the the new domain again
-					ConfMan.removeGameDomain(domain);
-				}
-			}
-		}
+		addGame();
 		break;
-	case kRemoveGameCmd: {
-	
-		MessageDialog alert("Do you really want to remove this game configuration?", "Yes", "No");
-		
-		if (alert.runModal() == 1) {
-			// Remove the currently selected game from the list
-			assert(item >= 0);
-			ConfMan.removeGameDomain(_domains[item]);
-	
-			// Write config to disk
-			ConfMan.flushToDisk();
-			
-			// Update the ListWidget and force a redraw
-			updateListing();
-			draw();
-		}
-		}
+	case kRemoveGameCmd:
+		removeGame(item);
 		break;
-	case kEditGameCmd: {
-		// Set game specifc options. Most of these should be "optional", i.e. by 
-		// default set nothing and use the global ScummVM settings. E.g. the user
-		// can set here an optional alternate music volume, or for specific games
-		// a different music driver etc.
-		// This is useful because e.g. MonkeyVGA needs Adlib music to have decent
-		// music support etc.
-		assert(item >= 0);
-		String gameId(ConfMan.get("gameid", _domains[item]));
-		if (gameId.isEmpty())
-			gameId = _domains[item];
-		EditGameDialog editDialog(_domains[item], GameDetector::findGame(gameId));
-		if (editDialog.runModal()) {
-			// User pressed OK, so make changes permanent
-
-			// Write config to disk
-			ConfMan.flushToDisk();
-			
-			// Update the ListWidget and force a redraw
-			updateListing();
-			draw();
-		}
-		}
+	case kEditGameCmd:
+		editGame(item);
 		break;
 	case kOptionsCmd: {
-		// TODO - show up a generic options dialog with global options, including:
-		// - the save path (use _browser!)
-		// - music & graphics driver (but see also the comments on EditGameDialog
-		//   for some techincal difficulties with this)
-		// - default volumes (sfx/master/music)
 		GlobalOptionsDialog options(_detector);
 		options.runModal();
 		}

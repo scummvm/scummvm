@@ -36,8 +36,6 @@ public:
 	LauncherDialog(GameDetector &detector);
 	~LauncherDialog();
 
-	virtual void open();
-	virtual void close();
 	virtual void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);
 
 protected:
@@ -51,6 +49,10 @@ protected:
 
 	void updateListing();
 	void updateButtons();
+	
+	void addGame();
+	void removeGame(int item);
+	void editGame(int item);
 };
 
 #endif

@@ -21,7 +21,7 @@
 #ifndef OPTIONS_DIALOG_H
 #define OPTIONS_DIALOG_H
 
-#include "dialog.h"
+#include "gui/dialog.h"
 #include "common/str.h"
 #include "common/list.h"
 
@@ -32,36 +32,70 @@ class PopUpWidget;
 class SliderWidget;
 class StaticTextWidget;
 
-class GlobalOptionsDialog : public Dialog {
+class OptionsDialog : public Dialog {
+	typedef Common::String String;
+public:
+	OptionsDialog(const String &domain, int x, int y, int w, int h);
+
+	void open();
+	void close();
+	void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);
+
+	enum {
+		kOKCmd					= 'ok  '
+	};
+
+protected:
+	/** Config domain this dialog is used to edit. */
+	String _domain;
+	
+	int addGraphicControls(GuiObject *boss, int yoffset);
+	int addMIDIControls(GuiObject *boss, int yoffset);
+	int addVolumeControls(GuiObject *boss, int yoffset);
+
+private:
+	//
+	// Graphics controls
+	//
+	PopUpWidget *_gfxPopUp;
+	CheckboxWidget *_fullscreenCheckbox;
+	CheckboxWidget *_aspectCheckbox;
+
+	//
+	// MIDI controls
+	//
+	PopUpWidget *_midiPopUp;
+
+	CheckboxWidget *_multiMidiCheckbox;
+	CheckboxWidget *_mt32Checkbox;
+
+	//
+	// Volume controls
+	//
+	SliderWidget *_masterVolumeSlider;
+	StaticTextWidget *_masterVolumeLabel;
+
+	SliderWidget *_musicVolumeSlider;
+	StaticTextWidget *_musicVolumeLabel;
+
+	SliderWidget *_sfxVolumeSlider;
+	StaticTextWidget *_sfxVolumeLabel;
+};
+
+
+class GlobalOptionsDialog : public OptionsDialog {
 	typedef Common::String String;
 public:
 	GlobalOptionsDialog(GameDetector &detector);
 	~GlobalOptionsDialog();
 
 	void open();
-//	void close();
+	void close();
 	void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);
 
 protected:
 	BrowserDialog *_browser;
 	StaticTextWidget *_savePath;
-
-	PopUpWidget *_gfxPopUp;
-	CheckboxWidget *_fullscreenCheckbox;
-	CheckboxWidget *_aspectCheckbox;
-
-	PopUpWidget *_midiPopUp;
-
-	SliderWidget *_masterVolumeSlider;
-	SliderWidget *_musicVolumeSlider;
-	SliderWidget *_sfxVolumeSlider;
-
-	StaticTextWidget *_masterVolumeLabel;
-	StaticTextWidget *_musicVolumeLabel;
-	StaticTextWidget *_sfxVolumeLabel;
-
-	CheckboxWidget *_multiMidiCheckbox;
-	CheckboxWidget *_mt32Checkbox;
 };
 
 #endif
