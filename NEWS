@@ -1,8 +1,9 @@
 For a more comprehensive changelog for the latest experimental CVS code, see:
         http://scummvm.sourceforge.net/daily/ChangeLog
 
-0.??cvs (2003-??-??)
-- ...
+0.4.1cvs (2003-??-??)
+- Curse of Monkey Island stability fixes
+- Music fixes (exp. Monkey Island 2)
 
 0.4.0 (2003-05-11)
 - Curse of Monkey Island (comi) support (experimental)
