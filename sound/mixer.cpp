@@ -346,7 +346,7 @@ SoundMixer::Channel_MP3_CDMUSIC::Channel_MP3_CDMUSIC(SoundMixer *mixer, FILE* fi
 	mad_frame_init(&_frame);
 	mad_synth_init(&_synth);
 
-	debug(1, "CRE %d", getpid());
+	//debug(1, "CRE %d", getpid());
 }
 
 void SoundMixer::Channel_MP3_CDMUSIC::mix(int16 *data, uint len) {
@@ -358,7 +358,7 @@ void SoundMixer::Channel_MP3_CDMUSIC::mix(int16 *data, uint len) {
 		return;
 	}
 
-	debug(1, "MIX %d", getpid());
+	//debug(1, "MIX %d", getpid());
 
 	if (!_initialized) {
 		int skip_loop;
@@ -458,7 +458,7 @@ void SoundMixer::Channel_MP3_CDMUSIC::real_destroy() {
 	mad_frame_finish(&_frame);
 	mad_stream_finish(&_stream);
 
-	debug(1, "DES %d", getpid());
+	//debug(1, "DES %d", getpid());
 
 	delete this;
 }
