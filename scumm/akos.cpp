@@ -1329,7 +1329,7 @@ void ScummEngine::akos_queCommand(byte cmd, Actor *a, int param_1, int param_2) 
 	case 3:
 		if (param_1 != 0) {
 			if (_features & GF_DIGI_IMUSE)
-				_imuseDigital->startSfx(param_1);
+				_imuseDigital->startSfx(param_1, 63);
 			else
 				_sound->addSoundToQueue(param_1);
 		}

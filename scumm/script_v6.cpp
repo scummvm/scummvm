@@ -1029,7 +1029,7 @@ void ScummEngine_v6::o6_getOwner() {
 
 void ScummEngine_v6::o6_startSound() {
 	if (_features & GF_DIGI_IMUSE)
-		_imuseDigital->startSfx(pop());
+		_imuseDigital->startSfx(pop(), 64);
 	else
 		_sound->addSoundToQueue(pop());
 }
