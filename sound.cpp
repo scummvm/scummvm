@@ -748,6 +748,7 @@ void Scumm::decompressBundleSound(int index) {
 
 			default:
 				printf("Unknown codec %d!\n", table[i].codec);
+				outputSize = 0;
 			break;
 		}
 		

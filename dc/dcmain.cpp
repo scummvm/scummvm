@@ -96,7 +96,7 @@ void OSystem_Dreamcast::update_cdrom()
   // Dummy.  The CD drive takes care of itself.
 }
 
-uint32 OSystem_Dreamcast::property(int param, uint32 value)
+uint32 OSystem_Dreamcast::property(int param, Property *value)
 {
   switch(param) {
 

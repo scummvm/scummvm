@@ -232,7 +232,7 @@ void *OSystem_MorphOS::create_thread(ThreadProc *proc, void *param)
 	return ScummMusicThread;
 }
 
-uint32 OSystem_MorphOS::property(int param, uint32 value)
+uint32 OSystem_MorphOS::property(int param, Property *value)
 {
 	switch( param )
 	{
@@ -241,7 +241,7 @@ uint32 OSystem_MorphOS::property(int param, uint32 value)
 			return 1;
 
 		case PROP_SET_WINDOW_CAPTION:
-			sprintf( ScummWndTitle, "ScummVM MorphOS - %s", (char *)value );
+			sprintf( ScummWndTitle, "ScummVM MorphOS - %s", value->caption );
 			if( ScummWindow )
 				SetWindowTitles( ScummWindow, ScummWndTitle, ScummWndTitle );
 			return 1;
@@ -276,11 +276,11 @@ uint32 OSystem_MorphOS::property(int param, uint32 value)
 			break;
 
 		case PROP_SHOW_DEFAULT_CURSOR:
-			if( value )
+			if( value->show_cursor )
 				ClearPointer( ScummWindow );
 			else
 				SetPointer( ScummWindow, ScummNoCursor, 1, 1, 0, 0 );
-			ScummOrigMouse = ScummDefaultMouse = value;
+			ScummOrigMouse = ScummDefaultMouse = value->show_cursor;
 			break;
 
 		case PROP_GET_SAMPLE_RATE:

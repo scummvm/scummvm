@@ -118,7 +118,7 @@ public:
 	void quit();
 
 	// Set a parameter
-	uint32 property(int param, uint32 value);
+	uint32 property(int param, Property *value);
 
 	static OSystem *create(int gfx_mode, bool full_screen);
 
@@ -1196,7 +1196,7 @@ bool OSystem_WINCE3::set_sound_proc(void *param, SoundProc *proc, byte format) {
 /* Hotswap graphics modes */
 void OSystem_WINCE3::get_320x200_image(byte *buf) {;}
 void OSystem_WINCE3::hotswap_gfx_mode() {;}
-uint32 OSystem_WINCE3::property(int param, uint32 value) {
+uint32 OSystem_WINCE3::property(int param, Property *value) {
 	switch(param) {
 
 	case PROP_TOGGLE_FULLSCREEN:

@@ -81,7 +81,7 @@ static void do_memory_test(void) {
 	signal(SIGBUS, handle_errors);
 	signal(SIGABRT, handle_errors);
 	signal(SIGSEGV, handle_errors);
-	if (*((int *) ((char *) test + 1)) != value) {
+	if (*((unsigned int *) ((char *) test + 1)) != value) {
 		error("Your system does not support unaligned memory accesses. Please rebuild with SCUMM_NEED_ALIGNMENT ");
 	}
 	signal(SIGBUS, SIG_DFL);
@@ -148,7 +148,10 @@ int main(int argc, char *argv[])
 
 	{
 		char *s = detector.getGameName();
-		system->property(OSystem::PROP_SET_WINDOW_CAPTION, (long)s);
+		OSystem::Property prop;
+
+		prop.caption = s;
+		system->property(OSystem::PROP_SET_WINDOW_CAPTION, &prop);
 		free(s);
 	}
 

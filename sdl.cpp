@@ -94,7 +94,7 @@ public:
 	void quit();
 
 	// Set a parameter
-	uint32 property(int param, uint32 value);
+	uint32 property(int param, Property *value);
 
 	static OSystem *create(int gfx_mode, bool full_screen);
 
@@ -733,7 +733,7 @@ bool OSystem_SDL::poll_event(Event *event) {
 
 				/* internal keypress? */				
 				if (b == KBD_ALT && ev.key.keysym.sym==SDLK_RETURN) {
-					property(PROP_TOGGLE_FULLSCREEN, 0);
+					property(PROP_TOGGLE_FULLSCREEN, NULL);
 					break;
 				}
 
@@ -743,8 +743,10 @@ bool OSystem_SDL::poll_event(Event *event) {
 				}
 
 				if (b == (KBD_CTRL|KBD_ALT) && 
-						ev.key.keysym.sym>='1' && ev.key.keysym.sym<='7') {
-					property(PROP_SET_GFX_MODE, ev.key.keysym.sym - '1');
+				    (ev.key.keysym.sym>='1') && (ev.key.keysym.sym<='7')) {
+					Property prop;
+					prop.gfx_mode = ev.key.keysym.sym - '1';
+					property(PROP_SET_GFX_MODE, &prop);
 					break;
 				}
 
@@ -855,7 +857,7 @@ void OSystem_SDL::hotswap_gfx_mode() {
 	OSystem_SDL::update_screen();
 }
 
-uint32 OSystem_SDL::property(int param, uint32 value) {
+uint32 OSystem_SDL::property(int param, Property *value) {
 	switch(param) {
 
 	case PROP_TOGGLE_FULLSCREEN:
@@ -869,14 +871,14 @@ uint32 OSystem_SDL::property(int param, uint32 value) {
 		return 1;
 
 	case PROP_SET_WINDOW_CAPTION:
-		SDL_WM_SetCaption((char*)value, (char*)value);
+		SDL_WM_SetCaption(value->caption, value->caption);
 		return 1;
 
 	case PROP_OPEN_CD:
 		if (SDL_InitSubSystem(SDL_INIT_CDROM) == -1)
 			cdrom = NULL;
 		else {
-			cdrom = SDL_CDOpen(value);
+			cdrom = SDL_CDOpen(value->cd_num);
 			/* Did if open? Check if cdrom is NULL */
 			if (!cdrom) {
 				warning("Couldn't open drive: %s\n", SDL_GetError());
@@ -885,16 +887,16 @@ uint32 OSystem_SDL::property(int param, uint32 value) {
 		break;
 
 	case PROP_SET_GFX_MODE:
-		if (value >= 7)
+		if (value->gfx_mode >= 7)
 			return 0;
 
-		_mode = value;
+		_mode = value->gfx_mode;
 		hotswap_gfx_mode();
 
 		return 1;
 
 	case PROP_SHOW_DEFAULT_CURSOR:
-		SDL_ShowCursor(value ? SDL_ENABLE : SDL_DISABLE);		
+		SDL_ShowCursor(value->show_cursor ? SDL_ENABLE : SDL_DISABLE);		
 		break;
 
 	case PROP_GET_SAMPLE_RATE:
@@ -1116,7 +1118,7 @@ public:
 	bool poll_event(Event *event) { return false; }
 	bool set_sound_proc(void *param, SoundProc *proc, byte sound) {}
 	void quit() { exit(1); }
-	uint32 property(int param, uint32 value) { return 0; }
+	uint32 property(int param, Property *value) { return 0; }
 	static OSystem *create(int gfx_mode, bool full_screen);
 private:
 

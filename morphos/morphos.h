@@ -75,7 +75,7 @@ class OSystem_MorphOS : public OSystem
 		virtual bool set_sound_proc(void *param, SoundProc *proc, byte format);
 				  void fill_sound    (byte * stream, int len);
 
-		virtual uint32 property(int param, uint32 value);
+		virtual uint32 property(int param, Property *value);
 
 		// Poll cdrom status
 		// Returns true if cd audio is playing

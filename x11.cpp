@@ -111,7 +111,7 @@ public:
 	void quit();
 
 	// Set a parameter
-	uint32 property(int param, uint32 value);
+	uint32 property(int param, Property *value);
 
 	static OSystem *create(int gfx_mode, bool full_screen);
 
@@ -703,13 +703,13 @@ void *OSystem_X11::create_thread(ThreadProc *proc, void *param) {
 		return thread;
 }
 
-uint32 OSystem_X11::property(int param, uint32 value) {
+uint32 OSystem_X11::property(int param, Property *value) {
 	switch (param) 
 	{
 		case PROP_GET_SAMPLE_RATE:
 			return 22050;
 	}
-	warning("Property not implemented yet (%d, 0x%08X) ", param, value);
+	warning("Property not implemented yet (%d) ", param);
 	return 0;
 }
 

@@ -64,7 +64,7 @@ class OSystem_Dreamcast : public OSystem {
   void quit();
 
   // Set a parameter
-  uint32 property(int param, uint32 value);
+  uint32 property(int param, Property *value);
 
   static OSystem *create();
 

@@ -1300,8 +1300,8 @@ void Scumm::launch()
 	else
 		OF_OWNER_ROOM = 0x0F;
 
-//  if (_gameId==GID_MONKEY2 && _bootParam == 0)
-//    _bootParam = 10001;
+	// if (_gameId==GID_MONKEY2 && _bootParam == 0)
+	//	_bootParam = 10001;
 
 	if (_gameId == GID_INDY4 && _bootParam == 0) {
 		_bootParam = -7873;
@@ -1336,6 +1336,7 @@ void Scumm::launch()
 Scumm *Scumm::createFromDetector(GameDetector *detector, OSystem *syst)
 {
 	Scumm *scumm;
+	OSystem::Property prop;
 
 	if (detector->_features & GF_OLD256)
 		scumm = new Scumm_v3;
@@ -1352,7 +1353,8 @@ Scumm *Scumm::createFromDetector(GameDetector *detector, OSystem *syst)
 
 	/* This initializes SDL */
 	syst->init_size(320,200);
-	syst->property(OSystem::PROP_OPEN_CD, detector->_cdrom);
+	prop.cd_num = detector->_cdrom;
+	syst->property(OSystem::PROP_OPEN_CD, &prop);
 
 	/* bind the mixer to the system => mixer will be invoked
 	 * automatically when samples need to be generated */	

@@ -63,7 +63,13 @@ public:
 		PROP_SHOW_DEFAULT_CURSOR = 5,
 		PROP_GET_SAMPLE_RATE = 6,
 	};
-
+	union Property {
+		char *caption;
+		int cd_num;
+		int gfx_mode;
+		bool show_cursor;
+	};
+	
 	enum {
 		SOUND_8BIT = 0,
 		SOUND_16BIT = 1,
@@ -114,7 +120,7 @@ public:
 	virtual bool set_sound_proc(void *param, SoundProc *proc, byte format) = 0;
 	
 	// Get or set a property
-	virtual uint32 property(int param, uint32 value) = 0;
+	virtual uint32 property(int param, Property *value) = 0;
 		
 	// Poll cdrom status
 	// Returns true if cd audio is playing

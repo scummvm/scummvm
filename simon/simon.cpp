@@ -7884,6 +7884,8 @@ void SimonState::realizePalette() {
 
 
 void SimonState::go() {
+	OSystem::Property prop;
+
 	if (!_dump_file)
 		_dump_file = stdout;
 
@@ -7915,7 +7917,8 @@ void SimonState::go() {
 	_vga_base_delay = 1;
 	_vk_t_toggle = true;
 
-	_system->property(OSystem::PROP_SHOW_DEFAULT_CURSOR, 1);
+	prop.show_cursor = true;
+	_system->property(OSystem::PROP_SHOW_DEFAULT_CURSOR, &prop);
 
 	while(1) {
 		hitarea_stuff();
