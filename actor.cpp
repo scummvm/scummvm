@@ -1211,7 +1211,7 @@ void Scumm::setupShadowPalette(int slot,int rfact,int gfact,int bfact,int from,i
 }
 
 void Scumm::walkActorOld(Actor *a) {
-	int new_dir,next_box,goto_x,goto_y;
+	int new_dir,next_box;
 
 	if(!a->moving)
 		return;

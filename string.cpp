@@ -132,7 +132,7 @@ void CharsetRenderer::addLinebreaks(int a, byte *str, int pos, int maxwidth) {
 		if (chr==' ')
 			lastspace = pos - 1;
 		if(_vm->_features & GF_OLD256) {
-			curw += 8;
+			curw += getSpacing(chr);
 		} else {
 			offs = READ_LE_UINT32(ptr + chr*4 + 4);
 			if (offs) {
@@ -677,7 +677,10 @@ void Scumm::unkAddMsgToStack5(int var) {
 
 void Scumm::initCharset(int charsetno) {
 	int i;
-	
+
+	if (_features & GF_OLD256)
+	    charsetno = !charsetno;
+
     if (_features & GF_SMALL_HEADER)
            loadCharset(charsetno);
     else
@@ -728,7 +731,7 @@ void CharsetRenderer::printCharOld(int chr) { // Loom3 / Zak256
 		}
 	}
 
-	_left+=8;
+	_left+= getSpacing(chr);
 
 	if (_left  > _strRight)
 		_strRight = _left;
@@ -917,4 +920,40 @@ void CharsetRenderer::drawBits() {
 		mask += 40;
 		y++;
 	}
+}
+
+int CharsetRenderer::getSpacing(char chr) {
+	int space;
+
+	if (_curId == 1) {	// do spacing for variable width old-style font	
+		switch(chr) {
+			case '.':
+				space=1;
+				break;
+			case 'i':
+			case '\'':
+			case 'I':
+			case '!':
+				space=2;
+				break;
+			case 'l':
+				space=3;
+				break;
+			case ' ':
+				space=4;
+				break;
+			case 'W':
+			case 'w':
+			case 'N':
+			case 'M':
+			case 'm':
+				space=8;
+				break;
+			default:
+				space=6;
+		}
+	}
+	else
+		space=7;
+	return space;
 }
