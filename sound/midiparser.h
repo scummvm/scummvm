@@ -190,9 +190,8 @@ protected:
 	 *  the pointer.
 	 */
 	uint32 read4high (byte * &data) {
-		uint32 val = 0;
-		int i;
-		for (i = 0; i < 4; ++i) val = (val << 8) | *data++;
+		uint32 val = READ_BE_UINT32 (data);
+		data += 4;
 		return val;
 	}
 
@@ -202,9 +201,8 @@ protected:
 	 *  the pointer.
 	 */
 	uint16 read2low  (byte * &data) {
-		uint16 val = 0;
-		int i;
-		for (i = 0; i < 2; ++i) val |= (*data++) << (i * 8);
+		uint16 val = READ_LE_UINT16 (data);
+		data += 2;
 		return val;
 	}
 
