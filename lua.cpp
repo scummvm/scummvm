@@ -1026,6 +1026,17 @@ static void GetTextObjectDimensions() {
 	lua_pushnumber(100);	// Dummy Y
 }
 
+static void SetSpeechMode() {
+	int mode = check_int(1);
+	if ((mode >= 1) && (mode <= 3))
+ 		Engine::instance()->setSpeechMode(mode);
+}
+
+static void GetSpeechMode() {
+	int mode = Engine::instance()->getSpeechMode();
+ 	lua_pushnumber(mode);
+}
+
 static void StartFullscreenMovie() {
 	bool mode = getbool(2);
 	Engine::instance()->setMode(ENGINE_MODE_SMUSH);
@@ -1034,8 +1045,8 @@ static void StartFullscreenMovie() {
 
 static void StartMovie() {
 	bool mode = getbool(2);
-	int x = lua_getparam(3);
-	int y = lua_getparam(4);
+	int x = check_int(3);
+	int y = check_int(4);
 	Engine::instance()->setMode(ENGINE_MODE_NORMAL);
 	pushbool(g_smush->play(luaL_check_string(1), x, y));
 }
@@ -1174,8 +1185,6 @@ static char *stubFuncs[] = {
 	"SetActorShadowPlane",
 	"ActivateActorShadow",
 	"SetShadowColor",
-	"GetSpeechMode",
-	"SetSpeechMode",
 	"Display",
 	"CleanBuffer",
 	"DimRegion",
@@ -1517,7 +1526,9 @@ struct luaL_reg builtins[] = {
 	{ "StartFullscreenMovie", StartFullscreenMovie },
 	{ "IsFullscreenMoviePlaying", IsFullscreenMoviePlaying },
 	{ "NewObjectState", NewObjectState }, 
-	{ "FreeObjectState", FreeObjectState }
+	{ "FreeObjectState", FreeObjectState },
+	{ "GetSpeechMode", GetSpeechMode },
+	{ "SetSpeechMode", SetSpeechMode }
 };
 
 void register_lua() {
