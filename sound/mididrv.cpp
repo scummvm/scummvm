@@ -347,6 +347,7 @@ MidiDriver *MidiDriver_AMIDI_create() {
 
 #endif // __MORPHOS__
 
+#if defined(UNIX)
 #define SEQ_MIDIPUTC    5
 #define SPECIAL_CHANNEL 9
 #define DEVICE_NUM 1
@@ -381,7 +382,7 @@ int MidiDriver_SEQ::open(int mode) {
 	device = 0;
 	_mode=mode;
 	if (mode!=MO_SIMPLE) return MERR_STREAMING_NOT_AVAILABLE;
-#if !defined(__APPLE__CW)		// No getenv support on Apple Carbon
+
 	char *device_name = getenv("SCUMMVM_MIDI");
 	if (device_name != NULL) {
 		device = (::open((device_name), O_RDWR, 0));
@@ -397,7 +398,7 @@ int MidiDriver_SEQ::open(int mode) {
 		if (device < 0)
 			error("Cannot open /dev/null to dump midi output");
 	}
-#endif
+
 	return 0;
 }
 
@@ -409,7 +410,7 @@ void MidiDriver_SEQ::close() {
 
 void MidiDriver_SEQ::send(uint32 b)
 {
-	unsigned long buf[256];
+	unsigned char buf[256];
 	int position = 0;
 
 	switch (b & 0xF0) {
@@ -419,26 +420,26 @@ void MidiDriver_SEQ::send(uint32 b)
 	case 0xB0:
 	case 0xE0:
 		buf[position++] = SEQ_MIDIPUTC;
-		buf[position++] = b;
+		buf[position++] = (unsigned char)b;
 		buf[position++] = DEVICE_NUM;
 		buf[position++] = 0;
 		buf[position++] = SEQ_MIDIPUTC;
-		buf[position++] = (b >> 8) & 0x7F;
+		buf[position++] = (unsigned char)((b >> 8) & 0x7F);
 		buf[position++] = DEVICE_NUM;
 		buf[position++] = 0;
 		buf[position++] = SEQ_MIDIPUTC;
-		buf[position++] = (b >> 16) & 0x7F;
+		buf[position++] = (unsigned char)((b >> 16) & 0x7F);
 		buf[position++] = DEVICE_NUM;
 		buf[position++] = 0;
 		break;
 	case 0xC0:
 	case 0xD0:
 		buf[position++] = SEQ_MIDIPUTC;
-		buf[position++] = b;
+		buf[position++] = (unsigned char)b;
 		buf[position++] = DEVICE_NUM;
 		buf[position++] = 0;
 		buf[position++] = SEQ_MIDIPUTC;
-		buf[position++] = (b >> 8) & 0x7F;
+		buf[position++] = (unsigned char)((b >> 8) & 0x7F);
 		buf[position++] = DEVICE_NUM;
 		buf[position++] = 0;
 		break;
@@ -478,6 +479,7 @@ uint32 MidiDriver_SEQ::property(int prop, uint32 param) {
 
 	return 0;
 }
+#endif
 
 /* NULL driver */
 class MidiDriver_NULL : public MidiDriver {
