@@ -270,6 +270,12 @@ void SkyEngine::initialise(void) {
 
 	if (isCDVersion()) {
 		_systemVars.systemFlags |= SF_ALLOW_SPEECH;
+		if (ConfMan.hasKey("nosubtitles")) {
+			warning("Configuration key 'nosubtitles' is deprecated. Use 'subtitles' instead");
+			if (ConfMan.getBool("nosubtitles") == false)
+				_systemVars.systemFlags |= SF_ALLOW_TEXT;
+		}
+
 		if (ConfMan.getBool("subtitles"))
 			_systemVars.systemFlags |= SF_ALLOW_TEXT;
 	} else

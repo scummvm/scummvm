@@ -626,6 +626,10 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 	_demoMode = ConfMan.getBool("demo_mode");
 	_noSubtitles = ConfMan.getBool("subtitles");
 	_noSubtitles ^=1;
+	if (ConfMan.hasKey("nosubtitles")) {
+		warning("Configuration key 'nosubtitles' is deprecated. Use 'subtitles' instead");
+		_noSubtitles = ConfMan.getBool("nosubtitles");
+	}
 	_confirmExit = ConfMan.getBool("confirm_exit");
 	_defaultTalkDelay = ConfMan.getInt("talkspeed");
 	_native_mt32 = ConfMan.getBool("native_mt32");
