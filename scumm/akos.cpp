@@ -24,7 +24,7 @@
 #include "actor.h"
 #include "akos.h"
 #include "imuse.h"
-
+#include "sound.h"
 
 #if !defined(__GNUC__)
 #pragma START_PACK_STRUCTS
@@ -1606,19 +1606,26 @@ void Scumm::akos_queCommand(byte cmd, Actor *a, int param_1, int param_2)
 	case 1:
 		a->putActor(0, 0, 0);
 		break;
+	case 2:
+		warning("unimplemented akos_queCommand(2,%d,%d,%d)", a->number, param_1, param_2);
+		// start script token in actor
+		break;
 	case 3:
 		if (param_1 != 0) {
-			if (_imuseDigital) {
-				_imuseDigital->startSound(param_1);
-//				_imuseDigital->doCommand(12, 0x400, param_1, 0, 0, 0, 0, 0);
-			}
+			_sound->addSoundToQueue(param_1);
 		}
 		break;
-	case 2:
 	case 4:
+		a->startAnimActor(param_1);
+		// param_2 ?
+		break;
 	case 5:
+		a->forceClip = param_1;
+		break;
 	case 6:
-		warning("unimplemented akos_queCommand(%d,%d,%d,%d)", cmd, a->number, param_1, param_2);
+		warning("unimplemented akos_queCommand(6,%d,%d,%d)", a->number, param_1, param_2);
+//		a->offs_x = param_1;
+//		a->offs_y = param_2;
 		break;
 	case 7:
 		if (param_1 != 0) {
