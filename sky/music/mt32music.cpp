@@ -62,12 +62,14 @@ void SkyMT32Music::timerCall(void) {
 }
 
 void SkyMT32Music::setVolume(uint8 volume) {
-
-	uint8 sysEx[6];
+	uint8 sysEx[10] = "\x41\x10\x16\x12\x10\x00\x16\x00\x00";
 	_musicVolume = volume;
-	sysEx[0] = 0x7F; sysEx[1] = 0x7F; sysEx[2] = 0x04; sysEx[3] = 0x01;
-	sysEx[4] = 0; sysEx[5] = volume & 0x7F;
-	_midiDrv->sysEx(sysEx, 6);
+	sysEx[7] = (volume > 100) ? 100 : volume;
+	sysEx[8] = 0x00;
+	for (uint8 cnt = 4; cnt < 8; cnt++)
+		sysEx[8] -= sysEx[cnt];
+	sysEx[8] &= 0x7F;
+	_midiDrv->sysEx(sysEx, 9);
 }
 
 void SkyMT32Music::setupPointers(void) {
