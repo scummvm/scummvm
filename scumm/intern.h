@@ -364,7 +364,7 @@ protected:
 	void setCursorTransparency(int a);
 	void setCursorHotspot(int x, int y);
 
-	void setCursorFromImg(uint img, uint room, uint imgindex);
+	virtual void setCursorFromImg(uint img, uint room, uint imgindex);
 	void useIm01Cursor(const byte *im, int w, int h);
 	void useBompCursor(const byte *im, int w, int h);
 	void grabCursor(int x, int y, int w, int h);
@@ -635,8 +635,9 @@ protected:
 	bool polygonDefined(int id);
 	int polygonHit(int id, int x, int y);
 
+	virtual void setCursorFromImg(uint img, uint room, uint imgindex);
+
 	/* HE version 70 script opcodes */
-	void o70he_cursorCommand();
 	void o70he_startSound();
 	void o70he_pickupObject();
 	void o70he_getActorRoom();

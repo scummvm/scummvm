@@ -179,7 +179,7 @@ void ScummEngine_v7he::setupOpcodes() {
 		OPCODE(o6_cutscene),
 		OPCODE(o6_stopMusic),
 		OPCODE(o6_freezeUnfreeze),
-		OPCODE(o70he_cursorCommand),
+		OPCODE(o6_cursorCommand),
 		/* 6C */
 		OPCODE(o6_breakHere),
 		OPCODE(o6_ifClassOfIs),
@@ -402,68 +402,6 @@ void ScummEngine_v7he::arrrays_unk2(int dst, int src, int len2, int len) {
 	}
 
 	writeArray(0, 0, edi + i, 0);
-}
-
-void ScummEngine_v7he::o70he_cursorCommand() {
-	int a, i;
-	int args[16];
-	int subOp = fetchScriptByte();
-
-	switch (subOp) {
-	case 0x90:		// SO_CURSOR_ON Turn cursor on
-		_cursor.state = 1;
-		verbMouseOver(0);
-		break;
-	case 0x91:		// SO_CURSOR_OFF Turn cursor off
-		_cursor.state = 0;
-		verbMouseOver(0);
-		break;
-	case 0x92:		// SO_USERPUT_ON
-		_userPut = 1;
-		break;
-	case 0x93:		// SO_USERPUT_OFF
-		_userPut = 0;
-		break;
-	case 0x94:		// SO_CURSOR_SOFT_ON Turn soft cursor on
-		_cursor.state++;
-		if (_cursor.state > 1)
-			error("Cursor state greater than 1 in script");
-		verbMouseOver(0);
-		break;
-	case 0x95:		// SO_CURSOR_SOFT_OFF Turn soft cursor off
-		_cursor.state--;
-		verbMouseOver(0);
-		break;
-	case 0x96:		// SO_USERPUT_SOFT_ON
-		_userPut++;
-		break;
-	case 0x97:		// SO_USERPUT_SOFT_OFF
-		_userPut--;
-		break;
-	case 0x99: 		// SO_CURSOR_IMAGE Set cursor image
-		_Win32ResExtractor->setCursor(pop()); 				/* Difference */
-		break;
-	case 0x9A:		// SO_CURSOR_HOTSPOT Set cursor hotspot
-		a = pop();
-		setCursorHotspot(pop(), a);
-		break;
-	case 0x9C:		// SO_CHARSET_SET
-		initCharset(pop());
-		break;
-	case 0x9D:		// SO_CHARSET_COLOR
-		getStackList(args, ARRAYSIZE(args));
-		for (i = 0; i < 16; i++)
-			_charsetColorMap[i] = _charsetData[_string[1]._default.charset][i] = (unsigned char)args[i];
-		break;
-	case 0xD6:		// SO_CURSOR_TRANSPARENT Set cursor transparent color
-		setCursorTransparency(pop());
-		break;
-	default:
-		error("o70he_cursorCommand: default case %x", subOp);
-	}
-
-	VAR(VAR_CURSORSTATE) = _cursor.state;
-	VAR(VAR_USERPUT) = _userPut;
 }
 
 void ScummEngine_v7he::o70he_startSound() {

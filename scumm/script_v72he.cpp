@@ -178,7 +178,7 @@ void ScummEngine_v72he::setupOpcodes() {
 		OPCODE(o6_cutscene),
 		OPCODE(o6_stopMusic),
 		OPCODE(o6_freezeUnfreeze),
-		OPCODE(o70he_cursorCommand),
+		OPCODE(o6_cursorCommand),
 		/* 6C */
 		OPCODE(o6_breakHere),
 		OPCODE(o6_ifClassOfIs),

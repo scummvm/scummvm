@@ -24,6 +24,7 @@
 #include "scumm/charset.h"
 #include "scumm/intern.h"
 #include "scumm/object.h"
+#include "scumm/resource_v7he.h"
 #include "scumm/scumm.h"
 
 
@@ -144,6 +145,10 @@ void ScummEngine::setCursorFromBuffer(byte *ptr, int width, int height, int pitc
 	}
 
 	updateCursor();
+}
+
+void ScummEngine_v7he::setCursorFromImg(uint img, uint room, uint imgindex) {
+	_Win32ResExtractor->setCursor(img);
 }
 
 void ScummEngine_v6::setCursorFromImg(uint img, uint room, uint imgindex) {
