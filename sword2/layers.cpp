@@ -91,14 +91,14 @@ int32 Sword2Engine::initBackground(int32 res, int32 new_palette) {
 	
 	screen_head = fetchScreenHeader(file);
 
-	//set number of special sort layers
+	// set number of special sort layers
 	_thisScreen.number_of_layers = screen_head->noLayers;
 	_thisScreen.screen_wide = screen_head->width;
 	_thisScreen.screen_deep = screen_head->height;
 
 	debug(5, "res test layers=%d width=%d depth=%d", screen_head->noLayers, screen_head->width, screen_head->height);
 
-	//initialise the driver back buffer
+	// initialise the driver back buffer
 	_graphics->setLocationMetrics(screen_head->width, screen_head->height);
 
 	if (screen_head->noLayers) {

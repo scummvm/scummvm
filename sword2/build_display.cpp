@@ -34,9 +34,6 @@
 namespace Sword2 {
 
 void Sword2Engine::buildDisplay(void) {
-	uint8 *file;
-	MultiScreenHeader *screenLayerTable;
-
 	if (_thisScreen.new_palette) {
 		// start the layer palette fading up
 		startNewPalette();
@@ -46,153 +43,86 @@ void Sword2Engine::buildDisplay(void) {
 		_largestSpriteArea = 0;
 	}
 
+	// Does this ever happen?
+	if (!_thisScreen.background_layer_id)
+		return;
+
 	// there is a valid screen to run
-	if (_thisScreen.background_layer_id) {
-		// set the scroll position
-		_graphics->setScrollTarget(_thisScreen.scroll_offset_x, _thisScreen.scroll_offset_y);
-		// increment the mouse frame
-		_graphics->animateMouse();
 
-		_graphics->startRenderCycle();
+	_graphics->setScrollTarget(_thisScreen.scroll_offset_x, _thisScreen.scroll_offset_y);
+	_graphics->animateMouse();
+	_graphics->startRenderCycle();
 
-		while (1) {
-			// first background parallax + related anims
+	uint8 *file = _resman->openResource(_thisScreen.background_layer_id);
+	MultiScreenHeader *screenLayerTable = (MultiScreenHeader *) (file + sizeof(StandardHeader));
 
-			// open the screen resource
-			file = _resman->openResource(_thisScreen.background_layer_id);
-			screenLayerTable = (MultiScreenHeader *) (file + sizeof(StandardHeader));
+	// Render at least one frame, but if the screen is scrolling, and if
+	// there is time left, we will render extra frames to smooth out the
+	// scrolling.
 
-			if (screenLayerTable->bg_parallax[0]) {
-				_graphics->renderParallax(fetchBackgroundParallaxLayer(file, 0), 0);
-				// release the screen resource before cacheing
-				// the sprites
-	 			_resman->closeResource(_thisScreen.background_layer_id);
-				sendBackPar0Frames();
-			} else {
-				// release the screen resource
- 	 			_resman->closeResource(_thisScreen.background_layer_id);
-			}
-
-			// second background parallax + related anims
-
-			// open the screen resource
-			file = _resman->openResource(_thisScreen.background_layer_id);
-			screenLayerTable = (MultiScreenHeader *) (file + sizeof(StandardHeader));
-
-			if (screenLayerTable->bg_parallax[1]) {
-				_graphics->renderParallax(fetchBackgroundParallaxLayer(file, 1), 1);
-				// release the screen resource before cacheing
-				// the sprites
-	 			_resman->closeResource(_thisScreen.background_layer_id);
-				sendBackPar1Frames();
-			} else {
-				// release the screen resource
- 	 			_resman->closeResource(_thisScreen.background_layer_id);
-			}
-
-			// normal backround layer (just the one!)
-
-			// open the screen resource
-			file = _resman->openResource(_thisScreen.background_layer_id);
-			_graphics->renderParallax(fetchBackgroundLayer(file), 2);
-			// release the screen resource
-			_resman->closeResource(_thisScreen.background_layer_id);
-
-			// sprites & layers
-
-			sendBackFrames();	// background sprites
-			sortTheSortList();
-			sendSortFrames();	// sorted sprites & layers
-			sendForeFrames();	// foreground sprites
-
-			// first foreground parallax + related anims
-
-			// open the screen resource
-			file = _resman->openResource(_thisScreen.background_layer_id);
-			screenLayerTable = (MultiScreenHeader *) (file + sizeof(StandardHeader));
-
-			if (screenLayerTable->fg_parallax[0]) {
-				_graphics->renderParallax(fetchForegroundParallaxLayer(file, 0), 3);
-				// release the screen resource before cacheing
-				// the sprites
-	 			_resman->closeResource(_thisScreen.background_layer_id);
-				sendForePar0Frames();
-			} else {
-				// release the screen resource
- 	 			_resman->closeResource(_thisScreen.background_layer_id);
-			}
-
-			// second foreground parallax + related anims
-
-			// open the screen resource
-			file = _resman->openResource(_thisScreen.background_layer_id);
-			screenLayerTable = (MultiScreenHeader *) (file + sizeof(StandardHeader));
-
-			if (screenLayerTable->fg_parallax[1]) {
-				_graphics->renderParallax(fetchForegroundParallaxLayer(file, 1), 4);
-				// release the screen resource before cacheing
-				// the sprites
-	 			_resman->closeResource(_thisScreen.background_layer_id);
-				sendForePar1Frames();
-			} else {
-				// release the screen resource
- 	 			_resman->closeResource(_thisScreen.background_layer_id);
-			}
-
-			// walkgrid, mouse & player markers & mouse area
-			// rectangle
-
-			_debugger->drawDebugGraphics();
-
-			// text blocks
-
-			// speech blocks and headup debug text
-			_fontRenderer->printTextBlocs();
-
-			// menu bar & icons
-
-			_graphics->processMenu();
-
-			// ready - blit to screen
-
-			_graphics->updateDisplay();
-
-			// update our fps reading
-
-			_frameCount++;
-			if (_system->get_msecs() > _cycleTime) {
-				_fps = _frameCount;
-				debug(2, "FPS: %d", _fps);
-				_frameCount = 0;
-				_cycleTime = _system->get_msecs() + 1000;
-			}
-
-			// Check if we've got time to render the screen again
-			// this cycle (so drivers can smooth out the scrolling
-			// in between normal game cycles)
-			//
-			// If we haven't got time to render again this cycle,
-			// drop out of 'render cycle' while-loop
-
-			if (_graphics->endRenderCycle())
-				break;
+	do {
+		// first background parallax + related anims
+		if (screenLayerTable->bg_parallax[0]) {
+			_graphics->renderParallax(fetchBackgroundParallaxLayer(file, 0), 0);
+			drawBackPar0Frames();
 		}
-	}
+
+		// second background parallax + related anims
+		if (screenLayerTable->bg_parallax[1]) {
+			_graphics->renderParallax(fetchBackgroundParallaxLayer(file, 1), 1);
+			drawBackPar1Frames();
+		}
+
+		// normal backround layer (just the one!)
+		_graphics->renderParallax(fetchBackgroundLayer(file), 2);
+
+		// sprites & layers
+		drawBackFrames();	// background sprites
+		drawSortFrames(file);	// sorted sprites & layers
+		drawForeFrames();	// foreground sprites
+
+		// first foreground parallax + related anims
+
+		if (screenLayerTable->fg_parallax[0]) {
+			_graphics->renderParallax(fetchForegroundParallaxLayer(file, 0), 3);
+			drawForePar0Frames();
+		}
+
+		// second foreground parallax + related anims
+
+		if (screenLayerTable->fg_parallax[1]) {
+			_graphics->renderParallax(fetchForegroundParallaxLayer(file, 1), 4);
+			drawForePar1Frames();
+		}
+
+		_debugger->drawDebugGraphics();
+		_fontRenderer->printTextBlocs();
+		_graphics->processMenu();
+
+		_graphics->updateDisplay();
+
+		_frameCount++;
+		if (_system->get_msecs() > _cycleTime) {
+			_fps = _frameCount;
+			_frameCount = 0;
+			_cycleTime = _system->get_msecs() + 1000;
+		}
+	} while (!_graphics->endRenderCycle());
+
+	_resman->closeResource(_thisScreen.background_layer_id);
 }
 
-//
-// Fades down and displays a message on the screen for time seconds
-//
+/**
+ * Fades down and displays a message on the screen.
+ * @param text The message
+ * @param time The number of seconds to display the message
+ */
 
 void Sword2Engine::displayMsg(uint8 *text, int time) {
-	Memory *text_spr;
-	FrameHeader *frame;
-	SpriteInfo spriteInfo;
 	PalEntry pal[256];
 	PalEntry oldPal[256];
-	uint32 rv;	// drivers error return value
 
-	debug(2, "DisplayMsg: %s", (char *) text);
+	debug(2, "DisplayMsg: %s", text);
 	
 	if (_graphics->getFadeStatus() != RDFADE_BLACK) {
 		_graphics->fadeDown();
@@ -205,9 +135,10 @@ void Sword2Engine::displayMsg(uint8 *text, int time) {
 	_graphics->closeMenuImmediately();
 	_graphics->clearScene();
 
-	text_spr = _fontRenderer->makeTextSprite(text, 640, 187, _speechFontId);
+	Memory *text_spr = _fontRenderer->makeTextSprite(text, 640, 187, _speechFontId);
+	FrameHeader *frame = (FrameHeader *) text_spr->ad;
 
-	frame = (FrameHeader *) text_spr->ad;
+	SpriteInfo spriteInfo;
 
 	spriteInfo.x = _graphics->_screenWide / 2 - frame->width / 2;
 	if (!time)
@@ -224,7 +155,7 @@ void Sword2Engine::displayMsg(uint8 *text, int time) {
 	spriteInfo.data = text_spr->ad + sizeof(FrameHeader);
 	spriteInfo.colourTable = 0;
 
-	rv = _graphics->drawSprite(&spriteInfo);
+	uint32 rv = _graphics->drawSprite(&spriteInfo);
 	if (rv)
 		error("Driver Error %.8x (in DisplayMsg)", rv);
 
@@ -234,24 +165,21 @@ void Sword2Engine::displayMsg(uint8 *text, int time) {
 	pal[187].red = 255;
 	pal[187].green = 255;
 	pal[187].blue = 255;
+
 	_graphics->setPalette(0, 256, (uint8 *) pal, RDPAL_FADE);
-
 	_graphics->fadeUp();
-
 	_memory->freeMemory(text_spr);
-
 	_graphics->waitForFade();
 
 	uint32 targetTime = _system->get_msecs() + (time * 1000);
 
 	sleepUntil(targetTime);
-
 	_graphics->setPalette(0, 256, (uint8 *) oldPal, RDPAL_FADE);
 }
 
-//
-// Fades message down and removes it, fading up again afterwards
-//
+/**
+ * Fades message down and removes it, fading up again afterwards
+ */
 
 void Sword2Engine::removeMsg(void) {
 	_graphics->fadeDown();
@@ -265,83 +193,77 @@ void Sword2Engine::removeMsg(void) {
 	// this routine to clean up!
 }
 
-void Sword2Engine::sendBackPar0Frames(void) {
-	// could be none at all - theoretically at least
-	for (uint i = 0; i < _curBgp0; i++) {
-		// frame attached to 1st background parallax
+void Sword2Engine::drawBackPar0Frames(void) {
+	// frame attached to 1st background parallax
+	for (uint i = 0; i < _curBgp0; i++)
 		processImage(&_bgp0List[i]);
-	}
 }
 
-void Sword2Engine::sendBackPar1Frames(void) {
-	// could be none at all - theoretically at least
-	for (uint i = 0; i < _curBgp1; i++) {
-		// frame attached to 2nd background parallax
+void Sword2Engine::drawBackPar1Frames(void) {
+	// frame attached to 2nd background parallax
+	for (uint i = 0; i < _curBgp1; i++)
 		processImage(&_bgp1List[i]);
-	}
 }
 
-void Sword2Engine::sendBackFrames(void) {
-	// could be none at all - theoretically at least
-	for (uint i = 0; i < _curBack; i++) {
+void Sword2Engine::drawBackFrames(void) {
+	// background sprite, fixed to main background
+	for (uint i = 0; i < _curBack; i++)
 		processImage(&_backList[i]);
-	}
 }
 
-void Sword2Engine::sendSortFrames(void) {
-	// send the sort frames for printing - layers, shrinkers & normal flat
-	// sprites
+void Sword2Engine::drawSortFrames(uint8 *file) {
+	uint i, j;
 
-	// could be none at all - theoretically at least
-	for (uint i = 0; i < _curSort; i++) {
+	// Sort the sort list. Used to be a separate function, but it was only
+	// called once, right before calling drawSortFrames().
+
+	if (_curSort > 1) {
+		for (i = 0; i < _curSort - 1; i++) {
+			for (j = 0; j < _curSort - 1; j++) {
+				if (_sortList[_sortOrder[j]].sort_y > _sortList[_sortOrder[j + 1]].sort_y) {
+					SWAP(_sortOrder[j], _sortOrder[j + 1]);
+				}
+			}
+		}
+	}
+
+	// Draw the sorted frames - layers, shrinkers & normal flat sprites
+
+	for (i = 0; i < _curSort; i++) {
 		if (_sortList[_sortOrder[i]].layer_number) {
 			// it's a layer - minus 1 for true layer number
 			// we need to know from the BuildUnit because the
 			// layers will have been sorted in random order
-			processLayer(_sortList[_sortOrder[i]].layer_number - 1);
+			processLayer(file, _sortList[_sortOrder[i]].layer_number - 1);
 		} else {
-			// sprite
+			// it's a sprite
 			processImage(&_sortList[_sortOrder[i]]);
 		}
 	}
 }
 
-void Sword2Engine::sendForeFrames(void) {
-	// could be none at all - theoretically at least
-	for (uint i = 0; i < _curFore; i++) {
+void Sword2Engine::drawForeFrames(void) {
+	// foreground sprite, fixed to main background
+	for (uint i = 0; i < _curFore; i++)
 		processImage(&_foreList[i]);
-	}
 }
 
-void Sword2Engine::sendForePar0Frames(void) {
-	// could be none at all - theoretically at least
-	for (uint i = 0; i < _curFgp0; i++) {
-		// frame attached to 1st foreground parallax
+void Sword2Engine::drawForePar0Frames(void) {
+	// frame attached to 1st foreground parallax
+	for (uint i = 0; i < _curFgp0; i++)
 		processImage(&_fgp0List[i]);
-	}
 }
 
-void Sword2Engine::sendForePar1Frames(void) {
-	// could be none at all - theoretically at least
-	for (uint i = 0; i < _curFgp1; i++) {
-		// frame attached to 2nd foreground parallax
+void Sword2Engine::drawForePar1Frames(void) {
+	// frame attached to 2nd foreground parallax
+	for (uint i = 0; i < _curFgp1; i++)
 		processImage(&_fgp1List[i]);
-	}
 }
 
-void Sword2Engine::processLayer(uint32 layer_number) {
-	uint8 *file;
-	LayerHeader *layer_head;
+void Sword2Engine::processLayer(uint8 *file, uint32 layer_number) {
+	LayerHeader *layer_head = fetchLayerHeader(file, layer_number);
+
  	SpriteInfo spriteInfo;
-	uint32 rv;
-
-	uint32 current_layer_area = 0;
-
-	// file points to 1st byte in the layer file
-	file = _resman->openResource(_thisScreen.background_layer_id);
-
-	// point to layer header
-	layer_head = fetchLayerHeader(file,layer_number);
 
 	spriteInfo.x = layer_head->x;
 	spriteInfo.y = layer_head->y;
@@ -357,7 +279,7 @@ void Sword2Engine::processLayer(uint32 layer_number) {
 
 	// check for largest layer for debug info
 
-	current_layer_area = layer_head->width * layer_head->height;
+	uint32 current_layer_area = layer_head->width * layer_head->height;
 
 	if (current_layer_area > _largestLayerArea) {
 		_largestLayerArea = current_layer_area;
@@ -367,33 +289,21 @@ void Sword2Engine::processLayer(uint32 layer_number) {
 			layer_number, layer_head->width, layer_head->height);
 	}
 
-	rv = _graphics->drawSprite(&spriteInfo);
+	uint32 rv = _graphics->drawSprite(&spriteInfo);
 	if (rv)
-		error("Driver Error %.8x in Process_layer(%d)", rv, layer_number);
-
-	_resman->closeResource(_thisScreen.background_layer_id);
+		error("Driver Error %.8x in processLayer(%d)", rv, layer_number);
 }
 
 void Sword2Engine::processImage(BuildUnit *build_unit) {
-	uint8 *file, *colTablePtr = NULL;
-	AnimHeader *anim_head;
-	FrameHeader *frame_head;
-	CdtEntry *cdt_entry;
-	SpriteInfo spriteInfo;
-	uint32 spriteType;
-	uint32 rv;
+	uint8 *file = _resman->openResource(build_unit->anim_resource);
+	uint8 *colTablePtr = NULL;
 
-	uint32 current_sprite_area = 0;
-
-	// open anim resource file & point to base
-	file = _resman->openResource(build_unit->anim_resource);
-
-	anim_head = fetchAnimHeader(file);
-	cdt_entry = fetchCdtEntry(file, build_unit->anim_pc);
-	frame_head = fetchFrameHeader(file, build_unit->anim_pc);
+	AnimHeader *anim_head = fetchAnimHeader(file);
+	CdtEntry *cdt_entry = fetchCdtEntry(file, build_unit->anim_pc);
+	FrameHeader *frame_head = fetchFrameHeader(file, build_unit->anim_pc);
 
 	// so that 0-colour is transparent
-	spriteType = RDSPR_TRANS;
+	uint32 spriteType = RDSPR_TRANS;
 
 	if (anim_head->blend)
 		spriteType |= RDSPR_BLEND;
@@ -416,7 +326,6 @@ void Sword2Engine::processImage(BuildUnit *build_unit) {
 		else
 			spriteType |= RDSPR_RLE256FAST;
 	} else {
-		// what compression was used?
 		switch (anim_head->runTimeComp) {
 		case NONE:
 			spriteType |= RDSPR_NOCOMPRESSION;
@@ -438,6 +347,8 @@ void Sword2Engine::processImage(BuildUnit *build_unit) {
 	if (build_unit->shadingFlag)
 		spriteType |= RDSPR_SHADOW;
 
+	SpriteInfo spriteInfo;
+
 	spriteInfo.x = build_unit->x;
 	spriteInfo.y = build_unit->y;
 	spriteInfo.w = frame_head->width;
@@ -452,8 +363,7 @@ void Sword2Engine::processImage(BuildUnit *build_unit) {
 	spriteInfo.colourTable	= colTablePtr;
 
 	// check for largest layer for debug info
-
-	current_sprite_area = frame_head->width * frame_head->height;
+	uint32 current_sprite_area = frame_head->width * frame_head->height;
 
 	if (current_sprite_area > _largestSpriteArea) {
 		_largestSpriteArea = current_sprite_area;
@@ -487,13 +397,7 @@ void Sword2Engine::processImage(BuildUnit *build_unit) {
 		_debugger->_rectY2 = spriteInfo.y + spriteInfo.scaledHeight;
 	}
 
-// #ifdef _SWORD2_DEBUG
-//	if (frame_head->width <= 1) {
-//		debug(5, "WARNING: 1-pixel-wide frame found in %s (%d)", fetchObjectName(build_unit->anim_resource), build_unit->anim_resource);
-//	}
-// #endif
-
-	rv = _graphics->drawSprite(&spriteInfo);
+	uint32 rv = _graphics->drawSprite(&spriteInfo);
 	if (rv)
 		error("Driver Error %.8x with sprite %s (%d) in processImage",
 			rv, fetchObjectName(build_unit->anim_resource),
@@ -518,26 +422,9 @@ void Sword2Engine::resetRenderLists(void) {
 	_curFgp1 = 0;
 
 	if (_curSort) {
-		// there are some layers - so rebuild the sort order
-		// positioning
+		// there are some layers - so rebuild the sort order list
 		for (uint i = 0; i < _curSort; i++)
-			_sortOrder[i] = i;	//rebuild the order list
-	}
-}
-
-void Sword2Engine::sortTheSortList(void) {
-	// sort the list
-
-	// cannot bubble sort 0 or 1 items!
-	if (_curSort <= 1)
-		return;
-
-	for (uint i = 0; i < _curSort - 1; i++) {
-		for (uint j = 0; j < _curSort - 1; j++) {
-			if (_sortList[_sortOrder[j]].sort_y > _sortList[_sortOrder[j + 1]].sort_y) {
-				SWAP(_sortOrder[j], _sortOrder[j + 1]);
-			}
-		}
+			_sortOrder[i] = i;
 	}
 }
 
@@ -547,26 +434,14 @@ void Sword2Engine::registerFrame(int32 *params, BuildUnit *build_unit) {
 	//         1 pointer to graphic structure
 	//         2 pointer to mega structure
 
-	ObjectMega *ob_mega;
-	ObjectGraphic *ob_graph;
-	ObjectMouse *ob_mouse;
-	uint8 *file;
-	FrameHeader *frame_head;
-	AnimHeader *anim_head;
-	CdtEntry *cdt_entry;
-	int scale = 0;
-
-	// open animation file & set up the necessary pointers
-
-	ob_graph = (ObjectGraphic *) _memory->intToPtr(params[1]);
-
+	ObjectGraphic *ob_graph = (ObjectGraphic *) _memory->intToPtr(params[1]);
 	assert(ob_graph->anim_resource);
 
-	file = _resman->openResource(ob_graph->anim_resource);
+	uint8 *file = _resman->openResource(ob_graph->anim_resource);
 
-	anim_head = fetchAnimHeader(file);
-	cdt_entry = fetchCdtEntry(file, ob_graph->anim_pc);
-	frame_head = fetchFrameHeader(file, ob_graph->anim_pc);
+	AnimHeader *anim_head = fetchAnimHeader(file);
+	CdtEntry *cdt_entry = fetchCdtEntry(file, ob_graph->anim_pc);
+	FrameHeader *frame_head = fetchFrameHeader(file, ob_graph->anim_pc);
 
 	// update player graphic details for on-screen debug info
 	if (Logic::_scriptVars[ID] == CUR_PLAYER_ID) {
@@ -579,11 +454,8 @@ void Sword2Engine::registerFrame(int32 *params, BuildUnit *build_unit) {
 
 	// fill in the BuildUnit structure for this frame
 
-	// retrieve the resource
  	build_unit->anim_resource = ob_graph->anim_resource;
-	// retrieve the frame
 	build_unit->anim_pc = ob_graph->anim_pc;
-	// not a layer
 	build_unit->layer_number = 0;
 
 	// Affected by shading mask?
@@ -592,11 +464,12 @@ void Sword2Engine::registerFrame(int32 *params, BuildUnit *build_unit) {
 	else
 		build_unit->shadingFlag = false;
 
-	// check if this frame has offsets ie. this is a scalable mega frame
+	// Check if this frame has offsets ie. this is a scalable mega frame
+
+	int scale = 0;
 
 	if (cdt_entry->frameType & FRAME_OFFSET) {
-		// param 2 is pointer to mega structure
-		ob_mega = (ObjectMega *) _memory->intToPtr(params[2]);
+		ObjectMega *ob_mega = (ObjectMega *) _memory->intToPtr(params[2]);
 
 		// calc scale at which to print the sprite, based on feet
 		// y-coord & scaling constants (NB. 'scale' is actually
@@ -613,18 +486,16 @@ void Sword2Engine::registerFrame(int32 *params, BuildUnit *build_unit) {
 		build_unit->x = ob_mega->feet_x + (cdt_entry->x * scale) / 256;
 		build_unit->y = ob_mega->feet_y + (cdt_entry->y * scale) / 256;
 
-		// work out new width and height
-		// always divide by 256 after everything else, to maintain
-		// accurary
+		// Work out new width and height. Always divide by 256 after
+		// everything else, to maintain accurary
 		build_unit->scaled_width = ((scale * frame_head->width) / 256);
 		build_unit->scaled_height = ((scale * frame_head->height) / 256);
 	} else {
-		// it's a non-scaling anim
-		// get render coords for sprite, from cdt
+		// It's a non-scaling anim. Get render coords for sprite, from cdt
 		build_unit->x = cdt_entry->x;
 		build_unit->y = cdt_entry->y;
 
- 		// get width and height
+		// Get width and height
 		build_unit->scaled_width = frame_head->width;
 		build_unit->scaled_height = frame_head->height;
 	}
@@ -637,9 +508,8 @@ void Sword2Engine::registerFrame(int32 *params, BuildUnit *build_unit) {
 
 	if (params[0]) {
 		// passed a mouse structure, so add to the _mouseList
-		ob_mouse = (ObjectMouse *) _memory->intToPtr(params[0]);
+		ObjectMouse *ob_mouse = (ObjectMouse *) _memory->intToPtr(params[0]);
 
-		// only if 'pointer' isn't NULL
 		if (ob_mouse->pointer) {
 			assert(_curMouse < TOTAL_mouse_list);
 
@@ -656,11 +526,11 @@ void Sword2Engine::registerFrame(int32 *params, BuildUnit *build_unit) {
 			// one)
 
 			// if 'pointer_text' field is set, but the 'id' field
-			// isn't same is current id
-			// then we don't want this "left over" pointer text
+			// isn't same is current id then we don't want this
+			// "left over" pointer text
 
 			if (_mouseList[_curMouse].pointer_text && _mouseList[_curMouse].id != (int32) Logic::_scriptVars[ID])
-				_mouseList[_curMouse].pointer_text=0;
+				_mouseList[_curMouse].pointer_text = 0;
 
 			_mouseList[_curMouse].id = Logic::_scriptVars[ID];
 			// not using sprite as detection mask
@@ -671,7 +541,6 @@ void Sword2Engine::registerFrame(int32 *params, BuildUnit *build_unit) {
 		}
 	}
 
-	// close animation file
 	_resman->closeResource(ob_graph->anim_resource);
 }
 
@@ -745,23 +614,16 @@ void Sword2Engine::startNewPalette(void) {
 	// happen when everythings cached into a large memory model
 	_graphics->waitForFade();
 
-	// open the screen file
 	screenFile = _resman->openResource(_thisScreen.background_layer_id);
 
 	_graphics->updatePaletteMatchTable((uint8 *) fetchPaletteMatchTable(screenFile));
-
 	_graphics->setPalette(0, 256, fetchPalette(screenFile), RDPAL_FADE);
 
 	// indicating that it's a screen palette
 	_lastPaletteRes = 0;
 
-	// close screen file
   	_resman->closeResource(_thisScreen.background_layer_id);
-
-	// start fade up
 	_graphics->fadeUp();
-
-	// reset
  	_thisScreen.new_palette = 0;
 }
 
@@ -779,7 +641,6 @@ int32 Logic::fnUpdatePlayerStats(int32 *params) {
 	_scriptVars[PLAYER_FEET_X] = ob_mega->feet_x;
 	_scriptVars[PLAYER_FEET_Y] = ob_mega->feet_y;
 	_scriptVars[PLAYER_CUR_DIR] = ob_mega->current_dir;
-
 	_scriptVars[SCROLL_OFFSET_X] = _vm->_thisScreen.scroll_offset_x;
 
 	debug(5, "fnUpdatePlayerStats: %d %d", ob_mega->feet_x, ob_mega->feet_y);
@@ -819,16 +680,16 @@ int32 Logic::fnSetPalette(int32 *params) {
 }
 
 void Sword2Engine::setFullPalette(int32 palRes) {
-	uint8 *file;
-	StandardHeader *head;
-
 	// fudge for hut interior
 	// - unpausing should restore last palette as normal (could be screen
 	// palette or 'dark_palette_13')
-	// - but restoring the screen palette after 'dark_plaette_13' should
+	// - but restoring the screen palette after 'dark_palette_13' should
 	// now work properly too!
 
-	// hut interior
+	// "Hut interior" refers to the watchman's hut in Marseille, and this
+	// is apparently needed for the palette to be restored properly when
+	// you turn the light off. (I didn't even notice the light switch!)
+
 	if (Logic::_scriptVars[LOCATION] == 13) {
 		// unpausing
 		if (palRes == -1) {
@@ -851,14 +712,18 @@ void Sword2Engine::setFullPalette(int32 palRes) {
 			palRes = _lastPaletteRes;
 	}
 
-	// non-zero: set palette to this separate palette file
-	if (palRes) {
-		// open the palette file
-		head = (StandardHeader *) _resman->openResource(palRes);
+	// If non-zero, set palette to this separate palette file. Otherwise,
+	// set palette to current screen palette.
 
+	uint8 *file;
+
+	if (palRes) {
+		file = _resman->openResource(palRes);
+
+		StandardHeader *head = (StandardHeader *) file;
 		assert(head->fileType == PALETTE_FILE);
 
-		file = (uint8 *) (head + 1);
+		file += sizeof(StandardHeader);
 
 		// always set colour 0 to black because most background screen
 		// palettes have a bright colour 0 although it should come out
@@ -869,35 +734,20 @@ void Sword2Engine::setFullPalette(int32 palRes) {
 		file[2] = 0;
 		file[3] = 0;
 
-		// not yet in separate palette files
-		// _graphics->updatePaletteMatchTable(file + (256 * 4));
-
 		_graphics->setPalette(0, 256, file, RDPAL_INSTANT);
-
-		if (palRes != CONTROL_PANEL_PALETTE) {	// (James 03sep97)
-			// indicating that it's a separate palette resource
-			_lastPaletteRes = palRes;
-		}
-
-		// close palette file
 	  	_resman->closeResource(palRes);
 	} else {
-		// 0: set palette to current screen palette
 		if (_thisScreen.background_layer_id) {
-			// open the screen file
 			file = _resman->openResource(_thisScreen.background_layer_id);
-			_graphics->updatePaletteMatchTable((uint8 *) fetchPaletteMatchTable(file));
-
+			_graphics->updatePaletteMatchTable(fetchPaletteMatchTable(file));
 			_graphics->setPalette(0, 256, fetchPalette(file), RDPAL_INSTANT);
-
-			// indicating that it's a screen palette
-			_lastPaletteRes = 0;
-
-			// close screen file
 	  		_resman->closeResource(_thisScreen.background_layer_id);
 		} else
 			error("setFullPalette(0) called, but no current screen available!");
 	}
+
+	if (palRes != CONTROL_PANEL_PALETTE)
+		_lastPaletteRes = palRes;
 }
 
 int32 Logic::fnRestoreGame(int32 *params) {

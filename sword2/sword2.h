@@ -104,18 +104,17 @@ private:
 
 	uint32 _lastPaletteRes;
 
-	void sendBackPar0Frames(void);
-	void sendBackPar1Frames(void);
-	void sendBackFrames(void);
-	void sendSortFrames(void);
-	void sendForeFrames(void);
-	void sendForePar0Frames(void);
-	void sendForePar1Frames(void);
-
-	void sortTheSortList(void);
+	void drawBackPar0Frames(void);
+	void drawBackPar1Frames(void);
+	void drawBackFrames(void);
+	void drawSortFrames(uint8 *file);
+	void drawForeFrames(void);
+	void drawForePar0Frames(void);
+	void drawForePar1Frames(void);
 
 	void startNewPalette(void);
-	void processLayer(uint32 layer_number);
+	void processLayer(uint8 *file, uint32 layer_number);
+	void processImage(BuildUnit *build_unit);
 
 	void getPlayerStructures(void);
 	void putPlayerStructures(void);
@@ -158,7 +157,6 @@ public:
 
 	void resetRenderLists(void);
 	void buildDisplay(void);
-	void processImage(BuildUnit *build_unit);
 	void displayMsg(uint8 *text, int time);
 	void removeMsg(void);
 	void setFullPalette(int32 palRes);
