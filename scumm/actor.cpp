@@ -1287,12 +1287,10 @@ void ScummEngine::actorTalk(const byte *msg) {
 	if (_heversion >= 72 || getTalkingActor() > 0x7F) {
 		_charsetColor = (byte)_string[0].color;
 	} else if (_features & GF_NES) {
-		static int NES_lastActor = 0;
-		static int NES_color = 0;
-		if (NES_lastActor != getTalkingActor())
-			NES_color ^= 1;
-		NES_lastActor = getTalkingActor();
-		_charsetColor = NES_color;
+		if (_NES_lastTalkingActor != getTalkingActor())
+			_NES_talkColor ^= 1;
+		_NES_lastTalkingActor = getTalkingActor();
+		_charsetColor = _NES_talkColor;
 	} else {
 		a = derefActor(getTalkingActor(), "actorTalk(2)");
 		_charsetColor = a->_talkColor;

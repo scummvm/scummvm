@@ -836,6 +836,9 @@ public:
 	SentenceTab _sentence[NUM_SENTENCE];
 	StringTab _string[6];
 	int16 _talkDelay;
+	int _NES_lastTalkingActor;
+	int _NES_talkColor;
+
 	void actorTalk(const byte *msg);
 	void stopTalk();
 	int getTalkingActor();		// Wrapper around VAR_TALK_ACTOR for V1 Maniac

@@ -852,6 +852,8 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 	_confirmExit = false;
 	_voiceMode = 0;
 	_talkDelay = 0;
+	_NES_lastTalkingActor = 0;
+	_NES_talkColor = 0;
 	_keepText = false;
 	_existLanguageFile = false;
 	_languageBuffer = NULL;
