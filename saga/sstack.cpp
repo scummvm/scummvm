@@ -25,8 +25,6 @@
 
 #include "reinherit.h"
 
-#include "yslib.h"
-
 #include "console_mod.h"
 #include "text_mod.h"
 

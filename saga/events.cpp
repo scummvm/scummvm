@@ -315,7 +315,6 @@ static int HandleOneShot(R_EVENT *event) {
 }
 
 static int HandleInterval(R_EVENT *event) {
-	YS_IGNORE_PARAM(event);
 	return R_EVENT_DELETE;
 }
 

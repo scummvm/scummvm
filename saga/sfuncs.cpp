@@ -25,8 +25,6 @@
 
 #include "reinherit.h"
 
-#include "yslib.h"
-
 #include "actor_mod.h"
 #include "animation_mod.h"
 #include "console_mod.h"

@@ -24,8 +24,6 @@
 #include "saga.h"
 #include "reinherit.h"
 
-#include "yslib.h"
-
 #include "text_mod.h"
 
 #include "script_mod.h"

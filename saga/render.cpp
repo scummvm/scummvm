@@ -26,8 +26,6 @@
 #include "reinherit.h"
 
 #include "timer.h"
-#include "yslib.h"
-
 #include "actor_mod.h"
 #include "console_mod.h"
 #include "cvar_mod.h"

@@ -23,8 +23,6 @@
 #include "saga.h"
 #include "reinherit.h"
 
-#include "yslib.h"
-
 #include "music.h"
 #include "rscfile_mod.h"
 #include "game_mod.h"

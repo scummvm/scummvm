@@ -25,7 +25,6 @@
 
 #include "reinherit.h"
 
-#include "yslib.h"
 #include "common/file.h"
 #include "base/gameDetector.h"
 #include "base/plugins.h"
@@ -392,8 +391,6 @@ const char *GAME_GetErrS() {
 int GAME_GetFileContext(R_RSCFILE_CONTEXT ** ctxt_p, uint16 r_type, int param) {
 	R_RSCFILE_CONTEXT *found_ctxt = NULL;
 	uint16 i;
-
-	YS_IGNORE_PARAM(param);
 
 	if (ctxt_p == NULL) {
 		return R_FAILURE;

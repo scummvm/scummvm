@@ -25,8 +25,6 @@
 #include "saga.h"
 #include "reinherit.h"
 
-#include "yslib.h"
-
 #include "game_mod.h"
 #include "cvar_mod.h"
 #include "actor_mod.h"

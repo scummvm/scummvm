@@ -108,7 +108,6 @@ int IHNM_StartProc() {
 
 int IHNM_IntroMovieProc1(int param, R_SCENE_INFO *scene_info) {
 	R_EVENT event;
-	YS_IGNORE_PARAM(scene_info);
 
 	switch (param) {
 	case SCENE_BEGIN:
@@ -137,7 +136,6 @@ int IHNM_IntroMovieProc2(int param, R_SCENE_INFO *scene_info) {
 	PALENTRY *pal;
 
 	static PALENTRY current_pal[R_PAL_ENTRIES];
-	YS_IGNORE_PARAM(scene_info);
 	switch (param) {
 
 	case SCENE_BEGIN:
@@ -198,7 +196,6 @@ int IHNM_IntroMovieProc3(int param, R_SCENE_INFO *scene_info) {
 	R_EVENT *q_event;
 	PALENTRY *pal;
 	static PALENTRY current_pal[R_PAL_ENTRIES];
-	YS_IGNORE_PARAM(scene_info);
 
 	switch (param) {
 	case SCENE_BEGIN:
@@ -256,7 +253,6 @@ int IHNM_IntroMovieProc3(int param, R_SCENE_INFO *scene_info) {
 int IHNM_HateProc(int param, R_SCENE_INFO *scene_info) {
 	R_EVENT event;
 	R_EVENT *q_event;
-	YS_IGNORE_PARAM(scene_info);
 
 	switch (param) {
 	case SCENE_BEGIN:

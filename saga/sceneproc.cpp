@@ -47,8 +47,6 @@ int InitialSceneProc(int param, R_SCENE_INFO *scene_info) {
 	static PALENTRY current_pal[R_PAL_ENTRIES];
 	PALENTRY *pal;
 
-	YS_IGNORE_PARAM(scene_info);
-
 	switch (param) {
 	case SCENE_BEGIN:
 		_vm->_music->stop();
@@ -120,8 +118,6 @@ int InitialSceneProc(int param, R_SCENE_INFO *scene_info) {
 
 int DefaultSceneProc(int param, R_SCENE_INFO *scene_info) {
 	R_EVENT event;
-
-	YS_IGNORE_PARAM(scene_info);
 
 	switch (param) {
 	case SCENE_BEGIN:

@@ -833,9 +833,6 @@ void CF_scenechange(int argc, char *argv[]) {
 void CF_sceneinfo(int argc, char *argv[]) {
 	const char *fmt = "%-20s %d";
 
-	YS_IGNORE_PARAM(argc);
-	YS_IGNORE_PARAM(argv);
-
 	CON_Print(fmt, "Scene number:", SceneModule.scene_number);
 	CON_Print(fmt, "Descriptor R#:", SceneModule.scene_rn);
 	CON_Print("-------------------------");

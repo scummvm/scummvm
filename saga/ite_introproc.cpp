@@ -169,7 +169,6 @@ int ITE_IntroRegisterLang() {
 // Handles the introductory Dreamer's Guild / NWC logo animation scene.
 int ITE_IntroAnimProc(int param, R_SCENE_INFO *scene_info) {
 	R_EVENT event;
-	YS_IGNORE_PARAM(scene_info);
 
 	switch (param) {
 	case SCENE_BEGIN:
@@ -959,7 +958,6 @@ int ITE_IntroFaireTentProc(int param, R_SCENE_INFO *scene_info) {
 	R_EVENT event;
 	R_EVENT *q_event;
 	R_EVENT *q_event_start;
-	YS_IGNORE_PARAM(scene_info);
 
 	switch (param) {
 	case SCENE_BEGIN:

@@ -42,9 +42,6 @@ typedef int (YS_COMPARE_FUNC) (const void *, const void *);
 
 // General-purpose utility macros 
 
-// Ignore a parameter (Supress warnings)
-#define YS_IGNORE_PARAM( param ) ( void )( param )
-
 //#define YS_ASSUME_2S_COMP
 
 // Shared declarations for list modules

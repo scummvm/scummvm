@@ -23,8 +23,6 @@
 
 //Background transition routines
 #include "saga.h"
-#include "yslib.h"
-
 #include "reinherit.h"
 
 namespace Saga {
@@ -36,10 +34,6 @@ int TRANSITION_Dissolve(byte *dst_img, int dst_w, int dst_h, int dst_p, const by
 	int seqlimit = (int)(65535 * percent);
 	int seq = 1;
 	int i;
-
-	YS_IGNORE_PARAM(flags);
-	YS_IGNORE_PARAM(src_p);
-	YS_IGNORE_PARAM(dst_p);
 
 	for (i = 0; i < seqlimit; i++) {
 		if (seq & 1) {

@@ -28,10 +28,7 @@
 // Coriolis Group Books, 1997
 
 #include "saga/saga.h"
-#include "saga/yslib.h"
-
 #include "saga/reinherit.h"
-
 #include "saga/gfx_mod.h"
 #include "saga/gfx.h"
 
