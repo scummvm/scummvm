@@ -1532,12 +1532,16 @@ uint8 *ScummEngine_v72he::drawWizImage(int restype, const WizImage *pwi) {
 	const uint8 *dataPtr = getResourceAddress(restype, pwi->resNum);
 	if (dataPtr) {
 		const uint8 *wizh = findWrappedBlock(MKID('WIZH'), dataPtr, pwi->state, 0);
-		assert(wizh);
+		if (!wizh) {
+			warning("WIZH not found");
+			return 0;
+		}
 		uint32 comp   = READ_LE_UINT32(wizh + 0x0);
 		uint32 width  = READ_LE_UINT32(wizh + 0x4);
 		uint32 height = READ_LE_UINT32(wizh + 0x8);
 		if (comp != 1) {
 			warning("%d has invalid compression type %d", pwi->resNum, comp);
+			return 0;
 		}
 		const uint8 *wizd = findWrappedBlock(MKID('WIZD'), dataPtr, pwi->state, 0);
 		assert(wizd);
