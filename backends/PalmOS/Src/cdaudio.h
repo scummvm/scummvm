@@ -25,6 +25,14 @@
 
 #include "common/system.h"
 
+// CD frames are 1/75 sec
+#define CD_FPS			75
+#define TO_MSECS(frame)	((UInt32)((frame) * 1000 / CD_FPS))
+
+// consider frame at 1/1000 sec
+#define FROM_MIN(mins)	((UInt32)((mins) * 60 * 1000))
+#define FROM_SEC(secs)	((UInt32)((secs) * 1000))
+
 class CDAudio {
 public:	
 	CDAudio() {

@@ -48,15 +48,15 @@
 	UInt16 _msaLoops;
 
 	UInt32 _msaStopTime;
-	UInt32 _msaEndTime;
 
 	UInt32 _msaStartFrame;
-	UInt32 _msaEndFrame;
+	UInt32 _msaDuration;
 
 	UInt16 _msaTrack;
-	UInt32 _msaTrackStart;
+	UInt32 _msaTrackStartSu, _msaTrackEndSu;
 	UInt32 _msaTrackLength;
 
  };
  
  #endif
+ 
