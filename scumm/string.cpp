@@ -560,7 +560,10 @@ void Scumm::drawString(int a)
 		charset._left -= charset.getStringWidth(a, buf, 0) >> 1;
 	}
 
-	charset._ignoreCharsetMask = 1;
+	// Full Throttle's conversation menus should definitely mask the
+	// background.
+	if (!(_features & GF_AFTER_V7))
+		charset._ignoreCharsetMask = 1;
 
 	if (!buf[0]) {
 		buf[0] = ' ';
@@ -598,10 +601,10 @@ void Scumm::drawString(int a)
 				break;
 			}
 		} else {
-			if (a == 1 && (_features & GF_AFTER_V6))
-
+			if (a == 1 && (_features & GF_AFTER_V6)) {
 				if (_string[a].no_talk_anim == 0)
 					charset._blitAlso = true;
+			}
 			if (_features & GF_OLD256)
 				charset.printCharOld(chr);
 			else
@@ -615,7 +618,19 @@ void Scumm::drawString(int a)
 	if (a == 0) {
 		charset._xpos2 = charset._left;
 		charset._ypos2 = charset._top;
-	}
+	} 
+
+	if (_features & GF_AFTER_V7) {
+		charset._hasMask = true;
+		if (charset._strLeft < gdi._mask_left)
+			gdi._mask_left = charset._strLeft;
+		if (charset._strRight > gdi._mask_right)
+			gdi._mask_right = charset._strRight;
+		if (charset._strTop < gdi._mask_top)
+			gdi._mask_top = charset._strTop;
+		if (charset._strBottom > gdi._mask_bottom)
+			gdi._mask_bottom = charset._strBottom;
+	} 
 }
 
 byte *Scumm::addMessageToStack(byte *msg)
