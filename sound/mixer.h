@@ -36,6 +36,7 @@ private:
 		virtual void mix(int16 *data, uint len) = 0;
 		void destroy() { _to_be_destroyed = true; }
 		virtual void real_destroy() = 0;
+		virtual void append(void *sound, uint32 size) = 0;
 #ifdef COMPRESSED_SOUND_FILE
 		virtual bool sound_finished();
 #endif
@@ -48,10 +49,12 @@ private:
 		uint32 _size;
 		uint32 _fp_speed;
 		uint32 _fp_pos;
+		uint32 _realsize, _rate;
 		byte _flags;
 		
 
 	public:
+		void append(void *sound, uint32 size);		
 		void mix(int16 *data, uint len);
 		Channel_RAW(SoundMixer *mixer, void *sound, uint32 size, uint rate, byte flags);
 		void real_destroy();
@@ -121,6 +124,7 @@ public:
 	PlayingSoundHandle *_handles[NUM_CHANNELS];
 	
 	int insert(PlayingSoundHandle *handle, Channel *chan);
+	void append(void *data, uint32 len);
 	void uninsert(Channel *chan);
 
 	/* start playing a raw sound */
@@ -148,6 +152,9 @@ public:
 	void stop(PlayingSoundHandle psh);
 	void stop(int index);
 
+	/* append to existing sound */
+	int append(int index, void *sound, uint32 size, uint rate, byte flags);
+
 	/* is any channel active? */
 	bool has_active_channel();
 
@@ -164,7 +171,6 @@ public:
 
 };
 
-
 struct MP3OffsetTable {	/* Compressed Sound (.SO3) */
 	int org_offset;
 	int new_offset;
@@ -172,56 +178,9 @@ struct MP3OffsetTable {	/* Compressed Sound (.SO3) */
 	int compressed_size;
 };
 
-struct BundleAudioTable {
+struct BundleAudioTable { /* Dig/CMI .bun audio */
  char filename[13];
  int size;
  int offset;
 };
-
-#if 0
-typedef enum {			/* Mixer types */
-  MIXER_STANDARD,
-  MIXER_MP3,
-  MIXER_MP3_CDMUSIC
-} MixerType;
-
-struct MixerChannel {	/* Mixer Channel */
-	void *_sfx_sound;
-	MixerType type;
-	union {
-	  struct {
-	    uint32 _sfx_pos;
-	    uint32 _sfx_size;
-	    uint32 _sfx_fp_speed;
-	    uint32 _sfx_fp_pos;
-	  } standard;
-#ifdef COMPRESSED_SOUND_FILE
-	  struct {
-	    struct mad_stream stream;
-	    struct mad_frame frame;
-	    struct mad_synth synth;
-	    uint32 silence_cut;
-	    uint32 pos_in_frame;
-	    uint32 position;
-	    uint32 size;
-	  } mp3;
-	  struct {
-            struct mad_stream stream;
-            struct mad_frame frame;
-            struct mad_synth synth;
-            uint32 pos_in_frame;
-            uint32 position;
-            uint32 size;
-            uint32 buffer_size;
-            mad_timer_t duration;
-            bool   playing;
-            FILE   *file;
-          } mp3_cdmusic;
-#endif
-	} sound_data;
-	void mix(int16 *data, uint32 len);
-	void clear();
-};
-#endif
-
 #endif /* _mixer_h_included */

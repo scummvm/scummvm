@@ -38,6 +38,18 @@ void SoundMixer::uninsert(Channel *chan) {
 	error("SoundMixer::channel_deleted chan not found");
 }
 
+int SoundMixer::append(int index, void *sound, uint32 size, uint rate, byte flags) {
+ Channel *chan = _channels[index];
+ if (!chan) {
+	 chan = new Channel_RAW(this, sound, size, rate, flags);
+	 _channels[index] = chan;
+	 return 0;
+ }
+
+ chan->append(sound, size);
+ return 1;
+}
+
 int SoundMixer::insert(PlayingSoundHandle *handle, Channel *chan) {
 	for(int i=0; i!=NUM_CHANNELS; i++) {
 		if (_channels[i] == NULL) {
@@ -163,7 +175,36 @@ SoundMixer::Channel_RAW::Channel_RAW(SoundMixer *mixer, void *sound, uint32 size
 	while (size & 0xFFFF0000)
 		size >>= 1, rate = (rate>>1) + 1;
 
+	_realsize = size;
+	_rate = rate;
 	_size = size * mixer->_output_rate / rate;
+}
+
+void SoundMixer::Channel_RAW::append(void *data, uint32 len) {   
+  int _cur_size;
+  void *holder;
+  
+  _mixer->_paused = true;	/* Don't mix while we do this */
+
+  /* Init our variables */
+  _cur_size = _realsize - _pos;
+  holder = malloc(len + _cur_size);
+  
+  /* Prepare the new buffer */
+  memcpy(holder, (byte*)_ptr + _pos, _cur_size);
+  memcpy((byte *)holder + _cur_size, data, len);
+
+  /* Quietly slip in the new data */
+  if (_flags & FLAG_AUTOFREE) free(_ptr);
+  _ptr = holder;
+
+  /* Reset sizes */
+  _realsize = _cur_size + len;
+  _size     = _realsize * _mixer->_output_rate / _rate;
+  _pos		= 0;
+  _fp_pos	= 0;
+
+  _mixer->_paused = false;	/* Mix again now */
 }
 
 void SoundMixer::Channel_RAW::mix(int16 *data, uint len) {

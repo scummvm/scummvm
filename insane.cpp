@@ -36,6 +36,7 @@ void invalidblock(uint32 tag)
 }
 
 int _frameChanged;
+int _mixer_num;
 
 uint32 SmushPlayer::nextBE32()
 {
@@ -645,8 +646,7 @@ void SmushPlayer::parseFOBJ()
 void SmushPlayer::parsePSAD()	// FIXME: Needs to append to
 {								//		  a sound buffer
 	unsigned int pos, sublen, tag, idx, trk;
-	byte * buf;
-	
+	byte * buf;	
 	pos = 0;
 	
 	trk = READ_LE_UINT16(_cur + pos); /* FIXME: is this correct ? */
@@ -712,10 +712,8 @@ void SmushPlayer::parsePSAD()	// FIXME: Needs to append to
 			debug(3, "trk %d: SDAT part len 0x%x rate %d",
 			      trk, sublen, _strkRate[idx]);
 
-			g_scumm->_mixer->play_raw(NULL, buf,
-						  sublen, _strkRate[idx],
-						  SoundMixer::FLAG_UNSIGNED |
-						  SoundMixer::FLAG_AUTOFREE);
+			g_scumm->_mixer->append(idx, buf, sublen, 
+				_strkRate[idx], SoundMixer::FLAG_UNSIGNED | SoundMixer::FLAG_AUTOFREE);
 			break;
 		case 'SMRK' :
 			_psadTrk[idx] = 0;
@@ -808,6 +806,7 @@ void SmushPlayer::init()
 	_renderBitmap = sm->_videoBuffer;
 	codec37_init(&pcd37, 320, 200);
 
+	_mixer_num = -1;
 	memset(_saudSize, 0, sizeof(_saudSize));
 	memset(_saudSubSize, 0, sizeof(_saudSubSize));
 	memset(_psadTrk, 0, sizeof(_psadTrk));
