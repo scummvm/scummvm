@@ -31,12 +31,12 @@ namespace Queen {
 struct MovePersonAnim {
 	int16 firstFrame;
 	int16 lastFrame;
-	uint16 facing;
+	Direction facing;
 
-	void set(int16 ff, int16 lf, uint16 face) {
+	void set(int16 ff, int16 lf, Direction dir) {
 		firstFrame = ff;
 		lastFrame = lf;
-		facing = face;
+		facing = dir;
 	}
 };
 

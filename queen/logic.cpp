@@ -821,16 +821,17 @@ void Logic::roomSetup(const char *room, int comPanel, bool inCutaway) {
 	sprintf(filename, "%s.BBK", room);
 	_vm->bankMan()->load(filename, 15);
 
-	_vm->grid()->setupNewRoom(_currentRoom, _roomData[_currentRoom]);
 	_numFrames = 37 + FRAMES_JOE_XTRA;
 	roomSetupFurniture();
 	roomSetupObjects();
 
-	_vm->display()->forceFullRefresh();
-
 	if (_currentRoom >= 90) {
 		_vm->graphics()->putCameraOnBob(0);
 	}
+
+	_vm->grid()->setupNewRoom(_currentRoom, _roomData[_currentRoom]);
+	_vm->display()->forceFullRefresh();
+
 }
 
 
@@ -850,11 +851,8 @@ void Logic::roomDisplay(uint16 room, RoomDisplayMode mode, uint16 scale, int com
 	if (mode != RDM_NOFADE_JOE) {
 		_vm->update();
 		BobSlot *joe = _vm->graphics()->bob(0);
-		if (IS_CD_INTRO_ROOM(_currentRoom)) {
-			_vm->display()->palFadeIn(0, 255, _currentRoom, joe->active, joe->x, joe->y);
-		} else {
-			_vm->display()->palFadeIn(0, 223, _currentRoom, joe->active, joe->x, joe->y);
-		}
+		int end = isIntroRoom(_currentRoom) ? 255 : 223;
+		_vm->display()->palFadeIn(0, end, _currentRoom, joe->active, joe->x, joe->y);
 	}
 	if (pod != NULL) {
 		_vm->walk()->moveJoe(0, pod->x, pod->y, inCutaway);
@@ -1469,7 +1467,7 @@ void Logic::objectCopy(int dummyObjectIndex, int realObjectIndex) {
 }
 
 
-void Logic::handleSpecialArea(int facing, uint16 areaNum, uint16 walkDataNum) {
+void Logic::handleSpecialArea(Direction facing, uint16 areaNum, uint16 walkDataNum) {
 	// queen.c l.2838-2911
 	debug(9, "handleSpecialArea(%d, %d, %d)\n", facing, areaNum, walkDataNum);
 

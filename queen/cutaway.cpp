@@ -954,7 +954,7 @@ void Cutaway::run(char *nextFilename) {
 		if (_roomFade) {
 			_vm->update();
 			int end = 223;
-			if (IS_CD_INTRO_ROOM(_vm->logic()->currentRoom())) {
+			if (_vm->logic()->isIntroRoom(_vm->logic()->currentRoom())) {
 				end = 255;
 			}
 			BobSlot *j = _vm->graphics()->bob(0);

@@ -70,10 +70,9 @@ enum {
 
 enum {
 	ITEM_NONE                     =  0,
-	ITEM_BAT                      =  1,
+	ITEM_BAT,
 	ITEM_JOURNAL,
-	ITEM_JOURNAL_DEMO             =  7,
-	ITEM_KNIFE                    =  3,
+	ITEM_KNIFE,
 	ITEM_COCONUT_HALVES,
 	ITEM_BEEF_JERKY,
 	ITEM_PROPELLER,
@@ -247,9 +246,6 @@ enum {
 	AZURA_HEAD                = 106,
 	FRANK_HEAD                = 107
 };
-
-#define IS_ALT_INTRO_ROOM(x) ((x) >= 90 && (x) <= 94)
-#define IS_CD_INTRO_ROOM(x) ((x) >= 115 && (x) <= 125)
 
 
 //! GameState vars

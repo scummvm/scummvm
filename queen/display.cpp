@@ -23,6 +23,7 @@
 #include "queen/display.h"
 
 #include "queen/input.h"
+#include "queen/logic.h"
 #include "queen/queen.h"
 #include "queen/resource.h"
 
@@ -79,7 +80,7 @@ void Display::dynalumInit(const char *roomName, uint16 roomNum) {
 	_dynalum.valid = false;
 	_dynalum.prevColMask = 0xFF;
 
-	if (!(IS_ALT_INTRO_ROOM(roomNum) || IS_CD_INTRO_ROOM(roomNum))) {
+	if (!(_vm->logic()->isAltIntroRoom(roomNum) || _vm->logic()->isIntroRoom(roomNum))) {
 		char filename[20];
 
 		sprintf(filename, "%s.msk", roomName);
@@ -184,7 +185,7 @@ void Display::palSetPanel() {
 void Display::palFadeIn(int start, int end, uint16 roomNum, bool dynalum, int16 dynaX, int16 dynaY) {
 	debug(9, "Display::palFadeIn(%d, %d)", start, end);
 	memcpy(_pal.screen, _pal.room, 256 * 3);
-	if (!(IS_ALT_INTRO_ROOM(roomNum) || IS_CD_INTRO_ROOM(roomNum))) {
+	if (!(_vm->logic()->isAltIntroRoom(roomNum) || _vm->logic()->isIntroRoom(roomNum))) {
 		if (dynalum) {
 			dynalumUpdate(dynaX, dynaY);
 		}
@@ -204,7 +205,7 @@ void Display::palFadeIn(int start, int end, uint16 roomNum, bool dynalum, int16 
 		}
 	}
 	_pal.dirtyMin = 0;
-	_pal.dirtyMax = IS_CD_INTRO_ROOM(roomNum) ? 255 : 223;
+	_pal.dirtyMax = _vm->logic()->isIntroRoom(roomNum) ? 255 : 223;
 	_pal.scrollable = true;
 }
 
@@ -213,7 +214,7 @@ void Display::palFadeOut(int start, int end, uint16 roomNum) {
 	debug(9, "Display::palFadeOut(%d, %d)", start, end);
 	_pal.scrollable = false;
 	int n = end - start + 1;
-	if (IS_ALT_INTRO_ROOM(roomNum) || IS_CD_INTRO_ROOM(roomNum)) {
+	if (_vm->logic()->isAltIntroRoom(roomNum) || _vm->logic()->isIntroRoom(roomNum)) {
 		memset(_pal.screen + start * 3, 0, n * 3);
 		palSet(_pal.screen, start, end, true);
 	} else {
@@ -659,7 +660,7 @@ void Display::setupNewRoom(const char *name, uint16 room) {
 	_bdWidth  = READ_LE_UINT16(pcxBuf + 12);
 	_bdHeight = READ_LE_UINT16(pcxBuf + 14);
 	readPCX(_backdropBuf, BACKDROP_W, pcxBuf + 128, _bdWidth, _bdHeight);
-	memcpy(_pal.room, pcxBuf + size - 768, IS_CD_INTRO_ROOM(room) ? 256 * 3 : 144 * 3);
+	memcpy(_pal.room, pcxBuf + size - 768, _vm->logic()->isIntroRoom(room) ? 256 * 3 : 144 * 3);
 	delete[] pcxBuf;
 
 	palCustomColors(room);

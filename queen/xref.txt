@@ -47,7 +47,7 @@ COM_I						Command::_cmdInventory
 COM_I_MAX					Command::_numCmdInventory
 COM_LIST					Command::_cmdList
 COM_LIST_MAX				Command::_numCmdList
-COMMANDstr					Command::_command
+COMMANDstr					Command::_cmdText
 DEFCOMM						Command::_state.defaultVerb
 MKEY						Command::_mouseKey
 OLDVERB,VERB				Command::_state.*verb
@@ -59,18 +59,18 @@ SUBJ1,SUBJ2					Command::_state.subject*
 
 CREDIT SCRIPTING SYSTEM
 =======================
-Cinit()
-Ctext()
-Cupdate()
+Cinit()						Credits::Credits()
+Ctext()						*not needed* (included in Credits::update)
+Cupdate()					Credits::update
 -
-Ccol
-Ccount
+Ccol						Credits::_color
+Ccount						Credits::_count
 Cfp
-Cflag
-Cfontsize
-Cjustify
-Cpausecount
-Czone
+Cflag						Credits::_running
+Cfontsize					Credits::_fontSize
+Cjustify					Credits::_justify
+Cpausecount					Credits::_pause
+Czone						Credits::_zone
 
 
 CUTAWAY
@@ -96,22 +96,22 @@ TROOM						Cutaway::_temporaryRoom
 DEBUG
 =====
 cd_sample_check()
-debuginfo()					Debug::printInfo
-select_new_room()			Debug::jumpToRoom
+debuginfo()					Debugger::Cmd_Info
+select_new_room()			Debugger::Cmd_Room
 -
 AREAVAR						(boolean, if true display objects/areas boxes)
 
 
 GAME SETTINGS
 =============
-game_load()					Logic::gameLoad()
-game_save()					Logic::gameSave()
+game_load()					Logic::gameLoad
+game_save()					Logic::gameSave
 -
 config_request
 MUSICTOGGLE					Sound::_musicToggle / ConfMan.("music_mute")
 SFXTOGGLE					Sound::_sfxToggle / ConfMan.("sfx_mute")
-TALKSPD						Logic::_talkSpeed / ConfMan.("talkspeed")
-TEXTTOGGLE					Logic::_subtitles / ConfMan.("subtitles")
+TALKSPD						QueenEngine::_talkSpeed / ConfMan.("talkspeed")
+TEXTTOGGLE					QueenEngine::_subtitles / ConfMan.("subtitles")
 VersionStr					GameVersion::versionString
 VOICETOGGLE					Sound::_speechToggle / ConfMan.("speech_mute")
 VOLUME						? / ConfMan.("master_volume")
@@ -126,7 +126,7 @@ clearallbobs()				Graphics::bobClearAll
 clearbob()					Graphics::bobClear
 drawbobs()					Graphics::bobDrawAll
 invbob()					Graphics::bobDrawInventoryItem
-loadbackdrop()				*included in Display::setupNewRoom*
+loadbackdrop()				*not needed* (included in Display::setupNewRoom)
 loadpanel()					Display::setupPanel
 MAKE_SPEAK_BOB()			Graphics::bobSetText
 makeanim()					BobSlot::animNormal
@@ -247,11 +247,9 @@ ITEM_DATA					Logic::_itemData
 NAMETOT						Logic::_numNames
 OBJ_DESC_DATA				Logic::_objectDescription
 OBJ_DESC_MAX				Logic::_numObjDesc
-OBJECT_BOX					Grid::_objectBox
 OBJECT_DATA					Logic::_objectData
 OBJECT_DESCRstr				Logic::_objDescription
 OBJECT_NAMEstr				Logic::_objName
-OBJMAX						Grid::_objMax
 OBJTOT						Logic::_numObjects
 OLDROOM,ROOM,NEW_ROOM  		Logic::_*oom
 ROOMTOT						Logic::_numRooms
@@ -353,7 +351,7 @@ FIND_STATE()				State::findState*
 TALK
 ====
 FIND_SACTION()				Talk::findSpeechParameters
-MOVE_SPEAK()				*included in Talk::getSpeakCommand*
+MOVE_SPEAK()				*not needed* (included in Talk::getSpeakCommand)
 SPEAK()						Talk::speak
 SPEAK_SUB()					Talk::speakSegment
 talk()						Talk::talk
@@ -418,18 +416,20 @@ FIND_VERB()					Grid::findVerbUnderCursor
 SETUP_PANEL_ZONES()			Grid::setupPanel
 SETUP_ZONES()				Grid::setupNewRoom
 SetZone()					Grid::setZone
-zone()						Grid:findZoneForPos / Logic::findAreaForPos
+zone()						Grid::findZoneForPos / Logic::findAreaForPos
 -
 AREA						Grid::_area
 AREAMAX						Grid::_areaMax
+OBJECT_BOX					Grid::_objectBox
+OBJMAX						Grid::_objMax
 zones						Grid::_zones
 
 
 (UNSORTED)
 ==========
-in()						defs.h InRange() macro
+in()						Cutaway::inRange
 find_cd_cut()				findCdCut
-find_cd_desc()				*not needed* (see Logic::joeSpeak())
+find_cd_desc()				*not needed* (included in Logic::joeSpeak)
 -
 Kstr				
 bank9

@@ -974,7 +974,7 @@ void BamScene::prepareAnimation() {
 }
 
 
-const BamDataBlock BamScene::_carData[] = {
+const BamScene::BamDataBlock BamScene::_carData[] = {
 	{ { 310, 105, 1 }, { 314, 106, 17 }, { 366, 101,  1 },  0 },
 	{ { 303, 105, 1 }, { 307, 106, 17 }, { 214,   0, 10 },  0 },
 	{ { 297, 104, 1 }, { 301, 105, 17 }, { 214,   0, 10 },  0 },
@@ -1052,7 +1052,7 @@ const BamDataBlock BamScene::_carData[] = {
 	{ { 310, 110, 1 }, { 314, 111, 17 }, { 214,   0, 10 }, 99 }
 };
 
-const BamDataBlock BamScene::_fight1Data[] = {
+const BamScene::BamDataBlock BamScene::_fight1Data[] = {
 	{ {  75,  96,  1 }, { 187, 96, -23 }, {  58,  37, 46 },  0 },
 	{ {  75,  96,  2 }, { 187, 96, -23 }, {  58,  37, 46 },  0 },
 	{ {  75,  96,  3 }, { 187, 96, -23 }, {  58,  37, 46 },  0 },
@@ -1101,7 +1101,7 @@ const BamDataBlock BamScene::_fight1Data[] = {
 	{ {  75,  96,  1 }, { 187, 96, -23 }, {   0,   0,  0 }, 99 }
 };
 
-const BamDataBlock BamScene::_fight2Data[] = {
+const BamScene::BamDataBlock BamScene::_fight2Data[] = {
 	{ {  75, 96,  1 }, { 187, 96, -23 }, { 150,  45, 35 },  0 },
 	{ {  78, 96,  2 }, { 187, 96, -23 }, { 150,  45, 35 },  0 },
 	{ {  81, 96,  3 }, { 189, 96, -18 }, { 150,  45, 35 },  0 },
@@ -1159,7 +1159,7 @@ const BamDataBlock BamScene::_fight2Data[] = {
 	{ {  75, 96,  5 }, { 187, 96, -23 }, { 224,  53, 53 }, 99 }
 };
 
-const BamDataBlock BamScene::_fight3Data[] = {
+const BamScene::BamDataBlock BamScene::_fight3Data[] = {
 	{ {  75, 96,  1 }, { 187,  96, -23 }, { 150,  45, 35 },  0 },
 	{ {  77, 96,  2 }, { 187,  96, -22 }, { 150,  45, 35 },  0 },
 	{ {  80, 96,  3 }, { 185,  96, -17 }, { 150,  45, 35 },  0 },

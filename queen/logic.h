@@ -77,6 +77,14 @@ public:
 			error("Invalid room number: %i", room);
 	}
 
+	bool isAltIntroRoom(uint16 room) const {
+		return room >= 90 && room <= 94;
+	}
+
+	bool isIntroRoom(uint16 room) const {
+		return room >= 115 && room <= 125;
+	}
+
 	ObjectData *objectData(int index) const;
 	uint16 roomData(int room) const { return _roomData[room]; }
 	GraphicData *graphicData(int index) const { return &_graphicData[index]; }
@@ -183,7 +191,7 @@ public:
 	//! Copy data from dummy object to object
 	void objectCopy(int dummyObjectIndex, int objectIndex);
 
-	void handleSpecialArea(int facing, uint16 areaNum, uint16 walkDataNum);
+	void handleSpecialArea(Direction facing, uint16 areaNum, uint16 walkDataNum);
 
 	void handlePinnacleRoom();
 
@@ -206,6 +214,20 @@ public:
 	void useJournal();
 
 	void executeSpecialMove(uint16 sm);
+
+	void startCredits(const char *filename);
+	void stopCredits();
+
+	enum {
+		JOE_RESPONSE_MAX    = 40,
+		DEFAULT_TALK_SPEED  = 7 * 3,
+		GAME_STATE_COUNT    = 211,
+		TALK_SELECTED_COUNT = 86
+	};
+
+protected:
+
+	void initialise();
 
 	void asmMakeJoeUseDress();
 	void asmMakeJoeUseNormalClothes();
@@ -247,20 +269,6 @@ public:
 	void asmEndDemo();
 	void asmInterviewIntro();
 	void asmEndInterview();
-
-	void startCredits(const char *filename);
-	void stopCredits();
-
-	enum {
-		JOE_RESPONSE_MAX    = 40,
-		DEFAULT_TALK_SPEED  = 7 * 3,
-		GAME_STATE_COUNT    = 211,
-		TALK_SELECTED_COUNT = 86
-	};
-
-protected:
-
-	void initialise();
 
 	virtual bool preChangeRoom() = 0;
 	virtual bool handleSpecialMove(uint16 sm) = 0;

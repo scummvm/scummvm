@@ -23,8 +23,8 @@
 #define QUEENGRAPHICS_H
 
 #include "common/str.h"
-#include "queen/defs.h"
 #include "common/util.h"
+#include "queen/defs.h"
 #include "queen/structs.h"
 
 namespace Queen {
@@ -173,18 +173,6 @@ private:
 };
 
 
-struct BamDataObj {
-	int16 x, y;
-	int16 frame;
-};
-
-struct BamDataBlock {
-	BamDataObj obj1; // truck / Frank
-	BamDataObj obj2; // Rico  / robot
-	BamDataObj fx;
-	int16 sfx;
-};
-
 class BamScene {
 public:
 
@@ -209,6 +197,18 @@ public:
 	uint16 _flag, _index;
 
 private:
+
+	struct BamDataObj {
+		int16 x, y;
+		int16 frame;
+	};
+
+	struct BamDataBlock {
+		BamDataObj obj1; // truck / Frank
+		BamDataObj obj2; // Rico  / robot
+		BamDataObj fx;
+		int16 sfx;
+	};
 
 	BobSlot *_obj1;
 	BobSlot *_obj2;

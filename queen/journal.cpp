@@ -334,7 +334,6 @@ void Journal::handleYesNoMode(int16 zoneNum) {
 
 
 void Journal::handleMouseWheel(int inc) {
-
 	if (_mode == M_NORMAL) {
 		int curSave = _currentSavePage * SAVE_PER_PAGE + _currentSaveSlot + inc;
 		if (curSave >= 0 && curSave < SAVE_PER_PAGE * 10) {
@@ -349,7 +348,6 @@ void Journal::handleMouseWheel(int inc) {
 
 
 void Journal::handleMouseDown(int x, int y) {
-
 	int16 zone = _vm->grid()->findZoneForPos(GS_ROOM, x, y);
 	if (_mode == M_INFO_BOX) {
 		handleInfoBoxMode(_mode);
@@ -363,7 +361,6 @@ void Journal::handleMouseDown(int x, int y) {
 
 
 void Journal::handleKeyDown(uint16 ascii, int keycode) {
-
 	if (_mode == M_YES_NO) {
 		if (keycode == 27) { // escape
 			handleYesNoMode(ZN_NO);
@@ -377,7 +374,6 @@ void Journal::handleKeyDown(uint16 ascii, int keycode) {
 
 
 void Journal::clearPanelTexts() {
-
 	int i;
 	for (i = 0; i < _panelTextCount; ++i) {
 		_vm->graphics()->textClear(_panelTextY[i], _panelTextY[i]);
@@ -386,7 +382,6 @@ void Journal::clearPanelTexts() {
 
 
 void Journal::drawPanelText(int y, const char *text) {
-
 	char s[80];
 	strcpy(s, text);
 	char *p = strchr(s, ' ');
@@ -403,7 +398,6 @@ void Journal::drawPanelText(int y, const char *text) {
 
 
 void Journal::drawCheckBox(bool active, int bobNum, int16 x, int16 y, int frameNum) {
-
 	if (active) {
 		showBob(bobNum, x, y, frameNum);
 	} else {
