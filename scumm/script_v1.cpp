@@ -1470,6 +1470,8 @@ void Scumm::o5_putActorInRoom()
 
 	a = derefActorSafe(getVarOrDirectByte(0x80), "o5_putActorInRoom");
 	room = getVarOrDirectByte(0x40);
+
+	if (a == NULL) return; // FIXME - yet another null dref hack, see bug 639201
 	if (a->visible && _currentRoom != room && _vars[VAR_TALK_ACTOR] == a->number) {
 		clearMsgQueue();
 	}
