@@ -532,7 +532,7 @@ void Sword2Engine::initialiseFontResourceFlags(void) {
 	else
 		textLine = (char *) fetchTextLine(textFile, 54) + 2;
 
-	_graphics->setWindowName(textLine);
+	_system->setWindowCaption(textLine);
 	_resman->closeResource(TEXT_RES);
 }
 

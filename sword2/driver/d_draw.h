@@ -193,7 +193,6 @@ public:
 
 	void markAsDirty(int16 x0, int16 y0, int16 x1, int16 y1);
 	void updateDisplay(bool redrawScene = true);
-	void setWindowName(const char *windowName);
 	void setNeedFullRedraw(void);
 
 	void setPalette(int16 startEntry, int16 noEntries, byte *palette, uint8 setNow);

@@ -114,12 +114,4 @@ void Graphics::updateDisplay(bool redrawScene) {
 	_vm->_system->updateScreen();
 }
 
-/**
- * Set the window title
- */
-
-void Graphics::setWindowName(const char *windowName) {
-	_vm->_system->setWindowCaption(windowName);
-}
-
 } // End of namespace Sword2
