@@ -1182,7 +1182,7 @@ void ScummEngine::scummInit() {
 
 void ScummEngine::initScummVars() {
 
-	if (_version <= 2 || _heversion >= 70) {
+	if (_version <= 2 || _heversion == 70) {
 		// This needs to be at least greater than 40 to get the more
 		// elaborate version of the EGA Zak into. I don't know where
 		// else it makes any difference.
