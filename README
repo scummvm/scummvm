@@ -1,5 +1,5 @@
 ScummVM README
-Last updated:    2003-07-30
+Last updated:    2003-08-02
 Release version: 0.5.3-cvs
 ------------------------------------------------------------------------
 
@@ -117,6 +117,11 @@ ScummVM and wish to commit it into the main CVS, feel free to contact us!
         PalmOS          - custom backend
         UNIX            - SDL           (Linux, Solaris, IRIX, *BSD)
 
+Neither the Dreamcast nor Palm ports support Curse of Monkey Island or
+either Simon the Sorcerer game. The Dig is also currently unsupported
+on the Dreamcast port, and will only work on some Palm devices (those
+with a large dynamic heap). The PalmOS port also lacks support for
+Beneath a Steel Sky.
 
 Copy Protection:
 ----------------
@@ -153,8 +158,8 @@ the section on Reporting Bugs.
 
        Beneath a Steel Sky:
                 - Floppy demo does not work at all
-                - Only versions 0.0288, 0.0368 and 0.0372 were tested
                 - Amiga versions aren't supported and probably never will be
+                - Not a bug: CD version is missing speech for some dialog
 
        Indiana Jones & the Last Crusade (EGA):
                 - In some rooms Indy may be able to walk to odd places
@@ -473,14 +478,14 @@ Curse of Monkey Island
         kr  - Korean
 
 Beneath a Steel Sky:
-	en  - English USA (default)
+        gb  - English (Great Britain) (default)
+	en  - English USA
         de  - German
         fr  - French
         it  - Italian
         pt  - Portuguese
         es  - Spanish
         se  - Swedish
-        gb  - English (Great Britain)
 
 Simon the Sorcerer: 1 & 2
 
