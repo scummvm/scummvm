@@ -438,11 +438,10 @@ void ScummEngine_v100he::o100_actorOps() {
 		a->charset = pop();
 		break;
 	case 18:
-	case 128:
-		_actorClipOverride.bottom = pop();
-		_actorClipOverride.right = pop();
-		_actorClipOverride.top = pop();
-		_actorClipOverride.left = pop();
+		a->_clipOverride.bottom = pop();
+		a->_clipOverride.right = pop();
+		a->_clipOverride.top = pop();
+		a->_clipOverride.left = pop();
 		break;
 	case 22:
 		k = getStackList(args, ARRAYSIZE(args));
@@ -520,6 +519,12 @@ void ScummEngine_v100he::o100_actorOps() {
 		break;
 	case 89:		// SO_NEVER_ZCLIP
 		a->forceClip = 0;
+		break;
+	case 128:
+		_actorClipOverride.bottom = pop();
+		_actorClipOverride.right = pop();
+		_actorClipOverride.top = pop();
+		_actorClipOverride.left = pop();
 		break;
 	case 130:		// SO_SOUND
 		k = getStackList(args, ARRAYSIZE(args));

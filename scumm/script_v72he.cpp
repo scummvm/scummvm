@@ -998,11 +998,16 @@ void ScummEngine_v72he::o72_actorOps() {
 		a->needRedraw = true;
 		break;
 	case 64:
-	case 67: // HE 99+
 		_actorClipOverride.bottom = pop();
 		_actorClipOverride.right = pop();
 		_actorClipOverride.top = pop();
 		_actorClipOverride.left = pop();
+		break;
+	case 67: // HE 99+
+		a->_clipOverride.bottom = pop();
+		a->_clipOverride.right = pop();
+		a->_clipOverride.top = pop();
+		a->_clipOverride.left = pop();
 		break;
 	case 65: // HE 98+
 		i = pop();
