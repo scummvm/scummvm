@@ -28,21 +28,33 @@
 
 namespace Saga {
 
+enum {
+	kProtagonist	= 0x01, // Actor is protagonist
+	kFollower	= 0x02, // Actor is follower
+	kCycle		= 0x04, // Actor stand has a cycle
+	kFaster		= 0x08, // Actor is fast
+	kFastest	= 0x10, // Actor is faster
+	kExtended	= 0x20  // Actor uses extended sprites
+};
+
+// TODO: This doesn't quite correspond to the original Actor struct, so I'm not
+// sure if I got it right.
+
 struct R_ACTORTABLE {
-	byte unknown4;
-	byte unknown5; 
+	byte type;		// Always 1 (remove this?)
+	byte flags;
 	byte name_index;
-	int32 unknown8; // 1
-	int16 x; // x
-	int16 y; // y
-	int16 unknown10; // 4
+	int32 scene_index;
+	int16 x;
+	int16 y;
+	int16 z;
 	int32 spritelist_rn;
 	int32 spriteindex_rn;
-	byte unknown24; // 5
+	byte script_rn;
 	byte color;
-	byte unknown39; // 6
-	byte unknown3a; // 7
-	byte unknown3b; // 8
+	byte action;
+	byte facing_dir;
+	byte action_dir;
 };
 
 #define R_ACTORCOUNT 181
