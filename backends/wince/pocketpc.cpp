@@ -25,7 +25,7 @@
 #include "scumm.h"
 #include "debug.h"
 #include "screen.h"
-#include "gui.h"
+#include "gui/newgui.h"
 #include "sound/mididrv.h"
 #include "gameDetector.h"
 #include "simon/simon.h"
@@ -47,19 +47,291 @@
 #include "SDL_timer.h"
 #include "SDL_thread.h"
 
-#define MAX(a,b) (((a)<(b)) ? (b) : (a))
-#define MIN(a,b) (((a)>(b)) ? (b) : (a))
-#define POCKETSCUMM_BUILD "080502"
+#include "dynamic_imports.h"
+
+#if defined(MIPS) || defined(SH3)
+#define GAMEX
+#endif
+
+#ifdef GAMEX
+#include "GameX.h"
+#endif
+
+#define POCKETSCUMM_BUILD "101902"
+#define CURRENT_GAMES_VERSION 1
+#define CURRENT_KEYS_VERSION 3
 
 #define VERSION "Build " POCKETSCUMM_BUILD " (VM " SCUMMVM_CVS ")"
 
 typedef int (*tTimeCallback)(int);
 typedef void SoundProc(void *param, byte *buf, int len);
 
+// Dynamically linked Aygshell
+typedef BOOL (*tSHFullScreen)(HWND,DWORD);
+//typedef BOOL (WINSHELLAPI *tSHHandleWMSettingChange)(HWND,WPARAM,LPARAM,SHACTIVATEINFO*);
+typedef BOOL (*tSHSipPreference)(HWND,SIPSTATE);
+
+// Dynamically linked SDLAudio
+typedef void (*tSDL_AudioQuit)(void);
+typedef int (*tSDL_Init)(Uint32);
+typedef void (*tSDL_PauseAudio)(int);
+typedef int (*tSDL_OpenAudio)(SDL_AudioSpec*, SDL_AudioSpec*);
+
+
+// GAPI "emulation"
+typedef struct pseudoGAPI {
+	const TCHAR *device;
+	void *buffer;
+	int xWidth;
+	int yHeight;
+	int xPitch;
+	int yPitch;
+	int BPP;
+	int format;
+} pseudoGAPI;
+
+/* Hardcode the video buffer for some devices for which there is no GAPI */
+/* and no GameX support */
+
+pseudoGAPI availablePseudoGAPI[] = {
+	{ TEXT("HP, Jornada 710"),
+      (void*)0x82200000,
+	  640,
+	  240,
+	  2,
+	  1280,
+	  16,
+      0xA8
+	},
+	{ TEXT("HP, Jornada 720"),
+      (void*)0x82200000,
+	  640,
+	  240,
+	  2,
+	  1280,
+	  16,
+      0xA8
+	},
+	{ TEXT("Compaq iPAQ H3600"),   /* this is just a test for my device :) */
+	  (void*)0xAC05029E,
+	  320,
+	  240,
+	  640,
+	  -2,
+	  16,
+	  0xA8
+	},
+	{ 0, 0, 0, 0, 0, 0, 0, 0 }
+};
+
+int _pseudoGAPI_device;
+
+/* Default SDLAUDIO */
+
+void defaultSDL_AudioQuit() {
+}
+
+int defaultSDL_Init(Uint32 flags) {
+	return 0;
+}
+
+void defaultSDL_PauseAudio(int pause) {
+}
+
+int defaultSDL_OpenAudio(SDL_AudioSpec *desired, SDL_AudioSpec *obtained) {
+	return 0;
+}
+
+/* Default AYGSHELL */
+
+BOOL defaultSHFullScreen(HWND handle, DWORD action) {
+	if ((action & SHFS_HIDETASKBAR) != 0 || (action & SHFS_SHOWTASKBAR) != 0) {
+		// Hide taskbar, WinCE 2.x style - from EasyCE
+		HKEY hKey=0;
+		DWORD dwValue = 0;
+		unsigned long lSize = sizeof( DWORD );
+		DWORD dwType = REG_DWORD;
+		MSG msg;
+
+		
+		RegOpenKeyEx( HKEY_LOCAL_MACHINE, TEXT("\\software\\microsoft\\shell"), 0, KEY_ALL_ACCESS, &hKey );
+		RegQueryValueEx( hKey, TEXT("TBOpt"), 0, &dwType, (BYTE*)&dwValue, &lSize );
+		if ((action & SHFS_SHOWTASKBAR) != 0)
+			 dwValue &= 0xFFFFFFFF - 8;// reset bit to show taskbar
+	 	else dwValue |= 8;			   // set bit to hide taskbar
+		RegSetValueEx( hKey, TEXT("TBOpt"), 0, REG_DWORD, (BYTE*)&dwValue, lSize );
+		msg.hwnd = FindWindow( TEXT("HHTaskBar"), NULL );
+		SendMessage( msg.hwnd, WM_COMMAND, 0x03EA, 0 );
+		if (handle)
+			SetForegroundWindow( handle );
+	}
+
+	return TRUE;
+}
+
+/*
+BOOL WINSHELLAPI defaultSHHandleWMSettingChange(HWND handle, WPARAM param1, LPARAM param2, SHACTIVATEINFO *info) {
+	return TRUE;
+}
+*/
+
+BOOL defaultSHSipPreference(HWND handle, SIPSTATE state) {
+	return TRUE;
+}
+
+/* Default GAPI */
+
+int defaultGXOpenDisplay(HWND hWnd, DWORD dwFlags) {
+	return 0;
+}
+
+int defaultGXCloseDisplay() {
+	return 0;
+}
+
+
+void* defaultGXBeginDraw() {
+	return availablePseudoGAPI[_pseudoGAPI_device].buffer;
+}
+
+int defaultGXEndDraw() {
+	return 0;
+}
+
+int defaultGXOpenInput() {
+	return 0;
+}
+
+int defaultGXCloseInput() {
+	return 0;
+}
+
+GXDisplayProperties defaultGXGetDisplayProperties() {
+	GXDisplayProperties result;
+
+	result.cxWidth = availablePseudoGAPI[_pseudoGAPI_device].xWidth;
+	result.cyHeight = availablePseudoGAPI[_pseudoGAPI_device].yHeight;
+	result.cbxPitch = availablePseudoGAPI[_pseudoGAPI_device].xPitch;
+	result.cbyPitch = availablePseudoGAPI[_pseudoGAPI_device].yPitch;
+	result.cBPP = availablePseudoGAPI[_pseudoGAPI_device].BPP;
+	result.ffFormat = availablePseudoGAPI[_pseudoGAPI_device].format;
+
+	return result;
+}
+
+GXKeyList defaultGXGetDefaultKeys(int options) {
+	GXKeyList result;
+
+	memset(&result, 0xff, sizeof(result));
+
+	return result;
+}
+
+int defaultGXSuspend() {
+	return 0;
+}
+
+int defaultGXResume() {
+	return 0;
+}
+
+/* GAMEX GAPI emulation */
+
+#ifdef GAMEX
+
+GameX *gameX;
+
+int gameXGXOpenDisplay(HWND hWnd, DWORD dwFlags) {
+	gameX = new GameX();
+	if (!gameX->OpenGraphics()) {
+		MessageBox(NULL, TEXT("Couldn't initialize GameX"), TEXT("Error"), MB_OK);
+		exit(1);
+	}
+	return 0;
+}
+
+int gameXGXCloseDisplay() {
+	gameX->CloseGraphics();
+	delete gameX;
+	return 0;
+}
+
+
+void* gameXGXBeginDraw() {
+	gameX->BeginDraw();
+	return (gameX->GetFBAddress());
+}
+
+int gameXGXEndDraw() {
+	return gameX->EndDraw();
+}
+
+int gameXGXOpenInput() {
+	return 0;
+}
+
+int gameXGXCloseInput() {
+	return 0;
+}
+
+GXDisplayProperties gameXGXGetDisplayProperties() {
+	GXDisplayProperties result;
+
+	result.cBPP = gameX->GetFBBpp();
+	if (result.cBPP == 16)
+		result.cbxPitch = 2;
+	else
+		result.cbxPitch = 1;
+	result.cbyPitch = gameX->GetFBModulo();
+
+	return result;
+}
+
+GXKeyList gameXGXGetDefaultKeys(int options) {
+	GXKeyList result;
+
+	memset(&result, 0xff, sizeof(result));
+
+	return result;
+}
+
+int gameXGXSuspend() {
+	return 0;
+}
+
+int gameXGXResume() {
+	return 0;
+}
+
+#endif
+
 GameDetector detector;
+NewGui *g_gui;
+extern Scumm *g_scumm;
+//extern SimonState *g_simon;
+//OSystem *g_system;
+//SoundMixer *g_mixer;
 Config *g_config;
 tTimeCallback timer_callback;
 int timer_interval;
+
+tSHFullScreen dynamicSHFullScreen = NULL;
+//tSHHandleWMSettingChange dynamicSHHandleWMSettingChange = NULL;
+tSHSipPreference dynamicSHSipPreference = NULL;
+tSDL_AudioQuit dynamicSDL_AudioQuit = NULL;
+tSDL_Init dynamicSDL_Init = NULL;
+tSDL_PauseAudio dynamicSDL_PauseAudio = NULL;
+tSDL_OpenAudio dynamicSDL_OpenAudio = NULL;
+tGXOpenInput dynamicGXOpenInput = NULL;
+tGXGetDefaultKeys dynamicGXGetDefaultKeys = NULL;
+tGXCloseDisplay dynamicGXCloseDisplay = NULL;
+tGXCloseInput dynamicGXCloseInput = NULL;
+tGXSuspend dynamicGXSuspend = NULL;
+tGXResume dynamicGXResume = NULL;
+tGXGetDisplayProperties dynamicGXGetDisplayProperties = NULL;
+tGXOpenDisplay dynamicGXOpenDisplay = NULL;
+tGXEndDraw dynamicGXEndDraw = NULL;
+tGXBeginDraw dynamicGXBeginDraw = NULL;
 
 extern void Cls();
 
@@ -94,8 +366,6 @@ public:
 	// Draw a bitmap to screen.
 	// The screen will not be updated to reflect the new bitmap
 	void copy_rect(const byte *buf, int pitch, int x, int y, int w, int h);
-
-	void move_screen(int dx, int dy, int height);
 
 	// Update the dirty areas of the screen
 	void update_screen();
@@ -150,6 +420,15 @@ public:
 	// Set a parameter
 	uint32 property(int param, Property *value);
 
+	// Overlay
+	void show_overlay();
+	void hide_overlay();
+	void clear_overlay();
+	void grab_overlay(int16 *buf, int pitch);
+	void copy_rect_overlay(const int16 *buf, int pitch, int x, int y, int w, int h);
+
+	void move_screen(int dx, int dy, int height);
+
 	static OSystem *create(int gfx_mode, bool full_screen);
 
 	// Added for hardware keys mapping
@@ -165,15 +444,22 @@ public:
 	void unlock_mutex(void*);
 	void delete_mutex(void*);
 
+	// Windows callbacks & stuff
+	static LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
+
 private:
 	// Windows callbacks & stuff
 	//bool handleMessage();
-	static LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 	
 
 	byte *_gfx_buf;
+	byte *_overlay_buf;
+	uint _screenHeight;
+	uint _screenWidth;
+	bool _overlay_visible;
 	uint32 _start_time;
 	Event _event;
+	Event _last_mouse_event;
 	HMODULE hInst;
 	HWND hWnd;
 	bool _display_cursor;	
@@ -256,9 +542,14 @@ extern bool toolbar_drawn;
 extern bool draw_keyboard;
 bool hide_toolbar;
 bool hide_cursor;
+bool save_hide_toolbar;
+bool keyboard_override;
 
-bool get_key_mapping;
+bool _get_key_mapping;
 static char _directory[MAX_PATH];
+bool select_game;
+
+bool gfx_mode_switch;
 
 SoundProc *real_soundproc;
 
@@ -272,23 +563,36 @@ extern void displayGameInfo();
 extern bool loadGameSettings(void);
 extern void setFindGameDlgHandle(HWND);
 extern void getSelectedGame(int, char*, TCHAR*);
+extern void runGame(char*);
 
 extern void palette_update();
 
 extern void own_soundProc(void *buffer, byte *samples, int len);
+
+extern int chooseGame(bool);
+extern void handleSelectGame(int, int);
 
 //#define SHMenuBar_GetMenu(hWndMB,ID_MENU) (HMENU)SendMessage((hWndMB), SHCMBM_GETSUBMENU, (WPARAM)0, (LPARAM)ID_MENU)
 
 /* Monkey2 keyboard stuff */
 bool monkey2_keyboard;
 
-void do_quit() {
-	g_config->set("Sound", sound_activated, "wince");
-	g_config->set("DisplayMode", GetScreenMode(), "wince");
+bool closing = false;
+
+void close_GAPI() {
+	g_config->setBool("Sound", sound_activated, "wince");
+	g_config->setInt("DisplayMode", GetScreenMode(), "wince");
 	g_config->flush();
-	GXCloseInput();
-	GXCloseDisplay();
-	SDL_AudioQuit();
+	dynamicSHFullScreen(hWnd_Window, SHFS_SHOWTASKBAR | SHFS_SHOWSIPBUTTON | SHFS_SHOWSTARTICON);
+	dynamicGXCloseInput();
+	dynamicGXCloseDisplay();
+	dynamicSDL_AudioQuit();
+	UpdateWindow(hWnd_Window);
+	closing = true;
+}
+
+void do_quit() {
+	close_GAPI();
 	exit(1);
 }
 
@@ -312,108 +616,190 @@ int mapKey(int key) {
 	return key;
 }
 
-BOOL CALLBACK SelectDlgProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
-{
-	switch(uMsg)
-	{
-	case WM_INITDIALOG:
-		{
-			TCHAR work[1024];
-			RECT rc; GetWindowRect(hwndDlg, &rc);
-			MoveWindow(hwndDlg,
-				(GetSystemMetrics(SM_CXSCREEN)-rc.right+rc.left)/2,
-				(GetSystemMetrics(SM_CYSCREEN)-rc.bottom+rc.top)/2,
-				rc.right-rc.left, rc.bottom-rc.top, TRUE);
-			BringWindowToTop(hwndDlg);
-			setFindGameDlgHandle(hwndDlg);
-			MultiByteToWideChar(CP_ACP, 0, VERSION, strlen(VERSION) + 1, work, sizeof(work));
-			SetDlgItemText(hwndDlg, IDC_GAMEDESC, work);
-			loadGameSettings();
-		}
-		return TRUE;
 
-	case WM_COMMAND:
-
-		if (LOWORD(wParam) == IDC_LISTAVAILABLE && HIWORD(wParam) == LBN_SELCHANGE) {
-			if (!isPrescanning()) 
-				displayGameInfo();
-			else
-				changeScanPath();
-		}
-
-		if (wParam == IDC_SCAN) {
-			if (!isPrescanning()) 
-				startScan();
-			else
-				endScanPath();
-		}
-		
-		if (wParam == IDC_PLAY) {
-			int item;
-
-			item = SendMessage(GetDlgItem(hwndDlg, IDC_LISTAVAILABLE), LB_GETCURSEL, 0, 0);
-			if (item == LB_ERR) {
-				MessageBox(hwndDlg, TEXT("Please select a game"), TEXT("Error"), MB_OK);
-			}
-			else
-				EndDialog(hwndDlg, item + 1000);
-		}
-
-		if (wParam == IDC_EXIT) {
-			if (!isPrescanning()) 
-				EndDialog(hwndDlg, 0);	
-			else
-				abortScanPath();
-		}
-		return TRUE;
-	default:
-		return FALSE;
+#define IMPORT(Handle,Variable,Type,Function) \
+	Variable = (Type)GetProcAddress(Handle, TEXT(Function)); \
+	if (!Variable) { \
+		MessageBox(NULL, TEXT(Function), TEXT("Error importing DLL function"), MB_OK); \
+		exit(1); \
 	}
-}
 
-char* GameSelector()
-{
-	TCHAR directory[MAX_PATH];	
-	static char  id[100];
-
-	DWORD result = DialogBox(GetModuleHandle(NULL), MAKEINTRESOURCE(IDD_GAMESELECT), HWND_DESKTOP, SelectDlgProc);
-	if (result < 1000)
-		return NULL;
-	result -= 1000;
-
-	getSelectedGame(result, id, directory);
-
-	WideCharToMultiByte(CP_ACP, 0, directory, wcslen(directory) + 1, _directory, sizeof(_directory), NULL, NULL);
-
-	strcat(_directory, "\\");
-	
-	return id;
-	
-}
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLine, int nShowCmd)
 {
-	
-	int argc = 3;
-	char* argv[3];
-	char argdir[MAX_PATH];
-	char *game_name;
-	const char *sound;
+	TCHAR directory[MAX_PATH];
+	char game_name[100];
+	bool sound;
+	int version;
+	int result;
+	bool need_rescan = false;
+
+	HMODULE aygshell_handle;
+	HMODULE SDLAudio_handle;
+	HMODULE GAPI_handle;
 
 	hide_toolbar = false;
+
+	// See if we're running on a Windows CE version supporting aygshell
+	aygshell_handle = LoadLibrary(TEXT("aygshell.dll"));
+	if (aygshell_handle) {
+		IMPORT(aygshell_handle, dynamicSHFullScreen, tSHFullScreen, "SHFullScreen")
+		IMPORT(aygshell_handle, dynamicSHSipPreference, tSHSipPreference, "SHSipPreference")
+		// This function doesn't seem to be implemented on my 3630 !
+		//IMPORT(aygshell_handle, dynamicSHHandleWMSettingChange, tSHHandleWMSettingChange, "SHHandleWMSettingChange")
+	} else {
+		dynamicSHFullScreen = defaultSHFullScreen;
+		dynamicSHSipPreference = defaultSHSipPreference;
+		//dynamicSHHandleWMSettingChange = defaultSHHandleWMSettingChange;
+	}
+
+	// See if SDLAudio.dll is present
+	SDLAudio_handle = LoadLibrary(TEXT("SDLAudio.dll"));
+	if (SDLAudio_handle) {
+		IMPORT(SDLAudio_handle, dynamicSDL_AudioQuit, tSDL_AudioQuit, "SDL_AudioQuit")
+		IMPORT(SDLAudio_handle, dynamicSDL_Init, tSDL_Init, "SDL_Init")
+		IMPORT(SDLAudio_handle, dynamicSDL_PauseAudio, tSDL_PauseAudio, "SDL_PauseAudio")
+		IMPORT(SDLAudio_handle, dynamicSDL_OpenAudio, tSDL_OpenAudio, "SDL_OpenAudio")
+	}
+	else {
+		MessageBox(NULL, TEXT("SDLAudio.dll not found - games will play without sound"), TEXT("Missing DLL"), MB_OK);
+		dynamicSDL_AudioQuit = defaultSDL_AudioQuit;
+		dynamicSDL_Init = defaultSDL_Init;
+		dynamicSDL_PauseAudio = defaultSDL_PauseAudio;
+		dynamicSDL_OpenAudio = defaultSDL_OpenAudio;
+	}
+
+	// See if GX.dll is present 
+	GAPI_handle = LoadLibrary(TEXT("gx.dll"));
+	if (GAPI_handle) {
+		IMPORT(GAPI_handle, dynamicGXOpenInput, tGXOpenInput, "?GXOpenInput@@YAHXZ")
+		IMPORT(GAPI_handle, dynamicGXGetDefaultKeys, tGXGetDefaultKeys, "?GXGetDefaultKeys@@YA?AUGXKeyList@@H@Z")
+		IMPORT(GAPI_handle, dynamicGXCloseDisplay, tGXCloseDisplay, "?GXCloseDisplay@@YAHXZ")
+		IMPORT(GAPI_handle, dynamicGXCloseInput, tGXCloseInput, "?GXCloseInput@@YAHXZ")
+		IMPORT(GAPI_handle, dynamicGXSuspend, tGXSuspend, "?GXSuspend@@YAHXZ")
+		IMPORT(GAPI_handle, dynamicGXResume, tGXResume, "?GXResume@@YAHXZ")
+		IMPORT(GAPI_handle, dynamicGXGetDisplayProperties, tGXGetDisplayProperties, "?GXGetDisplayProperties@@YA?AUGXDisplayProperties@@XZ")
+		IMPORT(GAPI_handle, dynamicGXOpenDisplay, tGXOpenDisplay, "?GXOpenDisplay@@YAHPAUHWND__@@K@Z")
+		IMPORT(GAPI_handle, dynamicGXEndDraw, tGXEndDraw, "?GXEndDraw@@YAHXZ")
+		IMPORT(GAPI_handle, dynamicGXBeginDraw, tGXBeginDraw, "?GXBeginDraw@@YAPAXXZ")
+		gfx_mode_switch = true;
+	} else {
+
+#ifndef GAMEX
+
+		TCHAR oeminfo[MAX_PATH];
+		int i = 0;
+
+		SystemParametersInfo(SPI_GETOEMINFO, sizeof(oeminfo), oeminfo, 0);
+
+		while (availablePseudoGAPI[i].device) {
+			if (!_tcsncmp(oeminfo, availablePseudoGAPI[i].device, _tcslen(availablePseudoGAPI[i].device))) {
+				_pseudoGAPI_device = i;
+				break;
+			}
+			i++;
+		}
+
+		if (!availablePseudoGAPI[i].device) {
+			MessageBox(NULL, TEXT("Cannot find GX.dll and no workaround for this device ! better luck next time ..."), TEXT("GAPI not found"), MB_OK);
+			exit(1);
+		}
+
+		dynamicGXOpenInput = defaultGXOpenInput;
+		dynamicGXGetDefaultKeys = defaultGXGetDefaultKeys;
+		dynamicGXCloseDisplay = defaultGXCloseDisplay;
+		dynamicGXCloseInput = defaultGXCloseInput;
+		dynamicGXSuspend = defaultGXSuspend;
+		dynamicGXResume = defaultGXResume;
+		dynamicGXGetDisplayProperties = defaultGXGetDisplayProperties;
+		dynamicGXOpenDisplay = defaultGXOpenDisplay;
+		dynamicGXEndDraw = defaultGXEndDraw;
+		dynamicGXBeginDraw = defaultGXBeginDraw;
+
+#else
+
+		dynamicGXOpenInput = gameXGXOpenInput;
+		dynamicGXGetDefaultKeys = gameXGXGetDefaultKeys;
+		dynamicGXCloseDisplay = gameXGXCloseDisplay;
+		dynamicGXCloseInput = gameXGXCloseInput;
+		dynamicGXSuspend = gameXGXSuspend;
+		dynamicGXResume = gameXGXResume;
+		dynamicGXGetDisplayProperties = gameXGXGetDisplayProperties;
+		dynamicGXOpenDisplay = gameXGXOpenDisplay;
+		dynamicGXEndDraw = gameXGXEndDraw;
+		dynamicGXBeginDraw = gameXGXBeginDraw;
+
+#endif
+
+		gfx_mode_switch = false;
+	}
 
 	g_config = new Config("scummvm.ini", "scummvm");
 	g_config->set_writing(true);
 
-	sound = g_config->get("Sound", "wince");
+	sound = g_config->getBool("Sound", true, "wince");
 	if (sound) 
-		sound_activated = (atoi(sound) == 1);
+		sound_activated = sound;
 	else
 		sound_activated = true;
 
-	game_name = GameSelector();
-	if (!game_name)
-		return 0;
+	version = g_config->getInt("GamesVersion", 0, "wince");
+	if (!version || version != CURRENT_GAMES_VERSION) 
+		need_rescan = true;
+
+	select_game = true;
+
+	/* Create the main window */
+	WNDCLASS wcex;
+	wcex.style			= CS_HREDRAW | CS_VREDRAW;
+	wcex.lpfnWndProc	= (WNDPROC)OSystem_WINCE3::WndProc;
+	wcex.cbClsExtra		= 0;
+	wcex.cbWndExtra		= 0;
+	wcex.hInstance		= GetModuleHandle(NULL);
+	wcex.hIcon			= 0;
+	wcex.hCursor		= NULL;
+	wcex.hbrBackground	= (HBRUSH)GetStockObject(BLACK_BRUSH);
+	wcex.lpszMenuName	= 0;	
+	wcex.lpszClassName	= TEXT("ScummVM");
+	if (!RegisterClass(&wcex))
+		Error(TEXT("Cannot register window class!"));
+
+	hWnd_Window = CreateWindow(TEXT("ScummVM"), TEXT("ScummVM"), WS_VISIBLE,
+      0, 0, GetSystemMetrics(SM_CXSCREEN), GetSystemMetrics(SM_CYSCREEN), NULL, NULL, GetModuleHandle(NULL), NULL);
+
+	ShowWindow(hWnd_Window, SW_SHOW);
+	UpdateWindow(hWnd_Window);
+	GraphicsOn(hWnd_Window, gfx_mode_switch);  // open GAPI in Portrait mode
+	GAPIKeysInit();
+	Cls();
+
+	// Hide taskbar
+	SetWindowPos(hWnd_Window, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE|SWP_NOSIZE);
+	SetForegroundWindow(hWnd_Window);
+	dynamicSHFullScreen(hWnd_Window, SHFS_HIDESIPBUTTON | SHFS_HIDETASKBAR | SHFS_HIDESTARTICON);
+
+	result = chooseGame(need_rescan);
+
+	if (need_rescan) {
+		g_config->setInt("GamesVersion", CURRENT_GAMES_VERSION, "wince");
+		g_config->flush();
+	}
+
+	getSelectedGame(result, game_name, directory);
+	WideCharToMultiByte(CP_ACP, 0, directory, wcslen(directory) + 1, _directory, sizeof(_directory), NULL, NULL);
+	strcat(_directory, "\\");
+	
+	runGame(game_name);
+
+	return 0;
+}
+
+void runGame(char *game_name) {
+	int argc = 3;
+	char* argv[3];
+	char argdir[MAX_PATH];
+
+	select_game = false;
 
 	argv[0] = NULL;	
 	sprintf(argdir, "-p%s", _directory);
@@ -421,7 +807,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLin
 	argv[2] = game_name;
 
 	if (!argv[2])
-		return 0;
+		//return 0;
+		return;
 
 	// No default toolbar for zak256
 	/*
@@ -435,25 +822,32 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLin
 		monkey2_keyboard = true;
 	}		
 
-	if (detector.detectMain(argc, argv))
-		return (-1);
+	detector.parseCommandLine(argc, argv);
+
+	if (detector.detectMain())
+		//return (-1);
+		return;
 
 	OSystem *system = detector.createSystem();
-	
-	// Create the game engine
+
+	//g_system = system;
+	g_gui = new NewGui(system);
+
+	/* Start the engine */
+
 	Engine *engine = Engine::createFromDetector(&detector, system);
 
 	keypad_init();
 	load_key_mapping();
-	
-	hide_cursor = TRUE;
+
 	if (detector._gameId == GID_SAMNMAX || detector._gameId == GID_FT || detector._gameId == GID_DIG)
 		hide_cursor = FALSE;
+	else
+		hide_cursor = TRUE;
 
-	// Run the game engine
 	engine->go();
-	
-	return 0;
+
+	//return 0;
 }
 
 
@@ -462,9 +856,12 @@ LRESULT CALLBACK OSystem_WINCE3::WndProc(HWND hWnd, UINT message, WPARAM wParam,
 {
 	static		 SHACTIVATEINFO sai;
 
-	OSystem_WINCE3 *wm = (OSystem_WINCE3*)GetWindowLong(hWnd, GWL_USERDATA);
+	OSystem_WINCE3 *wm = NULL;
 	
-	if (monkey2_keyboard && g_scumm->_vars[g_scumm->VAR_ROOM] != 108) {
+	if (!select_game)
+		wm = (OSystem_WINCE3*)GetWindowLong(hWnd, GWL_USERDATA);
+	
+	if (!select_game && monkey2_keyboard && g_scumm->_vars[g_scumm->VAR_ROOM] != 108) {
 		monkey2_keyboard = false;
 		draw_keyboard = false;
 		toolbar_drawn = false;
@@ -474,7 +871,7 @@ LRESULT CALLBACK OSystem_WINCE3::WndProc(HWND hWnd, UINT message, WPARAM wParam,
 	{
 	case WM_CREATE:
 		memset(&sai, 0, sizeof(sai));
-		SHSipPreference(hWnd, SIP_FORCEDOWN);
+		dynamicSHSipPreference(hWnd, SIP_FORCEDOWN);
 //		SHSipPreference(hWnd, SIP_INPUTDIALOG);
 
 		return 0;
@@ -490,6 +887,8 @@ LRESULT CALLBACK OSystem_WINCE3::WndProc(HWND hWnd, UINT message, WPARAM wParam,
 			
 			RECT rc;
 			HDC hDC;
+			if (select_game || closing)
+				break;
 			if (!GetScreenMode()) {
 				GetClientRect(hWnd, &rc);
 				rc.top = 200;
@@ -517,11 +916,12 @@ LRESULT CALLBACK OSystem_WINCE3::WndProc(HWND hWnd, UINT message, WPARAM wParam,
 				SHSipPreference(hWnd, SIP_FORCEDOWN);
 			} 
 			*/
-			SHSipPreference(hWnd, SIP_FORCEDOWN);
+			dynamicSHSipPreference(hWnd, SIP_FORCEDOWN);
 		}
 //		SHSipPreference(hWnd, SIP_UP); /* Hack! */
 		/* It does not happen often but I don't want to see tooltip traces */
-		wm->update_screen();
+		if (!select_game)
+			wm->update_screen();
 		return 0;
 
 	case WM_ACTIVATE:
@@ -531,8 +931,8 @@ LRESULT CALLBACK OSystem_WINCE3::WndProc(HWND hWnd, UINT message, WPARAM wParam,
 			toolbar_drawn = false;
 //		SHHandleWMActivate(hWnd, wParam, lParam, &sai, SHA_INPUTDIALOG);
 
-		SHSipPreference(hWnd, SIP_FORCEDOWN);
-		SHFullScreen(hWnd, SHFS_HIDETASKBAR);
+		dynamicSHSipPreference(hWnd, SIP_FORCEDOWN);
+		dynamicSHFullScreen(hWnd, SHFS_HIDETASKBAR);
 		MoveWindow(hWnd, 0, 0, GetSystemMetrics(SM_CXSCREEN), GetSystemMetrics(SM_CYSCREEN), TRUE);
 		SetCapture(hWnd);
 		
@@ -561,95 +961,27 @@ LRESULT CALLBACK OSystem_WINCE3::WndProc(HWND hWnd, UINT message, WPARAM wParam,
 		return 0;
 
 	case WM_SETTINGCHANGE:
-		SHHandleWMSettingChange(hWnd, wParam, lParam, &sai);
+		//not implemented ?
+		//dynamicSHHandleWMSettingChange(hWnd, wParam, lParam, &sai);
 		if (!hide_toolbar)
 			toolbar_drawn = false;
 		return 0;
 
 	
-	case WM_COMMAND:
-		/*
-		switch(wParam)
-		{
-		case IDC_OPTIONS:			
-			wm->_event.kbd.ascii = KEY_SET_OPTIONS;
-			wm->_event.event_code = EVENT_KEYDOWN;
-			break;
-		case IDC_EXIT:
-			DestroyWindow(hWnd);
-			do_quit();			
-			break;
-		case IDC_SKIP:
-			if (detector._gameId >= GID_SIMON_FIRST &&
-				detector._gameId <= GID_SIMON_LAST) {
-				g_simon->_exit_cutscene = true;
-				break;
-			}
-			if (g_scumm->vm.cutScenePtr[g_scumm->vm.cutSceneStackPointer])
-				wm->_event.kbd.ascii = g_scumm->_vars[g_scumm->VAR_CUTSCENEEXIT_KEY];
-			else
-				wm->_event.kbd.ascii = g_scumm->_vars[g_scumm->VAR_TALKSTOP_KEY];						
-			break;
-		case IDC_LOADSAVE:
-			if (detector._gameId >= GID_SIMON_FIRST &&
-				detector._gameId <= GID_SIMON_LAST) {
-				break;
-			}
-			if (GetScreenMode()) {
-				draw_keyboard = true;
-				if (!hide_toolbar)
-					toolbar_drawn = false;
-			}
-			wm->_event.kbd.ascii = mapKey(VK_F5);
-			wm->_event.event_code = EVENT_KEYDOWN;
-			break;
-		
-		case IDC_SOUND:
-			sound_activated = !sound_activated;
-			CheckMenuItem (
-				SHMenuBar_GetMenu (hWnd_MainMenu, IDM_POCKETSCUMM),
-				IDC_SOUND, 
-				MF_BYCOMMAND | (sound_activated ? MF_CHECKED : MF_UNCHECKED));	
-			if (detector._gameId >= GID_SIMON_FIRST &&
-				detector._gameId <= GID_SIMON_LAST) {
-				g_mixer->pause(!sound_activated);
-			}
-			else
-				g_scumm->pauseSounds(!sound_activated);
-
-			break;     
-		
-      break;
-
-		case IDC_LANDSCAPE:
-			//HWND taskbar;
-			//SHFullScreen (hWnd, SHFS_HIDESIPBUTTON | SHFS_HIDETASKBAR | SHFS_HIDESTARTICON);
-			//InvalidateRect(HWND_DESKTOP, NULL, TRUE);
-			SetScreenMode(!GetScreenMode());
-			//SHSipPreference(hWnd,SIP_FORCEDOWN);
-			//MoveWindow(hWnd, 0, 0, GetSystemMetrics(SM_CXSCREEN), GetSystemMetrics(SM_CYSCREEN), TRUE);
-			//SetCapture(hWnd); // to prevent input panel from getting taps						
-			/*taskbar = FindWindow(TEXT("HHTaskBar"), NULL);
-			if (taskbar)
-				ShowWindow(taskbar, SW_HIDE);*/
-			/*SHSipPreference(hWnd, SIP_FORCEDOWN);
-			SHFullScreen(hWnd, SHFS_HIDETASKBAR);*/
-		/*
-			SetForegroundWindow(hWnd);
-			MoveWindow(hWnd, 0, 0, GetSystemMetrics(SM_CXSCREEN), GetSystemMetrics(SM_CYSCREEN), TRUE);
-			SetCapture(hWnd);
-			UpdateWindow(hWnd);
-			if (!hide_toolbar)
-				toolbar_drawn = false;
-			break;
-
-		}
-		*/
-		
+	case WM_COMMAND:		
 		return 0;
 	
 	case WM_KEYDOWN:
-		if(wParam && wParam != 0x84) { // WHAT THE ???			
+
+		if (wParam == VK_ESCAPE)   // FIXME
+			do_quit();
+
+		if(wParam && wParam != 0x84 && wParam != 0x5B) { // WHAT THE ???			
+
+			if (select_game) {
+				GAPIKeysHandleSelect((int)wParam);
+				break;
+			}
 
 			/*
 			unsigned char GAPI_key;
@@ -657,8 +989,9 @@ LRESULT CALLBACK OSystem_WINCE3::WndProc(HWND hWnd, UINT message, WPARAM wParam,
 			GAPI_key = getGAPIKeyMapping((short)wParam);
 			if (GAPI_key) {
 			*/
-				if (get_key_mapping) {
-					wm->_event.kbd.ascii = GAPI_KEY_BASE + GAPIKeysTranslate((int)wParam);
+				if (_get_key_mapping) {
+					wm->_event.kbd.flags = 0xff;
+					wm->_event.kbd.ascii = GAPIKeysTranslate((unsigned int)(wParam));
 					wm->_event.event_code = EVENT_KEYDOWN;
 					break;
 				}					
@@ -667,7 +1000,7 @@ LRESULT CALLBACK OSystem_WINCE3::WndProc(HWND hWnd, UINT message, WPARAM wParam,
 					processAction((short)wParam);
 				*/
 			/*}*/
-			if (!processAction(GAPIKeysTranslate((int)wParam)))
+			if (!processAction(GAPIKeysTranslate((unsigned int)(wParam))))
 			/*else*/ {
 				wm->_event.kbd.ascii = mapKey(wParam);
 				wm->_event.event_code = EVENT_KEYDOWN;								
@@ -677,16 +1010,30 @@ LRESULT CALLBACK OSystem_WINCE3::WndProc(HWND hWnd, UINT message, WPARAM wParam,
 		break;
 
 	case WM_KEYUP:
+		if (_get_key_mapping) {
+			_get_key_mapping = false;
+			wm->_event.kbd.flags = 0xff;
+			wm->_event.kbd.ascii = GAPIKeysTranslate((int)wParam);
+			wm->_event.event_code = EVENT_KEYUP;
+			break;
+		}
 		break;
 
 	case WM_MOUSEMOVE:
 		{
 			int x = ((int16*)&lParam)[0];
 			int y = ((int16*)&lParam)[1];
+			/*if (select_game) {
+				handleSelectGame(x, y);
+				break;
+			}*/
+			if (select_game)
+				break;
 			Translate(&x, &y);
 			wm->_event.event_code = EVENT_MOUSEMOVE;
 			wm->_event.mouse.x = x;
 			wm->_event.mouse.y = y;
+			wm->_last_mouse_event = wm->_event;
 		}
 		break;
 	case WM_LBUTTONDOWN:
@@ -694,18 +1041,12 @@ LRESULT CALLBACK OSystem_WINCE3::WndProc(HWND hWnd, UINT message, WPARAM wParam,
 			ToolbarSelected toolbar_selection;
 			int x = ((int16*)&lParam)[0];
 			int y = ((int16*)&lParam)[1];
-			
-			//FILE *toto;
-			
+			if (select_game) {
+				handleSelectGame(x, y);
+				break;
+			}
+
 			Translate(&x, &y);
-
-			/*
- 			fprintf(toto, "Non translated %d %d Translated %d %d\n",
-					((int16*)&lParam)[0], ((int16*)&lParam)[1],
-					x, y);
-			fclose(toto);
-			*/
-
 
 			if (draw_keyboard) {
 				// Handle keyboard selection
@@ -760,12 +1101,13 @@ LRESULT CALLBACK OSystem_WINCE3::WndProc(HWND hWnd, UINT message, WPARAM wParam,
 				wm->_event.event_code = EVENT_LBUTTONDOWN;
 				wm->_event.mouse.x = x;
 				wm->_event.mouse.y = y;
+				wm->_last_mouse_event = wm->_event;
 				break;
 
 			}
 					
 
-			toolbar_selection = (hide_toolbar || get_key_mapping ? ToolbarNone : 
+			toolbar_selection = (hide_toolbar || _get_key_mapping ? ToolbarNone : 
 									 getToolbarSelection(
 										 (GetScreenMode() ? x : ((int16*)&lParam)[0]), 
 										 (GetScreenMode() ? y : ((int16*)&lParam)[1])));
@@ -773,32 +1115,7 @@ LRESULT CALLBACK OSystem_WINCE3::WndProc(HWND hWnd, UINT message, WPARAM wParam,
 				wm->_event.event_code = EVENT_LBUTTONDOWN;
 				wm->_event.mouse.x = x;
 				wm->_event.mouse.y = y;
-			
-				/*
-				if(y > 200 && !hide_toolbar)
-				{
-					if(x<160) {
-					   wm->_event.event_code = EVENT_KEYDOWN;
-					   wm->_event.kbd.ascii = mapKey(VK_ESCAPE);
-					}
-					else
-					{
-						HDC hDC;
-						PAINTSTRUCT ps;
-
-						SetScreenMode(0); // restore normal tap logic
-						//SHSipPreference(hWnd,SIP_UP);
-						ReleaseCapture();
-						//InvalidateRect(HWND_DESKTOP, NULL, TRUE);		
-						SHFullScreen(hWnd, SHFS_HIDESIPBUTTON | SHFS_HIDETASKBAR | SHFS_HIDESTARTICON);
-						MoveWindow(hWnd, 0, 0, GetSystemMetrics(SM_CYSCREEN), GetSystemMetrics(SM_CXSCREEN), TRUE);
-						SetWindowPos(hWnd, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE|SWP_NOSIZE);
-						SetForegroundWindow(hWnd);						
-						hDC = BeginPaint (hWnd, &ps);
-						EndPaint (hWnd, &ps);
-					}				
-				}
-				*/
+				wm->_last_mouse_event = wm->_event;			
 			}
 			else {
 				switch(toolbar_selection) {
@@ -823,12 +1140,15 @@ LRESULT CALLBACK OSystem_WINCE3::WndProc(HWND hWnd, UINT message, WPARAM wParam,
 							toolbar_drawn = false;
 						break;
 					case ToolbarSkip:
-						if (detector._gameId >= GID_SIMON_FIRST &&
-							detector._gameId <= GID_SIMON_LAST) {							
-							// Fake a right click to abort the current cut scene
-							wm->_event.event_code = EVENT_RBUTTONDOWN;
-							wm->_event.mouse.x = x;
-							wm->_event.mouse.y = y;
+						if (detector._gameId >= GID_SIMON_FIRST) {
+
+// !!! FIX SIMON !!!							
+							
+							//g_simon->_exit_cutscene = true;
+
+
+// !!! FIX SIMON !!!
+
 							break;
 						}
 						wm->_event.event_code = EVENT_KEYDOWN;
@@ -852,10 +1172,19 @@ LRESULT CALLBACK OSystem_WINCE3::WndProc(HWND hWnd, UINT message, WPARAM wParam,
 			// pinched from the SDL code. Distinguishes between taps and not
 			int x = ((int16*)&lParam)[0];
 			int y = ((int16*)&lParam)[1];
+			/*
+			if (select_game) {
+				handleSelectGame(x, y);
+				break;
+			}
+			*/
+			if (select_game)
+				break;
 			Translate(&x, &y);
 			wm->_event.event_code = EVENT_LBUTTONUP;
 			wm->_event.mouse.x = x;
 			wm->_event.mouse.y = y;
+			wm->_last_mouse_event = wm->_event;
 		}
 		break;
 	case WM_LBUTTONDBLCLK:  // doesn't seem to work right now
@@ -873,19 +1202,21 @@ LRESULT CALLBACK OSystem_WINCE3::WndProc(HWND hWnd, UINT message, WPARAM wParam,
 /*************** Specific config support ***********/
 
 void load_key_mapping() {
-	 unsigned char actions[NUMBER_ACTIONS];
-	 int actions_keys[NUMBER_ACTIONS];
+//	 unsigned char actions[TOTAL_ACTIONS];
+	 unsigned int actions_keys[TOTAL_ACTIONS];
 	 const char		*current;
-	 const char		*version;
+	 int			version;
 	 int			i;
 	 
 	 memset(actions_keys, 0, sizeof(actions_keys));
 	 
-	 version = g_config->get("KeysVersion", "wince");
+	 version = g_config->getInt("KeysVersion", 0, "wince");
+
+	 memset(actions_keys, 0, TOTAL_ACTIONS);
 
 	 current = g_config->get("ActionKeys", "wince");
-	 if (current && version) {
-		for (i=0; i<NUMBER_ACTIONS; i++) {
+	 if (current && version == CURRENT_KEYS_VERSION) {
+		for (i=0; i<TOTAL_ACTIONS; i++) {
 			char x[6];
 			int j;
 
@@ -897,7 +1228,8 @@ void load_key_mapping() {
 	 }
 	 setActionKeys(actions_keys);
 
-	 memset(actions, 0, NUMBER_ACTIONS);
+	 /*
+	 memset(actions, 0, TOTAL_ACTIONS);
 
 	 actions[0] = ACTION_PAUSE;
 	 actions[1] = ACTION_SAVE;
@@ -907,7 +1239,7 @@ void load_key_mapping() {
 
 	 current = g_config->get("ActionTypes", "wince");
 	 if (current && version) {
-		for (i=0; i<NUMBER_ACTIONS; i++) {
+		for (i=0; i<TOTAL_ACTIONS; i++) {
 			char x[6];
 			int j;
 
@@ -918,35 +1250,40 @@ void load_key_mapping() {
 		}
 	 }
 	 setActionTypes(actions);
+	 */
 
-	 if (!version) {
-		 g_config->set("KeysVersion", "2", "wince");
+	 if (!version || version != CURRENT_KEYS_VERSION) {
+		 g_config->setInt("KeysVersion", CURRENT_KEYS_VERSION, "wince");
 		 g_config->flush();
 	 }
 }
 					
 void save_key_mapping() {
 	 char tempo[1024];
-	 const int *work_keys;
-	 const unsigned char *work;
+	 const unsigned int *work_keys;
+//	 const unsigned char *work;
 	 int i;
 
 	 tempo[0] = '\0';
 	 work_keys = getActionKeys();
-	 for (i=0; i<NUMBER_ACTIONS; i++) {
+	 for (i=0; i<TOTAL_ACTIONS; i++) {
 		 char x[4];
 		 sprintf(x, "%.4x ", work_keys[i]);
 		 strcat(tempo, x);
 	 }
 	 g_config->set("ActionKeys", tempo, "wince");
+
+/*
 	 tempo[0] = '\0';
+
 	 work = getActionTypes();
-	 for (i=0; i<NUMBER_ACTIONS; i++) {
+	 for (i=0; i<TOTAL_ACTIONS; i++) {
 		 char x[3];
 		 sprintf(x, "%.2x ", work[i]);
 		 strcat(tempo, x);
 	 }
 	 g_config->set("ActionTypes", tempo, "wince");
+*/
 
 	 g_config->flush();
 }
@@ -1001,8 +1338,8 @@ void action_quit() {
 void action_boss() {
 	SHELLEXECUTEINFO se;    
 
-	g_config->set("Sound", sound_activated, "wince");
-	g_config->set("DisplayMode", GetScreenMode(), "wince");
+	g_config->setBool("Sound", sound_activated, "wince");
+	g_config->setInt("DisplayMode", GetScreenMode(), "wince");
 	g_config->flush();
 	sound_activated = false;
 	toolbar_drawn = false;
@@ -1013,9 +1350,9 @@ void action_boss() {
 	g_scumm->_saveLoadFlag = 1;
 	strcpy(g_scumm->_saveLoadName, "BOSS");
 	g_scumm->saveState(g_scumm->_saveLoadSlot, g_scumm->_saveLoadCompatible);
-	GXCloseInput();
-	GXCloseDisplay();
-	SDL_AudioQuit();
+	dynamicGXCloseInput();
+	dynamicGXCloseDisplay();
+	dynamicSDL_AudioQuit();
 	memset(&se, 0, sizeof(se));
 	se.cbSize = sizeof(se);
 	se.hwnd = NULL;
@@ -1073,19 +1410,45 @@ void action_subtitleonoff() {
 
 void keypad_init() {
 	static pAction actions[TOTAL_ACTIONS] =
-	{ action_pause, action_save, action_quit, action_skip, action_hide, 
+	{ NULL, action_pause, action_save, action_quit, action_skip, action_hide, 
 	  action_keyboard, action_sound, action_right_click, action_cursoronoff,
 	  action_subtitleonoff, action_boss
 	};
 	
-	GAPIKeysInit(actions);
+	GAPIKeysInitActions(actions);
 	
 }
 
 void keypad_close() {
-	GXCloseInput();	
+	dynamicGXCloseInput();	
 }
 
+void force_keyboard(bool activate) {
+
+if (activate) {
+	save_hide_toolbar = hide_toolbar;
+	if (save_hide_toolbar) {
+		// Display the keyboard while the dialog is running
+		do_hide(false);
+	}
+	if (!draw_keyboard) {
+		keyboard_override = true;
+		draw_keyboard = true;
+		toolbar_drawn = false;
+	}
+}
+else {
+	if (save_hide_toolbar) {
+		do_hide(true);
+		save_hide_toolbar = false;
+	}
+	if (keyboard_override) {
+		keyboard_override = false;
+		draw_keyboard = false;
+		toolbar_drawn = false;
+	}
+}
+}
 
 /************* OSystem Main **********************/
 OSystem *OSystem_WINCE3::create(int gfx_mode, bool full_screen) {
@@ -1099,61 +1462,16 @@ OSystem *OSystem_WINCE3::create(int gfx_mode, bool full_screen) {
 	/* Retrieve the handle of this module */
 	syst->hInst = GetModuleHandle(NULL);
 
-	/* Register the window class */
-	WNDCLASS wcex;
-	wcex.style			= CS_HREDRAW | CS_VREDRAW;
-	wcex.lpfnWndProc	= (WNDPROC)WndProc;
-	wcex.cbClsExtra		= 0;
-	wcex.cbWndExtra		= 0;
-	wcex.hInstance		= syst->hInst;
-	wcex.hIcon			= 0;
-	wcex.hCursor		= NULL;
-	wcex.hbrBackground	= (HBRUSH)GetStockObject(BLACK_BRUSH);
-	wcex.lpszMenuName	= 0;	
-	wcex.lpszClassName	= TEXT("ScummVM");
-	if (!RegisterClass(&wcex))
-		Error(TEXT("Cannot register window class!"));
-
-	syst->hWnd = CreateWindow(TEXT("ScummVM"), TEXT("ScummVM"), WS_VISIBLE,
-      0, 0, GetSystemMetrics(SM_CXSCREEN), GetSystemMetrics(SM_CYSCREEN), NULL, NULL, syst->hInst, NULL);
-	hWnd_Window = syst->hWnd;
+	syst->hWnd = hWnd_Window;
 	SetWindowLong(syst->hWnd, GWL_USERDATA, (long)syst);
-
-	ShowWindow(syst->hWnd, SW_SHOW);
-	UpdateWindow(syst->hWnd);
-
-	/*
-	SHMENUBARINFO smbi;
-	smbi.cbSize = sizeof(smbi); 
-	smbi.hwndParent = syst->hWnd; 
-	smbi.dwFlags = 0; 
-	smbi.nToolBarId = IDM_MENU; 
-	smbi.hInstRes = GetModuleHandle(NULL); 
-	smbi.nBmpId = 0; 
-	smbi.cBmpImages = 0; 
-	smbi.hwndMB = NULL;
-	BOOL res = SHCreateMenuBar(&smbi);
-	hWnd_MainMenu = smbi.hwndMB;
-	*/
-
-	/* Sound is activated on default - initialize it in the menu */
-	/*
-	CheckMenuItem((HMENU)SHMenuBar_GetMenu (hWnd_MainMenu, IDM_POCKETSCUMM),
-		IDC_SOUND, MF_BYCOMMAND | MF_CHECKED);
-	*/
-
-	GraphicsOn(syst->hWnd);
-
-	SetWindowPos(syst->hWnd, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE|SWP_NOSIZE);
-	SetForegroundWindow(syst->hWnd);
-	SHFullScreen(syst->hWnd, SHFS_HIDESIPBUTTON | SHFS_HIDETASKBAR | SHFS_HIDESTARTICON);
-
 	
 	// Mini SDL init
 
-	if (SDL_Init(SDL_INIT_AUDIO)==-1) {		
+	if (dynamicSDL_Init(SDL_INIT_AUDIO)==-1) {		
 	    exit(1);
 	}
+
+	reducePortraitGeometry();
 
 	Cls();
 	drawWait();
@@ -1191,6 +1509,7 @@ void OSystem_WINCE3::load_gfx_mode() {
 	force_full = true;
 
 	_gfx_buf = (byte*)malloc((320 * 240) * sizeof(byte));	
+	_overlay_buf = (byte*)malloc((320 * 240) * sizeof(uint16));
 	_ms_backup = (byte*)malloc((40 * 40 * 3) * sizeof(byte));
 }
 
@@ -1201,6 +1520,9 @@ void OSystem_WINCE3::unload_gfx_mode() {
 void OSystem_WINCE3::init_size(uint w, uint h) {
 	load_gfx_mode();
 	SetScreenGeometry(w, h);
+	LimitScreenGeometry();
+	_screenWidth = w;
+	_screenHeight = h;
 }
 
 void OSystem_WINCE3::copy_rect(const byte *buf, int pitch, int x, int y, int w, int h) {
@@ -1217,52 +1539,17 @@ void OSystem_WINCE3::copy_rect(const byte *buf, int pitch, int x, int y, int w, 
 	} while (--h);
 }
 
-void OSystem_WINCE3::move_screen(int dx, int dy, int height) {
-
-	if ((dx == 0) && (dy == 0))
-		return;
-
-	if (dx == 0) {
-		// vertical movement
-		if (dy > 0) {
-			// move down
-			// copy from bottom to top
-			for (int y = height - 1; y >= dy; y--)
-				copy_rect(_gfx_buf + SCREEN_WIDTH * (y - dy), SCREEN_WIDTH, 0, y, SCREEN_WIDTH, 1);
-		} else {
-			// move up
-			// copy from top to bottom
-			for (int y = 0; y < height + dx; y++)
-				copy_rect(_gfx_buf + SCREEN_WIDTH * (y - dy), SCREEN_WIDTH, 0, y, SCREEN_WIDTH, 1);
-		}
-	} else if (dy == 0) {
-		// horizontal movement
-		if (dx > 0) {
-			// move right
-			// copy from right to left
-			for (int x = SCREEN_WIDTH - 1; x >= dx; x--)
-				copy_rect(_gfx_buf + x - dx, SCREEN_WIDTH, x, 0, 1, height);
-		} else {
-			// move left
-			// copy from left to right
-			for (int x = 0; x < SCREEN_WIDTH; x++)
-				copy_rect(_gfx_buf + x - dx, SCREEN_WIDTH, x, 0, 1, height);
-		}
-	} else {
-		// free movement
-		// not neccessary for now
-	}
-
-
-}
-
-
 void OSystem_WINCE3::update_screen() {
 
 	if (!hide_cursor)
 		draw_mouse();
 
-	Blt(_gfx_buf);
+	if (_overlay_visible) {
+		Set_565((int16*)_overlay_buf, 320, 0, 0, 320, 200);
+		checkToolbar();
+	}
+	else
+		Blt(_gfx_buf);
 }
 
 bool OSystem_WINCE3::show_mouse(bool visible) {
@@ -1405,7 +1692,10 @@ void OSystem_WINCE3::delay_msecs(uint msecs) {
 	
 void *OSystem_WINCE3::create_thread(ThreadProc *proc, void *param) {
 	// needed for emulated MIDI support (Sam'n'Max)
-	return CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE)proc, param, 0, NULL);
+	HANDLE handle;
+	handle = CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE)proc, param, 0, NULL);
+	SetThreadPriority(handle, THREAD_PRIORITY_LOWEST);
+	return handle;
 }
 
 int mapKey(int key, byte mod)
@@ -1463,10 +1753,10 @@ bool OSystem_WINCE3::set_sound_proc(void *param, SoundProc *proc, byte format) {
 	desired.samples = 128;
 	desired.callback = own_soundProc;
 	desired.userdata = param;
-	if (SDL_OpenAudio(&desired, NULL) != 0) {
+	if (dynamicSDL_OpenAudio(&desired, NULL) != 0) {
 		return false;
 	}
-	SDL_PauseAudio(0);
+	dynamicSDL_PauseAudio(0);
 	return true;
 }
 
@@ -1499,8 +1789,8 @@ uint32 OSystem_WINCE3::property(int param, Property *value) {
 }
 		
 void OSystem_WINCE3::quit() {
-	unload_gfx_mode();
-	exit(0);
+	unload_gfx_mode();		
+	do_quit();
 }
 
 /* CDRom Audio */
@@ -1529,4 +1819,60 @@ void OSystem_WINCE3::unlock_mutex(void *handle) {
 
 void OSystem_WINCE3::delete_mutex(void *handle) {
 	CloseHandle((HANDLE)handle);
+}
+
+/* Overlay stuff */
+
+void OSystem_WINCE3::show_overlay() {
+	undraw_mouse();
+	_overlay_visible = true;
+	clear_overlay();
+
+}
+
+void OSystem_WINCE3::hide_overlay() {
+	undraw_mouse();
+	_overlay_visible = false;
+	toolbar_drawn = false;
+}
+
+void OSystem_WINCE3::clear_overlay() {
+
+	if (!_overlay_visible)
+		return;
+
+	Blt(_gfx_buf);
+}
+
+void OSystem_WINCE3::grab_overlay(int16 *buf, int pitch) {
+	//FIXME : it'd be better with a REAL surface :)
+	//Blt(_gfx_buf);
+	Get_565(_gfx_buf, buf, pitch, 0, 0, 320, 200);
+	memcpy(_overlay_buf, buf, 320 * 200 * sizeof(int16));
+}
+
+void OSystem_WINCE3::copy_rect_overlay(const int16 *buf, int pitch, int x, int y, int w, int h) {
+	int i;
+
+	UBYTE *dest = _overlay_buf;
+	dest += y * 320  * sizeof(int16);
+	for (i=0; i<h; i++) {
+		memcpy(dest + (x * sizeof(int16)), buf, w * 2);
+		dest += 320 * sizeof(int16);
+		buf += pitch;
+	}	
+}
+
+void OSystem_WINCE3::move_screen(int dx, int dy, int height) {
+	// FIXME : to be implemented
+}
+
+/* NECESSARY operators redefinition */
+
+void *operator new(size_t size) {
+	return calloc(size, 1);
+}
+
+void operator delete(void *ptr) {
+	free(ptr);
 }
