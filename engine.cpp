@@ -27,6 +27,7 @@
 #include <assert.h>
 #include "screen.h"
 #include "smush.h"
+
 #include "driver_gl.h"
 
 Engine *Engine::instance_ = NULL;
@@ -101,7 +102,6 @@ void Engine::mainLoop() {
 						g_driver->drawEmergString(550, 25, fps, Color(255, 255, 255));
 				}
 			}
-			g_driver->flipBuffer();
 		} else if (_mode == ENGINE_MODE_NORMAL) {
 			if (SCREENBLOCKS_GLOBAL)
 				screenBlocksReset();
@@ -141,14 +141,12 @@ void Engine::mainLoop() {
 				currScene_->setupCamera();
 
 			// Draw actors
-			if (!g_smush->isPlaying()) {
-				for (actor_list_type::iterator i = actors_.begin(); i != actors_.end(); i++) {
-					Actor *a = *i;
-					if (a->inSet(currScene_->name()) && a->visible())
-						a->draw();
-				}
-				//screenBlocksDrawDebug();
+			for (actor_list_type::iterator i = actors_.begin(); i != actors_.end(); i++) {
+				Actor *a = *i;
+				if (a->inSet(currScene_->name()) && a->visible())
+					a->draw();
 			}
+			//screenBlocksDrawDebug();
 
 			// Draw text
 			for (text_list_type::iterator i = textObjects_.begin(); i != textObjects_.end(); i++) {
@@ -159,9 +157,9 @@ void Engine::mainLoop() {
 				g_driver->drawEmergString(550, 25, fps, Color(255, 255, 255));
 
 			currScene_->drawBitmaps(ObjectState::OBJSTATE_OVERLAY);
-			
-			g_driver->flipBuffer();
 		}
+
+		g_driver->flipBuffer();
 
 		// don't kill CPU
 		SDL_Delay(1);
