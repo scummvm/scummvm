@@ -29,7 +29,24 @@
 Err HwrDisplayPalette(UInt8 operation, Int16 startIndex, 
 			 	  			 UInt16 paletteEntries, RGBColorType *tableP)
 							SYS_TRAP(sysTrapHwrDisplayPalette);
-							
+
+#define MAX_THREAD	2
+
+typedef struct {
+		bool active;
+		OSystem::ThreadProc *proc;
+		void *param;
+		bool sleep;
+		int old_time;
+
+} ThreadEmuType, *ThreadEmuPtr;
+
+typedef struct {
+	bool active;	
+	OSystem::SoundProc *proc;
+	void *param;
+	OSystem::SoundFormat format;
+} SoundDataType;
 
 //-- 02-12-17 --////////////////////////////////////////////////////////////////
 class OSystem_PALMOS : public OSystem {
@@ -128,7 +145,7 @@ public:
 
 	// Quit
 	void quit();
-	bool _quit;
+	bool _quit, _selfQuit;
 
 	// Overlay
 	void show_overlay();
@@ -171,6 +188,10 @@ private:
 	
 public:
 	byte *_screenP;
+	ThreadEmuType _thread[MAX_THREAD];	// 0: midi native, 1:multi-midi (adlib wrapper)
+	UInt8 _threadCounter;
+	UInt8 _threadID;
+
 private:
 	byte *_offScreenP;
 	byte *_tmpScreenP;
@@ -210,24 +231,7 @@ private:
 		int (*callback) (int);
 	} _timer;
 
-	struct {
-		bool active;
-		ThreadProc *proc;
-		void *param;
-		
-		struct {
-			UInt32 value;
-			UInt32 status;
-		} sleep;
-
-	} _thread;
-
-	struct {
-		bool active;	
-		SoundProc *proc;
-		void *param;
-		SoundFormat format;
-	} _sound;
+	SoundDataType _sound;
 
 	// Palette data
 	RGBColorType *_currentPalette;

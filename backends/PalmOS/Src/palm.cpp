@@ -28,6 +28,7 @@
 
 #define EXITDELAY		(500) // delay to exit : calc button : double tap 1/500 sec
 #define ftrOverlayPtr	(1000)
+#define	SND_BLOCK		(3072)// is this correct ? 4096 should be better, must use it with a timer to prevent scenes to be cut off
 
 OSystem *OSystem_PALMOS::create(UInt16 gfx_mode) {
 
@@ -79,8 +80,6 @@ void OSystem_PALMOS::load_gfx_mode() {
 		255	,255,87	,0,
 		255	,255,255,0
 	};
-	// palette for preload dialog
-	set_palette(startupPalette,0,16);
 
 	switch(_mode)
 	{
@@ -118,6 +117,8 @@ void OSystem_PALMOS::load_gfx_mode() {
 			break;
 	}
 
+	// palette for preload dialog
+	set_palette(startupPalette,0,16);
 	// try to allocate on storage heap
 	FtrPtrNew(appFileCreator, ftrOverlayPtr, _screenWidth * _screenHeight, (void **)&_tmpScreenP);
 	// failed ? dynamic heap
@@ -456,8 +457,6 @@ void OSystem_PALMOS::update_screen() {
 	// Make sure the mouse is drawn, if it should be drawn.
 	draw_mouse();
 
-	((this)->*(_renderer_proc))();
-
 	// Check whether the palette was changed in the meantime and update the
 	// screen surface accordingly. 
 	if (_paletteDirtyEnd != 0) {
@@ -482,6 +481,10 @@ void OSystem_PALMOS::update_screen() {
 				drawNumPad(this, gVars->indicator.on);
 		}
 	}
+
+	// redraw the screen
+	((this)->*(_renderer_proc))();
+
 }
 
 bool OSystem_PALMOS::show_mouse(bool visible) {
@@ -544,13 +547,21 @@ void OSystem_PALMOS::delay_msecs(uint msecs) {
 }
 
 void OSystem_PALMOS::create_thread(ThreadProc *proc, void *param) {
-	_thread.active	= true;
-	_thread.proc	= proc;
-	_thread.param	= param;
+	if (_threadCounter == MAX_THREAD) {
+		warning("Cannot create thread.");
+		return;
+	}
+
+	_thread[_threadCounter].active = true;
+	_thread[_threadCounter].proc = proc;
+	_thread[_threadCounter].param = param;
+	_thread[_threadCounter].old_time = get_msecs();
+	_thread[_threadCounter].sleep = true;
+
+	_threadCounter++;
 }
 
-void OSystem_PALMOS::set_timer(int timer, int (*callback)(int))
-{
+void OSystem_PALMOS::set_timer(int timer, int (*callback)(int)) {
 	if (callback != NULL) {
 		_timer.duration = timer;
 		_timer.next_expiry = get_msecs() + timer;
@@ -562,22 +573,10 @@ void OSystem_PALMOS::set_timer(int timer, int (*callback)(int))
 }
 
 /* Mutex handling */
-OSystem::MutexRef OSystem_PALMOS::create_mutex()
-{
-  return NULL;
-}
-
-void OSystem_PALMOS::lock_mutex(MutexRef mutex)
-{
-}
- 
-void OSystem_PALMOS::unlock_mutex(MutexRef mutex)
-{
-}
-
-void OSystem_PALMOS::delete_mutex(MutexRef mutex)
-{
-}
+OSystem::MutexRef OSystem_PALMOS::create_mutex() {return NULL;}
+void OSystem_PALMOS::lock_mutex(MutexRef mutex) {}
+void OSystem_PALMOS::unlock_mutex(MutexRef mutex) {}
+void OSystem_PALMOS::delete_mutex(MutexRef mutex) {}
 
 void OSystem_PALMOS::SimulateArrowKeys(Event *event, Int8 iHoriz, Int8 iVert, Boolean repeat) {
 	Int16 x = _mouseCurState.x;
@@ -619,7 +618,7 @@ static void getCoordinates(EventPtr event, Boolean wide, Coord *x, Coord *y) {
 bool OSystem_PALMOS::poll_event(Event *event) {
 	EventType ev;
 	Boolean handled;
-	uint32 current_msecs;
+	UInt32 current_msecs;
 	UInt32 keyCurrentState;
 	Coord x, y;
 	
@@ -628,8 +627,10 @@ bool OSystem_PALMOS::poll_event(Event *event) {
 
 	current_msecs = get_msecs();
 	//thread handler
-	if (_thread.active)
-		_thread.proc(_thread.param);
+	for(_threadID = 0; _threadID < _threadCounter; _threadID++) {
+		if (_thread[_threadID].active)
+			_thread[_threadID].proc(_thread[_threadID].param);
+	}
 
 	// sound handler
 	if(_sound.active)
@@ -676,8 +677,10 @@ bool OSystem_PALMOS::poll_event(Event *event) {
 
 				case vchrCalc:
 					if (_lastKeyPressed == vchrCalc)
-						if ((get_msecs() - _exit_delay) <= (EXITDELAY))
+						if ((get_msecs() - _exit_delay) <= (EXITDELAY)) {
+							_selfQuit = true;
 							quit();
+						}
 
 					_exit_delay = get_msecs();
 					_lastKeyPressed = vchrCalc;
@@ -730,6 +733,8 @@ bool OSystem_PALMOS::poll_event(Event *event) {
 
 				// if hotsync pressed
 				case vchrHardCradle:
+				case vchrHardCradle2:
+					_selfQuit = true;
 					quit();
 			}
 		}
@@ -772,7 +777,8 @@ bool OSystem_PALMOS::poll_event(Event *event) {
 					if (_lastKeyModifier == MD_CTRL)	b = KBD_CTRL;
 					if (_lastKeyModifier == MD_ALT)	b = KBD_ALT;
 					
-					if  (ev.data.keyDown.chr == 'q' && b == KBD_CTRL) {
+					if  (ev.data.keyDown.chr == 'z' && b == KBD_CTRL) {
+						_selfQuit = true;
 						quit();
 
 					} else if (ev.data.keyDown.chr == 'n' && b == KBD_CTRL) {
@@ -896,35 +902,30 @@ uint32 OSystem_PALMOS::property(int param, Property *value) {
 		break;
 
 	case PROP_GET_SAMPLE_RATE:
-		return SAMPLES_PER_SEC;
+		return 8000;
 	}
 
 	return 0;
 }
 
 void OSystem_PALMOS::quit() {
-	exit(1);
-
 	if (_quit)
 		return;
 
-	if (g_scumm)
+	if (_selfQuit && g_scumm)
 		g_scumm->_quit = true;
-	if (_currentPalette)
-		free(_currentPalette);
-	if (_mouseBackupP)
-		free(_mouseBackupP);
 
-	if (_sndTempP)
-		MemPtrFree(_sndTempP);
-	if (_sndDataP)
-		MemPtrFree(_sndDataP);
+	free(_currentPalette);
+	free(_mouseBackupP);
+//	free(_sndDataP);
+	free(_sndTempP);
 
 	if (_msaRefNum != sysInvalidRefNum)
 		MsaLibClose(_msaRefNum, msaLibOpenModeAlbum);
 
 	unload_gfx_mode();
 	_quit = true;
+	exit(1);
 }
 
 void OSystem_PALMOS::draw_mouse() {
@@ -1029,8 +1030,33 @@ static UInt16 checkMSA() {
 				if (error == sysErrLibNotFound)
 					error = SysLibLoad(sonySysFileTMsaLib, sonySysFileCMsaLib, &refNum);
 
-			if (!error)
-				error = MsaLibOpen(refNum, msaLibOpenModeAlbum);
+			if (!error) {
+//				Char buf[100];
+//				StrPrintF(buf,"MSA refNum %ld, Try to open lib ...", refNum);
+//				FrmCustomAlert(1000,buf,0,0);
+//				MsaLibClose(refNum, msaLibOpenModeAlbum);
+				error = MsaLibOpen(refNum, msaLibOpenModeAlbum);			
+/*				switch (error) {
+				case msaErrAlreadyOpen:
+					FrmCustomAlert(1000,"msaErrAlreadyOpen",0,0);
+					break;
+				case msaErrMemory:
+					FrmCustomAlert(1000,"msaErrMemory",0,0);
+					break;
+				case msaErrDifferentMode:
+					FrmCustomAlert(1000,"msaErrDifferentMode",0,0);
+					break;
+				case expErrCardNotPresent:
+					FrmCustomAlert(1000,"expErrCardNotPresent",0,0);
+					break;
+				}
+				
+				if (error == msaErrAlreadyOpen) {
+					error = MsaLibEnforceOpen(refNum, msaLibOpenModeAlbum, msaLibCreatorID);
+					FrmCustomAlert(1000,"Force no error",0,0);
+				}
+*///				error = errNone;
+			}
 		//}
 	}
 
@@ -1047,31 +1073,41 @@ void OSystem_PALMOS::stop_cdrom() {	/* Stop CD Audio in 1/10th of a second */
 }
 
 // frames are 1/75 sec
-#define TO_MSECS(frame)	((UInt32)((frame) * 1000 / 75))
+#define CD_FPS 75
+#define TO_MSECS(frame)	((UInt32)((frame) * 1000 / CD_FPS))
 // consider frame at 1/1000 sec
 #define TO_SEC(msecs)	((UInt16)((msecs) / 1000))
 #define TO_MIN(msecs)	((UInt16)(TO_SEC((msecs)) / 60))
 #define FROM_MIN(mins)	((UInt32)((mins) * 60 * 1000))
 #define FROM_SEC(secs)	((UInt32)((secs) * 1000))
 
+static void doErr(Err e, const Char *msg) {
+	Char err[100];
+	StrPrintF(err, "%ld : " , e);
+	StrCat(err,msg);
+	FrmCustomAlert(1000,err,0,0);
+}
+
 void OSystem_PALMOS::play_cdrom(int track, int num_loops, int start_frame, int end_frame) {
-	if (!_isCDRomAvalaible /*&& gVars->msaAlwaysOpen*/)
+	if (!_isCDRomAvalaible)
 		return;
 
 	if (!num_loops && !start_frame)
 		return;
 	
+	Err e;
+	
 	// open MSA lib if needed
 	if (_msaRefNum == sysInvalidRefNum) {
 		_msaRefNum = checkMSA();
 
-		// if not found disable CD-Rom
+		// if not found disable CD-Rom if needed
 		if (_msaRefNum == sysInvalidRefNum) {
-			_isCDRomAvalaible = false;
+//			FrmCustomAlert(1000,"MSA Lib not found",0,0);
+			_isCDRomAvalaible = (gVars->music.setDefaultTrackLength);
 			return;
 		}
 
-	//	Char *nameP = (Char *)MemPtrNew(256);
 		UInt32 dummy, albumIterater = albumIteratorStart;
 		Char nameP[256];
 		MemSet(&_msaAlbum, sizeof(_msaAlbum), 0);
@@ -1080,37 +1116,56 @@ void OSystem_PALMOS::play_cdrom(int track, int num_loops, int start_frame, int e
 		_msaAlbum.nameP = nameP;
 		_msaAlbum.fileNameLength = 256;
 
-		MsaAlbumEnumerate(_msaRefNum, &albumIterater, &_msaAlbum);
-		MsaSetAlbum(_msaRefNum, _msaAlbum.albumRefNum, &dummy);
-		MsaGetPBRate(_msaRefNum, &_msaPBRate);
+		e = MsaAlbumEnumerate(_msaRefNum, &albumIterater, &_msaAlbum);
+//		if (e) doErr(e, "MsaAlbumEnumerate");
+		e = MsaSetAlbum(_msaRefNum, _msaAlbum.albumRefNum, &dummy);
+//		if (e) doErr(e, "MsaSetAlbum");
+		e = MsaGetPBRate(_msaRefNum, &_msaPBRate);
+//		if (e) doErr(e, "MsaGetPBRate");
 		// TODO : use RMC to control volume
 		MsaOutSetVolume(_msaRefNum, 20, 20);
 		
 	}
 
+	if (start_frame > 0)
+		start_frame += CD_FPS >> 1;
+
 	if (end_frame > 0)
-		end_frame +=5;
+		end_frame += CD_FPS >> 1;
 
 	_msaLoops = num_loops;
-	_msaTrack = track + 1;	// first track = 1, not 0 (0=album)
+	_msaTrack = track + gVars->music.firstTrack - 1;	// first track >= 1 ?, not 0 (0=album)
 	_msaStartFrame = TO_MSECS(start_frame);
 	_msaEndFrame = TO_MSECS(end_frame);
 
 	// if gVars->MP3 audio track
-	Err e;
+//	Err e;
 	MemHandle trackH;
 	
+	// stop current play if any
+	MsaStop(_msaRefNum, true);
+	// retreive track info
 	e = MsaGetTrackInfo(_msaRefNum, _msaTrack, 0, msa_LANG_CODE_ASCII, &trackH);
+//	if (e) doErr(e, "MsaGetTrackInfo");
 	// track exists
 	if (!e && trackH) {
 		MsaTime tTime;
 		UInt32 SU, fullLength;
+		MsaTrackInfo *tiP;
 		
-		MsaTrackInfo *tiP = (MsaTrackInfo *)MemHandleLock(trackH);	
+		// FIXME : this enable MsaSuToTime to return the right value
+		MsaPlay(_msaRefNum, _msaTrack, 0, _msaPBRate);
+		MsaStop(_msaRefNum, true);
+		
+		tiP = (MsaTrackInfo *)MemHandleLock(trackH);	
 		MsaSuToTime(_msaRefNum, tiP->totalsu, &tTime);
 		SU = tiP->totalsu;
 		MemPtrUnlock(tiP);
 		MemHandleFree(trackH);
+		
+//		Char buf[200];
+//		StrPrintF(buf,"Track : %ld - %ld%:%ld.%ld (%ld)", track, tTime.minute, tTime.second, tTime.frame, SU);
+//		FrmCustomAlert(1000,buf,0,0);
 
 		_msaStopTime = 0;
 		fullLength = FROM_MIN(tTime.minute) + FROM_SEC(tTime.second) + tTime.frame;
@@ -1125,14 +1180,12 @@ void OSystem_PALMOS::play_cdrom(int track, int num_loops, int start_frame, int e
 		}
 		_msaEndTime = get_msecs() + _msaTrackLength - 2000; // 2sec less ...
 
-		// stop current play if any
-		MsaStop(_msaRefNum, true);
 		// try to play the track
 		if (start_frame == 0 && end_frame == 0) {
 			MsaPlay(_msaRefNum, _msaTrack, 0, _msaPBRate);
 		} else {
-			// MsaTimeToSu doesn't work ...
-			_msaTrackStart = (UInt32) ((float)_msaStartFrame / ((float)fullLength / (float)SU));
+			// FIXME : MsaTimeToSu doesn't work ... (may work with previous FIXME)
+			_msaTrackStart = (UInt32) ((float)(_msaStartFrame) / ((float)fullLength / (float)SU));
 			MsaPlay(_msaRefNum, _msaTrack, _msaTrackStart, _msaPBRate);
 		}
 	}
@@ -1193,6 +1246,7 @@ void OSystem_PALMOS::update_cdrom() {
 
 OSystem_PALMOS::OSystem_PALMOS() {
 	_quit = false;
+	_selfQuit = false; // prevent illegal access to g_scumm
 	_current_shake_pos = 0;
 	_new_shake_pos = 0;
 
@@ -1202,9 +1256,9 @@ OSystem_PALMOS::OSystem_PALMOS() {
 	_paletteDirtyStart = 0;
 	_paletteDirtyEnd = 0;
 	
-	_timer.active = false;
-	_thread.active = false;
-	_sound.active = false;
+	memset(_thread, 0, sizeof(_thread));
+	_threadID = 0;
+	_threadCounter = 0;
 	
 	_currentPalette = NULL;
 	_mouseBackupP = NULL;
@@ -1220,15 +1274,13 @@ OSystem_PALMOS::OSystem_PALMOS() {
 	_wideRefNum = sysInvalidRefNum;
 	
 	// cd-rom
-	_isCDRomAvalaible = true;	// true by default, set to false if MSA not avalaible
+	_isCDRomAvalaible = (gVars->music.MP3 || gVars->music.setDefaultTrackLength); // true by default, set to false if MSA not avalaible
 	_msaRefNum = sysInvalidRefNum;
 	
 	// sound
 	_isSndPlaying = false;
-	_sndTempP = (UInt8 *)MemPtrNew(512);
+	_sndTempP = (UInt8 *)MemPtrNew(SND_BLOCK);
 	_sndDataP = NULL;
-//	_sndTempP = (UInt8 *)MemPtrNew(4096);
-//	_sndDataP = (UInt8 *)MemPtrNew(1024);
 }
 
 void OSystem_PALMOS::move_screen(int dx, int dy, int height) {
@@ -1311,12 +1363,10 @@ void OSystem_PALMOS::move_screen(int dx, int dy, int height) {
 }
 
 bool OSystem_PALMOS::set_sound_proc(SoundProc *proc, void *param, SoundFormat format) {
-
 	_sound.active = true;
 	_sound.proc = proc;
 	_sound.param = param;
 	_sound.format = format;
-//	_sound.active = false;
 
 	return _sound.active;
 }
@@ -1330,7 +1380,7 @@ void OSystem_PALMOS::check_sound() {
 	// but i need to use this function to prevent out of memory
 	// on zak256 because the sound buffer growns and it's never
 	// freed.
-	_sound.proc(_sound.param, _sndTempP, 256);
+	_sound.proc(_sound.param, _sndTempP, SND_BLOCK);
 }
 
 void OSystem_PALMOS::show_overlay() {
