@@ -1234,27 +1234,30 @@ void ScummEngine_v90he::o90_setSpriteInfo() {
 
 void ScummEngine_v90he::o90_getSpriteGroupInfo() {
 	int32 tx, ty;
-	int spriteId, type;
+	int spriteGroupId, type;
 
 	byte subOp = fetchScriptByte();
 	switch (subOp) {
 	case 8: // HE 99+
-		pop();
-		push(0);
+		spriteGroupId = pop();
+		if (spriteGroupId)
+			push(spriteGroupGet_allocateGroupSpritesList(spriteGroupId));
+		else
+			push(0);
 		break;
 	case 30:
-		spriteId = pop();
-		if (spriteId) {
-			spriteGroupGet_tx_ty(spriteId, tx, ty);
+		spriteGroupId = pop();
+		if (spriteGroupId) {
+			spriteGroupGet_tx_ty(spriteGroupId, tx, ty);
 			push(tx);
 		} else {
 			push(0);
 		}
 		break;
 	case 31:
-		spriteId = pop();
-		if (spriteId) {
-			spriteGroupGet_tx_ty(spriteId, tx, ty);
+		spriteGroupId = pop();
+		if (spriteGroupId) {
+			spriteGroupGet_tx_ty(spriteGroupId, tx, ty);
 			push(ty);
 		} else {
 			push(0);
@@ -1262,20 +1265,20 @@ void ScummEngine_v90he::o90_getSpriteGroupInfo() {
 		break;
 	case 42: // HE 99+
 		type = pop();
-		spriteId = pop();
-		if (spriteId) {
+		spriteGroupId = pop();
+		if (spriteGroupId) {
 			switch(type) {
 			case 0:
-				push(spriteGroupGet_field_30(spriteId));
+				push(spriteGroupGet_field_30(spriteGroupId));
 				break;
 			case 1:
-				push(spriteGroupGet_field_34(spriteId));
+				push(spriteGroupGet_field_34(spriteGroupId));
 				break;
 			case 2:
-				push(spriteGroupGet_field_38(spriteId));
+				push(spriteGroupGet_field_38(spriteGroupId));
 				break;
 			case 3:
-				push(spriteGroupGet_field_3C(spriteId));
+				push(spriteGroupGet_field_3C(spriteGroupId));
 				break;
 			default:
 				push(0);
@@ -1285,17 +1288,17 @@ void ScummEngine_v90he::o90_getSpriteGroupInfo() {
 		}
 		break;
 	case 43:
-		spriteId = pop();
-		if (spriteId) {
-			push(spriteGroupGet_field_10(spriteId));
+		spriteGroupId = pop();
+		if (spriteGroupId) {
+			push(spriteGroupGet_field_10(spriteGroupId));
 		} else {
 			push(0);
 		}
 		break;
 	case 63: // HE 99+
-		spriteId = pop();
-		if (spriteId) {
-			push(spriteGroupGet_field_20(spriteId));
+		spriteGroupId = pop();
+		if (spriteGroupId) {
+			push(spriteGroupGet_field_20(spriteGroupId));
 		} else {
 			push(0);
 		}

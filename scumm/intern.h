@@ -898,44 +898,45 @@ protected:
 	void spriteInfoGet_tx_ty(int spriteId, int32 &tx, int32 &ty);
 	void spriteInfoGet_field_2C_30(int spriteId, int32 &field_2C, int32 &field_30);
 
-	int spriteGroupGet_field_10(int spriteId);
-	int spriteGroupGet_field_20(int spriteId);
-	int spriteGroupGet_field_30(int spriteId);
-	int spriteGroupGet_field_34(int spriteId);
-	int spriteGroupGet_field_38(int spriteId);
-	int spriteGroupGet_field_3C(int spriteId);
-	void spriteGroupGet_tx_ty(int spriteId, int32 &tx, int32 &ty);
+	int spriteGroupGet_allocateGroupSpritesList(int spriteGroupId);
+	int spriteGroupGet_field_10(int spriteGroupId);
+	int spriteGroupGet_field_20(int spriteGroupId);
+	int spriteGroupGet_field_30(int spriteGroupId);
+	int spriteGroupGet_field_34(int spriteGroupId);
+	int spriteGroupGet_field_38(int spriteGroupId);
+	int spriteGroupGet_field_3C(int spriteGroupId);
+	void spriteGroupGet_tx_ty(int spriteGroupId, int32 &tx, int32 &ty);
 
 	void spriteInfoSet_field_14(int spriteId, int value);
 	void spriteInfoSet_field_7C(int spriteId, int value);
 	void spriteInfoSet_field_80(int spriteId, int value);
 	void spriteInfoSet_case183(int spriteId);
-	void spriteInfoSet_resState(int spriteNum, int value);
-	void spriteInfoSet_tx_ty(int spriteNum, int value1, int value2);
-	void spriteInfoSet_groupNum(int spriteNum, int value);
-	void spriteInfoSet_field_2C_30(int spriteNum, int value1, int value2);
-	void spriteInfoSet_field_54(int spriteNum, int value);
-	void spriteInfoSet_field_44(int spriteNum, int value1, int value2);
-	void spriteInfoSet_field_18(int spriteNum, int value);
-	void spriteInfoSet_Inc_tx_ty(int spriteNum, int value1, int value2);
-	void spriteInfoSet_zoom(int spriteNum, int value);
-	void spriteInfoSet_rotAngle(int spriteNum, int value);
-	void spriteInfoSet_flag22(int spriteNum, int value);
-	void spriteInfoSet_flag7(int spriteNum, int value);
-	void spriteInfoSet_flagRotated(int spriteNum, int value);
-	void spriteInfoSet_flag8(int spriteNum, int value);
-	void spriteInfoSet_flagZoomed(int spriteNum, int value);
-	void spriteInfoSet_flag20(int spriteNum, int value);
-	void spriteInfoSet_flags23_26(int spriteNum, int value);
-	void spriteInfoSet_flag31(int spriteNum, int value);
-	void spriteInfoSet_field_78_64(int spriteNum, int value);
+	void spriteInfoSet_resState(int spriteId, int value);
+	void spriteInfoSet_tx_ty(int spriteId, int value1, int value2);
+	void spriteInfoSet_groupNum(int spriteId, int value);
+	void spriteInfoSet_field_2C_30(int spriteId, int value1, int value2);
+	void spriteInfoSet_field_54(int spriteId, int value);
+	void spriteInfoSet_field_44(int spriteId, int value1, int value2);
+	void spriteInfoSet_field_18(int spriteId, int value);
+	void spriteInfoSet_Inc_tx_ty(int spriteId, int value1, int value2);
+	void spriteInfoSet_zoom(int spriteId, int value);
+	void spriteInfoSet_rotAngle(int spriteId, int value);
+	void spriteInfoSet_flag22(int spriteId, int value);
+	void spriteInfoSet_flag7(int spriteId, int value);
+	void spriteInfoSet_flagRotated(int spriteId, int value);
+	void spriteInfoSet_flag8(int spriteId, int value);
+	void spriteInfoSet_flagZoomed(int spriteId, int value);
+	void spriteInfoSet_flag20(int spriteId, int value);
+	void spriteInfoSet_flags23_26(int spriteId, int value);
+	void spriteInfoSet_flag31(int spriteId, int value);
+	void spriteInfoSet_field_78_64(int spriteId, int value);
 
 	void spritesAllocTables(int numSprites, int numGroups, int numImgSprites);
 	void spritesResetTables(bool refreshScreen);
 	void spriteGroupCheck(int sprGrpId);
 	void spriteMarkIfInGroup(int sprGrpId, uint32 flags);
 
-	void spriteInfoSet_addImageToList(int spriteNum, int imageNum, int *spriteIdptr);
+	void spriteInfoSet_addImageToList(int spriteId, int imageNum, int *spriteIdptr);
 
 	/* HE version 90 script opcodes */
 	void o90_dup();
