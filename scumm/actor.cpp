@@ -1917,7 +1917,7 @@ void ScummEngine::postProcessAuxQueue() {
 					error("No AXFD block for actor %d", ae->actorNum);
 				} else {
 					uint16 comp = READ_LE_UINT16(axfd);
-					if (comp == 1 || comp == 16) {
+					if (comp != 0) {
 						int x1 = (int16)READ_LE_UINT16(axfd + 2) + dx;
 						int y1 = (int16)READ_LE_UINT16(axfd + 4) + dy;
 						int x2 = (int16)READ_LE_UINT16(axfd + 6);
@@ -1933,10 +1933,7 @@ void ScummEngine::postProcessAuxQueue() {
 							warning("unimplemented compression type %d", comp);
 							break;
 						}
-					} else {
-						warning("unimplemented compression type %d", comp);
 					}
-
 				}
 				const uint8 *axur = findResourceData(MKID('AXUR'), auxd);
 				if (axur) {
