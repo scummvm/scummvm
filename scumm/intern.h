@@ -882,13 +882,13 @@ protected:
 	void o90_unknown31();
 	void o90_unknown32();
 	void o90_findAllObjectsWithClassOf();
-	void o90_unknown35();
+	void o90_getPolygonOverlap();
 	void o90_unknown36();
 	void o90_dim2dim2Array();
-	void o90_unknown3A();
-	void o90_unknown44();
-	void o90_unknown94();
-	void o90_unknown9E();
+	void o90_sortArray();
+	void o90_getObjectData();
+	void o90_getPaletteData();
+	void o90_paletteOps();
 	void o90_unknownA5();
 	void o90_getActorAnimProgress();
 };

@@ -267,6 +267,10 @@ void ScummEngine_v72he::setupScummVars() {
 		VAR_NUM_SPRITES = 106;
 		VAR_WIZ_TCOLOR = 117;
 	}
+	if (_heversion >= 99) {
+		VAR_NUM_PALETTES = 130;
+		VAR_NUM_UNK = 131;
+	}
 }
 
 void ScummEngine_v7::setupScummVars() {
@@ -504,6 +508,10 @@ void ScummEngine::initScummVars() {
 			VAR(VAR_WINDOWS_VERSION) = 40;
 		if (_heversion >= 90)
 			VAR(VAR_NUM_SPRITES) = _numSprites - 1;
+		if (_heversion >= 99) {
+			VAR(VAR_NUM_PALETTES) = _numPalettes;
+			VAR(VAR_NUM_UNK) = _numUnk;
+		}
 	} else {
 		VAR(VAR_CURRENTDRIVE) = 0;
 		switch (_midiDriver) {

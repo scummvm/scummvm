@@ -314,6 +314,8 @@ static const ScummGameSettings scumm_settings[] = {
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
 
 	// Global scripts increased to 2048
+	{"500demo", "Putt-Putt Enters the Race (Demo)", GID_FREDDI4, 6, 98, MDT_NONE,
+	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
 	{"freddi4", "Freddi Fish 4: The Case of the Hogfish Rustlers of Briny Gulch", GID_FREDDI4, 6, 98, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
 	{"f4-demo", "Freddi Fish 4: The Case of the Hogfish Rustlers of Briny Gulch (Demo)", GID_FREDDI4, 6, 98, MDT_NONE,
@@ -540,6 +542,7 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 	_numSprites = 0;
 	_numTalkies = 0;
 	_numPalettes = 0;
+	_numUnk = 0;
 	_audioNames = NULL;
 	_numAudioNames = 0;
 	_curActor = 0;
@@ -835,6 +838,8 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 	VAR_NUM_CHARSETS = 0xFF;
 	VAR_NUM_GLOBAL_OBJS = 0xFF;
 	VAR_NUM_SPRITES = 0xFF;
+	VAR_NUM_PALETTES = 0xFF;
+	VAR_NUM_UNK = 0xFF;
 	VAR_POLYGONS_ONLY = 0xFF;
 	VAR_WINDOWS_VERSION = 0xFF;
 	VAR_WIZ_TCOLOR = 0xFF;

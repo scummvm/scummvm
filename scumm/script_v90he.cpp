@@ -110,13 +110,13 @@ void ScummEngine_v90he::setupOpcodes() {
 		OPCODE(o6_invalid),
 		/* 34 */
 		OPCODE(o90_findAllObjectsWithClassOf),
-		OPCODE(o90_unknown35),
+		OPCODE(o90_getPolygonOverlap),
 		OPCODE(o90_unknown36),
 		OPCODE(o90_dim2dim2Array),
 		/* 38 */
 		OPCODE(o6_invalid),
 		OPCODE(o6_invalid),
-		OPCODE(o90_unknown3A),
+		OPCODE(o90_sortArray),
 		OPCODE(o6_invalid),
 		/* 3C */
 		OPCODE(o6_invalid),
@@ -129,7 +129,7 @@ void ScummEngine_v90he::setupOpcodes() {
 		OPCODE(o6_invalid),
 		OPCODE(o6_writeWordVar),
 		/* 44 */
-		OPCODE(o90_unknown44),
+		OPCODE(o90_getObjectData),
 		OPCODE(o80_unknown45),
 		OPCODE(o6_invalid),
 		OPCODE(o6_wordArrayWrite),
@@ -229,7 +229,7 @@ void ScummEngine_v90he::setupOpcodes() {
 		OPCODE(o6_findInventory),
 		OPCODE(o6_getInventoryCount),
 		/* 94 */
-		OPCODE(o90_unknown94),
+		OPCODE(o90_getPaletteData),
 		OPCODE(o6_beginOverride),
 		OPCODE(o6_endOverride),
 		OPCODE(o6_setObjectName),
@@ -241,7 +241,7 @@ void ScummEngine_v90he::setupOpcodes() {
 		/* 9C */
 		OPCODE(o72_roomOps),
 		OPCODE(o72_actorOps),
-		OPCODE(o90_unknown9E),
+		OPCODE(o90_paletteOps),
 		OPCODE(o6_getActorFromXY),
 		/* A0 */
 		OPCODE(o72_findObject),
@@ -1049,7 +1049,7 @@ void ScummEngine_v90he::o90_findAllObjectsWithClassOf() {
 	push(readVar(0));
 }
 
-void ScummEngine_v90he::o90_unknown35() {
+void ScummEngine_v90he::o90_getPolygonOverlap() {
 	// Polygons related
 	int args[32];
 	int args2[32];
@@ -1072,7 +1072,7 @@ void ScummEngine_v90he::o90_unknown35() {
 	case 9:
 		break;
 	default:
-		error("o90_unknown35: default case %d", subOp);
+		error("o90_getPolygonOverlap: default case %d", subOp);
 	}
 	push(0);
 }
@@ -1129,7 +1129,7 @@ void ScummEngine_v90he::o90_dim2dim2Array() {
 	defineArray(fetchScriptWord(), data, dim2start, dim2end, dim1start, dim1end);
 }
 
-void ScummEngine_v90he::o90_unknown3A() {
+void ScummEngine_v90he::o90_sortArray() {
 	// Sorts array via qsort
 	int subOp = fetchScriptByte();
 
@@ -1143,12 +1143,12 @@ void ScummEngine_v90he::o90_unknown3A() {
 		pop();
 		break;
 	default:
-		error("o90_unknown3A: Unknown case %d", subOp);
+		error("o90_sortArray: Unknown case %d", subOp);
 	}
-	debug(1,"o90_unknown3A stub (%d)", subOp);
+	debug(1,"o90_sortArray stub (%d)", subOp);
 }
 
-void ScummEngine_v90he::o90_unknown44() {
+void ScummEngine_v90he::o90_getObjectData() {
 	// Object releated
 	int subOp = fetchScriptByte();
 	subOp -= 32;
@@ -1194,12 +1194,12 @@ void ScummEngine_v90he::o90_unknown44() {
 		push(0);
 		break;
 	default:
-		error("o90_unknown44: Unknown case %d", subOp);
+		error("o90_getObjectData: Unknown case %d", subOp);
 	}
-	debug(1,"o90_unknown44 stub (%d)", subOp);
+	debug(1,"o90_getObjectData stub (%d)", subOp);
 }
 
-void ScummEngine_v90he::o90_unknown94() {
+void ScummEngine_v90he::o90_getPaletteData() {
 	int subOp = fetchScriptByte();
 	subOp -= 45;
 
@@ -1231,13 +1231,13 @@ void ScummEngine_v90he::o90_unknown94() {
 		pop();
 		break;
 	default:
-		error("o90_unknown94: Unknown case %d", subOp);
+		error("o90_getPaletteData: Unknown case %d", subOp);
 	}
 	push(0);
-	debug(1,"o90_unknown94 stub (%d)", subOp);
+	debug(1,"o90_getPaletteData stub (%d)", subOp);
 }
 
-void ScummEngine_v90he::o90_unknown9E() {
+void ScummEngine_v90he::o90_paletteOps() {
 	int subOp = fetchScriptByte();
 	subOp -= 57;
 
@@ -1276,9 +1276,9 @@ void ScummEngine_v90he::o90_unknown9E() {
 	case 198:
 		break;
 	default:
-		error("o90_unknown9E: Unknown case %d", subOp);
+		error("o90_paletteOps: Unknown case %d", subOp);
 	}
-	debug(1,"o90_unknown9E stub (%d)", subOp);
+	debug(1,"o90_paletteOps stub (%d)", subOp);
 }
 
 

@@ -495,7 +495,7 @@ protected:
 	int _numInventory;
 	int _numNewNames, _numGlobalScripts;
 	int _numActors, _numRoomVariables;
-	int _numPalettes, _numSprites, _numTalkies;
+	int _numPalettes, _numSprites, _numTalkies, _numUnk;
 public:
 	int _numLocalScripts, _numImages, _numRooms, _numScripts, _numSounds;	// Used by HE games
 	int _numCostumes;	// FIXME - should be protected, used by Actor::remapActorPalette
@@ -1331,6 +1331,8 @@ public:
 	byte VAR_NUM_CHARSETS;
 	byte VAR_NUM_GLOBAL_OBJS;
 	byte VAR_NUM_SPRITES;
+	byte VAR_NUM_PALETTES;
+	byte VAR_NUM_UNK;
 	byte VAR_POLYGONS_ONLY;
 	byte VAR_WINDOWS_VERSION;
 	byte VAR_WIZ_TCOLOR;

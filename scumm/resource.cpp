@@ -2312,7 +2312,7 @@ void ScummEngine::readMAXS(int blockSize) {
 		_numLocalScripts = _fileHandle.readUint16LE();
 		_fileHandle.readUint16LE(); // heap related
 		_numPalettes = _fileHandle.readUint16LE();
-		_fileHandle.readUint16LE(); // unknown
+		_numUnk = _fileHandle.readUint16LE();
 		_numTalkies = _fileHandle.readUint16LE();
 		_numNewNames = 10;
 
