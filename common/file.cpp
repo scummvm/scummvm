@@ -83,6 +83,15 @@ FILE *File::fopenNoCase(const char *filename, const char *directory, const char 
 		file = fopen(buf, mode);
 	}
 
+	//
+	// Try again, with file name capitalized
+	//
+	if (!file) {
+		ptr = buf + offsetToFileName;
+		*ptr = toupper(*ptr);
+		file = fopen(buf, mode);
+	}
+
 	return file;
 }
 
