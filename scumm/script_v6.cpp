@@ -2808,9 +2808,7 @@ void Scumm_v6::o6_stampObject() {
 		int objnum = getObjectIndex(object);
 		if (objnum == -1)
 			return;
-		if (x != -1) {
-			setObjectState(object, state, x, y);
-		}
+		setObjectState(object, state, x, y);
 		drawObject(objnum, 0);
 		warning("o6_stampObject: (%d at (%d,%d) state %d)", object, x, y, state);
 		
