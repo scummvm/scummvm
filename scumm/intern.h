@@ -278,10 +278,6 @@ protected:
 	byte VAR_SENTENCE_VERB;
 	byte VAR_SENTENCE_OBJECT1;
 	byte VAR_SENTENCE_OBJECT2;
-
-	byte VAR_ACTIVE_VERB;
-	byte VAR_ACTIVE_OBJECT1;
-	byte VAR_ACTIVE_OBJECT2;
 };
 
 class Scumm_v4 : public Scumm_v3 {

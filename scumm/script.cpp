@@ -759,9 +759,16 @@ void Scumm::checkAndRunSentenceScript() {
 		if (_sentence[_sentenceNum].unk2 && _sentence[_sentenceNum].objectB == _sentence[_sentenceNum].objectA)
 			return;
 
-	_localParamList[0] = _sentence[_sentenceNum].verb;
-	_localParamList[1] = _sentence[_sentenceNum].objectA;
-	_localParamList[2] = _sentence[_sentenceNum].objectB;
+	if (_features & GF_AFTER_V2) {
+		_scummVars[VAR_ACTIVE_VERB] = _sentence[_sentenceNum].verb;
+		_scummVars[VAR_ACTIVE_OBJECT1] = _sentence[_sentenceNum].objectA;
+		_scummVars[VAR_ACTIVE_OBJECT2] = _sentence[_sentenceNum].objectB;
+		_scummVars[VAR_VERB_ALLOWED] = (0 != getVerbEntrypoint(_sentence[_sentenceNum].objectA, _sentence[_sentenceNum].verb));
+	} else {
+		_localParamList[0] = _sentence[_sentenceNum].verb;
+		_localParamList[1] = _sentence[_sentenceNum].objectA;
+		_localParamList[2] = _sentence[_sentenceNum].objectB;
+	}
 	_currentScript = 0xFF;
 	if (sentenceScript)
 		runScript(sentenceScript, 0, 0, _localParamList);
