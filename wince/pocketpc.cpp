@@ -27,7 +27,7 @@
 
 #define MAX(a,b) (((a)<(b)) ? (b) : (a))
 #define MIN(a,b) (((a)>(b)) ? (b) : (a))
-#define POCKETSCUMM_BUILD "042102"
+#define POCKETSCUMM_BUILD "050102"
 
 #define VERSION "Build " POCKETSCUMM_BUILD " (VM " SCUMMVM_CVS ")"
 
@@ -44,7 +44,7 @@ extern void startScan();
 extern void endScanPath();
 extern void abortScanPath();
 
-void registry_init();
+void load_key_mapping();
 void keypad_init();
 
 extern void Cls();
@@ -55,7 +55,6 @@ extern void startScan();
 extern void endScanPath();
 extern void abortScanPath();
 
-void registry_init();
 void keypad_init();
 
 class OSystem_WINCE3 : public OSystem {
@@ -140,9 +139,7 @@ private:
 	Event _last_mouse_event;
 	HMODULE hInst;
 	HWND hWnd;
-	bool _display_cursor;
-	bool _simulate_right_up;
-
+	bool _display_cursor;	
 
 	enum {
 		DF_FORCE_FULL_ON_PALETTE = 1,
@@ -356,6 +353,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLin
 	sound_activated = true;
 	hide_toolbar = false;
 
+	scummcfg = new Config("scummvm.ini", "scummvm");
+
 	argv[0] = NULL;
 	argv[1] = GameSelector();
 	sprintf(argdir, "-p%s", _directory);
@@ -363,8 +362,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLin
 
 	if (!argv[1])
 		return 0;
-
-	scummcfg = new Config("scummvm.ini", "scummvm");
 
 	if (detector.detectMain(argc, argv))
 		return (-1);
@@ -386,8 +383,12 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLin
 		Scumm *scumm = Scumm::createFromDetector(&detector, system);
 		g_scumm = scumm;
 
+		g_scumm->_sound_volume_master = 0;
+		g_scumm->_sound_volume_music = detector._music_volume;
+		g_scumm->_sound_volume_sfx = detector._sfx_volume;
+
 		keypad_init();
-		registry_init();
+		load_key_mapping();
 		
 		hide_cursor = TRUE;
 		if (scumm->_gameId == GID_SAMNMAX || scumm->_gameId == GID_FT || scumm->_gameId == GID_DIG)
@@ -427,14 +428,17 @@ LRESULT CALLBACK OSystem_WINCE3::WndProc(HWND hWnd, UINT message, WPARAM wParam,
 
 	case WM_ERASEBKGND:
 		{
+			
 			RECT rc;
 			HDC hDC;
-			GetClientRect(hWnd, &rc);
-			rc.top = 200;
-			hDC = GetDC(hWnd);
-			if(rc.top < rc.bottom)
-				FillRect(hDC, &rc, (HBRUSH)GetStockObject(BLACK_BRUSH));
-			ReleaseDC(hWnd, hDC);			
+			if (!GetScreenMode()) {
+				GetClientRect(hWnd, &rc);
+				rc.top = 200;
+				hDC = GetDC(hWnd);
+				if(rc.top < rc.bottom)
+					FillRect(hDC, &rc, (HBRUSH)GetStockObject(BLACK_BRUSH));
+				ReleaseDC(hWnd, hDC);			
+			}			
 		}
 		return 1;
 
@@ -465,6 +469,18 @@ LRESULT CALLBACK OSystem_WINCE3::WndProc(HWND hWnd, UINT message, WPARAM wParam,
 		if (!hide_toolbar)
 			toolbar_drawn = false;
 //		SHHandleWMActivate(hWnd, wParam, lParam, &sai, SHA_INPUTDIALOG);
+		if (LOWORD(wParam) == WA_ACTIVE) {
+			if (GetScreenMode()) {		
+				SHSipPreference(hWnd, SIP_FORCEDOWN);
+				SHFullScreen(hWnd, SHFS_HIDETASKBAR);
+				MoveWindow(hWnd, 0, 0, GetSystemMetrics(SM_CXSCREEN), GetSystemMetrics(SM_CYSCREEN), TRUE);
+				SetCapture(hWnd);
+			}
+			else {
+				SHFullScreen(hWnd, SHFS_SHOWTASKBAR);
+				MoveWindow(hWnd, 0, 0, GetSystemMetrics(SM_CYSCREEN), GetSystemMetrics(SM_CXSCREEN), TRUE);
+			}
+		}
 		return 0;
 
 	case WM_HIBERNATE:
@@ -518,12 +534,16 @@ LRESULT CALLBACK OSystem_WINCE3::WndProc(HWND hWnd, UINT message, WPARAM wParam,
       break;
 
 		case IDC_LANDSCAPE:
-			SHFullScreen (hWnd, SHFS_HIDESIPBUTTON | SHFS_HIDETASKBAR | SHFS_HIDESTARTICON);
-			InvalidateRect(HWND_DESKTOP, NULL, TRUE);
+			//SHFullScreen (hWnd, SHFS_HIDESIPBUTTON | SHFS_HIDETASKBAR | SHFS_HIDESTARTICON);
+			//InvalidateRect(HWND_DESKTOP, NULL, TRUE);
 			SetScreenMode(!GetScreenMode());
 			//SHSipPreference(hWnd,SIP_FORCEDOWN);
+			//MoveWindow(hWnd, 0, 0, GetSystemMetrics(SM_CXSCREEN), GetSystemMetrics(SM_CYSCREEN), TRUE);
+			//SetCapture(hWnd); // to prevent input panel from getting taps						
+			SHSipPreference(hWnd, SIP_FORCEDOWN);
+			SHFullScreen(hWnd, SHFS_HIDETASKBAR);
 			MoveWindow(hWnd, 0, 0, GetSystemMetrics(SM_CXSCREEN), GetSystemMetrics(SM_CYSCREEN), TRUE);
-			SetCapture(hWnd); // to prevent input panel from getting taps						
+			SetCapture(hWnd);
 			if (!hide_toolbar)
 				toolbar_drawn = false;
 			break;
@@ -554,12 +574,6 @@ LRESULT CALLBACK OSystem_WINCE3::WndProc(HWND hWnd, UINT message, WPARAM wParam,
 		break;
 
 	case WM_KEYUP:
-		if (wParam) {
-			if (wm->_simulate_right_up) {
-					wm->_event.event_code = EVENT_RBUTTONUP;
-					wm->_simulate_right_up = false;
-			}
-		}
 		break;
 
 	case WM_MOUSEMOVE:
@@ -633,10 +647,19 @@ LRESULT CALLBACK OSystem_WINCE3::WndProc(HWND hWnd, UINT message, WPARAM wParam,
 					}
 					else
 					{
+						HDC hDC;
+						PAINTSTRUCT ps;
+
 						SetScreenMode(0); // restore normal tap logic
-						SHSipPreference(hWnd,SIP_UP);
+						//SHSipPreference(hWnd,SIP_UP);
 						ReleaseCapture();
-						InvalidateRect(HWND_DESKTOP, NULL, TRUE);
+						//InvalidateRect(HWND_DESKTOP, NULL, TRUE);		
+						SHFullScreen(hWnd, SHFS_HIDESIPBUTTON | SHFS_HIDETASKBAR | SHFS_HIDESTARTICON);
+						MoveWindow(hWnd, 0, 0, GetSystemMetrics(SM_CYSCREEN), GetSystemMetrics(SM_CXSCREEN), TRUE);
+						SetWindowPos(hWnd, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE|SWP_NOSIZE);
+						SetForegroundWindow(hWnd);						
+						hDC = BeginPaint (hWnd, &ps);
+						EndPaint (hWnd, &ps);
 					}				
 				}			
 			}
@@ -694,81 +717,75 @@ LRESULT CALLBACK OSystem_WINCE3::WndProc(HWND hWnd, UINT message, WPARAM wParam,
    return 0;
 }
 
-/*************** Registry support ***********/
+/*************** Specific config support ***********/
 
-void registry_init() {
-	 HKEY	hkey;
-	 DWORD	disposition;
-	 DWORD  keyType, keySize, dummy;
+void load_key_mapping() {
 	 unsigned char actions[NUMBER_ACTIONS];
+	 const char		*current;
+	 int			i;
 
 	 memset(actions, 0, NUMBER_ACTIONS);
 
-	 if(RegCreateKeyEx(HKEY_CURRENT_USER, TEXT("Software\\PocketSCUMM"), 
-		 0, NULL, 0, 0, NULL, &hkey, &disposition) == ERROR_SUCCESS) {
+	 current = scummcfg->get("ActionKeys", "wince");
+	 if (current) {
+		for (i=0; i<NUMBER_ACTIONS; i++) {
+			char x[6];
+			int j;
 
-		 keyType = REG_DWORD;
-		 keySize = sizeof(DWORD);
-		 if (RegQueryValueEx(hkey, TEXT("VolumeMaster"), NULL, &keyType, 
-						 (unsigned char*)&dummy, &keySize) == ERROR_SUCCESS) 
-					g_scumm->_sound_volume_master = (uint16)dummy;
-		 else
-					g_scumm->_sound_volume_master = 100;
-		 
-		 if (RegQueryValueEx(hkey, TEXT("VolumeMusic"), NULL, &keyType, 
-						 (unsigned char*)&dummy, &keySize) == ERROR_SUCCESS) 
-					g_scumm->_sound_volume_music = (uint16)dummy;
-		 else
-					g_scumm->_sound_volume_music = 60;		 
-		 if (RegQueryValueEx(hkey, TEXT("VolumeSfx"), NULL, &keyType, 
-						 (unsigned char*)&dummy, &keySize) == ERROR_SUCCESS) 
-					g_scumm->_sound_volume_sfx = (uint16)dummy;
-		 else
-					g_scumm->_sound_volume_sfx = 100;		 
-		 keyType = REG_BINARY;
-		 keySize = NUMBER_ACTIONS;
-		 memset(actions, 0, sizeof(actions));
-		 RegQueryValueEx(hkey, TEXT("ActionsKeys"), NULL, &keyType, 
-						 actions, &keySize);
-		 setActionKeys(actions);		 
-		 actions[0] = ACTION_PAUSE;
-		 actions[1] = ACTION_SAVE;
-		 actions[2] = ACTION_QUIT;
-		 actions[3] = ACTION_SKIP;
-		 actions[4] = ACTION_HIDE;
-		 RegQueryValueEx(hkey, TEXT("ActionsTypes"), NULL, &keyType,
-						 actions, &keySize);
-		 setActionTypes(actions);
-
-		 RegCloseKey(hkey);
+			memset(x, 0, sizeof(x));
+			memcpy(x, current + 3 * i, 2);
+			sscanf(x, "%x", &j);
+			actions[i] = j;
+		}
 	 }
+	 setActionKeys(actions);
+
+	 memset(actions, 0, NUMBER_ACTIONS);
+
+	 actions[0] = ACTION_PAUSE;
+	 actions[1] = ACTION_SAVE;
+	 actions[2] = ACTION_QUIT;
+	 actions[3] = ACTION_SKIP;
+	 actions[4] = ACTION_HIDE;
+
+	 current = scummcfg->get("ActionTypes", "wince");
+	 if (current) {
+		for (i=0; i<NUMBER_ACTIONS; i++) {
+			char x[6];
+			int j;
+
+			memset(x, 0, sizeof(x));
+			memcpy(x, current + 3 * i, 2);
+			sscanf(x, "%x", &j);
+			actions[i] = j;
+		}
+	 }
+	 setActionTypes(actions);
 }
 					
-void registry_save() {
-	 HKEY	hkey;
-	 DWORD	disposition;
-	 DWORD  keyType, keySize, dummy;
+void save_key_mapping() {
+	 char tempo[1024];
+	 const unsigned char *work;
+	 int i;
 
-	 if(RegCreateKeyEx(HKEY_CURRENT_USER, TEXT("Software\\PocketSCUMM"), 
-		 0, NULL, 0, 0, NULL, &hkey, &disposition) == ERROR_SUCCESS) {
-
-		 keyType = REG_DWORD;
-		 keySize = sizeof(DWORD);
-		 dummy = g_scumm->_sound_volume_master;
-		 RegSetValueEx(hkey, TEXT("VolumeMaster"), 0, keyType, (unsigned char*)&dummy, keySize);
-		 dummy = g_scumm->_sound_volume_music;
-		 RegSetValueEx(hkey, TEXT("VolumeMusic"), 0, keyType, (unsigned char*)&dummy, keySize);		 
-		 dummy = g_scumm->_sound_volume_sfx;
-		 RegSetValueEx(hkey, TEXT("VolumeSfx"), 0, keyType, (unsigned char*)&dummy, keySize);		 
-		 keyType = REG_BINARY;
-		 keySize = NUMBER_ACTIONS;
-		 RegSetValueEx(hkey, TEXT("ActionsKeys"), 0, keyType, getActionKeys(), 
-						keySize);	
-		 RegSetValueEx(hkey, TEXT("ActionsTypes"), 0, keyType, getActionTypes(),
-						keySize);
-
-		 RegCloseKey(hkey);
+	 tempo[0] = '\0';
+	 work = getActionKeys();
+	 for (i=0; i<NUMBER_ACTIONS; i++) {
+		 char x[4];
+		 sprintf(x, "%.2x ", work[i]);
+		 strcat(tempo, x);
 	 }
+	 scummcfg->set("ActionKeys", tempo, "wince");
+	 tempo[0] = '\0';
+	 work = getActionTypes();
+	 for (i=0; i<NUMBER_ACTIONS; i++) {
+		 char x[3];
+		 sprintf(x, "%.2x ", work[i]);
+		 strcat(tempo, x);
+	 }
+	 scummcfg->set("ActionTypes", tempo, "wince");
+
+	 scummcfg->flush();
 }
 
 /*************** Hardware keys support ***********/
@@ -779,9 +796,10 @@ void OSystem_WINCE3::addEventKeyPressed(int ascii_code) {
 }
 
 void OSystem_WINCE3::addEventRightButtonClicked() {
-	_last_mouse_event.event_code = EVENT_RBUTTONDOWN;
-	_event = _last_mouse_event;
-	_simulate_right_up = true;
+	OSystem_WINCE3* system;
+	system = (OSystem_WINCE3*)g_scumm->_system;
+	
+	system->addEventKeyPressed(9);
 }
 
 void action_right_click() {

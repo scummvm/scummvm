@@ -3,9 +3,13 @@
 // Browse directories to locate SCUMM games
 
 #include "stdafx.h"
+#include <assert.h>
 #include <Winuser.h>
 #include <Winnls.h>
 #include "resource.h"
+#include "scumm.h"
+
+extern Config *scummcfg;
 
 #define MAX_GAMES 20
 
@@ -41,14 +45,14 @@ static const ScummGame GameList[] = {
 	},
 	{ 
 		 "Indiana Jones 3 (new)", 
-	     "Buggy, unplayable", 
+	     "Buggy, playable a bit", 
 		 "indy3", "", "", 
 		 "indy3",
 	     0 
 	},
 	{	 
 		 "Zak Mc Kracken (new)",
-		 "Buggy, unplayable",
+		 "Buggy, playable a bit",
 		 "zak256", "", "",
 		 "zak256",
 		 0
@@ -69,14 +73,14 @@ static const ScummGame GameList[] = {
 	},
 	{
 		 "Loom (VGA)",
-		 "Completable",
+		 "Completable, MP3 audio",
 		 "loomcd", "", "",
 		 "loomcd",
 		 0
 	},
 	{
 		 "Monkey Island 1 (VGA)",
-		 "Completable, no music",
+		 "Completable, MP3 music",
 		 "", "MONKEY.000", "MONKEY.001",
 		 "monkey",
 		 0
@@ -172,62 +176,51 @@ void setFindGameDlgHandle(HWND x) {
 }
 
 bool loadGameSettings() {
-	HKEY			hkey;
-	DWORD			disposition;
-	DWORD			keyType, keySize, dummy;
 	int				index;
 	int				i;
-	unsigned char	references[MAX_PATH];
+	const char		*current;
 
 	prescanning = FALSE;
 
-	if(RegCreateKeyEx(HKEY_CURRENT_USER, TEXT("Software\\PocketSCUMM"), 
-		 0, NULL, 0, 0, NULL, &hkey, &disposition) == ERROR_SUCCESS) {
-
-		 keyType = REG_DWORD;
-		 keySize = sizeof(DWORD);
-		 if (RegQueryValueEx(hkey, TEXT("GamesInstalled"), NULL, &keyType, 
-						 (unsigned char*)&dummy, &keySize) == ERROR_SUCCESS) 
-					index = dummy;
-		 else
-					return FALSE;
-
-		 installedGamesNumber = index;
-
-		 keyType = REG_BINARY;
-		 keySize = index;
-		 if (RegQueryValueEx(hkey, TEXT("GamesReferences"), NULL, &keyType, 
-						 references, &keySize) != ERROR_SUCCESS)
-					return FALSE;
-
-		 for (i=0; i<index; i++)
-			 gamesFound[references[i]] = 1;
-
-		 keyType = REG_SZ;
-		 keySize = MAX_PATH;
-		 if (RegQueryValueEx(hkey, TEXT("BasePath"), NULL, &keyType, (unsigned char*)basePath, &keySize) != ERROR_SUCCESS) {
-			basePath[0] = '\0';
-			basePath[1] = '\0';
-		 }
-
-		 for (i=0; i<index; i++) {
-			 char work[100];
-			 TCHAR keyname[100];
-
-			 gamesInstalled[i].reference = references[i];
-			 keySize = MAX_PATH;
-			 sprintf(work, "GamesDirectory%d", i);			 
-			 MultiByteToWideChar(CP_ACP, 0, work, strlen(work) + 1, keyname, sizeof(keyname));
-			 if (RegQueryValueEx(hkey, keyname, NULL, &keyType, (unsigned char*)gamesInstalled[i].directory, &keySize) != ERROR_SUCCESS)
-				 return FALSE;			 
-		 }
-		 
-		 RegCloseKey(hkey);
-		 displayFoundGames();
-		 return TRUE;
-	 }
-	else
+	current = scummcfg->get("GamesInstalled", "wince");
+	if (!current)
 		return FALSE;
+	index = atoi(current);
+
+	installedGamesNumber = index;
+
+	current = scummcfg->get("GamesReferences", "wince");
+	if (!current)
+		return FALSE;
+	for (i=0; i<index; i++) {
+		char x[6];
+		int j;
+
+		memset(x, 0, sizeof(x));
+		memcpy(x, current + 3 * i, 2);
+		sscanf(x, "%x", &j);
+		gamesFound[j] = 1;
+		gamesInstalled[i].reference = j;
+	}
+
+	current = scummcfg->get("BasePath", "wince");
+	if (!current)
+		return FALSE;
+	MultiByteToWideChar(CP_ACP, 0, current, strlen(current) + 1, basePath, sizeof(basePath));
+
+	for (i=0; i<index; i++) {
+		char keyName[100];
+
+		sprintf(keyName, "GamesDirectory%d", i);
+		current = scummcfg->get(keyName, "wince");
+		if (!current)
+			return FALSE;
+		MultiByteToWideChar(CP_ACP, 0, current, strlen(current) + 1, gamesInstalled[i].directory, sizeof(gamesInstalled[i].directory));
+	}
+
+	displayFoundGames();
+
+	return TRUE;
 }
 
 int countGameReferenced(int reference, int *infos) {
@@ -367,9 +360,8 @@ void startFindGame() {
 	//TCHAR			*tempo;
 	int				i = 0;
 	int		    	index = 0;
-	HKEY			hkey;
-	DWORD			disposition, keyType, keySize, dummy;
-	unsigned char	references[MAX_GAMES];
+	char			tempo[1024];
+	char		    workdir[MAX_PATH];	
 
 	prescanning = FALSE;
 
@@ -395,37 +387,32 @@ void startFindGame() {
 	// Save the results in the registry
 	SetDlgItemText(hwndDlg, IDC_FILEPATH, TEXT("Saving the results"));
 
-	for (i=0; i<index; i++)
-		references[i] = gamesInstalled[i].reference;
+	scummcfg->set("GamesInstalled", index, "wince");
 
-	if(RegCreateKeyEx(HKEY_CURRENT_USER, TEXT("Software\\PocketSCUMM"), 
-		 0, NULL, 0, 0, NULL, &hkey, &disposition) == ERROR_SUCCESS) {
+	tempo[0] = '\0';
+	for (i=0; i<index; i++) {
+		char x[3];
+		sprintf(x, "%.2x ", gamesInstalled[i].reference);
+		strcat(tempo, x);
+	}	
 
-		 keyType = REG_DWORD;
-		 keySize = sizeof(DWORD);
-		 dummy = index;
-		 RegSetValueEx(hkey, TEXT("GamesInstalled"), 0, keyType, (unsigned char*)&dummy, keySize);
-		 keyType = REG_BINARY;
-		 keySize = index;	
-		 RegSetValueEx(hkey, TEXT("GamesReferences"), 0, keyType, references, 
-						keySize);	
-		 keyType = REG_SZ;
-		 keySize = (wcslen(basePath) + 1) * 2;
-		 RegSetValueEx(hkey, TEXT("BasePath"), 0, keyType, (unsigned char*)basePath, keySize);
-		 for (i=0; i<index; i++) {
-			 char work[100];
-			 TCHAR keyname[100];
+	scummcfg->set("GamesReferences", tempo, "wince");
 
-			 sprintf(work, "GamesDirectory%d", i);
-			 MultiByteToWideChar(CP_ACP, 0, work, strlen(work) + 1, keyname, sizeof(keyname));
-			 keySize = (wcslen(gamesInstalled[i].directory) + 1) * 2;
-			 RegSetValueEx(hkey, keyname, 0, keyType, (unsigned char*)gamesInstalled[i].directory, keySize);				 
-		 }
-		 
-		 RegCloseKey(hkey);
-	 }
+	WideCharToMultiByte(CP_ACP, 0, basePath, wcslen(basePath) + 1, workdir, sizeof(workdir), NULL, NULL);
 
-	 SetDlgItemText(hwndDlg, IDC_FILEPATH, TEXT("Scan finished"));
+	scummcfg->set("BasePath", workdir, "wince");
+
+	for (i=0; i<index; i++) {
+		char keyName[100];
+
+		sprintf(keyName, "GamesDirectory%d", i);
+		WideCharToMultiByte(CP_ACP, 0, gamesInstalled[i].directory, wcslen(gamesInstalled[i].directory) + 1, workdir, sizeof(workdir), NULL, NULL);
+		scummcfg->set(keyName, workdir, "wince");
+	}
+
+	scummcfg->flush();
+
+	SetDlgItemText(hwndDlg, IDC_FILEPATH, TEXT("Scan finished"));
 
 }
 
