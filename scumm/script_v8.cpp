@@ -572,7 +572,7 @@ void Scumm_v8::decodeParseString(int m, int n)
 		error("decodeParseString: SO_PRINT_MUMBLE");
 		break;
 	default:
-		error("decodeParseString: default case");
+		error("decodeParseString: default case %d", b);
 	}
 }
 
@@ -1385,12 +1385,6 @@ void Scumm_v8::o6_kernelSetFunctions()
 	case 109:	// setPaletteShadow
 		setupShadowPalette(0, args[1], args[2], args[3], args[4], args[5]);
 		break;
-	case 115:	// getWalkBoxAt
-		warning("o6_kernelSetFunctions: getWalkBoxAt (len = %d)", len);
-		break;
-	case 116:	// isPointInBox
-		warning("o6_kernelSetFunctions: isPointInBox (len = %d)", len);
-		break;
 	case 118:	// blastShadowObject
 		enqueueObject(args[1], args[2], args[3], args[4], args[5], args[6], args[7], args[8], 3);
 		break;
@@ -1399,7 +1393,7 @@ void Scumm_v8::o6_kernelSetFunctions()
 		break;
 
 	default:
-		warning("o6_kernelSetFunctions: default case (len = %d)", len);
+		warning("o6_kernelSetFunctions: default case %d (len = %d)", args[0], len);
 	}
 }
 
@@ -1410,6 +1404,12 @@ void Scumm_v8::o6_kernelGetFunctions()
 	int len = getStackList(args, sizeof(args) / sizeof(args[0]));
 
 	switch (args[0]) {
+	case 0x73:	// getWalkBoxAt
+		push(getSpecialBox(args[1], args[2]));
+		break;
+	case 0x74:	// isPointInBox
+		push(checkXYInBoxBounds(args[3], args[1], args[2]));
+		break;
 	case 0xCE:		// getRGBSlot
 	case 0xD3:		// getKeyState
 	case 0xD7:		// getBox
@@ -1453,7 +1453,7 @@ void Scumm_v8::o6_kernelGetFunctions()
 		}
 		break;
 	default:
-		error("o6_kernelGetFunctions: default case (len = %d)", len);
+		error("o6_kernelGetFunctions: default case %d (len = %d)", args[0], len);
 	}
 
 }

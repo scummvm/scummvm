@@ -169,7 +169,7 @@ Box *Scumm::getBoxBaseAddr(int box)
 		return (Box *)(ptr + box * SIZEOF_BOX + 2);
 }
 
-int Scumm::getSpecialBox(int param1, int param2)
+int Scumm::getSpecialBox(int x, int y)
 {
 	int i;
 	int numOfBoxes;
@@ -183,7 +183,7 @@ int Scumm::getSpecialBox(int param1, int param2)
 		if (!(flag & kBoxInvisible) && (flag & kBoxPlayerOnly))
 			return (-1);
 
-		if (checkXYInBoxBounds(i, param1, param2))
+		if (checkXYInBoxBounds(i, x, y))
 			return (i);
 	}
 
