@@ -1422,8 +1422,8 @@ start_over_2:;
 		if (!_savedialog_flag)
 			goto start_over_2;
 		_saveload_row_curpos += 6;
-//    if (_saveload_row_curpos >= _num_savegame_rows)
-//      _saveload_row_curpos = _num_savegame_rows;
+		if (_saveload_row_curpos >= _num_savegame_rows)
+			_saveload_row_curpos = _num_savegame_rows;
 		goto strange_jump;
 	}
 
@@ -1459,6 +1459,8 @@ start_over_3:;
 		if (!_savedialog_flag)
 			goto start_over_3;
 		_saveload_row_curpos += 6;
+		if (_saveload_row_curpos >= _num_savegame_rows)
+			_saveload_row_curpos = _num_savegame_rows;
 		goto strange_jump;
 	}
 
