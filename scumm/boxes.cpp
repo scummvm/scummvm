@@ -232,7 +232,7 @@ int ScummEngine::getBoxScale(int box) {
  * At some point, we discovered that the old scale items (stored in rtScaleTable
  * resources) are in fact the same as (or rather, a predecessor of) the
  * scale slots used in COMI. While not being precomputed (and thus slightly
- * slower), they are more flexible, and most importantly, can cope with
+ * slower), scale slots are more flexible, and most importantly, can cope with
  * rooms higher than 200 pixels. That's an essential feature for DIG and FT
  * and in fact the lack of it caused various bugs in the past.
  *
@@ -252,7 +252,7 @@ void ScummEngine::convertScaleTableToScaleSlot(int slot) {
 		return;
 	
 	if (resptr[0] == resptr[199]) {
-		// The scale is constant This usually means we encountered one of the
+		// The scale is constant. This usually means we encountered one of the
 		// "broken" cases. We set pseudo scale item values which lead to a 
 		// constant scale of 255.
 		setScaleSlot(slot, 0, 0, 255, 0, 199, 255);
