@@ -1176,10 +1176,12 @@ void Gdi::drawBitmap(const byte *ptr, VirtScreen *vs, int x, int y, const int wi
 	if (_vm->_features & GF_SMALL_HEADER) {
 		smap_ptr = ptr;
 	} else if (_vm->_version == 8) {
-		// Skip to the skip to the BSTR->WRAP->OFFS chunk
+		// Skip to the BSTR->WRAP->OFFS chunk
 		smap_ptr = ptr + 24;
 	} else
 		smap_ptr = _vm->findResource(MKID('SMAP'), ptr);
+
+Common::hexdump(smap_ptr - 24, 48);
 
 	if (!smap_ptr) {
 		// This will go away eventually. HE 7.2 titles used different function
@@ -1219,7 +1221,7 @@ void Gdi::drawBitmap(const byte *ptr, VirtScreen *vs, int x, int y, const int wi
 		sx = 0;
 	}
 
-	while (numstrip && sx < _numStrips && x * 8 < _vm->_roomWidth) {
+	while (numstrip && sx < _numStrips && x * 8 < width) {
 		CHECK_HEAP;
 
 		if (y < vs->tdirty[sx])

@@ -900,11 +900,6 @@ public:
 protected:
 	/* Should be in Graphics class? */
 	uint16 _screenB, _screenH;
-
-//#ifdef V7_SMOOTH_SCROLLING_HACK
-//(see gfx.cpp line 1222)
-public: // HACK HACK HACK
-//#endif
 	int _roomHeight, _roomWidth;
 public:
 	int _screenHeight, _screenWidth;
