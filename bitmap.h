@@ -21,7 +21,6 @@
 #include "resource.h"
 
 #include <cstring>
-#include "tinygl/gl.h"
 
 class Bitmap : public Resource {
 public:
