@@ -288,6 +288,24 @@ void Cutaway::actionSpecialMove(int index) {
 
 	switch (index) {
 
+		// cred.cut - scale title
+		case 34:
+			{
+				BobSlot *bob = _graphics->bob(5);
+				bob->animating = false;
+				bob->x = 161;
+				bob->y = 200;
+				bob->scale = 100;
+
+				int i;
+				for (i = 5; i <= 100; i +=5) {
+					bob->scale = i;
+					bob->y -= 4;
+					_graphics->update();
+				}
+			}
+			break;
+
 		// cdint.cut - pan right fast
 		case 36:
 			{
@@ -666,11 +684,6 @@ byte *Cutaway::getCutawayAnim(byte *ptr, int header, CutawayAnim &anim) {
 
 	//debug(0, "[Cutaway::getCutawayAnim] header=%i", header);
 
-	// XXX why is Joe flying???
-	if (_logic->currentRoom() == 112 && header == 0) {
-		warning("Hack to show airplane instead of Joe at last credit scene");
-		header = 763;
-	}
 
 	anim.currentFrame = 0;
 	anim.originalFrame = 0;
@@ -1389,43 +1402,49 @@ void Cutaway::talk(char *nextFilename) {
 	}
 }
 
-
 int Cutaway::makeComplexAnimation(int16 currentImage, Cutaway::CutawayAnim *objAnim, int frameCount) {
-	AnimFrame cutAnim[17][30];
-	bool hasFrame[256];
+	// function MAKE_COMPLEX_ANIM, lines 816-883 in cutaway.c
+	int frameIndex[256];
 	int i;
 	int bobNum = objAnim[0].object;
 
-	memset(hasFrame, 0, sizeof(hasFrame));
+	memset(frameIndex, 0, sizeof(frameIndex));
+	debug(0, "[Cutaway::makeComplexAnimation] currentImage = %i", currentImage);
 
 	BobSlot *bob = _graphics->bob(bobNum);
 	bob->xflip = objAnim[0].flip;
 
 	for (i = 0; i < frameCount; i++) {
-		cutAnim[bobNum][i].frame = currentImage + objAnim[i].unpackFrame;
-		cutAnim[bobNum][i].speed = objAnim[i].speed;
-		hasFrame[objAnim[i].unpackFrame] = true;
+		_cutAnim[bobNum][i].frame = objAnim[i].unpackFrame;
+		_cutAnim[bobNum][i].speed = objAnim[i].speed;
+		frameIndex[objAnim[i].unpackFrame] = 1;
 	}
 
-	cutAnim[bobNum][frameCount].frame = 0;	
-	cutAnim[bobNum][frameCount].speed = 0;
+	_cutAnim[bobNum][frameCount].frame = 0;	
+	_cutAnim[bobNum][frameCount].speed = 0;
 
-	int uniqueFrameCount = 0;
+	int nextFrameIndex = 1;
 
 	for (i = 1; i < 256; i++)
-		if (hasFrame[i])
-			uniqueFrameCount++;
+		if (frameIndex[i])
+			frameIndex[i] = nextFrameIndex++;
+
+	for (i = 0; i < frameCount; i++) {
+		_cutAnim[bobNum][i].frame = currentImage + frameIndex[objAnim[i].unpackFrame];
+		debug(0, "_cutAnim[%i][%i].frame = %i", bobNum, i, _cutAnim[bobNum][i].frame);
+	}
 
 	for (i = 1; i < 256; i++) {
-		if (hasFrame[i]) {
+		if (frameIndex[i]) {
 			currentImage++;
+			debug(0, "bankUnpack(%i, %i, %i)", i, currentImage, objAnim[0].bank);
 			_graphics->bankUnpack(i, currentImage, objAnim[0].bank);
 		}
 	}
 
-	_graphics->bobAnimString(bobNum, cutAnim[bobNum]);
+	_graphics->bobAnimString(bobNum, _cutAnim[bobNum]);
 
-	return currentImage + 1;
+	return currentImage;
 }
 
 void Cutaway::handleText(

@@ -23,6 +23,7 @@
 #define QUEENCUTAWAY_H
 
 #include "queen/queen.h"
+#include "queen/graphics.h"
 
 namespace Queen {
 
@@ -30,6 +31,7 @@ class Graphics;
 class Logic;
 class Resource;
 class Walk;
+
 
 class Cutaway {
 	public:
@@ -204,6 +206,7 @@ class Cutaway {
 
 		int16 _currentImage;
 
+		AnimFrame _cutAnim[17][30];
 
 		Cutaway(
 				const char *filename, 
