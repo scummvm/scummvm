@@ -924,30 +924,30 @@ void ScummEngine_v6he::virtScreenLoad(int resIdx, int x1, int y1, int x2, int y2
 uint8 ScummEngine_v6he::virtScreenLoadUnpack(vsUnpackCtx *ctx, byte *data) {
 	uint8 decByte;
 	if (data != 0) {
-		ctx->num = 0;
+		ctx->type = 0;
 		ctx->ptr = data;
 		decByte = 0;
 	} else {
 		uint8 a;
-		if (ctx->num == 0) {
+		if (ctx->type == 0) {
 			a = *(ctx->ptr)++;
 			if (a & 1) {
-				ctx->num = 1;
+				ctx->type = 1;
 				ctx->b = *(ctx->ptr)++;
 			} else {
-				ctx->num = 2;
+				ctx->type = 2;
 			}
-			ctx->mask = a;
+			ctx->size = a;
 			a = (a >> 1) + 1;
 		} else {
- 			a = ctx->mask;
+ 			a = ctx->size;
 		}
-  		if (ctx->num == 2) {
+  		if (ctx->type == 2) {
   			ctx->b = *(ctx->ptr)++;
   		}
-  		ctx->mask = a - 1;
-  		if (ctx->mask == 0) {
-  			ctx->num = 0;
+  		ctx->size = a - 1;
+  		if (ctx->size == 0) {
+  			ctx->type = 0;
   		}
   		decByte = ctx->b;
 	}
@@ -1029,7 +1029,7 @@ int ScummEngine_v6he::virtScreenSavePack(byte *dst, byte *src, int len, int unk)
 				if (prevByte != curByte) {
 					ibeg = iend - 1;
 				}
-				if (iend - ibeg < 3) {
+				else if (iend - ibeg < 3) {
 					if (ibeg != 0) pass = true;
 					else flag = 1;
 				}

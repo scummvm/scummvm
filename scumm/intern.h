@@ -544,8 +544,8 @@ protected:
 		const char *desc;
 	};
 	struct vsUnpackCtx {
-		uint8 mask;
-		uint8 num;
+		uint8 size;
+		uint8 type;
 		uint8 b;
 		uint8 *ptr;
 	};
