@@ -3270,7 +3270,7 @@ void Part::setup(Player *player)
 	_transpose = 0;
 	_detune = 0;
 	_detune_eff = player->_detune;
-	_pitchbend_factor = 2;
+	_pitchbend_factor = ((g_scumm->_features & GID_SAMNMAX) ? 2 : 12);
 	_pitchbend = 0;
 	_effect_level = 64;
 	_program = 255;
@@ -3297,6 +3297,8 @@ void Part::uninit()
 	_player = NULL;
 	_next = NULL;
 	_prev = NULL;
+
+	update_pris(); // In case another player couldn't allocate all its parts
 }
 
 void Part::off()
