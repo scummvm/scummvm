@@ -1155,7 +1155,7 @@ void BamScene::updateCarAnimation() {
 		}
 
 		if (bdb->sfx == 99) {
-			_index = 0;
+			_lastSoundIndex = _index = 0;
 		}
 		else {
 			++_index;
