@@ -60,8 +60,8 @@ struct Box {				/* Internal walkbox file format */
 			int32 urx, ury;
 			int32 lrx, lry;
 			int32 llx, lly;
-			uint32 mask;	// FIXME - is 'mask' really here?
-			uint32 flags;	// FIXME - is 'flags' really here?
+			uint32 mask;
+			uint32 flags;
 			uint32 scaleSlot;
 			uint32 scale;
 			uint32 unk2;
@@ -90,6 +90,11 @@ byte ScummEngine::getMaskFromBox(int box) {
 
 	Box *ptr = getBoxBaseAddr(box);
 	if (!ptr)
+		return 0;
+
+	// WORKAROUND for bug #847827: This is a bug in the data files, as it also
+	// occurs with the original engine. We work around it here anyway.
+	if (_gameId == GID_INDY4 && _currentRoom == 225 && _roomResource == 94 && box == 8)
 		return 0;
 
 	if (_version == 8)
