@@ -31,7 +31,7 @@ graphics.
 #   install scripts
 #------------------------------------------------------------------------------
 %prep
-%setup -q -n scummvm
+%setup -q -n scummvm-%{version}
 
 %build
 make
