@@ -821,11 +821,9 @@ int Sound::isSoundRunning(int sound) const {
 			// getSoundStatus(), with a -1, will return the
 			// ID number of the first active music it finds.
 			if (_vm->_heversion >= 70 || _currentMusic)
-				return (_musicChannelHandle.isActive()) ? 1 : 0;
+				return (_musicChannelHandle.isActive());
 			else if (_vm->_imuse)
 				return (_vm->_imuse->getSoundStatus(sound));
-		} else if (sound > _vm->_numSounds) {
-			return _vm->_mixer->isSoundIDActive(sound);
 		}
 	}
 
@@ -835,7 +833,7 @@ int Sound::isSoundRunning(int sound) const {
 	if (isSoundInQueue(sound))
 		return 1;
 
-	if (!_vm->isResourceLoaded(rtSound, sound))
+	if (sound > _vm->_numSounds || !_vm->isResourceLoaded(rtSound, sound))
 		return 0;
 
 	if (_vm->_musicEngine)
