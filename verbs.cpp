@@ -262,7 +262,7 @@ void Scumm::setVerbObject(uint room, uint object, uint verb) {
 	if (whereIsObject(object) == WIO_FLOBJECT)
 		error("Can't grab verb image from flobject");
 
-	if(_features |= GF_SMALL_HEADER) {
+	if(_features & GF_SMALL_HEADER) {
 		for(i = _numObjectsInRoom; i>0; i--) {
 			if(_objs[i].obj_nr == object) {
 				findObjectInRoom(&foir, foImageHeader, object, room);
