@@ -2890,16 +2890,32 @@ void Scumm_v6::o6_pickOneOfDefault()
 }
 
 void Scumm_v6::o6_stampObject() {
-	// Full Throttle: FIXME
-	//		  Opcode is used when placing the bunny into the
-	//		  mine field. Some kind of drawBlastObject() wrapper
-	//	also used at least once in the humongous games
-	int object, x, y, image;
-	object = pop();
-	x = pop();
+	int object, x, y, state;
+
+	state = pop();
+	if (state == 0) {
+		state = 1;
+	}
 	y = pop();
-	image = pop();
-	warning("o6_stampObject: stub(%d at (%d,%d) image %d)", object, x, y, image);
+	x = pop();
+	object = pop();
+	if (object < 30) {
+		if (state == 0) {
+			state = 255;
+		}
+		warning("o6_stampObject: (%d at (%d,%d) scale %d)", object, x, y, state);
+		Actor *a = derefActor(object);
+		a->scalex = state;
+		a->scaley = state;
+		a->putActor(x, y, _currentRoom); // TODO
+//		drawActor(object, maskBufferPtr, x_y, scale_x_y);
+//		drawActor(object, mainBufferPtr, x_y, scale_x_y);
+		return;
+	}
+
+	warning("o6_stampObject: (%d at (%d,%d) state %d)", object, x, y, state);
+	setObjectState(object, state, x, y);
+	drawObject(getObjectIndex(object), 0);
 }
 
 void Scumm_v6::o6_stopTalking() {
