@@ -69,7 +69,7 @@ class Widget {
 protected:
 	Dialog *_parent;
 
-	_spriteInfo *_sprites;
+	SpriteInfo *_sprites;
 
 	struct WidgetSurface {
 		uint8 *_surface;
@@ -108,7 +108,7 @@ public:
 	virtual void onMouseUp(int x, int y) {}
 	virtual void onWheelUp(int x, int y) {}
 	virtual void onWheelDown(int x, int y) {}
-	virtual void onKey(_keyboardEvent *ke) {}
+	virtual void onKey(KeyboardEvent *ke) {}
 	virtual void onTick() {}
 
 	virtual void releaseMouse(int x, int y) {}
@@ -154,13 +154,13 @@ public:
 FontRendererGui::FontRendererGui(Gui *gui, int fontId)
 	: _gui(gui), _fontId(fontId) {
 	uint8 *font = _gui->_vm->_resman->openResource(fontId);
-	_frameHeader *head;
-	_spriteInfo sprite;
+	FrameHeader *head;
+	SpriteInfo sprite;
 
 	sprite.type = RDSPR_NOCOMPRESSION | RDSPR_TRANS;
 
 	for (int i = 0; i < SIZE_OF_CHAR_SET; i++) {
-		head = (_frameHeader *) _gui->_vm->fetchFrameHeader(font, i);
+		head = (FrameHeader *) _gui->_vm->fetchFrameHeader(font, i);
 		sprite.data = (uint8 *) (head + 1);
 		sprite.w = head->width;
 		sprite.h = head->height;
@@ -206,7 +206,7 @@ int FontRendererGui::getTextWidth(int textId) {
 }
 
 void FontRendererGui::drawText(char *text, int x, int y, int alignment) {
-	_spriteInfo sprite;
+	SpriteInfo sprite;
 	int i;
 
 	if (alignment != kAlignLeft) {
@@ -288,8 +288,8 @@ int Dialog::run() {
 		int16 newMouseX = _gui->_vm->_input->_mouseX;
 		int16 newMouseY = _gui->_vm->_input->_mouseY + 40;
 
-		_mouseEvent *me = _gui->_vm->_input->mouseEvent();
-		_keyboardEvent ke;
+		MouseEvent *me = _gui->_vm->_input->mouseEvent();
+		KeyboardEvent ke;
 		int32 keyboardStatus = _gui->_vm->_input->readKey(&ke);
 
 		if (keyboardStatus == RD_OK) {
@@ -381,7 +381,7 @@ int Dialog::run() {
 
 Widget::Widget(Dialog *parent, int states)
 	: _parent(parent), _numStates(states), _state(0) {
-	_sprites = (_spriteInfo *) calloc(states, sizeof(_spriteInfo));
+	_sprites = (SpriteInfo *) calloc(states, sizeof(SpriteInfo));
 	_surfaces = (WidgetSurface *) calloc(states, sizeof(WidgetSurface));
 
 	_hitRect.left = _hitRect.right = _hitRect.top = _hitRect.bottom = -1;
@@ -398,9 +398,9 @@ Widget::~Widget() {
 
 void Widget::createSurfaceImage(int state, uint32 res, int x, int y, uint32 pc) {
 	uint8 *file, *colTablePtr = NULL;
-	_animHeader *anim_head;
-	_frameHeader *frame_head;
-	_cdtEntry *cdt_entry;
+	AnimHeader *anim_head;
+	FrameHeader *frame_head;
+	CdtEntry *cdt_entry;
 	uint32 spriteType = RDSPR_TRANS;
 
 	// open anim resource file, point to base
@@ -430,7 +430,7 @@ void Widget::createSurfaceImage(int state, uint32 res, int x, int y, uint32 pc) 
 		// Points to just after last cdt_entry, i.e. start of colour
 		// table
 		colTablePtr = (uint8 *) (anim_head + 1) +
-			anim_head->noAnimFrames * sizeof(_cdtEntry);
+			anim_head->noAnimFrames * sizeof(CdtEntry);
 		break;
 	}
 
@@ -1077,7 +1077,7 @@ public:
 		_parent->onAction(this, kWheelDown);
 	}
 
-	virtual void onKey(_keyboardEvent *ke) {
+	virtual void onKey(KeyboardEvent *ke) {
 		if (_editable) {
 			if (ke->keycode == 8)
 				_parent->onAction(this, 8);
@@ -1415,7 +1415,7 @@ public:
 			} else {
 				// Prime system with a game cycle
 
-				// Reset the graphic 'buildit' list before a
+				// Reset the graphic 'BuildUnit' list before a
 				// new logic list (see fnRegisterFrame)
 				_gui->_vm->resetRenderLists();
 
@@ -1438,12 +1438,12 @@ void SaveLoadDialog::saveLoadError(char* text) {
 
 	// Wait for ESC or mouse click
 	while (1) {
-		_mouseEvent *me;
+		MouseEvent *me;
 
 		_gui->_vm->_graphics->updateDisplay();
 
 		if (_gui->_vm->_input->keyWaiting()) {
-			_keyboardEvent ke;
+			KeyboardEvent ke;
 
 			_gui->_vm->_input->readKey(&ke);
 			if (ke.keycode == 27)
@@ -1566,7 +1566,7 @@ void Gui::restartControl(void) {
 
 	// Reopen global variables resource & send address to interpreter -
 	// it won't be moving
-	_vm->_logic->setGlobalInterpreterVariables((int32 *) (_vm->_resman->openResource(1) + sizeof(_standardHeader)));
+	_vm->_logic->setGlobalInterpreterVariables((int32 *) (_vm->_resman->openResource(1) + sizeof(StandardHeader)));
 	_vm->_resman->closeResource(1);
 
 	DEMO = temp_demo_flag;
@@ -1579,7 +1579,7 @@ void Gui::restartControl(void) {
 
 	// Prime system with a game cycle
 
-	// Reset the graphic 'buildit' list before a new logic list
+	// Reset the graphic 'BuildUnit' list before a new logic list
 	// (see fnRegisterFrame)
 	_vm->resetRenderLists();
 

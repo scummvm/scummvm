@@ -154,7 +154,7 @@ void Router::freeAllRouteMem(void) {
 	}
 }
 
-int32 Router::routeFinder(Object_mega *ob_mega, Object_walkdata *ob_walkdata, int32 x, int32 y, int32 dir) {
+int32 Router::routeFinder(ObjectMega *ob_mega, ObjectWalkdata *ob_walkdata, int32 x, int32 y, int32 dir) {
 	/*********************************************************************
 	 * RouteFinder.C		polygon router with modular walks
 	 * 						21 august 94  
@@ -705,7 +705,7 @@ bool Router::addSlowInFrames(WalkData *walkAnim) {
 	return false;
 }
 
-void Router::earlySlowOut(Object_mega *ob_mega, Object_walkdata *ob_walkdata) {
+void Router::earlySlowOut(ObjectMega *ob_mega, ObjectWalkdata *ob_walkdata) {
 	int32 slowOutFrameNo;
 	int32 walk_pc;
 	WalkData *walkAnim;
@@ -2105,7 +2105,7 @@ int32 Router::checkTarget(int32 x, int32 y) {
 
 // THE SETUP ROUTINES
 
-void Router::loadWalkData(Object_walkdata *ob_walkdata) {
+void Router::loadWalkData(ObjectWalkdata *ob_walkdata) {
 	uint16 firstFrameOfDirection;
 	uint16 walkFrameNo;
 	uint32 frameCounter = 0; // starts at frame 0 of mega set
@@ -2330,7 +2330,7 @@ void Router::extractRoute() {
 	return;
 }
 
-void Router::setUpWalkGrid(Object_mega *ob_mega, int32 x, int32 y, int32 dir) {
+void Router::setUpWalkGrid(ObjectMega *ob_mega, int32 x, int32 y, int32 dir) {
 	// get walk grid file + extra grid into 'bars' & 'node' arrays
 	loadWalkGrid();
 
@@ -2395,7 +2395,7 @@ void Router::plotCross(int16 x, int16 y, uint8 colour) {
 }
 
 void Router::loadWalkGrid(void) {
-	_walkGridHeader floorHeader;
+	WalkGridHeader floorHeader;
 	uint8 *fPolygrid;
 	uint32 theseBars;
 	uint32 theseNodes;
@@ -2410,9 +2410,9 @@ void Router::loadWalkGrid(void) {
 		if (_walkGridList[i]) {
 			// open walk grid file
 			fPolygrid = _vm->_resman->openResource(_walkGridList[i]);
- 			fPolygrid += sizeof(_standardHeader);
- 			memmove((uint8 *) &floorHeader, fPolygrid, sizeof(_walkGridHeader));
- 			fPolygrid += sizeof(_walkGridHeader);
+ 			fPolygrid += sizeof(StandardHeader);
+ 			memmove((uint8 *) &floorHeader, fPolygrid, sizeof(WalkGridHeader));
+ 			fPolygrid += sizeof(WalkGridHeader);
 
 			// how many bars & nodes are we getting from this
 			// walkgrid file

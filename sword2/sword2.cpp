@@ -226,7 +226,7 @@ int32 Sword2Engine::initialiseGame(void) {
 	// res 1 is the globals list
 	file = _resman->openResource(1);
 	debug(5, "CALLING: SetGlobalInterpreterVariables");
-	_logic->setGlobalInterpreterVariables((int32 *) (file + sizeof(_standardHeader)));
+	_logic->setGlobalInterpreterVariables((int32 *) (file + sizeof(StandardHeader)));
 
 	// DON'T CLOSE VARIABLES RESOURCE - KEEP IT OPEN AT VERY START OF
 	// MEMORY SO IT CAN'T MOVE!
@@ -268,7 +268,7 @@ void Sword2Engine::gameCycle(void) {
 	if (_logic->getRunList()) {
 		// run the logic session UNTIL a full loop has been performed
 		do {
-			// reset the graphic 'buildit' list before a new
+			// reset the graphic 'BuildUnit' list before a new
 			// logic list (see fnRegisterFrame)
 			resetRenderLists();
 
@@ -296,7 +296,7 @@ void Sword2Engine::gameCycle(void) {
 }
 
 void Sword2Engine::go() {
-	_keyboardEvent ke;
+	KeyboardEvent ke;
 
 	debug(5, "CALLING: readOptionSettings");
 	_gui->readOptionSettings();

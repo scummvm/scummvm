@@ -22,7 +22,7 @@
 
 namespace Sword2 {
 
-typedef	struct {
+struct Memory {
 	uint32 state;
 	uint32 age;	// *not used*
 	uint32 size;
@@ -32,7 +32,7 @@ typedef	struct {
 	// visual display only
 	uint32 uid;
 	uint8 *ad;
-} mem;
+};
 
 enum {
 	MEM_null			= 0,	// null
@@ -78,7 +78,7 @@ private:
 	// VirtualDefrag.
 	int32 _suggestedStart;
 
-	mem *lowLevelAlloc(uint32 size, uint32 type, uint32 unique_id);
+	Memory *lowLevelAlloc(uint32 size, uint32 type, uint32 unique_id);
 	int32 defragMemory(uint32 req_size);
 
 	// Used to determine if the required size can be obtained if the
@@ -91,7 +91,7 @@ private:
 
 public:
 	// List of defined memory handles - each representing a block of memory
-	mem _memList[MAX_mem_blocks];
+	Memory _memList[MAX_mem_blocks];
 	uint32 _baseMemBlock;
 
 	MemoryManager(Sword2Engine *vm);
@@ -100,10 +100,10 @@ public:
 	int32 ptrToInt(const uint8 *p);
 	uint8 *intToPtr(int32 n);
 
-	mem *allocMemory(uint32 size, uint32 type, uint32 unique_id);
-	void freeMemory(mem *block);
-	void floatMemory(mem *block);
-	void lockMemory(mem *block);
+	Memory *allocMemory(uint32 size, uint32 type, uint32 unique_id);
+	void freeMemory(Memory *block);
+	void floatMemory(Memory *block);
+	void lockMemory(Memory *block);
 
 	// Debugging function
 	void displayMemory(void);

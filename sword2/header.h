@@ -38,7 +38,7 @@ namespace Sword2 {
 
 #define	NAME_LEN 34
 
-struct _standardHeader {
+struct StandardHeader {
 	uint8 fileType;			// Byte to define file type (see below)
 	uint8 compType;			// Type of file compression used ie.
 					// on whole file (see below)
@@ -106,7 +106,7 @@ enum {
 
 // Animation Header
 
-struct _animHeader {
+struct AnimHeader {
 	uint8 runTimeComp;	// Type of runtime compression used for the
 				// frame data (see below)
 	uint16 noAnimFrames;	// Number of frames in the anim (ie. no. of
@@ -135,7 +135,7 @@ enum {
 
 // CDT Entry
 
-struct _cdtEntry {
+struct CdtEntry {
 	int16 x;		// sprite x-coord OR offset to add to mega's
 				// feet x-coord to calc sprite y-coord
 	int16 y;		// sprite y-coord OR offset to add to mega's
@@ -158,7 +158,7 @@ enum {
 
 // Frame Header
 
-struct _frameHeader {
+struct FrameHeader {
 	uint32 compSize;	// Compressed size of frame - NB. compression
 				// type is now in Anim Header
 	uint16 width;		// Dimensions of frame
@@ -184,7 +184,7 @@ struct _frameHeader {
 // Goes at the beginning of a screen file after the standard header.
 // Gives offsets from start of table of each of the components
 
-struct _multiScreenHeader {
+struct MultiScreenHeader {
 	uint32 palette;
 	uint32 bg_parallax[2];
 	uint32 screen;
@@ -196,7 +196,7 @@ struct _multiScreenHeader {
 
 // Palette Data
 
-struct _palEntry {
+struct PalEntry {
 	uint8 red;
 	uint8 green;
 	uint8 blue;
@@ -205,7 +205,7 @@ struct _palEntry {
 
 // Screen Header
 
-struct _screenHeader {
+struct ScreenHeader {
 	uint16 width;		// dimensions of the background screen
 	uint16 height;
 	uint16 noLayers;	// number of layer areas
@@ -216,7 +216,7 @@ struct _screenHeader {
 // Note that all the layer headers are kept together, rather than being placed
 // before each layer mask, in order to simplify the sort routine.
 
-struct _layerHeader {
+struct LayerHeader {
 	uint16 x;		// coordinates of top-left pixel of area
 	uint16 y;
 	uint16 width;
@@ -246,7 +246,7 @@ struct _layerHeader {
 
 // Walk-Grid Header - taken directly from old "header.h" in STD_INC
 
-struct _walkGridHeader {
+struct WalkGridHeader {
 	int32 numBars;		// number of bars on the floor
 	int32 numNodes;		// number of nodes
 } GCC_PACK;
@@ -264,7 +264,7 @@ struct _walkGridHeader {
 
 #define	TREE_SIZE	3
 
-struct _object_hub {
+struct ObjectHub {
 	int32 type;			// type of object
 	uint32 logic_level;		// what level?
 	uint32 logic[TREE_SIZE];	// NOT USED
@@ -274,15 +274,15 @@ struct _object_hub {
 
 // (6) text module header
 
-struct _textHeader {
+struct TextHeader {
 	uint32 noOfLines;	// how many lines of text are there in this
 				// module
 } GCC_PACK;
 
 // a text file has:
 //
-//	_standardHeader
-//	_textHeader
+//	StandardHeader
+//	TextHeader
 //	look up table, to
 //	line of text,0
 //	line of text,0

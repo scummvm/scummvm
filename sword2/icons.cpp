@@ -25,12 +25,12 @@
 namespace Sword2 {
 
 int32 Logic::fnAddMenuObject(int32 *params) {
-	// params:	0 pointer to a menu_object structure to copy down
+	// params:	0 pointer to a MenuObject structure to copy down
 
 	assert(_vm->_totalTemp < TOTAL_engine_pockets);
 
 	// copy the structure to our in-the-engine list
-	memcpy(&_vm->_tempList[_vm->_totalTemp], _vm->_memory->intToPtr(params[0]), sizeof(menu_object));
+	memcpy(&_vm->_tempList[_vm->_totalTemp], _vm->_memory->intToPtr(params[0]), sizeof(MenuObject));
 	_vm->_totalTemp++;
 
 	// script continue
@@ -121,7 +121,7 @@ void Sword2Engine::buildMenu(void) {
 	for (j = 0; j < TOTAL_engine_pockets; j++) {
 		// not current end - meaning out over the end so move down
 		if (_masterMenuList[j].icon_resource && j != _totalMasters) {
-			memcpy(&_masterMenuList[_totalMasters++], &_masterMenuList[j], sizeof(menu_object));
+			memcpy(&_masterMenuList[_totalMasters++], &_masterMenuList[j], sizeof(MenuObject));
 
 			// moved down now so kill here
 			_masterMenuList[j].icon_resource = 0;
@@ -139,7 +139,7 @@ void Sword2Engine::buildMenu(void) {
 	for (j = 0; j < TOTAL_engine_pockets; j++) {
 		if (_tempList[j].icon_resource) {
 			// here's a new temp
-			memcpy(&_masterMenuList[_totalMasters++], &_tempList[j], sizeof(menu_object));
+			memcpy(&_masterMenuList[_totalMasters++], &_tempList[j], sizeof(MenuObject));
 		}
 	}
 
@@ -187,7 +187,7 @@ void Sword2Engine::buildMenu(void) {
 					icon_coloured = true;
 			}
 
-			icon = _resman->openResource(_masterMenuList[j].icon_resource) + sizeof(_standardHeader);
+			icon = _resman->openResource(_masterMenuList[j].icon_resource) + sizeof(StandardHeader);
 
 			// The coloured icon is stored directly after the
 			// greyed out one.
@@ -224,7 +224,7 @@ void Sword2Engine::buildSystemMenu(void) {
 	// rest will grey out
 
 	for (int i = 0; i < ARRAYSIZE(icon_list); i++) {
-		icon = _resman->openResource(icon_list[i]) + sizeof(_standardHeader);
+		icon = _resman->openResource(icon_list[i]) + sizeof(StandardHeader);
 		
 		// The only case when an icon is grayed is when the player
 		// is dead. Then SAVE is not available.

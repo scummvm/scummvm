@@ -207,8 +207,8 @@ int Logic::runScript(char *scriptData, char *objectData, uint32 *offset) {
 
 	bool checkPyramidBug = false;
 
-	_standardHeader *header = (_standardHeader *) scriptData;
-	scriptData += sizeof(_standardHeader) + sizeof(_object_hub);
+	StandardHeader *header = (StandardHeader *) scriptData;
+	scriptData += sizeof(StandardHeader) + sizeof(ObjectHub);
 
 	// The script data format:
 	//	int32_TYPE	1		Size of variable space in bytes
@@ -382,7 +382,7 @@ int Logic::runScript(char *scriptData, char *objectData, uint32 *offset) {
 		case CP_PUSH_DEREFERENCED_STRUCTURE:
 			// Push the address of a dereferenced structure
 			Read32ip(parameter);
-			ptrval = _vm->_memory->ptrToInt((const uint8 *) (objectData + sizeof(int32) + sizeof(_standardHeader) + sizeof(_object_hub) + parameter));
+			ptrval = _vm->_memory->ptrToInt((const uint8 *) (objectData + sizeof(int32) + sizeof(StandardHeader) + sizeof(ObjectHub) + parameter));
 			debug(5, "Push address of far variable (%x)", ptrval);
 			push(ptrval);
 			break;

@@ -91,19 +91,19 @@ enum {
 	POLISH_TEXT = 2
 };
 
-typedef	struct {
+struct TextBloc {
 	int16 x;
 	int16 y;
-	// RDSPR_ status bits - see defintion of _spriteInfo structure for
+	// RDSPR_ status bits - see defintion of SpriteInfo structure for
 	// correct size!
 	uint16 type;
-	mem *text_mem;
-} TextBloc;
+	Memory *text_mem;
+};
 
-typedef struct {
+struct LineInfo {
 	uint16 width;	// width of line in pixels
 	uint16 length;	// length of line in characters
-} LineInfo;
+};
 
 class FontRenderer {
 private:
@@ -121,11 +121,11 @@ private:
 	uint8 _borderPen;	// output pen colour of character borders
 
 	uint16 analyseSentence(uint8 *sentence, uint16 maxWidth, uint32 fontRes, LineInfo *line);
-	mem* buildTextSprite(uint8 *sentence, uint32 fontRes, uint8 pen, LineInfo *line, uint16 noOfLines);
+	Memory *buildTextSprite(uint8 *sentence, uint32 fontRes, uint8 pen, LineInfo *line, uint16 noOfLines);
 	uint16 charWidth(uint8 ch, uint32 fontRes);
 	uint16 charHeight(uint32 fontRes);
-	_frameHeader* findChar(uint8 ch, uint8 *charSet);
-	void copyChar(_frameHeader *charPtr, uint8 *spritePtr, uint16 spriteWidth, uint8 pen);
+	FrameHeader* findChar(uint8 ch, uint8 *charSet);
+	void copyChar(FrameHeader *charPtr, uint8 *spritePtr, uint16 spriteWidth, uint8 pen);
 	
 public:
 	FontRenderer(Sword2Engine *vm) : _vm(vm) {
@@ -133,7 +133,7 @@ public:
 			_blocList[i].text_mem = NULL;
 	}
 
-	mem* makeTextSprite(uint8 *sentence, uint16 maxWidth, uint8 pen, uint32 fontRes, uint8 border = BORDER_PEN);
+	Memory *makeTextSprite(uint8 *sentence, uint16 maxWidth, uint8 pen, uint32 fontRes, uint8 border = BORDER_PEN);
 
 	void killTextBloc(uint32 bloc_number);
 	void printTextBlocs(void);

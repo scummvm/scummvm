@@ -24,7 +24,7 @@ namespace Sword2 {
 
 void Input::writeKey(uint16 ascii, int keycode, int modifiers) {
 	if (_keyBuffer && _keyBacklog < MAX_KEY_BUFFER) {
-		_keyboardEvent *slot = &_keyBuffer[(_keyLogPos + _keyBacklog) % MAX_KEY_BUFFER];
+		KeyboardEvent *slot = &_keyBuffer[(_keyLogPos + _keyBacklog) % MAX_KEY_BUFFER];
 
 		slot->ascii = ascii;
 		slot->keycode = keycode;
@@ -46,7 +46,7 @@ bool Input::keyWaiting(void) {
  * @return RD_OK, or an error code to indicate there is no key waiting.
  */
 
-int32 Input::readKey(_keyboardEvent *ev) {
+int32 Input::readKey(KeyboardEvent *ev) {
 	if (!_keyBacklog)
 		return RDERR_NOKEYWAITING;
 

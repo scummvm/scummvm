@@ -26,7 +26,7 @@
 // global variable references
 // NB. 4 * <number from linc's Global Variables list>
 
-#define VAR(n)				(*(uint32 *) (g_sword2->_resman->_resList[1]->ad + sizeof(_standardHeader) + 4 * (n)))
+#define VAR(n)				(*(uint32 *) (g_sword2->_resman->_resList[1]->ad + sizeof(StandardHeader) + 4 * (n)))
 
 #define ID				VAR(0)
 #define RESULT				VAR(1)

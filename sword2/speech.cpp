@@ -86,7 +86,7 @@ int32 Logic::fnChoose(int32 *params) {
 
 	// the human is switched off so there will be no normal mouse engine
 
-	_mouseEvent *me;
+	MouseEvent *me;
 	uint32 i;
 	int hit;
 	uint8 *icon;
@@ -156,7 +156,7 @@ int32 Logic::fnChoose(int32 *params) {
 		for (i = 0; i < 15; i++) {
 			if (i < IN_SUBJECT) {
 				debug(5, " ICON res %d for %d", _subjectList[i].res, i);
-				icon = _vm->_resman->openResource(_subjectList[i].res) + sizeof(_standardHeader) + RDMENU_ICONWIDE * RDMENU_ICONDEEP;
+				icon = _vm->_resman->openResource(_subjectList[i].res) + sizeof(StandardHeader) + RDMENU_ICONWIDE * RDMENU_ICONDEEP;
 				_vm->_graphics->setMenuIcon(RDMENU_BOTTOM, (uint8) i, icon);
 				_vm->_resman->closeResource(_subjectList[i].res);
 			} else {
@@ -209,7 +209,7 @@ int32 Logic::fnChoose(int32 *params) {
 
 		// change all others to grey
 		if (i != (uint32) hit) {
-			icon = _vm->_resman->openResource(_subjectList[i].res) + sizeof(_standardHeader);
+			icon = _vm->_resman->openResource(_subjectList[i].res) + sizeof(StandardHeader);
 			_vm->_graphics->setMenuIcon(RDMENU_BOTTOM, (uint8) i, icon);
 			_vm->_resman->closeResource(_subjectList[i].res);
 		}
@@ -290,11 +290,11 @@ int32 Logic::fnTheyDo(int32 *params) {
 
 	uint32 null_pc = 5;		// 4th script - get-speech-state
 	char *raw_script_ad;
-	_standardHeader	*head;
+	StandardHeader *head;
 	int32 target = params[0];
 
 	// request status of target
-	head = (_standardHeader *) _vm->_resman->openResource(target);
+	head = (StandardHeader *) _vm->_resman->openResource(target);
 	if (head->fileType != GAME_OBJECT)
 		error("fnTheyDo %d not an object", target);
 
@@ -346,17 +346,17 @@ int32 Logic::fnTheyDoWeWait(int32 *params) {
 
 	// 'looping' flag is used as a sent command yes/no
 
-	Object_logic *ob_logic;
+	ObjectLogic *ob_logic;
 
 	uint32 null_pc = 5;		// 4th script - get-speech-state
 	char *raw_script_ad;
-	_standardHeader	*head;
+	StandardHeader *head;
 	int32 target = params[1];
 
 	// ok, see if the target is busy - we must request this info from the
 	// target object
 
-	head = (_standardHeader *) _vm->_resman->openResource(target);
+	head = (StandardHeader *) _vm->_resman->openResource(target);
 	if (head->fileType != GAME_OBJECT)
 		error("fnTheyDoWeWait %d not an object", target);
 
@@ -367,7 +367,7 @@ int32 Logic::fnTheyDoWeWait(int32 *params) {
 
 	_vm->_resman->closeResource(target);
 
-	ob_logic = (Object_logic *) _vm->_memory->intToPtr(params[0]);
+	ob_logic = (ObjectLogic *) _vm->_memory->intToPtr(params[0]);
 
 	if (!INS_COMMAND && RESULT == 1 && ob_logic->looping == 0) {
 		// first time so set up targets command if target is waiting
@@ -432,11 +432,11 @@ int32 Logic::fnWeWait(int32 *params) {
 
 	uint32 null_pc = 5;		// 4th script - get-speech-state
 	char *raw_script_ad;
-	_standardHeader	*head;
+	StandardHeader *head;
 	int32 target = params[0];
 
 	// request status of target
-	head = (_standardHeader *) _vm->_resman->openResource(target);
+	head = (StandardHeader *) _vm->_resman->openResource(target);
 	if (head->fileType != GAME_OBJECT)
 		error("fnWeWait: %d not an object", target);
 
@@ -474,17 +474,17 @@ int32 Logic::fnTimedWait(int32 *params) {
 
 	uint32 null_pc = 5;		// 4th script - get-speech-state
 	char *raw_script_ad;
-	Object_logic *ob_logic;
-	_standardHeader	*head;
+	ObjectLogic *ob_logic;
+	StandardHeader *head;
 	int32 target = params[1];
 
-	ob_logic = (Object_logic *) _vm->_memory->intToPtr(params[0]);
+	ob_logic = (ObjectLogic *) _vm->_memory->intToPtr(params[0]);
 
 	if (!ob_logic->looping)
 		ob_logic->looping = params[2];	// first time in
 
 	// request status of target
-	head = (_standardHeader *) _vm->_resman->openResource(target);
+	head = (StandardHeader *) _vm->_resman->openResource(target);
 	if (head->fileType != GAME_OBJECT)
 		error("fnTimedWait %d not an object", target);
 
@@ -556,10 +556,10 @@ int32 Logic::fnSpeechProcess(int32 *params) {
 	// note - we could save a var and ditch wait_state and check
 	// 'command' for non zero means busy
 
-	Object_speech *ob_speech;
+	ObjectSpeech *ob_speech;
 	int32 pars[9];
 
-	ob_speech = (Object_speech *) _vm->_memory->intToPtr(params[1]);
+	ob_speech = (ObjectSpeech *) _vm->_memory->intToPtr(params[1]);
 
 	debug(5, "  SP");
 
@@ -851,11 +851,11 @@ int32 Logic::fnISpeak(int32 *params) {
 	//		8 animation mode	0 lip synced,
 	//					1 just straight animation
 
-	_mouseEvent *me;
-	_animHeader *anim_head;
-	Object_logic *ob_logic;
-	Object_graphic *ob_graphic;
-	Object_mega *ob_mega;
+	MouseEvent *me;
+	AnimHeader *anim_head;
+	ObjectLogic *ob_logic;
+	ObjectGraphic *ob_graphic;
+	ObjectMega *ob_mega;
 	uint8 *anim_file;
 	uint32 local_text;
 	uint32 text_res;
@@ -869,12 +869,12 @@ int32 Logic::fnISpeak(int32 *params) {
   	uint32 rv;
 
 	// for text/speech testing & checking for correct file type
-	_standardHeader	*head;
+	StandardHeader *head;
 
 	// set up the pointers which we know we'll always need
 
-	ob_logic = (Object_logic *) _vm->_memory->intToPtr(params[S_OB_LOGIC]);
-	ob_graphic = (Object_graphic *) _vm->_memory->intToPtr(params[S_OB_GRAPHIC]);
+	ob_logic = (ObjectLogic *) _vm->_memory->intToPtr(params[S_OB_LOGIC]);
+	ob_graphic = (ObjectGraphic *) _vm->_memory->intToPtr(params[S_OB_GRAPHIC]);
 
 	// FIRST TIME ONLY: create the text, load the wav, set up the anim,
 	// etc.
@@ -926,7 +926,7 @@ int32 Logic::fnISpeak(int32 *params) {
 
 			if (_vm->_resman->checkValid(text_res)) {
 				// open the resource
-				head = (_standardHeader *) _vm->_resman->openResource(text_res);
+				head = (StandardHeader *) _vm->_resman->openResource(text_res);
 
 				if (head->fileType == TEXT_FILE) {
 					// if it's not an animation file
@@ -1016,7 +1016,7 @@ int32 Logic::fnISpeak(int32 *params) {
 			// use this direction table to derive the anim
 			// NB. ASSUMES WE HAVE A MEGA OBJECT!!
 
-			ob_mega = (Object_mega *) _vm->_memory->intToPtr(params[S_OB_MEGA]);
+			ob_mega = (ObjectMega *) _vm->_memory->intToPtr(params[S_OB_MEGA]);
 
 			// pointer to anim table
 			anim_table = (int32 *) _vm->_memory->intToPtr(params[S_DIR_TABLE]);
@@ -1294,12 +1294,12 @@ void Logic::locateTalker(int32 *params) {
 	//		8 animation mode	0 lip synced,
 	//					1 just straight animation
 
-	Object_mega *ob_mega;
+	ObjectMega *ob_mega;
 
 	uint8 *file;
-	_frameHeader *frame_head;
-	_animHeader *anim_head;
-	_cdtEntry *cdt_entry;
+	FrameHeader *frame_head;
+	AnimHeader *anim_head;
+	CdtEntry *cdt_entry;
 	uint16 scale;
 
 	// if there's no anim
@@ -1327,7 +1327,7 @@ void Logic::locateTalker(int32 *params) {
 
 		if (cdt_entry->frameType & FRAME_OFFSET) {
 			// this may be NULL
-			ob_mega = (Object_mega *) _vm->_memory->intToPtr(params[S_OB_MEGA]);
+			ob_mega = (ObjectMega *) _vm->_memory->intToPtr(params[S_OB_MEGA]);
 
 			// calc scale at which to print the sprite, based on
 			// feet y-coord & scaling constants (NB. 'scale' is
@@ -1394,13 +1394,13 @@ void Logic::formText(int32 *params) {
 	uint32 text_res;
 	uint8 *text;
 	uint32 textWidth;
-	Object_speech *ob_speech;
+	ObjectSpeech *ob_speech;
 
 	// should always be a text line, as all text is derived from line of
 	// text
 
 	if (params[S_TEXT]) {
-	 	ob_speech = (Object_speech *) _vm->_memory->intToPtr(params[S_OB_SPEECH]);
+	 	ob_speech = (ObjectSpeech *) _vm->_memory->intToPtr(params[S_OB_SPEECH]);
 
 		// establish the max width allowed for this text sprite
 

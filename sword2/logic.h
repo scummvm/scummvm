@@ -68,7 +68,7 @@ private:
 	uint32 _pc;
 
 	// each object has one of these tacked onto the beginning
-	_object_hub *_curObjectHub;
+	ObjectHub *_curObjectHub;
 
 	void processKillList(void);
 
@@ -83,28 +83,28 @@ private:
 
 	// FOR TEXT LINES IN SEQUENCE PLAYER
 
-	struct _sequenceTextInfo {
+	struct SequenceTextInfo {
 		uint32 textNumber;
 		uint16 startFrame;
 		uint16 endFrame;
-		mem *text_mem;
+		Memory *text_mem;
 		uint32 speechBufferSize;
 		uint16 *speech_mem;
 	};
 
-	_sequenceTextInfo _sequenceTextList[MAX_SEQUENCE_TEXT_LINES];
+	SequenceTextInfo _sequenceTextList[MAX_SEQUENCE_TEXT_LINES];
 
-	void createSequenceSpeech(_movieTextObject *sequenceText[]);
-	void clearSequenceSpeech(_movieTextObject *sequenceText[]);
+	void createSequenceSpeech(MovieTextObject *sequenceText[]);
+	void clearSequenceSpeech(MovieTextObject *sequenceText[]);
 
 	// array of these for subject menu build up
 
-	struct _subject_unit {
+	struct SubjectUnit {
 		uint32 res;
 		uint32 ref;
 	};
 
-	_subject_unit _subjectList[MAX_SUBJECT_LIST];
+	SubjectUnit _subjectList[MAX_SUBJECT_LIST];
 
 	// when not playing a wav we calculate the speech time based upon
 	// length of ascii
@@ -138,7 +138,7 @@ private:
 	uint32 _totalScreenManagers;
 	uint32 _startRes;
 
-	struct _startup {
+	struct StartUp {
 		char description[MAX_description];
 
 		// id of screen manager object
@@ -150,7 +150,7 @@ private:
 		uint32 key;
 	};
 
-	_startup _startList[MAX_starts];
+	StartUp _startList[MAX_starts];
 
 	uint32 initStartMenu(void);
 
@@ -202,12 +202,12 @@ public:
 	void setGlobalInterpreterVariables(int32 *vars);
 	int runScript(char *scriptData, char *objectData, uint32 *offset);
 
-	struct _event_unit {
+	struct EventUnit {
 		uint32 id;
 		uint32 interact_id;
 	};
 
-	_event_unit _eventList[MAX_events];
+	EventUnit _eventList[MAX_events];
 
 	void sendEvent(uint32 id, uint32 interact_id);
 	void setPlayerActionEvent(uint32 id, uint32 interact_id);
@@ -218,12 +218,12 @@ public:
 
 	uint32 countEvents(void);
 
-	struct _sync_unit {
+	struct SyncUnit {
 		uint32 id;
 		uint32 sync;
 	};
 
-	_sync_unit _syncList[MAX_syncs];
+	SyncUnit _syncList[MAX_syncs];
 
 	void clearSyncs(uint32 id);
 	bool getSync(void);

@@ -529,9 +529,9 @@ void Sound::unpauseSpeech(void) {
 int32 Sound::openFx(int32 id, uint8 *data) {
  	int32 i, fxi;
 	uint32 *data32 = NULL;
-	_wavHeader *wav;
+	WavHeader *wav;
 
-	wav = (_wavHeader *) data;
+	wav = (WavHeader *) data;
 
 	if (_soundOn) {
 		// Check for a valid id.

@@ -268,7 +268,7 @@ void Debugger::buildDebugText(void) {
 		showVarPos = 115;	// y-coord for first showVar
 
 		// res 1 is the global variables resource
-		varTable = (int32 *) (_vm->_resman->openResource(1) + sizeof(_standardHeader));
+		varTable = (int32 *) (_vm->_resman->openResource(1) + sizeof(StandardHeader));
 
 		for (showVarNo = 0; showVarNo < MAX_SHOWVARS; showVarNo++) {
 			varNo = _showVar[showVarNo];	// get variable number

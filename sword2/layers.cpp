@@ -40,10 +40,10 @@ int32 Logic::fnInitBackground(int32 *params) {
 }
 
 int32 Sword2Engine::initBackground(int32 res, int32 new_palette) {
-	_multiScreenHeader *screenLayerTable;
-	_screenHeader *screen_head;
-	_layerHeader *layer;
- 	_spriteInfo spriteInfo;
+	MultiScreenHeader *screenLayerTable;
+	ScreenHeader *screen_head;
+	LayerHeader *layer;
+ 	SpriteInfo spriteInfo;
 	uint8 *file;
 	uint32 rv;
 
@@ -154,7 +154,7 @@ int32 Sword2Engine::initBackground(int32 res, int32 new_palette) {
 
 	// shading mask
 
-	screenLayerTable = (_multiScreenHeader *) ((uint8 *) file + sizeof(_standardHeader));
+	screenLayerTable = (MultiScreenHeader *) (file + sizeof(StandardHeader));
 
 	if (screenLayerTable->maskOffset) {
 		spriteInfo.x = 0;
@@ -192,8 +192,8 @@ int32 Sword2Engine::initBackground(int32 res, int32 new_palette) {
 // called from fnInitBackground and also from control panel
 
 void Sword2Engine::setUpBackgroundLayers(void) {
-	_multiScreenHeader *screenLayerTable;
-	_screenHeader *screen_head;
+	MultiScreenHeader *screenLayerTable;
+	ScreenHeader *screen_head;
 	uint8 *file;
 	int i;
 
@@ -207,7 +207,7 @@ void Sword2Engine::setUpBackgroundLayers(void) {
 
 		screen_head = fetchScreenHeader(file);
 
-		screenLayerTable = (_multiScreenHeader *) ((uint8 *) file + sizeof(_standardHeader));
+		screenLayerTable = (MultiScreenHeader *) (file + sizeof(StandardHeader));
 
 		// Background parallax layers
 

@@ -22,7 +22,7 @@
 
 namespace Sword2 {
 
-typedef	struct {
+struct ScreenInfo {
 	uint16 scroll_offset_x;		// Position x
 	uint16 scroll_offset_y;		// Position y
 	uint16 max_scroll_offset_x;	// Calc'ed in fnInitBackground
@@ -44,7 +44,7 @@ typedef	struct {
 					// fading up after a build_display
 	uint8 scroll_flag;		// Scroll mode 0 off 1 on
 	uint8 mask_flag;		// Using shading mask
-} screen_info;
+};
 
 } // End of namespace Sword2
 

@@ -86,7 +86,7 @@ void Sword2Engine::triggerFx(uint8 j) {
 	if (_fxQueue[j].type == FX_SPOT) {
 		// load in the sample
 		data = _resman->openResource(_fxQueue[j].resource);
-		data += sizeof(_standardHeader);
+		data += sizeof(StandardHeader);
 		// wav data gets copied to sound memory
 		rv = _sound->playFx(id, data, _fxQueue[j].volume, _fxQueue[j].pan, RDSE_FXSPOT);
 		// release the sample
@@ -160,7 +160,7 @@ int32 Logic::fnPlayFx(int32 *params) {
 	uint32 rv;
 
 #ifdef _SWORD2_DEBUG
-	_standardHeader *header;
+	StandardHeader *header;
 #endif
 
 	if (_vm->_wantSfxDebug) {
@@ -210,7 +210,7 @@ int32 Logic::fnPlayFx(int32 *params) {
 		data = _vm->_resman->openResource(_vm->_fxQueue[j].resource);
 
 #ifdef _SWORD2_DEBUG
-		header = (_standardHeader *) data;
+		header = (StandardHeader *) data;
 		if (header->fileType != WAV_FILE)
 			error("fnPlayFx given invalid resource");
 #endif
@@ -226,12 +226,12 @@ int32 Logic::fnPlayFx(int32 *params) {
 		data = _vm->_resman->openResource(_vm->_fxQueue[j].resource);
 
 #ifdef _SWORD2_DEBUG
-		header = (_standardHeader *) data;
+		header = (StandardHeader *) data;
 		if (header->fileType != WAV_FILE)
 			error("fnPlayFx given invalid resource");
 #endif
 
-		data += sizeof(_standardHeader);
+		data += sizeof(StandardHeader);
 
 		// copy it to sound memory, using position in queue as 'id'
 		rv = _vm->_sound->openFx(id, data);

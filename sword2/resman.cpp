@@ -49,7 +49,7 @@ enum {
 	#pragma START_PACK_STRUCTS
 #endif
 
-struct _cd_inf {
+struct CdInf {
 	uint8 clusterName[20];	// Null terminated cluster name.
 	uint8 cd;		// Cd cluster is on and whether it is on the local drive or not.
 } GCC_PACK;
@@ -68,7 +68,7 @@ ResourceManager::ResourceManager(Sword2Engine *vm) {
 
 	File file;
 	uint32 end;
-	mem *temp;
+	Memory *temp;
 	uint32 pos = 0;
 	uint32 j = 0;
 
@@ -140,7 +140,7 @@ ResourceManager::ResourceManager(Sword2Engine *vm) {
 		error("init cannot *OPEN* cd.inf");
 	}
 
-	_cd_inf *cdInf = new _cd_inf[_totalClusters];
+	CdInf *cdInf = new CdInf[_totalClusters];
 
 	for (j = 0; j < _totalClusters; j++) {
 		file.read(cdInf[j].clusterName, sizeof(cdInf[j].clusterName));
@@ -172,7 +172,7 @@ ResourceManager::ResourceManager(Sword2Engine *vm) {
 		debug(5, "filename of cluster %d: -%s", j, _resourceFiles[j]);
 
 	// create space for a list of pointers to mem's
-	_resList = (mem **) malloc(_totalResFiles * sizeof(mem *));
+	_resList = (Memory **) malloc(_totalResFiles * sizeof(Memory *));
 
 	_age = (uint32 *) malloc(_totalResFiles * sizeof(uint32));
 	_count = (uint16 *) malloc(_totalResFiles * sizeof(uint16));
@@ -201,16 +201,16 @@ ResourceManager::~ResourceManager(void) {
 
 void convertEndian(uint8 *file, uint32 len) {
 	int i;
-	_standardHeader *hdr = (_standardHeader *) file;
+	StandardHeader *hdr = (StandardHeader *) file;
 	
-	file += sizeof(_standardHeader);
+	file += sizeof(StandardHeader);
 
 	SWAP32(hdr->compSize);
 	SWAP32(hdr->decompSize);
 
 	switch (hdr->fileType) {
 	case ANIMATION_FILE: {
-		_animHeader *animHead = (_animHeader *) file;
+		AnimHeader *animHead = (AnimHeader *) file;
 
 		SWAP16(animHead->noAnimFrames);
 		SWAP16(animHead->feetStartX);
@@ -219,13 +219,13 @@ void convertEndian(uint8 *file, uint32 len) {
 		SWAP16(animHead->feetEndY);
 		SWAP16(animHead->blend);
 
-		_cdtEntry *cdtEntry = (_cdtEntry *) (file + sizeof(_animHeader));
+		CdtEntry *cdtEntry = (CdtEntry *) (file + sizeof(AnimHeader));
 		for (i = 0; i < animHead->noAnimFrames; i++, cdtEntry++) {
 			SWAP16(cdtEntry->x);
 			SWAP16(cdtEntry->y);
 			SWAP32(cdtEntry->frameOffset);
 
-			_frameHeader *frameHeader = (_frameHeader *) (file + cdtEntry->frameOffset);
+			FrameHeader *frameHeader = (FrameHeader *) (file + cdtEntry->frameOffset);
 			// Quick trick to prevent us from incorrectly applying the endian
 			// fixes multiple times. This assumes that frames are less than 1 MB
 			// and have height/width less than 4096.
@@ -240,7 +240,7 @@ void convertEndian(uint8 *file, uint32 len) {
 		break;
 	}
 	case SCREEN_FILE: {
-		_multiScreenHeader *mscreenHeader = (_multiScreenHeader *) file;
+		MultiScreenHeader *mscreenHeader = (MultiScreenHeader *) file;
 
 		SWAP32(mscreenHeader->palette);
 		SWAP32(mscreenHeader->bg_parallax[0]);
@@ -253,14 +253,14 @@ void convertEndian(uint8 *file, uint32 len) {
 		SWAP32(mscreenHeader->maskOffset);
 
 		// screenHeader
-		_screenHeader *screenHeader = (_screenHeader *) (file + mscreenHeader->screen);
+		ScreenHeader *screenHeader = (ScreenHeader *) (file + mscreenHeader->screen);
 
 		SWAP16(screenHeader->width);
 		SWAP16(screenHeader->height);
 		SWAP16(screenHeader->noLayers);
 
 		// layerHeader
-		_layerHeader *layerHeader = (_layerHeader *) (file + mscreenHeader->layers);
+		LayerHeader *layerHeader = (LayerHeader *) (file + mscreenHeader->layers);
 		for (i = 0; i < screenHeader->noLayers; i++, layerHeader++) {
 			SWAP16(layerHeader->x);
 			SWAP16(layerHeader->y);
@@ -271,26 +271,26 @@ void convertEndian(uint8 *file, uint32 len) {
 		}
 
 		// backgroundParallaxLayer
-		_parallax *parallax;
+		Parallax *parallax;
 		int offset;
 		offset = mscreenHeader->bg_parallax[0];
 		if (offset > 0) {
-			parallax = (_parallax *) (file + offset);
+			parallax = (Parallax *) (file + offset);
 			SWAP16(parallax->w);
 			SWAP16(parallax->h);
 		}
 
 		offset = mscreenHeader->bg_parallax[1];
 		if (offset > 0) {
-			parallax = (_parallax *) (file + offset);
+			parallax = (Parallax *) (file + offset);
 			SWAP16(parallax->w);
 			SWAP16(parallax->h);
 		}
 
 		// backgroundLayer
-		offset = mscreenHeader->screen + sizeof(_screenHeader);
+		offset = mscreenHeader->screen + sizeof(ScreenHeader);
 		if (offset > 0) {
-			parallax = (_parallax *) (file + offset);
+			parallax = (Parallax *) (file + offset);
 			SWAP16(parallax->w);
 			SWAP16(parallax->h);
 		}
@@ -298,23 +298,23 @@ void convertEndian(uint8 *file, uint32 len) {
 		// foregroundParallaxLayer
 		offset = mscreenHeader->fg_parallax[0];
 		if (offset > 0) {
-			parallax = (_parallax *) (file + offset);
+			parallax = (Parallax *) (file + offset);
 			SWAP16(parallax->w);
 			SWAP16(parallax->h);
 		}
 
 		offset = mscreenHeader->fg_parallax[1];
 		if (offset > 0) {
-			parallax = (_parallax *) (file + offset);
+			parallax = (Parallax *) (file + offset);
 			SWAP16(parallax->w);
 			SWAP16(parallax->h);
 		}
 		break;
 	}
 	case GAME_OBJECT: {
-		_object_hub *objectHub = (_object_hub *) file;
+		ObjectHub *objectHub = (ObjectHub *) file;
 
-		objectHub->type = (int)SWAP_BYTES_32(objectHub->type);
+		objectHub->type = (int) SWAP_BYTES_32(objectHub->type);
 		SWAP32(objectHub->logic_level);
 
 		for (i = 0; i < TREE_SIZE; i++) {
@@ -325,12 +325,12 @@ void convertEndian(uint8 *file, uint32 len) {
 		break;
 	}
 	case WALK_GRID_FILE: {
-		_walkGridHeader	*walkGridHeader = (_walkGridHeader *) file;
+		WalkGridHeader *walkGridHeader = (WalkGridHeader *) file;
 
 		SWAP32(walkGridHeader->numBars);
 		SWAP32(walkGridHeader->numNodes);
 
-		BarData *barData = (BarData *) (file + sizeof(_walkGridHeader));
+		BarData *barData = (BarData *) (file + sizeof(WalkGridHeader));
 		for (i = 0; i < walkGridHeader->numBars; i++) {
 			SWAP16(barData->x1);
 			SWAP16(barData->y1);
@@ -346,7 +346,7 @@ void convertEndian(uint8 *file, uint32 len) {
 			barData++;
 		}
 
-		uint16 *node = (uint16 *) (file + sizeof(_walkGridHeader) + walkGridHeader->numBars * sizeof(barData));
+		uint16 *node = (uint16 *) (file + sizeof(WalkGridHeader) + walkGridHeader->numBars * sizeof(barData));
 		for (i = 0; i < walkGridHeader->numNodes * 2; i++) {
 			SWAP16(*node);
 			node++;
@@ -367,7 +367,7 @@ void convertEndian(uint8 *file, uint32 len) {
 		break;
 	}
 	case TEXT_FILE: {
-		_textHeader *textHeader = (_textHeader *) file;
+		TextHeader *textHeader = (TextHeader *) file;
 		SWAP32(textHeader->noOfLines);
 		break;
 	}
@@ -463,7 +463,7 @@ uint8 *ResourceManager::openResource(uint32 res, bool dump) {
 		file.read(_resList[res]->ad, len);
 
 		if (dump) {
-			_standardHeader *header = (_standardHeader *) _resList[res]->ad;
+			StandardHeader *header = (StandardHeader *) _resList[res]->ad;
 			char buf[256];
 			char tag[10];
 			File out;
@@ -743,7 +743,7 @@ void ResourceManager::printConsoleClusters(void) {
 }
 
 void ResourceManager::examine(int res) {
-	_standardHeader	*file_header;
+	StandardHeader *file_header;
 
 	if (res < 0 || res >= (int) _totalResFiles)
 		Debug_Printf("Illegal resource %d (there are %d resources 0-%d)\n", res, _totalResFiles, _totalResFiles - 1);
@@ -751,7 +751,7 @@ void ResourceManager::examine(int res) {
 		Debug_Printf("%d is a null & void resource number\n", res);
 	else {
 		// open up the resource and take a look inside!
-		file_header = (_standardHeader *) openResource(res);
+		file_header = (StandardHeader *) openResource(res);
 
 		// Debug_Printf("%d\n", file_header->fileType);
 		// Debug_Printf("%s\n", file_header->name);
@@ -855,7 +855,7 @@ void ResourceManager::killAll(bool wantInfo) {
 	int j;
 	uint32 res;
 	uint32 nuked = 0;
-  	_standardHeader *header;
+  	StandardHeader *header;
 
 	j = _vm->_memory->_baseMemBlock;
 
@@ -866,7 +866,7 @@ void ResourceManager::killAll(bool wantInfo) {
 			// not the global vars which are assumed to be open in
 			// memory & not the player object!
 			if (res != 1 && res != CUR_PLAYER_ID) {
-				header = (_standardHeader *) openResource(res);
+				header = (StandardHeader *) openResource(res);
 				closeResource(res);
 
 				_age[res] = 0;		// effectively gone from _resList
@@ -905,7 +905,7 @@ void ResourceManager::killAllObjects(bool wantInfo) {
 	int j;
 	uint32 res;
 	uint32 nuked = 0;
- 	_standardHeader *header;
+ 	StandardHeader *header;
 
 	j = _vm->_memory->_baseMemBlock;
 
@@ -915,7 +915,7 @@ void ResourceManager::killAllObjects(bool wantInfo) {
 			//not the global vars which are assumed to be open in
 			// memory & not the player object!
 			if (res != 1 && res != CUR_PLAYER_ID) {
-				header = (_standardHeader *) openResource(res);
+				header = (StandardHeader *) openResource(res);
 				closeResource(res);
 
 				if (header->fileType == GAME_OBJECT) {
@@ -964,8 +964,8 @@ void ResourceManager::getCd(int cd) {
 	// CD2: "RBSII2"
 
 	while (1) {
-		_keyboardEvent ke;
-		_mouseEvent *me;
+		KeyboardEvent ke;
+		MouseEvent *me;
 
 		me = _vm->_input->mouseEvent();
 		if (me && (me->buttons & (RD_LEFTBUTTONDOWN | RD_RIGHTBUTTONDOWN)))

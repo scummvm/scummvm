@@ -105,7 +105,7 @@ private:
 
 	// stores pointers to mem blocks containing routes created & used by
 	// megas (NULL if slot not in use)
-	mem *_routeSlots[TOTAL_ROUTE_SLOTS];
+	Memory *_routeSlots[TOTAL_ROUTE_SLOTS];
 
 	BarData _bars[O_GRID_SIZE];
 	NodeData _node[O_GRID_SIZE];
@@ -178,8 +178,8 @@ private:
 	int32 getRoute(void);
 	void extractRoute(void);
 	void loadWalkGrid(void);
-	void setUpWalkGrid(Object_mega *ob_mega, int32 x, int32 y, int32 dir);
-	void loadWalkData(Object_walkdata *ob_walkdata);
+	void setUpWalkGrid(ObjectMega *ob_mega, int32 x, int32 y, int32 dir);
+	void loadWalkData(ObjectWalkdata *ob_walkdata);
 	bool scan(int32 level);
 
 	int32 newCheck(int32 status, int32 x1, int32 y1, int32 x2, int32 y2);
@@ -223,9 +223,9 @@ public:
 		memset(_leadingLeg, 0, sizeof(_leadingLeg));
 	}
 
-	int32 routeFinder(Object_mega *ob_mega, Object_walkdata *ob_walkdata, int32 x, int32 y, int32 dir);
+	int32 routeFinder(ObjectMega *ob_mega, ObjectWalkdata *ob_walkdata, int32 x, int32 y, int32 dir);
 
-	void earlySlowOut(Object_mega *ob_mega, Object_walkdata *ob_walkdata);
+	void earlySlowOut(ObjectMega *ob_mega, ObjectWalkdata *ob_walkdata);
 
 	void allocateRouteMem(void);
 	WalkData *lockRouteMem(void);

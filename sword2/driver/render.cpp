@@ -526,7 +526,7 @@ void Graphics::setLocationMetrics(uint16 w, uint16 h) {
  * parallax can be either foreground, background or the main screen.
  */
 
-void Graphics::renderParallax(_parallax *p, int16 l) {
+void Graphics::renderParallax(Parallax *p, int16 l) {
 	int16 x, y;
 	Common::Rect r;
 
@@ -675,7 +675,7 @@ void Graphics::setScrollTarget(int16 sx, int16 sy) {
  * or a NULL pointer in order of background parallax to foreground parallax.
  */
 
-int32 Graphics::initialiseBackgroundLayer(_parallax *p) {
+int32 Graphics::initialiseBackgroundLayer(Parallax *p) {
 	uint8 *memchunk;
 	uint8 zeros;
 	uint16 count;
@@ -683,7 +683,7 @@ int32 Graphics::initialiseBackgroundLayer(_parallax *p) {
 	uint16 x;
 	uint8 *data;
 	uint8 *dst;
-	_parallaxLine line;
+	ParallaxLine line;
 	uint8 *pLine;
 
 	debug(2, "initialiseBackgroundLayer");
@@ -719,7 +719,7 @@ int32 Graphics::initialiseBackgroundLayer(_parallax *p) {
 		pLine = (uint8 *) p + FROM_LE_32(p->offset[i]);
 		line.packets = READ_LE_UINT16(pLine);
 		line.offset = READ_LE_UINT16(pLine + 2);
-		data = pLine + sizeof(_parallaxLine);
+		data = pLine + sizeof(ParallaxLine);
 		x = line.offset;
 
 		dst = memchunk + i * p->w + x;

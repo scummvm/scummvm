@@ -209,7 +209,7 @@ void Logic::conStart(int start) {
 
 		// reopen global variables resource & send address to
 		// interpreter - it won't be moving
-		setGlobalInterpreterVariables((int32 *) (_vm->_resman->openResource(1) + sizeof(_standardHeader)));
+		setGlobalInterpreterVariables((int32 *) (_vm->_resman->openResource(1) + sizeof(StandardHeader)));
 		_vm->_resman->closeResource(1);
 
 		// free all the route memory blocks from previous game

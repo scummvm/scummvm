@@ -55,7 +55,7 @@ private:
 	// structure filled out by each object to register its graphic printing
 	// requrements
 
-	struct buildit {
+	struct BuildUnit {
 		int16 x;
 		int16 y;
 		uint16 scaled_width;
@@ -80,13 +80,13 @@ private:
 		bool shadingFlag;
 	};
 
-	buildit	_bgp0List[MAX_bgp0_sprites];
-	buildit	_bgp1List[MAX_bgp1_sprites];
-	buildit	_backList[MAX_back_sprites];
-	buildit	_sortList[MAX_sort_sprites];
-	buildit	_foreList[MAX_fore_sprites];
-	buildit	_fgp0List[MAX_fgp0_sprites];
-	buildit	_fgp1List[MAX_fgp1_sprites];
+	BuildUnit _bgp0List[MAX_bgp0_sprites];
+	BuildUnit _bgp1List[MAX_bgp1_sprites];
+	BuildUnit _backList[MAX_back_sprites];
+	BuildUnit _sortList[MAX_sort_sprites];
+	BuildUnit _foreList[MAX_fore_sprites];
+	BuildUnit _fgp0List[MAX_fgp0_sprites];
+	BuildUnit _fgp1List[MAX_fgp1_sprites];
 
 	// Holds the order of the sort list, i.e. the list stays static and we
 	// sort this array.
@@ -152,13 +152,13 @@ public:
 
 	void resetRenderLists(void);
 	void buildDisplay(void);
-	void processImage(buildit *build_unit);
+	void processImage(BuildUnit *build_unit);
 	void displayMsg(uint8 *text, int time);
 	void removeMsg(void);
 	void setFullPalette(int32 palRes);
 
 	int32 registerFrame(int32 *params);
-	void registerFrame(int32 *params, buildit *build_unit);
+	void registerFrame(int32 *params, BuildUnit *build_unit);
 
 	// The debugger wants to access these
 
@@ -191,12 +191,12 @@ public:
 	int32 initBackground(int32 res, int32 new_palette);
 
 	// Set by fnPassMega()
-	Object_mega _engineMega;
+	ObjectMega _engineMega;
 
-	menu_object _tempList[TOTAL_engine_pockets];
+	MenuObject _tempList[TOTAL_engine_pockets];
 	uint32 _totalTemp;
 
-	menu_object _masterMenuList[TOTAL_engine_pockets];
+	MenuObject _masterMenuList[TOTAL_engine_pockets];
 	uint32 _totalMasters;
 
 	int menuClick(int menu_items);
@@ -207,12 +207,12 @@ public:
 	// _thisScreen describes the current back buffer and its in-game scroll
 	// positions, etc.
 
-	screen_info _thisScreen;
+	ScreenInfo _thisScreen;
 
 	void setUpBackgroundLayers(void);
 
 	uint32 _curMouse;
-	Mouse_unit _mouseList[TOTAL_mouse_list];
+	MouseUnit _mouseList[TOTAL_mouse_list];
 
 	// Set by checkMouseList()
 	uint32 _mouseTouching;
@@ -260,19 +260,19 @@ public:
 	void monitorPlayerActivity(void);
 	void noHuman(void);
 
-	void registerMouse(Object_mouse *ob_mouse);
+	void registerMouse(ObjectMouse *ob_mouse);
 
 	uint8 *fetchPalette(uint8 *screenFile);
-	_screenHeader *fetchScreenHeader(uint8 *screenFile);
-	_layerHeader *fetchLayerHeader(uint8 *screenFile, uint16 layerNo);
+	ScreenHeader *fetchScreenHeader(uint8 *screenFile);
+	LayerHeader *fetchLayerHeader(uint8 *screenFile, uint16 layerNo);
 	uint8 *fetchShadingMask(uint8 *screenFile);
 
-	_animHeader *fetchAnimHeader(uint8 *animFile);
-	_cdtEntry *fetchCdtEntry(uint8 *animFile, uint16 frameNo);
-	_frameHeader *fetchFrameHeader(uint8 *animFile, uint16 frameNo);
-	_parallax *fetchBackgroundParallaxLayer(uint8 *screenFile, int layer);
-	_parallax *fetchBackgroundLayer(uint8 *screenFile);
-	_parallax *fetchForegroundParallaxLayer(uint8 *screenFile, int layer);
+	AnimHeader *fetchAnimHeader(uint8 *animFile);
+	CdtEntry *fetchCdtEntry(uint8 *animFile, uint16 frameNo);
+	FrameHeader *fetchFrameHeader(uint8 *animFile, uint16 frameNo);
+	Parallax *fetchBackgroundParallaxLayer(uint8 *screenFile, int layer);
+	Parallax *fetchBackgroundLayer(uint8 *screenFile);
+	Parallax *fetchForegroundParallaxLayer(uint8 *screenFile, int layer);
 	uint8 *fetchTextLine(uint8 *file, uint32 text_line);
 	bool checkTextLine(uint8 *file, uint32 text_line);
 	uint8 *fetchPaletteMatchTable(uint8 *screenFile);
@@ -293,14 +293,14 @@ public:
 		uint32 feet_x;		// copy of _thisScreen.feet_x
 		uint32 feet_y;		// copy of _thisScreen.feet_y
 		uint32 music_id;	// copy of 'looping_music_id'
-		_object_hub player_hub;	// copy of player object's object_hub structure
-		Object_logic logic;	// copy of player character logic structure
+		ObjectHub player_hub;	// copy of player object's object_hub structure
+		ObjectLogic logic;	// copy of player character logic structure
 
 		// copy of player character graphic structure
-		Object_graphic	graphic;
+		ObjectGraphic graphic;
 
 		// copy of player character mega structure
-		Object_mega mega;
+		ObjectMega mega;
 	};
 
 	SaveGameHeader _saveGameHeader;
@@ -309,15 +309,15 @@ public:
 	uint32 restoreGame(uint16 slotNo);
 	uint32 getSaveDescription(uint16 slotNo, uint8 *description);
 	bool saveExists(uint16 slotNo);
-	void fillSaveBuffer(mem *buffer, uint32 size, uint8 *desc);
-	uint32 restoreFromBuffer(mem *buffer, uint32 size);
+	void fillSaveBuffer(Memory *buffer, uint32 size, uint8 *desc);
+	uint32 restoreFromBuffer(Memory *buffer, uint32 size);
 	uint32 findBufferSize(void);
 
 	uint8 _scrollFraction;
 
 	void setScrolling(void);
 
-	struct _fxq_entry {
+	struct FxQueueEntry {
 		uint32 resource;	// resource id of sample
 		uint32 fetchId;		// Id of resource in PSX CD queue. :)
 		uint16 delay;		// cycles to wait before playing (or 'random chance' if FX_RANDOM)
@@ -326,7 +326,7 @@ public:
 		uint8 type;		// FX_SPOT, FX_RANDOM or FX_LOOP
 	};
 
-	_fxq_entry _fxQueue[FXQ_LENGTH];
+	FxQueueEntry _fxQueue[FXQ_LENGTH];
 
 	// used to store id of tunes that loop, for save & restore
 	uint32 _loopingMusicId;

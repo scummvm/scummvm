@@ -113,7 +113,7 @@ uint8 *MemoryManager::intToPtr(int32 n) {
 	return &_freeMemman[n];
 }
 
-mem *MemoryManager::lowLevelAlloc(uint32 size, uint32 type, uint32 unique_id) {
+Memory *MemoryManager::lowLevelAlloc(uint32 size, uint32 type, uint32 unique_id) {
 	// allocate a block of memory - locked or float
 
 	// returns 0 if fails to allocate the memory
@@ -247,7 +247,7 @@ mem *MemoryManager::lowLevelAlloc(uint32 size, uint32 type, uint32 unique_id) {
 	return &_memList[nu_block];
 }
 
-void MemoryManager::freeMemory(mem *block) {
+void MemoryManager::freeMemory(Memory *block) {
 	// kill a block of memory - which was presumably floating or locked
 	// once you've done this the memory may be recycled
 
@@ -259,7 +259,7 @@ void MemoryManager::freeMemory(mem *block) {
 #endif
 }
 
-void MemoryManager::floatMemory(mem *block) {
+void MemoryManager::floatMemory(Memory *block) {
 	// set a block to float
 	// wont be trashed but will move around in memory
 
@@ -270,7 +270,7 @@ void MemoryManager::floatMemory(mem *block) {
 #endif
 }
 
-void MemoryManager::lockMemory(mem *block) {
+void MemoryManager::lockMemory(Memory *block) {
 	// set a block to lock
 	// wont be moved - don't lock memory for any longer than necessary
 	// unless you know the locked memory is at the bottom of the heap
@@ -482,13 +482,13 @@ void MemoryManager::debugMemory(void) {
 	} while (j != -1);
 }
 
-mem *MemoryManager::allocMemory(uint32 size, uint32 type, uint32 unique_id) {
+Memory *MemoryManager::allocMemory(uint32 size, uint32 type, uint32 unique_id) {
 	// the high level allocator
 
 	// can ask the resman to remove old resources to make space - will
 	// either do it or halt the system
 
-	mem *membloc;
+	Memory *membloc;
 	int j;
 	uint32 free = 0;
 

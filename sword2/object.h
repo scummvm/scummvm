@@ -29,25 +29,24 @@ namespace Sword2 {
 // mouse structure - defines mouse detection area, detection priority &
 // 'type' flag
 
-typedef	struct {
+struct ObjectMouse {
 	int32 x1;			// Top-left and bottom-right of mouse
 	int32 y1;			// area. (These coords are inclusive.)
 	int32 x2;
 	int32 y2;
 	int32 priority;
 	int32 pointer;			// type (or resource id?) of pointer used over this area
-
-} Object_mouse;
+};
 
 // logic structure - contains fields used in logic script processing
 
-typedef	struct {
+struct ObjectLogic {
 	int32 looping;			// 0 when first calling fn<function>;
 					// 1 when calling subsequent times in same loop
 	int32 pause;			// pause count, used by fnPause()
-} Object_logic;
+};
 
-// status bits for 'type' field of Object_graphic)
+// status bits for 'type' field of ObjectGraphic)
 
 // in low word:
 
@@ -67,15 +66,15 @@ typedef	struct {
 
 // graphic structure - contains fields appropriate to sprite output
 
-typedef	struct {
+struct ObjectGraphic {
 	int32 type;			// see above
 	int32 anim_resource;		// resource id of animation file
 	int32 anim_pc;			// current frame number of animation
-} Object_graphic;
+};
 
 // speech structure - contains fields used by speech scripts & text output
 
-typedef	struct {
+struct ObjectSpeech {
 	int32 pen;			// colour to use for body of characters
 	int32 width;			// max width of text sprite
 	int32 command;			// speech script command id
@@ -85,12 +84,12 @@ typedef	struct {
 	int32 ins4;
 	int32 ins5;
 	int32 wait_state;		// 0 not waiting, 1 waiting for next speech command
-} Object_speech;
+};
 
 // mega structure - contains fields used for mega-character & mega-set
 // processing
 
-typedef	struct {
+struct ObjectMega {
 	int32 NOT_USED_1;		// only free roaming megas need to check this before registering their graphics for drawing
 	int32 NOT_USED_2;		// id of floor on which we are standing
 	int32 NOT_USED_3;		// id of object which we are getting to
@@ -105,12 +104,12 @@ typedef	struct {
 	int32 NOT_USED_5;		// means were currently avoiding a collision (see fnWalk)
 	int32 megaset_res;		// resource id of mega-set file
 	int32 NOT_USED_6;		// NOT USED
-} Object_mega;
+};
 
 // walk-data structure - contains details of layout of frames in the
 // mega-set, and how they are to be used
 
-typedef struct {
+struct ObjectWalkdata {
 	int32 nWalkFrames;		// no. of frames per walk-cycle
 	int32 usingStandingTurnFrames;	// 0 = no  1 = yes
 	int32 usingWalkingTurnFrames;	// 0 = no  1 = yes
@@ -120,7 +119,7 @@ typedef struct {
 	int32 leadingLeg[8];		// leading leg for walk	in each direction  (0 = left  1 = right)
 	int32 dx[8 * (12 + 1)];		// walk step distances in x direction
 	int32 dy[8 * (12 + 1)];		// walk step distances in y direction
-} Object_walkdata;
+};
 
 } // End of namespace Sword2
 

@@ -122,7 +122,7 @@ int Sword2Engine::menuClick(int menu_items) {
 
 void Sword2Engine::systemMenuMouse(void) {
 	uint32 safe_looping_music_id;
-	_mouseEvent *me;
+	MouseEvent *me;
 	int hit;
 	uint8 *icon;
 	int32 pars[2];
@@ -167,7 +167,7 @@ void Sword2Engine::systemMenuMouse(void) {
 
 	for (int i = 0; i < ARRAYSIZE(icon_list); i++) {
 		if (i != hit) {
-			icon = _resman->openResource(icon_list[i]) + sizeof(_standardHeader);
+			icon = _resman->openResource(icon_list[i]) + sizeof(StandardHeader);
 			_graphics->setMenuIcon(RDMENU_TOP, i, icon);
 			_resman->closeResource(icon_list[i]);
 		}
@@ -260,7 +260,7 @@ void Sword2Engine::systemMenuMouse(void) {
 }
 
 void Sword2Engine::dragMouse(void) {
-	_mouseEvent *me;
+	MouseEvent *me;
 	int hit;
 
 	// We can use dragged object both on other inventory objects, or on
@@ -378,7 +378,7 @@ void Sword2Engine::dragMouse(void) {
 }
 
 void Sword2Engine::menuMouse(void) {
-	_mouseEvent *me;
+	MouseEvent *me;
 	int hit;
 
 	// If the mouse is moved off the menu, close it.
@@ -461,7 +461,7 @@ void Sword2Engine::normalMouse(void) {
 	// The gane is playing and none of the menus are activated - but, we
 	// need to check if a menu is to start. Note, won't have luggage
 
-	_mouseEvent *me;
+	MouseEvent *me;
 
 	// Check if the cursor has moved onto the system menu area. No save in
 	// big-object menu lock situation, of if the player is dragging an
@@ -773,8 +773,8 @@ void Sword2Engine::setMouse(uint32 res) {
 	_mousePointerRes = res;
 
 	if (res) {
-		icon = _resman->openResource(res) + sizeof(_standardHeader);
-		len = _resman->_resList[res]->size - sizeof(_standardHeader);
+		icon = _resman->openResource(res) + sizeof(StandardHeader);
+		len = _resman->_resList[res]->size - sizeof(StandardHeader);
 
 		// don't pulse the normal pointer - just do the regular anim
 		// loop
@@ -798,8 +798,8 @@ void Sword2Engine::setLuggage(uint32 res) {
 	_realLuggageItem = res;
 
 	if (res) {
-		icon = _resman->openResource(res) + sizeof(_standardHeader);
-		len = _resman->_resList[res]->size - sizeof(_standardHeader);
+		icon = _resman->openResource(res) + sizeof(StandardHeader);
+		len = _resman->_resList[res]->size - sizeof(StandardHeader);
 
 		_graphics->setLuggageAnim(icon, len);
 
@@ -1030,7 +1030,7 @@ void Sword2Engine::noHuman(void) {
 	setLuggage(0);
 }
 
-void Sword2Engine::registerMouse(Object_mouse *ob_mouse) {
+void Sword2Engine::registerMouse(ObjectMouse *ob_mouse) {
 	debug(5, "_curMouse = %d", _curMouse);
 
 	if (!ob_mouse->pointer)
@@ -1181,10 +1181,10 @@ int32 Logic::fnRegisterMouse(int32 *params) {
 	// floor or one whose mouse area is manually defined rather than
 	// intended to fit sprite shape
 
-	// params:	0 pointer to Object_mouse or 0 for no write to mouse
+	// params:	0 pointer to ObjectMouse or 0 for no write to mouse
 	//		  list
 
-	_vm->registerMouse((Object_mouse *) _vm->_memory->intToPtr(params[0]));
+	_vm->registerMouse((ObjectMouse *) _vm->_memory->intToPtr(params[0]));
 	return IR_CONT;
 }
 
@@ -1209,7 +1209,7 @@ int32 Logic::fnRegisterPointerText(int32 *params) {
 int32 Logic::fnInitFloorMouse(int32 *params) {
 	// params:	0 pointer to object's mouse structure
 
- 	Object_mouse *ob_mouse = (Object_mouse *) _vm->_memory->intToPtr(params[0]);
+ 	ObjectMouse *ob_mouse = (ObjectMouse *) _vm->_memory->intToPtr(params[0]);
 
 	// floor is always lowest priority
 
@@ -1228,7 +1228,7 @@ int32 Logic::fnInitFloorMouse(int32 *params) {
 int32 Logic::fnSetScrollLeftMouse(int32 *params) {
 	// params:	0 pointer to object's mouse structure
 
- 	Object_mouse *ob_mouse = (Object_mouse *) _vm->_memory->intToPtr(params[0]);
+ 	ObjectMouse *ob_mouse = (ObjectMouse *) _vm->_memory->intToPtr(params[0]);
 
 	// Highest priority
 
@@ -1252,7 +1252,7 @@ int32 Logic::fnSetScrollLeftMouse(int32 *params) {
 int32 Logic::fnSetScrollRightMouse(int32 *params) {
 	// params:	0 pointer to object's mouse structure
 
-	Object_mouse *ob_mouse = (Object_mouse *) _vm->_memory->intToPtr(params[0]);
+	ObjectMouse *ob_mouse = (ObjectMouse *) _vm->_memory->intToPtr(params[0]);
 
 	// Highest priority
 

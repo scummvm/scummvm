@@ -26,7 +26,7 @@ namespace Sword2 {
 
 void MemoryManager::displayMemory(void) {
 	int pass, found_end, k, j, free = 0;
-	_standardHeader	*file_header;
+	StandardHeader	*file_header;
 
 	char inf[][20] = {
 		{ "M_null  " },
@@ -38,7 +38,7 @@ void MemoryManager::displayMemory(void) {
 	j = _baseMemBlock;
 	do {
 		if (_memList[j].uid < 65536) {
-			file_header = (_standardHeader *) _vm->_resman->openResource(_memList[j].uid);
+			file_header = (StandardHeader *) _vm->_resman->openResource(_memList[j].uid);
 			// close immediately so give a true count
 			_vm->_resman->closeResource(_memList[j].uid);
 

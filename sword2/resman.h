@@ -74,7 +74,7 @@ public:
 	void removeAll(void);
 
 	// pointer to a pointer (or list of pointers in-fact)
-	mem **_resList;
+	Memory **_resList;
 
 private:
 	Sword2Engine *_vm;

@@ -28,10 +28,10 @@ namespace Sword2 {
 #define ALIGNRENDERDEEP		480
 #define RENDERDEEP		(ALIGNRENDERDEEP - (MENUDEEP * 2))
 
-typedef struct {
+struct ParallaxLine {
 	uint16 packets;
 	uint16 offset;
-} _parallaxLine;
+};
 
 } // End of namespace Sword2
 

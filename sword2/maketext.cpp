@@ -54,10 +54,10 @@ namespace Sword2 {
 
 // info for each line of words in the output text sprite
 
-mem* FontRenderer::makeTextSprite(uint8 *sentence, uint16 maxWidth, uint8 pen, uint32 fontRes, uint8 border) {
-	mem *line;		// handle for the memory block which will
+Memory *FontRenderer::makeTextSprite(uint8 *sentence, uint16 maxWidth, uint8 pen, uint32 fontRes, uint8 border) {
+	Memory *line;		// handle for the memory block which will
 				// contain the array of lineInfo structures
-	mem *textSprite;	// handle for the block to contain the text
+	Memory *textSprite;	// handle for the block to contain the text
 				// sprite itself
 	uint16 noOfLines;	// no of lines of text required to fit within
 				// a sprite of width 'maxWidth' pixels
@@ -185,13 +185,13 @@ uint16 FontRenderer::analyseSentence(uint8 *sentence, uint16 maxWidth, uint32 fo
 
 // PC Version of BuildTextSprite
 
-mem* FontRenderer::buildTextSprite(uint8 *sentence, uint32 fontRes, uint8 pen, LineInfo *line, uint16 noOfLines) {
+Memory *FontRenderer::buildTextSprite(uint8 *sentence, uint32 fontRes, uint8 pen, LineInfo *line, uint16 noOfLines) {
 	uint8 *linePtr, *spritePtr;
 	uint16 lineNo, pos = 0, posInLine, spriteWidth = 0, spriteHeight;
 	uint16 sizeOfSprite;
 	uint16 char_height = charHeight(fontRes);
-	_frameHeader *frameHeadPtr, *charPtr;
-	mem *textSprite;
+	FrameHeader *frameHeadPtr, *charPtr;
+	Memory *textSprite;
 	uint8 *charSet;
 
 	// spriteWidth = width of widest line of output text
@@ -210,13 +210,13 @@ mem* FontRenderer::buildTextSprite(uint8 *sentence, uint32 fontRes, uint8 pen, L
 
 	// allocate memory for sprite, and lock it ready for use
 	// NB. 'textSprite' is the given pointer to the handle to be used
-	textSprite = _vm->_memory->allocMemory(sizeof(_frameHeader) + sizeOfSprite, MEM_locked, UID_text_sprite);
+	textSprite = _vm->_memory->allocMemory(sizeof(FrameHeader) + sizeOfSprite, MEM_locked, UID_text_sprite);
 
 	// the handle (*textSprite) now points to UNMOVABLE memory block
 	// set up the frame header
 
 	// point to the start of our memory block
-	frameHeadPtr = (_frameHeader *) textSprite->ad;
+	frameHeadPtr = (FrameHeader *) textSprite->ad;
 
 	frameHeadPtr->compSize = 0;
 	frameHeadPtr->width = spriteWidth;
@@ -228,7 +228,7 @@ mem* FontRenderer::buildTextSprite(uint8 *sentence, uint32 fontRes, uint8 pen, L
 	// ok, now point to the start (of the first line) of the sprite data
 	// itelf
 
-	linePtr = textSprite->ad + sizeof(_frameHeader);
+	linePtr = textSprite->ad + sizeof(FrameHeader);
 
 	// start with transparent sprite (no colour)
 	memset(linePtr, NO_COL, sizeOfSprite);
@@ -280,7 +280,7 @@ mem* FontRenderer::buildTextSprite(uint8 *sentence, uint32 fontRes, uint8 pen, L
 // and a pointer to the start of the character set.
 
 uint16 FontRenderer::charWidth(uint8 ch, uint32 fontRes) {
-	_frameHeader *charFrame;
+	FrameHeader *charFrame;
 	uint8 *charSet;
 	uint16 width;
 
@@ -302,7 +302,7 @@ uint16 FontRenderer::charWidth(uint8 ch, uint32 fontRes) {
 // and a pointer to the start of the character set.
 
 uint16 FontRenderer::charHeight(uint32 fontRes) {
-	_frameHeader *charFrame;
+	FrameHeader *charFrame;
 	uint8 *charSet;
 	uint16 height;
 
@@ -323,7 +323,7 @@ uint16 FontRenderer::charHeight(uint32 fontRes) {
 // Returns a pointer to the header of a character sprite, given the character's
 // ASCII code and a pointer to the start of the character set.
 
-_frameHeader* FontRenderer::findChar(uint8 ch, uint8 *charSet) {
+FrameHeader* FontRenderer::findChar(uint8 ch, uint8 *charSet) {
 	// if 'ch' out of range, print the 'dud' character (chequered flag)
 	if (ch < FIRST_CHAR)
 		ch = DUD;
@@ -336,12 +336,12 @@ _frameHeader* FontRenderer::findChar(uint8 ch, uint8 *charSet) {
 // otherwise it maps pixels of BORDER_COL to '_borderPen', and LETTER_COL to
 // 'pen'.
 
-void FontRenderer::copyChar(_frameHeader *charPtr, uint8 *spritePtr, uint16 spriteWidth, uint8 pen) {
+void FontRenderer::copyChar(FrameHeader *charPtr, uint8 *spritePtr, uint16 spriteWidth, uint8 pen) {
 	uint8 *rowPtr, *source, *dest;
 	uint16 rows, cols;
 
 	// now pts to sprite data for char 'ch'
-	source = (uint8 *) charPtr + sizeof(_frameHeader);
+	source = (uint8 *) charPtr + sizeof(FrameHeader);
 
 	// pts to start of first row of char within text sprite
 	rowPtr = spritePtr;
@@ -395,7 +395,7 @@ void FontRenderer::copyChar(_frameHeader *charPtr, uint8 *spritePtr, uint16 spri
 
 uint32 FontRenderer::buildNewBloc(uint8 *ascii, int16 x, int16 y, uint16 width, uint8 pen, uint32 type, uint32 fontRes, uint8 justification) {
 	uint32	j = 0;
- 	_frameHeader *frame_head;
+ 	FrameHeader *frame_head;
 	int16 text_left_margin;
 	int16 text_right_margin;
 	int16 text_top_margin;
@@ -421,7 +421,7 @@ uint32 FontRenderer::buildNewBloc(uint8 *ascii, int16 x, int16 y, uint16 width, 
 	// without margin checking - used for debug text
 
 	if (justification != NO_JUSTIFICATION) {
-		frame_head = (_frameHeader *) _blocList[j].text_mem->ad;
+		frame_head = (FrameHeader *) _blocList[j].text_mem->ad;
 
 		switch (justification) {
 		// this one is always used for SPEECH TEXT; possibly
@@ -490,14 +490,14 @@ uint32 FontRenderer::buildNewBloc(uint8 *ascii, int16 x, int16 y, uint16 width, 
 void FontRenderer::printTextBlocs(void) {
 	//called by build_display
 
-	_frameHeader *frame;
-	_spriteInfo spriteInfo;
+	FrameHeader *frame;
+	SpriteInfo spriteInfo;
 	uint32 rv;
 	uint32 j;
 
 	for (j = 0; j < MAX_text_blocs; j++) {
 		if (_blocList[j].text_mem) {
-			frame = (_frameHeader *) _blocList[j].text_mem->ad;
+			frame = (FrameHeader *) _blocList[j].text_mem->ad;
 
 			spriteInfo.x = _blocList[j].x;
 			spriteInfo.y = _blocList[j].y;
@@ -508,7 +508,7 @@ void FontRenderer::printTextBlocs(void) {
 			spriteInfo.scaledHeight = 0;
 			spriteInfo.type = _blocList[j].type;
 			spriteInfo.blend = 0;
-			spriteInfo.data = _blocList[j].text_mem->ad + sizeof(_frameHeader);
+			spriteInfo.data = _blocList[j].text_mem->ad + sizeof(FrameHeader);
 			spriteInfo.colourTable = 0;
 
 			rv = _vm->_graphics->drawSprite(&spriteInfo);

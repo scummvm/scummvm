@@ -30,7 +30,7 @@ namespace Sword2 {
 uint8 *Sword2Engine::fetchPalette(uint8 *screenFile) {
 	uint8 *palette;
 
-	_multiScreenHeader *mscreenHeader = (_multiScreenHeader *) (screenFile + sizeof(_standardHeader));
+	MultiScreenHeader *mscreenHeader = (MultiScreenHeader *) (screenFile + sizeof(StandardHeader));
 
 	palette = (uint8 *) mscreenHeader + mscreenHeader->palette;
 
@@ -52,7 +52,7 @@ uint8 *Sword2Engine::fetchPalette(uint8 *screenFile) {
  */
 
 uint8 *Sword2Engine::fetchPaletteMatchTable(uint8 *screenFile) {
-	_multiScreenHeader *mscreenHeader = (_multiScreenHeader *) (screenFile + sizeof(_standardHeader));
+	MultiScreenHeader *mscreenHeader = (MultiScreenHeader *) (screenFile + sizeof(StandardHeader));
 
 	return (uint8 *) mscreenHeader + mscreenHeader->paletteTable;
 }
@@ -62,9 +62,9 @@ uint8 *Sword2Engine::fetchPaletteMatchTable(uint8 *screenFile) {
  * the screen file.
  */
 
-_screenHeader *Sword2Engine::fetchScreenHeader(uint8 *screenFile) {
-	_multiScreenHeader *mscreenHeader = (_multiScreenHeader *) (screenFile + sizeof(_standardHeader));
-	_screenHeader *screenHeader = (_screenHeader *) ((uint8 *) mscreenHeader + mscreenHeader->screen);
+ScreenHeader *Sword2Engine::fetchScreenHeader(uint8 *screenFile) {
+	MultiScreenHeader *mscreenHeader = (MultiScreenHeader *) (screenFile + sizeof(StandardHeader));
+	ScreenHeader *screenHeader = (ScreenHeader *) ((uint8 *) mscreenHeader + mscreenHeader->screen);
 
 	return screenHeader;
 }
@@ -75,17 +75,17 @@ _screenHeader *Sword2Engine::fetchScreenHeader(uint8 *screenFile) {
  * the number of layers on this screen.
  */
 
-_layerHeader *Sword2Engine::fetchLayerHeader(uint8 *screenFile, uint16 layerNo) {
+LayerHeader *Sword2Engine::fetchLayerHeader(uint8 *screenFile, uint16 layerNo) {
 #ifdef _SWORD2_DEBUG
-	_screenHeader *screenHead = fetchScreenHeader(screenFile);
+	ScreenHeader *screenHead = fetchScreenHeader(screenFile);
 
 	if (layerNo > screenHead->noLayers - 1)
 		error("fetchLayerHeader(%d) invalid layer number!", layerNo);
 #endif
 
-	_multiScreenHeader *mscreenHeader = (_multiScreenHeader *) (screenFile + sizeof(_standardHeader));
+	MultiScreenHeader *mscreenHeader = (MultiScreenHeader *) (screenFile + sizeof(StandardHeader));
 
-	_layerHeader *layerHeader = (_layerHeader *) ((uint8 *) mscreenHeader + mscreenHeader->layers + (layerNo * sizeof(_layerHeader)));
+	LayerHeader *layerHeader = (LayerHeader *) ((uint8 *) mscreenHeader + mscreenHeader->layers + (layerNo * sizeof(LayerHeader)));
 
 	return layerHeader;
 }
@@ -96,7 +96,7 @@ _layerHeader *Sword2Engine::fetchLayerHeader(uint8 *screenFile, uint16 layerNo) 
  */
 
 uint8 *Sword2Engine::fetchShadingMask(uint8 *screenFile) {
-	_multiScreenHeader *mscreenHeader = (_multiScreenHeader *) (screenFile + sizeof(_standardHeader));
+	MultiScreenHeader *mscreenHeader = (MultiScreenHeader *) (screenFile + sizeof(StandardHeader));
 
 	return (uint8 *) mscreenHeader + mscreenHeader->maskOffset;
 }
@@ -106,8 +106,8 @@ uint8 *Sword2Engine::fetchShadingMask(uint8 *screenFile) {
  * anim file.
  */
 
-_animHeader *Sword2Engine::fetchAnimHeader(uint8 *animFile) {
-	return (_animHeader *) (animFile + sizeof(_standardHeader));
+AnimHeader *Sword2Engine::fetchAnimHeader(uint8 *animFile) {
+	return (AnimHeader *) (animFile + sizeof(StandardHeader));
 }
 
 /**
@@ -116,15 +116,15 @@ _animHeader *Sword2Engine::fetchAnimHeader(uint8 *animFile) {
  * number exceeds the number of frames in this anim.
  */
 
-_cdtEntry *Sword2Engine::fetchCdtEntry(uint8 *animFile, uint16 frameNo) {
-	_animHeader *animHead = fetchAnimHeader(animFile);
+CdtEntry *Sword2Engine::fetchCdtEntry(uint8 *animFile, uint16 frameNo) {
+	AnimHeader *animHead = fetchAnimHeader(animFile);
 
 #ifdef _SWORD2_DEBUG
 	if (frameNo > animHead->noAnimFrames - 1)
 		error("fetchCdtEntry(animFile,%d) - anim only %d frames", frameNo, animHead->noAnimFrames);
 #endif
 
-	return (_cdtEntry *) ((uint8 *) animHead + sizeof(_animHeader) + frameNo * sizeof(_cdtEntry));
+	return (CdtEntry *) ((uint8 *) animHead + sizeof(AnimHeader) + frameNo * sizeof(CdtEntry));
 }
 
 /**
@@ -133,58 +133,58 @@ _cdtEntry *Sword2Engine::fetchCdtEntry(uint8 *animFile, uint16 frameNo) {
  * exceeds the number of frames in this anim
  */
 
-_frameHeader *Sword2Engine::fetchFrameHeader(uint8 *animFile, uint16 frameNo)	{
+FrameHeader *Sword2Engine::fetchFrameHeader(uint8 *animFile, uint16 frameNo)	{
 	// required address = (address of the start of the anim header) + frameOffset
-	return (_frameHeader *) (animFile + sizeof(_standardHeader) + fetchCdtEntry(animFile, frameNo)->frameOffset);
+	return (FrameHeader *) (animFile + sizeof(StandardHeader) + fetchCdtEntry(animFile, frameNo)->frameOffset);
 }
 
 /**
  * Returns a pointer to the requested parallax layer data.
  */
 
-_parallax *Sword2Engine::fetchBackgroundParallaxLayer(uint8 *screenFile, int layer) {
-	_multiScreenHeader *mscreenHeader = (_multiScreenHeader *) (screenFile + sizeof(_standardHeader));
+Parallax *Sword2Engine::fetchBackgroundParallaxLayer(uint8 *screenFile, int layer) {
+	MultiScreenHeader *mscreenHeader = (MultiScreenHeader *) (screenFile + sizeof(StandardHeader));
 
 #ifdef _SWORD2_DEBUG
 	if (mscreenHeader->bg_parallax[layer] == 0)
 		error("fetchBackgroundParallaxLayer(%d) - No parallax layer exists", layer);
 #endif
 
-	return (_parallax *) ((uint8 *) mscreenHeader + mscreenHeader->bg_parallax[layer]);
+	return (Parallax *) ((uint8 *) mscreenHeader + mscreenHeader->bg_parallax[layer]);
 }
 
-_parallax *Sword2Engine::fetchBackgroundLayer(uint8 *screenFile) {
-	_multiScreenHeader *mscreenHeader = (_multiScreenHeader *) (screenFile + sizeof(_standardHeader));
+Parallax *Sword2Engine::fetchBackgroundLayer(uint8 *screenFile) {
+	MultiScreenHeader *mscreenHeader = (MultiScreenHeader *) (screenFile + sizeof(StandardHeader));
 
 #ifdef _SWORD2_DEBUG
 	if (mscreenHeader->screen == 0)
 		error("fetchBackgroundLayer (%d) - No background layer exists");
 #endif
 
-	return (_parallax *) ((uint8 *) mscreenHeader + mscreenHeader->screen + sizeof(_screenHeader));
+	return (Parallax *) ((uint8 *) mscreenHeader + mscreenHeader->screen + sizeof(ScreenHeader));
 }
 
-_parallax *Sword2Engine::fetchForegroundParallaxLayer(uint8 *screenFile, int layer) {
-	_multiScreenHeader *mscreenHeader = (_multiScreenHeader *) (screenFile + sizeof(_standardHeader));
+Parallax *Sword2Engine::fetchForegroundParallaxLayer(uint8 *screenFile, int layer) {
+	MultiScreenHeader *mscreenHeader = (MultiScreenHeader *) (screenFile + sizeof(StandardHeader));
 
 #ifdef _SWORD2_DEBUG
 	if (mscreenHeader->fg_parallax[layer] == 0)
 		error("fetchForegroundParallaxLayer(%d) - No parallax layer exists", layer);
 #endif
 
-	return (_parallax *) ((uint8 *) mscreenHeader + mscreenHeader->fg_parallax[layer]);
+	return (Parallax *) ((uint8 *) mscreenHeader + mscreenHeader->fg_parallax[layer]);
 }
 
 uint8 errorLine[128];
 
 uint8 *Sword2Engine::fetchTextLine(uint8 *file, uint32 text_line) {
-	_standardHeader *fileHeader;
+	StandardHeader *fileHeader;
 	uint32 *point;
 
-	_textHeader *text_header = (_textHeader *) (file + sizeof(_standardHeader));
+	TextHeader *text_header = (TextHeader *) (file + sizeof(StandardHeader));
 
 	if (text_line >= text_header->noOfLines) {
-		fileHeader = (_standardHeader *) file;
+		fileHeader = (StandardHeader *) file;
 		sprintf((char *) errorLine, "xxMissing line %d of %s (only 0..%d)", text_line, fileHeader->name, text_header->noOfLines - 1);
 
 
@@ -204,15 +204,15 @@ uint8 *Sword2Engine::fetchTextLine(uint8 *file, uint32 text_line) {
 // Used for testing text & speech (see fnISpeak in speech.cpp)
 
 bool Sword2Engine::checkTextLine(uint8 *file, uint32 text_line) {
-	_textHeader *text_header = (_textHeader *) (file + sizeof(_standardHeader));
+	TextHeader *text_header = (TextHeader *) (file + sizeof(StandardHeader));
 
 	return text_line < text_header->noOfLines;
 }
 
 uint8 *Sword2Engine::fetchObjectName(int32 resourceId) {
-	_standardHeader *header;
+	StandardHeader *header;
 	
-	header = (_standardHeader *) _resman->openResource(resourceId);
+	header = (StandardHeader *) _resman->openResource(resourceId);
 	_resman->closeResource(resourceId);
 
 	// note this pointer is no longer valid, but it should be ok until

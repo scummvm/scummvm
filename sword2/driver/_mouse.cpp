@@ -48,8 +48,8 @@ bool Input::checkForMouseEvents(void) {
  * @return a pointer to the mouse event, or NULL of there is none
  */
 
-_mouseEvent *Input::mouseEvent(void) {
-	_mouseEvent *me;
+MouseEvent *Input::mouseEvent(void) {
+	MouseEvent *me;
 
 	if (_mouseBacklog) {
 		me = &_mouseLog[_mouseLogPos];
@@ -211,12 +211,12 @@ int32 Graphics::setMouseAnim(uint8 *ma, int32 size, int32 mouseFlash) {
 		else
 			_mouseFrame = MOUSEFLASHFRAME;
 
-		_mouseAnim = (struct _mouseAnim *) malloc(size);
+		_mouseAnim = (MouseAnim *) malloc(size);
 		if (!_mouseAnim)
 			return RDERR_OUTOFMEMORY;
 
 		memcpy((uint8 *) _mouseAnim, ma, size);
-		_mouseOffsets = (int32 *) ((uint8 *) _mouseAnim + sizeof(struct _mouseAnim));
+		_mouseOffsets = (int32 *) ((uint8 *) _mouseAnim + sizeof(MouseAnim));
 
 		animateMouse();
 		drawMouse();
@@ -246,12 +246,12 @@ int32 Graphics::setLuggageAnim(uint8 *ma, int32 size) {
 	}
 
 	if (ma)	{
-		_luggageAnim = (struct _mouseAnim *) malloc(size);
+		_luggageAnim = (MouseAnim *) malloc(size);
 		if (!_luggageAnim)
 			return RDERR_OUTOFMEMORY;
 
 		memcpy((uint8 *) _luggageAnim, ma, size);
-		_luggageOffset = (int32 *) ((uint8 *) _luggageAnim + sizeof(struct _mouseAnim));
+		_luggageOffset = (int32 *) ((uint8 *) _luggageAnim + sizeof(MouseAnim));
 
 		animateMouse();
 		drawMouse();

@@ -242,7 +242,7 @@ int32 Graphics::decompressRLE16(uint8 *dest, uint8 *source, int32 decompSize, ui
  * @return RD_OK, or an error code
  */
 
-int32 Graphics::createSurface(_spriteInfo *s, uint8 **sprite) {
+int32 Graphics::createSurface(SpriteInfo *s, uint8 **sprite) {
 	*sprite = (uint8 *) malloc(s->w * s->h);
 	if (!*sprite)
 		return RDERR_OUTOFMEMORY;
@@ -267,7 +267,7 @@ int32 Graphics::createSurface(_spriteInfo *s, uint8 **sprite) {
  * @param clipRect the clipping rectangle
  */
 
-void Graphics::drawSurface(_spriteInfo *s, uint8 *surface, Common::Rect *clipRect) {
+void Graphics::drawSurface(SpriteInfo *s, uint8 *surface, Common::Rect *clipRect) {
 	Common::Rect rd, rs;
 	uint16 x, y;
 	uint8 *src, *dst;
@@ -352,7 +352,7 @@ void Graphics::deleteSurface(uint8 *surface) {
 // FIXME: I'm sure this could be optimized. There's plenty of data copying and
 // mallocing here.
 
-int32 Graphics::drawSprite(_spriteInfo *s) {
+int32 Graphics::drawSprite(SpriteInfo *s) {
 	uint8 *src, *dst;
 	uint8 *sprite, *newSprite;
 	uint8 *backbuf = NULL;
@@ -623,7 +623,7 @@ int32 Graphics::drawSprite(_spriteInfo *s) {
  * Opens the light masking sprite for a room.
  */
 
-int32 Graphics::openLightMask(_spriteInfo *s) {
+int32 Graphics::openLightMask(SpriteInfo *s) {
 	// FIXME: The light mask is only needed on higher graphics detail
 	// settings, so to save memory we could simply ignore it on lower
 	// settings. But then we need to figure out how to ensure that it

@@ -39,8 +39,8 @@ int Logic::processSession(void) {
 	char *raw_script_ad;
 	char *raw_data_ad;
 	uint32 null_pc;
-	_standardHeader *head;
-	_standardHeader *far_head;
+	StandardHeader *head;
+	StandardHeader *far_head;
 	uint32 id;
 
 	// might change during the session, so take a copy here
@@ -53,7 +53,7 @@ int Logic::processSession(void) {
 	// processing on the current list
 
 	while (_pc != 0xffffffff) {
-		head = (_standardHeader *) _vm->_resman->openResource(run_list);
+		head = (StandardHeader *) _vm->_resman->openResource(run_list);
 
 		if (head->fileType != RUN_LIST)
 			error("Logic_engine %d not a run_list", run_list);
@@ -77,12 +77,12 @@ int Logic::processSession(void) {
 			return 0;
 		}
 
-		head = (_standardHeader *) _vm->_resman->openResource(ID);
+		head = (StandardHeader *) _vm->_resman->openResource(ID);
 
 		if (head->fileType != GAME_OBJECT)
 			error("Logic_engine %d not an object", ID);
 
-		_curObjectHub = (_object_hub *) (head + 1);
+		_curObjectHub = (ObjectHub *) (head + 1);
 
 		debug(5, " %d id(%d) pc(%d)",
 			LEVEL,
@@ -123,12 +123,12 @@ int Logic::processSession(void) {
 
 				raw_data_ad = (char *) head;
 
-				far_head = (_standardHeader *) _vm->_resman->openResource(script / SIZE);
+				far_head = (StandardHeader *) _vm->_resman->openResource(script / SIZE);
 
 				if (far_head->fileType != GAME_OBJECT && far_head->fileType != SCREEN_MANAGER)
 					error("Logic_engine %d not a far object (its a %d)", script / SIZE, far_head->fileType);
 
-				// raw_script_ad = (char *) (head + 1) + sizeof(_standardHeader);
+				// raw_script_ad = (char *) (head + 1) + sizeof(StandardHeader);
 
 				// get our objects data address
 				// raw_data_ad = (char *) (_curObjectHub + 1);
@@ -328,16 +328,16 @@ void Logic::logicReplace(uint32 new_script) {
 
 void Logic::examineRunList(void) {
 	uint32 *game_object_list;
-	_standardHeader *file_header;
+	StandardHeader *file_header;
 
 	if (_currentRunList) {
 		// open and lock in place
-		game_object_list = (uint32 *) (_vm->_resman->openResource(_currentRunList) + sizeof(_standardHeader));
+		game_object_list = (uint32 *) (_vm->_resman->openResource(_currentRunList) + sizeof(StandardHeader));
 
 		Debug_Printf("Runlist number %d\n", _currentRunList);
 
 		for (int i = 0; game_object_list[i]; i++) {
-			file_header = (_standardHeader *) _vm->_resman->openResource(game_object_list[i]);
+			file_header = (StandardHeader *) _vm->_resman->openResource(game_object_list[i]);
 			Debug_Printf("%d %s\n", game_object_list[i], file_header->name);
 			_vm->_resman->closeResource(game_object_list[i]);
 		}

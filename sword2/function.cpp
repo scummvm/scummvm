@@ -139,7 +139,7 @@ int32 Logic::fnPause(int32 *params) {
 	// NB. Pause-value of 0 causes script to continue, 1 causes a 1-cycle
 	// quit, 2 gives 2 cycles, etc.
 
-	Object_logic *ob_logic = (Object_logic *) _vm->_memory->intToPtr(params[0]);
+	ObjectLogic *ob_logic = (ObjectLogic *) _vm->_memory->intToPtr(params[0]);
 
 	if (ob_logic->looping == 0) {
 		// start the pause
@@ -168,7 +168,7 @@ int32 Logic::fnRandomPause(int32 *params) {
 	//		1 minimum number of game-cycles to pause
 	//		2 maximum number of game-cycles to pause
 
-	Object_logic *ob_logic = (Object_logic *) _vm->_memory->intToPtr(params[0]);
+	ObjectLogic *ob_logic = (ObjectLogic *) _vm->_memory->intToPtr(params[0]);
 	int32 pars[2];
 
 	if (ob_logic->looping == 0) {
@@ -184,13 +184,13 @@ int32 Logic::fnRandomPause(int32 *params) {
 }
 
 int32 Logic::fnPassGraph(int32 *params) {
-	// makes an engine local copy of passed Object_graphic - run script 4
+	// makes an engine local copy of passed ObjectGraphic - run script 4
 	// of an object to request this used by fnTurnTo(id) etc
 	//
 	// remember, we cannot simply read a compact any longer but instead
 	// must request it from the object itself
 
-	// params:	0 pointer to an Object_graphic structure
+	// params:	0 pointer to an ObjectGraphic structure
 
 	warning("fnPassGraph() is a no-op now");
 
@@ -208,7 +208,7 @@ int32 Logic::fnPassMega(int32 *params) {
 
 	// params: 	0 pointer to a mega structure
 
-	memcpy(&_vm->_engineMega, _vm->_memory->intToPtr(params[0]), sizeof(Object_mega));
+	memcpy(&_vm->_engineMega, _vm->_memory->intToPtr(params[0]), sizeof(ObjectMega));
 
 	// makes no odds
 	return IR_CONT;
@@ -223,7 +223,7 @@ int32 Logic::fnSetValue(int32 *params) {
 	// params:	0 pointer to object's mega structure
 	//		1 value to set it to
 
-	Object_mega *ob_mega = (Object_mega *) _vm->_memory->intToPtr(params[0]);
+	ObjectMega *ob_mega = (ObjectMega *) _vm->_memory->intToPtr(params[0]);
 
 	ob_mega->megaset_res = params[1];
 
@@ -342,11 +342,11 @@ int32 Logic::fnResetGlobals(int32 *params) {
 	uint32 *globals;
 
 	size = _vm->_resman->fetchLen(1);
-	size -= sizeof(_standardHeader);
+	size -= sizeof(StandardHeader);
 
 	debug(5, "globals size: %d", size);
 
-	globals = (uint32 *) ((uint8 *) _vm->_resman->openResource(1) + sizeof(_standardHeader));
+	globals = (uint32 *) ((uint8 *) _vm->_resman->openResource(1) + sizeof(StandardHeader));
 
 	// blank each global variable
 	memset(globals, 0, size);
@@ -418,7 +418,7 @@ int32 Logic::fnPlayCredits(int32 *params) {
 
 			_vm->_graphics->updateDisplay();
 
-			_keyboardEvent ke;
+			KeyboardEvent ke;
 
 			if (_vm->_input->readKey(&ke) == RD_OK && ke.keycode == 27)
 				break;

@@ -35,10 +35,10 @@ enum {
 // The MOUSE_holding mode is entered when the conversation menu is closed, and
 // exited when the mouse cursor moves off that menu area. I don't know why yet.
  
-// mouse unit - like Object_mouse, but with anim resource & pc (needed if
+// mouse unit - like ObjectMouse, but with anim resource & pc (needed if
 // sprite is to act as mouse detection mask)
 
-struct Mouse_unit {
+struct MouseUnit {
 	// Top-left and bottom-right of mouse area. These coords are inclusive
 	int32 x1;
 	int32 y1;
@@ -50,7 +50,7 @@ struct Mouse_unit {
 	// type (or resource id?) of pointer used over this area
 	int32 pointer;
 
-	// up to here, this is basically a copy of the Object_mouse
+	// up to here, this is basically a copy of the ObjectMouse
 	// structure, but then we have...
 
 	// object id, used when checking mouse list

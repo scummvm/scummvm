@@ -33,7 +33,7 @@ namespace Sword2 {
 
 extern void sword2_sound_handler(void *refCon);
 
-typedef struct {
+struct FxHandle {
 	int32 _id;
 	bool _paused;
 	int8 _volume;
@@ -42,7 +42,7 @@ typedef struct {
 	uint16 *_buf;
 	int32 _bufSize;
 	PlayingSoundHandle _handle;
-} FxHandle;
+};
 
 class MusicHandle : public AudioInputStream {
 public:

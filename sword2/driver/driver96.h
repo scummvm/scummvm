@@ -176,21 +176,21 @@ enum {
 
 // Structure definitions
 
-typedef struct {
+struct MouseEvent {
 	uint16 buttons;
-} _mouseEvent;
+};
 
-typedef struct {
+struct KeyboardEvent {
 	uint16 ascii;
 	int keycode;
 	int modifiers;
-} _keyboardEvent;
+};
 
 #if !defined(__GNUC__)
 	#pragma START_PACK_STRUCTS
 #endif
 
-struct _parallax {
+struct Parallax {
 	uint16 w;
 	uint16 h;
 	uint32 offset[2];	// 2 is arbitrary
@@ -200,11 +200,11 @@ struct _parallax {
 	#pragma END_PACK_STRUCTS
 #endif
 
-// The _spriteInfo structure is used to tell the driver96 code what attributes
+// The SpriteInfo structure is used to tell the driver96 code what attributes
 // are linked to a sprite for drawing.  These include position, scaling and
 // compression.
 
-typedef struct {
+struct SpriteInfo {
 	int16 x;		// coords for top-left of sprite
 	int16 y;
 	uint16 w;		// dimensions of sprite (before scaling)
@@ -216,13 +216,13 @@ typedef struct {
 	uint16 blend;		// holds the blending values.
 	uint8 *data;		// pointer to the sprite data
 	uint8 *colourTable;	// pointer to 16-byte colour table, only applicable to 16-col compression type
-} _spriteInfo;
+};
 
 // This is the format of a .WAV file.  Somewhere after this header is the
 // string 'DATA' followed by an int32 size which is the size of the data.
 // Following the size of the data is the data itself.
 
- typedef struct {
+struct WavHeader {
 	uint32 riff;
 	uint32 fileLength;
 	uint32 wavID;
@@ -236,19 +236,19 @@ typedef struct {
 	uint16 unknown1;
 	uint16 unknown2;
 	uint16 bitsPerSample;
-} _wavHeader;
+};
 
 // This is the structure which is passed to the sequence player. It includes
 // the smack to play, and any text lines which are to be displayed over the top
 // of the sequence.
 
-typedef struct {
+struct MovieTextObject {
 	uint16 startFrame;
 	uint16 endFrame;
-	_spriteInfo *textSprite;
+	SpriteInfo *textSprite;
 	uint32 speechBufferSize;
 	uint16 *speech;
-} _movieTextObject;
+};
 
 // Input handling class
 
@@ -264,7 +264,7 @@ private:
 
 	uint8 _mouseBacklog;
 	uint8 _mouseLogPos;
-	_mouseEvent _mouseLog[MAX_MOUSE_EVENTS];
+	MouseEvent _mouseLog[MAX_MOUSE_EVENTS];
 
 	void logMouseEvent(uint16 buttons);
 
@@ -275,7 +275,7 @@ private:
 	uint8 _keyLogPos;
 
 	// The keyboard buffer
-	_keyboardEvent _keyBuffer[MAX_KEY_BUFFER];
+	KeyboardEvent _keyBuffer[MAX_KEY_BUFFER];
 
 	void writeKey(uint16 ascii, int keycode, int modifiers);
 
@@ -289,11 +289,11 @@ public:
 
 	void parseEvents(void);
 
-	_mouseEvent *mouseEvent(void);
+	MouseEvent *mouseEvent(void);
 	bool checkForMouseEvents(void);
 
 	bool keyWaiting(void);
-	int32 readKey(_keyboardEvent *ev);
+	int32 readKey(KeyboardEvent *ev);
 };
  
 } // End of namespace Sword2

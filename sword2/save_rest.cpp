@@ -54,7 +54,7 @@ static void convertHeaderEndian(Sword2Engine::SaveGameHeader &header) {
 	SWAP32(header.feet_y);
 	SWAP32(header.music_id);
 	
-	// _object_hub
+	// ObjectHub
 	SWAP32(header.player_hub.type);
 	SWAP32(header.player_hub.logic_level);
 	for (i = 0; i < TREE_SIZE; i++) {
@@ -63,16 +63,16 @@ static void convertHeaderEndian(Sword2Engine::SaveGameHeader &header) {
 		SWAP32(header.player_hub.script_pc[i]);
 	}
 
-	// Object_logic
+	// ObjectLogic
 	SWAP32(header.logic.looping);
 	SWAP32(header.logic.pause);
 
-	// Object_graphic
+	// ObjectGraphic
 	SWAP32(header.graphic.type);
 	SWAP32(header.graphic.anim_resource);
 	SWAP32(header.graphic.anim_pc);
 
-	// Object_mega
+	// ObjectMega
 	SWAP32(header.mega.currently_walking);
 	SWAP32(header.mega.walk_pc);
 	SWAP32(header.mega.scale_a);
@@ -87,7 +87,7 @@ static void convertHeaderEndian(Sword2Engine::SaveGameHeader &header) {
 // SAVE GAME
 
 uint32 Sword2Engine::saveGame(uint16 slotNo, uint8 *desc) {
-	mem *saveBufferMem;
+	Memory *saveBufferMem;
 	uint32 bufferSize;
 	uint32 errorCode;
 
@@ -117,7 +117,7 @@ uint32 Sword2Engine::findBufferSize(void) {
 	return sizeof(_saveGameHeader) + _resman->fetchLen(1);
 }
 
-void Sword2Engine::fillSaveBuffer(mem *buffer, uint32 size, uint8 *desc) {
+void Sword2Engine::fillSaveBuffer(Memory *buffer, uint32 size, uint8 *desc) {
 	uint8 *varsRes;
 
 	// set up the _saveGameHeader
@@ -144,7 +144,7 @@ void Sword2Engine::fillSaveBuffer(mem *buffer, uint32 size, uint8 *desc) {
 	_saveGameHeader.music_id = _loopingMusicId;
 
 	// object hub
-	memcpy(&_saveGameHeader.player_hub, _resman->openResource(CUR_PLAYER_ID) + sizeof(_standardHeader), sizeof(_object_hub));
+	memcpy(&_saveGameHeader.player_hub, _resman->openResource(CUR_PLAYER_ID) + sizeof(StandardHeader), sizeof(ObjectHub));
 	_resman->closeResource(CUR_PLAYER_ID);
 
 	// logic, graphic & mega structures
@@ -169,8 +169,8 @@ void Sword2Engine::fillSaveBuffer(mem *buffer, uint32 size, uint8 *desc) {
 	memcpy(buffer->ad + sizeof(_saveGameHeader), varsRes, FROM_LE_32(_saveGameHeader.varLength));
 
 #ifdef SCUMM_BIG_ENDIAN
-	uint32 *globalVars = (uint32 *) (buffer->ad + sizeof(_saveGameHeader) + sizeof(_standardHeader));
-	const uint numVars = (FROM_LE_32(_saveGameHeader.varLength) - sizeof(_standardHeader)) / 4;
+	uint32 *globalVars = (uint32 *) (buffer->ad + sizeof(_saveGameHeader) + sizeof(StandardHeader));
+	const uint numVars = (FROM_LE_32(_saveGameHeader.varLength) - sizeof(StandardHeader)) / 4;
 
 	for (uint i = 0; i < numVars; i++)
 		globalVars[i] = SWAP_BYTES_32(globalVars[i]);
@@ -217,7 +217,7 @@ uint32 Sword2Engine::saveData(uint16 slotNo, uint8 *buffer, uint32 bufferSize) {
 // RESTORE GAME
 
 uint32 Sword2Engine::restoreGame(uint16 slotNo) {
-	mem *saveBufferMem;
+	Memory *saveBufferMem;
 	uint32 bufferSize;
 	uint32 errorCode;
 
@@ -290,7 +290,7 @@ uint32 Sword2Engine::restoreData(uint16 slotNo, uint8 *buffer, uint32 bufferSize
 	}
 }
 
-uint32 Sword2Engine::restoreFromBuffer(mem *buffer, uint32 size) {
+uint32 Sword2Engine::restoreFromBuffer(Memory *buffer, uint32 size) {
 	uint8 *varsRes;
 	int32 pars[2];
 
@@ -337,7 +337,7 @@ uint32 Sword2Engine::restoreFromBuffer(mem *buffer, uint32 size) {
 	// get player character data from savegame buffer
 
 	// object hub is just after the standard header 
-	memcpy(_resman->openResource(CUR_PLAYER_ID) + sizeof(_standardHeader), &_saveGameHeader.player_hub, sizeof(_object_hub));
+	memcpy(_resman->openResource(CUR_PLAYER_ID) + sizeof(StandardHeader), &_saveGameHeader.player_hub, sizeof(ObjectHub));
 
 	_resman->closeResource(CUR_PLAYER_ID);
 
@@ -353,8 +353,8 @@ uint32 Sword2Engine::restoreFromBuffer(mem *buffer, uint32 size) {
 	memcpy(varsRes, buffer->ad + sizeof(_saveGameHeader), _saveGameHeader.varLength );
 
 #ifdef SCUMM_BIG_ENDIAN
-	uint32 *globalVars = (uint32 *) (varsRes + sizeof(_standardHeader));
-	const uint numVars = (_saveGameHeader.varLength - sizeof(_standardHeader)) / 4;
+	uint32 *globalVars = (uint32 *) (varsRes + sizeof(StandardHeader));
+	const uint numVars = (_saveGameHeader.varLength - sizeof(StandardHeader)) / 4;
 
 	for (uint i = 0; i < numVars; i++)
 		globalVars[i] = SWAP_BYTES_32(globalVars[i]);
@@ -462,9 +462,9 @@ void Sword2Engine::getPlayerStructures(void) {
 
 	uint32 null_pc = 7;
  	char *raw_script_ad;
-	_standardHeader *head;
+	StandardHeader *head;
 
-	head = (_standardHeader *) _resman->openResource(CUR_PLAYER_ID);
+	head = (StandardHeader *) _resman->openResource(CUR_PLAYER_ID);
 
 	if (head->fileType != GAME_OBJECT)
 		error("incorrect CUR_PLAYER_ID=%d", CUR_PLAYER_ID);
@@ -481,9 +481,9 @@ void Sword2Engine::putPlayerStructures(void) {
 
 	uint32 null_pc;
  	char *raw_script_ad;
-	_standardHeader *head;
+	StandardHeader *head;
 
-	head = (_standardHeader *) _resman->openResource(CUR_PLAYER_ID);
+	head = (StandardHeader *) _resman->openResource(CUR_PLAYER_ID);
 
 	if (head->fileType != GAME_OBJECT)
 		error("incorrect CUR_PLAYER_ID=%d", CUR_PLAYER_ID);
@@ -546,9 +546,9 @@ int32 Logic::fnPassPlayerSaveData(int32 *params) {
 
 	// copy from player object to savegame header
 
-	memcpy(&_vm->_saveGameHeader.logic, _vm->_memory->intToPtr(params[0]), sizeof(Object_logic));
-	memcpy(&_vm->_saveGameHeader.graphic, _vm->_memory->intToPtr(params[1]), sizeof(Object_graphic));
-	memcpy(&_vm->_saveGameHeader.mega, _vm->_memory->intToPtr(params[2]), sizeof(Object_mega));
+	memcpy(&_vm->_saveGameHeader.logic, _vm->_memory->intToPtr(params[0]), sizeof(ObjectLogic));
+	memcpy(&_vm->_saveGameHeader.graphic, _vm->_memory->intToPtr(params[1]), sizeof(ObjectGraphic));
+	memcpy(&_vm->_saveGameHeader.mega, _vm->_memory->intToPtr(params[2]), sizeof(ObjectMega));
 
 	// makes no odds
 	return IR_CONT;
@@ -562,17 +562,17 @@ int32 Logic::fnGetPlayerSaveData(int32 *params) {
 	//		1 pointer to object's graphic structure
 	//		2 pointer to object's mega structure
 
-	Object_logic *ob_logic = (Object_logic *) _vm->_memory->intToPtr(params[0]);
-	Object_graphic *ob_graphic = (Object_graphic *) _vm->_memory->intToPtr(params[1]);
-	Object_mega *ob_mega = (Object_mega *) _vm->_memory->intToPtr(params[2]);
+	ObjectLogic *ob_logic = (ObjectLogic *) _vm->_memory->intToPtr(params[0]);
+	ObjectGraphic *ob_graphic = (ObjectGraphic *) _vm->_memory->intToPtr(params[1]);
+	ObjectMega *ob_mega = (ObjectMega *) _vm->_memory->intToPtr(params[2]);
 
 	int32 pars[3];
 
 	// copy from savegame header to player object
 
-	memcpy((uint8 *) ob_logic, &_vm->_saveGameHeader.logic, sizeof(Object_logic));
-	memcpy((uint8 *) ob_graphic, &_vm->_saveGameHeader.graphic, sizeof(Object_graphic));
-	memcpy((uint8 *) ob_mega, &_vm->_saveGameHeader.mega, sizeof(Object_mega));
+	memcpy((uint8 *) ob_logic, &_vm->_saveGameHeader.logic, sizeof(ObjectLogic));
+	memcpy((uint8 *) ob_graphic, &_vm->_saveGameHeader.graphic, sizeof(ObjectGraphic));
+	memcpy((uint8 *) ob_mega, &_vm->_saveGameHeader.mega, sizeof(ObjectMega));
 
  	// any walk-data must be cleared - the player will be set to stand if
 	// he was walking when saved

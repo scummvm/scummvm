@@ -45,7 +45,7 @@ namespace Sword2 {
 	#pragma START_PACK_STRUCTS
 #endif
 
-struct _mouseAnim {
+struct MouseAnim {
 	uint8 runTimeComp;	// type of runtime compression used for the
 				// frame data
 	uint8 noAnimFrames;	// number of frames in the anim
@@ -64,19 +64,19 @@ private:
 	Sword2Engine *_vm;
 
 	uint8 *_textSurface;
-	void openTextObject(_movieTextObject *obj);
-	void closeTextObject(_movieTextObject *obj);
-	void drawTextObject(_movieTextObject *obj);
+	void openTextObject(MovieTextObject *obj);
+	void closeTextObject(MovieTextObject *obj);
+	void drawTextObject(MovieTextObject *obj);
 
 public:
 	MoviePlayer(Sword2Engine *vm) : _vm(vm), _textSurface(NULL) {}
-	int32 play(char *filename, _movieTextObject *text[], uint8 *musicOut);
+	int32 play(char *filename, MovieTextObject *text[], uint8 *musicOut);
 };
 
-typedef struct {
+struct BlockSurface {
 	byte data[BLOCKWIDTH * BLOCKHEIGHT];
 	bool transparent;
-} BlockSurface;
+};
 
 class Graphics {
 	friend class MoviePlayer;
@@ -109,8 +109,8 @@ private:
 
 	uint8 _mouseFrame;
 	uint8 *_mouseSprite;
-	struct _mouseAnim *_mouseAnim;
-	struct _mouseAnim *_luggageAnim;
+	struct MouseAnim *_mouseAnim;
+	struct MouseAnim *_luggageAnim;
 	int32 *_mouseOffsets;
 	int32 *_luggageOffset;
 
@@ -222,19 +222,19 @@ public:
 	void initialiseRenderCycle(void);
 	void startRenderCycle(void);
 	bool endRenderCycle(void);
-	void renderParallax(_parallax *p, int16 layer);
+	void renderParallax(Parallax *p, int16 layer);
 	void setLocationMetrics(uint16 w, uint16 h);
-	int32 initialiseBackgroundLayer(_parallax *p);
+	int32 initialiseBackgroundLayer(Parallax *p);
 	void closeBackgroundLayer(void);
 
 	void plotPoint(uint16 x, uint16 y, uint8 colour);
 	void drawLine(int16 x1, int16 y1, int16 x2, int16 y2, uint8 colour);
 
-	int32 createSurface(_spriteInfo *s, uint8 **surface);
-	void drawSurface(_spriteInfo *s, uint8 *surface, Common::Rect *clipRect = NULL);
+	int32 createSurface(SpriteInfo *s, uint8 **surface);
+	void drawSurface(SpriteInfo *s, uint8 *surface, Common::Rect *clipRect = NULL);
 	void deleteSurface(uint8 *surface);
-	int32 drawSprite(_spriteInfo *s);
-	int32 openLightMask(_spriteInfo *s);
+	int32 drawSprite(SpriteInfo *s);
+	int32 openLightMask(SpriteInfo *s);
 	int32 closeLightMask(void);
 };
 

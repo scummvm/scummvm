@@ -67,7 +67,7 @@ public:
 
 	int32 _textNumber;
 
-	Object_graphic _playerGraphic;
+	ObjectGraphic _playerGraphic;
 	uint32 _playerGraphicNoFrames;
 
 	void buildDebugText(void);

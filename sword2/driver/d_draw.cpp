@@ -92,19 +92,19 @@ void Graphics::clearScene(void) {
 	memset(_buffer + MENUDEEP * _screenWide, 0, _screenWide * RENDERDEEP);
 }
 
-void MoviePlayer::openTextObject(_movieTextObject *obj) {
+void MoviePlayer::openTextObject(MovieTextObject *obj) {
 	if (obj->textSprite)
 		_vm->_graphics->createSurface(obj->textSprite, &_textSurface);
 }
 
-void MoviePlayer::closeTextObject(_movieTextObject *obj) {
+void MoviePlayer::closeTextObject(MovieTextObject *obj) {
 	if (_textSurface) {
 		_vm->_graphics->deleteSurface(_textSurface);
 		_textSurface = NULL;
 	}
 }
 
-void MoviePlayer::drawTextObject(_movieTextObject *obj) {
+void MoviePlayer::drawTextObject(MovieTextObject *obj) {
 	if (obj->textSprite && _textSurface)
 		_vm->_graphics->drawSurface(obj->textSprite, _textSurface);
 }
@@ -116,7 +116,7 @@ void MoviePlayer::drawTextObject(_movieTextObject *obj) {
  * @param musicOut lead-out music
  */
 
-int32 MoviePlayer::play(char *filename, _movieTextObject *text[], uint8 *musicOut) {
+int32 MoviePlayer::play(char *filename, MovieTextObject *text[], uint8 *musicOut) {
 	warning("semi-stub PlaySmacker %s", filename);
 
 	// WORKAROUND: For now, we just do the voice-over parts of the
@@ -136,9 +136,9 @@ int32 MoviePlayer::play(char *filename, _movieTextObject *text[], uint8 *musicOu
 		memset(_vm->_graphics->_buffer, 0, _vm->_graphics->_screenWide * MENUDEEP);
 
 		uint8 msg[] = "Cutscene - Press ESC to exit";
-		mem *data = _vm->_fontRenderer->makeTextSprite(msg, 640, 255, _vm->_speechFontId);
-		_frameHeader *frame = (_frameHeader *) data->ad;
-		_spriteInfo msgSprite;
+		Memory *data = _vm->_fontRenderer->makeTextSprite(msg, 640, 255, _vm->_speechFontId);
+		FrameHeader *frame = (FrameHeader *) data->ad;
+		SpriteInfo msgSprite;
 		uint8 *msgSurface;
 
 		msgSprite.x = _vm->_graphics->_screenWide / 2 - frame->width / 2;
@@ -146,7 +146,7 @@ int32 MoviePlayer::play(char *filename, _movieTextObject *text[], uint8 *musicOu
 		msgSprite.w = frame->width;
 		msgSprite.h = frame->height;
 		msgSprite.type = RDSPR_NOCOMPRESSION;
-		msgSprite.data = data->ad + sizeof(_frameHeader);
+		msgSprite.data = data->ad + sizeof(FrameHeader);
 
 		_vm->_graphics->createSurface(&msgSprite, &msgSurface);
 		_vm->_graphics->drawSurface(&msgSprite, msgSurface);
@@ -206,7 +206,7 @@ int32 MoviePlayer::play(char *filename, _movieTextObject *text[], uint8 *musicOu
 
 			_vm->_graphics->updateDisplay();
 
-			_keyboardEvent ke;
+			KeyboardEvent ke;
 
 			if (_vm->_input->readKey(&ke) == RD_OK && ke.keycode == 27) {
 				_vm->_mixer->stopHandle(handle);
