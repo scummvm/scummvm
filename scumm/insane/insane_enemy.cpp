@@ -171,7 +171,7 @@ int32 Insane::enemy0handler(int32 actor1, int32 actor2, int32 probability) {
 						retval = 1;
 			}
 			_enHdlVar[EN_ROTT1][5] = 0;
-			_enHdlVar[EN_ROTT1][6] = ABS(_vm->_rnd.getRandomNumber(probability - 1)) * 2;
+			_enHdlVar[EN_ROTT1][6] = _vm->_rnd.getRandomNumber(probability - 1) / 2;
 		}
 
 		if (_actor[actor1].weapon == -1)
@@ -335,7 +335,7 @@ int32 Insane::enemy1handler(int32 actor1, int32 actor2, int32 probability) {
 						retval = 1;
 			}
 			_enHdlVar[EN_ROTT1][5] = 0;
-			_enHdlVar[EN_ROTT1][6] = ABS(_vm->_rnd.getRandomNumber(probability - 1)) * 2;
+			_enHdlVar[EN_ROTT1][6] = _vm->_rnd.getRandomNumber(probability - 1) / 2;
 		}
 
 		if (_actor[actor1].weapon == -1)
@@ -479,7 +479,7 @@ int32 Insane::enemy2handler(int32 actor1, int32 actor2, int32 probability) {
 						retval = 1;
 			}
 			_enHdlVar[EN_ROTT3][5] = 0;
-			_enHdlVar[EN_ROTT3][6] = ABS(_vm->_rnd.getRandomNumber(probability - 1)) * 2;
+			_enHdlVar[EN_ROTT3][6] = _vm->_rnd.getRandomNumber(probability - 1) / 2;
 		}
 
 		if (_actor[actor1].weapon == -1)
@@ -629,7 +629,7 @@ int32 Insane::enemy3handler(int32 actor1, int32 actor2, int32 probability) {
 							retval = 1;
 			}
 			_enHdlVar[EN_VULTF1][5] = 0;
-			_enHdlVar[EN_VULTF1][6] = ABS(_vm->_rnd.getRandomNumber(probability - 1)) / 2;
+			_enHdlVar[EN_VULTF1][6] = _vm->_rnd.getRandomNumber(probability - 1) / 2;
 		}
 
 		if (_actor[actor1].weapon == -1)
@@ -785,7 +785,7 @@ int32 Insane::enemy4handler(int32 actor1, int32 actor2, int32 probability) {
 						retval = 1;
 			}
 			_enHdlVar[EN_VULTM1][5] = 0;
-			_enHdlVar[EN_VULTM1][6] = ABS(_vm->_rnd.getRandomNumber(probability - 1)) * 2;
+			_enHdlVar[EN_VULTM1][6] = _vm->_rnd.getRandomNumber(probability - 1) / 2;
 		}
 
 		if (_actor[actor1].weapon == -1)
