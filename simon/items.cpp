@@ -986,25 +986,17 @@ int SimonState::runScript()
 				uint b = getVarOrByte();
 				uint c = getVarOrByte();
 				uint a = getVarOrByte();
+				uint d = 0;
 
-				if (_game == GAME_SIMON1TALKIE || _game == GAME_SIMON1WIN) {
-					uint d = _array_4[a];
-					if (d != 0)
-						talk_with_speech(d, b);
-				} else if (!(_game & GAME_TALKIE)) {
-					const char *s = (const char *)getStringPtrByID(_stringid_array_3[a]);
-					ThreeValues *tv = getThreeValues(b);
+				const char *s = (const char *)getStringPtrByID(_stringid_array_3[a]);
+				ThreeValues *tv = getThreeValues(b);
+				if (_game == GAME_TALKIE) 
+					d = _array_4[a];
 
+				if (d != 0 && !_vk_t_toggle) {
+					talk_with_speech(d, b);
+				} else if (s != NULL) {
 					talk_with_text(b, c, s, tv->a, tv->b, tv->c);
-				} else if (_game == GAME_SIMON2TALKIE || _game & GAME_SIMON2WIN) {
-					const char *s = (const char *)getStringPtrByID(_stringid_array_3[a]);
-					ThreeValues *tv = getThreeValues(b);
-					uint d = _array_4[a];
-
-					if (d != 0 && !_vk_t_toggle)
-						talk_with_speech(d, b);
-					else
-						talk_with_text(b, c, s, tv->a, tv->b, tv->c);
 				}
 			}
 			break;
@@ -1234,40 +1226,27 @@ void SimonState::o_177()
 {
 	uint a = getVarOrByte();
 	uint b = getVarOrByte();
+	const char *s = NULL;
+	ThreeValues *tv = NULL;
+	char buf[256];
+
 	Child2 *child = (Child2 *)findChildOfType(getNextItemPtr(), 2);
+	if (child != NULL && child->avail_props & 1) {
+		s = (const char *)getStringPtrByID(child->array[0]);
+		tv = getThreeValues(a);
+	}
+
 	if (_game == GAME_SIMON1TALKIE || _game == GAME_SIMON1WIN) {
-		uint offs;
 		if (child != NULL && child->avail_props & 0x200) {
-			offs = getOffsetOfChild2Param(child, 0x200);
-			talk_with_speech(child->array[offs], a);
+			uint offs = getOffsetOfChild2Param(child, 0x200);
+			if (!_vk_t_toggle)
+				talk_with_speech(child->array[offs], a);
 		} else if (child != NULL && child->avail_props & 0x100) {
-			offs = getOffsetOfChild2Param(child, 0x100);
-			talk_with_speech(child->array[offs] + 3550, a);
-		}
-	} else if (!(_game & GAME_TALKIE)) {
-		if (child != NULL && child->avail_props & 1) {
-			const char *s = (const char *)getStringPtrByID(child->array[0]);
-			char buf[256];
-
-			ThreeValues *tv = getThreeValues(a);
-
-			if (child->avail_props & 0x100) {
-				sprintf(buf, "%d%s", child->array[getOffsetOfChild2Param(child, 0x100)], s);
-				s = buf;
-			}
-
-			talk_with_text(a, b, s, tv->a, tv->b, tv->c);
+			uint offs = getOffsetOfChild2Param(child, 0x100);
+			if (!_vk_t_toggle)
+				talk_with_speech(child->array[offs] + 3550, a);
 		}
 	} else if (_game == GAME_SIMON2TALKIE || _game & GAME_SIMON2WIN) {
-		const char *s = NULL;
-		ThreeValues *tv = NULL;
-		char buf[256];
-
-		if (child != NULL && child->avail_props & 1) {
-			s = (const char *)getStringPtrByID(child->array[0]);
-			tv = getThreeValues(a);
-		}
-
 		if (child != NULL && child->avail_props & 0x200) {
 			uint var200 = child->array[getOffsetOfChild2Param(child, 0x200)];
 
@@ -1319,18 +1298,14 @@ void SimonState::o_177()
 				talk_with_speech(var200, a);
 		}
 
-		if (!_vk_t_toggle)
-			return;
-
-		if (child == NULL || !(child->avail_props & 1))
-			return;
-
+	}
+	if (child != NULL && child->avail_props & 1 && !_vk_t_toggle) {
 		if (child->avail_props & 0x100) {
 			sprintf(buf, "%d%s", child->array[getOffsetOfChild2Param(child, 0x100)], s);
 			s = buf;
 		}
-
-		talk_with_text(a, b, s, tv->a, tv->b, tv->c);
+		if (s != NULL)
+			talk_with_text(a, b, s, tv->a, tv->b, tv->c);
 	}
 }
 

@@ -247,7 +247,8 @@ enum {
 	ES_ESP = 5,
 	JA_JPN = 6,
 	ZH_TWN = 7,
-	KO_KOR = 8
+	KO_KOR = 8,
+	HB_HEB = 20
 };
 
 enum {

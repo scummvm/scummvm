@@ -1889,7 +1889,7 @@ void SimonState::o_print_str()
 	case GAME_SIMON1TALKIE:
 	case GAME_SIMON1WIN:
 	case GAME_SIMON1CD32:
- 		if (speech_id != 0) {
+ 		if (speech_id != 0 && !_vk_t_toggle) {
   			talk_with_speech(speech_id, num_1);
   		} else if (string_ptr != NULL) {
   			talk_with_text(num_1, num_2, (char *)string_ptr, tv->a, tv->b, tv->c);
@@ -3237,7 +3237,8 @@ void SimonState::processSpecialKeys()
 			break;
 
 		case 't':
-			_vk_t_toggle ^= 1;
+			if (_game & GAME_SIMON2)
+				_vk_t_toggle ^= 1;
 			break;
 
 		case '+':
@@ -4698,7 +4699,7 @@ void SimonState::go()
 	if (_debugLevel == 4)
 		_start_mainscript = true;
 
-	if (_sound->hasVoice()) {
+	if (_sound->hasVoice() && _language != 20) {
 		_vk_t_toggle = false;
 	} else {
 		_vk_t_toggle = true;
