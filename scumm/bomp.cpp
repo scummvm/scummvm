@@ -235,11 +235,11 @@ void ScummEngine::drawBomp(const BompDrawData &bd, bool mirror) {
 	src = bd.dataptr;
 	dst = (byte *)bd.dst.pixels + bd.y * bd.dst.pitch + (bd.x + clip.left);
 
-	const byte maskbit = revBitMask[(bd.x + clip.left + virtscr[0].xstart) & 7];
+	const byte maskbit = revBitMask[(bd.x + clip.left) & 7];
 
 	// Mask against any additionally imposed mask
 	if (bd.maskPtr) {
-		mask = bd.maskPtr + (bd.y * gdi._numStrips) + ((bd.x + clip.left + (virtscr[0].xstart&7)) / 8);
+		mask = bd.maskPtr + (bd.y * gdi._numStrips) + ((bd.x + clip.left) / 8);
 	}
 
 	// Setup vertical scaling

@@ -518,8 +518,8 @@ void AkosRenderer::codec1_genericDecode(Codec1 &v1) {
 	height = _height;
 
 	scaleytab = &v1.scaletable[v1.scaleYindex];
-	maskbit = revBitMask[(v1.x + _vm->virtscr[0].xstart) & 7];
-	mask = _vm->getMaskBuffer(v1.x, v1.y, _zbuf);
+	maskbit = revBitMask[v1.x & 7];
+	mask = _vm->getMaskBuffer(v1.x - (_vm->virtscr[0].xstart & 7), v1.y, _zbuf);
 
 	if (len)
 		goto StartPos;
@@ -573,14 +573,14 @@ void AkosRenderer::codec1_genericDecode(Codec1 &v1) {
 					v1.x += v1.scaleXstep;
 					if (v1.x < 0 || v1.x >= _out.w)
 						return;
-					maskbit = revBitMask[(v1.x + _vm->virtscr[0].xstart) & 7];
+					maskbit = revBitMask[v1.x & 7];
 					v1.destptr += v1.scaleXstep;
 					skip_column = false;
 				} else
 					skip_column = true;
 				v1.scaleXindex += v1.scaleXstep;
 				dst = v1.destptr;
-				mask = _vm->getMaskBuffer(v1.x, v1.y, _zbuf);
+				mask = _vm->getMaskBuffer(v1.x - (_vm->virtscr[0].xstart & 7), v1.y, _zbuf);
 			}
 		StartPos:;
 		} while (--len);
@@ -978,8 +978,7 @@ byte AkosRenderer::codec5(int xmoveCur, int ymoveCur) {
 
 	bdd.srcwidth = _width;
 	bdd.srcheight = _height;
-	bdd.dst = _vm->virtscr[kMainVirtScreen];
-	bdd.dst.pixels = _out.pixels;
+	bdd.dst = _out;
 	bdd.dataptr = _srcptr;
 	bdd.scale_x = 255;
 	bdd.scale_y = 255;
