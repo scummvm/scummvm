@@ -306,17 +306,17 @@ void IMuseDigital::playComiMusic(const char *songName, const imuseComiTable *tab
 			setFade(table->soundId, 127, 120);
 			break;
 		case 2:
-			fadeOutMusic(table->fadeDelay);
+			fadeOutMusic(table->fadeOut60TicksDelay);
 			startMusic(table->filename, table->soundId, table->hookId, 127);
 			break;
 		case 3:
 			if ((!sequence) && (table->param != 0)) {
 				if (table->param == _comiStateMusicTable[_curMusicState].param) {
-					fadeOutMusic(table->fadeDelay);
+					fadeOutMusic(table->fadeOut60TicksDelay);
 					startMusic(table->filename, table->soundId, 0, 127);
 				}
 			} else {
-				fadeOutMusic(table->fadeDelay);
+				fadeOutMusic(table->fadeOut60TicksDelay);
 				startMusic(table->filename, table->soundId, hookId, 127);
 			}
 			break;
@@ -325,7 +325,7 @@ void IMuseDigital::playComiMusic(const char *songName, const imuseComiTable *tab
 			startMusic(table->filename, table->soundId, table->hookId, 127);
 			break;
 		case 12:
-			fadeOutMusic(table->fadeDelay);
+			fadeOutMusic(table->fadeOut60TicksDelay);
 			startMusic(table->filename, table->soundId, table->hookId, 127);
 			break;
 	}

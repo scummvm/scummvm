@@ -178,7 +178,7 @@ struct imuseComiTable {
 	char name[20];
 	byte param;
 	byte hookId;
-	int16 fadeDelay;
+	int16 fadeOut60TicksDelay;
 	char filename[13];
 };
 
