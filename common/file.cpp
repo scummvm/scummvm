@@ -201,7 +201,7 @@ void File::clearIOFailed() {
 	_ioFailed = false;
 }
 
-bool File::eof() {
+bool File::eof() const {
 	if (_handle == NULL) {
 		error("File::eof: File is not open!");
 		return false;
@@ -210,7 +210,7 @@ bool File::eof() {
 	return feof(_handle) != 0;
 }
 
-uint32 File::pos() {
+uint32 File::pos() const {
 	if (_handle == NULL) {
 		error("File::pos: File is not open!");
 		return 0;
@@ -219,7 +219,7 @@ uint32 File::pos() {
 	return ftell(_handle);
 }
 
-uint32 File::size() {
+uint32 File::size() const {
 	if (_handle == NULL) {
 		error("File::size: File is not open!");
 		return 0;

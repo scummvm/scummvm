@@ -29,14 +29,6 @@
 #include "common/savefile.h"
 #include "common/singleton.h"
 
-class OSystem;
-
-/**
- * Custom object factory for OSystem.
- */
-template <>
-OSystem *Common::Singleton<OSystem>::makeInstance();
-
 
 /**
  * Interface for ScummVM backends. If you want to port ScummVM to a system
@@ -49,6 +41,10 @@ OSystem *Common::Singleton<OSystem>::makeInstance();
  * control audio CD playback, and sound output.
  */
 class OSystem : public Common::Singleton<OSystem> {
+protected:
+	static OSystem *createSystem();
+	friend class Common::Singleton<SingletonBaseType>;
+
 public:
 	
 	/** @name Feature flags */
@@ -681,6 +677,14 @@ public:
 
 	//@}
 };
+
+/**
+ * Custom object factory for OSystem.
+ */
+template <>
+OSystem *Common::Singleton<OSystem>::makeInstance();
+
+
 
 /** The global OSystem instance. Inited in main(). */
 #define g_system	(&OSystem::instance())

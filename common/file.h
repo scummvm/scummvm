@@ -27,7 +27,7 @@
 #include "common/str.h"
 #include "common/stream.h"
 
-class File : public Common::ReadStream, public Common::WriteStream {
+class File : public Common::SeekableReadStream, public Common::WriteStream {
 protected:
 	/** POSIX file handle to the actual file; 0 if no file is open. */
 	FILE *_handle;
@@ -66,11 +66,11 @@ public:
 	bool isOpen() const;
 	bool ioFailed() const;
 	void clearIOFailed();
-	virtual bool eof();
-	virtual uint32 pos();
-	virtual uint32 size();
+	bool eof() const;
+	uint32 pos() const;
+	uint32 size() const;
 	const char *name() const { return _name.c_str(); }
-	virtual void seek(int32 offs, int whence = SEEK_SET);
+	void seek(int32 offs, int whence = SEEK_SET);
 	uint32 read(void *ptr, uint32 size);
 	uint32 write(const void *ptr, uint32 size);
 	char *gets(void *ptr, uint32 size);

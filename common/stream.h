@@ -166,6 +166,24 @@ public:
 	}
 };
 
+
+/**
+ * Interface for a seekable & readable data stream.
+ *
+ * @todo We really need better error handling here!
+ *       Like seek should somehow indicate whether it failed.
+ */
+class SeekableReadStream : public ReadStream {
+public:
+	
+	virtual bool eof() const = 0;
+	virtual uint32 pos() const = 0;
+	virtual uint32 size() const = 0;
+
+	virtual void seek(int32 offs, int whence = SEEK_SET) = 0;
+};
+
+
 /**
  * XORReadStream is a wrapper around an arbitrary other ReadStream,
  * which 'decrypts' the data being read by XORing all data bytes with the given
@@ -200,7 +218,7 @@ public:
  * Simple memory based 'stream', which implements the ReadStream interface for
  * a plain memory block.
  */
-class MemoryReadStream : public ReadStream {
+class MemoryReadStream : public SeekableReadStream {
 private:
 	const byte *_ptr;
 	const byte * const _ptrOrig;
@@ -223,7 +241,7 @@ public:
 	uint32 pos() const { return _pos; }
 	uint32 size() const { return _bufSize; }
 
-	void seek(uint32 offs, int whence = SEEK_SET);
+	void seek(int32 offs, int whence = SEEK_SET);
 };
 
 }	// End of namespace Common
