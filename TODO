@@ -260,7 +260,6 @@ SCUMM
   - Add support for song sync. in HE80+ games. (Used in ff2-demo/freddi2/pajama)
   - Add support for SBNG sound resources for songs (Used in ff2-demo/freddi2/pajama)
   - Add support for displayWizComplexImage 0x200 flag (Used in bb2demo/footdemo)
-  - Add support for displayWizComplexImage 0x10000 flag (Used in bb2demo/footdemo/ff5demo/freddicove)
   - Add support for displayWizComplexImage 0x80000 flag (Used in ff5demo/freddicove)
   - Add support for drawWizComplexPolygon (For Ski Ride & Credits of pajama3)
   - Add support for processWizImage mode 7 (For soccer2004)
@@ -268,8 +267,6 @@ SCUMM
   - Add support for RMAP/XMAP resources in drawWizImage (Used by akos codec 32 too)
   - Add support for arrayOps case 127 (For chase/lost/smaller/bb2demo/footdemo).
   - Add support for o90_sortArray (Used in bb2demo/footdemo/lost/smaller).
-  - Add support for o90_getPolygonOverlap case6 (Used in Shelves and Ski Ride of pajama3)
-  - Add support for o90_getPolygonOverlap case9 (Used in lost/smaller)
   - Add support for o90_getPolygonOverlap case10 (Used in Caramel Pit of pajama3)
   - Add support for floodState (For puzzle in pajama2)
   - Add support for o80_unknownE0 type1 (For binoculars in pajama2)
@@ -279,7 +276,7 @@ SCUMM
     The U32 code seems to control the players movements on field.
   - Fix actor parts disappearing in pajama2/racedemo (Related to XMAP support?)
   - Fix cursor transparency in puzzle of pajama2 (Related to floodState support?)
-  - Fix sprites graphical glitches
+  - Fix sprites not always redrawing
   - Fix inventory background/items disappearing in puttzoo/zoodemo/putttime/timedemo
 * Clean up class Gdi. This class right now mostly is about decoding various
   graphic formats. However some other functionality has crept into it, too.
