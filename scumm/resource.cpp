@@ -1029,12 +1029,7 @@ int Scumm::convertADResource(int type, int idx, byte * src_ptr, int size) {
 	ptr = createResource(type, idx, total_size);
 	// We will ignore the PPQN in the original resource, because
 	// it's invalid anyway. We use a constant PPQN of 480.
-	// For Indy it is actually 240.
-	if (_gameId == GID_INDY3) {
-	    ppqn = 240;
-	} else {
-	    ppqn = 480;
-	}
+    ppqn = 480;
 
 	src_ptr += 2;
 	size -= 2;
@@ -1089,7 +1084,7 @@ int Scumm::convertADResource(int type, int idx, byte * src_ptr, int size) {
 			// From my disassembly this would be correct:
 			// dw = 1000000 * 256 / 473 * ppqn / 2 / ticks;
 			// But this seems closer to original???
-			dw = 73000000 / ticks;
+			dw = 73000000 * 2 / ticks;
 		} else if (_gameId == GID_LOOM) {
 			dw = 1000000 * ppqn / 4 / 2 / ticks;
 		} else {
