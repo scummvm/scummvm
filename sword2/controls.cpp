@@ -17,28 +17,23 @@
  * $Header$
  */
 
-// FIXME: Are all of these includes really needed?
-
 #include "stdafx.h"
+#include "driver/driver96.h"
 #include "build_display.h"
 #include "console.h"
 #include "controls.h"
-#include "debug.h"
 #include "defs.h"
 #include "header.h"
 #include "interpreter.h"
 #include "layers.h"
 #include "logic.h"
-#include "maketext.h"	// for font resource variables
-#include "mem_view.h"
-#include "memory.h"
+#include "maketext.h"			// for font resource variables
 #include "mouse.h"
 #include "protocol.h"
 #include "resman.h"
 #include "router.h"
 #include "save_rest.h"
-#include "sound.h"		// for FN_stop_music()
-#include "startup.h"
+#include "sound.h"			// for FN_stop_music()
 #include "sword2.h"
 
 #define	MAX_STRING_LEN		64	// 20 was too low; better to be safe ;)

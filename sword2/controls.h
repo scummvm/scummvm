@@ -20,18 +20,15 @@
 #ifndef	_CONTROL_S
 #define	_CONTROL_S
 
-#include "common/scummsys.h"
-//#include "src\driver96.h"
+uint32 Restore_control(void);
+void Save_control(void);
+void Quit_control(void);
+void Restart_control(void);
+void Option_control(void);
+int32 ReadOptionSettings(void);
+void UpdateGraphicsLevel(uint8 newLevel);
 
-uint32	Restore_control(void);	//Tony20Mar97
-void	Save_control(void);	//Tony1Apr97
-void	Quit_control(void);	//Tony2Apr97
-void	Restart_control(void);	//Tony4Apr97
-void	Option_control(void);	//Pete5Jun97
-int32   ReadOptionSettings(void);	//Pete10Jun97
-void	UpdateGraphicsLevel(uint8 newLevel);	// (James13jun97)
-
-extern uint8 subtitles;		// text selected
+extern uint8 subtitles;			// text selected
 extern uint8 speechSelected;
 extern uint8 current_graphics_level;
 
