@@ -204,7 +204,7 @@ protected:
 		kTransactionActive = 2
 	};
 
-	struct transactionDetails {
+	struct TransactionDetails {
 		int mode;
 		bool modeChanged;
 		int w;
@@ -215,7 +215,8 @@ protected:
 		bool fsChanged;
 		bool ar;
 		bool arChanged;
-	} _transactionDetails;
+	};
+	TransactionDetails _transactionDetails;
 
 	/** Force full redraw on next updateScreen */
 	bool _forceFull;
@@ -248,7 +249,9 @@ protected:
 	bool _cksumValid;
 	int _cksumNum;
 
-	// Keyboard mouse emulation
+	// Keyboard mouse emulation.  Disabled by fingolfin 2004-12-18.
+	// I am keeping the rest of the code in for now, since the joystick
+	// code (or rather, "hack") uses it, too.
 	struct KbdMouse {	
 		int16 x, y, x_vel, y_vel, x_max, y_max, x_down_count, y_down_count;
 		uint32 last_time, delay_time, x_down_time, y_down_time;

@@ -392,69 +392,20 @@ bool OSystem_SDL::pollEvent(Event &event) {
 			event.kbd.keycode = ev.key.keysym.sym;
 			event.kbd.ascii = mapKey(ev.key.keysym.sym, ev.key.keysym.mod, ev.key.keysym.unicode);
 #endif
-
-/* Disabled mouse emulation code (fingolfin, 2004-12-18).
-   I am keeping the rest of the code in for now, since the joystick
-   code (or rather, "hack") uses it, too.
-			switch(ev.key.keysym.sym) {
-			case SDLK_LEFT:
-				_km.x_vel = -1;
-				_km.x_down_count = 1;
-				break;
-			case SDLK_RIGHT:
-				_km.x_vel =  1;
-				_km.x_down_count = 1;
-				break;
-			case SDLK_UP:
-				_km.y_vel = -1;
-				_km.y_down_count = 1;
-				break;
-			case SDLK_DOWN:
-				_km.y_vel =  1;
-				_km.y_down_count = 1;
-				break;
-			default:
-				break;
-			}
-*/
 			return true;
 	
 		case SDL_KEYUP:
 			event.type = EVENT_KEYUP;
 			event.kbd.keycode = ev.key.keysym.sym;
 			event.kbd.ascii = mapKey(ev.key.keysym.sym, ev.key.keysym.mod, ev.key.keysym.unicode);
-			event.kbd.flags = SDLModToOSystemKeyFlags(SDL_GetModState());;
+			event.kbd.flags = SDLModToOSystemKeyFlags(SDL_GetModState());
 
-/*
-			switch(ev.key.keysym.sym) {
-			case SDLK_LEFT:
-				if (_km.x_vel < 0) {
-					_km.x_vel = 0;
-					_km.x_down_count = 0;
-				}
-				break;
-			case SDLK_RIGHT:
-				if (_km.x_vel > 0) {
-					_km.x_vel = 0;
-					_km.x_down_count = 0;
-				}
-				break;
-			case SDLK_UP:
-				if (_km.y_vel < 0) {
-					_km.y_vel = 0;
-					_km.y_down_count = 0;
-				}
-				break;
-			case SDLK_DOWN:
-				if (_km.y_vel > 0) {
-					_km.y_vel = 0;
-					_km.y_down_count = 0;
-				}
-				break;
-			default:
+			// Ctrl-Alt-<key> will change the GFX mode
+			if ((b & (KBD_CTRL|KBD_ALT)) == (KBD_CTRL|KBD_ALT)) {
+				// Swallow these key up events
 				break;
 			}
-*/
+
 			return true;
 
 		case SDL_MOUSEMOTION:
