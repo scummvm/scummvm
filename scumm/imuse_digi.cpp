@@ -945,7 +945,7 @@ void IMuseDigital::startSound(int sound, byte *voc_src, int voc_size, int voc_ra
 							*(uint16 *)(_channel[l].data + t * 4 + 2) = *(uint16 *)(ptr + t * 2);
 						}
 					} else {
-						error("Stereo 16 bit sound support not yet implemented");
+						error("IMuseDigital::startSound() Stereo 16 bit sound support not yet implemented");
 					}
 					_channel[l].size = size;
 				} else if (_channel[l].bits == 8) {
@@ -965,7 +965,7 @@ void IMuseDigital::startSound(int sound, byte *voc_src, int voc_size, int voc_ra
 					}
 					_channel[l].size = size;
 				} else
-					error("Can't handle %d bit samples in iMuseDigital", _channel[l].bits);
+					error("IMuseDigital::startSound() Can't handle %d bit samples", _channel[l].bits);
 			}
 			_channel[l].mixerSize /= 25;
 			_channel[l].toBeRemoved = false;
