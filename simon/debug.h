@@ -240,9 +240,9 @@ static const char *const simon1dos_opcode_name_table[256] = {
 	"|VGA_POINTER_OP_1",
 	/* 176 */
 	"|VGA_POINTER_OP_2",
-	"BBI|UNK_177",
+	"BBI|INVENTORY_DESCRIPTION",
 	"WWBB|PATHFIND",
-	"BBB|UNK_179",
+	"BBB|ROOM_DESCRIPTION",
 	/* 180 */
 	"|FORCE_UNLOCK",
 	"|FORCE_LOCK",
@@ -478,9 +478,9 @@ static const char *const simon1talkie_opcode_name_table[256] = {
 	"|VGA_POINTER_OP_1",
 	/* 176 */
 	"|VGA_POINTER_OP_2",
-	"BBI|UNK_177",
+	"BBI|INVENTORY_DESCRIPTION",
 	"WWBB|PATHFIND",
-	"BBB|UNK_179",
+	"BBB|ROOM_DESCRIPTION",
 	/* 180 */
 	"|FORCE_UNLOCK",
 	"|FORCE_LOCK",
@@ -716,9 +716,9 @@ static const char *const simon2dos_opcode_name_table[256] = {
 	"|VGA_POINTER_OP_1",
 	/* 176 */
 	"|VGA_POINTER_OP_2",
-	"BBI|UNK_177",
+	"BBI|INVENTORY_DESCRIPTION",
 	"WWBB|PATHFIND",
-	"BBB|UNK_179",
+	"BBB|ROOM_DESCRIPTION",
 	/* 180 */
 	"|FORCE_UNLOCK",
 	"|FORCE_LOCK",
@@ -958,9 +958,9 @@ static const char *const simon2talkie_opcode_name_table[256] = {
 	"|VGA_POINTER_OP_1",
 	/* 176 */
 	"|VGA_POINTER_OP_2",
-	"BBI|UNK_177",
+	"BBI|INVENTORY_DESCRIPTION",
 	"WWBB|PATHFIND",
-	"BBB|UNK_179",
+	"BBB|ROOM_DESCRIPTION",
 	/* 180 */
 	"|FORCE_UNLOCK",
 	"|FORCE_LOCK",

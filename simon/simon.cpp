@@ -1142,7 +1142,6 @@ void SimonState::closeTablesFile_gme(File *in) {
 	// not needed
 }
 
-// Simon1DOS load tables file
 uint SimonState::loadTextFile_simon1(const char *filename, byte *dst) {
 	File fo;
 	fo.open(filename, _gameDataPath);
@@ -2723,8 +2722,7 @@ get_out:;
 #endif
 }
 
-void SimonState::o_wait_for_vga(uint a) {
-	_vga_wait_for = a;
+void SimonState::o_wait_for_vga(uint _vga_wait_for) {
 	_timer_1 = 0;
 	_exit_cutscene = false;
 	_skip_speech = false;
@@ -3240,43 +3238,33 @@ void SimonState::video_erase(FillOrCopyStruct *fcs) {
 }
 
 VgaSprite *SimonState::find_cur_sprite() {
-	if (_game & GF_SIMON2) {
-		VgaSprite *vsp = _vga_sprites;
-		while (vsp->id) {
+	VgaSprite *vsp = _vga_sprites;
+	while (vsp->id) {
+		if (_game & GF_SIMON2) {
 			if (vsp->id == _vga_cur_sprite_id && vsp->unk7 == _vga_cur_file_id)
 				break;
-			vsp++;
-		}
-		return vsp;
-	} else {
-		VgaSprite *vsp = _vga_sprites;
-		while (vsp->id) {
+		} else {
 			if (vsp->id == _vga_cur_sprite_id)
 				break;
-			vsp++;
 		}
-		return vsp;
+		vsp++;
 	}
+	return vsp;
 }
 
 bool SimonState::has_vgastruct_with_id(uint16 id, uint16 file) {
-	if (_game & GF_SIMON2) {
-		VgaSprite *vsp = _vga_sprites;
-		while (vsp->id) {
+	VgaSprite *vsp = _vga_sprites;
+	while (vsp->id) {
+		if (_game & GF_SIMON2) {
 			if (vsp->id == id && vsp->unk7 == file)
 				return true;
-			vsp++;
-		}
-		return false;
-	} else {
-		VgaSprite *vsp = _vga_sprites;
-		while (vsp->id) {
+		} else {
 			if (vsp->id == id)
 				return true;
-			vsp++;
 		}
-		return false;
+		vsp++;
 	}
+	return false;
 }
 
 void SimonState::processSpecialKeys() {

@@ -918,6 +918,7 @@ int SimonState::runScript() {
 			break;
 
 		case 163:{									/* sound 1 */
+				// Is this opcode actually used in games?
 				o_unk_163(getVarOrWord());
 			}
 			break;
@@ -969,7 +970,7 @@ int SimonState::runScript() {
 			}
 			break;
 
-		case 177:{									/* Inventory descriptions */
+		case 177:{									/* inventory descriptions */
 				o_inventory_descriptions();
 			}
 			break;
@@ -983,7 +984,7 @@ int SimonState::runScript() {
 			}
 			break;
 
-		case 179:{									/* Room descriptions */
+		case 179:{									/* room descriptions */
 				uint b = getVarOrByte();
 				uint c = getVarOrByte();
 				uint a = getVarOrByte();
@@ -1035,7 +1036,7 @@ int SimonState::runScript() {
 			}
 			break;
 
-		case 185:{
+		case 185:{									/* midi sfx file number */
 				if (_game & GF_SIMON2)
 					goto invalid_opcode;
 				_midi_sfx = getVarOrWord();
@@ -1064,7 +1065,7 @@ int SimonState::runScript() {
 			}
 			break;
 
-		case 189:{
+		case 189:{									/* clear_op189_flag */
 				if (!(_game & GF_SIMON2))
 					goto invalid_opcode;
 				_op_189_flags = 0;
