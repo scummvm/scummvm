@@ -410,101 +410,88 @@ dec_next:
 }
 
 int Wiz::isWizPixelNonTransparent(const uint8 *data, int x, int y, int w, int h) {
-	int ret = 0;
+	if (x < 0 || x >= w || y < 0 || y >= h) {
+		return 0;
+	}
 	while (y != 0) {
 		data += READ_LE_UINT16(data) + 2;
 		--y;
 	}
 	uint16 off = READ_LE_UINT16(data); data += 2;
-	if (off != 0) {
-		if (x == 0) {
-			ret = (~*data) & 1;			
+	if (off == 0) {
+		return 0;
+	}
+	while (x > 0) {
+		uint8 code = *data++;
+		if (code & 1) {
+			code >>= 1;
+			if (code > x) {
+				return 0;
+			}
+			x -= code;
+		} else if (code & 2) {
+			code = (code >> 2) + 1;
+			if (code > x) {
+				return 1;
+			}
+			x -= code;
+			++data;
 		} else {
-			do {
-				uint8 code = *data++;
-				if (code & 1) {
-					code >>= 1;
-					if (code > x) {
-						ret = 0;
-						break;
-					}
-					x -= code;
-				} else if (code & 2) {
-					code = (code >> 2) + 1;
-					if (code > x) {
-						ret = 1;
-						break;
-					}
-					x -= code;
-					++data;
-				} else {
-					code = (code >> 2) + 1;
-					if (code > x) {
-						ret = 1;
-						break;
-					}
-					x -= code;
-					data += code;
-				}				
-			} while (x > 0);
+			code = (code >> 2) + 1;
+			if (code > x) {
+				return 1;
+			}
+			x -= code;
+			data += code;
 		}
 	}
-	return ret;
+	return (~data[0]) & 1;
 }
 
 uint8 Wiz::getWizPixelColor(const uint8 *data, int x, int y, int w, int h, uint8 color) {
-	uint8 c = color;
-	if (x >= 0 && x < w && y >= 0 && y < h) {
-		while (y != 0) {
-			data += READ_LE_UINT16(data) + 2;
-			--y;
-		}
-		uint16 off = READ_LE_UINT16(data); data += 2;
-		if (off != 0) {
-			if (x == 0) {
-				c = (*data & 1) ? color : *data;
-			} else {
-				do {
-					uint8 code = *data++;
-					if (code & 1) {
-						code >>= 1;
-						if (code > x) {
-							c = color;
-							break;
-						}
-						x -= code;
-					} else if (code & 2) {
-						code = (code >> 2) + 1;
-						if (code > x) {
-							c = *data;
-							break;
-						}
-						x -= code;
-						++data;
-					} else {
-						code = (code >> 2) + 1;
-						if (code > x) {
-							c = *(data + x);
-							break;
-						}
-						x -= code;
-						data += code;
-					}				
-				} while (x > 0);
+	if (x < 0 || x >= w || y < 0 || y >= h) {
+		return color;
+	}
+	while (y != 0) {
+		data += READ_LE_UINT16(data) + 2;
+		--y;
+	}
+	uint16 off = READ_LE_UINT16(data); data += 2;
+	if (off == 0) {
+		return color;
+	}
+	while (x > 0) {
+		uint8 code = *data++;
+		if (code & 1) {
+			code >>= 1;
+			if (code > x) {
+				return color;
 			}
+			x -= code;
+		} else if (code & 2) {
+			code = (code >> 2) + 1;
+			if (code > x) {
+				return data[0];
+			}
+			x -= code;
+			++data;
+		} else {
+			code = (code >> 2) + 1;
+			if (code > x) {
+				return data[x];
+			}
+			x -= code;
+			data += code;
 		}
 	}
-	return c;
+	return (data[0] & 1) ? color : data[1];
 }
 
 uint8 Wiz::getRawWizPixelColor(const uint8 *data, int x, int y, int w, int h, uint8 color) {
-	uint8 c;
-	if (x >= 0 && x < w && y >= 0 && y < h) {
-		c = data[y * w + x];
-	} else {
-		c = color;
+	if (x < 0 || x >= w || y < 0 || y >= h) {
+		return color;
 	}
-	return c;
+	return data[y * w + x];
 }
 
 void Wiz::computeWizHistogram(uint32 *histogram, const uint8 *data, const Common::Rect *srcRect) {
