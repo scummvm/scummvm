@@ -73,6 +73,7 @@ void ScummEngine::setupScummVars() {
 	VAR_TMR_4 = 47;
 	VAR_SOUNDCARD = 48;
 	VAR_VIDEOMODE = 49;
+
 	if (_version >= 4) {
 		VAR_SCROLL_SCRIPT = 27;
 		VAR_DEBUGMODE = 39;
@@ -141,7 +142,9 @@ void ScummEngine_v5::setupScummVars() {
 	ScummEngine::setupScummVars();
 
 	VAR_CURRENT_LIGHTS = 9;
-	VAR_V5_TALK_STRING_Y = 54;
+
+	if (_version >= 4)
+		VAR_V5_TALK_STRING_Y = 54;
 }
 
 void ScummEngine_v6::setupScummVars() {
