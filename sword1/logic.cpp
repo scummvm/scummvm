@@ -1431,7 +1431,7 @@ int SwordLogic::fnIsFacing(BsObject *cpt, int32 id, int32 targetId, int32 b, int
 
 	int32 lookDir = whatTarget(x, y, cpt->o_xcoord, cpt->o_ycoord);
 	lookDir -= dir;
-	lookDir = abs(lookDir);
+	lookDir = ABS(lookDir);
 
 	if (lookDir > 4)
 		lookDir = 8 - lookDir;

@@ -704,7 +704,7 @@ int32 SwordRouter::SlidyPath()
 		stepY = stepY * scale;
 		stepX = stepX >> 19;// quarter a step minimum
 		stepY = stepY >> 19;
-		if ((abs(deltaX)>=abs(stepX)) &&	(abs(deltaY)>=abs(stepY)))
+		if ((ABS(deltaX)>=ABS(stepX)) &&	(ABS(deltaY)>=ABS(stepY)))
 		{									
 	 		modularPath[slidy].x = smoothPath[smooth].x;
 			modularPath[slidy].y = smoothPath[smooth].y;
@@ -936,7 +936,7 @@ void SwordRouter::SlidyWalkAnimator(WalkData *walkAnim)
 					lastErrorY = modularPath[p].y - walkAnim[stepCount-7].y;
 					if (stepX==0)
 					{
-						if (3*abs(lastErrorY) < abs(errorY)) //the last stop was closest
+						if (3*ABS(lastErrorY) < ABS(errorY)) //the last stop was closest
 						{
 							stepCount -= framesPerStep;
 							if (left == 0)
@@ -947,7 +947,7 @@ void SwordRouter::SlidyWalkAnimator(WalkData *walkAnim)
 					}
 					else
 					{
-						if (3*abs(lastErrorX) < abs(errorX)) //the last stop was closest
+						if (3*ABS(lastErrorX) < ABS(errorX)) //the last stop was closest
 						{
 							stepCount -= framesPerStep;
 							if (left == 0)
@@ -1187,7 +1187,7 @@ int32 SwordRouter::SolidPath()
 		stepY = stepY * scale;
 		stepX = stepX >> 16;
 		stepY = stepY >> 16;
-		if ((abs(deltaX)>=abs(stepX)) &&	(abs(deltaY)>=abs(stepY)))
+		if ((ABS(deltaX)>=ABS(stepX)) &&	(ABS(deltaY)>=ABS(stepY)))
 		{
 			modularPath[solid].x = smoothPath[smooth].x;
 			modularPath[solid].y = smoothPath[smooth].y;
@@ -1677,13 +1677,13 @@ int32 SwordRouter::Scan(int32 level)
 					x2 = node[k].x;
 					y2 = node[k].y;
 
-					if (abs(x2-x1)>(4.5*abs(y2-y1)))
+					if (ABS(x2-x1)>(4.5*ABS(y2-y1)))
 					{
-						distance = (8*abs(x2-x1)+18*abs(y2-y1))/(54*8)+1;
+						distance = (8*ABS(x2-x1)+18*ABS(y2-y1))/(54*8)+1;
 					}
 					else
 					{
-						distance = (6*abs(x2-x1)+36*abs(y2-y1))/(36*14)+1;
+						distance = (6*ABS(x2-x1)+36*ABS(y2-y1))/(36*14)+1;
 					}
 
 					if ((distance + node[i].dist < node[nnodes].dist) && (distance + node[i].dist < node[k].dist))
@@ -2629,9 +2629,9 @@ int whatTarget(int32 startX, int32 startY, int32 destX, int32 destY) {
 	int signY = (deltaY > 0);
 	int	slope;
 
-	if ( (abs(deltaY) * DIAGONALX ) < (abs(deltaX) * DIAGONALY / 2))
+	if ( (ABS(deltaY) * DIAGONALX ) < (ABS(deltaX) * DIAGONALY / 2))
 		slope = 0;// its flat
-	else if ( (abs(deltaY) * DIAGONALX / 2) > (abs(deltaX) * DIAGONALY ) )
+	else if ( (ABS(deltaY) * DIAGONALX / 2) > (ABS(deltaX) * DIAGONALY ) )
 		slope = 2;// its vertical
 	else
 		slope = 1;// its diagonal

@@ -288,13 +288,10 @@ void SwordScreen::spritesAndParallax(void) {
 	for (uint8 cnt = 0; cnt < _backLength; cnt++)
 		processImage(_backList[cnt]);
 
-	SortSpr temp;
 	for (uint8 cnt = 0; cnt < _sortLength - 1; cnt++)
 		for (uint8 sCnt = 0; sCnt < _sortLength - 1; sCnt++)
 			if (_sortList[sCnt].y > _sortList[sCnt + 1].y) {
-				temp = _sortList[sCnt];
-				_sortList[sCnt] = _sortList[sCnt + 1];
-				_sortList[sCnt + 1] = temp;
+				SWAP(_sortList[sCnt], _sortList[sCnt + 1]);
 			}
 	for (uint8 cnt = 0; cnt < _sortLength; cnt++)
 		processImage(_sortList[cnt].id);
@@ -748,8 +745,8 @@ void SwordScreen::hline(uint16 x1, uint16 x2, uint16 y) {
 
 void SwordScreen::bsubline_1(uint16 x1, uint16 y1, uint16 x2, uint16 y2) {
 	int x, y, ddx, ddy, e;
-	ddx = abs(x2 - x1);
-	ddy = abs(y2 - y1) << 1;
+	ddx = ABS(x2 - x1);
+	ddy = ABS(y2 - y1) << 1;
 	e = ddx - ddy;
 	ddx <<= 1;
 
@@ -772,8 +769,8 @@ void SwordScreen::bsubline_1(uint16 x1, uint16 y1, uint16 x2, uint16 y2) {
 
 void SwordScreen::bsubline_2(uint16 x1, uint16 y1, uint16 x2, uint16 y2) {
 	int x, y, ddx, ddy, e;
-	ddx = abs(x2 - x1) << 1;
-	ddy = abs(y2 - y1);
+	ddx = ABS(x2 - x1) << 1;
+	ddy = ABS(y2 - y1);
 	e = ddy - ddx;
 	ddy <<= 1;
 
@@ -796,8 +793,8 @@ void SwordScreen::bsubline_2(uint16 x1, uint16 y1, uint16 x2, uint16 y2) {
 
 void SwordScreen::bsubline_3(uint16 x1, uint16 y1, uint16 x2, uint16 y2) {
 	int x, y, ddx, ddy, e;
-	ddx = abs(x1 - x2) << 1;
-	ddy = abs(y2 - y1);
+	ddx = ABS(x1 - x2) << 1;
+	ddy = ABS(y2 - y1);
 	e = ddy - ddx;
 	ddy <<= 1;
 
@@ -820,8 +817,8 @@ void SwordScreen::bsubline_3(uint16 x1, uint16 y1, uint16 x2, uint16 y2) {
 
 void SwordScreen::bsubline_4(uint16 x1, uint16 y1, uint16 x2, uint16 y2) {
 	int x, y, ddx, ddy, e;
-	ddy = abs(y2 - y1) << 1;
-	ddx = abs(x1 - x2);
+	ddy = ABS(y2 - y1) << 1;
+	ddx = ABS(x1 - x2);
 	e = ddx - ddy;
 	ddx <<= 1;
 
