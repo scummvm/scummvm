@@ -1837,6 +1837,7 @@ void ScummEngine_v6::o6_verbOps() {
 		_verbRedraw = true;
 
 	op = fetchScriptByte();
+	warning("o6_verbOps op %d", op);
 	if (op == 196) {
 		_curVerb = pop();
 		_curVerbSlot = getVerbSlot(_curVerb, 0);
@@ -1930,8 +1931,8 @@ void ScummEngine_v6::o6_verbOps() {
 	case 139:		// SO_VERB_IMAGE_IN_ROOM
 		b = pop();
 		a = pop();
-		// HACK Prevent puttmoon from loading no existant objects.
-		if ((_gameId == GID_PUTTPUTT) && (a < 700 || a == 776 || a > 900))
+		// HACK Prevent puttmoon from loading non existant objects
+		if ((_gameId == GID_PUTTPUTT) && (a > 900))
 			break;
 
 		if (slot && a != vs->imgindex) {
