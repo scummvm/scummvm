@@ -998,6 +998,7 @@ bool Codec47Decoder::initSize(const Point & p, const Rect & r) {
 }
 
 Codec47Decoder::Codec47Decoder() {
+	_deltaBuf = 0;
 }
 
 void Codec47Decoder::clean() {
