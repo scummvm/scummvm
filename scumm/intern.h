@@ -578,7 +578,6 @@ protected:
 	void o8_cameraOps();
 	void o8_verbOps();
 	
-	void o8_soundKludge();
 	void o8_system();
 	void o8_startVideo();
 	void o8_kernelSetFunctions();

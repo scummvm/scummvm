@@ -261,7 +261,7 @@ void Scumm_v8::setupOpcodes() {
 		/* B0 */
 		OPCODE(o6_startMusic),
 		OPCODE(o6_stopSound),
-		OPCODE(o8_soundKludge),
+		OPCODE(o6_soundKludge),
 		OPCODE(o8_system),
 		/* B4 */
 		OPCODE(o6_saveRestoreVerbs),
@@ -1232,13 +1232,6 @@ void Scumm_v8::o8_verbOps() {
 	default:
 		error("o8_verbops: default case 0x%x", subOp);
 	}
-}
-
-void Scumm_v8::o8_soundKludge() {
-	int args[16];
-	int num = getStackList(args, ARRAYSIZE(args));
-
-	_sound->soundKludge(args, num);
 }
 
 void Scumm_v8::o8_system() {
