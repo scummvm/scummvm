@@ -292,7 +292,7 @@ int32 Sound::amISpeaking() {
 
 /**
  * This function loads and decompresses a list of speech from a cluster, but
- * does not play it. This is primarily used by PlayCompSpeech(), but also to
+ * does not play it. This is primarily used by playCompSpeech(), but also to
  * store the voice-overs for the animated cutscenes until they are played.
  * @param filename the file name of the speech cluster file
  * @param speechid the text line id used to reference the speech
@@ -302,7 +302,7 @@ int32 Sound::amISpeaking() {
 uint32 Sound::preFetchCompSpeech(const char *filename, uint32 speechid, uint16 **buf) {
 	uint32 i;
 	uint8 *data8;
-	uint32 speechIndex[2];
+	uint32 speechPos, speechLength;
 	File fp;
 	uint32 bufferSize;
 
@@ -315,30 +315,24 @@ uint32 Sound::preFetchCompSpeech(const char *filename, uint32 speechid, uint16 *
 
 	fp.seek((speechid + 1) * 8, SEEK_SET);
 
-	if (fp.read(speechIndex, sizeof(uint32) * 2) != (sizeof(uint32) * 2)) {
-		fp.close();
-		return 0;
-	}
+	speechPos = fp.readUint32LE();
+	speechLength = fp.readUint32LE();
 
-#ifdef SCUMM_BIG_ENDIAN
-	speechIndex[0] = SWAP_BYTES_32(speechIndex[0]);
-	speechIndex[1] = SWAP_BYTES_32(speechIndex[1]);
-#endif
-
-	if (!speechIndex[0] || !speechIndex[1]) {
+	if (!speechPos || !speechLength) {
 		fp.close();
 		return 0;
 	}
 
 	// Create a temporary buffer for compressed speech
-	if ((data8 = (uint8 *) malloc(speechIndex[1])) == NULL) {
+	data8 = (uint8 *) malloc(speechLength);
+	if (!data8) {
 		fp.close();
 		return 0;
 	}
 
-	fp.seek(speechIndex[0], SEEK_SET);
+	fp.seek(speechPos, SEEK_SET);
 
-	if (fp.read(data8, speechIndex[1]) != speechIndex[1]) {
+	if (fp.read(data8, speechLength) != speechLength) {
 		fp.close();
 		free(data8);
 		return 0;
@@ -348,7 +342,7 @@ uint32 Sound::preFetchCompSpeech(const char *filename, uint32 speechid, uint16 *
 
 	// Decompress data into speech buffer.
 
-	bufferSize = (speechIndex[1] - 1) * 2;
+	bufferSize = (speechLength - 1) * 2;
 
 	*buf = (uint16 *) malloc(bufferSize);
 	if (!*buf) {
@@ -361,7 +355,7 @@ uint32 Sound::preFetchCompSpeech(const char *filename, uint32 speechid, uint16 *
 	// Starting Value
 	data16[0] = READ_LE_UINT16(data8);
 
-	for (i = 1; i < speechIndex[1] - 1; i++) {
+	for (i = 1; i < speechLength - 1; i++) {
 		if (GetCompressedSign(data8[i + 1]))
 			data16[i] = data16[i - 1] - (GetCompressedAmplitude(data8[i + 1]) << GetCompressedShift(data8[i + 1]));
 		else
