@@ -191,6 +191,16 @@ void SkyState::initVirgin() {
 	_skyScreen->showScreen(60110);
 }
 
+void SkyState::escDelay(uint32 pDelay) {
+
+	pDelay /= 50;
+	while (pDelay) {
+		delay(50);
+		if (_key_pressed == 27) pDelay = 0;
+		else pDelay--;
+	}
+}
+
 void SkyState::intro(void) {
 
 	uint32 *commandPtr = (uint32 *)zeroCommands;
@@ -201,13 +211,13 @@ void SkyState::intro(void) {
 	_skyMusic->loadSection(0);
 	_skySound->loadSection(0);
 	
-	delay(3000); //keep virgin screen up for 3 seconds
+	escDelay(3000); //keep virgin screen up for 3 seconds
 	CHECK_ESC
 	
 	if (!isCDVersion())
 		_skyMusic->startMusic(1);
 	
-	delay(3000); //and another 3 seconds.
+	escDelay(3000); //and another 3 seconds.
 	CHECK_ESC
 	
 	_skyScreen->fnFadeDown(0); //remove virgin screen
@@ -224,7 +234,7 @@ void SkyState::intro(void) {
 
 	_skyText->getText(77);
 	
-	delay(8000); // keep revolution up for 8 seconds
+	escDelay(8000); // keep revolution up for 8 seconds
 	CHECK_ESC
 	
 	_skyScreen->fnFadeDown(0);
@@ -240,7 +250,7 @@ void SkyState::intro(void) {
 		_skyDisk->prefetchFile(FN_1A);
 
 		//keep gibbo up for 2 seconds
-		delay(2000);
+		escDelay(2000);
 		CHECK_ESC
 		_skyScreen->fnFadeDown(0);
 

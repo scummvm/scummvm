@@ -217,7 +217,7 @@ void SkyState::doCDIntro() {
 
 	bgVocBuffer = _skyDisk->loadFile(59499, NULL);
 	bgVocSize = _skyDisk->_lastLoadedFileSize;
-	delay(2000); //keep gibbons screen up for 2 seconds
+	escDelay(2000); //keep gibbons screen up for 2 seconds
 	_skyScreen->fnFadeDown(0); //and fade out
 
 	START_VOICE;

@@ -190,6 +190,7 @@ void SkyScreen::flip(void) {
 					copySrc += GAME_SCREEN_WIDTH;
 					copyDest += GAME_SCREEN_WIDTH;
 				}
+				_system->copy_rect(screenPos, GAME_SCREEN_WIDTH, cntx * GRID_W, cnty * GRID_H, GRID_W, GRID_H);
 			}
 			backPos += GRID_W;
 			screenPos += GRID_W;
@@ -209,7 +210,7 @@ void SkyScreen::fnDrawScreen(uint32 palette, uint32 scroll) {
 	recreate();
 	spriteEngine();
 	flip();
-	showScreen(_currentScreen);
+	_system->update_screen();
 	fnFadeUp(palette, scroll);
 }
 
@@ -227,7 +228,7 @@ void SkyScreen::fnFadeDown(uint32 scroll) {
 			palette_fadedown_helper((uint32 *)_palette, GAME_COLOURS);
 			_system->set_palette(_palette, 0, GAME_COLOURS);
 			_system->update_screen();
-			waitForTimer();
+			_system->delay_msecs(20);
 		}
 	}
 }
@@ -275,7 +276,7 @@ void SkyScreen::paletteFadeUp(uint8 *pal) {
 		}
 		_system->set_palette(_palette, 0, GAME_COLOURS);
 		_system->update_screen();
-		waitForTimer();
+		_system->delay_msecs(20);
 	}	
 }
 
@@ -371,6 +372,7 @@ void SkyScreen::stopSequence() {
 void SkyScreen::processSequence(void) {
 
 	uint32 screenPos = 0;
+	uint32 rectX, rectY, oldScreenPos;
 
 	_seqInfo.delay--;
 	if (_seqInfo.delay == 0) {
@@ -386,14 +388,28 @@ void SkyScreen::processSequence(void) {
 			do {
 				nrToDo = _seqInfo.seqDataPos[0];
 				_seqInfo.seqDataPos++;
+
+				rectX = screenPos % GAME_SCREEN_WIDTH;
+				rectY = screenPos / GAME_SCREEN_WIDTH;
+				oldScreenPos = screenPos;
+
 				for (cnt = 0; cnt < nrToDo; cnt++) {
 					_currentScreen[screenPos] = _seqInfo.seqDataPos[0];
 					_seqInfo.seqDataPos++;
 					screenPos++;
 				}
+				if (nrToDo > 0) {
+					if (rectX + nrToDo <= GAME_SCREEN_WIDTH)
+	                    _system->copy_rect(_currentScreen + oldScreenPos, GAME_SCREEN_WIDTH, rectX, rectY, nrToDo, 1);
+					else {
+						_system->copy_rect(_currentScreen + oldScreenPos, GAME_SCREEN_WIDTH, rectX, rectY, 320 - rectX, 1);
+						oldScreenPos += 320 - rectX;
+						_system->copy_rect(_currentScreen + oldScreenPos, GAME_SCREEN_WIDTH, 0, rectY + 1, nrToDo - (320 - rectX), 1);
+					}
+				}
 			} while (nrToDo == 0xFF);
 		} while (screenPos < (GAME_SCREEN_WIDTH * GAME_SCREEN_HEIGHT));
-		showScreen(_currentScreen);
+		_system->update_screen();
 		_seqInfo.framesLeft--;
 	}
 	if (_seqInfo.framesLeft == 0) {

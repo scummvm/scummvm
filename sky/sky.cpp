@@ -152,7 +152,7 @@ void SkyState::go() {
 		_skyScreen->recreate();
 		_skyScreen->spriteEngine();
 		_skyScreen->flip();
-		_skyScreen->showScreen(_skyScreen->giveCurrent());
+		_system->update_screen();
 	}
 }
 
