@@ -1115,7 +1115,7 @@ script:
 		case 1: // less_than
 			a = pop();
 			b = pop();
-			if (a < b)
+			if (a > b)
 				push(1);
 			else
 				push(0);
@@ -1200,7 +1200,7 @@ script:
 		case 12: // more_than
 			a = pop();
 			b = pop();
-			if (a > b)
+			if (a < b)
 				push(1);
 			else
 				push(0);
@@ -2225,11 +2225,11 @@ bool SkyLogic::fnQuitToDos(uint32 a, uint32 b, uint32 c) {
 }
 
 bool SkyLogic::fnPauseFx(uint32 a, uint32 b, uint32 c) {
-	error("Stub: fnPauseFx");
+	warning("Stub: fnPauseFx");
 }
 
 bool SkyLogic::fnUnPauseFx(uint32 a, uint32 b, uint32 c) {
-	error("Stub: fnUnPauseFx");
+	warning("Stub: fnUnPauseFx");
 }
 
 bool SkyLogic::fnPrintf(uint32 a, uint32 b, uint32 c) {
