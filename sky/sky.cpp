@@ -40,19 +40,17 @@ static const VersionSettings sky_settings[] = {
 	{NULL, NULL, 0, 0, 0, 0, 0, NULL}
 };
 
-const VersionSettings *Engine_SKY_targetList()
-{
+const VersionSettings *Engine_SKY_targetList() {
 	return sky_settings;
 }
 
-Engine *Engine_SKY_create(GameDetector *detector, OSystem *syst)
-{
+Engine *Engine_SKY_create(GameDetector *detector, OSystem *syst) {
 	return new SkyState(detector, syst);
 }
 
 SkyState::SkyState(GameDetector *detector, OSystem *syst)
-	: Engine(detector, syst)
-{
+	: Engine(detector, syst) {
+	
 	_game = detector->_gameId;
 
 	_debugMode = detector->_debugMode;
@@ -60,19 +58,18 @@ SkyState::SkyState(GameDetector *detector, OSystem *syst)
 	_language = detector->_language;
 }
 
-SkyState::~SkyState()
-{
+SkyState::~SkyState() {
 	
 }
 
-void SkyState::pollMouseXY()
-{
+void SkyState::pollMouseXY() {
+
 	_mouse_x = _sdl_mouse_x;
 	_mouse_y = _sdl_mouse_y;
 }
 
-void SkyState::go()
-{
+void SkyState::go() {
+
 	if (!_dump_file)
 		_dump_file = stdout;
 
@@ -83,18 +80,20 @@ void SkyState::go()
 	}
 }
 
-void SkyState::initialise(void)
-{
+void SkyState::initialise(void) {
+
 	//initialise_memory();
 	//init_timer();
 	//init_music(); 
-	initialise_disk();
-	initialise_screen();
-	init_virgin();
+	initialiseDisk();
+	initialiseScreen();
+	initVirgin();
+	//initMouse();
+	initialiseGrids();
 }
 
-void SkyState::delay(uint amount) //copied and mutilated from Simon.cpp
-{
+void SkyState::delay(uint amount) { //copied and mutilated from Simon.cpp
+
 	OSystem::Event event;
 
 	uint32 start = _system->get_msecs();

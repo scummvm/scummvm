@@ -43,7 +43,7 @@ protected:
 
 	uint8 _palette[1024];
 
-	int _num_screen_updates;
+	int _numScreenUpdates;
 
 //	int _timer_id;
 
@@ -53,14 +53,15 @@ protected:
 
 	int _sdl_mouse_x, _sdl_mouse_y;
 	
-	byte *_work_screen;
-	byte *_backscreen;
-	byte *_temp_pal;
-	byte *_work_palette;
-	byte *_half_palette;
+	byte *_workScreen;
+	byte *_backScreen;
+	byte *_tempPal;
+	byte *_workPalette;
+	byte *_halfPalette;
 
-	byte *_game_grid;
-
+	byte *_gameGrid;
+	byte *_gameGrids;
+	
 public:
 	SkyState(GameDetector *detector, OSystem *syst);
 	virtual ~SkyState();
@@ -69,16 +70,17 @@ protected:
 	void delay(uint amount);
 	void pollMouseXY();
 	void go();
-	void convert_palette(uint8 *inpal, uint8* outpal);
+	void convertPalette(uint8 *inpal, uint8* outpal);
 
 	void initialise();
-	void initialise_disk();
-	void initialise_screen();
-	void set_palette(uint8 *pal);
-	uint16 *load_file(uint16 file_nr, uint8 *dest);
-	uint16 *get_file_info(uint16 file_nr);
-	void init_virgin();
-	void show_screen();
+	void initialiseDisk();
+	void initialiseScreen();
+	void initialiseGrids();
+	void setPalette(uint8 *pal);
+	uint16 *loadFile(uint16 fileNr, uint8 *dest);
+	uint16 *getFileInfo(uint16 fileNr);
+	void initVirgin();
+	void showScreen();
 
 	static int CDECL game_thread_proc(void *param);
 

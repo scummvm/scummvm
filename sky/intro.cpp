@@ -216,25 +216,25 @@ uint32 anim6b_commands[] =
 
 uint32 *command_pointer = (uint32 *)zero_commands;
 
-void SkyState::init_virgin()
-{
-	_temp_pal = (uint8 *)load_file(60111, NULL);
-	if (_temp_pal != NULL)
-		set_palette(_temp_pal);
+void SkyState::initVirgin() {
+	
+	_tempPal = (uint8 *)loadFile(60111, NULL);
+	if (_tempPal != NULL)
+		setPalette(_tempPal);
 
-	_work_screen = (uint8 *)load_file(60110, NULL);
+	_workScreen = (uint8 *)loadFile(60110, NULL);
 
-	if (_work_screen != NULL)
-		show_screen();
+	if (_workScreen != NULL)
+		showScreen();
 
 	// free the memory that was malloc'ed indirectly via load_file
-	free(_work_screen);
-	free(_temp_pal);
+	free(_workScreen);
+	free(_tempPal);
 }
 
-void SkyState::show_screen(void)
-{
-	_system->copy_rect(_work_screen, 320, 0, 0, 320, 200);
+void SkyState::showScreen(void) {
+	
+	_system->copy_rect(_workScreen, 320, 0, 0, 320, 200);
 	_system->update_screen();
 }
 

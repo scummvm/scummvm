@@ -25,13 +25,13 @@
 #include "sky/skydefs.h"
 #include "sky/sky.h"
 
-#define fade_jump		2
-#define scroll_jump		16
+#define FADE_JUMP		2
+#define SCROLL_JUMP		16
 
-#define vga_colours		256
-#define game_colours	240
+#define VGA_COLOURS		256
+#define GAME_COLOURS		240
 
-uint8 top_16_colours[] =
+uint8 top16Colours[] =
 {
 	0, 0, 0,
 	38, 38, 38,
@@ -51,46 +51,46 @@ uint8 top_16_colours[] =
 	63, 63, 63
 };
 
-void SkyState::initialise_screen(void)
-{
+void SkyState::initialiseScreen(void) {
+	
 	int i;
-	uint8 tmp_pal[1024];
+	uint8 tmpPal[1024];
 
-	_system->init_size(full_screen_width, full_screen_height);
-	_backscreen = (uint8 *)malloc(full_screen_width * full_screen_height);
-	_game_grid = (uint8 *)malloc(GRID_X * GRID_Y * 2);
-	_work_palette = (uint8 *)malloc(vga_colours * 3);
+	_system->init_size(FULL_SCREEN_WIDTH, FULL_SCREEN_HEIGHT);
+	_backScreen = (uint8 *)malloc(FULL_SCREEN_WIDTH * FULL_SCREEN_HEIGHT);
+	_gameGrid = (uint8 *)malloc(GRID_X * GRID_Y * 2);
+	_workPalette = (uint8 *)malloc(VGA_COLOURS * 3);
 
 	//blank the first 240 colors of the palette 
-	memset(tmp_pal, 0, game_colours * 4);
+	memset(tmpPal, 0, GAME_COLOURS * 4);
 
 	//set the remaining colors
-	for (i = 0; i < (vga_colours-game_colours); i++) {
-		tmp_pal[game_colours + i * 4] = (top_16_colours[i * 3] << 2) + (top_16_colours[i * 3] & 3);
-		tmp_pal[game_colours + i * 4 + 1] = (top_16_colours[i * 3 + 1] << 2) + (top_16_colours[i * 3 + 1] & 3);
-		tmp_pal[game_colours + i * 4 + 2] = (top_16_colours[i * 3 + 2] << 2) + (top_16_colours[i * 3 + 2] & 3);
-		tmp_pal[game_colours + i * 4 + 3] = 0x00; 
+	for (i = 0; i < (VGA_COLOURS-GAME_COLOURS); i++) {
+		tmpPal[GAME_COLOURS + i * 4] = (top16Colours[i * 3] << 2) + (top16Colours[i * 3] & 3);
+		tmpPal[GAME_COLOURS + i * 4 + 1] = (top16Colours[i * 3 + 1] << 2) + (top16Colours[i * 3 + 1] & 3);
+		tmpPal[GAME_COLOURS + i * 4 + 2] = (top16Colours[i * 3 + 2] << 2) + (top16Colours[i * 3 + 2] & 3);
+		tmpPal[GAME_COLOURS + i * 4 + 3] = 0x00; 
 	}
 
 	//set the palette
-	_system->set_palette(tmp_pal, 0, 256);
+	_system->set_palette(tmpPal, 0, 256);
 }
 
 //set a new palette, pal is a pointer to dos vga rgb components 0..63
-void SkyState::set_palette(uint8 *pal)
-{
-	convert_palette(pal, _palette);
+void SkyState::setPalette(uint8 *pal) {
+	
+	convertPalette(pal, _palette);
 	_system->set_palette(_palette, 0, 256);
 }
 
-void SkyState::convert_palette(uint8 *inpal, uint8* outpal) //convert 3 byte 0..63 rgb to 4byte 0..255 rgbx
-{
+void SkyState::convertPalette(uint8 *inPal, uint8* outPal) { //convert 3 byte 0..63 rgb to 4byte 0..255 rgbx
+	
 	int i;
 
-	for (i = 0; i < vga_colours; i++) {
-		outpal[4 * i] = (inpal[3 * i] << 2) + (inpal[3 * i] & 3);
-		outpal[4 * i + 1] = (inpal[3 * i + 1] << 2) + (inpal[3 * i + 1] & 3);
-		outpal[4 * i + 2] = (inpal[3 * i + 2] << 2) + (inpal[3 * i + 2] & 3);
-		outpal[4 * i + 3] = 0x00;
+	for (i = 0; i < VGA_COLOURS; i++) {
+		outPal[4 * i] = (inPal[3 * i] << 2) + (inPal[3 * i] & 3);
+		outPal[4 * i + 1] = (inPal[3 * i + 1] << 2) + (inPal[3 * i + 1] & 3);
+		outPal[4 * i + 2] = (inPal[3 * i + 2] << 2) + (inPal[3 * i + 2] & 3);
+		outPal[4 * i + 3] = 0x00;
 	}
 }

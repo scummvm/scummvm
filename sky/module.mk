@@ -6,6 +6,7 @@ MODULE_OBJS = \
 	sky/screen.o \
 	sky/intro.o \
 	sky/rnc_deco.o \
+	sky/grid.o \
 
 # Include common rules 
 include common.rules

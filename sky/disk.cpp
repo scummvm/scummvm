@@ -27,122 +27,120 @@
 #include "sky/sky.h"
 #include "sky/rnc_deco.h"
 
-#define no_of_files_hd	1600
-#define no_of_files_cd	5200
-#define max_files_in_list		60
+#define MAX_FILES_IN_LIST		60
 
-const char *data_file_name = "sky.dsk";
-const char *dinner_file_name = "sky.dnr";
-uint8 *dinner_table_area, *fixed_dest, *file_dest, *comp_dest;
-uint32 dinner_table_entries, file_flags, file_offset, file_size, decomp_size, comp_file;
-uint16 build_list[max_files_in_list];
-uint32 loaded_file_list[max_files_in_list];
+const char *dataFilename = "sky.dsk";
+const char *dinnerFilename = "sky.dnr";
+uint8 *dinnerTableArea, *fixedDest, *fileDest, *compDest;
+uint32 dinnerTableEntries, fileFlags, fileOffset, fileSize, decompSize, compFile;
+uint16 buildList[MAX_FILES_IN_LIST];
+uint32 loadedFileList[MAX_FILES_IN_LIST];
 
-File *data_disk_handle = new File();
-File *dnr_handle = new File();
+File *dataDiskHandle = new File();
+File *dnrHandle = new File();
 
-void SkyState::initialise_disk()
-{
-	uint32 entries_read;
+void SkyState::initialiseDisk() {
 
-	dnr_handle->open(dinner_file_name, _gameDataPath);
-	if (dnr_handle->isOpen() == false)
-			error("Could not open %s%s!\n", _gameDataPath, dinner_file_name);
+	uint32 entriesRead;
 
-	if (!(dinner_table_entries = dnr_handle->readUint32LE()))
+	dnrHandle->open(dinnerFilename, _gameDataPath);
+	if (dnrHandle->isOpen() == false)
+			error("Could not open %s%s!\n", _gameDataPath, dinnerFilename);
+
+	if (!(dinnerTableEntries = dnrHandle->readUint32LE()))
 		error("Error reading from sky.dnr!\n"); //even though it was opened correctly?!
 	
-	debug(1, "Entries in dinner table: %d", dinner_table_entries);
+	debug(1, "Entries in dinner table: %d", dinnerTableEntries);
 
-	if (dinner_table_entries > 1600) 
+	if (dinnerTableEntries > 1600) 
 		_isCDVersion = true;
 	else
 		_isCDVersion = false;
 		
-	dinner_table_area = (uint8 *)malloc(dinner_table_entries * 8);
-	entries_read = dnr_handle->read(dinner_table_area, 8 * dinner_table_entries) / 8;
+	dinnerTableArea = (uint8 *)malloc(dinnerTableEntries * 8);
+	entriesRead = dnrHandle->read(dinnerTableArea, 8 * dinnerTableEntries) / 8;
 
-	if (entries_read != dinner_table_entries)
-		warning("bytes_read != dinner_table_entries. [%d/%d]\n", entries_read, dinner_table_entries);
+	if (entriesRead != dinnerTableEntries)
+		warning("entriesRead != dinnerTableEntries. [%d/%d]\n", entriesRead, dinnerTableEntries);
 
-	data_disk_handle->open(data_file_name, _gameDataPath);
-	if (data_disk_handle->isOpen() == false) 
-		error("Error opening %s%s!\n", _gameDataPath, data_file_name);
+	dataDiskHandle->open(dataFilename, _gameDataPath);
+	if (dataDiskHandle->isOpen() == false) 
+		error("Error opening %s%s!\n", _gameDataPath, dataFilename);
 }
 
 //load in file file_nr to address dest
 //if dest == NULL, then allocate memory for this file
-uint16 *SkyState::load_file(uint16 file_nr, uint8 *dest)
-{
+uint16 *SkyState::loadFile(uint16 fileNr, uint8 *dest) {
+	
 	uint8 cflag;
-	int32 bytes_read;
-	uint8 *file_ptr, *inputPtr, *outputPtr;
-	dataFileHeader file_header;
+	int32 bytesRead;
+	uint8 *filePtr, *inputPtr, *outputPtr;
+	dataFileHeader fileHeader;
 
 	#ifdef file_order_chk
 		warning("File order checking not implemented yet!\n");
 	#endif
 
-	comp_file = file_nr;
-	debug(1, "load file %d,%d (%d)", (file_nr >> 11), (file_nr & 2047), file_nr); 
+	compFile = fileNr;
+	debug(1, "load file %d,%d (%d)", (fileNr >> 11), (fileNr & 2047), fileNr); 
 
-	file_ptr = (uint8 *)get_file_info(file_nr);
-	if (file_ptr == NULL) {
-		printf("File %d not found!\n", file_nr);
+	filePtr = (uint8 *)getFileInfo(fileNr);
+	if (filePtr == NULL) {
+		printf("File %d not found!\n", fileNr);
 		return NULL;
 	}
 
-	file_flags = READ_LE_UINT32((file_ptr + 5));
-	file_size = file_flags & 0x03fffff;
+	fileFlags = READ_LE_UINT32((filePtr + 5));
+	fileSize = fileFlags & 0x03fffff;
 
-	file_offset = READ_LE_UINT32((file_ptr + 2)) & 0x0ffffff;
+	fileOffset = READ_LE_UINT32((filePtr + 2)) & 0x0ffffff;
 
-	cflag = (uint8)((file_offset >> (23)) & 0x1);
-	file_offset = (((1 << (23)) ^ 0xFFFFFFFF) & file_offset);
+	cflag = (uint8)((fileOffset >> (23)) & 0x1);
+	fileOffset = (((1 << (23)) ^ 0xFFFFFFFF) & fileOffset);
 
 	if (cflag)
-		file_offset <<= 4;
+		fileOffset <<= 4;
 
-	fixed_dest = dest;
-	file_dest = dest;
-	comp_dest = dest;
+	fixedDest = dest;
+	fileDest = dest;
+	compDest = dest;
 
 	if (dest == NULL) //we need to allocate memory for this file
-		file_dest = (uint8 *)malloc(file_size);
+		fileDest = (uint8 *)malloc(fileSize);
 
-	data_disk_handle->seek(file_offset, SEEK_SET);
+	dataDiskHandle->seek(fileOffset, SEEK_SET);
 
 	#ifdef file_order_chk
 		warning("File order checking not implemented yet!\n");
 	#endif
 
 	//now read in the data
-	bytes_read = data_disk_handle->read(file_dest, 1*file_size);
+	bytesRead = dataDiskHandle->read(fileDest, 1 * fileSize);
 
-	if (bytes_read != (int32)file_size)
-		printf("ERROR: Unable to read %d bytes from datadisk (%d bytes read)\n", file_size, bytes_read);
+	if (bytesRead != (int32)fileSize)
+		printf("ERROR: Unable to read %d bytes from datadisk (%d bytes read)\n", fileSize, bytesRead);
 
-	cflag = (uint8)((file_flags >> (23)) & 0x1);
+	cflag = (uint8)((fileFlags >> (23)) & 0x1);
 
 	//if cflag == 0 then file is compressed, 1 == uncompressed
 
 	if (!cflag) {
 		debug(1, "File is compressed...");
 
-		memcpy(&file_header, file_dest, sizeof(struct dataFileHeader));
-		if ( (uint8)((FROM_LE_16(file_header.flag) >> 7) & 0x1)	 ) {
+		memcpy(&fileHeader, fileDest, sizeof(struct dataFileHeader));
+		if ( (uint8)((FROM_LE_16(fileHeader.flag) >> 7) & 0x1)	 ) {
 			debug(1, "with RNC!");
 
-			decomp_size = (FROM_LE_16(file_header.flag) & 0xFFFFFF00) << 8;
-			decomp_size |= FROM_LE_16((uint16)file_header.s_tot_size);
+			decompSize = (FROM_LE_16(fileHeader.flag) & 0xFFFFFF00) << 8;
+			decompSize |= FROM_LE_16((uint16)fileHeader.s_tot_size);
 
-			if (fixed_dest == NULL) // is this valid?
-				comp_dest = (uint8 *)malloc(decomp_size);
+			if (fixedDest == NULL) // is this valid?
+				compDest = (uint8 *)malloc(decompSize);
 
-			inputPtr = file_dest;
-			outputPtr = comp_dest;
+			inputPtr = fileDest;
+			outputPtr = compDest;
 
-			if ( (uint8)(file_flags >> (22) & 0x1) ) //do we include the header?
+			if ( (uint8)(fileFlags >> (22) & 0x1) ) //do we include the header?
 				inputPtr += sizeof(struct dataFileHeader);
 			else {
 				memcpy(outputPtr, inputPtr, sizeof(struct dataFileHeader));
@@ -156,40 +154,40 @@ uint16 *SkyState::load_file(uint16 file_nr, uint8 *dest)
 			debug(2, "UnpackM1 returned: %d", unPackLen);
 
 			if (unPackLen == 0) { //Unpack returned 0: file was probably not packed.
-				if (fixed_dest == NULL)
-					free(comp_dest);
+				if (fixedDest == NULL)
+					free(compDest);
 			
-				return (uint16 *)file_dest;
+				return (uint16 *)fileDest;
 			}
 
-			if (! (uint8)(file_flags >> (22) & 0x1) ) { // include header?
+			if (! (uint8)(fileFlags >> (22) & 0x1) ) { // include header?
 				unPackLen += sizeof(struct dataFileHeader);
 
-				if (unPackLen != (int32)decomp_size) {
-					debug(1, "ERROR: invalid decomp size! (was: %d, should be: %d)", unPackLen, decomp_size);
+				if (unPackLen != (int32)decompSize) {
+					debug(1, "ERROR: invalid decomp size! (was: %d, should be: %d)", unPackLen, decompSize);
 				}
 			}
 
-			if (fixed_dest == NULL)
-				free(file_dest);
+			if (fixedDest == NULL)
+				free(fileDest);
 
 		} else
 			debug(1, "but not with RNC! (?!)");
 	} else
-		return (uint16 *)file_dest;
+		return (uint16 *)fileDest;
 
-	return (uint16 *)comp_dest;
+	return (uint16 *)compDest;
 }
 
-uint16 *SkyState::get_file_info(uint16 file_nr)
-{
+uint16 *SkyState::getFileInfo(uint16 fileNr) {
+	
 	uint16 i;
-	uint16 *dnr_tbl_16_ptr = (uint16 *)dinner_table_area;
+	uint16 *dnrTbl16Ptr = (uint16 *)dinnerTableArea;
 
-	for (i = 0; i < dinner_table_entries; i++) {
-		if (READ_LE_UINT16(dnr_tbl_16_ptr + (i * 4)) == file_nr) {
-			debug(1, "file %d found!", file_nr);
-			return (dnr_tbl_16_ptr + (i * 4));
+	for (i = 0; i < dinnerTableEntries; i++) {
+		if (READ_LE_UINT16(dnrTbl16Ptr + (i * 4)) == fileNr) {
+			debug(1, "file %d found!", fileNr);
+			return (dnrTbl16Ptr + (i * 4));
 		}
 	}
 

@@ -23,18 +23,17 @@
 
 //This file is incomplete, several flags still missing.
 
-#define key_buffer_size	80
-#define sequence_count	3
+#define KEY_BUFFER_SIZE	80
+#define SEQUENCE_COUNT	3
 
 //screen/grid defines
-#define game_screen_width	320
-#define game_screen_height	192
-#define full_screen_width	320
-#define full_screen_height	200
+#define GAME_SCREEN_WIDTH	320
+#define GAME_SCREEN_HEIGHT	192
+#define FULL_SCREEN_WIDTH	320
+#define FULL_SCREEN_HEIGHT	200
 
-#define tot_no_grids	70
-
-#define grid_size	120
+#define TOT_NO_GRIDS	70	//total no. of grids supported
+#define GRID_SIZE	120	//grid size in bytes
 
 #define GRID_X	20
 #define GRID_Y	24
@@ -44,8 +43,8 @@
 #define GRID_W_SHIFT	4
 #define GRID_H_SHIFT	3
 
-#define top_left_x	128
-#define top_left_y	136
+#define TOP_LEFT_X	128
+#define TOP_LEFT_Y	136
 
 //item list defines
 #define section_0_item	119
