@@ -271,18 +271,9 @@ void ScummEngine::cyclePalette() {
 	int valueToAdd;
 	int i, j;
 
-	if (VAR_TIMER == 0xFF) {
-		// FIXME - no idea if this is right :-/
-		// Needed for both V2 and V8 at this time
+	valueToAdd = VAR(VAR_TIMER);
+	if (valueToAdd < VAR(VAR_TIMER_NEXT))
 		valueToAdd = VAR(VAR_TIMER_NEXT);
-	} else {
-		valueToAdd = VAR(VAR_TIMER);
-		if (valueToAdd < VAR(VAR_TIMER_NEXT))
-			valueToAdd = VAR(VAR_TIMER_NEXT);
-	}
-
-	if (!_colorCycle)							// FIXME
-		return;
 
 	for (i = 0, cycl = _colorCycle; i < 16; i++, cycl++) {
 		if (!cycl->delay || cycl->start > cycl->end)

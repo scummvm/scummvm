@@ -1652,7 +1652,8 @@ load_game:
 
 		processActors();
 		_fullRedraw = false;
-		cyclePalette();
+		if (_version >= 4 && _heversion <= 60)
+			cyclePalette();
 		palManipulate();
 
 		if (_doEffect) {
@@ -2134,7 +2135,8 @@ void ScummEngine::startScene(int room, Actor *a, int objectNr) {
 	runExitScript();
 	killScriptsAndResources();
 	clearEnqueue();
-	stopCycle(0);
+	if (_version >= 4 && _heversion <= 60)
+		stopCycle(0);
 	_sound->processSoundQues();
 
 	for (i = 1; i < _numActors; i++) {
