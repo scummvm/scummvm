@@ -1794,7 +1794,7 @@ void Scumm::restoreBG(int left, int top, int right, int bottom, byte backColor)
 	topline = vs->topline;
 	height = topline + vs->height;
 
-	right++;		// FIXME - why do we increment right here?!? (add comment)
+//	right++;		// FIXME - why did we increment here?!? it caused bug 
 	if (left < 0)
 		left = 0;
 	if (right < 0)
