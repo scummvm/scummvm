@@ -371,7 +371,7 @@ void ScummEngine::drawVerb(int verb, int mode) {
 	VerbSlot *vs;
 	bool tmp;
 
-	if (!verb)
+	if (!_numVerbs)
 		return;
 
 	vs = &_verbs[verb];
@@ -422,6 +422,7 @@ void ScummEngine::drawVerb(int verb, int mode) {
 }
 
 void ScummEngine::restoreVerbBG(int verb) {
+	return;
 
 	VerbSlot *vs;
 
