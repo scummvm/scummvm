@@ -154,18 +154,18 @@ void SkyEngine::doCheat(uint8 num) {
 
 	switch(num) {
 	case 1: warning("executed cheat: get jammer");
-		Logic::_scriptVariables[258] = 42; // got_jammer
-		Logic::_scriptVariables[240] = 69; // got_sponsor
+		Logic::_scriptVariables[GOT_JAMMER] = 42;
+		Logic::_scriptVariables[GOT_SPONSOR] = 69;
 		break;
 	case 2: warning("executed cheat: computer room");
-		Logic::_scriptVariables[479] = 2; // card_status
-		Logic::_scriptVariables[480] = 1; // card_fix
+		Logic::_scriptVariables[CARD_STATUS] = 2;
+		Logic::_scriptVariables[CARD_FIX] = 1;
 		break;
 	case 3: warning("executed cheat: get to burke");
-		Logic::_scriptVariables[190] = 42; // knows_port
+		Logic::_scriptVariables[KNOWS_PORT] = 42;
 		break;
 	case 4: warning("executed cheat: get to reactor section");
-		Logic::_scriptVariables[451] = 42; // foreman_friend
+		Logic::_scriptVariables[FOREMAN_FRIEND] = 42;
 		_skyLogic->fnSendSync(8484, 1, 0); // send sync to RAD suit (put in locker)
 		_skyLogic->fnKillId(ID_ANITA_SPY, 0, 0); // stop anita from getting to you
 		break;
