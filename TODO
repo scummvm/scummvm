@@ -6,7 +6,6 @@ Assigned tasks:
  * Improved walk box code (frob)
  * Implement FadeInChore and FadeOutChore (frob)
  * Fix memory problems after Lua restore (aquadran)
- * Finish iMuse implemention  (aquadran)
 
 Unassigned (help wanted):
  * Add configure script (Custom ala main ScummVM, NOT autoconf)
@@ -14,6 +13,7 @@ Unassigned (help wanted):
  * Finish Save/Load support for rest of Engine except Lua
  * Implement 2D primitives 
  * Proper vsscanf implementation in textsplit.cpp for platforms without it (MSVC, etc)
- * Abstract rendering code and implement software renderer (partianly done)
+ * Abstract rendering code (partialy done)
  * Fix drawEmergString() to work with Mesa
  * Make SMUSH work on Linux/PPC (whats wrong with it, exactly? - ender :)
+ * Finish panning in 3d position code
