@@ -155,10 +155,7 @@ void ConsoleDialog::handleKeyDown(uint16 ascii, int keycode, int modifiers)
 		
 			if (_currentPos > _promptStartPos) {
 				_currentPos--;
-				for (i = _currentPos; i < _promptEndPos; i++)
-					_buffer[i % kBufferSize] = _buffer[(i+1) % kBufferSize];
-				_buffer[_promptEndPos % kBufferSize] = ' ';
-				_promptEndPos--;
+				killChar();
 			}
 			scrollToCurrent();
 			draw();	// FIXME - not nice to redraw the full console just for one char!
