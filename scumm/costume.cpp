@@ -496,7 +496,7 @@ void CostumeRenderer::proc3_ami() {
 			len = *src++;
 		do {
 			if (_scaleY == 255 || cost_scaleTable[_scaleIndexY] < _scaleY) {
-				masked = (y < _outheight) && v1.mask_ptr && ((mask[0] | mask[v1.imgbufoffs]) & maskbit);
+				masked = (y >= _outheight) || v1.mask_ptr && ((mask[0] | mask[v1.imgbufoffs]) & maskbit);
 				
 				if (color && v1.x >= 0 && v1.x < _vm->_screenWidth && !masked) {
 					*dst = _palette[color];
