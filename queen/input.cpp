@@ -36,7 +36,7 @@ const char* Input::_commandKeys[LANGUAGE_COUNT] = {
 Input::Input(Language language, OSystem *system) : 
 	_system(system), _fastMode(false), _keyVerb(VERB_NONE), 
 	_cutawayRunning(false), _cutawayQuit(false), _talkQuit(false),
-	_quickSave(false), _quickLoad(false),
+	_quickSave(false), _quickLoad(false), _debugger(false),
 	_inKey(0), _mouse_x(0), _mouse_y(0), _mouseButton(0) {
 
 	switch (language) {
@@ -83,7 +83,17 @@ void Input::delay(uint amount) {
 							event.kbd.keycode,
 							isprint(event.kbd.keycode) ? event.kbd.keycode : '.');
 
-					_inKey = event.kbd.keycode;
+					if (event.kbd.flags == OSystem::KBD_CTRL) {
+						if (event.kbd.keycode == 'd') {
+							_debugger = true;
+						}
+						else if (event.kbd.keycode == 'f') {
+							_fastMode = !_fastMode;
+						}
+					}
+					else {
+						_inKey = event.kbd.keycode;
+					}
 					break;
 
 				case OSystem::EVENT_MOUSEMOVE:
@@ -216,44 +226,6 @@ int Input::checkKeys() {
 	int inKey = _inKey;
 	_inKey = 0;	//reset
 	return inKey;
-}
-
-
-bool Input::waitForNumber(int &i, keyPressedCallback callback, void *refCon) {
-
-	i = 0;
-	int key = 0;
-	do {
-		delay(DELAY_SHORT);
-		key = _inKey;
-		_inKey = 0;
-		if (key >= '0' && key <= '9') {
-			i = i * 10 + key - '0';
-			(*callback)(refCon, key);
-		}
-		else if (key == KEY_BACKSPACE) {
-			i /= 10;
-			(*callback)(refCon, -1);
-		}
-	} while (key != KEY_ESCAPE && key != KEY_RETURN);
-	return key != KEY_ESCAPE;
-}
-
-
-bool Input::waitForCharacter(char &c) {
-
-	int key = 0;
-	do {
-		delay(DELAY_SHORT);
-		if (_inKey >= 'a' && _inKey <= 'z' || _inKey == KEY_ESCAPE) {
-			key = _inKey;
-			if (_inKey != KEY_ESCAPE) {
-				c = (char)_inKey;
-			}
-		}
-		_inKey = 0;
-	} while (key == 0);
-	return key != KEY_ESCAPE;
 }
 
 

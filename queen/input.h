@@ -31,8 +31,6 @@ class Input {
 
 	public:
 
-		typedef void (*keyPressedCallback)(void *refCon, int key);
-
 		//! Adjust here to change delays!
 		enum {
 			DELAY_SHORT  =  10,
@@ -75,6 +73,8 @@ class Input {
 		void quickSaveReset()  { _quickSave = false; }
 		bool quickLoad() const { return _quickLoad; }
 		void quickLoadReset()  { _quickLoad = false; }
+		bool debugger() const { return _debugger; }
+		void debuggerReset() { _debugger = false; }
 
 		bool fastMode() const { return _fastMode; }
 		void fastMode(bool fm)	{ _fastMode = fm; }
@@ -86,9 +86,6 @@ class Input {
 
 		int mouseButton() const { return _mouseButton; }
 		void clearMouseButton() { _mouseButton = 0; }
-
-		bool waitForNumber(int &i, keyPressedCallback callback, void *refCon);
-		bool waitForCharacter(char &c);
 
 	private:
 
@@ -146,6 +143,9 @@ class Input {
 		//! Set if quickload requested
 		bool _quickLoad;
 
+		//! Set if debugger requested
+		bool _debugger;
+
 		//! Set by delay();
 		int _inKey;
 
@@ -156,10 +156,10 @@ class Input {
 		int _mouseButton;
 
 		//! Command keys for current language
-		const char* _currentCommandKeys;
+		const char *_currentCommandKeys;
 
 		//! Command keys for all languages
-		static const char* _commandKeys[LANGUAGE_COUNT];
+		static const char *_commandKeys[LANGUAGE_COUNT];
 };
 
 } // End of namespace Queen

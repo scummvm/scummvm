@@ -30,195 +30,148 @@
 #include "queen/resource.h"
 #include "queen/structs.h"
 
+#include "common/debugger.cpp"
+
 namespace Queen {
 
-Debug::Debug(QueenEngine *vm)
-	: _passwordCharCount(0), _stubCount(0), _vm(vm) {
 
-	memset(_password, 0, sizeof(_password));
-
-	registerStub("zeroxpark", &Debug::jumpToRoom);
-	registerStub("grimley",   &Debug::printInfo);
-	registerStub("kowamori",  &Debug::toggleFastMode);
+Debugger::Debugger(QueenEngine *vm) 
+	: _drawAreas(false), _vm(vm) {
+		
+	DCmd_Register("exit", &Debugger::Cmd_Exit);
+	DCmd_Register("help", &Debugger::Cmd_Help);
+	DCmd_Register("areas", &Debugger::Cmd_Areas);
+	DCmd_Register("asm", &Debugger::Cmd_Asm);
+	DCmd_Register("gs", &Debugger::Cmd_GameState);
+	DCmd_Register("info", &Debugger::Cmd_Info);
+	DCmd_Register("items", &Debugger::Cmd_Items);
+	DCmd_Register("room", &Debugger::Cmd_Room);
 }
 
 
-void Debug::registerStub(const char *password, DebugFunc debugFunc) {
-
-	assert(_stubCount < MAX_STUB);
-	_stub[_stubCount].password = password;
-	_stub[_stubCount].function = debugFunc;
-	++_stubCount;
+void Debugger::preEnter() {
+	
+	// XXX mute all sounds
 }
 
 
-void Debug::update(int c) {
+void Debugger::postEnter() {
+	
+	// XXX un-mute all sounds
+	_vm->graphics()->bobSetupControl(); // re-init mouse cursor
+}
 
-	if (c >= 'a' && c <= 'z') {
-		_password[_passwordCharCount] = (char)c;
-		++_passwordCharCount;
-		_passwordCharCount &= 15;
 
-		uint k;
-		for (k = 0; k < _stubCount; ++k) {
-			const char *pass = _stub[k].password;
-			int i = strlen(pass) - 1;
-			int j = _passwordCharCount - 1;
-			bool match = true;
-			for (; i >= 0; --i, --j) {
-				if (_password[j & 15] != pass[i]) {
-					match = false;
-					break;
-				}
-			}
-			if (match) {
-				(this->*(_stub[k].function))();
-				break;
-			}
-		}
+bool Debugger::Cmd_Exit(int argc, const char **argv) {
+	
+	_detach_now = true;
+	return false;	
+}
+
+
+bool Debugger::Cmd_Help(int argc, const char **argv) {
+	// console normally has 39 line width
+	// wrap around nicely
+	int width = 0, size, i;
+
+	DebugPrintf("Commands are:\n");
+	for (i = 0 ; i < _dcmd_count ; i++) {
+		size = strlen(_dcmds[i].name) + 1;
+
+		if ((width + size) >= 39) {
+			DebugPrintf("\n");
+			width = size;
+		} else
+			width += size;
+
+		DebugPrintf("%s ", _dcmds[i].name);
 	}
+	DebugPrintf("\n");
+	return true;
 }
 
 
-void Debug::jumpToRoom() {
-
-	debug(9, "Debug::jumpToRoom()");
-
-	_vm->graphics()->textCurrentColor(INK_JOE);
-	_vm->graphics()->textSet(0, 142, "Enter new room");
-	_vm->logic()->update();
-
-	int room;
-	_digitTextCount = 0;
-	if (_vm->input()->waitForNumber(room, digitKeyPressed, this)) {
-		_vm->logic()->joeX(0);
-		_vm->logic()->joeY(0);
-		_vm->logic()->newRoom(room);
-		_vm->logic()->entryObj(_vm->logic()->roomData(room) + 1);
-		_vm->graphics()->textClear(0, 199);
+bool Debugger::Cmd_Asm(int argc, const char **argv) {
+	
+	if (argc == 2) {
+		uint16 sm = atoi(argv[1]);
+		DebugPrintf("Executing special move %d\n", sm);
+		_vm->logic()->executeSpecialMove(sm);
+	} else {
+		DebugPrintf("Usage: %s smnum\n", argv[0]);
 	}
+	return true;
 }
 
 
-void Debug::toggleFastMode() {
+bool Debugger::Cmd_Areas(int argc, const char **argv) {
 
-	debug(9, "Debug::toggleFastMode()");
-	_vm->input()->fastMode(!_vm->input()->fastMode());
+	_drawAreas = !_drawAreas;
+	DebugPrintf("Room areas display %s\n", _drawAreas ? "on" : "off");
+	return true;
 }
 
 
-void Debug::printInfo() {
-
-	debug(9, "Debug::printInfo()");
-
-	_vm->graphics()->textClear(0, 199);
-	_vm->graphics()->textCurrentColor(INK_JOE);
-
-	char buf[100];
-
-	snprintf(buf, sizeof(buf), "Version : %s", _vm->resource()->JASVersion());
-	_vm->graphics()->textSet(110, 20, buf);
-
-	snprintf(buf, sizeof(buf), "Room number : %d", _vm->logic()->currentRoom());
-	_vm->graphics()->textSet(110, 40, buf);
-
-	snprintf(buf, sizeof(buf), "Room name : %s", _vm->logic()->roomName(_vm->logic()->currentRoom()));
-	_vm->graphics()->textSet(110, 60, buf);
-
-	_vm->logic()->update();
-
-	char c;
-	if (_vm->input()->waitForCharacter(c)) {
-		switch (c) {
-		case 'a':
-			toggleAreasDrawing();
-			break;
-		case 's' :
-			changeGameState();
-            break;
-        case 'x' :
-			printGameState();
-            break;
-        case 'i' :
-			giveAllItems();
-            break;
-		}
-	}
-	_vm->graphics()->textClear(0, 199);
+bool Debugger::Cmd_GameState(int argc, const char **argv) {
+	
+	uint16 slot;
+	switch (argc) {
+	case 2:
+		slot = atoi(argv[1]);
+		DebugPrintf("GAMESTATE[%d] ", slot);
+		DebugPrintf("is %d\n", _vm->logic()->gameState(slot));
+		break;
+	case 3:
+		slot = atoi(argv[1]);
+		DebugPrintf("GAMESTATE[%d] ", slot);		
+		DebugPrintf("was %d ", _vm->logic()->gameState(slot));
+		_vm->logic()->gameState(slot, atoi(argv[2]));
+		DebugPrintf("now %d\n", _vm->logic()->gameState(slot));
+		break;
+	default:
+		DebugPrintf("Usage: %s slotnum value\n", argv[0]);
+		break;
+	}	
+	return true;
 }
 
 
-void Debug::toggleAreasDrawing() {
-
-	debug(9, "Debug::toggleAreasDrawing()");
-	warning("Debug::toggleAreasDrawing() unimplemented");
+bool Debugger::Cmd_Info(int argc, const char **argv) {
+	
+	DebugPrintf("Version: %s\n", _vm->resource()->JASVersion());
+	DebugPrintf("Room number: %d\n", _vm->logic()->currentRoom());
+	DebugPrintf("Room name: %s\n", _vm->logic()->roomName(_vm->logic()->currentRoom()));	
+	return true;
 }
 
 
-void Debug::changeGameState() {
-
-	debug(9, "Debug::changeGameState()");
-	_vm->graphics()->textSet(0, 142, "Set GAMESTATE");
-	_vm->logic()->update();
-	int slot, value;
-	_digitTextCount = 0;
-	if (_vm->input()->waitForNumber(slot, digitKeyPressed, this)) {
-		_vm->graphics()->textClear(0, 199);
-		_vm->graphics()->textSet(0, 142, "to");
-		_vm->logic()->update();
-		_digitTextCount = 0;
-		if (_vm->input()->waitForNumber(value, digitKeyPressed, this)) {
-			_vm->logic()->gameState(slot, value);
-		}
-	}
-}
-
-
-void Debug::printGameState() {
-
-	debug(9, "Debug::printGameState()");
-	_vm->graphics()->textSet(0, 142, "Show GAMESTATE");
-	_vm->logic()->update();
-	int slot;
-	_digitTextCount = 0;
-	if (_vm->input()->waitForNumber(slot, digitKeyPressed, this)) {
-		_vm->graphics()->textClear(0, 199);
-		char buf[50];
-		snprintf(buf, sizeof(buf), "Currently - %d", _vm->logic()->gameState(slot));
-		_vm->graphics()->textSet(0, 142, buf);
-		_vm->logic()->update();
-		char c;
-		_vm->input()->waitForCharacter(c);
-	}
-}
-
-
-void Debug::giveAllItems() {
-
-	debug(9, "Debug::giveAllItems()");
+bool Debugger::Cmd_Items(int argc, const char **argv) {
+	
 	int n = _vm->logic()->itemDataCount();
 	ItemData *item = _vm->logic()->itemData(1);
 	while (n--) {
 		item->name = ABS(item->name);
 		++item;
 	}
+	DebugPrintf("Enabled all inventory items\n");
+	return true;
 }
 
 
-void Debug::digitKeyPressed(void *refCon, int key) {
-
-	Debug *debug = (Debug *)refCon;
-	if(key != -1 && debug->_digitTextCount < sizeof(debug->_digitText) - 1) {
-		debug->_digitText[debug->_digitTextCount] = (char)key;
-		++debug->_digitTextCount;
+bool Debugger::Cmd_Room(int argc, const char **argv) {
+	
+	if (argc == 2) {
+		uint16 roomNum = atoi(argv[1]);
+		_vm->logic()->joeX(0);
+		_vm->logic()->joeY(0);
+		_vm->logic()->newRoom(roomNum);
+		_vm->logic()->entryObj(_vm->logic()->roomData(roomNum) + 1);
+		DebugPrintf("Changing from room %d to %d\n", _vm->logic()->currentRoom(), roomNum);
+	} else {
+		DebugPrintf("Usage: %s roomnum\n", argv[0]);
 	}
-	else if (debug->_digitTextCount > 0) {
-		--debug->_digitTextCount;
-	}
-	debug->_digitText[debug->_digitTextCount] = '\0';
-	debug->_vm->graphics()->textSet(0, 151, debug->_digitText);
-	debug->_vm->logic()->update();
+	return true;
 }
 
 
-}
+} // End of namespace Queen

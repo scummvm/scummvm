@@ -30,6 +30,7 @@ namespace Queen {
 
 class BamScene;
 class Command;
+class Debugger;
 class Display;
 class Graphics;
 class Input;
@@ -47,6 +48,7 @@ public:
 
 	BamScene *bam() const { return _bam; }
 	Command *command() const { return _command; }
+	Debugger *debugger() const { return _debugger; }
 	Display *display() const { return _display; }
 	Graphics *graphics() const { return _graphics; }
 	Input *input() const { return _input; }
@@ -71,6 +73,7 @@ protected:
 
 	BamScene *_bam;
 	Command *_command;
+	Debugger *_debugger;
 	Display *_display;
 	Graphics *_graphics;
 	Input *_input;

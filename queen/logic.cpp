@@ -25,8 +25,8 @@
 #include "common/config-manager.h"
 #include "queen/command.h"
 #include "queen/cutaway.h"
-#include "queen/defs.h"
 #include "queen/debug.h"
+#include "queen/defs.h"
 #include "queen/display.h"
 #include "queen/graphics.h"
 #include "queen/input.h"
@@ -45,15 +45,11 @@ Logic::Logic(QueenEngine *vm)
 	: _vm(vm) {
 	_joe.x = _joe.y = 0;
 	_joe.scale = 100;
-	_dbg = new Debug(vm);
 	memset(_gameState, 0, sizeof(_gameState));
 	memset(_talkSelected, 0, sizeof(_talkSelected));
 	initialise();
 }
 
-Logic::~Logic() {
-	delete _dbg;
-}
 
 void Logic::initialise() {
 	
@@ -2226,23 +2222,43 @@ void Logic::handlePinnacleRoom() {
 
 
 void Logic::update() {
+
+	if (_vm->debugger()->isAttached()) {
+		_vm->debugger()->onFrame();
+	}
+
 	_vm->graphics()->update(_currentRoom);
+
 	_vm->input()->delay();
+
 	_vm->display()->palCustomScroll(_currentRoom);
+	if (_vm->debugger()->_drawAreas) {
+		for(int i = 1; i < MAX_ZONES_NUMBER; ++i) {
+			const ZoneSlot *pzs = &_zones[ZONE_ROOM][i];
+			if (pzs->valid) {
+				const Box *b = &pzs->box;
+				_vm->display()->drawBox(b->x1, b->y1, b->x2, b->y2, 3);	
+			}
+		}
+	}
 	BobSlot *joe = _vm->graphics()->bob(0);
 	_vm->display()->update(joe->active, joe->x, joe->y);
-	_dbg->update(_vm->input()->checkKeys());
-
-	if (_vm->input()->quickSave())
-		if (!_vm->input()->cutawayRunning()) {
+	
+	_vm->input()->checkKeys();
+	if (_vm->input()->debugger()) {
+		_vm->input()->debuggerReset();
+		_vm->debugger()->attach();
+	}
+	if (!_vm->input()->cutawayRunning()) {
+		if (_vm->input()->quickSave()) {
 			_vm->input()->quickSaveReset();
 			gameSave(0, "Quicksave");
 		}
-	if (_vm->input()->quickLoad())
-		if (!_vm->input()->cutawayRunning()) {
+		if (_vm->input()->quickLoad()) {
 			_vm->input()->quickLoadReset();
 			gameLoad(0);
 		}
+	}
 }
 
 bool Logic::gameSave(uint16 slot, const char *desc) {

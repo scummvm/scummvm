@@ -22,56 +22,37 @@
 #ifndef QUEENDEBUG_H
 #define QUEENDEBUG_H
 
-#include "common/util.h"
+#include "common/debugger.h"
 
 namespace Queen {
 
 class QueenEngine;
 
-class Debug {
+class Debugger : public Common::Debugger<Debugger> {
 public:
-	typedef void (Debug::*DebugFunc)();
 
-	Debug(QueenEngine *vm);
+	Debugger(QueenEngine *vm);
 
-	void registerStub(const char *password, DebugFunc debugFunc);
+	bool _drawAreas;
 
-	void update(int c);
+protected:
 
-	void jumpToRoom();
-	void toggleFastMode();
-	void printInfo();
-	void toggleAreasDrawing();
-	void changeGameState();
-	void printGameState();
-	void giveAllItems();
+	virtual void preEnter();
+	virtual void postEnter();
 
-	static void digitKeyPressed(void *refCon, int key); 
-
-	struct DebugStub {
-		const char *password;
-		DebugFunc function;
-	};
-
-	enum {
-		MAX_STUB = 5
-	};
-
+	bool Cmd_Exit(int argc, const char **argv);
+	bool Cmd_Help(int argc, const char **argv);
+	bool Cmd_Areas(int argc, const char **argv);
+	bool Cmd_Asm(int argc, const char **argv);
+	bool Cmd_GameState(int argc, const char **argv);
+	bool Cmd_Info(int argc, const char **argv);
+	bool Cmd_Items(int argc, const char **argv);
+	bool Cmd_Room(int argc, const char **argv);
 
 private:
 
-	char _password[16];
-	uint _passwordCharCount;
-
-	char _digitText[50];
-	uint _digitTextCount;
-
-	DebugStub _stub[MAX_STUB];
-	uint _stubCount;
-
 	QueenEngine *_vm;
 };
-
 
 } // End of namespace Queen
 

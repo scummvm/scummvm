@@ -52,14 +52,12 @@ struct ZoneSlot {
 	Box box;
 };
 
-class Debug;
 class QueenEngine;
 
 class Logic {
 
 public:
 	Logic(QueenEngine *vm);
-	~Logic();
 
 	uint16 currentRoom() const { return _currentRoom; }
 	void currentRoom(uint16 room) { 
@@ -425,7 +423,6 @@ protected:
 
 	bool _subtitles;
 
-	Debug *_dbg;
 	QueenEngine *_vm;
 };
 

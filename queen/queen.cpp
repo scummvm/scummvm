@@ -33,6 +33,7 @@
 #include "queen/queen.h"
 #include "queen/command.h"
 #include "queen/cutaway.h"
+#include "queen/debug.h"
 #include "queen/display.h"
 #include "queen/graphics.h"
 #include "queen/input.h"
@@ -105,6 +106,7 @@ QueenEngine::~QueenEngine() {
 	delete _bam;
 	delete _resource;
 	delete _command;
+	delete _debugger;
 	delete _display;
 	delete _graphics;
 	delete _input;
@@ -163,6 +165,7 @@ void QueenEngine::initialise(void) {
 	_bam = new BamScene(this);
 	_resource = new Resource(_gameDataPath, _system->get_savefile_manager(), getSavePath());
 	_command = new Command(this);
+	_debugger = new Debugger(this);
 	_display = new Display(this, _resource->getLanguage(), _system);
 	_graphics = new Graphics(this);
 	_input = new Input(_resource->getLanguage(), _system);
