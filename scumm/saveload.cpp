@@ -812,7 +812,7 @@ void ScummEngine::saveOrLoad(Serializer *s, uint32 savegameVersion) {
 		if (!_palManipPalette)
 			_palManipPalette = (byte *)calloc(0x300, 1);
 		if (!_palManipIntermediatePal)
-			_palManipPalette = (byte *)calloc(0x300, 1);
+			_palManipIntermediatePal = (byte *)calloc(0x600, 1);
 		s->saveLoadArrayOf(_palManipPalette, 0x300, 1, sleByte);
 		s->saveLoadArrayOf(_palManipIntermediatePal, 0x600, 1, sleByte);
 	}
