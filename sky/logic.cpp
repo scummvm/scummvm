@@ -1247,7 +1247,7 @@ uint32 SkyLogic::fnTurnTo(uint32 dir, uint32 b, uint32 c) {
 
 uint32 SkyLogic::fnArrived(uint32 scriptVar, uint32 b, uint32 c) {
 	_compact->extCompact->leaving = (uint16)(scriptVar & 0xffff);
-	_scriptVariables[scriptVar]++;
+	_scriptVariables[scriptVar/4]++;
 	return 1;
 }
 
