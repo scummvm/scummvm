@@ -1040,7 +1040,7 @@ int SimonState::runScript()
 					}
 
 					talk_with_text(b, c, s, tv->a, tv->b, tv->c);
-				} else if (_game == GAME_SIMON2WIN || _game == GAME_SIMON2DOS) {
+				} else if (_game == GAME_SIMON2WIN) {
 					uint b = getVarOrByte();
 					uint c = getVarOrByte();
 					uint a = getVarOrByte();
@@ -1070,6 +1070,32 @@ int SimonState::runScript()
 						talk_with_speech(d, b);
 
 					if (s != NULL && _vk_t_toggle)
+						talk_with_text(b, c, s, tv->a, tv->b, tv->c);
+				} else if (_game == GAME_SIMON2DOS) {
+					uint b = getVarOrByte();
+					uint c = getVarOrByte();
+					uint a = getVarOrByte();
+					const char *s = (const char *)getStringPtrByID(_stringid_array_3[a]);
+					ThreeValues *tv;
+
+					switch (b) {
+					case 1:
+						tv = &_threevalues_1;
+						break;
+					case 2:
+						tv = &_threevalues_2;
+						break;
+					case 101:
+						tv = &_threevalues_3;
+						break;
+					case 102:
+						tv = &_threevalues_4;
+						break;
+					default:
+						error("setup text, invalid value %d", b);
+					}
+
+					if (s != NULL)
 						talk_with_text(b, c, s, tv->a, tv->b, tv->c);
 				}
 			}
@@ -1322,7 +1348,7 @@ void SimonState::o_177()
 
 			talk_with_text(a, b, s, tv->a, tv->b, tv->c);
 		}
-	} else if (_game & GAME_SIMON2) {
+	} else if (_game == GAME_SIMON2WIN) {
 		uint a = getVarOrByte();
 		uint b = getVarOrByte();
 		Child2 *child = (Child2 *)findChildOfType(getNextItemPtr(), 2);
@@ -1403,6 +1429,43 @@ void SimonState::o_177()
 
 		if (!_vk_t_toggle)
 			return;
+
+		if (child == NULL || !(child->avail_props & 1))
+			return;
+
+		if (child->avail_props & 0x100) {
+			sprintf(buf, "%d%s", child->array[getOffsetOfChild2Param(child, 0x100)], s);
+			s = buf;
+		}
+
+		talk_with_text(a, b, s, tv->a, tv->b, tv->c);
+	} else if (_game == GAME_SIMON2DOS) {
+		uint a = getVarOrByte();
+		uint b = getVarOrByte();
+		Child2 *child = (Child2 *)findChildOfType(getNextItemPtr(), 2);
+		const char *s = NULL;
+		ThreeValues *tv = NULL;
+		char buf[256];
+
+		if (child != NULL && child->avail_props & 1) {
+			s = (const char *)getStringPtrByID(child->array[0]);
+			switch (a) {
+			case 1:
+				tv = &_threevalues_1;
+				break;
+			case 2:
+				tv = &_threevalues_2;
+				break;
+			case 101:
+				tv = &_threevalues_3;
+				break;
+			case 102:
+				tv = &_threevalues_4;
+				break;
+			default:
+				error("setup text, invalid value %d", a);
+			}
+		}
 
 		if (child == NULL || !(child->avail_props & 1))
 			return;
