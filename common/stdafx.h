@@ -39,7 +39,8 @@
 #pragma once
 #pragma warning( disable : 4068 ) // turn off "unknown pragma" warning
 #pragma warning( disable : 4244 ) // turn off "conversion type" warning
-#pragma warning( disable : 4390 ) // turn oof "empty statement" warning for BS2 code
+#pragma warning( disable : 4355 ) // turn off "base member init" warning
+#pragma warning( disable : 4390 ) // turn off "empty statement" warning for BS2 code
 #endif
 
 #if !defined(_WIN32_WCE)
