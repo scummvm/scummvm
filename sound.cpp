@@ -746,7 +746,7 @@ void MixerChannel::mix(int16 *data, uint32 len) {
 				fread(_sfx_sound, 1, sound_data.mp3_cdmusic.buffer_size, 
 					  sound_data.mp3_cdmusic.file);
 			if (!sound_data.mp3_cdmusic.size) {
-				sound_data.mp3_cdmusic.playing = FALSE;
+                                sound_data.mp3_cdmusic.playing = false;
 				return;
 			}
 			last_pos = ftell(sound_data.mp3_cdmusic.file);
@@ -769,7 +769,7 @@ void MixerChannel::mix(int16 *data, uint32 len) {
 				else {
 					if (!MAD_RECOVERABLE(sound_data.mp3_cdmusic.stream.error)) {
 						debug(1, "Unrecoverable error while skipping !");
-						sound_data.mp3_cdmusic.playing = FALSE;
+                                                sound_data.mp3_cdmusic.playing = false;
 						return;
 					}
 				}
@@ -786,7 +786,7 @@ void MixerChannel::mix(int16 *data, uint32 len) {
 				sound_data.mp3_cdmusic.pos_in_frame = 0;
 			}
 			else {
-				sound_data.mp3_cdmusic.playing = FALSE;
+                                sound_data.mp3_cdmusic.playing = false;
 				return;
 			}
 		}
@@ -814,7 +814,7 @@ void MixerChannel::mix(int16 *data, uint32 len) {
 		mad_timer_negate(&frame_duration);
 		mad_timer_add(&sound_data.mp3_cdmusic.duration, frame_duration);
 		if (mad_timer_compare(sound_data.mp3_cdmusic.duration, mad_timer_zero) < 0) {
-			sound_data.mp3_cdmusic.playing = FALSE;
+                        sound_data.mp3_cdmusic.playing = false;
 		}
 		
 	        if (mad_frame_decode(&sound_data.mp3_cdmusic.frame, 

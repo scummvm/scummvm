@@ -208,14 +208,14 @@ bool mp3_cd_play(Scumm *s, int track, int num_loops, int start_frame, int end_fr
 		_mp3_track = fopen(track_name, "rb");
 		if (!_mp3_track) {
 			warning("No CD and track %d not available in mp3 format", track);
-			return FALSE;
+                        return false;
 		}
 
 		if (!parse_xing_vbr_tag()) {
 				warning("Error parsing file header - ignoring file", 
 							track);
 				fclose(_mp3_track);
-				return FALSE;
+                                return false;
 		}
 
 		if (_vbr_header.flags) {
@@ -227,7 +227,7 @@ bool mp3_cd_play(Scumm *s, int track, int num_loops, int start_frame, int end_fr
 				warning("Missing required part of VBR header - ignoring file");
 				fclose(_mp3_track);
 				_vbr_header.flags = 0;
-				return FALSE;
+                                return false;
 			}
 		}
 
@@ -237,7 +237,7 @@ bool mp3_cd_play(Scumm *s, int track, int num_loops, int start_frame, int end_fr
 			_mc = s->allocateMixer();
 			if (!_mc) {
 				warning("No mixer channel available for MP3 music");
-				return FALSE;
+                                return false;
 			}
 		}
 
@@ -247,7 +247,7 @@ bool mp3_cd_play(Scumm *s, int track, int num_loops, int start_frame, int end_fr
 
 		_mc->type = MIXER_MP3_CDMUSIC;
 		_mc->sound_data.mp3_cdmusic.file = _mp3_track;
-		_mc->sound_data.mp3_cdmusic.playing = FALSE;
+                _mc->sound_data.mp3_cdmusic.playing = false;
 		_mc->sound_data.mp3_cdmusic.buffer_size = 200000;
 		_mc->_sfx_sound = malloc(_mc->sound_data.mp3_cdmusic.buffer_size); 
 
@@ -273,7 +273,7 @@ bool mp3_cd_play(Scumm *s, int track, int num_loops, int start_frame, int end_fr
 
 		if (start_frame < 0 || end_frame < 0) {
 			warning("Negative index in frame");
-			return FALSE;
+                        return false;
 		}
 
 		mad_timer_set(&_mc->sound_data.mp3_cdmusic.duration,
@@ -282,12 +282,12 @@ bool mp3_cd_play(Scumm *s, int track, int num_loops, int start_frame, int end_fr
 					  CD_FPS);
 
 		fseek(_mp3_track, where, SEEK_SET);
-		_mc->sound_data.mp3_cdmusic.playing = TRUE;		
+                _mc->sound_data.mp3_cdmusic.playing = true;             
 
-		return TRUE;
+                return true;
 	}
 
-	return FALSE;
+        return false;
 }
 
 #endif

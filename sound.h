@@ -17,6 +17,9 @@
  *
  * Change Log:
  * $Log$
+ * Revision 1.12  2002/04/05 04:35:41  ender
+ * Fix mp3_cd support
+ *
  * Revision 1.11  2002/04/05 04:24:39  ender
  * Fix last BOOL
  *
@@ -279,7 +282,7 @@ struct VolumeFader {
 	int8 speed_lo;
 	uint16 speed_lo_counter;
 	
-	void initialize() { active = false; }
+        void initialize() { active = false; }
 	void on_timer();
 };
 
