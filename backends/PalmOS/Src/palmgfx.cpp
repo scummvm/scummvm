@@ -27,7 +27,7 @@
 #include "common/config-manager.h"
 
 #include <BmpGlue.h>
-#include "start.h"	// appFileCreator
+#include "palmdefs.h"
 #include "features.h"
 #include "globals.h"
 
@@ -36,6 +36,7 @@
 #include "i_zodiac.h"
 #endif
 
+#include "init_arm.h"
 #include "arm/native.h"
 #include "arm/macros.h"
 
@@ -188,8 +189,8 @@ void OSystem_PALMOS::load_gfx_mode() {
 #endif
 			if (std) {
 				// 640x480 only on Zodiac and in GFX_WIDE mode
-				if (_screenHeight == 480)
-					error("640x480 game can only be run on Zodiac in wide mode.");
+				if (_screenWidth == 640)
+					error("640x480 games can only be run on Zodiac in wide mode.");
 
 				// only for 320x200 games
 				if (!(_screenWidth == 320 && _screenHeight == 200)) {
