@@ -62,7 +62,12 @@ public:
 	void appendEntry(const String &entry, uint32 tag = (uint32)-1);
 	void clearEntries();
 
+	/** Select the entry at the given index. */
 	void setSelected(int item);
+	
+	/** Select the first entry matching the given tag. */
+	void setSelectedTag(uint32 tag);
+
 	int getSelected() const						{ return _selectedItem; }
 	uint32 getSelectedTag() const				{ return (_selectedItem >= 0) ? _entries[_selectedItem].tag : (uint32)-1; }
 	const String& getSelectedString() const		{ return (_selectedItem >= 0) ? _entries[_selectedItem].name : String::emptyString; }

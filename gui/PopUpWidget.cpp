@@ -315,6 +315,16 @@ void PopUpWidget::setSelected(int item) {
 	}
 }
 
+void PopUpWidget::setSelectedTag(uint32 tag) {
+	uint item;
+	for (item = 0; item < _entries.size(); ++item) {
+		if (_entries[item].tag == tag) {
+			setSelected(item);
+			return;
+		}
+	}
+}
+
 void PopUpWidget::drawWidget(bool hilite) {
 	NewGui	*gui = &g_gui;
 	int x = _x + _labelWidth;
