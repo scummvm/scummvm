@@ -407,18 +407,17 @@ ArrayHeader *ScummEngine_v6::defineArray(int array, int type, int dim2, int dim1
 
 	
 	if (_heversion >= 60) {
-		// FIXME: Fingolfin asks: What is this change good for? It doesn't hurt,
-		// but it also has no effect whatsoever...
-		if (type == 1 || type == 2)
-			type = 3;
+		if (type == kBitArray || type == kNibbleArray)
+			type = kByteArray;
 	} else {
-		// The following code basically turn all arrays except string arrays 
-		// into integer arrays. There seems to be no purpose in this, and it
-		// wastes space. However, we can't just change this either, as that
-		// would break savegame compatibility. So do not touch this unless you
-		// are adding code which updated old savegames, too.
-		if (type != 4)
-			type = 5;
+		// NOTE: The following code turns all arrays except string arrays into
+		// integer arrays. There seems to be no reason for this, and it wastes
+		// space. However, we can't just remove this either, as that would
+		// break savegame compatibility. So do not touch this unless you are
+		// also adding code which updated old savegames, too. And of course
+		// readArray() and writeArray() would have to be updated, too...
+		if (type != kStringArray)
+			type = kIntArray;
 	}
 
 	nukeArray(array);
@@ -514,7 +513,7 @@ int ScummEngine_v6::readArray(int array, int idx, int base) {
 			array, base, idx, FROM_LE_16(ah->dim1), FROM_LE_16(ah->dim2));
 	}
 
-	if (FROM_LE_16(ah->type) == 4 || (_heversion >= 60 && FROM_LE_16(ah->type) == rtCostume)) {
+	if (FROM_LE_16(ah->type) != kIntArray) {
 		return ah->data[offset];
 	} else if (_version == 8) {
 		return (int32)READ_LE_UINT32(ah->data + offset * 4);
@@ -535,7 +534,7 @@ void ScummEngine_v6::writeArray(int array, int idx, int base, int value) {
 			array, base, idx, FROM_LE_16(ah->dim1), FROM_LE_16(ah->dim2));
 	}
 
-	if (FROM_LE_16(ah->type) == rtSound || (_heversion >= 60 && FROM_LE_16(ah->type) == rtCostume)) {
+	if (FROM_LE_16(ah->type) != kIntArray) {
 		ah->data[offset] = value;
 	} else if (_version == 8) {
 		WRITE_LE_UINT32(ah->data + offset * 4, value);
