@@ -28,7 +28,8 @@ enum {
 	kTabHeight = 14,
 	
 	kTabLeftOffset = 4,
-	kTabSpacing = 2
+	kTabSpacing = 2,
+	kTabPadding = 3
 };
 
 TabWidget::TabWidget(GuiObject *boss, int x, int y, int w, int h)
@@ -38,15 +39,7 @@ TabWidget::TabWidget(GuiObject *boss, int x, int y, int w, int h)
 	_type = kTabWidget;
 	_activeTab = -1;
 	
-	_tabWidth = 50;
-	
-	// TODO: Dummy for now
-	addTab("Tab 1");
-	new ButtonWidget(this, 10, 20, kButtonWidth, 16, "Foo", 0, 0);
-	addTab("Tab 2");
-	new ButtonWidget(this, 20, 30, kButtonWidth, 16, "Bar", 0, 0);
-	addTab("Tab 3");
-	new PushButtonWidget(this, 30, 10, kButtonWidth, 16, "Qux", 0, 0);
+	_tabWidth = 40;
 }
 
 int16 TabWidget::getChildY() const {
@@ -54,18 +47,25 @@ int16 TabWidget::getChildY() const {
 }
 
 int TabWidget::addTab(const String &title) {
-	// TODO
+	// Add a new tab page
 	Tab newTab = { title, NULL };
 	_tabs.push_back(newTab);
-	setActiveTab(_tabs.size() - 1);
+	
+	int numTabs = _tabs.size();
+
+	// Determine the new tab width
+	int newWidth = g_gui.getStringWidth(title) + 2 * kTabPadding;
+	if (_tabWidth < newWidth)
+		_tabWidth = newWidth;
+	int maxWidth = (_w - kTabLeftOffset) / numTabs - kTabLeftOffset;
+	if (_tabWidth > maxWidth)
+		_tabWidth = maxWidth;
+	
+	// Activate the new tab
+	setActiveTab(numTabs - 1);
+	
 	return _activeTab;
 }
-
-/*
-void TabWidget::removeTab(int tabID) {
-	// TODO
-}
-*/
 
 void TabWidget::setActiveTab(int tabID) {
 	assert(0 <= tabID && tabID < _tabs.size());
@@ -106,8 +106,6 @@ bool TabWidget::handleKeyDown(uint16 ascii, int keycode, int modifiers) {
 }
 
 void TabWidget::drawWidget(bool hilite) {
-	// TODO
-
 	NewGui *gui = &g_gui;
 	
 	// Draw horizontal line
@@ -118,7 +116,7 @@ void TabWidget::drawWidget(bool hilite) {
 	for (i = 0; i < _tabs.size(); ++i) {
 		NewGuiColor color = (i == _activeTab) ? gui->_color : gui->_shadowcolor;
 		gui->box(x, _y, _tabWidth, kTabHeight, color, color);
-		gui->drawString(_tabs[i].title, x, _y + 4, _tabWidth, gui->_textcolor, kTextAlignCenter);
+		gui->drawString(_tabs[i].title, x + kTabPadding, _y + 4, _tabWidth - 2 * kTabPadding, gui->_textcolor, kTextAlignCenter);
 		x += _tabWidth + kTabSpacing;
 	}
 
