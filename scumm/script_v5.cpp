@@ -1517,9 +1517,7 @@ void ScummEngine_v5::o5_loadRoomWithEgo() {
 	}
 
 	// This is based on disassembly
-	camera._cur.x = a->_pos.x;
-
-	setCameraAt(a->_pos.x, a->_pos.y);
+	camera._cur.x = camera._dest.x = a->_pos.x;
 	setCameraFollows(a);
 
 	_fullRedraw = 1;
