@@ -338,6 +338,71 @@ void Codec37Decoder::maketable(int pitch, int index) {
 		dst += 4;						  \
 	} while (0)
 
+void Codec37Decoder::proc1(byte *dst, const byte *src, int32 next_offs, int bw, int bh, int pitch, int16 *offset_table) {
+	uint8 code;
+	bool filling, skipCode;
+	int32 len;
+	int i, p;
+	uint32 pitches[16];
+
+	i = bw;
+	for (p = 0; p < 16; ++p) {
+		pitches[p] = (p >> 2) * pitch + (p & 0x3);
+	}
+	code = 0;
+	filling = false;
+	len = -1;
+	while (1) {
+		if (len < 0) {
+			filling = (*src & 1) == 1;
+			len = *src++ >> 1;
+			skipCode = false;
+		} else {
+			skipCode = true;
+		}
+		if (!filling || !skipCode) {
+			code = *src++;
+			if (code == 0xFF) {
+				--len;
+				for (p = 0; p < 0x10; ++p) {
+					if (len < 0) {
+						filling = (*src & 1) == 1;
+						len = *src++ >> 1;
+						if (filling) {
+							code = *src++;
+						}
+					}
+					if (filling) {
+						*(dst + pitches[p]) = code;
+					} else {
+						*(dst + pitches[p]) = *src++;
+					}
+					--len;
+				}
+				dst += 4;
+				--i;
+				if (i == 0) {
+					dst += pitch * 3;
+					--bh;
+					if (bh == 0) return;
+					i = bw;
+				}
+				continue;
+			}
+		}
+		byte *dst2 = dst + offset_table[code] + next_offs;
+		COPY_4X4(dst2, dst, pitch);
+		--i;
+		if (i == 0) {
+			dst += pitch * 3;
+			--bh;
+			if (bh == 0) return;
+			i = bw;
+		}
+		--len;
+	}
+}
+
 void Codec37Decoder::proc3WithFDFE(byte *dst, const byte *src, int32 next_offs, int bw, int bh, int pitch, int16 *offset_table) {
 	do {
 		int32 i = bw;
@@ -464,7 +529,11 @@ void Codec37Decoder::decode(byte *dst, const byte *src) {
 		memcpy(_deltaBufs[_curtable], src + 16, decoded_size);
 		break;
 	case 1:
-		warning("codec37: missing opcode 1");
+		if ((seq_nb & 1) || !(mask_flags & 1)) {
+			_curtable ^= 1;
+		}
+		proc1(_deltaBufs[_curtable], src + 16, _deltaBufs[_curtable ^ 1] - _deltaBufs[_curtable], 
+										bw, bh, pitch, _offsetTable);
 		break;
 	case 2:
 		bompDecodeLine(_deltaBufs[_curtable], src + 16, decoded_size);

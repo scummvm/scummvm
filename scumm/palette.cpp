@@ -512,7 +512,7 @@ void ScummEngine::setupShadowPalette(int redScale, int greenScale, int blueScale
 		if (b > 255)
 			b = 255;
 
-		bestsum = (uint)-1;
+		bestsum = 32000;
 
 		r &= ~3;
 		g &= ~3;
@@ -572,7 +572,7 @@ void ScummEngine::createSpecialPalette(int16 from, int16 to, int16 redScale, int
 			b = 255;
 
 		searchPtr = palPtr + from * 3;
-		bestResult = (uint)-1;
+		bestResult = 32000;
 		currentIndex = (byte) from;
 
 		for (j = from; j <= to; j++) {

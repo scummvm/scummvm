@@ -4,6 +4,7 @@ For a more comprehensive changelog for the latest experimental CVS code, see:
 0.6.? (????-??-??)
  SCUMM:
    - Initialize variables to avoid possible crash in Digital iMUSE
+   - Corrected actor drawing glitches in V1 Maniac and Zak
 
 0.6.1b (2004-08-03)
  General:

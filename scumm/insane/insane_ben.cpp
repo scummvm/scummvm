@@ -122,6 +122,12 @@ void Insane::turnBen(bool controllable) {
 int32 Insane::actionBen(void) {
 	int32 buttons, tmp;
 	bool doDamage = false;
+	int sound;
+
+	if ((_vm->_features & GF_DEMO) && (_vm->_features & GF_PC))
+		sound = 59;
+	else
+		sound = 95;
 
 	if (_actor[0].enemyHandler != -1)
 		buttons = enemyHandler(_actor[0].enemyHandler, 0, 1, _actor[0].probability);
@@ -165,11 +171,11 @@ int32 Insane::actionBen(void) {
 				_val213d = 0;
 			}
 
-			if (!smlayer_isSoundRunning(95))
-				smlayer_startSfx(95);
+			if (!smlayer_isSoundRunning(sound))
+				smlayer_startSfx(sound);
 		} else {
-			if (smlayer_isSoundRunning(95))
-				smlayer_stopSound(95);
+			if (smlayer_isSoundRunning(sound))
+				smlayer_stopSound(sound);
 			
 			_val213d = 0;
 		}
@@ -568,10 +574,15 @@ void Insane::actor02Reaction(int32 buttons) {
 		if (_actor[0].act[2].frame == 2) {
 			if (_currEnemy != EN_CAVEFISH) {
 				tmp = calcEnemyDamage(1, 1);
-				if (tmp == 1)
-					smlayer_startSfx(60);
-				if (tmp == 1000)
-					smlayer_startSfx(62);
+				if ((_vm->_features & GF_DEMO) && (_vm->_features & GF_PC)) {
+					if (tmp == 1)
+						smlayer_startSfx(50);
+				} else {
+					if (tmp == 1)
+						smlayer_startSfx(60);
+					if (tmp == 1000)
+						smlayer_startSfx(62);
+				}
 			} else {
 				if ((_actor[1].x - _actor[0].x <= weaponMaxRange(0)) &&
 					(_actor[1].x - _actor[0].x >= weaponMinRange(0)) &&
@@ -886,10 +897,17 @@ void Insane::actor02Reaction(int32 buttons) {
 				case INV_2X4:
 				case INV_BOOT:
 					tmp = calcEnemyDamage(1, 1);
-					if (tmp == 1)
-						smlayer_startSfx(67);
-					if (tmp == 1000)
-						smlayer_startSfx(68);
+					if ((_vm->_features & GF_DEMO) && (_vm->_features & GF_PC)) {
+						if (tmp == 1)
+							smlayer_startSfx(52);
+						if (tmp == 1000)
+							smlayer_startSfx(56);
+					} else {
+						if (tmp == 1)
+							smlayer_startSfx(67);
+						if (tmp == 1000)
+							smlayer_startSfx(68);
+					}
 					break;
 				default:
 					if (calcEnemyDamage(1, 0))
@@ -1004,7 +1022,8 @@ void Insane::actor02Reaction(int32 buttons) {
 		smlayer_setActorFacing(0, 2, 19, 180);
 		_actor[0].act[2].state = 27;
 		_actor[0].act[2].tilt = calcTilt(_actor[0].tilt);
-		smlayer_startSfx(72);
+		if (!((_vm->_features & GF_DEMO) && (_vm->_features & GF_PC)))
+			smlayer_startSfx(72);
 		break;
 	case 27:
 		smlayer_setActorLayer(0, 2, 4);
@@ -1046,10 +1065,17 @@ void Insane::actor02Reaction(int32 buttons) {
 				case INV_BOOT:
 				case INV_DUST:
 					tmp = calcEnemyDamage(1, 1);
-					if (tmp == 1)
-						smlayer_startSfx(70);
-					if (tmp == 1000)
-						smlayer_startSfx(71);
+					if ((_vm->_features & GF_DEMO) && (_vm->_features & GF_PC)) {
+						if (tmp == 1)
+							smlayer_startSfx(58);
+						if (tmp == 1000)
+							smlayer_startSfx(56);
+					} else {
+						if (tmp == 1)
+							smlayer_startSfx(70);
+						if (tmp == 1000)
+							smlayer_startSfx(71);
+					}
 					break;
 				case INV_HAND:
 					if (!calcEnemyDamage(1, 0))
@@ -1158,7 +1184,10 @@ void Insane::actor02Reaction(int32 buttons) {
 	case 36:
 		smlayer_setActorLayer(0, 2, 5);
 		_actor[0].kicking = false;
-		smlayer_setActorCostume(0, 2, readArray(18));
+		if ((_vm->_features & GF_DEMO) && (_vm->_features & GF_PC))
+			smlayer_setActorCostume(0, 2, readArray(17));
+		else
+			smlayer_setActorCostume(0, 2, readArray(18));
 		smlayer_setActorFacing(0, 2, 6, 180);
 		smlayer_startSfx(96);
 		switch (_currEnemy) {
@@ -1201,7 +1230,10 @@ void Insane::actor02Reaction(int32 buttons) {
 				case EN_ROTT1:
 				case EN_ROTT2:
 				case EN_ROTT3:
-					queueSceneSwitch(9, 0, "wr2_benr.san", 64, 0, 0, 0);
+					if ((_vm->_features & GF_DEMO) && (_vm->_features & GF_PC))
+						queueSceneSwitch(9, 0, "bencrshe.san", 64, 0, 0, 0);
+					else
+						queueSceneSwitch(9, 0, "wr2_benr.san", 64, 0, 0, 0);
 					break;
 				case EN_VULTF1:
 				case EN_VULTM1:
@@ -1899,7 +1931,10 @@ void Insane::switchBenWeapon(void) {
 		_actor[0].act[2].state = 34;
 		break;
 	case INV_WRENCH:
-		smlayer_setActorCostume(0, 2, readArray(25));
+		if ((_vm->_features & GF_DEMO) && (_vm->_features & GF_PC))
+			smlayer_setActorCostume(0, 2, readArray(24));
+		else
+			smlayer_setActorCostume(0, 2, readArray(25));
 		smlayer_setActorFacing(0, 2, 18, 180);
 		_actor[0].weaponClass = 0;
 		_actor[0].act[2].state = 34;
@@ -1907,7 +1942,10 @@ void Insane::switchBenWeapon(void) {
 	case INV_BOOT:
 	case INV_HAND:
 	case INV_DUST:
-		smlayer_setActorCostume(0, 2, readArray(12));
+		if ((_vm->_features & GF_DEMO) && (_vm->_features & GF_PC))
+			smlayer_setActorCostume(0, 2, readArray(11));
+		else
+			smlayer_setActorCostume(0, 2, readArray(12));
 		_actor[0].weaponClass = 2;
 		_actor[0].act[2].state = 1;
 		break;
@@ -1954,6 +1992,11 @@ int32 Insane::setBenState(void) {
 
 void Insane::ouchSoundBen(void) {
 	_actor[0].act[3].state = 52;
+
+	if ((_vm->_features & GF_DEMO) && (_vm->_features & GF_PC)) {
+		smlayer_startVoice(54);
+		return;
+	}
 
 	switch (_vm->_rnd.getRandomNumber(3)) {
 	case 0:

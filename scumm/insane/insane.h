@@ -53,8 +53,6 @@ namespace Scumm {
 
 #define INSANE_DBG 5
 
-#undef FTDOSDEMO
-
 class Insane {
  public:
 	Insane(ScummEngine_v6 *scumm);

@@ -34,11 +34,6 @@
 namespace Scumm {
 
 void Insane::runScene(int arraynum) {
-#ifndef FTDOSDEMO
-	if ((_vm->_features & GF_DEMO) && (_vm->_features & GF_PC))
-		return;
-#endif
-
 	_insaneIsRunning = true;
 	_player = new SmushPlayer(_vm, _speed);
 	_player->insanity(true);
@@ -72,11 +67,17 @@ void Insane::runScene(int arraynum) {
 		break;
 	case 2:
 		setupValues();
-		smlayer_setActorCostume(0, 2, readArray(11));
+		if ((_vm->_features & GF_DEMO) && (_vm->_features & GF_PC))
+			smlayer_setActorCostume(0, 2, readArray(10));
+		else
+			smlayer_setActorCostume(0, 2, readArray(11));
 		smlayer_putActor(0, 2, _actor[0].x, _actor[0].y1 + 190, _smlayer_room2);
 
 		_mainRoadPos = readArray(2);
-		if (_mainRoadPos == _posBrokenTruck) {
+		if ((_vm->_features & GF_DEMO) && (_vm->_features & GF_PC)) {
+			initScene(5);
+			startVideo("tovista.san", 1, 32, 12, 0);
+		} else if (_mainRoadPos == _posBrokenTruck) {
 			initScene(5);
 			startVideo("tovista2.san", 1, 32, 12, 0);
 		} else if (_mainRoadPos == _posBrokenCar) {
@@ -141,24 +142,26 @@ void Insane::runScene(int arraynum) {
 
 	_insaneIsRunning = false;
 
-	writeArray(50, _actor[0].inventory[INV_CHAIN]);
-	writeArray(51, _actor[0].inventory[INV_CHAINSAW]);
-	writeArray(52, _actor[0].inventory[INV_MACE]);
-	writeArray(53, _actor[0].inventory[INV_2X4]);
-	writeArray(54, _actor[0].inventory[INV_WRENCH]);
-	writeArray(55, _actor[0].inventory[INV_DUST]);
-	writeArray(337, _enemy[EN_TORQUE].occurences);
-	writeArray(329, _enemy[EN_ROTT1].occurences);
-	writeArray(330, _enemy[EN_ROTT2].occurences);
-	writeArray(331, _enemy[EN_ROTT3].occurences);
-	writeArray(332, _enemy[EN_VULTF1].occurences);
-	writeArray(333, _enemy[EN_VULTM1].occurences);
-	writeArray(334, _enemy[EN_VULTF2].occurences);
-	writeArray(335, _enemy[EN_VULTM2].occurences);
-	writeArray(336, _enemy[EN_CAVEFISH].occurences);
-	writeArray(339, _enemy[EN_VULTF2].field_10);
-	writeArray(56, _enemy[EN_CAVEFISH].field_10);
-	writeArray(340, _enemy[EN_VULTM2].field_10);
+	if (!((_vm->_features & GF_DEMO) && (_vm->_features & GF_PC))) {
+		writeArray(50, _actor[0].inventory[INV_CHAIN]);
+		writeArray(51, _actor[0].inventory[INV_CHAINSAW]);
+		writeArray(52, _actor[0].inventory[INV_MACE]);
+		writeArray(53, _actor[0].inventory[INV_2X4]);
+		writeArray(54, _actor[0].inventory[INV_WRENCH]);
+		writeArray(55, _actor[0].inventory[INV_DUST]);
+		writeArray(337, _enemy[EN_TORQUE].occurences);
+		writeArray(329, _enemy[EN_ROTT1].occurences);
+		writeArray(330, _enemy[EN_ROTT2].occurences);
+		writeArray(331, _enemy[EN_ROTT3].occurences);
+		writeArray(332, _enemy[EN_VULTF1].occurences);
+		writeArray(333, _enemy[EN_VULTM1].occurences);
+		writeArray(334, _enemy[EN_VULTF2].occurences);
+		writeArray(335, _enemy[EN_VULTM2].occurences);
+		writeArray(336, _enemy[EN_CAVEFISH].occurences);
+		writeArray(339, _enemy[EN_VULTF2].field_10);
+		writeArray(56, _enemy[EN_CAVEFISH].field_10);
+		writeArray(340, _enemy[EN_VULTM2].field_10);
+	}
 	// insane_unlock(); // FIXME
 	_vm->_sound->stopAllSounds(); // IMUSE_StopAllSounds();
 	if (_memoryAllocatedNotOK) {
@@ -239,13 +242,18 @@ void Insane::stopSceneSounds(int sceneId) {
 		_actor[1].defunct = 0;
 		_actor[1].scenePropSubIdx = 0;
 		_actor[1].field_54 = 0;
-		smlayer_stopSound(89);
-		smlayer_stopSound(90);
-		smlayer_stopSound(91);
-		smlayer_stopSound(92);
-		smlayer_stopSound(93);
-		smlayer_stopSound(95);
-		smlayer_stopSound(87);
+		if ((_vm->_features & GF_DEMO) && (_vm->_features & GF_PC)) {
+			smlayer_stopSound(59);
+			smlayer_stopSound(63);
+		} else {
+			smlayer_stopSound(89);
+			smlayer_stopSound(90);
+			smlayer_stopSound(91);
+			smlayer_stopSound(92);
+			smlayer_stopSound(93);
+			smlayer_stopSound(95);
+			smlayer_stopSound(87);
+		}
 		break;
 	case 4:
 	case 5:
@@ -310,6 +318,9 @@ void Insane::shutCurrentScene(void) {
 
 // insane_loadSceneData1 & insane_loadSceneData2
 int Insane::loadSceneData(int scene, int flag, int phase) {
+	if ((_vm->_features & GF_DEMO) && (_vm->_features & GF_PC))
+		return 1;
+
 	int retvalue = 1;
 
 	debug(INSANE_DBG, "Insane::loadSceneData(%d, %d, %d)", scene, flag, phase);
@@ -641,7 +652,10 @@ void Insane::setSceneCostumes(int sceneId) {
 	case 4:
 	case 5:
 	case 6:
-		smlayer_setActorCostume(0, 2, readArray(11));
+		if ((_vm->_features & GF_DEMO) && (_vm->_features & GF_PC))
+			smlayer_setActorCostume(0, 2, readArray(10));
+		else
+			smlayer_setActorCostume(0, 2, readArray(11));
 		smlayer_putActor(0, 2, _actor[0].x, _actor[0].y1+190, _smlayer_room2);
 		setupValues();
 		return;
@@ -658,9 +672,15 @@ void Insane::setEnemyCostumes(void) {
 
 	debug(INSANE_DBG, "setEnemyCostumes(%d)", _currEnemy);
 
-	smlayer_setActorCostume(0, 2, readArray(12));
-	smlayer_setActorCostume(0, 0, readArray(14));
-	smlayer_setActorCostume(0, 1, readArray(13));
+	if ((_vm->_features & GF_DEMO) && (_vm->_features & GF_PC)) {
+		smlayer_setActorCostume(0, 2, readArray(11));
+		smlayer_setActorCostume(0, 0, readArray(13));
+		smlayer_setActorCostume(0, 1, readArray(12));
+	} else {
+		smlayer_setActorCostume(0, 2, readArray(12));
+		smlayer_setActorCostume(0, 0, readArray(14));
+		smlayer_setActorCostume(0, 1, readArray(13));
+	}
 	smlayer_setActorLayer(0, 1, 1);
 	smlayer_setActorLayer(0, 2, 5);
 	smlayer_setActorLayer(0, 0, 10);
@@ -1121,7 +1141,10 @@ void Insane::postCase20(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 
 void Insane::postCase3(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 					   int32 setupsan13, int32 curFrame, int32 maxFrame) {
-	turnBen(true);
+	if ((_vm->_features & GF_DEMO) && (_vm->_features & GF_PC))
+		turnBen(false);
+	else
+		turnBen(true);
 	
 	if (_actor[0].x >= 158 && _actor[0].x <= 168) {
 		if (!smlayer_isSoundRunning(86))
