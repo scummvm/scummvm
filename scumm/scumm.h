@@ -913,7 +913,7 @@ protected:
 	void removeBlastObject(BlastObject *eo);
 
 	int _drawObjectQueNr;
-	byte _drawObjectQue[700];
+	byte _drawObjectQue[200];
 	byte _palManipStart, _palManipEnd;
 	uint16 _palManipCounter;
 	byte *_palManipPalette;
