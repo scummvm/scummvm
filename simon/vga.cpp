@@ -607,9 +607,6 @@ void SimonState::vc_10_draw()
 	if (state.image == 0)
 		return;
 
-//  if (_vga_cur_sprite_id != 802)
-//    return;
-
 	state.base_color = (_vc_ptr[1] << 4);
 	_vc_ptr += 2;
 	state.x = (int16)vc_read_next_word();

@@ -2438,7 +2438,6 @@ restart:;
 
 get_out:;
 	o_unk_132_helper_3();
-//      clear_keydowns();
 
 	_base_time = time(NULL) - save_time + _base_time;
 	_copy_partial_mode = 0;
