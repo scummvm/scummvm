@@ -153,7 +153,7 @@ MidiDriver_MT32::MidiDriver_MT32(SoundMixer *mixer) : MidiDriver_Emulated(mixer)
 
 	_baseFreq = 1000;
 
-	_outputRate = 44100;
+	_outputRate = _mixer->getOutputRate();
 }
 
 MidiDriver_MT32::~MidiDriver_MT32() {
