@@ -1,44 +1,21 @@
-# configuration file for making Lua
-
-# == CHANGE THE SETTINGS BELOW TO SUIT YOUR ENVIRONMENT ======================
-
-# you need an ANSI C compiler. gcc is a popular one.
-CC= gcc
-WARN= -g -ansi -Wall
-
-# on SGI's, cc is ANSI.
-#CC= cc
-#WARN= -ansi -fullwarn
-
-# if you need compatibility with version 2.5 or older, uncomment the line below.
-#COMPAT= -DLUA_COMPAT2_5
-
-# Lua uses double for numbers. To change this, uncomment one of the lines below.
-NUMBER= -DLUA_NUM_TYPE=float
-#NUMBER= -DLUA_NUM_TYPE=long
-
-# if you want support for pipes, uncomment the following line.
-#POPEN= -DPOPEN
-
-# if your C library is not POSIX compliant, comment the following line.
-POSIX= -D_POSIX_SOURCE
-
-# if your C library does not have the newer ANSI functions memmove, strerror,
-# and locale support (e.g., in SunOs 4.1.x.), uncomment the following line.
-#OLD_ANSI= -DOLD_ANSI
-
-# in SunOs 4.1.x, standard headers in /usr/include are not ANSI,
-# so uncomment the following line to avoid prototypes warnings.
-#EXTRA_INCS=  -I/usr/5include
-
-# if your system doesn't have (or need) ranlib, change "ranlib" to "true".
-# on some systems, "ar s" does it.
-RANLIB= ranlib
-#RANLIB= ar s
-#RANLIB= true
-
-# this should work in all unix systems.
+# Standard GCC toolkit
+CC=gcc 			
+RANLIB= ranlib	
 AR= ar rcu
+
+# MingW cross-compiler
+#CC=i586-mingw32msvc-gcc
+#RANLIB=i586-mingw32msvc-ranlib
+#AR=i586-mingw32msvc-ar rcu
+
+
+# Other stuff...
+WARN= -g -ansi -Wall
+NUMBER= -DLUA_NUM_TYPE=float
+POSIX= -D_POSIX_SOURCE
+#OLD_ANSI= -DOLD_ANSI	# Older C libraries (no locale, etc - eg SunOs 4.1.x)
+
+
 
 # == END OF USER SETTINGS. DO NOT CHANGE ANYTHING BELOW THIS LINE ============
 
