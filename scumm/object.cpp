@@ -288,7 +288,7 @@ int Scumm::getObjActToObjActDist(int a, int b) {
 
 	if (y > x)
 		x = y;
-	return x;
+	return (_features & GF_AFTER_V2) ? x / 8 : x;
 }
 
 int Scumm::findObject(int x, int y) {

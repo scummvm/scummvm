@@ -1031,8 +1031,17 @@ void Scumm_v5::o5_getAnimCounter() {
 void Scumm_v5::o5_getClosestObjActor() {
 	int obj;
 	int act;
-	int closest_obj = 0xFF, closest_dist = 0xFFFF;
 	int dist;
+
+	// This is a bit odd: We can't detect any actors farther away than
+	// 255 units (pixels in newer games, characters in older ones.) To
+	// fix this, we also need to change getObjActToObjActDist(), since
+	// it returns 255 to indicate that it can't find the actor, and make
+	// sure we don't break o5_getDist() in the process.
+	//
+	// But we probably won't have to.
+
+	int closest_obj = 0xFF, closest_dist = 0xFF;
 
 	getResultPos();
 
@@ -1061,9 +1070,6 @@ void Scumm_v5::o5_getDist() {
 	// FIXME: MI2 race workaround, see bug #597022
 	if (_gameId == GID_MONKEY2 && vm.slot[_currentScript].number == 40 && r < 60) 
 		r = 60; 
-
-	if (_features & GF_AFTER_V2)
-		r /= 8;
 
 	setResult(r);
 }
