@@ -74,7 +74,7 @@ void SkyConResource::drawToScreen(bool doMask) {
 
 SkyTextResource::SkyTextResource(void *pSpData, uint32 pNSprites, uint32 pCurSprite, uint16 pX, uint16 pY, uint32 pText, uint8 pOnClick, OSystem *system, uint8 *screen) :
 	SkyConResource(pSpData, pNSprites, pCurSprite, pX, pY, pText, pOnClick, system, screen) {
-		_oldScreen = (uint8*)malloc(PAN_CHAR_HEIGHT * PAN_LINE_WIDTH);
+		_oldScreen = (uint8*)malloc(PAN_CHAR_HEIGHT * 3 * PAN_LINE_WIDTH);
 		_oldY = 0;
 		_oldX = GAME_SCREEN_WIDTH;
 }
@@ -96,11 +96,17 @@ void SkyTextResource::flushForRedraw(void) {
 void SkyTextResource::drawToScreen(bool doMask) {
 	
 	doMask = true;
-	uint16 cnty, cntx, cpWidth;
+	uint16 cnty, cntx, cpWidth, cpHeight;
 	if ((_oldX == _x) && (_oldY == _y) && (_spriteData)) return;
 	if (_oldX < GAME_SCREEN_WIDTH) {
 		cpWidth = (PAN_LINE_WIDTH > (GAME_SCREEN_WIDTH - _oldX))?(GAME_SCREEN_WIDTH - _oldX):(PAN_LINE_WIDTH);
-		for (cnty = 0; cnty < PAN_CHAR_HEIGHT; cnty++)
+		if (_spriteData && (cpWidth > _spriteData->s_width))
+			cpWidth = _spriteData->s_width;
+		if (_spriteData)
+			cpHeight = (_spriteData->s_height > (GAME_SCREEN_HEIGHT - _oldY))?(GAME_SCREEN_HEIGHT - _oldY):(_spriteData->s_height);
+		else
+			cpHeight = PAN_CHAR_HEIGHT;
+		for (cnty = 0; cnty < cpHeight; cnty++)
 			memcpy(_screen + (cnty + _oldY) * GAME_SCREEN_WIDTH + _oldX, _oldScreen + cnty * PAN_LINE_WIDTH, cpWidth);
 		_system->copy_rect(_screen + _oldY * GAME_SCREEN_WIDTH + _oldX, GAME_SCREEN_WIDTH, _oldX, _oldY, cpWidth, PAN_CHAR_HEIGHT);
 	}
@@ -111,10 +117,16 @@ void SkyTextResource::drawToScreen(bool doMask) {
 	_oldX = _x;
 	_oldY = _y;
 	cpWidth = (PAN_LINE_WIDTH > (GAME_SCREEN_WIDTH - _x))?(GAME_SCREEN_WIDTH - _x):(PAN_LINE_WIDTH);
+	if (_spriteData && (cpWidth > _spriteData->s_width))
+		cpWidth = _spriteData->s_width;
+	if (_spriteData)
+		cpHeight = (_spriteData->s_height > (GAME_SCREEN_HEIGHT - _y))?(GAME_SCREEN_HEIGHT - _y):(_spriteData->s_height);
+	else
+		cpHeight = PAN_CHAR_HEIGHT;
 	uint8 *screenPos = _screen + _y * GAME_SCREEN_WIDTH + _x;
 	uint8 *copyDest = _oldScreen;
 	uint8 *copySrc = ((uint8*)_spriteData) + sizeof(dataFileHeader);
-	for (cnty = 0; cnty < PAN_CHAR_HEIGHT; cnty++) {
+	for (cnty = 0; cnty < cpHeight; cnty++) {
 		memcpy(copyDest, screenPos, cpWidth);
 		for (cntx = 0; cntx < PAN_LINE_WIDTH; cntx++)
 			if (copySrc[cntx]) screenPos[cntx] = copySrc[cntx];
@@ -122,7 +134,7 @@ void SkyTextResource::drawToScreen(bool doMask) {
 		copyDest += PAN_LINE_WIDTH;
 		screenPos += GAME_SCREEN_WIDTH;
 	}
-	_system->copy_rect(_screen + _y * GAME_SCREEN_WIDTH + _x, GAME_SCREEN_WIDTH, _x, _y, cpWidth, PAN_CHAR_HEIGHT);
+	_system->copy_rect(_screen + _y * GAME_SCREEN_WIDTH + _x, GAME_SCREEN_WIDTH, _x, _y, cpWidth, cpHeight);
 }
 
 SkyControl::SkyControl(SkyScreen *screen, SkyDisk *disk, SkyMouse *mouse, SkyText *text, SkyMusicBase *music, SkyLogic *logic, SkySound *sound, OSystem *system, const char *savePath) {
@@ -436,6 +448,8 @@ void SkyControl::doControlPanel(void) {
 
 uint16 SkyControl::handleClick(SkyConResource *pButton) {
 
+	char quitDos[] = "Quit to DOS?";
+
 	switch(pButton->_onClick) {
 		case DO_NOTHING:
 			return 0;
@@ -508,7 +522,7 @@ uint16 SkyControl::handleClick(SkyConResource *pButton) {
 
 		case QUIT_TO_DOS:
 			animClick(pButton);
-			if (getYesNo()) {
+			if (getYesNo(quitDos)) {
 				showGameQuitMsg(false);
 				delay(1500);
 				_system->quit();
@@ -520,14 +534,25 @@ uint16 SkyControl::handleClick(SkyConResource *pButton) {
 	}
 }
 
-bool SkyControl::getYesNo(void) {
+bool SkyControl::getYesNo(char *text) {
 
 	bool retVal = false;
 	bool quitPanel = false;
 	uint8 mouseType = MOUSE_NORMAL;
 	uint8 wantMouse = MOUSE_NORMAL;
+	dataFileHeader *dlgTextDat;
+	uint16 textY = MPNL_Y;
 
 	_yesNo->drawToScreen(WITH_MASK);
+	if (text) {
+		displayText_t dlgLtm = _skyText->displayText(text, NULL, true, _yesNo->_spriteData->s_width - 8, 37);
+		dlgTextDat = (dataFileHeader*)dlgLtm.textData;
+		textY = MPNL_Y + 44 + (28 - dlgTextDat->s_height) / 2;
+	} else
+		dlgTextDat = NULL;
+	
+	SkyTextResource *dlgText = new SkyTextResource(dlgTextDat, 1, 0, MPNL_X+2, textY, 0, DO_NOTHING, _system, _screenBuf);
+	dlgText->drawToScreen(WITH_MASK);
 
 	while (!quitPanel) {
 		if (mouseType != wantMouse) {
@@ -554,6 +579,10 @@ bool SkyControl::getYesNo(void) {
 		} else
 			wantMouse = MOUSE_NORMAL;
 	}
+	_mouseClicked = false;
+	if (dlgTextDat)
+		free(dlgTextDat);
+	delete dlgText;
 	return retVal;
 }
 
@@ -690,18 +719,20 @@ uint16 SkyControl::saveRestorePanel(bool allowSave) {
 	dataFileHeader *textSprites[MAX_ON_SCREEN + 1];
 	textSprites[MAX_ON_SCREEN] = NULL;
 	_firstText = 0;
-
-	_savePanel->drawToScreen(NO_MASK);
-	_quitButton->drawToScreen(NO_MASK);
 	
 	loadDescriptions(saveGameTexts);
 	_selectedGame = 0;
 
 	bool quitPanel = false;
 	bool refreshNames = true;
+	bool refreshAll = true;
 	uint16 clickRes = 0;
 	while (!quitPanel) {
-		if (refreshNames) {
+		if (refreshNames || refreshAll) {
+			if (refreshAll) {
+				_savePanel->drawToScreen(NO_MASK);
+				_quitButton->drawToScreen(NO_MASK);
+			}
 			setUpGameSprites(saveGameTexts, textSprites, _firstText, _selectedGame);
 			showSprites(textSprites, allowSave);
 			refreshNames = false;
@@ -751,7 +782,8 @@ uint16 SkyControl::saveRestorePanel(bool allowSave) {
 						saveDescriptions(saveGameTexts);
 						quitPanel = true;
 					}
-						 
+					if (clickRes == RESTORE_FAILED)
+ 						refreshAll = true;
 				}
 			}
 
@@ -842,9 +874,11 @@ void SkyControl::showSprites(dataFileHeader **nameSprites, bool allowSave) {
 			for (uint16 cnty = GAME_NAME_Y + cnt * PAN_CHAR_HEIGHT; cnty < GAME_NAME_Y + (cnt + 1) * PAN_CHAR_HEIGHT - 1; cnty++)
 				memset(_screenBuf + cnty * GAME_SCREEN_WIDTH + GAME_NAME_X, 37, PAN_LINE_WIDTH);
 			drawResource->drawToScreen(WITH_MASK);
-			drawResource->setSprite(nameSprites[MAX_ON_SCREEN]);
-			drawResource->setXY(GAME_NAME_X + _enteredTextWidth + 1, GAME_NAME_Y + cnt * PAN_CHAR_HEIGHT + 4);
-			drawResource->drawToScreen(WITH_MASK);
+			if (allowSave) {
+				drawResource->setSprite(nameSprites[MAX_ON_SCREEN]);
+				drawResource->setXY(GAME_NAME_X + _enteredTextWidth + 1, GAME_NAME_Y + cnt * PAN_CHAR_HEIGHT + 4);
+				drawResource->drawToScreen(WITH_MASK);
+			}
 			_system->copy_rect(_screenBuf + (GAME_NAME_Y + cnt * PAN_CHAR_HEIGHT) * GAME_SCREEN_WIDTH + GAME_NAME_X, GAME_SCREEN_WIDTH, GAME_NAME_X, GAME_NAME_Y + cnt * PAN_CHAR_HEIGHT, PAN_LINE_WIDTH, PAN_CHAR_HEIGHT);
 		} else 
 			drawResource->drawToScreen(NO_MASK);
@@ -1217,6 +1251,7 @@ void SkyControl::lodsCompact(uint8 **srcPos, Compact *cpt) {
 
 uint16 SkyControl::parseSaveData(uint8 *srcBuf) {
 
+	char loadText[] = "Savegame has an old version. Loading it can lead to errors.";
 	uint32 reloadList[60];
 	uint32 oldSection = SkyLogic::_scriptVariables[CUR_SECTION];
 	
@@ -1231,8 +1266,6 @@ uint16 SkyControl::parseSaveData(uint8 *srcBuf) {
 		warning("Unknown save file revision (%d)",saveRev);
 		return RESTORE_FAILED;
 	}
-	
-	freeMemList(); // memory from last restore isn't needed anymore
 
 	uint32 music, charSet, mouseType, palette, gameVersion;
 	
@@ -1246,7 +1279,11 @@ uint16 SkyControl::parseSaveData(uint8 *srcBuf) {
 		LODSW(srcPos, _skySound->_saveSounds[0]);
 		LODSW(srcPos, _skySound->_saveSounds[1]);
 		_skySound->restoreSfx();
+	} else {
+		if(!getYesNo(loadText))
+			return RESTORE_FAILED;
 	}
+	freeMemList(); // memory from last restore isn't needed anymore
 	LODSD(srcPos, music);
 	LODSD(srcPos, charSet);
 	LODSD(srcPos, mouseType);

@@ -165,7 +165,7 @@ private:
 	void delay(unsigned int amount);
 	
     void animClick(SkyConResource *pButton);
-	bool getYesNo(void);
+	bool getYesNo(char *text);
 	void buttonControl(SkyConResource *pButton);
 	uint16 handleClick(SkyConResource *pButton);
 	uint16 doMusicSlide(void);
