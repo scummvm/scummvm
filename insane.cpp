@@ -311,7 +311,7 @@ void codec37_proc4(byte *dst, byte *src, int next_offs, int bw, int bh,
 }
 
 
-void codec37_proc5(byte *dst, byte *src, int next_offs, int bw, int bh,
+void codec37_proc5(int game, byte *dst, byte *src, int next_offs, int bw, int bh,
 									 int pitch, int16 * table)
 {
 	byte code, *tmp;
@@ -327,16 +327,18 @@ void codec37_proc5(byte *dst, byte *src, int next_offs, int bw, int bh,
 		i = bw;
 		do {
 			code = *src++;
-			if (code == 0xFD) {
+
+			// FIXME: Full Throttle has different FD and FEs?
+			if ((game == GID_DIG) && (code == 0xFD)) {
  				t = src[0];
  				t += (t << 8) + (t << 16) + (t << 24);
  				*(uint32 *)(dst + 0) = t;
  				*(uint32 *)(dst + 320) = t;
  				*(uint32 *)(dst + 320 * 2) = t;
  				*(uint32 *)(dst + 320 * 3) = t;
-				 src += 1;
-				 dst += 4;
-			} else if (code == 0xFE) {
+				src += 1;
+				dst += 4;
+			} else if ((game == GID_DIG) && (code == 0xFE)) {
  				t = src[0];
  				t += (t << 8) + (t << 16) + (t << 24);
  				*(uint32 *)(dst + 0) = t;
@@ -493,7 +495,7 @@ void codec37_maketable(PersistentCodecData37 * pcd, int pitch, byte idx)
 
 
 
-int codec37(CodecData * cd, PersistentCodecData37 * pcd)
+int codec37(int game, CodecData * cd, PersistentCodecData37 * pcd)
 {
 	int width_in_blocks, height_in_blocks;
 	int src_pitch;
@@ -550,10 +552,10 @@ int codec37(CodecData * cd, PersistentCodecData37 * pcd)
 				pcd->curtable ^= 1;
 			}
 
-			codec37_proc5(pcd->deltaBufs[pcd->curtable], cd->src + 16,
-										pcd->deltaBufs[pcd->curtable ^ 1] -
-										pcd->deltaBufs[pcd->curtable], width_in_blocks,
-										height_in_blocks, src_pitch, pcd->table1);
+			codec37_proc5(game, pcd->deltaBufs[pcd->curtable], cd->src + 16,
+								pcd->deltaBufs[pcd->curtable ^ 1] -
+								pcd->deltaBufs[pcd->curtable], width_in_blocks,
+								height_in_blocks, src_pitch, pcd->table1);
 			break;
 
 		  }
@@ -633,16 +635,101 @@ void SmushPlayer::parseFOBJ()
 		codec1(&cd);
 		break;
 	case 37:
-		_frameChanged = codec37(&cd, &pcd37);
+		_frameChanged = codec37(sm->_gameId, &cd, &pcd37);
 		break;
 	default:
 		error("invalid codec %d", codec);
 	}
 }
 
-void SmushPlayer::parsePSAD()
-{
-	//printf("parse PSAD\n");
+void SmushPlayer::parsePSAD()	// FIXME: Needs to append to
+{								//		  a sound buffer
+	unsigned int pos, sublen, tag, idx, trk;
+	byte * buf;
+	
+	pos = 0;
+	
+	trk = READ_LE_UINT16(_cur + pos); /* FIXME: is this correct ? */
+	pos += 2;
+
+	/* FIXME: number 8 should be replaced with a sensible literal */
+
+	for (idx = 0; idx < 8; idx++) {
+		if (_psadTrk[idx] == trk)
+			break;
+	}
+
+	if (idx == 8) {
+		for (idx = 0; idx < 8; idx++) {
+			if (_psadTrk[idx] == 0) {
+				_psadTrk[idx] = trk;
+				break;
+			}
+		}
+	}
+
+	if (idx == 8) {
+		warning("PSAD table full\n");
+		return;
+	}
+
+	pos += 8; /* FIXME: what are these ? */
+	
+	while (pos < _frmeSize) {
+
+		if (_saudSize[idx] == 0) {
+			tag = READ_BE_UINT32(_cur + pos);
+			pos += 4;
+			if (tag != 'SAUD')
+				error("trk %d: SAUD tag not found", trk);
+			_saudSize[idx] = READ_BE_UINT32(_cur + pos);
+			pos += 4;
+		}
+	
+		if (_saudSubSize[idx] == 0) {
+			_saudSubTag[idx] = READ_BE_UINT32(_cur + pos);
+			pos += 4;
+			_saudSubSize[idx] = READ_BE_UINT32(_cur + pos);
+			pos += 4;
+			_saudSize[idx] -= 8;
+			debug(3, "trk %d: tag '%4s' size %x",
+			      trk, _cur + pos - 8, _saudSubSize[idx]);
+		}
+
+		sublen = _saudSubSize[idx] < (_frmeSize - pos) ?
+			_saudSubSize[idx] : (_frmeSize - pos);
+				
+		switch (_saudSubTag[idx]) {
+		case 'STRK' :
+			/* FIXME: what is this stuff ? */
+			_strkRate[idx] = 22050;
+			break;
+		case 'SDAT' :
+			buf = (byte *) malloc(sublen);
+
+			memcpy(buf, _cur + pos, sublen);
+
+			debug(3, "trk %d: SDAT part len 0x%x rate %d",
+			      trk, sublen, _strkRate[idx]);
+
+			g_scumm->_mixer->play_raw(NULL, buf,
+						  sublen, _strkRate[idx],
+						  SoundMixer::FLAG_UNSIGNED |
+						  SoundMixer::FLAG_AUTOFREE);
+			break;
+		case 'SMRK' :
+			_psadTrk[idx] = 0;
+			break;
+		case 'SHDR' :
+			/* FIXME: what is this stuff ? */
+			break;
+		default :
+			error("trk %d: unknown tag inside PSAD", trk);
+		}
+		_saudSubSize[idx] -= sublen;
+		_saudSize[idx] -= sublen;				
+		pos += sublen;	
+	}
 }
 
 void SmushPlayer::parseTRES()
@@ -720,6 +807,10 @@ void SmushPlayer::init()
 {
 	_renderBitmap = sm->_videoBuffer;
 	codec37_init(&pcd37, 320, 200);
+
+	memset(_saudSize, 0, sizeof(_saudSize));
+	memset(_saudSubSize, 0, sizeof(_saudSubSize));
+	memset(_psadTrk, 0, sizeof(_psadTrk));
 }
 
 void SmushPlayer::go()

@@ -65,6 +65,11 @@ struct SmushPlayer {
         uint16 _fluPalMul129[768];
         uint16 _fluPalWords[768];
 
+		/* PSAD: Full Throttle audio */
+		uint32 _saudSize[8], _saudSubSize[8];
+		uint16 _psadTrk[8], _strkRate[8];
+		uint32 _saudSubTag[8];
+
         void openFile(byte* fileName);
         void nextBlock();
 
@@ -72,8 +77,7 @@ struct SmushPlayer {
         uint32 fileReadLE32();
         void go();
 
-        bool parseTag();
-
+        bool parseTag();		
         void parseAHDR();
         void parseFRME();
 
