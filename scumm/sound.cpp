@@ -462,17 +462,22 @@ void Sound::playSound(int soundID) {
 			size = READ_BE_UINT16(ptr + 6);
 			int start = READ_BE_UINT16(ptr + 8);
 			start += 10;
-
 			rate = 11000;
-			if ((READ_BE_UINT16(ptr + 50) == 0x357c) && (ptr[55] == 6))
-				rate = 3579545 / READ_BE_UINT16(ptr + 52);
-
 			int vol = 255;
-			if ((READ_BE_UINT16(ptr + 56) == 0x357c) && (ptr[61] == 8)) 
-				vol = READ_BE_UINT16(ptr + 58) * 2;
+			int i = 0;
+
+			while (i < start) {
+				if ((READ_BE_UINT16(ptr) == 0x357c) && (READ_BE_UINT16(ptr + 4) == 6))
+					rate = 3579545 / READ_BE_UINT16(ptr + 2);
+
+				if ((READ_BE_UINT16(ptr) == 0x357c) && (READ_BE_UINT16(ptr + 4) == 8))
+					vol = READ_BE_UINT16(ptr + 2) * 2;
+				ptr += 2;
+				i += 2;
+			}
 
 			sound = (char *)malloc(size);
-			memcpy(sound, ptr + start, size);
+			memcpy(sound, ptr, size);
 			_scumm->_mixer->playRaw(NULL, sound, size, rate, SoundMixer::FLAG_AUTOFREE, soundID, vol, 0);
 			return;
 		}
