@@ -184,7 +184,7 @@ uint32 SaveData(uint16 slotNo, uint8 *buffer, uint32 bufferSize)
 
 
 //create saves directory just in case not there
-	_mkdir("saves");
+	scumm_mkdir("saves");
 
 
 	sprintf(saveFileName, "saves\\savegame.%.3d", slotNo);	// construct filename

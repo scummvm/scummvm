@@ -1620,7 +1620,6 @@ extern int32 SetFxIdVolume(int32 id, uint8 vol);
 #undef SetFileAttributes
 #undef GetCurrentDirectory
 #undef GetVolumeInformation
-#undef _mkdir
 #undef GetModuleFileName
 
 #endif
@@ -1635,7 +1634,7 @@ extern void SetFileAttributes(char *file, uint32 atrib);
 extern void DeleteFile(char *file);
 extern void GetCurrentDirectory(uint32 max, char* path);
 extern int32 GetVolumeInformation(char *cdPath, char *sCDName, uint32 maxPath, uint8 *, DWORD *dwMaxCompLength, DWORD *dwFSFlags, uint8 *, uint32 a);
-extern void _mkdir(const char *pathname);
+extern void scumm_mkdir(const char *pathname);
 extern void GetModuleFileName(void *module, char *destStr, uint32 maxLen);
 
 //-----------------------------------------------------------------------------

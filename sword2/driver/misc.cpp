@@ -53,8 +53,8 @@ int32 GetVolumeInformation(char *cdPath, char *sCDName, uint32 maxPath, uint8 *,
 }
 
 // FIXME wrap different platform specific mkdir calls and actually do something
-void _mkdir(const char *pathname) {
-	warning("stub _mkdir %s", pathname);
+void scumm_mkdir(const char *pathname) {
+	warning("stub scumm_mkdir %s", pathname);
 }
 
 void GetModuleFileName(void *module, char *destStr, uint32 maxLen) {
