@@ -1252,7 +1252,7 @@ void ScummEngine_v90he::processWizImage(const WizParameters *params) {
 		displayWizComplexImage(params);
 		break;
 	case 2:
- 		captureWizImage(rtImage, params->img.resNum, params->box, (params->img.flags & 8) == 8, params->compType);
+ 		captureWizImage(rtImage, params->img.resNum, params->box, (params->img.flags & kWIFBlitToFrontVideoBuffer) == kWIFBlitToFrontVideoBuffer, params->compType);
 		break;
 	case 3:
 		if (params->processFlags & 0x800) {

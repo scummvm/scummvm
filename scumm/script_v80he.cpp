@@ -588,7 +588,7 @@ void ScummEngine_v80he::o80_drawWizPolygon() {
 	wi.x1 = wi.y1 = pop();
 	wi.resNum = pop();
 	wi.state = 0;
-	wi.flags = 0x40;
+	wi.flags = kWIFIsPolygon;
 	displayWizImage(&wi);	
 }
 

@@ -69,15 +69,26 @@ struct WizParameters {
 	WizImage img;
 };
 
+enum WizImageFlags {
+	kWIFPrint = 0x4,
+	kWIFBlitToFrontVideoBuffer = 0x8,
+	kWIFBlitToMemBuffer = 0x20,
+	kWIFIsPolygon = 0x40,
+	kWIFFlipX = 0x400,
+	kWIFFlipY = 0x800
+};
+
+enum WizProcessFlags {
+	kWPFSetPos = 0x1,
+	kWPFZoom = 0x8,
+	kWPFRotate = 0x10,
+	kWPFNewFlags = 0x20,
+	kWPFClipBox = 0x200,
+	kWPFNewState = 0x400,
+	kWPFUseFile = 0x800
+};
+
 struct Wiz {
-	enum {
-		FW_PRINT   = 0x4,
-		FW_MEM     = 0x20,
-		FW_POLYGON = 0x40,
-		FW_XFLIP   = 0x400,
-		FW_YFLIP   = 0x800
-	};
-	
 	enum {
 		NUM_POLYGONS = 200,
 		NUM_IMAGES   = 255

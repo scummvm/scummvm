@@ -1194,7 +1194,7 @@ void ScummEngine_v90he::spritesProcessWiz(bool arg) {
 
 		spi->field_48 = wiz.img.state = res_state;
 		spi->field_4C = wiz.img.resNum = res_id;
-		wiz.processFlags = 0x401;
+		wiz.processFlags = kWPFNewState | kWPFSetPos;
 		spi->field_68 = spi->rot_angle;
 		spi->field_6C = spi->zoom;
 		spi->field_34 = wiz.img.x1;
@@ -1222,6 +1222,8 @@ void ScummEngine_v90he::spritesProcessWiz(bool arg) {
 				// sar eax, 1
 				// mov ecx, eax
 				// neg ecx
+				
+				// => ecx = - something / 2
 
 				ebx = -1234;
 			}
@@ -1236,12 +1238,12 @@ void ScummEngine_v90he::spritesProcessWiz(bool arg) {
 
 		wiz.img.flags = 0x10;
 		if (spr_flags & kSF23)
-			wiz.img.flags = 0x410;
+			wiz.img.flags |= kWIFFlipX;
 		if (spr_flags & kSF22)
-			wiz.img.flags |= 0x800;
+			wiz.img.flags |= kWIFFlipY;
 		if (spr_flags & kSF21) {
 			wiz.img.flags &= ~(0x11);
-			wiz.img.flags |= 8;
+			wiz.img.flags |= kWIFBlitToFrontVideoBuffer;
 		}
 		if (spi->field_54) {
 			wiz.img.flags |= 0x200;
@@ -1254,14 +1256,14 @@ void ScummEngine_v90he::spritesProcessWiz(bool arg) {
 			wiz.processFlags |= 0x80000;
 			//wiz.field_178 = spi->field_7C; // FIXME
 		}
-		wiz.processFlags |= 0x20;
+		wiz.processFlags |= kWPFNewFlags;
 		
 		if (spr_flags & kSFRotated) {
-			wiz.processFlags |= 0x10;
+			wiz.processFlags |= kWPFRotate;
 			wiz.angle = spi->rot_angle;
 		}
 		if (spr_flags & kSFZoomed) {
-			wiz.processFlags |= 0x08;
+			wiz.processFlags |= kWPFZoom;
 			wiz.zoom = spi->zoom;
 		}
 		spi->imgFlags = wiz.img.flags;

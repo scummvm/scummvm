@@ -47,8 +47,8 @@ enum SpriteFlags {
 	kSF19           = (1 << 18),
 	kSF20           = (1 << 19),
 	kSF21           = (1 << 20),
-	kSF22           = (1 << 21),
-	kSF23           = (1 << 22),
+	kSF22           = (1 << 21), // kSFYFlipped
+	kSF23           = (1 << 22), // kSFXFlipped
 	kSF24           = (1 << 23),
 	kSF25           = (1 << 24),
 	kSFBlitDirectly = (1 << 25),
