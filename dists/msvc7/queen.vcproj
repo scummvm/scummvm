@@ -102,6 +102,9 @@
 			RelativePath="..\..\queen\cutaway.h">
 		</File>
 		<File
+			RelativePath="..\..\queen\defs.h">
+		</File>
+		<File
 			RelativePath="..\..\queen\graphics.cpp">
 		</File>
 		<File
@@ -127,6 +130,21 @@
 		</File>
 		<File
 			RelativePath="..\..\queen\restables.cpp">
+		</File>
+		<File
+			RelativePath="..\..\queen\structs.h">
+		</File>
+		<File
+			RelativePath="..\..\queen\talk.cpp">
+		</File>
+		<File
+			RelativePath="..\..\queen\talk.h">
+		</File>
+		<File
+			RelativePath="..\..\queen\walk.cpp">
+		</File>
+		<File
+			RelativePath="..\..\queen\walk.h">
 		</File>
 	</Files>
 	<Globals>
