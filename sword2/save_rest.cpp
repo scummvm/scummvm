@@ -56,17 +56,17 @@
 //------------------------------------------------------------------------------------
 // local function prototypes
 
-void GetPlayerStructures(void);		// James27feb97
-void PutPlayerStructures(void);		// James27feb97
+static void GetPlayerStructures(void);		// James27feb97
+static void PutPlayerStructures(void);		// James27feb97
 
-uint32 SaveData(uint16 slotNo, uint8 *buffer, uint32 bufferSize);
-uint32 RestoreData(uint16 slotNo, uint8 *buffer, uint32 bufferSize);
+static uint32 SaveData(uint16 slotNo, uint8 *buffer, uint32 bufferSize);
+static uint32 RestoreData(uint16 slotNo, uint8 *buffer, uint32 bufferSize);
 
-uint32 CalcChecksum(uint8 *buffer, uint32 size);	// James04aug97
+static uint32 CalcChecksum(uint8 *buffer, uint32 size);	// James04aug97
 
 //------------------------------------------------------------------------------------
 
-typedef	struct		// savegame file header		(James06feb97)
+typedef	struct		// savegame file g_header		(James06feb97)
 {
 	uint32			checksum;							// sum of all bytes in file, excluding this uint32
 	char			description[SAVE_DESCRIPTION_LEN];	// player's description of savegame
@@ -83,9 +83,56 @@ typedef	struct		// savegame file header		(James06feb97)
 }
 _savegameHeader;
 
-// savegame consists of header & global variables resource
+// savegame consists of g_header & global variables resource
 
-_savegameHeader header;		// global because easier to copy to/from player object structures
+static _savegameHeader g_header;		// global because easier to copy to/from player object structures
+
+#ifdef SCUMM_BIG_ENDIAN
+// Quick macro to make swapping in-place easier to write
+#define SWAP32_S(x)	x = (int16)SWAP_BYTES_32(x)
+#define SWAP32_U(x)	x = SWAP_BYTES_32(x)
+static void converHeaderEndian(_savegameHeader &header) {
+	int i;
+	
+	// _savegameHeader
+	SWAP32_U(header.checksum);
+	SWAP32_U(header.varLength);
+	SWAP32_U(header.screenId);
+	SWAP32_U(header.runListId);
+	SWAP32_U(header.feet_x);
+	SWAP32_U(header.feet_y);
+	SWAP32_U(header.music_id);
+	
+	// _object_hub
+	SWAP32_S(header.player_hub.type);
+	SWAP32_U(header.player_hub.logic_level);
+	for (i = 0; i < TREE_SIZE; i++) {
+		SWAP32_U(header.player_hub.logic[i]);
+		SWAP32_U(header.player_hub.script_id[i]);
+		SWAP32_U(header.player_hub.script_pc[i]);
+	}
+
+	// Object_logic
+	SWAP32_S(header.logic.looping);
+	SWAP32_S(header.logic.pause);
+
+	// Object_graphic
+	SWAP32_S(header.graphic.type);
+	SWAP32_S(header.graphic.anim_resource);
+	SWAP32_S(header.graphic.anim_pc);
+
+	// Object_mega
+	SWAP32_S(header.mega.currently_walking);
+	SWAP32_S(header.mega.walk_pc);
+	SWAP32_S(header.mega.scale_a);
+	SWAP32_S(header.mega.scale_b);
+	SWAP32_S(header.mega.feet_x);
+	SWAP32_S(header.mega.feet_y);
+	SWAP32_S(header.mega.current_dir);
+	SWAP32_S(header.mega.colliding);
+	SWAP32_S(header.mega.megaset_res);
+}
+#endif
 
 //------------------------------------------------------------------------------------
 //------------------------------------------------------------------------------------
@@ -126,7 +173,7 @@ uint32 SaveGame(uint16 slotNo, uint8 *desc)		// (James05feb97)
 
 uint32 FindBufferSize( void )
 {
-	return (sizeof(header) + res_man.Res_fetch_len(1));	// size of savegame header + size of global variables
+	return (sizeof(g_header) + res_man.Res_fetch_len(1));	// size of savegame g_header + size of global variables
 }
 
 //------------------------------------------------------------------------------------
@@ -136,41 +183,51 @@ void FillSaveBuffer(mem *buffer, uint32 size, uint8 *desc)
 	uint8	*varsRes;
 
 	//------------------------------------------------------
-	// set up the header
+	// set up the g_header
 
 	// 'checksum' gets filled in last of all
-	sprintf(header.description, "%s", (char*)desc);					// player's description of savegame
-	header.varLength	= res_man.Res_fetch_len(1);					// length of global variables resource
-	header.screenId		= this_screen.background_layer_id;			// resource id of current screen file
-	header.runListId	= LLogic.Return_run_list();					// resource id of current run-list
-	header.feet_x		= this_screen.feet_x;						// those scroll position control things
-	header.feet_y		= this_screen.feet_y;						//
-	header.music_id		= looping_music_id;							// id of currently looping music (or zero)
+	sprintf(g_header.description, "%s", (char*)desc);					// player's description of savegame
+	g_header.varLength	= res_man.Res_fetch_len(1);					// length of global variables resource
+	g_header.screenId		= this_screen.background_layer_id;			// resource id of current screen file
+	g_header.runListId	= LLogic.Return_run_list();					// resource id of current run-list
+	g_header.feet_x		= this_screen.feet_x;						// those scroll position control things
+	g_header.feet_y		= this_screen.feet_y;						//
+	g_header.music_id		= looping_music_id;							// id of currently looping music (or zero)
 
 	// object hub
-	memcpy (&header.player_hub, res_man.Res_open(CUR_PLAYER_ID) + sizeof(_standardHeader), sizeof(_object_hub));
+	memcpy (&g_header.player_hub, res_man.Res_open(CUR_PLAYER_ID) + sizeof(_standardHeader), sizeof(_object_hub));
 	res_man.Res_close(CUR_PLAYER_ID);
 
 	// logic, graphic & mega structures
-	GetPlayerStructures();											// copy the 4 essential player object structures into the header
+	GetPlayerStructures();											// copy the 4 essential player object structures into the g_header
 
 	//------------------------------------------------------
-	// copy the header to the buffer
+	// copy the g_header to the buffer
 
-	memcpy( buffer->ad, &header, sizeof(header) );					// copy the header to the savegame buffer
+#ifdef SCUMM_BIG_ENDIAN
+	converHeaderEndian(g_header);
+#endif
+	memcpy( buffer->ad, &g_header, sizeof(g_header) );					// copy the g_header to the savegame buffer
 
 	//------------------------------------------------------
 	// copy the global variables to the buffer
 
 	varsRes = res_man.Res_open(1);									// open variables resource
-	memcpy( buffer->ad + sizeof(header), varsRes, header.varLength );	// copy that to the buffer, following the header
+	memcpy( buffer->ad + sizeof(g_header), varsRes, FROM_LE_32(g_header.varLength) );	// copy that to the buffer, following the g_header
+#ifdef SCUMM_BIG_ENDIAN
+	uint32 *globalVars = (uint32 *)(buffer->ad + sizeof(g_header));
+	const uint numVars = FROM_LE_32(g_header.varLength)/4;
+	for (uint i = 0; i < numVars; i++) {
+		globalVars[i] = SWAP_BYTES_32(globalVars[i]);
+	}
+#endif
  	res_man.Res_close(1);											// close variables resource
 
 	//------------------------------------------------------
 	// set the checksum & copy that to the buffer (James05aug97)
 
-	header.checksum = CalcChecksum((buffer->ad)+sizeof(header.checksum), size-sizeof(header.checksum));
- 	memcpy( buffer->ad, &header.checksum, sizeof(header.checksum) );					// copy the header to the savegame buffer
+	g_header.checksum = TO_LE_32(CalcChecksum((buffer->ad)+sizeof(g_header.checksum), size-sizeof(g_header.checksum)));
+ 	memcpy( buffer->ad, &g_header.checksum, sizeof(g_header.checksum) );					// copy the g_header to the savegame buffer
 
 	//------------------------------------------------------
 }
@@ -289,12 +346,15 @@ uint32	RestoreFromBuffer(mem *buffer, uint32 size)
 	uint8	*varsRes;
 	int32	pars[2];
 
-	memcpy( &header, buffer->ad, sizeof(header) );		// get a copy of the header from the savegame buffer
+	memcpy( &g_header, buffer->ad, sizeof(g_header) );		// get a copy of the g_header from the savegame buffer
+#ifdef SCUMM_BIG_ENDIAN
+	converHeaderEndian(g_header);
+#endif
 
   	//------------------------------------------------------
-	// Calc checksum & check that aginst the value stored in the header (James05aug97)
+	// Calc checksum & check that aginst the value stored in the g_header (James05aug97)
 
-	if (header.checksum != CalcChecksum((buffer->ad)+sizeof(header.checksum), size-sizeof(header.checksum)))
+	if (g_header.checksum != CalcChecksum((buffer->ad)+sizeof(g_header.checksum), size-sizeof(g_header.checksum)))
 	{
 		Free_mem( buffer );
 		return(SR_ERR_INCOMPATIBLE);	// error: incompatible save-data - can't use!
@@ -305,7 +365,7 @@ uint32	RestoreFromBuffer(mem *buffer, uint32 size)
 
 	// Note that during development, earlier savegames will often be shorter than the current expected length
 
-	if (header.varLength != res_man.Res_fetch_len(1))	// if header contradicts actual current size of global variables
+	if (g_header.varLength != res_man.Res_fetch_len(1))	// if g_header contradicts actual current size of global variables
 	{
 		Free_mem( buffer );
 		return(SR_ERR_INCOMPATIBLE);	// error: incompatible save-data - can't use!
@@ -318,35 +378,42 @@ uint32	RestoreFromBuffer(mem *buffer, uint32 size)
 	//----------------------------------
 	// get player character data from savegame buffer
 
-	// object hub is just after the standard header 
-	memcpy (res_man.Res_open(CUR_PLAYER_ID) + sizeof(_standardHeader), &header.player_hub, sizeof(_object_hub));
+	// object hub is just after the standard g_header 
+	memcpy (res_man.Res_open(CUR_PLAYER_ID) + sizeof(_standardHeader), &g_header.player_hub, sizeof(_object_hub));
 	res_man.Res_close(CUR_PLAYER_ID);
-	PutPlayerStructures();										// fill in the 4 essential player object structures from the header
+	PutPlayerStructures();										// fill in the 4 essential player object structures from the g_header
 
 	//----------------------------------
 	// get variables resource from the savegame buffer	
 
 	varsRes = res_man.Res_open(1);								// open variables resource
-	memcpy( varsRes, buffer->ad + sizeof(header), header.varLength );// copy that to the buffer, following the header
+	memcpy( varsRes, buffer->ad + sizeof(g_header), g_header.varLength );// copy that to the buffer, following the g_header
+#ifdef SCUMM_BIG_ENDIAN
+	uint32 *globalVars = (uint32 *)varsRes;
+	const uint numVars = g_header.varLength/4;
+	for (uint i = 0; i < numVars; i++) {
+		globalVars[i] = SWAP_BYTES_32(globalVars[i]);
+	}
+#endif
  	res_man.Res_close(1);										// close variables resource
 
 	Free_mem( buffer );		// free it now, rather than in RestoreGame, to unblock memory before new screen & runlist loaded
-	pars[0] = header.screenId;
+	pars[0] = g_header.screenId;
 	pars[1] = 1;
 	FN_init_background(pars);
 	this_screen.new_palette=99;	// (JEL08oct97) so palette not restored immediately after control panel - we want to fade up instead!
 
-	this_screen.feet_x = header.feet_x;	// these need setting after the defaults get set in FN_init_background
-	this_screen.feet_y = header.feet_y;	// remember that these can change through the game, so need saving & restoring too
-	LLogic.Express_change_session(header.runListId);			// start the new run list
+	this_screen.feet_x = g_header.feet_x;	// these need setting after the defaults get set in FN_init_background
+	this_screen.feet_y = g_header.feet_y;	// remember that these can change through the game, so need saving & restoring too
+	LLogic.Express_change_session(g_header.runListId);			// start the new run list
 
 	//----------------------------------------------------------------------------
 	// (James01aug97)
 	// Force in the new scroll position, so unsightly scroll-catch-up does not occur
 	// when screen first draws after returning from restore panel
 
-	this_screen.player_feet_x = header.mega.feet_x;	// set 'this_screen's record of player position
-	this_screen.player_feet_y = header.mega.feet_y;	// - ready for Set_scrolling()
+	this_screen.player_feet_x = g_header.mega.feet_x;	// set 'this_screen's record of player position
+	this_screen.player_feet_y = g_header.mega.feet_y;	// - ready for Set_scrolling()
 
 	if (this_screen.scroll_flag)	// if this screen is wide
 		Set_scrolling();			// recompute the scroll offsets now, 
@@ -354,19 +421,19 @@ uint32	RestoreFromBuffer(mem *buffer, uint32 size)
 	//----------------------------------------------------------------------------
 	// Any music required will be started after we've returned from Restore_control()
 	// - see System_menu() in mouse.cpp!
-	looping_music_id = header.music_id;
+	looping_music_id = g_header.music_id;
  	//------------------------------------------------------
 
 	//--------------------------------------
 	// Write to walkthrough file (zebug0.txt)
 	#ifdef _SWORD2_DEBUG
 	Zdebug(0,"*************************************");
-	Zdebug(0,"RESTORED GAME \"%s\"", header.description);
+	Zdebug(0,"RESTORED GAME \"%s\"", g_header.description);
 	Zdebug(0,"*************************************");
 
 	// Also write this to system debug file
  	Zdebug("*************************************");
-	Zdebug("RESTORED GAME \"%s\"", header.description);
+	Zdebug("RESTORED GAME \"%s\"", g_header.description);
 	Zdebug("*************************************");
  	#endif
 	//--------------------------------------
@@ -394,7 +461,7 @@ uint32 GetSaveDescription(uint16 slotNo, uint8 *description)		// (James05feb97)
 		return(SR_ERR_FILEOPEN);					// error: couldn't open file
 
 	
-	in->read(&dummy, sizeof(_savegameHeader));	// read header
+	in->read(&dummy, sizeof(_savegameHeader));	// read g_header
 	delete in;
 	delete mgr;
 	sprintf((char*)description, dummy.description);
@@ -445,7 +512,7 @@ void PutPlayerStructures(void)		// James27feb97 (updated by James on 29july97)
 	null_pc=14;	// script no. 14 - 'set_up_nico_anim_tables'
 	RunScript( raw_script_ad, raw_script_ad, &null_pc );
 
-	switch (header.mega.megaset_res)	// which megaset was the player at the time of saving?
+	switch (g_header.mega.megaset_res)	// which megaset was the player at the time of saving?
 	{
 		case 36:		// GeoMega:
 			null_pc=9;	// script no.9	- 'player_is_george'
@@ -475,7 +542,7 @@ void PutPlayerStructures(void)		// James27feb97 (updated by James on 29july97)
 //------------------------------------------------------------------------------------
 int32 FN_pass_player_savedata(int32 *params)	// James27feb97
 {
-	// copies the 4 essential player structures into the savegame header
+	// copies the 4 essential player structures into the savegame g_header
 	// - run script 7 of player object to request this
 
 	// remember, we cannot simply read a compact any longer but instead must request it from the object itself
@@ -484,10 +551,10 @@ int32 FN_pass_player_savedata(int32 *params)	// James27feb97
 	//			1 pointer to object's graphic structure
 	//			2 pointer to object's mega structure
 
-	// copy from player object to savegame header
-	memcpy( &header.logic,		(uint8*)params[0], sizeof(Object_logic)		);
-	memcpy( &header.graphic,	(uint8*)params[1], sizeof(Object_graphic)	);
-	memcpy( &header.mega,		(uint8*)params[2], sizeof(Object_mega)		);
+	// copy from player object to savegame g_header
+	memcpy( &g_header.logic,		(uint8*)params[0], sizeof(Object_logic)		);
+	memcpy( &g_header.graphic,	(uint8*)params[1], sizeof(Object_graphic)	);
+	memcpy( &g_header.mega,		(uint8*)params[2], sizeof(Object_mega)		);
 
 	return(IR_CONT);	//makes no odds
 }
@@ -508,10 +575,10 @@ int32 FN_get_player_savedata(int32 *params)	// James27feb97
 	int32	pars[3];
 
 
-	// copy from savegame header to player object
-	memcpy( (uint8*)ob_logic,	&header.logic,		sizeof(Object_logic)	);
-	memcpy( (uint8*)ob_graphic,	&header.graphic,	sizeof(Object_graphic)	);
-	memcpy( (uint8*)ob_mega,	&header.mega,		sizeof(Object_mega)		);
+	// copy from savegame g_header to player object
+	memcpy( (uint8*)ob_logic,	&g_header.logic,		sizeof(Object_logic)	);
+	memcpy( (uint8*)ob_graphic,	&g_header.graphic,	sizeof(Object_graphic)	);
+	memcpy( (uint8*)ob_mega,	&g_header.mega,		sizeof(Object_mega)		);
 
 
  	// any walk-data must be cleared - the player will be set to stand if he was walking when saved
