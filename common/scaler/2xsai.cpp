@@ -52,8 +52,6 @@ void Super2xSaITemplate(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uin
 	uint16 *dP;
 	const uint32 nextlineSrc = srcPitch >> 1;
 	
-	dstPtr += dstPitch;
-
 	while (height--) {
 		bP = (const uint16 *)srcPtr;
 		dP = (uint16 *)dstPtr;
@@ -162,8 +160,6 @@ void SuperEagleTemplate(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uin
 	const uint16 *bP;
 	uint16 *dP;
 	const uint32 nextlineSrc = srcPitch >> 1;
-
-	dstPtr += dstPitch;
 
 	while (height--) {
 		bP = (const uint16 *)srcPtr;
@@ -275,8 +271,6 @@ void _2xSaITemplate(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 
 	const uint16 *bP;
 	uint16 *dP;
 	const uint32 nextlineSrc = srcPitch >> 1;
-
-	dstPtr += dstPitch;
 
 	while (height--) {
 		bP = (const uint16 *)srcPtr;
