@@ -677,10 +677,10 @@ void Script::whichObject(const Point& mousePoint) {
 	int newRightButtonVerb;
 	uint16 newObjectId;
 	ActorData *actor;
+	Point pickPoint;
 	Location pickLocation;
 	int hitZoneIndex;
 	const HitZone * hitZone;
-	Point tempPoint;
 
 	objectId = ID_NOTHING;
 	objectFlags = 0;
@@ -719,17 +719,16 @@ void Script::whichObject(const Point& mousePoint) {
 		}
 
 		if (newObjectId == ID_NOTHING) {		
+
+			pickPoint = mousePoint;
+
 			if (_vm->_scene->getFlags() & kSceneFlagISO) {
-				tempPoint = mousePoint;
-				tempPoint.y -= _vm->_actor->_protagonist->location.z;
-				_vm->_isoMap->screenPointToTileCoords(tempPoint, pickLocation);
-			} else {
-				pickLocation.x = mousePoint.x;
-				pickLocation.y = mousePoint.y;
-				pickLocation.z = 0;
+				pickPoint.y -= _vm->_actor->_protagonist->location.z;
+				_vm->_isoMap->screenPointToTileCoords(pickPoint, pickLocation);
+				pickLocation.toScreenPointUV(pickPoint);
 			}
 			
-			hitZoneIndex = _vm->_scene->_objectMap->hitTest(mousePoint);
+			hitZoneIndex = _vm->_scene->_objectMap->hitTest(pickPoint);
 		
 			if ((hitZoneIndex != -1)) {
 				hitZone = _vm->_scene->_objectMap->getHitZone(hitZoneIndex);

@@ -108,8 +108,8 @@ static GameSoundInfo ITEDEMO_GameSound = {
 };
 
 static GameFontDescription ITEMACDEMO_GameFonts[] = {
-	{0},
-	{2}
+	{2},
+	{0}
 }; 
 
 // Inherit the Earth - Wyrmkeep Win32 Demo version

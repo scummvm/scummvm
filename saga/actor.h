@@ -186,6 +186,7 @@ struct Location {
 
 class CommonObjectData {
 public:
+	bool disabled;				// disabled in init section 
 	int index;					// index in local array
 	uint16 id;					// object id
 	uint16 flags;				// initial flags
@@ -198,9 +199,6 @@ public:
 	int screenDepth;			//
 	int screenScale;			//
 
-	SpriteList spriteList;		// sprite list data
-	int spriteListResourceId;	// sprite list resource id
-
 	int frameNumber;			// current frame number
 
 	CommonObjectData() {
@@ -208,6 +206,7 @@ public:
 		flags = 0;
 		frameNumber = 0;
 	}
+
 };
 
 typedef CommonObjectData *CommonObjectDataPointer;
@@ -221,7 +220,7 @@ public:
 
 class ActorData: public CommonObjectData {
 public:
-	bool disabled;				// Actor disabled in init section
+
 	byte speechColor;			// Actor dialogue color
 	
 	uint16 actorFlags;			// dynamic flags
@@ -237,12 +236,13 @@ public:
 	uint8 cycleTimeCount;
 	uint8 cycleFlags;
 
+	SpriteList spriteList;		// sprite list data
+	int spriteListResourceId;	// sprite list resource id
+
 	ActorFrameSequence *frames;	// Actor's frames
 	int framesCount;			// Actor's frames count
 	int frameListResourceId;	// Actor's frame list resource id
 	
-	//int walkPath[ACTOR_STEPS_MAX]; //todo: will gone
-
 	int tileDirectionsAlloced;
 	byte *tileDirections;
 

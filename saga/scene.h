@@ -254,7 +254,7 @@ class Scene {
 	void getSlopes(int &beginSlope, int &endSlope);
 
 	int clearSceneQueue(void);
-	int changeScene(int sceneNumber, int actorsEntrance);
+	int changeScene(int sceneNumber, int actorsEntrance, int fadeIn = SCENE_NOFADE);
 
 	bool initialized() { return _initialized; }
 

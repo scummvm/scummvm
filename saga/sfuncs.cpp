@@ -504,11 +504,14 @@ void Script::sfScriptGotoScene(SCRIPTFUNC_PARAMS) {
 	// This is used for latter demos where all places on world map except
 	// Tent Faire are substituted with LBM picture and short description
 	// TODO: implement
-	for (int i = 0; i < ARRAYSIZE(sceneSubstitutes); i++)
-		if (sceneSubstitutes[i].sceneId == sceneNumber)
+	for (int i = 0; i < ARRAYSIZE(sceneSubstitutes); i++) {
+	
+		if (sceneSubstitutes[i].sceneId == sceneNumber) {
 			debug(0, "Scene %d substitute exists", sceneNumber);
+		}
+	}
 
-//	_vm->_scene->loadScene(sceneNumber, BY_SCENE, _vm->_scene->SC_defaultScene, NULL, (sceneNumber = RID_ITE_ENDCREDIT_SCENE_1) ? SCENE_FADE : SCENE_NOFADE, entrance);
+	_vm->_scene->changeScene(sceneNumber, entrance, (sceneNumber == RID_ITE_ENDCREDIT_SCENE_1) ? SCENE_FADE : SCENE_NOFADE);
 
 	//TODO: placard stuff
 	_pendingVerb = kVerbNone;
@@ -913,7 +916,7 @@ void Script::sfSetFrame(SCRIPTFUNC_PARAMS) {
 	frameRange = _vm->_actor->getActorFrameRange(actorId, frameType);
 
 	if (frameRange->frameCount <= frameOffset) {
-	//	frameRange = _vm->_actor->getActorFrameRange(actorId, frameType);
+		frameRange = _vm->_actor->getActorFrameRange(actorId, frameType);
 
 		error("Wrong frameOffset 0x%X", frameOffset);
 	}
@@ -1012,8 +1015,9 @@ void Script::sfPlaceActor(SCRIPTFUNC_PARAMS) {
 	if (frameType >= 0) {
 		frameRange = _vm->_actor->getActorFrameRange(actorId, frameType);
 	
-		if (frameRange->frameCount <= frameOffset)
+		if (frameRange->frameCount <= frameOffset) {
 			error("Wrong frameOffset 0x%X", frameOffset);
+		}
 
 		actor->frameNumber = frameRange->frameIndex + frameOffset;
 		actor->currentAction = kActionFreeze;

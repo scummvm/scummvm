@@ -408,8 +408,6 @@ int Events::handleOneShot(EVENT *event) {
 			sthread->_threadVars[kThreadVarWithObject] = TO_LE_16(event->param5);
 			sthread->_threadVars[kThreadVarActor] = TO_LE_16(event->param6);
 
-//			_vm->_script->executeThread(sthread, event->param);
-
 			if (event->op == EVENT_EXEC_BLOCKING)
 				_vm->_script->completeThread();
 

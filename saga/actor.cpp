@@ -62,6 +62,9 @@ static int commonObjectCompare(const CommonObjectDataPointer& obj1, const Common
 static int tileCommonObjectCompare(const CommonObjectDataPointer& obj1, const CommonObjectDataPointer& obj2) {
 	int p1 = -obj1->location.u() - obj1->location.v() - obj1->location.z;
 	int p2 = -obj2->location.u() - obj2->location.v() - obj2->location.z;
+	//TODO:  for kObjNotFlat obj Height*3 of sprite should be adde to p1 and p2
+	//if (validObjId(obj1->id)) {
+
 	if (p1 == p2) {
 		return 0;
 	} else {
@@ -248,15 +251,15 @@ Actor::Actor(SagaEngine *vm) : _vm(vm) {
 			debug(9, "init obj id=%d index=%d", obj->id, obj->index);
 			obj->nameIndex = ITE_ObjectTable[i].nameIndex;
 			obj->scriptEntrypointNumber = ITE_ObjectTable[i].scriptEntrypointNumber;
-			obj->spriteListResourceId = ITE_ObjectTable[i].spriteListResourceId;
+			obj->frameNumber = ITE_ObjectTable[i].frameNumber;
 			obj->sceneNumber = ITE_ObjectTable[i].sceneIndex;
 			obj->interactBits = ITE_ObjectTable[i].interactBits;
 			obj->flags = 0;
-			obj->frameNumber = 0;
 
 			obj->location.x = ITE_ObjectTable[i].x;
 			obj->location.y = ITE_ObjectTable[i].y;
 			obj->location.z = ITE_ObjectTable[i].z;
+			obj->disabled = false;
 		}
 	
 	} else {
@@ -352,7 +355,7 @@ bool Actor::loadActorResources(ActorData *actor) {
 	resourceId = actor->spriteListResourceId;
 	debug(9, "Loading sprite resource id %d", resourceId);
 	if (_vm->_sprite->loadList(resourceId, actor->spriteList) != SUCCESS) {
-		warning("Unable to load sprite list");
+		warning("loadActorResources: Unable to load sprite list");
 		return false;
 	}
 
@@ -439,7 +442,7 @@ void Actor::realLocation(Location &location, uint16 objectId, uint16 walkFlags) 
 			angle = location.x & 15;
 			distance = location.y;
 
-			location.x = (angleLUT[angle][0] * distance) >> 6; //fixme - call real angle calc
+			location.x = (angleLUT[angle][0] * distance) >> 6;
 			location.y = (angleLUT[angle][1] * distance) >> 6;
 		}
 	}
@@ -506,6 +509,9 @@ ObjectData *Actor::getObj(uint16 objId) {
 
 	obj = _objs[objIdToIndex(objId)];
 
+	if (obj->disabled)
+		error("Actor::getObj disabled objId 0x%X", objId);
+
 	return obj;
 }
 
@@ -525,7 +531,7 @@ ActorData *Actor::getActor(uint16 actorId) {
 	actor = _actors[actorIdToIndex(actorId)];
 
 	if (actor->disabled)
-		warning("Actor::getActor disabled actorId 0x%X", actorId);
+		error("Actor::getActor disabled actorId 0x%X", actorId);
 
 	return actor;
 }
@@ -841,7 +847,6 @@ void Actor::handleActions(int msec, bool setup) {
 
 		case kActionWalkToPoint:
 		case kActionWalkToLink:
-			// tiled stuff
 			if (_vm->_scene->getFlags() & kSceneFlagISO) {
 				actor->partialTarget.delta(actor->location, delta);
 					
@@ -979,7 +984,6 @@ void Actor::handleActions(int msec, bool setup) {
 			break;
 
 		case kActionWalkDir:
-			// tiled stuff
 			if (_vm->_scene->getFlags() & kSceneFlagISO) {
 				actor->location.u() += tileDirectionLUT[actor->actionDirection][0];
 				actor->location.v() += tileDirectionLUT[actor->actionDirection][1];
@@ -1092,7 +1096,7 @@ void Actor::handleActions(int msec, bool setup) {
 
 		if ((actor->currentAction >= kActionWalkToPoint) && (actor->currentAction <= kActionWalkDir)) {
 			hitZone = NULL;
-			// tiled stuff
+
 			if (_vm->_scene->getFlags() & kSceneFlagISO) {
 				actor->location.toScreenPointUV(hitPoint);
 			} else {
@@ -1198,13 +1202,14 @@ void Actor::createDrawOrderList() {
 		if (actor->disabled) continue;
 		if (actor->sceneNumber != _vm->_scene->currentSceneNumber()) continue;
 
-			_drawOrderList.pushBack(actor, compareFunction);
+		_drawOrderList.pushBack(actor, compareFunction);
 
 		calcScreenPosition(actor);
 	}
 
 	for (i = 0; i < _objsCount; i++) {
 		obj = _objs[i];
+		if (obj->disabled) continue;
 		if (obj->sceneNumber != _vm->_scene->currentSceneNumber()) continue;
 
 		_drawOrderList.pushBack(obj, compareFunction);
@@ -1223,13 +1228,17 @@ bool Actor::getSpriteParams(CommonObjectData *commonObjectData, int &frameNumber
 		spriteList = &_vm->_sprite->_mainSprites;
 	} else {
 		frameNumber = commonObjectData->frameNumber;			
-		spriteList = &commonObjectData->spriteList;	
+		if (validActorId(commonObjectData->id)) {
+			spriteList = &((ActorData*)commonObjectData)->spriteList;	
+		} else {
+			spriteList = &_vm->_sprite->_mainSprites;
+		}
+		
 	}
 
+
+
 	if ((frameNumber < 0) || (spriteList->spriteCount <= frameNumber)) {
-		if (_vm->_scene->getFlags() & kSceneFlagISO) { // TODO: remove it
-			return false;
-		}
 		warning("Actor::getSpriteParams frameNumber invalid for object id 0x%X", commonObjectData->id);
 		return false;
 	}

@@ -34,6 +34,9 @@
 #include "saga/interface.h"
 #include "saga/objectmap.h"
 #include "saga/stream.h"
+#include "saga/actor.h"
+#include "saga/scene.h"
+#include "saga/isomap.h"
 
 namespace Saga {
 
@@ -57,7 +60,7 @@ HitZone::HitZone(MemoryReadStreamEndian *readStream, int index): _index(index) {
 
 	for (i = 0; i < _clickAreasCount; i++) {
 		clickArea = &_clickAreas[i];
-		clickArea->pointsCount = readStream->readUint16();
+		clickArea->pointsCount = readStream->readUint16LE();
 		
 		assert(clickArea->pointsCount);
 
@@ -189,6 +192,7 @@ void ObjectMap::freeMem() {
 		free(_hitZoneList);
 		_hitZoneList = NULL;
 	}
+	_hitZoneListCount = 0;
 }
 
 
@@ -197,8 +201,17 @@ void ObjectMap::draw(SURFACE *ds, const Point& testPoint, int color, int color2)
 	int i;
 	int hitZoneIndex;
 	char txtBuf[32];
+	Point pickPoint;
+	Location pickLocation;
+	pickPoint = testPoint;
+	if (_vm->_scene->getFlags() & kSceneFlagISO) {
+		assert(_vm->_actor->_protagonist);
+		pickPoint.y -= _vm->_actor->_protagonist->location.z;
+		_vm->_isoMap->screenPointToTileCoords(pickPoint, pickLocation);
+		pickLocation.toScreenPointUV(pickPoint);
+	}
 
-	hitZoneIndex = hitTest(testPoint);
+	hitZoneIndex = hitTest(pickPoint);
 
 	for (i = 0; i < _hitZoneListCount; i++) {		
 		_hitZoneList[i]->draw(ds, (hitZoneIndex == i) ? color2 : color);

@@ -120,6 +120,24 @@ SagaEngine::SagaEngine(GameDetector *detector, OSystem *syst)
 	_gameFileContexts = NULL;
 	_quit = false;
 
+	_sndRes = NULL;
+	_events = NULL;
+	_font = NULL;
+	_sprite = NULL;
+	_anim = NULL;
+	_script = NULL;
+	_interface = NULL;
+	_actor = NULL;
+	_palanim = NULL;
+	_scene = NULL;
+	_isoMap = NULL;
+	_gfx = NULL;
+	_console = NULL;
+	_render = NULL;
+	_music = NULL;
+	_sound = NULL;
+
+
 	// The Linux version of Inherit the Earth puts all data files in an
 	// 'itedata' sub-directory, except for voices.rsc
 	File::addDefaultDirectory(_gameDataPath + "itedata/");
@@ -147,23 +165,54 @@ SagaEngine::SagaEngine(GameDetector *detector, OSystem *syst)
 SagaEngine::~SagaEngine() {
 	int i;
 
-	delete _scene;
-	delete _actor;
-	delete _script;
-	delete _sprite;
-	delete _font;
-	delete _console;
-	delete _events;
-	delete _palanim;
-
-	delete _interface;
-	delete _render;
-	delete _isoMap;
-	delete _sndRes;
-	// Shutdown system modules */
-	delete _music;
-	delete _sound;
-	delete _anim;
+	if (_sndRes != NULL) {
+		delete _sndRes;
+	}
+	if (_events != NULL) {
+		delete _events;
+	}
+	if (_font != NULL) {
+		delete _font;
+	}
+	if (_sprite != NULL) {
+		delete _sprite;
+	}
+	if (_anim != NULL) {
+		delete _anim;
+	}
+	if (_script != NULL) {
+		delete _script;
+	}
+	if (_interface != NULL) {
+		delete _interface;
+	}
+	if (_actor != NULL) {
+		delete _actor;
+	}
+	if (_palanim != NULL) {
+		delete _palanim;
+	}
+	if (_scene != NULL) {
+		delete _scene;
+	}
+	if (_isoMap != NULL) {
+		delete _isoMap;
+	}
+	if (_render != NULL) {
+		delete _render;
+	}
+	if (_music != NULL) {
+		delete _music;
+	}
+	if (_sound != NULL) {
+		delete _sound;
+	}
+	if (_gfx != NULL) {
+		delete _gfx;
+	}
+	if (_console != NULL) {
+		delete _console;
+	}
 
 	if (_gameFileContexts != NULL) {
 		for (i = 0; i < _gameDescription->filesCount; i++) {
@@ -197,7 +246,7 @@ int SagaEngine::init(GameDetector &detector) {
 
 	// Detect game and open resource files
 	if (initGame() != SUCCESS) {
-		return -1;
+		return FAILURE;
 	}
 
 	// Initialize engine modules
@@ -215,8 +264,7 @@ int SagaEngine::init(GameDetector &detector) {
 
 	if (!_scene->initialized()) {
 		warning("Couldn't initialize scene module");
-		// TODO/FIXME: We are leaking here
-		return -1;
+		return FAILURE;
 	}
 
 	// System initialization
@@ -253,8 +301,7 @@ int SagaEngine::init(GameDetector &detector) {
 	
 	_render = new Render(this, _system);
 	if (!_render->initialized()) {
-		// TODO/FIXME: We are leaking here
-		return -1;
+		return FAILURE;
 	}
 
 	// Initialize system specific sound
@@ -266,7 +313,7 @@ int SagaEngine::init(GameDetector &detector) {
 	_interface->converseInit();
 	_script->setVerb(kVerbWalkTo);
 
-	return 0;
+	return SUCCESS;
 }
 
 int SagaEngine::go() {

@@ -257,14 +257,19 @@ void IsoMap::loadMulti(const byte * resourcePointer, size_t resourceLength) {
 
 void IsoMap::freeMem() {
 	free(_tileData);
+	_tileData = NULL;
 	_tilesCount = 0;
 	free(_tilePlatformList);
+	_tilePlatformList = NULL;
 	_tilePlatformsCount = 0;
 	free(_metaTileList);
+	_metaTileList = NULL;
 	_metaTilesCount = 0;
 	free(_multiTable);
+	_multiTable = NULL;
 	_multiCount = 0;
 	free(_multiTableData);
+	_multiTableData = NULL;
 	_multiDataCount = 0;
 }
 

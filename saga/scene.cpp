@@ -283,7 +283,7 @@ int Scene::skipScene() {
 	return SUCCESS;
 }
 
-int Scene::changeScene(int sceneNumber, int actorsEntrance) {
+int Scene::changeScene(int sceneNumber, int actorsEntrance, int fadeIn) {
 	assert(_initialized);
 
 	if (!_sceneLoaded) {
@@ -302,7 +302,7 @@ int Scene::changeScene(int sceneNumber, int actorsEntrance) {
 	}
 
 	endScene();
-	loadScene(sceneNumber, BY_SCENE, SC_defaultScene, NULL, SCENE_NOFADE, actorsEntrance);
+	loadScene(sceneNumber, BY_SCENE, SC_defaultScene, NULL, fadeIn, actorsEntrance);
 
 	return SUCCESS;
 }
@@ -965,6 +965,7 @@ int Scene::endScene() {
 	_actionMap->freeMem();
 	_entryList.freeMem();
 	_sceneStrings.freeMem();
+	_vm->_isoMap->freeMem();
 
 	_animList.clear();
 

@@ -81,7 +81,7 @@ struct RSCFILE_CONTEXT;
 struct StringList;
 
 enum ERRORCODE {
-	MEM = -2,
+	MEM = -2,//todo: remove
 	FAILURE = -1,
 	SUCCESS = 0
 };
