@@ -23,20 +23,48 @@
 
 std::string parseMsgText(const char *msg, char *msgId);
 
-TextObject::TextObject(const char *text, const int x, const int y, /*const*/ Font *font, const Color& fgColor) :
-		_fgColor(fgColor), _x(x), _y(y) {
+TextObject::TextObject() :
+		_created(false), _x(0), _y(0), _width(0), _height(0), _textBitmap(NULL),
+		_bitmapWidth(0), _bitmapHeight(0), _textObjectHandle(NULL), _justify(0),
+		_font(NULL), _text(NULL) {
+	memset(_textID, 0, 10);
+	_fgColor._vals[0] = 0;
+	_fgColor._vals[1] = 0;
+	_fgColor._vals[2] = 0;
+}
 
-	strcpy(_textID, text);
+TextObject::~TextObject() {
+	destroyBitmap();
+}
+
+void TextObject::setDefaultsTextObjectParams() {
+	_x = 0;
+	_y = 0;
+	_width = 0;
+	_height = 0;
+	_font = NULL;
+	_fgColor._vals[0] = 0;
+	_fgColor._vals[1] = 0;
+	_fgColor._vals[2] = 0;
+	_justify = 0;
+	_text = NULL;
+}
+
+void TextObject::createBitmap() {
+	if (_created)
+		destroyBitmap();
+
+	strcpy(_textID, _text);
 	char msgId[32];
 	std::string msg = parseMsgText(_textID, msgId);
 
-	// Calculate bitmap dimensions
-	_bitmapHeight = _bitmapWidth = 0;
+	_bitmapWidth = 0;
+	_bitmapHeight = 0;
 
 	for (int i = 0; msg[i] != '\0'; ++i) {
-		_bitmapWidth += font->getCharLogicalWidth(msg[i]) + font->getCharStartingCol(msg[i]);
+		_bitmapWidth += _font->getCharLogicalWidth(msg[i]) + _font->getCharStartingCol(msg[i]);
 
-		int h = font->getCharHeight(msg[i]) + font->getCharStartingLine(msg[i]);
+		int h = _font->getCharHeight(msg[i]) + _font->getCharStartingLine(msg[i]);
 		if (h > _bitmapHeight)
 			_bitmapHeight = h;
 	}
@@ -50,14 +78,14 @@ TextObject::TextObject(const char *text, const int x, const int y, /*const*/ Fon
 	int offset = 0;
 	for (int line = 0; line < _bitmapHeight; ++line) {
 		for (int c = 0; msg[c] != '\0'; ++c) {
-			uint32 charWidth = font->getCharWidth(msg[c]);
-			uint32 charLogicalWidth = font->getCharLogicalWidth(msg[c]);
-			uint8 startingCol = font->getCharStartingCol(msg[c]);
-			uint8 startingLine = font->getCharStartingLine(msg[c]);
+			uint32 charWidth = _font->getCharWidth(msg[c]);
+			uint32 charLogicalWidth = _font->getCharLogicalWidth(msg[c]);
+			uint8 startingCol = _font->getCharStartingCol(msg[c]);
+			uint8 startingLine = _font->getCharStartingLine(msg[c]);
 
-			if (startingLine < line + 1 && font->getCharHeight(msg[c]) + startingLine > line) {
+			if (startingLine < line + 1 && _font->getCharHeight(msg[c]) + startingLine > line) {
 				memcpy(_textBitmap + offset + startingCol,
-					font->getCharData(msg[c]) + charWidth * (line - startingLine), charWidth);
+					_font->getCharData(msg[c]) + charWidth * (line - startingLine), charWidth);
 			}
 
 			offset += charLogicalWidth + startingCol;
@@ -66,19 +94,18 @@ TextObject::TextObject(const char *text, const int x, const int y, /*const*/ Fon
 
 	_textObjectHandle = g_driver->prepareToTextBitmap(_textBitmap, _bitmapWidth, _bitmapHeight, _fgColor);
 
+	_created = true;
 	g_engine->registerTextObject(this);
 }
 
-TextObject::~TextObject() {
-	delete[] _textBitmap;
-	if (_textObjectHandle->bitmapData)
-		delete _textObjectHandle->bitmapData;
-	if (_textObjectHandle->surface)
-		SDL_FreeSurface((SDL_Surface *)_textObjectHandle->surface);
-	if (_textObjectHandle->texIds)
-		delete _textObjectHandle->texIds;
-
-	delete _textObjectHandle;
+void TextObject::destroyBitmap() {
+	if (_textObjectHandle) {
+		delete[] _textBitmap;
+		g_driver->destroyTextBitmap(_textObjectHandle);
+		delete _textObjectHandle;
+		_textObjectHandle = NULL;
+	}
+	_created = false;
 }
 
 void TextObject::draw() {

@@ -68,6 +68,7 @@ public:
 	void loadEmergFont();
 	TextObjectHandle *prepareToTextBitmap(uint8 *bitmap, int width, int height, const Color &fgColor);
 	void drawTextBitmap(int x, int y, TextObjectHandle *handle);
+	void destroyTextBitmap(TextObjectHandle *handle);
 
 	void prepareSmushFrame(int width, int height, byte *bitmap);
 	void drawSmushFrame(int offsetX, int offsetY);

@@ -1160,8 +1160,7 @@ void GetControlState() {
 	}
 }
 
-void getTextObjectParams(lua_Object table_obj, Font **font, int &x, int &y, int &width,
-						 int &height, Color **fgColor, bool &center, bool &ljustify) {
+void getTextObjectParams(TextObject *textObject, lua_Object table_obj) {
 	char *key_text = NULL;
 	lua_Object key;
 
@@ -1179,21 +1178,21 @@ void getTextObjectParams(lua_Object table_obj, Font **font, int &x, int &y, int 
 
 		key_text = lua_getstring(key);
 		if (strstr(key_text, "x"))
-			x = atoi(lua_getstring(lua_getresult(2)));
+			textObject->setX(atoi(lua_getstring(lua_getresult(2))));
 		else if (strstr(key_text, "y"))
-			y = atoi(lua_getstring(lua_getresult(2)));
+			textObject->setY(atoi(lua_getstring(lua_getresult(2))));
 		else if (strstr(key_text, "width"))
-			width = atoi(lua_getstring(lua_getresult(2)));
+			textObject->setWidth(atoi(lua_getstring(lua_getresult(2))));
 		else if (strstr(key_text, "height"))
-			height = atoi(lua_getstring(lua_getresult(2)));
+			textObject->setHeight(atoi(lua_getstring(lua_getresult(2))));
 		else if (strstr(key_text, "font"))
-			*font = check_font(2);
+			textObject->setFont(check_font(2));
 		else if (strstr(key_text, "fgcolor"))
-			*fgColor = check_color(2);
+			textObject->setFGColor(check_color(2));
 		else if (strstr(key_text, "center"))
-			center = !lua_isnil(lua_getresult(2));
+			textObject->setJustify(1);
 		else if (strstr(key_text, "ljustify"))
-			ljustify = !lua_isnil(lua_getresult(2));
+			textObject->setJustify(2);
 		else
 			error("Unknown getTextObjectParams key %s\n", key_text);
 	}
@@ -1206,23 +1205,27 @@ static void MakeTextObject() {
 	Font *font = NULL;
 
 	char *line = lua_getstring(lua_getparam(1));
-	lua_Object table_obj = lua_getparam(2);
-	if (lua_istable(table_obj))
-		getTextObjectParams(table_obj, &font, x, y, width, height, &fgColor, center, ljustify);
+	lua_Object tableObj = lua_getparam(2);
 
-	// Note: The debug func display_setup_name in _sets.LUA creates an empty TextObject,
-	// and fills it with ChangeTextObject
+	TextObject *textObject = new TextObject();
+	textObject->setDefaultsTextObjectParams();
 
-	TextObject *textObject = new TextObject((const char *)line, x, y, font, *fgColor);
+	if (lua_istable(tableObj))
+		getTextObjectParams(textObject, tableObj);
+
+	textObject->setText(line);
+	textObject->createBitmap();
+
 	lua_pushusertag(textObject, MKID('TEXT'));
+	lua_pushnumber(textObject->getBitmapWidth());
+	lua_pushnumber(textObject->getBitmapHeight());
 }
 
 static void KillTextObject() {
 	TextObject *textObjectParm;
 
-	if (lua_isnil(lua_getparam(1))) { // FIXME: check this.. nil is kill all lines?
+	if (lua_isnil(lua_getparam(1))) {
 		error("KillTextObject(NULL)");
-		//g_engine->killTextObjects();
 		return;
 	}
 
@@ -1239,77 +1242,38 @@ static void KillTextObject() {
 	}
 }
 
-// Called from both Callback and Main CTO functions. This routine is NOT
-// thread safe.
-static void ChangeTextObject_Real(char *keyName, void *data) {
-	static TextObject *modifyObject = NULL; // Set by main CTO call 'object'
-	lua_Object *keyValue = NULL;
-
-	if (strstr(keyName, "object")) {
-		modifyObject = (TextObject*)data;
-		return;
-	}
-
-	if (!modifyObject)	// We *need* a modify object for remaining calls
-		return;
-
-	keyValue = (lua_Object*)data;
-
-	// FIXME: X/Y sets depend on GetTextObjectDimensions
-
-	if (strstr(keyName, "fgcolor")) {
-		modifyObject->setColor(check_color(2));
-	} else if (strstr(keyName, "x")) {
-		//modifyObject->setX(atoi(lua_getstring(keyValue)));
-	} else if (strstr(keyName, "y")) {
-		//modifyObject->setY(atoi(lua_getstring(keyValue)));
-	} else {
-		printf("ChangeTextObject() - Unknown key %s\n", keyName);
-	}
-}
-
-// Callback from table walk method in Main CTO function
-static void ChangeTextObject_CB(void) {
-	char *keyName = NULL;
-	lua_Object keyValue;
-
-	keyName = lua_getstring(lua_getparam(1));
-	keyValue = lua_getresult(2);
-	ChangeTextObject_Real(keyName, &keyValue);
-};
-
-// Main CTO handler and LUA interface
 static void ChangeTextObject() {
-	return;
-	char *textID = lua_getstring(lua_getparam(1));
+	TextObject *textObject = check_textobject(1);
 	lua_Object tableObj = lua_getparam(2);
-	TextObject *modifyObject = NULL;
 
+	TextObject *modifyObject = NULL;
 	for (Engine::TextListType::const_iterator i = g_engine->textsBegin(); i != g_engine->textsEnd(); i++) {
 		TextObject *textO = *i;
 
-		if (strstr(textO->name(), textID)) {
+		if (strstr(textO->name(), textObject->name())) {
 			modifyObject = textO;
 			break;
 		}
 	}
 
 	if (!modifyObject)
-		error("ChangeTextObject(%s): Cannot find active text object", textID);
+		error("ChangeTextObject(): Cannot find active text object");
 
-	if (!lua_istable(tableObj))
-		return;
+	modifyObject->destroyBitmap();
 
-	ChangeTextObject_Real("object", modifyObject);
-	lua_pushobject(tableObj);
-	lua_pushcfunction(ChangeTextObject_CB);	// Callback handler
-	lua_call("foreach");
+	if (lua_istable(tableObj))
+		getTextObjectParams(modifyObject, tableObj);
+
+	modifyObject->createBitmap();
+
+	lua_pushnumber(modifyObject->getBitmapWidth());
+	lua_pushnumber(modifyObject->getBitmapHeight());
 }
 
 static void GetTextObjectDimensions() {
-	warning("STUB: GetTextObjectDimensions()");
-	lua_pushnumber(100);	// Dummy X
-	lua_pushnumber(100);	// Dummy Y
+	TextObject *textObjectParam = check_textobject(1);
+	lua_pushnumber(textObjectParam->getBitmapWidth());
+	lua_pushnumber(textObjectParam->getBitmapHeight());
 }
 
 static void SetSpeechMode() {

@@ -74,6 +74,7 @@ public:
 	virtual void loadEmergFont() = 0;
 	virtual TextObjectHandle *prepareToTextBitmap(uint8 *bitmap, int width, int height, const Color &fgColor) = 0;
 	virtual void drawTextBitmap(int x, int y, TextObjectHandle *handle) = 0;
+	virtual void destroyTextBitmap(TextObjectHandle *handle) = 0;
 
 	virtual void prepareSmushFrame(int width, int height, byte *bitmap) = 0;
 	virtual void drawSmushFrame(int offsetX, int offsetY) = 0;

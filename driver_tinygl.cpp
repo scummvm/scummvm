@@ -441,3 +441,8 @@ void DriverTinyGL::drawTextBitmap(int x, int y, TextObjectHandle *handle) {
 	SDL_SetColorKey((SDL_Surface *)handle->surface, SDL_SRCCOLORKEY, 0xf81f);
 	SDL_BlitSurface((SDL_Surface *)handle->surface, &srcRect, _screen, &dstRect);
 }
+
+void DriverTinyGL::destroyTextBitmap(TextObjectHandle *handle) {
+	delete handle->bitmapData;
+	SDL_FreeSurface((SDL_Surface *)handle->surface);
+}

@@ -28,19 +28,40 @@
 
 class TextObject {
 public:
-	TextObject(const char *text, const int x, const int y, /*const*/ Font *font, const Color& fgColor);
+	TextObject();
 	~TextObject();
-	void setX(int x) {_x = x; }
-	void setY(int y) {_y = y; }
-	void setColor(Color *newColor) { _fgColor = newColor; }
+	void createBitmap();
+	void destroyBitmap();
+	void setDefaultsTextObjectParams();
+	void setText(char *text) { _text = text; }
+	void setX(int x) { _x = x; }
+	void setY(int y) { _y = y; }
+	void setWidth(int width) { _width = width; }
+	void setHeight(int height) { _height = height; }
+	void setFGColor(Color *fgColor) { _fgColor = fgColor; }
+	void setFont(Font *font) { _font = font; }
+	void setJustify(int justify) { _justify = justify; }
+	int getBitmapWidth() { return _bitmapWidth; }
+	int getBitmapHeight() { return _bitmapHeight; }
 
 	const char *name() const { return _textID; }
 	void draw();
 
+	enum Justify {
+		NONE,
+		CENTER,
+		LJUSTIFY
+	};
+
 protected:
+	bool _created;
 	Color _fgColor;
 	int _x, _y;
-	char _textID[10];
+	int _width, _height;
+	int _justify;
+	Font *_font;
+	char *_text;
+	char _textID[32];
 	uint8 *_textBitmap;
 	int _bitmapHeight, _bitmapWidth;
 	Driver::TextObjectHandle *_textObjectHandle;
