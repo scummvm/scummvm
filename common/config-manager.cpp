@@ -104,7 +104,7 @@ void ConfigManager::switchFile(const String &filename) {
 
 	_filename = filename;
 	loadFile(_filename);
-	printf("Switched to configuration %s\n", _filename.c_str());
+	debug(1, "Switched to configuration %s", _filename.c_str());
 }
 
 void ConfigManager::loadFile(const String &filename) {
@@ -114,7 +114,7 @@ void ConfigManager::loadFile(const String &filename) {
 	String domain;
 
 	if (!(cfg_file = fopen(filename.c_str(), "r"))) {
-		debug(1, "Unable to open configuration file: %s.\n", filename.c_str());
+		debug(1, "Unable to open configuration file: %s", filename.c_str());
 	} else {
 		while (!feof(cfg_file)) {
 			t = buf;
@@ -156,7 +156,7 @@ void ConfigManager::loadFile(const String &filename) {
 
 					if (!(p = strchr(t, '='))) {
 						if (strlen(t))
-							warning("Config file buggy: there is junk: %s\n", t);
+							warning("Config file buggy: there is junk: %s", t);
 					} else {
 						*p = 0;
 						String key = ltrim(rtrim(t));
@@ -178,7 +178,7 @@ void ConfigManager::flushToDisk() {
 //		return;
 
 	if (!(cfg_file = fopen(_filename.c_str(), "w"))) {
-		warning("Unable to write configuration file: %s.\n", _filename.c_str());
+		warning("Unable to write configuration file: %s", _filename.c_str());
 	} else {
 		DomainMap::const_iterator d;
 
