@@ -340,6 +340,7 @@ void SmartfonSkip(OSystem_WINCE3 *wm, int repeat) {
 		wm->_event.event_code = OSystem::EVENT_KEYDOWN;
 		if (is_simon || is_bass) {
 			wm->_event.kbd.ascii = VK_ESCAPE;
+			wm->_event.kbd.keycode = VK_ESCAPE;
 			return;
 		}
 		/*

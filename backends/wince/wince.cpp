@@ -1116,6 +1116,7 @@ void save_key_mapping() {
 void OSystem_WINCE3::addEventKeyPressed(int ascii_code) {
 	_event.event_code = EVENT_KEYDOWN;
 	_event.kbd.ascii = ascii_code;
+	_event.kbd.keycode = ascii_code;
 }
 
 void OSystem_WINCE3::addEventRightButtonClicked() {

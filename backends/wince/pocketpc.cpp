@@ -254,6 +254,7 @@ BOOL PPCWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, OSystem_W
 						wm->_event.event_code = OSystem::EVENT_KEYDOWN;
 						if (is_simon || is_bass) {
 							wm->_event.kbd.ascii = mapKey(VK_ESCAPE);
+							wm->_event.kbd.keycode = mapKey(VK_ESCAPE);
 							break;
 						}
 						/*
