@@ -518,9 +518,9 @@ void Scumm::loadRoomObjects() {
 	if (_version == 8)
 		_numObjectsInRoom = (byte)READ_LE_UINT32(&(roomhdr->v8.numObjects));
 	else if (_version == 7)
-		_numObjectsInRoom = READ_LE_UINT16(&(roomhdr->v7.numObjects));
+		_numObjectsInRoom = (byte) READ_LE_UINT16(&(roomhdr->v7.numObjects));
 	else
-		_numObjectsInRoom = READ_LE_UINT16(&(roomhdr->old.numObjects));
+		_numObjectsInRoom = (byte) READ_LE_UINT16(&(roomhdr->old.numObjects));
 
 	if (_numObjectsInRoom == 0)
 		return;
@@ -645,7 +645,7 @@ void Scumm::loadRoomObjectsSmall() {
 	room = getResourceAddress(rtRoom, _roomResource);
 	roomhdr = (const RoomHeader *)findResourceData(MKID('RMHD'), room);
 
-	_numObjectsInRoom = READ_LE_UINT16(&(roomhdr->old.numObjects));
+	_numObjectsInRoom = (byte) READ_LE_UINT16(&(roomhdr->old.numObjects));
 
 	if (_numObjectsInRoom == 0)
 		return;
@@ -773,7 +773,7 @@ void Scumm::setupRoomObject(ObjectData *od, const byte *room, const byte *search
 		od->y_pos = READ_LE_UINT16(&imhd->v7.y_pos);
 		od->width = READ_LE_UINT16(&imhd->v7.width);
 		od->height = READ_LE_UINT16(&imhd->v7.height);
-		od->actordir = READ_LE_UINT16(&imhd->v7.actordir);
+		od->actordir = (byte) READ_LE_UINT16(&imhd->v7.actordir);
 
 	} else if (_version == 6) {
 		od->obj_nr = READ_LE_UINT16(&(cdhd->v6.obj_id));
@@ -933,7 +933,7 @@ const byte *Scumm::getObjOrActorName(int obj) {
 		else if (_features & GF_OLD_BUNDLE)
 			offset = *(objptr + 16);
 		else
-			offset = READ_LE_UINT16(objptr + 18);
+			offset = (byte) READ_LE_UINT16(objptr + 18);
 
 		return (objptr + offset);
 	}
