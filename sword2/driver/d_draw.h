@@ -78,7 +78,7 @@ extern "C" {
 
 
 extern uint8 *lpPalette;			// palette
-extern Surface *lpBackBuffer;		// back surface
+extern byte *lpBackBuffer;		// back surface
 // extern Surface *lpPrimarySurface;	// DirectDraw front buffer.
 extern uint8 *lpDD2;				// DirectDraw2 object
 extern BOOL bFullScreen;		// Defines whether the app is running in full screen mode or not.

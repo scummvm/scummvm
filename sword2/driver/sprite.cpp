@@ -1308,7 +1308,7 @@ int32 DrawSurface(_spriteInfo *s, uint8 *surface) {
 		sprite = surface;
 
 	src = sprite + rs.top * srcPitch + rs.left;
-	dst = lpBackBuffer->_pixels + lpBackBuffer->_width * rd.top + rd.left;
+	dst = lpBackBuffer + screenWide * rd.top + rd.left;
 
 	if (s->type & RDSPR_TRANS) {
 		for (y = 0; y < rd.bottom - rd.top; y++) {
@@ -1317,19 +1317,19 @@ int32 DrawSurface(_spriteInfo *s, uint8 *surface) {
 					dst[x] = src[x];
 			}
 			src += srcPitch;
-			dst += lpBackBuffer->_width;
+			dst += screenWide;
 		}
 	} else {
 		for (y = 0; y < rd.bottom - rd.top; y++)
-			memcpy(dst, src, lpBackBuffer->_width);
+			memcpy(dst, src, screenWide);
 		src += srcPitch;
-		dst += lpBackBuffer->_width;
+		dst += screenWide;
 	}
 
 	if (freeSprite)
 		free(sprite);
 
-	UploadRect(&rd);
+	// UploadRect(&rd);
 	return 0;
 }
 
@@ -1463,7 +1463,7 @@ int32 DrawSprite(_spriteInfo *s) {
 
 	if (scale != 256) {
 		if ((renderCaps & RDBLTFX_ARITHMETICSTRETCH) && !clipped)
-			backbuf = lpBackBuffer->_pixels + lpBackBuffer->_width * rd.top + rd.left;
+			backbuf = lpBackBuffer + screenWide * rd.top + rd.left;
 			
 
 		if (s->scaledWidth > SCALE_MAXWIDTH || s->scaledHeight > SCALE_MAXHEIGHT) {
@@ -1535,7 +1535,7 @@ int32 DrawSprite(_spriteInfo *s) {
 	// -----------------------------------------------------------------
 
 	src = sprite + rs.top * srcPitch + rs.left;
-	dst = lpBackBuffer->_pixels + lpBackBuffer->_width * rd.top + rd.left;
+	dst = lpBackBuffer + screenWide * rd.top + rd.left;
 
 	if (s->type & RDSPR_BLEND) {
 		if (renderCaps & RDBLTFX_ALLHARDWARE) {
@@ -1545,7 +1545,7 @@ int32 DrawSprite(_spriteInfo *s) {
 						dst[j] = src[j];
 				}
 				src += srcPitch;
-				dst += lpBackBuffer->_width;
+				dst += screenWide;
 			}
 		} else {
 			if (s->blend & 0x01) {
@@ -1560,7 +1560,7 @@ int32 DrawSprite(_spriteInfo *s) {
 						}
 					}
 					src += srcPitch;
-					dst += lpBackBuffer->_width;
+					dst += screenWide;
 				}
 			} else if (s->blend & 0x02) {
 				// FIXME: This case looks bogus to me. The
@@ -1589,7 +1589,7 @@ int32 DrawSprite(_spriteInfo *s) {
 						}
 					}
 					src += srcPitch;
-					dst += lpBackBuffer->_width;
+					dst += screenWide;
 				}
 			} else {
 				warning("DrawSprite: Invalid blended sprite");
@@ -1606,13 +1606,13 @@ int32 DrawSprite(_spriteInfo *s) {
 						dst[j] = src[j];
 				}
 				src += srcPitch;
-				dst += lpBackBuffer->_width;
+				dst += screenWide;
 			}
 		} else {
 			for (i = 0; i < rs.bottom - rs.top; i++) {
 				memcpy(dst, src, rs.right - rs.left);
 				src += srcPitch;
-				dst += lpBackBuffer->_width;
+				dst += screenWide;
 			}
 		}
 	}
@@ -1620,7 +1620,7 @@ int32 DrawSprite(_spriteInfo *s) {
 	if (freeSprite)
 		free(sprite);
 
-	UploadRect(&rd);
+	// UploadRect(&rd);
 
 /*
 

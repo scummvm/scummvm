@@ -122,7 +122,7 @@ static uint8 menuStatus[2] = {
 	RDMENU_HIDDEN, RDMENU_HIDDEN
 };
 
-static uint8 *icons[2][RDMENU_MAXPOCKETS] = {
+static byte *icons[2][RDMENU_MAXPOCKETS] = {
 	{ NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL }, 
 	{ NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL }
 };
@@ -134,14 +134,32 @@ static uint8 pocketStatus[2][RDMENU_MAXPOCKETS] = {
 
 static uint8 iconCount = 0;
 
+void ClearIconArea(int menu, int pocket, ScummVM::Rect *r) {
+	byte *dst;
+	int i;
+
+	r->top = menu * (RENDERDEEP + MENUDEEP) + (MENUDEEP - RDMENU_ICONDEEP) / 2;
+	r->bottom = r->top + RDMENU_ICONDEEP;
+	r->left = RDMENU_ICONSTART + pocket * (RDMENU_ICONWIDE + RDMENU_ICONSPACING);
+	r->right = r->left + RDMENU_ICONWIDE;
+
+	dst = lpBackBuffer + r->top * screenWide + r->left;
+
+	for (i = 0; i < RDMENU_ICONDEEP; i++) {
+		memset(dst, 0, RDMENU_ICONWIDE);
+		dst += screenWide;
+	}
+}
+
 int32 ProcessMenu(void) {
+	byte *src, *dst;
 	uint8 menu;
-	uint8 i;
+	uint8 i, j;
 	uint8 complete;
 	uint8 frameCount;
 	int32 curx, xoff;
 	int32 cury, yoff;
-	ScummVM::Rect r;
+	ScummVM::Rect r1, r2;
 	int32 delta;
 	static int32 lastTime = 0;
 
@@ -188,6 +206,11 @@ int32 ProcessMenu(void) {
 
 				// Propagate the animation from the first icon.
 				for (i = RDMENU_MAXPOCKETS - 1; i > 0; i--) {
+					if (icons[menu][i] && pocketStatus[menu][i] != 0 && pocketStatus[menu][i - 1] == 0) {
+						ClearIconArea(menu, i, &r1);
+						UploadRect(&r1);
+					}
+
 					pocketStatus[menu][i] = pocketStatus[menu][i - 1];
 					if (pocketStatus[menu][i] != 0)
 						complete = 0;
@@ -196,10 +219,16 @@ int32 ProcessMenu(void) {
 					complete = 0;
 
 				// ... and animate the first icon
-				if (pocketStatus[menu][0] != 0)
+				if (pocketStatus[menu][0] != 0) {
 					pocketStatus[menu][0]--;
 
-				// Check to see if the menu is fully open
+					if (pocketStatus[menu][0] == 0) {
+						ClearIconArea(menu, 0, &r1);
+						UploadRect(&r1);
+					}
+				}
+
+				// Check to see if the menu is fully closed
 				if (complete)
 					menuStatus[menu] = RDMENU_HIDDEN;
 			}
@@ -215,41 +244,49 @@ int32 ProcessMenu(void) {
 
 			for (i = 0; i < RDMENU_MAXPOCKETS; i++) {
 				if (icons[menu][i]) {
+					// Since we no longer clear the screen
+					// after each frame we need to clear
+					// the icon area.
+
+					ClearIconArea(menu, i, &r1);
+					
 					if (pocketStatus[menu][i] == MAXMENUANIMS) {
 						xoff = (RDMENU_ICONWIDE / 2);
-						r.left = curx - xoff;
-						r.right = r.left + RDMENU_ICONWIDE;
+						r2.left = curx - xoff;
+						r2.right = r2.left + RDMENU_ICONWIDE;
 						yoff = (RDMENU_ICONDEEP / 2);
-						r.top = cury - yoff;
-						r.bottom = r.top + RDMENU_ICONDEEP;
+						r2.top = cury - yoff;
+						r2.bottom = r2.top + RDMENU_ICONDEEP;
 					} else {
 						xoff = (RDMENU_ICONWIDE / 2) * pocketStatus[menu][i] / MAXMENUANIMS;
-						r.left = curx - xoff;
-						r.right = curx + xoff;
+						r2.left = curx - xoff;
+						r2.right = curx + xoff;
 						yoff = (RDMENU_ICONDEEP / 2) * pocketStatus[menu][i] / MAXMENUANIMS;
-						r.top = cury - yoff;
-						r.bottom = cury + yoff;
+						r2.top = cury - yoff;
+						r2.bottom = cury + yoff;
 					}
 
 					if (xoff != 0 && yoff != 0) {
-						byte *dst = lpBackBuffer->_pixels + r.top * lpBackBuffer->_width + r.left;
-						byte *src = icons[menu][i];
+						dst = lpBackBuffer + r2.top * screenWide + r2.left;
+						src = icons[menu][i];
 
 						if (pocketStatus[menu][i] != MAXMENUANIMS) {
 							SquashImage(
-								dst, lpBackBuffer->_width, r.right - r.left, r.bottom - r.top,
+								dst, screenWide, r2.right - r2.left, r2.bottom - r2.top,
 								src, RDMENU_ICONWIDE, RDMENU_ICONWIDE, RDMENU_ICONDEEP, NULL);
 						} else {
-							for (int j = 0; j < RDMENU_ICONDEEP; j++) {
+							for (j = 0; j < RDMENU_ICONDEEP; j++) {
 								memcpy(dst, src, RDMENU_ICONWIDE);
 								src += RDMENU_ICONWIDE;
-								dst += lpBackBuffer->_width;
+								dst += screenWide;
 							}
 						}
-						UploadRect(&r);
+						UploadRect(&r1);
 					}
 				}
 				curx += (RDMENU_ICONSPACING + RDMENU_ICONWIDE);
+				r1.left += (RDMENU_ICONSPACING + RDMENU_ICONWIDE);
+				r1.right += (RDMENU_ICONSPACING + RDMENU_ICONWIDE);
 			}
 		}
 	}
@@ -501,15 +538,31 @@ int32 HideMenu(uint8 menu) {
 	return RD_OK;
 }
 
-int32 CloseMenuImmediately(void)
-{
+int32 CloseMenuImmediately(void) {
+	ScummVM::Rect r;
+	int i;
+
 	menuStatus[0] = RDMENU_HIDDEN;
 	menuStatus[1] = RDMENU_HIDDEN;
+
+	for (i = 0; i < RDMENU_MAXPOCKETS; i++) {
+		if (icons[0][i]) {
+			ClearIconArea(0, i, &r);
+			UploadRect(&r);
+		}
+		if (icons[1][i]) {
+			ClearIconArea(1, i, &r);
+			UploadRect(&r);
+		}
+	}
+
 	memset(pocketStatus, 0, sizeof(uint8) * 2 * RDMENU_MAXPOCKETS);
-	return (RD_OK);
+	return RD_OK;
 }
 
 int32 SetMenuIcon(uint8 menu, uint8 pocket, uint8 *icon) {
+	ScummVM::Rect r;
+
 	debug(5, "stub SetMenuIcon( %d, %d )", menu, pocket);
 
 	// Check for invalid menu parameter.
@@ -525,6 +578,8 @@ int32 SetMenuIcon(uint8 menu, uint8 pocket, uint8 *icon) {
 		iconCount--;
 		free(icons[menu][pocket]);
 		icons[menu][pocket] = NULL;
+		ClearIconArea(menu, pocket, &r);
+		UploadRect(&r);
 	}
 
 	// Only put the icon in the pocket if it is not NULL

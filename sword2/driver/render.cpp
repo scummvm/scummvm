@@ -277,36 +277,28 @@ uint8 xblocks[MAXLAYERS];
 uint8 yblocks[MAXLAYERS];
 uint8 restoreLayer[MAXLAYERS];
 
-// Each layer is composed by several sub-blocks
+// blockSurfaces stores an array of sub-blocks for each of the parallax layers.
 
-Surface **blockSurfaces[MAXLAYERS] = { 0, 0, 0, 0, 0 };
+typedef struct {
+	byte data[BLOCKWIDTH * BLOCKHEIGHT];
+	bool transparent;
+} BlockSurface;
 
+BlockSurface **blockSurfaces[MAXLAYERS] = { 0, 0, 0, 0, 0 };
 
-
-void Surface::clear() {
-	memset(_pixels, 0, _width * _height);
-	g_sword2->_system->copy_rect(_pixels, _width, 0, 0, _width, _height);
+void UploadRect(ScummVM::Rect *r) {
+	g_system->copy_rect(lpBackBuffer + r->top * screenWide + r->left,
+		screenWide, r->left, r->top, r->right - r->left, r->bottom - r->top);
 }
 
-void Surface::blit(Surface *s, ScummVM::Rect *r) {
-	ScummVM::Rect clip_rect;
-
-	clip_rect.left = 0;
-	clip_rect.top = 0;
-	clip_rect.right = 640;
-	clip_rect.bottom = 480;
-
-	blit(s, r, &clip_rect);
-}
-
-void Surface::blit(Surface *s, ScummVM::Rect *r, ScummVM::Rect *clip_rect) {
+void BlitBlockSurface(BlockSurface *s, ScummVM::Rect *r, ScummVM::Rect *clip_rect) {
 	if (r->top > clip_rect->bottom || r->left > clip_rect->right || r->bottom <= clip_rect->top || r->right <= clip_rect->left)
 		return;
 
-	byte *src = s->_pixels;
+	byte *src = s->data;
 
 	if (r->top < clip_rect->top) {
-		src -= s->_width * (r->top - clip_rect->top);
+		src -= BLOCKWIDTH * (r->top - clip_rect->top);
 		r->top = clip_rect->top;
 	}
 	if (r->left < clip_rect->left) {
@@ -318,29 +310,27 @@ void Surface::blit(Surface *s, ScummVM::Rect *r, ScummVM::Rect *clip_rect) {
 	if (r->right > clip_rect->right)
 		r->right = clip_rect->right;
 
-	byte *dst = _pixels + r->top * _width + r->left;
+	byte *dst = lpBackBuffer + r->top * screenWide + r->left;
 	int i, j;
 
-	// FIXME: We first render the data to the back buffer, and then copy
-	// it to the backend. Since the same area will probably be copied
-	// several times, as each new parallax layer is rendered, this may be
-	// a bit inefficient.
-
-	for (i = 0; i < r->bottom - r->top; i++) {
-		for (j = 0; j < r->right - r->left; j++) {
-			if (src[j])
-				dst[j] = src[j];
+	if (s->transparent) {
+		for (i = 0; i < r->bottom - r->top; i++) {
+			for (j = 0; j < r->right - r->left; j++) {
+				if (src[j])
+					dst[j] = src[j];
+			}
+			src += BLOCKWIDTH;
+			dst += screenWide;
 		}
-		src += s->_width;
-		dst += _width;
+	} else {
+		for (i = 0; i < r->bottom - r->top; i++) {
+			memcpy(dst, src, r->right - r->left);
+			src += BLOCKWIDTH;
+			dst += screenWide;
+		}
 	}
 
-	UploadRect(r);
-}
-
-void UploadRect(ScummVM::Rect *r) {
-	g_system->copy_rect(lpBackBuffer->_pixels + r->top * lpBackBuffer->_width + r->left,
-		lpBackBuffer->_width, r->left, r->top, r->right - r->left, r->bottom - r->top);
+	// UploadRect(r);
 }
 
 #define SCALE_MAXWIDTH 512
@@ -445,7 +435,7 @@ void SquashImage(byte *dst, uint16 dstPitch, uint16 dstWidth, uint16 dstHeight, 
 					dst[x] = QuickMatch((uint8) (red / count), (uint8) (green / count), (uint8) (blue / count));
 			}
 			dst += dstPitch;
-			backbuf += lpBackBuffer->_width;
+			backbuf += screenWide;
 		}
 	} else {
 		for (y = 0; y < dstHeight; y++) {
@@ -606,7 +596,7 @@ int32 RestoreBackgroundLayer(_parallax *p, int16 l)
 	if (blockSurfaces[l]) {
 		for (i = 0; i < xblocks[l] * yblocks[l]; i++)
 			if (blockSurfaces[l][i])
-				delete blockSurfaces[l][i];
+				free(blockSurfaces[l][i]);
 
 		free(blockSurfaces[l]);
 		blockSurfaces[l] = NULL;
@@ -920,8 +910,6 @@ int32 RenderParallax(_parallax *p, int16 l) {
 	int16 i, j;
 	ScummVM::Rect r;
 
-	debug(9, "RenderParallax %d", l);
-
 	if (locationWide == screenWide)
 		x = 0;
 	else
@@ -937,9 +925,9 @@ int32 RenderParallax(_parallax *p, int16 l) {
 	// Leave enough space for the top and bottom menues
 
 	clip_rect.left = 0;
-	clip_rect.right = 640;
-	clip_rect.top = 40;
-	clip_rect.bottom = 440;
+	clip_rect.right = screenWide;
+	clip_rect.top = MENUDEEP;
+	clip_rect.bottom = screenDeep - MENUDEEP;
 
 	for (j = 0; j < yblocks[l]; j++) {
 		for (i = 0; i < xblocks[l]; i++) {
@@ -948,7 +936,7 @@ int32 RenderParallax(_parallax *p, int16 l) {
 				r.right = r.left + BLOCKWIDTH;
 				r.top = j * BLOCKHEIGHT - y + 40;
 				r.bottom = r.top + BLOCKHEIGHT;
-				lpBackBuffer->blit(blockSurfaces[l][i + j * xblocks[l]], &r, &clip_rect);
+				BlitBlockSurface(blockSurfaces[l][i + j * xblocks[l]], &r, &clip_rect);
 			}
 		}
 	}
@@ -956,7 +944,7 @@ int32 RenderParallax(_parallax *p, int16 l) {
 	parallaxScrollx = scrollx - x;
 	parallaxScrolly = scrolly - y;
 
-	return(RD_OK);
+	return RD_OK;
 }
 
 
@@ -1078,7 +1066,6 @@ int32 CopyScreenBuffer(void) {
 
 int32 InitialiseBackgroundLayer(_parallax *p) {
 	uint8 *memchunk;
-	uint32 *quaddata;
 	uint8 zeros;
 	uint16 count;
 	uint16 i, j, k;
@@ -1105,7 +1092,7 @@ int32 InitialiseBackgroundLayer(_parallax *p) {
 	xblocks[layer] = (p->w + BLOCKWIDTH - 1) >> BLOCKWBITS;
 	yblocks[layer] = (p->h + BLOCKHEIGHT - 1) >> BLOCKHBITS;
 
-	blockSurfaces[layer] = (Surface **) calloc(xblocks[layer] * yblocks[layer], sizeof(Surface *));
+	blockSurfaces[layer] = (BlockSurface **) calloc(xblocks[layer] * yblocks[layer], sizeof(BlockSurface *));
 	if (!blockSurfaces[layer])
 		return RDERR_OUTOFMEMORY;
 
@@ -1160,36 +1147,34 @@ int32 InitialiseBackgroundLayer(_parallax *p) {
 
 	for (i = 0; i < xblocks[layer] * yblocks[layer]; i++) {
 		bool block_has_data = false;
+		bool block_is_transparent = false;
 
 		data = memchunk + (p->w * BLOCKHEIGHT * (i / xblocks[layer])) + BLOCKWIDTH * (i % xblocks[layer]);
 
-		quaddata = (uint32 *) data;
-
 		for (j = 0; j < BLOCKHEIGHT; j++) {
-			for (k = 0; k < BLOCKWIDTH / 4; k++) {
-				if (*quaddata) {
+			for (k = 0; k < BLOCKWIDTH; k++) {
+				if (data[j * p->w + k])
 					block_has_data = true;
-					goto bailout;
-				}
-				quaddata++;
+				else
+					block_is_transparent = true;
 			}
-			quaddata += ((p->w - BLOCKWIDTH) / 4);
 		}
-
-bailout:
 
 		//  Only assign a surface to the block if it contains data.
 
 		if (block_has_data) {
-			blockSurfaces[layer][i] = new Surface(BLOCKWIDTH, BLOCKHEIGHT);
+			blockSurfaces[layer][i] = (BlockSurface *) malloc(sizeof(BlockSurface));
 
 			//  Copy the data into the surfaces.
-			dst = blockSurfaces[layer][i]->_pixels;
+			dst = blockSurfaces[layer][i]->data;
 			for (j = 0; j < BLOCKHEIGHT; j++) {
 				memcpy(dst, data, BLOCKWIDTH);
 				data += p->w;
 				dst += BLOCKWIDTH;
 			}
+
+			blockSurfaces[layer][i]->transparent = block_is_transparent;
+
 		} else
 			blockSurfaces[layer][i] = NULL;
 	}
@@ -1209,7 +1194,7 @@ int32 CloseBackgroundLayer(void) {
 		if (blockSurfaces[j]) {
 			for (i = 0; i < xblocks[j] * yblocks[j]; i++)
 				if (blockSurfaces[j][i])
-					delete blockSurfaces[j][i];
+					free(blockSurfaces[j][i]);
 			free(blockSurfaces[j]);
 			blockSurfaces[j] = NULL;
 		}

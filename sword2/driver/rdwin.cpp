@@ -544,7 +544,12 @@ int32 ServiceWindows(void)
 {
 	g_sword2->parseEvents();
 	FadeServer();
-	g_sword2->_system->update_screen();
+
+	// FIXME: We re-render the entire picture area of the screen for each
+	// frame, which is pretty horrible.
+
+	g_system->copy_rect(lpBackBuffer + MENUDEEP * screenWide, screenWide, 0, MENUDEEP, screenWide, screenDeep - 2 * MENUDEEP);
+	g_system->update_screen();
 //	warning("stub ServiceWindows");  // too noisy
 /*
 	MSG msg;

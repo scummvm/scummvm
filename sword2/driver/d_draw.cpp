@@ -28,7 +28,7 @@
 #define SCREENYOFFSET	40
 #define MILLISECSPERCYCLE 83
 
-Surface *lpBackBuffer;
+byte *lpBackBuffer;
 
 /*
 static LPDIRECTDRAW		lpDraw;				// DirectDraw object
@@ -119,7 +119,7 @@ int32 InitialiseDisplay(int16 width, int16 height, int16 colourDepth, int32 wind
 	screenWide = width;
 	screenDeep = height;
 
-	lpBackBuffer = new Surface(width, height);
+	lpBackBuffer = (byte *) malloc(screenWide * screenDeep);
 	return(RD_OK);
 }
 
@@ -205,9 +205,15 @@ int32 WaitForVbl(void)
 }
 
 int32 EraseBackBuffer( void ) {
-	debug(9, "EraseBackBuffer");
-	lpBackBuffer->clear();
-	return(RD_OK);
+	// Since the entire screen is redrawn each time, there probably isn't
+	// any need to actually clear the back buffer.
+	//
+	// At the very least, since the menu code now is solely responsible
+	// for its own parts of the screen, we'd only need to clear the
+	// picture area.
+
+	// memset(lpBackBuffer + MENUDEEP * screnWide, 0, screenWide * (screenDeep - 2 * MENUDEEP));
+	return RD_OK;
 }
 
 

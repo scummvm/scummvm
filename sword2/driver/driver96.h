@@ -1247,39 +1247,6 @@ typedef int BOOL;
 #define TRUE 1
 #define FALSE 0
 
-// Surface class to help replace LPDIRECTDRAWSURFACE.
-//
-// This class should be used as little as possible since it introduces an
-// extra layer of data copying. It should only be used where we decode
-// something once and draw it many times, such as the parallax layers.
-//
-// Even then it's only necessary if we also need to keep track of the
-// surface's dimensions.
-//
-// Since the building blocks of the parallax layers have constant size,
-// expect this class to go away.
-
-class Surface {
-public:
-	uint16 _width, _height;
-	uint16 _pitch;
-	byte *_pixels;
-
-	Surface(uint width, uint height) {
-		_width = width;
-		_height = height;
-		_pixels = (byte *) calloc(_width, _height);
-	}
-
-	void clear();
-	void blit(Surface *s, ScummVM::Rect *r);
-	void blit(Surface *s, ScummVM::Rect *r, ScummVM::Rect *clip_rect);
-
-	~Surface() {
-		free(_pixels);
-	}
-};
-
 //
 //	Structure definitions
 //	---------------------
@@ -1378,7 +1345,7 @@ typedef struct
 //	LPDIRECTDRAW		lpDraw;
 //	LPDIRECTDRAW2		lpDD2;
 //	Surface				*lpPrimarySurface;
-	Surface				*lpBackBuffer;
+	byte				*lpBackBuffer;
 //	LPDIRECTDRAWPALETTE	lpPalette;
 	int16				screenDeep;
 	int16				screenWide;
