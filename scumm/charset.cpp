@@ -40,6 +40,7 @@ CharsetRenderer::CharsetRenderer(ScummEngine *vm) {
 	_dropShadow = false;
 	_center = false;
 	_hasMask = false;
+	_textScreenID = kMainVirtScreen;
 	_ignoreCharsetMask = false;
 	_blitAlso = false;
 	_firstChar = false;
@@ -978,8 +979,10 @@ void CharsetRendererV3::printChar(int chr) {
 
 	_vm->markRectAsDirty(vs->number, _left, _left + width, drawTop, drawTop + height);
 	
-	if (!_ignoreCharsetMask)
+	if (!_ignoreCharsetMask) {
 		_hasMask = true;
+		_textScreenID = vs->number;
+	}
 
 	drawBits1(vs, dest_ptr, char_ptr, mask_ptr, drawTop, 8, 8);
 
@@ -1084,8 +1087,10 @@ void CharsetRendererClassic::printChar(int chr) {
 
 	_vm->markRectAsDirty(vs->number, _left, _left + width, drawTop, drawTop + height + offsY);
 
-	if (!_ignoreCharsetMask)
+	if (!_ignoreCharsetMask) {
 		_hasMask = true;
+		_textScreenID = vs->number;
+	}
 
 	byte *mask = _vm->getMaskBuffer(_left, drawTop, 0);
 	byte *dst = vs->screenPtr + vs->xstart + drawTop * vs->width + _left;
@@ -1290,8 +1295,10 @@ void CharsetRendererNut::printChar(int chr) {
 	shadow.right = _left + width + 2;
 	shadow.bottom = _top + height + 2;
 
-	if (!_ignoreCharsetMask)
+	if (!_ignoreCharsetMask) {
 		_hasMask = true;
+		_textScreenID = kMainVirtScreen;
+	}
 
 	_current->drawShadowChar(chr, _left, _top, _color, !_ignoreCharsetMask, _curId != 3);
 	_vm->markRectAsDirty(kMainVirtScreen, shadow);

@@ -21,8 +21,9 @@
 #ifndef CHARSET_H
 #define CHARSET_H
 
-#include "common/rect.h"
 #include "common/scummsys.h"
+#include "common/rect.h"
+#include "scumm/gfx.h"
 
 namespace Scumm {
 
@@ -47,7 +48,10 @@ protected:
 
 public:
 	bool _center;
-	bool _hasMask;
+
+	bool _hasMask;	// True if "removable" text is visible somewhere (should be called _hasText or so)
+	VirtScreenNumber _textScreenID;	// ID of the virtual screen on which the text is visible.
+
 	bool _ignoreCharsetMask;
 	bool _blitAlso;
 	bool _firstChar;
