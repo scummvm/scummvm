@@ -60,6 +60,7 @@ uint16 Player::_active_notes[128];
 Player::Player() :
 	_midi(0),
 	_parser(0),
+	_passThrough(0),
 	_parts(0),
 	_active(false),
 	_scanning(false),
@@ -76,7 +77,6 @@ Player::Player() :
 	_loop_counter(0),
 	_loop_to_tick(0),
 	_loop_from_tick(0),
-	_passThrough(0),
 	_speed(128),
 	_isMT32(false),
 	_isGM(false),
