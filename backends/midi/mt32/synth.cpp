@@ -315,14 +315,15 @@ bool Detect3DNow() {
 #define SYSEX_SIZE 512
 
 // These are all the filters I tried without much success
+
 int16 Moog1(int16 wg, float *hist, float usefilt, float res) {
-	float f, p, q;             //filter coefficients
-	float t1, t2;              //temporary buffers
+	float f, p, q;	// filter coefficients
+	float t1, t2;	// temporary buffers
 
 	// Set coefficients given frequency & resonance [0.0...1.0]
 	
 	float frequency = usefilt;
-	float in = (float)wg/32767.0;
+	float in = (float)wg / 32767.0;
 	float resonance = res / 31.0;
 	resonance = resonance * resonance;
 
@@ -335,7 +336,8 @@ int16 Moog1(int16 wg, float *hist, float usefilt, float res) {
 
 	// Filter (in [-1.0...+1.0])
 
-	in -= q * hist[4];                          //feedback
+	// feedback
+	in -= q * hist[4];
 	t1 = hist[1];
 	hist[1] = (in + hist[0]) * p - hist[1] * f;
 	t2 = hist[2];
@@ -344,35 +346,37 @@ int16 Moog1(int16 wg, float *hist, float usefilt, float res) {
 	hist[3] = (hist[2] + t2) * p - hist[3] * f;
 	hist[4] = (hist[3] + t1) * p - hist[4] * f;
 	
-	hist[4] = hist[4] - hist[4] * hist[4] * hist[4] * 0.166667f;    //clipping
+	// clipping
+	hist[4] = hist[4] - hist[4] * hist[4] * hist[4] * 0.166667f;
 	hist[0] = in;
 	//LOG_MSG("In %d Hist: %f", wg, hist[4]*32767);
-	return (int16)(hist[4]*32767.0);
+
+	return (int16)(hist[4] * 32767.0);
 }
 
 int16 Moog2(int16 wg, float *hist, float usefilt, float resonance) {
-	
-  float res = resonance / 30.0;
-  double f = usefilt;
-  double invf = 1.0 - f;
-  double fb = res * (1.0 - 0.15 * f * f);
-  float input = (float)wg/32767.0;
-  input -= hist[4] * fb;
-  input *= 0.35013 * (f*f)*(f*f);
-  hist[1] = input + 0.3 * hist[5] + (invf) * hist[1]; // Pole 1
-  hist[5]  = input;
-  hist[2] = hist[1] + 0.3 * hist[6] + (invf) * hist[2];  // Pole 2
-  hist[6]  = hist[1];
-  hist[3] = hist[2] + 0.3 * hist[7] + (invf) * hist[3];  // Pole 3
-  hist[7]  = hist[2];
-  hist[4] = hist[3] + 0.3 * hist[0] + (invf) * hist[4];  // Pole 4
-  hist[0]  = hist[3];
-  return (int16)(hist[4]*32767.0);
+	float res = resonance / 30.0;
+	double f = usefilt;
+	double invf = 1.0 - f;
+	double fb = res * (1.0 - 0.15 * f * f);
+	float input = (float)wg / 32767.0;
+
+	input -= hist[4] * fb;
+	input *= 0.35013 * (f*f)*(f*f);
+	hist[1] = input + 0.3 * hist[5] + (invf) * hist[1]; // Pole 1
+	hist[5] = input;
+	hist[2] = hist[1] + 0.3 * hist[6] + (invf) * hist[2];  // Pole 2
+	hist[6] = hist[1];
+	hist[3] = hist[2] + 0.3 * hist[7] + (invf) * hist[3];  // Pole 3
+	hist[7] = hist[2];
+	hist[4] = hist[3] + 0.3 * hist[0] + (invf) * hist[4];  // Pole 4
+	hist[0] = hist[3];
+
+	return (int16)(hist[4] * 32767.0);
 }
 
 int16 simpleLowpass(int16 wg, float *hist, float usefilt, float resonance) {
-
-	float in = (float)wg/32767.0;
+	float in = (float)wg / 32767.0;
 	float res_lp = resonance / 31.0;
 	res_lp = res_lp * res_lp;
 	float cut_lp = usefilt;
@@ -381,63 +385,58 @@ int16 simpleLowpass(int16 wg, float *hist, float usefilt, float resonance) {
 	n1 = hist[0];
 	n2 = hist[1];
 
-	fb_lp = res_lp+res_lp/(1-cut_lp);
-	n1=n1+cut_lp*(in-n1+fb_lp*(n1-n2));
-	n2=n2+cut_lp*(n1-n2);
+	fb_lp = res_lp + res_lp / (1 - cut_lp);
+	n1 = n1 + cut_lp * (in - n1 + fb_lp * (n1 - n2));
+	n2 = n2 + cut_lp * (n1 - n2);
 
 	hist[0] = n1;
 	hist[1] = n2;
 
-	return (int)(n2*32767.0);
-
+	return (int)(n2 * 32767.0);
 }
 
 /* Reverb stuff */
 
 #define NUM_COMBS 6
 
-typedef struct {
+struct LOWPASS_STATE {
 	float coef;
 	float lastval;
-} LOWPASS_STATE;
+};
 
-typedef struct {
+struct COMB_STATE {
 	float tau;
 	float g;
 	float gsqu;
 	float *delbuf;
 	int bufsiz;
 	int bufpos;
-} COMB_STATE;
+};
 
-typedef struct {
-	int           lastsamp;
-	int           cursamp;
-	int           done;
+struct ST_REVERB {
+	int lastsamp;
+	int cursamp;
+	int done;
 	LOWPASS_STATE lowpass[NUM_COMBS];
-	COMB_STATE    comb[NUM_COMBS];
-	COMB_STATE    allpass[2];
-} ST_REVERB;
+	COMB_STATE comb[NUM_COMBS];
+	COMB_STATE allpass[2];
+};
 
 class Reverb {
 private:
-
 	ST_REVERB *revstate;
-
 	int SR;
 
 public:
-
 	Reverb(float t60, float hlratio, float dur, float hall_f, int smpr);
-
 	~Reverb();
 
 	void run(float *lchan, float *rchan, float revfrac);
 
 	float lowpass(float input, LOWPASS_STATE *state);
 
-	float lpcomb(float input, LOWPASS_STATE* lpstate, COMB_STATE* cstate);
-	float allpassfilt(float input, COMB_STATE* state);
+	float lpcomb(float input, LOWPASS_STATE *lpstate, COMB_STATE *cstate);
+	float allpassfilt(float input, COMB_STATE *state);
 };
 
 /*
