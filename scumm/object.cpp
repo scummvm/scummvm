@@ -896,26 +896,21 @@ void Scumm::findObjectInRoom(FindObjectInRoom *fo, byte findWhat, uint id, uint 
 				obcdptr = findResource(MKID('OBCD'), searchptr);
 			if (obcdptr == NULL)
 				error("findObjectInRoom: Not enough code blocks in room %d", room);
-			if (_features & GF_SMALL_HEADER) {
-				if (READ_LE_UINT16(obcdptr + 6) == (uint16)id) {
-					fo->cdhd = NULL;
-					fo->obcd = obcdptr;
-					break;
-				}
-			} else {
-				cdhd = (CodeHeader *)findResourceData(MKID('CDHD'), obcdptr);
-				if (_features & GF_AFTER_V7)
-					id2 = READ_LE_UINT16(&(cdhd->v7.obj_id));
-				else if (_features & GF_AFTER_V6)
-					id2 = READ_LE_UINT16(&(cdhd->v6.obj_id));
-				else
-					id2 = READ_LE_UINT16(&(cdhd->v5.obj_id));
+			cdhd = (CodeHeader *)findResourceData(MKID('CDHD'), obcdptr);
 
-				if (id2 == (uint16)id) {
-					fo->cdhd = cdhd;
-					fo->obcd = obcdptr;
-					break;
-				}
+			if (_features & GF_SMALL_HEADER)
+				id2 = READ_LE_UINT16(obcdptr + 6);
+			else if (_features & GF_AFTER_V7)
+				id2 = READ_LE_UINT16(&(cdhd->v7.obj_id));
+			else if (_features & GF_AFTER_V6)
+				id2 = READ_LE_UINT16(&(cdhd->v6.obj_id));
+			else
+				id2 = READ_LE_UINT16(&(cdhd->v5.obj_id));
+
+			if (id2 == (uint16)id) {
+				fo->cdhd = cdhd;
+				fo->obcd = obcdptr;
+				break;
 			}
 			if (++i == numobj)
 				error("findObjectInRoom: Object %d not found in room %d", id, room);
@@ -934,26 +929,21 @@ void Scumm::findObjectInRoom(FindObjectInRoom *fo, byte findWhat, uint id, uint 
 			if (obimptr == NULL)
 				error("findObjectInRoom: Not enough image blocks in room %d", room);
 			imhd = (ImageHeader *)findResourceData(MKID('IMHD'), obimptr);
-			if (_features & GF_SMALL_HEADER) {
-				if (READ_LE_UINT16(obimptr + 6) == (uint16)id) {
-					fo->obim = obimptr;
-					fo->imhd = imhd;
-					break;
-				}
-			} else {
-				if (_features & GF_AFTER_V8)
-					// In V8, IMHD has no obj_id, but rather a name string. We map the name
-					// back to an object id using a table derived from the DOBJ resource.
-					id3 = _objectIDMap[imhd->v8.name];
-				else if (_features & GF_AFTER_V7)
-					id3 = READ_LE_UINT16(&imhd->v7.obj_id);
-				else
-					id3 = READ_LE_UINT16(&imhd->old.obj_id);
-				if (id3 == (uint16)id) {
-					fo->obim = obimptr;
-					fo->imhd = imhd;
-					break;
-				}
+			if (_features & GF_SMALL_HEADER)
+				id3 = READ_LE_UINT16(obimptr + 6);
+			else if (_features & GF_AFTER_V8)
+				// In V8, IMHD has no obj_id, but rather a name string. We map the name
+				// back to an object id using a table derived from the DOBJ resource.
+				id3 = _objectIDMap[imhd->v8.name];
+			else if (_features & GF_AFTER_V7)
+				id3 = READ_LE_UINT16(&imhd->v7.obj_id);
+			else
+				id3 = READ_LE_UINT16(&imhd->old.obj_id);
+
+			if (id3 == (uint16)id) {
+				fo->obim = obimptr;
+				fo->imhd = imhd;
+				break;
 			}
 			if (++i == numobj)
 				error("findObjectInRoom: Object %d image not found in room %d", id, room);
@@ -1271,7 +1261,6 @@ void Scumm::drawBlastObjects()
 		drawBlastObject(eo);
 	}
 }
-
 
 void Scumm::drawBlastObject(BlastObject *eo)
 {
