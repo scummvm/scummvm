@@ -403,8 +403,6 @@ void Scumm_v2::decodeParseString() {
 	}
 	*ptr = 0;
 
-	printf("TODO: Scumm_v2::decodeParseString(\"%s\") from %d\n", buffer, vm.slot[_currentScript].number);
-
 	// For now, always use textSlot 0. Not sure if there are any situations where we might
 	// need to us another one?	
 	int textSlot = 0;
@@ -928,14 +926,20 @@ void Scumm_v2::o2_walkActorTo() {
 }
 
 void Scumm_v2::o2_putActor() {
+	int act = getVarOrDirectByte(0x80);
 	int x, y;
 	Actor *a;
 
-	a = derefActorSafe(getVarOrDirectByte(0x80), "o2_putActor");
+	a = derefActorSafe(act, "o2_putActor");
 	x = getVarOrDirectByte(0x40) * 8;
 	y = getVarOrDirectByte(0x20) * 2;
 
-	assert(a);
+	if (!a) {
+		// FIXME - this shouldn't be necessary but for now works around problems
+		// in the Zak intro.
+		warning("o2_putActor: actor %d not found", act);
+		return;
+	}
 	a->putActor(x, y, a->room);
 }
 
@@ -945,8 +949,7 @@ void Scumm_v2::o2_startScript() {
 }
 
 void Scumm_v2::o2_panCameraTo() {
-	panCameraTo(getVarOrDirectByte(0x80) * 8, 0);	// FIXME: I'm pretty sure we actually pan
-							// by strip, not X/Y, here. Hence *8
+	panCameraTo(getVarOrDirectByte(0x80) * 8, 0);
 }
 
 void Scumm_v2::o2_walkActorToObject() {
@@ -954,6 +957,7 @@ void Scumm_v2::o2_walkActorToObject() {
 	Actor *a;
 
 	a = derefActorSafe(getVarOrDirectByte(0x80), "o2_walkActorToObject");
+	assert(a);
 	obj = getVarOrDirectByte(0x40);
 	if (whereIsObject(obj) != WIO_NOT_FOUND) {
 		int x, y, dir;
