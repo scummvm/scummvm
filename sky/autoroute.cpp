@@ -41,7 +41,7 @@ SkyAutoRoute::~SkyAutoRoute(void) {
 uint16 SkyAutoRoute::checkBlock(uint16 *blockPos) {
 
 	uint16 fieldVal, retVal = 0;
-    fieldVal = blockPos[1]; // field to the right
+	fieldVal = blockPos[1]; // field to the right
 	if ((!(fieldVal & 0x8000)) && (fieldVal != 0)) retVal = fieldVal;
 	fieldVal = (blockPos - 1)[0]; // field to the left
 	if ((!(fieldVal & 0x8000)) && (fieldVal != 0) && (fieldVal > retVal)) retVal = fieldVal;
@@ -63,8 +63,8 @@ uint16 SkyAutoRoute::autoRoute(Compact *cpt, uint16 **pSaveRoute) {
 	
 	uint8 stretch1, stretch2; // bl / bh
 	stretch1 = 0;
-	//FIXME: don't know if this is uint16 or uint32 (endian problem)
-	stretch2 = (uint8)*(uint32 *)SkyCompact::getCompactElem(cpt, C_GRID_WIDTH + cpt->extCompact->megaSet);
+	MegaSet *mega = (MegaSet *)SkyCompact::getCompactElem(cpt, C_GRID_WIDTH + cpt->extCompact->megaSet);
+	stretch2 = (uint8)(mega->gridWidth & 0xff);
 
 	uint16 cnt;
 	//First clear the bottom line and right hand edge of next line
@@ -113,7 +113,7 @@ uint16 SkyAutoRoute::autoRoute(Compact *cpt, uint16 **pSaveRoute) {
 			stretch1 = 0; // clear stretch factor
 			gridCntY--;
 		}
-	} while(gridCntX || gridCntY);
+	} while(gridCntY);
 	for (cnt = 0; cnt < ROUTE_GRID_WIDTH-1; cnt++) 
 		_routeGrid[cnt] = 0; // clear top line (right hand edge already done
 	
@@ -193,12 +193,12 @@ uint16 SkyAutoRoute::autoRoute(Compact *cpt, uint16 **pSaveRoute) {
 	//postBlockX <<= 1; postBlockY <<= 1; // multiply by 2
 	uint16 *routeDestCalc;
 	routeDestCalc = postBlockY * ROUTE_GRID_WIDTH + postBlockX + _routeGrid;
-    routeDestCalc += ROUTE_GRID_WIDTH+1; // skip blank edges (what?)
+	routeDestCalc += ROUTE_GRID_WIDTH+1; // skip blank edges (what?)
 
 	//initBlockX <<= 1; initBlockY <<= 1;
 	uint16 *routeSrcCalc;
 	routeSrcCalc = initBlockY * ROUTE_GRID_WIDTH + initBlockX + _routeGrid;
-    routeSrcCalc += ROUTE_GRID_WIDTH+1; // skip blank edges
+	routeSrcCalc += ROUTE_GRID_WIDTH+1; // skip blank edges
 	routeSrcCalc[0] = 1; //start this one off
 	// means: mark the block we start from as accessible
 
@@ -225,12 +225,12 @@ uint16 SkyAutoRoute::autoRoute(Compact *cpt, uint16 **pSaveRoute) {
 		cnty = numLines;
 		uint16 *yPushedSrc = routeSrcCalc;
 		do { // wallow_x
-            cntx = numCols;
+			cntx = numCols;
 			uint16 *xPushedSrc = routeSrcCalc;
 			do { // wallow
 				if (!routeSrcCalc[0]) {
 					// block wasn't yet done
-                    blockRet = checkBlock(routeSrcCalc);
+					blockRet = checkBlock(routeSrcCalc);
 					if (blockRet > 0) {
 						// this block is accessible
 						routeSrcCalc[0] = blockRet;
@@ -247,7 +247,7 @@ uint16 SkyAutoRoute::autoRoute(Compact *cpt, uint16 **pSaveRoute) {
 
 		foundRoute = false;
 		if (!routeDestCalc[0]) {
-            // we have done a section, see if we want to shift backwards (what?)
+			// we have done a section, see if we want to shift backwards (what?)
 			if (numLines < ROUTE_GRID_HEIGHT-4) {
 				routeSrcCalc -= directionY;
 				numLines++;
@@ -258,12 +258,12 @@ uint16 SkyAutoRoute::autoRoute(Compact *cpt, uint16 **pSaveRoute) {
 			}
 		} else foundRoute = true;			
 	} while ((!foundRoute) && gridChanged);
-	
+
 	if (!routeDestCalc[0]) {
 		// no route exists from routeSrc to routeDest
 		return 2;
 	}
-    // ok, we know now that it's possible to get from the start position to the desired
+	// ok, we know now that it's possible to get from the start position to the desired
 	// destination. Let's see how.
 	uint16 *saveRoute = routeData+(ROUTE_SPACE >> 1)-1; // route_space is given in bytes so >> 1
 	saveRoute[0] = 0; // route is null terminated
@@ -329,7 +329,7 @@ uint16 SkyAutoRoute::autoRoute(Compact *cpt, uint16 **pSaveRoute) {
 			error("AutoRoute:: Can't find way backwards through _routeGrid");
 		}
 	} while (!routeDone);
-    // the route is done. if there was an initial x/y movement tag it onto the start
+	// the route is done. if there was an initial x/y movement tag it onto the start
 	if (initX < 0) {
         saveRoute -= 4;
 		saveRoute[1] = RIGHTY;
@@ -340,7 +340,7 @@ uint16 SkyAutoRoute::autoRoute(Compact *cpt, uint16 **pSaveRoute) {
 		saveRoute[0] = (initX+7)&0xFFF8;
 	}
 	// I wonder why initY isn't checked
-    // saveRoute should now point to routeData
+	// saveRoute should now point to routeData
 	if (routeData > saveRoute) error("Autoroute: Internal pointer error! routeData overflow.");
 	*pSaveRoute = saveRoute;
 	return 1;

@@ -47,9 +47,10 @@ static const LogicTable logicTable[] = {
 	&SkyLogic::simpleAnim,	 // 16 Module anim without x,y's
 };
 
-SkyLogic::SkyLogic(SkyDisk *skyDisk, SkyGrid *grid) {
+SkyLogic::SkyLogic(SkyDisk *skyDisk, SkyGrid *skyGrid) {
 	_skyDisk = skyDisk;
-	_grid = grid;
+	_skyGrid = skyGrid;
+	_skyAutoRoute = new SkyAutoRoute(_skyGrid);
 
 	for (uint i = 0; i < sizeof(_moduleList)/sizeof(uint16*); i++)
 		_moduleList[i] = 0;
@@ -60,6 +61,9 @@ SkyLogic::SkyLogic(SkyDisk *skyDisk, SkyGrid *grid) {
 
 void SkyLogic::engine() {
 	Compact *compact2 = SkyState::fetchCompact(141); // logic list
+
+	printf("XXXXXXX: loading grids\n");
+	_skyGrid->loadGrids();
 
 	while (compact2->logic) { // 0 means end of list
 		if (compact2->logic == 0xffff) {
@@ -78,13 +82,13 @@ void SkyLogic::engine() {
 		// ok, here we process the logic bit system
 
 		if (_compact->status & (1 << 7))
-			_grid->removeObjectFromWalk(_compact);
+			_skyGrid->removeObjectFromWalk(_compact);
 
 		SkyDebug::logic(_compact->logic);
 		(this->*logicTable[_compact->logic]) ();
 
 		if (_compact->status & (1 << 7))
-			_grid->objectToWalk(_compact);
+			_skyGrid->objectToWalk(_compact);
 
 		// a sync sent to the compact is available for one cycle
 		// only. that cycle has just ended so remove the sync.
@@ -123,12 +127,8 @@ void SkyLogic::logicScript() {
 }
 
 void SkyLogic::autoRoute() {
-	error("autoRoute unimplemented");
-	uint16 *route;
-	route = 0;
-	
-	warning("autoRoute unimplemented");
-	uint32 ret = 0; // = autoRoute(route);
+	uint16 *route = 0;
+	uint16 ret = _skyAutoRoute->autoRoute(_compact, &route);
 
 	_compact->logic = L_SCRIPT; // continue the script
 

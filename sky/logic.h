@@ -25,10 +25,11 @@
 #include "sky/sky.h"
 #include "sky/disk.h"
 #include "sky/grid.h"
+#include "sky/autoroute.h"
 
 class SkyLogic {
 public:
-	SkyLogic(SkyDisk *skyDisk, SkyGrid *grid);
+	SkyLogic(SkyDisk *skyDisk, SkyGrid *skyGrid);
 	void engine();
 
 	void lreturn();
@@ -181,7 +182,8 @@ protected:
 	uint32 _scriptVariables[838];
 
 	SkyDisk *_skyDisk;
-	SkyGrid *_grid;
+	SkyGrid *_skyGrid;
+	SkyAutoRoute *_skyAutoRoute;
 };
 
 #endif
