@@ -2104,9 +2104,11 @@ void ScummEngine_v72he::o72_getPixel() {
 	}
 
 	switch (subOp) {
+	case 9: // HE 100
 	case 218:
 		area = *vs->getBackPixels(x, y - vs->topline);
 		break;
+	case 8: // HE 100
 	case 219:
 		area = *vs->getPixels(x, y - vs->topline);
 		break;

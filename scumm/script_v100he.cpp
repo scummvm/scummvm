@@ -169,7 +169,7 @@ void ScummEngine_v100he::setupOpcodes() {
 		OPCODE(o6_putActorAtXY),
 		OPCODE(o6_invalid),
 		/* 64 */
-		OPCODE(o72_redimArray),
+		OPCODE(o100_redimArray),
 		OPCODE(o60_rename),
 		OPCODE(o6_stopObjectCode),
 		OPCODE(o6_invalid),
@@ -224,7 +224,7 @@ void ScummEngine_v100he::setupOpcodes() {
 		OPCODE(o6_walkActorToObj),
 		OPCODE(o6_walkActorTo),
 		/* 90 */
-		OPCODE(o60_writeFile),
+		OPCODE(o72_writeFile),
 		OPCODE(o72_writeINI),
 		OPCODE(o80_writeConfigFile),
 		OPCODE(o6_abs),
@@ -306,8 +306,8 @@ void ScummEngine_v100he::setupOpcodes() {
 		/* D0 */
 		OPCODE(o6_getRandomNumber),
 		OPCODE(o6_getRandomNumberRange),
-		OPCODE(o60_readFile),
 		OPCODE(o6_invalid),
+		OPCODE(o72_readFile),
 		/* D4 */
 		OPCODE(o72_readINI),
 		OPCODE(o80_readConfigFile),
@@ -596,8 +596,6 @@ void ScummEngine_v100he::o100_arrayOps() {
 		ah = defineArray(array, kStringArray, 0, 0, 0, len);
 		memcpy(ah->data, string, len);
 		break;
-
-
 	case 77:			// SO_ASSIGN_STRING
 		copyScriptString(string);
 		len = resStrLen(string) + 1;
@@ -626,7 +624,6 @@ void ScummEngine_v100he::o100_arrayOps() {
 			writeArray(array, 0, b + c, pop());
 		}
 		break;
-
 	case 130:
 		len = getStackList(list, ARRAYSIZE(list));
 		dim1end = pop();
@@ -1103,6 +1100,27 @@ void ScummEngine_v100he::o100_paletteOps() {
 		error("o100_paletteOps: Unknown case %d", subOp);
 	}
 	debug(0,"o100_paletteOps stub (%d)", subOp);
+}
+
+void ScummEngine_v100he::o100_redimArray() {
+	int newX, newY;
+	newY = pop();
+	newX = pop();
+
+	byte subOp = fetchScriptByte();
+	switch (subOp) {
+	case 42:
+		redimArray(fetchScriptWord(), 0, newX, 0, newY, kIntArray);
+		break;
+	case 43:
+		redimArray(fetchScriptWord(), 0, newX, 0, newY, kDwordArray);
+		break;
+	case 45:
+		redimArray(fetchScriptWord(), 0, newX, 0, newY, kByteArray);
+		break;
+	default:
+		error("o100_redimArray: default type %d", subOp);
+	}
 }
 
 void ScummEngine_v100he::o100_roomOps() {

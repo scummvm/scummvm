@@ -934,6 +934,7 @@ protected:
 	void o100_wizImageOps();
 	void o100_dim2dim2Array();
 	void o100_paletteOps();
+	void o100_redimArray();
 	void o100_roomOps();
 	void o100_startSound();
 	void o100_unknown26();
