@@ -567,7 +567,7 @@ void ScummEngine_v72he::decodeScriptString(byte *dst, bool scriptString) {
 			if (chr == 0x64)
 				dst += snprintf((char *)dst, 5, "%d", args[val++]);
 			else if (chr == 0x73)
-				dst += addStringToStack(dst, 100, args[val++]);
+				dst += addStringToStack(dst, 256, args[val++]);
 			continue;
 		}
 		*dst++ = chr;

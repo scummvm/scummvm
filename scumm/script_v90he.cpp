@@ -105,12 +105,12 @@ void ScummEngine_v90he::setupOpcodes() {
 		OPCODE(o6_invalid),
 		OPCODE(o90_unknown2F),
 		/* 30 */
-		OPCODE(o90_unknown30),
+		OPCODE(o90_mod),
 		OPCODE(o6_invalid),
 		OPCODE(o6_invalid),
 		OPCODE(o6_invalid),
 		/* 34 */
-		OPCODE(o72_findAllObjects),
+		OPCODE(o90_unknown34),
 		OPCODE(o6_invalid),
 		OPCODE(o6_invalid),
 		OPCODE(o90_unknown37),
@@ -242,7 +242,7 @@ void ScummEngine_v90he::setupOpcodes() {
 		/* 9C */
 		OPCODE(o6_roomOps),
 		OPCODE(o72_actorOps),
-		OPCODE(o72_verbOps),
+		OPCODE(o90_unknown9E),
 		OPCODE(o6_getActorFromXY),
 		/* A0 */
 		OPCODE(o6_findObject),
@@ -804,9 +804,33 @@ void ScummEngine_v90he::o90_unknown2F() {
 	debug(1,"o90_unknown2F stub (%d)", subOp);
 }
 
-void ScummEngine_v90he::o90_unknown30() {
+void ScummEngine_v90he::o90_mod() {
 	int a = pop();
-	debug(1,"o90_unknown30 stub (%d)", a);
+	if (a == 0)
+		error("modulus by zero");
+	push(pop() % a);
+}
+
+void ScummEngine_v90he::o90_unknown34() {
+	// Incomplete
+	int args[16];
+
+	getStackList(args, ARRAYSIZE(args));
+	int room = pop();
+	int i = 1;
+
+	if (room != _currentRoom)
+		warning("o72_findAllObjects: current room is not %d", room);
+	writeVar(0, 0);
+	defineArray(0, kDwordArray, 0, 0, 0, _numLocalObjects + 1);
+	writeArray(0, 0, 0, _numLocalObjects);
+	
+	while (i < _numLocalObjects) {
+		writeArray(0, 0, i, _objs[i].obj_nr);
+		i++;
+	}
+	
+	push(readVar(0));
 }
 
 void ScummEngine_v90he::o90_unknown37() {
@@ -851,6 +875,47 @@ void ScummEngine_v90he::o90_unknown37() {
 	defineArray(fetchScriptWord(), data, dim2start, dim2end, dim1start, dim1end);
 
 	debug(1,"o90_unknown37 stub");
+}
+
+void ScummEngine_v90he::o90_unknown9E() {
+	int subOp = fetchScriptByte();
+	subOp -= 57;
+
+	switch (subOp) {
+		case 0:
+			pop();
+			break;
+		case 6:
+			pop();
+			pop();
+			break;
+		case 9:
+			pop();
+			pop();
+			pop();
+			pop();
+			pop();
+			break;
+		case 13:
+			pop();
+			pop();
+			pop();
+			break;
+		case 29:
+			pop();
+			break;
+		case 118:
+			pop();
+			pop();
+			break;
+		case 160:
+			break;
+		case 198:
+			break;
+		default:
+			error("o90_unknown9E: Unknown case %d", subOp);
+	}
+	debug(1,"o90_unknown9E stub (%d)", subOp);
 }
 
 } // End of namespace Scumm

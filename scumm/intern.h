@@ -824,8 +824,10 @@ protected:
 	void o90_unknown28();
 	void o90_unknown29();
 	void o90_unknown2F();
-	void o90_unknown30();
+	void o90_mod();
+	void o90_unknown34();
 	void o90_unknown37();
+	void o90_unknown9E();
 };
 
 class ScummEngine_v7 : public ScummEngine_v6 {
