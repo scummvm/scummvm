@@ -254,6 +254,9 @@ public:
 	 *       API are probably going to remove it.
 	 */
 	virtual void setPalette(const byte *colors, uint start, uint num) = 0;
+	
+	/** Clear the screen to black */
+	virtual void clearScreen() {;}
 
 	/**
 	 * Blit a bitmap to the virtual screen.

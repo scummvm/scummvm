@@ -514,6 +514,20 @@ void OSystem_SDL::setFullscreenMode(bool enable) {
 	}
 }
 
+void OSystem_SDL::clearScreen() {
+	// Try to lock the screen surface
+	if (SDL_LockSurface(_screen) == -1)
+		error("SDL_LockSurface failed: %s", SDL_GetError());
+
+	byte *dst = (byte *)_screen->pixels;
+
+	// Clear the screen
+	memset(dst, 0, _screenWidth * _screenHeight);
+
+	// Unlock the screen surface
+	SDL_UnlockSurface(_screen);
+}
+
 void OSystem_SDL::copyRectToScreen(const byte *src, int pitch, int x, int y, int w, int h) {
 	if (_screen == NULL)
 		return;

@@ -64,6 +64,9 @@ public:
 	// The screen will not be updated to reflect the new bitmap
 	void copyRectToScreen(const byte *src, int pitch, int x, int y, int w, int h);
 
+	// Clear the screen
+	void clearScreen();
+
 	// Update the dirty areas of the screen
 	void updateScreen();
 

@@ -195,6 +195,9 @@ static int launcherDialog(GameDetector &detector, OSystem *system) {
 	// to fix all backends to support it, if they don't already.
 	system->initSize(320, 200);
 	
+	// Clear the main screen
+	system->clearScreen();
+
 	// FIXME - mouse cursors are currently always set via 8 bit data.
 	// Thus for now we need to setup a dummy palette. On the long run, we might
 	// want to add a setMouseCursor_overlay() method to OSystem, which would serve
