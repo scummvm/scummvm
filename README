@@ -277,7 +277,7 @@ ScummVM and wish to commit it into the main CVS, feel free to contact us!
         Windows CE      - SDL           (iPaq and other handheld devices)
         Linux           - X11 & OSS audio (includes iPaqs running Linux)
         Mac OS X        - SDL
-        AmigaOS         - SDL/AGA
+        AmigaOS         - SDL
         MorphOS         - Custom backend
         BeOS            - SDL
         Acorn (RiscOS)  - ???
