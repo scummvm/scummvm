@@ -367,6 +367,9 @@
 				<File
 					RelativePath="sound\rate.cpp">
 				</File>
+				<File
+					RelativePath="sound\rate.h">
+				</File>
 			</Filter>
 			<Filter
 				Name="gui"
