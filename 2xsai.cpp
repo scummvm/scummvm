@@ -761,3 +761,67 @@ void AdvMame2x(uint8 *srcPtr, uint32 srcPitch, uint8 *null, uint8 *dstPtr, uint3
 		q += nextlineDst << 1;
 	}
 }
+
+
+/* Beware! Contrary to the other functions in this file, this blits from 8 to 8 bit! */
+void Normal1x(uint8 *srcPtr, uint32 srcPitch, uint8 *null, uint8 *dstPtr, uint32 dstPitch, int width, int height)
+{
+	uint8* r;
+
+	for(int j = 0; j < height; ++j) {
+		r = dstPtr;
+		for(int i = 0; i < width; ++i, ++r) {
+			uint8 color = *(srcPtr + i );
+
+			*r = color;
+		}
+		srcPtr += srcPitch;
+		dstPtr += dstPitch;
+	}
+}
+
+/* Beware! Contrary to the other functions in this file, this blits from 8 to 8 bit! */
+void Normal2x(uint8 *srcPtr, uint32 srcPitch, uint8 *null, uint8 *dstPtr, uint32 dstPitch, int width, int height)
+{
+	uint8* r;
+
+	for(int j = 0; j < height; ++j) {
+		r = dstPtr;
+		for(int i = 0; i < width; ++i, r+=2) {
+			uint8 color = *(srcPtr + i );
+
+			*(r) = color;
+			*(r + 1) = color;
+			*(r + dstPitch) = color;
+			*(r + dstPitch + 1) = color;
+		}
+		srcPtr += srcPitch;
+		dstPtr += dstPitch << 1;
+	}
+}
+
+/* Beware! Contrary to the other functions in this file, this blits from 8 to 8 bit! */
+void Normal3x(uint8 *srcPtr, uint32 srcPitch, uint8 *null, uint8 *dstPtr, uint32 dstPitch, int width, int height)
+{
+	uint8* r;
+	uint32 dstPitch2 = dstPitch << 1;
+
+	for(int j = 0; j < height; ++j) {
+		r = dstPtr;
+		for(int i = 0; i < width; ++i, r+=3) {
+			uint8 color = *(srcPtr + i);
+
+			*(r + 0) = color;
+			*(r + 1) = color;
+			*(r + 2) = color;
+			*(r + 0 + dstPitch) = color;
+			*(r + 1 + dstPitch) = color;
+			*(r + 2 + dstPitch) = color;
+			*(r + 0 + dstPitch2) = color;
+			*(r + 1 + dstPitch2) = color;
+			*(r + 2 + dstPitch2) = color;
+		}
+		srcPtr += srcPitch;
+		dstPtr += dstPitch * 3;
+	}
+}
