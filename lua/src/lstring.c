@@ -168,7 +168,7 @@ static TaggedString *insert_u (void *buff, int tag, stringtable *tb)
     i = j;
   else
     tb->nuse++;
-  ts = tb->hash[i] = newone_u(buff, tag, h);
+  ts = tb->hash[i] = newone_u((char*)buff, tag, h);
   return ts;
 }
 
