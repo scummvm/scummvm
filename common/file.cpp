@@ -47,10 +47,12 @@ FILE *File::fopenNoCase(const char *filename, const char *directory, const char 
 		"data/",
 		"DATA/",
 		"resource/",
-		"RESOURCE/"
+		"RESOURCE/",
+		"voices/",
+		"VOICES/"
 	};
 
-	for (uint8 l = 0; l < 7; l++) {
+	for (uint8 l = 0; l < 9; l++) {
 		strcpy(buf, directory);
 		if (directory[0] != 0) {
 #ifdef __MORPHOS__
