@@ -76,10 +76,6 @@ void Engine::mainLoop() {
       if (event.type == SDL_KEYDOWN) {
 	if (event.key.keysym.sym == SDLK_q)
 	  return;
-	else if (event.key.keysym.sym == SDLK_F12) {
-	  printf("Enter lua code, ^D to end\n> ");
-	  lua_dofile(NULL);
-	}
       }
     }
 
