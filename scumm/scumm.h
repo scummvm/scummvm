@@ -918,10 +918,10 @@ public:
 	void description();
 	byte *_msgPtrToAdd;
 	byte *addMessageToStack(byte *msg);
-	void unkAddMsgToStack2(int var);
-	void unkAddMsgToStack3(int var);
-	void unkAddMsgToStack4(int var);
-	void unkAddMsgToStack5(int var);
+	void addIntToStack(int var);
+	void addVerbToStack(int var);
+	void addNameToStack(int var);
+	void addStringToStack(int var);
 	void unkMessage1();
 	void unkMessage2();
 	void clearMsgQueue();

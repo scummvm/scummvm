@@ -391,22 +391,24 @@ void Scumm::CHARSET_1()
 		}
 
 		c = *buffer++;
-		if (c == 3) {
-			if (_haveMsg != 0xFE)
-				_haveMsg = 0xFF;
-			_keepText = false;
-			break;
-		} else if (c == 1) {
+		switch(c) {
+		case 1:
 			goto newLine;
-		} else if (c == 2) {
+		case 2:
 			_haveMsg = 0;
 			_keepText = true;
 			break;
-		} else if (c == 9) {
+		case 3:		
+			if (_haveMsg != 0xFE)
+				_haveMsg = 0xFF;
+			_keepText = false;
+			break;		
+		case 9:
 			frme = *buffer++;
 			frme |= *buffer++ << 8;
 			has_anim = true;
-		} else if (c == 10) {
+			break;
+		case 10:
 			talk_sound_a = buffer[0] | (buffer[1] << 8) | (buffer[4] << 16) | (buffer[5] << 24);
 			talk_sound_b = buffer[8] | (buffer[9] << 8) | (buffer[12] << 16) | (buffer[13] << 24);
 			has_talk_sound = true;
@@ -415,7 +417,20 @@ void Scumm::CHARSET_1()
 			// Set flag that speech variant exist of this msg
 			if (_haveMsg == 0xFF)
 				_haveMsg = 0xFE;
-		} else if (c == 14) {
+			break;		
+		case 12:
+			int color;
+			color = *buffer++;
+			color |= *buffer++ << 8;
+			if (color == 0xFF)
+				charset._color = _charsetColor;
+			else
+				charset._color = color;
+			break;
+		case 13:
+			buffer += 2;
+			break;
+		case 14: {
 			int oldy = getResourceAddress(rtCharset, charset._curId)[30];
 
 			charset._curId = *buffer++;
@@ -426,19 +441,14 @@ void Scumm::CHARSET_1()
 				else
 					charset._colorMap[i] = _charsetData[charset._curId][i];
 			charset._ypos2 -= getResourceAddress(rtCharset, charset._curId)[30] - oldy;
-		} else if (c == 12) {
-			int color;
-			color = *buffer++;
-			color |= *buffer++ << 8;
-			if (color == 0xFF)
-				charset._color = _charsetColor;
-			else
-				charset._color = color;
-		} else if (c == 13) {
-			buffer += 2;
-		} else {
+			break;
+			}
+		default:
 			warning("CHARSET_1: invalid code %d", c);
 		}
+		if (c == 3 || c == 2)
+			break;
+
 	} while (1);
 
 	// Even if talkSound() is called, we may still have to call
@@ -640,22 +650,19 @@ byte *Scumm::addMessageToStack(byte *msg)
 		return NULL;
 	}
 
-	while ((chr = *msg++) != 0) {
-		if (num > 500)
+while ((ptr[num++] = chr = *msg++) != 0) {
+		if (num >= 500)
 			error("Message stack overflow");
 
-		ptr[num++] = chr;
-
-		if (chr == 255) {
-			ptr[num++] = chr = *msg++;
+		if (chr == 0xff) {	// 0xff is an escape character			
+			ptr[num++] = chr = *msg++;	// followed by a "command" code 
 
 			if (chr != 1 && chr != 2 && chr != 3 && chr != 8) {
-				ptr[num++] = chr = *msg++;
-				ptr[num++] = chr = *msg++;
+				ptr[num++] = *msg++;	// and some commands are followed by parameters to the functions below
+				ptr[num++] = *msg++;	// these are numbers of names, strings, verbs, variables, etc
 			}
 		}
 	}
-	ptr[num++] = 0;
 
 	_numInMsgStack = num;
 	num = numorg;
@@ -669,19 +676,19 @@ byte *Scumm::addMessageToStack(byte *msg)
 			chr = ptr[num++];
 			switch (chr) {
 			case 4:
-				unkAddMsgToStack2(READ_LE_UINT16(ptr + num));
+				addIntToStack(READ_LE_UINT16(ptr + num));
 				num += 2;
 				break;
 			case 5:
-				unkAddMsgToStack3(READ_LE_UINT16(ptr + num));
+				addVerbToStack(READ_LE_UINT16(ptr + num));
 				num += 2;
 				break;
 			case 6:
-				unkAddMsgToStack4(READ_LE_UINT16(ptr + num));
+				addNameToStack(READ_LE_UINT16(ptr + num));
 				num += 2;
 				break;
 			case 7:
-				unkAddMsgToStack5(READ_LE_UINT16(ptr + num));
+				addStringToStack(READ_LE_UINT16(ptr + num));
 				num += 2;
 				break;
 			case 9:
@@ -712,7 +719,7 @@ byte *Scumm::addMessageToStack(byte *msg)
 	return msg;
 }
 
-void Scumm::unkAddMsgToStack2(int var)
+void Scumm::addIntToStack(int var)
 {
 	int num, max;
 	byte flag;
@@ -737,7 +744,7 @@ void Scumm::unkAddMsgToStack2(int var)
 	} while (max);
 }
 
-void Scumm::unkAddMsgToStack3(int var)
+void Scumm::addVerbToStack(int var)
 {
 	int num, i;
 
@@ -754,7 +761,7 @@ void Scumm::unkAddMsgToStack3(int var)
 	}
 }
 
-void Scumm::unkAddMsgToStack4(int var)
+void Scumm::addNameToStack(int var)
 {
 	int num;
 
@@ -766,7 +773,7 @@ void Scumm::unkAddMsgToStack4(int var)
 	}
 }
 
-void Scumm::unkAddMsgToStack5(int var)
+void Scumm::addStringToStack(int var)
 {
 	byte *ptr;
 
