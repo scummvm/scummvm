@@ -53,6 +53,7 @@ Resource::Resource(const Common::String &datafilePath, const char *datafileName)
 	if (_resourceFile->readUint32BE() == 'QTBL') {
 		readTableCompResource();
 	} else {
+		_compression = COMPRESSION_NONE;
 		_gameVersion = detectGameVersion(_resourceFile->size());
 	
 		if (!readTableFile()) {
