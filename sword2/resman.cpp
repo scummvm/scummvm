@@ -264,11 +264,10 @@ void resMan::Close_ResMan(void) { //Tony29May96
 	free(count);
 }
 
-#ifdef SCUMM_BIG_ENDIAN
 // Quick macro to make swapping in-place easier to write
 #define SWAP16(x)	x = SWAP_BYTES_16(x)
 #define SWAP32(x)	x = SWAP_BYTES_32(x)
-static void convertEndian(uint8 *file, uint32 len) {
+void convertEndian(uint8 *file, uint32 len) {
 	int i;
 	_standardHeader *hdr = (_standardHeader *)file;
 	
@@ -277,17 +276,9 @@ static void convertEndian(uint8 *file, uint32 len) {
 	SWAP32(hdr->compSize);
 	SWAP32(hdr->decompSize);
 
-	_animHeader *animHead;
-	_cdtEntry *cdtEntry;
-	_multiScreenHeader *mscreenHeader;
-	_object_hub *objectHub;
-	_walkGridHeader *walkGridHeader;
-	uint32 *list;
-	_textHeader *textHeader;
-
 	switch (hdr->fileType) {
-	case ANIMATION_FILE:
-		animHead = (_animHeader *)file;
+	case ANIMATION_FILE: {
+		_animHeader *animHead = (_animHeader *)file;
 
 		SWAP16(animHead->noAnimFrames);
 		SWAP16(animHead->feetStartX);
@@ -296,7 +287,7 @@ static void convertEndian(uint8 *file, uint32 len) {
 		SWAP16(animHead->feetEndY);
 		SWAP16(animHead->blend);
 
-		cdtEntry = (_cdtEntry *) (file + sizeof(_animHeader));
+		_cdtEntry *cdtEntry = (_cdtEntry *) (file + sizeof(_animHeader));
 		for (i = 0; i < animHead->noAnimFrames; i++, cdtEntry++) {
 			SWAP16(cdtEntry->x);
 			SWAP16(cdtEntry->y);
@@ -315,8 +306,9 @@ static void convertEndian(uint8 *file, uint32 len) {
 			}
 		}
 		break;
+	}
 	case SCREEN_FILE: {
-		mscreenHeader = (_multiScreenHeader *) file;
+		_multiScreenHeader *mscreenHeader = (_multiScreenHeader *) file;
 
 		SWAP32(mscreenHeader->palette);
 		SWAP32(mscreenHeader->bg_parallax[0]);
@@ -386,8 +378,9 @@ static void convertEndian(uint8 *file, uint32 len) {
 			SWAP16(parallax->h);
 		}
 		break;
-	case GAME_OBJECT:
-		objectHub = (_object_hub *)file;
+	}
+	case GAME_OBJECT: {
+		_object_hub *objectHub = (_object_hub *)file;
 
 		objectHub->type = (int)SWAP_BYTES_32(objectHub->type);
 		SWAP32(objectHub->logic_level);
@@ -398,7 +391,8 @@ static void convertEndian(uint8 *file, uint32 len) {
 			SWAP32(objectHub->script_pc[i]);
 		}
 		break;
-	case WALK_GRID_FILE:
+	}
+	case WALK_GRID_FILE: {
 		_walkGridHeader	*walkGridHeader = (_walkGridHeader *)file;
 
 		SWAP32(walkGridHeader->numBars);
@@ -427,21 +421,24 @@ static void convertEndian(uint8 *file, uint32 len) {
 		}
 
 		break;
+	}
 	case GLOBAL_VAR_FILE:
 		break;
 	case PARALLAX_FILE_null:
 		break;
-	case RUN_LIST:
+	case RUN_LIST: {
 		uint32 *list = (uint32 *)file;
 		while (*list) {
 			SWAP32(*list);
 			list++;
 		}
 		break;
-	case TEXT_FILE:
+	}
+	case TEXT_FILE: {
 		_textHeader *textHeader = (_textHeader *)file;
 		SWAP32(textHeader->noOfLines);
 		break;
+	}
 	case SCREEN_MANAGER:
 		break;
 	case MOUSE_FILE:
@@ -450,7 +447,6 @@ static void convertEndian(uint8 *file, uint32 len) {
 		break;
 	}
 }
-#endif
 
 uint8 *resMan::Res_open(uint32 res) {	//BHTony30May96
 	// returns ad of resource. Loads if not in memory
