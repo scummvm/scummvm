@@ -27,7 +27,8 @@ namespace Common {
 
 const String String::emptyString;
 
-String::String(const char *str, int len) {
+String::String(const char *str, int len)
+ : _str(0), _len(0) {
 	_refCount = new int(1);
 	if (str && len != 0) {
 		if (len > 0)
@@ -43,20 +44,8 @@ String::String(const char *str, int len) {
 	}
 }
 
-String::String(const ConstString &str) {
-	printf("String::String(const ConstString &str)\n");
-	_refCount = new int(1);
-	if (str._str) {		
-		_capacity = _len = strlen(str._str);
-		_str = (char *)calloc(1, _capacity+1);
-		memcpy(_str, str._str, _len+1);
-	} else {
-		_capacity = _len = 0;
-		_str = 0;
-	}
-}
-
-String::String(const String &str) : ConstString() {
+String::String(const String &str)
+ : _str(0), _len(0) {
 	++(*str._refCount);
 
 	_refCount = str._refCount;
@@ -225,37 +214,37 @@ void String::ensureCapacity(int new_len, bool keep_old) {
 
 #pragma mark -
 
-bool ConstString::operator ==(const ConstString &x) const {
+bool String::operator ==(const String &x) const {
 	return (0 == strcmp(c_str(), x.c_str()));
 }
 
-bool ConstString::operator ==(const char *x) const {
+bool String::operator ==(const char *x) const {
 	assert(x != 0);
 	return (0 == strcmp(c_str(), x));
 }
 
-bool ConstString::operator !=(const ConstString &x) const {
+bool String::operator !=(const String &x) const {
 	return (0 != strcmp(c_str(), x.c_str()));
 }
 
-bool ConstString::operator !=(const char *x) const {
+bool String::operator !=(const char *x) const {
 	assert(x != 0);
 	return (0 != strcmp(c_str(), x));
 }
 
-bool ConstString::operator < (const ConstString &x) const {
+bool String::operator < (const String &x) const {
 	return strcmp(c_str(), x.c_str()) < 0;
 }
 
-bool ConstString::operator <= (const ConstString &x) const {
+bool String::operator <= (const String &x) const {
 	return strcmp(c_str(), x.c_str()) <= 0;
 }
 
-bool ConstString::operator > (const ConstString &x) const {
+bool String::operator > (const String &x) const {
 	return (x < *this);
 }
 
-bool ConstString::operator >= (const ConstString &x) const {
+bool String::operator >= (const String &x) const {
 	return (x <= *this);
 }
 
@@ -281,11 +270,11 @@ String operator +(const String &x, const char *y) {
 
 #pragma mark -
 
-bool operator == (const char* y, const ConstString &x) {
+bool operator == (const char* y, const String &x) {
 	return (x == y);
 }
 
-bool operator != (const char* y, const ConstString &x) {
+bool operator != (const char* y, const String &x) {
 	return x != y;
 }
 

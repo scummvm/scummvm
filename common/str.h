@@ -29,76 +29,42 @@
 
 namespace Common {
 
-/*
- TODO
- Add a class ConstString which is a light weight base class of String.
- It will be immutable, and *not* copy the char pointer it gets when created.
- Only constructor: ConstString(const char *ptr)
- Then whenever you now use "const String &" in a parameter, use "const ConstString &"
- instead (mayhaps make a typedef even). Thus, parameters are passed w/o 
- causing a free/malloc. Then only for permanent storage, when we assign it to a
- real String object, will a malloc be issued (to this end, make String aware of
- ConstString ?!?
-*/
-
-class ConstString {
-	friend class String;
+class String {
 protected:
 	char	*_str;
-	int		_len;
+	int 	_len;
+	int 	*_refCount;
+	int 	_capacity;
 
 public:
-	ConstString() : _str(0), _len(0) {}
-//	ConstString(const char *str, int len = -1) : _str((char *)str) { _len = str ? (len >= 0 ? len : strlen(str)) : 0; }
-	virtual ~ConstString() {}
-	
-	bool operator ==(const ConstString &x) const;
-	bool operator ==(const char *x) const;
-	bool operator !=(const ConstString &x) const;
-	bool operator !=(const char *x) const;
-	bool operator <(const ConstString &x) const;
-	bool operator <=(const ConstString &x) const;
-	bool operator >(const ConstString &x) const;
-	bool operator >=(const ConstString &x) const;
+	static const String emptyString;
 
-	char operator [](int idx) const {
-		assert(_str && idx >= 0 && idx < _len);
-		return _str[idx];
-	}
+	String() : _str(0), _len(0), _capacity(0) { _refCount = new int(1); }
+	String(const char *str, int len = -1);
+	String(const String &str);
+	virtual ~String();
+	
+	String &operator  =(const char *str);
+	String &operator  =(const String &str);
+	String &operator  =(char c);
+	String &operator +=(const char *str);
+	String &operator +=(const String &str);
+	String &operator +=(char c);
+
+	bool operator ==(const String &x) const;
+	bool operator ==(const char *x) const;
+	bool operator !=(const String &x) const;
+	bool operator !=(const char *x) const;
+	bool operator <(const String &x) const;
+	bool operator <=(const String &x) const;
+	bool operator >(const String &x) const;
+	bool operator >=(const String &x) const;
 
 	const char *c_str() const		{ return _str ? _str : ""; }
 	uint size() const				{ return _len; }
 
 	bool isEmpty() const	{ return (_len == 0); }
 	char lastChar() const	{ return (_len > 0) ? _str[_len-1] : 0; }
-};
-
-class String : public ConstString {
-protected:
-	int *_refCount;
-	int _capacity;
-
-public:
-	static const String emptyString;
-
-	String() : _capacity(0) { _refCount = new int(1); }
-	String(const char *str, int len = -1);
-	String(const ConstString &str);
-	String(const String &str);
-	virtual ~String();
-	
-	String &operator  =(const char *str);
-// TODO - We should use RTTI here - that is, not real C++ RTTI but maybe some magic
-// constant in each string object. We want to be able to optimize the case when
-// a real 'String' object is passed to a function as a ConstString obj and then
-// assigned to a 'String' object.
-// An alternative would be to add private clone() and cloneMutable methods that 
-// would do the right thing.
-	String &operator  =(const String &str);
-	String &operator  =(char c);
-	String &operator +=(const char *str);
-	String &operator +=(const String &str);
-	String &operator +=(char c);
 
 	char operator [](int idx) const {
 		assert(_str && idx >= 0 && idx < _len);
@@ -129,8 +95,8 @@ String operator +(const char *x, const String &y);
 String operator +(const String &x, const char *y);
 
 // Some useful additional comparision operators for Strings
-bool operator == (const char *x, const ConstString &y);
-bool operator != (const char *x, const ConstString &y);
+bool operator == (const char *x, const String &y);
+bool operator != (const char *x, const String &y);
 
 class StringList : public Array<String> {
 public:
@@ -139,11 +105,6 @@ public:
 		_data[_size++] = str;
 	}
 
-	void push_back(const ConstString &str) {
-		ensureCapacity(_size + 1);
-		_data[_size++] = str;
-	}
-	
 	void push_back(const String &str) {
 		ensureCapacity(_size + 1);
 		_data[_size++] = str;
