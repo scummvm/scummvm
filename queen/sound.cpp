@@ -151,14 +151,11 @@ void Sound::playSong(int16 songNum) {
 
 void Sound::saveState(byte *&ptr) {
 	WRITE_BE_UINT16(ptr, _lastOverride); ptr += 2;
-	// XXX lastmerge, lastalter, altmrgpri
 }
 
 void Sound::loadState(uint32 ver, byte *&ptr) {
 	_lastOverride = (int16)READ_BE_UINT16(ptr); ptr += 2;
-	// XXX lastmerge, lastalter, altmrgpri
 }
-
 
 void SBSound::playSound(byte *sound, uint32 size, bool isSpeech) {
 	byte flags = SoundMixer::FLAG_UNSIGNED | SoundMixer::FLAG_AUTOFREE;

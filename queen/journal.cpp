@@ -290,8 +290,6 @@ void Journal::handleYesNoMode(int16 zoneNum) {
 				_vm->music()->stopSong();
 				_vm->loadGameState(currentSlot);
 				_vm->display()->clearTexts(0, GAME_SCREEN_HEIGHT - 1);
-				// XXX panelflag=1;
-				// XXX walkgameload=1;
 				_quit = true;
 				_quitCleanly = false;
 			} else {

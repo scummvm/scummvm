@@ -64,8 +64,6 @@ Logic::~Logic() {
 void Logic::initialise() {	
 	int16 i;
 
-	// Step 1 : read queen.jas file and 'unserialize' some arrays
-
 	uint8 *jas = _vm->resource()->loadFile("QUEEN.JAS", 20);
 	uint8 *ptr = jas;
 
@@ -74,14 +72,12 @@ void Logic::initialise() {
 	_numObjects = READ_BE_UINT16(ptr); ptr += 2;
 	_numDescriptions = READ_BE_UINT16(ptr); ptr += 2;
 
-	// Object data
 	_objectData = new ObjectData[_numObjects + 1];
 	memset(&_objectData[0], 0, sizeof(ObjectData));
 	for (i = 1; i <= _numObjects; i++) {
 		_objectData[i].readFromBE(ptr);
 	}
 
-	// Room data
 	_roomData = new uint16[_numRooms + 2];
 	_roomData[0] = 0;
 	for (i = 1; i <= (_numRooms + 1); i++) {
@@ -89,8 +85,6 @@ void Logic::initialise() {
 	}
 	_roomData[_numRooms + 1] = _numObjects;
 
-	// SFX Name
-	// the following table isn't available in demo version
 	if (_vm->resource()->isDemo()) {
 		_sfxName = NULL;
 	} else {
@@ -101,18 +95,15 @@ void Logic::initialise() {
 		}	
 	}
 
-	// Item information
-	_numItems = READ_BE_UINT16(ptr); ptr += 2;
 
+	_numItems = READ_BE_UINT16(ptr); ptr += 2;
 	_itemData = new ItemData[_numItems + 1];
 	memset(&_itemData[0], 0, sizeof(ItemData));
 	for (i = 1; i <= _numItems; i++) {
 		_itemData[i].readFromBE(ptr);
 	}
 
-	// Graphic Image Data
 	_numGraphics = READ_BE_UINT16(ptr); ptr += 2;
-
 	_graphicData = new GraphicData[_numGraphics + 1];
 	memset(&_graphicData[0], 0, sizeof(GraphicData));
 	for (i = 1; i <= _numGraphics; i++) {
@@ -121,18 +112,14 @@ void Logic::initialise() {
 
 	_vm->grid()->readDataFrom(_numObjects, _numRooms, ptr);
 
-	// Walk OFF Data
 	_numWalkOffs = READ_BE_UINT16(ptr);	ptr += 2;
-
 	_walkOffData = new WalkOffData[_numWalkOffs + 1];
 	memset(&_walkOffData[0], 0, sizeof(WalkOffData));
 	for (i = 1; i <= _numWalkOffs; i++) {
 		_walkOffData[i].readFromBE(ptr);
 	}
 
-	// Special Object Descriptions
 	_numObjDesc = READ_BE_UINT16(ptr); ptr += 2;
-
 	_objectDescription = new ObjectDescription[_numObjDesc + 1];
 	memset(&_objectDescription[0], 0, sizeof(ObjectDescription));
 	for (i = 1; i <= _numObjDesc; i++) {
@@ -143,9 +130,7 @@ void Logic::initialise() {
 
 	_entryObj = READ_BE_UINT16(ptr); ptr += 2;
 
-	// Furniture DATA
 	_numFurniture = READ_BE_UINT16(ptr); ptr += 2;
-
 	_furnitureData = new FurnitureData[_numFurniture + 1];
 	memset(&_furnitureData[0], 0, sizeof(_furnitureData));
 	for (i = 1; i <= _numFurniture; i++) {
@@ -185,8 +170,6 @@ void Logic::initialise() {
 
 	delete[] jas;
 
-
-	// Step 2 : read queen2.jas and grab all description texts
 
 	_queen2jas = new LineReader(
 		(char *)_vm->resource()->loadFile("QUEEN2.JAS"),
@@ -237,8 +220,6 @@ void Logic::initialise() {
 	for (i = 1; i <= _numAFile; i++)
 		_aFile[i] = _queen2jas->nextLine();
 
-
-	// Step 3 : initialise game state / variables
 
 	_vm->command()->clear(false);
 	_scene = 0;
@@ -857,8 +838,6 @@ void Logic::playCutaway(const char *cutFile, char *next) {
 }
 
 void Logic::makeJoeSpeak(uint16 descNum, bool objectType) {
-	// makeJoeSpeak(k, false) == SPEAK(JOE_RESPstr[k],"JOE",find_cd_desc(k)) 
-	// makeJoeSpeak(k, true)  == SPEAK(OBJECT_DESCRstr[k],"JOE",find_cd_desc(JOERESPMAX+k))
 	const char *text = objectType ? _objDescription[descNum] : _joeResponse[descNum];
 	if (objectType) {
 		descNum += JOE_RESPONSE_MAX;
@@ -909,7 +888,6 @@ void Logic::inventoryRefresh() {
 		}
 		x += 35;
 	}
-	// XXX OLDVERB=VERB;
 	_vm->update();
 }
 
@@ -1011,10 +989,8 @@ void Logic::removeHotelItemsFromInventory() {
 }
 
 void Logic::objectCopy(int dummyObjectIndex, int realObjectIndex) {
-	// P3_COPY_FROM function in cutaway.c
-	/* Copy data from Dummy (D) object to object (K)
-		 If COPY_FROM Object images are greater than COPY_TO Object
-		 images then swap the objects around. */
+	// copy data from dummy object to real object, if COPY_FROM object 
+	// images are greater than COPY_TO Object images then swap the objects around.
 
 	ObjectData *dummyObject = objectData(dummyObjectIndex);
 	ObjectData *realObject  = objectData(realObjectIndex);
@@ -1056,8 +1032,6 @@ void Logic::objectCopy(int dummyObjectIndex, int realObjectIndex) {
 
 	if  (fromState == -1)
 		dummyObject->name = -ABS(dummyObject->name);
-
-	//  Make sure that WALK_OFF_DATA is copied too!
 
 	for (int i = 1; i <= _numWalkOffs; i++) {
 		WalkOffData *walkOff = &_walkOffData[i];
@@ -2117,7 +2091,6 @@ void LogicGame::useJournal() {
 	_vm->command()->clear(false);
 	_journal->use();
 	_vm->walk()->stopJoe();
-	// XXX TALKQUIT=CUTQUIT=0; Make sure that we turn off cut stuff in case we use Journal during cutaways
 }
 
 bool LogicGame::preChangeRoom() {
@@ -2128,8 +2101,6 @@ bool LogicGame::preChangeRoom() {
 		displayRoom(currentRoom(), RDM_FADE_NOJOE, 100, 2, true);
 		playCutaway("copy.cut");
 		playCutaway("clogo.cut");
-
-		// XXX enable talking for talkie version
 
 		if (ConfMan.getBool("alt_intro") && _vm->resource()->isCD()) {
 			playCutaway("cintr.cut");

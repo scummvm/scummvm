@@ -81,8 +81,6 @@ void Talk::talk(const char *filename, int personInRoom, char *cutawayFilename) {
 
 	cutawayFilename[0] = '\0';
 
-	// XXX S=SUBJECT[1];
-
 	int roomStart = _vm->logic()->currentRoomData();
 	ObjectData *data = _vm->logic()->objectData(roomStart + personInRoom);
 
@@ -109,7 +107,7 @@ void Talk::talk(const char *filename, int personInRoom, char *cutawayFilename) {
 	}
 
 	int16 oldLevel = 0;
-	bool personWalking = false;		// OWALK in talk.c
+	bool personWalking = false;
 
 	// Lines 828-846 in talk.c
 	for (i = 1; i <= 4; i++) {
@@ -268,9 +266,7 @@ void Talk::talk(const char *filename, int personInRoom, char *cutawayFilename) {
 			_vm->logic()->gameState(index, _dialogueTree[oldLevel][selectedSentence].gameStateValue);
 
 
-		// if(RETVAL = -1, then before we exit, check to see if(person
-		// has something final to say!
-
+		// check to see if person has something final to say
 		if (-1 == retval) {
 			findDialogueString(_person1Ptr, head, _pMax, _talkString[0]);
 			if (_talkString[0][0] != '\0') {
@@ -351,7 +347,6 @@ void Talk::disableSentence(int oldLevel, int selectedSentence) {
 	}
 
 	// Cancel selected dialogue line, so that its no longer displayed
-
 	_dialogueTree[oldLevel][selectedSentence].head = -1;
 	_dialogueTree[oldLevel][selectedSentence].dialogueNodeValue1 = -1;
 }
@@ -646,8 +641,6 @@ bool Talk::speak(const char *sentence, Person *person, const char *voiceFilePref
 	else
 		_talkHead = false;
 
-	// XXX CLEAR_COMMAND(false)
-
 	for (i = 0; i < strlen(sentence); ) {
 		if (sentence[i] == '*') {
 			int segmentLength = i - segmentStart;
@@ -786,12 +779,6 @@ void Talk::stringAnimation(const SpeechParameters *parameters, int startFrame, i
 
 		_vm->update();
 	}
-
-	// XXX #ifdef __DOS__
-	// XXX 			if (VOICETOGGLE && (sfxflag==0))
-	// XXX 				while (sfxbusy() && KEYVERB!=101)
-	// XXX 					update();
-	// XXX #endif
 }
 
 void Talk::defaultAnimation(
@@ -814,20 +801,6 @@ void Talk::defaultAnimation(
 
 	if (segment[0] != 0)  {
 
-		// XXX #ifdef __DOS__
-		// XXX     // 02-21-95 03:44pm DOn't talk until sfx finished
-		// XXX     if(SFXTOGGLE && VOICETOGGLE) {
-		// XXX        if(TEXTTOGGLE==0)
-		// XXX            blanktexts(0,150);
-		// XXX        while(sfxbusy() && KEYVERB!=101)
-		// XXX            update();
-		// XXX    }
-
-		// XXX    sfxflag=VOICETOGGLE ? sfxplay(SPKstr) : 1;
-		// XXX    if((sfxflag==0) && (TEXTTOGGLE==0)) 
-		// XXX		blanktexts(0,150);
-		// XXX  #endif
-
 		// Why on earth would someone name a variable qzx?
 		short qzx = 0;
 
@@ -835,10 +808,6 @@ void Talk::defaultAnimation(
 
 		int i;
 		for (i = 0; i < (spaces + 1) /* || sfxflag == 0*/; i++) {
-			// XXX #ifdef __DOS__
-			// XXX         if(sfxflag==0 && sfxbusy())
-			// XXX 			break;
-			// XXX #endif
 
 			if (parameters != NULL) {
 
@@ -1097,12 +1066,6 @@ void Talk::speakSegment(
 				_vm->update();
 			}
 
-			/* A12 = the frame pointer for the full body frame, well use this  */
-			/* for Hot Spot reference, before we have to set up a Torso frame. */
-			/* This way the hot spot is at bottom of body */
-
-			// XXX A12=A1;
-
 			if (-1 == parameters->rf) {
 				// Setup the Torso frames
 				_vm->bankMan()->overpack(parameters->bf, startFrame, bankNum);
@@ -1174,7 +1137,6 @@ const Talk::SpeechParameters *Talk::findSpeechParameters(
 		const char *name, 
 		int state, 
 		int faceDirection) {
-	// function FIND_SACTION in queen.c
 	const SpeechParameters *iterator = _speechParameters;
 	if (faceDirection == DIR_RIGHT)
 		faceDirection = DIR_LEFT;
@@ -1276,7 +1238,6 @@ static char *removeStar(char *str) {
 }
 
 int16 Talk::selectSentence() {
-	// Function TALK_BOB (lines 577-739) in talk.c
 	int selectedSentence = 0;
 
 	int startOption = 1;
@@ -1284,8 +1245,6 @@ int16 Talk::selectSentence() {
 	char optionText[5][MAX_STRING_SIZE];
 	int talkZone[5];
 	int i;
-
-	// Change NORMAL_INK -> TALK_NORMAL_INK
 
 	_vm->display()->textCurrentColor(INK_TALK_NORMAL);
 
@@ -1460,49 +1419,59 @@ const Talk::SpeechParameters Talk::_speechParameters[] = {
 	{ "JOE",0,1,1,10,2,3,"",0},
 	{ "JOE",0,3,3,28,2,3,"",0},
 	{ "JOE",0,4,5,38,1,0,"",0},
+	
 	{ "JOE",1,1,1,45,-1,0,"",0},
 	{ "JOE",1,3,3,28,2,3,"",0},
 	{ "JOE",1,4,5,38,1,0,"",0},
+	
 	{ "JOE",2,1,1,46,-1,0,"",0},
 	{ "JOE",2,3,3,28,2,3,"",0},
 	{ "JOE",2,4,5,38,1,0,"",0},
+	
 	{ "JOE",3,1,1,47,-1,0,"",0},
 	{ "JOE",3,3,3,28,2,3,"",0},
 	{ "JOE",3,4,5,38,1,0,"",0},
+	
 	{ "JOE",4,1,1,50,-1,0,"",0},
 	{ "JOE",4,3,3,28,2,3,"",0},
 	{ "JOE",4,4,5,38,1,0,"",0},
+	
 	{ "JOE",5,1,2,0,0,0,"",0},
 	{ "JOE",5,3,4,0,0,0,"",0},
 	{ "JOE",5,4,6,0,0,0,"",0},
-	//CR - Change 48,1,0 -> 48,0,1
+	
 	{ "JOE",6,1,1,48,0,1,"",0},
 	{ "JOE",6,3,3,28,2,3,"",0},
 	{ "JOE",6,4,5,38,1,0,"",0},
-	//CR - Change 51,1,0 -> 51,0,1
+
 	{ "JOE",7,1,1,51,0,1,"",0},
 	{ "JOE",7,3,3,28,2,3,"",0},
 	{ "JOE",7,4,5,38,1,0,"",0},
+	
 	{ "JOE",8,1,1,26,0,0,"",0},
 	{ "JOE",8,3,3,28,2,3,"",0},
 	{ "JOE",8,4,5,38,1,0,"",0},
+	
 	{ "JOE",9,1,1,29,0,0,"",0},
 	{ "JOE",9,3,3,28,0,0,"",0},
 	{ "JOE",9,4,5,38,0,0,"",0},
-	//     - Look down, sad. 10,12,46
+	
 	{ "JOE",10,1,1,12,0,0,"T046,010,010,010,012,012,012,012,012,012,012,012,012,012,012,012,012,012,010,000",0},
 	{ "JOE",10,3,3,18,0,0,"",0},
 	{ "JOE",10,4,5,44,0,0,"",0},
+	
 	{ "JOE",11,1,1,53,-1,0,"",0},
 	{ "JOE",11,3,3,28,2,3,"",0},
 	{ "JOE",11,4,5,38,1,0,"",0},
+	
 	{ "JOE",12,1,1,10,2,3,"",0},
 	{ "JOE",12,3,3,28,2,0,"",0},
 	{ "JOE",12,4,5,38,1,0,"",0},
+	
 	{ "JOE",13,1,1,10,2,3,"T012,013,019,019,019,019,019,019,019,019,019,019,013,010,000",0},
 	{ "JOE",13,3,3,28,2,3,"",0},
 	{ "JOE",13,4,5,38,1,0,"",0},
-	//     - 7/11/94, Make Joe look front
+
 	{ "JOE",14,1,1,16,2,3,"",16},
 	{ "JOE",14,3,3,28,2,3,"",0},
 	{ "JOE",14,4,5,38,1,0,"",0},
@@ -1561,7 +1530,6 @@ const Talk::SpeechParameters Talk::_speechParameters[] = {
 	{ "LOLA",1,0,9,10,2,3,"",33},
 	{ "LOLA",2,0,30,33,2,3,"",33},
 	{ "LOLA",3,0,32,33,2,3,"",33},
-	//CR 2 - 22/2/95,
 	{ "LOLA",4,0,8,0,0,0,"",33},
 	{ "LOLA",5,0,31,0,0,0,"",0},
 	{ "LOLA",6,0,31,0,0,0,"047,048,049,050,000",33},
@@ -1575,14 +1543,10 @@ const Talk::SpeechParameters Talk::_speechParameters[] = {
 	{ "LOLA_SHOWER",6,0,64,10,2,3,"",0},
 	{ "LOLA_SHOWER",7,0,31,0,0,0,"062,063,064,000",0},
 
-	// { "SECRETARY",0,0,1,12,2,0,"",12},
-	// Change Secretary
 	{ "SECRETARY",0,0,1,12,2,3,"",12},
 	{ "SECRETARY",1,0,1,12,2,0,"",12},
 	{ "SECRETARY",2,0,1,12,2,0,"",12},
 
-	// { "SPARKY",0,0,21,23,5,0,"",23},
-	// Change Sparky talk code
 	{ "SPARKY",0,0,21,23,2,3,"",23},
 	{ "SPARKY",1,0,21,22,0,0,"",0},
 	{ "SPARKY",2,0,21,22,0,0,"021,042,043,000",0},
@@ -1649,8 +1613,6 @@ const Talk::SpeechParameters Talk::_speechParameters[] = {
 	{ "WEDGEWOOD",0,0,8,1,2,0,"",8},
 	{ "WEDGEWOOD",1,0,1,1,3,0,"",1},
 
-	// { "BUD",0,0,1,2,4,2,"",2},
-	// Change Buds talk code
 	{ "BUD",0,0,1,2,3,2,"",2},
 	{ "BUD",1,0,1,2,4,2,"T017,018,000",2},
 	{ "BUD",2,0,1,21,-1,0,"",2},
@@ -1662,7 +1624,6 @@ const Talk::SpeechParameters Talk::_speechParameters[] = {
 	{ "BUD",8,0,1,17,-1,0,"",2},
 	{ "BUD",9,0,1,14,-1,0,"T014,008,008,003,003,008,008,003,003,010,010,012,012,000",2},
 
-	//CR 2 - Change 4,2 -> 2,3, End Frames 8 -> 2
 	{ "LOU",0,0,1,2,2,3,"",2},
 	{ "LOU",1,0,1,2,4,2,"013,014,015,016,017,018,000",2},
 	{ "LOU",2,0,1,2,4,2,"018,017,016,015,014,013,000",2},
@@ -1748,12 +1709,10 @@ const Talk::SpeechParameters Talk::_speechParameters[] = {
 
 	{ "KLUNK",0,0,1,2,2,3,"",2},
 	{ "KLUNK",1,0,1,2,2,3,"019,020,021,022,001,000",2},
-	//CR 4 - 22/2/95, Change 017 -> 517
 	{ "KLUNK",2,0,1,2,2,3,"001,022,021,020,019,016,517,000",2},
 	{ "KLUNK",3,0,1,2,2,3,"T010,011,010,011,010,011,009,000",2},
 
 	{ "FRANK",0,0,13,14,2,3,"",14},
-	//CR 2 - 21/2/95, Change from Torso to normal
 	{ "FRANK",1,0,13,20,0,1,"",14},
 	{ "FRANK",2,0,13,14,2,3,"025,026,027,027,027,026,026,026,027,027,026,026,027,025,013,000",14},
 	{ "FRANK",3,0,28,14,2,3,"",14},
@@ -1761,7 +1720,6 @@ const Talk::SpeechParameters Talk::_speechParameters[] = {
 	{ "DEATH",0,0,1,2,2,3,"",2},
 	{ "DEATH",1,0,1,2,2,3,"013,014,015,016,017,001,000",0},
 	{ "DEATH",2,0,1,2,2,3,"001,017,016,015,014,013,000",0},
-	//CR 2 - Change 024 -> 524
 	{ "DEATH",3,0,1,2,2,3,"T018,019,020,021,021,022,022,020,021,022,020,021,022,023,024,524,000",2},
 	{ "DEATH",4,0,1,2,2,3,"T025,026,027,028,028,028,028,028,028,028,028,028,029,035,000",2},
 	{ "DEATH",5,0,1,2,2,3,"T030,031,032,033,033,033,033,033,033,033,033,033,034,035,000",2},
@@ -1837,8 +1795,6 @@ const Talk::SpeechParameters Talk::_speechParameters[] = {
 	{ "ANDSON-E",0,0,1,3,4,1,"",1},
 	{ "ANDSON-E",1,0,1,3,4,1,"002,001,000",1},
 
-//#ifdef __DOS__
-
 	{ "JOE-H",0,0,1,1,4,4,"",1},
 	{ "JOE-H",1,0,1,1,2,3,"012,013,014,000",14},
 	{ "JOE-H",2,0,1,1,2,3,"010,011,000",11},
@@ -1860,16 +1816,12 @@ const Talk::SpeechParameters Talk::_speechParameters[] = {
 	{ "HUGH",0,0,1,1,2,3,"",1},
 	{ "HUGH",1,0,7,7,2,3,"",7},
 
-	// New CD-Rom intro persons
-	// *01 Blink
 	{ "X2_JOE",0,0,1,1,2,3,"",1},
 	{ "X2_JOE",1,0,1,1,2,3,"001,007,008,008,007,001,000",1},
 
-	// *01 Blink
 	{ "X2_RITA",0,0,1,1,2,3,"",1},
 	{ "X2_RITA",1,0,1,1,2,3,"001,007,008,008,007,001,000",1},
 
-	// *01 Smile, *02 Blink, *03 Raise Eyebrow, *04 Anger, *05 Surprise
 	{ "X3_RITA",0,0,1,1,4,1,"",1},
 	{ "X3_RITA",1,0,1,1,4,1,"007,000",7},
 	{ "X3_RITA",2,0,1,1,4,1,"009,010,011,009,001,000",1},
@@ -1877,47 +1829,37 @@ const Talk::SpeechParameters Talk::_speechParameters[] = {
 	{ "X3_RITA",4,0,1,1,4,1,"E015,000",1},
 	{ "X3_RITA",5,0,1,1,4,1,"E014,000",1},
 
-	// *01 Talk to Sparky, *02 Turn to Sparky, *03 Turn to Rita, *04 Close Eyes
 	{ "X4_JOE",0,0,1,1,3,4,"",1},
 	{ "X4_JOE",1,0,1,13,2,3,"",13},
 	{ "X4_JOE",2,0,1,1,3,4,"009,010,011,012,013,000",13},
 	{ "X4_JOE",3,0,1,1,3,4,"012,011,010,009,000",9},
 	{ "X4_JOE",4,0,1,1,3,4,"001,019,000",19},
 
-	// *01 Talk to Sparky, *02 Turn to Sparky, *03 Turn to Joe, *04 Close Eyes
 	{ "X4_RITA",0,0,1,1,0,1,"",1},
 	{ "X4_RITA",1,0,1,7,0,1,"",7},
 	{ "X4_RITA",2,0,1,1,3,4,"004,005,006,006,006,006,007,000",7},
 	{ "X4_RITA",3,0,1,1,3,4,"005,004,001,000",1},
 	{ "X4_RITA",4,0,1,1,3,4,"001,003,000",3},
 
-	// *01 Blink, *02 Look Right
 	{ "X5_SPARKY",0,0,1,1,2,3,"",1},
 	{ "X5_SPARKY",1,0,1,1,2,3,"001,010,011,011,001,000",1},
 	{ "X5_SPARKY",2,0,1,1,2,3,"001,007,008,009,000",9},
 
-	// *01 Eyes Bulge Once, *02 Eyes Bulge Big Time
 	{ "X6_HUGH",0,0,1,1,2,3,"",1},
 	{ "X6_HUGH",1,0,1,1,2,3,"007,007,007,007,,001,000",1},
 	{ "X6_HUGH",2,0,1,1,2,3,"008,008,008,008,008,009,009,008,008,008,009,008,000",8},
 
-	// *01 Talk to Sparky, Rub Head
 	{ "X10_JOE",0,0,1,2,2,3,"",2},
 	{ "X10_JOE",1,0,1,8,2,3,"",8},
-	//CR 2 - 21/2/95, Cut down rub head anim
 	{ "X10_JOE",2,0,1,2,2,3,"014,014,014,015,015,014,014,015,015,000",2},
 
 	{ "X10_RITA",0,0,1,2,2,3,"",2},
 
 	{ "X11_JOE",0,0,1,2,0,1,"",2},
 
-	// *01 Look at Joe
 	{ "X11_RITA",0,0,1,2,0,1,"",2},
 	{ "X11_RITA",1,0,1,2,1,0,"003,004,000",4},
 
-//#endif
-
-	// Interview
 	{ "JOHN", 0, 0, 1, 2, 2, 3, "", 1 },
 	{ "JOHN", 1, 0, 1, 15, -1, 0, "", 1 },
 	{ "JOHN", 2, 0, 1, 16, -1, 0, "", 1 },

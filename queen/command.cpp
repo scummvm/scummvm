@@ -613,18 +613,11 @@ void Command::grabSelectedItem() {
 }
 
 void Command::grabSelectedNoun() {
-	// if the NOUN has been selected from screen then it is positive
-	// otherwise it has been selected from inventory and is negative
-	// set PARSE to TRUE, default FALSE if command half complete
-	// click object without a command, if DEFAULT then
-	// do that, otherwise do a WALK!
-
 	ObjectData *od = findObjectData(_state.noun);
 	if (od == NULL || od->name <= 0) {
 		// selected a turned off object, so just walk
 		clear(true);
 		_state.noun = 0;
-//		_vm->logic()->newRoom(0);
 		_vm->logic()->joeWalk(JWM_EXECUTE);
 		return;
 	}
@@ -633,15 +626,12 @@ void Command::grabSelectedNoun() {
 		if (_mouseKey == Input::MOUSE_LBUTTON) {
 			if ((_state.commandLevel != 2 && _state.action == VERB_NONE) || 
 				(_state.commandLevel == 2 && _parse)) {
-					// action2 > 0 only if command has been constructed
-					// lmb pressed, just walk
 					_state.verb = VERB_WALK_TO;
 					_state.action = VERB_WALK_TO;
 					_cmdText.setVerb(VERB_WALK_TO);
 			}
 		} else if (_mouseKey == Input::MOUSE_RBUTTON) {
 			if (_cmdText.isEmpty()) {
-				// Ensures that Right Mkey will select correct default
 				_state.verb = State::findDefaultVerb(od->state);
 				_state.selAction = (_state.verb == VERB_NONE) ? VERB_WALK_TO : _state.verb;
 				_cmdText.setVerb(_state.selAction);
@@ -906,7 +896,6 @@ void Command::openOrCloseAssociatedObject(Verb action, int16 otherObj) {
 		if (cmdList->match(action, otherObj, 0)) {
 			if (cmdList->setConditions) {
 				CmdGameState *cmdGs = _cmdGameState;
-				warning("Command::openOrCloseAssociatedObject() setConditions slot=%d", cmdGs[i].gameStateSlot);
 				uint16 j;
 				for (j = 1; j <= _numCmdGameState; ++j) {
 					if (cmdGs[j].id == i && cmdGs[j].gameStateSlot > 0) {

@@ -237,7 +237,7 @@ class Cutaway {
 				CutawayObject &object, 
 				const char *sentence);
 
-		//! Restore QueenLogic::_objectData from _personData
+		//! Restore Logic::_objectData from _personData
 		void restorePersonData();
 
 		//! Stop the cutaway

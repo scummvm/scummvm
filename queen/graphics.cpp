@@ -163,6 +163,16 @@ void BobSlot::animNormal(uint16 firstFrame, uint16 lastFrame, uint16 spd, bool r
 	xflip = flip;
 }
 
+void BobSlot::scaleWalkSpeed(uint16 ms) {
+	if (!xmajor) {
+		ms /= 2;
+	}
+	speed = scale * ms / 100;
+	if (speed == 0) {
+		speed = 1;
+	}
+}
+
 void BobSlot::clear() {
 	active = false;
 	xflip = false;
@@ -423,13 +433,9 @@ void Graphics::setBobText(
 		const char *text, 
 		int textX, int textY, 
 		int color, int flags) {
-	// function MAKE_SPEAK_BOB, lines 335-457 in talk.c
 
 	if (text[0] == '\0')
 		return;
-
-	// debug(0, "makeSpeakBob('%s', (%i,%i), %i, %i, %i, %i);", 
-	//		text, bob->x, bob->y, textX, textY, color, flags);
 
 	// Duplicate string and append zero if needed
 
@@ -475,10 +481,6 @@ void Graphics::setBobText(
 			}
 		}
 	}
-
-	// Plan: write each line to Screen 2, put black outline around lines and
-	// pick them up as a BOB.
-
 
 	// Find width of widest line 
 
@@ -537,7 +539,7 @@ void Graphics::setBobText(
 	for (i = 0; i < lineCount; i++) {
 		int lineX = x + (maxLineWidth - _vm->display()->textWidth(lines[i])) / 2;
 
-		//debug(0, "Setting text '%s' at (%i, %i)", lines[i], lineX, y + 9 * i);
+		debug(7, "Setting text '%s' at (%i, %i)", lines[i], lineX, y + 9 * i);
 		_vm->display()->setText(lineX, y + 9 * i, lines[i]);
 	}
 }
@@ -572,7 +574,7 @@ void Graphics::handleParallax(uint16 roomNum) {
 	case ROOM_FINAL_FIGHT:
 		_vm->bam()->updateFightAnimation();
 		break;
-	case ROOM_INTRO_RITA_JOE_HEADS: // CR 2 - CD-Rom pan right while Rita talks...
+	case ROOM_INTRO_RITA_JOE_HEADS:
 		_cameraBob = -1;
 		if (screenScroll < 80) {
 			_vm->display()->horizontalScroll(screenScroll + 4);
@@ -584,7 +586,7 @@ void Graphics::handleParallax(uint16 roomNum) {
 			_bobs[21].x -= 2;
 		}
 		break;
-	case ROOM_INTRO_EXPLOSION: // CR 2 - CD-Rom the guys move off screen
+	case ROOM_INTRO_EXPLOSION:
 		_bobs[21].x += 2;
 		_bobs[21].y += 2;
 		break;
@@ -870,12 +872,6 @@ void Graphics::setupRoomFurniture(int16 *furniture, uint16 furnitureCount) {
 	uint16 i;
 	uint16 curImage = 36 + FRAMES_JOE_XTRA;
 
-	// unpack the furniture from bank 15
-	// there are 3 kinds :
-	// - static (bobs), gamestate range = ]0;5000]
-	// - animated (bobs), gamestate range = ]0;5000]
-	// - static (paste downs), gamestate range = [5000; [
-
 	// unpack the static bobs
 	_numFurnitureStatic = 0;
 	for	(i = 1; i <= furnitureCount; ++i) {
@@ -977,7 +973,6 @@ void Graphics::setupRoomObjects() {
 				rebound = true;
 			}
 			if (pgd->firstFrame < 0) {
-				// XXX if(TEMPA[1]<0) bobs[CURRBOB].xflip=1;
 				curBob = 5 + _numFurnitureAnimated;
 				setupObjectAnim(pgd, curImage + 1, curBob + numObjectAnimated, pod->name > 0);
 				curImage += pgd->lastFrame;

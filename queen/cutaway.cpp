@@ -345,11 +345,6 @@ void Cutaway::changeRooms(CutawayObject &object) {
 					}
 				}
 
-				/*debug(6, "Person '%s' (%i) is %s", 
-						_vm->logic()->objectName(objectData->name),
-						objectData->name,
-						on ? "on" : "off");*/
-
 				if (on) {
 					// It is needed, so ensure it's ON
 					objectData->name = ABS(objectData->name);
@@ -668,10 +663,6 @@ byte *Cutaway::handleAnimation(byte *ptr, CutawayObject &object) {
 					// Unpack animation, but do not unpack moving people
 
 					if (!((objAnim[i].mx > 0 || objAnim[i].my > 0) && inRange(objAnim[i].object, 1, 3))) {
-						/*debug(6, "Animation - bankUnpack(%i, %i, %i);",
-								objAnim[i].unpackFrame, 
-								objAnim[i].originalFrame,
-								objAnim[i].bank);*/
 						_vm->bankMan()->unpack(
 								objAnim[i].unpackFrame, 
 								objAnim[i].originalFrame,
@@ -773,7 +764,7 @@ void Cutaway::handlePersonRecord(
 			_vm->walk()->movePerson(
 					&p, 
 					object.moveToX, object.moveToY,
-					_currentImage + 1, 		// XXX CI+1
+					_currentImage + 1,
 					_vm->logic()->objectData(object.objectNumber)->image
 					);
 	}
@@ -1133,9 +1124,7 @@ void Cutaway::stop() {
 	}
 
 	if (joeRoom == _temporaryRoom &&
-			joeRoom != 37 &&    // XXX hard coded room number
-			joeRoom != 105 &&   // XXX hard coded room number
-			joeRoom != 106 &&   // XXX hard coded room number
+			joeRoom != 37 && joeRoom != 105 && joeRoom != 106 &&
 			(joeX || joeY)) {
 		BobSlot *joeBob = _vm->graphics()->bob(0);
 		
@@ -1175,8 +1164,6 @@ void Cutaway::updateGameState() {
 
 		if (update) {
 
-			// Show or hide an object
-
 			if (objectIndex > 0) {                    // Show the object
 				ObjectData *objectData  = _vm->logic()->objectData(objectIndex);
 				objectData->name        = ABS(objectData->name);
@@ -1209,7 +1196,6 @@ void Cutaway::updateGameState() {
 	} // for()
 }
 
-// XXX this function could probably be useful at other places too
 static char *right(char *str, int count) {
 	// This function does _not_ use static data (the implementation in talk.c does!)
 	int length = strlen(str);
@@ -1239,7 +1225,6 @@ void Cutaway::talk(char *nextFilename) {
 }
 
 int Cutaway::makeComplexAnimation(int16 currentImage, Cutaway::CutawayAnim *objAnim, int frameCount) {
-	// function MAKE_COMPLEX_ANIM, lines 816-883 in cutaway.c
 	int frameIndex[256];
 	int i;
 	int bobNum = objAnim[0].object;
