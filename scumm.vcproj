@@ -308,10 +308,10 @@
 				RelativePath=".\scumm\intern.h">
 			</File>
 			<File
-				RelativePath=".\scumm\midiparser_ro.cpp">
+				RelativePath=".\scumm\midiparser_eup.cpp">
 			</File>
 			<File
-				RelativePath=".\scumm\midiparser_eup.cpp">
+				RelativePath=".\scumm\midiparser_ro.cpp">
 			</File>
 			<File
 				RelativePath="scumm\music.h">
@@ -329,6 +329,12 @@
 				RelativePath=".\scumm\object.h">
 			</File>
 			<File
+				RelativePath="scumm\player_mod.cpp">
+			</File>
+			<File
+				RelativePath="scumm\player_mod.h">
+			</File>
+			<File
 				RelativePath="scumm\player_v1.cpp">
 			</File>
 			<File
@@ -339,6 +345,12 @@
 			</File>
 			<File
 				RelativePath=".\scumm\player_v2.h">
+			</File>
+			<File
+				RelativePath="scumm\player_v2a.cpp">
+			</File>
+			<File
+				RelativePath="scumm\player_v2a.h">
 			</File>
 			<File
 				RelativePath="scumm\player_v3a.cpp">
