@@ -412,7 +412,12 @@ void ScummEngine_v70he::o70_startSound() {
 		_heSndFlags |= 4;
 		break;
 	case 23:
-		debug(1,"o70_startSound: case 29 (%d, %d, %d)", pop(), pop(), pop());
+		{
+		int value = pop();
+		int var = pop();
+		int snd = pop();
+		debug(1,"o70_startSound: case 29 (snd %d, var %d, value %d)", snd, var, value);
+		}
 		break;
 	case 56:
 		_heSndFlags |= 2;

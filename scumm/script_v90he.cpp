@@ -135,7 +135,7 @@ void ScummEngine_v90he::setupOpcodes() {
 		OPCODE(o6_wordArrayWrite),
 		/* 48 */
 		OPCODE(o80_unknown48),
-		OPCODE(o80_unknown49),
+		OPCODE(o80_getSoundVar),
 		OPCODE(o80_localizeArrayToRoom),
 		OPCODE(o6_wordArrayIndexedWrite),
 		/* 4C */

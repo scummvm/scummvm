@@ -135,7 +135,7 @@ void ScummEngine_v80he::setupOpcodes() {
 		OPCODE(o6_wordArrayWrite),
 		/* 48 */
 		OPCODE(o80_unknown48),
-		OPCODE(o80_unknown49),
+		OPCODE(o80_getSoundVar),
 		OPCODE(o80_localizeArrayToRoom),
 		OPCODE(o6_wordArrayIndexedWrite),
 		/* 4C */
@@ -378,24 +378,22 @@ const char *ScummEngine_v80he::getOpcodeDesc(byte i) {
 }
 
 void ScummEngine_v80he::o80_unknown45() {
-	// Sound related
+	// Loads SBNG sound resource
 	byte subOp = fetchScriptByte();
 
 	switch (subOp) {
 	case 27:
 		pop();
+		//loadSBNG(_heSBNGId, pop();
 		break;
 	case 217:
+		//loadSBNG(_heSBNGId, -1);
 		break;
 	case 232:
-		_heSndSoundId = pop();
-		break;
-	case 255:
-		//Case doesn't match disasm.
-		_sound->addSoundToQueue(_heSndSoundId);
+		//_heSBNGId = pop();
 		break;
 	default:
-		warning("o80_unknown45: default type %d", subOp);
+		warning("o80_unknown45: default case %d", subOp);
 	}
 	debug(1,"o80_unknown45 stub (%d)",subOp);
 }
@@ -417,25 +415,14 @@ void ScummEngine_v80he::o80_unknown48() {
 	push(val);
 }
 
-void ScummEngine_v80he::o80_unknown49() {
-	// Sound related
-	int result = 0;
-	int subOp = pop();
+void ScummEngine_v80he::o80_getSoundVar() {
+	// Checks sound variable
+	int var = pop();
 	int snd = pop();
 
-	switch (subOp) {
-	case 0:
-		result = !_sound->isSoundRunning(snd);
-		break;
-	case 1:
-		result = _sound->isSoundRunning(snd); 
-		break;
-	default:
-		warning("o80_unknown49: default type %d", subOp);
-	}
-
-	push (result);
-	debug(1,"o80_unknown49 stub (%d, %d)", subOp, snd);
+	checkRange(27, 0, var, "Illegal sound variable %d");
+	push (_rnd.getRandomNumber(3));
+	debug(1,"o80_getSoundVar stub (snd %d, var %d)", snd, var);
 }
 
 void ScummEngine_v80he::o80_localizeArrayToRoom() {

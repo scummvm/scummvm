@@ -316,7 +316,7 @@ void ScummEngine_v100he::setupOpcodes() {
 		/* D8 */
 		OPCODE(o72_unknown5A),
 		OPCODE(o6_isSoundRunning),
-		OPCODE(o80_unknown49),
+		OPCODE(o80_getSoundVar),
 		OPCODE(o100_unknown25),
 		/* DC */
 		OPCODE(o90_sqrt),

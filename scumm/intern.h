@@ -802,7 +802,7 @@ protected:
 	/* HE version 80 script opcodes */
 	void o80_unknown45();
 	void o80_unknown48();
-	void o80_unknown49();
+	void o80_getSoundVar();
 	void o80_localizeArrayToRoom();
 	void o80_readConfigFile();
 	void o80_writeConfigFile();

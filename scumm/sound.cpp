@@ -270,6 +270,11 @@ void Sound::playSound(int soundID, int heOffset, int heChannel, int heFlags) {
 			ptr += 8 + READ_BE_UINT32(ptr + 12);
 		}
 
+		if (READ_UINT32(ptr) == MKID('SBNG')) {
+			ptr += READ_BE_UINT32(ptr + 4);
+			warning("playSound: Skipped SBNG block");
+		}
+
 		if (READ_UINT32(ptr) != MKID('SDAT')) {
 			warning("playSound: Invalid sound %d", soundID);
 			return;	// abort
@@ -663,6 +668,7 @@ void Sound::startTalkSound(uint32 offset, uint32 b, int mode, PlayingSoundHandle
 			_sfxFile->seek(offset + 32, SEEK_SET);
 
 			if (_sfxFile->readUint32LE() == TO_LE_32(MKID('SBNG'))) {
+				warning("startTalkSound: Skipped SBNG block");
 				// Skip the SBNG, so we end up at the SDAT chunk
 				extra = _sfxFile->readUint32BE();
 				_sfxFile->seek(extra - 4, SEEK_CUR);
