@@ -2072,7 +2072,7 @@ void Gdi::unkDecode9(byte *dst, const byte *src, int height) {
 				color += bits << i;
 			}
 			for (i = 0; i < ((c & 3) + 2); i++) {
-				*dst = (run * 16 + _vm->_roomPalette[color]);
+				*dst = _vm->_roomPalette[run * 16 + color];
 				NEXT_ROW;
 			}
 			break;
@@ -2084,7 +2084,7 @@ void Gdi::unkDecode9(byte *dst, const byte *src, int height) {
 					READ_256BIT;
 					color += bits << j;
 				}
-				*dst = (run * 16 + _vm->_roomPalette[color]);
+				*dst = _vm->_roomPalette[run * 16 + color];
 				NEXT_ROW;
 			}
 			break;
