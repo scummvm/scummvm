@@ -1372,6 +1372,9 @@ void ScummEngine_v72he::o72_unknownC1() {
 }
 
 void ScummEngine_v72he::drawWizImage(int restype, int resnum, int state, int x1, int y1, int flags) {
+	if (flags & 64)
+		error("Polygon Wiz image is unimplemented");
+
 	const uint8 *dataPtr = getResourceAddress(restype, resnum);
 	if (dataPtr) {
 		const uint8 *wizh = findWrappedBlock(MKID('WIZH'), dataPtr, state, 0);
