@@ -245,7 +245,8 @@ SCUMM
   - Add support for additional drawWizImage flags
   - Add support for new akos animation code used by cut scenes (cyx)
   - Complete support for akos codec 32
-  - Fix debug strings (Reports incorrect values/strings sometimes) (Kirben)
+  - Fix debug strings (Reports incorrect values) (Kirben)
+  - Fix array issues in Buzzy games (Kirben)
   - Add support for various new opcodes
 
 Broken Sword 2
