@@ -134,7 +134,7 @@ void OSystem_Dreamcast::create_thread(ThreadProc *proc, void *param) {
 
 
 /* Mutex handling */
-Mutex* OSystem_Dreamcast::create_mutex()
+OSystem::MutexRef OSystem_Dreamcast::create_mutex()
 {
   return NULL;
 }
