@@ -33,7 +33,7 @@ enum {
 	WIDGET_BORDER		= 1 << 3,
 	WIDGET_CLEARBG		= 1 << 4,
 	WIDGET_WANT_TICKLE	= 1 << 5,
-	WIDGET_TRACK_MOUSE  = 1 << 6
+	WIDGET_TRACK_MOUSE	= 1 << 6
 };
 
 enum {
