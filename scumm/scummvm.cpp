@@ -881,14 +881,14 @@ void Scumm::initRoomSubBlocks() {
 	if (!roomptr || !roomResPtr)
 		error("Room %d: data not found (" __FILE__  ":%d)", _roomResource, __LINE__);
 
+	//
+	// Determine the room dimensions (width/height)
+	//
 	if (_features & GF_OLD_BUNDLE)
 		rmhd = (RoomHeader *)(roomptr + 4);
 	else
 		rmhd = (RoomHeader *)findResourceData(MKID('RMHD'), roomptr);
 	
-	//
-	// Determine the room dimensions (width/height)
-	//
 	if (_features & GF_AFTER_V8) {
 		_scrWidth = READ_LE_UINT32(&(rmhd->v8.width));
 		_scrHeight = READ_LE_UINT32(&(rmhd->v8.height));
@@ -968,7 +968,7 @@ void Scumm::initRoomSubBlocks() {
 			ptr += size;
 			if (_features & GF_OLD_BUNDLE)
 				// FIXME. This is an evil HACK!!!
-				size = (READ_LE_UINT16(roomptr + 0x15) - READ_LE_UINT16(roomptr + 0x0A)) - size;
+				size = (READ_LE_UINT16(roomptr + 0x0A) - READ_LE_UINT16(roomptr + 0x15)) - size;
 			else
 				size = getResourceDataSize(ptr - size - 6) - size;
 
