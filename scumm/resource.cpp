@@ -1081,10 +1081,7 @@ int Scumm::convertADResource(int type, int idx, byte * src_ptr, int size) {
 		// Unfortunate LOOM and INDY3 have different interpretation
 		// of the ticks value.
 		if (_gameId == GID_INDY3) {
-			// From my disassembly this would be correct:
-			// dw = 1000000 * 256 / 473 * ppqn / 2 / ticks;
-			// But this seems closer to original???
-			dw = 73000000 * 2 / ticks;
+			dw = 1000000 * 256 / 473 * ppqn / 2 / ticks;
 		} else if (_gameId == GID_LOOM) {
 			dw = 1000000 * ppqn / 4 / 2 / ticks;
 		} else {
