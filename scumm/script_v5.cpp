@@ -595,6 +595,13 @@ void ScummEngine_v5::o5_and() {
 void ScummEngine_v5::o5_animateActor() {
 	int act = getVarOrDirectByte(0x80);
 	int anim = getVarOrDirectByte(0x40);
+	
+	// WORKAROUND bug #820357: This seems to be yet another script bug which
+	// the original engine let slip by. For details, refer to the tracker item.
+	if (_gameId == GID_INDY4 && vm.slot[_currentScript].number == 206 && _currentRoom == 17 && (act == 31 || act == 86)) {
+		return;
+	}
+	
 	Actor *a = derefActor(act, "o5_animateActor");
 	a->animateActor(anim);
 }
