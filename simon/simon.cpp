@@ -218,7 +218,7 @@ static const GameSpecificSettings simon1demo_settings = {
 	"",                                     // voc_filename
 	"",                                     // mp3_filename
 	"",                                     // vorbis_filename
-	"",										// flac_filename
+	"",					// flac_filename
 	"",                                     // voc_effects_filename
 	"",                                     // mp3_effects_filename
 	"",                                     // vorbis_effects_filename
@@ -246,7 +246,7 @@ static const GameSpecificSettings simon2dos_settings = {
 	"",                                     // voc_filename
 	"",                                     // mp3_filename
 	"",                                     // vorbis_filename
-	"",										// flac_filename
+	"",					// flac_filename
 	"",                                     // voc_effects_filename
 	"",                                     // mp3_effects_filename
 	"",                                     // vorbis_effects_filename
@@ -287,8 +287,44 @@ SimonEngine::SimonEngine(GameDetector *detector, OSystem *syst)
 
 	_game = game.features;
 
+#if 1
+	// HACK HACK HACK
+	// This is not how, and where, MD5 computation should be done in the
+	// real world. Rather this is meant as a proof-of-concept hack. 
+	// It's quick, it's dirty, and it'll go again eventually :-)
+	char buf[100];
+	uint8 md5sum[16];
+
+	sprintf(buf, g->detectname);
+
+	if (md5_file(buf, md5sum)) {
+		// HACK : changed to this code since PalmOS doesn't handle correctly %02x.
+		// It returns only 8 chars string in upper case so i need to use hex[],
+		// copy last 2 chars to md5str and convert result to lower case
+		int j;
+		char md5str[32+1];
+		char hex[8+1];
+		for (j = 0; j < 16; j++) {
+			sprintf(hex, "%02x", (int)md5sum[j]);
+			memcpy(md5str+j*2, hex + strlen(hex) - 2, 2);
+		}
+
+		for (j = 0; j < 32; j++)
+			md5str[j] = tolower(md5str[j]);
+		md5str[32] = 0;
+		printf("%s  %s\n", md5str, buf);
+		const MD5Table *elem;
+		elem = (const MD5Table *)bsearch(md5str, md5table, ARRAYSIZE(md5table)-1, sizeof(MD5Table), compareMD5Table);
+		if (elem)
+			printf("Match found in database: target %s, language %s, platform %s\n",
+				elem->target, Common::getLanguageDescription(elem->language), Common::getPlatformDescription(elem->platform));
+		else
+			printf("Unknown MD5! Please report the details (language, platform, etc.) of this game to the ScummVM team\n");
+	}
+#endif
+
+	VGA_DELAY_BASE = 1;
 	if (_game & GF_SIMON2) {
-		VGA_DELAY_BASE = 1;
 		TABLE_INDEX_BASE = 1580 / 4;
 		TEXT_INDEX_BASE = 1500 / 4;
 		NUM_VIDEO_OP_CODES = 75;
@@ -304,7 +340,6 @@ SimonEngine::SimonEngine(GameDetector *detector, OSystem *syst)
 			MUSIC_INDEX_BASE = 1128 / 4;
 		SOUND_INDEX_BASE = 1660 / 4;
 	} else {
-		VGA_DELAY_BASE = 1;
 		TABLE_INDEX_BASE = 1576 / 4;
 		TEXT_INDEX_BASE = 1460 / 4;
 		NUM_VIDEO_OP_CODES = 64;
