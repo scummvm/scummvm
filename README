@@ -218,7 +218,7 @@ Viewing these cutscenes thus requires a version of ScummVM compiled
 with both libmpeg2 (preferably 0.4.0 or greater) and libVorbis support.
 
 The cutscenes should be placed in a harddisk directory, and the location
-to this can be specified using the 'Extra Path' setting under the 'Paths'
+of this can be specified using the 'Extra Path' setting under the 'Paths'
 tab of the game options screen ('Edit Game').
 
 3.4) Flight of the Amazon Queen notes
@@ -243,7 +243,7 @@ a bug that is not listed here, nor in the compatibility table on the web site,
 please see the section on Reporting Bugs.
 
      CD Audio Games:
-          - When playing games that use CD Audio (Towns varients, Loom CD, etc),
+          - When playing games that use CD Audio (Towns variants, Loom CD, etc),
             users of Microsoft Windows 2000/XP may experience random crashes.
             This is due to a long-standing Windows bug, resulting in corrupt
             game files being read from the CD. Please copy the game data to
