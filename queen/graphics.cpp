@@ -769,7 +769,7 @@ void Graphics::journalBobPreDraw() { // GameSettings* pgs
 }
 
 
-void Graphics::setCameraBob(int bobNum) {
+void Graphics::cameraBob(int bobNum) {
 	_cameraBob = bobNum;
 }
 

@@ -284,12 +284,82 @@ void Cutaway::dumpCutawayObject(int index, CutawayObject &object)
 }
 
 void Cutaway::actionSpecialMove(int index) {
-	warning("Special move: %i", index);
+	debug(0, "Special move: %i", index);
 
 	switch (index) {
 
-		// cdint.cut
+		// cdint.cut - pan right fast
 		case 36:
+			{
+				Display *display = _logic->display();
+
+				BobSlot *bob_thugA1 = _graphics->bob(20);
+				BobSlot *bob_thugA2 = _graphics->bob(21);
+				BobSlot *bob_thugA3 = _graphics->bob(22);
+				BobSlot *bob_hugh1  = _graphics->bob(1);
+				BobSlot *bob_hugh2  = _graphics->bob(23);
+				BobSlot *bob_hugh3  = _graphics->bob(24);
+				BobSlot *bob_thugB1 = _graphics->bob(25);
+				BobSlot *bob_thugB2 = _graphics->bob(26);
+
+				_graphics->cameraBob(-1);
+				// XXX fastmode = 1;
+
+				_graphics->update();
+				
+				int i = 4, k = 160;
+
+				// Adjust thug1 gun so it matches rest of body
+				bob_thugA1->x += (k / 2) * 2 - 45; 
+				bob_thugA2->x += (k / 2) * 2; 
+				bob_thugA3->x += (k / 2) * 2;
+
+				bob_hugh1->x += (k / 2) * 3 + (k / 2);
+				bob_hugh2->x += (k / 2) * 3 + (k / 2);
+				bob_hugh3->x += (k / 2) * 3 + (k / 2);
+
+				bob_thugB1->x += (k / 2) * 4 + k; 
+				bob_thugB2->x += (k / 2) * 4 + k; 
+
+				if (i == 3) {
+					bob_thugB1->x += 10;
+					bob_thugB2->x += 10;
+				}
+
+				i *= 2;
+
+				int horizontalScroll = 0;
+
+				while (horizontalScroll < k) {
+
+					horizontalScroll = horizontalScroll + i;
+					if (horizontalScroll > k)
+						horizontalScroll = k;
+
+					debug(0, "horizontalScroll = %i", horizontalScroll);
+
+					display->horizontalScroll(horizontalScroll);
+
+					bob_thugA1->x += i * 2; 
+					bob_thugA2->x += i * 2; 
+					bob_thugA3->x += i * 2;
+
+					bob_hugh1->x += i * 3;
+					bob_hugh2->x += i * 3;
+					bob_hugh3->x += i * 3;
+
+					bob_thugB1->x += i * 4;
+					bob_thugB2->x += i * 4;
+
+					_graphics->update();
+
+					if (_quit)
+						return;
+
+				}
+
+				// XXX fastmode = 0;
+			}
 			break;
 		
 		// cdint.cut - flash white
@@ -308,7 +378,7 @@ void Cutaway::actionSpecialMove(int index) {
 				BobSlot *bob_clock = _graphics->bob(23);
 				BobSlot *bob_hands = _graphics->bob(24);
 
-				// XXX _graphics->cameraBob(-1);
+				_graphics->cameraBob(-1);
 				// XXX fastmode = 1;
 					
 				_graphics->update();
@@ -319,7 +389,7 @@ void Cutaway::actionSpecialMove(int index) {
 
 				int horizontalScroll = display->horizontalScroll();
 
-				int i = 1;
+				int i = 4;	// XXX 1 in original source code
 				while (horizontalScroll < 290) {
 
 					horizontalScroll = horizontalScroll + i;
@@ -347,7 +417,6 @@ void Cutaway::actionSpecialMove(int index) {
 			}
 			break;
 
-#if 0
 		// cdint.cut - pan left to bomb
 		case 39: 
 			{
@@ -356,7 +425,7 @@ void Cutaway::actionSpecialMove(int index) {
 				BobSlot *bob21 = _graphics->bob(21);
 				BobSlot *bob22 = _graphics->bob(22);
 
-				// XXX _graphics->cameraBob(-1);
+				_graphics->cameraBob(-1);
 				// XXX fastmode = 1;
 				
 				int horizontalScroll = display->horizontalScroll();
@@ -368,7 +437,7 @@ void Cutaway::actionSpecialMove(int index) {
 					if (horizontalScroll < 0)
 						horizontalScroll = 0;
 
-					debug(0, "horizontalScroll = %i", horizontalScroll);
+					//debug(0, "horizontalScroll = %i", horizontalScroll);
 					display->horizontalScroll(horizontalScroll);
 
 					if (horizontalScroll < 272 && bob21->x < 136)
@@ -386,7 +455,6 @@ void Cutaway::actionSpecialMove(int index) {
 				// XXX fastmode = 0;
 			}
 			break;
-#endif
 
 		default:
 			warning("Unhandled special move: %i", index);
@@ -643,7 +711,7 @@ byte *Cutaway::getCutawayAnim(byte *ptr, int header, CutawayAnim &anim) {
 	else {
 		if (anim.bank != 13) {
 			/* XXX if (OLDBANK != T) */ {
-				debug(0, "Loading bank '%s'", _bankNames[anim.bank-1]);
+				//debug(0, "Loading bank '%s'", _bankNames[anim.bank-1]);
 				_graphics->bankLoad(_bankNames[anim.bank-1], 8);
 				// XXX OLDBANK=T;
 			}
@@ -722,7 +790,7 @@ byte *Cutaway::handleAnimation(byte *ptr, CutawayObject &object) {
 		if (-2 == header)
 			break;
 
-		debug(0, "Animation frame %i, header = %i", frameCount, header);
+		//debug(0, "Animation frame %i, header = %i", frameCount, header);
 
 		if (header > 1000)
 			error("Header too large");
@@ -789,8 +857,8 @@ byte *Cutaway::handleAnimation(byte *ptr, CutawayObject &object) {
 		debug(0, "----- Normal cutaway animation (animType = %i) -----", object.animType);
 		
 		for (i = 0; i < frameCount; i++) {
-			debug(0, "===== Animating frame %i =====", i);
-			dumpCutawayAnim(objAnim[i]);
+			//debug(0, "===== Animating frame %i =====", i);
+			//dumpCutawayAnim(objAnim[i]);
 
 			BobSlot *bob = _graphics->bob(objAnim[i].object);
 			bob->active = true;
@@ -811,10 +879,10 @@ byte *Cutaway::handleAnimation(byte *ptr, CutawayObject &object) {
 					// Unpack animation, but do not unpack moving people
 
 					if (!((objAnim[i].mx || objAnim[i].my) && InRange(objAnim[i].object, 0, 3))) {
-						debug(0, "Animation - bankUnpack(%i, %i, %i);",
+						/*debug(0, "Animation - bankUnpack(%i, %i, %i);",
 								objAnim[i].unpackFrame, 
 								objAnim[i].originalFrame,
-								objAnim[i].bank);
+								objAnim[i].bank);*/
 						_graphics->bankUnpack(
 								objAnim[i].unpackFrame, 
 								objAnim[i].originalFrame,
@@ -918,12 +986,13 @@ void Cutaway::handlePersonRecord(
 			bob->y = object.bobStartY;
 		}
 
-		_walk->personMove(
-				&p, 
-				object.moveToX, object.moveToY,
-				_logic->numFrames() + 1, 		// XXX CI+1
-				_logic->objectData(object.objectNumber)->image
-				);
+		if (object.moveToX || object.moveToY)
+			_walk->personMove(
+					&p, 
+					object.moveToX, object.moveToY,
+					_logic->numFrames() + 1, 		// XXX CI+1
+					_logic->objectData(object.objectNumber)->image
+					);
 	}
 
 	if (_quit)
@@ -1001,7 +1070,7 @@ void Cutaway::run(char *nextFilename) {
 
 		char sentence[MAX_STRING_SIZE];
 		_nextSentence = Talk::getString(_nextSentence, sentence, MAX_STRING_LENGTH);
-		debug(0, "Sentence = '%s'", sentence);
+		//debug(0, "Sentence = '%s'", sentence);
 
 		if (OBJECT_ROOMFADE == object.objectNumber) {
 			_roomFade = true;

@@ -762,7 +762,7 @@ void Talk::speakSegment(
 
 		if (parameters->animation[0] != '\0') {
 			// talk.c lines 1639-1690
-			warning("Speech animation not yet implemented");
+			//warning("Speech animation not yet implemented");
 		}
 		else {
 			_graphics->bankUnpack(parameters->body, startFrame, bankNum);

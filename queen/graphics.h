@@ -162,7 +162,8 @@ public:
 	void journalBobSetup(uint32 bobnum, uint16 x, uint16 y, uint16 frame);
 	void journalBobPreDraw();
 
-	void setCameraBob(int bobNum);
+	void cameraBob(int bobNum);
+	int cameraBob() { return _cameraBob; }
 
 	void update();
 
