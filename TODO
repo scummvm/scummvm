@@ -15,6 +15,14 @@ General
   in each Plugin which given a FSList returns a list of candidate targets.
   This way, a plugin can implement tests more elaborate than filename
   checking, e.g. it could actually peek into the files.
+* make some generic "EventLoop" API/class which all backends and the GUI
+  use. Initially this would just call the backend poll_event() etc. methods.
+  But eventually the EventLoop object(s) could be made by the backend.
+  This may allow for more efficient CPU usage etc.
+  The current event handling model essentially is polling: the engines run
+  some kind of main loop, which, besides many other things, also polls and
+  dispatches events. The idea is to turn this around: the event loop
+  frequently gives the engine time to do these "other things".
 
 GUI
 ===
