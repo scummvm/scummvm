@@ -139,9 +139,9 @@ void Logic::initialise() {
 		ptr += 2;
 	}
 	
-	_objMax = new int16[_numRooms + 1];
-	_areaMax = new int16[_numRooms + 1];
-	_area = new int16[_numRooms + 1][11][8];
+	_objMax   = new int16[_numRooms + 1];
+	_areaMax  = new int16[_numRooms + 1];
+	_area     = new int16[_numRooms + 1][11][8];
 
 	for (i = 1; i < (_numRooms + 1); i++) {
 		_objMax[i] = (int16)READ_BE_UINT16(ptr);
@@ -151,6 +151,8 @@ void Logic::initialise() {
 		
 		for (j = 1; j < (_areaMax[i] + 1); j++)
 			for (k = 0; k < 8; k++) {
+				if (j > 11)
+					error("j (%i) too large, _areaMax[i] = %i", j, _areaMax[i]);
 				_area[i][j][k] = READ_BE_UINT16(ptr);
 				ptr += 2;
 			}
