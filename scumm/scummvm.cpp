@@ -319,7 +319,6 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 	memset(&res, 0, sizeof(res));
 	memset(&vm, 0, sizeof(vm));
 	_smushFrameRate = 0;
-	_insaneState = false;
 	_videoFinished = false;
 	_smushPaused = false;
 	_quit = false;
@@ -1342,7 +1341,7 @@ int ScummEngine::scummLoop(int delta) {
 	if (_version <= 3)
 		CHARSET_1();
 
-	processKbd();
+	processKbd(false);
 
 	if (_features & GF_NEW_CAMERA) {
 		VAR(VAR_CAMERA_POS_X) = camera._cur.x;
@@ -1724,7 +1723,7 @@ void ScummEngine::clearClickedStatus() {
 	_rightBtnPressed &= ~msClicked;
 }
 
-void ScummEngine::processKbd() {
+void ScummEngine::processKbd(bool smushMode) {
 	int saveloadkey;
 
 	_lastKeyHit = _keyPressed;
@@ -1837,7 +1836,7 @@ void ScummEngine::processKbd() {
 
 	if (_lastKeyHit == KEY_ALL_SKIP) {
 		// Skip cutscene
-		if (_insaneState) {
+		if (smushMode) {
 			// Eek this is literally shouting for trouble...
 			// Probably should set _lastKey to VAR_CUTSCENEEXIT_KEY instead!
 			_videoFinished = true;
@@ -1880,13 +1879,13 @@ void ScummEngine::processKbd() {
 		// Skip cutscene (or active SMUSH video). For the V2 games, which
 		// normally use F4 for this, we add in a hack that makes escape work,
 		// too (just for convenience).
-		if (_insaneState) {
+		if (smushMode) {
 			if (_gameId == GID_FT)
 				_insane->escapeKeyHandler();
 			else
 				_videoFinished = true;
 		}
-		if (!_insaneState || _videoFinished)
+		if (!smushMode || _videoFinished)
 			abortCutscene();
 		if (_version <= 2) {
 			// Ensure that the input script also sees the key press.

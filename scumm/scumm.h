@@ -340,7 +340,7 @@ public:
 	// Event handling
 	void parseEvents();
 	void waitForTimer(int msec_delay);
-	void processKbd();
+	void processKbd(bool smushMode);
 	void clearClickedStatus();
 
 	// Misc utility functions
@@ -355,7 +355,6 @@ public:
 
 	/* _insane vars */
 	int _smushFrameRate;
-	bool _insaneState;
 	bool _videoFinished;
 	bool _smushPaused;
 	
@@ -954,10 +953,6 @@ protected:
 
 	int _drawObjectQueNr;
 	byte _drawObjectQue[200];
-	byte _palManipStart, _palManipEnd;
-	uint16 _palManipCounter;
-	byte *_palManipPalette;
-	byte *_palManipIntermediatePal;
 	
 	/* For each of the 410 screen strips, gfxUsageBits contains a
 	 * bitmask. The lower 80 bits each correspond to one actor and
@@ -989,6 +984,11 @@ protected:
 	byte _currentPalette[3 * 256];
 
 	int _palDirtyMin, _palDirtyMax;
+
+	byte _palManipStart, _palManipEnd;
+	uint16 _palManipCounter;
+	byte *_palManipPalette;
+	byte *_palManipIntermediatePal;
 
 	byte _haveMsg;
 	bool _useTalkAnims;
@@ -1044,18 +1044,15 @@ protected:
 	/* String class */
 public:
 	CharsetRenderer *_charset;
-protected:
-	byte _charsetColor;
-public:
 	byte _charsetColorMap[16];
 protected:
+	byte _charsetColor;
 	byte _charsetData[15][16];
 
 	int _charsetBufPos;
 	byte _charsetBuffer[512];
 
 protected:
-
 	void initCharset(int charset);
 
 	void CHARSET_1();

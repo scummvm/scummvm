@@ -247,7 +247,6 @@ void SmushPlayer::init() {
 	_frame = 0;
 
 	_vm->_videoFinished = false;
-	_vm->_insaneState = true;
 
 	_smixer = new SmushMixer(_vm->_mixer);
 
@@ -286,7 +285,6 @@ void SmushPlayer::deinit() {
 	
 	_vm->_mixer->stopHandle(_IACTchannel);
 
-	_vm->_insaneState = false;
 	_vm->_fullRedraw = true;
 }
 
@@ -998,7 +996,7 @@ void SmushPlayer::play(const char *filename, const char *directory) {
 
 	while (true) {
 		_vm->parseEvents();
-		_vm->processKbd();
+		_vm->processKbd(true);
 		if (_updateNeeded) {
 			
 			uint32 end_time, start_time;
