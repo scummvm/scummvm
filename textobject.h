@@ -31,8 +31,11 @@ struct TextObjectDefaults {
 	int x, y;
 	int width, height;
 	int justify;
+	bool disabled;
 	Font *font;
 };
+
+#define TEXT_NULL   ' '
 
 extern TextObjectDefaults sayLineDefaults;
 extern TextObjectDefaults printLineDefaults;
@@ -45,7 +48,7 @@ public:
 	void createBitmap();
 	void destroyBitmap();
 	void setDefaults(TextObjectDefaults *defaults);
-	void setText(char *text) { strcpy(_textID, text); }
+	void setText(char *text);
 	void setX(int x) { _x = x; }
 	void setY(int y) { _y = y; }
 	void setWidth(int width) { _width = width; }
@@ -53,7 +56,7 @@ public:
 	void setFGColor(Color *fgColor) { _fgColor = fgColor; }
 	void setFont(Font *font) { _font = font; }
 	void setJustify(int justify) { _justify = justify; }
-	void setDim() { _dim = true; }
+	void setDisabled(bool disabled) { _disabled = disabled; }
 	int getBitmapWidth() { return _bitmapWidth; }
 	int getBitmapHeight() { return _bitmapHeight; }
 	int getTextCharPosition(int pos);
@@ -64,16 +67,17 @@ public:
 	enum Justify {
 		NONE,
 		CENTER,
-		LJUSTIFY
+		LJUSTIFY,
+		RJUSTIFY
 	};
 
 protected:
 	bool _created;
-	bool _dim;
 	Color _fgColor;
 	int _x, _y;
 	uint _width, _height;
 	int _justify;
+	bool _disabled;
 	Font *_font;
 	char _textID[32];
 	uint8 *_textBitmap;

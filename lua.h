@@ -39,4 +39,14 @@ void setMovieTime(float movieTime);
 // object if appropriate
 lua_Object getEventHandler(const char *name);
 
+// set the value for a table item
+void setTableValue(lua_Object table, char *name, int newvalue);
+void setTableValue(lua_Object table, char *name, lua_Object newvalue);
+
+// get the value of a table item
+lua_Object getTableValue(lua_Object table, char *name);
+
+// get a function stored in a table
+lua_Object getTableFunction(lua_Object table, char *name);
+
 #endif

@@ -76,6 +76,38 @@ Engine::Engine() :
 	printLineDefaults.justify = 2;
 }
 
+void Engine::handleButton(int operation, int key) {
+	lua_beginblock();
+	lua_Object menu = getEventHandler("menuHandler");
+	if (menu != LUA_NOOBJECT && !lua_isnil(menu)) {
+		lua_Object system_table = lua_getglobal("system");
+		lua_pushobject(system_table);
+		lua_pushstring(const_cast<char *>("userPaintHandler"));
+		lua_pushobject(lua_gettable());
+		lua_pushnumber(key);
+		if (operation == SDL_KEYDOWN)
+			lua_pushnil();
+		else
+			lua_pushnumber(1);
+		lua_pushnil();
+		lua_callfunction(menu);
+	}
+	lua_endblock();
+
+	lua_beginblock();
+	lua_Object handler = getEventHandler("buttonHandler");
+	if (handler != LUA_NOOBJECT) {
+		lua_pushnumber(key);
+		if (operation == SDL_KEYDOWN)
+			lua_pushnumber(1);
+		else
+			lua_pushnil();
+		lua_pushnil();
+		lua_callfunction(handler);
+	}
+	lua_endblock();
+}
+
 void Engine::mainLoop() {
 	_movieTime = 0;
 	_frameTime = 0;
@@ -92,17 +124,8 @@ void Engine::mainLoop() {
 		// Process events
 		SDL_Event event;
 		while (SDL_PollEvent(&event)) {
-			if (event.type == SDL_KEYDOWN && _controlsEnabled[event.key.keysym.sym]) {
-				lua_beginblock();
-				lua_Object handler = getEventHandler("buttonHandler");
-				if (handler != LUA_NOOBJECT) {
-					lua_pushnumber(event.key.keysym.sym);
-					lua_pushnumber(1);
-					lua_pushnil();
-					lua_callfunction(handler);
-				}
-				lua_endblock();
-			}
+			if (event.type == SDL_KEYDOWN && _controlsEnabled[event.key.keysym.sym])
+				handleButton(SDL_KEYDOWN, event.key.keysym.sym);
 			if (event.type == SDL_KEYUP && _controlsEnabled[event.key.keysym.sym]) {
 				// temporary hack for save/load request until game menu will work
 				if (event.key.keysym.sym == SDLK_F7) {
@@ -113,15 +136,7 @@ void Engine::mainLoop() {
 					continue;
 				}
 
-				lua_beginblock();
-				lua_Object handler = getEventHandler("buttonHandler");
-				if (handler != LUA_NOOBJECT) {
-					lua_pushnumber(event.key.keysym.sym);
-					lua_pushnil();
-					lua_pushnil();
-					lua_callfunction(handler);
-				}
-				lua_endblock();
+				handleButton(SDL_KEYUP, event.key.keysym.sym);
 			}
 			if (event.type == SDL_QUIT) {
 				lua_beginblock();

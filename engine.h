@@ -102,6 +102,9 @@ public:
 
 	float perSecond(float rate) const { return rate * _frameTime / 1000; }
 
+	void setMenuMode(int mode) { _menuMode = mode; }
+	int getMenuMode() { return _menuMode; }
+
 	void enableControl(int num) { _controlsEnabled[num] = true; }
 	void disableControl(int num) { _controlsEnabled[num] = false; }
 
@@ -122,6 +125,7 @@ public:
 	void setSelectedActor(Actor *a) { _selectedActor = a; }
 	Actor *selectedActor() { return _selectedActor; }
 
+	// Text Object Registration
 	typedef std::list<TextObject *> TextListType;
 	TextListType::const_iterator textsBegin() const {
 		return _textObjects.begin();
@@ -156,8 +160,10 @@ public:
 
 private:
 
+	void handleButton(int operation, int key);
+
 	Scene *_currScene;
-	int _mode;
+	int _mode, _menuMode;
 	int _speechMode;
 
 	unsigned _frameStart, _frameTime, _movieTime;

@@ -28,13 +28,25 @@ TextObjectDefaults printLineDefaults;
 TextObjectDefaults textObjectDefaults;
 
 TextObject::TextObject() :
-		_created(false), _dim(false), _x(0), _y(0), _width(0), _height(0), _justify(0),
+		_created(false), _x(0), _y(0), _width(0), _height(0), _justify(0),
 		_font(NULL), _textBitmap(NULL), _bitmapWidth(0),
-		_bitmapHeight(0), _textObjectHandle(NULL) {
+		_bitmapHeight(0), _textObjectHandle(NULL), _disabled(0) {
 	memset(_textID, 0, sizeof(_textID));
 	_fgColor._vals[0] = 0;
 	_fgColor._vals[1] = 0;
 	_fgColor._vals[2] = 0;
+}
+
+void TextObject::setText(char *text) {
+	if (strlen(text) < sizeof(_textID))
+		strcpy(_textID, text);
+	else {
+		error("Text ID exceeded maximum length (%d): %s\n", sizeof(_textID), text);
+		// this should be good enough to still be unique
+		// but for debug purposes lets make this crash the program so we know about it
+		strncpy(_textID, text, sizeof(_textID));
+		_textID[sizeof(_textID)] = 0;
+	}
 }
 
 TextObject::~TextObject() {
@@ -49,6 +61,7 @@ void TextObject::setDefaults(TextObjectDefaults *defaults) {
 	_font = defaults->font;
 	_fgColor = defaults->fgColor;
 	_justify = defaults->justify;
+	_disabled = defaults->disabled;
 }
 
 int TextObject::getTextCharPosition(int pos) {
@@ -66,9 +79,16 @@ void TextObject::createBitmap() {
 		destroyBitmap();
 
 	std::string msg = parseMsgText(_textID, NULL);
+	char *c = (char *)msg.c_str();
 
 	_bitmapWidth = 0;
 	_bitmapHeight = 0;
+
+	// remove spaces (NULL_TEXT) from the end of the string,
+	// while this helps make the string unique it screws up
+	// text justification
+	for(int i = (int) msg.length() - 1; c[i] == TEXT_NULL; i--)
+		msg.erase(msg.length() - 1, msg.length());
 
 	for (int i = 0; msg[i] != '\0'; ++i) {
 		_bitmapWidth += _font->getCharLogicalWidth(msg[i]) + _font->getCharStartingCol(msg[i]);
@@ -108,20 +128,32 @@ void TextObject::createBitmap() {
 }
 
 void TextObject::destroyBitmap() {
+	_created = false;
 	if (_textObjectHandle) {
 		g_driver->destroyTextBitmap(_textObjectHandle);
 		delete _textObjectHandle;
 		_textObjectHandle = NULL;
 	}
-	_created = false;
 }
 
 void TextObject::draw() {
-	int x = _x;
+	if (!_created)
+		return;
 
-	if (_justify == 1) {
-		x = 320 - (_bitmapWidth / 2);
-	}
+	if (_justify == LJUSTIFY || _justify == NONE)
+		g_driver->drawTextBitmap(_x, _y, _textObjectHandle);
+	else if (_justify == CENTER) {
+		int x = _x - (1 / 2.0) * _bitmapWidth;
+		if (x < 0)
+			x = 0;
 
-	g_driver->drawTextBitmap(x, _y, _textObjectHandle);
+		g_driver->drawTextBitmap(x, _y, _textObjectHandle);
+	} else if (_justify == RJUSTIFY) {
+		int x = _x - _bitmapWidth;
+		if (x < 0)
+			x = 0;
+
+		g_driver->drawTextBitmap(x, _y, _textObjectHandle);
+	} else
+		warning("TextObject::draw: Unknown justification code (%d)!", _justify);
 }

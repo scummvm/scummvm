@@ -39,6 +39,10 @@
 
 extern Imuse *g_imuse;
 
+#define strmatch(src, dst)     (strlen(src) == strlen(dst) && strcmp(src, dst) == 0)
+
+static void stubWarning(char *funcName);
+
 static inline bool isObject(int num) {
 	lua_Object param = lua_getparam(num);
 	if (lua_isuserdata(param) && lua_tag(param) == MKID('STAT'))
@@ -105,6 +109,14 @@ static inline TextObject *check_textobject(int num) {
 	if (lua_isuserdata(param) && lua_tag(param) == MKID('TEXT'))
 		return static_cast<TextObject *>(lua_getuserdata(param));
 	luaL_argerror(num, "textobject expected");
+	return NULL;
+}
+
+static inline Bitmap *check_bitmapobject(int num) {
+	lua_Object param = lua_getparam(num);
+	if (lua_isuserdata(param) && lua_tag(param) == MKID('IMAG'))
+		return static_cast<Bitmap *>(lua_getuserdata(param));
+	luaL_argerror(num, "image object expected");
 	return NULL;
 }
 
@@ -290,7 +302,7 @@ static void SetSayLineDefaults() {
 			break;
 
 		key_text = lua_getstring(key);		
-		if (strstr(key_text, "font"))
+		if (strmatch(key_text, "font"))
 			sayLineDefaults.font = check_font(2);
 		else
 			error("Unknown SetSayLineDefaults key %s\n", key_text);
@@ -795,6 +807,8 @@ static void SayLine() {
 static void InputDialog() {
 	int c, i = 0;
 	char buf[512];
+
+	stubWarning("InputDialog");
 	fprintf(stderr, "%s %s: ", luaL_check_string(1), luaL_check_string(2));
 	while (i < 512 && (c = fgetc(stdin)) != EOF && c != '\n')
 		buf[i++] = c;
@@ -841,10 +855,10 @@ static void IsActorInSector(void) {
 	const char *name = luaL_check_string(2);
 	int i, numSectors = g_engine->currScene()->getSectorCount();
 
-	for (i=0; i<numSectors; i++) {
+	for (i = 0; i < numSectors; i++) {
 		Sector *sector = g_engine->currScene()->getSectorBase(i);
 
-		if (sector->visible() && strstr(sector->name(), name)) {
+		if (sector->visible() && strmatch(sector->name(), name)) {
 			if (sector->isPointInSector(act->pos())) {
 				lua_pushnumber(sector->id());
 				lua_pushstring((char *)sector->name());
@@ -874,7 +888,7 @@ static void MakeSectorActive(void) {
 
 		for (i = 0; i < numSectors; i++) {
 			Sector *sector = g_engine->currScene()->getSectorBase(i);
-			if (strstr(sector->name(), name)) {
+			if (strmatch(sector->name(), name)) {
 				sector->setVisible(visible);
 				return;
 			}
@@ -1144,11 +1158,13 @@ void PerSecond() {
 }
 
 void EnableControl() {
+	stubWarning("EnableControl");
 	int num = check_control(1);
 	g_engine->enableControl(num);
 }
 
 void DisableControl() {
+	stubWarning("DisableControl");
 	int num = check_control(1);
 	g_engine->disableControl(num);
 }
@@ -1181,56 +1197,188 @@ void getTextObjectParams(TextObject *textObject, lua_Object table_obj) {
 		if (lua_isnil(key)) 
 			break;
 
+		// printf("debug param: %s %s\n", lua_getstring(key), lua_getstring(lua_getresult(2)));
+
 		key_text = lua_getstring(key);
-		if (strstr(key_text, "x"))
+		if (strmatch(key_text, "x"))
 			textObject->setX(atoi(lua_getstring(lua_getresult(2))));
-		else if (strstr(key_text, "y"))
+		else if (strmatch(key_text, "y"))
 			textObject->setY(atoi(lua_getstring(lua_getresult(2))));
-		else if (strstr(key_text, "width"))
+		else if (strmatch(key_text, "width"))
 			textObject->setWidth(atoi(lua_getstring(lua_getresult(2))));
-		else if (strstr(key_text, "height"))
+		else if (strmatch(key_text, "height"))
 			textObject->setHeight(atoi(lua_getstring(lua_getresult(2))));
-		else if (strstr(key_text, "font"))
+		else if (strmatch(key_text, "font"))
 			textObject->setFont(check_font(2));
-		else if (strstr(key_text, "fgcolor"))
+		else if (strmatch(key_text, "fgcolor"))
 			textObject->setFGColor(check_color(2));
-		else if (strstr(key_text, "center"))
+		else if (strmatch(key_text, "disabled"))
+			textObject->setDisabled(atoi(lua_getstring(lua_getresult(2))) != 0);
+		else if (strmatch(key_text, "center"))
 			textObject->setJustify(1);
-		else if (strstr(key_text, "ljustify"))
+		else if (strmatch(key_text, "ljustify"))
 			textObject->setJustify(2);
-		else if (strstr(key_text, "disabled"))
-			warning("getTextObjectParams: key %s\n not implemented yet", key_text);
+		else if (strmatch(key_text, "rjustify"))
+			textObject->setJustify(3);
 		else
-			error("Unknown getTextObjectParams key %s\n", key_text);
+			error("Unknown getTextObjectParams key '%s'\n", key_text);
 	}
 }
 
-static void MakeTextObject() {
-	int x = 0, y = 0, height = 0, width = 0;
-	bool center = false, ljustify = false;
-	Color *fgColor = NULL;
-	Font *font = NULL;
-
-	char *line = lua_getstring(lua_getparam(1));
-	lua_Object tableObj = lua_getparam(2);
-
-	TextObject *textObject = new TextObject();
-	textObject->setDefaults(&textObjectDefaults);
-
-	if (lua_istable(tableObj))
-		getTextObjectParams(textObject, tableObj);
-
-	textObject->setText(line);
-	textObject->createBitmap();
-	g_engine->registerTextObject(textObject);
-
-	lua_pushusertag(textObject, MKID('TEXT'));
-	lua_pushnumber(textObject->getBitmapWidth());
-	lua_pushnumber(textObject->getBitmapHeight());
+/* Clean the buffer of text objects
+ * this is known to be used when changing between menus
+ */
+static void CleanBuffer() {
+	g_engine->killTextObjects();
 }
+ 
+/*
+ *
+ */
+static void mainMenuHandler() {
+	lua_Object menuTable = lua_getparam(1);
+	lua_Object keycode = lua_getparam(2);
+	lua_Object pushcode = lua_getparam(3);
+	lua_Object itemTable;
+	int key, operation;
+	int _menuItem = 1, _menuItems = 1;
+         
+	stubWarning("mainMenuHandler");
+	if (!lua_isnumber(keycode) || !lua_istable(menuTable))
+		return;
+	if (lua_isnil(pushcode))
+		operation = 0;
+	else
+		return;
+         
+	// get the item list
+	itemTable = getTableValue(menuTable, "menu");
+	if (!lua_istable(itemTable))
+		return;
 
+		key = atoi(lua_getstring(keycode));
+
+	// get the current item
+	_menuItem = atoi(lua_getstring(getTableValue(itemTable, "cur_item")));
+	_menuItems = atoi(lua_getstring(getTableValue(itemTable, "num_items")));
+
+	/* if we're running the menu then we need to manually handle
+	 * a lot of the operations necessary to use the menu
+	 */
+	bool menuChanged = false;
+	if (key == SDLK_RETURN) {
+		switch(_menuItem) {
+		case 10:
+			key = SDLK_r;
+			break;
+		default:
+			key = SDLK_RETURN;
+		}
+	}
+
+	switch(key) {
+		case SDLK_r:
+		case SDLK_ESCAPE:
+		{
+			lua_Object close = getTableFunction(menuTable, "cancel");
+			lua_Object destroy = getTableFunction(menuTable, "destroy");
+
+			lua_beginblock();
+			lua_pushobject(menuTable);
+			lua_callfunction(destroy);
+			lua_endblock();
+
+			lua_beginblock();
+			lua_Object is_active = lua_createtable();
+			lua_pushobject(is_active);
+			lua_pushstring("is_active");
+			lua_pushnumber(1);
+			lua_settable();
+			lua_pushobject(is_active);
+			lua_callfunction(close);
+			lua_endblock();
+			break;
+		}
+        case SDLK_RETURN:
+		{
+			lua_Object choose = getTableFunction(menuTable, "choose_item");
+			lua_beginblock();
+			lua_pushnumber(_menuItem);
+			lua_callfunction(choose);
+			lua_endblock();
+			break;
+		}
+		case SDLK_DOWN:
+			menuChanged = true;
+			_menuItem++;
+			break;
+		case SDLK_UP:
+			menuChanged = true;
+			_menuItem--;
+			break;
+		case SDLK_h:
+			menuChanged = true;
+			_menuItem = 1; // help
+			break;
+		case SDLK_o:
+			menuChanged = true;
+			_menuItem = 2; // options
+			break;
+		case SDLK_s:
+			menuChanged = true;
+			_menuItem = 3; // load game
+			break;
+		case SDLK_l:
+			menuChanged = true;
+			_menuItem = 4; // load game
+			break;
+		case SDLK_d:
+			menuChanged = true;
+			_menuItem = 6; // dialog transcripts
+			break;
+	}
+	if (menuChanged) {
+		if (_menuItem < 1)
+			_menuItem = 1;
+		if (_menuItem > _menuItems)
+			_menuItem = _menuItems;
+
+		setTableValue(itemTable, "cur_item", _menuItem);
+	}
+}
+  
+/* Clean the requested menu
+ */
+static void CloseMenu() {
+	stubWarning("CloseMenu");
+	CleanBuffer();
+	lua_Object system_table = lua_getglobal("system");
+	setTableValue(system_table, "menuHandler", (lua_Object) 0);
+}
+  
+/* Check for an existing object by a certain name
+ * this function is used by several functions that look
+ * for text objects to see if they need to be created/modified/destroyed.
+ */
+TextObject *TextObjectExists(char *name) {
+	TextObject *modifyObject = NULL;
+
+	for (Engine::TextListType::const_iterator i = g_engine->textsBegin(); i != g_engine->textsEnd(); i++) {
+		TextObject *textO = *i;
+		if (strlen(name) == strlen(textO->name()) && strcmp(textO->name(), name) == 0) {
+			modifyObject = textO;
+			break;
+		}
+	}
+	return modifyObject;
+}
+  
+/* Destroy a text object since we don't need it anymore
+ * note that the menu creates more objects than it needs,
+ * so it deletes some objects right after creating them
+ */
 static void KillTextObject() {
-	TextObject *textObjectParm;
+	TextObject *textObjectParm, *delText;
 
 	if (lua_isnil(lua_getparam(1))) {
 		error("KillTextObject(NULL)");
@@ -1239,21 +1387,23 @@ static void KillTextObject() {
 
 	textObjectParm = check_textobject(1);
 
-	for (Engine::TextListType::const_iterator i = g_engine->textsBegin(); i != g_engine->textsEnd(); i++) {
-		TextObject *textO = *i;
-
-		if (strstr(textO->name(), textObjectParm->name())) {
-			g_engine->killTextObject(textO);
-			delete textO;
-			return;
-		}
-	}
+	delText = TextObjectExists((char *) textObjectParm->name());        
+	if (delText != NULL)
+		g_engine->killTextObject(delText);
 }
 
+/* Make changes to a text object based on the parameters passed
+ * in the table in the LUA parameter 2.
+ */
 static void ChangeTextObject() {
-	TextObject *textObject = check_textobject(1);
+	TextObject *modifyObject, *textObject = check_textobject(1);
 	lua_Object tableObj = lua_getparam(2);
-	TextObject *modifyObject = NULL;
+
+	modifyObject = TextObjectExists((char *)textObject->name());
+	if (modifyObject == NULL) {
+		warning("ChangeTextObject(): Cannot find active text object");
+		return;
+	}
 
 	for (Engine::TextListType::const_iterator i = g_engine->textsBegin(); i != g_engine->textsEnd(); i++) {
 		TextObject *textO = *i;
@@ -1266,16 +1416,49 @@ static void ChangeTextObject() {
 	if (!modifyObject)
 		error("ChangeTextObject(): Cannot find active text object");
 
-	modifyObject->destroyBitmap();
-
-//	textObject->setDefaults(&textObjectDefaults);
 	if (lua_istable(tableObj))
 		getTextObjectParams(modifyObject, tableObj);
+	else
+		warning("Expecting table parameter!");
 
+	// to modify current bitmap it need recreate it
+	modifyObject->destroyBitmap();
 	modifyObject->createBitmap();
 
 	lua_pushnumber(modifyObject->getBitmapWidth());
 	lua_pushnumber(modifyObject->getBitmapHeight());
+}
+
+/* Make a text object, known to be used by the menu
+ * please note that if the same text is issued we will
+ * add an additional space (TEXT_NULL) until the text
+ * becomes unique
+ * (otherwise we'll get identically named menu objects)
+ */
+static void MakeTextObject() {
+	TextObject *textObject;
+	char *line = lua_getstring(lua_getparam(1));
+	std::string text = line;
+	lua_Object tableObj = lua_getparam(2);
+         
+	textObject = new TextObject();
+	textObject->setDefaults(&textObjectDefaults);
+         
+	if (lua_istable(tableObj))
+		getTextObjectParams(textObject, tableObj);
+         
+	while (TextObjectExists((char *)text.c_str()) != NULL)
+		text += TEXT_NULL;
+
+	//printf("Make: %s\n", (char *)text.c_str());
+
+	textObject->setText((char *)text.c_str());
+	textObject->createBitmap();
+	g_engine->registerTextObject(textObject);
+         
+	lua_pushusertag(textObject, MKID('TEXT'));
+	lua_pushnumber(textObject->getBitmapWidth());
+	lua_pushnumber(textObject->getBitmapHeight());
 }
 
 static void GetTextObjectDimensions() {
@@ -1302,6 +1485,11 @@ static void BlastText() {
 	// there is some diffrence to MakeTextObject
 	// it draw directly to gfx buffer from here, not from main loop
 	MakeTextObject();
+}
+
+static void SetOffscreenTextPos() {
+	// this sets where we shouldn't put dialog maybe?
+	stubWarning("SetOffscreenTextPos");
 }
 
 static void SetSpeechMode() {
@@ -1459,6 +1647,42 @@ static void SetAmbientLight() {
 	}
 }
 
+static void RenderModeUser() {
+	stubWarning("RenderModeUser");
+	// it enable/disable updating display
+	lua_Object param1 = lua_getparam(1);
+	bool mode;
+	if (lua_isnumber(param1)) {
+		mode = check_int(1) != 0;
+	} else if (lua_isnil(param1)) {
+		mode = false;
+	} else {
+		error("RenderModeUser() Unknown type of param");
+	}
+	g_engine->setMenuMode(mode);
+	if (mode)
+		printf("RenderModeUser() Enable\n");
+	else
+		printf("RenderModeUser() Disable\n");
+}
+
+static void Display() {
+	stubWarning("Display");
+	lua_Object system_table = lua_getglobal("system");
+	// Install Menu Close Handler
+	lua_pushobject(system_table);
+	lua_pushstring(const_cast<char *>("userPaintHandler"));
+	lua_pushobject(lua_gettable());
+	lua_pushstring(const_cast<char *>("destroy"));
+	lua_pushcfunction(CloseMenu);
+	lua_settable();
+	// Install Menu Key Handler
+	lua_pushobject(system_table);
+	lua_pushstring(const_cast<char *>("menuHandler"));
+	lua_pushcfunction(mainMenuHandler);
+	lua_settable();
+}
+
 static void EngineDisplay() {
 	// it enable/disable updating display
 	lua_Object param1 = lua_getparam(1);
@@ -1470,6 +1694,7 @@ static void EngineDisplay() {
 	} else {
 		error("EngineDisplay() Unknown type of param");
 	}
+	g_engine->setMenuMode(!mode);
 	if (mode)
 		printf("EngineDisplay() Enable\n");
 	else
@@ -1556,12 +1781,9 @@ STUB_FUNC(SetActorShadowPoint)
 STUB_FUNC(SetActorShadowPlane)
 STUB_FUNC(ActivateActorShadow)
 STUB_FUNC(SetShadowColor)
-STUB_FUNC(Display)
-STUB_FUNC(CleanBuffer)
 STUB_FUNC(DimRegion)
 STUB_FUNC(DimScreen)
 STUB_FUNC(ForceRefresh)
-STUB_FUNC(RenderModeUser)
 STUB_FUNC(SetGamma)
 STUB_FUNC(LightMgrStartup)
 STUB_FUNC(SetLightIntensity)
@@ -1604,7 +1826,6 @@ STUB_FUNC(SetActorTimeScale)
 STUB_FUNC(GetActorTimeScale)
 STUB_FUNC(SetActorScale)
 STUB_FUNC(SetActorColormap)
-STUB_FUNC(SetOffscreenTextPos)
 STUB_FUNC(SetEmergencyFont)
 STUB_FUNC(GetTranslationMode)
 STUB_FUNC(SetTranslationMode)
@@ -2334,9 +2555,8 @@ int bundle_dofile(const char *filename) {
 	return result;
 }
 
-lua_Object getEventHandler(const char *name) {
-	lua_Object system_table = lua_getglobal("system");
-	lua_pushobject(system_table);
+lua_Object getTableFunction(lua_Object table, char *name) {
+	lua_pushobject(table);
 	lua_pushstring(const_cast<char *>(name));
 	lua_Object handler = lua_gettable();
 	
@@ -2358,4 +2578,55 @@ lua_Object getEventHandler(const char *name) {
 	}
 
 	return handler;
+}
+
+lua_Object getTableValue(lua_Object table, char *name) {
+	char *key_text = NULL;
+	lua_Object key;
+
+	if (!lua_istable(table)) {
+		error("getTableValue(): Parameter not a table!\n");
+		return 0;
+	}
+	
+	for (;;) {
+		lua_pushobject(table);
+		if (key_text)
+			lua_pushobject(key);
+		else
+			lua_pushnil();
+
+		lua_call("next");
+		key = lua_getresult(1);
+		if (lua_isnil(key)) 
+			break;
+
+		key_text = lua_getstring(key);
+		if (strmatch(key_text, name))
+			return lua_getresult(2);
+	}
+	
+	return 0;
+}
+
+void setTableValue(lua_Object table, char *name, int newvalue) {
+	lua_pushobject(table);
+	lua_pushstring(name);
+	lua_pushnumber(newvalue);
+	lua_settable();
+}
+
+void setTableValue(lua_Object table, char *name, lua_Object newvalue) {
+	lua_pushobject(table);
+	lua_pushstring(name);
+	if (newvalue == 0)
+		lua_pushnil();
+	else
+		lua_pushobject(newvalue);
+	lua_settable();
+}
+
+lua_Object getEventHandler(const char *name) {
+	lua_Object system_table = lua_getglobal("system");
+	return getTableFunction(system_table, (char *)name);
 }
