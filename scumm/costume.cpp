@@ -207,7 +207,7 @@ byte CostumeRenderer::mainRoutine(int xmoveCur, int ymoveCur) {
 		if (skip > 0) {
 			v1.skip_width -= skip;
 
-			if (_vm->_version == 1)
+			if (_loaded._format == 0x57)
 				c64_ignorePakCols(skip);
 			else
 				codec1_ignorePakCols(skip);
@@ -226,7 +226,7 @@ byte CostumeRenderer::mainRoutine(int xmoveCur, int ymoveCur) {
 		if (skip > 0) {
 			v1.skip_width -= skip;
 
-			if (_vm->_version == 1)
+			if (_loaded._format == 0x57)
 				c64_ignorePakCols(skip);
 			else
 				codec1_ignorePakCols(skip);
@@ -269,7 +269,7 @@ byte CostumeRenderer::mainRoutine(int xmoveCur, int ymoveCur) {
 
 	CHECK_HEAP
 
-	if (_vm->_version == 1)
+	if (_loaded._format == 0x57)
 		procC64();
 	else if (_vm->_features & GF_AMIGA && _vm->_version == 5)
 		proc3_ami();
@@ -284,24 +284,40 @@ void CostumeRenderer::c64_ignorePakCols(int num) {
 
 	warning("c64_ignorePakCols(%d) - this needs testing", num);
 
-	num = num * _height / 8;
-	do {
+	// FIXME: A problem with this is that num can be a number
+	// not divisible by 8, e.g. c64_ignorePakCols(17) happens.
+	// We currently don't really deal with that. OTOH it seems
+	// in all cases the number was of the form 8n+1, e.g. 1, 9, 17
+	//
+	
+	uint height = _height;
+	num >>= 3;
+
+	while (num > 0) {
 		v1.replen = *_srcptr++;
 		if (v1.replen & 0x80) {
 			v1.replen &= 0x7f;
 			v1.repcolor = *_srcptr++;
-			do {
-				if (!--num)
-					return;
-			} while (--v1.replen);
+			while (v1.replen--) {
+				if (!--height) {
+					if (!--num) {
+						v1.replen |= 0x80;
+						return;
+					}
+					height = _height;
+				}
+			}
 		} else {
-			do {
+			while (v1.replen--) {
 				v1.repcolor = *_srcptr++;
-				if (!--num)
-					return;
-			} while (--v1.replen);
+				if (!--height) {
+					if (!--num)
+						return;
+					height = _height;
+				}
+			}
 		}
-	} while (1);
+	}
 }
 
 void CostumeRenderer::procC64() {
@@ -321,7 +337,7 @@ void CostumeRenderer::procC64() {
 
 	// TODO:
 	// * figure out how to get the right colors/palette
-	// * implement masking
+	// * test masking (once we implement any masking for V1 games)
 
 	const byte *palette = _vm->gdi._C64Colors;
 //	const byte palette[4] = { 0, 1, 2, 3 };
@@ -557,12 +573,12 @@ void LoadedCostume::loadCostume(int id) {
 	// In addition, all offsets are shifted by 2; we accomodate that via a seperate
 	// _baseptr value (instead of adding tons of if's throughout the code).
 	if (_vm->_features & GF_OLD_BUNDLE) {
-		_numColors = (_vm->_version == 1) ? 0 : 1;
+		_numColors = (_format == 0x57) ? 0 : 1;
 		_baseptr += 2;
 	}
 	ptr += 8 + _numColors;
 	_frameOffsets = ptr + 2;
-	if (_vm->_version == 1) {
+	if (_format == 0x57) {
 		_dataOffsets = ptr + 18;
 		_baseptr += 4;
 	} else {
@@ -597,7 +613,7 @@ byte CostumeRenderer::drawLimb(const CostumeData &cost, int limb) {
 			const CostumeInfo *costumeInfo;
 			int xmoveCur, ymoveCur;
 
-			if (_vm->_version == 1) {
+			if (_loaded._format == 0x57) {
 				_width = _srcptr[0] * 8;
 				_height = _srcptr[1];
 				xmoveCur = _xmove + (int8)_srcptr[2] * 8;
@@ -710,7 +726,7 @@ void CostumeRenderer::setPalette(byte *palette) {
 			memset(_palette, 8, 16);
 			_palette[12] = 0;
 		}
-		if (_vm->_version == 1)
+		if (_loaded._format == 0x57)
 			return;
 		_palette[_loaded._palette[0]] = _palette[0];
 	} else {
