@@ -95,7 +95,7 @@ void ScummEngine_v90he::setupOpcodes() {
 		OPCODE(o90_unknown26),
 		OPCODE(o6_invalid),
 		/* 28 */
-		OPCODE(o6_invalid),
+		OPCODE(o90_unknown28),
 		OPCODE(o6_invalid),
 		OPCODE(o6_invalid),
 		OPCODE(o6_invalid),
@@ -447,11 +447,26 @@ void ScummEngine_v90he::o90_unknown26() {
 	int value = fetchScriptByte();
 	value -= 34;
 
-	if (value == 23) {
+	if (value == 10) {
+		pop();
+		pop();
+	} else if (value == 23) {
 		pop();
 	}
 
 	debug(1,"o90_unknown26 stub (%d)", value);
+}
+
+void ScummEngine_v90he::o90_unknown28() {
+	// Incomplete
+	int value = fetchScriptByte();
+	value -= 37;
+
+	if (value == 20) {
+		pop();
+	}
+
+	debug(1,"o90_unknown28 stub (%d)", value);
 }
 
 } // End of namespace Scumm
