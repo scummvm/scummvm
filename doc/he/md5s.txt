@@ -944,6 +944,15 @@ ab0693e9324cfcf498fdcbb12acf8bb4 puttcircus.HE0
 320a3bca28c8c30ad7aeff74f24ced2e puttcircus.he2
 9c01311b009b0b1b65735beb51eb526a puttcircus.HE4
 
+(russian putcircus cd)
+sev
+C:\Dev\Project\SPUTM\Src\*.cpp
+f22635a81cf4abb712704990b7d9d597 PUTTCIRCUS.w32
+0deaf09aff8db115b7da47272955f206 puttcircus.(a)
+7bad72e332a59f9fcc1d437f4edad32a puttcircus.he0
+9ef7154db4ba00b89b5424ffd5cfce26 puttcircus.he2
+e902d67046bfb7cb09c9148b4462f297 puttcircus.he4
+
 (putsfunshop cd/freddi5 cd/soccerMLS cd)
 sev
 C:\Dev\Project\SPUTM\Src\*.cpp

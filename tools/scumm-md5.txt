@@ -391,6 +391,7 @@ Putt-Putt Goes To The Moon
 
 Putt-Putt Joins the Circus
 	-	All	en	ab0693e9324cfcf498fdcbb12acf8bb4	puttcircus	sev
+	-	All	ru	7bad72e332a59f9fcc1d437f4edad32a	puttcircus	sev
 	Demo	All	en	a7cacad9c40c4dc9e1812abf6c8af9d5	circdemo	Kirben, sev
 
 Putt-Putt Joins The Parade
@@ -409,7 +410,6 @@ Putt-Putt Saves the Zoo
 	-	All	en	92e7727e67f5cd979d8a1070e4eb8cb3	puttzoo	cyx
 	-	Windows	nl	c3b22fa4654bb580b20325ebf4174841	puttzoo	joostp
 	-	Mac	en	58fdf4c7ad13540a734e18f8584cad89	puttzoo	khalek
-	Demo	Windows	en	1005456bfe351c1b679e1ff2dc2849e9	puttzoo	khalek
 	Demo	Windows	en	f3d55aea441e260e9e9c7d2a187097e0	zoodemo	khalek
 	Demo	Windows	en	de4efb910210736813c9a1185384bace	zoodemo	khalek
 	Demo	Mac	en	3486ede0f904789267d4bcc5537a46d4	zoodemo	khalek
