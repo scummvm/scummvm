@@ -2637,9 +2637,8 @@ bool Logic::executeASM_Game(uint16 sm) {
 void Logic::executeSpecialMove(uint16 sm) {
 	
 	debug(6, "Special move: %d", sm);
-	if (sm)
-		if (!(this->*_executeASM)(sm))
-			warning("unhandled / invalid special move : %d", sm);
+	if (!(this->*_executeASM)(sm))
+		warning("unhandled / invalid special move : %d", sm);
 }
 
 

@@ -884,7 +884,7 @@ void Cutaway::run(char *nextFilename) {
 
 		if (!object.moveToX && 
 				!object.moveToY && 
-				object.specialMove && 
+				object.specialMove > 0 && 
 				object.objectNumber >= 0) {
 			_vm->logic()->executeSpecialMove(object.specialMove);
 			object.specialMove = 0;
@@ -1178,7 +1178,8 @@ void Cutaway::stop() {
 		} // for()
 		
 		int16 specialMove = (int16)READ_BE_UINT16(ptr); ptr += 2;
-		_vm->logic()->executeSpecialMove(specialMove);
+		if (specialMove > 0)
+			_vm->logic()->executeSpecialMove(specialMove);
 
 		_lastSong = (int16)READ_BE_UINT16(ptr); ptr += 2;
 	}
