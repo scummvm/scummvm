@@ -38,34 +38,39 @@
                             else option = (*s == '\0' ? current_option : s);                    \
                             current_option = NULL
 
+// DONT FIXME: DO NOT ORDER ALPHABETICALY, THIS IS ORDERED BY IMPORTANCE/CATEGORY! :)
 static const char USAGE_STRING[] = 
 	"ScummVM - Scumm Interpreter\n"
 	"Syntax:\n"
 	"\tscummvm [-v] [-d[<num>]] [-n] [-b<num>] [-t<num>] [-s<num>] [-p<path>] [-m<num>] [-f] game\n"
 	"Flags:\n"
-	"\t-a         - specify game is amiga version\n"
-	"\t-b<num>    - start in room <num>\n"
-	"\t-c<num>    - use cdrom <num> for cd audio\n"
-	"\t-d[<num>]  - enable debug output (debug level [1])\n"
-	"\t-e<mode>   - set music engine (see README for details)\n"
+	"\t-p<path>   - look for game in <path>\n"
+	"\t-x[<num>]  - load this savegame (default: 0 - autosave)\n"
 	"\t-f         - fullscreen mode\n"
 	"\t-g<mode>   - graphics mode (normal,2x,3x,2xsai,super2xsai,supereagle,advmame2x)\n"
-	"\t-l<file>   - load config file instead of default\n"
+	"\t-e<mode>   - set music engine (see README for details)\n"
+	"\t-a         - specify game is amiga version\n"
+	"\n"
+	"\t-c<num>    - use cdrom <num> for cd audio\n"
 	"\t-m<num>    - set music volume to <num> (0-255)\n"
-	"\t-n         - no subtitles for speech\n"
 	"\t-o<num>    - set master volume to <num> (0-255)\n"
-	"\t-p<path>   - look for game in <path>\n"
 	"\t-s<num>    - set sfx volume to <num> (0-255)\n"
 	"\t-t<num>    - set music tempo (default- adlib: 0x1D9000, midi: 0x4A0000)\n"
-	"\t-v         - show version info and exit\n"
+	"\n"
+	"\t-n         - no subtitles for speech\n"
+	"\t-y         - set text speed (default: 60)\n"
+	"\n"
+	"\t-l<file>   - load config file instead of default\n"
 #if defined(UNIX)
 	"\t-w[<file>] - write to config file [~/.scummvmrc]\n"
 #else
 	"\t-w[<file>] - write to config file [scummvm.ini]\n"
 #endif
-	"\t-x[<num>]  - save game slot to load (default: autosave)\n"
-	"\t-y         - set text speed (default: 60)\n"
+	"\t-v         - show version info and exit\n"
 	"\t-z         - display list of games\n"
+	"\n"
+	"\t-b<num>    - start in room <num>\n"
+	"\t-d[<num>]  - enable debug output (debug level [1])\n"
 ;
 
 
