@@ -14,6 +14,13 @@
  *
  *
  ***********************************************************************/
+static UInt32 GetStackSize() {
+	MemPtr startPP, endPP;
+	SysGetStackInfo(&startPP, &endPP);
+
+	return ((Char *)endPP - (Char *)startPP) / 1024L;
+}
+
 static void GetMemory(UInt32* storageMemoryP, UInt32* dynamicMemoryP, UInt32 *storageFreeP, UInt32 *dynamicFreeP) {
 	UInt32		free, max;
 
@@ -66,10 +73,12 @@ static void GetMemory(UInt32* storageMemoryP, UInt32* dynamicMemoryP, UInt32 *st
 static void SystemInfoFormInit() {
 	FormPtr frmP;
 	Coord x;
-	UInt32 dm, sm, df, sf;
+	UInt32 dm, sm, df, sf, stack;
 	Char num[10];
 
 	GetMemory(&sm, &dm, &sf, &df);
+	stack = GetStackSize();
+	
 	frmP = FrmGetActiveForm();
 	FrmDrawForm(frmP);
 
@@ -84,6 +93,10 @@ static void SystemInfoFormInit() {
 	x = 149 - FntCharsWidth(num, StrLen(num));
 	WinDrawChars(num, StrLen(num), x, 42);
 
+	StrIToA(num, stack);
+	x = 149 - FntCharsWidth(num, StrLen(num));
+	WinDrawChars(num, StrLen(num), x, 54);
+
 	StrIToA(num, df);
 	x = 109 - FntCharsWidth(num, StrLen(num));
 	WinDrawChars(num, StrLen(num), x, 30);
@@ -91,6 +104,11 @@ static void SystemInfoFormInit() {
 	StrIToA(num, sf);
 	x = 109 - FntCharsWidth(num, StrLen(num));
 	WinDrawChars(num, StrLen(num), x, 42);
+
+	StrCopy(num,"-");
+	x = 109 - FntCharsWidth(num, StrLen(num));
+	WinDrawChars(num, StrLen(num), x, 54);
+
 }
 
 Boolean SystemInfoFormHandleEvent(EventPtr eventP) {
