@@ -259,7 +259,7 @@ void Scumm_v8::setupOpcodes()
 		OPCODE(o6_invalid),
 		/* B0 */
 		OPCODE(o6_invalid),
-		OPCODE(o6_invalid),
+		OPCODE(o6_stopSound),
 		OPCODE(o8_soundKludge),
 		OPCODE(o8_system),
 		/* B4 */
@@ -898,7 +898,7 @@ void Scumm_v8::o8_verbOps()
 	byte subOp = fetchScriptByte();
 	VerbSlot *vs = NULL;
 
-	if (0 <= _curVerbSlot && _curVerbSlot < _maxVerbs);
+	if (0 <= _curVerbSlot && _curVerbSlot < _maxVerbs) {}
 	vs = &_verbs[_curVerbSlot];
 
 	switch (subOp) {
@@ -965,10 +965,10 @@ void Scumm_v8::o8_system()
 {
 	// TODO
 	byte subOp = fetchScriptByte();
-	switch (subOp) {
-	default:
+//	switch (subOp) {
+//	default:
 		error("o8_system: default case %d", subOp);
-	}
+//	}
 }
 
 void Scumm_v8::o8_kludge()
@@ -977,10 +977,10 @@ void Scumm_v8::o8_kludge()
 	int16 args[30];
 	getStackList(args, sizeof(args) / sizeof(args[0]));
 
-	switch (args[0]) {
-	default:
+//	switch (args[0]) {
+//	default:
 		warning("o8_kludge: default case %d", args[0]);
-	}
+//	}
 }
 
 void Scumm_v8::o8_kludge2()
