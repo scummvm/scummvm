@@ -1975,9 +1975,7 @@ void ScummEngine::startScene(int room, Actor *a, int objectNr) {
 	runEntryScript();
 	if (_version <= 2)
 		runScript(5, 0, 0, 0);
-	else if (_version >= 4 && _version <= 6) {
-		// FIXME: The check above maybe should only trigger for V5&V6 games (i.e. not
-		// for V4). More investigation (ASM) needed. See also o5_loadRoomWithEgo().
+	else if (_version >= 5 && _version <= 6) {
 		if (a && !_egoPositioned) {
 			int x, y;
 			getObjectXYPos(objectNr, x, y);

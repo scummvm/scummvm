@@ -1482,9 +1482,7 @@ void ScummEngine_v5::o5_loadRoomWithEgo() {
 	startScene(a->room, a, obj);
 	VAR(VAR_WALKTO_OBJ) = 0;
 
-	if (_version <= 3) {
-		// FIXME: Maybe this should also cover V4 games. See also startScene().
-		// More investigation (ASM) needed.
+	if (_version <= 4) {
 		if (!_egoPositioned) {
 			getObjectXYPos(obj, x2, y2, dir);
 			a->putActor(x2, y2, _currentRoom);
