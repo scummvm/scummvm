@@ -20,13 +20,8 @@
  * $Header$
  *
  */
-/*
- Description:   
- 
-    Game detection, general game parameters - module header
 
- Notes: 
-*/
+// Game detection, general game parameters - module header
 
 #ifndef SAGA_GAME_MOD_H__
 #define SAGA_GAME_MOD_H__
@@ -34,13 +29,11 @@
 namespace Saga {
 
 enum R_GAME_BASETYPES {
-
 	R_GAMETYPE_ITE,
 	R_GAMETYPE_IHNM
 };
 
 enum R_GAME_IDS {
-
 	R_GAME_ITE_DEMO = 0,
 	R_GAME_ITE_DISK = 1,
 	R_GAME_ITE_CD = 2,
@@ -49,7 +42,6 @@ enum R_GAME_IDS {
 };
 
 enum R_GAME_FILETYPES {
-
 	R_GAME_RESOURCEFILE = 0x01,
 	R_GAME_SCRIPTFILE = 0x02,
 	R_GAME_SOUNDFILE = 0x04,
@@ -59,14 +51,12 @@ enum R_GAME_FILETYPES {
 };
 
 enum R_GAME_SOUNDINFO_TYPES {
-
 	R_GAME_SOUND_PCM = 0,
 	R_GAME_SOUND_VOC,
 	R_GAME_SOUND_WAV
 };
 
 enum R_GAME_FONT_IDS {
-
 	R_GAME_FONT_SMALL = 0,
 	R_GAME_FONT_MEDIUM,
 	R_GAME_FONT_LARGE,
@@ -77,72 +67,49 @@ enum R_GAME_FONT_IDS {
 };
 
 struct R_GAME_DISPLAYINFO {
-
 	int logical_w;
 	int logical_h;
 	int scene_h;
-
 };
 
 struct R_GAME_SOUNDINFO {
-
 	int res_type;
 	long freq;
 	int sample_size;
 	int stereo;
-
 };
 
 struct R_GAME_FONTDESC {
-
 	uint16 font_id;
 	uint32 font_rn;
-
 };
 
 struct R_GAME_SCENEDESC {
-
 	uint32 scene_lut_rn;
 	uint32 first_scene;
-
 };
 
 struct R_GAME_RESOURCEDESC {
-
 	uint32 scene_lut_rn;
 	uint32 script_lut_rn;
 	uint32 command_panel_rn;
 	uint32 dialogue_panel_rn;
-
 };
 
-int GAME_Register(void);
-
-int GAME_Init(void);
-
-int GAME_GetFileContext(R_RSCFILE_CONTEXT ** ctxt_p, uint16 r_type, int param);
-
+int GAME_Register();
+int GAME_Init();
+int GAME_GetFileContext(R_RSCFILE_CONTEXT **ctxt_p, uint16 r_type, int param);
 int GAME_GetFontInfo(R_GAME_FONTDESC **, int *);
-
 int GAME_GetResourceInfo(R_GAME_RESOURCEDESC *);
-
 int GAME_GetSoundInfo(R_GAME_SOUNDINFO *);
-
 int GAME_GetDisplayInfo(R_GAME_DISPLAYINFO *);
-
 int GAME_GetSceneInfo(R_GAME_SCENEDESC *);
-
-int GAME_GetGame(void);
-
-int GAME_GetGameType(void);
-
-int GAME_GetErrN(void);
-
+int GAME_GetGame();
+int GAME_GetGameType();
+int GAME_GetErrN();
 void GAME_setGameDirectory(const char *gamedir);
-
-const char *GAME_GetErrS(void);
+const char *GAME_GetErrS();
 
 } // End of namespace Saga
 
-#endif				/* R_GAME_MOD_H__ */
-/* end "r_game_mod.h" */
+#endif
