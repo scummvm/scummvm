@@ -80,14 +80,14 @@ void ScummEngine_v90he::setupOpcodes() {
 		OPCODE(o72_isAnyOf),
 		/* 1C */
 		OPCODE(o90_wizImageOps),
-		OPCODE(o90_getLT),
-		OPCODE(o90_getGT),
+		OPCODE(o90_min),
+		OPCODE(o90_max),
 		OPCODE(o90_sin),
 		/* 20 */
 		OPCODE(o90_cos),
-		OPCODE(o6_invalid),
-		OPCODE(o6_invalid),
-		OPCODE(o6_invalid),
+		OPCODE(o90_sqrt),
+		OPCODE(o90_atan2),
+		OPCODE(o90_getSegmentAngle),
 		/* 24 */
 		OPCODE(o6_invalid),
 		OPCODE(o90_unknown25),
@@ -388,7 +388,7 @@ void ScummEngine_v90he::o90_dup() {
 	}
 }
 
-void ScummEngine_v90he::o90_getLT() {
+void ScummEngine_v90he::o90_min() {
 	int a = pop();
 	int b = pop();
 
@@ -399,7 +399,7 @@ void ScummEngine_v90he::o90_getLT() {
 	}
 }
 
-void ScummEngine_v90he::o90_getGT() {
+void ScummEngine_v90he::o90_max() {
 	int a = pop();
 	int b = pop();
 
@@ -418,6 +418,37 @@ void ScummEngine_v90he::o90_sin() {
 void ScummEngine_v90he::o90_cos() {
 	double a = pop() * PI / 180.;
 	push((int)(cos(a) * 100000));	
+}
+
+void ScummEngine_v90he::o90_sqrt() {
+	int i = pop();
+	if (i < 2) {
+		push(i);
+	} else {
+		push((int)sqrt(i + 1));
+	}
+}
+
+void ScummEngine_v90he::o90_atan2() {
+	int y = pop();
+	int x = pop();
+	int a = (int)(atan2(y, x) * 180. / PI);
+	if (a < 0) {
+		a += 360;
+	}
+	push(a);
+}
+
+void ScummEngine_v90he::o90_getSegmentAngle() {
+	int y1 = pop();
+	int x1 = pop();
+	int dy = y1 - pop();
+	int dx = x1 - pop();
+	int a = (int)(atan2(dy, dx) * 180. / PI);
+	if (a < 0) {
+		a += 360;
+	}
+	push(a);
 }
 
 void ScummEngine_v90he::o90_startLocalScript() {

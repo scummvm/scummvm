@@ -868,10 +868,13 @@ protected:
 	
 	/* HE version 90 script opcodes */
 	void o90_dup();
-	void o90_getLT();
-	void o90_getGT();
+	void o90_min();
+	void o90_max();
 	void o90_sin();
 	void o90_cos();
+	void o90_sqrt();
+	void o90_atan2();
+	void o90_getSegmentAngle();
 	void o90_startLocalScript();
 	void o90_wizImageOps();
 	void o90_unknown25();
