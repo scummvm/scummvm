@@ -2,7 +2,7 @@
 
 CC	= gcc
 CFLAGS	= -g -Wno-multichar
-DEFINES	= -DUNIX -DHAVE_READLINE
+DEFINES	= -DUNIX -DHAVE_READLINE -DUSE_TIMIDITY
 LDFLAGS := 
 INCLUDES:= `sdl-config --cflags`
 CPPFLAGS= $(DEFINES) $(INCLUDES)
@@ -27,6 +27,8 @@ all: scummvm
 
 scummvm: $(OBJS)
 	$(CC) $(LDFLAGS) -o $(@) $(OBJS) $(LIBS)
+
+$(OBJS): Makefile
 
 clean:
 	rm -f $(OBJS) scummvm

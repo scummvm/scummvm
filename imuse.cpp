@@ -5,23 +5,42 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
  * $Header$
- *
+ */
+
+/*
+ * Timidity support by Lionel Ulmer <lionel.ulmer@free.fr>
  */
 
 #include "stdafx.h"
 #include "scumm.h"
 #include "sound.h"
+
+#ifdef USE_TIMIDITY
+#include <sys/time.h>
+#include <unistd.h>
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <netdb.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+/* Copy-pasted from Timidity */
+#define SEQ_MIDIPUTC		5
+
+#endif /* USE_TIMIDITY */
 
 #define ARRAYSIZE(x) (sizeof(x)/sizeof(x[0]))
 
@@ -2443,17 +2462,116 @@ void SoundEngine::adjust_priorities() {
 	}
 }
 
+#if defined(WIN32)
+
 void SoundEngine::midiInit() {
-#ifdef WIN32
 	if (midiOutOpen((HMIDIOUT*)&_mo, MIDI_MAPPER, NULL, NULL, 0) != MMSYSERR_NOERROR)
 		error("midiOutOpen failed");
-#endif
 }
 
-#ifdef WIN32
 #define MIDI_OUT(a,b) midiOutShortMsg((HMIDIOUT)(a), (b))
+
+#elif defined(USE_TIMIDITY)
+
+static int connect_to_timidity(int port)
+{
+	struct hostent *serverhost;
+	struct sockaddr_in sadd;
+	int s;
+	
+	serverhost = gethostbyname("localhost");
+	if (serverhost == NULL)
+		error("Could not resolve host");
+	sadd.sin_family = serverhost->h_addrtype;
+	sadd.sin_port = htons(port);
+	memcpy(&(sadd.sin_addr), serverhost->h_addr_list[0], serverhost->h_length);
+	
+	s = socket(AF_INET,SOCK_STREAM,0);
+	if (s < 0)
+		error("Could not open socket");
+	if (connect(s, (struct sockaddr *) &sadd, sizeof(struct sockaddr_in)) < 0)
+		error("Could not connect to server");
+	
+	return s;
+}
+
+void SoundEngine::midiInit() {
+	int s, s2;
+	int len;
+	int dummy, newport;
+	char buf[256];
+
+	s = connect_to_timidity(7777);
+	len = read(s, buf, 256);
+	buf[len] = '\0';
+	printf("%s", buf);
+
+	sprintf(buf, "SETBUF %f %f\n", 0.1, 0.15);
+	write(s, buf, strlen(buf));
+	len = read(s, buf, 256);
+	buf[len] = '\0';
+	printf("%s", buf);	
+	
+	sprintf(buf, "OPEN lsb\n");
+	write(s, buf, strlen(buf));
+	len = read(s, buf, 256);
+	buf[len] = '\0';
+	printf("%s", buf);	
+
+	sscanf(buf, "%d %d", &dummy, &newport);
+	printf("	 => port = %d\n", newport);
+	
+	s2 = connect_to_timidity(newport);
+	_mo = (void *) s2;
+}
+
+#define DEVICE_NUM 0
+
+static inline void MIDI_OUT(void *a, int b) {
+	int s = (int) a;
+	unsigned char buf[256];
+	int position = 0;
+	
+	switch (b & 0xF0) {
+	case 0x80:
+	case 0x90:
+	case 0xA0:
+	case 0xB0:
+	case 0xE0:
+		buf[position++] = SEQ_MIDIPUTC;
+		buf[position++] = b;
+		buf[position++] = DEVICE_NUM;		
+		buf[position++] = 0;
+		buf[position++] = SEQ_MIDIPUTC;
+		buf[position++] = (b >> 8) & 0x7F;
+		buf[position++] = DEVICE_NUM;		
+		buf[position++] = 0;
+		buf[position++] = SEQ_MIDIPUTC;
+		buf[position++] = (b >> 16) & 0x7F;
+		buf[position++] = DEVICE_NUM;		
+		buf[position++] = 0;
+		break;
+	case 0xC0:
+	case 0xD0:
+		buf[position++] = SEQ_MIDIPUTC;
+		buf[position++] = b;
+		buf[position++] = DEVICE_NUM;		
+		buf[position++] = 0;
+		buf[position++] = SEQ_MIDIPUTC;
+		buf[position++] = (b >> 8) & 0x7F;
+		buf[position++] = DEVICE_NUM;		
+		buf[position++] = 0;
+		break;
+	default:
+		fprintf(stderr, "Unknown : %08x\n", b);
+		break;
+	}
+	write(s, buf, position);
+}
+
 #else
 #define MIDI_OUT(a,b)
+void SoundEngine::midiInit() { }
 #endif
 
 void SoundEngine::midiPitchBend(byte chan, int16 pitchbend) {

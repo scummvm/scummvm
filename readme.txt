@@ -41,6 +41,16 @@ Ctrl-z quits, and Ctrl-f runs in fast mode.
 Ctrl-d starts the debugger.
 Ctrl-s shows memory consumption.
 
+
+Playing sound with Timidity:
+----------------------------
+Start Timidity with the following command line :
+
+$ timidity -irv 7777
+
+Then just start ScummVM and you should have sound.
+
+
 Good Luck,
 Ludvig Strigeus
 
