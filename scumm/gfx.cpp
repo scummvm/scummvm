@@ -1396,7 +1396,7 @@ void Gdi::drawBMAPBg(const byte *ptr, VirtScreen *vs, int startstrip) {
 	// for an area spanning multiple strips. In particular, the codecs 13 & 14
 	// in decompressBitmap call drawStripHE()
 	if (code == 150) {
-		warning("drawBMAPBg: case 150 unhandled");
+		fillRect((byte *)vs->backBuf, vs->pitch, 0, 0, vs->w - 1, vs->h - 1, *bmap_ptr);
 	} else if ((code >= 134 && code <= 138) || (code >= 144 && code <= 148)) {
 		_decomp_shr = code % 10;
 		_decomp_mask = 0xFF >> (8 - _decomp_shr);
@@ -2173,6 +2173,20 @@ void Gdi::drawStripHE(byte *dst, int dstPitch, const byte *src, int width, int h
 		}
 	}
 }
+
+void Gdi::fillRect(byte *dst, int pitch, int x1, int y1, int x2, int y2, byte color) {
+	int w, h;
+	byte *ptr = dst + x1 + y1 * pitch;
+
+	w = x2 - x1 + 1;
+	h = y2 - y1 + 1;
+
+	for (int i = 0; i < h; i++) {
+		memset(ptr, color, w);
+		ptr += pitch;
+	}
+}
+
 
 #undef READ_BIT
 #undef FILL_BITS

@@ -249,6 +249,7 @@ protected:
 	void drawStrip3DO(byte *dst, int dstPitch, const byte *src, int height, const bool transpCheck) const;
 
 	void drawStripHE(byte *dst, int dstPitch, const byte *src, int width, int height, const bool transpCheck) const;
+	void fillRect(byte *dst, int dstPitch, int x1, int y1, int x2, int y2, byte color);
 
 	/* Mask decompressors */
 	void drawStripC64Mask(byte *dst, int stripnr, int width, int height) const;
