@@ -28,6 +28,7 @@
 #include "scumm/usage_bits.h"
 
 #if defined(__PALM_OS__)
+#include "init_arm.h"
 #include "arm/native.h"
 #include "arm/macros.h"
 #endif

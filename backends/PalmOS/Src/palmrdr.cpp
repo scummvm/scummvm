@@ -30,6 +30,7 @@
 #include "i_zodiac.h"
 #endif
 
+#include "init_arm.h"
 #include "arm/native.h"
 #include "arm/macros.h"
 
