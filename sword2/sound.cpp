@@ -410,10 +410,7 @@ int32 FN_play_music(int32 *params)		// updated by James on 10apr97
 
 	// add the appropriate file extension & play it
 
-	if (g_sword2->_gameId == GID_SWORD2_DEMO)
-		sprintf(filename,"MUSIC.CLU");
-	else
-		sprintf(filename,"%sCLUSTERS/MUSIC.CLU", res_man.GetCdPath());
+	sprintf(filename,"Music.clu");
 
 	rv = g_sword2->_sound->StreamCompMusic(filename, g_sword2->getGameDataPath(), params[0], loopFlag);
 

@@ -1566,7 +1566,7 @@ int32 FN_i_speak(int32 *params)	//Tony18Oct96 (revamped by James01july97)
 			// first checking if we have speech1.clu or speech2.clu in current directory (for translators to test)
 
 			if (g_sword2->_gameId == GID_SWORD2_DEMO)
-				strcpy(speechFile,"SPEECH.CLU");
+				strcpy(speechFile,"speech.clu");
 			else {
 
 #ifdef _SWORD2_DEBUG
@@ -1577,8 +1577,7 @@ int32 FN_i_speak(int32 *params)	//Tony18Oct96 (revamped by James01july97)
 				} else
 #endif	// _SWORD2_DEBUG
 				{
-					strcpy(speechFile,res_man.GetCdPath());
-					strcat(speechFile,"CLUSTERS/SPEECH.CLU");
+					strcpy(speechFile,"speech.clu");
 				}
 			}
  			//------------------------------
