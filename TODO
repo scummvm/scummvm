@@ -262,11 +262,7 @@ SCUMM
 * Add support for TFMX music format in Amiga version of Monkey Island 1
   Check http://darkstar.tabu.uni-bonn.de/~neo/audio.html for music format
   details
-* Add tool and support for compress *.la* file resources (ex. sounds) to fit
-  on small devices 
 * Fix codec44 for nut fonts
-* iMUSE Digital:
-  - Add code for MP3 and Ogg Vorbis compressed datafiles
 * Humongous Entertainment Games
   - Add proper handling of sound looping in Humongous games
   - Add sound pitch support for piano keys in piano mini game of fbear (DOS)
