@@ -28,5 +28,3 @@ include $(srcdir)/Makefile.common
 
 INCS	+= portdefs.h dc.h
 
-$(OBJS): Makefile
-
