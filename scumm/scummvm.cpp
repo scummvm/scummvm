@@ -771,30 +771,15 @@ int Scumm::scummLoop(int delta) {
 
 	if (_features & GF_AUDIOTRACKS) {
 		// Covered automatically by the Sound class
-	} else if ((_features & GF_OLD256) || (_features & GF_16COLOR) || (_gameId == GID_MONKEY_VGA)) {
-		// Original values:
-		//const int ITERATIONS = 4;
-		//const int INCREMENT = 1;
-		
-		// This function (scummLoop) is invoked roughly every delta*15 milliseconds.
-		// In GID_MONKEY_VGA, delta usually is 5 or 6, hence this function is called
-		// every 75-90 ms. 
-		// With the original values, we incremented VAR_MUSIC_TIMER every fourth
-		// iteration by 1. That corresponds to a time interval of 18.75 / 22.5 ms.
-		//
-		// With the new values, we have a ratio of 3/11 = 0.272727... which makes
-		// the GID_MONKEY_VGA intro synced quite perfectly on my system. But I am not sure
-		// which impact this might have on other games, or on other parts in MI.
-		// However, even with the 4/1 values this seems much better than the old code
-		// for handling GID_MONKEY_VGA...
-		const int ITERATIONS = 11;
-		const int INCREMENT = 3;
-		
-		if (tempMusic == ITERATIONS-1) {
-			tempMusic = 0;
-			_vars[VAR_MUSIC_TIMER] += INCREMENT;
-		} else {
-			tempMusic++;
+	} else if (_features & GF_SMALL_HEADER) {
+		// TODO: The music delay (given in milliseconds) might have to be tuned a little
+		// to get it correct for all games. Without the ability to watch/listen to the
+		// original games, I can't do that myself.
+		const int MUSIC_DELAY = 300;
+		tempMusic += delta * 15;	// Convert delta to milliseconds
+		if (tempMusic >= MUSIC_DELAY) {
+			tempMusic %= MUSIC_DELAY;
+			_vars[VAR_MUSIC_TIMER] += 1;
 		}
 	}
 
