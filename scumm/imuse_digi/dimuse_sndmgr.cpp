@@ -565,10 +565,10 @@ int32 ImuseDigiSndMgr::getDataFromRegion(soundStruct *soundHandle, int region, b
 		char fileName[24];
 		sprintf(fileName, "%s_reg%03d.ogg", soundHandle->name, region);
 		if (scumm_stricmp(fileName, soundHandle->lastFileName) != 0) {
-			int32 offs = 0, size = 0;
-			File *oggFile = soundHandle->bundle->getFile(fileName, offs, size);
+			int32 offs = 0, len = 0;
+			File *oggFile = soundHandle->bundle->getFile(fileName, offs, len);
 			if (!soundHandle->compressedStream) {
-				soundHandle->compressedStream = makeVorbisStream(oggFile, size);
+				soundHandle->compressedStream = makeVorbisStream(oggFile, len);
 				assert(soundHandle->compressedStream);
 				assert(soundHandle->compressedStream->getRate() == 22050);
 				assert(soundHandle->compressedStream->isStereo());
