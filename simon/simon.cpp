@@ -1196,7 +1196,7 @@ void SimonEngine::loadTablesIntoMem(uint subr_id) {
 
 				if (_game == GAME_SIMON1WIN) {
 					memcpy(filename, "SFXXXX", 6);
-					_sound->readSfxFile(filename, _gameDataPath);
+					_sound->readSfxFile(filename);
 				} else if (_game & GF_SIMON2) {
 					_sound->loadSfxTable(_game_file, _game_offsets_ptr[atoi(filename + 6) - 1 + SOUND_INDEX_BASE]);
 				}
@@ -1226,7 +1226,7 @@ void SimonEngine::playSting(uint a) {
 	uint16 mus_offset;
 
 	sprintf(filename, "STINGS%i.MUS", _sound_file_id);
-	mus_file.open(filename, _gameDataPath);
+	mus_file.open(filename);
 	if (!mus_file.isOpen()) {
 		warning("Can't load sound effect from '%s'", filename);
 		return;
@@ -1290,7 +1290,7 @@ File *SimonEngine::openTablesFile_gme(const char *filename) {
 
 uint SimonEngine::loadTextFile_simon1(const char *filename, byte *dst) {
 	File fo;
-	fo.open(filename, _gameDataPath);
+	fo.open(filename);
 	uint32 size;
 
 	if (fo.isOpen() == false)
@@ -1307,7 +1307,7 @@ uint SimonEngine::loadTextFile_simon1(const char *filename, byte *dst) {
 
 File *SimonEngine::openTablesFile_simon1(const char *filename) {
 	File *fo = new File();
-	fo->open(filename, _gameDataPath);
+	fo->open(filename);
 	if (fo->isOpen() == false)
 		error("openTablesFile: Can't open '%s'", filename);
 	return fo;
@@ -1799,11 +1799,11 @@ uint SimonEngine::item_get_icon_number(Item *item) {
 void SimonEngine::loadIconFile() {
 	File in;
 	if (_game & GF_ACORN)
-		in.open("ICONDATA", _gameDataPath);
+		in.open("ICONDATA");
 	else if (_game & GF_AMIGA)
-		in.open("icon.pkd", _gameDataPath);
+		in.open("icon.pkd");
 	else
-		in.open("ICON.DAT", _gameDataPath);
+		in.open("ICON.DAT");
 	uint size;
 
 	if (in.isOpen() == false)
@@ -4273,7 +4273,7 @@ void SimonEngine::read_vga_from_datfile_1(uint vga_id) {
 			sprintf(buf, "0%d.VGA", vga_id); 
 		}
 
-		in.open(buf, _gameDataPath);
+		in.open(buf);
 		if (in.isOpen() == false)
 			error("read_vga_from_datfile_1: can't open %s", buf);
 		size = in.size();
@@ -4318,7 +4318,7 @@ byte *SimonEngine::read_vga_from_datfile_2(uint id) {
 			sprintf(buf, "%.3d%d.VGA", id >> 1, (id & 1) + 1);
 		}
 
-		in.open(buf, _gameDataPath);
+		in.open(buf);
 		if (in.isOpen() == false)
 			error("read_vga_from_datfile_2: can't open %s", buf);
 		size = in.size();
@@ -4358,7 +4358,7 @@ void SimonEngine::resfile_read(void *dst, uint32 offs, uint32 size) {
 void SimonEngine::openGameFile() {
 	if (!(_game & GF_OLD_BUNDLE)) {
 		_game_file = new File();
-		_game_file->open(gss->gme_filename, _gameDataPath);
+		_game_file->open(gss->gme_filename);
 
 		if (_game_file->isOpen() == false)
 			error("Can't open game file '%s'", gss->gme_filename);
@@ -4577,7 +4577,7 @@ void SimonEngine::go() {
 
 	setup_vga_file_buf_pointers();
 
-	_sound = new Sound(_game, gss, _gameDataPath, _mixer);
+	_sound = new Sound(_game, gss, _mixer);
 	_debugger = new Debugger(this);
 
 	if (ConfMan.hasKey("sfx_mute") && ConfMan.getBool("sfx_mute") == 1) {
@@ -5046,7 +5046,7 @@ void SimonEngine::loadMusic (uint music) {
 				char buf[15];
 				File f;
 				sprintf(buf, "MOD%d.MUS", music);
-				f.open(buf, _gameDataPath);
+				f.open(buf);
 				if (f.isOpen() == false) {
 					warning("Can't load music from '%s'", buf);
 					return;

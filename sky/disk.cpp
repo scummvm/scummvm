@@ -407,9 +407,9 @@ void Disk::dumpFile(uint16 fileNr) {
 	filePtr = loadFile(fileNr, NULL);
 	sprintf(buf, "dumps/file-%d.dmp", fileNr);
 
-	out.open(buf, "", File::kFileReadMode);
+	out.open(buf, File::kFileReadMode, "");
 	if (out.isOpen() == false) {
-		out.open(buf, "", File::kFileWriteMode);
+		out.open(buf, File::kFileWriteMode, "");
 		if (out.isOpen() == false)
 			return;
 		out.write(filePtr, _lastLoadedFileSize);

@@ -2278,7 +2278,7 @@ void ScummEngine::dumpResource(const char *tag, int idx, const byte *ptr, int le
 	sprintf(buf, "dumps/%s%d.dmp", tag, idx);
 #endif
 
-	out.open(buf, "", File::kFileWriteMode);
+	out.open(buf, File::kFileWriteMode, "");
 	if (out.isOpen() == false)
 		return;
 	out.write(ptr, size);

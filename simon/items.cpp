@@ -1025,9 +1025,9 @@ int SimonEngine::runScript() {
 				if (_game == GAME_SIMON1CD32) {
 					char buf[10];
 					sprintf(buf, "%d%s", _sound_file_id, "Effects");
-					_sound->readSfxFile(buf, _gameDataPath);
+					_sound->readSfxFile(buf);
 					sprintf(buf, "%d%s", _sound_file_id, "simon");
-					_sound->readVoiceFile(buf, _gameDataPath);
+					_sound->readVoiceFile(buf);
 				}
 
 			}

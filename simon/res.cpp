@@ -102,13 +102,13 @@ void SimonEngine::loadGamePcFile(const char *filename) {
 	int i, file_size;
 
 	/* read main gamepc file */
-	in.open(filename, _gameDataPath);
+	in.open(filename);
 	if (in.isOpen() == false) {
 		char *filename2;
 		filename2 = (char *)malloc(strlen(filename) + 2);
 		strcpy(filename2, filename);
 		strcat(filename2, ".");
-		in.open(filename2, _gameDataPath);
+		in.open(filename2);
 		free(filename2);
 		if (in.isOpen() == false)
 			error("Can't open gamepc file '%s' or '%s.'", gss->gamepc_filename, gss->gamepc_filename);
@@ -128,9 +128,9 @@ void SimonEngine::loadGamePcFile(const char *filename) {
 	in.close();
 
 	/* Read list of TABLE resources */
-	in.open("TBLLIST", _gameDataPath);
+	in.open("TBLLIST");
 	if (in.isOpen() == false) {
-		in.open("TBLLIST.", _gameDataPath);
+		in.open("TBLLIST.");
 		if (in.isOpen() == false)
 			error("Can't open table resources file 'TBLLIST' or 'TBLLIST.'");
 	}
@@ -150,9 +150,9 @@ void SimonEngine::loadGamePcFile(const char *filename) {
 
 	/* Read list of TEXT resources */
 	if (_game == GAME_SIMON1ACORN)
-		in.open("STRIPPED", _gameDataPath);
+		in.open("STRIPPED");
 	else
-		in.open("STRIPPED.TXT", _gameDataPath);
+		in.open("STRIPPED.TXT");
 	if (in.isOpen() == false)
 		error("Can't open text resources file 'STRIPPED.TXT'");
 

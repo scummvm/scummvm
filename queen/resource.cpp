@@ -143,7 +143,7 @@ uint8 *Resource::loadFileMalloc(const char *filename, uint32 skipBytes, byte *ds
 }
 
 bool Resource::findNormalVersion() {
-	_resourceFile->open("queen.1", _datafilePath);
+	_resourceFile->open("queen.1");
 	if (!_resourceFile->isOpen()) {
 		return false;
 	}
@@ -170,7 +170,7 @@ bool Resource::findNormalVersion() {
 }
 
 bool Resource::findCompressedVersion() {
-	_resourceFile->open("queen.1c", _datafilePath);
+	_resourceFile->open("queen.1c");
 	if (!_resourceFile->isOpen()) {
 		return false;
 	}
@@ -215,9 +215,9 @@ Language Resource::getLanguage() const {
 
 bool Resource::readTableFile(const GameVersion *gameVersion) {
 	File tableFile;
-	tableFile.open(_tableFilename, _datafilePath);
+	tableFile.open(_tableFilename);
 	if (!tableFile.isOpen())	
-		tableFile.open(_tableFilename, ""); // try current directory
+		tableFile.open(_tableFilename, File::kFileReadMode, ""); // try current directory
 	if (tableFile.isOpen() && tableFile.readUint32BE() == 'QTBL') {
 		if (tableFile.readUint32BE() != CURRENT_TBL_VERSION)
 			warning("Incorrect version of queen.tbl, please update it");

@@ -1012,9 +1012,9 @@ void ScummEngine_v6he::o6_openFile() {
 
 	if (slot != -1) {
 		if (mode == 1)
-			_hFileTable[slot].open((char*)filename + r, getGameDataPath(), File::kFileReadMode);
+			_hFileTable[slot].open((char*)filename + r, File::kFileReadMode);
 		else if (mode == 2)
-			_hFileTable[slot].open((char*)filename + r, getGameDataPath(), File::kFileWriteMode);
+			_hFileTable[slot].open((char*)filename + r, File::kFileWriteMode);
 		else
 			error("o6_openFile(): wrong open file mode");
 

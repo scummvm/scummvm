@@ -48,8 +48,7 @@ public:
 	
 	File();
 	virtual ~File();
-	bool open(const char *filename, const Common::String &directory) { return open(filename, directory.c_str()); }
-	bool open(const char *filename, const char *directory = NULL, AccessMode mode = kFileReadMode);
+	bool open(const char *filename, AccessMode mode = kFileReadMode, const char *directory = NULL);
 	void close();
 	bool isOpen() const;
 	bool ioFailed() const;

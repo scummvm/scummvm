@@ -31,7 +31,6 @@ class BaseSound;
 class Sound {
 private:
 	byte _game;
-	const Common::String _gameDataPath;
 
 	SoundMixer *_mixer;
 
@@ -53,12 +52,12 @@ public:
 	bool _voice_file;
 	uint _ambient_playing;
 
-	Sound(const byte game, const GameSpecificSettings *gss, const Common::String &gameDataPath, SoundMixer *mixer);
+	Sound(const byte game, const GameSpecificSettings *gss, SoundMixer *mixer);
 	~Sound();
 	
-	void readSfxFile(const char *filename, const Common::String &gameDataPath);
+	void readSfxFile(const char *filename);
 	void loadSfxTable(File *gameFile, uint32 base);
-	void readVoiceFile(const char *filename, const Common::String &gameDataPath);
+	void readVoiceFile(const char *filename);
 
 	void playVoice(uint sound);
 	void playEffects(uint sound);

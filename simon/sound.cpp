@@ -265,8 +265,8 @@ void FlacSound::playSound(uint sound, PlayingSoundHandle *handle, byte flags)
 }
 #endif
 
-Sound::Sound(const byte game, const GameSpecificSettings *gss, const Common::String &gameDataPath, SoundMixer *mixer)
-	: _game(game), _gameDataPath(gameDataPath), _mixer(mixer) {
+Sound::Sound(const byte game, const GameSpecificSettings *gss, SoundMixer *mixer)
+	: _game(game), _mixer(mixer) {
 	_voice = 0;
 	_effects = 0;
 
@@ -285,7 +285,7 @@ Sound::Sound(const byte game, const GameSpecificSettings *gss, const Common::Str
 
 #ifdef USE_FLAC
 	if (!_voice && gss->flac_filename && gss->flac_filename[0]) {
-		file->open(gss->flac_filename, gameDataPath);
+		file->open(gss->flac_filename);
 		if (file->isOpen()) {
 			_voice_file = true;
 			_voice = new FlacSound(_mixer, file);
@@ -294,7 +294,7 @@ Sound::Sound(const byte game, const GameSpecificSettings *gss, const Common::Str
 #endif
 #ifdef USE_MAD
 	if (!_voice && gss->mp3_filename && gss->mp3_filename[0]) {
-		file->open(gss->mp3_filename, gameDataPath);
+		file->open(gss->mp3_filename);
 		if (file->isOpen()) {
 			_voice_file = true;
 			_voice = new MP3Sound(_mixer, file);
@@ -303,7 +303,7 @@ Sound::Sound(const byte game, const GameSpecificSettings *gss, const Common::Str
 #endif
 #ifdef USE_VORBIS
 	if (!_voice && gss->vorbis_filename && gss->vorbis_filename[0]) {
-		file->open(gss->vorbis_filename, gameDataPath);
+		file->open(gss->vorbis_filename);
 		if (file->isOpen()) {
 			_voice_file = true;
 			_voice = new VorbisSound(_mixer, file);
@@ -313,7 +313,7 @@ Sound::Sound(const byte game, const GameSpecificSettings *gss, const Common::Str
 	if (!_voice) {
 		// for simon2 mac/amiga, only read index file
 		if (_game == GAME_SIMON2MAC) {
-			file->open("voices.idx", gameDataPath);
+			file->open("voices.idx");
 			if (file->isOpen() == false) {
 				warning("Can't open voice index file 'voices.idx'");
 			} else {
@@ -332,7 +332,7 @@ Sound::Sound(const byte game, const GameSpecificSettings *gss, const Common::Str
 			delete file;
 		} else if (_game & GF_WIN) {
 			s = gss->wav_filename;
-			file->open(s, gameDataPath);
+			file->open(s);
 			if (file->isOpen() == false) {
 				warning("Can't open voice file %s", s);
 				delete file;
@@ -345,7 +345,7 @@ Sound::Sound(const byte game, const GameSpecificSettings *gss, const Common::Str
 			return;
 		} else if (_game & GF_TALKIE) {
 			s = gss->voc_filename;
-			file->open(s, gameDataPath);
+			file->open(s);
 			if (file->isOpen() == false) {
 				warning("Can't open voice file %s", s);
 				delete file;
@@ -360,7 +360,7 @@ Sound::Sound(const byte game, const GameSpecificSettings *gss, const Common::Str
 		file = new File();
 #ifdef USE_MAD
 		if (!_effects && gss->mp3_effects_filename && gss->mp3_effects_filename[0]) {
-			file->open(gss->mp3_effects_filename, gameDataPath);
+			file->open(gss->mp3_effects_filename);
 			if (file->isOpen()) {
 				_effects = new MP3Sound(_mixer, file);
 			}
@@ -368,7 +368,7 @@ Sound::Sound(const byte game, const GameSpecificSettings *gss, const Common::Str
 #endif
 #ifdef USE_VORBIS
 		if (!_effects && gss->vorbis_effects_filename && gss->vorbis_effects_filename[0]) {
-			file->open(gss->vorbis_effects_filename, gameDataPath);
+			file->open(gss->vorbis_effects_filename);
 			if (file->isOpen()) {
 				_effects = new VorbisSound(_mixer, file);
 			}
@@ -376,7 +376,7 @@ Sound::Sound(const byte game, const GameSpecificSettings *gss, const Common::Str
 #endif
 #ifdef USE_FLAC
 		if (!_effects && gss->flac_effects_filename && gss->flac_effects_filename[0]) {
-			file->open(gss->flac_effects_filename, gameDataPath);
+			file->open(gss->flac_effects_filename);
 			if (file->isOpen()) {
 				_effects = new FlacSound(_mixer, file);
 			}
@@ -384,7 +384,7 @@ Sound::Sound(const byte game, const GameSpecificSettings *gss, const Common::Str
 #endif
 		if (!_effects) {
 			s = gss->voc_effects_filename;
-			file->open(s, gameDataPath);
+			file->open(s);
 			if (file->isOpen() == false) {
 				warning("Can't open effects file %s", s);
 			} else {
@@ -402,18 +402,18 @@ Sound::~Sound() {
 	free(_offsets);
 }
 
-void Sound::readSfxFile(const char *filename, const Common::String &gameDataPath) {
+void Sound::readSfxFile(const char *filename) {
 	stopAll();
 
 	File *file = new File();
-	file->open(filename, gameDataPath);
+	file->open(filename);
 
 	if (file->isOpen() == false) {
 		char *filename2;
 		filename2 = (char *)malloc(strlen(filename) + 2);
 		strcpy(filename2, filename);
 		strcat(filename2, ".");
-		file->open(filename2, gameDataPath);
+		file->open(filename2);
 		free(filename2);
 		if (file->isOpen() == false) {
 			if (atoi(filename + 6) != 1 && atoi(filename + 6) != 30)
@@ -438,18 +438,18 @@ void Sound::loadSfxTable(File *gameFile, uint32 base) {
 		_effects = new VocSound(_mixer, gameFile, base);
 }
 
-void Sound::readVoiceFile(const char *filename, const Common::String &gameDataPath) {
+void Sound::readVoiceFile(const char *filename) {
 	stopAll();
 
 	File *file = new File();
-	file->open(filename, gameDataPath);
+	file->open(filename);
 
 	if (file->isOpen() == false) {
 		char *filename2;
 		filename2 = (char *)malloc(strlen(filename) + 2);
 		strcpy(filename2, filename);
 		strcat(filename2, ".");
-		file->open(filename2, gameDataPath);
+		file->open(filename2);
 		free(filename2);
 		if (file->isOpen() == false) {
 			warning("readVoiceFile: Can't load voice file %s", filename);
@@ -470,7 +470,7 @@ void Sound::playVoice(uint sound) {
 			_last_voice_file = _filenums[sound];
 			sprintf(filename, "voices%d.dat", _filenums[sound]);
 			File *file = new File();
-			file->open(filename, _gameDataPath);
+			file->open(filename);
 			if (file->isOpen() == false) {
 				warning("playVoice: Can't load voice file %s", filename);
 				return;

@@ -140,7 +140,7 @@ File::~File() {
 	delete [] _name;
 }
 
-bool File::open(const char *filename, const char *directory, AccessMode mode) {
+bool File::open(const char *filename, AccessMode mode, const char *directory) {
 	if (_handle) {
 		debug(2, "File %s already opened", filename);
 		return false;
