@@ -71,7 +71,7 @@ byte Scumm::getMaskFromBox(int box)
 
 void Scumm::setBoxFlags(int box, int val)
 {
-	debug(1, "setBoxFlags(%d, 0x%02x)", box, val);
+	debug(2, "setBoxFlags(%d, 0x%02x)", box, val);
 
 	/* FULL_THROTTLE stuff */
 	if (val & 0xC000) {

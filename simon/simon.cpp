@@ -2707,16 +2707,14 @@ void SimonState::timer_proc1()
 	timer_vga_sprites_2();
 #endif
 
-	if (!(_game & GAME_SIMON2)) {
-		if (_copy_partial_mode == 1) {
-			dx_copy_from_2_to_attached(80, 46, 208 - 80, 94 - 46);
-		}
+	if (_copy_partial_mode == 1) {
+		dx_copy_from_2_to_attached(80, 46, 208 - 80, 94 - 46);
+	}
 
-		if (_copy_partial_mode == 2) {
-			/* copy partial from attached to 2 */
-			dx_copy_from_attached_to_2(176, 61, 320 - 176, 134 - 61);
-			_copy_partial_mode = 0;
-		}
+	if (_copy_partial_mode == 2) {
+		/* copy partial from attached to 2 */
+		dx_copy_from_attached_to_2(176, 61, 320 - 176, 134 - 61);
+		_copy_partial_mode = 0;
 	}
 
 	/* XXX: more stuff here */
@@ -3206,6 +3204,7 @@ void SimonState::video_toggle_colors(HitArea * ha, byte a, byte b, byte c, byte 
 	if (!(h > 0 && w > 0 && ha->x + w <= 320 && ha->y + h <= 200)) {
 		warning("Invalid coordinates in video_toggle_colors (%d,%d,%d,%d)", ha->x, ha->y, ha->width,
 						ha->height);
+		_lock_word &= ~0x8000;
 		return;
 	}
 
@@ -4453,8 +4452,10 @@ bool SimonState::save_game(uint slot, const char *caption)
 #endif
 
 	f = fopen(gen_savename(slot), "wb");
-	if (f == NULL)
+	if (f == NULL) {
+		_lock_word &= ~0x100;
 		return false;
+	}
 
 	fwrite(caption, 1, 0x12, f);
 
@@ -4559,8 +4560,10 @@ bool SimonState::load_game(uint slot)
 #endif
 
 	f = fopen(gen_savename(slot), "rb");
-	if (f == NULL)
+	if (f == NULL) {
+		_lock_word &= ~0x100;
 		return false;
+	}
 
 	fread(ident, 1, 18, f);
 
@@ -4568,6 +4571,7 @@ bool SimonState::load_game(uint slot)
 
 	if (fileReadBE32(f) != 0xFFFFFFFF || num != _itemarray_inited - 1) {
 		fclose(f);
+		_lock_word &= ~0x100;
 		return false;
 	}
 

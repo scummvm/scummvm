@@ -48,6 +48,11 @@ void Sound::addSoundToQueue(int sound) {
 		_scumm->_vars[_scumm->VAR_LAST_SOUND] = sound;
 		_scumm->ensureResourceLoaded(rtSound, sound);
 		addSoundToQueue2(sound);
+	} else {
+		// WARNING ! This may break something, maybe this sould be put inside if(_gameID == GID_FT) ? 
+		// But why addSoundToQueue should not queue sound ?
+		_scumm->ensureResourceLoaded(rtSound, sound);
+		addSoundToQueue2(sound);
 	}
 
 //	if (_features & GF_AUDIOTRACKS)
@@ -162,10 +167,59 @@ void Sound::processSoundQues() {
 	_soundQuePos = 0;
 }
 
+static char * read_creative_voc_file(byte * ptr, int & size, int & rate) {
+	assert(strncmp((char*)ptr, "Creative Voice File\x1A", 20) == 0);
+	int offset = READ_LE_UINT16(ptr+20);
+	short version = READ_LE_UINT16(ptr+22);
+	short code = READ_LE_UINT16(ptr+24);
+	assert(version == 0x010A || version == 0x0114);
+	assert(code == ~version + 0x1234);
+	bool quit = 0;
+	char * ret_sound = 0; size = 0;
+	while(!quit) {
+		int len = READ_LE_UINT32(ptr + offset);
+		offset += 4;
+		int code = len & 0xFF;		// FIXME not sure this is endian correct
+		len >>= 8;
+		switch(code) {
+			case 0: quit = 1; break;
+			case 1: {
+				int time_constant = ptr[offset++];
+				int packing = ptr[offset++];
+				len -= 2;
+				rate = 1000000L / (256L - time_constant);
+				debug(9, "VOC Data Bloc : %d, %d, %d", rate, packing, len);
+				if(packing == 0) {
+					if(size) {
+						ret_sound = (char*)realloc(ret_sound, size + len);
+					} else {
+						ret_sound = (char*)malloc(len);
+					}
+					memcpy(ret_sound + size, ptr + offset, len);
+					size += len;
+				} else {
+					warning("VOC file packing %d unsupported", packing);
+				}
+				} break;
+			case 6:	// begin of loop
+				debug(3, "loops in Creative files not supported");
+				break;
+			case 7:	// end of loop
+				break;
+			default:
+				warning("Invalid code in VOC file : %d", code);
+				//~ quit = 1;
+				break;
+		}
+		offset += len;
+	}
+	debug(9, "VOC Data Size : %d", size);
+	return ret_sound;
+}
+
 void Sound::playSound(int sound) {
 	byte *ptr;
-	IMuse *se = _scumm->_imuse;
-
+	
 	ptr = _scumm->getResourceAddress(rtSound, sound);
 	if (ptr != NULL && READ_UINT32_UNALIGNED(ptr) == MKID('SOUN')) {
 		ptr += 8;
@@ -180,11 +234,10 @@ void Sound::playSound(int sound) {
 		_scumm->current_cd_sound = sound;
 		return;
 	}
-
 	// Support for SFX in Monkey Island 1, Mac version
 	// This is rather hackish right now, but works OK. SFX are not sounding
 	// 100% correct, though, not sure right now what is causing this.
-	if (ptr != NULL && READ_UINT32_UNALIGNED(ptr) == MKID('Mac1')) {
+	else if (ptr != NULL && READ_UINT32_UNALIGNED(ptr) == MKID('Mac1')) {
 
 		// Read info from the header
 		int size = READ_UINT32_UNALIGNED(ptr+0x60);
@@ -214,6 +267,14 @@ void Sound::playSound(int sound) {
 		char *sound = (char*)malloc(size);
 		memcpy(sound, ptr+8, size);
 		_scumm->_mixer->play_raw(NULL, sound, size, rate, SoundMixer::FLAG_UNSIGNED | SoundMixer::FLAG_AUTOFREE);
+		return;
+	}
+	else if (ptr != NULL && READ_UINT32_UNALIGNED(ptr) == MKID('Crea')) {
+		int size, rate;
+		char * sound = read_creative_voc_file(ptr, size, rate);
+		if(sound != NULL) {
+			_scumm->_mixer->play_raw(NULL, sound, size, rate, SoundMixer::FLAG_UNSIGNED | SoundMixer::FLAG_AUTOFREE);
+		}
 		return;
 	}
 	// Support for sampled sound effects in Monkey1 and Monkey2
@@ -332,6 +393,7 @@ void Sound::playSound(int sound) {
 	if (_scumm->_gameId == GID_MONKEY_VGA)
 		return;											/* FIXME */
 
+	IMuse *se = _scumm->_imuse;
 	if (se) {
 		_scumm->getResourceAddress(rtSound, sound);
 		se->start_sound(sound);

@@ -725,6 +725,11 @@ int Scumm::readSoundResource(int type, int idx)
 		total_size = fileReadDwordBE();
 		fileRead(_fileHandle, createResource(type, idx, total_size), total_size - 8);
 		return 1;
+	} else if (basetag == MKID('Crea')) {
+		fileSeek(_fileHandle, -12, SEEK_CUR);
+		total_size = fileReadDwordBE();
+		fileRead(_fileHandle, createResource(type, idx, total_size), total_size - 8);
+		return 1;
 	} else {
 		fprintf(stderr, "WARNING: Unrecognized base tag 0x%08lx in sound %d\n", basetag, idx);
 	}
@@ -837,7 +842,6 @@ void Scumm::nukeResource(int type, int idx)
 {
 	byte *ptr;
 
-	debug(9, "nukeResource(%s,%d)", resTypeFromId(type), idx);
 
 	CHECK_HEAP if (!res.address[type])
 		  return;
@@ -845,6 +849,7 @@ void Scumm::nukeResource(int type, int idx)
 	assert(idx >= 0 && idx < res.num[type]);
 
 	if ((ptr = res.address[type][idx]) != NULL) {
+		debug(9, "nukeResource(%s,%d)", resTypeFromId(type), idx);
 		res.address[type][idx] = 0;
 		res.flags[type][idx] = 0;
 		_allocatedSize -= ((MemBlkHeader *)ptr)->size;

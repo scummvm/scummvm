@@ -1989,7 +1989,10 @@ void Scumm::o5_roomOps()
 			FILE *out;
 
 			a = getVarOrDirectByte(0x80);
-			s = buf;
+
+			// FIXME - check for buffer overflow
+			strcpy(buf, getSavePath());
+			s = buf + strlen(buf);
 			while ((*s++ = fetchScriptByte()));
 
 			// Use buf as filename
@@ -2007,7 +2010,10 @@ void Scumm::o5_roomOps()
 			FILE *in;
 
 			a = getVarOrDirectByte(0x80);
-			s = buf;
+
+			// FIXME - check for buffer overflow
+			strcpy(buf, getSavePath());
+			s = buf + strlen(buf);
 			while ((*s++ = fetchScriptByte()));
 
 			// Use buf as filename
