@@ -75,6 +75,7 @@ static const char USAGE_STRING[] =
 	"  --joystick[=NUM]         Enable input with joystick (default: 0 = first\n"
 	"                           joystick)\n"
 	"  --platform=WORD          Specify version of game (allowed values: amiga,\n"
+	"  --savepath=PATH          Path to where savegames are stored\n"
 	"                           atari, fmtowns, mac, pc, windows)\n"
 	"  --multi-midi             Enable combination Adlib and native MIDI\n"
 	"  --native-mt32            True Roland MT-32 (disable GM emulation)\n"
