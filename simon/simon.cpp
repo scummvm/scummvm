@@ -3300,7 +3300,7 @@ void SimonState::readSfxFile(const char *filename)
 		in.read(_sfx_heap, size);
 
 		in.close();
-	} else {
+	} else if (!gss->voc_filename) {
 		int res;
 		uint32 offs;
 		int size;
@@ -3320,6 +3320,37 @@ void SimonState::readSfxFile(const char *filename)
 		_sfx_heap = (byte *)malloc(size);
 
 		resfile_read(_sfx_heap, offs, size);
+
+	} else {
+
+		int num_per_set[] = {0, 188, 223, 217, 209, 179, 187, 189, 116, 174, 203,
+				173, 176, 38, 205, 134, 213, 212, 167, 141};
+
+		int set;
+		uint32 offs;
+		int num;
+		int i;
+
+		vc_29_stop_all_sounds();
+
+		if (_effects_offsets)
+			free(_effects_offsets);
+
+		set = atoi(filename + 6) - 1;
+		offs = _game_offsets_ptr[set + gss->SOUND_INDEX_BASE];
+		num = num_per_set[set];
+
+		if (num == 0)
+			return;
+
+		_effects_offsets = (uint32 *)malloc(num * sizeof(uint32));
+
+		_game_file->seek(offs, SEEK_SET);
+		_game_file->read(_effects_offsets, num * sizeof(uint32));
+
+		for (i = 0; i < num; i++) {
+			_effects_offsets[i] += offs;
+		}
 	}
 }
 
@@ -4847,7 +4878,36 @@ void SimonState::playVoice(uint voice)
 void SimonState::playSound(uint sound)
 {
 	if (_game & GAME_WIN) {
-		if (_effects_offsets) {			/* VOC sound file */
+		// XXX: redundant
+		if (_effects_offsets && (_game & GAME_SIMON2)) {			/* VOC sound simon2dos talkie */
+
+			VocHeader voc_hdr;
+			VocBlockHeader voc_block_hdr;
+			uint32 size;
+
+			if (_effects_sound != 0)
+				_mixer->stop(_effects_sound);
+			_game_file->seek(_effects_offsets[sound], SEEK_SET);
+
+
+			if (_game_file->read(&voc_hdr, sizeof(voc_hdr)) != sizeof(voc_hdr) ||
+					strncmp((char *)voc_hdr.desc, "Creative Voice File\x1A", 10) != 0) {
+				warning("playSound(%d): cannot read voc header", sound);
+				return;
+			}
+
+			_game_file->read(&voc_block_hdr, sizeof(voc_block_hdr));
+
+			size = voc_block_hdr.size[0] + (voc_block_hdr.size[1] << 8) + (voc_block_hdr.size[2] << 16) - 2;
+			uint32 samples_per_sec = 1000000L / (256L - (long)voc_block_hdr.sr);
+
+			byte *buffer = (byte *)malloc(size);
+			_game_file->read(buffer, size);
+
+			_mixer->playRaw(&_effects_sound, buffer, size, samples_per_sec, SoundMixer::FLAG_UNSIGNED);
+
+		 } else if (_effects_offsets) {			/* VOC sound file */
+			
 #ifdef USE_MAD
 			if (_effects_type == FORMAT_MP3) {
 				_effects_file->seek(_effects_offsets[sound], SEEK_SET);
