@@ -79,7 +79,7 @@ static const byte mt32_to_gm[128] = {
 	}
 	
 	bool MusicPlayer::queueSong(uint16 songNum) {
-		if (songNum >= _numSongs) {
+		if (songNum >= _numSongs && songNum < 1000) {
 			// this happens at the end of the car chase, where we try to play song 176,
 			// see Sound::_tune[], entry 39
 			warning("Trying to queue an invalid song number %d, max %d", songNum, _numSongs);
