@@ -27,8 +27,7 @@
 #include "script.h"
 
 namespace Kyra {
-	Resourcemanager::Resourcemanager(KyraEngine* engine, const char* gamedir) {
-		_gameDir = gamedir;
+	Resourcemanager::Resourcemanager(KyraEngine* engine) {
 		_engine = engine;
 		
 		// prefetches all PAK Files
@@ -43,7 +42,7 @@ namespace Kyra {
 		
 		for (uint32 tmp = 0; kyraFilelist[tmp]; ++tmp)	{
 			// prefetch file
-			PAKFile* file = new PAKFile(getPath() + kyraFilelist[tmp]);
+			PAKFile* file = new PAKFile(kyraFilelist[tmp]);
 			assert(file);			
 
 			if (file->isOpen() && file->isValid())		
@@ -70,7 +69,7 @@ namespace Kyra {
 		File file_;
 		
 		// test to open it in the main dir
-		if (file_.open((getPath() + file).c_str())) {
+		if (file_.open(file)) {
 		
 			*size = file_.size();
 			
@@ -152,30 +151,6 @@ namespace Kyra {
 		return context;
 	}
 	
-	Common::String Resourcemanager::getPath(void) {
-		assert(_gameDir);
-		int32 len = strlen(_gameDir);
-		
-		if(len < 1)
-			error("no valid gamedir");
-			
-		// tests for an path seperator at the end
-		if (_gameDir[len - 1] == '\\') {
-			return string(_gameDir);
-		} else if (_gameDir[len - 1 ] == '/') {
-			return string(_gameDir);
-		}
-	
-		// creates a path seperator at the end
-		// we are always using the path seperator from the system
-		// even if Windows shoudl accept '/'
-#ifdef WIN32	
-		return string(_gameDir) + "\\";
-#else
-		return string(_gameDir) + "/";
-#endif
-	}
-
 ///////////////////////////////////////////
 // Pak file manager
 	#define PAKFile_Iterate Common::List<PakChunk*>::iterator start=_files.begin();start != _files.end(); ++start

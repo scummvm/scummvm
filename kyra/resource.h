@@ -70,7 +70,7 @@ namespace Kyra {
 
 	public:
 
-		Resourcemanager(KyraEngine* engine, const char* gamedir);
+		Resourcemanager(KyraEngine* engine);
 		virtual ~Resourcemanager();
 
 		uint8* fileData(const char* file, uint32* size);
@@ -84,8 +84,6 @@ namespace Kyra {
 	protected:
 		KyraEngine* _engine;
 
-		string getPath(void);
-		const char*	_gameDir;
 		Common::List<PAKFile*> _pakfiles;
 
 	};

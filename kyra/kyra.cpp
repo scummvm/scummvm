@@ -99,14 +99,12 @@ KyraEngine::KyraEngine(GameDetector *detector, OSystem *syst)
 
 	_mixer->setVolume(ConfMan.getInt("sfx_volume") * ConfMan.getInt("master_volume") / 255);
 
-	//getGameDataPath();
-
 	// Initialize backen
 	syst->initSize(320, 200);
-	_screen = new uint8[320*200];
-	memset((void*)_screen, 0, sizeof(_screen));
+	_screen = new uint8[320 * 200];
+	memset(_screen, 0, 320 * 200);
 
-	_resMgr = new Resourcemanager(this, getGameDataPath());
+	_resMgr = new Resourcemanager(this);
 	assert(_resMgr);
 
 	setCurrentPalette(_resMgr->loadPalette("PALETTE.COL"));
@@ -125,6 +123,7 @@ KyraEngine::KyraEngine(GameDetector *detector, OSystem *syst)
 
 KyraEngine::~KyraEngine() {
 	delete _resMgr;
+	delete _screen;
 	delete _mouse;
 	delete _items;
 	delete _npcScript;
@@ -175,7 +174,7 @@ void KyraEngine::shutdown() {
 }
 
 void KyraEngine::updateScreen(void) {
-	_system->copyRectToScreen(_screen, 320, 0, 0, 320, 240);
+	_system->copyRectToScreen(_screen, 320, 0, 0, 320, 200);
 	_system->updateScreen();
 }
 
