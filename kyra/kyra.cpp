@@ -117,12 +117,10 @@ KyraEngine::KyraEngine(GameDetector *detector, OSystem *syst)
 
 	// loads the Font
 	_font = _resMgr->loadFont("8FAT.FNT");
-	printf("loading scripts\n");
+
 	// loads out scripts
 	_npcScript = _resMgr->loadScript("_NPC.EMC");
 	_currentScript = _resMgr->loadScript("_STARTUP.EMC");
-	printf("done\n");
-
 }
 
 KyraEngine::~KyraEngine() {

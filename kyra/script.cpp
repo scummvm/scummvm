@@ -344,16 +344,324 @@ namespace Kyra {
 			COMMAND(c1_unknownCommand),
 			{ 0, 0 }
 		};
-
 		_commands = commandProcs;
-//		_opcodes = opcodeProcs;
+		static OpcodeEntry opcodeProcs[] = {
+			// 0
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),			
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),
+			
+			// 10
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),			
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),
+			
+			// 20
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),			
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),
+			
+			// 30
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),			
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),
+			
+			// 40
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),			
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),
+			
+			// 50
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),			
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),
+			
+			// 60
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),			
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),
+			
+			// 70
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),			
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),
+			
+			// 80
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),			
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),
+			
+			// 90
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),			
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),
+			
+			// 100
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_0x68),			
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),
+			
+			// 110
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),			
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),
+			
+			// 120
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),			
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),
+			
+			// 130
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),			
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),
+			
+			// 140
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),			
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),
+			
+			// 150
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),			
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),
+			
+			// 160
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),			
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),
+			
+			// 170
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),			
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),
+			
+			// 180
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),			
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),
+			
+			// 190
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),			
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),
+			
+			// 200
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),			
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),
+			
+			// 210
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),			
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),
+			
+			// 220
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),			
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),
+			
+			// 230
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),			
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),
+			
+			// 240
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),			
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),
+			
+			// 250
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),
+			{ 0, 0 }
+		};
+		_opcodes = opcodeProcs;
 
 		_scriptFile = NULL;
 		_scriptFileSize = 0;
 	}
 	
 	void VMContext::loadScript(const char* file) {
-		printf("a\n");
 		if (_scriptFile) {
 			delete [] _scriptFile;
 			_scriptFileSize = 0;
@@ -363,7 +671,6 @@ namespace Kyra {
 		
 		// loads the new file
 		_scriptFile = _engine->resManager()->fileData(file, &_scriptFileSize);
-		printf("c\n");
 		
 		if (!_scriptFileSize || !_scriptFile) {
 			error("couldn't load script file '%s'", file);

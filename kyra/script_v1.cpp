@@ -217,4 +217,22 @@ namespace Kyra {
 		
 		pushStack(res);
 	}
+
+	// opcode procs
+	void VMContext::o1_unknownOpcode(void) {
+		_error = true;
+
+		debug("unknown opcode '0x%x'.", _argument);
+		debug("parameters:\n"
+			"Param0: %d\nParam1: %d\nParam2: %d\nParam3: %d\nParam4: %d\nParam5: %d\n"
+			"Param0 as a string: %s\nParam1 as a string: %s\nParam2 as a string: %s\n"
+			"Param3 as a string: %s\nParam4 as a string: %s\nParam5 as a string: %s\n",
+			param(0), param(1), param(2), param(3), param(5), param(5),
+			paramString(0), paramString(1), paramString(2), paramString(3), 
+			paramString(4), paramString(5));
+	}
+
+        void VMContext::o1_0x68(void) {
+                debug("o1_0x68 was called with param0: '%d' and param1: '%d'", param(0), param(1));
+        }
 } // end of namespace Kyra
