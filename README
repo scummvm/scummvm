@@ -951,8 +951,6 @@ X.X Credits:
         Kovacs Endre Janos   - Several fixes for Simon1
         Jeroen Janssen       - Numerous readability and bugfix patches
         Claudio Matsuoka     - Daily Linux/BeOS builds 
-        Gregory Montoir      - AdvanceMAME Scale-2X, TV 2x and dot matrix
-                               implementation
         Mikesch Nepomuk      - MI1 VGA floppy patches.
         Nicolas Noble        - Config file and ALSA support
         Edward Rudd          - Fixes for playing MP3 versions of MI1/Loom audio
