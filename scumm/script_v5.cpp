@@ -1022,7 +1022,7 @@ void Scumm_v5::o5_getAnimCounter() {
 void Scumm_v5::o5_getClosestObjActor() {
 	int obj;
 	int act;
-	int closest_obj = 0xFF, closest_dist = 0xFF;
+	int closest_obj = 0xFF, closest_dist = 0xFFFF;
 	int dist;
 
 	getResultPos();
