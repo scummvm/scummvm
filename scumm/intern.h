@@ -656,6 +656,8 @@ protected:
 	/* Version 7 script opcodes */
 	void o72_getString();
 	void o72_compareStackList();
+	void o72_objectX();
+	void o72_objectY();
 	void o72_startScript();
 	void o72_startObject();
 	void o72_drawObject();

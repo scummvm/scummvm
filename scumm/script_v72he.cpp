@@ -151,8 +151,8 @@ void ScummEngine_v72he::setupOpcodes() {
 		OPCODE(o6_invalid),
 		OPCODE(o6_wordArrayInc),
 		/* 54 */
-		OPCODE(o6_getObjectX),
-		OPCODE(o6_getObjectY),
+		OPCODE(o72_objectX),
+		OPCODE(o72_objectY),
 		OPCODE(o6_byteVarDec),
 		OPCODE(o6_wordVarDec),
 		/* 58 */
@@ -396,7 +396,7 @@ void ScummEngine_v72he::o72_compareStackList() {
 	int value = pop();
 
 	if (num) {
-		for (i = 1; i < 128; i++) {
+		for (i = 1; i < num; i++) {
 			if (args[i] == value) {
 				push(1);
 				break;
@@ -405,6 +405,31 @@ void ScummEngine_v72he::o72_compareStackList() {
 	} else {
 		push(0);
 	}
+}
+
+void ScummEngine_v72he::o72_objectX() {
+	int object = pop();
+	int objnum = getObjectIndex(object);
+
+	if (objnum == -1) {
+		push(0);
+		return;
+	}
+
+	push(_objs[objnum].x_pos);
+}
+
+
+void ScummEngine_v72he::o72_objectY() {
+	int object = pop();
+	int objnum = getObjectIndex(object);
+
+	if (objnum == -1) {
+		push(0);
+		return;
+	}
+
+	push(_objs[objnum].y_pos);
 }
 
 void ScummEngine_v72he::o72_startScript() {
