@@ -435,8 +435,8 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 	  gdi(this), _pauseDialog(0), _optionsDialog(0), _mainMenuDialog(0), _versionDialog(0),
 	  _targetName(detector->_targetName) {
 
-	// Copy md5sum
-	for (int i = 0; i < 17; i++) _gameMD5[i] = md5sum[i];
+	// Copy MD5 checksum
+	memcpy(_gameMD5, md5sum, 16);
 
 	// Add default file directories.
 	if (((_features & GF_AMIGA) || (_features & GF_ATARI_ST)) && (_version <= 4)) {
