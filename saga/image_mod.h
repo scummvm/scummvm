@@ -20,27 +20,18 @@
  * $Header$
  *
  */
-/*
- Description:   
- 
-    SAGA Image resource management routines
 
- Notes: 
-*/
+// SAGA Image resource management routines
 
 #ifndef SAGA_IMAGE_MOD_H_
 #define SAGA_IMAGE_MOD_H_
 
 namespace Saga {
 
-int
-IMG_DecodeBGImage(const byte * image_data,
-    size_t image_size,
-    byte ** output_buf, size_t * output_buf_len, int *w, int *h);
-
-const byte *IMG_GetImagePal(const byte * image_data, size_t image_size);
+int IMG_DecodeBGImage(const byte *image_data, size_t image_size,
+						byte **output_buf, size_t *output_buf_len, int *w, int *h);
+const byte *IMG_GetImagePal(const byte *image_data, size_t image_size);
 
 } // End of namespace Saga
 
-#endif				/* R_IMAGE_MOD_H_ */
-/* end "r_image_mod.h" */
+#endif

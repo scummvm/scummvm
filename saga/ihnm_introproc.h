@@ -20,13 +20,8 @@
  * $Header$
  *
  */
-/*
- Description:	
- 
-	Intro sequence scene procedures header file
 
- Notes: 
-*/
+// Intro sequence scene procedures header file
 
 #ifndef SAGA_ITE_INTRO_H_
 #define SAGA_ITE_INTRO_H_
@@ -40,5 +35,4 @@ namespace Saga {
 
 } // End of namespace Saga
 
-#endif				/* R_IHNM_INTRO_H_ */
-/* end "r_ihnm_introproc.h */
+#endif
