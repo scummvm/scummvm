@@ -209,19 +209,19 @@ static const ScummGameSettings scumm_settings[] = {
 	{"puttputt", "Putt-Putt Joins The Parade", GID_HEGAME, 6, 60, MDT_ADLIB | MDT_NATIVE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES | GF_MULTIPLE_VERSIONS, 0, 0},
 	{"puttdemo", "Putt-Putt Joins The Parade (Demo)", GID_PUTTDEMO, 6, 0, MDT_ADLIB | MDT_NATIVE,
-	  GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS, 0, 0},
+	  GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_MULTIPLE_VERSIONS, 0, 0},
 	{"moondemo", "Putt-Putt Goes To The Moon (Demo)", GID_HEGAME, 6, 60, MDT_ADLIB | MDT_NATIVE,
-	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
+	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES | GF_MULTIPLE_VERSIONS, 0, 0},
 	{"puttmoon", "Putt-Putt Goes To The Moon", GID_HEGAME, 6, 60, MDT_ADLIB | MDT_NATIVE,
-	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
+	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES | GF_MULTIPLE_VERSIONS, 0, 0},
 	{"funpack", "Putt-Putt's Fun Pack", GID_FUNPACK, 6, 60, MDT_ADLIB | MDT_NATIVE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
 	{"fbpack", "Fatty Bear's Fun Pack", GID_HEGAME, 6, 60, MDT_ADLIB | MDT_NATIVE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
 	{"fbear", "Fatty Bear's Birthday Surprise", GID_FBEAR, 6, 60, MDT_ADLIB | MDT_NATIVE,
-	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
-	{"fbdemo", "Fatty Bear's Birthday Surprise (Demo)", GID_FBEAR, 6, 60, MDT_ADLIB | MDT_NATIVE,
-	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
+	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES | GF_MULTIPLE_VERSIONS, 0, 0},
+	{"fbdemo", "Fatty Bear's Birthday Surprise (DOS Demo)", GID_FBEAR, 6, 60, MDT_ADLIB | MDT_NATIVE,
+	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES | GF_MULTIPLE_VERSIONS, 0, 0},
 
 	 /* Note that both full versions of Humongous games and demos were often released for
 	  * several interpreter versions... */
@@ -358,6 +358,18 @@ static const ScummGameSettings scumm_settings[] = {
 static const ScummGameSettings he_md5_settings[] = {
 	{"0b3222aaa7efcf283eb621e0cefd26cc", "Putt-Putt Joins The Parade (early version)", GID_HEGAME, 6, 0, MDT_ADLIB | MDT_NATIVE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS, 0, 0},
+	{"6a30a07f353a75cdc602db27d73e1b42", "Putt-Putt Joins The Parade (Windows)", GID_HEGAME, 6, 70, MDT_NONE,
+	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES | GF_WINDOWS, 0, 0},
+	{"37ff1b308999c4cca7319edfcc1280a0", "Putt-Putt Joins The Parade (Windows Demo)", GID_PUTTDEMO, 6, 70, MDT_NONE,
+	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
+	{"9c92eeaf517a31b7221ec2546ab669fd", "Putt-Putt Goes To The Moon (Windows)", GID_HEGAME, 6, 70, MDT_NONE,
+	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES | GF_WINDOWS, 0, 0},
+	{"9c143c5905055d5df7a0f014ab379aee", "Putt-Putt Goes To The Moon (Windows Demo)", GID_HEGAME, 6, 70, MDT_NONE,
+	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES | GF_WINDOWS, 0, 0},
+	{"179879b6e35c1ead0d93aab26db0951b", "Fatty Bear's Birthday Surprise (Windows)", GID_FBEAR, 6, 70, MDT_NONE,
+	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES | GF_WINDOWS, 0, 0},
+	{"22c9eb04455440131ffc157aeb8d40a8", "Fatty Bear's Birthday Surprise (Windows Demo)", GID_FBEAR, 6, 70, MDT_NONE,
+	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES | GF_WINDOWS, 0, 0},
 	{"8d479e36f35e80257dfc102cf4b8a912", "Let's Explore the Farm with Buzzy (Demo) (farm cd)", GID_HEGAME, 6, 72, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
 	{"566165a7338fa11029e7c14d94fa70d0", "Freddi Fish 1: The Case of the Missing Kelp Seeds (Demo) (spyfox cd)", GID_FREDDEMO, 6, 72, MDT_NONE,
@@ -3178,6 +3190,9 @@ Engine *Engine_SCUMM_create(GameDetector *detector, OSystem *syst) {
 		if (g->name) {
 			game = *g;
 			game.name = name;
+
+			if (game.description)
+				g_system->setWindowCaption(game.description);
 		}
 	}
 
