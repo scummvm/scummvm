@@ -347,7 +347,331 @@ void Scumm::setupOpcodes2() {
 	&Scumm::o6_invalid,
 	};
 
+	static const char* opcode_lookup[] = {
+	/* 00 */
+	"o6_pushByte",
+	"o6_pushWord",
+	"o6_pushByteVar",
+	"o6_pushWordVar",
+	/* 04 */
+	"o6_invalid",
+	"o6_invalid",
+	"o6_byteArrayRead",
+	"o6_wordArrayRead",
+	/* 08 */
+	"o6_invalid",
+	"o6_invalid",
+	"o6_byteArrayIndexedRead",
+	"o6_wordArrayIndexedRead",
+	/* 0C */
+	"o6_dup",
+	"o6_zero",
+	"o6_eq",
+	"o6_neq",
+	/* 10 */
+	"o6_gt",
+	"o6_lt",
+	"o6_le",
+	"o6_ge",
+	/* 14 */
+	"o6_add",
+	"o6_sub",
+	"o6_mul",
+	"o6_div",
+	/* 18 */
+	"o6_land",
+	"o6_lor",
+	"o6_kill",
+	"o6_invalid",
+	/* 1C */
+	"o6_invalid",
+	"o6_invalid",
+	"o6_invalid",
+	"o6_invalid",
+	/* 20 */
+	"o6_invalid",
+	"o6_invalid",
+	"o6_invalid",
+	"o6_invalid",
+	/* 24 */
+	"o6_invalid",
+	"o6_invalid",
+	"o6_invalid",
+	"o6_invalid",
+	/* 28 */
+	"o6_invalid",
+	"o6_invalid",
+	"o6_invalid",
+	"o6_invalid",
+	/* 2C */
+	"o6_invalid",
+	"o6_invalid",
+	"o6_invalid",
+	"o6_invalid",
+	/* 30 */
+	"o6_invalid",
+	"o6_invalid",
+	"o6_invalid",
+	"o6_invalid",
+	/* 34 */
+	"o6_invalid",
+	"o6_invalid",
+	"o6_invalid",
+	"o6_invalid",
+	/* 38 */
+	"o6_invalid",
+	"o6_invalid",
+	"o6_invalid",
+	"o6_invalid",
+	/* 3C */
+	"o6_invalid",
+	"o6_invalid",
+	"o6_invalid",
+	"o6_invalid",
+	/* 40 */
+	"o6_invalid",
+	"o6_invalid",
+	"o6_writeByteVar",
+	"o6_writeWordVar",
+	/* 44 */
+	"o6_invalid",
+	"o6_invalid",
+	"o6_byteArrayWrite",
+	"o6_wordArrayWrite",
+	/* 48 */
+	"o6_invalid",
+	"o6_invalid",
+	"o6_byteArrayIndexedWrite",
+	"o6_wordArrayIndexedWrite",
+	/* 4C */
+	"o6_invalid",
+	"o6_invalid",
+	"o6_byteVarInc",
+	"o6_wordVarInc",
+	/* 50 */
+	"o6_invalid",
+	"o6_invalid",
+	"o6_byteArrayInc",
+	"o6_wordArrayInc",
+	/* 54 */
+	"o6_invalid",
+	"o6_invalid",
+	"o6_byteVarDec",
+	"o6_wordVarDec",
+	/* 58 */
+	"o6_invalid",
+	"o6_invalid",
+	"o6_byteArrayDec",
+	"o6_wordArrayDec",
+	/* 5C */
+	"o6_jumpTrue",
+	"o6_jumpFalse",
+	"o6_startScriptEx",
+	"o6_startScript",
+	/* 60 */
+	"o6_startObject",
+	"o6_setObjectState",
+	"o6_setObjectXY",
+	"o6_drawBlastObject",
+	/* 64 */
+	"o6_invalid",
+	"o6_stopObjectCode",
+	"o6_stopObjectCode",
+	"o6_endCutscene",
+	/* 68 */
+	"o6_cutScene",
+	"o6_stopMusic",
+	"o6_freezeUnfreeze",
+	"o6_cursorCommand",
+	/* 6C */
+	"o6_breakHere",
+	"o6_ifClassOfIs",
+	"o6_setClass",
+	"o6_getState",
+	/* 70 */
+	"o6_setState",
+	"o6_setOwner",
+	"o6_getOwner",
+	"o6_jump",
+	/* 74 */
+	"o6_startSound",
+	"o6_stopSound",
+	"o6_startMusic",
+	"o6_stopObjectScript",
+	/* 78 */
+	"o6_panCameraTo",
+	"o6_actorFollowCamera",
+	"o6_setCameraAt",
+	"o6_loadRoom",
+	/* 7C */
+	"o6_stopScript",
+	"o6_walkActorToObj",
+	"o6_walkActorTo",
+	"o6_putActorInRoom",
+	/* 80 */
+	"o6_putActorAtObject",
+	"o6_faceActor",
+	"o6_animateActor",
+	"o6_doSentence",
+	/* 84 */
+	"o6_pickupObject",
+	"o6_loadRoomWithEgo",
+	"o6_invalid",
+	"o6_getRandomNumber",
+	/* 88 */
+	"o6_getRandomNumberRange",
+	"o6_invalid",
+	"o6_getActorMoving",
+	"o6_getScriptRunning",
+	/* 8C */
+	"o6_getActorRoom",
+	"o6_getObjectX",
+	"o6_getObjectY",
+	"o6_getObjectOldDir",
+	/* 90 */
+	"o6_getActorWalkBox",
+	"o6_getActorCostume",
+	"o6_findInventory",
+	"o6_getInventoryCount",
+	/* 94 */
+	"o6_getVerbFromXY",
+	"o6_beginOverride",
+	"o6_endOverride",
+	"o6_setObjectName",
+	/* 98 */
+	"o6_isSoundRunning",
+	"o6_setBoxFlags",
+	"o6_createBoxMatrix",
+	"o6_resourceRoutines",
+	/* 9C */
+	"o6_roomOps",
+	"o6_actorSet",
+	"o6_verbOps",
+	"o6_getActorFromXY",
+	/* A0 */
+	"o6_findObject",
+	"o6_pseudoRoom",
+	"o6_getActorElevation",
+	"o6_getVerbEntrypoint",
+	/* A4 */
+	"o6_arrayOps",
+	"o6_saveRestoreVerbs",
+	"o6_drawBox",
+	"o6_invalid",
+	/* A8 */
+	"o6_getActorWidth",
+	"o6_wait",
+	"o6_getActorScaleX",
+	"o6_getActorAnimCounter1",
+	/* AC */
+	"o6_soundKludge",
+	"o6_isAnyOf",
+	"o6_quitPauseRestart",
+	"o6_isActorInBox",
+	/* B0 */
+	"o6_delay",
+	"o6_delayLonger",
+	"o6_delayVeryLong",
+	"o6_stopSentence",
+	/* B4 */
+	"o6_print_0",
+	"o6_print_1",
+	"o6_print_2",
+	"o6_print_3",
+	/* B8 */
+	"o6_printActor",
+	"o6_printEgo",
+	"o6_talkActor",
+	"o6_talkEgo",
+	/* BC */
+	"o6_dim",
+	"o6_invalid",
+	"o6_runVerbCodeQuick",
+	"o6_runScriptQuick",
+	/* C0 */
+	"o6_dim2",
+	"o6_invalid",
+	"o6_invalid",
+	"o6_invalid",
+	/* C4 */
+	"o6_abs",
+	"o6_distObjectObject",
+	"o6_distObjectPt",
+	"o6_distPtPt",
+	/* C8 */
+	"o6_kernelFunction",
+	"o6_miscOps",
+	"o6_breakMaybe",
+	"o6_pickOneOf",
+	/* CC */
+	"o6_pickOneOfDefault",
+	"o6_invalid",
+	"o6_invalid",
+	"o6_invalid",
+	/* D0 */	
+	"o6_invalid",
+	"o6_invalid",
+	"o6_getAnimateVariable",
+	"o6_invalid",
+	/* D4 */	
+	"o6_invalid",
+	"o6_jumpToScript",
+	"o6_invalid",
+	"o6_invalid",
+	/* D8 */	
+	"o6_isRoomScriptRunning",
+	"o6_invalid",
+	"o6_invalid",
+	"o6_invalid",
+	/* DC */	
+	"o6_invalid",
+	"o6_invalid",
+	"o6_invalid",
+	"o6_invalid",
+	/* E0 */	
+	"o6_invalid",
+	"o6_invalid",
+	"o6_invalid",
+	"o6_invalid",
+	/* E4 */	
+	"o6_invalid",
+	"o6_invalid",
+	"o6_invalid",
+	"o6_invalid",
+	/* E8 */	
+	"o6_invalid",
+	"o6_invalid",
+	"o6_invalid",
+	"o6_invalid",
+	/* EC */	
+	"o6_invalid",
+	"o6_getObjectNewDir",
+	"o6_invalid",
+	"o6_invalid",
+	/* F0 */	
+	"o6_invalid",
+	"o6_invalid",
+	"o6_invalid",
+	"o6_invalid",
+	/* F4 */	
+	"o6_invalid",
+	"o6_invalid",
+	"o6_invalid",
+	"o6_invalid",
+	/* F8 */	
+	"o6_invalid",
+	"o6_invalid",
+	"o6_invalid",
+	"o6_invalid",
+	/* FC */	
+	"o6_invalid",
+	"o6_invalid",
+	"o6_invalid",
+	"o6_invalid"
+	};
+
 	_opcodes = opcode_list;
+	_opcodes_lookup = opcode_lookup;
 }
 
 int Scumm::popRoomAndObj(int *room) {
@@ -909,6 +1233,7 @@ void Scumm::o6_walkActorToObj() {
 	dist = pop();
 	obj = pop();
 	a = derefActorSafe(pop(), "o6_walkActorToObj");
+	if (!a) return;
 
 	if (obj >= NUM_ACTORS) {
 		if (whereIsObject(obj)==WIO_NOT_FOUND)
@@ -917,6 +1242,7 @@ void Scumm::o6_walkActorToObj() {
 		startWalkActor(a, _xPos, _yPos, _dir);
 	} else {
 		a2 = derefActorSafe(obj, "o6_walkActorToObj(2)");
+		if (!a2) return;
 		if (a2->room != _currentRoom ||
 			  a->room != _currentRoom)
 					return;
@@ -948,6 +1274,8 @@ void Scumm::o6_putActorInRoom() {
 	y = pop();
 	x = pop();
 	a = derefActorSafe(pop(), "o6_putActorInRoom");
+	if (!a)
+		return;
 
 	if (room==0xFF) {
 		room = a->room;
@@ -2257,7 +2585,7 @@ void Scumm::o6_miscOps() {
 			a->needRedraw = true;
 			break;
 
-		case 108:
+		case 108: /* shadow palette? */
 		case 109:
 			warning("stub o6_miscOps_108(%d,%d,%d,%d,%d,%d,%d)",args[1], args[2], args[3], args[4], args[5],0,256);
 			break;
@@ -2271,8 +2599,8 @@ void Scumm::o6_miscOps() {
 			a->shadow_mode = args[2] + args[3];
 			break;
 
-		case 112:
-			error("stub o6_miscOps_112(%d,%d,%d,%d,%d,%d,%d)",
+		case 112: /* palette shift? */
+			warning("stub o6_miscOps_112(%d,%d,%d,%d,%d,%d,%d)",
 				args[1], args[2], args[3], args[4], args[5],
 				args[6], args[7]);
 			break;
