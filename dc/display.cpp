@@ -25,11 +25,11 @@
 #include "dc.h"
 
 #define SCREEN_W 320
-#define SCREEN_H 200
+#define SCREEN_H 240
 #define MOUSE_W 64
 #define MOUSE_H 64
 
-#define TOP_OFFSET 40.0
+#define TOP_OFFSET (240.0-_screen_h)
 
 #define QACR0 (*(volatile unsigned int *)(void *)0xff000038)
 #define QACR1 (*(volatile unsigned int *)(void *)0xff00003c)
@@ -104,8 +104,9 @@ void OSystem_Dreamcast::set_palette(const byte *colors, uint start, uint num)
 
 void OSystem_Dreamcast::init_size(uint w, uint h)
 {
-  assert(w == SCREEN_W && h == SCREEN_H);
+  assert(w == SCREEN_W && h <= SCREEN_H);
 
+  _screen_h = h;
   ta_sync();
   if(!screen)
     screen = new unsigned char[SCREEN_W*SCREEN_H];
@@ -173,7 +174,7 @@ void OSystem_Dreamcast::update_screen(void)
   // while((*((volatile unsigned int *)(void*)0xa05f810c) & 0x3ff) != 200);
   // *((volatile unsigned int *)(void*)0xa05f8040) = 0xff0000;
   
-  for( int y = 0; y<SCREEN_H; y++ )
+  for( int y = 0; y<_screen_h; y++ )
   {
     texture_memcpy64_pal( dst, src, SCREEN_W>>5, palette );
     src += SCREEN_W;
@@ -214,9 +215,9 @@ void OSystem_Dreamcast::update_screen(void)
   ta_commit_list(&myvertex);
 
   myvertex.x = 0.0;
-  myvertex.y += SCREEN_H*2.0;
+  myvertex.y += _screen_h*2.0;
   myvertex.u = 0.0;
-  myvertex.v = SCREEN_H/512.0;
+  myvertex.v = _screen_h*(1/512.0);
   ta_commit_list(&myvertex);
 
   myvertex.x = SCREEN_W*2.0;

@@ -171,11 +171,8 @@ void waitForTimer(Scumm *s, int time)
 }
 */
 
-int dc_setup(GameDetector &detector)
+void dc_init_hardware(void)
 {
-  static char *argv[] = { "scummvm", NULL, NULL, NULL };
-  static int argc = 3;
-
 #ifndef NOSERIAL
   serial_init(57600);
   usleep(2000000);
@@ -186,13 +183,19 @@ int dc_setup(GameDetector &detector)
   maple_init();
   dc_setup_ta();
   init_arm();
+}
+
+int dc_setup(GameDetector &detector)
+{
+  static char *argv[] = { "scummvm", NULL, NULL, NULL };
+  static int argc = 3;
 
   initSound();
 
   if(!selectGame(&detector, argv[2], argv[1], icon))
     exit(0);
 
-  //  sound.initialize(&scumm, &snd_driv);
-
   detector.parseCommandLine(argc, argv);
+
+  return 0;
 }

@@ -73,7 +73,7 @@ class OSystem_Dreamcast : public OSystem {
 
   int _ms_cur_x, _ms_cur_y, _ms_cur_w, _ms_cur_h, _ms_old_x, _ms_old_y;
   int _ms_hotspot_x, _ms_hotspot_y, _ms_visible, _devpoll;
-  int _current_shake_pos;
+  int _current_shake_pos, _screen_h;
   unsigned char *_ms_buf;
   SoundProc *_sound_proc;
   void *_sound_proc_param;

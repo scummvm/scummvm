@@ -147,7 +147,7 @@ bool OSystem_Dreamcast::poll_event(Event *event)
   if (_ms_cur_x<0) _ms_cur_x=0;
   if (_ms_cur_x>319) _ms_cur_x=319;
   if (_ms_cur_y<0) _ms_cur_y=0;
-  if (_ms_cur_y>199) _ms_cur_y=199;
+  if (_ms_cur_y>=_screen_h) _ms_cur_y=_screen_h-1;
   event->mouse.x = _ms_cur_x;
   event->mouse.y = _ms_cur_y;
   event->kbd.ascii = event->kbd.keycode = 0;

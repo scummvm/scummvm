@@ -134,6 +134,11 @@ game settings!
 #endif
 */
 
+#ifdef __DC__
+	extern void dc_init_hardware();
+	dc_init_hardware();
+#endif
+
 #if defined(UNIX) || defined(UNIX_X11)
 	char scummhome[MAXPATHLEN];
 	if(getenv("HOME") != NULL)
