@@ -1410,6 +1410,7 @@ bool Scumm::akos_increaseAnim(Actor *a, int chan, byte *aksq, uint16 *akfo, int 
 			case AKC_Ignore2:
 			case AKC_Ignore:
 			case AKC_StartAnim:
+			case AKC_StartVarAnim:
 			case AKC_CmdQue3:
 				curpos += 3;
 				break;
