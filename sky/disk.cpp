@@ -28,6 +28,11 @@
 #include "sky/sky.h"
 #include "sky/struc.h"
 
+#if defined(__PALM_OS__)
+#include "arm/native.h"
+#include "arm/macros.h"
+#endif
+
 namespace Sky {
 
 static const char *dataFilename = "sky.dsk";
@@ -154,9 +159,20 @@ uint8 *Disk::loadFile(uint16 fileNr) {
 		uint8 *uncompDest = (uint8 *)malloc(decompSize);
 
 		int32 unpackLen;
+		void *output, *input = fileDest + sizeof(dataFileHeader);
+
 		if ((fileFlags >> 22) & 0x1) { //do we include the header?
 			// don't return the file's header
-			unpackLen = _rncDecoder.unpackM1(fileDest + sizeof(dataFileHeader), uncompDest, 0);
+			output = uncompDest;
+#ifdef __PALM_OS__
+		ARM_START(RncDecoderType)
+			ARM_INIT(SKY_UNPACKM1)
+			ARM_ADDM(input)
+			ARM_ADDM(output)
+			ARM_CALL_VALUE(ARM_ENGINE, PNO_DATA(), unpackLen)
+		ARM_CONTINUE()
+#endif
+			unpackLen = _rncDecoder.unpackM1(input, output, 0);
 		} else {
 #ifdef SCUMM_BIG_ENDIAN
 			// Convert dataFileHeader to BE (it only consists of 16 bit words)
@@ -164,8 +180,19 @@ uint8 *Disk::loadFile(uint16 fileNr) {
 			for (uint i = 0; i < sizeof(struct dataFileHeader) / 2; i++)
 				*(headPtr + i) = READ_LE_UINT16(headPtr + i);
 #endif
+
 			memcpy(uncompDest, fileDest, sizeof(dataFileHeader));
-			unpackLen = _rncDecoder.unpackM1(fileDest + sizeof(dataFileHeader), uncompDest + sizeof(dataFileHeader), 0);
+			output = uncompDest + sizeof(dataFileHeader);
+
+#ifdef __PALM_OS__
+		ARM_START(RncDecoderType)
+			ARM_INIT(SKY_UNPACKM1)
+			ARM_ADDM(input)
+			ARM_ADDM(output)
+			ARM_CALL_VALUE(ARM_ENGINE, PNO_DATA(), unpackLen)
+		ARM_CONTINUE()
+#endif
+			unpackLen = _rncDecoder.unpackM1(input, output, 0);
 			if (unpackLen)
 				unpackLen += sizeof(dataFileHeader);
 		}
