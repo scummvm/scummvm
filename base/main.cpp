@@ -290,7 +290,7 @@ int main(int argc, char *argv[]) {
 	return 0;
 }
 
-#ifndef __PALM_OS__
+#if !defined(__PALM_OS__) && !defined(MACOSX)
 void *operator new(size_t size) {
 	return memset(malloc(size), 0xE7, size);
 }

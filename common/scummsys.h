@@ -383,20 +383,21 @@ FORCEINLINE uint16 SWAP_BYTES_16(uint16 a) {
 	typedef int16 NewGuiColor;
 #endif
 
-/* Initialized operator new */
-// FIXME - get rid of these new/delete overrides!!! They conflict with the
-// Standard C++ library, and they are only there to support lazy programmers anyway.
-#ifndef __PALM_OS__
-void * operator new(size_t size);
-void operator delete(void *ptr);
-// Temporary hack until we fully remove the new/delete operators:
-// Since 'new' now returns a memory block inited to 0xE7E7E7E7 we might
-// get some invocations of free() with that param. We check for those here.
-// That allows us to set a debugger breakpoint to catch it.
-#ifndef _WIN32_WCE
-#define free(x)	free_check(x)
-void free_check(void *ptr);
-#endif
+#if !defined(__PALM_OS__) && !defined(MACOSX)
+	/* Initialized operator new */
+	// FIXME - get rid of these new/delete overrides!!! They conflict with the
+	// Standard C++ library, and they are only there to support lazy programmers anyway.
+	void * operator new(size_t size);
+	void operator delete(void *ptr);
+	
+	// Temporary hack until we fully remove the new/delete operators:
+	// Since 'new' now returns a memory block inited to 0xE7E7E7E7 we might
+	// get some invocations of free() with that param. We check for those here.
+	// That allows us to set a debugger breakpoint to catch it.
+	#ifndef _WIN32_WCE
+	#define free(x)	free_check(x)
+	void free_check(void *ptr);
+	#endif
 #endif
 
 #endif
