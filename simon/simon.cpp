@@ -21,6 +21,7 @@
 
 #include "stdafx.h"
 #include "simon.h"
+#include <errno.h>
 
 int sdl_mouse_x, sdl_mouse_y;
 
