@@ -2047,7 +2047,6 @@ void ScummEngine::readMAXS() {
 			_numGlobalScripts = 2000;
 
 		_shadowPaletteSize = NUM_SHADOW_PALETTE * 256;
-	// FIXME better check for the more recent windows based humongous games...
 	} else if (_features & GF_HE7_RESOURCES) {
 		_fileHandle.readUint16LE();
 		_numVariables = _fileHandle.readUint16LE();
