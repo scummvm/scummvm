@@ -661,6 +661,7 @@ protected:
 	
 	virtual void redrawBGAreas();
 
+	int setupStringArray(int size);
 	void appendSubstring(int dst, int src, int len2, int len);
 
 	int findObject(int x, int y, int num, int *args);
@@ -675,9 +676,11 @@ protected:
 	void o70_findObject();
 	void o70_quitPauseRestart();
 	void o70_kernelSetFunctions();
+	void o70_copyString();
 	void o70_getStringWidth();
 	void o70_getStringLen();
 	void o70_appendString();
+	void o70_concatString();
 	void o70_compareString();
 	void o70_readINI();
 	void o70_writeINI();
@@ -734,6 +737,7 @@ protected:
 	virtual void writeArray(int array, int idx2, int idx1, int value);
 	void redimArray(int arrayId, int newDim2start, int newDim2end, 
 					int newDim1start, int newDim1end, int type);
+	int setupStringArray(int size);
 	int readFileToArray(int slot, int32 size);
 	void writeFileFromArray(int slot, int resID);
 
@@ -787,9 +791,6 @@ protected:
 	void o72_getPixel();
 	void o72_pickVarRandom();
 	void o72_redimArray();
-	void o72_copyString();
-	void o72_appendString();
-	void o72_concatString();
 	void o72_checkGlobQueue();
 	void o72_readINI();
 	void o72_writeINI();

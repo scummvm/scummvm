@@ -336,12 +336,12 @@ void ScummEngine_v80he::setupOpcodes() {
 		OPCODE(o72_redimArray),
 		OPCODE(o60_readFilePos),
 		/* EC */
-		OPCODE(o72_copyString),
+		OPCODE(o70_copyString),
 		OPCODE(o70_getStringWidth),
 		OPCODE(o70_getStringLen),
-		OPCODE(o72_appendString),
+		OPCODE(o70_appendString),
 		/* F0 */
-		OPCODE(o72_concatString),
+		OPCODE(o70_concatString),
 		OPCODE(o70_compareString),
 		OPCODE(o72_checkGlobQueue),
 		OPCODE(o72_readINI),

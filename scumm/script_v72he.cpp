@@ -338,12 +338,12 @@ void ScummEngine_v72he::setupOpcodes() {
 		OPCODE(o72_redimArray),
 		OPCODE(o60_readFilePos),
 		/* EC */
-		OPCODE(o72_copyString),
+		OPCODE(o70_copyString),
 		OPCODE(o70_getStringWidth),
 		OPCODE(o70_getStringLen),
-		OPCODE(o72_appendString),
+		OPCODE(o70_appendString),
 		/* F0 */
-		OPCODE(o72_concatString),
+		OPCODE(o70_concatString),
 		OPCODE(o70_compareString),
 		OPCODE(o72_checkGlobQueue),
 		OPCODE(o72_readINI),
@@ -492,6 +492,13 @@ void ScummEngine_v72he::writeArray(int array, int idx2, int idx1, int value) {
 		WRITE_LE_UINT32(ah->data + offset * 4, value);
 		break;
 	}
+}
+
+int ScummEngine_v72he::setupStringArray(int size) {
+	writeVar(0, 0);
+	defineArray(0, kStringArray, 0, 0, 0, size + 1);
+	writeArray(0, 0, 0, 0);
+	return readVar(0);
 }
 
 void ScummEngine_v72he::readArrayFromIndexFile() {
@@ -1820,66 +1827,6 @@ void ScummEngine_v72he::redimArray(int arrayId, int newDim2start, int newDim2end
 	ah->dim1end = TO_LE_32(newDim1end);
 	ah->dim2start = TO_LE_32(newDim2start);
 	ah->dim2end = TO_LE_32(newDim2end);
-}
-
-void ScummEngine_v72he::o72_copyString() {
-	int dst, size;
-	int src = pop();
-
-	size = resStrLen(getStringAddress(src)) + 1;
-
-	writeVar(0, 0);
-	defineArray(0, kStringArray, 0, 0, 0, size);
-	writeArray(0, 0, 0, 0);
-	dst = readVar(0);
-
-	appendSubstring(dst, src, -1, -1);
-
-	push(dst);
-	debug(1,"o72_copyString");
-}
-
-void ScummEngine_v72he::o72_appendString() {
-	int dst, size;
-
-	int len = pop();
-	int srcOffs = pop();
-	int src = pop();
-
-	size = len - srcOffs + 2;
-
-	writeVar(0, 0);
-	defineArray(0, kStringArray, 0, 0, 0, size);
-	writeArray(0, 0, 0, 0);
-
-	dst = readVar(0);
-
-	appendSubstring(dst, src, srcOffs, len);
-
-	push(dst);
-	debug(1,"o72_appendString");
-}
-
-void ScummEngine_v72he::o72_concatString() {
-	int dst, size;
-
-	int src2 = pop();
-	int src1 = pop();
-
-	size = resStrLen(getStringAddress(src1));
-	size += resStrLen(getStringAddress(src2)) + 1;
-
-	writeVar(0, 0);
-	defineArray(0, kStringArray, 0, 0, 0, size);
-	writeArray(0, 0, 0, 0);
-
-	dst = readVar(0);
-
-	appendSubstring(dst, src1, 0, -1);
-	appendSubstring(dst, src2, 0, -1);
-
-	push(dst);
-	debug(1,"o72_concatString");
 }
 
 void ScummEngine_v72he::o72_checkGlobQueue() {
