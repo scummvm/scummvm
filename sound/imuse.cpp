@@ -32,7 +32,7 @@
 #define TICKS_PER_BEAT 480
 
 #define SYSEX_ID 0x7D
-#define SPECIAL_CHANNEL 9
+#define PERCUSSION_CHANNEL 9
 
 #define TRIGGER_ID 0
 #define COMMAND_ID 1
@@ -210,15 +210,12 @@ struct IsNoteCmdData {
 
 struct MidiChannel {
 	Part *_part;
-	MidiChannelAdl *adl() {
-		return (MidiChannelAdl *)this;
-	} MidiChannelGM *gm() {
-		return (MidiChannelGM *) this;
-	}
+	MidiChannelAdl *adl() { return (MidiChannelAdl *)this; }
+	MidiChannelGM *gm() { return (MidiChannelGM *)this; }
 };
 
 
-struct MidiChannelGM:MidiChannel {
+struct MidiChannelGM : MidiChannel {
 	byte _chan;
 	uint16 _actives[8];
 };
@@ -488,7 +485,7 @@ struct Instrument {
 	byte duration;
 };
 
-struct MidiChannelAdl:MidiChannel {
+struct MidiChannelAdl : MidiChannel {
 	MidiChannelAdl *_next, *_prev;
 	byte _waitforpedal;
 	byte _note;
@@ -588,7 +585,7 @@ public:
 
 /* IMuseGM classes */
 
-class IMuseGM:public IMuseDriver {
+class IMuseGM : public IMuseDriver {
 	IMuseInternal *_se;
 	OSystem *_system;
 	MidiDriver *_md;
@@ -618,34 +615,25 @@ class IMuseGM:public IMuseDriver {
 	void midiInit();
 
 public:
-	  IMuseGM(MidiDriver *midi) {
-		_md = midi;
-	} void uninit();
+	IMuseGM(MidiDriver *midi) { _md = midi; }
+	void uninit();
 	void init(IMuseInternal *eng, OSystem *os);
 	void update_pris();
 	void part_off(Part *part);
 	int part_update_active(Part *part, uint16 *active);
 
-	void on_timer() {
-	}
-	void set_instrument(uint slot, byte *instr) {
-	}
-	void part_set_instrument(Part *part, Instrument * instr) {
-	}
-	void part_set_param(Part *part, byte param, int value) {
-	}
+	void on_timer() {}
+	void set_instrument(uint slot, byte *instr) {}
+	void part_set_instrument(Part *part, Instrument * instr) {}
+	void part_set_param(Part *part, byte param, int value) {}
 	void part_key_on(Part *part, byte note, byte velocity);
 	void part_key_off(Part *part, byte note);
 	void part_changed(Part *part, byte what);
 
 	static int midi_driver_thread(void *param);
 
-	uint32 get_base_tempo() {
-		return 0x460000;
-	}
-	byte get_hardware_type() {
-		return 5;
-	}
+	uint32 get_base_tempo() { return 0x460000; }
+	byte get_hardware_type() { return 5; }
 };
 
 
@@ -4202,12 +4190,12 @@ void IMuseGM::midiControl0(byte chan, byte value)
 
 void IMuseGM::midiProgram(byte chan, byte program, bool mt32emulate)
 {
-//  if ((chan + 1) != 10) {       /* Ignore percussion prededed by patch change */
-	if (mt32emulate)
-		program = mt32_to_gmidi[program];
+	if (mt32emulate) {	/* Don't convert the percussion channel, it is the same in GM and MT32 */
+		if (chan != PERCUSSION_CHANNEL)
+			program = mt32_to_gmidi[program];
+	}
 
 	_md->send(program << 8 | 0xC0 | chan);
-//  }
 }
 
 void IMuseGM::midiPan(byte chan, int8 pan)
@@ -4243,9 +4231,9 @@ void IMuseGM::part_key_on(Part *part, byte note, byte velocity)
 		mc->_actives[note >> 4] |= (1 << (note & 0xF));
 		midiNoteOn(mc->_chan, note, velocity);
 	} else if (part->_percussion) {
-		midiVolume(SPECIAL_CHANNEL, part->_vol_eff);
-		midiProgram(SPECIAL_CHANNEL, part->_bank, part->_player->_mt32emulate);
-		midiNoteOn(SPECIAL_CHANNEL, note, velocity);
+		midiVolume(PERCUSSION_CHANNEL, part->_vol_eff);
+		midiProgram(PERCUSSION_CHANNEL, part->_bank, part->_player->_mt32emulate);
+		midiNoteOn(PERCUSSION_CHANNEL, note, velocity);
 	}
 }
 
@@ -4257,7 +4245,7 @@ void IMuseGM::part_key_off(Part *part, byte note)
 		mc->_actives[note >> 4] &= ~(1 << (note & 0xF));
 		midiNoteOff(mc->_chan, note);
 	} else if (part->_percussion) {
-		midiNoteOff(SPECIAL_CHANNEL, note);
+		midiNoteOff(PERCUSSION_CHANNEL, note);
 	}
 }
 
