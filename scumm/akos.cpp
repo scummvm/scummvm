@@ -409,7 +409,7 @@ void AkosRenderer::codec1_genericDecode() {
 
 				if (v1.scaletable[v1.scaleXindex] < _scaleX) {
 					v1.x += v1.scaleXstep;
-					if (v1.x < 0 || v1.x >= _vm->_screenWidth)
+					if (v1.x < 0 || v1.x >= (int)_outwidth)
 						return;
 					maskbit = revBitMask[v1.x & 7];
 					v1.destptr += v1.scaleXstep;
@@ -1013,7 +1013,7 @@ byte AkosRenderer::codec16(int xmoveCur, int ymoveCur) {
 	int32 width_unk, height_unk;
 
 	height_unk = clip_top;
-	int32 pitch = _vm->_screenWidth;
+	int32 pitch = _outwidth;
 
 	int32 dir;
 

@@ -149,7 +149,7 @@ byte CostumeRenderer::mainRoutine(int xmoveCur, int ymoveCur) {
 			x_right = x_left = v1.x;
 			_scaleIndexX = startScaleIndexX;
 			for (i = 0; i < _width; i++) {
-				if (x_left > (_vm->_screenWidth - 1)) {
+				if (x_left >= (int)_outwidth) {
 					skip++;
 					startScaleIndexX = _scaleIndexX;
 				}
@@ -209,7 +209,7 @@ byte CostumeRenderer::mainRoutine(int xmoveCur, int ymoveCur) {
 	if (y_top >= (int)_outheight || y_bottom <= 0)
 		return 0;
 
-	if (x_left >= _vm->_screenWidth || x_right <= 0)
+	if (x_left >= (int)_outwidth || x_right <= 0)
 		return 0;
 
 	v1.replen = 0;
@@ -224,7 +224,7 @@ byte CostumeRenderer::mainRoutine(int xmoveCur, int ymoveCur) {
 				v1.x = 0;
 			}
 		} else {
-			skip = x_right - _vm->_screenWidth;
+			skip = x_right - _outwidth;
 			if (skip <= 0) {
 				drawFlag = 2;
 			} else {
@@ -233,12 +233,12 @@ byte CostumeRenderer::mainRoutine(int xmoveCur, int ymoveCur) {
 		}
 	} else {
 		if (!use_scaling)
-			skip = x_right - _vm->_screenWidth;
+			skip = x_right - _outwidth;
 		if (skip > 0) {
 			if (!newAmiCost && _loaded._format != 0x57) {
 				v1.skip_width -= skip;
 				codec1_ignorePakCols(skip);
-				v1.x = _vm->_screenWidth - 1;
+				v1.x = _outwidth - 1;
 			}
 		} else {
 			skip = -1 - x_left;
@@ -410,7 +410,7 @@ void CostumeRenderer::procC64(int actor) {
 				height = _height;
 				y = v1.y;
 				v1.x += 8 * v1.scaleXstep;
-				if (v1.x < 0 || v1.x >= _vm->_screenWidth)
+				if (v1.x < 0 || v1.x >= (int)_outwidth)
 					return;
 				mask = v1.mask_ptr;
 				v1.destptr += 8 * v1.scaleXstep;
@@ -483,7 +483,7 @@ void CostumeRenderer::proc3() {
 
 				if (_scaleX == 255 || v1.scaletable[_scaleIndexX] < _scaleX) {
 					v1.x += v1.scaleXstep;
-					if (v1.x < 0 || v1.x >= _vm->_screenWidth)
+					if (v1.x < 0 || v1.x >= (int)_outwidth)
 						return;
 					maskbit = revBitMask[v1.x & 7];
 					v1.destptr += v1.scaleXstep;
@@ -526,7 +526,7 @@ void CostumeRenderer::proc3_ami() {
 			if (_scaleY == 255 || cost_scaleTable[_scaleIndexY] < _scaleY) {
 				masked = (y >= _outheight) || v1.mask_ptr && ((mask[0] | mask[v1.imgbufoffs]) & maskbit);
 				
-				if (color && v1.x >= 0 && v1.x < _vm->_screenWidth && !masked) {
+				if (color && v1.x >= 0 && v1.x < (int)_outwidth && !masked) {
 					*dst = _palette[color];
 				}
 
@@ -546,7 +546,7 @@ void CostumeRenderer::proc3_ami() {
 					return;
 
 				if (v1.x != oldXpos) {
-					dst += _vm->_screenWidth - (v1.x - oldXpos);
+					dst += _outwidth - (v1.x - oldXpos);
 					v1.mask_ptr += _numStrips;
 					mask = v1.mask_ptr;
 					y++;
