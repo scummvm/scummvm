@@ -2581,4 +2581,4 @@ static const FontDesc desc = {
 
 const NewFont g_sysfont(desc);
 
-} // End of namespace GUI
+} // End of namespace Graphics
