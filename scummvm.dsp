@@ -44,7 +44,7 @@ RSC=rc.exe
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_CONSOLE" /D "_MBCS" /Yu"stdafx.h" /FD /c
-# ADD CPP /nologo /G6 /MT /W3 /WX /GR /GX /O2 /Ob2 /I "." /I "sound" /I "common" /D "WIN32" /D "NDEBUG" /D "_CONSOLE" /D "_MBCS" /D "USE_ADLIB" /D "BYPASS_COPY_PROT" /FD /c
+# ADD CPP /nologo /G6 /MT /W3 /WX /GR /GX /O2 /Ob2 /I "." /I "common" /D "WIN32" /D "NDEBUG" /D "_CONSOLE" /D "_MBCS" /D "USE_ADLIB" /D "BYPASS_COPY_PROT" /FD /c
 # SUBTRACT CPP /YX /Yc /Yu
 # ADD BASE RSC /l 0x41d /d "NDEBUG"
 # ADD RSC /l 0x41d /d "NDEBUG"
@@ -70,7 +70,7 @@ LINK32=link.exe
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /Gm /GX /ZI /Od /D "WIN32" /D "_DEBUG" /D "_CONSOLE" /D "_MBCS" /Yu"stdafx.h" /FD /GZ /c
-# ADD CPP /nologo /MTd /W3 /WX /Gm /GR /GX /ZI /Od /I "." /I "sound" /I "common" /D "WIN32" /D "_DEBUG" /D "_CONSOLE" /D "_MBCS" /D "ALLOW_GDI" /D "BYPASS_COPY_PROT" /YX /FD /GZ /c
+# ADD CPP /nologo /MTd /W3 /WX /Gm /GR /GX /ZI /Od /I "." /I "common" /D "WIN32" /D "_DEBUG" /D "_CONSOLE" /D "_MBCS" /D "ALLOW_GDI" /D "BYPASS_COPY_PROT" /YX /FD /GZ /c
 # SUBTRACT CPP /Fr
 # ADD BASE RSC /l 0x41d /d "_DEBUG"
 # ADD RSC /l 0x41d /d "_DEBUG"
@@ -98,7 +98,7 @@ LINK32=link.exe
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /Gm /GX /Zi /Od /I "./sound" /I "./" /D "WIN32" /D "_DEBUG" /D "_CONSOLE" /D "_MBCS" /D "ALLOW_GDI" /D "BYPASS_COPY_PROT" /D "USE_ADLIB" /D "USE_MAD" /Yu"stdafx.h" /FD /GZ /c
 # SUBTRACT BASE CPP /Fr
-# ADD CPP /nologo /MTd /W3 /WX /Gm /GR /GX /ZI /Od /I "." /I "sound" /I "common" /D "WIN32" /D "_DEBUG" /D "_CONSOLE" /D "_MBCS" /D "ALLOW_GDI" /D "USE_ADLIB" /D "BYPASS_COPY_PROT" /D "USE_MAD" /YX /FD /GZ /c
+# ADD CPP /nologo /MTd /W3 /WX /Gm /GR /GX /ZI /Od /I "." /I "common" /D "WIN32" /D "_DEBUG" /D "_CONSOLE" /D "_MBCS" /D "ALLOW_GDI" /D "USE_ADLIB" /D "BYPASS_COPY_PROT" /D "USE_MAD" /YX /FD /GZ /c
 # SUBTRACT CPP /Fr
 # ADD BASE RSC /l 0x41d /d "_DEBUG"
 # ADD RSC /l 0x41d /d "_DEBUG"
@@ -124,9 +124,9 @@ LINK32=link.exe
 # PROP Intermediate_Dir "scummvm___mad_mp3_Release"
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
-# ADD BASE CPP /nologo /G6 /MD /W3 /O2 /Ob2 /I "." /I "sound" /I "common" /I "scumm" /D "WIN32" /D "NDEBUG" /D "_CONSOLE" /D "_MBCS" /D "USE_ADLIB" /D "USE_MAD" /FD /c
+# ADD BASE CPP /nologo /G6 /MD /W3 /O2 /Ob2 /I "." /I "common" /I "scumm" /D "WIN32" /D "NDEBUG" /D "_CONSOLE" /D "_MBCS" /D "USE_ADLIB" /D "USE_MAD" /FD /c
 # SUBTRACT BASE CPP /YX /Yc /Yu
-# ADD CPP /nologo /G6 /MT /W3 /WX /GR /GX /O2 /Ob2 /I "." /I "sound" /I "common" /D "WIN32" /D "NDEBUG" /D "_CONSOLE" /D "_MBCS" /D "USE_ADLIB" /D "BYPASS_COPY_PROT" /D "USE_MAD" /FD /c
+# ADD CPP /nologo /G6 /MT /W3 /WX /GR /GX /O2 /Ob2 /I "." /I "common" /D "WIN32" /D "NDEBUG" /D "_CONSOLE" /D "_MBCS" /D "USE_ADLIB" /D "BYPASS_COPY_PROT" /D "USE_MAD" /FD /c
 # SUBTRACT CPP /YX /Yc /Yu
 # ADD BASE RSC /l 0x41d /d "NDEBUG"
 # ADD RSC /l 0x41d /d "NDEBUG"
@@ -149,6 +149,38 @@ LINK32=link.exe
 # Begin Group "Source Files"
 
 # PROP Default_Filter "cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
+# Begin Group "base"
+
+# PROP Default_Filter ""
+# Begin Source File
+
+SOURCE=.\base\engine.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\base\engine.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\base\gameDetector.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\base\gameDetector.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\base\main.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\base\plugins.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\base\plugins.h
+# End Source File
+# End Group
 # Begin Group "common"
 
 # PROP Default_Filter ""
@@ -162,14 +194,6 @@ SOURCE=".\common\config-file.h"
 # End Source File
 # Begin Source File
 
-SOURCE=.\common\engine.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\common\engine.h
-# End Source File
-# Begin Source File
-
 SOURCE=.\common\file.cpp
 # End Source File
 # Begin Source File
@@ -178,31 +202,11 @@ SOURCE=.\common\file.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\common\gameDetector.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\common\gameDetector.h
-# End Source File
-# Begin Source File
-
 SOURCE=.\common\list.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\common\main.cpp
-# End Source File
-# Begin Source File
-
 SOURCE=.\common\map.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\common\plugins.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\common\plugins.h
 # End Source File
 # Begin Source File
 
