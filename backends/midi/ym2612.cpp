@@ -324,6 +324,7 @@ void Operator2612::nextTick(uint16 rate, const int *phasebuf, int *outbuf, int b
 	int32 target;
 	State next_state;
 	const int32 zero_level = ((int32)0x7f << 15);
+	const int phaseIncrement = (_multiple > 0) ? (_frequency * _multiple) : (_frequency / 2);
 
 	while (buflen) {
 		switch (_state) {
@@ -355,19 +356,13 @@ void Operator2612::nextTick(uint16 rate, const int *phasebuf, int *outbuf, int b
 			if (next_state == _s_attacking) {
 				// Attack phase
 				++_tickCount;
-				if (_attackTime <= 0) {
+				int i = (int) (_tickCount * _attackTime);
+				if (i >= 1024) {
 					_currentLevel = 0;
 					_state = _s_decaying;
 					switching = true;
 				} else {
-					int i = (int) (_tickCount * _attackTime);
-					if (i >= 1024) {
-						_currentLevel = 0;
-						_state = _s_decaying;
-						switching = true;
-					} else {
-						_currentLevel = attackOut[i] << (31 - 8 - 16);
-					}
+					_currentLevel = (attackOut[i] << (31 - 8 - 16));
 				}
 			} else {
 				// Decay, Sustain and Release phases
@@ -402,12 +397,7 @@ void Operator2612::nextTick(uint16 rate, const int *phasebuf, int *outbuf, int b
 				// Result varies from original code by max of 8.
 				output = ((output >> 4) * (powtbl[511-((level>>9)&511)] >> 3)) / 1024;
 
-				if (_multiple > 0)
-//					_phase += (_frequency * _multiple) / rate;
-					_phase += _frequency * _multiple; // / rate; already included
-				else
-//					_phase += _frequency / (rate << 1);
-					_phase += _frequency / 2;
+				_phase += phaseIncrement;
 			}
 
 			_lastOutput = output;
