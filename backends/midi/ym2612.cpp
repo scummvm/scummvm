@@ -23,7 +23,6 @@
  */
 
 #include <math.h>
-#include <string>
 #include "common/util.h"
 #include "sound/mididrv.h"
 #include "sound/mixer.h"
