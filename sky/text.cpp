@@ -430,6 +430,9 @@ void SkyText::changeTextSpriteColour(uint8 *sprData, uint8 newCol) {
 
 void SkyText::initHuffTree() {
 	switch (SkyState::_systemVars.gameVersion) {
+	case 109:
+		_huffTree = _huffTree_00109;
+		break;
 	case 267:
 		_huffTree = _huffTree_00267;
 		break;
