@@ -4179,7 +4179,7 @@ void IMuseAdlib::mc_key_on(MidiChannel * mc2, byte note, byte velocity)
 		vol_1 = volume_table[lookup_table[vol_1][c]];
 
 	adlib_setup_channel(mc->_channel, instr, vol_1, vol_2);
-	adlib_note_on_ex(mc->_channel, part->_transpose_eff + note, part->_detune_eff + part->_pitchbend);
+	adlib_note_on_ex(mc->_channel, part->_transpose_eff + note, part->_detune_eff + (part->_pitchbend * part->_pitchbend_factor >> 6));
 
 	if (instr->flags_a & 0x80) {
 		mc_init_stuff(mc, &mc->_s10a, &mc->_s11a, instr->flags_a, &instr->extra_a);
