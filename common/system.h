@@ -421,9 +421,14 @@ public:
 	 * the previous one. In particular, passing a callback pointer value of 0
 	 * is legal and can be used to clear the current timer callback.
 	 * @see Common::Timer
+	 * @note The implementation of this method must be 'atomic' in the sense
+	 *       that when the method returns, the previously set callback must
+	 *       not be in use anymore (in particular, if timers are implemented
+	 *       via threads, then it must be ensured that the timer thread is
+	 *       not using the old callback function anymore).
 	 *
 	 * @param callback	pointer to the callback. May be 0 to reset the timer
-	 * @param interval	the intervall (in milliseconds) between invocations
+	 * @param interval	the interval (in milliseconds) between invocations
 	 *                  of the callback
 	 */
 	virtual void setTimerCallback(TimerProc callback, int interval) = 0;

@@ -51,6 +51,9 @@ Timer::Timer(OSystem *system) :
 }
 
 Timer::~Timer() {
+	// Remove the timer callback. 
+	// Note: backends *must* gurantee that after this method call returns,
+	// the handler is not in use anymore; else race condtions could occurs.
 	_system->setTimerCallback(0, 0);
 
 	{
@@ -62,15 +65,6 @@ Timer::~Timer() {
 		}
 	}
 
-
-	// FIXME: There is still a potential race condition here, depending on how
-	// the system backend implements setTimerCallback: If timers are done using
-	// threads, and if setTimerCallback does *not* gurantee that after it terminates
-	// that timer thread is not run anymore, we are fine. However, if the timer
-	// is still running in parallel to this destructor, then it might be that
-	// it is still waiting for the _mutex. So, again depending on the backend,
-	// we might end up unlocking the mutex then immediately deleting it, while
-	// the timer thread is about to lock it.
 	_system->deleteMutex(_mutex);
 }
 
