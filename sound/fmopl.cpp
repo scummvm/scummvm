@@ -34,10 +34,6 @@
 
 #include "common/util.h"
 
-#ifndef PI
-#define PI 3.14159265358979323846
-#endif
-
 /* -------------------- preliminary define section --------------------- */
 /* attack/decay rate time rate */
 #define OPL_ARRATE     141280  /* RATE 4 =  2826.24ms @ 3.6MHz */

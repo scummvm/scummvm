@@ -59,10 +59,10 @@ static void LpFilter(double c[], int N, double frq, double Beta, int Num);
 static int makeFilter(HWORD Imp[], HWORD ImpD[], UHWORD *LpScl, UHWORD Nwing,
 	       double Froll, double Beta);
 
-static WORD FilterUp(HWORD Imp[], HWORD ImpD[], UHWORD Nwing, bool Interp,
+static int32 FilterUp(HWORD Imp[], HWORD ImpD[], UHWORD Nwing, bool Interp,
 	      HWORD *Xp, HWORD Inc, HWORD Ph);
 
-static WORD FilterUD(HWORD Imp[], HWORD ImpD[], UHWORD Nwing, bool Interp,
+static int32 FilterUD(HWORD Imp[], HWORD ImpD[], UHWORD Nwing, bool Interp,
 	      HWORD *Xp, HWORD Ph, HWORD Inc, UHWORD dhb);
 
 
@@ -144,7 +144,7 @@ static WORD FilterUD(HWORD Imp[], HWORD ImpD[], UHWORD Nwing, bool Interp,
 
 #define IBUFFSIZE 4096                         /* Input buffer size */
 
-static inline HWORD WordToHword(WORD v, int scl)
+static inline HWORD WordToHword(int32 v, int scl)
 {
     HWORD out;
 
@@ -167,7 +167,7 @@ static int SrcUp(HWORD X[], HWORD Y[], double factor, UWORD *Time,
                  HWORD Imp[], HWORD ImpD[], bool Interp)
 {
     HWORD *Xp, *Ystart;
-    WORD v;
+    int32 v;
     
     double dt;                  /* Step through input signal */ 
     UWORD dtb;                  /* Fixed-point version of Dt */
@@ -203,7 +203,7 @@ static int SrcUD(HWORD X[], HWORD Y[], double factor, UWORD *Time,
                  HWORD Imp[], HWORD ImpD[], bool Interp)
 {
     HWORD *Xp, *Ystart;
-    WORD v;
+    int32 v;
     
     double dh;                  /* Step through filter impulse response */
     double dt;                  /* Step through input signal */
@@ -267,7 +267,7 @@ void LpFilter(double c[], int N, double frq, double Beta, int Num)
    /* Calculate ideal lowpass filter impulse response coefficients: */
    c[0] = 2.0*frq;
    for (i=1; i<N; i++) {
-       temp = M_PI*(double)i/(double)Num;
+       temp = PI*(double)i/(double)Num;
        c[i] = sin(2.0*temp*frq)/temp; /* Analog sinc function, cutoff = frq */
    }
 
@@ -346,13 +346,13 @@ int makeFilter(HWORD Imp[], HWORD ImpD[], UHWORD *LpScl, UHWORD Nwing,
 #pragma mark -
 
 
-WORD FilterUp(HWORD Imp[], HWORD ImpD[], 
+int32 FilterUp(HWORD Imp[], HWORD ImpD[], 
 		     UHWORD Nwing, bool Interp,
 		     HWORD *Xp, HWORD Ph, HWORD Inc)
 {
     HWORD *Hp, *Hdp = NULL, *End;
     HWORD a = 0;
-    WORD v, t;
+    int32 v, t;
     
     v=0;
     Hp = &Imp[Ph>>Na];
@@ -397,7 +397,7 @@ WORD FilterUp(HWORD Imp[], HWORD ImpD[],
     return(v);
 }
 
-WORD FilterUD( HWORD Imp[], HWORD ImpD[],
+int32 FilterUD( HWORD Imp[], HWORD ImpD[],
 		     UHWORD Nwing, bool Interp,
 		     HWORD *Xp, HWORD Ph, HWORD Inc, UHWORD dhb)
 {
@@ -492,7 +492,7 @@ static int resampleWithFilter(  /* number of output samples returned */
     
     for (i=0; i<Xoff; X1[i++]=0); /* Need Xoff zeros at begining of sample */
     for (i=0; i<Xoff; X2[i++]=0); /* Need Xoff zeros at begining of sample */
-        
+    
     do {
         if (!last)              /* If haven't read last sample yet */
         {
@@ -932,8 +932,8 @@ ResampleRateConverter::ResampleRateConverter(st_rate_t inrate, st_rate_t outrate
 	Xread = Xoff;               /* Position in input array to read into */
 	Time = (Xoff<<Np);          /* Current-time pointer for converter */
 	
-	Nout = SrcUp(X1, Y1, factor, &Time, Nx, Nwing, LpScl, Imp, ImpD, quadr);
-	Nout = SrcUD(X1, Y1, factor, &Time, Nx, Nwing, LpScl, Imp, ImpD, quadr);
+	Nout = SrcUp(X1, Y1, factor, &Time, Nx, Nwing, LpScl, Imp, ImpD, quadr != 0);
+	Nout = SrcUD(X1, Y1, factor, &Time, Nx, Nwing, LpScl, Imp, ImpD, quadr != 0);
 
 //	st_resample_start(&rstuff, inrate, outrate);
 }

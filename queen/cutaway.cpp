@@ -91,7 +91,7 @@ void QueenCutaway::load(const char *filename, QueenResource *queenResource) {
 		return;
 	}
 
-	if (0 == strcasecmp(filename, "comic.cut"))
+	if (0 == scumm_stricmp(filename, "comic.cut"))
 		/* XXX _songBeforeComic = CURRSONG */; 
 
 	strcpy(_basename, filename);
@@ -295,11 +295,11 @@ void QueenCutaway::dumpCutawayObject(int index, CutawayObject &object)
 
 void QueenCutaway::actionSpecialMove(int index) {
 
-	switch (index) {
-		default:
+//	switch (index) {
+//		default:
 			warning("Unhandled special move: %i", index);
-			break;
-	}
+//			break;
+//	}
 }
 
 byte *QueenCutaway::turnOnPeople(byte *ptr, CutawayObject &object) {
@@ -1028,7 +1028,7 @@ static char *right(char *str, int count) {
 void QueenCutaway::talk(char *nextFilename) {
 	// Lines 2119-2131 in cutaway.c
 	
-	if (0 == strcasecmp(right(_talkFile, 4), ".dog")) {
+	if (0 == scumm_stricmp(right(_talkFile, 4), ".dog")) {
 		warning("QueenCutaway::talk() needed but not yet implemented");
 		nextFilename[0] = '\0';
 	}

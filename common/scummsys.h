@@ -30,6 +30,10 @@
 #include "config.h"
 #endif
 
+#ifndef PI
+#define PI 3.14159265358979323846
+#endif
+
 #if defined(_MSC_VER)
 
 	#define scumm_stricmp stricmp
