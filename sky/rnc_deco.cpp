@@ -131,7 +131,7 @@ uint16 input_bits(uint8 amount)
 	remBits = ROR((uint16)(((1 << amount) - 1) & newBitBuffh), amount);
 	bit_buffh = newBitBuffh >> amount;
 	bit_buffl = (newBitBuffl >> amount) | remBits;
-	bit_count = newBitCount;
+	bit_count = (uint8)newBitCount;
 
 	return returnVal;
 
