@@ -1436,7 +1436,6 @@ typedef struct
 } _drvKeyStatus;
 
 
-#ifndef WIN32
 // should probably remove this struct as it just replaces a windows struct...
 typedef struct {
     DWORD dwLength;
@@ -1447,8 +1446,7 @@ typedef struct {
     DWORD dwAvailPageFile;
     DWORD dwTotalVirtual;
     DWORD dwAvailVirtual;
-} GCC_PACK MEMORYSTATUS;
-#endif
+} GCC_PACK SVM_MEMORYSTATUS;
 
 //
 //	Function Prototypes
@@ -1617,7 +1615,7 @@ extern int32 SetFxIdVolume(int32 id, uint8 vol);
 //-----------------------------------------------------------------------------
 extern uint32 SVM_timeGetTime(void);
 extern void SVM_VirtualUnlock(uint8 *free_memman, uint32 total_free_memory);
-extern void SVM_GlobalMemoryStatus(MEMORYSTATUS *memo);
+extern void SVM_GlobalMemoryStatus(SVM_MEMORYSTATUS *memo);
 extern void SVM_SetFileAttributes(char *file, uint32 atrib);
 extern void SVM_DeleteFile(char *file);
 extern void SVM_GetCurrentDirectory(uint32 max, char* path);

@@ -69,7 +69,7 @@ void	Init_memory_manager(void)	//Tony9April96
 	uint32	j;
 	uint8	*memory_base;
 	//BOOL			res;
-	MEMORYSTATUS	memo;
+	SVM_MEMORYSTATUS	memo;
 
 //find out how much actual physical RAM this computer has
 	SVM_GlobalMemoryStatus(&memo);

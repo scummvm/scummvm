@@ -29,7 +29,7 @@ void SVM_VirtualUnlock(uint8 *free_memman, uint32 total_free_memory) {
 	warning("stub VirtualUnlock");
 }
 
-void SVM_GlobalMemoryStatus(MEMORYSTATUS *memo) {
+void SVM_GlobalMemoryStatus(SVM_MEMORYSTATUS *memo) {
 	warning("stub GlobalMemoryStatus");
 	memo->dwTotalPhys = 16000*1024; // hard code 16mb for now
 }
