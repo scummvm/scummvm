@@ -25,6 +25,7 @@
 
 extern const Char *SCUMMVM_SAVEPATH;
 
+//#define DISABLE_SCUMM
 #define DISABLE_SKY
 #define DISABLE_SIMON
 
