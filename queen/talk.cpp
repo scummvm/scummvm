@@ -640,8 +640,6 @@ void Talk::speakSegment(
 			break;
 	}
 
-	//int spaces = countSpaces(segment);
-
 	bool isJoe = (0 == person->actor->bobNum);
 
 	int16  bobNum  = person->actor->bobNum;
@@ -650,6 +648,7 @@ void Talk::speakSegment(
 
 	BobSlot *bob = _graphics->bob(bobNum);
 
+	bool oracle = false;
 	int textX = 0;
 	int textY = 0;
 
@@ -660,7 +659,7 @@ void Talk::speakSegment(
 			command = SPEAK_ORACLE;
 
 			warning("Oracle not yet handled!");
-			// XXX oracle=1;
+			oracle = true;
 			// XXX k=PERSON_FRAMES[BNUM];
 			// XXX for(i=5;i<=8;i++) {
 			// XXX 	unpack(i,k,BANK);
@@ -685,6 +684,7 @@ void Talk::speakSegment(
 	//int SF = _logic->findScale(textX, textY);
 
 	const SpeechParameters *parameters = NULL;
+	int startFrame = 0;
 
 	if (_talkHead && isJoe) {
 		// XXX MAKE_SPEAK_BOB(Tstr,tx,ty,C,TALKHEAD==1);
@@ -702,7 +702,7 @@ void Talk::speakSegment(
 		else
 			parameters = findSpeechParameters(person->name, command, 0);
 
-		int startFrame = 29 + bobNum + FRAMES_JOE_XTRA;
+		startFrame = 29 + bobNum + FRAMES_JOE_XTRA;
 		int faceDirection = 0;
 
 		if (isJoe && _logic->joeFacing() == DIR_LEFT)
@@ -756,12 +756,168 @@ void Talk::speakSegment(
 			_graphics->update();
 		}
 
-		// TODO implement more
-	}
-	
-// talkloop: XXX
+		/* A12 = the frame pointer for the full body frame, well use this  */
+		/* for Hot Spot reference, before we have to set up a Torso frame. */
+		/* This way the hot spot is at bottom of body */
 
-	// TODO implement more
+		// XXX A12=A1;
+
+		if (-1 == parameters->rf) {
+			// Setup the Torso frames
+			_graphics->bankOverpack(parameters->bf, startFrame, bankNum);
+			if (isJoe)
+				parameters = findSpeechParameters(person->name, 0, _logic->joeFacing());
+			else
+				parameters = findSpeechParameters(person->name, 0, 0);
+		}
+
+		if (-2 == parameters->rf) {
+			// Setup the Torso frames
+			_graphics->bankOverpack(parameters->bf, startFrame, bankNum);
+			if (isJoe)
+				parameters = findSpeechParameters(person->name, 14, _logic->joeFacing());
+			else
+				parameters = findSpeechParameters(person->name, 14, 0);
+		}
+
+	}
+
+	int bf = parameters->bf;
+
+	if (length > 0) {
+	
+		if (segment[0] == '0')
+			bf = 0;
+
+// talkloop:
+
+// XXX #ifdef __DOS__
+// XXX     // 02-21-95 03:44pm DOn't talk until sfx finished
+// XXX     if(SFXTOGGLE && VOICETOGGLE) {
+// XXX        if(TEXTTOGGLE==0)
+// XXX            blanktexts(0,150);
+// XXX        while(sfxbusy() && KEYVERB!=101)
+// XXX            update();
+// XXX    }
+
+// XXX    sfxflag=VOICETOGGLE ? sfxplay(SPKstr) : 1;
+// XXX    if((sfxflag==0) && (TEXTTOGGLE==0)) 
+// XXX		blanktexts(0,150);
+// XXX  #endif
+
+		// Why on earth would someone name a variable qzx?
+		short qzx = 0;
+
+		int spaces = countSpaces(segment);
+
+		for (int i = 0; i < (spaces + 1) /* || sfxflag == 0*/; i++) {
+// XXX #ifdef __DOS__
+// XXX         if(sfxflag==0 && sfxbusy())
+// XXX 			break;
+// XXX #endif
+
+			int head;
+
+			if (parameters->rf > 0)
+				head = bf + _randomizer.getRandomNumber(parameters->rf);
+			else
+				head = bf;
+
+			if (!(_talkHead && isJoe)) {
+				if (bf > 0) {
+					// Make the head move
+					qzx ^= 1;
+					if (parameters->af && qzx)
+						_graphics->bankOverpack(parameters->af + head, startFrame, bankNum);
+					else
+						_graphics->bankOverpack(head, startFrame, bankNum);
+				}
+				else {
+					// Just do a body action
+					_graphics->bankOverpack(parameters->body, startFrame, bankNum);
+				}
+
+				if (!_talkHead)
+					_graphics->update();
+			}
+			else
+				_graphics->update();
+
+			if (_logic->joeWalk() == 3) {
+				if (_quit)
+					break;
+
+				_graphics->update();
+			}
+			else {
+				if (_quit)
+					break;
+				
+				// XXX CHECK_PLAYER();
+				_graphics->update(); // XXX call it ourselves as CHECK_PLAYER is not called
+
+				if (_logic->joeWalk() == 2)
+					// Selected a command, so exit
+					break;
+			}
+
+			// Skip through text more quickly
+			// XXX if (KEYVERB == 101) {
+			// XXX 	KEYVERB=0;
+			// XXX 	break;
+			// XXX }
+
+		}
+		
+	}
+
+// SPEAK_SUB_EXIT:
+
+    // Make sure that Person closes their mouths
+	if (!isJoe && parameters->ff > 0)
+		_graphics->bankOverpack(parameters->ff, startFrame, bankNum);
+
+// SPEAK_SUB_EXIT2:
+
+    // Moved here so that Text is cleared when a Torso command done!
+    _graphics->textClear(0,198);
+
+	if (oracle) {
+		// lines 1831-1339 in talk.c
+		warning("Oracle not yet handled!");
+	}
+
+	// Ensure that the correct buffer frame is selected
+
+	if (isJoe && !_talkHead) {
+		if (_logic->joeFacing() == DIR_FRONT ||
+				_logic->joeFacing() == DIR_BACK) {
+			// Joe is facing either Front or Back!
+			//  - Don't FACE_JOE in room 69, because Joe is probably
+			//       holding the Dino Ray gun.
+			if (_logic->currentRoom() != 69) 
+				_logic->joeFace();
+		}
+		else {
+			if (command == SPEAK_DEFAULT ||
+					command == 6 ||
+					command == 7) {
+				_logic->joeFace();
+			}
+			else if (command != 5) {
+				// 7/11/94, Ensure that correct mouth closed frame is used!
+				if (parameters->rf != -1) 
+					_graphics->bankOverpack(bf, startFrame, bankNum);
+				
+				if (parameters->ff == 0)
+					_graphics->bankOverpack(10, startFrame, bankNum);
+				else
+					_graphics->bankOverpack(parameters->ff, startFrame, bankNum);
+			}
+		}
+	}
+
+	_graphics->update();
 }
 
 const Talk::SpeechParameters *Talk::findSpeechParameters(
