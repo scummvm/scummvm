@@ -21,13 +21,14 @@ void Blt(UBYTE * scr_ptr);
 /* meaning: 0 - portrait, 1 - left hand landscape, 2 - right hand landscape */
 void SetScreenMode(int mode);
 int GetScreenMode();
+void drawWait();
 
 void Translate(int* x, int* y);
 
 typedef enum ToolbarSelected {
 	ToolbarNone,
 	ToolbarSaveLoad,
-	ToolbarExit,
+	ToolbarMode,
 	ToolbarSkip,
 	ToolbarSound
 } ToolbarSelected;
