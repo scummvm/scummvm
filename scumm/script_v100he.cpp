@@ -711,17 +711,17 @@ void ScummEngine_v100he::o100_dim2dimArray() {
 	case 41:		// SO_BIT_ARRAY
 		data = kBitArray;
 		break;
-	case 42:		// SO_NIBBLE_ARRAY
-		data = kNibbleArray;
-		break;
-	case 43:		// SO_BYTE_ARRAY
-		data = kByteArray;
-		break;
-	case 44:		// SO_INT_ARRAY
+	case 42:		// SO_INT_ARRAY
 		data = kIntArray;
 		break;
-	case 45:		
+	case 43:		
 		data = kDwordArray;
+		break;
+	case 44:		// SO_NIBBLE_ARRAY
+		data = kNibbleArray;
+		break;
+	case 45:		// SO_BYTE_ARRAY
+		data = kByteArray;
 		break;
 	case 77:		// SO_STRING_ARRAY
 		data = kStringArray;
@@ -743,17 +743,17 @@ void ScummEngine_v100he::o100_dimArray() {
 	case 41:		// SO_BIT_ARRAY
 		data = kBitArray;
 		break;
-	case 42:		// SO_NIBBLE_ARRAY
-		data = kNibbleArray;
-		break;
-	case 43:		// SO_BYTE_ARRAY
-		data = kByteArray;
-		break;
-	case 44:		// SO_INT_ARRAY
+	case 42:		// SO_INT_ARRAY
 		data = kIntArray;
 		break;
-	case 45:
+	case 43:
 		data = kDwordArray;
+		break;
+	case 44:		// SO_NIBBLE_ARRAY
+		data = kNibbleArray;
+		break;
+	case 45:		// SO_BYTE_ARRAY
+		data = kByteArray;
 		break;
 	case 77:		// SO_STRING_ARRAY
 		data = kStringArray;
@@ -1028,17 +1028,17 @@ void ScummEngine_v100he::o100_dim2dim2Array() {
 	case 41:		// SO_BIT_ARRAY
 		data = kBitArray;
 		break;
-	case 42:		// SO_NIBBLE_ARRAY
-		data = kNibbleArray;
-		break;
-	case 43:		// SO_BYTE_ARRAY
-		data = kByteArray;
-		break;
-	case 44:		// SO_INT_ARRAY
+	case 42:		// SO_INT_ARRAY
 		data = kIntArray;
 		break;
-	case 45:
+	case 43:
 		data = kDwordArray;
+		break;
+	case 44:		// SO_NIBBLE_ARRAY
+		data = kNibbleArray;
+		break;
+	case 45:		// SO_BYTE_ARRAY
+		data = kByteArray;
 		break;
 	case 77:		// SO_STRING_ARRAY
 		data = kStringArray;
