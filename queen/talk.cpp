@@ -792,7 +792,7 @@ void Talk::speakSegment(
 	segment[length] = '\0';
 	
 	char voiceFileName[MAX_STRING_SIZE];
-	snprintf(voiceFileName, sizeof(voiceFileName), "%s%1x", voiceFilePrefix, index + 1);
+	sprintf(voiceFileName, "%s%1x", voiceFilePrefix, index + 1);
 
 	// FIXME - it seems the french talkie version has a useless voice file ; 
 	// the c30e_102 file is very similar to c30e_101, so there is no need to 
@@ -1044,6 +1044,10 @@ void Talk::getString(const byte *ptr, uint16 &offset, char *str, int maxLength, 
 			str[length] = '\0';
 		}
 		offset = (offset + length + (align - 1)) & ~(align - 1);
+	} else {
+		if (str) {
+			str[0] = '\0';
+		}
 	}
 }
 

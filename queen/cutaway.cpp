@@ -1165,30 +1165,12 @@ void Cutaway::updateGameState() {
 	} // for()
 }
 
-static char *right(char *str, int count) {
-	// This function does _not_ use static data (the implementation in talk.c does!)
-	int length = strlen(str);
-	if (count > length)
-		return str;
-	else
-		return str + length - count;
-}
-
 void Cutaway::talk(char *nextFilename) {
-	// Lines 2119-2131 in cutaway.c
-	
-	if (0 == scumm_stricmp(right(_talkFile, 4), ".dog")) {
+	const char *p = strrchr(_talkFile, '.');
+	if (p && 0 == scumm_stricmp(p, ".dog")) {
 		nextFilename[0] = '\0';
-
-		int personInRoom;
-
-		if (_talkTo > 0)
-			personInRoom = _talkTo - _vm->logic()->roomData(_vm->logic()->currentRoom());
-		else {
-			warning("_talkTo is 0!");
-			personInRoom = 0; 			// XXX is this correct?
-		}
-
+		assert(_talkTo > 0);
+		int personInRoom = _talkTo - _vm->logic()->roomData(_vm->logic()->currentRoom());
 		_vm->logic()->startDialogue(_talkFile, personInRoom, nextFilename);
 	}
 }
@@ -1269,13 +1251,8 @@ void Cutaway::handleText(
 			_vm->display()->clearTexts(0, 150);
 	}
 
-	int i;
-	for (i = 0; i < spaces; i++) {
+	while (1) {
 		_vm->update();
-
-		if (OBJECT_TYPE_TEXT_SPEAK == type || OBJECT_TYPE_TEXT_DISPLAY_AND_SPEAK == type) {
-			// XXX: see if speaking is finished
-		}
 
 		if (_vm->input()->cutawayQuit())
 			return;
@@ -1284,9 +1261,20 @@ void Cutaway::handleText(
 			_vm->input()->clearKeyVerb();
 			break;
 		}
+
+		if ((OBJECT_TYPE_TEXT_SPEAK == type || OBJECT_TYPE_TEXT_DISPLAY_AND_SPEAK == type) && _vm->sound()->speechOn()) {
+			if (!_vm->sound()->isSpeechActive()) {
+				break;
+			}
+		} else {
+			--spaces;
+			if (spaces <= 0) {
+				break;
+			}
+		}
 	}
 
-	_vm->display()->clearTexts(0,198);
+	_vm->display()->clearTexts(0, 198);
 	_vm->update();
 }
 		
