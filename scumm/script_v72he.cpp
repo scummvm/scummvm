@@ -148,7 +148,7 @@ void ScummEngine_v72he::setupOpcodes() {
 		OPCODE(o72_unknown50),
 		OPCODE(o6_invalid),
 		OPCODE(o72_findObjectWithClassOf),
-		OPCODE(o72_wordArrayInc),
+		OPCODE(o6_wordArrayInc),
 		/* 54 */
 		OPCODE(o72_getObjectImageX),
 		OPCODE(o72_getObjectImageY),
@@ -158,7 +158,7 @@ void ScummEngine_v72he::setupOpcodes() {
 		OPCODE(o72_getTimer),
 		OPCODE(o72_setTimer),
 		OPCODE(o72_unknown5A),
-		OPCODE(o72_wordArrayDec),
+		OPCODE(o6_wordArrayDec),
 		/* 5C */
 		OPCODE(o6_if),
 		OPCODE(o6_ifNot),
@@ -341,18 +341,18 @@ void ScummEngine_v72he::setupOpcodes() {
 		OPCODE(o60_readFilePos),
 		/* EC */
 		OPCODE(o72_unknownEC),
-		OPCODE(o72_unknownED),
+		OPCODE(o70_unknownED),
 		OPCODE(o70_stringLen),
 		OPCODE(o72_unknownEF),
 		/* F0 */
 		OPCODE(o72_unknownF0),
-		OPCODE(o72_unknownF1),
+		OPCODE(o70_unknownF1),
 		OPCODE(o72_checkGlobQueue),
 		OPCODE(o72_readINI),
 		/* F4 */
 		OPCODE(o72_writeINI),
-		OPCODE(o72_unknownF5),
-		OPCODE(o72_unknownF6),
+		OPCODE(o70_unknownF5),
+		OPCODE(o70_unknownF6),
 		OPCODE(o6_invalid),
 		/* F8 */
 		OPCODE(o72_getResourceSize),
@@ -510,31 +510,6 @@ void ScummEngine_v72he::readArrayFromIndexFile() {
 		else
 			defineArray(num, kDwordArray, 0, a, 0, b);
 	}
-}
-
-void ScummEngine_v72he::arrrays_unk2(int dst, int src, int len2, int len) {
-	int edi, value;
-	int i = 0;
-
-	if (len == -1) {
-		len = resStrLen(getStringAddress(src));
-		len2 = 0;
-	}
-
-	edi = resStrLen(getStringAddress(dst));
-
-	len -= len2;
-	len++;
-
-	while (i < len) {
-		writeVar(0, src);
-		value = readArray(0, 0, len2 + i);
-		writeVar(0, dst);
-		writeArray(0, 0, edi + i, value);
-		i++;
-	}
-
-	writeArray(0, 0, edi + i, 0);
 }
 
 void ScummEngine_v72he::copyScriptString(byte *dst) {
@@ -739,18 +714,6 @@ void ScummEngine_v72he::o72_findObjectWithClassOf() {
 	int x = pop();
 	int r = findObject(x, y, num, args);
 	push(r);
-}
-
-void ScummEngine_v72he::o72_wordArrayInc() {
-	int var = fetchScriptWord();
-	int base = pop();
-	writeArray(var, 0, base, readArray(var, 0, base) + 1);
-}
-
-void ScummEngine_v72he::o72_wordArrayDec() {
-	int var = fetchScriptWord();
-	int base = pop();
-	writeArray(var, 0, base, readArray(var, 0, base) - 1);
 }
 
 void ScummEngine_v72he::o72_getObjectImageX() {
@@ -2232,31 +2195,6 @@ void ScummEngine_v72he::o72_unknownEC() {
 	debug(1,"stub o72_unknownEC");
 }
 
-void ScummEngine_v72he::o72_unknownED() {
-	int array, pos, len;
-	int chr, result = 0;
-
-	len = pop();
-	pos = pop();
-	array = pop();
-
-	if (len == -1) {
-		pos = 0;
-		len = resStrLen(getStringAddress(array));
-	}
-
-	writeVar(0, array);
-	while (pos <= len) {
-		chr = readArray(0, 0, pos);
-		if (chr)
-			result += _charset->getCharWidth(chr);
-		pos++;
-	}
-
-	push(result);
-	debug(1,"stub o72_unknownED");
-}
-
 void ScummEngine_v72he::o72_unknownEF() {
 	int dst, size;
 	int b = pop();
@@ -2297,48 +2235,6 @@ void ScummEngine_v72he::o72_unknownF0() {
 
 	push(dst);
 	debug(1,"stub o72_unknownF0");
-}
-
-void ScummEngine_v72he::o72_unknownF1() {
-	byte *addr, *addr2;
-	int i = 0;
-
-	int id = pop();
-	int id2 = pop();
-
-	addr = getStringAddress(id);
-	if (!addr)
-		error("o72_stringLen: Reference to zeroed array pointer (%d)", id);
-
-	addr2 = getStringAddress(id2);
-	if (!addr)
-		error("o72_stringLen: Reference to zeroed array pointer (%d)", id);
-
-	while(1) {
-		if (*addr != *addr2)
-			break;
-		if (*addr == 0) {
-			push(0);
-			return;
-		}
-
-		addr++;
-		addr2++;
-
-		if (*addr != *addr2)
-			break;
-		if (*addr == 0) {
-			push(0);
-			return;
-		}
-
-		addr++;
-		addr2++;
-		i += 2;
-	}
-
-	push (i);
-	debug(1,"o70_unknownF1 stub (%d, %d, %d)", id, id2, i);
 }
 
 void ScummEngine_v72he::o72_checkGlobQueue() {
@@ -2401,71 +2297,6 @@ void ScummEngine_v72he::o72_writeINI() {
 	default:
 		error("o72_writeINI: default type %d", type);
 	}
-}
-
-void ScummEngine_v72he::o72_unknownF5() {
-	int chr, max;
-	int array, len, pos, result = 0;
-	max = pop();
-	pos = pop();
-	array = pop();
-
-	len = resStrLen(getStringAddress(array));
-
-	writeVar(0, array);
-	while (pos <= len) {
-		chr = readArray(0, 0, pos);
-		result += _charset->getCharWidth(chr);
-		if (result >= max) {
-			push(pos);
-			return;
-		}
-		pos++;
-	}
-
-	push(len);
-	debug(1,"stub o72_unknownF5 (%d)", result);
-}
-
-void ScummEngine_v72he::o72_unknownF6() {
-	int len, edi, pos, value, id;
-	value = pop();
-	edi = pop();
-	pos = pop();
-	id = pop();
-
-	if (edi >= 0) {
-		len = resStrLen(getStringAddress(id));
-		if (len < edi)
-			edi = len;
-	} else {
-		edi = 0;
-	}
-
-	if (pos < 0)
-		pos = 0;
-
-	writeVar(0, id);
-	if (edi > pos) {
-		while (edi >= pos) {
-			if (readArray(0, 0, pos) == value) {
-				push(pos);
-				return;
-			}
-			pos++;
-		}
-	} else {
-		while (edi <= pos) {
-			if (readArray(0, 0, pos) == value) {
-				push(pos);
-				return;
-			}
-			pos--;
-		}
-	}
-
-	push(-1);
-	debug(1,"stub o72_unknownF6");
 }
 
 void ScummEngine_v72he::o72_getResourceSize() {

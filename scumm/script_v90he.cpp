@@ -147,7 +147,7 @@ void ScummEngine_v90he::setupOpcodes() {
 		OPCODE(o72_unknown50),
 		OPCODE(o6_invalid),
 		OPCODE(o72_findObjectWithClassOf),
-		OPCODE(o72_wordArrayInc),
+		OPCODE(o6_wordArrayInc),
 		/* 54 */
 		OPCODE(o72_getObjectImageX),
 		OPCODE(o72_getObjectImageY),
@@ -157,7 +157,7 @@ void ScummEngine_v90he::setupOpcodes() {
 		OPCODE(o72_getTimer),
 		OPCODE(o72_setTimer),
 		OPCODE(o72_unknown5A),
-		OPCODE(o72_wordArrayDec),
+		OPCODE(o6_wordArrayDec),
 		/* 5C */
 		OPCODE(o6_if),
 		OPCODE(o6_ifNot),
@@ -340,18 +340,18 @@ void ScummEngine_v90he::setupOpcodes() {
 		OPCODE(o60_readFilePos),
 		/* EC */
 		OPCODE(o72_unknownEC),
-		OPCODE(o72_unknownED),
+		OPCODE(o70_unknownED),
 		OPCODE(o70_stringLen),
 		OPCODE(o72_unknownEF),
 		/* F0 */
 		OPCODE(o72_unknownF0),
-		OPCODE(o72_unknownF1),
+		OPCODE(o70_unknownF1),
 		OPCODE(o72_checkGlobQueue),
 		OPCODE(o72_readINI),
 		/* F4 */
 		OPCODE(o72_writeINI),
-		OPCODE(o72_unknownF5),
-		OPCODE(o72_unknownF6),
+		OPCODE(o70_unknownF5),
+		OPCODE(o70_unknownF6),
 		OPCODE(o6_invalid),
 		/* F8 */
 		OPCODE(o72_getResourceSize),

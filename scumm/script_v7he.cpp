@@ -347,7 +347,7 @@ void ScummEngine_v70he::setupOpcodes() {
 		OPCODE(o70_unknownEF),
 		/* F0 */
 		OPCODE(o6_invalid),
-		OPCODE(o6_invalid),
+		OPCODE(o70_unknownF1),
 		OPCODE(o6_invalid),
 		OPCODE(o70_readINI),
 		/* F4 */
@@ -759,6 +759,48 @@ void ScummEngine_v70he::o70_unknownEF() {
 
 	push(dst);
 	debug(1,"stub o70_unknownEF");
+}
+
+void ScummEngine_v70he::o70_unknownF1() {
+	byte *addr, *addr2;
+	int i = 0;
+
+	int id = pop();
+	int id2 = pop();
+
+	addr = getStringAddress(id);
+	if (!addr)
+		error("o72_stringLen: Reference to zeroed array pointer (%d)", id);
+
+	addr2 = getStringAddress(id2);
+	if (!addr)
+		error("o72_stringLen: Reference to zeroed array pointer (%d)", id);
+
+	while(1) {
+		if (*addr != *addr2)
+			break;
+		if (*addr == 0) {
+			push(0);
+			return;
+		}
+
+		addr++;
+		addr2++;
+
+		if (*addr != *addr2)
+			break;
+		if (*addr == 0) {
+			push(0);
+			return;
+		}
+
+		addr++;
+		addr2++;
+		i += 2;
+	}
+
+	push (i);
+	debug(1,"o70_unknownF1 stub (%d, %d, %d)", id, id2, i);
 }
 
 void ScummEngine_v70he::o70_readINI() {

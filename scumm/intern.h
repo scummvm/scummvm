@@ -641,6 +641,7 @@ protected:
 	void o70_unknownED();
 	void o70_stringLen();
 	void o70_unknownEF();
+	void o70_unknownF1();
 	void o70_readINI();
 	void o70_writeINI();
 	void o70_unknownF5();
@@ -709,7 +710,6 @@ protected:
 					int newDim1start, int newDim1end, int type);
 	int readFileToArray(int slot, int32 size);
 	void writeFileFromArray(int slot, int resID);
-	void arrrays_unk2(int dst, int src, int len2, int len);
 
 	void displayWizImage(const WizImage *pwi);
 	void getWizImageDim(int resnum, int state,  uint32 &w, uint32 &h);
@@ -730,14 +730,12 @@ protected:
 	void o72_isAnyOf();
 	void o72_unknown50();
 	void o72_findObjectWithClassOf();
-	void o72_wordArrayInc();
 	void o72_getObjectImageX();
 	void o72_getObjectImageY();
 	void o72_captureWizImage();
 	void o72_getTimer();
 	void o72_setTimer();
 	void o72_unknown5A();
-	void o72_wordArrayDec();
 	void o72_startScript();
 	void o72_startObject();
 	void o72_drawObject();
@@ -765,14 +763,11 @@ protected:
 	void o72_pickVarRandom();
 	void o72_redimArray();
 	void o72_unknownEC();
-	void o72_unknownED();
 	void o72_unknownEF();
-	void o72_unknownF1();
+	void o72_unknownF0();
 	void o72_checkGlobQueue();
 	void o72_readINI();
 	void o72_writeINI();
-	void o72_unknownF0();
-	void o72_unknownF4();
 	void o72_unknownF5();
 	void o72_unknownF6();
 	void o72_getResourceSize();

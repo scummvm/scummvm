@@ -79,7 +79,7 @@ void ScummEngine_v100he::setupOpcodes() {
 		OPCODE(o72_traceStatus),
 		OPCODE(o6_wordVarDec),
 		/* 1C */
-		OPCODE(o72_wordArrayDec),
+		OPCODE(o6_wordArrayDec),
 		OPCODE(o72_deleteFile),
 		OPCODE(o100_dim2dimArray),
 		OPCODE(o100_dimArray),
@@ -324,17 +324,17 @@ void ScummEngine_v100he::setupOpcodes() {
 		OPCODE(o6_startScriptQuick2),
 		OPCODE(o6_getState),
 		/* E0 */
-		OPCODE(o72_unknownF1),
+		OPCODE(o70_unknownF1),
 		OPCODE(o72_unknownEC),
 		OPCODE(o72_unknownEF),
 		OPCODE(o72_unknownF0),
 		/* E4 */
 		OPCODE(o70_stringLen),
-		OPCODE(o72_unknownF5),
+		OPCODE(o70_unknownF5),
 		OPCODE(o6_invalid),
-		OPCODE(o72_unknownF6),
+		OPCODE(o70_unknownF6),
 		/* E8 */
-		OPCODE(o72_unknownED),
+		OPCODE(o70_unknownED),
 		OPCODE(o60_readFilePos),
 		OPCODE(o72_getTimer),
 		OPCODE(o6_getVerbEntrypoint),
