@@ -561,8 +561,11 @@ void ScummEngine_v80he::o80_cursorCommand() {
 
 void ScummEngine_v80he::loadImgSpot(int resId, int state, uint32 &w, uint32 &h) {
 	const uint8 *dataPtr = getResourceAddress(rtImage, resId);
-	if (!dataPtr)
-		error("loadImgSpot: unknown Image %d", resId);
+	if (!dataPtr) {
+		warning("loadImgSpot: unknown Image %d", resId);
+		w = h = 0;
+		return;
+	}
 
 	const uint8 *spotPtr = findWrappedBlock(MKID('SPOT'), dataPtr, state, 0);
 

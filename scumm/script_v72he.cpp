@@ -1239,7 +1239,7 @@ void ScummEngine_v72he::o72_arrayOps() {
 	int list[128];
 	byte string[2048];
 
-	debug(1,"o72_arrayOps: case %d\n", subOp);
+	debug(1,"o72_arrayOps: case %d", subOp);
 	switch (subOp) {
 	case 7:			// SO_ASSIGN_STRING
 		copyScriptString(string);
@@ -1756,7 +1756,7 @@ void ScummEngine_v72he::o72_jumpToScript() {
 
 void ScummEngine_v72he::o72_openFile() {
 	int mode, slot, l, r;
-	byte filename[100];
+	byte filename[256];
 
 	mode = pop();
 	copyScriptString(filename);

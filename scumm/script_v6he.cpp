@@ -1031,8 +1031,7 @@ void ScummEngine_v60he::o60_openFile() {
 void ScummEngine_v60he::o60_closeFile() {
 	int slot = pop();
 	if (slot != -1)
-		if (_hFileTable[slot].isOpen() == true)
-			_hFileTable[slot].close();
+		_hFileTable[slot].close();
 }
 
 void ScummEngine_v60he::o60_deleteFile() {
