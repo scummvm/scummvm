@@ -621,6 +621,10 @@ int32 Logic::fnPlaySequence(int32 *params) {
 	// params:	0 pointer to null-terminated ascii filename
 	// 		1 number of frames in the sequence, used for PSX.
 
+	// Only two sequences exist in demo
+	if ((_vm->_features & GF_DEMO) && params[0] != 3626 && params[0] != 3879846)
+		return IR_CONT;
+
 	char filename[30];
  	uint32 rv;
 	MovieTextObject *sequenceSpeechArray[MAX_SEQUENCE_TEXT_LINES + 1];
