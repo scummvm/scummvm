@@ -25,16 +25,14 @@
 #include "blitter.h"
 
 bool Codec44Decoder::decode(Blitter & dst, Chunk & src) {
-	int32 size_line;
-	int32 num;
+	int32 size_line, num;
 	int32 length = src.getSize() - 14;
 	int32 width = getRect().width();
 	int32 height = getRect().height();
 	byte * src2 = (byte*)malloc(length);
 	byte * org_src2 = src2;
 	src.read(src2, length);
-	byte * dst2 = (byte*)malloc(2000);
-	byte * org_dst2 = dst2;
+	byte * dst2 = _buffer;
 	byte val;
 
 	do {
@@ -49,25 +47,23 @@ bool Codec44Decoder::decode(Blitter & dst, Chunk & src) {
 			dst2 += num;
 			length -= 2;
 			size_line -= 2;
-			if (size_line == 0)
-				break;
-
-			num = READ_LE_UINT16(src2) + 1;
-			src2 += 2;
-			memcpy(dst2, src2, num);
-			dst2 += num;
-			src2 += num;
-			length -= num + 2;
-			size_line -= num + 2;
+			if (size_line != 0) {
+				num = READ_LE_UINT16(src2) + 1;
+				src2 += 2;
+				memcpy(dst2, src2, num);
+				dst2 += num;
+				src2 += num;
+				length -= num + 2;
+				size_line -= num + 2;
+			}
 		}
 		dst2--;
 
 	} while (length > 1);
 
-	dst.blit(org_dst2, width * height);
+	dst.blit(_buffer, width * height);
 
 	free(org_src2);
-	free(org_dst2);
 
 	return true;
 }

@@ -22,24 +22,11 @@
 #ifndef CODEC44_H
 #define CODEC44_H
 
-#include "config.h"
-
-#ifdef DEBUG
-# ifndef NO_DEBUG_CODEC44
-#  define DEBUG_CODEC44
-# endif
-#else
-# ifdef DEBUG_CODEC44
-#  error DEBUG_CODEC44 defined without DEBUG
-# endif
-#endif
-
 #include "decoder.h"
 
-/*!	@brief ::decoder for codec 21 and 44.
-
-*/
 class Codec44Decoder : public Decoder {
+	byte _buffer[1000];
+
 public:
 	bool decode(Blitter & dst, Chunk & src);
 };

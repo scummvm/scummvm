@@ -36,8 +36,7 @@ NutRenderer::~NutRenderer() {
 
 void NutRenderer::decodeCodec44(byte *dst, byte *src, uint32 length) {
 	byte val;
-	uint16 size_line;
-	uint16 num;
+	uint16 size_line, num;
 
 	do {
 		size_line = READ_LE_UINT16(src);
@@ -51,16 +50,15 @@ void NutRenderer::decodeCodec44(byte *dst, byte *src, uint32 length) {
 			dst += num;
 			length -= 2;
 			size_line -= 2;
-			if (size_line == 0) break;
-
-			num = READ_LE_UINT16(src) + 1;
-			src += 2;
-			memcpy(dst, src, num);
-			dst += num;
-			src += num;
-			length -= num + 2;
-			size_line -= num + 2;
-
+			if (size_line != 0) {
+				num = READ_LE_UINT16(src) + 1;
+				src += 2;
+				memcpy(dst, src, num);
+				dst += num;
+				src += num;
+				length -= num + 2;
+				size_line -= num + 2;
+			}
 		}
 		dst--;
 
@@ -162,35 +160,6 @@ int32 NutRenderer::getStringWidth(char *string) {
 
 	return length;
 }
-
-/*
-void NutRenderer::drawString(const char *string, int32 x, int32 y, byte color, int32 mode) {
-	debug(2,  "NutRenderer::drawString() called");
-	if (_loaded == false) {
-		debug(2, "NutRenderer::drawString() Font is not loaded");
-		return;
-	}
-
-	int l = 0;
-	int left = x;
-	int height = 0, tmp;
-	do {
-		if ((x < 0) || (y < 0) || (x > _vm->_realWidth) || (y > _vm->_realHeight)) {
-			debug(2, "NutRenderer::drawString() position x, y out of range");
-			return;
-		}
-
-		drawChar(string[l], x, y, color);
-		x += getCharWidth(string[l]);
-		tmp = getCharHeight(string[l]);
-		if (height < tmp)
-			height = tmp;
-		l++;
-	} while (string[l] != 0);
-
-	_vm->updateDirtyRect(0, left, x, y, y + height, 0);
-}
-*/
 
 void NutRenderer::drawChar(char c, int32 x, int32 y, byte color, bool useMask) {
 	debug(2,  "NutRenderer::drawChar('%c', %d, %d, %d, %d) called", c, x, y, (int)color, useMask);
