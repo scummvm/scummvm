@@ -979,8 +979,9 @@ void ScummEngine_v6he::o6_openFile() {
 		else
 			error("o6_openFile(): wrong open file mode");
 
-		if (_hFileTable[l].isOpen() == false)
+		if (_hFileTable[slot].isOpen() == false)
 			slot = -1;
+
 		debug(1, "%d = o6_openFile(\"%s\", %d)", slot, filename + r, mode);
 	}
 	push(slot);
@@ -1074,7 +1075,6 @@ void ScummEngine_v6he::o6_readFile() {
 		val = readFileToArray(slot, size);
 		push(val);
 	}
-	debug(1, "returned %d", val);
 }
 
 void ScummEngine_v6he::writeFileFromArray(int slot, int resID) {
