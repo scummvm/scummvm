@@ -30,6 +30,8 @@ For a more comprehensive changelog for the latest experimental CVS code, see:
    - Fixed actor drawing glitches in V1 Maniac and Zak
    - Fixed ship-to-ship graphic glitches in COMI
    - Fixed palette glitches in COMI
+   - Additional 46 Humongous Entertainment titles/demos now supported. Only
+     few are completable.
 
  Queen:
    - Fixed some issues with the Dreamcast backend.
