@@ -678,13 +678,15 @@ int Scumm::startSfxSound(void *file, int file_size)
 		error("startSfxSound: cannot read %d bytes", size);
 		return -1;
 	}
+	// FIXME - why is this code here? playSfxSound Already should do the conversion
 	for (i = 0; i < size; i++) {
 		// Fixme: From WinCE port
-		if (_sound_volume_sfx != 100)
-			data[i] = _sound_volume_sfx * data[i] / 100;
+		if (_sound_volume_sfx != 256)
+			data[i] = _sound_volume_sfx * data[i] / 256;
 
 		data[i] ^= 0x80;
 	}
+
 	return playSfxSound(data, size, 1000000 / (256 - rate));
 }
 
