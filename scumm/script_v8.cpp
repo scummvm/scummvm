@@ -24,6 +24,7 @@
 #include "scumm/actor.h"
 #include "scumm/akos.h"
 #include "scumm/charset.h"
+#include "scumm/imuse_digi.h"
 #include "scumm/intern.h"
 #include "scumm/object.h"
 #include "scumm/resource.h"
@@ -1483,7 +1484,7 @@ void ScummEngine_v8::o8_kernelGetFunctions() {
 	case 0xE1:		// imGetMusicPosition
 		warning("o8_kernelGetFunctions: imGetMusicPosition(stub)");
 		// FIXME - get this stuff to be properly implemented
-		push(_sound->_bundleSongPosInMs);
+		push(_imuseDigital->_bundleSongPosInMs);
 		break;
 	case 0xE2:		// musicLipSyncWidth
 	case 0xE3:		// musicLipSyncHeight

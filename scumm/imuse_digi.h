@@ -34,6 +34,7 @@ namespace Scumm {
 #define MAX_IMUSE_REGIONS 3
 
 class ScummEngine;
+class Bundle;
 
 /**
  * iMuse Digital Implementation for SCUMM v7 and higher.
@@ -68,8 +69,42 @@ private:
 	ScummEngine *_scumm;
 	bool _pause;
 
-	static void timer_handler(void *engine);
+	static void timer_handler(void *refConf);
 	void musicTimer();
+
+	//
+	// Bundle music
+	//
+	const char *_nameBundleMusic;
+	const char *_newNameBundleMusic;
+	byte _musicDisk;
+	byte _voiceDisk;
+	int32 _currentSampleBundleMusic;
+	int32 _numberSamplesBundleMusic;
+	int32 _offsetSampleBundleMusic;
+	int32 _offsetBufBundleMusic;
+	byte *_musicBundleBufFinal;
+	byte *_musicBundleBufOutput;
+	bool _pauseBundleMusic;
+	PlayingSoundHandle _bundleMusicTrack;
+	bool _musicBundleToBeChanged;
+	int32 _bundleMusicSampleBits;
+	int32 _outputMixerSize;
+	int32 _bundleSampleChannels;
+	int32 _bundleMusicPosition;
+
+	static void music_handler(void *refCon);
+	void bundleMusicHandler();
+
+	void playBundleMusic(const char *song);
+	void pauseBundleMusic(bool state);
+
+public:
+	int32 _bundleSongPosInMs;
+	Bundle *_bundle;	// FIXME: should be protected but is used by ScummEngine::askForDisk
+
+	void stopBundleMusic();
+	void playBundleSound(const char *sound, PlayingSoundHandle *handle);
 
 public:
 	IMuseDigital(ScummEngine *scumm);

@@ -126,7 +126,8 @@ bool ScummEngine::loadState(int slot, bool compat, SaveFileManager *mgr) {
 	memcpy(_saveLoadName, hdr.name, sizeof(hdr.name));
 
 	_sound->stopAllSounds();
-	_sound->stopBundleMusic();
+	if (_imuseDigital)
+		_imuseDigital->stopBundleMusic();
 	_sound->stopCD();
 
 	_sound->pauseSounds(true);

@@ -25,6 +25,7 @@
 #include "scumm/actor.h"
 #include "scumm/charset.h"
 #include "scumm/dialogs.h"
+#include "scumm/imuse_digi.h"
 #include "scumm/verbs.h"
 #include "scumm/sound.h"
 
@@ -899,7 +900,7 @@ const byte *ScummEngine::translateTextAndPlaySpeech(const byte *ptr) {
 		pointer[j] = 0;
 
 		// Play speech
-		_sound->playBundleSound(pointer, &_sound->_talkChannelHandle);
+		_imuseDigital->playBundleSound(pointer, &_sound->_talkChannelHandle);
 
 		ptr = _transText;
 	}

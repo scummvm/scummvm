@@ -8213,7 +8213,6 @@ void Insane::smush_setupSanFile(const char *filename, int32 offset) {
 	_player->seekSan(filename, _scumm->getGameDataPath(), offset);
 
 	_scumm->_imuseDigital->pause(false);
-	_scumm->_sound->pauseBundleMusic(false);
 }
 
 }

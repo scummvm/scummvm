@@ -244,7 +244,6 @@ void SmushPlayer::init() {
 
 	_frame = 0;
 
-	_scumm->_sound->pauseBundleMusic(true);
 	if (_scumm->_imuseDigital) {
 		_scumm->_imuseDigital->pause(true);
 	}
@@ -293,7 +292,6 @@ void SmushPlayer::deinit() {
 	if (_scumm->_imuseDigital) {
 		_scumm->_imuseDigital->pause(false);
 	}
-	_scumm->_sound->pauseBundleMusic(false);
 	_scumm->_fullRedraw = true;
 }
 
@@ -373,7 +371,7 @@ void SmushPlayer::handleIACT(Chunk &b) {
 	checkBlock(b, TYPE_IACT, 8);
 	debug(6, "SmushPlayer::handleImuseAction()");
 
-	int code = b.getWord();
+	/* int code = */ b.getWord();
 	int flags = b.getWord();
 	int unknown = b.getShort();
 	int track_flags = b.getWord();

@@ -93,7 +93,7 @@ static const byte imxOtherTable[6][128] = {
 	}
 };
 
-const byte imxShortTable[] = {
+static const byte imxShortTable[] = {
 	0, 0, 1, 3, 7, 15, 31, 63
 };
 
@@ -436,12 +436,16 @@ int32 Bundle::getNumberOfMusicSamplesByName(const char *name) {
 	return number;
 }
 
-#define NextBit bit = mask & 1; mask >>= 1;				\
-								if (!--bitsleft) {								\
-									mask = READ_LE_UINT16(srcptr);	\
-									srcptr += 2;										\
-									bitsleft = 16;									\
-								}
+#define NextBit                            \
+	do {                                   \
+		bit = mask & 1;                    \
+		mask >>= 1;                        \
+		if (!--bitsleft) {                 \
+			mask = READ_LE_UINT16(srcptr); \
+			srcptr += 2;                   \
+			bitsleft = 16;                 \
+		}                                  \
+	} while (0)
 
 static int32 compDecode(byte *src, byte *dst) {
 	byte *result, *srcptr = src, *dstptr = dst;
@@ -449,12 +453,16 @@ static int32 compDecode(byte *src, byte *dst) {
 	srcptr += 2;
 
 	while (1) {
-		NextBit if (bit) {
+		NextBit;
+		if (bit) {
 			*dstptr++ = *srcptr++;
 		} else {
-			NextBit if (!bit) {
-				NextBit size = bit << 1;
-				NextBit size = (size | bit) + 3;
+			NextBit;
+			if (!bit) {
+				NextBit;
+				size = bit << 1;
+				NextBit;
+				size = (size | bit) + 3;
 				data = *srcptr++ | 0xffffff00;
 			} else {
 				data = *srcptr++;

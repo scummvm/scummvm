@@ -20,6 +20,8 @@
 
 #include "stdafx.h"
 #include "common/timer.h"
+#include "scumm/actor.h"
+#include "scumm/bundle.h"
 #include "scumm/imuse_digi.h"
 #include "scumm/scumm.h"
 #include "scumm/sound.h"
@@ -684,6 +686,37 @@ static byte *readCreativeVocFile(byte *ptr, int32 &size, int &rate) {
 	return ret_sound;
 }
 
+static uint32 decode12BitsSample(byte *src, byte **dst, uint32 size, bool stereo) {
+	uint32 s_size = (size / 3) * 4;
+	uint32 loop_size = s_size / 4;
+	if (stereo) {
+		s_size *= 2;
+	}
+	byte *ptr = *dst = (byte *)malloc(s_size);
+
+	uint32 tmp;
+	while (loop_size--) {
+		byte v1 = *src++;
+		byte v2 = *src++;
+		byte v3 = *src++;
+		tmp = ((((v2 & 0x0f) << 8) | v1) << 4) - 0x8000;
+		*ptr++ = (byte)((tmp >> 8) & 0xff);
+		*ptr++ = (byte)(tmp & 0xff);
+		if (stereo) {
+			*ptr++ = (byte)((tmp >> 8) & 0xff);
+			*ptr++ = (byte)(tmp & 0xff);
+		}
+		tmp = ((((v2 & 0xf0) << 4) | v3) << 4) - 0x8000;
+		*ptr++ = (byte)((tmp >> 8) & 0xff);
+		*ptr++ = (byte)(tmp & 0xff);
+		if (stereo) {
+			*ptr++ = (byte)((tmp >> 8) & 0xff);
+			*ptr++ = (byte)(tmp & 0xff);
+		}
+	}
+	return s_size;
+}
+
 void IMuseDigital::timer_handler(void *refCon) {
 	IMuseDigital *imuseDigital = (IMuseDigital *)refCon;
 	imuseDigital->musicTimer();
@@ -697,6 +730,13 @@ IMuseDigital::IMuseDigital(ScummEngine *scumm)
 	}
 	_scumm->_timer->installTimerProc(timer_handler, 200000, this);
 	_pause = false;
+
+	_nameBundleMusic = "";
+	_musicBundleBufFinal = NULL;
+	_musicBundleBufOutput = NULL;
+	_musicDisk = 0;
+	
+	_bundle = new Bundle();
 }
 
 IMuseDigital::~IMuseDigital() {
@@ -705,6 +745,8 @@ IMuseDigital::~IMuseDigital() {
 	for (int l = 0; l < MAX_DIGITAL_CHANNELS; l++) {
 		_scumm->_mixer->stopHandle(_channel[l]._handle);
 	}
+
+	delete _bundle;
 }
 
 void IMuseDigital::musicTimer() {
@@ -883,7 +925,7 @@ void IMuseDigital::startSound(int sound) {
 				if (_channel[l]._bits == 12) {
 					_channel[l]._mixerSize *= 2;
 					_channel[l]._mixerFlags |= SoundMixer::FLAG_16BITS;
-					_channel[l]._size = _scumm->_sound->decode12BitsSample(ptr, &_channel[l]._data, size, (_channel[l]._channels == 2) ? false : true);
+					_channel[l]._size = decode12BitsSample(ptr, &_channel[l]._data, size, (_channel[l]._channels == 2) ? false : true);
 				} else if (_channel[l]._bits == 8) {
 					_channel[l]._mixerFlags |= SoundMixer::FLAG_UNSIGNED;
 					if (_channel[l]._channels == 1) {
@@ -928,6 +970,7 @@ void IMuseDigital::stopAllSounds() {
 
 void IMuseDigital::pause(bool p) {
 	_pause = p;
+	pauseBundleMusic(p);
 }
 
 int32 IMuseDigital::doCommand(int a, int b, int c, int d, int e, int f, int g, int h) {
@@ -1041,7 +1084,7 @@ int32 IMuseDigital::doCommand(int a, int b, int c, int d, int e, int f, int g, i
 		}
 		if (_scumm->_gameId == GID_DIG) {
 			if (b == 1000) {		// STATE_NULL
-				_scumm->_sound->stopBundleMusic();
+				stopBundleMusic();
 				return 0;
 			}
 			for (l = 0;; l++) {
@@ -1052,30 +1095,30 @@ int32 IMuseDigital::doCommand(int a, int b, int c, int d, int e, int f, int g, i
 					int music = _digStateMusicMap[l].table_index;
 					debug(5, "Play imuse music: %s, %s, %s", _digStateMusicTable[music].name, _digStateMusicTable[music].title, _digStateMusicTable[music].filename);
 					if ((_digStateMusicTable[music].filename[0] != 0) && 
-						(strcmp(_digStateMusicTable[_digStateMusicTable[music].unk3].filename, _scumm->_sound->_nameBundleMusic) != 0) ) {
-						_scumm->_sound->playBundleMusic(_digStateMusicTable[music].filename);
+						(strcmp(_digStateMusicTable[_digStateMusicTable[music].unk3].filename, _nameBundleMusic) != 0) ) {
+						playBundleMusic(_digStateMusicTable[music].filename);
 					}
 					return 0;
 				}
 			}
 		} else if ((_scumm->_gameId == GID_CMI) && (_scumm->_features & GF_DEMO)) {
 			if (b == 2) {
-				_scumm->_sound->playBundleMusic("in1.imx");
+				playBundleMusic("in1.imx");
 			} else if (b == 4) {
-				_scumm->_sound->playBundleMusic("in2.imx");
+				playBundleMusic("in2.imx");
 			} else if (b == 8) {
-				_scumm->_sound->playBundleMusic("out1.imx");
+				playBundleMusic("out1.imx");
 			} else if (b == 9) {
-				_scumm->_sound->playBundleMusic("out2.imx");
+				playBundleMusic("out2.imx");
 			} else if (b == 16) {
-				_scumm->_sound->playBundleMusic("gun.imx");
+				playBundleMusic("gun.imx");
 			} else {
 				warning("imuse digital: set state unknown for cmi demo: %d, room: %d", b, this->_scumm->_currentRoom);
 				return 1;
 			}
 		} else if (_scumm->_gameId == GID_CMI) {
 			if (b == 1000) {		// STATE_NULL
-				_scumm->_sound->stopBundleMusic();
+				stopBundleMusic();
 				return 0;
 			}
 			for (l = 0;; l++) {
@@ -1085,7 +1128,7 @@ int32 IMuseDigital::doCommand(int a, int b, int c, int d, int e, int f, int g, i
 				if ((_comiStateMusicTable[l].id == b)) {
 					debug(5, "Play imuse music: %s, %s, %s", _comiStateMusicTable[l].name, _comiStateMusicTable[l].title, _comiStateMusicTable[l].filename);
 					if (_comiStateMusicTable[l].filename[0] != 0) {
-						_scumm->_sound->playBundleMusic(_comiStateMusicTable[l].filename);
+						playBundleMusic(_comiStateMusicTable[l].filename);
 					}
 					return 0;
 				}
@@ -1119,7 +1162,7 @@ int32 IMuseDigital::doCommand(int a, int b, int c, int d, int e, int f, int g, i
 				if ((_digSeqMusicTable[l].room == b)) {
 					debug(5, "Play imuse music: %s, %s, %s", _digSeqMusicTable[l].name, _digSeqMusicTable[l].title, _digSeqMusicTable[l].filename);
 					if (_digSeqMusicTable[l].filename[0] != 0) {
-						_scumm->_sound->playBundleMusic(_digSeqMusicTable[l].filename);
+						playBundleMusic(_digSeqMusicTable[l].filename);
 					}
 					return 0;
 				}
@@ -1132,7 +1175,7 @@ int32 IMuseDigital::doCommand(int a, int b, int c, int d, int e, int f, int g, i
 				if ((_comiSeqMusicTable[l].id == b)) {
 					debug(5, "Play imuse music: %s, %s, %s", _comiSeqMusicTable[l].name, _comiSeqMusicTable[l].title, _comiSeqMusicTable[l].filename);
 					if (_comiSeqMusicTable[l].filename[0] != 0) {
-						_scumm->_sound->playBundleMusic(_comiSeqMusicTable[l].filename);
+						playBundleMusic(_comiSeqMusicTable[l].filename);
 					}
 					return 0;
 				}
@@ -1187,6 +1230,318 @@ int IMuseDigital::getSoundStatus(int sound) const {
 
 	return 0;
 }
+
+#pragma mark -
+
+void IMuseDigital::music_handler(void *refCon) {
+	((IMuseDigital *)refCon)->bundleMusicHandler();
+}
+
+void IMuseDigital::playBundleMusic(const char *song) {
+	if (_scumm->_silentDigitalImuse) {
+		return;
+	}
+
+	if (_nameBundleMusic[0] == 0) {
+		if (_scumm->_gameId == GID_CMI) {
+			_outputMixerSize = (22050 * 2 * 2);
+
+			char bunfile[20];
+			if (_scumm->_features & GF_DEMO) {
+				if (_bundle->openMusicFile("music.bun", _scumm->getGameDataPath()) == false) {
+					_outputMixerSize = 0;
+					return;
+				}
+			} else {
+
+				sprintf(bunfile, "musdisk%d.bun", _scumm->VAR(_scumm->VAR_CURRENTDISK));
+				if (_musicDisk != _scumm->VAR(_scumm->VAR_CURRENTDISK)) 
+					_bundle->closeMusicFile();
+
+				if (_bundle->openMusicFile(bunfile, _scumm->getGameDataPath()) == false) {
+					if (_bundle->openMusicFile("music.bun", _scumm->getGameDataPath()) == false) {
+						_outputMixerSize = 0;
+						return;
+					}
+				}
+
+				_musicDisk = (byte)_scumm->VAR(_scumm->VAR_CURRENTDISK);
+			}
+		} else {
+			_outputMixerSize = ((22050 * 2 * 2) / 4) * 3;
+
+			if (_bundle->openMusicFile("digmusic.bun", _scumm->getGameDataPath()) == false)
+				return;
+		}
+		_musicBundleBufFinal = (byte *)malloc(_outputMixerSize);
+		_musicBundleBufOutput = (byte *)malloc(((_outputMixerSize / 0x2000) + 1) * _outputMixerSize);
+		_currentSampleBundleMusic = 0;
+		_offsetSampleBundleMusic = 0;
+		_offsetBufBundleMusic = 0;
+		_bundleMusicPosition = 0;
+		_bundleSongPosInMs = 0;
+		_pauseBundleMusic = false;
+		_musicBundleToBeChanged = false;
+		_bundleMusicTrack = 0;
+		_numberSamplesBundleMusic = _bundle->getNumberOfMusicSamplesByName(song);
+		_nameBundleMusic = song;
+		_scumm->_timer->installTimerProc(&music_handler, 1000000, this);
+	} else if (strcmp(_nameBundleMusic, song) != 0) {
+		_newNameBundleMusic = song;
+		_musicBundleToBeChanged = true;
+	}
+}
+
+void IMuseDigital::pauseBundleMusic(bool state) {
+	_pauseBundleMusic = state;
+}
+
+void IMuseDigital::stopBundleMusic() {
+	// First stop the music timer
+	_scumm->_timer->removeTimerProc(&music_handler);
+	_nameBundleMusic = "";
+	_scumm->_mixer->stopHandle(_bundleMusicTrack);
+	if (_musicBundleBufFinal) {
+		free(_musicBundleBufFinal);
+		_musicBundleBufFinal = NULL;
+	}
+	if (_musicBundleBufOutput) {
+		free(_musicBundleBufOutput);
+		_musicBundleBufOutput = NULL;
+	}
+}
+
+void IMuseDigital::bundleMusicHandler() {
+	byte *ptr;
+	int32 l, num = _numberSamplesBundleMusic, length, k;
+	int32 rate = 22050;
+	int32 tag, size = -1, header_size = 0;
+
+	if (_pauseBundleMusic)
+		return;
+
+	if (_musicBundleToBeChanged) {
+		_nameBundleMusic = _newNameBundleMusic;
+		_numberSamplesBundleMusic = _bundle->getNumberOfMusicSamplesByName(_nameBundleMusic);
+		_currentSampleBundleMusic = 0;
+		_offsetSampleBundleMusic = 0;
+		_offsetBufBundleMusic = 0;
+		_musicBundleToBeChanged = false;
+		_bundleMusicPosition = 0;
+		_bundleSongPosInMs = 0;
+	}
+
+	ptr = _musicBundleBufOutput;
+
+	for (k = 0, l = _currentSampleBundleMusic; l < num; k++) {
+		length = _bundle->decompressMusicSampleByName(_nameBundleMusic, l, (_musicBundleBufOutput + ((k * 0x2000) + _offsetBufBundleMusic)));
+		_offsetSampleBundleMusic += length;
+
+		if (l == 0) {
+			tag = READ_BE_UINT32(ptr); ptr += 4;
+			if (tag != MKID_BE('iMUS')) {
+				error("Decompressing bundle song failed (unknown tag '%s')", tag2str(tag));
+			}
+
+			ptr += 12;
+			while (tag != MKID_BE('DATA')) {
+				tag = READ_BE_UINT32(ptr);  ptr += 4;
+				switch(tag) {
+				case MKID_BE('FRMT'):
+					ptr += 12;
+					_bundleMusicSampleBits = READ_BE_UINT32(ptr); ptr += 4;
+					rate = READ_BE_UINT32(ptr); ptr += 4;
+					_bundleSampleChannels = READ_BE_UINT32(ptr); ptr += 4;
+				break;
+				case MKID_BE('TEXT'):
+				case MKID_BE('REGN'):
+				case MKID_BE('STOP'):
+				case MKID_BE('JUMP'):
+				case MKID_BE('SYNC'):
+					size = READ_BE_UINT32(ptr); ptr += size + 4;
+				break;
+					case MKID_BE('DATA'):
+					size = READ_BE_UINT32(ptr); ptr += 4;
+				break;
+
+				default:
+					error("Unknown sound header %c%c%c%c",
+						(byte)(tag >> 24),
+						(byte)(tag >> 16),
+						(byte)(tag >> 8),
+						(byte)tag);
+				}
+			}
+			if (size < 0) {
+				error("Decompressing sound failed (missing size field)");
+			}
+			header_size = (ptr - _musicBundleBufOutput);
+		}
+
+		l++;
+		_currentSampleBundleMusic = l;
+
+		if (_offsetSampleBundleMusic >= _outputMixerSize + header_size) {
+			memcpy(_musicBundleBufFinal, (_musicBundleBufOutput + header_size), _outputMixerSize);
+			_offsetBufBundleMusic = _offsetSampleBundleMusic - _outputMixerSize - header_size;
+			memcpy(_musicBundleBufOutput, (_musicBundleBufOutput + (_outputMixerSize + header_size)), _offsetBufBundleMusic);
+			_offsetSampleBundleMusic = _offsetBufBundleMusic;
+			break;
+		}
+	}
+
+	if (_currentSampleBundleMusic == num) {
+		_currentSampleBundleMusic = 0;
+		_offsetSampleBundleMusic = 0;
+		_offsetBufBundleMusic = 0;
+		_bundleMusicPosition = 0;
+		_bundleSongPosInMs = 0;
+	}
+
+	ptr = _musicBundleBufFinal;
+
+	byte *buffer = NULL;
+	uint32 final_size;
+	if (_bundleMusicSampleBits == 12) {
+		final_size = decode12BitsSample(ptr, &buffer, _outputMixerSize, false);
+	} else if (_bundleMusicSampleBits == 16) {
+		buffer = (byte *)malloc(_outputMixerSize);
+		final_size = _outputMixerSize;
+		memcpy(buffer, ptr, _outputMixerSize);
+	} else {
+		warning("IMuseDigital::bundleMusicHandler TODO: more newStream options...");
+		return;
+	}
+
+	_bundleSongPosInMs = (_bundleMusicPosition * 5) / (_outputMixerSize / 200);
+	_bundleMusicPosition += final_size;
+	if (_bundleMusicTrack == 0)
+		_scumm->_mixer->newStream(&_bundleMusicTrack, rate, SoundMixer::FLAG_16BITS | SoundMixer::FLAG_STEREO, 300000);
+	_scumm->_mixer->appendStream(_bundleMusicTrack, buffer, final_size);
+	free(buffer);
+}
+
+void IMuseDigital::playBundleSound(const char *sound, PlayingSoundHandle *handle) {
+	byte *ptr = 0, *orig_ptr = 0;
+	byte *final;
+	bool result;
+
+	if (_scumm->_noDigitalSamples)
+		return;	
+
+	if (_scumm->_gameId == GID_CMI) {
+		if (_scumm->_features & GF_DEMO) {
+			result = _bundle->openVoiceFile("voice.bun", _scumm->getGameDataPath());
+		} else {
+			char voxfile[20];
+			sprintf(voxfile, "voxdisk%d.bun", _scumm->VAR(_scumm->VAR_CURRENTDISK));
+			if (_voiceDisk != _scumm->VAR(_scumm->VAR_CURRENTDISK))
+				_bundle->closeVoiceFile();
+
+			result = _bundle->openVoiceFile(voxfile, _scumm->getGameDataPath());
+
+			if (result == false) 
+				result = _bundle->openVoiceFile("voice.bun", _scumm->getGameDataPath());
+			_voiceDisk = (byte)_scumm->VAR(_scumm->VAR_CURRENTDISK);
+		}
+	} else if (_scumm->_gameId == GID_DIG)
+		result = _bundle->openVoiceFile("digvoice.bun", _scumm->getGameDataPath());
+	else
+		error("Don't know which bundle file to load");
+
+	if (!result)
+		return;
+
+	int32 rate = 22050, pan = 0, channels, output_size = 0;
+	int32 tag, size = -1, bits = 0;
+
+	if (_scumm->_gameId == GID_CMI) {
+		char name[20];
+		strcpy(name, sound);
+		if (!(_scumm->_features & GF_DEMO)) // CMI demo does not have .IMX for voice but does for music...
+			strcat(name, ".IMX");
+		output_size = _bundle->decompressVoiceSampleByName(name, &ptr);
+	} else {
+		output_size = _bundle->decompressVoiceSampleByName(sound, &ptr);
+	}
+
+	orig_ptr = ptr;
+	if (output_size == 0 || orig_ptr == 0) {
+		goto bail;
+	}
+
+	tag = READ_BE_UINT32(ptr); ptr += 4;
+	if (tag != MKID_BE('iMUS')) {
+		warning("Decompression of bundle sound failed");
+		goto bail;
+	}
+
+	ptr += 12;
+	while (tag != MKID_BE('DATA')) {
+		tag = READ_BE_UINT32(ptr); ptr += 4;
+		switch(tag) {
+		case MKID_BE('FRMT'):
+			ptr += 12;
+			bits = READ_BE_UINT32(ptr); ptr += 4;
+			rate = READ_BE_UINT32(ptr); ptr += 4;
+			channels = READ_BE_UINT32(ptr); ptr += 4;
+			break;
+		case MKID_BE('TEXT'):
+		case MKID_BE('REGN'):
+		case MKID_BE('STOP'):
+		case MKID_BE('JUMP'):
+		case MKID_BE('SYNC'):
+			size = READ_BE_UINT32(ptr); ptr += size + 4;
+			break;
+		case MKID_BE('DATA'):
+			size = READ_BE_UINT32(ptr); ptr += 4;
+			break;
+		default:
+			error("Unknown sound header %c%c%c%c",
+				(byte)(tag >> 24),
+				(byte)(tag >> 16),
+				(byte)(tag >> 8),
+				(byte)tag);
+		}
+	}
+
+	if (size < 0) {
+		warning("Decompression sound failed (no size field)");
+		goto bail;
+	}
+
+	final = (byte *)malloc(size);
+	memcpy(final, ptr, size);
+
+	if (_scumm->_actorToPrintStrFor != 0xFF && _scumm->_actorToPrintStrFor != 0) {
+		Actor *a = _scumm->derefActor(_scumm->_actorToPrintStrFor, "playBundleSound");
+		rate = (rate * a->talkFrequency) / 256;
+
+		// Adjust to fit the mixer's notion of panning.
+		if (pan != 64)
+			pan = 2 * a->talkPan - 127;
+	}
+	
+	// Stop any sound currently playing on the given handle
+	if (handle)
+		_scumm->_mixer->stopHandle(*handle);
+
+	if (bits == 8) {
+		_scumm->_mixer->playRaw(handle, final, size, rate, SoundMixer::FLAG_UNSIGNED | SoundMixer::FLAG_AUTOFREE, -1, 255, pan);
+	} else if (bits == 16) {
+		// FIXME: For some weird reasons, sometimes we get an odd size, even though
+		// the data is supposed to be in 16 bit format... that makes no sense...
+		size &= ~1;
+		_scumm->_mixer->playRaw(handle, final, size, rate, SoundMixer::FLAG_16BITS | SoundMixer::FLAG_AUTOFREE, -1, 255, pan);
+	} else {
+		warning("IMuseDigital::playBundleSound() to do more options to playRaw...");
+	}
+	
+bail:
+	free(orig_ptr);
+}
+
+
 
 } // End of namespace Scumm
 
