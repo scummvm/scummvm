@@ -319,7 +319,9 @@ void ScummEngine::CHARSET_1() {
 			if (_version <= 3) {
 				_charset->printChar(c);
 			} else {
-				if ((_gameId == GID_LOOM256) && !ConfMan.getBool("subtitles") && (_sound->pollCD())) {
+				if (!ConfMan.getBool("subtitles") && (_imuseDigital && _sound->isSoundRunning(kTalkSoundID))) {
+					// Special case for games using imuse digital.for sound
+				} else if ((_gameId == GID_LOOM256) && !ConfMan.getBool("subtitles") && (_sound->pollCD())) {
 					// Special case for loomcd, since it only uses CD audio.for sound
 				} else if (!ConfMan.getBool("subtitles") && (_haveMsg == 0xFE || _sound->_talkChannelHandle.isActive())) {
 					// Subtitles are turned off, and there is a voice version
