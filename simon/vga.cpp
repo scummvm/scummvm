@@ -1482,8 +1482,6 @@ void SimonState::vc_48() {
 		p += step;
 		y1 = READ_BE_UINT16_UNALIGNED(p) - y2;
 
-//    assert(READ_BE_UINT16_UNALIGNED(&p[1]) != 999);
-
 		vp[0] = y1 >> 1;
 		vp[1] = y1 - (y1 >> 1);
 

@@ -2301,7 +2301,6 @@ void SimonState::set_video_mode_internal(uint mode, uint vga_res_id) {
 	}
 
 	_lock_word &= ~0x20;
-	// XXX: fix
 
 	if (!(_game & GF_SIMON2)) {
 		if (_unk_pal_flag) {
@@ -2461,8 +2460,6 @@ void SimonState::vc_resume_thread(byte *code_ptr, uint16 cur_file, uint16 cur_sp
 
 void SimonState::add_vga_timer(uint num, byte *code_ptr, uint cur_sprite, uint cur_file) {
 	VgaTimerEntry *vte;
-
-//  assert( (uint)READ_BE_UINT16_UNALIGNED(&*(uint16*)code_ptr) <= 63);
 
 	_lock_word |= 1;
 
