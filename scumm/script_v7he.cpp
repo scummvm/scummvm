@@ -890,9 +890,7 @@ void ScummEngine_v70he::o70_readINI() {
 	type = pop();
 	switch (type) {
 	case 1: // number
-		if (!strcmp((char *)option, "ReadPagesAutomatically"))
-			push(1);
-		else if (!strcmp((char *)option, "NoPrinting"))
+		if (!strcmp((char *)option, "NoPrinting"))
 			push(1);
 		else
 			push(0);
