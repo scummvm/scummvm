@@ -3115,7 +3115,7 @@ void ScummEngine_v6::o6_unknownE1() {
 void ScummEngine_v6::o6_unknownE4() {
 	int arg = pop();
 	const byte *room = getResourceAddress(rtRoom, _roomResource);
-	const byte *boxd, *boxm;
+	const byte *boxd = NULL, *boxm = NULL;
 	int32 dboxSize, mboxSize;
 
 	ResourceIterator boxds(room, false);
