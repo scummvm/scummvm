@@ -58,10 +58,7 @@ static const char USAGE_STRING[] =
 	"\t                 supereagle,advmame2x, advmame3x,tv2x,dotmatrix)\n"
 	"\t-e<mode>       - set music engine (see README for details)\n"
 	"\t-a             - specify game is amiga version\n"
-	"\t-q<lang>       - specify language (en,de,fr,it,pt,es,jp,zh,kr,hb)\n"
-#ifndef DISABLE_SKY
-	"\t                 BASS also: (gb, se)\n"
-#endif
+	"\t-q<lang>       - specify language (en,de,fr,it,pt,es,jp,zh,kr,se,gb,hb)\n"
 	"\n"
 	"\t-c<num>        - use cdrom <num> for cd audio\n"
 	"\t-m<num>        - set music volume to <num> (0-255)\n"

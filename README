@@ -229,12 +229,6 @@ If you have the dual version of Simon the Sorcerer 1 or 2 on CD,
 then you will find the Windows version in the main directory of CD
 and the DOS Talkie version in the DOS directory of the CD.
 
-Filenames of saved games for Simon the Sorcerer 1 & 2 were changed in 0.3.0 to:
-  Simon the Sorcerer 1 uses simon1.00x (Where x is the slot number) 
-  Simon the Sorcerer 2 uses simon2.00x (Where x is the slot number) 
-So if you have any pre 0.3.0 save games you will need to change their filenames
-to use them.
-
 
 Reporting Bugs:
 ---------------
@@ -437,8 +431,8 @@ simon games.
 
     Simon:
         F1 - F3                - text speed, faster - slower
-        F10                    - shows all objects you can interact with
-	                         (simon2 only)
+        F10                    - shows all characters and objects you can interact with
+	                         (Simon the Sorcerer 2 only)
         - and +                - music volume, down/up
         m                      - music on/off
         s                      - sound effects on/off
