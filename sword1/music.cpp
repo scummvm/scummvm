@@ -234,11 +234,11 @@ Music::Music(OSystem *system, SoundMixer *pMixer) {
 	_system = system;
 	_mixer = pMixer;
 	_sampleRate = pMixer->getOutputRate();
-	_mixer->setupPremix(this);
 	_mutex = _system->createMutex();
 	_converter[0] = NULL;
 	_converter[1] = NULL;
 	_volumeL = _volumeR = 192;
+	_mixer->setupPremix(this);
 }
 
 Music::~Music() {
