@@ -108,6 +108,7 @@ struct State {
 
 
 class Command;
+class Debug;
 class Display;
 class Input;
 class Graphics;
@@ -150,6 +151,7 @@ public:
 	uint16 objMax(int room);
 	GraphicData *graphicData(int index);
 	ItemData *itemData(int index) const { return &_itemData[index]; }
+	uint16 itemDataCount() const { return _numItems; }
 
 	uint16 findBob(uint16 obj);
 	uint16 findFrame(uint16 obj);
@@ -264,6 +266,7 @@ public:
 	Walk *walk() const { return _walk; }
 	Display *display() const { return _display; }
 	Command *command() const { return _cmd; }
+	Resource *resource() const { return _resource; }
 
 	uint16 findObjectRoomNumber(uint16 zoneNum) const;
 	uint16 findObjectGlobalNumber(uint16 zoneNum) const;
@@ -434,6 +437,7 @@ protected:
 
 	Resource *_resource;
 	Graphics *_graphics;
+	Debug *_dbg;
 	Display *_display;
 	Input *_input;
 	Sound *_sound;
@@ -443,6 +447,7 @@ protected:
 	//! Verbs (in order) available in panel
 	static const VerbEnum PANEL_VERBS[];
 };
+
 
 } // End of namespace Queen
 

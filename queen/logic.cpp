@@ -24,6 +24,7 @@
 #include "queen/command.h"
 #include "queen/cutaway.h"
 #include "queen/defs.h"
+#include "queen/debug.h"
 #include "queen/display.h"
 #include "queen/graphics.h"
 #include "queen/input.h"
@@ -174,8 +175,8 @@ void State::alterDefaultVerb(uint16 *objState, Verb v) {
 Common::RandomSource Logic::randomizer;
 
 
-Logic::Logic(Resource *resource, Graphics *graphics, Display *theDisplay, Input *input, Sound *sound)
-	: _resource(resource), _graphics(graphics), _display(theDisplay), 
+Logic::Logic(Resource *theResource, Graphics *graphics, Display *theDisplay, Input *input, Sound *sound)
+	: _resource(theResource), _graphics(graphics), _display(theDisplay), 
 	_input(input), _sound(sound) {
 	_settings.talkSpeed = DEFAULT_TALK_SPEED;
 	_jas = _resource->loadFile("QUEEN.JAS", 20);
@@ -183,6 +184,7 @@ Logic::Logic(Resource *resource, Graphics *graphics, Display *theDisplay, Input 
 	_joe.scale = 100;
 	_walk = new Walk(this, _graphics);
 	_cmd = new Command(this, _graphics, _input, _walk);
+	_dbg = new Debug(_input, this, _graphics);
 	memset(_gameState, 0, sizeof(_gameState));
 	memset(_talkSelected, 0, sizeof(_talkSelected));
 	initialise();
@@ -192,6 +194,7 @@ Logic::~Logic() {
 	delete[] _jas;
 	delete _walk;
 	delete _cmd;
+	delete _dbg;
 }
 
 void Logic::initialise() {
@@ -2317,7 +2320,7 @@ void Logic::update() {
 	_display->palCustomScroll(_currentRoom);
 	BobSlot *joe = _graphics->bob(0);
 	_display->update(joe->active, joe->x, joe->y);
-	_input->checkKeys();
+	_dbg->update(_input->checkKeys());
 }
 
 void Logic::sceneStart(bool showMouseCursor) {

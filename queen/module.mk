@@ -3,6 +3,7 @@ MODULE := queen
 MODULE_OBJS = \
 	queen/command.o \
 	queen/cutaway.o \
+	queen/debug.o \
 	queen/display.o \
 	queen/graphics.o \
 	queen/input.o \

@@ -34,6 +34,8 @@ class Input {
 
 	public:
 
+		typedef void (*keyPressedCallback)(void *refCon, int key);
+
 		//! Adjust here to change delays!
 		enum {
 			DELAY_SHORT  =  10,
@@ -54,7 +56,7 @@ class Input {
 		void delay(uint amount);
 
 		//! convert input to verb
-		void checkKeys();
+		int checkKeys();
 
 		//! use instead of KEYVERB=0
 		void clearKeyVerb()  { _keyVerb = Verb(VERB_NONE); }
@@ -70,6 +72,7 @@ class Input {
 		bool talkQuit() const { return _talkQuit; }
 		void talkQuitReset()  { _talkQuit = false; }
 
+		bool fastMode() const { return _fastMode; }
 		void fastMode(bool fm)	{ _fastMode = fm; }
 
 		Verb keyVerb() const { return _keyVerb; }
@@ -79,6 +82,9 @@ class Input {
 
 		int mouseButton() const { return _mouseButton; }
 		void clearMouseButton() { _mouseButton = 0; }
+
+		bool waitForNumber(int &i, keyPressedCallback callback, void *refCon);
+		bool waitForCharacter(char &c);
 
 	private:
 
@@ -92,7 +98,9 @@ class Input {
 			KEY_DIGIT_3 = '3',
 			KEY_DIGIT_4 = '4',
 
-			KEY_ESCAPE = 27,
+			KEY_ESCAPE    = 27,
+			KEY_RETURN    = 13,
+			KEY_BACKSPACE = 8,
 			
 			KEY_F1 = 282
 		};
