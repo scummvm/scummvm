@@ -1025,7 +1025,7 @@ void ScummEngine_v7he::o7_unknownFB() {
 		g = pop();
 		h = pop();
 		i = pop();
-		debug(1,"o7_unknownFB case 245 stub (%d, %d, %d, %d, %d, %d, %d, %d, %d)", a, b, c, d, e, g, h, i);
+		debug(1,"o7_unknownFB case 246 stub (%d, %d, %d, %d, %d, %d, %d, %d, %d)", a, b, c, d, e, g, h, i);
 		break;
 	case 247:
 		a = pop();
@@ -1045,7 +1045,7 @@ void ScummEngine_v7he::o7_unknownFB() {
 		debug(1,"o7_unknownFB case 248 stub (%d, %d, %d, %d, %d, %d, %d, %d, %d)", a, b, c, d, e, g, h, i);
 		break;
 	default:
-		error("o7_unknownFB: default type %d", subOp);
+		error("o7_unknownFB: default case %d", subOp);
 	}
 }
 
