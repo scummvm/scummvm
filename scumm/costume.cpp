@@ -1326,21 +1326,18 @@ void CostumeRenderer::setPalette(byte *palette) {
 			memset(_palette, 8, 16);
 			_palette[12] = 0;
 		}
-		// FIXME: is this actually anything more than a guess (i.e. verified by disassmbly) ?
-		// A more "logical" thing would be if any 255 values in _palette are replaced
-		// by this value, at least that would closely parallel the actor palette usage in
-		// newer games (see below).
 		_palette[_loaded._ptr[8]] = _palette[0];
 	} else {
-		for (i = 0; i < _loaded._numColors; i++) {
-			if ((_vm->VAR(_vm->VAR_CURRENT_LIGHTS) & LIGHTMODE_actor_color) || (_vm->_features & GF_AFTER_V6)) {
+		if ((_vm->_features & GF_AFTER_V6) || (_vm->VAR(_vm->VAR_CURRENT_LIGHTS) & LIGHTMODE_actor_color)) {
+			for (i = 0; i < _loaded._numColors; i++) {
 				color = palette[i];
 				if (color == 255)
 					color = _loaded._ptr[8 + i];
-			} else {
-				color = (i == 12) ? 0 : 8;
+				_palette[i] = color;
 			}
-			_palette[i] = color;
+		} else {
+			memset(_palette, 8, _loaded._numColors);
+			_palette[12] = 0;
 		}
 	}
 }

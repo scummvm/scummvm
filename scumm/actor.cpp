@@ -780,32 +780,6 @@ void Scumm::showActors() {
 	}
 }
 
-void Scumm::stopTalk() {
-	int act;
-
-	_sound->stopTalkSound();
-
-	_haveMsg = 0;
-	_talkDelay = 0;
-
-	act = VAR(VAR_TALK_ACTOR);
-	if (act && act < 0x80) {
-		Actor *a = derefActorSafe(act, "stopTalk");
-		if ((a->isInCurrentRoom() && _useTalkAnims) || (_features & GF_NEW_COSTUMES)) {
-			a->startAnimActor(a->talkFrame2);
-			_useTalkAnims = false;
-		}
-		VAR(VAR_TALK_ACTOR) = 0xFF;
-	}
-	_keepText = false;
-	restoreCharsetBg();
-}
-
-void Scumm::clearMsgQueue() {
-	_messagePtr = (byte *)" ";
-	stopTalk();
-}
-
 void Scumm::walkActors() {
 	int i;
 	Actor *a;
@@ -1148,7 +1122,6 @@ int Scumm::getActorFromPos(int x, int y) {
 }
 
 void Scumm::actorTalk() {
-	int oldact;
 	Actor *a;
 
 	_msgPtrToAdd = _charsetBuffer;
@@ -1159,9 +1132,10 @@ void Scumm::actorTalk() {
 		if (!_keepText)
 			stopTalk();
 		VAR(VAR_TALK_ACTOR) = 0xFF;
-		oldact = 0;
 	} else {
+		int oldact;
 		a = derefActorSafe(_actorToPrintStrFor, "actorTalk");
+		assert(a);
 		if (!a->isInCurrentRoom() && !(_features & GF_NEW_COSTUMES)) {
 			oldact = 0xFF;
 		} else {
@@ -1174,9 +1148,9 @@ void Scumm::actorTalk() {
 			}
 			oldact = VAR(VAR_TALK_ACTOR);
 		}
+		if (oldact >= 0x80)
+			return;
 	}
-	if (oldact >= 0x80)
-		return;
 
 	if (VAR(VAR_TALK_ACTOR) > 0x7F) {
 		_charsetColor = (byte)_string[0].color;
@@ -1189,6 +1163,32 @@ void Scumm::actorTalk() {
 	_haveMsg = 0xFF;
 	VAR(VAR_HAVE_MSG) = 0xFF;
 	CHARSET_1();
+}
+
+void Scumm::stopTalk() {
+	int act;
+
+	_sound->stopTalkSound();
+
+	_haveMsg = 0;
+	_talkDelay = 0;
+
+	act = VAR(VAR_TALK_ACTOR);
+	if (act && act < 0x80) {
+		Actor *a = derefActorSafe(act, "stopTalk");
+		if ((a->isInCurrentRoom() && _useTalkAnims) || (_features & GF_NEW_COSTUMES)) {
+			a->startAnimActor(a->talkFrame2);
+			_useTalkAnims = false;
+		}
+		VAR(VAR_TALK_ACTOR) = 0xFF;
+	}
+	_keepText = false;
+	restoreCharsetBg();
+}
+
+void Scumm::clearMsgQueue() {
+	_messagePtr = (byte *)" ";
+	stopTalk();
 }
 
 void Actor::setActorCostume(int c) {
