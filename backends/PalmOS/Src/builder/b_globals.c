@@ -5,7 +5,8 @@
 //#define BUILD_COMMON
 //#define BUILD_SIMON
 //#define BUILD_SCUMM
-#define BUILD_QUEEN
+//#define BUILD_QUEEN
+#define BUILD_SWORD1
 
 #ifdef BUILD_COMMON
 #	define BUILD_RES	GBVARS_COMMON
@@ -22,6 +23,11 @@
 #elif defined(BUILD_QUEEN)
 #	define BUILD_RES	GBVARS_QUEEN
 #	define BUILD_NAME	"Queen"
+
+#elif defined(BUILD_SWORD1)
+#	define BUILD_RES	GBVARS_SWORD1
+#	define BUILD_NAME	"Sword1"
+
 #else
 #	define BUILD_RES	-1
 #	define BUILD_NAME
@@ -81,6 +87,9 @@ void buildAll() {
 	Queen_addGraphics();
 	Queen_addDisplay();
 	Queen_addMusicdata();
+
+#elif defined(BUILD_SWORD1)
+	Sword1_addStaticres();
 #endif
 
 	DmCloseDatabase(dbP[BUILD_RES]);

@@ -1,5 +1,11 @@
 #include "enum_globals.h"
 
+typedef unsigned char byte;
+typedef UInt32 uint;
+typedef Int32 int32;
+typedef UInt32 uint32;
+
+
 void writeRecord(MemPtr ptr, UInt32 size, UInt16 index, UInt16 dbID);
 void buildAll();
 
@@ -22,3 +28,5 @@ void Queen_addRestables();
 void Queen_addGraphics();
 void Queen_addDisplay();
 void Queen_addMusicdata();
+/////////////////////////////////
+void Sword1_addStaticres();

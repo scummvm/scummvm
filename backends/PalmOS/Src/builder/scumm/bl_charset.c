@@ -1,8 +1,6 @@
 #include <PalmOS.h>
 #include "b_globals.h"
 
-typedef unsigned char byte;
-
 static void addCharset_germanCharsetDataV2() {
 	byte germanCharsetDataV2[] = {
 		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,

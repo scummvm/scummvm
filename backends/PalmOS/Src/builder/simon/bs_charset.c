@@ -1,8 +1,6 @@
 #include <PalmOS.h>
 #include "b_globals.h"
 
-typedef unsigned char byte;
-
 static void addCharset_russian_video_font() {
 	byte russian_video_font[] = {
 		0, 0, 0, 0, 0, 0, 0, 0,

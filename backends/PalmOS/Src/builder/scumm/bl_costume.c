@@ -1,7 +1,6 @@
 #include <PalmOS.h>
 #include "b_globals.h"
 
-typedef unsigned char byte;
 
 static void addCostume_cost_scaleTable() {
 	byte cost_scaleTable[256] = {
