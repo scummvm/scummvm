@@ -70,6 +70,11 @@ void Screen::setScrolling(int16 offsetX, int16 offsetY) {
 		Logic::_scriptVars[SCROLL_FLAG] = 1;
 		_fullRefresh = true;
 	} else if (Logic::_scriptVars[SCROLL_FLAG] == 1) {
+		// Because parallax layers may be drawn on the old scroll offset, we
+		// want a full refresh not only when the scroll offset changes, but
+		// also on the frame where they become the same.
+		if (_oldScrollX != Logic::_scriptVars[SCROLL_OFFSET_X] || _oldScrollY != Logic::_scriptVars[SCROLL_OFFSET_Y])
+			_fullRefresh = true;
 		_oldScrollX = Logic::_scriptVars[SCROLL_OFFSET_X];
 		_oldScrollY = Logic::_scriptVars[SCROLL_OFFSET_Y];
 		int32 distX = inRange(-MAX_SCROLL_DISTANCE, _oldScrollX - offsetX, MAX_SCROLL_DISTANCE);
