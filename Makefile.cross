@@ -12,7 +12,7 @@ OBJS = main.o lab.o bitmap.o model.o resource.o material.o debug.o \
 DEPS = $(OBJS:.o=.d)
 
 residual: $(OBJS) lua/lib/liblua.a lua/lib/liblualib.a
-	$(CXX) $(LDFLAGS) -o $@ $(OBJS) $(LIBS)
+	$(CXX) $(LDFLAGS) -o residual.exe $(OBJS) $(LIBS)
 
 .cpp.o:
 	$(CXX) $(CXXFLAGS) -MMD -c $<
