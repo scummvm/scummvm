@@ -156,7 +156,10 @@ SCUMM
 * Make it possible to restart games properly
 * Add support for handling Kanji in FM Towns games (foreground is rendered on a
   second plane at 640x480), text uses Shift_JIS encoding
+  [implementation now that currently depends on font rom, not needing the rom
+   would be preferable]
 * Figure out how to extract resources from Apple II and Commodore 64 versions
+* Figure out how to extract resources from Turbografx/PC Engine version of Loom
 * Document and fix AKOS differences in Humongous Entertainment games
 * Support various newer Humongous Entertainment games
 * Implement file related opcode stubs needed for Humongous games
@@ -192,6 +195,7 @@ SCUMM
   Or constantly (well, at least whenever the camera moves) redraw the text.
   That would require buffering the text; maybe the blast text code could be
   reused for this...
+* Add support for NES version of Maniac Mansion
 
 Broken Sword 2
 ==============
@@ -241,6 +245,5 @@ Backends
 
 X11 backend
 ===========
-* Verify that it still actually works
 * Make it work with multiple bitdepths
 * Add frills used by SDL backend like graphic filters usage and CD audio
