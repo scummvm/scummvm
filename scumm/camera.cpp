@@ -367,13 +367,18 @@ void ScummEngine::actorFollowCamera(int act) {
 	if (!(_features & GF_NEW_CAMERA)) {
 		int old;
 
-		/* mi1 compatibilty */
+// Exactly why is this code needed for Monkey Island 1?
+// Seems to be the real cause of lock up at title screen
+// in Amiga and PC demo versions.
+/*
+		// MI1 compatibilty
 		if (act == 0) {
 			camera._mode = CM_NORMAL;
 			camera._follows = 0;
 			camera._movingToActor = false;
 			return;
 		}
+*/
 
 		old = camera._follows;
 		setCameraFollows(derefActor(act, "actorFollowCamera"));
