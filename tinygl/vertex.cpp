@@ -346,7 +346,7 @@ void glopVertex(GLContext * c, TGLParam * p)
     c->vertex_n = n;
 }
 
-void glopEnd(GLContext * c, TGLParam * param)
+void glopEnd(GLContext *c, TGLParam *)
 {
     assert(c->in_begin == 1);
 

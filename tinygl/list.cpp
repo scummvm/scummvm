@@ -150,13 +150,13 @@ void gl_add_op(TGLParam *p)
 }
 
 /* this opcode is never called directly */
-void glopEndList(GLContext *c,TGLParam *p)
+void glopEndList(GLContext *,TGLParam *)
 {
   assert(0);
 }
 
 /* this opcode is never called directly */
-void glopNextBuffer(GLContext *c,TGLParam *p)
+void glopNextBuffer(GLContext *,TGLParam *)
 {
   assert(0);
 }

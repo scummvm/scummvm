@@ -50,4 +50,4 @@ V4 gl_V4_New(float x,float y,float z,float w);
 
 int gl_Matrix_Inv(float *r,float *m,int n);
 
-#endif  __ZMATH__
+#endif

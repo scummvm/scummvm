@@ -36,7 +36,7 @@ void glopMaterial(GLContext *c,TGLParam *p)
     break;
   case TGL_SHININESS:
     m->shininess=v[0];
-    m->shininess_i = (v[0]/128.0f)*SPECULAR_BUFFER_RESOLUTION;
+    m->shininess_i = (int)(v[0]/128.0f)*SPECULAR_BUFFER_RESOLUTION;
     break;
   case TGL_AMBIENT_AND_DIFFUSE:
     for(i=0;i<4;i++)

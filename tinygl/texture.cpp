@@ -181,7 +181,7 @@ void glopTexImage2D(GLContext *c,TGLParam *p)
 
 
 /* TODO: not all tests are done */
-void glopTexEnv(GLContext *c,TGLParam *p)
+void glopTexEnv(GLContext *,TGLParam *p)
 {
   int target=p[1].i;
   int pname=p[2].i;
@@ -198,7 +198,7 @@ void glopTexEnv(GLContext *c,TGLParam *p)
 }
 
 /* TODO: not all tests are done */
-void glopTexParameter(GLContext *c,TGLParam *p)
+void glopTexParameter(GLContext *,TGLParam *p)
 {
   int target=p[1].i;
   int pname=p[2].i;
@@ -217,7 +217,7 @@ void glopTexParameter(GLContext *c,TGLParam *p)
   }
 }
 
-void glopPixelStore(GLContext *c,TGLParam *p)
+void glopPixelStore(GLContext *,TGLParam *p)
 {
   int pname=p[1].i;
   int param=p[2].i;

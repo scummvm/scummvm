@@ -50,7 +50,7 @@ void glSelectBuffer(int size,unsigned int *buf)
 }
 
 
-void glopInitNames(GLContext *c,TGLParam *p)
+void glopInitNames(GLContext *c,TGLParam *)
 {
   if (c->render_mode == TGL_SELECT) {
     c->name_stack_size=0;
@@ -67,7 +67,7 @@ void glopPushName(GLContext *c,TGLParam *p)
   }
 }
 
-void glopPopName(GLContext *c,TGLParam *p)
+void glopPopName(GLContext *c,TGLParam *)
 {
   if (c->render_mode == TGL_SELECT) {
     assert(c->name_stack_size>0);

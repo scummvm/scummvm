@@ -129,14 +129,9 @@ void glopPolygonMode(GLContext *c,TGLParam *p)
   }
 }
 
-void glopHint(GLContext *c,TGLParam *p)
+void glopHint(GLContext *,TGLParam *)
 {
-#if 0
-  int target=p[1].i;
-  int mode=p[2].i;
-
   /* do nothing */
-#endif
 }
 
 void 

@@ -54,7 +54,7 @@ void glopLoadMatrix(GLContext *c,TGLParam *p)
   gl_matrix_update(c);
 }
 
-void glopLoadIdentity(GLContext *c,TGLParam *p)
+void glopLoadIdentity(GLContext *c,TGLParam *)
 {
 
   gl_M4_Id(c->matrix_stack_ptr[c->matrix_mode]);
@@ -84,7 +84,7 @@ void glopMultMatrix(GLContext *c,TGLParam *p)
 }
 
 
-void glopPushMatrix(GLContext *c,TGLParam *p)
+void glopPushMatrix(GLContext *c,TGLParam *)
 {
   int n=c->matrix_mode;
   M4 *m;
@@ -99,7 +99,7 @@ void glopPushMatrix(GLContext *c,TGLParam *p)
   gl_matrix_update(c);
 }
 
-void glopPopMatrix(GLContext *c,TGLParam *p)
+void glopPopMatrix(GLContext *c,TGLParam *)
 {
   int n=c->matrix_mode;
 
