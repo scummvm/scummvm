@@ -764,9 +764,6 @@ void Insane::smush_setToFinish(void) {
 
 // smlayer_stopSound
 void Insane::smlayer_stopSound(int idx) {
-	if ((_vm->_features & GF_DEMO) && (_vm->_features & GF_PC))
-		return;
-
 	_vm->_imuseDigital->stopSound(readArray(idx));
 }
 

@@ -235,13 +235,18 @@ void Insane::stopSceneSounds(int sceneId) {
 		_actor[1].defunct = 0;
 		_actor[1].scenePropSubIdx = 0;
 		_actor[1].field_54 = 0;
-		smlayer_stopSound(89);
-		smlayer_stopSound(90);
-		smlayer_stopSound(91);
-		smlayer_stopSound(92);
-		smlayer_stopSound(93);
-		smlayer_stopSound(95);
-		smlayer_stopSound(87);
+		if ((_vm->_features & GF_DEMO) && (_vm->_features & GF_PC)) {
+			smlayer_stopSound(59);
+			smlayer_stopSound(63);
+		} else {
+			smlayer_stopSound(89);
+			smlayer_stopSound(90);
+			smlayer_stopSound(91);
+			smlayer_stopSound(92);
+			smlayer_stopSound(93);
+			smlayer_stopSound(95);
+			smlayer_stopSound(87);
+		}
 		break;
 	case 4:
 	case 5:
