@@ -1256,6 +1256,7 @@ OSystem_PALMOS::OSystem_PALMOS() {
 	_paletteDirtyStart = 0;
 	_paletteDirtyEnd = 0;
 	
+	memset(&_sound, 0, sizeof(SoundDataType));
 	memset(_thread, 0, sizeof(_thread));
 	_threadID = 0;
 	_threadCounter = 0;
