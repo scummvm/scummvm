@@ -170,7 +170,7 @@ Bitmap::~Bitmap() {
   }
 }
 
-#define GET_BIT bit = bitstr_value & 1; \
+#define GET_BIT do { bit = bitstr_value & 1; \
   bitstr_len--; \
   bitstr_value >>= 1; \
   if (bitstr_len == 0) { \
@@ -178,7 +178,7 @@ Bitmap::~Bitmap() {
     bitstr_len = 16; \
     compressed += 2; \
   } \
-  do {} while (0)
+  } while (0)
 
 static void decompress_codec3(const char *compressed, char *result) {
   int bitstr_value = READ_LE_UINT16(compressed);
