@@ -45,9 +45,9 @@ void TextObject::draw() {
   glRasterPos2i(x_, y_);
   glListBase(Engine::instance()->font);
   glCallLists(
-    strlen(rindex(localString, '/')) - 1, 
+    strlen(strrchr(localString, '/')) - 1, 
     GL_UNSIGNED_BYTE,
-    rindex(localString, '/') + 1
+    strrchr(localString, '/') + 1
   );
 
   glMatrixMode( GL_PROJECTION );

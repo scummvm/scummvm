@@ -4,7 +4,7 @@ SDL_LIBS=-L/usr/i586-mingw32msvc/lib -lSDL
 
 CXXFLAGS = -W -Wall -Ilua/include $(SDL_CFLAGS) # -O2 
 LDFLAGS = -W -Wall # -O2 
-LIBS = -Llua/lib -llua -llualib -lmingw32 -lopengl32 -lglu32 $(SDL_LIBS) 
+LIBS = -Llua/lib -llua -llualib -lmingw32 -lopengl32 -lglu32 -lgdi32 $(SDL_LIBS) 
 
 OBJS = main.o lab.o bitmap.o model.o resource.o material.o debug.o \
         textsplit.o lua.o registry.o localize.o scene.o engine.o actor.o \

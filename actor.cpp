@@ -49,7 +49,6 @@ void Actor::walkTo(Vector3d p) {
   // For now, this is just the ignoring-boxes version (which afaict
   // isn't even in the original).  This will eventually need a
   // following-boxes version also.
-  printf("walkto\n");
   if (p == pos_)
     walking_ = false;
   else {

@@ -35,6 +35,7 @@
  #include <GL/glx.h>
  #include <X11/Xlib.h>
 #else
+ #include <SDL_syswm.h>
  #include <windows.h>
 #endif
 
@@ -128,7 +129,21 @@ int main(int argc, char *argv[]) {
   // FIXME: Hacky temporary font renderer code
   Engine::instance()->font = glGenLists(256);
   #ifdef WIN32
-	#warning FIXME: Do Win32 code
+  {
+	#warning entering w32 code
+	HDC   hDC;
+	HFONT font;
+	SDL_SysWMinfo wmi;
+        SDL_VERSION(&wmi.version);
+	SDL_GetWMInfo(&wmi);
+
+	hDC = GetDC(wmi.window);
+	font = CreateFont(0, 0, 0, 0, FW_NORMAL, FALSE, FALSE, FALSE, ANSI_CHARSET, 
+			  OUT_TT_PRECIS, CLIP_DEFAULT_PRECIS, 0	,
+			  FF_DONTCARE|DEFAULT_PITCH, "Courier New");
+	SelectObject(hDC, font);
+	wglUseFontBitmaps(hDC, 0, 256, Engine::instance()->font);
+  }
   #else
   {
         Display *dpy = XOpenDisplay(NULL);
