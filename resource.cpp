@@ -272,13 +272,14 @@ void Scumm::readIndexFile() {
 				}
 			}
 			fileRead(_fileHandle, _classData, num * sizeof(uint32));
-			
-/* #if defined(SCUMM_BIG_ENDIAN)
-			for (i=0; i<num; i++) {
+
+			/* This code should be here. Otherwise the flags will be swapped for big endian computers.
+			 * If it doesn't work with this code, something else is wrong */ 			
+#if defined(SCUMM_BIG_ENDIAN)
+			for (i=0; i!=num; i++) {
 				_classData[i] = FROM_LE_32(_classData[i]);
 			}
-#endif */ // ?? FIXME Remove according to Morphos diff.
-
+#endif
 			break;
 
 		case MKID('RNAM'):
@@ -399,6 +400,8 @@ void Scumm::loadCharset(int no) {
 	byte *ptr;
 	
 	debug(9, "loadCharset(%d)",no);
+
+
 
 	memset(_charsetData, 0, sizeof(_charsetData));
                 

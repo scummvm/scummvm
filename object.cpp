@@ -29,14 +29,10 @@ bool Scumm::getClass(int obj, int cls) {
 	checkRange(32,1,cls,"Class %d out of range in getClass");
 
 	if (_features & GF_SMALL_HEADER) {
-		byte *oldClass = (byte*)&_classData[obj];
 		if (cls == 32)	// CLASS_TOUCHABLE
 			cls = 23;
-
-		return (oldClass[cls/8] & bit_table[cls&0x07]) != 0;
-	} else {		
-		return (_classData[obj] & (1<<(cls-1))) != 0;	
 	}
+	return (_classData[obj] & (1<<(cls-1))) != 0;	
 }
 
 void Scumm::putClass(int obj, int cls, bool set) {
@@ -45,21 +41,13 @@ void Scumm::putClass(int obj, int cls, bool set) {
 	checkRange(32,1,cls,"Class %d out of range in getClass");
 
 	if (_features & GF_SMALL_HEADER) {
-		byte *oldClass = (byte*)&_classData[obj];
 		if (cls == 32)	// CLASS_TOUCHABLE
 			cls = 23;
-
-		if (set)
-			oldClass[cls/8] |= bit_table[cls&0x07];
-		else
-			oldClass[cls/8] &= bit_table[cls&0x07]^0xff;
-
-	} else {		
-		if (set)
-			_classData[obj] |= (1<<(cls-1));
-		else
-			_classData[obj] &= ~(1<<(cls-1));
 	}
+	if (set)
+		_classData[obj] |= (1<<(cls-1));
+	else
+		_classData[obj] &= ~(1<<(cls-1));
 }
 
 int Scumm::getOwner(int obj) {

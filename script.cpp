@@ -39,10 +39,7 @@ void Scumm::runScript(int script, int a, int b, int16 *lvarptr) {
 	
 	if (script < _numGlobalScripts) {
 		scriptPtr = getResourceAddress(rtScript, script);
-                if(_features & GF_SMALL_HEADER)
-                        scriptOffs = 6;
-                else
-                        scriptOffs = 8;
+		scriptOffs = _resourceHeaderSize;
 		scriptType = WIO_GLOBAL;
 	} else {
 		scriptOffs = _localScriptList[script - _numGlobalScripts];

@@ -465,7 +465,7 @@ AdjustBoxResult Scumm::adjustXYToBeInBox(Actor *a, int x, int y, int pathfrom) {
 	AdjustBoxResult abr,tmp;
 	uint threshold;
 	uint best;
-	int box, iterations = 0;	/* Use inerations for those odd times we get stuck in the loop */
+	int box, iterations = 0;	/* Use iterations for those odd times we get stuck in the loop */
 	int firstValidBox,j;
 	byte flags, b;
 	
@@ -478,12 +478,12 @@ AdjustBoxResult Scumm::adjustXYToBeInBox(Actor *a, int x, int y, int pathfrom) {
 	abr.y = y;
 	abr.dist = 0;
 
+	if ((_features & GF_SMALL_HEADER) && getClass(a->number, 21))
+		return abr;
+	
 	if (a && a->ignoreBoxes==0) {
 		threshold = 30;
 
-		if ((_features & GF_SMALL_HEADER) && (_classData[a->number] & 0x200000))
-			return abr;
-		
 		while(1) {
 			iterations++;
       if (iterations > 1000) return abr;   /* Safety net */

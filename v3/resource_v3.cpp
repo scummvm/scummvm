@@ -29,7 +29,6 @@ void Scumm_v3::readIndexFile() {
 	uint32 itemsize;
 	int numblock = 0;
 	int num, i;
-	byte* _oldClass; 
 
 	debug(9, "readIndexFile()");
 
@@ -121,21 +120,17 @@ void Scumm_v3::readIndexFile() {
                case 0x4F30:
                        num = fileReadWordLE();
                        assert(num == _numGlobalObjects);
-                       for (i=0; i<num; i++) { /* not too sure about all that */
-                                _oldClass=(byte*)&_classData[i];
-                                _oldClass[0]=fileReadByte();
-                                _oldClass[1]=fileReadByte();
-                                _oldClass[2]=fileReadByte();
-                                _objectOwnerTable[i] = fileReadByte();
-                            //   _objectStateTable[i] = fileReadByte();
-                               _objectOwnerTable[i] &= OF_OWNER_MASK;
+                       for (i=0; i!=num; i++) {
+                                uint32 bits = fileReadByte();
+																byte tmp;
+																bits |= fileReadByte() << 8;
+																bits |= fileReadByte() << 16;
+																_classData[i] = bits;
+                                tmp = fileReadByte();
+																_objectOwnerTable[i] = tmp & OF_OWNER_MASK;
+																_objectStateTable[i] = tmp >> OF_STATE_SHL;
                        }
 
-/*#if defined(SCUMM_BIG_ENDIAN)
-                       for (i=0; i<num; i++) {
-                               _classData[i] = FROM_LE_32(_classData[i]);
-                       }
-#endif*/
                        break;
 
                default:
@@ -148,7 +143,8 @@ void Scumm_v3::readIndexFile() {
 }
 
 void Scumm_v3::loadCharset(int no){
-	uint32 size;		memset(_charsetData, 0, sizeof(_charsetData));
+	uint32 size;		
+	memset(_charsetData, 0, sizeof(_charsetData));
 
         checkRange(4 ,0 ,no , "Loading illegal charset %d");
         openRoom(-1);
