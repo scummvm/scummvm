@@ -511,10 +511,26 @@ byte *SimonEngine::vc_10_depack_swap(byte *src, uint w, uint h) {
 	return _video_buf_1;
 }
 
-byte *vc_10_no_depack_swap(byte *src) {
-	// TODO Add vc_10_no_depack_swap support, should be very similar to 
-	// vc_10_depack_swap but without the depacking
-	return NULL;
+byte *SimonEngine::vc_10_no_depack_swap(byte *src, uint w, uint h) {
+	if (src == _vc_10_base_ptr_old)
+		return _video_buf_1;
+
+	_vc_10_base_ptr_old = src;
+	h *= 8;
+	byte *dst = _video_buf_1 + h - 1;
+
+	// loc_40F57F
+	uint h_cur = h;
+	do {
+		do {
+			*dst = *src << 4;
+			(*dst--) |= (*src++) >> 4;
+		} while (--h_cur != 0);
+		h_cur = h;
+		dst += h * 2;
+	} while (--w != 0);
+
+	return _video_buf_1;
 }
 
 /* must not be const */
@@ -656,10 +672,9 @@ void SimonEngine::vc_10_draw() {
 	if (state.e & 0x10) {
 		state.depack_src = vc_10_depack_swap(state.depack_src, width, height);
 	} else if (state.e & 1) {
-		// FIXME: vc_10_no_depack_swap should be called but is currently not supported
-		//state.depack_src = vc_10_no_depack_swap(state.depack_src);
-		debug(5,"vc_10_no_depack_swap unimpl");
-		state.depack_src = vc_10_depack_swap(state.depack_src, width, height);
+		state.depack_src = vc_10_no_depack_swap(state.depack_src, width, height);
+//		debug(5,"vc_10_no_depack_swap unimpl");
+//		state.depack_src = vc_10_depack_swap(state.depack_src, width, height);
 	}
 
 	vlut = &_video_windows[_video_palette_mode * 4];

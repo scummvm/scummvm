@@ -438,6 +438,7 @@ SimonEngine::SimonEngine(GameDetector *detector, OSystem *syst)
 	_sdl_buf = 0;
 	_sdl_buf_attached = 0;
 
+	_vc_10_base_ptr_old = 0;
 
 	// Setup midi driver
 	if (!driver)

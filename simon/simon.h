@@ -350,6 +350,7 @@ protected:
 
 	RandomSource _rnd;
 
+	byte *_vc_10_base_ptr_old;
 
 public:
 	SimonEngine(GameDetector *detector, OSystem *syst);
@@ -752,6 +753,7 @@ protected:
 	void shutdown();
 
 	byte *vc_10_depack_swap(byte *src, uint w, uint h);
+	byte *vc_10_no_depack_swap(byte *src, uint w, uint h);
 
 	Item *getNextItemPtrStrange();
 
