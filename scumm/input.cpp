@@ -144,6 +144,12 @@ void ScummEngine::parseEvents() {
 #if defined(_WIN32_WCE) || defined(__PALM_OS__)
 			_mouse.x = event.mouse.x;
 			_mouse.y = event.mouse.y;
+
+			if (_renderMode == Common::kRenderHercA || _renderMode == Common::kRenderHercG) {
+				_mouse.x -= (Common::kHercW - _screenWidth * 2) / 2;
+				_mouse.x /= 2;
+				_mouse.y = _mouse.y * 4 / 7;
+			}
 #endif
 			break;
 
@@ -152,6 +158,12 @@ void ScummEngine::parseEvents() {
 #if defined(_WIN32_WCE) || defined(__PALM_OS__)
 			_mouse.x = event.mouse.x;
 			_mouse.y = event.mouse.y;
+
+			if (_renderMode == Common::kRenderHercA || _renderMode == Common::kRenderHercG) {
+				_mouse.x -= (Common::kHercW - _screenWidth * 2) / 2;
+				_mouse.x /= 2;
+				_mouse.y = _mouse.y * 4 / 7;
+			}
 #endif
 			break;
 
