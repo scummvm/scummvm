@@ -333,6 +333,10 @@ SAGA
  * Structure INTERFACE_DESC should be put into GAME_DISPLAYINFO, as there are
    expected big differences between IHNM and ITE.
  * Optimize screen output. Now we blit whole screen for each frame.
+ * When using the original XMIDI music resources, some songs play at the wrong
+   speed. The worst example I've heard of this is the "Elk Fanfare" during the
+   intro. My guess is that it's one of those meta events we're not handling
+   that's supposed to set the tempo.
 
 - plans -
  * Implement unimplemented/proofread unchecked opcodes
