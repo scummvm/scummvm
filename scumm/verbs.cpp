@@ -488,8 +488,7 @@ void ScummEngine::drawVerbBitmap(int verb, int x, int y) {
 	}
 	for (i = 0; i < imgw; i++) {
 		tmp = xstrip + i;
-		if (tmp < gdi._numStrips)
-			gdi.drawBitmap(imptr, vs, tmp, ydiff, imgw * 8, imgh * 8, i, 1, Gdi::dbAllowMaskOr);
+		gdi.drawBitmap(imptr, vs, tmp, ydiff, imgw * 8, imgh * 8, i, 1, Gdi::dbAllowMaskOr);
 	}
 
 	vst = &_verbs[verb];
