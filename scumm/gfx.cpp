@@ -975,7 +975,7 @@ void Gdi::drawBitmap(byte *ptr, VirtScreen *vs, int x, int y, int h,
 					else
 						decompressMaskImg();
 				} else {
-					if (!(_useOrDecompress && flag & dbAllowMaskOr));
+					if (!(_useOrDecompress && flag & dbAllowMaskOr))
 						for (int h = 0; h < _numLinesToProcess; h++)
 							_mask_ptr_dest[h * NUM_STRIPS] = 0;
 					/* needs better abstraction, FIXME */
