@@ -42,6 +42,16 @@ static const OSystem::GraphicsMode s_supportedGraphicsModes[] = {
 	{0, 0, 0}
 };
 
+// Table of relative scalers magnitudes
+// [definedScale-1][_scaleFactor-1]
+static ScalerProc *scalersMagn[3][3] = {
+	{ Normal1x, AdvMame2x, AdvMame3x },
+	{ Normal1x, Normal1x, Normal1o5x },
+	{ Normal1x, Normal1x, Normal1x }
+};
+
+static int cursorStretch200To240(uint8 *buf, uint32 pitch, int width, int height, int srcX, int srcY, int origSrcY);
+
 const OSystem::GraphicsMode *OSystem_SDL::getSupportedGraphicsModes() const {
 	return s_supportedGraphicsModes;
 }
@@ -367,6 +377,9 @@ void OSystem_SDL::hotswapGFXMode() {
 	SDL_FreeSurface(old_screen);
 	SDL_FreeSurface(old_tmpscreen);
 
+	// Update cursor to new scale
+	blitCursor();
+
 	// Blit everything to the screen
 	internUpdateScreen();
 	
@@ -399,9 +412,6 @@ void OSystem_SDL::internUpdateScreen() {
 		_forceFull = true;
 	}
 
-	// Make sure the mouse is drawn, if it should be drawn.
-	drawMouse();
-	
 	// Check whether the palette was changed in the meantime and update the
 	// screen surface accordingly. 
 	if (_paletteDirtyEnd != 0) {
@@ -433,6 +443,8 @@ void OSystem_SDL::internUpdateScreen() {
 		}
 	}
 #endif
+
+	undrawMouse();
 
 	// Force a full redraw if requested
 	if (_forceFull) {
@@ -522,14 +534,20 @@ void OSystem_SDL::internUpdateScreen() {
 			_dirtyRectList[0].h = effectiveScreenHeight();
 		}
 
+		drawMouse();
+
 #ifdef USE_OSD
 		if (_osdAlpha != SDL_ALPHA_TRANSPARENT) {
 			SDL_BlitSurface(_osdSurface, 0, _hwscreen, 0);
 		}
 #endif
-
+		
 		// Finally, blit all our changes to the screen
 		SDL_UpdateRects(_hwscreen, _numDirtyRects, _dirtyRectList);
+	} else {
+		drawMouse();
+		if (_numDirtyRects)
+			SDL_UpdateRects(_hwscreen, _numDirtyRects, _dirtyRectList);
 	}
 
 	_numDirtyRects = 0;
@@ -562,8 +580,6 @@ void OSystem_SDL::setFullscreenMode(bool enable) {
 		assert(_hwscreen != 0);
 		_fullscreen ^= true;
 		
-		undrawMouse();
-
 #if defined(MACOSX) && !SDL_VERSION_ATLEAST(1, 2, 6)
 		// On OS X, SDL_WM_ToggleFullScreen is currently not implemented. Worse,
 		// before SDL 1.2.6 it always returned -1 (which would indicate a
@@ -672,9 +688,6 @@ void OSystem_SDL::copyRectToScreen(const byte *src, int pitch, int x, int y, int
 		addDirtyRect(x, y, w, h);
 	}
 
-	/* FIXME: undraw mouse only if the draw rect intersects with the mouse rect */
-	undrawMouse();
-
 	// Try to lock the screen surface
 	if (SDL_LockSurface(_screen) == -1)
 		error("SDL_LockSurface failed: %s", SDL_GetError());
@@ -696,9 +709,18 @@ void OSystem_SDL::copyRectToScreen(const byte *src, int pitch, int x, int y, int
 }
 
 
-void OSystem_SDL::addDirtyRect(int x, int y, int w, int h) {
+void OSystem_SDL::addDirtyRect(int x, int y, int w, int h, bool mouseRect) {
 	if (_forceFull)
 		return;
+
+ 	if (mouseRect) {
+ 		SDL_Rect *r = &_dirtyRectList[_numDirtyRects++];
+ 		r->x = x;
+ 		r->y = y;
+ 		r->w = w;
+ 		r->h = h;
+ 		return;
+ 	}
 
 	if (_numDirtyRects == NUM_DIRTY_RECT)
 		_forceFull = true;
@@ -846,6 +868,27 @@ void OSystem_SDL::setPalette(const byte *colors, uint start, uint num) {
 
 	if (start + num > _paletteDirtyEnd)
 		_paletteDirtyEnd = start + num;
+
+	// Some games blink cursors with palette
+	if (!_overlayVisible && !_cursorHasOwnPalette)
+		blitCursor();
+}
+
+void OSystem_SDL::setCursorPalette(const byte *colors, uint start, uint num) {
+	const byte *b = colors;
+	uint i;
+	SDL_Color *base = _cursorPalette + start;
+	for (i = 0; i < num; i++) {
+		base[i].r = b[0];
+		base[i].g = b[1];
+		base[i].b = b[2];
+		b += 4;
+	}
+
+	_cursorHasOwnPalette = true;
+
+	if (!_overlayVisible)
+		blitCursor();
 }
 
 void OSystem_SDL::setShakePos(int shake_pos) {
@@ -862,18 +905,12 @@ void OSystem_SDL::setShakePos(int shake_pos) {
 void OSystem_SDL::showOverlay() {
 	assert (_transactionMode == kTransactionNone);
 
-	// hide the mouse
-	undrawMouse();
-
 	_overlayVisible = true;
 	clearOverlay();
 }
 
 void OSystem_SDL::hideOverlay() {
 	assert (_transactionMode == kTransactionNone);
-
-	// hide the mouse
-	undrawMouse();
 
 	_overlayVisible = false;
 	_forceFull = true;
@@ -887,9 +924,6 @@ void OSystem_SDL::clearOverlay() {
 	
 	Common::StackLock lock(_graphicsMutex);	// Lock the mutex until this function ends
 	
-	// hide the mouse
-	undrawMouse();
-
 	// Clear the overlay by making the game screen "look through" everywhere.
 	SDL_Rect src, dst;
 	src.x = src.y = 0;
@@ -910,9 +944,6 @@ void OSystem_SDL::grabOverlay(OverlayColor *buf, int pitch) {
 
 	if (_tmpscreen == NULL)
 		return;
-
-	// hide the mouse
-	undrawMouse();
 
 	if (SDL_LockSurface(_tmpscreen) == -1)
 		error("SDL_LockSurface failed: %s", SDL_GetError());
@@ -964,9 +995,6 @@ void OSystem_SDL::copyRectToOverlay(const OverlayColor *buf, int pitch, int x, i
 	_cksumValid = false;
 	addDirtyRect(x, y, w, h);
 
-	/* FIXME: undraw mouse only if the draw rect intersects with the mouse rect */
-	undrawMouse();
-
 	if (SDL_LockSurface(_tmpscreen) == -1)
 		error("SDL_LockSurface failed: %s", SDL_GetError());
 
@@ -1000,17 +1028,13 @@ bool OSystem_SDL::showMouse(bool visible) {
 	bool last = _mouseVisible;
 	_mouseVisible = visible;
 
-	if (visible)
-		drawMouse();
-	else
-		undrawMouse();
+	updateScreen();
 
 	return last;
 }
 
 void OSystem_SDL::setMousePos(int x, int y) {
 	if (x != _mouseCurState.x || y != _mouseCurState.y) {
-		undrawMouse();
 		_mouseCurState.x = x;
 		_mouseCurState.y = y;
 		updateScreen();
@@ -1032,24 +1056,154 @@ void OSystem_SDL::warpMouse(int x, int y) {
 	}
 }
 	
-void OSystem_SDL::setMouseCursor(const byte *buf, uint w, uint h, int hotspot_x, int hotspot_y, byte keycolor) {
-
-	undrawMouse();
-
-	assert(w <= MAX_MOUSE_W);
-	assert(h <= MAX_MOUSE_H);
-	_mouseCurState.w = w;
-	_mouseCurState.h = h;
-
+void OSystem_SDL::setMouseCursor(const byte *buf, uint w, uint h, int hotspot_x, int hotspot_y, byte keycolor, int cursorTargetScale) {
 	_mouseHotspotX = hotspot_x;
 	_mouseHotspotY = hotspot_y;
 
 	_mouseKeyColor = keycolor;
 
+ 	_cursorTargetScale = cursorTargetScale;
+ 
+ 	if (_mouseCurState.w != (int)w || _mouseCurState.h != (int)h) {
+ 		_mouseCurState.w = w;
+ 		_mouseCurState.h = h;
+ 
+ 		if (_mouseOrigSurface)
+ 			SDL_FreeSurface(_mouseOrigSurface); 
+ 
+		// Allocate bigger surface because AdvMame2x adds black pixel at [0,0]
+ 		_mouseOrigSurface = SDL_CreateRGBSurface(SDL_SWSURFACE | SDL_RLEACCEL | SDL_SRCCOLORKEY | SDL_SRCALPHA,
+ 						_mouseCurState.w + 2,
+ 						_mouseCurState.h + 2,
+ 						16,
+ 						_hwscreen->format->Rmask,
+ 						_hwscreen->format->Gmask,
+ 						_hwscreen->format->Bmask,
+ 						_hwscreen->format->Amask);
+ 
+ 		if (_mouseOrigSurface == NULL)
+ 			error("allocating _mouseOrigSurface failed");
+ 		SDL_SetColorKey(_mouseOrigSurface, SDL_RLEACCEL | SDL_SRCCOLORKEY | SDL_SRCALPHA, kMouseColorKey);
+ 	}
+ 
 	free(_mouseData);
 
 	_mouseData = (byte *)malloc(w * h);
 	memcpy(_mouseData, buf, w * h);
+	blitCursor();
+}
+
+void OSystem_SDL::blitCursor() {
+	byte *dstPtr;
+	const byte *srcPtr = _mouseData;
+	byte color;
+	int w, h;
+  
+	if (!_mouseOrigSurface)
+ 		return;
+  
+	w = _mouseCurState.w;
+	h = _mouseCurState.h;
+  
+	SDL_LockSurface(_mouseOrigSurface);
+
+	// Make whole surface transparent
+	for (int i = 0; i < h + 2; i++) {
+		dstPtr = (byte *)_mouseOrigSurface->pixels + _mouseOrigSurface->pitch * i;
+		for (int j = 0; j < w + 2; j++) {
+			*(uint16 *)dstPtr = kMouseColorKey;
+			dstPtr += 2;
+		}
+	}
+
+	// Draw from [1,1] since AdvMame2x adds artefact at 0,0
+	dstPtr = (byte *)_mouseOrigSurface->pixels + _mouseOrigSurface->pitch + 2;
+
+	for (int i = 0; i < h; i++) {
+		for (int j = 0; j < w; j++) {
+			color = *srcPtr;
+			if (color != _mouseKeyColor) {	// transparent, don't draw
+				if (_cursorHasOwnPalette && !_overlayVisible)
+					*(uint16 *)dstPtr = SDL_MapRGB(_mouseOrigSurface->format, 
+								   _cursorPalette[color].r, _cursorPalette[color].g, 
+															   _cursorPalette[color].b);
+				else
+					*(uint16 *)dstPtr = SDL_MapRGB(_mouseOrigSurface->format, 
+								   _currentPalette[color].r, _currentPalette[color].g,
+												   				_currentPalette[color].b);
+			}
+			dstPtr += 2;
+			srcPtr++;
+		}
+		dstPtr += _mouseOrigSurface->pitch - w * 2;
+  	}
+
+	int hW, hH, hH1;
+
+	if (_cursorTargetScale >= _scaleFactor) {
+		hW = w;
+		hH = hH1 = h;
+	} else {
+		hW = w * _scaleFactor / _cursorTargetScale;
+		hH = hH1 = h * _scaleFactor / _cursorTargetScale;
+  	}
+  
+	if (_adjustAspectRatio) {
+		hH = real2Aspect(hH - 1) + 1;
+	}
+  
+	if (_mouseCurState.hW != hW || _mouseCurState.hH != hH) {
+		_mouseCurState.hW = hW;
+		_mouseCurState.hH = hH;
+  
+		if (_mouseSurface)
+			SDL_FreeSurface(_mouseSurface); 
+  
+		_mouseSurface = SDL_CreateRGBSurface(SDL_SWSURFACE | SDL_RLEACCEL | SDL_SRCCOLORKEY | SDL_SRCALPHA,
+						_mouseCurState.hW,
+						_mouseCurState.hH,
+						16,
+						_hwscreen->format->Rmask,
+						_hwscreen->format->Gmask,
+						_hwscreen->format->Bmask,
+						_hwscreen->format->Amask);
+  
+		if (_mouseSurface == NULL)
+			error("allocating _mouseSurface failed");
+
+		SDL_SetColorKey(_mouseSurface, SDL_RLEACCEL | SDL_SRCCOLORKEY | SDL_SRCALPHA, kMouseColorKey);
+  	}
+  
+	SDL_LockSurface(_mouseSurface);
+	(scalersMagn[_cursorTargetScale-1][_scaleFactor-1])((byte *)_mouseOrigSurface->pixels + _mouseOrigSurface->pitch + 2,
+		_mouseOrigSurface->pitch, (byte *)_mouseSurface->pixels, _mouseSurface->pitch,
+			  _mouseCurState.w, _mouseCurState.h);
+
+	if (_adjustAspectRatio)
+		cursorStretch200To240((uint8 *)_mouseSurface->pixels, _mouseSurface->pitch, hW, hH1, 0, 0, 0);
+  
+	SDL_UnlockSurface(_mouseSurface);
+	SDL_UnlockSurface(_mouseOrigSurface);
+}
+
+// Basically it is kVeryFastAndUglyAspectMode of stretch200To240 from 
+// common/scale/aspect.cpp
+static int cursorStretch200To240(uint8 *buf, uint32 pitch, int width, int height, int srcX, int srcY, int origSrcY) {
+	int maxDstY = real2Aspect(origSrcY + height - 1);
+	int y;
+	const uint8 *startSrcPtr = buf + srcX * 2 + (srcY - origSrcY) * pitch;
+	uint8 *dstPtr = buf + srcX * 2 + maxDstY * pitch;
+
+	for (y = maxDstY; y >= srcY; y--) {
+		const uint8 *srcPtr = startSrcPtr + aspect2Real(y) * pitch;
+
+		if (srcPtr == dstPtr)
+			break;
+		memcpy(dstPtr, srcPtr, width * 2);
+		dstPtr -= pitch;
+	}
+
+	return 1 + maxDstY - srcY;
 }
 
 void OSystem_SDL::toggleMouseGrab() {
@@ -1059,159 +1213,78 @@ void OSystem_SDL::toggleMouseGrab() {
 		SDL_WM_GrabInput(SDL_GRAB_OFF);
 }
 
-void OSystem_SDL::drawMouse() {
-	if (_mouseDrawn || !_mouseVisible || !_mouseData)
-		return;
-
-	int x = _mouseCurState.x - _mouseHotspotX;
-	int y = _mouseCurState.y - _mouseHotspotY;
-	int w = _mouseCurState.w;
-	int h = _mouseCurState.h;
-	byte color;
-	const byte *src = _mouseData;		// Image representing the mouse
-	
-	// clip the mouse rect, and addjust the src pointer accordingly
-	if (x < 0) {
-		w += x;
-		src -= x;
-		x = 0;
-	}
-	if (y < 0) {
-		h += y;
-		src -= y * _mouseCurState.w;
-		y = 0;
-	}
-
-	if (w > _screenWidth - x)
-		w = _screenWidth - x;
-	if (h > _screenHeight - y)
-		h = _screenHeight - y;
-
-	// Quick check to see if anything has to be drawn at all
-	if (w <= 0 || h <= 0)
-		return;
-
-	// Draw the mouse cursor; backup the covered area in "bak"
-	if (SDL_LockSurface(_overlayVisible ? _tmpscreen : _screen) == -1)
-		error("SDL_LockSurface failed: %s", SDL_GetError());
-
-	// Mark as dirty
-	addDirtyRect(x, y, w, h);
-
-	if (!_overlayVisible) {
-		byte *bak = _mouseBackup;		// Surface used to backup the area obscured by the mouse
-		byte *dst;					// Surface we are drawing into
-	
-		dst = (byte *)_screen->pixels + y * _screenWidth + x;
-		while (h > 0) {
-			int width = w;
-			while (width > 0) {
-				*bak++ = *dst;
-				color = *src++;
-				if (color != _mouseKeyColor)	// transparent, don't draw
-					*dst = color;
-				dst++;
-				width--;
-			}
-			src += _mouseCurState.w - w;
-			bak += MAX_MOUSE_W - w;
-			dst += _screenWidth - w;
-			h--;
-		}
-	
-	} else {
-		uint16 *bak = (uint16 *)_mouseBackup;	// Surface used to backup the area obscured by the mouse
-		byte *dst;					// Surface we are drawing into
-	
-		dst = (byte *)_tmpscreen->pixels + (y + 1) * _tmpscreen->pitch + (x + 1) * 2;
-		while (h > 0) {
-			int width = w;
-			while (width > 0) {
-				*bak++ = *(uint16 *)dst;
-				color = *src++;
-				if (color != 0xFF)	// 0xFF = transparent, don't draw
-					*(uint16 *)dst = RGBToColor(_currentPalette[color].r, _currentPalette[color].g, _currentPalette[color].b);
-				dst += 2;
-				width--;
-			}
-			src += _mouseCurState.w - w;
-			bak += MAX_MOUSE_W - w;
-			dst += _tmpscreen->pitch - w * 2;
-			h--;
-		}
-	}
-
-	SDL_UnlockSurface(_overlayVisible ? _tmpscreen : _screen);
-
-	// Finally, set the flag to indicate the mouse has been drawn
-	_mouseDrawn = true;
-}
-
 void OSystem_SDL::undrawMouse() {
-	assert (_transactionMode == kTransactionNone || _transactionMode == kTransactionCommit);
-
-	if (!_mouseDrawn)
-		return;
-	_mouseDrawn = false;
-
-	int old_mouse_x = _mouseCurState.x - _mouseHotspotX;
-	int old_mouse_y = _mouseCurState.y - _mouseHotspotY;
-	int old_mouse_w = _mouseCurState.w;
-	int old_mouse_h = _mouseCurState.h;
-
-	// clip the mouse rect, and addjust the src pointer accordingly
-	if (old_mouse_x < 0) {
-		old_mouse_w += old_mouse_x;
-		old_mouse_x = 0;
+	if (_mouseBackup.w) {
+		if (_adjustAspectRatio)
+			addDirtyRect(_mouseBackup.x, aspect2Real(_mouseBackup.y), _mouseBackup.w,
+						   _mouseBackup.h);
+		else
+			addDirtyRect(_mouseBackup.x, _mouseBackup.y, _mouseBackup.w,
+						   _mouseBackup.h);
 	}
-	if (old_mouse_y < 0) {
-		old_mouse_h += old_mouse_y;
-		old_mouse_y = 0;
-	}
-
-	if (old_mouse_w > _screenWidth - old_mouse_x)
-		old_mouse_w = _screenWidth - old_mouse_x;
-	if (old_mouse_h > _screenHeight - old_mouse_y)
-		old_mouse_h = _screenHeight - old_mouse_y;
-
-	// Quick check to see if anything has to be drawn at all
-	if (old_mouse_w <= 0 || old_mouse_h <= 0)
-		return;
-
-	if (SDL_LockSurface(_overlayVisible ? _tmpscreen : _screen) == -1)
-		error("SDL_LockSurface failed: %s", SDL_GetError());
-
-	int x, y;
-	if (!_overlayVisible) {
-		byte *dst, *bak = _mouseBackup;
-
-		// No need to do clipping here, since drawMouse() did that already
-		dst = (byte *)_screen->pixels + old_mouse_y * _screenWidth + old_mouse_x;
-		for (y = 0; y < old_mouse_h; ++y, bak += MAX_MOUSE_W, dst += _screenWidth) {
-			for (x = 0; x < old_mouse_w; ++x) {
-				dst[x] = bak[x];
-			}
-		}
-	
-	} else {
-
-		byte *dst;
-		uint16 *bak = (uint16 *)_mouseBackup;
-	
-		// No need to do clipping here, since drawMouse() did that already
-		dst = (byte *)_tmpscreen->pixels + (old_mouse_y + 1) * _tmpscreen->pitch + (old_mouse_x + 1) * 2;
-		for (y = 0; y < old_mouse_h; ++y, bak += MAX_MOUSE_W, dst += _tmpscreen->pitch) {
-			for (x = 0; x < old_mouse_w; ++x) {
-				*((uint16 *)dst + x) = bak[x];
-			}
-		}
-	}
-
-	addDirtyRect(old_mouse_x, old_mouse_y, old_mouse_w, old_mouse_h);
-
-	SDL_UnlockSurface(_overlayVisible ? _tmpscreen : _screen);
 }
 
+void OSystem_SDL::drawMouse() {
+	if (!_mouseVisible) {
+		_mouseBackup.x = _mouseBackup.y = _mouseBackup.w = _mouseBackup.h = 0;
+  		return;
+	}
+  
+	SDL_Rect src, dst;
+	bool scale;
+
+	scale = (_scaleFactor > _cursorTargetScale);
+
+	dst.x = _mouseCurState.x - _mouseHotspotX / _cursorTargetScale;
+	dst.y = _mouseCurState.y - _mouseHotspotY / _cursorTargetScale;
+
+	dst.w = _mouseCurState.hW;
+	dst.h = _mouseCurState.hH;
+	src.x = src.y = 0;
+
+	// clip the mouse rect, and adjust the src pointer accordingly
+	int dx, dy;
+  
+	dx = dst.x; dy = dst.y;
+	dx = scale ? dst.x * _scaleFactor / _cursorTargetScale : dst.x;
+	dy = scale ? dst.y * _scaleFactor / _cursorTargetScale : dst.y;
+	if (_adjustAspectRatio)
+		dy = real2Aspect(dy);
+
+	if (dst.x < 0) {
+		dst.w += dx;
+		src.x -= dx;
+		dst.x = 0;
+	}
+	if (dst.y < 0) {
+		dst.h += dy;
+		src.y -= dy;
+		dst.y = 0;
+	}
+
+  	// Quick check to see if anything has to be drawn at all
+	if (dst.w <= 0 || dst.h <= 0)
+  		return;
+  
+	src.w = dst.w;
+	src.h = dst.h;
+  
+	if (_adjustAspectRatio)
+		dst.y = real2Aspect(dst.y);
+  
+	_mouseBackup.x = dst.x;
+	_mouseBackup.y = dst.y;
+	_mouseBackup.w = dst.w;
+	_mouseBackup.h = dst.h;
+  
+	dst.x *= _scaleFactor;
+	dst.y *= _scaleFactor;
+  
+	if (SDL_BlitSurface(_mouseSurface, &src, _hwscreen, &dst) != 0)
+		error("SDL_BlitSurface failed: %s", SDL_GetError());
+  
+	addDirtyRect(dst.x, dst.y, dst.w, dst.h, true);
+}
 
 #pragma mark -
 #pragma mark --- Mouse ---

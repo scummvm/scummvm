@@ -107,7 +107,8 @@ void ScummEngine_v6::setCursorTransparency(int a) {
 
 void ScummEngine::updateCursor() {
 	_system->setMouseCursor(_grabbedCursor, _cursor.width, _cursor.height,
-							_cursor.hotspotX, _cursor.hotspotY);
+							_cursor.hotspotX, _cursor.hotspotY, 255, 
+							(_heversion == 70 ? 2 : 1));
 }
 
 void ScummEngine_v6::grabCursor(int x, int y, int w, int h) {

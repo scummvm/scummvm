@@ -1532,10 +1532,9 @@ void MacResExtractor::convertIcons(byte *data, int datasize, byte **cursor, int 
 	*hotspot_x = dis.readUint16BE();
 	*w = *h = 16;
 
-	// FIXME
-	// Color cursors use their own palette.
-	// So we can't use it for now and use B/W version
-	return;
+	// Use b/w cursor on backends which don't support cursor palettes
+	if (!_vm->_system->hasFeature(OSystem::kFeatureCursorHasPalette))
+		return;
 
 	dis.readUint32BE(); // reserved
 	dis.readUint32BE(); // cursorID
@@ -1600,12 +1599,7 @@ void MacResExtractor::convertIcons(byte *data, int datasize, byte **cursor, int 
 		palette[c * 4 + 3] = 0;
 	}
 
-	// TODO: Here we should set separate cursor palette.
-	// It requires cursor to be rendered on a different surface at
-	// least in SDL backend.
-	// HACK: now set global palett just to see if colors are correct.
-	// this affects subtitles colors
-	_vm->_system->setPalette(palette, 0, ctSize);
+	_vm->_system->setCursorPalette(palette, 0, ctSize);
 
 	numBytes =
          (iconBounds[2] - iconBounds[0]) *

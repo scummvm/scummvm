@@ -82,7 +82,10 @@ public:
 	virtual void warpMouse(int x, int y); // overloaded by CE backend
 
 	// Set the bitmap that's used when drawing the cursor.
-	void setMouseCursor(const byte *buf, uint w, uint h, int hotspot_x, int hotspot_y, byte keycolor);
+	void setMouseCursor(const byte *buf, uint w, uint h, int hotspot_x, int hotspot_y, byte keycolor, int cursorTargetScale);
+
+	// Set colors of cursor palette
+	void setCursorPalette(const byte *colors, uint start, uint num);
 
 	// Shaking is used in SCUMM. Set current shake position.
 	void setShakePos(int shake_pos);
@@ -258,7 +261,8 @@ protected:
 	};
 
 	struct MousePos {
-		int16 x, y, w, h;
+		int16 x, y, w, h, hW, hH;
+		MousePos() : x(0), y(0), w(0), h(0), hW(0), hH(0) {}
 	};
 
 	// mouse
@@ -266,11 +270,18 @@ protected:
 	bool _mouseVisible;
 	bool _mouseDrawn;
 	byte *_mouseData;
-	byte *_mouseBackup;
+	SDL_Rect _mouseBackup;
 	MousePos _mouseCurState;
 	int16 _mouseHotspotX;
 	int16 _mouseHotspotY;
 	byte _mouseKeyColor;
+	int _cursorTargetScale;
+	bool _cursorHasOwnPalette;
+	SDL_Surface *_mouseOrigSurface;
+	SDL_Surface *_mouseSurface;
+	enum {
+		kMouseColorKey = 1
+	};
 
 	// joystick
 	SDL_Joystick *_joystick;
@@ -283,6 +294,9 @@ protected:
 	SDL_Color *_currentPalette;
 	uint _paletteDirtyStart, _paletteDirtyEnd;
 	
+	// Cursor palette data
+	SDL_Color *_cursorPalette;
+	
 	/**
 	 * Mutex which prevents multiple threads from interfering with each other
 	 * when accessing the screen.
@@ -293,10 +307,11 @@ protected:
 	void addDirtyRgnAuto(const byte *buf);
 	void makeChecksums(const byte *buf);
 	
-	virtual void addDirtyRect(int x, int y, int w, int h); // overloaded by CE backend
+	virtual void addDirtyRect(int x, int y, int w, int h, bool mouseRect = false); // overloaded by CE backend
 
 	virtual void drawMouse(); // overloaded by CE backend
 	virtual void undrawMouse(); // overloaded by CE backend
+	void blitCursor();
 	
 	/** Set the position of the virtual mouse cursor. */
 	void setMousePos(int x, int y);

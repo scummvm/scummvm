@@ -169,6 +169,46 @@ void Normal3x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPit
 	}
 }
 
+#define INTERPOLATE		INTERPOLATE<bitFormat>
+#define Q_INTERPOLATE	Q_INTERPOLATE<bitFormat>
+
+/**
+ * Trivial nearest-neighbour 1.5x scaler.
+ */
+template<int bitFormat>
+void Normal1o5xTemplate(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch,
+							int width, int height) {
+	uint8 *r;
+	const uint32 dstPitch2 = dstPitch * 2;
+	const uint32 dstPitch3 = dstPitch * 3;
+	const uint32 srcPitch2 = srcPitch * 2;
+
+	assert(((int)dstPtr & 1) == 0);
+	while (height) {
+		r = dstPtr;
+		for (int i = 0; i < width; i += 2, r += 6) {
+			uint16 color0 = *(((const uint16 *)srcPtr) + i);
+			uint16 color1 = *(((const uint16 *)srcPtr) + i + 1);
+			uint16 color2 = *(((const uint16 *)(srcPtr + srcPitch)) + i);
+			uint16 color3 = *(((const uint16 *)(srcPtr + srcPitch)) + i + 1);
+
+			*(uint16 *)(r + 0) = color0;
+			*(uint16 *)(r + 2) = INTERPOLATE(color0, color1);
+			*(uint16 *)(r + 4) = color1;
+			*(uint16 *)(r + 0 + dstPitch) = INTERPOLATE(color0, color2);
+			*(uint16 *)(r + 2 + dstPitch) = Q_INTERPOLATE(color0, color1, color2, color3);
+			*(uint16 *)(r + 4 + dstPitch) = INTERPOLATE(color1, color3);
+			*(uint16 *)(r + 0 + dstPitch2) = color2;
+			*(uint16 *)(r + 2 + dstPitch2) = INTERPOLATE(color2, color3);
+			*(uint16 *)(r + 4 + dstPitch2) = color3;
+		}
+		srcPtr += srcPitch2;
+		dstPtr += dstPitch3;
+		height -= 2;
+	}
+}
+MAKE_WRAPPER(Normal1o5x)
+
 /**
  * The Scale2x filter, also known as AdvMame2x.
  * See also http://scale2x.sourceforge.net

@@ -100,8 +100,9 @@ OSystem_SDL::OSystem_SDL()
 	_tmpscreen(0), _overlayVisible(false),
 	_samplesPerSec(0),
 	_cdrom(0), _scalerProc(0), _modeChanged(false), _dirtyChecksums(0),
-	_mouseVisible(false), _mouseDrawn(false), _mouseData(0),
-	_mouseHotspotX(0), _mouseHotspotY(0),
+	_mouseVisible(false), _mouseDrawn(false), _mouseData(0), _mouseSurface(0),
+	_mouseOrigSurface(0), _mouseHotspotX(0), _mouseHotspotY(0), _cursorTargetScale(1),
+	_cursorHasOwnPalette(false),
 	_joystick(0),
 	_currentShakePos(0), _newShakePos(0),
 	_paletteDirtyStart(0), _paletteDirtyEnd(0),
@@ -109,9 +110,9 @@ OSystem_SDL::OSystem_SDL()
 
 	// allocate palette storage
 	_currentPalette = (SDL_Color *)calloc(sizeof(SDL_Color), 256);
+	_cursorPalette = (SDL_Color *)calloc(sizeof(SDL_Color), 256);
 
-	// allocate the dirty rect storage
-	_mouseBackup = (byte *)malloc(MAX_MOUSE_W * MAX_MOUSE_H * MAX_SCALING * 2);
+	_mouseBackup.x = _mouseBackup.y = _mouseBackup.w = _mouseBackup.h = 0;
 
 	// reset mouse state
 	memset(&_km, 0, sizeof(_km));
@@ -123,7 +124,7 @@ OSystem_SDL::OSystem_SDL()
 OSystem_SDL::~OSystem_SDL() {
 	free(_dirtyChecksums);
 	free(_currentPalette);
-	free(_mouseBackup);
+	free(_cursorPalette);
 	free(_mouseData);
 }
 
@@ -147,7 +148,8 @@ bool OSystem_SDL::hasFeature(Feature f) {
 	return
 		(f == kFeatureFullscreenMode) ||
 		(f == kFeatureAspectRatioCorrection) ||
-		(f == kFeatureAutoComputeDirtyRects);
+		(f == kFeatureAutoComputeDirtyRects) ||
+		(f == kFeatureCursorHasPalette);
 }
 
 void OSystem_SDL::setFeatureState(Feature f, bool enable) {

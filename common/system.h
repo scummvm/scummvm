@@ -96,7 +96,15 @@ public:
 		 * Implementing this is purely optional, and no harm should arise 
 		 * when not doing so (except for decreased speed in said frontends).
 		 */
-		kFeatureAutoComputeDirtyRects
+		kFeatureAutoComputeDirtyRects,
+
+		/**
+		 * This flags determines either cursor can have its own palette or not
+		 * It is currently used only by some Macintosh versions of Humongous
+		 * Entertainment games. If backend doesn't implement this feature then
+		 * engine switches to b/w version of cursors.
+		 */
+		kFeatureCursorHasPalette
 	};
 	
 	/**
@@ -274,6 +282,18 @@ public:
 	virtual void setPalette(const byte *colors, uint start, uint num) = 0;
 
 	/**
+	 * Replace the specified range of cursor the palette with new colors.
+	 * The palette entries from 'start' till (start+num-1) will be replaced - so
+	 * a full palette update is accomplished via start=0, num=256.
+	 *
+	 * Backends which implement it should have kFeatureCursorHasPalette flag set
+	 *
+	 * @see setPalette
+	 * @see kFeatureCursorHasPalette
+	 */
+	virtual void setCursorPalette(const byte *colors, uint start, uint num) {};
+
+	/**
 	 * Blit a bitmap to the virtual screen.
 	 * The real screen will not immediately be updated to reflect the changes.
 	 * Client code has to to call updateScreen to ensure any changes are
@@ -365,14 +385,15 @@ public:
 	/**
 	 * Set the bitmap used for drawing the cursor.
 	 *
-	 * @param buf		the pixmap data to be used (8bit/pixel)
-	 * @param w			width of the mouse cursor
-	 * @param h			height of the mouse cursor
-	 * @param hotspotX	horizontal offset from the left side to the hotspot
-	 * @param hotspotY	vertical offset from the top side to the hotspot
-	 * @param keycolor	transparency color index
+	 * @param buf				the pixmap data to be used (8bit/pixel)
+	 * @param w					width of the mouse cursor
+	 * @param h					height of the mouse cursor
+	 * @param hotspotX			horizontal offset from the left side to the hotspot
+	 * @param hotspotY			vertical offset from the top side to the hotspot
+	 * @param keycolor			transparency color index
+	 * @param cursorTargetScale	scale factor which cursor is designed for
 	 */
-	virtual void setMouseCursor(const byte *buf, uint w, uint h, int hotspotX, int hotspotY, byte keycolor = 255) = 0;
+	virtual void setMouseCursor(const byte *buf, uint w, uint h, int hotspotX, int hotspotY, byte keycolor = 255, int cursorTargetScale = 1) = 0;
 
 	//@}
 
