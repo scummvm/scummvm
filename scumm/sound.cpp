@@ -408,7 +408,7 @@ void Sound::playSound(int soundID) {
 	
 	}
 	
-	if (_scumm->_gameId == GID_LOOM && (READ_BE_UINT16(ptr + 4) == 'so')) {
+	if ((_scumm->_gameId == GID_LOOM) && (_scumm->_features & GF_MACINTOSH))  {
 		// Mac version of Loom uses yet another sound format
 		/*
 		playSound #9 (room 70)
