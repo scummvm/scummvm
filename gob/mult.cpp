@@ -952,7 +952,7 @@ void mult_playMult(int16 startFrame, int16 endFrame, char checkEscape,
 		if (snd_playingSound != 0)
 			snd_stopSound(10);
 
-		WRITE_LE_UINT32(inter_variables + 0xe4, -1);
+		WRITE_LE_UINT32(inter_variables + 0xe4, (uint32)-1);
 	} else {
 		WRITE_LE_UINT32(inter_variables + 0xe4, mult_frame - 1 - mult_frameStart);
 	}
