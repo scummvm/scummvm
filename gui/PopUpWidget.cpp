@@ -81,8 +81,8 @@ PopUpDialog::PopUpDialog(PopUpWidget *boss, int clickX, int clickY)
 	_selection = _popUpBoss->_selectedItem;
 
 	// Calculate real popup dimensions
-	_x = _popUpBoss->_boss->getX() + _popUpBoss->_x;
-	_y = _popUpBoss->_boss->getY() + _popUpBoss->_y - _popUpBoss->_selectedItem * kLineHeight;
+	_x = _popUpBoss->getAbsX();
+	_y = _popUpBoss->getAbsY() - _popUpBoss->_selectedItem * kLineHeight;
 	_h = _popUpBoss->_entries.size() * kLineHeight + 2;
 	_w = _popUpBoss->_w - 10;
 	
@@ -282,7 +282,7 @@ PopUpWidget::PopUpWidget(GuiObject *boss, int x, int y, int w, int h)
 void PopUpWidget::handleMouseDown(int x, int y, int button, int clickCount) {
 
 	if (isEnabled()) {
-		PopUpDialog popupDialog(this, x + _x + _boss->getX(), y + _y + _boss->getY());
+		PopUpDialog popupDialog(this, x + getAbsX(), y + getAbsY());
 		int newSel = popupDialog.runModal();
 		if (newSel != -1 && _selectedItem != newSel) {
 			_selectedItem = newSel;

@@ -294,8 +294,8 @@ void ListWidget::drawCaret(bool erase) {
 
 	// The item is selected, thus _bgcolor is used to draw the caret and _textcolorhi to erase it
 	int16 color = erase ? gui->_textcolorhi : gui->_bgcolor;
-	int x = _x + _boss->getX() + 3;
-	int y = _y + _boss->getY() + 1;
+	int x = getAbsX() + 3;
+	int y = getAbsY() + 1;
 	Common::String	buffer;
 
 	y += (_selectedItem - _currentPos) * kLineHeight;

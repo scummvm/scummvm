@@ -137,7 +137,7 @@ void Dialog::handleMouseDown(int x, int y, int button, int clickCount) {
 	}
 
 	if (w && w == _focusedWidget)
-		_focusedWidget->handleMouseDown(x - _focusedWidget->_x, y - _focusedWidget->_y, button, clickCount);
+		_focusedWidget->handleMouseDown(x - (_focusedWidget->getAbsX() - _x), y - (_focusedWidget->getAbsY() - _y), button, clickCount);
 }
 
 void Dialog::handleMouseUp(int x, int y, int button, int clickCount) {
@@ -156,7 +156,7 @@ void Dialog::handleMouseUp(int x, int y, int button, int clickCount) {
 	}
 
 	if (w)
-		w->handleMouseUp(x - w->_x, y - w->_y, button, clickCount);
+		w->handleMouseUp(x - (w->getAbsX() - _x), y - (w->getAbsY() - _y), button, clickCount);
 }
 
 void Dialog::handleMouseWheel(int x, int y, int direction) {
@@ -213,10 +213,12 @@ void Dialog::handleMouseMoved(int x, int y, int button) {
 	
 	if (_focusedWidget) {
 		w = _focusedWidget;
+		int wx = w->getAbsX() - _x;
+		int wy = w->getAbsY() - _y;
 		
 		// We still send mouseEntered/Left messages to the focused item
 		// (but to no other items).
-		bool mouseInFocusedWidget = (x >= w->_x && x < w->_x + w->_w && y >= w->_y && y < w->_y + w->_h);
+		bool mouseInFocusedWidget = (x >= wx && x < wx + w->_w && y >= wy && y < wy + w->_h);
 		if (mouseInFocusedWidget && _mouseWidget != w) {
 			_mouseWidget = w;
 			w->handleMouseEntered(button);
@@ -225,7 +227,7 @@ void Dialog::handleMouseMoved(int x, int y, int button) {
 			w->handleMouseLeft(button);
 		}
 
-		w->handleMouseMoved(x - w->_x, y - w->_y, button);
+		w->handleMouseMoved(x - wx, y - wy, button);
 	}
 
 	w = findWidget(x, y);
@@ -242,7 +244,7 @@ void Dialog::handleMouseMoved(int x, int y, int button) {
 		return;
 	}
 	
-	w->handleMouseMoved(x - w->_x, y - w->_y, button);
+	w->handleMouseMoved(x - (w->getAbsX() - _x), y - (w->getAbsY() - _y), button);
 }
 
 void Dialog::handleTickle() {

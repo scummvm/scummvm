@@ -62,10 +62,10 @@ public:
 
 	virtual bool 	isVisible() const = 0;
 
-	int16			getX() const	{ return _x; }
-	int16			getY() const	{ return _y; }
-	uint16			getW() const	{ return _w; }
-	uint16			getH() const	{ return _h; }
+	virtual int16	getAbsX() const		{ return _x; }
+	virtual int16	getAbsY() const		{ return _y; }
+	virtual uint16	getWidth() const	{ return _w; }
+	virtual uint16	getHeight() const	{ return _h; }
 
 protected:
 	virtual void	releaseFocus() = 0;

@@ -47,7 +47,8 @@ enum {
 	kCheckboxWidget		= 'CHKB',
 	kSliderWidget		= 'SLDE',
 	kListWidget			= 'LIST',
-	kScrollBarWidget	= 'SCRB'
+	kScrollBarWidget	= 'SCRB',
+	kTabWidget			= 'TABW'
 };
 
 enum {
@@ -74,6 +75,9 @@ protected:
 public:
 	Widget(GuiObject *boss, int x, int y, int w, int h);
 	virtual ~Widget() {}
+
+	virtual int16	getAbsX() const	{ return _x + _boss->getAbsX(); }
+	virtual int16	getAbsY() const	{ return _y + _boss->getAbsY(); }
 
 	virtual void handleMouseDown(int x, int y, int button, int clickCount) {}
 	virtual void handleMouseUp(int x, int y, int button, int clickCount) {}

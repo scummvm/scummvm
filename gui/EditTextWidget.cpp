@@ -170,8 +170,8 @@ void EditTextWidget::drawCaret(bool erase) {
 		return;
 
 	int16 color = erase ? g_gui._bgcolor : g_gui._textcolorhi;
-	int x = _x + _boss->getX() + 2;
-	int y = _y + _boss->getY() + 1;
+	int x = getAbsX() + 2;
+	int y = getAbsY() + 1;
 
 	int width = getCaretPos();
 	x += width;
