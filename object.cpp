@@ -1045,13 +1045,13 @@ void Scumm::setCursorImg(uint img, uint room, uint imgindex) {
 			READ_LE_UINT16(&foir.imhd->old.hotspot[0].y));
 	
 
-#if !defined(FULL_THROTTLE)
-	w = READ_LE_UINT16(&foir.cdhd->v6.w)>>3;
-	h = READ_LE_UINT16(&foir.cdhd->v6.h)>>3;
-#else
-	w = READ_LE_UINT16(&foir.imhd->v7.width)>>3;
-	h = READ_LE_UINT16(&foir.imhd->v7.height)>>3;
-#endif
+	if(!(_features & GF_AFTER_V7)) {
+		w = READ_LE_UINT16(&foir.cdhd->v6.w)>>3;
+		h = READ_LE_UINT16(&foir.cdhd->v6.h)>>3;
+	} else {
+		w = READ_LE_UINT16(&foir.imhd->v7.width)>>3;
+		h = READ_LE_UINT16(&foir.imhd->v7.height)>>3;
+	}
 
 	dataptr = findResource(IMxx_tags[imgindex],foir.obim);
 	if (dataptr==NULL)

@@ -1468,10 +1468,8 @@ void Scumm::o5_loadRoomWithEgo() {
 	startScene(a->room, a, obj);
 	_vars[VAR_WALKTO_OBJ] = 0;
 
-#if !defined(FULL_THROTTLE)
 	camera._dest.x = camera._cur.x = a->x;
 	setCameraFollows(a);
-#endif
 
 	_fullRedraw=1;
 

@@ -128,9 +128,8 @@ bool Scumm::loadState(int slot, bool compat) {
 	_drawObjectQueNr = 0;
 	_verbMouseOver = 0;
 
-#if defined(FULL_THROTTLE)
-	cameraMoved();
-#endif
+	if(_features & GF_AFTER_V7)
+		cameraMoved();
 
 	initBGBuffers();
 
@@ -324,7 +323,6 @@ void Scumm::saveOrLoad(Serializer *s) {
 		MKARRAY(Scumm,_charsetData[0][0],sleByte,10*16),
 		MKLINE(Scumm,_curExecScript,sleUint16),
 
-#if defined(FULL_THROTTLE)
 		MKLINE(Scumm,camera._dest.x,sleInt16),
 		MKLINE(Scumm,camera._dest.y,sleInt16),
 		MKLINE(Scumm,camera._cur.x,sleInt16),
@@ -333,12 +331,6 @@ void Scumm::saveOrLoad(Serializer *s) {
 		MKLINE(Scumm,camera._last.y,sleInt16),
 		MKLINE(Scumm,camera._accel.x,sleInt16),
 		MKLINE(Scumm,camera._accel.y,sleInt16),
-		MKLINE(Scumm,camera._follows,sleByte),
-		MKLINE(Scumm,camera._movingToActor,sleUint16),
-#else
-		MKLINE(Scumm,camera._dest.x,sleInt16),
-		MKLINE(Scumm,camera._cur.x,sleInt16),
-		MKLINE(Scumm,camera._last.x,sleInt16),
 		MKLINE(Scumm,_screenStartStrip,sleInt16),
 		MKLINE(Scumm,_screenEndStrip,sleInt16),
 		MKLINE(Scumm,camera._mode,sleByte),
@@ -346,7 +338,7 @@ void Scumm::saveOrLoad(Serializer *s) {
 		MKLINE(Scumm,camera._leftTrigger,sleInt16),
 		MKLINE(Scumm,camera._rightTrigger,sleInt16),
 		MKLINE(Scumm,camera._movingToActor,sleUint16),
-#endif
+		
 		MKLINE(Scumm,_actorToPrintStrFor,sleByte),
 		MKLINE(Scumm,_charsetColor,sleByte),
 		/* XXX Convert into word next time format changes */

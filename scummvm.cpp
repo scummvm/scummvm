@@ -88,19 +88,19 @@ void Scumm::scummInit() {
 		_verbs[i].key = 0;
 	}
 
-#if !defined(FULL_THROTTLE)
-	camera._leftTrigger = 10;
-	camera._rightTrigger = 30;
-	camera._mode = 0;
-#endif
+	if(!(_features & GF_AFTER_V7)) {
+		camera._leftTrigger = 10;
+		camera._rightTrigger = 30;
+		camera._mode = 0;
+	}	
 	camera._follows = 0;
 
 	virtscr[0].xstart = 0;
 
-#if !defined(FULL_THROTTLE)
-	_vars[VAR_V5_DRAWFLAGS] = 11;
-	_vars[VAR_59] = 3;
-#endif
+	if(!(_features & GF_AFTER_V7)) {
+		_vars[VAR_V5_DRAWFLAGS] = 11;
+		_vars[VAR_59] = 3;
+	}
 
 	mouse.x = 104;
 	mouse.y = 56;
@@ -162,19 +162,19 @@ void Scumm::scummInit() {
 
 
 void Scumm::initScummVars() {
-#if !defined(FULL_THROTTLE)
-	_vars[VAR_CURRENTDRIVE] = _currentDrive;
-	_vars[VAR_FIXEDDISK] = checkFixedDisk();
-	_vars[VAR_SOUNDCARD] = _soundCardType;
-	_vars[VAR_VIDEOMODE] = 0x13;
-	_vars[VAR_HEAPSPACE] = 630;
-	_vars[VAR_MOUSEPRESENT] = _mousePresent;
-	_vars[VAR_SOUNDPARAM] = _soundParam;
-	_vars[VAR_SOUNDPARAM2] = _soundParam2;
-	_vars[VAR_SOUNDPARAM3] = _soundParam3;
-	if (_features&GF_AFTER_V6)
-		_vars[VAR_V6_EMSSPACE] = 10000;
-#endif
+	if(!(_features & GF_AFTER_V7)) {
+		_vars[VAR_CURRENTDRIVE] = _currentDrive;
+		_vars[VAR_FIXEDDISK] = checkFixedDisk();
+		_vars[VAR_SOUNDCARD] = _soundCardType;
+		_vars[VAR_VIDEOMODE] = 0x13;
+		_vars[VAR_HEAPSPACE] = 630;
+		_vars[VAR_MOUSEPRESENT] = _mousePresent;
+		_vars[VAR_SOUNDPARAM] = _soundParam;
+		_vars[VAR_SOUNDPARAM2] = _soundParam2;
+		_vars[VAR_SOUNDPARAM3] = _soundParam3;
+		if (_features&GF_AFTER_V6)
+			_vars[VAR_V6_EMSSPACE] = 10000;
+	}
 }
 
 void Scumm::checkRange(int max, int min, int no, const char *str) {

@@ -606,11 +606,10 @@ void Scumm::checkAndRunVar33() {
 
 	_sentenceNum--;
 
-#if !defined(FULL_THROTTLE)
-	if (sentence[_sentenceNum].unk2 && 
-		sentence[_sentenceNum].unk3==sentence[_sentenceNum].unk4)
-		return;
-#endif
+	if(!(_features & GF_AFTER_V7))
+		if (sentence[_sentenceNum].unk2 && 
+			sentence[_sentenceNum].unk3==sentence[_sentenceNum].unk4)
+			return;
 
 	_localParamList[0] = sentence[_sentenceNum].unk5;
 	_localParamList[1] = sentence[_sentenceNum].unk4;
@@ -797,64 +796,63 @@ void Scumm::faceActorToObj(int act, int obj) {
 }
 
 void Scumm::animateActor(int act, int anim) {
-#if defined(FULL_THROTTLE)
-	int cmd,dir;
-	Actor *a;
+	if(_features & GF_AFTER_V7) {
+		int cmd,dir;
+		Actor *a;
 
-	a = derefActorSafe(act, "animateActor");
+		a = derefActorSafe(act, "animateActor");
 
-	if (anim==0xFF)
-		anim = 2000;
+		if (anim==0xFF)
+			anim = 2000;
 
-	cmd  = anim / 1000;
-	dir = anim % 1000;
+		cmd  = anim / 1000;
+		dir = anim % 1000;
 
-	/* temporary code */
-//	dir = newDirToOldDir(dir);
+		/* temporary code */
+//		dir = newDirToOldDir(dir);
 
-	switch(cmd) {
-	case 2:
-		stopActorMoving(a);
-		startAnimActor(a, a->standFrame);
-		break;
-	case 3:
-		a->moving &= ~4;
-		fixActorDirection(a, dir);
-		break;
-	case 4:
-		turnToDirection(a, dir);
-		break;
-	default:
-		startAnimActor(a, anim);
+		switch(cmd) {
+		case 2:
+			stopActorMoving(a);
+			startAnimActor(a, a->standFrame);
+			break;
+		case 3:
+			a->moving &= ~4;
+			fixActorDirection(a, dir);
+			break;
+		case 4:
+			turnToDirection(a, dir);
+			break;
+		default:
+			startAnimActor(a, anim);
+		}
+
+	} else {
+		int dir;
+		Actor *a;
+
+		a = derefActorSafe(act, "animateActor");
+		if (!a) return;
+	
+		dir = anim&3;
+
+		switch(anim>>2) {
+		case 0x3F:
+			stopActorMoving(a);
+			startAnimActor(a, a->standFrame);
+			break;
+		case 0x3E:
+			a->moving &= ~4;
+			fixActorDirection(a, oldDirToNewDir(dir));
+			break;
+		case 0x3D:
+			turnToDirection(a, oldDirToNewDir(dir));
+			break;
+		default:
+			startAnimActor(a, anim);
+		}
+	
 	}
-
-
-#else
-	int dir;
-	Actor *a;
-
-	a = derefActorSafe(act, "animateActor");
-	if (!a) return;
-
-	dir = anim&3;
-
-	switch(anim>>2) {
-	case 0x3F:
-		stopActorMoving(a);
-		startAnimActor(a, a->standFrame);
-		break;
-	case 0x3E:
-		a->moving &= ~4;
-		fixActorDirection(a, oldDirToNewDir(dir));
-		break;
-	case 0x3D:
-		turnToDirection(a, oldDirToNewDir(dir));
-		break;
-	default:
-		startAnimActor(a, anim);
-	}
-
-#endif
 }
 
 bool Scumm::isScriptRunning(int script) {
@@ -862,7 +860,7 @@ bool Scumm::isScriptRunning(int script) {
 	ScriptSlot *ss = vm.slot;
 	for (i=0; i<NUM_SCRIPT_SLOT; i++,ss++)
 		if (ss->number==script && (ss->where==WIO_GLOBAL || 
-			  ss->where==WIO_LOCAL) && ss->status)
+		ss->where==WIO_LOCAL) && ss->status)
 			return true;
 	return false;
 }
@@ -1018,46 +1016,44 @@ void Scumm::exitCutscene() {
 		vm.cutScenePtr[vm.cutSceneStackPointer] = 0;
 	}
 }
-#if defined(FULL_THROTTLE)
 void Scumm::doSentence(int c, int b, int a) {
-	SentenceTab *st;
+	if(_features & GF_AFTER_V7) {
+		SentenceTab *st;
 	
-	if (b==a)
-		return;
-
-	st = &sentence[_sentenceNum-1];
-
-	if (_sentenceNum &&
-		st->unk5 == c && st->unk4==b && st->unk3==a)
+		if (b==a)
 			return;
 
-	_sentenceNum++;
-	st++;
+		st = &sentence[_sentenceNum-1];
 
-	st->unk5 = c;
-	st->unk4 = b;
-	st->unk3 = a;
-	st->unk = 0;
+		if (_sentenceNum &&
+			st->unk5 == c && st->unk4==b && st->unk3==a)
+				return;
+
+		_sentenceNum++;
+		st++;
+
+		st->unk5 = c;
+		st->unk4 = b;
+		st->unk3 = a;
+		st->unk = 0;
 	
-	warning("dosentence(%d,%d,%d)", c, b, a);
+		warning("dosentence(%d,%d,%d)", c, b, a);
 
+	} else {
+
+		SentenceTab *st;
+
+		st = &sentence[_sentenceNum++];
+
+		st->unk5 = c;
+		st->unk4 = b;
+		st->unk3 = a;
+
+		if (!(st->unk3&0xFF00))
+			st->unk2 = 0;
+		else
+			st->unk2 = 1;
+
+		st->unk = 0;
+	}
 }
-
-#else
-void Scumm::doSentence(int c, int b, int a) {
-	SentenceTab *st;
-
-	st = &sentence[_sentenceNum++];
-
-	st->unk5 = c;
-	st->unk4 = b;
-	st->unk3 = a;
-
-	if (!(st->unk3&0xFF00))
-		st->unk2 = 0;
-	else
-		st->unk2 = 1;
-
-	st->unk = 0;
-}
-#endif

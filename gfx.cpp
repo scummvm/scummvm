@@ -552,10 +552,9 @@ void Scumm::redrawBGAreas() {
 	CameraData *cd = &camera;
 	int diff;	// Full throttle hack
 
-#if !defined(FULL_THROTTLE)
-	if (cd->_cur.x!=cd->_last.x && charset._hasMask)
-		stopTalk();
-#endif
+	if (!(_features & GF_AFTER_V7))
+		if (cd->_cur.x!=cd->_last.x && charset._hasMask)
+			stopTalk();
 
 	val = 0;
 
@@ -567,32 +566,31 @@ void Scumm::redrawBGAreas() {
 		}
 	}
 
-#if defined(FULL_THROTTLE)
-	diff = (cd->_cur.x>>3) - (cd->_last.x>>3);
-	if (_fullRedraw==0 && diff==1) {
-		val = 2;
-		redrawBGStrip(39, 1);
-	} else if (_fullRedraw==0 && diff==-1) {
-		val = 1;
-		redrawBGStrip(0, 1);
-	} else if (_fullRedraw!=0 || diff!=0) {
-		_BgNeedsRedraw = false;
-		_fullRedraw = false;
-		redrawBGStrip(0, 40);
+	if(_features & GF_AFTER_V7) {
+		diff = (cd->_cur.x>>3) - (cd->_last.x>>3);
+		if (_fullRedraw==0 && diff==1) {
+			val = 2;
+			redrawBGStrip(39, 1);
+		} else if (_fullRedraw==0 && diff==-1) {
+			val = 1;
+			redrawBGStrip(0, 1);
+		} else if (_fullRedraw!=0 || diff!=0) {
+			_BgNeedsRedraw = false;
+			_fullRedraw = false;
+			redrawBGStrip(0, 40);
+		}
+	} else {
+		if (_fullRedraw==0 && cd->_cur.x - cd->_last.x == 8) {
+			val = 2;
+			redrawBGStrip(39, 1);
+		} else if (_fullRedraw==0 && cd->_cur.x - cd->_last.x == -8) {
+			val = 1;
+			redrawBGStrip(0, 1);
+		} else if (_fullRedraw!=0 || cd->_cur.x != cd->_last.x) {
+			_BgNeedsRedraw = false;
+			redrawBGStrip(0, 40);
+		}
 	}
-
-#else
-	if (_fullRedraw==0 && cd->_cur.x - cd->_last.x == 8) {
-		val = 2;
-		redrawBGStrip(39, 1);
-	} else if (_fullRedraw==0 && cd->_cur.x - cd->_last.x == -8) {
-		val = 1;
-		redrawBGStrip(0, 1);
-	} else if (_fullRedraw!=0 || cd->_cur.x != cd->_last.x) {
-		_BgNeedsRedraw = false;
-		redrawBGStrip(0, 40);
-	}
-#endif
 
 	drawRoomObjects(val);
 	_BgNeedsRedraw = false;
@@ -1815,84 +1813,79 @@ void Scumm::moveCamera() {
 	}
 }
 
-#if defined(FULL_THROTTLE)
 void Scumm::cameraMoved() {
-	CameraData *cd = &camera;
+	if(_features & GF_AFTER_V7) {
+		CameraData *cd = &camera;
 
-	assert(cd->_cur.x>=160 && cd->_cur.y>=100);
-
-	_screenStartStrip = (cd->_cur.x-160) >> 3;
-	_screenEndStrip = _screenStartStrip + 39;
-	virtscr[0].xstart = _screenStartStrip << 3;
+		assert(cd->_cur.x>=160 && cd->_cur.y>=100);
 	
-	_screenLeft = cd->_cur.x - 160;
-	_screenTop = cd->_cur.y - 100;
-}
+		_screenStartStrip = (cd->_cur.x-160) >> 3;
+		_screenEndStrip = _screenStartStrip + 39;
+		virtscr[0].xstart = _screenStartStrip << 3;
+	
+		_screenLeft = cd->_cur.x - 160;
+		_screenTop = cd->_cur.y - 100;
+	} else {
 
+		CameraData *cd = &camera;
 
-#else
-void Scumm::cameraMoved() {
-	CameraData *cd = &camera;
+		if (cd->_cur.x < 160) {
+			cd->_cur.x = 160;
+		} else if (cd->_cur.x + 160 >= _scrWidth) {
+			cd->_cur.x = _scrWidth-160;
+		}
 
-	if (cd->_cur.x < 160) {
-		cd->_cur.x = 160;
-	} else if (cd->_cur.x + 160 >= _scrWidth) {
-		cd->_cur.x = _scrWidth-160;
+		_screenStartStrip = (cd->_cur.x >> 3) - 20;
+		_screenEndStrip = _screenStartStrip + 39;
+		virtscr[0].xstart = _screenStartStrip << 3;
 	}
-
-	_screenStartStrip = (cd->_cur.x >> 3) - 20;
-	_screenEndStrip = _screenStartStrip + 39;
-	virtscr[0].xstart = _screenStartStrip << 3;
 }
-#endif
 
-#if defined(FULL_THROTTLE)
 void Scumm::panCameraTo(int x, int y) {
-	CameraData *cd = &camera;
-	cd->_follows = 0;
-	cd->_dest.x = x;
-	cd->_dest.y = y;
-}
+	if(_features & GF_AFTER_V7) {
+		CameraData *cd = &camera;
+		cd->_follows = 0;
+		cd->_dest.x = x;
+		cd->_dest.y = y;
+	} else {
 
-#else
-void Scumm::panCameraTo(int x, int y) {
-	CameraData *cd = &camera;
-	cd->_dest.x = x;
-	cd->_mode = CM_PANNING;
-	cd->_movingToActor = 0;
+		CameraData *cd = &camera;
+		cd->_dest.x = x;
+		cd->_mode = CM_PANNING;
+		cd->_movingToActor = 0;
+	}
 }
-#endif
 
 void Scumm::actorFollowCamera(int act) {
-#if !defined(FULL_THROTTLE)
-	int old;
-	CameraData *cd = &camera;
+	if(!(_features & GF_AFTER_V7)) {
+		int old;
+		CameraData *cd = &camera;
 
-	/* mi1 compatibilty */
-	if (act==0) {
-		cd->_mode = CM_NORMAL;
-		cd->_follows = 0;
-		cd->_movingToActor = 0;
-		return;
-	}
+		/* mi1 compatibilty */
+		if (act==0) {
+			cd->_mode = CM_NORMAL;
+			cd->_follows = 0;
+			cd->_movingToActor = 0;
+			return;
+		}
 	
-	old = cd->_follows;
-	setCameraFollows(derefActorSafe(act, "actorFollowCamera"));
-	if (cd->_follows != old) 
-		runHook(0);
+		old = cd->_follows;
+		setCameraFollows(derefActorSafe(act, "actorFollowCamera"));
+		if (cd->_follows != old) 
+			runHook(0);
 
-	cd->_movingToActor = 0;
-#endif
+		cd->_movingToActor = 0;
+	}
 }
 
 void Scumm::setCameraAtEx(int at) {
-#if !defined(FULL_THROTTLE)
-	CameraData *cd = &camera;
-	cd->_mode = CM_NORMAL;
-	cd->_cur.x = at;
-	setCameraAt(at, 0);
-	cd->_movingToActor = 0;
-#endif
+	if(!(_features & GF_AFTER_V7)) {
+		CameraData *cd = &camera;
+		cd->_mode = CM_NORMAL;
+		cd->_cur.x = at;
+		setCameraAt(at, 0);
+		cd->_movingToActor = 0;
+	}
 }
 
 void Scumm::palManipulate() {
