@@ -3587,9 +3587,6 @@ void SimonState::talk_with_text(uint num_1, uint num_2, const char *string_ptr, 
 
 			height += 10;
 			threeval_b -= 10;
-
-			if (threeval_b < 2)
-				threeval_b = 2;
 			j = -1;
 		} else {
 			/* else_1 */
@@ -3645,9 +3642,6 @@ void SimonState::talk_with_text(uint num_1, uint num_2, const char *string_ptr, 
 				*char_buf++ = 10;
 				height += 20;
 				threeval_b -= 20;
-
-				if (threeval_b < 2)
-					threeval_b = 2;
 				j = -1;
 			} else {
 				/* else_6 */
@@ -3685,7 +3679,7 @@ void SimonState::talk_with_text(uint num_1, uint num_2, const char *string_ptr, 
 			}
 			strncpy(char_buf, string_ptr, m);
 			char_buf += m;
-			*char_buf++ = ' ';
+			*char_buf++ = '\n';
 			string_ptr = string_ptr_2;
 			string_ptr_2 += m;
 			while (*string_ptr_2-- != ' ' && m > 0)
@@ -3718,11 +3712,9 @@ void SimonState::talk_with_text(uint num_1, uint num_2, const char *string_ptr, 
 					}
 					strncpy(char_buf, string_ptr, m);
 					char_buf += m;
-					*char_buf++ = ' ';
+					*char_buf++ = '\n';
 					height += 30;
 					threeval_b -= 30;
-					if (threeval_b < 2)
-						threeval_b = 2;
 					j = -1;
 				} else {
 					/* else_15 */
@@ -3765,8 +3757,6 @@ void SimonState::talk_with_text(uint num_1, uint num_2, const char *string_ptr, 
 			*char_buf++ = 10;
 			height += 10;
 			threeval_b -= 10;
-			if (threeval_b < 2)
-				threeval_b = 2;
 			string_ptr = string_ptr_2;
 		}
 	}
