@@ -46,6 +46,7 @@ typedef struct {
 	OSystem::SoundProc *proc;
 	void *param;
 	OSystem::SoundFormat format;
+	SndStreamRef sndRefNum;
 } SoundDataType;
 
 //-- 02-12-17 --////////////////////////////////////////////////////////////////
@@ -100,7 +101,7 @@ public:
 	// Returns true if an event was retrieved.	
 	bool poll_event(Event *event);
 	
-	void SimulateArrowKeys(Event *event, Int8 iHoriz, Int8 iVert, Boolean repeat);
+	void SimulateArrowKeys(Event *event, Int8 iHoriz, Int8 iVert);
 
 	/** @name Sound */
 	//@{
@@ -164,13 +165,14 @@ public:
 	// Savefile management
 	SaveFileManager *get_savefile_manager();
 
-	static OSystem *create(UInt16 gfx_mode);
+	static OSystem *create(UInt16 gfx_mode, bool full_screen);
 
 	UInt8 _sndHandle;
 	Boolean _isSndPlaying;
 
 protected:
-	bool _overlay_visible;
+	byte *_tmpScreenP, *_tmpBackupP;
+	bool _overlayVisible;
 
 private:
 	typedef void (OSystem_PALMOS::*RendererProc)();
@@ -185,16 +187,24 @@ private:
 
 	WinHandle _screenH;
 	WinHandle _offScreenH;
-	
+	Boolean _fullscreen;
+	struct {
+		Coord x;
+		Coord y;
+		UInt32 addr;
+	} _screenOffset;
+
 public:
 	byte *_screenP;
+	int _offScreenPitch;
+	int _screenPitch;
+	
 	ThreadEmuType _thread[MAX_THREAD];	// 0: midi native, 1:multi-midi (adlib wrapper)
 	UInt8 _threadCounter;
 	UInt8 _threadID;
 
 private:
 	byte *_offScreenP;
-	byte *_tmpScreenP;
 
 	bool _mouseVisible;
 	bool _mouseDrawn;
@@ -205,7 +215,6 @@ private:
 	};
 
 	int _screenWidth, _screenHeight;
-	bool _overlaySaved;
 
 	struct MousePos {
 		int16 x,y,w,h;
@@ -221,7 +230,6 @@ private:
 	int _current_shake_pos;
 	int _new_shake_pos;
 	
-	UInt16 _decaly, _screeny;
 	Boolean _vibrate;
 	UInt32 _exit_delay;
 	
@@ -270,8 +278,6 @@ private:
 	Boolean _useHRmode;
 
 	eventsEnum _lastEvent;
-
-	UInt16 _wideRefNum;
 
 	OSystem_PALMOS();
 

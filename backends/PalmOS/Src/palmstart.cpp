@@ -93,6 +93,7 @@ typedef	struct {
 	Boolean stdPalette;
 	Boolean autoReset;
 	Boolean demoMode;
+	Boolean fullscreen;
 
 	struct {
 		UInt16 speaker;
@@ -201,25 +202,29 @@ static Char   itemsType = ITEM_TYPE_UNKNOWN;
  ***********************************************************************/
 static void GBInitAll() {
 #ifndef DISABLE_SCUMM
-	IMuseDigital_initGlobals();
-	NewGui_initGlobals();
-	Akos_initGlobals();
-	Codec47_initGlobals();
-	Gfx_initGlobals();
-	Dialogs_initGlobals();
-	Charset_initGlobals();
+	CALL_INIT(IMuseDigital)
+	CALL_INIT(NewGui)
+	CALL_INIT(Akos)
+	CALL_INIT(Bundle)
+	CALL_INIT(Codec47)
+	CALL_INIT(Gfx)
+	CALL_INIT(Dialogs)
+	CALL_INIT(Charset)
+	CALL_INIT(Costume)
 #endif
 }
 
 static void GBReleaseAll() {
 #ifndef DISABLE_SCUMM
-	IMuseDigital_releaseGlobals();
-	NewGui_releaseGlobals();
-	Akos_releaseGlobals();
-	Codec47_releaseGlobals();
-	Gfx_releaseGlobals();
-	Dialogs_releaseGlobals();
-	Charset_releaseGlobals();
+	CALL_RELEASE(IMuseDigital)
+	CALL_RELEASE(NewGui)
+	CALL_RELEASE(Akos)
+	CALL_RELEASE(Bundle)
+	CALL_RELEASE(Codec47)
+	CALL_RELEASE(Gfx)
+	CALL_RELEASE(Dialogs)
+	CALL_RELEASE(Charset)
+	CALL_RELEASE(Costume)
 #endif
 }
 
@@ -477,14 +482,16 @@ static void SknCopyBits(DmOpenRef skinDBP, DmResID bitmapID, const RectangleType
 				}
 
 				if (ch) {
+					Coord picth = gVars->screenFullWidth;
 					dst = (UInt8 *)BmpGetBits(WinGetBitmap(WinGetDisplayWindow()));
-					dst+= destX + destY * 320;
+				
+					dst+= destX + destY * picth;
 					bmpData = (UInt8 *)BmpGetBits(bmpTemp);
 					src	= bmpData + cx + cy * bw;
 
 					do {
 						MemMove(dst, src, cw);
-						dst += 320;
+						dst += picth;
 						src += bw;
 					} while (--ch);
 				}
@@ -700,7 +707,7 @@ static void GamCloseDatabase(Boolean ignoreCardParams) {
 		
 		DmOpenDatabaseInfo(_dbP, &dbID, 0, 0, &cardNo, 0);
 		DmCloseDatabase(_dbP);
-		
+
 		if (!ignoreCardParams) {
 			if (gPrefs->card.moveDB && gPrefs->card.volRefNum != sysInvalidRefNum) {
 				VFSFileRename(gPrefs->card.volRefNum, "/Palm/Programs/ScummVM/listdata.pdb", "listdata-old.pdb");
@@ -1726,7 +1733,7 @@ static Boolean SoundFormHandleEvent(EventPtr eventP) {
 static void MiscOptionsFormSave() {
 
 	FieldType *fld1P;
-	ControlType *cck1P, *cck2P, *cck3P, *cck4P, *cck5P, *cck6P, *cck7P;	
+	ControlType *cck1P, *cck2P, *cck3P, *cck4P, *cck5P, *cck6P, *cck7P, *cck8P;	
 	FormPtr frmP;
 
 	fld1P = (FieldType *)GetObjectPtr(MiscOptionsDebugLevelField);
@@ -1738,6 +1745,7 @@ static void MiscOptionsFormSave() {
 	cck5P = (ControlType *)GetObjectPtr(MiscOptionsWriteIniCheckbox);
 	cck6P = (ControlType *)GetObjectPtr(MiscOptionsAutoResetCheckbox);
 	cck7P = (ControlType *)GetObjectPtr(MiscOptionsDemoCheckbox);
+	cck8P = (ControlType *)GetObjectPtr(MiscOptionsFullscreenCheckbox);
 
 	frmP = FrmGetActiveForm();
 
@@ -1754,6 +1762,7 @@ static void MiscOptionsFormSave() {
 	gPrefs->saveConfig = CtlGetValue(cck5P);
 	gPrefs->autoReset = CtlGetValue(cck6P);
 	gPrefs->demoMode = CtlGetValue(cck7P);
+	gPrefs->fullscreen = CtlGetValue(cck8P);
 
 	gPrefs->debugLevel = StrAToI(FldGetTextPtr(fld1P));
 	
@@ -1775,6 +1784,7 @@ static void MiscOptionsFormInit() {
 	CtlSetValue((ControlType *)GetObjectPtr(MiscOptionsDebugCheckbox), gPrefs->debug);
 	CtlSetValue((ControlType *)GetObjectPtr(MiscOptionsWriteIniCheckbox), gPrefs->saveConfig);
 	CtlSetValue((ControlType *)GetObjectPtr(MiscOptionsDemoCheckbox), gPrefs->demoMode);
+	CtlSetValue((ControlType *)GetObjectPtr(MiscOptionsFullscreenCheckbox), gPrefs->fullscreen);
 
 	fld1P = (FieldType *)GetObjectPtr(MiscOptionsDebugLevelField);
 
@@ -1818,6 +1828,16 @@ static Boolean MiscOptionsFormHandleEvent(EventPtr eventP) {
 	return handled;
 }
 ///////////////////////////////////////////////////////////////////////
+static void CardSlotCreateDirs() {
+	if (gPrefs->card.volRefNum != sysInvalidRefNum) {
+		VFSDirCreate(gPrefs->card.volRefNum, "/PALM");
+		VFSDirCreate(gPrefs->card.volRefNum, "/PALM/Programs");
+		VFSDirCreate(gPrefs->card.volRefNum, "/PALM/Programs/ScummVM");
+		VFSDirCreate(gPrefs->card.volRefNum, "/PALM/Programs/ScummVM/Games");
+		VFSDirCreate(gPrefs->card.volRefNum, "/PALM/Programs/ScummVM/Saved");
+	}
+}
+
 static void CardSlotFromShowHideOptions() {
 	ControlType *cck1P;
 	FormPtr frmP = FrmGetActiveForm();
@@ -1846,36 +1866,34 @@ static UInt16 CardSlotFormInit(Boolean display, Boolean bDraw) {
 	while (volIterator != vfsIteratorStop) {
 		err = VFSVolumeEnumerate(&volRefNum, &volIterator);
 
-		if (!err)
-		{	Char labelP[expCardInfoStringMaxLen+1];
+		if (!err) {
+			Char labelP[expCardInfoStringMaxLen+1];
 			err = VFSVolumeGetLabel(volRefNum, labelP, expCardInfoStringMaxLen+1);
 
-			if (!err) {
-				if (StrLen(labelP) == 0) {	// if no label try to retreive card type
-					VolumeInfoType volInfo;
-					err = VFSVolumeInfo(volRefNum, &volInfo);
-					
-					if (!err) {
-						ExpCardInfoType info;
-						err = ExpCardInfo(volInfo.slotRefNum, &info);
-						StrCopy(labelP, info.deviceClassStr);
-					}
-					
-					if (err != errNone)	// if err default name
-						StrPrintF(labelP,"Other Card %ld", other++);
+			if (err || StrLen(labelP) == 0) {	// if no label try to retreive card type
+				VolumeInfoType volInfo;
+				err = VFSVolumeInfo(volRefNum, &volInfo);
+				
+				if (!err) {
+					ExpCardInfoType info;
+					err = ExpCardInfo(volInfo.slotRefNum, &info);
+					StrCopy(labelP, info.deviceClassStr);
 				}
-			
-				if (!cards)
-					cards = MemHandleNew(sizeof(CardInfoType));
-				else
-					MemHandleResize(cards, MemHandleSize(cards) + sizeof(CardInfoType));
-					
-				cardsInfo = (CardInfoType *)MemHandleLock(cards);
-				cardsInfo[counter].volRefNum = volRefNum;
-				StrCopy(cardsInfo[counter].nameP, labelP);
-				MemHandleUnlock(cards);
-				counter++;
+				
+				if (err)	// if err default name
+					StrPrintF(labelP,"Other Card %ld", other++);
 			}
+
+			if (!cards)
+				cards = MemHandleNew(sizeof(CardInfoType));
+			else
+				MemHandleResize(cards, MemHandleSize(cards) + sizeof(CardInfoType));
+				
+			cardsInfo = (CardInfoType *)MemHandleLock(cards);
+			cardsInfo[counter].volRefNum = volRefNum;
+			StrCopy(cardsInfo[counter].nameP, labelP);
+			MemHandleUnlock(cards);
+			counter++;
 		}
 	}
 
@@ -1993,10 +2011,10 @@ static void CardSlotFormExit(Boolean bSave) {
 			gPrefs->card.volRefNum = cardsInfo[selected].volRefNum;
 		}
 
-		//gPrefs->card.volRefNum = (selected == -1) ?  : cardsInfo[selected].volRefNum;
 		gPrefs->card.moveDB = CtlGetValue(cck1P);
 		gPrefs->card.deleteDB = CtlGetValue(cck2P);
 		gPrefs->card.confirmMoveDB = CtlGetValue(cck3P);
+		CardSlotCreateDirs();
 	}
 
 	FrmReturnToMain(updateCode);
@@ -2541,7 +2559,7 @@ typedef void (*sndStateOffType)(UInt8 /* kind */);
 #define aOutSndKindSp       (0) /* Speaker volume */
 #define aOutSndKindHp       (2) /* HeadPhone volume */
 ////////////////////////////////////////////////////////////
-#define MAX_ARG	20
+#define MAX_ARG	25
 
 static Boolean checkPath(const Char *pathP) {
 	FileRef *tmpRef;
@@ -2608,23 +2626,22 @@ static void StartScummVM() {
 			AddArg(&argvP[argc], "-q", (lang + (gameInfoP->language - 1) * 3), &argc);
 		}
 
+		// fullscreen ?
+		if (gPrefs->fullscreen) {
+			AddArg(&argvP[argc], "-f", NULL, &argc);
+		}
+
 		// gfx mode
-		gVars->flipping.pageAddr1 = (UInt8 *)(BmpGetBits(WinGetBitmap(WinGetDisplayWindow())));
-		gVars->flipping.pageAddr2 = gVars->flipping.pageAddr1; // default if not flipping mode
 		switch (gameInfoP->gfxMode)
 		{
 			case 1:
 				AddArg(&argvP[argc], "-g", "flipping", &argc);
-				gVars->flipping.pageAddr1 = (UInt8 *)WinScreenLock(winLockErase);
-				WinScreenUnlock();
 				break;
 			case 2:
 				AddArg(&argvP[argc], "-g", "dbuffer", &argc);
 				break;
 			case 3:
 				AddArg(&argvP[argc], "-g", "wide", &argc);
-				gVars->flipping.pageAddr1 = (UInt8 *)WinScreenLock(winLockErase);
-				WinScreenUnlock();
 				break;
 			default:
 				AddArg(&argvP[argc], "-g", "normal", &argc);
@@ -3200,6 +3217,7 @@ static Err AppStartCheckNotify() {
 		if (!err) {
 			SysNotifyRegister(cardNo, dbID, sysNotifyVolumeMountedEvent, NULL, sysNotifyNormalPriority, NULL);
 			SysNotifyRegister(cardNo, dbID, sysNotifyVolumeUnmountedEvent, NULL, sysNotifyNormalPriority, NULL);
+			SysNotifyRegister(cardNo, dbID, sonySysNotifyMsaEnforceOpenEvent, NULL, sysNotifyNormalPriority, NULL);
 		}
 	}
 
@@ -3269,6 +3287,67 @@ static void AppStopMathLib() {
 	}
 }
 
+static Err AppStartCheckScreenSize() {
+	SonySysFtrSysInfoP sonySysFtrSysInfoP;
+	Err error = errNone;
+
+//	WinGetDisplayExtent(&gVars->screenWidth, &gVars->screenHeight);
+	
+//	gVars->screenWidth <<= 1;
+//	gVars->screenHeight <<= 1;
+	gVars->screenWidth = 320;
+	gVars->screenHeight = 320;
+
+	gVars->screenFullWidth = gVars->screenWidth;
+	gVars->screenFullHeight = gVars->screenHeight;
+
+	if (!(error = FtrGet(sonySysFtrCreator, sonySysFtrNumSysInfoP, (UInt32*)&sonySysFtrSysInfoP))) {
+		if (sonySysFtrSysInfoP->libr & sonySysFtrSysInfoLibrSilk) {
+
+			if ((error = SysLibFind(sonySysLibNameSilk, &gVars->slkRefNum)))
+				if (error == sysErrLibNotFound)	
+					error = SysLibLoad( sonySysFileTSilkLib, sonySysFileCSilkLib, &gVars->slkRefNum);
+
+			if (!error) {
+				error = FtrGet(sonySysFtrCreator, sonySysFtrNumVskVersion, &gVars->slkVersion);
+				// Get screen size
+				if (error) {
+					// v1 = NR
+				 	error = SilkLibOpen(gVars->slkRefNum);
+					if(!error) {
+						gVars->slkVersion = vskVersionNum1;
+						SilkLibEnableResize(gVars->slkRefNum);
+						SilkLibResizeDispWin(gVars->slkRefNum, silkResizeMax);
+						HRWinGetWindowExtent(gVars->HRrefNum, &gVars->screenFullWidth, &gVars->screenFullHeight);
+						SilkLibResizeDispWin(gVars->slkRefNum, silkResizeNormal);
+						SilkLibDisableResize(gVars->slkRefNum);
+					}
+				} else {
+					// v2 = NX/NZ
+					// v3 = UX
+				 	error = VskOpen(gVars->slkRefNum);
+					if(!error) {
+						VskSetState(gVars->slkRefNum, vskStateEnable, (gVars->slkVersion == vskVersionNum2 ? vskResizeVertically : vskResizeHorizontally));
+						VskSetState(gVars->slkRefNum, vskStateResize, vskResizeNone);
+						HRWinGetWindowExtent(gVars->HRrefNum, &gVars->screenFullWidth, &gVars->screenFullHeight);
+						VskSetState(gVars->slkRefNum, vskStateResize, vskResizeMax);
+						VskSetState(gVars->slkRefNum, vskStateEnable, vskResizeDisable);
+					}
+				}
+			}
+		}
+	}
+
+	if (error)
+		gVars->slkRefNum = sysInvalidRefNum;
+	
+	return error;
+}
+
+static void AppStopSilk() {
+	if (gVars->slkRefNum != sysInvalidRefNum)
+		SilkLibClose(gVars->slkRefNum);
+}
 
 static Err AppStart(void) {
 	UInt16 dataSize, checkSize = 0;
@@ -3283,6 +3362,7 @@ static Err AppStart(void) {
 	gVars->indicator.off = 0;
 	gVars->HRrefNum = sysInvalidRefNum;
 	gVars->volRefNum = sysInvalidRefNum;
+	gVars->slkRefNum = sysInvalidRefNum;
 
 	// allocate prefs space
 	dataSize = sizeof(GlobalsPreferenceType);
@@ -3324,13 +3404,9 @@ static Err AppStart(void) {
 
 	error = AppStartCheckHRmode();
 	if (error) return (error);
-
+	
 	error = AppStartLoadSkin();
 	if (error) return (error);
-
-	error = GamOpenDatabase();
-	if (error) return (error);
-	GamImportDatabase(false);
 
 	if (gPrefs->card.volRefNum != sysInvalidRefNum) {	// if volref previously defined, check if it's a valid one
 		VolumeInfoType volInfo;
@@ -3341,7 +3417,12 @@ static Err AppStart(void) {
 	else
 		gPrefs->card.volRefNum = parseCards(); //parseCards(0);	// get first volref
 
+	error = GamOpenDatabase();
+	if (error) return (error);
+	GamImportDatabase(false);
+
 	AppStartCheckNotify(); // not fatal error if not avalaible
+	AppStartCheckScreenSize();
 
 	return error;
 }
@@ -3374,6 +3455,7 @@ static Err AppStopCheckNotify()
 		if (!err) {
 			SysNotifyUnregister(cardNo, dbID, sysNotifyVolumeUnmountedEvent, sysNotifyNormalPriority);
 			SysNotifyUnregister(cardNo, dbID, sysNotifyVolumeMountedEvent, sysNotifyNormalPriority);
+			// sonySysNotifyMsaEnforceOpenEvent
 		}
 	}
 	
@@ -3394,6 +3476,7 @@ static void AppStop(void) {
 	SavePrefs();
 
 	// stop all
+	AppStopSilk();
 	AppStopCheckNotify();
 	AppStopMathLib();
 	AppStopHRMode();
@@ -3439,10 +3522,13 @@ static void AppLaunchCmdNotify(UInt16 LaunchFlags, SysNotifyParamType * pData)
 					gPrefs->card.volRefNum = notifyDetailsP->volRefNum;
 
 					if (FrmGetFormPtr(MainForm) == FrmGetActiveForm())
-						if (gPrefs->card.volRefNum != sysInvalidRefNum)
+						if (gPrefs->card.volRefNum != sysInvalidRefNum) {
+							CardSlotCreateDirs();
 							FrmUpdateForm(MainForm, frmRedrawUpdateMSImport);
+						}
 				}
 			}
+			break;
 		
 		case sysNotifyVolumeUnmountedEvent:
 			if (gPrefs) {
@@ -3455,6 +3541,10 @@ static void AppLaunchCmdNotify(UInt16 LaunchFlags, SysNotifyParamType * pData)
 						FrmUpdateForm(MainForm, frmRedrawUpdateMS);
 				}
 			}
+			break;
+		
+		case sonySysNotifyMsaEnforceOpenEvent:
+			// what am i supposed to do here ???
 			break;
 	}
 }

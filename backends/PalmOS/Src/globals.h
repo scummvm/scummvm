@@ -28,22 +28,23 @@ typedef struct {
 
 	UInt16 HRrefNum;
 	UInt16 volRefNum;
+	UInt16 slkRefNum;
+	UInt32 slkVersion;
+
 	FileRef	logFile;
 
-	Boolean screenLocked;
+	
 	Boolean vibrator;
-	Boolean stdPalette;
 	Boolean autoReset;
+	Boolean screenLocked;
+	Boolean stdPalette;
+	Coord screenWidth, screenHeight;	// with silkarea
+	Coord screenFullWidth, screenFullHeight;	// without silkarea
 
 	struct {
 		UInt8 on;
 		UInt8 off;
 	} indicator;
-	
-	struct {
-		UInt8 *pageAddr1;
-		UInt8 *pageAddr2;
-	} flipping;
 	
 	struct {
 		Boolean MP3;
