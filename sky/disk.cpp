@@ -45,8 +45,6 @@ SkyDisk::SkyDisk(char *gameDataPath) {
 
 	if (!(_dinnerTableEntries = _dnrHandle->readUint32LE()))
 		error("Error reading from sky.dnr!\n"); //even though it was opened correctly?!
-	
-	debug(1, "Found BASS version v0.0%d (%d dnr entries)", determineGameVersion(), _dinnerTableEntries);
 
 	_dinnerTableArea = (uint8 *)malloc(_dinnerTableEntries * 8);
 	entriesRead = _dnrHandle->read(_dinnerTableArea, 8 * _dinnerTableEntries) / 8;
@@ -57,6 +55,8 @@ SkyDisk::SkyDisk(char *gameDataPath) {
 	_dataDiskHandle->open(dataFilename, _gameDataPath);
 	if (_dataDiskHandle->isOpen() == false) 
 		error("Error opening %s%s!\n", _gameDataPath, dataFilename);
+
+	debug(1, "Found BASS version v0.0%d (%d dnr entries)", determineGameVersion(), _dinnerTableEntries);
 
 	memset(_buildList, 0, 60 * 2);
 	memset(_loadedFilesList, 0, 60 * 4);
@@ -415,7 +415,8 @@ uint32 SkyDisk::determineGameVersion() {
 		return 303;
 	case 1445:
 		//floppy (v0.0331 or v0.0348)
-		return 331;
+		if (_dataDiskHandle->size() == 8830435) return 348;
+		else return 331;
 	case 1711:
 		//cd demo (v0.0365)
 		return 365;

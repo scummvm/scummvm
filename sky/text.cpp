@@ -1741,6 +1741,7 @@ void SkyText::initHuffTree() {
 		_huffTree = huffTree_00303;
 		break;
 	case 331:
+	case 348:
 		_huffTree = huffTree_00331;
 		break;
 	case 365:

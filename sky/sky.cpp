@@ -346,18 +346,14 @@ void SkyState::delay(uint amount) { //copied and mutilated from Simon.cpp
 
 bool SkyState::isDemo(void) {
 	switch (_systemVars.gameVersion) {
-	case 267:
+	case 267: // floppy demo
+	case 365: // cd demo
 		return true;
 	case 288:
-		return false;
 	case 303:
-		return false;
 	case 331:
-		return false;
-	case 365:
-		return true;
+	case 348:
 	case 368:
-		return false;
 	case 372:
 		return false;
 	default:
@@ -369,17 +365,13 @@ bool SkyState::isCDVersion(void) {
 
 	switch (_systemVars.gameVersion) {
 	case 267:
-		return false;
 	case 288:
-		return false;
 	case 303:
-		return false;
 	case 331:
+	case 348:
 		return false;
 	case 365:
-		return true;
 	case 368:
-		return true;
 	case 372:
 		return true;
 	default:
