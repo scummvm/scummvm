@@ -1195,16 +1195,30 @@ void Actor::setActorCostume(int c) {
 	int i;
 
 	costumeNeedsInit = true;
-
-	if (visible) {
-		hideActor();
+	
+	if (_vm->_version == 8) {
 		cost.reset();
+		memset(animVariable, 0, sizeof(animVariable));
 		costume = c;
-		showActor();
+		
+		if (visible) {
+			if (costume) {
+				_vm->ensureResourceLoaded(rtCostume, costume);
+			}
+			startAnimActor(initFrame);
+		}
 	} else {
-		costume = c;
-		cost.reset();
+		if (visible) {
+			hideActor();
+			cost.reset();
+			costume = c;
+			showActor();
+		} else {
+			costume = c;
+			cost.reset();
+		}
 	}
+
 
 	if (_vm->_features & GF_NEW_COSTUMES) {
 		for (i = 0; i < 256; i++)
@@ -1216,7 +1230,6 @@ void Actor::setActorCostume(int c) {
 		for (i = 0; i < 32; i++)
 			palette[i] = 0xFF;
 	}
-
 }
 
 void Actor::startWalkActor(int destX, int destY, int dir) {
