@@ -176,7 +176,7 @@ void MidiDriver_SEQ::sysEx (byte *msg, uint16 length) {
 	}
 	buf[position++] = 0xF7;
 	while (position % 8 != 0)
-		buf[position++] = 0;
+		buf[position++] = 0xFF; // Filler bytes
 
 	write (device, buf, position);
 }
