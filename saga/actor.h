@@ -181,7 +181,15 @@ struct ActorData {
 	int nameIndex;				// Actor's index in actor name string list
 	byte speechColor;			// Actor dialogue color
 	uint16 flags;				// Actor flags
+	
 	int sceneNumber;			// scene of actor
+	int actorX;					// Actor's logical coordinates
+	int actorY;					// 
+	int actorZ;					// 
+
+	Point screenPosition;		// Actor's screen coordinates
+	int screenDepth;			//
+	int screenScale;			//
 
 	int currentAction;		
 	int facingDirection;
@@ -195,8 +203,6 @@ struct ActorData {
 	int frameListResourceId;	// Actor's frame list resource id
 
 
-	Point a_pt;		// Actor's logical coordinates
-	Point s_pt;		// Actor's screen coordinates
 
 
 	int idle_time;
@@ -237,6 +243,11 @@ struct ActorData {
 		spriteList = NULL;
 		spriteListResourceId = 0;
 		flags = 0;
+		sceneNumber = 0;
+		actorX = 0;
+		actorY = 0;
+		actorZ = 0;
+		screenDepth = 0;
 
 		idle_time = 0;
 		orient = 0;
@@ -294,7 +305,7 @@ public:
 private:
 	int handleWalkIntent(ActorData *actor, WALKINTENT *a_walk_int, int *complete_p, int msec);
 	int handleSpeakIntent(ActorData *actor, ACTORINTENT *a_aintent, int *complete_p, int msec);
-	int setPathNode(WALKINTENT *walk_int, Point *src_pt, Point *dst_pt, SEMAPHORE *sem);
+	int setPathNode(WALKINTENT *walk_int, const Point &src_pt, Point *dst_pt, SEMAPHORE *sem);
 
 	ActorData *getActor(uint16 actorId);
 

@@ -40,10 +40,6 @@ enum SCENE_MODES {
 	SCENE_MODE_ISO
 };
 
-struct SCENE_ZINFO {
-	int beginSlope;
-	int endSlope;
-};
 
 struct SCENE_BGINFO {
 	int bg_x;
@@ -56,7 +52,6 @@ struct SCENE_BGINFO {
 };
 
 struct SCENE_INFO {
-	SCENE_ZINFO z_info;
 	SCENE_BGINFO bg_info;
 	TEXTLIST *text_list;
 };
@@ -232,9 +227,9 @@ class Scene {
 	int getBGMaskInfo(int *w, int *h, byte **buf, size_t *buf_len);
 	int isBGMaskPresent(void);
 	int getBGInfo(SCENE_BGINFO *bginfo);
-	int getZInfo(SCENE_ZINFO *zinfo);
 	int getBGPal(PALENTRY **pal);
 	int getInfo(SCENE_INFO *si);
+	void getSlopes(int &beginSlope, int &endSlope);
 
 	int clearSceneQueue(void);
 	int changeScene(int scene_num);

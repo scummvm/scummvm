@@ -317,13 +317,9 @@ int Scene::getMode() {
 	return _sceneMode;
 }
 
-int Scene::getZInfo(SCENE_ZINFO *zinfo) {
-	assert(_initialized);
-
-	zinfo->beginSlope = _desc.beginSlope;
-	zinfo->endSlope = _desc.endSlope;
-
-	return SUCCESS;
+void Scene::getSlopes(int &beginSlope, int &endSlope) {
+	beginSlope = ITE_STATUS_Y - _desc.beginSlope; // fixme: implement also IHNM_STATUS_Y 
+	endSlope = ITE_STATUS_Y - _desc.endSlope;
 }
 
 int Scene::getBGInfo(SCENE_BGINFO *bginfo) {

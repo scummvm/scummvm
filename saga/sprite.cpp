@@ -173,7 +173,7 @@ int Sprite::freeSprite(SPRITELIST *spritelist) {
 	return SUCCESS;
 }
 
-int Sprite::draw(SURFACE *ds, SPRITELIST *sprite_list, int sprite_num, int spr_x, int spr_y) {
+int Sprite::draw(SURFACE *ds, SPRITELIST *sprite_list, int sprite_num, const Point &screenCoord, int scale) {
 	int offset;
 	int offset_idx;
 	byte *sprite_p;
@@ -187,6 +187,7 @@ int Sprite::draw(SURFACE *ds, SPRITELIST *sprite_list, int sprite_num, int spr_x
 	int clip_height;
 	int x_align;
 	int y_align;
+	Point spr_pt;
 
 	if (!_initialized) {
 		return FAILURE;
@@ -209,38 +210,38 @@ int Sprite::draw(SURFACE *ds, SPRITELIST *sprite_list, int sprite_num, int spr_x
 
 	sprite_data_p = sprite_p + readS.pos();
 
-	spr_x += x_align;
-	spr_y += y_align;
+	spr_pt.x = screenCoord.x + x_align;
+	spr_pt.y = screenCoord.y + y_align;
 
-	if (spr_x < 0) {
+	if (spr_pt.x < 0) {
 		return 0;
 	}
 
-	if (spr_y < 0) {
+	if (spr_pt.y < 0) {
 		return 0;
 	}
 
-	decodeRLESprite(sprite_data_p, 64000, _decodeBuf, s_width * s_height);
+	decodeRLESprite(sprite_data_p, 64000, _decodeBuf, s_width * s_height, scale);
 
-	buf_row_p = (byte *)ds->pixels + ds->pitch * spr_y;
+	buf_row_p = (byte *)ds->pixels + ds->pitch * spr_pt.y;
 	src_row_p = _decodeBuf;
 
 	// Clip to right side of surface
 	clip_width = s_width;
-	if (s_width > (ds->w - spr_x)) {
-		clip_width = (ds->w - spr_x);
+	if (s_width > (ds->w - spr_pt.x)) {
+		clip_width = (ds->w - spr_pt.x);
 	}
 
 	// Clip to bottom side of surface
 	clip_height = s_height;
-	if (s_height > (ds->h - spr_y)) {
-		clip_height = (ds->h - spr_y);
+	if (s_height > (ds->h - spr_pt.y)) {
+		clip_height = (ds->h - spr_pt.y);
 	}
 
 	for (i = 0; i < clip_height; i++) {
 		for (j = 0; j < clip_width; j++) {
 			if (*(src_row_p + j) != 0) {
-				*(buf_row_p + j + spr_x) = *(src_row_p + j);
+				*(buf_row_p + j + spr_pt.x) = *(src_row_p + j);
 			}
 		}
 		buf_row_p += ds->pitch;
@@ -250,12 +251,11 @@ int Sprite::draw(SURFACE *ds, SPRITELIST *sprite_list, int sprite_num, int spr_x
 	return SUCCESS;
 }
 
-int Sprite::drawOccluded(SURFACE *ds, SPRITELIST *sprite_list, int sprite_num, int spr_x, int spr_y) {
+int Sprite::drawOccluded(SURFACE *ds, SPRITELIST *sprite_list, int sprite_num, const Point &screenCoord, int scale, int depth) {
 	int offset;
 	int offset_idx;
 	byte *sprite_p;
 	const byte *sprite_data_p;
-	int i;
 	int x, y;
 	byte *dst_row_p;
 	byte *src_row_p;
@@ -266,8 +266,6 @@ int Sprite::drawOccluded(SURFACE *ds, SPRITELIST *sprite_list, int sprite_num, i
 	int s_height;
 	int x_align;
 	int y_align;
-	int z_lut[SPRITE_ZMAX];
-	int e_slope;
 
 	// Clipinfo variables
 	Point spr_pt;
@@ -283,16 +281,13 @@ int Sprite::drawOccluded(SURFACE *ds, SPRITELIST *sprite_list, int sprite_num, i
 	byte *mask_row_p;
 	int mask_z;
 
-	// Z info variables
-	SCENE_ZINFO zinfo;
-	int actor_z;
 
 	if (!_initialized) {
 		return FAILURE;
 	}
 
 	if (!_vm->_scene->isBGMaskPresent()) {
-		return draw(ds, sprite_list, sprite_num, spr_x, spr_y);
+		return draw(ds, sprite_list, sprite_num, screenCoord, scale);
 	}
 
 	if (sprite_num >= sprite_list->sprite_count) {
@@ -319,16 +314,7 @@ int Sprite::drawOccluded(SURFACE *ds, SPRITELIST *sprite_list, int sprite_num, i
 
 	sprite_data_p = sprite_p + readS.pos();
 
-	// Create actor Z occlusion LUT
-	_vm->_scene->getZInfo(&zinfo);
 
-	e_slope = zinfo.endSlope;
-
-	for (i = 0; i < SPRITE_ZMAX; i++) {
-		z_lut[i] = (int)(e_slope + ((137.0 - e_slope) / 14.0) * (15.0 - i));
-	}
-
-	actor_z = spr_y;
 
 	_vm->_scene->getBGMaskInfo(&mask_w, &mask_h, &mask_buf, &mask_buf_len);
 
@@ -342,11 +328,8 @@ int Sprite::drawOccluded(SURFACE *ds, SPRITELIST *sprite_list, int sprite_num, i
 	spr_dst_rect.right = ds->clip_rect.right;
 	spr_dst_rect.bottom = MIN(ds->clip_rect.bottom, (int16)mask_h);
 
-	spr_pt.x = spr_x + x_align;
-	spr_pt.y = spr_y + y_align;
-
-	spr_x += x_align;
-	spr_y += y_align;
+	spr_pt.x = screenCoord.x + x_align;
+	spr_pt.y = screenCoord.y + y_align;
 
 	ci.dst_rect = &spr_dst_rect;
 	ci.src_rect = &spr_src_rect;
@@ -358,7 +341,7 @@ int Sprite::drawOccluded(SURFACE *ds, SPRITELIST *sprite_list, int sprite_num, i
 		return SUCCESS;
 	}
 
-	decodeRLESprite(sprite_data_p, 64000, _decodeBuf, s_width * s_height);
+	decodeRLESprite(sprite_data_p, 64000, _decodeBuf, s_width * s_height, scale);
 
 	// Finally, draw the occluded sprite
 	src_row_p = _decodeBuf + ci.src_draw_x + (ci.src_draw_y * s_width);
@@ -373,7 +356,7 @@ int Sprite::drawOccluded(SURFACE *ds, SPRITELIST *sprite_list, int sprite_num, i
 		for (x = 0; x < ci.draw_w; x++) {
 			if (*src_p != 0) {
 				mask_z = *mask_p & SPRITE_ZMASK;
-				if (actor_z > z_lut[mask_z]) {
+				if (mask_z > depth) {
 					*dst_p = *src_p;
 				}
 			}
@@ -396,7 +379,8 @@ int Sprite::drawOccluded(SURFACE *ds, SPRITELIST *sprite_list, int sprite_num, i
 	return SUCCESS;
 }
 
-int Sprite::decodeRLESprite(const byte *inbuf, size_t inbuf_len, byte *outbuf, size_t outbuf_len) {
+//TODO write scale support
+int Sprite::decodeRLESprite(const byte *inbuf, size_t inbuf_len, byte *outbuf, size_t outbuf_len, int scale) {
 	int bg_runcount;
 	int fg_runcount;
 	const byte *inbuf_ptr;

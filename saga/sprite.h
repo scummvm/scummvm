@@ -65,11 +65,11 @@ class Sprite {
 	int appendList(int resource_num, SPRITELIST *spritelist);
 	int getListLen(SPRITELIST *spritelist);
 	int freeSprite(SPRITELIST *spritelist);
-	int draw(SURFACE *ds, SPRITELIST *sprite_list, int sprite_num, int spr_x, int spr_y);
-	int drawOccluded(SURFACE *ds, SPRITELIST *sprite_list, int sprite_num, int spr_x, int spr_y);
+	int draw(SURFACE *ds, SPRITELIST *sprite_list, int sprite_num, const Point &screenCoord, int scale);
+	int drawOccluded(SURFACE *ds, SPRITELIST *sprite_list, int sprite_num, const Point &screenCoord, int scale, int depth);
 
  private:
-	int decodeRLESprite(const byte *inbuf, size_t inbuf_len, byte *outbuf, size_t outbuf_len);
+	int decodeRLESprite(const byte *inbuf, size_t inbuf_len, byte *outbuf, size_t outbuf_len, int scale);
 
 	SagaEngine *_vm;
 	bool _initialized;

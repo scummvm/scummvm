@@ -318,11 +318,9 @@ int Interface::draw() {
 
 	int xbase;
 	int ybase;
-	int lportrait_x;
-	int lportrait_y;
-	int rportrait_x;
-	int rportrait_y;
-
+	Point lportrait;
+	Point rportrait;
+	
 	Point origin;
 
 	back_buf = _vm->_gfx->getBackBuffer();
@@ -358,16 +356,16 @@ int Interface::draw() {
 	}
 
 	// Draw character portrait
-	lportrait_x = xbase + _iDesc.lportrait_x;
-	lportrait_y = ybase + _iDesc.lportrait_y;
+	lportrait.x = xbase + _iDesc.lportrait_x;
+	lportrait.y = ybase + _iDesc.lportrait_y;
 
-	_vm->_sprite->draw(back_buf, _defPortraits, _leftPortrait, lportrait_x, lportrait_y);
+	_vm->_sprite->draw(back_buf, _defPortraits, _leftPortrait, lportrait, 1);
 
 	if (_panelMode == kPanelDialogue && _iDesc.rportrait_x >= 0) {
-		rportrait_x = xbase + _iDesc.rportrait_x;
-		rportrait_y = ybase + _iDesc.rportrait_y;
+		rportrait.x = xbase + _iDesc.rportrait_x;
+		rportrait.y = ybase + _iDesc.rportrait_y;
 
-		_vm->_sprite->draw(back_buf, _scenePortraits, _rightPortrait, rportrait_x, rportrait_y);
+		_vm->_sprite->draw(back_buf, _scenePortraits, _rightPortrait, rportrait, 1);
 	}
 
 	drawInventory();
@@ -457,8 +455,7 @@ int Interface::handleCommandClick(SURFACE *ds, const Point& imousePt) {
 	int x_base;
 	int y_base;
 
-	int button_x = 0;
-	int button_y = 0;
+	Point button;
 
 	int old_set_button;
 	int set_button;
@@ -482,19 +479,19 @@ int Interface::handleCommandClick(SURFACE *ds, const Point& imousePt) {
 		}
 
 		if (_cPanel.buttons[set_button].flags & BUTTON_BITMAP) {
-			button_x = x_base + _cPanel.buttons[set_button].x1;
-			button_y = y_base + _cPanel.buttons[set_button].y1;
+			button.x = x_base + _cPanel.buttons[set_button].x1;
+			button.y = y_base + _cPanel.buttons[set_button].y1;
 
 			_vm->_sprite->draw(ds, _cPanel.sprites, _cPanel.buttons[set_button].
-						active_sprite - 1, button_x, button_y);
+						active_sprite - 1, button, 1);
 		}
 
 		if (_cPanel.buttons[old_set_button].flags & BUTTON_BITMAP) {
-			button_x = x_base + _cPanel.buttons[old_set_button].x1;
-			button_y = y_base + _cPanel.buttons[old_set_button].y1;
+			button.x = x_base + _cPanel.buttons[old_set_button].x1;
+			button.y = y_base + _cPanel.buttons[old_set_button].y1;
 
 			_vm->_sprite->draw(ds, _cPanel.sprites, _cPanel.buttons[old_set_button].
-						inactive_sprite - 1, button_x, button_y);
+						inactive_sprite - 1, button, 1);
 		}
 	}
 
@@ -505,8 +502,7 @@ int Interface::handleCommandUpdate(SURFACE *ds, const Point& imousePt) {
 	int hit_button;
 	int ibutton_num;
 
-	int button_x = 0;
-	int button_y = 0;
+	Point button;
 	int button_w = 0;
 
 	int verb_idx = 0;
@@ -546,16 +542,16 @@ int Interface::handleCommandUpdate(SURFACE *ds, const Point& imousePt) {
 			color = _iDesc.cmd_txt_col;
 		}
 
-		button_x = _cPanel.x + _cPanel.buttons[i].x1;
-		button_y = _cPanel.y + _cPanel.buttons[i].y1;
+		button.x = _cPanel.x + _cPanel.buttons[i].x1;
+		button.y = _cPanel.y + _cPanel.buttons[i].y1;
 
 		_vm->_font->draw(SMALL_FONT_ID, ds, I_VerbData[verb_idx].verb_str, 0,
-				button_x + ((button_w / 2) - (string_w / 2)), button_y + 1,
+				button.x + ((button_w / 2) - (string_w / 2)), button.y + 1,
 				color, _iDesc.cmd_txt_shadowcol, FONT_SHADOW);
 
 		if ((i == _cPanel.set_button) && (_cPanel.buttons[i].flags & BUTTON_BITMAP)) {
 			_vm->_sprite->draw(ds, _cPanel.sprites, _cPanel.buttons[i].active_sprite - 1,
-						button_x, button_y);
+						button, 1);
 		}
 	}
 
@@ -704,15 +700,18 @@ void Interface::drawInventory() {
 	int y = _iDesc.inv_ystart + _iDesc.inv_icon_yoffset;
 	int width = _iDesc.inv_icon_width + _iDesc.inv_xspacing;
 	int height = _iDesc.inv_icon_height + _iDesc.inv_yspacing;
+	Point drawPoint;
 
 	for (int i = 0; i < _inventoryCount; i++) {
 		if (_inventory[i] >= ARRAYSIZE(ObjectTable)) {
 			continue;
 		}
+		drawPoint.x = x + col * width;
+		drawPoint.y = y + row * height;
 
 		_vm->_sprite->draw(back_buf, _vm->_mainSprites,
 			ObjectTable[_inventory[i]].spritelistRn,
-			x + col * width, y + row * height);
+			drawPoint, 1);
 
 		if (++col >= _iDesc.inv_columns) {
 			if (++row >= _iDesc.inv_rows) {

@@ -39,13 +39,14 @@
 #include "saga/actor.h"
 #include "saga/actordata.h"
 #include "saga/stream.h"
+#include "saga/interface.h"
 
 namespace Saga {
 
 static int actorCompare(const ActorDataPointer& actor1, const ActorDataPointer& actor2) {
-	if (actor1->a_pt.y == actor2->a_pt.y) {
+	if (actor1->actorY == actor2->actorY) {
 		return 0;
-	} else if (actor1->a_pt.y < actor2->a_pt.y) {
+	} else if (actor1->actorY < actor2->actorY) {
 		return -1;
 	} else {
 		return 1;
@@ -279,15 +280,37 @@ int Actor::direct(int msec) {
 
 void Actor::createDrawOrderList() {
 	int i;
+	int	beginSlope, endSlope, middle;
 	ActorData *actor;
 
 	_drawOrderList.clear();
 	for (i = 0;i < ACTORCOUNT;i++) {
 		actor = &_actors[i];
 		if (actor->disabled) continue;
+		if (actor->sceneNumber != _vm->_scene->currentSceneNumber()) continue;
 
-		if (actor->sceneNumber == _vm->_scene->currentSceneNumber())
-			_drawOrderList.pushBack(actor, actorCompare);
+		_drawOrderList.pushBack(actor, actorCompare);
+
+		middle = ITE_STATUS_Y - actor->actorY / ACTOR_LMULT,
+
+		_vm->_scene->getSlopes(beginSlope, endSlope);
+
+		actor->screenDepth = (14 * middle) / endSlope + 1;
+
+		if (middle <= beginSlope) {
+			actor->screenScale = 256;
+		} else {
+			if (middle >= endSlope) {
+				actor->screenScale = 1;
+			} else {
+				middle -= beginSlope;
+				endSlope -= beginSlope;
+				actor->screenScale = 256 - (middle * 256) / endSlope;
+			}
+		}
+
+		actor->screenPosition.x = (actor->actorX / ACTOR_LMULT);
+		actor->screenPosition.y = (actor->actorY / ACTOR_LMULT) - actor->actorZ;
 	}
 }
 
@@ -314,13 +337,19 @@ int Actor::drawActors() {
 
 	for (actorDrawOrderIterator = _drawOrderList.begin(); actorDrawOrderIterator != _drawOrderList.end(); ++actorDrawOrderIterator) {
 		actor =  actorDrawOrderIterator.operator*();
-		if (actor->framesCount == 0) continue;
+		if (actor->framesCount == 0) {
+			warning("actor->framesCount == 0 actorId 0x%X", actor->actorId);
+			continue;
+		}
 
 		o_idx = ActorOrientationLUT[actor->orient];
 		sprite_num = actor->frames[actor->action].dir[o_idx].frameIndex;
 		sprite_num += actor->action_frame;
-		if (actor->spriteList->sprite_count <= sprite_num) continue;
-		_vm->_sprite->drawOccluded(back_buf, actor->spriteList, sprite_num, actor->s_pt.x, actor->s_pt.y);
+		if (actor->spriteList->sprite_count <= sprite_num) {
+			warning("(actor->spriteList->sprite_count <= sprite_num) actorId 0x%X", actor->actorId);
+			continue;
+		}
+		_vm->_sprite->drawOccluded(back_buf, actor->spriteList, sprite_num, actor->screenPosition, actor->screenScale, actor->screenDepth);
 
 		// If actor's current intent is to speak, oblige him by 
 		// displaying his dialogue 
@@ -331,8 +360,8 @@ int Actor::drawActors() {
 				actorDialogIterator = a_intent->si_diaglist.begin();
 				if (actorDialogIterator != a_intent->si_diaglist.end()) {
 					a_dialogue = actorDialogIterator.operator->();
-					diag_x = actor->s_pt.x;
-					diag_y = actor->s_pt.y;
+					diag_x = actor->screenPosition.x;
+					diag_y = actor->screenPosition.y;
 					diag_y -= ACTOR_DIALOGUE_HEIGHT;
 					_vm->textDraw(MEDIUM_FONT_ID, back_buf, a_dialogue->d_string, diag_x, diag_y, actor->speechColor, 0,
 								FONT_OUTLINE | FONT_CENTERED);
@@ -583,13 +612,13 @@ void Actor::walkTo(uint16 actorId, const Point *walk_pt, uint16 flags, SEMAPHORE
 	}
 }
 
-int Actor::setPathNode(WALKINTENT *walk_int, Point *src_pt, Point *dst_pt, SEMAPHORE *sem) {
+int Actor::setPathNode(WALKINTENT *walk_int, const Point &src_pt, Point *dst_pt, SEMAPHORE *sem) {
 	WALKNODE new_node;
 
 	walk_int->wi_active = 1;
-	walk_int->org = *src_pt;
+	walk_int->org = src_pt;
 
-	assert((walk_int != NULL) && (src_pt != NULL) && (dst_pt != NULL));
+	assert((walk_int != NULL) && (dst_pt != NULL));
 
 	new_node.node_pt = *dst_pt;
 	new_node.calc_flag = 0;
@@ -625,7 +654,7 @@ int Actor::handleWalkIntent(ActorData *actor, WALKINTENT *a_walkint, int *comple
 
 	// Initialize walk intent 
 	if (!a_walkint->wi_init) {
-		setPathNode(a_walkint, &actor->a_pt, &a_walkint->dst_pt, a_walkint->sem);
+		setPathNode(a_walkint, Point(actor->actorX,actor->actorY), &a_walkint->dst_pt, a_walkint->sem);
 		setDefaultAction(actor->actorId, ACTION_IDLE, ACTION_NONE);
 		a_walkint->wi_init = 1;
 	}
@@ -741,11 +770,8 @@ int Actor::handleWalkIntent(ActorData *actor, WALKINTENT *a_walkint, int *comple
 	actor_x = (int)new_a_x;
 	actor_y = (int)new_a_y;
 
-	actor->a_pt.x = (int)new_a_x;
-	actor->a_pt.y = (int)new_a_y;
-
-	actor->s_pt.x = actor->a_pt.x >> 2;
-	actor->s_pt.y = actor->a_pt.y >> 2;
+	actor->actorX = (int)new_a_x;
+	actor->actorY = (int)new_a_y;
 
 	return SUCCESS;
 }
@@ -753,17 +779,10 @@ int Actor::handleWalkIntent(ActorData *actor, WALKINTENT *a_walkint, int *comple
 void Actor::move(uint16 actorId, const Point &movePoint) {
 	ActorData *actor;
 
-	int moveUp = 0;
-
 	actor = getActor(actorId);
 
-	if (movePoint.y < actor->a_pt.y) {
-		moveUp = 1;
-	}
-
-	actor->a_pt = movePoint;
-
-	AtoS(actor->s_pt, actor->a_pt);
+	actor->actorX = movePoint.x;
+	actor->actorY = movePoint.y;
 }
 
 void Actor::moveRelative(uint16 actorId, const Point &movePoint) {
@@ -771,16 +790,10 @@ void Actor::moveRelative(uint16 actorId, const Point &movePoint) {
 
 	actor = getActor(actorId);
 
-	actor->a_pt.x += movePoint.x; //TODO user rect.h
-	actor->a_pt.y += movePoint.y;
-
-	AtoS(actor->s_pt, actor->a_pt);
+	actor->actorX += movePoint.x; 
+	actor->actorY += movePoint.y;
 }
 
-void Actor::AtoS(Point &screenPoint, const Point &actorPoint) {
-	screenPoint.x = (actorPoint.x / ACTOR_LMULT);
-	screenPoint.y = (actorPoint.y / ACTOR_LMULT);
-}
 
 void Actor::StoA(Point &actorPoint, const Point &screenPoint) {
 	actorPoint.x = (screenPoint.x * ACTOR_LMULT);
