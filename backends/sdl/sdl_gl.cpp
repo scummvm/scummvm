@@ -34,7 +34,7 @@ int glGetColorTable(int, int, int, void *) { return 0; }
 
 class OSystem_SDL_Normal : public OSystem_SDL_Common {
 public:
-	OSystem_SDL_Normal() : sdl_tmpscreen(0), sdl_hwscreen(0), _overlay_visible(false) { _glScreenStart = 0; }
+	OSystem_SDL_Normal() : sdl_tmpscreen(0), sdl_hwscreen(0), _overlay_visible(false) { _glScreenStart = 0; _glBilinearFilter = true; }
 
 	// Set colors of the palette
 	void set_palette(const byte *colors, uint start, uint num);
@@ -56,6 +56,7 @@ protected:
 	FB2GL fb2gl;
 	int gl_flags;
 	int _glScreenStart;
+	bool _glBilinearFilter;
 	SDL_Surface *tmpSurface; // Used for black rectangles blitting 
 	SDL_Rect tmpBlackRect; // Black rectangle at end of the GL screen
 
@@ -261,8 +262,6 @@ void OSystem_SDL_Normal::load_gfx_mode() {
 						Bmask,
 						Amask);
 
-	fprintf(stderr,"bits: %d\n",sdl_tmpscreen->format->BitsPerPixel);
-	
 	tmpSurface = SDL_CreateRGBSurface(SDL_SWSURFACE, _screenWidth, 
 						// 320x256 texture (black end)
 						256-_screenHeight-_glScreenStart,
@@ -362,9 +361,10 @@ void OSystem_SDL_Normal::update_screen() {
 		fb2gl.blit16(sdl_tmpscreen,_num_dirty_rects,_dirty_rect_list,0,
 		    _currentShakePos+_glScreenStart);
 
+		tmpBlackRect.h = 256-_screenHeight-_glScreenStart-_currentShakePos;
 		
 		SDL_FillRect(tmpSurface, &tmpBlackRect, 0);
-		fb2gl.blit16(tmpSurface,1,&tmpBlackRect,0,_screenHeight+_glScreenStart);
+		fb2gl.blit16(tmpSurface,1,&tmpBlackRect,0,_screenHeight+_glScreenStart+_currentShakePos);
 
 		fb2gl.display();
 	}
@@ -408,19 +408,56 @@ uint32 OSystem_SDL_Normal::property(int param, Property *value) {
 		return (sdl_tmpscreen->format->Rmask != 0x7C00);
 	}
 	else if (param == PROP_SET_GFX_MODE) {
-		if (value->gfx_mode==0) {
-		  fb2gl.init(0,0,0,15,gl_flags);
-		  _glScreenStart = 20;
-		  SDL_FillRect(tmpSurface,&tmpBlackRect,0);
-		  fb2gl.blit16(tmpSurface,1,&tmpBlackRect,0,0);
-		}
-		else {
-		  fb2gl.init(0,0,0,70,gl_flags);
-		  _glScreenStart = 0;
-		}
 		SDL_Rect full = {0,0,_screenWidth,_screenHeight};
+		glPopMatrix();
+
+		switch(value->gfx_mode) {
+		  case 0: // Bilinear Filtering (on/off)
+		    _glBilinearFilter ^= true;
+		    for (int i=0; i<2; i++) {
+		      glBindTexture(GL_TEXTURE_2D,i);
+		      if (_glBilinearFilter) {
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, 
+			    GL_LINEAR);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, 
+			    GL_LINEAR);
+		      }
+		      else {
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, 
+			    GL_NEAREST);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, 
+			    GL_NEAREST);
+		      }
+		    }
+		    break;
+		  case 1: // Don't fit the whole screen
+		    fb2gl.init(0,0,0,15,gl_flags);
+		    _glScreenStart = 20;
+		    SDL_FillRect(tmpSurface,&tmpBlackRect,0);
+		    fb2gl.blit16(tmpSurface,1,&tmpBlackRect,0,0);
+		    break;
+		  case 2: // Fit the whole screen
+		    fb2gl.init(0,0,0,70,gl_flags);
+		    _glScreenStart = 0;
+		    break;
+		  default: // Zooming
+		    glPushMatrix();
+/*		    SDL_FillRect(tmpSurface, &full, 0);
+		    fb2gl.blit16(tmpSurface,1,&full,0,_glScreenStart);
+		    fb2gl.display();
+		    double x = (double)((_mouse_cur_state.x) 
+			- (_screenWidth/2)) / (_screenWidth/2);
+		    double y = (double)((_mouse_cur_state.y) 
+			- (_screenHeight/2)) / (_screenHeight/2);
+		    glTranslatef(-x,y,0);
+*/
+		    glScalef(1.0+(double)(value->gfx_mode-1)/10,
+		      1.0+(double)(value->gfx_mode-1)/10,
+		      0);
+		};
 		fb2gl.blit16(sdl_tmpscreen,1,&full,0,_glScreenStart);
 		fb2gl.display();
+		
 		return 1;
 	}
 	
