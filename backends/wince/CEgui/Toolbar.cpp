@@ -24,8 +24,8 @@
 
 namespace CEGUI {
 
-	// FIXME (could be game dependant)
-	Toolbar::Toolbar() : GUIElement(0, 200, 320, 40)
+	// Not to be drawn on game screen ! 
+	Toolbar::Toolbar() : GUIElement(0, 0, 320, 40)
 	{
 	}
 

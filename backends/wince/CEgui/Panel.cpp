@@ -43,7 +43,7 @@ namespace CEGUI {
 
 	bool Panel::draw(SDL_Surface *surface) {
 		ItemMap::ConstIterator iterator;
-		if (!_drawn) {
+		if (!_drawn && _visible) {
 			GUIElement::draw(surface);
 			for (iterator = _itemsMap.begin(); iterator != _itemsMap.end(); ++iterator) {
 				((GUIElement*)(iterator->_value))->draw(surface);

@@ -58,8 +58,13 @@ namespace CEGUI {
 	}
 
 	bool ToolbarHandler::action(int x, int y, bool pushed) {
-		if (_active)
-			return _active->action(x, y, pushed);
+		if (_active) {
+			// FIXME !
+			if (_offset > 240)
+				return _active->action(x / 2, (y - _offset) / 2, pushed);
+			else
+				return _active->action(x, y - _offset, pushed);			
+		}
 		else
 			return false;
 	}
@@ -101,6 +106,14 @@ namespace CEGUI {
 		}
 		else
 			return false;
+	}
+
+	void ToolbarHandler::setOffset(int offset) {
+		_offset = offset;
+	}
+
+	int ToolbarHandler::getOffset() {
+		return _offset;
 	}
 
 	Toolbar* ToolbarHandler::active() {
