@@ -89,7 +89,7 @@ bool Scumm::checkXYInBoxBounds(int b, int x, int y) {
 		box.ur.x== box.ll.x &&
 		box.ur.y== box.ll.y) {
 
-		Point pt;
+		ScummPoint pt;
 		pt = closestPtOnLine(box.ul.x, box.ul.y, box.ll.x, box.ll.y, x, y);
 		if (distanceFromPt(x, y, pt.x,pt.y) <= 4)
 			return 1;
@@ -148,11 +148,11 @@ bool Scumm::getSideOfLine(int x1,int y1, int x2, int y2, int x, int y, int box) 
 	return (x-x1)*(y2-y1) <= (y-y1)*(x2-x1);
 }
 
-Point Scumm::closestPtOnLine(int ulx, int uly, int llx, int lly, int x, int y) {
+ScummPoint Scumm::closestPtOnLine(int ulx, int uly, int llx, int lly, int x, int y) {
 	int lydiff,lxdiff;
 	int32 dist,a,b,c;
 	int x2,y2;
-	Point pt;
+	ScummPoint pt;
 
 	if (llx==ulx) {
 		x2 = ulx;
@@ -254,7 +254,7 @@ bool Scumm::inBoxQuickReject(int b, int x, int y, int threshold) {
 }
 
 AdjustBoxResult Scumm::getClosestPtOnBox(int b, int x, int y) {
-	Point pt;
+	ScummPoint pt;
 	AdjustBoxResult best;
 	uint dist;
 	uint bestdist = (uint)0xFFFF;
@@ -332,7 +332,7 @@ int Scumm::getPathToDestBox(byte from, byte to) {
 int Scumm::findPathTowards(Actor *a, byte box1nr, byte box2nr, byte box3nr) {
 	BoxCoords box1;
 	BoxCoords box2;
-	Point tmp;
+	ScummPoint tmp;
 	int i,j;
 	int flag;
 	int q,pos;

@@ -2,6 +2,9 @@
  * $Id$
  *
  * $Log$
+ * Revision 1.10  2002/03/08 17:05:09  mutle
+ * Some changes, need to be done to get the Mac Port running. For example Point is now called ScummPoint, as the name Point is already in use by Apple.
+ *
  * Revision 1.9  2002/03/06 12:24:56  ender
  * Applied cleanup and scaling patch by Rob.
  *
@@ -73,8 +76,10 @@
 #if defined(NEED_SDL_HEADERS)
 #include <SDL.h>
 #endif
+#if !defined(__APPLE__CW)
 #include <sys/types.h>
 #include <sys/uio.h>
+#endif
 #if !defined (__BEOS__)
 #include <unistd.h>
 #endif
@@ -101,11 +106,16 @@
 #define SCUMMVM_PLATFORM_VERSION  "X11 version"
 
 #else
+#ifdef __APPLE__CW
+#define SCUMMVM_PLATFORM_VERSION "Carbon Mac version"
+#else
+
 #ifdef SDL_COMPILEDVERSION
 #define SCUMMVM_PLATFORM_VERSION  "SDL version"
 //SDL_COMPILEDVERSION is a number... :(
 //SDL_Linked_Version returns an SDL_Version structure...
 
+#endif
 #endif
 #endif
 #endif

@@ -167,7 +167,11 @@ bool Scumm::openResourceFile(const char *filename) {
 	debug(9, "openResourceFile(%s)",filename);
 
 	if (_resFilePath) {
+	#if defined(__APPLE__CW)
+		sprintf(buf, ":%s.%d:%s", _resFilePath, _resFilePathId, filename);
+	#else
 		sprintf(buf, "%s.%d\\%s", _resFilePath, _resFilePathId, filename);
+	#endif
 	} else if (_resFilePrefix) {
 		sprintf(buf, "%s%s", _resFilePrefix, filename);
 	} else {

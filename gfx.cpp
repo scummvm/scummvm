@@ -231,7 +231,7 @@ void Scumm::setCameraAt(int pos_x, int pos_y) {
 
 	if(_features & GF_AFTER_V7) {
 		CameraData *cd = &camera;
-		Point old;
+		ScummPoint old;
 
 		old = cd->_cur;
 
@@ -1641,7 +1641,7 @@ void Gdi::clearUpperMask() {
 	);
 }
 
-void Scumm::clampCameraPos(Point *pt) {
+void Scumm::clampCameraPos(ScummPoint *pt) {
 	if (pt->x < _vars[VAR_CAMERA_MIN_X])
 		pt->x = _vars[VAR_CAMERA_MIN_X];
 
@@ -1659,7 +1659,7 @@ void Scumm::clampCameraPos(Point *pt) {
 void Scumm::moveCamera() {
 	if(_features & GF_AFTER_V7) {
 		CameraData *cd = &camera;
-		Point old = cd->_cur;
+		ScummPoint old = cd->_cur;
 		Actor *a;
 
 		if (cd->_follows) {

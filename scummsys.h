@@ -139,6 +139,34 @@ typedef signed long int32;
 #define NORETURN
 #endif
 
+#elif defined(__APPLE__CW)
+#include <stdlib.h>
+#include <stdio.h>
+
+#define scumm_stricmp strcmp
+inline char* strdup(char *buf) {return (char*)buf;};
+
+#define CHECK_HEAP
+#define SCUMM_BIG_ENDIAN
+
+#define FORCEINLINE inline
+#define CDECL 
+
+typedef unsigned char byte;
+typedef unsigned char uint8;
+typedef unsigned short uint16;
+typedef unsigned long uint32;
+typedef unsigned int uint;
+typedef signed char int8;
+typedef signed short int16;
+typedef signed long int32;
+
+#define START_PACK_STRUCTS pack (1)
+#define END_PACK_STRUCTS   pack ()
+#define GCC_PACK
+#define NORETURN
+#define NEED_STRDUP
+
 #elif defined(__DC__)
 
 #define scumm_stricmp strcasecmp

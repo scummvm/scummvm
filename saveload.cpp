@@ -144,8 +144,12 @@ bool Scumm::loadState(int slot, bool compat) {
 }
 
 void Scumm::makeSavegameName(char *out, int slot, bool compatible) {
+	#if !defined(__APPLE__CW)
 	const char *dir = getenv("SCUMMVM_SAVEPATH");
 	if (dir==NULL) dir="";
+	#else
+	const char *dir = "";
+	#endif
 	/* snprintf should be used here, but it's not portable enough */
 	sprintf(out, "%s%s.%c%.2d", dir, _exe_name, compatible ? 'c': 's', slot);
 }

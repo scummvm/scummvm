@@ -420,6 +420,7 @@ int Scumm::scummLoop(int delta) {
 						"\tf       - fullscreen mode\n"
 
 void Scumm::parseCommandLine(int argc, char **argv) {
+	#if !defined(__APPLE__CW)
 	int i;
 	char *s;
 
@@ -501,6 +502,12 @@ NextArg:;
 			_exe_name = s;
 		}
 	}
+	#else
+	
+	//sprintf(_gameDataPath, ":%s:", *argv);
+	//_gameDataPath = *argv;
+	_exe_name = *argv;
+	#endif
 
 }
 
@@ -549,7 +556,7 @@ static const VersionSettings version_settings[] = {
 
         /* Scumm Version 7 */
         {"ft",          "Full Throttle",                                GID_FT,       7, 3, 0, GF_NEW_OPCODES|GF_AFTER_V6|GF_AFTER_V7},
-	{"dig",		"The Dig",					GID_DIG,      7, 5, 0, GF_NEW_OPCODES|GF_AFTER_V6|GF_AFTER_V7},	
+	    {"dig",			"The Dig",										GID_DIG,      7, 5, 0, GF_NEW_OPCODES|GF_AFTER_V6|GF_AFTER_V7},	
 	
         /* Scumm Version 8 */
 //      {"curse",       "The Curse of Monkey Island",                   GID_CMI,      8, 1, 0,},
@@ -1226,6 +1233,7 @@ void NORETURN CDECL error(const char *s, ...) {
 }
 
 void CDECL warning(const char *s, ...) {
+#if 0
 	char buf[1024];
 	va_list va;
 	
@@ -1234,9 +1242,11 @@ void CDECL warning(const char *s, ...) {
 	va_end(va);
 
 	fprintf(stderr, "WARNING: %s!\n", buf);
+#endif
 }
 
 void CDECL debug(int level, const char *s, ...) {
+#if 0
 	char buf[1024];
 	va_list va;
 
@@ -1248,6 +1258,7 @@ void CDECL debug(int level, const char *s, ...) {
 	va_end(va);
 	printf("%s\n", buf);
 	fflush(stdout);
+#endif
 }
 
 void checkHeap() {

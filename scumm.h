@@ -85,7 +85,7 @@ const int16 many_direction_tab_2 [16] = {
 	270,
 	315 };
 
-struct Point {
+struct ScummPoint {
 	int x,y;
 };
 
@@ -621,10 +621,10 @@ struct Actor {
 };
 
 struct CameraData {
-	Point _cur;
-	Point _dest;
-	Point _accel;
-	Point _last;
+	ScummPoint _cur;
+	ScummPoint _dest;
+	ScummPoint _accel;
+	ScummPoint _last;
 	int _leftTrigger, _rightTrigger;
 	byte _follows, _mode;
 	bool _movingToActor;
@@ -830,10 +830,10 @@ enum MouseButtonStatus {
 };
 
 struct BoxCoords {
-	Point ul;
-	Point ur;
-	Point ll;
-	Point lr;
+	ScummPoint ul;
+	ScummPoint ur;
+	ScummPoint ll;
+	ScummPoint lr;
 };
 
 #ifdef COMPRESSED_SOUND_FILE
@@ -1267,7 +1267,7 @@ struct Scumm {
 	void main();
 
 	uint distanceFromPt(int x, int y, int ptx, int pty);
-	Point closestPtOnLine(int ulx, int uly, int llx, int lly, int x, int y);
+	ScummPoint closestPtOnLine(int ulx, int uly, int llx, int lly, int x, int y);
 	bool getSideOfLine(int x1,int y1, int x2, int y2, int x, int y, int box);
 	void getBoxCoordinates(int boxnum, BoxCoords *bc);
 	byte getMaskFromBox(int box);
@@ -1799,7 +1799,7 @@ struct Scumm {
 	void actorFollowCamera(int act);
 	void setCameraAtEx(int at);
 
-	void clampCameraPos(Point *pt);
+	void clampCameraPos(ScummPoint *pt);
 
 	void setCursorHotspot2(int x,int y);
 
