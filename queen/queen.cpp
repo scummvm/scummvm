@@ -51,37 +51,28 @@ extern bool draw_keyboard;
 
 #endif
 
-static const GameSettings queen_settings[] = {
-	/* Flight of the Amazon Queen */
-	{ "queen", "Flight of the Amazon Queen", MDT_ADLIB | MDT_NATIVE | MDT_PREFER_NATIVE, 0, "queen.1" },
-	{ "queencomp", "Flight of the Amazon Queen", MDT_ADLIB | MDT_NATIVE | MDT_PREFER_NATIVE, 0, "queen.1c" },
-	{ NULL, NULL, MDT_NONE, 0, NULL} 
-};
+/* Flight of the Amazon Queen */
+static const GameSettings queen_setting =
+	{ "queen", "Flight of the Amazon Queen", MDT_ADLIB | MDT_NATIVE | MDT_PREFER_NATIVE, 0, "queen.1" };
 
 GameList Engine_QUEEN_gameList() {
-	const GameSettings *g = queen_settings;
 	GameList games;
-	while (g->gameName)
-		games.push_back(*g++);
+	games.push_back(queen_setting);
 	return games;
 }
 
 GameList Engine_QUEEN_detectGames(const FSList &fslist) {
 	GameList detectedGames;
-	const GameSettings *g = &queen_settings[0];
 
-	while(g->detectname) {
-		// Iterate over all files in the given directory
-		for (FSList::ConstIterator file = fslist.begin(); file != fslist.end(); ++file) {
-			const char *gameName = file->displayName().c_str();
+	// Iterate over all files in the given directory
+	for (FSList::ConstIterator file = fslist.begin(); file != fslist.end(); ++file) {
+		const char *gameName = file->displayName().c_str();
 
-			if (0 == scumm_stricmp(g->detectname, gameName)) {
-				// Match found, add to list of candidates, then abort inner loop.
-				detectedGames.push_back(*g);
-				break;
-			}
+		if (0 == scumm_stricmp("queen.1", gameName) || 0 == scumm_stricmp("queen.1c", gameName)) {
+			// Match found, add to list of candidates, then abort loop.
+			detectedGames.push_back(queen_setting);
+			break;
 		}
-		g++;
 	}
 	return detectedGames;
 }
@@ -103,7 +94,6 @@ QueenEngine::QueenEngine(GameDetector *detector, OSystem *syst)
 	_mixer->setVolume(ConfMan.getInt("sfx_volume"));
 
 	_debugLevel = ConfMan.getInt("debuglevel");
-	_detectname = detector->_game.detectname;
 
 	_system->init_size(320, 200);
 }
@@ -167,7 +157,7 @@ void QueenEngine::go() {
 
 void QueenEngine::initialise(void) {
 
-	_resource = new Resource(_gameDataPath, _detectname,  _system->get_savefile_manager(), getSavePath());
+	_resource = new Resource(_gameDataPath, _system->get_savefile_manager(), getSavePath());
 	_command = new Command(this);
 	_display = new Display(this, _resource->getLanguage(), _system);
 	_graphics = new Graphics(this);

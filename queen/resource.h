@@ -63,7 +63,7 @@ struct GameVersion {
 class Resource {
 
 public:
-	Resource(const Common::String &datafilePath, const char *datafileName, SaveFileManager *mgr, const char *savePath);
+	Resource(const Common::String &datafilePath, SaveFileManager *mgr, const char *savePath);
 	~Resource(void);
 	uint8 *loadFile(const char *filename, uint32 skipBytes = 0, byte *dstBuf = NULL);
 	uint8 *loadFileMalloc(const char *filename, uint32 skipBytes = 0, byte *dstBuf = NULL);

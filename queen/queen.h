@@ -73,8 +73,6 @@ protected:
 	Resource *_resource;
 	Sound *_sound;
 	Walk *_walk;
-	
-	const char *_detectname; // necessary for music
 };
 
 } // End of namespace Queen

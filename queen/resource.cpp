@@ -42,13 +42,15 @@ const GameVersion Resource::_gameVersions[] = {
 };
 
 
-Resource::Resource(const Common::String &datafilePath, const char *datafileName, SaveFileManager *mgr, const char *savePath)
+Resource::Resource(const Common::String &datafilePath, SaveFileManager *mgr, const char *savePath)
 	: _JAS2Pos(0), _datafilePath(datafilePath), _savePath(savePath), _resourceEntries(0), _resourceTable(NULL), _saveFileManager(mgr) {
 
 	_resourceFile = new File();
-	_resourceFile->open(datafileName, _datafilePath);
+	_resourceFile->open("queen.1", _datafilePath);
 	if (_resourceFile->isOpen() == false)
-		error("Could not open resource file '%s%s'", _datafilePath.c_str(), datafileName);
+		_resourceFile->open("queen.1c", _datafilePath);
+	if (_resourceFile->isOpen() == false)
+		error("Could not open resource file '%s%s'", _datafilePath.c_str(), "queen.1");
 
 	if (_resourceFile->readUint32BE() == 'QTBL') {
 		readTableCompResource();
