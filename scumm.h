@@ -20,6 +20,9 @@
  */
 
 #include "scummsys.h"
+#ifdef COMPRESSED_SOUND_FILE
+#include <mad.h>
+#endif
 
 #define SCUMMVM_VERSION "0.1.0 devel"
 
@@ -741,13 +744,33 @@ struct Gdi {
 	};
 };
 
+typedef enum {
+  MIXER_STANDARD,
+  MIXER_MP3
+} MixerType;
+
 struct MixerChannel {
 	void *_sfx_sound;
-	uint32 _sfx_pos;
-	uint32 _sfx_size;
-	uint32 _sfx_fp_speed;
-	uint32 _sfx_fp_pos;
-
+	MixerType type;
+	union {
+	  struct {
+	    uint32 _sfx_pos;
+	    uint32 _sfx_size;
+	    uint32 _sfx_fp_speed;
+	    uint32 _sfx_fp_pos;
+	  } standard;
+#ifdef COMPRESSED_SOUND_FILE
+	  struct {
+	    struct mad_stream stream;
+	    struct mad_frame frame;
+	    struct mad_synth synth;
+	    uint32 silence_cut;
+	    uint32 pos_in_frame;
+	    uint32 position;
+	    uint32 size;
+	  } mp3;
+#endif
+	} sound_data;
 	void mix(int16 *data, uint32 len);
 	void clear();
 };
@@ -812,6 +835,15 @@ struct BoxCoords {
 	Point ll;
 	Point lr;
 };
+
+#ifdef COMPRESSED_SOUND_FILE
+struct OffsetTable {
+	int org_offset;
+	int new_offset;
+	int num_tags;
+	int compressed_size;
+};
+#endif
 
 struct Scumm {
 	uint32 _features;
@@ -1135,6 +1167,11 @@ struct Scumm {
 
 	OpcodeProc getOpcode(int i) { return _opcodes[i]; }
 
+#ifdef COMPRESSED_SOUND_FILE
+	OffsetTable *offset_table;
+	int num_sound_effects;
+#endif
+  
 	void openRoom(int room);
 	void deleteRoomOffsets();
 	void readRoomsOffsets();
@@ -1825,7 +1862,7 @@ struct Scumm {
 	void startTalkSound(uint32 a, uint32 b, int mode);
 	void stopTalkSound();
 	bool isMouthSyncOff(uint pos);
-	void startSfxSound(void *file);
+	void startSfxSound(void *file, int size);
 	void *openSfxFile();
 	void resourceStats();
 	bool isCostumeInUse(int i);
@@ -1871,6 +1908,9 @@ struct Scumm {
 	MixerChannel *allocateMixer();
 	bool isSfxFinished();
 	void playSfxSound(void *sound, uint32 size, uint rate);
+#ifdef COMPRESSED_SOUND_FILE
+  	void playSfxSound_MP3(void *sound, uint32 size);
+#endif
 	void stopSfxSound();
 
 	void mixWaves(int16 *sounds, int len);

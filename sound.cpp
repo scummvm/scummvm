@@ -139,31 +139,63 @@ void Scumm::processSfxQueues() {
 	}
 }
 
+#ifdef COMPRESSED_SOUND_FILE
+static int compar(const void *a, const void *b) {
+  return ((OffsetTable *) a)->org_offset - ((OffsetTable *) b)->org_offset;
+}
+#endif
+
 void Scumm::startTalkSound(uint32 offset, uint32 b, int mode) {
-	int num, i;
+	int num = 0, i;
 	byte file_byte,file_byte_2;	
+	int size;
 
 	if (!_sfxFile) {
 		warning("startTalkSound: SFX file is not open");
 		return;
 	}
 
-	fileSeek((FILE*)_sfxFile, offset + 8, SEEK_SET);
-	i = 0;
 	if (b>8) {
 		num = (b-8)>>1;
-		do {
-			fileRead((FILE*)_sfxFile, &file_byte, sizeof(file_byte));
-			fileRead((FILE*)_sfxFile, &file_byte_2, sizeof(file_byte_2));
-			_mouthSyncTimes[i++] = file_byte | (file_byte_2<<8);
-		} while (--num);
+	}
+
+#ifdef COMPRESSED_SOUND_FILE
+	if (offset_table != NULL) {
+	  OffsetTable *result, key;
+	  
+	  key.org_offset = offset;
+	  result = (OffsetTable *) bsearch(&key, offset_table, num_sound_effects, sizeof(OffsetTable), compar);
+	  if (result == NULL) {
+	    warning("startTalkSound: did not find sound at offset %d !", offset);
+	    return;
+	  }
+	  if (2 * num != result->num_tags) {
+	    warning("startTalkSound: number of tags do not match (%d - %d) !", b, result->num_tags);
+	    num = result->num_tags;
+	  }
+	  offset = result->new_offset;
+	  size = result->compressed_size;
+	} else
+#endif
+	{
+	  offset += 8;
+	  size = -1;
+	}
+
+	fileSeek((FILE*)_sfxFile, offset, SEEK_SET);
+	i = 0;
+	while (num > 0) {
+	  fileRead((FILE*)_sfxFile, &file_byte, sizeof(file_byte));
+	  fileRead((FILE*)_sfxFile, &file_byte_2, sizeof(file_byte_2));
+	  _mouthSyncTimes[i++] = file_byte | (file_byte_2<<8);
+	  num--;
 	}
 	_mouthSyncTimes[i] = 0xFFFF;
 	_sfxMode = mode;
 	_curSoundPos = 0;
 	_mouthSyncMode = true;
 
-	startSfxSound(_sfxFile);
+	startSfxSound(_sfxFile, size);
 }
 
 void Scumm::stopTalkSound() {
@@ -292,7 +324,7 @@ void Scumm::talkSound(uint32 a, uint32 b, int mode) {
  * A mapping between roland instruments and GM instruments
  * is needed.
  */
-   
+
 void Scumm::setupSound() {
 	SoundEngine *se = (SoundEngine*)_soundEngine;
 	if (se)
@@ -314,7 +346,7 @@ enum {
 
 };
 
-void Scumm::startSfxSound(void *file) {
+void Scumm::startSfxSound(void *file, int file_size) {
 	char ident[8];
 	int block_type;
 	byte work[8];
@@ -322,6 +354,19 @@ void Scumm::startSfxSound(void *file) {
 	int rate,comp;
 	byte *data;
 
+#ifdef COMPRESSED_SOUND_FILE
+	if (file_size > 0) {
+	  data = (byte *) calloc(file_size + MAD_BUFFER_GUARD, 1);
+
+	  if (fread(data, file_size, 1, (FILE*) file) != 1) {
+	    /* no need to free the memory since error will shut down */
+	    error("startSfxSound: cannot read %d bytes", size);
+	    return;
+	  }
+	  playSfxSound_MP3(data, file_size);
+	  return;
+	}
+#endif
 	if ( fread(ident, 8, 1, (FILE*)file) != 1)
 		goto invalid;
 
@@ -351,7 +396,7 @@ invalid:;
 		warning("startSfxSound: Unsupported compression type %d", comp);
 		return;
 	}
-
+	
 	data = (byte*) malloc(size);
 	if (data==NULL) {
 		error("startSfxSound: out of memory");
@@ -365,9 +410,25 @@ invalid:;
 	}
 	for(i=0;i<size; i++)
 		data[i] ^= 0x80;
-
+	
 	playSfxSound(data, size, 1000000 / (256 - rate) );
 }
+
+
+#ifdef COMPRESSED_SOUND_FILE
+static int get_int(FILE *f) {
+  int ret = 0;
+  for (int size = 0; size < 4; size++) {
+    int c = fgetc(f);
+    if (c == EOF) {
+      error("Unexpected end of file !!!");
+    }
+    ret <<= 8;
+    ret |= c;
+  }
+  return ret;
+}
+#endif
 
 void *Scumm::openSfxFile() {
 	char buf[50];
@@ -376,12 +437,55 @@ void *Scumm::openSfxFile() {
 	/* Try opening the file <_exe_name>.sou first, eg tentacle.sou.
 	 * That way, you can keep .sou files for multiple games in the
 	 * same directory */
+#ifdef COMPRESSED_SOUND_FILE
+	offset_table = NULL;
 
+	sprintf(buf, "%s%s.so3", _gameDataPath, _exe_name);
+	file = fopen(buf, "rb");
+	if (!file) {
+	  sprintf(buf, "%smonster.so3", _gameDataPath);
+	  file = fopen(buf, "rb");
+	}
+	if (file != NULL) {
+	  /* Now load the 'offset' index in memory to be able to find the MP3 data
+
+	     The format of the .SO3 file is easy :
+  	       - number of bytes of the 'index' part
+	       - N times the following fields (4 bytes each) :
+	         + offset in the original sound file
+		 + offset of the MP3 data in the .SO3 file WITHOUT taking into account
+	           the index field and the 'size' field
+		 + the number of 'tags'
+		 + the size of the MP3 data
+	       - and then N times :
+	         + the tags
+	         + the MP3 data
+	  */
+	  int size, compressed_offset;
+	  OffsetTable *cur;
+	  
+	  compressed_offset = get_int(file);
+	  offset_table = (OffsetTable *) malloc(compressed_offset);
+	  num_sound_effects = compressed_offset / 16;
+	  
+	  size = compressed_offset;
+	  cur = offset_table;
+	  while (size > 0) {
+	    cur[0].org_offset = get_int(file);
+	    cur[0].new_offset = get_int(file) + compressed_offset + 4; /* The + 4 is to take into accound the 'size' field */
+	    cur[0].num_tags = get_int(file);
+	    cur[0].compressed_size = get_int(file);
+	    size -= 4 * 4;
+	    cur++;
+	  }
+	  return file;
+	}
+#endif
 	sprintf(buf, "%s%s.sou", _gameDataPath, _exe_name);
 	file = fopen(buf, "rb");
 	if (!file) {
-		sprintf(buf, "%smonster.sou", _gameDataPath);
-		file = fopen(buf, "rb");
+	  sprintf(buf, "%smonster.sou", _gameDataPath);
+	  file = fopen(buf, "rb");
 	}
 	return file;
 }
@@ -414,6 +518,40 @@ bool Scumm::isSfxFinished() {
 	return true;
 }
 
+#ifdef COMPRESSED_SOUND_FILE
+void Scumm::playSfxSound_MP3(void *sound, uint32 size) {
+  MixerChannel *mc = allocateMixer();
+
+  if (!mc) {
+    warning("No mixer channel available");
+    return;
+  }
+
+  mc->type = MIXER_MP3;
+  mc->_sfx_sound = sound;
+
+  mad_stream_init(&mc->sound_data.mp3.stream);
+  mad_frame_init(&mc->sound_data.mp3.frame);
+  mad_synth_init(&mc->sound_data.mp3.synth);
+  mc->sound_data.mp3.position = 0;
+  mc->sound_data.mp3.pos_in_frame = 0xFFFFFFFF;
+  mc->sound_data.mp3.size = size;
+  /* This variable is the number of samples to cut at the start of the MP3
+     file. This is needed to have lip-sync as the MP3 file have some miliseconds
+     of blank at the start (as, I suppose, the MP3 compression algorithm need to
+     have some silence at the start to really be efficient and to not distort
+     too much the start of the sample).
+
+     This value was found by experimenting out. If you recompress differently your
+     .SO3 file, you may have to change this value.
+
+     When using Lame, it seems that the sound starts to have some volume about 50 ms
+     from the start of the sound => we skip about 1024 samples.
+  */
+  mc->sound_data.mp3.silence_cut = 1024; 
+}
+#endif
+
 void Scumm::playSfxSound(void *sound, uint32 size, uint rate) {
 	MixerChannel *mc = allocateMixer();
 
@@ -422,47 +560,118 @@ void Scumm::playSfxSound(void *sound, uint32 size, uint rate) {
 		return;
 	}
 
+	mc->type = MIXER_STANDARD;
 	mc->_sfx_sound = sound;
-	mc->_sfx_pos = 0;
-	mc->_sfx_fp_speed = (1<<16) * rate / 22050;
-	mc->_sfx_fp_pos = 0;
+	mc->sound_data.standard._sfx_pos = 0;
+	mc->sound_data.standard._sfx_fp_speed = (1<<16) * rate / 22050;
+	mc->sound_data.standard._sfx_fp_pos = 0;
 
 	while (size&0xFFFF0000) size>>=1, rate>>=1;
-	mc->_sfx_size = size * 22050 / rate;
+	mc->sound_data.standard._sfx_size = size * 22050 / rate;
 }
 
+#ifdef COMPRESSED_SOUND_FILE
+static inline int scale_sample(mad_fixed_t sample)
+{
+  /* round */
+  sample += (1L << (MAD_F_FRACBITS - 16));
+
+  /* clip */
+  if (sample >= MAD_F_ONE)
+    sample = MAD_F_ONE - 1;
+  else if (sample < -MAD_F_ONE)
+    sample = -MAD_F_ONE;
+
+  /* quantize and scale to not saturate when mixing a lot of channels */
+  return sample >> (MAD_F_FRACBITS + 2 - 16);
+}
+#endif
+
 void MixerChannel::mix(int16 *data, uint32 len) {
-	int8 *s;	
-	uint32 fp_pos, fp_speed;
-
 	if (!_sfx_sound)
-		return;
-	if (len > _sfx_size)
-		len = _sfx_size;
-	_sfx_size -= len;
+	  return;
 
-	s = (int8*)_sfx_sound + _sfx_pos;
-	fp_pos = _sfx_fp_pos;
-	fp_speed = _sfx_fp_speed;
+#ifdef COMPRESSED_SOUND_FILE
+	if (type == MIXER_STANDARD) {
+#endif
+	  int8 *s;	
+	  uint32 fp_pos, fp_speed;
+	  
+	  if (len > sound_data.standard._sfx_size)
+	    len = sound_data.standard._sfx_size;
+	  sound_data.standard._sfx_size -= len;
+	  
+	  s = (int8*)_sfx_sound + sound_data.standard._sfx_pos;
+	  fp_pos = sound_data.standard._sfx_fp_pos;
+	  fp_speed = sound_data.standard._sfx_fp_speed;
+	  
+	  do {
+	    fp_pos += fp_speed;
+	    *data++ += (*s<<6);
+	    s += fp_pos >> 16;
+	    fp_pos &= 0x0000FFFF;
+	  } while (--len);
+	  
+	  sound_data.standard._sfx_pos = s - (int8*)_sfx_sound;
+	  sound_data.standard._sfx_fp_speed = fp_speed;
+	  sound_data.standard._sfx_fp_pos = fp_pos;
+	  
+	  if (!sound_data.standard._sfx_size)
+	    clear();
+#ifdef COMPRESSED_SOUND_FILE
+	} else {
+	  mad_fixed_t const *ch;
+	  while (1) {
+	    ch = sound_data.mp3.synth.pcm.samples[0] + sound_data.mp3.pos_in_frame;
+	    while ((sound_data.mp3.pos_in_frame < sound_data.mp3.synth.pcm.length) && 
+		   (len > 0)) {
+	      if (sound_data.mp3.silence_cut > 0) {
+		sound_data.mp3.silence_cut--;
+	      } else {
+		*data++ += scale_sample(*ch++);
+		len--;
+	      }
+	      sound_data.mp3.pos_in_frame++;
+	    }
+	    if (len == 0) return;
 
-	do {
-		fp_pos += fp_speed;
-		*data++ += (*s<<6);
-		s += fp_pos >> 16;
-		fp_pos &= 0x0000FFFF;
-	} while (--len);
+	    if (sound_data.mp3.position >= sound_data.mp3.size) {
+	      clear();
+	      return;
+	    }
 
-	_sfx_pos = s - (int8*)_sfx_sound;
-	_sfx_fp_speed = fp_speed;
-	_sfx_fp_pos = fp_pos;
-
-	if (!_sfx_size)
+	    mad_stream_buffer(&sound_data.mp3.stream, 
+			      ((unsigned char *) _sfx_sound) + sound_data.mp3.position, 
+			      sound_data.mp3.size + MAD_BUFFER_GUARD - sound_data.mp3.position);
+	    
+	    if (mad_frame_decode(&sound_data.mp3.frame, &sound_data.mp3.stream) == -1) {
+	      /* End of audio... */
+	      if (sound_data.mp3.stream.error == MAD_ERROR_BUFLEN) {
 		clear();
+		return;
+	      } else if (!MAD_RECOVERABLE(sound_data.mp3.stream.error)) {
+		error("MAD frame decode error !");
+	      }
+	    }
+	    mad_synth_frame(&sound_data.mp3.synth, &sound_data.mp3.frame);
+	    sound_data.mp3.pos_in_frame = 0;
+	    sound_data.mp3.position = (unsigned char *) sound_data.mp3.stream.next_frame - (unsigned char *) _sfx_sound;
+	  }
+	}
+#endif
 }
 
 void MixerChannel::clear() {
 	free(_sfx_sound);
 	_sfx_sound = NULL;
+
+#ifdef COMPRESSED_SOUND_FILE
+	if (type == MIXER_MP3) {
+	  mad_synth_finish(&sound_data.mp3.synth);
+	  mad_frame_finish(&sound_data.mp3.frame);
+	  mad_stream_finish(&sound_data.mp3.stream);
+	}
+#endif
 }
 
 void Scumm::mixWaves(int16 *sounds, int len) {
