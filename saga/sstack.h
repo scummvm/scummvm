@@ -20,40 +20,62 @@
  * $Header$
  *
  */
+/*
 
-#ifndef SAGA_H
-#define SAGA_H
+ Description:   
+ 
+    Scripting engine stack component header file
 
-#include "common/scummsys.h"
-#include "base/engine.h"
-#include "base/gameDetector.h"
-#include "common/util.h"
+ Notes: 
+*/
 
-//#include "gamedesc.h"
+#ifndef SAGA_SSTACK_H
+#define SAGA_SSTACK_H
+
+#include "script_mod.h"
 
 namespace Saga {
 
-#define R_PBOUNDS(n,max) (((n)>=(0))&&((n)<(max)))
+#define R_STACK_SIZE_LIMIT 16384
 
-enum SAGAGameId {
-	GID_ITE,
-	GID_ITECD,
-	GID_IHNM
+struct SSTACK_tag {
+	int flags;
+	int len;
+	int top;
+	SDataWord_T *data;
 };
 
-class SagaEngine:public Engine {
-	void errorString(const char *buf_input, char *buf_output);
+typedef struct SSTACK_tag *SSTACK;
 
- protected:
-	void go();
-	void shutdown();
+typedef enum SSTACK_ERR_enum {
+	STACK_SUCCESS = 0,
+	STACK_ERROR,
+	STACK_MEM,
+	STACK_UNDERFLOW,
+	STACK_OVERFLOW
+} SSTACK_ERR_CODE;
 
- public:
-	SagaEngine(GameDetector * detector, OSystem * syst);
-	virtual ~ SagaEngine();
+typedef enum SSTACK_FLAGS_enum {
+	STACK_FIXED = 0x00,
+	STACK_GROW = 0x01
+} SSTACK_FLAGS;
 
-};
+int SSTACK_Create(SSTACK * stack, int stack_len, int flags);
+
+int SSTACK_Destroy(SSTACK stack);
+
+int SSTACK_Clear(SSTACK stack);
+
+int SSTACK_Push(SSTACK stack, SDataWord_T value);
+
+int SSTACK_PushNull(SSTACK stack);
+
+int SSTACK_Pop(SSTACK stack, SDataWord_T * value);
+
+int SSTACK_Top(SSTACK stack, SDataWord_T * value);
+
+int SSTACK_Grow(SSTACK stack);
 
 } // End of namespace Saga
 
-#endif
+#endif				/* SAGA_SSTACK_H */

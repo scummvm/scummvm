@@ -20,40 +20,48 @@
  * $Header$
  *
  */
+/*
 
-#ifndef SAGA_H
-#define SAGA_H
+ Description:   
+ 
+    Action map module - private header
 
-#include "common/scummsys.h"
-#include "base/engine.h"
-#include "base/gameDetector.h"
-#include "common/util.h"
+ Notes: 
+*/
 
-//#include "gamedesc.h"
+#ifndef SAGA_ACTIONMAP_H_
+#define SAGA_ACTIONMAP_H_
 
 namespace Saga {
 
-#define R_PBOUNDS(n,max) (((n)>=(0))&&((n)<(max)))
+typedef struct R_ACTIONMAP_ENTRY_tag {
 
-enum SAGAGameId {
-	GID_ITE,
-	GID_ITECD,
-	GID_IHNM
-};
+	int unknown00;
+	int unknown02;
+	int exit_scene;
+	int unknown06;
 
-class SagaEngine:public Engine {
-	void errorString(const char *buf_input, char *buf_output);
+	int pt_count;
+	R_POINT *pt_tbl;
 
- protected:
-	void go();
-	void shutdown();
+} R_ACTIONMAP_ENTRY;
 
- public:
-	SagaEngine(GameDetector * detector, OSystem * syst);
-	virtual ~ SagaEngine();
+typedef struct R_ACTIONMAP_INFO_tag {
 
-};
+	int init;
+
+	int exits_loaded;
+	int n_exits;
+	R_ACTIONMAP_ENTRY *exits_tbl;
+
+	const uchar *exmap_res;
+	size_t exmap_res_len;
+
+} R_ACTIONMAP_INFO;
+
+void CF_action_info(int argc, char *argv[]);
 
 } // End of namespace Saga
 
-#endif
+#endif				/* R_ACTIONMAP_H_ */
+/* end "r_actionmap.h" */

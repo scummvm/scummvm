@@ -1,5 +1,7 @@
 /* ScummVM - Scumm Interpreter
- * Copyright (C) 2003 The ScummVM project
+ * Copyright (C) 2004 The ScummVM project
+ *
+ * The ReInherit Engine is (C)2000-2003 by Daniel Balsom.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -8,7 +10,7 @@
 
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	 See the
  * GNU General Public License for more details.
 
  * You should have received a copy of the GNU General Public License
@@ -18,47 +20,53 @@
  * $Header$
  *
  */
+/*
+ Description:   
+ 
+    Game detection, general game parameters - module header
 
-#ifndef SAGA_GAMEDESC_H
-#define SAGA_GAMEDESC_H
+ Notes: 
+*/
 
-#include "resfile.h"
-
-/* Public stuff */
+#ifndef SAGA_GAME_MOD_H__
+#define SAGA_GAME_MOD_H__
 
 namespace Saga {
 
 enum R_GAME_BASETYPES {
+
 	R_GAMETYPE_ITE,
 	R_GAMETYPE_IHNM
 };
 
 enum R_GAME_IDS {
-	R_GAME_ITE_DEMO  = 0,
-	R_GAME_ITE_DISK  = 1,
-	R_GAME_ITE_CD    = 2,
+
+	R_GAME_ITE_DEMO = 0,
+	R_GAME_ITE_DISK = 1,
+	R_GAME_ITE_CD = 2,
 	R_GAME_IHNM_DEMO = 3,
-	R_GAME_IHNM_CD   = 4
+	R_GAME_IHNM_CD = 4
 };
 
 enum R_GAME_FILETYPES {
+
 	R_GAME_RESOURCEFILE = 0x01,
-	R_GAME_SCRIPTFILE   = 0x02,
-	R_GAME_SOUNDFILE    = 0x04,
-	R_GAME_VOICEFILE    = 0x08,
-	R_GAME_DEMOFILE     = 0x10,
-	R_GAME_MUSICFILE    = 0x20,
-	
-	R_GAME_EXCLUDE = 0x8000
+	R_GAME_SCRIPTFILE = 0x02,
+	R_GAME_SOUNDFILE = 0x04,
+	R_GAME_VOICEFILE = 0x08,
+	R_GAME_DEMOFILE = 0x10,
+	R_GAME_MUSICFILE = 0x20
 };
 
 enum R_GAME_SOUNDINFO_TYPES {
+
 	R_GAME_SOUND_PCM = 0,
 	R_GAME_SOUND_VOC,
 	R_GAME_SOUND_WAV
 };
 
 enum R_GAME_FONT_IDS {
+
 	R_GAME_FONT_SMALL = 0,
 	R_GAME_FONT_MEDIUM,
 	R_GAME_FONT_LARGE,
@@ -69,61 +77,72 @@ enum R_GAME_FONT_IDS {
 };
 
 typedef struct R_GAME_DISPLAYINFO_tag {
+
 	int logical_w;
 	int logical_h;
 	int scene_h;
 
-	int ovl_pal_start;
-	int ovl_pal_end;
-
 } R_GAME_DISPLAYINFO;
 
 typedef struct R_GAMESOUND_INFO_tag {
-	int  res_type;
+
+	int res_type;
 	long freq;
-	int  sample_size;
-	int  stereo;
-	
+	int sample_size;
+	int stereo;
+
 } R_GAME_SOUNDINFO;
 
 typedef struct R_GAMEFONT_DESC_tag {
-	unsigned int  font_id;
-	unsigned long font_rn;
-	
+
+	uint font_id;
+	ulong font_rn;
+
 } R_GAME_FONTDESC;
 
 typedef struct R_GAMESCENE_DESC_tag {
-	unsigned long scene_lut_rn;
-	unsigned long first_scene;
+
+	ulong scene_lut_rn;
+	ulong first_scene;
 
 } R_GAME_SCENEDESC;
 
-typedef struct R_GAME_RESOURCEINFO_tag {
-	unsigned long scene_lut_rn;
-	unsigned long script_lut_rn;
+typedef struct R_GAMERESOURCE_DESC_tag {
 
-	unsigned long overlay_pal_rn;
+	ulong scene_lut_rn;
+	ulong script_lut_rn;
+	ulong command_panel_rn;
+	ulong dialogue_panel_rn;
 
-	unsigned long command_panel_rn;
-	unsigned long command_buttons_rn;
+} R_GAME_RESOURCEDESC;
 
-	unsigned long dialogue_panel_rn;
-	unsigned long lportraits_rn;
+int GAME_Register(void);
 
-	unsigned long actor_tbl_rn;
+int GAME_Init(void);
 
-} R_GAME_RESOURCEINFO;
+int GAME_GetFileContext(R_RSCFILE_CONTEXT ** ctxt_p, uint r_type, int param);
 
-	void setGameDirectory( const char *gamedir );
-	int detectGame();
-	bool openGame();
+int GAME_GetFontInfo(R_GAME_FONTDESC **, int *);
+
+int GAME_GetResourceInfo(R_GAME_RESOURCEDESC *);
+
+int GAME_GetSoundInfo(R_GAME_SOUNDINFO *);
+
+int GAME_GetDisplayInfo(R_GAME_DISPLAYINFO *);
+
+int GAME_GetSceneInfo(R_GAME_SCENEDESC *);
+
+int GAME_GetGame(void);
+
+int GAME_GetGameType(void);
+
+int GAME_GetErrN(void);
+
+void GAME_setGameDirectory(const char *gamedir);
+
+const char *GAME_GetErrS(void);
 
 } // End of namespace Saga
 
-#endif
-
-
-
-
-
-
+#endif				/* R_GAME_MOD_H__ */
+/* end "r_game_mod.h" */

@@ -20,40 +20,44 @@
  * $Header$
  *
  */
+/*
 
-#ifndef SAGA_H
-#define SAGA_H
+ Description:   
+ 
+    Event management module header file
 
-#include "common/scummsys.h"
-#include "base/engine.h"
-#include "base/gameDetector.h"
-#include "common/util.h"
+ Notes: 
+*/
 
-//#include "gamedesc.h"
+#ifndef SAGA_EVENT_H
+#define SAGA_EVENT_H
 
 namespace Saga {
 
-#define R_PBOUNDS(n,max) (((n)>=(0))&&((n)<(max)))
+#define R_EVENT_DBGLVL R_DEBUG_NONE
 
-enum SAGAGameId {
-	GID_ITE,
-	GID_ITECD,
-	GID_IHNM
+#define R_EVENT_WARNINGCOUNT 1000
+
+#define R_EVENT_MASK 0x00FF
+
+enum R_EVENT_STATUSCODE {
+
+	R_EVENT_INVALIDCODE = 0,
+	R_EVENT_DELETE,
+	R_EVENT_CONTINUE,
+	R_EVENT_BREAK
 };
 
-class SagaEngine:public Engine {
-	void errorString(const char *buf_input, char *buf_output);
+static int HandleContinuous(R_EVENT * event);
 
- protected:
-	void go();
-	void shutdown();
+static int HandleOneShot(R_EVENT * event);
 
- public:
-	SagaEngine(GameDetector * detector, OSystem * syst);
-	virtual ~ SagaEngine();
+static int HandleInterval(R_EVENT * event);
 
-};
+static int ProcessEventTime(long msec);
+
+static int InitializeEvent(R_EVENT * event);
 
 } // End of namespace Saga
 
-#endif
+#endif				/* R_EVENT_H */

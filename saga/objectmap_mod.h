@@ -20,40 +20,51 @@
  * $Header$
  *
  */
+/*
 
-#ifndef SAGA_H
-#define SAGA_H
+ Description:   
+ 
+    Object map module public header file
 
-#include "common/scummsys.h"
-#include "base/engine.h"
-#include "base/gameDetector.h"
-#include "common/util.h"
+ Notes: 
+*/
 
-//#include "gamedesc.h"
+#ifndef SAGA_OBJECTMAP_MOD_H__
+#define SAGA_OBJECTMAP_MOD_H__
 
 namespace Saga {
 
-#define R_PBOUNDS(n,max) (((n)>=(0))&&((n)<(max)))
+enum R_OBJECT_FLAGS {
 
-enum SAGAGameId {
-	GID_ITE,
-	GID_ITECD,
-	GID_IHNM
+	R_OBJECT_NORMAL = 0x02
 };
 
-class SagaEngine:public Engine {
-	void errorString(const char *buf_input, char *buf_output);
+int OBJECTMAP_Register(void);
 
- protected:
-	void go();
-	void shutdown();
+int OBJECTMAP_Init(void);
 
- public:
-	SagaEngine(GameDetector * detector, OSystem * syst);
-	virtual ~ SagaEngine();
+int OBJECTMAP_Shutdown(void);
 
-};
+int OBJECTMAP_Load(const uchar * om_res, size_t om_res_len);
+
+int OBJECTMAP_Free(void);
+
+int OBJECTMAP_LoadNames(const uchar * onl_res, size_t onl_res_len);
+
+int OBJECTMAP_FreeNames(void);
+
+int OBJECTMAP_GetName(int object, const char **name);
+
+int OBJECTMAP_GetFlags(int object, uint * flags);
+
+int OBJECTMAP_GetEPNum(int object, int *ep_num);
+
+int
+OBJECTMAP_Draw(R_SURFACE * draw_surface,
+    R_POINT * imouse_pt, int color, int color2);
+
+int OBJECTMAP_HitTest(R_POINT * imouse_pt, int *object_num);
 
 } // End of namespace Saga
 
-#endif
+#endif				/* SAGA_OBJECTMAP_MOD_H__ */

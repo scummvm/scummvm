@@ -20,40 +20,38 @@
  * $Header$
  *
  */
+/*
+ Description:	
+ 
+	Game interface module public header file
 
-#ifndef SAGA_H
-#define SAGA_H
+ Notes: 
+*/
 
-#include "common/scummsys.h"
-#include "base/engine.h"
-#include "base/gameDetector.h"
-#include "common/util.h"
-
-//#include "gamedesc.h"
+#ifndef SAGA_INTERFACE_MOD_H
+#define SAGA_INTERFACE_MOD_H
 
 namespace Saga {
 
-#define R_PBOUNDS(n,max) (((n)>=(0))&&((n)<(max)))
+typedef enum INTERFACE_UPDATE_FLAGS_tag {
 
-enum SAGAGameId {
-	GID_ITE,
-	GID_ITECD,
-	GID_IHNM
-};
+	UPDATE_MOUSEMOVE = 1,
+	UPDATE_MOUSECLICK
 
-class SagaEngine:public Engine {
-	void errorString(const char *buf_input, char *buf_output);
+} INTERFACE_UPDATE_FLAGS;
 
- protected:
-	void go();
-	void shutdown();
+int INTERFACE_RegisterLang(void);
 
- public:
-	SagaEngine(GameDetector * detector, OSystem * syst);
-	virtual ~ SagaEngine();
+int INTERFACE_Init(void);
+int INTERFACE_Shutdown(void);
 
-};
+int INTERFACE_Activate(void);
+int INTERFACE_Deactivate(void);
+
+int INTERFACE_SetStatusText(const char *new_txt);
+int INTERFACE_Draw(void);
+int INTERFACE_Update(R_POINT * imouse_pt, int update_flag);
 
 } // End of namespace Saga
 
-#endif
+#endif				/* SAGA_INTERFACE_MOD_H */

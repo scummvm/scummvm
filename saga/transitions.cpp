@@ -20,40 +20,64 @@
  * $Header$
  *
  */
+/*
+ Description:	
+ 
+	Background transition routines
 
-#ifndef SAGA_H
-#define SAGA_H
+ Notes: 
+*/
 
-#include "common/scummsys.h"
-#include "base/engine.h"
-#include "base/gameDetector.h"
-#include "common/util.h"
+#include <stdio.h>
+#include <stdlib.h>
 
-//#include "gamedesc.h"
+#include "yslib.h"
+
+#include "reinherit.h"
 
 namespace Saga {
 
-#define R_PBOUNDS(n,max) (((n)>=(0))&&((n)<(max)))
+int
+TRANSITION_Dissolve(uchar * dst_img,
+    int dst_w,
+    int dst_h,
+    int dst_p, const uchar * src_img, int src_p, int flags, double percent)
+{
+#define XOR_MASK 0xB400;
 
-enum SAGAGameId {
-	GID_ITE,
-	GID_ITECD,
-	GID_IHNM
-};
+	int pixelcount = dst_w * dst_h;
+	int seqlimit = (int)(65535 * percent);
 
-class SagaEngine:public Engine {
-	void errorString(const char *buf_input, char *buf_output);
+	int seq = 1;
+	int i;
 
- protected:
-	void go();
-	void shutdown();
+	YS_IGNORE_PARAM(flags);
+	YS_IGNORE_PARAM(src_p);
+	YS_IGNORE_PARAM(dst_p);
 
- public:
-	SagaEngine(GameDetector * detector, OSystem * syst);
-	virtual ~ SagaEngine();
+	for (i = 0; i < seqlimit; i++) {
 
-};
+		if (seq & 1) {
+			seq = (seq >> 1) ^ XOR_MASK;
+		} else {
+			seq = seq >> 1;
+		}
+
+		if (seq == 1) {
+			return 0;
+		}
+
+		if (seq >= pixelcount) {
+			continue;
+		} else {
+
+			dst_img[seq] = src_img[seq];
+
+		}
+	}
+
+	return 1;
+}
 
 } // End of namespace Saga
 
-#endif

@@ -20,40 +20,27 @@
  * $Header$
  *
  */
+/*
+ Description:   
+ 
+    SAGA Image resource management routines
 
-#ifndef SAGA_H
-#define SAGA_H
+ Notes: 
+*/
 
-#include "common/scummsys.h"
-#include "base/engine.h"
-#include "base/gameDetector.h"
-#include "common/util.h"
-
-//#include "gamedesc.h"
+#ifndef SAGA_IMAGE_MOD_H_
+#define SAGA_IMAGE_MOD_H_
 
 namespace Saga {
 
-#define R_PBOUNDS(n,max) (((n)>=(0))&&((n)<(max)))
+int
+IMG_DecodeBGImage(const uchar * image_data,
+    size_t image_size,
+    uchar ** output_buf, size_t * output_buf_len, int *w, int *h);
 
-enum SAGAGameId {
-	GID_ITE,
-	GID_ITECD,
-	GID_IHNM
-};
-
-class SagaEngine:public Engine {
-	void errorString(const char *buf_input, char *buf_output);
-
- protected:
-	void go();
-	void shutdown();
-
- public:
-	SagaEngine(GameDetector * detector, OSystem * syst);
-	virtual ~ SagaEngine();
-
-};
+const uchar *IMG_GetImagePal(const uchar * image_data, size_t image_size);
 
 } // End of namespace Saga
 
-#endif
+#endif				/* R_IMAGE_MOD_H_ */
+/* end "r_image_mod.h" */

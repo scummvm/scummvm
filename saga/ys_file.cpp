@@ -20,40 +20,44 @@
  * $Header$
  *
  */
+#include <stdio.h>
+#include <stdlib.h>
+#include <errno.h>
 
-#ifndef SAGA_H
-#define SAGA_H
-
-#include "common/scummsys.h"
-#include "base/engine.h"
-#include "base/gameDetector.h"
-#include "common/util.h"
-
-//#include "gamedesc.h"
+#include "yslib.h"
 
 namespace Saga {
 
-#define R_PBOUNDS(n,max) (((n)>=(0))&&((n)<(max)))
+int ys_get_filesize(FILE * file_p, unsigned long *len_p, int *p_errno)
+/*--------------------------------------------------------------------------*\
+ * Returns the 'size' of the specified file. The file must be opened in 
+ *  binary mode. Note that not all operating systems support determing the 
+ *  exact end of a binary file stream, so this function is limited in 
+ *  portability.
+\*--------------------------------------------------------------------------*/
+{
+	long f_pos;
+	long f_len;
 
-enum SAGAGameId {
-	GID_ITE,
-	GID_ITECD,
-	GID_IHNM
-};
+	f_pos = ftell(file_p);
+	if (f_pos == -1) {
+		*p_errno = errno;
+		return YS_E_FAILURE;
+	}
 
-class SagaEngine:public Engine {
-	void errorString(const char *buf_input, char *buf_output);
+	fseek(file_p, 0, SEEK_END);
 
- protected:
-	void go();
-	void shutdown();
+	f_len = ftell(file_p);
+	if (f_pos == -1) {
+		*p_errno = errno;
+		return YS_E_FAILURE;
+	}
 
- public:
-	SagaEngine(GameDetector * detector, OSystem * syst);
-	virtual ~ SagaEngine();
+	fseek(file_p, f_pos, SEEK_SET);
 
-};
+	*len_p = (unsigned long)f_len;
+
+	return YS_E_SUCCESS;;
+}
 
 } // End of namespace Saga
-
-#endif

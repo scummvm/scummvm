@@ -20,40 +20,35 @@
  * $Header$
  *
  */
+/*
+ Description:   
+ 
+    Graphics maniuplation routines - private header file
 
-#ifndef SAGA_H
-#define SAGA_H
+ Notes: 
+*/
 
-#include "common/scummsys.h"
-#include "base/engine.h"
-#include "base/gameDetector.h"
-#include "common/util.h"
-
-//#include "gamedesc.h"
+#ifndef SAGA_GFX_H_
+#define SAGA_GFX_H_
 
 namespace Saga {
 
-#define R_PBOUNDS(n,max) (((n)>=(0))&&((n)<(max)))
+#define R_CURSOR_W 7
+#define R_CURSOR_H 7
 
-enum SAGAGameId {
-	GID_ITE,
-	GID_ITECD,
-	GID_IHNM
-};
+#define R_CURSOR_ORIGIN_X 4
+#define R_CURSOR_ORIGIN_Y 4
 
-class SagaEngine:public Engine {
-	void errorString(const char *buf_input, char *buf_output);
+#define R_CLAMP(a, min, max) \
+    (a = (a < (min)) ? (min) : ((a > max) ? (max) : a ))
 
- protected:
-	void go();
-	void shutdown();
-
- public:
-	SagaEngine(GameDetector * detector, OSystem * syst);
-	virtual ~ SagaEngine();
-
-};
+#define R_CLAMP_RECT( rect, xmin, xmax, ymin, ymax ) \
+            R_CLAMP( rect->x1, xmin, xmax ); \
+            R_CLAMP( rect->x2, xmin, xmax ); \
+            R_CLAMP( rect->y1, ymin, ymax ); \
+            R_CLAMP( rect->y2, ymin, ymax )
 
 } // End of namespace Saga
 
-#endif
+#endif				/* R_GFX_H_ */
+/* end "r_gfx_h_ */

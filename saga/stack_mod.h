@@ -20,40 +20,50 @@
  * $Header$
  *
  */
+/*
+ Description:	
+ 
+	Simple integer stack module public header
 
-#ifndef SAGA_H
-#define SAGA_H
+ Notes: 
+*/
 
-#include "common/scummsys.h"
-#include "base/engine.h"
-#include "base/gameDetector.h"
-#include "common/util.h"
+#ifndef SAGA_STACK_MOD_H
+#define SAGA_STACK_MOD_H
 
-//#include "gamedesc.h"
+#include "stack.h"
 
 namespace Saga {
 
-#define R_PBOUNDS(n,max) (((n)>=(0))&&((n)<(max)))
+typedef enum STACK_ERR_enum {
+	STACK_SUCCESS = 0,
+	STACK_ERROR,
+	STACK_MEM,
+	STACK_UNDERFLOW,
+	STACK_OVERFLOW
+} STACK_ERR_CODE;
 
-enum SAGAGameId {
-	GID_ITE,
-	GID_ITECD,
-	GID_IHNM
-};
+typedef enum STACK_FLAGS_enum {
+	STACK_FIXED = 0x00,
+	STACK_GROW = 0x01
+} STACK_FLAGS;
 
-class SagaEngine:public Engine {
-	void errorString(const char *buf_input, char *buf_output);
+typedef struct R_ISTACK_tag *R_ISTACK;
 
- protected:
-	void go();
-	void shutdown();
+int ISTACK_Create(R_ISTACK * stack, int stack_len, int flags);
 
- public:
-	SagaEngine(GameDetector * detector, OSystem * syst);
-	virtual ~ SagaEngine();
+int ISTACK_Destroy(R_ISTACK * stack);
 
-};
+int ISTACK_Clear(R_ISTACK stack);
+
+int ISTACK_Push(R_ISTACK stack, int value);
+
+int ISTACK_PushNull(R_ISTACK stack);
+
+int ISTACK_Pop(R_ISTACK stack, int *value);
+
+int ISTACK_Grow(R_ISTACK stack);
 
 } // End of namespace Saga
 
-#endif
+#endif				/* SAGA_STACK_MOD_H */

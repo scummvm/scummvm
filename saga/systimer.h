@@ -20,40 +20,35 @@
  * $Header$
  *
  */
-
-#ifndef SAGA_H
-#define SAGA_H
-
-#include "common/scummsys.h"
-#include "base/engine.h"
-#include "base/gameDetector.h"
-#include "common/util.h"
-
-//#include "gamedesc.h"
+#ifndef SAGA_SYSTIMER_H__
+#define SAGA_SYSTIMER_H__
 
 namespace Saga {
 
-#define R_PBOUNDS(n,max) (((n)>=(0))&&((n)<(max)))
+typedef struct R_SYSTIMER_DATA_tag {
 
-enum SAGAGameId {
-	GID_ITE,
-	GID_ITECD,
-	GID_IHNM
+	int initialized;
+
+	Uint32 t_start_ticks;
+
+	Uint32 t_current_ticks;
+	Uint32 t_previous_ticks;
+
+} R_SYSTIMER_DATA;
+
+struct R_SYSTIMER_tag {
+
+	int t_running;
+
+	unsigned long t_interval;
+	void *t_param;
+
+	R_SYSTIMER_CALLBACK t_callback_f;
+	SDL_TimerID t_sdl_timerid;
 };
 
-class SagaEngine:public Engine {
-	void errorString(const char *buf_input, char *buf_output);
-
- protected:
-	void go();
-	void shutdown();
-
- public:
-	SagaEngine(GameDetector * detector, OSystem * syst);
-	virtual ~ SagaEngine();
-
-};
+Uint32         SYSTIMER_Callback(Uint32 interval, void *param);
 
 } // End of namespace Saga
 
-#endif
+#endif				/* SAGA_SYSTIMER_H__ */

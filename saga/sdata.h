@@ -20,40 +20,25 @@
  * $Header$
  *
  */
+/*
 
-#ifndef SAGA_H
-#define SAGA_H
+ Description:   
+ 
+    Scripting module data management component header file
 
-#include "common/scummsys.h"
-#include "base/engine.h"
-#include "base/gameDetector.h"
-#include "common/util.h"
+ Notes: 
+*/
 
-//#include "gamedesc.h"
+#ifndef SAGA_SDATA_H
+#define SAGA_SDATA_H
 
 namespace Saga {
 
-#define R_PBOUNDS(n,max) (((n)>=(0))&&((n)<(max)))
+#define R_SCRIPT_DATABUF_NUM 5U
+#define R_SCRIPT_DATABUF_LEN 1024U
 
-enum SAGAGameId {
-	GID_ITE,
-	GID_ITECD,
-	GID_IHNM
-};
-
-class SagaEngine:public Engine {
-	void errorString(const char *buf_input, char *buf_output);
-
- protected:
-	void go();
-	void shutdown();
-
- public:
-	SagaEngine(GameDetector * detector, OSystem * syst);
-	virtual ~ SagaEngine();
-
-};
+int SDATA_Init(void);
 
 } // End of namespace Saga
 
-#endif
+#endif				/* SAGA_SDATA_H */

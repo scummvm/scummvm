@@ -20,40 +20,40 @@
  * $Header$
  *
  */
+/*
+ Description:	
+ 
+	Console module public header file
 
-#ifndef SAGA_H
-#define SAGA_H
+ Notes: 
+*/
 
-#include "common/scummsys.h"
-#include "base/engine.h"
-#include "base/gameDetector.h"
-#include "common/util.h"
-
-//#include "gamedesc.h"
+#ifndef SAGA_CONSOLE_MOD_H_
+#define SAGA_CONSOLE_MOD_H_
 
 namespace Saga {
 
-#define R_PBOUNDS(n,max) (((n)>=(0))&&((n)<(max)))
+int CON_Register(void);
+int CON_Init(void);
+int CON_Shutdown(void);
 
-enum SAGAGameId {
-	GID_ITE,
-	GID_ITECD,
-	GID_IHNM
-};
+int CON_Activate(void);
+int CON_Deactivate(void);
+int CON_IsActive(void);
 
-class SagaEngine:public Engine {
-	void errorString(const char *buf_input, char *buf_output);
+int CON_Type(int in_char);
+int CON_Draw(R_SURFACE * ds);
+int CON_Print(const char *fmt_str, ...);
 
- protected:
-	void go();
-	void shutdown();
+int CON_CmdUp(void);
+int CON_CmdDown(void);
+int CON_PageUp(void);
+int CON_PageDown(void);
 
- public:
-	SagaEngine(GameDetector * detector, OSystem * syst);
-	virtual ~ SagaEngine();
-
-};
+int CON_DropConsole(double percent);
+int CON_RaiseConsole(double percent);
 
 } // End of namespace Saga
 
-#endif
+#endif				/* R_CONSOLE_MOD_H_ */
+/* end "r_console_mod.h" */

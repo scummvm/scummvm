@@ -20,40 +20,24 @@
  * $Header$
  *
  */
+/*
+ Description:   
+ 
+    Expression parsing module header file
 
-#ifndef SAGA_H
-#define SAGA_H
+ Notes: 
+*/
 
-#include "common/scummsys.h"
-#include "base/engine.h"
-#include "base/gameDetector.h"
-#include "common/util.h"
-
-//#include "gamedesc.h"
+#ifndef SAGA_EXPR_H_
+#define SAGA_EXPR_H_
 
 namespace Saga {
 
-#define R_PBOUNDS(n,max) (((n)>=(0))&&((n)<(max)))
+#define R_EXPR_WHITESPACE "\t\n "
 
-enum SAGAGameId {
-	GID_ITE,
-	GID_ITECD,
-	GID_IHNM
-};
-
-class SagaEngine:public Engine {
-	void errorString(const char *buf_input, char *buf_output);
-
- protected:
-	void go();
-	void shutdown();
-
- public:
-	SagaEngine(GameDetector * detector, OSystem * syst);
-	virtual ~ SagaEngine();
-
-};
+int EXPR_ParseArgs(char *cmd_str, char **argv);
 
 } // End of namespace Saga
 
-#endif
+#endif				/* R_EXPR_H_ */
+/* end "r_expr.h" */

@@ -20,40 +20,45 @@
  * $Header$
  *
  */
+/*
+ Description:   
+ 
+    SAGA Image resource management header file
 
-#ifndef SAGA_H
-#define SAGA_H
+ Notes: 
+*/
 
-#include "common/scummsys.h"
-#include "base/engine.h"
-#include "base/gameDetector.h"
-#include "common/util.h"
-
-//#include "gamedesc.h"
+#ifndef SAGA_IMAGE_H__
+#define SAGA_IMAGE_H__
 
 namespace Saga {
 
-#define R_PBOUNDS(n,max) (((n)>=(0))&&((n)<(max)))
+#define R_MIN_IMG_RLECODE    3
+#define MODEX_SCANLINE_LIMIT 200
 
-enum SAGAGameId {
-	GID_ITE,
-	GID_ITECD,
-	GID_IHNM
-};
+#define SAGA_IMAGE_DATA_OFFSET 776
+#define SAGA_IMAGE_HEADER_LEN  8
 
-class SagaEngine:public Engine {
-	void errorString(const char *buf_input, char *buf_output);
+typedef struct R_IMAGE_HEADER_tag {
 
- protected:
-	void go();
-	void shutdown();
+	int width;
+	int height;
+	int unknown4;
+	int unknown6;
 
- public:
-	SagaEngine(GameDetector * detector, OSystem * syst);
-	virtual ~ SagaEngine();
+} R_IMAGE_HEADER;
 
-};
+int
+DecodeBGImageRLE(const uchar * inbuf,
+    size_t inbuf_len, uchar * outbuf, size_t outbuf_len);
+
+int FlipImage(uchar * img_buf, int columns, int scanlines);
+
+int
+UnbankBGImage(uchar * dest_buf,
+    const uchar * src_buf, int columns, int scanlines);
 
 } // End of namespace Saga
 
-#endif
+#endif				/* R_IMAGE_H__ */
+/* end "r_image.h" */

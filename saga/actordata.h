@@ -20,40 +20,43 @@
  * $Header$
  *
  */
+/*
+ Description:	
+ 
+	Actor data table header file
 
-#ifndef SAGA_H
-#define SAGA_H
+ Notes: 
+*/
 
-#include "common/scummsys.h"
-#include "base/engine.h"
-#include "base/gameDetector.h"
-#include "common/util.h"
-
-//#include "gamedesc.h"
+#ifndef SAGA_ACTORDATA_H
+#define SAGA_ACTORDATA_H
 
 namespace Saga {
 
-#define R_PBOUNDS(n,max) (((n)>=(0))&&((n)<(max)))
+typedef struct R_ACTORTABLE_tag {
 
-enum SAGAGameId {
-	GID_ITE,
-	GID_ITECD,
-	GID_IHNM
-};
+	int name_index;
+	int unknown1;
+	int unknown2;
+	int unknown3;
+	int unknown4;
+	int spritelist_rn;
+	int spriteindex_rn;
+	int unknown5;
+	unsigned char color;
+	unsigned char unknown6;
+	unsigned char unknown7;
+	unsigned char unknown8;
 
-class SagaEngine:public Engine {
-	void errorString(const char *buf_input, char *buf_output);
+} R_ACTORTABLE;
 
- protected:
-	void go();
-	void shutdown();
+#define R_ACTORCOUNT 181
 
- public:
-	SagaEngine(GameDetector * detector, OSystem * syst);
-	virtual ~ SagaEngine();
-
-};
+extern int ActorOrientationLUT[];
+extern R_ACTORTABLE ActorTable[R_ACTORCOUNT];
 
 } // End of namespace Saga
 
-#endif
+#endif				/* R_ACTORDATA_H */
+
+/* end "r_actordata.h" */

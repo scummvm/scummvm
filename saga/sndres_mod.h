@@ -20,40 +20,33 @@
  * $Header$
  *
  */
+/*
+ Description:   
+ 
+    Sound resource management module - public header
 
-#ifndef SAGA_H
-#define SAGA_H
+ Notes: 
+*/
 
-#include "common/scummsys.h"
-#include "base/engine.h"
-#include "base/gameDetector.h"
-#include "common/util.h"
-
-//#include "gamedesc.h"
+#ifndef SAGA_SNDRES_MOD_H_
+#define SAGA_SNDRES_MOD_H_
 
 namespace Saga {
 
-#define R_PBOUNDS(n,max) (((n)>=(0))&&((n)<(max)))
+int SND_Init(void);
 
-enum SAGAGameId {
-	GID_ITE,
-	GID_ITECD,
-	GID_IHNM
-};
+int SND_LoadSound(ulong sound_rn);
 
-class SagaEngine:public Engine {
-	void errorString(const char *buf_input, char *buf_output);
+int SND_PlayVoice(ulong voice_rn);
 
- protected:
-	void go();
-	void shutdown();
+int SND_GetVoiceLength(ulong voice_rn);
 
- public:
-	SagaEngine(GameDetector * detector, OSystem * syst);
-	virtual ~ SagaEngine();
-
-};
+int
+SND_ITEVOC_Resample(long src_freq,
+    long dst_freq,
+    uchar * src_buf,
+    size_t src_buf_len, uchar ** dst_buf, size_t * dst_buf_len);
 
 } // End of namespace Saga
 
-#endif
+#endif				/* SAGA_SNDRES_MOD_H_ */

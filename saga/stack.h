@@ -20,40 +20,30 @@
  * $Header$
  *
  */
+/*
+ Description:	
+ 
+	Simple integer stack module private header
 
-#ifndef SAGA_H
-#define SAGA_H
+ Notes: 
+*/
 
-#include "common/scummsys.h"
-#include "base/engine.h"
-#include "base/gameDetector.h"
-#include "common/util.h"
-
-//#include "gamedesc.h"
+#ifndef SAGA_STACK_H
+#define SAGA_STACK_H
 
 namespace Saga {
 
-#define R_PBOUNDS(n,max) (((n)>=(0))&&((n)<(max)))
+#define ISTACK_MAX
 
-enum SAGAGameId {
-	GID_ITE,
-	GID_ITECD,
-	GID_IHNM
-};
+struct R_ISTACK_tag {
 
-class SagaEngine:public Engine {
-	void errorString(const char *buf_input, char *buf_output);
-
- protected:
-	void go();
-	void shutdown();
-
- public:
-	SagaEngine(GameDetector * detector, OSystem * syst);
-	virtual ~ SagaEngine();
+	int flags;
+	int len;
+	int top;
+	int *data;
 
 };
 
 } // End of namespace Saga
 
-#endif
+#endif				/* SAGA_STACK_H */

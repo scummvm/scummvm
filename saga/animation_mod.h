@@ -20,40 +20,48 @@
  * $Header$
  *
  */
+/*
+ Description:	
+ 
+	Background animation management module public header
 
-#ifndef SAGA_H
-#define SAGA_H
+ Notes: 
+*/
 
-#include "common/scummsys.h"
-#include "base/engine.h"
-#include "base/gameDetector.h"
-#include "common/util.h"
-
-//#include "gamedesc.h"
+#ifndef SAGA_ANIMATION_MOD_H__
+#define SAGA_ANIMATION_MOD_H__
 
 namespace Saga {
 
-#define R_PBOUNDS(n,max) (((n)>=(0))&&((n)<(max)))
+enum ANIM_FLAGS {
 
-enum SAGAGameId {
-	GID_ITE,
-	GID_ITECD,
-	GID_IHNM
+	ANIM_LOOP = 0x01,
+	ANIM_ENDSCENE = 0x80	/* When animation ends, dispatch scene end event */
 };
 
-class SagaEngine:public Engine {
-	void errorString(const char *buf_input, char *buf_output);
+int ANIM_Register(void);
 
- protected:
-	void go();
-	void shutdown();
+int ANIM_Init(void);
 
- public:
-	SagaEngine(GameDetector * detector, OSystem * syst);
-	virtual ~ SagaEngine();
+int ANIM_Shutdown(void);
 
-};
+int
+ANIM_Load(const uchar * anim_resdata,
+    size_t anim_resdata_len, uint * anim_id_p);
+
+int ANIM_Free(uint anim_id);
+
+int ANIM_Play(uint anim_id, int vector_time);
+
+int ANIM_Link(uint anim_id1, uint anim_id2);
+
+int ANIM_SetFlag(uint anim_id, uint flag);
+
+int ANIM_SetFrameTime(uint anim_id, int time);
+
+int ANIM_Reset(void);
 
 } // End of namespace Saga
 
-#endif
+#endif				/* R_ANIMATION_MOD_H__ */
+/* end "r_animation_mod.h__ */

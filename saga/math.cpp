@@ -20,40 +20,53 @@
  * $Header$
  *
  */
+/*
 
-#ifndef SAGA_H
-#define SAGA_H
+ Description:   
+ 
+    Math routines
 
-#include "common/scummsys.h"
-#include "base/engine.h"
-#include "base/gameDetector.h"
-#include "common/util.h"
+ Notes: 
+*/
 
-//#include "gamedesc.h"
+#include <stdio.h>
+#include <stdlib.h>
+
+#include "reinherit.h"
 
 namespace Saga {
 
-#define R_PBOUNDS(n,max) (((n)>=(0))&&((n)<(max)))
+int
+MATH_HitTestPoly(R_POINT * points, unsigned int npoints, R_POINT test_point)
+{
+	int yflag0;
+	int yflag1;
+	int inside_flag = 0;
+	unsigned int pt;
 
-enum SAGAGameId {
-	GID_ITE,
-	GID_ITECD,
-	GID_IHNM
-};
+	R_POINT *vtx0 = &points[npoints - 1];
+	R_POINT *vtx1 = &points[0];
 
-class SagaEngine:public Engine {
-	void errorString(const char *buf_input, char *buf_output);
+	yflag0 = (vtx0->y >= test_point.y);
 
- protected:
-	void go();
-	void shutdown();
+	for (pt = 0; pt < npoints; pt++, vtx1++) {
 
- public:
-	SagaEngine(GameDetector * detector, OSystem * syst);
-	virtual ~ SagaEngine();
+		yflag1 = (vtx1->y >= test_point.y);
 
-};
+		if (yflag0 != yflag1) {
+
+			if (((vtx1->y - test_point.y) * (vtx0->x - vtx1->x) >=
+				(vtx1->x - test_point.x) * (vtx0->y -
+				    vtx1->y)) == yflag1) {
+
+				inside_flag = !inside_flag;
+			}
+		}
+		yflag0 = yflag1;
+		vtx0 = vtx1;
+	}
+
+	return inside_flag;
+}
 
 } // End of namespace Saga
-
-#endif

@@ -20,40 +20,27 @@
  * $Header$
  *
  */
+/*
+ Description:	
+ 
+	Palette animation module public header file
 
-#ifndef SAGA_H
-#define SAGA_H
+ Notes: 
+*/
 
-#include "common/scummsys.h"
-#include "base/engine.h"
-#include "base/gameDetector.h"
-#include "common/util.h"
-
-//#include "gamedesc.h"
+#ifndef SAGA_PALANIM_MOD_H__
+#define SAGA_PALANIM_MOD_H__
 
 namespace Saga {
 
-#define R_PBOUNDS(n,max) (((n)>=(0))&&((n)<(max)))
+int PALANIM_Load(const uchar *, size_t);
 
-enum SAGAGameId {
-	GID_ITE,
-	GID_ITECD,
-	GID_IHNM
-};
+int PALANIM_CycleStart(void);
 
-class SagaEngine:public Engine {
-	void errorString(const char *buf_input, char *buf_output);
+int PALANIM_CycleStep(int vectortime);
 
- protected:
-	void go();
-	void shutdown();
-
- public:
-	SagaEngine(GameDetector * detector, OSystem * syst);
-	virtual ~ SagaEngine();
-
-};
+int PALANIM_Free(void);
 
 } // End of namespace Saga
 
-#endif
+#endif				/* SAGA_PALANIM_MOD_H__ */

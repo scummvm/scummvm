@@ -20,40 +20,52 @@
  * $Header$
  *
  */
+/*
 
-#ifndef SAGA_H
-#define SAGA_H
+ Description:   
+ 
+    Font management and font drawing module public header
 
-#include "common/scummsys.h"
-#include "base/engine.h"
-#include "base/gameDetector.h"
-#include "common/util.h"
+ Notes: 
+*/
 
-//#include "gamedesc.h"
+#ifndef SAGA_FONT_MOD_H_
+#define SAGA_FONT_MOD_H_
 
 namespace Saga {
 
-#define R_PBOUNDS(n,max) (((n)>=(0))&&((n)<(max)))
+enum FONT_ID {
 
-enum SAGAGameId {
-	GID_ITE,
-	GID_ITECD,
-	GID_IHNM
+	SMALL_FONT_ID,
+	MEDIUM_FONT_ID,
+	BIG_FONT_ID
 };
 
-class SagaEngine:public Engine {
-	void errorString(const char *buf_input, char *buf_output);
+enum FONT_EFFECT_FLAGS {
 
- protected:
-	void go();
-	void shutdown();
-
- public:
-	SagaEngine(GameDetector * detector, OSystem * syst);
-	virtual ~ SagaEngine();
-
+	FONT_NORMAL = 0x00,
+	FONT_OUTLINE = 0x01,
+	FONT_SHADOW = 0x02,
+	FONT_BOLD = 0x04,
+	FONT_CENTERED = 0x08
 };
+
+int FONT_Init(void);
+
+int FONT_Shutdown(void);
+
+int FONT_Draw(int font_id,
+    R_SURFACE * ds,
+    const char *draw_str,
+    size_t draw_str_len,
+    int text_x, int text_y, int color, int effect_color, int flags);
+
+int FONT_GetStringWidth(int font_id,
+    const char *test_str, size_t test_str_ct, int flags);
+
+int FONT_GetHeight(int font_id);
 
 } // End of namespace Saga
 
-#endif
+#endif				/* R_FONT_MOD_H_ */
+/* end "r_font_mod.h" */

@@ -20,40 +20,32 @@
  * $Header$
  *
  */
-
-#ifndef SAGA_H
-#define SAGA_H
-
-#include "common/scummsys.h"
-#include "base/engine.h"
-#include "base/gameDetector.h"
-#include "common/util.h"
-
-//#include "gamedesc.h"
+#ifndef SYSGFX_H_
+#define SYSGFX_H_
 
 namespace Saga {
 
-#define R_PBOUNDS(n,max) (((n)>=(0))&&((n)<(max)))
+#define R_COLORSEARCH_SQUARE 0
 
-enum SAGAGameId {
-	GID_ITE,
-	GID_ITECD,
-	GID_IHNM
-};
+#define R_RED_WEIGHT 0.299
+#define R_GREEN_WEIGHT 0.587
+#define R_BLUE_WEIGHT 0.114
 
-class SagaEngine:public Engine {
-	void errorString(const char *buf_input, char *buf_output);
+typedef struct R_SYSGFX_MODULE_tag {
 
- protected:
-	void go();
-	void shutdown();
+	int init;
 
- public:
-	SagaEngine(GameDetector * detector, OSystem * syst);
-	virtual ~ SagaEngine();
+	SDL_Surface *sdl_screen;	/* Screen surface */
+	R_SURFACE r_screen;
 
-};
+	SDL_Surface *sdl_back_buf;	/* Double buffer surface */
+	R_SURFACE r_back_buf;
+
+	int white_index;
+	int black_index;
+
+} R_SYSGFX_MODULE;
 
 } // End of namespace Saga
 
-#endif
+#endif				/* SYSGFX_H_ */

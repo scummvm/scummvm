@@ -20,40 +20,56 @@
  * $Header$
  *
  */
+/*
 
-#ifndef SAGA_H
-#define SAGA_H
+ Description:   
+ 
+    Object map / Object click-area module header file
 
-#include "common/scummsys.h"
-#include "base/engine.h"
-#include "base/gameDetector.h"
-#include "common/util.h"
+ Notes: 
+*/
 
-//#include "gamedesc.h"
+#ifndef SAGA_OBJECTMAP_H_
+#define SAGA_OBJECTMAP_H_
 
 namespace Saga {
 
-#define R_PBOUNDS(n,max) (((n)>=(0))&&((n)<(max)))
+typedef struct R_CLICKAREA_tag {
 
-enum SAGAGameId {
-	GID_ITE,
-	GID_ITECD,
-	GID_IHNM
-};
+	int n_points;
+	R_POINT *points;
 
-class SagaEngine:public Engine {
-	void errorString(const char *buf_input, char *buf_output);
+} R_CLICKAREA;
 
- protected:
-	void go();
-	void shutdown();
+typedef struct R_OBJECTMAP_ENTRY_tag {
 
- public:
-	SagaEngine(GameDetector * detector, OSystem * syst);
-	virtual ~ SagaEngine();
+	int unknown0;
+	uint flags;
 
-};
+	int object_num;
+	int script_num;
+
+	int n_clickareas;
+	R_CLICKAREA *clickareas;
+
+} R_OBJECTMAP_ENTRY;
+
+typedef struct R_OBJECTMAP_INFO_tag {
+
+	int initialized;
+
+	int objects_loaded;
+	int n_objects;
+	R_OBJECTMAP_ENTRY *object_maps;
+
+	int names_loaded;
+	int n_names;
+	char **names;
+
+} R_OBJECTMAP_INFO;
+
+static void CF_object_info(int argc, char *argv[]);
 
 } // End of namespace Saga
 
-#endif
+#endif				/* SAGA_OBJECTMAP_H_ */

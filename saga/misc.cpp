@@ -20,40 +20,35 @@
  * $Header$
  *
  */
+/*
+ Description:	
+ 
+	Misc. routines
 
-#ifndef SAGA_H
-#define SAGA_H
-
-#include "common/scummsys.h"
-#include "base/engine.h"
-#include "base/gameDetector.h"
-#include "common/util.h"
-
-//#include "gamedesc.h"
+ Notes: 
+*/
 
 namespace Saga {
 
-#define R_PBOUNDS(n,max) (((n)>=(0))&&((n)<(max)))
+int Granulate(int value, int granularity)
+{
 
-enum SAGAGameId {
-	GID_ITE,
-	GID_ITECD,
-	GID_IHNM
-};
+	int remainder;
 
-class SagaEngine:public Engine {
-	void errorString(const char *buf_input, char *buf_output);
+	if (value == 0)
+		return 0;
 
- protected:
-	void go();
-	void shutdown();
+	if (granularity == 0)
+		return 0;
 
- public:
-	SagaEngine(GameDetector * detector, OSystem * syst);
-	virtual ~ SagaEngine();
+	remainder = value % granularity;
 
-};
+	if (remainder == 0) {
+		return value;
+	} else {
+		return (granularity - remainder + value);
+	}
+
+}
 
 } // End of namespace Saga
-
-#endif

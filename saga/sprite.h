@@ -20,40 +20,69 @@
  * $Header$
  *
  */
+/*
+ Description:	
+ 
+	Sprite management module private header file
 
-#ifndef SAGA_H
-#define SAGA_H
+ Notes: 
+*/
 
-#include "common/scummsys.h"
-#include "base/engine.h"
-#include "base/gameDetector.h"
-#include "common/util.h"
-
-//#include "gamedesc.h"
+#ifndef SAGA_SPRITE_H__
+#define SAGA_SPRITE_H__
 
 namespace Saga {
 
-#define R_PBOUNDS(n,max) (((n)>=(0))&&((n)<(max)))
+#define R_APPENDMAX 4
 
-enum SAGAGameId {
-	GID_ITE,
-	GID_ITECD,
-	GID_IHNM
+#define R_SPRITE_ZMAX  16
+#define R_SPRITE_ZMASK 0x0F
+
+#define R_DECODE_BUF_LEN 64000
+
+typedef struct R_SPRITELIST_ENTRY_tag {
+
+	int x_align;
+	int y_align;
+	int width;
+	int height;
+
+} R_SPRITELIST_ENTRY;
+
+typedef struct R_SPRITELIST_OFFSET_tag {
+
+	uint data_idx;
+	size_t offset;
+
+} R_SPRITELIST_OFFSET;
+
+struct R_SPRITELIST_tag {
+
+	int append_count;
+	int sprite_count;
+
+	R_SPRITELIST_OFFSET *offset_list;
+
+	int slist_rn;
+	uchar *sprite_data[R_APPENDMAX];
+
 };
 
-class SagaEngine:public Engine {
-	void errorString(const char *buf_input, char *buf_output);
+typedef struct R_SPRITE_MODULE_tag {
 
- protected:
-	void go();
-	void shutdown();
+	int init;
 
- public:
-	SagaEngine(GameDetector * detector, OSystem * syst);
-	virtual ~ SagaEngine();
+	R_RSCFILE_CONTEXT *sprite_ctxt;
 
-};
+	uchar *decode_buf;
+	size_t decode_buf_len;
+
+} R_SPRITE_MODULE;
+
+int
+DecodeRLESprite(const uchar * inbuf,
+    size_t inbuf_len, uchar * outbuf, size_t outbuf_len);
 
 } // End of namespace Saga
 
-#endif
+#endif				/* SAGA_SPRITE_H__ */

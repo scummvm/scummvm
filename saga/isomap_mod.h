@@ -20,40 +20,29 @@
  * $Header$
  *
  */
+/*
+ Description:   
+ 
+    Isometric level module - public module header
 
-#ifndef SAGA_H
-#define SAGA_H
+ Notes: 
+*/
 
-#include "common/scummsys.h"
-#include "base/engine.h"
-#include "base/gameDetector.h"
-#include "common/util.h"
-
-//#include "gamedesc.h"
+#ifndef SAGA_ISOMAP_MOD_H_
+#define SAGA_ISOMAP_MOD_H_
 
 namespace Saga {
 
-#define R_PBOUNDS(n,max) (((n)>=(0))&&((n)<(max)))
+int ISOMAP_Init(void);
 
-enum SAGAGameId {
-	GID_ITE,
-	GID_ITECD,
-	GID_IHNM
-};
+int ISOMAP_LoadTileset(const uchar *, size_t);
 
-class SagaEngine:public Engine {
-	void errorString(const char *buf_input, char *buf_output);
+int ISOMAP_LoadMetaTileset(const uchar *, size_t);
 
- protected:
-	void go();
-	void shutdown();
+int ISOMAP_LoadMetamap(const uchar * mm_res_p, size_t mm_res_len);
 
- public:
-	SagaEngine(GameDetector * detector, OSystem * syst);
-	virtual ~ SagaEngine();
-
-};
+int ISOMAP_Draw(R_SURFACE * dst_s);
 
 } // End of namespace Saga
 
-#endif
+#endif				/* SAGA_ISOMAP_MOD_H_ */

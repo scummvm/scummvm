@@ -20,40 +20,79 @@
  * $Header$
  *
  */
+#include "reinherit.h"
 
-#ifndef SAGA_H
-#define SAGA_H
-
-#include "common/scummsys.h"
-#include "base/engine.h"
-#include "base/gameDetector.h"
-#include "common/util.h"
-
-//#include "gamedesc.h"
+#include "yslib.h"
 
 namespace Saga {
 
-#define R_PBOUNDS(n,max) (((n)>=(0))&&((n)<(max)))
+static int MusicInitialized = 0;
 
-enum SAGAGameId {
-	GID_ITE,
-	GID_ITECD,
-	GID_IHNM
-};
+int SYSMUSIC_Init(int enabled)
+{
+	YS_IGNORE_PARAM(enabled);
 
-class SagaEngine:public Engine {
-	void errorString(const char *buf_input, char *buf_output);
+	if (MusicInitialized) {
+		return R_FAILURE;
+	}
 
- protected:
-	void go();
-	void shutdown();
+	MusicInitialized = 1;
+	return R_SUCCESS;
+}
 
- public:
-	SagaEngine(GameDetector * detector, OSystem * syst);
-	virtual ~ SagaEngine();
+int SYSMUSIC_Shutdown(void)
+{
+	if (!MusicInitialized) {
+		return R_FAILURE;
+	}
 
-};
+	MusicInitialized = 0;
+	return R_SUCCESS;
+}
+
+int SYSMUSIC_Play(ulong music_rn, uint flags)
+{
+	if (!MusicInitialized) {
+		return R_FAILURE;
+	}
+
+	YS_IGNORE_PARAM(music_rn);
+	YS_IGNORE_PARAM(flags);
+
+	return R_SUCCESS;
+
+}
+
+int SYSMUSIC_Pause(void)
+{
+	if (!MusicInitialized) {
+		return R_FAILURE;
+	}
+
+	return R_SUCCESS;
+
+}
+
+int SYSMUSIC_Resume(void)
+{
+	if (!MusicInitialized) {
+		return R_FAILURE;
+	}
+
+	return R_SUCCESS;
+
+}
+
+int SYSMUSIC_Stop(void)
+{
+
+	if (!MusicInitialized) {
+		return R_FAILURE;
+	}
+
+	return R_SUCCESS;
+
+}
 
 } // End of namespace Saga
 
-#endif

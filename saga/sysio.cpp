@@ -21,39 +21,45 @@
  *
  */
 
-#ifndef SAGA_H
-#define SAGA_H
+#include "reinherit.h"
 
-#include "common/scummsys.h"
-#include "base/engine.h"
-#include "base/gameDetector.h"
-#include "common/util.h"
-
-//#include "gamedesc.h"
+#include "SDL.h"
 
 namespace Saga {
 
-#define R_PBOUNDS(n,max) (((n)>=(0))&&((n)<(max)))
+/*
+ * Uses the following modules:
+\*--------------------------------------------------------------------------*/
 
-enum SAGAGameId {
-	GID_ITE,
-	GID_ITECD,
-	GID_IHNM
-};
+/*
+ * Begin module component
+\*--------------------------------------------------------------------------*/
 
-class SagaEngine:public Engine {
-	void errorString(const char *buf_input, char *buf_output);
+int SYSIO_Init(void)
+{
 
- protected:
-	void go();
-	void shutdown();
+	int result;
 
- public:
-	SagaEngine(GameDetector * detector, OSystem * syst);
-	virtual ~ SagaEngine();
+	/* Initialize SDL library */
+	result = SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER | SDL_INIT_AUDIO);
 
-};
+	if (result != 0) {
+
+		R_printf(R_STDERR, "SDL library initialization failed.\n");
+
+		return R_FAILURE;
+	}
+
+	R_printf(R_STDOUT, "SDL library initialized.\n");
+
+	return R_SUCCESS;
+}
+
+int SYSIO_Shutdown(void)
+{
+
+	return R_SUCCESS;
+}
 
 } // End of namespace Saga
 
-#endif

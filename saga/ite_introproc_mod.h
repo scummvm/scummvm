@@ -20,40 +20,21 @@
  * $Header$
  *
  */
+/*
+ Description:	
+ 
+	Intro sequence scene procedures - public header file
 
-#ifndef SAGA_H
-#define SAGA_H
+ Notes: 
+*/
 
-#include "common/scummsys.h"
-#include "base/engine.h"
-#include "base/gameDetector.h"
-#include "common/util.h"
-
-//#include "gamedesc.h"
+#ifndef SAGA_ITE_INTROPROC_MOD_H_
+#define SAGA_ITE_INTROPROC_MOD_H_
 
 namespace Saga {
 
-#define R_PBOUNDS(n,max) (((n)>=(0))&&((n)<(max)))
-
-enum SAGAGameId {
-	GID_ITE,
-	GID_ITECD,
-	GID_IHNM
-};
-
-class SagaEngine:public Engine {
-	void errorString(const char *buf_input, char *buf_output);
-
- protected:
-	void go();
-	void shutdown();
-
- public:
-	SagaEngine(GameDetector * detector, OSystem * syst);
-	virtual ~ SagaEngine();
-
-};
+int ITE_IntroRegisterLang(void);
 
 } // End of namespace Saga
 
-#endif
+#endif				/* SAGA_ITE_INTROPROC_MOD_H_ */

@@ -20,40 +20,51 @@
  * $Header$
  *
  */
+/*
 
-#ifndef SAGA_H
-#define SAGA_H
+ Description:   
+ 
+    RSC Resource file management header file
 
-#include "common/scummsys.h"
-#include "base/engine.h"
-#include "base/gameDetector.h"
-#include "common/util.h"
+ Notes: 
+*/
 
-//#include "gamedesc.h"
+#ifndef SAGA_RSCFILE_H__
+#define SAGA_RSCFILE_H__
 
 namespace Saga {
 
-#define R_PBOUNDS(n,max) (((n)>=(0))&&((n)<(max)))
+#define RSC_TABLEINFO_SIZE 8
+#define RSC_TABLEENTRY_SIZE 8
 
-enum SAGAGameId {
-	GID_ITE,
-	GID_ITECD,
-	GID_IHNM
+#define RSC_MIN_FILESIZE (RSC_TABLEINFO_SIZE + RSC_TABLEENTRY_SIZE + 1)
+
+typedef struct R_RSCFILE_RESOURCE_tag {
+
+	int res_type;
+
+	size_t res_offset;
+	size_t res_size;
+
+} R_RSCFILE_RESOURCE;
+
+struct R_RSCFILE_CONTEXT_tag {
+
+	const char *rc_file_fspec;
+	FILE *rc_file_p;
+	int rc_file_open;
+	unsigned long rc_file_size;
+
+	int rc_file_loaded;
+	R_RSCFILE_RESOURCE *rc_res_table;
+	size_t rc_res_ct;
+
 };
 
-class SagaEngine:public Engine {
-	void errorString(const char *buf_input, char *buf_output);
+int RSC_LoadRSC(R_RSCFILE_CONTEXT * rsc_context);
 
- protected:
-	void go();
-	void shutdown();
-
- public:
-	SagaEngine(GameDetector * detector, OSystem * syst);
-	virtual ~ SagaEngine();
-
-};
+int RSC_FreeRSC(R_RSCFILE_CONTEXT * rsc);
 
 } // End of namespace Saga
 
-#endif
+#endif				/* SAGA_RSCFILE_H__ */

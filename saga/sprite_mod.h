@@ -20,40 +20,42 @@
  * $Header$
  *
  */
+/*
 
-#ifndef SAGA_H
-#define SAGA_H
+ Description:   
+ 
+    Sprite management module public header file
 
-#include "common/scummsys.h"
-#include "base/engine.h"
-#include "base/gameDetector.h"
-#include "common/util.h"
+ Notes: 
+*/
 
-//#include "gamedesc.h"
+#ifndef SAGA_SPRITE_MOD_H__
+#define SAGA_SPRITE_MOD_H__
 
 namespace Saga {
 
-#define R_PBOUNDS(n,max) (((n)>=(0))&&((n)<(max)))
+typedef struct R_SPRITELIST_tag R_SPRITELIST;
 
-enum SAGAGameId {
-	GID_ITE,
-	GID_ITECD,
-	GID_IHNM
-};
+int SPRITE_Init(void);
 
-class SagaEngine:public Engine {
-	void errorString(const char *buf_input, char *buf_output);
+int SPRITE_Shutdown(void);
 
- protected:
-	void go();
-	void shutdown();
+int SPRITE_LoadList(int resource_num, R_SPRITELIST ** sprite_list_p);
 
- public:
-	SagaEngine(GameDetector * detector, OSystem * syst);
-	virtual ~ SagaEngine();
+int SPRITE_AppendList(int resource_num, R_SPRITELIST * spritelist);
 
-};
+int SPRITE_GetListLen(R_SPRITELIST * spritelist);
+
+int SPRITE_Free(R_SPRITELIST * spritelist);
+
+int
+SPRITE_Draw(R_SURFACE * ds,
+    R_SPRITELIST * sprite_list, int sprite_num, int spr_x, int spr_y);
+
+int
+SPRITE_DrawOccluded(R_SURFACE * ds,
+    R_SPRITELIST * sprite_list, int sprite_num, int spr_x, int spr_y);
 
 } // End of namespace Saga
 
-#endif
+#endif				/* SAGA_SPRITE_MOD_H__ */
