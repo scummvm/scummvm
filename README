@@ -224,14 +224,16 @@ although patches to fix them are welcome. If you discover a bug that is not
 listed here, nor in the compatibility table on the web site, please see
 the section on Reporting Bugs.
 
-// FIXME: Are these two still present? Many walk-related fixes lately...
        Indiana Jones & the Last Crusade (EGA):
-       Indiana Jones & the Last Crusade (256):
-                - In some rooms Indy may be able to walk to odd places
+                - No inventory in Macintosh version
 
        Monkey Island 1 (EGA):
        Loom (EGA):
                 - MIDI support requires the Roland update from LucasArts
+
+       Indiana Jones & the Fate of Atlantis:
+       Monkey Island 2:
+               - Palette issues in Amiga versions
 
        Sam and Max:
                 - Highway subgame does not behave correctly.
@@ -545,6 +547,7 @@ simon games.
 
     Flight of the Amazon Queen:
         Ctrl-d                 - Starts the debugger
+        F1                     - Displays save/load box
 
     Simon the Sorcerer 1 & 2:
         Ctrl 0-9 and Alt 0-9   - Load and save game state
