@@ -41,7 +41,7 @@ int getSampleRateFromVOCRate(int vocSR) {
 	}
 }
 
-byte *readVOCFromMemory(byte *ptr, int &size, int &rate, int &loops) {
+byte *readVOCFromMemory(byte *ptr, int &size, int &rate, int &loops, int &begin_loop, int &end_loop) {
 	
 	assert(memcmp(ptr, "Creative Voice File\x1A", 20) == 0);
 	int32 offset = READ_LE_UINT16(ptr + 20);
@@ -53,6 +53,8 @@ byte *readVOCFromMemory(byte *ptr, int &size, int &rate, int &loops) {
 	bool quit = false;
 	byte *ret_sound = 0;
 	size = 0;
+	begin_loop = 0;
+	end_loop = 0;
 
 	while (!quit) {
 		int len = READ_LE_UINT32(ptr + offset);
@@ -76,7 +78,9 @@ byte *readVOCFromMemory(byte *ptr, int &size, int &rate, int &loops) {
 					ret_sound = (byte *)malloc(len);
 				}
 				memcpy(ret_sound + size, ptr + offset, len);
+				begin_loop = size;
 				size += len;
+				end_loop = size;
 			} else {
 				warning("VOC file packing %d unsupported", packing);
 			}
@@ -153,8 +157,8 @@ byte *loadVOCFile(File *file, int &size, int &rate) {
 }
 
 AudioStream *makeVOCStream(byte *ptr) {
-	int size, rate, loops;
-	byte *data = readVOCFromMemory(ptr, size, rate, loops);
+	int size, rate, loops, begin_loop, end_loop;
+	byte *data = readVOCFromMemory(ptr, size, rate, loops, begin_loop, end_loop);
 
 	if (!data)
 		return 0;

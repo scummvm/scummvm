@@ -208,19 +208,6 @@ void IMuseDigital::callback() {
 
 void IMuseDigital::switchToNextRegion(int track) {
 	int num_regions = _sound->getNumRegions(_track[track].soundHandle);
-	int num_jumps = _sound->getNumJumps(_track[track].soundHandle);
-	if (_vm->_gameId == GID_FT) {
-		if (_track[track].curRegion == -1) {
-			_track[track].curRegion = 0;
-			_track[track].regionOffset = 0;
-			return;
-		}
-		if (num_jumps != 0)
-			_track[track].regionOffset = 0;
-		else
-			_track[track].toBeRemoved = true;
-		return;
-	}
 
 	if (++_track[track].curRegion == num_regions) {
 		_track[track].toBeRemoved = true;

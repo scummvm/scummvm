@@ -57,7 +57,7 @@ struct VocBlockHeader {
  */
 extern int getSampleRateFromVOCRate(int vocSR);
 
-extern byte *readVOCFromMemory(byte *ptr, int &size, int &rate, int &loops);
+extern byte *readVOCFromMemory(byte *ptr, int &size, int &rate, int &loops, int &begin_loop, int &end_loop);
 extern byte *loadVOCFile(File *file, int &size, int &rate);
 
 AudioStream *makeVOCStream(byte *ptr);

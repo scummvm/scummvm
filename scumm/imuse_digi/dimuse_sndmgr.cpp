@@ -49,16 +49,30 @@ ImuseDigiSndMgr::~ImuseDigiSndMgr() {
 
 void ImuseDigiSndMgr::prepareSound(byte *ptr, int slot) {
 	if (READ_UINT32(ptr) == MKID('Crea')) {
-		int size = 0, rate = 0, loops = 0;
-		_sounds[slot].resPtr = readVOCFromMemory(ptr, size, rate, loops);
+		int size = 0, rate = 0, loops = 0, begin_loop = 0, end_loop = 0;
+		_sounds[slot].resPtr = readVOCFromMemory(ptr, size, rate, loops, begin_loop, end_loop);
 		_sounds[slot].freeResPtr = true;
 		_sounds[slot].bits = 8;
 		_sounds[slot].freq = rate;
 		_sounds[slot].channels = 1;
+		_sounds[slot].region[0].offset = 0;
 		_sounds[slot].region[0].length = size;
 		_sounds[slot].numRegions++;
-		if (loops != 0)
+		if (loops != 0) {
+			if (begin_loop == 0) {
+				_sounds[slot].region[1].offset = end_loop;
+				_sounds[slot].numRegions++;
+			} else {
+				_sounds[slot].region[0].length = begin_loop;
+				_sounds[slot].region[1].offset = begin_loop;
+				_sounds[slot].region[1].length = end_loop - begin_loop;
+				_sounds[slot].region[2].offset = end_loop;
+				_sounds[slot].numRegions += 2;
+			}
+			_sounds[slot].jump[0].dest = begin_loop;
+			_sounds[slot].jump[0].offset = end_loop;
 			_sounds[slot].numJumps++;
+		}
 	} else if (READ_UINT32(ptr) == MKID('iMUS')) {
 		uint32 tag;
 		int32 size = 0;
