@@ -254,6 +254,8 @@ Command Line Options:
         -d[<num>]  - Set debug verbosity to <num>
         -w[<file>] - Write configuration file
         -l<file>   - Load alternate configuration file
+	-x[<num>]  - Save game slot to load (default: autosave)
+	-z         - Display list of games
 
 In game Hot Keys:
 -----------------
