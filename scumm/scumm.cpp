@@ -806,8 +806,6 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 
 	_doEffect = false;
 	memset(&_flashlight, 0, sizeof(_flashlight));
-	_compositeBuf = 0;
-	_herculesBuf = 0;
 	_bompActorPalettePtr = NULL;
 	_shakeEnabled = false;
 	_shakeFrame = 0;
@@ -1128,6 +1126,7 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 
 	_compositeBuf = (byte *)malloc(_screenWidth * _screenHeight);
 
+	_herculesBuf = 0;
 	if (_renderMode == Common::kRenderHercA || _renderMode == Common::kRenderHercG) {
 		_herculesBuf = (byte *)malloc(Common::kHercW * Common::kHercH);
 	}

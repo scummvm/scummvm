@@ -277,6 +277,7 @@ protected:
 	
 	int getZPlanes(const byte *smap_ptr, const byte *zplane_list[9], bool bmapImage) const;
 
+	StripTable *generateStripTable(const byte *src, int width, int height, StripTable *table) const;
 	void drawBitmapV2Helper(const byte *ptr, VirtScreen *vs, int x, int y, const int width, const int height, 
 	                int stripnr, int numstrip);
 
@@ -287,7 +288,6 @@ public:
 	void drawBitmap(const byte *ptr, VirtScreen *vs, int x, int y, const int width, const int height,
 	                int stripnr, int numstrip, byte flag);
 
-	StripTable *generateStripTable(const byte *src, int width, int height, StripTable *table) const;
 	void decodeC64Gfx(const byte *src, byte *dst, int size) const;
 	void decodeNESGfx(const byte *room);
 	void decodeNESObject(const byte *ptr, int xpos, int ypos, int width, int height);

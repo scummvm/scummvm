@@ -805,8 +805,6 @@ void ScummEngine::redrawBGStrip(int start, int num) {
 
 	int s = _screenStartStrip + start;
 
-	assert(s >= 0 && (size_t) s < sizeof(gfxUsageBits) / (3 * sizeof(gfxUsageBits[0])));
-
 	for (int i = 0; i < num; i++)
 		setGfxUsageBit(s + i, USAGE_BIT_DIRTY);
 
