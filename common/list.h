@@ -171,10 +171,17 @@ public:
 
 	List<T>& operator  =(const List<T>& list) {
 		if (this != &list) {
-			// TODO: This could (and should) be optimized, by reusing
-			// the existing nodes...
-			clear();
-			insert(begin(), list.begin(), list.end());
+			iterator i;
+			const_iterator j;
+
+			for (i = begin(), j = list.begin();  (i != end()) && (j != list.end()) ; ++i, ++j) {
+				static_cast<Node<T> *>(i._node)->_data = static_cast<Node<T> *>(j._node)->_data;
+			}
+
+			if(i == end())
+				insert(i, j, list.end());
+			else
+				erase(i, end());
 		}
 		
 		return *this;
