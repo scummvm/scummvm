@@ -1060,12 +1060,16 @@ void Scumm::processKbd()
 		_sound->_sound_volume_master-=5;
 		if (_sound->_sound_volume_master < 0)
 			_sound->_sound_volume_master = 0;
-		_imuse->set_master_volume(_sound->_sound_volume_master);
+		if (_imuse) {
+			_imuse->set_master_volume(_sound->_sound_volume_master);
+		}
 	} else if (_lastKeyHit == ']') { // ] volume down
 		_sound->_sound_volume_master+=5;
 		if (_sound->_sound_volume_master > 128)
 			_sound->_sound_volume_master = 128;		
-		_imuse->set_master_volume(_sound->_sound_volume_master);
+		if (_imuse) {
+			_imuse->set_master_volume(_sound->_sound_volume_master);
+		}
 	} else if (_lastKeyHit == '-') { // - text speed down
 		_defaultTalkDelay+=5;
 		if (_defaultTalkDelay > 90)

@@ -596,8 +596,11 @@ void OptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data
 		_scumm->_sound->_sound_volume_music = _soundVolumeMusic;	// Music
 		_scumm->_sound->_sound_volume_sfx = _soundVolumeSfx;	// SFX
 		
-		_scumm->_imuse->set_music_volume(_soundVolumeMusic);
-		_scumm->_imuse->set_master_volume(_soundVolumeMaster);
+		if (_scumm->_imuse) {
+			_scumm->_imuse->set_music_volume(_soundVolumeMusic);
+			_scumm->_imuse->set_master_volume(_soundVolumeMaster);
+		}
+
 		_scumm->_mixer->setVolume(_soundVolumeSfx);
 		_scumm->_mixer->setMusicVolume(_soundVolumeMusic);
 		
