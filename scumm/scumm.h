@@ -1002,6 +1002,8 @@ protected:
 public:
 	byte _proc_special_palette[256];
 	byte *_shadowPalette;
+	int _midiDriver; // Use the MD_ values from mididrv.h
+
 protected:
 	int _shadowPaletteSize;
 	byte _currentPalette[3 * 256];
@@ -1011,7 +1013,6 @@ protected:
 	byte _haveMsg;
 	bool _useTalkAnims;
 	uint16 _defaultTalkDelay;
-	int _midiDriver; // Use the MD_ values from mididrv.h
 	int tempMusic;
 	int _saveSound;
 public:

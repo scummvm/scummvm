@@ -1487,11 +1487,17 @@ int Scumm::readSoundResourceSmallHeader(int type, int idx) {
 	//   8 bytes MTrk header
 	//   7 bytes MIDI tempo sysex
 	//     + some default instruments
-	// TODO:  - make some real MIDI instrument definitions
-	//        - proper handling of the short (non-music, SFX) AD resources format
-	//        - check the LE/BE handling for platforms other than PC
 
-	if (ad_offs != 0) {
+	if (((_midiDriver == MD_PCJR) || (_midiDriver == MD_PCSPK)) && wa_offs != 0) {
+		if (_features & GF_OLD_BUNDLE) {
+			_fileHandle.seek(wa_offs, SEEK_SET);
+			_fileHandle.read(createResource(type, idx, wa_size), wa_size);
+		} else {
+			_fileHandle.seek(wa_offs - 6, SEEK_SET);
+			_fileHandle.read(createResource(type, idx, wa_size + 6), wa_size + 6);
+		}
+		return 1;
+	} else if (ad_offs != 0) {
 		byte *ptr;
 		if (_features & GF_OLD_BUNDLE) {
 			ptr = (byte *) calloc(ad_size - 4, 1);

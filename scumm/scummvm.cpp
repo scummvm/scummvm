@@ -612,6 +612,7 @@ Scumm::Scumm (GameDetector *detector, OSystem *syst)
 	_mixer->setVolume(kDefaultSFXVolume * kDefaultMasterVolume / 255);
 	_mixer->setMusicVolume(kDefaultMusicVolume);
 
+	warning("_midiDriver is %d", _midiDriver);
 	// Init iMuse
 	_imuse = NULL;
 	_imuseDigital = NULL;
@@ -620,11 +621,14 @@ Scumm::Scumm (GameDetector *detector, OSystem *syst)
 		_imuseDigital = new IMuseDigital(this);
 	} else if ((_features & GF_AMIGA) && (_features & GF_OLD_BUNDLE)) {
 		_playerV2 = NULL;
-	} else if (_version <= 2) {
-		if ((_version == 1) && (_gameId == GID_MANIAC))
+	} else if (((_midiDriver == MD_PCJR) || (_midiDriver == MD_PCSPK) && (_version < 5)) || (_version <= 2)) {
+		if ((_version == 1) && (_gameId == GID_MANIAC)) {
 			_playerV2 = NULL;
-		else
+		} else {
 			_playerV2 = new Player_V2(this);
+			if (_midiDriver == MD_PCJR)
+				_playerV2->set_pcjr(false);
+		}
 	} else {
 		_imuse = IMuse::create (syst, _mixer, detector->createMidi());
 		if (_imuse) {

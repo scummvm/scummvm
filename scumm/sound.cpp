@@ -322,65 +322,6 @@ void Sound::playSound(int soundID) {
 			return;
 		} else if (_scumm->_features & GF_FMTOWNS) {
 			size = READ_LE_UINT32(ptr);
-#if 0
-			// FIXME - this is just some debug output for Zak256
-			if (size != 30) {
-				char name[9];
-				memcpy(name, ptr+22, 8);
-				name[8] = 0;
-				printf("Going to play Zak256 sound '%s':\n", name);
-				hexdump(ptr, 0x40);
-			}
-			/*
-			There seems to be some pattern in the Zak256 sound data. Two typical
-			examples are these:
-			
-			d7 10 00 00 53 4f d1 10  |....SO..|
-			00 00 00 00 04 00 ff 00  |........|
-			64 00 00 00 01 00 64 6f  |d.....do|
-			6f 72 6f 70 65 6e 40 a8  |oropen@.|
-			57 14 a1 10 00 00 50 08  |W.....P.|
-			00 00 00 00 00 00 b3 07  |........|
-			00 00 3c 00 00 00 04 80  |..<.....|
-			03 02 0a 01 8c 82 87 81  |........|
-	
-			5b 07 00 00 53 4f 55 07  |[...SOU.|
-			00 00 00 00 04 00 ff 00  |........|
-			64 00 00 00 01 00 64 72  |d.....dr|
-			77 6f 70 65 6e 00 53 a8  |wopen.S.|
-			57 14 25 07 00 00 92 03  |W.%.....|
-			00 00 00 00 00 00 88 03  |........|
-			00 00 3c 00 00 00 82 82  |..<.....|
-			83 84 86 88 89 8b 89 89  |........|
-			
-			As you can see, there are quite some patterns, e.g.
-			the "3c 00 00 00" - the sound data starts at offset 0x36
-			
-			Indy 3 uses a different format. The very first sound played
-			in Indy 3 looks as follows:
-			5a 25 00 00 53 4f 54 25  |Z%..SOT%|
-			00 00 53 4f db 0a 00 00  |..SO....|
-			57 41 c8 00 18 00 00 00  |WA......|
-			00 00 00 00 9e 05 00 00  |........|
-			00 00 00 00 fd 32 00 f8  |.....2..|
-			02 f9 08 ff 22 08 00 ff  |...."...|
-			20 5c 00 ff 10 03 00 fd  | \......|
-			64 00 f8 00 f9 00 ff 22  |d......"|
-
-			Indy 3, opening a door:
-			d1 00 00 00 53 4f cb 00  |....SO..|
-			00 00 53 4f a2 00 00 00  |..SO....|
-			57 41 64 00 18 00 00 00  |WAd.....|
-			00 00 00 00 00 00 00 00  |........|
-			00 00 7e 00 f9 0c ff 20  |..~.... |
-			90 01 ff 22 c2 01 ff 0a  |..."....|
-			03 00 ff 04 57 06 ff 00  |....W...|
-			04 00 ff 0a 00 00 ff 00  |........|
-			
-			So there seems to be a "SO" chunk which contains again a SO chunk and a WA chunk.
-			WA probably again contains audio data?
-			*/
-#endif
 			rate = 11025;
 			int type = *(ptr + 0x0D);
 
@@ -512,7 +453,7 @@ void Sound::playSound(int soundID) {
 		return;
 	}
 
-	if (_scumm->_version <= 2) {
+	if (((_scumm->_midiDriver == MD_PCJR) || (_scumm->_midiDriver == MD_PCSPK) && (_scumm->_version < 5)) || (_scumm->_version <= 2)) {
 		//TODO: support maniac v1 sounds
 		if ((_scumm->_version == 1) && (_scumm->_gameId == GID_MANIAC)) 
 			return;
@@ -523,8 +464,9 @@ void Sound::playSound(int soundID) {
 		if (amigatest) {
 			// TODO: support amiga sounds
 		} else {
-			if (_scumm->_playerV2)
+			if (_scumm->_playerV2) {
 				_scumm->_playerV2->startSound (soundID, ptr);
+			}
 		}
 		return;
 	}
