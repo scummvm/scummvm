@@ -209,7 +209,7 @@ public:
 	 *
 	 * This is the resolution for which the client code generates data;
 	 * this is not necessarily equal to the actual display size. For example,
-	 * a backend my magnify the graphics to fit on screen (see also the
+	 * a backend may magnify the graphics to fit on screen (see also the
 	 * GraphicsMode); stretch the data to perform aspect ratio correction;
 	 * or shrink it to fit on small screens (in cell phones).
 	 *
