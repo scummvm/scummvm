@@ -1074,8 +1074,8 @@ void SmushPlayer::parsePSAD()		// FIXME: Needs to append to
 		if (_saudSize[idx] == 0) {
 			tag = READ_BE_UINT32(_cur + pos);
 			pos += 4;
-			if (tag != 'SAUD')
-				error("trk %d: SAUD tag not found", trk);
+			if (tag != 'SAUD') // FIXME: DIG specific?
+				warning("trk %d: SAUD tag not found", trk);
 			_saudSize[idx] = READ_BE_UINT32(_cur + pos);
 			pos += 4;
 		}
@@ -1117,8 +1117,8 @@ void SmushPlayer::parsePSAD()		// FIXME: Needs to append to
 		case 'SHDR':
 			/* FIXME: what is this stuff ? */
 			break;
-		default:
-			error("trk %d: unknown tag inside PSAD", trk);
+		default: // FIXME: Add FT tags
+			warning("trk %d: unknown tag inside PSAD", trk);
 		}
 		_saudSubSize[idx] -= sublen;
 		_saudSize[idx] -= sublen;
@@ -1128,6 +1128,12 @@ void SmushPlayer::parsePSAD()		// FIXME: Needs to append to
 
 void SmushPlayer::parseTRES()
 {
+       // FIXME: Doesn't work for Full Throttle
+       if (sm->_gameId != GID_DIG) {  
+               printf("getStringTRES(%d)\n", READ_LE_UINT16(_cur + 16));
+               return;
+       }
+
 	byte * txt = getStringTRES (READ_LE_UINT16(_cur + 16));
 	drawStringTRES (READ_LE_UINT16(_cur), READ_LE_UINT16(_cur + 2), txt);
 	if (txt != NULL)
