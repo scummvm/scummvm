@@ -32,6 +32,7 @@ private:
 	FILE * _handle;
 	bool _ioFailed;
 	byte _encbyte;
+	char *_name;	// For debugging
 
 	FILE *fopenNoCase(const char *filename, const char *directory, const char *mode);
 
@@ -51,6 +52,7 @@ public:
 	bool eof();
 	uint32 pos();
 	uint32 size();
+	const char *name() const { return _name; }
 	void seek(int32 offs, int whence);
 	uint32 read(void *ptr, uint32 size);
 	byte readByte();

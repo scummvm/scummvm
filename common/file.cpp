@@ -86,9 +86,11 @@ File::File() {
 	_handle = NULL;
 	_ioFailed = false;
 	_encbyte = 0;
+	_name = 0;
 }
 
 File::~File() {
+	delete [] _name;
 	close();
 }
 
@@ -123,6 +125,10 @@ bool File::open(const char *filename, const char *directory, int mode, byte encb
 	}
 
 	_encbyte = encbyte;
+	
+	int len = strlen(filename);
+	_name = new char[len+1];
+	memcpy(_name, filename, len+1);
 
 	return true;
 }
