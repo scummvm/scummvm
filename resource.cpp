@@ -88,9 +88,9 @@ ResourceLoader::ResourceLoader() {
 			if (l->isOpen())
 				// Handle the Grim 1.1 patch's datafile
 				if (strstr(de->d_name, "005"))
-					labs_.push_front(l);
+					_labs.push_front(l);
 				else
-					labs_.push_back(l);
+					_labs.push_back(l);
 			else
 				delete l;
 		}
