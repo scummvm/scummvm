@@ -2836,8 +2836,12 @@ void Scumm::o6_miscOps()
 			createSpecialPalette(args[1], args[2], args[3], args[4], args[5], args[6], args[7]);
 			break;
 
-		case 114:									/* palette? */
-			warning("stub o6_miscOps_114()");
+		case 114:
+			// Sam & Max film noir mode
+			if (_gameId == GID_SAMNMAX)
+				desaturatePalette();
+			else
+				warning("stub o6_miscOps_114()");
 			break;
 
 		case 117:
