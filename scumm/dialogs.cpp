@@ -656,7 +656,9 @@ void ValueDisplayDialog::handleKeyDown(uint16 ascii, int keycode, int modifiers)
 }
 
 void ValueDisplayDialog::open() {
+#ifndef _WIN32_WCE
 	GUI::Dialog::open();
+#endif
 	setResult(_value);
 	_timer = getMillis() + kDisplayDelay;
 }
