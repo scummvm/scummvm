@@ -68,6 +68,8 @@ public:
 		_volume = volume;
 	}
 	virtual void setChannelPan(const int8 pan) {
+		if (pan != 0)
+			printf("Pan set to %d\n", pan);
 		_pan = pan;
 	}
 	virtual int getVolume() const {
@@ -246,7 +248,7 @@ int SoundMixer::insertChannel(PlayingSoundHandle *handle, Channel *chan) {
 	return index;
 }
 
-int SoundMixer::playRaw(PlayingSoundHandle *handle, void *sound, uint32 size, uint rate, byte flags, byte volume, int8 pan, int id, uint32 loopStart, uint32 loopEnd) {
+int SoundMixer::playRaw(PlayingSoundHandle *handle, void *sound, uint32 size, uint rate, byte flags, int id, byte volume, int8 pan, uint32 loopStart, uint32 loopEnd) {
 	StackLock lock(_mutex);
 
 	// Prevent duplicate sounds

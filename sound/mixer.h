@@ -90,7 +90,7 @@ public:
 
 	// start playing a raw sound
 	int playRaw(PlayingSoundHandle *handle, void *sound, uint32 size, uint rate, byte flags,
-				byte volume = 255, int8 pan = 0, int id = -1, uint32 loopStart = 0, uint32 loopEnd = 0);
+				int id = -1, byte volume = 255, int8 pan = 0, uint32 loopStart = 0, uint32 loopEnd = 0);
 #ifdef USE_MAD
 	int playMP3(PlayingSoundHandle *handle, File *file, uint32 size, byte volume = 255, int8 pan = 0);
 	int playMP3CDTrack(PlayingSoundHandle *handle, File *file, mad_timer_t duration, byte volume = 255, int8 pan = 0);

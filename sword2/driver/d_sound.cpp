@@ -564,7 +564,7 @@ int32 Sword2Sound::PlayCompSpeech(const char *filename, uint32 speechid, uint8 v
 		for (uint j = 0; j < (bufferSize / 2); j++)
 			data16[j] = TO_BE_16(data16[j]);
 
-		_mixer->playRaw(&soundHandleSpeech, data16, bufferSize, 22050, flags, volume, pan);
+		_mixer->playRaw(&soundHandleSpeech, data16, bufferSize, 22050, flags, -1, volume, pan);
 
 		speechStatus = 1;
 	}
@@ -755,7 +755,7 @@ int32 Sword2Sound::PlayFx(int32 id, uint8 *data, uint8 vol, int8 pan, uint8 type
 				} else {
 					volume = musicVolTable[volMusic[0]];
 				}
-				g_engine->_mixer->playRaw(&soundHandleFx[i], bufferFx[i], bufferSizeFx[i], fxRate[i], flagsFx[i], volume, 0);
+				g_engine->_mixer->playRaw(&soundHandleFx[i], bufferFx[i], bufferSizeFx[i], fxRate[i], flagsFx[i], -1, volume, 0);
 			} else {
 				i = GetFxIndex(id);
 				if (i == MAXFX) {
@@ -779,7 +779,7 @@ int32 Sword2Sound::PlayFx(int32 id, uint8 *data, uint8 vol, int8 pan, uint8 type
 				}
 				p = panTable[pan + 16];
 
-				g_engine->_mixer->playRaw(&soundHandleFx[i], bufferFx[i], bufferSizeFx[i], fxRate[i], flagsFx[i], volume, p);
+				g_engine->_mixer->playRaw(&soundHandleFx[i], bufferFx[i], bufferSizeFx[i], fxRate[i], flagsFx[i], -1, volume, p);
 			}
 		} else {
 			if (type == RDSE_FXLEADIN) {
@@ -801,7 +801,7 @@ int32 Sword2Sound::PlayFx(int32 id, uint8 *data, uint8 vol, int8 pan, uint8 type
 				} else {
 					volume = musicVolTable[volMusic[0]];
 				}
-				g_engine->_mixer->playRaw(&soundHandleFx[i], bufferFx[i], bufferSizeFx[i], fxRate[i], flagsFx[i], volume, 0);
+				g_engine->_mixer->playRaw(&soundHandleFx[i], bufferFx[i], bufferSizeFx[i], fxRate[i], flagsFx[i], -1, volume, 0);
 			} else {
 				hr = OpenFx(id, data);
 				if (hr != RD_OK) {
@@ -828,7 +828,7 @@ int32 Sword2Sound::PlayFx(int32 id, uint8 *data, uint8 vol, int8 pan, uint8 type
 					volume = vol * fxVol;
 				}
 				p = panTable[pan + 16];
-				g_engine->_mixer->playRaw(&soundHandleFx[i], bufferFx[i], bufferSizeFx[i], fxRate[i], flagsFx[i], volume, p);
+				g_engine->_mixer->playRaw(&soundHandleFx[i], bufferFx[i], bufferSizeFx[i], fxRate[i], flagsFx[i], -1, volume, p);
 			}
 		}
 	}
