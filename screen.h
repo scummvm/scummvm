@@ -48,4 +48,3 @@ void screenBlocksDrawDebug();
 void screenBlocksBlitDirtyBlocks();
 
 #endif // _SCREEN_H_
-

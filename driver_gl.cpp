@@ -323,10 +323,10 @@ void Driver::updateMesh(const Model::Mesh *mesh) {
 
 			if(winZ > bestDepth)
 				bestDepth = winZ;
-
 		}
 
-		//screenBlocksAddRectangle(top, right, left, bottom, bestDepth);
+//		if (SCREENBLOCKS_GLOBAL)
+//			screenBlocksAddRectangle(top, right, left, bottom, bestDepth);
 	}
 
 	glDisable(GL_DEPTH_TEST);

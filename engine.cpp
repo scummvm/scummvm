@@ -125,9 +125,6 @@ void Engine::mainLoop() {
 				}
 			}
 		} else if (_mode == ENGINE_MODE_NORMAL) {
-			if (SCREENBLOCKS_GLOBAL)
-				screenBlocksReset();
-
 			if (_currScene != NULL) {
 				// Update actor costumes
 				for (ActorListType::iterator i = _actors.begin(); i != _actors.end(); i++) {
@@ -136,6 +133,9 @@ void Engine::mainLoop() {
 						a->update();
 				}
 			}
+
+			if (SCREENBLOCKS_GLOBAL)
+				screenBlocksReset();
 
 			g_driver->clearScreen();
 
@@ -176,7 +176,9 @@ void Engine::mainLoop() {
 					if (_currScene != NULL && a->inSet(_currScene->name()) && a->visible())
 						a->draw();
 				}
-				//screenBlocksDrawDebug();
+
+				if (SCREENBLOCKS_GLOBAL)
+					screenBlocksDrawDebug();
 			}
 
 			// Draw text

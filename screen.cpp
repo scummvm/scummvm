@@ -46,7 +46,7 @@ float getZbufferBlockDepth(char *zbuffer, int x, int y) {
 
 	unsigned short int bDepth = 0xFFFF;
 
-	for (i = 0; i < SCREEN_BLOCK_SIZE; i++ ) {
+	for (i = 0; i < SCREEN_BLOCK_SIZE; i++) {
 		if (bDepth > buffer[i])
 			bDepth = buffer[i];
 	}
@@ -105,19 +105,14 @@ void screenBlocksAddRectangle( int top, int right, int left, int bottom, float d
 	if ((left > right) || (top > bottom))
 		return;
 
-	int firstLeft;
-	int firstTop;
-	int width;
-	int height;
+	int firstLeft = left / 16;
+	int firstTop = top /16;
 
-	firstLeft = left / 16;
-	firstTop = top /16;
-
-	width = (right - left) / 16;
-	if ((right-left) % 16)
+	int width = (right - left) / 16;
+	if ((right - left) % 16)
 		width++;
 
-	height = (bottom - top) / 16;
+	int height = (bottom - top) / 16;
 	if ((bottom - top) % 16)
 		height++;
 
@@ -142,7 +137,7 @@ void screenBlocksDrawDebug() {
 
 	glDisable(GL_DEPTH_TEST);
 	glColor4f(1.f, 0.3f, 1.f, 0.4f);
-	glDisable(GL_TEXTURE_2D );
+	glDisable(GL_TEXTURE_2D);
 	glDisable(GL_LIGHTING);
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -173,10 +168,10 @@ void screenBlocksBlitDirtyBlocks() {
 
 	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_ALWAYS);
-	glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE); 
+	glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
 	glDepthMask(GL_TRUE);
 
-	for (int j = 0;j < 30; j++) {
+	for (int j = 0; j < 30; j++) {
 		for (int i = 0; i < 40; i++) {
 			if (screenBlockData[i][j].isDirty) {
 				int width = 1;
@@ -197,4 +192,3 @@ void screenBlocksBlitDirtyBlocks() {
 	glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE); 
 	glDepthFunc(GL_LESS);
 }
-
