@@ -1540,7 +1540,7 @@ void Scumm_v6::o6_roomOps() {
 	case 181:
 		a = pop();
 		if (a) {
-			_switchRoomEffect = (byte)(a);
+			_switchRoomEffect = (byte)(a&0xFF);
 			_switchRoomEffect2 = (byte)(a >> 8);
 		} else {
 			fadeIn(_newEffect);

@@ -719,7 +719,7 @@ void Scumm::cost_decodeData(Actor *a, int frame, uint usemask) {
 		i++;
 		usemask <<= 1;
 		mask <<= 1;
-	} while ((uint16)mask);
+	} while (mask&0xFFFF);
 }
 
 void CostumeRenderer::setPalette(byte *palette) {

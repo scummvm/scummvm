@@ -2680,7 +2680,7 @@ printf("o5_oldRoomEffect ODDBALL: _opcode = 0x%x, a = 0x%x\n", _opcode, a);
 
 		}
 		if (a) {
-			_switchRoomEffect = (byte)a;
+			_switchRoomEffect = (byte)(a&0xFF);
 			_switchRoomEffect2 = (byte)(a >> 8);
 		} else {
 			fadeIn(_newEffect);
