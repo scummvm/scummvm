@@ -2728,8 +2728,8 @@ void ScummEngine::initRoomSubBlocks() {
 			_localScriptList[id - _numGlobalScripts] = ptr + 1 - roomptr;
 		}
 	} else if (_heversion >= 90) {
-		ResourceIterator localScriptIterator(searchptr, false);
-		while ((ptr = localScriptIterator.findNext(MKID('LSC2'))) != NULL) {
+		ResourceIterator localScriptIterator2(searchptr, false);
+		while ((ptr = localScriptIterator2.findNext(MKID('LSC2'))) != NULL) {
 			int id = 0;
 
 			ptr += _resourceHeaderSize;	/* skip tag & size */
@@ -2746,6 +2746,7 @@ void ScummEngine::initRoomSubBlocks() {
 			}
 		}
 
+		ResourceIterator localScriptIterator(searchptr, false);
 		while ((ptr = localScriptIterator.findNext(MKID('LSCR'))) != NULL) {
 			int id = 0;
 
