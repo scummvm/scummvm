@@ -249,6 +249,8 @@ Descumm
   to our GUI console; for ScummEX, append to some window/widget)
 * Rewrite code to use 2 passes; first pass builds an intermediate graph, the
   second pass then tries to detect loops, break/continue statements etc.
+* Proper implementation of o6_startObjectQuick decompilation (see comment in
+  descumm6.c). May requre rewrite of core program logic
 
 Backends
 ========
