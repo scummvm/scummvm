@@ -25,6 +25,7 @@
 #include "gameDetector.h"
 #include "config-file.h"
 #include "gui/newgui.h"
+#include "gui/launcher.h"
 #include "gui/message.h"
 
 GameDetector detector;
@@ -186,10 +187,16 @@ int main(int argc, char *argv[])
 
 	system->set_palette(dummy_palette, 0, 16);
 
+#if 1
+	extern OSystem *g_system;
+	g_system = system;
+	Dialog *dlg = new LauncherDialog(g_gui);
+#else
 	const char *message = "This dialog is shown before the\n"
 						  "Engine obejct is even created.\n"
 						  "Wow! Ain't we cool?\n";
 	Dialog *dlg = new MessageDialog(g_gui, message);
+#endif
 	dlg->open();
 	g_gui->runLoop();
 	delete dlg;

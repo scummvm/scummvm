@@ -336,18 +336,11 @@ bool GameDetector::parseMusicDriver(const char *s) {
 }
 
 
-struct VersionSettings {
-	const char *filename;
-	const char *gamename;
-	byte id, major, middle, minor;
-	uint32 features;
-};
-
 /*
         This is a list of all known SCUMM games. Commented games are not
         supported at this time */
 
-static const VersionSettings version_settings[] = {
+const VersionSettings version_settings[] = {
 	/* Scumm Version 1 */
 //      {"maniac",      "Maniac Mansion (C64)",                         GID_MANIAC64, 1, 0, 0,},
 //      {"zak",         "Zak McKracken and the Alien Mindbenders (C64)", GID_ZAK64, 1, 0, 0,},

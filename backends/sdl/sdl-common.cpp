@@ -70,7 +70,7 @@ void OSystem_SDL_Common::set_timer(int timer, int (*callback)(int)) {
 }
 
 OSystem_SDL_Common::OSystem_SDL_Common()
-	: sdl_screen(0), SCREEN_WIDTH(0), SCREEN_HEIGHT(0),
+	: sdl_screen(0), cdrom(0), SCREEN_WIDTH(0), SCREEN_HEIGHT(0),
 	_dirty_checksums(0), _current_shake_pos(0), _new_shake_pos(0)
 {
 	// allocate palette storage
@@ -91,7 +91,7 @@ OSystem_SDL_Common::~OSystem_SDL_Common()
 void OSystem_SDL_Common::init_size(uint w, uint h) {
 
 	// Avoid redundant res changes
-	if (w == SCREEN_WIDTH && h == SCREEN_HEIGHT)
+	if ((int)w == SCREEN_WIDTH && (int)h == SCREEN_HEIGHT)
 		return;
 
 	SCREEN_WIDTH = w;

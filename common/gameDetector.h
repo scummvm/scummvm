@@ -26,6 +26,16 @@
 class OSystem;
 class MidiDriver;
 
+struct VersionSettings {
+	const char *filename;
+	const char *gamename;
+	byte id, major, middle, minor;
+	uint32 features;
+};
+
+extern const VersionSettings version_settings[];
+
+
 class GameDetector {
 public:
 	int detectMain(int argc, char **argv);

@@ -273,9 +273,8 @@ void SaveLoadDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 	case kOptionsCmd:
 		_scumm->optionsDialog();
 		break;
-	case kQuitCmd: {
-			_scumm->_system->quit();
-		}
+	case kQuitCmd:
+		_scumm->_system->quit();
 		break;
 	default:
 		Dialog::handleCommand(sender, cmd, data);
