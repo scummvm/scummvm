@@ -147,12 +147,13 @@ normal_mode:;
 	//
 	// Create the surface that contains the scaled graphics in 16 bit mode
 	//
-	_hwscreen = SDL_SetVideoMode(_screenWidth * _scaleFactor, _screenHeight * _scaleFactor, 16, 
+
+	_hwscreen = SDL_SetVideoMode(_screenWidth * _scaleFactor, (_adjustAspectRatio ? 240 : _screenHeight) * _scaleFactor, 16, 
 		_full_screen ? (SDL_FULLSCREEN|SDL_SWSURFACE) : SDL_SWSURFACE
 	);
 	if (_hwscreen == NULL)
 		error("_hwscreen failed");
-	
+
 	//
 	// Create the surface used for the graphics in 16 bit before scaling, and also the overlay
 	//
@@ -192,7 +193,7 @@ void OSystem_SDL::unload_gfx_mode() {
 		SDL_FreeSurface(_hwscreen); 
 		_hwscreen = NULL;
 	}
-	
+
 	if (_tmpscreen) {
 		free(_tmpscreen->pixels);
 		SDL_FreeSurface(_tmpscreen);
@@ -281,7 +282,7 @@ void OSystem_SDL::update_screen() {
 		uint32 srcPitch, dstPitch;
 		SDL_Rect *last_rect = _dirty_rect_list + _num_dirty_rects;
 
-		if (_scaler_proc == Normal1x) {
+		if (_scaler_proc == Normal1x && !_adjustAspectRatio) {
 			SDL_Surface *target = _overlayVisible ? _tmpscreen : _screen;
 			for (r = _dirty_rect_list; r != last_rect; ++r) {
 				dst = *r;
@@ -314,23 +315,32 @@ void OSystem_SDL::update_screen() {
 			for (r = _dirty_rect_list; r != last_rect; ++r) {
 				register int dst_y = r->y + _currentShakePos;
 				register int dst_h = 0;
+				register int orig_dst_y = 0;
+
 				if (dst_y < _screenHeight) {
 					dst_h = r->h;
 					if (dst_h > _screenHeight - dst_y)
 						dst_h = _screenHeight - dst_y;
 
-						dst_y *= _scaleFactor;
+					dst_y *= _scaleFactor;
 
-						_scaler_proc((byte *)_tmpscreen->pixels + (r->x * 2 + 2) + (r->y + 1) * srcPitch, srcPitch,
+					if (_adjustAspectRatio) {
+						orig_dst_y = dst_y;
+						dst_y = real2Aspect(dst_y);
+					}
+
+					_scaler_proc((byte *)_tmpscreen->pixels + (r->x * 2 + 2) + (r->y + 1) * srcPitch, srcPitch,
 						(byte *)_hwscreen->pixels + r->x * 2 * _scaleFactor + dst_y * dstPitch, dstPitch, r->w, dst_h);
 				}
-			
+
 				r->x *= _scaleFactor;
 				r->y = dst_y;
 				r->w *= _scaleFactor;
 				r->h = dst_h * _scaleFactor;
-			}
 
+				if (_adjustAspectRatio && orig_dst_y / _scaleFactor < _screenHeight)
+					r->h = stretch200To240((uint8 *) _hwscreen->pixels, dstPitch, r->w, r->h, r->x, r->y, orig_dst_y);
+			}
 			SDL_UnlockSurface(_tmpscreen);
 			SDL_UnlockSurface(_hwscreen);
 		}
@@ -339,7 +349,7 @@ void OSystem_SDL::update_screen() {
 		// This is necessary if shaking is active.
 		if (_forceFull) {
 			_dirty_rect_list[0].y = 0;
-			_dirty_rect_list[0].h = _screenHeight * _scaleFactor;
+			_dirty_rect_list[0].h = (_adjustAspectRatio ? 240 : _screenHeight) * _scaleFactor;
 		}
 
 		// Finally, blit all our changes to the screen
@@ -374,6 +384,12 @@ uint32 OSystem_SDL::property(int param, Property *value) {
 		hotswap_gfx_mode();
 
 		return 1;
+	} else if (param == PROP_TOGGLE_ASPECT_RATIO) {
+		if (_screenHeight == 200) {
+			assert(_hwscreen != 0);
+			_adjustAspectRatio ^= true;
+			hotswap_gfx_mode();
+		}
 	}
 
 	return OSystem_SDL_Common::property(param, value);

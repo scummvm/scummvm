@@ -30,7 +30,9 @@ static uint32 lowPixelMask = 0x08210821;
 static uint32 qcolorMask = 0xE79CE79C;
 static uint32 qlowpixelMask = 0x18631863;
 static uint32 redblueMask = 0xF81F;
-static uint32 greenMask = 0x7E0;
+static uint32 redMask = 0xF800;
+static uint32 greenMask = 0x07E0;
+static uint32 blueMask = 0x001F;
 
 static const uint16 dotmatrix_565[16] = {
 	0x01E0, 0x0007, 0x3800, 0x0000,
@@ -53,7 +55,9 @@ int Init_2xSaI(uint32 BitFormat) {
 		qcolorMask = 0xE79CE79C;
 		qlowpixelMask = 0x18631863;
 		redblueMask = 0xF81F;
-		greenMask = 0x7E0;
+		redMask = 0xF800;
+		greenMask = 0x07E0;
+		blueMask = 0x001F;
 		dotmatrix = dotmatrix_565;
 	} else if (BitFormat == 555) {
 		colorMask = 0x7BDE7BDE;
@@ -61,7 +65,9 @@ int Init_2xSaI(uint32 BitFormat) {
 		qcolorMask = 0x739C739C;
 		qlowpixelMask = 0x0C630C63;
 		redblueMask = 0x7C1F;
-		greenMask = 0x3E0;
+		redMask = 0x7C00;
+		greenMask = 0x03E0;
+		blueMask = 0x001F;
 		dotmatrix = dotmatrix_555;
 	} else {
 		return 0;
@@ -633,4 +639,94 @@ void DotMatrix(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPi
 		p += nextlineSrc;
 		q += nextlineDst << 1;
 	}
+}
+
+
+static inline uint32 interpolate5(uint16 A, uint16 B, int scale) {
+	uint16 r = ((A & redMask) * scale + (B & redMask) * (5 - scale)) / 5;
+	uint16 g = ((A & greenMask) * scale + (B & greenMask) * (5 - scale)) / 5;
+	uint16 b = ((A & blueMask) * scale + (B & blueMask) * (5 - scale)) / 5;
+
+	return (r & redMask) | (g & greenMask) | (b & blueMask);
+}
+
+static inline void interpolate5Line(uint16 *dst, const uint16 *srcA, const uint16 *srcB, int scale, int width) {
+#if 1
+	// Accurate but slightly slower code
+	while (width--) {
+		*dst++ = interpolate5(*srcA++, *srcB++, scale);
+	}
+#else
+	// Not fully accurate, but a bit faster
+	width /= 2;
+	const uint32 *sA = (const uint32 *)srcA;
+	const uint32 *sB = (const uint32 *)srcB;
+	uint32 *d = (uint32 *)dst;
+	if (scale == 1) {
+		while (width--) {
+			uint32 B = *sB++;
+			*d++ = Q_INTERPOLATE(*sA++, B, B, B);
+		}
+	} else {
+		while (width--) {
+			*d++ = INTERPOLATE(*sA++, *sB++);
+		}
+	}
+#endif
+}
+
+/**
+ * Stretch a 16bpp image vertically by factor 1.2. Used to correct the
+ * aspect-ratio in games using 320x200 pixel graphics with non-qudratic
+ * pixels. Applying this method effectively turns that into 320x240, which
+ * provides the correct aspect-ratio on modern displays.
+ *
+ * The image would normally have occupied y coordinates origSrcY through
+ * origSrcY + height - 1.
+ *
+ * However, we have already placed it at srcY - the aspect-corrected y
+ * coordinate - to allow in-place stretching.
+ *
+ * Therefore, the source image now occupies Y coordinates srcY through
+ * srcY + height - 1, and it should be stretched to Y coordinates srcY
+ * through real2Aspect(srcY + height - 1).
+ */
+int stretch200To240(uint8 *buf, uint32 pitch, int width, int height, int srcX, int srcY, int origSrcY) {
+	int maxDstY = real2Aspect(origSrcY + height - 1);
+	int off = srcY - origSrcY;
+	int y;
+
+	uint8 *dstPtr = buf + srcX * 2 + maxDstY * pitch;
+
+	for (y = maxDstY; y >= srcY; y--) {
+		uint8 *srcPtr = buf + srcX * 2 + (aspect2Real(y) + off) * pitch;
+
+		if (srcPtr == dstPtr)
+			break;
+		
+#if 0
+		// Don't use bilinear filtering, rather just duplicate pixel lines:
+		// a little bit faster, but looks ugly
+		memcpy(dstPtr, srcPtr, width * 2);
+#else
+		// Bilinear filter
+		switch (y % 6) {
+		case 0:
+		case 5:
+			memcpy(dstPtr, srcPtr, width * 2);
+			break;
+		case 1:
+		case 4:
+			interpolate5Line((uint16 *)dstPtr, (uint16 *)(srcPtr - pitch), (uint16 *)srcPtr, 1, width);
+			break;
+		case 2:
+		case 3:
+			interpolate5Line((uint16 *)dstPtr, (uint16 *)(srcPtr - pitch), (uint16 *)srcPtr, 2, width);
+			break;
+		}
+#endif
+		dstPtr -= pitch;
+	}
+
+	return 1 + maxDstY - srcY;
 }

@@ -123,7 +123,7 @@ public:
 	virtual int16 RGBToColor(uint8 r, uint8 g, uint8 b);
 	virtual void colorToRGB(int16 color, uint8 &r, uint8 &g, uint8 &b);
 
-	static OSystem *create(int gfx_mode, bool full_screen);
+	static OSystem *create(int gfx_mode, bool full_screenm, bool aspect_ratio);
 
 protected:
 	OSystem_SDL_Common();
@@ -131,7 +131,7 @@ protected:
 
 	static OSystem_SDL_Common *create_intern();
 
-	void init_intern(int gfx_mode, bool full_screen);
+	void init_intern(int gfx_mode, bool full_screen, bool aspect_ratio);
 
 	// unseen game screen
 	SDL_Surface *_screen;
@@ -141,6 +141,8 @@ protected:
 	SDL_Surface *_tmpscreen;
 	int _tmpScreenWidth;
 	bool _overlayVisible;
+
+	bool _adjustAspectRatio;
 
 	// CD Audio
 	SDL_CD *_cdrom;

@@ -54,7 +54,6 @@ protected:
 	int _glFlags;
 	int _glScreenStart;
 	bool _glBilinearFilter;
-	bool _glAspectRatio;
 	bool _usingOpenGL;
 	SDL_Surface *tmpSurface; // Used for black rectangles blitting 
 	SDL_Rect tmpBlackRect;   // Black rectangle at end of the GL screen
@@ -79,7 +78,6 @@ OSystem_SDL_OpenGL::OSystem_SDL_OpenGL()
 {
   _glScreenStart = 0; 
   _glBilinearFilter = true;
-  _glAspectRatio = false;
   _usingOpenGL = false; // false => Switch to filters used in the sdl.cpp version
   _glBottomOfTexture = 256; // height is always 256
   // 640x480 resolution
@@ -165,7 +163,7 @@ void OSystem_SDL_OpenGL::load_gfx_mode() {
 
 	case GFX_NORMAL:
 normal_mode:;
-		_scaleFactor = 1;
+		_scaleFactor = _usingOpenGL ? 2 : 1;
 		_scaler_proc = Normal1x;
 		break;
 	default:
@@ -199,8 +197,7 @@ normal_mode:;
 		fb2gl.init(_glWindow.w, _glWindow.h, 0, _glScreenStart? 15: 70, 
 		    _glFlags);
 		
-	}
-	else { // SDL backend
+	} else { // SDL backend
 	  
 		_hwscreen = SDL_SetVideoMode(_screenWidth * _scaleFactor, _screenHeight * _scaleFactor, 16, 
 		  _full_screen ? (SDL_FULLSCREEN|SDL_SWSURFACE) : SDL_SWSURFACE
@@ -234,8 +231,7 @@ normal_mode:;
 						Gmask,
 						Bmask,
 						Amask);
-	}
-	else { // SDL backend
+	} else { // SDL backend
 		_tmpscreen = SDL_CreateRGBSurfaceFrom(tmp_screen,
 						_tmpScreenWidth, 
 						_screenHeight + 3, 
@@ -346,8 +342,7 @@ void OSystem_SDL_OpenGL::update_screen() {
 		
 			SDL_FillRect(tmpSurface, &blackrect, 0);
 			fb2gl.blit16(tmpSurface, 1, &blackrect, 0, 0);
-		}
-		else { // SDL backend
+		} else { // SDL backend
 			SDL_Rect blackrect = {0, 0, _screenWidth * _scaleFactor, _newShakePos * _scaleFactor};
 			SDL_FillRect(_hwscreen, &blackrect, 0);
 		}
@@ -545,9 +540,30 @@ uint32 OSystem_SDL_OpenGL::property(int param, Property *value) {
 #endif
 
 		return 1;
-	}
-	else if (param == PROP_SET_GFX_MODE) {
+	} else if (param == PROP_TOGGLE_ASPECT_RATIO) {
+		if (!_usingOpenGL) {
+			_usingOpenGL = true;
+			_mode = GFX_NORMAL;
+			hotswap_gfx_mode();
+		}
+
+		_adjustAspectRatio ^= true;
+		if (_adjustAspectRatio) {
+			// Don't use the whole screen (black borders)
+			fb2gl.init(0, 0, 0, 15, _glFlags);
+			_glScreenStart = 20;
+			SDL_FillRect(tmpSurface, &tmpBlackRect, 0);
+			fb2gl.blit16(tmpSurface, 1, &tmpBlackRect, 0, 0);
+		} else {
+			// Use the whole screen
+			fb2gl.init(0, 0, 0, 70, _glFlags);
+			_glScreenStart = 0;
+		}
+
 		SDL_Rect full = {0, 0, _screenWidth, _screenHeight};
+		fb2gl.blit16(_tmpscreen, 1, &full, 0, _glScreenStart);
+		fb2gl.display();
+	} else if (param == PROP_SET_GFX_MODE) {
 
 		if (value->gfx_mode > 10) { // OpenGL modes
 			if (!_usingOpenGL) {
@@ -562,20 +578,6 @@ uint32 OSystem_SDL_OpenGL::property(int param, Property *value) {
 				_glBilinearFilter ^= true;
 				fb2gl.setBilinearMode(_glBilinearFilter);
 				break;
-			case GFX_ASPECTRATIO: 
-				_glAspectRatio ^= true;
-				if (_glAspectRatio) {
-					// Don't use the whole screen (black borders)
-					fb2gl.init(0, 0, 0, 15, _glFlags);
-					_glScreenStart = 20;
-					SDL_FillRect(tmpSurface, &tmpBlackRect, 0);
-					fb2gl.blit16(tmpSurface, 1, &tmpBlackRect, 0, 0);
-				} else {
-					// Use the whole screen
-					fb2gl.init(0, 0, 0, 70, _glFlags);
-					_glScreenStart = 0;
-				}
-				break;
 			default: // SDL backend
 				if (value->gfx_mode >= 10)
 				  return 0;
@@ -589,6 +591,7 @@ uint32 OSystem_SDL_OpenGL::property(int param, Property *value) {
 		};
 
 		if (_usingOpenGL) {
+			SDL_Rect full = {0, 0, _screenWidth, _screenHeight};
 			fb2gl.blit16(_tmpscreen, 1, &full, 0, _glScreenStart);
 			fb2gl.display();
 		}

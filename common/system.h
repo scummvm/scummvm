@@ -94,7 +94,8 @@ public:
 		PROP_GET_SAMPLE_RATE = 6,
 		PROP_GET_FULLSCREEN = 7,
 		PROP_GET_FMOPL_ENV_BITS = 8,
-		PROP_GET_FMOPL_EG_ENT = 9
+		PROP_GET_FMOPL_EG_ENT = 9,
+		PROP_TOGGLE_ASPECT_RATIO = 10
 	};
 	union Property {
 		const char *caption;
@@ -363,7 +364,7 @@ public:
 /* Factory functions. This means we don't have to include the headers for
  * all backends.
  */
-extern OSystem *OSystem_SDL_create(int gfx_driver, bool full_screen);
+extern OSystem *OSystem_SDL_create(int gfx_driver, bool full_screen, bool aspect_ratio);
 extern OSystem *OSystem_NULL_create();
 extern OSystem *OSystem_MorphOS_create(int game_id, int gfx_driver, bool full_screen);
 extern OSystem *OSystem_Dreamcast_create();

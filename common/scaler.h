@@ -41,6 +41,15 @@ DECLARE_SCALER(Normal3x);
 DECLARE_SCALER(TV2x);
 DECLARE_SCALER(DotMatrix);
 
+FORCEINLINE int real2Aspect(int y) {
+	return y + (y + 1) / 5;
+}
+
+FORCEINLINE int aspect2Real(int y) {
+	return (y * 5 + 3) / 6;
+}
+
+extern int stretch200To240(uint8 *buf, uint32 pitch, int width, int height, int srcX, int srcY, int origSrcY);
 
 enum {
 	GFX_NORMAL = 0,
@@ -54,7 +63,6 @@ enum {
 	GFX_TV2X = 8,
 	GFX_DOTMATRIX = 9,
 
-	GFX_ASPECTRATIO = 11, // OpenGL backend
 	GFX_BILINEAR = 12,    // OpenGL backend
 	
 	GFX_FLIPPING = 100,	// Palmos

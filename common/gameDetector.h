@@ -110,6 +110,7 @@ public:
 	const String& getGameName(void);
 	
 	bool _fullScreen;
+	bool _aspectRatio;
 
 	bool _use_adlib;
 

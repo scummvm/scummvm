@@ -41,22 +41,23 @@
 #define JOY_BUT_SPACE 4
 #define JOY_BUT_F5 5
 
-OSystem *OSystem_SDL_create(int gfx_mode, bool full_screen) {
-	return OSystem_SDL_Common::create(gfx_mode, full_screen);
+OSystem *OSystem_SDL_create(int gfx_mode, bool full_screen, bool aspect_ratio) {
+	return OSystem_SDL_Common::create(gfx_mode, full_screen, aspect_ratio);
 }
 
-OSystem *OSystem_SDL_Common::create(int gfx_mode, bool full_screen) {
+OSystem *OSystem_SDL_Common::create(int gfx_mode, bool full_screen, bool aspect_ratio) {
 	OSystem_SDL_Common *syst = OSystem_SDL_Common::create_intern();
 
-	syst->init_intern(gfx_mode, full_screen);
+	syst->init_intern(gfx_mode, full_screen, aspect_ratio);
 
 	return syst;
 }
 
-void OSystem_SDL_Common::init_intern(int gfx_mode, bool full_screen) {
+void OSystem_SDL_Common::init_intern(int gfx_mode, bool full_screen, bool aspect_ratio) {
 
 	_mode = gfx_mode;
 	_full_screen = full_screen;
+	_adjustAspectRatio = aspect_ratio;
 
 	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_TIMER | SDL_INIT_JOYSTICK) ==-1) {
 		error("Could not initialize SDL: %s.\n", SDL_GetError());
@@ -129,6 +130,10 @@ void OSystem_SDL_Common::init_size(uint w, uint h) {
 
 	_screenWidth = w;
 	_screenHeight = h;
+
+	if (h != 200)
+		_adjustAspectRatio = false;
+
 	CKSUM_NUM = (_screenWidth * _screenHeight / (8 * 8));
 	if (_dirty_checksums)
 		free(_dirty_checksums);
@@ -576,20 +581,18 @@ bool OSystem_SDL_Common::poll_event(Event *event) {
 				}
 			}
 
-			// Ctr-Alt-a will change aspect ratio in OpenGL backend
+			// Ctr-Alt-a will change aspect ratio
 			if (b == (KBD_CTRL|KBD_ALT) && ev.key.keysym.sym=='a') {
-					Property prop;
-					prop.gfx_mode = 11;
-					property(PROP_SET_GFX_MODE, &prop);
-					break;
+				property(PROP_TOGGLE_ASPECT_RATIO, NULL);
+				break;
 			}
 
 			// Ctr-Alt-b will change bilinear filtering in OpenGL backend
 			if (b == (KBD_CTRL|KBD_ALT) && ev.key.keysym.sym=='b') {
-					Property prop;
-					prop.gfx_mode = 12;
-					property(PROP_SET_GFX_MODE, &prop);
-					break;
+				Property prop;
+				prop.gfx_mode = GFX_BILINEAR;
+				property(PROP_SET_GFX_MODE, &prop);
+				break;
 			}
 
 #ifdef QTOPIA
@@ -698,6 +701,8 @@ bool OSystem_SDL_Common::poll_event(Event *event) {
 			event->mouse.x /= _scaleFactor;
 			event->mouse.y /= _scaleFactor;
 
+			if (_adjustAspectRatio)
+				event->mouse.y = aspect2Real(event->mouse.y);
 			return true;
 
 		case SDL_MOUSEBUTTONDOWN:
@@ -718,6 +723,9 @@ bool OSystem_SDL_Common::poll_event(Event *event) {
 			event->mouse.x /= _scaleFactor;
 			event->mouse.y /= _scaleFactor;
 
+			if (_adjustAspectRatio)
+				event->mouse.y = aspect2Real(event->mouse.y);
+
 			return true;
 
 		case SDL_MOUSEBUTTONUP:
@@ -731,6 +739,10 @@ bool OSystem_SDL_Common::poll_event(Event *event) {
 			event->mouse.y = ev.button.y;
 			event->mouse.x /= _scaleFactor;
 			event->mouse.y /= _scaleFactor;
+
+			if (_adjustAspectRatio)
+				event->mouse.y = aspect2Real(event->mouse.y);
+
 			return true;
 
 		case SDL_JOYBUTTONDOWN:
@@ -835,6 +847,10 @@ bool OSystem_SDL_Common::poll_event(Event *event) {
 			event->mouse.y = km.y;
 			event->mouse.x /= _scaleFactor;
 			event->mouse.y /= _scaleFactor;
+
+			if (_adjustAspectRatio)
+				event->mouse.y = aspect2Real(event->mouse.y);
+
 			return true;
 
 		case SDL_VIDEOEXPOSE:

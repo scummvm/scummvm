@@ -50,38 +50,39 @@ static const char USAGE_STRING[] =
 	"Syntax:\n"
 	"\tscummvm [-v] [-d[<num>]] [-n] [-b<num>] [-t<num>] [-s<num>] [-p<path>] [-m<num>] [-f] game\n"
 	"Flags:\n"
-	"\t-p<path>      - look for game in <path>\n"
-	"\t-x[<num>]     - load this savegame (default: 0 - autosave)\n"
-	"\t-f            - fullscreen mode\n"
-	"\t-g<mode>      - graphics mode (normal,2x,3x,2xsai,super2xsai,supereagle,advmame2x,advmame3x,tv2x,dotmatrix)\n"
-	"\t-e<mode>      - set music engine (see README for details)\n"
-	"\t-a            - specify game is amiga version\n"
-	"\t-q<lang>      - specify language (en,de,fr,it,pt,es,jp,zh,kr,hb)\n"
+	"\t-p<path>       - look for game in <path>\n"
+	"\t-x[<num>]      - load this savegame (default: 0 - autosave)\n"
+	"\t-f             - fullscreen mode\n"
+	"\t-g<mode>       - graphics mode (normal,2x,3x,2xsai,super2xsai,supereagle,advmame2x,advmame3x,tv2x,dotmatrix)\n"
+	"\t-e<mode>       - set music engine (see README for details)\n"
+	"\t-a             - specify game is amiga version\n"
+	"\t-q<lang>       - specify language (en,de,fr,it,pt,es,jp,zh,kr,hb)\n"
 	"\n"
-	"\t-c<num>       - use cdrom <num> for cd audio\n"
-	"\t-m<num>       - set music volume to <num> (0-255)\n"
-	"\t-o<num>       - set master volume to <num> (0-255)\n"
-	"\t-s<num>       - set sfx volume to <num> (0-255)\n"
-	"\t-t<num>       - set music tempo (50-200, default 100%%)\n"
+	"\t-c<num>        - use cdrom <num> for cd audio\n"
+	"\t-m<num>        - set music volume to <num> (0-255)\n"
+	"\t-o<num>        - set master volume to <num> (0-255)\n"
+	"\t-s<num>        - set sfx volume to <num> (0-255)\n"
+	"\t-t<num>        - set music tempo (50-200, default 100%%)\n"
 	"\n"
-	"\t-n            - no subtitles for speech\n"
-	"\t-y            - set text speed (default: 60)\n"
+	"\t-n             - no subtitles for speech\n"
+	"\t-y             - set text speed (default: 60)\n"
 	"\n"
-	"\t-l<file>      - load config file instead of default\n"
+	"\t-l<file>       - load config file instead of default\n"
 #if defined(UNIX)
-	"\t-w[<file>]    - write to config file [~/.scummvmrc]\n"
+	"\t-w[<file>]     - write to config file [~/.scummvmrc]\n"
 #else
-	"\t-w[<file>]    - write to config file [scummvm.ini]\n"
+	"\t-w[<file>]     - write to config file [scummvm.ini]\n"
 #endif
-	"\t-v            - show version info and exit\n"
-	"\t-z            - display list of games\n"
+	"\t-v             - show version info and exit\n"
+	"\t-z             - display list of games\n"
 	"\n"
-	"\t-b<num>       - start in room <num>\n"
-	"\t-d[<num>]     - enable debug output (debug level [1])\n"
-	"\t-u            - dump scripts\n"
+	"\t-b<num>        - start in room <num>\n"
+	"\t-d[<num>]      - enable debug output (debug level [1])\n"
+	"\t-u             - dump scripts\n"
 	"\n"
-	"\t--multi-midi  - enable combination Adlib and native MIDI\n"
-	"\t--native-mt32 - true Roland MT-32 (disable GM emulation)\n"
+	"\t--multi-midi   - enable combination Adlib and native MIDI\n"
+	"\t--native-mt32  - true Roland MT-32 (disable GM emulation)\n"
+	"\t--aspect-ratio - enable aspect ratio correction\n"
 ;
 #endif
 // This contains a pointer to a list of all supported games.
@@ -148,6 +149,7 @@ static int countVersions(const VersionSettings *v) {
 
 GameDetector::GameDetector() {
 	_fullScreen = false;
+	_aspectRatio = false;
 
 	_use_adlib = false;
 
@@ -245,6 +247,7 @@ void GameDetector::updateconfig() {
 		}
 
 	_fullScreen = g_config->getBool("fullscreen", _fullScreen);
+	_aspectRatio = g_config->getBool("aspect_ratio", _aspectRatio);
 
 	if ((val = g_config->get("gfx_mode")))
 		if ((_gfx_mode = parseGraphicsMode(val)) == -1) {
@@ -453,6 +456,9 @@ void GameDetector::parseCommandLine(int argc, char **argv) {
 				} else if (!strcmp (s, "native-mt32")) {
 					_native_mt32 = true;
 					g_config->setBool ("native_mt32", true);
+				} else if (!strcmp (s, "aspect-ratio")) {
+					_aspectRatio = true;
+					g_config->setBool ("aspect_ratio", true);
 				} else {
 					goto ShowHelpAndExit;
 				}
@@ -673,7 +679,7 @@ OSystem *GameDetector::createSystem() {
 	return OSystem_PALMOS_create(_gfx_mode);
 #else
 	/* SDL is the default driver for now */
-	return OSystem_SDL_create(_gfx_mode, _fullScreen);
+	return OSystem_SDL_create(_gfx_mode, _fullScreen, _aspectRatio);
 #endif
 }
 
