@@ -18,10 +18,16 @@
  */
 
 #include "stdafx.h"
+
 #include "common/file.h"
 #include "common/util.h"
+
 #include "simon/sound.h"
+
+#include "sound/flac.h"
+#include "sound/mp3.h"
 #include "sound/voc.h"
+#include "sound/vorbis.h"
 
 namespace Simon {
 
@@ -213,7 +219,7 @@ void MP3Sound::playSound(uint sound, PlayingSoundHandle *handle, byte flags)
 
 	uint32 size = _offsets[sound + i] - _offsets[sound];
 
-	_mixer->playMP3(handle, _file, size);
+	_mixer->playInputStream(handle, makeMP3Stream(_file, size), false);
 }
 #endif
 
@@ -237,7 +243,7 @@ void VorbisSound::playSound(uint sound, PlayingSoundHandle *handle, byte flags)
 
 	uint32 size = _offsets[sound + i] - _offsets[sound];
 
-	_mixer->playVorbis(handle, _file, size);
+	_mixer->playInputStream(handle, makeVorbisStream(_file, size), false);
 }
 #endif
 
@@ -261,7 +267,7 @@ void FlacSound::playSound(uint sound, PlayingSoundHandle *handle, byte flags)
 
 	uint32 size = _offsets[sound + i] - _offsets[sound];
 
-	_mixer->playFlac(handle, _file, size);
+	_mixer->playInputStream(handle, makeFlacStream(_file, size), false);
 }
 #endif
 

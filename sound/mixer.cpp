@@ -27,9 +27,9 @@
 #include "sound/mixer.h"
 #include "sound/rate.h"
 #include "sound/audiostream.h"
+#include "sound/flac.h"
 #include "sound/mp3.h"
 #include "sound/vorbis.h"
-#include "sound/flac.h"
 
 
 #pragma mark -
@@ -150,7 +150,7 @@ SoundMixer::SoundMixer() {
 		_channels[i] = 0;
 
 	_mixerReady = _syst->setSoundCallback(mixCallback, this);
-	_outputRate = (uint) _syst->getOutputSampleRate();
+	_outputRate = (uint)_syst->getOutputSampleRate();
 
 	if (_outputRate == 0)
 		error("OSystem returned invalid sample rate");
@@ -316,30 +316,6 @@ void SoundMixer::playRaw(PlayingSoundHandle *handle, void *sound, uint32 size, u
 	insertChannel(handle, chan);
 }
 
-#ifdef USE_MAD
-void SoundMixer::playMP3(PlayingSoundHandle *handle, File *file, uint32 size, byte volume, int8 balance, int id) {
-	// Create the input stream
-	AudioStream *input = makeMP3Stream(file, size);
-	playInputStream(handle, input, false, volume, balance, id);
-}
-#endif
-
-#ifdef USE_VORBIS
-void SoundMixer::playVorbis(PlayingSoundHandle *handle, File *file, uint32 size, byte volume, int8 balance, int id) {
-	// Create the input stream
-	AudioStream *input = makeVorbisStream(file, size);
-	playInputStream(handle, input, false, volume, balance, id);
-}
-#endif
-
-#ifdef USE_FLAC
-void SoundMixer::playFlac(PlayingSoundHandle *handle, File *file, uint32 size, byte volume, int8 balance, int id) {
-	// Create the input stream
-	AudioStream *input = makeFlacStream(file, size);
-	playInputStream(handle, input, false, volume, balance, id);
-}
-#endif
-
 void SoundMixer::playInputStream(PlayingSoundHandle *handle, AudioStream *input, bool isMusic, byte volume, int8 balance, int id, bool autofreeStream) {
 	Common::StackLock lock(_mutex);
 
@@ -468,7 +444,7 @@ void SoundMixer::setChannelBalance(PlayingSoundHandle handle, int8 balance) {
 		_channels[index]->setBalance(balance);
 }
 
-uint32 SoundMixer::getChannelElapsedTime(PlayingSoundHandle handle) {
+uint32 SoundMixer::getSoundElapsedTime(PlayingSoundHandle handle) {
 	Common::StackLock lock(_mutex);
 
 	if (!handle.isActive())
@@ -477,14 +453,14 @@ uint32 SoundMixer::getChannelElapsedTime(PlayingSoundHandle handle) {
 	int index = handle.getIndex();
 
 	if ((index < 0) || (index >= NUM_CHANNELS)) {
-		warning("soundMixer::getChannelElapsedTime has invalid index %d", index);
+		warning("soundMixer::getSoundElapsedTime has invalid index %d", index);
 		return 0;
 	}
 
 	if (_channels[index])
 		return _channels[index]->getElapsedTime();
 
-	warning("soundMixer::getChannelElapsedTime has no channel object for index %d", index);
+	warning("soundMixer::getSoundElapsedTime has no channel object for index %d", index);
 	return 0;
 }
 

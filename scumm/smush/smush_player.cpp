@@ -43,6 +43,7 @@
 #include "scumm/insane/insane.h"
 
 #include "sound/mixer.h"
+#include "sound/vorbis.h"
 
 #ifdef DUMP_SMUSH_FRAMES
 #include <png.h>
@@ -1162,7 +1163,7 @@ void SmushPlayer::tryOggFile(const char *filename) {
 	if (_compressedFile.isOpen()) {
 		int size = _compressedFile.size();
 		_compressedFileMode = true;
-		_vm->_mixer->playVorbis(&_compressedFileSoundHandle, &_compressedFile, size);
+		_vm->_mixer->playInputStream(&_compressedFileSoundHandle, makeVorbisStream(&_compressedFile, size), false);
 	}
 #endif
 }

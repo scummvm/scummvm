@@ -348,7 +348,7 @@ Player_V2::Player_V2(ScummEngine *scumm, bool pcjr) {
 	_vm = scumm;
 	_system = scumm->_system;
 	_mixer = scumm->_mixer;
-	_sample_rate = _system->getOutputSampleRate();
+	_sample_rate = _mixer->getOutputRate();
 	_mutex = _system->createMutex();
 
 	_header_len = (scumm->_features & GF_OLD_BUNDLE) ? 4 : 6;

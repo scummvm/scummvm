@@ -27,6 +27,10 @@
 #include "queen/queen.h"
 #include "queen/resource.h"
 
+#include "sound/flac.h"
+#include "sound/mp3.h"
+#include "sound/vorbis.h"
+
 #define	SB_HEADER_SIZE	110
 #define	STOP_MUSIC	-1
 
@@ -190,7 +194,7 @@ void MP3Sound::sfxPlay(const char *name, bool isSpeech) {
 	if (_vm->resource()->fileExists(name)) {
 		uint32 size;
 		File *f = _vm->resource()->giveCompressedSound(name, &size);
-		_mixer->playMP3(isSpeech ? &_speechHandle : &_sfxHandle, f, size);
+		_mixer->playInputStream(isSpeech ? &_speechHandle : &_sfxHandle, makeMP3Stream(f, size), false);
 	}
 }
 #endif
@@ -200,7 +204,7 @@ void OGGSound::sfxPlay(const char *name, bool isSpeech) {
 	if (_vm->resource()->fileExists(name)) {
 		uint32 size;
 		File *f = _vm->resource()->giveCompressedSound(name, &size);		
-		_mixer->playVorbis(isSpeech ? &_speechHandle : &_sfxHandle, f, size);
+		_mixer->playInputStream(isSpeech ? &_speechHandle : &_sfxHandle, makeVorbisStream(f, size), false);
 	}
 }
 #endif
@@ -210,7 +214,7 @@ void FLACSound::sfxPlay(const char *name, bool isSpeech) {
 	if (_vm->resource()->fileExists(name)) {
 		uint32 size;
 		File *f = _vm->resource()->giveCompressedSound(name, &size);		
-		_mixer->playFlac(isSpeech ? &_speechHandle : &_sfxHandle, f, size);
+		_mixer->playInputStream(isSpeech ? &_speechHandle : &_sfxHandle, makeFlacStream(f, size), false);
 	}
 }
 #endif

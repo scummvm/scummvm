@@ -569,6 +569,8 @@ public:
 	/**
 	 * Determine the output sample rate. Audio data provided by the sound
 	 * callback will be played using this rate.
+	 * @note Client code other than the sound mixer should _not_ use this
+	 *       method. Instead, call SoundMixer::getOutputRate()!
 	 * @return the output sample rate
 	 */
 	virtual int getOutputSampleRate() const = 0;

@@ -174,7 +174,7 @@ bool BaseAnimationState::decodeFrame() {
 					return false;
 
 				if (checkPaletteSwitch() || (bgSoundStream == NULL) ||
-					((_snd->getChannelElapsedTime(bgSound) * 12) / 1000 < framenum + 1) ||
+					((_snd->getSoundElapsedTime(bgSound) * 12) / 1000 < framenum + 1) ||
 					frameskipped > 10) {
 					if (frameskipped > 10) {
 						warning("force frame %i redraw", framenum);
@@ -183,7 +183,7 @@ bool BaseAnimationState::decodeFrame() {
 					drawYUV(sequence_i->width, sequence_i->height, info->display_fbuf->buf);
 
 					if (bgSoundStream) {
-						while ((_snd->getChannelElapsedTime(bgSound) * 12) / 1000 < framenum)
+						while ((_snd->getSoundElapsedTime(bgSound) * 12) / 1000 < framenum)
 							_sys->delayMillis(10);
 					} else {
 						ticks += 83;

@@ -26,6 +26,9 @@
 #include "sword1/logic.h"
 #include "sword1/sword1.h"
 
+#include "sound/mp3.h"
+#include "sound/vorbis.h"
+
 namespace Sword1 {
 
 #define SOUND_SPEECH_ID 1
@@ -191,7 +194,7 @@ bool Sound::startSpeech(uint16 roomNo, uint16 localNo) {
 #ifdef USE_MAD
 		else if (_cowMode == CowMp3) {
 			_cowFile.seek(index);
-			_mixer->playMP3(&_speechHandle, &_cowFile, sampleSize, speechVol, speechPan, SOUND_SPEECH_ID);
+			_mixer->playInputStream(&_speechHandle, makeMP3Stream(&_cowFile, sampleSize), false, speechVol, speechPan, SOUND_SPEECH_ID);
 			// with compressed audio, we can't calculate the wave volume.
 			// so default to talking.
 			for (int cnt = 0; cnt < 480; cnt++)
@@ -202,7 +205,7 @@ bool Sound::startSpeech(uint16 roomNo, uint16 localNo) {
 #ifdef USE_VORBIS
 		else if (_cowMode == CowVorbis) {
 			_cowFile.seek(index);
-			_mixer->playVorbis(&_speechHandle, &_cowFile, sampleSize, speechVol, speechPan, SOUND_SPEECH_ID);
+			_mixer->playInputStream(&_speechHandle, makeVorbisStream(&_cowFile, sampleSize), false, speechVol, speechPan, SOUND_SPEECH_ID);
 			for (int cnt = 0; cnt < 480; cnt++)
 				_waveVolume[cnt] = true;	
 			_waveVolPos = 0;

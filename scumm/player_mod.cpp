@@ -31,7 +31,7 @@ namespace Scumm {
 Player_MOD::Player_MOD(ScummEngine *scumm) {
 	int i;
 	_mixer = scumm->_mixer;
-	_samplerate = scumm->_system->getOutputSampleRate();
+	_samplerate = _mixer->getOutputRate();
 	_mixamt = 0;
 	_mixpos = 0;
 
@@ -150,7 +150,7 @@ void Player_MOD::premix_proc(void *param, int16 *buf, uint len) {
 	((Player_MOD *) param)->do_mix(buf, len);
 }
 
-void Player_MOD::do_mix (int16 *data, uint len) {
+void Player_MOD::do_mix(int16 *data, uint len) {
 	int i;
 	int dpos = 0;
 	uint dlen = 0;
