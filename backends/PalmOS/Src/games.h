@@ -36,8 +36,8 @@ typedef struct {
 
 	Boolean autoLoad;
 	UInt16 loadSlot;
-	Boolean autoRoom;
-	UInt16 roomNum;
+	Boolean bootParam;
+	UInt16 bootValue;
 	Boolean amiga;
 	Boolean subtitles;
 	Boolean talkSpeed;
@@ -58,13 +58,13 @@ typedef struct {
 	UInt16	gfxMode;
 
 	Boolean autoLoad;
-	Boolean autoRoom;
+	Boolean bootParam;
 	Boolean setPlatform;
 	Boolean subtitles;
 	Boolean talkSpeed;
 
 	UInt16 loadSlot;
-	UInt16 roomNum;
+	UInt16 bootValue;
 	UInt16 talkValue;
 	UInt8 platform;
 	UInt8 language;
@@ -77,6 +77,7 @@ void	GamImportDatabase	();
 void	GamCloseDatabase	(Boolean ignoreCardParams);
 Err		GamSortList			();
 UInt16	GamGetSelected		();
+void	GamUnselect			();
 
 extern DmOpenRef gameDB;
 

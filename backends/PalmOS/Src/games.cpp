@@ -81,13 +81,13 @@ static Err GamUpdateList() {
 					gitCur.gfxMode = git0.gfxMode;
 					
 					gitCur.autoLoad = git0.autoLoad;
-					gitCur.autoRoom = git0.autoRoom;
+					gitCur.bootParam = git0.bootParam;
 					gitCur.setPlatform = git0.amiga;	// amiga become platform amiga/atari-st/machintosh
 					gitCur.subtitles = git0.subtitles;
 					gitCur.talkSpeed = git0.talkSpeed;
 
 					gitCur.loadSlot = git0.loadSlot;
-					gitCur.roomNum = git0.roomNum;
+					gitCur.bootValue = git0.bootValue;
 					gitCur.talkValue = git0.talkValue;
 					gitCur.platform = 0;	// default to amiga
 					gitCur.language = git0.language;
@@ -203,6 +203,28 @@ static Int16 GamCompare(GameInfoType *a, GameInfoType *b, SortRecordInfoPtr, Sor
 
 Err GamSortList() {
 	return DmQuickSort (gameDB, (DmComparF *)GamCompare, 0);
+}
+
+void GamUnselect() {
+	GameInfoType modGame;
+	GameInfoType *game;
+
+	MemHandle recordH;
+	UInt16 index;
+
+	index = GamGetSelected();
+	
+	if (index != dmMaxRecordIndex) {
+		recordH = DmGetRecord(gameDB, index);
+		game = (GameInfoType *)MemHandleLock(recordH);
+
+		MemMove(&modGame, game, sizeof(GameInfoType));	
+		modGame.selected = !modGame.selected;
+		DmWrite(game, 0, &modGame, sizeof(GameInfoType));
+
+		MemHandleUnlock(recordH);
+		DmReleaseRecord (gameDB, index, 0);
+	}
 }
 
 UInt16 GamGetSelected() {
