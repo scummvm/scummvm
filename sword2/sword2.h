@@ -64,6 +64,7 @@ class Sword2State : public Engine {
 		OSystem::MutexRef _paletteMutex; // put in a gfx class?
 	private:
 		bool _quit;
+		uint32 _bootParam;
 };
 
 extern Sword2State *g_sword2;

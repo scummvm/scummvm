@@ -106,6 +106,7 @@ Sword2State::Sword2State(GameDetector *detector, OSystem *syst)
 	g_sword2 = this;
 	_features = detector->_game.features;
 	_gameId = detector->_game.id;
+	_bootParam = detector->_bootParam;
 
 	// Setup mixer
 	if (!_mixer->bindToSystem(syst))
@@ -496,6 +497,11 @@ void	Sword2State::Start_game(void)	//Tony29May97
 	else
 		screen_manager_id = 949;	// INTRO & PARIS START
 
+	// FIXME this could be validated against startup.inf for valid numbers
+	// to stop people shooting themselves in the foot
+	if (_bootParam != 0)
+		screen_manager_id = _bootParam;
+	
 	char	*raw_script;
 	char	*raw_data_ad;
 	uint32	null_pc=1;	// the required start-scripts are both script #1 in the respective ScreenManager objects
