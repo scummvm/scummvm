@@ -811,7 +811,7 @@ public:
 	void readArrayFromIndexFile();
 	void readMAXS();
 	virtual void readIndexFile();
-	void loadCharset(int i);
+	virtual void loadCharset(int i);
 	void nukeCharset(int i);
 
 	bool fileReadFailed(void *handle);
@@ -1668,10 +1668,12 @@ class Scumm_v3 : public Scumm
 {
 public:
 	void readIndexFile();
+	virtual void loadCharset(int no);
 };
 
 class Scumm_v4 : public Scumm_v3
 {
+	void loadCharset(int no);
 };
 
 class Scumm_v5 : public Scumm

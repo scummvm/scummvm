@@ -399,25 +399,9 @@ void Scumm::loadCharset(int no) {
 	byte *ptr;
 	
 	debug(9, "loadCharset(%d)",no);
-        if(_features & GF_EXTERNAL_CHARSET) {                
-				uint32 size;
+                
+	checkRange(_maxCharsets-1, 1, no, "Loading illegal charset %d");
 
-                checkRange(4 ,0 ,no , "Loading illegal charset %d");
-                openRoom(-1);
-                if( _features & GF_SMALL_NAMES)
-                        openRoom(98+no);
-                else
-                        openRoom(900+no);
-				
-				if (_features & GF_OLD256)
-					size = fileReadWordLE();
-				else
-					size = fileReadDwordLE();
-                fileRead(_fileHandle, createResource(6, no, size), size);
-                openRoom(-1);
-        } else {
-                checkRange(_maxCharsets-1, 1, no, "Loading illegal charset %d");
-        }
 //	ensureResourceLoaded(6, no);
 	ptr = getResourceAddress(6, no);
 

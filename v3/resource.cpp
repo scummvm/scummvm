@@ -124,3 +124,17 @@ void Scumm_v3::readIndexFile() {
 
        openRoom(-1);
 }
+
+void Scumm_v3::loadCharset(int no){
+	uint32 size;
+
+        checkRange(4 ,0 ,no , "Loading illegal charset %d");
+        openRoom(-1);
+        
+      	openRoom(98+no);
+
+       	size = fileReadWordLE();
+        
+	fileRead(_fileHandle, createResource(6, no, size), size);
+        openRoom(-1);
+}
