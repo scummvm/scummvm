@@ -27,7 +27,7 @@ DEPDIR := .deps
 ifdef DISABLE_SCUMM
 DEFINES += -DDISABLE_SCUMM
 else
-MODULES += scumm
+MODULES += scumm scumm/smush
 endif
 
 ifdef DISABLE_SIMON
@@ -39,13 +39,13 @@ endif
 ifdef DISABLE_SKY
 DEFINES += -DDISABLE_SKY
 else
-MODULES += sky
+MODULES += sky sky/compacts sky/music
 endif
 
 ifdef DISABLE_SWORD2
 DEFINES += -DDISABLE_SWORD2
 else
-MODULES += bs2
+MODULES += bs2 bs2/driver
 endif
 
 MODULES += \
@@ -53,7 +53,6 @@ MODULES += \
 	gui \
 	backends \
 	sound \
-	scumm/smush \
 	backends/fs/posix \
 	backends/fs/morphos \
 	backends/fs/windows \
@@ -101,7 +100,9 @@ DEPFILES = $(wildcard $(addsuffix /*.d,$(DEPDIRS)))
 	$(RM) "$(*D)/$(DEPDIR)/$(*F).d2"
 
 # If you even have GCC 3.x, you can use this build rule, which is safer; the above
-# rule can get you into a bad state if you Ctrl-C it in the wrong moment.
+# rule can get you into a bad state if you Ctrl-C at the wrong moment.
+# Also, with this GCC inserts additional dummy rules for the involved headers,
+# which ensures a smooth compilation even if said headers become obsolete.
 #.cpp.o:
 #	$(MKDIR) $(*D)/$(DEPDIR)
 #	$(CXX) -Wp,-MMD,"$(*D)/$(DEPDIR)/$(*F).d",-MQ,"$@",-MP $(CXXFLAGS) $(CPPFLAGS) -c $(<) -o $*.o
