@@ -75,7 +75,7 @@ public:
 
 protected:
 	OSystem		*_system;
-	int16		*_screen;
+	NewGuiColor	*_screen;
 	int			_screenPitch;
 	
 	bool		_needRedraw;
@@ -116,31 +116,31 @@ protected:
 
 public:
 	// Theme colors
-	int16 _color, _shadowcolor;
-	int16 _bgcolor;
-	int16 _textcolor;
-	int16 _textcolorhi;
+	NewGuiColor _color, _shadowcolor;
+	NewGuiColor _bgcolor;
+	NewGuiColor _textcolor;
+	NewGuiColor _textcolorhi;
 
 	// Misc util
 	uint32 get_time() const { return _system->get_msecs(); }
 
 	// Drawing primitives
-	int16 *getBasePtr(int x, int y);
+	NewGuiColor *getBasePtr(int x, int y);
 	void box(int x, int y, int width, int height, bool inverted = false);
-	void line(int x, int y, int x2, int y2, int16 color);
-	void blendRect(int x, int y, int w, int h, int16 color, int level = 3);
-	void fillRect(int x, int y, int w, int h, int16 color);
-	void checkerRect(int x, int y, int w, int h, int16 color);
-	void frameRect(int x, int y, int w, int h, int16 color);
-	void drawChar(byte c, int x, int y, int16 color);
+	void line(int x, int y, int x2, int y2, NewGuiColor color);
+	void blendRect(int x, int y, int w, int h, NewGuiColor color, int level = 3);
+	void fillRect(int x, int y, int w, int h, NewGuiColor color);
+	void checkerRect(int x, int y, int w, int h, NewGuiColor color);
+	void frameRect(int x, int y, int w, int h, NewGuiColor color);
+	void drawChar(byte c, int x, int y, NewGuiColor color);
 	int getStringWidth(const String &str);
 	int getCharWidth(byte c);
-	void drawString(const String &str, int x, int y, int w, int16 color, int align = kTextAlignLeft);
+	void drawString(const String &str, int x, int y, int w, NewGuiColor color, int align = kTextAlignLeft);
 
 	void blitFromBuffer(int x, int y, int w, int h, const byte *buf, int pitch);
 	void blitToBuffer(int x, int y, int w, int h, byte *buf, int pitch);
 
-	void drawBitmap(uint32 *bitmap, int x, int y, int16 color, int h = 8);
+	void drawBitmap(uint32 *bitmap, int x, int y, NewGuiColor color, int h = 8);
 
 	void addDirtyRect(int x, int y, int w, int h);
 };

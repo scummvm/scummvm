@@ -219,13 +219,11 @@ bool ListWidget::handleKeyDown(uint16 ascii, int keycode, int modifiers) {
 		_scrollBar->draw();
 	}
 
-#ifndef _WIN32_WCE
-
-	// not done on WinCE because keyboard is emulated and
+#if !defined(_WIN32_WCE) && !defined(__PALM_OS__)
+	// not done on WinCE / PalmOS because keyboard is emulated and
 	// keyup is not generated
 
 	_currentKeyDown = keycode;
-
 #endif
 
 	return handled;

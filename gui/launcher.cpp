@@ -451,6 +451,9 @@ void LauncherDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 		updateButtons();
 		break;
 	case kQuitCmd:
+#ifdef __PALM_OS__
+		close();
+#endif
 		g_system->quit();
 		break;
 	default:

@@ -49,6 +49,9 @@ enum {
 	kKeyRepeatSustainDelay = 100
 };
 
+#ifdef __PALM_OS__
+static byte *guifont;
+#else
 // Built-in font
 static byte guifont[] = {
 0,0,99,1,226,8,4,8,6,8,6,0,0,0,0,0,0,0,0,0,0,0,8,2,1,8,0,0,0,0,0,0,0,0,0,0,0,0,4,3,7,8,7,7,8,4,5,5,8,7,4,7,3,8,7,7,7,7,8,7,7,7,7,7,3,4,7,5,7,7,8,7,7,7,7,7,7,7,7,5,7,7,
@@ -78,6 +81,7 @@ static byte guifont[] = {
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,28,54,54,124,102,102,124,64,0,0,0
 };
+#endif
 
 // Constructor
 NewGui::NewGui(OSystem *system) : _system(system), _screen(0), _needRedraw(false),
@@ -139,6 +143,7 @@ void NewGui::runLoop() {
 					activeDialog->handleKeyDown(event.kbd.ascii, event.kbd.keycode, event.kbd.flags);
 
 #ifndef _WIN32_WCE
+#ifndef __PALM_OS__
 					// init continuous event stream
 					// not done on WinCE because keyboard is emulated and
 					// keyup is not generated
@@ -146,6 +151,7 @@ void NewGui::runLoop() {
 					_currentKeyDown.keycode = event.kbd.keycode;
 					_currentKeyDown.flags = event.kbd.flags;
 					_keyRepeatTime = time + kKeyRepeatInitialDelay;
+#endif
 #endif
 					break;
 				case OSystem::EVENT_KEYUP:
@@ -215,7 +221,11 @@ void NewGui::saveState() {
 
 	_system->show_overlay();
 	// TODO - add getHeight & getWidth methods to OSystem.
-	_screen = new int16[sys_width * sys_height];
+#ifndef __PALM_OS__
+	_screen = new NewGuiColor[sys_width * sys_height];
+#else
+	_screen = (NewGuiColor*)calloc(sys_width*sys_height,sizeof(NewGuiColor));
+#endif
 	_screenPitch = sys_width;
 	_system->grab_overlay(_screen, _screenPitch);
 
@@ -232,7 +242,11 @@ void NewGui::restoreState() {
 
 	_system->hide_overlay();
 	if (_screen) {
+#ifndef __PALM_OS__
 		delete [] _screen;
+#else
+		free(_screen);
+#endif
 		_screen = 0;
 	}
 
@@ -258,13 +272,13 @@ void NewGui::closeTopDialog() {
 
 #pragma mark -
 
-int16 *NewGui::getBasePtr(int x, int y) {
+NewGuiColor *NewGui::getBasePtr(int x, int y) {
 	return _screen + x + y * _screenPitch;
 }
 
 void NewGui::box(int x, int y, int width, int height, bool inverted) {
-	int16 colorA = inverted ? _shadowcolor : _color;
-	int16 colorB = inverted ? _color : _shadowcolor;
+	NewGuiColor colorA = inverted ? _shadowcolor : _color;
+	NewGuiColor colorB = inverted ? _color : _shadowcolor;
 
 	hline(x + 1, y, x + width - 2, colorA);
 	hline(x, y + 1, x + width - 1, colorA);
@@ -277,8 +291,8 @@ void NewGui::box(int x, int y, int width, int height, bool inverted) {
 	vline(x + width - 2, y + 1, y + height - 1, colorB);
 }
 
-void NewGui::line(int x, int y, int x2, int y2, int16 color) {
-	int16 *ptr;
+void NewGui::line(int x, int y, int x2, int y2, NewGuiColor color) {
+	NewGuiColor *ptr;
 
 	if (x2 < x)
 		SWAP(x2, x);
@@ -302,7 +316,10 @@ void NewGui::line(int x, int y, int x2, int y2, int16 color) {
 	}
 }
 
-void NewGui::blendRect(int x, int y, int w, int h, int16 color, int level) {
+void NewGui::blendRect(int x, int y, int w, int h, NewGuiColor color, int level) {
+#ifdef NEWGUI_256
+	fillRect(x,y,w,h,color);
+#else
 	int r, g, b;
 	uint8 ar, ag, ab;
 	_system->colorToRGB(color, ar, ag, ab);
@@ -310,7 +327,7 @@ void NewGui::blendRect(int x, int y, int w, int h, int16 color, int level) {
 	g = ag * level;
 	b = ab * level;
 
-	int16 *ptr = getBasePtr(x, y);
+	NewGuiColor *ptr = getBasePtr(x, y);
 
 	while (h--) {
 		for (int i = 0; i < w; i++) {
@@ -321,11 +338,12 @@ void NewGui::blendRect(int x, int y, int w, int h, int16 color, int level) {
 		}
 		ptr += _screenPitch;
 	}
+#endif
 }
 
-void NewGui::fillRect(int x, int y, int w, int h, int16 color) {
+void NewGui::fillRect(int x, int y, int w, int h, NewGuiColor color) {
 	int i;
-	int16 *ptr = getBasePtr(x, y);
+	NewGuiColor *ptr = getBasePtr(x, y);
 
 	while (h--) {
 		for (i = 0; i < w; i++) {
@@ -335,9 +353,9 @@ void NewGui::fillRect(int x, int y, int w, int h, int16 color) {
 	}
 }
 
-void NewGui::checkerRect(int x, int y, int w, int h, int16 color) {
+void NewGui::checkerRect(int x, int y, int w, int h, NewGuiColor color) {
 	int i;
-	int16 *ptr = getBasePtr(x, y);
+	NewGuiColor *ptr = getBasePtr(x, y);
 
 	while (h--) {
 		for (i = 0; i < w; i++) {
@@ -348,9 +366,9 @@ void NewGui::checkerRect(int x, int y, int w, int h, int16 color) {
 	}
 }
 
-void NewGui::frameRect(int x, int y, int w, int h, int16 color) {
+void NewGui::frameRect(int x, int y, int w, int h, NewGuiColor color) {
 	int i;
-	int16 *ptr, *basePtr = getBasePtr(x, y);
+	NewGuiColor *ptr, *basePtr = getBasePtr(x, y);
 	if (basePtr == NULL)
 		return;
 
@@ -372,17 +390,17 @@ void NewGui::addDirtyRect(int x, int y, int w, int h) {
 	// For now we don't keep yet another list of dirty rects but simply
 	// blit the affected area directly to the overlay. At least for our current
 	// GUI/widget/dialog code that is just fine.
-	int16 *buf = getBasePtr(x, y);
+	NewGuiColor *buf = getBasePtr(x, y);
 	_system->copy_rect_overlay(buf, _screenPitch, x, y, w, h);
 }
 
-void NewGui::drawChar(const byte chr, int xx, int yy, int16 color) {
+void NewGui::drawChar(const byte chr, int xx, int yy, NewGuiColor color) {
 	unsigned int buffer = 0, mask = 0, x, y;
 	byte *tmp;
 
 	tmp = guifont + 224 + (chr + 1) * 8;
 
-	int16 *ptr = getBasePtr(xx, yy);
+	NewGuiColor *ptr = getBasePtr(xx, yy);
 
 	for (y = 0; y < 8; y++) {
 		for (x = 0; x < 8; x++) {
@@ -411,7 +429,7 @@ int NewGui::getCharWidth(byte c) {
 	return guifont[c+6];
 }
 
-void NewGui::drawString(const String &str, int x, int y, int w, int16 color, int align) {
+void NewGui::drawString(const String &str, int x, int y, int w, NewGuiColor color, int align) {
 	const int leftX = x, rightX = x + w;
 	int width = getStringWidth(str);
 	if (align == kTextAlignCenter)
@@ -433,7 +451,7 @@ void NewGui::drawString(const String &str, int x, int y, int w, int16 color, int
 // Blit from a buffer to the display
 //
 void NewGui::blitFromBuffer(int x, int y, int w, int h, const byte *buf, int pitch) {
-	int16 *ptr = getBasePtr(x, y);
+	NewGuiColor *ptr = getBasePtr(x, y);
 
 	assert(buf);
 	while (h--) {
@@ -447,7 +465,7 @@ void NewGui::blitFromBuffer(int x, int y, int w, int h, const byte *buf, int pit
 // Blit from the display to a buffer
 //
 void NewGui::blitToBuffer(int x, int y, int w, int h, byte *buf, int pitch) {
-	int16 *ptr = getBasePtr(x, y);
+	NewGuiColor *ptr = getBasePtr(x, y);
 
 	assert(buf);
 	while (h--) {
@@ -460,8 +478,8 @@ void NewGui::blitToBuffer(int x, int y, int w, int h, byte *buf, int pitch) {
 //
 // Draw an 8x8 bitmap at location (x,y)
 //
-void NewGui::drawBitmap(uint32 *bitmap, int x, int y, int16 color, int h) {
-	int16 *ptr = getBasePtr(x, y);
+void NewGui::drawBitmap(uint32 *bitmap, int x, int y, NewGuiColor color, int h) {
+	NewGuiColor *ptr = getBasePtr(x, y);
 
 	for (y = 0; y < h; y++) {
 		uint32 mask = 0xF0000000;
@@ -498,3 +516,11 @@ void NewGui::animateCursor() {
 		_cursorAnimateCounter = (_cursorAnimateCounter + 1) % 4;
 	}
 }
+
+#ifdef __PALM_OS__
+#include "scumm_globals.h"	// init globals
+void NewGui_initGlobals()	{
+	GSETPTR(guifont, GBVARS_GUIFONT_INDEX, byte, GBVARS_SCUMM)
+}
+void NewGui_releaseGlobals(){	GRELEASEPTR(GBVARS_GUIFONT_INDEX, GBVARS_SCUMM)				}
+#endif
