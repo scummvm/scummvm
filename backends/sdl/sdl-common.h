@@ -109,8 +109,8 @@ public:
 	virtual void clear_overlay();
 	virtual void grab_overlay(int16 *buf, int pitch);
 	virtual void copy_rect_overlay(const int16 *buf, int pitch, int x, int y, int w, int h);
-	virtual int16 OSystem_SDL_Common::get_height();
-	virtual int16 OSystem_SDL_Common::get_width();
+	virtual int16 get_height();
+	virtual int16 get_width();
 
 	// Methods that convert RBG to/from colors suitable for the overlay.
 	virtual int16 RBGToColor(uint8 r, uint8 g, uint8 b);
