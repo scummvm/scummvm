@@ -37,6 +37,8 @@
 #include <config.h>
 #endif
 
+#include "common/scaler/intern.h"
+
 #include "scale2x.h"
 #include "scale3x.h"
 
