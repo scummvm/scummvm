@@ -20,53 +20,20 @@
  *
  */
 
-#include "stdafx.h"
 #include "scumm.h"
-#include "mididrv.h"
-#include "gameDetector.h"
 #include "common/scaler.h"
 
 #include "palm.h"
-#include "starterrsc.h"
-#include "pa1lib.h"
-#include "sonychars.h"
+#include "vibrate.h"
 
-#define SAVEDELAY	(5 * 60 * 1000) // five minutes
-#define EXITDELAY	(100)		// delay to exit : calc button : double tap 1/500 sec
-
-#define SCREEN_OVERLAY 0
-
-static DmOpenRef gStgMemory = NULL;
-
-static void MemStgInit() {
-	if (!gStgMemory)
-	{
-		LocalID localID = DmFindDatabase(0, "Scumm-Memory");
-		if (localID) DmDeleteDatabase(0, localID);
-		
-		if (DmCreateDatabase (0, "Scumm-Memory", 'ScVM', 'DATA', false) != errNone)
-			return;
-
-		localID = DmFindDatabase(0, "Scumm-Memory");
-		gStgMemory = DmOpenDatabase(0, localID, dmModeReadWrite|dmModeExclusive);
-	}
-}
-
-static void MemStgCleanup() {
-	if (gStgMemory) {
-		DmCloseDatabase(gStgMemory);
-		LocalID localID = DmFindDatabase(0, "Scumm-Memory");
-		if (localID)
-			DmDeleteDatabase(0, localID);
-	}
-}
+#define EXITDELAY		(500) // delay to exit : calc button : double tap 1/500 sec
+#define ftrOverlayPtr	(1000)
 
 OSystem *OSystem_PALMOS::create(UInt16 gfx_mode) {
 
 	OSystem_PALMOS *syst = new OSystem_PALMOS();
 	syst->_mode = gfx_mode;
 	syst->_vibrate = gVars->vibrator;
-
 	return syst;
 }
 
@@ -112,40 +79,38 @@ void OSystem_PALMOS::load_gfx_mode() {
 		255	,255,87	,0,
 		255	,255,255,0
 	};
-	
 	// palette for preload dialog
 	set_palette(startupPalette,0,16);
-	MemStgInit();
 
 	switch(_mode)
 	{
 		case GFX_FLIPPING:
-			palm_offscreen	= WinScreenLock(winLockErase) + _screeny;
-			palm_screen		= palm_offscreen;
+			_offScreenP	= WinScreenLock(winLockErase) + _screeny;
+			_screenP	= _offScreenP;
 			gVars->screenLocked = true;
 			_renderer_proc = &update_screen__flipping;
 			break;
 		case GFX_DOUBLEBUFFER:
-			h_palm_screen	= WinGetDisplayWindow();
-			palm_screen		= (byte *)(BmpGetBits(WinGetBitmap(h_palm_screen))) + _screeny;
-			h_palm_offscreen= WinCreateOffscreenWindow(SCREEN_WIDTH, SCREEN_HEIGHT, screenFormat, &e);
-			palm_offscreen	= (byte *)(BmpGetBits(WinGetBitmap(h_palm_offscreen)));
+			_screenH	= WinGetDisplayWindow();
+			_screenP	= (byte *)(BmpGetBits(WinGetBitmap(_screenH))) + _screeny;
+			_offScreenH	= WinCreateOffscreenWindow(_screenWidth, _screenHeight, screenFormat, &e);
+			_offScreenP	= (byte *)(BmpGetBits(WinGetBitmap(_offScreenH)));
 			_renderer_proc = &update_screen__dbuffer;
 			break;
 		case GFX_NORMAL:
 		default:
-			h_palm_offscreen= WinGetDisplayWindow();
-			palm_offscreen	= (byte *)(BmpGetBits(WinGetBitmap(h_palm_offscreen))) + _screeny;
-			palm_screen		= palm_offscreen;
+			_offScreenH	= WinGetDisplayWindow();
+			_offScreenP	= (byte *)(BmpGetBits(WinGetBitmap(_offScreenH))) + _screeny;
+			_screenP	= _offScreenP;
 			_renderer_proc = &update_screen__direct;
 			break;
 	}
 
-//	h_palm_tmpscreen = WinCreateOffscreenWindow(SCREEN_WIDTH, SCREEN_HEIGHT, screenFormat, &e);
-//	palm_tmpscreen	= (byte *)(BmpGetBits(WinGetBitmap(h_palm_tmpscreen)));
-	UInt16 index = SCREEN_OVERLAY;
-	tmpScreenHandle = DmNewRecord(gStgMemory, &index, SCREEN_WIDTH * SCREEN_HEIGHT);
-	tmpScreen = (byte *)MemHandleLock(tmpScreenHandle);
+	// try to allocate on storage heap
+	FtrPtrNew(appFileCreator, ftrOverlayPtr, _screenWidth * _screenHeight, (void **)&_tmpScreenP);
+	// failed ? dynamic heap
+	if (!_tmpScreenP)
+		_tmpScreenP = (byte *)malloc(_screenWidth * _screenHeight);
 	_overlaySaved = false;
 
 }
@@ -157,20 +122,21 @@ void OSystem_PALMOS::unload_gfx_mode() {
 			WinScreenUnlock();
 			break;
 		case GFX_DOUBLEBUFFER:
-			WinDeleteWindow(h_palm_offscreen,false);
+			WinDeleteWindow(_offScreenH,false);
 			break;
 	}
 
-//	WinDeleteWindow(h_palm_tmpscreen,false);
-	if (tmpScreenHandle)
-		MemPtrUnlock(tmpScreen);
-	MemStgCleanup();
+	if (_tmpScreenP)
+		if (MemPtrDataStorage(_tmpScreenP))
+			FtrPtrFree(appFileCreator, ftrOverlayPtr);
+		else
+			free(_tmpScreenP);
 }
 
 void OSystem_PALMOS::init_size(uint w, uint h) {
 
-	SCREEN_WIDTH = w;
-	SCREEN_HEIGHT = h;
+	_screenWidth = w;
+	_screenHeight = h;
 
 	_overlay_visible = false;
 	_quit = false;
@@ -181,24 +147,21 @@ void OSystem_PALMOS::init_size(uint w, uint h) {
 	set_mouse_pos(200,150);
 
 	_currentPalette = (RGBColorType*)calloc(sizeof(RGBColorType), 256);
-	_mouse_backup = (byte*)malloc(MAX_MOUSE_W * MAX_MOUSE_H);
+	_mouseBackupP = (byte*)malloc(MAX_MOUSE_W * MAX_MOUSE_H);
 	
 	load_gfx_mode();
 }
 
 void OSystem_PALMOS::copy_rect(const byte *buf, int pitch, int x, int y, int w, int h) {
-
-	byte *dst;
-
 	/* FIXME: undraw mouse only if the draw rect intersects with the mouse rect */
-	if (_mouse_drawn)
+	if (_mouseDrawn)
 		undraw_mouse();
 
-	dst = palm_offscreen + y * SCREEN_WIDTH + x;
+	byte *dst = _offScreenP + y * _screenWidth + x;
 
 	do {
 		memcpy(dst, buf, w);
-		dst += SCREEN_WIDTH;
+		dst += _screenWidth;
 		buf += pitch;
 	} while (--h);
 }
@@ -207,18 +170,18 @@ void OSystem_PALMOS::update_screen__flipping()
 {
 	RectangleType r;
 	UInt8 *screen;
-	UInt32 size = SCREEN_WIDTH*SCREEN_HEIGHT + 6400; // 10 pix top and bottom border
+	UInt32 size = _screenWidth * _screenHeight + 6400; // 10 pix top and bottom border
 	Boolean shaked = false;
 	UInt32 move = 0;
 
 	// shake screen
 	if (_current_shake_pos != _new_shake_pos) {
 		if (gVars->HRrefNum) {
-			RctSetRectangle(&r, 0, _decaly - _new_shake_pos, SCREEN_WIDTH, SCREEN_HEIGHT + (_new_shake_pos << 2));
+			RctSetRectangle(&r, 0, _decaly - _new_shake_pos, _screenWidth, _screenHeight + (_new_shake_pos << 2));
 			HRWinScrollRectangle(gVars->HRrefNum, &r, winDown, _new_shake_pos, NULL);
 		} else {
-			move = (_new_shake_pos * SCREEN_WIDTH);
-			screen = palm_offscreen - 3200;
+			move = (_new_shake_pos * _screenWidth);
+			screen = _offScreenP - 3200;
 			MemMove(screen + move, screen, size);
 		}
 
@@ -233,13 +196,13 @@ void OSystem_PALMOS::update_screen__flipping()
 
 	// update screen
 	WinScreenUnlock();
-	palm_offscreen = WinScreenLock(winLockCopy) + _screeny;
-	palm_screen = palm_offscreen;
+	_offScreenP = WinScreenLock(winLockCopy) + _screeny;
+	_screenP = _offScreenP;
 	if (shaked) {
 		if (gVars->HRrefNum) {
 			HRWinScrollRectangle(gVars->HRrefNum, &r, winUp, _new_shake_pos, NULL);
 		} else {
-			screen = palm_offscreen - 3200;
+			screen = _offScreenP - 3200;
 			MemMove(screen, screen + move, size);
 		}
 	}
@@ -249,13 +212,13 @@ void OSystem_PALMOS::update_screen__flipping()
 void OSystem_PALMOS::update_screen__dbuffer()
 {
 	UInt32 move = 0;
-	UInt32 size = SCREEN_WIDTH*SCREEN_HEIGHT;
+	UInt32 size = _screenWidth * _screenHeight;
 
 	// shake screen
 	if (_current_shake_pos != _new_shake_pos) {
-		move = (_new_shake_pos * SCREEN_WIDTH);
+		move = (_new_shake_pos * _screenWidth);
 		// copy clear bottom of the screen to top to cover shaking image
-		MemMove(palm_screen, palm_screen + size , move);
+		MemMove(_screenP, _screenP + size , move);
 
 		if (_vibrate) {
 			Boolean active = (_new_shake_pos >= 3);
@@ -265,7 +228,7 @@ void OSystem_PALMOS::update_screen__dbuffer()
 		_current_shake_pos = _new_shake_pos;
 	}
 	// update screen
-	MemMove(palm_screen + move, palm_offscreen, size - move);
+	MemMove(_screenP + move, _offScreenP, size - move);
 }
 
 void OSystem_PALMOS::update_screen__direct()
@@ -309,11 +272,11 @@ void OSystem_PALMOS::update_screen() {
 }
 
 bool OSystem_PALMOS::show_mouse(bool visible) {
-	if (_mouse_visible == visible)
+	if (_mouseVisible == visible)
 		return visible;
 	
-	bool last = _mouse_visible;
-	_mouse_visible = visible;
+	bool last = _mouseVisible;
+	_mouseVisible = visible;
 
 	if (visible)
 		draw_mouse();
@@ -327,21 +290,21 @@ void OSystem_PALMOS::warp_mouse(int x, int y) {
 }
 
 void OSystem_PALMOS::set_mouse_pos(int x, int y) {
-	if (x != _mouse_cur_state.x || y != _mouse_cur_state.y) {
-		_mouse_cur_state.x = x;
-		_mouse_cur_state.y = y;
+	if (x != _mouseCurState.x || y != _mouseCurState.y) {
+		_mouseCurState.x = x;
+		_mouseCurState.y = y;
 		undraw_mouse();
 	}
 }
 
 void OSystem_PALMOS::set_mouse_cursor(const byte *buf, uint w, uint h, int hotspot_x, int hotspot_y) {
-	_mouse_cur_state.w = w;
-	_mouse_cur_state.h = h;
+	_mouseCurState.w = w;
+	_mouseCurState.h = h;
 
-	_mouse_hotspot_x = hotspot_x;
-	_mouse_hotspot_y = hotspot_y;
+	_mouseHotspotX = hotspot_x;
+	_mouseHotspotY = hotspot_y;
 
-	_mouse_data = (byte*)buf;
+	_mouseDataP = (byte*)buf;
 
 	undraw_mouse();
 }
@@ -406,8 +369,8 @@ void OSystem_PALMOS::delete_mutex(void *mutex)
 }
 
 void OSystem_PALMOS::SimulateArrowKeys(Event *event, Int8 iHoriz, Int8 iVert, Boolean repeat) {
-	Int16 x = _mouse_cur_state.x;
-	Int16 y = _mouse_cur_state.y;
+	Int16 x = _mouseCurState.x;
+	Int16 y = _mouseCurState.y;
 
 	if (repeat) {
 		lastKeyRepeat += 100;
@@ -422,9 +385,9 @@ void OSystem_PALMOS::SimulateArrowKeys(Event *event, Int8 iHoriz, Int8 iVert, Bo
 	y = y + iVert * (lastKeyRepeat/100);
 
 	x = (x < 0				) ? 0				: x;
-	x = (x >= SCREEN_WIDTH	) ? SCREEN_WIDTH-1	: x;
+	x = (x >= _screenWidth	) ? _screenWidth-1	: x;
 	y = (y < 0				) ? 0				: y;
-	y = (y >= SCREEN_HEIGHT	) ? SCREEN_HEIGHT-1	: y;
+	y = (y >= _screenHeight	) ? _screenHeight-1	: y;
 
 
 	event->event_code = EVENT_MOUSEMOVE;
@@ -443,7 +406,7 @@ void OSystem_PALMOS::drawKeyState() {
 	MemHandle hTemp;
 	BitmapType *bmTemp;
 	UInt32 *bmData;
-	UInt8 *scr = palm_screen + SCREEN_WIDTH * (SCREEN_HEIGHT + 2) + 2;
+	UInt8 *scr = _screenP + _screenWidth * (_screenHeight + 2) + 2;
 
 	hTemp	= DmGetResource(bitmapRsc,bmpID);
 	
@@ -458,7 +421,7 @@ void OSystem_PALMOS::drawKeyState() {
 				else
 					*scr++ = gVars->indicator.off;
 			}
-			scr += SCREEN_WIDTH - 32;
+			scr += _screenWidth - 32;
 			bmData++;
 		}
 
@@ -469,7 +432,7 @@ void OSystem_PALMOS::drawKeyState() {
 			for (j = 0; j < 32; j++) {
 				*scr++ = gVars->indicator.off;
 			}
-			scr += SCREEN_WIDTH - 32;
+			scr += _screenWidth - 32;
 		}
 	}
 }
@@ -477,7 +440,6 @@ void OSystem_PALMOS::drawKeyState() {
 bool OSystem_PALMOS::poll_event(Event *event) {
 	EventType ev;
 	Boolean handled;
-//	UInt32 button = 0;
 	uint32 current_msecs;
 	UInt32 keyCurrentState = 0;
 	Boolean funcButton = false;
@@ -497,9 +459,6 @@ bool OSystem_PALMOS::poll_event(Event *event) {
 		if(_sound.active)
 			check_sound();
 		
-//		if (_msg.state != 0)
-//			drawMessage();
-
 		// timer handler
 		if (_timer.active && (current_msecs >= _timer.next_expiry)) {
 			_timer.duration = _timer.callback(_timer.duration);
@@ -545,8 +504,8 @@ bool OSystem_PALMOS::poll_event(Event *event) {
 				// mouse emulation
 				case vchrHard1: // left button
 					event->event_code = EVENT_LBUTTONDOWN;
-					event->mouse.x = _mouse_cur_state.x;
-					event->mouse.y = _mouse_cur_state.y;
+					event->mouse.x = _mouseCurState.x;
+					event->mouse.y = _mouseCurState.y;
 					lastKeyPressed = -1;
 					return true;
 
@@ -572,8 +531,8 @@ bool OSystem_PALMOS::poll_event(Event *event) {
 
 				case vchrHard4: // right button
 					event->event_code = EVENT_RBUTTONDOWN;
-					event->mouse.x = _mouse_cur_state.x;
-					event->mouse.y = _mouse_cur_state.y;
+					event->mouse.x = _mouseCurState.x;
+					event->mouse.y = _mouseCurState.y;
 					lastKeyPressed = -1;
 					return true;
 
@@ -639,7 +598,7 @@ bool OSystem_PALMOS::poll_event(Event *event) {
 			}
 
 		case penMoveEvent:
-			if (ev.screenY*2-_decaly > SCREEN_HEIGHT || ev.screenY*2-_decaly < 0)
+			if (ev.screenY*2-_decaly > _screenHeight || ev.screenY*2-_decaly < 0)
 				return true;
 
 			if (lastEvent != penMoveEvent && (abs(ev.screenY*2-event->mouse.y) <= 2 || abs(ev.screenX*2-event->mouse.x) <= 2)) // move only if
@@ -654,7 +613,7 @@ bool OSystem_PALMOS::poll_event(Event *event) {
 		case penDownEvent:
 			lastEvent = penDownEvent;
 
-			if (ev.screenY*2-_decaly > SCREEN_HEIGHT || ev.screenY*2-_decaly < 0)
+			if (ev.screenY*2-_decaly > _screenHeight || ev.screenY*2-_decaly < 0)
 				return true;
 
 			event->event_code = EVENT_LBUTTONDOWN;
@@ -666,7 +625,7 @@ bool OSystem_PALMOS::poll_event(Event *event) {
 		case penUpEvent:
 			event->event_code = EVENT_LBUTTONUP;
 
-			if (ev.screenY*2-_decaly > SCREEN_HEIGHT || ev.screenY*2-_decaly < 0)
+			if (ev.screenY*2-_decaly > _screenHeight || ev.screenY*2-_decaly < 0)
 				return true;
 
 			event->mouse.x = ev.screenX*2;
@@ -688,28 +647,29 @@ uint32 OSystem_PALMOS::property(int param, Property *value) {
 		if (StrCaselessCompare(value->caption,"ScummVM") == 0)
 			return 1;
 		
-		UInt16 w1 = FntCharsWidth(value->caption,StrLen(value->caption));
+		Char *caption = "Loading...\0";
+		Char *build	= "Build on " __DATE__ ", " __TIME__ " GMT+1\0";
+		UInt16 h0 = FntLineHeight() + 2;
+		UInt16 w1;
+		
+		WinSetTextColor(255);
+		WinSetForeColor(255);
 
 		if (gVars->HRrefNum != sysInvalidRefNum) {
-			Char *caption = "Loading...\0";
-			UInt16 h0 = FntLineHeight() + 2;
-			UInt16 w1;
-
-			WinSetTextColor(255);
 			HRFntSetFont(gVars->HRrefNum,hrTinyBoldFont);
-			w1 = FntCharsWidth(caption,StrLen(caption)) * 1;
+			w1 = FntCharsWidth(caption,StrLen(caption));
 			w1 = (320 - w1) / 2;
 			HRWinDrawChars(gVars->HRrefNum,caption,StrLen(caption),w1,80);
 
 			HRFntSetFont(gVars->HRrefNum,hrTinyFont);
-			w1 = FntCharsWidth(value->caption,StrLen(value->caption)) * 1;
+			w1 = FntCharsWidth(value->caption,StrLen(value->caption));
 			w1 = (320 - w1) / 2;
 			HRWinDrawChars(gVars->HRrefNum,value->caption,StrLen(value->caption),w1,80 + h0);
+			HRWinDrawLine(gVars->HRrefNum, 40, 85 + h0 * 2, 280, 85 + h0 * 2);
+			w1 = FntCharsWidth(build,StrLen(build));
+			w1 = (320 - w1) / 2;
+			HRWinDrawChars(gVars->HRrefNum,build,StrLen(build),w1,90 + h0 * 2);
 		} else {
-			Char *caption = "Loading...\0";
-			UInt16 w1;
-
-			WinSetTextColor(255);
 			FntSetFont(boldFont);
 			w1 = FntCharsWidth(caption,StrLen(caption));
 			w1 = (160 - w1) / 2;
@@ -732,36 +692,37 @@ void OSystem_PALMOS::quit() {
 
 	if (_quit)
 		return;
+
 	if (g_scumm)
 		g_scumm->_quit = true;
 	if (_currentPalette)
 		free(_currentPalette);
-	if (_mouse_backup)
-		free(_mouse_backup);
-	if (_sndData)
-		MemPtrFree(_sndData);
+	if (_mouseBackupP)
+		free(_mouseBackupP);
+
+	if (_sndTempP)
+		MemPtrFree(_sndTempP);
+	if (_sndDataP)
+		MemPtrFree(_sndDataP);
 
 	unload_gfx_mode();
-
 	_quit = true;
-	_currentPalette = NULL;
-	_mouse_backup = NULL;
 }
 
 void OSystem_PALMOS::draw_mouse() {
-	if (_mouse_drawn || !_mouse_visible || _quit)
+	if (_mouseDrawn || !_mouseVisible || _quit)
 		return;
 
-	_mouse_cur_state.y = _mouse_cur_state.y>=SCREEN_HEIGHT ? SCREEN_HEIGHT-1 : _mouse_cur_state.y;
+	_mouseCurState.y = _mouseCurState.y >= _screenHeight ? _screenHeight - 1 : _mouseCurState.y;
 
-	int x = _mouse_cur_state.x - _mouse_hotspot_x;
-	int y = _mouse_cur_state.y - _mouse_hotspot_y;
-	int w = _mouse_cur_state.w;
-	int h = _mouse_cur_state.h;
+	int x = _mouseCurState.x - _mouseHotspotX;
+	int y = _mouseCurState.y - _mouseHotspotY;
+	int w = _mouseCurState.w;
+	int h = _mouseCurState.h;
 	byte color;
-	byte *src = _mouse_data;		// Image representing the mouse
-	byte *bak = _mouse_backup;		// Surface used to backup the area obscured by the mouse
-	byte *dst;					// Surface we are drawing into
+	byte *src = _mouseDataP;		// Image representing the mouse
+	byte *bak = _mouseBackupP;		// Surface used to backup the area obscured by the mouse
+	byte *dst;						// Surface we are drawing into
 
 
 	// clip the mouse rect, and addjust the src pointer accordingly
@@ -772,27 +733,27 @@ void OSystem_PALMOS::draw_mouse() {
 	}
 	if (y < 0) {
 		h += y;
-		src -= y * _mouse_cur_state.w;
+		src -= y * _mouseCurState.w;
 		y = 0;
 	}
-	if (w > SCREEN_WIDTH - x)
-		w = SCREEN_WIDTH - x;
-	if (h > SCREEN_HEIGHT - y)
-		h = SCREEN_HEIGHT - y;
-
-	// Store the bounding box so that undraw mouse can restore the area the
-	// mouse currently covers to its original content.
-	_mouse_old_state.x = x;
-	_mouse_old_state.y = y;
-	_mouse_old_state.w = w;
-	_mouse_old_state.h = h;
+	if (w > _screenWidth - x)
+		w = _screenWidth - x;
+	if (h > _screenHeight - y)
+		h = _screenHeight - y;
 
 	// Quick check to see if anything has to be drawn at all
 	if (w <= 0 || h <= 0)
 		return;
 
+	// Store the bounding box so that undraw mouse can restore the area the
+	// mouse currently covers to its original content.
+	_mouseOldState.x = x;
+	_mouseOldState.y = y;
+	_mouseOldState.w = w;
+	_mouseOldState.h = h;
+
 	// Draw the mouse cursor; backup the covered area in "bak"
-	dst = palm_offscreen + y * SCREEN_WIDTH + x;
+	dst = _offScreenP + y * _screenWidth + x;
 	while (h > 0) {
 		int width = w;
 		while (width > 0) {
@@ -803,33 +764,33 @@ void OSystem_PALMOS::draw_mouse() {
 			dst++;
 			width--;
 		}
-		src += _mouse_cur_state.w - w;
+		src += _mouseCurState.w - w;
 		bak += MAX_MOUSE_W - w;
-		dst += SCREEN_WIDTH - w;
+		dst += _screenWidth - w;
 		h--;
 	}
 
 	// Finally, set the flag to indicate the mouse has been drawn
-	_mouse_drawn = true;
+	_mouseDrawn = true;
 }
 
 void OSystem_PALMOS::undraw_mouse() {
-	if (!_mouse_drawn || _quit)
+	if (!_mouseDrawn || _quit)
 		return;
 
-	_mouse_drawn = false;
+	_mouseDrawn = false;
 
-	byte *dst, *bak = _mouse_backup;
-	const int old_mouse_x = _mouse_old_state.x;
-	const int old_mouse_y = _mouse_old_state.y;
-	const int old_mouse_w = _mouse_old_state.w;
-	const int old_mouse_h = _mouse_old_state.h;
+	byte *dst, *bak = _mouseBackupP;
+	const int old_mouse_x = _mouseOldState.x;
+	const int old_mouse_y = _mouseOldState.y;
+	const int old_mouse_w = _mouseOldState.w;
+	const int old_mouse_h = _mouseOldState.h;
 	int x,y;
 
 	// No need to do clipping here, since draw_mouse() did that already
 
-	dst = palm_offscreen + old_mouse_y * SCREEN_WIDTH + old_mouse_x;
-	for (y = 0; y < old_mouse_h; ++y, bak += MAX_MOUSE_W, dst += SCREEN_WIDTH) {
+	dst = _offScreenP + old_mouse_y * _screenWidth + old_mouse_x;
+	for (y = 0; y < old_mouse_h; ++y, bak += MAX_MOUSE_W, dst += _screenWidth) {
 		for (x = 0; x < old_mouse_w; ++x) {
 			dst[x] = bak[x];
 		}
@@ -857,11 +818,9 @@ OSystem_PALMOS::OSystem_PALMOS() {
 	_current_shake_pos = 0;
 	_new_shake_pos = 0;
 
-	memset(&_mouse_old_state,0,sizeof(MousePos));
-	memset(&_mouse_cur_state,0,sizeof(MousePos));
+	memset(&_mouseOldState,0,sizeof(MousePos));
+	memset(&_mouseCurState,0,sizeof(MousePos));
 	
-	_msg.state = 0;
-
 	_paletteDirtyStart = 0;
 	_paletteDirtyEnd = 0;
 	
@@ -870,15 +829,16 @@ OSystem_PALMOS::OSystem_PALMOS() {
 	_sound.active = false;
 	
 	_currentPalette = NULL;
-	_mouse_backup = NULL;
+	_mouseBackupP = NULL;
 
 	lastKeyPressed = -1;
 	lastKeyRepeat = 100;
 	lastKeyModifier = MD_NONE;
 	
-	_isPlaying = false;
-
-	_sndData = (UInt8 *)MemPtrNew(512);
+	// sound
+	_isSndPlaying = false;
+	_sndTempP = (UInt8 *)MemPtrNew(4096);
+	_sndDataP = (UInt8 *)MemPtrNew(1024);
 }
 
 void OSystem_PALMOS::move_screen(int dx, int dy, int height) {
@@ -892,79 +852,30 @@ void OSystem_PALMOS::move_screen(int dx, int dy, int height) {
 			// move down
 			// copy from bottom to top
 			for (int y = height - 1; y >= dy; y--)
-				copy_rect((byte *)palm_offscreen + SCREEN_WIDTH * (y - dy), SCREEN_WIDTH, 0, y, SCREEN_WIDTH, 1);
+				copy_rect((byte *)_offScreenP + _screenWidth * (y - dy), _screenWidth, 0, y, _screenWidth, 1);
 		} else {
 			// move up
 			// copy from top to bottom
 			for (int y = 0; y < height + dx; y++)
-				copy_rect((byte *)palm_offscreen + SCREEN_WIDTH * (y - dy), SCREEN_WIDTH, 0, y, SCREEN_WIDTH, 1);
+				copy_rect((byte *)_offScreenP + _screenWidth * (y - dy), _screenWidth, 0, y, _screenWidth, 1);
 		}
 	} else if (dy == 0) {
 		// horizontal movement
 		if (dx > 0) {
 			// move right
 			// copy from right to left
-			for (int x = SCREEN_WIDTH - 1; x >= dx; x--)
-				copy_rect((byte *)palm_offscreen + x - dx, SCREEN_WIDTH, x, 0, 1, height);
+			for (int x = _screenWidth - 1; x >= dx; x--)
+				copy_rect((byte *)_offScreenP + x - dx, _screenWidth, x, 0, 1, height);
 		} else {
 			// move left
 			// copy from left to right
-			for (int x = 0; x < SCREEN_WIDTH; x++)
-				copy_rect((byte *)palm_offscreen + x - dx, SCREEN_WIDTH, x, 0, 1, height);
+			for (int x = 0; x < _screenWidth; x++)
+				copy_rect((byte *)_offScreenP + x - dx, _screenWidth, x, 0, 1, height);
 		}
 	} else {
 		// free movement
 		// not neccessary for now
 	}
-}
-
-void OSystem_PALMOS::drawMessage() {
-	UInt32 msecs = get_msecs();
-	
-	if ((msecs - _msg.time) >= _msg.wait) {
-		Int16 y = _msg.position * _msg.state + (_msg.state == -1 ? 320 : 308);
-		 _msg.time = msecs;
-
-		WinSetDrawMode(winPaint);
-		WinSetBackColor(0);
-		WinSetTextColor(_msg.color);
-		HRFntSetFont(gVars->HRrefNum,hrTinyFont);
-		HRWinDrawChars(gVars->HRrefNum, _msg.text, StrLen(_msg.text), 2, y);
-		
-		_msg.position += 2;
-		if (_msg.position > 12) {
-			_msg.position = 0;
-			_msg.state *= -1;
-			_msg.wait = 5000;
-			_msg.state = (_msg.state == -1 ? 0 : _msg.state);
-		} else {
-			_msg.wait = 100;
-		}
-	}
-}
-
-void OSystem_PALMOS::deleteMessage() {
-	if (_msg.state != 0) {
-		Int16 y = _msg.position * _msg.state + (_msg.state == -1 ? 320 : 308);
-		WinSetDrawMode(winPaint);
-		WinSetBackColor(0);
-		WinSetTextColor(0);
-		HRFntSetFont(gVars->HRrefNum,hrTinyFont);
-		HRWinDrawChars(gVars->HRrefNum, _msg.text, StrLen(_msg.text), 2, y);
-	}
-}
-
-void OSystem_PALMOS::addMessage(const Char *msg) {
-
-	if (_msg.state != 0)
-		deleteMessage();
-
-	_msg.state = -1;
-	_msg.position = 0;
-	StrCopy(_msg.text,msg);
-	_msg.time = get_msecs();
-	_msg.wait = 100;
-	_msg.color = RGBToColor(255,255,255);
 }
 
 bool OSystem_PALMOS::set_sound_proc(void *param, SoundProc *proc, byte format) {
@@ -978,11 +889,10 @@ bool OSystem_PALMOS::set_sound_proc(void *param, SoundProc *proc, byte format) {
 
 void OSystem_PALMOS::check_sound() {
 	// currently not supported
-	_sound.proc(_sound.param, _sndData, 512);
+	_sound.proc(_sound.param, _sndTempP, 256);
 }
 
-void OSystem_PALMOS::show_overlay()
-{
+void OSystem_PALMOS::show_overlay() {
 	// hide the mouse
 	undraw_mouse();
 
@@ -990,92 +900,88 @@ void OSystem_PALMOS::show_overlay()
 	clear_overlay();
 }
 
-void OSystem_PALMOS::hide_overlay()
-{
+void OSystem_PALMOS::hide_overlay() {
 	// hide the mouse
 	undraw_mouse();
 
 	_overlay_visible = false;
 	_overlaySaved = false;
-	memmove(palm_offscreen, tmpScreen, SCREEN_WIDTH*SCREEN_HEIGHT);
+	memmove(_offScreenP, _tmpScreenP, _screenWidth * _screenHeight);
 }
 
-void OSystem_PALMOS::clear_overlay()
-{
+void OSystem_PALMOS::clear_overlay() {
 	if (!_overlay_visible)
 		return;
 	
 	// hide the mouse
 	undraw_mouse();
-	if (!_overlaySaved)
-	{	//memmove(palm_tmpscreen, palm_offscreen, SCREEN_WIDTH*SCREEN_HEIGHT);
-		DmWrite(tmpScreen, 0, palm_offscreen, SCREEN_WIDTH*SCREEN_HEIGHT);
+	if (!_overlaySaved) {
+		if (MemPtrDataStorage(_tmpScreenP))
+			DmWrite(_tmpScreenP, 0, _offScreenP, _screenWidth * _screenHeight);
+		else
+			MemMove(_tmpScreenP, _offScreenP, _screenWidth * _screenHeight);
 		_overlaySaved = true;
 	}
 }
 
-void OSystem_PALMOS::grab_overlay(byte *buf, int pitch)
-{
+void OSystem_PALMOS::grab_overlay(byte *buf, int pitch) {
 	if (!_overlay_visible)
 		return;
 
 	// hide the mouse
 	undraw_mouse();
 
-	byte *src = tmpScreen;
-	int h = SCREEN_HEIGHT;
+	byte *src = _tmpScreenP;
+	int h = _screenHeight;
 
 	do {
-		memcpy(buf, src, SCREEN_WIDTH);
-		src += SCREEN_WIDTH;
+		memcpy(buf, src, _screenWidth);
+		src += _screenWidth;
 		buf += pitch;
 	} while (--h);
 }
 
-void OSystem_PALMOS::copy_rect_overlay(const byte *buf, int pitch, int x, int y, int w, int h)
-{
+void OSystem_PALMOS::copy_rect_overlay(const byte *buf, int pitch, int x, int y, int w, int h) {
 	if (!_overlay_visible)
 		return;
 
 	undraw_mouse();
 
-	byte *dst = palm_offscreen + y * SCREEN_WIDTH + x;
+	byte *dst = _offScreenP + y * _screenWidth + x;
 
 	do {
 		memcpy(dst, buf, w);
-		dst += SCREEN_WIDTH;
+		dst += _screenWidth;
 		buf += pitch;
 	} while (--h);
 }
 
 
 int16 OSystem_PALMOS::get_height() {
-	return SCREEN_HEIGHT;
+	return _screenHeight;
 }
 
 int16 OSystem_PALMOS::get_width() {
-	return SCREEN_WIDTH;
+	return _screenWidth;
 }
 
-byte OSystem_PALMOS::RGBToColor(uint8 r, uint8 g, uint8 b)
-{
+byte OSystem_PALMOS::RGBToColor(uint8 r, uint8 g, uint8 b) {
 	NewGuiColor color = 255;
 	byte nearest = 255;
 	byte check;
 	byte r2,g2,b2;
 
-	for (int i=0; i<256; i++)
+	for (int i = 0; i < 256; i++)
 	{
 		r2 = _currentPalette[i].r;
 		g2 = _currentPalette[i].g;
 		b2 = _currentPalette[i].b;
 
-		check = (ABS(r2 - r) + ABS(g2 - g) + ABS(b2 - b))/3;
+		check = (ABS(r2 - r) + ABS(g2 - g) + ABS(b2 - b)) / 3;
 
 		if (check == 0)				// perfect match
 			return i;
-		else if (check<nearest)		// else save and continue
-		{	
+		else if (check < nearest) { // else save and continue
 			color = i;
 			nearest = check;
 		}
@@ -1084,8 +990,7 @@ byte OSystem_PALMOS::RGBToColor(uint8 r, uint8 g, uint8 b)
 	return color;
 }
 
-void OSystem_PALMOS::ColorToRGB(byte color, uint8 &r, uint8 &g, uint8 &b)
-{
+void OSystem_PALMOS::ColorToRGB(byte color, uint8 &r, uint8 &g, uint8 &b) {
 	r = _currentPalette[color].r;
 	g = _currentPalette[color].g;
 	b = _currentPalette[color].b;

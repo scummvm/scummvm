@@ -21,14 +21,18 @@
  */
 
 #include <PalmOS.h>
+#include <PalmOSGlue.h>
 #include <SonyClie.h>
+
 #include "StarterRsc.h"
-#include "extras.h"
 #include "skin.h"
 #include "globals.h"
 #include "pa1lib.h"
 #include "scumm_globals.h"
 #include "extend.h"			// for disable state
+
+#include "mathlib.h"
+#include "vibrate.h"
 
 void MemExtInit();
 void MemExtCleanup();
@@ -136,7 +140,6 @@ GlobalsDataType *gVars;
  *	Internal Constants
  *
  ***********************************************************************/
-#define appFileCreator			'ScVM'	// register your own at http://www.palmos.com/dev/creatorid/
 #define appVersionNum			0x01
 #define appPrefID				0x00
 #define appPrefVersionNum		0x01

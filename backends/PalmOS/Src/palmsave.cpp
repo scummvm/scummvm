@@ -22,14 +22,11 @@
 
 #include <ctype.h>
 #include "common/scummsys.h"
-//#include "common/stdafx.h"
 #include "common/engine.h"
 #include "scumm/saveload.h"
 #include "palm.h"
-//#include "gui/newgui.h"
-//#include "gui/message.h"
 
-#define	MAX_BLOCK 64000
+#define	MAX_BLOCK 64000	// store in memory, before dump to file
 
 // SaveFile class
 
@@ -77,7 +74,7 @@ int PalmSaveFile::fread(void *buf, int size, int cnt) {
 int PalmSaveFile::fwrite(void *buf, int size, int cnt) {
 	UInt32 fullsize = size*cnt;
 
-	if (fullsize<=MAX_BLOCK)
+	if (fullsize <= MAX_BLOCK)
 	{
 		if (!_readWriteData)
 			_readWriteData = (byte *)malloc(MAX_BLOCK);
@@ -103,24 +100,6 @@ int PalmSaveFile::fwrite(void *buf, int size, int cnt) {
 class PalmSaveFileManager : public SaveFileManager {
 
 public:
-/*	SaveFile *open_savefile(const char *filename,
-					bool saveOrLoad)
-	{
-		PalmSaveFile *sf = new PalmSaveFile(filename,
-						      (saveOrLoad? "wb":"rb"));
-		if(!sf->is_open()) {
-			delete sf;
-			sf = NULL;
-		}
-		return sf;
-	}
-
-	void list_savefiles(const char *prefix,
-				    bool *marks, int num)
-	{
-		memset(marks, true, num*sizeof(bool));
-	}
-*/
 	SaveFile *open_savefile(const char *filename, bool saveOrLoad);
 	void list_savefiles(const char *prefix, bool *marks, int num);
 };
