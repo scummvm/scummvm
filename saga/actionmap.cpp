@@ -28,6 +28,8 @@
 #include "saga/console.h"
 
 #include "saga/actionmap.h"
+#include "saga/game_mod.h"
+#include "saga/stream.h"
 
 namespace Saga {
 
@@ -39,10 +41,10 @@ ActionMap::ActionMap(SagaEngine *vm, const byte * exmap_res, size_t exmap_res_le
 
 	assert(exmap_res != NULL);
 
-	MemoryReadStream readS(exmap_res, exmap_res_len);
+	MemoryReadStreamEndian readS(exmap_res, exmap_res_len, IS_BIG_ENDIAN);
 
 	// Load exits
-	_nExits = readS.readSint16LE();
+	_nExits = readS.readSint16();
 	if (_nExits < 0) {
 		return;
 	}
@@ -59,8 +61,8 @@ ActionMap::ActionMap(SagaEngine *vm, const byte * exmap_res, size_t exmap_res_le
 		exmap_entry->nClickareas = readS.readByte();
 		exmap_entry->defaultVerb = readS.readByte();
 		readS.readByte();
-		exmap_entry->exitScene = readS.readUint16LE();
-		exmap_entry->entranceNum = readS.readUint16LE();
+		exmap_entry->exitScene = readS.readUint16();
+		exmap_entry->entranceNum = readS.readUint16();
 
 		exmap_entry->clickareas = (CLICKAREA *)malloc(exmap_entry->nClickareas * sizeof *(exmap_entry->clickareas));
 
@@ -72,7 +74,7 @@ ActionMap::ActionMap(SagaEngine *vm, const byte * exmap_res, size_t exmap_res_le
 		// Load all clickareas for this object
 		for (int k = 0; k < exmap_entry->nClickareas; k++) {
 			clickarea = &exmap_entry->clickareas[k];
-			clickarea->n_points = readS.readUint16LE();
+			clickarea->n_points = readS.readUint16();
 			assert(clickarea->n_points != 0);
 
 			clickarea->points = (Point *)malloc(clickarea->n_points * sizeof *(clickarea->points));
@@ -84,8 +86,8 @@ ActionMap::ActionMap(SagaEngine *vm, const byte * exmap_res, size_t exmap_res_le
 			// Load all points for this clickarea
 			for (int m = 0; m < clickarea->n_points; m++) {
 				point = &clickarea->points[m];
-				point->x = readS.readSint16LE();
-				point->y = readS.readSint16LE();
+				point->x = readS.readSint16();
+				point->y = readS.readSint16();
 			}
 		}
 	}

@@ -26,7 +26,10 @@
 #ifndef SAGA_EVENT_H
 #define SAGA_EVENT_H
 
+#include "saga/list.h"
+
 namespace Saga {
+
 enum EVENT_TYPES {
 	ONESHOT_EVENT,
 	CONTINUOUS_EVENT,
@@ -119,6 +122,8 @@ struct EVENT {
 	EVENT() { memset(this, 0, sizeof(*this)); }
 };
 
+typedef SortedList<EVENT> EventList;
+
 #define EVENT_WARNINGCOUNT 1000
 #define EVENT_MASK 0x00FF
 
@@ -151,7 +156,7 @@ class Events {
 	SagaEngine *_vm;
 	bool _initialized;
 
-	YS_DL_LIST *_eventList;
+	EventList _eventList;
 };
 
 } // End of namespace Saga

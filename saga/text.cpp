@@ -24,7 +24,6 @@
 // Text / dialogue display management module
 
 #include "saga/saga.h"
-#include "saga/yslib.h"
 
 #include "saga/gfx.h"
 #include "saga/font.h"
@@ -149,16 +148,9 @@ int SagaEngine::textDraw(int font_id, SURFACE *ds, const char *string, int text_
 TEXTLIST *SagaEngine::textCreateList() {
 	TEXTLIST *new_textlist;
 
-	new_textlist = (TEXTLIST *)malloc(sizeof *new_textlist);
+	new_textlist =  new TEXTLIST;
 
 	if (new_textlist == NULL) {
-		return NULL;
-	}
-
-	new_textlist->list = ys_dll_create();
-
-	if (new_textlist->list == NULL) {
-		free(new_textlist);
 		return NULL;
 	}
 
@@ -167,7 +159,7 @@ TEXTLIST *SagaEngine::textCreateList() {
 
 void SagaEngine::textClearList(TEXTLIST *tlist) {
 	if (tlist != NULL) {
-		ys_dll_delete_all(tlist->list);
+		tlist->clear();
 	}
 
 	return;
@@ -175,21 +167,18 @@ void SagaEngine::textClearList(TEXTLIST *tlist) {
 
 void SagaEngine::textDestroyList(TEXTLIST *tlist) {
 	if (tlist != NULL) {
-		ys_dll_destroy(tlist->list);
-	}
-	free(tlist);
-
+		delete tlist;
+	}	
 	return;
 }
 
 int SagaEngine::textDrawList(TEXTLIST *textlist, SURFACE *ds) {
 	TEXTLIST_ENTRY *entry_p;
-	YS_DL_NODE *walk_p;
 
 	assert((textlist != NULL) && (ds != NULL));
 
-	for (walk_p = ys_dll_head(textlist->list); walk_p != NULL; walk_p = ys_dll_next(walk_p)) {
-		entry_p = (TEXTLIST_ENTRY *)ys_dll_get_data(walk_p);
+	for (TEXTLIST::iterator texti = textlist->begin(); texti != textlist->end(); ++texti) {
+		entry_p = (TEXTLIST_ENTRY *)texti.operator->();
 		if (entry_p->display != 0) {
 			textDraw(entry_p->font_id, ds, entry_p->string, entry_p->text_x, entry_p->text_y, entry_p->color,
 			entry_p->effect_color, entry_p->flags);
@@ -201,16 +190,13 @@ int SagaEngine::textDrawList(TEXTLIST *textlist, SURFACE *ds) {
 
 int SagaEngine::textProcessList(TEXTLIST *textlist, long ms) {
 	TEXTLIST_ENTRY *entry_p;
-	YS_DL_NODE *walk_p;
-	YS_DL_NODE *temp_p;
 
-	for (walk_p = ys_dll_head(textlist->list); walk_p != NULL; walk_p = temp_p) {
-		temp_p = ys_dll_next(walk_p);
-		entry_p = (TEXTLIST_ENTRY *)ys_dll_get_data(walk_p);
+	for (TEXTLIST::iterator texti = textlist->begin(); texti != textlist->end(); ++texti) {
+		entry_p = (TEXTLIST_ENTRY *)texti.operator->();
 		if (entry_p->flags & TEXT_TIMEOUT) {
 			entry_p->time -= ms;
 			if (entry_p->time <= 0) {
-				ys_dll_delete(walk_p);
+				texti=textlist->eraseAndPrev(texti);
 			}
 		}
 	}
@@ -220,13 +206,10 @@ int SagaEngine::textProcessList(TEXTLIST *textlist, long ms) {
 }
 
 TEXTLIST_ENTRY *SagaEngine::textAddEntry(TEXTLIST *textlist, TEXTLIST_ENTRY *entry) {
-	YS_DL_NODE *new_node = NULL;
-
 	if (entry != NULL) {
-		new_node = ys_dll_add_tail(textlist->list, entry, sizeof *entry);
+		return textlist->pushBack(*entry).operator->();
 	}
-
-	return (new_node != NULL) ? (TEXTLIST_ENTRY *)new_node->data : NULL;
+	return NULL;
 }
 
 int SagaEngine::textSetDisplay(TEXTLIST_ENTRY *entry, int val) {
@@ -239,18 +222,12 @@ int SagaEngine::textSetDisplay(TEXTLIST_ENTRY *entry, int val) {
 }
 
 int SagaEngine::textDeleteEntry(TEXTLIST *textlist, TEXTLIST_ENTRY *entry) {
-	YS_DL_NODE *walk_p;
 
 	if (entry == NULL) {
 		return FAILURE;
 	}
-
-	for (walk_p = ys_dll_head(textlist->list); walk_p != NULL; walk_p = ys_dll_next(walk_p)) {
-		if (entry == ys_dll_get_data(walk_p)) {
-			ys_dll_delete(walk_p);
-			break;
-		}
-	}
+	
+	textlist->remove(entry);
 
 	return SUCCESS;
 }

@@ -24,7 +24,6 @@
 // "I Have No Mouth" Intro sequence scene procedures
 
 #include "saga/saga.h"
-#include "saga/yslib.h"
 #include "saga/gfx.h"
 
 #include "saga/animation.h"

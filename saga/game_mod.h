@@ -30,13 +30,18 @@
 
 namespace Saga {
 
+#define IS_BIG_ENDIAN ((GAME_GetFeatures() & GF_BIG_ENDIAN_DATA) != 0)
+#define IS_MAC_VERSION (GAME_GetGame() == GAME_ITE_MACDEMO)
+
+
 enum GAME_IDS {
 	GAME_ITE_DEMO = 0,
 	GAME_ITE_DISK = 1,
 	GAME_ITE_CD = 2,
 	GAME_IHNM_DEMO = 3,
 	GAME_IHNM_CD = 4,
-	GAME_ITE_WINDEMO = 5
+	GAME_ITE_WINDEMO = 5,
+	GAME_ITE_MACDEMO = 6
 };
 
 enum GAME_FILETYPES {
@@ -68,7 +73,8 @@ enum GAME_FONT_IDS {
 };
 
 enum GAME_FEATURES {
-	GF_VOX_VOICES = 1
+	GF_VOX_VOICES = 1,
+	GF_BIG_ENDIAN_DATA = 2
 };
 
 struct GAME_DISPLAYINFO {
@@ -109,11 +115,10 @@ int GAME_GetResourceInfo(GAME_RESOURCEDESC *);
 int GAME_GetSoundInfo(GAME_SOUNDINFO *);
 int GAME_GetDisplayInfo(GAME_DISPLAYINFO *);
 int GAME_GetSceneInfo(GAME_SCENEDESC *);
-int GAME_GetGame();
-int GAME_GetGameType();
+GAME_IDS GAME_GetGame();
+SAGAGameId GAME_GetGameType();
 DetectedGameList GAME_ProbeGame(const FSList &fslist);
 uint32 GAME_GetFeatures();
-
 } // End of namespace Saga
 
 #endif

@@ -32,6 +32,8 @@
 #include "saga/console.h"
 #include "saga/font.h"
 #include "saga/objectmap.h"
+#include "saga/game_mod.h"
+#include "saga/stream.h"
 
 namespace Saga {
 
@@ -56,14 +58,14 @@ int ObjectMap::load(const byte *om_res, size_t om_res_len) {
 
 	int i, k, m;
 
-	MemoryReadStream readS(om_res, om_res_len);
+	MemoryReadStreamEndian readS(om_res, om_res_len, IS_BIG_ENDIAN);
 
 	if (_objectsLoaded) {
 		freeMem();
 	}
 
 	// Obtain object count N and allocate space for N objects
-	_nObjects = readS.readUint16LE();
+	_nObjects = readS.readUint16();
 
 	_objectMaps = (OBJECTMAP_ENTRY *)malloc(_nObjects * sizeof *_objectMaps);
 
@@ -79,8 +81,8 @@ int ObjectMap::load(const byte *om_res, size_t om_res_len) {
 		object_map->nClickareas = readS.readByte();
 		object_map->defaultVerb = readS.readByte();
 		readS.readByte();
-		object_map->objectNum = readS.readUint16LE();
-		object_map->scriptNum = readS.readUint16LE();
+		object_map->objectNum = readS.readUint16();
+		object_map->scriptNum = readS.readUint16();
 		object_map->clickareas = (CLICKAREA *)malloc(object_map->nClickareas * sizeof *(object_map->clickareas));
 
 		if (object_map->clickareas == NULL) {
@@ -103,8 +105,8 @@ int ObjectMap::load(const byte *om_res, size_t om_res_len) {
 			// Load all points for this clickarea
 			for (m = 0; m < clickarea->n_points; m++) {
 				point = &clickarea->points[m];
-				point->x = readS.readSint16LE();
-				point->y = readS.readSint16LE();
+				point->x = readS.readSint16();
+				point->y = readS.readSint16();
 			}
 			debug(2, "ObjectMap::load(): Read %d points for clickarea %d in object %d.",
 					clickarea->n_points, k, object_map->objectNum);
@@ -153,13 +155,13 @@ int ObjectMap::loadNames(const unsigned char *onl_res, size_t onl_res_len) {
 
 	int i;
 
-	MemoryReadStream readS(onl_res, onl_res_len);
+	MemoryReadStreamEndian readS(onl_res, onl_res_len, IS_BIG_ENDIAN);
 
 	if (_namesLoaded) {
 		freeNames();
 	}
 
-	table_len = readS.readUint16LE();
+	table_len = readS.readUint16();
 
 	n_names = table_len / 2 - 2;
 	_nNames = n_names;
@@ -173,7 +175,7 @@ int ObjectMap::loadNames(const unsigned char *onl_res, size_t onl_res_len) {
 	}
 
 	for (i = 0; i < n_names; i++) {
-		name_offset = readS.readUint16LE();
+		name_offset = readS.readUint16();
 		_names[i] = (const char *)(onl_res + name_offset);
 
 		debug(3, "Loaded object name string: %s", _names[i]);

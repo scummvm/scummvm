@@ -30,6 +30,7 @@
 
 #include "saga/sndres.h"
 #include "saga/sound.h"
+#include "saga/stream.h"
 
 #include "common/file.h"
 
@@ -175,7 +176,7 @@ int SndRes::load(RSCFILE_CONTEXT *snd_ctxt, uint32 snd_rn, SOUNDBUFFER *snd_buf_
 }
 
 int SndRes::loadVocSound(byte *snd_res, size_t snd_res_len, SOUNDBUFFER *snd_buf_i) {
-	MemoryReadStream readS(snd_res, snd_res_len);
+	MemoryReadStreamEndian readS(snd_res, snd_res_len, IS_BIG_ENDIAN);
 	byte *data;
 	int rate;
 	int len;
@@ -188,11 +189,11 @@ int SndRes::loadVocSound(byte *snd_res, size_t snd_res_len, SOUNDBUFFER *snd_buf
 
 	snd_buf_i->s_freq = rate;
 	snd_buf_i->s_samplebits = 8;
-	snd_buf_i->s_stereo = 0;
+			snd_buf_i->s_stereo = 0;
 	snd_buf_i->s_signed = 0;
 	snd_buf_i->s_buf = data;
 	snd_buf_i->s_buf_len = len;
-	
+
 	return SUCCESS;
 
 }
@@ -200,7 +201,7 @@ int SndRes::loadVocSound(byte *snd_res, size_t snd_res_len, SOUNDBUFFER *snd_buf
 int SndRes::loadWavSound(byte *snd_res, size_t snd_res_len, SOUNDBUFFER *snd_buf_i) {
 	// TODO: This function should, perhaps, be made more robust.
 
-	MemoryReadStream readS(snd_res, snd_res_len);
+	MemoryReadStreamEndian readS(snd_res, snd_res_len, IS_BIG_ENDIAN);
 
 	byte buf[4];
 
@@ -209,7 +210,7 @@ int SndRes::loadWavSound(byte *snd_res, size_t snd_res_len, SOUNDBUFFER *snd_buf
 		return FAILURE;
 	}
 
-	readS.readUint32LE();
+	readS.readUint32();
 
 	readS.read(buf, sizeof(buf));
 	if (memcmp(buf, "WAVE", sizeof(buf)) != 0) {
@@ -221,13 +222,13 @@ int SndRes::loadWavSound(byte *snd_res, size_t snd_res_len, SOUNDBUFFER *snd_buf
 		return FAILURE;
 	}
 
-	uint32 len = readS.readUint32LE();
+	uint32 len = readS.readUint32();
 	uint32 pos = readS.pos();
 
-	readS.readUint16LE();
+	readS.readUint16();
 
-	snd_buf_i->s_stereo = (readS.readUint16LE() == 2) ? 1 : 0;
-	snd_buf_i->s_freq = readS.readUint16LE();
+	snd_buf_i->s_stereo = (readS.readUint16() == 2) ? 1 : 0;
+	snd_buf_i->s_freq = readS.readUint16();
 	snd_buf_i->s_samplebits = 16;
 	snd_buf_i->s_signed = 1;
 
@@ -239,11 +240,11 @@ int SndRes::loadWavSound(byte *snd_res, size_t snd_res_len, SOUNDBUFFER *snd_buf
 			break;
 		}
 
-		len = readS.readUint32LE();
+		len = readS.readUint32();
 		readS.seek(len, SEEK_CUR);
 	}
 
-	snd_buf_i->s_buf_len = readS.readUint32LE();
+	snd_buf_i->s_buf_len = readS.readUint32();
 
 	byte *data = (byte *)malloc(snd_buf_i->s_buf_len);
 	if (!data) {

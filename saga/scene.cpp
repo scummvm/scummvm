@@ -23,7 +23,6 @@
 
 // Scene management module
 #include "saga/saga.h"
-#include "saga/yslib.h"
 
 #include "saga/gfx.h"
 #include "saga/game_mod.h"
@@ -43,6 +42,7 @@
 #include "saga/music.h"
 
 #include "saga/scene.h"
+#include "saga/stream.h"
 
 namespace Saga {
 
@@ -63,11 +63,6 @@ Scene::Scene(SagaEngine *vm) : _vm(vm), _initialized(false) {
 		return;
 	}
 
-	// Initialize scene queue
-	_sceneQueue = ys_dll_create();
-	if (_sceneQueue == NULL) {
-		return;
-	}
 
 	// Load scene lookup table
 	debug(0, "Loading scene LUT from resource %u.", gs_desc.scene_lut_rn);
@@ -76,7 +71,10 @@ Scene::Scene(SagaEngine *vm) : _vm(vm), _initialized(false) {
 		warning("Scene::Scene(): Error: couldn't load scene LUT");
 		return;
 	}
-
+	if (scene_lut_len==0) {
+		warning("Scene::Scene(): scene_lut_len==0");
+		return;
+	}
 	_sceneCount = scene_lut_len / 2;
 	_sceneMax = _sceneCount - 1;
 	_sceneLUT = (int *)malloc(_sceneMax * sizeof *_sceneLUT);
@@ -85,10 +83,10 @@ Scene::Scene(SagaEngine *vm) : _vm(vm), _initialized(false) {
 		return;
 	}
 
-	MemoryReadStream readS(scene_lut_p, scene_lut_len);
+	MemoryReadStreamEndian readS(scene_lut_p, scene_lut_len, IS_BIG_ENDIAN);
 
 	for (i = 0; i < _sceneMax; i++) {
-		_sceneLUT[i] = readS.readUint16LE();
+		_sceneLUT[i] = readS.readUint16();
 	}
 
 	free(scene_lut_p);
@@ -119,7 +117,6 @@ Scene::Scene(SagaEngine *vm) : _vm(vm), _initialized(false) {
 	_resListEntries = 0;
 	_resList = NULL;
 	_animEntries = 0;
-	_animList = NULL;
 	_sceneProc = NULL;
 	_objectMap = NULL;
 	_actionMap = NULL;
@@ -140,21 +137,20 @@ int Scene::queueScene(SCENE_QUEUE *scene_queue) {
 	assert(_initialized);
 	assert(scene_queue != NULL);
 
-	ys_dll_add_tail(_sceneQueue, scene_queue, sizeof *scene_queue);
-
+	_sceneQueue.push_back(*scene_queue);
 	return SUCCESS;
 }
 
 int Scene::clearSceneQueue() {
 	assert(_initialized);
 
-	ys_dll_delete_all(_sceneQueue);
+	_sceneQueue.clear();
 
 	return SUCCESS;
 }
 
 int Scene::startScene() {
-	YS_DL_NODE *node;
+	SceneQueueList::iterator queueIterator;
 	SCENE_QUEUE *scene_qdat;
 	EVENT event;
 
@@ -188,13 +184,13 @@ int Scene::startScene() {
 		break;
 	}
 
-	// Load the head node in scene queue
-	node = ys_dll_head(_sceneQueue);
-	if (node == NULL) {
+	// Load the head in scene queue
+	queueIterator = _sceneQueue.begin();
+	if (queueIterator == _sceneQueue.end()) {
 		return SUCCESS;
 	}
 
-	scene_qdat = (SCENE_QUEUE *)ys_dll_get_data(node);
+	scene_qdat = queueIterator.operator->();
 	assert(scene_qdat != NULL);
 
 	loadScene(scene_qdat->scene_n, scene_qdat->load_flag, scene_qdat->scene_proc, scene_qdat->scene_desc, scene_qdat->fadeType);
@@ -203,7 +199,7 @@ int Scene::startScene() {
 }
 
 int Scene::nextScene() {
-	YS_DL_NODE *node;
+	SceneQueueList::iterator queueIterator;
 	SCENE_QUEUE *scene_qdat;
 
 	assert(_initialized);
@@ -220,32 +216,29 @@ int Scene::nextScene() {
 
 	endScene();
 
-	// Delete the current head node in scene queue
-	node = ys_dll_head(_sceneQueue);
-	if (node == NULL) {
+	// Delete the current head  in scene queue
+	queueIterator = _sceneQueue.begin();
+	if (queueIterator == _sceneQueue.end()) {
+		return SUCCESS;
+	}
+	
+	queueIterator = _sceneQueue.erase(queueIterator);
+
+	if (queueIterator == _sceneQueue.end()) {
 		return SUCCESS;
 	}
 
-	ys_dll_delete(node);
-
-	// Load the head node in scene queue
-	node = ys_dll_head(_sceneQueue);
-	if (node == NULL) {
-		return SUCCESS;
-	}
-
-	scene_qdat = (SCENE_QUEUE *)ys_dll_get_data(node);
+	// Load the head  in scene queue
+	scene_qdat = queueIterator.operator->();
 	assert(scene_qdat != NULL);
 
-	loadScene(scene_qdat->scene_n, scene_qdat->load_flag, scene_qdat->scene_proc, scene_qdat->scene_desc, scene_qdat->fadeType);
+	loadScene(RSC_ConvertID(scene_qdat->scene_n), scene_qdat->load_flag, scene_qdat->scene_proc, scene_qdat->scene_desc, scene_qdat->fadeType);
 
 	return SUCCESS;
 }
 
 int Scene::skipScene() {
-	YS_DL_NODE *node;
-	YS_DL_NODE *prev_node;
-	YS_DL_NODE *skip_node = NULL;
+	SceneQueueList::iterator queueIterator;
 
 	SCENE_QUEUE *scene_qdat = NULL;
 	SCENE_QUEUE *skip_qdat = NULL;
@@ -263,29 +256,28 @@ int Scene::skipScene() {
 	}
 
 	// Walk down scene queue and try to find a skip target
-	node = ys_dll_head(_sceneQueue);
-	if (node == NULL) {
+	queueIterator = _sceneQueue.begin();
+	if (queueIterator == _sceneQueue.end()) {
 		warning("Scene::skip(): Error: Can't skip scene...no scenes in queue");
 		return FAILURE;
 	}
 
-	for (node = ys_dll_next(node); node != NULL; node = ys_dll_next(node)) {
-		scene_qdat = (SCENE_QUEUE *)ys_dll_get_data(node);
+	++queueIterator;
+	while (queueIterator != _sceneQueue.end()) {
+		scene_qdat = queueIterator.operator->();
 		assert(scene_qdat != NULL);
 
 		if (scene_qdat->scene_skiptarget) {
-			skip_node = node;
 			skip_qdat = scene_qdat;
 			break;
 		}
+		++queueIterator;
 	}
 
 	// If skip target found, remove preceding scenes and load
-	if (skip_node != NULL) {
-		for (node = ys_dll_prev(skip_node); node != NULL; node = prev_node) {
-			prev_node = ys_dll_prev(node);
-			ys_dll_delete(node);
-		}
+	if (skip_qdat != NULL) {
+		_sceneQueue.erase(_sceneQueue.begin(), queueIterator);
+
 		endScene();
 		loadScene(skip_qdat->scene_n, skip_qdat->load_flag, skip_qdat->scene_proc, skip_qdat->scene_desc, skip_qdat->fadeType);
 	}
@@ -419,7 +411,6 @@ int Scene::loadScene(int scene_num, int load_flag, SCENE_PROC scene_proc, SCENE_
 		return FAILURE;
 	}
 
-	_animList = ys_dll_create();
 	_sceneMode = 0;
 	_loadDesc = true;
 
@@ -576,21 +567,16 @@ int Scene::loadSceneDescriptor(uint32 res_number) {
 		return FAILURE;
 	}
 
-	if (scene_desc_len != SAGA_SCENE_DESC_LEN) {
-		warning("Scene::loadSceneDescriptor(): Error: scene descriptor length invalid");
-		return FAILURE;
-	}
+	MemoryReadStreamEndian readS(scene_desc_data, scene_desc_len, IS_BIG_ENDIAN);
 
-	MemoryReadStream readS(scene_desc_data, scene_desc_len);
-
-	_desc.flags = readS.readSint16LE();
-	_desc.resListRN = readS.readSint16LE();
-	_desc.endSlope = readS.readSint16LE();
-	_desc.beginSlope = readS.readSint16LE();
-	_desc.scriptNum = readS.readUint16LE();
-	_desc.sceneScriptNum = readS.readUint16LE();
-	_desc.startScriptNum = readS.readUint16LE();
-	_desc.musicRN = readS.readSint16LE();
+	_desc.flags = readS.readSint16();
+	_desc.resListRN = readS.readSint16();
+	_desc.endSlope = readS.readSint16();
+	_desc.beginSlope = readS.readSint16();
+	_desc.scriptNum = readS.readUint16();
+	_desc.sceneScriptNum = readS.readUint16();
+	_desc.startScriptNum = readS.readUint16();
+	_desc.musicRN = readS.readSint16();
 
 	RSC_FreeResource(scene_desc_data);
 
@@ -610,7 +596,7 @@ int Scene::loadSceneResourceList(uint32 reslist_rn) {
 		return FAILURE;
 	}
 
-	MemoryReadStream readS(resource_list, resource_list_len);
+	MemoryReadStreamEndian readS(resource_list, resource_list_len, IS_BIG_ENDIAN);
 
 	// Allocate memory for scene resource list 
 	_resListEntries = resource_list_len / SAGA_RESLIST_ENTRY_LEN;
@@ -627,8 +613,8 @@ int Scene::loadSceneResourceList(uint32 reslist_rn) {
 	debug(0, "Loading scene resource list...");
 
 	for (i = 0; i < _resListEntries; i++) {
-		_resList[i].res_number = readS.readUint16LE();
-		_resList[i].res_type = readS.readUint16LE();
+		_resList[i].res_number = readS.readUint16();
+		_resList[i].res_type = readS.readUint16();
 	}
 
 	RSC_FreeResource(resource_list);
@@ -754,16 +740,9 @@ int Scene::processSceneResources() {
 		case SAGA_ANIM_6:
 		case SAGA_ANIM_7:
 			{
-				SCENE_ANIMINFO *new_animinfo;
 				uint16 new_anim_id;
 
 				debug(0, "Loading animation resource...");
-
-				new_animinfo = (SCENE_ANIMINFO *)malloc(sizeof *new_animinfo);
-				if (new_animinfo == NULL) {
-					warning("Scene::ProcessSceneResources(): Memory allocation error");
-					return MEM;
-				}
 
 				if (_vm->_anim->load(_resList[i].res_data,
 					_resList[i].res_data_len, &new_anim_id) != SUCCESS) {
@@ -771,9 +750,12 @@ int Scene::processSceneResources() {
 					return FAILURE;
 				}
 
+				SCENE_ANIMINFO *new_animinfo;
+
+				new_animinfo = _animList.pushBack().operator->();
+
 				new_animinfo->anim_handle = new_anim_id;
 				new_animinfo->anim_res_number =  _resList[i].res_number;
-				ys_dll_add_tail(_animList, new_animinfo, sizeof *new_animinfo);
 				_animEntries++;
 			}
 			break;
@@ -874,7 +856,7 @@ int Scene::endScene() {
 	_objectMap = NULL;
 	_actionMap = NULL;
 
-	ys_dll_destroy(_animList);
+	_animList.clear();
 
 	_animEntries = 0;
 

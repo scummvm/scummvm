@@ -40,6 +40,7 @@ int RSC_GetResourceOffset(RSCFILE_CONTEXT *, uint32, uint32 *);
 int RSC_LoadResource(RSCFILE_CONTEXT *, uint32, byte **, size_t *);
 int RSC_FreeResource(byte *);
 const char *RSC_FileName(RSCFILE_CONTEXT *rsc);
+int RSC_ConvertID(int id);
 
 } // End of namespace Saga
 

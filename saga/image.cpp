@@ -27,6 +27,7 @@
 #include "saga/game_mod.h"
 
 #include "saga/image.h"
+#include "saga/stream.h"
 
 namespace Saga {
 
@@ -64,13 +65,13 @@ int SagaEngine::decodeBGImage(const byte *image_data, size_t image_size,
 		return FAILURE;
 	}
 
-	MemoryReadStream readS(image_data, image_size);
+	MemoryReadStreamEndian readS(image_data, image_size, IS_BIG_ENDIAN);
 
-	hdr.width = readS.readUint16LE();
-	hdr.height = readS.readUint16LE();
+	hdr.width = readS.readUint16();
+	hdr.height = readS.readUint16();
 	// The next four bytes of the image header aren't used.
-	readS.readUint16LE();
-	readS.readUint16LE();
+	readS.readUint16();
+	readS.readUint16();
 
 	RLE_data_ptr = image_data + SAGA_IMAGE_DATA_OFFSET;
 	RLE_data_len = image_size - SAGA_IMAGE_DATA_OFFSET;

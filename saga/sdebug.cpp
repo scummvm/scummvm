@@ -30,11 +30,13 @@
 #include "saga/font.h"
 
 #include "saga/script.h"
+#include "saga/game_mod.h"
+#include "saga/stream.h"
 
 namespace Saga {
 
 #define SD_DISPLAY_LEN 128
-#define SD_ADDTXT( x ) strncat( disp_buf, x, SD_DISPLAY_LEN );
+#define SD_ADDTXT(x) strncat(disp_buf, x, SD_DISPLAY_LEN);
 
 int Script::SDebugPrintInstr(SCRIPT_THREAD *thread) {
 	TEXTLIST_ENTRY tl_e;
@@ -64,10 +66,10 @@ int Script::SDebugPrintInstr(SCRIPT_THREAD *thread) {
 	tl_e.string = disp_buf;
 	tl_e.display = 1;
 
-	MemoryReadStream readS(currentScript()->bytecode->bytecode_p 
+	MemoryReadStream/*Endian*/ readS(currentScript()->bytecode->bytecode_p 
 							 + thread->i_offset, 
 							 currentScript()->bytecode->bytecode_len 
-							 - thread->i_offset);
+							 - thread->i_offset/*, IS_BIG_ENDIAN*/);
 	in_char = readS.readByte();
 	sprintf(tmp_buf, "%04lX | %02X | ", thread->i_offset, in_char);
 	strncat(disp_buf, tmp_buf, SD_DISPLAY_LEN);
@@ -103,11 +105,11 @@ int Script::SDebugPrintInstr(SCRIPT_THREAD *thread) {
 			sprintf(tmp_buf, "%02X", param);
 			SD_ADDTXT(tmp_buf);
 /*
-			if(( param >= 0 ) && ( param < diag_list->n_dialogue )) {
-				debug(2, " ; \"%.*s\"", SCRIPT_STRINGLIMIT, diag_list->str[param] );
+			if((param >= 0) && (param < diag_list->n_dialogue)) {
+				debug(2, " ; \"%.*s\"", SCRIPT_STRINGLIMIT, diag_list->str[param]);
 			}
 			else {
-				debug(2, " ; Invalid dialogue string.\n" );
+				debug(2, " ; Invalid dialogue string.\n");
 			}
 */
 		}
@@ -243,9 +245,9 @@ int Script::SDebugPrintInstr(SCRIPT_THREAD *thread) {
 			sprintf(tmp_buf, "%04X ", param);
 			SD_ADDTXT(tmp_buf);
 /*
-			for( i = 0 ; i < script_list->n_scripts ; i++ ) {
-				if( op_offset == script_list->scripts[i].offset ) {
-					debug(2, "; Entrypoint \"%s\".", script_list->scriptl_p + script_list->scripts[i].name_offset );
+			for(i = 0 ; i < script_list->n_scripts ; i++) {
+				if(op_offset == script_list->scripts[i].offset) {
+					debug(2, "; Entrypoint \"%s\".", script_list->scriptl_p + script_list->scripts[i].name_offset);
 					break;
 				}
 			}
@@ -328,10 +330,10 @@ int Script::SDebugPrintInstr(SCRIPT_THREAD *thread) {
 			for (i = 0; i < n_switch; i++) {
 				switch_num = readS.readUint16LE();
 				switch_jmp = readS.readUint16LE();
-				// printf( TAB "CASE %04X, %04X\n", switch_num, switch_jmp);
+				// printf(TAB "CASE %04X, %04X\n", switch_num, switch_jmp);
 			}
 			default_jmp = readS.readUint16LE();
-			//printf( TAB "DEF %04X", default_jmp);
+			//printf(TAB "DEF %04X", default_jmp);
 		}
 		break;
 		// Random branch

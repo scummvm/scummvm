@@ -29,6 +29,7 @@
 #include "saga/game_mod.h"
 
 #include "saga/palanim.h"
+#include "saga/stream.h"
 
 namespace Saga {
 
@@ -54,13 +55,13 @@ int PalAnim::loadPalAnim(const byte *resdata, size_t resdata_len) {
 		return FAILURE;
 	}
 
-	MemoryReadStream readS(resdata, resdata_len);
+	MemoryReadStreamEndian readS(resdata, resdata_len, IS_BIG_ENDIAN);
 
 	if (GAME_GetGameType() == GID_IHNM) {
 		return SUCCESS;
 	}
 
-	_entryCount = readS.readUint16LE();
+	_entryCount = readS.readUint16();
 
 	debug(0, "PalAnim::loadPalAnim(): Loading %d PALANIM entries.", _entryCount);
 
@@ -77,8 +78,8 @@ int PalAnim::loadPalAnim(const byte *resdata, size_t resdata_len) {
 		int pal_count;
 		int p, c;
 
-		color_count = readS.readUint16LE();
-		pal_count = readS.readUint16LE();
+		color_count = readS.readUint16();
+		pal_count = readS.readUint16();
 
 		_entries[i].pal_count = pal_count;
 		_entries[i].color_count = color_count;

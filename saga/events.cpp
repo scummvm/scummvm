@@ -27,7 +27,6 @@
 #include "saga/saga.h"
 #include "saga/gfx.h"
 
-#include "saga/yslib.h"
 
 #include "saga/animation.h"
 #include "saga/console.h"
@@ -46,10 +45,7 @@ namespace Saga {
 
 Events::Events(SagaEngine *vm) : _vm(vm), _initialized(false) {
 	debug(0, "Initializing event subsystem...");
-	_eventList = ys_dll_create();
-
-	if (_eventList)
-		_initialized = true;
+	_initialized = true;
 }
 
 Events::~Events(void) {
@@ -61,9 +57,6 @@ Events::~Events(void) {
 // First advances event times, then processes each event with the appropriate
 //  handler depending on the type of event.
 int Events::handleEvents(long msec) {
-	YS_DL_NODE *walk_node;
-	YS_DL_NODE *next_node;
-
 	EVENT *event_p;
 
 	long delta_time;
@@ -73,11 +66,8 @@ int Events::handleEvents(long msec) {
 	processEventTime(msec);
 
 	// Process each event in list
-	for (walk_node = ys_dll_head(_eventList); walk_node != NULL; walk_node = next_node) {
-		event_p = (EVENT *)ys_dll_get_data(walk_node);
-
-		// Save next event in case current event is handled and removed 
-		next_node = ys_dll_next(walk_node);
+	for (EventList::iterator eventi = _eventList.begin(); eventi != _eventList.end(); ++eventi) {
+		event_p = (EVENT *)eventi.operator->();
 
 		// Call the appropriate event handler for the specific event type
 		switch (event_p->type) {
@@ -109,19 +99,18 @@ int Events::handleEvents(long msec) {
 		if ((result == EVENT_DELETE) || (result == EVENT_INVALIDCODE)) {
 			// If there is no event chain, delete the base event.
 			if (event_p->chain == NULL) {
-				ys_dll_delete(walk_node);
+				eventi=_eventList.eraseAndPrev(eventi);
 			} else {
 				// If there is an event chain present, move the next event 
 				// in the chain up, adjust it by the previous delta time, 
-				// and reprocess the event by adjusting next_node. */
+				// and reprocess the event  */
 				delta_time = event_p->time;
+				EVENT *from_chain=event_p->chain;
+				memcpy(event_p, from_chain,sizeof *event_p);
+				free(from_chain);  
 
-				ys_dll_replace(walk_node, event_p->chain, sizeof *event_p);
-
-				event_p = (EVENT *)ys_dll_get_data(walk_node);
 				event_p->time += delta_time;
-
-				next_node = walk_node;
+				--eventi;
 			}
 		} else if (result == EVENT_BREAK) {
 			break;
@@ -426,17 +415,10 @@ int Events::handleInterval(EVENT *event) {
 // Schedules an event in the event list; returns a pointer to the scheduled
 // event suitable for chaining if desired.
 EVENT *Events::queue(EVENT *event) {
-	YS_DL_NODE *new_node;
 	EVENT *queued_event;
 
 	event->chain = NULL;
-	new_node = ys_dll_add_tail(_eventList, event, sizeof *event);
-
-	if (new_node == NULL) {
-		return NULL;
-	}
-
-	queued_event = (EVENT *)ys_dll_get_data(new_node);
+	queued_event = _eventList.pushBack(*event).operator->();
 
 	initializeEvent(queued_event);
 
@@ -490,16 +472,13 @@ int Events::initializeEvent(EVENT *event) {
 }
 
 int Events::clearList() {
-	YS_DL_NODE *walk_node;
-	YS_DL_NODE *next_node;
 	EVENT *chain_walk;
 	EVENT *next_chain;
 	EVENT *event_p;
 
 	// Walk down event list
-	for (walk_node = ys_dll_head(_eventList); walk_node != NULL; walk_node = next_node) {
-		next_node = ys_dll_next(walk_node);
-		event_p = (EVENT *)ys_dll_get_data(walk_node);
+	for (EventList::iterator eventi = _eventList.begin(); eventi != _eventList.end(); ++eventi) {
+		event_p = (EVENT *)eventi.operator->();
 
 		// Only remove events not marked NODESTROY (engine events)
 		if (!(event_p->code & NODESTROY)) {
@@ -508,7 +487,7 @@ int Events::clearList() {
 				next_chain = chain_walk->chain;
 				free(chain_walk);
 			}
-			ys_dll_delete(walk_node);
+			eventi=_eventList.eraseAndPrev(eventi);
 		}
 	}
 
@@ -517,24 +496,21 @@ int Events::clearList() {
 
 // Removes all events from the list (even NODESTROY)
 int Events::freeList() {
-	YS_DL_NODE *walk_node;
-	YS_DL_NODE *next_node;
 	EVENT *chain_walk;
 	EVENT *next_chain;
 	EVENT *event_p;
 
 	// Walk down event list
-	for (walk_node = ys_dll_head(_eventList); walk_node != NULL; walk_node = next_node) {
-		event_p = (EVENT *)ys_dll_get_data(walk_node);
-		// Remove any events chained off current node
+	EventList::iterator eventi = _eventList.begin();
+	while (eventi != _eventList.end()) {
+		event_p = (EVENT *)eventi.operator->();
+
+		// Remove any events chained off this one */
 		for (chain_walk = event_p->chain; chain_walk != NULL; chain_walk = next_chain) {
 			next_chain = chain_walk->chain;
 			free(chain_walk);
 		}
-
-		// Delete current node
-		next_node = ys_dll_next(walk_node);
-		ys_dll_delete(walk_node);
+		eventi=_eventList.erase(eventi);
 	}
 
 	return SUCCESS;
@@ -542,12 +518,12 @@ int Events::freeList() {
 
 // Walks down the event list, updating event times by 'msec'.
 int Events::processEventTime(long msec) {
-	YS_DL_NODE *walk_node;
 	EVENT *event_p;
 	uint16 event_count = 0;
 
-	for (walk_node = ys_dll_head(_eventList); walk_node != NULL; walk_node = ys_dll_next(walk_node)) {
-		event_p = (EVENT *)ys_dll_get_data(walk_node);
+	for (EventList::iterator eventi = _eventList.begin(); eventi != _eventList.end(); ++eventi) {
+		event_p = (EVENT *)eventi.operator->();
+
 		event_p->time -= msec;
 		event_count++;
 

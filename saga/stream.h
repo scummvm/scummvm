@@ -1,8 +1,6 @@
 /* ScummVM - Scumm Interpreter
  * Copyright (C) 2004 The ScummVM project
  *
- * The ReInherit Engine is (C)2000-2003 by Daniel Balsom.
- *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -21,41 +19,38 @@
  *
  */
 
-// Text / dialogue display management module private header
+#ifndef SAGA_STREAM_H__
+#define SAGA_STREAM_H__
 
-#ifndef SAGA_TEXT_H__
-#define SAGA_TEXT_H__
-
-#include "saga/list.h"
+#include "common/stream.h"
 
 namespace Saga {
 
-#define TEXT_CENTERLIMIT 50
-#define TEXT_MARGIN 10
-#define TEXT_LINESPACING 2
+using Common::MemoryReadStream;
+
+class MemoryReadStreamEndian : public Common::MemoryReadStream {
+private:
+public:
+	bool _bigEndian;
+	MemoryReadStreamEndian(const byte *buf, uint32 len, bool bigEndian = false) : MemoryReadStream(buf, len), _bigEndian(bigEndian) {}
+
+	uint16 readUint16() {
+		return (_bigEndian) ? readUint16BE(): readUint16LE();
+	}
+
+	uint32 readUint32() {
+		return (_bigEndian) ? readUint32BE(): readUint32LE();
+	}
+
+	inline int16 readSint16() {
+		return (int16)readUint16();
+	}
 
 
-enum TEXT_FLAGS {
-	TEXT_TIMEOUT = 0x01
+	inline int32 readSint32() {
+		return (int32)readUint32();
+	}
 };
 
-struct TEXTLIST_ENTRY {
-	int display;
-	int id;
-	int text_x;
-	int text_y;
-	int color;
-	int effect_color;
-	int flags;
-	int font_id;
-	long time;
-	const char *string;
-	TEXTLIST_ENTRY() { memset(this, 0, sizeof(*this)); }
-};
-
-typedef SortedList<TEXTLIST_ENTRY> TEXTLIST;
-
-#define TEXTLISTITERATOR TEXTLIST::iterator
-
-}				// End of namespace Saga
+} // End of namespace Saga
 #endif

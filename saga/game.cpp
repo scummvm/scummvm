@@ -50,11 +50,25 @@ GAME_FILEDESC ITEDEMO_GameFiles[] = {
 GAME_FONTDESC ITEDEMO_GameFonts[] = {
 	{GAME_FONT_SMALL, 0},
 	{GAME_FONT_MEDIUM, 1}
-};
+}; 
 
 GAME_SOUNDINFO ITEDEMO_GameSound = {
 	GAME_SOUND_VOC, 0, 0, 0
 };
+
+// Inherit the Earth - MAC Wyrmkeep Demo version
+GAME_FILEDESC ITEMACDEMO_GameFiles[] = {
+	{"ITED.RSC", GAME_RESOURCEFILE},
+	{"SCRIPTSD.RSC", GAME_SCRIPTFILE},
+	{"SOUNDSD.RSC", GAME_SOUNDFILE},
+	{"VOICESD.RSC", GAME_VOICEFILE},
+	{"MUSICD.RSC", GAME_MUSICFILE}
+};
+
+GAME_FONTDESC ITEMACDEMO_GameFonts[] = {
+	{GAME_FONT_MEDIUM, 0},
+	{GAME_FONT_SMALL, 2}
+}; 
 
 // Inherit the Earth - win32 Wyrmkeep Linux Demo version
 GAME_FILEDESC ITEWINDEMO_GameFiles[] = {
@@ -64,6 +78,11 @@ GAME_FILEDESC ITEWINDEMO_GameFiles[] = {
 	{"VOICESD.RSC", GAME_VOICEFILE},
 	{"MUSICD.RSC", GAME_MUSICFILE}
 };
+
+GAME_FONTDESC ITEWINDEMO_GameFonts[] = {
+	{GAME_FONT_MEDIUM, 0},
+	{GAME_FONT_SMALL, 2}
+}; 
 
 // Inherit the Earth - win32 Wyrmkeep Demo version older release
 GAME_FILEDESC ITEWINDEMOOld_GameFiles[] = {
@@ -91,6 +110,13 @@ GAME_RESOURCEDESC ITE_Resources = {
 	ITE_SCRIPT_LUT, // Script lookup table RN
 	ITE_COMMAND_PANEL,
 	ITE_DIALOGUE_PANEL
+};
+
+GAME_RESOURCEDESC ITEMACDEMO_Resources = {
+		ITEMACDEMO_SCENE_LUT,  // Scene lookup table RN
+		ITE_SCRIPT_LUT, // Script lookup table RN
+		ITE_COMMAND_PANEL,
+		ITE_DIALOGUE_PANEL
 };
 
 GAME_SOUNDINFO ITE_GameSound = {
@@ -179,7 +205,26 @@ GAMEDESC GameDescs[] = {
 		ARRAYSIZE(ITEDEMO_GameFonts),
 		ITEDEMO_GameFonts,
 		&ITEDEMO_GameSound,
-		0 // features
+		0, // features
+	},
+
+	// Inherit the earth - MAC Demo version
+	// Note: it should be before win32 version ???
+	{
+			"ite-demo",
+			GID_ITE,
+			GAME_ITE_MACDEMO,
+			"Inherit the Earth (MAC Demo)",
+			320, 200,
+			137,
+			ITE_DEFAULT_SCENE,
+			&ITEMACDEMO_Resources,
+			ARRAYSIZE(ITEMACDEMO_GameFiles),
+			ITEMACDEMO_GameFiles,
+			ARRAYSIZE(ITEMACDEMO_GameFonts),
+			ITEMACDEMO_GameFonts,
+			&ITECD_GameSound,
+			GF_VOX_VOICES | GF_BIG_ENDIAN_DATA			
 	},
 
 	// Inherit the earth - Linux Demo version
@@ -213,8 +258,8 @@ GAMEDESC GameDescs[] = {
 		&ITE_Resources,
 		ARRAYSIZE(ITEWINDEMOOld_GameFiles),
 		ITEWINDEMO_GameFiles,
-		ARRAYSIZE(ITECD_GameFonts),
-		ITECD_GameFonts,
+		ARRAYSIZE(ITEWINDEMO_GameFonts),
+		ITEWINDEMO_GameFonts,
 		&ITECD_GameSound,
 		GF_VOX_VOICES
 	},
@@ -465,8 +510,11 @@ int LoadGame(uint16 game_n) {
 		return FAILURE;
 	}
 
-	game_filect = GameDescs[game_n].gd_filect;
+	GameModule.game_number = game_n;
+	GameModule.gamedesc = &GameDescs[game_n];
 
+	game_filect = GameDescs[game_n].gd_filect;
+	
 	GameModule.gfile_data = (GAME_FILEDATA *)malloc(game_filect * sizeof *GameModule.gfile_data);
 	if (GameModule.gfile_data == NULL) {
 		return MEM;
@@ -493,8 +541,6 @@ int LoadGame(uint16 game_n) {
 	GameModule.gd_fontdescs = GameDescs[game_n].gd_fontdescs;
 
 	// Finish initialization
-	GameModule.game_number = game_n;
-	GameModule.gamedesc = &GameDescs[game_n];
 	GameModule.game_init = 1;
 
 	return SUCCESS;
@@ -552,11 +598,11 @@ int GAME_GetSceneInfo(GAME_SCENEDESC *gs_desc) {
 	return SUCCESS;
 }
 
-int GAME_GetGame() {
+GAME_IDS GAME_GetGame() {
 	return GameModule.gamedesc->gd_game_id;
 }
 
-int GAME_GetGameType() {
+SAGAGameId GAME_GetGameType() {
 	return GameModule.gamedesc->gd_game_type;
 }
 

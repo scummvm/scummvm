@@ -27,6 +27,7 @@
 #define SAGA_SCENE_H
 
 #include "saga/text.h"
+#include "saga/list.h"
 
 namespace Saga {
 
@@ -136,8 +137,10 @@ struct SCENE_IMAGE {
 struct SCENE_ANIMINFO {
 	int anim_res_number;
 	int anim_handle;
-	SCENE_ANIMINFO *next;
+	//SCENE_ANIMINFO *next;
 };
+
+typedef SortedList<SCENE_ANIMINFO> SceneAnimInfoList;
 
 enum SCENE_FADE_TYPES {
 	SCENE_NOFADE = 0,
@@ -153,6 +156,8 @@ struct SCENE_QUEUE {
 	int scene_skiptarget;
 	int fadeType;
 };
+
+typedef Common::List<SCENE_QUEUE> SceneQueueList;
 
 ///// IHNM-specific stuff
 #define IHNM_PALFADE_TIME    1000
@@ -258,7 +263,7 @@ class Scene {
 	int *_sceneLUT;
 	int _sceneCount;
 	int _sceneMax;
-	YS_DL_LIST *_sceneQueue;
+	SceneQueueList _sceneQueue;
 	int _firstScene;
 	bool _sceneLoaded;
 	int _sceneMode;
@@ -270,7 +275,7 @@ class Scene {
 	int _resListEntries;
 	SCENE_RESLIST *_resList;
 	int _animEntries;
-	YS_DL_LIST *_animList;
+	SceneAnimInfoList _animList;
 	SCENE_PROC *_sceneProc;
 	TEXTLIST *_textList;
 	SCENE_IMAGE _bg;

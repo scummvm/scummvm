@@ -23,7 +23,6 @@
 
 // Scripting module thread management component
 #include "saga/saga.h"
-#include "saga/yslib.h"
 
 #include "saga/gfx.h"
 #include "saga/actor.h"
@@ -32,6 +31,8 @@
 #include "saga/script.h"
 
 #include "saga/sdata.h"
+#include "saga/game_mod.h"
+#include "saga/stream.h"
 
 namespace Saga {
 
@@ -42,22 +43,13 @@ void Script::setFramePtr(SCRIPT_THREAD *thread, int newPtr) {
 }
 
 SCRIPT_THREAD *Script::SThreadCreate() {
-	YS_DL_NODE *new_node;
 	SCRIPT_THREAD *new_thread;
 
 	if (!isInitialized()) {
 		return NULL;
 	}
 
-	new_thread = (SCRIPT_THREAD *)calloc(1, sizeof *new_thread);
-	if (new_thread == NULL) {
-		return NULL;
-	}
-
-	new_node = ys_dll_add_head(threadList(), new_thread, sizeof *new_thread);
-	free(new_thread);
-
-	new_thread = (SCRIPT_THREAD *)ys_dll_get_data(new_node);
+	new_thread = _threadList.pushFront().operator->();
 
 	new_thread->stackPtr = ARRAYSIZE(new_thread->stackBuf) - 1;
 	setFramePtr(new_thread, new_thread->stackPtr);
@@ -71,45 +63,24 @@ SCRIPT_THREAD *Script::SThreadCreate() {
 	return new_thread;
 }
 
-int Script::SThreadDestroy(SCRIPT_THREAD *thread) {
-	YS_DL_NODE *walk_p;
-	SCRIPT_THREAD *th;
-
-	if (thread == NULL) {
-		return FAILURE;
-	}
-
-	for (walk_p = ys_dll_head(threadList()); walk_p != NULL; walk_p = ys_dll_next(walk_p)) {
-		th = (SCRIPT_THREAD *)ys_dll_get_data(walk_p);
-		if (thread == th) {
-			ys_dll_delete(walk_p);
-			break;
-		}
-	}
-
-	return SUCCESS;
-}
 
 int Script::SThreadExecThreads(uint msec) {
-	YS_DL_NODE *walk_p, *next_p;
 	SCRIPT_THREAD *thread;
 
 	if (!isInitialized()) {
 		return FAILURE;
 	}
 
-	walk_p = ys_dll_head(threadList());
+	ScriptThreadList::iterator threadi = _threadList.begin();
 
-	while (walk_p != NULL) {
-		next_p = ys_dll_next(walk_p);
-
-		thread = (SCRIPT_THREAD *)ys_dll_get_data(walk_p);
+	while (threadi != _threadList.end()) {
+		thread = (SCRIPT_THREAD *)threadi.operator->();
 
 		if (thread->flags & (kTFlagFinished | kTFlagAborted)) {
 			//if (thread->flags & kTFlagFinished) // FIXME. Missing function
 
-			SThreadDestroy(thread);
-			walk_p = next_p;
+			
+			threadi = _threadList.erase(threadi);
 			continue;
 		}
 
@@ -131,14 +102,14 @@ int Script::SThreadExecThreads(uint msec) {
 		if (!(thread->flags & kTFlagWaiting))
 			SThreadRun(thread, STHREAD_TIMESLICE);
 
-		walk_p = next_p;
+		++threadi;
 	}
 
 	return SUCCESS;
 }
 
 void Script::SThreadCompleteThread(void) {
-	for (int i = 0; i < 40 && (ys_dll_head(threadList()) != NULL); i++)
+	for (int i = 0; i < 40 &&  !_threadList.isEmpty() ; i++)
 		SThreadExecThreads(0);
 }
 
@@ -260,7 +231,7 @@ int Script::SThreadRun(SCRIPT_THREAD *thread, int instr_limit) {
 		}
 	}
 
-	MemoryReadStream scriptS(currentScript()->bytecode->bytecode_p, currentScript()->bytecode->bytecode_len);
+	MemoryReadStream/*Endian*/ scriptS(currentScript()->bytecode->bytecode_p, currentScript()->bytecode->bytecode_len/*, IS_BIG_ENDIAN*/);
 
 	dataBuffer(2)->len = currentScript()->bytecode->bytecode_len / sizeof(SDataWord_T);
 	dataBuffer(2)->data = (SDataWord_T *) currentScript()->bytecode->bytecode_p;
@@ -275,7 +246,6 @@ int Script::SThreadRun(SCRIPT_THREAD *thread, int instr_limit) {
 		in_char = scriptS.readByte();
 
 		debug(2, "Executing thread offset: %lu (%x) stack: %d", thread->i_offset, in_char, thread->stackSize());
-
 		switch (in_char) {
 		case 0x01: // nextblock
 			// Some sort of "jump to the start of the next memory
@@ -385,6 +355,7 @@ int Script::SThreadRun(SCRIPT_THREAD *thread, int instr_limit) {
 				if (func_num >= SFUNC_NUM) {
 					_vm->_console->DebugPrintf(S_ERROR_PREFIX "Invalid script function number: (%X)\n", func_num);
 					thread->flags |= kTFlagAborted;
+					debug(9, "Invalid script function number: (%X)\n", func_num);
 					break;
 				}
 
@@ -392,6 +363,7 @@ int Script::SThreadRun(SCRIPT_THREAD *thread, int instr_limit) {
 				sfuncRetVal = (this->*sfunc)(thread, n_args);
 				if (sfuncRetVal != SUCCESS) {
 					_vm->_console->DebugPrintf(S_WARN_PREFIX "%X: Script function %d failed.\n", thread->i_offset, func_num);
+					debug(9, "%X: Script function %d failed.\n", thread->i_offset, func_num);
 				}
 
 				if (func_num == 16) { // SF_gotoScene
@@ -421,6 +393,7 @@ int Script::SThreadRun(SCRIPT_THREAD *thread, int instr_limit) {
 			if (thread->stackSize() == 0) {
 				_vm->_console->DebugPrintf("Script execution complete.\n");
 				thread->flags |= kTFlagFinished;
+				debug(9, "Script execution complete.\n");
 			} else {
 				thread->i_offset = thread->pop();
 				/* int n_args = */ thread->pop();
@@ -520,6 +493,7 @@ int Script::SThreadRun(SCRIPT_THREAD *thread, int instr_limit) {
 				}
 				if (!branch_found) {
 					_vm->_console->DebugPrintf(S_ERROR_PREFIX "%X: Random jump target out of bounds.\n", thread->i_offset);
+					debug(9, "%X: Random jump target out of bounds.\n", thread->i_offset);
 				}
 			}
 			break;
@@ -758,6 +732,7 @@ int Script::SThreadRun(SCRIPT_THREAD *thread, int instr_limit) {
 				a_index = _vm->_actor->getActorIndex(param1);
 				if (a_index < 0) {
 					_vm->_console->DebugPrintf(S_WARN_PREFIX "%X: DLGP Actor id not found.\n", thread->i_offset);
+					debug(9, "%X: DLGP Actor id not found.\n", thread->i_offset);
 				}
 
 				for (i = 0; i < n_voices; i++) {
@@ -806,6 +781,7 @@ int Script::SThreadRun(SCRIPT_THREAD *thread, int instr_limit) {
 
 			_vm->_console->DebugPrintf(S_ERROR_PREFIX "%X: Invalid opcode encountered: (%X).\n", thread->i_offset, in_char);
 			thread->flags |= kTFlagAborted;
+			debug(9, "%X: Invalid opcode encountered: (%X).\n", thread->i_offset, in_char);
 			break;
 		}
 
@@ -813,11 +789,18 @@ int Script::SThreadRun(SCRIPT_THREAD *thread, int instr_limit) {
 		if (saved_offset == thread->i_offset) {
 			thread->i_offset = scriptS.pos();
 		} else {
-			scriptS.seek(thread->i_offset);
+			if (thread->i_offset >= scriptS.size()) {
+				_vm->_console->DebugPrintf("Out of range script execution at %x size %x\n", thread->i_offset, scriptS.size());
+				thread->flags |= kTFlagFinished;
+				debug(9, "Out of range script execution at %x size %x\n", thread->i_offset, scriptS.size());
+			}
+			else
+				scriptS.seek(thread->i_offset);
 		}
 		if (unhandled) {
 			_vm->_console->DebugPrintf(S_ERROR_PREFIX "%X: Unhandled opcode.\n", thread->i_offset);
 			thread->flags |= kTFlagAborted;
+			debug(9, "%X: Unhandled opcode.\n", thread->i_offset);
 		}
 		if ((thread->flags == kTFlagNone) && debug_print) {
 			SDebugPrintInstr(thread);

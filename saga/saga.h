@@ -58,7 +58,6 @@ class Console;
 class Events;
 class PalAnim;
 
-using Common::MemoryReadStream;
 
 #define PBOUNDS(n,max) (((n)>=(0))&&((n)<(max)))
 #define MAXPATH 512

@@ -27,7 +27,7 @@
 #define SAGA_SCRIPT_H
 
 #include "saga/text.h"
-#include "saga/yslib.h"
+#include "saga/list.h"
 
 namespace Saga {
 
@@ -135,7 +135,11 @@ struct SCRIPT_THREAD {
 		assert(stackPtr < ARRAYSIZE(stackBuf));
 		return stackBuf[stackPtr++];
 	}
+
+	SCRIPT_THREAD() { memset(this, 0, sizeof(*this)); }
 };
+
+typedef SortedList<SCRIPT_THREAD> ScriptThreadList;
 
 struct PROC_TBLENTRY {
 	size_t name_offset;
@@ -200,7 +204,7 @@ public:
 	SCRIPTDATA *currentScript() { return _currentScript; }
 	void setBuffer(int idx, SCRIPT_DATABUF *ptr) { _dataBuf[idx] = ptr; }
 	SCRIPT_DATABUF *dataBuffer(int idx) { return _dataBuf[idx]; }
-	YS_DL_LIST *threadList() { return _threadList; }
+//	YS_DL_LIST *threadList() { return _threadList; }
 
 	void scriptInfo();
 	void scriptExec(int argc, const char **argv);
@@ -214,7 +218,7 @@ protected:
 	uint16 _scriptLUTEntryLen;
 	SCRIPTDATA *_currentScript;
 	SCRIPT_DATABUF *_dataBuf[SCRIPT_DATABUF_NUM];
-	YS_DL_LIST *_threadList;
+	ScriptThreadList _threadList;
 
 	bool _skipSpeeches;
 	bool _abortEnabled;

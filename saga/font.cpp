@@ -29,6 +29,7 @@
 #include "saga/game_mod.h"
 
 #include "saga/font.h"
+#include "saga/stream.h"
 
 namespace Saga {
 
@@ -64,20 +65,20 @@ Font::~Font(void) {
 
 	debug(0, "Font::~Font(): Freeing fonts.");
 /*
-	for ( i = 0 ; i < FONT_COUNT ; i ++ ) {
-		if ( _fonts[i] != NULL ) {
-			if ( _fonts[i]->normal_loaded ) {
-				free( _fonts[i]->normal->font_free_p );
-				free( _fonts[i]->normal );
+	for (i = 0 ; i < FONT_COUNT ; i++) {
+		if (_fonts[i] != NULL) {
+			if (_fonts[i]->normal_loaded) {
+				free(_fonts[i]->normal->font_free_p);
+				free(_fonts[i]->normal);
 			}
 
-			if ( _fonts[i]->outline_loaded ) {
-				free( _fonts[i]->outline->font_free_p );
-				free( _fonts[i]->outline );
+			if (_fonts[i]->outline_loaded) {
+				free(_fonts[i]->outline->font_free_p);
+				free(_fonts[i]->outline);
 			}
 		}
 
-		free( _fonts[i] );
+		free(_fonts[i]);
 	}
 */
 }
@@ -106,7 +107,7 @@ int Font::loadFont(uint32 font_rn, int font_id) {
 		return FAILURE;
 	}
 
-	MemoryReadStream readS(fontres_p, fontres_len);
+	MemoryReadStreamEndian readS(fontres_p, fontres_len, IS_BIG_ENDIAN);
 
 	// Create new font structure
 	font = (FONT *)malloc(sizeof *font);
@@ -116,9 +117,9 @@ int Font::loadFont(uint32 font_rn, int font_id) {
 	}
 
 	// Read font header
-	fh.c_height = readS.readUint16LE();
-	fh.c_width = readS.readUint16LE();
-	fh.row_length = readS.readUint16LE();
+	fh.c_height = readS.readUint16();
+	fh.c_width = readS.readUint16();
+	fh.row_length = readS.readUint16();
 
 	debug(1, "Font::loadFont(): Reading font resource #%d...", font_rn);
 
@@ -140,7 +141,7 @@ int Font::loadFont(uint32 font_rn, int font_id) {
 	normal_font->hdr.row_length = fh.row_length;
 
 	for (c = 0; c < FONT_CHARCOUNT; c++) {
-		normal_font->fce[c].index = readS.readUint16LE();
+		normal_font->fce[c].index = readS.readUint16();
 	}
 
 	for (c = 0; c < FONT_CHARCOUNT; c++) {

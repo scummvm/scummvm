@@ -23,7 +23,6 @@
 
 // Scripting module: Script resource handling functions
 #include "saga/saga.h"
-#include "saga/yslib.h"
 
 #include "saga/gfx.h"
 #include "saga/rscfile_mod.h"
@@ -31,6 +30,7 @@
 #include "saga/console.h"
 
 #include "saga/script.h"
+#include "saga/stream.h"
 
 namespace Saga {
 
@@ -51,7 +51,6 @@ Script::Script() {
 	_voiceLUTPresent = false;
 	_scriptLUTEntryLen = 0;
 	_currentScript = 0;
-	_threadList = 0;
 	_abortEnabled = true;
 	_skipSpeeches = false;
 	memset(_dataBuf, 0, sizeof(_dataBuf));
@@ -98,12 +97,12 @@ Script::Script() {
 	}
 
 	// Convert LUT resource to logical LUT
-	MemoryReadStream scriptS(rsc_ptr, rsc_len);
+	MemoryReadStreamEndian scriptS(rsc_ptr, rsc_len, IS_BIG_ENDIAN);
 	for (i = 0; i < _scriptLUTMax; i++) {
 		prevTell = scriptS.pos();
-		_scriptLUT[i].script_rn = scriptS.readUint16LE();
-		_scriptLUT[i].diag_list_rn = scriptS.readUint16LE();
-		_scriptLUT[i].voice_lut_rn = scriptS.readUint16LE();
+		_scriptLUT[i].script_rn = scriptS.readUint16();
+		_scriptLUT[i].diag_list_rn = scriptS.readUint16();
+		_scriptLUT[i].voice_lut_rn = scriptS.readUint16();
 		
 		// Skip the unused portion of the structure
 		for (j = scriptS.pos(); j < prevTell + _scriptLUTEntryLen; j++) {
@@ -122,8 +121,6 @@ Script::Script() {
 		}
 	}
 
-	// Initialize script submodules
-	_threadList = ys_dll_create();
 
 	setupScriptFuncList();
 
@@ -132,8 +129,6 @@ Script::Script() {
 
 // Shut down script module gracefully; free all allocated module resources
 Script::~Script() {
-	YS_DL_NODE *thread_node;
-	SCRIPT_THREAD *thread;
 
 	if (!_initialized) {
 		error("Script not initialized");
@@ -143,15 +138,7 @@ Script::~Script() {
 
 	// Free script lookup table
 	free(_scriptLUT);
-
-	// Stop all threads and destroy them
-
-	for (thread_node = ys_dll_head(_threadList); thread_node != NULL;
-				thread_node = ys_dll_next(thread_node)) {
-		thread = (SCRIPT_THREAD *)ys_dll_get_data(thread_node);
-		SThreadDestroy(thread);
-	}
-
+	
 	_initialized = false;
 }
 
@@ -322,12 +309,14 @@ SCRIPT_BYTECODE *Script::loadBytecode(byte *bytecode_p, size_t bytecode_len) {
 
 	debug(0, "Loading script bytecode...");
 
-	MemoryReadStream scriptS(bytecode_p, bytecode_len);
+	MemoryReadStreamEndian scriptS(bytecode_p, bytecode_len, IS_BIG_ENDIAN);
 
 	// The first two uint32 values are the number of entrypoints, and the
 	// offset to the entrypoint table, respectively.
-	n_entrypoints = scriptS.readUint32LE();
-	ep_tbl_offset = scriptS.readUint32LE();
+	n_entrypoints = scriptS.readUint16();
+	scriptS.readUint16(); //skip
+	ep_tbl_offset = scriptS.readUint16();
+	scriptS.readUint16(); //skip
 
 	// Check that the entrypoint table offset is valid.
 	if ((bytecode_len - ep_tbl_offset) < (n_entrypoints * SCRIPT_TBLENTRY_LEN)) {
@@ -365,8 +354,8 @@ SCRIPT_BYTECODE *Script::loadBytecode(byte *bytecode_p, size_t bytecode_len) {
 		// First uint16 is the offset of the entrypoint name from the start
 		// of the bytecode resource, second uint16 is the offset of the 
 		// bytecode itself for said entrypoint
-		bc_ep_tbl[i].name_offset = scriptS.readUint16LE();
-		bc_ep_tbl[i].offset = scriptS.readUint16LE();
+		bc_ep_tbl[i].name_offset = scriptS.readUint16();
+		bc_ep_tbl[i].offset = scriptS.readUint16();
 
 		// Perform a simple range check on offset values
 		if ((bc_ep_tbl[i].name_offset > bytecode_len) || (bc_ep_tbl[i].offset > bytecode_len)) {
@@ -403,10 +392,10 @@ DIALOGUE_LIST *Script::loadDialogue(const byte *dialogue_p, size_t dialogue_len)
 		return NULL;
 	}
 
-	MemoryReadStream scriptS(dialogue_p, dialogue_len);
+	MemoryReadStreamEndian scriptS(dialogue_p, dialogue_len, IS_BIG_ENDIAN);
 
 	// First uint16 is the offset of the first string
-	offset = scriptS.readUint16LE();
+	offset = scriptS.readUint16();
 	if (offset > dialogue_len) {
 		warning("Error, invalid string offset");
 		return NULL;
@@ -434,7 +423,7 @@ DIALOGUE_LIST *Script::loadDialogue(const byte *dialogue_p, size_t dialogue_len)
 	// Read in tables from dialogue list resource
 	scriptS.seek(0);
 	for (i = 0; i < n_dialogue; i++) {
-		offset = scriptS.readUint16LE();
+		offset = scriptS.readUint16();
 		if (offset > dialogue_len) {
 			warning("Error, invalid string offset");
 			free(dialogue_list->str);
@@ -474,10 +463,10 @@ VOICE_LUT *Script::loadVoiceLUT(const byte *voicelut_p, size_t voicelut_len, SCR
 		return NULL;
 	}
 
-	MemoryReadStream scriptS(voicelut_p, voicelut_len);
+	MemoryReadStreamEndian scriptS(voicelut_p, voicelut_len, IS_BIG_ENDIAN);
 
 	for (i = 0; i < n_voices; i++) {
-		voice_lut->voices[i] = scriptS.readUint16LE();
+		voice_lut->voices[i] = scriptS.readUint16();
 	}
 
 	return voice_lut;

@@ -26,8 +26,9 @@
 #ifndef SAGA_ACTOR_H__
 #define SAGA_ACTOR_H__
 
-#include "saga/yslib.h"
 #include "saga/sprite.h"
+#include "saga/actordata.h"
+#include "saga/list.h"
 
 namespace Saga {
 
@@ -87,6 +88,16 @@ struct ACTORACTION {
 	ACTORACTIONITEM dir[4];
 };
 
+struct WALKNODE {
+	int calc_flag;
+	Point node_pt;
+	WALKNODE() {
+		calc_flag = 0;
+	}
+};
+
+typedef Common::List<WALKNODE> WalkNodeList;
+
 struct WALKINTENT {
 	int wi_active;
 	uint16 wi_flags;
@@ -99,24 +110,48 @@ struct WALKINTENT {
 	Point cur;
 
 	Point dst_pt;
-	YS_DL_LIST *nodelist;
+	WalkNodeList nodelist;
 
 	int sem_held;
 	SEMAPHORE *sem;
 
-	WALKINTENT() { memset(this, 0, sizeof(*this)); }
+	WALKINTENT() { 
+		wi_active = 0;
+		wi_flags = 0;
+		wi_init = 0;
+
+		time = 0;
+		slope = 0;
+		x_dir = 0;
+
+		sem_held = 0;
+		sem = NULL;
+	}
 };
 
-struct WALKNODE {
-	int calc_flag;
-	Point node_pt;
+
+struct ACTORDIALOGUE {
+	int d_playing;
+	const char *d_string;
+	uint16 d_voice_rn;
+	long d_time;
+	int d_sem_held;
+	SEMAPHORE *d_sem;
+	ACTORDIALOGUE() { memset(this, 0, sizeof(*this)); }
 };
+
+typedef Common::List<ACTORDIALOGUE> ActorDialogList;
 
 struct SPEAKINTENT {
 	int si_init;
 	uint16 si_flags;
 	int si_last_action;
-	YS_DL_LIST *si_diaglist;	/* Actor dialogue list */
+	ActorDialogList si_diaglist;	/* Actor dialogue list */
+	SPEAKINTENT() {
+		si_init = 0;
+		si_flags = 0;
+		si_last_action = 0;
+	}
 };
 
 struct ACTORINTENT {
@@ -125,8 +160,41 @@ struct ACTORINTENT {
 	int a_idone;
 	void *a_data;
 
+	void createData() {
+		assert(a_data == NULL);
+		
+		if(INTENT_SPEAK == a_itype) {
+			a_data = new SPEAKINTENT;
+		}
+		else
+			if(INTENT_PATH == a_itype) {
+				a_data = new WALKINTENT;
+			}
+	}
+	void deleteData() {
+
+		if(INTENT_SPEAK == a_itype) {
+			SPEAKINTENT *a_speakint;
+
+			assert(a_data);
+			a_speakint = (SPEAKINTENT *)a_data;
+			delete a_speakint;
+		}
+		else
+			if(INTENT_PATH == a_itype) {
+				WALKINTENT *a_walkint;
+
+				assert(a_data);
+				a_walkint = (WALKINTENT *)a_data;
+				delete a_walkint;
+			}
+		a_data = NULL;
+	}
+
 	ACTORINTENT() { memset(this, 0, sizeof(*this)); }
 };
+
+typedef Common::List<ACTORINTENT> ActorIntentList;
 
 struct ACTOR {
 	int id;			// Actor id
@@ -151,7 +219,7 @@ struct ACTOR {
 	// intent before moving on to the next; thus actor movements, esp
 	// as described from scripts, can be serialized
 
-	YS_DL_LIST *a_intentlist;
+	ActorIntentList a_intentlist;
 
 	// WALKPATH path;
 
@@ -165,19 +233,30 @@ struct ACTOR {
 
 	ACTORACTION *act_tbl;	// Action lookup table
 	int action_ct;		// Number of actions in the action LUT
-	YS_DL_NODE *node;	// Actor's node in the actor list
-	ACTOR() { memset(this, 0, sizeof(*this)); }
+	ACTOR() {
+		id = 0;
+		name_i = 0;
+		flags = 0;
+		sl_rn = 0;
+		si_rn = 0;
+		sl_p = 0;
+		idle_time = 0;
+		orient = 0;
+		speaking = 0;
+		a_dcolor = 0;
+		def_action = 0;
+		def_action_flags = 0;
+		action = 0;
+		action_flags = 0;
+		action_frame = 0;
+		action_time = 0;
+		act_tbl = NULL;
+		action_ct = NULL;
+	}
 };
 
-struct ACTORDIALOGUE {
-	int d_playing;
-	const char *d_string;
-	uint16 d_voice_rn;
-	long d_time;
-	int d_sem_held;
-	SEMAPHORE *d_sem;
-	ACTORDIALOGUE() { memset(this, 0, sizeof(*this)); }
-};
+typedef SortedList<ACTOR> ActorList;
+
 
 struct ACTIONTIMES {
 	int action;
@@ -235,9 +314,9 @@ private:
 	bool _initialized;
 	RSCFILE_CONTEXT *_actorContext;
 	uint16 _count;
-	int *_aliasTbl;
-	YS_DL_NODE **_tbl;
-	YS_DL_LIST *_list;
+	int _aliasTbl[ACTORCOUNT];
+	ActorList::iterator _tbl[ACTORCOUNT];
+	ActorList _list;
 };
 
 } // End of namespace Saga

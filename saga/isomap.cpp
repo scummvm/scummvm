@@ -28,6 +28,7 @@
 #include "saga/gfx.h"
 
 #include "saga/isomap.h"
+#include "saga/stream.h"
 
 namespace Saga {
 
@@ -46,10 +47,10 @@ int IsoMap::loadTileset(const byte *tileres_p, size_t tileres_len) {
 	assert((_init) && (!_tiles_loaded));
 	assert((tileres_p != NULL) && (tileres_len > 0));
 
-	MemoryReadStream readS(tileres_p, tileres_len);
+	MemoryReadStreamEndian readS(tileres_p, tileres_len, IS_BIG_ENDIAN);
 
-	readS.readUint16LE(); // skip
-	first_entry.tile_offset = readS.readUint16LE();
+	readS.readUint16(); // skip
+	first_entry.tile_offset = readS.readUint16();
 
 	_tile_ct = first_entry.tile_offset / SAGA_ISOTILE_ENTRY_LEN;
 
@@ -63,9 +64,9 @@ int IsoMap::loadTileset(const byte *tileres_p, size_t tileres_len) {
 	for (i = 0; i < _tile_ct; i++) {
 		tile_tbl[i].tile_h = readS.readByte();
 		tile_tbl[i].mask_rule = readS.readByte();
-		tile_tbl[i].tile_offset = readS.readUint16LE();
-		tile_tbl[i].terrain_mask = readS.readSint16LE();
-		tile_tbl[i].mask = readS.readSint16LE();
+		tile_tbl[i].tile_offset = readS.readUint16();
+		tile_tbl[i].terrain_mask = readS.readSint16();
+		tile_tbl[i].mask = readS.readSint16();
 	}
 
 	_tiles_loaded = 1;
@@ -85,7 +86,7 @@ int IsoMap::loadMetaTileset(const byte *mtileres_p, size_t mtileres_len) {
 	assert(_init);
 	assert((mtileres_p != NULL) && (mtileres_len > 0));
 
-	MemoryReadStream readS(mtileres_p, mtileres_len);
+	MemoryReadStreamEndian readS(mtileres_p, mtileres_len, IS_BIG_ENDIAN);
 
 	mtile_ct = mtileres_len / SAGA_METATILE_ENTRY_LEN;
 	mtile_tbl = (ISO_METATILE_ENTRY *)malloc(mtile_ct * sizeof *mtile_tbl);
@@ -94,13 +95,13 @@ int IsoMap::loadMetaTileset(const byte *mtileres_p, size_t mtileres_len) {
 	}
 
 	for (ct = 0; ct < mtile_ct; ct++) {
-		mtile_tbl[ct].mtile_n = readS.readUint16LE();
-		mtile_tbl[ct].height = readS.readSint16LE();
-		mtile_tbl[ct].highest_pixel = readS.readSint16LE();
+		mtile_tbl[ct].mtile_n = readS.readUint16();
+		mtile_tbl[ct].height = readS.readSint16();
+		mtile_tbl[ct].highest_pixel = readS.readSint16();
 		mtile_tbl[ct].v_bits = readS.readByte();
 		mtile_tbl[ct].u_bits = readS.readByte();
 		for (i = 0; i < SAGA_METATILE_SIZE; i++) {
-			mtile_tbl[ct].tile_tbl[i] = readS.readUint16LE();
+			mtile_tbl[ct].tile_tbl[i] = readS.readUint16();
 		}
 	}
 
@@ -117,11 +118,11 @@ int IsoMap::loadMetaTileset(const byte *mtileres_p, size_t mtileres_len) {
 int IsoMap::loadMetamap(const byte *mm_res_p, size_t mm_res_len) {
 	int i;
 
-	MemoryReadStream readS(mm_res_p, mm_res_len);
-	_metamap_n = readS.readSint16LE();
+	MemoryReadStreamEndian readS(mm_res_p, mm_res_len, IS_BIG_ENDIAN);
+	_metamap_n = readS.readSint16();
 
 	for (i = 0; i < SAGA_METAMAP_SIZE; i++) {
-		_metamap_tbl[i] = readS.readUint16LE();
+		_metamap_tbl[i] = readS.readUint16();
 	}
 
 	_mm_res_p = mm_res_p;

@@ -25,6 +25,7 @@
 #include "saga/music.h"
 #include "saga/rscfile_mod.h"
 #include "saga/game_mod.h"
+#include "saga/stream.h"
 #include "sound/audiostream.h"
 #include "sound/mididrv.h"
 #include "sound/midiparser.h"
@@ -123,6 +124,7 @@ void RAWInputStream::refill() {
 
 	uint32 len_left;
 	byte *ptr = (byte *) _buf;
+	
 
 	_file->seek(_file_pos, SEEK_SET);
 
@@ -137,6 +139,12 @@ void RAWInputStream::refill() {
 		if (len & 1)
 			len--;
 
+		if (GAME_GetFeatures() & GF_BIG_ENDIAN_DATA) {			
+			uint16 *ptr16 = (uint16 *)ptr;
+			for (uint32 i = 0; i < (len / 2); i++)
+				ptr16[i] = TO_BE_16(ptr16[i]);
+		}
+			
 		len_left -= len;
 		ptr += len;
 
@@ -292,6 +300,7 @@ Music::Music(SoundMixer *mixer, MidiDriver *driver, int enabled) : _mixer(mixer)
 
 	if (GAME_GetGameType() == GID_ITE) {
 		File file;
+		byte footerBuf[ARRAYSIZE(_digiTableITECD) * 8];
 
 		// The lookup table is stored at the end of music.rsc. I don't
 		// know why it has 27 elements, but the last one represents a
@@ -312,11 +321,17 @@ Music::Music(SoundMixer *mixer, MidiDriver *driver, int enabled) : _mixer(mixer)
 			_musicFname = RSC_FileName(_musicContext);
 
 			file.open(_musicFname);
+			assert(file.size() > sizeof(footerBuf));
+
 			file.seek(-ARRAYSIZE(_digiTableITECD) * 8, SEEK_END);
+			file.read(footerBuf, sizeof(footerBuf));
+
+			MemoryReadStreamEndian readS(footerBuf, sizeof(footerBuf), IS_BIG_ENDIAN);
+
 
 			for (int i = 0; i < ARRAYSIZE(_digiTableITECD); i++) {
-				_digiTableITECD[i].start = file.readUint32LE();
-				_digiTableITECD[i].length = file.readUint32LE();
+				_digiTableITECD[i].start = readS.readUint32();
+				_digiTableITECD[i].length = readS.readUint32();
 			}
 
 			file.close();
@@ -478,7 +493,7 @@ int Music::play(uint32 music_rn, uint16 flags) {
 		}
 
 		if (RSC_LoadResource(rsc_ctxt, music_rn, &resource_data, 
-				&resource_size) != SUCCESS ) {
+				&resource_size) != SUCCESS) {
 			warning("Music::play(): Resource load failed: %u", music_rn);
 			return FAILURE;
 		}

@@ -33,6 +33,7 @@
 #include "saga/font.h"
 
 #include "saga/sprite.h"
+#include "saga/stream.h"
 
 namespace Saga {
 
@@ -81,9 +82,9 @@ int Sprite::loadList(int resource_num, SPRITELIST **sprite_list_p) {
 		return FAILURE;
 	}
 
-	MemoryReadStream readS(spritelist_data, spritelist_len);
+	MemoryReadStreamEndian readS(spritelist_data, spritelist_len, IS_BIG_ENDIAN);
 
-	sprite_count = readS.readUint16LE();
+	sprite_count = readS.readUint16();
 
 	new_slist->sprite_count = sprite_count;
 
@@ -95,7 +96,7 @@ int Sprite::loadList(int resource_num, SPRITELIST **sprite_list_p) {
 
 	for (i = 0; i < sprite_count; i++) {
 		new_slist->offset_list[i].data_idx = 0;
-		new_slist->offset_list[i].offset = readS.readUint16LE();
+		new_slist->offset_list[i].offset = readS.readUint16();
 	}
 
 	new_slist->slist_rn = resource_num;
@@ -124,9 +125,9 @@ int Sprite::appendList(int resource_num, SPRITELIST *spritelist) {
 		return FAILURE;
 	}
 
-	MemoryReadStream readS(spritelist_data, spritelist_len);
+	MemoryReadStreamEndian readS(spritelist_data, spritelist_len, IS_BIG_ENDIAN);
 
-	sprite_count = readS.readUint16LE();
+	sprite_count = readS.readUint16();
 
 	old_sprite_count = spritelist->sprite_count;
 	new_sprite_count = spritelist->sprite_count + sprite_count;
@@ -143,7 +144,7 @@ int Sprite::appendList(int resource_num, SPRITELIST *spritelist) {
 
 	for (i = old_sprite_count; i < spritelist->sprite_count; i++) {
 		spritelist->offset_list[i].data_idx = spritelist->append_count;
-		spritelist->offset_list[i].offset = readS.readUint16LE();
+		spritelist->offset_list[i].offset = readS.readUint16();
 	}
 
 	spritelist->sprite_data[spritelist->append_count] = spritelist_data;
@@ -194,7 +195,8 @@ int Sprite::draw(SURFACE *ds, SPRITELIST *sprite_list, int sprite_num, int spr_x
 	sprite_p = sprite_list->sprite_data[offset_idx];
 	sprite_p += offset;
 
-	MemoryReadStream readS(sprite_p, 5);
+	assert(sprite_p);
+	MemoryReadStreamEndian readS(sprite_p, 5, IS_BIG_ENDIAN);
 
 	x_align = readS.readSByte();
 	y_align = readS.readSByte();
@@ -302,7 +304,7 @@ int Sprite::drawOccluded(SURFACE *ds, SPRITELIST *sprite_list, int sprite_num, i
 	sprite_p = sprite_list->sprite_data[offset_idx];
 	sprite_p += offset;
 
-	MemoryReadStream readS(sprite_p, 5);
+	MemoryReadStreamEndian readS(sprite_p, 5, IS_BIG_ENDIAN);
 
 	// Read sprite dimensions -- should probably cache this stuff in 
 	// sprite list
@@ -383,7 +385,7 @@ int Sprite::drawOccluded(SURFACE *ds, SPRITELIST *sprite_list, int sprite_num, i
 /*
 	{
 		char buf[1024] = { 0 };
-		sprintf( buf, "dw: %d, dh: %d.", ci.draw_w, ci.draw_h );
+		sprintf(buf, "dw: %d, dh: %d.", ci.draw_w, ci.draw_h);
 
 		_vm->textDraw(2, ds, buf, spr_x - x_align, spr_y - y_align, 255, 0, FONT_OUTLINE);
 	}

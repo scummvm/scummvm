@@ -26,6 +26,8 @@
 
 #include "saga/rscfile_mod.h"
 #include "saga/rscfile.h"
+#include "saga/game_mod.h"
+#include "saga/stream.h"
 
 namespace Saga {
 
@@ -113,11 +115,11 @@ int RSC_LoadRSC(RSCFILE_CONTEXT *rsc) {
 	if (rsc->rc_file->read(tblinfo_buf, RSC_TABLEINFO_SIZE) != RSC_TABLEINFO_SIZE) {
 		return FAILURE;
 	}
+	
+	MemoryReadStreamEndian readS(tblinfo_buf, RSC_TABLEINFO_SIZE, IS_BIG_ENDIAN);
 
-	MemoryReadStream readS(tblinfo_buf, RSC_TABLEINFO_SIZE);
-
-	res_tbl_offset = readS.readUint32LE();
-	res_tbl_ct = readS.readUint32LE();
+	res_tbl_offset = readS.readUint32();
+	res_tbl_ct = readS.readUint32();
 
 	// Check for sane table offset
 	if (res_tbl_offset != rsc->rc_file->size() - RSC_TABLEINFO_SIZE - RSC_TABLEENTRY_SIZE * res_tbl_ct) {
@@ -146,11 +148,13 @@ int RSC_LoadRSC(RSCFILE_CONTEXT *rsc) {
 		return FAILURE;
 	}
 
-	MemoryReadStream readS1(tbl_buf, tbl_len);
+	MemoryReadStreamEndian readS1(tbl_buf, tbl_len, IS_BIG_ENDIAN);
 
+	debug(9, "RSC %s", rsc->rc_file_fspec);
 	for (i = 0; i < res_tbl_ct; i++) {
-		rsc_restbl[i].res_offset = readS1.readUint32LE();
-		rsc_restbl[i].res_size = readS1.readUint32LE();
+		rsc_restbl[i].res_offset = readS1.readUint32();
+		rsc_restbl[i].res_size = readS1.readUint32();
+		//debug(9, "#%x Offset:%x Size:%x", i, rsc_restbl[i].res_offset, rsc_restbl[i].res_size);
 		if ((rsc_restbl[i].res_offset > rsc->rc_file->size()) || (rsc_restbl[i].res_size > rsc->rc_file->size())) {
 			free(tbl_buf);
 			free(rsc_restbl);
@@ -256,6 +260,20 @@ int RSC_FreeResource(byte *resource_ptr) {
 	free(resource_ptr);
 
 	return SUCCESS;
+}
+
+int RSC_ConvertID(int id) {
+	int res = id;
+
+	if (IS_MAC_VERSION) {
+		if (res > 1537)
+			res -= 2;
+		else if (res == 1535 || res == 1536) {
+			error ("Wrong resource number %d for Mac ITE");
+		}
+	}
+
+	return res;
 }
 
 } // End of namespace Saga
