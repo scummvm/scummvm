@@ -25,8 +25,12 @@
 
 #include <stdio.h>
 
-#ifdef COMPRESSED_SOUND_FILE
+#ifdef USE_MAD
 #include <mad.h>
+#endif
+
+#ifdef USE_VORBIS
+#include <vorbis/vorbisfile.h>
 #endif
 
 #include "common/scummsys.h"
@@ -92,7 +96,7 @@ private:
 		void realDestroy();
 	};
 
-#ifdef COMPRESSED_SOUND_FILE
+#ifdef USE_MAD
 
 	class ChannelMP3 : public Channel {
 		SoundMixer * _mixer;
@@ -136,6 +140,22 @@ private:
 		bool soundFinished();
 	};
 
+#endif
+
+#ifdef USE_VORBIS
+	class ChannelVorbis : public Channel {
+		SoundMixer * _mixer;
+		OggVorbis_File * _ov_file;
+		double _end_pos;
+		bool _eof_flag;
+
+	public:
+		ChannelVorbis(SoundMixer * mixer, OggVorbis_File * ov_file, double duration);
+
+		void mix(int16 * data, uint len);
+		void realDestroy();
+		bool soundFinished();
+	};
 #endif
 
 	static void onGenerateSamples(void * s, byte * samples, int len);
@@ -187,9 +207,12 @@ public:
 	int playRaw(PlayingSoundHandle * handle, void * sound, uint32 size, uint rate, byte flags, int id);
 	int playStream(PlayingSoundHandle * handle, int index, void * sound, uint32 size, uint rate,
 									byte flags, int32 timeout = 3, int32 buffer_size = 2000000);
-#ifdef COMPRESSED_SOUND_FILE
+#ifdef USE_MAD
 	int playMP3(PlayingSoundHandle * handle, void * sound, uint32 size, byte flags);
 	int playMP3CDTrack(PlayingSoundHandle * handle, File * file, mad_timer_t duration);
+#endif
+#ifdef USE_VORBIS
+	int playVorbisCDTrack(PlayingSoundHandle * handle, OggVorbis_File * ov_file, double duration);
 #endif
 
 	/* Premix procedure, useful when using fmopl adlib */

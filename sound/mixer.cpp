@@ -120,7 +120,7 @@ void SoundMixer::beginSlots(int index) {
 	_beginSlots = index;
 }
 
-#ifdef COMPRESSED_SOUND_FILE
+#ifdef USE_MAD
 int SoundMixer::playMP3(PlayingSoundHandle * handle, void *sound, uint32 size, byte flags) {
 	for (int i = _beginSlots; i != NUM_CHANNELS; i++) {
 		if (_channels[i] == NULL) {
@@ -136,6 +136,19 @@ int SoundMixer::playMP3CDTrack(PlayingSoundHandle * handle, File * file, mad_tim
 	for (int i = _beginSlots; i != NUM_CHANNELS; i++) {
 		if (_channels[i] == NULL) {
 			return insertAt(handle, i, new ChannelMP3CDMusic(this, file, duration));
+		}
+	}
+
+	warning("SoundMixer::out of mixer slots");
+	return -1;
+}
+#endif
+
+#ifdef USE_VORBIS
+int SoundMixer::playVorbisCDTrack(PlayingSoundHandle * handle, OggVorbis_File * ov_file, double duration) {
+	for (int i = _beginSlots; i != NUM_CHANNELS; i++) {
+		if (_channels[i] == NULL) {
+			return insertAt(handle, i, new ChannelVorbis(this, ov_file, duration));
 		}
 	}
 
@@ -713,7 +726,7 @@ void SoundMixer::ChannelStream::realDestroy() {
 	delete this;
 }
 
-#ifdef COMPRESSED_SOUND_FILE
+#ifdef USE_MAD
 SoundMixer::ChannelMP3::ChannelMP3(SoundMixer * mixer, void * sound, uint size, byte flags) {
 	_mixer = mixer;
 	_flags = flags;
@@ -959,6 +972,89 @@ void SoundMixer::ChannelMP3CDMusic::realDestroy() {
 	mad_stream_finish(&_stream);
 
 	delete this;
+}
+
+#endif
+
+#ifdef USE_VORBIS
+SoundMixer::ChannelVorbis::ChannelVorbis(SoundMixer * mixer, OggVorbis_File * ov_file, double duration) {
+	_mixer = mixer;
+	_ov_file = ov_file;
+
+	if (duration)
+		_end_pos = ov_time_tell(ov_file) + duration;
+	else
+		_end_pos = 0;
+
+	_eof_flag = false;
+	_toBeDestroyed = false;
+}
+
+void SoundMixer::ChannelVorbis::mix(int16 * data, uint len) {
+	if (_toBeDestroyed) {
+		realDestroy();
+		return;
+	}
+
+	if (_eof_flag) {
+		memset(data, 0, sizeof(int16) * 2 * len);
+		return;
+	}
+
+	int channels = ov_info(_ov_file, -1)->channels;
+	uint len_left = len * channels * 2;
+	int16 *samples = new int16[len_left / 2];
+	char *read_pos = (char *) samples;
+	int volume = _mixer->_musicVolume;
+
+	// Read the samples
+	while (len_left > 0) {
+		long result = ov_read(_ov_file, read_pos, len_left,
+#ifdef SCUMM_BIG_ENDIAN
+				      1,
+#else
+				      0,
+#endif
+				      2, 1, NULL);
+		if (result == 0) {
+			_eof_flag = true;
+			memset(read_pos, 0, len_left);
+			break;
+		}
+		else if (result < 0) {
+			debug(1, "Decode error %d in Vorbis file", result);
+			// Don't delete it yet, that causes problems in
+			// the CD player emulation code.
+			_eof_flag = true;
+			memset(read_pos, 0, len_left);
+			break;
+		}
+		else {
+			len_left -= result;
+			read_pos += result;
+		}
+	}
+
+	// Mix the samples in
+	for (uint i = 0; i < len; i++) {
+		int16 sample = (int16) ((int32) samples[i * channels] * volume / 256);
+		*data++ += sample;
+		if (channels > 1)
+			sample = (int16) ((int32) samples[i * channels + 1] * volume / 256);
+		*data++ += sample;
+	}
+
+	delete [] samples;
+}
+
+void SoundMixer::ChannelVorbis::realDestroy() {
+	_mixer->unInsert(this);
+	delete this;
+}
+
+bool SoundMixer::ChannelVorbis::soundFinished() {
+	return _eof_flag || (_end_pos > 0 &&
+			     ov_time_tell(_ov_file) >= _end_pos);
 }
 
 #endif

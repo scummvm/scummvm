@@ -738,7 +738,7 @@ int Sound::startSfxSound(File *file, int file_size) {
 	int rate, comp;
 	byte *data;
 
-#ifdef COMPRESSED_SOUND_FILE
+#ifdef USE_MAD
 	if (file_size > 0) {
 		data = (byte *)calloc(file_size + MAD_BUFFER_GUARD, 1);
 
@@ -1116,7 +1116,7 @@ int Sound::playSfxSound(void *sound, uint32 size, uint rate, bool isUnsigned) {
 }
 
 int Sound::playSfxSound_MP3(void *sound, uint32 size) {
-#ifdef COMPRESSED_SOUND_FILE
+#ifdef USE_MAD
 	if (_soundsPaused)
 		return -1;
 	return _scumm->_mixer->playMP3(NULL, sound, size, SoundMixer::FLAG_AUTOFREE);
@@ -1219,16 +1219,11 @@ int Sound::getCachedTrack(int track) {
 	char track_name[1024];
 	File * file = new File();
 	int current_index;
-	struct mad_stream stream;
-	struct mad_frame frame;
-	unsigned char buffer[8192];
-	unsigned int buflen = 0;
-	int count = 0;
 
 	// See if we find the track in the cache
 	for (i = 0; i < CACHE_TRACKS; i++)
 		if (_cached_tracks[i] == track) {
-			if (_mp3_tracks[i])
+			if (_track_info[i])
 				return i;
 			else
 				return -1;
@@ -1237,20 +1232,118 @@ int Sound::getCachedTrack(int track) {
 	_current_cache %= CACHE_TRACKS;
 
 	// Not found, see if it exists
-	sprintf(track_name, "track%d.mp3", track);
-	file->open(track_name, _scumm->getGameDataPath());
+
+	// First, delete the previous track info object
+	delete _track_info[current_index];
+	_track_info[current_index] = NULL;
+
 	_cached_tracks[current_index] = track;
 
-	/* First, close the previous file */
-	if (_mp3_tracks[current_index])
-		_mp3_tracks[current_index]->close();
+#ifdef USE_MAD
+	sprintf(track_name, "track%d.mp3", track);
+	file->open(track_name, _scumm->getGameDataPath());
 
-	_mp3_tracks[current_index] = NULL;
-	if (file->isOpen() == false) {
-		// This warning is pretty pointless.
-		debug(1, "Track %d not available in mp3 format", track);
+	if (file->isOpen()) {
+		_track_info[current_index] = new MP3TrackInfo(file);
+		if (_track_info[current_index]->error()) {
+			delete _track_info[current_index];
+			_track_info[current_index] = NULL;
+			return -1;
+		}
+		return current_index;
+	}
+#endif
+
+#ifdef USE_VORBIS
+	sprintf(track_name, "track%d.ogg", track);
+	file->open(track_name, _scumm->getGameDataPath());
+
+	if (file->isOpen()) {
+		_track_info[current_index] = new VorbisTrackInfo(file);
+		if (_track_info[current_index]->error()) {
+			delete _track_info[current_index];
+			_track_info[current_index] = NULL;
+			return -1;
+		}
+		return current_index;
+	}
+#endif
+
+	debug(1, "Track %d not available in compressed format", track);
+	return -1;
+}
+
+int Sound::playMP3CDTrack(int track, int num_loops, int start, int delay) {
+	int index;
+	_scumm->_vars[_scumm->VAR_MI1_TIMER] = 0;
+
+	if (_soundsPaused)
+		return 0;
+
+	if ((num_loops == 0) && (start == 0)) {
+		return 0;
+	}
+
+	index = getCachedTrack(track);
+	if (index < 0)
+		return -1;
+
+	if (_dig_cd_playing)
+		_scumm->_mixer->stop(_dig_cd_index);
+	_dig_cd_index = _track_info[index]->play(_scumm->_mixer, start, delay);
+	_dig_cd_playing = true;
+	_dig_cd_track = track;
+	_dig_cd_num_loops = num_loops;
+	_dig_cd_start = start;
+	_dig_cd_delay = delay;
+	return 0;
+}
+
+int Sound::stopMP3CD() {
+	if (_dig_cd_playing == true) {
+		_scumm->_mixer->stop(_dig_cd_index);
+		_dig_cd_playing = false;
+		_dig_cd_track = 0;
+		_dig_cd_num_loops = 0;
+		_dig_cd_start = 0;
+		_dig_cd_delay = 0;
+		return 0;
+	}
+	return -1;
+}
+
+int Sound::pollMP3CD() {
+	if (_dig_cd_playing == true)
+		return 1;
+	return 0;
+}
+
+int Sound::updateMP3CD() {
+	if (_dig_cd_playing == false)
+		return -1;
+
+	if (_scumm->_mixer->_channels[_dig_cd_index] == NULL) {
+		warning("Error in MP3 decoding");
 		return -1;
 	}
+
+	if (_scumm->_mixer->_channels[_dig_cd_index]->soundFinished()) {
+		if (_dig_cd_num_loops == -1 || --_dig_cd_num_loops > 0)
+			playMP3CDTrack(_dig_cd_track, _dig_cd_num_loops, _dig_cd_start, _dig_cd_delay);
+		else
+			stopMP3CD();
+	}
+
+	return 0;
+}
+
+#ifdef USE_MAD
+Sound::MP3TrackInfo::MP3TrackInfo(File *file) {
+	struct mad_stream stream;
+	struct mad_frame frame;
+	unsigned char buffer[8192];
+	unsigned int buflen = 0;
+	int count = 0;
 
 	// Check the format and bitrate
 	mad_stream_init(&stream);
@@ -1263,7 +1356,7 @@ int Sound::getCachedTrack(int track) {
 			bytes = file->read(buffer + buflen, sizeof(buffer) - buflen);
 			if (bytes <= 0) {
 				if (bytes == -1) {
-					warning("Invalid format for track %d", track);
+					warning("Invalid file format");
 					goto error;
 				}
 				break;
@@ -1295,105 +1388,154 @@ int Sound::getCachedTrack(int track) {
 	}
 
 	if (count)
-		memcpy(&_mad_header[current_index], &frame.header, sizeof(mad_header));
+		memcpy(&_mad_header, &frame.header, sizeof(mad_header));
 	else {
-		warning("Invalid format for track %d", track);
+		warning("Invalid file format");
 		goto error;
 	}
 
 	mad_frame_finish(&frame);
 	mad_stream_finish(&stream);
 	// Get file size
-	_mp3_size[current_index] = file->size();
-	_mp3_tracks[current_index] = file;
-	
-	return current_index;
+	_size = file->size();
+	_file = file;
+	_error_flag = false;
+	return;
 
  error:
 	mad_frame_finish(&frame);
 	mad_stream_finish(&stream);
+	_error_flag = true;
 	delete file;
-
-	return -1;
 }
 
-int Sound::playMP3CDTrack(int track, int num_loops, int start, int delay) {
-	int index;
+int Sound::MP3TrackInfo::play(SoundMixer *mixer, int start, int delay) {
 	unsigned int offset;
 	mad_timer_t duration;
-	_scumm->_vars[_scumm->VAR_MI1_TIMER] = 0;
-
-	if (_soundsPaused)
-		return 0;
-
-	if ((num_loops == 0) && (start == 0)) {
-		return 0;
-	}
-
-	index = getCachedTrack(track);
-	if (index < 0)
-		return -1;
 
 	// Calc offset. As all bitrates are in kilobit per seconds, the division by 200 is always exact
-	offset = (start * (_mad_header[index].bitrate / (8 * 25))) / 3;
+	offset = (start * (_mad_header.bitrate / (8 * 25))) / 3;
 
 	// Calc delay
 	if (!delay) {
-		mad_timer_set(&duration, (_mp3_size[index] * 8) / _mad_header[index].bitrate,
-		              (_mp3_size[index] * 8) % _mad_header[index].bitrate, _mad_header[index].bitrate);
+		mad_timer_set(&duration, (_size * 8) / _mad_header.bitrate,
+		              (_size * 8) % _mad_header.bitrate, _mad_header.bitrate);
 	} else {
 		mad_timer_set(&duration, delay / 75, delay % 75, 75);
 	}	
 
 	// Go
-	_mp3_tracks[index]->seek(offset, SEEK_SET);
+	_file->seek(offset, SEEK_SET);
 
-	if (_mp3_cd_playing == true)
-		_scumm->_mixer->stop(_mp3_index);		
-	_mp3_index = _scumm->_mixer->playMP3CDTrack(NULL, _mp3_tracks[index], duration);
-	_mp3_cd_playing = true;
-	_mp3_cd_track = track;
-	_mp3_cd_num_loops = num_loops;
-	_mp3_cd_start = start;
-	_mp3_cd_delay = delay;
+	return mixer->playMP3CDTrack(NULL, _file, duration);
+}
+
+Sound::MP3TrackInfo::~MP3TrackInfo() {
+	if (! _error_flag)
+		_file->close();
+}
+
+#endif
+
+#ifdef USE_VORBIS
+// These are wrapper functions to allow using a File object to
+// provide data to the OggVorbis_File object.
+
+struct file_info {
+	File *file;
+	int start, curr_pos;
+	size_t len;
+};
+
+static size_t read_wrap(void *ptr, size_t size, size_t nmemb, void *datasource) {
+	file_info *f = (file_info *) datasource;
+	int result;
+
+	nmemb *= size;
+	if (f->curr_pos > (int) f->len)
+		nmemb = 0;
+	else if (nmemb > f->len - f->curr_pos)
+		nmemb = f->len - f->curr_pos;
+	result = f->file->read(ptr, nmemb);
+	if (result == -1) {
+		f->curr_pos = f->file->pos() - f->start;
+		return (size_t) -1;
+	}
+	else {
+		f->curr_pos += result;
+		return result / size;
+	}
+}
+
+static int seek_wrap(void *datasource, ogg_int64_t offset, int whence) {
+	file_info *f = (file_info *) datasource;
+
+	if (whence == SEEK_SET)
+		offset += f->start;
+	else if (whence == SEEK_END) {
+		offset += f->start + f->len;
+		whence = SEEK_SET;
+	}
+
+	f->file->seek(offset, whence);
+	f->curr_pos = f->file->pos() - f->start;
+	return f->curr_pos;
+}
+
+static int close_wrap(void *datasource) {
+	file_info *f = (file_info *) datasource;
+
+	f->file->close();
+	delete f;
 	return 0;
 }
 
-int Sound::stopMP3CD() {
-	if (_mp3_cd_playing == true) {
-		_scumm->_mixer->stop(_mp3_index);
-		_mp3_cd_playing = false;
-		_mp3_cd_track = 0;
-		_mp3_cd_num_loops = 0;
-		_mp3_cd_start = 0;
-		_mp3_cd_delay = 0;
-		return 0;
-	}
-	return -1;
+static long tell_wrap(void *datasource) {
+	file_info *f = (file_info *) datasource;
+
+	return f->file->pos();
 }
 
-int Sound::pollMP3CD() {
-	if (_mp3_cd_playing == true)
-		return 1;
-	return 0;
+static ov_callbacks File_wrap = {
+	read_wrap, seek_wrap, close_wrap, tell_wrap
+};
+
+Sound::VorbisTrackInfo::VorbisTrackInfo(File *file) {
+	file_info *f = new file_info;
+
+	f->file = file;
+	f->start = 0;
+	f->len = file->size();
+	f->curr_pos = file->pos();
+
+	if (ov_open_callbacks((void *) f, &_ov_file, NULL, 0, File_wrap) < 0) {
+		warning("Invalid file format");
+		_error_flag = true;
+		delete f;
+		delete file;
+	}
+	else {
+		_error_flag = false;
+		_file = file;
+
+		// Check the file format
+		if (ov_info(&_ov_file, -1)->rate != 22050)
+			warning("Vorbis code currently only supports files encoded at 22050 Hz");
+	}
 }
 
-int Sound::updateMP3CD() {
-	if (_mp3_cd_playing == false)
-		return -1;
-
-	if (_scumm->_mixer->_channels[_mp3_index] == NULL) {
-		warning("Error in MP3 decoding");
-		return -1;
-	}
-
-	if (_scumm->_mixer->_channels[_mp3_index]->soundFinished()) {
-		if (_mp3_cd_num_loops == -1 || --_mp3_cd_num_loops > 0)
-			playMP3CDTrack(_mp3_cd_track, _mp3_cd_num_loops, _mp3_cd_start, _mp3_cd_delay);
-		else
-			stopMP3CD();
-	}
-
-	return 0;
+int Sound::VorbisTrackInfo::play(SoundMixer *mixer, int start, int delay) {
+	ov_time_seek(&_ov_file, start / 75.0);
+	return mixer->playVorbisCDTrack(NULL, &_ov_file, delay / 75.0);
 }
+
+Sound::VorbisTrackInfo::~VorbisTrackInfo() {
+	if (! _error_flag) {
+		ov_clear(&_ov_file);
+		delete _file;
+	}
+}
+
+#endif
+
 #endif

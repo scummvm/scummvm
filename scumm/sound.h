@@ -65,24 +65,62 @@ enum {
 	uint16 _mouthSyncTimes[52];
 	uint _curSoundPos;
 
+#ifdef COMPRESSED_SOUND_FILE
 	MP3OffsetTable *offset_table;	// SO3 MP3 compressed audio
 	int num_sound_effects;		// SO3 MP3 compressed audio
-#ifdef COMPRESSED_SOUND_FILE
 
 	#define CACHE_TRACKS 10
 
 	/* used for mp3 CD music */
 
 	int _cached_tracks[CACHE_TRACKS];
-	struct mad_header _mad_header[CACHE_TRACKS];
-	long _mp3_size[CACHE_TRACKS];
-	File *_mp3_tracks[CACHE_TRACKS];
-	int _mp3_index;
-	int _mp3_cd_track;
-	int _mp3_cd_start;
-	int _mp3_cd_delay;
-	int _mp3_cd_num_loops;
-	bool _mp3_cd_playing;
+	int _dig_cd_index;
+	int _dig_cd_track;
+	int _dig_cd_start;
+	int _dig_cd_delay;
+	int _dig_cd_num_loops;
+	bool _dig_cd_playing;
+
+	class DigitalTrackInfo {
+	public:
+		virtual bool error() = 0;
+		virtual int play(SoundMixer *mixer, int start, int delay) = 0;
+		virtual ~DigitalTrackInfo() { }
+	};
+
+	DigitalTrackInfo *_track_info[CACHE_TRACKS];
+
+#ifdef USE_MAD
+	class MP3TrackInfo : public DigitalTrackInfo {
+	private:
+		struct mad_header _mad_header;
+		long _size;
+		File *_file;
+		bool _error_flag;
+
+	public:
+		MP3TrackInfo(File *file);
+		~MP3TrackInfo();
+		bool error() { return _error_flag; }
+		int play(SoundMixer *mixer, int start, int delay);
+	};
+#endif
+
+#ifdef USE_VORBIS
+	class VorbisTrackInfo : public DigitalTrackInfo {
+	private:
+		File *_file;
+		OggVorbis_File _ov_file;
+		bool _error_flag;
+
+	public:
+		VorbisTrackInfo(File *file);
+		~VorbisTrackInfo();
+		bool error() { return _error_flag; }
+		int play(SoundMixer *mixer, int start, int delay);
+	};
+#endif
+
 #endif
 
 	Scumm * _scumm;

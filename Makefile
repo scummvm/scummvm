@@ -36,8 +36,12 @@ OBJS	 =
 # DEFINES += -DDUMP_SCRIPTS
 
 # Uncomment this to activate the MAD lib for compressed sound files
-DEFINES += -DCOMPRESSED_SOUND_FILE
+DEFINES += -DUSE_MAD
 LIBS    += -lmad
+
+# Uncomment this to activate the Ogg Vorbis lib for compressed sound files
+# DEFINES += -DUSE_VORBIS
+# LIBS    += -lvorbisfile -lvorbis
 
 # Uncomment this to activate the ALSA lib for midi
 # DEFINES += -DUSE_ALSA
