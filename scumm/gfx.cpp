@@ -1005,6 +1005,10 @@ void ScummEngine::drawBox(int x, int y, int x2, int y2, int color) {
 			error("can only copy bg to main window");
 		bgbuff = vs->getBackPixels(x, y);
 		blit(backbuff, vs->pitch, bgbuff, vs->pitch, width, height);
+		if (_charset->_hasMask) {
+			byte *mask = (byte *)gdi._textSurface.pixels + gdi._textSurface.pitch * (y - _screenTop) + x;
+			fill(mask, gdi._textSurface.pitch, CHARSET_MASK_TRANSPARENCY, width, height);
+		}
 	} else {
 		fill(backbuff, vs->pitch, color, width, height);
 	}
