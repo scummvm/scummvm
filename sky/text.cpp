@@ -28,10 +28,7 @@
 #define NO_OF_TEXT_SECTIONS	8	// 8 sections per language
 #define	CHAR_SET_FILE	60150
 #define	SET_FONT_DATA_SIZE	12
-#define	TD_LINE_JUMP	10 
 #define MAX_SPEECH_SECTION	7 
-
-//#define	DO_TEXT_DUMP
 
 void SkyState::initialiseText(void) {
 
@@ -46,39 +43,6 @@ void SkyState::initialiseText(void) {
 	if (_isCDVersion) {
 		_preAfterTableArea = loadFile(60522, NULL);
 	}
-
-	#ifdef DO_TEXT_DUMP 
-		uint32 dumpConvertTable[] = {
-			553,	// 553 lines in section 0
-			484,	// 488 (484?) lines in section 1
-			1303,	// 1303 lines in section 2
-			922,	// 922 lines in section 3
-			1140,	// 1140 lines in section 4
-			531,	// 531 lines in section 5
-			150	// 150 lines in section 6
-		};
-
-		uint32 sectionCounter = 0;
-		uint32 textNumber = 0;
-		int32 lines = 0;
-		uint32 textNr;
-	
-		for (sectionCounter = 0; sectionCounter < MAX_SPEECH_SECTION; sectionCounter++) {
-			lines = dumpConvertTable[sectionCounter];
-			textNumber = 0;
-
-			do {
-				textNr = (sectionCounter << 12) + textNumber;
-				printf("Section \"%d\", Item \"%d\", Number \"%d\"\n", sectionCounter, textNumber, lines);
-				getText(textNr);
-				printf("Text: \"%s\"\n", _textBuffer);
-				textNumber += TD_LINE_JUMP;
-				lines -= TD_LINE_JUMP;	
-			} while (lines > -1);
-		}
-			
-	#endif
-
 }
 
 void SkyState::setupVersionSpecifics(uint32 version) {
