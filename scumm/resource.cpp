@@ -104,6 +104,7 @@ void Scumm::openRoom(int room)
 				return;
 			if (_features & GF_EXTERNAL_CHARSET && room >= roomlimit)
 				return;
+			printf("Reading room offsets from '%s'\n", buf);
 			readRoomsOffsets();
 			_fileOffset = _roomFileOffsets[room];
 
@@ -171,9 +172,7 @@ void Scumm::readRoomsOffsets()
 	}
 
 	num = _fileHandle.readByte();
-	while (num) {
-		num--;
-
+	while (num--) {
 		room = _fileHandle.readByte();
 		if (_roomFileOffsets[room] != 0xFFFFFFFF) {
 			_roomFileOffsets[room] = _fileHandle.readUint32LE();
@@ -535,7 +534,10 @@ int Scumm::loadResource(int type, int idx)
 		roomNr = _roomResource;
 
 	if (type == rtRoom) {
-		fileOffs = 0;
+		if (_features & GF_AFTER_V8)
+			fileOffs = 8;
+		else
+			fileOffs = 0;
 	} else {
 		fileOffs = res.roomoffs[type][idx];
 		if (fileOffs == 0xFFFFFFFF)
@@ -1633,10 +1635,8 @@ void Scumm::allocateArrays()
 	_vars = (int16 *)calloc(_numVariables, sizeof(int16));
 	_bitVars = (byte *)calloc(_numBitVariables >> 3, 1);
 
-	allocResTypeData(rtCostume,
-									 (_features & GF_NEW_COSTUMES) ? MKID('AKOS') :
-									 MKID('COST'), _numCostumes, "costume", 1);
-
+	allocResTypeData(rtCostume, (_features & GF_NEW_COSTUMES) ? MKID('AKOS') : MKID('COST'),
+								_numCostumes, "costume", 1);
 	allocResTypeData(rtRoom, MKID('ROOM'), _numRooms, "room", 1);
 	allocResTypeData(rtRoomScripts, MKID('RMSC'), _numRooms, "room script", 1);
 	allocResTypeData(rtSound, MKID('SOUN'), _numSounds, "sound", 1);
