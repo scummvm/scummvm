@@ -1,5 +1,4 @@
 /* ScummVM - Scumm Interpreter
- * Copyright (C) 2001  Ludvig Strigeus
  * Copyright (C) 2001/2002 The ScummVM project
  *
  * This program is free software; you can redistribute it and/or
@@ -17,15 +16,6 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
  * $Header$
- */
-
-/*
- * Timidity support by Lionel Ulmer <lionel.ulmer@free.fr>
- * QuickTime support by Florent Boudet <flobo@ifrance.com>
- * Raw output support by Michael Pearce
- * MorphOS support by Ruediger Hanke 
- * Alsa support by Nicolas Noble <nicolas@nobis-crew.org> copied from
- *    both the QuickTime support and (vkeybd http://www.alsa-project.org/~iwai/alsa.html)
  */
 
 #include "stdafx.h"
