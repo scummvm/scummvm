@@ -868,12 +868,19 @@ void ScummEngine::drawBox(int x, int y, int x2, int y2, int color) {
 	else if (y2 > vs->h)
 		y2 = vs->h;
 	
+	width = x2 - x;
+	height = y2 - y;
+
+	// This will happen in the Sam & Max intro - see bug #1039162 - where
+	// it would trigger an assertion in blit().
+
+	if (width <= 0 || height <= 0)
+		return;
+
 	markRectAsDirty(vs->number, x, x2, y, y2);
 
 	backbuff = vs->getPixels(x, y);
 
-	width = x2 - x;
-	height = y2 - y;
 	if (color == -1) {
 		if (vs->number != kMainVirtScreen)
 			error("can only copy bg to main window");
