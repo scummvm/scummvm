@@ -236,7 +236,7 @@ const char *getPlatformDescription(Platform id) {
 		if (l->id == id)
 			return l->description;
 	}
-	return 0;
+	return l->description;
 }
 
 
