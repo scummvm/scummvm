@@ -27,6 +27,8 @@
 #include "sound/mixer.h"
 #include "sound/rate.h"
 #include "sound/audiostream.h"
+#include "sound/mp3.h"
+#include "sound/vorbis.h"
 
 
 #pragma mark -
@@ -242,52 +244,51 @@ int SoundMixer::playRaw(PlayingSoundHandle *handle, void *sound, uint32 size, ui
 				return -1;
 	}
 
-	return insertChannel(handle, new ChannelRaw(this, handle, sound, size, rate, flags, volume, pan, id, loopStart, loopEnd));
+	Channel *chan = new ChannelRaw(this, handle, sound, size, rate, flags, volume, pan, id, loopStart, loopEnd);
+	return insertChannel(handle, chan);
 }
 
 #ifdef USE_MAD
 int SoundMixer::playMP3(PlayingSoundHandle *handle, File *file, uint32 size, byte volume, int8 pan) {
-	Common::StackLock lock(_mutex);
-
 	// Create the input stream
 	AudioInputStream *input = makeMP3Stream(file, mad_timer_zero, size);
-	Channel *chan = new Channel(this, handle, input, false, volume, pan);
-	return insertChannel(handle, chan);
+	return playInputStream(handle, input, false, volume, pan);
 }
 int SoundMixer::playMP3CDTrack(PlayingSoundHandle *handle, File *file, mad_timer_t duration, byte volume, int8 pan) {
-	Common::StackLock lock(_mutex);
-
 	// Create the input stream
 	AudioInputStream *input = makeMP3Stream(file, duration, 0);
-	Channel *chan = new Channel(this, handle, input, true, volume, pan);
-	return insertChannel(handle, chan);
+	return playInputStream(handle, input, true, volume, pan);
 }
 #endif
 
 #ifdef USE_VORBIS
 int SoundMixer::playVorbis(PlayingSoundHandle *handle, OggVorbis_File *ov_file, int duration, bool is_cd_track, byte volume, int8 pan) {
-	Common::StackLock lock(_mutex);
-
 	// Create the input stream
 	AudioInputStream *input = makeVorbisStream(ov_file, duration);
-	Channel *chan = new Channel(this, handle, input, is_cd_track, volume, pan);
-	return insertChannel(handle, chan);
+	return playInputStream(handle, input, is_cd_track, volume, pan);
 }
 #endif
+
+int SoundMixer::playInputStream(PlayingSoundHandle *handle, AudioInputStream *input, bool isMusic, byte volume, int8 pan) {
+	Common::StackLock lock(_mutex);
+
+	// Create the channel
+	Channel *chan = new Channel(this, handle, input, isMusic, volume, pan);
+	return insertChannel(handle, chan);
+}
 
 void SoundMixer::mix(int16 *buf, uint len) {
 #ifndef __PALM_OS__
 	Common::StackLock lock(_mutex);
 #endif
 
-	if (_premixProc && !_paused) {
-		_premixProc(_premixParam, buf, len);
-	} else {
-		//  zero the buf out
-		memset(buf, 0, 2 * len * sizeof(int16));
-	}
+	//  zero the buf
+	memset(buf, 0, 2 * len * sizeof(int16));
 
 	if (!_paused) {
+		if (_premixProc)
+			_premixProc(_premixParam, buf, len);
+
 		// now mix all channels
 		for (int i = 0; i != NUM_CHANNELS; i++)
 			if (_channels[i] && !_channels[i]->isPaused())

@@ -22,11 +22,17 @@
 #ifndef SOUND_MP3_H
 #define SOUND_MP3_H
 
-#include "sound/audiocd.h"
-
-class File;
+#include "stdafx.h"
+#include "common/scummsys.h"
 
 #ifdef USE_MAD
+
+#include "sound/audiocd.h"
+#include <mad.h>
+
+class AudioInputStream;
+class File;
+
 class MP3TrackInfo : public DigitalTrackInfo {
 private:
 	struct mad_header _mad_header;
@@ -40,8 +46,9 @@ public:
 	bool error() { return _error_flag; }
 	int play(SoundMixer *mixer, PlayingSoundHandle *handle, int startFrame, int duration);
 };
+
+AudioInputStream *makeMP3Stream(File *file, mad_timer_t duration, uint size = 0);
+
 #endif
-
-
 
 #endif

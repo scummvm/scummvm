@@ -25,21 +25,7 @@
 #include "stdafx.h"
 #include "common/scummsys.h"
 #include "common/util.h"
-#ifdef USE_MAD
-#include <mad.h>
-#endif
-#ifdef USE_VORBIS
-#include <vorbis/vorbisfile.h>
-#endif
 
-class File;
-
-
-// TODO:
-// * maybe make readIntern return 16.16 or 24.8 fixed point values
-//   since MAD (and maybe OggVorbis?) gives us those -> higher quality.
-//   The rate converters should be able to deal with those just fine, too.
-// * possibly add MADInputStream and VorbisInputStream
 
 /**
  * Generic input stream for the resampling code.
@@ -56,19 +42,12 @@ public:
 	 * happen when the stream is fully used up).
 	 * For stereo stream, buffer will be filled with interleaved
 	 * left and right channel samples.
-	 *
-	 * For maximum efficency, subclasses should always override
-	 * the default implementation!
 	 */
-	virtual int readBuffer(int16 *buffer, const int numSamples) {
-		int samples;
-		for (samples = 0; samples < numSamples && !eos(); samples++) {
-			*buffer++ = read();
-		}
-		return samples;
-	}
+	virtual int readBuffer(int16 *buffer, const int numSamples) = 0;
 
-	/** Read a single (16 bit signed) sample from the stream. */
+	/**
+	 * Read a single (16 bit signed) sample from the stream.
+	 */
 	virtual int16 read() = 0;
 	
 	/** Is this a stereo stream? */
@@ -88,7 +67,7 @@ public:
 };
 
 class ZeroInputStream : public AudioInputStream {
-protected:
+private:
 	int _len;
 public:
 	ZeroInputStream(uint len) : _len(len) { }
@@ -99,7 +78,6 @@ public:
 		return samples;
 	}
 	int16 read() { assert(_len > 0); _len--; return 0; }
-	int size() const { return _len; }
 	bool isStereo() const { return false; }
 	bool eos() const { return _len <= 0; }
 	
@@ -108,14 +86,5 @@ public:
 
 AudioInputStream *makeLinearInputStream(int rate, byte _flags, const byte *ptr, uint32 len, uint loopOffset, uint loopLen);
 WrappedAudioInputStream *makeWrappedInputStream(int rate, byte _flags, uint32 len);
-
-#ifdef USE_MAD
-AudioInputStream *makeMP3Stream(File *file, mad_timer_t duration, uint size = 0);
-#endif
-
-#ifdef USE_VORBIS
-AudioInputStream *makeVorbisStream(OggVorbis_File *file, int duration);
-#endif
-
 
 #endif

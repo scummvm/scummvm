@@ -19,13 +19,13 @@
  *
  */
 
-#include "stdafx.h"
-
 #include "sound/vorbis.h"
+#include "sound/audiostream.h"
 #include "common/file.h"
 #include "common/util.h"
 
 #ifdef USE_VORBIS
+
 // These are wrapper functions to allow using a File object to
 // provide data to the OggVorbis_File object.
 
@@ -86,9 +86,7 @@ static long tell_wrap(void *datasource) {
 static ov_callbacks g_File_wrap = {
 	read_wrap, seek_wrap, close_wrap, tell_wrap
 };
-#endif
 
-#ifdef USE_VORBIS
 
 VorbisTrackInfo::VorbisTrackInfo(File *file) {
 	file_info *f = new file_info;
@@ -146,5 +144,125 @@ void playSfxSound_Vorbis(SoundMixer *mixer, File *file, uint32 size, PlayingSoun
 	} else
 		mixer->playVorbis(handle, ov_file, 0, false);
 }
+
+
+#pragma mark -
+#pragma mark --- Ogg Vorbis stream ---
+#pragma mark -
+
+
+class VorbisInputStream : public AudioInputStream {
+	OggVorbis_File *_ov_file;
+	int _end_pos;
+	int _numChannels;
+	int16 _buffer[4096];
+	const int16 *_bufferEnd;
+	const int16 *_pos;
+	
+	void refill();
+	inline bool eosIntern() const;
+public:
+	VorbisInputStream(OggVorbis_File *file, int duration);
+	int readBuffer(int16 *buffer, const int numSamples);
+
+	int16 read();
+	bool eos() const			{ return eosIntern(); }
+	bool isStereo() const		{ return _numChannels >= 2; }
+	
+	int getRate() const			{ return ov_info(_ov_file, -1)->rate; }
+};
+
+
+#ifdef CHUNKSIZE
+#define VORBIS_TREMOR
+#endif
+
+
+VorbisInputStream::VorbisInputStream(OggVorbis_File *file, int duration) 
+	: _ov_file(file), _bufferEnd(_buffer + ARRAYSIZE(_buffer)) {
+
+	// Check the header, determine if this is a stereo stream
+	_numChannels = ov_info(_ov_file, -1)->channels;
+
+	// Determine the end position
+	if (duration)
+		_end_pos = ov_pcm_tell(_ov_file) + duration;
+	else
+		_end_pos = ov_pcm_total(_ov_file, -1);
+
+	// Read in initial data
+	refill();
+}
+
+inline int16 VorbisInputStream::read() {
+	assert(!eosIntern());
+
+	int16 sample = *_pos++;
+	if (_pos >= _bufferEnd) {
+		refill();
+	}
+	return sample;
+}
+
+inline bool VorbisInputStream::eosIntern() const {
+	return _pos >= _bufferEnd;
+}
+
+int VorbisInputStream::readBuffer(int16 *buffer, const int numSamples) {
+	int samples = 0;
+	while (samples < numSamples && !eosIntern()) {
+		const int len = MIN(numSamples, samples + (int)(_bufferEnd - _pos));
+		memcpy(buffer, _pos, len * 2);
+		buffer += len;
+		_pos += len;
+		samples += len;
+		if (_pos >= _bufferEnd) {
+			refill();
+		}
+	}
+	return samples;
+}
+
+void VorbisInputStream::refill() {
+	// Read the samples
+	uint len_left = sizeof(_buffer);
+	char *read_pos = (char *)_buffer;
+
+	while (len_left > 0 && _end_pos > ov_pcm_tell(_ov_file)) {
+		long result = ov_read(_ov_file, read_pos, len_left,
+#ifndef VORBIS_TREMOR
+#ifdef SCUMM_BIG_ENDIAN
+						1,
+#else
+						0,
+#endif
+						2,	// 16 bit
+						1,	// signed
+#endif
+						NULL);
+		if (result == OV_HOLE) {
+			// Possibly recoverable, just warn about it
+			warning("Corrupted data in Vorbis file");
+		} else if (result <= 0) {
+			if (result < 0)
+				debug(1, "Decode error %d in Vorbis file", result);
+			// Don't delete it yet, that causes problems in
+			// the CD player emulation code.
+			memset(read_pos, 0, len_left);
+			break;
+		} else {
+			len_left -= result;
+			read_pos += result;
+		}
+	}
+
+	_pos = _buffer;
+	_bufferEnd = (int16 *)read_pos;
+}
+
+AudioInputStream *makeVorbisStream(OggVorbis_File *file, int duration) {
+	return new VorbisInputStream(file, duration);
+}
+
 
 #endif

@@ -22,11 +22,16 @@
 #ifndef SOUND_VORBIS_H
 #define SOUND_VORBIS_H
 
-#include "sound/audiocd.h"
-
-class File;
+#include "stdafx.h"
+#include "common/scummsys.h"
 
 #ifdef USE_VORBIS
+
+#include "sound/audiocd.h"
+#include <vorbis/vorbisfile.h>
+
+class AudioInputStream;
+class File;
 
 class VorbisTrackInfo : public DigitalTrackInfo {
 private:
@@ -43,6 +48,8 @@ public:
 
 
 void playSfxSound_Vorbis(SoundMixer *mixer, File *file, uint32 size, PlayingSoundHandle *handle);
+
+AudioInputStream *makeVorbisStream(OggVorbis_File *file, int duration);
 
 #endif
 

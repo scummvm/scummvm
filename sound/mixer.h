@@ -37,6 +37,7 @@
 
 typedef uint32 PlayingSoundHandle;
 
+class AudioInputStream;
 class Channel;
 class File;
 
@@ -105,6 +106,9 @@ public:
 #ifdef USE_VORBIS
 	int playVorbis(PlayingSoundHandle *handle, OggVorbis_File *ov_file, int duration, bool is_cd_track, byte volume = 255, int8 pan = 0);
 #endif
+
+	int playInputStream(PlayingSoundHandle *handle, AudioInputStream *input, bool isMusic, byte volume = 255, int8 pan = 0);
+
 
 	/** Start a new stream. */
 	int newStream(PlayingSoundHandle *handle, void *sound, uint32 size, uint rate, byte flags, uint32 buffer_size, byte volume = 255, int8 pan = 0);
