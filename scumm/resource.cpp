@@ -2326,9 +2326,7 @@ void ScummEngine::readMAXS(int blockSize) {
 
 		_objectRoomTable = (byte *)calloc(_numGlobalObjects, 1);
 
-		// FIXME: Is this correct??? A V6+ game which doesn't use object name
-		// resources seems odd...
-		_numNewNames = 0;
+		_numNewNames = 10;
 
 		_objectRoomTable = (byte *)calloc(_numGlobalObjects * 4, 1);
 
