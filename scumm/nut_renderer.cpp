@@ -124,7 +124,7 @@ bool NutRenderer::loadFont(const char *filename, const char *dir) {
 	return true;
 }
 
-int32 NutRenderer::getCharWidth(char c) {
+int32 NutRenderer::getCharWidth(byte c) {
 	debug(2,  "NutRenderer::getCharWidth() called");
 	if (_loaded == false) {
 		debug(2, "NutRenderer::getCharWidth() Font is not loaded");
@@ -134,7 +134,7 @@ int32 NutRenderer::getCharWidth(char c) {
 	return READ_LE_UINT16(_dataSrc + _offsets[c] + 6);
 }
 
-int32 NutRenderer::getCharHeight(char c) {
+int32 NutRenderer::getCharHeight(byte c) {
 	debug(2,  "NutRenderer::getCharHeight() called");
 	if (_loaded == false) {
 		debug(2, "NutRenderer::getCharHeight() Font is not loaded");
@@ -144,7 +144,7 @@ int32 NutRenderer::getCharHeight(char c) {
 	return READ_LE_UINT16(_dataSrc + _offsets[c] + 8);
 }
 
-int32 NutRenderer::getStringWidth(char *string) {
+int32 NutRenderer::getStringWidth(byte *string) {
 	debug(2,  "NutRenderer::getStringWidth() called");
 	if (_loaded == false) {
 		debug(2, "NutRenderer::getStringWidth() Font is not loaded");
@@ -161,7 +161,7 @@ int32 NutRenderer::getStringWidth(char *string) {
 	return length;
 }
 
-void NutRenderer::drawChar(char c, int32 x, int32 y, byte color, bool useMask) {
+void NutRenderer::drawChar(byte c, int32 x, int32 y, byte color, bool useMask) {
 	debug(2,  "NutRenderer::drawChar('%c', %d, %d, %d, %d) called", c, x, y, (int)color, useMask);
 	if (_loaded == false) {
 		debug(2, "NutRenderer::drawChar() Font is not loaded");
