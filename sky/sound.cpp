@@ -33,6 +33,14 @@
 #pragma START_PACK_STRUCTS
 #endif
 
+enum {
+	SOUND_CH0    = 0,
+	SOUND_CH1    = 1,
+	SOUND_BG     = 2,
+	SOUND_VOICE  = 3,
+	SOUND_SPEECH = 4
+};
+
 struct RoomList {
 	uint8 room;
 	uint8 adlibVolume;
@@ -1021,7 +1029,6 @@ SkySound::SkySound(SoundMixer *mixer, SkyDisk *pDisk) {
 	_bgSoundHandle = 0;
 	_ingameSpeech = 0;
 	_ingameSound0 = _ingameSound1 = 0;
-	_spSlot = _slot0 = _slot1 = -1;
 	_saveSounds[0] = _saveSounds[1] = 0xFFFF;
 }
 
@@ -1033,17 +1040,19 @@ SkySound::~SkySound(void) {
 
 int SkySound::playVoice(byte *sound, uint32 size) {
 
-	return playSound(sound, size, &_voiceHandle);
+	_mixer->stopID(SOUND_VOICE);
+	return playSound(SOUND_VOICE, sound, size, &_voiceHandle);
 }
 
 
 int SkySound::playBgSound(byte *sound, uint32 size) {
 
 	size -= 512; //Hack to get rid of the annoying pop at the end of some bg sounds 
-	return playSound(sound, size, &_bgSoundHandle);
+	_mixer->stopID(SOUND_BG);
+	return playSound(SOUND_BG, sound, size, &_bgSoundHandle);
 }
 
-int SkySound::playSound(byte *sound, uint32 size, PlayingSoundHandle *handle) {
+int SkySound::playSound(uint32 id, byte *sound, uint32 size, PlayingSoundHandle *handle) {
 
 	byte flags = 0;
 	flags |= SoundMixer::FLAG_UNSIGNED|SoundMixer::FLAG_AUTOFREE;
@@ -1051,7 +1060,8 @@ int SkySound::playSound(byte *sound, uint32 size, PlayingSoundHandle *handle) {
 	byte *buffer = (byte *)malloc(size); 
 	memcpy(buffer, sound+sizeof(struct dataFileHeader), size);	
 	
-	return _mixer->playRaw(handle, buffer, size, 11025, flags);
+	_mixer->stopID(id);
+	return _mixer->playRaw(handle, buffer, size, 11025, flags, id);
 }
 
 void SkySound::loadSection(uint8 pSection) {
@@ -1074,17 +1084,10 @@ void SkySound::loadSection(uint8 pSection) {
 
 void SkySound::playSound(uint16 sound, uint16 volume, uint8 channel) {
 
-	if (channel == 0) {
-		if ((_slot0 >= 0) && ((_slot0 != _spSlot) || (!_ingameSpeech))) {
-			_mixer->stop(_slot0);
-			_slot0 = -1;
-		}
-	} else {
-		if ((_slot1 >= 0) && ((_slot1 != _spSlot) || (!_ingameSpeech))){
-			_mixer->stop(_slot1);
-			_slot1 = -1;
-		}
-	}
+	if (channel == 0)
+		_mixer->stopID(SOUND_CH0);
+	else
+		_mixer->stopID(SOUND_CH1);
 
 	if (!_soundData) {
 		warning("SkySound::playSound(%04X, %04X) called with a section having been loaded.\n", sound, volume);
@@ -1101,6 +1104,8 @@ void SkySound::playSound(uint16 sound, uint16 volume, uint8 channel) {
 	
 	// note: all those tables are big endian. Don't ask me why. *sigh*
 	uint16 sampleRate = (_sampleRates[sound << 2] << 8) | _sampleRates[(sound << 2) | 1];
+	if (sampleRate > 11025)
+		sampleRate = 11025;
 	uint32 dataOfs = ((_sfxInfo[sound << 3] << 8) | _sfxInfo[(sound << 3) | 1]) << 4;
 	dataOfs += _sfxBaseOfs;
 	uint16 dataSize = (_sfxInfo[(sound << 3) | 2] << 8) | _sfxInfo[(sound << 3) | 3];
@@ -1113,9 +1118,9 @@ void SkySound::playSound(uint16 sound, uint16 volume, uint8 channel) {
 	
 	_mixer->setVolume(volume);
 	if (channel == 0)
-		_slot0 = _mixer->playRaw(&_ingameSound0, _soundData + dataOfs, dataSize, sampleRate, flags);
+		_mixer->playRaw(&_ingameSound0, _soundData + dataOfs, dataSize, sampleRate, flags, SOUND_CH0);
 	else
-		_slot1 = _mixer->playRaw(&_ingameSound1, _soundData + dataOfs, dataSize, sampleRate, flags);
+		_mixer->playRaw(&_ingameSound1, _soundData + dataOfs, dataSize, sampleRate, flags, SOUND_CH1);
 }
 
 void SkySound::fnStartFx(uint32 sound, uint8 channel) {
@@ -1205,9 +1210,8 @@ void SkySound::restoreSfx(void) {
 }
 
 void SkySound::fnStopFx(void) {
-	if (_slot0 >= 0) _mixer->stop(_slot0);
-	if (_slot1 >= 0) _mixer->stop(_slot1);
-	_slot0 = _slot1 = -1;
+	_mixer->stopID(SOUND_CH0);
+	_mixer->stopID(SOUND_CH1);
 	_saveSounds[0] = _saveSounds[1] = 0xFFFF;
 }
 
@@ -1229,6 +1233,7 @@ bool SkySound::startSpeech(uint16 textNum) {
 
 	free(speechData);
 
-	_spSlot = _mixer->playRaw(&_ingameSpeech, playBuffer, speechSize, 11025, SoundMixer::FLAG_UNSIGNED | SoundMixer::FLAG_AUTOFREE);
+	_mixer->stopID(SOUND_SPEECH);
+	_mixer->playRaw(&_ingameSpeech, playBuffer, speechSize, 11025, SoundMixer::FLAG_UNSIGNED | SoundMixer::FLAG_AUTOFREE);
 	return true;
 }

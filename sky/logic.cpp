@@ -1350,13 +1350,12 @@ script:
 }
 
 bool SkyLogic::fnCacheChip(uint32 a, uint32 b, uint32 c) {
-	debug(5, "SkyDisk::fnCacheChip(%d);\n",a);
+	_skySound->fnStopFx();
 	_skyDisk->fnCacheChip(a);
 	return true;
 }
 
 bool SkyLogic::fnCacheFast(uint32 a, uint32 b, uint32 c) {
-	debug(5, "SkyDisk::fnCacheFast(%d);\n",a);
 	_skyDisk->fnCacheFast(a);
 	return true;
 }

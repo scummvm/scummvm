@@ -309,7 +309,6 @@ void SkyDisk::fnCacheFast(uint32 list) {
 
 void SkyDisk::fnCacheFiles(void) {
 
-	// call trash_all_fx
 	uint16 lCnt, bCnt, targCnt;
 	targCnt = lCnt = 0;
 	bool found;

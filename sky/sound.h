@@ -47,7 +47,7 @@ public:
 
 protected:
 
-	int playSound(byte *sound, uint32 size, PlayingSoundHandle *handle);
+	int playSound(uint32 id, byte *sound, uint32 size, PlayingSoundHandle *handle);
 
 public:
 	SkySound(SoundMixer *mixer, SkyDisk *pDisk);
@@ -72,7 +72,6 @@ private:
 	uint16 _sfxBaseOfs;
 	uint8 *_soundData;
 	uint8 *_sampleRates, *_sfxInfo;
-	int _slot0, _slot1, _spSlot;
 
 	static uint16 _speechConvertTable[8];
 	static SfxQueue _sfxQueue[MAX_QUEUED_FX];
