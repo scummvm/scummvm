@@ -126,13 +126,15 @@ void find_script (void) {
   switch (ttype(f)) {
   case LUA_T_CLOSURE:
     for (t = L->root_task->next; t != NULL; t = t->next)
-      if (ttype(t->stack.stack) == LUA_T_CLOSURE &&
+      if ((ttype(t->stack.stack) == LUA_T_CLOSURE ||
+	   ttype(t->stack.stack) == LUA_T_CMARK) &&
 	  clvalue(t->stack.stack) == clvalue(f))
 	break;
     break;
   case LUA_T_PROTO:
     for (t = L->root_task->next; t != NULL; t = t->next)
-      if (ttype(t->stack.stack) == LUA_T_PROTO &&
+      if ((ttype(t->stack.stack) == LUA_T_PROTO ||
+	   ttype(t->stack.stack) == LUA_T_PMARK) &&
 	  tfvalue(t->stack.stack) == tfvalue(f))
 	break;
     break;
