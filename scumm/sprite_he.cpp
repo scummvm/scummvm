@@ -962,8 +962,8 @@ void ScummEngine_v90he::spritesAllocTables(int numSprites, int numGroups, int nu
 }
 
 void ScummEngine_v90he::spritesResetGroup(int spriteGroupId) {
-	SpriteGroup *spg = &_spriteGroups[spriteGroupId];
 	checkRange(_varNumSpriteGroups, 1, spriteGroupId, "Invalid sprite group %d");
+	SpriteGroup *spg = &_spriteGroups[spriteGroupId];
 
 	spg->zorderPriority = 0;
 	spg->tx = spg->ty = 0;
