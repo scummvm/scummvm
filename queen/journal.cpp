@@ -31,8 +31,8 @@
 namespace Queen {
 
 
-Journal::Journal(Logic *l, Graphics *g, Display *d, Sound *s, GameConfig *c)
-	: _logic(l), _graphics(g), _display(d), _sound(s), _cfg(c) {
+Journal::Journal(Logic *l, Graphics *g, Display *d, Sound *s)
+	: _logic(l), _graphics(g), _display(d), _sound(s) {
 	_savePath = g_engine->getSavePath();
 	_currentSavePage = 0;
 	_currentSaveSlot = 0;
@@ -44,7 +44,6 @@ void Journal::use() {
 	BobSlot *joe = _graphics->bob(0);
 	_prevJoeX = joe->x;
 	_prevJoeY = joe->y;
-	debug(0, "Journal::prepare() - Joe.pos = (%d,%d)", _prevJoeX, _prevJoeY);
 
 	_edit.enable = false;
 	_mode = M_NORMAL;
@@ -80,6 +79,8 @@ void Journal::use() {
 		}
 		g_system->delay_msecs(20);
 	}
+
+	_logic->writeOptionSettings();
 
 	_graphics->textClear(0, GAME_SCREEN_HEIGHT - 1);
 	_graphics->cameraBob(0);
@@ -172,9 +173,7 @@ void Journal::update() {
 void Journal::showBob(int bobNum, int16 x, int16 y, int frameNum) {
 
 	BobSlot *bob = _graphics->bob(bobNum);
-	bob->active = true;
-	bob->x = x;
-	bob->y = y;
+	bob->curPos(x, y);
 	bob->frameNum = JOURNAL_FRAMES + frameNum;
 }
 
@@ -201,7 +200,6 @@ void Journal::findSaveDescriptions() {
 			SaveFile *f = mgr->open_savefile(filename, _savePath, false);
 			if (f) {
 				f->read(_saveDescriptions[i], MAX_SAVE_DESC_LEN);
-				debug(0, "Journal::findSaveDescriptions() - %d %s desc=%s", i, filename, _saveDescriptions[i]);
 				delete f;
 			}
 		}
@@ -266,10 +264,7 @@ void Journal::handleNormalMode(int16 zoneNum, int x) {
 		enterYesNoMode(zoneNum, TXT_GIVE_UP);
 	}
 	if (zoneNum == ZN_TEXT_SPEED) {
-		_cfg->talkSpeed = (x - 136) / 4;
-		if (_cfg->talkSpeed < 1) {
-			_cfg->talkSpeed = 1;
-		}
+		_logic->talkSpeed((x - 136) * 100 / 130);
 		drawConfigPanel();
 	}
 	else if (zoneNum == ZN_SFX_TOGGLE) {
@@ -277,13 +272,7 @@ void Journal::handleNormalMode(int16 zoneNum, int x) {
 		drawConfigPanel();
 	}
 	else if (zoneNum == ZN_MUSIC_VOLUME) {
-		_cfg->musicVolume = (x - 136) * 100 / 130;
-		if (_cfg->musicVolume < 4) {
-			_cfg->musicVolume = 4;
-		}
-		else if (_cfg->musicVolume > 95) {
-			_cfg->musicVolume = 100;
-		}
+		// int val = (x - 136) * 100 / 130;
 		// XXX alter_current_volume();
 		drawConfigPanel();
 	}
@@ -311,22 +300,11 @@ void Journal::handleNormalMode(int16 zoneNum, int x) {
 	}
 	else if (zoneNum == ZN_VOICE_TOGGLE) {
 		_sound->toggleSpeech();
-		if (!_sound->speechOn()) {
-			// ensure text is always on when voice is off
-			_cfg->textToggle = true;
-		}
 		drawConfigPanel();
 	}
 	else if (zoneNum == ZN_TEXT_TOGGLE) {
-		// only allow change on CD-ROM version
-		if (_logic->resource()->JASVersion()[0] == 'C') {
-			_cfg->textToggle = !_cfg->textToggle;
-			if (!_sound->speechOn()) {
-				// ensure text is always on when voice is off
-				_cfg->textToggle = true;
-			}
-			drawConfigPanel();
-		}
+		_logic->subtitles(!_logic->subtitles());
+		drawConfigPanel();
 	}
 }
 
@@ -494,13 +472,16 @@ void Journal::drawYesNoPanel(int titleNum) {
 
 void Journal::drawConfigPanel() {
 
-	drawSlideBar(_cfg->talkSpeed,     4,   1, BOB_TALK_SPEED,   136 - 4, 164, FRAME_BLUE_PIN);
-	drawSlideBar(_cfg->musicVolume, 130, 100, BOB_MUSIC_VOLUME, 136 - 4, 177, FRAME_GREEN_PIN);
+	_logic->checkOptionSettings();
 
-	drawCheckBox(_sound->sfxOn(),    BOB_SFX_TOGGLE,    221, 155, FRAME_CHECK_BOX);
+	drawSlideBar(_logic->talkSpeed(), 130, 100, BOB_TALK_SPEED, 136 - 4, 164, FRAME_BLUE_PIN);
+	// XXX music_volume
+	drawSlideBar(100, 130, 100, BOB_MUSIC_VOLUME, 136 - 4, 177, FRAME_GREEN_PIN);
+
+	drawCheckBox(_sound->sfxOn(), BOB_SFX_TOGGLE, 221, 155, FRAME_CHECK_BOX);
 	drawCheckBox(_sound->speechOn(), BOB_SPEECH_TOGGLE, 158, 155, FRAME_CHECK_BOX);
-	drawCheckBox(_cfg->textToggle,   BOB_TEXT_TOGGLE,   125, 167, FRAME_CHECK_BOX);
-	drawCheckBox(_sound->musicOn(),  BOB_MUSIC_TOGGLE,  125, 181, FRAME_CHECK_BOX);
+	drawCheckBox(_logic->subtitles(), BOB_TEXT_TOGGLE, 125, 167, FRAME_CHECK_BOX);
+	drawCheckBox(_sound->musicOn(), BOB_MUSIC_TOGGLE, 125, 181, FRAME_CHECK_BOX);
 }
 
 

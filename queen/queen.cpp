@@ -127,6 +127,9 @@ void QueenEngine::go() {
 
 	initialise();
 
+	_logic->registerDefaultSettings();
+	_logic->readOptionSettings();
+
 	_logic->oldRoom(0);
 	_logic->newRoom(_logic->currentRoom());
 

@@ -677,6 +677,7 @@ exit:
 	return personWalking;
 }
 
+// cyx : there is a similar function in Cutaway, what about merging them ?
 int Talk::countSpaces(const char *segment) {
 	int tmp = 0;
 
@@ -686,7 +687,7 @@ int Talk::countSpaces(const char *segment) {
 	if (tmp < 10)
 		tmp = 10;
 
-	return (tmp * 2) / _logic->talkSpeed();
+	return (tmp * 2) / (_logic->talkSpeed() / 3);
 }
 
 void Talk::headStringAnimation(const SpeechParameters *parameters, int bobNum, int bankNum) {

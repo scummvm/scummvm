@@ -107,13 +107,13 @@ game_load()					Logic::gameLoad()
 game_save()					Logic::gameSave()
 -
 config_request
-MUSICTOGGLE					Sound::musicToggle
-SFXTOGGLE					Sound::sfxToggle
-TALKSPD						GameConfig::talkSpeed
-TEXTTOGGLE					GameConfig::textToggle
-VersionStr					Logic::language (add more functions if needed)
-VOICETOGGLE					Sound::speechToggle
-VOLUME						GameConfig::musicVolume
+MUSICTOGGLE					Sound::_musicToggle / ConfMan.("music_mute")
+SFXTOGGLE					Sound::_sfxToggle / ConfMan.("sfx_mute")
+TALKSPD						Logic::_talkSpeed / ConfMan.("talkspeed")
+TEXTTOGGLE					Logic::_subtitles / ConfMan.("subtitles")
+VersionStr					GameVersion::versionString
+VOICETOGGLE					Sound::_speechToggle / ConfMan.("speech_mute")
+VOLUME						? / ConfMan.("master_volume")
 
 
 GRAPHICS

@@ -35,7 +35,7 @@ struct GameConfig;
 class Journal {
 public:
 
-	Journal(Logic *, Graphics *, Display *, Sound *, GameConfig *);
+	Journal(Logic *, Graphics *, Display *, Sound *);
 	void use();
   
 	enum {
@@ -184,7 +184,6 @@ private:
 	Graphics *_graphics;
 	Display *_display;
 	Sound *_sound;
-	GameConfig *_cfg;
 	const char *_savePath;
 };
 

@@ -41,13 +41,6 @@ struct ZoneSlot {
 	Box box;
 };
 
-// FIXME: get rid of that and use ConfigurationManager
-struct GameConfig {
-	int musicVolume;
-	bool textToggle;
-	int talkSpeed;
-};
-
 
 /*!
 	Each object/item in game has a state field. 
@@ -202,8 +195,6 @@ public:
 
 	uint16 numFrames() const { return _numFrames; }
 
-	int talkSpeed() const { return _settings.talkSpeed; }
-
 	void zoneSet(uint16 screen, uint16 zone, uint16 x1, uint16 y1, uint16 x2, uint16 y2);
 	void zoneSet(uint16 screen, uint16 zone, const Box& box);
 	uint16 zoneIn(uint16 screen, uint16 x, uint16 y) const;
@@ -300,6 +291,16 @@ public:
 
 	void useJournal();
 
+	int talkSpeed() const { return _talkSpeed; }
+	void talkSpeed(int speed) { _talkSpeed = speed; }
+	bool subtitles() const { return _subtitles; }
+	void subtitles(bool enable) { _subtitles = enable; }
+
+	void registerDefaultSettings();
+	void checkOptionSettings();
+	void readOptionSettings();
+	void writeOptionSettings();
+
 	void executeSpecialMove(uint16 sm);
 
 	void asmMakeJoeUseDress();
@@ -350,7 +351,7 @@ public:
 		MAX_ZONES_NUMBER   = 32,
 		MAX_AREAS_NUMBER   = 11,
 		JOE_RESPONSE_MAX   = 40,
-		DEFAULT_TALK_SPEED = 7,
+		DEFAULT_TALK_SPEED = 7 * 3,
 		GAME_STATE_COUNT   = 211,
 		TALK_SELECTED_COUNT = 86
 	};
@@ -474,13 +475,15 @@ protected:
 	//! Describe a string based animation (30 frames maximum, bob number must be < 17)
 	AnimFrame _newAnim[17][30];
 
-	GameConfig _settings;
-
 	//! Inventory items
 	int16 _inventoryItem[4];
 
 	//! scene counter
 	int _scene;
+
+	int _talkSpeed;
+
+	bool _subtitles;
 
 	Resource *_resource;
 	Graphics *_graphics;

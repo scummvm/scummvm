@@ -1409,7 +1409,7 @@ int Cutaway::countSpaces(ObjectType type, const char *segment) {
 	if (OBJECT_TYPE_TEXT_DISPLAY == type)
 		tmp *= 3;
 
-	return (tmp * 2) / _logic->talkSpeed();
+	return (tmp * 2) / (_logic->talkSpeed() / 3);
 
 }
 

@@ -20,6 +20,7 @@
  */
 
 #include "stdafx.h"
+#include "common/config-manager.h"
 #include "queen/logic.h"
 #include "queen/command.h"
 #include "queen/cutaway.h"
@@ -181,7 +182,6 @@ Common::RandomSource Logic::randomizer;
 Logic::Logic(Resource *theResource, Graphics *graphics, Display *theDisplay, Input *input, Sound *sound)
 	: _resource(theResource), _graphics(graphics), _display(theDisplay), 
 	_input(input), _sound(sound) {
-	_settings.talkSpeed = DEFAULT_TALK_SPEED;
 	_jas = _resource->loadFile("QUEEN.JAS", 20);
 	_joe.x = _joe.y = 0;
 	_joe.scale = 100;
@@ -380,12 +380,6 @@ void Logic::initialise() {
 	_aFile[0] = 0;
 	for (i = 1; i <= _numAFile; i++)
 		_aFile[i] = _resource->getJAS2Line();
-
-	_settings.textToggle = true;	
-	if (_resource->isFloppy())
-		_sound->speechToggle(false);
-	else
-		_sound->speechToggle(true);
 
 	_cmd->clear(false);
 	_scene = 0;
@@ -2404,12 +2398,12 @@ bool Logic::gameSave(uint16 slot, const char *desc) {
 	memcpy(ptr, buf, 32); ptr += 32;
 	delete[] buf;
 	
-	WRITE_BE_UINT16(ptr, _settings.talkSpeed); ptr += 2;
-	WRITE_BE_UINT16(ptr, _settings.musicVolume); ptr += 2;
+	WRITE_BE_UINT16(ptr, _talkSpeed); ptr += 2;
+	WRITE_BE_UINT16(ptr, 0 /*_settings.musicVolume*/); ptr += 2;
 	WRITE_BE_UINT16(ptr, _sound->sfxOn() ? 1 : 0); ptr += 2;
 	WRITE_BE_UINT16(ptr, _sound->speechOn() ? 1 : 0); ptr += 2;
 	WRITE_BE_UINT16(ptr, _sound->musicOn() ? 1 : 0); ptr += 2;
-	WRITE_BE_UINT16(ptr, _settings.textToggle ? 1 : 0); ptr += 2;
+	WRITE_BE_UINT16(ptr, _subtitles ? 1 : 0); ptr += 2;
 	
 	for (i = 0; i < 4; i++) {
 		WRITE_BE_UINT16(ptr, _inventoryItem[i]); ptr += 2;
@@ -2471,12 +2465,13 @@ bool Logic::gameLoad(uint16 slot) {
 	
 	debug(3, "Loading game from slot %d", slot);
 	ptr += 32;	//skip description
-	_settings.talkSpeed = (int16)READ_BE_UINT16(ptr); ptr += 2;
-	_settings.musicVolume = (int16)READ_BE_UINT16(ptr); ptr += 2;
+	_talkSpeed = (int16)READ_BE_UINT16(ptr); ptr += 2;
+	/*_settings.musicVolume = (int16)READ_BE_UINT16(ptr);*/ ptr += 2;
 	_sound->sfxToggle(READ_BE_UINT16(ptr) != 0); ptr += 2;
 	_sound->speechToggle(READ_BE_UINT16(ptr) != 0); ptr += 2;
 	_sound->musicToggle(READ_BE_UINT16(ptr) != 0); ptr += 2;
-	_settings.textToggle = READ_BE_UINT16(ptr) != 0; ptr += 2;
+	_subtitles = READ_BE_UINT16(ptr) != 0; ptr += 2;
+	ptr += 2 * 6;
 
 	for (i = 0; i < 4; i++) {
 		_inventoryItem[i] = (int16)READ_BE_UINT16(ptr); ptr += 2;
@@ -2647,7 +2642,7 @@ void Logic::useJournal() {
 
 		_cmd->clear(false);
 
-		Journal j(this, _graphics, _display, _sound, &_settings);
+		Journal j(this, _graphics, _display, _sound);
 		j.use();
 
 		_walk->stopJoe();
@@ -2659,6 +2654,67 @@ void Logic::useJournal() {
 		// XXX TALKQUIT=CUTQUIT=0; Make sure that we turn off cut stuff in case we use Journal during cutaways
 
 	}
+}
+
+
+void Logic::registerDefaultSettings() {
+
+	ConfMan.registerDefault("master_volume", 255);
+	ConfMan.registerDefault("music_mute", false);
+	ConfMan.registerDefault("sfx_mute", false);
+	ConfMan.registerDefault("talkspeed", DEFAULT_TALK_SPEED);
+	ConfMan.registerDefault("speech_mute", _resource->isFloppy());
+	ConfMan.registerDefault("subtitles", true);
+}
+
+
+void Logic::checkOptionSettings() {
+
+	// check talkspeed value
+	if (_talkSpeed < 4) {
+		_talkSpeed = 4;
+	}
+	else if (_talkSpeed > 95) {
+		_talkSpeed = 100;
+	}
+
+	// XXX check master_volume value
+
+	// only CD-ROM version has speech
+	if (_resource->JASVersion()[0] != 'C' && _sound->speechOn()) {
+		_sound->speechToggle(false);
+	}
+
+	// ensure text is always on when voice is off
+	if (!_sound->speechOn()) {
+		_subtitles = true;
+	}
+}
+
+
+void Logic::readOptionSettings() {
+
+	// XXX master_volume
+	_sound->musicToggle(!ConfMan.getBool("music_mute"));
+	_sound->sfxToggle(!ConfMan.getBool("sfx_mute"));
+	_talkSpeed = ConfMan.getInt("talkspeed");
+	_sound->speechToggle(!ConfMan.getBool("speech_mute"));
+	_subtitles = ConfMan.getBool("subtitles");
+
+	checkOptionSettings();
+}
+
+
+void Logic::writeOptionSettings() {
+
+	// XXX master_volume
+	ConfMan.set("music_mute", !_sound->musicOn());
+	ConfMan.set("sfx_mute", !_sound->sfxOn());
+	ConfMan.set("talkspeed", _talkSpeed);
+	ConfMan.set("speech_mute", !_sound->speechOn());
+	ConfMan.set("subtitles", _subtitles);
+
+	ConfMan.flushToDisk();
 }
 
 
