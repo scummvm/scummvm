@@ -56,7 +56,7 @@ public:
 	// Overloaded from SDL_Common (mouse and new scaler handling)
 	void fillMouseEvent(Event &event, int x, int y);
 	// Overloaded from SDL_Common (new scaler handling)
-	void addDirtyRect(int x, int y, int w, int h);
+	void addDirtyRect(int x, int y, int w, int h, bool mouseRect = false);
 	// Overloaded from SDL_Common (new scaler handling)
 	void warpMouse(int x, int y);
 	// Overloaded from SDL_Commmon

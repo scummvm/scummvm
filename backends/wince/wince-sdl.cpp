@@ -744,6 +744,7 @@ void OSystem_WINCE3::initSize(uint w, uint h, int overlayScale) {
 			_transactionDetails.h = h;
 			_transactionDetails.overlayScale = overlayScale;
 			_transactionDetails.sizeChanged = true;
+			_transactionDetails.needUnload = true;
 			return;
 			break;
 		case kTransactionCommit:
@@ -765,7 +766,8 @@ void OSystem_WINCE3::initSize(uint w, uint h, int overlayScale) {
 	if (w != _screenWidth || h != _screenHeight)
 		_scalersChanged = false;
 
-	OSystem_SDL::initSize(w, h, overlayScale);
+	//OSystem_SDL::initSize(w, h, overlayScale);
+	OSystem_SDL::initSize(w, h, 1);
 	
 	if (_scalersChanged) {
 		unloadGFXMode();
@@ -1039,6 +1041,18 @@ void OSystem_WINCE3::loadGFXMode() {
 	if (_tmpscreen == NULL)
 		error("_tmpscreen failed");
 
+
+
+	// Overlay
+	_overlayscreen = SDL_CreateRGBSurface(SDL_SWSURFACE, _overlayWidth, _overlayHeight, 16, 0, 0, 0, 0);
+	if (_overlayscreen == NULL)
+		error("_overlayscreen failed");
+	_tmpscreen2 = SDL_CreateRGBSurface(SDL_SWSURFACE, _overlayWidth + 3, _overlayHeight + 3, 16, 0, 0, 0, 0);
+	if (_tmpscreen2 == NULL)
+		error("_tmpscreen2 failed");
+
+
+
 	// Toolbar
 	uint16 *toolbar_screen = (uint16 *)calloc(320 * 40, sizeof(uint16));
 	_toolbarLow = SDL_CreateRGBSurfaceFrom(toolbar_screen,
@@ -1144,6 +1158,7 @@ void OSystem_WINCE3::update_keyboard() {
 }
 
 void OSystem_WINCE3::internUpdateScreen() {
+	SDL_Surface *srcSurf, *origSurf;
 	assert(_hwscreen != NULL);
 
 	update_keyboard();
@@ -1177,6 +1192,15 @@ void OSystem_WINCE3::internUpdateScreen() {
 		_forceFull = true;
 	}
 
+	if (!_overlayVisible) {
+		origSurf = _screen;
+		srcSurf = _tmpscreen;
+	}
+	else {
+		origSurf = _overlayscreen;
+		srcSurf = _tmpscreen2;
+	}
+
 	// Force a full redraw if requested
 	if (_forceFull) {
 		_numDirtyRects = 1;
@@ -1205,8 +1229,7 @@ void OSystem_WINCE3::internUpdateScreen() {
 		bool toolbarVisible = _toolbarHandler.visible();
 		int toolbarOffset = _toolbarHandler.getOffset();
 
-		if (_scalerProc == Normal1x && !_adjustAspectRatio) {
-			SDL_Surface *target = _overlayVisible ? _tmpscreen : _screen;
+		if (_scalerProc == Normal1x && !_adjustAspectRatio && 0) {
 			for (r = _dirtyRectList; r != last_rect; ++r) {
 				dst = *r;
 
@@ -1221,24 +1244,22 @@ void OSystem_WINCE3::internUpdateScreen() {
 					dst.y--;
 				}
 				dst.y += _currentShakePos;
-				if (SDL_BlitSurface(target, r, _hwscreen, &dst) != 0)
+				if (SDL_BlitSurface(origSurf, r, _hwscreen, &dst) != 0)
 					error("SDL_BlitSurface failed: %s", SDL_GetError());
 			}
 		} else {
-			if (!_overlayVisible) {
 				for (r = _dirtyRectList; r != last_rect; ++r) {
 					dst = *r;
 					dst.x++;	// Shift rect by one since 2xSai needs to acces the data around
 					dst.y++;	// any pixel to scale it, and we want to avoid mem access crashes.
-					if (SDL_BlitSurface(_screen, r, _tmpscreen, &dst) != 0)
+					if (SDL_BlitSurface(origSurf, r, srcSurf, &dst) != 0)
 						error("SDL_BlitSurface failed: %s", SDL_GetError());
 				}
-			}
 
-			SDL_LockSurface(_tmpscreen);
+			SDL_LockSurface(srcSurf);
 			SDL_LockSurface(_hwscreen);
 
-			srcPitch = _tmpscreen->pitch;
+			srcPitch = srcSurf->pitch;
 			dstPitch = _hwscreen->pitch;
 
 			for (r = _dirtyRectList; r != last_rect; ++r) {
@@ -1265,10 +1286,10 @@ void OSystem_WINCE3::internUpdateScreen() {
 					}
 				
 					if (!_zoomDown)
-						_scalerProc((byte *)_tmpscreen->pixels + (r->x * 2 + 2) + (r->y + 1) * srcPitch, srcPitch,
+						_scalerProc((byte *)srcSurf->pixels + (r->x * 2 + 2) + (r->y + 1) * srcPitch, srcPitch,
 							(byte *)_hwscreen->pixels + (r->x * 2 * _scaleFactorXm / _scaleFactorXd) + dst_y * dstPitch, dstPitch, r->w, dst_h);
 					else {
-						_scalerProc((byte *)_tmpscreen->pixels + (r->x * 2 + 2) + (r->y + 1) * srcPitch, srcPitch,
+						_scalerProc((byte *)srcSurf->pixels + (r->x * 2 + 2) + (r->y + 1) * srcPitch, srcPitch,
 							(byte *)_hwscreen->pixels + (r->x * 2 * _scaleFactorXm / _scaleFactorXd) + (dst_y - 240) * dstPitch, dstPitch, r->w, dst_h);
 					}
 				}
@@ -1285,7 +1306,7 @@ void OSystem_WINCE3::internUpdateScreen() {
 					r->h = stretch200To240((uint8 *) _hwscreen->pixels, dstPitch, r->w, r->h, r->x, r->y, orig_dst_y);
 				*/
 			}
-			SDL_UnlockSurface(_tmpscreen);
+			SDL_UnlockSurface(srcSurf);
 			SDL_UnlockSurface(_hwscreen);
 		}
 
@@ -1430,7 +1451,7 @@ void OSystem_WINCE3::warpMouse(int x, int y) {
 	}
 }
 
-void OSystem_WINCE3::addDirtyRect(int x, int y, int w, int h) {
+void OSystem_WINCE3::addDirtyRect(int x, int y, int w, int h, bool mouseRect) {
 	// Align on boundaries
 	if (_scaleFactorXd > 1) {
 		while (x % _scaleFactorXd) {
@@ -1471,7 +1492,7 @@ void OSystem_WINCE3::addDirtyRect(int x, int y, int w, int h) {
 		}
 	}
 
-	OSystem_SDL::addDirtyRect(x, y, w, h);
+	OSystem_SDL::addDirtyRect(x, y, w, h, mouseRect);
 }
 
 // FIXME
