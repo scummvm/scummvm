@@ -681,7 +681,8 @@ void ScummEngine_v6::o6_ifNot() {
 }
 
 void ScummEngine_v6::o6_jump() {
-	_scriptPointer += fetchScriptWordSigned();
+	int offset = fetchScriptWordSigned();
+	_scriptPointer += offset;
 }
 
 void ScummEngine_v6::o6_startScript() {
@@ -2872,7 +2873,7 @@ void ScummEngine_v6::o6_openFile() {
 	byte filename[100];
 
 	_msgPtrToAdd = filename;
-	_messagePtr =_scriptPointer;
+	_messagePtr = _scriptPointer;
 	addMessageToStack(_messagePtr);
 
 	len = resStrLen(_scriptPointer);
@@ -2916,7 +2917,7 @@ void ScummEngine_v6::o6_deleteFile() {
 	byte filename[100];
 
 	_msgPtrToAdd = filename;
-	_messagePtr =_scriptPointer;
+	_messagePtr = _scriptPointer;
 	addMessageToStack(_messagePtr);
 
 	len = resStrLen(_scriptPointer);
