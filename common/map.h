@@ -26,6 +26,18 @@
 namespace Common {
 
 /**
+ * Default comparison functor: compares to objects using their </==/> operators.
+ * Comparison functors ('comperators') are used by the Map template to
+ * compare keys. A non-standard comperator might e.g. be implemented to
+ * compare strings, ignoring the case.
+ */
+template <class T>
+struct DefaultComperator {
+  int operator()(const T& x, const T& y) const { return (x < y) ? -1 : (y < x) ? +1 : 0; }
+};
+
+
+/**
  * Template based map (aka dictionary) class which uniquely maps elements of
  * class Key to elements of class Value.
  *
@@ -36,7 +48,7 @@ namespace Common {
  * @todo Having unit tests for this class would be very desirable. There are a 
  *       big number of things which can go wrong in this code.
  */
-template <class Key, class Value>
+template <class Key, class Value, class Comperator = DefaultComperator<Key> >
 class Map {
 protected:
 	struct Node {
@@ -52,12 +64,12 @@ protected:
 	Node *_header;
 
 private:
-	Map<Key, Value>(const Map<Key, Value> &map);
-	Map<Key, Value> &operator =(const Map<Key, Value> &map);
+	Map<Key, Value, Comperator>(const Map<Key, Value, Comperator> &map);
+	Map<Key, Value, Comperator> &operator =(const Map<Key, Value, Comperator> &map);
 
 public:
 	class ConstIterator {
-		friend class Map<Key, Value>;
+		friend class Map<Key, Value, Comperator>;
 	protected:
 		Node *_node;
 		ConstIterator(Node *node) : _node(node) {}
@@ -93,12 +105,12 @@ public:
 	};
 
 public:
-	Map<Key, Value>() : _root(0) {
+	Map<Key, Value, Comperator>() : _root(0) {
 		_header = new Node();
 		_header->_right = _header->_left = _header;
 	}
 	
-	~Map<Key, Value>() {
+	virtual ~Map<Key, Value, Comperator>() {
 		clearNodes(_root);
 		delete _header;
 		_root = _header = 0;
@@ -187,7 +199,7 @@ public:
 		delete node;
 	}
 
-	void merge(const Map<Key, Value> &map) {
+	void merge(const Map<Key, Value, Comperator> &map) {
 		merge(map._root);
 	}
 
@@ -216,24 +228,29 @@ protected:
 
 	/** Find and return the node matching the given key, if any. */
 	Node *findNode(Node *node, const Key &key) const {
-		while (node && (key != node->_key)) {
-			if (key < node->_key) {
+		Comperator cmp;
+		while (node) {
+			int val = cmp(key,node->_key);
+			if (val == 0)
+				return node;
+			else if (val < 0)
 				node = node->_left;
-			} else {
+			else
 				node = node->_right;
-			}
 		}
-		return node;
+		return 0;
 	}
 
 	Node *findOrCreateNode(Node *node, const Key &key) {
+		Comperator cmp;
 		Node *prevNode = 0;
 		bool left = true;
 		while (node) {
+			int val = cmp(key, node->_key);
 			prevNode = node;
-			if (key == node->_key) {
+			if (val == 0) {
 				return node;
-			} else if (key < node->_key) {
+			} else if (val < 0) {
 				left = true;
 				node = node->_left;
 			} else {
