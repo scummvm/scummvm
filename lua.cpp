@@ -2255,23 +2255,23 @@ void register_lua() {
 	object_tag = lua_newtag();
 
 	// Register main opcodes functions
-	luaL_openlib(mainOpcodes, sizeof(mainOpcodes) / sizeof(mainOpcodes[0]));
+	luaL_openlib(mainOpcodes, ARRAYSIZE(mainOpcodes));
 
 	// Register text opcodes functions
-	luaL_openlib(textOpcodes, sizeof(textOpcodes) / sizeof(textOpcodes[0]));
+	luaL_openlib(textOpcodes, ARRAYSIZE(textOpcodes));
 
 	// Register primitives opcodes functions
-	luaL_openlib(primitivesOpcodes, sizeof(primitivesOpcodes) / sizeof(primitivesOpcodes[0]));
+	luaL_openlib(primitivesOpcodes, ARRAYSIZE(primitivesOpcodes));
 
 	// Register hardware opcodes functions
-	luaL_openlib(hardwareOpcodes, sizeof(hardwareOpcodes) / sizeof(hardwareOpcodes[0]));
+	luaL_openlib(hardwareOpcodes, ARRAYSIZE(hardwareOpcodes));
 
 	// Register system table
 	lua_Object system_table = lua_createtable();
 	lua_pushobject(system_table);
 	lua_setglobal("system");
 
-	for (unsigned i = 0; i < sizeof(system_defaults) / sizeof(system_defaults[0]); i++) {
+	for (unsigned i = 0; i < ARRAYSIZE(system_defaults); i++) {
 		lua_pushobject(system_table);
 		lua_pushstring(system_defaults[i].name);
 		lua_pushnumber(system_defaults[i].key);
@@ -2285,7 +2285,7 @@ void register_lua() {
 	lua_pushobject(controls_table);
 	lua_settable();
 
-	for (unsigned i = 0; i < sizeof(controls) / sizeof(controls[0]); i++) {
+	for (unsigned i = 0; i < ARRAYSIZE(controls); i++) {
 		lua_pushobject(controls_table);
 		lua_pushstring(controls[i].name);
 		lua_pushnumber(controls[i].key);
