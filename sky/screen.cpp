@@ -434,7 +434,6 @@ void SkyScreen::sortSprites(void) {
 		currDrawList++;
 
 		do { // a_new_draw_list:
-			//printf("loading drawlist %d\n",loadDrawList);
 			uint16 *drawListData = (uint16*)SkyState::fetchCompact(loadDrawList);
 			nextDrawList = false;
 			while ((!nextDrawList) && (drawListData[0])) {
@@ -446,13 +445,11 @@ void SkyScreen::sortSprites(void) {
 					Compact *spriteComp = SkyState::fetchCompact(drawListData[0]);
 					if ((spriteComp->status & 4) && // is it sortable playfield?(!?!)
 						(spriteComp->screen == SkyLogic::_scriptVariables[SCREEN])) { // on current screen
-							//printf("Adding to drawlist. status = %X, screen = %X\n",spriteComp->status,spriteComp->screen);
 							dataFileHeader *spriteData = 
 								(dataFileHeader*)SkyState::fetchItem(spriteComp->frame >> 6);
-							//printf("ycood = %d, s_offset_y = %d, height = %d\n",spriteComp->ycood,spriteData->s_offset_y,spriteData->s_height);
-							//printf("xcood = %d, s_offset_x = %d, width  = %d\n",spriteComp->xcood,spriteData->s_offset_x,spriteData->s_width);
 							if (!spriteData) {
 								printf("Missing file %d!\n",spriteComp->frame >> 6);
+								getchar();
 								spriteComp->status = 0;
 							} else {
 								sortList[spriteCnt].yCood = spriteComp->ycood + spriteData->s_offset_y + spriteData->s_height;
@@ -500,7 +497,6 @@ void SkyScreen::doSprites(uint8 layer) {
 		idNum = SkyLogic::_scriptVariables[drawListNum];
 		drawListNum++;
 
-		//printf("std_sp: New DrawList: %d\n",idNum); getchar();
 		drawList = (uint16*)SkyState::fetchCompact(idNum);
 		while(drawList[0]) {
 			// new_draw_list:
@@ -512,16 +508,20 @@ void SkyScreen::doSprites(uint8 layer) {
 						if ((spriteData->status & (1 << layer)) && 
 							(spriteData->screen == SkyLogic::_scriptVariables[SCREEN])) {
 								uint8 *toBeDrawn = (uint8*)SkyState::fetchItem(spriteData->frame >> 6);
-								drawSprite(toBeDrawn, spriteData);
-								if (layer == FORE) verticalMask();
-								if (spriteData->status & 8) vectorToGame(0x81);
-								else vectorToGame(1);
+								if (!toBeDrawn) {
+									printf("Spritedata %d not loaded!\n",spriteData->frame >> 6);
+									getchar();
+									spriteData->status = 0;
+								} else {
+									drawSprite(toBeDrawn, spriteData);
+									if (layer == BACK) verticalMask();
+									if (spriteData->status & 8) vectorToGame(0x81);
+									else vectorToGame(1);
+								}
 						}
 			}
-			if (drawList[0] == 0xFFFF) {
-				//printf("sub: New DrawList: %d\n",drawList[1]); getchar();
+			if (drawList[0] == 0xFFFF)
 				drawList = (uint16*)SkyState::fetchCompact(drawList[1]);
-			}
 		}
 	}
 }
@@ -584,7 +584,7 @@ void SkyScreen::drawSprite(uint8 *spriteInfo, Compact *sprCompact) {
 	}
 	_sprX = (uint32)spriteX;
 	uint8 *screenPtr = _backScreen + _sprY * GAME_SCREEN_WIDTH + _sprX;
-	if ((_sprX + _sprWidth >= 320) || (_sprY + _sprHeight >= 192)) {
+	if ((_sprX + _sprWidth > 320) || (_sprY + _sprHeight > 192)) {
 		warning("SkyScreen::drawSprite fatal error: got x = %d, y = %d, w = %d, h = %d\n",_sprX, _sprY, _sprWidth, _sprHeight);
 		_sprWidth = 0;
 		return ;
