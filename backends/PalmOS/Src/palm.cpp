@@ -27,6 +27,12 @@
 
 #include "cd_msa.h"
 #include "cd_default.h"
+#include "cd_pockettunes.h"
+
+#include <PalmNavigator.h>
+#ifndef DISABLE_TAPWAVE
+#include <TwChars.h>
+#endif
 
 OSystem *OSystem_PALMOS_create() {
 	return OSystem_PALMOS::create();
@@ -49,6 +55,7 @@ void OSystem_PALMOS::delay_msecs(uint msecs) {
 
 	do {
 		timer_handler(current);
+		sound_handler();
 		current = get_msecs();
 	} while (current < last);
 }
@@ -106,13 +113,12 @@ void OSystem_PALMOS::setWindowCaption(const char *caption) {
 	Coord h = FntLineHeight() + 2;
 	Coord w, y;
 
-	// quick erase the screen
-	WinScreenLock(winLockErase);
-	WinScreenUnlock();
-	
+	WinSetBackColor(0);
 	WinSetTextColor(255);
-	WinSetForeColor(255);
 
+	// erase the screen
+	WinEraseWindow();
+	
 	if (_useHRmode) {
 		y = 160 - (h >> 1) - 10;
 		HRFntSetFont(gVars->HRrefNum,hrTinyBoldFont);
@@ -126,14 +132,22 @@ void OSystem_PALMOS::setWindowCaption(const char *caption) {
 		HRWinDrawChars(gVars->HRrefNum, caption, StrLen(caption), w, y);
 	} else {
 		Err e;
+		UInt16 size = 1;
+
+		if (OPTIONS_TST(kOptModeHiDensity))
+			if (WinGetCoordinateSystem() == kCoordinatesNative) {
+				size = 2;
+				h = (h - 2) / 2 + 2;
+			}
+		
 		BitmapTypeV3 *bmp2P;
 		BitmapType *bmp1P = BmpCreate(320, (h << 1), 8, NULL, &e);
 		WinHandle tmpH = WinCreateBitmapWindow(bmp1P, &e);
 
 		WinSetDrawWindow(tmpH);
+		WinEraseWindow();
 
 		FntSetFont(boldFont);
-		y = 80 - (h >> 2) - 5;
 		w = FntCharsWidth(loading, StrLen(loading));
 		w = (320 - w) >> 1;
 		WinDrawChars(loading, StrLen(loading), w, 0 + h);
@@ -145,6 +159,7 @@ void OSystem_PALMOS::setWindowCaption(const char *caption) {
 
 		WinSetDrawWindow(WinGetDisplayWindow());
 		bmp2P = BmpCreateBitmapV3(bmp1P, kDensityDouble, BmpGetBits(bmp1P), NULL);
+		y = (80 - (h >> 2) - 5) * size;
 		WinDrawBitmap((BitmapPtr)bmp2P, 0, y);
 
 		BmpDelete((BitmapPtr)bmp2P);
@@ -187,39 +202,22 @@ bool OSystem_PALMOS::getFeatureState(Feature f) {
 }
 
 void OSystem_PALMOS::quit() {
-	// There is no exit(.) function under PalmOS, to exit an app
-	// we need to send an 'exit' event to the event handler
-	// and then the system return to the launcher. But this event
-	// is not handled by the main loop and so we need to force exit.
-	// In other systems like Windows ScummVM exit immediatly and so this doesn't appear.
-
-	if (_quitCount)
-		return;
-
-#ifndef DISABLE_SCUMM
-	if (_selfQuit && Scumm::g_scumm)
-		Scumm::g_scumm->_quit = true;
-#endif
-
 	free(_currentPalette);
 	free(_mouseBackupP);
 	free(_mouseDataP);
 	
-	_PnoFree(&_arm[PNO_COPY].pnoDesc, _arm[PNO_COPY].pnoPtr);
-
 	if (_cdPlayer) {
 		_cdPlayer->release();
 		_cdPlayer = NULL;
 	}
 
 	unload_gfx_mode();
-	_quitCount++;
-	exit(1);
+	clearSoundCallback();
+
+	exit(0);
 }
 
 OSystem_PALMOS::OSystem_PALMOS() {
-	_quitCount = 0;
-	_selfQuit = false; // prevent illegal access to g_scumm
 	_current_shake_pos = 0;
 	_new_shake_pos = 0;
 
@@ -257,9 +255,22 @@ OSystem_PALMOS::OSystem_PALMOS() {
 	// HiRes
 	_useHRmode	= (gVars->HRrefNum != sysInvalidRefNum);
 	
-	// ARM
-	memset(_arm, 0, sizeof(_arm));
-	_arm[PNO_COPY].pnoPtr = _PnoInit(ARM_OCOPYRECT, &_arm[PNO_COPY].pnoDesc);
+	// mouse emu
+	// TODO : add UX50 arrow keys
+	if (OPTIONS_TST(kOpt5WayNavigator)) {
+		_keyMouse.bitUp		= keyBitPageUp;
+		_keyMouse.bitDown	= keyBitPageDown;
+		_keyMouse.bitLeft	= keyBitNavLeft;
+		_keyMouse.bitRight	= keyBitNavRight;
+		_keyMouse.bitButLeft= keyBitNavSelect;
+	} else {
+		_keyMouse.bitUp		= keyBitPageUp;
+		_keyMouse.bitDown	= keyBitPageDown;
+		_keyMouse.bitLeft	= keyBitHard1;
+		_keyMouse.bitRight	= keyBitHard2;
+		_keyMouse.bitButLeft= keyBitHard3|0x00100000; // keyBitRockerCenter on TwKeys.h but conflict with palmnavigator.h
+	}
+	_keyMask = (_keyMouse.bitUp | _keyMouse.bitDown | _keyMouse.bitLeft | _keyMouse.bitRight | _keyMouse.bitButLeft);
 	
 	// enable cdrom ?
 	_cdPlayer = NULL;
@@ -270,6 +281,9 @@ OSystem_PALMOS::OSystem_PALMOS() {
 				break;
 			case 1:	// MSA Library
 				_cdPlayer = new MsaCDPlayer(this);
+				break;
+			case 2:	// Pocket Tunes API
+				_cdPlayer = new PckTunesCDPlayer(this);
 				break;
 		}
 		
@@ -283,9 +297,6 @@ OSystem_PALMOS::OSystem_PALMOS() {
 	
 	// sound
 	memset(&_sound,0,sizeof(SoundDataType));
-
-	// init
-	_vibrate = gVars->vibrator;
 }
 
 void ClearScreen() {
