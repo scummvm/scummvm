@@ -20,13 +20,8 @@
  * $Header$
  *
  */
-/*
- Description:   
- 
-    Sound class
 
- Notes: 
-*/
+// Sound class
 
 #ifndef SAGA_SOUND_H_
 #define SAGA_SOUND_H_
@@ -51,10 +46,10 @@ struct R_SOUNDBUFFER {
 };
 
 class Sound {
- public:
+public:
 
 	Sound(SagaEngine *vm, SoundMixer *mixer, int enabled);
-	~Sound(void);
+	~Sound();
 
 	int play(int sound_rn, int channel);
 	int pause(int channel);
@@ -62,16 +57,16 @@ class Sound {
 	int stop(int channel);
 
 	int playVoice(R_SOUNDBUFFER *);
-	int pauseVoice(void);
-	int resumeVoice(void);
-	int stopVoice(void);
+	int pauseVoice();
+	int resumeVoice();
+	int stopVoice();
 
  private:
 
 	int _soundInitialized;
 	int _enabled;
 
-    R_GAME_SOUNDINFO _snd_info;
+	R_GAME_SOUNDINFO _snd_info;
 
 	R_RSCFILE_CONTEXT *_soundContext;
 	R_RSCFILE_CONTEXT *_voiceContext;
@@ -83,8 +78,8 @@ class Sound {
 	PlayingSoundHandle _voiceHandle;
 	PlayingSoundHandle _musictHandle;
 
- };
+};
 
 } // End of namespace Saga
 
-#endif				/* SAGA_SOUND_H_ */
+#endif

@@ -20,13 +20,8 @@
  * $Header$
  *
  */
-/*
- Description:	
- 
-	Background transition routines
 
- Notes: 
-*/
+//Background transition routines
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -37,17 +32,11 @@
 
 namespace Saga {
 
-int
-TRANSITION_Dissolve(byte * dst_img,
-    int dst_w,
-    int dst_h,
-    int dst_p, const byte * src_img, int src_p, int flags, double percent)
-{
+int TRANSITION_Dissolve(byte *dst_img, int dst_w, int dst_h, int dst_p, const byte *src_img,
+						int src_p, int flags, double percent) {
 #define XOR_MASK 0xB400;
-
 	int pixelcount = dst_w * dst_h;
 	int seqlimit = (int)(65535 * percent);
-
 	int seq = 1;
 	int i;
 
@@ -56,7 +45,6 @@ TRANSITION_Dissolve(byte * dst_img,
 	YS_IGNORE_PARAM(dst_p);
 
 	for (i = 0; i < seqlimit; i++) {
-
 		if (seq & 1) {
 			seq = (seq >> 1) ^ XOR_MASK;
 		} else {
@@ -70,9 +58,7 @@ TRANSITION_Dissolve(byte * dst_img,
 		if (seq >= pixelcount) {
 			continue;
 		} else {
-
 			dst_img[seq] = src_img[seq];
-
 		}
 	}
 

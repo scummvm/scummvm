@@ -20,13 +20,8 @@
  * $Header$
  *
  */
-/*
- Description:   
- 
-    Text / dialogue display management module public header
 
- Notes: 
-*/
+// Text / dialogue display management module public header
 
 #ifndef SAGA_TEXT_MOD_H_
 #define SAGA_TEXT_MOD_H_
@@ -50,23 +45,22 @@ struct R_TEXTLIST_ENTRY {
 	int font_id;
 	long time;
 	const char *string;
-	
 	R_TEXTLIST_ENTRY() { memset(this, 0, sizeof(*this)); }
 };
 
 typedef struct R_TEXTLIST_tag R_TEXTLIST;
 
-R_TEXTLIST *TEXT_CreateList(void);
+R_TEXTLIST *TEXT_CreateList();
 void TEXT_DestroyList(R_TEXTLIST *textlist);
 void TEXT_ClearList(R_TEXTLIST *textlist);
 int TEXT_DrawList(R_TEXTLIST *textlist, R_SURFACE *ds);
 R_TEXTLIST_ENTRY *TEXT_AddEntry(R_TEXTLIST *textlist, R_TEXTLIST_ENTRY *entry);
 int TEXT_DeleteEntry(R_TEXTLIST *textlist, R_TEXTLIST_ENTRY *entry);
 int TEXT_SetDisplay(R_TEXTLIST_ENTRY *entry, int val);
-int TEXT_Draw(int font_id, R_SURFACE *ds, const char *string, int text_x, 
-			  int text_y, int color, int effect_color, int flags);
+int TEXT_Draw(int font_id, R_SURFACE *ds, const char *string, int text_x, int text_y, int color,
+				int effect_color, int flags);
 int TEXT_ProcessList(R_TEXTLIST *textlist, long ms);
 
 }				// End of namespace Saga
 
-#endif				/* SAGA_TEXT_MOD_H_ */
+#endif

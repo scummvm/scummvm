@@ -20,14 +20,8 @@
  * $Header$
  *
  */
-/*
 
- Description:   
- 
-    Scripting module thread management component header file
-
- Notes: 
-*/
+// Scripting module thread management component header file
 
 #ifndef SAGA_STHREAD_H__
 #define SAGA_STHREAD_H__
@@ -46,16 +40,15 @@ struct R_SCRIPT_THREAD_tag {
 	int executing;
 
 	int sleep_time;
-	int ep_num;	/* Entrypoint number */
-	unsigned long ep_offset;	/* Entrypoint offset */
-	unsigned long i_offset;	/* Instruction offset */
+	int ep_num; // Entrypoint number
+	unsigned long ep_offset; // Entrypoint offset
+	unsigned long i_offset; // Instruction offset
 
 	R_SEMAPHORE sem;
-
 	SSTACK stack;
 };
 
-R_SCRIPT_THREAD *STHREAD_Create(void);
+R_SCRIPT_THREAD *STHREAD_Create();
 int STHREAD_Destroy(R_SCRIPT_THREAD *thread);
 int STHREAD_SetEntrypoint(R_SCRIPT_THREAD *thread, int ep_num);
 int STHREAD_Execute(R_SCRIPT_THREAD *thread, int ep_num);
@@ -66,4 +59,4 @@ int SDEBUG_PrintInstr(R_SCRIPT_THREAD *thread);
 
 }				// End of namespace Saga
 
-#endif				/* SAGA_STHREAD_H__ */
+#endif

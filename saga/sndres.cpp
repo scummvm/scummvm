@@ -20,13 +20,8 @@
  * $Header$
  *
  */
-/*
- Description:   
- 
-    Sound resource management class
 
- Notes: 
-*/
+// Sound resource management class
 
 #include "saga.h"
 #include "reinherit.h"
@@ -35,15 +30,9 @@
 
 #include <limits.h>
 
-/*
- * Uses the following modules:
-\*--------------------------------------------------------------------------*/
 #include "game_mod.h"
 #include "rscfile_mod.h"
 
-/*
- * Begin module component
-\*--------------------------------------------------------------------------*/
 #include "sndres.h"
 #include "sound.h"
 
@@ -58,13 +47,12 @@ SndRes::SndRes(SagaEngine *vm) {
 		return;
 	}
 
-	result = GAME_GetFileContext(&_voice_ctxt,
-	    R_GAME_VOICEFILE, 0);
+	result = GAME_GetFileContext(&_voice_ctxt, R_GAME_VOICEFILE, 0);
 	if (result != R_SUCCESS) {
 		return;
 	}
 
-	/* Grab sound resource information for the current game */
+	// Grab sound resource information for the current game
 	GAME_GetSoundInfo(&_snd_info);
 
 	_vm = vm;
@@ -110,31 +98,21 @@ int SndRes::load(R_RSCFILE_CONTEXT *snd_ctxt, uint32 snd_rn, R_SOUNDBUFFER *snd_
 		snd_buf_i->s_freq = _snd_info.freq;
 		snd_buf_i->s_samplebits = _snd_info.sample_size;
 		snd_buf_i->s_stereo = _snd_info.stereo;
-
 		snd_buf_i->res_data = snd_res;
 		snd_buf_i->res_len = snd_res_len;
-
 		snd_buf_i->s_buf = snd_res;
 		snd_buf_i->s_buf_len = snd_res_len;
-
 		snd_buf_i->s_signed = 1;
-
 		break;
-
 	case R_GAME_SOUND_VOC:
 		if (loadVocSound(snd_res, snd_res_len, snd_buf_i) != R_SUCCESS) {
-
 			RSC_FreeResource(snd_res);
-
 			return R_FAILURE;
 		}
-
 		break;
-
 	default:
 		/* Unknown sound type */
 		RSC_FreeResource(snd_res);
-
 		return R_FAILURE;
 		break;
 	}
@@ -206,8 +184,7 @@ int SndRes::loadVocSound(byte *snd_res, size_t snd_res_len, R_SOUNDBUFFER *snd_b
 				return R_FAILURE;
 			}
 
-			byte_rate = R_VOC_TIME_BASE / (R_VOC_TIME_CBASE -
-			    (voc_b1.time_constant << 8));
+			byte_rate = R_VOC_TIME_BASE / (R_VOC_TIME_CBASE - (voc_b1.time_constant << 8));
 
 			snd_buf_i->s_stereo = 0;
 			snd_buf_i->s_samplebits = 8;
@@ -220,11 +197,8 @@ int SndRes::loadVocSound(byte *snd_res, size_t snd_res_len, R_SOUNDBUFFER *snd_b
 			snd_buf_i->s_buf_len = read_len - 1;	/* -1 for end block */
 
 			snd_buf_i->s_signed = 0;
-
 			return R_SUCCESS;
-
 			break;
-
 		default:
 			read_p += voc_gb.block_len;
 			read_len -= voc_gb.block_len;
@@ -251,13 +225,10 @@ int SndRes::getVoiceLength(uint32 voice_rn) {
 	}
 
 	if (_snd_info.res_type == R_GAME_SOUND_PCM) {
-		ms_f = (double)length /
-		    (_snd_info.sample_size / CHAR_BIT) /
-		    (_snd_info.freq) * 1000.0;
-
+		ms_f = (double)length / (_snd_info.sample_size / CHAR_BIT) / (_snd_info.freq) * 1000.0;
 		ms_i = (int)ms_f;
 	} else if (_snd_info.res_type == R_GAME_SOUND_VOC) {
-		/* Rough hack, fix this to be accurate */
+		// Rough hack, fix this to be accurate
 		ms_f = (double)length / 14705 * 1000.0;
 		ms_i = (int)ms_f;
 	} else {

@@ -25,9 +25,6 @@
 
 #include "yslib.h"
 
-/*
- * Uses the following modules:
-\*--------------------------------------------------------------------------*/
 #include "sound.h"
 #include "game_mod.h"
 
@@ -35,15 +32,11 @@
 
 namespace Saga {
 
-/*
- * Begin module component
-\*--------------------------------------------------------------------------*/
-
 Sound::Sound(SagaEngine *vm, SoundMixer *mixer, int enabled) : 
 	_vm(vm), _mixer(mixer), _enabled(enabled) {
 	int result;
 
-	/* Load sound module resource file contexts */
+	// Load sound module resource file contexts
 	result = GAME_GetFileContext(&_soundContext, R_GAME_SOUNDFILE, 0);
 	if (result != R_SUCCESS) {
 		return;
@@ -54,8 +47,8 @@ Sound::Sound(SagaEngine *vm, SoundMixer *mixer, int enabled) :
 		return;
 	}
 
-    /* Grab sound resource information for the current game */
-    GAME_GetSoundInfo(&_snd_info);
+	// Grab sound resource information for the current game
+	GAME_GetSoundInfo(&_snd_info);
 
 	_soundInitialized = 1;
 	return;
@@ -130,7 +123,7 @@ int Sound::playVoice(R_SOUNDBUFFER *buf) {
 	return R_SUCCESS;
 }
 
-int Sound::pauseVoice(void) {
+int Sound::pauseVoice() {
 	if (!_soundInitialized) {
 		return R_FAILURE;
 	}
@@ -140,7 +133,7 @@ int Sound::pauseVoice(void) {
 	return R_SUCCESS;
 }
 
-int Sound::resumeVoice(void) {
+int Sound::resumeVoice() {
 	if (!_soundInitialized) {
 		return R_FAILURE;
 	}
@@ -150,7 +143,7 @@ int Sound::resumeVoice(void) {
 	return R_SUCCESS;
 }
 
-int Sound::stopVoice(void) {
+int Sound::stopVoice() {
 	if (!_soundInitialized) {
 		return R_FAILURE;
 	}

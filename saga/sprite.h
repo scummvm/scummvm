@@ -20,13 +20,8 @@
  * $Header$
  *
  */
-/*
- Description:	
- 
-	Sprite management module private header file
 
- Notes: 
-*/
+// Sprite management module private header file
 
 #ifndef SAGA_SPRITE_H__
 #define SAGA_SPRITE_H__
@@ -41,7 +36,6 @@ namespace Saga {
 #define R_DECODE_BUF_LEN 64000
 
 struct R_SPRITELIST_ENTRY {
-
 	int x_align;
 	int y_align;
 	int width;
@@ -50,39 +44,27 @@ struct R_SPRITELIST_ENTRY {
 };
 
 struct R_SPRITELIST_OFFSET {
-
 	uint16 data_idx;
 	size_t offset;
-
 };
 
 struct R_SPRITELIST_tag {
-
 	int append_count;
 	int sprite_count;
-
 	R_SPRITELIST_OFFSET *offset_list;
-
 	int slist_rn;
 	byte *sprite_data[R_APPENDMAX];
-
 };
 
 struct R_SPRITE_MODULE {
-
 	int init;
-
 	R_RSCFILE_CONTEXT *sprite_ctxt;
-
 	byte *decode_buf;
 	size_t decode_buf_len;
-
 };
 
-int
-DecodeRLESprite(const byte * inbuf,
-    size_t inbuf_len, byte * outbuf, size_t outbuf_len);
+int DecodeRLESprite(const byte *inbuf, size_t inbuf_len, byte *outbuf, size_t outbuf_len);
 
 } // End of namespace Saga
 
-#endif				/* SAGA_SPRITE_H__ */
+#endif

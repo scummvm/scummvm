@@ -20,13 +20,8 @@
  * $Header$
  *
  */
-/*
- Description:   
- 
-    Sound resource class header
 
- Notes: 
-*/
+// Sound resource class header
 
 #ifndef SAGA_SNDRES_H_
 #define SAGA_SNDRES_H_
@@ -44,30 +39,30 @@ namespace Saga {
 #define R_VOC_FILE_DESC "Creative Voice File\x1A"
 
 struct R_VOC_HEADER_BLOCK {
-	char ft_desc[20];	/* BYTE [20] */
-	uint16 db_offset;		/* WORD */
-	uint16 voc_version;	/* WORD */
-	uint16 voc_fileid;	/* WORD */
+	char ft_desc[20]; // BYTE [20]
+	uint16 db_offset; // WORD
+	uint16 voc_version;// WORD
+	uint16 voc_fileid; // WORD
 };
 
 #define R_VOC_HEADER_BLOCK_LEN 26
 
 struct R_VOC_GENBLOCK {
-	int block_id;		/* BYTE */
-	uint32 block_len;	/* BYTE[3] */
+	int block_id;		// BYTE
+	uint32 block_len;	// BYTE[3]
 };
 
 #define R_VOC_GENBLOCK_LEN 4
 
 struct R_VOC_BLOCK1 {
-	int block_id;		/* BYTE */
-	uint32 block_len;	/* BYTE[3] */
-	uint16 time_constant;	/* BYTE */
-	int pack_method;	/* BYTE */
+	int block_id; // BYTE
+	uint32 block_len; // BYTE[3]
+	uint16 time_constant; // BYTE
+	int pack_method; // BYTE
 };
 
 class SndRes {
- public:
+public:
 
 	SndRes(SagaEngine *vm);
 
@@ -89,8 +84,8 @@ class SndRes {
 	R_GAME_SOUNDINFO _snd_info;
 
 	SagaEngine *_vm;
- };
+};
 
 } // End of namespace Saga
 
-#endif				/* SAGA_SNDRES_H_ */
+#endif

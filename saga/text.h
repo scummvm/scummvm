@@ -20,14 +20,8 @@
  * $Header$
  *
  */
-/*
 
- Description:   
- 
-    Text / dialogue display management module private header
-
- Notes: 
-*/
+// Text / dialogue display management module private header
 
 #ifndef SAGA_TEXT_H__
 #define SAGA_TEXT_H__
@@ -43,4 +37,4 @@ struct R_TEXTLIST_tag {
 };
 
 }				// End of namespace Saga
-#endif				/* SAGA_TEXT_H__ */
+#endif

@@ -20,20 +20,16 @@
  * $Header$
  *
  */
+
 #include <stddef.h>
 
 namespace Saga {
 
-void
-ys_write_u16_be(unsigned int u16_be,
-    unsigned char *data_p, unsigned char **data_pp)
-/*---------------------------------------------------------------------------*\
- * Writes an unsigned 16 bit integer in big-endian format to the buffer
- *  pointed to by 'data_p'.
- * If 'data_pp' is not null, the function will set it to point just beyond
- *  the integer written. 
-\*---------------------------------------------------------------------------*/
-{
+// Writes an unsigned 16 bit integer in big-endian format to the buffer
+// pointed to by 'data_p'.
+// If 'data_pp' is not null, the function will set it to point just beyond
+// the integer written. 
+void ys_write_u16_be(unsigned int u16_be, unsigned char *data_p, unsigned char **data_pp) {
 	data_p[0] = (unsigned char)((u16_be >> 8) & 0xFFU);
 	data_p[1] = (unsigned char)(u16_be & 0xFFU);
 
@@ -44,16 +40,11 @@ ys_write_u16_be(unsigned int u16_be,
 	return;
 }
 
-void
-ys_write_u32_be(unsigned long u32_be,
-    unsigned char *data_p, unsigned char **data_pp)
-/*---------------------------------------------------------------------------*\
- * Writes an unsigned 32 bit integer in big-endian format to the buffer
- *  pointed to by 'data_p'.
- * If 'data_pp' is not null, the function will set it to point just beyond
- *  the integer written. 
-\*---------------------------------------------------------------------------*/
-{
+// Writes an unsigned 32 bit integer in big-endian format to the buffer
+// pointed to by 'data_p'.
+// If 'data_pp' is not null, the function will set it to point just beyond
+// the integer written. 
+void ys_write_u32_be(unsigned long u32_be, unsigned char *data_p, unsigned char **data_pp) {
 	data_p[0] = (unsigned char)((u32_be >> 24) & 0xFFU);
 	data_p[1] = (unsigned char)((u32_be >> 16) & 0xFFU);
 	data_p[2] = (unsigned char)((u32_be >> 8) & 0xFFU);

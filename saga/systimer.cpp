@@ -20,45 +20,35 @@
  * $Header$
  *
  */
+
 #include "reinherit.h"
 
 #include <SDL.h>
 
-/*
- * Begin module
-\*--------------------------------------------------------------------------*/
 #include "systimer.h"
 
 namespace Saga {
 
 struct R_SYSTIMER {
-
 	int t_running;
-
 	unsigned long t_interval;
 	void *t_param;
-
 	R_SYSTIMER_CALLBACK t_callback_f;
 	SDL_TimerID t_sdl_timerid;
 };
 
 struct R_SYSTIMER_DATA {
-
-   int initialized;
-
-   Uint32 t_start_ticks;
-
-   Uint32 t_current_ticks;
-   Uint32 t_previous_ticks;
-
+	int initialized;
+	uint32 t_start_ticks;
+	uint32 t_current_ticks;
+	uint32 t_previous_ticks;
 };
 
 static R_SYSTIMER_DATA R_TimerData;
 
-static Uint32         SYSTIMER_Callback(Uint32 interval, void *param);
+static Uint32 SYSTIMER_Callback(Uint32 interval, void *param);
 
-int SYSTIMER_InitMSCounter(void)
-{
+int SYSTIMER_InitMSCounter() {
 
 	if (R_TimerData.initialized) {
 		return R_FAILURE;

@@ -20,14 +20,8 @@
  * $Header$
  *
  */
-/*
 
- Description:   
- 
-    Scripting engine stack component header file
-
- Notes: 
-*/
+// Scripting engine stack component header file
 
 #ifndef SAGA_SSTACK_H
 #define SAGA_SSTACK_H
@@ -60,22 +54,15 @@ typedef enum SSTACK_FLAGS_enum {
 	STACK_GROW = 0x01
 } SSTACK_FLAGS;
 
-int SSTACK_Create(SSTACK * stack, int stack_len, int flags);
-
+int SSTACK_Create(SSTACK *stack, int stack_len, int flags);
 int SSTACK_Destroy(SSTACK stack);
-
 int SSTACK_Clear(SSTACK stack);
-
 int SSTACK_Push(SSTACK stack, SDataWord_T value);
-
 int SSTACK_PushNull(SSTACK stack);
-
-int SSTACK_Pop(SSTACK stack, SDataWord_T * value);
-
-int SSTACK_Top(SSTACK stack, SDataWord_T * value);
-
+int SSTACK_Pop(SSTACK stack, SDataWord_T *value);
+int SSTACK_Top(SSTACK stack, SDataWord_T *value);
 int SSTACK_Grow(SSTACK stack);
 
 } // End of namespace Saga
 
-#endif				/* SAGA_SSTACK_H */
+#endif

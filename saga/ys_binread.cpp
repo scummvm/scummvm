@@ -20,36 +20,29 @@
  * $Header$
  *
  */
+
 #include <stdio.h>
 #include "yslib.h"
 
 namespace Saga {
 
-void
-ys_read_4cc(char *fourcc,
-    const unsigned char *data_p, const unsigned char **data_pp)
-{
+void ys_read_4cc(char *fourcc, const unsigned char *data_p, const unsigned char **data_pp) {
 	fourcc[0] = (char)data_p[0];
 	fourcc[1] = (char)data_p[1];
 	fourcc[2] = (char)data_p[2];
 	fourcc[3] = (char)data_p[3];
 
 	if (data_pp) {
-
 		*data_pp = data_p + 4;
 	}
 
 	return;
 }
 
-unsigned int
-ys_read_u8(const unsigned char *data_p, const unsigned char **data_pp)
-/*---------------------------------------------------------------------------*\
- * Reads an unsigned 8 bit integer in from the array of bytes pointed to by
- *  'data_p'. If 'data_pp' is not null, it will set '*data_pp' to point past
- *  the integer read. 
-\*---------------------------------------------------------------------------*/
-{
+// Reads an unsigned 8 bit integer in from the array of bytes pointed to by
+// 'data_p'. If 'data_pp' is not null, it will set '*data_pp' to point past
+// the integer read. 
+unsigned int ys_read_u8(const unsigned char *data_p, const unsigned char **data_pp) {
 	unsigned int u8 = *data_p;
 
 	if (data_pp != NULL) {
@@ -59,13 +52,10 @@ ys_read_u8(const unsigned char *data_p, const unsigned char **data_pp)
 	return u8;
 }
 
-int ys_read_s8(const unsigned char *data_p, const unsigned char **data_pp)
-/*---------------------------------------------------------------------------*\
- * Reads a signed 8 bit integer in two's complement notation from the array
- *  of bytes pointed to by 'data_p'. If 'data_pp' is not null, it will set
- * '*data_pp' to point past the integer read. 
-\*---------------------------------------------------------------------------*/
-{
+// Reads a signed 8 bit integer in two's complement notation from the array
+// of bytes pointed to by 'data_p'. If 'data_pp' is not null, it will set
+//'*data_pp' to point past the integer read. 
+int ys_read_s8(const unsigned char *data_p, const unsigned char **data_pp) {
 	unsigned int u8 = *data_p;
 	int s8;
 
@@ -83,14 +73,10 @@ int ys_read_s8(const unsigned char *data_p, const unsigned char **data_pp)
 	return s8;
 }
 
-unsigned int
-ys_read_u16_be(const unsigned char *data_p, const unsigned char **data_pp)
-/*---------------------------------------------------------------------------*\
- * Reads an unsigned 16 bit integer in big-endian format from the array of 
- * bytes pointed to by 'data_p'. If 'data_pp' is not null, it will set   
- * '*data_pp' to point past the integer read. 
-\*---------------------------------------------------------------------------*/
-{
+// Reads a signed 8 bit integer in two's complement notation from the array
+// of bytes pointed to by 'data_p'. If 'data_pp' is not null, it will set
+// '*data_pp' to point past the integer read. 
+unsigned int ys_read_u16_be(const unsigned char *data_p, const unsigned char **data_pp) {
 	unsigned int u16_be = ((unsigned int)data_p[0] << 8) | data_p[1];
 
 	if (data_pp != NULL) {
@@ -100,14 +86,10 @@ ys_read_u16_be(const unsigned char *data_p, const unsigned char **data_pp)
 	return u16_be;
 }
 
-unsigned int
-ys_read_u16_le(const unsigned char *data_p, const unsigned char **data_pp)
-/*---------------------------------------------------------------------------*\
- * Reads an unsigned 16 bit integer in little-endian format from the array of 
- * bytes pointed to by 'data_p'. If 'data_pp' is not null, it will set   
- * '*data_pp' to point past the integer read. 
-\*---------------------------------------------------------------------------*/
-{
+// Reads an unsigned 16 bit integer in little-endian format from the array of 
+// bytes pointed to by 'data_p'. If 'data_pp' is not null, it will set   
+// '*data_pp' to point past the integer read. 
+unsigned int ys_read_u16_le(const unsigned char *data_p, const unsigned char **data_pp) {
 	unsigned int u16_le = ((unsigned int)data_p[1] << 8) | data_p[0];
 
 	if (data_pp != NULL) {
@@ -117,14 +99,10 @@ ys_read_u16_le(const unsigned char *data_p, const unsigned char **data_pp)
 	return u16_le;
 }
 
-int ys_read_s16_be(const unsigned char *data_p, const unsigned char **data_pp)
-/*---------------------------------------------------------------------------*\
- * Reads a signed 16 bit integer in big-endian, 2's complement format from
- *  the array of bytes pointed to by 'data_p'. 
- * If 'data_pp' is not null, it will set '*data_pp' to point past the integer
- *  read.
-\*---------------------------------------------------------------------------*/
-{
+// Reads a signed 16 bit integer in big-endian, 2's complement format from
+// the array of bytes pointed to by 'data_p'.
+// If 'data_pp' is not null, it will set '*data_pp' to point past the integer read.
+int ys_read_s16_be(const unsigned char *data_p, const unsigned char **data_pp) {
 	unsigned int u16_be = ((unsigned int)data_p[0] << 8) | data_p[1];
 	int s16_be;
 
@@ -142,14 +120,10 @@ int ys_read_s16_be(const unsigned char *data_p, const unsigned char **data_pp)
 	return s16_be;
 }
 
-int ys_read_s16_le(const unsigned char *data_p, const unsigned char **data_pp)
-/*---------------------------------------------------------------------------*\
- * Reads a signed 16 bit integer in little-endian, 2's complement format from
- *  the array of bytes pointed to by 'data_p'. 
- * If 'data_pp' is not null, it will set '*data_pp' to point past the integer
- *  read.
-\*---------------------------------------------------------------------------*/
-{
+// Reads a signed 16 bit integer in little-endian, 2's complement format from
+// the array of bytes pointed to by 'data_p'. 
+// If 'data_pp' is not null, it will set '*data_pp' to point past the integer read.
+int ys_read_s16_le(const unsigned char *data_p, const unsigned char **data_pp) {
 	unsigned int u16_le = ((unsigned int)data_p[1] << 8) | data_p[0];
 	int s16_le;
 
@@ -167,16 +141,11 @@ int ys_read_s16_le(const unsigned char *data_p, const unsigned char **data_pp)
 	return s16_le;
 }
 
-unsigned long
-ys_read_u24_le(const unsigned char *data_p, const unsigned char **data_pp)
-/*---------------------------------------------------------------------------*\
- * Reads an unsigned 24 bit integer in big-endian format from the array of 
- * bytes pointed to by 'data_p'. If 'data_pp' is not null, it will set
- * '*data_pp' to point past the integer read. 
-\*---------------------------------------------------------------------------*/
-{
-	unsigned long u24_le = ((unsigned long)data_p[3] << 16) |
-	    ((unsigned long)data_p[2] << 8) | data_p[0];
+// Reads an unsigned 24 bit integer in big-endian format from the array of 
+// bytes pointed to by 'data_p'. If 'data_pp' is not null, it will set
+// '*data_pp' to point past the integer read. 
+unsigned long ys_read_u24_le(const unsigned char *data_p, const unsigned char **data_pp) {
+	unsigned long u24_le = ((unsigned long)data_p[3] << 16) | ((unsigned long)data_p[2] << 8) | data_p[0];
 
 	if (data_pp != NULL) {
 		*data_pp = data_p + 3;
@@ -185,17 +154,12 @@ ys_read_u24_le(const unsigned char *data_p, const unsigned char **data_pp)
 	return u24_le;
 }
 
-unsigned long
-ys_read_u32_be(const unsigned char *data_p, const unsigned char **data_pp)
-/*---------------------------------------------------------------------------*\
- * Reads an unsigned 32 bit integer in big-endian format from the array of 
- * bytes pointed to by 'data_p'. If 'data_pp' is not null, it will set
- * '*data_pp' to point past the integer read. 
-\*---------------------------------------------------------------------------*/
-{
-	unsigned long u32_be = ((unsigned long)data_p[0] << 24) |
-	    ((unsigned long)data_p[1] << 16) |
-	    ((unsigned long)data_p[2] << 8) | data_p[3];
+// Reads an unsigned 32 bit integer in big-endian format from the array of 
+// bytes pointed to by 'data_p'. If 'data_pp' is not null, it will set
+// '*data_pp' to point past the integer read. 
+unsigned long ys_read_u32_be(const unsigned char *data_p, const unsigned char **data_pp) {
+	unsigned long u32_be = ((unsigned long)data_p[0] << 24) | ((unsigned long)data_p[1] << 16) |
+							((unsigned long)data_p[2] << 8) | data_p[3];
 
 	if (data_pp != NULL) {
 		*data_pp = data_p + 4;
@@ -204,17 +168,12 @@ ys_read_u32_be(const unsigned char *data_p, const unsigned char **data_pp)
 	return u32_be;
 }
 
-unsigned long
-ys_read_u32_le(const unsigned char *data_p, const unsigned char **data_pp)
-/*---------------------------------------------------------------------------*\
- * Reads an unsigned 32 bit integer in little-endian format from the array of 
- * bytes pointed to by 'data_p'. If 'data_pp' is not null, it will set
- * '*data_pp' to point past the integer read. 
-\*---------------------------------------------------------------------------*/
-{
-	unsigned long u32_le = ((unsigned long)data_p[3] << 24) |
-	    ((unsigned long)data_p[2] << 16) |
-	    ((unsigned long)data_p[1] << 8) | data_p[0];
+// Reads an unsigned 32 bit integer in little-endian format from the array of 
+// bytes pointed to by 'data_p'. If 'data_pp' is not null, it will set
+// '*data_pp' to point past the integer read. 
+unsigned long ys_read_u32_le(const unsigned char *data_p, const unsigned char **data_pp) {
+	unsigned long u32_le = ((unsigned long)data_p[3] << 24) | ((unsigned long)data_p[2] << 16) |
+							((unsigned long)data_p[1] << 8) | data_p[0];
 
 	if (data_pp != NULL) {
 		*data_pp = data_p + 4;

@@ -20,6 +20,7 @@
  * $Header$
  *
  */
+
 #ifndef REINHERIT_SYSINTERFACE_H
 #define REINHERIT_SYSINTERFACE_H
 
@@ -32,4 +33,4 @@ namespace Saga {
 
 } // End of namespace Saga
 
-#endif				/* REINHERIT_SYSTYPES_H */
+#endif

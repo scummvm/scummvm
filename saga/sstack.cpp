@@ -20,36 +20,22 @@
  * $Header$
  *
  */
-/*
 
- Description:   
- 
-    Scripting engine stack component
-
- Notes: 
-*/
+// Scripting engine stack component
 
 #include "reinherit.h"
 
 #include "yslib.h"
 
-/*
- * Uses the following modules:
-\*--------------------------------------------------------------------------*/
 #include "console_mod.h"
 #include "text_mod.h"
 
-/*
- * Begin module component
-\*--------------------------------------------------------------------------*/
 #include "script.h"
 #include "sstack.h"
 
 namespace Saga {
 
-int SSTACK_Create(SSTACK * stack, int stack_len, int flags)
-{
-
+int SSTACK_Create(SSTACK *stack, int stack_len, int flags) {
 	SSTACK new_stack;
 	SDataWord_T *new_stack_data;
 
@@ -57,30 +43,25 @@ int SSTACK_Create(SSTACK * stack, int stack_len, int flags)
 
 	new_stack = (SSTACK_tag *)malloc(sizeof(struct SSTACK_tag));
 	if (new_stack == NULL) {
-
 		return STACK_MEM;
 	}
 
 	new_stack_data = (SDataWord_T *)calloc(stack_len, sizeof *new_stack_data);
 	if (new_stack_data == NULL) {
 		free(new_stack);
-
 		return STACK_MEM;
 	}
 
 	new_stack->data = new_stack_data;
-
 	new_stack->flags = flags;
 	new_stack->len = stack_len;
 	new_stack->top = -1;
-
 	*stack = new_stack;
 
 	return STACK_SUCCESS;
 }
 
-int SSTACK_Destroy(SSTACK stack)
-{
+int SSTACK_Destroy(SSTACK stack) {
 	if (stack != NULL) {
 		free(stack->data);
 	}
@@ -90,24 +71,17 @@ int SSTACK_Destroy(SSTACK stack)
 	return STACK_SUCCESS;
 }
 
-int SSTACK_Clear(SSTACK stack)
-{
-
+int SSTACK_Clear(SSTACK stack) {
 	stack->top = -1;
 
 	return STACK_SUCCESS;
 }
 
-int SSTACK_PushNull(SSTACK stack)
-{
-
+int SSTACK_PushNull(SSTACK stack) {
 	if (stack->top >= (stack->len - 1)) {
-
 		if (stack->flags & STACK_FIXED) {
-
 			return STACK_OVERFLOW;
 		} else if (SSTACK_Grow(stack) != STACK_SUCCESS) {
-
 			return STACK_MEM;
 		}
 	}
@@ -117,16 +91,11 @@ int SSTACK_PushNull(SSTACK stack)
 	return STACK_SUCCESS;
 }
 
-int SSTACK_Push(SSTACK stack, SDataWord_T value)
-{
-
+int SSTACK_Push(SSTACK stack, SDataWord_T value) {
 	if (stack->top >= (stack->len - 1)) {
-
 		if (stack->flags & STACK_FIXED) {
-
 			return STACK_OVERFLOW;
 		} else if (SSTACK_Grow(stack) != STACK_SUCCESS) {
-
 			return STACK_MEM;
 		}
 	}
@@ -137,16 +106,12 @@ int SSTACK_Push(SSTACK stack, SDataWord_T value)
 	return STACK_SUCCESS;
 }
 
-int SSTACK_Pop(SSTACK stack, SDataWord_T * value)
-{
-
+int SSTACK_Pop(SSTACK stack, SDataWord_T *value) {
 	if (stack->top <= -1) {
-
 		return STACK_UNDERFLOW;
 	}
 
 	if (value == NULL) {
-
 		stack->top--;
 		return STACK_SUCCESS;
 	}
@@ -157,13 +122,10 @@ int SSTACK_Pop(SSTACK stack, SDataWord_T * value)
 	return STACK_SUCCESS;
 }
 
-int SSTACK_Top(SSTACK stack, SDataWord_T * value)
-{
-
+int SSTACK_Top(SSTACK stack, SDataWord_T *value) {
 	*value = 0;
 
 	if (stack->top <= -1) {
-
 		return STACK_UNDERFLOW;
 	}
 
@@ -172,20 +134,16 @@ int SSTACK_Top(SSTACK stack, SDataWord_T * value)
 	return STACK_SUCCESS;
 }
 
-int SSTACK_Grow(SSTACK stack)
-{
-
+int SSTACK_Grow(SSTACK stack) {
 	SDataWord_T *new_data;
 
 	if ((stack->len * 2) > R_STACK_SIZE_LIMIT) {
-
 		CON_Print(S_ERROR_PREFIX "Stack fault: growing beyond limit.");
 		return STACK_OVERFLOW;
 	}
 
 	new_data = (SDataWord_T *)realloc(stack->data, (stack->len * 2) * sizeof *new_data);
 	if (new_data == NULL) {
-
 		return STACK_MEM;
 	}
 

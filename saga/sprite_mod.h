@@ -20,14 +20,8 @@
  * $Header$
  *
  */
-/*
 
- Description:   
- 
-    Sprite management module public header file
-
- Notes: 
-*/
+// Sprite management module public header file
 
 #ifndef SAGA_SPRITE_MOD_H__
 #define SAGA_SPRITE_MOD_H__
@@ -36,26 +30,15 @@ namespace Saga {
 
 typedef struct R_SPRITELIST_tag R_SPRITELIST;
 
-int SPRITE_Init(void);
-
-int SPRITE_Shutdown(void);
-
-int SPRITE_LoadList(int resource_num, R_SPRITELIST ** sprite_list_p);
-
-int SPRITE_AppendList(int resource_num, R_SPRITELIST * spritelist);
-
-int SPRITE_GetListLen(R_SPRITELIST * spritelist);
-
-int SPRITE_Free(R_SPRITELIST * spritelist);
-
-int
-SPRITE_Draw(R_SURFACE * ds,
-    R_SPRITELIST * sprite_list, int sprite_num, int spr_x, int spr_y);
-
-int
-SPRITE_DrawOccluded(R_SURFACE * ds,
-    R_SPRITELIST * sprite_list, int sprite_num, int spr_x, int spr_y);
+int SPRITE_Init();
+int SPRITE_Shutdown();
+int SPRITE_LoadList(int resource_num, R_SPRITELIST **sprite_list_p);
+int SPRITE_AppendList(int resource_num, R_SPRITELIST *spritelist);
+int SPRITE_GetListLen(R_SPRITELIST *spritelist);
+int SPRITE_Free(R_SPRITELIST *spritelist);
+int SPRITE_Draw(R_SURFACE *ds, R_SPRITELIST *sprite_list, int sprite_num, int spr_x, int spr_y);
+int SPRITE_DrawOccluded(R_SURFACE *ds, R_SPRITELIST *sprite_list, int sprite_num, int spr_x, int spr_y);
 
 } // End of namespace Saga
 
-#endif				/* SAGA_SPRITE_MOD_H__ */
+#endif
