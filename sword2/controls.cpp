@@ -1427,13 +1427,13 @@ Gui::Gui(Sword2Engine *vm) : _vm(vm), _baseSlot(0) {
 	ConfMan.registerDefault("speech_mute", false);
 	ConfMan.registerDefault("sfx_mute", false);
 	ConfMan.registerDefault("gfx_details", 2);
-	ConfMan.registerDefault("nosubtitles", false);
+	ConfMan.registerDefault("subtitles", true);
 	ConfMan.registerDefault("object_labels", true);
 	ConfMan.registerDefault("reverse_stereo", false);
 }
 
 void Gui::readOptionSettings(void) {
-	_subtitles = !ConfMan.getBool("nosubtitles");
+	_subtitles = ConfMan.getBool("subtitles");
 	_pointerTextSelected = ConfMan.getBool("object_labels");
 	_stereoReversed = ConfMan.getBool("reverse_stereo");
 
@@ -1456,7 +1456,7 @@ void Gui::writeOptionSettings(void) {
 	ConfMan.set("speech_mute", _vm->_sound->isSpeechMute());
 	ConfMan.set("sfx_mute", _vm->_sound->isFxMute());
 	ConfMan.set("gfx_details", _vm->_graphics->getRenderLevel());
-	ConfMan.set("nosubtitles", !_subtitles);
+	ConfMan.set("subtitles", _subtitles);
 	ConfMan.set("object_labels", _pointerTextSelected);
 	ConfMan.set("reverse_stereo", _stereoReversed);
 
