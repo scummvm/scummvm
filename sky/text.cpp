@@ -311,9 +311,7 @@ void SkyText::makeGameCharacter(char textChar, uint8 *charSetPtr, uint8 *&dest, 
 					*curPos = color;
 				else
 					//black edge
-					//FIXME: this is 240 in the original sources (with 1 commented out),
-					//yet 240 appears to be white in most palettes.
-					*curPos = 1; //240; 
+					*curPos = 240; 
 
 			curPos++;
 		}

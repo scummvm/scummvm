@@ -65,21 +65,21 @@ void SkyState::initialiseScreen(void) {
 
 	//set the remaining colors
 	for (i = 0; i < (VGA_COLOURS-GAME_COLOURS); i++) {
-		tmpPal[GAME_COLOURS + i * 4] = (top16Colours[i * 3] << 2) + (top16Colours[i * 3] & 3);
-		tmpPal[GAME_COLOURS + i * 4 + 1] = (top16Colours[i * 3 + 1] << 2) + (top16Colours[i * 3 + 1] & 3);
-		tmpPal[GAME_COLOURS + i * 4 + 2] = (top16Colours[i * 3 + 2] << 2) + (top16Colours[i * 3 + 2] & 3);
-		tmpPal[GAME_COLOURS + i * 4 + 3] = 0x00; 
+		tmpPal[4 * GAME_COLOURS + i * 4] = (top16Colours[i * 3] << 2) + (top16Colours[i * 3] & 3);
+		tmpPal[4 * GAME_COLOURS + i * 4 + 1] = (top16Colours[i * 3 + 1] << 2) + (top16Colours[i * 3 + 1] & 3);
+		tmpPal[4 * GAME_COLOURS + i * 4 + 2] = (top16Colours[i * 3 + 2] << 2) + (top16Colours[i * 3 + 2] & 3);
+		tmpPal[4 * GAME_COLOURS + i * 4 + 3] = 0x00; 
 	}
 
 	//set the palette
-	_system->set_palette(tmpPal, 0, 256);
+	_system->set_palette(tmpPal, 0, VGA_COLOURS);
 }
 
 //set a new palette, pal is a pointer to dos vga rgb components 0..63
 void SkyState::setPalette(uint8 *pal) {
 	
 	convertPalette(pal, _palette);
-	_system->set_palette(_palette, 0, 256);
+	_system->set_palette(_palette, 0, GAME_COLOURS);
 }
 
 void SkyState::convertPalette(uint8 *inPal, uint8* outPal) { //convert 3 byte 0..63 rgb to 4byte 0..255 rgbx
@@ -108,8 +108,8 @@ void SkyState::fnFadeDown(uint8 action) {
 		int i = 32;
 
 		do {
-			palette_fadedown_helper((uint32 *)_palette, 256);
-			_system->set_palette(_palette, 0, 256);
+			palette_fadedown_helper((uint32 *)_palette, GAME_COLOURS);
+			_system->set_palette(_palette, 0, GAME_COLOURS);
 			_system->update_screen();
 			delay(10);
 			
@@ -150,8 +150,8 @@ void SkyState::paletteFadeUp(uint8 *pal) {
 
 	do {
 
-		palette_fadeup_helper((uint32 *)_palette, (uint32 *)tmpPal, 256);
-		_system->set_palette(_palette, 0, 256);
+		palette_fadeup_helper((uint32 *)_palette, (uint32 *)tmpPal, GAME_COLOURS);
+		_system->set_palette(_palette, 0, GAME_COLOURS);
 		_system->update_screen();
 		delay(10);	
 	} while (--i);
