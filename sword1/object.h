@@ -54,7 +54,7 @@ struct WalkData {
 	int32	y;
 	int32	step;
 	int32	dir;
-};	// size = 5*int32 = 20 bytes
+} GCC_PACK;	// size = 5*int32 = 20 bytes
 
 struct BsObject {
 	int32	o_type;						// 0  broad description of type - object, floor, etc.
