@@ -92,15 +92,15 @@ void TextObject::createBitmap() {
 		}
 	}
 
-	_textObjectHandle = g_driver->prepareToTextBitmap(_textBitmap, _bitmapWidth, _bitmapHeight, _fgColor);
+	_textObjectHandle = g_driver->createTextBitmap(_textBitmap, _bitmapWidth, _bitmapHeight, _fgColor);
 
+	delete[] _textBitmap;
 	_created = true;
 	g_engine->registerTextObject(this);
 }
 
 void TextObject::destroyBitmap() {
 	if (_textObjectHandle) {
-		delete[] _textBitmap;
 		g_driver->destroyTextBitmap(_textObjectHandle);
 		delete _textObjectHandle;
 		_textObjectHandle = NULL;

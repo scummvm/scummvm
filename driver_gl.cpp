@@ -543,7 +543,7 @@ void DriverGL::drawEmergString(int x, int y, const char *text, const Color &fgCo
 	glPopMatrix();
 }
 
-Driver::TextObjectHandle *DriverGL::prepareToTextBitmap(uint8 *data, int width, int height, const Color &fgColor) {
+Driver::TextObjectHandle *DriverGL::createTextBitmap(uint8 *data, int width, int height, const Color &fgColor) {
 	TextObjectHandle *handle = new TextObjectHandle();
 	handle->width = width;
 	handle->height = height;

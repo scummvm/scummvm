@@ -398,7 +398,7 @@ void DriverTinyGL::loadEmergFont() {
 void DriverTinyGL::drawEmergString(int /*x*/, int /*y*/, const char * /*text*/, const Color &/*fgColor*/) {
 }
 
-Driver::TextObjectHandle *DriverTinyGL::prepareToTextBitmap(uint8 *data, int width, int height, const Color &fgColor) {
+Driver::TextObjectHandle *DriverTinyGL::createTextBitmap(uint8 *data, int width, int height, const Color &fgColor) {
 	TextObjectHandle *handle = new TextObjectHandle();
 	handle->width = width;
 	handle->height = height;

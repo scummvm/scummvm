@@ -72,7 +72,7 @@ public:
 
 	virtual void drawEmergString(int x, int y, const char *text, const Color &fgColor) = 0;
 	virtual void loadEmergFont() = 0;
-	virtual TextObjectHandle *prepareToTextBitmap(uint8 *bitmap, int width, int height, const Color &fgColor) = 0;
+	virtual TextObjectHandle *createTextBitmap(uint8 *bitmap, int width, int height, const Color &fgColor) = 0;
 	virtual void drawTextBitmap(int x, int y, TextObjectHandle *handle) = 0;
 	virtual void destroyTextBitmap(TextObjectHandle *handle) = 0;
 
