@@ -28,6 +28,7 @@
 #include "scumm/actor.h"
 #include "scumm/charset.h"
 #include "scumm/imuse.h"
+#include "scumm/imuse_digi/dimuse.h"
 #include "scumm/intern.h"
 #include "scumm/object.h"
 #include "scumm/resource.h"
@@ -936,7 +937,7 @@ void ScummEngine_v6::o6_startSound() {
 		pop(); // offset which seems to always be zero
 
 	if (_features & GF_DIGI_IMUSE)
-		_sound->playSound(pop());
+		_imuseDigital->startSfx(pop());
 	else
 		_sound->addSoundToQueue(pop());
 }
@@ -947,7 +948,7 @@ void ScummEngine_v6::o6_stopSound() {
 
 void ScummEngine_v6::o6_startMusic() {
 	if (_features & GF_DIGI_IMUSE)
-		_sound->playSound(pop());
+		error("o6_startMusic() It shouldn't be called here for imuse digital");
 	else
 		_sound->addSoundToQueue(pop());
 }

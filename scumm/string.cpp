@@ -28,7 +28,7 @@
 #include "scumm/actor.h"
 #include "scumm/charset.h"
 #include "scumm/dialogs.h"
-#include "scumm/imuse_digi.h"
+#include "scumm/imuse_digi/dimuse.h"
 #include "scumm/verbs.h"
 #include "scumm/sound.h"
 
@@ -921,7 +921,10 @@ const byte *ScummEngine::translateTextAndPlaySpeech(const byte *ptr) {
 		pointer[j] = 0;
 
 		// Play speech
-		_imuseDigital->playBundleSound(pointer);
+		if (!(_features & GF_DEMO) && (_gameId == GID_CMI)) // CMI demo does not have .IMX for voice
+			strcat(pointer, ".IMX");
+		_imuseDigital->stopSound(kTalkSoundID);
+		_imuseDigital->startVoice(kTalkSoundID, pointer);
 
 		ptr = _transText;
 	}

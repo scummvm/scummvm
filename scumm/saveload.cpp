@@ -26,7 +26,7 @@
 
 #include "scumm/actor.h"
 #include "scumm/charset.h"
-#include "scumm/imuse_digi.h"
+#include "scumm/imuse_digi/dimuse.h"
 #include "scumm/imuse.h"
 #include "scumm/object.h"
 #include "scumm/resource.h"
@@ -125,8 +125,6 @@ bool ScummEngine::loadState(int slot, bool compat, SaveFileManager *mgr) {
 	memcpy(_saveLoadName, hdr.name, sizeof(hdr.name));
 
 	_sound->stopAllSounds();
-	if (_imuseDigital)
-		_imuseDigital->stopBundleMusic();
 	_sound->stopCD();
 
 	_sound->pauseSounds(true);

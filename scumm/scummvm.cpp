@@ -40,7 +40,7 @@
 #include "scumm/costume.h"
 #include "scumm/debugger.h"
 #include "scumm/dialogs.h"
-#include "scumm/imuse_digi.h"
+#include "scumm/imuse_digi/dimuse.h"
 #include "scumm/imuse.h"
 #include "scumm/intern.h"
 #include "scumm/object.h"

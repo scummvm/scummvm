@@ -32,7 +32,7 @@
 #include "scumm/sound.h"
 #include "scumm/resource.h"
 #include "scumm/imuse.h"
-#include "scumm/imuse_digi.h"
+#include "scumm/imuse_digi/dimuse.h"
 
 #include "scumm/smush/smush_player.h"
 #include "scumm/smush/chunk_type.h"
@@ -5914,30 +5914,16 @@ bool Insane::smlayer_isSoundRunning(int32 sound) {
 }
 
 bool Insane::smlayer_startSound1(int32 sound) {
-	// FIXME: original startSound parameters:
-	// startSound(id, 40, 1);
-	// second param is priority in imuse, 
-	// third param set sound to group volume in imuse
-	//		(0 - master, 1-sfx, 2-voice, 3 - music, 
-	//		 4 - background music)
-	// there are no equivalents in scummvm
 	if (smlayer_loadSound(sound, 0, 2)) {
-		_scumm->_sound->playSound(readArray(_numberArray, sound));
+		_scumm->_imuseDigital->startSfx(readArray(_numberArray, sound));
 		return true;
 	} else
 		return false;
 }
 
 bool Insane::smlayer_startSound2(int32 sound) {
-	// FIXME: original startSound parameters:
-	// startSound(id, 126, 2);
-	// second param is priority in imuse, 
-	// third param set sound to group volume in imuse
-	//		(0 - master, 1-sfx, 2-voice, 3 - music, 
-	//		 4 - background music)
-	// there are no equivalents in scummvm
 	if (smlayer_loadSound(sound, 0, 2)) {
-		_scumm->_sound->playSound(readArray(_numberArray, sound));
+		_scumm->_imuseDigital->startSfx(readArray(_numberArray, sound));
 		return true;
 	} else
 		return false;

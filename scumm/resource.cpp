@@ -23,10 +23,9 @@
 #include "stdafx.h"
 #include "common/map.h"
 #include "common/str.h"
-#include "scumm/bundle.h"
 #include "scumm/dialogs.h"
 #include "scumm/imuse.h"
-#include "scumm/imuse_digi.h"
+#include "scumm/imuse_digi/dimuse.h"
 #include "scumm/object.h"
 #include "scumm/resource.h"
 #include "scumm/scumm.h"
@@ -228,8 +227,7 @@ void ScummEngine::askForDisk(const char *filename, int disknum) {
 	if (_version == 8) {
 		char result;
 
-		_imuseDigital->_bundle->closeVoiceFile();
-		_imuseDigital->_bundle->closeMusicFile();
+		_imuseDigital->closeBundleFiles();
 
 #ifdef MACOSX
 		sprintf(buf, "Cannot find file: '%s'\nPlease insert disc %d.\nHit OK to retry, Cancel to exit", filename, disknum);

@@ -1,5 +1,5 @@
 /* ScummVM - Scumm Interpreter
- * Copyright (C) 2002-2004 The ScummVM project
+ * Copyright (C) 2001-2004 The ScummVM project
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,10 +20,32 @@
 
 #include "stdafx.h"
 #include "common/scummsys.h"
-#include "scumm/scumm.h"
-#include "scumm/bundle.h"
+#include "common/util.h"
 
 namespace Scumm {
+
+namespace BundleCodecs {
+
+uint32 decode12BitsSample(byte *src, byte **dst, uint32 size) {
+	uint32 loop_size = size / 3;
+	uint32 s_size = loop_size * 4;
+	byte *ptr = *dst = (byte *)malloc(s_size);
+
+	uint32 tmp;
+	while (loop_size--) {
+		byte v1 = *src++;
+		byte v2 = *src++;
+		byte v3 = *src++;
+		tmp = ((((v2 & 0x0f) << 8) | v1) << 4) - 0x8000;
+		WRITE_BE_UINT16(ptr, tmp); ptr += 2;
+		tmp = ((((v2 & 0xf0) << 4) | v3) << 4) - 0x8000;
+		WRITE_BE_UINT16(ptr, tmp); ptr += 2;
+	}
+	return s_size;
+}
+
+static byte _destImcTable[93];
+static uint32 _destImcTable2[5697];
 
 #ifdef __PALM_OS__
 static const int16 *imcTable;
@@ -97,30 +119,7 @@ static const byte imxShortTable[] = {
 	0, 0, 1, 3, 7, 15, 31, 63
 };
 
-
-Bundle::Bundle() {
-	_compVoiceTable = NULL;
-	_compMusicTable = NULL;
-
-	_bundleVoiceTable = NULL;
-	_bundleMusicTable = NULL;
-	
-	_numVoiceFiles = 0;
-	_numMusicFiles = 0;
-
-	_lastSong = -1;
-
-	initializeImcTables();
-}
-
-Bundle::~Bundle() {
-	free(_bundleVoiceTable);
-	free(_bundleMusicTable);
-	free(_compVoiceTable);
-	free(_compMusicTable);
-}
-
-void Bundle::initializeImcTables() {
+void initializeImcTables() {
 	int32 destTablePos = 0;
 	int32 imcTable1Pos = 0;
 	do {
@@ -163,279 +162,6 @@ void Bundle::initializeImcTables() {
 		} while (++imcTable1Pos <= 88);
 	}
 }
-
-bool Bundle::openVoiceFile(const char *filename, const char *directory) {
-	int32 tag, offset;
-
-	if (_voiceFile.isOpen())
-		return true;
-
-	if (_voiceFile.open(filename, directory) == false) {
-		warning("Bundle: Can't open voice bundle file: %s", filename);
-		return false;
-	}
-
-	tag = _voiceFile.readUint32BE();
-	offset = _voiceFile.readUint32BE();
-	_numVoiceFiles = _voiceFile.readUint32BE();
-
-	_bundleVoiceTable = (BundleAudioTable *) malloc(_numVoiceFiles * sizeof(BundleAudioTable));
-
-	_voiceFile.seek(offset, SEEK_SET);
-
-	for (int32 i = 0; i < _numVoiceFiles; i++) {
-		char name[13], c;
-		int32 z = 0;
-		int32 z2;
-
-		for (z2 = 0; z2 < 8; z2++)
-			if ((c = _voiceFile.readByte()) != 0)
-				name[z++] = c;
-		name[z++] = '.';
-		for (z2 = 0; z2 < 4; z2++)
-			if ((c = _voiceFile.readByte()) != 0)
-				name[z++] = c;
-		name[z] = '\0';
-		strcpy(_bundleVoiceTable[i].filename, name);
-		_bundleVoiceTable[i].offset = _voiceFile.readUint32BE();
-		_bundleVoiceTable[i].size = _voiceFile.readUint32BE();
-	}
-
-	return true;
-}
-
-void Bundle::closeVoiceFile() {
-	if (_voiceFile.isOpen()) {
-		_voiceFile.close();
-		free(_bundleVoiceTable);
-		_bundleVoiceTable = NULL;
-	}
-}
-
-bool Bundle::openMusicFile(const char *filename, const char *directory) {
-	int32 tag, offset;
-
-	if (_musicFile.isOpen())
-		return true;
-
-	if (_musicFile.open(filename, directory) == false) {
-		warning("Bundle: Can't open music bundle file: %s", filename);
-		return false;
-	}
-
-	tag = _musicFile.readUint32BE();
-	offset = _musicFile.readUint32BE();
-	_numMusicFiles = _musicFile.readUint32BE();
-
-	_bundleMusicTable = (BundleAudioTable *) malloc(_numMusicFiles * sizeof(BundleAudioTable));
-
-	_musicFile.seek(offset, SEEK_SET);
-
-	for (int32 i = 0; i < _numMusicFiles; i++) {
-		char name[13], c;
-		int z = 0;
-		int z2;
-
-		for (z2 = 0; z2 < 8; z2++)
-			if ((c = _musicFile.readByte()) != 0)
-				name[z++] = c;
-		name[z++] = '.';
-		for (z2 = 0; z2 < 4; z2++)
-			if ((c = _musicFile.readByte()) != 0)
-				name[z++] = c;
-		name[z] = '\0';
-		strcpy(_bundleMusicTable[i].filename, name);
-		_bundleMusicTable[i].offset = _musicFile.readUint32BE();
-		_bundleMusicTable[i].size = _musicFile.readUint32BE();
-	}
-
-	return true;
-}
-
-void Bundle::closeMusicFile() {
-	if (_musicFile.isOpen()) {
-		_musicFile.close();
-		free(_bundleMusicTable);
-		_bundleMusicTable = NULL;
-		_lastSong = -1;
-	}
-}
-
-
-int32 Bundle::decompressVoiceSampleByIndex(int32 index, byte **comp_final) {
-	int32 i, tag, num, final_size, output_size;
-	byte *comp_input, *comp_output;
-
-	if (_voiceFile.isOpen() == false) {
-		warning("Bundle: voice file is not open!");
-		return 0;
-	}
-
-	_voiceFile.seek(_bundleVoiceTable[index].offset, SEEK_SET);
-	tag = _voiceFile.readUint32BE();
-	num = _voiceFile.readUint32BE();
-	_voiceFile.readUint32BE();
-	_voiceFile.readUint32BE();
-
-	if (tag != MKID_BE('COMP')) {
-		warning("Bundle: Compressed sound %d invalid (%s)", index, tag2str(tag));
-		return 0;
-	}
-
-	free(_compVoiceTable);
-	_compVoiceTable = (CompTable *)malloc(sizeof(CompTable) * num);
-	for (i = 0; i < num; i++) {
-		_compVoiceTable[i].offset = _voiceFile.readUint32BE();
-		_compVoiceTable[i].size = _voiceFile.readUint32BE();
-		_compVoiceTable[i].codec = _voiceFile.readUint32BE();
-		_voiceFile.readUint32BE();
-	}
-
-	final_size = 0;
-
-	comp_output = (byte *)malloc(0x2000);
-
-	*comp_final = (byte *)malloc(0x2000 * num);
-
-	for (i = 0; i < num; i++) {
-		// CMI hack: one more zero byte at the end of input buffer
-		comp_input = (byte *)malloc(_compVoiceTable[i].size + 1);
-		comp_input[_compVoiceTable[i].size] = 0;
-
-		_voiceFile.seek(_bundleVoiceTable[index].offset + _compVoiceTable[i].offset, SEEK_SET);
-		_voiceFile.read(comp_input, _compVoiceTable[i].size);
-
-		output_size = decompressCodec(_compVoiceTable[i].codec, comp_input, comp_output, _compVoiceTable[i].size);
-		assert(output_size <= 0x2000);
-		memcpy(*comp_final + final_size, comp_output, output_size);
-		final_size += output_size;
-
-		free(comp_input);
-	}
-	free(comp_output);
-
-	return final_size;
-}
-
-int32 Bundle::decompressMusicSampleByIndex(int32 index, int32 number, byte *comp_final) {
-	int final_size;
-	byte *comp_input;
-
-	if (_musicFile.isOpen() == false) {
-		warning("Bundle: music file is not open!");
-		return 0;
-	}
-
-	if (_lastSong != index) {
-		int i, tag, num;
-		_musicFile.seek(_bundleMusicTable[index].offset, SEEK_SET);
-		tag = _musicFile.readUint32BE();
-		num = _musicFile.readUint32BE();
-		_musicFile.readUint32BE();
-		_musicFile.readUint32BE();
-
-		if (tag != MKID_BE('COMP')) {
-			warning("Bundle: Compressed sound %d invalid (%s)", index, tag2str(tag));
-			return 0;
-		}
-
-		free(_compMusicTable);
-		_compMusicTable = (CompTable *)malloc(sizeof(CompTable) * num);
-
-		for (i = 0; i < num; i++) {
-			_compMusicTable[i].offset = _musicFile.readUint32BE();
-			_compMusicTable[i].size = _musicFile.readUint32BE();
-			_compMusicTable[i].codec = _musicFile.readUint32BE();
-			_musicFile.readUint32BE();
-		}
-
-		_lastSong = index;
-	}
-
-	// CMI hack: one more zero byte at the end of input buffer
-	comp_input = (byte *)malloc(_compMusicTable[number].size + 1);
-	comp_input[_compMusicTable[number].size] = 0;
-
-	_musicFile.seek(_bundleMusicTable[index].offset + _compMusicTable[number].offset, SEEK_SET);
-	_musicFile.read(comp_input, _compMusicTable[number].size);
-
-	final_size = decompressCodec(_compMusicTable[number].codec, comp_input, comp_final, _compMusicTable[number].size);
-
-	free(comp_input);
-
-	return final_size;
-}
-
-int32 Bundle::decompressVoiceSampleByName(const char *name, byte **comp_final) {
-	int32 final_size = 0, i;
-
-	if (_voiceFile.isOpen() == false) {
-		warning("Bundle: voice file is not open!");
-		return 0;
-	}
-
-	for (i = 0; i < _numVoiceFiles; i++) {
-		if (!scumm_stricmp(name, _bundleVoiceTable[i].filename)) {
-			final_size = decompressVoiceSampleByIndex(i, comp_final);
-			return final_size;
-		}
-	}
-	debug(2, "Failed finding voice %s", name);
-	return final_size;
-}
-
-int32 Bundle::decompressMusicSampleByName(const char *name, int32 number, byte *comp_final) {
-	int32 final_size = 0, i;
-
-	if (!name) {
-		warning("Bundle: decompressMusicSampleByName called with no name!");
-		return 0;
-	}
-
-	if (_musicFile.isOpen() == false) {
-		warning("Bundle: music file is not open!");
-		return 0;
-	}
-
-	for (i = 0; i < _numMusicFiles; i++) {
-		if (!scumm_stricmp(name, _bundleMusicTable[i].filename)) {
-			final_size = decompressMusicSampleByIndex(i, number, comp_final);
-			return final_size;
-		}
-	}
-	warning("Couldn't find sample %s", name);
-	return final_size;
-}
-
-int32 Bundle::getNumberOfMusicSamplesByIndex(int32 index) {
-	if (_musicFile.isOpen() == false) {
-		warning("Bundle: music file is not open!");
-		return 0;
-	}
-
-	_musicFile.seek(_bundleMusicTable[index].offset, SEEK_SET);
-	_musicFile.readUint32BE();
-	return _musicFile.readUint32BE();
-}
-
-int32 Bundle::getNumberOfMusicSamplesByName(const char *name) {
-	int32 number = 0, i;
-
-	if (_musicFile.isOpen() == false) {
-		warning("Bundle: music file is not open!");
-		return 0;
-	}
-
-	for (i = 0; i < _numMusicFiles; i++) {
-		if (!scumm_stricmp(name, _bundleMusicTable[i].filename)) {
-			number = getNumberOfMusicSamplesByIndex(i);
-			return number;
-		}
-	}
-	warning("Couldn't find numsample %s", name);
-	return number;
-}
-
 #define NextBit                            \
 	do {                                   \
 		bit = mask & 1;                    \
@@ -483,7 +209,7 @@ static int32 compDecode(byte *src, byte *dst) {
 }
 #undef NextBit
 
-int32 Bundle::decompressCodec(int32 codec, byte *comp_input, byte *comp_output, int32 input_size) {
+int32 decompressCodec(int32 codec, byte *comp_input, byte *comp_output, int32 input_size) {
 	int32 output_size, channels;
 	int32 offset1, offset2, offset3, length, k, c, s, j, r, t, z;
 	byte *src, *t_table, *p, *ptr;
@@ -946,7 +672,7 @@ int32 Bundle::decompressCodec(int32 codec, byte *comp_input, byte *comp_output, 
 		break;
 
 	default:
-		warning("Bundle: Unknown codec %d!", (int)codec);
+		error("BundleCodecs::decompressCodec() Unknown codec %d!", (int)codec);
 		output_size = 0;
 		break;
 	}
@@ -954,19 +680,19 @@ int32 Bundle::decompressCodec(int32 codec, byte *comp_input, byte *comp_output, 
 	return output_size;
 }
 
+} // End of namespace BundleCodecs
+
 } // End of namespace Scumm
 
 #ifdef __PALM_OS__
 #include "scumm_globals.h"
 
-_GINIT(Bundle)
-_GSETPTR(Scumm::imcTable, GBVARS_IMCTABLE_INDEX, int16, GBVARS_SCUMM)
+_GINIT(BundleCodecs)
+_GSETPTR(Scumm::BundleCodecs::imcTable, GBVARS_IMCTABLE_INDEX, int16, GBVARS_SCUMM)
 _GEND
 
-_GRELEASE(Bundle)
+_GRELEASE(BundleCodecs)
 _GRELEASEPTR(GBVARS_IMCTABLE_INDEX, GBVARS_SCUMM)
 _GEND
 
 #endif
-
-

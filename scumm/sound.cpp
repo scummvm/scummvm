@@ -23,7 +23,7 @@
 #include "stdafx.h"
 #include "scumm/actor.h"
 #include "scumm/imuse.h"
-#include "scumm/imuse_digi.h"
+#include "scumm/imuse_digi/dimuse.h"
 #include "scumm/scumm.h"
 #include "scumm/sound.h"
 
@@ -123,11 +123,6 @@ void Sound::playSound(int soundID) {
 	debug(3, "playSound #%d (room %d)", soundID, _scumm->getResourceRoomNr(rtSound, soundID));
 	ptr = _scumm->getResourceAddress(rtSound, soundID);
 	if (!ptr) {
-		return;
-	}
-
-	if (_scumm->_features & GF_DIGI_IMUSE) {
-		_scumm->_musicEngine->startSound(soundID);
 		return;
 	}
 
@@ -815,7 +810,6 @@ void Sound::startSfxSound(File *file, int file_size, PlayingSoundHandle *handle,
 
 	AudioStream *input;
 	
-
 	if (file_size > 0) {
 		if (_vorbis_mode) {
 #ifdef USE_VORBIS
@@ -831,7 +825,8 @@ void Sound::startSfxSound(File *file, int file_size, PlayingSoundHandle *handle,
 	}
 
 	if (_scumm->_imuseDigital) {
-		_scumm->_imuseDigital->startSound(kTalkSoundID, 0, input);
+		_scumm->_imuseDigital->stopSound(kTalkSoundID);
+		_scumm->_imuseDigital->startVoice(kTalkSoundID, input);
 	} else {
 		_scumm->_mixer->playInputStream(handle, input, false, 255, 0, id);
 	}

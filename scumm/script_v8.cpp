@@ -24,7 +24,7 @@
 #include "scumm/actor.h"
 #include "scumm/akos.h"
 #include "scumm/charset.h"
-#include "scumm/imuse_digi.h"
+#include "scumm/imuse_digi/dimuse.h"
 #include "scumm/intern.h"
 #include "scumm/object.h"
 #include "scumm/resource.h"
@@ -1444,14 +1444,9 @@ void ScummEngine_v8::o8_kernelGetFunctions() {
 		break;
 	}
 	case 0xDA:		// lipSyncWidth
+		push(_imuseDigital->getCurVoiceLipSyncWidth());
 	case 0xDB:		// lipSyncHeight
-		{
-		// TODO - get lip sync data for the currently active voice
-		// HACK - return random values for now, to make things look half decent
-		int val = _rnd.getRandomNumber(255);
-//		warning("o8_kernelGetFunctions: lipSync(case 0x%x, len %d, val %d)", args[0], len, val);
-		push(val);
-		}
+		push(_imuseDigital->getCurVoiceLipSyncHeight());
 		break;
 	case 0xDC:		// actorTalkAnimation
 		{
@@ -1482,18 +1477,12 @@ void ScummEngine_v8::o8_kernelGetFunctions() {
 		}
 		break;
 	case 0xE1:		// imGetMusicPosition
-		warning("o8_kernelGetFunctions: imGetMusicPosition(stub)");
-		// FIXME - get this stuff to be properly implemented
-		push(_imuseDigital->_bundleSongPosInMs);
+		push(_imuseDigital->getCurMusicPosInMs());
 		break;
 	case 0xE2:		// musicLipSyncWidth
+		push(_imuseDigital->getCurMusicLipSyncWidth());
 	case 0xE3:		// musicLipSyncHeight
-		{
-		// TODO - get lip sync data for the currently active music
-		int val = _rnd.getRandomNumber(255);
-//		warning("o8_kernelGetFunctions: musicLipSync(case 0x%x, len %d, val %d)", args[0], len, val);
-		push(val);
-		}
+		push(_imuseDigital->getCurMusicLipSyncHeight());
 		break;
 	default:
 		error("o8_kernelGetFunctions: default case 0x%x (len = %d)", args[0], len);

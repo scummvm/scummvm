@@ -29,7 +29,7 @@
 #include "common/timer.h"
 
 #include "scumm/bomp.h"
-#include "scumm/imuse_digi.h"
+#include "scumm/imuse_digi/dimuse.h"
 #include "scumm/imuse.h"
 #include "scumm/scumm.h"
 #include "scumm/sound.h"
