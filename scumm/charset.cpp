@@ -225,23 +225,24 @@ void CharsetRendererOld256::printChar(int chr) {
 				bit = 0x80;
 			}
 			if (buffer & bit) {
-				byte *dst = dest_ptr + y * _vm->_realWidth + x;
-
-				if (_dropShadow)
-					*(dst + _vm->_realWidth + 1) = 0;
-				*dst = _color;
+				if (_dropShadow) {
+					*(dest_ptr + x + 1) = 0;
+					*(dest_ptr + x + _vm->_realWidth) = 0;
+					*(dest_ptr + x + _vm->_realWidth + 1) = 0;
+				}					
+				*(dest_ptr + x) = _color;
 
 				if (useMask) {
 					mask_ptr[maskpos] |= maskmask;
 					if (_dropShadow) {
-						int spos = maskpos + _vm->gdi._numStrips;
-						byte sbit = maskmask >> 1;
-
-						if (sbit == 0) {
-							sbit = 0x80;
-							spos++;
+						mask_ptr[maskpos + _vm->gdi._numStrips] |= maskmask;
+						if (maskmask == 1) {
+							mask_ptr[maskpos + 1] |= 0x80;
+							mask_ptr[maskpos + _vm->gdi._numStrips + 1] |= 0x80;
+						} else {
+							mask_ptr[maskpos] |= (maskmask >> 1);
+							mask_ptr[maskpos + _vm->gdi._numStrips] |= (maskmask >> 1);
 						}
-						mask_ptr[spos] |= sbit;
 					}
 				}
 			}
@@ -251,6 +252,7 @@ void CharsetRendererOld256::printChar(int chr) {
 				maskpos++;
 			}
 		}
+		dest_ptr += _vm->_realWidth;
 		mask_ptr += _vm->gdi._numStrips;
 	}
 
