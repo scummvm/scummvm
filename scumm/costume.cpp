@@ -674,12 +674,7 @@ void LoadedCostume::loadCostume(int id) {
 void CostumeRenderer::drawNESCostume(const Actor *a, int limb) {
 	const byte *src;
 	int offset, numSprites, spritesOffset, numAnims;
-	byte *table, *ptr, *spritesDefs, *spritesOffsetTab, *numSpritesTab;
-	bool flip;
-	int palette, tile;
-	int i, j;
-	byte x, y;
-	int8 x1, y1;
+	byte *table, *ptr, *spritesDefs, *spritesOffsetTab, *numSpritesTab, *spritesPal;
 	const CostumeData &cost = a->_cost;
 	int frame = cost.frame[limb];
 
@@ -702,6 +697,9 @@ void CostumeRenderer::drawNESCostume(const Actor *a, int limb) {
 	// data
 	spritesDefs = _vm->getResourceAddress(rtCostume, v1MMNEScostTables[_vm->_v1MMNESCostumeSet][3]);
 
+	// data
+	spritesPal = _vm->getResourceAddress(rtCostume, v1MMNEScostTables[_vm->_v1MMNESCostumeSet][5]) + 2;
+
 	int frameNum = 0;
 
 	offset = READ_LE_UINT16(table + v1MMNESLookup[_loaded._id] * 2 + 2 + frameNum * 2);
@@ -710,87 +708,43 @@ void CostumeRenderer::drawNESCostume(const Actor *a, int limb) {
 
 	ptr = spritesDefs + spritesOffset + 2;
 
-	byte mask;
-
-	byte pic[256][256];
-	for (i = 0; i < 256; i++)
-		for(j = 0; j < 256; j++)
-			pic[i][j] = 0;
-
+	int left = 239, right = 0, top = 239, bottom = 0;
+  
 	for (int spr = 0; spr < numSprites; spr++) {
-		flip = ((*ptr & 0x80) != 0);
-			
-		y1 = *ptr++;
-		y1 |= (int8)0x80;
-		y1 += (int8)0x80;
-		y = y1;
+		byte mask = (ptr[0] & 0x80) ? 0x01 : 0x80;
+		int8 y = ptr[0] << 1;	y >>= 1;
+		byte tile = ptr[1];
+		byte palette = (ptr[2] & 0x03) << 2;
+		int8 x = ptr[2];	x >>= 2;
+		ptr += 3;
 
-		tile = *ptr++;
-
-		x1 = *ptr >> 2;
-
-		if (*ptr & 0x80)
-			x1 |= (int8)0xc0;
-		x1 += (int8)0x80;
-		x = x1;
-
-		palette = *ptr++ & 0x3;
-		
-		mask = flip ? 0x01 : 0x80;
-
-#define SHIFT 0
-
-		for (i = 0; i < 8; i++) {
-			byte c = _vm->_v1MMNESCostumeGfx[_vm->_v1MMNESCostumeSet][tile * 16 + i];
-			for (j = 0; j < 8; j++) {
-				pic[SHIFT + j + x][SHIFT + i + y] = (c & mask) ? 1 : 0;
-				if (flip)
-					c >>= 1;
-				else
-					c <<= 1;
+		for (int ty = 0; ty < 8; ty++) {
+			byte c1 = _vm->_v1MMNESCostumeGfx[_vm->_v1MMNESCostumeSet][tile * 16 + ty];
+			byte c2 = _vm->_v1MMNESCostumeGfx[_vm->_v1MMNESCostumeSet][tile * 16 + ty + 8];
+			for (int tx = 0; tx < 8; tx++) {
+				unsigned char c = ((c1 & mask) ? 1 : 0) | ((c2 & mask) ? 2 : 0) | palette;
+				if (mask == 0x01) {
+					c1 >>= 1;
+					c2 >>= 1;
+				} else {
+					c1 <<= 1;
+					c2 <<= 1;
+				}
+				if (!(c & 3))
+					continue;
+				*((byte *)_out.pixels + (_actorY + y + ty) * _out.pitch + (_actorX + x + tx)) = spritesPal[c];
 			}
 		}
-		for (i = 0; i < 8; i++) {
-			byte c = _vm->_v1MMNESCostumeGfx[_vm->_v1MMNESCostumeSet][tile * 16 + i + 8];
-			for (j = 0; j < 8; j++) {
-				if (pic[SHIFT + j + x][SHIFT + i + y] == 1)
-					pic[SHIFT + j + x][SHIFT + i + y] = (c & mask) ? 3 : 1;
-				else
-					pic[SHIFT + j + x][SHIFT + i + y] = (c & mask) ? 2 : 0;
-				if (flip)
-					c >>= 1;
-				else
-					c <<= 1;
-			}
-		}
+		if (left > _actorX + x)
+			left = _actorX + x;
+		if (right < _actorX + x + 8)
+			right = _actorX + x + 8;
+		if (top > _actorY + y)
+			top = _actorY + y;
+		if (bottom < _actorY + y + 8)
+			bottom = _actorY + y + 8;
 	}
-	
-	int left = 256, top = 256, right = 0, bottom = 0;
-		
-	for (i = 0; i < 256; i++)
-		for(j = 0; j < 256; j++)
-			if (pic[j][i] != 0) {
-				if (left > j)
-					left = j;
-				if (right < j)
-					right = j;
-				if (top > i)
-					top = i;
-				if (bottom < i)
-					bottom = i;
-			}
-
-	byte *dest = (byte *)_out.pixels + (_actorY + top - 128) * _out.pitch + 
-		_actorX + left - 128;
-
-	for (i = top; i <= bottom; i++) {
-		for(j = left; j <= right; j++)
-			if (pic[j][i])
-				dest[j - left] = pic[j][i];
-		dest += _out.pitch;
-	}
-
-	_vm->markRectAsDirty(kMainVirtScreen, _actorX + left - 128, _actorX + right - 128, _actorY + top - 128, _actorY + bottom - 128);
+	_vm->markRectAsDirty(kMainVirtScreen, left, right, top, bottom);
 }
 
 byte CostumeRenderer::drawLimb(const Actor *a, int limb) {
@@ -857,7 +811,7 @@ void ScummEngine::cost_decodeNESCostumeGfx() {
 		byte *patTable = getResourceAddress(rtCostume, v1MMNEScostTables[n][4]);
 		int j = 0;
 		int i = 3;
-		int maxSprites = 257; //patTable[3];
+		int maxSprites = patTable[2];
 		int len = READ_LE_UINT16(patTable);
 
 		if (maxSprites == 0)
@@ -866,8 +820,8 @@ void ScummEngine::cost_decodeNESCostumeGfx() {
 		_v1MMNESCostumeGfx[n] = (byte *)calloc(maxSprites * 16, 1);
 
 		while (i < len) {
-			if (patTable[i] > 0x80) {
-				for (int cnt = (patTable[i++] & ~0x80); cnt > 0; cnt--)
+			if (patTable[i] & 0x80) {
+				for (int cnt = (patTable[i++] & 0x7F); cnt > 0; cnt--)
 					_v1MMNESCostumeGfx[n][j++] = patTable[i++];
 			} else {
 				for (int cnt = patTable[i++]; cnt > 0; cnt--)
