@@ -438,6 +438,10 @@ SOURCE=.\sky\compacts\objects.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\sky\compacts\savedata.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\sky\compacts\z_compac.h
 # End Source File
 # End Group
