@@ -253,14 +253,13 @@ int32 BundleMgr::decompressSampleByIndex(int32 index, int32 offset, int32 size, 
 				output_size -= skip;
 		}
 
+		if ((output_size + skip) > 0x2000) // workaround
+			output_size -= (output_size + skip) - 0x2000;
+
 		if (output_size > size)
 			output_size = size;
 
 		assert(final_size + output_size <= blocks_final_size);
-
-		if ((skip + output_size) > 0x2000) {
-			error("skip: %d, output_size: %d, _outputSize: %d", skip, output_size, _outputSize);
-		}
 
 		memcpy(*comp_final + final_size, _compOutput + skip, output_size);
 		final_size += output_size;
