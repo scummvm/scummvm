@@ -146,8 +146,6 @@ static void do_memory_test(void) {
 
 #endif
 
-#ifndef _WIN32_WCE
-
 static int launcherDialog(GameDetector &detector, OSystem *system) {
 	// FIXME - we need to call init_size() here so that we can display for example
 	// the launcher dialog. But the Engine object will also call it again (possibly
@@ -233,7 +231,11 @@ static void runGame(GameDetector &detector, OSystem *system) {
 	delete engine;
 };
 
+#ifndef _WIN32_WCE
 int main(int argc, char *argv[]) {
+#else
+extern "C" int scummvm_main(GameDetector &detector, int argc, char *argv[]) {
+#endif
 	OSystem::Property prop;
 
 #if defined(UNIX)
@@ -283,7 +285,9 @@ int main(int argc, char *argv[]) {
 	PluginManager::instance().loadPlugins();
 
 	// Parse the command line information
+#ifndef _WIN32_WCE
 	GameDetector detector;
+#endif
 	detector.parseCommandLine(argc, argv);
 
 	// Create the system object
@@ -321,8 +325,6 @@ int main(int argc, char *argv[]) {
 #if defined(ALLEGRO_BACKEND)
 END_OF_MAIN();
 #endif
-
-#endif // WIN32_WCE
 
 /*
 #if !defined(__PALM_OS__) && !defined(_WIN32_WCE)
