@@ -85,17 +85,17 @@ private:
 	ScummEngine *_vm;
 	ImuseDigiSndMgr *_sound;
 
-	int _volVoice;
-	int _volSfx;
-	int _volMusic;
+	int32 _volVoice;
+	int32 _volSfx;
+	int32 _volMusic;
 
 	bool _pause;
 
-	int _attributes[188];
-	int _nextSeqToPlay;
-	int _curMusicState;
-	int _curMusicSeq;
-	int _curMusicCue;
+	int32 _attributes[188];
+	int32 _nextSeqToPlay;
+	int32 _curMusicState;
+	int32 _curMusicSeq;
+	int32 _curMusicCue;
 
 	static void timer_handler(void *refConf);
 	void callback();
