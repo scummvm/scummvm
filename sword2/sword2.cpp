@@ -112,6 +112,7 @@ Sword2State::Sword2State(GameDetector *detector, OSystem *syst)
 		warning("Sound initialization failed");
 
 	_mixer->setVolume(kDefaultSFXVolume * kDefaultMasterVolume / 255);
+	_mixer->setMusicVolume(kDefaultMusicVolume * kDefaultMasterVolume / 255);
 
 	_sound = new Sword2Sound(_mixer);
 }
