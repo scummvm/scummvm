@@ -1232,7 +1232,7 @@ load_game:
 			if (oldEgo != VAR(VAR_EGO)) {
 				// FIXME/TODO: Reset and redraw the sentence line
 				oldEgo = VAR(VAR_EGO);
-				_inventoryOffset = 0;	// TODO: Record the _inventoryOffset for each ego actor?
+				_inventoryOffset = 0;
 				redrawV2Inventory();
 			}
 			checkV2MouseOver(_mouse);
@@ -2529,8 +2529,6 @@ void Scumm::launch() {
 		_numActors = 30;
 	else if (_gameId == GID_MANIAC)
 		_numActors = 25;
-	else if ((_gameId == GID_ZAK) && (_version == 1))
-		_numActors = 14;		// FIXME: Nasty Wrong Hack(tm)
 	else 
 		_numActors = 13;
 
