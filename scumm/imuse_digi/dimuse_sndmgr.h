@@ -115,7 +115,7 @@ public:
 	int getNumRegions(soundStruct *soundHandle);
 	int getNumJumps(soundStruct *soundHandle);
 	int getRegionOffset(soundStruct *soundHandle, int region);
-	int getJumpIdByRegionAndHookId(soundStruct *soundHandle, int region, int hookId);
+	int getJumpIdByRegion(soundStruct *soundHandle, int region);
 	int getRegionIdByJumpId(soundStruct *soundHandle, int jumpId);
 	int getJumpHookId(soundStruct *soundHandle, int number);
 	int getJumpFade(soundStruct *soundHandle, int number);

@@ -395,13 +395,12 @@ int ImuseDigiSndMgr::getRegionOffset(soundStruct *soundHandle, int region) {
 	return soundHandle->region[region].offset;
 }
 
-int ImuseDigiSndMgr::getJumpIdByRegionAndHookId(soundStruct *soundHandle, int region, int hookId) {
+int ImuseDigiSndMgr::getJumpIdByRegion(soundStruct *soundHandle, int region) {
 	assert(soundHandle && checkForProperHandle(soundHandle));
 	assert(region >= 0 && region < soundHandle->numRegions);
 	for (int l = 0; l < soundHandle->numJumps; l++) {
 		if (soundHandle->jump[l].offset == soundHandle->region[region].offset) {
-			if (soundHandle->jump[l].hookId == hookId)
-				return l;
+			return l;
 		}
 	}
 	
