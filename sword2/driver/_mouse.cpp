@@ -25,9 +25,9 @@ namespace Sword2 {
 #define MOUSEFLASHFRAME 6
 
 /**
- * Logs the mouse button event passed in buttons.  The button events are 
- * defined as RD_LEFTBUTTONDOWN, RD_LEFTBUTTONUP, RD_RIGHTBUTTONDOWN and
- * RD_RIGHTBUTTONUP.
+ * Logs the mouse button event passed in buttons. The button events were
+ * originaly defined as RD_LEFTBUTTONDOWN, RD_LEFTBUTTONUP, RD_RIGHTBUTTONDOWN
+ * and RD_RIGHTBUTTONUP. ScummVM adds RD_WHEELDOWN and RD_WHEELUP.
  */
 
 void Input::logMouseEvent(uint16 buttons) {

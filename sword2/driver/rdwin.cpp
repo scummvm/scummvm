@@ -51,6 +51,12 @@ void Input::parseEvents(void) {
 		case OSystem::EVENT_RBUTTONUP:
 			logMouseEvent(RD_RIGHTBUTTONUP);
 			break;
+		case OSystem::EVENT_WHEELUP:
+			logMouseEvent(RD_WHEELUP);
+			break;
+		case OSystem::EVENT_WHEELDOWN:
+			logMouseEvent(RD_WHEELDOWN);
+			break;
 		case OSystem::EVENT_QUIT:
 			_vm->closeGame();
 			break;

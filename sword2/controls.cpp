@@ -106,6 +106,8 @@ public:
 	virtual void onMouseMove(int x, int y) {}
 	virtual void onMouseDown(int x, int y) {}
 	virtual void onMouseUp(int x, int y) {}
+	virtual void onWheelUp(int x, int y) {}
+	virtual void onWheelDown(int x, int y) {}
 	virtual void onKey(_keyboardEvent *ke) {}
 	virtual void onTick() {}
 
@@ -297,34 +299,66 @@ int Dialog::run() {
 				setResult(1);
 		}
 
-		for (i = 0; i < _numWidgets; i++) {
-			bool oldHit = _widgets[i]->isHit(oldMouseX, oldMouseY);
-			bool newHit = _widgets[i]->isHit(newMouseX, newMouseY);
+		int oldHit = -1;
+		int newHit = -1;
 
-			if (!oldHit && newHit)
-				_widgets[i]->onMouseEnter();
-			if (oldHit && !newHit)
-				_widgets[i]->onMouseExit();
-			if (_gui->_vm->_input->_mouseX != oldMouseX || _gui->_vm->_input->_mouseY != oldMouseY)
-				_widgets[i]->onMouseMove(newMouseX, newMouseY);
+		// Find out which widget the mouse was over the last time, and
+		// which it is currently over. This assumes the widgets do not
+		// overlap.
+
+		for (i = 0; i < _numWidgets; i++) {
+			if (_widgets[i]->isHit(oldMouseX, oldMouseY))
+				oldHit = i;
+			if (_widgets[i]->isHit(newMouseX, newMouseY))
+				newHit = i;
+		}
+
+		// Was the mouse inside a widget the last time?
+
+		if (oldHit >= 0) {
+			if (newHit != oldHit)
+				_widgets[oldHit]->onMouseExit();
+		}
+
+		// Is the mouse currently in a widget?
+
+		if (newHit >= 0) {
+			if (newHit != oldHit)
+				_widgets[newHit]->onMouseEnter();
 
 			if (me) {
 				switch (me->buttons) {
 				case RD_LEFTBUTTONDOWN:
-					if (newHit)
-						_widgets[i]->onMouseDown(newMouseX, newMouseY);
+					_widgets[newHit]->onMouseDown(newMouseX, newMouseY);
 					break;
 				case RD_LEFTBUTTONUP:
-					if (newHit)
-						_widgets[i]->onMouseUp(newMouseX, newMouseY);
-					// So that slider widgets will know
-					// when the user releases the mouse
-					// button, even if the cursor is
-					// outside of the slider's hit area.
-					_widgets[i]->releaseMouse(newMouseX, newMouseY);
+					_widgets[newHit]->onMouseUp(newMouseX, newMouseY);
+					break;
+				case RD_WHEELUP:
+					_widgets[newHit]->onWheelUp(newMouseX, newMouseY);
+					break;
+				case RD_WHEELDOWN:
+					_widgets[newHit]->onWheelDown(newMouseX, newMouseY);
 					break;
 				}
 			}
+		}
+
+		// Some events are passed to the widgets regardless of where
+		// the mouse cursor is.
+
+		for (i = 0; i < _numWidgets; i++) {
+			if (me && me->buttons == RD_LEFTBUTTONUP) {
+				// So that slider widgets will know when the
+				// user releases the mouse button, even if the
+				// cursor is outside of the slider's hit area.
+				_widgets[i]->releaseMouse(newMouseX, newMouseY);
+			}
+
+			// This is to make it easier to drag the slider widget
+
+			if (newMouseX != oldMouseX || newMouseY != oldMouseY)
+				_widgets[i]->onMouseMove(newMouseX, newMouseY);
 
 			if (keyboardStatus == RD_OK)
 				_widgets[i]->onKey(&ke);
@@ -957,11 +991,15 @@ enum {
 	kLoadDialog
 };
 
+// Slot button actions. Note that keyboard input generates positive actions
+
 enum {
 	kSelectSlot = -1,
 	kDeselectSlot = -2,
-	kStartEditing = 0,
-	kCursorTick = 1
+	kWheelDown = -3,
+	kWheelUp = -4,
+	kStartEditing = -5,
+	kCursorTick = -6
 };
 
 class Slot : public Widget {
@@ -1029,6 +1067,14 @@ public:
 				_parent->onAction(this, kDeselectSlot);
 			}
 		}
+	}
+
+	virtual void onWheelUp(int x, int y) {
+		_parent->onAction(this, kWheelUp);
+	}
+
+	virtual void onWheelDown(int x, int y) {
+		_parent->onAction(this, kWheelDown);
 	}
 
 	virtual void onKey(_keyboardEvent *ke) {
@@ -1206,60 +1252,23 @@ public:
 			setResult(0);
 		} else {
 			Slot *slot = (Slot *) widget;
+			int textWidth;
+			char tmp;
+			int i;
 
-			if (result >= kStartEditing) {
-				if (result == kStartEditing) {
-					if (_selectedSlot >= 10)
-						_firstPos = 5;
-					else
-						_firstPos = 4;
-
-					strcpy(_editBuffer, slot->getText());
-					_editPos = strlen(_editBuffer);
-					_cursorTick = 0;
-					_editBuffer[_editPos] = '_';
-					_editBuffer[_editPos + 1] = 0;
-					slot->setEditable(true);
-					drawEditBuffer(slot);
-				} else if (result == kCursorTick) {
-					_cursorTick++;
-					if (_cursorTick == 7) {
-						_editBuffer[_editPos] = ' ';
-						drawEditBuffer(slot);
-					} else if (_cursorTick == 14) {
-						_cursorTick = 0;
-						_editBuffer[_editPos] = '_';
-						drawEditBuffer(slot);
-					}
-				} else if (result == 8) {
-					if (_editPos > _firstPos) {
-						_editBuffer[_editPos - 1] = _editBuffer[_editPos];
-						_editBuffer[_editPos--] = 0;
-						drawEditBuffer(slot);
-					}
-				} else {
-					int textWidth;
-					char tmp;
-
-					tmp = _editBuffer[_editPos];
-					_editBuffer[_editPos] = 0;
-					textWidth = _fr2->getTextWidth(_editBuffer);
-					_editBuffer[_editPos] = tmp;
-
-					if (textWidth < 340 && _editPos < SAVE_DESCRIPTION_LEN - 2) {
-						_editBuffer[_editPos + 1] = _editBuffer[_editPos];
-						_editBuffer[_editPos + 2] = 0;
-						_editBuffer[_editPos++] = result;
-						drawEditBuffer(slot);
-					}
-				}
-			} else {
+			switch (result) {
+			case kWheelUp:
+				onAction(_upButton);
+				break;
+			case kWheelDown:
+				onAction(_downButton);
+				break;
+			case kSelectSlot:
+			case kDeselectSlot:
 				if (result == kSelectSlot)
 					_selectedSlot = _gui->_baseSlot + (slot->getY() - 72) / 35;
 				else if (result == kDeselectSlot)
 					_selectedSlot = -1;
-
-				int i;
 
 				for (i = 0; i < 8; i++)
 					if (widget == _slotButton[i])
@@ -1271,6 +1280,52 @@ public:
 						_slotButton[j]->setState(0);
 					}
 				}
+				break;
+			case kStartEditing:
+				if (_selectedSlot >= 10)
+					_firstPos = 5;
+				else
+					_firstPos = 4;
+
+				strcpy(_editBuffer, slot->getText());
+				_editPos = strlen(_editBuffer);
+				_cursorTick = 0;
+				_editBuffer[_editPos] = '_';
+				_editBuffer[_editPos + 1] = 0;
+				slot->setEditable(true);
+				drawEditBuffer(slot);
+				break;
+			case kCursorTick:
+				_cursorTick++;
+				if (_cursorTick == 7) {
+					_editBuffer[_editPos] = ' ';
+					drawEditBuffer(slot);
+				} else if (_cursorTick == 14) {
+					_cursorTick = 0;
+					_editBuffer[_editPos] = '_';
+					drawEditBuffer(slot);
+				}
+				break;
+			case 8:
+				if (_editPos > _firstPos) {
+					_editBuffer[_editPos - 1] = _editBuffer[_editPos];
+					_editBuffer[_editPos--] = 0;
+					drawEditBuffer(slot);
+				}
+				break;
+			default:
+				tmp = _editBuffer[_editPos];
+				_editBuffer[_editPos] = 0;
+				textWidth = _fr2->getTextWidth(_editBuffer);
+				_editBuffer[_editPos] = tmp;
+
+				if (textWidth < 340 && _editPos < SAVE_DESCRIPTION_LEN - 2) {
+					_editBuffer[_editPos + 1] = _editBuffer[_editPos];
+					_editBuffer[_editPos + 2] = 0;
+					_editBuffer[_editPos++] = result;
+					drawEditBuffer(slot);
+				}
+				break;
 			}
 		}
 	}
