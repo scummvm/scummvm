@@ -237,8 +237,7 @@ int main(int argc, char *argv[]) {
 	ConfMan.set("versioninfo", gScummVMVersion, "scummvm");
 	
 	// Load the plugins
-	g_pluginManager = new PluginManager();
-	g_pluginManager->loadPlugins();
+	PluginManager::instance().loadPlugins();
 
 	// Parse the command line information
 	GameDetector detector;

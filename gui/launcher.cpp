@@ -281,8 +281,7 @@ GameList findGame(FilesystemNode *dir) {
 
 	// Iterate over all known games and for each check if it might be
 	// the game in the presented directory.
-	assert(g_pluginManager);
-	const PluginList &plugins = g_pluginManager->getPlugins();
+	const PluginList &plugins = PluginManager::instance().getPlugins();
 	int p;
 	for (p = 0; p < plugins.size(); p++) {
 		const TargetSettings *v = plugins[p]->getTargets();

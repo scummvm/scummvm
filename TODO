@@ -9,7 +9,6 @@ General
 * fix the Map<> template, make it more robust; maybe use a red-black tree?
 * add iterators to List<> template and make use of them
 * allow for return-to-launcher instead of a normal "quit" ?
-* turn g_pluginManager into a proper singleton
 * improve the argv (command line args) parser
 * extend the Plugin API to provide for "game detection": instead of the
   TargetSettings::detectname "hack" to detect files, provide a callback

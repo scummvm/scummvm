@@ -24,6 +24,7 @@
 #define COMMON_PLUGINS_H
 
 #include "common/list.h"
+#include "common/singleton.h"
 
 class Engine;
 class GameDetector;
@@ -84,25 +85,22 @@ typedef Common::List<Plugin *> PluginList;
  *
  * @todo Add support for dynamic plugins (this may need additional API, e.g. for a plugin path)
  */
-class PluginManager {
-protected:
+using Common::Singleton;
+class PluginManager : public Singleton<PluginManager> {
+private:
 	PluginList _plugins;
 	
 	bool tryLoadPlugin(Plugin *plugin);
 	
-public:
+	friend class Singleton<PluginManager>;
 	PluginManager();
 	~PluginManager();
 	
+public:
 	void loadPlugins();
 	void unloadPlugins();
 	
 	const PluginList &getPlugins()	{ return _plugins; }
 };
-
-/**
- * Global, shared plugin manager.
- */
-extern PluginManager	*g_pluginManager;
 
 #endif

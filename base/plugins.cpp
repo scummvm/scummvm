@@ -74,12 +74,6 @@ extern Engine *Engine_QUEEN_create(GameDetector *detector, OSystem *syst);
 #pragma mark -
 
 
-PluginManager	*g_pluginManager = 0;
-
-
-#pragma mark -
-
-
 int Plugin::countTargets() const {
 	const TargetSettings *target = getTargets();
 	int count;

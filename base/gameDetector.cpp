@@ -238,7 +238,7 @@ void GameDetector::list_games() {
 	//    what this code does, but without the "Config" column.
 	// 2) List all available (configured) targets, including those with custom
 	//    names, e.g. "monkey-mac", "skycd-demo", ...
-	const PluginList &plugins = g_pluginManager->getPlugins();
+	const PluginList &plugins = PluginManager::instance().getPlugins();
 	const TargetSettings *v;
 
 	printf("Game             Full Title                                            \n"
@@ -262,7 +262,7 @@ void GameDetector::list_games() {
 const TargetSettings *GameDetector::findTarget(const String &targetName, const Plugin **plugin) const {
 	// Find the TargetSettings for this target
 	const TargetSettings *target;
-	const PluginList &plugins = g_pluginManager->getPlugins();
+	const PluginList &plugins = PluginManager::instance().getPlugins();
 	
 	PluginList::ConstIterator iter = plugins.begin();
 	for (iter = plugins.begin(); iter != plugins.end(); ++iter) {
