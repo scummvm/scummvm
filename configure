@@ -157,15 +157,19 @@ Configuration:
   --backend=BACKEND      backend to build (sdl, sdlgl, x11, morphos, dc, gp32) [sdl]
 
 Optional Features:
-  --disable-scumm        don't build the SCUMM engine
-  --disable-simon        don't build the simon engine
-  --disable-sky          don't build the Beneath a Steel Sky engine
-  --disable-bs2          don't build the Broken Sword II engine
+  --disable-scumm          don't build the SCUMM engine
+  --disable-simon          don't build the simon engine
+  --disable-sky            don't build the Beneath a Steel Sky engine
+  --disable-bs2            don't build the Broken Sword II engine
 
 Optional Libraries:
-  --disable-alsa         disable ALSA midi sound support [autodetect]
-  --disable-vorbis       disable Ogg Vorbis support [autodetect]
-  --disable-mad          disable libmad (MP3) support [autodetect]
+  --with-alsa-prefix=PFX   Prefix where alsa is installed (optional)
+  --disable-alsa           disable ALSA midi sound support [autodetect]
+  --with-ogg-prefix=PFX    Prefix where libogg is installed (optional)
+  --with-vorbis-prefix=PFX Prefix where libvorbis is installed (optional)
+  --disable-vorbis         disable Ogg Vorbis support [autodetect]
+  --with-mad-prefix=PFX Prefix where libmad is installed (optional)
+  --disable-mad            disable libmad (MP3) support [autodetect]
  
 EOF
     exit 0
@@ -184,7 +188,27 @@ for ac_option in $@; do
       --disable-vorbis)		_vorbis=no	;;
       --enable-mad)		_mad=yes	;;
       --disable-mad)		_mad=no		;;
-
+      --with-alsa-prefix=*)
+      	_prefix=`echo $ac_option | cut -d '=' -f 2`
+	ALSA_CFLAGS="-I$_prefix/include"
+	ALSA_LIBS="-L$_prefix/libs"
+	;;
+      --with-ogg-prefix=*)
+      	_prefix=`echo $ac_option | cut -d '=' -f 2`
+	OGG_CFLAGS="-I$_prefix/include"
+	OGG_LIBS="-L$_prefix/lib"
+	;;
+      --with-vorbis-prefix=*)
+      	_prefix=`echo $ac_option | cut -d '=' -f 2`
+	echo "prefix is $_prefix"
+	VORBIS_CFLAGS="-I$_prefix/include"
+	VORBIS_LIBS="-L$_prefix/lib"
+	;;
+      --with-mad-prefix=*)
+      	_prefix=`echo $ac_option | cut -d '=' -f 2`
+	MAD_CFLAGS="-I$_prefix/include"
+	MAD_LIBS="-L$_prefix/lib"
+	;;
       --backend=*)
         _backend=`echo $ac_option | cut -d '=' -f 2`
 	;;
@@ -398,11 +422,13 @@ if test "$_vorbis" = auto ; then
 #include <vorbis/codec.h>
 int main(void) { vorbis_packet_blocksize(0,0); return 0; }
 EOF
-  cc_check -lvorbis -logg -lm && _vorbis=yes
+  cc_check $OGG_CFLAGS $OGG_LIBS $VORBIS_CFLAGS $VORBIS_LIBS \
+  -lvorbis -logg -lm && _vorbis=yes
 fi
 if test "$_vorbis" = yes ; then
   _def_vorbis='#define USE_VORBIS'
-  LIBS="$LIBS -lvorbisfile -lvorbis -logg"
+  LIBS="$LIBS $OGG_LIBS $VORBIS_LIBS -lvorbisfile -lvorbis -logg"
+  INCLUDES="$INCLUDES $OGG_CFLAGS $VORBIS_CFLAGS"
 else
   _def_vorbis='#undef USE_VORBIS'
 fi
@@ -415,11 +441,12 @@ if test "$_mad" = auto ; then
 #include <mad.h>
 int main(void) {return 0; }
 EOF
-  cc_check -lmad && _mad=yes
+  cc_check $MAD_CFLAGS $MAD_LIBS -lmad && _mad=yes
 fi
 if test "$_mad" = yes ; then
   _def_mad='#define USE_MAD'
-  LIBS="$LIBS -lmad"
+  LIBS="$LIBS $MAD_LIBS -lmad"
+  INCLUDES="$INCLUDES $MAD_CFLAGS"
 else
   _def_mad='#undef USE_MAD'
 fi
@@ -432,11 +459,12 @@ if test "$_alsa" = auto ; then
 #include <alsa/asoundlib.h>
 int main(void) { return (!(SND_LIB_MAJOR==0 && SND_LIB_MINOR==9)); }
 EOF
-  cc_check -lasound && _alsa=yes
+  cc_check $ALSA_CFLAGS $ALSA_LIBS -lasound && _alsa=yes
 fi
 if test "$_alsa" = yes ; then
   _def_alsa='#define USE_ALSA'
-  LIBS="$LIBS -lasound"
+  LIBS="$LIBS $ALSA_LIBS -lasound"
+  INCLUDES="$INCLUDES $ALSA_CFLAGS"
 else
   _def_alsa='#undef USE_ALSA'
 fi
