@@ -1375,14 +1375,24 @@ void Gdi::drawBMAPBg(const byte *ptr, VirtScreen *vs, int startstrip) {
 	// The following few lines more or less duplicate decompressBitmap(), only
 	// for an area spanning multiple strips. In particular, the codecs 13 & 14
 	// in decompressBitmap call drawStripHE()
-	if (code == 150) {
-		fill((byte *)vs->backBuf, vs->pitch, *bmap_ptr, vs->w, vs->h);
-	} else if ((code >= 134 && code <= 138) || (code >= 144 && code <= 148)) {
-		_decomp_shr = code % 10;
-		_decomp_mask = 0xFF >> (8 - _decomp_shr);
-
+	_decomp_shr = code % 10;
+	_decomp_mask = 0xFF >> (8 - _decomp_shr);
+	code /= 10;
+		
+	switch (code) {
+	case 13:	
+		drawStripHE((byte *)vs->backBuf, vs->pitch, bmap_ptr, vs->w, vs->h, false);
+		break;
+	case 14:
 		drawStripHE((byte *)vs->backBuf, vs->pitch, bmap_ptr, vs->w, vs->h, true);
+		break;
+	case 15:
+		fill((byte *)vs->backBuf, vs->pitch, *bmap_ptr, vs->w, vs->h);
+		break;
+	default:
+		error("Gdi::drawBMAPBg: default case %d", code);
 	}
+
 	copyVirtScreenBuffers(Common::Rect(vs->w, vs->h));
 
 	int numzbuf = getZPlanes(ptr, zplane_list, true);
