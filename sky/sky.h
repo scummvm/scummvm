@@ -30,6 +30,7 @@ class SkyState : public Engine {
 
 protected:
 	byte _game;
+	bool _isCDVersion;
 	byte _key_pressed;
 
 	uint16 _debugMode;

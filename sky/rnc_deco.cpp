@@ -182,7 +182,7 @@ uint16 input_value(uint16 *table)
 	return value;
 }
 
-int UnpackM1(void *input, void *output, uint16 key)
+int32 UnpackM1(void *input, void *output, uint16 key)
 {
 	uint8 *inputHigh, *outputLow, *outputHigh;
 	uint8 *inputptr = (uint8 *)input;

@@ -30,12 +30,12 @@
 #define no_of_files_cd	5200
 #define max_files_in_list		60
 
-int UnpackM1(void *, void *, uint16);
+int32 UnpackM1(void *, void *, uint16);
 
 const char *data_file_name = "sky.dsk";
 const char *dinner_file_name = "sky.dnr";
 uint8 *dinner_table_area, *fixed_dest, *file_dest, *comp_dest;
-uint32 dinner_table_size, file_flags, file_offset, file_size, decomp_size, comp_file;
+uint32 dinner_table_entries, file_flags, file_offset, file_size, decomp_size, comp_file;
 uint16 build_list[max_files_in_list];
 uint32 loaded_file_list[max_files_in_list];
 
@@ -50,16 +50,21 @@ void SkyState::initialise_disk()
 	if (dnr_handle->isOpen() == false)
 			error("Could not open %s%s!\n", _gameDataPath, dinner_file_name);
 
-	if (!(dinner_table_size = dnr_handle->readUint32LE()))
+	if (!(dinner_table_entries = dnr_handle->readUint32LE()))
 		error("Error reading from sky.dnr!\n"); //even though it was opened correctly?!
 	
-	debug(1, "Entries in dinner table: %d", dinner_table_size);
+	debug(1, "Entries in dinner table: %d", dinner_table_entries);
 
-	dinner_table_area = (uint8 *)malloc(dinner_table_size * 8);
-	entries_read = dnr_handle->read(dinner_table_area, 8 * dinner_table_size) / 8;
+	if (dinner_table_entries > 1600) 
+		_isCDVersion = true;
+	else
+		_isCDVersion = false;
+		
+	dinner_table_area = (uint8 *)malloc(dinner_table_entries * 8);
+	entries_read = dnr_handle->read(dinner_table_area, 8 * dinner_table_entries) / 8;
 
-	if (entries_read != dinner_table_size)
-		warning("bytes_read != dinner_table_entries. [%d/%d]\n", entries_read, dinner_table_size);
+	if (entries_read != dinner_table_entries)
+		warning("bytes_read != dinner_table_entries. [%d/%d]\n", entries_read, dinner_table_entries);
 
 	data_disk_handle->open(data_file_name, _gameDataPath);
 	if (data_disk_handle->isOpen() == false) 
@@ -72,7 +77,7 @@ uint16 *SkyState::load_file(uint16 file_nr, uint8 *dest)
 {
 	uint8 cflag;
 	int32 bytes_read;
-	uint8 *file_ptr, *esiptr, *ediptr;
+	uint8 *file_ptr, *inputPtr, *outputPtr;
 	dataFileHeader file_header;
 
 	#ifdef file_order_chk
@@ -135,18 +140,18 @@ uint16 *SkyState::load_file(uint16 file_nr, uint8 *dest)
 			if (fixed_dest == NULL) // is this valid?
 				comp_dest = (uint8 *)malloc(decomp_size);
 
-			esiptr = file_dest;
-			ediptr = comp_dest;
+			inputPtr = file_dest;
+			outputPtr = comp_dest;
 
 			if ( (uint8)(file_flags >> (22) & 0x1) ) //do we include the header?
-				esiptr += sizeof(struct dataFileHeader);
+				inputPtr += sizeof(struct dataFileHeader);
 			else {
-				memcpy(ediptr, esiptr, sizeof(struct dataFileHeader));
-				esiptr += sizeof(struct dataFileHeader);
-				ediptr += sizeof(struct dataFileHeader);
+				memcpy(outputPtr, inputPtr, sizeof(struct dataFileHeader));
+				inputPtr += sizeof(struct dataFileHeader);
+				outputPtr += sizeof(struct dataFileHeader);
 			}
 
-			uint32 unPackLen = UnpackM1(esiptr, ediptr, 0);
+			int32 unPackLen = UnpackM1(inputPtr, outputPtr, 0);
 
 			debug(2, "UnpackM1 returned: %d", unPackLen);
 
@@ -160,7 +165,7 @@ uint16 *SkyState::load_file(uint16 file_nr, uint8 *dest)
 			if (! (uint8)(file_flags >> (22) & 0x1) ) { // include header?
 				unPackLen += sizeof(struct dataFileHeader);
 
-				if (unPackLen != decomp_size) {
+				if (unPackLen != (int32)decomp_size) {
 					debug(1, "ERROR: invalid decomp size! (was: %d, should be: %d)", unPackLen, decomp_size);
 				}
 			}
@@ -181,7 +186,7 @@ uint16 *SkyState::get_file_info(uint16 file_nr)
 	uint16 i;
 	uint16 *dnr_tbl_16_ptr = (uint16 *)dinner_table_area;
 
-	for (i = 0; i < dinner_table_size / 2; i++) {
+	for (i = 0; i < dinner_table_entries; i++) {
 		if (READ_LE_UINT16(dnr_tbl_16_ptr + (i * 4)) == file_nr) {
 			debug(1, "file %d found!", file_nr);
 			return (dnr_tbl_16_ptr + (i * 4));
