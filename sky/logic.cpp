@@ -985,8 +985,8 @@ uint32 SkyLogic::fnChooser(uint32 a, uint32 b, uint32 c) {
 			data++;
 		}
 
-		_compact->getToFlag = textNum & 0xffff;
-		_compact->downFlag = *p++ & 0xffff; // get animation number
+		_compact->getToFlag = (uint16)(textNum & 0xffff);
+		_compact->downFlag = (uint16)(*p++ & 0xffff); // get animation number
 
 		_compact->status |= ST_MOUSE; // mouse detects
 
@@ -1138,7 +1138,7 @@ uint32 SkyLogic::fnMoveItems(uint32 listNo, uint32 screenNo, uint32 c) {
 		if (!*p)
 			return 1;
 		Compact *cpt = SkyState::fetchCompact(*p++);
-		cpt->screen = screenNo & 0xffff;
+		cpt->screen = (uint16)(screenNo & 0xffff);
 	}
 	return 1;
 }
