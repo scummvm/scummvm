@@ -73,8 +73,14 @@ Block *Lab::getFileBlock(const char *filename) const {
     return NULL;
 
   std::fseek(f_, i->second.offset, SEEK_SET);
-  char *data = new char[i->second.len];
+
+  // The sound decoder reads up to two bytes past the end of data
+  // (but shouldn't actually use those bytes).  So allocate two extra bytes
+  // to be safe against crashes.
+  char *data = new char[i->second.len + 2];
   std::fread(data, 1, i->second.len, f_);
+  data[i->second.len] = '\0';	// For valgrind cleanness
+  data[i->second.len + 1] = '\0';
   return new Block(data, i->second.len);
 }
 

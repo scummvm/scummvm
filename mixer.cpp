@@ -276,6 +276,7 @@ void Mixer::start() {
   Sound::init();
 
   SDL_AudioSpec desired;
+  memset(&desired, 0, sizeof(desired)); // for valgrind cleanness
   desired.freq = 22050;
   desired.format = AUDIO_S16SYS;
   desired.channels = 2;
