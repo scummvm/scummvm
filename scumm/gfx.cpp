@@ -28,6 +28,10 @@
 #include "usage_bits.h"
 #include "util.h"
 
+#ifdef _MSC_VER
+// Disable "unknown pragma" warning in MSVC 6
+#pragma warning(disable : 4068)
+#endif
 
 enum {
 	kScrolltime = 500,  // ms scrolling is supposed to take

@@ -23,6 +23,10 @@
 
 #include <ctype.h>
 
+#ifdef _MSC_VER
+// Disable "unknown pragma" warning in MSVC 6
+#pragma warning(disable : 4068)
+#endif
 
 namespace ScummVM {
 
