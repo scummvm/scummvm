@@ -1632,7 +1632,7 @@ uint32 SkyLogic::fnDecMegaSet(uint32 a, uint32 b, uint32 c) {
 
 uint32 SkyLogic::fnSetMegaSet(uint32 mega, uint32 setNo, uint32 c) {
 	Compact *cpt = SkyState::fetchCompact(mega);
-	cpt->extCompact->megaSet = setNo * NEXT_MEGA_SET;
+	cpt->extCompact->megaSet = (uint16) (setNo * NEXT_MEGA_SET);
 	return 1;
 }
 
