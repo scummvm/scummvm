@@ -38,7 +38,6 @@
 
 uint fileReadItemID(File *in);
 
-#define ARRAYSIZE(x) (sizeof(x)/sizeof(x[0]))
 #define CHECK_BOUNDS(x,y) assert((uint)(x)<ARRAYSIZE(y))
 #define NUM_PALETTE_FADEOUT 32
 
