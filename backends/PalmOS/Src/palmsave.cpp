@@ -143,7 +143,7 @@ void PalmSaveFileManager::list_savefiles(const char *prefix, const char *directo
 	VFSFileClose(fileRef);
 }
 
-SaveFile *SaveFileManager::makeSaveFile(const char *filename, bool saveOrLoad) {
+SaveFile *PalmSaveFileManager::makeSaveFile(const char *filename, bool saveOrLoad) {
 	return new PalmSaveFile(filename, saveOrLoad);
 }
 
