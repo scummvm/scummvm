@@ -402,11 +402,12 @@ void Sound::playSound(int soundID) {
 				int track = -1;
 				if (soundID == 50)
 					track = 17;
-				else if (soundID == 53)
-					track = 18;
-				else if ((soundID >= 100) && (soundID <= 118)) {
-					char tracks[19] = {7,6,4,12,2,2,2,2,5,10,1,16,8,9,13,11,15,3,14};
-					track = tracks[soundID - 100];
+				else if (ptr[6] == 0x7F && ptr[7] == 0x00 && ptr[8] == 0x80)
+				{
+					char tracks[16] = {13,14,10,3,4,9,16,5,1,8,2,15,6,7,11,12};
+					if (ptr[9] == 0x0E)
+						track = 18;
+					else	track = tracks[ptr[9] - 0x23];
 				}
 				if (track != -1) {
 					playCDTrack(track,((track < 5) || (track > 16)) ? 1 : -1,0,0);
