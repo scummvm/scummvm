@@ -397,7 +397,7 @@ void SkyLogic::initScriptVariables() {
 	_scriptVariables[822] = 1;
 }
 
-uint32 SkyLogic::script(Compact *compact, uint32 script) {
+uint32 SkyLogic::script(Compact *compact, uint32 scr) {
 script:
 	// process a script
 	// low level interface to interpreter
@@ -407,8 +407,8 @@ script:
 	// Bit 12-15 - Module number
 	// Bit 16-31 - Script offset (if any)
 
-	uint16 scriptNo = script & 0xffff;
-	uint16 moduleNo = (script & 0xff00) >> 12;
+	uint16 scriptNo = scr & 0xffff;
+	uint16 moduleNo = (scr & 0xff00) >> 12;
 	printf("scriptNo: %d, moduleNo: %d\n", scriptNo, moduleNo);
 	uint16 *scriptData = _moduleList[moduleNo]; // get module address
 
@@ -421,10 +421,10 @@ script:
 	uint16 *moduleStart = scriptData;
 
 	// Check whether we have an offset or what
-	if (script & 0xffff0000)
-		scriptData = moduleStart + (script >> 16);
+	if (scr & 0xffff0000)
+		scriptData = moduleStart + (scr >> 16);
 	else
-		scriptData += *(scriptData + (script & 0x0fff));
+		scriptData += *(scriptData + (scr & 0x0fff));
 
 	uint32 a, b, c;
 	uint16 command, mcode, s;
