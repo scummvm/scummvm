@@ -81,7 +81,7 @@ ScummVM and wish to commit it into the main CVS, feel free to contact us!
 
         Windows         - SDL
         Windows CE      - SDL           (iPaq and other handheld devices)
-        Linux           - SDL/X11       (includes iPaq devices running Linux)
+        Unix            - SDL/X11       (includes iPaq devices running Linux)
         Macintosh       - SDL/CUSTOM    (Including Classic and Mac OS X)
         AmigaOS         - SDL/AGA
         MorphOS         - SDL
@@ -177,7 +177,7 @@ Please include the following information:
         - Bug details, including instructions on reproducing
         - Language of game (English, German, etc)
         - Version of game (Talkie, Floppy...)
-        - Platform and Compiler (Win32, Linux, etc)
+        - Platform and Compiler (Win32, Linux, FreeBSD, etc)
         - Attach a save game if possible
         - If this bug only occurred recently, please note the last
           version without the bug, and the first version including
@@ -255,7 +255,7 @@ under Windows, you would make a shortcut calling this command:
 
   C:\Games\LucasArts\scummvm.exe -f -pC:\Games\LucasArts\monkey\ monkey
 
-Under BSD, Linux, or similar, the commandline would be:
+Under Unix, the commandline would be:
 
   /path/to/scummvm -f -p/games/LucasArts/monkey/ monkey
 
@@ -394,7 +394,7 @@ You can also use the environment variable SCUMMVM_SAVEPATH to specify where to
 put save games. Don't forget the trailing directory separator. Also be aware
 that saved games can, and probably WILL, break between ScummVM releases.
 
-Bash (Linux) Example:
+Bash (Unix) Example:
         export SCUMMVM_SAVEPATH=/tmp/scummvm_savegames/
 
 Windows example:
@@ -574,7 +574,7 @@ Configuration file:
 By default, the configuration file is saved in, and loaded from:
 
         Windows:  <windir>\scummvm.ini,
-        Linux:    ~/.scummvmrc
+        Unix:     ~/.scummvmrc
         Mac OS X: ~/Library/Preferences/ScummVM Preferences
         Others:   scummvm.ini in the current directory
 
@@ -633,7 +633,7 @@ Credits:
         Mutwin Kraus       - MacOS Carbon port (retired)
         Peter Moraliyski   - GP32 port
         Nicolas Noble      - Config file and ALSA support
-        Lionel Ulmer       - X11/Linux port
+        Lionel Ulmer       - X11 backend
 
  Contributors:
         Janne Huttunen     - V3 actor mask support, Dig/FT SMUSH audio
