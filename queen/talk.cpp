@@ -640,7 +640,7 @@ void Talk::speakSegment(
 	//		length, segment, person, voiceFileName);
 
 	_sound->sfxPlay(voiceFileName);
-	debug(0, "Playing voice file '%s'", voiceFileName);
+	//debug(0, "Playing voice file '%s'", voiceFileName);
 
 	int faceDirectionCommand = 0;
 
