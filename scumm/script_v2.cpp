@@ -1215,7 +1215,6 @@ void Scumm_v2::o2_isLessEqual() {
 }
 
 void Scumm_v2::o2_lights() {
-	warning("o2_lights");
 	int a, b, c;
 
 	a = getVarOrDirectByte(0x80);
@@ -1233,10 +1232,8 @@ void Scumm_v2::o2_lights() {
 				VAR(VAR_CURRENT_LIGHTS) = 11; 
 			else if (a == 1) 
 				VAR(VAR_CURRENT_LIGHTS) = 4;
-			else if (a == 0)
+			else 
 				VAR(VAR_CURRENT_LIGHTS) = 0;
-			else
-				warning("o2_lights: light mode  %d unknown", a);
 ;		} else
 			VAR(VAR_CURRENT_LIGHTS) = a;
 	} else if (c == 1) {
