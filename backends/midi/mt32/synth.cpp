@@ -2769,11 +2769,11 @@ bool CSynthMT32::InitTables(const char *baseDir ) {
 
 	//LOG_MSG("MT-32 Initializing Pitch Tables");
 	for(f=-108;f<109;f++) {
-		keytable[f+108] = (int)(256 * pow((float)2,(float)f/24.0));
+		keytable[f + 108] = (int)(256 * pow((float)2, (float)f / (float)24.0));
 		//LOG_MSG("KT %d = %d", f, keytable[f+108]);
 
 	}
-	float ff;
+	float ff = 0;
 	for(f=0;f<=101;f++) {
 		ff = (float)f/100.00;
 		sqrtable[f] = (int)(100*sqrt(ff));
@@ -3012,7 +3012,7 @@ bool CSynthMT32::InitTables(const char *baseDir ) {
 	fp.close();
 
 	int j,res;
-	float fres, tres;
+	float fres = 0, tres = 0;
 	for(res=0;res<31;res++) {
 		fres = (float)res/30.0;
 		ResonFactor[res] = (pow((float)2,log(pow((float)fres,(float)16))) * 2.5)+1.0;
@@ -4244,7 +4244,7 @@ void CSynthMT32::PlaySysex(uint8 * sysex,uint32 len) {
 
 int CSynthMT32::DumpSysex(char *filename) {
 	File fp;
-	char tmpc;
+	byte tmpc;
 	fp.open(filename,File::kFileWriteMode);
 	if(!fp.isOpen())
 		return -1;

@@ -98,7 +98,7 @@ MP3InputStream::MP3InputStream(File *file, mad_timer_t duration) {
  * @param size		limits playback based on the number of input bytes, 0 means
  *					playback until EOF
  */
-MP3InputStream::MP3InputStream(File *file, uint size) {
+MP3InputStream::MP3InputStream(File *file, uint32 size) {
 	mad_stream_init(&_stream);
 	mad_frame_init(&_frame);
 	mad_synth_init(&_synth);
