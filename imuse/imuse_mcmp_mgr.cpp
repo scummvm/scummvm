@@ -30,29 +30,21 @@ McmpMgr::McmpMgr() {
 	_numCompItems = 0;
 	_curSample = -1;
 	_compInput = NULL;
+	_outputSize = 0;
 	_file = NULL;
+	_numCompItems = 0;
+	_lastBlock = -1;
 }
 
 McmpMgr::~McmpMgr() {
 	if (_file) {
 		fclose(_file);
-		_file = NULL;
 	}
-	_numCompItems = 0;
-	_compTableLoaded = false;
-	_lastBlock = -1;
-	_outputSize = 0;
-	_curSample = -1;
 	free(_compTable);
-	_compTable = NULL;
 	free(_compInput);
-	_compInput = NULL;
 }
 
 bool McmpMgr::openSound(const char *filename, byte **resPtr, int &offsetData) {
-	_outputSize = 0;
-	_lastBlock = -1;
-
 	_file = ResourceLoader::instance()->openNewStream(filename);
 
 	if (!_file) {
@@ -116,10 +108,6 @@ int32 McmpMgr::decompressSample(int32 offset, int32 size, byte **comp_final) {
 
 	if (!_file) {
 		warning("McmpMgr::decompressSampleByName() File is not open!");
-		return 0;
-	}
-
-	if (!_compTableLoaded) {
 		return 0;
 	}
 

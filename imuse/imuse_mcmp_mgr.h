@@ -42,7 +42,6 @@ private:
 	int16 _numCompItems;
 	int _curSample;
 	FILE *_file;
-	bool _compTableLoaded;
 	byte _compOutput[0x2000];
 	byte *_compInput;
 	int _outputSize;
