@@ -92,7 +92,8 @@ void SkyState::go() {
 	if (!isDemo(_gameVersion) || isCDVersion(_gameVersion))
 		intro();
 
-	_skyGrid->loadGrids();
+	loadBase0();
+	
 	while (1) {
 		delay(100);
 		_skyLogic->engine();
@@ -116,6 +117,7 @@ void SkyState::initialise(void) {
 	initItemList();
 	//initScript();
 	//initialiseRouter();
+	loadFixedItems();
 	_skyGrid = new SkyGrid(_skyDisk);
 	_skyLogic = new SkyLogic(_skyDisk, _skyGrid, _skyText);
 }
@@ -140,6 +142,38 @@ void SkyState::initItemList() {
 		_itemList[124] = (void **)SkyCompact::data_5; // Compacts - Section 5
 		_itemList[125] = (void **)SkyCompact::data_6; // Compacts - Section 6
 	}
+}
+
+void SkyState::loadBase0(void) {
+
+	//fnEnterSection(0);
+	_skyMusic->startMusic(2);
+	_skyGrid->loadGrids();
+	
+}
+
+void SkyState::loadFixedItems(void) {
+
+	if (!isDemo(_gameVersion))
+		_itemList[36] = (void **)_skyDisk->loadFile(26, NULL);
+
+	_itemList[49] = (void **)_skyDisk->loadFile(49, NULL);
+	_itemList[50] = (void **)_skyDisk->loadFile(50, NULL);
+	_itemList[73] = (void **)_skyDisk->loadFile(73, NULL);
+	_itemList[262] = (void **)_skyDisk->loadFile(262, NULL);
+
+	if (isDemo(_gameVersion)) 
+		return;
+	
+	_itemList[263] = (void **)_skyDisk->loadFile(263, NULL);
+	_itemList[264] = (void **)_skyDisk->loadFile(264, NULL);
+	_itemList[265] = (void **)_skyDisk->loadFile(265, NULL);
+	_itemList[266] = (void **)_skyDisk->loadFile(266, NULL);
+	_itemList[267] = (void **)_skyDisk->loadFile(267, NULL);
+	_itemList[269] = (void **)_skyDisk->loadFile(269, NULL);
+	_itemList[271] = (void **)_skyDisk->loadFile(271, NULL);
+	_itemList[272] = (void **)_skyDisk->loadFile(272, NULL);
+		
 }
 
 Compact *SkyState::fetchCompact(uint32 a) {

@@ -144,6 +144,8 @@ protected:
 	void startTimerSequence(byte *sequence);
 	static void timerHandler(void *ptr);
 	void doTimerSequence();
+	void loadFixedItems();
+	void loadBase0();
 	
 	static int CDECL game_thread_proc(void *param);
 
