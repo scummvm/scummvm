@@ -1407,14 +1407,14 @@ void Gdi::decompressImageHE(uint8 *dst, int dstWidth, const Common::Rect *dstRec
 		return;
 		
 	while (1) {
+		if (h < 0)
+			break;
+		--h;
 		xoff = srcRect->left;
 		off = READ_LE_UINT16(dataPtr);
 		w = srcRect->right - srcRect->left + 1;
 		dstPtrNext = dstWidth + dstPtr;
 		dataPtrNext = off + 2 + dataPtr;
-		if (h < 0)
-			break;
-		--h;
 		dataPtr += 2;	
 		if (off == 0) goto dec_next;
 
@@ -1466,27 +1466,20 @@ dec_sub1:		dstPtr += code;
 				if (databit) {
 					++code;
 dec_sub2:			w -= code;
-					if (w >= 0) {
-						memset(dstPtr, *dataPtr++, code);
-						dstPtr += code;
-					} else {
+					if (w < 0) {
 						code += w;
-						memset(dstPtr, *dataPtr++, code);
-						dstPtr += code;
 					}
+					memset(dstPtr, *dataPtr++, code);
+					dstPtr += code;
 				} else {
 					++code;
 dec_sub3:			w -= code;
-					if (w >= 0) {
-						memcpy(dstPtr, dataPtr, code);
-						dstPtr += code;
-						dataPtr += code;
-					} else {
+					if (w < 0) {
 						code += w;
-						memcpy(dstPtr, dataPtr, code);
-						dstPtr += code;
-						dataPtr += code;
 					}
+					memcpy(dstPtr, dataPtr, code);
+					dstPtr += code;
+					dataPtr += code;
 				}
 			}
 		}
