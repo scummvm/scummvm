@@ -63,7 +63,7 @@ static const char USAGE_STRING[] =
 	"  -m, --music-volume=NUM   Set the music volume, 0-255 (default: 192)\n"
 	"  -o, --master-volume=NUM  Set the master volume, 0-255 (default: 192)\n"
 	"  -s, --sfx-volume=NUM     Set the sfx volume, 0-255 (default: 192)\n"
-	"  -r, --voice-volume=NUM   Set the voice volume, 0-255 (default: 192)\n"
+	"  -r, --speech-volume=NUM  Set the speech volume, 0-255 (default: 192)\n"
 	"  -n, --subtitles          Enable subtitles (use with games that have voice)\n"
 	"  -b, --boot-param=NUM     Pass number to the boot script (boot param)\n"
 	"  -d, --debuglevel=NUM     Set debug verbosity level\n"
@@ -108,7 +108,7 @@ GameDetector::GameDetector() {
 	ConfMan.registerDefault("master_volume", 192);
 	ConfMan.registerDefault("music_volume", 192);
 	ConfMan.registerDefault("sfx_volume", 192);
-	ConfMan.registerDefault("voice_volume", 192);
+	ConfMan.registerDefault("speech_volume", 192);
 
 	ConfMan.registerDefault("multi_midi", false);
 	ConfMan.registerDefault("native_mt32", false);
@@ -369,8 +369,8 @@ void GameDetector::parseCommandLine(int argc, char **argv) {
 				ConfMan.set("sfx_volume", (int)strtol(option, 0, 10), kTransientDomain);
 			END_OPTION
 
-			DO_OPTION('r', "voice-volume")
-				ConfMan.set("voice_volume", (int)strtol(option, 0, 10), kTransientDomain);
+			DO_OPTION('r', "speech-volume")
+				ConfMan.set("speech_volume", (int)strtol(option, 0, 10), kTransientDomain);
 			END_OPTION
 
 			DO_OPTION_CMD('t', "list-targets")

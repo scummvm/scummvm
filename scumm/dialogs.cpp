@@ -470,13 +470,13 @@ void ConfigDialog::close() {
 	int soundVolumeMaster = ConfMan.getInt("master_volume");
 	int soundVolumeMusic = ConfMan.getInt("music_volume");
 	int soundVolumeSfx = ConfMan.getInt("sfx_volume");
-	int soundVolumeVoice = ConfMan.getInt("voice_volume");
+	int soundVolumeSpeech = ConfMan.getInt("speech_volume");
 
 	if (_vm->_imuseDigital) {
 		_vm->_mixer->setVolume(soundVolumeMaster);
 		_vm->_imuseDigital->setGroupMusicVolume(soundVolumeMusic / 2);
 		_vm->_imuseDigital->setGroupSfxVolume(soundVolumeSfx / 2);
-		_vm->_imuseDigital->setGroupVoiceVolume(soundVolumeVoice / 2);
+		_vm->_imuseDigital->setGroupVoiceVolume(soundVolumeSpeech / 2);
 		return;
 	}
 

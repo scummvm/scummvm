@@ -91,8 +91,8 @@ private:
 	SliderWidget *_sfxVolumeSlider;
 	StaticTextWidget *_sfxVolumeLabel;
 
-	SliderWidget *_voiceVolumeSlider;
-	StaticTextWidget *_voiceVolumeLabel;
+	SliderWidget *_speechVolumeSlider;
+	StaticTextWidget *_speechVolumeLabel;
 };
 
 
