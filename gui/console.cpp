@@ -112,8 +112,12 @@ void ConsoleDialog::drawDialog() {
 	for (int line = 0; line < _linesPerPage; line++) {
 		int x = _x + 1;
 		for (int column = 0; column < _lineWidth; column++) {
+#if 0
 			int l = (start + line) % _linesInBuffer;
 			byte c = buffer(l * _lineWidth + column);
+#else
+			byte c = buffer((start + line) * _lineWidth + column);
+#endif
 			g_gui.drawChar(c, x, y, g_gui._textcolor);
 			x += kCharWidth;
 		}
