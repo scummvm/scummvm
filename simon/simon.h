@@ -192,7 +192,6 @@ public:
 	int _x_scroll, _vga_var1, _vga_var2, _vga_var3, _vga_var5;
 	byte _vga_var8;
 
-	uint16 _midi_unk1, _midi_unk2;
 	uint16 _vc72_var1, _vc72_var2, _vc72_var3;
 	uint16 _vc70_var1, _vc70_var2;
 	byte *_vga_var7;
@@ -253,6 +252,7 @@ public:
 
 	uint _midi_sfx;
 	uint _last_music_played;
+	uint _next_music_to_play;
 
 	bool _show_preposition;
 	bool _showmessage_flag;
@@ -762,6 +762,7 @@ public:
 	void video_putchar_newline(FillOrCopyStruct *fcs);
 	void video_putchar_drawchar(FillOrCopyStruct *fcs, uint x, uint y, byte chr);
 
+	void midi_play(uint music);
 	void playMusic(uint music, uint music_unk);
 	void checkTimerCallback();
 	void delay(uint delay);

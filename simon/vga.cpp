@@ -1692,9 +1692,8 @@ void SimonState::vc_62_palette_thing() {
 
 	if (!_video_var_3) {
 		if (_game & GF_SIMON2) {
-			if (_midi_unk2 != 0xffff) {
-				playMusic(999, _midi_unk2);
-			}
+			if (_next_music_to_play != 0xffff)
+				playMusic(999, _next_music_to_play);
 		}
 	} else
 		_video_var_3 = true;
@@ -1813,11 +1812,7 @@ void SimonState::vc_69() {
 
 	if (_vc72_var1 == 999) {
 		_vc70_var2 = b;
-		if (_game & GF_WIN) {
-			// FIXME: What do we expect to have happen here?
-			// midi.initialize();
-			// midi.play();
-		}
+		midi_play(a);
 		_vc72_var1 = b;
 	} else if (_vc72_var1 != 0xFFFF) {
 		if (_vc72_var1 != a) {

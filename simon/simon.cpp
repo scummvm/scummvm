@@ -5037,6 +5037,19 @@ bool SimonState::load_game(uint slot) {
 	return true;
 }
 
+void SimonState::midi_play(uint music) {
+	// FIXME What exactly should this function do?
+	if (music != 0) {
+		//_midi_cur_song_ptr = ((arg_0 & 0xFFFF) << 4) + midi_songs;
+		if (_vc72_var1 == 999)
+			//midi.initialize();
+
+		//_midi_var11 = 0;
+		//_midi_var12 = 1;
+	}
+}
+
+
 void SimonState::playMusic(uint music_unk, uint music) {
 	if (midi._midi_sfx_toggle)
 		return;
@@ -5049,11 +5062,11 @@ void SimonState::playMusic(uint music_unk, uint music) {
 		} else {
 			midi.playXMIDI (_game_file);
 		}
-		_midi_unk1 = music;
+		_last_music_played = music;
 		_vc72_var1 = music_unk;
 		_vc70_var1 = 0xFFFF;
 		_vc72_var3 = 0xFFFF;
-		_midi_unk2 = 0xFFFF;
+		_next_music_to_play = 0xFFFF;
 	} else { // Simon 1 music
 		if (_game & GF_AMIGAS) {
 			if (_game != GAME_SIMON1CD32) {
