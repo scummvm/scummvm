@@ -226,10 +226,46 @@ void IMuseDigital::switchToNextRegion(int track) {
 	_track[track].regionOffset = 0;
 }
 
-void IMuseDigital::startSound(int soundId, const char *soundName, int soundType, int soundGroup, AudioStream *input, int hookId, int volume) {
+void IMuseDigital::startSound(int soundId, const char *soundName, int soundType, int soundGroup, AudioStream *input, int hookId, int volume, int priority) {
 	Common::StackLock lock(_mutex, g_system, "IMuseDigital::startSound()");
 	debug(5, "IMuseDigital::startSound(%d)", soundId);
 	int l;
+	int lower_priority = 127;
+	bool found_free = false;
+
+	for (l = 0; l < MAX_DIGITAL_TRACKS; l++) {
+		if (!_track[l].used && !_track[l].handle.isActive())
+			found_free = true;
+	}
+
+	if (!found_free) {
+		warning("IMuseDigital::startSound(): All slots are full");
+		for (l = 0; l < MAX_DIGITAL_TRACKS; l++) {
+			if (_track[l].used && _track[l].handle.isActive() &&
+					(lower_priority > _track[l].priority) && (!_track[l].stream2))
+				lower_priority = _track[l].priority;
+		}
+		if (lower_priority <= priority) {
+			int track_id = -1;
+			for (l = 0; l < MAX_DIGITAL_TRACKS; l++) {
+				if (_track[l].used && _track[l].handle.isActive() &&
+						(lower_priority == _track[l].priority) && (!_track[l].stream2)) {
+					track_id = l;
+				}
+			}
+			assert(track_id != -1);
+			_track[track_id].stream->finish();
+			_track[track_id].stream = NULL;
+			_vm->_mixer->stopHandle(_track[track_id].handle);
+			_sound->closeSound(_track[track_id].soundHandle);
+			_track[track_id].used = false;
+			assert(!_track[track_id].handle.isActive());
+			warning("IMuseDigital::startSound(): Removed sound %d from track %d", _track[track_id].soundId, track_id);
+		} else {
+			warning("IMuseDigital::startSound(): Priority sound too low");
+			return;
+		}
+	}
 
 	for (l = 0; l < MAX_DIGITAL_TRACKS; l++) {
 		if (!_track[l].used && !_track[l].handle.isActive()) {
@@ -243,6 +279,7 @@ void IMuseDigital::startSound(int soundId, const char *soundName, int soundType,
 			_track[l].started = false;
 			_track[l].soundGroup = soundGroup;
 			_track[l].curHookId = hookId;
+			_track[l].priority = priority;
 			_track[l].curRegion = -1;
 			_track[l].dataOffset = 0;
 			_track[l].regionOffset = 0;
@@ -315,7 +352,9 @@ void IMuseDigital::startSound(int soundId, const char *soundName, int soundType,
 			return;
 		}
 	}
-	warning("IMuseDigital::startSound(): All slots are full");
+
+	warning("it should not happen");
+	assert(0);
 }
 
 void IMuseDigital::stopSound(int soundId) {
@@ -328,6 +367,19 @@ void IMuseDigital::stopSound(int soundId) {
 			}
 			else if (_track[l].stream2)
 				_vm->_mixer->stopHandle(_track[l].handle);
+		}
+	}
+}
+
+void IMuseDigital::setPriority(int soundId, int priority) {
+	Common::StackLock lock(_mutex, g_system, "IMuseDigital::setPriority()");
+	debug(5, "IMuseDigital::setPrioritySound(%d, %d)", soundId, priority);
+
+	assert ((priority >= 0) && (priority <= 127));
+
+	for (int l = 0; l < MAX_DIGITAL_TRACKS; l++) {
+		if ((_track[l].soundId == soundId) && _track[l].used) {
+			_track[l].priority = priority;
 		}
 	}
 }
@@ -448,7 +500,8 @@ void IMuseDigital::parseScriptCmds(int a, int b, int c, int d, int e, int f, int
 		case 0x400: // set group volume
 			debug(5, "set group volume (0x400), soundId(%d), group volume(%d)", soundId, d);
 			break;
-		case 0x500: // set priority - could be ignored
+		case 0x500: // set priority
+			setPriority(soundId, d);
 			break;
 		case 0x600: // set volume
 			setVolume(soundId, d);

@@ -1194,7 +1194,7 @@ bool Insane::smlayer_isSoundRunning(int32 sound) {
 
 bool Insane::smlayer_startSfx(int32 sound) {
 	if (smlayer_loadSound(sound, 0, 2)) {
-		_vm->_imuseDigital->startSfx(readArray(sound));
+		_vm->_imuseDigital->startSfx(readArray(sound), 40);
 		return true;
 	} else
 		return false;
@@ -1202,7 +1202,7 @@ bool Insane::smlayer_startSfx(int32 sound) {
 
 bool Insane::smlayer_startVoice(int32 sound) {
 	if (smlayer_loadSound(sound, 0, 2)) {
-		_vm->_imuseDigital->startSfx(readArray(sound));
+		_vm->_imuseDigital->startSfx(readArray(sound), 126);
 		return true;
 	} else
 		return false;
@@ -1212,7 +1212,8 @@ void Insane::smlayer_soundSetPan(int32 soundId, int32 pan) {
 	_vm->_imuseDigital->setPan(soundId, pan);
 }
 
-void Insane::smlayer_soundSetPriority(int32 sound, int32 priority) {
+void Insane::smlayer_soundSetPriority(int32 soundId, int32 priority) {
+	_vm->_imuseDigital->setPriority(soundId, priority);
 }
 
 void Insane::smlayer_drawSomething(byte *renderBitmap, int32 codecparam, 
