@@ -17,4 +17,4 @@ Unassigned (help wanted):
  * Lip syncing
  * Abstract rendering code and implement software renderer
  * Fix drawEmergString() to work with Mesa
- * Make Smush work on all BE archs (or maybe it is only broken on linux/ppc?)
+ * Make Smush work on linux/ppc
