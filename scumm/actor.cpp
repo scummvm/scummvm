@@ -82,14 +82,14 @@ void Actor::initActor(int mode) {
 		initFrame = 2;
 		walkFrame = 0;
 		standFrame = 1;
-		talkFrame1 = 5;
-		talkFrame2 = 4;
+		talkStartFrame = 5;
+		talkStopFrame = 4;
 	} else {
 		initFrame = 1;
 		walkFrame = 2;
 		standFrame = 3;
-		talkFrame1 = 4;
-		talkFrame2 = 5;
+		talkStartFrame = 4;
+		talkStopFrame = 5;
 	}
 
 	walk_script = 0;
@@ -439,10 +439,10 @@ void Actor::startAnimActor(int f) {
 			f = standFrame;
 			break;
 		case 1004:
-			f = talkFrame1;
+			f = talkStartFrame;
 			break;
 		case 1005:
-			f = talkFrame2;
+			f = talkStopFrame;
 			break;
 		}
 
@@ -469,10 +469,10 @@ void Actor::startAnimActor(int f) {
 			f = standFrame;
 			break;
 		case 0x3B:
-			f = talkFrame1;
+			f = talkStartFrame;
 			break;
 		case 0x3C:
-			f = talkFrame2;
+			f = talkStopFrame;
 			break;
 		}
 		
@@ -756,7 +756,7 @@ void Actor::showActor() {
 		startAnimActor(initFrame);
 		if (_vm->_features & GF_AFTER_V2) {
 			startAnimActor(standFrame);
-			startAnimActor(talkFrame2);
+			startAnimActor(talkStopFrame);
 		}
 		costumeNeedsInit = false;
 	}
@@ -1094,7 +1094,7 @@ void Scumm::actorTalk() {
 				stopTalk();
 			VAR(VAR_TALK_ACTOR) = a->number;
 			if (!_string[0].no_talk_anim) {
-				a->startAnimActor(a->talkFrame1);
+				a->startAnimActor(a->talkStartFrame);
 				_useTalkAnims = true;
 			}
 			oldact = VAR(VAR_TALK_ACTOR);
@@ -1130,7 +1130,7 @@ void Scumm::stopTalk() {
 	if (act && act < 0x80) {
 		Actor *a = derefActorSafe(act, "stopTalk");
 		if ((a->isInCurrentRoom() && _useTalkAnims) || (_features & GF_NEW_COSTUMES)) {
-			a->startAnimActor(a->talkFrame2);
+			a->startAnimActor(a->talkStopFrame);
 			_useTalkAnims = false;
 		}
 		VAR(VAR_TALK_ACTOR) = 0xFF;

@@ -1043,15 +1043,15 @@ void Scumm_v8::o8_actorOps() {
 		a->initFrame = 1;
 		a->walkFrame = 2;
 		a->standFrame = 3;
-		a->talkFrame1 = 4;
-		a->talkFrame2 = 5;
+		a->talkStartFrame = 4;
+		a->talkStopFrame = 5;
 		break;
 	case 0x68:		// SO_ACTOR_ANIMATION_INIT Initialize animation
 		a->initFrame = pop();
 		break;
 	case 0x69:		// SO_ACTOR_ANIMATION_TALK Set actor animation to talk animation
-		a->talkFrame2 = pop();
-		a->talkFrame1 = pop();
+		a->talkStopFrame = pop();
+		a->talkStartFrame = pop();
 		break;
 	case 0x6A:		// SO_ACTOR_ANIMATION_WALK Set actor animation to walk animation
 		a->walkFrame = pop();
@@ -1611,7 +1611,7 @@ void Scumm_v8::o8_kernelGetFunctions() {
 		{
 		Actor *a = derefActorSafe(args[1], "actorTalkAnimation");
 		assert(a);
-		push(a->talkFrame1);
+		push(a->talkStartFrame);
 		}
 		break;
 	case 0xDD:		// getMasterSFXVol

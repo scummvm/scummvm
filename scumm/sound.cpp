@@ -500,7 +500,7 @@ void Sound::processSfxQueues() {
 						a->startAnimActor(_talk_sound_frame);
 						_talk_sound_frame = -1;
 					} else
-						a->startAnimActor(b ? a->talkFrame2 : a->talkFrame1);
+						a->startAnimActor(b ? a->talkStopFrame : a->talkStartFrame);
 				}
 			}
 		}

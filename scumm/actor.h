@@ -90,7 +90,7 @@ public:
 	byte moving;
 	bool ignoreBoxes;
 	byte forceClip;
-	byte initFrame, walkFrame, standFrame, talkFrame1, talkFrame2;
+	byte initFrame, walkFrame, standFrame, talkStartFrame, talkStopFrame;
 	bool needRedraw, needBgReset, costumeNeedsInit, visible;
 	byte shadow_mode;
 	bool flip;

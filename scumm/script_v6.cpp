@@ -1626,8 +1626,8 @@ void Scumm_v6::o6_actorOps() {
 		a->walkFrame = pop();
 		break;
 	case 80:											/* actor-talkframe */
-		a->talkFrame2 = pop();
-		a->talkFrame1 = pop();
+		a->talkStopFrame = pop();
+		a->talkStartFrame = pop();
 		break;
 	case 81:											/* actor-standframe */
 		a->standFrame = pop();
@@ -1650,8 +1650,8 @@ void Scumm_v6::o6_actorOps() {
 		a->initFrame = 1;
 		a->walkFrame = 2;
 		a->standFrame = 3;
-		a->talkFrame1 = 4;
-		a->talkFrame2 = 5;
+		a->talkStartFrame = 4;
+		a->talkStopFrame = 5;
 		break;
 	case 86:											/* actor-palette */
 		j = pop();

@@ -327,7 +327,7 @@ void Scumm::CHARSET_1() {
 	if (has_talk_sound)
 		_sound->talkSound(talk_sound_a, talk_sound_b, 2, frme);
 	if (a && has_anim)
-		a->startAnimActor(frme != -1 ? frme : a->talkFrame1);
+		a->startAnimActor(frme != -1 ? frme : a->talkStartFrame);
 
 	_charsetBufPos = buffer - _charsetBuffer;
 

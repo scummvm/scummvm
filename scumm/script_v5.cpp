@@ -434,8 +434,8 @@ void Scumm_v5::o5_actorSet() {
 			a->walkFrame = getVarOrDirectByte(0x80);
 			break;
 		case 5:										/* talkanim */
-			a->talkFrame1 = getVarOrDirectByte(0x80);
-			a->talkFrame2 = getVarOrDirectByte(0x40);
+			a->talkStartFrame = getVarOrDirectByte(0x80);
+			a->talkStopFrame = getVarOrDirectByte(0x40);
 			break;
 		case 6:										/* standanim */
 			a->standFrame = getVarOrDirectByte(0x80);
@@ -457,8 +457,8 @@ void Scumm_v5::o5_actorSet() {
 			a->initFrame = 1;
 			a->walkFrame = 2;
 			a->standFrame = 3;
-			a->talkFrame1 = 4;
-			a->talkFrame2 = 5;
+			a->talkStartFrame = 4;
+			a->talkStopFrame = 5;
 			break;
 		case 11:										/* palette */
 			i = getVarOrDirectByte(0x80);
