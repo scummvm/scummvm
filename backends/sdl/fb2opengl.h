@@ -92,7 +92,7 @@ class FB2GL {
 };
 
 void FB2GL::setBilinearMode(bool bilinear) {
-	GLuint mode = bilinear ? GL_LINEAR : GL_NEAREST;
+	const GLuint mode = bilinear ? GL_LINEAR : GL_NEAREST;
 	glBindTexture(GL_TEXTURE_2D, texture1);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, mode);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, mode);
@@ -119,12 +119,20 @@ void FB2GL::makeTextures() {
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 */
 
+	GLuint mode;
+	const GLvoid *buffer1, *buffer2;
+
 	if (flags & FB2GL_RGBA) {
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 256, 256, 0, GL_RGBA, GL_UNSIGNED_BYTE, RGBAFrameBuffer1);
+		mode = GL_RGBA;
+		buffer1 = (unsigned char *)RGBAFrameBuffer1;
+		buffer2 = RGBAFrameBuffer2;
+	} else {
+		mode = GL_RGBA;
+		buffer1 = palettedFrameBuffer1;
+		buffer2 = palettedFrameBuffer2;
 	}
-	else {
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_COLOR_INDEX, 256, 256, 0, GL_COLOR_INDEX, GL_UNSIGNED_BYTE, palettedFrameBuffer1);
-	}
+
+	glTexImage2D(GL_TEXTURE_2D, 0, mode, 256, 256, 0, mode, GL_UNSIGNED_BYTE, buffer1);
 
 	if (flags & FB2GL_320) {
 		glGenTextures(1, &texture2);
@@ -141,14 +149,7 @@ void FB2GL::makeTextures() {
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 */
 
-		if (flags & FB2GL_RGBA) {
-			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 64, 256, 0, GL_RGBA, 
-										GL_UNSIGNED_BYTE, RGBAFrameBuffer2);
-		}
-		else {
-			glTexImage2D(GL_TEXTURE_2D, 0, GL_COLOR_INDEX, 64, 256, 0, GL_COLOR_INDEX,
-										GL_UNSIGNED_BYTE, palettedFrameBuffer2);
-		}
+		glTexImage2D(GL_TEXTURE_2D, 0, mode, 64, 256, 0, mode, GL_UNSIGNED_BYTE, buffer2);
 	}
 }
 
@@ -257,7 +258,8 @@ void FB2GL::update(void *fb, int w, int h, int pitch, int xskip, int yskip) {
 	unsigned char *tempFrameBuffer = (unsigned char *)fb;
 	int x, y, scr_pitch, byte = 0;
 
-	if (flags & FB2GL_PITCH) scr_pitch = pitch;
+	if (flags & FB2GL_PITCH)
+		scr_pitch = pitch;
 	else {
 		scr_pitch = w * pitch;
 		byte = pitch; // Bytes perl pixel (for RGBA mode)
@@ -268,38 +270,35 @@ void FB2GL::update(void *fb, int w, int h, int pitch, int xskip, int yskip) {
 		if (flags & FB2GL_EXPAND) { // Expand the 8 bit fb into a RGB fb
 	
 			for (y = yskip; y < h; y++) {
-	for (x = xskip; x < w; x++) {
-		if (x < 256) { 
-			RGBAFrameBuffer1[y][x][0] = colorTable[*(tempFrameBuffer+x)][0];
-			RGBAFrameBuffer1[y][x][1] = colorTable[*(tempFrameBuffer+x)][1]; 
-			RGBAFrameBuffer1[y][x][2] = colorTable[*(tempFrameBuffer+x)][2]; 
-			RGBAFrameBuffer1[y][x][3] = 255;
-		}
-		else {
-			RGBAFrameBuffer2[y][x-256][0] = colorTable[*(tempFrameBuffer+x)][0]; 
-			RGBAFrameBuffer2[y][x-256][1] = colorTable[*(tempFrameBuffer+x)][1]; 
-			RGBAFrameBuffer2[y][x-256][2] = colorTable[*(tempFrameBuffer+x)][2]; 
-			RGBAFrameBuffer2[y][x-256][3] = 255;
-		}
-	}
-	tempFrameBuffer += scr_pitch; // Next row (like y++)
+				for (x = xskip; x < w; x++) {
+					if (x < 256) { 
+						RGBAFrameBuffer1[y][x][0] = colorTable[*(tempFrameBuffer+x)][0];
+						RGBAFrameBuffer1[y][x][1] = colorTable[*(tempFrameBuffer+x)][1]; 
+						RGBAFrameBuffer1[y][x][2] = colorTable[*(tempFrameBuffer+x)][2]; 
+						RGBAFrameBuffer1[y][x][3] = 255;
+					} else {
+						RGBAFrameBuffer2[y][x-256][0] = colorTable[*(tempFrameBuffer+x)][0]; 
+						RGBAFrameBuffer2[y][x-256][1] = colorTable[*(tempFrameBuffer+x)][1]; 
+						RGBAFrameBuffer2[y][x-256][2] = colorTable[*(tempFrameBuffer+x)][2]; 
+						RGBAFrameBuffer2[y][x-256][3] = 255;
+					}
+				}
+				tempFrameBuffer += scr_pitch; // Next row (like y++)
 			}
-		}
-		else { // No expansion
+		} else { // No expansion
 			for (y = yskip; y < h; y++) {
-	for (x = xskip; x < w; x++) {
-		if (x < 256) { 
-			RGBAFrameBuffer1[y-yskip][x-xskip][0] = *(tempFrameBuffer+(x*byte)); 
-			RGBAFrameBuffer1[y-yskip][x-xskip][1] = *(tempFrameBuffer+(x*byte)+1); 
-			RGBAFrameBuffer1[y-yskip][x-xskip][2] = *(tempFrameBuffer+(x*byte)+2); 
-		}
-		else {
-			RGBAFrameBuffer2[y-yskip][x-256][0] = *(tempFrameBuffer+(x*byte)); 
-			RGBAFrameBuffer2[y-yskip][x-256][1] = *(tempFrameBuffer+(x*byte)+1); 
-			RGBAFrameBuffer2[y-yskip][x-256][2] = *(tempFrameBuffer+(x*byte)+2); 
-		}
-	}
-	tempFrameBuffer += scr_pitch; // Next row (like y++)
+				for (x = xskip; x < w; x++) {
+					if (x < 256) { 
+						RGBAFrameBuffer1[y-yskip][x-xskip][0] = *(tempFrameBuffer+(x*byte)); 
+						RGBAFrameBuffer1[y-yskip][x-xskip][1] = *(tempFrameBuffer+(x*byte)+1); 
+						RGBAFrameBuffer1[y-yskip][x-xskip][2] = *(tempFrameBuffer+(x*byte)+2); 
+					} else {
+						RGBAFrameBuffer2[y-yskip][x-256][0] = *(tempFrameBuffer+(x*byte)); 
+						RGBAFrameBuffer2[y-yskip][x-256][1] = *(tempFrameBuffer+(x*byte)+1); 
+						RGBAFrameBuffer2[y-yskip][x-256][2] = *(tempFrameBuffer+(x*byte)+2); 
+					}
+				}
+				tempFrameBuffer += scr_pitch; // Next row (like y++)
 			}
 		}
 
@@ -319,17 +318,15 @@ void FB2GL::update(void *fb, int w, int h, int pitch, int xskip, int yskip) {
 			    GL_UNSIGNED_BYTE, RGBAFrameBuffer2);
 		}
 
-	}
-	else { // non RGBA (paletted)
+	} else { // non RGBA (paletted)
 
 		for (y=0; y<h; y++)
 			for (x=0; x<w; x++) {
-	if (x<256) { 
-		palettedFrameBuffer1[ y ][ x ] = *(tempFrameBuffer + (y)*scr_pitch + x);
-	}
-	else { 
-		palettedFrameBuffer2[ y ][ x - 256 ] = *(tempFrameBuffer + y*scr_pitch + x);
-	}
+				if (x<256) { 
+					palettedFrameBuffer1[ y ][ x ] = *(tempFrameBuffer + (y)*scr_pitch + x);
+				} else { 
+					palettedFrameBuffer2[ y ][ x - 256 ] = *(tempFrameBuffer + y*scr_pitch + x);
+				}
 			}
 
 		// Update 256x256 texture
@@ -379,12 +376,11 @@ void FB2GL::blit16(SDL_Surface *fb, int num_rect, SDL_Rect *rect, int xskip, int
 
 		if (rx < 256) { // Begins before the end of texture1
 			if (xend >= 256) { // Ends after texture1
-			      tex2_w = xend - 256; //Rectangle width on texture2
-			      tex1_w = rw - tex2_w; // Width left for texture1
-			}
-			else tex1_w = rw;  // This rectangle is inside texture1
-		}
-		else {
+			  tex2_w = xend - 256; //Rectangle width on texture2
+			  tex1_w = rw - tex2_w; // Width left for texture1
+			} else
+				tex1_w = rw;  // This rectangle is inside texture1
+		} else {
 			tex2_w = rw;       // This rectangle is inside texture2
 			tex2_x = rx - 256; // Relative x coordinate on texture2
 		}
@@ -396,26 +392,25 @@ void FB2GL::blit16(SDL_Surface *fb, int num_rect, SDL_Rect *rect, int xskip, int
 			for (x = rx; x < xend; x++) {
 			
 				if (x < 256 && tex1_w) { 
-		int pos = (x-rx+(y-ry)*tex1_w)*4; // (x + (y*pitch)) * RGBAsize
-		SDL_GetRGB(
-			((Uint16 *)fb->pixels)[x+y*(pitch)], 
-			fb->format,
-			&blitFrameBuffer1[pos],
-			&blitFrameBuffer1[pos+1],
-			&blitFrameBuffer1[pos+2]
-		);
-	}
-	else if (x >= 256 && tex2_w) {
-		int rx2 = rx < 256? 256: rx;
-		int pos = (x-rx2+(y-ry)*tex2_w)*4; // (x + (y*pitch)) * RGBAsize
-		SDL_GetRGB(
-			((Uint16 *)fb->pixels)[x+y*(pitch)], 
-			fb->format,
-			&blitFrameBuffer2[pos],
-			&blitFrameBuffer2[pos+1],
-			&blitFrameBuffer2[pos+2]
-		);
-	}
+					int pos = (x-rx+(y-ry)*tex1_w)*4; // (x + (y*pitch)) * RGBAsize
+					SDL_GetRGB(
+						((Uint16 *)fb->pixels)[x+y*(pitch)], 
+						fb->format,
+						&blitFrameBuffer1[pos],
+						&blitFrameBuffer1[pos+1],
+						&blitFrameBuffer1[pos+2]
+					);
+				} else if (x >= 256 && tex2_w) {
+					int rx2 = rx < 256? 256: rx;
+					int pos = (x-rx2+(y-ry)*tex2_w)*4; // (x + (y*pitch)) * RGBAsize
+					SDL_GetRGB(
+						((Uint16 *)fb->pixels)[x+y*(pitch)], 
+						fb->format,
+						&blitFrameBuffer2[pos],
+						&blitFrameBuffer2[pos+1],
+						&blitFrameBuffer2[pos+2]
+					);
+				}
 			}
 		}
 
@@ -447,8 +442,7 @@ void FB2GL::palette(int i, int r, int g, int b) {
 		tempColorTable[i][0] = r;
 		tempColorTable[i][1] = g;
 		tempColorTable[i][2] = b;
-	}
-	else { // Paletted texture
+	} else { // Paletted texture
 		colorTable[i][0] = r;
 		colorTable[i][1] = g;
 		colorTable[i][2] = b;
@@ -465,8 +459,7 @@ void FB2GL::setPalette(int first, int n) {
 			colorTable[i][1] = tempColorTable[i][1];
 			colorTable[i][2] = tempColorTable[i][2];
 		}
-	}
-	else { // Paletted texture
+	} else { // Paletted texture
 		glBindTexture(GL_TEXTURE_2D, texture1);
 		glGetColorTable(GL_TEXTURE_2D, GL_RGB, GL_UNSIGNED_BYTE, &temp);
 	
