@@ -816,6 +816,14 @@ void ScummEngine_v6::o6_startScript() {
 	script = pop();
 	flags = pop();
 	
+	// HACK bug #556558: At Dino Bungee National Memorial, the buttons for the Wally 
+	// and Rex dinosaurs will always restart their speech, instead of stopping and 
+	// starting their speech. This was a script bug in the original game.
+	if (_gameId == GID_SAMNMAX && _roomResource == 59 &&
+		vm.slot[_currentScript].number == 201 && script == 48) {
+		o6_breakHere();
+	}
+
 	// WORKAROUND bug #903223: In Puerto Pollo, if you have Guybrush examine
 	// the church clock, he'll read out the current time. Nice touch, only that
 	// it sounds crap in the german version (and maybe others, too). It seems
