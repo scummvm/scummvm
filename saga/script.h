@@ -28,6 +28,7 @@
 
 #include "sstack.h"
 #include "sdata.h"
+#include "text_mod.h"
 #include "yslib.h"
 
 namespace Saga {
@@ -89,31 +90,37 @@ struct R_SCRIPT_DATABUF {
 	int len;
 };
 
-struct R_SCRIPT_MODULE {
-	int initialized;
-	R_RSCFILE_CONTEXT *script_ctxt;
-	int voice_lut_present;
-	R_SCRIPT_LUT_ENTRY *script_lut;
-	int script_lut_max;
-	uint16 script_lut_entrylen;
-	R_SCRIPTDATA *current_script;
-	YS_DL_LIST *thread_list;
-	R_SCRIPT_DATABUF *data_buf[R_SCRIPT_DATABUF_NUM];
-	int dbg_singlestep;
-	int dbg_dostep;
-	R_SCRIPT_THREAD *dbg_thread;
-	R_TEXTLIST_ENTRY *dbg_txtentry;
+
+class Script {
+public:
+	Script();
+	~Script();
+	
+	int reg(void);
+	int loadScript(int scriptNum);
+	int freeScript();
+	R_SCRIPT_BYTECODE *loadBytecode(byte *bytecode_p, size_t bytecode_len);
+	R_DIALOGUE_LIST *loadDialogue(const byte *dialogue_p, size_t dialogue_len);
+	R_VOICE_LUT *loadVoiceLUT(const byte *voicelut_p, size_t voicelut_len, R_SCRIPTDATA *script);
+	int disassemble(R_SCRIPT_BYTECODE *script_list, R_DIALOGUE_LIST *diag_list);
+
+
+//protected:
+//these are temporarily public, eventually get/set methods should be created for them
+	int _initialized;
+	R_RSCFILE_CONTEXT *_script_ctxt;
+	int _voice_lut_present;
+	R_SCRIPT_LUT_ENTRY *_script_lut;
+	int _script_lut_max;
+	uint16 _script_lut_entrylen;
+	R_SCRIPTDATA *_current_script;
+	YS_DL_LIST *_thread_list;
+	R_SCRIPT_DATABUF *_data_buf[R_SCRIPT_DATABUF_NUM];
+	int _dbg_singlestep;
+	int _dbg_dostep;
+	R_SCRIPT_THREAD *_dbg_thread;
+	R_TEXTLIST_ENTRY *_dbg_txtentry;
 };
-
-extern R_SCRIPT_MODULE ScriptModule;
-
-R_SCRIPT_BYTECODE *SCRIPT_LoadBytecode(byte *bytecode_p, size_t bytecode_len);
-R_DIALOGUE_LIST *SCRIPT_LoadDialogue(const byte *dialogue_p, size_t dialogue_len);
-R_VOICE_LUT *SCRIPT_LoadVoiceLUT(const byte *voicelut_p, size_t voicelut_len, R_SCRIPTDATA *script);
-int SCRIPT_Disassemble(R_SCRIPT_BYTECODE *script_list, R_DIALOGUE_LIST *diag_list);
-void CF_script_info(int argc, char *argv[], void *refCon);
-void CF_script_exec(int argc, char *argv[], void *refCon);
-void CF_script_togglestep(int argc, char *argv[], void *refCon);
 
 } // End of namespace Saga
 

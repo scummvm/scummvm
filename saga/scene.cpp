@@ -38,6 +38,7 @@
 #include "palanim_mod.h"
 #include "render.h"
 #include "rscfile_mod.h"
+#include "script.h"
 #include "text_mod.h"
 #include "sound.h"
 #include "music.h"
@@ -469,7 +470,7 @@ int SCENE_Load(int scene_num, int load_flag, R_SCENE_PROC scene_proc, R_SCENE_DE
 
 	// Load scene script data
 	if (SceneModule.desc.script_num > 0) {
-		if (SCRIPT_Load(SceneModule.desc.script_num) != R_SUCCESS) {
+		if (_vm->_script->loadScript(SceneModule.desc.script_num) != R_SUCCESS) {
 			warning("Error loading scene script");
 			return R_FAILURE;
 		}
@@ -763,7 +764,7 @@ int SCENE_End() {
 	SceneModule.scene_proc(SCENE_END, &scene_info);
 
 	if (SceneModule.desc.script_num > 0) {
-		SCRIPT_Free();
+		_vm->_script->freeScript();
 	}
 
 	// Free scene background

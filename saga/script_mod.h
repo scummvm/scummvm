@@ -43,11 +43,6 @@ enum R_SCRIPT_VERBS {
 	S_VERB_GIVE
 };
 
-int SCRIPT_Register();
-int SCRIPT_Init();
-int SCRIPT_Shutdown();
-int SCRIPT_Load(int script_num);
-int SCRIPT_Free();
 R_SCRIPT_THREAD *STHREAD_Create();
 int STHREAD_Execute(R_SCRIPT_THREAD *thread, int ep_num);
 int STHREAD_ExecThreads(int msec);

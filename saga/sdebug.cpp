@@ -53,9 +53,9 @@ int SDEBUG_PrintInstr(R_SCRIPT_THREAD *thread) {
 
 	disp_buf[0] = 0;
 
-	if (ScriptModule.dbg_txtentry != NULL) {
-		TEXT_DeleteEntry(si.text_list, ScriptModule.dbg_txtentry);
-		ScriptModule.dbg_txtentry = NULL;
+	if (_vm->_script->_dbg_txtentry != NULL) {
+		TEXT_DeleteEntry(si.text_list, _vm->_script->_dbg_txtentry);
+		_vm->_script->_dbg_txtentry = NULL;
 	}
 
 	tl_e.color = 1;
@@ -69,9 +69,9 @@ int SDEBUG_PrintInstr(R_SCRIPT_THREAD *thread) {
 
 	// XXX
 	MemoryReadStream *readS = 
-		new MemoryReadStream(ScriptModule.current_script->bytecode->bytecode_p 
+		new MemoryReadStream(_vm->_script->_current_script->bytecode->bytecode_p 
 							 + thread->i_offset, 
-							 ScriptModule.current_script->bytecode->bytecode_len 
+							 _vm->_script->_current_script->bytecode->bytecode_len 
 							 - thread->i_offset);
 	in_char = readS->readByte();
 	sprintf(tmp_buf, "%04lX | %02X | ", thread->i_offset, in_char);
@@ -517,8 +517,8 @@ int SDEBUG_PrintInstr(R_SCRIPT_THREAD *thread) {
 		break;
 	}
 
-	ScriptModule.dbg_txtentry = TEXT_AddEntry(si.text_list, &tl_e);
-	TEXT_SetDisplay(ScriptModule.dbg_txtentry, 1);
+	_vm->_script->_dbg_txtentry = TEXT_AddEntry(si.text_list, &tl_e);
+	TEXT_SetDisplay(_vm->_script->_dbg_txtentry, 1);
 
 	return R_SUCCESS;
 }

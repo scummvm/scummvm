@@ -47,6 +47,7 @@
 #include "game.h"
 #include "interface_mod.h"
 #include "isomap_mod.h"
+#include "script.h"
 #include "script_mod.h"
 #include "scene_mod.h"
 #include "sdata.h"
@@ -117,9 +118,7 @@ void SagaEngine::go() {
 	CON_Register(); // Register console cvars first
 
 	GAME_Register();
-
 	OBJECTMAP_Register();
-	SCRIPT_Register();
 	ACTOR_Register();
 	SCENE_Register();
 
@@ -159,7 +158,7 @@ void SagaEngine::go() {
 	_actionMap = new ActionMap(this);
 	OBJECTMAP_Init();
 	ISOMAP_Init();
-	SCRIPT_Init();
+	_script = new Script();
 	_sdata = new SData();
 	INTERFACE_Init(); // requires script module
 	ACTOR_Init();
@@ -208,6 +207,7 @@ void SagaEngine::go() {
 		debug(0, "Sound disabled.");
 	}
 
+	_script->reg();
 	_render->reg();
 	_anim->reg();
 	_actionMap->reg();
@@ -240,7 +240,7 @@ void SagaEngine::go() {
 void SagaEngine::shutdown() {
 	SCENE_Shutdown();
 	ACTOR_Shutdown();
-	SCRIPT_Shutdown();
+	delete _script;
 	SPRITE_Shutdown();
 	OBJECTMAP_Shutdown();
 	FONT_Shutdown();
