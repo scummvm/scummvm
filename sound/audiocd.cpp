@@ -93,7 +93,7 @@ AudioCDManager::Status AudioCDManager::getStatus() const {
 	// TODO: This could be improved for "real" CD playback.
 	// But to do that, we have to extend the OSystem interface.
 	Status info = _cd;
-	info.playing = isPlaying();
+	info.playing = isPlaying() != 0;
 	return info;
 }
 
