@@ -498,16 +498,19 @@ int ScummEngine_v6::readArray(int array, int idx, int base) {
 		error("readArray: invalid array %d (%d)", array, readVar(array));
 	}
 
-	base += idx * FROM_LE_16(ah->dim1);
+	const int offset = base + idx * FROM_LE_16(ah->dim1);
 
-	assert(base >= 0 && base < FROM_LE_16(ah->dim1) * FROM_LE_16(ah->dim2));
+	if (offset < 0 || offset >= FROM_LE_16(ah->dim1) * FROM_LE_16(ah->dim2)) {
+		error("readArray: array %d out of bounds: [%d,%d] exceeds [%d,%d]",
+			array, base, idx, FROM_LE_16(ah->dim1), FROM_LE_16(ah->dim2));
+	}
 
 	if (FROM_LE_16(ah->type) == 4 || (_heversion >= 60 && FROM_LE_16(ah->type) == rtCostume)) {
-		return ah->data[base];
+		return ah->data[offset];
 	} else if (_version == 8) {
-		return (int32)READ_LE_UINT32(ah->data + base * 4);
+		return (int32)READ_LE_UINT32(ah->data + offset * 4);
 	} else {
-		return (int16)READ_LE_UINT16(ah->data + base * 2);
+		return (int16)READ_LE_UINT16(ah->data + offset * 2);
 	}
 }
 
@@ -515,26 +518,20 @@ void ScummEngine_v6::writeArray(int array, int idx, int base, int value) {
 	ArrayHeader *ah = getArray(array);
 	if (!ah)
 		return;
-	base += idx * FROM_LE_16(ah->dim1);
 
-	assert(base >= 0 && base < FROM_LE_16(ah->dim1) * FROM_LE_16(ah->dim2));
+	const int offset = base + idx * FROM_LE_16(ah->dim1);
+
+	if (offset < 0 || offset >= FROM_LE_16(ah->dim1) * FROM_LE_16(ah->dim2)) {
+		error("writeArray: array %d out of bounds: [%d,%d] exceeds [%d,%d]",
+			array, base, idx, FROM_LE_16(ah->dim1), FROM_LE_16(ah->dim2));
+	}
 
 	if (FROM_LE_16(ah->type) == rtSound || (_heversion >= 60 && FROM_LE_16(ah->type) == rtCostume)) {
-		ah->data[base] = value;
+		ah->data[offset] = value;
 	} else if (_version == 8) {
-#if defined(SCUMM_NEED_ALIGNMENT)
-		uint32 tmp = TO_LE_32(value);
-		memcpy(&ah->data[base*4], &tmp, 4);
-#else
-		((uint32 *)ah->data)[base] = TO_LE_32(value);
-#endif
+		WRITE_LE_UINT32(ah->data + offset * 4, value);
 	} else {
-#if defined(SCUMM_NEED_ALIGNMENT)
-		uint16 tmp = TO_LE_16(value);
-		memcpy(&ah->data[base*2], &tmp, 2);
-#else
-		((uint16 *)ah->data)[base] = TO_LE_16(value);
-#endif
+		WRITE_LE_UINT16(ah->data + offset * 2, value);
 	}
 }
 
