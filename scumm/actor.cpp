@@ -787,8 +787,7 @@ void Scumm::walkActors() {
 	for (i = 1; i < _numActors; i++) {
 		a = derefActor(i);
 		if (a->isInCurrentRoom())
-			// FIXME: really V3, or should it maybe be GF_SMALL_HEADER
-			if (_features & GF_AFTER_V3)
+			if (_features & GF_AFTER_V2 || _features & GF_AFTER_V3)
 				a->walkActorOld();
 			else
 				a->walkActor();
@@ -1233,7 +1232,7 @@ void Actor::startWalkActor(int destX, int destY, int dir) {
 		// Considering that abr was obtained by adjustXYToBeInBox which works on
 		// the boxes in the *current* room no in the room the actor actually is in.
 		// Occurs in Monkey Island 1 demo, after title name.
-		warning("When is this ever triggered anyway?");
+		warning("When is this ever triggered anyway? (%d,%d) -> (%d,%d)", x, y, abr.x, abr.y);
 		x = abr.x;
 		y = abr.y;
 		if (dir != -1)
