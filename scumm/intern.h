@@ -655,21 +655,21 @@ protected:
 	virtual const char *getOpcodeDesc(byte i);
 
 	/* Version 7 script opcodes */
-	void o7_getString();
-	void o7_objectX();
-	void o7_objectY();
-	void o7_startScript();
-	void o7_startObject();
-	void o7_unknown63();
-	void o7_arrayOps();
-	void o7_dimArray();
-	void o7_dim2dimArray();
-	void o7_jumpToScript();
-	void o7_stringLen();
-	void o7_readINI();
-	void o7_unknownF4();
-	void o7_unknownFA();
-	void o7_unknownFB();
+	void o72_getString();
+	void o72_objectX();
+	void o72_objectY();
+	void o72_startScript();
+	void o72_startObject();
+	void o72_unknown63();
+	void o72_arrayOps();
+	void o72_dimArray();
+	void o72_dim2dimArray();
+	void o72_jumpToScript();
+	void o72_stringLen();
+	void o72_readINI();
+	void o72_unknownF4();
+	void o72_unknownFA();
+	void o72_unknownFB();
 };
 
 class ScummEngine_v7 : public ScummEngine_v6 {

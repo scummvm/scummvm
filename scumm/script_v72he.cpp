@@ -51,7 +51,7 @@ void ScummEngine_v72he::setupOpcodes() {
 		OPCODE(o6_pushByteVar),
 		OPCODE(o6_pushWordVar),
 		/* 04 */
-		OPCODE(o7_getString),
+		OPCODE(o72_getString),
 		OPCODE(o6_invalid),
 		OPCODE(o6_byteArrayRead),
 		OPCODE(o6_wordArrayRead),
@@ -151,8 +151,8 @@ void ScummEngine_v72he::setupOpcodes() {
 		OPCODE(o6_byteArrayInc),
 		OPCODE(o6_wordArrayInc),
 		/* 54 */
-		OPCODE(o7_objectX),
-		OPCODE(o7_objectY),
+		OPCODE(o72_objectX),
+		OPCODE(o72_objectY),
 		OPCODE(o6_byteVarDec),
 		OPCODE(o6_wordVarDec),
 		/* 58 */
@@ -163,13 +163,13 @@ void ScummEngine_v72he::setupOpcodes() {
 		/* 5C */
 		OPCODE(o6_if),
 		OPCODE(o6_ifNot),
-		OPCODE(o7_startScript),
+		OPCODE(o72_startScript),
 		OPCODE(o6_startScriptQuick),
 		/* 60 */
-		OPCODE(o7_startObject),
+		OPCODE(o72_startObject),
 		OPCODE(o6_drawObject),
 		OPCODE(o6_drawObjectAt),
-		OPCODE(o7_unknown63),
+		OPCODE(o72_unknown63),
 		/* 64 */
 		OPCODE(o6_invalid),
 		OPCODE(o6_stopObjectCode),
@@ -251,7 +251,7 @@ void ScummEngine_v72he::setupOpcodes() {
 		OPCODE(o6_getActorElevation),
 		OPCODE(o6_getVerbEntrypoint),
 		/* A4 */
-		OPCODE(o7_arrayOps),
+		OPCODE(o72_arrayOps),
 		OPCODE(o6_saveRestoreVerbs),
 		OPCODE(o6_drawBox),
 		OPCODE(o6_pop),
@@ -281,12 +281,12 @@ void ScummEngine_v72he::setupOpcodes() {
 		OPCODE(o6_talkActor),
 		OPCODE(o6_talkEgo),
 		/* BC */
-		OPCODE(o7_dimArray),
+		OPCODE(o72_dimArray),
 		OPCODE(o6_dummy),
 		OPCODE(o6_startObjectQuick),
 		OPCODE(o6_startScriptQuick2),
 		/* C0 */
-		OPCODE(o7_dim2dimArray),
+		OPCODE(o72_dim2dimArray),
 		OPCODE(o6_invalid),
 		OPCODE(o6_invalid),
 		OPCODE(o6_invalid),
@@ -312,7 +312,7 @@ void ScummEngine_v72he::setupOpcodes() {
 		OPCODE(o6_invalid),
 		/* D4 */
 		OPCODE(o6_shuffle),
-		OPCODE(o7_jumpToScript),
+		OPCODE(o72_jumpToScript),
 		OPCODE(o6_band),
 		OPCODE(o6_bor),
 		/* D8 */
@@ -343,23 +343,23 @@ void ScummEngine_v72he::setupOpcodes() {
 		/* EC */
 		OPCODE(o6_invalid),
 		OPCODE(o6_invalid),
-		OPCODE(o7_stringLen),
+		OPCODE(o72_stringLen),
 		OPCODE(o6_invalid),
 		/* F0 */
 		OPCODE(o6_invalid),
 		OPCODE(o6_invalid),
 		OPCODE(o6_invalid),
-		OPCODE(o7_readINI),
+		OPCODE(o72_readINI),
 		/* F4 */
-		OPCODE(o7_unknownF4),
+		OPCODE(o72_unknownF4),
 		OPCODE(o6_invalid),
 		OPCODE(o6_invalid),
 		OPCODE(o6_invalid),
 		/* F8 */
 		OPCODE(o6_invalid),
 		OPCODE(o7_unknownF9),
-		OPCODE(o7_unknownFA),
-		OPCODE(o7_unknownFB),
+		OPCODE(o72_unknownFA),
+		OPCODE(o72_unknownFB),
 		/* FC */
 		OPCODE(o6_invalid),
 		OPCODE(o6_invalid),
@@ -380,17 +380,17 @@ const char *ScummEngine_v72he::getOpcodeDesc(byte i) {
 }
 
 
-void ScummEngine_v72he::o7_getString() {
+void ScummEngine_v72he::o72_getString() {
 	int len;
 	
 	len = resStrLen(_scriptPointer);
-	warning("stub o7_getString(\"%s\")", _scriptPointer);
+	warning("stub o72_getString(\"%s\")", _scriptPointer);
 	_scriptPointer += len;
 	fetchScriptWord();
 	fetchScriptWord();
 }
 
-void ScummEngine_v72he::o7_objectX() {
+void ScummEngine_v72he::o72_objectX() {
 	int object = pop();
 	int objnum = getObjectIndex(object);
 
@@ -403,7 +403,7 @@ void ScummEngine_v72he::o7_objectX() {
 }
 
 
-void ScummEngine_v72he::o7_objectY() {
+void ScummEngine_v72he::o72_objectY() {
 	int object = pop();
 	int objnum = getObjectIndex(object);
 
@@ -415,12 +415,7 @@ void ScummEngine_v72he::o7_objectY() {
 	push(_objs[objnum].y_pos);
 }
 
-void ScummEngine_v72he::o7_startScript() {
-	if (_heversion <= 71) {
-		ScummEngine_v6::o6_startScript();
-		return;
-	}
-
+void ScummEngine_v72he::o72_startScript() {
 	int args[16];
 	int script, flags;
 
@@ -431,7 +426,7 @@ void ScummEngine_v72he::o7_startScript() {
 	runScript(script, (flags == 199 || flags == 200), (flags == 195 || flags == 200), args);
 }
 
-void ScummEngine_v72he::o7_startObject() {
+void ScummEngine_v72he::o72_startObject() {
 	int args[16];
 	int script, entryp;
 	int flags;
@@ -442,13 +437,13 @@ void ScummEngine_v72he::o7_startObject() {
 	runObjectScript(script, entryp, (flags == 199 || flags == 200), (flags == 195 || flags == 200), args);
 }
 
-void ScummEngine_v72he::o7_unknown63() {
+void ScummEngine_v72he::o72_unknown63() {
 	int a = fetchScriptByte();
-	warning("o7_unknown63 stub (%d)", a);
+	warning("o72_unknown63 stub (%d)", a);
 	push(1);
 }
 
-void ScummEngine_v72he::o7_arrayOps() {
+void ScummEngine_v72he::o72_arrayOps() {
 	byte subOp = fetchScriptByte();
 	int array = fetchScriptWord();
 	int b, c, d, len;
@@ -490,16 +485,11 @@ void ScummEngine_v72he::o7_arrayOps() {
 		}
 		break;
 	default:
-		error("o7_arrayOps: default case %d (array %d)", subOp, array);
+		error("o72_arrayOps: default case %d (array %d)", subOp, array);
 	}
 }
 
-void ScummEngine_v72he::o7_dimArray() {
-	if (_heversion <= 71) {
-		ScummEngine_v6::o6_dimArray();
-		return;
-	}
-
+void ScummEngine_v72he::o72_dimArray() {
 	int data;
 	int type = fetchScriptByte();
 
@@ -523,19 +513,14 @@ void ScummEngine_v72he::o7_dimArray() {
 		nukeArray(fetchScriptWord());
 		return;
 	default:
-		error("o7_dimArray: default case %d", type);
+		error("o72_dimArray: default case %d", type);
 	}
 
 	defineArray(fetchScriptWord(), data, 0, pop());
 }
 
 
-void ScummEngine_v72he::o7_dim2dimArray() {
-	if (_heversion <= 71) {
-		ScummEngine_v6::o6_dim2dimArray();
-		return;
-	}
-
+void ScummEngine_v72he::o72_dim2dimArray() {
 	int a, b, data;
 	int type = fetchScriptByte();
 	switch (type - 2) {
@@ -555,7 +540,7 @@ void ScummEngine_v72he::o7_dim2dimArray() {
 		data = kStringArray;
 		break;
 	default:
-		error("o7_dim2dimArray: default case %d", type);
+		error("o72_dim2dimArray: default case %d", type);
 	}
 
 	b = pop();
@@ -563,11 +548,7 @@ void ScummEngine_v72he::o7_dim2dimArray() {
 	defineArray(fetchScriptWord(), data, a, b);
 }
 
-void ScummEngine_v72he::o7_jumpToScript() {
-	if (_heversion <= 71) {
-		ScummEngine_v6::o6_jumpToScript();
-		return;
-	}
+void ScummEngine_v72he::o72_jumpToScript() {
 	int args[16];
 	int script, flags;
 
@@ -578,7 +559,7 @@ void ScummEngine_v72he::o7_jumpToScript() {
 	runScript(script, (flags == 199 || flags == 200), (flags == 195 || flags == 200), args);
 }
 
-void ScummEngine_v72he::o7_stringLen() {
+void ScummEngine_v72he::o72_stringLen() {
 	int a, len;
 	byte *addr;
 
@@ -587,7 +568,7 @@ void ScummEngine_v72he::o7_stringLen() {
 	addr = getStringAddress(a);
 	if (!addr) {
 		// FIXME: should be error here
-		warning("o7_stringLen: Reference to zeroed array pointer (%d)", a);
+		warning("o72_stringLen: Reference to zeroed array pointer (%d)", a);
 		push(0);
 		return;
 	}
@@ -596,7 +577,7 @@ void ScummEngine_v72he::o7_stringLen() {
 	push(len);
 }
 
-void ScummEngine_v72he::o7_readINI() {
+void ScummEngine_v72he::o72_readINI() {
 	int type;
 	int retval;
 
@@ -613,11 +594,11 @@ void ScummEngine_v72he::o7_readINI() {
 		push(retval); // var ID string
 		break;
 	default:
-		warning("o7_readINI(..., %d): read-ini string not implemented", type);
+		warning("o72_readINI(..., %d): read-ini string not implemented", type);
 	}
 }
 
-void ScummEngine_v72he::o7_unknownF4() {
+void ScummEngine_v72he::o72_unknownF4() {
 	byte b;
 	int len;
 	b = fetchScriptByte();
@@ -635,14 +616,14 @@ void ScummEngine_v72he::o7_unknownF4() {
 		_scriptPointer += len + 1;
 		break;
 	}
-	warning("o7_unknownF4 stub");
+	warning("o72_unknownF4 stub");
 }
 
-void ScummEngine_v72he::o7_unknownFA() {
-	warning("stub o7_unknownFA(%d)", fetchScriptByte());
+void ScummEngine_v72he::o72_unknownFA() {
+	warning("stub o72_unknownFA(%d)", fetchScriptByte());
 }
 
-void ScummEngine_v72he::o7_unknownFB() {
+void ScummEngine_v72he::o72_unknownFB() {
 	byte b;
 	b = fetchScriptByte();
 
@@ -664,7 +645,7 @@ void ScummEngine_v72he::o7_unknownFB() {
 		pop();
 		break;
 	}
-	warning("o7_unknownFB stub");
+	warning("o72_unknownFB stub");
 }
 
 } // End of namespace Scumm
