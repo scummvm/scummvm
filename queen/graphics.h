@@ -29,14 +29,6 @@
 
 namespace Queen {
 
-
-struct BobFrame {
-	uint16 width, height;
-	uint16 xhotspot, yhotspot;
-	uint8 *data;
-};
-
-
 struct BobSlot {
 	bool active;
 	//! current position
@@ -93,54 +85,12 @@ struct BobSlot {
 	void clear();
 };
 
-
 struct TextSlot {
 	uint16 x;
 	uint8 color;
 	Common::String text;
 	bool outlined;
 };
-
-class Resource;
-
-class BankManager {
-public:
-
-	BankManager(Resource *res);
-	~BankManager();
-
-	void load(const char *bankname, uint32 bankslot);
-	void unpack(uint32 srcframe, uint32 dstframe, uint32 bankslot);
-	void overpack(uint32 srcframe, uint32 dstframe, uint32 bankslot);
-	void close(uint32 bankslot);
-
-	BobFrame *fetchFrame(uint32 index);
-	void eraseFrame(uint32 index);
-	void eraseAllFrames(bool joe);
-
-	enum {
-		MAX_BANK_SIZE     = 110,
-		MAX_FRAMES_NUMBER = 256,
-		MAX_BANKS_NUMBER  =  18
-	};
-
-
-private:
-
-	struct PackedBank {
-		uint32 indexes[MAX_BANK_SIZE];
-		uint8 *data;
-	};
-
-	//! unbanked bob frames
-	BobFrame _frames[MAX_FRAMES_NUMBER];
-
-	 //! banked bob frames
-	PackedBank _banks[MAX_BANKS_NUMBER];
-
-	Resource *_res;
-};
-
 
 class QueenEngine;
 

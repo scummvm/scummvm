@@ -1,12 +1,14 @@
 MODULE := queen
 
 MODULE_OBJS = \
+	queen/bankman.o \
 	queen/command.o \
 	queen/credits.o \
 	queen/cutaway.o \
 	queen/debug.o \
 	queen/display.o \
 	queen/graphics.o \
+	queen/grid.o \
 	queen/input.o \
 	queen/journal.o \
 	queen/logic.o \

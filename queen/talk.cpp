@@ -22,8 +22,10 @@
 #include "stdafx.h"
 #include "queen/talk.h"
 
+#include "queen/bankman.h"
 #include "queen/display.h"
 #include "queen/graphics.h"
+#include "queen/grid.h"
 #include "queen/input.h"
 #include "queen/logic.h"
 #include "queen/queen.h"
@@ -301,7 +303,7 @@ void Talk::talk(const char *filename, int personInRoom, char *cutawayFilename) {
 		}
 	}
 	
-	_vm->logic()->zoneSetupPanel();
+	_vm->grid()->setupPanel();
 
 	uint8 *ptr = _cutawayPtr;
 
@@ -1003,7 +1005,7 @@ void Talk::speakSegment(
 		textY = bob->y;
 	}
 
-	//int SF = _vm->logic()->findScale(textX, textY);
+	//int SF = _vm->grid()->findScale(textX, textY);
 
 	const SpeechParameters *parameters = NULL;
 	int startFrame = 0;
@@ -1266,11 +1268,11 @@ int16 Talk::selectSentence() {
 
 		// Set zones for UP/DOWN text arrows when not English version
 
-		_vm->logic()->zoneClearAll(ZONE_PANEL);
+		_vm->grid()->clear(GS_PANEL);
 
 		if (_vm->resource()->getLanguage() != ENGLISH) {
-			_vm->logic()->zoneSet(ZONE_PANEL, ARROW_ZONE_UP,   MAX_TEXT_WIDTH + 1, 0,  319, 24);
-			_vm->logic()->zoneSet(ZONE_PANEL, ARROW_ZONE_DOWN, MAX_TEXT_WIDTH + 1, 25, 319, 49);
+			_vm->grid()->setZone(GS_PANEL, ARROW_ZONE_UP,   MAX_TEXT_WIDTH + 1, 0,  319, 24);
+			_vm->grid()->setZone(GS_PANEL, ARROW_ZONE_DOWN, MAX_TEXT_WIDTH + 1, 25, 319, 49);
 		}
 
 		_vm->graphics()->textClear(151,199);
@@ -1289,8 +1291,8 @@ int16 Talk::selectSentence() {
 				optionLines = splitOption(removeStar(temp), optionText);
 
 				if (yOffset < 5) {
-					_vm->logic()->zoneSet(
-							ZONE_PANEL,
+					_vm->grid()->setZone(
+							GS_PANEL,
 							i,
 							0,
 							yOffset * LINE_HEIGHT - PUSHUP,
@@ -1336,7 +1338,7 @@ int16 Talk::selectSentence() {
 
 				_vm->update();
 
-				zone = _vm->logic()->zoneIn(ZONE_PANEL, _vm->input()->mousePosX(), _vm->input()->mousePosY());
+				zone = _vm->grid()->findZoneForPos(GS_PANEL, _vm->input()->mousePosX(), _vm->input()->mousePosY());
 
 				if (5 == zone || 6 == zone) {
 					// XXX Arrow zones
@@ -1351,12 +1353,14 @@ int16 Talk::selectSentence() {
 								oldZone, zone);*/
 
 						if (zone > 0) {
-							for (y = _vm->logic()->zoneBox(ZONE_PANEL, zone).y1; y < _vm->logic()->zoneBox(ZONE_PANEL, zone).y2; y += 10)
+							const Box *b = _vm->grid()->zone(GS_PANEL, zone);
+							for (y = b->y1; y < b->y2; y += 10)
 								_vm->graphics()->textColor(150 + y, INK_JOE);
 						}
 
 						if (oldZone > 0) {
-							for (y = _vm->logic()->zoneBox(ZONE_PANEL, oldZone).y1; y < _vm->logic()->zoneBox(ZONE_PANEL, oldZone).y2; y += 10)
+							const Box *b = _vm->grid()->zone(GS_PANEL, oldZone);
+							for (y = b->y1; y < b->y2; y += 10)
 								_vm->graphics()->textColor(150 + y, INK_TALK_NORMAL);
 						}
 

@@ -595,6 +595,13 @@ struct TalkSelected {
 };
 
 
+struct BobFrame {
+	uint16 width, height;
+	uint16 xhotspot, yhotspot;
+	uint8 *data;
+};
+
+
 } // End of namespace Queen
 
 #endif

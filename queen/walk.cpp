@@ -22,9 +22,10 @@
 #include "stdafx.h"
 #include "queen/walk.h"
 
-#include "queen/defs.h"
+#include "queen/bankman.h"
 #include "queen/logic.h"
 #include "queen/graphics.h"
+#include "queen/grid.h"
 #include "queen/queen.h"
 
 namespace Queen {
@@ -122,7 +123,7 @@ void Walk::animateJoe() {
 			pbs->animNormal(pwd->anim.firstFrame, pwd->anim.lastFrame, 1, false, false);
 		}
 
-		uint16 moveSpeed = _vm->logic()->findScale(pbs->x, pbs->y) * 6 / 100;
+		uint16 moveSpeed = _vm->grid()->findScale(pbs->x, pbs->y) * 6 / 100;
 		pbs->move(pbs->x + pwd->dx, pbs->y + pwd->dy, moveSpeed);
 		pbs->xflip = (pbs->xdir < 0);
 		while (pbs->moving) {
@@ -250,7 +251,7 @@ void Walk::animatePerson(const MovePersonData *mpd, uint16 image, uint16 bobNum,
 		}
 
 		// move other actors at correct speed relative to scale
-		uint16 moveSpeed = _vm->logic()->findScale(pbs->x, pbs->y) * mpd->moveSpeed / 100;
+		uint16 moveSpeed = _vm->grid()->findScale(pbs->x, pbs->y) * mpd->moveSpeed / 100;
 		pbs->move(pbs->x + pwd->dx, pbs->y + pwd->dy, moveSpeed);
 
 		// flip if one set of frames for actor
@@ -287,8 +288,8 @@ int16 Walk::moveJoe(int direction, int16 endx, int16 endy, bool inCutaway) {
 
 	_vm->logic()->joeWalk(JWM_MOVE);
 
-	uint16 oldPos = _vm->logic()->zoneInArea(ZONE_ROOM, oldx, oldy);
-	uint16 newPos = _vm->logic()->zoneInArea(ZONE_ROOM, endx, endy);
+	uint16 oldPos = _vm->grid()->findAreaForPos(GS_ROOM, oldx, oldy);
+	uint16 newPos = _vm->grid()->findAreaForPos(GS_ROOM, endx, endy);
 
 	debug(9, "Walk::moveJoe(%d, %d, %d, %d, %d) - old = %d, new = %d", direction, oldx, oldy, endx, endy, oldPos, newPos);
 
@@ -342,8 +343,8 @@ int16 Walk::movePerson(const Person *pp, int16 endx, int16 endy, uint16 curImage
 	uint16 oldx = _vm->graphics()->bob(bobNum)->x;
 	uint16 oldy = _vm->graphics()->bob(bobNum)->y;
 
-	uint16 oldPos = _vm->logic()->zoneInArea(ZONE_ROOM, oldx, oldy);
-	uint16 newPos = _vm->logic()->zoneInArea(ZONE_ROOM, endx, endy);
+	uint16 oldPos = _vm->grid()->findAreaForPos(GS_ROOM, oldx, oldy);
+	uint16 newPos = _vm->grid()->findAreaForPos(GS_ROOM, endx, endy);
 
 	debug(9, "Walk::movePerson(%d, %d, %d, %d, %d) - old = %d, new = %d", direction, oldx, oldy, endx, endy, oldPos, newPos);
 
@@ -419,8 +420,8 @@ bool Walk::calc(uint16 oldPos, uint16 newPos, int16 oldx, int16 oldy, int16 x, i
 		for (i = 2; i <= _areaListCount; ++i) {
 			uint16 a1 = _areaList[i - 1];
 			uint16 a2 = _areaList[i];
-			const Area *pa1 = _vm->logic()->currentRoomArea(a1);
-			const Area *pa2 = _vm->logic()->currentRoomArea(a2);
+			const Area *pa1 = &_roomArea[a1];
+			const Area *pa2 = &_roomArea[a2];
 			uint16 x1 = calcC(pa1->box.x1, pa1->box.x2, pa2->box.x1, pa2->box.x2, px);
 			uint16 y1 = calcC(pa1->box.y1, pa1->box.y2, pa2->box.y1, pa2->box.y2, py);
 			incWalkData(px, py, x1, y1, a1);
@@ -458,10 +459,10 @@ int16 Walk::findAreaPosition(int16 *x, int16 *y, bool recalibrate) {
 	uint16 i;
 	uint16 pos = 1;
 	uint32 minDist = ~0;
-	const Box *b = &_vm->logic()->currentRoomArea(1)->box;
-	for (i = 1; i <= _vm->logic()->currentRoomAreaMax(); ++i) {
+	const Box *b = &_roomArea[1].box;
+	for (i = 1; i <= _roomAreaCount; ++i) {
 
-		b = &_vm->logic()->currentRoomArea(i)->box;
+		b = &_roomArea[i].box;
 
 		uint16 dx1 = ABS(b->x1 - *x);
 		uint16 dx2 = ABS(b->x2 - *x);
@@ -490,7 +491,7 @@ int16 Walk::findAreaPosition(int16 *x, int16 *y, bool recalibrate) {
  	// we now have the closest area near X,Y, so we can recalibrate
  	// the X,Y coord to be in this area
 	if (recalibrate) {
-		b = &_vm->logic()->currentRoomArea(pos)->box;
+		b = &_roomArea[pos].box;
 		if(*x < b->x1) *x = b->x1;
 		if(*x > b->x2) *x = b->x2;
 		if(*y < b->y1) *y = b->y1;
@@ -503,9 +504,9 @@ int16 Walk::findAreaPosition(int16 *x, int16 *y, bool recalibrate) {
 uint16 Walk::findFreeArea(uint16 area) const {
 	uint16 testArea;
 	uint16 freeArea = 0;
-	uint16 map = ABS(_vm->logic()->currentRoomArea(area)->mapNeighbours);
-	for (testArea = 1; testArea <= _vm->logic()->currentRoomAreaMax(); ++testArea) {
-		int b = _vm->logic()->currentRoomAreaMax() - testArea;
+	uint16 map = ABS(_roomArea[area].mapNeighbours);
+	for (testArea = 1; testArea <= _roomAreaCount; ++testArea) {
+		int b = _roomAreaCount - testArea;
 		if (map & (1 << b)) {
 			// connecting area, check if it's been struck off
 			if(!isAreaStruck(testArea)) {
@@ -558,6 +559,10 @@ bool Walk::calcPath(uint16 oldArea, uint16 newArea) {
 
 
 void Walk::initWalkData() {
+	uint16 curRoom = _vm->logic()->currentRoom();
+	_roomArea = _vm->grid()->area(curRoom, 0);
+	_roomAreaCount = _vm->grid()->areaMax(curRoom);
+
 	_walkDataCount = 0;
 	memset(_walkData, 0, sizeof(_walkData));
 	_areaStrikeCount = 0;
@@ -569,13 +574,12 @@ void Walk::initWalkData() {
 
 void Walk::incWalkData(int16 px, int16 py, int16 x, int16 y, uint16 areaNum) {
 	debug(9, "Walk::incWalkData(%d, %d, %d)", (x - px), (y - py), areaNum);
-
 	if (px != x || py != y) {
 		++_walkDataCount;
 		WalkData *pwd = &_walkData[_walkDataCount];
 		pwd->dx = x - px;
 		pwd->dy = y - py;
-		pwd->area = _vm->logic()->currentRoomArea(areaNum);
+		pwd->area = &_roomArea[areaNum];
 		pwd->areaNum = areaNum;
 	}
 }

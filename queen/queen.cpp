@@ -31,11 +31,13 @@
 #include "common/timer.h"
 
 #include "queen/queen.h"
+#include "queen/bankman.h"
 #include "queen/command.h"
 #include "queen/cutaway.h"
 #include "queen/debug.h"
 #include "queen/display.h"
 #include "queen/graphics.h"
+#include "queen/grid.h"
 #include "queen/input.h"
 #include "queen/logic.h"
 #include "queen/music.h"
@@ -108,6 +110,7 @@ QueenEngine::~QueenEngine() {
 	delete _debugger;
 	delete _display;
 	delete _graphics;
+	delete _grid;
 	delete _input;
 	delete _logic;
 	delete _music;
@@ -263,6 +266,7 @@ void QueenEngine::initialise(void) {
 	_debugger = new Debugger(this);
 	_display = new Display(this, _system);
 	_graphics = new Graphics(this);
+	_grid = new Grid(this);
 	_input = new Input(_resource->getLanguage(), _system);
 
 	if (_resource->isDemo()) {

@@ -22,8 +22,10 @@
 #include "stdafx.h"
 #include "queen/journal.h"
 
+#include "queen/bankman.h"
 #include "queen/display.h"
 #include "queen/graphics.h"
+#include "queen/grid.h"
 #include "queen/logic.h"
 #include "queen/queen.h"
 #include "queen/resource.h"
@@ -106,21 +108,21 @@ void Journal::prepare() {
 	_vm->graphics()->textCurrentColor(INK_JOURNAL);
 
 	int i;
-	_vm->logic()->zoneClearAll(ZONE_ROOM);
+	_vm->grid()->clear(GS_ROOM);
 	for (i = 0; i < 4; ++i) { // left panel
-		_vm->logic()->zoneSet(ZONE_ROOM, i + 1, 32, 8 + i * 48, 96, 40 + i * 48);
+		_vm->grid()->setZone(GS_ROOM, i + 1, 32, 8 + i * 48, 96, 40 + i * 48);
 	}
-	_vm->logic()->zoneSet(ZONE_ROOM, ZN_TEXT_SPEED, 136, 169, 265, 176);
-    _vm->logic()->zoneSet(ZONE_ROOM, ZN_SFX_TOGGLE, 221 - 24, 155, 231, 164);
-    _vm->logic()->zoneSet(ZONE_ROOM, ZN_MUSIC_VOLUME, 136, 182, 265, 189);
+	_vm->grid()->setZone(GS_ROOM, ZN_TEXT_SPEED, 136, 169, 265, 176);
+	_vm->grid()->setZone(GS_ROOM, ZN_SFX_TOGGLE, 221 - 24, 155, 231, 164);
+	_vm->grid()->setZone(GS_ROOM, ZN_MUSIC_VOLUME, 136, 182, 265, 189);
 	for (i = 0; i < 10; ++i) { // right panel
-        _vm->logic()->zoneSet(ZONE_ROOM, ZN_DESC_FIRST + i, 131, 7 + i * 13, 290, 18 + i * 13);
-        _vm->logic()->zoneSet(ZONE_ROOM, ZN_PAGE_FIRST + i, 300, 4 + i * 15, 319, 17 + i * 15);
+		_vm->grid()->setZone(GS_ROOM, ZN_DESC_FIRST + i, 131, 7 + i * 13, 290, 18 + i * 13);
+		_vm->grid()->setZone(GS_ROOM, ZN_PAGE_FIRST + i, 300, 4 + i * 15, 319, 17 + i * 15);
 	}
-    _vm->logic()->zoneSet(ZONE_ROOM, ZN_INFO_BOX, 273, 146, 295, 189);
-    _vm->logic()->zoneSet(ZONE_ROOM, ZN_MUSIC_TOGGLE, 125 - 16, 181, 135, 190);
-    _vm->logic()->zoneSet(ZONE_ROOM, ZN_VOICE_TOGGLE, 158 - 24, 155, 168, 164);
-    _vm->logic()->zoneSet(ZONE_ROOM, ZN_TEXT_TOGGLE, 125 - 16, 168, 135, 177);
+	_vm->grid()->setZone(GS_ROOM, ZN_INFO_BOX, 273, 146, 295, 189);
+	_vm->grid()->setZone(GS_ROOM, ZN_MUSIC_TOGGLE, 125 - 16, 181, 135, 190);
+	_vm->grid()->setZone(GS_ROOM, ZN_VOICE_TOGGLE, 158 - 24, 155, 168, 164);
+	_vm->grid()->setZone(GS_ROOM, ZN_TEXT_TOGGLE, 125 - 16, 168, 135, 177);
 
 	_vm->display()->setupNewRoom("journal", JOURNAL_ROOM);
 	_vm->bankMan()->load("journal.BBK", JOURNAL_BANK);
@@ -348,7 +350,7 @@ void Journal::handleMouseWheel(int inc) {
 
 void Journal::handleMouseDown(int x, int y) {
 
-	int16 zone = _vm->logic()->zoneIn(ZONE_ROOM, x, y);
+	int16 zone = _vm->grid()->findZoneForPos(GS_ROOM, x, y);
 	if (_mode == M_INFO_BOX) {
 		handleInfoBoxMode(_mode);
 	} else if (_mode == M_YES_NO) {

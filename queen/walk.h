@@ -113,7 +113,10 @@ private:
 	bool calc(uint16 oldPos, uint16 newPos, int16 oldx, int16 oldy, int16 x, int16 y);
 
 
-	WalkData _walkData[MAX_WALK_DATA];	
+	const Area *_roomArea;
+	uint16 _roomAreaCount;
+
+	WalkData _walkData[MAX_WALK_DATA];
 	uint16 _walkDataCount;
 	
 	uint16 _areaStrike[MAX_WALK_DATA];

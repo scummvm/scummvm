@@ -211,8 +211,6 @@ DISP_ROOM()					Logic::roomDisplay
 FIND_BOB()					Logic::findBob
 FIND_FRAME()				Logic::findFrame
 FIND_GRAPHIC()				Logic::graphicData
-FIND_SCALE()				Logic::findScale
-FIND_VERB()					Logic::findVerb
 P3_COPY_FROM()				Logic::objectCopy
 R_MAP()						Logic::handlePinnacleRoom
 REDISP_OBJECT()				Logic::roomRefreshObject
@@ -231,8 +229,6 @@ A_NAME_MAX					Logic::_numAName
 A_FILEstr 					Logic::_aFile
 A_FILE_MAX					Logic::_numAFile
 ACTOR_DATA_MAX				Logic::_numActors
-AREA						Logic::_area
-AREAMAX						Logic::_areaMax
 bamflag						BamScene::_flag
 bamindex					BamScene::_index
 DESCTOT						Logic::_numDescriptions
@@ -251,11 +247,11 @@ ITEM_DATA					Logic::_itemData
 NAMETOT						Logic::_numNames
 OBJ_DESC_DATA				Logic::_objectDescription
 OBJ_DESC_MAX				Logic::_numObjDesc
-OBJECT_BOX					Logic::_objectBox
+OBJECT_BOX					Grid::_objectBox
 OBJECT_DATA					Logic::_objectData
 OBJECT_DESCRstr				Logic::_objDescription
 OBJECT_NAMEstr				Logic::_objName
-OBJMAX						Logic::_objMax
+OBJMAX						Grid::_objMax
 OBJTOT						Logic::_numObjects
 OLDROOM,ROOM,NEW_ROOM  		Logic::_*oom
 ROOMTOT						Logic::_numRooms
@@ -416,13 +412,17 @@ WALKI						Walk::_walkDataCount
 
 ZONES
 =====
-ClearZones()				Logic::zoneClearAll
-SETUP_PANEL_ZONES()			Logic::zoneSetupPanel
-SETUP_ZONES()				Logic::zoneSetup
-SetZone()					Logic::zoneSet
-zone()						Logic::zoneIn / Logic::zoneInArea
+ClearZones()				Grid::clear
+FIND_SCALE()				Grid::findScale
+FIND_VERB()					Grid::findVerbUnderCursor
+SETUP_PANEL_ZONES()			Grid::setupPanel
+SETUP_ZONES()				Grid::setupNewRoom
+SetZone()					Grid::setZone
+zone()						Grid:findZoneForPos / Logic::findAreaForPos
 -
-zones						Logic::_zones
+AREA						Grid::_area
+AREAMAX						Grid::_areaMax
+zones						Grid::_zones
 
 
 (UNSORTED)

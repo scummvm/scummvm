@@ -36,23 +36,12 @@ enum RoomDisplayMode {
 	RDM_FADE_JOE_XY = 3  // display Joe at the current X, Y coords
 };
 
-enum {
-	ZONE_ROOM  = 0,
-	ZONE_PANEL = 1
-};
-
 enum JoeWalkMode {
 	JWM_NORMAL  = 0,
 	JWM_MOVE    = 1,
 	JWM_EXECUTE = 2,
 	JWM_SPEAK   = 3
 };
-
-struct ZoneSlot {
-	bool valid;
-	Box box;
-};
-
 
 class Credits;
 class Journal;
@@ -90,7 +79,6 @@ public:
 
 	ObjectData *objectData(int index) const;
 	uint16 roomData(int room) const { return _roomData[room]; }
-	uint16 objMax(int room) const { return _objMax[room]; } 
 	GraphicData *graphicData(int index) const { return &_graphicData[index]; }
 	ItemData *itemData(int index) const { return &_itemData[index]; }
 	uint16 itemDataCount() const { return _numItems; }
@@ -100,13 +88,8 @@ public:
 	uint16 objectForPerson(uint16 bobnum) const;
 	WalkOffData *walkOffPointForObject(uint16 obj) const;
 
-	Area *area(int room, int num) const { return &_area[room][num]; }
-	Area *currentRoomArea(int num) const;
-	uint16 areaMax(int room) const { return _areaMax[room]; }
-	uint16 currentRoomAreaMax() const { return _areaMax[_currentRoom]; }
 	uint16 walkOffCount() const { return _numWalkOffs; }
 	WalkOffData *walkOffData(int index) const { return &_walkOffData[index]; }
-	uint16 currentRoomObjMax() const { return _objMax[_currentRoom]; }
 	uint16 currentRoomData() const { return _roomData[_currentRoom]; }
 	GraphicAnim *graphicAnim(int index) const { return &_graphicAnim[index]; }
 	uint16 graphicAnimCount() const { return _numGraphicAnim; }
@@ -147,23 +130,12 @@ public:
 	const char *objectName(uint16 objNum) const { return _objName[objNum]; }
 	const char *objectTextualDescription(uint16 objNum) const { return _objDescription[objNum]; }
 
-	void zoneSet(uint16 screen, uint16 zone, uint16 x1, uint16 y1, uint16 x2, uint16 y2);
-	void zoneSet(uint16 screen, uint16 zone, const Box& box);
-	uint16 zoneIn(uint16 screen, uint16 x, uint16 y) const;
-	uint16 zoneInArea(uint16 screen, uint16 x, uint16 y) const;
-	void zoneClearAll(uint16 screen);
-	void zoneSetup();
-	void zoneSetupPanel();
-	Box &zoneBox(uint16 screen, uint16 index) { return _zones[screen][index].box; } 
-
 	void roomErase();
 	void roomSetupFurniture();
 	void roomSetupObjects();
 	uint16 roomRefreshObject(uint16 obj);
 	void roomSetup(const char *room, int comPanel, bool inCutaway);
 	void roomDisplay(uint16 room, RoomDisplayMode mode, uint16 joeScale, int comPanel, bool inCutaway);
-
-	uint16 findScale(uint16 x, uint16 y);
 
 	int16 entryObj() const { return _entryObj; }
 	void entryObj(int16 obj) { _entryObj = obj; }
@@ -195,10 +167,6 @@ public:
 	void makePersonSpeak(const char *sentence, Person *person, const char *voiceFilePrefix);
 	void startDialogue(const char *dlgFile, int personInRoom, char *cutaway);
 	void playCutaway(const char *cutFile, char *next = NULL);
-
-	Verb findVerbUnderCursor(int16 cursorx, int16 cursory) const;
-	uint16 findObjectUnderCursor(int16 cursorx, int16 cursory) const;
-	uint16 findObjectNumber(uint16 zoneNum) const;
 
 	void inventorySetup();
 	uint16 findInventoryItem(int invSlot) const;
@@ -284,8 +252,6 @@ public:
 	void stopCredits();
 
 	enum {
-		MAX_ZONES_NUMBER    = 32,
-		MAX_AREAS_NUMBER    = 11,
 		JOE_RESPONSE_MAX    = 40,
 		DEFAULT_TALK_SPEED  = 7 * 3,
 		GAME_STATE_COUNT    = 211,
@@ -315,9 +281,6 @@ protected:
 	//! Background music to play in room
 	uint16 *_sfxName;
 
-	//! Number of objects in room
-	int16 *_objMax;
-
 	//! Bounding box of object
 	Box *_objectBox;
 
@@ -337,12 +300,6 @@ protected:
 	ActorData *_actorData;
 	uint16 _numActors;
 
-	//! Areas in room
-	Area (*_area)[MAX_AREAS_NUMBER];
-
-	//! Number of areas in room
-	int16 *_areaMax;
-
 	//! Walk off point for an object
 	WalkOffData *_walkOffData;
 	uint16 _numWalkOffs;
@@ -352,9 +309,6 @@ protected:
 	
 	GraphicAnim *_graphicAnim;
 	uint16 _numGraphicAnim;
-
-	//! Current areas in room
-	ZoneSlot _zones[2][MAX_ZONES_NUMBER];
 
 	//! Actor position in room is _walkOffData[_entryObj]
 	int16 _entryObj;

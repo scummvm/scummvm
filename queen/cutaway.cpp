@@ -22,9 +22,10 @@
 #include "stdafx.h"
 #include "queen/cutaway.h"
 
-#include "queen/credits.h"
+#include "queen/bankman.h"
 #include "queen/display.h"
 #include "queen/graphics.h"
+#include "queen/grid.h"
 #include "queen/input.h"
 #include "queen/logic.h"
 #include "queen/queen.h"
@@ -337,7 +338,7 @@ void Cutaway::changeRooms(CutawayObject &object) {
 
 	if (_finalRoom != object.room) {
 		int firstObjectInRoom = _vm->logic()->roomData(object.room) + 1;
-		int lastObjectInRoom  = _vm->logic()->roomData(object.room) + _vm->logic()->objMax(object.room);
+		int lastObjectInRoom  = _vm->logic()->roomData(object.room) + _vm->grid()->objMax(object.room);
 
 		for (int i = firstObjectInRoom; i <= lastObjectInRoom; i++) {
 			ObjectData *objectData  = _vm->logic()->objectData(i);
@@ -1137,7 +1138,7 @@ void Cutaway::stop() {
 					pbs->x = x;
 					pbs->y = y;
 					if (inRange(object->image, -4, -3))
-						pbs->scale = _vm->logic()->findScale(x, y);
+						pbs->scale = _vm->grid()->findScale(x, y);
 				}
 
 				if (frame) {
@@ -1185,7 +1186,7 @@ void Cutaway::stop() {
 
 		joeBob->x = joeX;
 		joeBob->y = joeY;
-		_vm->logic()->joeScale(_vm->logic()->findScale(joeX, joeY));
+		_vm->logic()->joeScale(_vm->grid()->findScale(joeX, joeY));
 		_vm->logic()->joeFace();
 	}
 }
@@ -1238,11 +1239,11 @@ void Cutaway::updateGameState() {
 				// Turn area on or off
 
 				if (areaSubIndex > 0) {
-					Area *area = _vm->logic()->area(areaIndex, areaSubIndex);
+					Area *area = _vm->grid()->area(areaIndex, areaSubIndex);
 					area->mapNeighbours = ABS(area->mapNeighbours);
 				}
 				else {
-					Area *area = _vm->logic()->area(areaIndex, ABS(areaSubIndex));
+					Area *area = _vm->grid()->area(areaIndex, ABS(areaSubIndex));
 					area->mapNeighbours = -ABS(area->mapNeighbours);
 				}
 			}
@@ -1416,9 +1417,9 @@ int Cutaway::scale(CutawayObject &object) {
 			y = bob->y;
 		}
 
-		int zone = _vm->logic()->zoneInArea(0, x, y);
+		int zone = _vm->grid()->findAreaForPos(GS_ROOM, x, y);
 		if (zone > 0) {
-			Area *area = _vm->logic()->area(_vm->logic()->currentRoom(), zone);
+			Area *area = _vm->grid()->area(_vm->logic()->currentRoom(), zone);
 			scaling = area->calcScale(y);
 		}
 	}

@@ -23,6 +23,7 @@
 #include "queen/logic.h"
 
 #include "common/config-manager.h"
+#include "queen/bankman.h"
 #include "queen/command.h"
 #include "queen/credits.h"
 #include "queen/cutaway.h"
@@ -30,6 +31,7 @@
 #include "queen/defs.h"
 #include "queen/display.h"
 #include "queen/graphics.h"
+#include "queen/grid.h"
 #include "queen/input.h"
 #include "queen/journal.h"
 #include "queen/queen.h"
@@ -60,7 +62,7 @@ Logic::~Logic() {
 }
 
 void Logic::initialise() {	
-	int16 i, j;
+	int16 i;
 
 	// Step 1 : read queen.jas file and 'unserialize' some arrays
 
@@ -117,28 +119,7 @@ void Logic::initialise() {
 		_graphicData[i].readFromBE(ptr);
 	}
 
-	_objMax   = new int16[_numRooms + 1];
-	_areaMax  = new int16[_numRooms + 1];
-	_area     = new Area[_numRooms + 1][MAX_AREAS_NUMBER];
-
-	_objMax[0] = 0;
-	_areaMax[0] = 0;
-	memset(&_area[0], 0, sizeof(Area) * MAX_AREAS_NUMBER);
-	for (i = 1; i <= _numRooms; i++) {
-		_objMax[i] = (int16)READ_BE_UINT16(ptr); ptr += 2;
-		_areaMax[i] = (int16)READ_BE_UINT16(ptr); ptr += 2;
-		memset(&_area[i][0], 0, sizeof(Area));
-		for (j = 1; j <= _areaMax[i]; j++) {
-			assert(j < MAX_AREAS_NUMBER);
-			_area[i][j].readFromBE(ptr);
-		}
-	}
-
-	_objectBox = new Box[_numObjects + 1];
-	memset(&_objectBox[0], 0, sizeof(Box));
-	for (i = 1; i <= _numObjects; i++) {
-		_objectBox[i].readFromBE(ptr);
-	}
+	_vm->grid()->readDataFrom(_numObjects, _numRooms, ptr);
 
 	// Walk OFF Data
 	_numWalkOffs = READ_BE_UINT16(ptr);	ptr += 2;
@@ -263,7 +244,7 @@ void Logic::initialise() {
 	_vm->display()->setupPanel();
 	_vm->graphics()->bobSetupControl();
 	setupJoe();
-	zoneSetupPanel();
+	_vm->grid()->setupPanel();
 
 	_oldRoom = 0;
 }
@@ -274,14 +255,6 @@ ObjectData* Logic::objectData(int index) const {
 		return &_objectData[index];
 	else
 		error("[Logic::objectData] Invalid object data index: %i", index);
-}
-
-
-Area *Logic::currentRoomArea(int num) const {
-	if (num == 0 || num > _areaMax[_currentRoom]) {
-		error("Logic::currentRoomArea() - Bad area number = %d (max = %d), currentRoom = %d", num, _areaMax[_currentRoom], _currentRoom);
-	}
-	return &_area[_currentRoom][num];
 }
 
 
@@ -492,107 +465,6 @@ void Logic::gameState(int index, int16 newValue) {
 	}
 	else
 		error("[QueenLogic::gameState] invalid index: %i", index);
-}
-
-
-void Logic::zoneSet(uint16 screen, uint16 zone, uint16 x1, uint16 y1, uint16 x2, uint16 y2) {
-	debug(9, "Logic::zoneSet(%d, %d, (%d,%d), (%d,%d))", screen, zone, x1, y1, x2, y2);
-	ZoneSlot *pzs = &_zones[screen][zone];
-	pzs->valid = true;
-	pzs->box.x1 = x1;
-	pzs->box.y1 = y1;
-	pzs->box.x2 = x2;
-	pzs->box.y2 = y2;
-}
-
-
-void Logic::zoneSet(uint16 screen, uint16 zone, const Box& box) {
-	debug(9, "Logic::zoneSet(%d, %d, (%d,%d), (%d,%d))", screen, zone, box.x1, box.y1, box.x2, box.y2);
-	ZoneSlot *pzs = &_zones[screen][zone];
-	pzs->valid = true;
-	pzs->box = box;
-}
-
-
-uint16 Logic::zoneIn(uint16 screen, uint16 x, uint16 y) const {
-	debug(9, "Logic::zoneIn(%d, (%d,%d))", screen, x, y);
-	int i;
-	if (screen == ZONE_PANEL) {
-		y -= ROOM_ZONE_HEIGHT;
-	}
-	for(i = 1; i < MAX_ZONES_NUMBER; ++i) {
-		const ZoneSlot *pzs = &_zones[screen][i];
-		if (pzs->valid && pzs->box.contains(x, y)) {
-			return i;
-		}
-	}
-	return 0;
-}
-
-
-uint16 Logic::zoneInArea(uint16 screen, uint16 x, uint16 y) const {
-	uint16 zone = zoneIn(screen, x, y);
-	if (zone <= currentRoomObjMax()) {
-		zone = 0;
-	} else {
-		zone -= currentRoomObjMax();
-	}
-	return zone;
-}
-
-
-void Logic::zoneClearAll(uint16 screen) {
-	debug(9, "Logic::zoneClearAll(%d)", screen);
-	int i;
-	for(i = 1; i < MAX_ZONES_NUMBER; ++i) {
-		_zones[screen][i].valid = false;
-	}
-}
-
-
-void Logic::zoneSetup() {
-	debug(9, "Logic::zoneSetup()");
-	zoneClearAll(ZONE_ROOM);
-
-	int i;
-	int zoneNum;
-
-	// setup objects zones
-	uint16 maxObjRoom = currentRoomObjMax();
-	uint16 objRoomNum = currentRoomData();
-	zoneNum = 1;
-	for (i = objRoomNum + 1; i <= objRoomNum + maxObjRoom; ++i) {
-		if (_objectData[i].name != 0) {
-			zoneSet(ZONE_ROOM, zoneNum, _objectBox[i]);
-		}
-		++zoneNum;
-	}
-
-	// setup room zones (areas)
-	uint16 maxAreaRoom = currentRoomAreaMax();
-	for (zoneNum = 1; zoneNum <= maxAreaRoom; ++zoneNum) {
-		zoneSet(ZONE_ROOM, maxObjRoom + zoneNum, currentRoomArea(zoneNum)->box);
-	}
-}
-
-
-void Logic::zoneSetupPanel() {
-	// verbs 
-	int i;
-	for (i = 0; i <= 7; ++i) {
-		int x = i * 20;
-		zoneSet(ZONE_PANEL, i + 1, x, 10, x + 19, 49);
-	}
-
-	// inventory scrolls
-	zoneSet(ZONE_PANEL,  9, 160, 10, 179, 29);
-	zoneSet(ZONE_PANEL, 10, 160, 30, 179, 49);
-
-	// inventory items
-	zoneSet(ZONE_PANEL, 11, 180, 10, 213, 49);
-	zoneSet(ZONE_PANEL, 12, 214, 10, 249, 49);
-	zoneSet(ZONE_PANEL, 13, 250, 10, 284, 49);
-	zoneSet(ZONE_PANEL, 14, 285, 10, 320, 49);
 }
 
 
@@ -949,7 +821,7 @@ void Logic::roomSetup(const char *room, int comPanel, bool inCutaway) {
 	sprintf(filename, "%s.BBK", room);
 	_vm->bankMan()->load(filename, 15);
 
-	zoneSetup();
+	_vm->grid()->setupNewRoom(_currentRoom, _roomData[_currentRoom]);
 	_numFrames = 37 + FRAMES_JOE_XTRA;
 	roomSetupFurniture();
 	roomSetupObjects();
@@ -987,16 +859,6 @@ void Logic::roomDisplay(uint16 room, RoomDisplayMode mode, uint16 scale, int com
 	if (pod != NULL) {
 		_vm->walk()->moveJoe(0, pod->x, pod->y, inCutaway);
 	}
-}
-
-
-uint16 Logic::findScale(uint16 x, uint16 y) {
-	uint16 scale = 100;
-	uint16 areaNum = zoneInArea(ZONE_ROOM, x, y);
-	if(areaNum != 0) {
-		scale = currentRoomArea(areaNum)->calcScale(y);
-	}
-	return scale;
 }
 
 
@@ -1067,10 +929,10 @@ uint16 Logic::setupPersonInRoom(uint16 noun, uint16 curImage) {
 
 	const ActorData *pad = p.actor;
 	uint16 scale = 100;
-	uint16 a = zoneInArea(ZONE_ROOM, pad->x, pad->y);
+	uint16 a = _vm->grid()->findAreaForPos(GS_ROOM, pad->x, pad->y);
 	if (a > 0) {
 		// person is not standing in the area box, scale it accordingly
-		scale = currentRoomArea(a)->calcScale(pad->y);
+		scale = _vm->grid()->area(_currentRoom, a)->calcScale(pad->y);
 	}
 
 	_vm->bankMan()->unpack(pad->bobFrameStanding, p.bobFrame, p.actor->bankNum);
@@ -1158,9 +1020,9 @@ ObjectData *Logic::setupJoeInRoom(bool autoPosition, uint16 scale) {
 	if (scale > 0 && scale < 100) {
 		joeScale(scale);
 	} else {
-		uint16 a = zoneInArea(ZONE_ROOM, oldx, oldy);
+		uint16 a = _vm->grid()->findAreaForPos(GS_ROOM, oldx, oldy);
 		if (a > 0) {
-			joeScale(currentRoomArea(a)->calcScale(oldy));
+			joeScale(_vm->grid()->area(_currentRoom, a)->calcScale(oldy));
 		} else {
 			joeScale(100);
 		}
@@ -1399,55 +1261,6 @@ void Logic::makeJoeSpeak(uint16 descNum, bool objectType) {
 	char descFilePrefix[10];
 	sprintf(descFilePrefix, "JOE%04i", descNum);
 	makePersonSpeak(text, NULL, descFilePrefix);
-}
-
-
-Verb Logic::findVerbUnderCursor(int16 cursorx, int16 cursory) const {
-	static const Verb pv[] = {
-		VERB_NONE,
-		VERB_OPEN,
-		VERB_CLOSE,
-		VERB_MOVE,
-		VERB_GIVE,
-		VERB_LOOK_AT,
-		VERB_PICK_UP,
-		VERB_TALK_TO,
-		VERB_USE,
-		VERB_SCROLL_UP,
-		VERB_SCROLL_DOWN,
-		VERB_INV_1,
-		VERB_INV_2,
-		VERB_INV_3,
-		VERB_INV_4,
-	};
-	return pv[zoneIn(ZONE_PANEL, cursorx, cursory)];
-}
-
-
-uint16 Logic::findObjectUnderCursor(int16 cursorx, int16 cursory) const {
-	uint16 roomObj = 0;
-	if (cursory < ROOM_ZONE_HEIGHT) {
-		int16 x = cursorx + _vm->display()->horizontalScroll();
-		roomObj = zoneIn(ZONE_ROOM, x, cursory);
-	}
-	return roomObj;
-}
-
-
-uint16 Logic::findObjectNumber(uint16 zoneNum) const {
-	// l.316-327 select.c
-	uint16 obj = zoneNum;
-	uint16 objectMax = currentRoomObjMax();
-	debug(9, "Logic::findObjectNumber(%X, %X)", zoneNum, objectMax);
-	if (zoneNum > objectMax) {
-		// this is an area box, check for associated object
-		obj = currentRoomArea(zoneNum - objectMax)->object;
-		if (obj != 0) {
-			// there is an object, get its number
-			obj -= currentRoomData();
-		}
-	}
-	return obj;
 }
 
 
@@ -1814,7 +1627,7 @@ void Logic::handlePinnacleRoom() {
 
 		_vm->graphics()->textClear(5, 5);
 
-		uint16 curObj = findObjectUnderCursor(mx, my);
+		uint16 curObj = _vm->grid()->findObjectUnderCursor(mx, my);
 		if (curObj != 0 && curObj != prevObj) {
 			_entryObj = 0;
 			curObj += currentRoomData(); // global object number
@@ -1876,13 +1689,7 @@ void Logic::update() {
 		_credits->update();
 
 	if (_vm->debugger()->_drawAreas) {
-		for(int i = 1; i < MAX_ZONES_NUMBER; ++i) {
-			const ZoneSlot *pzs = &_zones[ZONE_ROOM][i];
-			if (pzs->valid) {
-				const Box *b = &pzs->box;
-				_vm->display()->drawBox(b->x1, b->y1, b->x2, b->y2, 3);	
-			}
-		}
+		_vm->grid()->drawZones();
 	}
 }
 
@@ -1929,8 +1736,8 @@ bool Logic::gameSave(uint16 slot, const char *desc) {
 	}
 	
 	for (i = 1; i <= _numRooms; i++)
-		for (j = 1; j <= _areaMax[i]; j++)
-			_area[i][j].writeToBE(ptr);
+		for (j = 1; j <= _vm->grid()->areaMax(i); j++)
+			_vm->grid()->area(i, j)->writeToBE(ptr);
 			
 	for (i = 0; i < TALK_SELECTED_COUNT; i++)
 			_talkSelected[i].writeToBE(ptr);
@@ -2000,8 +1807,8 @@ bool Logic::gameLoad(uint16 slot) {
 	}
 
 	for (i = 1; i <= _numRooms; i++)
-		for (j = 1; j <= _areaMax[i]; j++)
-			_area[i][j].readFromBE(ptr);
+		for (j = 1; j <= _vm->grid()->areaMax(i); j++)
+			_vm->grid()->area(i, j)->readFromBE(ptr);
 	
 	for (i = 0; i < TALK_SELECTED_COUNT; i++)
 		_talkSelected[i].readFromBE(ptr);
@@ -2076,7 +1883,7 @@ void Logic::sceneStop() {
 
 	_vm->display()->palSetAllDirty();
 	_vm->display()->showMouseCursor(true);
-	zoneSetupPanel();
+	_vm->grid()->setupPanel();
 }
 
 
@@ -2308,7 +2115,7 @@ void Logic::asmSetLightsOn() {
 
 
 void Logic::asmSetManequinAreaOn() {
-	Area *a = area(ROOM_FLODA_FRONTDESK, 7);
+	Area *a = _vm->grid()->area(ROOM_FLODA_FRONTDESK, 7);
 	a->mapNeighbours = ABS(a->mapNeighbours);
 }
 

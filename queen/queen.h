@@ -34,6 +34,7 @@ class Command;
 class Debugger;
 class Display;
 class Graphics;
+class Grid;
 class Input;
 class Logic;
 class Music;
@@ -53,6 +54,7 @@ public:
 	Debugger *debugger() const { return _debugger; }
 	Display *display() const { return _display; }
 	Graphics *graphics() const { return _graphics; }
+	Grid *grid() const { return _grid; }
 	Input *input() const { return _input; }
 	Logic *logic() const { return _logic; }
 	Music *music() const { return _music; }
@@ -95,6 +97,7 @@ protected:
 	Debugger *_debugger;
 	Display *_display;
 	Graphics *_graphics;
+	Grid *_grid;
 	Input *_input;
 	Logic *_logic;
 	Music *_music;

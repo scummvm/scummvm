@@ -25,6 +25,7 @@
 #include "queen/display.h"
 #include "queen/input.h"
 #include "queen/graphics.h"
+#include "queen/grid.h"
 #include "queen/logic.h"
 #include "queen/queen.h"
 #include "queen/sound.h"
@@ -506,9 +507,9 @@ void Command::grabCurrentSelection() {
 	_selPosX = _vm->input()->mousePosX();
 	_selPosY = _vm->input()->mousePosY();
 
-	uint16 zone = _vm->logic()->findObjectUnderCursor(_selPosX, _selPosY);
-	_state.noun = _vm->logic()->findObjectNumber(zone);
-	_state.verb = _vm->logic()->findVerbUnderCursor(_selPosX, _selPosY);
+	uint16 zone = _vm->grid()->findObjectUnderCursor(_selPosX, _selPosY);
+	_state.noun = _vm->grid()->findObjectNumber(zone);
+	_state.verb = _vm->grid()->findVerbUnderCursor(_selPosX, _selPosY);
 
 	_selPosX += _vm->display()->horizontalScroll();
 
@@ -772,7 +773,7 @@ bool Command::executeIfDialog(const char *description) {
 
 bool Command::handleWrongAction() {
 	// l.96-141 execute.c
-	uint16 objMax = _vm->logic()->currentRoomObjMax();
+	uint16 objMax = _vm->grid()->objMax(_vm->logic()->currentRoom());
 	uint16 roomData = _vm->logic()->currentRoomData();
 
 	// select without a command or WALK TO ; do a WALK
@@ -1074,7 +1075,7 @@ void Command::setAreas(uint16 command) {
 	for (i = 1; i <= _numCmdArea; ++i, ++cmdArea) {
 		if (cmdArea->id == command) {
 			uint16 areaNum = ABS(cmdArea->area);
-			Area *area = _vm->logic()->area(cmdArea->room, areaNum);
+			Area *area = _vm->grid()->area(cmdArea->room, areaNum);
 			if (cmdArea->area > 0) {
 				// turn on area
 				area->mapNeighbours = ABS(area->mapNeighbours);
@@ -1123,7 +1124,7 @@ void Command::setObjects(uint16 command) {
 						}
 						// invalidate object area
 						uint16 objZone = dstObj - _vm->logic()->currentRoomData();
-						_vm->logic()->zoneSet(ZONE_ROOM, objZone, 0, 0, 1, 1);
+						_vm->grid()->setZone(GS_ROOM, objZone, 0, 0, 1, 1);
 					}
 				}
 
@@ -1296,8 +1297,8 @@ void Command::lookAtSelectedObject() {
 
 
 void Command::lookForCurrentObject(int16 cx, int16 cy) {
-	uint16 obj = _vm->logic()->findObjectUnderCursor(cx, cy);
-	_state.noun = _vm->logic()->findObjectNumber(obj);
+	uint16 obj = _vm->grid()->findObjectUnderCursor(cx, cy);
+	_state.noun = _vm->grid()->findObjectNumber(obj);
 
 	if (_state.oldNoun == _state.noun) {
 		return;
@@ -1351,7 +1352,7 @@ void Command::lookForCurrentObject(int16 cx, int16 cy) {
 
 
 void Command::lookForCurrentIcon(int16 cx, int16 cy) {
-	_state.verb = _vm->logic()->findVerbUnderCursor(cx, cy);
+	_state.verb = _vm->grid()->findVerbUnderCursor(cx, cy);
 	if (_state.oldVerb != _state.verb) {
 
 		if (_state.action == VERB_NONE) {
