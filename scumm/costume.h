@@ -53,6 +53,7 @@ protected:
 	byte *_srcptr;
 	byte *_bgbak_ptr, *_backbuff_ptr, *_mask_ptr, *_mask_ptr_dest;
 	byte _maskval;
+	bool _use_mask, _use_charset_mask;
 	byte _shrval;
 	byte _width2;
 	byte _height2;
@@ -63,7 +64,6 @@ protected:
 	byte _scaleIndexX;						/* must wrap at 256 */
 	byte _scaleIndexY, _scaleIndexYTop;
 	int _left, _right;
-	int _dir2;
 	int _top, _bottom;
 	int _ypostop;
 	int _ypitch;
@@ -83,19 +83,8 @@ public:
 protected:
 	byte drawLimb(const CostumeData &cost, int limb);
 
-	void proc6();
-	void proc5();
-	void proc4();
 	void proc3();
-	void proc2();
-	void proc1();
-	void proc6_ami();
-	void proc5_ami();
-	void proc4_ami();
 	void proc3_ami();
-	void proc2_ami();
-	void proc1_ami();
-	void proc_special(byte mask);
 	byte mainRoutine(int limb, int frame);
 	void ignorePakCols(int num);
 };

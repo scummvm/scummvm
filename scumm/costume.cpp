@@ -81,13 +81,9 @@ byte CostumeRenderer::mainRoutine(int slot, int frame) {
 	int xmove, ymove, i, b, s;
 	uint scal;
 	bool scaling;
-	bool charsetmask, masking;
 	byte startScaleIndexX;
-	byte newAmiCost;
 	int ex1, ex2;
 	
-	newAmiCost = (_vm->_features & GF_AMIGA) != 0;
-
 	CHECK_HEAP
 	_maskval = 0xF;
 	_shrval = 4;
@@ -281,252 +277,32 @@ byte CostumeRenderer::mainRoutine(int slot, int frame) {
 
 	_bgbak_ptr = _vm->getResourceAddress(rtBuffer, 5) + _vm->virtscr[0].xstart + _ypos * _vm->_screenWidth + _xpos;
 	_backbuff_ptr = _vm->virtscr[0].screenPtr + _vm->virtscr[0].xstart + _ypos * _vm->_screenWidth + _xpos;
-	charsetmask =
-		_vm->hasCharsetMask(_left, _top + _vm->virtscr[0].topline, _right,
-												_vm->virtscr[0].topline + _bottom);
-	masking = false;
-	if (_vm->_features & GF_SMALL_HEADER)
-		masking = (_zbuf != 0);
-	else if (_zbuf != 0) {
-		masking =
-			_vm->isMaskActiveAt(_left, _top, _right, _bottom,
-													_vm->getResourceAddress(rtBuffer, 9) +
-													_vm->gdi._imgBufOffs[_zbuf] +
-													_vm->_screenStartStrip);
-	}
 
-	_mask_ptr = NULL;
-	if (masking || charsetmask) {
-		_mask_ptr = _vm->getResourceAddress(rtBuffer, 9) + _ypos * _numStrips + _vm->_screenStartStrip;
-		_imgbufoffs = _vm->gdi._imgBufOffs[_zbuf];
-		if (!charsetmask && _zbuf != 0)
-			_mask_ptr += _imgbufoffs;
-		_mask_ptr_dest = _mask_ptr + _xpos / 8;
-	}
+	_mask_ptr = _vm->getResourceAddress(rtBuffer, 9) + _ypos * _numStrips + _vm->_screenStartStrip;
+	_imgbufoffs = _vm->gdi._imgBufOffs[_zbuf];
+	_mask_ptr_dest = _mask_ptr + _xpos / 8;
+
+	// FIXME: Masking used to be conditional. Will it cause regressions
+	// to always do it? I don't think so, since the behaviour used to be
+	// to mask if there was a mask to apply, unless _zbuf is 0.
+	//
+	// However, when _zbuf is 0 masking and charset masking are the same
+	// thing. I believe the only thing that is ever written to the
+	// frontmost mask buffer is the charset mask, except in Sam & Max
+	// where it's also used for the inventory box and conversation icons.
+
+	_use_mask = true;
+	_use_charset_mask = true;
 
 	CHECK_HEAP
-	if (_shadow_mode) {
-		proc_special((masking << 1) + charsetmask);
-		return b;
-	}
 
-	switch ((newAmiCost << 3) | (scaling << 2) | (masking << 1) | (charsetmask ? 1 : 0)) {
-	case 0:
-		proc6();										// no scaling, no masking, no charsetmask
-		break;
-	case 1:
-	case 2:
-		proc5();										// no scaling, masking or charsetmask
-		break;
-	case 3:
-		proc4();										// no scaling, masking and charsetmask
-		break;
-	case 4:
-		proc1();										// scaling, no masking, no charsetmask
-		break;
-	case 5:
-	case 6:
-		proc2();										// scaling, masking or charsetmask
-		break;
-	case 7:
-		proc3();										// scaling, masking and charsetmask
-		break;
-	case 8:
-		proc6_ami();								// no scaling, no masking, no charsetmask (Amiga)
-		break;
-	case 9:
-	case 10:
-		proc5_ami();								// no scaling, masking or charsetmask (Amiga)
-		break;
-	case 11:
-		proc4_ami();								// no scaling, masking and charsetmask (Amiga)
-		break;
-	case 12:
-		proc1_ami();								// scaling, no masking, no charsetmask (Amiga)
-		break;
-	case 13:
-	case 14:
-		proc2_ami();								// scaling, masking or charsetmask (Amiga)
-		break;
-	case 15:
-		proc3_ami();								// scaling, masking and charsetmask (Amiga)
-		break;
-	}
+	if (_vm->_features & GF_AMIGA)
+		proc3_ami();
+	else
+		proc3();
 
 	CHECK_HEAP
 	return b;
-}
-
-void CostumeRenderer::proc6() {
-	byte *src, *dst;
-	byte len, height, pcolor, width;
-	uint y;
-	int color;
-	uint scrheight;
-
-	y = _ypos;
-	src = _srcptr;
-	dst = _backbuff_ptr;
-	len = _replen;
-	color = _repcolor;
-	height = _height2;
-	scrheight = _outheight;
-	width = _width2;
-
-	if (_docontinue)
-		goto StartPos;
-
-	do {
-		len = *src++;
-		color = len >> _shrval;
-		len &= _maskval;
-		if (!len)
-			len = *src++;
-
-		do {
-			if (color && y < scrheight) {
-				pcolor = _palette[color];
-				if (pcolor == 13 && _shadow_table)
-					pcolor = _shadow_table[*dst];
-				*dst = pcolor;
-			}
-
-			dst += _vm->_screenWidth;
-			y++;
-			if (!--height) {
-				if (!--width)
-					return;
-				height = _height;
-				dst -= _ypitch;
-				y = _ypostop;
-			}
-		StartPos:;
-		} while (--len);
-	} while (1);
-}
-
-void CostumeRenderer::proc5() {
-	byte *mask, *src, *dst;
-	byte maskbit, len, height, pcolor;
-	uint y, scrheight;
-	int color;
-
-	mask = _mask_ptr = _mask_ptr_dest;
-	maskbit = revBitMask[_xpos & 7];
-	y = _ypos;
-	src = _srcptr;
-	dst = _backbuff_ptr;
-	len = _replen;
-	color = _repcolor;
-	height = _height2;
-	scrheight = _outheight;
-
-	if (_docontinue)
-		goto StartPos;
-
-	do {
-		len = *src++;
-		color = len >> _shrval;
-		len &= _maskval;
-		if (!len)
-			len = *src++;
-
-		do {
-			if (color && y < scrheight && !(*mask & maskbit)) {
-				pcolor = _palette[color];
-				if (pcolor == 13 && _shadow_table)
-					pcolor = _shadow_table[*dst];
-				*dst = pcolor;
-			}
-			dst += _vm->_screenWidth;
-			y++;
-			mask += _numStrips;
-			if (!--height) {
-				if (!--_width2)
-					return;
-				height = _height;
-				dst -= _ypitch;
-				y = _ypostop;
-				if (_scaleIndexXStep != 1) {
-					maskbit <<= 1;
-					if (!maskbit) {
-						maskbit = 1;
-						_mask_ptr--;
-					}
-				} else {
-					maskbit >>= 1;
-					if (!maskbit) {
-						maskbit = 0x80;
-						_mask_ptr++;
-					}
-				}
-				mask = _mask_ptr;
-			}
-		StartPos:;
-		} while (--len);
-	} while (1);
-}
-
-void CostumeRenderer::proc4() {
-	byte *mask, *src, *dst;
-	byte maskbit, len, height, pcolor;
-	uint y, scrheight;
-	int color;
-
-	mask = _mask_ptr = _mask_ptr_dest;
-	maskbit = revBitMask[_xpos & 7];
-	y = _ypos;
-	src = _srcptr;
-	dst = _backbuff_ptr;
-	len = _replen;
-	color = _repcolor;
-	height = _height2;
-	scrheight = _outheight;
-
-	if (_docontinue)
-		goto StartPos;
-
-	do {
-		len = *src++;
-		color = len >> _shrval;
-		len &= _maskval;
-		if (!len)
-			len = *src++;
-
-		do {
-			if (color && y < scrheight && !((*mask | mask[_imgbufoffs]) & maskbit)) {
-				pcolor = _palette[color];
-				if (pcolor == 13 && _shadow_table)
-					pcolor = _shadow_table[*dst];
-				*dst = pcolor;
-			}
-			dst += _vm->_screenWidth;
-			y++;
-			mask += _numStrips;
-			if (!--height) {
-				if (!--_width2)
-					return;
-				height = _height;
-				dst -= _ypitch;
-				y = _ypostop;
-				if (_scaleIndexXStep != 1) {
-					maskbit <<= 1;
-					if (!maskbit) {
-						maskbit = 1;
-						_mask_ptr--;
-					}
-				} else {
-					maskbit >>= 1;
-					if (!maskbit) {
-						maskbit = 0x80;
-						_mask_ptr++;
-					}
-				}
-				mask = _mask_ptr;
-			}
-		StartPos:;
-		} while (--len);
-	} while (1);
 }
 
 void CostumeRenderer::proc3() {
@@ -534,6 +310,7 @@ void CostumeRenderer::proc3() {
 	byte maskbit, len, height, pcolor, width;
 	int color, t;
 	uint y;
+	bool masked;
 
 	mask = _mask_ptr_dest;
 	maskbit = revBitMask[_xpos & 7];
@@ -556,11 +333,20 @@ void CostumeRenderer::proc3() {
 			len = *src++;
 
 		do {
-			if (cost_scaleTable[_scaleIndexY++] < _scaleY) {
-				if (color && y < _outheight && !((*mask | mask[_imgbufoffs]) & maskbit)) {
-					pcolor = _palette[color];
-					if (pcolor == 13 && _shadow_table)
-						pcolor = _shadow_table[*dst];
+			if (_scaleY == 255 || cost_scaleTable[_scaleIndexY++] < _scaleY) {
+				masked = (_use_mask && (mask[_imgbufoffs] & maskbit)) || (_use_charset_mask && (mask[0] & maskbit));
+				
+				if (color && y < _outheight && !masked) {
+					// FIXME: Fully implement _shadow_mode.
+					// For now, it's enough for Sam & Max
+					// transparency.
+					if (_shadow_mode & 0x20) {
+						pcolor = _vm->_proc_special_palette[*dst];
+					} else {
+						pcolor = _palette[color];
+						if (pcolor == 13 && _shadow_table)
+							pcolor = _shadow_table[*dst];
+					}
 					*dst = pcolor;
 				}
 				dst += _vm->_screenWidth;
@@ -575,7 +361,7 @@ void CostumeRenderer::proc3() {
 				_scaleIndexY = _scaleIndexYTop;
 				t = _scaleIndexX;
 				_scaleIndexX = t + _scaleIndexXStep;
-				if (cost_scaleTable[t] < _scaleX) {
+				if (_scaleX == 255 || cost_scaleTable[t] < _scaleX) {
 					_xpos += _scaleIndexXStep;
 					if (_xpos < 0 || _xpos >= _vm->_screenWidth)
 						return;
@@ -586,311 +372,16 @@ void CostumeRenderer::proc3() {
 				mask = _mask_ptr + (_xpos >> 3);
 			}
 		StartPos:;
-		} while (--len);
-	} while (1);
-}
-
-void CostumeRenderer::proc2() {
-	byte *mask, *src, *dst;
-	byte maskbit, len, height, pcolor, width;
-	int color, t;
-	uint y;
-
-	mask = _mask_ptr_dest;
-	maskbit = revBitMask[_xpos & 7];
-	y = _ypos;
-	src = _srcptr;
-	dst = _backbuff_ptr;
-	len = _replen;
-	color = _repcolor;
-	height = _height2;
-	width = _width2;
-
-	if (_docontinue)
-		goto StartPos;
-
-	do {
-		len = *src++;
-		color = len >> _shrval;
-		len &= _maskval;
-		if (!len)
-			len = *src++;
-
-		do {
-			if (cost_scaleTable[_scaleIndexY++] < _scaleY) {
-				if (color && y < _outheight && !(*mask & maskbit)) {
-					pcolor = _palette[color];
-					if (pcolor == 13 && _shadow_table)
-						pcolor = _shadow_table[*dst];
-					*dst = pcolor;
-				}
-				dst += _vm->_screenWidth;
-				mask += _numStrips;
-				y++;
-			}
-			if (!--height) {
-				if (!--width)
-					return;
-				height = _height;
-				y = _ypostop;
-				_scaleIndexY = _scaleIndexYTop;
-				t = _scaleIndexX;
-				_scaleIndexX = t + _scaleIndexXStep;
-				if (cost_scaleTable[t] < _scaleX) {
-					_xpos += _scaleIndexXStep;
-					if (_xpos < 0 || _xpos >= _vm->_screenWidth)
-						return;
-					maskbit = revBitMask[_xpos & 7];
-					_backbuff_ptr += _scaleIndexXStep;
-				}
-				dst = _backbuff_ptr;
-				mask = _mask_ptr + (_xpos >> 3);
-			}
-		StartPos:;
-		} while (--len);
-	} while (1);
-}
-
-void CostumeRenderer::proc1() {
-	byte *mask, *src, *dst, *dstorg;
-	byte maskbit, len, height, pcolor, width;
-	int color, t;
-	uint y;
-
-	mask = _mask_ptr = _mask_ptr_dest;
-	maskbit = revBitMask[_xpos & 7];
-	y = _ypos;
-	src = _srcptr;
-	dstorg = dst = _backbuff_ptr;
-	len = _replen;
-	color = _repcolor;
-	height = _height2;
-	width = _width2;
-
-	if (_docontinue)
-		goto StartPos;
-
-	do {
-		len = *src++;
-		color = len >> _shrval;
-		len &= _maskval;
-		if (!len)
-			len = *src++;
-
-		do {
-			if (cost_scaleTable[_scaleIndexY++] < _scaleY) {
-				if (color && y < _outheight) {
-					pcolor = _palette[color];
-					if (pcolor == 13 && _shadow_table)
-						pcolor = _shadow_table[*dst];
-					*dst = pcolor;
-				}
-				dst += _vm->_screenWidth;
-				y++;
-			}
-			if (!--height) {
-				if (!--width)
-					return;
-				height = _height;
-				y = _ypostop;
-				_scaleIndexY = _scaleIndexYTop;
-				t = _scaleIndexX;
-				_scaleIndexX = t + _scaleIndexXStep;
-				if (cost_scaleTable[t] < _scaleX) {
-					_xpos += _scaleIndexXStep;
-					if (_xpos < 0 || _xpos >= _vm->_screenWidth)
-						return;
-					_backbuff_ptr += _scaleIndexXStep;
-				}
-				dst = _backbuff_ptr;
-			}
-		StartPos:;
-		} while (--len);
-	} while (1);
-}
-
-void CostumeRenderer::proc6_ami() {
-	byte len;
-	byte *src, *dst;
-	byte width, height, pcolor;
-	int color;
-	int step = _scaleIndexXStep;
-	int x;
-	int y;
-	int scrheight;
-
-	x = _xpos;
-	y = _ypos;
-	src = _srcptr;
-	dst = _backbuff_ptr;
-	scrheight = _outheight;
-	width = _width;
-	height = _height2;
-
-	do {
-		len = *src++;
-		color = len >> _shrval;
-		len &= _maskval;
-		if (!len)
-			len = *src++;
-
-		do {
-			if (color && x >= 0 && x < _vm->_screenWidth) {
-				pcolor = _palette[color];
-/*				  if (pcolor == 13 && _shadow_table)
-					pcolor = _shadow_table[*dst];*/
-				*dst = pcolor;
-			}
-
-			dst += step;
-			x += step;
-			if (!--width) {
-				if (!--height)
-					return;
-				width = _width;
-				dst += _vm->_screenWidth - step * _width;
-				x = _xpos;
-				y++;
-				if (y >= scrheight)
-					return;
-			}
-		} while (--len);
-	} while (1);
-}
-
-void CostumeRenderer::proc5_ami() {
-	byte *mask, *src, *dst;
-	byte maskbit, len, width, height, pcolor;
-	uint y, scrheight;
-	int color, x;
-	int step = _scaleIndexXStep;
-
-	mask = _mask_ptr = _mask_ptr_dest;
-	maskbit = revBitMask[_xpos & 7];
-	x = _xpos;
-	y = _ypos;
-	src = _srcptr;
-	dst = _backbuff_ptr;
-	scrheight = _outheight;
-	width = _width;
-	height = _height2;
-
-	do {
-		len = *src++;
-		color = len >> _shrval;
-		len &= _maskval;
-		if (!len)
-			len = *src++;
-
-		do {
-			if (color && x >=0 && x < _vm->_screenWidth && !(*mask & maskbit)) {
-				pcolor = _palette[color];
-/*				  if (pcolor == 13 && _shadow_table)
-					pcolor = _shadow_table[*dst];*/
-				*dst = pcolor;
-			}
-			dst += step;
-			x += step;
-			if (step != 1) {
-				maskbit <<= 1;
-				if (!maskbit)
-				{
-					maskbit = 1;
-					mask--;
-				}
-			} else {
-				maskbit >>= 1;
-				if (!maskbit)
-				{
-					maskbit = 0x80;
-					mask++;
-				}
-			}
-			if (!--width) {
-				if (!--height)
-					return;
-				width = _width;
-				x = _xpos;
-				y++;
-				dst += _vm->_screenWidth - step * _width;
-				_mask_ptr += _numStrips;
-				mask = _mask_ptr;
-				maskbit = revBitMask[_xpos & 7];
-				if (y >= scrheight)
-					return;
-			}
-		} while (--len);
-	} while (1);
-}
-
-void CostumeRenderer::proc4_ami() {
-	byte *mask, *src, *dst;
-	byte maskbit, len, width, height, pcolor;
-	uint y, scrheight;
-	int color, x;
-	int step = _scaleIndexXStep;
-
-	mask = _mask_ptr = _mask_ptr_dest;
-	maskbit = revBitMask[_xpos & 7];
-	x = _xpos;
-	y = _ypos;
-	src = _srcptr;
-	dst = _backbuff_ptr;
-	scrheight = _outheight;
-	height = _height2;
-	width = _width;
-
-	do {
-		len = *src++;
-		color = len >> _shrval;
-		len &= _maskval;
-		if (!len)
-			len = *src++;
-
-		do {
-			if (color && x >= 0 && x < _vm->_screenWidth && !((*mask | mask[_imgbufoffs]) & maskbit)) {
-				pcolor = _palette[color];
-/*				  if (pcolor == 13 && _shadow_table)
-					pcolor = _shadow_table[*dst];*/
-				*dst = pcolor;
-			}
-			dst += step;
-			x += step;
-			if (step != 1) {
-				maskbit <<= 1;
-				if (!maskbit) {
-					maskbit = 1;
-					mask--;
-				}
-			} else {
-				maskbit >>= 1;
-				if (!maskbit) {
-					maskbit = 0x80;
-					mask++;
-				}
-			}
-			if (!--width) {
-				if (!--height)
-					return;
-				width = _width;
-				y++;
-				x = _xpos;
-				dst += _vm->_screenWidth - step * _width;
-				_mask_ptr += _numStrips;
-				mask = _mask_ptr;
-				maskbit = revBitMask[_xpos & 7];
-				if (y >= scrheight)
-					return;
-			}
 		} while (--len);
 	} while (1);
 }
 
 void CostumeRenderer::proc3_ami() {
 	byte *mask, *src, *dst;
-	byte maskbit, len, height, pcolor, width;
+	byte maskbit, len, height, width;
 	int color, t;
 	uint y;
+	bool masked;
 	int oldXpos, oldScaleIndexX;
 
 	mask = _mask_ptr_dest;
@@ -910,17 +401,16 @@ void CostumeRenderer::proc3_ami() {
 		if (!len)
 			len = *src++;
 		do {
-			if (cost_scaleTable[_scaleIndexY] < _scaleY) {
-				if (color && _xpos >= 0 && _xpos < _vm->_screenWidth && !((*mask | mask[_imgbufoffs]) & maskbit)) {
-					pcolor = _palette[color];
-/*					  if (pcolor == 13 && _shadow_table)
-						pcolor = _shadow_table[*dst];*/
-					*dst = pcolor;
+			if (_scaleY == 255 || cost_scaleTable[_scaleIndexY] < _scaleY) {
+				masked = (_use_mask && (mask[_imgbufoffs] & maskbit)) || (_use_charset_mask && (mask[0] & maskbit));
+				
+				if (color && _xpos >= 0 && _xpos < _vm->_screenWidth && !masked) {
+					*dst = _palette[color];
 				}
 
 				t = _scaleIndexX;
 				_scaleIndexX = t + _scaleIndexXStep;
-				if (cost_scaleTable[t] < _scaleX) {
+				if (_scaleX == 255 || cost_scaleTable[t] < _scaleX) {
 					_xpos += _scaleIndexXStep;
 					dst += _scaleIndexXStep;
 					maskbit = revBitMask[_xpos & 7];
@@ -945,233 +435,6 @@ void CostumeRenderer::proc3_ami() {
 				_scaleIndexX = oldScaleIndexX;
 				_scaleIndexY++;
 			}
-		} while (--len);
-	} while (1);
-}
-
-void CostumeRenderer::proc2_ami() {
-	byte *mask, *src, *dst;
-	byte maskbit, len, height, pcolor, width;
-	int color, t;
-	uint y;
-	int oldXpos, oldScaleIndexX;
-
-	mask = _mask_ptr_dest;
-	dst = _backbuff_ptr;
-	height = _height2;
-	width = _width;
-	src = _srcptr;
-	maskbit = revBitMask[_xpos & 7];
-	y = _ypos;
-
-	oldXpos = _xpos;
-	oldScaleIndexX = _scaleIndexX;
-
-	do {
-		len = *src++;
-		color = len >> _shrval;
-		len &= _maskval;
-		if (!len)
-			len = *src++;
-		do {
-			if (cost_scaleTable[_scaleIndexY] < _scaleY) {
-				if (color && _xpos >= 0 && _xpos < _vm->_screenWidth && !(*mask & maskbit)) {
-					pcolor = _palette[color];
-/*					  if (pcolor == 13 && _shadow_table)
-						pcolor = _shadow_table[*dst];*/
-					*dst = pcolor;
-				}
-				t = _scaleIndexX;
-				_scaleIndexX = t + _scaleIndexXStep;
-				if (cost_scaleTable[t] < _scaleX) {
-					_xpos += _scaleIndexXStep;
-					dst += _scaleIndexXStep;
-					maskbit = revBitMask[_xpos & 7];
-					_backbuff_ptr += _scaleIndexXStep;
-				}
-				mask = _mask_ptr + (_xpos >> 3);
-			}
-			if (!--width) {
-				if (!--height)
-					return;
-
-				if (y >= _outheight)
-					return;
-
-				if (_xpos != oldXpos) {
-					dst += _vm->_screenWidth - (_xpos - oldXpos);
-					_mask_ptr += _numStrips;
-					mask = _mask_ptr;
-					y++;
-				}
-				width = _width;
-				_xpos = oldXpos;
-				_scaleIndexX = oldScaleIndexX;
-				_scaleIndexY++;
-			}
-		} while (--len);
-	} while (1);
-}
-
-void CostumeRenderer::proc1_ami() {
-	byte *mask, *src, *dst;
-	byte maskbit, len, height, pcolor, width;
-	uint y;
-	int color;
-	int t, x;
-	int oldXpos, oldScaleIndexX;
-
-	mask = _mask_ptr = _mask_ptr_dest;
-	maskbit = revBitMask[_xpos & 7];
-	x = _xpos;
-	y = _ypos;
-
-	dst = _backbuff_ptr;
-	height = _height2;
-	width = _width;
-	src = _srcptr;
-
-	oldXpos = _xpos;
-	oldScaleIndexX = _scaleIndexX;
-
-	do {
-		len = *src++;
-		color = len >> _shrval;
-		len &= _maskval;
-		if (!len)
-			len = *src++;
-
-		do {
-			if (cost_scaleTable[_scaleIndexY] < _scaleY) {
-				if (color && _xpos >= 0 && _xpos < _vm->_screenWidth) {
-					pcolor = _palette[color];
-/*					  if (pcolor == 13 && _shadow_table)
-						pcolor = _shadow_table[*dst];*/
-					*dst = pcolor;
-				}
-
-				t = _scaleIndexX;
-				_scaleIndexX = t + _scaleIndexXStep;
-				if (cost_scaleTable[t] < _scaleX) {
-					_xpos += _scaleIndexXStep;
-					dst += _scaleIndexXStep;
-				}
-			}
-			if (!--width) {
-				if (!--height)
-					return;
-
-				if (y >= _outheight)
-					return;
-
-				if (_xpos != oldXpos) {
-					dst += _vm->_screenWidth - (_xpos - oldXpos);
-					y++;
-				}
-				width = _width;
-				_xpos = oldXpos;
-				_scaleIndexX = oldScaleIndexX;
-				_scaleIndexY++;
-			}
-		} while (--len);
-	} while (1);
-}
-
-void CostumeRenderer::proc_special(byte mask2) {
-	byte *mask, *src, *dst, *dstorg;
-	byte maskbit, len, height, pcolor, width;
-	uint y;
-	int color;
-	int t;
-
-	byte shadow1;
-	byte shadow2;
-	byte shadow3;
-	byte shadow4;
-	byte shadow5;
-
-	shadow1 = _shadow_mode & 0x80;
-	shadow2 = _shadow_mode & 0x40;
-	shadow3 = _shadow_mode & 0x20;
-	shadow4 = _shadow_mode & 0x10;
-	shadow5 = _shadow_mode & 0x0F;
-
-	mask = _mask_ptr = _mask_ptr_dest;
-	maskbit = revBitMask[_xpos & 7];
-	y = _ypos;
-
-	mask = _mask_ptr_dest;
-	dstorg = dst = _backbuff_ptr;
-	height = _height2;
-	width = _width2;
-	len = _replen;
-	color = _repcolor;
-	src = _srcptr;
-
-	if (_mirror == 0)
-		shadow5 = -shadow5;
-
-	maskbit = revBitMask[_xpos & 7];
-
-	dst = _backbuff_ptr;
-
-	if (mask2 != 0 && mask2 < 3)
-		_imgbufoffs = 0;
-
-	if (_docontinue)
-		goto StartPos;
-
-	do {
-		len = *src++;
-		color = len >> _shrval;
-		len &= _maskval;
-		if (!len)
-			len = *src++;
-
-		do {												// ok
-			if (cost_scaleTable[_scaleIndexY++] < _scaleY) {
-				if (color && y < _outheight) {
-					if (!mask2 || (mask2 && !((*mask | mask[_imgbufoffs]) & maskbit))) {
-						if (shadow3 == 0) {
-							pcolor = _palette[color];
-							if (pcolor != 13)
-								goto proc_special_end;
-
-						}
-						if (shadow2 != 0) {
-							warning("proc_special: shadow2 unimplemented");
-							pcolor = 0;
-						} else							// we don't need all the random stuff, just the background copy
-						{
-							pcolor = _vm->_proc_special_palette[*dst];
-						}
-					proc_special_end:;
-						*dst = pcolor;
-					}
-				}
-				dst += _vm->_screenWidth;
-				mask += _numStrips;
-				y++;
-			}
-			if (!--height) {
-				if (!--width)
-					return;
-				height = _height;
-				y = _ypostop;
-				_scaleIndexY = _scaleIndexYTop;
-				t = _scaleIndexX;
-				_scaleIndexX = t + _scaleIndexXStep;
-				if (cost_scaleTable[t] < _scaleX) {
-					_xpos += _scaleIndexXStep;
-					if (_xpos < 0 || _xpos >= _vm->_screenWidth)
-						return;
-					maskbit = revBitMask[_xpos & 7];
-					_backbuff_ptr += _scaleIndexXStep;
-				}
-				dst = _backbuff_ptr;
-				mask = _mask_ptr + (_xpos >> 3);
-			}
-		StartPos:;
 		} while (--len);
 	} while (1);
 }
