@@ -164,7 +164,7 @@ R_GAME_DISPLAYINFO IHNM_DisplayInfo = {
 	248, 255  /* Overlay palette start index and length */
 };
 
-R_GAME_RESOURCEINFO IHNM_Resources[] = {
+R_GAME_RESOURCEINFO IHNM_Resources = {
 	IHNM_SCENE_LUT,  /* Scene lookup table RN */
 	IHNM_SCRIPT_LUT, /* Script lookup table RN */
 	
@@ -268,7 +268,7 @@ R_GAMEDESC GameDescs[] = {
 		  
 		0,
 
-		IHNM_Resources,
+		&IHNM_Resources,
 	  
 		ARRAYSIZE(IHNMDEMO_GameFiles),
 		IHNMDEMO_GameFiles,
@@ -292,7 +292,7 @@ R_GAMEDESC GameDescs[] = {
 			  
 		1,
 
-		IHNM_Resources,
+		&IHNM_Resources,
 
 		ARRAYSIZE(IHNMCD_GameFiles),
 		IHNMCD_GameFiles,

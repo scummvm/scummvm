@@ -129,7 +129,7 @@ bool ResourceFile::loadResource(int32 rn, byte **res, int32 *res_len) {
 
 	assert(res != NULL && res_len != NULL);
 	*res = NULL;
-	*res_len = NULL;
+	*res_len = 0;
 
 	if (!R_PBOUNDS(rn, _resTblCt)) {
 		return false;
@@ -151,7 +151,7 @@ bool ResourceFile::loadResource(int32 rn, byte **res, int32 *res_len) {
 
 	*res = new_res;
 	*res_len = new_res_len;
-		
+
 	return true;
 }
 
