@@ -2,7 +2,7 @@
 #
 # Some things this script could/should do when finished
 #
-# * detect whether its a GNU compiler or not (for compiler settings)
+# * detect whether it's a GNU compiler or not (for compiler settings)
 # * command line options to...
 #   - override the host settings (for cross compiles
 #   - whether to do a debug build (with -g) or an optimized build (-O3 etc.)
@@ -412,15 +412,22 @@ done;
 
 CXXFLAGS="$CXXFLAGS $DEBFLAGS"
 
-if test "$_host" = "linupy"; then
+case $_host in
+linupy)
     _host_os=linux
     _host_cpu=arm
-else
-	guessed_host=`$_srcdir/config.guess`
+    ;;
+arm-riscos-aof)
+    _host_os=riscos
+    _host_cpu=arm
+    ;;
+*)
+    guessed_host=`$_srcdir/config.guess`
     _host_cpu=`echo $guessed_host | sed 's/^\([^-]*\)-\([^-]*\)-\(.*\)$/\1/'`
     _host_os=`echo $guessed_host | sed 's/^\([^-]*\)-\([^-]*\)-\(.*\)$/\3/'`
     _host_vendor=`echo $guessed_host | sed 's/^\([^-]*\)-\([^-]*\)-\(.*\)$/\2/'`
-fi
+    ;;
+esac
 
 #
 # Determine extension used for executables
@@ -428,6 +435,9 @@ fi
 case $_host_os in
 mingw* | cygwin*)
 	EXEEXT=".exe"
+	;;
+arm-riscos-aof)
+	EXEEXT=",ff8"
 	;;
 *)
 	EXEEXT=""
@@ -481,6 +491,10 @@ case $cxx_version in
 		_cxx_minor=95
 		cxx_version="$cxx_version, ok"
 		cxx_verc_fail=no
+		;;
+	3_4)
+		_cxx_major=3
+		_mxx_minor=4
 		;;
 	'not found')
 		cxx_verc_fail=yes
@@ -570,7 +584,7 @@ fi
 if test -n "$_host"; then
     # Cross-compiling mode - add your target here if needed
     case "$_host" in
-	linupy)
+	linupy|arm-riscos-aof)
 	    echo "Cross-compiling to $_host, forcing endianness, alignment and type sizes"
 	    DEFINES="$DEFINES -DUNIX"
 	    _def_endianness='#define SCUMM_LITTLE_ENDIAN'
