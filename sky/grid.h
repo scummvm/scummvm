@@ -24,6 +24,7 @@
 
 #include "stdafx.h"
 #include "common/scummsys.h"
+#include "skydefs.h"
 
 namespace Sky {
 
