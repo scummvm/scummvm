@@ -242,6 +242,7 @@ SimonSound::SimonSound(const byte game, const GameSpecificSettings *gss, const C
 	_ambient_paused = false;
 
 	_filenums = 0;
+	_last_voice_file = 0;
 	_offsets = 0;
 
 	_voice_handle = 0;
@@ -396,21 +397,25 @@ void SimonSound::readVoiceFile(const char *filename, const Common::String &gameD
 
 void SimonSound::playVoice(uint sound) {
 	if (_game == GAME_SIMON2MAC && _filenums) {
-		stopAll();
+		if (_last_voice_file != _filenums[sound]) {
+			warning("Loading voice file %d", _filenums[sound]);
+			stopAll();
 
-		char filename[16];
-		sprintf(filename, "voices%d.dat", _filenums[sound]);
-		File *file = new File();
-		file->open(filename, _gameDataPath);
-		if (file->isOpen() == false) {
-			warning("playVoice: Can't load voice file %s", filename);
-			return;
-		} 
-		// FIXME freeing voice at this point causes frequent game crashes
-		// Maybe related to sound effects and speech using same sound format ?
-		// In any case, this means we currently leak.
-		// delete _voice;
-		_voice = new WavSound(_mixer, file, _offsets);
+			char filename[16];
+			_last_voice_file = _filenums[sound];
+			sprintf(filename, "voices%d.dat", _filenums[sound]);
+			File *file = new File();
+			file->open(filename, _gameDataPath);
+			if (file->isOpen() == false) {
+				warning("playVoice: Can't load voice file %s", filename);
+				return;
+			} 
+			// FIXME freeing voice at this point causes frequent game crashes
+			// Maybe related to sound effects and speech using same sound format ?
+			// In any case, this means we currently leak.
+			// delete _voice;
+			_voice = new WavSound(_mixer, file, _offsets);
+		}
 	}
 
 	if (!_voice)

@@ -46,6 +46,7 @@ private:
 
 	uint16 *_filenums;
 	uint32 *_offsets;
+	uint16 _last_voice_file;
 
 public:
 	PlayingSoundHandle _voice_handle;
