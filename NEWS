@@ -13,7 +13,7 @@ For a more comprehensive changelog for the latest experimental CVS code, see:
  SCUMM
    - Added support for Mac Humongous Entertainment titles
    - Added support for multiple filenames/versions using a single target
-   - Implemeted CGA and Hercules render modes in early LEC titles
+   - Implemented CGA and Hercules render modes in early LEC titles
 
  <PORT #1 NEWS>
    - ...
