@@ -1090,8 +1090,6 @@ int ScummEngine::init(GameDetector &detector) {
 
 	if (_imuse) {
 		_imuse->setBase(res.address[rtSound]);
-
-		_imuse->setMusicVolume(ConfMan.getInt("music_volume"));
 	}
 	_sound->setupSound();
 
@@ -1376,12 +1374,8 @@ void ScummEngine::setupVolumes() {
 	int soundVolumeSfx = ConfMan.getInt("sfx_volume");
 	int soundVolumeSpeech = ConfMan.getInt("speech_volume");
 
-	if (_imuse) {
-		_imuse->setMusicVolume(soundVolumeMusic);
-	}
-
 	if (_musicEngine) {
-		_musicEngine->setMusicVolume(soundVolumeMusic);
+		_musicEngine->setMusicVolume(soundVolumeMusic * soundVolumeMaster / 255);
 	}
 
 	_mixer->setVolume(soundVolumeSfx * soundVolumeMaster / 255);
