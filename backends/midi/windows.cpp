@@ -99,7 +99,7 @@ void MidiDriver_WIN::sysEx (byte *msg, uint16 length)
 	}
 
 	midiOutUnprepareHeader (_mo, &_streamHeader, sizeof (_streamHeader));
-	_streamBuffer [0] = 0xFF;
+	_streamBuffer [0] = 0xF0;
 	memcpy(&_streamBuffer[1], msg, length);
 	_streamBuffer [length+1] = 0xF7;
 
@@ -107,7 +107,7 @@ void MidiDriver_WIN::sysEx (byte *msg, uint16 length)
 	_streamHeader.dwBufferLength = length + 2;
 	_streamHeader.dwBytesRecorded = length + 2;
 	_streamHeader.dwUser = 0;
-//	_streamHeader.dwFlags |= MHDR_ISSTRM;
+	_streamHeader.dwFlags = 0;
 
 	MMRESULT result = midiOutPrepareHeader (_mo, &_streamHeader, sizeof (_streamHeader));
 	if (result != MMSYSERR_NOERROR) {
