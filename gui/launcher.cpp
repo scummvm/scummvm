@@ -86,7 +86,8 @@ LauncherDialog::LauncherDialog(NewGui *gui, GameDetector &detector)
 	}
 
 	_list->setList(l);
-//	_list->setSelected(0);
+	// TODO - make a default selection (maybe the game user played last?)
+	//_list->setSelected(0);
 
 	// Two more buttons directly below the list box
 	bw = new ButtonWidget(this, 10, 144, 80, 16, "Add Game...", kAddGameCmd, 'A');
@@ -100,6 +101,30 @@ void LauncherDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 	int item;
 	
 	switch (cmd) {
+	case kAddGameCmd:
+		// TODO: Allow user to add a new game to the list.
+		// 1) show a file selection dialog (to be implemented!) which lets 
+		// the user pick the directory the game data resides in.
+		// 2) show the user a list of games to pick from. Initially just show
+		// all known games. But ideally, we would refine this list by checking
+		// which choices are possible. E.g. if we don't find atlantis.000 in that
+		// directory, then it's not FOA etc.
+		break;
+	case kConfigureGameCmd:
+		// Set game specifc options. Most of these should be "optional", i.e. by 
+		// default set nothing and use the global ScummVM settings. E.g. the user
+		// can set here an optional alternate music volume, or for specific games
+		// a different music driver etc.
+		// This is useful because e.g. MonkeyVGA needs Adlib music to have decent
+		// music support etc.
+		break;
+	case kOptionsCmd:
+		// TODO - show up a generic options dialog, loosely based upon the one 
+		// we have in scumm/dialogs.cpp. So we will be modifying the settings
+		// in _detector, like which music engine to use, volumes, etc.
+		//
+		// We also allow the global save game path to be set here.
+		break;
 	case kStartCmd:
 	case kListItemDoubleClickedCmd:
 		// Print out what was selected
