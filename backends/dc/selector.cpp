@@ -22,8 +22,10 @@
 
 #include <common/stdafx.h>
 #include <common/scummsys.h>
-#include "base/engine.h"
-#include <common/gameDetector.h>
+#include <base/engine.h>
+#include <base/gameDetector.h>
+#include <base/plugins.h>
+#include <backends/fs/fs.h>
 #include "dc.h"
 #include "icon.h"
 #include "label.h"
@@ -138,8 +140,9 @@ struct Game
 
 struct Dir
 {
-  char name[256];
+  char name[252];
   char deficon[256];
+  FilesystemNode *node;
 };
 
 static Game the_game;
@@ -147,38 +150,41 @@ static Game the_game;
 static bool checkName(const char *base, char *text = 0)
 {
   GameDetector g;
-  const VersionSettings *gnl = version_settings;
+  GameSettings gs = g.findGame(base);
 
-  do {
-    if (!scumm_stricmp(base, gnl->filename)) {
-      if(text != NULL)
-	strcpy(text, gnl->gamename);
-      return true;
-    }
-  } while ((++gnl)->filename);
+  if (gs.gameName) {
+    if(text != NULL)
+      strcpy(text, gs.description);
+    return true;
+  }
   return false;
 }
 
-static const char *checkDetect(const char *fname)
+static const char *checkDetect(const FilesystemNode *entry)
 {
-  GameDetector g;
-  const VersionSettings *gnl = version_settings;
+  FSList files;
+  files.push_back(*entry);
+  GameList candidates;
 
-  do {
-    if (!scumm_stricmp(fname, gnl->detectname))
-      return gnl->filename;
-  } while ((++gnl)->filename);
-  return false;
+  const PluginList &plugins = PluginManager::instance().getPlugins();
+  PluginList::ConstIterator iter = plugins.begin();
+  for (iter = plugins.begin(); iter != plugins.end(); ++iter) {
+    candidates.push_back((*iter)->detectGames(files));
+  }
+  if (candidates.isEmpty())
+    return NULL;
+  return candidates[0].gameName;
 }
 
-static bool isGame(const char *fn, char *base)
+static bool isGame(const FilesystemNode *entry, char *base)
 {
+  const char *fn = entry->displayName().c_str();
   if(!strcasecmp(fn, "00.LFL") ||
      !strcasecmp(fn, "000.LFL")) {
     *base = '\0';
     return true;
   }
-  if(const char *dtct = checkDetect(fn)) {
+  if(const char *dtct = checkDetect(entry)) {
     strcpy(base, dtct);
     return true;
   }
@@ -217,10 +223,10 @@ static bool checkExe(const char *dir, const char *f)
   return true;
 }
 
-static bool isIcon(const char *fn)
+static bool isIcon(const FilesystemNode *entry)
 {
-  int l = strlen(fn);
-  if(l>4 && !strcasecmp(fn+l-4, ".ICO"))
+  int l = entry->displayName().size();
+  if(l>4 && !strcasecmp(entry->displayName().c_str()+l-4, ".ICO"))
     return true;
   else
     return false;
@@ -263,27 +269,26 @@ static int findGames(Game *games, int max)
 {
   Dir *dirs = new Dir[MAX_DIR];
   int curr_game = 0, curr_dir = 0, num_dirs = 1;
-  strcpy(dirs[0].name, "/");
+  dirs[0].node = FilesystemNode::getRoot();
   while(curr_game < max && curr_dir < num_dirs) {
+    strncpy(dirs[curr_dir].name, dirs[curr_dir].node->path().c_str(), 252);
+    dirs[curr_dir].name[251] = '\0';
     dirs[curr_dir].deficon[0] = '\0';
-    DIR *dirp = opendir(dirs[curr_dir++].name);
-    if(dirp) {
-      struct dirent *entry;
-      while((entry = readdir(dirp)))
-	if(entry->d_size < 0) {
-	  if(num_dirs < MAX_DIR && strcasecmp(entry->d_name, "install")) {
-	    strcpy(dirs[num_dirs].name, dirs[curr_dir-1].name);
-	    if(strlen(dirs[num_dirs].name)+strlen(entry->d_name)<255) {
-	      strcat(dirs[num_dirs].name, entry->d_name);
-	      strcat(dirs[num_dirs].name, "/");
-	      num_dirs++;
-	    }
+    FSList *fslist = dirs[curr_dir++].node->listDir(FilesystemNode::kListAll);
+    if (fslist != NULL) {
+      for (FSList::ConstIterator entry = fslist->begin(); entry != fslist->end();
+	   ++entry) {
+	if (entry->isDirectory()) {
+	  if(num_dirs < MAX_DIR && strcasecmp(entry->displayName().c_str(),
+					      "install")) {
+	    if ((dirs[num_dirs].node = entry->clone()) != NULL)
+	      num_dirs ++;
 	  }
 	} else 
-	  if(isIcon(entry->d_name))
-	    strcpy(dirs[curr_dir-1].deficon, entry->d_name);
+	  if(isIcon(&*entry))
+	    strcpy(dirs[curr_dir-1].deficon, entry->displayName().c_str());
 	  else if(curr_game < max &&
-		  isGame(entry->d_name, games[curr_game].filename_base)) {
+		  isGame(&*entry, games[curr_game].filename_base)) {
 	    strcpy(games[curr_game].dir, dirs[curr_dir-1].name);
 	    if(!*games[curr_game].filename_base) {
 	      int i;
@@ -312,13 +317,15 @@ static int findGames(Game *games, int max)
 	      printf("Registered game <%s> in <%s> <%s> because of <%s> <%s>\n",
 		     games[curr_game].text, games[curr_game].dir,
 		     games[curr_game].filename_base,
-		     dirs[curr_dir-1].name, entry->d_name);
+		     dirs[curr_dir-1].name, entry->displayName().c_str());
 #endif
 	      curr_game++;
 	    }
 	  }
-      closedir(dirp);
+      }
+      delete fslist;
     }
+    delete dirs[curr_dir-1].node;
   }
   for(int i=0; i<curr_game; i++)
     if(!loadIcon(games[i], dirs, num_dirs))
