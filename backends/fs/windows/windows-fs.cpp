@@ -150,9 +150,9 @@ WindowsFilesystemNode::WindowsFilesystemNode(const String &p) {
 	_displayName = String(str + offset, len);
 
 	// Check whether it is a directory, and whether the file actually exists
-	DWORD fileAttribs = GetFileAttributes(_path.c_str());
+	DWORD fileAttribs = GetFileAttributes(toUnicode((char *)_path.c_str()));
 
-	if (fileAttribs == INVALID_FILE_ATTRIBUTES) {
+	if (fileAttribs == 0xffffffff) {
 		_isValid = false;
 		_isDirectory = false;
 	} else {
