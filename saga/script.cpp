@@ -501,7 +501,6 @@ void Script::loadStrings(const byte *stringsPointer, size_t stringsLength, Strin
 VOICE_LUT *Script::loadVoiceLUT(const byte *voicelut_p, size_t voicelut_len, SCRIPTDATA *script) {
 	VOICE_LUT *voice_lut;
 
-	uint16 n_voices;
 	uint16 i;
 
 	voice_lut = (VOICE_LUT *)malloc(sizeof *voice_lut);
@@ -509,13 +508,13 @@ VOICE_LUT *Script::loadVoiceLUT(const byte *voicelut_p, size_t voicelut_len, SCR
 		return NULL;
 	}
 
-	n_voices = voicelut_len / 2;
-	if (n_voices != script->strings->stringsCount) {
+	voice_lut->n_voices = voicelut_len / 2;
+	if (voice_lut->n_voices != script->strings->stringsCount) {
 		warning("Error: Voice LUT entries do not match dialogue entries");
 		return NULL;
 	}
 
-	voice_lut->voices = (int *)malloc(n_voices * sizeof *voice_lut->voices);
+	voice_lut->voices = (int *)malloc(voice_lut->n_voices * sizeof *voice_lut->voices);
 	if (voice_lut->voices == NULL) {
 
 		return NULL;
@@ -523,7 +522,7 @@ VOICE_LUT *Script::loadVoiceLUT(const byte *voicelut_p, size_t voicelut_len, SCR
 
 	MemoryReadStreamEndian scriptS(voicelut_p, voicelut_len, IS_BIG_ENDIAN);
 
-	for (i = 0; i < n_voices; i++) {
+	for (i = 0; i < voice_lut->n_voices; i++) {
 		voice_lut->voices[i] = scriptS.readUint16();
 	}
 
