@@ -647,7 +647,7 @@ void Scumm_v5::o5_cursorCommand() {
 		// omit for now.
 		// FIXME: Actually: is this opcode ever called by a non-Loom game?
 		// Which V3-V5 game besides Loom makes use of custom cursors, ever?
-		if (!(_features & GF_LOOM)) {
+		if (_gameId != GID_LOOM && _gameId != GID_LOOM256) {
 			warning("setCursorImg called - tell Fingolfin where you saw this!");
 			setCursorImg(i, j, 1);
 		}

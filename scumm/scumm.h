@@ -85,7 +85,6 @@ enum GameFeatures {
 	GF_AFTER_HEV7          = 1 << 15,
 	GF_FMTOWNS             = 1 << 16,
 	GF_FEW_LOCALS          = 1 << 17,
-	GF_LOOM                = 1 << 18,	// FIXME: remove this
 
 	GF_EXTERNAL_CHARSET    = GF_SMALL_HEADER
 };
