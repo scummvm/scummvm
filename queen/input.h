@@ -107,6 +107,7 @@ class Input {
 			KEY_BACKSPACE = 8,
 			
 			KEY_F1 = 282,
+			KEY_F5 = KEY_F1 + 4,
 			KEY_F11 = KEY_F1 + 10,
 			KEY_F12
 		};
