@@ -626,7 +626,14 @@ void Scumm::runExitScript()
 
 		vm.slot[slot].delayFrameCount = 0;
 
-		runScriptNested(slot);
+		// FIXME: the exit script of room 7 in indy3 only seems to have a size and tag
+		// not actual data not even a 00 (stop code)
+		// maybe we should be limiting ourselves to strictly reading the size 
+		// described in the header?
+		if ((_currentRoom == 7) && (_gameId == GID_INDY3_256))
+			printf("skipping specific exit script as its empty, fix properly!\n");
+		else
+			runScriptNested(slot);
 	}
 	if (_vars[VAR_EXIT_SCRIPT2])
 		runScript(_vars[VAR_EXIT_SCRIPT2], 0, 0, 0);
