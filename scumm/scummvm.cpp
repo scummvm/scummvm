@@ -934,11 +934,11 @@ void Scumm::initRoomSubBlocks()
 
 	ptr = findResourceData(MKID('TRNS'), roomptr);
 	if (ptr)
-		gdi._transparency = ptr[0];
+		gdi._transparentColor = ptr[0];
 	else if (_features & GF_AFTER_V8)
-		gdi._transparency = 5;	// FIXME
+		gdi._transparentColor = 5;	// FIXME
 	else
-		gdi._transparency = 255;
+		gdi._transparentColor = 255;
 
 	initBGBuffers(_scrHeight);
 

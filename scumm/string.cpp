@@ -348,11 +348,11 @@ void Scumm::CHARSET_1()
 void Scumm::description()
 {
 	int c;
-	byte *buffer;
+	byte *buf;
 
-	buffer = _charsetBuffer;
+	buf = _charsetBuffer;
 	_string[0].ypos = camera._cur.y + 88;
-	_string[0].xpos = (_realWidth / 2) - (_charset->getStringWidth(0, buffer) >> 1);
+	_string[0].xpos = (_realWidth / 2) - (_charset->getStringWidth(0, buf) >> 1);
 	if (_string[0].xpos < 0)
 		_string[0].xpos = 0;
 
@@ -373,7 +373,7 @@ void Scumm::description()
 	restoreCharsetBg();
 
 	do {
-		c = *buffer++;
+		c = *buf++;
 		if (c == 0) {
 			_haveMsg = 1;
 			break;
@@ -554,7 +554,7 @@ void Scumm::drawString(int a)
 
 	if (_features & GF_AFTER_V7) {
 		_charset->_hasMask = true;
-		// FIXME - hos is supposed to ever work, since gdi._mask_left is by default set
+		// FIXME - how is this supposed to ever work, since gdi._mask_left is by default set
 		// to -1 to mark it as invalid. Hence this comparision will always leave it at -1,
 		// which implies that if the mask was marked invalid, it will always stay so. 
 		// That seems odd and not at all to be the intended thing... or is it?

@@ -131,17 +131,18 @@ protected:
 
 	byte _palette_mod;
 	byte _decomp_shr, _decomp_mask;
-	byte _transparency;
+	byte _transparentColor;
 	uint32 _vertStripNextInc;
 
 	/* Bitmap decompressors */
-	void decompressBitmap(byte *bgbak_ptr, byte *smap_ptr, int numLinesToProcess);
-	void unkDecode1(byte *dst, byte *src, int height);
-	void unkDecode2(byte *dst, byte *src, int height);
-	void unkDecode3(byte *dst, byte *src, int height);
-	void unkDecode4(byte *dst, byte *src, int height);
-	void unkDecode5(byte *dst, byte *src, int height);
-	void unkDecode6(byte *dst, byte *src, int height);
+	bool decompressBitmap(byte *bgbak_ptr, byte *smap_ptr, int numLinesToProcess);
+	void unkDecodeA(byte *dst, byte *src, int height);
+	void unkDecodeA_trans(byte *dst, byte *src, int height);
+	void unkDecodeB(byte *dst, byte *src, int height);
+	void unkDecodeB_trans(byte *dst, byte *src, int height);
+	void unkDecodeC(byte *dst, byte *src, int height);
+	void unkDecodeC_trans(byte *dst, byte *src, int height);
+
 	void unkDecode7(byte *dst, byte *src, int height);
 	void unkDecode8(byte *dst, byte *src, int height);
 	void unkDecode9(byte *dst, byte *src, int height);

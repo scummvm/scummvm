@@ -425,7 +425,7 @@ void Scumm::saveOrLoad(Serializer *s, uint32 savegameVersion)
 		MKARRAY_OLD(Scumm, gfxUsageBits[0], sleUint32, 200, VER_V8, VER_V9),
 		MKARRAY(Scumm, gfxUsageBits[0], sleUint32, 410, VER_V10),
 
-		MKLINE(Scumm, gdi._transparency, sleByte, VER_V8),
+		MKLINE(Scumm, gdi._transparentColor, sleByte, VER_V8),
 		MKARRAY(Scumm, _currentPalette[0], sleByte, 768, VER_V8),
 
 		MKARRAY(Scumm, _proc_special_palette[0], sleByte, 256, VER_V8),
