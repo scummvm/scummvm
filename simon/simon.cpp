@@ -126,8 +126,13 @@ SimonState::SimonState(GameDetector *detector, OSystem *syst)
 	midi.set_driver(driver);
 
 	_game = detector->_gameId;
-	set_volume(detector->_sfx_volume);
 	_game_path = detector->_gameDataPath;
+
+	/* Setup mixer */
+	if (!_mixer->bind_to_system(syst))
+		warning("Sound initialization failed. "
+						"Features of the game that depend on sound synchronization will most likely break");
+	set_volume(detector->_sfx_volume);
 }
 
 SimonState::~SimonState()
@@ -141,15 +146,7 @@ SimonState::~SimonState()
 
 SimonState *SimonState::createFromDetector(GameDetector *detector, OSystem *syst)
 {
-	SimonState *s = new SimonState(detector, syst);
-
-	/* Setup mixer */
-	if (!s->_mixer->bind_to_system(syst))
-		warning("Sound initialization failed. "
-						"Features of the game that depend on sound synchronization will most likely break");
-
-	return s;
-
+	return new SimonState(detector, syst);
 }
 
 void palette_fadeout(uint32 *pal_values, uint num)
@@ -4948,7 +4945,7 @@ void SimonState::dx_unlock_attached()
 
 void SimonState::set_volume(byte volume)
 {
-	_mixer->set_volume(volume * 256 / 100);
+	_mixer->set_volume(volume);
 }
 
 
