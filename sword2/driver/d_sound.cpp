@@ -196,6 +196,11 @@ void Sound::saveMusicState() {
 	_music[2]._filePos = _music[saveStream]._filePos;
 	_music[2]._fileEnd = _music[saveStream]._fileEnd;
 	_music[2]._lastSample = _music[saveStream]._lastSample;
+
+	if (fpMus.isOpen())
+		savedMusicFilename = strdup(fpMus.name());
+	else
+		savedMusicFilename = NULL;
 }
 
 void Sound::restoreMusicState() {
@@ -226,6 +231,15 @@ void Sound::restoreMusicState() {
 	_music[restoreStream]._filePos = _music[2]._filePos;
 	_music[restoreStream]._fileEnd = _music[2]._fileEnd;
 	_music[restoreStream]._lastSample = _music[2]._lastSample;
+
+	if (savedMusicFilename) {
+		if (fpMus.isOpen())
+			fpMus.close();
+
+		fpMus.open(savedMusicFilename);
+		free(savedMusicFilename);
+		savedMusicFilename = NULL;
+	}
 }
 
 void Sound::playLeadOut(uint8 *leadOut) {

@@ -109,6 +109,8 @@ private:
 
 	void updateCompSampleStreaming(int16 *data, uint len);
 
+	char *savedMusicFilename;
+
 public:
 	Sound(Sword2Engine *vm);
 	~Sound();
