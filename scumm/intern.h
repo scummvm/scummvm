@@ -46,8 +46,6 @@ protected:
 
 	void decodeParseString();
 	int getWordVararg(int *ptr);
-	int getVarOrDirectWord(byte mask);
-	int getVarOrDirectByte(byte mask);
 
 	/* Version 5 script opcodes */
 	void o5_actorFollowCamera();
@@ -248,23 +246,13 @@ protected:
 	void o2_notEqualZero();
 	void o2_startScript();
 	void o2_panCameraTo();
-	void o2_move();
-	void o2_startMusic();
-	void o2_getActorRoom();
 	void o2_getActorElevation();
-	void o2_walkActorToActor();
 	void o2_walkActorToObject();
-	void o2_faceActor();
 	void o2_putActorAtObject();
-	void o2_getObjectOwner();
 	void o2_animateActor();
 	void o2_print();
 	void o2_actorFromPos();
 	void o2_getVerbEntrypoint();
-	void o2_isScriptRunning();
-	void o2_getRandomNr();
-	void o2_startSound();
-	void o2_getAnimCounter();
 	void o2_saveLoadGame();
 	void o2_getActorX();
 	void o2_getActorY();
@@ -283,18 +271,11 @@ protected:
 	void o2_pickupObject();
 	void o2_actorFollowCamera();
 	void o2_setObjectName();
-	void o2_getActorMoving();
 	void o2_cursorCommand();
 	void o2_stopScript();
-	void o2_getActorFacing();
 	void o2_getClosestObjActor();
-	void o2_lights();
-	void o2_getActorCostume();
 	void o2_loadRoom();
 	void o2_getActorWalkBox();
-	void o2_isSoundRunning();
-	void o2_delay();
-	void o2_stopSound();
 	void o2_endCutscene();
 	void o2_drawSentence();
 };

@@ -336,7 +336,6 @@ int Scumm::getVarOrDirectByte(byte mask) {
 			return readVar(fetchScriptByte());
 		else
 			return readVar(fetchScriptWord());
-
 	return fetchScriptByte();
 }
 
@@ -346,7 +345,7 @@ int Scumm::getVarOrDirectWord(byte mask) {
 			return readVar(fetchScriptByte());
 		else
 			return readVar(fetchScriptWord());
-	return fetchScriptWord();
+	return (int16)fetchScriptWord();
 }
 
 #ifndef BYPASS_COPY_PROT

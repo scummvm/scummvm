@@ -2375,18 +2375,6 @@ int Scumm_v5::getWordVararg(int *ptr) {
 	return i;
 }
 
-int Scumm_v5::getVarOrDirectWord(byte mask) {
-	if (_opcode & mask)
-		return readVar(fetchScriptWord());
-	return (int16)fetchScriptWord();
-}
-
-int Scumm_v5::getVarOrDirectByte(byte mask) {
-	if (_opcode & mask)
-		return readVar(fetchScriptWord());
-	return fetchScriptByte();
-}
-
 void Scumm_v5::decodeParseString() {
 	int textSlot;
 
