@@ -1919,7 +1919,7 @@ int32	ReadOptionSettings(void)	//pete10Jun97
 	g_sword2->_sound->MuteFx(buff[5]);
 
 
-	UpdateGraphicsLevel(GetRenderType(), buff[6]);	// (James13jun97)
+	UpdateGraphicsLevel(buff[6]);	// (James13jun97)
 
 	speechSelected      = !buff[4];
 	subtitles			= buff[7];
@@ -2091,7 +2091,6 @@ void	Option_control(void)	//Pete6Jun97
 	//uint8   safe_musicVolume  = musicVolume;
 	//uint8   safe_speechVolume = speechVolume;
 	//uint8   safe_fxVolume     = fxVolume;
-	uint8   safe_grfxLevel    = grfxLevel;
 
 // button state variables
 	uint8	dreverse_stereo_state = 0, dmusic_mute_state = 0, dspeech_mute_state = 0, dfx_mute_state = 0, dobject_state = 0, dsubtitle_state = 0;
@@ -2540,7 +2539,7 @@ void	Option_control(void)	//Pete6Jun97
 				lb_down = 0;
 				if	(touching_restore_button && restore_button_state)	// ok to settings
 				{
-					UpdateGraphicsLevel(safe_grfxLevel, grfxLevel);	// (James13jun97)
+					UpdateGraphicsLevel(grfxLevel);	// (James13jun97)
 
 					g_sword2->_sound->MuteMusic(music_mute_state);					// Ensure all the levels are recorded correctly (Pete21Aug97)
 					g_sword2->_sound->MuteSpeech(speech_mute_state);
@@ -2784,106 +2783,34 @@ void	Option_control(void)	//Pete6Jun97
 	return;	//just return to game
 }
 
-//-----------------------------------------------------------------------------------------------------------------------
-void UpdateGraphicsLevel(uint8 oldLevel, uint8 newLevel)	// (James13jun97)
-{
-
-	switch (oldLevel)			// Set the graphics level
-	{
-		//-------------------------------
-		case 0:		// lowest setting: h/w only; no graphics fx
-			switch(newLevel)
-			{
-				case 0:
-					break;
-
-				case 1:
-					ClearBltFx();
-					ClearShadowFx();
-					CloseBackgroundLayer();
-					break;
-
-				case 2:
-					ClearBltFx();
-					CloseBackgroundLayer();
-					break;
-
-				case 3:	// same as case 2 until case 2 has edge-blending inactivated
-					CloseBackgroundLayer();
-					break;
-			}
+void UpdateGraphicsLevel(uint8 newLevel) {	// (James13jun97)
+	switch (newLevel) {
+		case 0:		// Lowest setting: no graphics fx
+			ClearTransFx();
+			ClearShadowFx();
+			ClearBltFx();
 			break;
-		//-------------------------------
-		case 1:		// medium-low setting: s/w transparency-blending
-			switch(newLevel)
-			{
-				case 1:
-					break;
-
-				case 0:
-					SetUpBackgroundLayers();	// InitialiseBackgroundLayer for each layer! (see layers.cpp)
-					break;
-
-				case 2:
-					SetShadowFx();
-					break;
-
-				case 3:	// same as case 2 until case 2 has edge-blending inactivated
-					SetBltFx();
-					break;
-			}
+		case 1:		// Medium-low setting: transparency-blending
+			SetTransFx();
+			ClearShadowFx();
+			ClearBltFx();
 			break;
-		//-------------------------------
-		case 2:		// medium-high setting: s/w transparency-blending + shading
-			switch(newLevel)
-			{
-				case 2:
-					break;
-
-				case 3:	// same as case 2 until case 2 has edge-blending inactivated
-					SetBltFx();
-					break;
-
-				case 1:
-					ClearShadowFx();
-					break;
-
-				case 0:
-					SetUpBackgroundLayers();	// InitialiseBackgroundLayer for each layer! (see layers.cpp)
-					break;
-			}
+		case 2:		// Medium-high setting: transparency-blending + shading
+			SetTransFx();
+			SetShadowFx();
+			ClearBltFx();
 			break;
-		//-------------------------------
-		case 3:		// highest setting: s/w transparency-blending + shading + edge-blending (& improved stretching)
-			switch(newLevel)
-			{
-				case 2:
-					ClearBltFx();
-					break;
-
-				case 3:	// same as case 2 until case 2 has edge-blending inactivated
-					break;
-
-				case 1:
-					ClearBltFx();
-					ClearShadowFx();
-					break;
-
-				case 0:
-					SetUpBackgroundLayers();	// InitialiseBackgroundLayer for each layer! (see layers.cpp)
-					break;
-			}
+		case 3:		// Highest setting: transparency-blending + shading + edge-blending + improved stretching
+			SetTransFx();
+			SetShadowFx();
+			SetBltFx();
 			break;
-		//-------------------------------
 	}
 
-	// update our global variable - which needs to be checked when dimming the palette
-	// in PauseGame() in sword2.cpp (since palette-matching cannot be done with dimmed palette
-	// so we turn down one notch while dimmed, if at top level)
+	// update our global variable - which needs to be checked when dimming
+	// the palette in PauseGame() in sword2.cpp (since palette-matching
+	// cannot be done with dimmed palette so we turn down one notch while
+	// dimmed, if at top level)
+
 	current_graphics_level = newLevel;
 }
-//-----------------------------------------------------------------------------------------------------------------------
-//-----------------------------------------------------------------------------------------------------------------------
-//-----------------------------------------------------------------------------------------------------------------------
-//-----------------------------------------------------------------------------------------------------------------------
-

@@ -123,24 +123,35 @@ int32 InitialiseDisplay(int16 width, int16 height, int16 colourDepth, int32 wind
 	return(RD_OK);
 }
 
-int32 SetBltFx(void) {
-	renderCaps |= RDBLTFX_EDGEBLEND + RDBLTFX_ARITHMETICSTRETCH;
-	return(RD_OK);
+// FIXME: Clean up this mess. I don't want to add any new flags, but some of
+// them should be renamed. Or maybe we should abandon the whole renderCaps
+// thing and simply check the numeric value of the graphics quality setting
+// instead.
+
+// Note that SetTransFx() actually clears a bit. That's intentional.
+
+void SetTransFx(void) {
+	renderCaps &= ~RDBLTFX_ALLHARDWARE;
 }
 
-int32 ClearBltFx(void) { 
-	renderCaps &= (0xffffffff - RDBLTFX_EDGEBLEND - RDBLTFX_ARITHMETICSTRETCH);
-	return(RD_OK);
+void ClearTransFx(void) {
+	renderCaps |= RDBLTFX_ALLHARDWARE;
 }
 
-int32 ClearShadowFx(void) {
-	renderCaps &= (0xffffffff - RDBLTFX_SHADOWBLEND);
-	return(RD_OK);
+void SetBltFx(void) {
+	renderCaps |= (RDBLTFX_EDGEBLEND | RDBLTFX_ARITHMETICSTRETCH);
 }
 
-int32 SetShadowFx(void) {
+void ClearBltFx(void) { 
+	renderCaps &= ~(RDBLTFX_EDGEBLEND | RDBLTFX_ARITHMETICSTRETCH);
+}
+
+void SetShadowFx(void) {
 	renderCaps |= RDBLTFX_SHADOWBLEND;
-	return RD_OK;
+}
+
+void ClearShadowFx(void) {
+	renderCaps &= ~RDBLTFX_SHADOWBLEND;
 }
 
 int32 GetRenderType(void)

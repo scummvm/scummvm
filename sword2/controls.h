@@ -29,7 +29,7 @@ void	Quit_control(void);	//Tony2Apr97
 void	Restart_control(void);	//Tony4Apr97
 void	Option_control(void);	//Pete5Jun97
 int32   ReadOptionSettings(void);	//Pete10Jun97
-void	UpdateGraphicsLevel(uint8 oldLevel, uint8 newLevel);	// (James13jun97)
+void	UpdateGraphicsLevel(uint8 newLevel);	// (James13jun97)
 
 extern uint8 subtitles;		// text selected
 extern uint8 speechSelected;

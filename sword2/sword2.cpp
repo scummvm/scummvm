@@ -542,7 +542,7 @@ void PauseGame(void)		// James17jun97
 
 	if (current_graphics_level==3)	// if level at max
 	{
-		UpdateGraphicsLevel(3,2);	// turn down because palette-matching won't work when dimmed
+		UpdateGraphicsLevel(2);	// turn down because palette-matching won't work when dimmed
 		graphics_level_fudged=1;
 	}
 
@@ -567,7 +567,7 @@ void UnpauseGame(void)		// James17jun97
 
  	if (graphics_level_fudged)	// if level at max
 	{
-		UpdateGraphicsLevel(2,3);	// turn up again
+		UpdateGraphicsLevel(3);	// turn up again
 		graphics_level_fudged=0;
 	}
 

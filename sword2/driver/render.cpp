@@ -349,15 +349,16 @@ void UploadRect(ScummVM::Rect *r) {
 static uint16 xScale[SCALE_MAXWIDTH];
 static uint16 yScale[SCALE_MAXHEIGHT];
 
-// This is based on the "line doubling" scaler in the original sprite renderer.
-// I've made it into two separate functions because there were cases from
+// I've made the scaling two separate functions because there were cases from
 // DrawSprite() where it wasn't obvious if the sprite should grow or shrink,
 // which caused crashes.
 //
-// The functions can probably be merged later, if/when we implement a better
-// scale function for it.
+// Maybe the functions can be merged later?
+//
+// The code is based on the original DrawSprite() code, so apart from not
+// knowing if I got it right, I don't know how good the original really is.
 
-void SquashImage(byte *dst, uint16 dstPitch, uint16 dstWidth, uint16 dstHeight,byte *src, uint16 srcPitch, uint16 srcWidth, uint16 srcHeight) {
+void SquashImage(byte *dst, uint16 dstPitch, uint16 dstWidth, uint16 dstHeight, byte *src, uint16 srcPitch, uint16 srcWidth, uint16 srcHeight, byte *backbuf) {
 	int32 ince, incne, d;
 	int16 x, y;
 
@@ -403,15 +404,56 @@ void SquashImage(byte *dst, uint16 dstPitch, uint16 dstWidth, uint16 dstHeight,b
 
 	// Copy the image
 
-	for (y = 0; y < dstHeight; y++) {
-		for (x = 0; x < dstWidth; x++) {
-			dst[x] = src[yScale[y] * srcPitch + xScale[x]];
+	if (backbuf) {
+		for (y = 0; y < dstHeight; y++) {
+			for (x = 0; x < dstWidth; x++) {
+				uint8 p;
+				uint8 p1 = 0;
+				int count = 0;
+				int spriteCount = 0;
+				int red = 0;
+				int green = 0;
+				int blue = 0;
+				int i, j;
+
+				for (j = yScale[y]; j < yScale[y + 1]; j++) {
+					for (i = xScale[x]; i < xScale[x + 1]; i++) {
+						p = src[j * srcPitch + i];
+						if (p) {
+							red += palCopy[p][0];
+							green += palCopy[p][1];
+							blue += palCopy[p][2];
+							p1 = p;
+							spriteCount++;
+						} else {
+							red += palCopy[backbuf[x]][0];
+							green += palCopy[backbuf[x]][1];
+							blue += palCopy[backbuf[x]][2];
+						}
+						count++;
+					}
+				}
+				if (spriteCount == 0)
+					dst[x] = 0;
+				else if (spriteCount == 1)
+					dst[x] = p1;
+				else
+					dst[x] = QuickMatch((uint8) (red / count), (uint8) (green / count), (uint8) (blue / count));
+			}
+			dst += dstPitch;
+			backbuf += lpBackBuffer->_width;
 		}
-		dst += dstPitch;
+	} else {
+		for (y = 0; y < dstHeight; y++) {
+			for (x = 0; x < dstWidth; x++) {
+				dst[x] = src[yScale[y] * srcPitch + xScale[x]];
+			}
+			dst += dstPitch;
+		}
 	}
 }
 
-void StretchImage(byte *dst, uint16 dstPitch, uint16 dstWidth, uint16 dstHeight,byte *src, uint16 srcPitch, uint16 srcWidth, uint16 srcHeight) {
+void StretchImage(byte *dst, uint16 dstPitch, uint16 dstWidth, uint16 dstHeight, byte *src, uint16 srcPitch, uint16 srcWidth, uint16 srcHeight, byte *backbuf) {
 	int32 ince, incne, d;
 	int16 x, y, i, j, k;
 
@@ -455,6 +497,8 @@ void StretchImage(byte *dst, uint16 dstPitch, uint16 dstWidth, uint16 dstHeight,
 	}
 
 	// Copy the image
+
+	// FIXME: If backbuf != NULL the image should be anti-aliased
 
 	for (y = 0; y < srcHeight; y++) {
 		for (j = yScale[y]; j < yScale[y + 1]; j++) {

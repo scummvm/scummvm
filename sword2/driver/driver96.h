@@ -1476,10 +1476,12 @@ typedef struct {
 extern int32 InitialiseDisplay(int16 width, int16 height, int16 colourDepth, int32 windowType);
 extern int32 WaitForVbl(void);
 extern int32 EraseBackBuffer(void);
-extern int32 SetBltFx(void);
-extern int32 ClearBltFx(void);
-extern int32 ClearShadowFx(void);
-extern int32 SetShadowFx(void);
+extern void SetTransFx(void);
+extern void ClearTransFx(void);
+extern void SetBltFx(void);
+extern void ClearBltFx(void);
+extern void ClearShadowFx(void);
+extern void SetShadowFx(void);
 extern int32 GetRenderType(void);
 extern int32 PlaySmacker(char *filename, _movieTextObject *textObjects[], uint8 *musicOut);
 extern void  GetDrawStatus(_drvDrawStatus *s);

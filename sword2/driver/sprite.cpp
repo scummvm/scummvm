@@ -1298,9 +1298,9 @@ int32 DrawSurface(_spriteInfo *s, uint8 *surface) {
 			return RDERR_OUTOFMEMORY;
 		
 		if (scale < 256) {
-			SquashImage(sprite, s->scaledWidth, s->scaledWidth, s->scaledHeight, surface, s->w, s->w, s->h);
+			SquashImage(sprite, s->scaledWidth, s->scaledWidth, s->scaledHeight, surface, s->w, s->w, s->h, NULL);
 		} else {
-			StretchImage(sprite, s->scaledWidth, s->scaledWidth, s->scaledHeight, surface, s->w, s->w, s->h);
+			StretchImage(sprite, s->scaledWidth, s->scaledWidth, s->scaledHeight, surface, s->w, s->w, s->h, NULL);
 		}
 
 		freeSprite = true;
@@ -1348,20 +1348,19 @@ uint16 yScale[SCALE_MAXHEIGHT];
 int32 DrawSprite(_spriteInfo *s) {
 	uint8 *src, *dst;
 	uint8 *sprite, *newSprite;
+	uint8 *backbuf = NULL;
 	uint8 red, green, blue;
 	uint16 scale;
 	int16 i, j;
 	uint16 srcPitch;
 	bool freeSprite = false;
+	bool clipped = false;
 	ScummVM::Rect rd, rs;
 
 	// FIXME: There are still a few minor details that I think the
-	// original did:
-	//
-	// * Anti-aliasing sprites when upscaling them.
-	// * We don't implement the various graphics quality settings at all.
-	//
-	// But it should be good enough for now.
+	// original did. Off-hand, I know that at the highest graphics
+	// quality setting sprites should be anti-aliased when they are
+	// upscaled.
 
 	// -----------------------------------------------------------------
 	// Decompression and mirroring
@@ -1445,18 +1444,22 @@ int32 DrawSprite(_spriteInfo *s) {
 	if (rd.top < 40) {
 		rs.top = (40 - rd.top) * 256 / scale;
 		rd.top = 40;
+		clipped = true;
 	}
 	if (rd.bottom > 440) {
 		rs.bottom -= ((rd.bottom - 440) * 256 / scale);
 		rd.bottom = 440;
+		clipped = true;
 	}
 	if (rd.left < 0) {
 		rs.left = (0 - rd.left) * 256 / scale;
 		rd.left = 0;
+		clipped = true;
 	}
 	if (rd.right > 640) {
 		rs.right -= ((rd.right - 640) * 256 / scale);
 		rd.right = 640;
+		clipped = true;
 	}
 
 	// -----------------------------------------------------------------
@@ -1464,6 +1467,10 @@ int32 DrawSprite(_spriteInfo *s) {
 	// -----------------------------------------------------------------
 
 	if (scale != 256) {
+		if ((renderCaps & RDBLTFX_ARITHMETICSTRETCH) && !clipped)
+			backbuf = lpBackBuffer->_pixels + lpBackBuffer->_width * rd.top + rd.left;
+			
+
 		if (s->scaledWidth > SCALE_MAXWIDTH || s->scaledHeight > SCALE_MAXHEIGHT) {
 			if (freeSprite)
 				free(sprite);
@@ -1478,14 +1485,14 @@ int32 DrawSprite(_spriteInfo *s) {
 		}
 
 		if (scale < 256) {
-			SquashImage(newSprite, s->scaledWidth, s->scaledWidth, s->scaledHeight, sprite, s->w, s->w, s->h);
+			SquashImage(newSprite, s->scaledWidth, s->scaledWidth, s->scaledHeight, sprite, s->w, s->w, s->h, backbuf);
 		} else {
 			if (s->scale > 512) {
 				if (freeSprite)
 					free(sprite);
 				return RDERR_INVALIDSCALING;
 			}
-			StretchImage(newSprite, s->scaledWidth, s->scaledWidth, s->scaledHeight, sprite, s->w, s->w, s->h);
+			StretchImage(newSprite, s->scaledWidth, s->scaledWidth, s->scaledHeight, sprite, s->w, s->w, s->h, backbuf);
 		}
 
 		if (freeSprite)
@@ -1501,7 +1508,7 @@ int32 DrawSprite(_spriteInfo *s) {
 	// The light mask is an optional layer that covers the entire room
 	// and which is used to simulate light and shadows.
 
-	if (lightMask && (scale != 256 || (s->type & RDSPR_SHADOW))) {
+	if ((renderCaps & RDBLTFX_SHADOWBLEND) && lightMask && (scale != 256 || (s->type & RDSPR_SHADOW))) {
 		uint8 *lightMap;
 
 		if (!freeSprite) {
@@ -1536,51 +1543,65 @@ int32 DrawSprite(_spriteInfo *s) {
 	dst = lpBackBuffer->_pixels + lpBackBuffer->_width * rd.top + rd.left;
 
 	if (s->type & RDSPR_BLEND) {
-		if (s->blend & 0x01) {
-			red = s->blend >> 8;
+		if (renderCaps & RDBLTFX_ALLHARDWARE) {
 			for (i = 0; i < rs.bottom - rs.top; i++) {
 				for (j = 0; j < rs.right - rs.left; j++) {
-					if (src[j]) {
-						uint8 r = (palCopy[src[j]][0] * red + palCopy[dst[j]][0] * (8 - red)) >> 3;
-						uint8 g = (palCopy[src[j]][1] * red + palCopy[dst[j]][1] * (8 - red)) >> 3;
-						uint8 b = (palCopy[src[j]][2] * red + palCopy[dst[j]][2] * (8 - red)) >> 3;
-						dst[j] = QuickMatch(r, g, b);
-					}
-				}
-				src += srcPitch;
-				dst += lpBackBuffer->_width;
-			}
-		} else if (s->blend & 0x02) {
-			// FIXME: This case looks bogus to me. The same value
-			// for the red, green and blue parameters, and we
-			// multiply with the source color's palette index
-			// rather than its color component.
-			//
-			// But as far as I can see, that's how the original
-			// code did it.
-			//
-			// Does anyone know where this case was used anyway?
-
-			red = palCopy[s->blend >> 8][0];
-			green = palCopy[s->blend >> 8][0];
-			blue = palCopy[s->blend >> 8][0];
-			for (i = 0; i < rs.bottom - rs.top; i++) {
-				for (j = 0; j < rs.right - rs.left; j++) {
-					if (src[j]) {
-						uint8 r = (src[j] * red + (16 - src[j]) * palCopy[dst[j]][0]) >> 4;
-						uint8 g = (src[j] * green + (16 - src[j]) * palCopy[dst[j]][1]) >> 4;
-						uint8 b = (src[j] * blue + (16 - src[j]) * palCopy[dst[j]][2]) >> 4;
-						dst[j] = QuickMatch(r, g, b);
-					}
+					if (src[j] && ((i & 1) == (j & 1)))
+						dst[j] = src[j];
 				}
 				src += srcPitch;
 				dst += lpBackBuffer->_width;
 			}
 		} else {
-			warning("DrawSprite: Invalid blended sprite");
-			if (freeSprite)
-				free(sprite);
-			return RDERR_UNKNOWNTYPE;
+			if (s->blend & 0x01) {
+				red = s->blend >> 8;
+				for (i = 0; i < rs.bottom - rs.top; i++) {
+					for (j = 0; j < rs.right - rs.left; j++) {
+						if (src[j]) {
+							uint8 r = (palCopy[src[j]][0] * red + palCopy[dst[j]][0] * (8 - red)) >> 3;
+							uint8 g = (palCopy[src[j]][1] * red + palCopy[dst[j]][1] * (8 - red)) >> 3;
+							uint8 b = (palCopy[src[j]][2] * red + palCopy[dst[j]][2] * (8 - red)) >> 3;
+							dst[j] = QuickMatch(r, g, b);
+						}
+					}
+					src += srcPitch;
+					dst += lpBackBuffer->_width;
+				}
+			} else if (s->blend & 0x02) {
+				// FIXME: This case looks bogus to me. The
+				// same value for the red, green and blue
+				// parameters, and we multiply with the source
+				// color's palette index rather than its color
+				// component.
+				//
+				// But as far as I can see, that's how the
+				// original
+				// code did it.
+				//
+				// Does anyone know where this case was used
+				// anyway?
+
+				red = palCopy[s->blend >> 8][0];
+				green = palCopy[s->blend >> 8][0];
+				blue = palCopy[s->blend >> 8][0];
+				for (i = 0; i < rs.bottom - rs.top; i++) {
+					for (j = 0; j < rs.right - rs.left; j++) {
+						if (src[j]) {
+							uint8 r = (src[j] * red + (16 - src[j]) * palCopy[dst[j]][0]) >> 4;
+							uint8 g = (src[j] * green + (16 - src[j]) * palCopy[dst[j]][1]) >> 4;
+							uint8 b = (src[j] * blue + (16 - src[j]) * palCopy[dst[j]][2]) >> 4;
+							dst[j] = QuickMatch(r, g, b);
+						}
+					}
+					src += srcPitch;
+					dst += lpBackBuffer->_width;
+				}
+			} else {
+				warning("DrawSprite: Invalid blended sprite");
+				if (freeSprite)
+					free(sprite);
+				return RDERR_UNKNOWNTYPE;
+			}
 		}
 	} else {
 		if (s->type & RDSPR_TRANS) {
@@ -3266,85 +3287,30 @@ int32 DrawSprite(_spriteInfo *s) {
 
 
 
-int32 OpenLightMask(_spriteInfo *s)
-
-{
+int32 OpenLightMask(_spriteInfo *s) {
+	// FIXME: The light mask is only needed on higher graphics detail
+	// settings, so to save memory we could simply ignore it on lower
+	// settings. But then we need to figure out how to ensure that it
+	// is properly loaded if the user changes the settings in mid-game.
 
 	if (lightMask)
-		return(RDERR_NOTCLOSED);
+		return RDERR_NOTCLOSED;
 
 	lightMask = (uint8 *) malloc(s->w * s->h);
-
-	if (lightMask == NULL)
-		return(RDERR_OUTOFMEMORY);
+	if (!lightMask)
+		return RDERR_OUTOFMEMORY;
 
 	if (DecompressRLE256(lightMask, s->data, s->w * s->h))
-		return(RDERR_DECOMPRESSION);
+		return RDERR_DECOMPRESSION;
 
-	return(RD_OK);
-
+	return RD_OK;
 }
 
-int32 CloseLightMask(void)
-{
-
+int32 CloseLightMask(void) {
 	if (!lightMask)
-		return(RDERR_NOTOPEN);
+		return RDERR_NOTOPEN;
 
 	free(lightMask);
-
 	lightMask = 0;
-
-	return(RD_OK);
-
+	return RD_OK;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

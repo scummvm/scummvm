@@ -238,7 +238,7 @@ int32 ProcessMenu(void) {
 						if (pocketStatus[menu][i] != MAXMENUANIMS) {
 							SquashImage(
 								dst, lpBackBuffer->_width, r.right - r.left, r.bottom - r.top,
-								src, RDMENU_ICONWIDE, RDMENU_ICONWIDE, RDMENU_ICONDEEP);
+								src, RDMENU_ICONWIDE, RDMENU_ICONWIDE, RDMENU_ICONDEEP, NULL);
 						} else {
 							for (int j = 0; j < RDMENU_ICONDEEP; j++) {
 								memcpy(dst, src, RDMENU_ICONWIDE);
