@@ -46,17 +46,21 @@
 static const char USAGE_STRING[] = "NoUsageString"; // save more data segment space
 #else
 static const char USAGE_STRING[] = 
-	"ScummVM - Scumm Interpreter\n"
+	"ScummVM - Graphical Adventure Game Interpreter\n"
 	"Syntax:\n"
-	"\tscummvm [-v] [-d[<num>]] [-n] [-b<num>] [-t<num>] [-s<num>] [-p<path>] [-m<num>] [-f] game\n"
-	"Flags:\n"
+	"\tscummvm [OPTIONS] [game]\n"
+	"Options:\n"
 	"\t-p<path>       - look for game in <path>\n"
 	"\t-x[<num>]      - load this savegame (default: 0 - autosave)\n"
 	"\t-f             - fullscreen mode\n"
-	"\t-g<mode>       - graphics mode (normal,2x,3x,2xsai,super2xsai,supereagle,advmame2x,advmame3x,tv2x,dotmatrix)\n"
+	"\t-g<mode>       - graphics mode (normal,2x,3x,2xsai,super2xsai,\n"
+	"\t                 supereagle,advmame2x,advmame3x,tv2x,dotmatrix)\n"
 	"\t-e<mode>       - set music engine (see README for details)\n"
 	"\t-a             - specify game is amiga version\n"
-	"\t-q<lang>       - specify language (en,de,fr,it,pt,es,jp,zh,kr,hb) BASS also: (gb, se)\n"
+	"\t-q<lang>       - specify language (en,de,fr,it,pt,es,jp,zh,kr,hb)\n"
+#ifndef DISABLE_SKY
+	"\t                 BASS also: (gb, se)\n"
+#endif
 	"\n"
 	"\t-c<num>        - use cdrom <num> for cd audio\n"
 	"\t-m<num>        - set music volume to <num> (0-255)\n"
