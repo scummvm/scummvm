@@ -97,9 +97,6 @@ OSystem *OSystem_MorphOS_create(int game_id, int gfx_mode, bool full_screen)
 
 void close_resources()
 {
-	if (EtudeMidiDriver)
-		EtudeMidiDriver->close();
-
 	if (TheSystem)
 		delete TheSystem;
 

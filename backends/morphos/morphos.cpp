@@ -213,8 +213,11 @@ OSystem_MorphOS::~OSystem_MorphOS()
 
 	if (ScummMusicThread)
 	{
-		Signal((Task *) ScummMusicThread, SIGBREAKF_CTRL_C);
-		ObtainSemaphore(&ScummMusicThreadRunning);    /* Wait for thread to finish */
+		if (!AttemptSemaphore(&ScummMusicThreadRunning))
+		{
+			Signal((Task *) ScummMusicThread, SIGBREAKF_CTRL_C);
+			ObtainSemaphore(&ScummMusicThreadRunning);    /* Wait for thread to finish */
+		}
 		ReleaseSemaphore(&ScummMusicThreadRunning);
 	}
 
@@ -1096,8 +1099,9 @@ void OSystem_MorphOS::move_screen(int dx, int dy, int height) {
 	} else if (dy < 0) {
 		// move up
 		// copy from top to bottom
+		dy = -dy;
 		for (int y = dy; y < height; y++)
-			copy_rect((byte *)ScummBuffer + ScummBufferWidth * (y - dy), ScummBufferWidth, 0, y, ScummBufferWidth, 1);
+			copy_rect((byte *)ScummBuffer + ScummBufferWidth * y, ScummBufferWidth, 0, y - dy, ScummBufferWidth, 1);
 	}
 
 	// horizontal movement
@@ -1109,8 +1113,9 @@ void OSystem_MorphOS::move_screen(int dx, int dy, int height) {
 	} else if (dx < 0) {
 		// move left
 		// copy from left to right
+		dx = -dx;
 		for (int x = dx; x < ScummBufferWidth; x++)
-			copy_rect((byte *)ScummBuffer + x - dx, ScummBufferWidth, x, 0, 1, height);
+			copy_rect((byte *)ScummBuffer + x, ScummBufferWidth, x, 0, 1, height);
 	}
 }
 
