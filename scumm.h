@@ -45,6 +45,9 @@ typedef void (Scumm::*OpcodeProc)();
 
 /* Use this one from error() ONLY */
 extern Scumm *g_scumm;
+/* BIG HACK for MidiEmu - FIXME */
+extern OSystem *g_system;
+extern SoundMixer *g_mixer;
 
 /* System Wide Constants */
 enum {

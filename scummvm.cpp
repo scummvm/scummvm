@@ -1425,6 +1425,8 @@ Scumm *Scumm::createFromDetector(GameDetector *detector, OSystem *syst)
 
 	/* HACK !!! */
 	g_scumm = scumm;
+	g_system = scumm->_system;
+	g_mixer = &scumm->_mixer[0];
 	/* END HACK */
 
 //	scumm->_fullScreen = detector->_fullScreen;

@@ -964,13 +964,14 @@ static int my_midi_fm_vol_table[128] = {
 
 class MidiDriver_MIDIEMU : public MidiDriver {
 public:
-        MidiDriver_MIDIEMU();
+    MidiDriver_MIDIEMU();
 	int open(int mode);
 	void close();
 	void send(uint32 b);
 	void pause(bool pause);
 	void set_stream_callback(void *param, StreamCallback *sc);
-
+	static int midiemu_callback_thread(void *param);
+	
 private:
 	struct midi_channel {
 		int inum;
@@ -1001,9 +1002,9 @@ private:
 	StreamCallback *_stream_proc;
 	void *_stream_param;
 	int _mode;
-	FM_OPL *_opl;
 	int chp[9][3];
 	unsigned char myinsbank[128][11];
+	FM_OPL *_opl;
 	midi_channel ch[16];
 };
 
@@ -1035,8 +1036,10 @@ MidiDriver_MIDIEMU::MidiDriver_MIDIEMU(){
 }
 
 int MidiDriver_MIDIEMU::open(int mode) {
-	_opl = OPLCreate(OPL_TYPE_YM3812, 3579545, g_scumm->_system->property(OSystem::PROP_GET_SAMPLE_RATE,0));
-	g_scumm->_mixer->setup_premix((void*) this, premix_proc);
+	_opl = OPLCreate(OPL_TYPE_YM3812, 3579545, g_system->property(OSystem::PROP_GET_SAMPLE_RATE,0));
+	g_mixer->setup_premix((void*) this, premix_proc);
+	if (_stream_proc)
+		g_system->create_thread(midiemu_callback_thread, this);
 	return 0;
 }
 
@@ -1240,6 +1243,46 @@ void MidiDriver_MIDIEMU::send(uint32 b)
 void MidiDriver_MIDIEMU::pause(bool pause) {
 	if (_mode == MO_STREAMING) {
 	}
+}
+
+#define NUMBER_MIDI_EVENTS 64
+
+int MidiDriver_MIDIEMU::midiemu_callback_thread(void *param) {
+	MidiDriver_MIDIEMU *driver = (MidiDriver_MIDIEMU*) param;
+	MidiEvent my_evs[NUMBER_MIDI_EVENTS];
+	bool need_midi_data = true;
+
+	for (;;) {
+		int number;
+		int i;
+
+		if (need_midi_data) {
+			number = driver->_stream_proc(driver->_stream_param, my_evs, NUMBER_MIDI_EVENTS);
+			if (!number) {
+				// No MIDI data available for the moment
+				g_system->delay_msecs(10);
+				continue;
+			}
+			need_midi_data = false;
+		}
+
+		for (i=0; i<number; i++) {
+			uint32 event;
+
+			event = my_evs[i].event;
+			if ((event>>24) == ME_TEMPO) {
+				event = (MEVT_TEMPO << 24) | (event & 0xFFFFFF);
+			}
+			driver->send(event);			
+			if (my_evs[i].delta) {
+				g_system->delay_msecs(my_evs[i].delta);
+			}
+		}
+
+		need_midi_data = true;
+	}
+
+	return 0;
 }
 
 void MidiDriver_MIDIEMU::set_stream_callback(void *param, StreamCallback *sc) {

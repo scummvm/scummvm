@@ -32,6 +32,9 @@ GameDetector detector;
 Gui gui;
 
 Scumm *g_scumm;
+/* FIXME */
+OSystem *g_system;
+SoundMixer *g_mixer;
 
 Config * scummcfg;
 
@@ -182,6 +185,8 @@ game settings!
 		MidiDriver *midi = detector.createMidi();
 		
 		SimonState *simon = SimonState::create(system, midi);
+		g_system = simon->_system;
+		g_mixer = &simon->_mixer[0];
 		simon->_game = detector._gameId - GID_SIMON_FIRST;
 		simon->set_volume(detector._sfx_volume);
 		simon->_game_path = detector._gameDataPath;
@@ -190,6 +195,8 @@ game settings!
 	} else {
 		Scumm *scumm = Scumm::createFromDetector(&detector, system);
 		g_scumm = scumm;
+		g_system = scumm->_system;
+		g_mixer = &scumm->_mixer[0];
 		g_scumm->_sound_volume_master = 0;
 		g_scumm->_sound_volume_music = detector._music_volume;
 		g_scumm->_sound_volume_sfx = detector._sfx_volume;
