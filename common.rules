@@ -2,6 +2,7 @@
 
 # Convenience library target
 $(MODULE)/lib$(MODULE).a: $(MODULE_OBJS)
+	-$(RM)  $@
 	$(AR) $@ $+
 	$(RANLIB) $@ 
 
