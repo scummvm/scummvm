@@ -267,7 +267,7 @@ static void mix_signed_mono_16(int16 *data, uint len, byte **s_ptr, uint32 *fp_p
 	unsigned char volume = ((int) vol_tab[1]) * 32 / 255;
 	byte *s = *s_ptr;
 	do {
-		int16 sample = (int16) (((int32) ((*s << 8) | *(s + 1))) * volume / 32);
+		int16 sample = (((int16)(*s << 8) | *(s + 1)) * volume) / 32;
 		fp_pos += fp_speed;
 		*data++ += sample;
 		*data++ += sample;
@@ -287,8 +287,8 @@ static void mix_signed_stereo_16(int16 *data, uint len, byte **s_ptr, uint32 *fp
 	byte *s = *s_ptr;
 	do {
 		fp_pos += fp_speed;
-		*data++ += (int16) ((((int32) ((*(s    ) << 8) | *(s + 1))) * volume) / 32);
-		*data++ += (int16) ((((int32) ((*(s + 2) << 8) | *(s + 3))) * volume) / 32);
+		*data++ += (((int16)(*(s    ) << 8) | *(s + 1)) * volume) / 32;
+		*data++ += (((int16)(*(s + 2) << 8) | *(s + 3)) * volume) / 32;
 		s += (fp_pos >> 16) << 2;
 		fp_pos &= 0x0000FFFF;
 	} while (--len);
