@@ -175,8 +175,6 @@ int SwordEngine::init(GameDetector &detector) {
 	_logic = new Logic(_objectMan, _resMan, _screen, _mouse, _sound, _music, _menu, _system, _mixer);
 	_mouse->useLogicAndMenu(_logic, _menu);
 
-	ConfMan.registerDefault("speech_volume", 192);
-
 	uint8 musicVol = (uint8)ConfMan.getInt("music_volume");
 	uint8 speechVol = (uint8)ConfMan.getInt("speech_volume");
 	uint8 sfxVol = (uint8)ConfMan.getInt("sfx_volume");
