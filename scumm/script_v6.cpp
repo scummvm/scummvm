@@ -1004,7 +1004,7 @@ void Scumm_v6::o6_walkActorToObj() {
 		a->startWalkActor(x, y, dir);
 	} else {
 		a2 = derefActorSafe(obj, "o6_walkActorToObj(2)");
-		if (a2 == 0) {
+		if (_gameId == GID_SAMNMAX && a2 == 0) {
 			// FIXME: This is a hack to work around bug #742676 SAM: Fish Farm.
 			// Note quite sure why it happens, though, if it's normal or due to
 			// a bug in the ScummVM code.
