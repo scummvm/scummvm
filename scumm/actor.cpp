@@ -1662,8 +1662,13 @@ void Actor::remapActorPalette(int r_fact, int g_fact, int b_fact, int threshold)
 	int r, g, b;
 	byte akpl_color;
 
-	if (!isInCurrentRoom() || costume < 1 || costume >= _vm->_numCostumes - 1)
+	if (!isInCurrentRoom()) {
+		debugC(DEBUG_ACTORS, "Remap actor %d not in current room", number);
 		return;
+	} else if (costume < 1 || costume >= _vm->_numCostumes - 1) {
+		debugC(DEBUG_ACTORS, "Remap actor %d invalid costume %d", number, costume);
+		return;
+	}
 
 	akos = _vm->getResourceAddress(rtCostume, costume);
 	if (!akos) {
@@ -1686,7 +1691,7 @@ void Actor::remapActorPalette(int r_fact, int g_fact, int b_fact, int threshold)
 	rgbs = _vm->findResource(MKID('RGBS'), akos);
 
 	if (!rgbs) {
-		warning("Can't remap actor %d costume %d doesn't contain an RGB block", number, costume);
+		debugC(DEBUG_ACTORS, "Can't remap actor %d costume %d doesn't contain an RGB block", number, costume);
 		return;
 	}
 	// skip resource header
