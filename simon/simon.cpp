@@ -2935,12 +2935,11 @@ void SimonEngine::timer_proc1() {
 
 	if (_game & GF_SIMON2) {
 		if (_lock_word & 0x80E9 || _lock_word & 2)
-		return;
-	} else if (_game & GF_TALKIE) {
+			return;
+	} else {
 		if (_lock_word & 0xC0E9 || _lock_word & 2)
-		return;
-	} else 	if (_lock_word & 0x8000 || _lock_word & 0xE9 || _lock_word & 2)
-		return;
+			return;
+	}
 
 	_timer_1++;
 
@@ -2957,7 +2956,6 @@ void SimonEngine::timer_proc1() {
 
 		} else {
 			_sync_flag_2 ^= 1;
-
 			if (!_sync_flag_2)
 				expire_vga_timers();
 
@@ -2969,7 +2967,6 @@ void SimonEngine::timer_proc1() {
 		}
 	}
 
-	// XXX: more stuff here
 	timer_vga_sprites();
 	if (_draw_images_debug)
 		timer_vga_sprites_2();
