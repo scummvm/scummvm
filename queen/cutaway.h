@@ -24,6 +24,8 @@
 
 #include "queen/queen.h"
 
+namespace Queen {
+
 class QueenResource;
 class QueenLogic;
 class QueenGraphics;
@@ -248,5 +250,6 @@ class QueenCutaway {
 
 };
 
-#endif
+} // End of namespace Queen
 
+#endif

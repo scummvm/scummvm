@@ -21,6 +21,8 @@
 
 #include "queen/logic.h"
 
+namespace Queen {
+
 QueenLogic::QueenLogic(QueenResource *resource) 
 	: _maxAnimatedFrame(0), _maxStaticFrame(0), _resource(resource) {
 	_jas = _resource->loadFile("QUEEN.JAS", 20);
@@ -370,3 +372,5 @@ uint16 QueenLogic::findFrame(uint16 obj) {
 	}
 	return framenum;
 }
+
+} // End of namespace Queen

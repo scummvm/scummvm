@@ -21,6 +21,8 @@
 
 #include "queen/resource.h"
 
+namespace Queen {
+
 //English Floppy Demo v1
 const GameVersion QueenResource::_gameVersionPE100v1 = {
 	"PE100",
@@ -57,3 +59,4 @@ const GameVersion QueenResource::_gameVersionCEM10 = {
 	_resourceTableCEM10
 };
 
+} // End of namespace Queen

@@ -19,10 +19,12 @@
  *
  */
 
-#ifndef QUEENRESOURCE_H
-#define QUEENRESOURCE_H
+#ifndef QUEEN_RESOURCE_H
+#define QUEEN_RESOURCE_H
 
 #include "common/file.h"
+
+namespace Queen {
 
 struct ResourceEntry {
 	char filename[13];
@@ -67,6 +69,8 @@ protected:
 	uint32 fileOffset(const char *filename);
 	const char *JASVersion();
 };
+
+} // End of namespace Queen
 
 #endif
 

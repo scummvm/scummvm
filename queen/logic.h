@@ -24,6 +24,7 @@
 
 #include "queen/queen.h"
 
+namespace Queen {
 
 struct GraphicData {
 	uint16 x, y;
@@ -100,5 +101,7 @@ protected:
 
 	void initialise();
 };
+
+} // End of namespace Queen
 
 #endif

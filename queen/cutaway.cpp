@@ -23,6 +23,8 @@
 #include "cutaway.h"
 #include "graphics.h"
 
+namespace Queen {
+
 /*
 	 Functions needed:
 
@@ -1036,3 +1038,4 @@ void QueenCutaway::talk(char *nextFilename) {
 	}
 }
 
+} // End of namespace Queen

@@ -22,6 +22,8 @@
 #include "queen/queen.h"
 #include "queen/resource.h"
 
+namespace Queen {
+
 #define	DEMO_JAS_VERSION_OFFSET	0x119A8
 #define JAS_VERSION_OFFSET	0x12484
 
@@ -142,3 +144,4 @@ bool QueenResource::isDemo() {
 	return _gameVersion->isDemo;
 }
 
+} // End of namespace Queen

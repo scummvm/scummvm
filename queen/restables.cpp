@@ -21,6 +21,8 @@
 
 #include "queen/resource.h"
 
+namespace Queen {
+
 //English Floppy Demo v1
 const ResourceEntry QueenResource::_resourceTablePE100v1[] = {
 	{ "ANDERSON.ACT", 1, 0x00000000, 0x00007c0a },
@@ -9094,3 +9096,4 @@ const ResourceEntry QueenResource::_resourceTableCEM10[] = {
 	{ "ZOMBIE2.DOG", 1, 0x0b5f218d, 0x00000c40 }
 };
 
+} // End of namespace Queen

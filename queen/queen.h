@@ -31,6 +31,8 @@
 #include "queen/logic.h"
 #include "common/config-file.h"
 
+namespace Queen {
+
 class QueenLogic;
 
 class QueenEngine : public Engine {
@@ -67,5 +69,7 @@ protected:
 
 	static int CDECL game_thread_proc(void *param);
 };
+
+} // End of namespace Queen
 
 #endif

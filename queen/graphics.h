@@ -24,6 +24,7 @@
 
 #include "queen/queen.h"
 
+namespace Queen {
 
 #define MAX_BANK_SIZE      110
 #define MAX_FRAMES_NUMBER  256
@@ -134,5 +135,6 @@ private:
 	
 };
 
-#endif
+} // End of namespace Queen
 
+#endif

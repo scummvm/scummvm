@@ -21,6 +21,7 @@
 
 #include "queen/graphics.h"
 
+namespace Queen {
 
 QueenGraphics::QueenGraphics(QueenResource *resource)
 	:_resource(resource) {
@@ -509,3 +510,5 @@ void QueenGraphics::frameErase(uint32 fslot) {
 	delete[] pbf->data;
 
 }
+
+} // End of namespace Queen

@@ -45,10 +45,12 @@ const TargetSettings *Engine_QUEEN_targetList() {
 }
 
 Engine *Engine_QUEEN_create(GameDetector *detector, OSystem *syst) {
-	return new QueenEngine(detector, syst);
+	return new Queen::QueenEngine(detector, syst);
 }
 
 REGISTER_PLUGIN("Flight of the Amazon Queen", Engine_QUEEN_targetList, Engine_QUEEN_create);
+
+namespace Queen {
 
 QueenEngine::QueenEngine(GameDetector *detector, OSystem *syst)
 	: Engine(detector, syst) {
@@ -179,3 +181,4 @@ void QueenEngine::delay(uint amount) {
 	} while (cur < start + amount);
 }
 
+} // End of namespace Queen
