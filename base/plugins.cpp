@@ -133,7 +133,7 @@ void *DynamicPlugin::findSymbol(const char *symbol) {
 #endif
 	void *func = dlsym(_dlHandle, symbol);
 	if (!func)
-		warning("Failed loading symbold '%s' from plugin '%s' (%s)", symbol, _filename.c_str(), dlerror());
+		warning("Failed loading symbol '%s' from plugin '%s' (%s)", symbol, _filename.c_str(), dlerror());
 	return func;
 #else
 #error TODO
@@ -218,7 +218,7 @@ void PluginManager::loadPlugins() {
 	// the "ABI" version the plugin was built for, and we can compare that
 	// to the ABI version of the executable.
 	#define LOAD_MODULE(name, NAME) \
-		tryLoadPlugin(new DynamicPlugin("scumm/lib" name ".so"));
+		tryLoadPlugin(new DynamicPlugin(name "/lib" name ".so"));
 #else
 	// "Loader" for the static plugins
 	#define LOAD_MODULE(name, NAME) \
