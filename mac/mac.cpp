@@ -28,13 +28,28 @@
 #include <string.h>
 #include <assert.h>
 
+#include "stdafx.h"
 #include "scumm.h"
-#include "sound.h"
 #include "gui.h"
+#include "sound.h"
+#include "cdmusic.h"
+#include "mp3_cd.h"
+#include "gameDetector.h"
 
 #define SRC_WIDTH 320
 #define SRC_HEIGHT 200
 #define SRC_PITCH (320)
+
+#define MS_PER_TICK	(1000.0/60.0)
+
+int Time()
+{
+	UnsignedWide ms;
+	
+	Microseconds(&ms);
+	//return(ms.lo * MS_PER_TICK);
+	return(ms.lo / 1000);
+}
 
 int DEST_WIDTH, DEST_HEIGHT;
 static bool shutdown;
@@ -121,11 +136,13 @@ public:
 };
 
 int sel;
-Scumm scumm;
+Scumm *scumm;
 ScummDebugger debugger;
 Gui gui;
 SoundEngine sound;
 SOUND_DRIVER_TYPE snd_driv;
+OSystem _system;
+GameDetector detector;
 
 WndMan wm[1];
 byte veryFastMode;
@@ -281,8 +298,8 @@ static pascal OSStatus EventHandler( EventHandlerCallRef inCallRef, EventRef inE
 					GetPort(&oldPort);
 					SetPortWindowPort(wm->wPtr);
 					GlobalToLocal(&mouse);
-					scumm.mouse.x = mouse.h/wm->scale;
-					scumm.mouse.y = mouse.v/wm->scale;
+					scumm->mouse.x = mouse.h/wm->scale;
+					scumm->mouse.y = mouse.v/wm->scale;
 					
 					//debug(1, "Mouse X:%i Y:%i", scumm.mouse.x, scumm.mouse.y);
 				}
@@ -293,33 +310,9 @@ static pascal OSStatus EventHandler( EventHandlerCallRef inCallRef, EventRef inE
 	return result;
 }
 
-void pc_loop()
-{
-	int delta;
-	int last_time, new_time, old_time = TickCount();
-	
-	delta = 0;
-	do {
-		updateScreen(&scumm);
-		
-		new_time = TickCount();
-		waitForTimer(&scumm, delta * 15 + last_time - new_time);
-		last_time = TickCount();
-		
-		sound.on_timer();
-		
-		if(gui._active) {
-			gui.loop();
-			delta = 3;
-		} else {
-			delta = scumm.scummLoop(delta);
-		}
-	} while(1);
-}
-
 pascal void DoGameLoop(EventLoopTimerRef theTimer, void *userData)
 {
-	pc_loop();
+	scumm->mainRun();
 	QuitApplicationEventLoop();
 }
 
@@ -436,10 +429,10 @@ void waitForTimer(Scumm *s, int delay)
 	else if(s->_fastMode&1)
 		delay = 10;
 	
-	start_time = TickCount();
+	start_time = Time();
 	do {
 		wm->handleMessage();
-		if(TickCount() >= start_time + delay)
+		if(Time() >= start_time + delay)
 			break;
 	} while (1);
 }
@@ -914,7 +907,7 @@ void Preferences()
 
 /* FIXME: CD Music Stubs */
 void cd_playtrack(int track, int offset, int delay) {;}
-void cd_play(int track, int num_loops, int start_frame, int end_frame) {;}
+void cd_play(Scumm *s, int track, int num_loops, int start_frame, int end_frame) {;}
 void cd_stop() {;}
 int cd_is_running() {return 0;}
 
@@ -939,11 +932,60 @@ void InitMacStuff()
     GetFNum("\pMonaco",&SIOUXSettings.fontid);
    	SIOUXSettings.standalone        = false;
    	SIOUXSettings.setupmenus		= false;
+   	SIOUXSettings.toppixel			= 40;
+   	SIOUXSettings.leftpixel			= 5;
+}
+
+void InitScummStuff()
+{
+	detector.detectMain(2, &gameTitle);
+	
+	if(detector._features & GF_OLD256)
+		scumm = new Scumm_v3;
+	else
+	if(detector._features & GF_SMALL_HEADER) // this force loomCD as v4
+		scumm = new Scumm_v4;
+	else
+	if(detector._features & GF_AFTER_V7)
+		scumm = new Scumm_v7;
+	else
+	if(detector._features & GF_AFTER_V6) // this force SamnmaxCD as v6
+		scumm = new Scumm_v6;
+	else
+		scumm = new Scumm_v5;
+	
+	scumm->_fullScreen = detector._fullScreen;
+	scumm->_debugMode = detector._debugMode;
+	scumm->_bootParam = detector._bootParam;
+	scumm->_scale = detector._scale;
+	scumm->_gameDataPath = detector._gameDataPath;
+	scumm->_gameTempo = detector._gameTempo;
+	scumm->_soundEngine = detector._soundEngine;
+	scumm->_videoMode = detector._videoMode;
+	scumm->_exe_name = detector._exe_name;
+	scumm->_gameId = detector._gameId;
+	scumm->_gameText = detector._gameText;
+	scumm->_features = detector._features;
+	scumm->_soundCardType = detector._soundCardType;
+	scumm->_noSubtitles = detector._noSubtitles;
+	scumm->_midi_driver = detector._midi_driver;
+	scumm->_cdrom = detector._cdrom;
+	
+	scumm->delta=6;
+	scumm->_gui = &gui;	
+	sound.initialize(scumm,&snd_driv);
+	
+	scumm->delta=0;
+	scumm->_system = &_system;	
 }
 
 void setWindowName(Scumm *scumm)
 {
-	StringPtr gameText = CToPascal(scumm->getGameName());
+	char buf[512], *gameName;
+	
+	sprintf(buf, "ScummVM - %s", gameName = detector.getGameName());
+	free(gameName);
+	StringPtr gameText = CToPascal(buf);
 	SetWTitle(wm->wPtr, gameText);
 }
 
@@ -955,22 +997,40 @@ void main(void)
 //	initGraphics(&scumm, wm->fullscreen, wm->scale);
 	
 	wm->_vgabuf = (byte*)calloc(320,200);
-	wm->_scumm = &scumm;
+	wm->_scumm = scumm;
 	
-	sound.initialize(&scumm,&snd_driv);
+	InitScummStuff();
 	
-	scumm.scummMain(2, &gameTitle);
+	scumm->launch();
+	
+	gui.init(scumm);
 	
 	setWindowName(wm->_scumm);
-	
-	if (!(scumm._features & GF_SMALL_HEADER))
-    	gui.init(&scumm);
-    
-	scumm._fastMode = true;
-	
-	veryFastMode = true;
 	
 	RunApplicationEventLoop();
 	
 	return;	
+}
+
+OSystem::OSystem()
+{
+	last_time = Time();
+}
+
+int OSystem::waitTick(int delta)
+{
+	do
+	{
+		updateScreen(scumm);
+		new_time = Time();
+		waitForTimer(scumm, delta * 15 + last_time - new_time);
+		last_time = Time();
+		if(gui._active)
+		{
+			gui.loop(scumm);
+			delta = 5;
+		}
+	} while(gui._active);
+	
+	return(delta);
 }
