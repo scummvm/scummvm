@@ -50,7 +50,7 @@ int SoundMixer::insert(PlayingSoundHandle *handle, Channel *chan) {
 	}
 	
 	warning("SoundMixer::insert out of mixer slots");
-	chan->destroy();
+	chan->real_destroy();
 
 	return -1;
 }
@@ -140,6 +140,7 @@ SoundMixer::Channel_RAW::Channel_RAW(SoundMixer *mixer, void *sound, uint32 size
 	_pos = 0;
 	_fp_pos = 0;
 	_fp_speed = (1 << 16) * rate / mixer->_output_rate;
+	_to_be_destroyed = false;
 
 	/* adjust the magnitute to prevent division error */
 	while (size & 0xFFFF0000)
@@ -151,6 +152,11 @@ SoundMixer::Channel_RAW::Channel_RAW(SoundMixer *mixer, void *sound, uint32 size
 void SoundMixer::Channel_RAW::mix(int16 *data, uint len) {
 	byte *s, *s_org = NULL;
 	uint32 fp_pos;
+
+	if (_to_be_destroyed) {
+		real_destroy();
+		return;
+	}
 
 	if (len > _size)
 		len = _size;
@@ -205,11 +211,11 @@ void SoundMixer::Channel_RAW::mix(int16 *data, uint len) {
 	}
 
 	if (_size < 1)
-		destroy();
+		real_destroy();
 
 }
 
-void SoundMixer::Channel_RAW::destroy() {
+void SoundMixer::Channel_RAW::real_destroy() {
 	if (_flags & FLAG_AUTOFREE)
 		free(_ptr);
 	_mixer->uninsert(this);
@@ -226,6 +232,7 @@ SoundMixer::Channel_MP3::Channel_MP3(SoundMixer *mixer, void *sound, uint size, 
 	_position = 0;
 	_size = size;
 	_ptr = sound;
+	_to_be_destroyed = false;
 	
 	mad_stream_init(&_stream);
 #ifdef _WIN32_WCE
@@ -266,6 +273,12 @@ static inline int scale_sample(mad_fixed_t sample)
 
 void SoundMixer::Channel_MP3::mix(int16 *data, uint len) {
 	mad_fixed_t const *ch;
+
+	if (_to_be_destroyed) {
+		real_destroy();
+		return;
+	}
+
 	while (1) {
 		ch = _synth.pcm.samples[0] + _pos_in_frame;
 		while ((_pos_in_frame < _synth.pcm.length) && (len > 0)) {
@@ -281,7 +294,7 @@ void SoundMixer::Channel_MP3::mix(int16 *data, uint len) {
 			return;
 		
 		if (_position >= _size) {
-			destroy();
+			real_destroy();
 			return;
 		}
 
@@ -290,7 +303,7 @@ void SoundMixer::Channel_MP3::mix(int16 *data, uint len) {
 		if (mad_frame_decode(&_frame, &_stream) == -1) {
 			/* End of audio... */
 			if (_stream.error == MAD_ERROR_BUFLEN) {
-				destroy();
+				real_destroy();
 				return;
 			} else if (!MAD_RECOVERABLE(_stream.error)) {
 				error("MAD frame decode error !");
@@ -302,7 +315,7 @@ void SoundMixer::Channel_MP3::mix(int16 *data, uint len) {
 	}
 }
 
-void SoundMixer::Channel_MP3::destroy() {
+void SoundMixer::Channel_MP3::real_destroy() {
 	if (_flags & FLAG_AUTOFREE)
 		free(_ptr);
 	_mixer->uninsert(this);
@@ -323,6 +336,8 @@ SoundMixer::Channel_MP3_CDMUSIC::Channel_MP3_CDMUSIC(SoundMixer *mixer, FILE* fi
 	_buffer_size = buffer_size;
 	_ptr = buffer;
 	_flags = 0;
+	_to_be_destroyed = false;
+
 	mad_stream_init(&_stream);
 #ifdef _WIN32_WCE
 	// 11 kHz on WinCE
@@ -330,11 +345,20 @@ SoundMixer::Channel_MP3_CDMUSIC::Channel_MP3_CDMUSIC(SoundMixer *mixer, FILE* fi
 #endif
 	mad_frame_init(&_frame);
 	mad_synth_init(&_synth);
+
+	debug(1, "CRE %d", getpid());
 }
 
 void SoundMixer::Channel_MP3_CDMUSIC::mix(int16 *data, uint len) {
 	mad_fixed_t const *ch;
 	mad_timer_t frame_duration;
+
+	if (_to_be_destroyed) {
+		real_destroy();
+		return;
+	}
+
+	debug(1, "MIX %d", getpid());
 
 	if (!_initialized) {
 		int skip_loop;
@@ -342,7 +366,7 @@ void SoundMixer::Channel_MP3_CDMUSIC::mix(int16 *data, uint len) {
 		memset(_ptr, 0,_buffer_size);
 		_size = fread(_ptr, 1, _buffer_size, _file);
 		if (!_size) {
-				destroy();
+				real_destroy();
 				return;
 		}
 		// Resync
@@ -358,7 +382,7 @@ void SoundMixer::Channel_MP3_CDMUSIC::mix(int16 *data, uint len) {
 			} else {
 				if (!MAD_RECOVERABLE(_stream.error)) {
 					debug(1, "Unrecoverable error while skipping !");
-					destroy();
+					real_destroy();
 					return;
 				}
 			}
@@ -370,10 +394,9 @@ void SoundMixer::Channel_MP3_CDMUSIC::mix(int16 *data, uint len) {
 		if (mad_frame_decode(&_frame,&_stream) == 0) {
 			_pos_in_frame = 0;
 			_initialized = true;
-		} 
-		else {
+		} else {
 			debug(1, "Cannot resume decoding");
-			destroy();
+			real_destroy();
 			return;
 		}
 	}
@@ -396,7 +419,7 @@ void SoundMixer::Channel_MP3_CDMUSIC::mix(int16 *data, uint len) {
 		mad_timer_negate(&frame_duration);
 		mad_timer_add(&_duration, frame_duration);
 		if (mad_timer_compare(_duration, mad_timer_zero) < 0) {					
-			destroy();
+			real_destroy();
 			return;
 		}		
 		if (mad_frame_decode(&_frame, &_stream) == -1) {
@@ -427,13 +450,15 @@ void SoundMixer::Channel_MP3_CDMUSIC::mix(int16 *data, uint len) {
 	}
 }
 
-void SoundMixer::Channel_MP3_CDMUSIC::destroy() {
+void SoundMixer::Channel_MP3_CDMUSIC::real_destroy() {
 	if (_flags & FLAG_AUTOFREE)
 		free(_ptr);
 	_mixer->uninsert(this);
 	mad_synth_finish(&_synth);
 	mad_frame_finish(&_frame);
 	mad_stream_finish(&_stream);
+
+	debug(1, "DES %d", getpid());
 
 	delete this;
 }

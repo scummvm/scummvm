@@ -32,8 +32,10 @@ class SoundMixer {
 private:	
 	class Channel {
 	public:
+		bool _to_be_destroyed;
 		virtual void mix(int16 *data, uint len) = 0;
-		virtual void destroy() = 0;
+		void destroy() { _to_be_destroyed = true; }
+		virtual void real_destroy() = 0;
 	};
 
 	class Channel_RAW : public Channel {
@@ -48,9 +50,8 @@ private:
 
 	public:
 		void mix(int16 *data, uint len);
-		void destroy();
-
 		Channel_RAW(SoundMixer *mixer, void *sound, uint32 size, uint rate, byte flags);
+		void real_destroy();
 	};
 
 #ifdef COMPRESSED_SOUND_FILE
@@ -69,9 +70,9 @@ private:
 
 	public:
 		void mix(int16 *data, uint len);
-		void destroy();
-
 		Channel_MP3(SoundMixer *mixer, void *sound, uint size, byte flags);
+		void real_destroy();
+
 	};
 
 	class Channel_MP3_CDMUSIC : public Channel {
@@ -89,9 +90,10 @@ private:
 		byte _flags;
 	public:
 		void mix(int16 *data, uint len);
-		void destroy();		
-
 		Channel_MP3_CDMUSIC(SoundMixer *mixer, FILE* file, void *buffer, uint32 buffer_size, mad_timer_t duration);
+		void real_destroy();		
+
+
 	};
 
 #endif
