@@ -180,12 +180,17 @@ LauncherDialog::LauncherDialog(NewGui *gui, GameDetector &detector)
 	addButton(1*(_w - kButtonWidth)/6, _h - 24, "Quit", kQuitCmd, 'Q');
 	addButton(3*(_w - kButtonWidth)/6, _h - 24, "Options", kOptionsCmd, 'O');
 	_startButton = addButton(5*(_w - kButtonWidth)/6, _h - 24, "Start", kStartCmd, 'S');
-	_startButton->setEnabled(false);
 
 	// Add list with game titles
 	_list = new ListWidget(this, 10, 28, 300, 112);
 	_list->setEditable(false);
 	_list->setNumberingMode(kListNumberingOff);
+	
+	// Two more buttons directly below the list box
+	const int kBigButtonWidth = 90;
+	new ButtonWidget(this, 10, 144, kBigButtonWidth, 16, "Add Game...", kAddGameCmd, 'A');
+	_editButton = new ButtonWidget(this, (320-kBigButtonWidth)/2, 144, kBigButtonWidth, 16, "Edit Game...", kEditGameCmd, 'E');
+	_removeButton = new ButtonWidget(this, 320-kBigButtonWidth-10, 144, kBigButtonWidth, 16, "Remove Game", kRemoveGameCmd, 'R');
 	
 	// Populate the list
 	updateListing();
@@ -193,14 +198,9 @@ LauncherDialog::LauncherDialog(NewGui *gui, GameDetector &detector)
 	// TODO - make a default selection (maybe the game user played last?)
 	//_list->setSelected(0);
 
-	// Two more buttons directly below the list box
-	const int kBigButtonWidth = 90;
-	new ButtonWidget(this, 10, 144, kBigButtonWidth, 16, "Add Game...", kAddGameCmd, 'A');
-	_editButton = new ButtonWidget(this, (320-kBigButtonWidth)/2, 144, kBigButtonWidth, 16, "Edit Game...", kEditGameCmd, 'E');
-	_editButton->setEnabled(false);
-	_removeButton = new ButtonWidget(this, 320-kBigButtonWidth-10, 144, kBigButtonWidth, 16, "Remove Game", kRemoveGameCmd, 'R');
-	_removeButton->setEnabled(false);
-	
+	// En-/Disable the buttons depending on the list selection
+	updateButtons();
+
 	// Create file browser dialog
 	_browser = new BrowserDialog(_gui);
 
@@ -262,6 +262,7 @@ void LauncherDialog::updateListing()
 	}
 
 	_list->setList(l);
+	updateButtons();
 }
 
 /*
@@ -448,26 +449,29 @@ void LauncherDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 		_detector.setGame(_domains[item]);
 		close();
 		break;
-	case kListSelectionChangedCmd: {
-		bool enable = ((int)data >= 0);
-		if (enable != _startButton->isEnabled()) {
-			_startButton->setEnabled(enable);
-			_startButton->draw();
-		}
-		if (enable != _editButton->isEnabled()) {
-			_editButton->setEnabled(enable);
-			_editButton->draw();
-		}
-		if (enable != _removeButton->isEnabled()) {
-			_removeButton->setEnabled(enable);
-			_removeButton->draw();
-		}
-		}
+	case kListSelectionChangedCmd:
+		updateButtons();
 		break;
 	case kQuitCmd:
 		g_system->quit();
 		break;
 	default:
 		Dialog::handleCommand(sender, cmd, data);
+	}
+}
+
+void LauncherDialog::updateButtons() {
+	bool enable = (_list->getSelected() >= 0);
+	if (enable != _startButton->isEnabled()) {
+		_startButton->setEnabled(enable);
+		_startButton->draw();
+	}
+	if (enable != _editButton->isEnabled()) {
+		_editButton->setEnabled(enable);
+		_editButton->draw();
+	}
+	if (enable != _removeButton->isEnabled()) {
+		_removeButton->setEnabled(enable);
+		_removeButton->draw();
 	}
 }

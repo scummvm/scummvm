@@ -50,6 +50,7 @@ protected:
 	BrowserDialog	*_browser;
 
 	void updateListing();
+	void updateButtons();
 };
 
 #endif
