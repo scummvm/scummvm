@@ -327,7 +327,7 @@ void ScummEngine_v6he::setupOpcodes() {
 		OPCODE(o6_deleteFile),
 		OPCODE(o6_rename),
 		/* E0 */
-		OPCODE(o6_setVolume),
+		OPCODE(o6_soundOps),
 		OPCODE(o6_unknownE1),
 		OPCODE(o6_localizeArray),
 		OPCODE(o6_pickVarRandom),
@@ -1240,20 +1240,18 @@ void ScummEngine_v6he::o6_writeFile() {
 	debug(1, "o6_writeFile(%d, %d)", slot, resID);
 }
 
-void ScummEngine_v6he::o6_setVolume() {
+void ScummEngine_v6he::o6_soundOps() {
 	byte subOp = fetchScriptByte();
-	int soundVolumeMaster;
-	int volume = pop();
+	int arg = pop();
 	switch (subOp) {
-	case 222:
-		if (_imuse)
-			_imuse->set_music_volume(volume);
-		else
-			_mixer->setMusicVolume(volume);
+	case 0xde:
+		_imuse->set_music_volume(arg);
 		break;
-	case 224:
-		soundVolumeMaster = ConfMan.getInt("master_volume");
-		_mixer->setVolume(volume * soundVolumeMaster / 255);
+	case 0xe0:
+		// Fatty Bear's Birthday surprise uses this when playing the
+		// piano, but only when using one of the digitized instruments.
+		// See also o6_startSound().
+		_sound->setOverrideFreq(arg);
 		break;
 	}
 }

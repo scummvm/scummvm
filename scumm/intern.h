@@ -597,7 +597,7 @@ protected:
 	void o6_readFile();
 	void o6_rename();
 	void o6_writeFile();
-	void o6_setVolume();
+	void o6_soundOps();
 	void o6_seekFilePos();
 	void o6_localizeArray();
 	void o6_unknownEE();

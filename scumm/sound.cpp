@@ -53,6 +53,7 @@ Sound::Sound(ScummEngine *parent) {
 	memset(this,0,sizeof(Sound));	// palmos
 	
 	_vm = parent;
+	_overrideFreq = 0;
 	_currentCDSound = 0;
 
 	_sfxFile = 0;
@@ -121,6 +122,10 @@ void Sound::processSoundQues() {
 	_soundQuePos = 0;
 }
 
+void Sound::setOverrideFreq(int freq) {
+	_overrideFreq = freq;
+}
+
 void Sound::playSound(int soundID) {
 	byte *ptr;
 	char *sound;
@@ -157,13 +162,18 @@ void Sound::playSound(int soundID) {
 	else if (READ_UINT32(ptr) == MKID('DIGI')) {
 		// TODO - discover what data the first chunk, HSHD, contains
 		// it might be useful here.
+		rate = READ_LE_UINT16(ptr + 22);
+
 		ptr += 8 + READ_BE_UINT32(ptr+12);
 		if (READ_UINT32(ptr) != MKID('SDAT'))
 			return;	// abort
 
 		size = READ_BE_UINT32(ptr+4) - 8;
-		// FIXME - what value here ?!? 11025 is just a guess based on strings in w32 bin, prev guess 8000
-		rate = 11025;
+		if (_overrideFreq) {
+			// Used by the piano in Fatty Bear's Birthday Surprise
+			rate = _overrideFreq;
+			_overrideFreq = 0;
+		}
 
 		// Allocate a sound buffer, copy the data into it, and play
 		sound = (char *)malloc(size);
@@ -522,16 +532,19 @@ void Sound::startTalkSound(uint32 offset, uint32 b, int mode, PlayingSoundHandle
 			return;
 		}
 
-		// FIXME hack until more is known
-		// the size of the data after the sample isn't known
-		// 64 is just a guess
 		if (_vm->_features & GF_HUMONGOUS) {
-			// SKIP TLKB (8) TALK (8) HSHD (24) and SDAT (8)
 			_sfxMode |= mode;
-			_sfxFile->seek(offset + 48, SEEK_SET);
-			sound = (byte *)malloc(b - 64);
-			_sfxFile->read(sound, b - 64);
-			_vm->_mixer->playRaw(handle, sound, b - 64, 11025, SoundMixer::FLAG_UNSIGNED | SoundMixer::FLAG_AUTOFREE);
+
+			// SKIP TALK (8) HSHD (14)
+			_sfxFile->seek(offset + 22, SEEK_SET);
+			int rate = _sfxFile->readUint16LE();
+			// SKIP HSHD (8) and SDAT (8)
+			_sfxFile->seek(+16, SEEK_CUR);
+
+			size = b - 40;
+			sound = (byte *)malloc(size);
+			_sfxFile->read(sound, size);
+			_vm->_mixer->playRaw(handle, sound, size, rate, SoundMixer::FLAG_UNSIGNED | SoundMixer::FLAG_AUTOFREE);
 			return;
 		}
 
@@ -632,7 +645,7 @@ int Sound::isSoundRunning(int sound) const {
 
 	if (_vm->_features & GF_HUMONGOUS) {
 		if (sound == -2) {
-			return isSfxFinished();
+			return !isSfxFinished();
 		} else if (sound == -1) {
 			// getSoundStatus(), with a -1, will return the
 			// ID number of the first active music it finds.
@@ -714,6 +727,7 @@ void Sound::stopSound(int a) {
 			// Stop current sfx
 		} else if (a == -1) {
 			// Stop current music
+			_vm->_imuse->stopSound(_vm->_imuse->getSoundStatus(-1));
 		}
 	}
 

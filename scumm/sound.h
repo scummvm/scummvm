@@ -54,6 +54,8 @@ protected:
 	int num_sound_effects;		// SO3 MP3 compressed audio
 	bool _vorbis_mode;	// true if using SOG, false if using SO3
 
+	int _overrideFreq;
+
 	int _currentCDSound;
 
 	ScummEngine *_vm;
@@ -69,6 +71,7 @@ public:
 	void addSoundToQueue(int sound);
 	void addSoundToQueue2(int sound);
 	void processSoundQues();
+	void setOverrideFreq(int freq);
 	void playSound(int sound);
 	void startTalkSound(uint32 offset, uint32 b, int mode, PlayingSoundHandle *handle = NULL);
 	void stopTalkSound();
