@@ -41,7 +41,7 @@ class Cutaway {
 				Logic *logic,
 				Resource *resource);
 
-	private:
+	public:
 		//! Collection of constants used by QueenCutaway
 		enum {
 			PREVIOUS_ROOM = 0,
@@ -73,6 +73,7 @@ class Cutaway {
 			OBJECT_TYPE_TEXT_DISPLAY            = 5
 		};
 
+	private:
 		//! Data for a cutaway object
 		struct CutawayObject {
 			int16 objectNumber;    // 0 = JOE, -1 = MESSAGE
