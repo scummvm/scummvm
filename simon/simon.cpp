@@ -346,7 +346,7 @@ SimonEngine::SimonEngine(GameDetector *detector, OSystem *syst)
 	_skip_speech = 0;
 	_video_var_9 = 0;
 
-	_midi_sfx = 0;
+	_sound_file_id = 0;
 	_last_music_played = -1;
 	_next_music_to_play = -1;
 
@@ -1107,7 +1107,7 @@ void SimonEngine::playSting(uint a) {
 	File mus_file;
 	uint16 mus_offset;
 
-	sprintf(filename, "STINGS%i.MUS", _midi_sfx);
+	sprintf(filename, "STINGS%i.MUS", _sound_file_id);
 	mus_file.open(filename, _gameDataPath);
 	if (!mus_file.isOpen()) {
 		warning("Can't load sound effect from '%s'", filename);

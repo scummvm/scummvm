@@ -249,7 +249,7 @@ protected:
 	bool _skip_speech;
 	byte _video_var_9;
 
-	uint _midi_sfx;
+	uint _sound_file_id;
 	int16 _last_music_played;
 	int16 _next_music_to_play;
 

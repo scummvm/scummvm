@@ -1049,12 +1049,12 @@ int SimonEngine::runScript() {
 		case 185:{									/* midi sfx file number */
 				if (_game & GF_SIMON2)
 					goto invalid_opcode;
-					_midi_sfx = getVarOrWord();
+					_sound_file_id = getVarOrWord();
 				if (_game == GAME_SIMON1CD32) {
 					char buf[10];
-					sprintf(buf, "%d%s", _midi_sfx, "Effects");
+					sprintf(buf, "%d%s", _sound_file_id, "Effects");
 					_sound->readSfxFile(buf, _gameDataPath);
-					sprintf(buf, "%d%s", _midi_sfx, "simon");
+					sprintf(buf, "%d%s", _sound_file_id, "simon");
 					_sound->readVoiceFile(buf, _gameDataPath);
 				}
 
