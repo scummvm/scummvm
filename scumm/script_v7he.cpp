@@ -375,6 +375,24 @@ const char *ScummEngine_v70he::getOpcodeDesc(byte i) {
 	return _opcodesv70he[i].desc;
 }
 
+int ScummEngine_v70he::getStringCharWidth(byte chr) {
+	int charset = _string[0]._default.charset;
+
+	byte *ptr = getResourceAddress(rtCharset, charset);
+	if (ptr == 0)
+		error("getStringCharWidth::charset %d not found!", charset);
+	ptr += 29;
+
+	int spacing = 0;
+
+	int offs = READ_LE_UINT32(ptr + chr * 4 + 4);
+	if (offs) {
+		spacing = ptr[offs] + (signed char)ptr[offs + 2];
+	}
+	
+	return spacing;
+}
+
 int ScummEngine_v70he::setupStringArray(int size) {
 	writeVar(0, 0);
 	defineArray(0, kStringArray, 0, size + 1);
@@ -752,7 +770,7 @@ void ScummEngine_v70he::o70_getStringWidth() {
 		chr = readArray(0, 0, pos);
 		if (chr == 0)
 			break;
-		width += _charset->getCharWidth(chr);
+		width += getStringCharWidth(chr);
 		pos++;
 	}
 
@@ -977,7 +995,7 @@ void ScummEngine_v70he::o70_getStringLenForWidth() {
 	writeVar(0, array);
 	while (pos <= len) {
 		chr = readArray(0, 0, pos);
-		width += _charset->getCharWidth(chr);
+		width += getStringCharWidth(chr);
 		if (width >= max) {
 			push(pos);
 			return;

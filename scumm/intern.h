@@ -661,6 +661,7 @@ protected:
 	
 	virtual void redrawBGAreas();
 
+	int getStringCharWidth(byte chr);
 	virtual int setupStringArray(int size);
 	void appendSubstring(int dst, int src, int len2, int len);
 
