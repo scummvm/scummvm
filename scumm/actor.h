@@ -130,6 +130,8 @@ public:
 		animProgress = 0;
 		memset(animVariable, 0, sizeof(animVariable));
 		memset(palette, 0, sizeof(palette));
+		memset(sound, 0, sizeof(sound));
+		memset(&cost, 0, sizeof(CostumeData));
 
 		walkScript = 0;
 
