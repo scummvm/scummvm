@@ -219,8 +219,8 @@ void Scumm::CHARSET_1()
 
 			if (_string[0].xpos < 80)
 				_string[0].xpos = 80;
-			if (_string[0].xpos > 240)
-				_string[0].xpos = 240;
+			if (_string[0].xpos > _realWidth - 80)
+				_string[0].xpos = _realWidth - 80;
 		} else {
 			s = a->scaley * a->new_1 / 0xFF;
 			_string[0].ypos = ((a->new_1 - s) >> 1) + s - a->elevation + a->y;
@@ -234,8 +234,8 @@ void Scumm::CHARSET_1()
 			_string[0].xpos = ((a->new_2 - s) >> 1) + s + a->x - camera._cur.x + (_realWidth / 2);
 			if (_string[0].xpos < 80)
 				_string[0].xpos = 80;
-			if (_string[0].xpos > 240)
-				_string[0].xpos = 240;
+			if (_string[0].xpos > _realWidth - 80)
+				_string[0].xpos = _realWidth - 80;
 		}
 	}
 
@@ -1038,7 +1038,7 @@ void CharsetRenderer::printChar(int chr)
 	}
 
 	_mask_ptr = _vm->getResourceAddress(rtBuffer, 9)
-		+ _drawTop * 40 + _left / 8 + _vm->_screenStartStrip;
+		+ _drawTop * _vm->gdi._numStrips + _left / 8 + _vm->_screenStartStrip;
 
 	_virtScreenHeight = vs->height;
 	_charPtr += 4;
