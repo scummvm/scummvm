@@ -1218,7 +1218,6 @@ void resMan::CacheNewCluster(uint32 newCluster) {
 	textSprite.x = textX;
 	textSprite.y = textY;
 
-	CopyScreenBuffer();
 	FadeUp((float) 0.75);
 
 	WaitForFade();
@@ -1259,7 +1258,6 @@ void resMan::CacheNewCluster(uint32 newCluster) {
 			textSprite.x = textX;
 			textSprite.y = textY;
 
-			CopyScreenBuffer();
 			fr++;
 		} else
 			step++;
@@ -1279,7 +1277,6 @@ void resMan::CacheNewCluster(uint32 newCluster) {
 
 	FadeDown((float) 0.75);
 	WaitForFade();
-	CopyScreenBuffer();
 	FadeUp((float) 0.75);
 
 	// Git rid of read-only status.
@@ -1436,18 +1433,12 @@ void resMan::GetCd(int cd) {
 			}
 		}
 		
-		//--------------------------------------------------
-		// Service windows
-
 		ServiceWindows();
 
-		//--------------------------------------------------
-	
 		EraseBackBuffer();
 		DrawSprite(&spriteInfo);	// Keep the message there even when the user task swaps.
 		spriteInfo.y = oldY;		// Drivers change the y co-ordinate, don't know why...
 		spriteInfo.x = oldX;
-		CopyScreenBuffer();
 	} while (!done);
 
 	Free_mem(text_spr);

@@ -343,14 +343,6 @@
 //
 //	---------------------------------------------------------------------------
 //
-//	int32 CopyScreenBuffer(void)
-//
-//	Copies the screen buffer to screen memory.  This function should be called
-//	when the drawing should be done to the back buffer.  It only does this
-//	when we are using a software screen buffer.
-//
-//	---------------------------------------------------------------------------
-//
 //	int32 SetScrollTarget(int16 sx, int16 sy)
 //
 //	Sets the scroll target position for the end of the game cycle.  The drivers
@@ -1066,7 +1058,6 @@ extern int32 StartRenderCycle(void);
 extern int32 EndRenderCycle(bool *end);
 extern int32 RenderParallax(_parallax *p, int16 layer);
 extern int32 SetLocationMetrics(uint16 w, uint16 h);
-extern int32 CopyScreenBuffer(void);
 extern int32 PlotPoint(uint16 x, uint16 y, uint8 colour);
 extern int32 DrawLine(int16 x1, int16 y1, int16 x2, int16 y2, uint8 colour);
 extern int32 InitialiseBackgroundLayer(_parallax *p);

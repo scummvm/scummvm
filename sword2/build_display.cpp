@@ -304,8 +304,6 @@ void Build_display(void) {	//Tony21Sept96
 		rv = DrawSprite(&spriteInfo);
 		if (rv)
 			error("Driver Error %.8x (drawing console)", rv);
-
-		CopyScreenBuffer();
 	} else{
 		StartConsole();
 		// force the palette
@@ -379,8 +377,6 @@ void DisplayMsg(uint8 *text, int time) {
 	pal[187].blue = 255;
 	BS2_SetPalette(0, 256, (uint8 *) pal, RDPAL_FADE);
 
-	CopyScreenBuffer();
-
 	FadeUp((float) 0.75);
 
 	Free_mem(text_spr);
@@ -401,7 +397,6 @@ void DisplayMsg(uint8 *text, int time) {
 		// Drivers change the y co-ordinate, don't know why...
 		spriteInfo.y = oldY;
 		spriteInfo.x = oldX;
-		CopyScreenBuffer();
 	}
 
 	BS2_SetPalette(0, 256, (uint8 *) oldPal, RDPAL_FADE);
@@ -418,7 +413,6 @@ void RemoveMsg(void) {
 	WaitForFade();
 
 	EraseBackBuffer();
-	CopyScreenBuffer();
 
 	// FadeUp((float) 0.75);	
 	// removed by JEL (08oct97) to prevent "eye" smacker corruption when

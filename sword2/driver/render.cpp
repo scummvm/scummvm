@@ -39,14 +39,6 @@
 //
 //	---------------------------------------------------------------------------
 //
-//	int32 CopyScreenBuffer(void)
-//
-//	Copies the screen buffer to screen memory.  This function should be called
-//	when the drawing should be done to the back buffer.  It only does this
-//	when we are using a software screen buffer.
-//
-//	---------------------------------------------------------------------------
-//
 //	int32 SetScrollTarget(int16 sx, int16 sy)
 //
 //	Sets the scroll target position for the end of the game cycle.  The drivers
@@ -904,12 +896,6 @@ int32 SetScrollTarget(int16 sx, int16 sy) {
 	scrollxTarget = sx;
 	scrollyTarget = sy;
 
-	return RD_OK;
-}
-
-int32 CopyScreenBuffer(void) {
-	// FIXME: This function no longer seems to be needed. We copy the
-	// back buffer to the screen in ServiceWindows() instead.
 	return RD_OK;
 }
 
