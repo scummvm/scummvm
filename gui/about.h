@@ -33,6 +33,7 @@ protected:
 	uint32		_scrollTime;
 	StringList	_lines;
 	uint32		_lineHeight;
+	byte		_modifiers;
 
 public:
 	AboutDialog();

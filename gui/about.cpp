@@ -28,7 +28,7 @@
 namespace GUI {
 
 enum {
-	kScrollStartDelay = 2500,
+	kScrollStartDelay = 1500,
 	kScrollMillisPerPixel = 80,
 	
 	kXOff = 3,
@@ -82,7 +82,7 @@ static const char *credits_intro[] = {
 
 AboutDialog::AboutDialog()
 	: Dialog(10, 20, 300, 174),
-	_scrollPos(0), _scrollTime(0) {
+	_scrollPos(0), _scrollTime(0), _modifiers(0) {
 	
 	int i;
 	
@@ -194,6 +194,12 @@ void AboutDialog::handleTickle() {
 	const uint32 t = g_system->getMillis();
 	int scrollOffset = ((int)t - (int)_scrollTime) / kScrollMillisPerPixel;
 	if (scrollOffset > 0) {
+		// Scroll faster when shift is pressed
+		if (_modifiers & OSystem::KBD_SHIFT)
+			scrollOffset *= 4;
+		// Reverse scrolling when alt is pressed
+		if (_modifiers & OSystem::KBD_ALT)
+			scrollOffset *= -1;
 		_scrollPos += scrollOffset;
 		_scrollTime = t;
 
@@ -215,10 +221,13 @@ void AboutDialog::handleMouseUp(int x, int y, int button, int clickCount) {
 }
 
 void AboutDialog::handleKeyDown(uint16 ascii, int keycode, int modifiers) {
+	_modifiers = modifiers;
 }
 
 void AboutDialog::handleKeyUp(uint16 ascii, int keycode, int modifiers) {
-	close();
+	_modifiers = modifiers;
+	if (ascii)
+		close();
 }
 
 
