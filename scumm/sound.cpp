@@ -466,7 +466,7 @@ void Sound::playSound(int soundID) {
 			memcpy(sound,ptr + start,size);
 
 			// Experimental sound looping support
-			if (start == 108 | start == 106)
+			if (start == 108 || start == 106)
 				_scumm->_mixer->playRaw(NULL, sound, size, rate,
 						SoundMixer::FLAG_AUTOFREE | SoundMixer::FLAG_LOOP, 127, 0, soundID,
 						start,size);
