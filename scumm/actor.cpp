@@ -109,7 +109,9 @@ void Actor::initActor(int mode) {
 	ignoreBoxes = false;
 	forceClip = (_vm->_version >= 7) ? 100 : 0;
 	ignoreTurns = false;
-	flip = 0;
+
+	if (_vm->_features & GF_HUMONGOUS)
+		flip = 0;
 
 	talkFrequency = 256;
 	talkPan = 64;
@@ -430,7 +432,7 @@ void Actor::setupActorScale() {
 }
 
 void Actor::startAnimActor(int f) {
-	if (_vm->_version >= 7) {
+	if (_vm->_version >= 7 && !((_vm->_gameId == GID_FT) && (_vm->_features & GF_DEMO) && (_vm->_features & GF_PC))) {
 		switch (f) {
 		case 1001:
 			f = initFrame;
@@ -499,7 +501,7 @@ void Actor::startAnimActor(int f) {
 void Actor::animateActor(int anim) {
 	int cmd, dir;
 
-	if (_vm->_version >= 7) {
+	if (_vm->_version >= 7 && !((_vm->_gameId == GID_FT) && (_vm->_features & GF_DEMO) && (_vm->_features & GF_PC))) {
 
 		if (anim == 0xFF)
 			anim = 2000;
