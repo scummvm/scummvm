@@ -192,7 +192,9 @@ class Insane {
 	int32 _val211d;
 	int32 _val212_;
 	int32 _val213d;
-
+	int32 _val214d;
+	int32 _val215d;
+	int32 _val216d[12];
 
 	struct enemy {
 		int32 handler;
@@ -474,6 +476,8 @@ class Insane {
 	void setBit(int n);
 	void clearBit(int n);
 	void proc62(void);
+	void proc63(void);
+	void proc64(int32);
 };
 } // End of namespace Insane
 

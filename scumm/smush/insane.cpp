@@ -193,6 +193,8 @@ void Insane::initvars(void) {
 	_val211d = 0;
 	_val212_ = 0;
 	_val213d = 0;
+	_val214d = -1;
+	_val215d = 0;
 	_smlayer_room = 0;
 	_smlayer_room2 = 0;
 	_isBenCut = 0;
@@ -7649,12 +7651,168 @@ void Insane::iactScene1(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 }
 
 void Insane::proc62(void) {
+	if (readArray(_numberArray, 58) == 0)
+		_enemy[EN_TORQUE].field_10 = 1;
+
+	if (_enemy[EN_TORQUE].field_8 == 0) {
+		_currEnemy = EN_TORQUE;
+		_val215d++;
+		_val216d[_val215d] = EN_TORQUE;
+		_val214d = _currEnemy;
+		return;
+	}
+
+	proc63();
+
+	// FIXME: someone, please, untaint this mess
+
+	int32 en, edi, ebp, edx, esi, eax, ebx, ecx;
+
+	for (en = 0; _enemy[en].field_10 == 0; en++);
+	en -= 4;
+
+	ebp = 0;
+	edi = 0;
+
+	_loop1:
+	edi++;
+	if (edi > 14)
+		goto loc5;
+
+	edx = rand() / 11;
+
+	esi = edx;
+
+	if (edx == 9)
+		esi = 6;
+	else if (edx > 9)
+		esi = 7;
+
+	eax = esi;
+	ebx = 1;
+
+	if (_enemy[eax].field_10 != ebp)
+		goto _loop1;
+
+	if (ebp < _val215d) {
+		edx = _val215d;
+		eax = ebp;
+		if (ebx)
+			goto loc1;
+	}
+
+	goto loc4;
+
+	loc1:
+	if (esi == _val216d[eax + 1])
+		ebx = ebp;
+
+	eax++;
+
+	if (eax < edx) {
+		if (ebx)
+			goto loc1;
+	}
+
+	loc4:
+	if (ebx == 0)
+		goto loc15;
+
+	edx = _val215d;
+	edx++;
+	_val216d[edx] = esi;
+	_val215d = edx;
+	if (edx < en)
+		goto loc15;
+	goto loc14;
+
+	loc5:
+	ecx = ebp;
+
+	loc6:
+	ebx = 1;
+	esi = ecx;
+	if (ebp < _val215d)
+		goto loc9;
+	goto loc11;
+
+	loc7:
+	if (esi == _val216d[eax + 1])
+		ebx = ebp;
+
+	eax++;
+
+	if (eax < edx)
+		goto loc10;
+
+	goto loc11;
+
+	loc9:
+	edx = _val215d;
+	eax = ebp;
+	
+	loc10:
+	if (ebx != 0)
+		goto loc7;
+
+	loc11:
+	ecx++;
+	if (ecx >= 9)
+		goto loc12;
+
+	if (ebx == 0)
+		goto loc6;
+
+	loc12:
+	if (ebx != 0)
+		goto loc13;
+
+	_val215d = ebp;
+	edi = ebp;
+	goto _loop1;
+
+	loc13:
+	edx = _val215d;
+	edx++;
+	_val216d[edx] = esi;
+	_val215d = edx;
+	
+	if (edx < en)
+		goto loc15;
+
+	loc14:
+	proc64(ebp);
+
+	loc15:
+	if (ebx == 0)
+		goto _loop1;
+
+	_currEnemy = esi;
+	_val214d = _currEnemy;
+}
+
+void Insane::proc63(void) {
+	int i;
+
+	if (_val215d > 0) {
+		for (i = 0; i < _val215d; i++)
+			if (_enemy[i].field_10 == 1)
+				proc64(i);
+	}
+}
+
+void Insane::proc64(int32 enemy1) {
+	int en = _val215d;
+
+	for (en = _val215d; enemy1 < en; en++)
+		_val216d[en] = _val216d[en + 1];
+
+	_val215d = en - 1;
 }
 
 void Insane::iactScene3(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 					  int32 setupsan13, Chunk &b, int32 size, int32 flags) {
 	_player->checkBlock(b, TYPE_IACT, 8);
-	debug(0, "SmushPlayer::iactScene3()");
 
 	int command, par1, par2, par3, tmp;
 	command = b.getWord();
@@ -7845,8 +8003,54 @@ void Insane::iactScene6(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 void Insane::iactScene17(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 					  int32 setupsan13, Chunk &b, int32 size, int32 flags) {
 	_player->checkBlock(b, TYPE_IACT, 8);
-	debug(0, "SmushPlayer::iactScene17()");
-	// FIXME: implement
+	int16 par1, par2, par3, par4;
+
+	par1 = b.getWord(); // dx
+	par2 = b.getWord(); // cx
+	par3 = b.getWord(); // di
+	par4 = b.getWord();
+
+	switch (par1) {
+	case 2:
+	case 3:
+	case 4:
+		if (par3 == 1) {
+			setBit(b.getWord());
+			_val32d = -1;
+		}
+		break;
+	case 6:
+		switch (par2) {
+		case 38:
+			smlayer_drawSomething(renderBitmap, codecparam, 28, 48, 1, 
+								  _smush_iconsNut, 6, 0, 0);
+			_val119_ = true;
+			_iactSceneId = par4;
+			if (_counter1 <= 4) {
+				if (_counter1 == 4)
+					smlayer_startSound1(94);
+
+				smlayer_showStatusMsg(-1, renderBitmap, codecparam, 24, 167, 1,
+									  2, 0, "%s", handleTrsTag(_trsFilePtr, 5000));
+			}
+			_val124_ = true;
+			break;
+		case 11:
+			smlayer_drawSomething(renderBitmap, codecparam, 28, 48, 1, 
+								  _smush_iconsNut, 6, 0, 0);
+			if (_counter1 <= 4) {
+				if (_counter1 == 4)
+					smlayer_startSound1(94);
+
+				smlayer_showStatusMsg(-1, renderBitmap, codecparam, 24, 167, 1,
+									  2, 0, "%s", handleTrsTag(_trsFilePtr, 5001));
+			}
+			_val124_ = true;
+			_val123_ = true;
+			break;
+		}
+		break;
+	}
 }
 
 void Insane::iactScene21(byte *renderBitmap, int32 codecparam, int32 setupsan12,
