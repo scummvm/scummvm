@@ -133,8 +133,14 @@ void Scumm::scummInit() {
 	clearDrawObjectQueue();
 
 	for (i=0; i<6; i++) {
-		string[i].t_xpos = 2;
-		string[i].t_ypos = 5;
+		if(_features & GF_OLD256)
+		{
+			string[i].t_xpos = 0;
+			string[i].t_ypos = 0;
+		} else {
+			string[i].t_xpos = 2;
+			string[i].t_ypos = 5;
+		}
 		string[i].t_right = 319;
 		string[i].t_color = 0xF;
 		string[i].t_center = 0;

@@ -27,9 +27,6 @@ int CharsetRenderer::getStringWidth(int arg, byte *text, int pos) {
 	int width,offs,w;
 	byte chr;
 
-	if (_vm->_features & GF_OLD256)
-		return strlen((char *)text) * 8;
-
 	width = 1;
 	ptr = _vm->getResourceAddress(rtCharset, _curId) + 29;
         if(_vm->_features & GF_SMALL_HEADER)
@@ -67,15 +64,18 @@ int CharsetRenderer::getStringWidth(int arg, byte *text, int pos) {
 				continue;
 			}
 		}
-
-		offs = READ_LE_UINT32(ptr + chr*4 + 4);
-		if (offs) {
-			if (ptr[offs+2]>=0x80) {
-				w = ptr[offs+2] - 0x100;
-			} else {
-				w = ptr[offs+2];
+		if(_vm->_features & GF_OLD256) {
+			width += 8;
+		} else {
+			offs = READ_LE_UINT32(ptr + chr*4 + 4);
+			if (offs) {
+				if (ptr[offs+2]>=0x80) {
+					w = ptr[offs+2] - 0x100;
+				} else {
+					w = ptr[offs+2];
+				}
+				width += ptr[offs] + w;
 			}
-			width += ptr[offs] + w;
 		}
 	}
 	return width;
@@ -87,7 +87,6 @@ void CharsetRenderer::addLinebreaks(int a, byte *str, int pos, int maxwidth) {
 	int offs,w;
 	byte *ptr;
 	byte chr;
-	if (_vm->_features & GF_OLD256) return;
 
 	ptr = _vm->getResourceAddress(rtCharset, _curId) + 29;
         if(_vm->_features & GF_SMALL_HEADER)
@@ -132,15 +131,18 @@ void CharsetRenderer::addLinebreaks(int a, byte *str, int pos, int maxwidth) {
 
 		if (chr==' ')
 			lastspace = pos - 1;
-
-		offs = READ_LE_UINT32(ptr + chr*4 + 4);
-		if (offs) {
-			if (ptr[offs+2]>=0x80) {
-				w = ptr[offs+2] - 0x100;
-			} else {
-				w = ptr[offs+2];
+		if(_vm->_features & GF_OLD256) {
+			curw += 8;
+		} else {
+			offs = READ_LE_UINT32(ptr + chr*4 + 4);
+			if (offs) {
+				if (ptr[offs+2]>=0x80) {
+					w = ptr[offs+2] - 0x100;
+				} else {
+					w = ptr[offs+2];
+				}
+				curw += w + ptr[offs];
 			}
-			curw += w + ptr[offs];
 		}
 		if (lastspace==-1)
 				continue;
@@ -277,6 +279,16 @@ void Scumm::CHARSET_1() {
 	_talkDelay = _defaultTalkDelay;
 
 	if (!_keepText) {
+		if(_features & GF_OLD256) {
+			int lenght;
+			
+			gdi._mask_left = string[0].xpos;
+			gdi._mask_top = string[0].ypos;
+			gdi._mask_bottom = string[0].ypos+8;
+			gdi._mask_right = 320;
+			if(string[0].ypos <= 16) // If we are cleaning the text line, clean 2 lines.
+				gdi._mask_bottom = 16;
+		}
 		restoreCharsetBg();
 		charset._xpos2 = string[0].xpos;
 		charset._ypos2 = string[0].ypos;
@@ -310,16 +322,23 @@ void Scumm::CHARSET_1() {
 		}
 		if (c == 13) {
 newLine:;
-			charset._xpos2 = string[0].xpos;
-			if (charset._center) {
-				charset._xpos2 -= charset.getStringWidth(0, buffer, 0)>>1;
+			if(_features & GF_OLD256)
+			{
+				charset._ypos2 = 8;
+				charset._xpos2 = 0;
+				continue;
+			} else {
+				charset._xpos2 = string[0].xpos;
+				if (charset._center) {
+					charset._xpos2 -= charset.getStringWidth(0, buffer, 0)>>1;
+				}
+				if(_features & GF_SMALL_HEADER)
+					charset._ypos2 += getResourceAddress(rtCharset,charset._curId)[18];
+				else
+					charset._ypos2 += getResourceAddress(rtCharset,charset._curId)[30];
+				charset._disableOffsX = 1;
+				continue;
 			}
-			if(_features & GF_SMALL_HEADER)
-				charset._ypos2 += getResourceAddress(rtCharset,charset._curId)[18];
-			else
-				charset._ypos2 += getResourceAddress(rtCharset,charset._curId)[30];
-			charset._disableOffsX = 1;
-			continue;
 		}
 
 		if (c==0xFE) c=0xFF;
@@ -696,7 +715,7 @@ void CharsetRenderer::printCharOld(int chr) { // Loom3 / Zak256
     		if ((mask >>= 1) == 0) {buffer = *char_ptr++;  mask = 0x80;}
 			color = ((buffer & mask) != 0);
 			if (color)
-				*(dest_ptr + y*320 + x) = color;
+				*(dest_ptr + y*320 + x) = _color;
 		}
 	}
 		
