@@ -127,6 +127,12 @@ private:
 	void pauseGame(void);
 	void unpauseGame(void);
 
+	MenuObject _tempList[TOTAL_engine_pockets];
+	uint32 _totalTemp;
+
+	MenuObject _masterMenuList[TOTAL_engine_pockets];
+	uint32 _totalMasters;
+
 public:
 	Sword2Engine(GameDetector *detector, OSystem *syst);
 	~Sword2Engine();
@@ -196,14 +202,9 @@ public:
 	// Set by fnPassMega()
 	ObjectMega _engineMega;
 
-	MenuObject _tempList[TOTAL_engine_pockets];
-	uint32 _totalTemp;
-
-	MenuObject _masterMenuList[TOTAL_engine_pockets];
-	uint32 _totalMasters;
-
 	int menuClick(int menu_items);
 
+	void addMenuObject(MenuObject *obj);
 	void buildMenu(void);
 	void buildSystemMenu(void);
 

@@ -30,12 +30,7 @@ namespace Sword2 {
 int32 Logic::fnAddMenuObject(int32 *params) {
 	// params:	0 pointer to a MenuObject structure to copy down
 
-	assert(_vm->_totalTemp < TOTAL_engine_pockets);
-
-	// copy the structure to our in-the-engine list
-	memcpy(&_vm->_tempList[_vm->_totalTemp], _vm->_memory->intToPtr(params[0]), sizeof(MenuObject));
-	_vm->_totalTemp++;
-
+	_vm->addMenuObject((MenuObject *) _vm->_memory->intToPtr(params[0]));
 	return IR_CONT;
 }
 
@@ -59,160 +54,136 @@ int32 Logic::fnRefreshInventory(int32 *params) {
 	return IR_CONT;
 }
 
+void Sword2Engine::addMenuObject(MenuObject *obj) {
+	assert(_totalTemp < TOTAL_engine_pockets);
+	memcpy(&_tempList[_totalTemp], obj, sizeof(MenuObject));
+	_totalTemp++;
+}
+
+/**
+ * Create and start the inventory (bottom) menu
+ */
+
 void Sword2Engine::buildMenu(void) {
-	// create and start the inventory menu - NOW AT THE BOTTOM OF THE
-	// SCREEN!
+	uint32 i, j;
 
-	uint32 null_pc = 0;
-	uint32 j, k;
-	bool icon_coloured;
-	uint8 *icon;
-	uint8 *head;
-	uint32 res = 0;
+	// Clear the temporary inventory list, since we are going to build a
+	// new one from scratch.
 
-	// reset temp list which will be totally rebuilt
+	for (i = 0; i < TOTAL_engine_pockets; i++)
+		_tempList[i].icon_resource = 0;
+
 	_totalTemp = 0;
 
-	debug(5, "build top menu %d", _totalMasters);
+	// Run the 'build_menu' script in the 'menu_master' object. This will
+	// register all carried menu objects.
 
-	// clear the temp list before building a new temp list in-case list
-	// gets smaller. check each master
-
-	for (j = 0; j < TOTAL_engine_pockets; j++)
-		_tempList[j].icon_resource = 0;
-
-	// Call menu builder script which will register all carried menu
-	// objects. Run the 'build_menu' script in the 'menu_master' object
-
-	head = _resman->openResource(MENU_MASTER_OBJECT);
-	_logic->runScript((char *) head, (char *) head, &null_pc);
+	uint32 null_pc = 0;
+	char *menuScript = (char *) _resman->openResource(MENU_MASTER_OBJECT);
+	_logic->runScript(menuScript, menuScript, &null_pc);
 	_resman->closeResource(MENU_MASTER_OBJECT);
+
+	// Create a new master list based on the old master inventory list and
+	// the new temporary inventory list. The purpose of all this is, as
+	// far as I can tell, that the new list is ordered in the same way as
+	// the old list, with new objects added to the end of it.
 
 	// Compare new with old. Anything in master thats not in new gets
 	// removed from master - if found in new too, remove from temp
 
-	if (_totalMasters) {
-		// check each master
+	for (i = 0; i < _totalMasters; i++) {
+		bool found_in_temp = false;
 
-		for (j = 0; j < _totalMasters; j++) {
-			for (k = 0; k < TOTAL_engine_pockets; k++) {
-				res = 0;
-				// if master is in temp
-				if (_masterMenuList[j].icon_resource == _tempList[k].icon_resource) {
-					// kill it in the temp
-					_tempList[k].icon_resource = 0;
-					res = 1;
-					break;
-				}
+		for (j = 0; j < TOTAL_engine_pockets; j++) {
+			if (_masterMenuList[i].icon_resource == _tempList[j].icon_resource) {
+				// We alread know about this object, so kill it
+				// in the temporary list.
+				_tempList[j].icon_resource = 0;
+				found_in_temp = true;
+				break;
 			}
-			if (!res) {
-				// otherwise not in temp so kill in main
-				_masterMenuList[j].icon_resource = 0;
-				debug(5, "Killed menu %d", j);
-			}
+		}
+
+		if (!found_in_temp) {
+			// The object is in the master list, but not in the
+			// temporary list. The player must have lost the object
+			// since the last time we checked, so kill it in the
+			// master list.
+			_masterMenuList[i].icon_resource = 0;
 		}
 	}
 
-	// merge master downwards
+	// Eliminate blank entries from the master list.
 
 	_totalMasters = 0;
 
-	//check each master slot
-
-	for (j = 0; j < TOTAL_engine_pockets; j++) {
-		// not current end - meaning out over the end so move down
-		if (_masterMenuList[j].icon_resource && j != _totalMasters) {
-			memcpy(&_masterMenuList[_totalMasters++], &_masterMenuList[j], sizeof(MenuObject));
-
-			// moved down now so kill here
-			_masterMenuList[j].icon_resource = 0;
-		} else if (_masterMenuList[j].icon_resource) {
-			// skip full slots
+	for (i = 0; i < TOTAL_engine_pockets; i++) {
+		if (_masterMenuList[i].icon_resource) {
+			if (i != _totalMasters) {
+				memcpy(&_masterMenuList[_totalMasters], &_masterMenuList[i], sizeof(MenuObject));
+				_masterMenuList[i].icon_resource = 0;
+			}
 			_totalMasters++;
 		}
 	}
 
-	// add those new to menu still in temp but not yet in master to the
-	// end of the master
+	// Add the new objects - i.e. the ones still in the temporary list but
+	// not yet in the master list - to the end of the master.
 
-	// check each master slot
-
-	for (j = 0; j < TOTAL_engine_pockets; j++) {
-		if (_tempList[j].icon_resource) {
-			// here's a new temp
-			memcpy(&_masterMenuList[_totalMasters++], &_tempList[j], sizeof(MenuObject));
+	for (i = 0; i < TOTAL_engine_pockets; i++) {
+		if (_tempList[i].icon_resource) {
+			memcpy(&_masterMenuList[_totalMasters++], &_tempList[i], sizeof(MenuObject));
 		}
 	}
 
-	// init top menu from master list
+	// Initialise the menu from the master list.
 
-	for (j = 0; j < 15; j++) {
-		if (_masterMenuList[j].icon_resource) {
-			// 'res' is now the resource id of the icon
-			res = _masterMenuList[j].icon_resource;
+	for (i = 0; i < 15; i++) {
+		uint32 res = _masterMenuList[i].icon_resource;
+		uint8 *icon = NULL;
+
+		if (res) {
+			bool icon_coloured;
 
 			if (_examiningMenuIcon) {
-				// WHEN AN ICON HAS BEEN RIGHT-CLICKED FOR
-				// 'EXAMINE' - SELECTION COLOURED, THE REST
-				// GREYED OUT
-
-				// If this is the icon being examined, make
-				// it coloured. If not, grey this one out.
-
-				if (res == Logic::_scriptVars[OBJECT_HELD])
-					icon_coloured = true;
-				else
-					icon_coloured = false;
+				// When examining an object, that object is
+				// coloured. The rest are greyed out.
+				icon_coloured = (res == Logic::_scriptVars[OBJECT_HELD]);
 			} else if (Logic::_scriptVars[COMBINE_BASE]) {
-				// WHEN ONE MENU OBJECT IS BEING USED WITH
-				// ANOTHER - BOTH TO BE COLOURED, THE REST
-				// GREYED OUT
-
-				// if this if either of the icons being
-				// combined...
-
-				if (res == Logic::_scriptVars[OBJECT_HELD] || res == Logic::_scriptVars[COMBINE_BASE])
-					icon_coloured = true;
-				else
-					icon_coloured = false;
+				// When combining two menu object (i.e. using
+				// one on another), both are coloured. The rest
+				// are greyed out.
+				icon_coloured = (res == Logic::_scriptVars[OBJECT_HELD] || res == Logic::_scriptVars[COMBINE_BASE]);
 			} else {
-				// NORMAL ICON SELECTION - SELECTION GREYED
-				// OUT, THE REST COLOURED
-
-				// If this is the selction, grey it out. If
-				// not, make it coloured.
-
-  				if (res == Logic::_scriptVars[OBJECT_HELD])
-					icon_coloured = false;
-				else
-					icon_coloured = true;
+				// If an object is selected but we are not yet
+				// doing anything with it, the selected object
+				// is greyed out. The rest are coloured.
+				icon_coloured = (res != Logic::_scriptVars[OBJECT_HELD]);
 			}
 
-			icon = _resman->openResource(_masterMenuList[j].icon_resource) + sizeof(StandardHeader);
+			icon = _resman->openResource(res) + sizeof(StandardHeader);
 
 			// The coloured icon is stored directly after the
 			// greyed out one.
 
 			if (icon_coloured)
 				icon += (RDMENU_ICONWIDE * RDMENU_ICONDEEP);
-
-			_graphics->setMenuIcon(RDMENU_BOTTOM, j, icon);
-			_resman->closeResource(res);
-		} else {
-			// no icon here
-			_graphics->setMenuIcon(RDMENU_BOTTOM, j, NULL);
-			debug(5, " NULL for %d", j);
 		}
+
+		_graphics->setMenuIcon(RDMENU_BOTTOM, i, icon);
+
+		if (res)
+			_resman->closeResource(res);
 	}
 
 	_graphics->showMenu(RDMENU_BOTTOM);
 }
 
+/**
+ * Build a fresh system (top) menu.
+ */
+
 void Sword2Engine::buildSystemMenu(void) {
-	// start a fresh top system menu
-
-	uint8 *icon;
-
 	uint32 icon_list[5] = {
 		OPTIONS_ICON,
 		QUIT_ICON,
@@ -221,11 +192,11 @@ void Sword2Engine::buildSystemMenu(void) {
 		RESTART_ICON
 	};
 
-	// build them all high in full colour - when one is clicked on all the
-	// rest will grey out
+	// Build them all high in full colour - when one is clicked on all the
+	// rest will grey out.
 
 	for (int i = 0; i < ARRAYSIZE(icon_list); i++) {
-		icon = _resman->openResource(icon_list[i]) + sizeof(StandardHeader);
+		uint8 *icon = _resman->openResource(icon_list[i]) + sizeof(StandardHeader);
 		
 		// The only case when an icon is grayed is when the player
 		// is dead. Then SAVE is not available.
