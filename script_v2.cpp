@@ -2728,7 +2728,7 @@ void Scumm::o6_miscOps()
 		case 16:
 			if (_gameId == GID_DIG) {
 				_msgPtrToAdd = charset._buffer;
-				_messagePtr = addMessageToStack(getStringAddressVar(VAR_STRING2DRAW));
+				addMessageToStack(getStringAddressVar(VAR_STRING2DRAW));
 				i = 0;
 				while (charset._buffer[i] != 0) {
 					if (charset._buffer[i] == '/') {
