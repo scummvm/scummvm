@@ -1680,6 +1680,7 @@ bool SkyLogic::fnStartMenu(uint32 firstObject, uint32 b, uint32 c) {
 	// firstObject is o0 for game menu, k0 for linc
 
 	uint i;
+	firstObject /= 4;
 
 	// (1) FIRST, SET UP THE 2 ARROWS SO THEY APPEAR ON SCREEN
 
