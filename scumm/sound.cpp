@@ -875,7 +875,7 @@ void Sound::soundKludge(int *list, int num) {
 	}
 }
 
-void Sound::talkSound(uint32 a, uint32 b, int mode, int frame) {
+void Sound::talkSound(uint32 a, uint32 b, int mode) {
 	if (mode == 1) {
 		_talk_sound_a1 = a;
 		_talk_sound_b1 = b;

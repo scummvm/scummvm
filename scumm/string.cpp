@@ -55,7 +55,7 @@ void ScummEngine::unkMessage1(const byte *msg) {
 		// FIXME: There are other VAR_V6_SOUNDMODE states, as
 		// mentioned in the patch. FIXME after iMUSE is done.
 		if (_gameId != GID_SAMNMAX || (VAR(VAR_V6_SOUNDMODE) != 2))
-			_sound->talkSound(a, b, 1, -1);
+			_sound->talkSound(a, b, 1);
 	}
 }
 
@@ -238,7 +238,7 @@ void ScummEngine::CHARSET_1() {
 				talk_sound_b = buffer[8] | (buffer[9] << 8) | (buffer[12] << 16) | (buffer[13] << 24);
 				buffer += 14;
 	
-				_sound->talkSound(talk_sound_a, talk_sound_b, 2, frme);
+				_sound->talkSound(talk_sound_a, talk_sound_b, 2);
 
 				// Set flag that speech variant exist of this msg.
 				// TODO: This does not work for the speech system in V7+ games
@@ -828,7 +828,7 @@ void ScummEngine::playSpeech(const byte *ptr) {
 
 		_sound->stopTalkSound();
 		_imuseDigital->startVoice(kTalkSoundID, pointer);
-		_sound->talkSound(0, 0, 2, -1);
+		_sound->talkSound(0, 0, 2);
 	}
 }
 
