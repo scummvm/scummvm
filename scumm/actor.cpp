@@ -1232,6 +1232,7 @@ void Actor::startWalkActor(int destX, int destY, int dir) {
 		// FIXME: Should we really use abr.x / abr.y here? Shouldn't it be destX / destY?
 		// Considering that abr was obtained by adjustXYToBeInBox which works on
 		// the boxes in the *current* room no in the room the actor actually is in.
+		// Occurs in Monsyer Island 1 demo, after title name.
 		warning("When is this ever triggered anyway?");
 		x = abr.x;
 		y = abr.y;
