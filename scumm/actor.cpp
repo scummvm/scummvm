@@ -730,7 +730,10 @@ void Actor::turnToDirection(int newdir) {
 	moving &= ~MF_TURN;
 
 	if (newdir != facing) {
-		moving = MF_TURN;
+		if (_vm->_version <= 3)
+			moving = MF_TURN;
+		else
+			moving |= MF_TURN;
 		newDirection = newdir;
 	}
 }
