@@ -59,8 +59,6 @@ private:
 	void *_premixParam;
 	PremixProc *_premixProc;
 
-	PlayingSoundHandle *_handles[NUM_CHANNELS];
-
 public:
 	uint _outputRate;
 

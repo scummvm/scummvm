@@ -30,14 +30,23 @@
 class Channel {
 protected:
 	SoundMixer *_mixer;
+	PlayingSoundHandle *_handle;
 public:
-	bool _toBeDestroyed;
 	int _id;
-	Channel(SoundMixer *mixer) : _mixer(mixer), _toBeDestroyed(false), _id(-1) {}
-	virtual ~Channel() {}
+	Channel(SoundMixer *mixer, PlayingSoundHandle *handle)
+		: _mixer(mixer), _handle(handle), _id(-1) {
+		assert(mixer);
+	}
+	virtual ~Channel() {
+		if (_handle)
+			*_handle = 0;
+	}
 	virtual void mix(int16 *data, uint len) = 0;
 	void destroy() {
-		_toBeDestroyed = true;
+		for (int i = 0; i != SoundMixer::NUM_CHANNELS; i++)
+			if (_mixer->_channels[i] == this)
+				_mixer->_channels[i] = 0;
+		delete this;
 	}
 	virtual bool isActive();
 	virtual bool isMusicChannel() = 0;
@@ -55,12 +64,12 @@ class ChannelRaw : public Channel {
 	uint32 _loop_size;
 
 public:
-	ChannelRaw(SoundMixer *mixer, void *sound, uint32 size, uint rate, byte flags, int id);
+	ChannelRaw(SoundMixer *mixer, PlayingSoundHandle *handle, void *sound, uint32 size, uint rate, byte flags, int id);
 	~ChannelRaw();
 
 	void mix(int16 *data, uint len);
 	bool isMusicChannel() {
-		return false; // TODO: IS this correct? Or does any Scumm game us this for music?
+		return false; // TODO: Is this correct? Or does anything use ChannelRaw for music?
 	}
 };
 
@@ -77,7 +86,7 @@ class ChannelStream : public Channel {
 	bool _finished;
 
 public:
-	ChannelStream(SoundMixer *mixer, void *sound, uint32 size, uint rate, byte flags, uint32 buffer_size);
+	ChannelStream(SoundMixer *mixer, PlayingSoundHandle *handle, void *sound, uint32 size, uint rate, byte flags, uint32 buffer_size);
 	~ChannelStream();
 
 	void mix(int16 *data, uint len);
@@ -101,7 +110,7 @@ protected:
 	uint32 _size;
 
 public:
-	ChannelMP3Common(SoundMixer *mixer);
+	ChannelMP3Common(SoundMixer *mixer, PlayingSoundHandle *handle);
 	~ChannelMP3Common();
 };
 
@@ -110,7 +119,7 @@ class ChannelMP3 : public ChannelMP3Common {
 	uint32 _position;
 
 public:
-	ChannelMP3(SoundMixer *mixer, void *sound, uint size, byte flags);
+	ChannelMP3(SoundMixer *mixer, PlayingSoundHandle *handle, void *sound, uint size, byte flags);
 
 	void mix(int16 *data, uint len);
 	bool isMusicChannel() { return false; }
@@ -124,7 +133,7 @@ class ChannelMP3CDMusic : public ChannelMP3Common {
 
 
 public:
-	ChannelMP3CDMusic(SoundMixer *mixer, File *file, mad_timer_t duration);
+	ChannelMP3CDMusic(SoundMixer *mixer, PlayingSoundHandle *handle, File *file, mad_timer_t duration);
 
 	void mix(int16 *data, uint len);
 	bool isActive();
@@ -140,7 +149,7 @@ class ChannelVorbis : public Channel {
 	bool _eof_flag, _is_cd_track;
 
 public:
-	ChannelVorbis(SoundMixer *mixer, OggVorbis_File *ov_file, int duration, bool is_cd_track);
+	ChannelVorbis(SoundMixer *mixer, PlayingSoundHandle *handle, OggVorbis_File *ov_file, int duration, bool is_cd_track);
 
 	void mix(int16 *data, uint len);
 	bool isActive();
@@ -159,9 +168,6 @@ SoundMixer::SoundMixer() {
 	_premixProc = 0;
 	int i = 0;
 
-	for (i = 0; i != NUM_CHANNELS; i++)
-		_handles[i] = NULL;
-	
 	_outputRate = 0;
 
 	_volumeTable = (int16 *)calloc(256 * sizeof(int16), 1);
@@ -219,7 +225,6 @@ int SoundMixer::insertChannel(PlayingSoundHandle *handle, Channel *chan) {
 	}
 
 	_channels[index] = chan;
-	_handles[index] = handle;
 	if (handle)
 		*handle = index + 1;
 	return index;
@@ -235,29 +240,29 @@ int SoundMixer::playRaw(PlayingSoundHandle *handle, void *sound, uint32 size, ui
 				return -1;
 	}
 
-	return insertChannel(handle, new ChannelRaw(this, sound, size, rate, flags, id));
+	return insertChannel(handle, new ChannelRaw(this, handle, sound, size, rate, flags, id));
 }
 
 int SoundMixer::newStream(void *sound, uint32 size, uint rate, byte flags, uint32 buffer_size) {
 	StackLock lock(_mutex);	
-	return insertChannel(NULL, new ChannelStream(this, sound, size, rate, flags, buffer_size));
+	return insertChannel(NULL, new ChannelStream(this, 0, sound, size, rate, flags, buffer_size));
 }
 
 #ifdef USE_MAD
 int SoundMixer::playMP3(PlayingSoundHandle *handle, void *sound, uint32 size, byte flags) {
 	StackLock lock(_mutex);	
-	return insertChannel(handle, new ChannelMP3(this, sound, size, flags));
+	return insertChannel(handle, new ChannelMP3(this, handle, sound, size, flags));
 }
 int SoundMixer::playMP3CDTrack(PlayingSoundHandle *handle, File *file, mad_timer_t duration) {
 	StackLock lock(_mutex);	
-	return insertChannel(handle, new ChannelMP3CDMusic(this, file, duration));
+	return insertChannel(handle, new ChannelMP3CDMusic(this, handle, file, duration));
 }
 #endif
 
 #ifdef USE_VORBIS
 int SoundMixer::playVorbis(PlayingSoundHandle *handle, OggVorbis_File *ov_file, int duration, bool is_cd_track) {
 	StackLock lock(_mutex);	
-	return insertChannel(handle, new ChannelVorbis(this, ov_file, duration, is_cd_track));
+	return insertChannel(handle, new ChannelVorbis(this, handle, ov_file, duration, is_cd_track));
 }
 #endif
 
@@ -278,17 +283,8 @@ void SoundMixer::mix(int16 *buf, uint len) {
 	if (!_paused) {
 		// now mix all channels
 		for (int i = 0; i != NUM_CHANNELS; i++)
-			if (_channels[i]) {
-				if (_channels[i]->_toBeDestroyed) {
-					if (_handles[i]) {
-						*_handles[i] = 0;
-						_handles[i] = NULL;
-					}
-					delete _channels[i];
-					_channels[i] = NULL;
-				} else
-					_channels[i]->mix(buf, len);
-			}
+			if (_channels[i]) 
+				_channels[i]->mix(buf, len);
 	}
 }
 
@@ -627,8 +623,8 @@ bool Channel::isActive() {
 }
 
 /* RAW mixer */
-ChannelRaw::ChannelRaw(SoundMixer *mixer, void *sound, uint32 size, uint rate, byte flags, int id)
-	: Channel(mixer) {
+ChannelRaw::ChannelRaw(SoundMixer *mixer, PlayingSoundHandle *handle, void *sound, uint32 size, uint rate, byte flags, int id)
+	: Channel(mixer, handle) {
 	_id = id;
 	_flags = flags;
 	_ptr = (byte *)sound;
@@ -689,9 +685,9 @@ void ChannelRaw::mix(int16 *data, uint len) {
 
 #define WARP_WORKAROUND 50000
 
-ChannelStream::ChannelStream(SoundMixer *mixer, void *sound, uint32 size, uint rate,
+ChannelStream::ChannelStream(SoundMixer *mixer, PlayingSoundHandle *handle, void *sound, uint32 size, uint rate,
 										 byte flags, uint32 buffer_size)
-	: Channel(mixer) {
+	: Channel(mixer, handle) {
 	assert(size <= buffer_size);
 	_flags = flags;
 	_bufferSize = buffer_size;
@@ -792,8 +788,8 @@ void ChannelStream::mix(int16 *data, uint len) {
 
 #ifdef USE_MAD
 
-ChannelMP3Common::ChannelMP3Common(SoundMixer *mixer)
-	: Channel(mixer) {
+ChannelMP3Common::ChannelMP3Common(SoundMixer *mixer, PlayingSoundHandle *handle)
+	: Channel(mixer, handle) {
 	mad_stream_init(&_stream);
 #ifdef _WIN32_WCE
 	// 11 kHz on WinCE if necessary
@@ -812,8 +808,8 @@ ChannelMP3Common::~ChannelMP3Common() {
 	mad_stream_finish(&_stream);
 }
 
-ChannelMP3::ChannelMP3(SoundMixer *mixer, void *sound, uint size, byte flags) 
-	: ChannelMP3Common(mixer) {
+ChannelMP3::ChannelMP3(SoundMixer *mixer, PlayingSoundHandle *handle, void *sound, uint size, byte flags) 
+	: ChannelMP3Common(mixer, handle) {
 	_posInFrame = 0xFFFFFFFF;
 	_position = 0;
 	_size = size;
@@ -905,8 +901,8 @@ void ChannelMP3::mix(int16 *data, uint len) {
 
 #define MP3CD_BUFFERING_SIZE 131072
 
-ChannelMP3CDMusic::ChannelMP3CDMusic(SoundMixer *mixer, File *file, mad_timer_t duration)
-	: ChannelMP3Common(mixer) {
+ChannelMP3CDMusic::ChannelMP3CDMusic(SoundMixer *mixer, PlayingSoundHandle *handle, File *file, mad_timer_t duration)
+	: ChannelMP3Common(mixer, handle) {
 	_file = file;
 	_duration = duration;
 	_initialized = false;
@@ -1017,8 +1013,8 @@ bool ChannelMP3CDMusic::isActive() {
 #endif
 
 #ifdef USE_VORBIS
-ChannelVorbis::ChannelVorbis(SoundMixer *mixer, OggVorbis_File *ov_file, int duration, bool is_cd_track)
-	: Channel(mixer) {
+ChannelVorbis::ChannelVorbis(SoundMixer *mixer, PlayingSoundHandle *handle, OggVorbis_File *ov_file, int duration, bool is_cd_track)
+	: Channel(mixer, handle) {
 	_ov_file = ov_file;
 
 	if (duration)
