@@ -28,17 +28,16 @@
 
 #include <BmpGlue.h>
 #include "start.h"	// appFileCreator
+#include "features.h"
 #include "globals.h"
 
 #ifndef DISABLE_TAPWAVE
-// Tapwave code will come here
+#include <tapwave.h>
+#include "i_zodiac.h"
 #endif
 
-enum {
-	ftrBufferOverlay	= 1000,
-	ftrBufferBackup,
-	ftrBufferHotSwap
-};
+#include "arm/native.h"
+#include "arm/macros.h"
 
 static const OSystem::GraphicsMode s_supportedGraphicsModes[] = {
 	{"normal", "Normal (no scaling)", GFX_NORMAL},
@@ -49,7 +48,7 @@ static const OSystem::GraphicsMode s_supportedGraphicsModes[] = {
 };
 
 int OSystem_PALMOS::getDefaultGraphicsMode() const {
-	return GFX_NORMAL;
+	return GFX_NORMAL;//GFX_WIDE;
 }
 
 const OSystem::GraphicsMode *OSystem_PALMOS::getSupportedGraphicsModes() const {
@@ -85,12 +84,6 @@ void OSystem_PALMOS::initSize(uint w, uint h) {
 	_screenPitch	= gVars->screenPitch;
 
 	_overlayVisible = false;
-	_quitCount = 0;
-
-	// 640x480 only on Zodiac and in GFX_WIDE mode
-	if (h == 480)
-		if (!(_mode == GFX_WIDE && OPTIONS_TST(kOptDeviceZodiac)))
-			error("640x480 game can only be run on Zodiac in wide mode.");
 
 	// lock the graffiti sizer
 	if (gVars->slkRefNum != sysInvalidRefNum) {
@@ -111,6 +104,11 @@ void OSystem_PALMOS::initSize(uint w, uint h) {
 	set_mouse_pos(200,150);
 	
 	unload_gfx_mode();
+
+	// force WIDE mode for 640x480 games 
+	if (h == 480)
+		_setMode = GFX_WIDE;
+
 	_mode		= _setMode;
 	_initMode	= _mode;
 	load_gfx_mode();
@@ -178,9 +176,21 @@ void OSystem_PALMOS::load_gfx_mode() {
 			Boolean std = true;
 
 #ifndef DISABLE_TAPWAVE
-// Tapwave code will come here
+			// check Zodiac
+			if (OPTIONS_TST(kOptDeviceZodiac)) {
+				if (ZodiacInit(ptrP, _screenWidth, _screenHeight)) {
+					OPTIONS_RST(kOptDeviceZodiac);
+					warning("Failed to initialize Zodiac device, switching to standard GFX_WIDE mode.");
+				} else {
+					std = false;
+				}
+			}
 #endif
 			if (std) {
+				// 640x480 only on Zodiac and in GFX_WIDE mode
+				if (_screenHeight == 480)
+					error("640x480 game can only be run on Zodiac in wide mode.");
+
 				// only for 320x200 games
 				if (!(_screenWidth == 320 && _screenHeight == 200)) {
 					warning("Wide display not avalaible for this game, switching to GFX_NORMAL mode.");
@@ -258,7 +268,7 @@ void OSystem_PALMOS::load_gfx_mode() {
 			_screenP	= _offScreenP;
 			_offScreenH	= WinGetDisplayWindow();
 			_screenH	= _offScreenH;	
-			_renderer_proc = &OSystem_PALMOS::updateScreen__flipping;
+			_renderer_proc = &OSystem_PALMOS::updateScreen_flipping;
 			break;
 		case GFX_WIDE:
 		case GFX_BUFFERED:
@@ -268,23 +278,30 @@ void OSystem_PALMOS::load_gfx_mode() {
 
 			if (_mode == GFX_WIDE) {
 #ifndef DISABLE_TAPWAVE
-// Tapwave code will come here
+				if (OPTIONS_TST(kOptDeviceZodiac)) {
+					HotSwap16bitMode(true);
+					_twBmpV3 = (void *)WinGetBitmap(_offScreenH);
+
+					// TODO : change _screenP with the correct value (never used in this mode ?)
+					_screenP = (byte *)(BmpGetBits(WinGetBitmap(_screenH)));
+					_renderer_proc =  &OSystem_PALMOS::updateScreen_wideZodiac;
+				} else
 #endif			
 				{
 					gVars->screenLocked = true;
 					_screenP = WinScreenLock(winLockErase) + _screenOffset.addr;
 					
 					if (OPTIONS_TST(kOptDeviceARM))
-						_arm[PNO_WIDE].pnoPtr = _PnoInit((OPTIONS_TST(kOptModeLandscape) ? ARM_OWIDELS : ARM_OWIDEPT), &_arm[PNO_WIDE].pnoDesc);
+						ARM(PNO_WIDE).pnoPtr = _PnoInit((OPTIONS_TST(kOptModeLandscape) ? RSC_WIDELANDSCAPE : RSC_WIDEPORTRAIT), &ARM(PNO_WIDE).pnoDesc);
 					
 					_renderer_proc = (OPTIONS_TST(kOptModeLandscape)) ?
-						&OSystem_PALMOS::updateScreen__wide_landscape :
-						&OSystem_PALMOS::updateScreen__wide_portrait;
+						&OSystem_PALMOS::updateScreen_wideLandscape :
+						&OSystem_PALMOS::updateScreen_widePortrait;
 				}
 
 			} else {
 				_screenP = (byte *)(BmpGetBits(WinGetBitmap(_screenH))) + _screenOffset.addr;
-				_renderer_proc =  &OSystem_PALMOS::updateScreen__buffered;
+				_renderer_proc =  &OSystem_PALMOS::updateScreen_buffered;
 			}
 			_offScreenPitch = _screenWidth;
 			break;
@@ -295,7 +312,7 @@ void OSystem_PALMOS::load_gfx_mode() {
 			_screenH = _offScreenH;
 			_offScreenP	= (byte *)(BmpGetBits(WinGetBitmap(_offScreenH))) + _screenOffset.addr;
 			_screenP	= _offScreenP;
-			_renderer_proc =  &OSystem_PALMOS::updateScreen__direct;
+			_renderer_proc =  &OSystem_PALMOS::updateScreen_direct;
 			break;
 	}
 
@@ -329,14 +346,17 @@ void OSystem_PALMOS::unload_gfx_mode() {
 
 		case GFX_WIDE:
 #ifndef DISABLE_TAPWAVE
-// Tapwave code will come here
+			if (OPTIONS_TST(kOptDeviceZodiac)) {
+				ZodiacRelease(ptrP);
+				HotSwap16bitMode(false);
+			} else
 #endif
 			{
 				WinScreenUnlock();
 				gVars->screenLocked = false;
 
-				if (OPTIONS_TST(kOptDeviceARM) && _arm[PNO_WIDE].pnoPtr)
-					_PnoFree(&_arm[PNO_WIDE].pnoDesc, _arm[PNO_WIDE].pnoPtr);
+				if (OPTIONS_TST(kOptDeviceARM) && ARM(PNO_WIDE).pnoPtr)
+					_PnoFree(&ARM(PNO_WIDE).pnoDesc, ARM(PNO_WIDE).pnoPtr);
 			}
 				// continue to GFX_BUFFERED
 
@@ -384,6 +404,8 @@ void OSystem_PALMOS::hotswap_gfx_mode(int mode) {
 	byte *dst = _tmpHotSwapP;
 	int h = _screenHeight;
 
+	undraw_mouse();
+
 	UInt32 offset = 0;
 	do {
 		DmWrite(dst, offset, src, _screenWidth);
@@ -403,6 +425,8 @@ void OSystem_PALMOS::hotswap_gfx_mode(int mode) {
 	load_gfx_mode();
 	
 	// restore offscreen
+	WinPalette(winPaletteSet, 0, 256, _currentPalette);
+	ClearScreen();
 	copyRectToScreen(_tmpHotSwapP, _screenWidth, 0, 0, _screenWidth, _screenHeight);
 	_modeChanged = false;
 	
@@ -413,13 +437,9 @@ void OSystem_PALMOS::hotswap_gfx_mode(int mode) {
 	updateScreen();
 }
 
-
 // TODO : move GFX functions here
 
 void OSystem_PALMOS::setPalette(const byte *colors, uint start, uint num) {
-	if (_quitCount)
-		return;
-
 	const byte *b = colors;
 	uint i;
 	RGBColorType *base = _currentPalette + start;
@@ -506,23 +526,21 @@ void OSystem_PALMOS::copyRectToScreen(const byte *buf, int pitch, int x, int y, 
 
 	byte *dst = _offScreenP + y * _offScreenPitch + x;
 
-#ifndef DISABLE_ARM
-	if (OPTIONS_TST(kOptDeviceARM)) {
-		OSysCopyType userData = { dst, buf, pitch, _offScreenPitch, w, h };
-		_PnoCall(&_arm[PNO_COPY].pnoDesc, &userData);
-		return;
-	}
-#ifdef DEBUG_ARM
-	if (OPTIONS_TST(kOptDeviceProcX86)) {
-		OSysCopyType userData = { dst, buf, pitch, _offScreenPitch, w, h };
-		UInt32 result = PceNativeCall((NativeFuncType*)"ARMlet.dll\0ARMlet_Main", &userData);
-		return;
-	}
-#endif
-#endif	
+	// if ARM
+	ARM_CHECK_EXEC(w > 8 && h > 8)
+		ARM_START(CopyRectangleType)
+			ARM_ADDM(dst)
+			ARM_ADDM(buf)
+			ARM_ADDM(pitch)
+			ARM_ADDM(_offScreenPitch)
+			ARM_ADDM(w)
+			ARM_ADDM(h)
+			PNO_CALL(PNO_COPYRECT, ARM_DATA())
+		ARM_END()
+	ARM_CHECK_END()
 	// if no ARM
-	if (_offScreenPitch == pitch && pitch == w) {
-		MemMove(dst, buf, h * w);
+	if (w == pitch && w == _offScreenPitch) {
+		MemMove(dst, buf, w*h);
 	} else {
 		do {
 			MemMove(dst, buf, w);
@@ -533,12 +551,6 @@ void OSystem_PALMOS::copyRectToScreen(const byte *buf, int pitch, int x, int y, 
 }
 
 void OSystem_PALMOS::updateScreen() {
-	if(_quitCount)
-		return;
-
-	// Make sure the mouse is drawn, if it should be drawn.
-	draw_mouse();
-
 	// Check whether the palette was changed in the meantime and update the
 	// screen surface accordingly. 
 	if (_paletteDirtyEnd != 0) {
@@ -566,6 +578,9 @@ void OSystem_PALMOS::updateScreen() {
 				draw1BitGfx(kDrawBatLow, (getWidth() >> 1), -16, true);
 		}
 	}
+
+	// Make sure the mouse is drawn, if it should be drawn.
+	draw_mouse();
 
 	if (_overlayVisible) {
 		byte *src = _tmpScreenP;
