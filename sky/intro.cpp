@@ -794,7 +794,11 @@ bool Intro::floppyScrollFlirt(void) {
 		}
 		_system->copy_rect(scrollPos, GAME_SCREEN_WIDTH, 0, 0, GAME_SCREEN_WIDTH, GAME_SCREEN_HEIGHT);
 		_system->update_screen();
+#ifndef _WIN32_WCE
 		if (!escDelay(40))
+#else
+		if (!escDelay(15))
+#endif
 			doContinue = false;
 	}
 	memcpy(_skyScreen->giveCurrent(), scrollPos, FRAME_SIZE);
@@ -887,6 +891,10 @@ bool Intro::escDelay(uint32 msecs) {
 
 	OSystem::Event event;
 	do {
+#ifdef _WIN32_WCE
+		uint32 startTimeLoop = _system->get_msecs();
+		uint32 delta;
+#endif
 		while (_system->poll_event(&event)) {
 			if (event.event_code == OSystem::EVENT_KEYDOWN) {
 				if (event.kbd.keycode == 27)
@@ -902,7 +910,15 @@ bool Intro::escDelay(uint32 msecs) {
 		uint8 nDelay = (msecs > 50) ? (50) : ((uint8)msecs);
 #endif
 		_system->delay_msecs(nDelay);
+#ifdef _WIN32_WCE
+		delta = _system->get_msecs() - startTimeLoop;
+		if (delta > msecs)
+			break;
+		else
+			msecs -= delta;
+#else
 		msecs -= nDelay;
+#endif
 	} while (msecs > 0);
 	return true;
 }
