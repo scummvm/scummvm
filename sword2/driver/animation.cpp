@@ -47,8 +47,10 @@ AnimationState::~AnimationState() {
 	delete sndfile;
 #ifndef BACKEND_8BIT
 	_vm->_system->hide_overlay();
-	delete overlay;
+	free(overlay);
 #endif
+	if (bgSoundStream)
+		delete bgSoundStream;
 #endif
 }
 
@@ -142,7 +144,7 @@ bool AnimationState::init(const char *name) {
 	sprintf(tempFile, "%s.ogg", name);
 	if (sndfile->open(tempFile)) {
 		bgSoundStream = makeVorbisStream(sndfile, sndfile->size());
-		_vm->_mixer->playInputStream(&bgSound, bgSoundStream, false, 255, 0, -1);
+		_vm->_mixer->playInputStream(&bgSound, bgSoundStream, false, 255, 0, -1, false);
 	}
 
 #endif
