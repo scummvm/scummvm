@@ -414,7 +414,11 @@ bool SimonState::hitarea_proc_2(uint a)
 		return false;
 
 	string_ptr = getStringPtrByID(_stringid_array_2[a]);
-	x = (53 - (strlen((const char *)string_ptr) - 1)) * 3;
+	// Arisme : hack for long strings in the French version
+	if ((strlen((const char*)string_ptr) - 1) <= 53)
+		x = (53 - (strlen((const char *)string_ptr) - 1)) * 3;
+	else
+		x = 0;
 	showActionString(x, string_ptr);
 
 	return true;
@@ -434,7 +438,11 @@ bool SimonState::hitarea_proc_3(Item *item)
 		return false;
 
 	string_ptr = getStringPtrByID(child2->string_id);
-	x = (53 - (strlen((const char *)string_ptr) - 1)) * 3;
+	// Arisme : hack for long strings in the French version
+	if ((strlen((const char*)string_ptr) - 1) <= 53)
+		x = (53 - (strlen((const char *)string_ptr) - 1)) * 3;
+	else
+		x = 0;
 	showActionString(x, string_ptr);
 	return true;
 }
