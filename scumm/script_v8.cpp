@@ -658,6 +658,7 @@ void Scumm_v8::o8_wait()
 	case 0x20:		// SO_WAIT_FOR_CAMERA Wait for camera (to finish current action?)
 		if (camera._dest != camera._cur)
 			break;
+		return;
 	case 0x21:		// SO_WAIT_FOR_SENTENCE
 		if (_sentenceNum) {
 			if (_sentence[_sentenceNum - 1].freezeCount && !isScriptInUse(_vars[VAR_SENTENCE_SCRIPT]))
