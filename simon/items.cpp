@@ -780,7 +780,8 @@ int SimonState::runScript()
 			break;
 
 		case 134:{
-				warning("stopMidiMusic: not implemented");
+				if (_debugMode)
+					warning("stopMidiMusic: not implemented");
 				/* dummy proc */
 			}
 			break;
@@ -1665,7 +1666,8 @@ void SimonState::o_unk_127()
 		uint b = getVarOrWord();
 		uint c = getVarOrByte();
 
-		warning("o_unk_127(%d,%d,%d) not implemented properly", a, b, c);
+		if (_debugMode)
+			warning("o_unk_127(%d,%d,%d) not implemented properly", a, b, c);
 
 		//FIXME simon 2 attempts to use music track 93 in ending sequences 
 		// which doesn't exist so prevent that happening
