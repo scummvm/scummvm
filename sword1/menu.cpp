@@ -299,6 +299,7 @@ void SwordMenu::fnStartMenu(void) {
 	SwordLogic::_scriptVars[OBJECT_HELD]  = 0; // icon no longer selected
 	SwordLogic::_scriptVars[SECOND_ITEM]  = 0; // second icon no longer selected (after using one on another)
 	SwordLogic::_scriptVars[MENU_LOOKING] = 0; // no longer 'looking at' an icon
+	_mouse->setLuggage(0, 0);
 	buildMenu();
 	_mouse->controlPanel(true); // so that the arrow cursor will be shown.
 	showMenu(MENU_TOP);
@@ -313,6 +314,7 @@ void SwordMenu::fnEndMenu(void) {
 
 void SwordMenu::fnChooser(BsObject *compact) {
 	SwordLogic::_scriptVars[OBJECT_HELD] = 0;
+	_mouse->setLuggage(0, 0);
 	buildSubjects();
 	compact->o_logic = LOGIC_choose;
 	_mouse->controlPanel(true); // so the mouse cursor will be shown.
@@ -324,6 +326,7 @@ void SwordMenu::fnEndChooser(void) {
 	_subjectBarStatus = MENU_CLOSING;
 	_objectBarStatus = MENU_CLOSING;
 	_mouse->controlPanel(false);
+	_mouse->setLuggage(0, 0);
 }
 
 void SwordMenu::checkTopMenu(void) {

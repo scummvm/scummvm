@@ -243,7 +243,7 @@ void SwordMouse::setLuggage(uint32 resId, uint32 rate) {
 }
 
 void SwordMouse::animate(void) {
-	if ((SwordLogic::_scriptVars[MOUSE_STATUS] == 1) || _mouseOverride) {
+	if ((SwordLogic::_scriptVars[MOUSE_STATUS] == 1) || (_mouseOverride && _currentPtr)) {
 		_frame = (_frame + 1) % _currentPtr->numFrames;
 		uint8 *ptrData = (uint8*)_currentPtr + sizeof(MousePtr);
 		ptrData += _frame * _currentPtr->sizeX * _currentPtr->sizeY;
