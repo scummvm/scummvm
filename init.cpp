@@ -27,9 +27,11 @@
 
 Scumm::Scumm (void) {
 	_newgui = new NewGui(this);
+	_bundle = new Bundle(this);
 }
 
 Scumm::~Scumm (void) {
 	delete [] _actors;
 	delete _newgui;
+	delete _bundle;
 }
