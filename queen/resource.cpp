@@ -231,6 +231,8 @@ const GameVersion *Resource::detectGameVersion(uint32 dataFilesize) {
 bool Resource::readTableFile() {
 	File tableFile;
 	tableFile.open(tableFilename, _datafilePath);
+	if (!tableFile.isOpen())	
+		tableFile.open(tableFilename, ""); //try current directory
 	if (tableFile.isOpen() && tableFile.readUint32BE() == 'QTBL') {
 		tableFile.seek(_gameVersion->tableOffset);
 		_resourceEntries = tableFile.readUint16BE();
