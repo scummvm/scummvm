@@ -5,6 +5,7 @@ MODULE_OBJS := \
 	gui/browser.o \
 	gui/chooser.o \
 	gui/console.o \
+	gui/consolefont.o \
 	gui/dialog.o \
 	gui/EditTextWidget.o \
 	gui/launcher.o \

@@ -27,10 +27,14 @@
 
 #include "graphics/font.h"
 
-#define kCharWidth	g_gui.getFont().getMaxCharWidth()
-
-
 namespace GUI {
+
+extern const Graphics::NewFont g_consolefont;
+
+#define kConsoleCharWidth	(g_consolefont.getMaxCharWidth())
+#define kConsoleLineHeight	(g_consolefont.getFontHeight() + 2)
+
+
 
 #define PROMPT	") "
 
@@ -83,14 +87,14 @@ ConsoleDialog::ConsoleDialog(float widthPercent, float heightPercent)
 void ConsoleDialog::reflowLayout() {
 	// Calculate the real width/height (rounded to char/line multiples)
 	_w = (uint16)(_widthPercent * g_system->getOverlayWidth());
-//	_w = (_widthPercent * g_system->getOverlayWidth() - kScrollBarWidth - 2) / kCharWidth;
-//	_w = _w * kCharWidth + kScrollBarWidth + 2;
-	_h = (uint16)((_heightPercent * g_system->getOverlayHeight() - 2) / kLineHeight);
-	_h = _h * kLineHeight + 2;
+//	_w = (_widthPercent * g_system->getOverlayWidth() - kScrollBarWidth - 2) / kConsoleCharWidth;
+//	_w = _w * kConsoleCharWidth + kScrollBarWidth + 2;
+	_h = (uint16)((_heightPercent * g_system->getOverlayHeight() - 2) / kConsoleLineHeight);
+	_h = _h * kConsoleLineHeight + 2;
 
 	// Calculate depending values
-	_lineWidth = (_w - kScrollBarWidth - 2) / kCharWidth;
-	_linesPerPage = (_h - 2) / kLineHeight;
+	_lineWidth = (_w - kScrollBarWidth - 2) / kConsoleCharWidth;
+	_linesPerPage = (_h - 2) / kConsoleLineHeight;
 }
 
 void ConsoleDialog::open() {
@@ -121,10 +125,10 @@ void ConsoleDialog::drawDialog() {
 #else
 			byte c = buffer((start + line) * _lineWidth + column);
 #endif
-			g_gui.drawChar(c, x, y, g_gui._textcolor);
-			x += kCharWidth;
+			g_gui.drawChar(c, x, y, g_gui._textcolor, &g_consolefont);
+			x += kConsoleCharWidth;
 		}
-		y += kLineHeight;
+		y += kConsoleLineHeight;
 	}
 
 	// Draw the scrollbar
@@ -534,18 +538,18 @@ void ConsoleDialog::drawCaret(bool erase) {
 		return;
 	}
 
-	int x = _x + 1 + (_currentPos % _lineWidth) * kCharWidth;
-	int y = _y + displayLine * kLineHeight;
+	int x = _x + 1 + (_currentPos % _lineWidth) * kConsoleCharWidth;
+	int y = _y + displayLine * kConsoleLineHeight;
 
 	char c = buffer(_currentPos);
 	if (erase) {
-		g_gui.fillRect(x, y, kCharWidth, kLineHeight, g_gui._bgcolor);
-		g_gui.drawChar(c, x, y + 2, g_gui._textcolor);
+		g_gui.fillRect(x, y, kConsoleCharWidth, kConsoleLineHeight, g_gui._bgcolor);
+		g_gui.drawChar(c, x, y + 2, g_gui._textcolor, &g_consolefont);
 	} else {
-		g_gui.fillRect(x, y, kCharWidth, kLineHeight, g_gui._textcolor);
-		g_gui.drawChar(c, x, y + 2, g_gui._bgcolor);
+		g_gui.fillRect(x, y, kConsoleCharWidth, kConsoleLineHeight, g_gui._textcolor);
+		g_gui.drawChar(c, x, y + 2, g_gui._bgcolor, &g_consolefont);
 	}
-	g_gui.addDirtyRect(x, y, kCharWidth, kLineHeight);
+	g_gui.addDirtyRect(x, y, kConsoleCharWidth, kConsoleLineHeight);
 
 	_caretVisible = !erase;
 }
