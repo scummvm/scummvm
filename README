@@ -322,12 +322,13 @@ arguments - see the next section.
                          a pre-configured target.
 
         -p<path>       - Path to where the game is installed. Default is CWD.
-        -x[<num>]      - Save game slot to load (default: autosave)
+        -x[num]        - Save game slot to load (default: autosave)
         -f             - Full-screen mode. (-F forces window mode.)
         -g<mode>       - Select graphics scaler. See below.
         -e<mode>       - Select sound engine. See below.
         -q<lang>       - Select language. See below.
         -c<num>        - Drive to play CD audio from.  E.g., 0 is first drive.
+        -j[num]        - Enable input with joystick (default: 0 - 1st joystick)
         -m<num>        - Set the music volume, 0-255.  Default is '192'
         -o<num>        - Set the master volume, 0-255. Default is '192'
         -s<num>        - Set the sfx volume, 0-255.    Default is '192'
@@ -335,11 +336,11 @@ arguments - see the next section.
         -n             - Disable subtitles. Use with games that have voice.
         -y             - Set talk speed ('yak option'). Default is '60'
         -l<file>       - Load alternate configuration file
-        -w[<file>]     - Write configuration file
+        -w[file]       - Write configuration file
         -v             - Show version information and exit
         -z             - Display list of games
         -b<num>        - Pass number to the boot script (boot param)
-        -d[<num>]      - Set debug verbosity to <num>
+        -d[num]        - Set debug verbosity to <num>
         -u             - Dump scripts if a directory called 'dumps' exists in
                          current directory
         --platform=    - Specify version of game (amiga,atari-st,macintosh)
@@ -813,6 +814,7 @@ The following keywords are recognized:
 
         cdrom           int      Number of CD-ROM unit to use for audio. If
                                  negative, don't even try to access the CD-ROM.
+        joystick_num    int      Number of joystick device to use for input
         master_volume   int      The master volume setting (0-255)
         music_driver    string   The music engine to use.
         music_volume    int      The music volume setting (0-255)
@@ -827,6 +829,7 @@ The following keywords are recognized:
         floppy_intro    bool     Use floppy version of introduction in Beneath
                                  a Steel Sky (CD version)
 
+        bootparam       int      Pass this number to the boot script
         debuglevel      int      Enable debug output. The higher number, the
                                  more verbose output.
 
