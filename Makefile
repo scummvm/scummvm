@@ -25,15 +25,15 @@ OBJS	 =
 
 # Enable this if you want ScummVM to dump all scripts it runs.
 # This is mainly interesting for developers.
-DEFINES += -DDUMP_SCRIPTS
+# DEFINES += -DDUMP_SCRIPTS
 
 # Uncomment this to activate the MAD lib for compressed sound files
 DEFINES += -DCOMPRESSED_SOUND_FILE
 LIBS    += -lmad
 
 # Uncomment this to activate the ALSA lib for midi
-DEFINES += -DUSE_ALSA
-LIBS    += -lasound
+# DEFINES += -DUSE_ALSA
+# LIBS    += -lasound
 
 # Concat DEFINES and INCLUDES to for the CPPFLAGS
 CPPFLAGS= $(DEFINES) $(INCLUDES)
