@@ -55,7 +55,6 @@ typedef struct {
 class MusicHandle : public MusicStream {
 public:
 	uint32 _id;
-	char _fileName[256];
 	bool _firstTime;
 	bool _streaming;
 	bool _paused;
@@ -75,9 +74,7 @@ public:
 	MusicHandle() : MusicStream(), _firstTime(false), _streaming(false),
 			_paused(false), _looping(false), _fading(0),
 			_fileStart(0), _filePos(0), _fileEnd(0),
-			_lastSample(0) {
-		_fileName[0] = 0;
-	}
+			_lastSample(0) {}
 };
 
 class Sword2Sound {
@@ -147,7 +144,6 @@ class Sword2Sound {
 		uint8 fxVol;
 		uint8 speechMuted;
 		uint8 fxMuted;
-		uint8 compressedMusic;
 
 		PlayingSoundHandle soundHandleSpeech;
 		uint8 musicMuted;

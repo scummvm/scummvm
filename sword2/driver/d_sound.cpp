@@ -151,6 +151,21 @@
 //
 //=============================================================================
 
+// FIXME: One feature still missing is the original's DipMusic() function
+// which, as far as I can understand, softened the music volume when someone
+// was speaking, but only if the music was playing loudly at the time.
+//
+// I'm not sure if we can implement this in any sensible fashion - I don't
+// think we have that fine-grained control over the mixer - or if we really
+// want it anyway.
+//
+// Simply adjusting the volume paramters to flow() is not enough. If you
+// only adjust them a little you won't hear the difference anyway, and if you
+// adjust them a lot it will sound really bad.
+//
+// Does anyone who can run the original interpreter have any
+// opinions on this?
+
 #include "stdafx.h"
 #include "driver96.h"
 #include "d_sound.h"
@@ -170,13 +185,16 @@ static File fpMus;
 #define GetCompressedAmplitude(n)  ((n) & 7)
 
 int32 panTable[33] = {
-	-127, -119, -111, -103, -95, -87, -79, -71, -63, -55, -47, -39, -31, -23, -15, -7,
-	0,
-	7, 15, 23, 31, 39, 47, 55, 63, 71, 79, 87, 95, 103, 111, 119, 127
+	-127, -119, -111, -103,  -95,  -87,  -79,  -71,
+	 -63,  -55,  -47,  -39,  -31,  -23,  -15,   -7,
+	   0,
+	   7,   15,   23,   31,   39,   47,   55,   63,
+          71,   79,   87,   95,  103,  111,  119,  127
 };
 
 int32 musicVolTable[17] = {
-	0, 15, 31, 47, 63, 79, 95, 111, 127, 143, 159, 175, 191, 207, 223, 239, 255
+	  0,  15,  31,  47,  63,  79,  95, 111, 127,
+	143, 159, 175, 191, 207, 223, 239, 255
 };
 
 int16 MusicHandle::read() {
@@ -252,8 +270,6 @@ Sword2Sound::Sword2Sound(SoundMixer *mixer) {
 	fxVol = 14;
 	speechMuted = 0;
 	fxMuted = 0;
-	compressedMusic = 0;
-
 	musicVol = 16;
 
 	musicMuted = 0;
@@ -262,7 +278,6 @@ Sword2Sound::Sword2Sound(SoundMixer *mixer) {
 	memset(fx, 0, sizeof(fx));
 
 	soundHandleSpeech = 0;
-
 	soundOn = 1;
 
 	_converter = makeRateConverter(music[0].getRate(), _mixer->getOutputRate(), music[0].isStereo(), false);
@@ -325,10 +340,7 @@ void Sword2Sound::FxServer(int16 *data, uint len) {
 	if (!soundOn)
 		return;
 
-	if (!music[0]._paused && !music[1]._paused) {
-		if (compressedMusic == 1)
-			UpdateCompSampleStreaming(data, len);
-	}
+	UpdateCompSampleStreaming(data, len);
 
 	if (!music[0]._streaming && !music[1]._streaming && fpMus.isOpen())
 		fpMus.close();
@@ -494,7 +506,6 @@ int32 Sword2Sound::PlayCompSpeech(const char *filename, uint32 speechid, uint8 v
 		speechStatus = 1;
 	}
 
-	// FIXME: See comment in UpdateCompSampleStreaming()
 	// DipMusic();
 
 	return RD_OK;
@@ -901,8 +912,6 @@ int32 Sword2Sound::StreamCompMusicFromLock(const char *filename, uint32 musicId,
 	int32 primaryStream = -1;
 	int32 secondaryStream = -1;
 
-	compressedMusic = 1;
-
 	// If both music streams are playing, that should mean one of them is
 	// fading out. Pick that one.
 
@@ -930,8 +939,6 @@ int32 Sword2Sound::StreamCompMusicFromLock(const char *filename, uint32 musicId,
 	} else
 		primaryStream = 0;
 
-	strcpy(music[primaryStream]._fileName, filename);
-
 	// Save looping info and tune id
 	music[primaryStream]._looping = looping;
 	music[primaryStream]._id = musicId;
@@ -940,8 +947,9 @@ int32 Sword2Sound::StreamCompMusicFromLock(const char *filename, uint32 musicId,
 	if (IsMusicMute())
 		return RD_OK;
 
-	// Always use fpMus[0] (all music in one cluster)
-	// musFilePos[primaryStream] for different pieces of music.
+	// The assumption here is that we are never playing music from two
+	// different files at the same time.
+
 	if (!fpMus.isOpen())
 		fpMus.open(filename);
 
@@ -969,19 +977,14 @@ int32 Sword2Sound::StreamCompMusicFromLock(const char *filename, uint32 musicId,
 
 void Sword2Sound::UpdateCompSampleStreaming(int16 *data, uint len) {
 	for (int i = 0; i < MAXMUS; i++) {
-		if (!music[i]._streaming)
+		if (!music[i]._streaming || music[i]._paused)
 			continue;
 
-		byte volume = musicMuted ? 0 : musicVolTable[musicVol];
+		st_sample_t volume = musicMuted ? 0 : musicVolTable[musicVol];
 
 		fpMus.seek(music[i]._filePos, SEEK_SET);
 		_converter->flow(music[i], data, len, volume, volume);
 	}
-
-	// FIXME: We need to implement DipMusic()'s functionality, but since
-	// our sound buffer is much shorter than the original's it should be
-	// enough to simply modify the channel volume in this function instead
-	// of using a separate function to modify part of the sound buffer.
 
 	// DipMusic();
 }
