@@ -426,10 +426,9 @@ FORCEINLINE uint16 SWAP_BYTES_16(uint16 a) {
 	typedef int16 NewGuiColor;
 #endif
 
-#if !defined(__PALM_OS__) && !defined(MACOSX)
-	/* Initialized operator new */
-	// FIXME - get rid of these new/delete overrides!!! They conflict with the
-	// Standard C++ library, and they are only there to support lazy programmers anyway.
+/*
+#if !defined(__PALM_OS__)
+	// Initialized operator new
 	void * operator new(size_t size);
 	void operator delete(void *ptr);
 	
@@ -442,5 +441,6 @@ FORCEINLINE uint16 SWAP_BYTES_16(uint16 a) {
 	void free_check(void *ptr);
 	#endif
 #endif
+*/
 
 #endif

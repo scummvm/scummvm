@@ -310,7 +310,8 @@ END_OF_MAIN();
 
 #endif // WIN32_WCE
 
-#if !defined(__PALM_OS__) && !defined(MACOSX) && !defined(_WIN32_WCE)
+/*
+#if !defined(__PALM_OS__) && !defined(_WIN32_WCE)
 void *operator new(size_t size) {
 	return memset(malloc(size), 0xE7, size);
 }
@@ -331,3 +332,4 @@ void free_check(void *ptr) {
 	free(ptr);
 }
 #endif
+*/
