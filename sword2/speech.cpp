@@ -1564,24 +1564,28 @@ int32 FN_i_speak(int32 *params)	//Tony18Oct96 (revamped by James01july97)
 			//------------------------------
 			// set up path to speech cluster
 			// first checking if we have speech1.clu or speech2.clu in current directory (for translators to test)
+			// FIXME better way to do this? debug configs used to use res_man.WhichCd
+			// to determine the cd but we always return 0 for that currently
+			File fp;
 
-			if (g_sword2->_gameId == GID_SWORD2_DEMO)
-				strcpy(speechFile,"speech.clu");
-			else {
-
-#ifdef _SWORD2_DEBUG
-				if ((res_man.WhichCd()==1) && (!access("speech1.clu",0))) {	// if 0 ie. if it's there
-				strcpy(speechFile,"speech1.clu");
-				} else if ((res_man.WhichCd()==2) && (!access("speech2.clu",0))) {	// if 0 ie. if it's there
-					strcpy(speechFile,"speech2.clu");
-				} else
-#endif	// _SWORD2_DEBUG
-				{
-					strcpy(speechFile,"speech.clu");
+			strcpy(speechFile,"speech.clu");
+			if (fp.open(speechFile, g_sword2->getGameDataPath()) == false) {
+				uint8	cd;	// 1, 2 or 0 (if speech on both cd's, ie. no need to change)
+				fp.close();
+				
+				if (fp.open("cd.bin",g_sword2->getGameDataPath()) == false) {
+					warning("Need cd.bin file to determine which speech cluster to use");
+				} else {
+					fp.seek(params[S_WAV], SEEK_SET);
+					fp.read(&cd, 1);
+	
+					if (cd < 2) 
+						strcpy(speechFile,"speech1.clu");
+					else 
+						strcpy(speechFile,"speech2.clu");
 				}
 			}
- 			//------------------------------
-
+			fp.close();
 
 			rv = g_sword2->_sound->PlayCompSpeech(speechFile, params[S_WAV], SPEECH_VOLUME, speech_pan);	// Load speech but don't start playing yet
 			if (rv == RD_OK)
@@ -1912,18 +1916,16 @@ void	Form_text(int32	*params)	//Tony18Oct96
 
 void GetCorrectCdForSpeech(int32 wavId)
 {
-	FILE	*fp;
+	File fp;
 	uint8	cd;	// 1, 2 or 0 (if speech on both cd's, ie. no need to change)
 
-	fp = fopen("cd.bin","rb");
-
-	if (fp==NULL)
+	if (fp.open("cd.bin",g_sword2->getGameDataPath()) == false)
 		Con_fatal_error("Need cd.bin file for testing speech!");
 
-	fseek(fp, wavId, SEEK_SET);
-	fread(&cd, 1, 1, fp);
+	fp.seek(wavId, SEEK_SET);
+	fp.read(&cd, 1);
 
-	fclose(fp);
+	fp.close();
 
 	if ((cd==1)||(cd==2))	// if we specifically need CD1 or CD2 (ie. it's not on both)
 		res_man.GetCd(cd);	// then check it's there (& ask for it if it's not there)
