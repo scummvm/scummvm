@@ -23,11 +23,9 @@
  * Readline and command completion support by Tom Dunstan <tommyd@senet.com.au>
  */
 
-
-
-
 #include "stdafx.h"
 #include "scumm.h"
+#include "actor.h"
 
 #ifdef HAVE_READLINE
 #include "debugrl.h"

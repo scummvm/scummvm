@@ -24,6 +24,7 @@
 #include "scumm.h"
 #include "sound/mididrv.h"
 #include "sound/imuse.h"
+#include "actor.h"
 
 struct SaveGameHeader {
 	uint32 type;

@@ -22,6 +22,7 @@
 
 #include "stdafx.h"
 #include "scumm.h"
+#include "actor.h"
 
 void Scumm::setupOpcodes()
 {

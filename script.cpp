@@ -22,6 +22,7 @@
 
 #include "stdafx.h"
 #include "scumm.h"
+#include "actor.h"
 
 /* Start executing script 'script' with parameters 'a' and 'b' */
 void Scumm::runScript(int script, int a, int b, int16 * lvarptr)

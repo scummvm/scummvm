@@ -21,6 +21,7 @@
  */
 #include "stdafx.h"
 #include "scumm.h"
+#include "actor.h"
 
 bool Scumm::akos_hasManyDirections(Actor * a)
 {

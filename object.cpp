@@ -22,6 +22,7 @@
 
 #include "stdafx.h"
 #include "scumm.h"
+#include "actor.h"
 
 bool Scumm::getClass(int obj, int cls)
 {

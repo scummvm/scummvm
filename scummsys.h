@@ -21,6 +21,8 @@
 #ifndef __SCUMMSYS_H_
 #define __SCUMMSYS_H_
 
+#include <stdlib.h>
+
 #if defined(HAVE_NO_BOOL)
 typedef int bool;
 const bool true(1), false(0);
@@ -132,7 +134,6 @@ typedef signed long int32;
 #endif
 
 #elif defined(macintosh)
-#include <stdlib.h>
 #include <stdio.h>
 
 #include "macos.h"
