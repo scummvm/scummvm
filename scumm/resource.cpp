@@ -351,7 +351,9 @@ void ScummEngine::readIndexFile() {
 				_fileHandle.read(_objectStateTable, num);
 				_fileHandle.read(_objectRoomTable, num);
 				memset(_objectOwnerTable, 0xFF, num);
-			} else if (_heversion >= 70) { // Windows titles
+			} else if (_heversion >= 90) { // newer windows titles
+				error("DOBJ reading not yet supported for Scummsys >= 90");
+			} else if (_heversion >= 70) { // older Windows titles
 				_fileHandle.read(_objectStateTable, num);
 				_fileHandle.read(_objectOwnerTable, num);
 				_fileHandle.read(_objectRoomTable, num);
@@ -394,7 +396,8 @@ void ScummEngine::readIndexFile() {
 			debug(9, "found DIRM block, skipping");
 			break;
 			
-		case MKID('DIRI'):
+		case MKID('DIRI'): // Images?
+//			readResTypeList(rtImage, MKID('AWIZ'), "images");
 			num = _fileHandle.readUint16LE();
 			_fileHandle.seek(num + (8 * num), SEEK_CUR);
 			debug(9, "found DIRI block, skipping");
@@ -2045,6 +2048,10 @@ void ScummEngine::resourceStats() {
 }
 
 void ScummEngine::readMAXS(int blockSize) {
+	// FIXME: trying to detect multiple targets probably a better way to do this
+	if (_heversion >= 70 && blockSize > 38 && _heversion < 72)
+			_heversion = 72;
+
 	if (_version == 8) {                    // CMI
 		_fileHandle.seek(50 + 50, SEEK_CUR);            // 176 - 8
 		_numVariables = _fileHandle.readUint32LE();     // 1500
@@ -2096,19 +2103,31 @@ void ScummEngine::readMAXS(int blockSize) {
 			_numGlobalScripts = 2000;
 
 		_shadowPaletteSize = NUM_SHADOW_PALETTE * 256;
-	// check blocksize instead of just >= 72 as some 70 targets have later engine versions
-	// freddi being an example of this
-	} else if (_heversion >= 70 && blockSize > 38) { // sputm7.2
-		if (_heversion < 72)
-			_heversion = 72;
-		if (blockSize != 32 + 8) {
-			if (blockSize == 44 + 8)
+	} else if (_heversion >= 70 && (blockSize == 38 + 8)) { // Scummsys.9x
+		_numVariables = _fileHandle.readUint16LE();
+		_fileHandle.readUint16LE(); // not used in spydemo
+		_fileHandle.readUint16LE(); // _numLocalVariables ?
+		_numLocalObjects = _fileHandle.readUint16LE();
+		_numArray = _fileHandle.readUint16LE();
+		_fileHandle.readUint16LE(); // unknown
+		_fileHandle.readUint16LE(); // unknown
+		_numFlObject = _fileHandle.readUint16LE();
+		_numInventory = _fileHandle.readUint16LE();
+		_numRooms = _fileHandle.readUint16LE();
+		_numScripts = _fileHandle.readUint16LE();
+		_numSounds = _fileHandle.readUint16LE();
+		_numCharsets = _fileHandle.readUint16LE();
+		_numCostumes = _fileHandle.readUint16LE();
+		_numGlobalObjects = _fileHandle.readUint16LE();
+		_numImages = _fileHandle.readUint16LE();
+		_fileHandle.readUint16LE(); // unknown
+		_fileHandle.readUint16LE(); // _numLocalScripts?
+		_fileHandle.readUint16LE(); // unknown
+	} else if (_heversion >= 70 && (blockSize == 44 + 8)) { // C++ based engine
 				error("MAXS blocks from C++ based games not yet supported");
-			else if (blockSize == 38 + 8)
-				error("MAXS blocks from Scummsys.9x games not yet supported");
-			else
+	} else if (_heversion >= 70 && blockSize > 38) { // sputm7.2
+		if (blockSize != 32 + 8)
 				error("MAXS block of size %d not supported, please report", blockSize);
-		}
 		_fileHandle.readUint16LE();
 		_numVariables = _fileHandle.readUint16LE();
 		_numBitVariables = _fileHandle.readUint16LE();
@@ -2210,6 +2229,7 @@ void ScummEngine::allocateArrays() {
 	debug(2, "Allocated %d space in numObjects", _numLocalObjects);
 	_scummVars = (int32 *)calloc(_numVariables, sizeof(int32));
 	_bitVars = (byte *)calloc(_numBitVariables >> 3, 1);
+	_images = (uint16 *)calloc(_numImages, sizeof(uint16));
 
 	allocResTypeData(rtCostume, (_features & GF_NEW_COSTUMES) ? MKID('AKOS') : MKID('COST'),
 								_numCostumes, "costume", 1);
@@ -2227,6 +2247,7 @@ void ScummEngine::allocateArrays() {
 	allocResTypeData(rtString, MKID('NONE'), _numArray, "array", 0);
 	allocResTypeData(rtFlObject, MKID('NONE'), _numFlObject, "flobject", 0);
 	allocResTypeData(rtMatrix, MKID('NONE'), 10, "boxes", 0);
+	allocResTypeData(rtImage, MKID('AWIZ'), _numImages, "images", 1);
 }
 
 
@@ -2456,6 +2477,8 @@ const char *resTypeFromId(int id) {
 		return "Last";
 	case rtNumTypes:
 		return "NumTypes";
+	case rtImage:
+		return "Image";
 	default:
 		sprintf(buf, "%d", id);
 		return buf;

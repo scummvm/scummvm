@@ -207,7 +207,8 @@ enum ResTypes {
 	rtRoomScripts = 17,
 	rtRoomStart = 17,
 	rtLast = 17,
-	rtNumTypes = 18
+	rtImage = 19,
+	rtNumTypes = 20
 };
 
 enum {
@@ -429,6 +430,7 @@ protected:
 	
 	uint16 *_inventory;
 	uint16 *_newNames;
+	uint16 *_images;
 public:
 	// VAR is a wrapper around scummVar, which attempts to include additional
 	// useful information should an illegal var access be detected.
@@ -458,7 +460,7 @@ protected:
 	int _numGlobalObjects, _numArray, _numVerbs, _numFlObject;
 	int _numInventory, _numRooms, _numScripts, _numSounds;
 	int _numNewNames, _numGlobalScripts;
-	int _numActors;
+	int _numActors, _numImages;
 public:
 	int _numCostumes;	// FIXME - should be protected, used by Actor::remapActorPalette
 	int _numCharsets;	// FIXME - should be protected, used by CharsetRenderer
