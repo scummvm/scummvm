@@ -23,7 +23,6 @@
 #include "driver/palette.h"
 #include "common/gameDetector.h"
 #include "common/config-file.h"
-#include "common/timer.h"
 #include "build_display.h"
 #include "console.h"
 #include "controls.h"
@@ -300,23 +299,6 @@ void Sword2State::go()
 	Zdebug("CALLING: ReadOptionSettings");
 	ReadOptionSettings();	//restore the menu settings
   	Zdebug("RETURNED.");
-
-	Zdebug("CALLING: InitialiseSound");
-	rv = _sound->InitialiseSound(22050, 2, 16);
- 	Zdebug("RETURNED with rv = %.8x", rv);
-	// don't care if this fails, because it should still work without sound cards
-	// but it should set a global system flag so that we can avoid loading sound fx & streaming music
-	// because they won't be heard anyway
-/*
-	if (rv != RD_OK)
-	{
-		ReportDriverError(rv);
-		CloseAppWindow();
-		return(0);
-	}
-*/
-
-	g_engine->_timer->installProcedure(sword2_sound_handler, 1000000);
 	Zdebug("CALLING: InitialiseGame");
 	if (InitialiseGame())
 	{

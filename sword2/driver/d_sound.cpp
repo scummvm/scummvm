@@ -169,6 +169,7 @@
 #include "rdwin.h"			// for hwnd.
 #include "d_sound.h"
 #include "../sword2.h"
+#include "common/timer.h"
 #include "sound/mixer.h"
 
 // Decompression macros
@@ -235,6 +236,15 @@ Sword2Sound::Sword2Sound(SoundMixer *mixer) {
 	musicMuted = 0;
 	bufferSizeMusic = 44100;
 	_mixer = mixer;
+
+	// Don't care if this fails, because it should still work without
+	// sound cards but it should set a global system flag so that we can
+	// avoid loading sound fx & streaming music because they won't be
+	// heard anyway
+
+	InitialiseSound(22050, 2, 16);
+
+	g_engine->_timer->installProcedure(sword2_sound_handler, 1000000);
 }
 
 // --------------------------------------------------------------------------
