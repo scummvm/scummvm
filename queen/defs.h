@@ -75,6 +75,7 @@ enum {
 };
 
 enum {
+	ITEM_NONE                     =  0,
 	ITEM_BAT                      =  1,
 	ITEM_JOURNAL,
 	ITEM_JOURNAL_DEMO             =  7,

@@ -1115,10 +1115,8 @@ void Cutaway::run(char *nextFilename) {
 
 		ObjectType objectType = getObjectType(object);
 
-		if (object.song) {
-			debug(0, "Should play song %i here", object.song);
-			// XXX playsong(object.song);
-		}
+		if (object.song)
+			_sound->playSong(object.song);
 
 		switch (objectType) {
 			case OBJECT_TYPE_ANIMATION:

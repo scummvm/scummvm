@@ -1911,8 +1911,8 @@ void Logic::inventorySetup() {
 	_graphics->bankLoad("objects.BBK", 14);
 	_inventoryItem[0] = ITEM_BAT;
 	_inventoryItem[1] = _resource->isDemo() ? ITEM_JOURNAL_DEMO : ITEM_JOURNAL;
-	_inventoryItem[2] = 0;
-	_inventoryItem[3] = 0;
+	_inventoryItem[2] = ITEM_NONE;
+	_inventoryItem[3] = ITEM_NONE;
 }
 
 void Logic::inventoryRefresh() {
@@ -1967,7 +1967,7 @@ void Logic::removeDuplicateItems() {
 	for (int i = 0; i < 4; i++)
 		for (int j = i + 1; j < 4; j++)
 			if (_inventoryItem[i] == _inventoryItem[j])
-				_inventoryItem[j] = 0;
+				_inventoryItem[j] = ITEM_NONE;
 }
 
 uint16 Logic::numItemsInventory() const {

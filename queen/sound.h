@@ -37,13 +37,16 @@ public:
 	virtual ~Sound(); 
 	virtual void sfxPlay(const char *base) = 0;
 	static Sound *giveSound(SoundMixer *mixer, Input *input, Resource *resource, uint8 compression);
-	bool isPlaying();
+	void waitSfxFinished();
+	void playSong(int16 songNum);
 
 protected:
 	SoundMixer *_mixer;
 	Input *_input;
 	Resource *_resource;
 
+	int16 _lastOverride;
+	int16 _currentSong;
 	PlayingSoundHandle _sfxHandle;
 };
 
