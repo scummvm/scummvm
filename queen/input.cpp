@@ -185,6 +185,7 @@ int Input::checkKeys() {
 			break;
 
 		case KEY_F1:	// Use Journal
+		case KEY_F5:
 			if (_cutawayRunning) {
 				if (_canQuit) {
 					_keyVerb = VERB_USE_JOURNAL;
