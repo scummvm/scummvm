@@ -272,7 +272,7 @@ void Sound::playSound(int soundID, int offset) {
 	}	
 	// Support for sampled sound effects in Monkey Island 1 and 2
 	else if (READ_UINT32(ptr) == MKID('SBL ')) {
-		debug(2, "Using SBL sound effect");
+		debugC(DEBUG_SOUND, "Using SBL sound effect");
 		
 		// SBL resources essentially contain VOC sound data.
 		// There are at least two main variants: in one,

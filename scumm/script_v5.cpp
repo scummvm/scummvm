@@ -731,7 +731,7 @@ void ScummEngine_v5::o5_endCutscene() {
 
 void ScummEngine_v5::o5_debug() {
 	int a = getVarOrDirectWord(PARAM_1);
-	debug(1, "o5_debug(%d)", a);
+	debugC(DEBUG_GENERAL, "o5_debug(%d)", a);
 }
 
 void ScummEngine_v5::o5_decrement() {
@@ -2127,7 +2127,7 @@ void ScummEngine_v5::o5_startMusic() {
 			// can look at the global script #9 (0x888A in 49.LFL). 
 			break;
 		}
-		debug(4,"o5_startMusic(%d)", b);
+		debugC(DEBUG_GENERAL,"o5_startMusic(%d)", b);
 		setResult(result);
 	} else {
 		_sound->addSoundToQueue(getVarOrDirectByte(PARAM_1));

@@ -392,7 +392,7 @@ int ScummEngine_v8::fetchScriptWordSigned() {
 }
 
 int ScummEngine_v8::readVar(uint var) {
-	debug(9, "readvar(%d)", var);
+	debugC(DEBUG_VARS, "readvar(%d)", var);
 
 	if (!(var & 0xF0000000)) {
 		checkRange(_numVariables - 1, 0, var, "Variable %d out of range(r)");
@@ -416,7 +416,7 @@ int ScummEngine_v8::readVar(uint var) {
 }
 
 void ScummEngine_v8::writeVar(uint var, int value) {
-	debug(9, "writeVar(%d, %d)", var, value);
+	debugC(DEBUG_VARS, "writeVar(%d, %d)", var, value);
 
 	if (!(var & 0xF0000000)) {
 		checkRange(_numVariables - 1, 0, var, "Variable %d out of range(w)");
@@ -430,9 +430,9 @@ void ScummEngine_v8::writeVar(uint var, int value) {
 
 		if ((_varwatch == (int)var) || (_varwatch == 0)) {
 			if (vm.slot[_currentScript].number < 100)
-				debug(1, "vars[%d] = %d (via script-%d)", var, value, vm.slot[_currentScript].number);
+				debugC(DEBUG_VARS, "vars[%d] = %d (via script-%d)", var, value, vm.slot[_currentScript].number);
 			else
-				debug(1, "vars[%d] = %d (via room-%d-%d)", var, value, _currentRoom, vm.slot[_currentScript].number);
+				debugC(DEBUG_VARS, "vars[%d] = %d (via room-%d-%d)", var, value, _currentRoom, vm.slot[_currentScript].number);
 		}
 		return;
 	}
@@ -1212,8 +1212,6 @@ void ScummEngine_v8::o8_system() {
 void ScummEngine_v8::o8_startVideo() {
 	int len = resStrLen(_scriptPointer);
 
-	debug(4, "o8_startVideo(%s)", (const char*)_scriptPointer);
-
 	SmushPlayer *sp = new SmushPlayer(this, 1000000 / 12);
 	sp->play((const char*)_scriptPointer);
 	delete sp;
@@ -1336,7 +1334,7 @@ void ScummEngine_v8::o8_kernelSetFunctions() {
 		array = 658;
 		ArrayHeader *ah = (ArrayHeader *)getResourceAddress(rtString, readVar(array));
 
-		debug(1,"o8_kernelSetFunctions: writeRegistryValue(%s, %d)", (char *)ah->data, value);
+		debugC(DEBUG_GENERAL,"o8_kernelSetFunctions: writeRegistryValue(%s, %d)", (char *)ah->data, value);
 		}
 		break;
 	case 33:	// paletteSetIntensity
@@ -1463,7 +1461,7 @@ void ScummEngine_v8::o8_kernelGetFunctions() {
 			push(14);
 		else 		// Use defaults
 			push(-1);
-		debug(1,"o8_kernelGetFunctions: readRegistryValue(%s)", (char *)ah->data);
+		debugC(DEBUG_GENERAL,"o8_kernelGetFunctions: readRegistryValue(%s)", (char *)ah->data);
 		}
 		break;
 	case 0xE1:		// imGetMusicPosition
