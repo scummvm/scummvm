@@ -163,6 +163,14 @@ SOURCE=..\..\queen\graphics.h
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\queen\input.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\queen\input.h
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\queen\logic.cpp
 # End Source File
 # Begin Source File
@@ -188,6 +196,14 @@ SOURCE=..\..\queen\resource.h
 # Begin Source File
 
 SOURCE=..\..\queen\restables.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\queen\sound.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\queen\sound.h
 # End Source File
 # Begin Source File
 
