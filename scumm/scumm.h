@@ -219,7 +219,7 @@ protected:
 	int _offsX, _offsY;
 	int _virtScreenHeight;
 
-	void drawBits(byte *dst, byte *mask, int drawTop, int width, int height);
+	void drawBits(byte *dst, byte *mask, int drawTop, int width, int height, bool useMask);
 
 public:
 	byte _colorMap[16];
@@ -406,7 +406,6 @@ public:
 	int _curVerbSlot;
 	int _curPalIndex;
 	byte _currentRoom;
-	VirtScreen *_curVirtScreen;
 
 	bool _egoPositioned;
 	int _keyPressed;

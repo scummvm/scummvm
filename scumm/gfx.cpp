@@ -32,6 +32,26 @@
 #endif
 
 
+// If you wan to try buggy hacked smooth scrolling support in The Dig, enable
+// the following preprocessor flag by uncommenting it.
+//
+// Note: This is purely experimental, NOT WORKING COMPLETLY and very buggy.
+// Please do not make reports about problems with it - this is only in CVS
+// to get it fixed and so that really interested parties can experiment it.
+// It is NOT FIT FOR GENERAL USAGE!. You have been warned.
+//
+// Doing this correctly will be quite some more complicated. Basically, with smooth
+// scrolling, the virtual screen strips don't match the display screen strips.
+// Hence we either have to draw partial strips - but that'd be rather cumbersome.
+// Or the much simple (and IMHO more elegant) solution is to simply use a screen pitch
+// that is 8 pixel wider than the real screen width, and always draw one strip more than 
+// needed to the backbuf. This will still require quite some code to be changed but
+// should otherwise be relatively easy to understand, and using VirtScreen::pitch
+// will actually clean up the code.
+//
+// #define V7_SMOOTH_SCROLLING_HACK
+
+
 enum {
 	kScrolltime = 500,  // ms scrolling is supposed to take
 	kPictureDelay = 20
@@ -159,8 +179,6 @@ void Scumm::initVirtScreen(int slot, int number, int top, int width, int height,
 {
 	VirtScreen *vs = &virtscr[slot];
 	int size;
-	int i;
-	byte *ptr;
 
 	assert(height >= 0);
 	assert(slot >= 0 && slot < 4);
@@ -171,7 +189,6 @@ void Scumm::initVirtScreen(int slot, int number, int top, int width, int height,
 	}
 
 	vs->number = slot;
-	vs->unk1 = 0;
 	vs->width = _realWidth;
 	vs->topline = top;
 	vs->height = height;
@@ -182,18 +199,17 @@ void Scumm::initVirtScreen(int slot, int number, int top, int width, int height,
 	vs->size = size;
 	vs->backBuf = NULL;
 
-	if ((vs->scrollable) && (_features & GF_AFTER_V7)) {
-		size += _realWidth * 8;
-	} else {
-		size += _realWidth * 4;
+	if (vs->scrollable) {
+		if (_features & GF_AFTER_V7) {
+			size += _realWidth * 8;
+		} else {
+			size += _realWidth * 4;
+		}
 	}
-
+	
 	createResource(rtBuffer, slot + 1, size);
 	vs->screenPtr = getResourceAddress(rtBuffer, slot + 1);
-
-	ptr = vs->screenPtr;
-	for (i = 0; i < size; i++)		// reset background ?
-		*ptr++ = 0;
+	memset(vs->screenPtr, 0, size);			// reset background
 
 	if (twobufs) {
 		createResource(rtBuffer, slot + 5, size);
@@ -211,10 +227,10 @@ VirtScreen *Scumm::findVirtScreen(int y)
 
 	for (i = 0; i < 3; i++, vs++) {
 		if (y >= vs->topline && y < vs->topline + vs->height) {
-			return _curVirtScreen = vs;
+			return vs;
 		}
 	}
-	return _curVirtScreen = NULL;
+	return NULL;
 }
 
 void Scumm::updateDirtyRect(int virt, int left, int right, int top, int bottom, uint32 dirtybits)
@@ -237,14 +253,19 @@ void Scumm::updateDirtyRect(int virt, int left, int right, int top, int bottom, 
 		right = vs->width;
 
 	if (virt == 0 && dirtybits) {
-		rp = (right >> 3) + _screenStartStrip;
 		lp = (left >> 3) + _screenStartStrip;
 		if (lp < 0)
 			lp = 0;
 		if (_features & GF_AFTER_V7) {
+#ifdef V7_SMOOTH_SCROLLING_HACK
+			rp = (right + vs->xstart) >> 3;
+#else
+			rp = (right >> 3) + _screenStartStrip;
+#endif
 			if (rp > 409)
 				rp = 409;
 		} else {
+			rp = (right >> 3) + _screenStartStrip;
 			if (rp >= 200)
 				rp = 200;
 		}
@@ -306,8 +327,8 @@ void Scumm::drawDirtyScreenParts()
 	} else {
 		vs = &virtscr[0];
 
-		src = vs->screenPtr + _screenStartStrip * 8 + _screenTop * _realWidth;
-		_system->copy_rect(src, _realWidth, 0, vs->topline, _realWidth, vs->height);
+		src = vs->screenPtr + vs->xstart + _screenTop * _realWidth;
+		_system->copy_rect(src, _realWidth, 0, vs->topline, _realWidth, vs->height - _screenTop);
 
 		for (i = 0; i < gdi._numStrips; i++) {
 			vs->tdirty[i] = (byte)vs->height;
@@ -330,14 +351,16 @@ void Scumm::updateDirtyScreen(int slot)
 	gdi.updateDirtyScreen(&virtscr[slot]);
 }
 
+// Blit the data from the given VirtScreen to the display. If the camera moved,
+// a full blit is done, otherwise only the visible dirty areas are updated.
 void Gdi::updateDirtyScreen(VirtScreen *vs)
 {
 	if (vs->height == 0)
 		return;
 
-	if (_vm->_features & GF_AFTER_V7 && (_vm->camera._cur.y != _vm->camera._last.y))
+	if (_vm->_features & GF_AFTER_V7 && (_vm->camera._cur.y != _vm->camera._last.y)) {
 		drawStripToScreen(vs, 0, _numStrips << 3, 0, vs->height);
-	else {
+	} else {
 		int i;
 		int start, w, top, bottom;
 	
@@ -352,6 +375,8 @@ void Gdi::updateDirtyScreen(VirtScreen *vs)
 				vs->tdirty[i] = (byte)vs->height;
 				vs->bdirty[i] = 0;
 				if (i != (_numStrips - 1) && vs->bdirty[i + 1] == (byte)bottom && vs->tdirty[i + 1] == (byte)top) {
+					// Simple optimizations: if two or more neighbouring strips form one bigger rectangle,
+					// blit them all at once.
 					w += 8;
 					continue;
 				}
@@ -366,6 +391,7 @@ void Gdi::updateDirtyScreen(VirtScreen *vs)
 	}
 }
 
+// Blit the specified rectangle from the given virtual screen to the display.
 void Gdi::drawStripToScreen(VirtScreen *vs, int x, int w, int t, int b)
 {
 	byte *ptr;
@@ -395,6 +421,7 @@ void Gdi::clearUpperMask()
 	memset(_vm->getResourceAddress(rtBuffer, 9), 0, _imgBufOffs[1] - _imgBufOffs[0]);
 }
 
+// Reset the background behind an actor or blast object
 void Gdi::resetBackground(int top, int bottom, int strip)
 {
 	VirtScreen *vs = &_vm->virtscr[0];
@@ -569,6 +596,8 @@ void Scumm::drawFlashlight()
 	_flashlightIsDrawn = true;
 }
 
+// Redraw background as needed, i.e. the left/right sides if scrolling took place etc.
+// Note that this only updated the virtual screen, not the actual display.
 void Scumm::redrawBGAreas()
 {
 	int i;
@@ -581,6 +610,7 @@ void Scumm::redrawBGAreas()
 
 	val = 0;
 
+	// Redraw parts of the background which are marked as dirty.
 	if (!_fullRedraw && _BgNeedsRedraw) {
 		for (i = 0; i != gdi._numStrips; i++) {
 			if (gfxUsageBits[_screenStartStrip + i] & 0x80000000) {
@@ -626,19 +656,11 @@ void Scumm::redrawBGStrip(int start, int num)
 
 	assert(s >= 0 && (size_t) s < sizeof(gfxUsageBits) / sizeof(gfxUsageBits[0]));
 
-	_curVirtScreen = &virtscr[0];
-
 	for (int i = 0; i < num; i++)
 		gfxUsageBits[s + i] |= 0x80000000;
 
-	/*if (_curVirtScreen->height < _scrHeight) {  
-	   warning("Screen Y size %d < Room height %d",
-	   _curVirtScreen->height,
-	   _scrHeight);
-	   } */
-
 	gdi.drawBitmap(getResourceAddress(rtRoom, _roomResource) + _IM00_offs,
-								 _curVirtScreen, s, 0, _curVirtScreen->height, s, num, 0);
+								 &virtscr[0], s, 0, virtscr[0].height, s, num, 0);
 }
 
 void Scumm::restoreCharsetBg()
@@ -765,7 +787,6 @@ void Gdi::drawBitmap(byte *ptr, VirtScreen *vs, int x, int y, const int h,
 	byte *zplane_list[6];
 
 	int bottom;
-	byte twobufs;
 	int numzbuf;
 	int sx;
 	bool lightsOn;
@@ -815,8 +836,6 @@ void Gdi::drawBitmap(byte *ptr, VirtScreen *vs, int x, int y, const int h,
 		warning("Gdi::drawBitmap, strip drawn to %d below window bottom %d", bottom, vs->height);
 	}
 
-	twobufs = vs->alloctwobuffers;
-
 	_vertStripNextInc = h * _vm->_realWidth - 1;
 
 	do {
@@ -838,7 +857,7 @@ void Gdi::drawBitmap(byte *ptr, VirtScreen *vs, int x, int y, const int h,
 			vs->bdirty[sx] = bottom;
 
 		backbuff_ptr = vs->screenPtr + (y * _numStrips + x) * 8;
-		if (twobufs)
+		if (vs->alloctwobuffers)
 			bgbak_ptr = _vm->getResourceAddress(rtBuffer, vs->number + 5) + (y * _numStrips + x) * 8;
 		else
 			bgbak_ptr = backbuff_ptr;
@@ -851,7 +870,7 @@ void Gdi::drawBitmap(byte *ptr, VirtScreen *vs, int x, int y, const int h,
 			decompressBitmap(bgbak_ptr, smap_ptr + READ_LE_UINT32(smap_ptr + stripnr * 4 + 8), h);
 
 		CHECK_HEAP;
-		if (twobufs) {
+		if (vs->alloctwobuffers) {
 			if (_vm->hasCharsetMask(sx << 3, y, (sx + 1) << 3, bottom)) {
 				if (flag & dbClear || !lightsOn)
 					clear8ColWithMasking(backbuff_ptr, h, _mask_ptr);
@@ -1954,8 +1973,6 @@ void Scumm::cameraMoved()
 
 	_screenStartStrip = (camera._cur.x - (_realWidth / 2)) >> 3;
 	_screenEndStrip = _screenStartStrip + gdi._numStrips - 1;
-	virtscr[0].xstart = _screenStartStrip << 3;
-
 
 	_screenTop = camera._cur.y - (_realHeight / 2);
 	if (_features & GF_AFTER_V7) {
@@ -1966,6 +1983,11 @@ void Scumm::cameraMoved()
 		_screenLeft = _screenStartStrip << 3;
 	}
 
+#ifdef V7_SMOOTH_SCROLLING_HACK
+	virtscr[0].xstart = _screenLeft;
+#else
+	virtscr[0].xstart = _screenStartStrip << 3;
+#endif
 }
 
 void Scumm::panCameraTo(int x, int y)

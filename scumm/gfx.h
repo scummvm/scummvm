@@ -42,7 +42,6 @@ struct CameraData {		/* Camera state data */
 
 struct VirtScreen {		/* Virtual screen areas */
 	int number;
-	uint16 unk1;
 	uint16 topline;
 	uint16 width, height;
 	uint16 size;

@@ -320,17 +320,18 @@ void CharsetRenderer::printChar(int chr)
 		+ drawTop * _vm->gdi._numStrips + _left / 8 + _vm->_screenStartStrip;
 
 	byte *dst = vs->screenPtr + vs->xstart + drawTop * _vm->_realWidth + _left;
+	bool useMask = (vs->number == 0 && !_ignoreCharsetMask);
 
 	if (_blitAlso) {
 		byte *back = dst;
 		dst = _vm->getResourceAddress(rtBuffer, vs->number + 5)
 			+ vs->xstart + drawTop * _vm->_realWidth + _left;
 
-		drawBits(dst, mask, drawTop, width, height);
+		drawBits(dst, mask, drawTop, width, height, useMask);
 
 		_vm->blit(back, dst, width, height);
 	} else {
-		drawBits(dst, mask, drawTop, width, height);
+		drawBits(dst, mask, drawTop, width, height, useMask);
 	}
 	
 	_left += width;
@@ -343,16 +344,13 @@ void CharsetRenderer::printChar(int chr)
 	_top -= _offsY;
 }
 
-void CharsetRenderer::drawBits(byte *dst, byte *mask, int drawTop, int width, int height)
+void CharsetRenderer::drawBits(byte *dst, byte *mask, int drawTop, int width, int height, bool useMask)
 {
-	bool usemask;
 	byte maskmask;
 	int y, x;
 	int maskpos;
 	int color;
 	byte numbits, bits;
-
-	usemask = (_vm->_curVirtScreen->number == 0 && !_ignoreCharsetMask);
 
 	bits = *_charPtr++;
 	numbits = 8;
@@ -370,7 +368,7 @@ void CharsetRenderer::drawBits(byte *dst, byte *mask, int drawTop, int width, in
 			assert(color == myColor);
 			
 			if (color) {
-				if (usemask) {
+				if (useMask) {
 					mask[maskpos] |= maskmask;
 				}
 				*dst = _colorMap[color];
