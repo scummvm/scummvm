@@ -2111,27 +2111,7 @@ void SimonEngine::o_print_str() {
 
 	tv = getThreeValues(num_1);
 
-	switch (_game) {
-	case GAME_SIMON1TALKIE:
-	case GAME_SIMON1WIN:
-	case GAME_SIMON1CD32:
-	case GAME_SIMON1ACORN:
-		if (speech_id != 0)
-			talk_with_speech(speech_id, num_1);
-		if (string_ptr != NULL && (speech_id == 0 || _subtitles))
-			talk_with_text(num_1, num_2, (const char *)string_ptr, tv->a, tv->b, tv->c);
-		break;
-
-	case GAME_SIMON1DEMO:
-	case GAME_SIMON1DOS:
-	case GAME_SIMON1AMIGA:
-	case GAME_SIMON2DOS:
-		talk_with_text(num_1, num_2, (const char *)string_ptr, tv->a, tv->b, tv->c);
-		break;
-
-	case GAME_SIMON2TALKIE:
-	case GAME_SIMON2WIN:
-	case GAME_SIMON2MAC:
+	if ((_game & GF_SIMON2) && (_game & GF_TALKIE)) {
 		if (speech_id != 0 && num_1 == 1 && (_language == 20 || !_subtitles))
 			talk_with_speech(speech_id, num_1);
 
@@ -2140,8 +2120,18 @@ void SimonEngine::o_print_str() {
 
 		if (string_ptr != NULL && (speech_id == 0 || _subtitles))
 			talk_with_text(num_1, num_2, (const char *)string_ptr, tv->a, tv->b, tv->c);
-		break;
+
+	} else if (_game & GF_TALKIE) {
+		if (speech_id != 0)
+			talk_with_speech(speech_id, num_1);
+		if (string_ptr != NULL && (speech_id == 0 || _subtitles))
+			talk_with_text(num_1, num_2, (const char *)string_ptr, tv->a, tv->b, tv->c);
+
+	} else {
+		talk_with_text(num_1, num_2, (const char *)string_ptr, tv->a, tv->b, tv->c);
+
 	}
+
 }
 
 void SimonEngine::ensureVgaResLoadedC(uint vga_res) {
@@ -2801,7 +2791,11 @@ restart:;
 
 					name_len--;
 
-					x = (name[name_len] == 'i' || name[name_len] == 'l') ? 1 : 8;
+					if (_language == 20) //Hebrew
+						x = 8;
+					else
+						x = (name[name_len] == 'i' || name[name_len] == 'l') ? 1 : 8;
+
 					name[name_len] = 0;
 
 					o_unk_132_helper_2(_fcs_ptr_array_3[5], x);

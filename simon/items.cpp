@@ -1248,15 +1248,7 @@ void SimonEngine::o_inventory_descriptions() {
 		tv = getThreeValues(a);
 	}
 
-	if (_game == GAME_SIMON1CD32 || _game == GAME_SIMON1TALKIE || _game == GAME_SIMON1WIN) {
-		if (child != NULL && child->avail_props & 0x200) {
-			uint offs = getOffsetOfChild2Param(child, 0x200);
-			talk_with_speech(child->array[offs], a);
-		} else if (child != NULL && child->avail_props & 0x100) {
-			uint offs = getOffsetOfChild2Param(child, 0x100);
-			talk_with_speech(child->array[offs] + 3550, a);
-		}
-	} else if (_game == GAME_SIMON2TALKIE || _game == GAME_SIMON2WIN) {
+	if ((_game & GF_SIMON2) && (_game & GF_TALKIE)) {
 		if (child != NULL && child->avail_props & 0x200) {
 			uint var200 = child->array[getOffsetOfChild2Param(child, 0x200)];
 
@@ -1308,7 +1300,16 @@ void SimonEngine::o_inventory_descriptions() {
 				talk_with_speech(var200, a);
 		}
 
+	} else if (_game & GF_TALKIE) {
+		if (child != NULL && child->avail_props & 0x200) {
+			uint offs = getOffsetOfChild2Param(child, 0x200);
+			talk_with_speech(child->array[offs], a);
+		} else if (child != NULL && child->avail_props & 0x100) {
+			uint offs = getOffsetOfChild2Param(child, 0x100);
+			talk_with_speech(child->array[offs] + 3550, a);
+		}
 	}
+
 	if (child != NULL && (child->avail_props & 1) && _subtitles) {
 		if (child->avail_props & 0x100) {
 			sprintf(buf, "%d%s", child->array[getOffsetOfChild2Param(child, 0x100)], s);
