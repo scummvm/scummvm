@@ -34,11 +34,6 @@
 namespace Scumm {
 
 void Insane::runScene(int arraynum) {
-#ifndef FTDOSDEMO
-	if ((_vm->_features & GF_DEMO) && (_vm->_features & GF_PC))
-		return;
-#endif
-
 	_insaneIsRunning = true;
 	_player = new SmushPlayer(_vm, _speed);
 	_player->insanity(true);
@@ -146,18 +141,20 @@ void Insane::runScene(int arraynum) {
 	writeArray(53, _actor[0].inventory[INV_2X4]);
 	writeArray(54, _actor[0].inventory[INV_WRENCH]);
 	writeArray(55, _actor[0].inventory[INV_DUST]);
-	writeArray(337, _enemy[EN_TORQUE].occurences);
-	writeArray(329, _enemy[EN_ROTT1].occurences);
-	writeArray(330, _enemy[EN_ROTT2].occurences);
-	writeArray(331, _enemy[EN_ROTT3].occurences);
-	writeArray(332, _enemy[EN_VULTF1].occurences);
-	writeArray(333, _enemy[EN_VULTM1].occurences);
-	writeArray(334, _enemy[EN_VULTF2].occurences);
-	writeArray(335, _enemy[EN_VULTM2].occurences);
-	writeArray(336, _enemy[EN_CAVEFISH].occurences);
-	writeArray(339, _enemy[EN_VULTF2].field_10);
 	writeArray(56, _enemy[EN_CAVEFISH].field_10);
-	writeArray(340, _enemy[EN_VULTM2].field_10);
+	if (!((_vm->_features & GF_DEMO) && (_vm->_features & GF_PC))) {
+		writeArray(337, _enemy[EN_TORQUE].occurences);
+		writeArray(329, _enemy[EN_ROTT1].occurences);
+		writeArray(330, _enemy[EN_ROTT2].occurences);
+		writeArray(331, _enemy[EN_ROTT3].occurences);
+		writeArray(332, _enemy[EN_VULTF1].occurences);
+		writeArray(333, _enemy[EN_VULTM1].occurences);
+		writeArray(334, _enemy[EN_VULTF2].occurences);
+		writeArray(335, _enemy[EN_VULTM2].occurences);
+		writeArray(336, _enemy[EN_CAVEFISH].occurences);
+		writeArray(339, _enemy[EN_VULTF2].field_10);
+		writeArray(340, _enemy[EN_VULTM2].field_10);
+	}
 	// insane_unlock(); // FIXME
 	_vm->_sound->stopAllSounds(); // IMUSE_StopAllSounds();
 	if (_memoryAllocatedNotOK) {
@@ -657,9 +654,15 @@ void Insane::setEnemyCostumes(void) {
 
 	debugC(DEBUG_INSANE, "setEnemyCostumes(%d)", _currEnemy);
 
-	smlayer_setActorCostume(0, 2, readArray(12));
-	smlayer_setActorCostume(0, 0, readArray(14));
-	smlayer_setActorCostume(0, 1, readArray(13));
+	if ((_vm->_features & GF_DEMO) && (_vm->_features & GF_PC)) {
+		smlayer_setActorCostume(0, 2, readArray(11));
+		smlayer_setActorCostume(0, 0, readArray(13));
+		smlayer_setActorCostume(0, 1, readArray(12));
+	} else {
+		smlayer_setActorCostume(0, 2, readArray(12));
+		smlayer_setActorCostume(0, 0, readArray(14));
+		smlayer_setActorCostume(0, 1, readArray(13));
+	}
 	smlayer_setActorLayer(0, 1, 1);
 	smlayer_setActorLayer(0, 2, 5);
 	smlayer_setActorLayer(0, 0, 10);

@@ -1201,7 +1201,10 @@ void Insane::actor02Reaction(int32 buttons) {
 				case EN_ROTT1:
 				case EN_ROTT2:
 				case EN_ROTT3:
-					queueSceneSwitch(9, 0, "wr2_benr.san", 64, 0, 0, 0);
+					if ((_vm->_features & GF_DEMO) && (_vm->_features & GF_PC))
+						queueSceneSwitch(9, 0, "bencrshe.san", 64, 0, 0, 0);
+					else
+						queueSceneSwitch(9, 0, "wr2_benr.san", 64, 0, 0, 0);
 					break;
 				case EN_VULTF1:
 				case EN_VULTM1:

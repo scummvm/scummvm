@@ -51,13 +51,6 @@ static const int actorAnimationData[21] = {20, 21, 22, 23, 24, 25, 26, 13, 14, 1
 Insane::Insane(ScummEngine_v6 *scumm) {
 	_vm = scumm;
 	
-#ifndef FTDOSDEMO
-	if ((_vm->_features & GF_DEMO) && (_vm->_features & GF_PC)) {
-		_insaneIsRunning = false;
-		return;
-	}
-#endif
-
 	initvars();
 
 	if (!((_vm->_features & GF_DEMO) && (_vm->_features & GF_PC))) {
@@ -181,8 +174,15 @@ void Insane::initvars(void) {
 	for (i = 0; i < 0x80; i++)
 		_iactBits[i] = 0;
 
-	init_enemyStruct(EN_ROTT1, EN_ROTT1, 0, 0, 160, 0, INV_MACE, 90, "wr2_rott.san", 
-					 26, 16, 17, 27, 11, 3);
+	
+	if ((_vm->_features & GF_DEMO) && (_vm->_features & GF_PC)) {
+		init_enemyStruct(EN_ROTT1, EN_ROTT1, 0, 0, 160, 0, INV_MACE, 90, "endcrshr.san", 
+						 25, 16, 15, 27, 11, 3);
+	} else {
+		init_enemyStruct(EN_ROTT1, EN_ROTT1, 0, 0, 160, 0, INV_MACE, 90, "wr2_rott.san", 
+						 26, 16, 17, 27, 11, 3);
+	}
+
 	init_enemyStruct(EN_ROTT2, EN_ROTT2, 1, 0, 250, 0, INV_2X4, 90, "wr2_rott.san", 
 					 28, 16, 17, 42, 11, 3);
 	init_enemyStruct(EN_ROTT3, EN_ROTT3, 2, 0, 120, 0, INV_HAND, 90, "wr2_rott.san", 
@@ -638,27 +638,31 @@ void Insane::readState(void) { // PATCH
 	_actor[0].inventory[INV_HAND] = 1;
 	_actor[0].inventory[INV_BOOT] = 1;
 
-	_smlayer_room = readArray(320);
-	_smlayer_room2 = readArray(321);
-	_posBrokenTruck = readArray(322);
-	_posVista = readArray(323);
-	_val57d = readArray(324);
-	_posCave = readArray(325);
-	_posBrokenCar = readArray(326);
-	_val54d = readArray(327);
-	_posFatherTorque = readArray(328);
-	_enemy[EN_TORQUE].occurences = readArray(337);
-	_enemy[EN_ROTT1].occurences = readArray(329);
-	_enemy[EN_ROTT2].occurences = readArray(330);
-	_enemy[EN_ROTT3].occurences = readArray(331);
-	_enemy[EN_VULTF1].occurences = readArray(332);
-	_enemy[EN_VULTM1].occurences = readArray(333);
-	_enemy[EN_VULTF2].occurences = readArray(334);
-	_enemy[EN_VULTM2].occurences = readArray(335);
-	_enemy[EN_CAVEFISH].occurences = readArray(336);
-	_enemy[EN_VULTM2].field_10 = readArray(340);
 	_enemy[EN_CAVEFISH].field_10 = readArray(56);
-	_enemy[EN_VULTF2].field_10 = readArray(339);
+	if (!((_vm->_features & GF_DEMO) && (_vm->_features & GF_PC))) {
+		_smlayer_room = readArray(320);
+		_smlayer_room2 = readArray(321);
+		_posBrokenTruck = readArray(322);
+		_posVista = readArray(323);
+		_val57d = readArray(324);
+		_posCave = readArray(325);
+		_posBrokenCar = readArray(326);
+		_val54d = readArray(327);
+		_posFatherTorque = readArray(328);
+		_enemy[EN_TORQUE].occurences = readArray(337);
+		_enemy[EN_ROTT1].occurences = readArray(329);
+		_enemy[EN_ROTT2].occurences = readArray(330);
+		_enemy[EN_ROTT3].occurences = readArray(331);
+		_enemy[EN_VULTF1].occurences = readArray(332);
+		_enemy[EN_VULTM1].occurences = readArray(333);
+		_enemy[EN_VULTF2].occurences = readArray(334);
+		_enemy[EN_VULTM2].occurences = readArray(335);
+		_enemy[EN_CAVEFISH].occurences = readArray(336);
+		_enemy[EN_VULTM2].field_10 = readArray(340);
+		_enemy[EN_VULTF2].field_10 = readArray(339);
+	} else {
+		_smlayer_room = _smlayer_room2 = 13;
+	}
 }
 
 void Insane::setupValues(void) {
@@ -757,6 +761,9 @@ void Insane::smush_setToFinish(void) {
 
 // smlayer_stopSound
 void Insane::smlayer_stopSound(int idx) {
+	if ((_vm->_features & GF_DEMO) && (_vm->_features & GF_PC))
+		return;
+
 	_vm->_imuseDigital->stopSound(readArray(idx));
 }
 
@@ -894,9 +901,15 @@ int32 Insane::weaponDamage(int32 actornum) {
 }
 
 void Insane::reinitActors(void) {
-	smlayer_setActorCostume(0, 2, readArray(12));
-	smlayer_setActorCostume(0, 0, readArray(14));
-	smlayer_setActorCostume(0, 1, readArray(13));
+	if ((_vm->_features & GF_DEMO) && (_vm->_features & GF_PC)) {
+		smlayer_setActorCostume(0, 2, readArray(11));
+		smlayer_setActorCostume(0, 0, readArray(13));
+		smlayer_setActorCostume(0, 1, readArray(12));
+	} else {
+		smlayer_setActorCostume(0, 2, readArray(12));
+		smlayer_setActorCostume(0, 0, readArray(14));
+		smlayer_setActorCostume(0, 1, readArray(13));
+	}
 	smlayer_setActorLayer(0, 1, 1);
 	smlayer_setActorLayer(0, 2, 5);
 	smlayer_setActorLayer(0, 0, 10);
@@ -959,7 +972,7 @@ void Insane::escapeKeyHandler(void) {
 		writeArray(9, 0);
 		break;
 	case 18:
-		queueSceneSwitch(1, _smush_minedrivFlu, "minedriv.san", 64, 0, _continueFrame1, 1300);
+		queueSceneSwitch(17, _smush_minedrivFlu, "minedriv.san", 64, 0, _continueFrame1, 1300);
 		writeArray(9, 1);
 		break;
 	case 2:
@@ -1100,6 +1113,9 @@ bool Insane::actor0StateFlags2(int state) {
 
 // smlayer_loadSound1 && smlayer_loadSound2
 int Insane::smlayer_loadSound(int id, int flag, int phase) {
+	if ((_vm->_features & GF_DEMO) && (_vm->_features & GF_PC))
+		return 0;
+
 	int resid;
 	
 	if (phase == 1) {
@@ -1170,6 +1186,9 @@ void Insane::smlayer_setActorLayer(int actornum, int actnum, int layer) {
 }
 
 void Insane::smlayer_setFluPalette(byte *pal, int shut_flag) {
+	if ((_vm->_features & GF_DEMO) && (_vm->_features & GF_PC))
+		return;
+
 	//	  if (shut_flag)
 	//		// FIXME: shut colors and make picture appear smoothly
 	//		SmushPlayer::setPalette(pal);
@@ -1178,10 +1197,16 @@ void Insane::smlayer_setFluPalette(byte *pal, int shut_flag) {
 }
 
 bool Insane::smlayer_isSoundRunning(int32 sound) {
+	if ((_vm->_features & GF_DEMO) && (_vm->_features & GF_PC))
+		return 1;
+
 	return _vm->_imuseDigital->getSoundStatus(readArray(sound)) != 0;
 }
 
 bool Insane::smlayer_startSfx(int32 sound) {
+	if ((_vm->_features & GF_DEMO) && (_vm->_features & GF_PC))
+		return 1;
+
 	if (smlayer_loadSound(sound, 0, 2)) {
 		_vm->_imuseDigital->startSfx(readArray(sound), 40);
 		return true;
@@ -1190,6 +1215,9 @@ bool Insane::smlayer_startSfx(int32 sound) {
 }
 
 bool Insane::smlayer_startVoice(int32 sound) {
+	if ((_vm->_features & GF_DEMO) && (_vm->_features & GF_PC))
+		return 1;
+
 	if (smlayer_loadSound(sound, 0, 2)) {
 		_vm->_imuseDigital->startSfx(readArray(sound), 126);
 		return true;
@@ -1328,6 +1356,9 @@ void Insane::smlayer_setActorFacing(int actornum, int actnum, int frame, int dir
 }
 
 const char *Insane::handleTrsTag(int32 trsId) {
+	if ((_vm->_features & GF_DEMO) && (_vm->_features & GF_PC)) 
+		return 0;
+
 	debugC(DEBUG_INSANE, "Insane::handleTrsTag(%d)", trsId);
 	return _player->getString(trsId);
 }
