@@ -49,21 +49,17 @@ static R_SYSTIMER_DATA R_TimerData;
 static Uint32 SYSTIMER_Callback(Uint32 interval, void *param);
 
 int SYSTIMER_InitMSCounter() {
-
 	if (R_TimerData.initialized) {
 		return R_FAILURE;
 	}
 
 	R_TimerData.t_previous_ticks = SDL_GetTicks();
-
 	R_TimerData.initialized = 1;
 
 	return R_SUCCESS;
 }
 
-unsigned long SYSTIMER_ReadMSCounter(void)
-{
-
+unsigned long SYSTIMER_ReadMSCounter() {
 	Uint32 ms_elapsed = 0;
 
 	if (!R_TimerData.initialized) {
@@ -73,20 +69,16 @@ unsigned long SYSTIMER_ReadMSCounter(void)
 	R_TimerData.t_current_ticks = SDL_GetTicks();
 
 	if (R_TimerData.t_current_ticks < R_TimerData.t_previous_ticks) {
-		/* Timer has rolled over after 49 days... */
+		// Timer has rolled over after 49 days
 	} else {
-		ms_elapsed = R_TimerData.t_current_ticks -
-		    R_TimerData.t_previous_ticks;
-
+		ms_elapsed = R_TimerData.t_current_ticks - R_TimerData.t_previous_ticks;
 		R_TimerData.t_previous_ticks = R_TimerData.t_current_ticks;
 	}
 
 	return ms_elapsed;
 }
 
-int SYSTIMER_ResetMSCounter(void)
-{
-
+int SYSTIMER_ResetMSCounter() {
 	if (!R_TimerData.initialized) {
 		return R_FAILURE;
 	}
@@ -96,17 +88,13 @@ int SYSTIMER_ResetMSCounter(void)
 	return R_SUCCESS;
 }
 
-int SYSTIMER_Sleep(uint16 msec)
-{
+int SYSTIMER_Sleep(uint16 msec) {
 	SDL_Delay(msec);
 
 	return R_SUCCESS;
 }
 
-int
-SYSTIMER_CreateTimer(R_SYSTIMER ** timer,
-    unsigned long interval, void *param, R_SYSTIMER_CALLBACK callback)
-{
+int SYSTIMER_CreateTimer(R_SYSTIMER **timer, unsigned long interval, void *param, R_SYSTIMER_CALLBACK callback) {
 	R_SYSTIMER *new_timer = (R_SYSTIMER *)malloc(sizeof *new_timer);
 	if (new_timer == NULL) {
 		return R_MEM;
@@ -118,38 +106,31 @@ SYSTIMER_CreateTimer(R_SYSTIMER ** timer,
 
 	*timer = new_timer;
 
-	new_timer->t_sdl_timerid = SDL_AddTimer(interval,
-	    SYSTIMER_Callback, new_timer);
+	new_timer->t_sdl_timerid = SDL_AddTimer(interval, SYSTIMER_Callback, new_timer);
 
 	if (new_timer->t_sdl_timerid == NULL) {
 		free(new_timer);
 		*timer = NULL;
-
 		return R_FAILURE;
 	}
 
 	return R_SUCCESS;
 }
 
-int SYSTIMER_DestroyTimer(R_SYSTIMER * timer)
-{
+int SYSTIMER_DestroyTimer(R_SYSTIMER *timer) {
 	if (timer == NULL) {
 		return R_FAILURE;
 	}
 
 	timer->t_running = 0;
-
 	SDL_RemoveTimer(timer->t_sdl_timerid);
-
 	free(timer);
 
 	return R_SUCCESS;
 }
 
-Uint32 SYSTIMER_Callback(Uint32 interval, void *param)
-{
+Uint32 SYSTIMER_Callback(Uint32 interval, void *param) {
 	R_SYSTIMER *timer_p = (R_SYSTIMER *)param;
-
 	timer_p->t_callback_f(timer_p->t_interval, timer_p->t_param);
 
 	return timer_p->t_interval;
