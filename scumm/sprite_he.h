@@ -77,8 +77,8 @@ struct SpriteInfo {
 	int bbox_ymin;
 	int bbox_xmax;
 	int bbox_ymax;
-	int field_2C;
-	int field_30;
+	int dx;
+	int dy;
 	int field_34;
 	int field_38;
 	int tx;
@@ -124,11 +124,11 @@ struct SpriteGroup {
 	int _varNumSpriteGroups;
 	int _numSpritesToProcess;
 	int _varNumSprites;
-	int _varNumImgLists;
+	int _varMaxSprites;
 	SpriteInfo *_spriteTable;
 	SpriteGroup *_spriteGroups;
 	SpriteInfo **_activeSpritesTable;
-	uint32 *_imageListTable; // XXX wrong type
+	uint16 *_imageListTable;
 	uint16 *_imageListStack;
 	int _curSprImageListNum;
 

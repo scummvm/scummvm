@@ -212,8 +212,8 @@ void ScummEngine_v90he::spriteInfoGet_tx_ty(int spriteId, int32 &tx, int32 &ty) 
 void ScummEngine_v90he::spriteInfoGet_field_2C_30(int spriteId, int32 &field_2C, int32 &field_30) {
 	checkRange(_varNumSprites, 1, spriteId, "Invalid sprite %d");
 
-	field_2C = _spriteTable[spriteId].field_2C;
-	field_30 = _spriteTable[spriteId].field_30;
+	field_2C = _spriteTable[spriteId].dx;
+	field_30 = _spriteTable[spriteId].dy;
 }
 
 //
@@ -333,8 +333,8 @@ void ScummEngine_v90he::spriteInfoSet_groupNum(int spriteId, int value) {
 void ScummEngine_v90he::spriteInfoSet_field_2C_30(int spriteId, int value1, int value2) {
 	checkRange(_varNumSprites, 1, spriteId, "Invalid sprite %d");
 
-	_spriteTable[spriteId].field_2C = value1;
-	_spriteTable[spriteId].field_30 = value2;
+	_spriteTable[spriteId].dx = value1;
+	_spriteTable[spriteId].dy = value2;
 }
 
 void ScummEngine_v90he::spriteInfoSet_field_54(int spriteId, int value) {
@@ -495,21 +495,21 @@ void ScummEngine_v90he::spriteInfoSet_addImageToList(int spriteId, int imageNum,
 	// TODO
 }
 
-void ScummEngine_v90he::spritesAllocTables(int numSprites, int numGroups, int numImgLists) {
+void ScummEngine_v90he::spritesAllocTables(int numSprites, int numGroups, int numMaxSprites) {
 	_varNumSpriteGroups = numGroups;
 	_numSpritesToProcess = 0;
 	_varNumSprites = numSprites;
-	_varNumImgLists = numImgLists;
+	_varMaxSprites = numMaxSprites;
 	_spriteGroups = (SpriteGroup *)malloc((_varNumSpriteGroups + 1) * sizeof(SpriteGroup));
 	_spriteTable = (SpriteInfo *)malloc((_varNumSprites + 1) * sizeof(SpriteInfo));
 	_activeSpritesTable = (SpriteInfo **)malloc((_varNumSprites + 1) * sizeof(SpriteInfo *));
-	_imageListTable = (uint32 *)malloc((_varNumImgLists + 1) * sizeof(uint32)); // XXX
-	_imageListStack = (uint16 *)malloc((_varNumImgLists + 1) * sizeof(uint16));
+	_imageListTable = (uint16 *)malloc((_varMaxSprites + 1) * sizeof(uint16) * 2 + 1);
+	_imageListStack = (uint16 *)malloc((_varMaxSprites + 1) * sizeof(uint16));
 }
 
 void ScummEngine_v90he::spritesResetTables(bool refreshScreen) {
 	int i;
-	for (i = 0; i < _varNumImgLists; ++i) {
+	for (i = 0; i < _varMaxSprites; ++i) {
 		_imageListStack[i] = i;
 	}
 	memset(_spriteTable, 0, (_varNumSprites + 1) * sizeof(SpriteInfo));
@@ -619,6 +619,80 @@ void ScummEngine_v90he::spritesBlitToScreen() {
 	}
 	if (refreshScreen) {
 		gdi.copyVirtScreenBuffers(Common::Rect(xmin, ymin, xmax, ymax)); // , 0, 0x40000000);
+	}
+}
+
+void ScummEngine_v90he::spritesMarkDirty(bool unkFlag) {
+	VirtScreen *vs0 = &virtscr[kMainVirtScreen];
+	for (int i = 0; i < _numSpritesToProcess; ++i) {
+		SpriteInfo *spi = _activeSpritesTable[i];
+		if (!(spi->flags & (kSFNeedRedraw | kSF30))) {
+			if ((!unkFlag || spi->field_18 >= 0) && (spi->flags & kSF23)) {
+				bool needRedraw = false;
+				int lp = MIN(79, spi->bbox_xmin / 8);
+				int rp = MIN(79, (spi->bbox_xmax + 7) / 8);
+				for (; lp <= rp; ++lp) {
+					if (vs0->tdirty[lp] < vs0->h && spi->bbox_ymax >= vs0->bdirty[lp] && spi->bbox_ymin <= vs0->tdirty[lp]) {
+						needRedraw = true;
+						break;
+					}
+				}
+				if (needRedraw) {
+					spi->flags |= kSFNeedRedraw;
+				}
+			}
+		}
+	}
+}
+
+void ScummEngine_v90he::spritesUpdateImages() {
+	for (int i = 0; i < _numSpritesToProcess; ++i) {
+		SpriteInfo *spi = _activeSpritesTable[i];
+		if (spi->dx != 0 || spi->dy != 0) {
+			checkRange(_varNumSprites, 1, i, "Invalid sprite %d");
+			int tx = spi->tx;
+			int ty = spi->ty;
+			spi->tx += spi->dx;
+			spi->ty += spi->dy;
+			if (tx != spi->tx || ty != spi->ty) {
+				spi->flags |= kSF01 | kSFNeedRedraw;
+			}			
+		}
+		if (spi->flags & kSF22) {
+			if (spi->field_78 != 0) {
+				--spi->field_64;
+				if (spi->field_64 != 0) {
+					continue;
+				}
+				spi->field_64 = spi->field_78;
+			}
+			int state = spi->res_state;
+			++spi->res_state;
+			if (spi->res_state >= spi->res_wiz_states) {
+				spi->res_state = 0;
+				if (spi->imglist_num != 0) {
+					if (!(spi->flags & kSF25)) {
+						// XXX
+						checkRange(_varMaxSprites, 1, spi->imglist_num, "Image list %d out of range");
+						uint16 img1 = _imageListTable[0x21 * spi->imglist_num - 1];
+						uint16 img2 = spi->field_74 + 1;
+						if (img2 >= img1) {
+							img2 = 0;
+						}
+						if (spi->field_74 != img2) {
+							spi->field_74 = img2;
+							spi->res_id = _imageListTable[0x21 * (img2 - 1)];
+							spi->flags |= kSF01 | kSFNeedRedraw;
+							spi->res_wiz_states = getWizImageStates(spi->res_id);
+						}
+					}
+					continue;
+				} else if (state == 0) {
+					continue;
+				}
+			}
+			spi->flags |= kSF01 | kSFNeedRedraw;
+		}
 	}
 }
 

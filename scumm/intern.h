@@ -936,11 +936,13 @@ protected:
 	void spriteInfoSet_flag31(int spriteId, int value);
 	void spriteInfoSet_field_78_64(int spriteId, int value);
 
-	void spritesAllocTables(int numSprites, int numGroups, int numImgSprites);
+	void spritesAllocTables(int numSprites, int numGroups, int numMaxSprites);
 	void spritesResetTables(bool refreshScreen);
 	void spriteGroupCheck(int spriteGroupId);
 	void spriteMarkIfInGroup(int spriteGroupId, uint32 flags);
 	void spritesBlitToScreen();
+	void spritesMarkDirty(bool unkFlag);
+	void spritesUpdateImages();
 	void spriteInfoSet_addImageToList(int spriteId, int imageNum, int *spriteIdptr);
 
 	/* HE version 90 script opcodes */
