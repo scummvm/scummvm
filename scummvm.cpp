@@ -540,6 +540,7 @@ NextArg:;
 	
 	//sprintf(_gameDataPath, ":%s:", *argv);
 	//_gameDataPath = *argv;
+	_midi_driver = 4;
 	_exe_name = *argv;
 	#endif
 

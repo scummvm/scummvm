@@ -124,6 +124,8 @@ int sel;
 Scumm scumm;
 ScummDebugger debugger;
 Gui gui;
+SoundEngine sound;
+SOUND_DRIVER_TYPE snd_driv;
 
 WndMan wm[1];
 byte veryFastMode;
@@ -294,7 +296,7 @@ static pascal OSStatus EventHandler( EventHandlerCallRef inCallRef, EventRef inE
 void pc_loop()
 {
 	int delta;
-	int last_time, new_time;
+	int last_time, new_time, old_time = TickCount();
 	
 	delta = 0;
 	do {
@@ -303,6 +305,8 @@ void pc_loop()
 		new_time = TickCount();
 		waitForTimer(&scumm, delta * 15 + last_time - new_time);
 		last_time = TickCount();
+		
+		sound.on_timer();
 		
 		if(gui._active) {
 			gui.loop();
@@ -893,6 +897,8 @@ void main(void)
 	
 	wm->_vgabuf = (byte*)calloc(320,200);
 	wm->_scumm = &scumm;
+	
+	sound.initialize(&scumm,&snd_driv);
 	
 	scumm._gui = &gui;
 	
