@@ -154,18 +154,18 @@ void Scumm_v2::readIndexFile() {
 
 	switch(magic) {
 		case 0x0100:
-			debug(1,"Enhanced V2 game detected");
+			printf("Enhanced V2 game detected\n");
 			readEnhancedIndexFile();			
 			break;
 		case 0x0A31:
-			debug(1,"Classic V1 game detected");
+			printf("Classic V1 game detected\n");
 			_version = 1;
 			readClassicIndexFile();
 			break;
 		case 0x4643:
 			if (!(_features & GF_NES))
 				error("Use maniacnes target");
-			debug(1,"NES V1 game detected");
+			printf("NES V1 game detected\n");
 			_version = 1;
 			readClassicIndexFile();
 			break;

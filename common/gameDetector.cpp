@@ -694,7 +694,7 @@ bool GameDetector::detectGame() {
 				_game.filename = basename;
 			}
 			_gameText = gnl->gamename;
-			debug(1, "Trying to start game '%s'",gnl->gamename);
+			printf("Trying to start game '%s'\n",gnl->gamename);
 			return true;
 		}
 	} while ((++gnl)->filename);

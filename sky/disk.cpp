@@ -56,7 +56,7 @@ SkyDisk::SkyDisk(char *gameDataPath) {
 	if (_dataDiskHandle->isOpen() == false) 
 		error("Error opening %s%s", _gameDataPath, dataFilename);
 
-	debug(1, "Found BASS version v0.0%d (%d dnr entries)", determineGameVersion(), _dinnerTableEntries);
+	printf("Found BASS version v0.0%d (%d dnr entries)\n", determineGameVersion(), _dinnerTableEntries);
 
 	memset(_buildList, 0, 60 * 2);
 	memset(_loadedFilesList, 0, 60 * 4);
