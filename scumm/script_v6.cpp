@@ -1785,6 +1785,10 @@ void Scumm_v6::o6_verbOps() {
 		vs->curmode = 0;
 		break;
 	case 131:
+		if (_features & GF_HUMONGOUS) {
+			// delete verb supposedly...
+			pop();
+		}
 		killVerb(slot);
 		break;
 	case 132:
