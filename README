@@ -858,7 +858,7 @@ Broken Sword II adds the following non-standard keywords:
 
 Simon the Sorcerer 1 & 2 add the following non-standard keywords:
 
-        fade            bool     If true, fades are instant
+        fade            bool     If true, fade effect is enabled
         slow_down       number   Makes games slower (1- 10)
         speech          bool     If true, speech is enabled
                                  [Simon the Sorcerer 2 only]
