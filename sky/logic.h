@@ -166,7 +166,7 @@ public:
 	uint32 fnPrintf(uint32 a, uint32 b, uint32 c);
 
 protected:
-	void push(unsigned int);
+	void push(uint16);
 	uint32 pop();
 	void checkModuleLoaded(uint32 moduleNo);
 	uint32 script(Compact *compact, uint32 script);
