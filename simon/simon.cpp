@@ -350,6 +350,7 @@ SimonEngine::SimonEngine(GameDetector *detector, OSystem *syst)
 	_vga_var5 = 0;
 	_vga_var7 = 0;
 	_vga_var8 = 0;
+	_keep_arrows = 0;
 
 	_script_cond_a = 0;
 	_script_cond_b = 0;
@@ -1734,6 +1735,8 @@ void SimonEngine::setup_hit_areas(FillOrCopyStruct *fcs, uint fcs_index) {
 		ha->unk3 = 1;
 
 		// Simon1 specific
+		warning("Updating inventory area");
+		_keep_arrows = 1;
 		o_kill_sprite_simon1(0x80);
 		start_vga_code(0, 1, 0x80, 0, 0, 0xE);
 	} else {
@@ -3361,12 +3364,7 @@ void SimonEngine::fcs_unk1(uint fcs_index) {
 
 // ok
 void SimonEngine::fcs_unk_5(FillOrCopyStruct *fcs, uint fcs_index) {
-	if (_game == GAME_SIMON1WIN) {
-		o_kill_sprite_simon1(0x80);
-	} else {
-		o_kill_sprite_simon1(0x81);
-		start_vga_code(0, 1, 0x81, 0, 0, 0xE);
-	}
+	o_kill_sprite_simon1(0x80);
 }
 
 void SimonEngine::delete_hitarea_by_index(uint index) {

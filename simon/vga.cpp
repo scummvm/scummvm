@@ -1193,6 +1193,14 @@ void SimonEngine::vc_24_set_sprite_xy() {
 
 void SimonEngine::vc_25_halt_sprite() {
 	VgaSprite *vsp = find_cur_sprite();
+	// Work around to allow inventory arrows to be
+	// showned in some versions of Simon the Sorcerer 1
+	if (!(_game GF_SIMON2) && !(_game & GF_WIN) &&
+	      vsp->id == 0x80 && _keep_arrows) {
+		_keep_arrows = 0;
+		return;
+	}
+
 	while (vsp->id != 0) {
 		memcpy(vsp, vsp + 1, sizeof(VgaSprite));
 		vsp++;
@@ -1220,7 +1228,7 @@ void SimonEngine::vc_27_reset_simon1() {
 
 	vsp = _vga_sprites;
 	while (vsp->id) {
-		if ((_game == GAME_SIMON1WIN) && (vsp->id == 0x80)) {
+		if (vsp->id == 0x80) {
 			memcpy(&bak, vsp, sizeof(VgaSprite));
 		}
 		vsp->id = 0;
@@ -1244,7 +1252,7 @@ void SimonEngine::vc_27_reset_simon1() {
 				memcpy(vte2, vte2 + 1, sizeof(VgaTimerEntry));
 				vte2++;
 			}
-		} else if (_game == GAME_SIMON1WIN) {
+		} else {
 			vte++;
 		}
 	}
@@ -1722,7 +1730,7 @@ void SimonEngine::vc_62_palette_thing() {
 			delay(5);
 		}
 
-		if (_game == GAME_SIMON1WIN) {
+		if (!(_game & GF_SIMON2)) {
 			uint16 params[5];						/* parameters to vc_10_draw */
 			VgaSprite *vsp;
 			VgaPointersEntry *vpe;
