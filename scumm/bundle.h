@@ -21,8 +21,8 @@
 #ifndef BUNDLE_H
 #define BUNDLE_H
 
-#include "scummsys.h"
-#include "file.h"
+#include "common/scummsys.h"
+#include "common/file.h"
 
 class Bundle {
 
