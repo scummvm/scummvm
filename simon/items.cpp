@@ -775,7 +775,7 @@ int SimonState::runScript()
 			break;
 
 		case 135:{
-				error("Quit if user presses Y unimplemented");
+				warning("Quit if user presses Y unimplemented");
 			}
 			break;
 
