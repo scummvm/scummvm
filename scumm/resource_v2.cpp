@@ -165,6 +165,7 @@ void ScummEngine_v2::readIndexFile() {
 			readClassicIndexFile();
 			break;
 		case 0x4643:
+			error("No support for NES version");
 			if (!(_features & GF_NES))
 				error("Use maniacnes target");
 			printf("NES V1 game detected\n");
