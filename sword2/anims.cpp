@@ -81,26 +81,17 @@ int32 Logic::animate(int32 *params, bool reverse) {
 	//		1 pointer to object's graphic structure
 	//		2 resource id of animation file
 
- 	ObjectLogic *ob_logic;
- 	ObjectGraphic *ob_graphic;
+ 	ObjectLogic *ob_logic = (ObjectLogic *) _vm->_memory->intToPtr(params[0]);
+ 	ObjectGraphic *ob_graphic = (ObjectGraphic *) _vm->_memory->intToPtr(params[1]);
 	uint8 *anim_file;
 	AnimHeader *anim_head;
  	int32 res = params[2];
 
-#ifdef _SWORD2_DEBUG
-	// for animation testing & checking for correct file type
-	StandardHeader	*head;
-#endif
-
-	// read the main parameters
-
-	ob_logic = (ObjectLogic *) _vm->_memory->intToPtr(params[0]);
-	ob_graphic = (ObjectGraphic *) _vm->_memory->intToPtr(params[1]);
-	
 	if (ob_logic->looping == 0) {
+		StandardHeader *head;
+
 		// This is the start of the anim - set up the first frame
 
-#ifdef _SWORD2_DEBUG
 		// For testing all anims!
 		// A script loop can send every resource number to the anim
 		// function & it will only run the valid ones. See
@@ -111,11 +102,11 @@ int32 Logic::animate(int32 *params, bool reverse) {
 			// if the resource number is within range & it's not
 			// a null resource
 
-			if (_resman->Res_check_valid(res)) {
+			if (_vm->_resman->checkValid(res)) {
 				// Open the resource. Can close it immediately.
 				// We've got a pointer to the header.
-				head = (StandardHeader *) _resman->openResource(res);
-				_resman->closeResource(res);
+				head = (StandardHeader *) _vm->_resman->openResource(res);
+				_vm->_resman->closeResource(res);
 
 				// if it's not an animation file
 				if (head->fileType != ANIMATION_FILE) {
@@ -136,32 +127,17 @@ int32 Logic::animate(int32 *params, bool reverse) {
 			// switch on the sprite
 			fnSortSprite(params + 1);
 		}
-#endif
 
-#ifdef _SWORD2_DEBUG
-		// check that we haven't been passed a zero resource number
-		if (res == 0)
-			error("animate: %s (id %d) passed zero anim resource", _vm->fetchObjectName(_scriptVars[ID]), _scriptVars[ID]);
-#endif
+		assert(res);
 
 		// open anim file
 		anim_file = _vm->_resman->openResource(res);
 
-#ifdef _SWORD2_DEBUG
-		// check this this resource is actually an animation file!
 		head = (StandardHeader *) anim_file;
-		if (head->fileType != ANIMATION_FILE)
-			error("animate: %s (%d) is not an anim!", _vm->fetchObjectName(res), res);
-#endif
+		assert(head->fileType == ANIMATION_FILE);
 
 		// point to anim header
 		anim_head = _vm->fetchAnimHeader(anim_file);
-
-/* #ifdef _SWORD2_DEBUG
-		// check there's at least one frame
-		if (anim_head->noAnimFrames == 0)
- 			error("animate: %s (%d) has zero frame count!", _vm->fetchObjectName(res), res);
-#endif */
 
 		// now running an anim, looping back to this 'FN' call again
 		ob_logic->looping = 1;
@@ -216,32 +192,26 @@ int32 Logic::megaTableAnimate(int32 *params, bool reverse) {
 	//		2 pointer to object's mega structure
 	//		3 pointer to animation table
 
- 	ObjectLogic *ob_logic;
- 	ObjectMega *ob_mega;
-	uint32 *anim_table;
-	int32 pars[5];
+	int32 pars[3];
 
-	// if this is the start of the anim, read the anim table to get the
+	// Set up the parameters for animate().
+
+	pars[0] = params[0];
+	pars[1] = params[1];
+
+	// If this is the start of the anim, read the anim table to get the
 	// appropriate anim resource
 
-	ob_logic = (ObjectLogic *) _vm->_memory->intToPtr(params[0]);
+ 	ObjectLogic *ob_logic = (ObjectLogic *) _vm->_memory->intToPtr(params[0]);
 
 	if (ob_logic->looping == 0) {
-	 	ob_mega = (ObjectMega *) _vm->_memory->intToPtr(params[2]);
-		anim_table = (uint32 *) _vm->_memory->intToPtr(params[3]);
+	 	ObjectMega *ob_mega = (ObjectMega *) _vm->_memory->intToPtr(params[2]);
+		uint32 *anim_table = (uint32 *) _vm->_memory->intToPtr(params[3]);
 
 		// appropriate anim resource is in 'table[direction]'
 		pars[2] = anim_table[ob_mega->current_dir];
 	}
 
-	// set up the rest of the parameters for fnAnim()
-
-	pars[0] = params[0];
-	pars[1] = params[1];
-
-	// pars[2] only needed setting at the start of the anim
-
-	// call animate() with these params
 	return animate(pars, reverse);
 }
 
@@ -250,167 +220,102 @@ int32 Logic::fnSetFrame(int32 *params) {
 	//		1 resource id of animation file
 	//		2 frame flag (0=first 1=last)
 
- 	ObjectGraphic *ob_graphic;
-	uint8 *anim_file;
-	AnimHeader *anim_head;
 	int32 res = params[1];
-
-#ifdef _SWORD2_DEBUG
-	// for checking for correct file type
-	StandardHeader	*head;
-#endif
-
-#ifdef _SWORD2_DEBUG
-	// check that we haven't been passed a zero resource number
-	if (res == 0)
-		error("fnSetFrame: %s (id %d) passed zero anim resource", _vm->fetchObjectName(_scriptsVars[ID]), _scriptsVars[ID]);
-#endif
+	assert(res);
 
 	// open the resource (& check it's valid)
+	uint8 *anim_file = _vm->_resman->openResource(res);
 
-	anim_file = _vm->_resman->openResource(res);
-
-#ifdef _SWORD2_DEBUG
-	// check this this resource is actually an animation file!
-	head = (StandardHeader *) anim_file;
-	if (head->fileType != ANIMATION_FILE)
-		error("fnSetFrame: %s (%d) is not an anim!", _vm->fetchObjectName(res), res);
-#endif
+	StandardHeader *head = (StandardHeader *) anim_file;
+	assert(head->fileType == ANIMATION_FILE);
 
 	// set up pointer to the animation header
-	anim_head = _vm->fetchAnimHeader(anim_file);
-
-/* #ifdef _SWORD2_DEBUG
-	// check there's at least one frame
-	if (anim_head->noAnimFrames == 0)
-		error("fnSetFrame: %s (%d) has zero frame count!", _vm->fetchObjectName(res), res);
-#endif */
+	AnimHeader *anim_head = _vm->fetchAnimHeader(anim_file);
 
 	// set up anim resource in graphic object
+	ObjectGraphic *ob_graphic = (ObjectGraphic *) _vm->_memory->intToPtr(params[0]);
 
-	ob_graphic = (ObjectGraphic *) _vm->_memory->intToPtr(params[0]);
 	ob_graphic->anim_resource = res;
-
-	if (params[2])
-		ob_graphic->anim_pc = anim_head->noAnimFrames - 1;
-	else
-		ob_graphic->anim_pc = 0;
+	ob_graphic->anim_pc = params[2] ? anim_head->noAnimFrames - 1 : 0;
 
 	// Close the anim file and drop out of script
-
 	_vm->_resman->closeResource(ob_graphic->anim_resource);
 	return IR_CONT;
 }
 
+void Logic::setSpriteStatus(uint32 sprite, uint32 type) {
+	ObjectGraphic *ob_graphic = (ObjectGraphic *) _vm->_memory->intToPtr(sprite);
+
+	// Remove the previous status, but don't affect the shading upper-word
+	ob_graphic->type = (ob_graphic->type & 0xffff0000) | type;
+}
+
+void Logic::setSpriteShading(uint32 sprite, uint32 type) {
+	ObjectGraphic *ob_graphic = (ObjectGraphic *) _vm->_memory->intToPtr(sprite);
+
+	// Remove the previous shading, but don't affect the status lower-word.
+	// Note that drivers may still shade mega frames automatically, even
+	// when not sent 'RDSPR_SHADOW'.
+	ob_graphic->type = (ob_graphic->type & 0x0000ffff) | type;
+}
+
 int32 Logic::fnNoSprite(int32 *params) {
 	// params:	0 pointer to object's graphic structure
-
- 	ObjectGraphic *ob_graphic = (ObjectGraphic *) _vm->_memory->intToPtr(params[0]);
-
-	// remove previous status (but don't affect the shading upper-word)
-	ob_graphic->type &= 0xffff0000;
-	ob_graphic->type |= NO_SPRITE;
+	setSpriteStatus(params[0], NO_SPRITE);
 	return IR_CONT;
 }
 
 int32 Logic::fnBackPar0Sprite(int32 *params) {
 	// params:	0 pointer to object's graphic structure
-
- 	ObjectGraphic *ob_graphic = (ObjectGraphic *) _vm->_memory->intToPtr(params[0]);
-
-	// remove previous status (but don't affect the shading upper-word)
-	ob_graphic->type &= 0xffff0000;
-	ob_graphic->type |= BGP0_SPRITE;
+	setSpriteStatus(params[0], BGP0_SPRITE);
 	return IR_CONT;
 }
 
 int32 Logic::fnBackPar1Sprite(int32 *params) {
 	// params:	0 pointer to object's graphic structure
-
- 	ObjectGraphic *ob_graphic = (ObjectGraphic *) _vm->_memory->intToPtr(params[0]);
-
-	// remove previous status (but don't affect the shading upper-word)
-	ob_graphic->type &= 0xffff0000;
-	ob_graphic->type |= BGP1_SPRITE;
+	setSpriteStatus(params[0], BGP1_SPRITE);
 	return IR_CONT;
 }
 
 int32 Logic::fnBackSprite(int32 *params) {
 	// params:	0 pointer to object's graphic structure
-
- 	ObjectGraphic *ob_graphic = (ObjectGraphic *) _vm->_memory->intToPtr(params[0]);
-
-	// remove previous status (but don't affect the shading upper-word)
-	ob_graphic->type &= 0xffff0000;
-	ob_graphic->type |= BACK_SPRITE;
+	setSpriteStatus(params[0], BACK_SPRITE);
 	return IR_CONT;
 }
 
 int32 Logic::fnSortSprite(int32 *params) {
 	// params:	0 pointer to object's graphic structure
-
- 	ObjectGraphic *ob_graphic = (ObjectGraphic *) _vm->_memory->intToPtr(params[0]);
-
-	// remove previous status (but don't affect the shading upper-word)
-	ob_graphic->type &= 0xffff0000;
-	ob_graphic->type |= SORT_SPRITE;
+	setSpriteStatus(params[0], SORT_SPRITE);
 	return IR_CONT;
 }
 
 int32 Logic::fnForeSprite(int32 *params) {
 	// params:	0 pointer to object's graphic structure
-
- 	ObjectGraphic *ob_graphic = (ObjectGraphic *) _vm->_memory->intToPtr(params[0]);
-
-	// remove previous status (but don't affect the shading upper-word)
-	ob_graphic->type &= 0xffff0000;
-	ob_graphic->type |= FORE_SPRITE;
+	setSpriteStatus(params[0], FORE_SPRITE);
 	return IR_CONT;
 }
 
 int32 Logic::fnForePar0Sprite(int32 *params) {
 	// params:	0 pointer to object's graphic structure
-
- 	ObjectGraphic *ob_graphic = (ObjectGraphic *) _vm->_memory->intToPtr(params[0]);
-
-	// remove previous status (but don't affect the shading upper-word)
-	ob_graphic->type &= 0xffff0000;
-	ob_graphic->type |= FGP0_SPRITE;
+	setSpriteStatus(params[0], FGP0_SPRITE);
 	return IR_CONT;
 }
 
 int32 Logic::fnForePar1Sprite(int32 *params) {
 	// params:	0 pointer to object's graphic structure
-
-	ObjectGraphic *ob_graphic = (ObjectGraphic *) _vm->_memory->intToPtr(params[0]);
-
-	// remove previous status (but don't affect the shading upper-word)
-	ob_graphic->type &= 0xffff0000;
-	ob_graphic->type |= FGP1_SPRITE;
+	setSpriteStatus(params[0], FGP1_SPRITE);
 	return IR_CONT;
 }
 
 int32 Logic::fnShadedSprite(int32 *params) {
 	// params:	0 pointer to object's graphic structure
-
-	ObjectGraphic *ob_graphic = (ObjectGraphic *) _vm->_memory->intToPtr(params[0]);
-
-	// remove previous status (but don't affect the shading upper-word)
-	// note that drivers may still shade mega frames automatically, even
-	// when not sent 'RDSPR_SHADOW'
-	ob_graphic->type &= 0x0000ffff;
-	ob_graphic->type |= SHADED_SPRITE;
+	setSpriteShading(params[0], SHADED_SPRITE);
 	return IR_CONT;
 }
 
 int32 Logic::fnUnshadedSprite(int32 *params) {
 	// params:	0 pointer to object's graphic structure
-
-	ObjectGraphic *ob_graphic = (ObjectGraphic *) _vm->_memory->intToPtr(params[0]);
-
-	// remove previous status (but don't affect the shading upper-word)
-	ob_graphic->type &= 0x0000ffff;
-	ob_graphic->type |= UNSHADED_SPRITE;
+	setSpriteShading(params[0], UNSHADED_SPRITE);
 	return IR_CONT;
 }
 
@@ -423,7 +328,7 @@ int32 Logic::fnAddSequenceText(int32 *params) {
 
 	_sequenceTextList[_sequenceTextLines].textNumber = params[0];
 	_sequenceTextList[_sequenceTextLines].startFrame = params[1];
-	_sequenceTextList[_sequenceTextLines].endFrame = (uint16) params[2];
+	_sequenceTextList[_sequenceTextLines].endFrame = params[2];
 	_sequenceTextLines++;
 	return IR_CONT;
 }
@@ -485,7 +390,7 @@ void Logic::createSequenceSpeech(MovieTextObject *sequenceText[]) {
 			else
 				strcpy(speechFile, "speech.clu");
 
-			_sequenceTextList[line].speechBufferSize = _vm->_sound->preFetchCompSpeech((char *) speechFile, wavId, &_sequenceTextList[line].speech_mem);
+			_sequenceTextList[line].speechBufferSize = _vm->_sound->preFetchCompSpeech(speechFile, wavId, &_sequenceTextList[line].speech_mem);
 			if (_sequenceTextList[line].speechBufferSize) {
 				// ok, we've got speech!
 				speechRunning = true;
@@ -581,19 +486,12 @@ void Logic::clearSequenceSpeech(MovieTextObject *sequenceText[]) {
 int32 Logic::fnSmackerLeadIn(int32 *params) {
 	uint8 *leadIn;
 	uint32 rv;
-#ifdef _SWORD2_DEBUG
-	StandardHeader *header;
-#endif
 
 	// params:	0 id of lead-in music
-
 	leadIn = _vm->_resman->openResource(params[0]);
 
-#ifdef _SWORD2_DEBUG
-	header = (StandardHeader *) leadIn;
-	if (header->fileType != WAV_FILE)
-		error("fnSmackerLeadIn() given invalid resource");
-#endif
+	StandardHeader *header = (StandardHeader *) leadIn;
+	assert(header->fileType == WAV_FILE);
 
 	leadIn += sizeof(StandardHeader);
 	// wav data gets copied to sound memory
@@ -622,13 +520,8 @@ int32 Logic::fnPlaySequence(int32 *params) {
 	// 		1 number of frames in the sequence, used for PSX.
 
 	char filename[30];
- 	uint32 rv;
 	MovieTextObject *sequenceSpeechArray[MAX_SEQUENCE_TEXT_LINES + 1];
 	uint8 *leadOut = NULL;
-
-#ifdef _SWORD2_DEBUG
-	StandardHeader *header;
-#endif
 
 	// The original code had some #ifdef blocks for skipping or muting the
 	// cutscenes - fondly described as "the biggest fudge in the history
@@ -636,12 +529,6 @@ int32 Logic::fnPlaySequence(int32 *params) {
 	// cutscene subtitles, so I removed them.
 
 	debug(5, "fnPlaySequence(\"%s\");", (const char *) _vm->_memory->intToPtr(params[0]));
-
-#ifdef _SWORD2_DEBUG
-	// check that the name paseed from script is 8 chars or less
-	if (strlen((const char *) _vm->_memory->intToPtr(params[0])) > 8)
-		error("Sequence filename too long");
-#endif
 
 	// add the appropriate file extension & play it
 
@@ -660,11 +547,8 @@ int32 Logic::fnPlaySequence(int32 *params) {
 	if (_smackerLeadOut) {
 		leadOut = _vm->_resman->openResource(_smackerLeadOut);
 
-#ifdef _SWORD2_DEBUG
-		header = (StandardHeader *) leadOut;
-		if (header->fileType != WAV_FILE)
-			error("fnSmackerLeadOut() given invalid resource");
-#endif
+		StandardHeader *header = (StandardHeader *) leadOut;
+		assert(header->fileType == WAV_FILE);
 
 		leadOut += sizeof(StandardHeader);
 	}
@@ -678,11 +562,16 @@ int32 Logic::fnPlaySequence(int32 *params) {
 	_vm->_sound->pauseFxForSequence();
 
 	MoviePlayer player(_vm);
+ 	uint32 rv;
 
 	if (_sequenceTextLines && !_scriptVars[DEMO])
 		rv = player.play(filename, sequenceSpeechArray, leadOut);
 	else
 		rv = player.play(filename, NULL, leadOut);
+
+	// check the error return-value
+	if (rv)
+		debug(5, "MoviePlayer.play(\"%s\") returned 0x%.8x", filename, rv);
 
 	// unpause sound fx again, in case we're staying in same location
 	_vm->_sound->unpauseFx();
@@ -693,10 +582,6 @@ int32 Logic::fnPlaySequence(int32 *params) {
 		_vm->_resman->closeResource(_smackerLeadOut);
 		_smackerLeadOut = 0;
 	}
-
-	// check the error return-value
-	if (rv)
-		debug(5, "MoviePlayer.play(\"%s\") returned 0x%.8x", filename, rv);
 
 	// now clear the text sprites, if any
 
