@@ -1627,7 +1627,7 @@ void ScummEngine_v6::o6_roomOps() {
 	case 220:		// SO_DRAW_OBJECT_AT
 		a = pop();
 		b = pop();
-		warning("o6_roomops:180 (%d, %d): unimplemented", a, b);
+		warning("o6_roomops:220 (%d, %d): unimplemented", a, b);
 		break;
 	case 221:		// SO_DRAW_OBJECT_IMAGE
 		int len;
