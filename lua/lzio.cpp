@@ -43,7 +43,7 @@ ZIO* zsopen (ZIO* z, char* s, char *name)
 
 static int zffilbuf (ZIO* z)
 {
- int n=fread(z->buffer,1,ZBSIZE,z->u);
+ int n=fread(z->buffer,1,ZBSIZE,(FILE *)z->u);
  if (n==0) return EOZ;
  z->n=n-1;
  z->p=z->buffer;

@@ -142,7 +142,7 @@ void find_script (void) {
     if (f->value.ts->u.d.tag != task_tag)
       lua_error("Bad argument to find_script");
     /* Shortcut: just see whether it's still running */
-    t = f->value.ts->u.d.v;
+    t = (lua_Task *)f->value.ts->u.d.v;
     if (t->Tstate == DONE)
       lua_pushnil();
     else

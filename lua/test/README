@@ -1,6 +1,0 @@
-These are simple tests for Lua.  Some of them contain useful code.
-They are meant to be run to make sure Lua is ok and also to be read, to see
-how Lua programs can look like.
-
-In the directory examples/, there is more useful code: a library for PostScript
-output and a database for a fake web site.

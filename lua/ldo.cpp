@@ -379,9 +379,9 @@ int luaD_protectedrun (int nResults)
 {
   jmp_buf myErrorJmp;
   int status;
-  volatile struct C_Lua_Stack oldCLS = L->Cstack;
-  jmp_buf *volatile oldErr = L->errorJmp;
-  volatile int ci_len = L->ci - L->base_ci;
+  struct C_Lua_Stack oldCLS = L->Cstack;
+  jmp_buf *oldErr = L->errorJmp;
+  int ci_len = L->ci - L->base_ci;
   L->errorJmp = &myErrorJmp;
   if (setjmp(myErrorJmp) == 0) {
     do_callinc(nResults);

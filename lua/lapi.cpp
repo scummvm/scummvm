@@ -54,7 +54,7 @@ static int normalized_type (TObject *o)
 static void set_normalized (TObject *d, TObject *s)
 {
   d->value = s->value;
-  d->ttype = normalized_type(s);
+  d->ttype = (lua_Type)normalized_type(s);
 }
 
 

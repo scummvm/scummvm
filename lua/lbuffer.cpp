@@ -27,7 +27,7 @@ static void Openspace (int size)
   l->Mbuffsize *= 2;
   if (l->Mbuffnext+size > l->Mbuffsize)  /* still not big enough? */
     l->Mbuffsize = l->Mbuffnext+size;
-  l->Mbuffer = luaM_realloc(l->Mbuffer, l->Mbuffsize);
+  l->Mbuffer = (char *)luaM_realloc(l->Mbuffer, l->Mbuffsize);
   l->Mbuffbase = l->Mbuffer+base;
 }
 

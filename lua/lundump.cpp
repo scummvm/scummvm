@@ -107,7 +107,7 @@ static Byte* LoadCode(ZIO* Z)
  if (s!=size) luaL_verror("code too long (%ld bytes) in %s",size,zname(Z));
  b=luaM_malloc(size);
  LoadBlock(b,size,Z);
- return b;
+ return (Byte *)b;
 }
 
 static TaggedString* LoadTString(ZIO* Z)
@@ -151,7 +151,7 @@ static void LoadConstants(TProtoFunc* tf, ZIO* Z)
  for (i=0; i<n; i++)
  {
   TObject* o=tf->consts+i;
-  ttype(o)=-ezgetc(Z);
+  ttype(o)=(lua_Type)-ezgetc(Z);
   switch (ttype(o))
   {
    case -'N':
@@ -222,7 +222,7 @@ static void LoadSignature(ZIO* Z)
 static void LoadHeader(ZIO* Z)
 {
  int version,id,sizeofR;
- real f=-TEST_NUMBER,tf=TEST_NUMBER;
+ real f=(real)-TEST_NUMBER,tf=(real)TEST_NUMBER;
  LoadSignature(Z);
  version=ezgetc(Z);
  if (version>VERSION)

@@ -81,7 +81,7 @@ static FILE *getfile (char *name)
   lua_Object f = lua_getglobal(name);
   if (!ishandler(f))
       luaL_verror("global variable `%.50s' is not a file handle", name);
-  return lua_getuserdata(f);
+  return (FILE *)lua_getuserdata(f);
 }
 
 
@@ -90,7 +90,7 @@ static FILE *getfileparam (char *name, int *arg)
   lua_Object f = lua_getparam(*arg);
   if (ishandler(f)) {
     (*arg)++;
-    return lua_getuserdata(f);
+    return (FILE *)lua_getuserdata(f);
   }
   else
     return getfile(name);
@@ -132,7 +132,7 @@ static void io_readfrom (void)
     current = stdin;
   }
   else if (lua_tag(f) == gettag(IOTAG))
-    current = lua_getuserdata(f);
+    current = (FILE *)lua_getuserdata(f);
   else {
     char *s = luaL_check_string(FIRSTARG);
     current = (*s == '|') ? popen(s+1, "r") : fopen(s, "r");
@@ -154,7 +154,7 @@ static void io_writeto (void)
     current = stdout;
   }
   else if (lua_tag(f) == gettag(IOTAG))
-    current = lua_getuserdata(f);
+    current = (FILE *)lua_getuserdata(f);
   else {
     char *s = luaL_check_string(FIRSTARG);
     current = (*s == '|') ? popen(s+1,"w") : fopen(s,"w");
