@@ -233,34 +233,35 @@ int Actor::remapDirection(int dir, bool is_walking) {
 			return 180;
 		}
 	}
-	/* Or 1024 in to signal direction interpolation should be done */
+	// OR 1024 in to signal direction interpolation should be done
 	return normalizeAngle(dir) | 1024;
 }
 
 int Actor::updateActorDirection(bool is_walking) {
-	int from, to;
-	int diff;
+	int from;
 	int dirType;
 	int dir;
-	int num;
 	bool shouldInterpolate;
 
 	dirType = (_vm->_features & GF_NEW_COSTUMES) ? _vm->akos_hasManyDirections(this) : false;
 
 	from = toSimpleDir(dirType, facing);
 	dir = remapDirection(newDirection, is_walking);
+
 	if (_vm->_features & GF_NEW_COSTUMES)
 		// Direction interpolation interfers with walk scripts in Dig; they perform
 		// (much better) interpolation themselves.
 		shouldInterpolate = false;	
 	else
 		shouldInterpolate = (dir & 1024) ? true : false;
-	to = toSimpleDir(dirType, dir & 1023);
-	num = dirType ? 8 : 4;
+	dir &= 1023;
 
 	if (shouldInterpolate) {
+		int to = toSimpleDir(dirType, dir);
+		int num = dirType ? 8 : 4;
+
 		// Turn left or right, depending on which is shorter.
-		diff = to - from;
+		int diff = to - from;
 		if (abs(diff) > (num >> 1))
 			diff = -diff;
 
@@ -269,9 +270,9 @@ int Actor::updateActorDirection(bool is_walking) {
 		} else if (diff < 0){
 			to = from - 1;
 		}
-	}
 
-	dir = fromSimpleDir(dirType, (to + num) % num);
+		dir = fromSimpleDir(dirType, (to + num) % num);
+	}
 
 	return dir;
 }
@@ -1275,7 +1276,7 @@ void Actor::startWalkAnim(int cmd, int angle) {
 }
 
 void Actor::walkActor() {
-	int j;
+	int new_dir, box;
 	int16 foundPathX, foundPathY;
 
 	if (!moving)
@@ -1293,9 +1294,9 @@ void Actor::walkActor() {
 		}
 
 		if (moving & MF_TURN) {
-			j = updateActorDirection(false);
-			if (facing != j)
-				setDirection(j);
+			new_dir = updateActorDirection(false);
+			if (facing != new_dir)
+				setDirection(new_dir);
 			else
 				moving = 0;
 			return;
@@ -1314,15 +1315,15 @@ void Actor::walkActor() {
 		}
 		if (walkbox == walkdata.destbox)
 			break;
-		j = _vm->getPathToDestBox(walkbox, walkdata.destbox);
-		if (j == -1 || j > 0xF0) {
+		box = _vm->getPathToDestBox(walkbox, walkdata.destbox);
+		if (box == -1 || box > 0xF0) {
 			walkdata.destbox = walkbox;
 			moving |= MF_LAST_LEG;
 			return;
 		}
-		walkdata.curbox = j;
+		walkdata.curbox = box;
 
-		if (_vm->findPathTowards(this, walkbox, j, walkdata.destbox, foundPathX, foundPathY))
+		if (_vm->findPathTowards(this, walkbox, box, walkdata.destbox, foundPathX, foundPathY))
 			break;
 		if (calcMovementFactor(foundPathX, foundPathY))
 			return;
@@ -1391,10 +1392,8 @@ void Actor::walkActorOld() {
 
 	}
 
-	if (moving & MF_IN_LEG) {
-		if (actorWalkStep())
-			return;
-	}
+	if (moving & MF_IN_LEG && actorWalkStep())
+		return;
 
 	if (moving & MF_LAST_LEG) {
 		moving = 0;
@@ -1404,11 +1403,10 @@ void Actor::walkActorOld() {
 
 	if (moving & MF_TURN) {
 		new_dir = updateActorDirection(false);
-		if (facing != new_dir) {
+		if (facing != new_dir)
 			setDirection(new_dir);
-			return;
-		}
-		moving = 0;
+		else
+			moving = 0;
 		return;
 	}
 
