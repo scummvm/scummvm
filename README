@@ -38,7 +38,6 @@ Table of Contents:
  * 7.7 Output sample rate
 8.0) Configuration Files
 9.0) Compiling
-X.X) Credits
 
 1.0) About:
 ---- ------ 
@@ -1148,84 +1147,6 @@ messages (see http://www.sysinternals.com/ntw2k/freeware/debugview.shtml).
           will create ScummVM.app (this only works if you installed SDL
           etc. via Fink and into /sw. If you have installed SDL
           in another way, you'll have to edit the Makefile).
-
-X.X) Credits:
----- --------
- The ScummVM team:
-        James Brown          - Lead developer
-        Max Horn             - Lead developer
-        Torbjorn Andersson   - Engine: SCUMM, Broken Sword II
-        David Eriksson       - Engine: Flight of the Amazon Queen
-        Robert Goeffringmann - Engine: Beneath a Steel Sky,
-                                       Broken Sword I
-        Jonathan Gray        - Engine: SCUMM, Broken Sword II
-        Travis Howell        - Engine: SCUMM, Simon the Sorcerer
-        Oliver Kiehl         - Engine: Beneath a Steel Sky, Simon
-        Pawel Kolodziejski   - Engine: SCUMM (Codecs, iMUSE, Smush, etc.)
-        Gregory Montoir      - Engine: Flight of the Amazon Queen
-        Joost Peters         - Engine: Beneath a Steel Sky,
-                                       Flight of the Amazon Queen
-        Eugene Sandulenko    - Engine: SCUMM (FT INSANE, bugfixes)
-        Chris Apers          - Port: PalmOS
-        Nicolas Bacca        - Port: PocketPC/WinCE port
-        Marcus Comstedt      - Port: Dreamcast
-        Ruediger Hanke       - Port: MorphOS
-        Peter Moraliyski     - Port: GP32
-        Lionel Ulmer         - Port: X11
-        Jamieson Christian   - iMUSE, MIDI, all things musical.
-        Jochen Hoenicke      - Speaker & PCjr sound support, Adlib work
-        Jerome Fisher        - MT-32 emulator
-        Jeremy Newman        - Webmaster
-
- Retired Team Members:
-        Ralph Brorsen        - Help with GUI implementation
-        Vincent Hamm         - Co-Founder
-        Felix Jakschitsch    - Zak256 reverse engineering
-        Mutwin Kraus         - Original MacOS porter
-        Ludvig Strigeus      - Original ScummVM and SimonVM author
-
- Contributors:
-        Andreas Roever       - Broken Sword 1/2 MPEG2 cutscene support
-        Quietust             - Sound support for Amiga SCUMM V2 - V3 games
-        Stuart Caie          - Decoders for Simon 1 Amiga data files
-        Janne Huttunen       - V3 actor mask support, Dig/FT Smush audio
-        Kovacs Endre Janos   - Several fixes for Simon1
-        Jeroen Janssen       - Numerous readability and bugfix patches
-        Claudio Matsuoka     - Daily Linux/BeOS builds 
-        Mikesch Nepomuk      - MI1 VGA floppy patches.
-        Nicolas Noble        - Config file and ALSA support
-        Edward Rudd          - Fixes for playing MP3 versions of MI1/Loom audio
-        Daniel Schepler      - Final MI1 CD music support/ 
-                               Initial Ogg Vorbis support
-        Andre Souza          - SDL-based OpenGL renderer
-        Tim 'realmz'         - Initial MI1 CD music support
-        Tore Anderson        - Packaging for Debian GNU/Linux
-
-        And to all the contributors, users, and beta testers we've missed.
-        Thanks!
-
- Special thanks to:
-        Sander Buskens  - For his work on the initial reversing of Monkey2
-        Canadacow       - For the original MT-32 emulator
-        Kevin Carnes    - For Scumm16, the basis of ScummVM older gfx codec
-        Jezar           - For his freeverb filter implementation
-        Jim Leiterman   - Various info on his FM-TOWNS/Marty SCUMM ports
-        Jimmi Thogersen - For ScummRev, and much obscure code/documentation
-        Tristan         - For additional work on the original MT-32 emulator
-
-        Tony Warriner and everyone at Revolution Software Ltd. for sharing
-        with us the source of some of their brilliant games, allowing us to
-        release Beneath a Steel Sky as freeware... and generally being
-        supportive above and beyond the call of duty.
-
-        John Passfield and Steve Stamatiadis for sharing the source of their
-        classic title, Flight of the Amazon Queen and also being incredibly
-        supportive.
-
-        Aric Wilmunder, Ron Gilbert, David Fox, Vince Lee, and all those at
-        LucasFilm/LucasArts who made SCUMM the insane mess to reimplement
-        that it is today. Feel free to drop us a line and tell us what you
-        think, guys!
 
 
 
