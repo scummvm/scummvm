@@ -690,8 +690,8 @@ static int32 codec47_decode2_offset2;
 static int16 * codec47_decode2_table;
 static int32 d_pitch;
 static byte * codec47_decode2_param_ptr;
-static int16 * codec47_decode2_buf2;
-static int16 * codec47_decode2_buf1;
+static int16 * codec47_decode2_buf_small;
+static int16 * codec47_decode2_buf_big;
 static int32 codec47_subgfx_width_blocks;
 static int32 codec47_subgfx_height_blocks;
 static int32 codec47_subgfx_width_pixels;
@@ -772,7 +772,7 @@ static void codec47_subgfx_lev3() {
 		return;
 	}
 	if (code == 0xFD) {
-		byte * tmp_ptr = (*(d_src + 1) << 7) + (byte*)codec47_decode2_buf2;
+		byte * tmp_ptr = (*(d_src + 1) << 7) + (byte*)codec47_decode2_buf_small;
 		int32 l = *(tmp_ptr + 96);
 		byte val = *(d_src + 2);
 		int16 * tmp_ptr2 = (int16*)tmp_ptr;
@@ -870,13 +870,11 @@ static void codec47_subgfx_lev2() {
 		return;
 	}
 	if (code == 0xFD) {
-		d_src += 4;
-		return;
 		tmp = *(d_src + 1);
 		tmp2 = tmp * 4;
 		tmp <<= 7;
 		int32 tmp3 = tmp2 + tmp * 2;
-		byte * tmp_ptr = tmp + tmp3 + (byte*)codec47_decode2_buf1;
+		byte * tmp_ptr = tmp + tmp3 + (byte*)codec47_decode2_buf_big;
 		byte l = *(tmp_ptr + 384);
 		byte val = *(d_src + 2);
 		int16 * tmp_ptr2 = (int16*)tmp_ptr;
@@ -950,7 +948,7 @@ static void disp() {
 
 static void decode2(byte * dst, byte * src, int32 offset1, int32 offset2, int32 pitch,
 						 int16 * tmp_table, byte * param_ptr, int32 height, int32,
-						 int16 * buf2, int16 * buf1) {
+						 int16 * buf_small, int16 * buf_big) {
 	d_dst = dst;
 	d_src = src;
 	codec47_decode2_offset1 = offset1;
@@ -958,8 +956,8 @@ static void decode2(byte * dst, byte * src, int32 offset1, int32 offset2, int32 
 	d_pitch = pitch;
 	codec47_decode2_table = tmp_table;
 	codec47_decode2_param_ptr = param_ptr - 0xf8;
-	codec47_decode2_buf1 = buf1;
-	codec47_decode2_buf2 = buf2;
+	codec47_decode2_buf_small = buf_small;
+	codec47_decode2_buf_big = buf_big;
 	codec47_subgfx_height_blocks = (height + 7) >> 3;
 	codec47_subgfx_width_blocks = (pitch + 7) >> 3;
 	codec47_subgfx_width_pixels = pitch << 3;
@@ -1021,8 +1019,8 @@ bool Codec47Decoder::decode(Blitter & dst, Chunk & src) {
 	g_out = dst.getPtr();
 	int32 width = getRect().width();
 	int32 height = getRect().height();
-	int32 offset_table1 = _deltaBufs[1] - _curBuf;
-	int32 offset_table2 = _deltaBufs[0] - _curBuf;
+	int32 offset1 = _deltaBufs[1] - _curBuf;
+	int32 offset2 = _deltaBufs[0] - _curBuf;
 
 	int32 chunk_size = src.getSize() - 14;
 	byte * chunk_buffer = (byte*)malloc(chunk_size);
@@ -1083,7 +1081,7 @@ bool Codec47Decoder::decode(Blitter & dst, Chunk & src) {
 //			return false;
 //		}
 		if ((first_word - _var100) == 1) {
-			decode2(tmp_curBuf, gfx_data, offset_table1, offset_table2, width,
+			decode2(tmp_curBuf, gfx_data, offset1, offset2, width,
 					codec47_temp_table, chunk_buffer + 8, height, width * 8,
 					smush_buf_small, smush_buf_big);
 			_var104 = _curBuf;
