@@ -31,12 +31,12 @@
 
 class OSystem_SDL_Common : public OSystem {
 public:
-	// Set colors of the palette
-	void set_palette(const byte *colors, uint start, uint num) = 0;
-
 	// Set the size of the video bitmap.
 	// Typically, 320x200
 	void init_size(uint w, uint h);
+
+	// Set colors of the palette
+	void set_palette(const byte *colors, uint start, uint num);
 
 	// Draw a bitmap to screen.
 	// The screen will not be updated to reflect the new bitmap
@@ -208,7 +208,7 @@ protected:
 	
 	// Mutex that prevents multiple threads interferring with each other
 	// when accessing the screen.
-	SDL_mutex *_mutex;
+	SDL_mutex *_graphicsMutex;
 
 
 	void add_dirty_rgn_auto(const byte *buf);

@@ -36,9 +36,6 @@ class OSystem_SDL_OpenGL : public OSystem_SDL_Common {
 public:
 	OSystem_SDL_OpenGL();
 
-	// Set colors of the palette
-	void set_palette(const byte *colors, uint start, uint num);
-
 	// Update the dirty areas of the screen
 	void update_screen();
 
@@ -85,24 +82,6 @@ OSystem_SDL_OpenGL::OSystem_SDL_OpenGL()
   // 640x480 resolution
   _glWindow.w = 640;
   _glWindow.h = 480;
-}
-
-void OSystem_SDL_OpenGL::set_palette(const byte *colors, uint start, uint num) {
-	const byte *b = colors;
-	uint i;
-	SDL_Color *base = _currentPalette + start;
-	for (i = 0; i < num; i++) {
-		base[i].r = b[0];
-		base[i].g = b[1];
-		base[i].b = b[2];
-		b += 4;
-	}
-
-	if (start < _paletteDirtyStart)
-		_paletteDirtyStart = start;
-
-	if (start + num > _paletteDirtyEnd)
-		_paletteDirtyEnd = start + num;
 }
 
 void OSystem_SDL_OpenGL::load_gfx_mode() {
@@ -304,8 +283,6 @@ void OSystem_SDL_OpenGL::hotswap_gfx_mode() {
 	if (!_screen)
 		return;
 
-	StackLock lock(_mutex); // Lock the mutex until this function ends
-
 	// Keep around the old _screen & _tmpscreen so we can restore the screen data
 	// after the mode switch.
 	SDL_Surface *old_screen = _screen;
@@ -342,7 +319,7 @@ void OSystem_SDL_OpenGL::hotswap_gfx_mode() {
 
 void OSystem_SDL_OpenGL::update_screen() {
 
-	StackLock lock(_mutex);	// Lock the mutex until this function ends
+	StackLock lock(_graphicsMutex);	// Lock the mutex until this function ends
 
 	// If the shake position changed, fill the dirty area with blackness
 	if (_currentShakePos != _newShakePos) {
@@ -540,6 +517,8 @@ bool OSystem_SDL_OpenGL::poll_event(Event *event) {
 */
 
 uint32 OSystem_SDL_OpenGL::property(int param, Property *value) {
+
+	StackLock lock(_graphicsMutex); // Lock the mutex until this function ends
 
 	if (param == PROP_TOGGLE_FULLSCREEN) {
 		if (!_usingOpenGL)

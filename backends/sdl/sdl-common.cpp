@@ -63,7 +63,7 @@ void OSystem_SDL_Common::init_intern(int gfx_mode, bool full_screen, bool aspect
 		error("Could not initialize SDL: %s.\n", SDL_GetError());
 	}
 
-	_mutex = SDL_CreateMutex();
+	_graphicsMutex = SDL_CreateMutex();
 
 	SDL_ShowCursor(SDL_DISABLE);
 	
@@ -94,7 +94,7 @@ OSystem_SDL_Common::OSystem_SDL_Common()
 	_mouseHotspotX(0), _mouseHotspotY(0),
 	_currentShakePos(0), _newShakePos(0),
 	_paletteDirtyStart(0), _paletteDirtyEnd(0),
-	_mutex(0) {
+	_graphicsMutex(0) {
 
 	// allocate palette storage
 	_currentPalette = (SDL_Color *)calloc(sizeof(SDL_Color), 256);
@@ -113,7 +113,7 @@ OSystem_SDL_Common::~OSystem_SDL_Common() {
 		free(_dirty_checksums);
 	free(_currentPalette);
 	free(_mouseBackup);
-	SDL_DestroyMutex(_mutex);
+	SDL_DestroyMutex(_graphicsMutex);
 
 	SDL_ShowCursor(SDL_ENABLE);
 #ifdef MACOSX
@@ -147,7 +147,7 @@ void OSystem_SDL_Common::copy_rect(const byte *buf, int pitch, int x, int y, int
 	if (_screen == NULL)
 		return;
 
-	StackLock lock(_mutex);	// Lock the mutex until this function ends
+	StackLock lock(_graphicsMutex);	// Lock the mutex until this function ends
 	
 	if (((uint32)buf & 3) == 0 && pitch == _screenWidth && x==0 && y==0 &&
 			w==_screenWidth && h==_screenHeight && _mode_flags&DF_WANT_RECT_OPTIM) {
@@ -1228,7 +1228,7 @@ void OSystem_SDL_Common::clear_overlay() {
 	if (!_overlayVisible)
 		return;
 	
-	StackLock lock(_mutex);	// Lock the mutex until this function ends
+	StackLock lock(_graphicsMutex);	// Lock the mutex until this function ends
 	
 	// hide the mouse
 	undraw_mouse();
@@ -1325,6 +1325,24 @@ void OSystem_SDL_Common::copy_rect_overlay(const int16 *buf, int pitch, int x, i
 	} while (--h);
 
 	SDL_UnlockSurface(_tmpscreen);
+}
+
+void OSystem_SDL_Common::set_palette(const byte *colors, uint start, uint num) {
+	const byte *b = colors;
+	uint i;
+	SDL_Color *base = _currentPalette + start;
+	for (i = 0; i < num; i++) {
+		base[i].r = b[0];
+		base[i].g = b[1];
+		base[i].b = b[2];
+		b += 4;
+	}
+
+	if (start < _paletteDirtyStart)
+		_paletteDirtyStart = start;
+
+	if (start + num > _paletteDirtyEnd)
+		_paletteDirtyEnd = start + num;
 }
 
 int16 OSystem_SDL_Common::RGBToColor(uint8 r, uint8 g, uint8 b) {
