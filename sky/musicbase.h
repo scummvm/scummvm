@@ -44,7 +44,7 @@ private:
 class SkyMusicBase {
 public:
 	SkyMusicBase(SkyDisk *pSkyDisk);
-	~SkyMusicBase(void);
+	virtual ~SkyMusicBase(void);
 	void loadSectionMusic(uint8 pSection);
 	void musicCommand(uint16 command);
 	void startMusic(uint16 param) { _onNextPoll.musicToProcess = param & 0xF; }; // 4
