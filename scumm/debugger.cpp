@@ -1054,6 +1054,8 @@ bool ScummDebugger::TabComplete(const char *input, char*& completion) {
 					}
 					matchlen = j;
 				}
+				if (matchlen == 0)
+					return false;
 			}
 		}
 	}
