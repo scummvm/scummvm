@@ -25,7 +25,6 @@
 #include "system.h"	// For events
 
 class Dialog;
-class Scumm;
 
 #define hline(x, y, x2, color) line(x, y, x2, y, color);
 #define vline(x, y, y2, color) line(x, y, x, y2, color);
@@ -68,10 +67,9 @@ public:
 
 	bool isActive()	{ return ! _dialogStack.empty(); }
 
-	NewGui(Scumm *s);
+	NewGui(OSystem *system);
 
 protected:
-	Scumm		*_s;
 	OSystem		*_system;
 	int16		*_screen;
 	int			_screen_pitch;
@@ -84,9 +82,6 @@ protected:
 	int			_currentKeyDown, _currentKeyDownFlags;
 	int			_keyRepeatLoopCount;
 	int			_keyRepeatEvenCount;
-
-	// sound state
-	bool		_old_soundsPaused;
 	
 	// position and time of last mouse click (used to detect double clicks)
 	struct {

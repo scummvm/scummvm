@@ -87,7 +87,7 @@ void MidiDriver_WIN::set_stream_callback(void *param, StreamCallback *sc)
 }
 
 void CALLBACK MidiDriver_WIN::midi_callback(HMIDIOUT hmo, UINT wMsg,
-																						DWORD dwInstance, DWORD dwParam1, DWORD dwParam2)
+                                            DWORD dwInstance, DWORD dwParam1, DWORD dwParam2)
 {
 
 	switch (wMsg) {
@@ -111,13 +111,26 @@ int MidiDriver_WIN::open(int mode)
 		MMRESULT res = midiOutOpen((HMIDIOUT *) & _mo, MIDI_MAPPER, NULL, NULL, 0);
 		if (res != MMSYSERR_NOERROR)
 			check_error(res);
+
+		// Send initial pitch bend sensitivity values for +/- 12 semitones.
+		// For information on control change registered parameters,
+		// which includes the Pitch Bend sensitivity settings,
+		// visit http://www.midi.org/about-midi/table3.htm,
+		// Table 3a.
+		int chan;
+		for (chan = 0; chan < 16; ++chan) {
+			send(( 0 << 16) | (101 << 8) | (0xB0 | chan));
+			send(( 0 << 16) | (100 << 8) | (0xB0 | chan));
+			send((12 << 16) | (  6 << 8) | (0xB0 | chan));
+			send(( 0 << 16) | ( 38 << 8) | (0xB0 | chan));
+		} // next for
 	} else {
 		/* streaming mode */
 		MIDIPROPTIMEDIV mptd;
 		UINT _midi_device_id = 0;
 
 		check_error(midiStreamOpen(&_ms, &_midi_device_id, 1,
-															 (uint32)midi_callback, (uint32)this, CALLBACK_FUNCTION));
+                                   (uint32)midi_callback, (uint32)this, CALLBACK_FUNCTION));
 
 		prepare();
 

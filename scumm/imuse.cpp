@@ -3110,7 +3110,7 @@ void Part::set_detune(int8 detune)
 
 void Part::set_pitchbend(int value)
 {
-	_pitchbend = value * _pitchbend_factor >> 6;
+	_pitchbend = value;
 	changed(IMuseDriver::pcMod);
 }
 
@@ -3993,7 +3993,7 @@ void IMuseAdlib::part_changed(Part *part, byte what)
 	if (what & pcMod) {
 		for (mc = part->_mc->adl(); mc; mc = mc->_next) {
 			adlib_note_on(mc->_channel, mc->_note + part->_transpose_eff,
-										part->_pitchbend + part->_detune_eff);
+			              (part->_pitchbend * part->_pitchbend_factor >> 6) + part->_detune_eff);
 		}
 	}
 
@@ -4278,7 +4278,7 @@ void IMuseGM::midiPitchBend(byte chan, int16 pitchbend)
 
 	if (_midi_pitchbend_last[chan] != pitchbend) {
 		_midi_pitchbend_last[chan] = pitchbend;
-		tmp = (pitchbend << 2) + 0x2000;
+		tmp = pitchbend + 0x2000;
 		_md->send(((tmp >> 7) & 0x7F) << 16 | (tmp & 0x7F) << 8 | 0xE0 | chan);
 	}
 }
@@ -4570,8 +4570,9 @@ void IMuseGM::part_changed(Part *part, byte what)
 
 	if (what & pcMod)
 		midiPitchBend(mc->_chan,
-									clamp(part->_pitchbend + part->_detune_eff +
-												(part->_transpose_eff << 7), -2048, 2047));
+		              clamp(part->_pitchbend +
+					        (part->_detune_eff * 64 / 12) +
+		                    (part->_transpose_eff * 8192 / 12), -8192, 8191));
 
 	if (what & pcVolume)
 		midiVolume(mc->_chan, part->_vol_eff);

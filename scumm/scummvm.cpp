@@ -103,7 +103,7 @@ Scumm::Scumm (GameDetector *detector, OSystem *syst)
 	_gui = new Gui();
 	_gui->init(this);
 	
-	_newgui = new NewGui(this);
+	_newgui = new NewGui(_system);
 	_bundle = new Bundle();
 	_sound = new Sound(this);
 	_timer = Engine::_timer;
@@ -917,28 +917,42 @@ void Scumm::setOptions()
 	//_newgui->optionsDialog();
 }
 
+void Scumm::runDialog(Dialog *dialog)
+{
+	// Pause sound put
+	bool old_soundsPaused = _sound->_soundsPaused;
+	_sound->pauseSounds(true);
+
+	// Open & run the dialog
+	dialog->open();
+	_newgui->runLoop();
+
+	// Restore old cursor
+	updateCursor();
+
+	// Resume sound output
+	_sound->pauseSounds(old_soundsPaused);
+}
+
 void Scumm::pauseDialog()
 {
 	if (!_pauseDialog)
 		_pauseDialog = new PauseDialog(_newgui, this);
-	_pauseDialog->open();
-	_newgui->runLoop();
+	runDialog(_pauseDialog);
 }
 
 void Scumm::saveloadDialog()
 {
 	if (!_saveLoadDialog)
 		_saveLoadDialog = new SaveLoadDialog(_newgui, this);
-	_saveLoadDialog->open();
-	_newgui->runLoop();
+	runDialog(_saveLoadDialog);
 }
 
 void Scumm::optionsDialog()
 {
 	if (!_optionsDialog)
 		_optionsDialog = new OptionsDialog(_newgui, this);
-	_optionsDialog->open();
-	_newgui->runLoop();
+	runDialog(_optionsDialog);
 }
 
 void Scumm::shutDown(int i)

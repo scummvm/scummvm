@@ -20,11 +20,8 @@
 
 #include "stdafx.h"
 #include "util.h"
-#include "scumm/scumm.h"
-#include "scumm/sound.h"
 #include "newgui.h"
 #include "dialog.h"
-#include "scumm/dialogs.h"
 
 
 #ifdef _MSC_VER
@@ -78,7 +75,7 @@ static byte guifont[] = {
 };
 
 // Constructor
-NewGui::NewGui(Scumm *s) : _s(s), _system(s->_system), _screen(0),
+NewGui::NewGui(OSystem *system) : _system(system), _screen(0),
 	_use_alpha_blending(true), _need_redraw(false),
 	_currentKeyDown(0), _cursorAnimateCounter(0), _cursorAnimateTimer(0)
 {
@@ -200,28 +197,25 @@ void NewGui::runLoop()
 
 void NewGui::saveState()
 {
-	// Pause sound put
-	_old_soundsPaused = _s->_sound->_soundsPaused;
-	_s->_sound->pauseSounds(true);
-
 	// Backup old cursor
 	_oldCursorMode = _system->show_mouse(true);
 	
-	// TODO - add getHeight & getWidth methods to OSystem
 	_system->show_overlay();
-	_screen = new int16[_s->_realWidth * _s->_realHeight];
-	_screen_pitch = _s->_realWidth;
+	// TODO - add getHeight & getWidth methods to OSystem.
+	// Note that this alone is not a sufficient solution, as in the future the screen size
+	// might change. E.g. we start up in 320x200 mode but then go on playing Zak256
+	// which makes us switch to 320x240, or even CMI which uses 640x480...
+	// FIXME - for now just use a dirty HACK
+	_screen = new int16[320 * 240];
+	_screen_pitch = 320;
+//	_screen = new int16[_s->_realWidth * _s->_realHeight];
+//	_screen_pitch = _s->_realWidth;
 	_system->grab_overlay(_screen, _screen_pitch);
 }
 
 void NewGui::restoreState()
 {
-	// Restore old cursor
-	_s->updateCursor();
 	_system->show_mouse(_oldCursorMode);
-
-	// Resume sound output
-	_s->_sound->pauseSounds(_old_soundsPaused);
 
 	_system->hide_overlay();
 	if (_screen) {
