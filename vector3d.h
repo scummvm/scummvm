@@ -72,6 +72,12 @@ public:
   float magnitude() const {
     return std::sqrt(x() * x() + y() * y() + z() * z());
   }
+
+  bool isZero() {
+	  if(x() == 0.f && y() == 0.f && z() == 0.f)
+		  return true;
+	  return false;
+  }
 };
 
 inline float dot(const Vector3d& v1, const Vector3d& v2) {

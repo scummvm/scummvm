@@ -29,7 +29,7 @@
 Actor::Actor(const char *name) :
   name_(name), talkColor_(255, 255, 255), pos_(0, 0, 0),
   pitch_(0), yaw_(0), roll_(0), walkRate_(0), turnRate_(0),
-  visible_(true), talkSound_(NULL), turning_(false), walking_(false)
+  visible_(true), talkSound_(NULL), turning_(false), walking_(false), walkChore_(-1)
 {
   Engine::instance()->registerActor(this);
 }
@@ -202,6 +202,10 @@ void Actor::update() {
     }
     else
       pos_ += dir * walkAmt;
+  }
+
+  if (lookingMode_) {
+	  float lookAtAmt = Engine::instance()->perSecond(lookAtRate_);
   }
 
   for (std::list<Costume *>::iterator i = costumeStack_.begin();

@@ -33,7 +33,27 @@
 #include <cstdio>
 #include <cmath>
 
-static int actor_tag, color_tag, sound_tag;
+static int actor_tag, color_tag, sound_tag, text_tag, vbuffer_tag;
+
+// Yaz: we'll need those later on, you'll see why....
+
+static inline bool isActor(int num) {
+	if(lua_tag(lua_getparam(num)) != actor_tag)
+		return false;
+	return true;
+}
+
+static inline bool isColor(int num) {
+	if(lua_tag(lua_getparam(num)) != color_tag)
+		return false;
+	return true;
+}
+
+static inline bool isSound(int num) {
+	if(lua_tag(lua_getparam(num)) != sound_tag)
+		return false;
+	return true;
+}
 
 // Helper functions to ensure the arguments we get are what we expect
 
@@ -459,6 +479,69 @@ static void IsActorChoring() {
     lua_pushnumber(result);
 }
 
+static void ActorLookAt() {
+	Actor *act = check_actor(1);
+	lua_Object x = lua_getparam(2);
+	lua_Object y = lua_getparam(3);
+	lua_Object z = lua_getparam(4);
+	lua_Object rate = lua_getparam(5);
+
+	if(lua_isnumber(rate))
+		act->setLookAtRate( luaL_check_number(5) );
+
+	// Look at nothing
+	if( lua_isnil(x) )
+	{
+		if(act->isLookAtVectorZero()) // already looking at nothing
+			return;
+		
+		act->setLookAtVectorZero();
+
+		if(lua_isnumber(y))
+			act->setLookAtRate( luaL_check_number(3) );
+
+		act->setLooking( true );
+		return;
+	}
+
+	// look at xyz
+	else if( lua_isnumber(x) )
+	{
+		Vector3d vector;
+		float fX;
+		float fY;
+		float fZ;
+
+		fX = luaL_check_number(2);
+
+		if( lua_isnumber(y) )
+			fY = luaL_check_number(3);
+		else
+			fY = 0.f;
+
+		if( lua_isnumber(z) )
+			fZ = luaL_check_number(4);
+		else
+			fZ = 0.f;
+
+		vector.set(fX,fY,fZ);
+
+		act->setLookAtVector( vector );
+	}
+	// look at another actor
+	else if(isActor(2))
+	{
+		Actor *lookedAct = check_actor(2);
+
+		act->setLookAtVector(lookedAct->pos());
+
+		if(lua_isnumber(y))
+			act->setLookAtRate(luaL_check_number(3));
+	}
+
+	act->setLooking( true );
+}
+
 static void GetVisibleThings() {
   lua_Object result = lua_createtable();
   Actor *sel = Engine::instance()->selectedActor();
@@ -508,6 +591,11 @@ static void ShutUpActor() {
  Actor *act = check_actor(1);
  if (act)
   act->shutUp();
+}
+
+static void HardwareAccelerated() {
+	// FIXME: Are we always in HW accelerated ?
+	lua_pushnumber( TRUE );
 }
 
 // Sector functions
@@ -883,7 +971,6 @@ static void stubWarning() {
 static char *stubFuncs[] = {
   "RestoreIMuse",
   "SaveIMuse",
-  "Is3DHardwareEnabled",
   "SetActorInvClipNode",
   "NukeResources",
   "UnShrinkBoxes",
@@ -1001,7 +1088,6 @@ static char *stubFuncs[] = {
   "GetCameraActor",
   "GetActorLookRate",
   "SetActorLookRate",
-  "ActorLookAt",
   "DriveActorTo",
   "WalkActorVector",
   "PutActorAtInterest",
@@ -1267,15 +1353,20 @@ struct luaL_reg builtins[] = {
   { "GetTextObjectDimensions", GetTextObjectDimensions },
   { "MakeTextObject", MakeTextObject },
   { "KillTextObject", KillTextObject },
-  { "ShutUpActor", ShutUpActor }
+  { "ShutUpActor", ShutUpActor },
+  { "HardwareAccelerated", HardwareAccelerated },
+  { "ActorLookAt", ActorLookAt },
 };
 
 void register_lua() {
   // Create various LUA tags
   actor_tag = lua_newtag();
   color_tag = lua_newtag();
-  sound_tag = lua_newtag();
+  sound_tag = lua_newtag();  // Yaz: wasn't found in the original engine, maybe I messed it.
+  text_tag = lua_newtag();
+  vbuffer_tag = lua_newtag();
 
+  //Yaz: do we really need a garbage collector ?
   // Register GC methods
   lua_pushcfunction(gc_Color);
   lua_settagmethod(color_tag, "gc");

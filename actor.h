@@ -54,6 +54,7 @@ public:
   float turnRate() const { return turnRate_; }
   void setWalkRate(float rate) { walkRate_ = rate; }
   float walkRate() const { return walkRate_; }
+  void setLooking(bool lookingMode) { lookingMode_ = lookingMode; }
 
   float angleTo(const Actor &a) const;
   float yawTo(Vector3d p) const;
@@ -67,6 +68,8 @@ public:
   void sayLine(const char *msg);
   void shutUp();
   bool talking();
+
+  void setWalkChore(int choreNumber) { walkChore_ = choreNumber; }
 
   void pushCostume(const char *name);
   void setCostume(const char *name);
@@ -86,6 +89,20 @@ public:
   void update();
   void draw();
 
+  bool isLookAtVectorZero() {
+	  return lookAtVector_.isZero();
+  }
+  void setLookAtVectorZero() {
+	  lookAtVector_.set( 0.f, 0.f, 0.f );
+  }
+  void setLookAtVector( Vector3d vector )
+  {
+	  lookAtVector_ = vector;
+  }
+  void setLookAtRate( float rate ) {
+	  lookAtRate_ = rate;
+  }
+
 private:
   std::string name_;
   std::string setName_;
@@ -93,7 +110,9 @@ private:
   Vector3d pos_;
   float pitch_, yaw_, roll_;
   float walkRate_, turnRate_;
+  
   bool visible_;
+  bool lookingMode_;
   ResPtr<Sound> talkSound_;
   std::list<Costume *> costumeStack_;
 
@@ -104,6 +123,13 @@ private:
   // Variables for walking to a point
   bool walking_;
   Vector3d destPos_;
+
+  // chores
+  int walkChore_;
+
+  // lookAt
+  Vector3d lookAtVector_;
+  float lookAtRate_;
 
   friend class Engine;
 };
