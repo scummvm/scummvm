@@ -25,6 +25,7 @@
 #include "sound/mididrv.h"
 #include "sound/imuse.h"
 #include "actor.h"
+#include "config-file.h"
 
 struct SaveGameHeader {
 	uint32 type;
@@ -161,25 +162,31 @@ bool Scumm::loadState(int slot, bool compat)
 void Scumm::makeSavegameName(char *out, int slot, bool compatible)
 {
 
-#ifndef _WIN32_WCE
+	const char *dir = NULL;
 
-#if !defined(MACOS_CARBON)
-	const char *dir = getenv("SCUMMVM_SAVEPATH");
+#ifdef _WIN32_WCE
+	dir = _gameDataPath;
+#else
+
+  #if !defined(MACOS_CARBON)
+	dir = getenv("SCUMMVM_SAVEPATH");
+  #endif
+
+	// If SCUMMVM_SAVEPATH was not specified, try to use game specific savepath from config
+	if (!dir || dir[0] == 0)
+		dir = scummcfg->get("savepath");
+
+	// If SCUMMVM_SAVEPATH was not specified, try to use general path from config
+	if (!dir || dir[0] == 0)
+		dir = scummcfg->get("savepath", "scummvm");
+
+	// If no save path was specified, use no directory prefix
 	if (dir == NULL)
 		dir = "";
-#else
-	const char *dir = "";
 #endif
 
-	/* snprintf should be used here, but it's not portable enough */
+	// snprintf should be used here, but it's not portable enough
 	sprintf(out, "%s%s.%c%.2d", dir, _exe_name, compatible ? 'c' : 's', slot);
-
-#else
-
-	sprintf(out, "%s%s.%c%.2d", _gameDataPath, _exe_name,
-					compatible ? 'c' : 's', slot);
-
-#endif
 }
 
 bool Scumm::getSavegameName(int slot, char *desc)
