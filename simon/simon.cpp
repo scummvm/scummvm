@@ -2389,7 +2389,8 @@ void SimonEngine::expire_vga_timers() {
 		_vga_tick_counter++;
 
 		while (vte->delay) {
-			if (!--vte->delay) {
+			// not quite ok, good enough
+			if ((int16)(vte->delay -= 5) <= 0) {
 				uint16 cur_file = vte->cur_vga_file;
 				uint16 cur_unk = vte->sprite_id;
 				byte *script_ptr = vte->script_pointer;
@@ -2398,6 +2399,8 @@ void SimonEngine::expire_vga_timers() {
 				delete_vga_timer(vte);
 
 				if (script_ptr == NULL) {
+					// special scroll timer
+					scroll_timeout();
 				} else {
 					vc_resume_sprite(script_ptr, cur_file, cur_unk);
 				}
