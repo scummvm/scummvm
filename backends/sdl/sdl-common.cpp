@@ -406,7 +406,7 @@ void OSystem_SDL_Common::warp_mouse(int x, int y) {
 	if (_full_screen) SDL_ShowCursor(SDL_ENABLE);
 	SDL_WarpMouse(x * _scaleFactor, y * _scaleFactor);
 	if (_full_screen) SDL_ShowCursor(SDL_DISABLE);
-	set_mouse_pos(x, y);
+//	set_mouse_pos(x, y);
 }
 	
 void OSystem_SDL_Common::set_mouse_cursor(const byte *buf, uint w, uint h, int hotspot_x, int hotspot_y) {

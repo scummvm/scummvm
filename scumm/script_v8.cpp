@@ -801,6 +801,15 @@ void Scumm_v8::o8_cursorCommand()
 			_charsetColorMap[i] = _charsetData[_string[1].t_charset][i] = (unsigned char)args[i];
 		break;
 	case 0xE9: 		// SO_CURSOR_PUT
+#if 1
+		{
+		int y = pop();
+		int x = pop();
+
+		_system->warp_mouse(x, y);
+		_system->update_screen();
+		}
+#else
 		_virtual_mouse_y = pop();
 		_virtual_mouse_x = pop();
 
@@ -811,6 +820,7 @@ void Scumm_v8::o8_cursorCommand()
 		_system->warp_mouse(mouse.x, mouse.y);
 		_system->update_screen();
 //		warning("warped mouse to (%d, %d) from %d-%d", _virtual_mouse_x, _virtual_mouse_y, _roomResource, vm.slot[_currentScript].number);
+#endif
 		break;
 	default:
 		error("o8_cursorCommand: default case 0x%x", subOp);
