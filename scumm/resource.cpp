@@ -1016,22 +1016,23 @@ static inline byte *writeVLQ(byte *ptr, int value) {
 	return ptr;
 }
 
-static inline byte Mac0ToGMInstrument(uint32 type) {
+static inline byte Mac0ToGMInstrument(uint32 type, int &transpose) {
+	transpose = 0;
 	switch (type) {
-	case MKID('MARI'):	return 13;
-	case MKID('PLUC'):	return 46;
-	case MKID('HARM'):	return 23;
-	case MKID('PIPE'):	return 110;	// 20 or 74 or 110 ?
-	case MKID('TROM'):	return 58;
-	case MKID('STRI'):	return 49;	// 49 or 50
-	case MKID('HORN'):	return 61;	// 61 or 70
-	case MKID('VIBE'):	return 12;
-	case MKID('SHAK'):	return 78;
-	case MKID('PANP'):	return 76;
-	case MKID('WHIS'):	return 79;
-	case MKID('ORGA'):	return 17;	// 17-21
-	case MKID('BONG'):	return 116;
-	case MKID('BASS'):	return 33;	// 33-40
+	case MKID('MARI'): return 12;
+	case MKID('PLUC'): return 45;
+	case MKID('HARM'): return 22;
+	case MKID('PIPE'): return 19;
+	case MKID('TROM'): transpose = -12; return 57;
+	case MKID('STRI'): return 48;
+	case MKID('HORN'): return 60;
+	case MKID('VIBE'): return 11;
+	case MKID('SHAK'): return 77;
+	case MKID('PANP'): return 75;
+	case MKID('WHIS'): return 76;
+	case MKID('ORGA'): return 17;
+	case MKID('BONG'): return 115;
+	case MKID('BASS'): transpose = -24; return 35;
 	default:
 		error("Unknown Mac0 instrument %c%c%c%c found",
 					(byte)type,
@@ -1071,20 +1072,20 @@ void ScummEngine::convertMac0Resource(int type, int idx, byte *src_ptr, int size
 	---
 	
 	Instruments (General Midi):
-	"MARI" - Marimba (13)
-	"PLUC" - Pizzicato Strings (46)
-	"HARM" - Harmonica (23)
-	"PIPE" - Church Organ? (20) or Flute? (74) or Bag Pipe (110)
-	"TROM" - Trombone (58)
-	"STRI" - String Ensemble (49 or 50)
-	"HORN" - French Horn? (61) or English Horn? (70)
-	"VIBE" - Vibraphone (12)
-	"SHAK" - Shakuhachi? (78)
-	"PANP" - Pan Flute (76)
-	"WHIS" - Whistle (79) / Bottle (77)
-	"ORGA" - Drawbar Organ (17; but could also be 18-21)
-	"BONG" - Woodblock? (116)
-	"BASS" - Bass (33-40)
+	"MARI" - Marimba (12)
+	"PLUC" - Pizzicato Strings (45)
+	"HARM" - Harmonica (22)
+	"PIPE" - Church Organ? (19) or Flute? (73) or Bag Pipe (109)
+	"TROM" - Trombone (57)
+	"STRI" - String Ensemble (48 or 49)
+	"HORN" - French Horn? (60) or English Horn? (69)
+	"VIBE" - Vibraphone (11)
+	"SHAK" - Shakuhachi? (77)
+	"PANP" - Pan Flute (75)
+	"WHIS" - Whistle (78) / Bottle (76)
+	"ORGA" - Drawbar Organ (16; but could also be 17-20)
+	"BONG" - Woodblock? (115)
+	"BASS" - Bass (32-39)
 	
 	
 	Now the task could be to convert this into MIDI, to be fed into iMuse.
@@ -1111,17 +1112,19 @@ void ScummEngine::convertMac0Resource(int type, int idx, byte *src_ptr, int size
 	byte track_instr[3];
 	byte *track_data[3];
 	int track_len[3];
+	int track_transpose[3];
 	bool looped = false;
 
+	src_ptr += 8;
 	// TODO: Decipher the unknown bytes in the header. For now, skip 'em
-	src_ptr += 36;
+	src_ptr += 28;
 
 	// Parse the three channels
 	for (i = 0; i < 3; i++) {
 		assert(*((uint32*)src_ptr) == MKID('Chan'));
 		len = READ_BE_UINT32(src_ptr + 4);
 		track_len[i] = len - 24;
-		track_instr[i] = Mac0ToGMInstrument(*(uint32*)(src_ptr + 8));
+		track_instr[i] = Mac0ToGMInstrument(*(uint32*)(src_ptr + 8), track_transpose[i]);
 		track_data[i] = src_ptr + 12;
 		src_ptr += len;
 		looped = (*((uint32*)(src_ptr - 8)) == MKID('Loop'));
@@ -1180,7 +1183,7 @@ void ScummEngine::convertMac0Resource(int type, int idx, byte *src_ptr, int size
 				// Note On
 				ptr = writeVLQ(ptr, nextTime[best]);
 				*ptr++ = 0x90 | best;
-				*ptr++ = track_data[best][2];
+				*ptr++ = track_data[best][2] + track_transpose[best];
 				*ptr++ = track_data[best][3] * 127 / 100; // Scale velocity
 				for (i = 0; i < 3; ++i)
 					nextTime[i] -= bestTime;
@@ -1193,7 +1196,7 @@ void ScummEngine::convertMac0Resource(int type, int idx, byte *src_ptr, int size
 				// There was a Note On, so do a Note Off
 				ptr = writeVLQ(ptr, nextTime[best]);
 				*ptr++ = 0x80 | best;
-				*ptr++ = track_data[best][2];
+				*ptr++ = track_data[best][2] + track_transpose[best];
 				*ptr++ = track_data[best][3] * 127 / 100; // Scale velocity
 				for (i = 0; i < 3; ++i)
 					nextTime[i] -= bestTime;
