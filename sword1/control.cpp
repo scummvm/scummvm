@@ -89,7 +89,8 @@ enum ButtonIds {
 enum TextModes {
 	TEXT_LEFT_ALIGN = 0,
 	TEXT_CENTER,
-	TEXT_RIGHT_ALIGN
+	TEXT_RIGHT_ALIGN,
+	TEXT_RED_FONT = 128
 };
 
 ControlButton::ControlButton(uint16 x, uint16 y, uint32 resId, uint8 id, ResMan *pResMan, uint8 *screenBuf, OSystem *system) {
@@ -159,7 +160,8 @@ uint8 SwordControl::runPanel(void) {
 	_lStrings = _languageStrings + MIN(SwordEngine::_systemVars.language, (uint8)BS1_SPANISH) * 20;
 	_keyPressed = _numButtons = 0;
 	_screenBuf = (uint8*)malloc(640 * 480);
-	_font = (uint8*)_resMan->openFetchRes(GAME_FONT); // todo: czech support
+	_font = (uint8*)_resMan->openFetchRes(SR_FONT); // todo: czech support
+	_redFont = (uint8*)_resMan->openFetchRes(SR_REDFONT);
 	uint8 *pal = (uint8*)_resMan->openFetchRes(SR_PALETTE);
 	uint8 *palOut = (uint8*)malloc(256 * 4);
 	for (uint16 cnt = 1; cnt < 256; cnt++) {
@@ -214,6 +216,8 @@ uint8 SwordControl::runPanel(void) {
 		newMode = getClicks(mode, &retVal);
 	} while ((newMode != 1) && (retVal == 0));
 	destroyButtons();
+	_resMan->resClose(SR_FONT);
+	_resMan->resClose(SR_REDFONT);
 	memset(_screenBuf, 0, 640 * 480);
 	_system->copy_rect(_screenBuf, 640, 0, 0, 640, 480);
 	free(_screenBuf);
@@ -461,7 +465,13 @@ void SwordControl::writeSavegameDescriptions(void) {
 void SwordControl::showSavegameNames(void) {
 	for (uint8 cnt = 0; cnt < 8; cnt++) {
 		_buttons[cnt]->draw();
-		renderText(_saveNames[cnt + _saveScrollPos], _saveButtons[cnt].x + 6, _saveButtons[cnt].y + 2, TEXT_LEFT_ALIGN);
+		uint8 textMode = TEXT_LEFT_ALIGN;
+		uint16 ycoord = _saveButtons[cnt].y + 2;
+		if (cnt + _saveScrollPos == _selectedSavegame) {
+			textMode |= TEXT_RED_FONT;
+			ycoord += 2;
+		}
+		renderText(_saveNames[cnt + _saveScrollPos], _saveButtons[cnt].x + 6, ycoord, textMode);
 	}
 }
 
@@ -539,6 +549,11 @@ uint16 SwordControl::getTextWidth(const char *str) {
 }
 
 void SwordControl::renderText(const char *str, uint16 x, uint16 y, uint8 mode) {
+	uint8 *font = _font;
+	if (mode & TEXT_RED_FONT)
+		font = _redFont;
+	mode &= ~TEXT_RED_FONT;
+	
 	if (mode == TEXT_RIGHT_ALIGN) // negative x coordinate means right-aligned.
 		x -= getTextWidth(str);
 	else if (mode == TEXT_CENTER)
@@ -548,7 +563,7 @@ void SwordControl::renderText(const char *str, uint16 x, uint16 y, uint8 mode) {
 	while (*str) {
 		uint8 *dst = _screenBuf + y * SCREEN_WIDTH + destX;
 
-		FrameHeader *chSpr = _resMan->fetchFrame(_font, ((uint8)*str) - 32);
+		FrameHeader *chSpr = _resMan->fetchFrame(font, ((uint8)*str) - 32);
 		uint8 *sprData = (uint8*)chSpr + sizeof(FrameHeader);
 		for (uint16 cnty = 0; cnty < FROM_LE_16(chSpr->height); cnty++) {
 			for (uint16 cntx = 0; cntx < FROM_LE_16(chSpr->width); cntx++) {

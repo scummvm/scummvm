@@ -761,8 +761,8 @@
 // general
 	// fonts
 #define GAME_FONT 				 0x04000000
-#define SR_FONT 				 0x04000001
-#define SR_REDFONT 				 0x04000002
+#define OTHER_SR_FONT 			 0x04000001
+#define OTHER_SR_REDFONT 		 0x04000002
 #define SR_DEATHFONT 			 0x04000003
 #define CZECH_GAME_FONT 		 0x04000004
 #define CZECH_SR_FONT 			 0x04000005
@@ -996,9 +996,9 @@
 #define ICON_YES 				 0x0404005D
 	// 94 entities in TXTs, 94 in datafiles.
 	// save_menu
-#define SR_UNKNOWN_RESOURCE1	 0x04050000
+#define SR_FONT					 0x04050000
 #define SR_BUTTON				 0x04050001
-#define SR_UNKNOWN_RESOURCE2	 0x04050002 // this is actually the red font
+#define SR_REDFONT				 0x04050002
 #define SR_PALETTE 				 0x04050003
 #define SR_PANEL_ENGLISH 		 0x04050004
 #define SR_PANEL_FRENCH 		 0x04050005

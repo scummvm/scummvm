@@ -325,9 +325,9 @@ void ResMan::openScriptResourceBigEndian(uint32 id) {
 }
 
 uint32 ResMan::_srIdList[29] = { // the file numbers differ for the control panel file IDs, so we need this array
-	0,
+	OTHER_SR_FONT,
 	0x04050000,
-	0,
+	OTHER_SR_REDFONT,
 	0x04050001,
 	0x04050002,
 	0x04050003,

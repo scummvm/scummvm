@@ -115,8 +115,7 @@ private:
 	SwordMouse *_mouse;
 	SwordMusic *_music;
 	char _savePath[256];
-	uint8 *_font;
-	uint32 _fontId;
+	uint8 *_font, *_redFont;
 	uint8 *_screenBuf;
 	uint8 _keyPressed;
 	void delay(uint32 msecs);
