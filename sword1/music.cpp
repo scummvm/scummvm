@@ -57,7 +57,7 @@ void SwordMusic::mixer(int16 *buf, uint len) {
 			if (len >= maxLen) {
 				for (uint32 cnt = 0; cnt < maxLen; cnt++)
 					buf[(cnt << 2) | 0] = buf[(cnt << 2) | 1] =
-					buf[(cnt << 2) | 2] = buf[(cnt << 2) | 3] = _musicBuf[_bufPos + cnt];
+					buf[(cnt << 2) | 2] = buf[(cnt << 2) | 3] = (int16)READ_LE_UINT16(_musicBuf + _bufPos + cnt);
 				_smpInBuf -= maxLen;
 				_bufPos = 0;
 				len -= maxLen;
@@ -66,7 +66,7 @@ void SwordMusic::mixer(int16 *buf, uint len) {
 			if (len) {
 				for (uint32 cnt = 0; cnt < len; cnt++)
 					buf[(cnt << 2) | 0] = buf[(cnt << 2) | 1] =
-					buf[(cnt << 2) | 2] = buf[(cnt << 2) | 3] = _musicBuf[_bufPos + cnt];
+					buf[(cnt << 2) | 2] = buf[(cnt << 2) | 3] = (int16)READ_LE_UINT16(_musicBuf + _bufPos + cnt);
 				_smpInBuf -= len;
 				_bufPos += len;
 			}
