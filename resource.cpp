@@ -470,7 +470,7 @@ int Scumm::loadResource(int type, int idx)
 	uint32 fileOffs;
 	uint32 size, tag;
 
-// debug(1, "loadResource(%s,%d)", resTypeFromId(type),idx);
+    // debug(1, "loadResource(%s,%d)", resTypeFromId(type),idx);
 
 	if (type == rtCharset && (_features & GF_SMALL_HEADER)) {
 		loadCharset(idx);
@@ -478,9 +478,12 @@ int Scumm::loadResource(int type, int idx)
 	}
 
 	roomNr = getResourceRoomNr(type, idx);
-	if (roomNr == 0 || idx >= res.num[type]) {
-		error("%s %d undefined", res.name[type], idx);
-	}
+
+	if (idx >= res.num[type])
+		error("%s %d undefined %d %d", res.name[type], idx, res.num[type], roomNr);
+
+	if (roomNr == 0)
+		roomNr = _roomResource;
 
 	if (type == rtRoom) {
 		fileOffs = 0;

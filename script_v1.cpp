@@ -825,19 +825,17 @@ void Scumm::o5_actorSetClass()
 {
 	int act = getVarOrDirectWord(0x80);
 	int newClass;
-
+	
 	while ((_opcode = fetchScriptByte()) != 0xFF) {
 		newClass = getVarOrDirectWord(0x80);
 		if (newClass == 0) {
 			_classData[act] = 0;
-
-			if( _features & GF_SMALL_HEADER)
+			if((_features & GF_SMALL_HEADER) && act <= NUM_ACTORS)
 			{
 				Actor *a;
-				a=derefActor(act);
+				a = derefActorSafe(act, "actorSetClass");
 				a->forceClip=0;
-			}
-				
+			}				
 			continue;
 		}
 
