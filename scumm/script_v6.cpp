@@ -2939,7 +2939,7 @@ void Scumm_v6::o6_findAllObjects() {
 	if (a != _currentRoom)
 		warning("o6_findAllObjects: current room is not %d", a);
 	writeVar(0, 0);
-	defineArray(0, 5, 0, _numLocalObjects);
+	defineArray(0, 5, 0, _numLocalObjects + 1);
 	writeArray(0, 0, 0, _numLocalObjects);
 	
 	while(i < _numLocalObjects) {
