@@ -241,13 +241,14 @@ SCUMM
   - Fix o6_setboxset, only used when leaving basement in fbear
   - Fix nukeArrays, it is nuking wrong arrays in fbear
 * Humongous entertainment >= v7 titles:
-  - Add support for local script offsets used in HE98+ games
+  - Add support for sprites (Used by HE90+ games)
   - Add support for additional drawWizImage flags
   - Add support for WizPolygon rendering (cyx)
-  - Add support for new akos animation code used by cut scenes (cyx)
-  - Complete support for akos codec 32
+  - Add support for aux animation code used by cut scenes (cyx)
+  - Add support for akos codec 32 shadows
   - Fix debug strings (Reports incorrect values) (Kirben)
   - Fix array issues in Buzzy games (Kirben)
+  - Fix inventory disappearing in puttzoo/zoodemo/timedemo
   - Add support for various new opcodes
 
 Broken Sword 2
