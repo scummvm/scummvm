@@ -1370,116 +1370,6 @@ int Scumm::getResourceDataSize(const byte *ptr) const {
 		return READ_BE_UINT32(ptr - 4) - 8;
 }
 
-ResourceIterator::ResourceIterator(const byte *searchin, bool smallHeader)
-	: _ptr(searchin), _smallHeader(smallHeader) {
-	assert(searchin);
-	if (_smallHeader) {
-		_size = READ_LE_UINT32(searchin);
-		_pos = 6;
-		_ptr = searchin + 6;
-	} else {
-		_size = READ_BE_UINT32(searchin + 4);
-		_pos = 8;
-		_ptr = searchin + 8;
-	}
-	
-}
-
-const byte *ResourceIterator::findNext(uint32 tag) {
-	uint32 size = 0;
-	const byte *result = 0;
-	
-	if (_smallHeader) {
-		uint16 smallTag = newTag2Old(tag);
-		do {
-			if (_pos >= _size)
-				return 0;
-	
-			result = _ptr;
-			size = READ_LE_UINT32(result);
-			if ((int32)size <= 0)
-				return 0;	// Avoid endless loop
-			
-			_pos += size;
-			_ptr += size;
-		} while (READ_LE_UINT16(result + 4) != smallTag);
-	} else {
-		do {
-			if (_pos >= _size)
-				return 0;
-	
-			result = _ptr;
-			size = READ_BE_UINT32(result + 4);
-			if ((int32)size <= 0)
-				return 0;	// Avoid endless loop
-			
-			_pos += size;
-			_ptr += size;
-		} while (READ_UINT32(result) != tag);
-	}
-
-	return result;
-}
-
-const byte *findResource(uint32 tag, const byte *searchin) {
-	uint32 curpos, totalsize, size;
-
-	assert(searchin);
-
-	searchin += 4;
-	totalsize = READ_BE_UINT32(searchin);
-	curpos = 8;
-	searchin += 4;
-
-	while (curpos < totalsize) {
-		if (READ_UINT32(searchin) == tag)
-			return searchin;
-
-		size = READ_BE_UINT32(searchin + 4);
-		if ((int32)size <= 0) {
-			error("(%c%c%c%c) Not found in %d... illegal block len %d",
-						tag & 0xFF, (tag >> 8) & 0xFF, (tag >> 16) & 0xFF, (tag >> 24) & 0xFF, 0, size);
-			return NULL;
-		}
-
-		curpos += size;
-		searchin += size;
-	}
-
-	return NULL;
-}
-
-const byte *findResourceSmall(uint32 tag, const byte *searchin) {
-	uint32 curpos, totalsize, size;
-	uint16 smallTag;
-
-	smallTag = newTag2Old(tag);
-
-	assert(searchin);
-
-	totalsize = READ_LE_UINT32(searchin);
-	searchin += 6;
-	curpos = 6;
-
-	while (curpos < totalsize) {
-		size = READ_LE_UINT32(searchin);
-
-		if (READ_LE_UINT16(searchin + 4) == smallTag)
-			return searchin;
-
-		if ((int32)size <= 0) {
-			error("(%c%c%c%c) Not found in %d... illegal block len %d",
-						tag & 0xFF, (tag >> 8) & 0xFF, (tag >> 16) & 0xFF, (tag >> 24) & 0xFF, 0, size);
-			return NULL;
-		}
-
-		curpos += size;
-		searchin += size;
-	}
-
-	return NULL;
-}
-
 void Scumm::lock(int type, int i) {
 	if (!validateResource("Locking", type, i))
 		return;
@@ -1772,6 +1662,116 @@ bool Scumm::isGlobInMemory(int type, int idx) const{
 		return false;
 
 	return res.address[type][idx] != NULL;
+}
+
+ResourceIterator::ResourceIterator(const byte *searchin, bool smallHeader)
+	: _ptr(searchin), _smallHeader(smallHeader) {
+	assert(searchin);
+	if (_smallHeader) {
+		_size = READ_LE_UINT32(searchin);
+		_pos = 6;
+		_ptr = searchin + 6;
+	} else {
+		_size = READ_BE_UINT32(searchin + 4);
+		_pos = 8;
+		_ptr = searchin + 8;
+	}
+	
+}
+
+const byte *ResourceIterator::findNext(uint32 tag) {
+	uint32 size = 0;
+	const byte *result = 0;
+	
+	if (_smallHeader) {
+		uint16 smallTag = newTag2Old(tag);
+		do {
+			if (_pos >= _size)
+				return 0;
+	
+			result = _ptr;
+			size = READ_LE_UINT32(result);
+			if ((int32)size <= 0)
+				return 0;	// Avoid endless loop
+			
+			_pos += size;
+			_ptr += size;
+		} while (READ_LE_UINT16(result + 4) != smallTag);
+	} else {
+		do {
+			if (_pos >= _size)
+				return 0;
+	
+			result = _ptr;
+			size = READ_BE_UINT32(result + 4);
+			if ((int32)size <= 0)
+				return 0;	// Avoid endless loop
+			
+			_pos += size;
+			_ptr += size;
+		} while (READ_UINT32(result) != tag);
+	}
+
+	return result;
+}
+
+const byte *findResource(uint32 tag, const byte *searchin) {
+	uint32 curpos, totalsize, size;
+
+	assert(searchin);
+
+	searchin += 4;
+	totalsize = READ_BE_UINT32(searchin);
+	curpos = 8;
+	searchin += 4;
+
+	while (curpos < totalsize) {
+		if (READ_UINT32(searchin) == tag)
+			return searchin;
+
+		size = READ_BE_UINT32(searchin + 4);
+		if ((int32)size <= 0) {
+			error("(%c%c%c%c) Not found in %d... illegal block len %d",
+						tag & 0xFF, (tag >> 8) & 0xFF, (tag >> 16) & 0xFF, (tag >> 24) & 0xFF, 0, size);
+			return NULL;
+		}
+
+		curpos += size;
+		searchin += size;
+	}
+
+	return NULL;
+}
+
+const byte *findResourceSmall(uint32 tag, const byte *searchin) {
+	uint32 curpos, totalsize, size;
+	uint16 smallTag;
+
+	smallTag = newTag2Old(tag);
+
+	assert(searchin);
+
+	totalsize = READ_LE_UINT32(searchin);
+	searchin += 6;
+	curpos = 6;
+
+	while (curpos < totalsize) {
+		size = READ_LE_UINT32(searchin);
+
+		if (READ_LE_UINT16(searchin + 4) == smallTag)
+			return searchin;
+
+		if ((int32)size <= 0) {
+			error("(%c%c%c%c) Not found in %d... illegal block len %d",
+						tag & 0xFF, (tag >> 8) & 0xFF, (tag >> 16) & 0xFF, (tag >> 24) & 0xFF, 0, size);
+			return NULL;
+		}
+
+		curpos += size;
+		searchin += size;
+	}
+
+	return NULL;
 }
 
 uint16 newTag2Old(uint32 oldTag) {
