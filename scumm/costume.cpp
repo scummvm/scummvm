@@ -185,7 +185,7 @@ byte CostumeRenderer::mainRoutine(int xmoveCur, int ymoveCur) {
 		return 0;
 
 	if (x_left >= _vm->_screenWidth || x_right <= 0)
-		return 1;
+		return 0;
 
 	v1.replen = 0;
 
@@ -242,7 +242,7 @@ byte CostumeRenderer::mainRoutine(int xmoveCur, int ymoveCur) {
 		return 2;
 	}
 
-	v1.destptr = _outptr + v1.y * _vm->_screenWidth + v1.x;
+	v1.destptr = _outptr + v1.y * _outwidth + v1.x;
 
 	v1.mask_ptr = _vm->getResourceAddress(rtBuffer, 9) + v1.y * _numStrips + _vm->_screenStartStrip;
 	v1.imgbufoffs = _vm->gdi._imgBufOffs[_zbuf];

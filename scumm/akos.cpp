@@ -641,11 +641,13 @@ byte AkosRenderer::codec1(int xmoveCur, int ymoveCur) {
 	v1.skip_width = _width;
 	v1.scaleXstep = _mirror ? 1 : -1;
 
+	_vm->updateDirtyRect(0, x_left, x_right, y_top, y_bottom, _dirty_id);
+
 	if (y_top >= (int)_outheight || y_bottom <= 0)
 		return 0;
 
 	if (x_left >= (int)_outwidth || x_right <= 0)
-		return 1;
+		return 0;
 
 	v1.replen = 0;
 
@@ -686,8 +688,6 @@ byte AkosRenderer::codec1(int xmoveCur, int ymoveCur) {
 
 	if (v1.skip_width <= 0 || _height <= 0)
 		return 0;
-
-	_vm->updateDirtyRect(0, x_left, x_right, y_top, y_bottom, _dirty_id);
 
 	if ((uint) y_top > (uint) _outheight)
 		y_top = 0;
