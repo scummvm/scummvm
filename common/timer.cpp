@@ -104,7 +104,7 @@ int Timer::handler(int t) {
 	return t;
 }
 
-bool Timer::installProcedure(TimerProc procedure, int32 interval, void *refCon) {
+bool Timer::installTimerProc(TimerProc procedure, int32 interval, void *refCon) {
 	assert(interval > 0);
 	Common::StackLock lock(_mutex);
 
@@ -122,7 +122,7 @@ bool Timer::installProcedure(TimerProc procedure, int32 interval, void *refCon) 
 	return false;
 }
 
-void Timer::releaseProcedure(TimerProc procedure) {
+void Timer::removeTimerProc(TimerProc procedure) {
 	Common::StackLock lock(_mutex);
 
 	for (int l = 0; l < MAX_TIMERS; l++) {

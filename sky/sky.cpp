@@ -275,7 +275,7 @@ void SkyEngine::initialise(void) {
 	_skyMouse->useLogicInstance(_skyLogic);
 	
 	_timer = Engine::_timer; // initialize timer *after* _skyScreen has been initialized.
-	_timer->installProcedure(&timerHandler, 1000000 / 50, this); //call 50 times per second
+	_timer->installTimerProc(&timerHandler, 1000000 / 50, this); //call 50 times per second
 
 	_skyControl = new SkyControl(_skyScreen, _skyDisk, _skyMouse, _skyText, _skyMusic, _skyLogic, _skySound, _system, getSavePath());
 	_skyLogic->useControlInstance(_skyControl);

@@ -260,13 +260,13 @@ void SmushPlayer::init() {
 	_smixer->_silentMixer = _scumm->_silentDigitalImuse;
 	_scumm->_smushPlay = true;
 	_dst = _scumm->virtscr[0].screenPtr + _scumm->virtscr[0].xstart;
-	_scumm->_timer->installProcedure(&timerCallback, _speed, _scumm);
+	_scumm->_timer->installTimerProc(&timerCallback, _speed, _scumm);
 
 	_alreadyInit = false;
 }
 
 void SmushPlayer::deinit() {
-	_scumm->_timer->releaseProcedure(&timerCallback);
+	_scumm->_timer->removeTimerProc(&timerCallback);
 	_scumm->_smushPlay = false;
 	// In case the timerCallback is active right now, we loop till it finishes.
 	// Note: even this still leaves a window for race conditions to occur.

@@ -695,12 +695,12 @@ IMuseDigital::IMuseDigital(ScummEngine *scumm)
 	for (int l = 0; l < MAX_DIGITAL_CHANNELS; l++) {
 		_channel[l]._mixerChannel = 0;
 	}
-	_scumm->_timer->installProcedure(timer_handler, 200000, this);
+	_scumm->_timer->installTimerProc(timer_handler, 200000, this);
 	_pause = false;
 }
 
 IMuseDigital::~IMuseDigital() {
-	_scumm->_timer->releaseProcedure(timer_handler);
+	_scumm->_timer->removeTimerProc(timer_handler);
 
 	for (int l = 0; l < MAX_DIGITAL_CHANNELS; l++) {
 		_scumm->_mixer->stopChannel(_channel[l]._mixerChannel);

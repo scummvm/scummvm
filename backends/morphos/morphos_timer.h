@@ -62,8 +62,8 @@ class Timer
 
 		bool init();
 		void release();
-		bool installProcedure(TimerProc procedure, int32 interval);
-		void releaseProcedure(TimerProc procedure);
+		bool installTimerProc(TimerProc procedure, int32 interval);
+		void removeTimerProc(TimerProc procedure);
 
 	protected:
 		bool SendMsg(ULONG MsgID, TimerProc procedure, LONG interval);

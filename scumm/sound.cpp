@@ -1044,7 +1044,7 @@ void Sound::playBundleMusic(const char *song) {
 		_bundleMusicTrack = 0;
 		_numberSamplesBundleMusic = _bundle->getNumberOfMusicSamplesByName(song);
 		_nameBundleMusic = song;
-		_scumm->_timer->installProcedure(&music_handler, 1000000, this);
+		_scumm->_timer->installTimerProc(&music_handler, 1000000, this);
 	} else if (strcmp(_nameBundleMusic, song) != 0) {
 		_newNameBundleMusic = song;
 		_musicBundleToBeChanged = true;
@@ -1057,7 +1057,7 @@ void Sound::pauseBundleMusic(bool state) {
 
 void Sound::stopBundleMusic() {
 	// First stop the music timer
-	_scumm->_timer->releaseProcedure(&music_handler);
+	_scumm->_timer->removeTimerProc(&music_handler);
 	_nameBundleMusic = "";
 	_scumm->_mixer->stopChannel(_bundleMusicTrack);
 	if (_musicBundleBufFinal) {
@@ -1412,12 +1412,12 @@ void Sound::startCDTimer() {
 	else 
 		timer_interval = 101;
 
-	_scumm->_timer->releaseProcedure(&cd_timer_handler);
-	_scumm->_timer->installProcedure(&cd_timer_handler, 1000 * timer_interval, _scumm);
+	_scumm->_timer->removeTimerProc(&cd_timer_handler);
+	_scumm->_timer->installTimerProc(&cd_timer_handler, 1000 * timer_interval, _scumm);
 }
 
 void Sound::stopCDTimer() {
-	_scumm->_timer->releaseProcedure(&cd_timer_handler);
+	_scumm->_timer->removeTimerProc(&cd_timer_handler);
 }
 
 void Sound::playCDTrack(int track, int numLoops, int startFrame, int duration) {

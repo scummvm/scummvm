@@ -73,12 +73,12 @@ void Timer::release()
 {
 }
 
-bool Timer::installProcedure(TimerProc procedure, int32 interval)
+bool Timer::installTimerProc(TimerProc procedure, int32 interval)
 {
 	return SendMsg(TSM_MSGID_ADDTIMER, procedure, interval);
 }
 
-void Timer::releaseProcedure(TimerProc procedure)
+void Timer::removeTimerProc(TimerProc procedure)
 {
 	SendMsg(TSM_MSGID_REMTIMER, procedure, 0);
 }

@@ -52,8 +52,8 @@ public:
 	Timer(OSystem *system);
 	~Timer();
 
-	bool installProcedure(TimerProc procedure, int32 interval, void *refCon);
-	void releaseProcedure(TimerProc procedure);
+	bool installTimerProc(TimerProc procedure, int32 interval, void *refCon);
+	void removeTimerProc(TimerProc procedure);
 
 protected:
 	static int timer_handler(int t);
