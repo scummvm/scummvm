@@ -390,7 +390,7 @@ void ScummEngine_v100he::o100_actorOps() {
 		return;
 	}
 
-	a = derefActorSafe(_curActor, "o72_actorOps");
+	a = derefActorSafe(_curActor, "o100_actorOps");
 	if (!a)
 		return;
 
@@ -447,7 +447,7 @@ void ScummEngine_v100he::o100_actorOps() {
 		for (i = 0; i < k; ++i) {
 			a->setUserCondition(args[i] & 0x7F, args[i] & 0x80);
 		}
-		debug(1,"o72_actorOps: case 21 (%d)", k);
+		debug(1,"o100_actorOps: case 21 (%d)", k);
 		break;
 	case 25:		// SO_COSTUME
 		a->setActorCostume(pop());
@@ -465,7 +465,7 @@ void ScummEngine_v100he::o100_actorOps() {
 	case 57:		// SO_PALETTE
 		j = pop();
 		i = pop();
-		checkRange(255, 0, i, "Illegal palette slot %d");
+		checkRange(255, 0, i, "o100_actorOps: Illegal palette slot %d");
 		a->remapActorPaletteColor(i, j);
 		break;
 	case 59:
@@ -481,7 +481,7 @@ void ScummEngine_v100he::o100_actorOps() {
 		break;
 	case 70:		// SO_SHADOW
 		a->_shadowMode = pop();
-		debug(0, "Set actor XMAP idx to %d", a->_shadowMode);
+		debug(0, "o100_actorOps: Set actor XMAP idx to %d", a->_shadowMode);
 		break;
 	case 74:		// SO_STEP_DIST
 		j = pop();
@@ -564,7 +564,7 @@ void ScummEngine_v100he::o100_actorOps() {
 		k = pop();
 		a->talkUnk = 1;
 		a->setTalkCondition(k);
-		debug(1,"o72_actorOps: case 24 (%d)", k);
+		debug(1,"o100_actorOps: case 24 (%d)", k);
 		break;
 	case 143:		// SO_TEXT_OFFSET
 		a->talkPosY = pop();
@@ -609,7 +609,7 @@ void ScummEngine_v100he::o100_arrayOps() {
 		len = getStackList(list, ARRAYSIZE(list));
 		id = readVar(array);
 		if (id == 0)
-			error("Must DIM a two dimensional array before assigning");
+			error("o100_arrayOps: Must DIM a two dimensional array before assigning");
 		c = pop();
 		while (--len >= 0) {
 			writeArray(array, c, len, list[len]);
@@ -956,7 +956,7 @@ void ScummEngine_v100he::o100_dim2dim2Array() {
 		data = kStringArray;
 		break;
 	default:
-		error("o90_dim2dim2Array: default case %d", type);
+		error("o100_dim2dim2Array: default case %d", type);
 	}
 
 	if (pop() == 2) {
@@ -1212,7 +1212,7 @@ void ScummEngine_v100he::o100_unknown26() {
 		pop();
 		break;
 	default:
-		error("o90_unknown26: Unknown case %d", subOp);
+		error("o100_unknown26: Unknown case %d", subOp);
 	}
 	debug(1,"o100_unknown26 stub (%d)", subOp);
 }
@@ -1277,7 +1277,7 @@ void ScummEngine_v100he::o100_cursorCommand() {
 	case 0x8A:		// SO_CURSOR_SOFT_ON Turn soft cursor on
 		_cursor.state++;
 		if (_cursor.state > 1)
-			error("Cursor state greater than 1 in script");
+			error("o100_cursorCommand: Cursor state greater than 1 in script");
 		break;
 	case 0x8B:		// SO_CURSOR_SOFT_OFF Turn soft cursor off
 		_cursor.state--;
@@ -1306,7 +1306,7 @@ void ScummEngine_v100he::o100_wait() {
 	case 128:		// SO_WAIT_FOR_ACTOR Wait for actor
 		offs = fetchScriptWordSigned();
 		actnum = pop();
-		a = derefActor(actnum, "o6_wait:168");
+		a = derefActor(actnum, "o100_wait:168");
 		if (a->moving)
 			break;
 		return;
