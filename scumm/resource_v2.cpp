@@ -154,7 +154,7 @@ void ScummEngine_v2::readIndexFile() {
 
 	magic = _fileHandle.readUint16LE();
 
-	switch(magic) {
+	switch (magic) {
 		case 0x0100:
 			printf("Enhanced V2 game detected\n");
 			readEnhancedIndexFile();			

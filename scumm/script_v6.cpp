@@ -2769,7 +2769,7 @@ void ScummEngine_v6::o6_kernelGetFunctions() {
 // FIXME: check either some warning will trigger. I am not sure that those
 // keys are queried in scripts at all
 int ScummEngine::getKeyState(int key) {
-	switch(key) {
+	switch (key) {
 	case 0x145:
 		warning("ScummEngine::getKeyState(%x) 'numlock' is probed", key);
 		return 0;

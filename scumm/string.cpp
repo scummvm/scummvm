@@ -242,7 +242,7 @@ void ScummEngine::CHARSET_1() {
 
 		if (_heversion >= 72 && c == code) {
 			c = *buffer++;
-			switch(c) {
+			switch (c) {
 			case 84:
 				i = 0;
 				memset(value, 0, 32);
@@ -284,7 +284,7 @@ void ScummEngine::CHARSET_1() {
 			}
 		} else if (c == 0xFE || c == 0xFF) {
 			c = *buffer++;
-			switch(c) {
+			switch (c) {
 			case 1:
 				goto newLine;
 			case 2:

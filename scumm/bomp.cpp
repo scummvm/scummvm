@@ -115,7 +115,7 @@ void bompApplyMask(byte *line_buffer, byte *mask, byte maskbit, int32 size, byte
 
 void bompApplyShadow(int shadowMode, const byte *shadowPalette, const byte *line_buffer, byte *dst, int32 size, byte transparency, byte HE7Check) {
 	assert(size > 0);
-	switch(shadowMode) {
+	switch (shadowMode) {
 	case 0:
 		bompApplyShadow0(shadowPalette, line_buffer, dst, size, transparency, HE7Check);
 		break;

@@ -30,7 +30,7 @@ void ScummEngine::loadCJKFont() {
 	if ((_gameId == GID_DIG || _gameId == GID_CMI) && (_language == Common::KO_KOR || _language == Common::JA_JPN || _language == Common::ZH_TWN)) {
 		File fp;
 		const char *fontFile = NULL;
-		switch(_language) {
+		switch (_language) {
 		case Common::KO_KOR:
 			fontFile = "korean.fnt";
 			break;
@@ -53,7 +53,7 @@ void ScummEngine::loadCJKFont() {
 			_2byteHeight = fp.readByte();
 
 			int numChar = 0;
-			switch(_language) {
+			switch (_language) {
 			case Common::KO_KOR:
 				numChar = 2350;
 				break;
@@ -120,7 +120,7 @@ static int SJIStoFMTChunk(int f, int s) //convert sjis code to fmt font offset
 	if ((base == 0x7f && s == 0x9e) || (base == 0x9f && s == 0xbe) || (base == 0xbf && s == 0xde))
 		base += 0x20; //correction
 
-	switch(base) {
+	switch (base) {
 	case 0x3f:
 		cr = 0; //3f
 		if (kanjiType == KANA) chunk = 1;
@@ -165,7 +165,7 @@ static int SJIStoFMTChunk(int f, int s) //convert sjis code to fmt font offset
 }
 
 byte *ScummEngine::get2byteCharPtr(int idx) {
-	switch(_language) {
+	switch (_language) {
 	case Common::KO_KOR:
 		idx = ((idx % 256) - 0xb0) * 94 + (idx / 256) - 0xa1;
 		break;

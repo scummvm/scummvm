@@ -897,7 +897,7 @@ void ScummEngine_v2::o2_doSentence() {
 
 	// Execute or print the sentence
 	_opcode = fetchScriptByte();
-	switch(_opcode) {
+	switch (_opcode) {
 	case 0:
 		// Do nothing (besides setting up the sentence above)
 		break;
