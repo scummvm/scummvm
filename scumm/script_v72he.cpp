@@ -1869,13 +1869,13 @@ void ScummEngine_v72he::o72_kernelGetFunctions() {
 		break;
 	case 1001:
 		{
-		double a = args[1] * M_PI / 180.;
+		double a = args[1] * PI / 180.;
 		push((int)(sin(a) * 100000));
 		}
 		break;
 	case 1002:
 		{
-		double a = args[1] * M_PI / 180.;
+		double a = args[1] * PI / 180.;
 		push((int)(cos(a) * 100000));
 		}
 		break;

@@ -864,13 +864,12 @@ void MidiDriver_YM2612::rate(uint16 r)
 		_channel[i]->rate(r);
 }
 
-#define M_PI 3.14159265358979323846
 void MidiDriver_YM2612::createLookupTables() {
 	{
 		int i;
 		sintbl = new int [2048];
 		for (i = 0; i < 2048; i++)
-			sintbl[i] = (int)(0xffff * sin(i/2048.0*2.0*M_PI));
+			sintbl[i] = (int)(0xffff * sin(i/2048.0*2.0*PI));
 	}
 
 	{

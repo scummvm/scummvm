@@ -411,12 +411,12 @@ void ScummEngine_v90he::o90_getGT() {
 }
 
 void ScummEngine_v90he::o90_sin() {
-	double a = pop() * M_PI / 180.;
+	double a = pop() * PI / 180.;
 	push((int)(sin(a) * 100000));	
 }
 
 void ScummEngine_v90he::o90_cos() {
-	double a = pop() * M_PI / 180.;
+	double a = pop() * PI / 180.;
 	push((int)(cos(a) * 100000));	
 }
 
