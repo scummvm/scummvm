@@ -820,25 +820,6 @@ void AkosRenderer::akos16SetupBitReader(const byte *src) {
 	akos16.dataptr = src + 4;
 }
 
-void AkosRenderer::akos16PutOnScreen(byte *dst, const byte *src, byte transparency, int32 count) {
-	if (count <= 0)
-		return;
-
-	switch(_shadow_mode) {
-	case 0:
-		_vm->bompApplyShadow0(src, dst, count, transparency);
-		break;
-	case 1:
-		_vm->bompApplyShadow1(src, dst, count, transparency);
-		break;
-	case 3:
-		_vm->bompApplyShadow3(src, dst, count, transparency);
-		break;
-	default:
-		error("Unknown shadowMode %d", _shadow_mode);
-	}
-}
-
 #define AKOS16_FILL_BITS()                                        \
         if (akos16.numbits <= 8) {                                \
           akos16.bits |= (*akos16.dataptr++) << akos16.numbits;   \
@@ -934,16 +915,16 @@ void AkosRenderer::akos16Decompress(byte *dest, int32 pitch, const byte *src, in
 		akos16SkipData(numskip_before);
 	}
 
-	while (t_height != 0) {
+	assert(t_height > 0);
+	assert(t_width > 0);
+	while (t_height--) {
 		akos16DecodeLine(tmp_buf, t_width, dir);
-		akos16PutOnScreen(dest, akos16.buffer, transparency, t_width);
+		_vm->bompApplyShadow(_shadow_mode, akos16.buffer, dest, t_width, transparency);
 
 		if (numskip_after != 0)	{
 			akos16SkipData(numskip_after);
 		}
 		dest += pitch;
-
-		t_height--;
 	}
 }
 
@@ -964,18 +945,18 @@ void AkosRenderer::akos16DecompressMask(byte *dest, int32 pitch, const byte *src
 
 	maskpitch = _numStrips;
 
-	while (t_height != 0) {
+	assert(t_height > 0);
+	assert(t_width > 0);
+	while (t_height--) {
 		akos16DecodeLine(tmp_buf, t_width, dir);
 		akos16ApplyMask(akos16.buffer, maskptr, (byte)bitpos_start, t_width, transparency);
-		akos16PutOnScreen(dest, akos16.buffer, transparency, t_width);
+		_vm->bompApplyShadow(_shadow_mode, akos16.buffer, dest, t_width, transparency);
 
 		if (numskip_after != 0)	{
 			akos16SkipData(numskip_after);
 		}
 		dest += pitch;
 		maskptr += maskpitch;
-
-		t_height--;
 	}
 }
 

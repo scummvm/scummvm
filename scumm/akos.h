@@ -74,14 +74,13 @@ public:
 protected:
 	byte drawLimb(const CostumeData &cost, int limb);
 
-	byte codec1(int _xmoveCur, int _ymoveCur);
+	byte codec1(int xmoveCur, int ymoveCur);
 	void codec1_genericDecode();
 
-	byte codec5(int _xmoveCur, int _ymoveCur);
+	byte codec5(int xmoveCur, int ymoveCur);
 
-	byte codec16(int _xmoveCur, int _ymoveCur);
+	byte codec16(int xmoveCur, int ymoveCur);
 	void akos16SetupBitReader(const byte *src);
-	void akos16PutOnScreen(byte *dest, const byte *src, byte transparency, int32 count);
 	void akos16SkipData(int32 numskip);
 	void akos16DecodeLine(byte *buf, int32 numbytes, int32 dir);
 	void akos16ApplyMask(byte *dest, byte *maskptr, byte bits, int32 count, byte fillwith);

@@ -902,19 +902,20 @@ public:
 
 	void drawBomp(const BompDrawData &bd, int decode_mode, int mask);
 protected:
-	void decompressBomp(byte *dst, const byte *src, int w, int h);
-	int32 setupBompScale(byte *scaling, int32 size, byte scale);
-	void bompScaleFuncX(byte *line_buffer, byte *scaling_x_ptr, byte skip, int32 size);
-	int32 bompDecodeLineMode0(const byte *src, byte *line_buffer, int32 size);
-	int32 bompDecodeLineMode1(const byte *src, byte *line_buffer, int32 size);
-	int32 bompDecodeLineMode3(const byte *src, byte *line_buffer, int32 size);
-	void bompApplyMask(byte *line_buffer, byte *mask_out, byte bits, int32 size);
+	static void decompressBomp(byte *dst, const byte *src, int w, int h);
+	static int32 setupBompScale(byte *scaling, int32 size, byte scale);
+	static void bompScaleFuncX(byte *line_buffer, byte *scaling_x_ptr, byte skip, int32 size);
+	static int32 bompDecodeLineMode0(const byte *src, byte *line_buffer, int32 size);
+	static int32 bompDecodeLineMode1(const byte *src, byte *line_buffer, int32 size);
+	static int32 bompDecodeLineMode3(const byte *src, byte *line_buffer, int32 size);
+	static void bompApplyMask(byte *line_buffer, byte *mask_out, byte bits, int32 size);
 public:
-	void bompApplyShadow0(const byte *line_buffer, byte *dst, int32 size, byte transparency = 255);
-	void bompApplyShadow1(const byte *line_buffer, byte *dst, int32 size, byte transparency = 255);
-	void bompApplyShadow3(const byte *line_buffer, byte *dst, int32 size, byte transparency = 255);
+	void bompApplyShadow(int shadowMode, const byte *line_buffer, byte *dst, int32 size, byte transparency) const;
 protected:
-	void bompApplyActorPalette(byte *line_buffer, int32 size);
+	void bompApplyShadow0(const byte *line_buffer, byte *dst, int32 size, byte transparency) const;
+	void bompApplyShadow1(const byte *line_buffer, byte *dst, int32 size, byte transparency) const;
+	void bompApplyShadow3(const byte *line_buffer, byte *dst, int32 size, byte transparency) const;
+	void bompApplyActorPalette(byte *line_buffer, int32 size) const;
 
 	bool _shakeEnabled;
 	uint _shakeFrame;

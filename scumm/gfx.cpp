@@ -3173,6 +3173,12 @@ void Scumm::useBompCursor(const byte *im, int width, int height) {
 	_cursor.height = height;
 	_cursor.animate = 0;
 
+	// Skip the header
+	if (_features & GF_AFTER_V8) {
+		im += 16;
+	} else {
+		im += 18;
+	}
 	decompressBomp(_grabbedCursor, im, width, height);
 
 	updateCursor();
@@ -3254,24 +3260,25 @@ int32 Scumm::bompDecodeLineMode1(const byte *src, byte *line_buffer, int32 size)
 	if (size <= 0)
 		return t_size;
 	
-	int32 len = size;
+	int len, num;
+	byte code, color;
+
+	len = size;
 	src += 2;
 	while (len) {
-		byte code = *src++;
-		int32 num = (code >> 1) + 1;
+		code = *src++;
+		num = (code >> 1) + 1;
 		if (num > len)
 			num = len;
 		len -= num;
 		if (code & 1) {
-			byte color = *src++;
-			do
-				*line_buffer++ = color;
-			while (--num);
+			color = *src++;
+			memset(line_buffer, color, num);
 		} else {
-			do
-				*line_buffer++ = *src++;
-			while (--num);
+			memcpy(line_buffer, src, num);
+			src += num;
 		}
+		line_buffer += num;
 	}
 	return t_size;
 }
@@ -3282,23 +3289,24 @@ int32 Scumm::bompDecodeLineMode3(const byte *src, byte *line_buffer, int32 size)
 	if (size <= 0)
 		return t_size;
 	
-	int32 len = size;
+	int len, num;
+	byte code, color;
+
+	len = size;
 	src += 2;
 	while (len) {
-		byte code = *src++;
-		int32 num = (code >> 1) + 1;
+		code = *src++;
+		num = (code >> 1) + 1;
 		if (num > len)
 			num = len;
 		len -= num;
+		line_buffer -= num;
 		if (code & 1) {
-			byte color = *src++;
-			do
-				*--line_buffer = color;
-			while (--num);
+			color = *src++;
+			memset(line_buffer, color, num);
 		} else {
-			do
-				*--line_buffer = *src++;
-			while (--num);
+			memcpy(line_buffer, src, num);
+			src += num;
 		}
 	}
 	return t_size;
@@ -3320,7 +3328,23 @@ void Scumm::bompApplyMask(byte *line_buffer, byte *mask_src, byte bits, int32 si
 	}
 }
 
-void Scumm::bompApplyShadow0(const byte *line_buffer, byte *dst, int32 size, byte transparency) {
+void Scumm::bompApplyShadow(int shadowMode, const byte *line_buffer, byte *dst, int32 size, byte transparency) const {
+	assert(size > 0);
+	switch(shadowMode) {
+	case 0:
+		bompApplyShadow0(line_buffer, dst, size, transparency);
+		break;
+	case 1:
+		bompApplyShadow1(line_buffer, dst, size, transparency);
+		break;
+	case 3:
+		bompApplyShadow3(line_buffer, dst, size, transparency);
+		break;
+	default:
+		error("Unknown shadow mode %d", shadowMode);
+	}
+}
+void Scumm::bompApplyShadow0(const byte *line_buffer, byte *dst, int32 size, byte transparency) const {
 	while(size-- > 0) {
 		byte tmp = *line_buffer++;
 		if (tmp != transparency) {
@@ -3330,7 +3354,7 @@ void Scumm::bompApplyShadow0(const byte *line_buffer, byte *dst, int32 size, byt
 	}
 }
 
-void Scumm::bompApplyShadow1(const byte *line_buffer, byte *dst, int32 size, byte transparency) {
+void Scumm::bompApplyShadow1(const byte *line_buffer, byte *dst, int32 size, byte transparency) const {
 	while(size-- > 0) {
 		byte tmp = *line_buffer++;
 		if (tmp != transparency) {
@@ -3343,7 +3367,7 @@ void Scumm::bompApplyShadow1(const byte *line_buffer, byte *dst, int32 size, byt
 	}
 }
 
-void Scumm::bompApplyShadow3(const byte *line_buffer, byte *dst, int32 size, byte transparency) {
+void Scumm::bompApplyShadow3(const byte *line_buffer, byte *dst, int32 size, byte transparency) const {
 	while(size-- > 0) {
 		byte tmp = *line_buffer++;
 		if (tmp != transparency) {
@@ -3356,7 +3380,7 @@ void Scumm::bompApplyShadow3(const byte *line_buffer, byte *dst, int32 size, byt
 	}
 }
 
-void Scumm::bompApplyActorPalette(byte *line_buffer, int32 size) {
+void Scumm::bompApplyActorPalette(byte *line_buffer, int32 size) const {
 	if (_bompActorPalettePtr != 0) {
 		*(_bompActorPalettePtr + 255) = 255;
 		while(1) {
@@ -3390,13 +3414,6 @@ void Scumm::bompScaleFuncX(byte *line_buffer, byte *scaling_x_ptr, byte skip, in
 void Scumm::decompressBomp(byte *dst, const byte *src, int w, int h) {
 	int len, num;
 	byte code, color;
-
-	// Skip the header
-	if (_features & GF_AFTER_V8) {
-		src += 16;
-	} else {
-		src += 18;
-	}
 
 	do {
 		len = w;
@@ -3532,20 +3549,7 @@ void Scumm::drawBomp(const BompDrawData &bd, int decode_mode, int mask) {
 	
 			bompApplyMask(line_ptr, charset_mask, bits, clip_right);
 			bompApplyActorPalette(line_ptr, clip_right);
-	
-			switch(bd.shadowMode) {
-			case 0:
-				bompApplyShadow0(line_ptr, dst, clip_right);
-				break;
-			case 1:
-				bompApplyShadow1(line_ptr, dst, clip_right);
-				break;
-			case 3:
-				bompApplyShadow3(line_ptr, dst, clip_right);
-				break;
-			default:
-				error("Unknown bomp shadowMode %d", bd.shadowMode);
-			}
+			bompApplyShadow(bd.shadowMode, line_ptr, dst, clip_right, 255);
 		}
 
 		mask_out += mask_pitch;
