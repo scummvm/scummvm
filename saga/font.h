@@ -20,14 +20,8 @@
  * $Header$
  *
  */
-/*
 
- Description:   
- 
-    Font management and font drawing header file
-
- Notes: 
-*/
+// Font management and font drawing header file
 
 #ifndef SAGA_FONT_H__
 #define SAGA_FONT_H__
@@ -36,18 +30,17 @@ namespace Saga {
 
 #define R_FONT_DBGLVL R_DEBUG_NONE
 
-#define R_FONT_SHOWUNDEFINED 1	/* Define to draw undefined characters 
-				 * as ?'s */
+#define R_FONT_SHOWUNDEFINED 1	// Define to draw undefined characters * as ?'s
 
-/* The first defined character (!) is the only one that may 
-   have a valid offset of '0' */
+// The first defined character (!) is the only one that may 
+// have a valid offset of '0'
 #define R_FONT_FIRSTCHAR 33
 
 #define R_FONT_CH_SPACE 32
 #define R_FONT_CH_QMARK 63
 
-/* Minimum font header size without font data 
-   (6 + 512 + 256 + 256 + 256 ) */
+// Minimum font header size without font data 
+// (6 + 512 + 256 + 256 + 256 )
 #define R_FONT_DESCSIZE 1286
 
 #define R_FONT_CHARCOUNT 256
@@ -56,35 +49,27 @@ namespace Saga {
 #define SAGA_FONT_HEADER_LEN 6
 
 struct R_FONT_HEADER {
-
 	int c_height;
 	int c_width;
 	int row_length;
-
 };
 
 struct FONT_CHAR_ENTRY {
-
 	int index;
 	int byte_width;
 	int width;
 	int flag;
 	int tracking;
-
 };
 
 struct R_FONT_STYLE {
-
 	R_FONT_HEADER hdr;
 	FONT_CHAR_ENTRY fce[256];
-
 	byte *font_free_p;
 	byte *font_p;
-
 };
 
 struct R_FONT {
-
 	uint32 font_rn;
 	int font_id;
 
@@ -95,13 +80,10 @@ struct R_FONT {
 
 	byte *res_data;
 	size_t res_len;
-
 };
 
 struct R_FONT_MODULE {
-
 	int init;
-
 	R_RSCFILE_CONTEXT *font_ctxt;
 
 	int n_fonts;
@@ -109,24 +91,15 @@ struct R_FONT_MODULE {
 
 	int err_n;
 	const char *err_str;
-
 };
 
 int FONT_Load(uint32 font_rn, int font_id);
-
 static R_FONT_STYLE *FONT_CreateOutline(R_FONT_STYLE * src_font);
-
-int
-FONT_Out(R_FONT_STYLE * font,
-    R_SURFACE * ds,
-    const char *draw_str,
-    size_t draw_str_ct, int text_x, int text_y, int color);
-
+int FONT_Out(R_FONT_STYLE *font, R_SURFACE * ds, const char *draw_str, size_t draw_str_ct,
+			int text_x, int text_y, int color);
 static int GetByteLen(int num_bits);
-
 extern int CharMap[];
 
 } // End of namespace Saga
 
-#endif				/* R_FONT_H__ */
-/* end "r_font.h" */
+#endif

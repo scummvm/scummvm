@@ -20,28 +20,16 @@
  * $Header$
  *
  */
-/*
 
- Description:   
- 
-    Font management and font drawing module
-
- Notes: 
-*/
+// Font management and font drawing module
 
 #include "reinherit.h"
 
 #include "yslib.h"
 
-/*
- * Uses the following modules:
-\*--------------------------------------------------------------------------*/
 #include "rscfile_mod.h"
 #include "game_mod.h"
 
-/*
- * Begin module
-\*--------------------------------------------------------------------------*/
 #include "font_mod.h"
 #include "font.h"
 
@@ -49,46 +37,34 @@ namespace Saga {
 
 static R_FONT_MODULE FontModule;
 
-int FONT_Init(void)
-{
-
+int FONT_Init() {
 	R_GAME_FONTDESC *gamefonts;
 	int i;
 
 	if (FontModule.init) {
-
 		FontModule.err_str = "Font module already initialized.";
-
 		return R_FAILURE;
 	}
 
-	/* Load font module resource context 
-	 * \*------------------------------------------------------------ */
+	// Load font module resource context 
 	if (GAME_GetFileContext(&FontModule.font_ctxt,
 		R_GAME_RESOURCEFILE, 0) != R_SUCCESS) {
-
 		FontModule.err_str = "Couldn't get resource context.";
-
 		return R_FAILURE;
 	}
 
-	/* Allocate font table
-	 * \*------------------------------------------------------------ */
+	// Allocate font table
 	GAME_GetFontInfo(&gamefonts, &FontModule.n_fonts);
 
 	assert(FontModule.n_fonts > 0);
 
-	FontModule.fonts = (R_FONT **)malloc(FontModule.n_fonts *
-	    sizeof *FontModule.fonts);
+	FontModule.fonts = (R_FONT **)malloc(FontModule.n_fonts * sizeof *FontModule.fonts);
 	if (FontModule.fonts == NULL) {
-
 		FontModule.err_str = "Memory allocation failure.";
-
 		return R_MEM;
 	}
 
 	for (i = 0; i < FontModule.n_fonts; i++) {
-
 		FONT_Load(gamefonts[i].font_rn, gamefonts[i].font_id);
 	}
 
@@ -97,47 +73,38 @@ int FONT_Init(void)
 	return R_SUCCESS;
 }
 
-int FONT_Shutdown(void)
-{
-
+int FONT_Shutdown() {
 //	int i;
 
 	R_printf(R_STDOUT, "FONT_Shutdown(): Freeing fonts.\n");
 /*
-    for ( i = 0 ; i < R_FONT_COUNT ; i ++ ) {
+	for ( i = 0 ; i < R_FONT_COUNT ; i ++ ) {
+		if ( FontModule.fonts[i] != NULL ) {
+			if ( FontModule.fonts[i]->normal_loaded ) {
+				free( FontModule.fonts[i]->normal->font_free_p );
+				free( FontModule.fonts[i]->normal );
+			}
 
-        if ( FontModule.fonts[i] != NULL ) {
+			if ( FontModule.fonts[i]->outline_loaded ) {
+				free( FontModule.fonts[i]->outline->font_free_p );
+				free( FontModule.fonts[i]->outline );
+			}
+		}
 
-            if ( FontModule.fonts[i]->normal_loaded ) {
-                free( FontModule.fonts[i]->normal->font_free_p );
-                free( FontModule.fonts[i]->normal );
-            }
-
-            if ( FontModule.fonts[i]->outline_loaded ) {
-                free( FontModule.fonts[i]->outline->font_free_p );
-                free( FontModule.fonts[i]->outline );
-            }
-        }
-
-        free( FontModule.fonts[i] );
-    }
+		free( FontModule.fonts[i] );
+	}
 */
 	return R_SUCCESS;
 }
 
-int FONT_Load(uint32 font_rn, int font_id)
-{
-
+int FONT_Load(uint32 font_rn, int font_id) {
 	R_FONT_HEADER fh;
 	R_FONT *font;
 	R_FONT_STYLE *normal_font;
-
 	byte *fontres_p;
 	size_t fontres_len;
 	size_t remain;
-
 	const byte *read_p;
-
 	int nbits;
 	int c;
 
@@ -145,35 +112,27 @@ int FONT_Load(uint32 font_rn, int font_id)
 		return R_FAILURE;
 	}
 
-	/* Load font resource
-	 * \*------------------------------------------------------------- */
-	if (RSC_LoadResource(FontModule.font_ctxt,
-		font_rn, &fontres_p, &fontres_len) != R_SUCCESS) {
-
+	// Load font resource
+	if (RSC_LoadResource(FontModule.font_ctxt, font_rn, &fontres_p, &fontres_len) != R_SUCCESS) {
 		FontModule.err_str = "Couldn't load font resource.";
-
 		return R_FAILURE;
 	}
 
 	if (fontres_len < R_FONT_DESCSIZE) {
-
 		FontModule.err_str = "Invalid font length.";
 	}
 
 	read_p = fontres_p;
 	remain = fontres_len;
 
-	/* Create new font structure
-	 * \*------------------------------------------------------------- */
+	// Create new font structure
 	font = (R_FONT *)malloc(sizeof *font);
 	if (font == NULL) {
 		FontModule.err_str = "Memory allocation error.";
-
 		return R_MEM;
 	}
 
-	/* Read font header
-	 * \*------------------------------------------------------------- */
+	// Read font header
 	fh.c_height = ys_read_u16_le(read_p, &read_p);
 	fh.c_width = ys_read_u16_le(read_p, &read_p);
 	fh.row_length = ys_read_u16_le(read_p, &read_p);
@@ -188,14 +147,11 @@ int FONT_Load(uint32 font_rn, int font_id)
 	R_printf(R_STDOUT, "Row padding:\t%d\n", fh.row_length);
 #endif
 
-	/* Create normal font style
-	 * \*------------------------------------------------------------- */
+	// Create normal font style
 	normal_font = (R_FONT_STYLE *)malloc(sizeof *normal_font);
 	if (normal_font == NULL) {
-
 		FontModule.err_str = "Memory allocation error.";
 		free(font);
-
 		return R_MEM;
 	}
 
@@ -209,8 +165,7 @@ int FONT_Load(uint32 font_rn, int font_id)
 	}
 
 	for (c = 0; c < R_FONT_CHARCOUNT; c++) {
-		nbits = normal_font->fce[c].width =
-		    ys_read_u8(read_p, &read_p);
+		nbits = normal_font->fce[c].width = ys_read_u8(read_p, &read_p);
 		normal_font->fce[c].byte_width = GetByteLen(nbits);
 	}
 
@@ -223,7 +178,6 @@ int FONT_Load(uint32 font_rn, int font_id)
 	}
 
 	if ((read_p - fontres_p) != R_FONT_DESCSIZE) {
-
 		R_printf(R_STDERR, "Invalid font resource size.\n");
 		return R_FAILURE;
 	}
@@ -233,34 +187,25 @@ int FONT_Load(uint32 font_rn, int font_id)
 	font->normal = normal_font;
 	font->normal_loaded = 1;
 
-	/* Create outline font style
-	 * \*------------------------------------------------------------- */
+	// Create outline font style
 	font->outline = FONT_CreateOutline(normal_font);
 	font->outline_loaded = 1;
 
-	/* Set font data 
-	 * \*------------------------------------------------------------- */
-
+	// Set font data 
 	FontModule.fonts[font_id] = font;
 
 	return R_SUCCESS;
 }
 
-int FONT_GetHeight(int font_id)
-{
-
+int FONT_GetHeight(int font_id) {
 	R_FONT *font;
 
 	if (!FontModule.init) {
 		return R_FAILURE;
 	}
 
-	if ((font_id < 0) ||
-	    (font_id >= FontModule.n_fonts) ||
-	    (FontModule.fonts[font_id] == NULL)) {
-
+	if ((font_id < 0) || (font_id >= FontModule.n_fonts) || (FontModule.fonts[font_id] == NULL)) {
 		FontModule.err_str = "Invalid font id.";
-
 		return R_FAILURE;
 	}
 
@@ -269,55 +214,41 @@ int FONT_GetHeight(int font_id)
 	return font->normal->hdr.c_height;
 }
 
-static R_FONT_STYLE *FONT_CreateOutline(R_FONT_STYLE * src_font)
-{
-
+static R_FONT_STYLE *FONT_CreateOutline(R_FONT_STYLE *src_font) {
 	R_FONT_STYLE *new_font;
 	unsigned char *new_font_data;
 	size_t new_font_data_len;
-
 	int s_width = src_font->hdr.c_width;
 	int s_height = src_font->hdr.c_height;
-
 	int new_row_len = 0;
 	int row;
 	int i;
-
 	int index;
 	size_t index_offset = 0;
-
 	int new_byte_width;
 	int old_byte_width;
-
 	int current_byte;
-
 	unsigned char *base_ptr;
 	unsigned char *src_ptr;
 	unsigned char *dest_ptr1;
 	unsigned char *dest_ptr2;
 	unsigned char *dest_ptr3;
-
 	unsigned char c_rep;
 
-	/* Create new font style structure
-	 * \*------------------------------------------------------------- */
+	// Create new font style structure
 	new_font = (R_FONT_STYLE *)malloc(sizeof *new_font);
 
 	if (new_font == NULL) {
 		FontModule.err_str = "Memory allocation error.";
-
 		return NULL;
 	}
 
 	memset(new_font, 0, sizeof *new_font);
 
-	/* Populate new font style character data 
-	 * \*------------------------------------------------------------- */
+	// Populate new font style character data 
 	for (i = 0; i < R_FONT_CHARCOUNT; i++) {
-
 		new_byte_width = 0;
 		old_byte_width = 0;
-
 		index = src_font->fce[i].index;
 		if ((index > 0) || (i == R_FONT_FIRSTCHAR)) {
 			index += index_offset;
@@ -328,9 +259,7 @@ static R_FONT_STYLE *FONT_CreateOutline(R_FONT_STYLE * src_font)
 		new_font->fce[i].flag = src_font->fce[i].flag;
 
 		if (src_font->fce[i].width != 0) {
-
-			new_byte_width =
-			    GetByteLen(src_font->fce[i].width + 2);
+			new_byte_width = GetByteLen(src_font->fce[i].width + 2);
 			old_byte_width = GetByteLen(src_font->fce[i].width);
 
 			if (new_byte_width > old_byte_width) {
@@ -351,14 +280,12 @@ static R_FONT_STYLE *FONT_CreateOutline(R_FONT_STYLE * src_font)
 	new_font->hdr.c_height = s_height + 2;
 	new_font->hdr.row_length = new_row_len;
 
-	/* Allocate new font representation storage 
-	 * \*------------------------------------------------------------- */
+	// Allocate new font representation storage 
 	new_font_data_len = new_row_len * (s_height + 2);
 	new_font_data = (unsigned char *)malloc(new_font_data_len);
 
 	if (new_font_data == NULL) {
 		FontModule.err_str = "Memory allocation error.";
-
 		return NULL;
 	}
 
@@ -367,113 +294,60 @@ static R_FONT_STYLE *FONT_CreateOutline(R_FONT_STYLE * src_font)
 	new_font->font_free_p = new_font_data;
 	new_font->font_p = new_font_data;
 
-	/* Generate outline font representation
-	 * \*------------------------------------------------------------- */
+	// Generate outline font representation
 	for (i = 0; i < R_FONT_CHARCOUNT; i++) {
-
 		for (row = 0; row < s_height; row++) {
-
-			for (current_byte = 0;
-			    current_byte < new_font->fce[i].byte_width;
-			    current_byte++) {
-
-				base_ptr =
-				    new_font->font_p + new_font->fce[i].index +
-				    current_byte;
-
-				dest_ptr1 =
-				    base_ptr + new_font->hdr.row_length * row;
-				dest_ptr2 =
-				    base_ptr +
-				    new_font->hdr.row_length * (row + 1);
-				dest_ptr3 =
-				    base_ptr +
-				    new_font->hdr.row_length * (row + 2);
-
+			for (current_byte = 0; current_byte < new_font->fce[i].byte_width; current_byte++) {
+				base_ptr = new_font->font_p + new_font->fce[i].index + current_byte;
+				dest_ptr1 = base_ptr + new_font->hdr.row_length * row;
+				dest_ptr2 = base_ptr + new_font->hdr.row_length * (row + 1);
+				dest_ptr3 = base_ptr + new_font->hdr.row_length * (row + 2);
 				if (current_byte > 0) {
-
-					/* Get last two columns from previous byte */
-					src_ptr = src_font->font_p +
-					    src_font->hdr.row_length * row +
-					    src_font->fce[i].index +
-					    (current_byte - 1);
-
+					// Get last two columns from previous byte
+					src_ptr = src_font->font_p + src_font->hdr.row_length * row + src_font->fce[i].index +
+								(current_byte - 1);
 					c_rep = *src_ptr;
-					*dest_ptr1 |=
-					    ((c_rep << 6) | (c_rep << 7));
-					*dest_ptr2 |=
-					    ((c_rep << 6) | (c_rep << 7));
-					*dest_ptr3 |=
-					    ((c_rep << 6) | (c_rep << 7));
+					*dest_ptr1 |= ((c_rep << 6) | (c_rep << 7));
+					*dest_ptr2 |= ((c_rep << 6) | (c_rep << 7));
+					*dest_ptr3 |= ((c_rep << 6) | (c_rep << 7));
 				}
 
 				if (current_byte < src_font->fce[i].byte_width) {
-
-					src_ptr = src_font->font_p +
-					    src_font->hdr.row_length * row +
-					    src_font->fce[i].index +
-					    current_byte;
-
+					src_ptr = src_font->font_p + src_font->hdr.row_length * row + src_font->fce[i].index +
+								current_byte;
 					c_rep = *src_ptr;
-					*dest_ptr1 |=
-					    c_rep | (c_rep >> 1) | (c_rep >>
-					    2);
-					*dest_ptr2 |=
-					    c_rep | (c_rep >> 1) | (c_rep >>
-					    2);
-					*dest_ptr3 |=
-					    c_rep | (c_rep >> 1) | (c_rep >>
-					    2);
+					*dest_ptr1 |= c_rep | (c_rep >> 1) | (c_rep >> 2);
+					*dest_ptr2 |= c_rep | (c_rep >> 1) | (c_rep >> 2);
+					*dest_ptr3 |= c_rep | (c_rep >> 1) | (c_rep >> 2);
 				}
 			}
 		}
 
-		/* "Hollow out" character to prevent overdraw */
+		// "Hollow out" character to prevent overdraw
 		for (row = 0; row < s_height; row++) {
-
-			for (current_byte = 0;
-			    current_byte < new_font->fce[i].byte_width;
-			    current_byte++) {
-
-				dest_ptr2 = new_font->font_p +
-				    new_font->hdr.row_length * (row + 1) +
-				    new_font->fce[i].index + current_byte;
-
+			for (current_byte = 0; current_byte < new_font->fce[i].byte_width; current_byte++) {
+				dest_ptr2 = new_font->font_p +  new_font->hdr.row_length * (row + 1) + new_font->fce[i].index + current_byte;
 				if (current_byte > 0) {
-
-					/* Get last two columns from previous byte */
-					src_ptr = src_font->font_p +
-					    src_font->hdr.row_length * row +
-					    src_font->fce[i].index +
-					    (current_byte - 1);
-
-					*dest_ptr2 &=
-					    ((*src_ptr << 7) ^ 0xFFU);
+					// Get last two columns from previous byte
+					src_ptr = src_font->font_p + src_font->hdr.row_length * row + src_font->fce[i].index +
+								(current_byte - 1);
+					*dest_ptr2 &= ((*src_ptr << 7) ^ 0xFFU);
 				}
 
 				if (current_byte < src_font->fce[i].byte_width) {
-
-					src_ptr = src_font->font_p +
-					    src_font->hdr.row_length * row +
-					    src_font->fce[i].index +
-					    current_byte;
-
-					*dest_ptr2 &=
-					    ((*src_ptr >> 1) ^ 0xFFU);
+					src_ptr = src_font->font_p + src_font->hdr.row_length * row + src_font->fce[i].index +
+								current_byte;
+					*dest_ptr2 &= ((*src_ptr >> 1) ^ 0xFFU);
 				}
 			}
 		}
 	}
 
 	return new_font;
-
 }
 
-static int GetByteLen(int num_bits)
-{
-
+static int GetByteLen(int num_bits) {
 	int byte_len;
-
 	byte_len = num_bits / 8;
 
 	if (num_bits % 8) {
@@ -483,17 +357,11 @@ static int GetByteLen(int num_bits)
 	return byte_len;
 }
 
-int
-FONT_GetStringWidth(int font_id,
-    const char *test_str, size_t test_str_ct, int flags)
-/*--------------------------------------------------------------------------*\
- * Returns the horizontal length in pixels of the graphical representation
- *  of at most 'test_str_ct' characters of the string 'test_str', taking
- *  into account any formatting options specified by 'flags'.
- * If 'test_str_ct' is 0, all characters of 'test_str' are counted.
-\*--------------------------------------------------------------------------*/
-{
-
+// Returns the horizontal length in pixels of the graphical representation
+// of at most 'test_str_ct' characters of the string 'test_str', taking
+// into account any formatting options specified by 'flags'.
+// If 'test_str_ct' is 0, all characters of 'test_str' are counted.
+int FONT_GetStringWidth(int font_id, const char *test_str, size_t test_str_ct, int flags) {
 	R_FONT *font;
 	size_t ct;
 	int width = 0;
@@ -504,12 +372,8 @@ FONT_GetStringWidth(int font_id,
 		return R_FAILURE;
 	}
 
-	if ((font_id < 0) ||
-	    (font_id >= FontModule.n_fonts) ||
-	    (FontModule.fonts[font_id] == NULL)) {
-
+	if ((font_id < 0) || (font_id >= FontModule.n_fonts) || (FontModule.fonts[font_id] == NULL)) {
 		FontModule.err_str = "Invalid font id.";
-
 		return R_FAILURE;
 	}
 
@@ -518,15 +382,11 @@ FONT_GetStringWidth(int font_id,
 
 	txt_p = (const byte *) test_str;
 
-	for (ct = test_str_ct;
-	    *txt_p && (!test_str_ct || ct > 0); txt_p++, ct--) {
-
+	for (ct = test_str_ct; *txt_p && (!test_str_ct || ct > 0); txt_p++, ct--) {
 		ch = *txt_p & 0xFFU;
-
-		/* Translate character */
+		// Translate character
 		ch = CharMap[ch];
 		assert(ch < R_FONT_CHARCOUNT);
-
 		width += font->normal->fce[ch].tracking;
 	}
 
@@ -537,14 +397,8 @@ FONT_GetStringWidth(int font_id,
 	return width;
 }
 
-int
-FONT_Draw(int font_id,
-    R_SURFACE * ds,
-    const char *draw_str,
-    size_t draw_str_ct,
-    int text_x, int text_y, int color, int effect_color, int flags)
-{
-
+int FONT_Draw(int font_id, R_SURFACE *ds, const char *draw_str, size_t draw_str_ct,
+			int text_x, int text_y, int color, int effect_color, int flags) {
 	R_FONT *font;
 
 	if (!FontModule.init) {
@@ -553,56 +407,31 @@ FONT_Draw(int font_id,
 		return R_FAILURE;
 	}
 
-	if ((font_id < 0) ||
-	    (font_id >= FontModule.n_fonts) ||
-	    (FontModule.fonts[font_id] == NULL)) {
-
+	if ((font_id < 0) || (font_id >= FontModule.n_fonts) || (FontModule.fonts[font_id] == NULL)) {
 		FontModule.err_str = "Invalid font id.";
-
 		return R_FAILURE;
 	}
 
 	font = FontModule.fonts[font_id];
 
-	if (flags & FONT_OUTLINE) {
-
-		FONT_Out(font->outline,
-		    ds,
-		    draw_str,
-		    draw_str_ct, text_x - 1, text_y - 1, effect_color);
-
-		FONT_Out(font->normal,
-		    ds, draw_str, draw_str_ct, text_x, text_y, color);
+	if (flags & FONT_OUTLINE) { 
+		FONT_Out(font->outline, ds, draw_str, draw_str_ct, text_x - 1, text_y - 1, effect_color);
+		FONT_Out(font->normal, ds, draw_str, draw_str_ct, text_x, text_y, color);
 	} else if (flags & FONT_SHADOW) {
-
-		FONT_Out(font->normal,
-		    ds,
-		    draw_str,
-		    draw_str_ct, text_x - 1, text_y + 1, effect_color);
-
-		FONT_Out(font->normal,
-		    ds, draw_str, draw_str_ct, text_x, text_y, color);
-	} else {		/* FONT_NORMAL */
-
-		FONT_Out(font->normal,
-		    ds, draw_str, draw_str_ct, text_x, text_y, color);
+		FONT_Out(font->normal, ds, draw_str, draw_str_ct, text_x - 1, text_y + 1, effect_color);
+		FONT_Out(font->normal, ds, draw_str, draw_str_ct, text_x, text_y, color);
+	} else { // FONT_NORMAL
+		FONT_Out(font->normal, ds, draw_str, draw_str_ct, text_x, text_y, color);
 	}
 
 	return R_SUCCESS;
 }
 
-int
-FONT_Out(R_FONT_STYLE * draw_font,
-    R_SURFACE * ds,
-    const char *draw_str,
-    size_t draw_str_ct, int text_x, int text_y, int color)
-{
-
+int FONT_Out(R_FONT_STYLE * draw_font, R_SURFACE * ds, const char *draw_str, size_t draw_str_ct,
+				int text_x, int text_y, int color) {
 	const byte *draw_str_p;
-
 	byte *c_data_ptr;
 	int c_code;
-
 	int char_row;
 
 	byte *output_ptr;
@@ -615,105 +444,78 @@ FONT_Out(R_FONT_STYLE * draw_font,
 	int c_byte_len;
 	int c_byte;
 	int c_bit;
-
 	int ct;
 
 	if ((text_x > ds->buf_w) || (text_y > ds->buf_h)) {
-		/* Output string can't be visible */
+		// Output string can't be visible
 		return R_SUCCESS;
 	}
 
 	draw_str_p = (const byte *) draw_str;
 	ct = draw_str_ct;
 
-	/* Draw string one character at a time, maximum of 'draw_str'_ct 
-	 * characters, or no limit if 'draw_str_ct' is 0 */
+	// Draw string one character at a time, maximum of 'draw_str'_ct 
+	// characters, or no limit if 'draw_str_ct' is 0
 	for (; *draw_str_p && (!draw_str_ct || ct); draw_str_p++, ct--) {
-
 		c_code = *draw_str_p & 0xFFU;
 
-		/* Translate character */
+		// Translate character
 		c_code = CharMap[c_code];
 		assert(c_code < R_FONT_CHARCOUNT);
 
-		/* Check if character is defined */
-		if ((draw_font->fce[c_code].index == 0) &&
-		    (c_code != R_FONT_FIRSTCHAR)) {
-
-#           if R_FONT_SHOWUNDEFINED
-
+		// Check if character is defined
+		if ((draw_font->fce[c_code].index == 0) && (c_code != R_FONT_FIRSTCHAR)) {
+#if R_FONT_SHOWUNDEFINED
 			if (c_code == R_FONT_CH_SPACE) {
 				text_x += draw_font->fce[c_code].tracking;
 				continue;
 			}
 			c_code = R_FONT_CH_QMARK;
-
-#           else
-
-			/* Character code is not defined, but advance tracking
-			 * ( Not defined if offset is 0, except for 33 ('!') which
-			 *   is defined ) */
+#else
+			// Character code is not defined, but advance tracking
+			// ( Not defined if offset is 0, except for 33 ('!') which
+			//   is defined )
 			text_x += draw_font->fce[c_code].tracking;
 			continue;
-
 #endif
 		}
 
-		/* Get length of character in bytes */
+		// Get length of character in bytes
 		c_byte_len = ((draw_font->fce[c_code].width - 1) / 8) + 1;
-
-		row_limit = (ds->buf_h < (text_y + draw_font->hdr.c_height))
-		    ? ds->buf_h : text_y + draw_font->hdr.c_height;
-
+		row_limit = (ds->buf_h < (text_y + draw_font->hdr.c_height)) ? ds->buf_h : text_y + draw_font->hdr.c_height;
 		char_row = 0;
 
 		for (row = text_y; row < row_limit; row++, char_row++) {
-
-			/* Clip negative rows */
+			// Clip negative rows */
 			if (row < 0) {
 				continue;
 			}
 
 			output_ptr = ds->buf + (ds->buf_pitch * row) + text_x;
-
-			output_ptr_min = ds->buf + (ds->buf_pitch * row) +
-			    (text_x > 0 ? text_x : 0);
-
+			output_ptr_min = ds->buf + (ds->buf_pitch * row) + (text_x > 0 ? text_x : 0);
 			output_ptr_max = output_ptr + (ds->buf_pitch - text_x);
 
-			/* If character starts off the screen, jump to next character */
+			// If character starts off the screen, jump to next character
 			if (output_ptr < output_ptr_min) {
 				break;
 			}
 
-			c_data_ptr = draw_font->font_p +
-			    char_row * draw_font->hdr.row_length +
-			    draw_font->fce[c_code].index;
+			c_data_ptr = draw_font->font_p + char_row * draw_font->hdr.row_length + draw_font->fce[c_code].index;
 
-			for (c_byte = 0; c_byte < c_byte_len;
-			    c_byte++, c_data_ptr++) {
-
-				/* Check each bit, draw pixel if bit is set */
-				for (c_bit = 7;
-				    c_bit >= 0
-				    && (output_ptr < output_ptr_max);
-				    c_bit--) {
-
+			for (c_byte = 0; c_byte < c_byte_len; c_byte++, c_data_ptr++) {
+				// Check each bit, draw pixel if bit is set
+				for (c_bit = 7; c_bit >= 0 && (output_ptr < output_ptr_max); c_bit--) {
 					if ((*c_data_ptr >> c_bit) & 0x01) {
 						*output_ptr = (byte) color;
 					}
 					output_ptr++;
+				} // end per-bit processing
+			} // end per-byte processing
+		} // end per-row processing
 
-				}	/* end per-bit processing */
-
-			}	/* end per-byte processing */
-
-		}		/* end per-row processing */
-
-		/* Advance tracking position */
+		// Advance tracking position
 		text_x += draw_font->fce[c_code].tracking;
-
-	}			/* end per-character processing */
+	} // end per-character processing
 
 	return R_SUCCESS;
 }

@@ -20,14 +20,8 @@
  * $Header$
  *
  */
-/*
 
- Description:   
- 
-    Font management and font drawing module public header
-
- Notes: 
-*/
+// Font management and font drawing module public header
 
 #ifndef SAGA_FONT_MOD_H_
 #define SAGA_FONT_MOD_H_
@@ -35,14 +29,12 @@
 namespace Saga {
 
 enum FONT_ID {
-
 	SMALL_FONT_ID,
 	MEDIUM_FONT_ID,
 	BIG_FONT_ID
 };
 
 enum FONT_EFFECT_FLAGS {
-
 	FONT_NORMAL = 0x00,
 	FONT_OUTLINE = 0x01,
 	FONT_SHADOW = 0x02,
@@ -50,22 +42,13 @@ enum FONT_EFFECT_FLAGS {
 	FONT_CENTERED = 0x08
 };
 
-int FONT_Init(void);
-
-int FONT_Shutdown(void);
-
-int FONT_Draw(int font_id,
-    R_SURFACE * ds,
-    const char *draw_str,
-    size_t draw_str_len,
-    int text_x, int text_y, int color, int effect_color, int flags);
-
-int FONT_GetStringWidth(int font_id,
-    const char *test_str, size_t test_str_ct, int flags);
-
+int FONT_Init();
+int FONT_Shutdown();
+int FONT_Draw(int font_id, R_SURFACE *ds, const char *draw_str, size_t draw_str_len,
+			int text_x, int text_y, int color, int effect_color, int flags);
+int FONT_GetStringWidth(int font_id, const char *test_str, size_t test_str_ct, int flags);
 int FONT_GetHeight(int font_id);
 
 } // End of namespace Saga
 
-#endif				/* R_FONT_MOD_H_ */
-/* end "r_font_mod.h" */
+#endif
