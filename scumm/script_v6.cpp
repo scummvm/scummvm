@@ -1837,7 +1837,6 @@ void ScummEngine_v6::o6_verbOps() {
 		_verbRedraw = true;
 
 	op = fetchScriptByte();
-	warning("o6_verbOps op %d", op);
 	if (op == 196) {
 		_curVerb = pop();
 		_curVerbSlot = getVerbSlot(_curVerb, 0);
