@@ -257,6 +257,9 @@ void Engine::savegameRestore() {
 	g_imuse->stopAllSounds();
 	g_imuse->resetState();
 	g_smush->stop();
+	g_imuse->pause(true);
+	g_smush->pause(true);
+
 	//  free all resource
 	//  lock resources
 
@@ -281,44 +284,10 @@ void Engine::savegameRestore() {
 	gzclose(_savegameFileHandle);
 
 	//bundle_dofile("patch05.bin");
+
+	g_imuse->pause(false);
+	g_smush->pause(false);
 	printf("Engine::savegameRestore() finished.\n");
-}
-
-void Engine::savegameCallback() {
-	lua_Object funcParam1;
-	lua_Object funcParam2;
-	bool unk1 = false;
-	bool unk2 = false;
-
-	lua_beginblock();
-	lua_pushobject(lua_getglobal("system"));
-	lua_pushstring("saveGameCallback");
-	funcParam2 = lua_gettable();
-
-	if (lua_istable(funcParam2)) {
-		lua_pushobject(funcParam2);
-		lua_pushstring("saveGameCallback");
-		funcParam1 = lua_gettable();
-		if (lua_isfunction(funcParam1)) {
-			unk1 = true;
-			unk2 = true;
-		} else {
-			assert(false);
-		}
-	} else if (lua_isfunction(funcParam2)) {
-		funcParam1 = funcParam2;
-		unk1 = false;
-		unk2 = true;
-	} else if (!lua_isnil(funcParam2)) {
-		assert(false);
-	}
-	if (unk2) {
-		if (unk1) {
-			lua_pushobject(funcParam2);
-		}
-		lua_callfunction(funcParam1);
-	}
-	lua_endblock();
 }
 
 void Engine::savegameSave() {
@@ -362,6 +331,43 @@ void Engine::savegameSave() {
 	g_imuse->pause(false);
 	g_smush->pause(false);
 	printf("Engine::savegameSave() finished.\n");
+}
+
+void Engine::savegameCallback() {
+	lua_Object funcParam1;
+	lua_Object funcParam2;
+	bool unk1 = false;
+	bool unk2 = false;
+
+	lua_beginblock();
+	lua_pushobject(lua_getglobal("system"));
+	lua_pushstring("saveGameCallback");
+	funcParam2 = lua_gettable();
+
+	if (lua_istable(funcParam2)) {
+		lua_pushobject(funcParam2);
+		lua_pushstring("saveGameCallback");
+		funcParam1 = lua_gettable();
+		if (lua_isfunction(funcParam1)) {
+			unk1 = true;
+			unk2 = true;
+		} else {
+			assert(false);
+		}
+	} else if (lua_isfunction(funcParam2)) {
+		funcParam1 = funcParam2;
+		unk1 = false;
+		unk2 = true;
+	} else if (!lua_isnil(funcParam2)) {
+		assert(false);
+	}
+	if (unk2) {
+		if (unk1) {
+			lua_pushobject(funcParam2);
+		}
+		lua_callfunction(funcParam1);
+	}
+	lua_endblock();
 }
 
 void Engine::setScene(const char *name) {
