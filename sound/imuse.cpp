@@ -4249,7 +4249,7 @@ int IMuseGM::midi_driver_thread(void *param) {
 
 	for(;;) {
 		mid->_system->delay_msecs(10);
-
+		
 		cur_time = mid->_system->get_msecs();
 		while (old_time < cur_time) {
 			old_time += 10;
@@ -4318,8 +4318,8 @@ void IMuseGM::init(IMuseInternal *eng, OSystem *syst)
 		error("IMuseGM::error = %s", MidiDriver::get_error_name(result));
 
 	/* Install the on_timer thread */
-	syst->create_thread(midi_driver_thread, this);
 	_se = eng;
+	syst->create_thread(midi_driver_thread, this);
 
 	for (i = 0, mc = _midi_channels; i != ARRAYSIZE(_midi_channels); i++, mc++)
 		mc->_chan = i;
