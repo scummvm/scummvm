@@ -412,7 +412,11 @@ SOURCE=.\backends\midi\adlib.cpp
 # End Group
 # Begin Source File
 
-SOURCE=.\ReadMe.txt
+SOURCE=.\README
+# End Source File
+# Begin Source File
+
+SOURCE=.\NEWS
 # End Source File
 # Begin Source File
 
