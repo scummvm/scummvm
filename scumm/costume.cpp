@@ -27,7 +27,6 @@
 #include "scumm/sound.h"
 
 #if defined(__PALM_OS__)
-#include "init_arm.h"
 #include "arm/native.h"
 #include "arm/macros.h"
 #endif
@@ -425,7 +424,7 @@ void CostumeRenderer::proc3(Codec1 &v1) {
 		ARM_ADDV(_out_pitch,	_out.pitch)
 		ARM_ADDV(_out_w,		_out.w)
 		ARM_ADDV(_out_h,		_out.h)
-		ARM_CALL_RETURN(ARM_ENGINE, PNO_DATA(), _scaleIndexX)
+		ARM_CALL_VALUE(ARM_ENGINE, PNO_DATA(), _scaleIndexX)
 	ARM_END()
 #endif
 
