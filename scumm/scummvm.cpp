@@ -612,24 +612,19 @@ Scumm::Scumm (GameDetector *detector, OSystem *syst)
 	_mixer->setMusicVolume(kDefaultMusicVolume);
 
 	// Init iMuse
+	_imuse = NULL;
+	_imuseDigital = NULL;
+	_playerV2 = NULL;
 	if (_features & GF_DIGI_IMUSE) {
 		_imuseDigital = new IMuseDigital(this);
-		_imuse = NULL;
-		_playerV2 = NULL;
 	} else if ((_features & GF_AMIGA) && (_features & GF_OLD_BUNDLE)) {
 		_playerV2 = NULL;
-		_imuse = NULL;
-		_imuseDigital = NULL;
 	} else if (_features & GF_OLD_BUNDLE) {
 		if ((_version == 1) && (_gameId == GID_MANIAC))
 			_playerV2 = NULL;
 		else
 			_playerV2 = new Player_V2(this);
-		_imuse = NULL;
-		_imuseDigital = NULL;
 	} else {
-		_playerV2 = NULL;
-		_imuseDigital = NULL;
 		_imuse = IMuse::create (syst, detector->createMidi());
 		if (_imuse) {
 			if (detector->_gameTempo != 0)
