@@ -153,22 +153,34 @@ void ConsoleDialog::handleKeyDown(uint16 ascii, int keycode, int modifiers)
 			nextLine();
 
 			int len = _promptEndPos - _promptStartPos;
-//			char str[len + 1];
-			char str[1000];
-
-			if (len < 0) len = 0;	// Prevent overflow from forced Ctrl-D deletion
-
-			for (i = 0; i < len; i++)
-				str[i] = _buffer[(_promptStartPos + i) % kBufferSize];
-			str[len] = '\0';
-			
- 			addToHistory(str);
-
 			bool keepRunning = true;
-			if (_callbackProc)
-				keepRunning = (*_callbackProc)(this, str, _callbackRefCon);
-			//printf("You entered '%s'\n", str);
 
+			// FIXME - len should NEVER be negative. If anything makes it negative,
+			// then the code doing that is buggy and needs to be fixed.
+			assert(len >= 0);
+			
+			if (len > 0) {
+
+				// We have to allocate the string buffer with new, since VC++ sadly does not
+				// comply to the C++ standard, so we can't use a dynamic sized stack array.
+				char *str = new char[len + 1];
+	
+				// Copy the user intput to str
+				for (i = 0; i < len; i++)
+					str[i] = _buffer[(_promptStartPos + i) % kBufferSize];
+				str[len] = '\0';
+				
+				// Add the input to the history
+				addToHistory(str);
+				
+				// Pass it to the input callback, if any
+				if (_callbackProc)
+					keepRunning = (*_callbackProc)(this, str, _callbackRefCon);
+	
+					// Get rid of the string buffer
+				delete [] str;
+			}
+			
 			print(PROMPT);
 			_promptStartPos = _promptEndPos = _currentPos;
 			
@@ -270,8 +282,10 @@ void ConsoleDialog::specialKeys(int keycode)
 			draw();
 			break;
 		case 'd':
-			killChar();
-			draw();
+			if (_currentPos < _promptEndPos) {
+				killChar();
+				draw();
+			}
 			break;
 		case 'e':
 			_currentPos = _promptEndPos;
