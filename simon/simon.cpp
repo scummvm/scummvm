@@ -4960,13 +4960,13 @@ void SimonState::playMusic(uint music)
 	
 		midi.initialize();
 		midi.play();
-	} else if (!(_game & GAME_SIMON2)){
+	} else if (!(_game & GAME_SIMON2) && !(_game & GAME_DEMO)){
 		midi.shutdown();
 
 		if (_game & GAME_TALKIE) {
 			_game_file->seek(_game_offsets_ptr[gss->MUSIC_INDEX_BASE + music], SEEK_SET);
 			midi.read_all_songs_old(_game_file);
-		} else if (_game == GAME_SIMON1DOS) {
+		} else {
 			char buf[50];
 			File *f = new File();
 			sprintf(buf, "MOD%d.MUS", music);
