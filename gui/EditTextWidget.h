@@ -40,7 +40,7 @@ public:
 
 	virtual void handleMouseDown(int x, int y, int button, int clickCount);
 
-	virtual bool wantsFocus() { return true; };
+	virtual bool wantsFocus() { return true; }
 
 protected:
 	void drawWidget(bool hilite);

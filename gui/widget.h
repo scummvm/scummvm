@@ -99,7 +99,7 @@ public:
 	void draw();
 	void receivedFocus() { _hasFocus = true; receivedFocusWidget(); }
 	void lostFocus() { _hasFocus = false; lostFocusWidget(); }
-	virtual bool wantsFocus() { return false; };
+	virtual bool wantsFocus() { return false; }
 
 	void setFlags(int flags)	{ _flags |= flags; }
 	void clearFlags(int flags)	{ _flags &= ~flags; }

@@ -82,7 +82,7 @@ public:
 	virtual bool handleKeyUp(uint16 ascii, int keycode, int modifiers);
 	virtual void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);
 
-	virtual bool wantsFocus() { return true; };
+	virtual bool wantsFocus() { return true; }
 
 	// Made startEditMode for SCUMM's SaveLoadChooser
 	void startEditMode();

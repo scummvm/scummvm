@@ -48,7 +48,7 @@ public:
 	virtual void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);
 #endif
 
-	const FilesystemNode	&getResult() { return _choice; };
+	const FilesystemNode	&getResult() { return _choice; }
 
 
 protected:
