@@ -1214,7 +1214,7 @@ void MidiDriver_ALSA::send(uint32 b)
 	case 0xE0:{
 			// long theBend = ((((long)midiCmd[1] + (long)(midiCmd[2] << 7))) - 0x2000) / 4;
 			// snd_seq_ev_set_pitchbend(&ev, chanID, theBend);
-			long theBend = (long)midiCmd[1] + (long)(midiCmd[2] << 7);
+			long theBend = ((long)midiCmd[1] + (long)(midiCmd[2] << 7)) - 0x2000;
 			snd_seq_ev_set_pitchbend(&ev, chanID, theBend);
 			send_event(1);
 		}
