@@ -576,7 +576,6 @@ protected:
 	void virtScreenLoad(int resIdx, int x1, int y1, int x2, int y2);
 	uint8 virtScreenLoadUnpack(vsUnpackCtx *ctx, byte *data);
 	void seekFilePos(int slot, int offset, int mode);
-	byte stringLen(byte *);
 	virtual void decodeParseString(int a, int b);
 
 	/* Version 6 script opcodes */
@@ -601,14 +600,9 @@ protected:
 	void o6_writeFile();
 	void o6_setVolume();
 	void o6_seekFilePos();
+	void o6_unknownE1();
 	void o6_localizeArray();
-	void o6_unknownFA();
 	void o6_redimArray();
-	void o6_stringLen();
-	void o6_readINI();
-	void o6_unknownF4();
-	void o6_unknownF9();
-	void o6_unknownFB();
 	void o6_readFilePos();
 	void o6_quitPauseRestart();
 };
@@ -633,9 +627,17 @@ protected:
 	virtual void executeOpcode(byte i);
 	virtual const char *getOpcodeDesc(byte i);
 
+	byte stringLen(byte *);
+
 	/* Version 7 script opcodes */
 	void o7_objectX();
 	void o7_objectY();
+	void o7_stringLen();
+	void o7_readINI();
+	void o7_unknownF4();
+	void o7_unknownF9();
+	void o7_unknownFA();
+	void o7_unknownFB();
 };
 
 class ScummEngine_v7 : public ScummEngine_v6 {

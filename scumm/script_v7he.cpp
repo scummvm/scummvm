@@ -342,23 +342,23 @@ void ScummEngine_v7he::setupOpcodes() {
 		/* EC */
 		OPCODE(o6_invalid),
 		OPCODE(o6_invalid),
-		OPCODE(o6_stringLen),
+		OPCODE(o7_stringLen),
 		OPCODE(o6_invalid),
 		/* F0 */
 		OPCODE(o6_invalid),
 		OPCODE(o6_invalid),
 		OPCODE(o6_invalid),
-		OPCODE(o6_readINI),
+		OPCODE(o7_readINI),
 		/* F4 */
-		OPCODE(o6_unknownF4),
+		OPCODE(o7_unknownF4),
 		OPCODE(o6_invalid),
 		OPCODE(o6_invalid),
 		OPCODE(o6_invalid),
 		/* F8 */
 		OPCODE(o6_invalid),
-		OPCODE(o6_unknownF9),
-		OPCODE(o6_unknownFA),
-		OPCODE(o6_unknownFB),
+		OPCODE(o7_unknownF9),
+		OPCODE(o7_unknownFA),
+		OPCODE(o7_unknownFB),
 		/* FC */
 		OPCODE(o6_invalid),
 		OPCODE(o6_invalid),
@@ -402,6 +402,170 @@ void ScummEngine_v7he::o7_objectY() {
 	}
 
 	push(_objs[objnum].y_pos);
+}
+
+void ScummEngine_v7he::o7_unknownFA() {
+	int len, a = fetchScriptByte();
+	
+	len = resStrLen(_scriptPointer);
+	warning("stub o7_unknownFA(%d, \"%s\")", a, _scriptPointer);
+	_scriptPointer += len + 1;
+}
+
+void ScummEngine_v7he::o7_stringLen() {
+	int a, len;
+	byte *addr;
+
+	a = pop();
+
+	addr = getStringAddress(a);
+	if (!addr) {
+		// FIXME: should be error here
+		warning("o7_stringLen: Reference to zeroed array pointer (%d)", a);
+		push(0);
+		return;
+	}
+
+	if (_heversion >= 60) {
+		len = strlen((char *)getStringAddress(a));
+	} else { // FREDDI, PUTTMOON
+		len = stringLen(addr);
+	}
+	push(len);
+}
+
+byte ScummEngine_v7he::stringLen(byte *ptr) {
+	byte len;
+	byte c;
+	if (!ptr) {
+		//ptr = _someGlobalPtr;
+		error("ScummEngine_v7he::stringLen(): zero ptr. Undimplemented behaviour");
+		return 1;
+	}
+
+	len = 0;
+	c = *ptr++;
+
+	if (len == c)
+		return 1;
+
+	do {
+		len++;
+		if (c == 0xff) {
+			ptr += 3;
+			len += 3;
+		}
+		c = *ptr++;
+	} while (c);
+
+	return len+1;
+}
+
+void ScummEngine_v7he::o7_readINI() {
+	int len;
+
+	len = resStrLen(_scriptPointer);
+	debug(1, "stub o7_readINI(\"%s\")", _scriptPointer);
+	_scriptPointer += len + 1;
+	pop();
+	push(0);
+	
+}
+
+void ScummEngine_v7he::o7_unknownF4() {
+	if (_heversion >= 60) {
+		byte b;
+		int len;
+		b = fetchScriptByte();
+
+		switch (b) {
+		case 6:
+			pop();
+			len = resStrLen(_scriptPointer);
+			_scriptPointer += len + 1;
+			break;
+		case 7:
+			len = resStrLen(_scriptPointer);
+			_scriptPointer += len + 1;
+			len = resStrLen(_scriptPointer);
+			_scriptPointer += len + 1;
+			break;
+		}
+	} else { // FREDDI, PUTTMOON
+		int a, b;
+		byte filename1[256], filename2[256];
+		int len;
+
+		
+		b = pop();
+		a = pop();
+
+		switch (b) {
+		case 1:
+			addMessageToStack(_scriptPointer, filename1, sizeof(filename1));
+
+			len = resStrLen(_scriptPointer);
+			_scriptPointer += len + 1;
+			debug(1, "o7_unknownF4(%d, %d, \"%s\")", a, b, filename1);
+			break;
+		case 2:
+			addMessageToStack(_scriptPointer, filename1, sizeof(filename1));
+
+			len = resStrLen(_scriptPointer);
+			_scriptPointer += len + 1;
+
+			addMessageToStack(_scriptPointer, filename2, sizeof(filename2));
+
+			len = resStrLen(_scriptPointer);
+			_scriptPointer += len + 1;
+			debug(1, "o7_unknownF4(%d, %d, \"%s\", \"%s\")", a, b, filename1, filename2);
+			break;
+		}
+	}
+	warning("o7_unknownF4 stub");
+}
+
+void ScummEngine_v7he::o7_unknownF9() {
+	// File related
+	int len, r;
+	byte filename[100];
+
+	addMessageToStack(_scriptPointer, filename, sizeof(filename));
+
+	len = resStrLen(_scriptPointer);
+	_scriptPointer += len + 1;
+
+	for (r = strlen((char*)filename); r != 0; r--) {
+		if (filename[r - 1] == '\\')
+			break;
+	}
+
+	warning("stub o7_unknownF9(\"%s\")", filename + r);
+}
+
+void ScummEngine_v7he::o7_unknownFB() {
+	byte b;
+	b = fetchScriptByte();
+
+	switch (b) {
+	case 246:
+	case 248:
+		pop();
+		pop();
+		pop();
+		pop();
+		pop();
+		pop();
+		pop();
+		pop();
+		pop();
+		break;
+	case 247:
+		pop();
+		pop();
+		break;
+	}
+	warning("o7_unknownFB stub");
 }
 
 } // End of namespace Scumm
