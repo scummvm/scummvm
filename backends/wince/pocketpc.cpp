@@ -25,7 +25,9 @@ extern bool select_game;
 extern bool _get_key_mapping;
 extern bool draw_keyboard;
 extern bool hide_toolbar;
+extern bool freelook;
 extern bool is_simon;
+extern bool is_bass;
 extern int num_of_dirty_square;
 extern bool toolbar_drawn;
 extern Engine *engine;
@@ -38,9 +40,9 @@ extern int mapKey(int key);
 extern void handleSelectGame(int, int);
 extern void do_quit();
 
-const char KEYBOARD_MAPPING_ALPHA_HIGH[] = {"ABCDEFGHIJKLM"};
+const char KEYBOARD_MAPPING_ALPHA_HIGH[] = {"abcdefghijklm"};
 const char KEYBOARD_MAPPING_NUMERIC_HIGH[] = {"12345"};
-const char KEYBOARD_MAPPING_ALPHA_LOW[] = {"NOPQRSTUVWXYZ"};
+const char KEYBOARD_MAPPING_ALPHA_LOW[] = {"nopqrstuvwxyz"};
 const char KEYBOARD_MAPPING_NUMERIC_LOW[] = {"67890"};
 
 
@@ -134,6 +136,13 @@ BOOL PPCWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, OSystem_W
 
 			wm->_event.kbd.flags = 0;
 
+			if (freelook) {
+				wm->_event.event_code = OSystem::EVENT_MOUSEMOVE;
+				wm->_event.mouse.x = x;
+				wm->_event.mouse.y = y;
+				break;
+			}
+
 			if (draw_keyboard) {
 				// Handle keyboard selection
 				int offset_y;
@@ -212,6 +221,7 @@ BOOL PPCWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, OSystem_W
 					case ToolbarSaveLoad:
 						if (is_simon) 
 							break;
+
 						/*if (GetScreenMode()) {*/
 						/*
 							draw_keyboard = true;
@@ -220,10 +230,16 @@ BOOL PPCWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, OSystem_W
 						*/
 						/*}*/
 						wm->_event.event_code = OSystem::EVENT_KEYDOWN;
-						if (g_scumm->_features & GF_OLD256 || g_scumm->_gameId == GID_CMI)
+						if (is_bass)
+							wm->_event.kbd.ascii = 63;
+						else
+						if (g_scumm->_version <= 2)
+							wm->_event.kbd.ascii = 5;
+						else
+						if ((g_scumm->_features & GF_OLD256) || (g_scumm->_gameId == GID_CMI) || (g_scumm->_features & GF_16COLOR))
 							wm->_event.kbd.ascii = 319;
 						else
-							wm->_event.kbd.ascii = g_scumm->VAR_SAVELOADDIALOG_KEY;
+							wm->_event.kbd.ascii = g_scumm->VAR(g_scumm->VAR_SAVELOADDIALOG_KEY);
 						break;
 					case ToolbarMode:
 						SetScreenMode(!GetScreenMode());
@@ -234,11 +250,13 @@ BOOL PPCWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, OSystem_W
 					case ToolbarSkip:
 						if (is_demo)
 							do_quit();
-						if (is_simon) {
+
+						wm->_event.event_code = OSystem::EVENT_KEYDOWN;
+						if (is_simon || is_bass) {
 							wm->_event.kbd.ascii = mapKey(VK_ESCAPE);
 							break;
 						}
-						wm->_event.event_code = OSystem::EVENT_KEYDOWN;
+						/*
 						if (g_scumm->vm.cutScenePtr[g_scumm->vm.cutSceneStackPointer] || g_scumm->_insaneState)
 							wm->_event.kbd.ascii = g_scumm->_vars[g_scumm->VAR_CUTSCENEEXIT_KEY];
 						else
@@ -246,6 +264,8 @@ BOOL PPCWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, OSystem_W
 							wm->_event.kbd.ascii = g_scumm->VAR_TALKSTOP_KEY;						
 						else
 							wm->_event.kbd.ascii = mapKey(VK_ESCAPE);
+						*/
+						wm->_event.kbd.ascii = KEY_ALL_SKIP;
 						break;
 					case ToolbarSound:
 						sound_activated = !sound_activated;
