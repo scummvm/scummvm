@@ -21,21 +21,6 @@
 #include "common/file.h"
 #include "common/engine.h"
 
-enum {
-	GAME_SIMON2 = 1,
-	GAME_WIN = 2,
-	GAME_TALKIE = 4,
-	GAME_DEMO = 8,
-
-	GAME_SIMON1DOS = 0,
-	GAME_SIMON2DOS = GAME_SIMON2,
-	GAME_SIMON1TALKIE = GAME_TALKIE,
-	GAME_SIMON2TALKIE = GAME_SIMON2 + GAME_TALKIE,
-	GAME_SIMON1WIN = GAME_WIN + GAME_TALKIE,
-	GAME_SIMON2WIN = GAME_SIMON2 + GAME_WIN + GAME_TALKIE,
-	GAME_SIMON1DEMO = GAME_DEMO,
-};
-
 SimonSound::SimonSound(const byte game, const GameSpecificSettings *gss, const char *gameDataPath, SoundMixer *mixer)
 {
 	_game = game;
