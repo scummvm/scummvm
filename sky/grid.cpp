@@ -235,3 +235,8 @@ void SkyGrid::removeGrid(uint32 x, uint32 y, uint32 width, Compact *cpt) {
 	if (getGridValues(x, y, width, cpt, &resBitPos, &resWidth))
 		removeObjectFromWalk(resBitPos, resWidth);
 }
+
+uint8 *SkyGrid::giveGrid(uint32 pScreen)
+{
+	return _gameGrids + GRID_SIZE * _gridConvertTable[pScreen];
+}

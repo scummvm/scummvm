@@ -48,6 +48,8 @@ public:
 	void plotGrid(uint32 x, uint32 y, uint32 width, Compact *cpt);
 	// same here, it's basically the same as removeObjectFromWalk
 	void removeGrid(uint32 x, uint32 y, uint32 width, Compact *cpt);
+	// note that this function actually returns the byte after the end of the requested grid
+	uint8 *giveGrid(uint32 pScreen);
 
 private:
 	static int8 _gridConvertTable[];
