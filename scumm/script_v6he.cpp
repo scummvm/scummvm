@@ -331,7 +331,7 @@ void ScummEngine_v6he::setupOpcodes() {
 		OPCODE(o6_deleteFile),
 		OPCODE(o6_rename),
 		/* E0 */
-		OPCODE(o6_setVolume),
+		OPCODE(o6_soundOps),
 		OPCODE(o6_unknownE1),
 		OPCODE(o6_localizeArray),
 		OPCODE(o6_pickVarRandom),
@@ -402,6 +402,9 @@ void ScummEngine_v6he::o6_setState() {
 
 void ScummEngine_v6he::o6_startSound() {
 	// Seems to range between 952 - 9000
+	// In Fatty Bear's Birthday Surprise the piano uses offsets 1 - 23 to
+	// indicate which note to play, but only when using the standard piano
+	// sound. See also o6_soundOps().
 	int offset = pop();
 	debug(2, "o6_startSound: offset %d", offset);
 	_sound->addSoundToQueue(pop());
@@ -1136,17 +1139,18 @@ void ScummEngine_v6he::o6_writeFile() {
 	}
 }
 
-void ScummEngine_v6he::o6_setVolume() {
+void ScummEngine_v6he::o6_soundOps() {
 	byte subOp = fetchScriptByte();
-	int soundVolumeMaster;
 	int volume = pop();
 	switch (subOp) {
 	case 0xde:
 		_mixer->setMusicVolume(volume);
 		break;
 	case 0xe0:
-		soundVolumeMaster = ConfMan.getInt("master_volume");
-		_mixer->setVolume(volume * soundVolumeMaster / 255);
+		// Fatty Bear's Birthday surprise uses this when playing the
+		// piano, but only when using one of the digitized instruments.
+		// See also o6_startSound().
+		_sound->setOverrideFreq(volume);
 		break;
 	}
 }

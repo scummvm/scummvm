@@ -68,6 +68,7 @@ Sound::Sound(ScummEngine *parent)
 	_mouthSyncMode(false),
 	_endOfMouthSync(false),
 	_curSoundPos(0),
+	_overrideFreq(0),
 	_currentCDSound(0),
 	_soundsPaused(false),
 	_sfxMode(0) {
@@ -140,6 +141,10 @@ void Sound::processSoundQues() {
 	_soundQuePos = 0;
 }
 
+void Sound::setOverrideFreq(int freq) {
+	_overrideFreq = freq;
+}
+
 void Sound::playSound(int soundID) {
 	byte *ptr;
 	char *sound;
@@ -182,7 +187,12 @@ void Sound::playSound(int soundID) {
 
 		size = READ_BE_UINT32(ptr+4) - 8;
 		// FIXME - what value here ?!? 11025 is just a guess based on strings in w32 bin, prev guess 8000
-		rate = 11025;
+		if (_overrideFreq) {
+			// Used by the piano in Fatty Bear's Birthday Surprise
+			rate = _overrideFreq;
+			_overrideFreq = 0;
+		} else
+			rate = 11025;
 
 		// Allocate a sound buffer, copy the data into it, and play
 		sound = (char *)malloc(size);

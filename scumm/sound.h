@@ -70,6 +70,8 @@ protected:
 	uint16 _mouthSyncTimes[64];
 	uint _curSoundPos;
 
+	int _overrideFreq;
+
 	int _currentCDSound;
 public:
 	PlayingSoundHandle _talkChannelHandle;	// Handle of mixer channel actor is talking on
@@ -82,6 +84,7 @@ public:
 	void addSoundToQueue(int sound);
 	void addSoundToQueue2(int sound);
 	void processSoundQues();
+	void setOverrideFreq(int freq);
 	void playSound(int sound);
 	void startTalkSound(uint32 offset, uint32 b, int mode, PlayingSoundHandle *handle = NULL);
 	void stopTalkSound();
