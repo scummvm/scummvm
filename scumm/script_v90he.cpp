@@ -2178,7 +2178,6 @@ void ScummEngine_v90he::o90_getActorAnimProgress() {
 void ScummEngine_v90he::o90_kernelGetFunctions() {
 	int args[29];
 	int num;
-	ArrayHeader *ah;
 
 	num = getStackList(args, ARRAYSIZE(args));
 
