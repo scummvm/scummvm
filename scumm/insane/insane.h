@@ -160,32 +160,29 @@ class Insane {
 	int16 _mainRoadPos;
 	int16 _posBrokenCar;
 	int16 _posBrokenTruck;
+	int16 _posFatherTorque;
+	int16 _posCave;
+	int16 _posVista;
 	bool _roadLeftBranch;
 	bool _roadRightBranch;
 	bool _carIsBroken;
-	int32 _val11d;
+	bool _benHasGoggles;
+	bool _mineCaveIsNear;
+	bool _objectDetected;
 	int32 _val32d;
-	int32 _val51d;
-	int32 _val52d;
-	int32 _val53d;
 	int32 _val54d;
 	int32 _val57d;
-	int32 _val114d16[16];
 	bool _val115_;
 	bool _val121_;
-	bool _val122_;
-	bool _val123_;
-	bool _val124_;
 	int32 _val211d;
 	int32 _val213d;
-	int32 _val214d;
 	int32 _val215d;
 	int32 _val216d[12];
 
 	struct enemy {
 		int32 handler;
 		int32 initializer;
-		int32 field_8;
+		int16 occurences;
 		int32 maxdamage;
 		int32 field_10;
 		int32 weapon;
@@ -246,14 +243,14 @@ class Insane {
 		int32 y;
 		int32 y1;
 		int32 x1;
-		int32 weaponClass;
-		int32 animWeaponClass;
-		int32 field_34;
-		int32 field_38;
+		int16 weaponClass;
+		int16 animWeaponClass;
+		int16 field_34;
+		int16 field_38;
 		bool  lost;
 		bool  kicking;
 		bool  field_44;
-		int32 field_48;
+		bool field_48;
 		bool  defunct;
 		int32 scenePropSubIdx;
 		int32 field_54;
@@ -343,7 +340,7 @@ class Insane {
 	void init_actStruct(int actornum, int actnum, int32 actorval, byte state, 
 						  int32 room, int32 animtilt, int32 tilt, int32 frame);
 	void init_enemyStruct(int n, int32 handler, int32 initializer,
-							   int32 field_8, int32 maxdamage, int32 field_10,
+							   int16 occurences, int32 maxdamage, int32 field_10,
 							   int32 field_14, int32 sound, const char *filename,
 							   int32 costume4, int32 costume6, int32 costume5,
 							   int16 field_2C, int32 field_30, int32 field_34);

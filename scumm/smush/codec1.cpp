@@ -24,14 +24,16 @@
 
 namespace Scumm {
 
-void smush_decode_codec1(byte *dst, byte *src, int height) {
+void smush_decode_codec1(byte *dst, byte *src, int left, int top, int height, int width, int dstWidth) {
 	byte val, code;
 	int32 length;
 	int h = height, size_line;
 
+	dst += top * dstWidth;
 	for (h = 0; h < height; h++) {
 		size_line = READ_LE_UINT16(src);
 		src += 2;
+		dst += left;
 		while (size_line > 0) {
 			code = *src++;
 			size_line--;
@@ -52,6 +54,7 @@ void smush_decode_codec1(byte *dst, byte *src, int height) {
 				}
 			}
 		}
+		dst += dstWidth - left - width;
 	}
 }
 

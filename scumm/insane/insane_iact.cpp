@@ -89,6 +89,7 @@ void Insane::iactScene1(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 			proc62();
 			_val32d = _enemy[_currEnemy].field_34;
 		}
+
 		if (_val32d == par4)
 			clearBit(par5);
 		else
@@ -101,7 +102,7 @@ void Insane::iactScene1(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 		}
 		break;
 	case 4:
-		if (par3 == 1 || _val32d < 0 || _val32d > 4)
+		if (par3 == 1 && (_val32d < 0 || _val32d > 4))
 			setBit(b.getWord());
 		break;
 	case 5:
@@ -115,7 +116,7 @@ void Insane::iactScene1(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 		par9 = b.getWord();  // +16 bx
 		tmp = b.getWord();   // +18
 		par11 = b.getWord(); // +20 cx
-		tmp = b.getWord();   // +12
+		tmp = b.getWord();   // +22
 		par13 = b.getWord(); // +24 ax
 		
 		if (par13 > _actor[0].x || par11 < _actor[0].x) {
@@ -195,7 +196,7 @@ void Insane::iactScene1(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 		if (readArray(8)) {
 			smlayer_drawSomething(renderBitmap, codecparam, 270, 20, 3, 
 								  _smush_iconsNut, 20, 0, 0);
-			_val122_ = true;
+			_benHasGoggles = true;
 		}
 }
 
@@ -203,11 +204,10 @@ void Insane::proc62(void) {
 	if (readArray(58) != 0)
 		_enemy[EN_TORQUE].field_10 = 1;
 
-	if (_enemy[EN_TORQUE].field_8 == 0) {
+	if (_enemy[EN_TORQUE].occurences == 0) {
 		_currEnemy = EN_TORQUE;
 		_val215d++;
 		_val216d[_val215d] = EN_TORQUE;
-		_val214d = _currEnemy;
 		return;
 	}
 
@@ -235,7 +235,7 @@ void Insane::proc62(void) {
 	if (edi >= 14)
 		goto loc5;
 
-	edx = rand() / 11;
+	edx = rand() % 11;
 
 	esi = edx;
 
@@ -320,14 +320,12 @@ void Insane::proc62(void) {
 		goto loc6;
 
 	loc12:
-	if (ebx != 0)
-		goto loc13;
+	if (ebx == 0) {
+		_val215d = ebp;
+		edi = ebp;
+		goto _loop1;
+	}
 
-	_val215d = ebp;
-	edi = ebp;
-	goto _loop1;
-
-	loc13:
 	edx = _val215d;
 	edx++;
 	_val216d[edx] = esi;
@@ -344,7 +342,6 @@ void Insane::proc62(void) {
 		goto _loop1;
 
 	_currEnemy = esi;
-	_val214d = _currEnemy;
 }
 
 void Insane::proc63(void) {
@@ -488,9 +485,19 @@ void Insane::iactScene6(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 	par4 = b.getWord();
 
 	switch (par1) {
+	case 7:
+		par5 = b.getWord();
+		if (par4 != 3)
+			break;
+
+		if (par5 >= _actor[0].x)
+			break;
+
+		_actor[0].x = par5;
+		break;
 	case 2:
 	case 4:
-		par5 = b.getWord(); // si
+		par5 = b.getWord();
 		switch (par3) {
 		case 1:
 			if (par4 == 1) {
@@ -534,7 +541,7 @@ void Insane::iactScene6(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 				return;
 
 			writeArray(1, _posBrokenTruck);
-			writeArray(3, _val53d);
+			writeArray(3, _posVista);
 			smush_setToFinish();
 
 			break;
@@ -590,7 +597,7 @@ void Insane::iactScene17(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 				smlayer_showStatusMsg(-1, renderBitmap, codecparam, 24, 167, 1,
 									  2, 0, "%s", handleTrsTag(5000));
 			}
-			_val124_ = true;
+			_objectDetected = true;
 			break;
 		case 11:
 			smlayer_drawSomething(renderBitmap, codecparam, 28, 48, 1, 
@@ -602,8 +609,8 @@ void Insane::iactScene17(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 				smlayer_showStatusMsg(-1, renderBitmap, codecparam, 24, 167, 1,
 									  2, 0, "%s", handleTrsTag(5001));
 			}
-			_val124_ = true;
-			_val123_ = true;
+			_objectDetected = true;
+			_mineCaveIsNear = true;
 			break;
 		}
 		break;

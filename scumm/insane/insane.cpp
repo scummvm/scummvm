@@ -148,24 +148,22 @@ void Insane::initvars(void) {
 	_beenCheated = 0;
 	_posBrokenTruck = 0;
 	_posBrokenCar = 0;
+	_posFatherTorque = 0;
+	_posCave = 0;
+	_posVista = 0;
 	_roadLeftBranch = false;
 	_roadRightBranch = false;
 	_carIsBroken = false;
-	_val11d = 0;
+	_benHasGoggles = false;
+	_mineCaveIsNear = false;
+	_objectDetected = false;
 	_val32d = -1;
-	_val51d = 0;
-	_val52d = 0;
-	_val53d = 0;
 	_val54d = 0;
 	_val57d = 0;
 	_val115_ = false;
 	_val121_ = false;
-	_val122_ = false;
-	_val123_ = false;
-	_val124_ = false;
 	_val211d = 0;
 	_val213d = 0;
-	_val214d = -1;
 	_val215d = 0;
 	_smlayer_room = 0;
 	_smlayer_room2 = 0;
@@ -375,10 +373,10 @@ void Insane::initvars(void) {
 	_actor[0].animWeaponClass = 0;
 	_actor[0].field_34 = 2;
 	_actor[0].field_38 = 0;
-	_actor[0].lost = 0;
-	_actor[0].kicking = 0;
-	_actor[0].field_44 = 0;
-	_actor[0].field_48 = 0;
+	_actor[0].lost = false;
+	_actor[0].kicking = false;
+	_actor[0].field_44 = false;
+	_actor[0].field_48 = false;
 	_actor[0].defunct = 0;
 	_actor[0].scenePropSubIdx = 0;
 	_actor[0].field_54 = 0;
@@ -414,10 +412,10 @@ void Insane::initvars(void) {
 	_actor[1].animWeaponClass = 0;
 	_actor[1].field_34 = 0;
 	_actor[1].field_38 = 0;
-	_actor[1].lost = 0;
-	_actor[1].kicking = 0;
-	_actor[1].field_44 = 0;
-	_actor[1].field_48 = 0;
+	_actor[1].lost = false;
+	_actor[1].kicking = false;
+	_actor[1].field_44 = false;
+	_actor[1].field_48 = false;
 	_actor[1].defunct = 0;
 	_actor[1].scenePropSubIdx = 0;
 	_actor[1].field_54 = 0;
@@ -455,7 +453,7 @@ void Insane::init_actStruct(int actornum, int actnum, int32 actorval, byte state
 }
 
 void Insane::init_enemyStruct(int n, int32 handler, int32 initializer,
-								   int32 field_8, int32 maxdamage, int32 field_10,
+								   int16 occurences, int32 maxdamage, int32 field_10,
 								   int32 weapon, int32 sound, const char *filename,
 								   int32 costume4, int32 costume6, int32 costume5,
 								   int16 costumevar, int32 maxframe, int32 field_34) {
@@ -463,7 +461,7 @@ void Insane::init_enemyStruct(int n, int32 handler, int32 initializer,
 
 	_enemy[n].handler = handler;
 	_enemy[n].initializer = initializer;
-	_enemy[n].field_8 = field_8;
+	_enemy[n].occurences = occurences;
 	_enemy[n].maxdamage = maxdamage;
 	_enemy[n].field_10 = field_10;
 	_enemy[n].weapon = weapon;
@@ -672,21 +670,21 @@ void Insane::readState(void) {
 	_smlayer_room = readArray(320);
 	_smlayer_room2 = readArray(321);
 	_posBrokenTruck = readArray(322);
-	_val53d = readArray(323);
+	_posVista = readArray(323);
 	_val57d = readArray(324);
-	_val52d = readArray(325);
+	_posCave = readArray(325);
 	_posBrokenCar = readArray(326);
 	_val54d = readArray(327);
-	_val51d = readArray(328);
-	_enemy[EN_TORQUE].field_8 = readArray(337);
-	_enemy[EN_ROTT1].field_8 = readArray(329);
-	_enemy[EN_ROTT2].field_8 = readArray(330);
-	_enemy[EN_ROTT3].field_8 = readArray(331);
-	_enemy[EN_VULTF1].field_8 = readArray(332);
-	_enemy[EN_VULTM1].field_8 = readArray(333);
-	_enemy[EN_VULTF2].field_8 = readArray(334);
-	_enemy[EN_VULTM2].field_8 = readArray(335);
-	_enemy[EN_CAVEFISH].field_8 = readArray(336);
+	_posFatherTorque = readArray(328);
+	_enemy[EN_TORQUE].occurences = readArray(337);
+	_enemy[EN_ROTT1].occurences = readArray(329);
+	_enemy[EN_ROTT2].occurences = readArray(330);
+	_enemy[EN_ROTT3].occurences = readArray(331);
+	_enemy[EN_VULTF1].occurences = readArray(332);
+	_enemy[EN_VULTM1].occurences = readArray(333);
+	_enemy[EN_VULTF2].occurences = readArray(334);
+	_enemy[EN_VULTM2].occurences = readArray(335);
+	_enemy[EN_CAVEFISH].occurences = readArray(336);
 	_enemy[EN_VULTM2].field_10 = readArray(340);
 	_enemy[EN_CAVEFISH].field_10 = readArray(56);
 	_enemy[EN_VULTF2].field_10 = readArray(339);
@@ -705,7 +703,7 @@ void Insane::setupValues(void) {
 	_actor[0].act[1].room = 0;
 	_actor[0].act[0].room = 0;
 	_actor[0].cursorX = 0;
-	_actor[0].lost = 0;
+	_actor[0].lost = false;
 	_currEnemy = -1;
 	_val32d = -1;
 	smush_warpMouse(160, 100, -1);
@@ -714,8 +712,6 @@ void Insane::setupValues(void) {
 // FIXME: it seems that in ScummVM it may be unused
 void Insane::mainLoop(void) {
 	int32 resid;
-
-	_val11d++;
 
 	while (!idx2Compare()) {
 		if(!(resid = idx2Tweak()))
@@ -1026,7 +1022,7 @@ void Insane::escapeKeyHandler(void) {
 				return;
 			queueSceneSwitch(15, 0, "vistthru.san", 64, 0, 0, 0);
 		} else {
-			writeArray(1, _val53d);
+			writeArray(1, _posVista);
 			smush_setToFinish();
 		}
 		break;
@@ -1325,30 +1321,31 @@ void Insane::procSKIP(Chunk &b) {
 	if (!par2) {
 		if (isBitSet(par1))
 			_player->_skipNext = true;
-
 		return;
 	}
 
-	if (isBitSet(par1) != isBitSet(par2))
+	if (isBitSet(par1) != isBitSet(par2)) {
 		_player->_skipNext = true;
+		return;
+	}
 }
 
 bool Insane::isBitSet(int n) {
-	if (n >= 0x80)
+	if (n >= 0x80 * 8)
 		return false;
 
-	return (_iactBits[n / 8] & (0x80 >> (n % 8))) != 0;
+	return ((_iactBits[n / 8] & (0x80 >> (n % 8))) != 0);
 }
 
 void Insane::setBit(int n) {
-	if (n >= 0x80)
+	if (n >= 0x80 * 8)
 		return;
 
 	_iactBits[n / 8] |= 0x80 >> (n % 8);
 }
 
 void Insane::clearBit(int n) {
-	if (n >= 0x80)
+	if (n >= 0x80 * 8)
 		return;
 
 	_iactBits[n / 8] &= ~(0x80 >> (n % 8));

@@ -661,7 +661,7 @@ void SmushPlayer::handleNewPalette(Chunk &b) {
 	setPalette(_pal);
 }
 
-void smush_decode_codec1(byte *dst, byte *src, int height);
+void smush_decode_codec1(byte *dst, byte *src, int left, int top, int height, int width, int dstWidth);
 
 void SmushPlayer::handleFrameObject(Chunk &b) {
 	checkBlock(b, TYPE_FOBJ, 14);
@@ -671,12 +671,12 @@ void SmushPlayer::handleFrameObject(Chunk &b) {
 	}
 
 	int codec = b.getWord();
-	b.getWord(); // left
-	b.getWord(); // top
+	int left = b.getWord(); // left
+	int top = b.getWord(); // top
 	int width = b.getWord();
 	int height = b.getWord();
 
-	if ((height != _vm->_screenHeight) || (width != _vm->_screenWidth))
+	if ((height > _vm->_screenHeight) || (width > _vm->_screenWidth))
 		return;
 
 	if (!_alreadyInit) {
@@ -685,8 +685,8 @@ void SmushPlayer::handleFrameObject(Chunk &b) {
 		_alreadyInit = true;
 	}
 
-	_width = width;
-	_height = height;
+	_width = _vm->_screenWidth;
+	_height = _vm->_screenHeight;
 	b.getWord();
 	b.getWord();
 
@@ -699,7 +699,7 @@ void SmushPlayer::handleFrameObject(Chunk &b) {
 	switch (codec) {
 	case 1:
 	case 3:
-		smush_decode_codec1(_dst, chunk_buffer, _height);
+		smush_decode_codec1(_dst, chunk_buffer, left, top, height, width, _vm->_screenWidth);
 		break;
 	case 37:
 		_codec37.decode(_dst, chunk_buffer);
@@ -972,6 +972,13 @@ void SmushPlayer::seekSan(const char *file, const char *directory, int32 pos, in
 			delete _base;
 
 		_base = new FileChunk(file, directory);
+		// In this case we need to get palette and number of frames
+		if (pos > 8) {
+			Chunk *sub = _base->subBlock();
+			checkBlock(*sub, TYPE_AHDR);
+			handleAnimHeader(*sub);
+			delete sub;
+		}
 		if (pos >= 8)
 			pos -= 8;
 	} else {

@@ -145,15 +145,15 @@ void Insane::runScene(int arraynum) {
 	writeArray(53, _actor[0].inventory[INV_2X4]);
 	writeArray(54, _actor[0].inventory[INV_WRENCH]);
 	writeArray(55, _actor[0].inventory[INV_DUST]);
-	writeArray(337, _enemy[EN_TORQUE].field_8);
-	writeArray(329, _enemy[EN_ROTT1].field_8);
-	writeArray(330, _enemy[EN_ROTT2].field_8);
-	writeArray(331, _enemy[EN_ROTT3].field_8);
-	writeArray(332, _enemy[EN_VULTF1].field_8);
-	writeArray(333, _enemy[EN_VULTM1].field_8);
-	writeArray(334, _enemy[EN_VULTF2].field_8);
-	writeArray(335, _enemy[EN_VULTM2].field_8);
-	writeArray(336, _enemy[EN_CAVEFISH].field_8);
+	writeArray(337, _enemy[EN_TORQUE].occurences);
+	writeArray(329, _enemy[EN_ROTT1].occurences);
+	writeArray(330, _enemy[EN_ROTT2].occurences);
+	writeArray(331, _enemy[EN_ROTT3].occurences);
+	writeArray(332, _enemy[EN_VULTF1].occurences);
+	writeArray(333, _enemy[EN_VULTM1].occurences);
+	writeArray(334, _enemy[EN_VULTF2].occurences);
+	writeArray(335, _enemy[EN_VULTM2].occurences);
+	writeArray(336, _enemy[EN_CAVEFISH].occurences);
 	writeArray(339, _enemy[EN_VULTF2].field_10);
 	writeArray(56, _enemy[EN_CAVEFISH].field_10);
 	writeArray(340, _enemy[EN_VULTM2].field_10);
@@ -600,7 +600,6 @@ int Insane::loadSceneData(int scene, int flag, int phase) {
 	}
 	if (phase == 1) {
 		_sceneData1Loaded = 1;
-		_val11d = 0;
 	}
 	return retvalue;
 }
@@ -736,7 +735,7 @@ void Insane::setEnemyCostumes(void) {
 	_actor[1].tilt = 0;
 	_actor[1].weapon = -1;
 	_actor[1].weaponClass = 2;
-	_enemy[_currEnemy].field_8++;
+	_enemy[_currEnemy].occurences++;
 	_actor[1].maxdamage = _enemy[_currEnemy].maxdamage;
 	_actor[1].enemyHandler = _enemy[_currEnemy].handler;
 	_actor[1].animWeaponClass = 0;
@@ -764,20 +763,19 @@ void Insane::setEnemyCostumes(void) {
 	_actor[0].scenePropSubIdx = 0;
 	_actor[0].field_54 = 0;
 	_actor[0].runningSound = 0;
-	_actor[0].lost = 0;
-	_actor[0].kicking = 0;
-	_actor[0].field_44 = 0;
+	_actor[0].lost = false;
+	_actor[0].kicking = false;
+	_actor[0].field_44 = false;
 	_actor[1].inventory[_enemy[_currEnemy].weapon] = 1;
-	_actor[0].field_44 = 0;
-	_actor[0].field_48 = 0;
+	_actor[0].field_48 = false;
 	_actor[1].defunct = 0;
 	_actor[1].scenePropSubIdx = 0;
 	_actor[1].field_54 = 0;
 	_actor[1].runningSound = 0;
-	_actor[1].lost = 0;
-	_actor[1].kicking = 0;
-	_actor[1].field_44 = 0;
-	_actor[1].field_48 = 0;
+	_actor[1].lost = false;
+	_actor[1].kicking = false;
+	_actor[1].field_44 = false;
+	_actor[1].field_48 = false;
 	if (_enemy[_currEnemy].initializer != -1)
 		enemyInitializer(_enemy[_currEnemy].initializer, _actor[1].damage, 
 							 _actor[0].damage, _actor[1].probability);
@@ -791,7 +789,7 @@ void Insane::procPreRendering(void) {
 	switchSceneIfNeeded();
 
 	if (_sceneData1Loaded) {
-		_val115_ = 1;
+		_val115_ = true;
 		if (!_keyboardDisable) {
 			smush_changeState(1);
 			_smush_isPauseImuse = true;
@@ -799,7 +797,7 @@ void Insane::procPreRendering(void) {
 			_keyboardDisable = 1;
 		}
 	} else {
-		_val115_ = 0;
+		_val115_ = false;
 		if (_keyboardDisable) {
 			smush_changeState(0);
 			_smush_isPauseImuse = false;
@@ -1010,8 +1008,8 @@ void Insane::postCase0(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 	_val121_ = false;
 	_roadLeftBranch = false;
 	_roadRightBranch = false;
-	_val122_ = false;
-	_val123_ = false;
+	_benHasGoggles = false;
+	_mineCaveIsNear = false;
 	_continueFrame1 = curFrame;
 }
 
@@ -1055,7 +1053,7 @@ void Insane::postCase16(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 	// FIXME: it should be transparent, so now it is disabled
 	//smlayer_drawSomething(renderBitmap, codecparam, 0, 0, 1, _smush_bensgoggNut, 0, 0, 0);
 	
-	if (!_val124_)
+	if (!_objectDetected)
 		smlayer_drawSomething(renderBitmap, codecparam, 24, 170, 1, 
 							  _smush_iconsNut, 23, 0, 0);
 	
@@ -1067,10 +1065,10 @@ void Insane::postCase16(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 		smlayer_setFluPalette(_smush_goglpaltRip, 0);
 	}
 	_val121_ = false;
-	_val123_ = false;
+	_mineCaveIsNear = false;
 	_roadLeftBranch = false;
 	_roadRightBranch = false;
-	_val124_ = false;
+	_objectDetected = false;
 	_counter1++;
 	_continueFrame1 = curFrame;
 	if (_counter1 >= 10)
@@ -1153,7 +1151,7 @@ void Insane::postCase3(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 				if (!_needSceneSwitch)
 					queueSceneSwitch(15, 0, "vistthru.san", 64, 0, 0, 0);
 			} else {
-				writeArray(1, _val53d);
+				writeArray(1, _posVista);
 				smush_setToFinish();
 			}
 		}
@@ -1307,7 +1305,7 @@ void Insane::postCase12(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 		case EN_ROTT2:
 			turnBen(true);
 
-			if (_enemy[1].field_8 <= 1)
+			if (_enemy[EN_ROTT2].occurences <= 1)
 				prepareScenePropScene(32, 0, 1);
 			else
 				prepareScenePropScene(33, 0, 1);
@@ -1315,19 +1313,19 @@ void Insane::postCase12(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 		case EN_ROTT3:
 			turnBen(true);
 
-			if (_enemy[1].field_8 <= 1)
+			if (_enemy[EN_ROTT3].occurences <= 1)
 				prepareScenePropScene(25, 0, 1);
 			break;
 		case EN_VULTF1:
 			turnBen(true);
 
-			if (_enemy[1].field_8 <= 1)
+			if (_enemy[EN_VULTF1].occurences <= 1)
 				prepareScenePropScene(2, 0, 1);
 			break;
 		case EN_VULTF2:
 			turnBen(true);
 
-			if (_enemy[1].field_8 <= 1)
+			if (_enemy[EN_VULTF2].occurences <= 1)
 				prepareScenePropScene(9, 0, 1);
 			else
 				prepareScenePropScene(16, 0, 1);
@@ -1340,7 +1338,7 @@ void Insane::postCase12(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 			break;
 		case EN_TORQUE:
 			turnBen(false);
-			writeArray(1, _val51d);
+			writeArray(1, _posFatherTorque);
 			smush_setToFinish();
 			break;
 		case EN_ROTT1:
@@ -1353,7 +1351,7 @@ void Insane::postCase12(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 	} else {
 		switch (_currEnemy) {
 		case EN_VULTM2:
-			if (_enemy[EN_VULTM2].field_8 <= 1)
+			if (_enemy[EN_VULTM2].occurences <= 1)
 				turnBen(false);
 			else
 				turnBen(true);
