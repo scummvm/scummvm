@@ -403,17 +403,16 @@ void Scumm::readResTypeList(int id, uint32 tag, const char *name)
 	} else if (_features & GF_SMALL_HEADER) {
 		for (i = 0; i < num; i++) {
 			res.roomno[id][i] = _fileHandle.readByte();
-			res.roomoffs[id][i] = fileReadDword();
+			res.roomoffs[id][i] = _fileHandle.readUint32LE();
 		}
 	} else {
 		_fileHandle.read(res.roomno[id], num * sizeof(uint8));
 		_fileHandle.read(res.roomoffs[id], num * sizeof(uint32));
-	}
-
 #if defined(SCUMM_BIG_ENDIAN)
-	for (i = 0; i < num; i++)
-		res.roomoffs[id][i] = FROM_LE_32(res.roomoffs[id][i]);
+		for (i = 0; i < num; i++)
+			res.roomoffs[id][i] = FROM_LE_32(res.roomoffs[id][i]);
 #endif
+	}
 }
 
 
@@ -493,11 +492,11 @@ void Scumm::ensureResourceLoaded(int type, int i)
 
 int Scumm::loadResource(int type, int idx)
 {
-	int roomNr, i;
+	int roomNr;
 	uint32 fileOffs;
 	uint32 size, tag;
 
-	// debug(1, "loadResource(%s,%d)", resTypeFromId(type),idx);
+	debug(1, "loadResource(%s,%d)", resTypeFromId(type),idx);
 
 	if (type == rtCharset && (_features & GF_SMALL_HEADER)) {
 		loadCharset(idx);
@@ -520,53 +519,51 @@ int Scumm::loadResource(int type, int idx)
 			return 0;
 	}
 
-	for (i = 0; i < 5; i++) {
-		openRoom(roomNr);
+	openRoom(roomNr);
 
-		_fileHandle.seek(fileOffs + _fileOffset, SEEK_SET);
+	_fileHandle.seek(fileOffs + _fileOffset, SEEK_SET);
 
-		if (_features & GF_OLD_BUNDLE) {
-			size = _fileHandle.readUint16LE();
-		} else if (_features & GF_SMALL_HEADER) {
-			if (!(_features & GF_SMALL_NAMES))
-				_fileHandle.seek(8, SEEK_CUR);
-			size = _fileHandle.readUint32LE();
-			tag = _fileHandle.readUint16LE();
-			_fileHandle.seek(-6, SEEK_CUR);
-			/* FIXME */
-			if ((type == rtSound) && (_gameId != GID_ZAK256))
-				return readSoundResourceSmallHeader(type, idx);
-		} else {
-			if (type == rtSound) {
-				_fileHandle.readUint32LE();
-				_fileHandle.readUint32LE();
-				return readSoundResource(type, idx);
-			}
-
-			tag = fileReadDword();
-
-			if (tag != res.tags[type]) {
-				error("%s %d not in room %d at %d+%d", res.name[type], type, roomNr, _fileOffset, fileOffs);
-			}
-
-			size = _fileHandle.readUint32BE();
-			_fileHandle.seek(-8, SEEK_CUR);
+	if (_features & GF_OLD_BUNDLE) {
+		size = _fileHandle.readUint16LE();
+	} else if (_features & GF_SMALL_HEADER) {
+		if (!(_features & GF_SMALL_NAMES))
+			_fileHandle.seek(8, SEEK_CUR);
+		size = _fileHandle.readUint32LE();
+		tag = _fileHandle.readUint16LE();
+		_fileHandle.seek(-6, SEEK_CUR);
+		/* FIXME */
+		if ((type == rtSound) && (_gameId != GID_ZAK256))
+			return readSoundResourceSmallHeader(type, idx);
+	} else {
+		if (type == rtSound) {
+			_fileHandle.readUint32LE();
+			_fileHandle.readUint32LE();
+			return readSoundResource(type, idx);
 		}
-		_fileHandle.read(createResource(type, idx, size), size);
 
-		/* dump the resource */
+		tag = fileReadDword();
+
+		if (tag != res.tags[type]) {
+			error("%s %d not in room %d at %d+%d", res.name[type], type, roomNr, _fileOffset, fileOffs);
+		}
+
+		size = _fileHandle.readUint32BE();
+		_fileHandle.seek(-8, SEEK_CUR);
+	}
+	_fileHandle.read(createResource(type, idx, size), size);
+
+	/* dump the resource */
 #ifdef DUMP_SCRIPTS
-		if (type == rtScript) {
-			dumpResource("script-", idx, getResourceAddress(rtScript, idx));
-		}
+	if (type == rtScript) {
+		dumpResource("script-", idx, getResourceAddress(rtScript, idx));
+	}
 #endif
 
-		if (!_fileHandle.ioFailed()) {
-			return 1;
-		}
-
-		nukeResource(type, idx);
+	if (!_fileHandle.ioFailed()) {
+		return 1;
 	}
+
+	nukeResource(type, idx);
 
 	error("Cannot read resource");
 }
