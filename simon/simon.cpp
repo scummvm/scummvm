@@ -2543,7 +2543,7 @@ void SimonEngine::scroll_timeout() {
 		}
 	}
 
-	add_vga_timer(2, NULL, 0, 0);
+	add_vga_timer(6, NULL, 0, 0);
 }
 
 void SimonEngine::vc_resume_sprite(byte *code_ptr, uint16 cur_file, uint16 cur_sprite) {

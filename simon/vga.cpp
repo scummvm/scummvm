@@ -1417,7 +1417,7 @@ void SimonEngine::vc_40_var_add() {
 			tmp = _vga_var1 - _x_scroll;
 			if (tmp < 20)
 				_vga_var2 = tmp;
-			add_vga_timer(2, NULL, 0, 0);	/* special timer */
+			add_vga_timer(6, NULL, 0, 0);	/* special timer */
 		}
 	}
 no_scroll:;
@@ -1446,7 +1446,7 @@ void SimonEngine::vc_41_var_sub() {
 			tmp = _vga_var1 - _x_scroll;
 			if (_x_scroll < 20)
 				_vga_var2 = -_x_scroll;
-			add_vga_timer(2, NULL, 0, 0);	/* special timer */
+			add_vga_timer(6, NULL, 0, 0);	/* special timer */
 		}
 	}
 no_scroll:;
