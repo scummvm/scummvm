@@ -82,12 +82,12 @@ protected:
 
 	int _sdl_mouse_x, _sdl_mouse_y;
 
-	SkySound *_sound;
+	SkySound *_skySound;
 	SkyDisk *_skyDisk;
 	SkyText *_skyText;
-	SkyGrid *_grid;
+	SkyGrid *_skyGrid;
 	SkyLogic *_skyLogic;
-	SkyMusic *_music;
+	SkyMusic *_skyMusic;
 	
 	byte *_workScreen;
 	byte *_backScreen;

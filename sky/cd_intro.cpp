@@ -190,11 +190,11 @@
 #define cd_104	60097
 #define cd_105	60098
 
-#define START_VOICE	( delay(200), _sound->playVoice(vocBuffer, loadedVocSize) )
-#define START_BG	( _sound->playBgSound(bgVocBuffer, bgVocSize) )
+#define START_VOICE	( delay(200), _skySound->playVoice(vocBuffer, loadedVocSize) )
+#define START_BG	( _skySound->playBgSound(bgVocBuffer, bgVocSize) )
 #define LOAD_NEW_VOICE(num)	( free (vocBuffer), vocBuffer = _skyDisk->loadFile(num, NULL), loadedVocSize = _skyDisk->_lastLoadedFileSize ) 
 #define LOAD_NEW_BG(num)	( free (bgVocBuffer), bgVocBuffer = _skyDisk->loadFile(num, NULL), bgVocSize = _skyDisk->_lastLoadedFileSize )
-#define WAIT_VOICE	while (_sound->_voiceHandle != 0) { delay(50); }
+#define WAIT_VOICE	while (_skySound->_voiceHandle != 0) { delay(50); }
 #define WAIT_SEQUENCE	while (_tseqFrames != 0) { delay(50); }
 #define WAIT_RELATIVE(x)	( delay(20 * (x)) )
 #define COPY_SCREEN	( memcpy(_workScreen, workScreen2, GAME_SCREEN_WIDTH * GAME_SCREEN_HEIGHT) )
@@ -822,7 +822,7 @@ void SkyState::doCDIntro() {
 	cd2_seq_data_1 = _skyDisk->loadFile(cd_104, NULL);
 	WAIT_SEQUENCE; //103
 
-	_music->startMusic(2);
+	_skyMusic->startMusic(2);
 	fnFadeDown(0);
 	COPY_SCREEN;
 	showScreen();

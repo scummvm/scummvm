@@ -92,7 +92,7 @@ void SkyState::go() {
 	if (!isDemo(_gameVersion) || isCDVersion(_gameVersion))
 		intro();
 
-	_grid->loadGrids();
+	_skyGrid->loadGrids();
 	while (1) {
 		delay(100);
 		_skyLogic->engine();
@@ -104,9 +104,9 @@ void SkyState::initialise(void) {
 	//initialise_memory();
 	initTimer();
 
-	_sound = new SkySound(_mixer);
+	_skySound = new SkySound(_mixer);
 	_skyDisk = new SkyDisk(_gameDataPath);
-	_music = new SkyMusic(_mixer, _skyDisk);
+	_skyMusic = new SkyMusic(_mixer, _skyDisk);
 	_gameVersion = _skyDisk->determineGameVersion();
 	_skyText = getSkyText();
 	
@@ -116,8 +116,8 @@ void SkyState::initialise(void) {
 	initItemList();
 	//initScript();
 	//initialiseRouter();
-	_grid = new SkyGrid(_skyDisk);
-	_skyLogic = new SkyLogic(_skyDisk, _grid, _skyText);
+	_skyGrid = new SkyGrid(_skyDisk);
+	_skyLogic = new SkyLogic(_skyDisk, _skyGrid, _skyText);
 }
 
 void SkyState::initItemList() {

@@ -206,12 +206,12 @@ void SkyState::intro(void) {
 	_workScreen = _skyDisk->loadFile(60112, NULL); //while virgin screen is up, load rev screen
 	_tempPal = _skyDisk->loadFile(60113, NULL);
 
-	_music->loadSectionMusic(0);
+	_skyMusic->loadSectionMusic(0);
 	
 	delay(3000); //keep virgin screen up for 3 seconds
 
 	if (!isCDVersion(_gameVersion))
-		_music->startMusic(1);
+		_skyMusic->startMusic(1);
 	
 	delay(3000); //and another 3 seconds.
 	fnFadeDown(0); //remove virgin screen
@@ -379,7 +379,7 @@ void SkyState::intro(void) {
 		fnFadeDown(0);
 		showScreen();
 
-		_music->startMusic(2);
+		_skyMusic->startMusic(2);
 		paletteFadeUp(_tempPal);
 
 		startTimerSequence(seq6aData);
