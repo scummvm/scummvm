@@ -1342,7 +1342,7 @@ bool Debugger::Cmd_ShowCompact(int argc, const char **argv) {
 	}
 	
 	int i;
-	int numCompacts = sizeof(section_0_compacts) / sizeof(section_0_compacts[0]);
+	int numCompacts = ARRAYSIZE(section_0_compacts);
 
 	if (0 == strcmp(argv[1], "list")) {
 		for (i = 0; i < numCompacts; ++i) {
@@ -1382,7 +1382,7 @@ bool Debugger::Cmd_LogicCommand(int argc, const char **argv) {
 		return true;
 	}
 	
-	int numMCodes = sizeof(mcodes) / sizeof(mcodes[0]);
+	int numMCodes = ARRAYSIZE(mcodes);
 	
 	if (0 == strcmp(argv[1], "list")) {
 		for (int i = 0; i < numMCodes; ++i) {
@@ -1427,7 +1427,7 @@ bool Debugger::Cmd_ScriptVar(int argc, const char **argv) {
 		return true;
 	}
 	
-	int numScriptVars = sizeof(scriptVars) / sizeof(scriptVars[0]);	
+	int numScriptVars = ARRAYSIZE(scriptVars);	
 
 	if (0 == strcmp(argv[1], "list")) {
 		for (int i = 0; i < numScriptVars; ++i) {
