@@ -225,6 +225,7 @@ void CharsetRenderer::printCharOld(int chr)
 void CharsetRenderer::printChar(int chr)
 {
 	int width, height;
+	int offsX, offsY;
 	int d;
 	VirtScreen *vs;
 
@@ -239,14 +240,14 @@ void CharsetRenderer::printChar(int chr)
 	_bpp = *_fontPtr;
 	_colorMap[1] = _color;
 
-	_charOffs = READ_LE_UINT32(_fontPtr + chr * 4 + 4);
+	uint32 charOffs = READ_LE_UINT32(_fontPtr + chr * 4 + 4);
 
-	if (!_charOffs)
+	if (!charOffs)
 		return;
 
-	assert(_charOffs < 0x10000);
+	assert(charOffs < 0x10000);
 
-	_charPtr = _fontPtr + _charOffs;
+	_charPtr = _fontPtr + charOffs;
 
 	width = _charPtr[0];
 	height = _charPtr[1];
@@ -258,25 +259,25 @@ void CharsetRenderer::printChar(int chr)
 	}
 
 	if (_disableOffsX) {
-		_offsX = 0;
+		offsX = 0;
 	} else {
 		d = _charPtr[2];
 		if (d >= 0x80)
 			d -= 0x100;
-		_offsX = d;
+		offsX = d;
 	}
 
 	d = _charPtr[3];
 	if (d >= 0x80)
 		d -= 0x100;
-	_offsY = d;
+	offsY = d;
 
-	_top += _offsY;
-	_left += _offsX;
+	_top += offsY;
+	_left += offsX;
 
 	if (_left + width > _right + 1 || _left < 0) {
 		_left += width;
-		_top -= _offsY;
+		_top -= offsY;
 		return;
 	}
 
@@ -299,7 +300,7 @@ void CharsetRenderer::printChar(int chr)
 	int drawTop = _top - vs->topline;
 	if (drawTop < 0)
 		drawTop = 0;
-	int bottom = drawTop + height + _offsY;
+	int bottom = drawTop + height + offsY;
 
 	_vm->updateDirtyRect(vs->number, _left, _left + width, drawTop, bottom, 0);
 
@@ -334,7 +335,7 @@ void CharsetRenderer::printChar(int chr)
 	if (_top + height > _strBottom)
 		_strBottom = _top + height;
 
-	_top -= _offsY;
+	_top -= offsY;
 }
 
 void CharsetRenderer::drawBits(VirtScreen *vs, byte *dst, byte *mask, int drawTop, int width, int height)

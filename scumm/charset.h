@@ -33,19 +33,19 @@ public:
 
 	int _top;
 	int _left, _startLeft;
-	byte _center;
 	int _right;
+
 	byte _color;
+	byte _colorMap[16];
+
+	bool _center;
 	bool _hasMask;
+	bool _ignoreCharsetMask;
 	bool _blitAlso;
-	
-	int _bufPos;
 	bool _firstChar;
 	bool _disableOffsX;
 
-	bool _ignoreCharsetMask;
-
-	byte _colorMap[16];
+	int _bufPos;
 	byte _buffer[512];	// TODO - would be really nice to get rid of this
 
 protected:
@@ -55,9 +55,7 @@ protected:
 	byte *_fontPtr;
 
 	byte _bpp;
-	uint32 _charOffs;
 	byte *_charPtr;
-	int _offsX, _offsY;
 
 	void drawBits(VirtScreen *vs, byte *dst, byte *mask, int drawTop, int width, int height);
 

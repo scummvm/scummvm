@@ -242,13 +242,13 @@ void Scumm::CHARSET_1()
 		if (c != 0xFF) {
 			_charset->_left = _charset->_nextLeft;
 			_charset->_top = _charset->_nextTop;
-			if (_features & GF_OLD256)
+			if (_features & GF_OLD256) {
 				_charset->printCharOld(c);
-			else if (!(_features & GF_AFTER_V6)) {
-				if (!(_haveMsg == 0xFE && _noSubtitles))
+			} else if (_features & GF_AFTER_V6) {
+				if (!_noSubtitles || (_haveMsg != 0xFE && _haveMsg != 0xFF))
 					_charset->printChar(c);
 			} else {
-				if (!((_haveMsg == 0xFE || _haveMsg == 0xFF) && _noSubtitles))
+				if (!_noSubtitles || _haveMsg != 0xFE)
 					_charset->printChar(c);
 			}
 
