@@ -408,10 +408,7 @@ void ScummEngine_v2::decodeParseString() {
 	}
 	*ptr = 0;
 
-	// For now, always use textSlot 0. Not sure if there are any situations where we might
-	// need to us another one?	
 	int textSlot = 0;
-	
 	_string[textSlot].xpos = 0;
 	_string[textSlot].ypos = 0;
 	_string[textSlot].right = 320;
@@ -428,20 +425,7 @@ void ScummEngine_v2::decodeParseString() {
 	}
 
 	_messagePtr = buffer;
-	switch (textSlot) {
-	case 0:
-		actorTalk();
-		break;
-	case 1:
-		drawString(1);
-		break;
-	case 2:
-		unkMessage1();
-		break;
-	case 3:
-		unkMessage2();
-		break;
-	}
+	actorTalk();
 }
 
 int ScummEngine_v2::readVar(uint var) {
