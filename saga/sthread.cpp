@@ -333,7 +333,7 @@ void Script::runThread(ScriptThread *thread, uint instructionLimit) {
 				_vm->_console->DebugPrintf(S_WARN_PREFIX "%X: Script function %d failed.\n", thread->_instructionOffset, scriptFunctionReturnValue);
 			}
 
-			if (scriptFunction ==  SF_gotoScene) { // SF_gotoScene
+			if (functionNumber ==  16) { // SF_gotoScene
 				instructionCount = instructionLimit; // break the loop
 				break;
 			}
