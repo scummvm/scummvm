@@ -25,8 +25,8 @@
 #include "sky/disk.h"
 
 struct HuffTree {
-	char lChild;
-	char rChild;
+	unsigned char lChild;
+	unsigned char rChild;
 	char value;
 };
 
