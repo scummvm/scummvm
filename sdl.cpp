@@ -1,5 +1,3 @@
-#define NEED_SDL_HEADERS
-
 #include "stdafx.h"
 #include "scumm.h"
 #include "SDL_thread.h"
@@ -144,6 +142,8 @@ private:
 	void unload_gfx_mode();
 
 	void hotswap_gfx_mode();
+
+	void get_320x200_image(byte *buf);
 };
 
 int Init_2xSaI (uint32 BitFormat);
@@ -184,17 +184,17 @@ OSystem *OSystem_SDL_create(int gfx_mode, bool full_screen) {
 void OSystem_SDL::set_palette(const byte *colors, uint start, uint num) {
 	const byte *b = colors;
 	uint i;
+	SDL_Color *base = _cur_pal + start;
 	for(i=0;i!=num;i++) {
-		_cur_pal[i].r = b[0];
-		_cur_pal[i].g = b[1];
-		_cur_pal[i].b = b[2];
+		base[i].r = b[0];
+		base[i].g = b[1];
+		base[i].b = b[2];
 		b += 4;
 	}
 
 	if (_mode_flags & DF_FORCE_FULL_ON_PALETTE)
 		force_full = true;
-
-	SDL_SetColors(sdl_screen, _cur_pal, start, num);
+	SDL_SetColors(sdl_screen, base, start, num);
 }
 
 void OSystem_SDL::fill_sound(void *userdata, Uint8 * stream, int len) {
@@ -329,13 +329,11 @@ void OSystem_SDL::init_size(uint w, uint h, byte sound) {
 	 * driver changes, so i'll alloc it here */
 	_cur_pal = (SDL_Color*)calloc(sizeof(SDL_Color), 256);
 
-	load_gfx_mode();
-
 	dirty_rect_list = (SDL_Rect*)calloc(NUM_DIRTY_RECT, sizeof(SDL_Rect));
-
 	_ms_backup = (byte*)malloc(MAX_MOUSE_W * MAX_MOUSE_H * MAX_SCALING);
-
 	dirty_checksums = (uint32*)calloc(CKSUM_NUM*2, sizeof(uint32));
+
+	load_gfx_mode();
 }
 
 void OSystem_SDL::copy_rect(const byte *buf, int pitch, int x, int y, int w, int h) {
@@ -753,6 +751,49 @@ void OSystem_SDL::set_sound_proc(void *param, SoundProc *proc) {
 	_sound_param = param;
 }
 
+
+/* retrieve the 320x200 bitmap currently being displayed */
+void OSystem_SDL::get_320x200_image(byte *buf) {
+	/* make sure the mouse is gone */
+	undraw_mouse();
+	
+	if (SDL_LockSurface(sdl_screen) == -1)
+		error("SDL_LockSurface failed: %s.\n", SDL_GetError());
+
+	byte *src;
+	int x,y;
+
+	switch(_internal_scaling) {
+	case 1:
+		memcpy(buf, sdl_screen->pixels, 320*200);
+		break;
+
+	case 2:
+		src = (byte*)sdl_screen->pixels;
+		for(y=0; y!=200; y++) {
+			for(x=0; x!=320; x++)
+				buf[x] = src[x*2];
+
+			buf += 320;
+			src += 320 * 2 * 2;
+		}
+		break;
+
+	case 3:
+		src = (byte*)sdl_screen->pixels;
+		for(y=0; y!=200; y++) {
+			for(x=0; x!=320; x++)
+				buf[x] = src[x*3];
+
+			buf += 320;
+			src += 320 * 3 * 3;
+		}
+		break;
+	}	
+
+	SDL_UnlockSurface(sdl_screen);
+}
+
 void OSystem_SDL::hotswap_gfx_mode() {
 	/* hmm, need to allocate a 320x200 bitmap
 	 * which will contain the "backup" of the screen during the change.
@@ -761,32 +802,20 @@ void OSystem_SDL::hotswap_gfx_mode() {
 	
 	byte *bak_mem = (byte*)malloc(320*200);
 
-	SDL_Surface *bak = SDL_CreateRGBSurfaceFrom(bak_mem, 320, 200, 8, 320, 0, 0, 0, 0);
-	if (bak == NULL) {
-		error("hotswap_gfx_mode::bak==NULL");
-	}
-
-	SDL_SetColors(bak, _cur_pal, 0, 256);
-
-	SDL_Rect src_rect = {0, 0, 320 * _internal_scaling, 200 * _internal_scaling };
-	static SDL_Rect dst_rect = {0, 0, 320, 200 };
-
-	if (SDL_BlitSurface(sdl_screen, &src_rect, bak, &dst_rect) != 0)
-		error("hotswap_gfx_mode::blit failed = %s", SDL_GetError());
-
-	/* destroy the temp surface, the backup bitmap is in bak_mem now */
-	SDL_FreeSurface(bak);
+	get_320x200_image(bak_mem);
 
 	unload_gfx_mode();
 	load_gfx_mode();
 
+	/* blit image */
+	OSystem_SDL::copy_rect(bak_mem, 320, 0, 0, 320, 200);
+	free(bak_mem);
+
 	/* reset palette */
 	SDL_SetColors(sdl_screen, _cur_pal, 0, 256);
 
-	/* blit image */
-	OSystem_SDL::copy_rect(bak_mem, 320, 0, 0, 320, 200);
-
-	free(bak_mem);
+	force_full = true;
+	OSystem_SDL::update_screen();
 }
 
 uint32 OSystem_SDL::set_param(int param, uint32 value) {
