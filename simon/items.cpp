@@ -1516,23 +1516,20 @@ void SimonState::o_unk_127()
 		if (_debugMode)
 			warning("o_unk_127(%d,%d,%d) not implemented properly", a, b, c);
 
-		//FIXME simon 2 attempts to use music track 93 in ending sequences 
-		// which doesn't exist so prevent that happening
-		if ((a != _last_music_played) && (a < 93)) {
+		if (a != _last_music_played) {
 			_last_music_played = a;
-			playMusic(a);
+			playMusic(a - 1);
 		}
 	} else {
 		uint a = getVarOrWord();
 		/*uint b = */ getVarOrWord();
 
-		//FIXME music track 12 uses a different and unknown format
+		//FIXME music track 12 isn't be read correctly and produce high pitched noise
 		// Using music in next area as temporary work around
 		if (a == 12)
 			a=0;
 
-		//FIXME simon 1 attempts to use music track 35 in ending sequences 
-		// which doesn't exist so prevent that happening
+		//FIXME simon 1 attempts repeat music track 35 in ending sequences when it should only be played once
 		if ((a != _last_music_played)  && (a < 35)) {
 			_last_music_played = a;
 			playMusic(a);
