@@ -1,8 +1,7 @@
 CXX = g++
-CXXFLAGS = -g -W -Wall -Ilua/include `sdl-config --cflags` # -O2
+CXXFLAGS = -g -W -Wall -Ilua/include `sdl-config --cflags` -DUNIX # -O2
 LDFLAGS = -g -W -Wall # -O2
 LIBS = -lSDL -lGL -lGLU -Llua/lib -llua -llualib `sdl-config --libs`
-
 OBJS = main.o lab.o bitmap.o model.o resource.o material.o debug.o \
 	textsplit.o lua.o registry.o localize.o scene.o engine.o actor.o \
 	sound.o mixer.o keyframe.o costume.o walkplane.o textobject.o \

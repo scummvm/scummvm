@@ -96,16 +96,16 @@
 	#ifdef X11_BACKEND
 
 	// You need to set this manually if necessary
-//	#define SCUMM_LITTLE_ENDIAN
+//	#define SYSTEM_LITTLE_ENDIAN
 	
 	#else
 	/* need this for the SDL_BYTEORDER define */
 	#include <SDL_byteorder.h>
 
 	#if SDL_BYTEORDER == SDL_LIL_ENDIAN
-	#define SCUMM_LITTLE_ENDIAN
+	#define SYSTEM_LITTLE_ENDIAN
 	#elif SDL_BYTEORDER == SDL_BIG_ENDIAN
-	#define SCUMM_BIG_ENDIAN
+	#define SYSTEM_BIG_ENDIAN
 	#else
 	#error Neither SDL_BIG_ENDIAN nor SDL_LITTLE_ENDIAN is set.
 	#endif
