@@ -176,6 +176,12 @@ void ScummEngine::CHARSET_1() {
 	}
 
 	buffer = _charsetBuffer + _charsetBufPos;
+
+	// TODO HE 7.2 games use difference charset codes
+	// Skip the code for now
+	if (_heversion >= 72)
+		buffer += 15;
+
 	if (_version > 3)
 		_charset->addLinebreaks(0, buffer, 0, t);
 
