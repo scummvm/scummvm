@@ -29,6 +29,7 @@ protected:
 
 public:
 	byte *_ptr;
+	byte *_baseptr;
 	byte *_dataptr;
 	byte _numColors;
 

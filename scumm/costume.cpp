@@ -114,7 +114,7 @@ byte CostumeRenderer::mainRoutine(int slot, int frame) {
 		_srcptr += 2;
 		if (ex1 != 0xFF || ex2 != 0xFF) {
 			ex1 = READ_LE_UINT16(_loaded._ptr + _loaded._numColors + 10 + ex1 * 2);
-			_srcptr = _loaded._ptr + READ_LE_UINT16(_loaded._ptr + ex1 + ex2 * 2) + 14;
+			_srcptr = _loaded._baseptr + READ_LE_UINT16(_loaded._ptr + ex1 + ex2 * 2) + 14;
 		}
 	}
 
@@ -1189,6 +1189,8 @@ void LoadedCostume::loadCostume(int id) {
 	else
 		_ptr += 2;
 
+	_baseptr = _ptr;
+
 	switch (_ptr[7] & 0x7F) {
 	case 0x58:
 		_numColors = 16;
@@ -1208,10 +1210,13 @@ void LoadedCostume::loadCostume(int id) {
 	
 	// In GF_OLD_BUNDLE games, there is no actual palette, just a single color byte. 
 	// Don't forget, these games were designed around a fixed 16 color HW palette :-)
-	if (_vm->_features & GF_OLD_BUNDLE)
+	// In addition, all offsets are shifted by 2; we accomodate that via a seperate
+	// _baseptr value (instead of adding tons of if's throughout the code).
+	if (_vm->_features & GF_OLD_BUNDLE) {
 		_numColors = 1;
-
-	_dataptr = _ptr + READ_LE_UINT16(_ptr + _numColors + 8);
+		_baseptr += 2;
+	}
+	_dataptr = _baseptr + READ_LE_UINT16(_ptr + _numColors + 8);
 }
 
 byte CostumeRenderer::drawLimb(const CostumeData &cost, int limb) {
@@ -1223,11 +1228,11 @@ byte CostumeRenderer::drawLimb(const CostumeData &cost, int limb) {
 
 	i = cost.curpos[limb] & 0x7FFF;
 
-	_frameptr = _loaded._ptr + READ_LE_UINT16(_loaded._ptr + _loaded._numColors + limb * 2 + 10);
+	_frameptr = _loaded._baseptr + READ_LE_UINT16(_loaded._ptr + _loaded._numColors + limb * 2 + 10);
 
 	code = _loaded._dataptr[i] & 0x7F;
 	
-	_srcptr = _loaded._ptr + READ_LE_UINT16(_frameptr + code * 2);
+	_srcptr = _loaded._baseptr + READ_LE_UINT16(_frameptr + code * 2);
 
 	if (code != 0x7B) {
 		if (!(_vm->_features & GF_OLD256) || code < 0x79)
@@ -1243,7 +1248,7 @@ int Scumm::cost_frameToAnim(Actor *a, int frame) {
 }
 
 void Scumm::cost_decodeData(Actor *a, int frame, uint usemask) {
-	byte *p, *r;
+	byte *r;
 	uint mask, j;
 	int i;
 	byte extra, cmd;
@@ -1255,19 +1260,17 @@ void Scumm::cost_decodeData(Actor *a, int frame, uint usemask) {
 
 	anim = cost_frameToAnim(a, frame);
 
-	p = lc._ptr;
-	if (anim > p[6]) {
+	if (anim > lc._ptr[6]) {
 		return;
 	}
 
-	r = p + READ_LE_UINT16(p + anim * 2 + lc._numColors + 42);
+	r = lc._baseptr + READ_LE_UINT16(lc._ptr + anim * 2 + lc._numColors + 42);
 
-	if (r == p) {
+	if (r == lc._baseptr) {
 		return;
 	}
 
 	dataptr = lc._dataptr;
-
 	mask = READ_LE_UINT16(r);
 	r += 2;
 	i = 0;
@@ -1275,6 +1278,7 @@ void Scumm::cost_decodeData(Actor *a, int frame, uint usemask) {
 		if (mask & 0x8000) {
 			if (_features & GF_AFTER_V3) {
 				j = *r++;
+
 				if (j == 0xFF)
 					j = 0xFFFF;
 			} else {
@@ -1317,17 +1321,13 @@ void CostumeRenderer::setPalette(byte *palette) {
 	byte color;
 
 	if (_vm->_features & GF_OLD_BUNDLE) {
-		palette[_loaded._ptr[8]] = palette[0];
 		if ((_vm->_vars[_vm->VAR_CURRENT_LIGHTS] & LIGHTMODE_actor_color)) {
-			for (i = 0; i < 16; i++) {
-				_palette[i] = palette[i];
-			}
+			memcpy(_palette, palette, 16);
 		} else {
-			for (i = 0; i < 16; i++) {
-				_palette[i] = 8;
-			}
+			memset(_palette, 8, 16);
 			_palette[12] = 0;
 		}
+		_palette[_loaded._ptr[8]] = _palette[0];
 	} else {
 		for (i = 0; i < _loaded._numColors; i++) {
 			if ((_vm->_vars[_vm->VAR_CURRENT_LIGHTS] & LIGHTMODE_actor_color) || (_vm->_features & GF_AFTER_V6)) {
