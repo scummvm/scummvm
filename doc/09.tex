@@ -29,10 +29,17 @@ messages (see \url{http://www.sysinternals.com/ntw2k/freeware/debugview.shtml}).
     options.
   \item Type make -f Makefile.mingw,  hopefully ScummVM will compile for you.
   \end{itemize}
-\subsection{MS Visual C++}
+\subsection{Microsoft Visual C++ 6.0}
   \begin{itemize}
   \item Open the workspace, scummwm.dsw
-  \item Enter the path to the SDL include files in
+  \item Enter the path to the needed libraries and includes in
+    Tools|Options|Directories
+  \item Now it should compile successfully. 
+  \end{itemize}
+\subsection{Microsoft Visual C++ 7.0}
+  \begin{itemize}
+  \item Open the solution file scummwm.sln
+  \item Enter the path to the needed libraries and includes in
     Tools|Options|Directories
   \item Now it should compile successfully. 
   \end{itemize}
