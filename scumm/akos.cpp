@@ -1233,8 +1233,8 @@ byte AkosRenderer::codec32(int xmoveCur, int ymoveCur) {
 	src.bottom = _height - 1;
 
 	dst.top = _actorY + ymoveCur;
-	dst.right = dst.left + _width - 1;
-	dst.bottom = dst.top + _height - 1;
+	dst.right = dst.left + _width;
+	dst.bottom = dst.top + _height;
 
 	dst.clip(_clipOverride);
 
