@@ -833,7 +833,6 @@ void Scumm_v2::o2_doSentence() {
 		return;
 	}
 	if (a == 0xFC) {
-		_sentenceNum--;
 		clearClickedStatus();
 		return;
 	}
@@ -1133,6 +1132,9 @@ void Scumm_v2::o2_roomOps() {
 
 void Scumm_v2::o2_cutscene() {
 	warning("TODO o2_cutscene()");
+	_sentenceNum = 0;
+	stopScriptNr(SENTENCE_SCRIPT);
+	clearClickedStatus();
 }
 
 void Scumm_v2::o2_endCutscene() {
