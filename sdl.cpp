@@ -579,3 +579,210 @@ int main(int argc, char* argv[]) {
 	return 0;
 }
 
+/************ ENDER: Temporary debug code for boxen **************/
+int hlineColor (SDL_Surface *dst, Sint16 x1, Sint16 x2, Sint16 y, Uint32 color) {
+ Sint16 left,right,top,bottom;
+ Uint8 *pixel,*pixellast;
+ int dx;
+ int pixx, pixy;
+ Sint16 w;
+ Sint16 xtmp;
+ int result=-1;
+ Uint8 *colorptr;
+ 
+ /* Get clipping boundary */
+ left = dst->clip_rect.x;
+ right = dst->clip_rect.x+dst->clip_rect.w-1;
+ top = dst->clip_rect.y;
+ bottom = dst->clip_rect.y+dst->clip_rect.h-1;
+
+ /* Swap x1, x2 if required */
+ if (x1>x2) {
+  xtmp=x1; x1=x2; x2=xtmp;
+ }
+
+ /* Visible */
+ if ((x1>right) || (x2<left) || (y<top) || (y>bottom)) {
+  return(0);
+ }
+ 
+ /* Clip x */
+ if (x1<left) { 
+  x1=left;
+ } 
+ if (x2>right) {
+  x2=right;
+ }
+  
+ /* Calculate width */
+ w=x2-x1;
+ 
+ /* Sanity check on width */
+ if (w<0) {
+  return(0);
+ }
+
+  /* Setup color */
+  colorptr=(Uint8 *)&color;
+  if (SDL_BYTEORDER == SDL_BIG_ENDIAN) {
+   color=SDL_MapRGBA(dst->format, colorptr[0], colorptr[1], colorptr[2], colorptr[3]);
+  } else {
+   color=SDL_MapRGBA(dst->format, colorptr[3], colorptr[2], colorptr[1], colorptr[0]);
+  }
+  
+  /* Lock surface */
+  SDL_LockSurface(dst);
+
+  /* More variable setup */
+  dx=w;
+  pixx = dst->format->BytesPerPixel;
+  pixy = dst->pitch;
+  pixel = ((Uint8*)dst->pixels) + pixx * (int)x1 + pixy * (int)y;
+  
+  /* Draw */
+  switch(dst->format->BytesPerPixel) {
+   case 1:
+    memset (pixel, color, dx);
+    break;
+   case 2:
+    pixellast = pixel + dx + dx;
+    for (; pixel<=pixellast; pixel += pixx) {
+     *(Uint16*)pixel = color;
+    }
+    break;
+   case 3:
+    pixellast = pixel + dx + dx + dx;
+    for (; pixel<=pixellast; pixel += pixx) {
+     if (SDL_BYTEORDER == SDL_BIG_ENDIAN) {
+      pixel[0] = (color >> 16) & 0xff;
+      pixel[1] = (color >> 8) & 0xff;
+      pixel[2] = color & 0xff;
+     } else {
+      pixel[0] = color & 0xff;
+      pixel[1] = (color >> 8) & 0xff;
+      pixel[2] = (color >> 16) & 0xff;
+     }
+    }
+    break;
+   default: /* case 4*/
+    dx = dx + dx;
+    pixellast = pixel + dx + dx;
+    for (; pixel<=pixellast; pixel += pixx) {
+     *(Uint32*)pixel = color;
+    }
+    break;
+  }
+
+  /* Unlock surface */
+  SDL_UnlockSurface(dst);
+
+  /* Set result code */
+  result=0;
+
+ return(result);
+}
+
+int gfxPrimitivesCompareInt(const void *a, const void *b);
+
+static int *gfxPrimitivesPolyInts=NULL;
+static int gfxPrimitivesPolyAllocated=0;
+
+int filledPolygonColor (SDL_Surface *dst, Sint16 *vx, Sint16 *vy, int n, int color)
+{
+	int result;
+	int i;
+	int y;
+	int miny, maxy;
+	int x1, y1;
+	int x2, y2;
+	int ind1, ind2;
+	int ints;
+	
+	/* Sanity check */
+	if (n<3) {
+	 return -1;
+	}
+	
+	/* Allocate temp array, only grow array */
+	if (!gfxPrimitivesPolyAllocated) {
+	 gfxPrimitivesPolyInts = (int *) malloc(sizeof(int) * n);
+	 gfxPrimitivesPolyAllocated = n;
+	} else {
+	 if (gfxPrimitivesPolyAllocated<n) {
+ 	  gfxPrimitivesPolyInts = (int *) realloc(gfxPrimitivesPolyInts, sizeof(int) * n);
+	  gfxPrimitivesPolyAllocated = n;
+	 }
+	}		
+
+	/* Determine Y maxima */
+	miny = vy[0];
+	maxy = vy[0];
+	for (i=1; (i < n); i++) {
+		if (vy[i] < miny) {
+		 miny = vy[i];
+		} else if (vy[i] > maxy) {
+		 maxy = vy[i];
+		}
+	}
+	
+	/* Draw, scanning y */
+	result=0;
+	for (y=miny; (y <= maxy); y++) {
+		ints = 0;
+		for (i=0; (i < n); i++) {
+			if (!i) {
+				ind1 = n-1;
+				ind2 = 0;
+			} else {
+				ind1 = i-1;
+				ind2 = i;
+			}
+			y1 = vy[ind1];
+			y2 = vy[ind2];
+			if (y1 < y2) {
+				x1 = vx[ind1];
+				x2 = vx[ind2];
+			} else if (y1 > y2) {
+				y2 = vy[ind1];
+				y1 = vy[ind2];
+				x2 = vx[ind1];
+				x1 = vx[ind2];
+			} else {
+				continue;
+			}
+			if ((y >= y1) && (y < y2)) {
+				gfxPrimitivesPolyInts[ints++] = (y-y1) * (x2-x1) / (y2-y1) + x1;
+			} else if ((y == maxy) && (y > y1) && (y <= y2)) {
+				gfxPrimitivesPolyInts[ints++] = (y-y1) * (x2-x1) / (y2-y1) + x1;
+			}
+		}
+		qsort(gfxPrimitivesPolyInts, ints, sizeof(int), gfxPrimitivesCompareInt);
+
+		for (i=0; (i<ints); i+=2) {
+			result |= hlineColor(dst, gfxPrimitivesPolyInts[i], gfxPrimitivesPolyInts[i+1], y, color);
+		}
+	}
+	
+ return (result);
+}
+
+int gfxPrimitivesCompareInt(const void *a, const void *b)
+{
+ return (*(const int *)a) - (*(const int *)b);
+}
+
+void BoxTest(int num) {
+	BoxCoords box;
+	Sint16 rx1[4], ry1[4];
+	
+	scumm.getBoxCoordinates(num,  &box);
+	rx1[0] = box.ul.x*2; ry1[0] = box.ul.y*2;
+	rx1[1] = box.ur.x*2; ry1[1] = box.ur.y*2;
+	rx1[2] = box.lr.x*2; ry1[2] = box.lr.y*2;
+	rx1[3] = box.ll.x*2; ry1[3] = box.ll.y*2;
+
+	filledPolygonColor(screen, &rx1[0], &ry1[0], 4, 255);
+	SDL_UpdateRect(screen, 0,0,0,0);
+	
+}
+

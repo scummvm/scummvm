@@ -23,6 +23,8 @@
  */
 
 
+
+
 #include "stdafx.h"
 #include "scumm.h"
 
@@ -38,6 +40,7 @@ enum {
 	CMD_ACTOR,
 	CMD_SCRIPTS,
 	CMD_LOAD_ROOM,
+        CMD_DUMPBOX,
 	CMD_EXIT
 };
 
@@ -55,6 +58,7 @@ void ScummDebugger::attach(Scumm *s) {
 #endif
 }
 
+void BoxTest(int num);
 bool ScummDebugger::do_command() {
 	int cmd;
 
@@ -68,6 +72,7 @@ bool ScummDebugger::do_command() {
 				"(a)ctor [actornum] -> show actor information\n"
 				"(r)oom roomnum -> load room\n"
 				"(s)cripts -> show running scripts\n"
+                                "(b)oxes -> list and draw boxen\n"
 				"(e)xit -> exit game\n"
 			   );
 		return true;
@@ -101,7 +106,19 @@ bool ScummDebugger::do_command() {
 			_s->_fullRedraw = 1;
 		}
 		return true;
-
+	case CMD_DUMPBOX:
+		{
+			int num, i; BoxCoords box;		
+			num = _s->getNumBoxes();
+			for (i=0; i<num; i++) {
+				BoxTest(i);
+				_s->getBoxCoordinates(i, &box);
+				printf("%d: [%d x %d] [%d x %d] [%d x %d] [%d x %d]\n", i, 
+				box.ul.x, box.ul.y, 	box.ll.x, box.ll.y, 
+				box.ur.x, box.ur.y, 	box.lr.x, box.lr.y);
+			}
+		}
+		return true;
 	case CMD_EXIT:
 		exit(1);
 	}
@@ -144,6 +161,7 @@ static const DebuggerCommands debugger_commands[] = {
 	{ "a", 1, CMD_ACTOR },
 	{ "s", 1, CMD_SCRIPTS },
 	{ "r", 1, CMD_LOAD_ROOM },
+        { "b", 1, CMD_DUMPBOX},
 	{ "e", 1, CMD_EXIT },
 	{ 0, 0, 0 },
 };
