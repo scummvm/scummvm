@@ -698,6 +698,7 @@ void ScummEngine_v90he::o90_getDistanceBetweenPoints() {
 
 void ScummEngine_v90he::o90_getSpriteInfo() {
 	int args[16];
+	int eax, esi;
 	byte subOp = fetchScriptByte();
 	subOp -= 30;
 
@@ -734,8 +735,31 @@ void ScummEngine_v90he::o90_getSpriteInfo() {
 		pop();
 		break;
 	case 12:
-		pop();
-		pop();
+		esi = pop();
+		eax = pop();
+		if (eax) {
+			switch(esi) {
+			case 0:
+				push(spriteInfoGet_flags_1(eax));
+				break;
+			case 1:
+				push(spriteInfoGet_flags_2(eax));
+				break;
+			case 2:
+				push(spriteInfoGet_flags_3(eax));
+				break;
+			case 3:
+				push(spriteInfoGet_flags_4(eax));
+				break;
+			case 4:
+				push(spriteInfoGet_flags_5(eax));
+				break;
+			default:
+				push(0);
+			}
+		} else {
+			push(0);
+		}
 		break;
 	case 13:
 		pop();
@@ -768,7 +792,11 @@ void ScummEngine_v90he::o90_getSpriteInfo() {
 		pop();
 		break;
 	case 52:
-		pop();
+		eax = pop();
+		if (eax)
+			push(spriteInfoGet_flags_6(eax));
+		else
+			push(0);
 		break;
 	case 62:
 		pop();
@@ -780,7 +808,11 @@ void ScummEngine_v90he::o90_getSpriteInfo() {
 		pop();
 		break;
 	case 94:
-		pop();
+		eax = pop();
+		if (eax)
+			push(spriteInfoGet_flags_7(eax));
+		else
+			push(0);
 		break;
 	case 95:
 		getStackList(args, ARRAYSIZE(args));
