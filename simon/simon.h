@@ -656,7 +656,7 @@ public:
 	void vc_53_no_op();
 	void vc_54_no_op();
 	void vc_55_offset_hit_area();
-	void vc_56_no_op();
+	void vc_56();
 	void vc_57_no_op();
 	void vc_59();
 	void vc_60_kill_sprite();

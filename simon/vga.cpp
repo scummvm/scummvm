@@ -86,7 +86,7 @@ static const VgaOpcodeProc vga_opcode_table[] = {
 	&SimonState::vc_53_no_op,
 	&SimonState::vc_54_no_op,
 	&SimonState::vc_55_offset_hit_area,
-	&SimonState::vc_56_no_op,
+	&SimonState::vc_56,
 	&SimonState::vc_57_no_op,
 	&SimonState::vc_58,
 	&SimonState::vc_59,
@@ -1282,6 +1282,7 @@ void SimonState::vc_27_reset() {
 void SimonState::vc_28_dummy_op() {
 	/* dummy opcode */
 	_vc_ptr += 8;
+	error("vc_28 - Please report error message and where in game it occured");
 }
 
 void SimonState::vc_29_stop_all_sounds() {
@@ -1324,9 +1325,12 @@ void SimonState::vc_34_force_lock() {
 }
 
 void SimonState::vc_35() {
+	/* unknown function is simon1dos/simon2dos */
+	/* dummy op in simon1win/simon2win */
 	/* not used? */
 	_vc_ptr += 4;
 	_vga_sprite_changed++;
+	error("vc_35 - Please report error message and where in game it occured");
 }
 
 void SimonState::vc_36_saveload_thing() {
@@ -1530,12 +1534,14 @@ void SimonState::vc_52_play_sound() {
 }
 
 void SimonState::vc_53_no_op() {
-	/* no op */
+	/* dummy op in simon1dos/talkie */
+	/* no op in simon1win */
 	error("vc_53 - Please report error message and where in game it occured");
 }
 
 void SimonState::vc_54_no_op() {
-	/* no op */
+	/* dummy op in simon1dos/talkie */
+	/* no op in simon1win */
 	error("vc_54 - Please report error message and where in game it occured");
 }
 
@@ -1560,7 +1566,7 @@ void SimonState::vc_55_offset_hit_area() {
 	_need_hitarea_recalc++;
 }
 
-void SimonState::vc_56_no_op() {
+void SimonState::vc_56() {
 	/* no op in simon1 */
 	if (_game & GF_SIMON2) {
 		uint num = vc_read_var_or_word() * _vga_base_delay;
@@ -1591,6 +1597,8 @@ void SimonState::vc_59() {
 }
 
 void SimonState::vc_58() {
+	/* no op in simon1dos */
+	/* not used in simon1win? */
 	if (!(_game & GF_SIMON2))
 		error("vc_58 - Please report error message and where in game it occured");
 	uint sprite = _vga_cur_sprite_id;
@@ -1613,7 +1621,9 @@ void SimonState::vc_58() {
 }
 
 void SimonState::vc_57_no_op() {
-	/* no op */
+	/* unknown function in simon1dos/simon2dos */
+	/* no op in simon1win/simon2win */
+	/* not used? */
 		error("vc_57 - Please report error message and where in game it occured");
 }
 
