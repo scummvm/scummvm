@@ -50,6 +50,30 @@ CharsetRenderer::CharsetRenderer(ScummEngine *vm) {
 	_curId = 0;
 }
 
+int CharsetRenderer::getLetter(int letter) {
+	int offset, result;
+
+	byte *ptr = _vm->getResourceAddress(rtCharset, _curId);
+	if (!ptr)
+		error("CharsetRenderer::getLetter: charset %d not found!", _curId);
+
+	offset = READ_LE_UINT32(ptr + 29 + letter);
+	if (offset == 0)
+		return 0;
+
+	ptr += offset;
+	
+	result = READ_LE_UINT16(ptr + 2);
+	byte start = *ptr;
+
+	if (result >= 0x80) {
+		result = result - 256 + start;
+	} else {
+		result += start;
+	};
+	return (result);
+}
+
 void CharsetRendererCommon::setCurID(byte id) {
 	checkRange(_vm->_numCharsets - 1, 0, id, "Printing with bad charset %d");
 

@@ -754,7 +754,7 @@ int Sound::isSoundRunning(int sound) const {
 		} else if (sound == -1 || sound == 10000 || sound == _currentMusic) {
 			// getSoundStatus(), with a -1, will return the
 			// ID number of the first active music it finds.
-			if (_currentMusic)
+			if (_vm->_heversion >= 70  || _currentMusic)
 				return (_musicChannelHandle.isActive()) ? 1 : 0;
 			else if (_vm->_imuse)
 				return (_vm->_imuse->getSoundStatus(sound));
@@ -834,9 +834,9 @@ void Sound::stopSound(int a) {
 			// Stop current sfx
 		} else if (a == -1 || a == 10000) {
 			// Stop current music
-			if (_currentMusic)
+			if (_vm->_heversion >= 70  || _currentMusic)
 				_vm->_mixer->stopID(_currentMusic);
-			else
+			else if (_vm->_imuse)
 				_vm->_imuse->stopSound(_vm->_imuse->getSoundStatus(-1));
 		}
 	}

@@ -629,10 +629,12 @@ protected:
 	void o7_unknownEF();
 	void o7_readINI();
 	void o7_unknownF4();
+	void o7_unknownF5();
 	void o7_unknownF6();
 	void o7_unknownF9();
 	void o7_unknownFA();
 	void o7_unknownFB();
+	void o7_unknownFC();
 };
 
 class ScummEngine_v72he : public ScummEngine_v7he {
@@ -692,6 +694,7 @@ protected:
 	void o72_compareStackList();
 	void o72_unknown1C();
 	void o72_unknown50();
+	void o72_unknown5A();
 	void o72_wordArrayInc();
 	void o72_objectX();
 	void o72_objectY();
@@ -720,12 +723,12 @@ protected:
 	void o72_pickVarRandom();
 	void o72_redimArray();
 	void o72_readINI();
+	void o72_unknownF1();
 	void o72_unknownF4();
 	void o72_unknownF8();
 	void o72_unknownF9();
 	void o72_unknownFA();
 	void o72_unknownFB();
-	void o72_unknownFC();
 };
 
 class ScummEngine_v7 : public ScummEngine_v6 {

@@ -1065,6 +1065,7 @@ void ScummEngine::copyScriptString(byte *dst, bool override) {
 		while (len--)
 			*dst++ = fetchScriptByte();
 	}
+	*dst = 0;
 
 }
 

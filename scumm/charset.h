@@ -71,6 +71,7 @@ public:
 	virtual void printChar(int chr) = 0;
 	virtual void drawChar(int chr, const Graphics::Surface &s, int x, int y) {}
 
+	int getLetter(int letter);
 	int getStringWidth(int a, const byte *str);
 	void addLinebreaks(int a, byte *str, int pos, int maxwidth);
 	

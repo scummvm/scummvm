@@ -158,7 +158,7 @@ void ScummEngine_v72he::setupOpcodes() {
 		/* 58 */
 		OPCODE(o72_getTimer),
 		OPCODE(o72_setTimer),
-		OPCODE(o6_invalid),
+		OPCODE(o72_unknown5A),
 		OPCODE(o72_wordArrayDec),
 		/* 5C */
 		OPCODE(o6_if),
@@ -347,7 +347,7 @@ void ScummEngine_v72he::setupOpcodes() {
 		OPCODE(o6_invalid),
 		/* F0 */
 		OPCODE(o6_invalid),
-		OPCODE(o6_invalid),
+		OPCODE(o72_unknownF1),
 		OPCODE(o6_invalid),
 		OPCODE(o72_readINI),
 		/* F4 */
@@ -361,7 +361,7 @@ void ScummEngine_v72he::setupOpcodes() {
 		OPCODE(o72_unknownFA),
 		OPCODE(o72_unknownFB),
 		/* FC */
-		OPCODE(o72_unknownFC),
+		OPCODE(o7_unknownFC),
 		OPCODE(o6_invalid),
 		OPCODE(o6_invalid),
 		OPCODE(o6_invalid),
@@ -661,6 +661,12 @@ void ScummEngine_v72he::o72_setTimer() {
 	}
 }
 
+void ScummEngine_v72he::o72_unknown5A() {
+	int value = pop();
+	push(4);
+	warning("o72_unknown5A stub (%d)", value);
+}
+
 void ScummEngine_v72he::o72_wordArrayDec() {
 	int var = fetchScriptWord();
 	int base = pop();
@@ -798,6 +804,7 @@ void ScummEngine_v72he::o72_arrayOps() {
 	case 194:			// SO_ASSIGN_STRING
 		array = fetchScriptWord();
 		len = getStackList(list, ARRAYSIZE(list));
+		pop();
 		ah = defineArray(array, kStringArray, 0, 0, 0, 1024);
 		copyScriptString(ah->data);
 		break;
@@ -941,15 +948,15 @@ void ScummEngine_v72he::o72_openFile() {
 	int mode, slot, l, r;
 	byte filename[100];
 
+	mode = pop();
 	copyScriptString(filename, true);
-	printf("File %s\n", filename);
+	debug(1,"File %s\n", filename);
 	
 	for (r = strlen((char*)filename); r != 0; r--) {
 		if (filename[r - 1] == '\\')
 			break;
 	}
 	
-	mode = pop();
 	slot = -1;
 	for (l = 0; l < 17; l++) {
 		if (_hFileTable[l].isOpen() == false) {
@@ -959,9 +966,9 @@ void ScummEngine_v72he::o72_openFile() {
 	}
 
 	if (slot != -1) {
-		if (mode == -1)
+		if (mode == 1)
 			_hFileTable[slot].open((char*)filename + r, File::kFileReadMode);
-		else if (mode == -2)
+		else if (mode == 2)
 			_hFileTable[slot].open((char*)filename + r, File::kFileWriteMode);
 		else
 			error("o6_openFile(): wrong open file mode %d", mode);
@@ -1212,21 +1219,29 @@ void ScummEngine_v72he::o72_readINI() {
 	int retval;
 
 	// we pretend that we don't have .ini file
+	copyScriptString(name);
 	type = fetchScriptByte();
 	switch (type) {
 	case 6: // number
 		push(0);
 		break;
 	case 7: // string
-		copyScriptString(name);
 		defineArray(0, kStringArray, 0, 0, 0, 0);
 		retval = readVar(0);
 		writeArray(0, 0, 0, 0);
 		push(retval); // var ID string
 		break;
 	default:
-		warning("o72_readINI(..., %d): read-ini string not implemented", type);
+		warning("o72_readINI( read-ini string not implemented", type);
 	}
+	debug(1, "o72_readINI (%d) %s", type, name);
+}
+
+void ScummEngine_v72he::o72_unknownF1() {
+	int a = pop();
+	int b = pop();
+	debug(1,"o7_unknownF1 stub (%d, %d)", b, a);
+	push(-1);
 }
 
 void ScummEngine_v72he::o72_unknownF4() {
@@ -1249,14 +1264,6 @@ void ScummEngine_v72he::o72_unknownF4() {
 	}
 }
 
-void ScummEngine_v72he::o72_unknownFA() {
-	byte name[100];
-	int id = fetchScriptByte();
-	copyScriptString(name);
-
-	debug(1,"o72_unknownFA: (%d) %s", id, name);
-}
-
 void ScummEngine_v72he::o72_unknownF8() {
 	int a = fetchScriptByte();
 	push(1);
@@ -1266,17 +1273,15 @@ void ScummEngine_v72he::o72_unknownF8() {
 
 void ScummEngine_v72he::o72_unknownF9() {
 	// File related
-	int r;
-	byte filename[255];
+	warning("stub o72_unknownF9");
+}
 
-	copyScriptString(filename);
+void ScummEngine_v72he::o72_unknownFA() {
+	byte name[100];
+	int id = fetchScriptByte();
+	copyScriptString(name);
 
-	for (r = strlen((char*)filename); r != 0; r--) {
-		if (filename[r - 1] == '\\')
-			break;
-	}
-
-	warning("stub o72_unknownF9(\"%s\")", filename + r);
+	debug(1,"o72_unknownFA: (%d) %s", id, name);
 }
 
 void ScummEngine_v72he::o72_unknownFB() {
@@ -1302,13 +1307,6 @@ void ScummEngine_v72he::o72_unknownFB() {
 		break;
 	}
 	debug(1, "o72_unknownFB stub");
-}
-
-void ScummEngine_v72he::o72_unknownFC() {
-	int a =	pop();
-	int b =	pop();
-	debug(1,"o7_unknownFC stub (%d, %d)", b, a);
-	push(0);
 }
 
 } // End of namespace Scumm

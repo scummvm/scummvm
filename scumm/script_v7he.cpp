@@ -352,7 +352,7 @@ void ScummEngine_v7he::setupOpcodes() {
 		OPCODE(o7_readINI),
 		/* F4 */
 		OPCODE(o7_unknownF4),
-		OPCODE(o6_invalid),
+		OPCODE(o7_unknownF5),
 		OPCODE(o7_unknownF6),
 		OPCODE(o6_invalid),
 		/* F8 */
@@ -361,7 +361,7 @@ void ScummEngine_v7he::setupOpcodes() {
 		OPCODE(o7_unknownFA),
 		OPCODE(o7_unknownFB),
 		/* FC */
-		OPCODE(o6_invalid),
+		OPCODE(o7_unknownFC),
 		OPCODE(o6_invalid),
 		OPCODE(o6_invalid),
 		OPCODE(o6_invalid),
@@ -711,12 +711,28 @@ void ScummEngine_v7he::o7_quitPauseRestart() {
 }
 
 void ScummEngine_v7he::o7_unknownED() {
-	int a, b, c;
-	a = pop();
-	b = pop();
-	c = pop();
-	push(-1);
-	warning("stub o7_unknownED (%d, %d, %d)", c, b, a);
+	int array, pos, len;
+	int letter = 0, result = 0;
+
+	len = pop();
+	pos = pop();
+	array = pop();
+
+	if (len == -1) {
+		pos = 0;
+		len = resStrLen(getStringAddress(array));
+	}
+
+	writeVar(0, array);
+	while (len >= pos) {
+		letter = readArray(0, 0, pos);
+		if (letter)
+			result += _charset->getLetter(letter);
+		pos++;
+	}
+
+	push(result);
+	debug(1,"stub o7_unknownED");
 }
 
 void ScummEngine_v7he::o7_kernelSetFunctions() {
@@ -772,17 +788,48 @@ void ScummEngine_v7he::o7_stringLen() {
 	if (!addr)
 		error("o72_stringLen: Reference to zeroed array pointer (%d)", id);
 
-	len = strlen((char *)getStringAddress(id));
+	len = resStrLen(getStringAddress(id));
 	push(len);
 }
 
 void ScummEngine_v7he::o7_unknownEF() {
-	int a, b, c;
-	a = pop();
+	int value;
+	int array, array2, len, len2, len3, offset;
+	int b, size;
+	len = pop();
 	b = pop();
-	c = pop();
-	push(1);
-	warning("stub o7_unknownEF (%d, %d, %d)", c, b, a);
+	array2 = pop();
+
+	size = len - b + 2;
+
+	defineArray(0, kStringArray, 0, size);
+	writeArray(0, 0, 0, 0);
+
+	array = readVar(0);
+
+	if (len = -1) {
+		len2 = resStrLen(getStringAddress(array2));
+		len = 0;
+	} else {
+		len = b;
+	}
+	len3 = resStrLen(getStringAddress(array));
+
+	offset = 0;
+	len2 -= len;
+	len2++;
+	while (offset <= len2) {
+		writeVar(0, array2);
+		value = readArray(0, 0, offset + len);
+		writeVar(0, array);
+		writeArray(0, 0, len3 + offset, value);
+		offset++;
+	}
+
+	writeArray(0, 0, len3 + offset, 0);
+
+	push(array);
+	debug(1,"stub o7_unknownEF (array %d, array2 %d)", array, array2);
 }
 
 void ScummEngine_v7he::o7_readINI() {
@@ -805,7 +852,7 @@ void ScummEngine_v7he::o7_readINI() {
 		push(retval); // var ID string
 		break;
 	default:
-		warning("o7_readINI(..., %d): read-ini string not implemented", type);
+		warning("o7_readINI(%d): read-ini string not implemented", type);
 	}
 }
 
@@ -839,17 +886,65 @@ void ScummEngine_v7he::o7_unknownF4() {
 		debug(1, "o7_unknownF4(%d, %d, \"%s\", \"%s\")", a, b, filename1, filename2);
 		break;
 	}
-	warning("o7_unknownF4 stub");
+	debug(1,"o7_unknownF4 stub");
+}
+
+void ScummEngine_v7he::o7_unknownF5() {
+	int letter, ebx;
+	int array, len, pos, result = 0;
+	ebx = pop();
+	pos = pop();
+	array = pop();
+
+	len = resStrLen(getStringAddress(array));
+	writeVar(0, array);
+
+	while (len <= pos) {
+		letter = readArray(0, 0, pos);
+		result += _charset->getLetter(letter);
+		if (result >= ebx)
+			break;
+		pos++;
+	}
+
+	push(result);
+	debug(1,"stub o7_unknownF5");
 }
 
 void ScummEngine_v7he::o7_unknownF6() {
-	int a, b, c, d;
-	a = pop();
-	b = pop();
-	c = pop();
-	d = pop();
-	push(0);
-	warning("stub o7_unknownF6 (%d, %d, %d, %d)", d, c, b, a);
+	int len, pos, value, array;
+	value = pop();
+	len = pop();
+	pos = pop();
+	array = pop();
+
+	if (len < 0)
+		len = resStrLen(getStringAddress(array));
+
+	if (pos < 0)
+		pos = 0;
+
+	writeVar(0, array);
+	if (len < pos) {
+		while (len < pos) {
+			if (readArray(0, 0, pos) == value) {
+				push(pos);
+				return;
+			}
+			pos--;
+		}
+	} else {
+		while (len >= pos) {
+			if (readArray(0, 0, pos) == value) {
+				push(pos);
+				return;
+			}
+			pos++;
+		}
+	}
+
+	push(-1);
+	debug(1,"stub o7_unknownF6");
 }
 
 void ScummEngine_v7he::o7_unknownF9() {
@@ -867,13 +962,13 @@ void ScummEngine_v7he::o7_unknownF9() {
 			break;
 	}
 
-	warning("stub o7_unknownF9(\"%s\")", filename + r);
+	debug(1,"stub o7_unknownF9(\"%s\")", filename + r);
 }
 
 void ScummEngine_v7he::o7_unknownFA() {
 	int num = fetchScriptByte();
 	int len = resStrLen(_scriptPointer);
-	warning("stub o7_unknownFA(%d, \"%s\")", num, _scriptPointer);
+	debug(1,"stub o7_unknownFA(%d, \"%s\")", num, _scriptPointer);
 	_scriptPointer += len + 1;
 }
 
@@ -899,7 +994,14 @@ void ScummEngine_v7he::o7_unknownFB() {
 		pop();
 		break;
 	}
-	warning("o7_unknownFB stub");
+	debug(1,"o7_unknownFB stub");
+}
+
+void ScummEngine_v7he::o7_unknownFC() {
+	int a = pop();
+	int b = pop();
+	debug(1,"o7_unknownFC (%d, %d) stub", b, a);
+	push(1);
 }
 
 } // End of namespace Scumm
