@@ -582,7 +582,10 @@ bool ScummDebugger::Cmd_PrintBoxMatrix(int argc, const char **argv) {
 }
 
 void ScummDebugger::printBox(int box) {
-	assert(box < _vm->getNumBoxes());
+	if (box < 0 || box >= _vm->getNumBoxes()) {
+		DebugPrintf("%d is not a valid box!\n", box);
+		return;
+	}
 	BoxCoords coords;
 	int flags = _vm->getBoxFlags(box);
 	int mask = _vm->getMaskFromBox(box);
