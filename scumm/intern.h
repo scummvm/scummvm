@@ -207,6 +207,8 @@ protected:
 	virtual void executeOpcode(int i);
 	virtual const char *getOpcodeDesc(int i);
 
+	virtual void setupScummVars();
+
 	int popRoomAndObj(int *room);
 
 	virtual void decodeParseString(int a, int b);
@@ -372,6 +374,15 @@ protected:
 	void o6_findAllObjects();
 	void o6_pickVarRandom();
 	void o6_getDateTime();
+
+	byte VAR_VIDEONAME;
+
+	byte VAR_TIMEDATE_YEAR;
+	byte VAR_TIMEDATE_MONTH;
+	byte VAR_TIMEDATE_DAY;
+	byte VAR_TIMEDATE_HOUR;
+	byte VAR_TIMEDATE_MINUTE;
+	byte VAR_TIMEDATE_SECOND;
 };
 
 class Scumm_v7 : public Scumm_v6

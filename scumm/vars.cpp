@@ -108,16 +108,21 @@ void Scumm::setupScummVars()
 	VAR_V6_SCREEN_HEIGHT = 54;
 	VAR_V6_EMSSPACE = 76;
 	VAR_V6_RANDOM_NR = 118;
+	
+	VAR_V6_SOUNDMODE = 9;
+}
+
+void Scumm_v6::setupScummVars()
+{
+	// Many vars are the same as in V5 games, so just call the inherited method first
+	Scumm::setupScummVars();
 
 	VAR_TIMEDATE_YEAR = 119;
 	VAR_TIMEDATE_MONTH = 129;
 	VAR_TIMEDATE_DAY = 128;
 	VAR_TIMEDATE_HOUR = 125;
 	VAR_TIMEDATE_MINUTE = 126;
-	
-	VAR_V6_SOUNDMODE = 9;
 }
-
 
 void Scumm_v7::setupScummVars()
 {

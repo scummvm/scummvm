@@ -1106,15 +1106,7 @@ public:
 	byte VAR_CHARSET_MASK;
 
 	byte VAR_CUSTOMSCALETABLE;
-	byte VAR_VIDEONAME;
 	byte VAR_V6_SOUNDMODE;
-
-	byte VAR_TIMEDATE_YEAR;
-	byte VAR_TIMEDATE_MONTH;
-	byte VAR_TIMEDATE_DAY;
-	byte VAR_TIMEDATE_HOUR;
-	byte VAR_TIMEDATE_MINUTE;
-	byte VAR_TIMEDATE_SECOND;
 };
 
 // This is a constant lookup table of reverse bit masks

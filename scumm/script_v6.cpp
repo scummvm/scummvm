@@ -2979,7 +2979,7 @@ void Scumm_v6::o6_getDateTime()
 	_vars[VAR_TIMEDATE_MINUTE] = t->tm_min;
 	
 	if (_features & GF_AFTER_V8)
-	_vars[VAR_TIMEDATE_SECOND] = t->tm_sec;
+		_vars[VAR_TIMEDATE_SECOND] = t->tm_sec;
 }
 
 void Scumm_v6::decodeParseString(int m, int n)
