@@ -237,12 +237,7 @@ the section on Reporting Bugs.
                   version.
 
        Simon the Sorcerer 2:
-                - Text in copy protection screen of simon2dos is only shown for
-                  a short time
-                - simon2dos and simon2talkie (With subtitles enabled) freeze 
-                  briefly when Pirate Captain is talking to Mate, when Simon
-                  tries to escape
-                - Only default language in data files is supported in simon2mac
+                - Only default language (English) in data files is supported in simon2mac
                 - F10 key animation in simon2mac is different compared to
                   original game
 
