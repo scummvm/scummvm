@@ -183,6 +183,7 @@ uint32 ScummFile::read(void *ptr, uint32 len) {
 
 uint32 ScummFile::write(const void *, uint32) {
 	error("ScummFile does not support writing!");
+	return 0;
 }
 
 #pragma mark -
