@@ -653,7 +653,7 @@ void Scumm::runAllScripts() {
 }
 
 void Scumm::runExitScript() {
-	if (_vars[VAR_EXIT_SCRIPT])
+	if (!(_features & GF_AFTER_V2) && _vars[VAR_EXIT_SCRIPT])
 		runScript(_vars[VAR_EXIT_SCRIPT], 0, 0, 0);
 	if (_EXCD_offs) {
 		int slot = getScriptSlot();
@@ -684,12 +684,12 @@ void Scumm::runExitScript() {
 
 		runScriptNested(slot);
 	}
-	if (_vars[VAR_EXIT_SCRIPT2])
+	if (!(_features & GF_AFTER_V2) && _vars[VAR_EXIT_SCRIPT2])
 		runScript(_vars[VAR_EXIT_SCRIPT2], 0, 0, 0);
 }
 
 void Scumm::runEntryScript() {
-	if (_vars[VAR_ENTRY_SCRIPT])
+	if (!(_features & GF_AFTER_V2) && _vars[VAR_ENTRY_SCRIPT])
 		runScript(_vars[VAR_ENTRY_SCRIPT], 0, 0, 0);
 	if (_ENCD_offs) {
 		int slot = getScriptSlot();
@@ -703,7 +703,7 @@ void Scumm::runEntryScript() {
 		vm.slot[slot].delayFrameCount = 0;
 		runScriptNested(slot);
 	}
-	if (_vars[VAR_ENTRY_SCRIPT2])
+	if (!(_features & GF_AFTER_V2) && _vars[VAR_ENTRY_SCRIPT2])
 		runScript(_vars[VAR_ENTRY_SCRIPT2], 0, 0, 0);
 }
 
