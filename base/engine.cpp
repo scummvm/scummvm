@@ -74,6 +74,10 @@ const char *Engine::getSavePath() const {
 #endif
 }
 
+const char *Engine::getGameDataPath() const {
+	return _gameDataPath.c_str();
+}
+
 void NORETURN CDECL error(const char *s, ...) {
 #ifdef __PALM_OS__
 	char buf_input[256]; // 1024 is too big overflow the stack

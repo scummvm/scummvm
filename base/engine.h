@@ -45,13 +45,16 @@ public:
 	Engine(OSystem *syst);
 	virtual ~Engine();
 
-	// Invoke the main engine loop using this method
+	/** Start the main engine loop. */ 
 	virtual void go() = 0;
 
-	// Get the save game dir path
-	const char *getSavePath() const;
+	/** Get the path to the save game directory. */
+	virtual const char *getSavePath() const;
 
-	// Specific for each engine preparare of erroe string
+	/** Get the path to the game data directory. */
+	virtual const char *getGameDataPath() const;
+
+	/** Specific for each engine: prepare error string. */
 	virtual void errorString(const char *buf_input, char *buf_output) = 0;
 };
 
