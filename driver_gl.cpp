@@ -404,19 +404,6 @@ void DriverGL::drawDepthBitmap(int x, int y, int w, int h, char *data) {
 	//	}
 
 	if (y + h == 480) {
-		
-		//For some mysterious reason residual crashes
-		//on this glRasterPos2i(...) call on Mac.
-		//However, if we issue some dummy gl* calls beforehand
-		//(either this or some nonsensical state change) then
-		//everything works fine... how odd.
-		//Use this workaround for now.
-
-		#ifdef MACOSX
-			glBegin(GL_POINTS);
-			glEnd();
-		#endif
-		
 		glRasterPos2i(x, 479);
 		glBitmap(0, 0, 0, 0, 0, -1, NULL);
 	} else
