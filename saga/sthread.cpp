@@ -388,31 +388,22 @@ int Script::SThreadRun(SCRIPT_THREAD *thread, int instr_limit) {
 					break;
 				}
 
-				sfunc = _SFuncList[func_num].sfunc_fp;
-				if (sfunc == NULL) {
-					_vm->_console->print(S_WARN_PREFIX "%X: Undefined script function number: #%d (%X)\n",
-							thread->i_offset, func_num, func_num);
-					_vm->_console->print(S_WARN_PREFIX "Removing %d operand(s) from stack.\n", n_args);
-					for (i = 0; i < n_args; i++) {
-						thread->pop();
-					}
-				} else {
-					sfuncRetVal = (this->*sfunc)(thread);
-					if (sfuncRetVal != SUCCESS) {
-						_vm->_console->print(S_WARN_PREFIX "%X: Script function %d failed.\n", thread->i_offset, func_num);
-					}
-
-					if (func_num == 16) { // SF_gotoScene
-						instr_count = instr_limit; // break the loop
-						break;
-					}
-
-					if (in_char == 0x18) // CALL function
-						thread->push(thread->retVal);
-
-					if (thread->flags & kTFlagAsleep)
-						instr_count = instr_limit;	// break out of loop!
+				sfunc = _SFuncList[func_num];
+				sfuncRetVal = (this->*sfunc)(thread, n_args);
+				if (sfuncRetVal != SUCCESS) {
+					_vm->_console->print(S_WARN_PREFIX "%X: Script function %d failed.\n", thread->i_offset, func_num);
 				}
+
+				if (func_num == 16) { // SF_gotoScene
+					instr_count = instr_limit; // break the loop
+					break;
+				}
+
+				if (in_char == 0x18) // CALL function
+					thread->push(thread->retVal);
+
+				if (thread->flags & kTFlagAsleep)
+					instr_count = instr_limit;	// break out of loop!
 			}
 			break;
 		case 0x1A: // (ENTR) Enter the dragon

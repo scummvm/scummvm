@@ -44,87 +44,96 @@ namespace Saga {
 #define OPCODE(x) &Script::x
 
 void Script::setupScriptFuncList(void) {
-	static const SFUNC_ENTRY SFuncList[SFUNC_NUM] = {
-		{0, 0, NULL},
-		{1, 1, OPCODE(SF_sleep)},
-		{2, 1, OPCODE(SF_takeObject)},
-		{3, 1, OPCODE(SF_objectIsCarried)},
-		{4, 1, OPCODE(SF_setStatusText)},
-		{5, 0, OPCODE(SF_commandMode)},
-		{6, 3, OPCODE(SF_actorWalkTo)},
-		{7, 4, OPCODE(SF_doAction)},
-		{8, 2, OPCODE(SF_setFacing)},
-		{9, 2, OPCODE(SF_startBgdAnim)},
-		{10, 1, OPCODE(SF_stopBgdAnim)},
-		{11, 1, OPCODE(SF_freezeInterface)},
-		{12, 0, OPCODE(SF_dialogMode)},
-		{13, 0, NULL},
-		{14, 2, OPCODE(SF_faceTowards)},
-		{15, 2, OPCODE(SF_setFollower)},
-		{16, 2, OPCODE(SF_gotoScene)},
-		{17, 0, NULL},
-		{18, 0, NULL},
-		{19, 0, NULL},
-		{20, 0, NULL},
-		{21, 0, NULL},
-		{22, 0, NULL},
-		{23, 2, OPCODE(SF_setBgdAnimSpeed)},
-		{24, 0, NULL},
-		{25, 1, OPCODE(SF_centerActor)},
-		{26, 3, OPCODE(SF_startAnim)},
-		{27, 3, OPCODE(SF_actorWalkToAsync)},
-		{28, 0, NULL},
-		{29, 2, OPCODE(SF_setActorState)},
-		{30, 3, OPCODE(SF_moveTo)},
-		{31, 1, OPCODE(SF_sceneEq)},
-		{32, 0, NULL},
-		{33, 1, OPCODE(SF_finishBgdAnim)},
-		{34, 2, OPCODE(SF_swapActors)},
-		{35, 0, NULL},
-		{36, 4, OPCODE(SF_actorWalk)},
-		{37, 4, OPCODE(SF_cycleActorFrames)},
-		{38, 3, OPCODE(SF_setFrame)},
-		{39, 1, OPCODE(SF_setRightPortrait)},
-		{40, 1, OPCODE(SF_setLeftPortrait)},
-		{41, 4, OPCODE(SF_linkAnim)},
-		{42, 4, OPCODE(SF_scriptSpecialWalk)},
-		{43, 6, OPCODE(SF_placeActor)},
-		{44, 0, OPCODE(SF_checkUserInterrupt)},
-		{45, 5, OPCODE(SF_walkRelative)},
-		{46, 5, OPCODE(SF_moveRelative)},
-		{47, 0, NULL},
-		{48, 0, OPCODE(SF_placard)},
-		{49, 0, OPCODE(SF_placardOff)},
-		{50, 0, NULL},
-		{51, 0, NULL},
-		{52, 6, OPCODE(SF_throwActor)},
-		{53, 1, OPCODE(SF_waitWalk)},
-		{54, 0, NULL},
-		{55, 2, OPCODE(SF_changeActorScene)},
-		{56, 4, OPCODE(SF_climb)},
-		{57, 0, NULL},
-		{58, 2, OPCODE(SF_setActorZ)},
-		{59, 0, NULL},
-		{60, 1, OPCODE(SF_getActorX)},
-		{61, 1, OPCODE(SF_getActorY)},
-		{62, 0, NULL},
-		{63, 1, OPCODE(SF_playMusic)},
-		{64, 0, NULL},
-		{65, 0, NULL},
-		{66, 0, NULL},
-		{67, 0, NULL},
-		{68, 0, NULL},
-		{69, 1, OPCODE(SF_enableEscape)},
-		{70, 1, OPCODE(SF_playSound)},
-		{71, 0, NULL},
-		{72, 0, NULL},
-		{73, 0, NULL},
-		{74, 0, NULL},
-		{75, 1, OPCODE(SF_rand)},
-		{76, 0, OPCODE(SF_fadeMusic)},
-		{77, 0, NULL}
+	static const SFunc_T SFuncList[SFUNC_NUM] = {
+		OPCODE(SF_putString),
+		OPCODE(SF_sleep),
+		OPCODE(SF_takeObject),
+		OPCODE(SF_objectIsCarried),
+		OPCODE(SF_setStatusText),
+		OPCODE(SF_commandMode),
+		OPCODE(SF_actorWalkTo),
+		OPCODE(SF_doAction),
+		OPCODE(SF_setFacing),
+		OPCODE(SF_startBgdAnim),
+		OPCODE(SF_stopBgdAnim),
+		OPCODE(SF_freezeInterface),
+		OPCODE(SF_dialogMode),
+		OPCODE(SF_killActorThreads),
+		OPCODE(SF_faceTowards),
+		OPCODE(SF_setFollower),
+		OPCODE(SF_gotoScene),
+		OPCODE(SF_setObjImage),
+		OPCODE(SF_setObjName),
+		OPCODE(SF_getObjName),
+		OPCODE(SF_getNumber),
+		OPCODE(SF_openDoor),
+		OPCODE(SF_closeDoor),
+		OPCODE(SF_setBgdAnimSpeed),
+		OPCODE(SF_cycleColors),
+		OPCODE(SF_centerActor),
+		OPCODE(SF_startAnim),
+		OPCODE(SF_actorWalkToAsync),
+		OPCODE(SF_enableZone),
+		OPCODE(SF_setActorState),
+		OPCODE(SF_moveTo),
+		OPCODE(SF_sceneEq),
+		OPCODE(SF_dropObject),
+		OPCODE(SF_finishBgdAnim),
+		OPCODE(SF_swapActors),
+		OPCODE(SF_simulSpeech),
+		OPCODE(SF_actorWalk),
+		OPCODE(SF_cycleActorFrames),
+		OPCODE(SF_setFrame),
+		OPCODE(SF_setRightPortrait),
+		OPCODE(SF_setLeftPortrait),
+		OPCODE(SF_linkAnim),
+		OPCODE(SF_scriptSpecialWalk),
+		OPCODE(SF_placeActor),
+		OPCODE(SF_checkUserInterrupt),
+		OPCODE(SF_walkRelative),
+		OPCODE(SF_moveRelative),
+		OPCODE(SF_simulSPeech2),
+		OPCODE(SF_placard),
+		OPCODE(SF_placardOff),
+		OPCODE(SF_setProtagState),
+		OPCODE(SF_resumeBgdAnim),
+		OPCODE(SF_throwActor),
+		OPCODE(SF_waitWalk),
+		OPCODE(SF_sceneID),
+		OPCODE(SF_changeActorScene),
+		OPCODE(SF_climb),
+		OPCODE(SF_setDoorState),
+		OPCODE(SF_setActorZ),
+		OPCODE(SF_text),
+		OPCODE(SF_getActorX),
+		OPCODE(SF_getActorY),
+		OPCODE(SF_eraseDelta),
+		OPCODE(SF_playMusic),
+		OPCODE(SF_pickClimbOutPos),
+		OPCODE(SF_tossRif),
+		OPCODE(SF_showControls),
+		OPCODE(SF_showMap),
+		OPCODE(SF_puzzleWon),
+		OPCODE(SF_enableEscape),
+		OPCODE(SF_playSound),
+		OPCODE(SF_playLoopedSound),
+		OPCODE(SF_getDeltaFrame),
+		OPCODE(SF_showProtect),
+		OPCODE(SF_protectResult),
+		OPCODE(SF_rand),
+		OPCODE(SF_fadeMusic),
+		OPCODE(SF_playVoice)
 	};
 	_SFuncList = SFuncList;
+}
+
+// Script function #0 (0x00)
+int Script::SF_putString(SCRIPTFUNC_PARAMS) {
+	for (int i = 0; i < nArgs; i++)
+		thread->pop();
+	
+	debug(1, "stub: SF_putString(), %d args", nArgs);
+	return SUCCESS;
 }
 
 // Script function #1 (0x01) blocking
@@ -291,6 +300,15 @@ int Script::SF_dialogMode(SCRIPTFUNC_PARAMS) {
 	return _vm->_interface->setMode(kPanelDialogue);
 }
 
+// Script function #13 (0x0D)
+int Script::SF_killActorThreads(SCRIPTFUNC_PARAMS) {
+	for (int i = 0; i < nArgs; i++)
+		thread->pop();
+
+	debug(1, "stub: SF_killActorThreads(), %d args", nArgs);
+	return SUCCESS;
+}
+
 // Script function #14 (0x0E)
 int Script::SF_faceTowards(SCRIPTFUNC_PARAMS) {
 	SDataWord_T param1 = thread->pop();
@@ -318,12 +336,75 @@ int Script::SF_gotoScene(SCRIPTFUNC_PARAMS) {
 	return SUCCESS;
 }
 
+// Script function #17 (0x11)
+int Script::SF_setObjImage(SCRIPTFUNC_PARAMS) {
+	for (int i = 0; i < nArgs; i++)
+		thread->pop();
+
+	debug(1, "stub: SF_setObjImage(), %d args", nArgs);
+	return SUCCESS;
+}
+
+// Script function #18 (0x12)
+int Script::SF_setObjName(SCRIPTFUNC_PARAMS) {
+	for (int i = 0; i < nArgs; i++)
+		thread->pop();
+
+	debug(1, "stub: SF_setObjName(), %d args", nArgs);
+	return SUCCESS;
+}
+
+// Script function #19 (0x13)
+int Script::SF_getObjName(SCRIPTFUNC_PARAMS) {
+	for (int i = 0; i < nArgs; i++)
+		thread->pop();
+
+	debug(1, "stub: SF_getObjName(), %d args", nArgs);
+	return SUCCESS;
+}
+
+// Script function #20 (0x14)
+int Script::SF_getNumber(SCRIPTFUNC_PARAMS) {
+	for (int i = 0; i < nArgs; i++)
+		thread->pop();
+
+	debug(1, "stub: SF_getNumber(), %d args", nArgs);
+	return SUCCESS;
+}
+
+// Script function #21 (0x15)
+int Script::SF_openDoor(SCRIPTFUNC_PARAMS) {
+	for (int i = 0; i < nArgs; i++)
+		thread->pop();
+
+	debug(1, "stub: SF_openDoor(), %d args", nArgs);
+	return SUCCESS;
+}
+
+// Script function #22 (0x16)
+int Script::SF_closeDoor(SCRIPTFUNC_PARAMS) {
+	for (int i = 0; i < nArgs; i++)
+		thread->pop();
+
+	debug(1, "stub: SF_closeDoor(), %d args", nArgs);
+	return SUCCESS;
+}
+
 // Script function #23 (0x17)
 int Script::SF_setBgdAnimSpeed(SCRIPTFUNC_PARAMS) {
 	SDataWord_T param1 = thread->pop();
 	SDataWord_T param2 = thread->pop();
 
 	debug(1, "stub: SF_setBgdAnimSpeed(%d, %d)", param1, param2);
+	return SUCCESS;
+}
+
+// Script function #24 (0x18)
+int Script::SF_cycleColors(SCRIPTFUNC_PARAMS) {
+	for (int i = 0; i < nArgs; i++)
+		thread->pop();
+
+	debug(1, "stub: SF_cycleColors(), %d args", nArgs);
 	return SUCCESS;
 }
 
@@ -395,6 +476,15 @@ int Script::SF_actorWalkToAsync(SCRIPTFUNC_PARAMS) {
 	return SUCCESS;
 }
 
+// Script function #28 (0x1C)
+int Script::SF_enableZone(SCRIPTFUNC_PARAMS) {
+	for (int i = 0; i < nArgs; i++)
+		thread->pop();
+
+	debug(1, "stub: SF_enableZone(), %d args", nArgs);
+	return SUCCESS;
+}
+
 // Script function #29 (0x1D)
 int Script::SF_setActorState(SCRIPTFUNC_PARAMS) {
 	SDataWord_T param1 = thread->pop();
@@ -453,6 +543,15 @@ int Script::SF_sceneEq(SCRIPTFUNC_PARAMS) {
 }
 
 
+// Script function #32 (0x20)
+int Script::SF_dropObject(SCRIPTFUNC_PARAMS) {
+	for (int i = 0; i < nArgs; i++)
+		thread->pop();
+
+	debug(1, "stub: SF_dropObject(), %d args", nArgs);
+	return SUCCESS;
+}
+
 // Script function #33 (0x21)
 int Script::SF_finishBgdAnim(SCRIPTFUNC_PARAMS) {
 	SDataWord_T param = thread->pop();
@@ -467,6 +566,15 @@ int Script::SF_swapActors(SCRIPTFUNC_PARAMS) {
 	SDataWord_T param2 = thread->pop();
 
 	debug(1, "stub: SF_swapActors(%d, %d)", param1, param2);
+	return SUCCESS;
+}
+
+// Script function #35 (0x23)
+int Script::SF_simulSpeech(SCRIPTFUNC_PARAMS) {
+	for (int i = 0; i < nArgs; i++)
+		thread->pop();
+
+	debug(1, "stub: SF_simulSpeech(), %d args", nArgs);
 	return SUCCESS;
 }
 
@@ -719,6 +827,15 @@ int Script::SF_moveRelative(SCRIPTFUNC_PARAMS) {
 	return SUCCESS;
 }
 
+// Script function #47 (0x2F)
+int Script::SF_simulSPeech2(SCRIPTFUNC_PARAMS) {
+	for (int i = 0; i < nArgs; i++)
+		thread->pop();
+
+	debug(1, "stub: SF_simulSPeech2(), %d args", nArgs);
+	return SUCCESS;
+}
+
 // Script function #48 (0x30)
 int Script::SF_placard(SCRIPTFUNC_PARAMS) {
 	debug(1, "stub: SF_placard()");
@@ -728,6 +845,24 @@ int Script::SF_placard(SCRIPTFUNC_PARAMS) {
 // Script function #49 (0x31)
 int Script::SF_placardOff(SCRIPTFUNC_PARAMS) {
 	debug(1, "stub: SF_placardOff()");
+	return SUCCESS;
+}
+
+// Script function #50 (0x32)
+int Script::SF_setProtagState(SCRIPTFUNC_PARAMS) {
+	for (int i = 0; i < nArgs; i++)
+		thread->pop();
+
+	debug(1, "stub: SF_setProtagState(), %d args", nArgs);
+	return SUCCESS;
+}
+
+// Script function #51 (0x33)
+int Script::SF_resumeBgdAnim(SCRIPTFUNC_PARAMS) {
+	for (int i = 0; i < nArgs; i++)
+		thread->pop();
+
+	debug(1, "stub: SF_resumeBgdAnim(), %d args", nArgs);
 	return SUCCESS;
 }
 
@@ -752,6 +887,15 @@ int Script::SF_waitWalk(SCRIPTFUNC_PARAMS) {
 	return SUCCESS;
 }
 
+// Script function #54 (0x36)
+int Script::SF_sceneID(SCRIPTFUNC_PARAMS) {
+	for (int i = 0; i < nArgs; i++)
+		thread->pop();
+
+	debug(1, "stub: SF_sceneID(), %d args", nArgs);
+	return SUCCESS;
+}
+
 // Script function #55 (0x37)
 int Script::SF_changeActorScene(SCRIPTFUNC_PARAMS) {
 	SDataWord_T param1 = thread->pop();
@@ -772,12 +916,30 @@ int Script::SF_climb(SCRIPTFUNC_PARAMS) {
 	return SUCCESS;
 }
 
+// Script function #57 (0x39)
+int Script::SF_setDoorState(SCRIPTFUNC_PARAMS) {
+	for (int i = 0; i < nArgs; i++)
+		thread->pop();
+
+	debug(1, "stub: SF_setDoorState(), %d args", nArgs);
+	return SUCCESS;
+}
+
 // Script function #58 (0x3A)
 int Script::SF_setActorZ(SCRIPTFUNC_PARAMS) {
 	SDataWord_T param1 = thread->pop();
 	SDataWord_T param2 = thread->pop();
 
 	debug(1, "stub: SF_setActorZ(%d, %d)", param1, param2);
+	return SUCCESS;
+}
+
+// Script function #59 (0x3B)
+int Script::SF_text(SCRIPTFUNC_PARAMS) {
+	for (int i = 0; i < nArgs; i++)
+		thread->pop();
+
+	debug(1, "stub: SF_text(), %d args", nArgs);
 	return SUCCESS;
 }
 
@@ -797,6 +959,15 @@ int Script::SF_getActorY(SCRIPTFUNC_PARAMS) {
 	return SUCCESS;
 }
 
+// Script function #62 (0x3E)
+int Script::SF_eraseDelta(SCRIPTFUNC_PARAMS) {
+	for (int i = 0; i < nArgs; i++)
+		thread->pop();
+
+	debug(1, "stub: SF_eraseDelta(), %d args", nArgs);
+	return SUCCESS;
+}
+
 // Script function #63 (0x3F)
 int Script::SF_playMusic(SCRIPTFUNC_PARAMS) {
 	SDataWord_T param = thread->pop() + 9;
@@ -809,7 +980,52 @@ int Script::SF_playMusic(SCRIPTFUNC_PARAMS) {
 	return SUCCESS;
 }
 
-// Script function #69
+// Script function #64 (0x40)
+int Script::SF_pickClimbOutPos(SCRIPTFUNC_PARAMS) {
+	for (int i = 0; i < nArgs; i++)
+		thread->pop();
+
+	debug(1, "stub: SF_pickClimbOutPos(), %d args", nArgs);
+	return SUCCESS;
+}
+
+// Script function #65 (0x41)
+int Script::SF_tossRif(SCRIPTFUNC_PARAMS) {
+	for (int i = 0; i < nArgs; i++)
+		thread->pop();
+
+	debug(1, "stub: SF_tossRif(), %d args", nArgs);
+	return SUCCESS;
+}
+
+// Script function #66 (0x42)
+int Script::SF_showControls(SCRIPTFUNC_PARAMS) {
+	for (int i = 0; i < nArgs; i++)
+		thread->pop();
+
+	debug(1, "stub: SF_showControls(), %d args", nArgs);
+	return SUCCESS;
+}
+
+// Script function #67 (0x43)
+int Script::SF_showMap(SCRIPTFUNC_PARAMS) {
+	for (int i = 0; i < nArgs; i++)
+		thread->pop();
+
+	debug(1, "stub: SF_showMap(), %d args", nArgs);
+	return SUCCESS;
+}
+
+// Script function #68 (0x44)
+int Script::SF_puzzleWon(SCRIPTFUNC_PARAMS) {
+	for (int i = 0; i < nArgs; i++)
+		thread->pop();
+
+	debug(1, "stub: SF_puzzleWon(), %d args", nArgs);
+	return SUCCESS;
+}
+
+// Script function #69 (0x45)
 int Script::SF_enableEscape(SCRIPTFUNC_PARAMS) {
 	if (thread->pop())
 		_abortEnabled = true;
@@ -904,6 +1120,42 @@ int Script::SF_playSound(SCRIPTFUNC_PARAMS) {
 	return SUCCESS;
 }
 
+// Script function #71 (0x47)
+int Script::SF_playLoopedSound(SCRIPTFUNC_PARAMS) {
+	for (int i = 0; i < nArgs; i++)
+		thread->pop();
+
+	debug(1, "stub: SF_playLoopedSound(), %d args", nArgs);
+	return SUCCESS;
+}
+
+// Script function #72 (0x48)
+int Script::SF_getDeltaFrame(SCRIPTFUNC_PARAMS) {
+	for (int i = 0; i < nArgs; i++)
+		thread->pop();
+
+	debug(1, "stub: SF_getDeltaFrame(), %d args", nArgs);
+	return SUCCESS;
+}
+
+// Script function #73 (0x49)
+int Script::SF_showProtect(SCRIPTFUNC_PARAMS) {
+	for (int i = 0; i < nArgs; i++)
+		thread->pop();
+
+	debug(1, "stub: SF_showProtect(), %d args", nArgs);
+	return SUCCESS;
+}
+
+// Script function #74 (0x4A)
+int Script::SF_protectResult(SCRIPTFUNC_PARAMS) {
+	for (int i = 0; i < nArgs; i++)
+		thread->pop();
+
+	debug(1, "stub: SF_protectResult(), %d args", nArgs);
+	return SUCCESS;
+}
+
 // Script function #75 (0x4d)
 int Script::SF_rand(SCRIPTFUNC_PARAMS) {
 	SDataWord_T param = thread->pop();
@@ -916,6 +1168,15 @@ int Script::SF_rand(SCRIPTFUNC_PARAMS) {
 // Script function #76 (0x4c)
 int Script::SF_fadeMusic(SCRIPTFUNC_PARAMS) {
 	debug(1, "stub: SF_fadeMusic()");
+	return SUCCESS;
+}
+
+// Script function #77 (0x4d)
+int Script::SF_playVoice(SCRIPTFUNC_PARAMS) {
+	for (int i = 0; i < nArgs; i++)
+		thread->pop();
+
+	debug(1, "stub: SF_playVoice(), %d args", nArgs);
 	return SUCCESS;
 }
 

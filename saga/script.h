@@ -179,7 +179,7 @@ struct SCRIPT_DATABUF {
 	int len;
 };
 
-#define SCRIPTFUNC_PARAMS SCRIPT_THREAD *thread
+#define SCRIPTFUNC_PARAMS SCRIPT_THREAD *thread, int nArgs
 
 class Script {
 public:
@@ -246,66 +246,89 @@ private:
 private:
 	typedef int (Script::*SFunc_T)(SCRIPTFUNC_PARAMS);
 
-	struct SFUNC_ENTRY {
-		int sfunc_num;
-		int sfunc_argc;
-		SFunc_T sfunc_fp;
-	};
-
-	const SFUNC_ENTRY *_SFuncList;
+	const SFunc_T *_SFuncList;
 
 	void setupScriptFuncList(void);
 	int SDebugPrintInstr(SCRIPT_THREAD *thread);
 
+	int SF_putString(SCRIPTFUNC_PARAMS);
 	int SF_sleep(SCRIPTFUNC_PARAMS);
 	int SF_takeObject(SCRIPTFUNC_PARAMS);
 	int SF_objectIsCarried(SCRIPTFUNC_PARAMS);
 	int SF_setStatusText(SCRIPTFUNC_PARAMS);
 	int SF_commandMode(SCRIPTFUNC_PARAMS);
 	int SF_actorWalkTo(SCRIPTFUNC_PARAMS);
+	int SF_doAction(SCRIPTFUNC_PARAMS);
 	int SF_setFacing(SCRIPTFUNC_PARAMS);
 	int SF_startBgdAnim(SCRIPTFUNC_PARAMS);
+	int SF_stopBgdAnim(SCRIPTFUNC_PARAMS);
 	int SF_freezeInterface(SCRIPTFUNC_PARAMS);
 	int SF_dialogMode(SCRIPTFUNC_PARAMS);
+	int SF_killActorThreads(SCRIPTFUNC_PARAMS);
+	int SF_faceTowards(SCRIPTFUNC_PARAMS);
+	int SF_setFollower(SCRIPTFUNC_PARAMS);
+	int SF_gotoScene(SCRIPTFUNC_PARAMS);
+	int SF_setObjImage(SCRIPTFUNC_PARAMS);
+	int SF_setObjName(SCRIPTFUNC_PARAMS);
+	int SF_getObjName(SCRIPTFUNC_PARAMS);
+	int SF_getNumber(SCRIPTFUNC_PARAMS);
+	int SF_openDoor(SCRIPTFUNC_PARAMS);
+	int SF_closeDoor(SCRIPTFUNC_PARAMS);
+	int SF_setBgdAnimSpeed(SCRIPTFUNC_PARAMS);
+	int SF_cycleColors(SCRIPTFUNC_PARAMS);
+	int SF_centerActor(SCRIPTFUNC_PARAMS);
 	int SF_startAnim(SCRIPTFUNC_PARAMS);
-	int SF_stopBgdAnim(SCRIPTFUNC_PARAMS);
 	int SF_actorWalkToAsync(SCRIPTFUNC_PARAMS);
+	int SF_enableZone(SCRIPTFUNC_PARAMS);
+	int SF_setActorState(SCRIPTFUNC_PARAMS);
 	int SF_moveTo(SCRIPTFUNC_PARAMS);
+	int SF_sceneEq(SCRIPTFUNC_PARAMS);
+	int SF_dropObject(SCRIPTFUNC_PARAMS);
+	int SF_finishBgdAnim(SCRIPTFUNC_PARAMS);
+	int SF_swapActors(SCRIPTFUNC_PARAMS);
+	int SF_simulSpeech(SCRIPTFUNC_PARAMS);
 	int SF_actorWalk(SCRIPTFUNC_PARAMS);
 	int SF_cycleActorFrames(SCRIPTFUNC_PARAMS);
 	int SF_setFrame(SCRIPTFUNC_PARAMS);
 	int SF_setRightPortrait(SCRIPTFUNC_PARAMS);
 	int SF_setLeftPortrait(SCRIPTFUNC_PARAMS);
 	int SF_linkAnim(SCRIPTFUNC_PARAMS);
+	int SF_scriptSpecialWalk(SCRIPTFUNC_PARAMS);
 	int SF_placeActor(SCRIPTFUNC_PARAMS);
 	int SF_checkUserInterrupt(SCRIPTFUNC_PARAMS);
-	int SF_moveRelative(SCRIPTFUNC_PARAMS);
-	int SF_doAction(SCRIPTFUNC_PARAMS);
-	int SF_faceTowards(SCRIPTFUNC_PARAMS);
-	int SF_setFollower(SCRIPTFUNC_PARAMS);
-	int SF_setBgdAnimSpeed(SCRIPTFUNC_PARAMS);
-	int SF_centerActor(SCRIPTFUNC_PARAMS);
-	int SF_setActorState(SCRIPTFUNC_PARAMS);
-	int SF_finishBgdAnim(SCRIPTFUNC_PARAMS);
-	int SF_swapActors(SCRIPTFUNC_PARAMS);
-	int SF_scriptSpecialWalk(SCRIPTFUNC_PARAMS);
 	int SF_walkRelative(SCRIPTFUNC_PARAMS);
-	int SF_throwActor(SCRIPTFUNC_PARAMS);
-	int SF_waitWalk(SCRIPTFUNC_PARAMS);
-	int SF_changeActorScene(SCRIPTFUNC_PARAMS);
-	int SF_climb(SCRIPTFUNC_PARAMS);
-	int SF_setActorZ(SCRIPTFUNC_PARAMS);
-	int SF_getActorX(SCRIPTFUNC_PARAMS);
-	int SF_getActorY(SCRIPTFUNC_PARAMS);
-	int SF_playMusic(SCRIPTFUNC_PARAMS);
-	int SF_enableEscape(SCRIPTFUNC_PARAMS);
-	int SF_playSound(SCRIPTFUNC_PARAMS);
-	int SF_gotoScene(SCRIPTFUNC_PARAMS);
-	int SF_rand(SCRIPTFUNC_PARAMS);
-	int SF_sceneEq(SCRIPTFUNC_PARAMS);
+	int SF_moveRelative(SCRIPTFUNC_PARAMS);
+	int SF_simulSPeech2(SCRIPTFUNC_PARAMS);
 	int SF_placard(SCRIPTFUNC_PARAMS);
 	int SF_placardOff(SCRIPTFUNC_PARAMS);
+	int SF_setProtagState(SCRIPTFUNC_PARAMS);
+	int SF_resumeBgdAnim(SCRIPTFUNC_PARAMS);
+	int SF_throwActor(SCRIPTFUNC_PARAMS);
+	int SF_waitWalk(SCRIPTFUNC_PARAMS);
+	int SF_sceneID(SCRIPTFUNC_PARAMS);
+	int SF_changeActorScene(SCRIPTFUNC_PARAMS);
+	int SF_climb(SCRIPTFUNC_PARAMS);
+	int SF_setDoorState(SCRIPTFUNC_PARAMS);
+	int SF_setActorZ(SCRIPTFUNC_PARAMS);
+	int SF_text(SCRIPTFUNC_PARAMS);
+	int SF_getActorX(SCRIPTFUNC_PARAMS);
+	int SF_getActorY(SCRIPTFUNC_PARAMS);
+	int SF_eraseDelta(SCRIPTFUNC_PARAMS);
+	int SF_playMusic(SCRIPTFUNC_PARAMS);
+	int SF_pickClimbOutPos(SCRIPTFUNC_PARAMS);
+	int SF_tossRif(SCRIPTFUNC_PARAMS);
+	int SF_showControls(SCRIPTFUNC_PARAMS);
+	int SF_showMap(SCRIPTFUNC_PARAMS);
+	int SF_puzzleWon(SCRIPTFUNC_PARAMS);
+	int SF_enableEscape(SCRIPTFUNC_PARAMS);
+	int SF_playSound(SCRIPTFUNC_PARAMS);
+	int SF_playLoopedSound(SCRIPTFUNC_PARAMS);
+	int SF_getDeltaFrame(SCRIPTFUNC_PARAMS);
+	int SF_showProtect(SCRIPTFUNC_PARAMS);
+	int SF_protectResult(SCRIPTFUNC_PARAMS);
+	int SF_rand(SCRIPTFUNC_PARAMS);
 	int SF_fadeMusic(SCRIPTFUNC_PARAMS);
+	int SF_playVoice(SCRIPTFUNC_PARAMS);
 };
 
 } // End of namespace Saga
