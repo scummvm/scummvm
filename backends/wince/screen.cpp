@@ -137,6 +137,8 @@ int toolbar_available;
 
 UBYTE *toolbar = NULL;
 
+UBYTE *displayCache;
+
 #ifndef NEW_GAPI_CODE
 
 UBYTE *noGAPI_video_buffer = NULL;
@@ -155,36 +157,37 @@ HDC noGAPI_compat;
 char noGAPI = 0;
 
 /* Using vectorized function to save on branches */
+typedef void (*tScreenOp)();
 typedef void (*tCls)();
 typedef void (*tBlt)(UBYTE*);
-typedef void (*tBlt_part)(UBYTE*,int, int, int, int, UBYTE*, int);
+typedef void (*tBlt_part)(UBYTE*,int, int, int, int, UBYTE*, int, BOOL = FALSE);
 typedef void (*tSet_565)(INT16 *buffer, int pitch, int x, int y, int width, int height);
 
 void mono_Cls();
 void mono_Blt(UBYTE*);
-void mono_Blt_part(UBYTE*, int, int, int, int, UBYTE*, int);
+void mono_Blt_part(UBYTE*, int, int, int, int, UBYTE*, int, BOOL = FALSE);
 void mono_Set_565(INT16*, int, int, int, int, int);
 
 
 void palette_Cls();
 void palette_Blt(UBYTE*);
-void palette_Blt_part(UBYTE*, int, int, int, int, UBYTE*, int);
+void palette_Blt_part(UBYTE*, int, int, int, int, UBYTE*, int, BOOL = FALSE);
 void palette_Set_565(INT16*, int, int, int, int, int);
 
 
 void hicolor_Cls();
 void hicolor555_Blt(UBYTE*);
-void hicolor555_Blt_part(UBYTE*, int, int, int, int, UBYTE*, int);
+void hicolor555_Blt_part(UBYTE*, int, int, int, int, UBYTE*, int, BOOL = FALSE);
 void hicolor555_Set_565(INT16*, int, int, int, int, int);
 
 void hicolor565_Blt(UBYTE*);
-void hicolor565_Blt_part(UBYTE*, int, int, int, int, UBYTE*, int);
+void hicolor565_Blt_part(UBYTE*, int, int, int, int, UBYTE*, int, BOOL = FALSE);
 //void hicolor565_Get_565(INT16*, int, int, int, int, int);
 void hicolor565_Set_565(INT16*, int, int, int, int, int);
 
 void noGAPI_Cls();
 void noGAPI_Blt(UBYTE*);
-void noGAPI_Blt_part(UBYTE*, int, int, int, int, UBYTE*, int);
+void noGAPI_Blt_part(UBYTE*, int, int, int, int, UBYTE*, int, BOOL = FALSE);
 void noGAPI_Set_565(INT16*, int, int, int, int, int);
 
 //void NULL_Get_565(INT16*, int, int, int, int, int);
@@ -225,6 +228,8 @@ static tCls        pCls        = NULL;
 static tBlt		   pBlt	       = NULL;
 static tBlt_part   pBlt_part   = NULL;
 static tSet_565    pSet_565	   = NULL;
+static tScreenOp   pBeginDraw  = NULL;
+static tScreenOp   pEndDraw	   = NULL;
 
 static int _geometry_w;
 static int _geometry_h;  
@@ -336,6 +341,14 @@ void GraphicsOff(void)
 {
 	dynamicGXCloseDisplay();
 	active = 0;
+}
+
+void GAPIBeginDraw() {
+	displayCache = (UBYTE*)dynamicGXBeginDraw();
+}
+
+void GAPIEndDraw() {
+	dynamicGXEndDraw();
 }
 
 void SetScreenGeometry(int w, int h) {
@@ -473,6 +486,8 @@ int GraphicsOn(HWND hWndMain_param, bool gfx_mode_switch)
 		pBlt =    hicolor565_Blt;
 		pBlt_part = hicolor565_Blt_part;
 		pSet_565 = hicolor565_Set_565;
+		pBeginDraw = GAPIBeginDraw;
+		pEndDraw = GAPIEndDraw;
 		filter_available = 1;
 		smooth_filter = 1;
 		toolbar_available = 1;
@@ -485,6 +500,8 @@ int GraphicsOn(HWND hWndMain_param, bool gfx_mode_switch)
 		pBlt =    hicolor555_Blt;
 		pBlt_part = hicolor555_Blt_part;
 		pSet_565 = hicolor555_Set_565;
+		pBeginDraw = GAPIBeginDraw;
+		pEndDraw = GAPIEndDraw;
 		filter_available = 1;
 		smooth_filter = 1;
 		toolbar_available = 1;
@@ -497,6 +514,8 @@ int GraphicsOn(HWND hWndMain_param, bool gfx_mode_switch)
 		pBlt =  mono_Blt;
 		pBlt_part = mono_Blt_part;
 		pSet_565 = mono_Set_565;
+		pBeginDraw = GAPIBeginDraw;
+		pEndDraw = GAPIEndDraw;
 		
 		if(gxdp.ffFormat & kfDirectInverted)
 			invert = (1<<gxdp.cBPP)-1;
@@ -515,6 +534,8 @@ int GraphicsOn(HWND hWndMain_param, bool gfx_mode_switch)
 		pBlt =    palette_Blt;
 		pBlt_part = palette_Blt_part;
 		pSet_565 = palette_Set_565;
+		pBeginDraw = GAPIBeginDraw;
+		pEndDraw = GAPIEndDraw;
 		
 		toolbar_available = 1;
 
@@ -795,6 +816,11 @@ void drawWait() {
 	pBlt_part(image_expand(item_loading), 28, 10, 100, 25, item_loading_colors, 0);
 }
 
+void drawWaitSelectKey() {
+	drawWait();
+	drawString("Press key for RIGHT CLICK", 10, 100, 2, 1);
+}
+
 void setGameSelectionPalette() {
 	int i;
 
@@ -975,6 +1001,17 @@ ToolbarSelected getToolbarSelection (int x, int y) {
 	
 /* ************************** BLT IMPLEMENTATION **************************** */
 
+void beginBltPart() {
+	if (pBeginDraw)
+		pBeginDraw();
+}
+
+void endBltPart() {
+	if (pEndDraw)
+		pEndDraw();
+}
+
+
 void Blt(UBYTE * scr_ptr) 
 {
 	pBlt(scr_ptr);
@@ -996,7 +1033,7 @@ void Blt_part(UBYTE * src_ptr, int x, int y, int width, int height, int pitch, b
 	if (y + height > _geometry_h)
 		height = _geometry_h - y;
 
-	pBlt_part(src_ptr, x, y, width, height, NULL, pitch);
+	pBlt_part(src_ptr, x, y, width, height, NULL, pitch, TRUE);
 
 	//if (check && (y > _geometry_h || (y + height) > _geometry_h)) {
 	//	toolbar_drawn = false;
@@ -1100,7 +1137,7 @@ void mono_Blt(UBYTE *src_ptr) {
 
 
 void mono_Blt_part(UBYTE * scr_ptr, int x, int y, int width, int height,
-				    UBYTE * own_palette, int pitch)
+				    UBYTE * own_palette, int pitch, BOOL useCache)
 {
 // Mono blit routines contain good deal of voodoo
 	static UBYTE *src;
@@ -1133,7 +1170,10 @@ void mono_Blt_part(UBYTE * scr_ptr, int x, int y, int width, int height,
 	linestep = geom[useMode].linestep;
 	skipmask = geom[useMode].xSkipMask;
 
-	scraddr = (UBYTE*)dynamicGXBeginDraw();
+	if (!useCache)
+		scraddr = (UBYTE*)dynamicGXBeginDraw();
+	else
+		scraddr = displayCache;
 
 	if(pixelstep)
 	{
@@ -1580,7 +1620,8 @@ void mono_Blt_part(UBYTE * scr_ptr, int x, int y, int width, int height,
 			}
 		}
 	}
-	dynamicGXEndDraw();
+	if (!useCache)
+		dynamicGXEndDraw();
 }
 
 /* *************************** PALETTED DISPLAY ********************************* */
@@ -1666,7 +1707,7 @@ void palette_Blt(UBYTE *src_ptr) {
 }
 
 void palette_Blt_part(UBYTE * scr_ptr,int x, int y, int width, int height,
-				    UBYTE * own_palette, int pitch)
+				    UBYTE * own_palette, int pitch, BOOL useCache)
 {
 	static UBYTE *src;
 	static UBYTE *dst;
@@ -1698,7 +1739,11 @@ void palette_Blt_part(UBYTE * scr_ptr,int x, int y, int width, int height,
 	linestep = geom[useMode].linestep;
 	skipmask = geom[useMode].xSkipMask;
 
-	scraddr = (UBYTE*)dynamicGXBeginDraw();
+	if (!useCache)
+		scraddr = (UBYTE*)dynamicGXBeginDraw();
+	else
+		scraddr = displayCache;
+
 	if(scraddr)
 	{
 
@@ -1827,8 +1872,8 @@ void palette_Blt_part(UBYTE * scr_ptr,int x, int y, int width, int height,
 				src_limit += (pitch ? pitch : width);
 			}
 		}
-
-		dynamicGXEndDraw();
+		if (!useCache)
+			dynamicGXEndDraw();
 	}
 }
 
@@ -1895,7 +1940,7 @@ void hicolor555_Blt(UBYTE *src_ptr) {
 
 
 void hicolor555_Blt_part(UBYTE * scr_ptr,int x, int y, int width, int height,
-				    UBYTE * own_palette, int pitch)
+				    UBYTE * own_palette, int pitch, BOOL useCache)
 {
 	static UBYTE *src;
 	static UBYTE *dst;
@@ -1923,7 +1968,11 @@ void hicolor555_Blt_part(UBYTE * scr_ptr,int x, int y, int width, int height,
 	linestep = geom[useMode].linestep;
 	skipmask = geom[useMode].xSkipMask;
 
-	scraddr = (UBYTE*)dynamicGXBeginDraw();
+	if (!useCache)
+		scraddr = (UBYTE*)dynamicGXBeginDraw();
+	else
+		scraddr = displayCache;
+
 	if(scraddr)
 	{
 
@@ -1961,9 +2010,16 @@ void hicolor555_Blt_part(UBYTE * scr_ptr,int x, int y, int width, int height,
 				{
 					UBYTE r, g, b;
 					
+					/*
 					r = (3*palRed[*(src+0)] + palRed[*(src+1)])>>2;
 					g = (3*palGreen[*(src+0)] + palGreen[*(src+1)])>>2;
 					b = (3*palBlue[*(src+0)] + palBlue[*(src+1)])>>2;
+					*/
+
+					r = (2*palRed[*(src + 0)] + palRed[*(src + (pitch ? pitch : width) + 0)] + palRed[*(src + 1)]) >> 2;
+					g = (2*palGreen[*(src + 0)] + palGreen[*(src + (pitch ? pitch : width) + 0)] + palGreen[*(src + 1)]) >> 2;
+					b = (2*palBlue[*(src + 0)] + palBlue[*(src + (pitch ? pitch : width) + 0)] + palBlue[*(src + 1)]) >> 2;
+
 					
 					*(unsigned short*)dst = COLORCONV555(r,g,b);
 
@@ -2123,7 +2179,8 @@ void hicolor555_Blt_part(UBYTE * scr_ptr,int x, int y, int width, int height,
 			}
 		}
 
-		dynamicGXEndDraw();
+		if (!useCache)
+			dynamicGXEndDraw();
 	}
 }
 
@@ -2247,7 +2304,7 @@ int getColor565 (int color) {
 }
 
 void hicolor565_Blt_part(UBYTE * scr_ptr, int x, int y, int width, int height,
-						 UBYTE * own_palette, int pitch)
+						 UBYTE * own_palette, int pitch, BOOL useCache)
 {
 	static UBYTE *src;
 	static UBYTE *dst;
@@ -2275,7 +2332,10 @@ void hicolor565_Blt_part(UBYTE * scr_ptr, int x, int y, int width, int height,
 	linestep = geom[useMode].linestep;
 	skipmask = geom[useMode].xSkipMask;
 
-	scraddr = (UBYTE*)dynamicGXBeginDraw();
+	if (!useCache)
+		scraddr = (UBYTE*)dynamicGXBeginDraw();
+	else
+		scraddr = displayCache;
 
 	if(scraddr)
 	{
@@ -2313,10 +2373,21 @@ void hicolor565_Blt_part(UBYTE * scr_ptr, int x, int y, int width, int height,
 				while(src < src_limit)
 				{
 					UBYTE r, g, b;
-					
+
+					UBYTE *index1; 
+					UBYTE *index2;
+					UBYTE *index3;
+					UBYTE *index4;
+
+					/*
 					r = (3*palRed[*(src+0)] + palRed[*(src+1)])>>2;
 					g = (3*palGreen[*(src+0)] + palGreen[*(src+1)])>>2;
 					b = (3*palBlue[*(src+0)] + palBlue[*(src+1)])>>2;
+					*/
+
+					r = (2*palRed[*(src + 0)] + palRed[*(src + (pitch ? pitch : width) + 0)] + palRed[*(src + 1)]) >> 2;
+					g = (2*palGreen[*(src + 0)] + palGreen[*(src + (pitch ? pitch : width) + 0)] + palGreen[*(src + 1)]) >> 2;
+					b = (2*palBlue[*(src + 0)] + palBlue[*(src + (pitch ? pitch : width) + 0)] + palBlue[*(src + 1)]) >> 2;
 					
 					*(unsigned short*)dst = COLORCONV565(r,g,b);
 
@@ -2419,14 +2490,23 @@ void hicolor565_Blt_part(UBYTE * scr_ptr, int x, int y, int width, int height,
 					register second = *(src + 1);	
 					register third = *(src + 2);
 
-					r = (3*palRed[first] + palRed[second])>>2;
-					g = (3*palGreen[first] + palGreen[second])>>2;
-					b = (3*palBlue[first] + palBlue[second])>>2;
+					if (line != 6) {					
+						r = (3*palRed[first] + palRed[second])>>2;
+						g = (3*palGreen[first] + palGreen[second])>>2;
+						b = (3*palBlue[first] + palBlue[second])>>2;
+					}
+					else {
+						r = (2*palRed[first] + palRed[*(src + (pitch ? pitch : width) + 0)] + palRed[second]) >> 2;
+						g = (2*palGreen[first] + palGreen[*(src + (pitch ? pitch : width) + 0)] + palGreen[second]) >> 2;
+						b = (2*palBlue[first] + palBlue[*(src + (pitch ? pitch : width) + 0)] + palBlue[second]) >> 2;
+					}
 					
 					*(unsigned short*)dst = COLORCONV565(r,g,b);
+					
 
 					dst += pixelstep;	
 
+					/*
 					r = (palRed[second] + palRed[third])>>1;
 					g = (palGreen[second] + palGreen[third])>>1;
 					b = (palBlue[second] + palBlue[third])>>1;
@@ -2434,8 +2514,25 @@ void hicolor565_Blt_part(UBYTE * scr_ptr, int x, int y, int width, int height,
 					*(unsigned short*)dst = COLORCONV565(r,g,b);
 	
 					dst += pixelstep;
+					*/
 
-					src += 3;
+					if (line != 6) {					
+						r = (3*palRed[second] + palRed[third])>>2;
+						g = (3*palGreen[second] + palGreen[third])>>2;
+						b = (3*palBlue[second] + palBlue[third])>>2;
+					}
+					else {
+						r = (2*palRed[second] + palRed[*(src + 1 + (pitch ? pitch : width) + 0)] + palRed[third]) >> 2;
+						g = (2*palGreen[second] + palGreen[*(src + 1 + (pitch ? pitch : width) + 0)] + palGreen[third]) >> 2;
+						b = (2*palBlue[second] + palBlue[*(src + 1 + (pitch ? pitch : width) + 0)] + palBlue[third]) >> 2;
+					}
+					
+					*(unsigned short*)dst = COLORCONV565(r,g,b);
+
+					dst += pixelstep;
+
+
+					src += 3;					
 				}
 
 				scraddr += linestep;
@@ -2604,7 +2701,8 @@ void hicolor565_Blt_part(UBYTE * scr_ptr, int x, int y, int width, int height,
 			}
 		}
 
-		dynamicGXEndDraw();
+		if (!useCache)
+			dynamicGXEndDraw();
 	}
 }
 
@@ -2688,7 +2786,7 @@ void noGAPI_Set_565(INT16 *buffer, int pitch, int x, int y, int width, int heigh
 }
 
 void noGAPI_Blt_part(UBYTE * scr_ptr, int x, int y, int width, int height,
-					 UBYTE * own_palette, int pitch) {
+					 UBYTE * own_palette, int pitch, BOOL useCache) {
 	HBITMAP old;
 	RECT rc;
 	HDC hdc = GetDC(hWndMain);
@@ -2824,7 +2922,7 @@ void noGAPI_Set_565(INT16 *buffer, int pitch, int x, int y, int width, int heigh
 }
 
 void noGAPI_Blt_part(UBYTE * scr_ptr, int x, int y, int width, int height,
-					 UBYTE * own_palette, int pitch) {
+					 UBYTE * own_palette, int pitch, BOOL useCache) {
 	HDC hdc = GetDC(hWndMain);
 	HBITMAP hb;
 	UBYTE *workBuffer = noGAPI_buffer;
@@ -2921,12 +3019,8 @@ void Translate(int* px, int* py)
 
 	if (wide_screen && high_res) {
 		if (!g_gui->isActive()) {
-			*px = x * 2;
-			*py = y * 2;
-		}
-		else {
-			*px = x;
-			*py = y;
+			*px = *px * 2;
+			*py = *py * 2;
 		}
 		return;
 	}
@@ -3016,6 +3110,7 @@ int drawString(const char *str, int x, int y, int textcolor, int highlight) {
 	current_y = y;
 
 	while(current_pos < strlen(str)) {
+		memset(decomp + (current_y * 320), 0, 320 * 8);
 		memset(substring, 0, sizeof(substring));
 		if (strlen(str + current_pos) > MAX_CHARS_PER_LINE) 
 			memcpy(substring, str + current_pos, MAX_CHARS_PER_LINE);

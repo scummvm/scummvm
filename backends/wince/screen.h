@@ -50,6 +50,9 @@ void Blt(UBYTE * scr_ptr);
 void Blt_part(UBYTE * src_ptr, int x, int y, int width, int height, int pitch, bool check = false);
 void checkToolbar();
 
+void beginBltPart();
+void endBltPart();
+
 void Get_565(UBYTE *src, INT16 *buffer, int pitch, int x, int y, int width, int height);
 void Set_565(INT16 *buffer, int pitch, int x, int y, int width, int height);
 
@@ -67,6 +70,7 @@ void reducePortraitGeometry();
 void drawCommentString(char *);
 void drawStandardString(char *, int);
 void drawHighlightedString(char *, int);
+void drawWaitSelectKey();
 void resetLastHighlighted();
 
 void Translate(int* x, int* y);
