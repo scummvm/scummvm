@@ -125,7 +125,7 @@ void Engine::mainLoop() {
 
 			if (_currScene != NULL) {
 				// Update actor costumes
-				for (actor_list_type::iterator i = _actors.begin(); i != _actors.end(); i++) {
+				for (ActorListType::iterator i = _actors.begin(); i != _actors.end(); i++) {
 					Actor *a = *i;
 					if (_currScene != NULL && a->inSet(_currScene->name()) && a->visible())
 						a->update();
@@ -166,7 +166,7 @@ void Engine::mainLoop() {
 				_currScene->setupCamera();
 
 				// Draw actors
-				for (actor_list_type::iterator i = _actors.begin(); i != _actors.end(); i++) {
+				for (ActorListType::iterator i = _actors.begin(); i != _actors.end(); i++) {
 					Actor *a = *i;
 					if (_currScene != NULL && a->inSet(_currScene->name()) && a->visible())
 						a->draw();
@@ -175,7 +175,7 @@ void Engine::mainLoop() {
 			}
 
 			// Draw text
-			for (text_list_type::iterator i = _textObjects.begin(); i != _textObjects.end(); i++) {
+			for (TextListType::iterator i = _textObjects.begin(); i != _textObjects.end(); i++) {
 				(*i)->draw();
 			}
 
@@ -198,11 +198,11 @@ void Engine::mainLoop() {
 		}
 
 		lua_beginblock();
-		set_frameTime(_frameTime);
+		setFrameTime(_frameTime);
 		lua_endblock();
 
 		lua_beginblock();
-		set_movieTime(_movieTime);
+		setMovieTime(_movieTime);
 		lua_endblock();
 
 		if (SHOWFPS_GLOBAL) {

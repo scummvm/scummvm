@@ -608,11 +608,11 @@ void Costume::Chore::load(Costume *owner, TextSplitter &ts) {
 	for (int i = 0; i < _numTracks; i++) {
 		int compID, numKeys;
 		ts.scanString(" %d %d", 2, &compID, &numKeys);
-		_tracks[i]._compID = compID;
-		_tracks[i]._numKeys = numKeys;
-		_tracks[i]._keys = new TrackKey[numKeys];
+		_tracks[i].compID = compID;
+		_tracks[i].numKeys = numKeys;
+		_tracks[i].keys = new TrackKey[numKeys];
 		for (int j = 0; j < numKeys; j++) {
-			ts.scanString(" %d %d", 2, &_tracks[i]._keys[j]._time, &_tracks[i]._keys[j]._value);
+			ts.scanString(" %d %d", 2, &_tracks[i].keys[j].time, &_tracks[i].keys[j].value);
 		}
 	}
 }
@@ -639,7 +639,7 @@ void Costume::Chore::stop() {
 	_hasPlayed = false;
 
 	for (int i = 0; i < _numTracks; i++) {
-		Component *comp = _owner->_components[_tracks[i]._compID];
+		Component *comp = _owner->_components[_tracks[i].compID];
 		if (comp != NULL)
 			comp->reset();
 	}
@@ -647,15 +647,15 @@ void Costume::Chore::stop() {
 
 void Costume::Chore::setKeys(int startTime, int stopTime) {
 	for (int i = 0; i < _numTracks; i++) {
-		Component *comp = _owner->_components[_tracks[i]._compID];
+		Component *comp = _owner->_components[_tracks[i].compID];
 		if (comp == NULL)
 			continue;
 
-		for (int j = 0; j < _tracks[i]._numKeys; j++) {
-			if (_tracks[i]._keys[j]._time > stopTime)
+		for (int j = 0; j < _tracks[i].numKeys; j++) {
+			if (_tracks[i].keys[j].time > stopTime)
 				break;
-			if (_tracks[i]._keys[j]._time > startTime)
-				comp->setKey(_tracks[i]._keys[j]._value);
+			if (_tracks[i].keys[j].time > startTime)
+				comp->setKey(_tracks[i].keys[j].value);
 		}
 	}
 }
@@ -754,12 +754,12 @@ void Costume::update() {
 }
 
 void Costume::setHead(int joint1, int joint2, int joint3, float maxRoll, float maxPitch, float maxYaw) {
-	_head._joint1 = joint1;
-	_head._joint2 = joint2;
-	_head._joint3 = joint3;
-	_head._maxRoll = maxRoll;
-	_head._maxPitch = maxPitch;
-	_head._maxYaw = maxYaw;
+	_head.joint1 = joint1;
+	_head.joint2 = joint2;
+	_head.joint3 = joint3;
+	_head.maxRoll = maxRoll;
+	_head.maxPitch = maxPitch;
+	_head.maxYaw = maxYaw;
 }
 
 void Costume::setPosRotate(Vector3d pos, float pitch, float yaw, float roll) {

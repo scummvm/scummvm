@@ -35,8 +35,8 @@ private:
 
 	static Registry *_instance;
 
-	typedef std::map<std::string, std::string> group;
-	group _settings;
+	typedef std::map<std::string, std::string> Group;
+	Group _settings;
 	bool _dirty;
 };
 

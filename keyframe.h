@@ -41,8 +41,8 @@ private:
 	int _numMarkers;
 
 	struct Marker {
-		float _frame;
-		int _val;
+		float frame;
+		int val;
 	};
 	Marker *_markers;
 
@@ -61,6 +61,7 @@ private:
 		~KeyframeNode();
 
 		void animate(Model::HierNode &node, float frame, int priority) const;
+
 		char _meshName[32];
 		int _numEntries;
 		KeyframeEntry *_entries;

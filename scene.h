@@ -39,14 +39,14 @@ public:
 	~Scene();
 
 	void drawBackground() const {
-		if (_currSetup->_bkgnd_zbm != NULL) // Some screens have no zbuffer mask (eg, Alley)
-			_currSetup->_bkgnd_zbm->draw();
+		if (_currSetup->_bkgndZBm != NULL) // Some screens have no zbuffer mask (eg, Alley)
+			_currSetup->_bkgndZBm->draw();
 
-		if (_currSetup->_bkgnd_bm == NULL) {
+		if (_currSetup->_bkgndBm == NULL) {
 			error("Null background for setup %s in %s", _currSetup->_name.c_str(), _name.c_str());
 			return;
 		} 
-		_currSetup->_bkgnd_bm->draw();
+		_currSetup->_bkgndBm->draw();
 	}
 	void drawBitmaps(ObjectState::Position stage);
 	void setupCamera() {
@@ -79,7 +79,7 @@ private:
 		void load(TextSplitter &ts);
 		void setupCamera() const;
 		std::string _name;
-		ResPtr<Bitmap> _bkgnd_bm, _bkgnd_zbm;
+		ResPtr<Bitmap> _bkgndBm, _bkgndZBm;
 		Vector3d _pos, _interest;
 		float _roll, _fov, _nclip, _fclip;
 	};

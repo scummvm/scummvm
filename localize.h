@@ -33,8 +33,8 @@ private:
 
 	static Localizer *_instance;
 
-	typedef std::map<std::string, std::string> string_map;
-	string_map _entries;
+	typedef std::map<std::string, std::string> StringMap;
+	StringMap _entries;
 };
 
 #endif

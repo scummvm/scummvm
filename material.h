@@ -34,15 +34,15 @@ public:
 	void select() const;
 
 	// Set which image in an animated texture to use
-	void setNumber(int n) { _curr_image = n; }
+	void setNumber(int n) { _currImage = n; }
 
-	int numImages() const { return _num_images; }
-	int currentImage() const { return _curr_image; }
+	int numImages() const { return _numImages; }
+	int currentImage() const { return _currImage; }
 
 	~Material();
 
 //private:
-	int _num_images, _curr_image;
+	int _numImages, _currImage;
 	int _width, _height;
 	GLuint *_textures;
 };

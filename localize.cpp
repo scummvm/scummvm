@@ -94,7 +94,7 @@ std::string Localizer::localize(const char *str) const {
 		return str;
 
 	std::string key(str + 1, slash2 - str - 1);
-	string_map::const_iterator i = _entries.find(key);
+	StringMap::const_iterator i = _entries.find(key);
 	if (i == _entries.end())
 		return str;
 

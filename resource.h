@@ -118,8 +118,8 @@ private:
 
 	const Lab *findFile(const char *filename) const;
 
-	typedef std::map<std::string, Resource *> cache_type;
-	cache_type _cache;
+	typedef std::map<std::string, Resource *> CacheType;
+	CacheType _cache;
 
 	// Shut up pointless g++ warning
 	friend class dummy;

@@ -54,7 +54,7 @@ Registry *Registry::instance() {
 }
 
 const char *Registry::get(const char *key) const {
-	group::const_iterator i = _settings.find(key);
+	Group::const_iterator i = _settings.find(key);
 	if (i == _settings.end())
 		return NULL;
 	else
@@ -88,7 +88,7 @@ void Registry::save() {
 		return;
 	}
 
-	for (group::iterator i = _settings.begin(); i != _settings.end(); i++)
+	for (Group::iterator i = _settings.begin(); i != _settings.end(); i++)
 		std::fprintf(f, "%s=%s\n", i->first.c_str(), i->second.c_str());
 
 	std::fclose(f);

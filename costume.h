@@ -78,22 +78,22 @@ private:
 	Component **_components;
 
 	struct TrackKey {
-		int _time, _value;
+		int time, value;
 	};
 
 	struct ChoreTrack {
-		int _compID;
-		int _numKeys;
-		TrackKey *_keys;
+		int compID;
+		int numKeys;
+		TrackKey *keys;
 	};
 
 	struct Head {
-		int _joint1;
-		int _joint2;
-		int _joint3;
-		float _maxRoll;
-		float _maxPitch;
-		float _maxYaw;
+		int joint1;
+		int joint2;
+		int joint3;
+		float maxRoll;
+		float maxPitch;
+		float maxYaw;
 	} _head;
 
 	class Chore {

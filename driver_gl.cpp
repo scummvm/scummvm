@@ -413,14 +413,14 @@ void Driver::updateHierachyNode(const Model::HierNode *node) {
 void Driver::createBitmap(Bitmap *bitmap) {
 	if (bitmap->_format == 1) {
 		bitmap->_hasTransparency = false;
-		bitmap->_num_tex = ((bitmap->_width + (BITMAP_TEXTURE_SIZE - 1)) / BITMAP_TEXTURE_SIZE) *
+		bitmap->_numTex = ((bitmap->_width + (BITMAP_TEXTURE_SIZE - 1)) / BITMAP_TEXTURE_SIZE) *
 			((bitmap->_height + (BITMAP_TEXTURE_SIZE - 1)) / BITMAP_TEXTURE_SIZE);
-		bitmap->_tex_ids = new GLuint[bitmap->_num_tex * bitmap->_num_images];
-		glGenTextures(bitmap->_num_tex * bitmap->_num_images, bitmap->_tex_ids);
+		bitmap->_texIds = new GLuint[bitmap->_numTex * bitmap->_numImages];
+		glGenTextures(bitmap->_numTex * bitmap->_numImages, bitmap->_texIds);
 
 		byte *texData = new byte[4 * bitmap->_width * bitmap->_height];
 
-		for (int pic = 0; pic < bitmap->_num_images; pic++) {
+		for (int pic = 0; pic < bitmap->_numImages; pic++) {
 			// Convert data to 32-bit RGBA format
 			byte *texDataPtr = texData;
 			uint16 *bitmapData = reinterpret_cast<uint16 *>(bitmap->_data[pic]);
@@ -440,8 +440,8 @@ void Driver::createBitmap(Bitmap *bitmap) {
 				}
 			}
 
-			for (int i = 0; i < bitmap->_num_tex; i++) {
-				glBindTexture(GL_TEXTURE_2D, bitmap->_tex_ids[bitmap->_num_tex * pic + i]);
+			for (int i = 0; i < bitmap->_numTex; i++) {
+				glBindTexture(GL_TEXTURE_2D, bitmap->_texIds[bitmap->_numTex * pic + i]);
 				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
@@ -452,13 +452,13 @@ void Driver::createBitmap(Bitmap *bitmap) {
 			glPixelStorei(GL_UNPACK_ALIGNMENT, 2);
 			glPixelStorei(GL_UNPACK_ROW_LENGTH, bitmap->_width);
 
-			int cur_tex_idx = bitmap->_num_tex * pic;
+			int cur_tex_idx = bitmap->_numTex * pic;
 
 			for (int y = 0; y < bitmap->_height; y += BITMAP_TEXTURE_SIZE) {
 				for (int x = 0; x < bitmap->_width; x += BITMAP_TEXTURE_SIZE) {
 					int width  = (x + BITMAP_TEXTURE_SIZE >= bitmap->_width)  ? (bitmap->_width  - x) : BITMAP_TEXTURE_SIZE;
 					int height = (y + BITMAP_TEXTURE_SIZE >= bitmap->_height) ? (bitmap->_height - y) : BITMAP_TEXTURE_SIZE;
-					glBindTexture(GL_TEXTURE_2D, bitmap->_tex_ids[cur_tex_idx]);
+					glBindTexture(GL_TEXTURE_2D, bitmap->_texIds[cur_tex_idx]);
 					glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, width, height, GL_RGBA, GL_UNSIGNED_BYTE,
 						texData + (y * 4 * bitmap->_width) + (4 * x));
 					cur_tex_idx++;
@@ -470,7 +470,7 @@ void Driver::createBitmap(Bitmap *bitmap) {
 		glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
 		delete [] texData;
 	} else {
-		for (int pic = 0; pic < bitmap->_num_images; pic++) {
+		for (int pic = 0; pic < bitmap->_numImages; pic++) {
 			uint16 *zbufPtr = reinterpret_cast<uint16 *>(bitmap->_data[pic]);
 			for (int i = 0; i < (bitmap->_width * bitmap->_height); i++) {
 				uint16 val = READ_LE_UINT16(bitmap->_data[pic] + 2 * i);
@@ -488,7 +488,7 @@ void Driver::createBitmap(Bitmap *bitmap) {
 				}
 			}
 		}
-		bitmap->_tex_ids = NULL;
+		bitmap->_texIds = NULL;
 	}
 }
 
@@ -514,10 +514,10 @@ void Driver::drawBitmap(const Bitmap *bitmap) {
 		glDepthMask(GL_FALSE);
 		glEnable(GL_SCISSOR_TEST);
 		glScissor(bitmap->_x, 480 - (bitmap->_y + bitmap->_height), bitmap->_width, bitmap->_height);
-		int cur_tex_idx = bitmap->_num_tex * (bitmap->_curr_image - 1);
+		int cur_tex_idx = bitmap->_numTex * (bitmap->_currImage - 1);
 		for (int y = bitmap->_y; y < (bitmap->_y + bitmap->_height); y += BITMAP_TEXTURE_SIZE) {
 			for (int x = bitmap->_x; x < (bitmap->_x + bitmap->_width); x += BITMAP_TEXTURE_SIZE) {
-				glBindTexture(GL_TEXTURE_2D, bitmap->_tex_ids[cur_tex_idx]);
+				glBindTexture(GL_TEXTURE_2D, bitmap->_texIds[cur_tex_idx]);
 				glBegin(GL_QUADS);
 				glTexCoord2f(0.0, 0.0);
 				glVertex2i(x, y);
@@ -542,22 +542,22 @@ void Driver::drawBitmap(const Bitmap *bitmap) {
 		if ((!ZBUFFER_GLOBAL) || SCREENBLOCKS_GLOBAL)
 			return;
 
-		g_driver->drawDepthBitmap(bitmap->_x, bitmap->_y, bitmap->_width, bitmap->_height, bitmap->_data[bitmap->_curr_image - 1]);
+		g_driver->drawDepthBitmap(bitmap->_x, bitmap->_y, bitmap->_width, bitmap->_height, bitmap->_data[bitmap->_currImage - 1]);
 	}
 }
 
 void Driver::destroyBitmap(Bitmap *bitmap) {
-	if (bitmap->_tex_ids) {
-		glDeleteTextures(bitmap->_num_tex * bitmap->_num_images, bitmap->_tex_ids);
-		delete[] bitmap->_tex_ids;
+	if (bitmap->_texIds) {
+		glDeleteTextures(bitmap->_numTex * bitmap->_numImages, bitmap->_texIds);
+		delete[] bitmap->_texIds;
 	}
 }
 
 void Driver::createMaterial(Material *material, const char *data, const CMap *cmap) {
-	material->_textures = new GLuint[material->_num_images];
-	glGenTextures(material->_num_images, material->_textures);
+	material->_textures = new GLuint[material->_numImages];
+	glGenTextures(material->_numImages, material->_textures);
 	char *texdata = new char[material->_width * material->_height * 4];
-	for (int i = 0; i < material->_num_images; i++) {
+	for (int i = 0; i < material->_numImages; i++) {
 		char *texdatapos = texdata;
 		for (int y = 0; y < material->_height; y++) {
 			for (int x = 0; x < material->_width; x++) {
@@ -585,14 +585,14 @@ void Driver::createMaterial(Material *material, const char *data, const CMap *cm
 }
 
 void Driver::selectMaterial(const Material *material) {
-	glBindTexture(GL_TEXTURE_2D, material->_textures[material->_curr_image]);
+	glBindTexture(GL_TEXTURE_2D, material->_textures[material->_currImage]);
 	glMatrixMode(GL_TEXTURE);
 	glLoadIdentity();
 	glScalef(1.0f / material->_width, 1.0f / material->_height, 1);
 }
 
 void Driver::destroyMaterial(Material *material) {
-	glDeleteTextures(material->_num_images, material->_textures);
+	glDeleteTextures(material->_numImages, material->_textures);
 	delete[] material->_textures;
 }
 

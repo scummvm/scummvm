@@ -112,22 +112,22 @@ public:
 	Scene *currScene() { return _currScene; }
 	const char *sceneName() const { return _currScene->name(); }
 
-	typedef std::list<Actor *> actor_list_type;
-	actor_list_type::const_iterator actorsBegin() const {
+	typedef std::list<Actor *> ActorListType;
+	ActorListType::const_iterator actorsBegin() const {
 		return _actors.begin();
 	}
-	actor_list_type::const_iterator actorsEnd() const {
+	ActorListType::const_iterator actorsEnd() const {
 		return _actors.end();
 	}
 
 	void setSelectedActor(Actor *a) { _selectedActor = a; }
 	Actor *selectedActor() { return _selectedActor; }
 
-	typedef std::list<TextObject *> text_list_type;
-	text_list_type::const_iterator textsBegin() const {
+	typedef std::list<TextObject *> TextListType;
+	TextListType::const_iterator textsBegin() const {
 		return _textObjects.begin();
 	}
-	text_list_type::const_iterator textsEnd() const {
+	TextListType::const_iterator textsEnd() const {
 		return _textObjects.end();
 	}
 	void registerTextObject(TextObject *a) { _textObjects.push_back(a); }
@@ -166,9 +166,9 @@ private:
 
 	bool _controlsEnabled[SDLK_EXTRA_LAST];
 
-	actor_list_type _actors;
+	ActorListType _actors;
 	Actor *_selectedActor;
-	text_list_type _textObjects;
+	TextListType _textObjects;
 };
 
 #endif

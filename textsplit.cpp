@@ -47,7 +47,7 @@ TextSplitter::TextSplitter(const char *data, int len) {
 	_data = new char[len + 1];
 	std::memcpy(_data, data, len);
 	_data[len] = '\0';
-	_curr_line = _data;
+	_currLine = _data;
 	processLine();
 }
 
@@ -89,29 +89,29 @@ void TextSplitter::processLine() {
 	if (eof())
 		return;
 
-	_next_line = std::strchr(_curr_line, '\n');
-	if (_next_line != NULL) {
-		*_next_line = '\0';
-		_next_line++;
+	_nextLine = std::strchr(_currLine, '\n');
+	if (_nextLine != NULL) {
+		*_nextLine = '\0';
+		_nextLine++;
 	}
 
 	// Cut off comments
-	char *comment_start = std::strchr(_curr_line, '#');
+	char *comment_start = std::strchr(_currLine, '#');
 	if (comment_start != NULL)
 		*comment_start = '\0';
 
 	// Cut off trailing whitespace (including '\r')
-	char *strend = std::strchr(_curr_line, '\0');
-	while (strend > _curr_line && std::isspace(strend[-1]))
+	char *strend = std::strchr(_currLine, '\0');
+	while (strend > _currLine && std::isspace(strend[-1]))
 		strend--;
 	*strend = '\0';
 
 	// Skip blank lines
-	if (*_curr_line == '\0')
+	if (*_currLine == '\0')
 		nextLine();
 
 	// Convert to lower case
 	if (!eof())
-		for (char *s = _curr_line; *s != '\0'; s++)
+		for (char *s = _currLine; *s != '\0'; s++)
 			*s = std::tolower(*s);
 }

@@ -27,16 +27,16 @@ Material::Material(const char *filename, const char *data, int len, const CMap &
 	if (len < 4 || memcmp(data, "MAT ", 4) != 0)
 		error("invalid magic loading texture\n");
 
-	_num_images = READ_LE_UINT32(data + 12);
-	_curr_image = 0;
-	_width = READ_LE_UINT32(data + 76 + _num_images * 40);
-	_height = READ_LE_UINT32(data + 80 + _num_images * 40);
+	_numImages = READ_LE_UINT32(data + 12);
+	_currImage = 0;
+	_width = READ_LE_UINT32(data + 76 + _numImages * 40);
+	_height = READ_LE_UINT32(data + 80 + _numImages * 40);
 
 	if ((_width == 0) || (_height == 0)) {
 		warning("bad texture size (%dx%d) for texture %s\n", _width, _height, filename);
 	}
 
-	data += 100 + _num_images * 40;
+	data += 100 + _numImages * 40;
 
 	g_driver->createMaterial(this, data, &cmap);
 }

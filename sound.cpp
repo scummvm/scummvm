@@ -285,7 +285,7 @@ void Mixer::playSfx(Sound *s) {
 }
 
 void Mixer::stopSfx(Sound *s) {
-	for (sound_list::iterator i = _sfxSounds.begin(); i != _sfxSounds.end(); ) {
+	for (SoundList::iterator i = _sfxSounds.begin(); i != _sfxSounds.end(); ) {
 		if (*i == s)
 			i = _sfxSounds.erase(i);
 		else
@@ -294,7 +294,7 @@ void Mixer::stopSfx(Sound *s) {
 }
 
 void Mixer::stopVoice(Sound *s) {
-	for (sound_list::iterator i = _voiceSounds.begin(); i != _voiceSounds.end(); ) {
+	for (SoundList::iterator i = _voiceSounds.begin(); i != _voiceSounds.end(); ) {
 		if (*i == s)
 			i = _voiceSounds.erase(i);
 		else
@@ -363,7 +363,7 @@ void Mixer::setImuseSeq(int state) {
 }
 
 Sound *Mixer::findSfx(const char *filename) {
-	for (sound_list::iterator i = _sfxSounds.begin(); i != _sfxSounds.end(); i++) {
+	for (SoundList::iterator i = _sfxSounds.begin(); i != _sfxSounds.end(); i++) {
 		if (std::strcmp((*i)->filename(), filename) == 0)
 			return *i;
 	}
@@ -376,14 +376,14 @@ bool Mixer::voicePlaying() const {
 
 void Mixer::getAudio(int16 *data, int numSamples) {
 	memset(data, 0, numSamples * 2);
-	for (sound_list::iterator i = _voiceSounds.begin(); i != _voiceSounds.end(); ) {
+	for (SoundList::iterator i = _voiceSounds.begin(); i != _voiceSounds.end(); ) {
 		(*i)->mix(data, numSamples);
 		if ((*i)->done())
 			i = _voiceSounds.erase(i);
 		else
 			i++;
 	}
-	for (sound_list::iterator i = _sfxSounds.begin(); i != _sfxSounds.end(); ) {
+	for (SoundList::iterator i = _sfxSounds.begin(); i != _sfxSounds.end(); ) {
 		(*i)->mix(data, numSamples);
 		if ((*i)->done())
 			i = _sfxSounds.erase(i);

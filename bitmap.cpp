@@ -36,17 +36,17 @@ Bitmap::Bitmap(const char *filename, const char *data, int len) :
 		error("Invalid magic loading bitmap\n");
 
 	int codec = READ_LE_UINT32(data + 8);
-	_num_images = READ_LE_UINT32(data + 16);
+	_numImages = READ_LE_UINT32(data + 16);
 	_x = READ_LE_UINT32(data + 20);
 	_y = READ_LE_UINT32(data + 24);
 	_format = READ_LE_UINT32(data + 32);
 	_width = READ_LE_UINT32(data + 128);
 	_height = READ_LE_UINT32(data + 132);
-	_curr_image = 1;
+	_currImage = 1;
 
-	_data = new char *[_num_images];
+	_data = new char *[_numImages];
 	int pos = 0x88;
-	for (int i = 0; i < _num_images; i++) {
+	for (int i = 0; i < _numImages; i++) {
 		_data[i] = new char[2 * _width * _height];
 		if (codec == 0) {
 			memcpy(_data[i], data + pos, 2 * _width * _height);
@@ -69,14 +69,14 @@ Bitmap::Bitmap(const char *filename, const char *data, int len) :
 }
 
 void Bitmap::draw() const {
-	if (_curr_image == 0)
+	if (_currImage == 0)
 		return;
 
 	g_driver->drawBitmap(this);
 }
 
 Bitmap::~Bitmap() {
-	for (int i = 0; i < _num_images; i++)
+	for (int i = 0; i < _numImages; i++)
 		delete[] _data[i];
 
 	delete[] _data;

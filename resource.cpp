@@ -142,7 +142,7 @@ int ResourceLoader::fileLength(const char *filename) const {
 Bitmap *ResourceLoader::loadBitmap(const char *filename) {
 	std::string fname = filename;
 	makeLower(fname);
-	cache_type::iterator i = _cache.find(fname);
+	CacheType::iterator i = _cache.find(fname);
 	if (i != _cache.end()) {
 		return dynamic_cast<Bitmap *>(i->second);
 	}
@@ -162,7 +162,7 @@ Bitmap *ResourceLoader::loadBitmap(const char *filename) {
 CMap *ResourceLoader::loadColormap(const char *filename) {
 	std::string fname = filename;
 	makeLower(fname);
-	cache_type::iterator i = _cache.find(fname);
+	CacheType::iterator i = _cache.find(fname);
 
 	if (i != _cache.end()) {
 		return dynamic_cast<CMap *>(i->second);
@@ -191,7 +191,7 @@ Costume *ResourceLoader::loadCostume(const char *filename, Costume *prevCost) {
 KeyframeAnim *ResourceLoader::loadKeyframe(const char *filename) {
 	std::string fname = filename;
 	makeLower(fname);
-	cache_type::iterator i = _cache.find(fname);
+	CacheType::iterator i = _cache.find(fname);
 	if (i != _cache.end()) {
 		return dynamic_cast<KeyframeAnim *>(i->second);
 	}
@@ -210,7 +210,7 @@ LipSynch *ResourceLoader::loadLipSynch(const char *filename) {
 	LipSynch *result;
 
 	makeLower(fname);
-	cache_type::iterator i = _cache.find(fname);
+	CacheType::iterator i = _cache.find(fname);
 	if (i != _cache.end()) {
 		return dynamic_cast<LipSynch *>(i->second);
 	}
@@ -231,7 +231,7 @@ LipSynch *ResourceLoader::loadLipSynch(const char *filename) {
 Material *ResourceLoader::loadMaterial(const char *filename, const CMap &c) {
 	std::string fname = filename;
 	makeLower(fname);
-	cache_type::iterator i = _cache.find(fname);
+	CacheType::iterator i = _cache.find(fname);
 	if (i != _cache.end()) {
 		return dynamic_cast<Material *>(i->second);
 	}
@@ -248,7 +248,7 @@ Material *ResourceLoader::loadMaterial(const char *filename, const CMap &c) {
 Model *ResourceLoader::loadModel(const char *filename, const CMap &c) {
 	std::string fname = filename;
 	makeLower(fname);
-	cache_type::iterator i = _cache.find(fname);
+	CacheType::iterator i = _cache.find(fname);
 	if (i != _cache.end()) {
 		return dynamic_cast<Model *>(i->second);
 	}
@@ -265,7 +265,7 @@ Model *ResourceLoader::loadModel(const char *filename, const CMap &c) {
 Sound *ResourceLoader::loadSound(const char *filename) {
 	std::string fname = filename;
 	makeLower(fname);
-	cache_type::iterator i = _cache.find(fname);
+	CacheType::iterator i = _cache.find(fname);
 	if (i != _cache.end()) {
 		return dynamic_cast<Sound *>(i->second);
 	}
@@ -282,7 +282,7 @@ Sound *ResourceLoader::loadSound(const char *filename) {
 void ResourceLoader::uncache(const char *filename) {
 	std::string fname = filename;
 	makeLower(fname);
-	cache_type::iterator i = _cache.find(fname);
+	CacheType::iterator i = _cache.find(fname);
 	if (i != _cache.end())
 		_cache.erase(i);
 }

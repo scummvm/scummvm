@@ -56,8 +56,8 @@ bool Lab::open(const char *filename) {
 		std::string fname = string_table + fname_offset;
 		std::transform(fname.begin(), fname.end(), fname.begin(), tolower);
 
-		_file_map.insert(std::make_pair(fname, LabEntry(start, size)));
-		_file_map.size();
+		_fileMap.insert(std::make_pair(fname, LabEntry(start, size)));
+		_fileMap.size();
 	}
 
 	delete [] string_table;
@@ -65,12 +65,12 @@ bool Lab::open(const char *filename) {
 }
 
 bool Lab::fileExists(const char *filename) const {
-	return find_filename(filename) != _file_map.end();
+	return findFilename(filename) != _fileMap.end();
 }
 
 Block *Lab::getFileBlock(const char *filename) const {
-	file_map_type::const_iterator i = find_filename(filename);
-	if (i == _file_map.end())
+	FileMapType::const_iterator i = findFilename(filename);
+	if (i == _fileMap.end())
 		return NULL;
 
 	std::fseek(_f, i->second.offset, SEEK_SET);
@@ -86,8 +86,8 @@ Block *Lab::getFileBlock(const char *filename) const {
 }
 
 std::FILE *Lab::openNewStream(const char *filename) const {
-	file_map_type::const_iterator i = find_filename(filename);
-	if (i == _file_map.end())
+	FileMapType::const_iterator i = findFilename(filename);
+	if (i == _fileMap.end())
 		return NULL;
 
 	std::fseek(_f, i->second.offset, SEEK_SET);
@@ -96,22 +96,22 @@ std::FILE *Lab::openNewStream(const char *filename) const {
 }
 
 int Lab::fileLength(const char *filename) const {
-	file_map_type::const_iterator i = find_filename(filename);
-	if (i == _file_map.end())
+	FileMapType::const_iterator i = findFilename(filename);
+	if (i == _fileMap.end())
 		return -1;
 
 	return i->second.len;
 }
 
-Lab::file_map_type::const_iterator Lab::find_filename(const char *filename) const {
+Lab::FileMapType::const_iterator Lab::findFilename(const char *filename) const {
 	std::string s = filename;
 	std::transform(s.begin(), s.end(), s.begin(), tolower);
-	return _file_map.find(s);
+	return _fileMap.find(s);
 }
 
 void Lab::close() {
 	if (_f != NULL)
 		std::fclose(_f);
 	_f = NULL;
-	_file_map.clear();
+	_fileMap.clear();
 }

@@ -658,7 +658,7 @@ static void SetActorFollowBoxes() {	// Constrain actor to walkplanes?
 static void GetVisibleThings() {
 	lua_Object result = lua_createtable();
 	Actor *sel = Engine::instance()->selectedActor();
-	for (Engine::actor_list_type::const_iterator i = Engine::instance()->actorsBegin(); i != Engine::instance()->actorsEnd(); i++) {
+	for (Engine::ActorListType::const_iterator i = Engine::instance()->actorsBegin(); i != Engine::instance()->actorsEnd(); i++) {
 		if (!(*i)->inSet(Engine::instance()->sceneName()))
 			continue;
 		if (sel->angleTo(*(*i)) < 90) {
@@ -911,14 +911,14 @@ void ImSetSequence() {
 	Mixer::instance()->setImuseSeq(seq);
 }
 
-void set_frameTime(float frameTime) {
+void setFrameTime(float frameTime) {
 	lua_pushobject(lua_getglobal("system"));
 	lua_pushstring("frameTime");
 	lua_pushnumber(frameTime);
 	lua_settable();
 }
 
-void set_movieTime(float movieTime) {
+void setMovieTime(float movieTime) {
 	lua_pushobject(lua_getglobal("system"));
 	lua_pushstring("movieTime");
 	lua_pushnumber(movieTime);
@@ -1006,7 +1006,7 @@ static void KillTextObject() {
 
 	textID = lua_getstring(lua_getparam(1));
 
-	for (Engine::text_list_type::const_iterator i = Engine::instance()->textsBegin();
+	for (Engine::TextListType::const_iterator i = Engine::instance()->textsBegin();
 			i != Engine::instance()->textsEnd(); i++) {
 		TextObject *textO = *i;
 
@@ -1063,7 +1063,7 @@ static void ChangeTextObject() {
 	lua_Object tableObj = lua_getparam(2);
 	TextObject *modifyObject = NULL;
 
-	for (Engine::text_list_type::const_iterator i = Engine::instance()->textsBegin(); i != Engine::instance()->textsEnd(); i++) {
+	for (Engine::TextListType::const_iterator i = Engine::instance()->textsBegin(); i != Engine::instance()->textsEnd(); i++) {
 		TextObject *textO = *i;
 
 		if (strstr(textO->name(), textID)) {

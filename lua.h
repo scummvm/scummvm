@@ -30,10 +30,10 @@ void register_lua();
 int bundle_dofile(const char *filename);
 
 // Set system.frameTime
-void set_frameTime(float frameTime);
+void setFrameTime(float frameTime);
 
 // Set smush.movieTime
-void set_movieTime(float movieTime);
+void setMovieTime(float movieTime);
 
 // Get the event handler function with the given name, pushing the handler
 // object if appropriate

@@ -41,8 +41,8 @@ void KeyframeAnim::loadBinary(const char *data, int len) {
 	_numMarkers = READ_LE_UINT32(data + 68);
 	_markers = new Marker[_numMarkers];
 	for (int i = 0; i < _numMarkers; i++) {
-		_markers[i]._frame = get_float(data + 72 + 4 * i);
-		_markers[i]._val = READ_LE_UINT32(data + 104 + 4 * i);
+		_markers[i].frame = get_float(data + 72 + 4 * i);
+		_markers[i].val = READ_LE_UINT32(data + 104 + 4 * i);
 	}
 
 	_nodes = new KeyframeNode *[_numJoints];
@@ -70,7 +70,7 @@ void KeyframeAnim::loadText(TextSplitter &ts) {
 		ts.scanString("markers %d", 1, &_numMarkers);
 		_markers = new Marker[_numMarkers];
 		for (int i = 0; i < _numMarkers; i++)
-			ts.scanString("%f %d", 2, &_markers[i]._frame, &_markers[i]._val);
+			ts.scanString("%f %d", 2, &_markers[i].frame, &_markers[i].val);
 	} else {
 		_numMarkers = 0;
 		_markers = NULL;

@@ -66,8 +66,8 @@ private:
 	~Mixer();
 
 	static Mixer *_instance;
-	typedef std::list<ResPtr<Sound> > sound_list;
-	sound_list _voiceSounds, _sfxSounds;
+	typedef std::list<ResPtr<Sound> > SoundList;
+	SoundList _voiceSounds, _sfxSounds;
 	ResPtr<Sound> _musicSound, _seqSound;
 
 	friend void mixerCallback(void *userdata, uint8 *stream, int len);

@@ -59,10 +59,10 @@ private:
 	};
 
 	std::FILE *_f;
-	typedef std::map<std::string, LabEntry> file_map_type;
-	file_map_type _file_map;
+	typedef std::map<std::string, LabEntry> FileMapType;
+	FileMapType _fileMap;
 
-	file_map_type::const_iterator find_filename(const char *filename) const;
+	FileMapType::const_iterator findFilename(const char *filename) const;
 };
 
 #endif
