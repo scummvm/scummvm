@@ -351,7 +351,7 @@ lowTextManager_t SkyText::lowTextManager(uint32 textNum, uint16 width, uint16 lo
 
 	Compact *cpt = SkyState::fetchCompact(compactNum);
 
-	while (cpt->status != 0xFFFF) { //-1
+	while (cpt->status != 0) { 
 		compactNum++;
 		cpt = SkyState::fetchCompact(compactNum);
 	}
