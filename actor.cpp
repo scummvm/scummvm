@@ -31,6 +31,7 @@ Actor::Actor(const char *name) :
 		visible_(true), talkSound_(NULL), turning_(false), walking_(false), walkChore_(-1) {
 	Engine::instance()->registerActor(this);
 	lookingMode_ = false;
+	constrain_ = false;
 }
 
 void Actor::turnTo(float pitch, float yaw, float roll) {
@@ -59,10 +60,14 @@ void Actor::walkTo(Vector3d p) {
 }
 
 bool Actor::validBoxVector(Vector3d forwardVec, float dist) {
-	//TODO: Obey Actor 'constrain' flags. Verify if any other sector flags allow walking
-	//Possibly use a box-aware TraceLine function instead of just checking dest point
+	// TODO: Verify if any other sector flags allow walking
+	// Possibly use a box-aware TraceLine function instead of just checking
+	// dest point
 	Vector3d tempVec = pos_ + (forwardVec * dist);
 	int numSectors = Engine::instance()->currScene()->getSectorCount();
+
+	if (constrain_ == false)
+		return true;
 
 	for (int i = 0; i < numSectors; i++) {
 		Sector *sector = Engine::instance()->currScene()->getSectorBase(i);

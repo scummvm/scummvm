@@ -579,6 +579,14 @@ static void SetActorHead() {
 	act->setHead( joint1, joint2, joint3, maxRoll, maxPitch, maxYaw );
 }
 
+static void SetActorFollowBoxes() {	// Constrain actor to walkplanes?
+	Actor *act = check_actor(1);
+	bool constrain = !lua_isnil(lua_getparam(2));
+
+	act->setConstrain(constrain);
+}
+
+/////////////
 static void GetVisibleThings() {
 	lua_Object result = lua_createtable();
 	Actor *sel = Engine::instance()->selectedActor();
@@ -1205,8 +1213,6 @@ static char *stubFuncs[] = {
 	"DimScreen",
 	"ForceRefresh",
 	"RenderModeUser",
-	"SetActorConstrain",
-	"SetActorWalkDominate",
 	"SetGamma",
 	"ImSetVoiceEffect",
 	"ImResume",
@@ -1259,7 +1265,8 @@ static char *stubFuncs[] = {
 	"GetPointSector",
 	"IsPointInSector",
 	"SetActorFrustrumCull",
-	"SetActorFollowBoxes",
+	"SetActorWalkDominate",
+	"SetActorConstrain",
 	"GetCameraActor",
 	"DriveActorTo",
 	"WalkActorVector",
@@ -1477,6 +1484,7 @@ struct luaL_reg builtins[] = {
 	{ "SetActorTalkColor", SetActorTalkColor },
 	{ "GetActorTalkColor", GetActorTalkColor },
 	{ "SetActorVisibility", SetActorVisibility },
+	{ "SetActorFollowBoxes", SetActorFollowBoxes },
 	{ "PutActorAt", PutActorAt },
 	{ "GetActorPos", GetActorPos },
 	{ "SetActorRot", SetActorRot },

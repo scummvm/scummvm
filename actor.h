@@ -87,7 +87,9 @@ public:
 	int costumeStackDepth() const {
 		return costumeStack_.size();
 	}
-
+	void setConstrain(bool constrain) {
+		constrain_ = constrain;
+	}
 	void update();
 	void draw();
 
@@ -116,6 +118,7 @@ private:
 	float pitch_, yaw_, roll_;
 	float walkRate_, turnRate_;
 
+	bool constrain_;	// Constrain to walkboxes
 	bool visible_;
 	bool lookingMode_;
 	ResPtr<Sound> talkSound_;
