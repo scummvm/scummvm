@@ -333,10 +333,10 @@ void Talk::talk(const char *filename, int personInRoom, char *cutawayFilename) {
 	}
 
 	if (_input->talkQuit()) {
-		talkSelected()->hasTalkedTo = 1;
+		// TODO: missing some code here!
 	}
 	else {
-		// TODO: missing some code here!
+		talkSelected()->hasTalkedTo = 1;
 	}
 
 	_logic->joeFace();
