@@ -258,17 +258,15 @@ int main(int argc, char *argv[]) {
 	if (detector.detectMain()) {
 
 		// Set the window caption to the game name
-		prop.caption = ConfMan.get("description", detector._targetName).c_str();
-		if (strnlen(prop.caption, 3) == 0)	
-			prop.caption = detector._game.description;
-		if (strnlen(prop.caption, 3) == 0)	
-			prop.caption = detector._targetName.c_str();
-		if (strnlen(prop.caption, 3) != 0)	
+		Common::String caption(ConfMan.get("description", detector._targetName));
+		if (caption.isEmpty() && detector._game.description)
+			caption = detector._game.description;
+		if (caption.isEmpty())	
+			caption = detector._targetName;
+		if (!caption.isEmpty())	{
+			prop.caption = caption.c_str();
 			system->property(OSystem::PROP_SET_WINDOW_CAPTION, &prop);
-
-		// FIXME: It seem not logical that we first might set the gfx mode to
-		// 1x, and then immediately after might override it again. We probably
-		// should combine both checks into one.
+		}
 
 		// See if the game should default to 1x scaler
 		if (!ConfMan.hasKey("gfx_mode", detector._targetName) && 
