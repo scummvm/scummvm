@@ -1314,8 +1314,8 @@ void Scumm_v5::o5_lights() {
 	if (c == 0)
 		VAR(VAR_CURRENT_LIGHTS) = a;
 	else if (c == 1) {
-		_flashlightXStrips = a;
-		_flashlightYStrips = b;
+		_flashlight.xStrips = a;
+		_flashlight.yStrips = b;
 	}
 	_fullRedraw = 1;
 }

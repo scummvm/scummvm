@@ -582,7 +582,7 @@ void Scumm::drawFlashlight() {
 	int i, j, offset, x, y;
 
 	// Remove the flash light first if it was previously drawn
-	if (_flashlightIsDrawn) {
+	if (_flashlight.isDrawn) {
 		updateDirtyRect(0, _flashlight.x, _flashlight.x + _flashlight.w,
 										_flashlight.y, _flashlight.y + _flashlight.h, USAGE_BIT_DIRTY);
 		
@@ -593,10 +593,10 @@ void Scumm::drawFlashlight() {
 				_flashlight.buffer += _screenWidth;
 			} while (--i);
 		}
-		_flashlightIsDrawn = false;
+		_flashlight.isDrawn = false;
 	}
 
-	if (_flashlightXStrips == 0 || _flashlightYStrips == 0)
+	if (_flashlight.xStrips == 0 || _flashlight.yStrips == 0)
 		return;
 
 	// Calculate the area of the flashlight
@@ -608,8 +608,8 @@ void Scumm::drawFlashlight() {
 		x = a->x;
 		y = a->y;
 	}
-	_flashlight.w = _flashlightXStrips * 8;
-	_flashlight.h = _flashlightYStrips * 8;
+	_flashlight.w = _flashlight.xStrips * 8;
+	_flashlight.h = _flashlight.yStrips * 8;
 	_flashlight.x = x - _flashlight.w / 2 - _screenStartStrip * 8;
 	_flashlight.y = y - _flashlight.h / 2;
 
@@ -659,7 +659,7 @@ void Scumm::drawFlashlight() {
 		}
 	}
 	
-	_flashlightIsDrawn = true;
+	_flashlight.isDrawn = true;
 }
 
 // Redraw background as needed, i.e. the left/right sides if scrolling took place etc.
@@ -705,7 +705,7 @@ void Scumm::redrawBGAreas() {
 			redrawBGStrip(0, 1);
 		} else if (_fullRedraw != 0 || camera._cur.x != camera._last.x) {
 			_BgNeedsRedraw = false;
-			_flashlightIsDrawn = false;
+			_flashlight.isDrawn = false;
 			redrawBGStrip(0, gdi._numStrips);
 		}
 	}

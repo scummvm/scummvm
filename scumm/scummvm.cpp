@@ -324,9 +324,6 @@ Scumm::Scumm (GameDetector *detector, OSystem *syst)
 	_switchRoomEffect = 0;
 	_doEffect = false;
 	memset(&_flashlight,0,sizeof(_flashlight));
-	_flashlightXStrips = 0;
-	_flashlightYStrips = 0;
-	_flashlightIsDrawn = false;
 	_bompScaleRight = 0;
 	_bompScaleBottom = 0;
 	_bompScallingXPtr = NULL;
@@ -720,8 +717,8 @@ void Scumm::scummInit() {
 
 	if (!(_features & GF_AFTER_V7)) {
 		// Setup light
-		_flashlightXStrips = 7;
-		_flashlightYStrips = 7;
+		_flashlight.xStrips = 7;
+		_flashlight.yStrips = 7;
 		_flashlight.buffer = NULL;
 	}
 

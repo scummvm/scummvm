@@ -770,9 +770,9 @@ public:
 	struct {
 		int x, y, w, h;
 		byte *buffer;
+		uint16 xStrips, yStrips;
+		bool isDrawn;
 	} _flashlight;
-	uint16 _flashlightXStrips, _flashlightYStrips;
-	bool _flashlightIsDrawn;
 
 	void getGraphicsPerformance();
 	void initScreens(int a, int b, int w, int h);
