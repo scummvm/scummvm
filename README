@@ -355,7 +355,7 @@ MAME.
 They are:
         normal     - No filtering, original 320x200 resolution. Fastest.
         2x         - No filtering, double screen/window size to 640x400 (default)
-        3x         - No filtering, triple screen/window size to 800x600
+        3x         - No filtering, triple screen/window size to 960x600
         2xsai      - 2xsai filtering, double screen/window size to 640x400
         super2xsai - Enhanced 2xsai filtering. 640x400 screen/window size
         supereagle - Less blurry than 2xsai, but slower. Also 640x400
