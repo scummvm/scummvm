@@ -116,4 +116,4 @@ R_EVENT *EVENT_Chain(R_EVENT *eead_event, R_EVENT *add_event);
 
 } // End of namespace Saga
 
-#endif				/* R_EVENTS_MOD_H */
+#endif

@@ -19,14 +19,9 @@
  *
  * $Header$
  *
- */
-/*
- Description:   
- 
-    Expression parsing module header file
-
- Notes: 
 */
+
+// Expression parsing module header file
 
 #ifndef SAGA_EXPR_H_
 #define SAGA_EXPR_H_
@@ -39,5 +34,4 @@ int EXPR_ParseArgs(char *cmd_str, char **argv);
 
 } // End of namespace Saga
 
-#endif				/* R_EXPR_H_ */
-/* end "r_expr.h" */
+#endif

@@ -20,33 +20,19 @@
  * $Header$
  *
  */
-/*
- Description:   
- 
-    Expression parsing module, and string handling functions
 
- Notes: 
+// Expression parsing module, and string handling functions
 
-    EXPR_ParseArgs() lifted wholesale from SDL win32 initialization code by
-    Sam Lantinga
-*/
+// EXPR_ParseArgs() lifted wholesale from SDL win32 initialization code by Sam Lantinga
 
 #include "reinherit.h"
 
-/*
-   Uses the following modules:
-\*--------------------------------------------------------------------------*/
 #include "cvar_mod.h"
-
-/*
-   Begin module
-\*--------------------------------------------------------------------------*/
 #include "expr.h"
 
 namespace Saga {
 
 static const char *EXPR_ErrMsg[] = {
-
 	"Invalid error state.",
 	"No Error",
 	"Memory allocation failed",
@@ -63,7 +49,6 @@ static const char *EXPR_ErrMsg[] = {
 };
 
 enum EXPR_Errors {
-
 	EXERR_ASSERT,
 	EXERR_NONE,
 	EXERR_MEM,
@@ -81,30 +66,20 @@ enum EXPR_Errors {
 
 static enum EXPR_Errors EXPR_ErrorState;
 
-int EXPR_GetError(const char **err_str)
-/*--------------------------------------------------------------------------*\
- Returns the appropriate expression parser error string given an error code.
-\*--------------------------------------------------------------------------*/
-{
-
+// Returns the appropriate expression parser error string given an error code.
+int EXPR_GetError(const char **err_str) {
 	*err_str = EXPR_ErrMsg[EXPR_ErrorState];
-
 	return EXPR_ErrorState;
 }
 
-int
-EXPR_Parse(const char **exp_pp, int *len, R_CVAR_P * expr_cvar, char **rvalue)
-/*--------------------------------------------------------------------------*\
- Parses an interactive expression.
- Sets 'expr_cvar' to the cvar/cfunction identifier input by the user, and
- 'rvalue' to the corresponding rvalue ( in an expression ) or argument string
- ( in a function call ).
-
- Memory pointed to by rvalue after return must be explicitly freed by the
- caller.
-\*--------------------------------------------------------------------------*/
-{
-
+// Parses an interactive expression.
+// Sets 'expr_cvar' to the cvar/cfunction identifier input by the user, and
+// 'rvalue' to the corresponding rvalue ( in an expression ) or argument string
+// ( in a function call ).
+//
+// Memory pointed to by rvalue after return must be explicitly freed by the
+// caller.
+int EXPR_Parse(const char **exp_pp, int *len, R_CVAR_P *expr_cvar, char **rvalue) {
 	int i;
 	int in_char;
 	int equ_offset = 0;
@@ -112,13 +87,11 @@ EXPR_Parse(const char **exp_pp, int *len, R_CVAR_P * expr_cvar, char **rvalue)
 
 	char *lvalue_str;
 	int lvalue_len;
-
 	char *rvalue_str;
 	int rvalue_len;
 
 	const char *scan_p;
 	int scan_len;
-
 	const char *expr_p;
 	int expr_len;
 	int test_char = '\0';
@@ -128,45 +101,37 @@ EXPR_Parse(const char **exp_pp, int *len, R_CVAR_P * expr_cvar, char **rvalue)
 
 	expr_p = *exp_pp;
 	expr_len = strlen(*exp_pp);
-
 	scan_p = *exp_pp;
 	scan_len = expr_len;
 
-    /**lvalue = NULL;*/
+	//*lvalue = NULL;
 	*rvalue = NULL;
 
 	EXPR_ErrorState = EXERR_ASSERT;
 
 	for (i = 0; i <= scan_len; i++, scan_p++) {
-
 		in_char = *scan_p;
-
 		if ((i == 0) && isdigit(in_char)) {
-			/* First character of a valid identifier cannot be a digit */
+			// First character of a valid identifier cannot be a digit
 			EXPR_ErrorState = EXERR_ILLEGAL;
 			return R_FAILURE;
 		}
 
-		/* If we reach a character that isn't valid in an identifier... */
+		// If we reach a character that isn't valid in an identifier...
 		if ((!isalnum(in_char)) && ((in_char != '_'))) {
 
-			/* then eat remaining whitespace, if any */
+			// then eat remaining whitespace, if any
 			equ_offset = strspn(scan_p, R_EXPR_WHITESPACE);
-
 			test_char = scan_p[equ_offset];
-			/* and test for the only valid characters after an identifier */
-			if ((test_char != '=') &&
-			    (test_char != '\0') && (test_char != '(')) {
-
-				if ((equ_offset == 0)
-				    && ((scan_p - expr_p) != expr_len)) {
+			// and test for the only valid characters after an identifier
+			if ((test_char != '=') && (test_char != '\0') && (test_char != '(')) {
+				if ((equ_offset == 0) && ((scan_p - expr_p) != expr_len)) {
 					EXPR_ErrorState = EXERR_ILLEGAL;
 				} else {
 					EXPR_ErrorState = EXERR_EXPR;
 				}
 				return R_FAILURE;
 			}
-
 			break;
 		}
 	}
@@ -182,7 +147,7 @@ EXPR_Parse(const char **exp_pp, int *len, R_CVAR_P * expr_cvar, char **rvalue)
 	strncpy(lvalue_str, expr_p, lvalue_len);
 	lvalue_str[lvalue_len] = 0;
 
-	/* We now have the lvalue, so attempt to find it */
+	// We now have the lvalue, so attempt to find it
 	lvalue_cvar = CVAR_Find(lvalue_str);
 	if (lvalue_cvar == NULL) {
 		EXPR_ErrorState = EXERR_NOTFOUND;
@@ -193,22 +158,19 @@ EXPR_Parse(const char **exp_pp, int *len, R_CVAR_P * expr_cvar, char **rvalue)
 		lvalue_str = NULL;
 	}
 
-	/* Skip parsed character, if any */
+	// Skip parsed character, if any
 	scan_p += equ_offset + 1;
 	scan_len = (scan_p - expr_p);
 
-	/* Check if the 'cvar' is really a function */
+	// Check if the 'cvar' is really a function
 	have_func = CVAR_IsFunc(lvalue_cvar);
 
 	if (test_char == '(') {
-
 		if (have_func) {
-
-			rvalue_str =
-			    EXPR_ReadString(&scan_p, &rvalue_len, ')');
+			rvalue_str = EXPR_ReadString(&scan_p, &rvalue_len, ')');
 			if (rvalue_str != NULL) {
-				/* Successfully read string */
-				/*CON_Print( "Read function parameters \"%s\".", rvalue_str ); */
+				// Successfully read string
+				//CON_Print("Read function parameters \"%s\".", rvalue_str);
 				*expr_cvar = lvalue_cvar;
 				*rvalue = rvalue_str;
 
@@ -227,14 +189,13 @@ EXPR_Parse(const char **exp_pp, int *len, R_CVAR_P * expr_cvar, char **rvalue)
 			EXPR_ErrorState = EXERR_NOTFUNC;
 			return R_FAILURE;
 		}
-
 	}
 
-	/* Eat more whitespace */
+	// Eat more whitespace
 	rvalue_offset = strspn(scan_p, R_EXPR_WHITESPACE);
 
 	if (rvalue_offset + i == expr_len) {
-		/* Only found single lvalue */
+		// Only found single lvalue
 		*expr_cvar = lvalue_cvar;
 		*exp_pp = scan_p;
 		*len -= scan_len;
@@ -245,18 +206,15 @@ EXPR_Parse(const char **exp_pp, int *len, R_CVAR_P * expr_cvar, char **rvalue)
 	scan_len = (scan_p - expr_p) + 1;
 
 	in_char = *scan_p;
-
 	in_char = toupper(in_char);
 
 	switch (in_char) {
-
 	case '\"':
 		scan_p++;
 		scan_len--;
 		rvalue_str = EXPR_ReadString(&scan_p, &rvalue_len, '\"');
-
 		if (rvalue_str != NULL) {
-			/* Successfully read string */
+			// Successfully read string
 			break;
 		} else {
 			EXPR_ErrorState = EXERR_LITERAL;
@@ -265,25 +223,19 @@ EXPR_Parse(const char **exp_pp, int *len, R_CVAR_P * expr_cvar, char **rvalue)
 		break;
 
 #if 0
-	case 'Y':		/* Y[es] */
-	case 'T':		/* T[rue] */
-
+	case 'Y': // Y[es]
+	case 'T': // T[rue]
 		break;
-
-	case 'N':		/* N[o] */
-	case 'F':		/* F[alse] */
-
+	case 'N': // N[o]
+	case 'F': // F[alse]
 		break;
 #endif
-
 	default:
 
 		if (isdigit(in_char) || (in_char == '-') || (in_char == '+')) {
-
 			rvalue_str = EXPR_ReadString(&scan_p, &rvalue_len, 0);
-
 			if (rvalue_str != NULL) {
-				/* Successfully read string */
+				// Successfully read string
 				break;
 			} else {
 				EXPR_ErrorState = EXERR_STRING;
@@ -293,9 +245,7 @@ EXPR_Parse(const char **exp_pp, int *len, R_CVAR_P * expr_cvar, char **rvalue)
 			EXPR_ErrorState = EXERR_NUMBER;
 			return R_FAILURE;
 		}
-
 		break;
-
 	}
 
 	*expr_cvar = lvalue_cvar;
@@ -311,33 +261,25 @@ EXPR_Parse(const char **exp_pp, int *len, R_CVAR_P * expr_cvar, char **rvalue)
 
 }
 
-char *EXPR_ReadString(const char **string_p, int *len, int term_char)
-/****************************************************************************\
- Reads in a string of characters from '*string_p' until 'term_char' is 
- encountered. If 'term_char' == 0, the function reads characters until
- whitespace is encountered. 
- Upon reading a string, the function modifies *string_p and len based on 
- the number of characters read.
-\****************************************************************************/
-{
-
+// Reads in a string of characters from '*string_p' until 'term_char' is 
+// encountered. If 'term_char' == 0, the function reads characters until
+// whitespace is encountered. 
+// Upon reading a string, the function modifies *string_p and len based on 
+// the number of characters read.
+char *EXPR_ReadString(const char **string_p, int *len, int term_char) {
 	int string_len;
 	char *str_p = NULL;
 	char *term_p;
-
 	const char *scan_p;
 	int in_char;
 
 	if (term_char > 0) {
-
 		term_p = strchr(*string_p, term_char);
-
 		if (term_p == NULL) {
 			return NULL;
 		}
 
 		string_len = (int)(term_p - *string_p);
-
 		str_p = (char *)malloc(string_len + 1);
 
 		if (str_p == NULL) {
@@ -349,33 +291,25 @@ char *EXPR_ReadString(const char **string_p, int *len, int term_char)
 
 		*string_p += (string_len + 1);	/* Add 1 for terminating char */
 		*len -= (string_len + 1);
-
 	} else {
-
 		scan_p = *string_p;
 		string_len = 0;
 
 		while (scan_p) {
-
 			in_char = *scan_p++;
-
 			if (!isspace(in_char)) {
 				string_len++;
 			} else if (string_len) {
-
-			  str_p = (char *)malloc(string_len + 1);
-
+				str_p = (char *)malloc(string_len + 1);
 				if (str_p == NULL) {
 					return NULL;
 				}
 
 				strncpy(str_p, *string_p, string_len);
 				str_p[string_len] = 0;
-
 				*string_p += string_len;
 				*len -= string_len;
 				break;
-
 			} else {
 				return NULL;
 			}
@@ -386,16 +320,12 @@ char *EXPR_ReadString(const char **string_p, int *len, int term_char)
 	return str_p;
 }
 
-int EXPR_GetArgs(char *cmd_str, char ***expr_argv)
-/****************************************************************************\
- Parses the string 'cmd_str' into argc/argv format, returning argc.
- The resulting argv pointers point into the 'cmd_str' string, so any argv
- entries should not be used after cmd_str is deallocated.
-
- Memory pointed to by expr_argv must be explicitly freed by the caller.
-\****************************************************************************/
-{
-
+// Parses the string 'cmd_str' into argc/argv format, returning argc.
+// The resulting argv pointers point into the 'cmd_str' string, so any argv
+// entries should not be used after cmd_str is deallocated.
+//
+// Memory pointed to by expr_argv must be explicitly freed by the caller.
+int EXPR_GetArgs(char *cmd_str, char ***expr_argv) {
 	int expr_argc;
 
 	expr_argc = EXPR_ParseArgs(cmd_str, NULL);
@@ -408,22 +338,19 @@ int EXPR_GetArgs(char *cmd_str, char ***expr_argv)
 	EXPR_ParseArgs(cmd_str, *expr_argv);
 
 	return expr_argc;
-
 }
 
-int EXPR_ParseArgs(char *cmd_str, char **argv)
-{
-
+int EXPR_ParseArgs(char *cmd_str, char **argv) {
 	char *bufp;
 	int argc;
 
 	argc = 0;
 	for (bufp = cmd_str; *bufp;) {
-		/* Skip leading whitespace */
+		// Skip leading whitespace
 		while (isspace(*bufp)) {
 			++bufp;
 		}
-		/* Skip over argument */
+		// Skip over argument
 		if (*bufp == '"') {
 			++bufp;
 			if (*bufp) {
@@ -432,7 +359,7 @@ int EXPR_ParseArgs(char *cmd_str, char **argv)
 				}
 				++argc;
 			}
-			/* Skip over word */
+			// Skip over word
 			while (*bufp && (*bufp != '"')) {
 				++bufp;
 			}
@@ -443,7 +370,7 @@ int EXPR_ParseArgs(char *cmd_str, char **argv)
 				}
 				++argc;
 			}
-			/* Skip over word */
+			// Skip over word
 			while (*bufp && !isspace(*bufp)) {
 				++bufp;
 			}
