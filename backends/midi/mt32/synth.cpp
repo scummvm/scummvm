@@ -667,19 +667,18 @@ void InitFilter(float fs, float fc, float *icoeff, float Q, float resfac) {
 iir_filter_type usefilter;
 
 #if defined(WIN32) && !(defined(__CYGWIN__) || defined(__MINGW32__))
-float iir_filter_sse(float input,float *hist1_ptr, float *coef_ptr, int revLevel)
-{
-    float *hist2_ptr;
-    float output;
 
-    hist2_ptr = hist1_ptr + 1;           /* next history */
+float iir_filter_sse(float input,float *hist1_ptr, float *coef_ptr, int revLevel) {
+	float *hist2_ptr;
+	float output;
 
-        /* 1st number of coefficients array is overall input scale factor,
-         * or filter gain */
-    output = (input) * (*coef_ptr++);
+	hist2_ptr = hist1_ptr + 1;	// next history
+
+	// 1st number of coefficients array is overall input scale factor, or
+	// filter gain
+	output = input * (*coef_ptr++);
 
 	__asm {
-
 		movss xmm1,	output
 
 		mov eax, coef_ptr
@@ -748,24 +747,23 @@ float iir_filter_sse(float input,float *hist1_ptr, float *coef_ptr, int revLevel
 
 	output *= ResonInv[revLevel];
 
-    return(output);
-
+	return output;
 }
 
-float iir_filter_3dnow(float input,float *hist1_ptr, float *coef_ptr, int revLevel)
-{
-    float *hist2_ptr;
-    float output;
+float iir_filter_3dnow(float input,float *hist1_ptr, float *coef_ptr, int revLevel) {
+	float *hist2_ptr;
+	float output;
 	float tmp;
 
-    hist2_ptr = hist1_ptr + 1;           /* next history */
+	hist2_ptr = hist1_ptr + 1;	// next history
 
-        /* 1st number of coefficients array is overall input scale factor,
-         * or filter gain */
-    output = (input) * (*coef_ptr++);
+	// 1st number of coefficients array is overall input scale factor, or
+	// filter gain
+	output = input * (*coef_ptr++);
 
-	// I find it very sad that 3DNow requires twice as many instructions as Intel's SSE
-	// Intel does have the upper hand here.
+	// I find it very sad that 3DNow requires twice as many instructions as
+	// Intel's SSE. Intel does have the upper hand here.
+
 	__asm {
 		movq mm1, output
 		mov ebx, coef_ptr
@@ -834,159 +832,148 @@ float iir_filter_3dnow(float input,float *hist1_ptr, float *coef_ptr, int revLev
 
 	output *= ResonInv[revLevel];
 
-    return(output);
+	return output;
 }
-#else
 
-#ifdef HAVE_X86
-float iir_filter_sse(float input,float *hist1_ptr, float *coef_ptr, int revLevel)
-{
+#elif defined(HAVE_X86)
+
+float iir_filter_sse(float input,float *hist1_ptr, float *coef_ptr, int revLevel) {
 	float *hist2_ptr;
 	float output;
 
-	hist2_ptr = hist1_ptr + 1;           /* next history */
-	
-        /* 1st number of coefficients array is overall input scale factor,
-         * or filter gain */
-	output = (input) * (*coef_ptr++);
+	hist2_ptr = hist1_ptr + 1;	// next history
 
+	// 1st number of coefficients array is overall input scale factor, or
+	// filter gain
+	output = input * (*coef_ptr++);
 	output = atti386_iir_filter_sse(&output, hist1_ptr, coef_ptr);	
 	output *= ResonInv[revLevel];
 
-	return(output);
+	return output;
 }
 
-float iir_filter_3dnow(float input,float *hist1_ptr, float *coef_ptr, int revLevel)
-{
+float iir_filter_3dnow(float input,float *hist1_ptr, float *coef_ptr, int revLevel) {
 	float *hist2_ptr;
 	float output;
 	
-	hist2_ptr = hist1_ptr + 1;           /* next history */
+	hist2_ptr = hist1_ptr + 1;	// next history
 
         /* 1st number of coefficients array is overall input scale factor,
          * or filter gain */
-	output = (input) * (*coef_ptr++);
-	
-	output = atti386_iir_filter_3DNow(output, hist1_ptr, coef_ptr);	
-		
+	output = input * (*coef_ptr++);
+	output = atti386_iir_filter_3DNow(output, hist1_ptr, coef_ptr);
 	output *= ResonInv[revLevel];
 
-    return(output);
+	return output;
 }
-#endif
 
 #endif
 
-float iir_filter_normal(float input,float *hist1_ptr, float *coef_ptr, int revLevel)
-{
-    float *hist2_ptr;
-    float output,new_hist;
+float iir_filter_normal(float input,float *hist1_ptr, float *coef_ptr, int revLevel) {
+	float *hist2_ptr;
+	float output, new_hist;
 
-    hist2_ptr = hist1_ptr + 1;           /* next history */
+	hist2_ptr = hist1_ptr + 1;	// next history
 
-        /* 1st number of coefficients array is overall input scale factor,
-         * or filter gain */
-    output = (input) * (*coef_ptr++);
+	// 1st number of coefficients array is overall input scale factor, or
+	// filter gain
+	output = input * (*coef_ptr++);
 
-    output = output - *hist1_ptr * (*coef_ptr++);
-    new_hist = output - *hist2_ptr * (*coef_ptr++);    /* poles */
+	output = output - *hist1_ptr * (*coef_ptr++);
+	new_hist = output - *hist2_ptr * (*coef_ptr++);	// poles
 
-    output = new_hist + *hist1_ptr * (*coef_ptr++);
-    output = output + *hist2_ptr * (*coef_ptr++);      /* zeros */
+	output = new_hist + *hist1_ptr * (*coef_ptr++);
+	output = output + *hist2_ptr * (*coef_ptr++);	// zeros
 
-    *hist2_ptr++ = *hist1_ptr;
-    *hist1_ptr++ = new_hist;
-    hist1_ptr++;
-    hist2_ptr++;
+	*hist2_ptr++ = *hist1_ptr;
+	*hist1_ptr++ = new_hist;
+	hist1_ptr++;
+	hist2_ptr++;
 
-	// i = 1
-    output = output - *hist1_ptr * (*coef_ptr++);
-    new_hist = output - *hist2_ptr * (*coef_ptr++);    /* poles */
+	output = output - *hist1_ptr * (*coef_ptr++);
+	new_hist = output - *hist2_ptr * (*coef_ptr++);	// poles
 
-    output = new_hist + *hist1_ptr * (*coef_ptr++);
-    output = output + *hist2_ptr * (*coef_ptr++);      /* zeros */
+	output = new_hist + *hist1_ptr * (*coef_ptr++);
+	output = output + *hist2_ptr * (*coef_ptr++);	// zeros
 	
-    *hist2_ptr++ = *hist1_ptr;
-    *hist1_ptr++ = new_hist;
+	*hist2_ptr++ = *hist1_ptr;
+	*hist1_ptr++ = new_hist;
 
 	output *= ResonInv[revLevel];
 
-    return(output);
+	return output;
 }
 
 #endif
 
 #if FILTER_64BIT == 1
+
 // 64-bit version
-long iir_filter(long input, int64 *hist1_ptr, int64 *coef_ptr)
-{
-    unsigned int i;
-    int64 *hist2_ptr;
-	int64 output,new_hist,history1,history2;
+long iir_filter(long input, int64 *hist1_ptr, int64 *coef_ptr) {
+	int64 *hist2_ptr;
+	int64 output, new_hist, history1, history2;
 
-    hist2_ptr = hist1_ptr + 1;           // next history
+	hist2_ptr = hist1_ptr + 1;	// next history
 
-    // 1st number of coefficients array is overall input scale factor,
-    // or filter gain
-    output = (input * (*coef_ptr++));
+	// 1st number of coefficients array is overall input scale factor, or
+	// filter gain
+	output = input * (*coef_ptr++);
 
-    for (i = 0 ; i < 2; i++)
-        {
-        history1 = *hist1_ptr;           // history values
-        history2 = *hist2_ptr;
+	for (int i = 0 ; i < 2; i++) {
+		history1 = *hist1_ptr;           // history values
+		history2 = *hist2_ptr;
 
-        output = output - ((history1 * (*coef_ptr++))>>20);
-        new_hist = output - ((history2 * (*coef_ptr++))>>20);    // poles
+		output = output - ((history1 * (*coef_ptr++)) >> 20);
+		new_hist = output - ((history2 * (*coef_ptr++)) >> 20);	// poles
 
-        output = new_hist + ((history1 * (*coef_ptr++))>>20);
-        output = output + ((history2 * (*coef_ptr++))>>20);      // zeros
+		output = new_hist + ((history1 * (*coef_ptr++)) >> 20);
+		output = output + ((history2 * (*coef_ptr++)) >> 20);	// zeros
 
-        *hist2_ptr++ = *hist1_ptr;
-        *hist1_ptr++ = new_hist;
-        hist1_ptr++;
-        hist2_ptr++;
-    }
+		*hist2_ptr++ = *hist1_ptr;
+		*hist1_ptr++ = new_hist;
+		hist1_ptr++;
+		hist2_ptr++;
+	}
 
-    return(output>>20);
+	return output >> 20;
 }
 
 #endif
 
 #if FILTER_INT == 1
-long iir_filter(long input, signed long *hist1_ptr, signed long *coef_ptr)
-{
-    unsigned int i;
-    signed long *hist2_ptr;
-	signed long output,new_hist,history1,history2;
 
-    hist2_ptr = hist1_ptr + 1;           // next history
+long iir_filter(long input, signed long *hist1_ptr, signed long *coef_ptr) {
+	signed long *hist2_ptr;
+	signed long output, new_hist, history1, history2;
 
-    // 1st number of coefficients array is overall input scale factor,
-    // or filter gain
-    output = (input * (*coef_ptr++));
+	hist2_ptr = hist1_ptr + 1;	// next history
 
-    for (i = 0 ; i < 2; i++)
-        {
-        history1 = *hist1_ptr;           // history values
-        history2 = *hist2_ptr;
+	// 1st number of coefficients array is overall input scale factor, or
+	// filter gain
+	output = input * (*coef_ptr++);
 
-        output = output - ((history1 * (*coef_ptr++))>>10);
-        new_hist = output - ((history2 * (*coef_ptr++))>>10);    // poles
+	for (int i = 0 ; i < 2; i++) {
+		history1 = *hist1_ptr;	// history values
+		history2 = *hist2_ptr;
 
-        output = new_hist + ((history1 * (*coef_ptr++))>>10);
-        output = output + ((history2 * (*coef_ptr++))>>10);      // zeros
+		output = output - ((history1 * (*coef_ptr++)) >> 10);
+		new_hist = output - ((history2 * (*coef_ptr++))>>10);	// poles
 
-        *hist2_ptr++ = *hist1_ptr;
-        *hist1_ptr++ = new_hist;
-        hist1_ptr++;
-        hist2_ptr++;
-    }
+		output = new_hist + ((history1 * (*coef_ptr++)) >> 10);
+		output = output + ((history2 * (*coef_ptr++)) >> 10);	// zeros
 
-    return(output>>10);
+		*hist2_ptr++ = *hist1_ptr;
+		*hist1_ptr++ = new_hist;
+		hist1_ptr++;
+		hist2_ptr++;
+	}
+
+	return output >> 10;
 }
+
 #endif
 
-/* end filter stuff */
+// End filter stuff
 
 partialFormat PCM[54];
 partialTable PCMList[128];
