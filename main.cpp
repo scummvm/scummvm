@@ -40,7 +40,7 @@ Scumm *g_scumm;
 Config * scummcfg;
 
 
-#if defined(__APPLE__) && defined(SDL)
+#if defined(MACOSX) && defined(UNIX)
 #include <SDL.h>
 #elif !defined(__MORPHOS__)
 #undef main
