@@ -2706,6 +2706,8 @@ void ScummEngine_v6::o6_kernelGetFunctions() {
 
 		if (args[1] != -1 && args[2] != -1) {
 			VirtScreen *vs = &virtscr[0];
+			assert(0 <= args[1] && args[1] < vs->width);
+			assert(0 <= args[2] && args[2] < vs->height);
 			push(vs->screenPtr[args[1] + args[2] * vs->width]);
 		} else
 			push(0);
@@ -3080,6 +3082,8 @@ void ScummEngine_v6::o6_unknownE1() {
 		return;
 	}
 	
+	// FIXME: Actually, there is only one virtscr in V7/V8 games anyway.
+	// And topline is always 0 for it.
 	VirtScreen *vs = findVirtScreen(y);
 
 	if (vs == NULL) {
