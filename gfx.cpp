@@ -1260,13 +1260,10 @@ void Gdi::unkDecode7() {
 	{
        		_currentX = 8;
        		for(;;) {
-
         		byte color = *src++;
-        
-   
-             			*dst = color;
+      			*dst = color;
 				NEXT_ROW
-		}
+			}
        		return;
 	}
 	
@@ -2087,9 +2084,6 @@ void Scumm::setCursorHotspot2(int x,int y) {
 
 byte Scumm::isMaskActiveAt(int l, int t, int r, int b, byte *mem) {
 	int w,h,i;
-
-        if(_features & GF_SMALL_HEADER) /* FIXME */
-                return false;
 
 	l>>=3;
 	if (l<0) l = 0;
