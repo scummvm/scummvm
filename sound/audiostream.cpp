@@ -26,13 +26,8 @@
 #include "common/file.h"
 #include "common/util.h"
 
-template<bool is16Bit, bool isUnsigned>
-static inline int16 readSample(const byte *ptr) {
-	uint16 sample = is16Bit ? READ_BE_UINT16(ptr) : (*ptr << 8);
-	if (isUnsigned)
-		sample ^= 0x8000;
-	return (int16)sample;
-}
+#define READSAMPLE(is16Bit, isUnsigned, ptr) \
+	((is16Bit ? READ_BE_UINT16(ptr) : (*ptr << 8)) ^ (isUnsigned ? 0x8000 : 0))
 
 #pragma mark -
 #pragma mark --- LinearMemoryStream ---
@@ -49,7 +44,7 @@ protected:
 
 	inline int16 readIntern() {
 		//assert(_ptr < _end);
-		int16 val = readSample<is16Bit, isUnsigned>(_ptr);
+		int16 val = READSAMPLE(is16Bit, isUnsigned, _ptr);
 		_ptr += (is16Bit ? 2 : 1);
 		if (_loopPtr && _ptr == _end) {
 			_ptr = _loopPtr;
@@ -81,7 +76,7 @@ int LinearMemoryStream<stereo, is16Bit, isUnsigned>::readBuffer(int16 *buffer, i
 	while (samples < numSamples && !eosIntern()) {
 		const int len = MIN(numSamples, (int)(_end - _ptr) / (is16Bit ? 2 : 1));
 		while (samples < len) {
-			*buffer++ = readSample<is16Bit, isUnsigned>(_ptr);
+			*buffer++ = READSAMPLE(is16Bit, isUnsigned, _ptr);
 			_ptr += (is16Bit ? 2 : 1);
 			samples++;
 		}
@@ -137,7 +132,7 @@ WrappedMemoryStream<stereo, is16Bit, isUnsigned>::WrappedMemoryStream(uint buffe
 template<bool stereo, bool is16Bit, bool isUnsigned>
 inline int16 WrappedMemoryStream<stereo, is16Bit, isUnsigned>::readIntern() {
 	//assert(_pos != _end);
-	int16 val = readSample<is16Bit, isUnsigned>(_pos);
+	int16 val = READSAMPLE(is16Bit, isUnsigned, _pos);
 	_pos += (is16Bit ? 2 : 1);
 
 	// Wrap around?
@@ -154,7 +149,7 @@ int WrappedMemoryStream<stereo, is16Bit, isUnsigned>::readBuffer(int16 *buffer, 
 		const byte *endMarker = (_pos > _end) ? _bufferEnd : _end;
 		const int len = MIN(numSamples, (int)(endMarker - _pos) / (is16Bit ? 2 : 1));
 		while (samples < len) {
-			*buffer++ = readSample<is16Bit, isUnsigned>(_pos);
+			*buffer++ = READSAMPLE(is16Bit, isUnsigned, _pos);
 			_pos += (is16Bit ? 2 : 1);
 			samples++;
 		}
