@@ -86,6 +86,8 @@ class EditGameDialog : public OptionsDialog {
 public:
 	EditGameDialog(const String &domain, GameSettings target);
 
+	void open();
+	void close();
 	virtual void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);
 
 protected:
@@ -98,10 +100,6 @@ protected:
 	CheckboxWidget *_globalGraphicsOverride;
 	CheckboxWidget *_globalAudioOverride;
 	CheckboxWidget *_globalVolumeOverride;
-
-	virtual void applySettings();
-	virtual void loadSettings();
-	virtual void saveSettings();
 };
 
 EditGameDialog::EditGameDialog(const String &domain, GameSettings target)
@@ -205,17 +203,11 @@ EditGameDialog::EditGameDialog(const String &domain, GameSettings target)
 
 	// Add OK & Cancel buttons
 	addButton(_w - 2 * (kButtonWidth + 10), _h - 24, "Cancel", kCloseCmd, 0);
-	addButton(_w - (kButtonWidth + 10), _h - 24, "OK", kSaveCmd, 0);
+	addButton(_w - (kButtonWidth + 10), _h - 24, "OK", kOKCmd, 0);
 }
 
-void EditGameDialog::applySettings() {
-	// Do *never* apply settings from the EditGameDialog!
-	// After all, we are editing a game target in the launcher; that target
-	// can definitely not be the active target, since we are in the launcher.
-}
-
-void EditGameDialog::loadSettings() {
-	OptionsDialog::loadSettings();
+void EditGameDialog::open() {
+	OptionsDialog::open();
 
 	int sel, i;
 	bool e;
@@ -259,22 +251,24 @@ void EditGameDialog::loadSettings() {
 	_platformPopUp->setSelected(sel);
 }
 
-void EditGameDialog::saveSettings() {
-	ConfMan.set("description", _descriptionWidget->getLabel(), _domain);
 
-	Common::Language lang = (Common::Language)_langPopUp->getSelectedTag();
-	if (lang < 0)
-		ConfMan.removeKey("language", _domain);
-	else
-		ConfMan.set("language", Common::getLanguageCode(lang), _domain);
+void EditGameDialog::close() {
+	if (getResult()) {
+		ConfMan.set("description", _descriptionWidget->getLabel(), _domain);
 
-	Common::Platform platform = (Common::Platform)_platformPopUp->getSelectedTag();
-	if (platform < 0)
-		ConfMan.removeKey("platform", _domain);
-	else
-		ConfMan.set("platform", Common::getPlatformCode(platform), _domain);
+		Common::Language lang = (Common::Language)_langPopUp->getSelectedTag();
+		if (lang < 0)
+			ConfMan.removeKey("language", _domain);
+		else
+			ConfMan.set("language", Common::getLanguageCode(lang), _domain);
 
-	OptionsDialog::saveSettings();
+		Common::Platform platform = (Common::Platform)_platformPopUp->getSelectedTag();
+		if (platform < 0)
+			ConfMan.removeKey("platform", _domain);
+		else
+			ConfMan.set("platform", Common::getPlatformCode(platform), _domain);
+	}
+	OptionsDialog::close();
 }
 
 void EditGameDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
@@ -291,7 +285,7 @@ void EditGameDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 		setVolumeSettingsState(data != 0);
 		draw();
 		break;
-	case kSaveCmd: {
+	case kOKCmd: {
 		// Write back changes made to config object
 		String newDomain(_domainWidget->getLabel());
 		if (newDomain != _domain) {

@@ -112,15 +112,12 @@ public:
 	ConfigDialog(ScummEngine *scumm);
 	~ConfigDialog();
 
+	virtual void open();
+	virtual void close();
 	virtual void handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data);
 
 protected:
 	GUI::CheckboxWidget *subtitlesCheckbox;
-
-
-	virtual void applySettings();
-	virtual void loadSettings();
-	virtual void saveSettings();
 };
 
 class InfoDialog : public ScummDialog {

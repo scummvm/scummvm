@@ -395,6 +395,10 @@ void MainMenuDialog::load() {
 #pragma mark -
 
 enum {
+	kOKCmd					= 'ok  '
+};
+
+enum {
 	kKeysCmd = 'KEYS'
 };
 
@@ -409,14 +413,12 @@ ConfigDialog::ConfigDialog(ScummEngine *scumm)
 	// Add the buttons
 	//
 #ifdef _WIN32_WCE
-	addButton(_w - kButtonWidth - 8, _h - 24 - 4, "Save", GUI::OptionsDialog::kSaveCmd, 'S');
-	addButton(_w - 2 * kButtonWidth - 12, _h - 24 - 4, "Apply", GUI::OptionsDialog::kApplyCmd, 'A');
-	addButton(_w - 3 * kButtonWidth - 16, _h - 24 - 4, "Revert", GUI::OptionsDialog::kRevertCmd, 'R');
-	addButton(_w - 4 * kButtonWidth - 16, _h - 24 - 4, "Keys", kKeysCmd, 'K');
+	addButton(_w - kButtonWidth - 8, _h - 24 - 4, "OK", GUI::OptionsDialog::kOKCmd, 'O');
+	addButton(_w - 2 * kButtonWidth - 12, _h - 24 - 4, "Cancel", kCloseCmd, 'C');
+	addButton(_w - 3 * kButtonWidth - 16, _h - 24 - 4, "Keys", kKeysCmd, 'K');
 #else
-	addButton(_w - kButtonWidth - 8, _h - 24, "Save", GUI::OptionsDialog::kSaveCmd, 'S');
-	addButton(_w - 2 * kButtonWidth - 12, _h - 24, "Apply", GUI::OptionsDialog::kApplyCmd, 'A');
-	addButton(_w - 3 * kButtonWidth - 16, _h - 24, "Revert", GUI::OptionsDialog::kRevertCmd, 'R');
+	addButton(_w - kButtonWidth-8, _h - 24, "OK", GUI::OptionsDialog::kOKCmd, 'O');
+	addButton(_w - 2 * kButtonWidth-12, _h - 24, "Cancel", kCloseCmd, 'C');
 #endif
 
 	//
@@ -444,8 +446,24 @@ ConfigDialog::~ConfigDialog() {
 #endif
 }
 
-void ConfigDialog::applySettings() {
-	ConfigDialog::applySettings();
+void ConfigDialog::open() {
+	GUI_OptionsDialog::open();
+
+	// update checkboxes, too
+	subtitlesCheckbox->setState(ConfMan.getBool("subtitles"));
+}
+
+void ConfigDialog::close() {
+	
+	if (getResult()) {
+		// Subtitles
+		ConfMan.set("subtitles", subtitlesCheckbox->getState(), _domain);
+		// Sync with current setting
+		if (_vm->_version >= 7)
+			_vm->VAR(_vm->VAR_VOICE_MODE) = subtitlesCheckbox->getState();
+	}
+
+	GUI_OptionsDialog::close();
 
 	// Sync the engine with the config manager
 	int soundVolumeMaster = ConfMan.getInt("master_volume");
@@ -461,25 +479,8 @@ void ConfigDialog::applySettings() {
 
 	_vm->_mixer->setVolume(soundVolumeSfx * soundVolumeMaster / 255);
 	_vm->_mixer->setMusicVolume(soundVolumeMusic);
-
-	// Sync with current setting
-	if (_vm->_version >= 7)
-		_vm->VAR(_vm->VAR_VOICE_MODE) = ConfMan.getBool("subtitles");
 }
 
-void ConfigDialog::loadSettings() {
-	GUI_OptionsDialog::loadSettings();
-
-	// Update subtitles checkbox
-	subtitlesCheckbox->setState(ConfMan.getBool("subtitles"));
-}
-
-void ConfigDialog::saveSettings() {
-	// Subtitles
-	ConfMan.set("subtitles", subtitlesCheckbox->getState(), _domain);
-
-	GUI_OptionsDialog::saveSettings();
-}
 
 void ConfigDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
 	switch (cmd) {

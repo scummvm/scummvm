@@ -55,8 +55,6 @@ enum {
 OptionsDialog::OptionsDialog(const String &domain, int x, int y, int w, int h)
 	: Dialog(x, y, w, h),
 	_domain(domain),
-	_isActiveDomain(domain.isEmpty() || domain == ConfMan.getActiveDomain() ||
-				(ConfMan.getActiveDomain().isEmpty() && domain == Common::ConfigManager::kApplicationDomain)),
 	_enableGraphicSettings(false),
 	_gfxPopUp(0), _fullscreenCheckbox(0), _aspectCheckbox(0),
 	_enableAudioSettings(false),
@@ -66,7 +64,6 @@ OptionsDialog::OptionsDialog(const String &domain, int x, int y, int w, int h)
 	_musicVolumeSlider(0), _musicVolumeLabel(0),
 	_sfxVolumeSlider(0), _sfxVolumeLabel(0) {
 
-printf("_isActiveDomain = %d, _domain = %s, active domain = %s\n", _isActiveDomain, _domain.c_str(), ConfMan.getActiveDomain().c_str());
 }
 
 void OptionsDialog::open() {
@@ -74,49 +71,15 @@ void OptionsDialog::open() {
 
 	// Reset result value
 	setResult(0);
-
-	loadSettings();
-}
-
-void OptionsDialog::handleScreenChanged() {
-	loadSettings();
-}
-
-void OptionsDialog::close() {
-	if (getResult() == kSaveCmd) {
-		saveSettings();
-	}
-
-	if (_isActiveDomain && (getResult() == kSaveCmd || getResult() == kApplyCmd)) {
-		applySettings();
-	}
-
-	Dialog::close();
-}
-
-void OptionsDialog::applySettings() {
-	// Activate changes now
-	if (_enableGraphicSettings) {
-		g_system->setFeatureState(OSystem::kFeatureFullscreenMode, _fullscreenCheckbox->getState());
-		g_system->setFeatureState(OSystem::kFeatureAspectRatioCorrection, _aspectCheckbox->getState());
-		if ((int32)_gfxPopUp->getSelectedTag() >= 0)
-			g_system->setGraphicsMode(_gfxPopUp->getSelectedTag());
-	}
-}
-
-void OptionsDialog::loadSettings() {
-	bool state;
 	
 	if (_fullscreenCheckbox) {
 		_gfxPopUp->setSelected(0);
+		_gfxPopUp->setEnabled(false);
 
-		if (_isActiveDomain) {
-			int gfxMode = g_system->getGraphicsMode();
-			_gfxPopUp->setSelectedTag(gfxMode);
-		} else if (ConfMan.hasKey("gfx_mode", _domain)) {
+		if (ConfMan.hasKey("gfx_mode", _domain)) {
 			const OSystem::GraphicsMode *gm = g_system->getSupportedGraphicsModes();
-			int gfxCount = 1;
 			String gfxMode = ConfMan.get("gfx_mode", _domain);
+			int gfxCount = 1;
 			while (gm->name) {
 				gfxCount++;
 
@@ -129,16 +92,10 @@ void OptionsDialog::loadSettings() {
 
 #ifndef _WIN32_WCE
 		// Fullscreen setting
-		state = _isActiveDomain ?
-					g_system->getFeatureState(OSystem::kFeatureFullscreenMode) :
-					ConfMan.getBool("fullscreen", _domain);
-		_fullscreenCheckbox->setState(state);
+		_fullscreenCheckbox->setState(ConfMan.getBool("fullscreen", _domain));
 	
 		// Aspect ratio setting
-		state = _isActiveDomain ?
-					g_system->getFeatureState(OSystem::kFeatureAspectRatioCorrection) :
-					ConfMan.getBool("aspect_ratio", _domain);
-		_aspectCheckbox->setState(state);
+		_aspectCheckbox->setState(ConfMan.getBool("aspect_ratio", _domain));
 #endif
 	}
 
@@ -183,55 +140,59 @@ void OptionsDialog::loadSettings() {
 	}
 }
 
-void OptionsDialog::saveSettings() {
-	if (_fullscreenCheckbox) {
-		if (_enableGraphicSettings) {
-			ConfMan.set("fullscreen", _fullscreenCheckbox->getState(), _domain);
-			ConfMan.set("aspect_ratio", _aspectCheckbox->getState(), _domain);
+void OptionsDialog::close() {
+	if (getResult()) {
+		if (_fullscreenCheckbox) {
+			if (_enableGraphicSettings) {
+				ConfMan.set("fullscreen", _fullscreenCheckbox->getState(), _domain);
+				ConfMan.set("aspect_ratio", _aspectCheckbox->getState(), _domain);
 
-			if ((int32)_gfxPopUp->getSelectedTag() >= 0)
-				ConfMan.set("gfx_mode", _gfxPopUp->getSelectedString(), _domain);
-		} else {
-			ConfMan.removeKey("fullscreen", _domain);
-			ConfMan.removeKey("aspect_ratio", _domain);
-			ConfMan.removeKey("gfx_mode", _domain);
+				if ((int32)_gfxPopUp->getSelectedTag() >= 0)
+					ConfMan.set("gfx_mode", _gfxPopUp->getSelectedString(), _domain);
+			} else {
+				ConfMan.removeKey("fullscreen", _domain);
+				ConfMan.removeKey("aspect_ratio", _domain);
+				ConfMan.removeKey("gfx_mode", _domain);
+			}
 		}
-	}
 
-	if (_masterVolumeSlider) {
-		if (_enableVolumeSettings) {
-			ConfMan.set("master_volume", _masterVolumeSlider->getValue(), _domain);
-			ConfMan.set("music_volume", _musicVolumeSlider->getValue(), _domain);
-			ConfMan.set("sfx_volume", _sfxVolumeSlider->getValue(), _domain);
-		} else {
-			ConfMan.removeKey("master_volume", _domain);
-			ConfMan.removeKey("music_volume", _domain);
-			ConfMan.removeKey("sfx_volume", _domain);
+		if (_masterVolumeSlider) {
+			if (_enableVolumeSettings) {
+				ConfMan.set("master_volume", _masterVolumeSlider->getValue(), _domain);
+				ConfMan.set("music_volume", _musicVolumeSlider->getValue(), _domain);
+				ConfMan.set("sfx_volume", _sfxVolumeSlider->getValue(), _domain);
+			} else {
+				ConfMan.removeKey("master_volume", _domain);
+				ConfMan.removeKey("music_volume", _domain);
+				ConfMan.removeKey("sfx_volume", _domain);
+			}
 		}
-	}
 
-	if (_multiMidiCheckbox) {
-		if (_enableAudioSettings) {
-			ConfMan.set("multi_midi", _multiMidiCheckbox->getState(), _domain);
-			ConfMan.set("native_mt32", _mt32Checkbox->getState(), _domain);
-			ConfMan.set("subtitles", _subCheckbox->getState(), _domain); 
-			const MidiDriverDescription *md = getAvailableMidiDrivers();
-			while (md->name && md->id != (int)_midiPopUp->getSelectedTag())
-				md++;
-			if (md->name)
-				ConfMan.set("music_driver", md->name, _domain);
-			else
+		if (_multiMidiCheckbox) {
+			if (_enableAudioSettings) {
+				ConfMan.set("multi_midi", _multiMidiCheckbox->getState(), _domain);
+				ConfMan.set("native_mt32", _mt32Checkbox->getState(), _domain);
+				ConfMan.set("subtitles", _subCheckbox->getState(), _domain); 
+				const MidiDriverDescription *md = getAvailableMidiDrivers();
+				while (md->name && md->id != (int)_midiPopUp->getSelectedTag())
+					md++;
+				if (md->name)
+					ConfMan.set("music_driver", md->name, _domain);
+				else
+					ConfMan.removeKey("music_driver", _domain);
+			} else {
+				ConfMan.removeKey("multi_midi", _domain);
+				ConfMan.removeKey("native_mt32", _domain);
 				ConfMan.removeKey("music_driver", _domain);
-		} else {
-			ConfMan.removeKey("multi_midi", _domain);
-			ConfMan.removeKey("native_mt32", _domain);
-			ConfMan.removeKey("music_driver", _domain);
-			ConfMan.removeKey("subtitles", _domain); 
+				ConfMan.removeKey("subtitles", _domain); 
+			}
 		}
+
+		// Save config file
+		ConfMan.flushToDisk();
 	}
 
-	// Save config file
-	ConfMan.flushToDisk();
+	Dialog::close();
 }
 
 void OptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
@@ -248,13 +209,9 @@ void OptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data
 		_sfxVolumeLabel->setValue(_sfxVolumeSlider->getValue());
 		_sfxVolumeLabel->draw();
 		break;
-	case kApplyCmd:
-	case kSaveCmd:
-		setResult(cmd);
+	case kOKCmd:
+		setResult(1);
 		close();
-		break;
-	case kRevertCmd:
-		// TODO: Implement this!
 		break;
 	default:
 		Dialog::handleCommand(sender, cmd, data);
@@ -387,7 +344,7 @@ int OptionsDialog::addVolumeControls(GuiObject *boss, int yoffset) {
 
 
 GlobalOptionsDialog::GlobalOptionsDialog(GameDetector &detector)
-	: OptionsDialog(Common::ConfigManager::kApplicationDomain, 10, 10, 320 - 2 * 10, 200 - 2 * 10) {
+	: OptionsDialog(Common::ConfigManager::kApplicationDomain, 10, 20, 320 - 2 * 10, 200 - 2 * 20) {
 
 	const int vBorder = 5;
 	int yoffset;
@@ -431,30 +388,19 @@ GlobalOptionsDialog::GlobalOptionsDialog(GameDetector &detector)
 	tab->setActiveTab(0);
 
 	// Add OK & Cancel buttons
-	addButton(10, _h - 24, "Revert", kRevertCmd, 0);
-	addButton(_w - 2 * (kButtonWidth + 10), _h - 24, "Save", kSaveCmd, 0);
-	addButton(_w - (kButtonWidth + 10), _h - 24, "Apply", kApplyCmd, 0);
+	addButton(_w - 2 * (kButtonWidth + 10), _h - 24, "Cancel", kCloseCmd, 0);
+	addButton(_w - (kButtonWidth + 10), _h - 24, "OK", kOKCmd, 0);
 
 	// Create file browser dialog
 	_browser = new BrowserDialog("Select directory for savegames");
-
-	setGraphicSettingsState(true);
-	setAudioSettingsState(true);
-	setVolumeSettingsState(true);
 }
 
 GlobalOptionsDialog::~GlobalOptionsDialog() {
 	delete _browser;
 }
 
-void GlobalOptionsDialog::applySettings() {
-	OptionsDialog::applySettings();
-
-	// TODO ?
-}
-
-void GlobalOptionsDialog::loadSettings() {
-	OptionsDialog::loadSettings();
+void GlobalOptionsDialog::open() {
+	OptionsDialog::open();
 
 #if !( defined(__DC__) || defined(__GP32__) )
 	// Set _savePath to the current save path
@@ -470,11 +416,12 @@ void GlobalOptionsDialog::loadSettings() {
 #endif
 }
 
-void GlobalOptionsDialog::saveSettings() {
-	// Savepath
-	ConfMan.set("savepath", _savePath->getLabel(), _domain);
-
-	OptionsDialog::saveSettings();
+void GlobalOptionsDialog::close() {
+	if (getResult()) {
+		// Savepath
+		ConfMan.set("savepath", _savePath->getLabel(), _domain);
+	}
+	OptionsDialog::close();
 }
 
 void GlobalOptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {

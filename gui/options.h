@@ -42,19 +42,14 @@ public:
 	void open();
 	void close();
 	void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);
-	void handleScreenChanged();
 
 	enum {
-		kApplyCmd	= 'aply',
-		kSaveCmd	= 'save',
-		kRevertCmd	= 'rvrt'
+		kOKCmd					= 'ok  '
 	};
 
 protected:
 	/** Config domain this dialog is used to edit. */
 	String _domain;
-	
-	const bool _isActiveDomain;
 	
 	int addGraphicControls(GuiObject *boss, int yoffset);
 	int addMIDIControls(GuiObject *boss, int yoffset);
@@ -63,10 +58,6 @@ protected:
 	void setGraphicSettingsState(bool enabled);
 	void setAudioSettingsState(bool enabled);
 	void setVolumeSettingsState(bool enabled);
-	
-	virtual void applySettings();
-	virtual void loadSettings();
-	virtual void saveSettings();
 
 private:
 	//
@@ -108,15 +99,13 @@ public:
 	GlobalOptionsDialog(GameDetector &detector);
 	~GlobalOptionsDialog();
 
+	void open();
+	void close();
 	void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);
 
 protected:
 	BrowserDialog *_browser;
 	StaticTextWidget *_savePath;
-
-	virtual void applySettings();
-	virtual void loadSettings();
-	virtual void saveSettings();
 };
 
 } // End of namespace GUI
