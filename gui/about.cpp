@@ -28,9 +28,9 @@
 namespace GUI {
 
 AboutDialog::AboutDialog()
-	: Dialog(10, 20, 300, 154) {
+	: Dialog(10, 20, 300, 174) {
 	
-	addButton((_w - kButtonWidth) / 2, 130, "OK", kCloseCmd, '\r');	// Close dialog - FIXME
+	addButton((_w - kButtonWidth) / 2, 150, "OK", kCloseCmd, '\r');	// Close dialog - FIXME
 
 	Common::String version("ScummVM ");
 	version += gScummVMVersion;
@@ -55,6 +55,8 @@ AboutDialog::AboutDialog()
 	new StaticTextWidget(this, 0, 95, _w, kLineHeight, "Simon the Sorcerer (C) Adventure Soft", kTextAlignCenter);
 	new StaticTextWidget(this, 0, 105, _w, kLineHeight, "Beneath a Steel Sky (C) Revolution", kTextAlignCenter);
 	new StaticTextWidget(this, 0, 115, _w, kLineHeight, "Broken Sword Games (C) Revolution", kTextAlignCenter);
+	new StaticTextWidget(this, 0, 125, _w, kLineHeight, "Flight of the Amazon Queen (C) John Passfield", kTextAlignCenter);
+	new StaticTextWidget(this, 0, 135, _w, kLineHeight, "and Steve Stamatiadis", kTextAlignCenter);
 }
 
 } // End of namespace GUI
