@@ -853,13 +853,6 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 		_insane = new Insane((ScummEngine_v6 *)this);
 	else
 		_insane = 0;
-
-	// HE v7.0+
-	if (_heversion >= 70) {
-		_Win32ResExtractor = new Win32ResExtractor(this);
-	} else {
-		_Win32ResExtractor = 0;
-	}
 }
 
 ScummEngine::~ScummEngine() {
@@ -903,6 +896,27 @@ ScummEngine::~ScummEngine() {
 	free(_languageIndex);
 
 	delete _debugger;
+}
+
+ScummEngine_v6::ScummEngine_v6(GameDetector *detector, OSystem *syst, const ScummGameSettings &gs)
+ : ScummEngine(detector, syst, gs) {
+	VAR_VIDEONAME = 0xFF;
+	VAR_RANDOM_NR = 0xFF;
+	VAR_STRING2DRAW = 0xFF;
+
+	VAR_TIMEDATE_YEAR = 0xFF;
+	VAR_TIMEDATE_MONTH = 0xFF;
+	VAR_TIMEDATE_DAY = 0xFF;
+	VAR_TIMEDATE_HOUR = 0xFF;
+	VAR_TIMEDATE_MINUTE = 0xFF;
+	VAR_TIMEDATE_SECOND = 0xFF;
+
+	// HE v7.0+
+	if (_heversion >= 70) {
+		_Win32ResExtractor = new Win32ResExtractor(this);
+	} else {
+		_Win32ResExtractor = 0;
+	}
 }
 
 void ScummEngine::go() {
