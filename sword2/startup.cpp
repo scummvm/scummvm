@@ -119,7 +119,7 @@ uint32 Logic::initStartMenu(void) {
 
 		if (res_man->checkValid(_startRes)) {
 			debug(5, "- resource %d ok", _startRes);
-			raw_script = (char*) res_man->openResource(_startRes);
+			raw_script = (char *) res_man->openResource(_startRes);
 			null_pc = 0;
 			runScript(raw_script, raw_script, &null_pc);
 			res_man->closeResource(_startRes);
@@ -141,7 +141,7 @@ int32 Logic::fnRegisterStartPoint(int32 *params) {
 		error("ERROR: _startList full");
 
 	// +1 to allow for NULL terminator
-	if (strlen((char*) params[1]) + 1 > MAX_description)
+	if (strlen((const char *) memory->intToPtr(params[1])) + 1 > MAX_description)
 		error("ERROR: startup description too long");
 #endif
 
@@ -152,7 +152,7 @@ int32 Logic::fnRegisterStartPoint(int32 *params) {
 	// the correct start
 	_startList[_totalStartups].key = params[0];
 
-	strcpy(_startList[_totalStartups].description, (char*) params[1]);
+	strcpy(_startList[_totalStartups].description, (const char *) memory->intToPtr(params[1]));
 
 	// point to next
 	_totalStartups++;

@@ -34,7 +34,7 @@ int32 Logic::fnAddMenuObject(int32 *params) {
 	assert(_vm->_totalTemp < TOTAL_engine_pockets);
 
 	// copy the structure to our in-the-engine list
-	memcpy(&_vm->_tempList[_vm->_totalTemp], (uint8 *) params[0], sizeof(menu_object));
+	memcpy(&_vm->_tempList[_vm->_totalTemp], memory->intToPtr(params[0]), sizeof(menu_object));
 	_vm->_totalTemp++;
 
 	// script continue

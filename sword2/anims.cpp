@@ -97,8 +97,8 @@ int32 Logic::animate(int32 *params, bool reverse) {
 
 	// read the main parameters
 
-	ob_logic = (Object_logic *) params[0];
-	ob_graphic = (Object_graphic *) params[1];
+	ob_logic = (Object_logic *) memory->intToPtr(params[0]);
+	ob_graphic = (Object_graphic *) memory->intToPtr(params[1]);
 	
 	if (ob_logic->looping == 0) {
 		// This is the start of the anim - set up the first frame
@@ -227,11 +227,11 @@ int32 Logic::megaTableAnimate(int32 *params, bool reverse) {
 	// if this is the start of the anim, read the anim table to get the
 	// appropriate anim resource
 
-	ob_logic = (Object_logic *) params[0];
+	ob_logic = (Object_logic *) memory->intToPtr(params[0]);
 
 	if (ob_logic->looping == 0) {
-	 	ob_mega = (Object_mega *) params[2];
-		anim_table = (uint32 *) params[3];
+	 	ob_mega = (Object_mega *) memory->intToPtr(params[2]);
+		anim_table = (uint32 *) memory->intToPtr(params[3]);
 
 		// appropriate anim resource is in 'table[direction]'
 		pars[2] = anim_table[ob_mega->current_dir];
@@ -291,7 +291,7 @@ int32 Logic::fnSetFrame(int32 *params) {
 
 	// set up anim resource in graphic object
 
-	ob_graphic = (Object_graphic *) params[0];
+	ob_graphic = (Object_graphic *) memory->intToPtr(params[0]);
 	ob_graphic->anim_resource = res;
 
 	if (params[2])
@@ -308,7 +308,7 @@ int32 Logic::fnSetFrame(int32 *params) {
 int32 Logic::fnNoSprite(int32 *params) {
 	// params:	0 pointer to object's graphic structure
 
- 	Object_graphic	*ob_graphic = (Object_graphic *) params[0];
+ 	Object_graphic	*ob_graphic = (Object_graphic *) memory->intToPtr(params[0]);
 
 	// remove previous status (but don't affect the shading upper-word)
 	ob_graphic->type &= 0xffff0000;
@@ -321,7 +321,7 @@ int32 Logic::fnNoSprite(int32 *params) {
 int32 Logic::fnBackPar0Sprite(int32 *params) {
 	// params:	0 pointer to object's graphic structure
 
- 	Object_graphic	*ob_graphic = (Object_graphic *) params[0];
+ 	Object_graphic	*ob_graphic = (Object_graphic *) memory->intToPtr(params[0]);
 
 	// remove previous status (but don't affect the shading upper-word)
 	ob_graphic->type &= 0xffff0000;
@@ -334,7 +334,7 @@ int32 Logic::fnBackPar0Sprite(int32 *params) {
 int32 Logic::fnBackPar1Sprite(int32 *params) {
 	// params:	0 pointer to object's graphic structure
 
- 	Object_graphic	*ob_graphic = (Object_graphic *) params[0];
+ 	Object_graphic	*ob_graphic = (Object_graphic *) memory->intToPtr(params[0]);
 
 	// remove previous status (but don't affect the shading upper-word)
 	ob_graphic->type &= 0xffff0000;
@@ -347,7 +347,7 @@ int32 Logic::fnBackPar1Sprite(int32 *params) {
 int32 Logic::fnBackSprite(int32 *params) {
 	// params:	0 pointer to object's graphic structure
 
- 	Object_graphic	*ob_graphic = (Object_graphic *) params[0];
+ 	Object_graphic	*ob_graphic = (Object_graphic *) memory->intToPtr(params[0]);
 
 	// remove previous status (but don't affect the shading upper-word)
 	ob_graphic->type &= 0xffff0000;
@@ -360,7 +360,7 @@ int32 Logic::fnBackSprite(int32 *params) {
 int32 Logic::fnSortSprite(int32 *params) {
 	// params:	0 pointer to object's graphic structure
 
- 	Object_graphic	*ob_graphic = (Object_graphic *) params[0];
+ 	Object_graphic	*ob_graphic = (Object_graphic *) memory->intToPtr(params[0]);
 
 	// remove previous status (but don't affect the shading upper-word)
 	ob_graphic->type &= 0xffff0000;
@@ -373,7 +373,7 @@ int32 Logic::fnSortSprite(int32 *params) {
 int32 Logic::fnForeSprite(int32 *params) {
 	// params:	0 pointer to object's graphic structure
 
- 	Object_graphic	*ob_graphic = (Object_graphic *) params[0];
+ 	Object_graphic	*ob_graphic = (Object_graphic *) memory->intToPtr(params[0]);
 
 	// remove previous status (but don't affect the shading upper-word)
 	ob_graphic->type &= 0xffff0000;
@@ -386,7 +386,7 @@ int32 Logic::fnForeSprite(int32 *params) {
 int32 Logic::fnForePar0Sprite(int32 *params) {
 	// params:	0 pointer to object's graphic structure
 
- 	Object_graphic	*ob_graphic = (Object_graphic *) params[0];
+ 	Object_graphic	*ob_graphic = (Object_graphic *) memory->intToPtr(params[0]);
 
 	// remove previous status (but don't affect the shading upper-word)
 	ob_graphic->type &= 0xffff0000;
@@ -399,7 +399,7 @@ int32 Logic::fnForePar0Sprite(int32 *params) {
 int32 Logic::fnForePar1Sprite(int32 *params) {
 	// params:	0 pointer to object's graphic structure
 
-	Object_graphic	*ob_graphic = (Object_graphic *) params[0];
+	Object_graphic	*ob_graphic = (Object_graphic *) memory->intToPtr(params[0]);
 
 	// remove previous status (but don't affect the shading upper-word)
 	ob_graphic->type &= 0xffff0000;
@@ -412,7 +412,7 @@ int32 Logic::fnForePar1Sprite(int32 *params) {
 int32 Logic::fnShadedSprite(int32 *params) {
 	// params:	0 pointer to object's graphic structure
 
-	Object_graphic	*ob_graphic = (Object_graphic *) params[0];
+	Object_graphic	*ob_graphic = (Object_graphic *) memory->intToPtr(params[0]);
 
 	// remove previous status (but don't affect the shading upper-word)
 	ob_graphic->type &= 0x0000ffff;
@@ -428,7 +428,7 @@ int32 Logic::fnShadedSprite(int32 *params) {
 int32 Logic::fnUnshadedSprite(int32 *params) {
 	// params:	0 pointer to object's graphic structure
 
-	Object_graphic	*ob_graphic = (Object_graphic *) params[0];
+	Object_graphic	*ob_graphic = (Object_graphic *) memory->intToPtr(params[0]);
 
 	// remove previous status (but don't affect the shading upper-word)
 	ob_graphic->type &= 0x0000ffff;
@@ -680,17 +680,17 @@ int32 Logic::fnPlaySequence(int32 *params) {
 	// of computer games" - but at the very least we want to show the
 	// cutscene subtitles, so I removed them.
 
-	debug(5, "fnPlaySequence(\"%s\");", params[0]);
+	debug(5, "fnPlaySequence(\"%s\");", (const char *) memory->intToPtr(params[0]));
 
 #ifdef _SWORD2_DEBUG
 	// check that the name paseed from script is 8 chars or less
-	if (strlen((char *) params[0]) > 8)
+	if (strlen((const char *) memory->intToPtr(params[0])) > 8)
 		error("Sequence filename too long");
 #endif
 
 	// add the appropriate file extension & play it
 
-	sprintf(filename, "%s.smk", (char *) params[0]);
+	sprintf(filename, "%s.smk", (const char *) memory->intToPtr(params[0]));
 
 	// Write to walkthrough file (zebug0.txt)
  	debug(5, "PLAYING SEQUENCE \"%s\"", filename);

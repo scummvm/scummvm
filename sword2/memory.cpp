@@ -88,6 +88,38 @@ MemoryManager::~MemoryManager(void) {
 	free(_freeMemman);
 }
 
+// I don't know about C++, but here's what "C: A Reference Manual" (Harbison &
+// Steele) has to say:
+//
+// "There is no requirement in C that any of the integral types be large enough
+// to represent a pointer, although C programmers often assume that type long
+// is large enough, which it is on most computers. In C99, header inttypes.h
+// may define integer types intptr_t and uintptr_t, which are guaranteed large
+// enough to hold a pointer as an integer."
+//
+// The script engine frequently needs to pass around pointers to various
+// structures etc. and, and used to do so by casting them to int32 and back
+// again. Since those pointers always point to memory that belongs to the
+// memory manager, we can easily represent them as offsets instead.
+
+int32 MemoryManager::ptrToInt(const uint8 *p) {
+	debug(9, "ptrToInt: %p -> %d", p, p - _freeMemman);
+
+	if (p < _freeMemman || p >= &_freeMemman[MEMORY_POOL])
+		warning("ptrToInt: Converting bad pointer: %p", p);
+
+	return p - _freeMemman;
+}
+
+uint8 *MemoryManager::intToPtr(int32 n) {
+	debug(9, "intToPtr: %d -> %p", n, &_freeMemman[n]);
+
+	if (n < 0 || n >= MEMORY_POOL)
+		warning("intToPtr: Converting bad integer: %d", n);
+
+	return &_freeMemman[n];
+}
+
 mem *MemoryManager::lowLevelAlloc(uint32 size, uint32 type, uint32 unique_id) {
 	// allocate a block of memory - locked or float
 

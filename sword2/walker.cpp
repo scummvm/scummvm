@@ -60,9 +60,9 @@ int32 Logic::fnWalk(int32 *params) {
 
 	// get the parameters
 
-	ob_logic = (Object_logic *) params[0];
-	ob_graph = (Object_graphic *) params[1];
-	ob_mega	 = (Object_mega *) params[2];
+	ob_logic = (Object_logic *) memory->intToPtr(params[0]);
+	ob_graph = (Object_graphic *) memory->intToPtr(params[1]);
+	ob_mega	 = (Object_mega *) memory->intToPtr(params[2]);
 
 	target_x = (int16) params[4];
 	target_y = (int16) params[5];
@@ -88,7 +88,7 @@ int32 Logic::fnWalk(int32 *params) {
 		if (params[6] < 0 || params[6] > 8)
 			error("Invalid direction (%d) in fnWalk", params[6]);
 
-		ob_walkdata = (Object_walkdata *) params[3];
+		ob_walkdata = (Object_walkdata *) memory->intToPtr(params[3]);
 
 		ob_mega->walk_pc = 0;	// always
 
@@ -170,7 +170,7 @@ int32 Logic::fnWalk(int32 *params) {
 	if (checkEventWaiting()) {
 		if (walkAnim[walk_pc].step == 0 && walkAnim[walk_pc + 1].step == 1) {
 			// at the beginning of a step
-			ob_walkdata = (Object_walkdata *) params[3];
+			ob_walkdata = (Object_walkdata *) memory->intToPtr(params[3]);
 			_router->earlySlowOut(ob_mega, ob_walkdata);
 		}
 	}
@@ -255,7 +255,7 @@ int32 Logic::fnWalkToAnim(int32 *params) {
 
 	// if this is the start of the walk, read anim file to get start coords
 
-	ob_logic = (Object_logic *) params[0];
+	ob_logic = (Object_logic *) memory->intToPtr(params[0]);
 
 	if (ob_logic->looping == 0) {
 		// open anim file
@@ -320,13 +320,13 @@ int32 Logic::fnTurn(int32 *params) {
 	// if this is the start of the turn, get the mega's current feet
 	// coords + the required direction
 
-	ob_logic = (Object_logic *) params[0];
+	ob_logic = (Object_logic *) memory->intToPtr(params[0]);
 
 	if (ob_logic->looping == 0) {
 		if (params[4] < 0 || params[4] > 7)
 			error("Invalid direction (%d) in fnTurn", params[4]);
 
-	 	ob_mega = (Object_mega *) params[2];
+	 	ob_mega = (Object_mega *) memory->intToPtr(params[2]);
 
 		pars[4] = ob_mega->feet_x;
 		pars[5] = ob_mega->feet_y;
@@ -367,8 +367,8 @@ int32 Logic::fnStandAt(int32 *params) {
 
 	// set up pointers to the graphic & mega structure
 
-	ob_graph = (Object_graphic *) params[0];
-	ob_mega = (Object_mega *) params[1];
+	ob_graph = (Object_graphic *) memory->intToPtr(params[0]);
+	ob_mega = (Object_mega *) memory->intToPtr(params[1]);
 
 	// set up the stand frame & set the mega's new direction
 
@@ -394,7 +394,7 @@ int32 Logic::fnStand(int32 *params) {
 	//		1 pointer to object's mega structure
 	//		2 target direction
 
-	Object_mega *ob_mega = (Object_mega *) params[1];
+	Object_mega *ob_mega = (Object_mega *) memory->intToPtr(params[1]);
 	int32 pars[5];
 
 	pars[0] = params[0];
@@ -556,10 +556,10 @@ int32 Logic::fnFaceXY(int32 *params) {
 	// if this is the start of the turn, get the mega's current feet
 	// coords + the required direction
 
-	ob_logic = (Object_logic *) params[0];
+	ob_logic = (Object_logic *) memory->intToPtr(params[0]);
 
 	if (ob_logic->looping == 0) {
-	 	ob_mega = (Object_mega *) params[2];
+	 	ob_mega = (Object_mega *) memory->intToPtr(params[2]);
 	
 		pars[4] = ob_mega->feet_x;
 		pars[5] = ob_mega->feet_y;
@@ -591,12 +591,12 @@ int32 Logic::fnFaceMega(int32 *params) {
 	Object_mega *ob_mega;
 	_standardHeader	*head;
 
-	ob_mega = (Object_mega *) params[2];
-	ob_logic = (Object_logic *) params[0];
+	ob_mega = (Object_mega *) memory->intToPtr(params[2]);
+	ob_logic = (Object_logic *) memory->intToPtr(params[0]);
 
 	if (ob_logic->looping == 0) {
 		// get targets info
-		head = (_standardHeader*) res_man->openResource(params[4]);
+		head = (_standardHeader *) res_man->openResource(params[4]);
 
 		if (head->fileType != GAME_OBJECT)
 			error("fnFaceMega %d not an object", params[4]);
@@ -647,8 +647,8 @@ int32 Logic::fnWalkToTalkToMega(int32 *params) {
 	int mega_separation = params[5];
 	_standardHeader	*head;
 
-	ob_logic = (Object_logic*) params[0];
-	ob_mega = (Object_mega*) params[2];
+	ob_logic = (Object_logic *) memory->intToPtr(params[0]);
+	ob_mega = (Object_mega *) memory->intToPtr(params[2]);
 
 	pars[0] = params[0];	// standard stuff
 	pars[1] = params[1];
@@ -658,7 +658,7 @@ int32 Logic::fnWalkToTalkToMega(int32 *params) {
 	// not been here before so decide where to walk-to
 	if (!ob_logic->looping)	{
 		// first request the targets info
-		head = (_standardHeader*) res_man->openResource(params[4]);
+		head = (_standardHeader *) res_man->openResource(params[4]);
 
 		if (head->fileType != GAME_OBJECT)
 			error("fnWalkToTalkToMega %d not an object", params[4]);
@@ -771,7 +771,7 @@ int32 Logic::fnSetScaling(int32 *params) {
 	// where s is system scale, which itself is (256 * actual_scale) ie.
 	// s == 128 is half size
 
- 	Object_mega *ob_mega = (Object_mega *) params[0];
+ 	Object_mega *ob_mega = (Object_mega *) memory->intToPtr(params[0]);
 
 	ob_mega->scale_a = params[1];
 	ob_mega->scale_b = params[2];

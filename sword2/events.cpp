@@ -185,7 +185,7 @@ int32 Logic::fnPauseForEvent(int32 *params) {
 	// params:	0 pointer to object's logic structure
 	//		1 number of game-cycles to pause
 
-	Object_logic *ob_logic = (Object_logic *) params[0];
+	Object_logic *ob_logic = (Object_logic *) memory->intToPtr(params[0]);
 
 	// first, check for an event
 

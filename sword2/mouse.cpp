@@ -1156,7 +1156,7 @@ int32 Logic::fnRegisterMouse(int32 *params) {
 	// params:	0 pointer to Object_mouse or 0 for no write to mouse
 	//		  list
 
-	_vm->registerMouse((Object_mouse *) params[0]);
+	_vm->registerMouse((Object_mouse *) memory->intToPtr(params[0]));
 	return IR_CONT;
 }
 
@@ -1181,7 +1181,7 @@ int32 Logic::fnRegisterPointerText(int32 *params) {
 int32 Logic::fnInitFloorMouse(int32 *params) {
 	// params:	0 pointer to object's mouse structure
 
- 	Object_mouse *ob_mouse = (Object_mouse *) params[0];
+ 	Object_mouse *ob_mouse = (Object_mouse *) memory->intToPtr(params[0]);
 
 	// floor is always lowest priority
 
@@ -1200,7 +1200,7 @@ int32 Logic::fnInitFloorMouse(int32 *params) {
 int32 Logic::fnSetScrollLeftMouse(int32 *params) {
 	// params:	0 pointer to object's mouse structure
 
- 	Object_mouse *ob_mouse = (Object_mouse *) params[0];
+ 	Object_mouse *ob_mouse = (Object_mouse *) memory->intToPtr(params[0]);
 
 	// Highest priority
 
@@ -1224,7 +1224,7 @@ int32 Logic::fnSetScrollLeftMouse(int32 *params) {
 int32 Logic::fnSetScrollRightMouse(int32 *params) {
 	// params:	0 pointer to object's mouse structure
 
- 	Object_mouse *ob_mouse = (Object_mouse *) params[0];
+ 	Object_mouse *ob_mouse = (Object_mouse *) memory->intToPtr(params[0]);
 
 	// Highest priority
 

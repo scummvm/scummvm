@@ -576,7 +576,7 @@ void Sword2Engine::registerFrame(int32 *params, buildit *build_unit) {
 
 	// open animation file & set up the necessary pointers
 
-	ob_graph = (Object_graphic *) params[1];
+	ob_graph = (Object_graphic *) memory->intToPtr(params[1]);
 
 	assert(ob_graph->anim_resource);
 
@@ -614,7 +614,7 @@ void Sword2Engine::registerFrame(int32 *params, buildit *build_unit) {
 
 	if (cdt_entry->frameType & FRAME_OFFSET) {
 		// param 2 is pointer to mega structure
-		ob_mega = (Object_mega *) params[2];
+		ob_mega = (Object_mega *) memory->intToPtr(params[2]);
 
 		// calc scale at which to print the sprite, based on feet
 		// y-coord & scaling constants (NB. 'scale' is actually
@@ -655,7 +655,7 @@ void Sword2Engine::registerFrame(int32 *params, buildit *build_unit) {
 
 	if (params[0]) {
 		// passed a mouse structure, so add to the _mouseList
-		ob_mouse = (Object_mouse *) params[0];
+		ob_mouse = (Object_mouse *) memory->intToPtr(params[0]);
 
 		// only if 'pointer' isn't NULL
 		if (ob_mouse->pointer) {
@@ -706,7 +706,7 @@ int32 Logic::fnRegisterFrame(int32 *params) {
 }
 
 int32 Sword2Engine::registerFrame(int32 *params) {
-	Object_graphic *ob_graph = (Object_graphic *) params[1];
+	Object_graphic *ob_graph = (Object_graphic *) memory->intToPtr(params[1]);
 
 	// check low word for sprite type
 	switch (ob_graph->type & 0x0000ffff) {
@@ -788,7 +788,7 @@ int32 Logic::fnUpdatePlayerStats(int32 *params) {
 
 	// params:	0 pointer to mega structure
 
-	Object_mega *ob_mega = (Object_mega *) params[0];
+	Object_mega *ob_mega = (Object_mega *) memory->intToPtr(params[0]);
 
 	_vm->_thisScreen.player_feet_x = ob_mega->feet_x;
 	_vm->_thisScreen.player_feet_y = ob_mega->feet_y;

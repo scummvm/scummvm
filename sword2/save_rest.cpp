@@ -557,9 +557,9 @@ int32 Logic::fnPassPlayerSaveData(int32 *params) {
 
 	// copy from player object to savegame header
 
-	memcpy(&_vm->g_header.logic, (uint8 *) params[0], sizeof(Object_logic));
-	memcpy(&_vm->g_header.graphic, (uint8 *) params[1], sizeof(Object_graphic));
-	memcpy(&_vm->g_header.mega, (uint8 *) params[2], sizeof(Object_mega));
+	memcpy(&_vm->g_header.logic, memory->intToPtr(params[0]), sizeof(Object_logic));
+	memcpy(&_vm->g_header.graphic, memory->intToPtr(params[1]), sizeof(Object_graphic));
+	memcpy(&_vm->g_header.mega, memory->intToPtr(params[2]), sizeof(Object_mega));
 
 	// makes no odds
 	return IR_CONT;
@@ -573,9 +573,9 @@ int32 Logic::fnGetPlayerSaveData(int32 *params) {
 	//		1 pointer to object's graphic structure
 	//		2 pointer to object's mega structure
 
-	Object_logic *ob_logic = (Object_logic *) params[0];
-	Object_graphic *ob_graphic = (Object_graphic *) params[1];
-	Object_mega *ob_mega = (Object_mega *) params[2];
+	Object_logic *ob_logic = (Object_logic *) memory->intToPtr(params[0]);
+	Object_graphic *ob_graphic = (Object_graphic *) memory->intToPtr(params[1]);
+	Object_mega *ob_mega = (Object_mega *) memory->intToPtr(params[2]);
 
 	int32 pars[3];
 

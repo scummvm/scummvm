@@ -95,6 +95,9 @@ public:
 	MemoryManager(void);
 	~MemoryManager(void);
 
+	int32 ptrToInt(const uint8 *p);
+	uint8 *intToPtr(int32 n);
+
 	mem *allocMemory(uint32 size, uint32 type, uint32 unique_id);
 	void freeMemory(mem *block);
 	void floatMemory(mem *block);

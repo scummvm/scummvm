@@ -148,7 +148,7 @@ int32 Logic::fnPause(int32 *params) {
 	// NB. Pause-value of 0 causes script to continue, 1 causes a 1-cycle
 	// quit, 2 gives 2 cycles, etc.
 
-	Object_logic *ob_logic = (Object_logic *) params[0];
+	Object_logic *ob_logic = (Object_logic *) memory->intToPtr(params[0]);
 
 	if (ob_logic->looping == 0) {
 		// start the pause
@@ -177,7 +177,7 @@ int32 Logic::fnRandomPause(int32 *params) {
 	//		1 minimum number of game-cycles to pause
 	//		2 maximum number of game-cycles to pause
 
-	Object_logic *ob_logic = (Object_logic *) params[0];
+	Object_logic *ob_logic = (Object_logic *) memory->intToPtr(params[0]);
 	int32 pars[2];
 
 	if (ob_logic->looping == 0) {
@@ -202,7 +202,7 @@ int32 Logic::fnPassGraph(int32 *params) {
 
 	// params:	0 pointer to a graphic structure (might not need this?)
 
-	memcpy(&_vm->_engineGraph, (uint8 *) params[0], sizeof(Object_graphic));
+	memcpy(&_vm->_engineGraph, memory->intToPtr(params[0]), sizeof(Object_graphic));
 
 	// makes no odds
 	return IR_CONT;
@@ -218,7 +218,7 @@ int32 Logic::fnPassMega(int32 *params) {
 
 	// params: 	0 pointer to a mega structure
 
-	memcpy(&_vm->_engineMega, (uint8 *) params[0], sizeof(Object_mega));
+	memcpy(&_vm->_engineMega, memory->intToPtr(params[0]), sizeof(Object_mega));
 
 	// makes no odds
 	return IR_CONT;
@@ -233,7 +233,7 @@ int32 Logic::fnSetValue(int32 *params) {
 	// params:	0 pointer to object's mega structure
 	//		1 value to set it to
 
-	Object_mega *ob_mega = (Object_mega *) params[0];
+	Object_mega *ob_mega = (Object_mega *) memory->intToPtr(params[0]);
 
 	ob_mega->megaset_res = params[1];
 

@@ -198,16 +198,7 @@ int32 Logic::executeOpcode(int i, int32 *params) {
 	return (this->*op) (params);
 }
 
-// FIXME: The script engine assumes it can freely cast from pointer to in32
-// and back again with no ill effects. As far as I know, there is absolutely
-// no guarantee that this will work.
-//
-// Maybe we can represent them as offsets into the memory manager's memory?
-// Assuming, of course, that all the pointers we try to pass around this way
-// point to somewhere in that block.
-//
-// I also have a feeling the handling of a script's local variables may be
-// alignment-unsafe.
+// FIXME: Is the handling of script local variables really alignment-safe?
 
 #define CHECKSTACKPOINTER2 assert(stackPointer2 >= 0 && stackPointer2 < STACK_SIZE);
 #define	PUSHONSTACK(x) { stack2[stackPointer2] = (x); stackPointer2++; CHECKSTACKPOINTER2 }
@@ -362,8 +353,8 @@ int Logic::runScript(char *scriptData, char *objectData, uint32 *offset) {
 		case CP_PUSH_LOCAL_ADDR:
 			// push the address of a local variable
 			Read16ip(parameter);
-			debug(5, "Push address of local variable %d (%x)", parameter, (int32) (variables + parameter));
-			PUSHONSTACK((int32) (variables + parameter));
+			debug(5, "Push address of local variable %d (%x)", parameter, memory->ptrToInt((const uint8 *) (variables + parameter)));
+			PUSHONSTACK(memory->ptrToInt((uint8 *) (variables + parameter)));
 			break;
 		case CP_PUSH_INT32:
 			// Push a long word value on to the stack
@@ -598,14 +589,14 @@ int Logic::runScript(char *scriptData, char *objectData, uint32 *offset) {
 			Read8ip(parameter);
 
 			// ip points to the string
-			PUSHONSTACK((int32) (code + ip));
+			PUSHONSTACK(memory->ptrToInt((const uint8 *) (code + ip)));
 			ip += (parameter + 1);
 			break;
 		case CP_PUSH_DEREFERENCED_STRUCTURE:
 			// Push the address of a dereferenced structure
 			Read32ip(parameter);
-			debug(5, "Push address of far variable (%x)", (int32) (objectData + sizeof(int32) + sizeof(_standardHeader) + sizeof(_object_hub) + parameter));
-			PUSHONSTACK((int32) (objectData + sizeof(int32) + sizeof(_standardHeader) + sizeof(_object_hub) + parameter));
+			debug(5, "Push address of far variable (%x)", memory->ptrToInt((const uint8 *) (objectData + sizeof(int32) + sizeof(_standardHeader) + sizeof(_object_hub) + parameter)));
+			PUSHONSTACK(memory->ptrToInt((const uint8 *) (objectData + sizeof(int32) + sizeof(_standardHeader) + sizeof(_object_hub) + parameter)));
 			break;
 		case OP_GTTHANE:
 			// '>='

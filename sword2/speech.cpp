@@ -387,7 +387,7 @@ int32 Logic::fnTheyDoWeWait(int32 *params) {
 
 	res_man->closeResource(target);
 
-	ob_logic = (Object_logic *) params[0];
+	ob_logic = (Object_logic *) memory->intToPtr(params[0]);
 
 	if (!INS_COMMAND && RESULT == 1 && ob_logic->looping == 0) {
 		// first time so set up targets command if target is waiting
@@ -498,10 +498,10 @@ int32 Logic::fnTimedWait(int32 *params) {
 	_standardHeader	*head;
 	int32 target = params[1];
 
-	ob_logic = (Object_logic *) params[0];
+	ob_logic = (Object_logic *) memory->intToPtr(params[0]);
 
 	if (!ob_logic->looping)
-		ob_logic->looping = params[2];	//first time in
+		ob_logic->looping = params[2];	// first time in
 
 	// request status of target
 	head = (_standardHeader*) res_man->openResource(target);
@@ -580,7 +580,7 @@ int32 Logic::fnSpeechProcess(int32 *params) {
 	int32 pars[9];
 	int32 ret;
 
-	ob_speech = (Object_speech *) params[1];
+	ob_speech = (Object_speech *) memory->intToPtr(params[1]);
 
 	debug(5, "  SP");
 
@@ -896,8 +896,8 @@ int32 Logic::fnISpeak(int32 *params) {
 
 	// set up the pointers which we know we'll always need
 
-	ob_logic = (Object_logic *) params[S_OB_LOGIC];
-	ob_graphic = (Object_graphic *) params[S_OB_GRAPHIC];
+	ob_logic = (Object_logic *) memory->intToPtr(params[S_OB_LOGIC]);
+	ob_graphic = (Object_graphic *) memory->intToPtr(params[S_OB_GRAPHIC]);
 
 	// FIRST TIME ONLY: create the text, load the wav, set up the anim,
 	// etc.
@@ -1039,10 +1039,10 @@ int32 Logic::fnISpeak(int32 *params) {
 			// use this direction table to derive the anim
 			// NB. ASSUMES WE HAVE A MEGA OBJECT!!
 
-			ob_mega = (Object_mega*) params[S_OB_MEGA];
+			ob_mega = (Object_mega *) memory->intToPtr(params[S_OB_MEGA]);
 
 			// pointer to anim table
-			anim_table = (int32 *) params[S_DIR_TABLE];
+			anim_table = (int32 *) memory->intToPtr(params[S_DIR_TABLE]);
 
 			// appropriate anim resource is in 'table[direction]'
 			_animId = anim_table[ob_mega->current_dir];
@@ -1373,7 +1373,7 @@ void Logic::locateTalker(int32 *params) {
 
 		if (cdt_entry->frameType & FRAME_OFFSET) {
 			// this may be NULL
-			ob_mega = (Object_mega*) params[S_OB_MEGA];
+			ob_mega = (Object_mega *) memory->intToPtr(params[S_OB_MEGA]);
 
 			// calc scale at which to print the sprite, based on
 			// feet y-coord & scaling constants (NB. 'scale' is
@@ -1446,7 +1446,7 @@ void Logic::formText(int32 *params) {
 	// text
 
 	if (params[S_TEXT]) {
-	 	ob_speech = (Object_speech *) params[S_OB_SPEECH];
+	 	ob_speech = (Object_speech *) memory->intToPtr(params[S_OB_SPEECH]);
 
 		// establish the max width allowed for this text sprite
 
