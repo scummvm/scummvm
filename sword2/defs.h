@@ -24,44 +24,38 @@
 #define	SIZE	0x10000			// 65536 items per section
 #define	NuSIZE	0xffff			// & with this
 
-// Error codes
+// Return codes
 
 enum {
 	// Generic error codes
-
-	RD_OK,
-	RDERR_UNKNOWN,
-	RDERR_OUTOFMEMORY,
-	RDERR_INVALIDFILENAME,
+	RD_OK				= 0x00000000,
+	RDERR_UNKNOWN			= 0x00000001,
+	RDERR_OUTOFMEMORY		= 0x00000003,
+	RDERR_INVALIDFILENAME		= 0x00000004,
 
 	// Drawing error codes
-
-	RDERR_DECOMPRESSION,
+	RDERR_DECOMPRESSION		= 0x00010007,
 
 	// Sprite drawing error codes
-
-	RDERR_NOTIMPLEMENTED,
-	RDERR_NOTCLOSED,
-	RDERR_NOTOPEN,
+	RDERR_NOTIMPLEMENTED		= 0x00060001,
+	RDERR_NOTCLOSED			= 0x00050005,
+	RDERR_NOTOPEN			= 0x00050006,
 
 	// Menubar error codes
-
-	RDERR_INVALIDMENU,
-	RDERR_INVALIDPOCKET,
-	RDERR_INVALIDCOMMAND,
+	RDERR_INVALIDMENU		= 0x00060000,
+	RDERR_INVALIDPOCKET		= 0x00060001,
+	RDERR_INVALIDCOMMAND		= 0x00060002,
 
 	// Palette fading error codes
-
-	RDERR_FADEINCOMPLETE,
+	RDERR_FADEINCOMPLETE		= 0x00070000,
 
 	// Sound engine error codes
-
-	RDERR_SPEECHPLAYING,
-	RDERR_SPEECHNOTPLAYING,
-	RDERR_INVALIDWAV,
-	RDERR_FXALREADYOPEN,
-	RDERR_FXNOTOPEN,
-	RDERR_INVALIDID
+	RDERR_SPEECHPLAYING		= 0x00080004,
+	RDERR_SPEECHNOTPLAYING		= 0x00080005,
+	RDERR_INVALIDWAV		= 0x00080006,
+	RDERR_FXALREADYOPEN		= 0x00080009,
+	RDERR_FXNOTOPEN			= 0x0008000B,
+	RDERR_INVALIDID			= 0x0008000D
 };
 
 // Text ids for the control panel etc.
@@ -83,10 +77,10 @@ enum {
 	TEXT_REVERSE_STEREO		= 0x08EB0015
 };
 
-// always 8 (George object used for Nico player character as well)
+// Always 8 (George object used for Nico player character as well)
 #define CUR_PLAYER_ID 8
 
-// global variable references
+// Global variable references
 
 enum {
 	ID				= 0,
