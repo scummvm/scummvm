@@ -161,8 +161,8 @@ void Scumm_v8::setupOpcodes()
 		OPCODE(o8_unknown),
 		OPCODE(o8_unknown),
 		/* 64 */
-		OPCODE(o6_jumpFalse),
-		OPCODE(o6_jumpTrue),
+		OPCODE(o6_jumpFalse),	// Not sure about which of these two is which (false==if or true==if ?!?)...
+		OPCODE(o6_jumpTrue),	// ... since "if" could mean 'jump "if"' or 'execute following code "if", otherwise jump'.
 		OPCODE(o6_jump),
 		OPCODE(o6_breakHere),
 		/* 68 */
@@ -369,6 +369,25 @@ void Scumm_v8::executeOpcode(int i)
 const char *Scumm_v8::getOpcodeDesc(int i)
 {
 	return _opcodesV8[i].desc;
+}
+
+// In V8, the word size is 4 byte, not 2 bytes as in V6/V7 games
+uint Scumm_v8::fetchScriptWord()
+{
+	int a;
+	if (*_lastCodePtr + sizeof(MemBlkHeader) != _scriptOrgPointer) {
+		uint32 oldoffs = _scriptPointer - _scriptOrgPointer;
+		getScriptBaseAddress();
+		_scriptPointer = _scriptOrgPointer + oldoffs;
+	}
+	a = READ_LE_UINT32(_scriptPointer);
+	_scriptPointer += 4;
+	return a;
+}
+
+int Scumm_v8::fetchScriptWordSigned()
+{
+	return (int32)fetchScriptWord();
 }
 
 void Scumm_v8::o8_unknown()

@@ -396,6 +396,9 @@ protected:
 	virtual void executeOpcode(int i);
 	virtual const char *getOpcodeDesc(int i);
 
+	virtual uint fetchScriptWord();
+	virtual int fetchScriptWordSigned();
+
 	/* Version 8 script opcodes */
 	void o8_unknown();
 	void o8_invalid();

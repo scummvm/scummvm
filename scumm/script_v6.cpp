@@ -422,6 +422,9 @@ int Scumm::readArray(int array, int idx, int base)
 
 	if (ah->type == 4) {
 		return ah->data[base];
+	} else if (_features & GF_AFTER_V8) {
+		// FIXME - this is just a guess, might be wrong
+		return (int32)READ_LE_UINT32(ah->data + base * 4);
 	} else {
 		return (int16)READ_LE_UINT16(ah->data + base * 2);
 	}
@@ -438,6 +441,9 @@ void Scumm::writeArray(int array, int idx, int base, int value)
 
 	if (ah->type == 4) {
 		ah->data[base] = value;
+	} else if (_features & GF_AFTER_V8) {
+		// FIXME - this is just a guess, might be wrong
+		((uint32 *)ah->data)[base] = TO_LE_32(value);
 	} else {
 		((uint16 *)ah->data)[base] = TO_LE_16(value);
 	}
@@ -470,7 +476,7 @@ void Scumm_v6::o6_pushByte()
 
 void Scumm_v6::o6_pushWord()
 {
-	push((int16)fetchScriptWord());
+	push(fetchScriptWordSigned());
 }
 
 void Scumm_v6::o6_pushByteVar()
@@ -722,7 +728,7 @@ void Scumm_v6::o6_jumpFalse()
 
 void Scumm_v6::o6_jump()
 {
-	_scriptPointer += (int16)fetchScriptWord();
+	_scriptPointer += fetchScriptWordSigned();
 }
 
 void Scumm_v6::o6_startScriptEx()
@@ -2047,7 +2053,7 @@ void Scumm_v6::o6_wait()
 {
 	switch (fetchScriptByte()) {
 	case 168:{
-			int offs = (int16)fetchScriptWord();
+			int offs = fetchScriptWordSigned();
 			if (derefActorSafe(pop(), "o6_wait")->moving) {
 				_scriptPointer += offs;
 				o6_breakHere();
@@ -2092,7 +2098,7 @@ void Scumm_v6::o6_wait()
 	case 226:{										/* wait until actor drawn */
 			int actnum = pop();
 			Actor *a = derefActorSafe(actnum, "o6_wait:226");
-			int offs = (int16)fetchScriptWord();
+			int offs = fetchScriptWordSigned();
 			if (a && a->isInCurrentRoom() && a->needRedraw) {
 				_scriptPointer += offs;
 				o6_breakHere();
@@ -2102,7 +2108,7 @@ void Scumm_v6::o6_wait()
 	case 232:{										/* wait until actor stops turning */
 			int actnum = pop();
 			Actor *a = derefActorSafe(actnum, "o6_wait:232");
-			int offs = (int16)fetchScriptWord();
+			int offs = fetchScriptWordSigned();
 			if (a && a->isInCurrentRoom() && a->moving & MF_TURN) {
 				_scriptPointer += offs;
 				o6_breakHere();

@@ -476,7 +476,8 @@ public:
 	void getScriptBaseAddress();
 	void getScriptEntryPoint();
 	byte fetchScriptByte();
-	int fetchScriptWord();
+	virtual uint fetchScriptWord();
+	virtual int fetchScriptWordSigned();
 	void ignoreScriptWord() { fetchScriptWord(); }
 	void ignoreScriptByte() { fetchScriptByte(); }
 	void getResultPos();

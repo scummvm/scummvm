@@ -297,7 +297,7 @@ byte Scumm::fetchScriptByte()
 	return *_scriptPointer++;
 }
 
-int Scumm::fetchScriptWord()
+uint Scumm::fetchScriptWord()
 {
 	int a;
 	if (*_lastCodePtr + sizeof(MemBlkHeader) != _scriptOrgPointer) {
@@ -308,6 +308,11 @@ int Scumm::fetchScriptWord()
 	a = READ_LE_UINT16(_scriptPointer);
 	_scriptPointer += 2;
 	return a;
+}
+
+int Scumm::fetchScriptWordSigned()
+{
+	return (int16)fetchScriptWord();
 }
 
 #ifndef BYPASS_COPY_PROT
@@ -1010,7 +1015,11 @@ int Scumm::defineArray(int array, int type, int dim2, int dim1)
 
 	writeVar(array, id);
 
-	size = (type == 5) ? 16 : 8;
+	if (_features & GF_AFTER_V8) {
+		size = 32;	// FIXME - this is just a guess
+	} else {
+		size = (type == 5) ? 16 : 8;
+	}
 	size *= dim2 + 1;
 	size *= dim1 + 1;
 	size >>= 3;
