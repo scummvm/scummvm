@@ -35,9 +35,6 @@ namespace GUI {
 
 class Dialog;
 
-#define hLine(x, y, x2, color) line(x, y, x2, y, color);
-#define vLine(x, y, y2, color) line(x, y, x, y2, color);
-
 #define g_gui	(GUI::NewGui::instance())
 
 
@@ -140,7 +137,8 @@ public:
 	// Drawing primitives
 	OverlayColor *getBasePtr(int x, int y);
 	void box(int x, int y, int width, int height, OverlayColor colorA, OverlayColor colorB);
-	void line(int x, int y, int x2, int y2, OverlayColor color);
+	void hLine(int x, int y, int x2, OverlayColor color);
+	void vLine(int x, int y, int y2, OverlayColor color);
 	void blendRect(int x, int y, int w, int h, OverlayColor color, int level = 3);
 	void fillRect(int x, int y, int w, int h, OverlayColor color);
 	void checkerRect(int x, int y, int w, int h, OverlayColor color);

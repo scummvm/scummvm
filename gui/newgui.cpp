@@ -255,28 +255,30 @@ void NewGui::box(int x, int y, int width, int height, OverlayColor colorA, Overl
 	vLine(x + width - 2, y + 1, y + height - 1, colorB);
 }
 
-void NewGui::line(int x, int y, int x2, int y2, OverlayColor color) {
+void NewGui::hLine(int x, int y, int x2, OverlayColor color) {
 	OverlayColor *ptr;
 
 	if (x2 < x)
 		SWAP(x2, x);
+
+	ptr = getBasePtr(x, y);
+
+	while (x++ <= x2) {
+		*ptr++ = color;
+	}
+}
+
+void NewGui::vLine(int x, int y, int y2, OverlayColor color) {
+	OverlayColor *ptr;
 
 	if (y2 < y)
 		SWAP(y2, y);
 
 	ptr = getBasePtr(x, y);
 
-	if (x == x2) {
-		/* vertical line */
-		while (y++ <= y2) {
-			*ptr = color;
-			ptr += _screenPitch;
-		}
-	} else if (y == y2) {
-		/* horizontal line */
-		while (x++ <= x2) {
-			*ptr++ = color;
-		}
+	while (y++ <= y2) {
+		*ptr = color;
+		ptr += _screenPitch;
 	}
 }
 
