@@ -50,10 +50,10 @@ void RncDecoder::initCrc() {
 		tmp1 = tmp2; 
 		for (cnt = 8; cnt > 0; cnt--) {
 			if (tmp1 % 2) {
-				tmp1 /= 2;
+				tmp1 >>= 1;
 				tmp1 ^= 0x0a001;
 			} else
-				tmp1 /= 2;
+				tmp1 >>= 1;
 		}
 		_crcTable[tmp2] = tmp1;
 	}
