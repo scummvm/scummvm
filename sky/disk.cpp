@@ -42,8 +42,8 @@ Disk::Disk(const Common::String &gameDataPath) {
 	uint32 entriesRead;
 
 	_dnrHandle->open(dinnerFilename);
-	if (_dnrHandle->isOpen() == false)
-			error("Could not open %s%s", gameDataPath.c_str(), dinnerFilename);
+	if (!_dnrHandle->isOpen())
+		error("Could not open %s%s", gameDataPath.c_str(), dinnerFilename);
 
 	if (!(_dinnerTableEntries = _dnrHandle->readUint32LE()))
 		error("Error reading from sky.dnr"); //even though it was opened correctly?!
@@ -55,7 +55,7 @@ Disk::Disk(const Common::String &gameDataPath) {
 		warning("entriesRead != dinnerTableEntries. [%d/%d]", entriesRead, _dinnerTableEntries);
 
 	_dataDiskHandle->open(dataFilename);
-	if (_dataDiskHandle->isOpen() == false) 
+	if (!_dataDiskHandle->isOpen()) 
 		error("Error opening %s%s", gameDataPath.c_str(), dataFilename);
 
 	printf("Found BASS version v0.0%d (%d dnr entries)\n", determineGameVersion(), _dinnerTableEntries);
@@ -73,8 +73,10 @@ Disk::~Disk(void) {
 		fEntry = fEntry->next;
 		delete fTemp;
 	}
-	if (_dnrHandle->isOpen()) _dnrHandle->close();
-	if (_dataDiskHandle->isOpen()) _dataDiskHandle->close();
+	if (_dnrHandle->isOpen())
+		_dnrHandle->close();
+	if (_dataDiskHandle->isOpen())
+		_dataDiskHandle->close();
 	delete _dnrHandle;
 	delete _dataDiskHandle;
 }
@@ -96,133 +98,101 @@ bool Disk::fileExists(uint16 fileNr) {
 	return (getFileInfo(fileNr) != NULL);
 }
 
-//load in file file_nr to address dest
-//if dest == NULL, then allocate memory for this file
-uint8 *Disk::loadFile(uint16 fileNr, uint8 *dest) {
-	
+// allocate memory, load the file and return a pointer
+uint8 *Disk::loadFile(uint16 fileNr) {
+
 	uint8 cflag;
-	int32 bytesRead;
-	uint8 *filePtr, *inputPtr, *outputPtr;
-	dataFileHeader fileHeader;
 
 	uint8 *prefData = givePrefetched(fileNr, &_lastLoadedFileSize);
-	if (prefData) {
-		if (dest == NULL) return prefData;
-		else {
-			memcpy(dest, prefData, _lastLoadedFileSize);
-			free(prefData);
-			return dest;
-		}
-	}
+	if (prefData)
+		return prefData;
 
-	_compFile = fileNr;
 	debug(2, "load file %d,%d (%d)", (fileNr >> 11), (fileNr & 2047), fileNr); 
 
-	filePtr = getFileInfo(fileNr);
-	if (filePtr == NULL) {
+	uint8 *fileInfoPtr = getFileInfo(fileNr);
+	if (fileInfoPtr == NULL) {
 		debug(1, "File %d not found", fileNr);
 		return NULL;
 	}
 
-	_fileFlags = READ_LE_UINT24(filePtr + 5);
-	_fileSize = _fileFlags & 0x03fffff;
-	_lastLoadedFileSize = _fileSize;
-	
-	_fileOffset = READ_LE_UINT32(filePtr + 2) & 0x0ffffff;
+	uint32 fileFlags = READ_LE_UINT24(fileInfoPtr + 5);
+	uint32 fileSize = fileFlags & 0x03fffff;
+	uint32 fileOffset = READ_LE_UINT32(fileInfoPtr + 2) & 0x0ffffff;
 
-	cflag = (uint8)((_fileOffset >> 23) & 0x1);
-	_fileOffset &= 0x7FFFFF;
+	_lastLoadedFileSize = fileSize;
+	cflag = (uint8)((fileOffset >> 23) & 0x1);
+	fileOffset &= 0x7FFFFF;
 
 	if (cflag) {
 		if (SkyEngine::_systemVars.gameVersion == 331)
-			_fileOffset <<= 3;
+			fileOffset <<= 3;
 		else
-			_fileOffset <<= 4;
+			fileOffset <<= 4;
 	}
 
-	_fixedDest = dest;
-	_fileDest = dest;
-	_compDest = dest;
+	uint8 *fileDest = (uint8 *)malloc(fileSize + 4); // allocate memory for file
 
-	if (dest == NULL) //we need to allocate memory for this file
-		_fileDest = (uint8 *)malloc(_fileSize + 4);
-
-	_dataDiskHandle->seek(_fileOffset, SEEK_SET);
+	_dataDiskHandle->seek(fileOffset, SEEK_SET);
 
 	//now read in the data
-	bytesRead = _dataDiskHandle->read(_fileDest, 1 * _fileSize);
+	int32 bytesRead = _dataDiskHandle->read(fileDest, fileSize);
 
-	if (bytesRead != (int32)_fileSize)
-		warning("ERROR: Unable to read %d bytes from datadisk (%d bytes read)", _fileSize, bytesRead);
+	if (bytesRead != (int32)fileSize)
+		warning("Unable to read %d bytes from datadisk (%d bytes read)", fileSize, bytesRead);
 
-	cflag = (uint8)((_fileFlags >> (23)) & 0x1);
-
+	cflag = (uint8)((fileFlags >> 23) & 0x1);
 	//if cflag == 0 then file is compressed, 1 == uncompressed
 
-	if ((!cflag) && ((FROM_LE_16(((dataFileHeader *)_fileDest)->flag) >> 7)&1)) {
+	dataFileHeader *fileHeader = (dataFileHeader*)fileDest;
+
+	if ((!cflag) && ((FROM_LE_16(fileHeader->flag) >> 7) & 1)) {
 		debug(2, "File is RNC compressed.");
 
-		memcpy(&fileHeader, _fileDest, sizeof(struct dataFileHeader));
-		_decompSize = (FROM_LE_16(fileHeader.flag) & 0xFFFFFF00) << 8;
-		_decompSize |= FROM_LE_16((uint16)fileHeader.s_tot_size);
+		uint32 decompSize = (FROM_LE_16(fileHeader->flag) & ~0xFF) << 8;
+		decompSize |= FROM_LE_16(fileHeader->s_tot_size);
 
-		if (_fixedDest == NULL) // is this valid?
-			_compDest = (uint8 *)malloc(_decompSize);
+		uint8 *uncompDest = (uint8 *)malloc(decompSize);
 
-		inputPtr = _fileDest;
-		outputPtr = _compDest;
-
-		if ( (uint8)(_fileFlags >> (22) & 0x1) ) //do we include the header?
-			inputPtr += sizeof(struct dataFileHeader);
-		else {
+		RncDecoder rncDecoder;
+		int32 unpackLen;
+		if ((fileFlags >> 22) & 0x1) { //do we include the header?
+			// don't return the file's header
+			unpackLen = rncDecoder.unpackM1(fileDest + sizeof(dataFileHeader), uncompDest, 0);
+		} else {
 #ifdef SCUMM_BIG_ENDIAN
 			// Convert dataFileHeader to BE (it only consists of 16 bit words)
 			uint16 *headPtr = (uint16 *)_fileDest;
 			for (uint i = 0; i < sizeof(struct dataFileHeader) / 2; i++)
 				*(headPtr + i) = READ_LE_UINT16(headPtr + i);
 #endif
-			memcpy(outputPtr, inputPtr, sizeof(struct dataFileHeader));
-			inputPtr += sizeof(struct dataFileHeader);
-			outputPtr += sizeof(struct dataFileHeader);
+			memcpy(uncompDest, fileDest, sizeof(dataFileHeader));
+			unpackLen = rncDecoder.unpackM1(fileDest + sizeof(dataFileHeader), uncompDest + sizeof(dataFileHeader), 0);
+			unpackLen += sizeof(dataFileHeader);
 		}
 
-		RncDecoder rncDecoder;
-		int32 unPackLen = rncDecoder.unpackM1(inputPtr, outputPtr, 0);
+		debug(3, "UnpackM1 returned: %d", unpackLen);
 
-		debug(3, "UnpackM1 returned: %d", unPackLen);
+		if (unpackLen == 0) { //Unpack returned 0: file was probably not packed.
+			free(uncompDest);
+			return fileDest;
+		} else {
+			if (unpackLen != (int32)decompSize)
+				debug(1, "ERROR: invalid decomp size! (was: %d, should be: %d)", unpackLen, decompSize);
+			_lastLoadedFileSize = decompSize;
 
-		if (unPackLen == 0) { //Unpack returned 0: file was probably not packed.
-			if (_fixedDest == NULL)
-				free(_compDest);
-
-			return _fileDest;
+			free(fileDest);
+			return uncompDest;
 		}
-
-		if (! (uint8)(_fileFlags >> (22) & 0x1) ) { // include header?
-			unPackLen += sizeof(struct dataFileHeader);
-
-			if (unPackLen != (int32)_decompSize) {
-				debug(1, "ERROR: invalid decomp size! (was: %d, should be: %d)", unPackLen, _decompSize);
-			}
-		}
-
-		_lastLoadedFileSize = _decompSize; //including header
-			
-		if (_fixedDest == NULL)
-			free(_fileDest);
 	} else {
 #ifdef SCUMM_BIG_ENDIAN
 		if (!cflag) {
-			warning("patching header for uncompressed file %d", fileNr);
-			uint16 *headPtr = (uint16 *)_fileDest;
+			uint16 *headPtr = (uint16 *)fileDest;
 			for (uint i = 0; i < sizeof(struct dataFileHeader) / 2; i++)
 				*(headPtr + i) = READ_LE_UINT16(headPtr + i);
 		}
 #endif
-		return _fileDest;
+		return fileDest;
 	}
-
-	return _compDest;
 }
 
 void Disk::prefetchFile(uint16 fileNr) {
@@ -230,14 +200,15 @@ void Disk::prefetchFile(uint16 fileNr) {
 	PrefFile **fEntry = &_prefRoot;
 	bool found = false;
 	while (*fEntry) {
-		if ((*fEntry)->fileNr == fileNr) found = true;
+		if ((*fEntry)->fileNr == fileNr)
+			found = true;
 		fEntry = &((*fEntry)->next);
 	}
 	if (found) {
 		debug(1,"Disk::prefetchFile: File %d was already prefetched",fileNr);
 		return ;
 	}
-	uint8 *temp = loadFile(fileNr, NULL);
+	uint8 *temp = loadFile(fileNr);
 	*fEntry = new PrefFile;
 	(*fEntry)->data = temp;
 	(*fEntry)->fileSize = _lastLoadedFileSize;
@@ -250,8 +221,10 @@ uint8 *Disk::givePrefetched(uint16 fileNr, uint32 *fSize) {
 	PrefFile **fEntry = &_prefRoot;
 	bool found = false;
 	while ((*fEntry) && (!found)) {
-		if ((*fEntry)->fileNr == fileNr) found = true;
-		else fEntry = &((*fEntry)->next);
+		if ((*fEntry)->fileNr == fileNr)
+			found = true;
+		else
+			fEntry = &((*fEntry)->next);
 	}
 	if (!found) {
 		*fSize = 0;
@@ -315,8 +288,10 @@ void Disk::fnCacheFiles(void) {
 		bCnt = 0;
 		found = false;
 		while (_buildList[bCnt] && (!found)) {
-			if ((_buildList[bCnt] & 0x7FFFU) == _loadedFilesList[lCnt]) found = true;
-			else bCnt++;
+			if ((_buildList[bCnt] & 0x7FFFU) == _loadedFilesList[lCnt])
+				found = true;
+			else
+				bCnt++;
 		}
 		if (found) {
 			_loadedFilesList[targCnt] = _loadedFilesList[lCnt];
@@ -338,7 +313,8 @@ void Disk::fnCacheFiles(void) {
 		lCnt = 0;
 		found = false;
 		while (_loadedFilesList[lCnt] && (!found)) {
-			if (_loadedFilesList[lCnt] == (_buildList[bCnt] & 0x7FFFU)) found = true;
+			if (_loadedFilesList[lCnt] == (_buildList[bCnt] & 0x7FFFU))
+				found = true;
 			lCnt++;
 		}
 		if (found) {
@@ -349,7 +325,7 @@ void Disk::fnCacheFiles(void) {
 		_loadedFilesList[targCnt] = _buildList[bCnt] & 0x7FFFU;
 		targCnt++;
 		_loadedFilesList[targCnt] = 0;
-		SkyEngine::_itemList[_buildList[bCnt] & 2047] = (void**)loadFile(_buildList[bCnt] & 0x7FFF, NULL);
+		SkyEngine::_itemList[_buildList[bCnt] & 2047] = (void**)loadFile(_buildList[bCnt] & 0x7FFF);
 		if (!SkyEngine::_itemList[_buildList[bCnt] & 2047])
 			warning("fnCacheFiles: Disk::loadFile() returned NULL for file %d",_buildList[bCnt] & 0x7FFF);
 		bCnt++;
@@ -369,7 +345,7 @@ void Disk::refreshFilesList(uint32 *list) {
 	cnt = 0;
 	while (list[cnt]) {
 		_loadedFilesList[cnt] = list[cnt];
-		SkyEngine::_itemList[_loadedFilesList[cnt] & 2047] = (void**)loadFile((uint16)(_loadedFilesList[cnt] & 0x7FFF), NULL);
+		SkyEngine::_itemList[_loadedFilesList[cnt] & 2047] = (void**)loadFile((uint16)(_loadedFilesList[cnt] & 0x7FFF));
 		cnt++;
 	}
 	_loadedFilesList[cnt] = 0;
@@ -379,12 +355,13 @@ void Disk::fnMiniLoad(uint16 fileNum) {
 
 	uint16 cnt = 0;
 	while (_loadedFilesList[cnt]) {
-		if (_loadedFilesList[cnt] == fileNum) return ;
+		if (_loadedFilesList[cnt] == fileNum)
+			return ;
 		cnt++;
 	}
 	_loadedFilesList[cnt] = fileNum & 0x7FFFU;
 	_loadedFilesList[cnt + 1] = 0;
-	SkyEngine::_itemList[fileNum & 2047] = (void**)loadFile(fileNum, NULL);
+	SkyEngine::_itemList[fileNum & 2047] = (void**)loadFile(fileNum);
 }
 
 void Disk::fnFlushBuffers(void) {
@@ -404,7 +381,7 @@ void Disk::dumpFile(uint16 fileNr) {
 	File out;
 	byte* filePtr;
 
-	filePtr = loadFile(fileNr, NULL);
+	filePtr = loadFile(fileNr);
 	sprintf(buf, "dumps/file-%d.dmp", fileNr);
 
 	out.open(buf, File::kFileReadMode, "");
@@ -435,8 +412,10 @@ uint32 Disk::determineGameVersion() {
 		return 303;
 	case 1445:
 		//floppy (v0.0331 or v0.0348)
-		if (_dataDiskHandle->size() == 8830435) return 348;
-		else return 331;
+		if (_dataDiskHandle->size() == 8830435)
+			return 348;
+		else
+			return 331;
 	case 1711:
 		//cd demo (v0.0365)
 		return 365;

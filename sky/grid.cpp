@@ -130,21 +130,24 @@ int8 Grid::_gridConvertTable[] = {
 };
 
 Grid::Grid(Disk *pDisk) {
-
-	_gameGrids = (uint8 *)malloc(TOT_NO_GRIDS * GRID_SIZE);
+	for (int cnt = 0; cnt < TOT_NO_GRIDS; cnt++)
+		_gameGrids[cnt] = NULL;
 	_skyDisk = pDisk;
 }
 
 Grid::~Grid(void) {
-
-	free(_gameGrids);
+	for (uint8 cnt = 0; cnt < TOT_NO_GRIDS; cnt++)
+		if (_gameGrids[cnt])
+			free(_gameGrids[cnt]);
 }
 
 void Grid::loadGrids(void) {
-
 	// no endian conversion necessary as I'm using uint8* instead of uint32*
-	for (uint8 cnt = 0; cnt < TOT_NO_GRIDS; cnt++)
-		_skyDisk->loadFile(GRID_FILE_START + cnt, _gameGrids + (cnt * GRID_SIZE));
+	for (uint8 cnt = 0; cnt < TOT_NO_GRIDS; cnt++) {
+		if (_gameGrids[cnt])
+			free(_gameGrids[cnt]);
+		_gameGrids[cnt] = _skyDisk->loadFile(GRID_FILE_START + cnt);
+	}
 	if (!SkyEngine::isDemo()) { // single disk demos never get that far
 		// Reloading the grids can sometimes cause problems eg when reichs door is
 		// open the door grid bit gets replaced so you can't get back in (or out)
@@ -153,25 +156,26 @@ void Grid::loadGrids(void) {
 	}
 }
 
-bool Grid::getGridValues(Compact *cpt, uint32 *resBitNum, uint32 *resWidth) {
-
+bool Grid::getGridValues(Compact *cpt, uint8 *resGrid, uint32 *resBitNum, uint32 *resWidth) {
 	uint16 width = SkyCompact::getMegaSet(cpt, cpt->extCompact->megaSet)->gridWidth;
-	return getGridValues(cpt->xcood, cpt->ycood, width, cpt, resBitNum, resWidth);
+	return getGridValues(cpt->xcood, cpt->ycood, width, cpt, resGrid, resBitNum, resWidth);
 }
 
-bool Grid::getGridValues(uint32 x, uint32 y, uint32 width, Compact *cpt, uint32 *resBitNum, uint32 *resWidth) {
-
+bool Grid::getGridValues(uint32 x, uint32 y, uint32 width, Compact *cpt, uint8 *resGrid, uint32 *resBitNum, uint32 *resWidth) {
 	uint32 bitPos;
-	if (y < TOP_LEFT_Y) return false; // off screen
+	if (y < TOP_LEFT_Y) 
+		return false; // off screen
 	y -= TOP_LEFT_Y;
 	y >>= 3; // convert to blocks
-	if (y >= GAME_SCREEN_HEIGHT >> 3) return false; // off screen
+	if (y >= GAME_SCREEN_HEIGHT >> 3) 
+		return false; // off screen
 	bitPos = y * 40;
 	width++;
 	x >>= 3; // convert to blocks
 	
 	if (x < (TOP_LEFT_X >> 3)) { // at least partially off screen
-		if (x + width < (TOP_LEFT_X >> 3)) return false; // completely off screen
+		if (x + width < (TOP_LEFT_X >> 3)) 
+			return false; // completely off screen
 		else {
 			width -= (TOP_LEFT_X >> 3) - x;
 			x = 0;
@@ -179,13 +183,15 @@ bool Grid::getGridValues(uint32 x, uint32 y, uint32 width, Compact *cpt, uint32 
 	} else
 		x -= TOP_LEFT_X >> 3;
 
-	if ((GAME_SCREEN_WIDTH >> 3) <= x) return false; // off screen
+	if ((GAME_SCREEN_WIDTH >> 3) <= x) 
+		return false; // off screen
 	if ((GAME_SCREEN_WIDTH >> 3) < x + width) // partially off screen
 		width = (GAME_SCREEN_WIDTH >> 3) - x;
 
 	bitPos += x;
-	int32 screenGridOfs = _gridConvertTable[cpt->screen] * GRID_SIZE;
-	bitPos += (screenGridOfs << 3); // convert to bits
+	assert((_gridConvertTable[cpt->screen] >= 0) && (_gridConvertTable[cpt->screen] < TOT_NO_GRIDS));
+	*resGrid = (uint8)_gridConvertTable[cpt->screen];
+
 	uint32 tmpBits = 0x1F - (bitPos&0x1F);
 	bitPos &= ~0x1F; // divide into dword address and bit number
 	bitPos += tmpBits;
@@ -195,56 +201,56 @@ bool Grid::getGridValues(uint32 x, uint32 y, uint32 width, Compact *cpt, uint32 
 }
 
 void Grid::removeObjectFromWalk(Compact *cpt) {
-
 	uint32 bitNum, width;
-	if (getGridValues(cpt, &bitNum, &width))
-		removeObjectFromWalk(bitNum, width);
+	uint8 gridIdx;
+	if (getGridValues(cpt, &gridIdx, &bitNum, &width))
+		removeObjectFromWalk(gridIdx, bitNum, width);
 }
 
-void Grid::removeObjectFromWalk(uint32 bitNum, uint32 width) {
-
+void Grid::removeObjectFromWalk(uint8 gridIdx, uint32 bitNum, uint32 width) {
 	for (uint32 cnt = 0; cnt < width; cnt++) {
-		_gameGrids[bitNum >> 3] &= ~(1 << (bitNum & 0x7));
+		_gameGrids[gridIdx][bitNum >> 3] &= ~(1 << (bitNum & 0x7));
 		if ((bitNum & 0x1F) == 0)
 			bitNum += 0x3F;
-		else bitNum--;
+		else
+			bitNum--;
 	}
 }
 
 void Grid::objectToWalk(Compact *cpt) {
-
 	uint32 bitNum, width;
-	if (getGridValues(cpt, &bitNum, &width))
-		objectToWalk(bitNum, width);
+	uint8 gridIdx;
+	if (getGridValues(cpt, &gridIdx, &bitNum, &width))
+		objectToWalk(gridIdx, bitNum, width);
 }
 
-void Grid::objectToWalk(uint32 bitNum, uint32 width) {
-
+void Grid::objectToWalk(uint8 gridIdx, uint32 bitNum, uint32 width) {
 	for (uint32 cnt = 0; cnt < width; cnt++) {
-		_gameGrids[bitNum >> 3] |= (1 << (bitNum & 0x7));
+		_gameGrids[gridIdx][bitNum >> 3] |= (1 << (bitNum & 0x7));
 		if ((bitNum & 0x1F) == 0)
 			bitNum += 0x3F;
-		else bitNum--;
+		else
+			bitNum--;
 	}
 }
 
 void Grid::plotGrid(uint32 x, uint32 y, uint32 width, Compact *cpt) {
-
 	uint32 resBitPos, resWidth;
-	if (getGridValues(x, y, width-1, cpt, &resBitPos, &resWidth))
-		objectToWalk(resBitPos, resWidth);
+	uint8 resGridIdx;
+	if (getGridValues(x, y, width-1, cpt, &resGridIdx, &resBitPos, &resWidth))
+		objectToWalk(resGridIdx, resBitPos, resWidth);
 }
 
 void Grid::removeGrid(uint32 x, uint32 y, uint32 width, Compact *cpt) {
-
 	uint32 resBitPos, resWidth;
-	if (getGridValues(x, y, width, cpt, &resBitPos, &resWidth))
-		removeObjectFromWalk(resBitPos, resWidth);
+	uint8 resGridIdx;
+	if (getGridValues(x, y, width, cpt, &resGridIdx, &resBitPos, &resWidth))
+		removeObjectFromWalk(resGridIdx, resBitPos, resWidth);
 }
 
-uint8 *Grid::giveGrid(uint32 pScreen)
-{
-	return _gameGrids + GRID_SIZE * _gridConvertTable[pScreen];
+uint8 *Grid::giveGrid(uint32 pScreen) {
+	assert((_gridConvertTable[pScreen] >= 0) && (_gridConvertTable[pScreen] < TOT_NO_GRIDS));
+	return _gameGrids[_gridConvertTable[pScreen]];
 }
 
 } // End of namespace Sky

@@ -133,7 +133,7 @@ void Screen::halvePalette(void) {
 
 void Screen::setPalette(uint16 fileNum) {
 
-	uint8 *tmpPal = _skyDisk->loadFile(fileNum, NULL);
+	uint8 *tmpPal = _skyDisk->loadFile(fileNum);
 	if (tmpPal) {
 		setPalette(tmpPal);
 		free(tmpPal);
@@ -143,7 +143,7 @@ void Screen::setPalette(uint16 fileNum) {
 void Screen::showScreen(uint16 fileNum) {
 
 	if (_currentScreen) free(_currentScreen);
-	_currentScreen = _skyDisk->loadFile(fileNum, NULL);
+	_currentScreen = _skyDisk->loadFile(fileNum);
 	
 	if (_currentScreen) showScreen(_currentScreen);
 	else warning("Screen::showScreen: can't load file nr. %d",fileNum);
@@ -281,7 +281,7 @@ void Screen::palette_fadedown_helper(uint32 *pal, uint num) {
 
 void Screen::paletteFadeUp(uint16 fileNr) {
 
-	uint8 *pal = _skyDisk->loadFile(fileNr, NULL);
+	uint8 *pal = _skyDisk->loadFile(fileNr);
 	if (pal) {
 		paletteFadeUp(pal);
 		free(pal);
@@ -401,7 +401,7 @@ void Screen::handleTimer(void) {
 
 void Screen::startSequence(uint16 fileNum) {
 
-	_seqInfo.seqData = _skyDisk->loadFile(fileNum, NULL);
+	_seqInfo.seqData = _skyDisk->loadFile(fileNum);
 	_seqInfo.framesLeft = _seqInfo.seqData[0];
 	_seqInfo.seqDataPos = _seqInfo.seqData + 1;
 	_seqInfo.delay = SEQ_DELAY;

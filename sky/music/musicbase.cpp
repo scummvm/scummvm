@@ -51,7 +51,7 @@ void MusicBase::loadSection(uint8 pSection) {
 	if (_musicData)
 		free(_musicData);
 	_currentSection = pSection;
-	_musicData = _skyDisk->loadFile(_driverFileBase + FILES_PER_SECTION * pSection, NULL);
+	_musicData = _skyDisk->loadFile(_driverFileBase + FILES_PER_SECTION * pSection);
 	_allowedCommands = 0;
 	_musicTempo0 = 0x78; // init constants taken from idb file, area ~0x1060
 	_musicTempo1 = 0xC0;

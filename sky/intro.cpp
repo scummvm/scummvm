@@ -725,7 +725,7 @@ bool Intro::nextPart(uint16 *&data) {
 	case PLAYVOICE:
 		if (!escDelay(200))
 			return false;
-		vData = _skyDisk->loadFile(*data++, NULL);
+		vData = _skyDisk->loadFile(*data++);
 		// HACK: Fill the header with silence. We should
 		// probably use _skySound instead of calling playRaw()
 		// directly, but this will have to do for now.
@@ -742,7 +742,7 @@ bool Intro::nextPart(uint16 *&data) {
 		_mixer->stopID(SOUND_BG);
 		if (_bgBuf)
 			free(_bgBuf);
-		_bgBuf = _skyDisk->loadFile(*data++, NULL);
+		_bgBuf = _skyDisk->loadFile(*data++);
 		_bgSize = _skyDisk->_lastLoadedFileSize;
 		return true;
 	case LOOPBG:
@@ -770,8 +770,8 @@ bool Intro::floppyScrollFlirt(void) {
 	memset(scrollScreen, 0, FRAME_SIZE);
 	memcpy(scrollScreen + FRAME_SIZE, _skyScreen->giveCurrent(), FRAME_SIZE);
 	uint8 *scrollPos = scrollScreen + FRAME_SIZE;
-	uint8 *vgaData = _skyDisk->loadFile(60100, NULL);
-	uint8 *diffData = _skyDisk->loadFile(60101, NULL);
+	uint8 *vgaData = _skyDisk->loadFile(60100);
+	uint8 *diffData = _skyDisk->loadFile(60101);
 	uint16 frameNum = READ_LE_UINT16(diffData);
 	uint8 *diffPtr = diffData + 2;
 	uint8 *vgaPtr = vgaData;

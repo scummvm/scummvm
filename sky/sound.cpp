@@ -1049,7 +1049,7 @@ void Sound::loadSection(uint8 pSection) {
 	_mixer->stopAll();
 
 	if (_soundData) free(_soundData);
-	_soundData = _skyDisk->loadFile(pSection * 4 + SOUND_FILE_BASE, NULL);
+	_soundData = _skyDisk->loadFile(pSection * 4 + SOUND_FILE_BASE);
 	uint16 asmOfs;
 	if (SkyEngine::_systemVars.gameVersion == 109) {
 		if (pSection == 0)
@@ -1219,7 +1219,7 @@ bool Sound::startSpeech(uint16 textNum) {
 		return false;
 	uint16 speechFileNum = _speechConvertTable[textNum >> 12] + (textNum & 0xFFF);
 	
-	uint8 *speechData = _skyDisk->loadFile(speechFileNum + 50000, NULL);
+	uint8 *speechData = _skyDisk->loadFile(speechFileNum + 50000);
 	if (!speechData) {
 		debug(9,"File %d (speechFile %d from section %d) wasn't found", speechFileNum + 50000, textNum & 0xFFF, textNum >> 12);
 		return false;

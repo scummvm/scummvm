@@ -41,18 +41,18 @@ Text::Text(Disk *skyDisk) {
 
 	initHuffTree();
 
-	_mainCharacterSet.addr = _skyDisk->loadFile(CHAR_SET_FILE, NULL);
+	_mainCharacterSet.addr = _skyDisk->loadFile(CHAR_SET_FILE);
 	_mainCharacterSet.charHeight = MAIN_CHAR_HEIGHT;
 	_mainCharacterSet.charSpacing = 0;
 	
 	fnSetFont(0);
 
 	if (!SkyEngine::isDemo()) {
-		_controlCharacterSet.addr = _skyDisk->loadFile(60520, NULL);
+		_controlCharacterSet.addr = _skyDisk->loadFile(60520);
 		_controlCharacterSet.charHeight = 12;
 		_controlCharacterSet.charSpacing = 0;
 
-		_linkCharacterSet.addr = _skyDisk->loadFile(60521, NULL);
+		_linkCharacterSet.addr = _skyDisk->loadFile(60521);
 		_linkCharacterSet.charHeight = 12;
 		_linkCharacterSet.charSpacing = 1;
 
@@ -63,7 +63,7 @@ Text::Text(Disk *skyDisk) {
 	}
 
 	if (SkyEngine::isCDVersion()) {
-		_preAfterTableArea = _skyDisk->loadFile(60522, NULL);
+		_preAfterTableArea = _skyDisk->loadFile(60522);
 	} else
 		_preAfterTableArea = NULL;
 }
@@ -267,7 +267,7 @@ void Text::getText(uint32 textNr) { //load text #"textNr" into textBuffer
 		debug(5, "Loading Text item(s) for Section %d", (sectionNo>>2));
 		
 		uint32 fileNo = sectionNo + ((SkyEngine::_systemVars.language * NO_OF_TEXT_SECTIONS) + 60600);
-		SkyEngine::_itemList[FIRST_TEXT_SEC + sectionNo] = (void **)_skyDisk->loadFile((uint16)fileNo, NULL);
+		SkyEngine::_itemList[FIRST_TEXT_SEC + sectionNo] = (void **)_skyDisk->loadFile((uint16)fileNo);
 	}
 	_textItemPtr = (uint8 *)SkyEngine::_itemList[FIRST_TEXT_SEC + sectionNo];
 

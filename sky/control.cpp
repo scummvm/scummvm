@@ -246,19 +246,19 @@ void Control::initPanel(void) {
 	uint16 spdY = (SkyEngine::_systemVars.gameSpeed - 2) / SPEED_MULTIPLY;
 	spdY += MPNL_Y + 83; // speed slider's initial position
 
-	_sprites.controlPanel	= _skyDisk->loadFile(60500, NULL);
-	_sprites.button			= _skyDisk->loadFile(60501, NULL);
-	_sprites.buttonDown		= _skyDisk->loadFile(60502, NULL);
-	_sprites.savePanel		= _skyDisk->loadFile(60503, NULL);
-	_sprites.yesNo			= _skyDisk->loadFile(60504, NULL);
-	_sprites.slide			= _skyDisk->loadFile(60505, NULL);
-	_sprites.slode			= _skyDisk->loadFile(60506, NULL);
-	_sprites.slode2			= _skyDisk->loadFile(60507, NULL);
-	_sprites.slide2			= _skyDisk->loadFile(60508, NULL);
+	_sprites.controlPanel	= _skyDisk->loadFile(60500);
+	_sprites.button			= _skyDisk->loadFile(60501);
+	_sprites.buttonDown		= _skyDisk->loadFile(60502);
+	_sprites.savePanel		= _skyDisk->loadFile(60503);
+	_sprites.yesNo			= _skyDisk->loadFile(60504);
+	_sprites.slide			= _skyDisk->loadFile(60505);
+	_sprites.slode			= _skyDisk->loadFile(60506);
+	_sprites.slode2			= _skyDisk->loadFile(60507);
+	_sprites.slide2			= _skyDisk->loadFile(60508);
 	if (SkyEngine::_systemVars.gameVersion < 368) 
 		_sprites.musicBodge = NULL;
 	else
-		_sprites.musicBodge = _skyDisk->loadFile(60509, NULL);
+		_sprites.musicBodge = _skyDisk->loadFile(60509);
 
 	//Main control panel:                                            X    Y Text       OnClick
 	_controlPanel     = createResource(_sprites.controlPanel, 1, 0,  0,   0,  0,      DO_NOTHING, MAINPANEL);
@@ -1538,7 +1538,7 @@ uint16 Control::restoreGameFromFile(bool autoSave) {
 	*(uint32 *)saveData = TO_LE_32(infSize);
 
 	if (inf->read(saveData+4, infSize-4) != infSize-4) {
-		displayMessage("Can't read from file '%s'", fName);
+		displayMessage(NULL, "Can't read from file '%s'", fName);
 		free(saveData);
 		delete inf;
 		return RESTORE_FAILED;

@@ -788,7 +788,7 @@ void Logic::stopAndWait() {
 
 void Logic::checkModuleLoaded(uint16 moduleNo) {
 	if (!_moduleList[moduleNo])
-		_moduleList[moduleNo] = (uint16 *)_skyDisk->loadFile((uint16)moduleNo + F_MODULE_0, NULL);
+		_moduleList[moduleNo] = (uint16 *)_skyDisk->loadFile((uint16)moduleNo + F_MODULE_0);
 }
 
 void Logic::push(uint32 a) {
@@ -1191,7 +1191,7 @@ script:
 	uint16 *scriptData = _moduleList[moduleNo]; // get module address
 
 	if (!scriptData) { // The module has not been loaded
-		scriptData = (uint16 *)_skyDisk->loadFile(moduleNo + F_MODULE_0, NULL);
+		scriptData = (uint16 *)_skyDisk->loadFile(moduleNo + F_MODULE_0);
 		_moduleList[moduleNo] = scriptData; // module has been loaded
 	}
 

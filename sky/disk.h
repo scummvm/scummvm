@@ -44,7 +44,7 @@ public:
 	Disk(const Common::String &gameDataPath);
 	~Disk(void);
 
-	uint8 *loadFile(uint16 fileNr, uint8 *dest);
+	uint8 *loadFile(uint16 fileNr);
 	bool fileExists(uint16 fileNr);
 
 	void prefetchFile(uint16 fileNr);
@@ -71,13 +71,12 @@ protected:
 	void dumpFile(uint16 fileNr);
 
 	uint32 _dinnerTableEntries;
-
-	uint8 *_dinnerTableArea, *_fixedDest, *_fileDest, *_compDest;
-	uint32 _fileFlags, _fileOffset, _fileSize, _decompSize, _compFile;
-	uint16 _buildList[MAX_FILES_IN_LIST];
-	uint32 _loadedFilesList[MAX_FILES_IN_LIST];
+	uint8 *_dinnerTableArea;
 	File *_dataDiskHandle;
 	File *_dnrHandle;
+
+	uint16 _buildList[MAX_FILES_IN_LIST];
+	uint32 _loadedFilesList[MAX_FILES_IN_LIST];
 };
 
 } // End of namespace Sky

@@ -94,10 +94,10 @@ Mouse::Mouse(OSystem *system, Disk *skyDisk) {
 	_mouseX = GAME_SCREEN_WIDTH / 2;
 	_mouseY = GAME_SCREEN_HEIGHT / 2;
 	
-	_miceData = _skyDisk->loadFile(MICE_FILE, NULL);
+	_miceData = _skyDisk->loadFile(MICE_FILE);
 
 	//load in the object mouse file
-	_objectMouseData = _skyDisk->loadFile(MICE_FILE + 1, NULL);
+	_objectMouseData = _skyDisk->loadFile(MICE_FILE + 1);
 }
 
 Mouse::~Mouse( ){
@@ -106,7 +106,8 @@ Mouse::~Mouse( ){
 }
 
 void Mouse::replaceMouseCursors(uint16 fileNo) {
-	_skyDisk->loadFile(fileNo, _objectMouseData);
+	free(_objectMouseData);
+	_objectMouseData = _skyDisk->loadFile(fileNo);
 }
 
 bool Mouse::fnAddHuman(void) {
@@ -188,8 +189,10 @@ void Mouse::spriteMouse(uint16 frameNum, uint8 mouseX, uint8 mouseY) {
 	uint16 mouseHeight = ((struct dataFileHeader *)_miceData)->s_height;
 
 	_system->setMouseCursor(newCursor, mouseWidth, mouseHeight, mouseX, mouseY, 0);
-	if (frameNum == MOUSE_BLANK) _system->showMouse(false);
-	else _system->showMouse(true);
+	if (frameNum == MOUSE_BLANK)
+		_system->showMouse(false);
+	else
+		_system->showMouse(true);
 }
 
 void Mouse::mouseEngine(uint16 mouseX, uint16 mouseY) {

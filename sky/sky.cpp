@@ -247,8 +247,10 @@ void SkyEngine::go() {
 		if (!_skyLogic->checkProtection()) { // don't let copy prot. screen flash up
 			_skyScreen->recreate();
 			_skyScreen->spriteEngine();
-			if (_debugger->showGrid())
+			if (_debugger->showGrid()) {
 				_skyScreen->showGrid(_skyLogic->_skyGrid->giveGrid(Logic::_scriptVariables[SCREEN]));
+				_skyScreen->forceRefresh();
+			}
 			_skyScreen->flip();
 		}
 	}
@@ -394,24 +396,24 @@ void SkyEngine::loadBase0(void) {
 void SkyEngine::loadFixedItems(void) {
 
 	if (!isDemo())
-		_itemList[36] = (void **)_skyDisk->loadFile(36, NULL);
+		_itemList[36] = (void **)_skyDisk->loadFile(36);
 
-	_itemList[49] = (void **)_skyDisk->loadFile(49, NULL);
-	_itemList[50] = (void **)_skyDisk->loadFile(50, NULL);
-	_itemList[73] = (void **)_skyDisk->loadFile(73, NULL);
-	_itemList[262] = (void **)_skyDisk->loadFile(262, NULL);
+	_itemList[49] = (void **)_skyDisk->loadFile(49);
+	_itemList[50] = (void **)_skyDisk->loadFile(50);
+	_itemList[73] = (void **)_skyDisk->loadFile(73);
+	_itemList[262] = (void **)_skyDisk->loadFile(262);
 
 	if (isDemo()) 
 		return;
 	
-	_itemList[263] = (void **)_skyDisk->loadFile(263, NULL);
-	_itemList[264] = (void **)_skyDisk->loadFile(264, NULL);
-	_itemList[265] = (void **)_skyDisk->loadFile(265, NULL);
-	_itemList[266] = (void **)_skyDisk->loadFile(266, NULL);
-	_itemList[267] = (void **)_skyDisk->loadFile(267, NULL);
-	_itemList[269] = (void **)_skyDisk->loadFile(269, NULL);
-	_itemList[271] = (void **)_skyDisk->loadFile(271, NULL);
-	_itemList[272] = (void **)_skyDisk->loadFile(272, NULL);
+	_itemList[263] = (void **)_skyDisk->loadFile(263);
+	_itemList[264] = (void **)_skyDisk->loadFile(264);
+	_itemList[265] = (void **)_skyDisk->loadFile(265);
+	_itemList[266] = (void **)_skyDisk->loadFile(266);
+	_itemList[267] = (void **)_skyDisk->loadFile(267);
+	_itemList[269] = (void **)_skyDisk->loadFile(269);
+	_itemList[271] = (void **)_skyDisk->loadFile(271);
+	_itemList[272] = (void **)_skyDisk->loadFile(272);
 		
 }
 

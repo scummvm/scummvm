@@ -37,12 +37,8 @@ public:
 
 	// grid.asm routines
 	void loadGrids(void);
-	bool getGridValues(Compact *cpt, uint32 *resBitNum, uint32 *resWidth);
-	bool getGridValues(uint32 x, uint32 y, uint32 width, Compact *cpt, uint32 *resBitNum, uint32 *resWidth);
 	void removeObjectFromWalk(Compact *cpt);
-	void removeObjectFromWalk(uint32 bitNum, uint32 width);
 	void objectToWalk(Compact *cpt);
-	void objectToWalk(uint32 bitNum, uint32 width);
 
 	// function.asm
 	// note that this routine does the same as objectToWalk, it just doesn't get
@@ -50,12 +46,16 @@ public:
 	void plotGrid(uint32 x, uint32 y, uint32 width, Compact *cpt);
 	// same here, it's basically the same as removeObjectFromWalk
 	void removeGrid(uint32 x, uint32 y, uint32 width, Compact *cpt);
-	// note that this function actually returns the byte after the end of the requested grid
 	uint8 *giveGrid(uint32 pScreen);
 
 private:
+	void objectToWalk(uint8 gridIdx, uint32 bitNum, uint32 width);
+	void removeObjectFromWalk(uint8 gridIdx, uint32 bitNum, uint32 width);
+	bool getGridValues(Compact *cpt, uint8 *resGrid, uint32 *resBitNum, uint32 *resWidth);
+	bool getGridValues(uint32 x, uint32 y, uint32 width, Compact *cpt, uint8 *resGrid, uint32 *resBitNum, uint32 *resWidth);
+
 	static int8 _gridConvertTable[];
-	uint8 *_gameGrids;
+	uint8 *_gameGrids[TOT_NO_GRIDS];
 	Disk *_skyDisk;
 };
 
