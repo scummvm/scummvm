@@ -398,14 +398,14 @@ void OptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data
 #pragma mark -
 
 AboutDialog::AboutDialog(NewGui *gui)
-	: Dialog (gui, 30, 10, 260, 134)
+	: Dialog (gui, 30, 20, 260, 124)
 {
-	addButton(110, 110, 40, 16, CUSTOM_STRING(23), kCloseCmd, 'C');	// Close dialog - FIXME
-	new StaticTextWidget(this, 10, 17, 240, 16, "Build " SCUMMVM_VERSION " (" SCUMMVM_CVS ")", kTextAlignCenter);
-	new StaticTextWidget(this, 10, 37, 240, 16, "ScummVM http://scummvm.sourceforge.net", kTextAlignCenter);
-	new StaticTextWidget(this, 10, 67, 240, 16, "All games (c) LucasArts", kTextAlignCenter);
-	new StaticTextWidget(this, 10, 84, 240, 16, "Except", kTextAlignCenter);
-	new StaticTextWidget(this, 10, 97, 240, 16, "Simon the Sorcerer (c) Adventuresoft", kTextAlignCenter);
+	addButton(110, 100, 40, 16, CUSTOM_STRING(23), kCloseCmd, 'C');	// Close dialog - FIXME
+	new StaticTextWidget(this, 10, 10, 240, 16, "Build " SCUMMVM_VERSION " (" SCUMMVM_CVS ")", kTextAlignCenter);
+	new StaticTextWidget(this, 10, 30, 240, 16, "ScummVM http://scummvm.sourceforge.net", kTextAlignCenter);
+	new StaticTextWidget(this, 10, 50, 240, 16, "All games (c) LucasArts", kTextAlignCenter);
+	new StaticTextWidget(this, 10, 64, 240, 16, "Except", kTextAlignCenter);
+	new StaticTextWidget(this, 10, 78, 240, 16, "Simon the Sorcerer (c) Adventuresoft", kTextAlignCenter);
 }
 
 PauseDialog::PauseDialog(NewGui *gui)
