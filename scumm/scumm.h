@@ -254,7 +254,7 @@ enum MouseButtonStatus {
 	msClicked = 2
 };
 
-struct langIndexNode {
+struct LangIndexNode {
 	char tag[9];
 	int32 offset;
 };
@@ -1064,7 +1064,7 @@ public:
 protected:
 	bool _existLanguageFile;
 	char *_languageBuffer;
-	struct langIndexNode *_languageIndex;
+	LangIndexNode *_languageIndex;
 	int _languageStrCount;
 	byte _transText[500];
 

@@ -745,8 +745,8 @@ void Scumm::initCharset(int charsetno) {
 }
 
 int indexCompare(const void *p1, const void *p2) {
-	const struct langIndexNode *i1 = (const struct langIndexNode *) p1;
-	const struct langIndexNode *i2 = (const struct langIndexNode *) p2;
+	const LangIndexNode *i1 = (const LangIndexNode *) p1;
+	const LangIndexNode *i2 = (const LangIndexNode *) p2;
 
 	return strcmp(i1->tag, i2->tag);
 }
@@ -797,23 +797,32 @@ void Scumm::loadLanguageBundle() {
 		// instead, but the extra overhead in the node structure would
 		// easily have doubled the memory consumption of the index.
 
-		_languageIndex = (struct langIndexNode *) malloc(_languageStrCount * sizeof(struct langIndexNode));
+		_languageIndex = (LangIndexNode *)calloc(_languageStrCount, sizeof(LangIndexNode));
 
 		ptr = _languageBuffer;
 
 		for (i = 0; i < _languageStrCount; i++) {
 			int j;
 
-			for (j = 0; j < 8 && !isspace(ptr[j]); j++)
-				_languageIndex[i].tag[j] = toupper(ptr[j]);
+			// First 8 chars in the line give the string ID / 'tag'
+			for (j = 0; j < 8 && !isspace(*ptr); j++, ptr++)
+				_languageIndex[i].tag[j] = toupper(*ptr);
 			_languageIndex[i].tag[j] = 0;
-			ptr += (j + 1);
+
+			// After that follows a single space which we skip
+			assert(isspace(*ptr));
+			ptr++;
+			
+			// Then comes the translated string: we record an offset to that.
 			_languageIndex[i].offset = ptr - _languageBuffer;
+
+//skip:
+			// Skip over newlines (and turn them into null bytes)
 			ptr = strpbrk(ptr, "\n\r");
 			if (ptr == NULL)
 				break;
 			while (*ptr == '\n' || *ptr == '\r')
-				ptr++;
+				*ptr++ = 0;
 		}
 
 		// Conceptually, it may be more elegant to construct the
@@ -821,8 +830,7 @@ void Scumm::loadLanguageBundle() {
 		// start. However, this is less error-prone and likely to be
 		// much more optimized than anything I might implement.
 
-		qsort(_languageIndex, _languageStrCount, sizeof(struct langIndexNode), indexCompare);
-		free(_languageBuffer);
+		qsort(_languageIndex, _languageStrCount, sizeof(LangIndexNode), indexCompare);
 	}
 	
 	_existLanguageFile = true;
@@ -833,8 +841,8 @@ void Scumm::translateText(const byte *text, byte *trans_buff) {
 	
 	if ((text[0] == '/') && _existLanguageFile) {
 		if (_gameId == GID_CMI) {
-			struct langIndexNode target;
-			struct langIndexNode *found = NULL;
+			LangIndexNode target;
+			LangIndexNode *found = NULL;
 	
 			// copy name from text /..../
 			for (l = 0; (l < 8) && (text[l + 1] != '/'); l++)
@@ -849,41 +857,21 @@ void Scumm::translateText(const byte *text, byte *trans_buff) {
 			// we can't find translations for these.
 	
 			if (strcmp(target.tag, "PU_M001") != 0 && strcmp(target.tag, "PU_M002") != 0)
-				found = (struct langIndexNode *)bsearch(&target, _languageIndex, _languageStrCount, sizeof(struct langIndexNode), indexCompare);
+				found = (LangIndexNode *)bsearch(&target, _languageIndex, _languageStrCount, sizeof(LangIndexNode), indexCompare);
 			if (found != NULL) {
-				File file;
-	
-				file.open("language.tab", getGameDataPath());
-				if (file.isOpen()) {
-					byte *ptr = trans_buff;
-					byte c;
-	
-					file.seek(found->offset, SEEK_SET);
-					for (;;) {
-						c = file.readByte();
-						if (c == 10 || c == 13) {
-							*ptr = 0;
-							break;
-						} else
-							*ptr++ = c;
-					}
-					file.close();
-					return;
-				} else {
-					// Some evil person removed the language file?
-					_existLanguageFile = false;
-				}
+				strcpy((char *)trans_buff, _languageBuffer + found->offset);
+				return;
 			}
 		} else if (_gameId == GID_DIG) {
 			// FIXME: This code really could stand a rewrite
 			// It's rather inefficient and if a string isn't found it'll read past the
 			// end of the _languageBuffer.
-			char name[20], tmp[500], tmp2[20], num_s[20], number[4], enc;
+			char name[12+1], tmp[500], tmp2[20], num_s[20], number[4], enc;
 			int32 num, j, k, r, pos = 0;
 			char *buf = _languageBuffer;
 	
 			// copy name from text /..../
-			for (l = 0; (l < 20) && (text[l + 1] != '.'); l++) {
+			for (l = 0; (l < 12) && (text[l + 1] != '.'); l++) {
 				name[l] = text[l + 1];
 			}
 			name[l] = 0;
