@@ -19,8 +19,8 @@
  * $Header$
  *
  */
-#ifndef __ANIM_H
-#define __ANIM_H
+#ifndef GOB_ANIM_H
+#define GOB_ANIM_H
 
 namespace Gob {
 

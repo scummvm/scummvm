@@ -19,8 +19,8 @@
  * $Header$
  *
  */
-#ifndef _GLOBAL_H
-#define _GLOBAL_H
+#ifndef GOB_GLOBAL_H
+#define GOB_GLOBAL_H
 
 #include "gob/dataio.h"
 #include "gob/video.h"

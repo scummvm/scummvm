@@ -19,8 +19,8 @@
  * $Header$
  *
  */
-#ifndef __MY_DEBUG_H
-#define __MY_DEBUG_H
+#ifndef GOB_DEBUG_H
+#define GOB_DEBUG_H
 
 #define LOG_NAME	"log.txt"
 

@@ -19,8 +19,8 @@
  * $Header$
  *
  */
-#ifndef __GAME_H
-#define __GAME_H
+#ifndef GOB_GAME_H
+#define GOB_GAME_H
 
 #include "gob/sound.h"
 

@@ -19,8 +19,8 @@
  * $Header$
  *
  */
-#ifndef __DRAW_H
-#define __DRAW_H
+#ifndef GOB_DRAW_H
+#define GOB_DRAW_H
 
 #include "gob/video.h"
 

@@ -19,8 +19,8 @@
  * $Header$
  *
  */
-#ifndef __DATAIO_H
-#define __DATAIO_H
+#ifndef GOB_DATAIO_H
+#define GOB_DATAIO_H
 
 #include "common/file.h"
 #include <sys/stat.h>

@@ -19,8 +19,8 @@
  * $Header$
  *
  */
-#ifndef DRIVER_VGA
-#define DRIVER_VGA
+#ifndef GOB_DRIVER_VGA_H
+#define GOB_DRIVER_VGA_H
 
 #include "gob/video.h"
 

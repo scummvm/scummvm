@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef __Gob_H
-#define __Gob_H
+#ifndef GOB_GOB_H
+#define GOB_GOB_H
 
 #include "common/stdafx.h"
 #include "common/system.h"
