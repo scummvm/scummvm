@@ -1112,10 +1112,7 @@ void ScummEngine_v6he::o6_soundOps() {
 	int arg = pop();
 	switch (subOp) {
 	case 0xde:
-		if (_heversion == 60)
-			_imuse->set_music_volume(arg);
-		else
-			_mixer->setChannelVolume(_sound->_musicChannelHandle, arg);
+		_imuse->set_music_volume(arg);
 		break;
 	case 0xe0:
 		// Fatty Bear's Birthday surprise uses this when playing the
