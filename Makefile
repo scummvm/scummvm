@@ -83,6 +83,25 @@ deb:
 	debian/prepare
 	fakeroot debian/rules binary
 
+#######################################################################
+# Tools directory
+#######################################################################
+
+TOOLS := tools/convbdf$(EXEEXT) tools/md5table$(EXEEXT)
+
+tools: $(TOOLS)
+
+tools/convbdf$(EXEEXT): tools/convbdf.o
+	$(CXX) -o $@ $<
+
+tools/md5table$(EXEEXT): tools/md5table.o
+	$(CXX) -o $@ $<
+
+credits:
+	./credits.pl --text > AUTHORS
+	./credits.pl --html > ../web/credits.inc
+	./credits.pl --cpp > gui/credits.h
+	./credits.pl --xml > ../docs/docbook/credits.xml
 
 #######################################################################
 # Unit/regression tests                                               #
@@ -153,4 +172,4 @@ win32dist: scummvm$(EXEEXT)
 	u2d $(WIN32PATH)/*.txt
 
 
-.PHONY: deb bundle test osxsnap win32dist dist install uninstall
+.PHONY: deb bundle test osxsnap win32dist dist install uninstall credits

@@ -5,7 +5,7 @@
 ######################################################################
 # The defaul build target: just build the scummvm executable
 ######################################################################
-all: $(EXECUTABLE) plugins
+all: tools $(EXECUTABLE) plugins
 
 
 ######################################################################
@@ -122,7 +122,7 @@ distclean: clean
 	$(RM) build.rules config.h config.mak config.log
 
 clean:
-	$(RM) $(OBJS) $(EXECUTABLE)
+	$(RM) $(OBJS) $(EXECUTABLE) $(TOOLS)
 
 .PHONY: all clean dist distclean plugins
 
