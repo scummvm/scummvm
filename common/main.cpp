@@ -234,7 +234,7 @@ int main(int argc, char *argv[]) {
 
 #ifndef __PALM_OS__
 void *operator new(size_t size) {
-	return calloc(size, 1);
+	return memset(malloc(size), 0xE7, size);
 }
 
 void operator delete(void *ptr) {
