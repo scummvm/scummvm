@@ -1289,7 +1289,7 @@ int16 Talk::selectSentence() {
 	// Function TALK_BOB (lines 577-739) in talk.c
 	int selectedSentence = 0;
 
-	int scrollX = 0; 	// XXX: global variable
+	int scrollX = _vm->display()->horizontalScroll();
 	int startOption = 1;
 	int optionLines = 0;
 	char optionText[5][MAX_STRING_SIZE];

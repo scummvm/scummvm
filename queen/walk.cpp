@@ -540,9 +540,11 @@ bool Walk::calcPath(uint16 oldArea, uint16 newArea) {
 			area = _areaList[_areaListCount];	
 		} else {
 			++_areaListCount;
+			assert(_areaListCount < MAX_WALK_DATA);
 			_areaList[_areaListCount] = area;
 			if(!isAreaStruck(area)) {
 				++_areaStrikeCount;
+				assert(_areaStrikeCount < MAX_WALK_DATA);
 				_areaStrike[_areaStrikeCount] = area;
 			}
 		}		
@@ -567,6 +569,7 @@ void Walk::incWalkData(int16 px, int16 py, int16 x, int16 y, uint16 areaNum) {
 	debug(9, "Walk::incWalkData(%d, %d, %d)", (x - px), (y - py), areaNum);
 	if (px != x || py != y) {
 		++_walkDataCount;
+		assert(_walkDataCount < MAX_WALK_DATA);
 		WalkData *pwd = &_walkData[_walkDataCount];
 		pwd->dx = x - px;
 		pwd->dy = y - py;

@@ -143,6 +143,7 @@ void Command::executeCurrentAction() {
 	uint16 i;
 	for (i = 1; i <= _numCmdList; ++i, ++cmdList) {
 		if (cmdList->match(_state.selAction, _state.subject[0], _state.subject[1])) {
+			assert(comMax < MAX_MATCHING_CMDS);
 			matchingCmds[comMax] = i;
 			++comMax;
 		}
