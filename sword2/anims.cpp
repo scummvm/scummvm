@@ -298,7 +298,7 @@ int32 Logic::fnSetFrame(int32 *params) {
 int32 Logic::fnNoSprite(int32 *params) {
 	// params:	0 pointer to object's graphic structure
 
- 	Object_graphic	*ob_graphic = (Object_graphic *) _vm->_memory->intToPtr(params[0]);
+ 	Object_graphic *ob_graphic = (Object_graphic *) _vm->_memory->intToPtr(params[0]);
 
 	// remove previous status (but don't affect the shading upper-word)
 	ob_graphic->type &= 0xffff0000;
@@ -311,7 +311,7 @@ int32 Logic::fnNoSprite(int32 *params) {
 int32 Logic::fnBackPar0Sprite(int32 *params) {
 	// params:	0 pointer to object's graphic structure
 
- 	Object_graphic	*ob_graphic = (Object_graphic *) _vm->_memory->intToPtr(params[0]);
+ 	Object_graphic *ob_graphic = (Object_graphic *) _vm->_memory->intToPtr(params[0]);
 
 	// remove previous status (but don't affect the shading upper-word)
 	ob_graphic->type &= 0xffff0000;
@@ -324,7 +324,7 @@ int32 Logic::fnBackPar0Sprite(int32 *params) {
 int32 Logic::fnBackPar1Sprite(int32 *params) {
 	// params:	0 pointer to object's graphic structure
 
- 	Object_graphic	*ob_graphic = (Object_graphic *) _vm->_memory->intToPtr(params[0]);
+ 	Object_graphic *ob_graphic = (Object_graphic *) _vm->_memory->intToPtr(params[0]);
 
 	// remove previous status (but don't affect the shading upper-word)
 	ob_graphic->type &= 0xffff0000;
@@ -337,7 +337,7 @@ int32 Logic::fnBackPar1Sprite(int32 *params) {
 int32 Logic::fnBackSprite(int32 *params) {
 	// params:	0 pointer to object's graphic structure
 
- 	Object_graphic	*ob_graphic = (Object_graphic *) _vm->_memory->intToPtr(params[0]);
+ 	Object_graphic *ob_graphic = (Object_graphic *) _vm->_memory->intToPtr(params[0]);
 
 	// remove previous status (but don't affect the shading upper-word)
 	ob_graphic->type &= 0xffff0000;
@@ -350,7 +350,7 @@ int32 Logic::fnBackSprite(int32 *params) {
 int32 Logic::fnSortSprite(int32 *params) {
 	// params:	0 pointer to object's graphic structure
 
- 	Object_graphic	*ob_graphic = (Object_graphic *) _vm->_memory->intToPtr(params[0]);
+ 	Object_graphic *ob_graphic = (Object_graphic *) _vm->_memory->intToPtr(params[0]);
 
 	// remove previous status (but don't affect the shading upper-word)
 	ob_graphic->type &= 0xffff0000;
@@ -363,7 +363,7 @@ int32 Logic::fnSortSprite(int32 *params) {
 int32 Logic::fnForeSprite(int32 *params) {
 	// params:	0 pointer to object's graphic structure
 
- 	Object_graphic	*ob_graphic = (Object_graphic *) _vm->_memory->intToPtr(params[0]);
+ 	Object_graphic *ob_graphic = (Object_graphic *) _vm->_memory->intToPtr(params[0]);
 
 	// remove previous status (but don't affect the shading upper-word)
 	ob_graphic->type &= 0xffff0000;
@@ -376,7 +376,7 @@ int32 Logic::fnForeSprite(int32 *params) {
 int32 Logic::fnForePar0Sprite(int32 *params) {
 	// params:	0 pointer to object's graphic structure
 
- 	Object_graphic	*ob_graphic = (Object_graphic *) _vm->_memory->intToPtr(params[0]);
+ 	Object_graphic *ob_graphic = (Object_graphic *) _vm->_memory->intToPtr(params[0]);
 
 	// remove previous status (but don't affect the shading upper-word)
 	ob_graphic->type &= 0xffff0000;
@@ -389,7 +389,7 @@ int32 Logic::fnForePar0Sprite(int32 *params) {
 int32 Logic::fnForePar1Sprite(int32 *params) {
 	// params:	0 pointer to object's graphic structure
 
-	Object_graphic	*ob_graphic = (Object_graphic *) _vm->_memory->intToPtr(params[0]);
+	Object_graphic *ob_graphic = (Object_graphic *) _vm->_memory->intToPtr(params[0]);
 
 	// remove previous status (but don't affect the shading upper-word)
 	ob_graphic->type &= 0xffff0000;
@@ -402,7 +402,7 @@ int32 Logic::fnForePar1Sprite(int32 *params) {
 int32 Logic::fnShadedSprite(int32 *params) {
 	// params:	0 pointer to object's graphic structure
 
-	Object_graphic	*ob_graphic = (Object_graphic *) _vm->_memory->intToPtr(params[0]);
+	Object_graphic *ob_graphic = (Object_graphic *) _vm->_memory->intToPtr(params[0]);
 
 	// remove previous status (but don't affect the shading upper-word)
 	ob_graphic->type &= 0x0000ffff;
@@ -418,7 +418,7 @@ int32 Logic::fnShadedSprite(int32 *params) {
 int32 Logic::fnUnshadedSprite(int32 *params) {
 	// params:	0 pointer to object's graphic structure
 
-	Object_graphic	*ob_graphic = (Object_graphic *) _vm->_memory->intToPtr(params[0]);
+	Object_graphic *ob_graphic = (Object_graphic *) _vm->_memory->intToPtr(params[0]);
 
 	// remove previous status (but don't affect the shading upper-word)
 	ob_graphic->type &= 0x0000ffff;

@@ -384,8 +384,8 @@ uint8 *ResourceManager::openResource(uint32 res, bool dump) {
 	// returns ad of resource. Loads if not in memory
 	// retains a count
 	// resource can be aged out of memory if count = 0
-	// the resource is locked while count != 0 i.e. until a closeResource is
-	// called
+	// the resource is locked while count != 0 i.e. until a closeResource
+	// is called
 
 	File	file;
 	uint16	parent_res_file;

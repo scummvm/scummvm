@@ -600,7 +600,7 @@ int Logic::runScript(char *scriptData, char *objectData, uint32 *offset) {
 			break;
 		case OP_GTTHANE:
 			// '>='
-			debug(5, "%d > %d -> %d",
+			debug(5, "%d >= %d -> %d",
 				stack2[stackPointer2 - 2],
 				stack2[stackPointer2 - 1],
 				stack2[stackPointer2 - 2] >= stack2[stackPointer2 - 1]);
@@ -608,7 +608,7 @@ int Logic::runScript(char *scriptData, char *objectData, uint32 *offset) {
 			break;
 		case OP_LSTHANE:
 			// '<='
-			debug(5, "%d < %d -> %d",
+			debug(5, "%d <= %d -> %d",
 				stack2[stackPointer2 - 2],
 				stack2[stackPointer2 - 1],
 				stack2[stackPointer2 - 2] <= stack2[stackPointer2 - 1]);
