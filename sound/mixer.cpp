@@ -262,12 +262,10 @@ void SoundMixer::setMusicVolume(int volume) {
 	_musicVolume = volume;
 }
 
-#ifdef COMPRESSED_SOUND_FILE
 bool SoundMixer::Channel::soundFinished() {
 	warning("sound_finished should never be called on a non-MP3 mixer ");
 	return false;
 }
-#endif
 
 void SoundMixer::Channel::append(void * sound, uint32 size) {
 	error("append method should never be called on something else than a _STREAM mixer ");

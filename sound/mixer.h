@@ -52,9 +52,7 @@ private:
 		}
 		virtual void realDestroy() = 0;
 		virtual void append(void *sound, uint32 size);
-#ifdef COMPRESSED_SOUND_FILE
 		virtual bool soundFinished();
-#endif
 	};
 
 	class ChannelRaw : public Channel {

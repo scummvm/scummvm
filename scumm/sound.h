@@ -65,7 +65,6 @@ enum {
 	uint16 _mouthSyncTimes[52];
 	uint _curSoundPos;
 
-#ifdef COMPRESSED_SOUND_FILE
 	MP3OffsetTable *offset_table;	// SO3 MP3 compressed audio
 	int num_sound_effects;		// SO3 MP3 compressed audio
 	bool _vorbis_mode;	// true if using SOG, false if using SO3
@@ -122,17 +121,11 @@ enum {
 	};
 #endif
 
-#endif
-
 	Scumm * _scumm;
 
 public:
 
-#ifdef COMPRESSED_SOUND_FILE
-
 	int _current_cache;
-
-#endif
 
 	int _talkChannel;	/* Mixer channel actor is talking on */
 	int _cd_timer_value;
@@ -184,13 +177,11 @@ public:
 	void updateCD();
 
 protected:
-#ifdef COMPRESSED_SOUND_FILE
 	int getCachedTrack(int track);
 	int playMP3CDTrack(int track, int num_loops, int start, int delay);
 	int stopMP3CD();
 	int pollMP3CD();
 	int updateMP3CD();
-#endif
 };
 
 #endif

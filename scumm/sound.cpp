@@ -453,13 +453,11 @@ void Sound::processSfxQueues() {
 	}
 }
 
-#ifdef COMPRESSED_SOUND_FILE
 static int compar(const void *a, const void *b)
 {
 	return ((MP3OffsetTable *) a)->org_offset -
 		((MP3OffsetTable *) b)->org_offset;
 }
-#endif
 
 int Sound::startTalkSound(uint32 offset, uint32 b, int mode) {
 	int num = 0, i;
@@ -491,7 +489,7 @@ int Sound::startTalkSound(uint32 offset, uint32 b, int mode) {
 	if (b > 8) {
 		num = (b - 8) >> 1;
 	}
-#ifdef COMPRESSED_SOUND_FILE
+
 	if (offset_table != NULL) {
 		MP3OffsetTable *result = NULL, key;
 
@@ -510,9 +508,7 @@ int Sound::startTalkSound(uint32 offset, uint32 b, int mode) {
 		}
 		offset = result->new_offset;
 		size = result->compressed_size;
-	} else
-#endif
-	{
+	} else {
 		offset += 8;
 		size = -1;
 	}
@@ -738,11 +734,10 @@ int Sound::startSfxSound(File *file, int file_size) {
 	int rate, comp;
 	byte *data;
 
-#ifdef COMPRESSED_SOUND_FILE
 	if (file_size > 0) {
 		int alloc_size = file_size;
 #ifdef USE_MAD
-		if (! _vorbis_mode)
+		if (!_vorbis_mode)
 			alloc_size += MAD_BUFFER_GUARD;
 #endif
 		data = (byte *)calloc(alloc_size, 1);
@@ -757,7 +752,7 @@ int Sound::startSfxSound(File *file, int file_size) {
 		else
 			return playSfxSound_MP3(data, file_size);
 	}
-#endif
+
 	if (file->read(ident, 8) != 8)
 		goto invalid;
 
@@ -810,7 +805,6 @@ File * Sound::openSfxFile() {
 	/* Try opening the file <_exe_name>.sou first, eg tentacle.sou.
 	 * That way, you can keep .sou files for multiple games in the
 	 * same directory */
-#ifdef COMPRESSED_SOUND_FILE
 	offset_table = NULL;
 
 #ifdef USE_MAD
@@ -820,19 +814,19 @@ File * Sound::openSfxFile() {
 	}
 	if (file->isOpen())
 		_vorbis_mode = false;
-	else
-#endif
-#ifdef USE_VORBIS
-		{
-			sprintf(buf, "%s.sog", _scumm->_exe_name);
-			if (!file->open(buf, _scumm->getGameDataPath()))
-				file->open("monster.sog", _scumm->getGameDataPath());
-			if (file->isOpen())
-				_vorbis_mode = true;
-		}
 #endif
 
-	if (file->isOpen() == true) {
+#ifdef USE_VORBIS
+	if (!file->isOpen()) {
+		sprintf(buf, "%s.sog", _scumm->_exe_name);
+		if (!file->open(buf, _scumm->getGameDataPath()))
+			file->open("monster.sog", _scumm->getGameDataPath());
+		if (file->isOpen())
+			_vorbis_mode = true;
+	}
+#endif
+
+	if (file->isOpen()) {
 		/* Now load the 'offset' index in memory to be able to find the MP3 data
 
 		   The format of the .SO3 file is easy :
@@ -849,7 +843,6 @@ File * Sound::openSfxFile() {
 		 */
 		int size, compressed_offset;
 		MP3OffsetTable *cur;
-
 		compressed_offset = file->readUint32BE();
 		offset_table = (MP3OffsetTable *) malloc(compressed_offset);
 		num_sound_effects = compressed_offset / 16;
@@ -866,7 +859,7 @@ File * Sound::openSfxFile() {
 		}
 		return file;
 	}
-#endif
+
 	sprintf(buf, "%s.sou", _scumm->_exe_name);
 	if (!file->open(buf, _scumm->getGameDataPath())) {
 		file->open("monster.sou", _scumm->getGameDataPath());
@@ -1286,9 +1279,7 @@ void Sound::stopCDTimer()
 
 void Sound::playCDTrack(int track, int num_loops, int start, int delay)
 {
-#ifdef COMPRESSED_SOUND_FILE
 	if (playMP3CDTrack(track, num_loops, start, delay) == -1)
-#endif
 		_scumm->_system->play_cdrom(track, num_loops, start, delay);
 
 	// Start the timer after starting the track. Starting an MP3 track is
@@ -1301,30 +1292,23 @@ void Sound::playCDTrack(int track, int num_loops, int start, int delay)
 void Sound::stopCD()
 {
 	stopCDTimer();
-#ifdef COMPRESSED_SOUND_FILE
 	if (stopMP3CD() == -1)
-#endif
 		_scumm->_system->stop_cdrom();
 }
 
 int Sound::pollCD()
 {
-#ifdef COMPRESSED_SOUND_FILE
 	if (pollMP3CD())
 		return 1;
-#endif
+
 	return _scumm->_system->poll_cdrom();
 }
 
 void Sound::updateCD()
 {
-#ifdef COMPRESSED_SOUND_FILE
 	if (updateMP3CD() == -1)
-#endif
 		_scumm->_system->update_cdrom();
 }
-
-#ifdef COMPRESSED_SOUND_FILE
 
 int Sound::getCachedTrack(int track) {
 	int i;
@@ -1381,7 +1365,7 @@ int Sound::getCachedTrack(int track) {
 	}
 #endif
 
-	debug(1, "Track %d not available in compressed format", track);
+	debug(2, "Track %d not available in compressed format", track);
 	return -1;
 }
 
@@ -1649,7 +1633,5 @@ Sound::VorbisTrackInfo::~VorbisTrackInfo() {
 		delete _file;
 	}
 }
-
-#endif
 
 #endif

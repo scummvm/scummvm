@@ -325,9 +325,7 @@ void Scumm::scummInit()
 
 	getGraphicsPerformance();
 
-#ifdef COMPRESSED_SOUND_FILE
 	_sound->_current_cache = 0;
-#endif
 
 	_timer->installProcedure(&autosave, 5 * 60 * 1000);
 }
