@@ -20,7 +20,7 @@
 
 #ifndef DEBUG_H
 #define DEBUG_H
-
+#define USE_CONSOLE
 class Scumm;
 typedef bool (ScummDebugger::*DebugProc)();
 
