@@ -1284,7 +1284,11 @@ void Scumm::o5_loadRoom()
 	int room;
 
 	room = getVarOrDirectByte(0x80);
-	startScene(room, 0, 0);
+	
+	// FIXME - the following 'if' is needed for Zak256 and MonkeyVGA, but might
+	// cause regression in other games.
+	if (room != _currentRoom)
+		startScene(room, 0, 0);
 	_fullRedraw = 1;
 }
 
