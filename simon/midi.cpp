@@ -227,18 +227,20 @@ void MidiPlayer::playSMF (File *in, int song) {
 	_system->lock_mutex (_mutex);
 	clearConstructs();
 
-	// When computing the resource size, add
-	// 4 for our own End of Track on GMF resources.
-	uint32 size = in->size() - in->pos() + 4;
+	uint32 size = in->size() - in->pos();
 	if (size > 64000)
 		size = 64000;
-	_data = (byte *) calloc (size, 1);
+
+	// When allocating space, add 4 bytes in case
+	// this is a GMF and we have to tack on our own
+	// End of Track event.
+	_data = (byte *) calloc (size + 4, 1);
 	in->read (_data, size);
 
 	// For GMF files, we're going to have to use
 	// hardcoded size tables.
 	if (!memcmp (_data, "GMF\x1", 4) && size == 64000)
-		size = simon1_gmf_size [song] + 4; // Again, +4 for End of Track
+		size = simon1_gmf_size [song];
 
 	MidiParser *parser = MidiParser::createParser_SMF();
 	parser->property (MidiParser::mpMalformedPitchBends, 1);
@@ -250,10 +252,8 @@ void MidiPlayer::playSMF (File *in, int song) {
 		parser = 0;
 	}
 
-	_currentTrack = 255;
-	for (int i = ARRAYSIZE (_volumeTable); i; --i)
-		_volumeTable[i-1] = 127;
 	_paused = true;
+	_currentTrack = 255;
 	_parser = parser; // That plugs the power cord into the wall
 	_system->unlock_mutex (_mutex);
 }
@@ -354,10 +354,8 @@ void MidiPlayer::playXMIDI (File *in) {
 		parser = 0;
 	}
 
-	_currentTrack = 255;
-	for (int i = ARRAYSIZE (_volumeTable); i; --i)
-		_volumeTable[i-1] = 127;
 	_paused = true;
+	_currentTrack = 255;
 	_parser = parser; // That plugs the power cord into the wall
 	_system->unlock_mutex (_mutex);
 }
