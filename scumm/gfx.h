@@ -134,6 +134,7 @@ protected:
 
 	/* Bitmap decompressors */
 	bool decompressBitmap(byte *bgbak_ptr, byte *smap_ptr, int numLinesToProcess);
+	void decodeStripEGA(byte *dst, byte *src, int height);
 	void unkDecodeA(byte *dst, byte *src, int height);
 	void unkDecodeA_trans(byte *dst, byte *src, int height);
 	void unkDecodeB(byte *dst, byte *src, int height);

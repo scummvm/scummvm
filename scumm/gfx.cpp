@@ -529,12 +529,22 @@ void Scumm::initBGBuffers(int height) {
 	} else if (_features & GF_SMALL_HEADER) {
 		int off;
 		ptr = findResourceData(MKID('SMAP'), room);
-		off = READ_LE_UINT32(ptr);
 		gdi._numZBuffer = 0;
-		for (i = 0; off && (i < 4); i++) {
-			gdi._numZBuffer++;
-			ptr += off;
-			off = READ_LE_UINT16(ptr);
+		if (_gameId == GID_MONKEY_EGA) {
+			for (i = 0; i < 4; i++) {
+				off = READ_LE_UINT16(ptr);
+				if (off) {
+					gdi._numZBuffer++;
+					ptr += off;
+				}
+			}
+		} else {
+			off = READ_LE_UINT32(ptr);
+			for (i = 0; off && (i < 4); i++) {
+				gdi._numZBuffer++;
+				ptr += off;
+				off = READ_LE_UINT16(ptr);
+			}
 		}
 	} else if (_features & GF_AFTER_V8) {
 		// in V8 there is no RMIH and num z buffers is in RMHD
@@ -927,10 +937,15 @@ void Gdi::drawBitmap(byte *ptr, VirtScreen *vs, int x, int y, const int h,
 
 		_mask_ptr = _vm->getResourceAddress(rtBuffer, 9) + (y * _numStrips + x);
 
-		if (_vm->_features & GF_SMALL_HEADER)
-			useOrDecompress = decompressBitmap(bgbak_ptr, smap_ptr + READ_LE_UINT32(smap_ptr + stripnr * 4 + 4), h);
-		else
+		if (_vm->_features & GF_SMALL_HEADER) {
+			if (_vm->_gameId == GID_MONKEY_EGA) {
+				useOrDecompress = decompressBitmap(bgbak_ptr, smap_ptr + READ_LE_UINT16(smap_ptr + stripnr * 2 + 2), h);
+			} else {
+				useOrDecompress = decompressBitmap(bgbak_ptr, smap_ptr + READ_LE_UINT32(smap_ptr + stripnr * 4 + 4), h);
+			}
+		}	else {
 			useOrDecompress = decompressBitmap(bgbak_ptr, smap_ptr + READ_LE_UINT32(smap_ptr + stripnr * 4 + 8), h);
+		}
 
 		CHECK_HEAP;
 		if (vs->alloctwobuffers) {
@@ -1021,11 +1036,56 @@ next_iter:
 }
 
 
+void Gdi::decodeStripEGA(byte *dst, byte *src, int height) {
+	byte data, color, color2;
+	int run = 1;
+	byte *t_dst = dst;
+	int t_height = height;
+
+	for (int x = 0; x < 4; x++) {
+		height = t_height;
+		dst = t_dst + x * 2;
+		do {
+			if (run == 0) {
+				data = *src++;
+				if (data & 0x80) {
+					run = data & 0x3f;
+					if (data & 0x40) {
+						data = *src++;
+						color = _vm->_shadowPalette[data >> 4];
+						color2 = _vm->_shadowPalette[data & 0x0f];
+					} else {
+						color = 0xff;
+					}
+				} else {
+					run = data >> 4;
+					color = _vm->_shadowPalette[data & 0x0f];
+					color2 = color;
+				}
+				if (run == 0) {
+					run = *src++;
+				}
+			}
+			if (color != 0xff) {
+				*dst++ = color;
+				*(dst + 1) = color2;
+				dst += _vm->_realWidth;
+			}
+		} while (--height);
+		dst = t_dst;
+	}
+}
+
 bool Gdi::decompressBitmap(byte *bgbak_ptr, byte *smap_ptr, int numLinesToProcess) {
 	byte code = *smap_ptr++;
 	assert(numLinesToProcess);
 
-	if ((_vm->_features & GF_AMIGA) || (_vm->_features & GF_16COLOR))
+	if ((_vm->_gameId == GID_MONKEY_EGA) || (_vm->_gameId == GID_LOOM)) {
+		decodeStripEGA(bgbak_ptr, smap_ptr, numLinesToProcess);
+		return false;
+	}
+
+	if (_vm->_features & GF_AMIGA)
 		_palette_mod = 16;
 	else
 		_palette_mod = 0;
