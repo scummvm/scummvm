@@ -154,6 +154,7 @@ Actor::Actor(SagaEngine *vm) : _vm(vm) {
 		actor->actionDirection = ActorTable[i].actionDirection;
 		actor->frameNumber = 0;
 		actor->targetObject = ID_NOTHING;
+		actor->actorFlags = 0;
 
 		actor->location.x = ActorTable[i].x;
 		actor->location.y = ActorTable[i].y;
@@ -950,7 +951,7 @@ bool Actor::actorWalkTo(uint16 actorId, const ActorLocation &toLocation) {
 		_vm->_scene->setDoorState(2, 0);
 		_vm->_scene->setDoorState(3, 0xff);
 	}
-	if (actorId == 2002)
+	if (actorId == 0x2002)
 		debug("eah");
 	if (_vm->_scene->getMode() == SCENE_MODE_ISO) {
 		//todo: it
@@ -1045,39 +1046,39 @@ bool Actor::actorWalkTo(uint16 actorId, const ActorLocation &toLocation) {
 			}
 
 
-				pointBest = pointTo;
+			pointBest = pointTo;
+			actor->walkStepsCount = 0;
+			findActorPath(actor, pointFrom, pointTo);
+
+			if (extraStartNode) {
+				actor->walkStepIndex = 0;
+			} else {
+				actor->walkStepIndex = 2;
+			}
+
+			if (extraEndNode) {
+				actor->walkPath[actor->walkStepsCount - 2] = pointTo.x / (ACTOR_LMULT * 2);
+				actor->walkPath[actor->walkStepsCount - 1] = pointTo.y / ACTOR_LMULT;
+			}
+
+			pointBest.x = actor->walkPath[actor->walkStepsCount - 2] * 2;
+			pointBest.y = actor->walkPath[actor->walkStepsCount - 1];
+
+			pointFrom.x &= ~1;
+			delta.x = ABS(pointFrom.x - pointTo.x);
+			delta.y = ABS(pointFrom.y - pointTo.y);
+
+			bestDelta.x = ABS(pointBest.x - pointTo.x);
+			bestDelta.y = ABS(pointBest.y - pointTo.y);
+
+			if (delta.x + delta.y <= bestDelta.x + bestDelta.y) {
+				if (actor->flags & kFollower)
+					actor->actorFlags |= kActorNoFollow;
+			}
+
+			if (pointBest == pointFrom) {
 				actor->walkStepsCount = 0;
-				findActorPath(actor, pointFrom, pointTo);
-
-				if (extraStartNode) {
-					actor->walkStepIndex = 0;
-				} else {
-					actor->walkStepIndex = 2;
-				}
-
-				if (extraEndNode) {
-					actor->walkPath[actor->walkStepsCount - 2] = pointTo.x / (ACTOR_LMULT * 2);
-					actor->walkPath[actor->walkStepsCount - 1] = pointTo.y / ACTOR_LMULT;
-				}
-
-				pointBest.x = actor->walkPath[actor->walkStepsCount - 2] * 2;
-				pointBest.y = actor->walkPath[actor->walkStepsCount - 1];
-
-				pointFrom.x &= ~1;
-				delta.x = ABS(pointFrom.x - pointTo.x);
-				delta.y = ABS(pointFrom.y - pointTo.y);
-
-				bestDelta.x = ABS(pointBest.x - pointTo.x);
-				bestDelta.y = ABS(pointBest.y - pointTo.y);
-
-				if (delta.x + delta.y <= bestDelta.x + bestDelta.y) {
-					if (actor->flags & kFollower)
-						actor->actorFlags |= kActorNoFollow;
-				}
-
-				if (pointBest == pointFrom) {
-					actor->walkStepsCount = 0;
-				}			
+			}			
 		} else {
 			actor->walkPath[0] = pointTo.x / 2;
 			actor->walkPath[1] = pointTo.y;
@@ -1100,8 +1101,7 @@ bool Actor::actorWalkTo(uint16 actorId, const ActorLocation &toLocation) {
 		}
 
 	}
-	return false;
-
+	return true;
 }
 
 void Actor::actorSpeech(uint16 actorId, const char **strings, int stringsCount, uint16 sampleResourceId, int speechFlags) {
