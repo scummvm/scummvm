@@ -1052,6 +1052,9 @@ void Scumm_v8::o8_actorOps()
 		break;
 	case 0x75:		// SO_ACTOR_ALWAYS_ZCLIP ?
 		a->forceClip = pop();
+		// V8 uses 255 where we used to use 100
+		if (a->forceClip == 255)
+			a->forceClip = 100;
 		break;
 	case 0x76:		// SO_ACTOR_IGNORE_BOXES Make actor ignore boxes
 		a->ignoreBoxes = true;
