@@ -249,6 +249,7 @@ struct StringSlot {
 	int16 xpos;
 	int16 ypos;
 	int16 right;
+	int16 height;
 	byte color;
 	byte charset;
 	bool center;

@@ -1516,6 +1516,7 @@ void ScummEngine::scummInit() {
 			_string[i]._default.ypos = 5;
 		}
 		_string[i]._default.right = _screenWidth - 1;
+		_string[i]._default.height = 0;
 		_string[i]._default.color = 0xF;
 		_string[i]._default.center = 0;
 		_string[i]._default.charset = 0;

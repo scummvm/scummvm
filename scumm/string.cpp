@@ -234,7 +234,11 @@ void ScummEngine::CHARSET_1() {
 			if (_charset->_center) {
 				_charset->_nextLeft -= _charset->getStringWidth(0, buffer) / 2;
 			}
-			_charset->_nextTop += _charset->getFontHeight();
+			if (_string[0].height) {
+				_charset->_nextTop += _string[0].height;
+			} else {
+				_charset->_nextTop += _charset->getFontHeight();
+			}
 			if (_version > 3) {
 				// FIXME - is this really needed?
 				_charset->_disableOffsX = true;

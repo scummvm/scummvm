@@ -2641,9 +2641,10 @@ void ScummEngine_v5::decodeParseString() {
 			break;
 		case 3:		// SO_ERASE
 			{
-			int a = getVarOrDirectWord(PARAM_1);
-			int b = getVarOrDirectWord(PARAM_2);
-			warning("ScummEngine_v5::decodeParseString: Unhandled case 3: %d, %d", a, b);
+			int w = getVarOrDirectWord(PARAM_1);
+			int h = getVarOrDirectWord(PARAM_2);
+			// restoreCharsetBg(xpos, xpos + w, ypos, ypos + h)
+			error("ScummEngine_v5::decodeParseString: Unhandled case 3: %d, %d", w, h);
 			}
 			break;
 		case 4:		// SO_CENTER
@@ -2652,10 +2653,7 @@ void ScummEngine_v5::decodeParseString() {
 			break;
 		case 6:		// SO_LEFT
 			if (_version == 3) {
-				// FIXME: this value seems to be some kind of override
-				// for text spacing?!?
-				/* int a = */ getVarOrDirectWord(PARAM_1);
-				
+				_string[textSlot].height = getVarOrDirectWord(PARAM_1);
 			} else {
 				_string[textSlot].center = false;
 				_string[textSlot].overhead = false;
@@ -2715,6 +2713,7 @@ void ScummEngine_v5::decodeParseString() {
 			if (_version <= 3) {
 				_string[textSlot]._default.xpos = _string[textSlot].xpos;
 				_string[textSlot]._default.ypos = _string[textSlot].ypos;
+				_string[textSlot]._default.height = _string[textSlot].height;
 				_string[textSlot]._default.color = _string[textSlot].color;
 			}
 			return;
