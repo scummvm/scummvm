@@ -198,7 +198,6 @@ void Scumm::drawBomp(const BompDrawData &bd, bool mirror) {
 	byte *dst;
 	byte maskbit;
 	byte *mask = 0;
-	int mask_offset;
 	byte *charset_mask;
 	int clip_left, clip_right, clip_top, clip_bottom;
 	byte *scalingYPtr = bd.scalingYPtr;
@@ -232,15 +231,14 @@ void Scumm::drawBomp(const BompDrawData &bd, bool mirror) {
 	src = bd.dataptr;
 	dst = bd.out + bd.y * bd.outwidth + bd.x + clip_left;
 
-	mask_offset = _screenStartStrip + (bd.y * gdi._numStrips) + ((bd.x + clip_left) >> 3);
 	maskbit = revBitMask[(bd.x + clip_left) & 7];
 
 	// Always mask against the charset mask
-	charset_mask = getResourceAddress(rtBuffer, 9) + mask_offset;
+	charset_mask = getMaskBuffer(bd.x + clip_left, bd.y, 0);
 
 	// Also mask against any additionally imposed mask
 	if (bd.maskPtr) {
-		mask = bd.maskPtr + mask_offset;
+		mask = bd.maskPtr + (bd.y * gdi._numStrips) + ((bd.x + clip_left) >> 3);
 	}
 
 	// Setup vertical scaling

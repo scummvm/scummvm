@@ -868,17 +868,12 @@ protected:
 public:
 	void updateDirtyRect(int virt, int left, int right, int top, int bottom, int dirtybit);
 protected:
-	void setDirtyRange(int slot, int a, int height);
 	void drawDirtyScreenParts();
 	void updateDirtyScreen(int slot);
 
 public:
 	VirtScreen *findVirtScreen(int y);
-protected:
-	void setVirtscreenDirty(VirtScreen *vs, int left, int top, int right, int bottom);
-
-public:
-	bool isMaskActiveAt(int l, int t, int r, int b, byte *mem);
+	byte *getMaskBuffer(int x, int y, int z);
 
 protected:
 	void drawFlashlight();

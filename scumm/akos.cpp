@@ -702,7 +702,7 @@ byte AkosRenderer::codec1(int xmoveCur, int ymoveCur) {
 
 	v1.destptr = _outptr + v1.y * _outwidth + v1.x;
 
-	v1.mask_ptr = _vm->getResourceAddress(rtBuffer, 9) + v1.y * _numStrips + _vm->_screenStartStrip;
+	v1.mask_ptr = _vm->getMaskBuffer(0, v1.y, 0);
 	v1.imgbufoffs = _vm->gdi._imgBufOffs[_zbuf];
 
 	codec1_genericDecode();
@@ -777,7 +777,7 @@ byte AkosRenderer::codec5(int xmoveCur, int ymoveCur) {
 	bdd.y = _actorY + ymoveCur;
 
 	if (_zbuf != 0) {
-		bdd.maskPtr = _vm->getResourceAddress(rtBuffer, 9) + _vm->gdi._imgBufOffs[_zbuf];
+		bdd.maskPtr = _vm->getMaskBuffer(0, 0, _zbuf);
 		_vm->drawBomp(bdd, !_mirror);
 	} else {
 		_vm->drawBomp(bdd, !_mirror);
@@ -1009,8 +1009,7 @@ byte AkosRenderer::codec16(int xmoveCur, int ymoveCur) {
 	if (_zbuf == 0) {
 		akos16Decompress(dest, pitch, _srcptr, cur_x, out_height, dir, numskip_before, numskip_after, transparency);
 	} else {
-		byte *ptr = _vm->_screenStartStrip + _vm->getResourceAddress(rtBuffer, 9) + _vm->gdi._imgBufOffs[_zbuf];
-		ptr += _numStrips * clip_top + (clip_left / 8);
+		byte *ptr = _vm->getMaskBuffer(clip_left, clip_top, _zbuf);
 		akos16DecompressMask(dest, pitch, _srcptr, cur_x, out_height, dir, numskip_before, numskip_after, transparency, ptr, clip_left / 8);
 	}
 	

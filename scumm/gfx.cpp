@@ -188,7 +188,7 @@ void Scumm::getGraphicsPerformance() {
 		VAR(VAR_PERFORMANCE_1) = 0;
 
 	for (i = 10; i != 0; i--) {
-		setDirtyRange(0, 0, _screenHeight);	//ender
+		virtscr[0].setDirtyRange(0, _screenHeight);	//ender
 		drawDirtyScreenParts();
 	}
 
@@ -266,7 +266,7 @@ void Scumm::initVirtScreen(int slot, int number, int top, int width, int height,
 	}
 
 	if (slot != 3) {
-		setDirtyRange(slot, 0, height);
+		virtscr[slot].setDirtyRange(0, height);
 	}
 }
 
@@ -317,12 +317,9 @@ void Scumm::updateDirtyRect(int virt, int left, int right, int top, int bottom, 
 			setGfxUsageBit(lp, dirtybit);
 	}
 
-	setVirtscreenDirty(vs, left, top, right, bottom);
-}
-
-void Scumm::setVirtscreenDirty(VirtScreen *vs, int left, int top, int right, int bottom) {
-	int lp = left >> 3;
-	int rp = right >> 3;
+	// The following code used to be in the seperate method setVirtscreenDirty
+	lp = left >> 3;
+	rp = right >> 3;
 
 	if ((lp >= gdi._numStrips) || (rp < 0))
 		return;
@@ -337,15 +334,6 @@ void Scumm::setVirtscreenDirty(VirtScreen *vs, int left, int top, int right, int
 		if (bottom > vs->bdirty[lp])
 			vs->bdirty[lp] = bottom;
 		lp++;
-	}
-}
-
-void Scumm::setDirtyRange(int slot, int top, int bottom) {
-	int i;
-	VirtScreen *vs = &virtscr[slot];
-	for (i = 0; i < gdi._numStrips; i++) {
-		vs->tdirty[i] = top;
-		vs->bdirty[i] = bottom;
 	}
 }
 
@@ -477,10 +465,10 @@ void Gdi::resetBackground(int top, int bottom, int strip) {
 	if (bottom > vs->bdirty[strip])
 		vs->bdirty[strip] = bottom;
 
-	offs = (top * _numStrips + _vm->_screenStartStrip + strip);
-	byte *mask_ptr = _vm->getResourceAddress(rtBuffer, 9) + offs;
-	bgbak_ptr = _vm->getResourceAddress(rtBuffer, 5) + (offs << 3);
-	backbuff_ptr = vs->screenPtr + (offs << 3);
+	offs = (top * _numStrips + _vm->_screenStartStrip + strip) << 3;
+	byte *mask_ptr = _vm->getMaskBuffer(strip * 8, top, 0);
+	bgbak_ptr = _vm->getResourceAddress(rtBuffer, 5) + offs;
+	backbuff_ptr = vs->screenPtr + offs;
 
 	numLinesToProcess = bottom - top;
 	if (numLinesToProcess) {
@@ -840,7 +828,7 @@ void Scumm::restoreBG(ScummVM::Rect rect, byte backColor) {
 			if (rect.right & 0x07)
 				mask_width++;
 
-			mask = getResourceAddress(rtBuffer, 9) + rect.top * gdi._numStrips + (rect.left >> 3) + _screenStartStrip;
+			mask = getMaskBuffer(rect.left, rect.top, 0);
 			if (vs->number == 0)
 				mask += vs->topline * gdi._numStrips;
 
@@ -871,34 +859,11 @@ bool Scumm::hasCharsetMask(int left, int top, int right, int bottom) {
 			&& right >= gdi._mask.left;
 }
 
-bool Scumm::isMaskActiveAt(int l, int t, int r, int b, byte *mem) {
-	int w, h, i;
-
-	l >>= 3;
-	if (l < 0)
-		l = 0;
-	if (t < 0)
-		t = 0;
-
-	r >>= 3;
-	if (r > gdi._numStrips - 1)
-		r = gdi._numStrips - 1;
-
-	mem += l + t * gdi._numStrips;
-
-	w = r - l;
-	h = b - t + 1;
-
-	do {
-		for (i = 0; i <= w; i++)
-			if (mem[i]) {
-				return true;
-			}
-		mem += gdi._numStrips;
-	} while (--h);
-
-	return false;
+byte *Scumm::getMaskBuffer(int x, int y, int z) {
+	return getResourceAddress(rtBuffer, 9)
+			+ _screenStartStrip + (x / 8) + y * gdi._numStrips + gdi._imgBufOffs[z];
 }
+
 
 #pragma mark -
 #pragma mark --- Image drawing ---
@@ -1237,7 +1202,7 @@ void Gdi::drawBitmap(const byte *ptr, VirtScreen *vs, int x, int y, const int wi
 #if 0
 		// HACK: blit mask(s) onto normal screen. Useful to debug masking 
 		for (i = 0; i < numzbuf; i++) {
-			mask_ptr = _vm->getResourceAddress(rtBuffer, 9) + y * _numStrips + x + _imgBufOffs[i];
+			mask_ptr = _vm->getMaskBuffer(x, y, i);
 			byte *dst = backbuff_ptr;
 			byte *dst2 = bgbak_ptr;
 			for (int h = 0; h < height; h++) {
@@ -2026,7 +1991,7 @@ void Scumm::fadeIn(int effect) {
 void Scumm::fadeOut(int effect) {
 	VirtScreen *vs;
 
-	setDirtyRange(0, 0, 0);
+	virtscr[0].setDirtyRange(0, 0);
 	if (!(_features & GF_AFTER_V7))
 		camera._last.x = camera._cur.x;
 
@@ -2049,7 +2014,7 @@ void Scumm::fadeOut(int effect) {
 			break;
 		case 129:
 			// Just blit screen 0 to the display (i.e. display will be black)
-			setDirtyRange(0, 0, vs->height);
+			virtscr[0].setDirtyRange(0, vs->height);
 			updateDirtyScreen(0);
 			break;
 		case 134:

@@ -247,7 +247,7 @@ byte CostumeRenderer::mainRoutine(int xmoveCur, int ymoveCur) {
 
 	v1.destptr = _outptr + v1.y * _outwidth + v1.x;
 
-	v1.mask_ptr = _vm->getResourceAddress(rtBuffer, 9) + v1.y * _numStrips + _vm->_screenStartStrip;
+	v1.mask_ptr = _vm->getMaskBuffer(0, v1.y, 0);
 	v1.imgbufoffs = _vm->gdi._imgBufOffs[_zbuf];
 
 	CHECK_HEAP

@@ -54,6 +54,7 @@ void Scumm::setCameraAt(int pos_x, int pos_y) {
 		runScript(VAR(VAR_SCROLL_SCRIPT), 0, 0, 0);
 	}
 
+	// If the camera moved and text is visible, remove it
 	if (camera._cur.x != camera._last.x && _charset->_hasMask)
 		stopTalk();
 }

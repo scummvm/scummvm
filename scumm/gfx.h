@@ -53,6 +53,13 @@ struct VirtScreen {		/** Virtual screen areas */
 	uint16 bdirty[80];
 	byte *screenPtr;
 	byte *backBuf;
+
+	void setDirtyRange(int top, int bottom) {
+		for (int i = 0; i < 80; i++) {
+			tdirty[i] = top;
+			bdirty[i] = bottom;
+		}
+	}
 };
 
 struct ColorCycle {		/** Palette cycles */

@@ -197,8 +197,7 @@ void NutRenderer::drawChar(byte c, int32 x, int32 y, byte color, bool useMask) {
 		color = cTable[i];
 	
 		dst = _vm->virtscr[0].screenPtr + y * _vm->_screenWidth + x + _vm->virtscr[0].xstart;
-		mask = _vm->getResourceAddress(rtBuffer, 9)
-						+ (y * _vm->_screenWidth + x) / 8 + _vm->_screenStartStrip;
+		mask = _vm->getMaskBuffer(x, y, 0);
 	
 		src = _tmpCodecBuffer;
 	

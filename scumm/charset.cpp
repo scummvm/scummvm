@@ -560,7 +560,7 @@ void CharsetRendererV3::printChar(int chr) {
 
 	char_ptr = _fontPtr + chr * 8;
 	dest_ptr = vs->screenPtr + vs->xstart + (_top - vs->topline) * _vm->_screenWidth + _left;
-	mask_ptr = _vm->getResourceAddress(rtBuffer, 9) + _vm->_screenStartStrip + (_top - vs->topline) * _vm->gdi._numStrips + _left / 8;
+	mask_ptr = _vm->getMaskBuffer(_left, _top - vs->topline, 0);
 	useMask = (vs->number == 0 && !_ignoreCharsetMask);
 
 	_vm->updateDirtyRect(vs->number, _left, _left + w, _top - vs->topline, _top - vs->topline + h, 0);
@@ -711,9 +711,7 @@ void CharsetRendererClassic::printChar(int chr) {
 
 	_charPtr += 4;
 
-	byte *mask = _vm->getResourceAddress(rtBuffer, 9)
-		+ drawTop * _vm->gdi._numStrips + _left / 8 + _vm->_screenStartStrip;
-
+	byte *mask = _vm->getMaskBuffer(_left, drawTop, 0);
 	byte *dst = vs->screenPtr + vs->xstart + drawTop * _vm->_screenWidth + _left;
 
 	if (_blitAlso) {
