@@ -171,6 +171,8 @@ static char * read_creative_voc_file(byte * ptr, int & size, int & rate) {
 
 void Sound::playSound(int sound) {
 	byte *ptr;
+	int size;
+	int rate;
 	
 	ptr = _scumm->getResourceAddress(rtSound, sound);
 	if (ptr) {
@@ -189,8 +191,8 @@ void Sound::playSound(int sound) {
 		else if (READ_UINT32_UNALIGNED(ptr) == MKID('Mac1')) {
 	
 			// Read info from the header
-			int size = READ_UINT32_UNALIGNED(ptr+0x60);
-			int rate = READ_UINT32_UNALIGNED(ptr+0x64) >> 16;
+			size = READ_UINT32_UNALIGNED(ptr+0x60);
+			rate = READ_UINT32_UNALIGNED(ptr+0x64) >> 16;
 	
 			// Skip over the header (fixed size)
 			ptr += 0x72;
@@ -209,8 +211,8 @@ void Sound::playSound(int sound) {
 			if (READ_UINT32_UNALIGNED(ptr) != MKID('SDAT'))
 				return;	// abort
 	
-			int size = READ_BE_UINT32_UNALIGNED(ptr+4);
-			int rate = 8000;	// FIXME - what value here ?!? 8000 is just a guess
+			size = READ_BE_UINT32_UNALIGNED(ptr+4);
+			rate = 8000;	// FIXME - what value here ?!? 8000 is just a guess
 			
 			// Allocate a sound buffer, copy the data into it, and play
 			char *sound = (char*)malloc(size);
@@ -219,7 +221,6 @@ void Sound::playSound(int sound) {
 			return;
 		}
 		else if (READ_UINT32_UNALIGNED(ptr) == MKID('Crea')) {
-			int size, rate;
 			char * sound = read_creative_voc_file(ptr, size, rate);
 			if(sound != NULL) {
 				_scumm->_mixer->playRaw(NULL, sound, size, rate, SoundMixer::FLAG_UNSIGNED | SoundMixer::FLAG_AUTOFREE);
@@ -253,8 +254,8 @@ void Sound::playSound(int sound) {
 			// guesswork. The result sounds reasonable to me, but I've
 			// never heard the original.
 	
-			int size = READ_BE_UINT32_UNALIGNED(ptr + 4) - 27;
-			int rate = 8000;
+			size = READ_BE_UINT32_UNALIGNED(ptr + 4) - 27;
+			rate = 8000;
 	
 			// Allocate a sound buffer, copy the data into it, and play
 			char *sound = (char*)malloc(size);
@@ -263,7 +264,7 @@ void Sound::playSound(int sound) {
 			return;
 		} else if (_scumm->_features & GF_OLD256) {
 			char *sound;
-			int size = READ_LE_UINT32(ptr);
+			size = READ_LE_UINT32(ptr);
 			
 	#if 0
 			// FIXME - this is just some debug output for Zak256
@@ -299,8 +300,33 @@ void Sound::playSound(int sound) {
 			As you can see, there are quite some patterns, e.g.
 			the 00 00 00 3c - the sound data seems to start at
 			offset 54.
+			
+			Indy 3 seems to use a different format. The very first sound played
+			in Indy 3 looks as follows:
+			5a 25 00 00 53 4f 54 25  |Z%..SOT%|
+			00 00 53 4f db 0a 00 00  |..SO....|
+			57 41 c8 00 18 00 00 00  |WA......|
+			00 00 00 00 9e 05 00 00  |........|
+			00 00 00 00 fd 32 00 f8  |.....2..|
+			02 f9 08 ff 22 08 00 ff  |...."...|
+			20 5c 00 ff 10 03 00 fd  | \......|
+			64 00 f8 00 f9 00 ff 22  |d......"|
+
+			Indy 3, opening a door:
+			d1 00 00 00 53 4f cb 00  |....SO..|
+			00 00 53 4f a2 00 00 00  |..SO....|
+			57 41 64 00 18 00 00 00  |WAd.....|
+			00 00 00 00 00 00 00 00  |........|
+			00 00 7e 00 f9 0c ff 20  |..~.... |
+			90 01 ff 22 c2 01 ff 0a  |..."....|
+			03 00 ff 04 57 06 ff 00  |....W...|
+			04 00 ff 0a 00 00 ff 00  |........|
+			
+			So there seems to be a "SO" chunk which contains again a SO chunk and a WA chunk.
+			WA probably again contains audio data?
 			*/
 	#endif
+			rate = 11000;
 			
 			ptr += 0x16;
 			if (size == 30) {
@@ -319,7 +345,17 @@ void Sound::playSound(int sound) {
 			sound = (char*)malloc(size);
 			for (int x = 0; x < size; x++) {
 				int bit = *ptr++;
-				if (bit<0x80) sound[x] = 0x7F-bit; else sound[x] = bit;
+				if (_scumm->_gameId == GID_INDY3_256) {
+					// FIXME - this is an (obviously incorrect, just listen to it)
+					// test hack for the Indy3 music format.... it doesn't work better
+					// but at least the generated data "looks" somewhat OK :-)
+					sound[x] = bit ^ 0x80;
+				} else {
+					if (bit < 0x80)
+						sound[x] = 0x7F-bit;
+					else
+						sound[x] = bit;
+				}
 			}
 	
 			// FIXME: Maybe something in the header signifies looping? Need to
