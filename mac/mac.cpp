@@ -30,6 +30,7 @@
 //#include "mp3_cd.h"
 #include "gui.h"
 //#include "gameDetector.h"
+#include "scaler.h"
 
 #define MAX(a,b) (((a)<(b)) ? (b) : (a))
 #define MIN(a,b) (((a)>(b)) ? (b) : (a))
@@ -203,22 +204,6 @@ private:
 	SoundProc *sndProc;
 	void * parameter;
 };
-
-int Init_2xSaI (uint32 BitFormat);
-void _2xSaI(uint8 *srcPtr, uint32 srcPitch, uint8 *deltaPtr, uint8 *dstPtr,
-						uint32 dstPitch, int width, int height);
-void Super2xSaI(uint8 *srcPtr, uint32 srcPitch, uint8 *deltaPtr,
-								uint8 *dstPtr, uint32 dstPitch, int width, int height);
-void SuperEagle(uint8 *srcPtr, uint32 srcPitch, uint8 *deltaPtr,
-								uint8 *dstPtr, uint32 dstPitch, int width, int height);
-void AdvMame2x(uint8 *srcPtr, uint32 srcPitch, uint8 *null,
-								uint8 *dstPtr, uint32 dstPitch, int width, int height);
-void Normal1x(uint8 *srcPtr, uint32 srcPitch, uint8 *null,
-								uint8 *dstPtr, uint32 dstPitch, int width, int height);
-void Normal2x(uint8 *srcPtr, uint32 srcPitch, uint8 *null,
-								uint8 *dstPtr, uint32 dstPitch, int width, int height);
-void Normal3x(uint8 *srcPtr, uint32 srcPitch, uint8 *null,
-								uint8 *dstPtr, uint32 dstPitch, int width, int height);
 
 KeyMap fKeyMap;
 

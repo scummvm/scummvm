@@ -25,6 +25,7 @@
 #include "mididrv.h"
 #include "SDL_thread.h"
 #include "gameDetector.h"
+#include "scaler.h"
 
 #include "scummvm.xpm"
 
@@ -153,12 +154,12 @@ private:
 
 	/* Keyboard mouse emulation */
 	struct KbdMouse {	
-		int16 x, y, xv, yv, xm, ym, xd, yd;
-		uint32 last, delay, xdown, ydown;
+		int16 x, y, x_vel, y_vel, x_max, y_max, x_down_count, y_down_count;
+		uint32 last_time, delay_time, x_down_time, y_down_time;
 	} km;
 
 	struct MousePos {
-		int16 x,y,w,h;
+		int16 x, y, w, h;
 	};
 
 	byte *_mouse_data;
@@ -196,22 +197,6 @@ private:
 	void setup_icon();
 	void kbd_mouse();
 };
-
-int Init_2xSaI (uint32 BitFormat);
-void _2xSaI(uint8 *srcPtr, uint32 srcPitch, uint8 *deltaPtr, uint8 *dstPtr,
-						uint32 dstPitch, int width, int height);
-void Super2xSaI(uint8 *srcPtr, uint32 srcPitch, uint8 *deltaPtr,
-								uint8 *dstPtr, uint32 dstPitch, int width, int height);
-void SuperEagle(uint8 *srcPtr, uint32 srcPitch, uint8 *deltaPtr,
-								uint8 *dstPtr, uint32 dstPitch, int width, int height);
-void AdvMame2x(uint8 *srcPtr, uint32 srcPitch, uint8 *null,
-								uint8 *dstPtr, uint32 dstPitch, int width, int height);
-void Normal1x(uint8 *srcPtr, uint32 srcPitch, uint8 *null,
-								uint8 *dstPtr, uint32 dstPitch, int width, int height);
-void Normal2x(uint8 *srcPtr, uint32 srcPitch, uint8 *null,
-								uint8 *dstPtr, uint32 dstPitch, int width, int height);
-void Normal3x(uint8 *srcPtr, uint32 srcPitch, uint8 *null,
-								uint8 *dstPtr, uint32 dstPitch, int width, int height);
 
 void atexit_proc() {
 	SDL_ShowCursor(SDL_ENABLE);
@@ -371,10 +356,10 @@ normal_mode:;
 	}
 
 	// keyboard cursor control, some other better place for it?
-	km.xm = SCREEN_WIDTH * scaling;
-	km.ym = SCREEN_HEIGHT * scaling;
-	km.delay = 25;
-	km.last = 0;
+	km.x_max = SCREEN_WIDTH * scaling - 1;
+	km.y_max = SCREEN_HEIGHT * scaling - 1;
+	km.delay_time = 25;
+	km.last_time = 0;
 
 }
 
@@ -704,66 +689,66 @@ void OSystem_SDL::update_screen() {
 
 void OSystem_SDL::kbd_mouse() {
 	uint32 time = get_msecs();
-	if (time >= km.last + km.delay) {
-		km.last = time;
-		if (km.xd == 1) {
-			km.xdown = time;
-			km.xd = 2;
+	if (time >= km.last_time + km.delay_time) {
+		km.last_time = time;
+		if (km.x_down_count == 1) {
+			km.x_down_time = time;
+			km.x_down_count = 2;
 		}
-		if (km.yd == 1) {
-			km.ydown = time;      
-			km.yd = 2;
+		if (km.y_down_count == 1) {
+			km.y_down_time = time;      
+			km.y_down_count = 2;
 		}
 
-		if (km.xv || km.yv) {
-			if (km.xd) {
-				if (time > km.xdown + km.delay*12) {
-					if (km.xv > 0)
-						km.xv++;
+		if (km.x_vel || km.y_vel) {
+			if (km.x_down_count) {
+				if (time > km.x_down_time + km.delay_time*12) {
+					if (km.x_vel > 0)
+						km.x_vel++;
 					else
-						km.xv--;
-				} else if (time > km.xdown + km.delay*8) {
-					if (km.xv > 0)
-						km.xv = 5;
+						km.x_vel--;
+				} else if (time > km.x_down_time + km.delay_time*8) {
+					if (km.x_vel > 0)
+						km.x_vel = 5;
 					else
-						km.xv = -5;
+						km.x_vel = -5;
 				}
 			}
-			if (km.yd) {
-				if (time > km.ydown + km.delay*12) {
-					if (km.yv > 0)
-						km.yv++;
+			if (km.y_down_count) {
+				if (time > km.y_down_time + km.delay_time*12) {
+					if (km.y_vel > 0)
+						km.y_vel++;
 					else
-						km.yv--;
-				} else if (time > km.ydown + km.delay*8) {
-					if (km.yv > 0)
-						km.yv = 5;
+						km.y_vel--;
+				} else if (time > km.y_down_time + km.delay_time*8) {
+					if (km.y_vel > 0)
+						km.y_vel = 5;
 					else
-						km.yv = -5;
+						km.y_vel = -5;
 				}
 			}
 
-			km.x += km.xv;
-			km.y += km.yv;
+			km.x += km.x_vel;
+			km.y += km.y_vel;
 
 			if (km.x < 0) {
 				km.x = 0;
-				km.xv = -1;
-				km.xd = 1;
-			} else if (km.x >= km.xm) {
-				km.x = km.xm - 1;
-				km.xv = 1;
-				km.xd = 1;
+				km.x_vel = -1;
+				km.x_down_count = 1;
+			} else if (km.x > km.x_max) {
+				km.x = km.x_max;
+				km.x_vel = 1;
+				km.x_down_count = 1;
 			}
 
 			if (km.y < 0) {
 				km.y = 0;
-				km.yv = -1;
-				km.yd = 1;
-			} else if (km.y >= km.ym) {
-				km.y = km.ym - 1;
-				km.yv = 1;
-				km.yd = 1;
+				km.y_vel = -1;
+				km.y_down_count = 1;
+			} else if (km.y > km.y_max) {
+				km.y = km.y_max;
+				km.y_vel = 1;
+				km.y_down_count = 1;
 			}
 
 			SDL_WarpMouse(km.x, km.y);
@@ -874,20 +859,20 @@ bool OSystem_SDL::poll_event(Event *event) {
 				event->kbd.ascii = mapKey(ev.key.keysym.sym, ev.key.keysym.mod);
 				switch(ev.key.keysym.sym) {
 					case SDLK_LEFT:
-						km.xv = -1;
-						km.xd = 1;
+						km.x_vel = -1;
+						km.x_down_count = 1;
 					break;
 					case SDLK_RIGHT:
-						km.xv =  1;
-						km.xd = 1;
+						km.x_vel =  1;
+						km.x_down_count = 1;
 					break;
 					case SDLK_UP:
-						km.yv = -1;
-						km.yd = 1;
+						km.y_vel = -1;
+						km.y_down_count = 1;
 					break;
 					case SDLK_DOWN:
-						km.yv =  1;
-						km.yd = 1;
+						km.y_vel =  1;
+						km.y_down_count = 1;
 					break;
 					default:
 					break;
@@ -899,27 +884,27 @@ bool OSystem_SDL::poll_event(Event *event) {
 			case SDL_KEYUP: {
 				switch(ev.key.keysym.sym){
 					case SDLK_LEFT:                
-						if (km.xv < 0) {
-							km.xv = 0;
-							km.xd = 0;
+						if (km.x_vel < 0) {
+							km.x_vel = 0;
+							km.x_down_count = 0;
 						}
 					break;
 					case SDLK_RIGHT:
-						if (km.xv > 0) {
-							km.xv = 0;
-							km.xd = 0;
+						if (km.x_vel > 0) {
+							km.x_vel = 0;
+							km.x_down_count = 0;
 						}
 					break;
 					case SDLK_UP:
-						if (km.yv < 0) {
-							km.yv = 0;
-							km.yd = 0;
+						if (km.y_vel < 0) {
+							km.y_vel = 0;
+							km.y_down_count = 0;
 						}
 					break;
 					case SDLK_DOWN:
-						if (km.yv > 0) {
-							km.yv = 0;
-							km.yd = 0;
+						if (km.y_vel > 0) {
+							km.y_vel = 0;
+							km.y_down_count = 0;
 						}
 					break;
 					default:

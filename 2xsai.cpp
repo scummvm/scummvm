@@ -22,6 +22,7 @@
 
 #include "stdafx.h"
 #include "scummsys.h"
+#include "scaler.h"
 
 /********** 2XSAI Filter *****************/
 static uint32 colorMask = 0xF7DEF7DE;

@@ -25,6 +25,7 @@
 #include "mididrv.h"
 #include "SDL_thread.h"
 #include "gameDetector.h"
+#include "scaler.h"
 
 #include "scummvm.xpm"
 
@@ -196,22 +197,6 @@ private:
 
 	void setup_icon();
 };
-
-int Init_2xSaI (uint32 BitFormat);
-void _2xSaI(uint8 *srcPtr, uint32 srcPitch, uint8 *deltaPtr, uint8 *dstPtr,
-						uint32 dstPitch, int width, int height);
-void Super2xSaI(uint8 *srcPtr, uint32 srcPitch, uint8 *deltaPtr,
-								uint8 *dstPtr, uint32 dstPitch, int width, int height);
-void SuperEagle(uint8 *srcPtr, uint32 srcPitch, uint8 *deltaPtr,
-								uint8 *dstPtr, uint32 dstPitch, int width, int height);
-void AdvMame2x(uint8 *srcPtr, uint32 srcPitch, uint8 *null,
-								uint8 *dstPtr, uint32 dstPitch, int width, int height);
-void Normal1x(uint8 *srcPtr, uint32 srcPitch, uint8 *null,
-								uint8 *dstPtr, uint32 dstPitch, int width, int height);
-void Normal2x(uint8 *srcPtr, uint32 srcPitch, uint8 *null,
-								uint8 *dstPtr, uint32 dstPitch, int width, int height);
-void Normal3x(uint8 *srcPtr, uint32 srcPitch, uint8 *null,
-								uint8 *dstPtr, uint32 dstPitch, int width, int height);
 
 void atexit_proc() {
 	SDL_ShowCursor(SDL_ENABLE);
