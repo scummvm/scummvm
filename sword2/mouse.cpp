@@ -1084,7 +1084,6 @@ int32 Logic::fnNoHuman(int32 *params) {
 		_vm->_graphics->hideMenu(RDMENU_TOP);
 	}
 
-	// script continue
 	return IR_CONT;
 }
 
@@ -1188,7 +1187,6 @@ int32 Logic::fnRegisterPointerText(int32 *params) {
 
 	_vm->_mouseList[_vm->_curMouse].id = ID;
 	_vm->_mouseList[_vm->_curMouse].pointer_text = params[0];
-
 	return IR_CONT;
 }
 
@@ -1205,7 +1203,6 @@ int32 Logic::fnInitFloorMouse(int32 *params) {
 	ob_mouse->y2 = _vm->_thisScreen.screen_deep - 1;
 	ob_mouse->priority = 9;
 	ob_mouse->pointer = NORMAL_MOUSE_ID;
-
 	return IR_CONT;
 }
 
@@ -1269,7 +1266,6 @@ int32 Logic::fnSetObjectHeld(int32 *params) {
 
 	// mode locked - no menu available
 	_vm->_mouseModeLocked = true;
-
 	return IR_CONT;
 }
 
