@@ -299,6 +299,14 @@ SOURCE=.\scumm\gfx.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\scumm\help.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\scumm\help.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\scumm\imuse.cpp
 # End Source File
 # Begin Source File
