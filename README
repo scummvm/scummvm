@@ -1,5 +1,5 @@
 Residual: A LucasArts 3D game interpreter            Version 0.01-CVS
-(C) 2003- The ScummVM-Residual team                  Last Updated: 11th Oct 2003
+(C) 2003- The ScummVM-Residual team                  Last Updated: 13th Dec 2003
 --------------------------------------------------------------------------------
 
 What is Residual?
@@ -55,9 +55,7 @@ not drawn (such as the mail tube). It may crash. Walking is not quite right.
 There is no lighting.
 
 The game itself is in a fairly decent state, and you can play at least up until
-you retrieve your first customer. The default Grim keys 
-use, 'p' to pickup and 'i' for inventory) will let you interact with things and
-actually 'play' it.
+you retrieve your first customer. 
 
 What are the default keys?
 --------------------------
@@ -85,7 +83,7 @@ ScummVM-Residual Team Credits:
  James Brown          	 ScummVM project leader, core engine developer
  Vincent Hamm            Some core engine code
  Lionel Ulmer            OpenGL optimisations
- Pawel Kolodziejski      Future SMUSH/iMUSE implemention
+ Pawel Kolodziejski      SMUSH implemention
 
 Special Thanks To:
 ------------------ 

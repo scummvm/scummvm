@@ -1,6 +1,7 @@
 Residual in-progress items (in rough order of priority):
 -------------------------------------------------------0
- * Add SMUSH (low-priority, but important) - Assigned to aquadran
+ * Figure out why SMUSH doesn't display graphics on Windows
+ * Get SMUSH to stream from .lab instead of needing uncompressed snm
  * Add LAF font support to replace existing hack
 
 Residual TODO list (in rough order of priority):
