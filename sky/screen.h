@@ -102,7 +102,7 @@ private:
 		uint32 delay;
 		uint8 *seqData;
 		uint8 *seqDataPos;
-		bool running;
+		volatile bool running;
 		bool runningItem; // when playing an item, don't free it afterwards.
 	} _seqInfo;
 

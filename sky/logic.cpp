@@ -498,7 +498,6 @@ void SkyLogic::talk() {
 
 	if ((_compact->extCompact->spTextId == 0xFFFF) && // is this a voc file?
 		(_skySound->speechFinished())) { // finished?
-			printf("weird thing\n");
 
 		_compact->logic = L_SCRIPT; // restart character control
 
@@ -523,7 +522,6 @@ void SkyLogic::talk() {
 				_compact->grafixProg = graphixProg;
 			}
 		} else {
-			printf("EOA reached. getTo = %d (%X) frame %X\n",_compact->getToFlag,_compact->getToFlag,_compact->getToFlag>>6);
 			// we ran out of frames, let actor stand still.
 			// TODO: we should improve this and simply restart animation.
 			_compact->frame = _compact->getToFlag;
@@ -2232,7 +2230,6 @@ void SkyLogic::stdSpeak(Compact *target, uint32 textNum, uint32 animNum, uint32 
 
 	animNum += target->extCompact->megaSet / NEXT_MEGA_SET;
 	animNum &= 0xFF;
-	printf("Doing anim %X (%d). %s\n",animNum,animNum,SkyTalkAnims::animTalkTableIsPointer[animNum]?("PTR"):("VAL"));
 	if (SkyTalkAnims::animTalkTableIsPointer[animNum]) //is it a pointer? 
 		animPtr = (uint16 *)SkyTalkAnims::animTalkTablePtr[animNum];
 	else 	//then it must be a value
