@@ -380,7 +380,6 @@ void OSystem_SDL::setFullscreenMode(bool enable) {
 		// use hotswap_gfx_mode() directly to switch to fullscreen mode.
 		hotswap_gfx_mode();
 #else
-		// FIXME: _hwscreen is not currently available from SDL_Common's scope
 		if (!SDL_WM_ToggleFullScreen(_hwscreen)) {
 			// if ToggleFullScreen fails, achieve the same effect with hotswap gfx mode
 			hotswap_gfx_mode();
