@@ -661,10 +661,12 @@ bool Graphics::endRenderCycle(void) {
 	if (_scrollX != _scrollXOld || _scrollY != _scrollYOld)
 		setNeedFullRedraw();
 
-	// This shouldn't delay anything, but might possibly allow the
-	// backend to give the other threads some breathing space, which could
-	// conceivably help against bug #875683.
-	_vm->_system->delay_msecs(0);
+#ifdef LIMIT_FRAME_RATE
+	// Give the other threads some breathing space. This apparently helps
+	// against bug #875683, though I was never able to reproduce it for
+	// myself.
+	_vm->_system->delay_msecs(10);
+#endif
 
 	return false;
 }
