@@ -678,6 +678,9 @@ int Scene::loadScene(int scene_num, int load_flag, SCENE_PROC scene_proc, SCENE_
 	
 	_vm->_actor->updateActorsScene();
 
+	if (_desc.flags & kSceneFlagShowCursor)
+		_vm->_interface->activate();
+
 	return SUCCESS;
 }
 

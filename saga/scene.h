@@ -209,6 +209,11 @@ struct INTRO_CREDIT {
 };
 
 
+enum SceneFlags {
+	kSceneFlagISO        = 1,
+	kSceneFlagShowCursor = 2
+};
+
 class Scene {
  public:
 	Scene(SagaEngine *vm);
@@ -228,6 +233,7 @@ class Scene {
 	int queueScene(SCENE_QUEUE *scene_queue);
 	int draw(SURFACE *);
 	int getMode();
+	int getFlags() { return _desc.flags; }
 	
 	void getBGMaskInfo(int &width, int &height, byte *&buffer, size_t &bufferLength);
 	int isBGMaskPresent() {

@@ -45,7 +45,7 @@ struct SPRITELIST_ENTRY {
 
 struct SPRITELIST_OFFSET {
 	uint16 data_idx;
-	size_t offset;
+	uint32 offset;
 };
 
 struct SPRITELIST {

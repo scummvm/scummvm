@@ -98,7 +98,10 @@ int Sprite::loadList(int resource_num, SPRITELIST **sprite_list_p) {
 
 	for (i = 0; i < sprite_count; i++) {
 		new_slist->offset_list[i].data_idx = 0;
-		new_slist->offset_list[i].offset = readS.readUint16();
+		if (_vm->_features & GF_MAC_RESOURCES)
+			new_slist->offset_list[i].offset = readS.readUint32();
+		else
+			new_slist->offset_list[i].offset = readS.readUint16();
 	}
 
 	new_slist->slist_rn = resource_num;
@@ -200,7 +203,7 @@ int Sprite::draw(SURFACE *ds, SPRITELIST *sprite_list, int sprite_num, const Poi
 
 	assert(sprite_p);
 
-	MemoryReadStreamEndian readS(sprite_p, 8, IS_BIG_ENDIAN);
+	MemoryReadStream readS(sprite_p, 8);
 	if (!(_vm->_features & GF_MAC_RESOURCES)) {
 		x_align = readS.readSByte();
 		y_align = readS.readSByte();
@@ -208,11 +211,11 @@ int Sprite::draw(SURFACE *ds, SPRITELIST *sprite_list, int sprite_num, const Poi
 		so_width = s_width = readS.readByte();
 		so_height = s_height = readS.readByte();
 	} else {
-		x_align = readS.readSint16();
-		y_align = readS.readSint16();
+		x_align = readS.readSint16BE();
+		y_align = readS.readSint16BE();
 
-		so_width = s_width = readS.readUint16();
-		so_height = s_height = readS.readUint16();
+		so_width = s_width = readS.readUint16BE();
+		so_height = s_height = readS.readUint16BE();
 	}
 	spr_pt.x = screenCoord.x + x_align;
 	spr_pt.y = screenCoord.y + y_align;
@@ -314,15 +317,23 @@ int Sprite::drawOccluded(SURFACE *ds, SPRITELIST *sprite_list, int sprite_num, c
 	sprite_p = sprite_list->sprite_data[offset_idx];
 	sprite_p += offset;
 
-	MemoryReadStreamEndian readS(sprite_p, 5, IS_BIG_ENDIAN);
+	MemoryReadStream readS(sprite_p, 8);
 
 	// Read sprite dimensions -- should probably cache this stuff in 
 	// sprite list
-	x_align = readS.readSByte();
-	y_align = readS.readSByte();
+	if (!(_vm->_features & GF_MAC_RESOURCES)) {
+		x_align = readS.readSByte();
+		y_align = readS.readSByte();
 
-	so_width = s_width = readS.readByte();
-	so_height = s_height = readS.readByte();
+		so_width = s_width = readS.readByte();
+		so_height = s_height = readS.readByte();
+	} else {
+		x_align = readS.readSint16BE();
+		y_align = readS.readSint16BE();
+
+		so_width = s_width = readS.readUint16BE();
+		so_height = s_height = readS.readUint16BE();
+	}
 
 	sprite_data_p = sprite_p + readS.pos();
 
@@ -384,48 +395,29 @@ int Sprite::drawOccluded(SURFACE *ds, SPRITELIST *sprite_list, int sprite_num, c
 		mask_row_p += maskWidth;
 		src_row_p += s_width;
 	}
-/*
-	{
-		char buf[1024] = { 0 };
-		sprintf(buf, "dw: %d, dh: %d.", ci.draw_w, ci.draw_h);
 
-		_vm->textDraw(2, ds, buf, spr_x - x_align, spr_y - y_align, 255, 0, FONT_OUTLINE);
-	}
-*/
 	return SUCCESS;
 }
 
 int Sprite::decodeRLESprite(const byte *inbuf, size_t inbuf_len, byte *outbuf, size_t outbuf_len) {
 	int bg_runcount;
 	int fg_runcount;
-	const byte *inbuf_ptr;
 	byte *outbuf_ptr;
-	const byte *inbuf_end;
 	byte *outbuf_end;
 	int c;
 
-	inbuf_ptr = inbuf;
 	outbuf_ptr = outbuf;
-
-	inbuf_end = inbuf + (inbuf_len);
-	inbuf_end--;
 
 	outbuf_end = outbuf + outbuf_len;
 	outbuf_end--;
 
 	memset(outbuf, 0, outbuf_len);
 
-	while ((inbuf_ptr < inbuf_end) && (outbuf_ptr < outbuf_end)) {
-		bg_runcount = *inbuf_ptr;
-		if (inbuf_ptr < inbuf_end)
-			inbuf_ptr++;
-		else
-			return 0;
-		fg_runcount = *inbuf_ptr;
-		if (inbuf_ptr < inbuf_end)
-			inbuf_ptr++;
-		else
-			return 0;
+	MemoryReadStream readS(inbuf, inbuf_len);
+
+	while (!readS.eof() && (outbuf_ptr < outbuf_end)) {
+		bg_runcount = readS.readByte();
+		fg_runcount = readS.readByte();
 
 		for (c = 0; c < bg_runcount; c++) {
 			*outbuf_ptr = (byte) 0;
@@ -436,11 +428,7 @@ int Sprite::decodeRLESprite(const byte *inbuf, size_t inbuf_len, byte *outbuf, s
 		}
 
 		for (c = 0; c < fg_runcount; c++) {
-			*outbuf_ptr = *inbuf_ptr;
-			if (inbuf_ptr < inbuf_end)
-				inbuf_ptr++;
-			else
-				return 0;
+			*outbuf_ptr = readS.readByte();
 			if (outbuf_ptr < outbuf_end)
 				outbuf_ptr++;
 			else

@@ -115,3 +115,7 @@ Resource.h
  PicHeader.width           IMAGE_HEADER.width
  PicHeader.height          IMAGE_HEADER.height
 
+
+Process.c
+=========
+ mainPanelMode             Interface::_inMainMode
