@@ -109,7 +109,7 @@ Contributors:
  Vincent Hamm                       Various engine code
  Lionel 'bbrox' Ulmer               OpenGL optimisations
  Ori 'salty-horse' Avtalion         Lipsync, LAF support
- Erich Hoover                       x86-64 and subtitles fixes
+ Erich 'Compholio' Hoover           x86-64, subtitles fixes, menu support
 
 Special Thanks To:
 ------------------ 
