@@ -484,7 +484,11 @@ void ScummEngine::drawObject(int obj, int arg) {
 		// the inventory and conversation icons.
 		if ((_version >= 7 || _gameId == GID_SAMNMAX) && getClass(od.obj_nr, kObjectClassIgnoreBoxes))
 			flags |= Gdi::dbDrawMaskOnAll;
-		gdi.drawBitmap(ptr, &virtscr[0], x, ypos, width * 8, height, x - xpos, numstrip, flags);
+
+		if (_heversion >= 70 && findResource(MKID('SMAP'), ptr) == NULL)
+			gdi.drawBMAPObject(ptr, &virtscr[0], obj, od.x_pos * 8, od.y_pos * 8, od.width * 8, od.height * 8);
+		else
+			gdi.drawBitmap(ptr, &virtscr[0], x, ypos, width * 8, height, x - xpos, numstrip, flags);
 	}
 }
 

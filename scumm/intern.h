@@ -698,7 +698,6 @@ protected:
 
 	void drawWizImage(int restype, int resnum, int x1, int y1, int flags);
 	void flushWizBuffer();
-	void copyWizImage(uint8 *dst, const uint8 *src, int dstw, int dsth, int srcx, int srcy, int srcw, int srch, Common::Rect *pr);
 
 	virtual void decodeParseString(int a, int b);
 	void decodeScriptString(byte *dst, bool scriptString = false);

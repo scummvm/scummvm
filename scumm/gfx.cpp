@@ -557,20 +557,28 @@ void ScummEngine::redrawBGAreas() {
 				gdi.drawBMAPBg(room, &virtscr[0], _screenStartStrip, _screenWidth);
 			}
 			cont = false;
+		} else if (findResource(MKID('SMAP'), room) == NULL) {
+			warning("redrawBGAreas(): Both SMAP and BMAP are missing...");
+			cont = false;
+		}
+
+		if (!cont) {
+			drawRoomObjects(val);
+			_BgNeedsRedraw = false;
+			return;
 		}
 	}
 
 	// Redraw parts of the background which are marked as dirty.
-	if (!_fullRedraw && _BgNeedsRedraw && cont) {
+	if (!_fullRedraw && _BgNeedsRedraw) {
 		for (i = 0; i != gdi._numStrips; i++) {
 			if (testGfxUsageBit(_screenStartStrip + i, USAGE_BIT_DIRTY)) {
 				redrawBGStrip(i, 1);
-				cont = false;
 			}
 		}
 	}
 
-	if (_features & GF_NEW_CAMERA && cont) {
+	if (_features & GF_NEW_CAMERA) {
 		diff = camera._cur.x / 8 - camera._last.x / 8;
 		if (_fullRedraw == 0 && diff == 1) {
 			val = 2;
@@ -1288,7 +1296,7 @@ void Gdi::drawBMAPBg(const byte *ptr, VirtScreen *vs, int startstrip, int width)
 	bmap_ptr = _vm->findResource(MKID('BMAP'), ptr) + 8;
 
 	if (bmap_ptr == NULL) {
-		error("Room %d has no compressed bitmap?", _vm->_roomResource);
+		error("Gdi::drawBMAPBg: Room %d has no compressed bitmap?", _vm->_roomResource);
 		return;
 	}
 
@@ -1300,7 +1308,7 @@ void Gdi::drawBMAPBg(const byte *ptr, VirtScreen *vs, int startstrip, int width)
 
 		decompressBMAPbg((byte *)vs->backBuf, width, vs->w, vs->h, bmap_ptr, decomp_shr, decomp_mask);
 	}
-	copyVirtScreenBuffers(0, 0, vs->w - 1, vs->h - 1);
+	copyVirtScreenBuffers(Common::Rect(0, 0, vs->w - 1, vs->h - 1));
 
 	if (_numZBuffer <= 1)
 		return;
@@ -1334,6 +1342,38 @@ void Gdi::drawBMAPBg(const byte *ptr, VirtScreen *vs, int startstrip, int width)
 				decompressMaskImg(mask_ptr, z_plane_ptr, vs->h);
 			}
 		}
+}
+
+void Gdi::drawBMAPObject(const byte *ptr, VirtScreen *vs, int obj, int x, int y, int w, int h) {
+	const byte *bmap_ptr;
+
+	warning("drawBMAPObject() called");
+
+	bmap_ptr = _vm->findResource(MKID('BMAP'), ptr) + 8;
+	if (bmap_ptr == NULL) {
+		error("Gdi::drawBMAPObject: No image for item %d?", obj);
+		return;
+	}
+
+	byte code = *ptr++;
+	int scrX = _vm->_screenStartStrip * 8;
+
+	if (code == 8 || code == 9) {
+		Common::Rect rScreen(0, 0, vs->w, vs->h);
+		byte *dst = (byte *)_vm->virtscr[0].backBuf + scrX;
+		copyWizImage(dst, ptr, vs->w, vs->h, x - scrX, y, w, h, &rScreen);
+	}
+
+	Common::Rect rect1(x, y, w, h);
+	Common::Rect rect2(scrX, 0, vs->w + scrX, vs->h);
+
+	if (rect1.intersects(rect2) && rect1.top <= rect1.bottom && rect1.left <= rect1.right) {
+		rect1.left -= rect2.left;
+		rect1.right -= rect2.left;
+		rect1.top -= rect2.top;
+		rect1.bottom -= rect2.top;
+		copyVirtScreenBuffers(rect1);
+	}
 }
 
 void Gdi::decompressBMAPbg(byte *dst, int screenwidth, int w, int height, const byte *src, int shr, int mask) {
@@ -1383,6 +1423,47 @@ void Gdi::decompressBMAPbg(byte *dst, int screenwidth, int w, int height, const 
 		 dst += screenwidth - w;
 		 height--;
 	 }
+}
+
+void Gdi::copyWizImage(uint8 *dst, const uint8 *src, int dst_w, int dst_h, int src_x, int src_y, int src_w, int src_h, Common::Rect *rect) {
+	Common::Rect r1(0, 0, src_w, src_h), r2(src_x, src_y, src_x + src_w, src_y + src_h);
+	Common::Rect r3;
+	int diff;
+
+	if (rect) {
+		r3 = *rect;
+		Common::Rect r4(0, 0, dst_w, dst_h);
+		if (!r3.intersects(r4)) {
+			return;
+		} else {
+			r3.clip(r4);
+		}
+	} else {
+		r3 = Common::Rect(0, 0, dst_w, dst_h);
+	}
+	diff = r2.left - r3.left;
+	if (diff < 0) {
+		r1.left -= diff;
+		r2.left -= diff;
+	}
+	diff = r2.right - r3.right;
+	if (diff > 0) {
+		r1.right -= diff;
+		r2.right -= diff;
+	}
+	diff = r2.top - r3.top;
+	if (diff < 0) {
+		r1.top -= diff;
+		r2.top -= diff;
+	}
+	diff = r2.bottom - r3.bottom;
+	if (diff > 0) {
+		r1.bottom -= diff;
+		r2.bottom -= diff;
+	}
+	if (r1.isValidRect() && r2.isValidRect()) {
+		decompressImageHE(dst, dst_w, &r2, src, &r1);
+	}
 }
 
 void Gdi::decompressImageHE(uint8 *dst, int dstWidth, const Common::Rect *dstRect, const uint8 *src, const Common::Rect *srcRect) {
@@ -1489,16 +1570,16 @@ dec_next:
 	}
 }
 
-void Gdi::copyVirtScreenBuffers(int x1, int y1, int x2, int y2) {
-	int rw = x2 - x1 + 1;
-	int rh = y2 - y1 + 1;
+void Gdi::copyVirtScreenBuffers(Common::Rect rect) {
+	int rw = rect.right - rect.left + 1;
+	int rh = rect.bottom - rect.top + 1;
 	byte *src, *dst;
 
-	src = (byte *)_vm->virtscr[0].backBuf + (_vm->_screenStartStrip + y1 * _numStrips) * 8 + x1;
-	dst = (byte *)_vm->virtscr[0].pixels + (_vm->_screenStartStrip + y1 * _numStrips) * 8 + x1;
+	src = (byte *)_vm->virtscr[0].backBuf + (_vm->_screenStartStrip + rect.top * _numStrips) * 8 + rect.left;
+	dst = (byte *)_vm->virtscr[0].pixels + (_vm->_screenStartStrip + rect.top * _numStrips) * 8 + rect.left;
 	
 	copyBufferBox(dst, src, rw, rh);
-	_vm->markRectAsDirty(kMainVirtScreen, x1, x2, y1, y2, 0);
+	_vm->markRectAsDirty(kMainVirtScreen, rect.left, rect.right, rect.top, rect.bottom, 0);
 }
 
 /**

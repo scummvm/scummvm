@@ -1295,7 +1295,7 @@ void ScummEngine_v72he::drawWizImage(int restype, int resnum, int x1, int y1, in
 		if (flags & 2) {			
 			warning("unhandled Wiz image w/ rmap");
 		} else {
-			copyWizImage(dst, wizd, pvs->w, pvs->h, x1, y1, width, height, &rScreen);
+			gdi.copyWizImage(dst, wizd, pvs->w, pvs->h, x1, y1, width, height, &rScreen);
 		}
 
 		Common::Rect rImage(x1, y1, x1 + width, y1 + height);
@@ -1305,7 +1305,7 @@ void ScummEngine_v72he::drawWizImage(int restype, int resnum, int x1, int y1, in
 				++rImage.bottom;
 				markRectAsDirty(kMainVirtScreen, rImage);
 			} else {
-				gdi.copyVirtScreenBuffers(rImage.left, rImage.top, rImage.right - 1, rImage.bottom - 1);
+				gdi.copyVirtScreenBuffers(rImage);
 			}
 		}
 	}
@@ -1322,47 +1322,6 @@ void ScummEngine_v72he::flushWizBuffer() {
 		drawWizImage(rtImage, pwi->resnum, pwi->x1, pwi->y1, pwi->flags);
 	}
 	_wizImagesNum = 0;
-}
-
-void ScummEngine_v72he::copyWizImage(uint8 *dst, const uint8 *src, int dst_w, int dst_h, int src_x, int src_y, int src_w, int src_h, Common::Rect *rect) {
-	Common::Rect r1(0, 0, src_w, src_h), r2(src_x, src_y, src_x + src_w, src_y + src_h);
-	Common::Rect r3;
-	int diff;
-
-	if (rect) {
-		r3 = *rect;
-		Common::Rect r4(0, 0, dst_w, dst_h);
-		if (!r3.intersects(r4)) {
-			return;
-		} else {
-			r3.clip(r4);
-		}
-	} else {
-		r3 = Common::Rect(0, 0, dst_w, dst_h);
-	}
-	diff = r2.left - r3.left;
-	if (diff < 0) {
-		r1.left -= diff;
-		r2.left -= diff;
-	}
-	diff = r2.right - r3.right;
-	if (diff > 0) {
-		r1.right -= diff;
-		r2.right -= diff;
-	}
-	diff = r2.top - r3.top;
-	if (diff < 0) {
-		r1.top -= diff;
-		r2.top -= diff;
-	}
-	diff = r2.bottom - r3.bottom;
-	if (diff > 0) {
-		r1.bottom -= diff;
-		r2.bottom -= diff;
-	}
-	if (r1.isValidRect() && r2.isValidRect()) {
-		gdi.decompressImageHE(dst, dst_w, &r2, src, &r1);
-	}
 }
 
 void ScummEngine_v72he::o72_drawWizImage() {
