@@ -550,7 +550,7 @@ else
 	    ;;
 	irix*)
 	    DEFINES="$DEFINES -DUNIX"
-	    ranlib=ar -r
+	    _ranlib=:
 	    ;;
 	darwin*)
 	    DEFINES="$DEFINES -DUNIX -DMACOSX"
