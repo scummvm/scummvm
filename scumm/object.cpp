@@ -1656,6 +1656,7 @@ void Scumm::loadFlObject(uint object, uint room)
 	ObjectData *od;
 	byte *flob;
 	uint32 obcd_size, obim_size, flob_size;
+	bool isRoomLocked, isRoomScriptsLocked;
 
 	// Don't load an already loaded object
 	if (whereIsObject(object) != WIO_NOT_FOUND)
@@ -1690,8 +1691,11 @@ void Scumm::loadFlObject(uint object, uint room)
 
 	// Lock room/roomScripts for the given room. They contains the OBCD/OBIM
 	// data, and a call to createResource might expire them, hence we lock them.
-	lock(rtRoom, room);
-	if (_features & GF_AFTER_V8)
+	isRoomLocked = res.flags[rtRoom][room] & RF_LOCK;
+	isRoomScriptsLocked = res.flags[rtRoomScripts][room] & RF_LOCK;
+	if (!isRoomLocked)
+		lock(rtRoom, room);
+	if (_features & GF_AFTER_V8 && !isRoomScriptsLocked)
 		lock(rtRoomScripts, room);
 
 	// Allocate slot & memory for floating object
@@ -1708,8 +1712,9 @@ void Scumm::loadFlObject(uint object, uint room)
 	memcpy(flob + 8 + obcd_size, foir.obim, obim_size);
 
 	// Unlock room/roomScripts
-	unlock(rtRoom, room);
-	if (_features & GF_AFTER_V8)
+	if (!isRoomLocked)
+		unlock(rtRoom, room);
+	if (_features & GF_AFTER_V8 && !isRoomScriptsLocked)
 		unlock(rtRoomScripts, room);
 
 	// Setup local object flags
