@@ -1128,11 +1128,10 @@ void SkySound::playSound(uint16 sound, uint16 volume, uint8 channel) {
 		flags |= SoundMixer::FLAG_LOOP;
 	}
 	
-	_mixer->setVolume(volume);
 	if (channel == 0)
-		_mixer->playRaw(&_ingameSound0, _soundData + dataOfs, dataSize, sampleRate, flags, SOUND_CH0, loopSta, loopEnd);
+		_mixer->playRaw(&_ingameSound0, _soundData + dataOfs, dataSize, sampleRate, flags, SOUND_CH0, volume, 0, loopSta, loopEnd);
 	else
-		_mixer->playRaw(&_ingameSound1, _soundData + dataOfs, dataSize, sampleRate, flags, SOUND_CH1, loopSta, loopEnd);
+		_mixer->playRaw(&_ingameSound1, _soundData + dataOfs, dataSize, sampleRate, flags, SOUND_CH1, volume, 0, loopSta, loopEnd);
 }
 
 void SkySound::fnStartFx(uint32 sound, uint8 channel) {
@@ -1162,15 +1161,11 @@ void SkySound::fnStartFx(uint32 sound, uint8 channel) {
 
 	uint8 volume = _mainSfxVolume; // start with standard vol
 
-	if (!SkyState::isCDVersion()) {
-		// as long as we can't set the volume for sfx without changing the speech volume,
-		// we're better off not setting it at all.
-		if (SkyState::_systemVars.systemFlags & SF_SBLASTER)
-			volume = roomList[i].adlibVolume;
-		if (SkyState::_systemVars.systemFlags & SF_ROLAND)
-		 	volume = roomList[i].rolandVolume;
-		volume = (volume * _mainSfxVolume) >> 8;
-	}
+	if (SkyState::_systemVars.systemFlags & SF_SBLASTER)
+		volume = roomList[i].adlibVolume;
+	else if (SkyState::_systemVars.systemFlags & SF_ROLAND)
+	 	volume = roomList[i].rolandVolume;
+	volume = (volume * _mainSfxVolume) >> 8;
 
 	// Check the flags, the sound may come on after a delay.
 	if (sfx->flags & SFXF_START_DELAY) {
