@@ -866,21 +866,21 @@ int Scumm::readSoundResource(int type, int idx) {
 		   1 byte - 0x09
 		---
 		
-		Instruments:
-		"MARI" - Marimba
-		"PLUC" - Pizzicato Strings
-		"HARM" - Harmonica
-		"PIPE" - Church Organ?
-		"TROM" - Trombone
-		"STRI" - String Ensemble
-		"HORN" - French Horn?
-		"VIBE" - Vibraphone
-		"SHAK" - Shakuhachi?
-		"PANP" - Pan Flute
-		"WHIS" - Whistle/Bottle
-		"ORGA" - Drawbar Organ
-		"BONG" - Woodblock?
-		"BASS" - Bass
+		Instruments (General Midi):
+		"MARI" - Marimba (13)
+		"PLUC" - Pizzicato Strings (46)
+		"HARM" - Harmonica (23)
+		"PIPE" - Church Organ? (20) or Flute? (74)
+		"TROM" - Trombone (58)
+		"STRI" - String Ensemble (49 or 50)
+		"HORN" - French Horn? (61) or English Horn? (70)
+		"VIBE" - Vibraphone (12)
+		"SHAK" - Shakuhachi? (78)
+		"PANP" - Pan Flute (76)
+		"WHIS" - Whistle (79) / Bottle (77)
+		"ORGA" - Drawbar Organ (17; but could also be 18-21)
+		"BONG" - Woodblock? (116)
+		"BASS" - Bass (33-40)
 		
 		
 		Now the task could be to convert this into MIDI, to be fed into iMuse.
