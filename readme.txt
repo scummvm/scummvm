@@ -1,14 +1,17 @@
-2001-10-12
+2001-11-6
 
-This is the 2nd pre-alpha release of ScummVM. It is an implementation of the SCUMM
-engine used in various Lucas Arts games such as Monkey Island and Day of the Tentacle.
+ScummVM is an implementation of the SCUMM engine used in various Lucas Arts games
+such as Monkey Island and Day of the Tentacle.
 
-The engine is far from complete, and thus only Monkey Island 2 and Monkey Island
-1 is supported at the moment.
+At the moment the following games have been reported to work:
+Monkey Island 1 (CD version)
+Monkey Island 2
+Indiana Jones And The Fate Of Atlantis
+Day Of The Tentacle
+Sam & Max (partially)
 
 Please be aware that the engine contains bugs and non-implemented-features that
-make it impossible to finish the game. Other stuff that's missing is sound and
-savegames.
+make it impossible to finish the game. Other stuff that's missing is music.
 
 Compiling:
 ----------
@@ -19,9 +22,6 @@ GCC:
 ----
 * Type make (or gmake if that's what GNU make is called on your system) and
 hopefully ScummVM will compile for you.
-
-Please note that big endian support is preliminary and contains bugs.
-
 
 Microsoft Visual C++:
 ---------------------
@@ -38,6 +38,8 @@ Before you run the engine, you need to put the game's datafiles in the same dire
 
 You can use Ctrl 0-9 and Shift 0-9 to load and save states.
 Ctrl-z quits, and Ctrl-f runs in fast mode.
+Ctrl-d starts the debugger.
+Ctrl-s shows memory consumption.
 
 Good Luck,
 Ludvig Strigeus

@@ -52,6 +52,8 @@ bool ScummDebugger::do_command() {
 		       "help -> display this help text\n"
 			   "quit -> quit the debugger\n"
 			   "go [numframes] -> increase frame\n"
+				 "actor [actornum] -> show actor information\n"
+				 "scripts -> show running scripts\n"
 			   );
 		return true;
 
