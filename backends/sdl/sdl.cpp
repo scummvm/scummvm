@@ -192,7 +192,6 @@ void OSystem_SDL::unload_gfx_mode() {
 
 void OSystem_SDL::hotswap_gfx_mode() {
 
-
 	// Keep around the old _screen & _tmpscreen so we can restore the screen data
 	// after the mode switch.
 	SDL_Surface *old_screen = _screen;
@@ -339,7 +338,17 @@ uint32 OSystem_SDL::property(int param, Property *value) {
 		}
 #endif
 		return 1;
+	} else if (param == PROP_SET_GFX_MODE) {
+		if (value->gfx_mode >= 7)
+			return 0;
+
+		_mode = value->gfx_mode;
+		hotswap_gfx_mode();
+
+		return 1;
 	}
+
+
 	
 	return OSystem_SDL_Common::property(param, value);
 }

@@ -55,7 +55,6 @@ protected:
 
 	virtual void load_gfx_mode();
 	virtual void unload_gfx_mode();
-	void hotswap_gfx_mode();
 };
 
 OSystem_SDL_Common *OSystem_SDL_Common::create() {
@@ -241,29 +240,6 @@ void OSystem_SDL_OpenGL::update_screen() {
 
 	_num_dirty_rects = 0;
 	_forceFull = false;
-}
-
-void OSystem_SDL_OpenGL::hotswap_gfx_mode() {
-	/* We allocate a screen sized bitmap which contains a "backup"
-	 * of the screen data during the change. Then we draw that to
-	 * the new screen right after it's setup.
-	 */
-	
-	byte *bak_mem = (byte*)malloc(_screenWidth*_screenHeight);
-
-	get_screen_image(bak_mem);
-
-	unload_gfx_mode();
-	load_gfx_mode();
-
-	// reset palette
-	SDL_SetColors(_screen, _currentPalette, 0, 256);
-
-	// blit image
-	copy_rect(bak_mem, _screenWidth, 0, 0, _screenWidth, _screenHeight);
-	free(bak_mem);
-
-	update_screen();
 }
 
 uint32 OSystem_SDL_OpenGL::property(int param, Property *value) {

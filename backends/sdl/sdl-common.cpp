@@ -655,20 +655,6 @@ bool OSystem_SDL_Common::set_sound_proc(void *param, SoundProc *proc, byte forma
 	return true;
 }
 
-
-/* retrieve the 320x200 bitmap currently being displayed */
-void OSystem_SDL_Common::get_screen_image(byte *buf) {
-	/* make sure the mouse is gone */
-	undraw_mouse();
-	
-	if (SDL_LockSurface(_screen) == -1)
-		error("SDL_LockSurface failed: %s.\n", SDL_GetError());
-
-	memcpy(buf, _screen->pixels, _screenWidth*_screenHeight);
-
-	SDL_UnlockSurface(_screen);
-}
-
 uint32 OSystem_SDL_Common::property(int param, Property *value) {
 	switch(param) {
 
@@ -690,15 +676,6 @@ uint32 OSystem_SDL_Common::property(int param, Property *value) {
 			}
 		}
 		break;
-
-	case PROP_SET_GFX_MODE:
-		if (value->gfx_mode >= 7)
-			return 0;
-
-		_mode = value->gfx_mode;
-		hotswap_gfx_mode();
-
-		return 1;
 
 	case PROP_SHOW_DEFAULT_CURSOR:
 		SDL_ShowCursor(value->show_cursor ? SDL_ENABLE : SDL_DISABLE);		
