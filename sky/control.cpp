@@ -1520,13 +1520,14 @@ uint16 SkyControl::quickXRestore(uint16 slot) {
 		memset(_skyScreen->giveCurrent(), 0, GAME_SCREEN_WIDTH * GAME_SCREEN_HEIGHT);
 		_skyScreen->showScreen(_skyScreen->giveCurrent());
 		_skyScreen->forceRefresh();
+		_skyScreen->setPaletteEndian((uint8 *)SkyState::fetchCompact(SkyState::_systemVars.currentPalette));
 	} else {
 		memset(_screenBuf, 0, FULL_SCREEN_WIDTH * FULL_SCREEN_HEIGHT);
 		_system->copy_rect(_screenBuf, GAME_SCREEN_WIDTH, 0, 0, GAME_SCREEN_WIDTH, FULL_SCREEN_HEIGHT);
 		_system->update_screen();
 		_skyScreen->showScreen(_skyScreen->giveCurrent());
+		_skyScreen->setPalette(60111);
 	}
-	_skyScreen->setPaletteEndian((uint8 *)SkyState::fetchCompact(SkyState::_systemVars.currentPalette));
 	_skyMouse->spriteMouse(_savedMouse, 0, 0);
 	_skyText->fnSetFont(_savedCharSet);
 
