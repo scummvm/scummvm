@@ -27,6 +27,11 @@
 #	include "palm.h"
 #endif
 
+#ifdef NEW_FONT_CODE
+#include "gui/font.h"
+#endif
+
+
 namespace GUI {
 
 /*
@@ -49,6 +54,13 @@ enum {
 	kKeyRepeatSustainDelay = 100
 };
 
+#ifdef NEW_FONT_CODE
+/*
+ * TODO: 
+ *  - replace kLineHeight by global variable or query method
+ *  - ....
+ */
+#else
 #ifdef __PALM_OS__
 static byte *guifont;
 #else
@@ -83,6 +95,9 @@ static byte guifont[] = {
 };
 #endif
 
+#endif // NEW_FONT_CODE
+
+
 // Constructor
 NewGui::NewGui() : _screen(0), _needRedraw(false),
 	_stateIsSaved(false), _cursorAnimateCounter(0), _cursorAnimateTimer(0) {
@@ -113,9 +128,8 @@ void NewGui::runLoop() {
 		return;
 	
 	// Setup some default GUI colors. Normally this will be done whenever an
-	// EVENT_SCREEN_CHANGED is received. However, not all backends support
-	// that even at this time, so we also do it "manually" whenever a run loop
-	// is entered.
+	// EVENT_SCREEN_CHANGED is received. However, not yet all backends support
+	// that event, so we also do it "manually" whenever a run loop is entered.
 	updateColors();
 
 	if (!_stateIsSaved) {
@@ -402,18 +416,48 @@ void NewGui::addDirtyRect(int x, int y, int w, int h) {
 	_system->copy_rect_overlay(buf, _screenPitch, x, y, w, h);
 }
 
-void NewGui::drawChar(const byte chr, int xx, int yy, NewGuiColor color) {
-	unsigned int buffer = 0, mask = 0, x, y;
-	byte *tmp;
-
-	tmp = guifont + 224 + (chr + 1) * 8;
-
+void NewGui::drawChar(byte chr, int xx, int yy, NewGuiColor color) {
 	NewGuiColor *ptr = getBasePtr(xx, yy);
+	uint x, y;
 
-	for (y = 0; y < 8; y++) {
-		for (x = 0; x < 8; x++) {
+#ifdef NEW_FONT_CODE
+	assert(g_sysfont.bits != 0 && g_sysfont.maxwidth <= 16);
+
+	// If this character is not included in the font, use the default char.
+	if (chr < g_sysfont.firstchar || chr >= g_sysfont.firstchar + g_sysfont.size) {
+		if (chr == ' ')
+			return;
+		chr = g_sysfont.defaultchar;
+	}
+
+	const uint w = getCharWidth(chr);
+	const uint h = g_sysfont.height;
+	chr -= g_sysfont.firstchar;
+	const bitmap_t *tmp = g_sysfont.bits + (g_sysfont.offset ? g_sysfont.offset[chr] : (chr * h));
+//printf("Char '%c', width %d\n", chr, w);
+
+	for (y = 0; y < h; y++) {
+		const bitmap_t buffer = *tmp++;
+		bitmap_t mask = 0x8000;
+		for (x = 0; x < w; x++) {
+			if ((buffer & mask) != 0)
+				ptr[x] = color;
+			mask >>= 1;
+		}
+		ptr += _screenPitch;
+	}
+#else
+	const uint w = 8;
+	const uint h = 8;
+	const byte *tmp = guifont + 224 + (chr + 1) * 8;
+	uint buffer = 0;
+	uint mask = 0;
+
+	for (y = 0; y < h; y++) {
+		for (x = 0; x < w; x++) {
 			unsigned char c;
-			if ((mask >>= 1) == 0) {
+			mask >>= 1;
+			if (mask == 0) {
 				buffer = *tmp++;
 				mask = 0x80;
 			}
@@ -423,6 +467,7 @@ void NewGui::drawChar(const byte chr, int xx, int yy, NewGuiColor color) {
 		}
 		ptr += _screenPitch;
 	}
+#endif
 }
 
 int NewGui::getStringWidth(const String &str) {
@@ -434,7 +479,20 @@ int NewGui::getStringWidth(const String &str) {
 }
 
 int NewGui::getCharWidth(byte c) {
+#ifdef NEW_FONT_CODE
+	// If no width table is specified, return the maximum width
+	if (!g_sysfont.width)
+		return g_sysfont.maxwidth;
+	// If this character is not included in the font, use the default char.
+	if (c < g_sysfont.firstchar || g_sysfont.firstchar + g_sysfont.size < c) {
+		if (c == ' ')
+			return g_sysfont.maxwidth / 2;
+		c = g_sysfont.defaultchar;
+	}
+	return g_sysfont.width[c - g_sysfont.firstchar];
+#else
 	return guifont[c+6];
+#endif
 }
 
 void NewGui::drawString(const String &s, int x, int y, int w, NewGuiColor color, int align, int deltax, bool useEllipsis) {

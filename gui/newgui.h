@@ -26,6 +26,21 @@
 #include "common/str.h"
 #include "common/system.h"	// For events
 
+// Uncomment the following to enable the new font code:
+//#define NEW_FONT_CODE
+
+
+// Height of a single text line
+#ifdef NEW_FONT_CODE
+#include "gui/font.h"
+#define kLineHeight	(g_sysfont.height + 2)
+#else
+enum {
+	kLineHeight			= 10
+};
+#endif
+
+
 namespace GUI {
 
 class Dialog;
@@ -34,12 +49,6 @@ class Dialog;
 #define vLine(x, y, y2, color) line(x, y, x, y2, color);
 
 #define g_gui	(NewGui::instance())
-
-
-// Height of a single text line
-enum {
-	kLineHeight			= 11
-};
 
 
 // Text alignment modes for drawString()
@@ -65,7 +74,9 @@ public:
 	Dialog	*operator [](int i)	{ return _stack[i]; }
 };
 
-// This class hopefully will replace the old Gui class completly one day 
+/**
+ * GUI manager singleton.
+ */ 
 class NewGui : public Common::Singleton<NewGui> {
 	typedef Common::String String;
 	friend class Dialog;

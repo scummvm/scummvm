@@ -277,7 +277,7 @@ void ListWidget::drawWidget(bool hilite) {
 			else
 				gui->frameRect(_x + 1, _y + 1 + kLineHeight * i, _w - 1, kLineHeight, gui->_textcolorhi);
 		}
-		gui->drawString(buffer, _x + 2, _y + 3 + kLineHeight * i, _w - 4,
+		gui->drawString(buffer, _x + 2, _y + 2 + kLineHeight * i, _w - 4,
 							(_selectedItem == pos && _hasFocus) ? gui->_bgcolor : gui->_textcolor);
 	}
 }

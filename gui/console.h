@@ -31,7 +31,6 @@ namespace GUI {
 enum {
 	kBufferSize	= 32768,
 	kLineBufferSize = 256,
-	kCharWidth = 8,
 
 	kHistorySize = 20
 };

@@ -24,6 +24,15 @@
 
 #include "base/engine.h"
 
+#ifdef NEW_FONT_CODE
+#include "gui/font.h"
+#define kCharWidth	g_sysfont.maxwidth
+#else
+enum {
+	kCharWidth = 8
+};
+#endif
+
 
 namespace GUI {
 

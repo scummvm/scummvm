@@ -141,7 +141,7 @@ void ButtonWidget::handleMouseUp(int x, int y, int button, int clickCount) {
 
 void ButtonWidget::drawWidget(bool hilite) {
 	NewGui *gui = &g_gui;
-	gui->drawString(_label, _x, _y, _w,
+	gui->drawString(_label, _x, _y + (_h - kLineHeight)/2 + 1, _w,
 					!isEnabled() ? gui->_color :
 					hilite ? gui->_textcolorhi : gui->_textcolor, _align);
 }
