@@ -20,6 +20,7 @@
  */
 
 #include "file.h"
+#include "util.h"
 #include "engine.h"	// For debug/warning/error
 
 FILE *File::fopenNoCase(const char *filename, const char *directory, const char *mode) {
@@ -27,16 +28,22 @@ FILE *File::fopenNoCase(const char *filename, const char *directory, const char 
 	char buf[256];
 	char *ptr;
 
-	// Fix for Win98 issue related with game directory pointing to root drive ex. "c:\"
-	ptr = (char*)directory;
-	if ((ptr[1] == ':') && (ptr[2] == '\\') && (ptr[3] == 0)) {
-		ptr[2] = 0;
-	}
-
 	strcpy(buf, directory);
-	if (directory[0] != 0) {
+
+#ifdef _MSC_VER	// FIXME: is there a better check to detect Windows ?!
+	// Fix for Win98 issue related with game directory pointing to root drive ex. "c:\"
+	if (buf[0] != 0) && (buf[1] == ':') && (buf[2] == '\\') && (buf[3] == 0)) {
+		buf[2] = 0;
+	}
+#endif
+
+	// Record the length of the dir name (so we can cut of anything trailing it
+	// later, when we try with different file names).
+	const int dirLen = strlen(buf);
+
+	if (dirLen > 0) {
 #ifdef __MORPHOS__
-		if (buf[strlen(buf)-1] != ':' && buf[strlen(buf)-1] != '/')
+		if (buf[dirLen-1] != ':' && buf[dirLen-1] != '/')
 #endif
 
 #if !defined(__GP32__) && !defined(__PALM_OS__)
@@ -61,9 +68,9 @@ FILE *File::fopenNoCase(const char *filename, const char *directory, const char 
 		"VOICES/"
 	};
 
-	for (uint8 l = 0; l < 9; l++) {
-		strcpy(buf, directory);
-		if (directory[0] != 0) {
+	for (int dirIdx = 0; dirIdx < ARRAYSIZE(dirs); dirIdx++) {
+		buf[dirLen] = 0;
+		if (buf[0] != 0) {
 #ifdef __MORPHOS__
 			if (buf[strlen(buf) - 1] != ':' && buf[strlen(buf) - 1] != '/')
 #endif
@@ -71,7 +78,7 @@ FILE *File::fopenNoCase(const char *filename, const char *directory, const char 
 			strcat(buf, "/");	// PALMOS
 #endif
 		}
-		strcat(buf, dirs[l]);
+		strcat(buf, dirs[dirIdx]);
 		int8 len = strlen(buf);
 		strcat(buf, filename);
 
