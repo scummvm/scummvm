@@ -2219,15 +2219,15 @@ void Scumm_v6::o6_printEgo() {
 
 void Scumm_v6::o6_talkActor() {
 	_actorToPrintStrFor = pop();
+
 	_messagePtr = _scriptPointer;
+	_scriptPointer += resStrLen(_scriptPointer) + 1;
 
 	if (((_gameId == GID_DIG) || (_features & GF_AFTER_V8)) && (_messagePtr[0] == '/')) {
 		char pointer[20];
 		int i, j;
 
-		_scriptPointer += resStrLen(_scriptPointer) + 1;
 		translateText(_messagePtr, _transText);
-
 		for (i = 0, j = 0; (_messagePtr[i] != '/' || j == 0) && j < 19; i++) {
 			if (_messagePtr[i] != '/')
 				pointer[j++] = _messagePtr[i];
@@ -2240,13 +2240,10 @@ void Scumm_v6::o6_talkActor() {
 
 		_sound->_talkChannel = _sound->playBundleSound(pointer);
 		_messagePtr = _transText;
-		setStringVars(0);
-		actorTalk();
-	} else {
-		setStringVars(0);
-		actorTalk();
-		_scriptPointer = _messagePtr;
 	}
+
+	setStringVars(0);
+	actorTalk();
 }
 
 void Scumm_v6::o6_talkEgo() {
