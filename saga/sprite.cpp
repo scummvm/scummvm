@@ -118,22 +118,22 @@ int Sprite::loadList(int resourceId, SpriteList &spriteList) {
 		spritePointer = spriteListData;
 		spritePointer += offset;
 
-		MemoryReadStream readS(spritePointer, (_vm->_features & GF_MAC_RESOURCES) ? 8 : 4);
+		MemoryReadStream readS2(spritePointer, (_vm->_features & GF_MAC_RESOURCES) ? 8 : 4);
 
 		if (!(_vm->_features & GF_MAC_RESOURCES)) {
-			spriteInfo->xAlign = readS.readSByte();
-			spriteInfo->yAlign = readS.readSByte();
+			spriteInfo->xAlign = readS2.readSByte();
+			spriteInfo->yAlign = readS2.readSByte();
 
-			spriteInfo->width = readS.readByte();
-			spriteInfo->height = readS.readByte();
+			spriteInfo->width = readS2.readByte();
+			spriteInfo->height = readS2.readByte();
 		} else {
-			spriteInfo->xAlign = readS.readSint16BE();
-			spriteInfo->yAlign = readS.readSint16BE();
+			spriteInfo->xAlign = readS2.readSint16BE();
+			spriteInfo->yAlign = readS2.readSint16BE();
 
-			spriteInfo->width = readS.readUint16BE();
-			spriteInfo->height = readS.readUint16BE();
+			spriteInfo->width = readS2.readUint16BE();
+			spriteInfo->height = readS2.readUint16BE();
 		}
-		spriteDataPointer = spritePointer + readS.pos();
+		spriteDataPointer = spritePointer + readS2.pos();
 		outputLength = spriteInfo->width * spriteInfo->height;
 		decodeRLEBuffer(spriteDataPointer, 64000, outputLength); //todo: 64000 - should be replace by real input length
 		spriteInfo->decodedBuffer = (byte *) malloc(outputLength);
