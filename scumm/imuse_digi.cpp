@@ -736,14 +736,9 @@ void IMuseDigital::callback() {
 
 			int pan = (_channel[l].pan != 64) ? 2 * _channel[l].pan - 127 : 0;
 			if (_scumm->_mixer->isReady()) {
-				if (!_channel[l].stream) {
-					// Create an AudioInputStream and hook it to the mixer.
-					_channel[l].stream = makeWrappedInputStream(_channel[l].freq, _channel[l].mixerFlags, 100000);
-					_scumm->_mixer->playInputStream(&_channel[l].handle, _channel[l].stream, true, _channel[l].vol / 1000, _channel[l].pan, -1, false);
-				} else {
-					_scumm->_mixer->setChannelVolume(_channel[l].handle, _channel[l].vol / 1000);
-					_scumm->_mixer->setChannelPan(_channel[l].handle, pan);
-				}
+				_scumm->_mixer->setChannelVolume(_channel[l].handle, _channel[l].vol / 1000);
+				_scumm->_mixer->setChannelPan(_channel[l].handle, pan);
+				assert(_channel[l].stream);
 				_channel[l].stream->append(_channel[l].data + _channel[l].offset, mixer_size);
 			}
 			_channel[l].offset += mixer_size;
@@ -800,11 +795,11 @@ void IMuseDigital::startSound(int sound, byte *voc_src, int voc_size, int voc_ra
 					int loops = 0;
 					voc_src = readVOCFromMemory(ptr, voc_size, voc_rate, loops);
 				}
-				_channel[l].mixerSize = voc_rate * 2;
+				_channel[l].mixerSize = voc_rate;
 				_channel[l].freq = voc_rate;
-				_channel[l].size = voc_size * 2;
+				_channel[l].size = voc_size;
 				_channel[l].bits = 8;
-				_channel[l].channels = 2;
+				_channel[l].channels = 1;
 				_channel[l].mixerFlags = SoundMixer::FLAG_UNSIGNED;
 				_channel[l].data = voc_src;
 			} else if (READ_UINT32(ptr) == MKID('iMUS')) {
@@ -902,18 +897,18 @@ void IMuseDigital::startSound(int sound, byte *voc_src, int voc_size, int voc_ra
 					}
 				}
 
-				// FIXME / TODO: Is FLAG_REVERSE_STEREO really needed here?
-				// How do we know that it is needed? If we indeed have reasons
-				// to believe that it is needed, those should be documented in
-				// a comment here. And if the channels are reversed, then we
-				// might just swap them right here, instead of using the mixer
-				// flag - since we copy the data around anyway, swapping the
-				// channels should be little extra work (in fact, none for
-				// mono data, which includes the 12 bit compressed format).
-
 				assert(_channel[l].channels == 1 || _channel[l].channels == 2);
 
 				if (_channel[l].channels == 2) {
+					// FIXME / TODO: Is FLAG_REVERSE_STEREO really needed here?
+					// How do we know that it is needed? If we indeed have reasons
+					// to believe that it is needed, those should be documented in
+					// a comment here. And if the channels are reversed, then we
+					// might just swap them right here, instead of using the mixer
+					// flag - since we copy the data around anyway, swapping the
+					// channels should be little extra work (in fact, none for
+					// mono data, which includes the 12 bit compressed format).
+
 					_channel[l].mixerFlags = SoundMixer::FLAG_STEREO | SoundMixer::FLAG_REVERSE_STEREO;
 					_channel[l].mixerSize = _channel[l].freq * 2;
 				} else {
@@ -946,6 +941,11 @@ void IMuseDigital::startSound(int sound, byte *voc_src, int voc_size, int voc_ra
 					error("IMuseDigital::startSound() Can't handle %d bit samples", _channel[l].bits);
 			}
 			_channel[l].mixerSize /= 25;	// FIXME: Why division by 25? Maybe to we achieve a "frame rate" of 25 audio blocks per second?
+
+			// Create an AudioInputStream and hook it to the mixer.
+			_channel[l].stream = makeWrappedInputStream(_channel[l].freq, _channel[l].mixerFlags, 100000);
+			_scumm->_mixer->playInputStream(&_channel[l].handle, _channel[l].stream, true, _channel[l].vol / 1000, _channel[l].pan, -1, false);
+
 			_channel[l].toBeRemoved = false;
 			_channel[l].used = true;
 			break;
