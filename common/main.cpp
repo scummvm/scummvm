@@ -194,7 +194,9 @@ int main(int argc, char *argv[]) {
 	}
 
 	// Set the window caption to the game name
-	prop.caption = detector.getGameName().c_str();
+	prop.caption = g_config->get("description", detector._gameFileName);
+	if (prop.caption == NULL)	
+		prop.caption = detector.getGameName().c_str();
 	system->property(OSystem::PROP_SET_WINDOW_CAPTION, &prop);
 
 	// See if the game should default to 1x scaler
