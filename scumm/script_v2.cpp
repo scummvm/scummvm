@@ -121,7 +121,7 @@ void Scumm_v2::setupOpcodes() {
 		OPCODE(o5_isLess),
 		OPCODE(o2_drawObject),
 		OPCODE(o5_increment),
-		OPCODE(o2_setState08),
+		OPCODE(o2_clearState08),
 		/* 48 */
 		OPCODE(o5_isEqual),
 		OPCODE(o5_faceActor),
