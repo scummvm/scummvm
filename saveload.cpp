@@ -127,8 +127,12 @@ bool Scumm::loadState(int slot, bool compat)
 	gdi._mask_left = -1;
 
 	initScreens(0, 0, 320, 200);
+	
+	// Force a fade to black
+	int old_screenEffectFlag = _screenEffectFlag;
 	_screenEffectFlag = true;
 	fadeToBlackEffect(129);
+	_screenEffectFlag = old_screenEffectFlag;
 
 	initScreens(0, sb, 320, sh);
 
