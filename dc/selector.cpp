@@ -4,6 +4,8 @@
 #include "icon.h"
 #include "label.h"
 
+#include <ronin/gddrive.h>
+
 
 #define MAX_GAMES 100
 #define MAX_DIR 100
@@ -212,6 +214,56 @@ static int findGames(Scumm *s, Game *games, int max)
   return curr_game;
 }
 
+int getCdState()
+{
+  unsigned int param[4];
+  gdGdcGetDrvStat(param);
+  return param[0];
+}
+
+void waitForDisk()
+{
+  Label lab;
+  int wasopen = 0;
+  ta_sync();
+  void *mark = ta_txmark();
+  lab.create_texture("Please insert game CD.");
+  printf("waitForDisk, cdstate = %d\n", getCdState());
+  for(;;) {
+    int s = getCdState();
+    if(s >= 6)
+      wasopen = 1;
+    if(s > 0 && s < 6 && wasopen) {
+      cdfs_reinit();
+      chdir("/");
+      chdir("/");
+      ta_sync();
+      ta_txrelease(mark);
+      return;
+    }
+    
+    ta_begin_frame();
+    
+    draw_solid_quad(20.0, 20.0, 620.0, 460.0,
+		    0xff0000, 0x00ff00, 0x0000ff, 0xffffff);
+
+    ta_commit_end();
+
+    lab.draw(166.0, 200.0, 0xffff2020);
+
+    ta_commit_frame();
+
+    int16 mousex = 0, mousey = 0;
+    byte lmb=0, rmb=0;
+    int key=0;
+
+    int mask = getimask();
+    setimask(15);
+    handleInput(locked_get_pads(), mousex, mousey, lmb, rmb, key);
+    setimask(mask);
+  }
+}
+
 int gameMenu(Game *games, int num_games)
 {
   int top_game = 0, selector_pos = 0;
@@ -221,6 +273,9 @@ int gameMenu(Game *games, int num_games)
     return -1;
 
   for(;;) {
+
+    if(getCdState()>=6)
+      return -1;
 
     ta_begin_frame();
     
@@ -279,22 +334,31 @@ int gameMenu(Game *games, int num_games)
 bool selectGame(Scumm *s, char *&ret)
 {
   Game *games = new Game[MAX_GAMES];
-  int num_games = findGames(s, games, MAX_GAMES);
-  int selected;
+  int selected, num_games;
 
   ta_sync();
   void *mark = ta_txmark();
 
-  for(int i=0; i<num_games; i++) {
-    games[i].icon.create_texture();
-    games[i].label.create_texture(games[i].text);
+  for(;;) {
+
+    num_games = findGames(s, games, MAX_GAMES);
+
+    for(int i=0; i<num_games; i++) {
+      games[i].icon.create_texture();
+      games[i].label.create_texture(games[i].text);
+    }
+
+    selected = gameMenu(games, num_games);
+
+    ta_sync();
+    ta_txrelease(mark);
+
+    if(selected == -1)
+      waitForDisk();
+    else
+      break;
+
   }
-
-  selected = gameMenu(games, num_games);
-
-  ta_sync();
-  ta_txrelease(mark);
-
 
   if(selected >= num_games)
     selected = -1;
