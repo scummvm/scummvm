@@ -1262,7 +1262,7 @@ void Insane::smlayer_overrideDrawActorAt(byte *arg_0, byte arg_4, byte arg_8) {
 
 void Insane::smlayer_showStatusMsg(int32 arg_0, byte *renderBitmap, int32 codecparam, 
 					   int32 pos_x, int32 pos_y, int32 arg_14, int32 arg_18, 
-					   int32 flags, const char *formatString, char *strng) {
+					   int32 flags, const char *formatString, const char *strng) {
 	SmushFont *sf = _player->_sf[0];
 	int color = 1, top = 0;
 	char *str = NULL, *string;
@@ -1366,8 +1366,8 @@ void Insane::smlayer_setActorFacing(int actornum, int actnum, int frame, int dir
 	}
 }
 
-char *Insane::handleTrsTag(int32 trsId) {
-	return _player->getString(trsId);;
+const char *Insane::handleTrsTag(int32 trsId) {
+	return _player->getString(trsId);
 }
 
 bool Insane::smush_eitherNotStartNewFrame(void) {

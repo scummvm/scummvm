@@ -99,7 +99,7 @@ class Insane {
 	int32 _currEnemy;
 	int32 _currScenePropIdx;
 	int32 _currScenePropSubIdx;
-	char *_currTrsMsg;
+	const char *_currTrsMsg;
 	int16 _sceneData2Loaded;
 	int16 _sceneData1Loaded;
 	int16 _keyboardDisable;
@@ -385,7 +385,7 @@ class Insane {
 	void smush_rewindCurrentSan(int arg_0, int arg_4, int arg_8);
 	void smlayer_showStatusMsg(int32 arg_0, byte *renderBitmap, int32 codecparam, 
 							   int32 x, int32 y, int32 arg_14, int32 arg_18, 
-							   int32 arg_1C, const char *formatString, char *str);
+							   int32 arg_1C, const char *formatString, const char *str);
 	void init_fluConfStruct(int n, int sceneId, byte **fluPtr, 
 							const char *filenamePtr, int startFrame, int numFrames);
 	int32 processBenOnRoad(bool flag);
@@ -419,7 +419,7 @@ class Insane {
 	int32 setBenState(void);
 	bool smlayer_actorNeedRedraw(int actornum, int actnum);
 	void reinitActors(void);
-	char *handleTrsTag(int32 trsId);
+	const char *handleTrsTag(int32 trsId);
 	void ouchSoundBen(void);
 	void smush_setupSanWithFlu(const char *filename, int32 setupsan2, int32 step1, 
 							   int32 step2, int32 setupsan1, byte *fluPtr, int32 numFrames);
