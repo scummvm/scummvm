@@ -1271,8 +1271,7 @@ int IMuseInternal::set_master_volume_intern(uint vol)
 	if (vol > 127)
 		return -1;
 
-	if (_music_volume >= 0)
-		vol = vol * _music_volume / 128;
+	vol = vol * _music_volume / 128;
 
 	_master_volume = vol;
 	for (int i = 0; i != 8; i++)
