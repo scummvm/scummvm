@@ -180,10 +180,9 @@ bool SkyGrid::getGridValues(uint32 x, uint32 y, uint32 width, Compact *cpt, uint
     bitPos += x_signed;
 	int32 screenGridOfs = _gridConvertTable[cpt->screen] * GRID_SIZE;
 	bitPos += (screenGridOfs << 3); // convert to bits
-	int32 tmpBits = bitPos&0x1F;
+	uint32 tmpBits = 0x1F - (bitPos&0x1F);
 	bitPos &= ~0x1F; // divide into dword address and bit number
-	tmpBits = ~(tmpBits-0x1F); // NOTE THE ~ !!
-	bitPos += tmpBits; // anyone have an idea what this calculation is meant for?!
+	bitPos += tmpBits;
 	*resBitNum = bitPos;
 	*resWidth = width;
 	return true;
@@ -200,9 +199,9 @@ void SkyGrid::removeObjectFromWalk(uint32 bitNum, uint32 width) {
 
 	for (uint32 cnt = 0; cnt < width; cnt++) {
 		_gameGrids[bitNum >> 3] &= ~(1 << (bitNum & 0x7));
-		bitNum--;
 		if ((bitNum & 0x1F) == 0)
 			bitNum += 0x3F;
+		else bitNum--;
 	}
 }
 
@@ -217,9 +216,9 @@ void SkyGrid::objectToWalk(uint32 bitNum, uint32 width) {
 
 	for (uint32 cnt = 0; cnt < width; cnt++) {
 		_gameGrids[bitNum >> 3] |= (1 << (bitNum & 0x7));
-		bitNum--;
 		if ((bitNum & 0x1F) == 0)
 			bitNum += 0x3F;
+		else bitNum--;
 	}
 }
 
