@@ -181,11 +181,18 @@ int32 musicVolTable[17] = {
 
 int16 MusicHandle::read() {
 	uint8 in;
-	uint16 delta, value;
+	uint16 delta;
 	int16 out;
 
 	if (!_streaming)
 		return 0;
+
+	if (_firstTime) {
+		_lastSample = fpMus.readUint16LE();
+		_filePos += 2;
+		_firstTime = false;
+		return _lastSample;
+	}
 
 	// Assume the file handle has been correctly positioned already.
 
@@ -193,14 +200,25 @@ int16 MusicHandle::read() {
 	delta = GetCompressedAmplitude(in) << GetCompressedShift(in);
 
 	if (GetCompressedSign(in))
-		value = _lastSample - delta;
+		out = _lastSample - delta;
 	else
-		value = _lastSample + delta;
+		out = _lastSample + delta;
 
 	_filePos++;
-	_lastSample = value;
+	_lastSample = out;
 
-	out = (int16) (value ^ 0x8000);
+	if (_looping) {
+		if (_filePos >= _fileEnd) {
+			_firstTime = true;
+			_filePos = _fileStart;
+		}
+	} else {
+		// Fade out at the end of the music. Is this really desirable
+		// behaviour?
+
+		if (_fileEnd - _filePos <= FADE_SAMPLES)
+			_fading = _fileEnd - _filePos;
+	}
 
 	if (_fading > 0) {
 		if (--_fading == 0) {
@@ -879,6 +897,7 @@ int32 Sword2Sound::StreamCompMusic(const char *filename, uint32 musicId, bool lo
 }
 
 int32 Sword2Sound::StreamCompMusicFromLock(const char *filename, uint32 musicId, bool looping) {
+	uint32 len;
 	int32 primaryStream = -1;
 	int32 secondaryStream = -1;
 
@@ -934,60 +953,29 @@ int32 Sword2Sound::StreamCompMusicFromLock(const char *filename, uint32 musicId,
 		music[secondaryStream]._fading = FADE_SAMPLES;
 
 	fpMus.seek((musicId + 1) * 8, SEEK_SET);
-	music[primaryStream]._filePos = fpMus.readUint32LE();
-	music[primaryStream]._fileEnd = fpMus.readUint32LE();
+	music[primaryStream]._fileStart = fpMus.readUint32LE();
+	len = fpMus.readUint32LE();
 
-	if (!music[primaryStream]._filePos || !music[primaryStream]._fileEnd)
+	if (!music[primaryStream]._fileStart || !len)
 		return RDERR_INVALIDID;
 
-	// Calculate the file position of the end of the music
-	music[primaryStream]._fileEnd += music[primaryStream]._filePos;
-
-	// We used to read two bytes for _lastSample, but doing that breaks
-	// some of the music, so I guess that was a bug. Maybe.
-
-	music[primaryStream]._lastSample = fpMus.readByte();
-	music[primaryStream]._filePos++;
+	music[primaryStream]._fileEnd = music[primaryStream]._fileStart + len;
+	music[primaryStream]._filePos = music[primaryStream]._fileStart;
 	music[primaryStream]._streaming = true;
+	music[primaryStream]._firstTime = true;
 
 	return RD_OK;
 }
 
 void Sword2Sound::UpdateCompSampleStreaming(int16 *data, uint len) {
-	uint32 i;
-
-	for (i = 0; i < MAXMUS; i++) {
+	for (int i = 0; i < MAXMUS; i++) {
 		if (!music[i]._streaming)
 			continue;
-
-		// Modify the volume according to the master volume and music
-		// mute state
 
 		byte volume = musicMuted ? 0 : musicVolTable[musicVol];
 
 		fpMus.seek(music[i]._filePos, SEEK_SET);
 		_converter->flow(music[i], data, len, volume, volume);
-
-		if (music[i].eos()) {
-			// End of the music so we need to start fading and
-			// start the music again
-
-			// FIXME: The original code faded the music here, but
-			// to do that we need to start before we reach the end
-			// of the file.
-			//
-			// On the other hand, do we want to fade out the end
-			// of the music?
-
-			// Fade the old music
-			// musFading[i] = -16;
-
-			// Loop if neccassary
-			if (music[i]._looping) {
-				music[i]._streaming = false;
-				StreamCompMusicFromLock(music[i]._fileName, music[i]._id, music[i]._looping);
-			}
-		}
 	}
 
 	// FIXME: We need to implement DipMusic()'s functionality, but since

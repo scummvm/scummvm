@@ -56,10 +56,12 @@ class MusicHandle : public MusicStream {
 public:
 	uint32 _id;
 	char _fileName[256];
+	bool _firstTime;
 	bool _streaming;
 	bool _paused;
 	bool _looping;
 	int32 _fading;
+	int32 _fileStart;
 	int32 _filePos;
 	int32 _fileEnd;
 	uint16 _lastSample;
@@ -70,8 +72,9 @@ public:
 	int16 read();
 	bool eos() const;
 
-	MusicHandle() : MusicStream(), _streaming(false), _paused(false),
-			_looping(false), _fading(0), _filePos(0), _fileEnd(0),
+	MusicHandle() : MusicStream(), _firstTime(false), _streaming(false),
+			_paused(false), _looping(false), _fading(0),
+			_fileStart(0), _filePos(0), _fileEnd(0),
 			_lastSample(0) {
 		_fileName[0] = 0;
 	}
