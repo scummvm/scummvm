@@ -823,15 +823,16 @@ void Scumm_v8::o8_cursorCommand()
 			_charsetColorMap[i] = _charsetData[_string[1].t_charset][i] = (unsigned char)args[i];
 		break;
 	case 0xE9: 		// SO_CURSOR_PUT
-		mouse.x = pop();
-		mouse.y = pop();
-	        _virtual_mouse_x = mouse.x + virtscr[0].xstart;
-                _virtual_mouse_y = mouse.y + camera._cur.y - (_realHeight / 2);
-		_virtual_mouse_y -= 16;
+	        _virtual_mouse_x = pop();
+		_virtual_mouse_y = pop();
+
+		mouse.x = _virtual_mouse_x - virtscr[0].xstart;
+		mouse.y = _virtual_mouse_y - camera._cur.y + (_realHeight / 2);
+		mouse.y += 16;
 
 		_system->set_mouse_pos(mouse.x, mouse.y);
 		_system->update_screen();
-		warning("warped mouse to (%d, %d)", mouse.x, mouse.y);
+		warning("warped mouse to (%d, %d) from %d-%d", _virtual_mouse_x, _virtual_mouse_y, _roomResource, vm.slot[_currentScript].number);
 		break;
 	default:
 		error("o8_cursorCommand: default case %d", subOp);
