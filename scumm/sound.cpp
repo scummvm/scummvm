@@ -792,9 +792,9 @@ void Sound::startTalkSound(uint32 offset, uint32 b, int mode, SoundHandle *handl
 void Sound::stopTalkSound() {
 	if (_sfxMode & 2) {
 		if (_vm->_imuseDigital) {
-			_vm->_mixer->stopID(kTalkSoundID);
+			_vm->_imuseDigital->stopSound(kTalkSoundID);
 		} else if (_vm->_heversion >= 70) {
-			_vm->_imuseDigital->stopSound(1);
+			_vm->_mixer->stopID(1);
 		} else {
 			_vm->_mixer->stopHandle(_talkChannelHandle);
 		}
