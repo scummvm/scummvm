@@ -206,6 +206,8 @@ void Scumm::scummInit()
 	else
 		_resourceHeaderSize = 8;
 
+	memset(_charsetData, 0, sizeof(_charsetData));
+	
 	if (!(_features & GF_SMALL_NAMES))
 		loadCharset(1);
 

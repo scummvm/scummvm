@@ -450,8 +450,6 @@ void Scumm::loadCharset(int no)
 	if (_gameId == GID_INDY4 && no == 0)
 		no = 1;
 
-	memset(_charsetData, 0, sizeof(_charsetData));
-
 	assert(no < (int)sizeof(_charsetData) / 16);
 	checkRange(_maxCharsets - 1, 1, no, "Loading illegal charset %d");
 
