@@ -509,7 +509,9 @@ void Sound::playSound(int soundID) {
 			return;
 		size = READ_BE_UINT16(ptr + 12);
 		rate = 11000;
-		_scumm->_mixer->playRaw(NULL, ptr + 28, size, rate, flags, soundID);
+		sound = (char *)malloc(size);
+		memcpy(sound,ptr + 28,size);
+		_scumm->_mixer->playRaw(NULL, sound, size, rate, SoundMixer::FLAG_AUTOFREE, soundID);
 		return;
 	}
 
