@@ -197,6 +197,13 @@ ActorData *Actor::getActor(uint16 actorId) {
 	if (!IS_VALID_ACTOR_ID(actorId))
 		error("Actor::getActor Wrong actorId 0x%X", actorId);
 
+	if (actorId == ID_PROTAG) {
+		if (_protagonist == NULL) {
+			error("_protagonist == NULL");
+		}
+		return _protagonist;
+	}
+
 	actor = &_actors[ACTOR_ID_TO_INDEX(actorId)];
 
 	if (actor->disabled)
@@ -316,6 +323,7 @@ void Actor::handleSpeech(int msec) {
 		} else {
 			removeFirst = true;
 		}		
+		_activeSpeech.playing = false;
 	}
 
 	if (removeFirst) {
@@ -323,7 +331,6 @@ void Actor::handleSpeech(int msec) {
 			_activeSpeech.strings[i - 1] = _activeSpeech.strings[i];
 		}
 		_activeSpeech.stringsCount--;
-		_activeSpeech.playing = false;
 	}
 
 	if (!isSpeaking())
