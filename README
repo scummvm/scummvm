@@ -434,7 +434,7 @@ factor 2x will effectively yield 640x400 graphics. Likewise with a
 
 They are:
         normal     - No filtering, no scaling. Fastest.
-        2x         - No filtering, factor 2x (default).
+        2x         - No filtering, factor 2x (default for non 640x480 games).
         3x         - No filtering, factor 3x.
         2xsai      - 2xsai filter, factor 2x.
         super2xsai - Enhanced 2xsai filtering, factor 2x.
@@ -473,8 +473,6 @@ simon games.
         Ctrl-f                 - Toggle fast mode.
         Ctrl-Alt 1-8           - Switch between graphics filters
         Ctrl-Alt + and -       - Increase/Decrease the scale factor
-        Ctrl-Alt b             - Switch between bilinear and non-linear
-                                 filtering [OpenGL backend]
         Ctrl-Alt a             - Toggle aspect-ratio correction on/off.
                                  Most of the games use a 320x200 pixel
                                  resolution, which may look squashed on

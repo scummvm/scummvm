@@ -42,17 +42,14 @@ if a path isn't specified in a config file.
 You may supply a different path using -p on the command line. The name of the
 game is then supplied on the command line.
 .TP
-.B \-a
-Specify game is amiga version.
-.TP
 .BI \-\-[no\-]aspect\-ratio
 Enable/Disable aspect ratio correction
 .TP
 .BI \-b <param>
 Specify parameter to pass to first game script default is 0.
 .TP
-.BI \-c <num>
-Use cdrom number \fI<num>\fP for cd audio.
+.BI \-\-cdrom=NUM
+CD drive to play audio from (default: 0 = first drive)
 .TP
 .BI \-d [num]
 Set debug level (default level 1)
@@ -84,35 +81,39 @@ Runs in full-screen mode.
 Enable/Disable floppy version intro for Beneath a Steel Sky CD version.
 .TP
 .BI \-g <mode>
-Graphics Filter. Note that resolutions listed assume the game was originally 320x200.
+Set graphics filter.
 \fI<mode>\fP can be one of:
 .br
-\fBnormal\fP     No filtering, original 320x200 resolution. Fastest.
+\fBnormal\fP     No filtering, no scaling. Fastest.
 .br
-\fB2x\fP         No filtering, double screen/window size to 640x400
+\fB2x\fP         No filtering, factor 2x (default for non 640x480 games).
 .br
-\fB3x\fP         No filtering, triple screen/window size to 960x600
+\fB3x\fP         No filtering, factor 3x.
 .br
-\fB2xsai\fP      2xsai filtering, double screen/window size to 640x400
+\fB2xsai\fP      2xsai filter, factor 2x.
 .br
-\fBsuper2xsai\fP Enhanced 2xsai filtering. 640x400 screen/window size
+\fBsuper2xsai\fP Enhanced 2xsai filtering. factor 2x.
 .br
-\fBsupereagle\fP Less blurry than 2xsai, but slower. Also 640x400
+\fBsupereagle\fP Less blurry than 2xsai, but slower. Factor 2x.
 .br
-\fBadvmame2x\fP  640x400 scaling. Doesn't rely on blurring like 2xSAI.
+\fBadvmame2x\fP  Doesn't rely on blurring like 2xSAI, fast. Factor 2x.
 .br
-\fBadvmame3x\fP  960x600 scaling. Doesn't rely on blurring like 2xSAI.
+\fBadvmame3x\fP  Doesn't rely on blurring like 2xSAI, fast. Factor 3x.
 .br
-\fBtv2x\fP       640x400 scaling. Horizontal scanlines.
+\fBhq2x\fP       Very nice high quality filter but slow. Factor 2x.
 .br
-\fBdotmatrix\fP  640x400 scaling. Dot matrix effect.
+\fBhq3x\fP       Very nice high quality filter but slow. Factor 3x.
+.br
+\fBtv2x\fP       Horizontal scanlines. Factor 2x.
+.br
+\fBdotmatrix\fP  Dot matrix effect. Factor 2x.
 .br
 .TP
 .BI \-h
 Show help and exit.
 .TP
-.BI \-l <file>
-Load config file \fI<file>\fP instead of default.
+.BI \-\-joystick[=NUM]
+Enable input with joystick (default: 0 = first joystick)
 .TP
 .B \-m <num>
 Set music volume to number \fI<num>\fP (0-255)
@@ -121,7 +122,7 @@ Set music volume to number \fI<num>\fP (0-255)
 Enable/Disable combination Adlib and native MIDI.
 .TP
 .B \-n
-No subtitles for speech
+Enable subtitles
 .TP
 .BI \-\-[no\-]native\-mt32
 Enable/Disable true Roland MT-32 MIDI (disable GM emulation)
@@ -131,6 +132,9 @@ Set master volume to number \fI<num>\fP (0-255)
 .TP
 .BI \-p <path>
 Specify the path to the game.
+.TP
+.BI \-\-platform=WORD
+Specify version of game where \fIWORD\fP can be one of amiga, atari, mac, pc.
 .TP
 .BI \-q <lang>
 Specify language where \fI<lang>\fP can be one of:
@@ -163,26 +167,20 @@ Specify language where \fI<lang>\fP can be one of:
 .BI \-s <num>
 set sfx volume to number num (0-255)
 .TP
-.BI \-t <num>
-Set music tempo (50-200, default 100)
+.BI \-t
+Display list of configured targets and exit
 .TP
 .BI \-u
 Dump scripts if a dumps directory is in the current directory.
 .TP
 .BI \-v
-Show version info and exit.
-.TP
-.BI \-w [file]
-Write to config file [~/.scummvmrc]
+Show version information and exit.
 .TP
 .BI \-x [num]
 Load savegame slot number num (default: 0 - autosave)
 .TP
-.BI \-y <num>
-Set text speed (default: 60)
-.TP
 .BI \-z
-Display list of recognised games.
+Display list of supported games and exit.
 
 .SH "INGAME KEYS"
 While the game is running, the following keys can be used (in addition to any
@@ -199,9 +197,6 @@ Toggle aspect\-ratio correction on/off. Most of the games use a 320x200 pixel
 resolution, which may look squashed on modern monitors. Aspect\-ratio
 correction stretches the image to use 320x240 pixels instead, or a multiple
 thereof.
-.TP
-.B Ctrl+Alt b
-Switch between bilinear and non-linear filtering [OpenGL backend]
 .TP
 .B Alt+0..9
 Save a game state.
