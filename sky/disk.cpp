@@ -178,16 +178,13 @@ uint8 *SkyDisk::loadFile(uint16 fileNr, uint8 *dest) {
 		else {
 #ifdef SCUMM_BIG_ENDIAN
 			// Convert dataFileHeader to BE (it only consists of 16 bit words)
-			for (uint i = 0; i < sizeof(struct dataFileHeader); i+=2) {
-				*(uint16 *)outputPtr = READ_LE_UINT16(inputPtr);
-				inputPtr += 2;
-				outputPtr += 2;
-			}
-#else
+			uint16 *headPtr = (uint16 *)_fileDest;
+			for (uint i = 0; i < sizeof(struct dataFileHeader) / 2; i++)
+				*(headPtr + i) = READ_LE_UINT16(headPtr + i);
+#endif
 			memcpy(outputPtr, inputPtr, sizeof(struct dataFileHeader));
 			inputPtr += sizeof(struct dataFileHeader);
 			outputPtr += sizeof(struct dataFileHeader);
-#endif
 		}
 
 		RncDecoder rncDecoder;
@@ -198,7 +195,7 @@ uint8 *SkyDisk::loadFile(uint16 fileNr, uint8 *dest) {
 		if (unPackLen == 0) { //Unpack returned 0: file was probably not packed.
 			if (_fixedDest == NULL)
 				free(_compDest);
-			
+
 			return _fileDest;
 		}
 
