@@ -39,9 +39,7 @@ static uint32 lowPixelMask = 0x08210821;
 static uint32 qcolorMask = 0xE79CE79C;
 static uint32 qlowpixelMask = 0x18631863;
 static uint32 redblueMask = 0xF81F;
-static uint32 redMask = 0xF800;
 static uint32 greenMask = 0x07E0;
-static uint32 blueMask = 0x001F;
 
 static const uint16 dotmatrix_565[16] = {
 	0x01E0, 0x0007, 0x3800, 0x0000,
@@ -66,9 +64,7 @@ void InitScalers(uint32 BitFormat) {
 		qcolorMask = 0xE79CE79C;
 		qlowpixelMask = 0x18631863;
 		redblueMask = 0xF81F;
-		redMask = 0xF800;
 		greenMask = 0x07E0;
-		blueMask = 0x001F;
 		dotmatrix = dotmatrix_565;
 	} else if (BitFormat == 555) {
 		colorMask = 0x7BDE7BDE;
@@ -76,9 +72,7 @@ void InitScalers(uint32 BitFormat) {
 		qcolorMask = 0x739C739C;
 		qlowpixelMask = 0x0C630C63;
 		redblueMask = 0x7C1F;
-		redMask = 0x7C00;
 		greenMask = 0x03E0;
-		blueMask = 0x001F;
 		dotmatrix = dotmatrix_555;
 	} else {
 		error("Unknwon bit format %d\n", BitFormat);
@@ -5531,14 +5525,16 @@ void InitLUT(uint32 BitFormat) {
 
 
 #if ASPECT_MODE == kSlowAndPerfectAspectMode
+
 template<int scale>
 static inline uint16 interpolate5(uint16 A, uint16 B) {
-	uint16 r = (uint16)(((A & redMask) * scale + (B & redMask) * (5 - scale)) / 5);
+	uint16 r = (uint16)(((A & redblueMask & 0xFF00) * scale + (B & redblueMask & 0xFF00) * (5 - scale)) / 5);
 	uint16 g = (uint16)(((A & greenMask) * scale + (B & greenMask) * (5 - scale)) / 5);
-	uint16 b = (uint16)(((A & blueMask) * scale + (B & blueMask) * (5 - scale)) / 5);
+	uint16 b = (uint16)(((A & redblueMask & 0x00FF) * scale + (B & redblueMask & 0x00FF) * (5 - scale)) / 5);
 
-	return (uint16)((r & redMask) | (g & greenMask) | (b & blueMask));
+	return (uint16)((r & redblueMask & 0xFF00) | (g & greenMask) | (b & redblueMask & 0x00FF));
 }
+
 
 template<int scale>
 static inline void interpolate5Line(uint16 *dst, const uint16 *srcA, const uint16 *srcB, int width) {
@@ -5552,15 +5548,14 @@ static inline void interpolate5Line(uint16 *dst, const uint16 *srcA, const uint1
 #if ASPECT_MODE == kFastAndNiceAspectMode
 template<int scale>
 static inline void interpolate5Line(uint16 *dst, const uint16 *srcA, const uint16 *srcB, int width) {
-	// For efficiency reasons we blit two pixels at a time, so it is
-	// important that makeRectStretchable() guarantees that the width is
-	// even and that the rect starts on a well-aligned address. (Even
-	// where unaligned memory access is allowed there may be a speed
-	// penalty for it.)
+	// For efficiency reasons we blit two pixels at a time, so it is important
+	// that makeRectStretchable() guarantees that the width is even and that
+	// the rect starts on a well-aligned address. (Even where unaligned memory
+	// access is allowed there may be a speed penalty for it.)
 
-	// These asserts are disabled for maximal speed; but I leave them in here in case
-	// other people want to test if the memory alignment (to an address divisibl by 4)
-	// are really effective.
+	// These asserts are disabled for maximal speed; but I leave them in here
+	// in case  other people want to test if the memory alignment (to an
+	// address divisible by 4) is really working properly.
 	//assert(((int)dst & 3) == 0);
 	//assert(((int)srcA & 3) == 0);
 	//assert(((int)srcB & 3) == 0);
