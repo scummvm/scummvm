@@ -49,6 +49,7 @@ enum {
 LauncherDialog::LauncherDialog(NewGui *gui, GameDetector &detector)
 	: Dialog(gui, 0, 0, 320, 200), _detector(detector)
 {
+	int i;
 	Widget *bw;
 
 	// Show game name
@@ -74,31 +75,39 @@ LauncherDialog::LauncherDialog(NewGui *gui, GameDetector &detector)
 	// (i.e. a path to the game data was set and is accesible) ?
 
 
+	// Retrieve a list of all games defined in the config file
 	char domains[255][100];
 	int count = g_config->get_domains(domains);
-	//printf("First domain is %s, out of %d\n", domains[0], count);
-	while (v->filename && v->gamename) {
-		if (g_config->has_domain(v->filename)) {
-			String name;
-			char *txtname;
-			int pos = 0, size = l.size();
-
-		        if ((txtname = (char*)g_config->get("description", v->filename))) {
-				name = txtname;
-			} else {
-		                name  = v->gamename;
+	for (i=0;i<count;i++) {
+		String name = (char*)g_config->get("gameid", domains[i]);
+		String description = (char*)g_config->get("description", domains[i]);
+		
+		if (name.isEmpty() || description.isEmpty()) {
+			v = version_settings;
+			while (v->filename && v->gamename) {
+				if (!scumm_stricmp(v->filename, domains[i])) {
+					name = domains[i];
+					description = v->gamename;
+					break;
+				}
+				v++;
 			}
+		} 
+
+		if (!name.isEmpty() && !description.isEmpty()) {
+			// Insert the game into the launcher list
+			int pos = 0, size = l.size();
 
 			while (pos < size && (name > l[pos]))
 				pos++;
-			l.insert_at(pos, name);
-			_filenames.insert_at(pos, v->filename);
+			l.insert_at(pos, description);
+			_filenames.insert_at(pos, domains[i]);
 		}
-		v++;
 	}
 
 	if (l.size() > 0) 
 		_list->setList(l);
+
 	// TODO - make a default selection (maybe the game user played last?)
 	//_list->setSelected(0);
 
