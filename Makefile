@@ -121,7 +121,7 @@ osxsnap: bundle
 	cp COPYING ./ScummVM-snapshot/License
 	/Developer/Tools/SetFile -t TEXT -c ttxt ./ScummVM-snapshot/*
 	/Developer/Tools/CpMac -r $(bundle_name) ./ScummVM-snapshot/
-	hdiutil create -format UDZO -srcfolder ScummVM-snapshot ScummVM-snapshot.dmg
+	hdiutil create -ov -format UDZO -srcfolder ScummVM-snapshot ScummVM-snapshot.dmg
 	rm -rf ScummVM-snapshot
 
 # Special target to create a win32 snapshot binary
