@@ -1071,7 +1071,7 @@ void ScummEngine_v72he::o72_findAllObjects() {
 }
 
 void ScummEngine_v72he::o72_deleteFile() {
-	int len, r;
+	int r;
 	byte filename[100];
 
 	copyScriptString(filename);
