@@ -1077,7 +1077,7 @@ ScummFile *Sound::openSfxFile() {
 	}
 
 	if (!file->isOpen()) {
-		if (_vm->_heversion >= 70) {
+		if ((_vm->_heversion == 60 && _vm->_features & GF_MACINTOSH) || (_vm->_heversion >= 70)) {
 			sprintf(buf, "%s.he2", _vm->getGameName());
 
 			if (_vm->_heMacFileNameIndex > 0) {
