@@ -140,7 +140,7 @@ enum {
 	GF_TALKIE = 1 << 2,
 	GF_DEMO   = 1 << 3,
 	GF_MAC    = 1 << 4,
-	GF_AMIGAS = 1 << 5 // rename to GF_AMIGA once the scumm GF_* have been removed from gameDetector.h
+	GF_AMIGA = 1 << 5
 };
 
 enum {
@@ -152,8 +152,8 @@ enum {
 	GAME_SIMON2WIN = GF_SIMON2 | GF_WIN | GF_TALKIE,
 	GAME_SIMON1DEMO = GF_DEMO,
 	GAME_SIMON2MAC =  GF_SIMON2 | GF_WIN | GF_TALKIE | GF_MAC,
-	GAME_SIMON1AMIGA = GF_AMIGAS,
-	GAME_SIMON1CD32 = GF_TALKIE | GF_AMIGAS
+	GAME_SIMON1AMIGA = GF_AMIGA,
+	GAME_SIMON1CD32 = GF_TALKIE | GF_AMIGA
 };
 
 #endif

@@ -1156,21 +1156,21 @@ File *SimonEngine::openTablesFile_simon1(const char *filename) {
 }
 
 uint SimonEngine::loadTextFile(const char *filename, byte *dst) {
-	if (_game & GF_AMIGAS || _game == GAME_SIMON1DEMO || _game == GAME_SIMON1DOS)
+	if (_game & GF_AMIGA || _game == GAME_SIMON1DEMO || _game == GAME_SIMON1DOS)
 		return loadTextFile_simon1(filename, dst);
 	else
 		return loadTextFile_gme(filename, dst);
 }
 
 File *SimonEngine::openTablesFile(const char *filename) {
-	if (_game & GF_AMIGAS || _game == GAME_SIMON1DEMO || _game == GAME_SIMON1DOS)
+	if (_game & GF_AMIGA || _game == GAME_SIMON1DEMO || _game == GAME_SIMON1DOS)
 		return openTablesFile_simon1(filename);
 	else
 		return openTablesFile_gme(filename);
 }
 
 void SimonEngine::closeTablesFile(File *in) {
-	if (_game & GF_AMIGAS || _game == GAME_SIMON1DEMO || _game == GAME_SIMON1DOS) {
+	if (_game & GF_AMIGA || _game == GAME_SIMON1DEMO || _game == GAME_SIMON1DOS) {
 		in->close();
 		delete in;
 	}
@@ -1642,7 +1642,7 @@ uint SimonEngine::item_get_icon_number(Item *item) {
 
 void SimonEngine::loadIconFile() {
 	File in;
-	if (_game & GF_AMIGAS)
+	if (_game & GF_AMIGA)
 		in.open("icon.pkd", _gameDataPath);
 	else
 		in.open("ICON.DAT", _gameDataPath);
@@ -4024,7 +4024,7 @@ void SimonEngine::talk_with_text(uint num_1, uint num_2, const char *string_ptr,
 }
 
 void SimonEngine::read_vga_from_datfile_1(uint vga_id) {
-	if (_game & GF_AMIGAS || _game == GAME_SIMON1DEMO || _game == GAME_SIMON1DOS) {
+	if (_game & GF_AMIGA || _game == GAME_SIMON1DEMO || _game == GAME_SIMON1DOS) {
 		File in;
 		char buf[50];
 		uint32 size;
@@ -4061,7 +4061,7 @@ void SimonEngine::read_vga_from_datfile_1(uint vga_id) {
 }
 
 byte *SimonEngine::read_vga_from_datfile_2(uint id) {
-	if (_game & GF_AMIGAS || _game == GAME_SIMON1DEMO || _game == GAME_SIMON1DOS) {
+	if (_game & GF_AMIGA || _game == GAME_SIMON1DEMO || _game == GAME_SIMON1DOS) {
 		File in;
 		char buf[50];
 		uint32 size;
@@ -4109,7 +4109,7 @@ void SimonEngine::resfile_read(void *dst, uint32 offs, uint32 size) {
 }
 
 void SimonEngine::openGameFile() {
-	if (!(_game & GF_AMIGAS) && _game != GAME_SIMON1DEMO && _game != GAME_SIMON1DOS) {
+	if (!(_game & GF_AMIGA) && _game != GAME_SIMON1DEMO && _game != GAME_SIMON1DOS) {
 		_game_file = new File();
 		_game_file->open(gss->gme_filename, _gameDataPath);
 
@@ -4336,7 +4336,7 @@ void SimonEngine::go() {
 		gss = &simon2win_settings;
 	} else if (_game == GAME_SIMON2DOS) {
 		gss = &simon2dos_settings;
-	} else if (_game & GF_AMIGAS) {
+	} else if (_game & GF_AMIGA) {
 		gss = &simon1amiga_settings;
 	} else if (_game == GAME_SIMON1DEMO) {
 		gss = &simon1demo_settings;
@@ -4715,7 +4715,7 @@ void SimonEngine::loadMusic (uint music) {
 		_last_music_played = music;
 		_next_music_to_play = -1;
 	} else { // Simon 1 music
-		if (_game & GF_AMIGAS) {
+		if (_game & GF_AMIGA) {
 			if (_game != GAME_SIMON1CD32) {
 				// TODO Add support for decruncher
 				warning("playMusic - Decrunch %dtune attempt", music);
