@@ -1100,6 +1100,7 @@ int SimonEngine::runScript() {
 		invalid_opcode:;
 			error("Invalid opcode '%d'", opcode);
 		}
+		delay(1);
 
 	} while (condition != flag);
 
