@@ -117,6 +117,7 @@ Scene::Scene(SagaEngine *vm) : _vm(vm), _initialized(false) {
 	_sceneProc = NULL;
 	_objectMap = NULL;
 	_actionMap = new ActionMap(_vm);
+	_entryList = new SceneEntryList(_vm);
 	memset(&_bg, 0, sizeof(_bg));
 	memset(&_bgMask, 0, sizeof(_bgMask));
 
@@ -127,6 +128,7 @@ Scene::~Scene() {
 	if (_initialized) {
 		endScene();
 		delete _actionMap;
+		delete _entryList;
 		free(_sceneLUT);
 	}
 }
@@ -191,7 +193,7 @@ int Scene::startScene() {
 	scene_qdat = queueIterator.operator->();
 	assert(scene_qdat != NULL);
 
-	loadScene(scene_qdat->scene_n, scene_qdat->load_flag, scene_qdat->scene_proc, scene_qdat->sceneDescription, scene_qdat->fadeType, 0);
+	loadScene(scene_qdat->scene_n, scene_qdat->load_flag, scene_qdat->scene_proc, scene_qdat->sceneDescription, scene_qdat->fadeType, -1);
 
 	return SUCCESS;
 }
@@ -806,7 +808,7 @@ int Scene::processSceneResources() {
 			}
 			break;
 		case SAGA_ACTION_MAP:
-			debug(0, "Loading exit map resource...");
+			debug(0, "Loading action map resource...");
 			_actionMap->load(res_data, res_data_len);
 			break;
 		case SAGA_ISO_TILESET:
@@ -824,8 +826,7 @@ int Scene::processSceneResources() {
 			break;
 		case SAGA_ISO_METAMAP:
 			if (!(_vm->_scene->getFlags() & kSceneFlagISO)) {
-				warning("Scene::ProcessSceneResources(): Isometric metamap incompatible with normal scene mode");
-				return FAILURE;
+				error("Scene::ProcessSceneResources(): Isometric metamap incompatible with normal scene mode");
 			}
 
 			debug(0, "Loading isometric metamap resource.");
@@ -837,8 +838,7 @@ int Scene::processSceneResources() {
 			break;
 		case SAGA_ISO_METATILESET:
 			if (!(_vm->_scene->getFlags() & kSceneFlagISO)) {
-				warning("Scene::ProcessSceneResources(): Isometric metatileset incompatible with normal scene mode");
-				return FAILURE;
+				error("Scene::ProcessSceneResources(): Isometric metatileset incompatible with normal scene mode");
 			}
 
 			debug(0, "Loading isometric metatileset resource.");
@@ -880,7 +880,8 @@ int Scene::processSceneResources() {
 			_vm->_palanim->loadPalAnim(_resList[i].res_data, _resList[i].res_data_len);
 			break;
 		case SAGA_ENTRY:
-			warning("Scene::ProcessSceneResources(): Loading scene entries is not implemented");
+			debug(0, "Loading entry list resource...");
+			_entryList->load(res_data, res_data_len);
 			break;
 		case SAGA_FACES:
 			_vm->_interface->loadScenePortraits(_resList[i].res_number);
@@ -960,6 +961,7 @@ int Scene::endScene() {
 
 	_objectMap = NULL;
 	_actionMap->freeMem();
+	_entryList->freeMem();
 
 	_animList.clear();
 
@@ -1108,6 +1110,30 @@ int Scene::defaultScene(int param, SCENE_INFO *scene_info) {
 	}
 
 	return 0;
+}
+
+void SceneEntryList::load(const byte* resourcePointer, size_t resourceLength) {
+	int i;
+
+	_entryListCount = resourceLength / 8;
+
+	MemoryReadStreamEndian readS(resourcePointer, resourceLength, IS_BIG_ENDIAN);
+
+
+	if (_entryList)
+		error("SceneEntryList::load _entryList != NULL");
+
+	_entryList = (SceneEntry *) malloc(_entryListCount * sizeof(*_entryList));
+	if (_entryList == NULL) {
+		error("SceneEntryList::load Memory allocation failure");
+	}
+
+	for (i = 0; i < _entryListCount; i++) {
+		_entryList[i].location.x = readS.readSint16();
+		_entryList[i].location.y = readS.readSint16();
+		_entryList[i].location.z = readS.readSint16();
+		_entryList[i].facing = readS.readUint16();
+	}
 }
 
 } // End of namespace Saga

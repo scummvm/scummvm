@@ -468,6 +468,7 @@ void Actor::updateActorsScene(int actorsEntrance) {
 	Location tempLocation;
 	Location possibleLocation;
 	Point delta;
+	const SceneEntry *sceneEntry;
 	
 	if (_vm->getGameType() == GType_IHNM) {
 		warning("Actors aren't implemented for IHNM yet");
@@ -492,14 +493,20 @@ void Actor::updateActorsScene(int actorsEntrance) {
 	}
 	
 	assert(_protagonist);
-
-/* setup protagonist entry
-	// tiled stuff
-	if (_vm->_scene->getFlags() & kSceneFlagISO) {
-		//todo: it
-	} else {
+	
+	if (actorsEntrance >= 0) {
+		sceneEntry = _vm->_scene->_entryList->getEntry(actorsEntrance);
+		// tiled stuff
+		if (_vm->_scene->getFlags() & kSceneFlagISO) {
+			//todo: it
+		} else {
+			_protagonist->location.x = sceneEntry->location.x * ACTOR_LMULT;
+			_protagonist->location.y = sceneEntry->location.y * ACTOR_LMULT;
+			_protagonist->location.z = sceneEntry->location.z * ACTOR_LMULT;
+			_protagonist->facingDirection = _protagonist->actionDirection = sceneEntry->facing;
+		}
 	}
-*/
+
 	_protagonist->currentAction = kActionWait;
 
 	if (_vm->_scene->getFlags() & kSceneFlagISO) {

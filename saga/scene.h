@@ -28,6 +28,7 @@
 
 #include "saga/text.h"
 #include "saga/list.h"
+#include "saga/actor.h"
 
 namespace Saga {
 
@@ -37,6 +38,11 @@ class ActionMap;
 class ObjectMap;
 
 struct EVENT;
+
+enum SceneFlags {
+	kSceneFlagISO        = 1,
+	kSceneFlagShowCursor = 2
+};
 
 struct SCENE_BGINFO {
 	int bg_x;
@@ -112,6 +118,40 @@ struct SceneDescription {
 	size_t resListCnt;
 };
 
+struct SceneEntry {
+	Location location;
+	int facing;
+};
+
+class SceneEntryList {
+private:
+	SagaEngine *_vm;
+	SceneEntry *_entryList;
+	int _entryListCount;
+public:
+	int getEntryListCount() const { return _entryListCount; }
+	const SceneEntry * getEntry(int index) {
+		if ((index < 0) || (index >= _entryListCount)) {
+			error("SceneEntryList::getEntry wrong index");
+		}
+		return &_entryList[index];
+	}
+	void load(const byte* resourcePointer, size_t resourceLength);
+
+	void freeMem() {
+		free(_entryList);
+		_entryList = NULL;
+		_entryListCount = 0;
+	}
+	SceneEntryList(SagaEngine *vm): _vm(vm) {
+		_entryList = NULL;
+		_entryListCount = 0;
+	}
+	~SceneEntryList() {
+		freeMem();
+	}
+};
+
 struct SCENE_IMAGE {
 	int loaded;
 	int w;
@@ -180,10 +220,6 @@ struct INTRO_CREDIT {
 	const char *string;
 };
 
-enum SceneFlags {
-	kSceneFlagISO        = 1,
-	kSceneFlagShowCursor = 2
-};
 
 class Scene {
  public:
@@ -270,6 +306,7 @@ class Scene {
  public:
 	ActionMap *_actionMap;
 	ObjectMap *_objectMap;
+	SceneEntryList *_entryList;
 
  private:
 	int IHNMStartProc();
