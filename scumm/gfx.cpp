@@ -257,7 +257,10 @@ void Scumm::blit(byte *dst, byte *src, int w, int h)
 
 void Scumm::setCursor(int cursor)
 {
-	warning("setCursor(%d)", cursor);
+	if (cursor >= 0 && cursor <= 3)
+		gdi._currentCursor = cursor;
+	else
+		warning("setCursor(%d)", cursor);
 }
 
 void Scumm::setCameraAt(int pos_x, int pos_y)
@@ -2978,23 +2981,60 @@ static const byte default_cursor_colors[4] = {
 	15, 15, 7, 8
 };
 
+static const uint16 default_cursor_images[4][16] = {
+	/* cross-hair */
+	{ 0x0080, 0x0080, 0x0080, 0x0080, 0x0080, 0x0080, 0x0000, 0x7e3f,
+	  0x0000, 0x0080, 0x0080, 0x0080, 0x0080, 0x0080, 0x0080, 0x0000 },
+	/* hourglass */
+	{ 0x0000, 0x7ffe, 0x6006, 0x300c, 0x1818, 0x0c30, 0x0660, 0x03c0,
+	  0x0660, 0x0c30, 0x1998, 0x33cc, 0x67e6, 0x7ffe, 0x0000, 0x0000 },
+	/* arrow */
+	{ 0x0000, 0x4000, 0x6000, 0x7000, 0x7800, 0x7c00, 0x7e00, 0x7f00,
+	  0x7f80, 0x78c0, 0x7c00, 0x4600, 0x0600, 0x0300, 0x0300, 0x0180 },
+	/* hand */
+	{ 0x1e00, 0x1200, 0x1200, 0x1200, 0x1200, 0x13ff, 0x1249, 0x1249,
+	  0xf249, 0x9001, 0x9001, 0x9001, 0x8001, 0x8001, 0x8001, 0xffff },
+};
+
+static const byte default_cursor_hotspots[8] = {
+	8, 7,   8, 7,   1, 1,   5, 0
+};
+
 void Scumm::decompressDefaultCursor(int idx)
 {
-	int i;
+	int i, j;
 	byte color;
 
 	memset(_grabbedCursor, 0xFF, sizeof(_grabbedCursor));
-	_cursorWidth = 16;
-	_cursorHeight = 16;
-	_cursorHotspotX = 8;
-	_cursorHotspotY = 8;
 
 	color = default_cursor_colors[idx];
 
-	for (i = 0; i < 16; i++) {
-		if ((i < 7) || (i > 9)) {
-			_grabbedCursor[16 * 8 + i] = color;
-			_grabbedCursor[16 * i + 8] = color;
+	// FIXME: None of the stock cursors are right for Loom. Why is that?
+
+	if (_gameId == GID_LOOM256) {
+		int w;
+
+		_cursorWidth = 8;
+		_cursorHeight = 8;
+		_cursorHotspotX = 0;
+		_cursorHotspotY = 0;
+
+		for (i = 0, w = 0; i < 8; i++) {
+			w += (i >= 6) ? -2 : 1;
+			for (j = 0; j < w; j++)
+				_grabbedCursor[i * 8 + j] = color;
+		}
+	} else {
+		_cursorWidth = 16;
+		_cursorHeight = 16;
+		_cursorHotspotX = default_cursor_hotspots[2 * gdi._currentCursor];
+		_cursorHotspotY = default_cursor_hotspots[2 * gdi._currentCursor + 1];
+
+		for (i = 0; i < 16; i++) {
+			for (j = 0; j < 16; j++) {
+				if (default_cursor_images[gdi._currentCursor][i] & (1 << j))
+					_grabbedCursor[16 * i + 15 - j] = color;
+			}
 		}
 	}
 

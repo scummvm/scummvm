@@ -272,6 +272,7 @@ void Scumm::scummInit()
 	_talkDelay = 0;
 	_keepText = false;
 
+	gdi._currentCursor = 0;
 	_cursorState = 0;
 	_userPut = 0;
 
