@@ -282,7 +282,7 @@ SimonState::SimonState(GameDetector *detector, OSystem *syst)
 	_need_hitarea_recalc = 0;
 	_verb_hitarea = 0;
 	_hitarea_unk_4 = 0;
-	_lock_counter = 0;
+	_lock_counter = 200;
 
 	_video_palette_mode = 0;
 
@@ -1409,9 +1409,12 @@ void SimonState::unlock() {
 void SimonState::handle_mouse_moved() {
 	uint x;
 
-	if (_lock_counter)
+	if (_lock_counter) {
+		_system->show_mouse(false);
 		return;
+	}
 
+	_system->show_mouse(true);
 	pollMouseXY();
 
 	if (_mouse_x >= 32768)
@@ -2733,7 +2736,6 @@ void SimonState::o_wait_for_vga(uint a) {
 	_timer_1 = 0;
 	_exit_cutscene = false;
 	_skip_speech = false;
-	_system->show_mouse(false);
 	while (_vga_wait_for != 0) {
 		if (_skip_speech) {
 			if (_game & GF_SIMON2) {
@@ -2765,7 +2767,6 @@ void SimonState::o_wait_for_vga(uint a) {
 		}
 
 	}
-	_system->show_mouse(true);
 }
 
 void SimonState::skip_speech() {
