@@ -897,7 +897,7 @@ protected:
 	// bomp
 public:
 	byte *_bompActorPalettePtr;
-	void drawBomp(const BompDrawData &bd, int decode_mode, int mask);
+	void drawBomp(const BompDrawData &bd, bool mirror);
 
 protected:
 	bool _shakeEnabled;

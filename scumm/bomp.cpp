@@ -28,7 +28,6 @@ static void bompScaleFuncX(byte *line_buffer, byte *scaling_x_ptr, byte skip, in
 
 static void bompDecodeLineReverse(byte *dst, const byte *src, int size);
 
-static void bompApplyMask(byte *line_buffer, byte *mask_out, byte maskbit, int32 size);
 static void bompApplyShadow0(const byte *line_buffer, byte *dst, int32 size, byte transparency);
 static void bompApplyShadow1(const byte *shadowPalette, const byte *line_buffer, byte *dst, int32 size, byte transparency);
 static void bompApplyShadow3(const byte *shadowPalette, const byte *line_buffer, byte *dst, int32 size, byte transparency);
@@ -97,13 +96,13 @@ void bompDecodeLineReverse(byte *dst, const byte *src, int size) {
 	}
 }
 
-void bompApplyMask(byte *line_buffer, byte *mask, byte maskbit, int32 size) {
+void bompApplyMask(byte *line_buffer, byte *mask, byte maskbit, int32 size, byte transparency) {
 	while(1) {
 		do {
 			if (size-- == 0) 
 				return;
 			if (*mask & maskbit) {
-				*line_buffer = 255;
+				*line_buffer = transparency;
 			}
 			line_buffer++;
 			maskbit >>= 1;
@@ -176,35 +175,37 @@ void bompApplyActorPalette(byte *actorPalette, byte *line_buffer, int32 size) {
 }
 
 void bompScaleFuncX(byte *line_buffer, byte *scaling_x_ptr, byte skip, int32 size) {
-	byte * line_ptr1 = line_buffer;
-	byte * line_ptr2 = line_buffer;
+	byte *line_ptr1 = line_buffer;
+	byte *line_ptr2 = line_buffer;
 
-	byte tmp = *(scaling_x_ptr++);
+	byte tmp = *scaling_x_ptr++;
 
 	while (size--) {
 		if ((skip & tmp) == 0) {
-			*(line_ptr1++) = *(line_ptr2);
+			*line_ptr1++ = *line_ptr2;
 		}
 		line_ptr2++;
 		skip >>= 1;
 		if (skip == 0) {
 			skip = 128;
-			tmp = *(scaling_x_ptr++);
+			tmp = *scaling_x_ptr++;
 		}
 	}
 }
 
-void Scumm::drawBomp(const BompDrawData &bd, int decode_mode, int mask) {
-	byte skip_y = 128;
-	byte skip_y_new = 0;
-	byte maskbit;
-	byte *mask_out = 0;
-	byte *charset_mask;
-	byte tmp;
+void Scumm::drawBomp(const BompDrawData &bd, bool mirror) {
 	const byte *src;
 	byte *dst;
-	int32 clip_left, clip_right, clip_top, clip_bottom, tmp_x, tmp_y, mask_offset;
+	byte maskbit;
+	byte *mask = 0;
+	int mask_offset;
+	byte *charset_mask;
+	int clip_left, clip_right, clip_top, clip_bottom;
 	byte *scalingYPtr = bd.scalingYPtr;
+	byte skip_y_bits = 0x80;
+	byte skip_y_new = 0;
+	byte tmp;
+
 
 	if (bd.x < 0) {
 		clip_left = -bd.x;
@@ -219,44 +220,50 @@ void Scumm::drawBomp(const BompDrawData &bd, int decode_mode, int mask) {
 	}
 
 	clip_right = bd.srcwidth;
-	tmp_x = bd.x + bd.srcwidth;
-	if (tmp_x > bd.outwidth) {
-		clip_right -= tmp_x - bd.outwidth;
+	if (clip_right > bd.outwidth - bd.x) {
+		clip_right = bd.outwidth - bd.x;
 	}
 
 	clip_bottom = bd.srcheight;
-	tmp_y = bd.y + bd.srcheight;
-	if (tmp_y > bd.outheight) {
-		clip_bottom -= tmp_y - bd.outheight;
+	if (clip_bottom > bd.outheight - bd.y) {
+		clip_bottom = bd.outheight - bd.y;
 	}
 
 	src = bd.dataptr;
 	dst = bd.out + bd.y * bd.outwidth + bd.x + clip_left;
 
 	mask_offset = _screenStartStrip + (bd.y * gdi._numStrips) + ((bd.x + clip_left) >> 3);
-
-	charset_mask = getResourceAddress(rtBuffer, 9) + mask_offset;
 	maskbit = revBitMask[(bd.x + clip_left) & 7];
 
-	if (mask == 1) {
-		mask_out = bd.maskPtr + mask_offset;
+	// Always mask against the charset mask
+	charset_mask = getResourceAddress(rtBuffer, 9) + mask_offset;
+
+	// Also mask against any additionally imposed mask
+	if (bd.maskPtr) {
+		mask = bd.maskPtr + mask_offset;
 	}
 
-	if (mask == 3) {
-		if (scalingYPtr != NULL) {
-			skip_y_new = *(scalingYPtr++);
-		}
+	// Setup vertical scaling
+	if (bd.scale_y != 255) {
+		assert(scalingYPtr);
 
-		if (clip_right > bd.scaleRight) {
-			clip_right = bd.scaleRight;
-		}
+		skip_y_new = *scalingYPtr++;
+		skip_y_bits = 0x80;
 
 		if (clip_bottom > bd.scaleBottom) {
 			clip_bottom = bd.scaleBottom;
 		}
 	}
 
-	int width = clip_right - clip_left;
+	// Setup horizontal scaling
+	if (bd.scale_x != 255) {
+		assert(bd.scalingXPtr);
+		if (clip_right > bd.scaleRight) {
+			clip_right = bd.scaleRight;
+		}
+	}
+
+	const int width = clip_right - clip_left;
 
 	if (width <= 0)
 		return;
@@ -266,58 +273,59 @@ void Scumm::drawBomp(const BompDrawData &bd, int decode_mode, int mask) {
 
 	byte *line_ptr = line_buffer + clip_left;
 
+	// Loop over all lines
 	while (pos_y < clip_bottom) {
-		switch(decode_mode) {
-		case 0:
-			memcpy(line_buffer, src, bd.srcwidth);
-			src += bd.srcwidth;
-			break;
-		case 1:
-			bompDecodeLine(line_buffer, src + 2, bd.srcwidth);
-			src += READ_LE_UINT16(src) + 2;
-			break;
-		case 3:
+		// Decode a single (bomp encoded) line, reversed if we are in mirror mode
+		if (mirror)
 			bompDecodeLineReverse(line_buffer, src + 2, bd.srcwidth);
-			src += READ_LE_UINT16(src) + 2;
-			break;
-		default:
-			error("Unknown bomp decode_mode %d", decode_mode);
-		}
+		else
+			bompDecodeLine(line_buffer, src + 2, bd.srcwidth);
+		src += READ_LE_UINT16(src) + 2;
 
-		if (mask == 3) {
-			if (bd.scale_y != 255) {
-				tmp = skip_y_new & skip_y;
-				skip_y >>= 1;
-				if (skip_y == 0) {
-					skip_y = 128;
-					skip_y_new = *(scalingYPtr++);
-				}
-
-				if (tmp != 0) 
-					continue;
+		// If vertical scaling is enabled, do it
+		if (bd.scale_y != 255) {
+			// A bit set means we should skip this line...
+			tmp = skip_y_new & skip_y_bits;
+			
+			// Advance the scale-skip bit mask, if it's 0, get the next scale-skip byte
+			skip_y_bits >>= 1;
+			if (skip_y_bits == 0) {
+				skip_y_bits = 0x80;
+				skip_y_new = *scalingYPtr++;
 			}
 
-			if (bd.scale_x != 255) {
-				bompScaleFuncX(line_buffer, bd.scalingXPtr, 128, bd.srcwidth);
-			}
+			// Skip the current line if the above check tells us to
+			if (tmp != 0) 
+				continue;
 		}
 
+		// Perform horizontal scaling
+		if (bd.scale_x != 255) {
+			bompScaleFuncX(line_buffer, bd.scalingXPtr, 0x80, bd.srcwidth);
+		}
+
+		// The first clip_top lines are to be clipped, i.e. not drawn
 		if (clip_top > 0) {
 			clip_top--;
 		} else {
-
-			if (mask == 1) {
-				bompApplyMask(line_ptr, mask_out, maskbit, width);
-			}
+			// Replace the parts of the line which are masked with the transparency color
+			if (bd.maskPtr)
+				bompApplyMask(line_ptr, mask, maskbit, width, 255);
+			bompApplyMask(line_ptr, charset_mask, maskbit, width, 255);
 	
-			bompApplyMask(line_ptr, charset_mask, maskbit, width);
-			bompApplyActorPalette(_bompActorPalettePtr, line_ptr, width);
+			// Apply custom color map, if available
+			if (_bompActorPalettePtr)
+				bompApplyActorPalette(_bompActorPalettePtr, line_ptr, width);
+			
+			// Finally, draw the decoded, scaled, masked and recolored line onto
+			// the target surface, using the specified shadow mode
 			bompApplyShadow(bd.shadowMode, _shadowPalette, line_ptr, dst, width, 255);
 		}
 
-		mask_out += gdi._numStrips;
-		charset_mask += gdi._numStrips;
+		// Advance to the next line
 		pos_y++;
+		mask += gdi._numStrips;
+		charset_mask += gdi._numStrips;
 		dst += bd.outwidth;
 	}
 }

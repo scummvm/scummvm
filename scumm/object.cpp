@@ -1505,10 +1505,14 @@ void Scumm::drawBlastObject(BlastObject *eo) {
 		bdd.scaleRight = setupBompScale(bomp_scaling_x, bdd.srcwidth, bdd.scale_x);
 		bdd.scaleBottom = setupBompScale(bomp_scaling_y, bdd.srcheight, bdd.scale_y);
 		bdd.shadowMode = 0;
-		drawBomp(bdd, 1, 3);
+		drawBomp(bdd, false);
 	} else {
+		bdd.scalingXPtr = NULL;
+		bdd.scalingYPtr = NULL;
+		bdd.scaleRight = 0;
+		bdd.scaleBottom = 0;
 		bdd.shadowMode = eo->mode;
-		drawBomp(bdd, 1, 0);
+		drawBomp(bdd, false);
 	}
 
 	updateDirtyRect(vs->number, bdd.x, bdd.x + bdd.srcwidth, bdd.y, bdd.y + bdd.srcheight, 0);

@@ -769,23 +769,18 @@ byte AkosRenderer::codec5(int xmoveCur, int ymoveCur) {
 	bdd.scaleRight = 0;
 	bdd.scaleBottom = 0;
 
-	int decode_mode;
-
 	if (!_mirror) {
 		bdd.x = (_actorX - xmoveCur - _width) + 1;
-		decode_mode = 3;
 	} else {
 		bdd.x = _actorX + xmoveCur;
-		decode_mode = 1;
 	}
-
 	bdd.y = _actorY + ymoveCur;
 
 	if (_zbuf != 0) {
 		bdd.maskPtr = _vm->getResourceAddress(rtBuffer, 9) + _vm->gdi._imgBufOffs[_zbuf];
-		_vm->drawBomp(bdd, decode_mode, 1);
+		_vm->drawBomp(bdd, !_mirror);
 	} else {
-		_vm->drawBomp(bdd, decode_mode, 0);
+		_vm->drawBomp(bdd, !_mirror);
 	}
 
 	_vm->_bompActorPalettePtr = NULL;
@@ -862,28 +857,6 @@ void AkosRenderer::akos16DecodeLine(byte *buf, int32 numbytes, int32 dir) {
 	}
 }
 
-void AkosRenderer::akos16ApplyMask(byte *dest, byte *maskptr, byte bits, int32 count, byte fillwith) {
-	byte bitpos = 1 << (7 - bits);
-
-	if (count <= 0)
-		return;
-
-	while(1) {
-		byte tmp = *(maskptr++);
-		do {
-			if (tmp & bitpos) {
-				*(dest) = fillwith;
-			}
-			dest++;
-
-			if (--count == 0)
-				return;
-		} while ((bitpos>>=1) != 0);
-
-		bitpos = 0x80;
-	}
-}
-
 void AkosRenderer::akos16Decompress(byte *dest, int32 pitch, const byte *src, int32 t_width, int32 t_height, int32 dir, int32 numskip_before, int32 numskip_after, byte transparency) {
 	byte *tmp_buf = akos16.buffer;
 
@@ -932,7 +905,7 @@ void AkosRenderer::akos16DecompressMask(byte *dest, int32 pitch, const byte *src
 	assert(t_width > 0);
 	while (t_height--) {
 		akos16DecodeLine(tmp_buf, t_width, dir);
-		akos16ApplyMask(akos16.buffer, maskptr, (byte)bitpos_start, t_width, transparency);
+		bompApplyMask(akos16.buffer, maskptr, (byte)bitpos_start, t_width, transparency);
 		bompApplyShadow(_shadow_mode, _shadow_table, akos16.buffer, dest, t_width, transparency);
 
 		if (numskip_after != 0)	{
