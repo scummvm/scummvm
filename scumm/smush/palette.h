@@ -35,19 +35,19 @@ private:
 	Color _colors[256];
 public:
 	Palette() {}
-	Palette(unsigned char *ptr)
+	Palette(byte *ptr)
 	{
-		for(int i = 0; i < 256; i++) {
+		for(int32 i = 0; i < 256; i++) {
 			_colors[i] = Color(ptr[3 * i + 0], ptr[3 * i + 1], ptr[3 * i + 2]);
 		}
 	
 	}
-	const Color & operator[](int a) const
+	const Color & operator[](int32 a) const
 	{
 		assert(a >= 0 && a < 256);
 		return _colors[a];
 	}
-	Color & operator[](int a)
+	Color & operator[](int32 a)
 	{
 		assert(a >= 0 && a < 256);
 		return _colors[a];

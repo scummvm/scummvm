@@ -32,10 +32,10 @@
 #include "blitter.h"
 
 #include <assert.h>
-#include <stdlib.h> // for atoi
-#include <stdio.h> // for FILE, fopen, fclose, fread, fseek, ftell
-#include <string.h> // for strchr, strrchr
-#include <ctype.h> // for isdigit
+#include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
 
 const int WAIT = 100;
 
@@ -47,21 +47,21 @@ const int WAIT = 100;
 	@bug some of The Dig strings are not completely parsed (in titles)
 */
 
-const int MAX_STRINGS = 200;
+const int32 MAX_STRINGS = 200;
 
 class StringResource {
 private:
 	struct {
-		int id;
+		int32 id;
 		char * string;
 	} _strings[MAX_STRINGS];
-	int _nbStrings;
-	int _lastId;
+	int32 _nbStrings;
+	int32 _lastId;
 	char * _lastString;
 public:
 	StringResource() : _nbStrings(0), _lastId(-1) {};
 	~StringResource() {
-		for(int i = 0; i < _nbStrings; i++) {
+		for(int32 i = 0; i < _nbStrings; i++) {
 			delete []_strings[i].string;
 		}
 	}
@@ -72,7 +72,7 @@ public:
 
 		@return \c true if the parsing went fine, \c false otherwise
 	*/
-	bool init(char * buffer, int length) {
+	bool init(char * buffer, int32 length) {
 		debug(9, "parsing string resources...");
 		char * def_start = strchr(buffer, '#');
 		while(def_start != NULL) {
@@ -87,11 +87,13 @@ public:
 			char idstring[32];
 			memcpy(idstring, id_start, id_end - id_start);
 			idstring[id_end - id_start] = 0;
-			int id = atoi(idstring);
-			//~ assert(id != LONG_MIN && id != 0 && id != LONG_MAX);
+			int32 id = atoi(idstring);
 			char * data_start = def_end;
-			while(*data_start == '\n' || *data_start == '\r') data_start++;
+			
+			while(*data_start == '\n' || *data_start == '\r') 
+				data_start++;
 			char * data_end = data_start;
+
 			while(1) {
 				if(data_end[-2] == '\r' && data_end[1] == '\n' && data_end[-1] == '\n' && data_end[0] == '\r')
 					break;
@@ -101,6 +103,7 @@ public:
 					break;
 				}
 			}
+	
 			data_end -= 2;
 			assert(data_end > data_start);
 			char * value = new char[data_end - data_start + 1];
@@ -109,6 +112,7 @@ public:
 			value[data_end - data_start] = 0;
 			char * line_start = value;
 			char * line_end;
+
 			while ((line_end = strchr(line_start, '\n'))) {
 				line_start = line_end+1;
 				if (line_start[0] == '/' && line_start[1] == '/') {
@@ -136,7 +140,7 @@ public:
 
 		@return the corresponding string.
 	*/
-	const char * get(int id) {
+	const char * get(int32 id) {
 		if(id == _lastId) return _lastString;
 		for(int i = 0; i < _nbStrings; i++)
 		{
@@ -175,7 +179,7 @@ void SmushPlayer::hide(const char * p) {
 	else if(strcmp(p, "voices") == 0)
 		_voices = false;
 	else {
-		int id = atoi(p);
+		int32 id = atoi(p);
 		if(id < 0 || id > 36) error("invalid parameter to hide");
 		_skips[id] = false;
 	}
@@ -221,7 +225,7 @@ void SmushPlayer::clean() {
 	if(_fr[3]) delete _fr[3];
 }
 
-void SmushPlayer::checkBlock(const Chunk & b, Chunk::type type_expected, unsigned int min_size) {
+void SmushPlayer::checkBlock(const Chunk & b, Chunk::type type_expected, uint32 min_size) {
 	if(type_expected != b.getType()) {
 		error("Chunk type is different from expected : %d != %d", b.getType(), type_expected);
 	}
@@ -230,13 +234,13 @@ void SmushPlayer::checkBlock(const Chunk & b, Chunk::type type_expected, unsigne
 	}
 }
 
-void SmushPlayer::handleSoundBuffer(int track_id, int index, int max_frames, int flags, int vol, int bal, Chunk & b, int size) {
+void SmushPlayer::handleSoundBuffer(int32 track_id, int32 index, int32 max_frames, int32 flags, int32 vol, int32 bal, Chunk & b, int32 size) {
 	debug(6, "smush_player::handleSoundBuffer(%d)", track_id);
 	if(!_voices && (flags & 128) == 128) return;
 	if(!_bgmusic && (flags & 64) == 64) return;
 	_Channel * c = _mixer->findChannel(track_id);
 	if(c == 0) {
-		c = new SaudChannel(track_id,  _soundFrequency);
+		c = new SaudChannel(track_id, _soundFrequency);
 		_mixer->addChannel(c);
 	}
 	if(index == 0)
@@ -250,24 +254,24 @@ void SmushPlayer::handleSoundFrame(Chunk & b) {
 	checkBlock(b, TYPE_PSAD);
 	debug(6, "SmushPlayer::handleSoundFrame()");
 	if(!_outputSound) return;
-	int track_id = b.getWord();
-	int index = b.getWord();
-	int max_frames = b.getWord();
-	int flags = b.getWord();
-	int vol = b.getByte();
-	int bal = b.getChar();
+	int32 track_id = b.getWord();
+	int32 index = b.getWord();
+	int32 max_frames = b.getWord();
+	int32 flags = b.getWord();
+	int32 vol = b.getByte();
+	int32 bal = b.getChar();
 #ifdef DEBUG
 	if(index == 0) {
 		debug(5, "track_id == %d, max_frames == %d, %d, %d, %d", track_id, max_frames, flags, vol, bal);
 	}
 #endif
-	int size = b.getSize() - 10;
+	int32 size = b.getSize() - 10;
 	handleSoundBuffer(track_id, index, max_frames, flags, vol, bal, b, size);
 }
 
 void SmushPlayer::handleSkip(Chunk & b) {
 	checkBlock(b, TYPE_SKIP, 4);
-	int code = b.getDword();
+	int32 code = b.getDword();
 	debug(6, "SmushPlayer::handleSkip(%d)", code);
 	if(code >= 0 && code < 37)
 		_skipNext = _skips[code];
@@ -285,7 +289,7 @@ void SmushPlayer::handleFetch(Chunk & b) {
 	debug(6, "SmushPlayer::handleFetch()");
 }
 
-void SmushPlayer::handleImuseBuffer(int track_id, int index, int nbframes, int size, int unk1, int unk2, Chunk & b, int bsize) {
+void SmushPlayer::handleImuseBuffer(int32 track_id, int32 index, int32 nbframes, int32 size, int32 unk1, int32 unk2, Chunk & b, int32 bsize) {
 	_Channel * c = _mixer->findChannel(track_id);
 	if(c == 0) {
 		c = new ImuseChannel(track_id, _soundFrequency);
@@ -298,14 +302,14 @@ void SmushPlayer::handleImuseBuffer(int track_id, int index, int nbframes, int s
 	c->appendData(b, bsize);
 }
 
-void SmushPlayer::handleImuseAction8(Chunk & b, int flags, int unknown, int track_id) {
+void SmushPlayer::handleImuseAction8(Chunk & b, int32 flags, int32 unknown, int32 track_id) {
 	assert(flags == 46 && unknown == 0);
-	int unknown2 = b.getWord();
+	int32 unknown2 = b.getWord();
 	track_id |= unknown2 << 16;
-	int index = b.getWord();
-	int nbframes = b.getWord();
-	int size = b.getDword();
-	int bsize = b.getSize() - 18;
+	int32 index = b.getWord();
+	int32 nbframes = b.getWord();
+	int32 size = b.getDword();
+	int32 bsize = b.getSize() - 18;
 	handleImuseBuffer(track_id, index, nbframes, size, unknown, unknown2, b, bsize);
 }
 
@@ -313,10 +317,10 @@ void SmushPlayer::handleImuseAction(Chunk & b) {
 	checkBlock(b, TYPE_IACT, 8);
 	debug(6, "SmushPlayer::handleImuseAction()");
 	if(!_outputSound) return;
-	int code = b.getWord();
-	int flags = b.getWord();
-	int unknown = b.getShort();
-	int track_id = b.getWord();
+	int32 code = b.getWord();
+	int32 flags = b.getWord();
+	int32 unknown = b.getShort();
+	int32 track_id = b.getWord();
 #ifdef DEBUG
 	debug(5, "handleImuseAction(%d, %d, %d, %d)", code, flags, unknown, track_id);
 #endif
@@ -334,42 +338,36 @@ void SmushPlayer::handleImuseAction(Chunk & b) {
 
 void SmushPlayer::handleTextResource(Chunk & b) {
 	checkBlock(b, TYPE_TRES, 18); 
-	int pos_x = b.getShort();
-	int pos_y = b.getShort();
-	int flags = b.getShort();
-	int left = b.getShort();
-	int top = b.getShort();
-	int width = b.getShort();
-	int height = b.getShort();
-	int unk2 = b.getWord();
-	int string_id = b.getWord();
+	int32 pos_x = b.getShort();
+	int32 pos_y = b.getShort();
+	int32 flags = b.getShort();
+	int32 left = b.getShort();
+	int32 top = b.getShort();
+	int32 width = b.getShort();
+	int32 height = b.getShort();
+	int32 unk2 = b.getWord();
+	int32 string_id = b.getWord();
 	debug(6, "SmushPlayer::handleTextResource(%d)", string_id);
 	if(!_strings) return;
 
 	// if subtitles disabled and bit 3 is set, then do not draw
-	if((!_subtitles) && ((flags & 8) == 8)) return;
+	if((!_subtitles) && ((flags & 8) == 8)) 
+		return;
 	const char * str = _strings->get(string_id);
 
 	FontRenderer * fr = _fr[0];
-	int color = 15;
+	int32 color = 15;
 	while(*str == '/') str++; // For Full Throttle text resources
 	while(str[0] == '^') {
 		switch(str[1]) {
 		case 'f':
 			{
-#if 0
-				// This cause trouble if the next character is a digit.
-				int id = atoi(str+2);
-#else
-				// assume ASCII like character set...
 				int id = str[3] - '0';
-#endif
 				str += 4;
 				fr = _fr[id]; 
 			} break;
 		case 'c':
 			{
-				//~ int id = atoi(str+2);
 				color = str[4] - '0' + 10 *(str[3] - '0');
 				str += 5;
 			} break;
@@ -388,7 +386,7 @@ void SmushPlayer::handleTextResource(Chunk & b) {
 }
 
 void SmushPlayer::readPalette(Palette & out, Chunk & in) {
-	unsigned char buffer[768];
+	byte buffer[768];
 	in.read(buffer, 768);
 	out = Palette(buffer);
 }
@@ -397,20 +395,20 @@ void SmushPlayer::handleDeltaPalette(Chunk & b) {
 	checkBlock(b, TYPE_XPAL);
 	debug(6, "SmushPlayer::handleDeltaPalette()");
 	if(b.getSize() == 768 * 3 + 4) {
-		int unk1, num;
+		int32 unk1, num;
 		unk1 = b.getWord();
 		num = b.getWord();
-		for(int i = 0; i < 768; i++) {
+		for(int32 i = 0; i < 768; i++) {
 			_deltaPal[i] = b.getWord();
 		}
 		readPalette(_pal, b);
 		updatePalette();
 	} else if(b.getSize() == 6) {
-		int unk1, num, unk2;
+		int32 unk1, num, unk2;
 		unk1 = b.getWord();
 		num = b.getWord();
 		unk2 = b.getWord();
-		for(int i = 0; i < 256; i++) {
+		for(int32 i = 0; i < 256; i++) {
 			_pal[i].delta(_deltaPal + 3 * i);
 		}
 		updatePalette();
@@ -428,7 +426,7 @@ void SmushPlayer::handleNewPalette(Chunk & b) {
 
 void SmushPlayer::decodeCodec(Chunk & b, const Rect & r, Decoder & codec) {
 	assert(_curBuffer);
-	Blitter blit(_curBuffer, _frameSize, r);
+	Blitter blit((byte*)_curBuffer, _frameSize, r);
 	codec.decode(blit, b);
 }
 
@@ -469,12 +467,12 @@ void SmushPlayer::handleFrameObject(Chunk & b) {
 	}
 	int codec = b.getWord();
 	debug(6, "SmushPlayer::handleFrameObject(%d)", codec);
-	unsigned short left = b.getWord();
-	unsigned short top = b.getWord();
-	unsigned short width = b.getWord();
-	unsigned short height = b.getWord();
+	uint16 left = b.getWord();
+	uint16 top = b.getWord();
+	uint16 width = b.getWord();
+	uint16 height = b.getWord();
 	Rect r(left, top, left + width, top + height);
-	unsigned short data[2];
+	uint16 data[2];
 	data[1] = b.getWord();
 	data[0] = b.getWord();
 #ifdef DEBUG
@@ -504,7 +502,7 @@ void SmushPlayer::handleFrameObject(Chunk & b) {
 		decodeCodec(b, r, _codec44);
 		break;
 	default:
-		error("Invalid codec for frame object : %d", (int)codec);
+		error("Invalid codec for frame object : %d", (int32)codec);
 	}
 }
 
@@ -570,7 +568,7 @@ void SmushPlayer::handleAnimHeader(Chunk & b) {
 	debug(6, "SmushPlayer::handleAnimHeader()");
 	_version = b.getWord();
 	_nbframes = b.getWord();
-	int unknown = b.getWord();
+	int32 unknown = b.getWord();
 #ifdef DEBUG
 	debug(5, "SMUSH HEADER : version == %d, nbframes == %d, unknown == %d", _version, _nbframes, unknown);
 #else
@@ -584,11 +582,11 @@ void SmushPlayer::handleAnimHeader(Chunk & b) {
 	}
 	if(_version == 2) {
 		_secondaryVersion = b.getDword();
-		int unknown2 = b.getDword();
+		int32 unknown2 = b.getDword();
 		_soundFrequency = b.getDword();
 #ifdef DEBUG
 		debug(5, "SMUSH HEADER : secondary version == %d, unknown2 == %d, sound frequency == %d", _secondaryVersion, unknown2, _soundFrequency);
-		int i = 0, c;
+		int32 i = 0, c;
 		while(!b.eof()) {
 			c = b.getByte();
 			if(c) debug(9, "SMUSH HEADER : remaining bytes : %d == %d", i, c);
@@ -621,7 +619,7 @@ static StringResource * getStrings(const char * file, bool is_encoded) {
 	is = fopen(file, "rb");
 	if(is == NULL) return 0;
 	fseek(is, 0, SEEK_END);
-	int length = ftell(is);
+	int32 length = ftell(is);
 	fseek(is, 0, SEEK_SET);
 	char * filebuffer = new char [length + 1];
 	assert(filebuffer);
@@ -629,7 +627,7 @@ static StringResource * getStrings(const char * file, bool is_encoded) {
 	filebuffer[length] = 0;
 	fclose(is);
 	if(is_encoded) {
-		static const int ETRS_HEADER_LENGTH = 16;
+		static const int32 ETRS_HEADER_LENGTH = 16;
 		assert(length > ETRS_HEADER_LENGTH);
 		Chunk::type type = READ_BE_UINT32(filebuffer);
 		if(type != TYPE_ETRS) {
@@ -638,7 +636,7 @@ static StringResource * getStrings(const char * file, bool is_encoded) {
 		}
 		char * old = filebuffer;
 		filebuffer = new char[length - ETRS_HEADER_LENGTH];
-		for(int i = ETRS_HEADER_LENGTH; i < length; i++)
+		for(int32 i = ETRS_HEADER_LENGTH; i < length; i++)
 			filebuffer[i - ETRS_HEADER_LENGTH] = old[i] ^ 0xCC;
 		delete []old;
 		length -= ETRS_HEADER_LENGTH;
@@ -737,7 +735,7 @@ bool SmushPlayer::play(const char * file) {
 				strcpy(file, directory); strcat(file, "titlfnt.nut");
 				_fr[2] = loadFont(file, true);
 			} else {
-				for(int i = 0; i < 4; i++) {
+				for(int32 i = 0; i < 4; i++) {
 					char file[260];
 					sprintf(file, "%s/font%d.nut",directory, i);
 					_fr[i] = loadFont(file, i != 0);

@@ -26,18 +26,21 @@
 #include "rect.h"
 
 #include <assert.h>
-#include <string.h> // for memcpy, strcat, strdup
+#include <string.h>
 
-FontRenderer::FontRenderer(bool use_original_colors) : _nbChars(0), _color(-1), _original(use_original_colors) {
+FontRenderer::FontRenderer(bool use_original_colors) : 
+	_nbChars(0), 
+	_color(-1), 
+	_original(use_original_colors) {
 }
 
 FontRenderer::~FontRenderer() {
-	for(int i = 0; i < _nbChars; i++) {
+	for(int32 i = 0; i < _nbChars; i++) {
 		if(_chars[i].chr) delete []_chars[i].chr;
 	}
 }
 
-void FontRenderer::save(int frame) {
+void FontRenderer::save(int32 frame) {
 	_chars[_nbChars].width = getWidth();
 	_chars[_nbChars].height = getHeight();
 	int size = getWidth() * getHeight();
@@ -46,20 +49,20 @@ void FontRenderer::save(int frame) {
 	_nbChars++;
 }
 
-int FontRenderer::charWidth(int v) const {
+int32 FontRenderer::charWidth(int32 v) const {
 	if(v < 0) v = 256 + v;
 	if(v < 0 || v >= _nbChars) error("invalid character in FontRenderer::charWidth : %d (%d)", v, _nbChars);
 	return _chars[v].width;
 }
 
-int FontRenderer::charHeight(int v) const {
+int32 FontRenderer::charHeight(int32 v) const {
 	if(v < 0) v = 256 + v;
 	if(v < 0 || v >= _nbChars) error("invalid character in FontRenderer::charHeight : %d (%d)", v, _nbChars);
 	return _chars[v].height;
 }
 
-int FontRenderer::stringWidth(const char * str) const {
-	int ret = 0;
+int32 FontRenderer::stringWidth(const char * str) const {
+	int32 ret = 0;
 
 	while(*str) {
 		ret += charWidth(*str++);
@@ -68,36 +71,36 @@ int FontRenderer::stringWidth(const char * str) const {
 	return ret;
 }
 
-int FontRenderer::stringHeight(const char * str) const {
-	int ret = 0;
+int32 FontRenderer::stringHeight(const char * str) const {
+	int32 ret = 0;
 
-	for(int i = 0; str[i] != 0; i++) {
-		int h = charHeight(str[i]);
+	for(int32 i = 0; str[i] != 0; i++) {
+		int32 h = charHeight(str[i]);
 		ret = MAX(ret, h);
 	}
 
 	return ret;
 }
 
-int FontRenderer::drawChar(char * buffer, const Point & size, int x, int y, int chr) const {
-	int w = _chars[chr].width;
-	int h = _chars[chr].height;
+int32 FontRenderer::drawChar(char * buffer, const Point & size, int32 x, int32 y, int32 chr) const {
+	int32 w = _chars[chr].width;
+	int32 h = _chars[chr].height;
 	char * src = _chars[chr].chr;
 	char * dst = buffer + size.getX() * y + x;
 
 	if(_original) {
-		for(int j = 0; j < h; j++) {
-			for(int i = 0; i < w; i++) {
-				int value = *src++;
+		for(int32 j = 0; j < h; j++) {
+			for(int32 i = 0; i < w; i++) {
+				char value = *src++;
 				if(value) dst[i] = value;
 			}
 			dst += size.getX();
 		}
 	} else {
-		int color = (_color != -1) ? _color : 1;
-		for(int j = 0; j < h; j++) {
-			for(int i = 0; i < w; i++) {
-				int value = *src++;
+		char color = (_color != -1) ? _color : 1;
+		for(int32 j = 0; j < h; j++) {
+			for(int32 i = 0; i < w; i++) {
+				char value = *src++;
 				if(value == 1) {
 					dst[i] = color;
 				} else if(value) {
@@ -112,7 +115,7 @@ int FontRenderer::drawChar(char * buffer, const Point & size, int x, int y, int 
 
 static char * * split(const char * str, char sep) {
 	char * * ret = new char *[32];
-	int n = 0;
+	int32 n = 0;
 	const char * i = str, * j = strchr(i, sep);
 
 	while(j != NULL) {
@@ -131,12 +134,12 @@ static char * * split(const char * str, char sep) {
 	return ret;
 }
 
-void FontRenderer::drawSubstring(const unsigned char * str, char * buffer, const Point & size, int x, int y) const {
-	for(int i = 0; str[i] != 0; i++)
+void FontRenderer::drawSubstring(const byte * str, char * buffer, const Point & size, int32 x, int32 y) const {
+	for(int32 i = 0; str[i] != 0; i++)
 		x += drawChar(buffer, size, x, y, str[i]);
 }
 
-bool FontRenderer::drawStringAbsolute(const char * str, char * buffer, const Point & size, int x, int y) const {
+bool FontRenderer::drawStringAbsolute(const char * str, char * buffer, const Point & size, int32 x, int32 y) const {
 	debug(9, "FontRenderer::drawStringAbsolute(%s, %d, %d)", str, x, y);
 	while(str) {
 		char line[256];
@@ -149,42 +152,42 @@ bool FontRenderer::drawStringAbsolute(const char * str, char * buffer, const Poi
 			strcpy(line, str);
 			str = 0;
 		}
-		drawSubstring((const unsigned char *)line, buffer, size, x, y);
+		drawSubstring((const byte *)line, buffer, size, x, y);
 		y += stringHeight(line);
 	}
 	return true;
 }
 
-bool FontRenderer::drawStringCentered(const char * str, char * buffer, const Point & size, int y, int xmin, int width, int offset) const {
+bool FontRenderer::drawStringCentered(const char * str, char * buffer, const Point & size, int32 y, int32 xmin, int32 width, int32 offset) const {
 	debug(9, "FontRenderer::drawStringCentered(%s, %d, %d)", str, xmin, y);
 	assert(strchr(str, '\n') == 0);
 	char * * words = split(str, ' ');
-	int nb_sub = 0;
+	int32 nb_sub = 0;
 
 	while(words[nb_sub]) nb_sub++;
 
-	int * sizes = new int[nb_sub];
-	int i = 0, max_width = 0, height = 0, nb_subs = 0;
+	int32 * sizes = new int32[nb_sub];
+	int32 i = 0, max_width = 0, height = 0, nb_subs = 0;
 
 	for(i = 0; i < nb_sub; i++)
 		sizes[i] = stringWidth(words[i]);
 
 	char * * substrings = new char *[nb_sub];
-	int * substr_widths = new int[nb_sub];
-	int space_width = charWidth(' ');
+	int32 * substr_widths = new int32[nb_sub];
+	int32 space_width = charWidth(' ');
 
 	i = 0;
 	while(i < nb_sub) {
-		int substr_width = sizes[i];
+		int32 substr_width = sizes[i];
 		char * substr = new char[1000];
 		strcpy(substr, words[i]);
-		int j = i + 1;
+		int32 j = i + 1;
 
 		while(j < nb_sub && (substr_width + space_width + sizes[j]) < width) {
 			substr_width += sizes[j++] + space_width;
 		}
 
-		for(int k = i + 1; k < j; k++) {
+		for(int32 k = i + 1; k < j; k++) {
 			strcat(substr, " ");
 			strcat(substr, words[k]);
 		}
@@ -219,8 +222,8 @@ bool FontRenderer::drawStringCentered(const char * str, char * buffer, const Poi
 	}
 
 	for(i = 0; i < nb_subs; i++) {
-		int substr_width = substr_widths[i];
-		drawSubstring((const unsigned char *)substrings[i], buffer, size, x - substr_width / 2, y);
+		int32 substr_width = substr_widths[i];
+		drawSubstring((const byte *)substrings[i], buffer, size, x - substr_width / 2, y);
 		y += stringHeight(substrings[i]);
 		delete []substrings[i];
 	}

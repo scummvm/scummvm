@@ -31,24 +31,24 @@
 class Point {
 	friend class Rect;
 private:
-	int _x;	//!< The horizontal part of the point
-	int _y;	//!< The vertical part of the point
+	int32 _x;	//!< The horizontal part of the point
+	int32 _y;	//!< The vertical part of the point
 public:
 	Point() : _x(0), _y(0) {};
 	Point(const Point & p) : _x(p._x), _y(p._y) {};
-	explicit Point(int x, int y) : _x(x), _y(y) {};
+	explicit Point(int32 x, int32 y) : _x(x), _y(y) {};
 	Point & operator=(const Point & p) { _x = p._x; _y = p._y; return *this; };
 	bool operator==(const Point & p) const { return _x == p._x && _y == p._y; };
-	const int & getX() const { return _x; };
-	const int & getY() const { return _y; };
-	int & getX() { return _x; };
-	int & getY() { return _y; };
+	const int32 & getX() const { return _x; };
+	const int32 & getY() const { return _y; };
+	int32 & getX() { return _x; };
+	int32 & getY() { return _y; };
 	Point operator+(const Point & p) const { return Point(_x + p._x, _y+p._y); };
 	Point operator-(const Point & p) const { return Point(_x - p._x, _y-p._y); };
 	Point & operator+=(const Point & p) { _x += p._x; _y += p._y; return *this; };
 	Point & operator-=(const Point & p) { _x -= p._x; _y -= p._y; return *this; };
 	bool isOrigin() const { return _x == 0 && _y == 0; };
-	void set(int x, int y) { _x = x; _y = y; }
+	void set(int32 x, int32 y) { _x = x; _y = y; }
 };
 
 /*! 	@brief simple class for handling a rectangular zone.
@@ -62,15 +62,15 @@ private:
 	Point _bottomRight;	//!< The point at the bottom right of the rectangle
 public:
 	Rect() : _topLeft(0, 0), _bottomRight(0,0) {}
-	Rect(int x, int y) : _topLeft(0, 0), _bottomRight(x, y) {}
-	Rect(int x1, int y1, int x2, int y2) : _topLeft(x1, y1), _bottomRight(x2, y2) {}
+	Rect(int32 x, int32 y) : _topLeft(0, 0), _bottomRight(x, y) {}
+	Rect(int32 x1, int32 y1, int32 x2, int32 y2) : _topLeft(x1, y1), _bottomRight(x2, y2) {}
 	Point size() const { return (_bottomRight - _topLeft); };
-	int width() const { return size()._x; }
-	int height() const { return size()._y; }
-	int left() const { return _topLeft._x; }
-	int right() const { return _bottomRight._x; }
-	int top() const { return _topLeft._y; }
-	int bottom() const { return _bottomRight._y; }
+	int32 width() const { return size()._x; }
+	int32 height() const { return size()._y; }
+	int32 left() const { return _topLeft._x; }
+	int32 right() const { return _bottomRight._x; }
+	int32 top() const { return _topLeft._y; }
+	int32 bottom() const { return _bottomRight._y; }
 	const Point & topLeft() const { return _topLeft; }
 	const Point & bottomRight() const { return _bottomRight; }
 
@@ -81,8 +81,7 @@ public:
 		
 		@return true if the given position is inside the rectangle, false otherwise
 	*/
-	bool isInside(int x, int y) const
-	{
+	bool isInside(int32 x, int32 y) const {
 		return (_topLeft._x <= x) && (_bottomRight._x > x) && (_topLeft._y <= y) && (_bottomRight._y > y);
 	}
 	/*!	@brief check if given point is inside the rectangle
@@ -91,11 +90,9 @@ public:
 		
 		@return true if the given point is inside the rectangle, false otherwise
 	*/
-	bool isInside(const Point & p) const
-	{
+	bool isInside(const Point & p) const {
 		return (_topLeft._x <= p._x) && (_bottomRight._x > p._x) && (_topLeft._y <= p._y) && (_bottomRight._y > p._y);
 	}
-
 
 	bool clip(Rect & r) const;
 };

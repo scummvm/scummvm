@@ -54,7 +54,7 @@ bool BaseRenderer::initFrame(const Point & p) {
 	return true;
 }
 
-char * BaseRenderer::lockFrame(int frame) {
+char * BaseRenderer::lockFrame(int32 frame) {
 	_frame = frame; 
 	if(!_data) error("no allocated image buffer in lock_frame");
 	return _data;

@@ -25,10 +25,10 @@
 #include "blitter.h"
 
 bool Codec44Decoder::decode(Blitter & dst, Chunk & src) {
-	int size_line;
-	int num;
-	int w, width = getRect().width() + 1;
-	int h, height = getRect().height() + 1;
+	int32 size_line;
+	int32 num;
+	int32 w, width = getRect().width() + 1;
+	int32 h, height = getRect().height() + 1;
 	bool zero;
 #ifdef DEBUG_CODEC44
 	debug(7, "codec44 : %dx%d", width, height);

@@ -34,7 +34,7 @@ class Chunk {
 public:
 	enum seek_type { seek_start, seek_end, seek_cur };
 	virtual ~Chunk() {};
-	typedef unsigned int type;			//!< type of a Chunk (i.e. The first 4byte field of the Chunk structure).
+	typedef uint32 type;			//!< type of a Chunk (i.e. The first 4byte field of the Chunk structure).
 	/*!	@brief convert a type to a string
 		
 		Utility function that convert a type to a string.
@@ -46,17 +46,17 @@ public:
 	static const char * ChunkString(type t);
 
 	virtual type getType() const = 0;	//!< return the type of the Chunk
-	virtual unsigned int getSize() const = 0;	//!< return the size of the Chunk
+	virtual uint32 getSize() const = 0;	//!< return the size of the Chunk
 	virtual Chunk * subBlock() = 0; //!< extract a subChunk from the current read position
 	virtual bool eof() const = 0;	//!< is the Chunk completely read ?
-	virtual unsigned int tell() const = 0;	//!< get the Chunk current read position
-	virtual bool seek(int delta, seek_type dir = seek_cur) = 0;	//!< move the current read position inside the Chunk
-	virtual bool read(void * buffer, unsigned int size) = 0;		//!< read some data for the current read position
+	virtual uint32 tell() const = 0;	//!< get the Chunk current read position
+	virtual bool seek(int32 delta, seek_type dir = seek_cur) = 0;	//!< move the current read position inside the Chunk
+	virtual bool read(void * buffer, uint32 size) = 0;		//!< read some data for the current read position
 	virtual int8 getChar() = 0;							//!< extract the character at the current read position
-	virtual unsigned char getByte() = 0;					//!< extract the byte at the current read position
-	virtual short getShort() = 0;						//!< extract the short at the current read position
-	virtual unsigned short getWord() = 0;					//!< extract the word at the current read position
-	virtual unsigned int getDword()= 0;					//!< extract the dword at the current read position
+	virtual byte getByte() = 0;					//!< extract the byte at the current read position
+	virtual int16 getShort() = 0;						//!< extract the short at the current read position
+	virtual uint16 getWord() = 0;					//!< extract the word at the current read position
+	virtual uint32 getDword()= 0;					//!< extract the dword at the current read position
 };
 
 class FilePtr;
@@ -70,26 +70,26 @@ class FileChunk : public Chunk {
 private:
 	FilePtr * _data;
 	type _type;
-	unsigned int _size;
-	unsigned int _offset;
-	unsigned int _curPos;
+	uint32 _size;
+	uint32 _offset;
+	uint32 _curPos;
 protected:
 	FileChunk();
 public:
 	FileChunk(const char * fname);
 	virtual ~FileChunk();
 	type getType() const;
-	unsigned int getSize() const;
+	uint32 getSize() const;
 	Chunk * subBlock();
 	bool eof() const;
-	unsigned int tell() const;
-	bool seek(int delta, seek_type dir = seek_cur);
-	bool read(void * buffer, unsigned int size);
+	uint32 tell() const;
+	bool seek(int32 delta, seek_type dir = seek_cur);
+	bool read(void * buffer, uint32 size);
 	int8 getChar();
-	unsigned char getByte();
+	byte getByte();
 	short getShort();
-	unsigned short getWord();
-	unsigned int getDword();
+	uint16 getWord();
+	uint32 getDword();
 };
 
 /*! 	@brief memory based ::Chunk
@@ -98,24 +98,24 @@ public:
 */
 class ContChunk : public Chunk {
 private:
-	char * _data;
+	byte * _data;
 	Chunk::type _type;
-	unsigned int _size;
-	unsigned int _curPos;
+	uint32 _size;
+	uint32 _curPos;
 public:
-	ContChunk(char * data);
+	ContChunk(byte * data);
 	Chunk::type getType() const;
-	unsigned int getSize() const;
+	uint32 getSize() const;
 	Chunk * subBlock();
 	bool eof() const;
-	unsigned int tell() const;
-	bool seek(int delta, seek_type dir = seek_cur);
-	bool read(void * buffer, unsigned int size);
+	uint32 tell() const;
+	bool seek(int32 delta, seek_type dir = seek_cur);
+	bool read(void * buffer, uint32 size);
 	int8 getChar();
-	unsigned char getByte();
-	short getShort();
-	unsigned short getWord();
-	unsigned int getDword();
+	byte getByte();
+	int16 getShort();
+	uint16 getWord();
+	uint32 getDword();
 };
 
 #endif

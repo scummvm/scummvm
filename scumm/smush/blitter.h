@@ -1,4 +1,4 @@
-/* ScummVM - Scumm Interpreter
+/* ScummVM - Scumm int32erpreter
  * Copyright (C) 2001/2002 The ScummVM project
  *
  * This program is free software; you can redistribute it and/or
@@ -44,15 +44,15 @@ class Chunk;
 */
 class Blitter {
 private:
-	char * _ptr;	//!< This is the pointer to the start of the frame buffer
-	char * _offset;	//!< This is the current pointer in the frame buffer
+	byte * _ptr;	//!< This is the pointer to the start of the frame buffer
+	byte * _offset;	//!< This is the current pointer in the frame buffer
 	Point _clip;		//!<  This is the size of the frame buffer (width/height)
 	Rect _src; 		//!< This is the size and position of the destination rectangle
 	Point _cur; 		//!< This is the current position in the destination rectangle
 	bool _outside;	//!< flag that is set to \c true when the blitter reach the end of the destination rectangle
 #ifdef DEBUG_CLIPPER
-	int _clipped;
-	int _clippedBlock;
+	int32 _clipped;
+	int32 _clippedBlock;
 #endif
 public:
 	/*!	@brief constructor
@@ -61,19 +61,19 @@ public:
 		@param dstsize the size of the frame buffer
 		@param src the rectangle to blit to
 	*/
-	Blitter(char * buffer, const Point & dstsize, const Rect & src);
+	Blitter(byte * buffer, const Point & dstsize, const Rect & src);
 	virtual ~Blitter();
-	void blit(char *, unsigned int); //!< This method allows to blit directly some data from a buffer
-	void blit(Chunk &, unsigned int); //!< This method allows to blit directly some data from a Chunk
-	void put(char); //!< This method allows to blit one byte
-	void put(char, unsigned int); //!< This method allows to blit one byte several times
-	void advance(int = 1, int = 0); //!< This method allows to advance the current position in the blitter
-	void advanceBlock(int = 1, int = 0); //!< This method allows to advance the current position in the blitter in terms of blocks
-	void putBlock(unsigned int); //!< This method allows to blit one block from an int value repeated 4 time
+	void blit(byte *, uint32); //!< This method allows to blit directly some data from a buffer
+	void blit(Chunk &, uint32); //!< This method allows to blit directly some data from a Chunk
+	void put(byte); //!< This method allows to blit one byte
+	void put(byte, uint32); //!< This method allows to blit one byte several times
+	void advance(int32 = 1, int32 = 0); //!< This method allows to advance the current position in the blitter
+	void advanceBlock(int32 = 1, int32 = 0); //!< This method allows to advance the current position in the blitter in terms of blocks
+	void putBlock(uint32); //!< This method allows to blit one block from an int32 value repeated 4 time
 	void putBlock(Chunk &); //!< This method allows to blit one block directly read from a Chunk
-	void putBlock(unsigned char *); //!< This method allows to blit one block directly from a buffer
-	void putBlock(unsigned int, unsigned int, unsigned int, unsigned int); //!< This method allows to blit one block from a 4 int value
-	void blockCopy(int); //!< This method allows to copy one block from another separated by the given offset
+	void putBlock(byte *); //!< This method allows to blit one block directly from a buffer
+	void putBlock(uint32, uint32, uint32, uint32); //!< This method allows to blit one block from a 4 int32 value
+	void blockCopy(int32); //!< This method allows to copy one block from another separated by the given offset
 };
 
 #endif

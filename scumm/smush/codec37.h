@@ -54,14 +54,14 @@
 
 class Codec37Decoder : public Decoder {
 private:
-	int _deltaSize;
-	unsigned char * _deltaBufs[2];
-	unsigned char * _deltaBuf;
-	short * _offsetTable;
-	int _curtable;
-	unsigned short _prevSeqNb;
-	int _tableLastPitch;
-	int _tableLastIndex;
+	int32 _deltaSize;
+	byte * _deltaBufs[2];
+	byte * _deltaBuf;
+	int16 * _offsetTable;
+	int32 _curtable;
+	uint16 _prevSeqNb;
+	int32 _tableLastPitch;
+	int32 _tableLastIndex;
 
 public:
 	bool initSize(const Point &, const Rect &);
@@ -69,16 +69,16 @@ public:
 	void clean();
 	virtual ~Codec37Decoder();
 protected:
-	static inline unsigned int expand(unsigned char b) {
-		unsigned int r = b | (b << 8);
+	static inline uint32 expand(byte b) {
+		uint32 r = b | (b << 8);
 		return r | (r << 16);
 	}
-	void maketable(int, int);
-	void proc1(Blitter &, Chunk &, int, int, int, int);
-	void proc2(Blitter &, Chunk &, int);
-	void proc3WithFDFE(Blitter &, Chunk &, int, int, int);
-	void proc3WithoutFDFE(Blitter &, Chunk &, int, int, int);
-	void proc4(Blitter &, Chunk &, int, int, int);
+	void maketable(int32, int32);
+	void proc1(Blitter &, Chunk &, int32, int32, int32, int32);
+	void proc2(Blitter &, Chunk &, int32);
+	void proc3WithFDFE(Blitter &, Chunk &, int32, int32, int32);
+	void proc3WithoutFDFE(Blitter &, Chunk &, int32, int32, int32);
+	void proc4(Blitter &, Chunk &, int32, int32, int32);
 public:
 	bool decode(Blitter &, Chunk &);
 };

@@ -44,13 +44,13 @@ class StringResource;
 class SmushPlayer {
 private:
 	char * _fname;			//!< the name of the animation file being played
-	int _version;			//!< the version of the animation file being played
-	int _secondaryVersion;	//!< the secondary version number of the animation file being played
-	int _soundFrequency;		//!< the sound frequency of the animation file being played
-	int _nbframes;			//!< the number of frames in the animation file
+	int32 _version;			//!< the version of the animation file being played
+	int32 _secondaryVersion;	//!< the secondary version number of the animation file being played
+	int32 _soundFrequency;		//!< the sound frequency of the animation file being played
+	int32 _nbframes;			//!< the number of frames in the animation file
 	Mixer * _mixer;			//!< the sound mixer
 	Palette _pal;			//!< the current palette
-	short _deltaPal[768];		//!< the delta palette information set by an xpal
+	int16 _deltaPal[768];		//!< the delta palette information set by an xpal
 	Renderer * _renderer;		//!< pointer to the ::renderer
 	StringResource * _strings;	//!< pointer to the string resources associated with the animation
 	FontRenderer * _fr[4];		//!< pointers to the fonts for the animation
@@ -59,7 +59,7 @@ private:
 	Codec44Decoder _codec44;	//!< the ::decoder for codec 21 and 44
 	DumpDecoder _codecd;	//!< the ::decoder for codec 21 and 44
 	Point _frameSize;		//!< the current frame size of the animation
-	int _frame;				//!< the current frame number of the animation
+	int32 _frame;				//!< the current frame number of the animation
 	bool _outputSound;		//!< should we handle sound ?
 	bool _wait;				//!< should we synchronise the player ?
 	bool _alreadyInit;		//!< has the player already been initialized for the current frame
@@ -80,18 +80,18 @@ public:
 protected:
 	bool readString(const char * file, bool &);
 	void clean();
-	void checkBlock(const Chunk &, Chunk::type, unsigned int = 0);
+	void checkBlock(const Chunk &, Chunk::type, uint32 = 0);
 	void handleAnimHeader(Chunk &);
 	void handleFrame(Chunk &);
 	void handleNewPalette(Chunk &);
 	void handleFrameObject(Chunk &);
-	void handleSoundBuffer(int, int, int, int, int, int, Chunk &, int);
-	void handleImuseBuffer(int, int, int, int, int, int, Chunk &, int);
+	void handleSoundBuffer(int32, int32, int32, int32, int32, int32, Chunk &, int32);
+	void handleImuseBuffer(int32, int32, int32, int32, int32, int32, Chunk &, int32);
 	void handleSoundFrame(Chunk &);
 	void handleSkip(Chunk &);
 	void handleStore(Chunk &);
 	void handleFetch(Chunk &);
-	void handleImuseAction8(Chunk &, int flags, int unknown, int track_id);
+	void handleImuseAction8(Chunk &, int32 flags, int32 unknown, int32 track_id);
 	void handleImuseAction(Chunk &);
 	void handleTextResource(Chunk &);
 	void handleDeltaPalette(Chunk &);

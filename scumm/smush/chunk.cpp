@@ -1,4 +1,4 @@
-/* ScummVM - Scumm Interpreter
+/* ScummVM - Scumm int32erpreter
  * Copyright (C) 2001/2002 The ScummVM project
  *
  * This program is free software; you can redistribute it and/or
@@ -32,8 +32,8 @@
 class FilePtr {
 	char * _filename;
 	FILE * _ifs;
-	int _refcount;
-	int _curPos;
+	int32 _refcount;
+	int32 _curPos;
 public:
 	FilePtr(const char * fname) : _refcount(1), _curPos(0) {
 		debug(9, "FilePtr created for %s", fname);
@@ -46,17 +46,17 @@ public:
 		free(_filename);
 		fclose(_ifs);
 	}
-	int tell() {
+	int32 tell() {
 		return _curPos;
 	}
-	bool seek(int pos) {
+	bool seek(int32 pos) {
 		if(pos != _curPos) {
 			fseek(_ifs, pos, SEEK_SET);
 			_curPos = pos;
 		}
 		return true;
 	}
-	bool read(void * ptr, int size) {
+	bool read(void * ptr, int32 size) {
 		fread(ptr, size, 1, _ifs);
 		_curPos += size;
 		return true;
@@ -101,7 +101,7 @@ Chunk::type FileChunk::getType() const {
 	return _type; 
 }
 
-unsigned int FileChunk::getSize() const { 
+uint32 FileChunk::getSize() const { 
 	return _size; 
 }
 
@@ -110,7 +110,7 @@ Chunk * FileChunk::subBlock() {
 	ptr->_data = _data;
 	_data->incRef();
 	_data->seek(_offset + _curPos);
-	unsigned int temp;
+	uint32 temp;
 	_data->read(&temp, 4);
 	ptr->_type = TO_BE_32(temp);
 	_data->read(&temp, 4);
@@ -125,22 +125,22 @@ bool FileChunk::eof() const {
 	return _curPos >= _size; 
 }
 
-unsigned int FileChunk::tell() const { 
+uint32 FileChunk::tell() const { 
 	return _curPos; 
 }
 
-bool FileChunk::seek(int delta, seek_type dir) {
+bool FileChunk::seek(int32 delta, seek_type dir) {
 	switch(dir) {
 		case seek_cur:
 			_curPos += delta;
 			break;
 		case seek_start:
 			if(delta < 0) error("invalid seek request");
-			_curPos = (unsigned int)delta;
+			_curPos = (uint32)delta;
 			break;
 		case seek_end:
 			if(delta > 0 || (_size + delta) < 0) error("invalid seek request");
-			_curPos = (unsigned int)(_size + delta);
+			_curPos = (uint32)(_size + delta);
 			break;
 	}
 	if(_curPos > _size) {
@@ -149,7 +149,7 @@ bool FileChunk::seek(int delta, seek_type dir) {
 	return true;
 }
 
-bool FileChunk::read(void * buffer, unsigned int size) {
+bool FileChunk::read(void * buffer, uint32 size) {
 	if(size <= 0 || (_curPos + size) > _size) error("invalid buffer read request");
 	_data->seek(_offset + _curPos);
 	_data->read(buffer, size);
@@ -166,43 +166,43 @@ int8 FileChunk::getChar() {
 	return buffer;
 }
 
-unsigned char FileChunk::getByte() {
+byte FileChunk::getByte() {
 	if(_curPos >= _size) error("invalid byte read request");
 	_data->seek(_offset + _curPos);
-	unsigned char buffer;
+	byte buffer;
 	_data->read(&buffer, sizeof(buffer));
 	_curPos+= sizeof(buffer);
 	return buffer;
 }
 
-short FileChunk::getShort() {
-	unsigned short buffer = getWord();
-	return *((short*)&buffer);
+int16 FileChunk::getShort() {
+	int16 buffer = getWord();
+	return *((int16*)&buffer);
 }
 
-unsigned short FileChunk::getWord() {
+uint16 FileChunk::getWord() {
 	if(_curPos >= _size - 1) error("invalid word read request");
 	_data->seek(_offset + _curPos);
-	unsigned short buffer;
+	uint16 buffer;
 	_data->read(&buffer, sizeof(buffer));
 	_curPos+= sizeof(buffer);
 	return TO_LE_16(buffer);
 }
 
-unsigned int FileChunk::getDword() {
+uint32 FileChunk::getDword() {
 	if(_curPos >= _size - 3) error("invalid dword read request");
 	_data->seek(_offset + _curPos);
-	unsigned int buffer;
+	uint32 buffer;
 	_data->read(&buffer, sizeof(buffer));
 	_curPos+= sizeof(buffer);
 	return TO_LE_32(buffer);
 }
 
-ContChunk::ContChunk(char * data) {
-	if(data == 0) error("Chunk() called with NULL pointer");
+ContChunk::ContChunk(byte * data) {
+	if(data == 0) error("Chunk() called with NULL point32er");
 	_type = (Chunk::type)READ_BE_UINT32(data);
-	_size = READ_BE_UINT32(data+4);
-	_data = data + sizeof(Chunk::type) + sizeof(unsigned int);
+	_size = READ_BE_UINT32(data + 4);
+	_data = data + sizeof(Chunk::type) + sizeof(uint32);
 	_curPos = 0;
 }
 
@@ -210,13 +210,13 @@ Chunk::type ContChunk::getType() const {
 	return _type; 
 }
 
-unsigned int ContChunk::getSize() const { 
+uint32 ContChunk::getSize() const { 
 	return _size; 
 }
 
 Chunk * ContChunk::subBlock() {
 	ContChunk * ptr = new ContChunk(_data + _curPos);
-	seek(sizeof(Chunk::type) + sizeof(unsigned int) + ptr->getSize());
+	seek(sizeof(Chunk::type) + sizeof(uint32) + ptr->getSize());
 	return ptr;
 }
 
@@ -224,22 +224,22 @@ bool ContChunk::eof() const {
 	return _curPos >= _size; 
 }
 
-unsigned int ContChunk::tell() const { 
+uint32 ContChunk::tell() const { 
 	return _curPos; 
 }
 
-bool ContChunk::seek(int delta, seek_type dir) {
+bool ContChunk::seek(int32 delta, seek_type dir) {
 	switch(dir) {
 		case seek_cur:
 			_curPos += delta;
 			break;
 		case seek_start:
 			if(delta < 0) error("invalid seek request");
-			_curPos = (unsigned int)delta;
+			_curPos = (uint32)delta;
 			break;
 		case seek_end:
 			if(delta > 0 || (_size + delta) < 0) error("invalid seek request");
-			_curPos = (unsigned int)(_size + delta);
+			_curPos = (uint32)(_size + delta);
 			break;
 	}
 	if(_curPos > _size) {
@@ -248,7 +248,7 @@ bool ContChunk::seek(int delta, seek_type dir) {
 	return true;
 }
 
-bool ContChunk::read(void * buffer, unsigned int size) {
+bool ContChunk::read(void * buffer, uint32 size) {
 	if(size <= 0 || (_curPos + size) > _size) error("invalid buffer read request");
 	memcpy(buffer, _data + _curPos, size);
 	_curPos += size;
@@ -260,29 +260,29 @@ int8 ContChunk::getChar() {
 	return _data[_curPos++];
 }
 
-unsigned char ContChunk::getByte() {
+byte ContChunk::getByte() {
 	if(_curPos >= _size) error("invalid byte read request");
-	unsigned char * ptr = (unsigned char *)(_data + _curPos);
+	byte * ptr = (byte *)(_data + _curPos);
 	_curPos += 1;
 	return *ptr;
 }
 
-short ContChunk::getShort() {
-	if(_curPos >= _size - 1) error("invalid short read request");
-	unsigned short buffer = getWord();
-	return *((short*)&buffer);
+int16 ContChunk::getShort() {
+	if(_curPos >= _size - 1) error("invalid int16 read request");
+	int16 buffer = getWord();
+	return *((int16*)&buffer);
 }
 
-unsigned short ContChunk::getWord() {
+uint16 ContChunk::getWord() {
 	if(_curPos >= _size - 1) error("invalid word read request");
-	unsigned short * ptr = (unsigned short *)(_data + _curPos);
+	uint16 * ptr = (uint16 *)(_data + _curPos);
 	_curPos += 2;
 	return READ_LE_UINT16(ptr);
 }
 
-unsigned int ContChunk::getDword() {
+uint32 ContChunk::getDword() {
 	if(_curPos >= _size - 3) error("invalid dword read request");
-	unsigned int * ptr = (unsigned int *)(_data + _curPos);
+	uint32 * ptr = (uint32 *)(_data + _curPos);
 	_curPos += 4;
 	return READ_LE_UINT32(ptr);
 }

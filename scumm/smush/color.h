@@ -30,7 +30,7 @@
 */
 class Color {
 public:
-	typedef unsigned char value_type;	//!< The type of the Chunk components.
+	typedef byte value_type;	//!< The type of the Chunk components.
 private:
 	value_type _r;	//!< The red component.
 	value_type _g;	//!< The green component.
@@ -49,7 +49,7 @@ public:
 
 		@param ptr pointer to a table of 3 shorts that contain delta values to use.
 	*/
-	void delta(short * ptr);
+	void delta(int16 * ptr);
 };
 
 #endif

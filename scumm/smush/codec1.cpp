@@ -28,10 +28,10 @@ Codec1Decoder::~Codec1Decoder() {
 }
 
 bool Codec1Decoder::decode(Blitter & dst, Chunk & src) {
-	int val;
-	int size_line;
-	int code, length;
-	int h, height = getRect().height();
+	byte val;
+	int32 size_line;
+	int32 code, length;
+	int32 h, height = getRect().height();
 
 	for(h = 0; h < height; h++) {
 		size_line = src.getWord(); // size of compressed line !
@@ -48,8 +48,10 @@ bool Codec1Decoder::decode(Blitter & dst, Chunk & src) {
 			if(code & 1) {
 				val = src.getByte();
 				size_line --;
-				if(val) dst.put(val, length);
-				else dst.advance(length);
+				if(val) 
+					dst.put(val, length);
+				else 
+					dst.advance(length);
 #ifdef DEBUG_CODEC1
 			debug(7, "codec1 : blitting %d times %d", length, val);
 #endif
@@ -60,7 +62,8 @@ bool Codec1Decoder::decode(Blitter & dst, Chunk & src) {
 #endif
 				while(length--) {
 					val = src.getByte();
-					if(val) dst.put(val);
+					if(val) 
+						dst.put(val);
 					else dst.advance();
 				}
 			}
@@ -68,7 +71,7 @@ bool Codec1Decoder::decode(Blitter & dst, Chunk & src) {
 	}
 #ifdef DEBUG_CODEC1
 	if(!src.eof()) {
-		int len = src.getSize() - src.tell();
+		int32 len = src.getSize() - src.tell();
 		debug(7, "codec1: remaining length after decode == %d", len);
 	}
 #endif

@@ -22,12 +22,12 @@
 #include <stdafx.h>
 #include "color.h"
 
-#define UPDATE_COLOR(c, inc) (((int)((c)) << 7) + (c) + (inc)) >> 7
+#define UPDATE_COLOR(c, inc) (((int32)((c)) << 7) + (c) + (inc)) >> 7
 #define CHECK_BOUNDS(c) (((c) > 255) ? 255 : (((c) < 0) ? 0 : (c)))
 
-void Color::delta(short * ptr) {
+void Color::delta(int16 * ptr) {
 	// This is a very specific method for XPALs.
-	int t;
+	int16 t;
 	t = UPDATE_COLOR(_r, ptr[0]);
 	_r = CHECK_BOUNDS(t);
 	t = UPDATE_COLOR(_g, ptr[1]);

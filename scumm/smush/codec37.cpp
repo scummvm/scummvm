@@ -25,7 +25,7 @@
 #include "blitter.h"
 
 #include <assert.h>
-#include <string.h> // for memset
+#include <string.h>
 
 bool Codec37Decoder::initSize(const Point & p, const Rect & r) {
 	if(r.width() != getRect().width() && r.height() != getRect().height()) {
@@ -37,13 +37,13 @@ bool Codec37Decoder::initSize(const Point & p, const Rect & r) {
 			return false;
 		Decoder::initSize(p, r);
 		clean();
-		int frame_size = getRect().width() * getRect().height();
+		int32 frame_size = getRect().width() * getRect().height();
 		_deltaSize = frame_size * 2 + DELTA_ADD * 4;
-		_deltaBuf = new  unsigned char[_deltaSize];
+		_deltaBuf = new byte[_deltaSize];
 		if(_deltaBuf == 0) error("unable to allocate decoder buffer");
 		_deltaBufs[0] = _deltaBuf + DELTA_ADD;
 		_deltaBufs[1] = _deltaBuf + frame_size + DELTA_ADD * 3;
-		_offsetTable = new short[255];
+		_offsetTable = new int16[255];
 		if(_offsetTable == 0) error("unable to allocate decoder offset table");
 		_tableLastPitch = -1;
 		_tableLastIndex = -1;
@@ -84,8 +84,8 @@ Codec37Decoder::~Codec37Decoder() {
 	clean();
 }
 
-void Codec37Decoder::maketable(int pitch, int index) {
-	static const signed char maketable_bytes[] = {
+void Codec37Decoder::maketable(int32 pitch, int32 index) {
+	static const int8 maketable_bytes[] = {
 		0, 0, 1, 0, 2, 0, 3, 0, 5, 0, 8, 0, 13, 0, 21, 0,
 		-1, 0, -2, 0, -3, 0, -5, 0, -8, 0, -13, 0, -17, 0, -21, 0,
 		0, 1, 1, 1, 2, 1, 3, 1, 5, 1, 8, 1, 13, 1, 21, 1,
@@ -192,22 +192,22 @@ void Codec37Decoder::maketable(int pitch, int index) {
 	_tableLastPitch = pitch;
 	_tableLastIndex = index;
 	index *= 255;
-	assert(index + 254 < (int)(sizeof(maketable_bytes) / 2));
+	assert(index + 254 < (int32)(sizeof(maketable_bytes) / 2));
 
-	for (int i = 0; i < 255; i++) {
-		int j = (i + index) << 1; // * 2
+	for (int32 i = 0; i < 255; i++) {
+		int32 j = (i + index) << 1; // * 2
 		_offsetTable[i] = maketable_bytes[j + 1] * pitch + maketable_bytes[j];
 	}
 }
 
-void Codec37Decoder::proc1(Blitter & dst, Chunk & src, int next_offs, int bw, int bh, int size) {
-	unsigned char * decoded = new unsigned char[size];
-	int w = 0;
+void Codec37Decoder::proc1(Blitter & dst, Chunk & src, int32 next_offs, int32 bw, int32 bh, int32 size) {
+	byte * decoded = new byte[size];
+	int32 w = 0;
 	while(!src.eof()) {
-		int code = src.getByte();
-		int length = (code >> 1) + 1;
+		int32 code = src.getByte();
+		int32 length = (code >> 1) + 1;
 		if (code & 1) {
-			unsigned char val = src.getByte();
+			byte val = src.getByte();
 			while(length--)
 				decoded[w++] = val;
 		} else {
@@ -219,7 +219,7 @@ void Codec37Decoder::proc1(Blitter & dst, Chunk & src, int next_offs, int bw, in
 	assert(w == size);
 	w = 0;
 	// Now we have our stream ready...
-	for(int i = 0; i < size; i++) {
+	for(int32 i = 0; i < size; i++) {
 		if(decoded[i] == 0xFF) {
 			dst.putBlock(decoded + i + 1);
 			i += 16;
@@ -234,14 +234,14 @@ void Codec37Decoder::proc1(Blitter & dst, Chunk & src, int next_offs, int bw, in
 	delete []decoded;
 }
 
-void Codec37Decoder::proc2(Blitter & dst, Chunk & src, int size) { // This is codec1 like...
+void Codec37Decoder::proc2(Blitter & dst, Chunk & src, int32 size) { // This is codec1 like...
 #ifdef DEBUG_CODEC37_PROC2
-	int decoded_size = 0;
-	int coded_size = 0;
+	int32 decoded_size = 0;
+	int32 coded_size = 0;
 #endif
 	do {
-		int code = src.getByte();
-		int length = (code >> 1) + 1;
+		int32 code = src.getByte();
+		int32 length = (code >> 1) + 1;
 		size -= length;
 #ifdef DEBUG_CODEC37_PROC2
 		decoded_size += length;
@@ -258,11 +258,11 @@ void Codec37Decoder::proc2(Blitter & dst, Chunk & src, int size) { // This is co
 	} while (size);
 }
 
-void Codec37Decoder::proc3WithFDFE(Blitter & dst, Chunk & src, int next_offs, int bw, int bh) {
+void Codec37Decoder::proc3WithFDFE(Blitter & dst, Chunk & src, int32 next_offs, int32 bw, int32 bh) {
 	do {
-		int i = bw;
+		int32 i = bw;
 		do {
-			int code = src.getByte();
+			int32 code = src.getByte();
 			if (code == 0xFD) {
 #ifdef USE_COLOR_CODE_FOR_BLOCK
 				dst.putBlock(expand(1));
@@ -293,11 +293,11 @@ void Codec37Decoder::proc3WithFDFE(Blitter & dst, Chunk & src, int next_offs, in
 	} while (--bh);
 }
 
-void Codec37Decoder::proc3WithoutFDFE(Blitter & dst, Chunk & src, int next_offs, int bw, int bh) {
+void Codec37Decoder::proc3WithoutFDFE(Blitter & dst, Chunk & src, int32 next_offs, int32 bw, int32 bh) {
 	do {
-		int i = bw;
+		int32 i = bw;
 		do {
-			int code = src.getByte();
+			int32 code = src.getByte();
 			if (code == 0xFF) {
 #ifdef USE_COLOR_CODE_FOR_BLOCK
 				dst.putBlock(expand(5));
@@ -316,11 +316,11 @@ void Codec37Decoder::proc3WithoutFDFE(Blitter & dst, Chunk & src, int next_offs,
 	} while (--bh);
 }
 
-void Codec37Decoder::proc4(Blitter & dst, Chunk & src, int next_offs, int bw, int bh) {
+void Codec37Decoder::proc4(Blitter & dst, Chunk & src, int32 next_offs, int32 bw, int32 bh) {
 	do {
-		int i = bw;
+		int32 i = bw;
 		do {
-			int code = src.getByte();
+			int32 code = src.getByte();
 			if (code == 0xFD) {
 #ifdef USE_COLOR_CODE_FOR_BLOCK
 				dst.putBlock(expand(7));
@@ -340,8 +340,8 @@ void Codec37Decoder::proc4(Blitter & dst, Chunk & src, int next_offs, int bw, in
 				dst.putBlock(src);
 #endif
 			} else if (code == 0x00) {
-				int length = src.getByte() + 1;
-				for (int l = 0; l < length; l++) {
+				int32 length = src.getByte() + 1;
+				for (int32 l = 0; l < length; l++) {
 #ifdef USE_COLOR_CODE_FOR_BLOCK
 					dst.putBlock(expand(10));
 #else
@@ -369,24 +369,24 @@ void Codec37Decoder::proc4(Blitter & dst, Chunk & src, int next_offs, int bw, in
 }
 
 bool Codec37Decoder::decode(Blitter & dst, Chunk & src) {
-	int width = getRect().width();
-	int height = getRect().height();
-	int bw = (width + 3) >> 2, bh = (height + 3) >> 2;
-	int pitch = bw << 2;
+	int32 width = getRect().width();
+	int32 height = getRect().height();
+	int32 bw = (width + 3) >> 2, bh = (height + 3) >> 2;
+	int32 pitch = bw << 2;
 #ifdef DEBUG_CODEC37
 	debug(7, "codec37::decode() : width == %d : height == %d : pitch == %d : _prevSeqNb == %d",
 		width, height, pitch, _prevSeqNb);
 #endif
-	int code = src.getByte();			// 0 -> 1	(1)
-	int index = src.getByte();			// 1 -> 2	(1)
-	unsigned short seq_nb	= src.getWord();	// 2 -> 4	(2)
-	unsigned int decoded_size = src.getDword();	// 4 -> 8	(4)
+	int32 code = src.getByte();			// 0 -> 1	(1)
+	int32 index = src.getByte();			// 1 -> 2	(1)
+	uint16 seq_nb	= src.getWord();	// 2 -> 4	(2)
+	uint32 decoded_size = src.getDword();	// 4 -> 8	(4)
 #ifdef DEBUG_CODEC37
-	unsigned int coded_size	= src.getDword();	// 8 -> 12	(4)
+	uint32 coded_size	= src.getDword();	// 8 -> 12	(4)
 #else
 	src.seek(4);
 #endif
-	unsigned int mask_flag	= src.getDword();	// 12 -> 16	(4)
+	uint32 mask_flag	= src.getDword();	// 12 -> 16	(4)
 #ifdef DEBUG_CODEC37
 	debug(7, "codec37::decode() : code == %d : index == %d : seq_nb == %d : decoded_size == %d : coded_size == %d : mask_flag == %d",
 		code, index, seq_nb, decoded_size, coded_size, mask_flag);
@@ -396,7 +396,7 @@ bool Codec37Decoder::decode(Blitter & dst, Chunk & src) {
 		assert(seq_nb && _prevSeqNb + 1 == seq_nb);
 		if (seq_nb & 1 || !(mask_flag & 1)) _curtable ^= 1;
 	}
-	Blitter blit((char *)_deltaBufs[_curtable], Point(width, height), Rect(0, 0, width, height));
+	Blitter blit((byte *)_deltaBufs[_curtable], Point(width, height), Rect(0, 0, width, height));
 	switch(code) {
 	case 0:
 		memset(_deltaBuf, 0, _deltaBufs[_curtable] - _deltaBuf);
@@ -426,7 +426,7 @@ bool Codec37Decoder::decode(Blitter & dst, Chunk & src) {
 #endif
 		break;
 	}
-	dst.blit((char*)_deltaBufs[_curtable], width * height);
+	dst.blit((byte *)_deltaBufs[_curtable], width * height);
 	_prevSeqNb = seq_nb;
 	return true;
 }

@@ -41,7 +41,7 @@ public:
 	scumm_mixer(SoundMixer *);
 	virtual ~scumm_mixer();
 	bool init();
-	_Channel * findChannel(int track);
+	_Channel * findChannel(int32 track);
 	bool addChannel(_Channel * c);
 	bool handleFrame();
 	bool stop();
@@ -49,7 +49,7 @@ public:
 };
 
 scumm_mixer::scumm_mixer(SoundMixer * m) : _mixer(m), _nextIndex(0) {
-	for(int i = 0; i < SoundMixer::NUM_CHANNELS; i++) {
+	for(int32 i = 0; i < SoundMixer::NUM_CHANNELS; i++) {
 		_channels[i].id = -1;
 		_channels[i].chan = 0;
 		_channels[i].first = true;
@@ -64,9 +64,9 @@ bool scumm_mixer::init() {
 	return true;
 }
 
-_Channel * scumm_mixer::findChannel(int track) {
+_Channel * scumm_mixer::findChannel(int32 track) {
 	debug(9, "scumm_mixer::findChannel(%d)", track);
-	for(int i = 0; i < SoundMixer::NUM_CHANNELS; i++) {
+	for(int32 i = 0; i < SoundMixer::NUM_CHANNELS; i++) {
 		if(_channels[i].id == track)
 			return _channels[i].chan;
 	}
@@ -74,8 +74,8 @@ _Channel * scumm_mixer::findChannel(int track) {
 }
 
 bool scumm_mixer::addChannel(_Channel * c) {
-	int track = c->getTrackIdentifier();
-	int i;
+	int32 track = c->getTrackIdentifier();
+	int32 i;
 
 	debug(9, "scumm_mixer::addChannel(%d)", track);
 
@@ -129,17 +129,17 @@ bool scumm_mixer::handleFrame() {
 				_channels[i].id = -1;
 				_channels[i].chan = 0;
 			} else {
-				int rate;
+				int32 rate;
 				bool stereo, is_short;
 
 				_channels[i].chan->getParameters(rate, stereo, is_short);
-				int size = _channels[i].chan->availableSoundData();
+				int32 size = _channels[i].chan->availableSoundData();
 				debug(9, "channel %d : %d, %s, %d bits, %d", _channels[i].id, rate, stereo ? "stereo" : "mono", is_short ? 16 : 8, size);
-				int flags = stereo ? SoundMixer::FLAG_STEREO : 0;
+				int32 flags = stereo ? SoundMixer::FLAG_STEREO : 0;
 
 				if(is_short) {
 					// FIXME this is one more data copy... we could get rid of it...
-					short * data = new short[size * (stereo ? 2 : 1)];
+					short * data = new int16[size * (stereo ? 2 : 1)];
 					_channels[i].chan->getSoundData(data, size);
 					size *= stereo ? 4 : 2;
 
@@ -154,7 +154,7 @@ bool scumm_mixer::handleFrame() {
 
 					delete []data;
 				} else {
-					char * data = new char[size*(stereo ? 2 : 1)];
+					int8 * data = new int8[size * (stereo ? 2 : 1)];
 					_channels[i].chan->getSoundData(data, size);
 					size *= stereo ? 2 : 1;
 
@@ -218,14 +218,14 @@ ScummRenderer::~ScummRenderer() {
 	_scumm->_sound->pauseBundleMusic(false);
 }
 
-bool ScummRenderer::wait(int ms) {
+bool ScummRenderer::wait(int32 ms) {
 	while(_wait) {
 		_scumm->waitForTimer(1);
 	}
 	return true; 
 }
 
-bool ScummRenderer::startDecode(const char * fname, int version, int nbframes) {
+bool ScummRenderer::startDecode(const char * fname, int32 version, int32 nbframes) {
 	_scumm->_sound->pauseBundleMusic(true);
 	_scumm->videoFinished = 0;
 	_scumm->_insaneState = 1;
@@ -249,7 +249,7 @@ bool ScummRenderer::setPalette(const Palette & pal) {
 	return BaseRenderer::setPalette(pal); // For compatibility with possible subclass...
 }
 
-void ScummRenderer::save(int frame) {
+void ScummRenderer::save(int32 frame) {
 	int width = MIN(getWidth(), _scumm->_realWidth); 
 	int height = MIN(getHeight(), _scumm->_realHeight);
 	

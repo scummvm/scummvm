@@ -49,7 +49,7 @@ class Mixer {
 public:
 	virtual ~Mixer() {};
 	virtual bool init() = 0;
-	virtual _Channel * findChannel(int track) = 0;
+	virtual _Channel * findChannel(int32 track) = 0;
 	virtual bool addChannel(_Channel * c) = 0;
 	virtual bool handleFrame() = 0;
 	virtual bool stop() = 0;

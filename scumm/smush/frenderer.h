@@ -50,12 +50,12 @@
 */
 class FontRenderer : public BaseRenderer {
 private:
-	int _nbChars;	//!< The number of frames in the font
-	int _color;		//!< A color parameter used for font printing.
+	int32 _nbChars;	//!< The number of frames in the font
+	int32 _color;		//!< A color parameter used for font printing.
 	bool _original;	//!< flag for color selection
 	struct {
-		int width;
-		int height;
+		int32 width;
+		int32 height;
 		char * chr;
 	} _chars[256]; //!< array that contains the size of the different frames (i.e. characters) of the font.
 public:
@@ -65,37 +65,37 @@ public:
 	*/
 	FontRenderer(bool use_original_colors = false);
 	virtual ~FontRenderer();
-	virtual bool wait(int ms) { return true; };
+	virtual bool wait(int32 ms) { return true; };
 protected:
-	virtual void save(int frame = -1);
+	virtual void save(int32 frame = -1);
 	/*!	@brief get the width of a character.
 		
 		@param c	the character we want the width from.
 
 		@return the width of the character
 	*/
-	int charWidth(int c) const;
+	int32 charWidth(int32 c) const;
 	/*!	@brief get the width of a string.
 		
 		@param str	the string we want the width from.
 
 		@return the complete width of the string
 	*/
-	int stringWidth(const char * str) const;
+	int32 stringWidth(const char * str) const;
 	/*!	@brief get the height of a character.
 		
 		@param c	the character we want the height from.
 
 		@return the height of the character
 	*/
-	int charHeight(int c) const;
+	int32 charHeight(int32 c) const;
 	/*!	@brief get the height of a string.
 		
 		@param str	the string we want the height from.
 
 		@return the complete height of the string
 	*/
-	int stringHeight(const char * str) const;
+	int32 stringHeight(const char * str) const;
 	/*!	@brief draw a character in the given frame buffer.
 		
 		@param buffer	the frame buffer to draw into.
@@ -108,7 +108,7 @@ protected:
 
 		@return the width of the character
 	*/
-	int drawChar(char * buffer, const Point & size, int x, int y, int c) const;
+	int32 drawChar(char * buffer, const Point & size, int32 x, int32 y, int32 c) const;
 	/*!	@brief draw a string in the given frame buffer.
 		
 		@param str		the string to draw.
@@ -119,7 +119,7 @@ protected:
 
 		@bug	This method does not clip. This is not really a bug, as it should always be correctly called, but some asserts would be welcome.
 	*/
-	void drawSubstring(const unsigned char * str, char * buffer, const Point & size, int x, int y) const;
+	void drawSubstring(const byte * str, char * buffer, const Point & size, int32 x, int32 y) const;
 public:
 	/*!	@brief change the programmable color of the font.
 		
@@ -127,7 +127,7 @@ public:
 
 		@return \c true if everything went fine, \c false otherwise
 	*/
-	bool setColor(int c) { _color = c; return true; }
+	bool setColor(int32 c) { _color = c; return true; }
 	/*!	@brief draw a centered and possibly using multiple lines string.
 	
 		This method performs calculation of the string size before choosing where to draw it.
@@ -147,7 +147,7 @@ public:
 
 		@return \c true if everything went fine, \c false otherwise
 	*/
-	bool drawStringCentered(const char * str, char * buffer, const Point & size, int y, int xmin, int width, int offset) const;
+	bool drawStringCentered(const char * str, char * buffer, const Point & size, int32 y, int32 xmin, int32 width, int32 offset) const;
 	/*!	@brief draw a string at an absolute position.
 	
 		@param str		the string to draw.
@@ -158,7 +158,7 @@ public:
 
 		@return \c true if everything went fine, \c false otherwise
 	*/
-	bool drawStringAbsolute(const char * str, char * buffer, const Point & size, int x, int y) const;
+	bool drawStringAbsolute(const char * str, char * buffer, const Point & size, int32 x, int32 y) const;
 
 };
 

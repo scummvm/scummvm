@@ -48,12 +48,12 @@ private:
 public:
 	ScummRenderer(Scumm * scumm);
 	virtual ~ScummRenderer();
-	virtual bool wait(int ms);
+	virtual bool wait(int32 ms);
 	bool update();
 protected:
-	virtual bool startDecode(const char * fname, int version, int nbframes);
+	virtual bool startDecode(const char * fname, int32 version, int32 nbframes);
 	virtual bool setPalette(const Palette & pal);
-	virtual void save(int frame = -1);
+	virtual void save(int32 frame = -1);
 	virtual Mixer * getMixer();
 	virtual bool prematureClose();
 };

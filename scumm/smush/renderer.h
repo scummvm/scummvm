@@ -48,7 +48,7 @@ public:
 		
 		@return true if initialisation was ok, false otherwise
 	*/
-	virtual bool startDecode(const char * fname, int version, int nbframes) = 0;
+	virtual bool startDecode(const char * fname, int32 version, int32 nbframes) = 0;
 	/*!	@brief start of animation output
 		
 		This is called by the animation player when the frame size is changing.
@@ -75,7 +75,7 @@ public:
 		
 		@return a pointer to the frame buffer to output data to.
 	*/
-	virtual char * lockFrame(int frame) = 0;
+	virtual char * lockFrame(int32 frame) = 0;
 	/*!	@brief unlock a frame buffer
 		
 		This is called by the animation player when a frame has been decoded.
@@ -98,7 +98,7 @@ public:
 		
 		@return true if everything went fine, false otherwise
 	*/
-	virtual bool wait(int ms) = 0;
+	virtual bool wait(int32 ms) = 0;
 	/*!	@brief does the renderer want a premature end of the animation ?
 		
 		This is called by the animation player after each frame.
