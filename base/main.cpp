@@ -148,7 +148,7 @@ static void do_memory_test(void) {
 
 #ifndef _WIN32_WCE
 
-static void launcherDialog(GameDetector &detector, OSystem *system) {
+static int launcherDialog(GameDetector &detector, OSystem *system) {
 	// FIXME - we need to call init_size() here so that we can display for example
 	// the launcher dialog. But the Engine object will also call it again (possibly
 	// with a different widht/height!9 However, this method is not for all OSystem 
@@ -184,8 +184,54 @@ static void launcherDialog(GameDetector &detector, OSystem *system) {
 	system->set_palette(dummy_palette, 0, 16);
 
 	GUI::LauncherDialog dlg(detector);
-	dlg.runModal();
+	return dlg.runModal();
 }
+
+static void runGame(GameDetector &detector, OSystem *system) {
+	OSystem::Property prop;
+
+	// Set the window caption to the game name
+	Common::String caption(ConfMan.get("description", detector._targetName));
+
+	if (caption.isEmpty() && detector._game.description)
+		caption = detector._game.description;
+	if (caption.isEmpty())	
+		caption = detector._targetName;
+	if (!caption.isEmpty())	{
+		prop.caption = caption.c_str();
+		system->property(OSystem::PROP_SET_WINDOW_CAPTION, &prop);
+	}
+
+	// See if the game should default to 1x scaler
+	if (!ConfMan.hasKey("gfx_mode", detector._targetName) && 
+		(detector._game.features & GF_DEFAULT_TO_1X_SCALER)) {
+		prop.gfx_mode = GFX_NORMAL;
+		system->property(OSystem::PROP_SET_GFX_MODE, &prop);
+	} else {
+	// Override global scaler with any game-specific define
+		if (ConfMan.hasKey("gfx_mode")) {
+			prop.gfx_mode = detector.parseGraphicsMode(ConfMan.get("gfx_mode"));
+			system->property(OSystem::PROP_SET_GFX_MODE, &prop);
+		}
+	}
+
+	// (De)activate fullscreen mode as determined by the config settings 
+	if (ConfMan.getBool("fullscreen") != (system->property(OSystem::PROP_GET_FULLSCREEN, 0) != 0))
+		system->property(OSystem::PROP_TOGGLE_FULLSCREEN, 0);
+	
+	// Create the game engine
+	Engine *engine = detector.createEngine(system);
+	assert(engine);
+
+	// Run the game engine
+	engine->go();
+
+	// Stop all sound processing now (this prevents some race conditions later on)
+	system->clear_sound_proc();
+
+	// Free up memory
+	delete engine;
+};
 
 int main(int argc, char *argv[]) {
 	OSystem::Property prop;
@@ -254,49 +300,17 @@ int main(int argc, char *argv[]) {
 	if (detector._targetName.isEmpty())
 		launcherDialog(detector, system);
 
-	// Verify the given game name is a valid supported game
-	if (detector.detectMain()) {
+	// Uncomment the while loop, and the launcherDialog call, to allow
+	// returning to the Launcher after an engine quit. Disabled currently
+	// as it probably leaks memory like a sieve.
+	//while(1) {
+		// Verify the given game name is a valid supported game
+		if (detector.detectMain()) {
+			runGame(detector, system);
 
-		// Set the window caption to the game name
-		Common::String caption(ConfMan.get("description", detector._targetName));
-		if (caption.isEmpty() && detector._game.description)
-			caption = detector._game.description;
-		if (caption.isEmpty())	
-			caption = detector._targetName;
-		if (!caption.isEmpty())	{
-			prop.caption = caption.c_str();
-			system->property(OSystem::PROP_SET_WINDOW_CAPTION, &prop);
+                	 // launcherDialog(detector, system);
 		}
-
-		// See if the game should default to 1x scaler
-		if (!ConfMan.hasKey("gfx_mode", detector._targetName) && 
-			(detector._game.features & GF_DEFAULT_TO_1X_SCALER)) {
-			prop.gfx_mode = GFX_NORMAL;
-			system->property(OSystem::PROP_SET_GFX_MODE, &prop);
-		} else
-		// Override global scaler with any game-specific define
-		if (ConfMan.hasKey("gfx_mode")) {
-			prop.gfx_mode = detector.parseGraphicsMode(ConfMan.get("gfx_mode"));
-			system->property(OSystem::PROP_SET_GFX_MODE, &prop);
-		}
-
-		// (De)activate fullscreen mode as determined by the config settings 
-		if (ConfMan.getBool("fullscreen") != (system->property(OSystem::PROP_GET_FULLSCREEN, 0) != 0))
-			system->property(OSystem::PROP_TOGGLE_FULLSCREEN, 0);
-	
-		// Create the game engine
-		Engine *engine = detector.createEngine(system);
-		assert(engine);
-
-		// Run the game engine
-		engine->go();
-
-		// Stop all sound processing now (this prevents some race conditions later on)
-		system->clear_sound_proc();
-
-		// Free up memory
-		delete engine;
-	}
+	//}
 
 	// ...and quit (the return 0 should never be reached)
 	system->quit();
