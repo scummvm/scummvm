@@ -194,6 +194,8 @@ do { \
 	stack[stackPtr++] = (value); \
 } while (false)
 
+#define push_ptr(ptr) push(_vm->_memory->ptrToInt(ptr))
+
 #define pop() (assert(stackPtr < ARRAYSIZE(stack)), stack[--stackPtr])
 
 uint32 *Logic::_scriptVars = NULL;
@@ -222,9 +224,9 @@ int Logic::runScript(char *scriptData, char *objectData, uint32 *offset) {
 
 	// Get the start of variables and start of code
 
-	uint32 *variables = (uint32 *) (scriptData + sizeof(int32));
-	const char *code = scriptData + (int32) READ_LE_UINT32(scriptData) + sizeof(int32);
-	uint32 noScripts = (int32) READ_LE_UINT32(code);
+	uint32 *localVars = (uint32 *) (scriptData + sizeof(int32));
+	char *code = scriptData + READ_LE_UINT32(scriptData) + sizeof(int32);
+	uint32 noScripts = READ_LE_UINT32(code);
 
 	code += sizeof(int32);
 
@@ -299,8 +301,7 @@ int Logic::runScript(char *scriptData, char *objectData, uint32 *offset) {
 		int retVal;
 		int caseCount;
 		bool foundCase;
-		int32 ptrval;
-		int i;
+		uint8 *ptr;
 
 		curCommand = code[ip++];
 
@@ -310,7 +311,6 @@ int Logic::runScript(char *scriptData, char *objectData, uint32 *offset) {
 
 		case CP_END_SCRIPT:
 			// End the script
-			debug(5, "End script");
 			runningScript = false;
 
 			// WORKAROUND: Pyramid Bug. See explanation above.
@@ -320,21 +320,22 @@ int Logic::runScript(char *scriptData, char *objectData, uint32 *offset) {
 				_scriptVars[913] = 0;
 			}
 
+			debug(9, "CP_END_SCRIPT");
 			break;
 		case CP_QUIT:
 			// Quit out for a cycle
-			debug(5, "Quit script for a cycle");
 			*offset = ip;
+			debug(9, "CP_QUIT");
 			return 0;
 		case CP_TERMINATE:
 			// Quit out immediately without affecting the offset
 			// pointer
-			debug(5, "Terminate script");
+			debug(9, "CP_TERMINATE");
 			return 3;
 		case CP_RESTART_SCRIPT:
 			// Start the script again
-			debug(5, "Restart script");
 			ip = FROM_LE_32(offsetTable[scriptNumber]);
+			debug(9, "CP_RESTART_SCRIPT");
 			break;
 
 		// Stack-related opcodes
@@ -342,91 +343,91 @@ int Logic::runScript(char *scriptData, char *objectData, uint32 *offset) {
 		case CP_PUSH_INT32:
 			// Push a long word value on to the stack
 			Read32ip(parameter);
-			debug(5, "Push int32 %d", parameter);
 			push(parameter);
+			debug(9, "CP_PUSH_INT32: %d", parameter);
 			break;
 		case CP_PUSH_LOCAL_VAR32:
 			// Push the contents of a local variable
 			Read16ip(parameter);
 			parameter /= 4;
-			debug(5, "Push local var %d (%d)", parameter, variables[parameter]);
-			push(variables[parameter]);
+			push(localVars[parameter]);
+			debug(9, "CP_PUSH_LOCAL_VAR32: localVars[%d] => %d", parameter, localVars[parameter]);
 			break;
 		case CP_PUSH_GLOBAL_VAR32:
 			// Push a global variable
-			Read16ip(parameter);
 			assert(_scriptVars);
-			debug(5, "Push global var %d (%d)", parameter, _scriptVars[parameter]);
+			Read16ip(parameter);
 			push(_scriptVars[parameter]);
+			debug(9, "CP_PUSH_GLOBAL_VAR32: scriptVars[%d] => %d", parameter, _scriptVars[parameter]);
 			break;
 		case CP_PUSH_LOCAL_ADDR:
 			// push the address of a local variable
 			Read16ip(parameter);
 			parameter /= 4;
-			ptrval = _vm->_memory->ptrToInt((const uint8 *) &variables[parameter]);
-			debug(5, "Push address of local variable %d (%x)", parameter, ptrval);
-			push(ptrval);
+			ptr = (uint8 *) &localVars[parameter];
+			push_ptr(ptr);
+			debug(9, "CP_PUSH_LOCAL_ADDR: &localVars[%d] => %p", parameter, ptr);
 			break;
 		case CP_PUSH_STRING:
 			// Push the address of a string on to the stack
 			// Get the string size
 			Read8ip(parameter);
 
-			// ip points to the string
-			ptrval = _vm->_memory->ptrToInt((const uint8 *) (code + ip));
-			debug(5, "Push address of string (%x)\n", ptrval);
-			push(ptrval);
+			// ip now points to the string
+			ptr = (uint8 *) (code + ip);
+			push_ptr(ptr);
+			debug(9, "CP_PUSH_STRING: \"%s\"", ptr);
 			ip += (parameter + 1);
 			break;
 		case CP_PUSH_DEREFERENCED_STRUCTURE:
 			// Push the address of a dereferenced structure
 			Read32ip(parameter);
-			ptrval = _vm->_memory->ptrToInt((const uint8 *) (objectData + sizeof(int32) + sizeof(StandardHeader) + sizeof(ObjectHub) + parameter));
-			debug(5, "Push address of far variable (%x)", ptrval);
-			push(ptrval);
+			ptr = (uint8 *) (objectData + sizeof(int32) + sizeof(StandardHeader) + sizeof(ObjectHub) + parameter);
+			push_ptr(ptr);
+			debug(9, "CP_PUSH_DEREFERENCED_STRUCTURE: %d => %p", parameter, ptr);
 			break;
 		case CP_POP_LOCAL_VAR32:
 			// Pop a value into a local word variable
 			Read16ip(parameter);
 			parameter /= 4;
 			value = pop();
-			debug(5, "Pop %d into local var %d", value, parameter);
-			variables[parameter] = value;
+			localVars[parameter] = value;
+			debug(9, "CP_POP_LOCAL_VAR32: localVars[%d] = %d", parameter, value);
 			break;
 		case CP_POP_GLOBAL_VAR32:
 			// Pop a global variable
 			Read16ip(parameter);
 			value = pop();
-			debug(5, "Pop %d into global var %d", value, parameter);
 			_scriptVars[parameter] = value;
+			debug(9, "CP_POP_GLOBAL_VAR32: scriptsVars[%d] = %d", parameter, value);
 			break;
 		case CP_ADDNPOP_LOCAL_VAR32:
 			Read16ip(parameter);
 			parameter /= 4;
 			value = pop();
-			variables[parameter] += value;
-			debug(5, "+= %d into local var %d -> %d", value, parameter, variables[parameter]);
+			localVars[parameter] += value;
+			debug(9, "CP_ADDNPOP_LOCAL_VAR32: localVars[%d] += %d => %d", parameter, value, localVars[parameter]);
 			break;
 		case CP_SUBNPOP_LOCAL_VAR32:
 			Read16ip(parameter);
 			parameter /= 4;
 			value = pop();
-			variables[parameter] -= value;
-			debug(5, "-= %d into local var %d -> %d", value, parameter, variables[parameter]);
+			localVars[parameter] -= value;
+			debug(9, "CP_SUBNPOP_LOCAL_VAR32: localVars[%d] -= %d => %d", parameter, value, localVars[parameter]);
 			break;
 		case CP_ADDNPOP_GLOBAL_VAR32:
 			// Add and pop a global variable
 			Read16ip(parameter);
 			value = pop();
 			_scriptVars[parameter] += value;
-			debug(5, "+= %d into global var %d -> %d", value, parameter, _scriptVars[parameter]);
+			debug(9, "CP_ADDNPOP_GLOBAL_VAR32: scriptVars[%d] += %d => %d", parameter, value, _scriptVars[parameter]);
 			break;
 		case CP_SUBNPOP_GLOBAL_VAR32:
 			// Sub and pop a global variable
 			Read16ip(parameter);
 			value = pop();
 			_scriptVars[parameter] -= value;
-			debug(5, "-= %d into global var %d -> %d", value, parameter, _scriptVars[parameter]);
+			debug(9, "CP_SUBNPOP_GLOBAL_VAR32: scriptVars[%d] -= %d => %d", parameter, value, _scriptVars[parameter]);
 			break;
 
 		// Jump opcodes
@@ -435,27 +436,31 @@ int Logic::runScript(char *scriptData, char *objectData, uint32 *offset) {
 			// Skip if the value on the stack is true
 			Read32ipLeaveip(parameter);
 			value = pop();
-			debug(5, "Skip %d if %d is false", parameter, value);
-			if (!value)
+			if (!value) {
 				ip += sizeof(int32);
-			else
+				debug(9, "CP_SKIPONTRUE: %d (IS FALSE (NOT SKIPPED))", parameter);
+			} else {
 				ip += parameter;
+				debug(9, "CP_SKIPONTRUE: %d (IS TRUE (SKIPPED))", parameter);
+			}
 			break;
 		case CP_SKIPONFALSE:
 			// Skip if the value on the stack is false
 			Read32ipLeaveip(parameter);
 			value = pop();
-			debug(5, "Skip %d if %d is false", parameter, value);
-			if (value)
+			if (value) {
 				ip += sizeof(int32);
-			else
+				debug(9, "CP_SKIPONFALSE: %d (IS TRUE (NOT SKIPPED))", parameter);
+			} else {
 				ip += parameter;
+				debug(9, "CP_SKIPONFALSE: %d (IS FALSE (SKIPPED))", parameter);
+			}
 			break;
 		case CP_SKIPALWAYS:
 			// skip a block
 			Read32ipLeaveip(parameter);
-			debug(5, "Skip %d", parameter);
 			ip += parameter;
+			debug(9, "CP_SKIPALWAYS: %d", parameter);
 			break;
 		case CP_SWITCH:
 			// switch
@@ -464,7 +469,7 @@ int Logic::runScript(char *scriptData, char *objectData, uint32 *offset) {
 
 			// Search the cases
 			foundCase = false;
-			for (i = 0; i < caseCount && !foundCase; i++) {
+			for (int i = 0; i < caseCount && !foundCase; i++) {
 				if (value == (int32) READ_LE_UINT32(code + ip)) {
 					// We have found the case, so lets
 					// jump to it
@@ -479,11 +484,13 @@ int Logic::runScript(char *scriptData, char *objectData, uint32 *offset) {
 			if (!foundCase)
 				ip += READ_LE_UINT32(code + ip);
 
+			debug(9, "CP_SWITCH: [SORRY, NO DEBUG INFO]");
 			break;
 		case CP_SAVE_MCODE_START:
 			// Save the start position on an mcode instruction in
 			// case we need to restart it again
 			savedStartOfMcode = ip - 1;
+			debug(9, "CP_SAVE_MCODE_START");
 			break;
 		case CP_CALL_MCODE:
 			// Call an mcode routine
@@ -491,7 +498,7 @@ int Logic::runScript(char *scriptData, char *objectData, uint32 *offset) {
 			assert(parameter < ARRAYSIZE(opcodes));
 			// amount to adjust stack by (no of parameters)
 			Read8ip(value);
-			debug(5, "Calling '%s' with %d parameters", opcodes[parameter].desc, value);
+			debug(9, "CP_CALL_MCODE: '%s', %d", opcodes[parameter].desc, value);
 			stackPtr -= value;
 			assert(stackPtr >= 0);
 			retVal = (this->*opcodes[parameter].proc)(&stack[stackPtr]);
@@ -527,6 +534,9 @@ int Logic::runScript(char *scriptData, char *objectData, uint32 *offset) {
 
 			// Get the maximum value
 			Read8ip(parameter);
+			debug(9, "CP_JUMP_ON_RETURNED: %d => %d",
+				parameterReturnedFromMcodeFunction,
+				READ_LE_UINT32(code + ip + parameterReturnedFromMcodeFunction * 4));
 			ip += READ_LE_UINT32(code + ip + parameterReturnedFromMcodeFunction * 4);
 			break;
 
@@ -536,87 +546,86 @@ int Logic::runScript(char *scriptData, char *objectData, uint32 *offset) {
 			b = pop();
 			a = pop();
 			push(a == b);
-			debug(5, "operation %d == %d", a, b);
+			debug(9, "OP_ISEQUAL: RESULT = %d", a == b);
 			break;
 		case OP_NOTEQUAL:
 			b = pop();
 			a = pop();
 			push(a != b);
-			debug(5, "operation %d != %d", a, b);
+			debug(9, "OP_NOTEQUAL: RESULT = %d", a != b);
 			break;
 		case OP_GTTHAN:
 			b = pop();
 			a = pop();
 			push(a > b);
-			debug(5, "operation %d > %d", a, b);
+			debug(9, "OP_GTTHAN: RESULT = %d", a > b);
 			break;
 		case OP_LSTHAN:
 			b = pop();
 			a = pop();
 			push(a < b);
-			debug(5, "operation %d < %d", a, b);
+			debug(9, "OP_LSTHAN: RESULT = %d", a < b);
 			break;
 		case OP_GTTHANE:
 			b = pop();
 			a = pop();
 			push(a >= b);
-			debug(5, "operation %d >= %d", a, b);
+			debug(9, "OP_GTTHANE: RESULT = %d", a >= b);
 			break;
 		case OP_LSTHANE:
 			b = pop();
 			a = pop();
 			push(a <= b);
-			debug(5, "operation %d <= %d", a, b);
+			debug(9, "OP_LSTHANE: RESULT = %d", a <= b);
 			break;
 		case OP_PLUS:
 			b = pop();
 			a = pop();
 			push(a + b);
-			debug(5, "operation %d + %d", a, b);
+			debug(9, "OP_PLUS: RESULT = %d", a + b);
 			break;
 		case OP_MINUS:
 			b = pop();
 			a = pop();
 			push(a - b);
-			debug(5, "operation %d - %d", a, b);
+			debug(9, "OP_MINUS: RESULT = %d", a - b);
 			break;
 		case OP_TIMES:
 			b = pop();
 			a = pop();
 			push(a * b);
-			debug(5, "operation %d * %d", a, b);
+			debug(9, "OP_TIMES: RESULT = %d", a * b);
 			break;
 		case OP_DIVIDE:
 			b = pop();
 			a = pop();
 			push(a / b);
-			debug(5, "operation %d / %d", a, b);
+			debug(9, "OP_DIVIDE: RESULT = %d", a / b);
 			break;
 		case OP_ANDAND:
 			b = pop();
 			a = pop();
 			push(a && b);
-			debug(5, "operation %d && %d", a, b);
+			debug(9, "OP_ANDAND: RESULT = %d", a && b);
 			break;
 		case OP_OROR:
 			b = pop();
 			a = pop();
 			push(a || b);
-			debug(5, "operation %d || %d", a, b);
+			debug(9, "OP_OROR: RESULT = %d", a || b);
 			break;
 
 		// Debugging opcodes, I think
 
 		case CP_DEBUGON:
-			// Turn debugging on
+			debug(9, "CP_DEBUGON");
 			break;
 		case CP_DEBUGOFF:
-			// Turn debugging off
+			debug(9, "CP_DEBUGOFF");
 			break;
 		case CP_TEMP_TEXT_PROCESS:
-			// Process a text line
 			Read32ip(parameter);
-			debug(5, "Process text id %d", parameter);
+			debug(9, "CP_TEMP_TEXT_PROCESS: %d", parameter);
 			break;
 		default:
 			error("Invalid script command %d", curCommand);
