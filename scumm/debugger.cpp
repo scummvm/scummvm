@@ -99,7 +99,7 @@ void ScummDebugger::attach(Scumm *s, char *entry) {
 		DCmd_Register("scripts", &ScummDebugger::Cmd_PrintScript);
 		DCmd_Register("importres", &ScummDebugger::Cmd_ImportRes);
 
-		if ((_s->_features & GF_LOOM))
+		if (_s->_features & GF_LOOM)
 			DCmd_Register("drafts", &ScummDebugger::Cmd_PrintDraft);
 
 		DCmd_Register("loadgame", &ScummDebugger::Cmd_LoadGame);
