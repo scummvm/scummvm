@@ -159,6 +159,20 @@ void IMuseDigital::parseScriptCmds(int a, int b, int c, int d, int e, int f, int
 	}
 }
 
+void IMuseDigital::refreshScripts() {
+	Common::StackLock lock(_mutex, "IMuseDigital::refreshScripts()");
+	bool found = false;
+	for (int l = 0; l < MAX_DIGITAL_TRACKS; l++) {
+		if ((_track[l].used) && (_track[l].volGroupId == IMUSE_VOLGRP_MUSIC) && (!_track[l].volFadeUsed)) {
+			found = true;
+		}
+	}
+
+	if ((!found) && (_curMusicSeq != 0)) {
+		parseScriptCmds(0x2000, 0, 0, 0, 0, 0, 0, 0);
+	}
+}
+
 void IMuseDigital::startVoice(int soundId, AudioStream *input) {
 	debug(5, "startVoiceStream(%d)", soundId);
 	startSound(soundId, NULL, 0, IMUSE_VOLGRP_VOICE, input, 0, 127, 127);

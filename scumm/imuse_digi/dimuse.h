@@ -146,6 +146,7 @@ public:
 	void stopAllSounds(bool waitForStop);
 	void pause(bool pause);
 	void parseScriptCmds(int a, int b, int c, int d, int e, int f, int g, int h);
+	void refreshScripts();
 	int getSoundStatus(int sound) const;
 	int32 getCurMusicPosInMs();
 	int32 getCurVoiceLipSyncWidth();

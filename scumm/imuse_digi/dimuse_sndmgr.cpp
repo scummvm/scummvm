@@ -23,6 +23,7 @@
 #include "common/util.h"
 #include "sound/voc.h"
 #include "scumm/scumm.h"
+#include "scumm/imuse_digi/dimuse.h"
 #include "scumm/imuse_digi/dimuse_sndmgr.h"
 #include "scumm/imuse_digi/dimuse_bndmgr.h"
 
@@ -221,8 +222,12 @@ bool ImuseDigiSndMgr::openMusicBundle(int slot) {
 		} else {
 			char musicfile[20];
 			sprintf(musicfile, "musdisk%d.bun", _vm->VAR(_vm->VAR_CURRENTDISK));
-			if (_disk != _vm->VAR(_vm->VAR_CURRENTDISK))
+			if (_disk != _vm->VAR(_vm->VAR_CURRENTDISK)) {
+				_vm->_imuseDigital->parseScriptCmds(0x1000, 0, 0, 0, 0, 0, 0, 0);
+				_vm->_imuseDigital->parseScriptCmds(0x2000, 0, 0, 0, 0, 0, 0, 0);
+				_vm->_imuseDigital->stopAllSounds(true);
 				_sounds[slot].bundle->closeFile();
+			}
 
 			result = _sounds[slot].bundle->openFile(musicfile, _vm->getGameDataPath());
 
@@ -248,8 +253,12 @@ bool ImuseDigiSndMgr::openVoiceBundle(int slot) {
 		} else {
 			char voxfile[20];
 			sprintf(voxfile, "voxdisk%d.bun", _vm->VAR(_vm->VAR_CURRENTDISK));
-			if (_disk != _vm->VAR(_vm->VAR_CURRENTDISK))
+			if (_disk != _vm->VAR(_vm->VAR_CURRENTDISK)) {
+				_vm->_imuseDigital->parseScriptCmds(0x1000, 0, 0, 0, 0, 0, 0, 0);
+				_vm->_imuseDigital->parseScriptCmds(0x2000, 0, 0, 0, 0, 0, 0, 0);
+				_vm->_imuseDigital->stopAllSounds(true);
 				_sounds[slot].bundle->closeFile();
+			}
 
 			result = _sounds[slot].bundle->openFile(voxfile, _vm->getGameDataPath());
 
