@@ -61,11 +61,6 @@ public:
 		writeByte((byte)(value >> 8));
 	}
 
-	void writeUint24LE(uint32 value) {
-		writeUint16LE((uint16)(value & 0xffff));
-		writeByte((byte)(value >> 16));
-	}
-
 	void writeUint32LE(uint32 value) {
 		writeUint16LE((uint16)(value & 0xffff));
 		writeUint16LE((uint16)(value >> 16));
@@ -74,11 +69,6 @@ public:
 	void writeUint16BE(uint16 value) {
 		writeByte((byte)(value >> 8));
 		writeByte((byte)(value & 0xff));
-	}
-
-	void writeUint24BE(uint32 value) {
-		writeByte((byte)(value >> 16));
-		writeUint16BE((uint16)(value & 0xffff));
 	}
 
 	void writeUint32BE(uint32 value) {
@@ -90,20 +80,12 @@ public:
 		writeUint16LE((uint16)value);
 	}
 
-	void writeSint24LE(int32 value) {
-		writeUint24LE((uint32)value);
-	}
-
 	void writeSint32LE(int32 value) {
 		writeUint32LE((uint32)value);
 	}
 
 	void writeSint16BE(int16 value) {
 		writeUint16BE((uint16)value);
-	}
-
-	void writeSint24BE(int32 value) {
-		writeUint24BE((uint32)value);
 	}
 
 	void writeSint32BE(int32 value) {
@@ -149,12 +131,6 @@ public:
 		return a | (b << 8);
 	}
 
-	uint32 readUint24LE() {
-		uint32 a = readUint16LE();
-		uint32 b = readByte();
-		return (b << 16) | a;
-	}
-
 	uint32 readUint32LE() {
 		uint32 a = readUint16LE();
 		uint32 b = readUint16LE();
@@ -167,25 +143,14 @@ public:
 		return a | (b << 8);
 	}
 
-	uint32 readUint24BE() {
-		uint32 b = readByte();
-		uint32 a = readUint16BE();
-		return (b << 16) | a;
-	}
-
 	uint32 readUint32BE() {
 		uint32 b = readUint16BE();
 		uint32 a = readUint16BE();
 		return (b << 16) | a;
 	}
 
-
 	int16 readSint16LE() {
 		return (int16)readUint16LE();
-	}
-
-	int32 readSint24LE() {
-		return (int32)readUint24LE();
 	}
 
 	int32 readSint32LE() {
@@ -194,10 +159,6 @@ public:
 
 	int16 readSint16BE() {
 		return (int16)readUint16BE();
-	}
-
-	int32 readSint24BE() {
-		return (int32)readUint24BE();
 	}
 
 	int32 readSint32BE() {
