@@ -168,8 +168,8 @@ void Scumm_v6::setupOpcodes()
 		OPCODE(o6_drawBlastObject),
 		/* 64 */
 		OPCODE(o6_setBlastObjectWindow),
-		OPCODE(o6_stopObjectCode),	// FIXME - are 0x65 and 0x66 really the same?
-		OPCODE(o6_stopObjectCode),	// FIXME - are 0x65 and 0x66 really the same?
+		OPCODE(o6_stopObjectCode),
+		OPCODE(o6_stopObjectCode),
 		OPCODE(o6_endCutscene),
 		/* 68 */
 		OPCODE(o6_cutscene),
