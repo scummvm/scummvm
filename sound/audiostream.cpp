@@ -28,17 +28,10 @@
 
 template<bool is16Bit, bool isUnsigned>
 static inline int16 readSample(const byte *ptr) {
-	if (is16Bit) {
-		if (isUnsigned)
-			return (int16)(READ_BE_UINT16(ptr) ^ 0x8000);
-		else
-			return (int16)READ_BE_UINT16(ptr);
-	} else {
-		if (isUnsigned)
-			return (int8)(*ptr ^ 0x80) << 8;
-		else
-			return (int8)*ptr << 8;
-	}
+	uint16 sample = is16Bit ? READ_BE_UINT16(ptr) : (*ptr << 8);
+	if (isUnsigned)
+		sample ^= 0x8000;
+	return (int16)sample;
 }
 
 #pragma mark -
@@ -308,7 +301,7 @@ void VorbisInputStream::refill() {
 
 
 template<bool stereo>
-static AudioInputStream *makeLinearInputStream(const byte *ptr, uint32 len, bool isUnsigned, bool is16Bit) {
+static AudioInputStream *makeLinearInputStream(const byte *ptr, uint32 len, bool is16Bit, bool isUnsigned) {
 	if (isUnsigned) {
 		if (is16Bit)
 			return new LinearMemoryStream<stereo, true, true>(ptr, len);
@@ -324,7 +317,7 @@ static AudioInputStream *makeLinearInputStream(const byte *ptr, uint32 len, bool
 
 
 template<bool stereo>
-static WrappedAudioInputStream *makeWrappedInputStream(uint32 len, bool isUnsigned, bool is16Bit) {
+static WrappedAudioInputStream *makeWrappedInputStream(uint32 len, bool is16Bit, bool isUnsigned) {
 	if (isUnsigned) {
 		if (is16Bit)
 			return new WrappedMemoryStream<stereo, true, true>(len);
@@ -340,17 +333,21 @@ static WrappedAudioInputStream *makeWrappedInputStream(uint32 len, bool isUnsign
 
 
 AudioInputStream *makeLinearInputStream(byte _flags, const byte *ptr, uint32 len) {
+	const bool is16Bit = (_flags & SoundMixer::FLAG_16BITS) != 0;
+	const bool isUnsigned = (_flags & SoundMixer::FLAG_UNSIGNED) != 0;
 	if (_flags & SoundMixer::FLAG_STEREO) {
-		return makeLinearInputStream<true>(ptr, len, _flags & SoundMixer::FLAG_UNSIGNED, _flags & SoundMixer::FLAG_16BITS != 0);
+		return makeLinearInputStream<true>(ptr, len, is16Bit, isUnsigned);
 	} else {
-		return makeLinearInputStream<false>(ptr, len, _flags & SoundMixer::FLAG_UNSIGNED, _flags & SoundMixer::FLAG_16BITS != 0);
+		return makeLinearInputStream<false>(ptr, len, is16Bit, isUnsigned);
 	}
 }
 
 WrappedAudioInputStream *makeWrappedInputStream(byte _flags, uint32 len) {
+	const bool is16Bit = (_flags & SoundMixer::FLAG_16BITS) != 0;
+	const bool isUnsigned = (_flags & SoundMixer::FLAG_UNSIGNED) != 0;
 	if (_flags & SoundMixer::FLAG_STEREO) {
-		return makeWrappedInputStream<true>(len, _flags & SoundMixer::FLAG_UNSIGNED, _flags & SoundMixer::FLAG_16BITS != 0);
+		return makeWrappedInputStream<true>(len, is16Bit, isUnsigned);
 	} else {
-		return makeWrappedInputStream<false>(len, _flags & SoundMixer::FLAG_UNSIGNED, _flags & SoundMixer::FLAG_16BITS != 0);
+		return makeWrappedInputStream<false>(len, is16Bit, isUnsigned);
 	}
 }
