@@ -876,7 +876,7 @@ void Display::drawTexts() {
 }
 
 void Display::clearTexts(uint16 y1, uint16 y2) {
-	assert(y1 <= y2 <= GAME_SCREEN_HEIGHT);
+	assert(y1 <= y2 && y2 < GAME_SCREEN_HEIGHT);
 	while (y1 <= y2) {
 		_texts[y1].text.clear();
 		++y1;
