@@ -208,7 +208,7 @@ protected:
 
 	void transitionParameters();
 
-	static void decode_sysex_bytes(byte *src, byte *dst, int len);
+	static void decode_sysex_bytes(const byte *src, byte *dst, int len);
 
 	void clear_active_note(int chan, byte note);
 	void set_active_note(int chan, byte note);
