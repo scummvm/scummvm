@@ -419,12 +419,12 @@ void ScummEngine_v2::decodeParseString() {
 	_string[textSlot].center = false;
 	_string[textSlot].overhead = false;
 
-	// V1 Mansion Mansion uses dynamic color table for subtitles
-	if ((_gameId == GID_MANIAC) && (_version == 1)) {
-		// Demo mode doesn't set subtitle color before display first subtitle.
+	if (_gameId == GID_MANIAC) {
+		// Demos don't set subtitle color before display first subtitle.
 		if (_demoMode && _actorToPrintStrFor == 0xFF)
-			_string[textSlot].color = 1;
-		else if (_actorToPrintStrFor != 0xFF) 
+			_string[textSlot].color = (_version == 2) ? 15 : 1;
+		// V1 Mansion Mansion uses dynamic color table for subtitles
+		else if (_version == 1 && _actorToPrintStrFor != 0xFF) 
 			_string[textSlot].color = v1_mm_actor_speech_color[_actorToPrintStrFor];
 	}
 
@@ -823,15 +823,11 @@ void ScummEngine_v2::o2_verbOps() {
 		vs = &_verbs[slot];
 		vs->verbid = verb;
 		if (_version == 1) {
-			if (_gameId == GID_MANIAC && _demoMode)
-				vs->color = 16;
-			else
-				vs->color = 5;
-
+			vs->color = (_gameId == GID_MANIAC && _demoMode) ? 16: 5;
 			vs->hicolor = 7;
 			vs->dimcolor = 11;
 		} else {
-			vs->color = 2;
+			vs->color = (_gameId == GID_MANIAC && _demoMode) ? 13 : 2;
 			vs->hicolor = 14;
 			vs->dimcolor = 8;
 		}
@@ -1382,7 +1378,7 @@ void ScummEngine_v2::o2_cutscene() {
 	// FIXME allows quotes script (173) to start during introudction of
 	// demo mode of V1 Maniac Mansion. setUserState was halting script
 	// 173 before it started.
-	if (!(_gameId == GID_MANIAC && _version == 1 && _demoMode))
+	if (!(_gameId == GID_MANIAC && _demoMode))
 	// Hide inventory, freeze scripts, hide cursor
 	setUserState(15);
 
