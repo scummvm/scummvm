@@ -524,7 +524,7 @@ void Player_V1::do_mix (int16 *data, uint len) {
 			generatePCjrSamples(data, step);
 		else
 			generateSpkSamples(data, step);
-		data += step;
+		data += 2 * step;
 		_next_tick -= step << FIXP_SHIFT;
 
 		if (!(_next_tick >> FIXP_SHIFT)) {
