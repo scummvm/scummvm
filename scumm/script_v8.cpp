@@ -1314,6 +1314,9 @@ void Scumm_v8::o8_startVideo()
 	SmushPlayer * sp = new SmushPlayer(sr);
 	sp->play((char*)_scriptPointer, getGameDataPath());
 	
+	delete sp;
+	delete sr;
+
 	_scriptPointer += len + 1;
 }
 
