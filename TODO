@@ -67,6 +67,7 @@ Build System
    1) Which platforms/systems require Makefile.noconf?
    2) What stops them from using 'configure' ? Document this!
    3) If possible fix all the issue listed in 2)
+* Add an install target to the Makefile.
 
 Documentation
 =============
