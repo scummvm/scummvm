@@ -59,7 +59,11 @@ bool Talk::speak(
 		Resource *resource,
 	       	Sound *sound) {
 	Talk *talk = new Talk(graphics, input, logic, resource, sound);
-	bool result = talk->speak(sentence, person, voiceFilePrefix);
+	bool result;
+	if (sentence)
+		result = talk->speak(sentence, person, voiceFilePrefix);
+	else
+		result = false;
 	delete talk;
 	return result;
 }
