@@ -210,7 +210,7 @@ protected:
 	void push(uint32);
 	uint32 pop();
 	void checkModuleLoaded(uint16 moduleNo);
-	uint32 script(uint16 scriptNo, uint16 offset);
+	uint16 script(uint16 scriptNo, uint16 offset);
 	bool collide(Compact *cpt);
 	void initScriptVariables();
 	void mainAnim();
