@@ -23,14 +23,14 @@
 
 // Main Header File
 
-#ifndef SAGA_REINHERIT_H_
-#define SAGA_REINHERIT_H_
+#ifndef SAGA_REINHERIT_H
+#define SAGA_REINHERIT_H
 
 #include "common/stdafx.h"
 #include "common/scummsys.h"
 #include "common/rect.h"
 
-#include "base/engine.h"
+class OSystem;
 
 namespace Saga {
 

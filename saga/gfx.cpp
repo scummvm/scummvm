@@ -27,13 +27,16 @@
 // described in "Michael Abrash's Graphics Programming Black Book", 
 // Coriolis Group Books, 1997
 
-#include "saga.h"
-#include "yslib.h"
+#include "saga/saga.h"
+#include "saga/yslib.h"
 
-#include "reinherit.h"
+#include "saga/reinherit.h"
 
-#include "gfx_mod.h"
-#include "gfx.h"
+#include "saga/gfx_mod.h"
+#include "saga/gfx.h"
+
+#include "common/system.h"
+
 
 namespace Saga {
 

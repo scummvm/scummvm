@@ -52,7 +52,7 @@ enum SAGAGameId {
 	GID_IHNM
 };
 
-class SagaEngine:public Engine {
+class SagaEngine : public Engine {
 	void errorString(const char *buf_input, char *buf_output);
 
 protected:
