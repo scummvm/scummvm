@@ -86,6 +86,7 @@ public:
 	void				flushToDisk();
 
 	void				setActiveDomain(const String &domain);
+	const String &		getActiveDomain() const { return _activeDomain; }
 
 //	void				addDomain(const String &name);
 	void				removeGameDomain(const String &name);
