@@ -828,13 +828,13 @@ void SmushPlayer::setupAnim(const char *file, const char *directory) {
 	handleAnimHeader(*sub);
 
 	if (_insanity) {
-		if(!(_vm->_features & GF_DEMO))
+		if (!((_vm->_features & GF_DEMO) && (_vm->_features & GF_PC)))
 			readString("mineroad.trs", directory);
 	} else
 		readString(file, directory);
 
 	if (_vm->_gameId == GID_FT) {
-		if (!(_vm->_features & GF_DEMO)) {
+		if (!((_vm->_features & GF_DEMO) && (_vm->_features & GF_PC))) {
 			_sf[0] = new SmushFont(true, false);
 			_sf[1] = new SmushFont(true, false);
 			_sf[2] = new SmushFont(true, false);
