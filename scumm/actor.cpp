@@ -920,12 +920,6 @@ void Actor::drawActorCostume() {
 
 		cr._draw_top = top = 0xFF;
 		cr._draw_bottom = bottom = 0;
-
-		// if the actor is partially hidden, redraw it next frame
-		if (cr.drawCostume(cost) & 1) {
-			needBgReset = true;
-			needRedraw = true;
-		}
 	} else {
 		AkosRenderer& ar = *(AkosRenderer *)bcr;
 
@@ -942,19 +936,23 @@ void Actor::drawActorCostume() {
 
 		ar._draw_top = top = 0x7fffffff;
 		ar._draw_bottom = bottom = 0;
+	}
 
-		if (ar.drawCostume(cost)) {
-			// FIXME: this breaks talking in The Dig because the actor
-			// is redrawn too often, thus breaking the waitForActor opcode.
-			// Note that I originally added this to correct some redraw issues.
-			// A "better" implementation would work like the corresponding code
-			// for "old" costumes, that is, only trigger a redraw if the actor
-			// is partially hidden / offscreen... but I am not sure the original
-			// actually does this, so before we spend time on implementing this,
-			// we should first figure out what the original code does here...
-			//needBgReset = true;
-			//needRedraw = true;
-		}
+	// If the actor is partially hidden, redraw it next frame.
+	// Note: for akos, this only works for codec 1 so far; we need to look
+	// if we can (or even should) implement this for the other codecs, too.
+	if (bcr->drawCostume(cost) & 1) {
+		// FIXME: this used to break talking in The Dig because the actor
+		// was redrawn too often, which broke the waitForActor opcode.
+		// This refined version hopefully will work better.
+		//
+		// We didn't use to do this for AKOS games at all, only for the classic
+		// costumes. And I am not sure the original game did this for AKOS
+		// games, either. So maybe this code isn't the correct way to do what
+		// it does (which is to fix actor draw problems, see also patch #699980).
+		// Would be nice to figure out what the original code does...
+		needBgReset = true;
+		needRedraw = true;
 	}
 
 	top = bcr->_draw_top;
