@@ -640,11 +640,11 @@ bool Scumm::isSfxFinished()
 	return !_mixer->has_active_channel();
 }
 
-#define NextBit bit = mask&1; mask>>=1; if (!--bitsleft) {mask = *(unsigned short *)srcptr; srcptr+=2; bitsleft=16;}
+#define NextBit bit = mask&1; mask>>=1; if (!--bitsleft) {mask = READ_LE_UINT16(srcptr); srcptr+=2; bitsleft=16;}
 int CompDecode(unsigned char *src, unsigned char *dst)
 {
 	unsigned char *result, *srcptr = src, *dstptr = dst;
-	int data, size, bit, bitsleft = 16, mask = *(unsigned short *)srcptr;	
+	int data, size, bit, bitsleft = 16, mask = READ_LE_UINT16(srcptr);	
 	srcptr+=2;
 
 	while(1) {
@@ -723,6 +723,7 @@ void Scumm::decompressBundleSound(int index) {
 		switch(table[i].codec) {
 			case 0:
 				warning("Unimplemented bundle codec 1");
+				outputSize = 0;
 			break;
 
 			case 1:
