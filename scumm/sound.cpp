@@ -742,6 +742,7 @@ void Sound::stopSound(int a) {
 	if (a != 0 && a == _currentCDSound) {
 		_currentCDSound = 0;
 		stopCD();
+		stopCDTimer();
 	}
 
 	if (_scumm->_features & GF_FMTOWNS) {
@@ -759,6 +760,7 @@ void Sound::stopAllSounds() {
 	if (_currentCDSound != 0) {
 		_currentCDSound = 0;
 		stopCD();
+		stopCDTimer();
 	}
 
 	// Clear the (secondary) sound queue
@@ -1491,7 +1493,7 @@ void Sound::playCDTrack(int track, int numLoops, int startFrame, int duration) {
 			_dig_cd.numLoops = numLoops;
 			_dig_cd.start = startFrame;
 			_dig_cd.duration = duration;
-			_track_info[index]->play(_scumm->_mixer, &_dig_cd.handle, startFrame, duration);
+			_track_info[index]->play(_scumm->_mixer, &_dig_cd.handle, _dig_cd.start, _dig_cd.duration);
 		} else {
 			_scumm->_system->play_cdrom(track, numLoops, startFrame, duration);
 		}
@@ -1504,7 +1506,6 @@ void Sound::playCDTrack(int track, int numLoops, int startFrame, int duration) {
 }
 
 void Sound::stopCD() {
-	stopCDTimer();
 
 	if (_dig_cd.playing) {
 		_scumm->_mixer->stopHandle(_dig_cd.handle);
