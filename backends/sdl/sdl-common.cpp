@@ -635,7 +635,7 @@ bool OSystem_SDL_Common::poll_event(Event *event) {
 				return true;
 			}
 #else
-			// Ctrl-b toggles mouse capture
+			// Ctrl-m toggles mouse capture
 			if (b == KBD_CTRL && ev.key.keysym.sym == 'm') {
 				property(PROP_TOGGLE_MOUSE_GRAB, NULL);
 				break;
