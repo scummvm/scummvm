@@ -398,9 +398,12 @@ void MidiPlayer::loadSMF (File *in, int song, bool sfx) {
 		// 1 BYTE : Always seems to be 0x00
 		// 1 BYTE : Ranges from 0x02 to 0x08 (always 0x02 for SFX, though)
 		// 1 BYTE : Loop control. 0 = no loop, 1 = loop
-		if (!sfx)
-			setLoop(p->data[6] != 0);
-
+		if (!sfx) {
+			// According to bug #1004919 calling setLoop() from
+			// within a lock causes a lockup, though I have no
+			// idea when this actually happens.
+			_loopTrack = (p->data[6] != 0);
+		}
 	}
 
 	MidiParser *parser = MidiParser::createParser_SMF();
