@@ -402,8 +402,8 @@ void Sound::playSound(int soundID) {
 						ptr += 0x20;
 						size -= 0x20;
 						if (size < waveSize) {
-							warning("Wrong wave size in sound #%i: %i", soundID, waveSize);
-							waveSize = size - 0x36;
+							error("Wrong wave size in sound #%i: %i", soundID, waveSize);
+							return;
 						}
 						sound = (char *)malloc(waveSize);
 						for (int x = 0; x < waveSize; x++) {
