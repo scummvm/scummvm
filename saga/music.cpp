@@ -191,8 +191,10 @@ int Music::play(ulong music_rn, uint flags) {
 
 	debug(0, "Music::play(%d, %d)", music_rn, flags);
 
-	parser->setTrack(0);	
+	parser->setTrack(0);
 	parser->setMidiDriver(_player);
+	parser->setTimerRate(10000);	// FIXME: Get the timer rate from _driver
+
 	_player->_parser = parser;
 	_player->setVolume(ConfMan.getInt("music_volume") * ConfMan.getInt("master_volume") / 255);
 	_player->playMusic();
