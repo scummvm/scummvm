@@ -370,6 +370,7 @@ void DisplayMsg(uint8 *text, int time) { 	// Chris 15May97
 	Set_mouse(0);
 	Set_luggage(0);			//tw28Aug
 
+	CloseMenuImmediately();
 	EraseBackBuffer();		// for hardware rendering
 	EraseSoftwareScreenBuffer();	// for software rendering
 
