@@ -1026,6 +1026,9 @@ void SmushPlayer::play(const char *filename, const char *directory) {
 			_scumm->_system->update_screen();
 			_updateNeeded = false;
 
+			if (_insanity)
+				_scumm->_sound->processSoundQues();
+
 			end_time = _scumm->_system->get_msecs();
 
 			debug(4, "Smush stats: BackendUpdateScreen( %03d )", end_time - start_time);
