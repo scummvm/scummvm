@@ -219,6 +219,8 @@ void Scumm_v8::setupScummVars()
 	VAR_CAMERA_DEST_X = 11;
 	VAR_CAMERA_DEST_Y = 12;
 
+	VAR_LEFTBTN_HOLD = 16;	// FIXME: Is this right?
+
 	VAR_ROOM = 31;
 	VAR_CURRENTDISK = 42;
 
