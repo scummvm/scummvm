@@ -273,45 +273,6 @@ uint32 File::read(void *ptr, uint32 len) {
 	return real_len;
 }
 
-byte File::readByte() {
-	byte b;
-
-	if (_handle == NULL) {
-		error("File is not open!");
-		return 0;
-	}
-
-	if (fread(&b, 1, 1, _handle) != 1) {
-		clearerr(_handle);
-		_ioFailed = true;
-	}
-	return b ^ _encbyte;
-}
-
-uint16 File::readUint16LE() {
-	uint16 a = readByte();
-	uint16 b = readByte();
-	return a | (b << 8);
-}
-
-uint32 File::readUint32LE() {
-	uint32 a = readUint16LE();
-	uint32 b = readUint16LE();
-	return (b << 16) | a;
-}
-
-uint16 File::readUint16BE() {
-	uint16 b = readByte();
-	uint16 a = readByte();
-	return a | (b << 8);
-}
-
-uint32 File::readUint32BE() {
-	uint32 b = readUint16BE();
-	uint32 a = readUint16BE();
-	return (b << 16) | a;
-}
-
 uint32 File::write(const void *ptr, uint32 len) {
 	byte *tmp = 0;
 	
@@ -344,37 +305,4 @@ uint32 File::write(const void *ptr, uint32 len) {
 	}
 
 	return len;
-}
-
-void File::writeByte(byte value) {
-	value ^= _encbyte;
-
-	if (_handle == NULL) {
-		error("File is not open!");
-	}
-
-	if (fwrite(&value, 1, 1, _handle) != 1) {
-		clearerr(_handle);
-		_ioFailed = true;
-	}
-}
-
-void File::writeUint16LE(uint16 value) {
-	writeByte((byte)(value & 0xff));
-	writeByte((byte)(value >> 8));
-}
-
-void File::writeUint32LE(uint32 value) {
-	writeUint16LE((uint16)(value & 0xffff));
-	writeUint16LE((uint16)(value >> 16));
-}
-
-void File::writeUint16BE(uint16 value) {
-	writeByte((byte)(value >> 8));
-	writeByte((byte)(value & 0xff));
-}
-
-void File::writeUint32BE(uint32 value) {
-	writeUint16BE((uint16)(value >> 16));
-	writeUint16BE((uint16)(value & 0xffff));
 }

@@ -23,6 +23,9 @@
 #include "common/util.h"
 #include "common/savefile.h"
 
+#include <stdio.h>
+#include <string.h>
+
 #ifdef USE_ZLIB
 #include <zlib.h>
 #endif
@@ -31,64 +34,8 @@ uint32 SaveFile::read(void *ptr, uint32 size) {
 	return fread(ptr, 1, size);
 }
 
-byte SaveFile::readByte() {
-	byte b;
-	// TODO: Proper error handling
-	if (fread(&b, 1, 1) != 1)
-		return 0;
-	return b;
-}
-
-uint16 SaveFile::readUint16LE() {
-	uint16 a = readByte();
-	uint16 b = readByte();
-	return a | (b << 8);
-}
-
-uint32 SaveFile::readUint32LE() {
-	uint32 a = readUint16LE();
-	uint32 b = readUint16LE();
-	return (b << 16) | a;
-}
-
-uint16 SaveFile::readUint16BE() {
-	uint16 b = readByte();
-	uint16 a = readByte();
-	return a | (b << 8);
-}
-
-uint32 SaveFile::readUint32BE() {
-	uint32 b = readUint16BE();
-	uint32 a = readUint16BE();
-	return (b << 16) | a;
-}
-
 uint32 SaveFile::write(const void *ptr, uint32 size) {
 	return fwrite(ptr, 1, size);
-}
-
-void SaveFile::writeByte(byte value) {
-	fwrite(&value, 1, 1);
-}
-
-void SaveFile::writeUint16LE(uint16 value) {
-	writeByte((byte)(value & 0xff));
-	writeByte((byte)(value >> 8));
-}
-
-void SaveFile::writeUint32LE(uint32 value) {
-	writeUint16LE((uint16)(value & 0xffff));
-	writeUint16LE((uint16)(value >> 16));
-}
-
-void SaveFile::writeUint16BE(uint16 value) {
-	writeByte((byte)(value >> 8));
-	writeByte((byte)(value & 0xff));
-}
-
-void SaveFile::writeUint32BE(uint32 value) {
-	writeUint16BE((uint16)(value >> 16));
-	writeUint16BE((uint16)(value & 0xffff));
 }
 
 

@@ -6,6 +6,7 @@ MODULE_OBJS := \
 	common/md5.o \
 	common/scaler.o \
 	common/str.o \
+	common/stream.o \
 	common/timer.o \
 	common/util.o \
 	common/savefile.o \

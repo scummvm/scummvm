@@ -25,8 +25,9 @@
 #include "stdafx.h"
 #include "common/scummsys.h"
 #include "common/str.h"
+#include "common/stream.h"
 
-class File {
+class File : public Common::ReadStream, public Common::WriteStream {
 private:
 
 	FILE * _handle;
@@ -60,17 +61,8 @@ public:
 	const char *name() const { return _name; }
 	void seek(int32 offs, int whence = SEEK_SET);
 	uint32 read(void *ptr, uint32 size);
-	byte readByte();
-	uint16 readUint16LE();
-	uint32 readUint32LE();
-	uint16 readUint16BE();
-	uint32 readUint32BE();
 	uint32 write(const void *ptr, uint32 size);
-	void writeByte(byte value);
-	void writeUint16LE(uint16 value);
-	void writeUint32LE(uint32 value);
-	void writeUint16BE(uint16 value);
-	void writeUint32BE(uint32 value);
+
 	void setEnc(byte value) { _encbyte = value; }
 };
 
