@@ -81,7 +81,7 @@ void AudioCDManager::play(int track, int numLoops, int startFrame, int duration)
 			_cd.playing = true;
 			_track_info[index]->play(g_engine->_mixer, &_cd.handle, _cd.start, _cd.duration);
 		} else {
-			g_system->play_cdrom(track, numLoops, startFrame, duration);
+			g_system->playCD(track, numLoops, startFrame, duration);
 		}
 	}
 }
@@ -91,12 +91,12 @@ void AudioCDManager::stop() {
 		g_engine->_mixer->stopHandle(_cd.handle);
 		_cd.playing = false;
 	} else {
-		g_system->stop_cdrom();
+		g_system->stopCD();
 	}
 }
 
 bool AudioCDManager::isPlaying() const {
-	return _cd.playing || g_system->poll_cdrom();
+	return _cd.playing || g_system->pollCD();
 }
 
 void AudioCDManager::updateCD() {
@@ -116,7 +116,7 @@ void AudioCDManager::updateCD() {
 			}
 		}
 	} else {
-		g_system->update_cdrom();
+		g_system->updateCD();
 	}
 }
 

@@ -892,10 +892,10 @@ bool Intro::escDelay(uint32 msecs) {
 	OSystem::Event event;
 	do {
 #ifdef _WIN32_WCE
-		uint32 startTimeLoop = _system->get_msecs();
+		uint32 startTimeLoop = _system->getMillis();
 		uint32 delta;
 #endif
-		while (_system->poll_event(&event)) {
+		while (_system->pollEvent(event)) {
 			if (event.event_code == OSystem::EVENT_KEYDOWN) {
 				if (event.kbd.keycode == 27)
 					return false;
@@ -909,9 +909,9 @@ bool Intro::escDelay(uint32 msecs) {
 #else
 		uint8 nDelay = (msecs > 50) ? (50) : ((uint8)msecs);
 #endif
-		_system->delay_msecs(nDelay);
+		_system->delayMillis(nDelay);
 #ifdef _WIN32_WCE
-		delta = _system->get_msecs() - startTimeLoop;
+		delta = _system->getMillis() - startTimeLoop;
 		if (delta > msecs)
 			break;
 		else

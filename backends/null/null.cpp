@@ -52,7 +52,7 @@ public:
 	virtual void setPalette(const byte *colors, uint start, uint num);
 	virtual void copyRectToScreen(const byte *buf, int pitch, int x, int y, int w, int h);
 	virtual void updateScreen();
-	virtual void set_shake_pos(int shakeOffset);
+	virtual void setShakePos(int shakeOffset);
 
 	virtual void showOverlay();
 	virtual void hideOverlay();
@@ -70,9 +70,9 @@ public:
 	virtual void warpMouse(int x, int y);
 	virtual void setMouseCursor(const byte *buf, uint w, uint h, int hotspotX, int hotspotY, byte keycolor = 255);
 
-	virtual bool poll_event(Event *event);
-	virtual uint32 get_msecs();
-	virtual void delay_msecs(uint msecs);
+	virtual bool pollEvent(Event &event);
+	virtual uint32 getMillis();
+	virtual void delayMillis(uint msecs);
 
 	virtual void setTimerCallback(TimerProc callback, int interval);
 
@@ -86,11 +86,11 @@ public:
 	virtual int getOutputSampleRate() const;
 
 	virtual bool openCD(int drive);
-	virtual bool poll_cdrom();
+	virtual bool pollCD();
 
-	virtual void play_cdrom(int track, int num_loops, int start_frame, int duration);
-	virtual void stop_cdrom();
-	virtual void update_cdrom();
+	virtual void playCD(int track, int num_loops, int start_frame, int duration);
+	virtual void stopCD();
+	virtual void updateCD();
 
 	virtual void quit();
 
@@ -98,7 +98,7 @@ public:
 
 	virtual void displayMessageOnOSD(const char *msg);
 
-	virtual SaveFileManager *get_savefile_manager();
+	virtual SaveFileManager *getSavefileManager();
 
 };
 
@@ -180,7 +180,7 @@ void OSystem_NULL::updateScreen()
 {
 }
 
-void OSystem_NULL::set_shake_pos(int shakeOffset)
+void OSystem_NULL::setShakePos(int shakeOffset)
 {
 }
 
@@ -236,17 +236,17 @@ void OSystem_NULL::setMouseCursor(const byte *buf, uint w, uint h, int hotspotX,
 {
 }
 
-bool OSystem_NULL::poll_event(Event *event)
+bool OSystem_NULL::pollEvent(Event &event)
 {
 	return false;
 }
 
-uint32 OSystem_NULL::get_msecs()
+uint32 OSystem_NULL::getMillis()
 {
 	return 0;
 }
 
-void OSystem_NULL::delay_msecs(uint msecs)
+void OSystem_NULL::delayMillis(uint msecs)
 {	
 }
 
@@ -290,20 +290,20 @@ bool OSystem_NULL::openCD(int drive)
 	return true;
 }
 
-bool OSystem_NULL::poll_cdrom()
+bool OSystem_NULL::pollCD()
 {
 	return true;
 }
 
-void OSystem_NULL::play_cdrom(int track, int num_loops, int start_frame, int duration)
+void OSystem_NULL::playCD(int track, int num_loops, int start_frame, int duration)
 {
 }
 
-void OSystem_NULL::stop_cdrom()
+void OSystem_NULL::stopCD()
 {
 }
 
-void OSystem_NULL::update_cdrom()
+void OSystem_NULL::updateCD()
 {
 }
 
@@ -319,7 +319,7 @@ void OSystem_NULL::displayMessageOnOSD(const char *msg)
 {
 }
 
-SaveFileManager* OSystem_NULL::get_savefile_manager()
+SaveFileManager* OSystem_NULL::getSavefileManager()
 {
 	return NULL;
 }

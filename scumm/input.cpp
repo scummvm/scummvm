@@ -40,7 +40,7 @@ enum MouseButtonStatus {
 void ScummEngine::parseEvents() {
 	OSystem::Event event;
 
-	while (_system->poll_event(&event)) {
+	while (_system->pollEvent(event)) {
 
 		switch(event.event_code) {
 		case OSystem::EVENT_KEYDOWN:

@@ -102,10 +102,10 @@ void Sword2Engine::buildDisplay(void) {
 		_graphics->updateDisplay();
 
 		_frameCount++;
-		if (_system->get_msecs() > _cycleTime) {
+		if (_system->getMillis() > _cycleTime) {
 			_fps = _frameCount;
 			_frameCount = 0;
-			_cycleTime = _system->get_msecs() + 1000;
+			_cycleTime = _system->getMillis() + 1000;
 		}
 	} while (!_graphics->endRenderCycle());
 
@@ -173,7 +173,7 @@ void Sword2Engine::displayMsg(byte *text, int time) {
 	_graphics->waitForFade();
 
 	if (time > 0) {
-		uint32 targetTime = _system->get_msecs() + (time * 1000);
+		uint32 targetTime = _system->getMillis() + (time * 1000);
 		sleepUntil(targetTime);
 	} else {
 		while (!_quit) {
@@ -185,7 +185,7 @@ void Sword2Engine::displayMsg(byte *text, int time) {
 				break;
 
 			_graphics->updateDisplay();
-			_system->delay_msecs(50);
+			_system->delayMillis(50);
 		}
 	}
 

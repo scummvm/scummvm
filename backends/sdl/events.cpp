@@ -88,7 +88,7 @@ void OSystem_SDL::fillMouseEvent(Event &event, int x, int y) {
 }
 
 void OSystem_SDL::kbd_mouse() {
-	uint32 curTime = get_msecs();
+	uint32 curTime = getMillis();
 	if (curTime >= km.last_time + km.delay_time) {
 		km.last_time = curTime;
 		if (km.x_down_count == 1) {
@@ -156,7 +156,7 @@ void OSystem_SDL::kbd_mouse() {
 	}
 }
 
-bool OSystem_SDL::poll_event(Event *event) {
+bool OSystem_SDL::pollEvent(Event &event) {
 	SDL_Event ev;
 	int axis;
 	byte b = 0;
@@ -166,7 +166,7 @@ bool OSystem_SDL::poll_event(Event *event) {
 	// If the screen mode changed, send an EVENT_SCREEN_CHANGED
 	if (_modeChanged) {
 		_modeChanged = false;
-		event->event_code = EVENT_SCREEN_CHANGED;
+		event.event_code = EVENT_SCREEN_CHANGED;
 		return true;
 	}
 
@@ -188,7 +188,7 @@ bool OSystem_SDL::poll_event(Event *event) {
 			if (ev.key.keysym.mod & KMOD_ALT)
 				b |= KBD_ALT;
 #endif
-			event->kbd.flags = b;
+			event.kbd.flags = b;
 
 			// Alt-Return and Alt-Enter toggle full screen mode				
 			if (b == KBD_ALT && (ev.key.keysym.sym == SDLK_RETURN
@@ -233,19 +233,19 @@ bool OSystem_SDL::poll_event(Event *event) {
 #ifdef MACOSX
 			// On Macintosh', Cmd-Q quits
 			if ((ev.key.keysym.mod & KMOD_META) && ev.key.keysym.sym == 'q') {
-				event->event_code = EVENT_QUIT;
+				event.event_code = EVENT_QUIT;
 				return true;
 			}
 #elif defined(UNIX)
 			// On other unices, Control-Q quits
 			if ((ev.key.keysym.mod & KMOD_CTRL) && ev.key.keysym.sym == 'q') {
-				event->event_code = EVENT_QUIT;
+				event.event_code = EVENT_QUIT;
 				return true;
 			}
 #else
 			// Ctrl-z and Alt-X quit
 			if ((b == KBD_CTRL && ev.key.keysym.sym == 'z') || (b == KBD_ALT && ev.key.keysym.sym == 'x')) {
-				event->event_code = EVENT_QUIT;
+				event.event_code = EVENT_QUIT;
 				return true;
 			}
 #endif
@@ -351,28 +351,28 @@ bool OSystem_SDL::poll_event(Event *event) {
 #ifdef LINUPY
 			// On Yopy map the End button to quit
 			if ((ev.key.keysym.sym==293)) {
-				event->event_code = EVENT_QUIT;
+				event.event_code = EVENT_QUIT;
 				return true;
 			}
 			// Map menu key to f5 (scumm menu)
 			if (ev.key.keysym.sym==306) {
-				event->event_code = EVENT_KEYDOWN;
-				event->kbd.keycode = SDLK_F5;
-				event->kbd.ascii = mapKey(SDLK_F5, ev.key.keysym.mod, 0);
+				event.event_code = EVENT_KEYDOWN;
+				event.kbd.keycode = SDLK_F5;
+				event.kbd.ascii = mapKey(SDLK_F5, ev.key.keysym.mod, 0);
 				return true;
 			}
 			// Map action key to action
 			if (ev.key.keysym.sym==291) {
-				event->event_code = EVENT_KEYDOWN;
-				event->kbd.keycode = SDLK_TAB;
-				event->kbd.ascii = mapKey(SDLK_TAB, ev.key.keysym.mod, 0);
+				event.event_code = EVENT_KEYDOWN;
+				event.kbd.keycode = SDLK_TAB;
+				event.kbd.ascii = mapKey(SDLK_TAB, ev.key.keysym.mod, 0);
 				return true;
 			}
 			// Map OK key to skip cinematic
 			if (ev.key.keysym.sym==292) {
-				event->event_code = EVENT_KEYDOWN;
-				event->kbd.keycode = SDLK_ESCAPE;
-				event->kbd.ascii = mapKey(SDLK_ESCAPE, ev.key.keysym.mod, 0);
+				event.event_code = EVENT_KEYDOWN;
+				event.kbd.keycode = SDLK_ESCAPE;
+				event.kbd.ascii = mapKey(SDLK_ESCAPE, ev.key.keysym.mod, 0);
 				return true;
 			}
 #endif
@@ -380,41 +380,41 @@ bool OSystem_SDL::poll_event(Event *event) {
 #ifdef QTOPIA
 			// quit on fn+backspace on zaurus
 			if (ev.key.keysym.sym == 127) {
-				event->event_code = EVENT_QUIT;
+				event.event_code = EVENT_QUIT;
 				return true;
 			}
 
 			// map menu key (f11) to f5 (scumm menu)
 			if (ev.key.keysym.sym == SDLK_F11) {
-				event->event_code = EVENT_KEYDOWN;
-				event->kbd.keycode = SDLK_F5;
-				event->kbd.ascii = mapKey(SDLK_F5, ev.key.keysym.mod, 0);
+				event.event_code = EVENT_KEYDOWN;
+				event.kbd.keycode = SDLK_F5;
+				event.kbd.ascii = mapKey(SDLK_F5, ev.key.keysym.mod, 0);
 			}
 			// map center (space) to tab (default action )
 			// I wanted to map the calendar button but the calendar comes up
 			//
 			else if (ev.key.keysym.sym == SDLK_SPACE) {
-				event->event_code = EVENT_KEYDOWN;
-				event->kbd.keycode = SDLK_TAB;
-				event->kbd.ascii = mapKey(SDLK_TAB, ev.key.keysym.mod, 0);
+				event.event_code = EVENT_KEYDOWN;
+				event.kbd.keycode = SDLK_TAB;
+				event.kbd.ascii = mapKey(SDLK_TAB, ev.key.keysym.mod, 0);
 			}
 			// since we stole space (pause) above we'll rebind it to the tab key on the keyboard
 			else if (ev.key.keysym.sym == SDLK_TAB) {
-				event->event_code = EVENT_KEYDOWN;
-				event->kbd.keycode = SDLK_SPACE;
-				event->kbd.ascii = mapKey(SDLK_SPACE, ev.key.keysym.mod, 0);
+				event.event_code = EVENT_KEYDOWN;
+				event.kbd.keycode = SDLK_SPACE;
+				event.kbd.ascii = mapKey(SDLK_SPACE, ev.key.keysym.mod, 0);
 			} else {
 			// let the events fall through if we didn't change them, this may not be the best way to
 			// set it up, but i'm not sure how sdl would like it if we let if fall through then redid it though.
 			// and yes i have an huge terminal size so i dont wrap soon enough.
-				event->event_code = EVENT_KEYDOWN;
-				event->kbd.keycode = ev.key.keysym.sym;
-				event->kbd.ascii = mapKey(ev.key.keysym.sym, ev.key.keysym.mod, ev.key.keysym.unicode);
+				event.event_code = EVENT_KEYDOWN;
+				event.kbd.keycode = ev.key.keysym.sym;
+				event.kbd.ascii = mapKey(ev.key.keysym.sym, ev.key.keysym.mod, ev.key.keysym.unicode);
 			}
 #else
-			event->event_code = EVENT_KEYDOWN;
-			event->kbd.keycode = ev.key.keysym.sym;
-			event->kbd.ascii = mapKey(ev.key.keysym.sym, ev.key.keysym.mod, ev.key.keysym.unicode);
+			event.event_code = EVENT_KEYDOWN;
+			event.kbd.keycode = ev.key.keysym.sym;
+			event.kbd.ascii = mapKey(ev.key.keysym.sym, ev.key.keysym.mod, ev.key.keysym.unicode);
 #endif
 			
 			switch(ev.key.keysym.sym) {
@@ -441,9 +441,9 @@ bool OSystem_SDL::poll_event(Event *event) {
 			return true;
 	
 		case SDL_KEYUP:
-			event->event_code = EVENT_KEYUP;
-			event->kbd.keycode = ev.key.keysym.sym;
-			event->kbd.ascii = mapKey(ev.key.keysym.sym, ev.key.keysym.mod, ev.key.keysym.unicode);
+			event.event_code = EVENT_KEYUP;
+			event.kbd.keycode = ev.key.keysym.sym;
+			event.kbd.ascii = mapKey(ev.key.keysym.sym, ev.key.keysym.mod, ev.key.keysym.unicode);
 
 			switch(ev.key.keysym.sym) {
 			case SDLK_LEFT:
@@ -476,64 +476,64 @@ bool OSystem_SDL::poll_event(Event *event) {
 			return true;
 
 		case SDL_MOUSEMOTION:
-			event->event_code = EVENT_MOUSEMOVE;
-			fillMouseEvent(*event, ev.motion.x, ev.motion.y);
+			event.event_code = EVENT_MOUSEMOVE;
+			fillMouseEvent(event, ev.motion.x, ev.motion.y);
 			
-			set_mouse_pos(event->mouse.x, event->mouse.y);
+			set_mouse_pos(event.mouse.x, event.mouse.y);
 			return true;
 
 		case SDL_MOUSEBUTTONDOWN:
 			if (ev.button.button == SDL_BUTTON_LEFT)
-				event->event_code = EVENT_LBUTTONDOWN;
+				event.event_code = EVENT_LBUTTONDOWN;
 			else if (ev.button.button == SDL_BUTTON_RIGHT)
-				event->event_code = EVENT_RBUTTONDOWN;
+				event.event_code = EVENT_RBUTTONDOWN;
 #if defined(SDL_BUTTON_WHEELUP) && defined(SDL_BUTTON_WHEELDOWN)
 			else if (ev.button.button == SDL_BUTTON_WHEELUP)
-				event->event_code = EVENT_WHEELUP;
+				event.event_code = EVENT_WHEELUP;
 			else if (ev.button.button == SDL_BUTTON_WHEELDOWN)
-				event->event_code = EVENT_WHEELDOWN;
+				event.event_code = EVENT_WHEELDOWN;
 #endif
 			else
 				break;
 
-			fillMouseEvent(*event, ev.button.x, ev.button.y);
+			fillMouseEvent(event, ev.button.x, ev.button.y);
 
 			return true;
 
 		case SDL_MOUSEBUTTONUP:
 			if (ev.button.button == SDL_BUTTON_LEFT)
-				event->event_code = EVENT_LBUTTONUP;
+				event.event_code = EVENT_LBUTTONUP;
 			else if (ev.button.button == SDL_BUTTON_RIGHT)
-				event->event_code = EVENT_RBUTTONUP;
+				event.event_code = EVENT_RBUTTONUP;
 			else
 				break;
-			fillMouseEvent(*event, ev.button.x, ev.button.y);
+			fillMouseEvent(event, ev.button.x, ev.button.y);
 
 			return true;
 
 		case SDL_JOYBUTTONDOWN:
 			if (ev.jbutton.button == JOY_BUT_LMOUSE) {
-				event->event_code = EVENT_LBUTTONDOWN;
+				event.event_code = EVENT_LBUTTONDOWN;
 			} else if (ev.jbutton.button == JOY_BUT_RMOUSE) {
-				event->event_code = EVENT_RBUTTONDOWN;
+				event.event_code = EVENT_RBUTTONDOWN;
 			} else {
-				event->event_code = EVENT_KEYDOWN;
+				event.event_code = EVENT_KEYDOWN;
 				switch (ev.jbutton.button) {
 					case JOY_BUT_ESCAPE:
-						event->kbd.keycode = SDLK_ESCAPE;
-						event->kbd.ascii = mapKey(SDLK_ESCAPE, ev.key.keysym.mod, 0);
+						event.kbd.keycode = SDLK_ESCAPE;
+						event.kbd.ascii = mapKey(SDLK_ESCAPE, ev.key.keysym.mod, 0);
 						break;
 					case JOY_BUT_PERIOD:
-						event->kbd.keycode = SDLK_PERIOD;
-						event->kbd.ascii = mapKey(SDLK_PERIOD, ev.key.keysym.mod, 0);
+						event.kbd.keycode = SDLK_PERIOD;
+						event.kbd.ascii = mapKey(SDLK_PERIOD, ev.key.keysym.mod, 0);
 						break;
 					case JOY_BUT_SPACE:
-						event->kbd.keycode = SDLK_SPACE;
-						event->kbd.ascii = mapKey(SDLK_SPACE, ev.key.keysym.mod, 0);
+						event.kbd.keycode = SDLK_SPACE;
+						event.kbd.ascii = mapKey(SDLK_SPACE, ev.key.keysym.mod, 0);
 						break;
 					case JOY_BUT_F5:
-						event->kbd.keycode = SDLK_F5;
-						event->kbd.ascii = mapKey(SDLK_F5, ev.key.keysym.mod, 0);
+						event.kbd.keycode = SDLK_F5;
+						event.kbd.ascii = mapKey(SDLK_F5, ev.key.keysym.mod, 0);
 						break; 
 				}
 			}
@@ -541,27 +541,27 @@ bool OSystem_SDL::poll_event(Event *event) {
 
 		case SDL_JOYBUTTONUP:
 			if (ev.jbutton.button == JOY_BUT_LMOUSE) {
-				event->event_code = EVENT_LBUTTONUP;
+				event.event_code = EVENT_LBUTTONUP;
 			} else if (ev.jbutton.button == JOY_BUT_RMOUSE) {
-				event->event_code = EVENT_RBUTTONUP;
+				event.event_code = EVENT_RBUTTONUP;
 			} else {
-				event->event_code = EVENT_KEYUP;
+				event.event_code = EVENT_KEYUP;
 				switch (ev.jbutton.button) {
 					case JOY_BUT_ESCAPE:
-						event->kbd.keycode = SDLK_ESCAPE;
-						event->kbd.ascii = mapKey(SDLK_ESCAPE, ev.key.keysym.mod, 0);
+						event.kbd.keycode = SDLK_ESCAPE;
+						event.kbd.ascii = mapKey(SDLK_ESCAPE, ev.key.keysym.mod, 0);
 						break;
 					case JOY_BUT_PERIOD:
-						event->kbd.keycode = SDLK_PERIOD;
-						event->kbd.ascii = mapKey(SDLK_PERIOD, ev.key.keysym.mod, 0);
+						event.kbd.keycode = SDLK_PERIOD;
+						event.kbd.ascii = mapKey(SDLK_PERIOD, ev.key.keysym.mod, 0);
 						break;
 					case JOY_BUT_SPACE:
-						event->kbd.keycode = SDLK_SPACE;
-						event->kbd.ascii = mapKey(SDLK_SPACE, ev.key.keysym.mod, 0);
+						event.kbd.keycode = SDLK_SPACE;
+						event.kbd.ascii = mapKey(SDLK_SPACE, ev.key.keysym.mod, 0);
 						break;
 					case JOY_BUT_F5:
-						event->kbd.keycode = SDLK_F5;
-						event->kbd.ascii = mapKey(SDLK_F5, ev.key.keysym.mod, 0);
+						event.kbd.keycode = SDLK_F5;
+						event.kbd.ascii = mapKey(SDLK_F5, ev.key.keysym.mod, 0);
 						break;
 				} 
 			}
@@ -571,10 +571,10 @@ bool OSystem_SDL::poll_event(Event *event) {
 			axis = ev.jaxis.value;
 			if ( axis > JOY_DEADZONE) {
 				axis -= JOY_DEADZONE;
-				event->event_code = EVENT_MOUSEMOVE;
+				event.event_code = EVENT_MOUSEMOVE;
 			} else if ( axis < -JOY_DEADZONE ) {
 				axis += JOY_DEADZONE;
-				event->event_code = EVENT_MOUSEMOVE;
+				event.event_code = EVENT_MOUSEMOVE;
 			} else
 				axis = 0;
 
@@ -610,7 +610,7 @@ bool OSystem_SDL::poll_event(Event *event) {
 #endif
 			}
 			
-			fillMouseEvent(*event, km.x, km.y);
+			fillMouseEvent(event, km.x, km.y);
 
 			return true;
 
@@ -619,7 +619,7 @@ bool OSystem_SDL::poll_event(Event *event) {
 			break;
 
 		case SDL_QUIT:
-			event->event_code = EVENT_QUIT;
+			event.event_code = EVENT_QUIT;
 			return true;
 		}
 	}

@@ -108,17 +108,17 @@ public:
 	void setMouseCursor(const byte *buf, uint w, uint h, int hotspot_x, int hotspot_y, byte keycolor);
 
 	// Shaking is used in SCUMM. Set current shake position.
-	void set_shake_pos(int shake_pos);
+	void setShakePos(int shake_pos);
 
 	// Get the number of milliseconds since the program was started.
-	uint32 get_msecs();
+	uint32 getMillis();
 
 	// Delay for a specified amount of milliseconds
-	void delay_msecs(uint msecs);
+	void delayMillis(uint msecs);
 
 	// Get the next event.
 	// Returns true if an event was retrieved.  
-	bool poll_event(Event *event);
+	bool pollEvent(Event &event);
 
 	// Set function that generates samples 
 	bool setSoundCallback(SoundProc proc, void *param);
@@ -133,16 +133,16 @@ public:
 
 	// Poll cdrom status
 	// Returns true if cd audio is playing
-	bool poll_cdrom();
+	bool pollCD();
 
 	// Play cdrom audio track
-	void play_cdrom(int track, int num_loops, int start_frame, int duration);
+	void playCD(int track, int num_loops, int start_frame, int duration);
 
 	// Stop cdrom audio track
-	void stop_cdrom();
+	void stopCD();
 
 	// Update cdrom audio status
-	void update_cdrom();
+	void updateCD();
 
 	// Quit
 	void quit();
@@ -462,7 +462,7 @@ int OSystem_X11::getGraphicsMode() const {
 }
 
 
-uint32 OSystem_X11::get_msecs() {
+uint32 OSystem_X11::getMillis() {
 	struct timeval current_time;
 	gettimeofday(&current_time, NULL);
 	return (uint32)(((current_time.tv_sec - start_time.tv_sec) * 1000) +
@@ -789,7 +789,7 @@ void OSystem_X11::setMouseCursor(const byte *buf, uint w, uint h, int hotspot_x,
 	_mouse_state_changed = true;
 }
 
-void OSystem_X11::set_shake_pos(int shake_pos) {
+void OSystem_X11::setShakePos(int shake_pos) {
 	if (new_shake_pos != shake_pos) {
 		if (_mouse_state_changed == false) {
 			undraw_mouse();
@@ -807,26 +807,26 @@ bool OSystem_X11::openCD(int drive) {
 	return false;
 }
 
-bool OSystem_X11::poll_cdrom() {
+bool OSystem_X11::pollCD() {
 	return false;
 }
 
-void OSystem_X11::play_cdrom(int track, int num_loops, int start_frame, int duration) {
+void OSystem_X11::playCD(int track, int num_loops, int start_frame, int duration) {
 }
 
-void OSystem_X11::stop_cdrom() {
+void OSystem_X11::stopCD() {
 }
 
-void OSystem_X11::update_cdrom() {
+void OSystem_X11::updateCD() {
 }
 
-void OSystem_X11::delay_msecs(uint msecs) {
+void OSystem_X11::delayMillis(uint msecs) {
 	usleep(msecs * 1000);
 }
 
-bool OSystem_X11::poll_event(Event *scumm_event) {
+bool OSystem_X11::pollEvent(Event &scumm_event) {
 	/* First, handle timers */
-	uint32 current_msecs = get_msecs();
+	uint32 current_msecs = getMillis();
 
 	if (_timer_active && (current_msecs >= _timer_next_expiry)) {
 		_timer_duration = _timer_callback(_timer_duration);
@@ -923,10 +923,10 @@ bool OSystem_X11::poll_event(Event *scumm_event) {
 					}
 				}
 				if (keycode != -1) {
-					scumm_event->event_code = EVENT_KEYDOWN;
-					scumm_event->kbd.keycode = keycode;
-					scumm_event->kbd.ascii = (ascii != -1 ? ascii : keycode);
-					scumm_event->kbd.flags = mode;
+					scumm_event.event_code = EVENT_KEYDOWN;
+					scumm_event.kbd.keycode = keycode;
+					scumm_event.kbd.ascii = (ascii != -1 ? ascii : keycode);
+					scumm_event.kbd.flags = mode;
 					return true;
 				}
 		}
@@ -965,10 +965,10 @@ bool OSystem_X11::poll_event(Event *scumm_event) {
 					}
 				}
 				if (keycode != -1) {
-					scumm_event->event_code = EVENT_KEYUP;
-					scumm_event->kbd.keycode = keycode;
-					scumm_event->kbd.ascii = (ascii != -1 ? ascii : keycode);
-					scumm_event->kbd.flags = mode;
+					scumm_event.event_code = EVENT_KEYUP;
+					scumm_event.kbd.keycode = keycode;
+					scumm_event.kbd.ascii = (ascii != -1 ? ascii : keycode);
+					scumm_event.kbd.flags = mode;
 					return true;
 				}
 			}
@@ -978,14 +978,14 @@ bool OSystem_X11::poll_event(Event *scumm_event) {
 			if (report_presses != 0) {
 				if (event.xbutton.button == 1) {
 					if (fake_right_mouse == 0) {
-						scumm_event->event_code = EVENT_LBUTTONDOWN;
+						scumm_event.event_code = EVENT_LBUTTONDOWN;
 					} else {
-						scumm_event->event_code = EVENT_RBUTTONDOWN;
+						scumm_event.event_code = EVENT_RBUTTONDOWN;
 					}
 				} else if (event.xbutton.button == 3)
-					scumm_event->event_code = EVENT_RBUTTONDOWN;
-				scumm_event->mouse.x = event.xbutton.x - scumm_x;
-				scumm_event->mouse.y = event.xbutton.y - scumm_y;
+					scumm_event.event_code = EVENT_RBUTTONDOWN;
+				scumm_event.mouse.x = event.xbutton.x - scumm_x;
+				scumm_event.mouse.y = event.xbutton.y - scumm_y;
 				return true;
 			}
 			break;
@@ -994,23 +994,23 @@ bool OSystem_X11::poll_event(Event *scumm_event) {
 			if (report_presses != 0) {
 				if (event.xbutton.button == 1) {
 					if (fake_right_mouse == 0) {
-						scumm_event->event_code = EVENT_LBUTTONUP;
+						scumm_event.event_code = EVENT_LBUTTONUP;
 					} else {
-						scumm_event->event_code = EVENT_RBUTTONUP;
+						scumm_event.event_code = EVENT_RBUTTONUP;
 					}
 				} else if (event.xbutton.button == 3)
-					scumm_event->event_code = EVENT_RBUTTONUP;
-				scumm_event->mouse.x = event.xbutton.x - scumm_x;
-				scumm_event->mouse.y = event.xbutton.y - scumm_y;
+					scumm_event.event_code = EVENT_RBUTTONUP;
+				scumm_event.mouse.x = event.xbutton.x - scumm_x;
+				scumm_event.mouse.y = event.xbutton.y - scumm_y;
 				return true;
 			}
 			break;
 
 		case MotionNotify:
-			scumm_event->event_code = EVENT_MOUSEMOVE;
-			scumm_event->mouse.x = event.xmotion.x - scumm_x;
-			scumm_event->mouse.y = event.xmotion.y - scumm_y;
-			set_mouse_pos(scumm_event->mouse.x, scumm_event->mouse.y);
+			scumm_event.event_code = EVENT_MOUSEMOVE;
+			scumm_event.mouse.x = event.xmotion.x - scumm_x;
+			scumm_event.mouse.y = event.xmotion.y - scumm_y;
+			set_mouse_pos(scumm_event.mouse.x, scumm_event.mouse.y);
 			return true;
 
 		case ConfigureNotify:{
@@ -1036,7 +1036,7 @@ bool OSystem_X11::poll_event(Event *scumm_event) {
 void OSystem_X11::setTimerCallback(TimerProc callback, int interval) {
 	if (callback != NULL) {
 		_timer_duration = interval;
-		_timer_next_expiry = get_msecs() + interval;
+		_timer_next_expiry = getMillis() + interval;
 		_timer_callback = callback;
 		_timer_active = true;
 	} else {

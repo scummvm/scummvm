@@ -73,7 +73,7 @@ void MoviePlayer::play(const char *filename) {
 			_sys->updateScreen();
 #endif
 			OSystem::Event event;
-			while (_sys->poll_event(&event)) {
+			while (_sys->pollEvent(event)) {
 				switch (event.event_code) {
 #ifndef BACKEND_8BIT
 				case OSystem::EVENT_SCREEN_CHANGED:

@@ -46,7 +46,7 @@ public:
 	void initSize(uint w, uint h);
 
 	// Overloaded from SDL_Common (toolbar handling)
-	bool poll_event(Event *event);
+	bool pollEvent(Event &event);
 	// Overloaded from SDL_Common (toolbar handling)
 	void draw_mouse();
 	// Overloaded from SDL_Common (mouse and new scaler handling)

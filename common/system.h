@@ -277,7 +277,7 @@ public:
 	 *       frontend - we should consider removing it from the backend API
 	 *       and instead implement the functionality in the frontend.
 	 */
-	virtual void set_shake_pos(int shakeOffset) = 0;
+	virtual void setShakePos(int shakeOffset) = 0;
 
 	//@}
 
@@ -383,7 +383,7 @@ public:
 
 	/**
 	 * Data structure for an event. A pointer to an instance of Event
-	 * can be passed to poll_event. 
+	 * can be passed to pollEvent. 
 	 */
 	struct Event {
 		/** The type of the event. */
@@ -433,13 +433,13 @@ public:
 	 * @param event	point to an Event struct, which will be filled with the event data.
 	 * @return true if an event was retrieved.
 	 */
-	virtual bool poll_event(Event *event) = 0;
+	virtual bool pollEvent(Event &event) = 0;
 
 	/** Get the number of milliseconds since the program was started. */
-	virtual uint32 get_msecs() = 0;
+	virtual uint32 getMillis() = 0;
 
 	/** Delay/sleep for the specified amount of milliseconds. */
-	virtual void delay_msecs(uint msecs) = 0;
+	virtual void delayMillis(uint msecs) = 0;
 
 	/**
 	 * Set the timer callback, a function which is periodically invoked by the
@@ -558,7 +558,7 @@ public:
 	 * Poll CD status.
 	 * @return true if CD audio is playing
 	 */
-	virtual bool poll_cdrom() = 0;
+	virtual bool pollCD() = 0;
 
 	/**
 	 * Start audio CD playback. 
@@ -567,17 +567,17 @@ public:
 	 * @param start_frame	the frame at which playback should start (75 frames = 1 second).
 	 * @param duration		the number of frames to play.
 	 */
-	virtual void play_cdrom(int track, int num_loops, int start_frame, int duration) = 0;
+	virtual void playCD(int track, int num_loops, int start_frame, int duration) = 0;
 
 	/**
 	 * Stop audio CD playback.
 	 */
-	virtual void stop_cdrom() = 0;
+	virtual void stopCD() = 0;
 
 	/**
 	 * Update cdrom audio status.
 	 */
-	virtual void update_cdrom() = 0;
+	virtual void updateCD() = 0;
 
 	//@}
 
@@ -609,7 +609,7 @@ public:
 	virtual void displayMessageOnOSD(const char *msg);
 
 	/** Savefile management. */
-	virtual SaveFileManager *get_savefile_manager();
+	virtual SaveFileManager *getSavefileManager();
 
 	//@}
 };

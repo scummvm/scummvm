@@ -55,10 +55,10 @@ void Graphics::processMenu(void) {
 	static int32 lastTime = 0;
 
 	if (lastTime == 0) {
-		lastTime = _vm->_system->get_msecs();
+		lastTime = _vm->_system->getMillis();
 		frameCount = 1;
 	} else {
-		int32 delta = _vm->_system->get_msecs() - lastTime;
+		int32 delta = _vm->_system->getMillis() - lastTime;
 
 		if (delta > 250) {
 			lastTime += delta;

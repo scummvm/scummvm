@@ -153,7 +153,7 @@ void SagaEngine::go() {
 
 	// System initialization
 
-	_previousTicks = _system->get_msecs();
+	_previousTicks = _system->getMillis();
 
 	// On some platforms, graphics initialization also initializes sound
 	// ( Win32 DirectX )... Music must be initialized before sound for 
@@ -202,7 +202,7 @@ void SagaEngine::go() {
 	_actionMap->reg();
 	_objectMap->reg();
 
-	_previousTicks = _system->get_msecs();
+	_previousTicks = _system->getMillis();
 
 	// Begin Main Engine Loop
 
@@ -212,9 +212,9 @@ void SagaEngine::go() {
 	for (;;) {
 		if (_render->getFlags() & RF_RENDERPAUSE) {
 			// Freeze time while paused
-			_previousTicks = _system->get_msecs();
+			_previousTicks = _system->getMillis();
 		} else {
-			currentTicks = _system->get_msecs();
+			currentTicks = _system->getMillis();
 			// Timer has rolled over after 49 days
 			if (currentTicks < _previousTicks)
 				msec = 0;
@@ -231,7 +231,7 @@ void SagaEngine::go() {
 		}
 		// Per frame processing
 		_render->drawScene();
-		_system->delay_msecs(10);
+		_system->delayMillis(10);
 	}
 }
 

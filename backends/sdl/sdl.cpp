@@ -128,11 +128,11 @@ OSystem_SDL::~OSystem_SDL() {
 	SDL_Quit();
 }
 
-uint32 OSystem_SDL::get_msecs() {
+uint32 OSystem_SDL::getMillis() {
 	return SDL_GetTicks();	
 }
 
-void OSystem_SDL::delay_msecs(uint msecs) {
+void OSystem_SDL::delayMillis(uint msecs) {
 	SDL_Delay(msecs);
 }
 
@@ -343,12 +343,12 @@ bool OSystem_SDL::openCD(int drive) {
 	return (_cdrom != NULL);
 }
 
-void OSystem_SDL::stop_cdrom() {	/* Stop CD Audio in 1/10th of a second */
+void OSystem_SDL::stopCD() {	/* Stop CD Audio in 1/10th of a second */
 	cd_stop_time = SDL_GetTicks() + 100;
 	cd_num_loops = 0;
 }
 
-void OSystem_SDL::play_cdrom(int track, int num_loops, int start_frame, int duration) {
+void OSystem_SDL::playCD(int track, int num_loops, int start_frame, int duration) {
 	if (!num_loops && !start_frame)
 		return;
 
@@ -372,14 +372,14 @@ void OSystem_SDL::play_cdrom(int track, int num_loops, int start_frame, int dura
 	cd_end_time = SDL_GetTicks() + _cdrom->track[track].length * 1000 / CD_FPS;
 }
 
-bool OSystem_SDL::poll_cdrom() {
+bool OSystem_SDL::pollCD() {
 	if (!_cdrom)
 		return false;
 
 	return (cd_num_loops != 0 && (SDL_GetTicks() < cd_end_time || SDL_CDStatus(_cdrom) != CD_STOPPED));
 }
 
-void OSystem_SDL::update_cdrom() {
+void OSystem_SDL::updateCD() {
 	if (!_cdrom)
 		return;
 

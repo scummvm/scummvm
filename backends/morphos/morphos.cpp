@@ -307,14 +307,14 @@ bool OSystem_MorphOS::OpenATimer(MsgPort **port, IORequest **req, ULONG unit, bo
 	return *req != NULL;
 }
 
-uint32 OSystem_MorphOS::get_msecs()
+uint32 OSystem_MorphOS::getMillis()
 {
 	int ticks = clock();
 	ticks *= (1000/CLOCKS_PER_SEC);
 	return ticks;
 }
 
-void OSystem_MorphOS::delay_msecs(uint msecs)
+void OSystem_MorphOS::delayMillis(uint msecs)
 {
 /*	  TimerIORequest->tr_node.io_Command = TR_ADDREQUEST;
 	TimerIORequest->tr_time.tv_secs = 0;
@@ -456,7 +456,7 @@ uint32 OSystem_MorphOS::property(int param, Property *value)
 	return 0;
 }
 
-void OSystem_MorphOS::play_cdrom(int track, int num_loops, int start_frame, int duration)
+void OSystem_MorphOS::playCD(int track, int num_loops, int start_frame, int duration)
 {
 	if (CDrive && start_frame >= 0)
 	{
@@ -472,13 +472,13 @@ void OSystem_MorphOS::play_cdrom(int track, int num_loops, int start_frame, int 
 	}
 }
 
-void OSystem_MorphOS::stop_cdrom()
+void OSystem_MorphOS::stopCD()
 {
 	if (CDrive)
 		CDDA_Stop(CDrive);
 }
 
-bool OSystem_MorphOS::poll_cdrom()
+bool OSystem_MorphOS::pollCD()
 {
 	ULONG status;
 
@@ -489,7 +489,7 @@ bool OSystem_MorphOS::poll_cdrom()
 	return status == CDDA_Status_Busy;
 }
 
-void OSystem_MorphOS::update_cdrom()
+void OSystem_MorphOS::updateCD()
 {
 }
 
@@ -798,7 +798,7 @@ void OSystem_MorphOS::SwitchScalerTo(SCALERTYPE newScaler)
 	}
 }
 
-bool OSystem_MorphOS::poll_event(Event *event)
+bool OSystem_MorphOS::pollEvent(Event &event)
 {
 	IntuiMessage *ScummMsg;
 
@@ -823,9 +823,9 @@ bool OSystem_MorphOS::poll_event(Event *event)
 					qual |= KBD_SHIFT;
 				if (ScummMsg->Qualifier & IEQUALIFIER_CONTROL)
 					qual |= KBD_CTRL;
-				event->kbd.flags = qual;
+				event.kbd.flags = qual;
 
-				event->event_code = (ScummMsg->Code & IECODE_UP_PREFIX) ? EVENT_KEYUP : EVENT_KEYDOWN;
+				event.event_code = (ScummMsg->Code & IECODE_UP_PREFIX) ? EVENT_KEYUP : EVENT_KEYDOWN;
 				ScummMsg->Code &= ~IECODE_UP_PREFIX;
 
 				if (ScummMsg->Code >= RAWKEY_F1 && ScummMsg->Code <= RAWKEY_F10)
@@ -833,29 +833,29 @@ bool OSystem_MorphOS::poll_event(Event *event)
 					/*
 					 * Function key
 					 */
-					event->kbd.ascii = (ScummMsg->Code-RAWKEY_F1)+315;
-					event->kbd.keycode = 0;
+					event.kbd.ascii = (ScummMsg->Code-RAWKEY_F1)+315;
+					event.kbd.keycode = 0;
 				}
 				else if (ScummMsg->Code == RAWKEY_F11 || ScummMsg->Code == RAWKEY_F12)
 				{
 					/*
 					 * Function key on PC keyboard
 					 */
-					event->kbd.ascii = (ScummMsg->Code == RAWKEY_F11) ? 325 : 326;
-					event->kbd.keycode = 0;
+					event.kbd.ascii = (ScummMsg->Code == RAWKEY_F11) ? 325 : 326;
+					event.kbd.keycode = 0;
 				}
 				else if (ScummMsg->Code == NM_WHEEL_UP || ScummMsg->Code == NM_WHEEL_DOWN)
 				{
 					/*
 					 * Wheelmouse event
 					 */
-					event->event_code = (ScummMsg->Code == NM_WHEEL_UP) ? EVENT_WHEELUP : EVENT_WHEELDOWN;
+					event.event_code = (ScummMsg->Code == NM_WHEEL_UP) ? EVENT_WHEELUP : EVENT_WHEELDOWN;
 				}
 				else if (MapRawKey(&FakedIEvent, &charbuf, 1, NULL) == 1)
 				{
 					if (qual == KBD_CTRL && charbuf == 'z')
 					{
-						event->event_code = EVENT_QUIT;
+						event.event_code = EVENT_QUIT;
 						break;
 					}
 					else if (qual == KBD_ALT)
@@ -870,7 +870,7 @@ bool OSystem_MorphOS::poll_event(Event *event)
 						}
 						else if (charbuf == 'x')
 						{
-							event->event_code = EVENT_QUIT;
+							event.event_code = EVENT_QUIT;
 							break;
 						}
 						else if (charbuf == 0x0d)
@@ -881,8 +881,8 @@ bool OSystem_MorphOS::poll_event(Event *event)
 						}
 					}
 
-					event->kbd.ascii = charbuf;
-					event->kbd.keycode = charbuf;
+					event.kbd.ascii = charbuf;
+					event.kbd.keycode = charbuf;
 				}
 				break;
 			}
@@ -915,10 +915,10 @@ bool OSystem_MorphOS::poll_event(Event *event)
 				else if (FullScreenMode)
 					newy = newy <? (ScummScrHeight >> ScummScale)-2;
 
-				event->event_code = EVENT_MOUSEMOVE;
-				event->mouse.x = newx;
-				event->mouse.y = newy;
-				set_mouse_pos(event->mouse.x, event->mouse.y);
+				event.event_code = EVENT_MOUSEMOVE;
+				event.mouse.x = newx;
+				event.mouse.y = newy;
+				set_mouse_pos(event.mouse.x, event.mouse.y);
 				break;
 			}
 
@@ -932,32 +932,32 @@ bool OSystem_MorphOS::poll_event(Event *event)
 				switch (ScummMsg->Code)
 				{
 					case SELECTDOWN:
-						event->event_code = EVENT_LBUTTONDOWN;
+						event.event_code = EVENT_LBUTTONDOWN;
 						break;
 
 					case SELECTUP:
-						event->event_code = EVENT_LBUTTONUP;
+						event.event_code = EVENT_LBUTTONUP;
 						break;
 
 					case MENUDOWN:
-						event->event_code = EVENT_RBUTTONDOWN;
+						event.event_code = EVENT_RBUTTONDOWN;
 						break;
 
 					case MENUUP:
-						event->event_code = EVENT_RBUTTONUP;
+						event.event_code = EVENT_RBUTTONUP;
 						break;
 
 					default:
 						ReplyMsg((Message *)ScummMsg);
 						return false;
 				}
-				event->mouse.x = newx;
-				event->mouse.y = newy;
+				event.mouse.x = newx;
+				event.mouse.y = newy;
 				break;
 			}
 
 			case IDCMP_CLOSEWINDOW:
-				event->event_code = EVENT_QUIT;
+				event.event_code = EVENT_QUIT;
 				break;
 		}
 
@@ -1007,7 +1007,7 @@ void OSystem_MorphOS::warpMouse(int x, int y)
 	}
 }
 
-void OSystem_MorphOS::set_shake_pos(int shake_pos)
+void OSystem_MorphOS::setShakePos(int shake_pos)
 {
 	ScummShakePos = shake_pos;
 	AddUpdateRect(0, 0, ScummBufferWidth, ScummBufferHeight);

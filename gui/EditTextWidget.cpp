@@ -42,7 +42,7 @@ EditTextWidget::EditTextWidget(GuiObject *boss, int x, int y, int w, int h, cons
 }
 
 void EditTextWidget::handleTickle() {
-	uint32 time = g_system->get_msecs();
+	uint32 time = g_system->getMillis();
 	if (_caretTime < time) {
 		_caretTime = time + kCaretBlinkTime;
 		drawCaret(_caretVisible);

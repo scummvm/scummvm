@@ -368,9 +368,9 @@ bool Debugger::Cmd_SaveRest(int argc, const char **argv) {
 
 bool Debugger::Cmd_TimeOn(int argc, const char **argv) {
 	if (argc == 2)
-		_startTime = _vm->_system->get_msecs() - atoi(argv[1]) * 1000;
+		_startTime = _vm->_system->getMillis() - atoi(argv[1]) * 1000;
 	else if (_startTime == 0)
-		_startTime = _vm->_system->get_msecs();
+		_startTime = _vm->_system->getMillis();
 	_displayTime = true;
 	DebugPrintf("Timer display on\n");
 	return true;

@@ -37,7 +37,7 @@ int SagaEngine::processInput() {
 
 	R_POINT imouse_pt;
 
-	while (g_system->poll_event(&event)) {
+	while (g_system->pollEvent(event)) {
 		int in_char;
 
 		switch (event.event_code) {

@@ -568,7 +568,7 @@ void Channel::mix(int16 *data, uint len) {
 		}
 
 		_samplesConsumed = _samplesDecoded;
-		_mixerTimeStamp = g_system->get_msecs();
+		_mixerTimeStamp = g_system->getMillis();
 
 		_converter->flow(*_input, data, len, vol_l, vol_r);
 
@@ -588,7 +588,7 @@ uint32 Channel::getElapsedTime() {
 	uint32 seconds = _samplesConsumed / rate;
 	uint32 milliseconds = (1000 * (_samplesConsumed % rate)) / rate;
 
-	uint32 delta = g_system->get_msecs() - _mixerTimeStamp;
+	uint32 delta = g_system->getMillis() - _mixerTimeStamp;
 
 	// In theory it would seem like a good idea to limit the approximation
 	// so that it never exceeds the theoretical upper bound set by

@@ -170,7 +170,7 @@ int handleInput(struct mapledev *pad, int &mouse_x, int &mouse_y,
   return 0;
 }
 
-bool OSystem_Dreamcast::poll_event(Event *event)
+bool OSystem_Dreamcast::pollEvent(Event &event)
 {
   unsigned int t = Timer();
 
@@ -189,29 +189,29 @@ bool OSystem_Dreamcast::poll_event(Event *event)
   setimask(15);
   checkSound();
   int e = handleInput(locked_get_pads(), _ms_cur_x, _ms_cur_y,
-		      event->kbd.flags, (_softkbd_on? &_softkbd : NULL));
+		      event.kbd.flags, (_softkbd_on? &_softkbd : NULL));
   setimask(mask);
   if (_ms_cur_x<0) _ms_cur_x=0;
   if (_ms_cur_x>=_screen_w) _ms_cur_x=_screen_w-1;
   if (_ms_cur_y<0) _ms_cur_y=0;
   if (_ms_cur_y>=_screen_h) _ms_cur_y=_screen_h-1;
-  event->mouse.x = _ms_cur_x;
-  event->mouse.y = _ms_cur_y;
+  event.mouse.x = _ms_cur_x;
+  event.mouse.y = _ms_cur_y;
   if (_overlay_visible) {
-    event->mouse.x -= _overlay_x;
-    event->mouse.y -= _overlay_y;
+    event.mouse.x -= _overlay_x;
+    event.mouse.y -= _overlay_y;
   }
-  event->kbd.ascii = event->kbd.keycode = 0;
+  event.kbd.ascii = event.kbd.keycode = 0;
   if(e<0) {
-    event->event_code = (EventCode)-e;
+    event.event_code = (EventCode)-e;
     return true;
   } else if(e>0) {
     bool processed = false, down = !(e&(1<<30));
     e &= ~(1<<30);
     if(e < 1000) {
-      event->event_code = (down? EVENT_KEYDOWN : EVENT_KEYUP);
-      event->kbd.keycode = e;
-      event->kbd.ascii = (e>='a' && e<='z' && (event->kbd.flags & KBD_SHIFT)?
+      event.event_code = (down? EVENT_KEYDOWN : EVENT_KEYUP);
+      event.kbd.keycode = e;
+      event.kbd.ascii = (e>='a' && e<='z' && (event.kbd.flags & KBD_SHIFT)?
 			  e &~ 0x20 : e);
       processed = true;
     } else if(down) {
@@ -221,12 +221,12 @@ bool OSystem_Dreamcast::poll_event(Event *event)
     }
     return processed;
   } else if(_ms_cur_x != _ms_old_x || _ms_cur_y != _ms_old_y) {
-    event->event_code = EVENT_MOUSEMOVE;
+    event.event_code = EVENT_MOUSEMOVE;
     _ms_old_x = _ms_cur_x;
     _ms_old_y = _ms_cur_y;
     return true;
   } else {
-    event->event_code = (EventCode)0;
+    event.event_code = (EventCode)0;
     return false;
   }
 }

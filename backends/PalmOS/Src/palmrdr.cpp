@@ -41,7 +41,7 @@ void OSystem_PALMOS::rumblePack(Boolean active) {
 }
 
 
-void OSystem_PALMOS::set_shake_pos(int shake_pos) {
+void OSystem_PALMOS::setShakePos(int shake_pos) {
 	_new_shake_pos = shake_pos;
 
 	if (shake_pos == 0)

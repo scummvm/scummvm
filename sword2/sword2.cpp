@@ -307,7 +307,7 @@ uint32 Sword2Engine::setEventFilter(uint32 filter) {
 void Sword2Engine::parseEvents(void) {
 	OSystem::Event event;
 	
-	while (_system->poll_event(&event)) {
+	while (_system->pollEvent(event)) {
 		switch (event.event_code) {
 		case OSystem::EVENT_KEYDOWN:
 			if (!(_eventFilter & RD_KEYDOWN)) {
@@ -576,12 +576,12 @@ void Sword2Engine::startGame(void) {
 // FIXME: Move this to some better place?
 
 void Sword2Engine::sleepUntil(uint32 time) {
-	while (_system->get_msecs() < time) {
+	while (_system->getMillis() < time) {
 		// Make sure menu animations and fades don't suffer, but don't
 		// redraw the entire scene.
 		_graphics->processMenu();
 		_graphics->updateDisplay(false);
-		_system->delay_msecs(10);
+		_system->delayMillis(10);
 	}
 }
 

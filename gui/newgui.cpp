@@ -107,9 +107,9 @@ void NewGui::runLoop() {
 		_system->updateScreen();		
 
 		OSystem::Event event;
-		uint32 time = _system->get_msecs();
+		uint32 time = _system->getMillis();
 
-		while (_system->poll_event(&event)) {
+		while (_system->pollEvent(event)) {
 			switch (event.event_code) {
 			case OSystem::EVENT_KEYDOWN:
 #if !defined(__PALM_OS__)
@@ -177,7 +177,7 @@ void NewGui::runLoop() {
 		}
 
 		// Delay for a moment
-		_system->delay_msecs(10);
+		_system->delayMillis(10);
 	}
 	
 	if (didSaveState)
@@ -413,7 +413,7 @@ void NewGui::drawBitmap(uint32 *bitmap, int x, int y, OverlayColor color, int h)
 // We could plug in a different cursor here if we like to.
 //
 void NewGui::animateCursor() {
-	int time = _system->get_msecs(); 
+	int time = _system->getMillis(); 
 	if (time > _cursorAnimateTimer + kCursorAnimateDelay) {
 		const byte colors[4] = { 15, 15, 7, 8 };
 		const byte color = colors[_cursorAnimateCounter];

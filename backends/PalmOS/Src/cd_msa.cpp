@@ -127,8 +127,8 @@ void MsaCDPlayer::update() {
 	MsaPBStatus pb;
 	MsaGetPBStatus(_msaRefNum, &pb);
 
-	// stop replay upon request of stop_cdrom()
-	if (_msaStopTime != 0 && _sys->get_msecs() >= _msaStopTime) {
+	// stop replay upon request of stopCD()
+	if (_msaStopTime != 0 && _sys->getMillis() >= _msaStopTime) {
 		MsaStop(_msaRefNum, true);
 		_msaLoops = 0;
 		_msaStopTime = 0;
@@ -174,7 +174,7 @@ void MsaCDPlayer::stop() {	/* Stop CD Audio in 1/10th of a second */
 	if (!_isInitialized)
 		return;
 
-	_msaStopTime = _sys->get_msecs() + 100;
+	_msaStopTime = _sys->getMillis() + 100;
 	_msaLoops = 0;
 	return;
 }

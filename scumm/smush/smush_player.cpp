@@ -833,7 +833,7 @@ void SmushPlayer::handleFrame(Chunk &b) {
 	_skipNext = false;
 
 	uint32 start_time, end_time;
-	start_time = _vm->_system->get_msecs();
+	start_time = _vm->_system->getMillis();
 
 	if (_insanity) {
 		_vm->_insane->procPreRendering();
@@ -898,7 +898,7 @@ void SmushPlayer::handleFrame(Chunk &b) {
 		_vm->_insane->procPostRendering(_dst, 0, 0, 0, _frame, _nbframes-1);
 	}
 
-	end_time = _vm->_system->get_msecs();
+	end_time = _vm->_system->getMillis();
 
 	updateScreen();
 	_smixer->handleFrame();
@@ -1074,10 +1074,10 @@ void SmushPlayer::updateScreen() {
 	png_destroy_write_struct(&png_ptr, &info_ptr);
 #endif
 
-	uint32 end_time, start_time = _vm->_system->get_msecs();
+	uint32 end_time, start_time = _vm->_system->getMillis();
 	_vm->_system->copyRectToScreen(_dst, _width, 0, 0, _width, _height);
 	_updateNeeded = true;
-	end_time = _vm->_system->get_msecs();
+	end_time = _vm->_system->getMillis();
 	debugC(DEBUG_SMUSH, "Smush stats: updateScreen( %03d )", end_time - start_time);
 }
 
@@ -1175,18 +1175,18 @@ void SmushPlayer::play(const char *filename, int32 offset, int32 startFrame) {
 			
 			uint32 end_time, start_time;
 			
-			start_time = _vm->_system->get_msecs();
+			start_time = _vm->_system->getMillis();
 			_vm->_system->updateScreen();
 			_updateNeeded = false;
 
-			end_time = _vm->_system->get_msecs();
+			end_time = _vm->_system->getMillis();
 
 			debugC(DEBUG_SMUSH, "Smush stats: BackendUpdateScreen( %03d )", end_time - start_time);
 
 		}
 		if (_vm->_smushVideoShouldFinish || _vm->_quit || _vm->_saveLoadFlag)
 			break;
-		_vm->_system->delay_msecs(10);
+		_vm->_system->delayMillis(10);
 	};
 
 	release();

@@ -1290,7 +1290,7 @@ void OSystem_WINCE3::add_dirty_rect(int x, int y, int w, int h) {
 // FIXME
 // See if some SDL mapping can be useful for HPCs
 
-bool OSystem_WINCE3::poll_event(Event *event) {
+bool OSystem_WINCE3::pollEvent(Event &event) {
 	SDL_Event ev;
 	byte b = 0;
 	Event temp_event;

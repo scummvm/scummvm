@@ -92,7 +92,7 @@ void OSystem::displayMessageOnOSD(const char *msg) {
 	dialog.runModal();
 }
 
-SaveFileManager *OSystem::get_savefile_manager() {
+SaveFileManager *OSystem::getSavefileManager() {
 	return new DefaultSaveFileManager();
 }
 

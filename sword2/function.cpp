@@ -250,7 +250,7 @@ int32 Logic::fnFlash(int32 *params) {
 	// the delay was meant to be. Probably doesn't matter much.
 
 	_vm->_graphics->updateDisplay();
-	_vm->_system->delay_msecs(250);
+	_vm->_system->delayMillis(250);
 	_vm->_graphics->setPalette(0, 1, black, RDPAL_INSTANT);
 #endif
 
@@ -607,7 +607,7 @@ int32 Logic::fnPlayCredits(int32 *params) {
 	bool abortCredits = false;
 
 	int scrollSteps = lineTop + CREDITS_FONT_HEIGHT;
-	uint32 musicStart = _vm->_system->get_msecs();
+	uint32 musicStart = _vm->_system->getMillis();
 
 	// Ideally the music should last just a tiny bit longer than the
 	// credits. Note that musicTimeRemaining() will return 0 if the music
@@ -712,7 +712,7 @@ int32 Logic::fnPlayCredits(int32 *params) {
 
 		while (_vm->_sound->musicTimeRemaining() && !_vm->_quit) {
 			_vm->_graphics->updateDisplay(false);
-			_vm->_system->delay_msecs(100);
+			_vm->_system->delayMillis(100);
 		}
 	}
 

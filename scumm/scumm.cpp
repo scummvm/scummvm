@@ -1272,7 +1272,7 @@ void ScummEngine::scummInit() {
 	for (i = 0; i < 512; i++)
 		_keyDownMap[i] = false;
 
-	_lastSaveTime = _system->get_msecs();
+	_lastSaveTime = _system->getMillis();
 }
 
 void ScummEngine_v2::scummInit() {
@@ -1382,16 +1382,16 @@ void ScummEngine::setupMusic(int midi) {
 
 void ScummEngine::mainRun() {
 	int delta = 0;
-	int diff = _system->get_msecs();
+	int diff = _system->getMillis();
 
 	while (!_quit) {
 
 		updatePalette();
 		_system->updateScreen();
 
-		diff -= _system->get_msecs();
+		diff -= _system->getMillis();
 		waitForTimer(delta * 15 + diff);
-		diff = _system->get_msecs();
+		diff = _system->getMillis();
 		delta = scummLoop(delta);
 
 		if (delta < 1)	// Ensure we don't get into a loop
@@ -1411,15 +1411,15 @@ void ScummEngine::waitForTimer(int msec_delay) {
 	else if (_fastMode & 1)
 		msec_delay = 10;
 
-	start_time = _system->get_msecs();
+	start_time = _system->getMillis();
 
 	while (!_quit) {
 		parseEvents();
 
 		_sound->updateCD(); // Loop CD Audio if needed
-		if (_system->get_msecs() >= start_time + msec_delay)
+		if (_system->getMillis() >= start_time + msec_delay)
 			break;
-		_system->delay_msecs(10);
+		_system->delayMillis(10);
 	}
 }
 
@@ -1511,7 +1511,7 @@ int ScummEngine::scummLoop(int delta) {
 	}
 
 	// Trigger autosave all 5 minutes.
-	if (!_saveLoadFlag && _system->get_msecs() > _lastSaveTime + 5 * 60 * 1000) {
+	if (!_saveLoadFlag && _system->getMillis() > _lastSaveTime + 5 * 60 * 1000) {
 		_saveLoadSlot = 0;
 		sprintf(_saveLoadName, "Autosave %d", _saveLoadSlot);
 		_saveLoadFlag = 1;
@@ -1562,7 +1562,7 @@ load_game:
 			clearClickedStatus();
 
 		_saveLoadFlag = 0;
-		_lastSaveTime = _system->get_msecs();
+		_lastSaveTime = _system->getMillis();
 	}
 
 	if (_completeScreenRedraw) {

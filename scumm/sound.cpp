@@ -1150,7 +1150,7 @@ void Sound::playCDTrack(int track, int numLoops, int startFrame, int duration) {
 
 	// Start the timer after starting the track. Starting an MP3 track is
 	// almost instantaneous, but a CD player may take some time. Hopefully
-	// play_cdrom() will block during that delay.
+	// playCD() will block during that delay.
 	startCDTimer();
 }
 

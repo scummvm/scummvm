@@ -42,21 +42,21 @@ OSystem *OSystem_PALMOS::create() {
 	return new OSystem_PALMOS();
 }
 
-uint32 OSystem_PALMOS::get_msecs() {
+uint32 OSystem_PALMOS::getMillis() {
 	uint32 ticks = TimGetTicks();
 	ticks *= (1000/SysTicksPerSecond());
 	return ticks;
 
 }
 
-void OSystem_PALMOS::delay_msecs(uint msecs) {
-	UInt32 current = get_msecs();
+void OSystem_PALMOS::delayMillis(uint msecs) {
+	UInt32 current = getMillis();
 	UInt32 last = current + msecs;
 
 	do {
 		timer_handler(current);
 		sound_handler();
-		current = get_msecs();
+		current = getMillis();
 	} while (current < last);
 }
 
@@ -100,7 +100,7 @@ void OSystem_PALMOS::timer_handler(UInt32 current_msecs) {
 void OSystem_PALMOS::setTimerCallback(TimerProc callback, int timer) {
 	if (callback != NULL) {
 		_timer.duration = timer;
-		_timer.nextExpiry = get_msecs() + timer;
+		_timer.nextExpiry = getMillis() + timer;
 		_timer.callback = callback;
 		_timer.active = true;
 	} else {

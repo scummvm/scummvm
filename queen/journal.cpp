@@ -62,7 +62,7 @@ void Journal::use() {
 	OSystem *system = OSystem::instance();
 	while (!_quit) {
 		OSystem::Event event;
-		while (system->poll_event(&event)) {
+		while (system->pollEvent(event)) {
 			switch (event.event_code) {
 			case OSystem::EVENT_KEYDOWN:
 				handleKeyDown(event.kbd.ascii, event.kbd.keycode);
@@ -83,7 +83,7 @@ void Journal::use() {
 				break;
 			}
 		}
-		system->delay_msecs(20);
+		system->delayMillis(20);
 		system->updateScreen();
 	}
 

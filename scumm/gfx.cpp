@@ -393,10 +393,10 @@ void ScummEngine::drawDirtyScreenParts() {
 	// Handle shaking
 	if (_shakeEnabled) {
 		_shakeFrame = (_shakeFrame + 1) % NUM_SHAKE_POSITIONS;
-		_system->set_shake_pos(shake_positions[_shakeFrame]);
+		_system->setShakePos(shake_positions[_shakeFrame]);
 	} else if (!_shakeEnabled &&_shakeFrame != 0) {
 		_shakeFrame = 0;
-		_system->set_shake_pos(0);
+		_system->setShakePos(0);
 	}
 }
 
@@ -971,7 +971,7 @@ void ScummEngine::setShake(int mode) {
 
 	_shakeEnabled = mode != 0;
 	_shakeFrame = 0;
-	_system->set_shake_pos(0);
+	_system->setShakePos(0);
 }
 
 #pragma mark -

@@ -663,7 +663,7 @@ void Sound::waitForLeadOut(void) {
 
 	while (_fx[i]._handle.isActive()) {
 		_vm->_graphics->updateDisplay();
-		_vm->_system->delay_msecs(30);
+		_vm->_system->delayMillis(30);
 	}
 }
 

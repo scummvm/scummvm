@@ -157,28 +157,28 @@ bool OSystem_PALMOS::openCD(int drive) {
 	return false;
 }
 
-void OSystem_PALMOS::stop_cdrom() {
+void OSystem_PALMOS::stopCD() {
 	if (!_cdPlayer)
 		return;
 
 	_cdPlayer->stop();
 }
 
-void OSystem_PALMOS::play_cdrom(int track, int num_loops, int start_frame, int duration) {
+void OSystem_PALMOS::playCD(int track, int num_loops, int start_frame, int duration) {
 	if (!_cdPlayer)
 		return;
 
 	_cdPlayer->play(track, num_loops, start_frame, duration);
 }
 
-bool OSystem_PALMOS::poll_cdrom() {
+bool OSystem_PALMOS::pollCD() {
 	if (!_cdPlayer)
 		return false;
 	
 	return _cdPlayer->poll();
 }
 
-void OSystem_PALMOS::update_cdrom() {
+void OSystem_PALMOS::updateCD() {
 	if (!_cdPlayer)
 		return;
 

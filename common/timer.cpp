@@ -43,7 +43,7 @@ Timer::Timer(OSystem *system) :
 		_timerSlots[i].counter = 0;
 	}
 
-	_thisTime = _system->get_msecs();
+	_thisTime = _system->getMillis();
 
 	// Set the timer last, after everything has been initialised
 	_system->setTimerCallback(&timer_handler, 10);
@@ -79,7 +79,7 @@ int Timer::handler(int t) {
 	uint32 interval, l;
 
 	_lastTime = _thisTime;
-	_thisTime = _system->get_msecs();
+	_thisTime = _system->getMillis();
 	interval = 1000 * (_thisTime - _lastTime);
 
 	for (l = 0; l < MAX_TIMERS; l++) {

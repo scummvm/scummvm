@@ -38,13 +38,13 @@ void DefaultCDPlayer::release() {
 }
 
 bool DefaultCDPlayer::poll() {
-	return (_defLoops != 0 && _sys->get_msecs() < _defTrackEndFrame);
+	return (_defLoops != 0 && _sys->getMillis() < _defTrackEndFrame);
 }
 
 void DefaultCDPlayer::update() {
 
-	// stop replay upon request of stop_cdrom()
-	if (_defStopTime != 0 && _sys->get_msecs() >= _defStopTime) {
+	// stop replay upon request of stopCD()
+	if (_defStopTime != 0 && _sys->getMillis() >= _defStopTime) {
 		_defLoops = 0;
 		_defStopTime = 0;
 		_defTrackEndFrame = 0;
@@ -52,7 +52,7 @@ void DefaultCDPlayer::update() {
 	}
 
 	// not fully played
-	if (_sys->get_msecs() < _defTrackEndFrame)
+	if (_sys->getMillis() < _defTrackEndFrame)
 		return;
 		
 	if (_defLoops == 0)
@@ -64,12 +64,12 @@ void DefaultCDPlayer::update() {
 
 	// loop if needed
 	if (_defLoops != 0) {
-		_defTrackEndFrame = _sys->get_msecs() + _defTrackLength;
+		_defTrackEndFrame = _sys->getMillis() + _defTrackLength;
 	}
 }
 
 void DefaultCDPlayer::stop() {	/* Stop CD Audio in 1/10th of a second */
-	_defStopTime = _sys->get_msecs() + 100;
+	_defStopTime = _sys->getMillis() + 100;
 	_defLoops = 0;
 	return;
 }
@@ -98,5 +98,5 @@ void DefaultCDPlayer::play(int track, int num_loops, int start_frame, int durati
 	}
 				
 	// try to play the track
-	_defTrackEndFrame = _sys->get_msecs() + _defTrackLength;
+	_defTrackEndFrame = _sys->getMillis() + _defTrackLength;
 }

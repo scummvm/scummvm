@@ -401,7 +401,7 @@ int Dialog::run() {
 		oldMouseX = newMouseX;
 		oldMouseY = newMouseY;
 
-		_gui->_vm->_system->delay_msecs(20);
+		_gui->_vm->_system->delayMillis(20);
 
 		if (_gui->_vm->_quit)
 			setResult(0);

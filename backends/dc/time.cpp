@@ -27,7 +27,7 @@
 #include "dc.h"
 
 
-uint32 OSystem_Dreamcast::get_msecs()
+uint32 OSystem_Dreamcast::getMillis()
 {
   static uint32 msecs=0;
   static unsigned int t0=0;
@@ -43,14 +43,14 @@ uint32 OSystem_Dreamcast::get_msecs()
   return msecs += dm;
 }
 
-void OSystem_Dreamcast::delay_msecs(uint msecs)
+void OSystem_Dreamcast::delayMillis(uint msecs)
 {
-  get_msecs();
+  getMillis();
   unsigned int t, start = Timer();
   int time = (((unsigned int)msecs)*100000U)>>11;
   while(((int)((t = Timer())-start))<time)
     checkSound();
-  get_msecs();
+  getMillis();
 }
 
 void OSystem_Dreamcast::setTimerCallback(TimerProc callback, int timer)

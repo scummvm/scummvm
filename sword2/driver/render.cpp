@@ -419,7 +419,7 @@ void Graphics::renderParallax(Parallax *p, int16 l) {
  */
 
 void Graphics::initialiseRenderCycle(void) {
-	_initialTime = _vm->_system->get_msecs();
+	_initialTime = _vm->_system->getMillis();
 	_totalTime = _initialTime + MILLISECSPERCYCLE;
 }
 
@@ -432,7 +432,7 @@ void Graphics::startRenderCycle(void) {
 	_scrollXOld = _scrollX;
 	_scrollYOld = _scrollY;
 
-	_startTime = _vm->_system->get_msecs();
+	_startTime = _vm->_system->getMillis();
 
 	if (_startTime + _renderAverageTime >= _totalTime)	{
 		_scrollX = _scrollXTarget;
@@ -461,7 +461,7 @@ bool Graphics::endRenderCycle(void) {
 	static int32 renderCountIndex = 0;
 	int32 time;
 
-	time = _vm->_system->get_msecs();
+	time = _vm->_system->getMillis();
 	renderTimeLog[renderCountIndex] = time - _startTime;
 	_startTime = time;
 	_renderAverageTime = (renderTimeLog[0] + renderTimeLog[1] + renderTimeLog[2] + renderTimeLog[3]) >> 2;
@@ -487,7 +487,7 @@ bool Graphics::endRenderCycle(void) {
 		// If we have already reached the scroll target sleep for the
 		// rest of the render cycle.
 		_vm->sleepUntil(_totalTime);
-		_initialTime = _vm->_system->get_msecs();
+		_initialTime = _vm->_system->getMillis();
 		_totalTime += MILLISECSPERCYCLE;
 		return true;
 	}
@@ -512,7 +512,7 @@ bool Graphics::endRenderCycle(void) {
 	// Give the other threads some breathing space. This apparently helps
 	// against bug #875683, though I was never able to reproduce it for
 	// myself.
-	_vm->_system->delay_msecs(10);
+	_vm->_system->delayMillis(10);
 #endif
 
 	return false;

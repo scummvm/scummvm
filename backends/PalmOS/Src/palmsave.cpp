@@ -192,6 +192,6 @@ SaveFile *PalmSaveFileManager::makeSaveFile(const char *filename, bool saveOrLoa
 }
 
 // OSystem
-SaveFileManager *OSystem_PALMOS::get_savefile_manager() {
+SaveFileManager *OSystem_PALMOS::getSavefileManager() {
 	return new PalmSaveFileManager();
 }

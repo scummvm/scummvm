@@ -249,7 +249,7 @@ void Screen::fnFadeDown(uint32 scroll) {
 			palette_fadedown_helper((uint32 *)_palette, GAME_COLOURS);
 			_system->setPalette(_palette, 0, GAME_COLOURS);
 			_system->updateScreen();
-			_system->delay_msecs(20);
+			_system->delayMillis(20);
 		}
 	}
 }
@@ -297,7 +297,7 @@ void Screen::paletteFadeUp(uint8 *pal) {
 		}
 		_system->setPalette(_palette, 0, GAME_COLOURS);
 		_system->updateScreen();
-		_system->delay_msecs(20);
+		_system->delayMillis(20);
 	}	
 }
 
@@ -368,8 +368,8 @@ void Screen::waitForTimer(void) {
 	while (!_gotTick) {
 		OSystem::Event event;
 
-		_system->delay_msecs(10);
-		while (_system->poll_event(&event));
+		_system->delayMillis(10);
+		while (_system->pollEvent(event));
 	}
 }
 
@@ -377,8 +377,8 @@ void Screen::waitForSequence(void) {
 	while (_seqInfo.running) {
 		OSystem::Event event;
 
-		_system->delay_msecs(20);
-		while (_system->poll_event(&event));
+		_system->delayMillis(20);
+		while (_system->pollEvent(event));
 	}
 }
 

@@ -238,7 +238,7 @@ void OSystem_Dreamcast::setMouseCursor(const byte *buf, uint w, uint h,
   memcpy(_ms_buf, buf, w * h);
 }
 
-void OSystem_Dreamcast::set_shake_pos(int shake_pos)
+void OSystem_Dreamcast::setShakePos(int shake_pos)
 {
   _current_shake_pos = shake_pos;
 }

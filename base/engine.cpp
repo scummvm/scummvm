@@ -46,7 +46,7 @@ Engine::Engine(OSystem *syst)
 
 	g_debugLevel = ConfMan.getInt("debuglevel");
 
-	_saveFileMan = _system->get_savefile_manager();
+	_saveFileMan = _system->getSavefileManager();
 }
 
 Engine::~Engine() {

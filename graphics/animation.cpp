@@ -127,7 +127,7 @@ bool BaseAnimationState::init(const char *name) {
 	info = mpeg2_info(decoder);
 	framenum = 0;
 	frameskipped = 0;
-	ticks = _sys->get_msecs();
+	ticks = _sys->getMillis();
 
 	// Play audio
 	bgSoundStream = AudioStream::openStreamFile(name);
@@ -184,11 +184,11 @@ bool BaseAnimationState::decodeFrame() {
 
 					if (bgSoundStream) {
 						while ((_snd->getChannelElapsedTime(bgSound) * 12) / 1000 < framenum)
-							_sys->delay_msecs(10);
+							_sys->delayMillis(10);
 					} else {
 						ticks += 83;
-						while (_sys->get_msecs() < ticks)
-							_sys->delay_msecs(10);
+						while (_sys->getMillis() < ticks)
+							_sys->delayMillis(10);
 						// FIXME: This used to be used for the Sword2 version of this
 						// method. I do not see any compelling reason why it should be
 						// used, but maybe I am wrong; so if you know more, either

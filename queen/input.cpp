@@ -74,7 +74,7 @@ void Input::delay(uint amount) {
 
 	OSystem::Event event;
 
-	uint32 start = _system->get_msecs();
+	uint32 start = _system->getMillis();
 	uint32 cur = start;
 
 	if (_idleTime < DELAY_SCREEN_BLANKER) {
@@ -82,7 +82,7 @@ void Input::delay(uint amount) {
 	}
 
 	do {
-		while (_system->poll_event(&event)) {
+		while (_system->pollEvent(event)) {
 			_idleTime = 0;
 			switch (event.event_code) {
 				case OSystem::EVENT_KEYDOWN:
@@ -131,8 +131,8 @@ void Input::delay(uint amount) {
 		uint this_delay = 20; // 1?
 		if (this_delay > amount)
 			this_delay = amount;
-		_system->delay_msecs(this_delay);
-		cur = _system->get_msecs();
+		_system->delayMillis(this_delay);
+		cur = _system->getMillis();
 	} while (cur < start + amount);
 }
 

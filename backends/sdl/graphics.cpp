@@ -720,7 +720,7 @@ void OSystem_SDL::setPalette(const byte *colors, uint start, uint num) {
 		_paletteDirtyEnd = start + num;
 }
 
-void OSystem_SDL::set_shake_pos(int shake_pos) {
+void OSystem_SDL::setShakePos(int shake_pos) {
 	_newShakePos = shake_pos;
 }
 

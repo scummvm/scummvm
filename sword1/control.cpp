@@ -987,12 +987,12 @@ void Control::doRestore(void) {
 void Control::delay(uint32 msecs) {
 	OSystem::Event event;
 
-	uint32 endTime = _system->get_msecs() + msecs;
+	uint32 endTime = _system->getMillis() + msecs;
 	_keyPressed = 0;	//reset
 	_mouseState = 0;
 
 	do {
-		while (_system->poll_event(&event)) {
+		while (_system->pollEvent(event)) {
 			switch (event.event_code) {
 			case OSystem::EVENT_KEYDOWN:
 
@@ -1033,8 +1033,8 @@ void Control::delay(uint32 msecs) {
 				break;
 			}
 		}
-		_system->delay_msecs(10);
-	} while (_system->get_msecs() < endTime);
+		_system->delayMillis(10);
+	} while (_system->getMillis() < endTime);
 }
 
 const ButtonInfo Control::_deathButtons[3] = {

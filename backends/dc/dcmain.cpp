@@ -78,7 +78,7 @@ static bool find_track(int track, int &first_sec, int &last_sec)
   return false;
 }
 
-void OSystem_Dreamcast::play_cdrom(int track, int num_loops, int start_frame, int duration)
+void OSystem_Dreamcast::playCD(int track, int num_loops, int start_frame, int duration)
 {
   int first_sec, last_sec;
 #if 1
@@ -95,18 +95,18 @@ void OSystem_Dreamcast::play_cdrom(int track, int num_loops, int start_frame, in
   play_cdda_sectors(first_sec, last_sec, num_loops);
 }
 
-void OSystem_Dreamcast::stop_cdrom()
+void OSystem_Dreamcast::stopCD()
 {
   stop_cdda();
 }
 
-bool OSystem_Dreamcast::poll_cdrom()
+bool OSystem_Dreamcast::pollCD()
 {
   extern int getCdState();
   return getCdState() == 3;
 }
 
-void OSystem_Dreamcast::update_cdrom()
+void OSystem_Dreamcast::updateCD()
 {
   // Dummy.  The CD drive takes care of itself.
 }

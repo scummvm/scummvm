@@ -218,7 +218,7 @@ void SkyEngine::go() {
 	if (introSkipped)
 		_skyControl->restartGame();
 	
-	_lastSaveTime = _system->get_msecs();
+	_lastSaveTime = _system->getMillis();
 
 	while (1) {
 		if (_debugger->isAttached()) {
@@ -232,9 +232,9 @@ void SkyEngine::go() {
 		else
 			delay(_systemVars.gameSpeed);
 
-		if (_system->get_msecs() - _lastSaveTime > 5 * 60 * 1000) {
+		if (_system->getMillis() - _lastSaveTime > 5 * 60 * 1000) {
 			if (_skyControl->loadSaveAllowed()) {
-				_lastSaveTime = _system->get_msecs();
+				_lastSaveTime = _system->getMillis();
 				_skyControl->doAutoSave();
 			} else
 				_lastSaveTime += 30 * 1000; // try again in 30 secs
@@ -442,12 +442,12 @@ void SkyEngine::delay(uint amount) {
 
 	OSystem::Event event;
 
-	uint32 start = _system->get_msecs();
+	uint32 start = _system->getMillis();
 	uint32 cur = start;
 	_key_pressed = 0;	//reset
 
 	do {
-		while (_system->poll_event(&event)) {
+		while (_system->pollEvent(event)) {
 			switch (event.event_code) {
 			case OSystem::EVENT_KEYDOWN:
 				if (event.kbd.flags == OSystem::KBD_CTRL) {
@@ -501,9 +501,9 @@ void SkyEngine::delay(uint amount) {
 #endif
 			if (this_delay > amount)
 				this_delay = amount;
-			_system->delay_msecs(this_delay);
+			_system->delayMillis(this_delay);
 		}
-		cur = _system->get_msecs();
+		cur = _system->getMillis();
 	} while (cur < start + amount);
 }
 

@@ -254,7 +254,7 @@ int32 MoviePlayer::play(const char *filename, MovieTextObject *text[], byte *mus
 			_vm->_sound->playFx(0, musicOut, 0, 0, RDSE_FXLEADOUT);
 
 		OSystem::Event event;
-		while (_sys->poll_event(&event)) {
+		while (_sys->pollEvent(event)) {
 			switch (event.event_code) {
 #ifndef BACKEND_8BIT
 			case OSystem::EVENT_SCREEN_CHANGED:
@@ -277,7 +277,7 @@ int32 MoviePlayer::play(const char *filename, MovieTextObject *text[], byte *mus
 
 	if (!skipCutscene) {
 		// Sleep for one frame so that the last frame is displayed.
-		_sys->delay_msecs(1000 / 12);
+		_sys->delayMillis(1000 / 12);
 	}
 
 	// Most movies fade to black on their own, but not all of them. Since
@@ -307,7 +307,7 @@ int32 MoviePlayer::play(const char *filename, MovieTextObject *text[], byte *mus
 
 	while (handle.isActive()) {
 		_vm->_graphics->updateDisplay(false);
-		_sys->delay_msecs(100);
+		_sys->delayMillis(100);
 	}
 
 	// Clear the screen again
@@ -436,7 +436,7 @@ int32 MoviePlayer::playDummy(const char *filename, MovieTextObject *text[], byte
 			// frame rate the original movies had, or even if it
 			// was constant, but this seems to work reasonably.
 
-			_sys->delay_msecs(90);
+			_sys->delayMillis(90);
 		}
 
 		// Wait for the voice to stop playing. This is to make sure
@@ -446,7 +446,7 @@ int32 MoviePlayer::playDummy(const char *filename, MovieTextObject *text[], byte
 
 		while (handle.isActive()) {
 			_vm->_graphics->updateDisplay(false);
-			_sys->delay_msecs(100);
+			_sys->delayMillis(100);
 		}
 
 		closeTextObject(text[textCounter]);

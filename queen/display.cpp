@@ -930,7 +930,7 @@ void Display::drawBox(int16 x1, int16 y1, int16 x2, int16 y2, uint8 col) {
 }
 
 void Display::shake(bool reset) {
-	_system->set_shake_pos(reset ? 0 : 3);
+	_system->setShakePos(reset ? 0 : 3);
 }
 
 void Display::blankScreen() {

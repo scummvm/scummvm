@@ -1679,12 +1679,12 @@ void Control::delay(unsigned int amount) {
 
 	OSystem::Event event;
 
-	uint32 start = _system->get_msecs();
+	uint32 start = _system->getMillis();
 	uint32 cur = start;
 	_keyPressed = 0;	//reset
 
 	do {
-		while (_system->poll_event(&event)) {
+		while (_system->pollEvent(event)) {
 			switch (event.event_code) {
 			case OSystem::EVENT_KEYDOWN:
 				// Make sure backspace works right (this fixes a small issue on OS X)
@@ -1721,9 +1721,9 @@ void Control::delay(unsigned int amount) {
 		if (this_delay > amount)
 			this_delay = amount;
 
-		if (this_delay > 0)	_system->delay_msecs(this_delay);
+		if (this_delay > 0)	_system->delayMillis(this_delay);
 
-		cur = _system->get_msecs();
+		cur = _system->getMillis();
 	} while (cur < start + amount);
 }
 

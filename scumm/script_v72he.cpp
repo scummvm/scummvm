@@ -770,7 +770,7 @@ void ScummEngine_v72he::o72_getTimer() {
 
 	if (cmd == 10) {
 		checkRange(3, 1, timer, "o72_getTimer: Timer %d out of range(%d)");
-		int diff = _system->get_msecs() - _timers[timer];
+		int diff = _system->getMillis() - _timers[timer];
 		push(diff);
 	} else {
 		push(0);
@@ -783,7 +783,7 @@ void ScummEngine_v72he::o72_setTimer() {
 
 	if (cmd == 158) {
 		checkRange(3, 1, timer, "o72_setTimer: Timer %d out of range(%d)");
-		_timers[timer] = _system->get_msecs();
+		_timers[timer] = _system->getMillis();
 	} else {
 		error("TIMER command %d?", cmd);
 	}

@@ -1174,7 +1174,7 @@ uint8 SwordEngine::mainLoop(void) {
 			uint32 newTime;
 			bool scrollFrameShown = false;
 
-			uint32 frameTime = _system->get_msecs();
+			uint32 frameTime = _system->getMillis();
 			_logic->engine();
 			_logic->updateScreenParams(); // sets scrolling
 
@@ -1185,19 +1185,19 @@ uint8 SwordEngine::mainLoop(void) {
 			_menu->refresh(MENU_TOP);
 			_menu->refresh(MENU_BOT);
 
-			newTime = _system->get_msecs();
+			newTime = _system->getMillis();
 			if (newTime - frameTime < 1000 / FRAME_RATE) {
 				scrollFrameShown = _screen->showScrollFrame();
-				int32 restDelay = (1000 / (FRAME_RATE * 2)) - (_system->get_msecs() - frameTime);
+				int32 restDelay = (1000 / (FRAME_RATE * 2)) - (_system->getMillis() - frameTime);
 				if (restDelay > 0)
 					delay((uint)restDelay);
 			}
 
-			newTime = _system->get_msecs();
+			newTime = _system->getMillis();
 			if ((newTime - frameTime < 1000 / FRAME_RATE) || (!scrollFrameShown))
 				_screen->updateScreen();
 
-			int32 frameDelay = (1000 / FRAME_RATE) - (_system->get_msecs() - frameTime);
+			int32 frameDelay = (1000 / FRAME_RATE) - (_system->getMillis() - frameTime);
 			if (frameDelay > 0)
 				delay((uint)frameDelay);
 			else
@@ -1240,11 +1240,11 @@ void SwordEngine::delay(uint amount) { //copied and mutilated from sky.cpp
 
 	OSystem::Event event;
 
-	uint32 start = _system->get_msecs();
+	uint32 start = _system->getMillis();
 	uint32 cur = start;
 
 	do {
-		while (_system->poll_event(&event)) {
+		while (_system->pollEvent(event)) {
 			switch (event.event_code) {
 			case OSystem::EVENT_KEYDOWN:
 
@@ -1296,9 +1296,9 @@ void SwordEngine::delay(uint amount) { //copied and mutilated from sky.cpp
 #endif
 			if (this_delay > amount)
 				this_delay = amount;
-			_system->delay_msecs(this_delay);
+			_system->delayMillis(this_delay);
 		}
-		cur = _system->get_msecs();
+		cur = _system->getMillis();
 	} while (cur < start + amount);
 }
 

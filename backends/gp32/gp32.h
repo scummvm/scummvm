@@ -61,17 +61,17 @@ public:
 	void setMouseCursor(const byte *buf, uint w, uint h, int hotspot_x, int hotspot_y, byte keycolor);
 	
 	// Shaking is used in SCUMM. Set current shake position.
-	void set_shake_pos(int shake_pos);
+	void setShakePos(int shake_pos);
 		
 	// Get the number of milliseconds since the program was started.
-	uint32 get_msecs();
+	uint32 getMillis();
 	
 	// Delay for a specified amount of milliseconds
-	void delay_msecs(uint msecs);
+	void delayMillis(uint msecs);
 	
 	// Get the next event.
 	// Returns true if an event was retrieved.	
-	bool poll_event(Event *event);
+	bool pollEvent(Event &event);
 
 	// Set the function to be invoked whenever samples need to be generated
 	// Format is the sample type format.
@@ -84,16 +84,16 @@ public:
 		
 	// Poll cdrom status
 	// Returns true if cd audio is playing
-	bool poll_cdrom();
+	bool pollCD();
 
 	// Play cdrom audio track
-	void play_cdrom(int track, int num_loops, int start_frame, int duration);
+	void playCD(int track, int num_loops, int start_frame, int duration);
 
 	// Stop cdrom audio track
-	void stop_cdrom();
+	void stopCD();
 
 	// Update cdrom audio status
-	void update_cdrom();
+	void updateCD();
 
 	// Add a new callback timer
 	void setTimerCallback(TimerProc callback, int timer);

@@ -341,7 +341,7 @@ void VMSaveManager::list_savefiles(const char *prefix, const char *directory,
     tryList(prefix, marks, num, i);
 }
 
-SaveFileManager *OSystem_Dreamcast::get_savefile_manager()
+SaveFileManager *OSystem_Dreamcast::getSavefileManager()
 {
   return new VMSaveManager();
 }

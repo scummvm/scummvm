@@ -812,17 +812,17 @@ void OSystem_GP32::setMouseCursor(const byte *buf, uint w, uint h, int hotspot_x
 }
 	
 // Shaking is used in SCUMM. Set current shake position.
-void OSystem_GP32::set_shake_pos(int shake_pos) { 
+void OSystem_GP32::setShakePos(int shake_pos) { 
 	_newShakePos = shake_pos;
 }
 		
 // Get the number of milliseconds since the program was started.
-uint32 OSystem_GP32::get_msecs() { 
+uint32 OSystem_GP32::getMillis() { 
 	return GpTickCountGet(); 
 }
 	
 // Delay for a specified amount of milliseconds
-void OSystem_GP32::delay_msecs(uint msecs) { 
+void OSystem_GP32::delayMillis(uint msecs) { 
 	int n = GpTickCountGet();
 	while ( ( GpTickCountGet() - n ) < msecs) ;
 }
@@ -830,7 +830,7 @@ void OSystem_GP32::delay_msecs(uint msecs) {
 // Get the next event.
 // Returns true if an event was retrieved.	
 
-bool OSystem_GP32::poll_event(Event *event) { 	// fixme: make more user-friendly :)
+bool OSystem_GP32::pollEvent(Event &event) { 	// fixme: make more user-friendly :)
 
 	#define EVENT_COUNT	2 // >=1
 	#define MOUSE_MIPS	1 // bg updates wrong if >1 ??
@@ -842,7 +842,7 @@ bool OSystem_GP32::poll_event(Event *event) { 	// fixme: make more user-friendly
 	if (key == GPC_VK_NONE) {
 		if (lastevent==EVENT_LBUTTONDOWN) {
 			lastevent=0;
-			event->event_code = EVENT_LBUTTONUP;
+			event.event_code = EVENT_LBUTTONUP;
 			return true;
 		}
 		return false;
@@ -855,7 +855,7 @@ bool OSystem_GP32::poll_event(Event *event) { 	// fixme: make more user-friendly
 	oldkey=key;
 	eventcount=EVENT_COUNT;
 
-	event->event_code = EVENT_KEYDOWN;
+	event.event_code = EVENT_KEYDOWN;
 
 	if (key & GPC_VK_FL && key & GPC_VK_FR) { // L+R = save state
 		printf("Saving game, please wait...");
@@ -888,27 +888,27 @@ bool OSystem_GP32::poll_event(Event *event) { 	// fixme: make more user-friendly
 	}
 
 	if (key & GPC_VK_START) { // START = menu
-		event->kbd.keycode = 319;
-		event->kbd.ascii = 319;
+		event.kbd.keycode = 319;
+		event.kbd.ascii = 319;
 		return true;			
 	}
 
 	if (key & GPC_VK_SELECT) { // SELECT == escape/skip
 		if (_overlay_visible) 
 			do key=GpKeyGet(); while (key != GPC_VK_NONE) ; // prevent 2xESC
-		event->kbd.keycode = 27;
-		event->kbd.ascii = 27;		
+		event.kbd.keycode = 27;
+		event.kbd.ascii = 27;		
 		return true;
 	}		
 
 	if (key & GPC_VK_FA) {
 		lastevent=EVENT_LBUTTONDOWN;
-		event->event_code = EVENT_LBUTTONDOWN;
+		event.event_code = EVENT_LBUTTONDOWN;
 		return true;
 	}
 	if (key & GPC_VK_FB) {
 		lastevent=EVENT_RBUTTONDOWN;
-		event->event_code = EVENT_RBUTTONDOWN;
+		event.event_code = EVENT_RBUTTONDOWN;
 		return true;
 	}
 
@@ -932,14 +932,14 @@ bool OSystem_GP32::poll_event(Event *event) { 	// fixme: make more user-friendly
 		if (my>199) my=199;
 	}
 
-	event->event_code = EVENT_MOUSEMOVE;
-	km.x = event->mouse.x = mx;
-	km.y = event->mouse.y = my;
+	event.event_code = EVENT_MOUSEMOVE;
+	km.x = event.mouse.x = mx;
+	km.y = event.mouse.y = my;
 
-	event->mouse.x /= _scaleFactor;
-	event->mouse.y /= _scaleFactor;	
+	event.mouse.x /= _scaleFactor;
+	event.mouse.y /= _scaleFactor;	
 
-	set_mouse_pos(event->mouse.x, event->mouse.y);
+	set_mouse_pos(event.mouse.x, event.mouse.y);
 }
 
 // Set the function to be invoked whenever samples need to be generated
@@ -1026,16 +1026,16 @@ uint32 OSystem_GP32::property(int param, Property *value) {
 		
 // Poll cdrom status
 // Returns true if cd audio is playing
-bool OSystem_GP32::poll_cdrom() { return false; }
+bool OSystem_GP32::pollCD() { return false; }
 
 // Play cdrom audio track
-void OSystem_GP32::play_cdrom(int track, int num_loops, int start_frame, int duration) { }
+void OSystem_GP32::playCD(int track, int num_loops, int start_frame, int duration) { }
 
 // Stop cdrom audio track
-void OSystem_GP32::stop_cdrom() { }
+void OSystem_GP32::stopCD() { }
 
 // Update cdrom audio status
-void OSystem_GP32::update_cdrom() { }
+void OSystem_GP32::updateCD() { }
 
 // Add a new callback timer
 void OSystem_GP32::setTimerCallback(TimerProc callback, int timer) { }

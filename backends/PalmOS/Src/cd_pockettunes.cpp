@@ -136,8 +136,8 @@ bool PckTunesCDPlayer::poll() {
 
 void PckTunesCDPlayer::update() {
 
-	// stop replay upon request of stop_cdrom()
-	if (_pckStopTime != 0 && _sys->get_msecs() >= _pckStopTime) {
+	// stop replay upon request of stopCD()
+	if (_pckStopTime != 0 && _sys->getMillis() >= _pckStopTime) {
 		PocketTunesStop();
 		_pckLoops = 0;
 		_pckStopTime = 0;
@@ -146,7 +146,7 @@ void PckTunesCDPlayer::update() {
 	}
 
 	// not fully played
-//	if (_sys->get_msecs() < _pckTrackEndFrame)
+//	if (_sys->getMillis() < _pckTrackEndFrame)
 //		return;
 	if (getPosition(_pckTrackEndFrame) < _pckTrackEndFrame)
 		return;
@@ -174,7 +174,7 @@ void PckTunesCDPlayer::update() {
 }
 
 void PckTunesCDPlayer::stop() {	/* Stop CD Audio in 1/10th of a second */
-	_pckStopTime = _sys->get_msecs() + 100;
+	_pckStopTime = _sys->getMillis() + 100;
 	_pckLoops = 0;
 	return;
 }
