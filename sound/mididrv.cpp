@@ -544,9 +544,10 @@ int MidiDriver_SEQ::open(int mode)
 	if (_mode != 0)
 		return MERR_ALREADY_OPEN;
 	device = 0;
-	_mode = mode;
 	if (mode != MO_SIMPLE)
 		return MERR_STREAMING_NOT_AVAILABLE;
+
+	_mode = mode;
 
 	char *device_name = getenv("SCUMMVM_MIDI");
 	if (device_name != NULL) {
@@ -1114,10 +1115,11 @@ int MidiDriver_ALSA::open(int mode)
 
 	if (_mode != 0)
 		return MERR_ALREADY_OPEN;
-	_mode = mode;
 
 	if (mode != MO_SIMPLE)
 		return MERR_STREAMING_NOT_AVAILABLE;
+
+	_mode = mode;
 
 	if (!(var = getenv("SCUMMVM_PORT"))) {
 		// default alsa port if none specified
