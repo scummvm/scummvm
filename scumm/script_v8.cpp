@@ -37,6 +37,7 @@
 
 #define OPCODE(x)	{ &Scumm_v8::x, #x }
 
+/*
 // FIXME: Move this somewhere better :)
 void Scumm_v8::loadCharset(int charset) {
 	char fontname[256];
@@ -51,6 +52,7 @@ void Scumm_v8::loadCharset(int charset) {
 
 	_fr[charset]->bindDisplay(virtscr[0].screenPtr, _realWidth, _realHeight, _realWidth);
 }
+*/
 
 void Scumm_v8::setupOpcodes()
 {
@@ -528,6 +530,62 @@ void Scumm_v8::decodeParseString(int m, int n)
 		break;
 	case 0xD1: {
 
+#if 1
+		_messagePtr = _scriptPointer;
+
+		if (_messagePtr[0] == '/') {
+			char pointer[20];
+			int i, j;
+
+			_scriptPointer += resStrLen((char*)_scriptPointer)+ 1;
+			translateText(_messagePtr, _transText);
+			for (i = 0, j = 0; (_messagePtr[i] != '/' || j == 0) && j < 19; i++) {
+				if (_messagePtr[i] != '/')
+					pointer[j++] = _messagePtr[i];
+			}
+			pointer[j] = 0;
+
+			// Stop any talking that's still going on
+			if (_sound->_talkChannel > -1)
+				_mixer->stop(_sound->_talkChannel);
+
+//			_sound->_talkChannel = _sound->playBundleSound(pointer);
+			_messagePtr = _transText;
+
+			switch (m) {
+			case 0:
+				actorTalk();
+				break;
+			case 1:
+				drawString(1);
+				break;
+			case 2:
+				unkMessage1();
+				break;
+			case 3:
+				unkMessage2();
+				break;
+			}
+			return;
+		} else {
+			switch (m) {
+			case 0:
+				actorTalk();
+				break;
+			case 1:
+				drawString(1);
+				break;
+			case 2:
+				unkMessage1();
+				break;
+			case 3:
+				unkMessage2();
+				break;
+			}
+			_scriptPointer = _messagePtr;
+			return;
+		}
+#else
 		char buffer[1024];
 		_messagePtr = _scriptPointer;
 
@@ -579,6 +637,7 @@ void Scumm_v8::decodeParseString(int m, int n)
 				x -= _fr[_string[m].charset]->getStringWidth(buffer) / 2;
 			_fr[_string[m].charset]->drawString(buffer, x, _string[m].ypos, _string[m].color, 0);
 		}
+#endif
 		break;
 	}
 	case 0xD2:		// SO_PRINT_WRAP Set print wordwrap
@@ -731,7 +790,7 @@ void Scumm_v8::o8_printSystem()
 void Scumm_v8::o8_blastText()
 {
 	// FIXME
-	decodeParseString(2, 0);
+	decodeParseString(1, 0);
 }
 
 void Scumm_v8::o8_cursorCommand()
@@ -789,7 +848,8 @@ void Scumm_v8::o8_cursorCommand()
 		break;
 	case 0xE7: {		// SO_CHARSET_SET
 		int charset = pop();
-		loadCharset(charset);
+		warning("Set userface charset to %d\n", charset);
+//		loadCharset(charset);
 		break;
 	}
 	case 0xE8:		// SO_CHARSET_COLOR

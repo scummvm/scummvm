@@ -21,6 +21,7 @@
 #include "stdafx.h"
 #include "charset.h"
 #include "scumm.h"
+#include "nut_renderer.h"
 
 void CharsetRendererCommon::setCurID(byte id)
 {
@@ -388,3 +389,78 @@ void CharsetRendererClassic::drawBits(VirtScreen *vs, byte *dst, byte *mask, int
 		mask += _vm->gdi._numStrips;
 	}
 }
+
+CharsetRendererNut::CharsetRendererNut(Scumm *vm)
+	 : CharsetRenderer(vm)
+{
+	_current = 0;
+	
+	for (int i = 0; i < 4; i++) {
+		char fontname[256];
+		sprintf(fontname, "resource/font%d.nut", i);
+		warning("Loading charset %s\n", fontname);
+		_fr[i] = new NutRenderer(_vm);
+		if (!(_fr[i]->loadFont(fontname, _vm->getGameDataPath()))) {
+			delete _fr[i];
+			_fr[i] = NULL;
+		}
+	
+		_fr[i]->bindDisplay(_vm->virtscr[0].screenPtr, _vm->_realWidth, _vm->_realHeight, _vm->_realWidth);
+	}
+}
+
+CharsetRendererNut::~CharsetRendererNut()
+{
+	for (int i = 0; i < 4; i++)
+		delete _fr[i];
+}
+
+void CharsetRendererNut::setCurID(byte id)
+{
+	assert(id < 4);
+	_curId = id;
+	_current = _fr[id];
+}
+
+int CharsetRendererNut::getCharWidth(byte chr)
+{
+	assert(_current);
+	return _current->getCharWidth(chr);
+}
+
+int CharsetRendererNut::getFontHeight()
+{
+	// FIXME / TODO: how to implement this properly???
+	assert(_current);
+	return _current->getCharHeight('|');
+}
+
+void CharsetRendererNut::printChar(int chr)
+{
+	assert(_current);
+	
+	if (chr == '@')
+		return;
+
+	if (_firstChar) {
+		_strLeft = _left;
+		_strTop = _top;
+		_strRight = _left;
+		_strBottom = _top;
+		_firstChar = false;
+	}
+
+	int width = _current->getCharWidth(chr);
+	int height = _current->getCharHeight(chr);
+
+	_current->drawChar((char)chr, _left, _top, _color);
+	_vm->updateDirtyRect(0, _left, _left + width, _top, _top + height, 0);
+
+	_left += width;
+	if (_left > _strRight)
+		_strRight = _left;
+
+	if (_top + height > _strBottom)
+		_strBottom = _top + height;
+}
+

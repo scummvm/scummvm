@@ -407,9 +407,10 @@ protected:
 	void decodeParseString(int m, int n);
 
 	/* Version 8 Font Stuff */
+/*
 	void loadCharset(int charset);
 	NutRenderer *_fr[4];
-
+*/
 	/* Version 8 script opcodes */
 	void o8_mod();
 	void o8_wait();

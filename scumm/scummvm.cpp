@@ -207,8 +207,16 @@ void Scumm::scummInit()
 	else
 		_resourceHeaderSize = 8;
 
+	if (_features & GF_AFTER_V7) {
+		initScreens(0, 0, _realWidth, _realHeight);
+	} else {
+		initScreens(0, 16, _realWidth, 144);
+	}
+
 	if (_features & GF_OLD256)
 		_charset = new CharsetRendererOld256(this);
+	else if (_features & GF_AFTER_V8)
+		_charset = new CharsetRendererNut(this);
 	else
 		_charset = new CharsetRendererClassic(this);
 
@@ -216,12 +224,6 @@ void Scumm::scummInit()
 	
 	if (!(_features & GF_SMALL_NAMES) && !(_features & GF_AFTER_V8))
 		loadCharset(1);
-
-	if (_features & GF_AFTER_V7) {
-		initScreens(0, 0, _realWidth, _realHeight);
-	} else {
-		initScreens(0, 16, _realWidth, 144);
-	}
 
 	setShake(0);
 	setupCursor();

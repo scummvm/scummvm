@@ -24,6 +24,7 @@
 #include "common/scummsys.h"
 
 class Scumm;
+class NutRenderer;
 struct VirtScreen;
 
 class CharsetRenderer {
@@ -46,6 +47,7 @@ public:
 
 protected:
 	Scumm *_vm;
+	byte _curId;
 
 	virtual int getCharWidth(byte chr) = 0;
 
@@ -59,7 +61,7 @@ public:
 	void addLinebreaks(int a, byte *str, int pos, int maxwidth);
 	
 	virtual void setCurID(byte id) = 0;
-	virtual int getCurID() = 0;
+	int getCurID() { return _curId; }
 	
 	virtual int getFontHeight() = 0;
 };
@@ -67,14 +69,12 @@ public:
 
 class CharsetRendererCommon : public CharsetRenderer {
 protected:
-	byte _curId;
 	byte *_fontPtr;
 
 public:
 	CharsetRendererCommon(Scumm *vm) : CharsetRenderer(vm) {}
 
 	void setCurID(byte id);
-	int getCurID() { return _curId; }
 	
 	int getFontHeight() { return _fontPtr[1]; }
 };
@@ -104,20 +104,22 @@ public:
 	void printChar(int chr);
 };
 
-/*
-class CharsetRendererNUT : public CharsetRenderer {
+class CharsetRendererNut : public CharsetRenderer {
 protected:
 	int getCharWidth(byte chr);
 
 	NutRenderer *_fr[4];
+	NutRenderer *_current;
 
 public:
-	CharsetRendererNUT(Scumm *vm) : CharsetRenderer(vm) {}
+	CharsetRendererNut(Scumm *vm);
+	~CharsetRendererNut();
 	
 	void printChar(int chr);
 
 	void setCurID(byte id);
+	
+	int getFontHeight();
 };
-*/
 
 #endif
