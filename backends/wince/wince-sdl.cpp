@@ -315,8 +315,7 @@ void OSystem_WINCE3::update_game_settings() {
 		_toolbarHandler.setActive(NAME_MAIN_PANEL);
 
 		// Keyboard is active for Monkey 1 or 2
-		if (_gameDetector._targetName == "monkey2" || _gameDetector._targetName == "monkeyvga" ||
-		_gameDetector._targetName == "monkeyega") {
+		if (strncmp(_gameDetector._targetName.c_str(), "monkey", 6) == 0) {
 			_monkeyKeyboard = true;
 			_toolbarHandler.setActive(NAME_PANEL_KEYBOARD);
 		}
