@@ -91,7 +91,6 @@ AudioStream *MusicHandle::createAudioSource(void) {
 	switch (_musicMode) {
 #ifdef USE_MAD
 		case MusicMp3:
-			printf("creating mp3 stream\n");
 			return makeMP3Stream(&_file, _file.size());			
 #endif
 #ifdef USE_VORBIS

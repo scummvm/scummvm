@@ -176,7 +176,6 @@ bool Sound::startSpeech(uint16 roomNo, uint16 localNo) {
 		} 
 #ifdef USE_MAD
 		else if (_cowMode == CowMp3) {
-			warning("playing mp3: Sample(%d/%d) Index %X, Size %d", roomNo, localNo, index, sampleSize);
 			_cowFile.seek(index);
 			_mixer->playMP3(&_speechHandle, &_cowFile, sampleSize, speechVol, speechPan, SOUND_SPEECH_ID);
 			// with compressed audio, we can't calculate the wave volume.
