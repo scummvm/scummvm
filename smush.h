@@ -111,6 +111,7 @@ struct SmushPlayer {
 
         uint32 nextBE32();
         void init();
+        void deinit();
 
         void startVideo(short int arg, byte* videofile);
 
