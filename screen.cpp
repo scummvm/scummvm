@@ -236,29 +236,40 @@ void screenBlocksBlitDirtyBlocks()
 	glMatrixMode(GL_TEXTURE);
 	glLoadIdentity();
 
+	glEnable(GL_DEPTH_TEST);
+	glDepthFunc(GL_ALWAYS);
+	glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE); 
+	glDepthMask(GL_TRUE);
+
 	for(i=0;i<40;i++)
 	{
 		for(j=0;j<30;j++)
 		{
 			if(screenBlockData[i][j].isDirty)
 			{
-				glRasterPos2i(i*16, j*16);
-				glEnable(GL_DEPTH_TEST);
-				glDepthFunc(GL_ALWAYS);
-				glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE); 
-				glDepthMask(GL_TRUE);
+				// find the largest possible line
+				int width = 1;
+				int temp = i+1;
+				screenBlockData[i][j].isDirty = false;
+				while(temp <40 && screenBlockData[temp][j].isDirty)
+				{
+					screenBlockData[temp][j].isDirty = false;
+					width++;
+				}
+
 				/* This loop here is to prevent using PixelZoom that may be unoptimized for the 1.0 / -1.0 case
 				in some drivers...
 				*/
 				for (int y = 0; y < 16; y++)
 				{
 					glRasterPos2i(j*16, i*16 + y);
-					glDrawPixels(16, 1, GL_DEPTH_COMPONENT, GL_UNSIGNED_SHORT, dataTemp+((j*16 +y) * 640)+(i*16));
+					glDrawPixels(16*width, 1, GL_DEPTH_COMPONENT, GL_UNSIGNED_SHORT, dataTemp+((j*16 +y) * 640)+(i*16));
 				}
-				glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE); 
-				glDepthFunc(GL_LESS);
 			}
 		}
 	}
+
+	glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE); 
+	glDepthFunc(GL_LESS);
 }
 
