@@ -143,27 +143,17 @@ int main(int argc, char *argv[]) {
 	}
 #endif
 
-	lua_open();
-
-	lua_beginblock();
 	lua_iolibopen();
 	lua_strlibopen();
 	lua_mathlibopen();
-	lua_endblock();
 
-	lua_beginblock();
 	register_lua();
-	lua_endblock();
-
-	lua_beginblock();
 	bundle_dofile("_system.lua");
-	lua_endblock();
 
-	lua_beginblock();
 	lua_pushnil();		// resumeSave
-	lua_pushnumber(0);		// bootParam
+	lua_pushnil();		// bootParam
+//	lua_pushnumber(0);		// bootParam
 	lua_call("BOOT");
-	lua_endblock();
 
 	Engine::instance()->setMode(ENGINE_MODE_NORMAL);
 	Engine::instance()->mainLoop();
