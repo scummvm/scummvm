@@ -23,17 +23,9 @@
 
 #include "scummsys.h"
 
-#ifndef ABS
-#define ABS(x) ((x) >= 0 ? (x) : -(x))
-#endif
-
-#ifndef MIN
-#define MIN(a,b) (((a) < (b)) ? (a) : (b))
-#endif
-
-#ifndef MAX
-#define MAX(a,b) (((a) > (b)) ? (a) : (b))
-#endif
+template<typename T> inline T ABS (T x)			{ return (x>=0) ? x : -x; }
+template<typename T> inline T MIN (T a, T b)	{ return (a<b) ? a : b; }
+template<typename T> inline T MAX (T a, T b)	{ return (a>b) ? a : b; }
 
 /**
  * Template method which swaps the vaulues of its two parameters.
