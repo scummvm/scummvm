@@ -91,7 +91,7 @@ int Timer::handler(int t) {
 	for (l = 0; l < MAX_TIMERS; l++) {
 		if ((_timerSlots[l].procedure) && (_timerSlots[l].interval > 0)) {
 			_timerSlots[l].counter -= interval;
-			if (_timerSlots[l].counter <= 0) {
+			while (_timerSlots[l].counter <= 0) {
 				_timerSlots[l].counter += _timerSlots[l].interval;
 				_timerSlots[l].procedure(_timerSlots[l].refCon);
 			}
