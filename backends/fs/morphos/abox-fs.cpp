@@ -204,7 +204,7 @@ FilesystemNode *ABoxFilesystemNode::parent() const
 
 	if (_lock == NULL)
 		/* Parent of the root is the root itself */
-		node = const_cast<ABoxFilesystemNode*>(this);
+		node = clone();
 	else
 	{
 		BPTR parent_lock = ParentDir(_lock);
