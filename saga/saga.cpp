@@ -202,9 +202,6 @@ int SagaEngine::init(GameDetector &detector) {
 	_music->setNativeMT32(native_mt32);
 	_music->setAdlib(adlib);
 
-	if (midiDriver == MD_MT32)
-		_music->setPassThrough(true);
-
 	if (!_musicEnabled) {
 		debug(0, "Music disabled.");
 	}
