@@ -311,25 +311,57 @@ void NewGui::blendRect(int x, int y, int w, int h, OverlayColor color, int level
 	if (!rect.isValidRect())
 		return;
 
-	int r, g, b;
-	uint8 ar, ag, ab;
-	_system->colorToRGB(color, ar, ag, ab);
-	r = ar * level;
-	g = ag * level;
-	b = ab * level;
+	if (_system->hasAlpha()) {
 
-	OverlayColor *ptr = getBasePtr(rect.left, rect.top);
+		int a, r, g, b;
+		uint8 aa, ar, ag, ab;
+		_system->colorToARGB(color, aa, ar, ag, ab);
+		a = aa*level/(level+1);
+		if (a < 1)
+			return;
+		r = ar * a;
+		g = ag * a;
+		b = ab * a;
 
-	h = rect.height();
-	w = rect.width();
-	while (h--) {
-		for (int i = 0; i < w; i++) {
-			_system->colorToRGB(ptr[i], ar, ag, ab);
-			ptr[i] = _system->RGBToColor((ar + r) / (level+1),
-										 (ag + g) / (level+1),
-										 (ab + b) / (level+1));
+		OverlayColor *ptr = getBasePtr(rect.left, rect.top);
+		
+		h = rect.height();
+		w = rect.width();
+		while (h--) {
+			for (int i = 0; i < w; i++) {
+				_system->colorToARGB(ptr[i], aa, ar, ag, ab);
+				int a2 = aa + a - (a*aa)/255;
+				ptr[i] = _system->ARGBToColor(a2,
+							      ((255-a)*aa*ar/255+r)/a2,
+							      ((255-a)*aa*ag/255+g)/a2,
+							      ((255-a)*aa*ab/255+b)/a2);
+			}
+			ptr += _screenPitch;
 		}
-		ptr += _screenPitch;
+
+	} else {
+	  
+		int r, g, b;
+		uint8 ar, ag, ab;
+		_system->colorToRGB(color, ar, ag, ab);
+		r = ar * level;
+		g = ag * level;
+		b = ab * level;
+		
+		OverlayColor *ptr = getBasePtr(rect.left, rect.top);
+		
+		h = rect.height();
+		w = rect.width();
+		while (h--) {
+			for (int i = 0; i < w; i++) {
+				_system->colorToRGB(ptr[i], ar, ag, ab);
+				ptr[i] = _system->RGBToColor((ar + r) / (level+1),
+							     (ag + g) / (level+1),
+							     (ab + b) / (level+1));
+			}
+			ptr += _screenPitch;
+		}
+
 	}
 #endif
 }
