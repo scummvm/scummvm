@@ -154,8 +154,8 @@ void ScummEngine_v6::setupScummVars() {
 	// Many vars are the same as in V5 & V6 games, so just call the inherited method first
 	ScummEngine::setupScummVars();
 
-	VAR_V6_SCREEN_WIDTH = 41;
-	VAR_V6_SCREEN_HEIGHT = 54;
+	VAR_ROOM_WIDTH = 41;
+	VAR_ROOM_HEIGHT = 54;
 
 	VAR_LEFTBTN_HOLD = 74;
 	VAR_RIGHTBTN_HOLD = 75;
@@ -210,8 +210,8 @@ void ScummEngine_v72he::setupScummVars() {
 	VAR_CURSORSTATE = 19;
 	VAR_USERPUT = 20;
 	VAR_ROOM = 21;
-	VAR_V6_SCREEN_WIDTH = 22;
-	VAR_V6_SCREEN_HEIGHT = 23;
+	VAR_ROOM_WIDTH = 22;
+	VAR_ROOM_HEIGHT = 23;
 	VAR_CAMERA_POS_X = 24;
 	VAR_CAMERA_MIN_X = 25;
 	VAR_CAMERA_MAX_X = 26;
@@ -278,8 +278,8 @@ void ScummEngine_v7::setupScummVars() {
 	VAR_MOUSE_Y = 2;
 	VAR_VIRT_MOUSE_X = 3;
 	VAR_VIRT_MOUSE_Y = 4;
-	VAR_V6_SCREEN_WIDTH = 5;
-	VAR_V6_SCREEN_HEIGHT = 6;
+	VAR_ROOM_WIDTH = 5;
+	VAR_ROOM_HEIGHT = 6;
 	VAR_CAMERA_POS_X = 7;
 	VAR_CAMERA_POS_Y = 8;
 	VAR_OVERRIDE = 9;
@@ -378,8 +378,8 @@ void ScummEngine_v7::setupScummVars() {
 }
 
 void ScummEngine_v8::setupScummVars() {
-	// VAR_ROOM_HEIGHT = 1;
-	// VAR_ROOM_WIDTH = 2;
+	VAR_ROOM_WIDTH = 1;
+	VAR_ROOM_HEIGHT = 2;
 
 	VAR_MOUSE_X = 3;
 	VAR_MOUSE_Y = 4;

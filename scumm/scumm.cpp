@@ -779,8 +779,8 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 
 	VAR_V5_TALK_STRING_Y = 0xFF;
 
-	VAR_V6_SCREEN_WIDTH = 0xFF;
-	VAR_V6_SCREEN_HEIGHT = 0xFF;
+	VAR_ROOM_WIDTH = 0xFF;
+	VAR_ROOM_HEIGHT = 0xFF;
 	VAR_V6_EMSSPACE = 0xFF;
 
 	VAR_CAMERA_POS_Y = 0xFF;
@@ -1846,9 +1846,9 @@ void ScummEngine::startScene(int room, Actor *a, int objectNr) {
 		loadRoomObjects();
 
 	
-	if (VAR_V6_SCREEN_WIDTH != 0xFF && VAR_V6_SCREEN_HEIGHT != 0xFF) {
-		VAR(VAR_V6_SCREEN_WIDTH) = _roomWidth;
-		VAR(VAR_V6_SCREEN_HEIGHT) = _roomHeight;
+	if (VAR_ROOM_WIDTH != 0xFF && VAR_ROOM_HEIGHT != 0xFF) {
+		VAR(VAR_ROOM_WIDTH) = _roomWidth;
+		VAR(VAR_ROOM_HEIGHT) = _roomHeight;
 	}
 
 	VAR(VAR_CAMERA_MIN_X) = _screenWidth / 2;
