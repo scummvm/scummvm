@@ -313,12 +313,15 @@ Scumm games, not other games (such as Simon the Sorcerer)
 Savegames:
 ----------
 
-Savegames are by default put in the current directory. You can use the
-environment variable SCUMMVM_SAVEPATH to specify where to put save games.
-Don't forget the trailing directory separator. Also be aware that saved games
-can, and probably WILL, break between ScummVM releases.
+Savegames are by default put in the current directory. You can specify the save
+in the config file by setting the savepath parameter. See the example config
+file later in this readme.
 
-Bash Example:
+You can also use the environment variable SCUMMVM_SAVEPATH to specify where to
+put save games. Don't forget the trailing directory separator. Also be aware
+that saved games can, and probably WILL, break between ScummVM releases.
+
+Bash (Linux) Example:
         export SCUMMVM_SAVEPATH=/tmp/scummvm_savegames/
 
 Windows example:
@@ -479,6 +482,7 @@ An example config file is as follows:
         [scummvm]
         gfx_mode=supereagle
         fullscreen=true
+		savepath=C:\saves\
 
         [tentacle]
         path=C:\tentacle\
