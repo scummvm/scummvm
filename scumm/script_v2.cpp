@@ -793,7 +793,7 @@ void Scumm_v2::o2_verbOps() {
 		int x = fetchScriptByte() << 3;
 		int y = fetchScriptByte() << 3;
 		slot = getVarOrDirectByte(0x80) + 1;
-		/*int unk =*/ fetchScriptByte(); // ?
+		/* int unk = */ fetchScriptByte(); // ?
 		
 		//printf("o2_verbOps: verb = %d, slot = %d, x = %d, y = %d, unk = %d, name = %s\n",
 		//		verb, slot, x, y, unk, _scriptPointer);
@@ -816,6 +816,17 @@ void Scumm_v2::o2_verbOps() {
 		
 		vs->x = x;
 		vs->y = y;
+		
+		// FIXME: again, this map depends on the language of the game.
+		// E.g. a german keyboard has 'z' and 'y' swapped, while a french
+		// keyboard starts with "awert", etc.
+		const char keyboard[] = {
+				'q','w','e','r','t',
+				'a','s','d','f','g',
+				'z','x','c','v','b'
+			};
+		if (1 <= slot && slot <= ARRAYSIZE(keyboard))
+			vs->key = keyboard[slot - 1];
 
 		// It follows the verb name
 		loadPtrToResource(rtVerb, slot, NULL);
@@ -901,10 +912,18 @@ void Scumm_v2::o2_drawSentence() {
 		}
 	}
 
+	if (0 < _scummVars[29] && _scummVars[29] <= 4) {
+		// FIXME: Are these stored somewhere in the data? If not, we have to provide
+		// localized versions for all the languages MM/Zak are available in. Note
+		// that we already will have to do that for the fonts anyway.
+		const char *words[] = { " ", " in", " with", " on", " to" };
+		strcat(sentence, words[_scummVars[29]]);
+	}
+
 	if (VAR(VAR_SENTENCE_OBJECT2) > 0) {
 		temp = getObjOrActorName(VAR(VAR_SENTENCE_OBJECT2));
 		if (temp) {
-			strcat(sentence, " with ");
+			strcat(sentence, " ");
 			strcat(sentence, (const char*)temp);
 		}
 	}
