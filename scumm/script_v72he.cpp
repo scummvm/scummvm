@@ -1414,7 +1414,7 @@ void ScummEngine_v72he::o72_unknownF8() {
 
 void ScummEngine_v72he::o72_unknownF9() {
 	// File related
-	byte name[100];
+	//byte name[100];
 	//copyScriptString(name);
 	//debug(1,"o72_unknownF9: %s", name);
 }
