@@ -252,28 +252,3 @@ void SmushFont::drawStringWrap(const char *str, byte *buffer, int dst_width, int
 }
 
 } // End of namespace Scumm
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

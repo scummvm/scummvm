@@ -316,7 +316,6 @@ void ScummEngine::CHARSET_1() {
 		warning("_hasMask mismatch (case A %d) - please report to Fingolfin if you notice any text/graphics glitches related to this!", _charset->_hasMask);
 }
 
-
 void ScummEngine::drawString(int a, const byte *msg) {
 	byte buf[256];
 	byte *space;
