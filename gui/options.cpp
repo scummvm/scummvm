@@ -38,7 +38,7 @@
   |_| |_| |_|_|___/ |_|___/  \__,_|  \__,_|\__,_|_| |_| |_|_| |_| |_|\__, (_)
                                                                      |___/   
 
-This just looks like an option dialog, butit doesn't change any actual settings currently!
+This just looks like an option dialog, but it doesn't change any actual settings currently!
 
 */
 
