@@ -522,7 +522,7 @@ void ScummEngine_v6he::o6_roomOps() {
 	case 220:
 		a = pop();
 		b = pop();
-		warning("o6_roomops:220 (%d, %d): unimplemented", a, b);
+		copyPalColor(a, b);
 		break;
 	case 221:
 		int len;
