@@ -1946,6 +1946,7 @@ void Scumm::o5_setObjectName() {
 	int a;
 	int i;
 	byte *name;
+	unsigned char work[255];
 	
 	if (obj < NUM_ACTORS)
 		error("Can't set actor %d name with new-name-of", obj);
@@ -1958,19 +1959,25 @@ void Scumm::o5_setObjectName() {
 	i = 0;	
 
 	while ((a = fetchScriptByte()) != 0) {
-		 name[i++] = a;
+		 work[i++] = a;
 
 		if (a==0xFF) {
-			name[i++] = fetchScriptByte();
-			name[i++] = fetchScriptByte();
-			name[i++] = fetchScriptByte();
+			work[i++] = fetchScriptByte();
+			work[i++] = fetchScriptByte();
+			work[i++] = fetchScriptByte();
 		}
 
-		if (i >= size)
-			error("New name of object %d too long", obj);
 	}
 
-	name[i] = 0;
+	if (i >= size) {
+		work[i] = 0;
+		warning("New name of object %d too long (old *%s* new *%s*)", 
+					obj, name, work);
+		i = size - 1;
+	}
+
+	work[i] = 0;
+	strcpy((char*)name, (char*)work);
 	runHook(0);
 }
 
