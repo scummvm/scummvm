@@ -8,8 +8,8 @@ if [ "$TMP" = "" ]; then
 fi
 PKG=$TMP/package-scummvm
 
-#VERSION=0.5.1
-VERSION=20031221
+VERSION=0.7.1
+#VERSION=20031221
 ARCH=i486
 BUILD=1
 
@@ -33,7 +33,7 @@ strip scummvm
 chmod 755 scummvm
 mkdir -p $PKG/usr/bin
 cp scummvm $PKG/usr/bin
-chown root:bin $PKG/usr/bin/scummvm
+chown -R root:bin $PKG/usr/bin
 gzip -9 scummvm.6
 mkdir -p $PKG/usr/man/man6
 cp scummvm.6.gz $PKG/usr/man/man6
@@ -43,6 +43,12 @@ cp -a AUTHORS COPYING ChangeLog NEWS README TODO \
 chmod 644 $PKG/usr/doc/scummvm-$VERSION
 mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
+mkdir -p $PKG/usr/share/pixmaps
+cp -a scummvm.ico scummvm.xpm \
+  $PKG/usr/share/pixmaps
+mkdir -p $PKG/usr/share/applications
+cp -a scummvm.desktop \
+  $PKG/usr/share/applications
 
 cd $PKG
 makepkg -l y -c n $TMP/scummvm-$VERSION-$ARCH-$BUILD.tgz
