@@ -84,52 +84,6 @@ Scene::~Scene() {
    delete [] sectors_; 
 }
 
-void Scene::Sector::load(TextSplitter &ts) {
-  char buf[256];
-  int id = 0;
-  ts.scanString(" sector %256s", 1, buf);
-  ts.scanString(" id %d", 1, &id);
-  load0(ts, buf, id);
-}
-
-void Scene::Sector::load0(TextSplitter &ts, char *name, int id) {
-  char buf[256];
-  int i = 0;
-  float height = 12345.f; // Yaz: this is in the original code...
-  Vector3d tempVert;
-
-  name_ = name;
-  id_ = id;
-  ts.scanString(" type %256s", 1, buf);
-
-  // FIXME: I don't think these are right (see grim loc_4A7D19, result is var_200?)
-  // Yaz: actualy, those should be flags that are later used function at 4A66C0 (I named it buildWalkPlane)
-
-  
-  if (strstr(buf, "walk"))
-   type_ = 0x1000;
-  else if (strstr(buf, "funnel"))
-   type_ = 0x1100; 
-  else if (strstr(buf, "camera"))
-   type_ = 0x2000;
-  else if (strstr(buf, "special"))
-   type_ = 0x4000;
-  else if (strstr(buf, "chernobyl"))
-   type_ = 0x8000;
-  else
-   error("Unknown sector type '%s' in room setup", buf);
-
-  ts.scanString(" default visibility %256s", 1, buf);
-  visibility_ = buf;
-  ts.scanString(" height %f", 1, &height_);
-  ts.scanString(" numvertices %d", 1, &numVertices_);
-  vertices_ = new Vector3d[numVertices_];
-
-  ts.scanString(" vertices: %f %f %f", 3, &vertices_[0].x(), &vertices_[0].y(), &vertices_[0].z());
-  for (i=1;i<numVertices_;i++)
-    ts.scanString(" %f %f %f", 3, &vertices_[i].x(), &vertices_[i].y(), &vertices_[i].z());
-}
-
 void Scene::Setup::load(TextSplitter &ts) {
   char buf[256];
 

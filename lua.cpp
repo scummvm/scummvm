@@ -462,13 +462,14 @@ static void IsActorInSector(void) {
 
   warning("IsActorInSector(%s, %s): SEMI-STUB", act->name(), name);
   for (i=0; i<numSectors; i++) {
-   const char *sector_name = Engine::instance()->currScene()->getSectorName(i);
-   if (sector_name && strstr(sector_name, name)) {
+   Sector *sector = Engine::instance()->currScene()->getSectorBase(i);
+
+   if (strstr(sector->name(), name)) {
     warning("found sector!");
-    if (Engine::instance()->currScene()->isPointInSector(i, act->pos())) {
-      lua_pushnumber(Engine::instance()->currScene()->getSectorID(i));
-      lua_pushstring((char*)Engine::instance()->currScene()->getSectorName(i));
-      lua_pushnumber(Engine::instance()->currScene()->getSectorType(i));
+    if (sector->isPointInSector(act->pos())) {
+      lua_pushnumber(sector->id());
+      lua_pushstring((char*)sector->name());
+      lua_pushnumber(sector->type());
     }
    }
   } 

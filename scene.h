@@ -22,6 +22,7 @@
 #include "bitmap.h"
 #include "color.h"
 #include "debug.h"
+#include "walkplane.h"
 #include <SDL.h>
 #include <SDL_opengl.h>
 #include <string>
@@ -56,14 +57,13 @@ public:
   int setup() const { return currSetup_ - setups_; }
 
   // Sector access functions
-  #define validSector(id) ((numSectors_ >= 0) && (id < numSectors_))
   int getSectorCount() { return numSectors_; }
-  const char *getSectorName(int id) const {
-   if (validSector(id)) return sectors_[id].name_.c_str(); else return NULL;
+  Sector *getSectorBase(int id) { 
+   if ((numSectors_ >= 0) && (id < numSectors_))
+    return &sectors_[id];
+   else
+    return NULL;
   }
-  int getSectorType(int id) { if (validSector(id)) return sectors_[id].type_; else return -1; }
-  int getSectorID(int id) { if (validSector(id)) return sectors_[id].id_; else return -1; }
-  bool isPointInSector(int id, Vector3d point) { return false; } // FIXME: Need pointInPoly func
 
 private:
   struct Setup {		// Camera setup data
@@ -82,17 +82,6 @@ private:
     Vector3d pos_, dir_;
     Color color_;
     float intensity_, umbraangle_, penumbraangle_;
-  };
-
-  struct Sector {		// Walkarea 'sectors'
-    void load(TextSplitter &ts);
-    void load0(TextSplitter &ts, char *name, int id);
-    int numVertices_, id_;
-    std::string name_;
-    int type_;
-    std::string visibility_;
-    Vector3d *vertices_;
-    float height_;
   };
 
   std::string name_;
