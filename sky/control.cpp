@@ -1128,21 +1128,48 @@ void SkyControl::stosMegaSet(uint8 **destPos, MegaSet *mega) {
 	// anims, stands, turnTable
 }
 
-void SkyControl::stosStr(uint8 **destPos, uint16 *src, bool isGraf) {
+void SkyControl::stosGrafStr(uint8 **destPos, Compact *cpt) {
 	uint16 strLen = 0;
-	if (isGraf) {
-		while (src[strLen] || src[strLen+2])
-			strLen++;
-		strLen += 3;
-	} else {
+	uint16 *src = cpt->grafixProg;
+	if ((cpt->logic == L_AR_ANIM) || (cpt->logic == L_TURNING)) {
+		if ((!src[0]) && (!src[2])) {
+			strLen = 3;
+		} else {
+			if (!src[0])
+		        strLen += 2;
+			while (src[strLen])
+				strLen += 2;
+		}
+	} else if ((cpt->logic == L_MOD_ANIMATE) || (cpt->logic == L_TALK) || 
+		(cpt->logic == L_LISTEN) || (cpt->logic == L_FRAMES)) {
 		while (src[strLen])
-			strLen++;
-		strLen++;
-	}
+			strLen += 3; // start fx, sendsync and coordinates are all 3 words each.
+	} else {
+		while (src[strLen])  // this *could* lead to problems... but I can't think
+			strLen++;        // of a way to find the end of the graphics data if
+	}                        // the compact isn't in any special graphic mode.
+	strLen++;
 	STOSW(*destPos, strLen);
 	for (uint16 cnt = 0; cnt < strLen; cnt++) {
 		STOSW(*destPos, src[cnt]);
 	}
+}
+
+void SkyControl::stosStr(uint8 **destPos, Compact *cpt, uint16 type) {
+	uint16 strLen = 0;
+	if (type & SAVE_GRAFX)
+		stosGrafStr(destPos, cpt);
+
+	if (type & SAVE_TURNP) {
+		uint16 *src = cpt->extCompact->turnProg;
+		while (src[strLen])
+			strLen++;
+		strLen++;
+		STOSW(*destPos, strLen);
+		for (uint16 cnt = 0; cnt < strLen; cnt++) {
+			STOSW(*destPos, src[cnt]);
+		}
+	}	
 }
 
 void SkyControl::stosCompact(uint8 **destPos, Compact *cpt) {
@@ -1159,10 +1186,7 @@ void SkyControl::stosCompact(uint8 **destPos, Compact *cpt) {
 
 	STOSW(*destPos, saveType);
 
-	if (saveType & SAVE_GRAFX)
-		stosStr(destPos, cpt->grafixProg, true);
-	if (saveType & SAVE_TURNP)
-		stosStr(destPos, cpt->extCompact->turnProg, false);
+	stosStr(destPos, cpt, saveType);
 
 	STOSW(*destPos, cpt->logic);
 	STOSW(*destPos, cpt->status);
@@ -1317,7 +1341,15 @@ void SkyControl::lodsCompact(uint8 **srcPos, Compact *cpt) {
 	if (saveType & SAVE_GRAFX) {
 		uint16 grafxLen;
 		LODSW(*srcPos, grafxLen);
-		cpt->grafixProg = (uint16 *)malloc(grafxLen << 1);
+		//cpt->grafixProg = (uint16 *)malloc(grafxLen << 1);
+		/* hack: there's a theoretical possibility that the saving routine detected the
+		         end of the string incorrectly and forgot the end of the data.
+		         By adding 10 zero-words, the data should at least be correctly terminated
+				 (as all grafixProg data is 0-terminated), so if this condition really can
+				 occur, it should only lead to small graphic glitches, not to crashes.*/
+
+		cpt->grafixProg = (uint16 *)malloc((grafxLen << 1) + 20);
+		memset(cpt->grafixProg + grafxLen, 0, 20); 
 		appendMemList(cpt->grafixProg);
 		for (cnt = 0; cnt < grafxLen; cnt++) {
 			LODSW(*srcPos, cpt->grafixProg[cnt]);
