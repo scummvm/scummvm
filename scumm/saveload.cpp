@@ -114,7 +114,7 @@ bool Scumm::loadState(int slot, bool compat, SaveFileManager *mgr) {
 		delete out;
 		return false;
 	}
-	
+
 	// Due to a bug in scummvm up to and including 0.3.0, save games could be saved
 	// in the V8/V9 format but were tagged with a V7 mark. Ouch. So we just pretend V7 == V8 here
 	if (hdr.ver == VER_V7)
@@ -394,11 +394,23 @@ void Scumm::saveOrLoad(Serializer *s, uint32 savegameVersion) {
 		MKLINE(Scumm, _currentScript, sleByte, VER_V8),
 		MKARRAY(Scumm, _localScriptList[0], sleUint32, NUM_LOCALSCRIPT, VER_V8),
 
-		// vm.localvar grew from 25 to 40 entries and then from
-		// 16 to 32 bit variables... and THEN from 16 to 20 variables
-		MKARRAY_OLD(Scumm, vm.localvar[0][0], sleUint16, 25 * 17, VER_V8, VER_V8),
-		MKARRAY_OLD(Scumm, vm.localvar[0][0], sleUint16, NUM_SCRIPT_SLOT * 17, VER_V9, VER_V14),
-		MKARRAY(Scumm, vm.localvar[0][0], sleUint16, NUM_SCRIPT_SLOT * 25, VER_V15),
+
+		// vm.localvar grew from 25 to 40 script entries and then from
+		// 16 to 32 bit variables (but that wasn't reflect hered)... and
+		// THEN from 16 to 25 variables. However, this was incorrectly implemented
+		// here. But now we support two dimensional arrays properly here.
+		MKARRAY2_OLD(Scumm, vm.localvar[0][0], sleUint16, 17, 25, (byte*)vm.localvar[1] - (byte*)vm.localvar[0], VER_V8, VER_V8),
+		MKARRAY2_OLD(Scumm, vm.localvar[0][0], sleUint16, 17, NUM_SCRIPT_SLOT, (byte*)vm.localvar[1] - (byte*)vm.localvar[0], VER_V9, VER_V14),
+
+		// We used to save 25 * 40 = 1000 blocks; but actually, each 'row consisted of 26 entry,
+		// i.e. 26 * 40 = 1040. Thus the last 40 blocks of localvar where not saved at all. To be
+		// able to load this screwed format, we use a trick: We load 26 * 38 = 988 blocks.
+		// Then, we mark the followin 12 blocks (24 bytes) as obsolete.
+		MKARRAY2_OLD(Scumm, vm.localvar[0][0], sleUint16, 26, 38, (byte*)vm.localvar[1] - (byte*)vm.localvar[0], VER_V15, VER_V17),
+		MK_OBSOLETE_ARRAY(Scumm, vm.localvar[39][0], sleUint16, 12, VER_V15, VER_V17),
+
+		MKARRAY2(Scumm, vm.localvar[0][0], sleUint32, 26, NUM_SCRIPT_SLOT, (byte*)vm.localvar[1] - (byte*)vm.localvar[0], VER_V18),
+
 
 		MKARRAY(Scumm, _resourceMapper[0], sleByte, 128, VER_V8),
 		MKARRAY(Scumm, _charsetColorMap[0], sleByte, 16, VER_V8),
@@ -941,13 +953,20 @@ void Serializer::saveEntries(void *d, const SaveLoadEntry *sle) {
 			saveWord(ptr ? ((*_save_ref) (_ref_me, type, ptr) + 1) : 0);
 		} else {
 			// save entry
-			int replen = 1;
+			int columns = 1;
+			int rows = 1;
+			int rowlen = 0;
 			if (type & 128) {
 				sle++;
-				replen = sle->offs;
+				columns = sle->offs;
+				rows = sle->type;
+				rowlen = sle->size;
 				type &= ~128;
 			}
-			saveArrayOf(at, replen, size, type);
+			while (rows--) {
+				saveArrayOf(at, columns, size, type);
+				at += rowlen;
+			}
 		}
 		sle++;
 	}
@@ -975,14 +994,21 @@ void Serializer::loadEntries(void *d, const SaveLoadEntry *sle) {
 				*((void **)at) = num ? (*_load_ref) (_ref_me, type, num - 1) : NULL;
 		} else {
 			// load entry
-			int replen = 1;
+			int columns = 1;
+			int rows = 1;
+			int rowlen = 0;
 
 			if (type & 128) {
 				sle++;
-				replen = sle->offs;
+				columns = sle->offs;
+				rows = sle->type;
+				rowlen = sle->size;
 				type &= ~128;
 			}
-			loadArrayOf(at, replen, size, type);
+			while (rows--) {
+				loadArrayOf(at, columns, size, type);
+				at += rowlen;
+			}
 		}
 		sle++;
 	}

@@ -36,10 +36,11 @@ enum {
 	VER_V14,
 	VER_V15,
 	VER_V16,
-	VER_V17
+	VER_V17,
+	VER_V18
 };
 
-#define CURRENT_VER VER_V17
+#define CURRENT_VER VER_V18
 
 
 // To work around a warning in GCC 3.2 (and 3.1 ?) regarding non-POD types,
@@ -55,16 +56,19 @@ enum {
 
 // Any item that is still in use automatically gets a maxVersion equal to CURRENT_VER
 #define MKLINE(type,item,saveas,minVer) {OFFS(type,item),saveas,SIZE(type,item),minVer,CURRENT_VER}
-#define MKARRAY(type,item,saveas,num,minVer) {OFFS(type,item),128|saveas,SIZE(type,item),minVer,CURRENT_VER}, {num,0,0,0,0}
+#define MKARRAY(type,item,saveas,dim,minVer) {OFFS(type,item),128|saveas,SIZE(type,item),minVer,CURRENT_VER}, {dim,1,0,0,0}
+#define MKARRAY2(type,item,saveas,dim,dim2,rowlen,minVer) {OFFS(type,item),128|saveas,SIZE(type,item),minVer,CURRENT_VER}, {dim,dim2,rowlen,0,0}
 
 // Use this if you have an entry that used to be smaller:
 #define MKLINE_OLD(type,item,saveas,minVer,maxVer) {OFFS(type,item),saveas,SIZE(type,item),minVer,maxVer}
-#define MKARRAY_OLD(type,item,saveas,num,minVer,maxVer) {OFFS(type,item),128|saveas,SIZE(type,item),minVer,maxVer}, {num,0,0,0,0}
+#define MKARRAY_OLD(type,item,saveas,dim,minVer,maxVer) {OFFS(type,item),128|saveas,SIZE(type,item),minVer,maxVer}, {dim,1,0,0,0}
+#define MKARRAY2_OLD(type,item,saveas,dim,dim2,rowlen,minVer,maxVer) {OFFS(type,item),128|saveas,SIZE(type,item),minVer,maxVer}, {dim,dim2,rowlen,0,0}
 
 // An obsolete item/array, to be ignored upon load. We retain the type/item params to make it easier to debug.
 // Obsolete items have size == 0.
 #define MK_OBSOLETE(type,item,saveas,minVer,maxVer) {0,saveas,0,minVer,maxVer}
-#define MK_OBSOLETE_ARRAY(type,item,saveas,num,minVer,maxVer) {0,128|saveas,0,minVer,maxVer}, {num,0,0,0,0}
+#define MK_OBSOLETE_ARRAY(type,item,saveas,dim,minVer,maxVer) {0,128|saveas,0,minVer,maxVer}, {dim,1,0,0,0}
+#define MK_OBSOLETE_ARRAY2(type,item,saveas,dim,dim2,rowlen,minVer,maxVer) {0,128|saveas,0,minVer,maxVer}, {dim,dim2,rowlen,0,0}
 
 // End marker
 #define MKEND() {0xFFFF,0xFF,0xFF,0,0}
@@ -87,9 +91,9 @@ enum {
 };
 
 struct SaveLoadEntry {
-	uint32 offs;
-	uint8 type;
-	uint8 size;
+	uint32 offs;	// or: array dimension
+	uint16 type;	// or: array dimension 2
+	uint16 size;	// or: array row length
 	uint8 minVersion;
 	uint8 maxVersion;
 };
