@@ -33,6 +33,13 @@ extern bool draw_keyboard;
 
 #endif
 
+#ifdef WIN32
+
+extern "C" {
+	int errno;
+}
+
+#endif
 
 static const GameSpecificSettings simon1_settings = {
 	1,														/* VGA_DELAY_BASE */
