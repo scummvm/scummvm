@@ -2255,6 +2255,10 @@ void ScummEngine::startScene(int room, Actor *a, int objectNr) {
 		a->putActor(x, y, _currentRoom);
 		a->setDirection(dir + 180);
 		a->stopActorMoving();
+		if (_gameId == GID_SAMNMAX) {
+			camera._cur.x = camera._dest.x = a->_pos.x;
+			setCameraAt(a->_pos.x, a->_pos.y);
+		}
 	}
 
 	showActors();
