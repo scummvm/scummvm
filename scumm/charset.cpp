@@ -1289,21 +1289,28 @@ void CharsetRendererClassic::printChar(int chr) {
 		_hasMask = true;
 		_textScreenID = vs->number;
 	}
+	
+	Graphics::Surface dstSurface;
+	Graphics::Surface backSurface;
 	if (_ignoreCharsetMask || !vs->hasTwoBuffers) {
+		dstSurface = *vs;
 		dst = vs->getPixels(_left, drawTop);
 	} else {
+		dstSurface = _vm->gdi._textSurface;
 		dst = (byte *)_vm->gdi._textSurface.pixels + (_top - _vm->_screenTop) * _vm->gdi._textSurface.pitch + _left;
 	}
 
 	if (_blitAlso && vs->hasTwoBuffers) {
+		backSurface = dstSurface;
 		back = dst;
+		dstSurface = *vs;
 		dst = vs->getBackPixels(_left, drawTop);
 	}
 
 	if (is2byte) {
-		drawBits1(*vs, dst, charPtr, drawTop, origWidth, origHeight);
+		drawBits1(dstSurface, dst, charPtr, drawTop, origWidth, origHeight);
 	} else {
-		drawBitsN(*vs, dst, charPtr, *_fontPtr, drawTop, origWidth, origHeight);
+		drawBitsN(dstSurface, dst, charPtr, *_fontPtr, drawTop, origWidth, origHeight);
 	}
 
 	if (_blitAlso && vs->hasTwoBuffers) {
@@ -1319,8 +1326,8 @@ void CharsetRendererClassic::printChar(int chr) {
 		int h = height;
 		do {
 			memcpy(back, dst, width);
-			back += vs->pitch;
-			dst += vs->pitch;
+			back += backSurface.pitch;
+			dst += dstSurface.pitch;
 		} while (--h);
 	}
 	
