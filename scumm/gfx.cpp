@@ -1876,10 +1876,10 @@ void ScummEngine::NES_loadCostumeSet(int n) {
 	byte *palette = getResourceAddress(rtCostume, v1MMNEScostTables[n][5]) + 2;
 	for (i = 0; i < 16; i++) {
 		byte c = *palette++;
-		//if (c == 0x1D)	// HACK - switch around colors 0x00 and 0x1D
-		//	c = 0;		// so we don't need a zillion extra checks
-		//else if (c == 0)// for determining the proper background color
-		//	c = 0x1D;
+		if (c == 0x1D)	// HACK - switch around colors 0x00 and 0x1D
+			c = 0;		// so we don't need a zillion extra checks
+		else if (c == 0)// for determining the proper background color
+			c = 0x1D;
 		_NESPalette[1][i] = c;
 	}
 
