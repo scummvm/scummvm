@@ -199,7 +199,8 @@ bool ScummMixer::stop() {
 ScummRenderer::ScummRenderer(Scumm * scumm, uint32 speed) :
 	_scumm(scumm),
 	_smixer(0),
-	_insaneSpeed(speed) {
+	_insaneSpeed(speed),
+	_pending_updates(0) {
 }
 
 static ScummRenderer * s_renderer;
@@ -239,9 +240,12 @@ ScummRenderer::~ScummRenderer() {
 }
 
 bool ScummRenderer::wait(int32 ms) {
-	while(_wait) {
-		_scumm->waitForTimer(1);
-	}
+	// Because waitForTimer() also is the function that checks for user
+	// input we always want to call it at least once between frames, or
+	// the user may become unable to interrupt the movie.
+	do {
+ 		_scumm->waitForTimer(1);
+	} while(_pending_updates <= 0);
 	return true; 
 }
 
@@ -276,20 +280,25 @@ void ScummRenderer::save(int32 frame) {
 	int width = MIN(getWidth(), _scumm->_realWidth); 
 	int height = MIN(getHeight(), _scumm->_realHeight);
 	
-	_scumm->_system->copy_rect((const byte *)data(), getWidth(), 0, 0, width, height);
-	_scumm->_system->update_screen();
+
+	// In theory, this will always be true. In reality, there may be
+	// several pending updates because the computer wasn't fast enough to
+	// process them all. In that case, skip the frame to catch up.
+	if (--_pending_updates <= 0) {
+		_scumm->_system->copy_rect((const byte *)data(), getWidth(), 0, 0, width, height);
+		_scumm->_system->update_screen();
+	} else {
+		warning("ScummRenderer: Skipping frame %d to catch up", getFrame());
+	}
 	_scumm->processKbd();
-	_wait = true;
 }
 
 bool ScummRenderer::prematureClose() { 
-	
 	return _scumm->_videoFinished || _scumm->_saveLoadFlag;
-
 }
 
 bool ScummRenderer::update() {
-	_wait = false;
+	_pending_updates++;
 	return true;
 }
 

@@ -45,7 +45,7 @@ private:
 	Scumm * _scumm;
 	ScummMixer * _smixer;
 	uint32 _insaneSpeed;
-	volatile bool _wait;
+	volatile int _pending_updates;
 public:
 	ScummRenderer(Scumm * scumm, uint32 speed);
 	virtual ~ScummRenderer();
