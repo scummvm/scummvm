@@ -728,6 +728,9 @@ int Scumm::readSoundResource(int type, int idx) {
 				if (_use_adlib)
 					pri = 10;
 				break;
+			case MKID('AMI '):
+				pri = 3;
+				break;
 			case MKID('ROL '):
 				pri = 3;
 				break;

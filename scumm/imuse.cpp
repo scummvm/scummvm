@@ -131,6 +131,8 @@ bool IMuseInternal::isMT32(int sound) {
 	switch (tag) {
 	case MKID('ADL '):
 		return false;
+	case MKID('AMI '):
+		return true;
 	case MKID('ROL '):
 		return true;
 	case MKID('GMD '):
@@ -158,6 +160,8 @@ bool IMuseInternal::isGM(int sound) {
 	switch (tag) {
 	case MKID('ADL '):
 		return false;
+	case MKID('AMI '):
+		return true; // Yeah... for our purposes, this is GM
 	case MKID('ROL '):
 		return true; // Yeah... for our purposes, this is GM
 	case MKID('GMD '):
