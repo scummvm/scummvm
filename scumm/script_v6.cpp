@@ -252,7 +252,7 @@ void Scumm_v6::setupOpcodes()
 		OPCODE(o6_arrayOps),
 		OPCODE(o6_saveRestoreVerbs),
 		OPCODE(o6_drawBox),
-		OPCODE(o6_invalid),
+		OPCODE(o6_pop),
 		/* A8 */
 		OPCODE(o6_getActorWidth),
 		OPCODE(o6_wait),
