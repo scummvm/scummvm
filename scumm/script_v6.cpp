@@ -1474,10 +1474,17 @@ void Scumm_v6::o6_resourceRoutines() {
 			loadFlObject(obj, room);
 			break;
 		}
+	case 120:{										/* queue ? for load */
+			 warning("stub queueload resource %d", pop());
+			 // QL_QueGlobForLoad(2, pop(), 1);
+			 break;
+		
+		}
 	default:
 		error("o6_resourceRoutines: default case %d", op);
 	}
 }
+
 
 void Scumm_v6::o6_roomOps() {
 	int a, b, c, d, e;
@@ -3110,6 +3117,9 @@ void Scumm_v6::decodeParseString(int m, int n) {
 			unkMessage2();
 			break;
 		}
+		return;
+	case 0xF9:
+		error("decodeParseString case 0xF9 stub");
 		return;
 	case 0xFE:
 		setStringVars(m);
