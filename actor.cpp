@@ -20,6 +20,7 @@
 #include "engine.h"
 #include "costume.h"
 #include "sound.h"
+#include "localize.h"
 #include <cmath>
 #include <cstring>
 #include "driver_gl.h"
@@ -117,7 +118,8 @@ void Actor::sayLine(const char *msg) {
 		return;
 	if (talkSound_) // Only once line at a time, please :)
 		shutUp();
-	std::string msgId(msg + 1, secondSlash);
+	std::string msgText = Localizer::instance()->localize(secondSlash + 1);
+ 	std::string msgId(msg + 1, secondSlash);
 	talkSound_ = ResourceLoader::instance()->loadSound((msgId + ".wav").c_str());
 	if (talkSound_ != NULL)
 		Mixer::instance()->playVoice(talkSound_);
