@@ -26,15 +26,14 @@
 #include "driver_gl.h"
 #include "resource.h"
 
-
-Smush *smush;
+Smush *g_smush;
 
 void Smush::timerCallback(void *refCon) {
-	smush->handleFrame();
+	g_smush->handleFrame();
 }
 
 Smush::Smush() {
-	smush = this;
+	g_smush = this;
 	_nbframes = 0;
 	_dst = NULL;
 	_width = 0;
@@ -42,6 +41,8 @@ Smush::Smush() {
 	_speed = 0;
 	_channels = -1;
 	_freq = 22050;
+	_videoFinished = false;
+	_videoPause = true;
 }
 
 Smush::~Smush() {
@@ -50,20 +51,19 @@ Smush::~Smush() {
 
 void Smush::init() {
 	_frame = 0;
-	_alreadyInit = false;
 	_videoFinished = false;
+	_videoPause = false;
 	g_timer->installTimerProc(&timerCallback, _speed, NULL);
 }
 
 void Smush::deinit() {
+	_videoFinished = true;
+	_videoPause = true;
 	g_timer->removeTimerProc(&timerCallback);
+	_file.close();
 }
 
 void Smush::handleBlocky16(byte *src) {
-	if (!_alreadyInit) {
-		_blocky16.init(_width, _height);
-		_alreadyInit = true;
-	}
 	_blocky16.decode(_dst, src);
 }
 
@@ -94,6 +94,14 @@ void Smush::handleFrame() {
 	int32 size;
 	int pos = 0;
 
+	if (_videoPause)
+		return;
+
+	if (_videoFinished) {
+		_videoPause = true;
+		return;
+	}
+
 	tag = _file.readUint32BE();
 	if (tag == MKID_BE('ANNO')) {
 		size = _file.readUint32BE();
@@ -109,7 +117,7 @@ void Smush::handleFrame() {
 			handleBlocky16(frame + pos + 8);
 			pos += READ_BE_UINT32(frame + pos + 4) + 8;
 		} else if (READ_BE_UINT32(frame + pos) == MKID_BE('Wave')) {
-			handleWave(frame + pos + 8 + 4, READ_BE_UINT32(frame + pos + 8));
+//			handleWave(frame + pos + 8 + 4, READ_BE_UINT32(frame + pos + 8));
 			pos += READ_BE_UINT32(frame + pos + 4) + 8;
 		} else {
 			error("unknown tag");
@@ -151,7 +159,7 @@ void Smush::handleFramesHeader() {
 	free(f_header);
 }
 
-bool Smush::setupAnim(const char *file, const char *directory) {
+bool Smush::setupAnim(const char *file, int x, int y) {
 	if (!_file.open(file))
 		return false;
 
@@ -167,13 +175,17 @@ bool Smush::setupAnim(const char *file, const char *directory) {
 	byte *s_header = (byte *)malloc(size);
 	_file.read(s_header, size);
 	_nbframes = READ_LE_UINT32(s_header + 2);
-	_width = READ_LE_UINT16(s_header + 8);
-	_height = READ_LE_UINT16(s_header + 10);
+	_x = x;
+	_y = y;
+	int width = READ_LE_UINT16(s_header + 8);
+	int height = READ_LE_UINT16(s_header + 10);
 
-	if ((_width != 640) || (_height != 480)) {
-		warning("resolution of smush frame other than 640x480 not supported");
-		return false;
+	if ((_width != width) || (_height != height)) {
+		_blocky16.init(width, height);
 	}
+
+	_width = width;
+	_height = height;
 
 	_speed = READ_LE_UINT32(s_header + 14);
 	free(s_header);
@@ -181,13 +193,15 @@ bool Smush::setupAnim(const char *file, const char *directory) {
 	return true;
 }
 
-void Smush::play(const char *filename, const char *directory) {
+bool Smush::play(const char *filename, int x, int y) {
+	stop();
+
 	// Tempfile version of decompression code
 	#ifdef ZLIB_MEMORY
 		// zlibFile version of code. Experimental.
 		// Load the video
-		if (!setupAnim(filename, directory))
-			return;
+		if (!setupAnim(filename, x, y))
+			return false;
 	#else
 		char tmpOut[256];
 		FILE *tmp = ResourceLoader::instance()->openNewStream(filename);
@@ -249,7 +263,7 @@ void Smush::play(const char *filename, const char *directory) {
 
 				if (status != Z_OK) {
 					warning("Smush::play() - Error inflating stream (%d) [-3 means bad data]", status);
-					return;
+					return false;
 				}
 
 				if (z.avail_out == 0) {
@@ -265,11 +279,13 @@ void Smush::play(const char *filename, const char *directory) {
 			inflateEnd(&z);
 			fclose(outFile);
 			warning("Smush::play() Open okay for %s!\n", filename);
+		} else {
+			return false;
 		}
 
 		// Load the video
-		if (!setupAnim(tmpOut, directory))
-			return;
+		if (!setupAnim(tmpOut, x, y))
+			return false;
 	#endif
 
 	handleFramesHeader();
@@ -292,23 +308,47 @@ void Smush::play(const char *filename, const char *directory) {
 
 	init();
 
-	while (!_videoFinished) {
-		
-		if (_updateNeeded) {
-			g_driver->drawSMUSHframe(_width, _height, _buf);
-			_updateNeeded = false;
-		}
+	return true;
+}
 
-		SDL_Event event;
-		if (SDL_PollEvent(&event)) {
-			// Skip cutscene?
-			if (event.type == SDL_KEYDOWN)
-				if (event.key.keysym.sym == SDLK_ESCAPE)
-					_videoFinished = true;
-		}
-		SDL_Delay(10);
-	};
+void Smush::stop() {
 	deinit();
+}
+
+void Smush::pause(bool pause) {
+	_videoPause = pause;
+}
+
+bool Smush::isPlaying() {
+	return !_videoPause;
+}
+
+bool Smush::isUpdateNeeded() {
+	return _updateNeeded;
+}
+
+int Smush::getX() {
+	return _x;
+}
+
+int Smush::getY() {
+	return _y;
+}
+
+int Smush::getWidth() {
+	return _width;
+}
+
+int Smush::getHeight() {
+	return _height;
+}
+
+byte *Smush::getDstPtr() {
+	return _buf;
+}
+
+void Smush::setUpdateNeeded() {
+	_updateNeeded = true;
 }
 
 FILE *File::fopenNoCase(const char *filename, const char *directory, const char *mode) {

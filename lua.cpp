@@ -1017,16 +1017,48 @@ static void GetTextObjectDimensions() {
  lua_pushnumber(100);	// Dummy Y
 }
 
-static void StartMovie() {
-	Smush player;
-	char *filename = lua_getstring(lua_getparam(1));
-	player.play(filename, "");
+static void StartFullscreenMovie() {
+	bool mode = lua_getparam(2) != 0;
+	if (g_smush->play(lua_getstring(lua_getparam(1)), 0, 0)) {
+		lua_pushnumber(1);
+	} else {
+		lua_pushnil();
+	}
 }
 
-static void StartFullscreenMovie() {
-	Smush player;
-	char *filename = lua_getstring(lua_getparam(1));
-	player.play(filename, "");
+static void StartMovie() {
+	bool mode = lua_getparam(2) != 0;
+	int x = lua_getparam(3);
+	int y = lua_getparam(4);
+	if (g_smush->play(lua_getstring(lua_getparam(1)), x, y)) {
+		lua_pushnumber(1);
+	} else {
+		lua_pushnil();
+	}
+}
+
+static void IsFullscreenMoviePlaying() {
+	if (g_smush->isPlaying()) {
+		lua_pushnumber(1);
+	} else {
+		lua_pushnil();
+	}
+}
+
+static void IsMoviePlaying() {
+	if (g_smush->isPlaying()) {
+		lua_pushnumber(1);
+	} else {
+		lua_pushnil();
+	}
+}
+
+static void StopMovie() {
+	g_smush->stop();
+}
+
+static void PauseMovie() {
+	g_smush->pause(lua_isnil(lua_getparam(1)));
 }
 
 // Stub function for builtin functions not yet implemented
@@ -1169,10 +1201,6 @@ static char *stubFuncs[] = {
   "SetSoundPosition",
   "IsSoundPlaying",
   "PlaySoundAt",
-  "IsMoviePlaying",
-  "PauseMovie",
-  "StopMovie",
-  "IsFullscreenMoviePlaying",
   "PreviousSetup",
   "NextSetup",
   "UnLockSet",
@@ -1462,7 +1490,11 @@ struct luaL_reg builtins[] = {
   { "GetActorLookRate", GetActorLookRate },
   { "SetActorHead", SetActorHead },
   { "StartMovie", StartMovie },
+  { "StopMovie", StopMovie },
+  { "PauseMovie", PauseMovie },
+  { "IsMoviePlaying", IsMoviePlaying },
   { "StartFullscreenMovie", StartFullscreenMovie },
+  { "IsFullscreenMoviePlaying", IsFullscreenMoviePlaying },
 };
 
 void register_lua() {

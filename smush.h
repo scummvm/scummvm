@@ -106,11 +106,12 @@ private:
 
 	int32 _frame;
 	bool _updateNeeded;
-	bool _alreadyInit;
 	int32 _speed;
 	int _channels;
 	int _freq;
 	bool _videoFinished;
+	bool _videoPause;
+	int _x, _y;
 	int _width, _height;
 	byte *_dst;
 	byte *_buf;
@@ -119,7 +120,17 @@ public:
 	Smush();
 	~Smush();
 
-	void play(const char *filename, const char *directory);
+	bool play(const char *filename, int x, int y);
+	void stop();
+	void pause(bool pause);
+	bool isPlaying();
+	bool isUpdateNeeded();
+	byte *getDstPtr();
+	int getX();
+	int getY();
+	int getWidth();
+	int getHeight();
+	void setUpdateNeeded();
 
 private:
 	static void timerCallback(void *ptr);
@@ -130,8 +141,10 @@ private:
 	void handleWave(const byte *src, uint32 size);
 	void init();
 	void deinit();
-	bool setupAnim(const char *file, const char *directory);
+	bool setupAnim(const char *file, int x, int y);
 	void updateGLScreen();
 };
+
+extern Smush *g_smush;
 
 #endif

@@ -26,6 +26,7 @@
 #include "engine.h"
 #include "sound.h"
 #include "timer.h"
+#include "smush.h"
 #include "mixer/mixer.h"
 #include "driver_gl.h"
 
@@ -78,6 +79,12 @@ int main(int argc, char *argv[]) {
   atexit(SDL_Quit);
   atexit(saveRegistry);
   
+  g_mixer = new SoundMixer();
+  g_timer = new Timer();
+  g_smush = new Smush();
+
+  Mixer::instance()->start();
+
   Bitmap *splash_bm = ResourceLoader::instance()->loadBitmap("splash.bm");
 
   SDL_Event event;
@@ -91,10 +98,6 @@ int main(int argc, char *argv[]) {
       g_driver->flipBuffer();
     }
   }
-
-  g_mixer = new SoundMixer();
-  g_timer = new Timer();
-  Mixer::instance()->start();
 
   lua_open();
 
@@ -120,6 +123,7 @@ int main(int argc, char *argv[]) {
 
   Engine::instance()->mainLoop();
 
+  delete g_smush;
   delete g_timer;
   delete g_mixer;
 

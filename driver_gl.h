@@ -26,7 +26,7 @@ class Driver {
 		void drawBitmap();
 
 		void drawHackFont(int x, int y, const char *text, Color &fgColor);
-		void drawSMUSHframe(int _width, int _height, uint8 *_dst);
+		void drawSMUSHframe(int offsetX, int offsetY, int _width, int _height, uint8 *_dst);
 
 	private:
 		GLuint hackFont;  // FIXME: Temporary font drawing hack

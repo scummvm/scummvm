@@ -20,6 +20,7 @@
 #include <cstring>
 #include "bitmap.h"
 #include "bits.h"
+#include "smush.h"
 #include "debug.h"
 
 #include "driver_gl.h"
@@ -147,6 +148,14 @@ void Bitmap::draw() const {
 	cur_tex_idx++;
       }
     }
+
+	if (g_smush->isPlaying()) {
+		if (g_smush->isUpdateNeeded()) {
+			g_driver->drawSMUSHframe(g_smush->getX(), g_smush->getY(), g_smush->getWidth(), g_smush->getHeight(), g_smush->getDstPtr());
+			g_smush->setUpdateNeeded();
+		}
+	}
+
     glDisable(GL_SCISSOR_TEST);
     glDisable(GL_TEXTURE_2D);
     glDepthMask(GL_TRUE);
@@ -154,7 +163,7 @@ void Bitmap::draw() const {
   } else if (format_ == 5) {	// ZBuffer image
     // Only draw the manual zbuffer when we are not using screenblocks, and when enabled
     if ((ZBUFFER_GLOBAL == 0) || (SCREENBLOCKS_GLOBAL == 1))
-	return;
+		return;
 
     g_driver->drawDepthBitmap(curr_image_, x_, y_, width_, height_, data_);
   }

@@ -148,7 +148,7 @@ void Driver::drawHackFont(int x, int y, const char *text, Color &fgColor) {
 }
 
 // drawSMUSHframe, used for quickly pushing full-screen images from cutscenes
-void Driver::drawSMUSHframe(int _width, int _height, uint8 *_dst) {
+void Driver::drawSMUSHframe(int offsetX, int offsetY, int _width, int _height, uint8 *_dst) {
         int num_tex_;
         GLuint *tex_ids_;
 
@@ -194,23 +194,25 @@ void Driver::drawSMUSHframe(int _width, int _height, uint8 *_dst) {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         // prepare view
-        glMatrixMode(GL_PROJECTION);
-        glLoadIdentity();
-        glOrtho(0, 640, 480, 0, 0, 1);
-        glMatrixMode(GL_MODELVIEW);
-        glLoadIdentity();
-        glMatrixMode(GL_TEXTURE);
-        glLoadIdentity();
+//        glMatrixMode(GL_PROJECTION);
+  //      glLoadIdentity();
+    //    glOrtho(0, 640, 480, 0, 0, 1);
+ //       glMatrixMode(GL_MODELVIEW);
+   //     glLoadIdentity();
+     //   glMatrixMode(GL_TEXTURE);
+       // glLoadIdentity();
         // A lot more may need to be put there : disabling Alpha test, blending, ...
         // For now, just keep this here :-)
 
-        glDisable(GL_LIGHTING);
-        glEnable(GL_TEXTURE_2D);
+//        glDisable(GL_LIGHTING);
+  //      glEnable(GL_TEXTURE_2D);
 
         // draw
-        glDisable(GL_DEPTH_TEST);
-        glDepthMask(GL_FALSE);
-        glEnable(GL_SCISSOR_TEST);
+//        glDisable(GL_DEPTH_TEST);
+//        glDepthMask(GL_FALSE);
+//        glEnable(GL_SCISSOR_TEST);
+
+        offsetY = 480 - offsetY - _height;
         cur_tex_idx = 0;
         for (int y = 0; y < _height; y += BITMAP_TEXTURE_SIZE) {
                 for (int x = 0; x < _width; x += BITMAP_TEXTURE_SIZE) {
@@ -219,7 +221,7 @@ void Driver::drawSMUSHframe(int _width, int _height, uint8 *_dst) {
                         glBindTexture(GL_TEXTURE_2D, tex_ids_[cur_tex_idx]);
                         glScissor(x, 480 - (y + height), x + width, 480 - y);
                         glBegin(GL_QUADS);
-                        glTexCoord2f(0.0, 0.0);
+                        glTexCoord2f(0, 0);
 
                         glVertex2i(x, y);
                         glTexCoord2f(1.0, 0.0);
@@ -232,11 +234,11 @@ void Driver::drawSMUSHframe(int _width, int _height, uint8 *_dst) {
                         cur_tex_idx++;
                 }
         }
-        glDisable(GL_SCISSOR_TEST);
-        glDisable(GL_TEXTURE_2D);
-        glDepthMask(GL_TRUE);
-        glEnable(GL_DEPTH_TEST);
-        SDL_GL_SwapBuffers();
+//        glDisable(GL_SCISSOR_TEST);
+  //      glDisable(GL_TEXTURE_2D);
+    //    glDepthMask(GL_TRUE);
+  //      glEnable(GL_DEPTH_TEST);
+    //    SDL_GL_SwapBuffers();
 
         // remove
         glDeleteTextures(num_tex_, tex_ids_);
