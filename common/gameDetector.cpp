@@ -52,7 +52,7 @@ static const char USAGE_STRING[] =
 	"\t-b<num>    - start in room <num>\n"
 	"\t-c<num>    - use cdrom <num> for cd audio\n"
 	"\t-d[<num>]  - enable debug output (debug level [1])\n"
-	"\t-e<mode>   - set music engine (see readme.txt for details)\n"
+	"\t-e<mode>   - set music engine (see README for details)\n"
 	"\t-f         - fullscreen mode\n"
 	"\t-g<mode>   - graphics mode (normal,2x,3x,2xsai,super2xsai,supereagle,advmame2x)\n"
 	"\t-l<file>   - load config file instead of default\n"
