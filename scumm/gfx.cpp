@@ -62,14 +62,6 @@ static const int8 shake_positions[NUM_SHAKE_POSITIONS] = {
 	0, 1 * 2, 2 * 2, 1 * 2, 0 * 2, 2 * 2, 3 * 2, 1 * 2
 };
 
-static const uint32 zplane_tags[] = {
-	MKID('ZP00'),
-	MKID('ZP01'),
-	MKID('ZP02'),
-	MKID('ZP03'),
-	MKID('ZP04')
-};
-
 static const int8 screen_eff7_table1[4][16] = {
 	{ 1,  1, -1,  1, -1,  1, -1, -1,
 	  1, -1, -1, -1,  1,  1,  1, -1},
@@ -805,6 +797,8 @@ void Gdi::drawBitmap(byte *ptr, VirtScreen *vs, int x, int y, const int h,
 	CHECK_HEAP;
 	if (_vm->_features & GF_SMALL_HEADER)
 		smap_ptr = ptr;
+	else if (_vm->_features & GF_AFTER_V8)
+		smap_ptr = ptr;
 	else
 		smap_ptr = findResource(MKID('SMAP'), ptr);
 
@@ -845,6 +839,14 @@ void Gdi::drawBitmap(byte *ptr, VirtScreen *vs, int x, int y, const int h,
 		// A small hack to skip to the BSTR->WRAP->OFFS chunk
 		smap_ptr += 24;
 	} else {
+		const uint32 zplane_tags[] = {
+			MKID('ZP00'),
+			MKID('ZP01'),
+			MKID('ZP02'),
+			MKID('ZP03'),
+			MKID('ZP04')
+		};
+		
 		for (i = 1; i < numzbuf; i++) {
 			zplane_list[i] = findResource(zplane_tags[i], ptr);
 		}

@@ -359,7 +359,18 @@ void Scumm::drawObject(int obj, int arg)
 
 	if (_features & GF_SMALL_HEADER)
 		ptr += 8;
-	else
+	else if (_features & GF_AFTER_V8) {
+		ptr = findResource(MKID('IMAG'), ptr);
+		if (!ptr)
+			return;
+
+		ptr = findResource(MKID('WRAP'), ptr);
+		assert(ptr);
+		ptr = findResource(MKID('OFFS'), ptr);
+		assert(ptr);
+		// Get the address of the specified SMAP (corresponding to IMxx)
+		ptr += READ_LE_UINT32(ptr + 4 + 4*getState(od->obj_nr));
+	} else
 		ptr = findResource(IMxx_tags[getState(od->obj_nr)], ptr);
 	if (!ptr)
 		return;
@@ -1273,7 +1284,7 @@ void Scumm::drawBlastObjects()
 void Scumm::drawBlastObject(BlastObject *eo)
 {
 	VirtScreen *vs;
-	byte *bomp, *ptr, *img;
+	byte *bomp, *ptr;
 	int idx;
 	BompDrawData bdd;
 
@@ -1299,18 +1310,16 @@ void Scumm::drawBlastObject(BlastObject *eo)
 		// an OFFS chunk and multiple BOMP chunks. To find the right BOMP, we can
 		// either use the offsets in the OFFS chunk, or iterate over all BOMPs we find.
 		// Here we use the first method.
-		img = findResource(MKID('IMAG'), ptr);
-		assert(img);
-
-		img = findResource(MKID('WRAP'), img);
-		assert(img);
-
-		img = findResource(MKID('OFFS'), img);
-		assert(img);
-
-		bomp = img + READ_LE_UINT32(img + 4 + 4*eo->image) + 8;
+		ptr = findResource(MKID('IMAG'), ptr);
+		assert(ptr);
+		ptr = findResource(MKID('WRAP'), ptr);
+		assert(ptr);
+		ptr = findResource(MKID('OFFS'), ptr);
+		assert(ptr);
+		// Get the address of the specified BOMP (we really should verify it's a BOMP and not a SMAP
+		bomp = ptr + READ_LE_UINT32(ptr + 4 + 4*eo->image) + 8;
 	} else {
-		img = findResource(IMxx_tags[eo->image], ptr);
+		byte *img = findResource(IMxx_tags[eo->image], ptr);
 		if (!img)
 			img = findResource(IMxx_tags[1], ptr);	// Backward compatibility with samnmax blast objects
 

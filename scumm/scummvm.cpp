@@ -745,9 +745,17 @@ void Scumm::initRoomSubBlocks()
 
 	if (_features & GF_SMALL_HEADER)
 		_IM00_offs = findResourceData(MKID('IM00'), roomptr) - roomptr;
-	else if (_features & GF_AFTER_V8)
-		_IM00_offs = findResourceData(MKID('IMAG'), roomptr) - roomptr;
-	else
+	else if (_features & GF_AFTER_V8) {
+		ptr = findResource(MKID('IMAG'), roomptr);
+		assert(ptr);
+		ptr = findResource(MKID('WRAP'), ptr);
+		assert(ptr);
+		ptr = findResource(MKID('OFFS'), ptr);
+		assert(ptr);
+		// Get the first SMAP resource (corresponds to IM00)
+		ptr += READ_LE_UINT32(ptr + 8);
+		_IM00_offs = ptr - roomptr;
+	} else
 		_IM00_offs =
 			findResource(MKID('IM00'),
 									 findResource(MKID('RMIM'), roomptr)) - roomptr;
