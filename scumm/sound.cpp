@@ -1050,7 +1050,7 @@ void Sound::bundleMusicHandler(Scumm * scumm) {
 	ptr = _musicBundleBufOutput;
 
 	for (k = 0, l = _currentSampleBundleMusic; l < num; k++) {
-		length = _scumm->_bundle->decompressMusicSampleByName(_nameBundleMusic, l, (_musicBundleBufOutput + ((k * 0x2000) + _offsetBufBundleMusic)), _bundleSampleChannels);
+		length = _scumm->_bundle->decompressMusicSampleByName(_nameBundleMusic, l, (_musicBundleBufOutput + ((k * 0x2000) + _offsetBufBundleMusic)));
 		_offsetSampleBundleMusic += length;
 
 		if (l == 0) {
@@ -1169,13 +1169,13 @@ int Sound::playBundleSound(char *sound) {
 		strcpy(name, sound);
 		strcat(name, ".IMX");
 		ptr = (byte *)malloc(1000000);
-		if (_scumm->_bundle->decompressVoiceSampleByName(name, ptr, channels) == 0) {
+		if (_scumm->_bundle->decompressVoiceSampleByName(name, ptr) == 0) {
 			delete ptr;
 			return -1;
 		}
 	} else {
 		ptr = (byte *)malloc(1000000);
-		if (_scumm->_bundle->decompressVoiceSampleByName(sound, ptr, channels) == 0) {
+		if (_scumm->_bundle->decompressVoiceSampleByName(sound, ptr) == 0) {
 			delete ptr;
 			return -1;
 		}

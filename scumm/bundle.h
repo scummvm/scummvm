@@ -41,7 +41,7 @@ struct BundleAudioTable {
 };
 
 	int32 compDecode(byte *src, byte *dst);
-	int32 decompressCodec(int32 codec, byte *comp_input, byte *comp_output, int32 size, int32 index, int32 & channels);
+	int32 decompressCodec(int32 codec, byte *comp_input, byte *comp_output, int32 size);
 	CompTable *_compVoiceTable;
 	CompTable *_compMusicTable;
 	BundleAudioTable *_bundleVoiceTable;
@@ -63,10 +63,10 @@ public:
 	void initializeImcTables();
 	bool openVoiceFile(const char *filename, const char *directory);
 	bool openMusicFile(const char *filename, const char *directory);
-	int32 decompressVoiceSampleByName(char *name, byte *comp_final, int32 & channels);
-	int32 decompressVoiceSampleByIndex(int32 index, byte *comp_final, int32 & channels);
-	int32 decompressMusicSampleByName(char *name, int32 number, byte *comp_final, int32 & channels);
-	int32 decompressMusicSampleByIndex(int32 index, int32 number, byte *comp_final, int32 & channels);
+	int32 decompressVoiceSampleByName(char *name, byte *comp_final);
+	int32 decompressVoiceSampleByIndex(int32 index, byte *comp_final);
+	int32 decompressMusicSampleByName(char *name, int32 number, byte *comp_final);
+	int32 decompressMusicSampleByIndex(int32 index, int32 number, byte *comp_final);
 	int32 getNumberOfMusicSamplesByIndex(int32 index);
 	int32 getNumberOfMusicSamplesByName(char *name);
 };

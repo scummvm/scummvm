@@ -24,7 +24,7 @@
 #include "bundle.h"
 #include "file.h"
 
-uint16 imcTable1[] = {
+int16 imcTable[] = {
 	0x0007, 0x0008, 0x0009, 0x000A, 0x000B, 0x000C, 0x000D, 0x000E, 0x0010, 0x0011,
 	0x0013, 0x0015, 0x0017, 0x0019, 0x001C, 0x001F, 0x0022, 0x0025, 0x0029, 0x002D,
 	0x0032, 0x0037, 0x003C, 0x0042, 0x0049, 0x0050, 0x0058, 0x0061, 0x006B, 0x0076,
@@ -86,8 +86,8 @@ byte imxOtherTable6[] = {
 	0x19, 0x1A, 0x1B, 0x1C, 0x1D, 0x1E, 0x1F, 0x20
 };
 
-uint16 imxShortTable[] = {
-	0x0000, 0x0000, 0x0001, 0x0003, 0x0007, 0x000F, 0x001F, 0x003F
+byte imxShortTable[] = {
+	0, 0, 1, 3, 7, 15, 31, 63
 };
 
 Bundle::Bundle()
@@ -115,13 +115,13 @@ void Bundle::initializeImcTables()
 	int32 destTablePos = 0;
 	int32 imcTable1Pos = 0;
 	do {
-		int16 put = 1;
-		int32 tableValue = ((imcTable1[imcTable1Pos] << 2) / 7) / 2;
+		byte put = 1;
+		int32 tableValue = ((imcTable[imcTable1Pos] << 2) / 7) >> 1;
 		if (tableValue != 0) {
 			do {
-				tableValue /= 2;
+				tableValue >>= 1;
 				put++;
-			} while (tableValue != 0); 
+			} while (tableValue != 0);
 		}
 		if (put < 3) {
 			put = 3;
@@ -130,30 +130,28 @@ void Bundle::initializeImcTables()
 			put = 8;
 		}
 		put--;
-		imcTable1Pos++;
-		_destImcTable[destTablePos] = (byte)put;
+		_destImcTable[destTablePos] = put;
 		destTablePos++;
-	} while (imcTable1Pos <= 88);
+	} while (++imcTable1Pos <= 88);
 	_destImcTable[89] = 0;
 
-	for (int n = 0; n < 63; n++) {
+	for (int n = 0; n < 64; n++) {
 		imcTable1Pos = 0;
-		int32 destTable2Pos = n;
+		destTablePos = n;
 		do {
 			int32 count = 32;
-			int32 putD = 0;
-			int32 tableValue = imcTable1[imcTable1Pos];
+			int32 put = 0;
+			int32 tableValue = imcTable[imcTable1Pos];
 	 		do {
 				if ((count & n) != 0) {
-					putD = putD + tableValue;
+					put += tableValue;
 				}
 				count >>= 1;
 				tableValue >>= 1;
 			} while (count != 0);
-			_destImcTable2[destTable2Pos] = putD;
-			destTable2Pos += 64;
-			imcTable1Pos++;
-		} while (imcTable1Pos <= 88);
+			_destImcTable2[destTablePos] = put;
+			destTablePos += 64;
+		} while (++imcTable1Pos <= 88);
 	}
 
 	_initializedImcTables = true;
@@ -245,7 +243,7 @@ bool Bundle::openMusicFile(const char *filename, const char *directory)
 	return true;
 }
 
-int32 Bundle::decompressVoiceSampleByIndex(int32 index, byte *comp_final, int32 & channels)
+int32 Bundle::decompressVoiceSampleByIndex(int32 index, byte *comp_final)
 {
 	int32 i, tag, num, final_size, output_size;
 	byte *comp_input, *comp_output;
@@ -262,15 +260,14 @@ int32 Bundle::decompressVoiceSampleByIndex(int32 index, byte *comp_final, int32 
 	_voiceFile.readUint32BE();
 
 	if (tag != MKID_BE('COMP')) {
-		warning("Bundle: Compressed sound %d invalid (%c%c%c%c)", index, tag >> 24, tag >> 16, tag >> 8,
-						tag);
+		warning("Bundle: Compressed sound %d invalid (%c%c%c%c)", index, tag >> 24, tag >> 16, tag >> 8, tag);
 		return 0;
 	}
 
 	if (_compVoiceTable)
 		free(_compVoiceTable);
 
-	_compVoiceTable = (CompTable*)malloc(sizeof(CompTable) * num);
+	_compVoiceTable = (CompTable *)malloc(sizeof(CompTable) * num);
 	for (i = 0; i < num; i++) {
 		_compVoiceTable[i].offset = _voiceFile.readUint32BE();
 		_compVoiceTable[i].size = _voiceFile.readUint32BE();
@@ -280,7 +277,7 @@ int32 Bundle::decompressVoiceSampleByIndex(int32 index, byte *comp_final, int32 
 
 	final_size = 0;
 
-	comp_output = (byte *)malloc(10000);
+	comp_output = (byte *)malloc(0x2000);
 
 	for (i = 0; i < num; i++) {
 		comp_input = (byte *)malloc(_compVoiceTable[i].size);
@@ -288,9 +285,8 @@ int32 Bundle::decompressVoiceSampleByIndex(int32 index, byte *comp_final, int32 
 		_voiceFile.seek(_bundleVoiceTable[index].offset + _compVoiceTable[i].offset, SEEK_SET);
 		_voiceFile.read(comp_input, _compVoiceTable[i].size);
 
-		output_size =
-			decompressCodec(_compVoiceTable[i].codec, comp_input, comp_output, _compVoiceTable[i].size, i, channels);
-		assert(output_size <= 10000);
+		output_size = decompressCodec(_compVoiceTable[i].codec, comp_input, comp_output, _compVoiceTable[i].size);
+		assert(output_size <= 0x2000);
 		memcpy(comp_final + final_size, comp_output, output_size);
 		final_size += output_size;
 
@@ -301,7 +297,7 @@ int32 Bundle::decompressVoiceSampleByIndex(int32 index, byte *comp_final, int32 
 	return final_size;
 }
 
-int32 Bundle::decompressMusicSampleByIndex(int32 index, int32 number, byte *comp_final, int32 & channels)
+int32 Bundle::decompressMusicSampleByIndex(int32 index, int32 number, byte *comp_final)
 {
 	int32 i = 0;
 	int tag, num, final_size;
@@ -320,14 +316,13 @@ int32 Bundle::decompressMusicSampleByIndex(int32 index, int32 number, byte *comp
 		_musicFile.readUint32BE();
 
 		if (tag != MKID_BE('COMP')) {
-			warning("Bundle: Compressed sound %d invalid (%c%c%c%c)", index, tag >> 24, tag >> 16, tag >> 8,
-							tag);
+			warning("Bundle: Compressed sound %d invalid (%c%c%c%c)", index, tag >> 24, tag >> 16, tag >> 8, tag);
 			return 0;
 		}
 
 		if (_compMusicTable)
 			free(_compMusicTable);
-		_compMusicTable = (CompTable*)malloc(sizeof(CompTable) * num);
+		_compMusicTable = (CompTable *)malloc(sizeof(CompTable) * num);
 
 		for (i = 0; i < num; i++) {
 			_compMusicTable[i].offset = _musicFile.readUint32BE();
@@ -335,6 +330,8 @@ int32 Bundle::decompressMusicSampleByIndex(int32 index, int32 number, byte *comp
 			_compMusicTable[i].codec = _musicFile.readUint32BE();
 			_musicFile.readUint32BE();
 		}
+
+		_lastSong = index;
 	}
 
 	comp_input = (byte *)malloc(_compMusicTable[number].size);
@@ -342,18 +339,14 @@ int32 Bundle::decompressMusicSampleByIndex(int32 index, int32 number, byte *comp
 	_musicFile.seek(_bundleMusicTable[index].offset + _compMusicTable[number].offset, SEEK_SET);
 	_musicFile.read(comp_input, _compMusicTable[number].size);
 
-	// FIXME - if _lastSong == index then i will be 0 - is the right / the desired behaviour?!?
-	final_size =
-		decompressCodec(_compMusicTable[number].codec, comp_input, comp_final, _compMusicTable[number].size, number, channels);
+	final_size = decompressCodec(_compMusicTable[number].codec, comp_input, comp_final, _compMusicTable[number].size);
 
 	free(comp_input);
-
-	_lastSong = index;
 
 	return final_size;
 }
 
-int32 Bundle::decompressVoiceSampleByName(char *name, byte *comp_final, int32 & channels)
+int32 Bundle::decompressVoiceSampleByName(char *name, byte *comp_final)
 {
 	int32 final_size = 0, i;
 
@@ -364,7 +357,7 @@ int32 Bundle::decompressVoiceSampleByName(char *name, byte *comp_final, int32 & 
 
 	for (i = 0; i < _numVoiceFiles; i++) {
 		if (!scumm_stricmp(name, _bundleVoiceTable[i].filename)) {
-			final_size = decompressVoiceSampleByIndex(i, comp_final, channels);
+			final_size = decompressVoiceSampleByIndex(i, comp_final);
 			return final_size;
 		}
 	}
@@ -372,7 +365,7 @@ int32 Bundle::decompressVoiceSampleByName(char *name, byte *comp_final, int32 & 
 	return final_size;
 }
 
-int32 Bundle::decompressMusicSampleByName(char *name, int32 number, byte *comp_final, int32 & channels) {
+int32 Bundle::decompressMusicSampleByName(char *name, int32 number, byte *comp_final) {
 	int32 final_size = 0, i;
 
 	if (!name) {
@@ -387,7 +380,7 @@ int32 Bundle::decompressMusicSampleByName(char *name, int32 number, byte *comp_f
 
 	for (i = 0; i < _numMusicFiles; i++) {
 		if (!scumm_stricmp(name, _bundleMusicTable[i].filename)) {
-			final_size = decompressMusicSampleByIndex(i, number, comp_final, channels);
+			final_size = decompressMusicSampleByIndex(i, number, comp_final);
 			return final_size;
 		}
 	}
@@ -461,9 +454,9 @@ int32 Bundle::compDecode(byte *src, byte *dst)
 }
 #undef NextBit
 
-int32 Bundle::decompressCodec(int32 codec, byte *comp_input, byte *comp_output, int32 input_size, int32 index, int32 & channels)
+int32 Bundle::decompressCodec(int32 codec, byte *comp_input, byte *comp_output, int32 input_size)
 {
-	int32 output_size;
+	int32 output_size, channels;
 	int32 offset1, offset2, offset3, length, k, c, s, j, r, t, z;
 	byte *src, *t_table, *p, *ptr;
 	byte t_tmp1, t_tmp2;
@@ -790,113 +783,120 @@ int32 Bundle::decompressCodec(int32 codec, byte *comp_input, byte *comp_output, 
 
 	case 13:
 	case 15:
+		if (codec == 13) {
+			channels = 1;
+		} else {
+			channels = 2;
+		}
+
 		{
-			uint16 firstWord;
-			int32 startPos;
-			byte sByte[4];
-			int32 sDWord[4];
-			int32 channel;
-			int32 left, origLeft;
-			int32 tableEntrySum;
-			int32 curTablePos;
-			int32 outputWord;
-			int32 imcTableEntry;
-			int32 destPos = 0;
-			int32 curTableEntry;
-			byte decompTable;
+			int32 left, startPos, origLeft, curTableEntry, destPos, esiReg;
+			int16 firstWord;
+			byte sByte1, sByte2;
+			int32 sDWord1, sDWord2, sDWord3, sDWord4;
+			int32 tableEntrySum, imcTableEntry, curTablePos, outputWord, adder;
+			byte decompTable, otherTablePos, var3b;
+			byte *readPos, *dst;
 			uint16 readWord;
-			byte * readPos;
-			byte otherTablePos;
-			int32 esiReg;
-			byte var3b;
-			int32 adder;
-			
-			byte *endPos = comp_input + input_size;
-			
+
 			src = comp_input;
-			memset (comp_output, 0, 0x2000);
+			dst = comp_output;
+			if (channels == 2) {
+				output_size = left = 0x2000;
+			} else {
+				left = 0x1000;
+				output_size = 0x2000;
+			}
 			firstWord = READ_BE_UINT16(src);
 			src += 2;
-			assert(src < endPos);
-
-
 			if (firstWord != 0) {
-				if (index != 0) {
-					startPos = 0;
-				} else {
-					memcpy(comp_output, src, firstWord);
-					startPos = firstWord;
-					uint32 tag;
-					ptr = src;
-					do {
-						tag = READ_BE_UINT32(ptr); ptr += 4;
-					} while (tag != MKID_BE('FRMT'));
-					channels = READ_BE_UINT32(ptr + 20);
-				}
+				memcpy(dst, src, firstWord);
+				dst += firstWord;
 				src += firstWord;
-				origLeft = 0x2000 - firstWord;
-				// At this point we are at the start of the content of the 'DATA' chunk.
+				startPos = 0;
+				if (channels == 2) {
+					left = 0x2000 - firstWord;
+					output_size = left;
+				} else {
+					left = 0x1000 - (firstWord >> 1);
+					output_size = left << 1;
+				}
 			} else {
-				sByte[0] = *src++;
-				sDWord[0] = (int32)READ_BE_UINT32(src);
+				startPos = 1;
+				sByte1 = *(src++);
+				sDWord1 = READ_BE_UINT32(src);
 				src += 4;
-				sDWord[1] = (int32)READ_BE_UINT32(src);
+				sDWord2 = READ_BE_UINT32(src);
 				src += 4;
-				if (channels > 1) {
-					sByte[1] = *src++;
-					sDWord[2] = (int32)READ_BE_UINT32(src);
+				if (channels == 2) {
+					sByte2 = *(src++);
+					sDWord3 = READ_BE_UINT32(src);
 					src += 4;
-					sDWord[3] = (int32)READ_BE_UINT32(src);
+					sDWord4 = READ_BE_UINT32(src);
 					src += 4;
 				}
-				startPos = 0;
-				origLeft = 0x2000;
 			}
-			assert(src < endPos);
 
+			origLeft = left >> (channels - 1);
 			tableEntrySum = 0;
-			for (channel = 0; channel < channels; channel++) {
-				if (firstWord == 0) {
-					curTablePos = sByte[channel];
-					outputWord = sDWord[channel * 2 + 1];
-					imcTableEntry = sDWord[channel * 2];
+			for (int l = 0; l < channels; l++) {
+				if (startPos != 0) {
+					if (l == 0) {
+						curTablePos = sByte1;
+						imcTableEntry = sDWord1;
+						outputWord = sDWord2;
+					} else {
+						curTablePos = sByte2;
+						imcTableEntry = sDWord3;
+						outputWord = sDWord4;
+					}
 				} else {
+					imcTableEntry = 7;
 					curTablePos = 0;
 					outputWord = 0;
-					imcTableEntry = 7;
 				}
-				
-				left = (origLeft - 1) / (2 * (channels - channel)) + 1;
-				origLeft -= 2* left;
 
-				destPos = startPos + 2 * channel;
-				while (left--) {
+				left = origLeft;
+				destPos = l * 2;
+
+				if (channels == 2) {
+					if (l == 0) {
+						if (left == 0)
+							return output_size;
+						left++;
+						left >>= 1;
+					} else {
+						if (left <= 1)
+							return output_size;
+						left >>= 1;
+					}
+				} else {
+					if (left == 0)
+						return output_size;
+				}
+
+				do {
 					curTableEntry = _destImcTable[curTablePos];
 					decompTable = curTableEntry - 2;
 					var3b = (1 << decompTable) << 1;
 					readPos = src + (tableEntrySum >> 3);
-					if (readPos >= endPos) {
-						error("readPos exceeds endPos: %d >= %d (%d, %d)!" , readPos, endPos, left, origLeft);
-					}
-					assert(readPos < endPos);
 					readWord = (uint16)(READ_BE_UINT16(readPos) << (tableEntrySum & 7));
 					otherTablePos = (byte)(readWord >> (16 - curTableEntry));
 					tableEntrySum += curTableEntry;
-					esiReg = imxShortTable[curTableEntry];
-					esiReg = (esiReg & otherTablePos) << (7 - curTableEntry);
-					esiReg += (curTablePos << 6);
+					esiReg = ((imxShortTable[curTableEntry] & otherTablePos)
+						<< (7 - curTableEntry)) + (curTablePos << 6);
 					imcTableEntry >>= (curTableEntry - 1);
 					adder = imcTableEntry + _destImcTable2[esiReg];
 					if ((otherTablePos & var3b) != 0) {
 						adder = -adder;
 					}
 					outputWord += adder;
-					if (outputWord > 0x7fff) 
+					if (outputWord > 0x7fff)
 						outputWord = 0x7fff;
 					if (outputWord < -0x8000)
 						outputWord = -0x8000;
-					comp_output[destPos] = (byte)(outputWord >> 8);
-					comp_output[destPos + 1] = (byte)(outputWord);
+					dst[destPos] = ((int16)outputWord) >> 8;
+					dst[destPos + 1] = (byte)(outputWord);
 					switch (decompTable) {
 						case 0: curTablePos += (signed char)imxOtherTable1[otherTablePos];
 							break;
@@ -911,21 +911,17 @@ int32 Bundle::decompressCodec(int32 codec, byte *comp_input, byte *comp_output, 
 						case 5: curTablePos += (signed char)imxOtherTable6[otherTablePos];
 							break;
 					}
-					if (curTablePos < 0)
-						curTablePos = 0;
 					if (curTablePos > 88)
 						curTablePos = 88;
-					destPos += 2 * channels;
-					imcTableEntry = imcTable1[curTablePos];
-				}
-			}
-			if (index == 0) {
-				output_size = 0x2000 - firstWord;
-			} else {
-				output_size = 0x2000;
+					if (curTablePos < 0)
+						curTablePos = 0;
+					destPos += channels << 1;
+					imcTableEntry = imcTable[curTablePos];
+				} while (--left != 0);
 			}
 		}
 		break;
+
 	default:
 		warning("Bundle: Unknown codec %d!", (int)codec);
 		output_size = 0;
