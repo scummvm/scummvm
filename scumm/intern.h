@@ -895,6 +895,8 @@ protected:
 	int spriteInfoGet_field_78(int spriteNun);
 	int spriteInfoGet_field_80(int spriteNun);
 	void getSpriteImageDim(int spriteNum, int32 &w, int32 &h);
+	void spriteInfoGet_tx_ty(int spriteNum, int32 &tx, int32 &ty);
+	void spriteInfoGet_field_2C_30(int spriteNum, int32 &field_2C, int32 &field_30);
 
 	void spriteInfoSet_field_14(int spriteNum, int value);
 	void spriteInfoSet_field_7C(int spriteNum, int value);

@@ -699,23 +699,33 @@ void ScummEngine_v90he::o90_getDistanceBetweenPoints() {
 void ScummEngine_v90he::o90_getSpriteInfo() {
 	int args[16];
 	int eax, esi;
-	int32 w, h;
+	int32 a, b;
 	byte subOp = fetchScriptByte();
 	subOp -= 30;
 
 	debug(1,"o90_getSpriteInfo stub (%d)", subOp);
 	switch (subOp) {
 	case 0:
-		pop();
-		break;
+		eax = pop();
+		if (eax) {
+			spriteInfoGet_tx_ty(eax, a, b);
+			push(a);
+		} else {
+			push(0);
+		}
 	case 1:
-		pop();
-		break;
+		eax = pop();
+		if (eax) {
+			spriteInfoGet_tx_ty(eax, a, b);
+			push(b);
+		} else {
+			push(0);
+		}
 	case 2:
 		eax = pop();
 		if (eax) {
-			getSpriteImageDim(eax, w, h);
-			push(w);
+			getSpriteImageDim(eax, a, b);
+			push(a);
 		} else {
 			push(0);
 		}
@@ -723,17 +733,29 @@ void ScummEngine_v90he::o90_getSpriteInfo() {
 	case 3:
 		eax = pop();
 		if (eax) {
-			getSpriteImageDim(eax, w, h);
-			push(h);
+			getSpriteImageDim(eax, a, b);
+			push(b);
 		} else {
 			push(0);
 		}
 		break;
 	case 4:
-		pop();
+		eax = pop();
+		if (eax) {
+			spriteInfoGet_field_2C_30(eax, a, b);
+			push(a);
+		} else {
+			push(0);
+		}
 		break;
 	case 5:
-		pop();
+		eax = pop();
+		if (eax) {
+			spriteInfoGet_field_2C_30(eax, a, b);
+			push(b);
+		} else {
+			push(0);
+		}
 		break;
 	case 6:
 		eax = pop();
