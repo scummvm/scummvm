@@ -949,17 +949,26 @@ void Scumm::initRoomSubBlocks() {
 	//
 	// Look for an entry script
 	//
-	if (_features & GF_AFTER_V2)
+	int ENCD_len = -1;
+	if (_features & GF_AFTER_V2) {
 		_ENCD_offs = READ_LE_UINT16(roomptr + 0x1A);
-	else if (_features & GF_OLD_BUNDLE)
+	} else if (_features & GF_OLD_BUNDLE) {
 		_ENCD_offs = READ_LE_UINT16(roomptr + 0x1B);
-	else {
+		// FIXME - the following is a hack which assumes that immediately after
+		// the entry script the first local script follows.
+		int num_objects = *(roomResPtr + 20);
+		int num_sounds = *(roomResPtr + 23);
+		int num_scripts = *(roomResPtr + 24);
+		ptr = roomptr + 29 + num_objects * 4 + num_sounds + num_scripts;
+		if (*ptr)
+			ENCD_len = READ_LE_UINT16(ptr + 1) - _ENCD_offs + _resourceHeaderSize; // HACK
+	} else {
 		ptr = findResourceData(MKID('ENCD'), roomResPtr);
 		if (ptr)
 			_ENCD_offs = ptr - roomResPtr;
 	}
 	if (_dumpScripts && _ENCD_offs)
-		dumpResource("entry-", _roomResource, roomResPtr + _ENCD_offs - _resourceHeaderSize);
+		dumpResource("entry-", _roomResource, roomResPtr + _ENCD_offs - _resourceHeaderSize, ENCD_len);
 
 	//
 	// Load box data
@@ -1070,9 +1079,7 @@ void Scumm::initRoomSubBlocks() {
 				loadResource(rtSound, *ptr++);
 			while (num_scripts--)
 				loadResource(rtScript, *ptr++);
-		}
-
-		if (_features & GF_AFTER_V3) {
+		} else if (_features & GF_AFTER_V3) {
 			num_sounds = *(roomResPtr + 23);
 			num_scripts = *(roomResPtr + 24);
 			ptr = roomptr + 29 + num_objects * 4 + num_sounds + num_scripts;
