@@ -31,7 +31,7 @@ QueenLogic::QueenLogic(QueenResource *resource)
 }
 
 QueenLogic::~QueenLogic() {
-	free (_jas);
+	delete[] _jas;
 	//free(_graphicData);
 }
 
@@ -280,16 +280,25 @@ uint16 QueenLogic::findBob(uint16 obj) {
 						++idxStatic;
 					}
 				}
+				else if(img == -1) {
+					++idxStatic;
+				}
+				else if(img == -2) {
+					++idxAnimated;
+				}
 			}
-			// FIXME: _max*Frame variables should initialized in SETUP_FURNITURE and DISP_ROOM
+			// FIXME: _max*Frame variables should be initialized in SETUP_FURNITURE and DISP_ROOM
 			if(bobtype == 0) {
 				// static bob
-				bobnum = 19 + _maxStaticFrame + idxStatic;
+				if(idxStatic > 0) {
+					bobnum = 19 + _maxStaticFrame + idxStatic;
+				}
 			}
 			else {
 				// animated bob
-				bobnum = 4 + _maxAnimatedFrame + idxAnimated;
-
+				if(idxAnimated > 0) {
+					bobnum = 4 + _maxAnimatedFrame + idxAnimated;
+				}
 			}
 		}
 	}
@@ -355,7 +364,7 @@ uint16 QueenLogic::findFrame(uint16 obj) {
 		if(img <= -10) {
 			GraphicData* pgd = &_graphicData[-(img + 10)];
 			if(pgd->lastFrame != 0) {
-				idx += ABS(pgd->lastFrame - pgd->firstFrame) + 1;
+				idx += ABS(pgd->lastFrame) - pgd->firstFrame + 1;
 			}
 			else {
 				++idx;
