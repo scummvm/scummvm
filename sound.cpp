@@ -905,7 +905,7 @@ void Scumm::decompressBundleSound(int index) {
 						s += 12;
 						k++;
 						c += 12;
-					} while (k < length);
+					} while (k <= length);
 				}
 			break;
 
