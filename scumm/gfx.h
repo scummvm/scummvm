@@ -114,7 +114,6 @@ public:
 
 	int _numZBuffer;
 	int _imgBufOffs[8];
-	byte _disable_zbuffer;
 	int32 _numStrips;
 	int16 _mask_top, _mask_bottom, _mask_right, _mask_left;
 
@@ -128,6 +127,8 @@ protected:
 	byte _decomp_shr, _decomp_mask;
 	byte _transparentColor;
 	uint32 _vertStripNextInc;
+
+	bool _zbufferDisabled;
 
 	/* Bitmap decompressors */
 	bool decompressBitmap(byte *bgbak_ptr, byte *smap_ptr, int numLinesToProcess);
@@ -162,8 +163,8 @@ public:
 	                int stripnr, int numstrip, byte flag);
 	void clearUpperMask();
 
-	void disableZBuffer() { _disable_zbuffer++; }
-	void enableZBuffer() { _disable_zbuffer--; }
+	void disableZBuffer() { _zbufferDisabled = true; }
+	void enableZBuffer() { _zbufferDisabled = false; }
 
 	void resetBackground(int top, int bottom, int strip);
 

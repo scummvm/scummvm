@@ -885,7 +885,7 @@ void Gdi::drawBitmap(byte *ptr, VirtScreen *vs, int x, int y, const int width, c
 
 	zplane_list[0] = smap_ptr;
 
-	if (_disable_zbuffer)
+	if (_zbufferDisabled)
 		numzbuf = 0;
 	else if (_numZBuffer <= 1 || (_vm->_features & GF_AFTER_V2))
 		numzbuf = _numZBuffer;
@@ -3396,10 +3396,10 @@ void Scumm::useIm01Cursor(byte *im, int w, int h) {
 	drawBox(0, 0, w - 1, h - 1, 0xFF);
 
 	vs->alloctwobuffers = false;
-	gdi._disable_zbuffer = true;
+	gdi.disableZBuffer();
 	gdi.drawBitmap(im, vs, _screenStartStrip, 0, w, h, 0, w >> 3, 0);
 	vs->alloctwobuffers = true;
-	gdi._disable_zbuffer = false;
+	gdi.enableZBuffer();
 
 	grabCursor(vs->screenPtr + vs->xstart, w, h);
 

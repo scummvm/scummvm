@@ -1009,7 +1009,7 @@ public:
 
 	void initCharset(int charset);
 	void restoreCharsetBg();
-	bool hasCharsetMask(int x, int y, int x2, int y2);
+	bool hasCharsetMask(int left, int top, int right, int bottom);
 	void CHARSET_1();
 	void drawString(int a);
 	void drawDescString(byte *msg);
