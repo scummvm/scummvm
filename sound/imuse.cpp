@@ -1354,16 +1354,24 @@ int32 IMuse::do_command(int a, int b, int c, int d, int e, int f, int g,
 			return start_sound(b) ? 0 : -1;
 		case 9:
 			return stop_sound(b);
+		case 10:
+			return stop_all_sounds(); //FIXME
 		case 11:
 			return stop_all_sounds();
 		case 13:
 			return get_sound_status(b);
+		case 14:
+			return stop_sound(b); //FIXME  should be something like fade off
 		case 16:
 			return set_volchan(b, c);
 		case 17:
 			return set_channel_volume(b, c);
 		case 18:
 			return set_volchan_entry(b, c);
+		case 19:
+			return stop_sound(b); //FIXME
+		case 20:
+			return stop_sound(b); //FIXME
 
 		case 2:
 		case 3:

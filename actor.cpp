@@ -918,6 +918,9 @@ void Scumm::drawActorCostume(Actor * a)
 			a->mask = 0;
 		else if (g_scumm->getClass(a->number, 21))
 			a->forceClip = 1;
+		
+		if (_gameId==GID_SAMNMAX && getState(995)) // FIXME: ugly fix for samnmax inventory
+			return;
 
 		a->needRedraw = false;
 
