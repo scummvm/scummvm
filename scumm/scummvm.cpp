@@ -219,7 +219,7 @@ Engine *Engine_SCUMM_create(GameDetector *detector, OSystem *syst) {
 	return engine;
 }
 
-Scumm::Scumm (GameDetector *detector, OSystem *syst) 
+Scumm::Scumm (GameDetector *detector, OSystem *syst)
 	: Engine(detector, syst), _pauseDialog(0), _optionsDialog(0), _saveLoadDialog(0) {
 	OSystem::Property prop;
 
@@ -290,7 +290,7 @@ Scumm::Scumm (GameDetector *detector, OSystem *syst)
 	_objectOwnerTable = NULL;
 	_objectRoomTable = NULL;
 	_objectStateTable = NULL;
-	memset(&_objectIDMap,0,sizeof(ObjectIDMap));
+	memset(&_objectIDMap, 0, sizeof(ObjectIDMap));
 	_numObjectsInRoom = 0;
 	_userPut = 0;
 	_userState = 0;
@@ -299,10 +299,10 @@ Scumm::Scumm (GameDetector *detector, OSystem *syst)
 	_saveLoadSlot = 0;
 	_lastSaveTime = 0;
 	_saveLoadCompatible = false;
-	memset(_saveLoadName,0,sizeof(_saveLoadName));
+	memset(_saveLoadName, 0, sizeof(_saveLoadName));
 	_maxHeapThreshold = 0;
 	_minHeapThreshold = 0;
-	memset(_localScriptList,0,sizeof(_localScriptList));
+	memset(_localScriptList, 0, sizeof(_localScriptList));
 	_scriptPointer = NULL;
 	_scriptOrgPointer = NULL;
 	_opcode = 0;
@@ -312,17 +312,17 @@ Scumm::Scumm (GameDetector *detector, OSystem *syst)
 	_lastCodePtr = NULL;
 	_resultVarNumber = 0;
 	_scummStackPos = 0;
-	memset(_localParamList,0,sizeof(_localParamList));
-	memset(_scummStack,0,sizeof(_scummStack));
+	memset(_localParamList, 0, sizeof(_localParamList));
+	memset(_scummStack, 0, sizeof(_scummStack));
 	_keyScriptKey = 0;
 	_keyScriptNo = 0;
 	_encbyte = 0;
-	memset(&_fileHandle,0,sizeof(File));
+	memset(&_fileHandle, 0, sizeof(File));
 	_fileOffset = 0;
 	_exe_name = NULL;
 	_game_name = NULL;
 	_dynamicRoomOffsets = false;
-	memset(_resourceMapper,0,sizeof(_resourceMapper));
+	memset(_resourceMapper, 0, sizeof(_resourceMapper));
 	_allocatedSize = 0;
 	_expire_counter = 0;
 	_lastLoadedRoom = 0;
@@ -333,17 +333,17 @@ Scumm::Scumm (GameDetector *detector, OSystem *syst)
 	_classData = NULL;
 	_actorToPrintStrFor = 0;
 	_sentenceNum = 0;
-	memset(_sentence,0,sizeof(_sentence));
-	memset(_string,0,sizeof(_string));
+	memset(_sentence, 0, sizeof(_sentence));
+	memset(_string, 0, sizeof(_string));
 	_screenB = 0;
 	_screenH = 0;
 	_roomHeight = 0;
 	_roomWidth = 0;
 	_screenHeight = 0;
 	_screenWidth = 0;
-	memset(virtscr,0,sizeof(virtscr));
-	memset(&camera,0,sizeof(CameraData));
-	memset(_colorCycle,0,sizeof(_colorCycle));
+	memset(virtscr, 0, sizeof(virtscr));
+	memset(&camera, 0, sizeof(CameraData));
+	memset(_colorCycle, 0, sizeof(_colorCycle));
 	_ENCD_offs = 0;
 	_EXCD_offs = 0;
 	_CLUT_offs = 0;
@@ -354,14 +354,14 @@ Scumm::Scumm (GameDetector *detector, OSystem *syst)
 	_verbRedraw = false;
 	_screenEffectFlag = false;
 	_completeScreenRedraw = false;
-	memset(&_cursor,0,sizeof(_cursor));
-	memset(_grabbedCursor,0,sizeof(_grabbedCursor));
+	memset(&_cursor, 0, sizeof(_cursor));
+	memset(_grabbedCursor, 0, sizeof(_grabbedCursor));
 	_currentCursor = 0;
 	_newEffect = 0;
 	_switchRoomEffect2 = 0;
 	_switchRoomEffect = 0;
 	_doEffect = false;
-	memset(&_flashlight,0,sizeof(_flashlight));
+	memset(&_flashlight, 0, sizeof(_flashlight));
 	_roomStrips = 0;
 	_bompActorPalettePtr = NULL;
 	_shakeEnabled= false;
@@ -370,22 +370,22 @@ Scumm::Scumm (GameDetector *detector, OSystem *syst)
 	_screenEndStrip = 0;
 	_screenLeft = 0;
 	_screenTop = 0;
-	_blastObjectQueuePos = 0; 
-	memset(_blastObjectQueue,0,sizeof(_blastObjectQueue));
+	_blastObjectQueuePos = 0;
+	memset(_blastObjectQueue, 0, sizeof(_blastObjectQueue));
 	_blastTextQueuePos = 0;
-	memset(_blastTextQueue,0,sizeof(_blastTextQueue));
+	memset(_blastTextQueue, 0, sizeof(_blastTextQueue));
 	_drawObjectQueNr = 0;
-	memset(_drawObjectQue,0,sizeof(_drawObjectQue));
+	memset(_drawObjectQue, 0, sizeof(_drawObjectQue));
 	_palManipStart = 0;
 	_palManipEnd = 0;
 	_palManipCounter = 0;
 	_palManipPalette = NULL;
 	_palManipIntermediatePal = NULL;
-	memset(gfxUsageBits,0,sizeof(gfxUsageBits));
+	memset(gfxUsageBits, 0, sizeof(gfxUsageBits));
 	_shadowPalette = NULL;
 	_shadowPaletteSize = 0;
-	memset(_currentPalette,0,sizeof(_currentPalette));
-	memset(_proc_special_palette,0,sizeof(_proc_special_palette));
+	memset(_currentPalette, 0, sizeof(_currentPalette));
+	memset(_proc_special_palette, 0, sizeof(_proc_special_palette));
 	_palDirtyMin = 0;
 	_palDirtyMax = 0;
 	_haveMsg = 0;
@@ -397,14 +397,14 @@ Scumm::Scumm (GameDetector *detector, OSystem *syst)
 	_noDigitalSamples = 0;
 	_saveSound = 1;
 	current_cd_sound = 0;
-	memset(_extraBoxFlags,0,sizeof(_extraBoxFlags));
-	memset(_scaleSlots,0,sizeof(_scaleSlots));
+	memset(_extraBoxFlags, 0, sizeof(_extraBoxFlags));
+	memset(_scaleSlots, 0, sizeof(_scaleSlots));
 	_charset = NULL;
 	_charsetColor = 0;
-	memset(_charsetColorMap,0,sizeof(_charsetColorMap));
-	memset(_charsetData,0,sizeof(_charsetData));
+	memset(_charsetColorMap, 0, sizeof(_charsetColorMap));
+	memset(_charsetData, 0, sizeof(_charsetData));
 	_charsetBufPos = 0;
-	memset(_charsetBuffer,0,sizeof(_charsetBuffer));
+	memset(_charsetBuffer, 0, sizeof(_charsetBuffer));
 	_noSubtitles = false;
 	_numInMsgStack = 0;
 	_msgPtrToAdd = NULL;
@@ -414,7 +414,7 @@ Scumm::Scumm (GameDetector *detector, OSystem *syst)
 	_existLanguageFile = false;
 	_languageBuffer = NULL;
 	_languageIndex = NULL;
-	memset(_transText,0,sizeof(_transText));
+	memset(_transText, 0, sizeof(_transText));
 	_bcr = NULL;
 
 	//
@@ -609,19 +609,19 @@ Scumm::Scumm (GameDetector *detector, OSystem *syst)
 
 #ifndef __GP32__ //ph0x FIXME, "quick dirty hack"
 	/* Bind the mixer to the system => mixer will be invoked
-	 * automatically when samples need to be generated */	
+	 * automatically when samples need to be generated */
 	_silentDigitalImuse = false;
-	if (!_mixer->bindToSystem(syst)) {         
+	if (!_mixer->bindToSystem(syst)) {
 		warning("Sound initialization failed");
 		if (detector->_use_adlib) {
-			_use_adlib = false;   
-			detector->_use_adlib = false;   
-			detector->_midi_driver = MD_NULL;   
-			warning("Adlib music was selected, switching to midi null driver");   
-		}   
+			_use_adlib = false;
+			detector->_use_adlib = false;
+			detector->_midi_driver = MD_NULL;
+			warning("Adlib music was selected, switching to midi null driver");
+		}
 		_silentDigitalImuse = true;
 		_noDigitalSamples = true;
-	} 
+	}
 	_mixer->setVolume(kDefaultSFXVolume * kDefaultMasterVolume / 255);
 	_mixer->setMusicVolume(kDefaultMusicVolume);
 
@@ -798,7 +798,7 @@ void Scumm::scummInit() {
 
 	if (!(_features & GF_SMALL_NAMES) && _version != 8)
 		loadCharset(1);
-		
+	
 	if (_features & GF_OLD_BUNDLE)
 		loadCharset(0);	// FIXME - HACK ?
 
@@ -811,7 +811,7 @@ void Scumm::scummInit() {
 	for (i = 1; i < _numActors; i++) {
 		_actors[i].number = i;
 		_actors[i].initActor(1);
-		
+	
 		// this is from IDB
 		if (_version == 1)
 			_actors[i].setActorCostume(i);
@@ -941,7 +941,7 @@ void Scumm::initScummVars() {
 		VAR(VAR_MOUSEPRESENT) = true; // FIXME - used to be 0, but that seems odd?!?
 		if (_features & GF_HUMONGOUS)
 			VAR(VAR_SOUNDPARAM) = 1; // soundblaster for music
-		else 
+		else
 			VAR(VAR_SOUNDPARAM) = 0;
 		VAR(VAR_SOUNDPARAM2) = 0;
 		VAR(VAR_SOUNDPARAM3) = 0;
@@ -1093,7 +1093,7 @@ load_game:
 			char buf[1024];
 #endif
 			sprintf(buf, errMsg, filename);
-			
+	
 			Dialog *dialog = new MessageDialog(_newgui, buf, 1500, false);
 			runDialog(dialog);
 			delete dialog;
@@ -1125,7 +1125,7 @@ load_game:
 
 	// HACK: If a load was requested, immediately perform it. This avoids
 	// drawing the current room right after the load is request but before
-	// it is performed. That was annoying esp. if you loaded while a SMUSH 
+	// it is performed. That was annoying esp. if you loaded while a SMUSH
 	// cutscene was playing.
 	if (_saveLoadFlag && _saveLoadFlag != 1) {
 		goto load_game;
@@ -1152,7 +1152,7 @@ load_game:
 		if (_verbRedraw) {
 			redrawVerbs();
 		}
-		
+	
 		setActorRedrawFlags();
 		resetActorBgs();
 
@@ -1619,7 +1619,7 @@ void Scumm::initRoomSubBlocks() {
 
 				_localScriptList[id - _numGlobalScripts] = READ_LE_UINT16(ptr + 1);
 				ptr += 3;
-				
+	
 				if (_dumpScripts) {
 					char buf[32];
 					sprintf(buf, "room-%d-", _roomResource);
@@ -2209,11 +2209,11 @@ const char *Scumm::getGameDataPath() const {
 		struct stat st;
 		int disk = (_scummVars && _scummVars[VAR_CURRENTDISK] == 2) ? 2 : 1;
 		sprintf(buf, "/Volumes/MONKEY3_%d", disk);
-		
+	
 		if (!stat(buf, &st)) {
 			return buf;
 		}
-		
+	
 		// Apparently that disk is not inserted. However since many data files
 		// (fonts, comi.la0) are on both disks, we also try the other CD.
 		disk = (disk == 1) ? 2 : 1;
@@ -2298,7 +2298,7 @@ void Scumm::parseEvents() {
 				// because that's what MI2 looks for in
 				// its "instant win" cheat.
 				_keyPressed = event.kbd.keycode + 154;
-			} else 
+			} else
 				_keyPressed = event.kbd.ascii;	// Normal key press, pass on to the game.
 			break;
 
@@ -2332,11 +2332,11 @@ void Scumm::parseEvents() {
 		case OSystem::EVENT_RBUTTONUP:
 			_rightBtnPressed &= ~msDown;
 			break;
-		
+	
 		case OSystem::EVENT_QUIT:
 			_quit = true;
 			break;
-		
+	
 		default:
 			break;
 		}
@@ -2401,7 +2401,7 @@ void Scumm::mainRun() {
 	while (!_quit) {
 
 		updatePalette();
-		_system->update_screen();		
+		_system->update_screen();
 
 		diff -= _system->get_msecs();
 		waitForTimer(delta * 15 + diff);
