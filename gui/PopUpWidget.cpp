@@ -22,6 +22,7 @@
 #include "PopUpWidget.h"
 #include "dialog.h"
 #include "newgui.h"
+#include "common/engine.h"
 
 /* TODO:
  * - draw an (unselectable) sepeator line for items that start with a '-'
@@ -52,6 +53,7 @@ protected:
 	int			_clickX, _clickY;
 	byte		*_buffer;
 	int			_selection;
+	uint32		_openTime;
 public:
 	PopUpDialog(PopUpWidget *boss, int clickX, int clickY);
 	
@@ -93,6 +95,9 @@ PopUpDialog::PopUpDialog(PopUpWidget *boss, int clickX, int clickY)
 	// Remember original mouse position
 	_clickX = clickX - _x;
 	_clickY = clickY - _y;
+	
+	// Time the popup was opened
+	_openTime = g_system->get_msecs();
 }
 
 void PopUpDialog::drawDialog()
@@ -123,12 +128,13 @@ void PopUpDialog::handleMouseUp(int x, int y, int button, int clickCount)
 	// Mouse was released. If it wasn't moved much since the original mouse down, 
 	// let the popup stay open. If it did move, assume the user made his selection.
 	int dist = (_clickX - x) * (_clickX - x) + (_clickY - y) * (_clickY - y);
-	if (dist > 3*3) {
+	if (dist > 3*3 || g_system->get_msecs() - _openTime > 300) {
 		setResult(_selection);
 		close();
 	}
 	_clickX = -1;
 	_clickY = -1;
+	_openTime = (uint32)-1;
 }
 
 void PopUpDialog::handleMouseMoved(int x, int y, int button)
@@ -214,7 +220,7 @@ void PopUpWidget::handleMouseDown(int x, int y, int button, int clickCount)
 	int newSel = popupDialog.runModal();
 	if (newSel != -1 && _selectedItem != newSel) {
 		_selectedItem = newSel;
-		sendCommand(kPopUpItemSelectedCmd, _selectedItem);
+		sendCommand(kPopUpItemSelectedCmd, _entries[_selectedItem].tag);
 	}
 }
 
