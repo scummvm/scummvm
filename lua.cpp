@@ -418,6 +418,17 @@ static void SayLine() {
   act->sayLine(msg);
 }
 
+static void InputDialog() {
+  int c, i = 0;
+  char buf[512];
+  fprintf(stderr, "%s %s: ", luaL_check_string(1), luaL_check_string(2));
+  while (i < 512 && (c = fgetc(stdin)) != EOF && c != '\n')
+    buf[i++] = c;
+  buf[i] = '\0';
+  
+  lua_pushstring(buf);
+}
+
 static void IsMessageGoing() {
   Actor *act;
   if (lua_getparam(1) == LUA_NOOBJECT)
@@ -731,7 +742,6 @@ static char *stubFuncs[] = {
   "PreRender",
   "MakeSectorActive",
   "GetSectorOppositeEdge",
-  "InputDialog",
   "FileFindDispose",
   "FileFindNext",
   "FileFindFirst",
@@ -1028,7 +1038,8 @@ struct luaL_reg builtins[] = {
   { "PerSecond", PerSecond },
   { "EnableControl", EnableControl },
   { "DisableControl", DisableControl },
-  { "GetControlState", GetControlState }
+  { "GetControlState", GetControlState },
+  { "InputDialog", InputDialog }
 };
 
 void register_lua() {
