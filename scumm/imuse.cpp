@@ -130,7 +130,7 @@ struct Player {
 	void key_on(uint8 chan, byte data, byte velocity);
 	void part_set_transpose(uint8 chan, byte relative, int8 b);
 	void parse_sysex(byte *p, uint len);
-	void maybe_jump(byte *data);
+	void maybe_jump (byte cmd, uint track, uint beat, uint tick);
 	void maybe_set_transpose(byte *data);
 	void maybe_part_onoff(byte *data);
 	void maybe_set_volume(byte *data);
@@ -793,7 +793,7 @@ byte *IMuseInternal::findTag(int sound, char *tag, int index)
 		pos += READ_BE_UINT32_UNALIGNED(ptr + pos + 4) + 8;
 	}
 
-	debug(1, "IMuseInternal::findTag failed finding sound %d", sound);
+	debug(3, "IMuseInternal::findTag failed finding sound %d", sound);
 	return NULL;
 }
 
@@ -864,7 +864,7 @@ bool IMuseInternal::start_sound(int sound)
 	if (!mdhd) {
 		mdhd = findTag(sound, MDPG_TAG, 0);
 		if (!mdhd) {
-			warning("SE::start_sound failed: Couldn't find %s", MDHD_TAG);
+			warning("SE::start_sound failed: Couldn't find sound %d", sound);
 			return false;
 		}
 	}
@@ -2097,14 +2097,29 @@ void Player::parse_sysex(byte *p, uint len)
 	len -= 2;
 
 	switch (code = *p++) {
-	case 0:												/* part on/off? */
-		// This seems to do the right thing for Monkey 2, at least.
-		a = *p++ & 0x0F;
-		part = get_part(a);
-		if (part) {
-			debug(2, "%d => turning %s part %d", p[1], (p[1] == 2) ? "OFF" : "ON", a);
-			part->set_onoff(p[1] != 2);
-		}
+	case 0:
+		if (len > 2) {
+			// Part on/off?
+			// This seems to do the right thing for Monkey 2, at least.
+			a = *p++ & 0x0F;
+			part = get_part(a);
+			if (part) {
+				debug(2, "%d => turning %s part %d", p[1], (p[1] == 2) ? "OFF" : "ON", a);
+				part->set_onoff(p[1] != 2);
+			}
+		} // end if
+
+		// Jamieson630: Sam & Max uses this for something entirely different.
+		// The data is much shorter, hence the len > 2 check above.
+		break;
+
+	case 1:
+		// This SysEx is used in Sam & Max to provide loop (and
+		// possibly marker) information. Presently, only the
+		// loop information is implemented.
+		if (_scanning)
+			break;
+		maybe_jump (p[0], p[1] - 1, (read_word (p + 2) - 1) * 4 + p[4], ((p[5] * _ticks_per_beat) >> 2) + p[6]);
 		break;
 		
 	case 16:											/* set instrument in part */
@@ -2140,7 +2155,7 @@ void Player::parse_sysex(byte *p, uint len)
 		if (_scanning)
 			break;
 		decode_sysex_bytes(p + 1, buf, len - 2);
-		maybe_jump(buf);
+		maybe_jump (buf[0], read_word (buf + 1), read_word (buf + 3), read_word (buf + 5));
 		break;
 
 	case 49:											/* hook - global transpose */
@@ -2212,12 +2227,8 @@ void Player::decode_sysex_bytes(byte *src, byte *dst, int len)
 	}
 }
 
-void Player::maybe_jump(byte *data)
+void Player::maybe_jump (byte cmd, uint track, uint beat, uint tick)
 {
-	byte cmd;
-
-	cmd = data[0];
-
 	/* is this the hook i'm waiting for? */
 	if (cmd && _hook._jump != cmd)
 		return;
@@ -2226,7 +2237,7 @@ void Player::maybe_jump(byte *data)
 	if (cmd != 0 && cmd < 0x80)
 		_hook._jump = 0;
 
-	jump(read_word(data + 1), read_word(data + 3), read_word(data + 5));
+	jump (track, beat, tick);
 }
 
 void Player::maybe_set_transpose(byte *data)
