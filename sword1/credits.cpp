@@ -336,4 +336,4 @@ uint8 *ArcFile::decompressFile(uint32 fileId) {
 	return dstBuf;
 }
 
-}; // end of namespace Sword1
+} // end of namespace Sword1

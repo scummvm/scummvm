@@ -2,6 +2,7 @@ MODULE := sword1
 
 MODULE_OBJS := \
 	sword1/animation.o \
+	sword1/credits.o \
 	sword1/control.o \
 	sword1/debug.o \
 	sword1/eventman.o \

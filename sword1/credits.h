@@ -63,6 +63,6 @@ private:
 	uint8 *_smlFont, *_bigFont;
 };
 
-}; // end of namespace Sword1
+} // end of namespace Sword1
 
 #endif // BS1CREDITS_H
