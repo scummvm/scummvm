@@ -422,6 +422,7 @@ ConfigDialog::ConfigDialog(ScummEngine *scumm)
 	// Some misc options
 	//
 	subtitlesCheckbox = new GUI::CheckboxWidget(this, 15, 78, 200, 16, "Show subtitles", 0, 'S');
+	speechCheckbox = new GUI::CheckboxWidget(this, 130, 78, 200, 16, "Enable speech", 0, 'E');
 
 	//
 	// Create the sub dialog(s)
@@ -442,6 +443,7 @@ void ConfigDialog::open() {
 
 	// update checkboxes, too
 	subtitlesCheckbox->setState(ConfMan.getBool("subtitles"));
+	speechCheckbox->setState(!ConfMan.getBool("speech_mute"));
 }
 
 void ConfigDialog::close() {
@@ -449,9 +451,15 @@ void ConfigDialog::close() {
 	if (getResult()) {
 		// Subtitles
 		ConfMan.set("subtitles", subtitlesCheckbox->getState(), _domain);
+		ConfMan.set("speech_mute", !subtitlesCheckbox->getState(), _domain);
 		// Sync with current setting
+		if (ConfMan.getBool("speech_mute"))
+			_vm->_voiceMode = 2;
+		else
+			_vm->_voiceMode = ConfMan.getBool("subtitles");
+
 		if (_vm->_version >= 7)
-			_vm->VAR(_vm->VAR_VOICE_MODE) = subtitlesCheckbox->getState();
+			_vm->VAR(_vm->VAR_VOICE_MODE) = _vm->_voiceMode;
 	}
 
 	GUI_OptionsDialog::close();

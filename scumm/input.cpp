@@ -25,6 +25,9 @@
 #include "common/config-manager.h"
 #include "common/system.h"
 
+#include "gui/message.h"
+#include "gui/newgui.h"
+
 #include "scumm/debugger.h"
 #include "scumm/dialogs.h"
 #include "scumm/imuse.h"
@@ -336,6 +339,39 @@ void ScummEngine::processKbd(bool smushMode) {
 			_lastKeyHit = 27;
 	}
 #endif
+
+	if (_version >= 6 && _lastKeyHit == 20) {
+		char buf[256];
+
+		_voiceMode++;
+		if (_voiceMode == 3)
+			_voiceMode = 0;
+
+		switch(_voiceMode) {
+		case 0:
+			sprintf(buf, "Speech Only");
+			ConfMan.set("speech_mute", false);
+			ConfMan.set("subtitles", false);
+			break;
+		case 1:
+			sprintf(buf, "Speech and Subtitles");
+			ConfMan.set("speech_mute", false);
+			ConfMan.set("subtitles", true);
+			break;
+		case 2:
+			sprintf(buf, "Subtitles Only");
+			ConfMan.set("speech_mute", true);
+			ConfMan.set("subtitles", true);
+			break;
+		}
+
+		if (_version >= 7)
+			VAR(VAR_VOICE_MODE) = _voiceMode;
+
+		GUI::TimedMessageDialog dialog(buf, 1500);
+		runDialog(dialog);
+		return;
+	}
 
 	if (VAR_RESTART_KEY != 0xFF && _lastKeyHit == VAR(VAR_RESTART_KEY) ||
 	   (((_version <= 2) || (_features & GF_FMTOWNS && _version == 3)) && _lastKeyHit == 8)) {

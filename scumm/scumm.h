@@ -1043,6 +1043,7 @@ public:
 	byte *_shadowPalette;
 	bool _skipDrawObject, _skipProcessActors;
 	int _timers[4];
+	int _voiceMode;
 
 protected:
 	int _shadowPaletteSize;

@@ -117,6 +117,7 @@ public:
 
 protected:
 	GUI::CheckboxWidget *subtitlesCheckbox;
+	GUI::CheckboxWidget *speechCheckbox;
 };
 
 /**

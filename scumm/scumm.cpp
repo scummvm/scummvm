@@ -829,6 +829,7 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 	_copyProtection = false;
 	_demoMode = false;
 	_confirmExit = false;
+	_voiceMode = 0;
 	_talkDelay = 0;
 	_keepText = false;
 	_existLanguageFile = false;
@@ -1024,6 +1025,17 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 		if (!ConfMan.hasKey("subtitles"))
 			ConfMan.set("subtitles", !ConfMan.getBool("nosubtitles"));
 	}
+
+	// Make sure that at least subtitles are enabled
+	if (ConfMan.getBool("speech_mute") && !ConfMan.getBool("subtitles"))
+		ConfMan.set("subtitles", 1);
+
+	// TODO Detect subtitle only versions of scumm6 games
+	if (ConfMan.getBool("speech_mute"))
+		_voiceMode = 2;
+	else
+		_voiceMode = ConfMan.getBool("subtitles");
+
 	_confirmExit = ConfMan.getBool("confirm_exit");
 
 	if (ConfMan.hasKey("render_mode")) {
