@@ -34,6 +34,10 @@ struct displayText_t {
 	uint32 textWidth;
 };
 
+#if !defined(__GNUC__)
+#pragma START_PACK_STRUCTS
+#endif
+
 struct dataFileHeader {
 	uint16 flag; // bit 0: set for colour data, clear for not
 	// bit 1: set for compressed, clear for uncompressed
@@ -48,7 +52,11 @@ struct dataFileHeader {
 	int16 s_offset_x;
 	int16 s_offset_y;
 	uint16 s_compressed_size;
-};
+} GCC_PACK;
+
+#if !defined(__GNUC__)
+#pragma END_PACK_STRUCTS
+#endif
 
 struct GrafixPtr { // replacement for old grafixProg pointer. More savegame compatible.
 	uint8 ptrType; // ptr to autoroute / to compact / to turntable
