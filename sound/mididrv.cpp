@@ -552,7 +552,7 @@ int MidiDriver_SEQ::open(int mode)
 	if (device_name != NULL) {
 		device = (::open((device_name), O_RDWR, 0));
 	} else {
-		warning("You need to set-up the SCUMMVM_MIDI environment variable properly (see readme.txt) ");
+		warning("You need to set-up the SCUMMVM_MIDI environment variable properly (see README) ");
 	}
 	if ((device_name == NULL) || (device < 0)) {
 		if (device_name == NULL)
