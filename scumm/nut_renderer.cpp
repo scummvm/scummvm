@@ -30,8 +30,10 @@ NutRenderer::NutRenderer(Scumm *vm) {
 }
 
 NutRenderer::~NutRenderer() {
-	if (_dataSrc != NULL)
+	if (_dataSrc != NULL) {
 		free(_dataSrc);
+		_dataSrc = NULL;
+	}
 }
 
 void NutRenderer::decodeCodec44(byte *dst, byte *src, uint32 length) {
@@ -84,8 +86,10 @@ bool NutRenderer::loadFont(const char *filename, const char *dir) {
 		return false;
 	}
 
-	if (_dataSrc != NULL)
+	if (_dataSrc != NULL) {
 		free(_dataSrc);
+		_dataSrc = NULL;
+	}
 
 	uint32 length = file.readUint32BE();
 	_dataSrc = (byte *)malloc(length);
@@ -95,6 +99,7 @@ bool NutRenderer::loadFont(const char *filename, const char *dir) {
 	if (READ_BE_UINT32(_dataSrc) != 'AHDR') {
 		debug(2, "NutRenderer::loadFont() there is no AHDR chunk in font header");
 		free(_dataSrc);
+		_dataSrc = NULL;
 		return false;
 	}
 	
@@ -110,12 +115,14 @@ bool NutRenderer::loadFont(const char *filename, const char *dir) {
 			else {
 				debug(2, "NutRenderer::loadFont() there is no FRME chunk");
 				free(_dataSrc);
+				_dataSrc = NULL;
 				return false;
 			}
 		}
 		else {
 			debug(2, "NutRenderer::loadFont() there is no FOBJ chunk in FRME chunk");
 			free(_dataSrc);
+			_dataSrc = NULL;
 			return false;
 		}
 	}
