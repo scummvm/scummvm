@@ -1008,8 +1008,8 @@ ScummEngine_v6::ScummEngine_v6(GameDetector *detector, OSystem *syst, const Scum
 	_smushFrameRate = 0;
 }
 
-ScummEngine_v7he::ScummEngine_v7he(GameDetector *detector, OSystem *syst, const ScummGameSettings &gs, uint8 md5sum[16])
- : ScummEngine_v6he(detector, syst, gs, md5sum) {
+ScummEngine_v70he::ScummEngine_v70he(GameDetector *detector, OSystem *syst, const ScummGameSettings &gs, uint8 md5sum[16])
+ : ScummEngine_v60he(detector, syst, gs, md5sum) {
 	 _win32ResExtractor = new Win32ResExtractor(this);
 }
 
@@ -2837,11 +2837,11 @@ Engine *Engine_SCUMM_create(GameDetector *detector, OSystem *syst) {
 			break;
 		case 71:
 		case 70:
-			engine = new ScummEngine_v7he(detector, syst, game, md5sum);
+			engine = new ScummEngine_v70he(detector, syst, game, md5sum);
 			break;
 #endif
 		case 60:
-			engine = new ScummEngine_v6he(detector, syst, game, md5sum);
+			engine = new ScummEngine_v60he(detector, syst, game, md5sum);
 			break;
 		default:
 			engine = new ScummEngine_v6(detector, syst, game, md5sum);

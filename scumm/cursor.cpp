@@ -147,7 +147,7 @@ void ScummEngine::setCursorFromBuffer(byte *ptr, int width, int height, int pitc
 	updateCursor();
 }
 
-void ScummEngine_v7he::setCursorFromImg(uint img, uint room, uint imgindex) {
+void ScummEngine_v70he::setCursorFromImg(uint img, uint room, uint imgindex) {
 	_win32ResExtractor->setCursor(img);
 }
 

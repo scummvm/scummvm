@@ -185,12 +185,12 @@ void ScummEngine_v72he::setupOpcodes() {
 		OPCODE(o6_setClass),
 		OPCODE(o6_getState),
 		/* 70 */
-		OPCODE(o6he_setState),
+		OPCODE(o60_setState),
 		OPCODE(o6_setOwner),
 		OPCODE(o6_getOwner),
 		OPCODE(o6_jump),
 		/* 74 */
-		OPCODE(o70he_startSound),
+		OPCODE(o70_startSound),
 		OPCODE(o6_stopSound),
 		OPCODE(o6_startMusic),
 		OPCODE(o6_stopObjectScript),
@@ -210,7 +210,7 @@ void ScummEngine_v72he::setupOpcodes() {
 		OPCODE(o6_animateActor),
 		OPCODE(o6_doSentence),
 		/* 84 */
-		OPCODE(o70he_pickupObject),
+		OPCODE(o70_pickupObject),
 		OPCODE(o6_loadRoomWithEgo),
 		OPCODE(o6_invalid),
 		OPCODE(o6_getRandomNumber),
@@ -220,7 +220,7 @@ void ScummEngine_v72he::setupOpcodes() {
 		OPCODE(o6_getActorMoving),
 		OPCODE(o6_isScriptRunning),
 		/* 8C */
-		OPCODE(o70he_getActorRoom),
+		OPCODE(o70_getActorRoom),
 		OPCODE(o6_getObjectX),
 		OPCODE(o6_getObjectY),
 		OPCODE(o6_getObjectOldDir),
@@ -238,9 +238,9 @@ void ScummEngine_v72he::setupOpcodes() {
 		OPCODE(o6_isSoundRunning),
 		OPCODE(o6_setBoxFlags),
 		OPCODE(o6_invalid),
-		OPCODE(o70he_resourceRoutines),
+		OPCODE(o70_resourceRoutines),
 		/* 9C */
-		OPCODE(o6he_roomOps),
+		OPCODE(o60_roomOps),
 		OPCODE(o72_actorOps),
 		OPCODE(o72_verbOps),
 		OPCODE(o6_getActorFromXY),
@@ -256,13 +256,13 @@ void ScummEngine_v72he::setupOpcodes() {
 		OPCODE(o6_pop),
 		/* A8 */
 		OPCODE(o6_getActorWidth),
-		OPCODE(o6he_wait),
+		OPCODE(o60_wait),
 		OPCODE(o6_getActorScaleX),
 		OPCODE(o6_getActorAnimCounter1),
 		/* AC */
 		OPCODE(o6_invalid),
 		OPCODE(o6_isAnyOf),
-		OPCODE(o70he_quitPauseRestart),
+		OPCODE(o70_quitPauseRestart),
 		OPCODE(o6_isActorInBox),
 		/* B0 */
 		OPCODE(o6_delay),
@@ -286,7 +286,7 @@ void ScummEngine_v72he::setupOpcodes() {
 		OPCODE(o6_startScriptQuick2),
 		/* C0 */
 		OPCODE(o72_dim2dimArray),
-		OPCODE(o72_unknownC1),
+		OPCODE(o72_traceStatus),
 		OPCODE(o6_invalid),
 		OPCODE(o6_invalid),
 		/* C4 */
@@ -295,8 +295,8 @@ void ScummEngine_v72he::setupOpcodes() {
 		OPCODE(o6_distObjectPt),
 		OPCODE(o6_distPtPt),
 		/* C8 */
-		OPCODE(o6he_kernelGetFunctions),
-		OPCODE(o70he_kernelSetFunctions),
+		OPCODE(o60_kernelGetFunctions),
+		OPCODE(o70_kernelSetFunctions),
 		OPCODE(o6_delayFrames),
 		OPCODE(o6_pickOneOf),
 		/* CC */
@@ -316,18 +316,18 @@ void ScummEngine_v72he::setupOpcodes() {
 		OPCODE(o6_bor),
 		/* D8 */
 		OPCODE(o6_isRoomScriptRunning),
-		OPCODE(o6he_closeFile),
+		OPCODE(o60_closeFile),
 		OPCODE(o72_openFile),
 		OPCODE(o72_readFile),
 		/* DC */
 		OPCODE(o72_writeFile),
 		OPCODE(o72_findAllObjects),
 		OPCODE(o72_deleteFile),
-		OPCODE(o6he_rename),
+		OPCODE(o60_rename),
 		/* E0 */
-		OPCODE(o6he_soundOps),
+		OPCODE(o60_soundOps),
 		OPCODE(o72_getPixel),
-		OPCODE(o6he_localizeArray),
+		OPCODE(o60_localizeArray),
 		OPCODE(o72_pickVarRandom),
 		/* E4 */
 		OPCODE(o6_setBoxSet),
@@ -336,13 +336,13 @@ void ScummEngine_v72he::setupOpcodes() {
 		OPCODE(o6_invalid),
 		/* E8 */
 		OPCODE(o6_invalid),
-		OPCODE(o6he_seekFilePos),
+		OPCODE(o60_seekFilePos),
 		OPCODE(o72_redimArray),
-		OPCODE(o6he_readFilePos),
+		OPCODE(o60_readFilePos),
 		/* EC */
 		OPCODE(o72_unknownEC),
 		OPCODE(o72_unknownED),
-		OPCODE(o70he_stringLen),
+		OPCODE(o70_stringLen),
 		OPCODE(o72_unknownEF),
 		/* F0 */
 		OPCODE(o72_unknownF0),
@@ -358,9 +358,9 @@ void ScummEngine_v72he::setupOpcodes() {
 		OPCODE(o72_unknownF8),
 		OPCODE(o72_setFilePath),
 		OPCODE(o72_unknownFA),
-		OPCODE(o70he_polygonOps),
+		OPCODE(o70_polygonOps),
 		/* FC */
-		OPCODE(o70he_polygonHit),
+		OPCODE(o70_polygonHit),
 		OPCODE(o6_invalid),
 		OPCODE(o6_invalid),
 		OPCODE(o6_invalid),
@@ -889,7 +889,7 @@ void ScummEngine_v72he::o72_actorOps() {
 		return;
 	}
 
-	a = derefActorSafe(_curActor, "o6he_actorOps");
+	a = derefActorSafe(_curActor, "o60_actorOps");
 	if (!a)
 		return;
 
@@ -1353,13 +1353,11 @@ void ScummEngine_v72he::o72_dim2dimArray() {
 	defineArray(fetchScriptWord(), data, 0, a, 0, b);
 }
 
-void ScummEngine_v72he::o72_unknownC1() {
+void ScummEngine_v72he::o72_traceStatus() {
 	byte string[80];
 
 	copyScriptString(string);
 	pop();
-
-	//debug(1, "stub o72_unknownC1(%s)", string);
 }
 
 void ScummEngine_v72he::getWizImageDim(int resnum, int state, uint32 &w, uint32 &h) {
@@ -1660,7 +1658,7 @@ void ScummEngine_v72he::drawWizPolygon(int resnum, int state, int id, int flags)
 }
 
 void ScummEngine_v72he::redrawBGAreas() {
-	ScummEngine_v7he::redrawBGAreas();
+	ScummEngine_v70he::redrawBGAreas();
 	flushWizBuffer();
 }
 
@@ -1755,7 +1753,7 @@ void ScummEngine_v72he::o72_openFile() {
 		else if (mode == 2)
 			_hFileTable[slot].open((char*)filename + r, File::kFileWriteMode);
 		else
-			error("o6he_openFile(): wrong open file mode %d", mode);
+			error("o60_openFile(): wrong open file mode %d", mode);
 
 		if (_hFileTable[slot].isOpen() == false)
 			slot = -1;
@@ -2095,7 +2093,7 @@ void ScummEngine_v72he::o72_unknownF1() {
 	}
 
 	push (1);
-	debug(1,"o70he_unknownF1 stub (%d, %d)", id, id2);
+	debug(1,"o70_unknownF1 stub (%d, %d)", id, id2);
 }
 
 void ScummEngine_v72he::o72_checkGlobQueue() {

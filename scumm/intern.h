@@ -542,11 +542,11 @@ protected:
 	byte VAR_TIMEDATE_SECOND;
 };
 
-class ScummEngine_v6he : public ScummEngine_v6 {
+class ScummEngine_v60he : public ScummEngine_v6 {
 protected:
-	typedef void (ScummEngine_v6he::*OpcodeProcV6he)();
-	struct OpcodeEntryV6he {
-		OpcodeProcV6he proc;
+	typedef void (ScummEngine_v60he::*OpcodeProcv60he)();
+	struct OpcodeEntryv60he {
+		OpcodeProcv60he proc;
 		const char *desc;
 	};
 	struct vsUnpackCtx {
@@ -560,12 +560,12 @@ protected:
 		uint8 buf[256];
 	};
 
-	const OpcodeEntryV6he *_opcodesV6he;
+	const OpcodeEntryv60he *_opcodesv60he;
 
 	File _hFileTable[17];
 	
 public:
-	ScummEngine_v6he(GameDetector *detector, OSystem *syst, const ScummGameSettings &gs, uint8 md5sum[16]) : ScummEngine_v6(detector, syst, gs, md5sum) {}
+	ScummEngine_v60he(GameDetector *detector, OSystem *syst, const ScummGameSettings &gs, uint8 md5sum[16]) : ScummEngine_v6(detector, syst, gs, md5sum) {}
 
 protected:
 	virtual void setupOpcodes();
@@ -587,41 +587,41 @@ protected:
 	void swapObjects(int object1, int object2);
 
 	/* HE version 60 script opcodes */
-	void o6he_setState();
-	void o6he_roomOps();
-	void o6he_actorOps();
-	void o6he_wait();
-	void o6he_kernelSetFunctions();
-	void o6he_kernelGetFunctions();
-	void o6he_openFile();
-	void o6he_closeFile();
-	void o6he_deleteFile();
-	void o6he_readFile();
-	void o6he_rename();
-	void o6he_writeFile();
-	void o6he_soundOps();
-	void o6he_seekFilePos();
-	void o6he_localizeArray();
-	void o6he_redimArray();
-	void o6he_readFilePos();
+	void o60_setState();
+	void o60_roomOps();
+	void o60_actorOps();
+	void o60_wait();
+	void o60_kernelSetFunctions();
+	void o60_kernelGetFunctions();
+	void o60_openFile();
+	void o60_closeFile();
+	void o60_deleteFile();
+	void o60_readFile();
+	void o60_rename();
+	void o60_writeFile();
+	void o60_soundOps();
+	void o60_seekFilePos();
+	void o60_localizeArray();
+	void o60_redimArray();
+	void o60_readFilePos();
 };
 
-class ScummEngine_v7he : public ScummEngine_v6he {
+class ScummEngine_v70he : public ScummEngine_v60he {
 	friend class Win32ResExtractor;
 
 protected:
-	typedef void (ScummEngine_v7he::*OpcodeProcV7he)();
-	struct OpcodeEntryV7he {
-		OpcodeProcV7he proc;
+	typedef void (ScummEngine_v70he::*OpcodeProcv70he)();
+	struct OpcodeEntryv70he {
+		OpcodeProcv70he proc;
 		const char *desc;
 	};
 	
 	Win32ResExtractor *_win32ResExtractor;
 
-	const OpcodeEntryV7he *_opcodesV7he;
+	const OpcodeEntryv70he *_opcodesv70he;
 
 public:
-	ScummEngine_v7he(GameDetector *detector, OSystem *syst, const ScummGameSettings &gs, uint8 md5sum[16]);
+	ScummEngine_v70he(GameDetector *detector, OSystem *syst, const ScummGameSettings &gs, uint8 md5sum[16]);
 
 protected:
 	virtual void setupOpcodes();
@@ -638,26 +638,26 @@ protected:
 	virtual void setCursorFromImg(uint img, uint room, uint imgindex);
 
 	/* HE version 70 script opcodes */
-	void o70he_startSound();
-	void o70he_pickupObject();
-	void o70he_getActorRoom();
-	void o70he_resourceRoutines();
-	void o70he_quitPauseRestart();
-	void o70he_kernelSetFunctions();
-	void o70he_unknownED();
-	void o70he_stringLen();
-	void o70he_unknownEF();
-	void o70he_readINI();
-	void o70he_writeINI();
-	void o70he_unknownF5();
-	void o70he_unknownF6();
-	void o70he_setFilePath();
-	void o70he_unknownFA();
-	void o70he_polygonOps();
-	void o70he_polygonHit();
+	void o70_startSound();
+	void o70_pickupObject();
+	void o70_getActorRoom();
+	void o70_resourceRoutines();
+	void o70_quitPauseRestart();
+	void o70_kernelSetFunctions();
+	void o70_unknownED();
+	void o70_stringLen();
+	void o70_unknownEF();
+	void o70_readINI();
+	void o70_writeINI();
+	void o70_unknownF5();
+	void o70_unknownF6();
+	void o70_setFilePath();
+	void o70_unknownFA();
+	void o70_polygonOps();
+	void o70_polygonHit();
 };
 
-class ScummEngine_v72he : public ScummEngine_v7he {
+class ScummEngine_v72he : public ScummEngine_v70he {
 protected:
 	typedef void (ScummEngine_v72he::*OpcodeProcV72he)();
 	struct OpcodeEntryV72he {
@@ -694,7 +694,7 @@ protected:
 	uint16 _wizImagesNum;
 
 public:
-	ScummEngine_v72he(GameDetector *detector, OSystem *syst, const ScummGameSettings &gs, uint8 md5sum[16]) : ScummEngine_v7he(detector, syst, gs, md5sum), _wizImagesNum(0) {}
+	ScummEngine_v72he(GameDetector *detector, OSystem *syst, const ScummGameSettings &gs, uint8 md5sum[16]) : ScummEngine_v70he(detector, syst, gs, md5sum), _wizImagesNum(0) {}
 
 protected:
 	virtual void setupScummVars();
@@ -753,7 +753,7 @@ protected:
 	void o72_arrayOps();
 	void o72_dimArray();
 	void o72_dim2dimArray();
-	void o72_unknownC1();
+	void o72_traceStatus();
 	void o72_unknownCF();
 	void o72_drawWizImage();
 	void o72_jumpToScript();

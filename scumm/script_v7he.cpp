@@ -41,10 +41,10 @@
 
 namespace Scumm {
 
-#define OPCODE(x)	{ &ScummEngine_v7he::x, #x }
+#define OPCODE(x)	{ &ScummEngine_v70he::x, #x }
 
-void ScummEngine_v7he::setupOpcodes() {
-	static const OpcodeEntryV7he opcodes[256] = {
+void ScummEngine_v70he::setupOpcodes() {
+	static const OpcodeEntryv70he opcodes[256] = {
 		/* 00 */
 		OPCODE(o6_pushByte),
 		OPCODE(o6_pushWord),
@@ -186,12 +186,12 @@ void ScummEngine_v7he::setupOpcodes() {
 		OPCODE(o6_setClass),
 		OPCODE(o6_getState),
 		/* 70 */
-		OPCODE(o6he_setState),
+		OPCODE(o60_setState),
 		OPCODE(o6_setOwner),
 		OPCODE(o6_getOwner),
 		OPCODE(o6_jump),
 		/* 74 */
-		OPCODE(o70he_startSound),
+		OPCODE(o70_startSound),
 		OPCODE(o6_stopSound),
 		OPCODE(o6_startMusic),
 		OPCODE(o6_stopObjectScript),
@@ -211,7 +211,7 @@ void ScummEngine_v7he::setupOpcodes() {
 		OPCODE(o6_animateActor),
 		OPCODE(o6_doSentence),
 		/* 84 */
-		OPCODE(o70he_pickupObject),
+		OPCODE(o70_pickupObject),
 		OPCODE(o6_loadRoomWithEgo),
 		OPCODE(o6_invalid),
 		OPCODE(o6_getRandomNumber),
@@ -221,7 +221,7 @@ void ScummEngine_v7he::setupOpcodes() {
 		OPCODE(o6_getActorMoving),
 		OPCODE(o6_isScriptRunning),
 		/* 8C */
-		OPCODE(o70he_getActorRoom),
+		OPCODE(o70_getActorRoom),
 		OPCODE(o6_getObjectX),
 		OPCODE(o6_getObjectY),
 		OPCODE(o6_getObjectOldDir),
@@ -239,10 +239,10 @@ void ScummEngine_v7he::setupOpcodes() {
 		OPCODE(o6_isSoundRunning),
 		OPCODE(o6_setBoxFlags),
 		OPCODE(o6_invalid),
-		OPCODE(o70he_resourceRoutines),
+		OPCODE(o70_resourceRoutines),
 		/* 9C */
-		OPCODE(o6he_roomOps),
-		OPCODE(o6he_actorOps),
+		OPCODE(o60_roomOps),
+		OPCODE(o60_actorOps),
 		OPCODE(o6_verbOps),
 		OPCODE(o6_getActorFromXY),
 		/* A0 */
@@ -257,13 +257,13 @@ void ScummEngine_v7he::setupOpcodes() {
 		OPCODE(o6_pop),
 		/* A8 */
 		OPCODE(o6_getActorWidth),
-		OPCODE(o6he_wait),
+		OPCODE(o60_wait),
 		OPCODE(o6_getActorScaleX),
 		OPCODE(o6_getActorAnimCounter1),
 		/* AC */
 		OPCODE(o6_invalid),
 		OPCODE(o6_isAnyOf),
-		OPCODE(o70he_quitPauseRestart),
+		OPCODE(o70_quitPauseRestart),
 		OPCODE(o6_isActorInBox),
 		/* B0 */
 		OPCODE(o6_delay),
@@ -296,8 +296,8 @@ void ScummEngine_v7he::setupOpcodes() {
 		OPCODE(o6_distObjectPt),
 		OPCODE(o6_distPtPt),
 		/* C8 */
-		OPCODE(o6he_kernelGetFunctions),
-		OPCODE(o70he_kernelSetFunctions),
+		OPCODE(o60_kernelGetFunctions),
+		OPCODE(o70_kernelSetFunctions),
 		OPCODE(o6_delayFrames),
 		OPCODE(o6_pickOneOf),
 		/* CC */
@@ -317,18 +317,18 @@ void ScummEngine_v7he::setupOpcodes() {
 		OPCODE(o6_bor),
 		/* D8 */
 		OPCODE(o6_isRoomScriptRunning),
-		OPCODE(o6he_closeFile),
-		OPCODE(o6he_openFile),
-		OPCODE(o6he_readFile),
+		OPCODE(o60_closeFile),
+		OPCODE(o60_openFile),
+		OPCODE(o60_readFile),
 		/* DC */
-		OPCODE(o6he_writeFile),
+		OPCODE(o60_writeFile),
 		OPCODE(o6_findAllObjects),
-		OPCODE(o6he_deleteFile),
-		OPCODE(o6he_rename),
+		OPCODE(o60_deleteFile),
+		OPCODE(o60_rename),
 		/* E0 */
-		OPCODE(o6he_soundOps),
+		OPCODE(o60_soundOps),
 		OPCODE(o6_getPixel),
-		OPCODE(o6he_localizeArray),
+		OPCODE(o60_localizeArray),
 		OPCODE(o6_pickVarRandom),
 		/* E4 */
 		OPCODE(o6_setBoxSet),
@@ -337,49 +337,49 @@ void ScummEngine_v7he::setupOpcodes() {
 		OPCODE(o6_invalid),
 		/* E8 */
 		OPCODE(o6_invalid),
-		OPCODE(o6he_seekFilePos),
-		OPCODE(o6he_redimArray),
-		OPCODE(o6he_readFilePos),
+		OPCODE(o60_seekFilePos),
+		OPCODE(o60_redimArray),
+		OPCODE(o60_readFilePos),
 		/* EC */
 		OPCODE(o6_invalid),
-		OPCODE(o70he_unknownED),
-		OPCODE(o70he_stringLen),
-		OPCODE(o70he_unknownEF),
+		OPCODE(o70_unknownED),
+		OPCODE(o70_stringLen),
+		OPCODE(o70_unknownEF),
 		/* F0 */
 		OPCODE(o6_invalid),
 		OPCODE(o6_invalid),
 		OPCODE(o6_invalid),
-		OPCODE(o70he_readINI),
+		OPCODE(o70_readINI),
 		/* F4 */
-		OPCODE(o70he_writeINI),
-		OPCODE(o70he_unknownF5),
-		OPCODE(o70he_unknownF6),
+		OPCODE(o70_writeINI),
+		OPCODE(o70_unknownF5),
+		OPCODE(o70_unknownF6),
 		OPCODE(o6_invalid),
 		/* F8 */
 		OPCODE(o6_invalid),
-		OPCODE(o70he_setFilePath),
-		OPCODE(o70he_unknownFA),
-		OPCODE(o70he_polygonOps),
+		OPCODE(o70_setFilePath),
+		OPCODE(o70_unknownFA),
+		OPCODE(o70_polygonOps),
 		/* FC */
-		OPCODE(o70he_polygonHit),
+		OPCODE(o70_polygonHit),
 		OPCODE(o6_invalid),
 		OPCODE(o6_invalid),
 		OPCODE(o6_invalid),
 	};
 
-	_opcodesV7he = opcodes;
+	_opcodesv70he = opcodes;
 }
 
-void ScummEngine_v7he::executeOpcode(byte i) {
-	OpcodeProcV7he op = _opcodesV7he[i].proc;
+void ScummEngine_v70he::executeOpcode(byte i) {
+	OpcodeProcv70he op = _opcodesv70he[i].proc;
 	(this->*op) ();
 }
 
-const char *ScummEngine_v7he::getOpcodeDesc(byte i) {
-	return _opcodesV7he[i].desc;
+const char *ScummEngine_v70he::getOpcodeDesc(byte i) {
+	return _opcodesv70he[i].desc;
 }
 
-void ScummEngine_v7he::arrrays_unk2(int dst, int src, int len2, int len) {
+void ScummEngine_v70he::arrrays_unk2(int dst, int src, int len2, int len) {
 	int edi, value;
 	int i = 0;
 
@@ -404,7 +404,7 @@ void ScummEngine_v7he::arrrays_unk2(int dst, int src, int len2, int len) {
 	writeArray(0, 0, edi + i, 0);
 }
 
-void ScummEngine_v7he::o70he_startSound() {
+void ScummEngine_v70he::o70_startSound() {
 	byte op;
 	op = fetchScriptByte();
 
@@ -413,7 +413,7 @@ void ScummEngine_v7he::o70he_startSound() {
 		_heSndLoop |= 4;
 		break;
 	case 23:
-		debug(1,"o70he_startSound: case 29 (%d, %d, %d)", pop(), pop(), pop());
+		debug(1,"o70_startSound: case 29 (%d, %d, %d)", pop(), pop(), pop());
 		break;
 	case 56:
 		_heSndLoop |= 2;
@@ -447,16 +447,16 @@ void ScummEngine_v7he::o70he_startSound() {
 	case 255:
 		// _sound->addSoundToQueue(_heSndSoundId, _heSndOffset, _heSndChannel, _heSndLoop);
 		_sound->addSoundToQueue(_heSndSoundId, _heSndOffset);
-		debug(2, "o70he_startSound stub (%d, %d, %d, %d)", _heSndSoundId, _heSndOffset, _heSndChannel, _heSndLoop);
+		debug(2, "o70_startSound stub (%d, %d, %d, %d)", _heSndSoundId, _heSndOffset, _heSndChannel, _heSndLoop);
 		_heSndLoop = 0;
 		break;
 
 	default:
-		error("o70he_startSound invalid case %d", op);
+		error("o70_startSound invalid case %d", op);
 	}
 }
 
-void ScummEngine_v7he::o70he_pickupObject() {
+void ScummEngine_v70he::o70_pickupObject() {
 	int obj, room;
 
 	room = pop();
@@ -475,17 +475,17 @@ void ScummEngine_v7he::o70he_pickupObject() {
 	runInventoryScript(obj);									/* Difference */
 }
 
-void ScummEngine_v7he::o70he_getActorRoom() {
+void ScummEngine_v70he::o70_getActorRoom() {
 	int act = pop();
 
 	if (act < _numActors) {
-		Actor *a = derefActor(act, "o70he_getActorRoom");
+		Actor *a = derefActor(act, "o70_getActorRoom");
 		push(a->room);
 	} else
 		push(getObjectRoom(act));
 }
 
-void ScummEngine_v7he::o70he_resourceRoutines() {
+void ScummEngine_v70he::o70_resourceRoutines() {
 	int resid, op;
 	op = fetchScriptByte();
 
@@ -603,18 +603,18 @@ void ScummEngine_v7he::o70he_resourceRoutines() {
 		break;
 	case 233:
 		resid = pop();
-		debug(5,"stub o70he_resourceRoutines lock object %d", resid);
+		debug(5,"stub o70_resourceRoutines lock object %d", resid);
 		break;
 	case 235:
 		resid = pop();
-		debug(5,"stub o70he_resourceRoutines unlock object %d", resid);
+		debug(5,"stub o70_resourceRoutines unlock object %d", resid);
 		break;
 	default:
-		debug(1,"o70he_resourceRoutines: default case %d", op);
+		debug(1,"o70_resourceRoutines: default case %d", op);
 	}
 }
 
-void ScummEngine_v7he::o70he_quitPauseRestart() {
+void ScummEngine_v70he::o70_quitPauseRestart() {
 	byte subOp = fetchScriptByte();
 	int par1;
 
@@ -628,24 +628,24 @@ void ScummEngine_v7he::o70he_quitPauseRestart() {
 		break;
 	case 250:
 		par1 = pop();
-		warning("stub: o70he_quitPauseRestart subOpcode %d", subOp);
+		warning("stub: o70_quitPauseRestart subOpcode %d", subOp);
 		break;
 	case 253:
 		par1 = pop();
-		warning("stub: o70he_quitPauseRestart subOpcode %d", subOp);
+		warning("stub: o70_quitPauseRestart subOpcode %d", subOp);
 	case 244:		// SO_QUIT
 		shutDown();
 		break;
 	case 251:
 	case 252:
-		warning("stub: o70he_quitPauseRestart subOpcode %d", subOp);
+		warning("stub: o70_quitPauseRestart subOpcode %d", subOp);
 		break;
 	default:
-		warning("o70he_quitPauseRestart invalid case %d", subOp);
+		warning("o70_quitPauseRestart invalid case %d", subOp);
 	}
 }
 
-void ScummEngine_v7he::o70he_unknownED() {
+void ScummEngine_v70he::o70_unknownED() {
 	int array, pos, len;
 	int chr, result = 0;
 
@@ -666,17 +666,17 @@ void ScummEngine_v7he::o70he_unknownED() {
 	}
 
 	push(result);
-	debug(1,"stub o70he_unknownED");
+	debug(1,"stub o70_unknownED");
 }
 
-void ScummEngine_v7he::o70he_kernelSetFunctions() {
+void ScummEngine_v70he::o70_kernelSetFunctions() {
 	int args[29];
 	int num;
 	Actor *a;
 
 	num = getStackList(args, ARRAYSIZE(args));
 
-	debug(1, "o70he_kernelSetFunctions: case %d (param count %d)", args[0], num);
+	debug(1, "o70_kernelSetFunctions: case %d (param count %d)", args[0], num);
 	switch (args[0]) {
 	case 1:
 		// Used to restore images when decorating cake in
@@ -684,7 +684,7 @@ void ScummEngine_v7he::o70he_kernelSetFunctions() {
 		virtScreenLoad(args[1], args[2], args[3], args[4], args[5]);
 		break;
 	case 20: // HE72+
-		a = derefActor(args[1], "o70he_kernelSetFunctions: 20");
+		a = derefActor(args[1], "o70_kernelSetFunctions: 20");
 		queueAuxBlock(a);
 		break;
 	case 21:
@@ -706,7 +706,7 @@ void ScummEngine_v7he::o70he_kernelSetFunctions() {
 		_fullRedraw = 1;
 		break;
 	case 30:
-		a = derefActor(args[1], "o70he_kernelSetFunctions: 30");
+		a = derefActor(args[1], "o70_kernelSetFunctions: 30");
 		a->clipOverride.bottom = args[2];
 		break;
 	case 42:
@@ -718,11 +718,11 @@ void ScummEngine_v7he::o70he_kernelSetFunctions() {
 	case 714:
 		break;
 	default:
-		error("o70he_kernelSetFunctions: default case %d (param count %d)", args[0], num);
+		error("o70_kernelSetFunctions: default case %d (param count %d)", args[0], num);
 	}
 }
 
-void ScummEngine_v7he::o70he_stringLen() {
+void ScummEngine_v70he::o70_stringLen() {
 	int id, len;
 	byte *addr;
 
@@ -730,13 +730,13 @@ void ScummEngine_v7he::o70he_stringLen() {
 
 	addr = getStringAddress(id);
 	if (!addr)
-		error("o70he_stringLen: Reference to zeroed array pointer (%d)", id);
+		error("o70_stringLen: Reference to zeroed array pointer (%d)", id);
 
 	len = resStrLen(getStringAddress(id));
 	push(len);
 }
 
-void ScummEngine_v7he::o70he_unknownEF() {
+void ScummEngine_v70he::o70_unknownEF() {
 	int dst, size;
 	int b = pop();
 	int a = pop();
@@ -753,10 +753,10 @@ void ScummEngine_v7he::o70he_unknownEF() {
 	arrrays_unk2(dst, src, a, b);
 
 	push(dst);
-	debug(1,"stub o70he_unknownEF");
+	debug(1,"stub o70_unknownEF");
 }
 
-void ScummEngine_v7he::o70he_readINI() {
+void ScummEngine_v70he::o70_readINI() {
 	int len;
 	int type;
 	int retval;
@@ -785,11 +785,11 @@ void ScummEngine_v7he::o70he_readINI() {
 		push(retval); // var ID string
 		break;
 	default:
-		error("o70he_readINI: default type %d", type);
+		error("o70_readINI: default type %d", type);
 	}
 }
 
-void ScummEngine_v7he::o70he_writeINI() {
+void ScummEngine_v70he::o70_writeINI() {
 	int type, value;
 	byte option[256], option2[256];
 	int len;
@@ -803,20 +803,20 @@ void ScummEngine_v7he::o70he_writeINI() {
 
 	switch (type) {
 	case 1: // number
-		debug(1, "o70he_writeINI: %s set to %d", option, value);
+		debug(1, "o70_writeINI: %s set to %d", option, value);
 		break;
 	case 2: // string
 		addMessageToStack(_scriptPointer, option2, sizeof(option2));
 		len = resStrLen(_scriptPointer);
 		_scriptPointer += len + 1;
-		debug(1, "o70he_writeINI: %s set to %s", option, option2);
+		debug(1, "o70_writeINI: %s set to %s", option, option2);
 		break;
 	default:
-		error("o70he_writeINI: default type %d", type);
+		error("o70_writeINI: default type %d", type);
 	}
 }
 
-void ScummEngine_v7he::o70he_unknownF5() {
+void ScummEngine_v70he::o70_unknownF5() {
 	int chr, max;
 	int array, len, pos, result = 0;
 	max = pop();
@@ -837,10 +837,10 @@ void ScummEngine_v7he::o70he_unknownF5() {
 	}
 
 	push(len);
-	debug(1,"stub o70he_unknownF5 (%d)", result);
+	debug(1,"stub o70_unknownF5 (%d)", result);
 }
 
-void ScummEngine_v7he::o70he_unknownF6() {
+void ScummEngine_v70he::o70_unknownF6() {
 	int len, edi, pos, value, id;
 	value = pop();
 	edi = pop();
@@ -878,10 +878,10 @@ void ScummEngine_v7he::o70he_unknownF6() {
 	}
 
 	push(-1);
-	debug(1,"stub o70he_unknownF6");
+	debug(1,"stub o70_unknownF6");
 }
 
-void ScummEngine_v7he::o70he_setFilePath() {
+void ScummEngine_v70he::o70_setFilePath() {
 	// File related
 	int len;
 	byte filename[100];
@@ -891,17 +891,17 @@ void ScummEngine_v7he::o70he_setFilePath() {
 	len = resStrLen(_scriptPointer);
 	_scriptPointer += len + 1;
 
-	debug(1,"stub o70he_setFilePath(%s)", filename);
+	debug(1,"stub o70_setFilePath(%s)", filename);
 }
 
-void ScummEngine_v7he::o70he_unknownFA() {
+void ScummEngine_v70he::o70_unknownFA() {
 	int num = fetchScriptByte();
 	int len = resStrLen(_scriptPointer);
-	debug(1,"stub o70he_unknownFA(%d, \"%s\")", num, _scriptPointer);
+	debug(1,"stub o70_unknownFA(%d, \"%s\")", num, _scriptPointer);
 	_scriptPointer += len + 1;
 }
 
-void ScummEngine_v7he::o70he_polygonOps() {
+void ScummEngine_v70he::o70_polygonOps() {
 	byte b;
 	b = fetchScriptByte();
 	int vert1x, vert1y, vert2x, vert2y, vert3x, vert3y, vert4x, vert4y;
@@ -973,21 +973,21 @@ void ScummEngine::polygonStore(int id, bool flag, int vert1x, int vert1y, int ve
 	}
 }
 
-void ScummEngine_v7he::polygonErase(int fromId, int toId) {
+void ScummEngine_v70he::polygonErase(int fromId, int toId) {
 	for (int i = 0; i < _wizNumPolygons; i++) {
 		if (_wizPolygons[i].id >= fromId && _wizPolygons[i].id <= toId)
 			memset(&_wizPolygons[i], 0, sizeof(WizPolygon));
 	}
 }
 
-void ScummEngine_v7he::o70he_polygonHit() {
+void ScummEngine_v70he::o70_polygonHit() {
 	int y = pop();
 	int x = pop();
 
 	push(polygonHit(0, x, y));
 }
 
-int ScummEngine_v7he::polygonHit(int id, int x, int y) {
+int ScummEngine_v70he::polygonHit(int id, int x, int y) {
 	for (int i = 0; i < _wizNumPolygons; i++) {
 		if ((!id || _wizPolygons[i].id == id) && _wizPolygons[i].bound.contains(x, y)) {
 			if (polygonContains(_wizPolygons[i], x, y)) {
@@ -999,7 +999,7 @@ int ScummEngine_v7he::polygonHit(int id, int x, int y) {
 	return 0;
 }
 
-bool ScummEngine_v7he::polygonDefined(int id) {
+bool ScummEngine_v70he::polygonDefined(int id) {
 	for (int i = 0; i < _wizNumPolygons; i++)
 		if (_wizPolygons[i].id == id)
 			return true;
@@ -1007,7 +1007,7 @@ bool ScummEngine_v7he::polygonDefined(int id) {
 	return false;
 }
 
-bool ScummEngine_v7he::polygonContains(WizPolygon &pol, int x, int y) {
+bool ScummEngine_v70he::polygonContains(WizPolygon &pol, int x, int y) {
 	int pi = pol.numVerts - 1;
 	bool diry = (y < pol.vert[pi].y);
 	bool curdir;
