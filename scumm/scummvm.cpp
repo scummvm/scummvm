@@ -480,6 +480,7 @@ Scumm::Scumm (GameDetector *detector, OSystem *syst)
 	VAR_SOUNDRESULT = 0xFF;
 	VAR_TALKSTOP_KEY = 0xFF;
 	VAR_59 = 0xFF;
+	VAR_SUBTITLES = 0xFF;
 
 	VAR_SOUNDPARAM = 0xFF;
 	VAR_SOUNDPARAM2 = 0xFF;
@@ -2006,6 +2007,10 @@ void Scumm::processKbd() {
 		VAR(VAR_CHARINC) = _defaultTalkDelay / 20;
 	} else if (_lastKeyHit == '~' || _lastKeyHit == '#') { // Debug console
 		g_debugger->attach(this, NULL);
+	// F9 toggles subtitles for loomcd
+	} else if (_gameId == GID_LOOM256 && _lastKeyHit == 323) {
+		_noSubtitles = !_noSubtitles;
+		VAR(VAR_SUBTITLES) = !_noSubtitles;
 	}
 
 	_mouseButStat = _lastKeyHit;

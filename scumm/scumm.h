@@ -1144,6 +1144,7 @@ public:
 	byte VAR_SOUNDRESULT;
 	byte VAR_TALKSTOP_KEY;
 	byte VAR_59;
+	byte VAR_SUBTITLES;
 
 	byte VAR_SOUNDPARAM;
 	byte VAR_SOUNDPARAM2;
