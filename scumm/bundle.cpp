@@ -792,8 +792,8 @@ int32 Bundle::decompressCodec(int32 codec, byte *comp_input, byte *comp_output, 
 		{
 			int32 left, startPos, origLeft, curTableEntry, destPos, esiReg;
 			int16 firstWord;
-			byte sByte1, sByte2;
-			int32 sDWord1, sDWord2, sDWord3, sDWord4;
+			byte sByte1 = 0, sByte2 = 0;
+			int32 sDWord1 = 0, sDWord2 = 0, sDWord3 = 0, sDWord4 = 0;
 			int32 tableEntrySum, imcTableEntry, curTablePos, outputWord, adder;
 			byte decompTable, otherTablePos, var3b;
 			byte *readPos, *dst;
