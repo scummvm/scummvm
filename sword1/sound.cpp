@@ -215,10 +215,13 @@ void SwordSound::stopSpeech(void) {
 
 void SwordSound::initCowSystem(void) {
 	char cowName[25];
+	/* look for speech1/2.clu in the data dir
+	   and speech/speech.clu (running from cd or using cd layout)
+	*/
 	sprintf(cowName, "SPEECH%d.CLU", SwordEngine::_systemVars.currentCD);
 	_cowFile.open(cowName);
 	if (!_cowFile.isOpen()) {
-		sprintf(cowName, "speech/SPEECH%d.CLU", SwordEngine::_systemVars.currentCD);
+		sprintf(cowName, "speech/SPEECH.CLU");
 		_cowFile.open(cowName);
 	}
 	if (_cowFile.isOpen()) {
