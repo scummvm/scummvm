@@ -58,7 +58,11 @@ MODULE_OBJS := \
 	scumm/smush/saud_channel.o \
 	scumm/smush/smush_mixer.o \
 	scumm/smush/smush_font.o \
-	scumm/smush/insane.o
+	scumm/insane/insane.o \
+	scumm/insane/insane_ben.o \
+	scumm/insane/insane_enemy.o \
+	scumm/insane/insane_scenes.o \
+	scumm/insane/insane_iact.o
 
 MODULE_DIRS += \
 	scumm \
