@@ -19,27 +19,28 @@
  *
  */
 
-#ifndef CODEC_47_H
-#define CODEC_47_H
+#ifndef SMUSH_CODEC_47_H
+#define SMUSH_CODEC_47_H
 
-#include "config.h"
+#include "common/scummsys.h"
 
-#include "decoder.h"
-
-class Codec47Decoder : public Decoder {
+class Codec47Decoder {
 private:
+
 	int32 _deltaSize;
 	byte *_deltaBufs[2];
 	byte *_deltaBuf;
 	byte *_curBuf;
 	int32 _prevSeqNb;
-	int32 _lastTableWidth;
+	int _lastTableWidth;
 	const byte *_d_src, *_paramPtr;
-	int32 _d_pitch;
+	int _d_pitch;
 	int32 _offset1, _offset2;
 	byte _tableBig[99328];
 	byte _tableSmall[32768];
 	int16 _table[256];
+	int32 _frameSize;
+	int _width, _height;
 
 	void makeTables47(int32 width);
 	void makeTables37(int32 param);
@@ -47,14 +48,14 @@ private:
 	void level1(byte *d_dst);
 	void level2(byte *d_dst);
 	void level3(byte *d_dst);
-	void decode2(byte *dst, const byte *src, int32 width, int32 height, const byte *param_ptr);
+	void decode2(byte *dst, const byte *src, int width, int height, const byte *param_ptr);
 
 public:
 	Codec47Decoder();
-	virtual ~Codec47Decoder();
-	bool initSize(const Point &, const Rect &);
-	void clean();
-	bool decode(byte *dst, const byte *src, int length);
+	~Codec47Decoder();
+	void init(int width, int height);
+	void deinit();
+	bool decode(byte *dst, const byte *src);
 };
 
 #endif

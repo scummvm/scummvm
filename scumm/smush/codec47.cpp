@@ -601,16 +601,16 @@ void Codec47Decoder::level1(byte *d_dst) {
 	}
 }
 
-void Codec47Decoder::decode2(byte *dst, const byte *src, int32 width, int32 height, const byte *param_ptr) {
+void Codec47Decoder::decode2(byte *dst, const byte *src, int width, int height, const byte *param_ptr) {
 	_d_src = src;
 	_paramPtr = param_ptr - 0xf8;
-	int32 bw = (width + 7) >> 3;
-	int32 bh = (height + 7) >> 3;
-	int32 next_line = width * 7;
+	int bw = (width + 7) >> 3;
+	int bh = (height + 7) >> 3;
+	int next_line = width * 7;
 	_d_pitch = width;
 
 	do {
-		int32 tmp_bw = bw;
+		int tmp_bw = bw;
 		do {
 			level1(dst);
 			dst += 8;
@@ -619,35 +619,26 @@ void Codec47Decoder::decode2(byte *dst, const byte *src, int32 width, int32 heig
 	} while (--bh);
 }
 
-bool Codec47Decoder::initSize(const Point &p, const Rect &r) {
-	if(r.width() != getRect().width() && r.height() != getRect().height()) {
-		if(
-			(r.width() != 640 || r.height() != 480)
-			)
-			return false;
-		Decoder::initSize(p, r);
-		clean();
+void Codec47Decoder::init(int width, int height) {
+	deinit();
+	_width = width;
+	_height = height;
+	makeTables37(4);
+	makeTables37(8);
 
-		makeTables37(4);
-		makeTables37(8);
-
-		int32 frame_size = getRect().width() * getRect().height();
-		_deltaSize = frame_size * 3;
-		_deltaBuf = new byte[_deltaSize];
-		_deltaBufs[0] = _deltaBuf;
-		_deltaBufs[1] = _deltaBuf + frame_size;
-		_curBuf = _deltaBuf + frame_size * 2;
-
-		return true;
-	}
-	return false;
+	_frameSize = _width * _height;
+	_deltaSize = _frameSize * 3;
+	_deltaBuf = new byte[_deltaSize];
+	_deltaBufs[0] = _deltaBuf;
+	_deltaBufs[1] = _deltaBuf + _frameSize;
+	_curBuf = _deltaBuf + _frameSize * 2;
 }
 
 Codec47Decoder::Codec47Decoder() {
 	_deltaBuf = 0;
 }
 
-void Codec47Decoder::clean() {
+void Codec47Decoder::deinit() {
 	_lastTableWidth = -1;
 	if(_deltaBuf) {
 		delete []_deltaBuf;
@@ -659,12 +650,10 @@ void Codec47Decoder::clean() {
 }
 
 Codec47Decoder::~Codec47Decoder() {
-	clean();
+	deinit();
 }
 
-bool Codec47Decoder::decode(byte *dst, const byte *src, int length) {
-	int32 width = getRect().width();
-	int32 height = getRect().height();
+bool Codec47Decoder::decode(byte *dst, const byte *src) {
 	_offset1 = _deltaBufs[1] - _curBuf;
 	_offset2 = _deltaBufs[0] - _curBuf;
 
@@ -674,9 +663,9 @@ bool Codec47Decoder::decode(byte *dst, const byte *src, int length) {
 	byte *tmp_ptr;
 
 	if (seq_nb == 0) {
-		makeTables47(width);
-		memset(_deltaBufs[0], src[12], width * height);
-		memset(_deltaBufs[1], src[13], width * height);
+		makeTables47(_width);
+		memset(_deltaBufs[0], src[12], _frameSize);
+		memset(_deltaBufs[1], src[13], _frameSize);
 		_prevSeqNb = -1;
 	}
 
@@ -686,28 +675,28 @@ bool Codec47Decoder::decode(byte *dst, const byte *src, int length) {
 
 	switch(src[2]) {
 	case 0:
-		memcpy(_curBuf, gfx_data, width * height);
+		memcpy(_curBuf, gfx_data, _frameSize);
 		break;
 	case 1:
 		warning("codec47: not implemented decode1 proc");
 		break;
 	case 2:
 		if (seq_nb == _prevSeqNb + 1) {
-			decode2(_curBuf, gfx_data, width, height, src + 8);
+			decode2(_curBuf, gfx_data, _width, _height, src + 8);
 		}
 		break;
 	case 3:
-		memcpy(_curBuf, _deltaBufs[1], width * height);
+		memcpy(_curBuf, _deltaBufs[1], _frameSize);
 		break;
 	case 4:
-		memcpy(_curBuf, _deltaBufs[0], width * height);
+		memcpy(_curBuf, _deltaBufs[0], _frameSize);
 		break;
 	case 5:
 		bompDecode(_curBuf, gfx_data, READ_LE_UINT32(src + 14));
 		break;
 	}
 
-	memcpy(dst, _curBuf, width * height);
+	memcpy(dst, _curBuf, _frameSize);
 
 	if (seq_nb == _prevSeqNb + 1) {
 		if (src[3] == 1) {

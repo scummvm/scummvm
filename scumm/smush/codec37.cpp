@@ -24,35 +24,24 @@
 
 #include "common/engine.h"
 
-#include <assert.h>
-#include <string.h>
-
-bool Codec37Decoder::initSize(const Point &p, const Rect &r) {
-	if(r.width() != getRect().width() && r.height() != getRect().height()) {
-		if(
-			(r.width() != 320 || r.height() != 200) &&
-			(r.width() != 384 || r.height() != 242) &&
-			(r.width() != 640 || r.height() != 480)
-			)
-			return false;
-		Decoder::initSize(p, r);
-		clean();
-		int32 frame_size = getRect().width() * getRect().height();
-		_deltaSize = frame_size * 3 + 0x13600;
-		_deltaBuf = new byte[_deltaSize];
-		memset(_deltaBuf, 0, _deltaSize);
-		if(_deltaBuf == 0) error("unable to allocate decoder buffer");
-		_deltaBufs[0] = _deltaBuf + 0x4D80;
-		_deltaBufs[1] = _deltaBuf + 0xE880 + frame_size;
-		_offsetTable = new int16[255];
-		_curtable = 0;
-		if(_offsetTable == 0)
-			error("unable to allocate decoder offset table");
-		_tableLastPitch = -1;
-		_tableLastIndex = -1;
-		return true; 
-	}
-	return false;
+void Codec37Decoder::init(int width, int height) {
+	deinit();
+	_width = width;
+	_height = height;
+	_frameSize = _width * _height;
+	_deltaSize = _frameSize * 3 + 0x13600;
+	_deltaBuf = new byte[_deltaSize];
+	memset(_deltaBuf, 0, _deltaSize);
+	if(_deltaBuf == 0)
+		error("unable to allocate decoder buffer");
+	_deltaBufs[0] = _deltaBuf + 0x4D80;
+	_deltaBufs[1] = _deltaBuf + 0xE880 + _frameSize;
+	_offsetTable = new int16[255];
+	_curtable = 0;
+	if(_offsetTable == 0)
+		error("unable to allocate decoder offset table");
+	_tableLastPitch = -1;
+	_tableLastIndex = -1;
 }
 
 Codec37Decoder::Codec37Decoder() {
@@ -67,7 +56,7 @@ Codec37Decoder::Codec37Decoder() {
 	_prevSeqNb = 0;
 }
 
-void Codec37Decoder::clean() {
+void Codec37Decoder::deinit() {
 	if(_offsetTable) {
 		delete []_offsetTable;
 		_offsetTable = 0;
@@ -84,10 +73,10 @@ void Codec37Decoder::clean() {
 }
 
 Codec37Decoder::~Codec37Decoder() {
-	clean();
+	deinit();
 }
 
-void Codec37Decoder::maketable(int32 pitch, int32 index) {
+void Codec37Decoder::maketable(int pitch, int index) {
 	static const int8 maketable_bytes[] = {
     0,   0,   1,   0,   2,   0,   3,   0,   5,   0,
     8,   0,  13,   0,  21,   0,  -1,   0,  -2,   0,
@@ -246,6 +235,7 @@ void Codec37Decoder::maketable(int32 pitch, int32 index) {
 
 	if (_tableLastPitch == pitch && _tableLastIndex == index)
 		return;
+
 	_tableLastPitch = pitch;
 	_tableLastIndex = index;
 	index *= 255;
@@ -368,7 +358,7 @@ void Codec37Decoder::bompDecode(byte *dst, const byte *src, int len) {
 		dst += 4;						  \
 	} while(0)
 
-void Codec37Decoder::proc3WithFDFE(byte *dst, const byte *src, int32 next_offs, int32 bw, int32 bh, int32 pitch, int16 *offset_table) {
+void Codec37Decoder::proc3WithFDFE(byte *dst, const byte *src, int32 next_offs, int bw, int bh, int pitch, int16 *offset_table) {
 	do {
 		int32 i = bw;
 		do {
@@ -388,7 +378,7 @@ void Codec37Decoder::proc3WithFDFE(byte *dst, const byte *src, int32 next_offs, 
 	} while (--bh);
 }
 
-void Codec37Decoder::proc3WithoutFDFE(byte *dst, const byte *src, int32 next_offs, int32 bw, int32 bh, int32 pitch, int16 *offset_table) {
+void Codec37Decoder::proc3WithoutFDFE(byte *dst, const byte *src, int32 next_offs, int bw, int bh, int pitch, int16 *offset_table) {
 	do {
 		int32 i = bw;
 		do {
@@ -404,7 +394,7 @@ void Codec37Decoder::proc3WithoutFDFE(byte *dst, const byte *src, int32 next_off
 	} while (--bh);
 }
 
-void Codec37Decoder::proc4WithFDFE(byte *dst, const byte *src, int32 next_offs, int32 bw, int32 bh, int32 pitch, int16 *offset_table) {
+void Codec37Decoder::proc4WithFDFE(byte *dst, const byte *src, int32 next_offs, int bw, int bh, int pitch, int16 *offset_table) {
 	do {
 		int32 i = bw;
 		do {
@@ -440,7 +430,7 @@ void Codec37Decoder::proc4WithFDFE(byte *dst, const byte *src, int32 next_offs, 
 	} while (--bh);
 }
 
-void Codec37Decoder::proc4WithoutFDFE(byte *dst, const byte *src, int32 next_offs, int32 bw, int32 bh, int32 pitch, int16 *offset_table) {
+void Codec37Decoder::proc4WithoutFDFE(byte *dst, const byte *src, int32 next_offs, int bw, int bh, int pitch, int16 *offset_table) {
 	do {
 		int32 i = bw;
 		do {
@@ -472,10 +462,8 @@ void Codec37Decoder::proc4WithoutFDFE(byte *dst, const byte *src, int32 next_off
 	} while (--bh);
 }
 
-bool Codec37Decoder::decode(byte *dst, const byte *src, int length) {
-	int32 width = getRect().width();
-	int32 height = getRect().height();
-	int32 bw = (width + 3) >> 2, bh = (height + 3) >> 2;
+void Codec37Decoder::decode(byte *dst, const byte *src) {
+	int32 bw = (_width + 3) >> 2, bh = (_height + 3) >> 2;
 	int32 pitch = bw << 2;
 
 	int16 seq_nb = READ_LE_UINT16(src + 2);
@@ -543,8 +531,6 @@ bool Codec37Decoder::decode(byte *dst, const byte *src, int length) {
 	}
 	_prevSeqNb = seq_nb;
 
-	memcpy(dst, _deltaBufs[_curtable], width * height);
-	
-	return true;
+	memcpy(dst, _deltaBufs[_curtable], _frameSize);
 }
 

@@ -19,36 +19,39 @@
  *
  */
 
-#ifndef CODEC37_H
-#define CODEC37_H
+#ifndef SMUSH_CODEC37_H
+#define SMUSH_CODEC37_H
 
-#include "decoder.h"
+#include "common/scummsys.h"
 
-class Codec37Decoder : public Decoder {
+class Codec37Decoder {
 private:
+
 	int32 _deltaSize;
 	byte *_deltaBufs[2];
 	byte *_deltaBuf;
 	int16 *_offsetTable;
-	int32 _curtable;
+	int _curtable;
 	uint16 _prevSeqNb;
-	int32 _tableLastPitch;
-	int32 _tableLastIndex;
+	int _tableLastPitch;
+	int _tableLastIndex;
+	int32 _frameSize;
+	int _width, _height;
 
 public:
-	bool initSize(const Point &, const Rect &);
 	Codec37Decoder();
-	void clean();
-	virtual ~Codec37Decoder();
+	~Codec37Decoder();
+	void init(int width, int height);
+	void deinit();
 protected:
-	void maketable(int32, int32);
+	void maketable(int, int);
 	void bompDecode(byte *dst, const byte *src, int len);
-	void proc3WithFDFE(byte *dst, const byte *src, int32, int32, int32, int32, int16 *);
-	void proc3WithoutFDFE(byte *dst, const byte *src, int32, int32, int32, int32, int16 *);
-	void proc4WithFDFE(byte *dst, const byte *src, int32, int32, int32, int32, int16 *);
-	void proc4WithoutFDFE(byte *dst, const byte *src, int32, int32, int32, int32, int16 *);
+	void proc3WithFDFE(byte *dst, const byte *src, int32, int, int, int, int16 *);
+	void proc3WithoutFDFE(byte *dst, const byte *src, int32, int, int, int, int16 *);
+	void proc4WithFDFE(byte *dst, const byte *src, int32, int, int, int, int16 *);
+	void proc4WithoutFDFE(byte *dst, const byte *src, int32, int, int, int, int16 *);
 public:
-	bool decode(byte *dst, const byte *src, int length);
+	void decode(byte *dst, const byte *src);
 };
 
 #endif

@@ -20,44 +20,28 @@
  */
 
 #include <stdafx.h>
-#include "codec1.h"
+#include "common/scummsys.h"
 
-Codec1Decoder::~Codec1Decoder() {
-}
-
-bool Codec1Decoder::decode(byte *dst, const byte *src, int) {
-	byte val;
-	int32 size_line;
-	int32 code, length;
-	int32 h, height = getRect().height();
+void smush_decode_codec1(byte *dst, byte *src, int height) {
+	byte val, code;
+	int32 length;
+	int h = height, size_line;
 
 	for(h = 0; h < height; h++) {
-		size_line = READ_LE_UINT16(src); // size of compressed line !
+		size_line = READ_LE_UINT16(src);
 		src += 2;
-#ifdef DEBUG_CODEC1
-		debug(7, "codec1 : h == %d, size_line == %d", h, size_line);
-#endif
 		while(size_line > 0) {
 			code = *src++;
 			size_line--;
 			length = (code >> 1) + 1;
-#ifdef DEBUG_CODEC1
-			debug(7, "codec1 : length == %d", length);
-#endif
 			if(code & 1) {
 				val = *src++;
 				size_line--;
 				if (val)
 					memset(dst, val, length);
 				dst += length;
-#ifdef DEBUG_CODEC1
-			debug(7, "codec1 : blitting %d times %d", length, val);
-#endif
 			} else {
 				size_line -= length;
-#ifdef DEBUG_CODEC1
-				debug(7, "codec1 : blitting %d entries", length);
-#endif
 				while(length--) {
 					val = *src++;
 					if (val)
@@ -67,5 +51,4 @@ bool Codec1Decoder::decode(byte *dst, const byte *src, int) {
 			}
 		}
 	}
-	return true;
 }

@@ -24,9 +24,6 @@
 #include "chunk.h"
 #include "chunk_type.h"
 
-#include <assert.h>
-#include <string.h>
-
 ImuseChannel::ImuseChannel(int32 track, int32 freq) : 
 	_track(track), 
 	_tbuffer(0), 
@@ -73,7 +70,7 @@ bool ImuseChannel::checkParameters(int32 index, int32 nbframes, int32 size, int3
 }
 
 bool ImuseChannel::appendData(Chunk &b, int32 size) {
-	if(_dataSize == -1) { // First call
+	if(_dataSize == -1) {
 		assert(size > 8);
 		Chunk::type imus_type = b.getDword(); imus_type = SWAP_BYTES(imus_type);
 		uint32 imus_size = b.getDword(); imus_size = SWAP_BYTES(imus_size);
@@ -86,9 +83,9 @@ bool ImuseChannel::appendData(Chunk &b, int32 size) {
 		if(!_tbuffer)
 			error("imuse_channel failed to allocate memory");
 		b.read(_tbuffer, size);
-		_dataSize = -2; // even if _in_data does not get set, this won't be called again
+		_dataSize = -2;
 	} else {
-		if(_tbuffer) { // remaining from last call
+		if(_tbuffer) {
 			byte *old = _tbuffer;
 			int32 new_size = size + _tbufferSize;
 			_tbuffer = new byte[new_size];
@@ -223,7 +220,7 @@ bool ImuseChannel::handleSubTags(int32 &offset) {
 					handleMap(c);
 				}
 				break;
-			case TYPE_DATA: // Sound data !!!
+			case TYPE_DATA:
 				_inData = true;
 				_dataSize = size;
 				offset += 8;
@@ -254,7 +251,6 @@ bool ImuseChannel::handleSubTags(int32 &offset) {
 }
 
 bool ImuseChannel::processBuffer() {
-	// see comments in saud_channel::processBuffer for an explanation
 	assert(_tbuffer != 0);
 	assert(_tbufferSize != 0);
 	assert(_sbuffer == 0);
@@ -266,7 +262,7 @@ bool ImuseChannel::processBuffer() {
 			while(handleSubTags(offset));
 			_sbufferSize = _dataSize;
 			_sbuffer = _tbuffer;
-			if(offset < _tbufferSize) { // there is still some unprocessed data
+			if(offset < _tbufferSize) {
 				int32 new_size = _tbufferSize - offset;
 				_tbuffer = new byte[new_size];
 				if(!_tbuffer) error("imuse_channel failed to allocate memory");
@@ -277,12 +273,10 @@ bool ImuseChannel::processBuffer() {
 				_tbufferSize = 0;
 			}
 			if(_sbufferSize == 0) {
-				// this never happened yet, but who knows
 				delete []_sbuffer; 
 				_sbuffer = 0;
 			}
 		} else {
-			// easy, swap the buffer
 			_sbufferSize = _tbufferSize;
 			_sbuffer = _tbuffer;
 			_tbufferSize = 0;
@@ -301,7 +295,7 @@ bool ImuseChannel::processBuffer() {
 			_tbuffer = 0;
 			_tbufferSize = 0;
 		} else {
-			if(offset) { // maybe I should assert() this to avoid a lock...
+			if(offset) {
 				byte * old = _tbuffer;
 				int32 new_size = _tbufferSize - offset;
 				_tbuffer = new byte[new_size];

@@ -19,40 +19,34 @@
  *
  */
 
-#ifndef SMUSH_MIXER_H
-#define SMUSH_MIXER_H
+#include <stdafx.h>
 
-#include "config.h"
+#include "sound/mixer.h"
 
-#ifdef DEBUG
-# ifndef NO_DEBUG_MIXER
-#  define DEBUG_MIXER
-# endif
-#else
-# ifdef DEBUG_MIXER
-#  error DEBUG_MIXER defined without DEBUG
-# endif
-#endif
+class SmushChannel;
 
-class _Channel;
+class SmushMixer {
+private:
 
-class SoundRenderer;
+	SoundMixer *_mixer;
+	struct {
+		int id;
+		SmushChannel *chan;
+		bool first;
+		int mixer_index;
+	} _channels[SoundMixer::NUM_CHANNELS];
 
-/*! 	@brief The class for the player's sound mixer
+	int _nextIndex;
+	int _soundFrequency;
 
-	This class is used for sound mixing.
-	It contains a list of current track and request them to mix.
-	It then sends the mixed sound samples to the sound renderer.
-
-*/
-class Mixer {
 public:
-	virtual ~Mixer() {};
-	virtual bool init() = 0;
-	virtual _Channel * findChannel(int32 track) = 0;
-	virtual bool addChannel(_Channel * c) = 0;
-	virtual bool handleFrame() = 0;
-	virtual bool stop() = 0;
-};
 
-#endif
+	SmushMixer(SoundMixer *);
+	virtual ~SmushMixer();
+	SmushChannel *findChannel(int32 track);
+	bool addChannel(SmushChannel *c);
+	bool handleFrame();
+	bool stop();
+	bool update();
+	bool _silentMixer;
+};

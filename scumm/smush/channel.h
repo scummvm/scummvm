@@ -19,63 +19,47 @@
  *
  */
 
-#ifndef CHANNEL_H
-#define CHANNEL_H
+#ifndef SMUSH_CHANNEL_H
+#define SMUSH_CHANNEL_H
 
-#include "config.h"
-#include "common/engine.h" // for debug, warning, error
-
-#ifdef DEBUG
-# ifndef NO_DEBUG_CHANNEL
-#  define DEBUG_CHANNEL
-# endif
-#else
-# ifdef DEBUG_CHANNEL
-#  error DEBUG_CHANNEL defined without DEBUG
-# endif
-#endif
+#include "common/engine.h"
 
 class Chunk;
 class ContChunk;
 	
-/*! 	@brief int32erface for a sound channel (a track)
-
-	This is the int32erface for sound channels. 
-*/
-class _Channel {
+class SmushChannel {
 public:
-	virtual ~_Channel() {};
-	// called by the smush_player
+
+	virtual ~SmushChannel() {};
 	virtual bool appendData(Chunk &b, int32 size) = 0;
 	virtual bool setParameters(int32, int32, int32, int32) = 0;
 	virtual bool checkParameters(int32, int32, int32, int32, int32) = 0;
-	// called by the mixer
 	virtual bool isTerminated() const = 0;
 	virtual int32 availableSoundData() const = 0;
-	virtual void getSoundData(int16 *sound_buffer, int32 size) = 0; // size is in sample 
+	virtual void getSoundData(int16 *sound_buffer, int32 size) = 0;
 	virtual void getSoundData(int8 *sound_buffer, int32 size) = 0;
 	virtual int32 getRate() = 0;
 	virtual bool getParameters(int32 &rate, bool &stereo, bool &is_16bit) = 0;
 	virtual int32 getTrackIdentifier() const = 0;
 };
 
-class SaudChannel : public _Channel {
+class SaudChannel : public SmushChannel {
 private:
-	int32 _track;				//!< The track identifier
-	int32 _nbframes;			//!< number of frames of the track (unused)
-	int32 _dataSize;			//!< the size of the sound buffer
-	int32 _frequency;			//!< the frequency target of the track (always 22050)
-	bool _inData;			//!< are we processing data ?
-	bool _markReached;		//!< set to \c true when the SMRK tag is reached
-	int32 _flags;				//!< current flags of the track (unused)
-	int32 _volume;			//!< the current track volume
-	int32 _balance;			//!< the current track balance
-	int32 _index;				//!< the current PSAD index (for coherency checking)
-	int16 _voltable[2][256];	//!< the precalculated volume table (stereo 16 bits)
-	byte *_tbuffer;	//!< data temporary buffer
-	int32 _tbufferSize;			//!< temporary buffer size
-	byte *_sbuffer;	//!< sound buffer
-	int32 _sbufferSize;			//!< sound buffer size
+	int32 _track;
+	int32 _nbframes;
+	int32 _dataSize;
+	int32 _frequency;
+	bool _inData;
+	bool _markReached;
+	int32 _flags;
+	int32 _volume;
+	int32 _balance;
+	int32 _index;
+	int16 _voltable[2][256];
+	byte *_tbuffer;
+	int32 _tbufferSize;
+	byte *_sbuffer;
+	int32 _sbufferSize;
 
 protected:
 	void handleStrk(Chunk &c);
@@ -105,13 +89,7 @@ public:
 	virtual int32 getTrackIdentifier() const { return _track; };
 };
 
-/*! 	@brief class for a IACT sound ::channel (a The Dig track)
-
-	This class implements a channel specifically for The Dig.
-
-	\bug for unknown reason, some sound have a too long duration, or repeat themselves.
-*/
-class ImuseChannel : public _Channel {
+class ImuseChannel : public SmushChannel {
 private:
 	int32 _track;				//!< the track number
 	byte *_tbuffer;	//!< data temporary buffer

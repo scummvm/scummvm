@@ -25,9 +25,6 @@
 #include "chunk.h"
 #include "chunk_type.h"
 
-#include <assert.h>
-#include <string.h>
-
 void SaudChannel::handleStrk(Chunk &b) {
 	int32 size = b.getSize();
 	if(size != 14 && size != 10) {
@@ -41,7 +38,8 @@ void SaudChannel::handleSmrk(Chunk &b) {
 
 void SaudChannel::handleShdr(Chunk &b) {
 	int32 size = b.getSize();
-	if(size != 4) warning("SMRK has a invalid size : %d", size);
+	if(size != 4)
+		warning("SMRK has a invalid size : %d", size);
 }
 
 bool SaudChannel::handleSubTags(int32 &offset) {
@@ -93,12 +91,6 @@ bool SaudChannel::handleSubTags(int32 &offset) {
 }
 
 bool SaudChannel::processBuffer() {
-	// At the start of this function, we have _tbuffer[0.._tbuffersize] containing possible data...
-	// and _sbuffer is 0
-	// At the end we have :
-	// if(sound data) _sbuffer[0.._sbuffer_size] contains the sound data
-	// the unprocessed data is kept in _tbuffer[0.._tbuffersize] (which may have changed)
-	// if no unprocessed data, then _tbuffer is 0
 	assert(_tbuffer != 0);
 	assert(_tbufferSize != 0);
 	assert(_sbuffer == 0);
@@ -106,12 +98,11 @@ bool SaudChannel::processBuffer() {
 	
 	if(_inData) {
 		if(_dataSize < _tbufferSize) {
-			// I can't assume that the channel is finished after data is received... (this assumption failed in realride.san)
 			int32 offset = _dataSize;
 			while(handleSubTags(offset));
 			_sbufferSize = _dataSize;
 			_sbuffer = _tbuffer;
-			if(offset < _tbufferSize) { // there is still some unprocessed data
+			if(offset < _tbufferSize) {
 				int new_size = _tbufferSize - offset;
 				_tbuffer = new byte[new_size];
 				if(!_tbuffer)  error("SaudChannel failed to allocate memory");
@@ -122,12 +113,10 @@ bool SaudChannel::processBuffer() {
 				_tbufferSize = 0;
 			}
 			if(_sbufferSize == 0) {
-				// this never happened yet, but who knows
 				delete []_sbuffer; 
 				_sbuffer = 0;
 			}
 		} else {
-			// easy, swap the buffer
 			_sbufferSize = _tbufferSize;
 			_sbuffer = _tbuffer;
 			_tbufferSize = 0;
@@ -140,17 +129,19 @@ bool SaudChannel::processBuffer() {
 			_sbufferSize = _tbufferSize - offset;
 			assert(_sbufferSize);
 			_sbuffer = new byte[_sbufferSize];
-			if(!_sbuffer)  error("saud_channel failed to allocate memory");
+			if(!_sbuffer)
+				error("saud_channel failed to allocate memory");
 			memcpy(_sbuffer, _tbuffer + offset, _sbufferSize);
 			delete []_tbuffer;
 			_tbuffer = 0;
 			_tbufferSize = 0;
 		} else {
-			if(offset) { // maybe I should assert() this to avoid a lock...
-				unsigned char *old = _tbuffer;
+			if(offset) {
+				byte *old = _tbuffer;
 				int32 new_size = _tbufferSize - offset;
 				_tbuffer = new byte[new_size];
-				if(!_tbuffer)  error("SaudChannel failed to allocate memory");
+				if(!_tbuffer)
+					error("SaudChannel failed to allocate memory");
 				memcpy(_tbuffer, old + offset, new_size);
 				_tbufferSize = new_size;
 				delete []old;
@@ -197,10 +188,14 @@ void SaudChannel::recalcVolumeTable() {
 	int32 right_multiplier = MAX_BALANCE + _balance;
 	volume_left = _volume * left_multiplier / (MAX_BALANCE * 2);
 	volume_right = _volume * right_multiplier / (MAX_BALANCE * 2);
-	if(volume_left < 0) volume_left = 0;
-	if(volume_left > 128) volume_left = 128;
-	if(volume_right < 0) volume_right = 0;
-	if(volume_right > 128) volume_right = 128;
+	if(volume_left < 0)
+		volume_left = 0;
+	if(volume_left > 128)
+		volume_left = 128;
+	if(volume_right < 0)
+		volume_right = 0;
+	if(volume_right > 128)
+		volume_right = 128;
 	for(int32 i = 0; i < 256; i++) {
 		int16 value = volume_left * (int8)i;
 		_voltable[0][i] = TO_BE_16(value);
@@ -220,9 +215,12 @@ bool SaudChannel::setParameters(int32 nb, int32 flags, int32 volume, int32 balan
 }
 
 bool SaudChannel::checkParameters(int32 index, int32 nb, int32 flags, int32 volume, int32 balance) {
-	if(++_index != index) error("invalid index in SaudChannel::checkParameters()");
-	if(_nbframes != nb) error("invalid duration in SaudChannel::checkParameters()");
-	if(_flags != flags) error("invalid flags in SaudChannel::checkParameters()");
+	if(++_index != index)
+		error("invalid index in SaudChannel::checkParameters()");
+	if(_nbframes != nb)
+		error("invalid duration in SaudChannel::checkParameters()");
+	if(_flags != flags)
+		error("invalid flags in SaudChannel::checkParameters()");
 	if(_volume != volume || _balance != balance) {
 		_volume = volume;
 		_balance = balance;
@@ -232,13 +230,13 @@ bool SaudChannel::checkParameters(int32 index, int32 nb, int32 flags, int32 volu
 }
 
 bool SaudChannel::appendData(Chunk &b, int32 size) {
-	if(_dataSize == -1) { // First call
+	if(_dataSize == -1) {
 		assert(size > 8);
 		Chunk::type saud_type = b.getDword(); saud_type = SWAP_BYTES(saud_type);
 		uint32 saud_size = b.getDword(); saud_size = SWAP_BYTES(saud_size);
 		if(saud_type != TYPE_SAUD) error("Invalid Chunk for SaudChannel : %X", saud_type);
 		size -= 8;
-		_dataSize = -2; // We don't get here again...
+		_dataSize = -2;
 	}
 	if(_tbuffer) {
 		byte *old = _tbuffer;
