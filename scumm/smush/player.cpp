@@ -440,7 +440,7 @@ void SmushPlayer::handleTextResource(Chunk & b) {
 	/*int32 unk2 =*/ b.getWord();
 
 	const char * str;
-	char * string;
+	char * string = 0;
 	if (g_scumm->_gameId == GID_CMI) {
 		string = (char*)malloc(b.getSize() - 16);
 		str = string;
