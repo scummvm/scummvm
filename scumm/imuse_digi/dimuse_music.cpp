@@ -332,12 +332,12 @@ void IMuseDigital::playComiMusic(const char *songName, const imuseComiTable *tab
 			if ((!sequence) && (table->param != 0) &&
 					(table->param == _comiStateMusicTable[_curMusicState].param)) {
 				startMusic(table->filename, table->soundId, 0, 127);
+				return;
+			}
+			if (table->opcode == 12) {
+				startMusic(table->filename, table->soundId, table->hookId, 127);
 			} else {
-				if (table->opcode == 12) {
-					startMusic(table->filename, table->soundId, table->hookId, 127);
-				} else {
-					startMusic(table->filename, table->soundId, hookId, 127);
-				}
+				startMusic(table->filename, table->soundId, hookId, 127);
 			}
 			break;
 	}
