@@ -7758,11 +7758,6 @@ void Insane::iactScene4(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 			break;
 		}
 		break;
-	case 7:
-		if (par4 == 3 && par5 <_actor[0].x) {
-			return; // nice noop here
-		}
-		break;
 	}
 }
 
@@ -7842,11 +7837,6 @@ void Insane::iactScene6(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 			_val119_ = true;
 			_iactSceneId = par4;
 			break;
-		}
-		break;
-	case 7:
-		if (par4 == 3 && par5 <_actor[0].x) {
-			return; // nice noop here
 		}
 		break;
 	}
