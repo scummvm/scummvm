@@ -32,7 +32,7 @@ void initSound()
   stop_sound();
   do_sound_command(CMD_SET_FREQ_EXP(FREQ_22050_EXP));
   do_sound_command(CMD_SET_STEREO(1));
-  do_sound_command(CMD_SET_BUFFER(3));
+  do_sound_command(CMD_SET_BUFFER(SOUND_BUFFER_SHIFT));
 }
 
 bool OSystem_Dreamcast::setSoundCallback(SoundProc proc, void *param)
@@ -82,7 +82,7 @@ void OSystem_Dreamcast::checkSound()
     memcpy4s(RING_BUF+fillpos, temp_sound_buffer, SAMPLES_TO_BYTES(r));
     fillpos = 0;
     n -= r;
-    memcpy4s(RING_BUF, temp_sound_buffer+(r<<1), SAMPLES_TO_BYTES(n));
+    memcpy4s(RING_BUF, temp_sound_buffer+r, SAMPLES_TO_BYTES(n));
   } else {
     memcpy4s(RING_BUF+fillpos, temp_sound_buffer, SAMPLES_TO_BYTES(n));
   }

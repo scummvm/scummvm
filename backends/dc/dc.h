@@ -24,6 +24,7 @@
 #include <ronin/soundcommon.h>
 
 #define NUM_BUFFERS 4
+#define SOUND_BUFFER_SHIFT 3
 
 class OSystem_Dreamcast : public OSystem {
 
@@ -168,7 +169,7 @@ class OSystem_Dreamcast : public OSystem {
   void *ovl_tx[NUM_BUFFERS];
   unsigned short palette[256];
 
-  short temp_sound_buffer[RING_BUFFER_SAMPLES];
+  int temp_sound_buffer[RING_BUFFER_SAMPLES>>SOUND_BUFFER_SHIFT];
 
   void checkSound();
 
