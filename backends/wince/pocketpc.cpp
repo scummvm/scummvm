@@ -71,7 +71,9 @@ BOOL PPCWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, OSystem_W
 			if (GAPI_key) {
 			*/
 				if (_force_get_key_mapping) {
-					getAction(ACTION_RIGHTCLICK)->action_key = GAPIKeysTranslate((unsigned int)(wParam)) & 0xff;					
+					unsigned char selected_key = GAPIKeysTranslate((unsigned int)(wParam)) & 0xff;
+					clearActionKey(selected_key);
+					getAction(ACTION_RIGHTCLICK)->action_key = selected_key;					
 				}
 				else
 				if (_get_key_mapping) {
