@@ -567,7 +567,7 @@ int Scumm::readSoundResource(int type, int idx)
 			pos += size;
 
 			pri = -1;
-
+		
 			switch (tag) {
 			case MKID('ADL '):
 				if (_use_adlib)
@@ -584,6 +584,10 @@ int Scumm::readSoundResource(int type, int idx)
 			case MKID('MAC '):
 				if (!_use_adlib)
 					pri = 1;
+				break;
+			case MKID('SPK '):
+				if (!_use_adlib)
+					pri = 0;
 				break;
 			}
 
