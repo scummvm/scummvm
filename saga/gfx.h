@@ -47,6 +47,8 @@ struct R_GFX_MODULE {
 	int black_index;
 };
 
+void GFX_SetCursor(int best_white);
+
 } // End of namespace Saga
 
 #endif

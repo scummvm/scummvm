@@ -904,27 +904,8 @@ int GFX_SetPalette(R_SURFACE *surface, PALENTRY *pal) {
 	// When the palette changes, make sure the cursor colours are still
 	// correct. We may have to reconsider this code later, but for now
 	// there is only one cursor image.
-
 	if (GfxModule.white_index != best_windex) {
-		int white = (best_windex == 255) ? 254 : best_windex;
-
-		// Set up the mouse cursor
-		static byte cursor_img[R_CURSOR_W * R_CURSOR_H] = {
-			255, 255, 255, 0,   255, 255, 255,
-			255, 255, 255, 0,   255, 255, 255,
-			255, 255, 255, 255, 255, 255, 255,
-			0,   0,   255, 255, 255, 0,   0,
-			255, 255, 255, 255, 255, 255, 255,
-			255, 255, 255, 0,   255, 255, 255,
-			255, 255, 255, 0,   255, 255, 255,
-		};
-
-		for (i = 0; i < R_CURSOR_W * R_CURSOR_H; i++) {
-			if (cursor_img[i] != 255)
-				cursor_img[i] = white;
-		}
-
-		_system->setMouseCursor(cursor_img, R_CURSOR_W, R_CURSOR_H, 4, 4);
+		GFX_SetCursor(best_windex);
 	}
 
 	// Set whitest and blackest color indices
@@ -1066,9 +1047,39 @@ int GFX_BlackToPal(R_SURFACE *surface, PALENTRY *src_pal, double percent) {
 		}
 	}
 
+	// When the palette changes, make sure the cursor colours are still
+	// correct. We may have to reconsider this code later, but for now
+	// there is only one cursor image.
+	if (GfxModule.white_index != best_windex) {
+		GFX_SetCursor(best_windex);
+	}
+
 	_system->setPalette(cur_pal, 0, R_PAL_ENTRIES);
 
 	return R_SUCCESS;
+}
+
+void GFX_SetCursor(int best_white) {
+	int white = (best_white == 255) ? 254 : best_white;
+	int i;
+
+	// Set up the mouse cursor
+	static byte cursor_img[R_CURSOR_W * R_CURSOR_H] = {
+		255, 255, 255, 0,   255, 255, 255,
+		255, 255, 255, 0,   255, 255, 255,
+		255, 255, 255, 255, 255, 255, 255,
+		0,   0,   255, 255, 255, 0,   0,
+		255, 255, 255, 255, 255, 255, 255,
+		255, 255, 255, 0,   255, 255, 255,
+		255, 255, 255, 0,   255, 255, 255,
+	};
+
+	for (i = 0; i < R_CURSOR_W * R_CURSOR_H; i++) {
+		if (cursor_img[i] != 255)
+			cursor_img[i] = white;
+	}
+
+	_system->setMouseCursor(cursor_img, R_CURSOR_W, R_CURSOR_H, 4, 4);
 }
 
 } // End of namespace Saga
