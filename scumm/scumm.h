@@ -872,16 +872,20 @@ public:
 	int cost_frameToAnim(Actor *a, int frame);
 
 	// Akos Class
-	int16 _queueCmd[32];
-	int16 _queueActor[32];
-	int16 _queueParam1[32];
-	int16 _queueParam2[32];
-	int16 _queuePos;
+	struct {
+		int16 cmd;
+		int16 actor;
+		int16 param1;
+		int16 param2;
+	} _akosQueue[32];
+	int16 _akosQueuePos;
 
-	int16 _queueTalkPosX[16];
-	int16 _queueTalkPosY[16];
-	int16 _queueTalkColor[16];
-	byte _queueTalkString[16][128];
+	struct {
+		int16 posX;
+		int16 posY;
+		int16 color;
+		byte sentence[128];
+	} _talkQueue[16];
 
 	Common::Rect _actorClipOverride;
 

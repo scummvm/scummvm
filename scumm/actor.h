@@ -247,10 +247,10 @@ public:
 	void classChanged(int cls, bool value);
 	
 	void setUserCondition(int slot, int set);
-	bool isUserConditionSet(int slot);
+	bool isUserConditionSet(int slot) const;
 
 	void setTalkCondition(int slot);
-	bool isTalkConditionSet(int slot);
+	bool isTalkConditionSet(int slot) const;
 	
 	// Used by the save/load syste:
 	static const SaveLoadEntry *getSaveLoadEntries();

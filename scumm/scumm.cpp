@@ -703,16 +703,10 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 	_wizState = 0;
 	_wizFlag = 0;
 
-	memset(_queueCmd, 0, sizeof(_queueCmd));
-	memset(_queueActor, 0, sizeof(_queueActor));
-	memset(_queueParam1, 0, sizeof(_queueParam1));
-	memset(_queueParam2, 0, sizeof(_queueParam2));
-	_queuePos = 0;
+	memset(_akosQueue, 0, sizeof(_akosQueue));
+	_akosQueuePos = 0;
 
-	memset(_queueTalkPosX, 0, sizeof(_queueTalkPosX));
-	memset(_queueTalkPosY, 0, sizeof(_queueTalkPosY));
-	memset(_queueTalkColor, 0, sizeof(_queueTalkColor));
-	memset(_queueTalkString, 0, sizeof(_queueTalkString));
+	memset(_talkQueue, 0, sizeof(_talkQueue));
 
 	//
 	// Init all VARS to 0xFF

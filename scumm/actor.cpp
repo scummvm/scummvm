@@ -1846,7 +1846,7 @@ void Actor::setUserCondition(int slot, int set) {
 	}
 }
 
-bool Actor::isUserConditionSet(int slot) {
+bool Actor::isUserConditionSet(int slot) const {
 	assert(slot >= 1 && slot <= 0x20);
 	return (condMask & (1 << (slot + 0xF))) != 0;
 }
@@ -1865,7 +1865,7 @@ void Actor::setTalkCondition(int slot) {
 	}	
 }
 
-bool Actor::isTalkConditionSet(int slot) {	
+bool Actor::isTalkConditionSet(int slot) const {	
 	assert(slot >= 1 && slot <= 0x10);
 	return (condMask & (1 << (slot - 1))) != 0;
 }
@@ -1874,8 +1874,8 @@ void ScummEngine::preProcessAuxQueue() {
 	if (!_skipProcessActors) {
 		for (int i = 0; i < _auxBlocksNum; ++i) {
 			AuxBlock *ab = &_auxBlocks[i];
-			assert(ab->r.top <= ab->r.bottom);
 			if (ab->visible) {
+				assert(ab->r.top <= ab->r.bottom);
 				gdi.copyVirtScreenBuffers(ab->r);
 			}
 		}
@@ -1897,6 +1897,14 @@ void ScummEngine::postProcessAuxQueue() {
 				assert(akax);
 				const uint8 *auxd = findPalInPals(akax, ae->subIndex) - _resourceHeaderSize;
 				assert(auxd);
+				const uint8 *frel = findResourceData(MKID('FREL'), auxd);
+				if (frel) {
+					warning("unhandled FREL block");
+				}
+				const uint8 *disp = findResourceData(MKID('DISP'), auxd);
+				if (disp) {
+					warning("unhandled DISP block");
+				}
 				const uint8 *axfd = findResourceData(MKID('AXFD'), auxd);
 				assert(axfd);
 

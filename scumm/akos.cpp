@@ -1617,25 +1617,25 @@ bool ScummEngine::akos_increaseAnim(Actor *a, int chan, const byte *aksq, const 
 }
 
 void ScummEngine::akos_queCommand(byte cmd, Actor *a, int param_1, int param_2) {
-	checkRange(32, 0, _queuePos, "akos_queCommand overflow");
+	checkRange(32, 0, _akosQueuePos, "akos_queCommand overflow");
 
-	_queuePos++;
-	_queueCmd[_queuePos] = cmd;
-	_queueActor[_queuePos] = a->number;
-	_queueParam1[_queuePos] = param_1;
-	_queueParam2[_queuePos] = param_2;
+	_akosQueuePos++;
+	_akosQueue[_akosQueuePos].cmd = cmd;
+	_akosQueue[_akosQueuePos].actor = a->number;
+	_akosQueue[_akosQueuePos].param1 = param_1;
+	_akosQueue[_akosQueuePos].param2 = param_2;
 }
 
 void ScummEngine::akos_processQueue() {
 	byte cmd;
 	int actor, param_1, param_2;
 
-	while (_queuePos) {
-		cmd = _queueCmd[_queuePos];	
-		actor = _queueActor[_queuePos];
-		param_1 = _queueParam1[_queuePos];
-		param_2 = _queueParam2[_queuePos];
-		_queuePos--;
+	while (_akosQueuePos) {
+		cmd = _akosQueue[_akosQueuePos].cmd;
+		actor = _akosQueue[_akosQueuePos].actor;
+		param_1 = _akosQueue[_akosQueuePos].param1;
+		param_2 = _akosQueue[_akosQueuePos].param2;
+		_akosQueuePos--;
 
 		Actor *a = derefActor(actor, "akos_processQueue");
 
@@ -1678,12 +1678,12 @@ void ScummEngine::akos_processQueue() {
 			if (_heversion >= 71) {
 				_actorToPrintStrFor = a->number;
 
-				a->talkPosX = _queueTalkPosX[param_1];
-				a->talkPosY = _queueTalkPosY[param_1];
-				a->talkColor = _queueTalkColor[param_1];
+				a->talkPosX = _talkQueue[param_1].posX;
+				a->talkPosY = _talkQueue[param_1].posY;
+				a->talkColor = _talkQueue[param_1].color;
 
 				_string[0].loadDefault();
-				actorTalk(_queueTalkString[param_1]);
+				actorTalk(_talkQueue[param_1].sentence);
 
 			} else if (param_1 != 0) {
 				if (_imuseDigital) {
