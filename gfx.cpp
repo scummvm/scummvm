@@ -23,6 +23,7 @@
 #include "scumm.h"
 #include "actor.h"
 #include "gui.h"
+#include "newgui.h"
 #include "resource.h"
 
 void Scumm::getGraphicsPerformance()
@@ -156,7 +157,7 @@ void Scumm::drawDirtyScreenParts()
 	}
 
 	/* Handle shaking */
-	if (_shakeEnabled && !_gui->isActive()) {
+	if (_shakeEnabled && !_gui->isActive() && !_newgui->isActive()) {
 		_shakeFrame = (_shakeFrame + 1) & (NUM_SHAKE_POSITIONS - 1);
 		_system->set_shake_pos(shake_positions[_shakeFrame]);
 	}
