@@ -117,38 +117,6 @@ struct TimeEvent {
 	TimeEvent *next;
 };
 
-struct VgaFile1Header {
-	uint16 x_1, x_2;
-	uint16 hdr2_start;
-	uint16 x_3, x_4;
-};
-
-struct VgaFile1Header2 {
-	uint16 x_1;
-	uint16 unk1;
-	uint16 x_2;
-	uint16 id_count;
-	uint16 x_3;
-	uint16 unk2_offs;
-	uint16 x_4;
-	uint16 id_table;
-	uint16 x_5;
-};
-
-struct VgaFile1Struct0x8 {
-	uint16 id;
-	uint16 x_1;
-	uint16 x_2;
-	uint16 script_offs;
-};
-
-struct VgaFile1Struct0x6 {
-	uint16 id;
-	uint16 x_2;
-	uint16 script_offs;
-};
-
-
 struct GameSpecificSettings {
 	uint VGA_DELAY_BASE;
 	uint TABLE_INDEX_BASE;

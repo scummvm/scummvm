@@ -23,6 +23,7 @@
 #include "stdafx.h"
 #include "simon/simon.h"
 #include "simon/intern.h"
+#include "simon/vga.h"
 
 #ifdef SIMONDEBUG
 #define SIMON2
@@ -762,7 +763,7 @@ void SimonState::dump_vga_script_always(byte *ptr, uint res, uint sprite_id)
 
 void SimonState::dump_vga_script(byte *ptr, uint res, uint sprite_id)
 {
-	dump_Vga_script_always(ptr, res, sprite_id);
+	dump_vga_script_always(ptr, res, sprite_id);
 }
 
 

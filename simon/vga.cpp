@@ -23,6 +23,7 @@
 #include "stdafx.h"
 #include "simon/simon.h"
 #include "simon/intern.h"
+#include "simon/vga.h"
 
 typedef void (SimonState::*VgaOpcodeProc) ();
 static const uint16 vc_get_out_of_code = 0;
@@ -406,30 +407,6 @@ void SimonState::vc_9_maybe_skip()
 	if (!vc_maybe_skip_proc_1(a, b))
 		vc_skip_next_instruction();
 }
-
-struct VC10_state {
-	int image;
-	uint16 e;
-	int x, y;
-
-	byte base_color;
-
-	uint draw_width, draw_height;
-	uint x_skip, y_skip;
-
-	byte *surf2_addr;
-	uint surf2_pitch;
-
-	byte *surf_addr;
-	uint surf_pitch;
-
-	byte dl, dh;
-
-	byte *depack_src;
-	int8 depack_cont;
-
-	byte depack_dest[200];
-};
 
 byte *vc_10_depack_column(VC10_state * vs)
 {

@@ -22,6 +22,7 @@
 #include "stdafx.h"
 #include "simon/simon.h"
 #include "simon/intern.h"
+#include "simon/vga.h"
 #include "sound/mididrv.h"
 #include "common/gameDetector.h"
 #include <errno.h>
