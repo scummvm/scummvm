@@ -4936,42 +4936,32 @@ void SimonState::playMusic(uint music)
 		
 		if (_game & GAME_WIN) {
 			_game_file->seek(_game_offsets_ptr[gss->MUSIC_INDEX_BASE + music], SEEK_SET);
-			File *f = _game_file;
-			midi.read_all_songs(f);
+			midi.read_all_songs(_game_file);
 		}
 	
 		midi.initialize();
 		midi.play();
 	} else {
+		midi.shutdown();
+
 		if (_game == GAME_SIMON1DOS) {
-
-		midi.shutdown();
-
-		char buf[50];
-		File *f = new File();
-		sprintf(buf, "MOD%d.MUS", music);
-		f->open(buf, _gameDataPath);
-		if (f->isOpen() == false) {
-			warning("Cannot load music from '%s'", buf);
-			return;
+			char buf[50];
+			File *f = new File();
+			sprintf(buf, "MOD%d.MUS", music);
+			f->open(buf, _gameDataPath);
+			if (f->isOpen() == false) {
+				warning("Cannot load music from '%s'", buf);
+				return;
+			}
+			midi.read_all_songs_old(f);
+			delete f;
+		} else if (_game == GAME_SIMON1WIN) {
+			_game_file->seek(_game_offsets_ptr[gss->MUSIC_INDEX_BASE + music], SEEK_SET);
+			midi.read_all_songs_old(_game_file);
 		}
-		midi.read_all_songs_old(f);
-		delete f;
 
 		midi.initialize();
 		midi.play();
-		}
-		if (_game == GAME_SIMON1WIN) {
-
-		midi.shutdown();
-
-		_game_file->seek(_game_offsets_ptr[gss->MUSIC_INDEX_BASE + music], SEEK_SET);
-		File *f = _game_file;
-		midi.read_all_songs_old(f);
-
-		midi.initialize();
-		midi.play();
-		}
 	}
 }
 

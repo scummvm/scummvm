@@ -24,6 +24,30 @@
 #include "simon/simon.h"
 #include "simon/intern.h"
 
+static const char *const verb_names[] = {
+	"Walk to",
+	"Look at",
+	"Open",
+	"Move",
+
+	"Consume",
+	"Pick up",
+	"Close",
+	"Use",
+
+	"Talk to",
+	"Remove",
+	"Wear",
+	"Give"
+};
+
+static const char *const verb_prep_names[] = {
+	"", "", "", "",
+	"", "", "", "with what ?",
+	"", "", "", "to whom ?"
+};
+
+
 void SimonState::defocusHitarea()
 {
 	HitArea *last;
@@ -49,29 +73,6 @@ void SimonState::defocusHitarea()
 			(ha = findHitAreaByID(200)) && (ha->flags & 0x40) && !(last->flags & 0x40))
 		focusVerb(last->id);
 }
-
-static const char *const verb_names[] = {
-	"Walk to",
-	"Look at",
-	"Open",
-	"Move",
-
-	"Consume",
-	"Pick up",
-	"Close",
-	"Use",
-
-	"Talk to",
-	"Remove",
-	"Wear",
-	"Give"
-};
-
-static const char *const verb_prep_names[] = {
-	"", "", "", "",
-	"", "", "", "with what ?",
-	"", "", "", "to whom ?"
-};
 
 void SimonState::focusVerb(uint hitarea_id)
 {
@@ -318,42 +319,39 @@ void SimonState::handle_unk_hitarea(FillOrCopyStruct *fcs)
 
 void SimonState::setup_hitarea_from_pos(uint x, uint y, uint mode)
 {
-	HitArea *best_ha;
-
 	if (_game & GAME_SIMON2) {
 		if (_bit_array[4] & 0x8000 || y < 134) {
 			x += _x_scroll * 8;
 		}
 	}
 
-	{
-		HitArea *ha = _hit_areas;
-		uint count = ARRAYSIZE(_hit_areas);
-		uint16 layer = 0;
-		const uint16 x_ = x;
-		const uint16 y_ = y;
+	HitArea *best_ha;
+	HitArea *ha = _hit_areas;
+	uint count = ARRAYSIZE(_hit_areas);
+	uint16 layer = 0;
+	const uint16 x_ = x;
+	const uint16 y_ = y;
 
-		best_ha = NULL;
+	best_ha = NULL;
 
-		do {
-			if (ha->flags & 0x20) {
-				if (!(ha->flags & 0x40)) {
-					if (x_ >= ha->x && y_ >= ha->y &&
-							x_ - ha->x < ha->width && y_ - ha->y < ha->height && layer <= ha->layer) {
-						layer = ha->layer;
-						best_ha = ha;
-					} else {
-						if (ha->flags & 2) {
-							hitarea_leave(ha);
-							ha->flags &= ~2;
-						}
-					}
+	do {
+		if (ha->flags & 0x20) {
+			if (!(ha->flags & 0x40)) {
+				if (x_ >= ha->x && y_ >= ha->y &&
+						x_ - ha->x < ha->width && y_ - ha->y < ha->height && layer <= ha->layer) {
+					layer = ha->layer;
+					best_ha = ha;
 				} else {
-					ha->flags &= ~2;
+					if (ha->flags & 2) {
+						hitarea_leave(ha);
+						ha->flags &= ~2;
+					}
 				}
+			} else {
+				ha->flags &= ~2;
 			}
-		} while (ha++, --count);
-	}
+		}
+	} while (ha++, --count);
 
 	if (best_ha == NULL) {
 		defocusHitarea();
@@ -445,5 +443,6 @@ bool SimonState::hitarea_proc_3(Item *item)
 	else
 		x = 0;
 	showActionString(x, string_ptr);
+	
 	return true;
 }
