@@ -108,7 +108,7 @@ class OSystem_Dreamcast : public OSystem {
   void *_sound_proc_param;
   bool _overlay_visible, _overlay_dirty, _screen_dirty;
   int _screen_buffer, _overlay_buffer, _mouse_buffer;
-  bool _hires;
+  bool _hires, _hires_mouse;
   float _overlay_fade;
 
   uint32 _timer_duration, _timer_next_expiry;

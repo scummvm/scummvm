@@ -154,6 +154,7 @@ void OSystem_Dreamcast::init_size(uint w, uint h)
   _overlay_y = (h-OVL_H)/2;
   if(_overlay_x<0) _overlay_x = 0;
   if(_overlay_y<0) _overlay_y = 0;
+  _hires_mouse = _hires;
   ta_sync();
   if(!screen)
     screen = new unsigned char[SCREEN_W*SCREEN_H];
@@ -469,24 +470,49 @@ void OSystem_Dreamcast::drawMouse(int xdraw, int ydraw, int w, int h,
   myvertex.u = 0.0;
   myvertex.v = 0.0;
 
-  myvertex.x = (xdraw-_ms_hotspot_y)*2.0;
-  myvertex.y = (ydraw-_ms_hotspot_x)*2.0 + TOP_OFFSET;
-  ta_commit_list(&myvertex);
+  if(_hires_mouse) {
 
-  myvertex.x += w*2.0;
-  myvertex.u = w*(1.0/MOUSE_W);
-  ta_commit_list(&myvertex);
+    myvertex.x = xdraw*2.0-_ms_hotspot_x;
+    myvertex.y = ydraw*2.0-_ms_hotspot_y + TOP_OFFSET;
+    ta_commit_list(&myvertex);
 
-  myvertex.x = (xdraw-_ms_hotspot_y)*2.0;
-  myvertex.y += h*2.0;
-  myvertex.u = 0.0;
-  myvertex.v = h*(1.0/MOUSE_H);
-  ta_commit_list(&myvertex);
+    myvertex.x += w;
+    myvertex.u = w*(1.0/MOUSE_W);
+    ta_commit_list(&myvertex);
 
-  myvertex.x += w*2.0;
-  myvertex.u = w*(1.0/MOUSE_W);
-  myvertex.cmd |= TA_CMD_VERTEX_EOS;
-  ta_commit_list(&myvertex);
+    myvertex.x = xdraw*2.0-_ms_hotspot_x;
+    myvertex.y += h;
+    myvertex.u = 0.0;
+    myvertex.v = h*(1.0/MOUSE_H);
+    ta_commit_list(&myvertex);
+    
+    myvertex.x += w;
+    myvertex.u = w*(1.0/MOUSE_W);
+    myvertex.cmd |= TA_CMD_VERTEX_EOS;
+    ta_commit_list(&myvertex);
+
+  } else {
+
+    myvertex.x = (xdraw-_ms_hotspot_x)*2.0;
+    myvertex.y = (ydraw-_ms_hotspot_y)*2.0 + TOP_OFFSET;
+    ta_commit_list(&myvertex);
+
+    myvertex.x += w*2.0;
+    myvertex.u = w*(1.0/MOUSE_W);
+    ta_commit_list(&myvertex);
+
+    myvertex.x = (xdraw-_ms_hotspot_x)*2.0;
+    myvertex.y += h*2.0;
+    myvertex.u = 0.0;
+    myvertex.v = h*(1.0/MOUSE_H);
+    ta_commit_list(&myvertex);
+    
+    myvertex.x += w*2.0;
+    myvertex.u = w*(1.0/MOUSE_W);
+    myvertex.cmd |= TA_CMD_VERTEX_EOS;
+    ta_commit_list(&myvertex);
+
+  }
 }
 
 
