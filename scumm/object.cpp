@@ -1326,7 +1326,7 @@ void Scumm::drawBlastObject(BlastObject *eo)
 	if (!bomp)
 		error("object %d is not a blast object", eo->number);
 
-	hexdump(bomp,32);
+	//hexdump(bomp,32);
 
 	if (_features & GF_AFTER_V8) {
 		bdd.srcwidth = READ_LE_UINT32(&((BompHeader *)bomp)->v8.width);

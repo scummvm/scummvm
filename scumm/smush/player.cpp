@@ -698,7 +698,7 @@ bool SmushPlayer::readString(const char * file, const char * directory, bool & f
 	return false;
 }
 
-static FontRenderer * loadFont(const char * file, const char * directory, bool original = false) {
+static FontRenderer *loadFont(const char * file, const char * directory, bool original = false) {
 #ifdef DEBUG
 	debug(5, "loading font from \"%s\"", file);
 #endif

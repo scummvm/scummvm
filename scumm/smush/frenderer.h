@@ -161,7 +161,6 @@ public:
 		@return \c true if everything went fine, \c false otherwise
 	*/
 	bool drawStringAbsolute(const char * str, char * buffer, const Point & size, int32 x, int32 y) const;
-
 };
 
 #endif
