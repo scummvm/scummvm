@@ -929,19 +929,9 @@ void Actor::drawActorCostume() {
 	bcr->_outheight = _vm->virtscr[0].height;
 
 	// If the actor is partially hidden, redraw it next frame.
-	// Note: for akos, this only works for codec 1 so far; we need to look
-	// if we can (or even should) implement this for the other codecs, too.
+	// Only done for pre-AKOS, though.
 	if (bcr->drawCostume(cost) & 1) {
-		// FIXME: this used to break talking in The Dig because the actor
-		// was redrawn too often, which broke the waitForActor opcode.
-		// This refined version hopefully will work better.
-		//
-		// We didn't use to do this for AKOS games at all, only for the classic
-		// costumes. And I am not sure the original game did this for AKOS
-		// games, either. So maybe this code isn't the correct way to do what
-		// it does (which is to fix actor draw problems, see also patch #699980).
-		// Would be nice to figure out what the original code does...
-		needRedraw = true;
+		needRedraw = !(_vm->_features & GF_NEW_COSTUMES);
 	}
 
 	// Record the vertical extent of the drawn actor
