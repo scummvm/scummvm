@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist SYSTEM "file://localhost/System/Library/DTDs/PropertyList.dtd">
+<plist version="0.9">
+<dict>
+	<key>CFBundleDevelopmentRegion</key>
+	<string>English</string>
+	<key>CFBundleExecutable</key>
+	<string>scummvm</string>
+	<key>CFBundleGetInfoString</key>
+	<string>0.2.81 CVS, Copyright 2001-2002 The ScummVM team</string>
+	<key>CFBundleIconFile</key>
+	<string>scummvm.icns</string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+	<key>CFBundleName</key>
+	<string>scummvm</string>
+	<key>CFBundlePackageType</key>
+	<string>APPL</string>
+	<key>CFBundleShortVersionString</key>
+	<string>0.2.81 CVS</string>
+	<key>CFBundleVersion</key>
+	<string>0.2.81 CVS</string>
+	<key>NSPrincipalClass</key>
+	<string>NSApplication</string>
+	<key>NSHumanReadableCopyright</key>
+	<string>Copyright 2001-2002 The ScummVM team</string>
+</dict>
+</plist>

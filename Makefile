@@ -75,3 +75,13 @@ deb:
 	ln -sf dists/debian;
 	debian/prepare
 	fakeroot debian/rules binary
+
+# Special target to create a application wrapper for Mac OS X
+bundle_name = ScummVM.app
+bundle: scummvm
+	mkdir -p $(bundle_name)/Contents/MacOS
+	mkdir -p $(bundle_name)/Contents/Resources
+	echo "APPL????" > $(bundle_name)/Contents/PkgInfo
+	cp Info.plist $(bundle_name)/Contents/
+	cp scummvm.icns $(bundle_name)/Contents/Resources/
+	cp $< $(bundle_name)/Contents/MacOS/
