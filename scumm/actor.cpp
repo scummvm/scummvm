@@ -1118,7 +1118,7 @@ void Scumm::resetActorBgs() {
 		clearGfxUsageBit(strip, USAGE_BIT_RESTORED);
 		for (j = 1; j < _numActors; j++) {
 			if (testGfxUsageBit(strip, j) &&
-				((_actors[j].top != 0xFF || _actors[j].needRedraw) || _actors[j].needBgReset)) {
+				((_actors[j].top != 0xFF && _actors[j].needRedraw) || _actors[j].needBgReset)) {
 				clearGfxUsageBit(strip, j);
 				if ((_actors[j].bottom - _actors[j].top) >= 0)
 					gdi.resetBackground(_actors[j].top, _actors[j].bottom, i);
