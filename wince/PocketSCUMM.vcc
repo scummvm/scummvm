@@ -1,0 +1,39 @@
+; CLW file contains information for the MFC ClassWizard
+
+[General Info]
+Version=1
+LastClass=
+LastTemplate=CDialog
+NewFileInclude1=#include "stdafx.h"
+NewFileInclude2=#include "pocketscumm.h"
+LastPage=0
+
+ClassCount=0
+
+ResourceCount=2
+Resource1=IDD_GAMESELECT (English (U.S.))
+Resource2=IDM_MENU (English (U.S.))
+
+[DLG:IDD_GAMESELECT (English (U.S.))]
+Type=1
+Class=?
+ControlCount=7
+Control1=IDC_LISTAVAILABLE,listbox,1352728833
+Control2=IDC_STATIC,static,1342177806
+Control3=IDC_GAMEDESC,static,1342308352
+Control4=IDC_PLAY,button,1342242816
+Control5=IDC_FILEPATH,static,1342308352
+Control6=IDC_SCAN,button,1342242816
+Control7=IDC_EXIT,button,1342242816
+
+[MNU:IDM_MENU (English (U.S.))]
+Type=1
+Class=?
+Command1=IDC_LOADSAVE
+Command2=IDC_OPTIONS
+Command3=IDC_EXIT
+Command4=IDC_LANDSCAPE
+Command5=IDC_SKIP
+Command6=IDC_SOUND
+CommandCount=6
+

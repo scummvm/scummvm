@@ -4,6 +4,7 @@
 
 #include "stdafx.h"
 #include <Winuser.h>
+#include <Winnls.h>
 #include "resource.h"
 
 #define MAX_GAMES 20
