@@ -976,11 +976,11 @@ void Scumm::findPathTowardsOld(Actor *actor, byte trap1, byte trap2, byte final_
 void Scumm::getGates(int trap1, int trap2, ScummPoint gateA[2], ScummPoint gateB[2])
 {
 	int i, j;
-	int Dist[8];
-	int MinDist[3];
-	int Closest[3];
-	int Box[3];
-	BoxCoords box;
+	int dist[8];
+	int minDist[3];
+	int closest[3];
+	int box[3];
+	BoxCoords coords;
 	ScummPoint Clo[8];
 	ScummPoint poly[8];
 	AdjustBoxResult abr;
@@ -988,43 +988,43 @@ void Scumm::getGates(int trap1, int trap2, ScummPoint gateA[2], ScummPoint gateB
 
 	// For all corner coordinates of the first box, compute the point cloest 
 	// to them on the second box (and also compute the distance of these points).
-	getBoxCoordinates(trap1, &box);
-	poly[0] = box.ul;
-	poly[1] = box.ur;
-	poly[2] = box.lr;
-	poly[3] = box.ll;
+	getBoxCoordinates(trap1, &coords);
+	poly[0] = coords.ul;
+	poly[1] = coords.ur;
+	poly[2] = coords.lr;
+	poly[3] = coords.ll;
 	for (i = 0; i < 4; i++) {
 		abr = getClosestPtOnBox(trap2, poly[i].x, poly[i].y);
-		Dist[i] = abr.dist;
+		dist[i] = abr.dist;
 		Clo[i].x = abr.x;
 		Clo[i].y = abr.y;
 	}
 
 	// Now do the same but with the roles of the first and second box swapped.
-	getBoxCoordinates(trap2, &box);
-	poly[4] = box.ul;
-	poly[5] = box.ur;
-	poly[6] = box.lr;
-	poly[7] = box.ll;
+	getBoxCoordinates(trap2, &coords);
+	poly[4] = coords.ul;
+	poly[5] = coords.ur;
+	poly[6] = coords.lr;
+	poly[7] = coords.ll;
 	for (i = 4; i < 8; i++) {
 		abr = getClosestPtOnBox(trap1, poly[i].x, poly[i].y);
-		Dist[i] = abr.dist;
+		dist[i] = abr.dist;
 		Clo[i].x = abr.x;
 		Clo[i].y = abr.y;
 	}
 
 	// Find the three closest "close" points between the two boxes.
 	for (j = 0; j < 3; j++) {
-		MinDist[j] = 0xFFFF;
+		minDist[j] = 0xFFFF;
 		for (i = 0; i < 8; i++) {
-			if (Dist[i] < MinDist[j]) {
-				MinDist[j] = Dist[i];
-				Closest[j] = i;
+			if (dist[i] < minDist[j]) {
+				minDist[j] = dist[i];
+				closest[j] = i;
 			}
 		}
-		Dist[Closest[j]] = 0xFFFF;
-		MinDist[j] = (int)sqrt((double)MinDist[j]);
-		Box[j] = (Closest[j] > 3);	// Is the poin on the first or on the second box?
+		dist[closest[j]] = 0xFFFF;
+		minDist[j] = (int)sqrt((double)minDist[j]);
+		box[j] = (closest[j] > 3);	// Is the poin on the first or on the second box?
 	}
 
 
@@ -1032,32 +1032,32 @@ void Scumm::getGates(int trap1, int trap2, ScummPoint gateA[2], ScummPoint gateB
 	// in the same box (actually, on the border of that box), which both have
 	// "minimal" distance to the other box in a certain sense.
 
-	if (Box[0] == Box[1] && abs(MinDist[0] - MinDist[1]) < 4) {
-		line1 = Closest[0];
-		line2 = Closest[1];
+	if (box[0] == box[1] && abs(minDist[0] - minDist[1]) < 4) {
+		line1 = closest[0];
+		line2 = closest[1];
 
-	} else if (Box[0] == Box[1] && MinDist[0] == MinDist[1]) {	/* parallel */
-		line1 = Closest[0];
-		line2 = Closest[1];
-	} else if (Box[0] == Box[2] && MinDist[0] == MinDist[2]) {	/* parallel */
-		line1 = Closest[0];
-		line2 = Closest[2];
-	} else if (Box[1] == Box[2] && MinDist[1] == MinDist[2]) {	/* parallel */
-		line1 = Closest[1];
-		line2 = Closest[2];
+	} else if (box[0] == box[1] && minDist[0] == minDist[1]) {	/* parallel */
+		line1 = closest[0];
+		line2 = closest[1];
+	} else if (box[0] == box[2] && minDist[0] == minDist[2]) {	/* parallel */
+		line1 = closest[0];
+		line2 = closest[2];
+	} else if (box[1] == box[2] && minDist[1] == minDist[2]) {	/* parallel */
+		line1 = closest[1];
+		line2 = closest[2];
 
-	} else if (Box[0] == Box[2] && abs(MinDist[0] - MinDist[2]) < 4) {
-		line1 = Closest[0];
-		line2 = Closest[2];
-	} else if (abs(MinDist[0] - MinDist[2]) < 4) {	/* if 1 close to 3 then use 2-3 */
-		line1 = Closest[1];
-		line2 = Closest[2];
-	} else if (abs(MinDist[0] - MinDist[1]) < 4) {
-		line1 = Closest[0];
-		line2 = Closest[1];
+	} else if (box[0] == box[2] && abs(minDist[0] - minDist[2]) < 4) {
+		line1 = closest[0];
+		line2 = closest[2];
+	} else if (abs(minDist[0] - minDist[2]) < 4) {	/* if 1 close to 3 then use 2-3 */
+		line1 = closest[1];
+		line2 = closest[2];
+	} else if (abs(minDist[0] - minDist[1]) < 4) {
+		line1 = closest[0];
+		line2 = closest[1];
 	} else {
-		line1 = Closest[0];
-		line2 = Closest[0];
+		line1 = closest[0];
+		line2 = closest[0];
 	}
 
 	// Set the gate
