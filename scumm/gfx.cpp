@@ -2422,10 +2422,6 @@ void Scumm::cameraMoved()
 
 		assert(camera._cur.x >= (_realWidth / 2) && camera._cur.y >= (_realHeight / 2));
 
-		_screenStartStrip = (camera._cur.x - (_realWidth / 2)) >> 3;
-		_screenEndStrip = _screenStartStrip + gdi._numStrips - 1;
-		virtscr[0].xstart = _screenStartStrip << 3;
-
 		_screenLeft = camera._cur.x - (_realWidth / 2);
 		_screenTop = camera._cur.y - (_realHeight / 2);
 	} else {
@@ -2435,11 +2431,11 @@ void Scumm::cameraMoved()
 		} else if (camera._cur.x + (_realWidth / 2) >= _scrWidth) {
 			camera._cur.x = _scrWidth - (_realWidth / 2);
 		}
-
-		_screenStartStrip = (camera._cur.x >> 3) - 20;
-		_screenEndStrip = _screenStartStrip + gdi._numStrips - 1;
-		virtscr[0].xstart = _screenStartStrip << 3;
 	}
+
+	_screenStartStrip = (camera._cur.x - (_realWidth / 2)) >> 3;
+	_screenEndStrip = _screenStartStrip + gdi._numStrips - 1;
+	virtscr[0].xstart = _screenStartStrip << 3;
 }
 
 void Scumm::panCameraTo(int x, int y)
