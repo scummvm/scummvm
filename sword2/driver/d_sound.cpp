@@ -1169,6 +1169,7 @@ void Sword2Sound::StartMusicFadeDown(int i) {
 	musFading[i] = -16;
 	musStreaming[i] = 0;
 	fpMus.close();
+	soundHandleMusic[i] = 0;
 }
 
 int32 Sword2Sound::StreamCompMusic(const char *filename, uint32 musicId, int32 looping) {
@@ -1279,7 +1280,7 @@ int32 Sword2Sound::StreamCompMusic(const char *filename, uint32 musicId, int32 l
 		}
 
 		if (soundHandleMusic[i] == 0) {
-				soundHandleMusic[i] = g_engine->_mixer->newStream(data16, bufferSizeMusic, 22050, SoundMixer::FLAG_16BITS, 100000);
+			soundHandleMusic[i] = g_engine->_mixer->newStream(data16, bufferSizeMusic, 22050, SoundMixer::FLAG_16BITS, 100000);
 		} else {
 			g_engine->_mixer->appendStream(soundHandleMusic[i], data16, bufferSizeMusic);
 		}
@@ -1298,6 +1299,7 @@ int32 Sword2Sound::StreamCompMusic(const char *filename, uint32 musicId, int32 l
 		musFading[i] = 0;
 		g_engine->_mixer->endStream(soundHandleMusic[i]);
 		musStreaming[i] = 0;
+		soundHandleMusic[i] = 0;
 	} else if (musStreaming[0] + musStreaming[1] == 1)	{
 		i = musStreaming[0];			// Set i to the free channel
 
@@ -1837,6 +1839,7 @@ void Sword2Sound::UpdateCompSampleStreaming(void) {
 						g_engine->_mixer->endStream(soundHandleMusic[i]);
 						musStreaming[i] = 0;
 						musLooping[i] = 0;
+						soundHandleMusic[i] = 0;
 					} else {
 	    			//  Modify the volume according to the master volume and music mute state
 						if (musicMuted)
@@ -1932,6 +1935,7 @@ void Sword2Sound::UpdateCompSampleStreaming(void) {
 
 					// End of the music so we need to start fading and start the music again
 					if (fade) {
+						soundHandleMusic[i] = 0;
 						musFading[i] = -16;		// Fade the old music
 
 						// Close the music cluster if it's open
@@ -1944,6 +1948,8 @@ void Sword2Sound::UpdateCompSampleStreaming(void) {
 							StreamCompMusic(musFilename[i], musId[i], musLooping[i]);
 						}
 					}
+				} else {
+						soundHandleMusic[i] = 0;
 				}
 			}
 		}
