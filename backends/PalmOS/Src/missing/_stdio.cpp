@@ -338,6 +338,9 @@ Int16 sprintf(Char* s, const Char* formatStr, ...)
 ///////////////////////////////////////////////////////////////////////////////
 Int16 vsprintf(Char* s, const Char* formatStr, _Palm_va_list argParam)
 {
+//	Char buf[10];
+//	StrPrintF(buf,"%c%c%c%c",'A' << 16 | 'B', 'C' << 16 | 'D');
+
 	Char format[256];
 	// TODO : need a better modifier
 	StrCopy(format,formatStr);
