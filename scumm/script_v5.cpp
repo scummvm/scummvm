@@ -2232,8 +2232,22 @@ void ScummEngine_v5::o5_startMusic() {
 }
 
 void ScummEngine_v5::o5_startSound() {
+	const byte *oldaddr = _scriptPointer - 1;
+	int sound = getVarOrDirectByte(PARAM_1);
+
+	// WORKAROUND: In the scene where Largo is talking to Mad Marty, the
+	// Woodtick music often resumes before Largo's theme has finished. As
+	// far as I can tell, this is a script bug.
+
+	if (_gameId == GID_MONKEY2 && sound == 110 && _sound->isSoundRunning(151)) {
+		warning("Delaying Woodtick music until Largo's theme has finished");
+		_scriptPointer = oldaddr;
+		o5_breakHere();
+		return;
+	}
+
 	VAR(VAR_MUSIC_TIMER) = 0;
-	_sound->addSoundToQueue(getVarOrDirectByte(PARAM_1));
+	_sound->addSoundToQueue(sound);
 }
 
 void ScummEngine_v5::o5_stopMusic() {
