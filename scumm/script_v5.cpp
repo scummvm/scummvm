@@ -2015,15 +2015,38 @@ void Scumm_v5::o5_setVarRange() {
 }
 
 void Scumm_v5::o5_startMusic() {
-	int snd;
 	if (_gameId == GID_ZAK256) {
+		// In Zak256, this seems to be some kind of Audio CD status query function.
+		// See also bug #762589 (thanks to Hibernatus for providing the information).
 		getResultPos();
-		snd = getVarOrDirectByte(0x80);
-		warning("unknown: o5_startMusic(%d)", snd);
+		int b = getVarOrDirectByte(0x80);
+		int result = 0;
+		switch (b) {
+		case 0:
+			result = _sound->pollCD() != 0;
+			break;
+		case 0xFC:
+			// TODO: Unpause (resume) audio track. We'll have to extend Sound and OSystem for this.
+			break;
+		case 0xFD:
+			// TODO: Pause audio track. We'll have to extend Sound and OSystem for this.
+			break;
+		case 0xFE:
+			result = _sound->getCurrentCDSound();
+			break;
+		case 0xFF:
+			// Unknown, but apparently never used.
+			break;
+		default:
+			// TODO: return track length in seconds. We'll have to extend Sound and OSystem for this.
+			// To check scummvm returns the right track length you 
+			// can look at the global script #9 (0x888A in 49.LFL). 
+			break;
+		}
+		warning("unknown: o5_startMusic(%d)", b);
 		setResult(0);
 	} else {
-		snd = getVarOrDirectByte(0x80);
-		_sound->addSoundToQueue(snd);
+		_sound->addSoundToQueue(getVarOrDirectByte(0x80));
 	}
 }
 
@@ -2522,7 +2545,7 @@ void Scumm_v5::decodeParseString() {
 						_sound->stopCD();
 					} else {
 						// Loom specified the offset from the start of the CD;
-						// thus we have to subtract the lenght of the first track
+						// thus we have to subtract the length of the first track
 						// (22500 frames) plus the 2 second = 150 frame leadin.
 						// I.e. in total 22650 frames.
 						offset = (int)(offset * 7.5 - 22650);

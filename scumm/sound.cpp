@@ -93,7 +93,7 @@ Sound::Sound(Scumm *parent) {
 	_musicDisk = 0;
 	_talkChannel = -1;
 	_current_cache = 0;
-	_current_cd_sound = 0;
+	_currentCDSound = 0;
 
 	_sfxFile = 0;
 	
@@ -200,7 +200,7 @@ void Sound::playSound(int soundID) {
 			_scumm->VAR(_scumm->VAR_MUSIC_TIMER) = 0;
 			playCDTrack(track, loops == 0xff ? -1 : loops, start, 0);
 
-			_current_cd_sound = soundID;
+			_currentCDSound = soundID;
 			return;
 		}
 		// Support for SFX in Monkey Island 1, Mac version
@@ -379,12 +379,12 @@ void Sound::playSound(int soundID) {
 				int start = (ptr[2] * 60 + ptr[3]) * 75 + ptr[4];
 				int end = (ptr[5] * 60 + ptr[6]) * 75 + ptr[7];
 
-				if (soundID == _current_cd_sound)
+				if (soundID == _currentCDSound)
 					if (pollCD() == 1)
 						return;
 
 				playCDTrack(track, loops == 0xff ? -1 : loops, start, end);
-				_current_cd_sound = soundID;
+				_currentCDSound = soundID;
 				return;
 			}
 	
@@ -601,7 +601,7 @@ bool Sound::isMouthSyncOff(uint pos) {
 int Sound::isSoundRunning(int sound) const {
 	int i;
 
-	if (sound == _current_cd_sound)
+	if (sound == _currentCDSound)
 		return pollCD();
 	
 	if (_scumm->_features & GF_HUMONGOUS) {
@@ -645,7 +645,7 @@ int Sound::isSoundRunning(int sound) const {
 bool Sound::isSoundActive(int sound) const {
 	int i;
 
-	if (sound == _current_cd_sound)
+	if (sound == _currentCDSound)
 		return pollCD() != 0;
 
 	i = _soundQue2Pos;
@@ -692,8 +692,8 @@ bool Sound::isSoundInQueue(int sound) const {
 void Sound::stopSound(int a) {
 	int i;
 
-	if (a != 0 && a == _current_cd_sound) {
-		_current_cd_sound = 0;
+	if (a != 0 && a == _currentCDSound) {
+		_currentCDSound = 0;
 		stopCD();
 	}
 
@@ -711,8 +711,8 @@ void Sound::stopSound(int a) {
 }
 
 void Sound::stopAllSounds() {
-	if (_current_cd_sound != 0) {
-		_current_cd_sound = 0;
+	if (_currentCDSound != 0) {
+		_currentCDSound = 0;
 		stopCD();
 	}
 

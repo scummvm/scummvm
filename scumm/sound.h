@@ -82,7 +82,7 @@ protected:
 
 	/* used for mp3 CD music */
 
-	int _current_cd_sound;
+	int _currentCDSound;
 
 	int _cached_tracks[CACHE_TRACKS];
 	int _dig_cd_index;
@@ -102,8 +102,11 @@ public:
 
 	int _talkChannel;	/* Mixer channel actor is talking on */
 	bool _soundsPaused;
-	int16 _sound_volume_master, _sound_volume_music, _sound_volume_sfx;
 	byte _sfxMode;
+	
+	// FIXME: Should add API to get/set volumes (and automatically
+	// update iMuse/iMuseDigi/Player_v2/SoundMIxer, too
+	int16 _sound_volume_master, _sound_volume_music, _sound_volume_sfx;
 
 	Bundle *_bundle;	// FIXME: should be protected but is used by Scumm::askForDisk
 
@@ -143,6 +146,7 @@ public:
 	void stopCD();
 	int pollCD() const;
 	void updateCD();
+	int getCurrentCDSound() const { return _currentCDSound; }
 
 protected:
 	void clearSoundQue();
