@@ -270,7 +270,7 @@ int SndRes::getVoiceLength(uint32 voice_rn) {
 		ms_f = (double)length / 22050 * 2000.0;
 		ms_i = (int)ms_f;
 	} else if (res_type == GAME_SOUND_PCM) {
-		ms_f = (double)length / (_snd_info.sample_size / CHAR_BIT) / (_snd_info.freq) * 1000.0;
+		ms_f = (double)length / (_snd_info.sample_size / 8) / (_snd_info.freq) * 1000.0;
 		ms_i = (int)ms_f;
 	} else if (res_type == GAME_SOUND_VOC) {		
 		// Rough hack, fix this to be accurate

@@ -33,10 +33,6 @@
 #include "common/stream.h"
 #include "common/rect.h"
 
-// TODO: These shouldn't be here!
-#include <limits.h>
-#include <stddef.h>
-
 #include "saga/text.h"
 #include "saga/gfx.h"
 #include "saga/list.h"
