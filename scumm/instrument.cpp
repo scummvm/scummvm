@@ -421,10 +421,21 @@ void Instrument_Roland::send (MidiChannel *mc) {
 	if (_native_mt32) {
 //		_instrument.device_id = mc->getNumber();
 		_instrument.device_id = 0x10;
+
+		// Remap instrument to appropriate address space.
 		int address = 0x010000 + mc->getNumber() * 246;
 		_instrument.address[0] = (address >> 14) & 0x7F;
 		_instrument.address[1] = (address >>  7) & 0x7F;
 		_instrument.address[2] = (address      ) & 0x7F;
+
+		// Recompute checksum.
+		byte checksum = 0;
+		byte *ptr = (byte *) &_instrument + 4;
+		int i;
+		for (i = 4; i < sizeof (_instrument) - 1; ++i)
+			checksum -= *ptr++;
+		_instrument.checksum = checksum & 0x7F;
+
 		mc->device()->sysEx ((byte *) &_instrument, sizeof (_instrument));
 	} else {
 		// Convert to a GM program change.
