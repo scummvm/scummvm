@@ -479,7 +479,7 @@ uint16 Logic::objectForPerson(uint16 bobNum) const {
 
 	uint16 bobcur = 0;
 	// first object number in the room
-	uint16 cur = _roomData[_currentRoom] + 1;
+	uint16 cur = currentRoomData() + 1;
 	// last object number in the room
 	uint16 last = _roomData[_currentRoom + 1];
 	while (cur <= last) {
@@ -599,10 +599,10 @@ uint16 Logic::zoneIn(uint16 screen, uint16 x, uint16 y) const {
 uint16 Logic::zoneInArea(uint16 screen, uint16 x, uint16 y) const {
 
 	uint16 zone = zoneIn(screen, x, y);
-	if (zone <= _objMax[_currentRoom]) {
+	if (zone <= currentRoomObjMax()) {
 		zone = 0;
 	} else {
-		zone -= _objMax[_currentRoom];
+		zone -= currentRoomObjMax();
 	}
 	return zone;
 }
@@ -627,8 +627,8 @@ void Logic::zoneSetup() {
 	int zoneNum;
 
 	// setup objects zones
-	uint16 maxObjRoom = _objMax[_currentRoom];
-	uint16 objRoomNum = _roomData[_currentRoom];
+	uint16 maxObjRoom = currentRoomObjMax();
+	uint16 objRoomNum = currentRoomData();
 	zoneNum = 1;
 	for (i = objRoomNum + 1; i <= objRoomNum + maxObjRoom; ++i) {
 		if (_objectData[i].name != 0) {
@@ -638,9 +638,9 @@ void Logic::zoneSetup() {
 	}
 
 	// setup room zones (areas)
-	uint16 maxAreaRoom = _areaMax[_currentRoom];
+	uint16 maxAreaRoom = currentRoomAreaMax();
 	for (zoneNum = 1; zoneNum <= maxAreaRoom; ++zoneNum) {
-		zoneSet(ZONE_ROOM, maxObjRoom + zoneNum, _area[_currentRoom][zoneNum].box);
+		zoneSet(ZONE_ROOM, maxObjRoom + zoneNum, currentRoomArea(zoneNum)->box);
 	}
 }
 
@@ -810,7 +810,7 @@ void Logic::roomSetupObjects() {
 	// furniture frames are reserved in ::roomSetupFurniture(), we append objects 
 	// frames after the furniture ones.
 	uint16 curImage = 36 + FRAMES_JOE_XTRA + _numFurnitureStatic + _numFurnitureAnimatedLen;
-	uint16 firstRoomObj = _roomData[_currentRoom] + 1;
+	uint16 firstRoomObj = currentRoomData() + 1;
 	uint16 lastRoomObj = _roomData[_currentRoom + 1];
 	uint16 numObjectStatic = 0;
 	uint16 numObjectAnimated = 0;
@@ -895,7 +895,7 @@ void Logic::roomSetupObjects() {
 		ObjectData *pod = &_objectData[i];
 		if (pod->image == -3 || pod->image == -4) {
 			debug(6, "Logic::roomSetupObjects() - Setting up person %X, name=%X", i, pod->name);
-			uint16 noun = i - _roomData[_currentRoom];
+			uint16 noun = i - currentRoomData();
 			if (pod->name > 0) {
 				curImage = personSetup(noun, curImage);
 			} else {
@@ -955,7 +955,7 @@ uint16 Logic::roomRefreshObject(uint16 obj) {
 		} else {
 			// find person number
 			uint16 pNum = 1;
-			uint16 i = _roomData[_currentRoom] + 1;
+			uint16 i = currentRoomData() + 1;
 			while (i < obj) {
 				if (_objectData[i].image == -3 || _objectData[i].image == -4) {
 					++pNum;
@@ -967,7 +967,7 @@ uint16 Logic::roomRefreshObject(uint16 obj) {
 				curImage = _numFrames;
 				_personFrames[pNum] = curImage;
 			}
-			curImage = personSetup(obj - _roomData[_currentRoom], curImage);
+			curImage = personSetup(obj - currentRoomData(), curImage);
 		}
 		return curImage;
 	}
@@ -1082,7 +1082,7 @@ uint16 Logic::findScale(uint16 x, uint16 y) {
 	uint16 scale = 100;
 	uint16 areaNum = zoneInArea(ZONE_ROOM, x, y);
 	if(areaNum != 0) {
-		scale = _area[_currentRoom][areaNum].calcScale(y);
+		scale = currentRoomArea(areaNum)->calcScale(y);
 	}
 	return scale;
 }
@@ -1095,7 +1095,7 @@ void Logic::personSetData(int16 noun, const char *actorName, bool loadBank, Pers
 	}
 
 	uint16 i;
-	uint16 obj = _roomData[_currentRoom] + noun;
+	uint16 obj = currentRoomData() + noun;
 	int16 img = _objectData[obj].image;
 	if (img != -3 && img != -4) {
 		warning("Logic::personSetData() - Object %d is not a person", obj);
@@ -1104,7 +1104,7 @@ void Logic::personSetData(int16 noun, const char *actorName, bool loadBank, Pers
 
 	// search Bob number for the person
 	uint16 bobNum = 0;
-	for (i = _roomData[_currentRoom] + 1; i <= obj; ++i) {
+	for (i = currentRoomData() + 1; i <= obj; ++i) {
 		img = _objectData[i].image;
 		if (img == -3 || img == -4) {
 			++bobNum;
@@ -1171,7 +1171,7 @@ uint16 Logic::personSetup(uint16 noun, uint16 curImage) {
 
 	_vm->graphics()->bankUnpack(pad->bobFrameStanding, p.bobFrame, p.actor->bankNum);
 	bool xflip = false;
-	uint16 person = _roomData[_currentRoom] + noun;
+	uint16 person = currentRoomData() + noun;
 	if (_objectData[person].image == -3) {
 		// person is facing left
 		xflip = true;
@@ -1197,11 +1197,11 @@ uint16 Logic::personSetup(uint16 noun, uint16 curImage) {
 uint16 Logic::personAllocate(uint16 noun, uint16 curImage) {
 
 	uint16 i;
-	uint16 person = _roomData[_currentRoom] + noun;
+	uint16 person = currentRoomData() + noun;
 
 	// search Bob number for the person
 	uint16 bobNum = 0;
-	for (i = _roomData[_currentRoom] + 1; i <= person; ++i) {
+	for (i = currentRoomData() + 1; i <= person; ++i) {
 		int16 img = _objectData[i].image;
 		if (img == -3 || img == -4) {
 			++bobNum;
@@ -2120,7 +2120,7 @@ void Logic::handlePinnacleRoom() {
 		uint16 curObj = findObjectUnderCursor(mx, my);
 		if (curObj != 0 && curObj != prevObj) {
 			_entryObj = 0;
-			curObj += _roomData[_currentRoom]; // global object number
+			curObj += currentRoomData(); // global object number
 			ObjectData *objData = &_objectData[curObj];
 			if (objData->name > 0) {
 				_entryObj = objData->entryObj;
@@ -2406,13 +2406,6 @@ void Logic::useJournal() {
 	if (_vm->resource()->isDemo()) {
 		makePersonSpeak("This is a demo, so I can't load or save games*14", NULL, "");
 	} else {
-
-		// XXX save some vars
-		// 
-		// XXX tmpbamflag=bamflag;
-		// XXX bamflag=0;
-		// XXX in_journal=1;
-
 		_vm->command()->clear(false);
 
 		Journal j(_vm);
@@ -2420,12 +2413,7 @@ void Logic::useJournal() {
 
 		_vm->walk()->stopJoe();
 
-		// XXX restore vars
-		// 
-		// XXX in_journal=0;
-		// XXX bamflag=tmpbamflag;
 		// XXX TALKQUIT=CUTQUIT=0; Make sure that we turn off cut stuff in case we use Journal during cutaways
-
 	}
 }
 
@@ -2562,7 +2550,6 @@ bool Logic::executeASM_Demo(uint16 sm) {
 		break;
 	default:
 		return false;
-		break;
 	}
 	return true;
 }
