@@ -240,7 +240,7 @@ struct Part {
 
 	void key_on(byte note, byte velocity);
 	void key_off(byte note);
-	void set_param(byte param, int value);
+	void set_param(byte param, int value) { }
 	void init(IMuseDriver * _driver);
 	void setup(Player *player);
 	void uninit();
@@ -286,21 +286,6 @@ struct ImTrigger {
 // IMuseDriver class
 
 class IMuseDriver {
-public:
-	enum {
-		pcMod = 1,
-		pcVolume = 2,
-		pcPedal = 4,
-		pcModwheel = 8,
-		pcPan = 16,
-		pcEffectLevel = 32,
-		pcProgram = 64,
-		pcChorus = 128,
-		pcPitchBendFactor = 256,
-		pcPriority = 512,
-		pcAll = 1023
-	};
-
 private:
 	IMuseInternal *_se;
 	OSystem *_system;
@@ -314,17 +299,14 @@ public:
 	IMuseDriver(MidiDriver *midi);
 	void uninit();
 	void init(IMuseInternal *eng, OSystem *os);
-	void update_pris();
-	void part_off(Part *part);
 
 	void set_instrument(uint slot, byte *instr);
 	void part_load_global_instrument (Part *part, byte slot);
-	void part_set_param(Part *part, byte param, int value) {}
 	void get_channel_instrument (byte channel, Instrument *instrument) { _midi_instrument_last[channel].copy_to (instrument); }
 
+	MidiChannel *allocateChannel() { return _md->allocateChannel(); }
 	MidiChannel *getPercussionChannel() { return _md->getPercussionChannel(); }
-	uint32 get_base_tempo() { return _md->getBaseTempo(); }
-	byte get_hardware_type() { return 5; }
+	uint32 getBaseTempo() { return _md->getBaseTempo(); }
 };
 
 // WARNING: This is the internal variant of the IMUSE class.
@@ -337,9 +319,6 @@ private:
 	IMuseDriver * _driver;
 
 	byte **_base_sounds;
-
-	byte _locked;
-	byte _hardware_type;
 
 private:
 	bool _paused;
@@ -426,16 +405,14 @@ public:
 	}
 	~IMuseInternal();
 
-	Part *parts_ptr() {
-		return _parts;
-	}
 	IMuseDriver *driver() {
 		return _driver;
 	}
 	
 	int initialize(OSystem *syst, MidiDriver *midi, SoundMixer *mixer);
+	void reallocateMidiChannels();
 
-	// Public interface
+	// IMuse interface
 
 	void on_timer();
 	void pause(bool paused);
@@ -886,7 +863,7 @@ Part *IMuseInternal::allocate_part(byte pri) {
 
 	if (best) {
 		best->uninit();
-		_driver->update_pris();
+		reallocateMidiChannels();
 	} else {
 		debug(1, "Denying part request");
 	}
@@ -1673,8 +1650,7 @@ int IMuseInternal::initialize(OSystem *syst, MidiDriver *midi, SoundMixer *mixer
 		driv = new IMuseDriver (midi);
 
 	_driver = driv;
-	_hardware_type = driv->get_hardware_type();
-	_game_tempo = driv->get_base_tempo();
+	_game_tempo = driv->getBaseTempo();
 
 	driv->init(this, syst);
 
@@ -1874,7 +1850,7 @@ void Player::uninit_parts() {
 		error("asd");
 	while (_parts)
 		_parts->uninit();
-	_se->_driver->update_pris(); // In case another player couldn't allocate all its parts
+	_se->reallocateMidiChannels(); // In case another player couldn't allocate all its parts
 }
 
 void Player::uninit_seq() {
@@ -1951,7 +1927,7 @@ byte *Player::parse_midi(byte *s) {
 			break;
 		case 18: // GP Slider 3
 			part->set_pri(value - 0x40);
-			_se->_driver->update_pris();
+			_se->reallocateMidiChannels();
 			break;
 		case 64: // Sustain Pedal
 			part->set_pedal(value != 0);
@@ -2084,7 +2060,7 @@ void Player::parse_sysex(byte *p, uint len) {
 				if (part->_percussion) {
 					if (part->_mc) {
 						part->off();
-						_se->_driver->update_pris();
+						_se->reallocateMidiChannels();
 					}
 				} else {
 					part->sendAll();
@@ -2124,8 +2100,6 @@ void Player::parse_sysex(byte *p, uint len) {
 
 	case 16: // Adlib instrument definition (Part)
 		a = *p++ & 0x0F;
-		if (_se->_hardware_type != *p++ && false)
-			break;
 		part = get_part(a);
 		if (part) {
 			if (len == 63) {
@@ -2140,8 +2114,6 @@ void Player::parse_sysex(byte *p, uint len) {
 
 	case 17: // Adlib instrument definition (Global)
 		p++;
-		if (_se->_hardware_type != *p++ && false)
-			break;
 		a = *p++;
 		decode_sysex_bytes(p, buf, len - 4);
 		_se->_driver->set_instrument(a, buf);
@@ -2149,8 +2121,6 @@ void Player::parse_sysex(byte *p, uint len) {
 
 	case 33: // Parameter adjust
 		a = *p++ & 0x0F;
-		if (_se->_hardware_type != *p++ && false)
-			break;
 		decode_sysex_bytes(p, buf, len - 3);
 		part = get_part(a);
 		if (part)
@@ -2653,7 +2623,7 @@ void Player::set_priority(int pri) {
 	for (part = _parts; part; part = part->_next) {
 		part->set_pri(part->_pri);
 	}
-	_se->_driver->update_pris();
+	_se->reallocateMidiChannels();
 }
 
 void Player::set_pan(int pan) {
@@ -2710,7 +2680,7 @@ int Player::scan(uint totrack, uint tobeat, uint totick) {
 	pos = scanptr - mtrk;
 
 	_scanning = false;
-	_se->driver()->update_pris();
+	_se->reallocateMidiChannels();
 	play_active_notes();
 	_beat_index = tobeat;
 	_tick_index = totick;
@@ -2730,7 +2700,7 @@ void Player::turn_off_parts() {
 
 	for (part = _parts; part; part = part->_next)
 		part->off();
-	_se->_driver->update_pris();
+	_se->reallocateMidiChannels();
 }
 
 void Player::play_active_notes() {
@@ -3031,7 +3001,7 @@ int IMuseInternal::save_or_load(Serializer *ser, Scumm *scumm) {
 		init_sustaining_notes();
 		_active_volume_faders = true;
 		fix_parts_after_load();
-		_driver->update_pris();
+		reallocateMidiChannels();
 		set_master_volume (_master_volume);
 	}
 
@@ -3154,7 +3124,7 @@ void Part::set_onoff(bool on) {
 		if (!on)
 			off();
 		if (!_percussion)
-			_drv->update_pris();
+			_player->_se->reallocateMidiChannels();
 	}
 }
 
@@ -3269,12 +3239,17 @@ void Part::uninit() {
 }
 
 void Part::off() {
-	_drv->part_off(this);
+	if (_mc) {
+		_mc->allNotesOff();
+		_mc->release();
+		_mc = NULL;
+		memset (_actives, 0, sizeof(_actives));
+	}
 }
 
 bool Part::clearToTransmit() {
 	if (_mc) return true;
-	_drv->update_pris();
+	_player->_se->reallocateMidiChannels();
 	return false;
 }
 
@@ -3295,10 +3270,6 @@ void Part::sendAll() {
 	}
 	_mc->chorusLevel (_effect_level);
 	_mc->priority (_pri_eff);
-}
-
-void Part::set_param(byte param, int value) {
-	_drv->part_set_param(this, param, value);
 }
 
 int Part::update_actives(uint16 *active) {
@@ -3380,7 +3351,7 @@ void IMuseDriver::uninit() {
 	_md->close();
 }
 
-void IMuseDriver::update_pris() {
+void IMuseInternal::reallocateMidiChannels() {
 	Part *part, *hipart;
 	int i;
 	byte hipri, lopri;
@@ -3389,7 +3360,7 @@ void IMuseDriver::update_pris() {
 	while (true) {
 		hipri = 0;
 		hipart = NULL;
-		for (i = 32, part = _se->parts_ptr(); i; i--, part++) {
+		for (i = 32, part = _parts; i; i--, part++) {
 			if (part->_player && !part->_percussion && part->_on && !part->_mc && part->_pri_eff >= hipri) {
 				hipri = part->_pri_eff;
 				hipart = part;
@@ -3399,10 +3370,10 @@ void IMuseDriver::update_pris() {
 		if (!hipart)
 			return;
 
-		if ((hipart->_mc = _md->allocateChannel()) == NULL) {
+		if ((hipart->_mc = _driver->allocateChannel()) == NULL) {
 			lopri = 255;
 			lopart = NULL;
-			for (i = 32, part = _se->parts_ptr(); i; i--, part++) {
+			for (i = 32, part = _parts; i; i--, part++) {
 				if (part->_mc && part->_pri_eff <= lopri) {
 					lopri = part->_pri_eff;
 					lopart = part;
@@ -3413,7 +3384,7 @@ void IMuseDriver::update_pris() {
 				return;
 			lopart->off();
 
-			if ((hipart->_mc = _md->allocateChannel()) == NULL)
+			if ((hipart->_mc = _driver->allocateChannel()) == NULL)
 				return;
 		}
 		hipart->sendAll();
@@ -3432,16 +3403,6 @@ void IMuseDriver::part_load_global_instrument (Part *part, byte slot) {
 		return;
 	_glob_instr [slot].copy_to (&part->_instrument);
 	if (part->clearToTransmit()) part->_instrument.send (part->_mc);
-}
-
-void IMuseDriver::part_off(Part *part) {
-	MidiChannel *mc = part->_mc;
-	if (mc) {
-		mc->allNotesOff();
-		mc->release();
-		part->_mc = NULL;
-		memset(part->_actives, 0, sizeof(part->_actives));
-	}
 }
 
 ////////////////////////////////////////////////////////////
