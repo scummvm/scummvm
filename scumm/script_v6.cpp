@@ -1836,7 +1836,7 @@ void ScummEngine_v6::o6_actorOps() {
 		j = pop();
 		i = pop();
 		checkRange(255, 0, i, "Illegal palette slot %d");
-		if (_features & GF_HUMONGOUS)
+		if ((_features & GF_HUMONGOUS) && (_gameId != GID_PUTTDEMO))
 			a->remapActorPaletteColor(i, j);
 		else
 			a->setPalette(i, j);
