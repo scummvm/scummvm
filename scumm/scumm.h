@@ -1157,7 +1157,7 @@ protected:
 	void CHARSET_1();
 	void drawString(int a, const byte *msg);
 	void unkMessage1(const byte *msg);
-	void unkMessage2(const byte *msg);
+	void showMessageDialog(const byte *msg);
 
 	int addMessageToStack(const byte *msg, byte *dst, int dstSize);
 	int addIntToStack(byte *dst, int dstSize, int var);

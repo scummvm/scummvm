@@ -46,7 +46,7 @@ void ScummEngine::printString(int m, const byte *msg) {
 		unkMessage1(msg);
 		break;
 	case 3:
-		unkMessage2(msg);
+		showMessageDialog(msg);
 		break;
 	}
 }
@@ -79,7 +79,7 @@ void ScummEngine::unkMessage1(const byte *msg) {
 	}
 }
 
-void ScummEngine::unkMessage2(const byte *msg) {
+void ScummEngine::showMessageDialog(const byte *msg) {
 	// Original COMI used different code at this point.
 	// Seemed to use blastText for the messages
 	byte buf[100];

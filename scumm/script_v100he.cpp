@@ -1858,20 +1858,7 @@ void ScummEngine_v100he::decodeParseString(int m, int n) {
 		break;
 	case 35:
 		decodeScriptString(name, true);
-		switch (m) {
-		case 0:
-			actorTalk(name);
-			break;
-		case 1:
-			drawString(1, name);
-			break;
-		case 2:
-			unkMessage1(name);
-			break;
-		case 3:
-			unkMessage2(name);
-			break;
-		}
+		printString(m, name);
 		break;
 	case 46:		// SO_LEFT
 		_string[m].center = false;
@@ -1888,39 +1875,11 @@ void ScummEngine_v100he::decodeParseString(int m, int n) {
 		ptr = getResourceAddress(rtTalkie, pop());
 		size = READ_BE_UINT32(ptr + 12);
 		memcpy(name, ptr + 16, size);
-
-		switch (m) {
-		case 0:
-			actorTalk(name);
-			break;
-		case 1:
-			drawString(1, name);
-			break;
-		case 2:
-			unkMessage1(name);
-			break;
-		case 3:
-			unkMessage2(name);
-			break;
-		}
+		printString(m, name);
 		break;
 	case 79:		// SO_TEXTSTRING
-		switch (m) {
-		case 0:
-			actorTalk(_scriptPointer);
-			break;
-		case 1:
-			drawString(1, _scriptPointer);
-			break;
-		case 2:
-			unkMessage1(_scriptPointer);
-			break;
-		case 3:
-			unkMessage2(_scriptPointer);
-			break;
-		}
+		printString(m, _scriptPointer);
 		_scriptPointer += resStrLen(_scriptPointer) + 1;
-
 		break;
 	case 91:
 		_string[m].loadDefault();
