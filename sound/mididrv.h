@@ -44,8 +44,8 @@ enum {
 	MD_ADLIB = 10,
 	MD_PCSPK = 11,
 	MD_PCJR = 12,
-	
-	MD_YPA1 = 100	// palmos
+	MD_TOWNS = 13,
+	MD_YPA1 = 14 // PalmOS
 };
 
 /**
@@ -144,16 +144,16 @@ public:
 
 	// Control Change messages
 	virtual void controlChange (byte control, byte value) = 0;
-	virtual void modulationWheel (byte value) = 0;
-	virtual void volume (byte value) = 0;
-	virtual void panPosition (byte value) = 0;
+	virtual void modulationWheel (byte value) { controlChange (1, value); }
+	virtual void volume (byte value) { controlChange (7, value); }
+	virtual void panPosition (byte value) { controlChange (10, value); }
 	virtual void pitchBendFactor (byte value) = 0;
-	virtual void detune (byte value) = 0;
-	virtual void priority (byte value) = 0;
-	virtual void sustain (bool value) = 0;
-	virtual void effectLevel (byte value) = 0;
-	virtual void chorusLevel (byte value) = 0;
-	virtual void allNotesOff() = 0;
+	virtual void detune (byte value) { controlChange (17, value); }
+	virtual void priority (byte value) { controlChange (18, value); }
+	virtual void sustain (bool value) { controlChange (64, value ? 1 : 0); }
+	virtual void effectLevel (byte value) { controlChange (91, value); }
+	virtual void chorusLevel (byte value) { controlChange (93, value); }
+	virtual void allNotesOff() { controlChange (123, 0); }
 
 	// SysEx messages
 	virtual void sysEx_customInstrument (uint32 type, byte *instr) = 0;
@@ -169,6 +169,7 @@ extern MidiDriver *MidiDriver_QT_create();
 extern MidiDriver *MidiDriver_CORE_create();
 extern MidiDriver *MidiDriver_ETUDE_create();
 extern MidiDriver *MidiDriver_ALSA_create();
+extern MidiDriver *MidiDriver_YM2612_create(SoundMixer *mixer);
 extern MidiDriver *MidiDriver_YamahaPa1_create();
 
 #endif

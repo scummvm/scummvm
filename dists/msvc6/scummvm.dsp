@@ -540,6 +540,10 @@ SOURCE=..\..\backends\midi\null.cpp
 
 SOURCE=..\..\backends\midi\windows.cpp
 # End Source File
+# Begin Source File
+
+SOURCE=..\..\backends\midi\ym2612.cpp
+# End Source File
 # End Group
 # End Group
 # End Group

@@ -32,6 +32,8 @@ namespace Scumm {
  */
 class MidiParser_EUP : public MidiParser {
 protected:
+	byte _instruments[6][50]; // Two extra bytes for SysEx ID and channel #
+	byte _channel_instr[16];
 	struct {
 		byte *enable;
 		int8 *channel;
@@ -69,14 +71,22 @@ void MidiParser_EUP::parseNextEvent (EventInfo &info) {
 	// program changes to get a reasonable "one-size-
 	// fits-all" sound until we actually support the
 	// FM synthesis capabilities of FM Towns.
-	if (_presend) {
-		--_presend;
+	for (; _presend < 32; ++_presend) {
+		if (_channel_instr[_presend >> 1] == 0xFF) continue;
 		info.start = pos;
 		info.delta = 0;
-		info.event = ((_presend & 1) ? 0xB0 : 0xC0) | (_presend >> 1);
-		info.basic.param1 = ((_presend & 1) ? 7 : 0x38);
-		info.basic.param2 = ((_presend & 1) ? 127 : 0);
-		_presend = (_presend + 2) % 32;
+		if (_presend & 1) {
+			info.event = 0xB0;
+			info.basic.param1 = 7;
+			info.basic.param2 = 127;
+		} else {
+			byte *data = &_instruments[_channel_instr[_presend >> 1]][0];
+			data[1] = _presend >> 1;
+			info.event = 0xF0;
+			info.ext.data = data;
+			info.length = 48;
+		}
+		++_presend;
 		return;
 	}
 
@@ -89,7 +99,17 @@ void MidiParser_EUP::parseNextEvent (EventInfo &info) {
 				channel = cmd & 0x0F;
 			uint16 tick = (pos[2] | ((uint16) pos[3] << 7)) + _base_tick;
 			int note = (int) pos[4] + _presets.transpose[preset];
-			int volume = (int) pos[5] + _presets.volume[preset];
+			int volume = (int) pos[5];
+			// HACK: Loom-Towns distaff tracks seem to
+			// contain zero-volume note events, so change
+			// those to full volume.
+			if (!volume)
+				volume = 127;
+			volume += _presets.volume[preset];
+			if (volume > 127)
+				volume = 127;
+			else if (volume < 0)
+				volume = 0;
 			pos += 6;
 			if (_presets.enable[preset]) {
 				uint16 duration = pos[1] | (pos[2] << 4);
@@ -148,7 +168,12 @@ bool MidiParser_EUP::loadMusic (byte *data, uint32 size) {
 	}
 
 	byte numInstruments = pos[16];
-	pos += (16 + 2 + numInstruments * 48);
+	pos += 16 + 2;
+	for (int i = 0; i < numInstruments; ++i) {
+		_instruments[i][0] = 0x7C;
+		memcpy (&_instruments[i][2], pos, 48);
+		pos += 48;
+	}
 
 	// Load the prest pointers
 	_presets.enable = pos;
@@ -161,6 +186,10 @@ bool MidiParser_EUP::loadMusic (byte *data, uint32 size) {
 	pos += 32;
 
 	pos += 8; // Unknown bytes
+	for (i = 0; i < 16; ++i)
+		_channel_instr[i] = 0xFF;
+	for (i = 0; i < 6; ++i)
+		_channel_instr[pos[i]] = i;
 	pos += 6; // Instrument-to-channel mapping (not supported yet)
 	pos += 4; // Skip the music size for now.
 	pos++;    // Unknown byte
@@ -183,7 +212,7 @@ bool MidiParser_EUP::loadMusic (byte *data, uint32 size) {
 
 void MidiParser_EUP::resetTracking() {
 	MidiParser::resetTracking();
-	_presend = 1;
+	_presend = 0;
 	_base_tick = 0;
 }
 

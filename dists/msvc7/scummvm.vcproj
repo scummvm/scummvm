@@ -355,6 +355,9 @@
 				<File
 					RelativePath="..\..\backends\midi\windows.cpp">
 				</File>
+				<File
+					RelativePath="..\..\backends\midi\ym2612.cpp">
+				</File>
 			</Filter>
 		</Filter>
 		<Filter

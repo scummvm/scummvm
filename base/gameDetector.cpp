@@ -676,12 +676,15 @@ bool GameDetector::detectMain() {
 		if (_game.midi & MDT_PREFER_NATIVE)
 			_midi_driver = getMidiDriverType();
 		else
-			_midi_driver = MD_ADLIB;
+			_midi_driver = MD_TOWNS;
 	}
 	bool nativeMidiDriver =
 		(_midi_driver != MD_NULL && _midi_driver != MD_ADLIB &&
-		 _midi_driver != MD_PCSPK && _midi_driver != MD_PCJR);
+		 _midi_driver != MD_PCSPK && _midi_driver != MD_PCJR &&
+		 _midi_driver != MD_TOWNS);
 	if (nativeMidiDriver && !(_game.midi & MDT_NATIVE))
+		_midi_driver = MD_TOWNS;
+	if (_midi_driver == MD_TOWNS && !(_game.midi & MDT_TOWNS))
 		_midi_driver = MD_ADLIB;
 	if (_midi_driver == MD_ADLIB && !(_game.midi & MDT_ADLIB))
 		_midi_driver = MD_PCJR;
@@ -770,11 +773,14 @@ MidiDriver *GameDetector::createMidi() {
 
 	switch(drv) {
 	case MD_NULL:      return MidiDriver_NULL_create();
+
 	// In the case of Adlib, we won't specify anything.
 	// IMuse is designed to set up its own Adlib driver
 	// if need be, and we only have to specify a native
 	// driver.
 	case MD_ADLIB:     return NULL;
+
+	case MD_TOWNS:     return MidiDriver_YM2612_create(g_engine->_mixer);
 
 	// Right now PC Speaker and PCjr are handled
 	// outside the MidiDriver architecture, so

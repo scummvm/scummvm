@@ -54,6 +54,7 @@ _initialized(false),
 _tempoFactor(0),
 _player_limit(ARRAYSIZE(_players)),
 _recycle_players(false),
+_direct_passthrough(false),
 _queue_end(0),
 _queue_pos(0),
 _queue_sound(0),
@@ -250,7 +251,7 @@ bool IMuseInternal::startSound(int sound) {
 		return false;
 
 	player->clear();
-	return player->startSound(sound, driver);
+	return player->startSound(sound, driver, _direct_passthrough);
 }
 
 
@@ -1117,10 +1118,14 @@ uint32 IMuseInternal::property(int prop, uint32 value) {
 		break;
 
 	case IMuse::PROP_RECYCLE_PLAYERS:
-		if (value > 0 && value <= ARRAYSIZE(_players))
-			_recycle_players = (value != 0);
+		_recycle_players = (value != 0);
+		break;
+
+	case IMuse::PROP_DIRECT_PASSTHROUGH:
+		_direct_passthrough = (value != 0);
 		break;
 	}
+
 	return 0;
 }
 

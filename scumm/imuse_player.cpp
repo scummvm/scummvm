@@ -39,6 +39,11 @@ namespace Scumm {
 //
 ////////////////////////////////////////
 
+#define IMUSE_SYSEX_ID 0x7D
+#define YM2612_SYSEX_ID 0x7C
+#define ROLAND_SYSEX_ID 0x41
+#define PERCUSSION_CHANNEL 9
+
 extern MidiParser *MidiParser_createRO();
 extern MidiParser *MidiParser_createEUP();
 
@@ -85,7 +90,7 @@ Player::~Player() {
 	}
 }
 
-bool Player::startSound(int sound, MidiDriver *midi) {
+bool Player::startSound(int sound, MidiDriver *midi, bool passThrough) {
 	void *ptr;
 	int i;
 
@@ -111,6 +116,7 @@ bool Player::startSound(int sound, MidiDriver *midi) {
 	_pan = 0;
 	_transpose = 0;
 	_detune = 0;
+	_passThrough = passThrough;
 
 	for (i = 0; i < ARRAYSIZE(_parameterFaders); ++i)
 		_parameterFaders[i].init();
@@ -152,8 +158,11 @@ void Player::clear() {
 	debug (0, "Stopping music %d", _id);
 #endif
 
-	if (_parser)
+	if (_parser) {
 		_parser->unloadMusic();
+		delete _parser;
+		_parser = 0;
+	}
 	uninit_parts();
 	_se->ImFireAllTriggers(_id);
 	_active = false;
@@ -224,6 +233,11 @@ void Player::setSpeed(byte speed) {
 }
 
 void Player::send(uint32 b) {
+	if (_passThrough) {
+		_midi->send (b);
+		return;
+	}
+
 	byte cmd = (byte)(b & 0xF0);
 	byte chan = (byte)(b & 0x0F);
 	byte param1 = (byte)((b >> 8) & 0xFF);
@@ -333,8 +347,12 @@ void Player::sysEx(byte *p, uint16 len) {
 	byte buf[128];
 	Part *part;
 
+	if (_passThrough) {
+		_midi->sysEx (p, len);
+		return;
+	}
+
 	// Check SysEx manufacturer.
-	// Roland is 0x41
 	a = *p++;
 	--len;
 	if (a != IMUSE_SYSEX_ID) {
@@ -346,6 +364,9 @@ void Player::sysEx(byte *p, uint16 len) {
 				if (part->clearToTransmit())
 					part->_instrument.send(part->_mc);
 			}
+		} else if (a == YM2612_SYSEX_ID) {
+			// FM-Towns custom instrument definition
+			_midi->sysEx_customInstrument (p[0], 'EUP ', p + 1);
 		} else {
 			warning("Unknown SysEx manufacturer 0x%02X", (int) a);
 		}
@@ -1124,10 +1145,8 @@ uint32 Player::getBaseTempo() {
 }
 
 void Player::metaEvent(byte type, byte *msg, uint16 len) {
-	if (type == 0x2F) {
-		_parser->unloadMusic();
+	if (type == 0x2F)
 		clear();
-	}
 }
 
 

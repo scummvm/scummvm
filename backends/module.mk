@@ -11,7 +11,8 @@ MODULE_OBJS := \
 	backends/midi/quicktime.o \
 	backends/midi/seq.o \
 	backends/midi/alsa.o \
-	backends/midi/windows.o
+	backends/midi/windows.o \
+	backends/midi/ym2612.o
 
 MODULE_DIRS += \
 	backends \

@@ -567,9 +567,10 @@ emulation. MIDI may not be available on all operating systems or may need
 manual configuration. If you ARE using MIDI, you have several different
 choices of output, depending on your operating system and configuration.
         
-        adlib     - Uses internal Adlib Emulation (default) 
+        adlib     - Uses internal Adlib Emulation (default)
         pcjr      - Uses internal PCjr Emulation 
         pcspk     - Uses internal PC Speaker Emulation
+        towns     - Uses FM-Towns YM2612 Emulation
         windows   - Windows MIDI. Uses built-in sequencer, for Windows users
         seq       - Uses /dev/sequencer for MIDI, *nix users. See below.
         qt        - Quicktime sound, for Macintosh users.

@@ -54,6 +54,7 @@ static const struct MidiDriverDescription midiDrivers[] = {
 	{"adlib", "Adlib", MD_ADLIB},
 	{"pcspk", "PC Speaker", MD_PCSPK},
 	{"pcjr", "IBM PCjr", MD_PCJR},
+	{"towns", "FM Towns", MD_TOWNS},
 #endif
 
 #if defined(__PALM_OS__)

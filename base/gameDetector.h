@@ -70,8 +70,9 @@ enum MidiDriverType {
 	MDT_NONE   = 0,
 	MDT_PCSPK  = 1, // MD_PCSPK and MD_PCJR
 	MDT_ADLIB  = 2, // MD_ADLIB
-	MDT_NATIVE = 4,  // Everything else
-	MDT_PREFER_NATIVE = 8
+	MDT_TOWNS  = 4, // MD_TOWNS
+	MDT_NATIVE = 8, // Everything else
+	MDT_PREFER_NATIVE = 16
 };
 
 struct TargetSettings {

@@ -59,16 +59,7 @@ public:
 
 	// Control Change messages
 	void controlChange (byte control, byte value);
-	void modulationWheel (byte value) { controlChange (1, value); }
-	void volume (byte value) { controlChange (7, value); }
-	void panPosition (byte value) { controlChange (10, value); }
 	void pitchBendFactor (byte value);
-	void detune (byte value) { controlChange (17, value); }
-	void priority (byte value) { controlChange (18, value); }
-	void sustain (bool value) { controlChange (64, value ? 1 : 0); }
-	void effectLevel (byte value) { controlChange (91, value); }
-	void chorusLevel (byte value) { controlChange (93, value); }
-	void allNotesOff() { controlChange (123, 0); }
 
 	// SysEx messages
 	void sysEx_customInstrument (uint32 type, byte *instr);

@@ -60,10 +60,6 @@ class ScummEngine;
 
 #define TICKS_PER_BEAT 480
 
-#define IMUSE_SYSEX_ID 0x7D
-#define ROLAND_SYSEX_ID 0x41
-#define PERCUSSION_CHANNEL 9
-
 #define TRIGGER_ID 0
 #define COMMAND_ID 1
 
@@ -158,6 +154,7 @@ protected:
 protected:
 	MidiDriver *_midi;
 	MidiParser *_parser;
+	bool _passThrough; // Only respond to EOT, all else direct to MidiDriver
 
 	Part *_parts;
 	bool _active;
@@ -259,7 +256,7 @@ public:
 	void   setSpeed(byte speed);
 	int    setTranspose(byte relative, int b);
 	int    setVolume(byte vol);
-	bool   startSound(int sound, MidiDriver *midi);
+	bool   startSound(int sound, MidiDriver *midi, bool passThrough);
 	int    getMusicTimer() const;
 
 public:
@@ -366,8 +363,9 @@ protected:
 
 	int _tempoFactor;
 
-	int  _player_limit;    // Limits how many simultaneous music tracks are played
-	bool _recycle_players; // Can we stop a player in order to start another one?
+	int  _player_limit;       // Limits how many simultaneous music tracks are played
+	bool _recycle_players;    // Can we stop a player in order to start another one?
+	bool _direct_passthrough; // Pass data direct to MidiDriver (no interactivity)
 
 	uint _queue_end, _queue_pos, _queue_sound;
 	byte _queue_adding;
