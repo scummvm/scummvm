@@ -25,7 +25,6 @@
 #include "object.h"
 #include "resource.h"
 #include "verbs.h"
-#include "common/util.h"
 
 void Scumm::redrawVerbs()
 {
@@ -156,10 +155,6 @@ void Scumm::drawVerb(int verb, int mode)
 		if (!_messagePtr)
 			return;
 		assert(_messagePtr);
-
-		if ((verb == 49 || verb == 48) && mode == 0) {
-			hexdump(_messagePtr, 32);
-		}
 
 		tmp = charset._center;
 		charset._center = 0;
