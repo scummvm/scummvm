@@ -2593,9 +2593,16 @@ printf("o5_oldRoomEffect ODDBALL: _opcode = 0x%x, a = 0x%x\n", _opcode, a);
 				// No idea what byte_2FCCF is, but it's a globale boolean flag.
 				// I only add it here as a temporary hack to make the pseudo code compile.
 				// Maybe it is just there as a reentry protection guard, given
-				// how it is used?
+				// how it is used? It might also correspond to _screenEffectFlag.
 				int byte_2FCCF = 0;
 
+				// For now, we force a redraw of the screen background. This 
+				// Makes the Zak end credits work more or less correctly.
+				VirtScreen *vs = &virtscr[0];
+				restoreBG(ScummVM::Rect(0,vs->topline, vs->width, vs->topline + vs->height));
+				virtscr[0].setDirtyRange(0, virtscr[0].height);
+				updateDirtyScreen(0);
+				
 				if (byte_2FCCF) {
 					// Here now "sub_1C44" is called, which sets byte_2FCCF to 0 then
 					// calls yet another sub (which also reads byte_2FCCF):
@@ -2607,7 +2614,8 @@ printf("o5_oldRoomEffect ODDBALL: _opcode = 0x%x, a = 0x%x\n", _opcode, a);
 					// Now sub_085C is called. This is quite simply: it sets 
 					// 0xF000 bytes. starting at 0x40000 to 0. No idea what that
 					// buffer is, maybe a screen buffer, though. Note that
-					// 0xF000 = 320*192
+					// 0xF000 = 320*192.
+					// Maybe this is also the charset mask being cleaned?
 					
 					// call sub_085C
 
