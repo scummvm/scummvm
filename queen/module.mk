@@ -4,6 +4,7 @@ MODULE_OBJS = \
 	queen/cutaway.o \
 	queen/display.o \
 	queen/graphics.o \
+	queen/input.o \
 	queen/logic.o \
 	queen/queen.o \
 	queen/resource.o \

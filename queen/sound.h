@@ -28,18 +28,20 @@
 
 namespace Queen {
 
+class Input;
 class Resource;
 
 class Sound {
 public:
-	Sound(SoundMixer *mixer, Resource *resource);
+	Sound(SoundMixer *mixer, Input *input, Resource *resource);
 	virtual ~Sound(); 
 	virtual void sfxPlay(const char *base) = 0;
-	static Sound *giveSound(SoundMixer *mixer, Resource *resource, uint8 compression);
+	static Sound *giveSound(SoundMixer *mixer, Input *input, Resource *resource, uint8 compression);
 	bool isPlaying();
 
 protected:
 	SoundMixer *_mixer;
+  Input *_input;
 	Resource *_resource;
 
 	PlayingSoundHandle _sfxHandle;
@@ -47,13 +49,13 @@ protected:
 
 class SilentSound : public Sound {
 public:
-	SilentSound(SoundMixer *mixer, Resource *resource) : Sound(mixer, resource) {};
+	SilentSound(SoundMixer *mixer, Input *input, Resource *resource) : Sound(mixer, input, resource) {};
 	void sfxPlay(const char *base) { }
 };
 
 class SBSound : public Sound {
 public:
-	SBSound(SoundMixer *mixer, Resource *resource) : Sound(mixer, resource) {};
+	SBSound(SoundMixer *mixer, Input *input, Resource *resource) : Sound(mixer, input, resource) {};
 	int playSound(byte *sound, uint32 size);
 	void sfxPlay(const char *base);
 };
@@ -61,7 +63,7 @@ public:
 #ifdef USE_MAD
 class MP3Sound : public Sound {
 public:
-	MP3Sound(SoundMixer *mixer, Resource *resource) : Sound(mixer, resource) {};
+	MP3Sound(SoundMixer *mixer, Input *input, Resource *resource) : Sound(mixer, input, resource) {};
 	void sfxPlay(const char *base);
 };
 #endif

@@ -33,6 +33,7 @@
 namespace Queen {
 
 class Graphics;
+class Input;
 class Logic;
 class Display;
 class Sound;
@@ -41,18 +42,17 @@ class QueenEngine : public Engine {
 	void errorString(const char *buf_input, char *buf_output);
 protected:
 	byte _game;
-	byte _key_pressed;
 	bool _quickLaunch; // set when starting with -x
 
 	uint16 _debugMode;
 	int _numScreenUpdates;
 
 	int _number_of_savegames;
-	int _sdl_mouse_x, _sdl_mouse_y;
 
 	FILE *_dump_file;
 	
 	Graphics *_graphics;
+	Input *_input;
 	Resource *_resource;
 	Logic *_logic;
 	Display *_display;
@@ -63,8 +63,6 @@ protected:
 public:
 	QueenEngine(GameDetector *detector, OSystem *syst);
 	virtual ~QueenEngine();
-
-	void delay(uint amount);
 
 protected:
 	byte _fastMode;
@@ -79,9 +77,6 @@ protected:
 	static void timerHandler(void *ptr);
 	void gotTimerTick();
 };
-
-// XXX: Temporary hack to allow Graphics to call delay()
-extern QueenEngine *g_queen;
 
 } // End of namespace Queen
 

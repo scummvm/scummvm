@@ -23,6 +23,7 @@
 #include "cutaway.h"
 #include "display.h"
 #include "graphics.h"
+#include "input.h"
 #include "sound.h"
 #include "talk.h"
 #include "walk.h"
@@ -64,10 +65,11 @@ void Cutaway::run(
 		const char *filename, 
 		char *nextFilename,
 		Graphics *graphics,
+		Input *input,
 		Logic *logic,
 		Resource *resource,
 		Sound *sound) {
-	Cutaway *cutaway = new Cutaway(filename, graphics, logic, resource, sound);
+	Cutaway *cutaway = new Cutaway(filename, graphics, input, logic, resource, sound);
 	cutaway->run(nextFilename);
 	delete cutaway;
 }
@@ -75,10 +77,11 @@ void Cutaway::run(
 Cutaway::Cutaway(
 		const char *filename, 
 		Graphics *graphics,
+		Input *input,
 		Logic *logic,
 		Resource *resource,
 		Sound *sound) 
-: _graphics(graphics), _logic(logic), _resource(resource), _sound(sound), _walk(logic->walk()),
+: _graphics(graphics), _input(input), _logic(logic), _resource(resource), _sound(sound), _walk(logic->walk()),
 	_quit(false), _personDataCount(0), _personFaceCount(0), _lastSong(0), _songBeforeComic(0) {
 	memset(&_bankNames, 0, sizeof(_bankNames));
 	load(filename); 
@@ -304,7 +307,7 @@ void Cutaway::actionSpecialMove(int index) {
 				for (i = 5; i <= 100; i +=5) {
 					bob->scale = i;
 					bob->y -= 4;
-					_graphics->update();
+					_logic->update();
 				}
 			}
 			break;
@@ -324,9 +327,8 @@ void Cutaway::actionSpecialMove(int index) {
 				BobSlot *bob_thugB2 = _graphics->bob(26);
 
 				_graphics->cameraBob(-1);
-				// XXX fastmode = 1;
-
-				_graphics->update(true);
+				_input->fastMode(true);
+				_logic->update();
 				
 				int i = 4, k = 160;
 
@@ -372,14 +374,14 @@ void Cutaway::actionSpecialMove(int index) {
 					bob_thugB1->x -= i * 4;
 					bob_thugB2->x -= i * 4;
 
-					_graphics->update(true);
+					_logic->update();
 
 					if (_quit)
 						return;
 
 				}
 
-				// XXX fastmode = 0;
+				_input->fastMode(false);
 			}
 			break;
 		
@@ -400,9 +402,9 @@ void Cutaway::actionSpecialMove(int index) {
 				BobSlot *bob_hands = _graphics->bob(24);
 
 				_graphics->cameraBob(-1);
-				// XXX fastmode = 1;
+				_input->fastMode(true);
 					
-				_graphics->update(true);
+				_logic->update();
 
 				bob_box  ->x += 280 * 2;
 				bob_beam ->x += 30;
@@ -427,14 +429,14 @@ void Cutaway::actionSpecialMove(int index) {
 					bob_clock->x -= i * 2;
 					bob_hands->x -= i * 2;
 
-					_graphics->update(true);
+					_logic->update();
 
 					if (_quit)
 						return;
 
 				}
 
-				// XXX fastmode = 0;
+				_input->fastMode(false);
 			}
 			break;
 
@@ -447,7 +449,7 @@ void Cutaway::actionSpecialMove(int index) {
 				BobSlot *bob22 = _graphics->bob(22);
 
 				_graphics->cameraBob(-1);
-				// XXX fastmode = 1;
+				_input->fastMode(true);
 				
 				int horizontalScroll = display->horizontalScroll();
 
@@ -466,14 +468,14 @@ void Cutaway::actionSpecialMove(int index) {
 
 					bob22->x += i;
 
-					_graphics->update(true);
+					_logic->update();
 
 					if (_quit)
 						return;
 
 				}
 
-				// XXX fastmode = 0;
+				_input->fastMode(false);
 			}
 			break;
 
@@ -928,7 +930,7 @@ byte *Cutaway::handleAnimation(byte *ptr, CutawayObject &object) {
 
 				int j;
 				for (j = 0; j < objAnim[i].speed; j++)
-					_graphics->update();
+					_logic->update();
 			}
 
 			if (_quit)
@@ -951,7 +953,7 @@ byte *Cutaway::handleAnimation(byte *ptr, CutawayObject &object) {
 
 	while (moving) {
 		moving = false;
-		_graphics->update();
+		_logic->update();
 		
 		for (i = 0; i < frameCount; i++) {
 			BobSlot *bob = _graphics->bob(objAnim[i].object);
@@ -1043,7 +1045,7 @@ void Cutaway::handlePersonRecord(
 			char voiceFilePrefix[MAX_STRING_SIZE];
 			findCdCut(_basename, index, voiceFilePrefix);
 			Talk::speak(sentence, (object.objectNumber == OBJECT_JOE) ? NULL : &p, voiceFilePrefix,
-				_graphics, _logic, _resource, _sound);
+				_graphics, _input, _logic, _resource, _sound);
 		}
 
 	}
@@ -1401,7 +1403,7 @@ void Cutaway::talk(char *nextFilename) {
 	if (0 == scumm_stricmp(right(_talkFile, 4), ".dog")) {
 		nextFilename[0] = '\0';
 
-		Talk::talk(_talkFile, 0 /* XXX */, nextFilename, _graphics, _logic, _resource, _sound);
+		Talk::talk(_talkFile, 0 /* XXX */, nextFilename, _graphics, _input, _logic, _resource, _sound);
 	}
 }
 
@@ -1487,7 +1489,7 @@ void Cutaway::handleText(
 
 	int i;
 	for (i = 0; i < spaces; i++) {
-		_graphics->update();
+		_logic->update();
 
 		if (OBJECT_TYPE_TEXT_SPEAK == type || OBJECT_TYPE_TEXT_DISPLAY_AND_SPEAK == type) {
 			// XXX: see if speaking is finished
@@ -1504,7 +1506,7 @@ void Cutaway::handleText(
 	}
 
 	_graphics->textClear(0,198);
-	_graphics->update();
+	_logic->update();
 }
 		
 int Cutaway::countSpaces(ObjectType type, const char *segment) {

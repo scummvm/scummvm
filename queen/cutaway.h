@@ -41,6 +41,7 @@ class Cutaway {
 				const char *filename,
 				char *nextFilename,
 				Graphics *graphics,
+				Input *input,
 				Logic *logic,
 				Resource *resource,
 				Sound *sound);
@@ -136,6 +137,7 @@ class Cutaway {
 		};
 
 		Graphics    *_graphics;
+		Input       *_input;
 		Logic       *_logic;
 		Resource    *_resource;
 		Sound       *_sound;
@@ -214,6 +216,7 @@ class Cutaway {
 		Cutaway(
 				const char *filename, 
 				Graphics *graphics,
+				Input *input,
 				Logic *logic,
 				Resource *resource,
 				Sound *sound);

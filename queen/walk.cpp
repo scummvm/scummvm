@@ -156,7 +156,7 @@ bool Walk::animateJoe() {
 			if (pbs->speed == 0) {
 				pbs->speed = 1;
 			}
-			_graphics->update(); // CHECK_PLAYER();
+			_logic->update(); // CHECK_PLAYER();
 			if (_logic->joeWalk() == 2) { // || cutQuit 
 				// we are about to do something else, so stop walking
 				interrupted = true;
@@ -290,7 +290,7 @@ void Walk::animatePerson(const MovePersonData *mpd, uint16 image, uint16 bobNum,
 		}
 
 		while (pbs->moving) {
-			_graphics->update();
+			_logic->update();
 			uint16 scale = pwd->area->calcScale(pbs->y);
 			pbs->scale = scale;
 			if (pbs->xmajor) {

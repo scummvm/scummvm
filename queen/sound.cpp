@@ -22,37 +22,38 @@
 #include "stdafx.h"
 #include "common/file.h"
 #include "common/util.h"
+#include "queen/input.h"
 #include "queen/resource.h"
 #include "queen/sound.h"
-#include "queen/queen.h"	//g_queen (temporary)
 
 #define	SB_HEADER_SIZE	110
 
 namespace Queen {
 
-Sound::Sound(SoundMixer *mixer, Resource  *resource) : _mixer(mixer), _resource(resource), _sfxHandle(0) {
+Sound::Sound(SoundMixer *mixer, Input *input, Resource  *resource) : 
+  _mixer(mixer), _input(input), _resource(resource), _sfxHandle(0) {
 }
 
 Sound::~Sound() {
 }
 
-Sound *Sound::giveSound(SoundMixer *mixer, Resource *resource, uint8 compression) {
+Sound *Sound::giveSound(SoundMixer *mixer, Input *input, Resource *resource, uint8 compression) {
 	switch(compression) {
 		case COMPRESSION_NONE:
-				return new SBSound(mixer, resource);
+				return new SBSound(mixer, input, resource);
 				break;
 		case COMPRESSION_MP3:
 				#ifndef USE_MAD
 					warning("Using MP3 compressed datafile, but MP3 support not compiled in");
-					return new SilentSound(mixer, resource);
+					return new SilentSound(mixer, input, resource);
 				#else
-					return new MP3Sound(mixer, resource);
+					return new MP3Sound(mixer, input, resource);
 
 				#endif
 				break;
 		default:
 				warning("Unknown compression type");
-				return new SilentSound(mixer, resource);
+				return new SilentSound(mixer, input, resource);
 	}
 }
 
@@ -76,7 +77,7 @@ void SBSound::sfxPlay(const char *base) {
 	strcat(name, ".SB");
 
 	while(isPlaying())
-		g_queen->delay(10);
+	  _input->delay(10);
 	
 	if (_resource->exists(name)) 
 		playSound(_resource->loadFile(name, SB_HEADER_SIZE), _resource->fileSize(name) - SB_HEADER_SIZE);
@@ -94,7 +95,7 @@ void MP3Sound::sfxPlay(const char *base) {
 	strcat(name, ".SB");
 	
 	while(isPlaying())
-		g_queen->delay(10);
+		_input->delay(10);
 
 	if (_resource->exists(name)) 
 		_mixer->playMP3(&_sfxHandle, _resource->giveMP3(name), _resource->fileSize(name));

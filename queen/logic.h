@@ -54,13 +54,14 @@ struct Command {
 class Graphics;
 class Resource;
 class Display;
+class Input;
 class Sound;
 class Walk;
 
 class Logic {
 
 public:
-	Logic(Resource *resource, Graphics *graphics, Display *display, Sound *sound);
+	Logic(Resource *resource, Graphics *graphics, Display *display, Input *input, Sound *sound);
 	~Logic();
 
 	uint16 currentRoom();
@@ -182,6 +183,8 @@ public:
 
 	Display *display() { return _display; }
 
+	void update();
+
 protected:
 	bool _textToggle;
 	bool _speechToggle;
@@ -277,6 +280,7 @@ protected:
 	Resource *_resource;
 	Graphics *_graphics;
 	Display *_display;
+	Input *_input;
 	Sound *_sound;
 	Walk *_walk;
 

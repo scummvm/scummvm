@@ -38,10 +38,11 @@ void Talk::talk(
 		int personInRoom,
 		char *cutawayFilename,
 		Graphics *graphics,
+		Input *input,
 		Logic *logic,
 		Resource *resource,
 		Sound *sound) {
-	Talk *talk = new Talk(graphics, logic, resource, sound);
+	Talk *talk = new Talk(graphics, input, logic, resource, sound);
 	talk->talk(filename, personInRoom, cutawayFilename);
 	delete talk;
 }
@@ -51,10 +52,11 @@ bool Talk::speak(
 		Person *person,
 		const char *voiceFilePrefix,
 		Graphics *graphics,
+		Input *input,
 		Logic *logic,
 		Resource *resource,
 	       	Sound *sound) {
-	Talk *talk = new Talk(graphics, logic, resource, sound);
+	Talk *talk = new Talk(graphics, input, logic, resource, sound);
 	bool result = talk->speak(sentence, person, voiceFilePrefix);
 	delete talk;
 	return result;
@@ -62,10 +64,12 @@ bool Talk::speak(
 
 Talk::Talk(
 		Graphics *graphics,
+		Input *input,
 		Logic *logic,
 		Resource *resource,
-		Sound *sound) 
-: _graphics(graphics), _logic(logic), _resource(resource), _sound(sound), _fileData(NULL), _quit(false) {
+		Sound *sound) : 
+	_graphics(graphics), _input(input), _logic(logic), _resource(resource), 
+	_sound(sound), _fileData(NULL), _quit(false) {
 
 	//! TODO Move this to the Logic class later!
 	memset(_talkSelected, 0, sizeof(_talkSelected));
@@ -649,7 +653,7 @@ void Talk::speakSegment(
 			for (i = 0; i < 10; i++) {
 				if (_quit)
 					break;
-				_graphics->update();
+				_logic->update();
 			}
 			return;
 
@@ -775,7 +779,7 @@ void Talk::speakSegment(
 
 		if (length == 0 && !isJoe && parameters->bf > 0) {
 			_graphics->bankOverpack(parameters->bf, startFrame, bankNum);
-			_graphics->update();
+			_logic->update();
 		}
 
 		/* A12 = the frame pointer for the full body frame, well use this  */
@@ -860,23 +864,23 @@ void Talk::speakSegment(
 				}
 
 				if (!_talkHead)
-					_graphics->update();
+					_logic->update();
 			}
 			else
-				_graphics->update();
+				_logic->update();
 
 			if (_logic->joeWalk() == 3) {
 				if (_quit)
 					break;
 
-				_graphics->update();
+				_logic->update();
 			}
 			else {
 				if (_quit)
 					break;
 				
 				// XXX CHECK_PLAYER();
-				_graphics->update(); // XXX call it ourselves as CHECK_PLAYER is not called
+				_logic->update(); // XXX call it ourselves as CHECK_PLAYER is not called
 
 				if (_logic->joeWalk() == 2)
 					// Selected a command, so exit
@@ -939,7 +943,7 @@ void Talk::speakSegment(
 		}
 	}
 
-	_graphics->update();
+	_logic->update();
 }
 
 const Talk::SpeechParameters *Talk::findSpeechParameters(
@@ -1120,7 +1124,7 @@ int16 Talk::selectSentence() {
 				if (_quit)
 					break;
 
-				_graphics->update();
+				_logic->update();
 
 				// XXX zone = zone(1, mouseX, mouseY);
 

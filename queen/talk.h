@@ -41,6 +41,7 @@ class Talk {
 		int personInRoom,
 		char *cutawayFilename, 
 		Graphics *graphics,
+		Input *input,
 		Logic *logic,
 		Resource *resource,
 		Sound *sound);
@@ -51,6 +52,7 @@ class Talk {
 		Person *person, 
 		const char *voiceFilePrefix,
 		Graphics *graphics,
+		Input *input,
 		Logic *logic,
 		Resource *resource,
 		Sound *sound);
@@ -108,6 +110,7 @@ class Talk {
 	Common::RandomSource _randomizer;
 
 	Graphics  *_graphics;
+	Input     *_input;
 	Logic     *_logic;
 	Resource  *_resource;
 	Sound     *_sound;
@@ -159,7 +162,7 @@ class Talk {
 
 	static const SpeechParameters _speechParameters[];
 
-	Talk(Graphics *graphics, Logic *logic, Resource *resource, Sound *sound);
+	Talk(Graphics *graphics, Input *input, Logic *logic, Resource *resource, Sound *sound);
 	~Talk();
 
 	//! Perform talk in file and return a cutaway filename

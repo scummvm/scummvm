@@ -142,15 +142,17 @@ scrollx						Display::_horizontalScroll
 
 INPUT
 =====
+check_keys()				Input::checkKeys()
+get_key()					*not needed*
 -
 drawmouseflag
 key_commands
 key_language
-KEYVERB
+KEYVERB						Input::_keyVerb
 MKEY
 MouseButton
 mouseflag
-no_check_keys
+no_check_keys				Input::_noCheckKeys
 
 
 INVENTORY

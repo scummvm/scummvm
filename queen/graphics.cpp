@@ -27,8 +27,8 @@
 namespace Queen {
 
 
-Graphics::Graphics(Display *display, Resource *resource)
-	: _cameraBob(0), _display(display), _resource(resource) {
+Graphics::Graphics(Display *display, Input *input, Resource *resource)
+	: _cameraBob(0), _display(display), _input(input), _resource(resource) {
 		
 	memset(_frames, 0, sizeof(_frames));
 	memset(_banks, 0, sizeof(_banks));
@@ -727,7 +727,6 @@ void Graphics::loadBackdrop(const char* name, uint16 room) {
 	if (room >= 90) {
 		_cameraBob = 0;
 	}
-	_lastRoom = room; // TEMP
 }
 
 
@@ -806,26 +805,16 @@ void Graphics::cameraBob(int bobNum) {
 }
 
 
-void Graphics::update(bool fastmode) {
+void Graphics::update(uint16 room) {
 	// FIXME: temporary code, move to Logic::update()
 	bobSortAll();
 	if (_cameraBob >= 0) {
 		_display->horizontalScrollUpdate(_bobs[_cameraBob].x);
 	}
-	// FIXME: currently, we use the _lastRoom variable only
-	// to know in which current room we are. This is necessary
-	// for the parallax stuff as it relies on the room number.
-	// When we switch to the Logic::update() method, we will be
-	// able to get rid of this variable...
-	bobCustomParallax(_lastRoom);
+	bobCustomParallax(room);
 	_display->prepareUpdate();
 	bobDrawAll();
 	textDrawAll();
-	if (!fastmode) {
-		g_queen->delay(100);
-	}
-	_display->palCustomScroll(_lastRoom);
-	_display->update(_bobs[0].active, _bobs[0].x, _bobs[0].y);
 }
 
 void Graphics::bobSetText(

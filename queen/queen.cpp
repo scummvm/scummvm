@@ -28,6 +28,7 @@
 #include "queen/cutaway.h"
 #include "queen/display.h"
 #include "queen/graphics.h"
+#include "queen/input.h"
 #include "queen/queen.h"
 #include "queen/sound.h"
 #include "queen/talk.h"
@@ -85,13 +86,9 @@ REGISTER_PLUGIN("Flight of the Amazon Queen", Engine_QUEEN_gameList, Engine_QUEE
 
 namespace Queen {
 
-QueenEngine *g_queen;
-
 QueenEngine::QueenEngine(GameDetector *detector, OSystem *syst)
 	: Engine(detector, syst) {
 
-	g_queen = this;
-	
 	_game = detector->_game.id;
 
 	if (!_mixer->bindToSystem(syst))
@@ -111,8 +108,10 @@ QueenEngine::QueenEngine(GameDetector *detector, OSystem *syst)
 QueenEngine::~QueenEngine() {
 	delete _resource;
 	delete _display;
+	delete _logic;
 	delete _graphics;
 	delete _logic;
+	delete _input;
 }
 
 void QueenEngine::errorString(const char *buf1, char *buf2) {
@@ -132,35 +131,33 @@ void QueenEngine::roomChanged() {
 		// XXX fadeout(0,223);
 	}
 	else if (_logic->currentRoom() == 95 && _logic->gameState(VAR_INTRO_PLAYED) == 0) {
-		char nextFilename[20];
-
 		_logic->roomDisplay(_logic->roomName(_logic->currentRoom()), RDM_FADE_NOJOE, 100, 2, true);
 
 		if (_resource->isDemo()) {
 			if (_resource->exists("pclogo.cut"))
-				Cutaway::run("pclogo.cut", nextFilename, _graphics, _logic, _resource, _sound);
+				_logic->playCutaway("pclogo.cut");
 			else
-				Cutaway::run("clogo.cut",  nextFilename, _graphics, _logic, _resource, _sound);
+				_logic->playCutaway("clogo.cut");
 		}
 		else {
-			Cutaway::run("copy.cut",  nextFilename, _graphics, _logic, _resource, _sound);
-			Cutaway::run("clogo.cut", nextFilename, _graphics, _logic, _resource, _sound);
+			_logic->playCutaway("copy.cut");
+			_logic->playCutaway("clogo.cut");
 
 			// TODO enable talking for talkie version
 
-			Cutaway::run("cdint.cut", nextFilename, _graphics, _logic, _resource, _sound);
+			_logic->playCutaway("cdint.cut");
 
 			// restore palette colors ranging from 144 to 256
 			_graphics->loadPanel();
 			
-			Cutaway::run("cred.cut",  nextFilename, _graphics, _logic, _resource, _sound);
+			_logic->playCutaway("cred.cut");
 		}
 
 		_logic->currentRoom(73);
 		_logic->entryObj(584);
 
 		_logic->roomDisplay(_logic->roomName(_logic->currentRoom()), RDM_FADE_JOE, 100, 2, true);
-		Cutaway::run("c70d.cut", nextFilename, _graphics, _logic, _resource, _sound);
+		_logic->playCutaway("c70d.cut");
 
 		_logic->gameState(VAR_INTRO_PLAYED, 1);
 
@@ -188,7 +185,7 @@ void QueenEngine::go() {
 		// queen.c lines 4080-4104
 		if (_logic->newRoom() > 0) {
 			_graphics->textClear(151, 151);
-			_graphics->update();
+			_logic->update();
 			_logic->oldRoom(_logic->currentRoom());
 			_logic->currentRoom(_logic->newRoom());
 			roomChanged();
@@ -211,18 +208,15 @@ void QueenEngine::go() {
 
 		break; // XXX don't loop yet
 	}
-
-	while (1) { //main loop
-		delay(1000);
-	}
 }
 
 void QueenEngine::initialise(void) {
 	_resource = new Resource(_gameDataPath, _detector->_game.detectname);
 	_display = new Display(_system);
-	_graphics = new Graphics(_display, _resource);
-	_sound = Sound::giveSound(_mixer, _resource, _resource->compression());
-	_logic = new Logic(_resource, _graphics, _display, _sound);
+	_input = new Input(_system);
+	_graphics = new Graphics(_display, _input, _resource);
+	_sound = Sound::giveSound(_mixer, _input, _resource, _resource->compression());
+	_logic = new Logic(_resource, _graphics, _display, _input, _sound);
 	_timer->installTimerProc(&timerHandler, 1000000 / 50, this); //call 50 times per second
 }
 
@@ -236,75 +230,6 @@ void QueenEngine::timerHandler(void *ptr) {
 void QueenEngine::gotTimerTick() {
 
 	_display->handleTimer();
-}
-
-
-void QueenEngine::delay(uint amount) { 
-
-	OSystem::Event event;
-
-	uint32 start = _system->get_msecs();
-	uint32 cur = start;
-	_key_pressed = 0;	//reset
-
-	do {
-		while (_system->poll_event(&event)) {
-			switch (event.event_code) {
-				case OSystem::EVENT_KEYDOWN:
-					if (event.kbd.flags == OSystem::KBD_CTRL) {
-						if (event.kbd.keycode == 'f') {
-							_fastMode ^= 1;
-							break;
-						}
-						if (event.kbd.keycode == 'g') {
-							_fastMode ^= 2;
-							break;
-						}
-					}
-
-					// Make sure backspace works right (this fixes a small issue on OS X)
-					if (event.kbd.keycode == 8)
-						_key_pressed = 8;
-					else
-						_key_pressed = (byte)event.kbd.ascii;
-					break;
-
-				case OSystem::EVENT_MOUSEMOVE:
-					_sdl_mouse_x = event.mouse.x;
-					_sdl_mouse_y = event.mouse.y;
-					
-					break;
-
-				case OSystem::EVENT_LBUTTONDOWN:
-#ifdef _WIN32_WCE
-					_sdl_mouse_x = event.mouse.x;
-					_sdl_mouse_y = event.mouse.y;
-#endif
-					break;
-
-				case OSystem::EVENT_RBUTTONDOWN:
-					break;
-
-				case OSystem::EVENT_QUIT:
-					_system->quit();
-					break;
-
-				default:
-					break;
-			}
-		}
-
-		if (amount == 0)
-			break;
-
-		{
-			uint this_delay = 20; // 1?
-			if (this_delay > amount)
-				this_delay = amount;
-			_system->delay_msecs(this_delay);
-		}
-		cur = _system->get_msecs();
-	} while (cur < start + amount);
 }
 
 } // End of namespace Queen

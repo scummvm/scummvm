@@ -23,6 +23,7 @@
 #define QUEENGRAPHICS_H
 
 #include "queen/queen.h"
+#include "queen/input.h"
 #include "queen/defs.h"
 #include "queen/structs.h"
 
@@ -105,11 +106,12 @@ struct TextSlot {
 
 
 class Display;
+class Input;
 
 class Graphics {
 public:
 
-	Graphics(Display *display, Resource *resource);
+	Graphics(Display *display, Input *input, Resource *resource);
 	~Graphics();
 
 	void bankLoad(const char *bankname, uint32 bankslot); // loadbank()
@@ -161,7 +163,7 @@ public:
 	void cameraBob(int bobNum);
 	int cameraBob() { return _cameraBob; }
 
-	void update(bool fastmode = false);
+	void update(uint16 room);
 
 
 private:
@@ -199,9 +201,8 @@ private:
 
 	int _cameraBob; // cambob
 
-	uint16 _lastRoom; // TEMP
-
 	Display *_display;
+	Input *_input;
 	Resource *_resource;
 
 };

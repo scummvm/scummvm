@@ -592,7 +592,7 @@ void Display::palCustomFlash() {
 	// set flash palette
 	palSet(tempPal, 0, 255, true);
 	// restore original palette
-	palSet(_pals.screen, 0, 255, true);
+	// palSet(_pals.screen, 0, 255, true);
 }
 
 

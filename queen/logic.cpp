@@ -25,13 +25,15 @@
 #include "queen/defs.h"
 #include "queen/display.h"
 #include "queen/graphics.h"
+#include "queen/input.h"
 #include "queen/walk.h"
 
 
 namespace Queen {
 
-Logic::Logic(Resource *resource, Graphics *graphics, Display *theDisplay, Sound *sound)
-	: _resource(resource), _graphics(graphics), _display(theDisplay), _sound(sound), _talkSpeed(DEFAULT_TALK_SPEED) {
+Logic::Logic(Resource *resource, Graphics *graphics, Display *theDisplay, Input *input, Sound *sound)
+	: _resource(resource), _graphics(graphics), _display(theDisplay), 
+	_input(input), _sound(sound), _talkSpeed(DEFAULT_TALK_SPEED) {
 	_jas = _resource->loadFile("QUEEN.JAS", 20);
 	_joe.x = _joe.y = 0;
 	_joe.scale = 100;
@@ -1124,7 +1126,7 @@ void Logic::roomDisplay(const char* room, RoomDisplayMode mode, uint16 scale, in
 	// FIXME: commented for now, to avoid color glitches when
 	// switching rooms during cutaway
 //	if (mode != RDM_NOFADE_JOE) {
-		_graphics->update();
+		update();
 		if (_currentRoom >= 114) {
 			_display->palFadeIn(0, 255, _currentRoom);
 		}
@@ -1609,26 +1611,26 @@ uint16 Logic::joeFace() {
 		if (_joe.facing == DIR_FRONT) {
 			if (_joe.prevFacing == DIR_BACK) {
 				pbs->frameNum = 33 + FRAMES_JOE_XTRA;
-				_graphics->update();
+				update();
 			}
 			frame = 34;
 		}
 		else if (_joe.facing == DIR_BACK) {
 			if (_joe.prevFacing == DIR_FRONT) {
 				pbs->frameNum = 33 + FRAMES_JOE_XTRA;
-				_graphics->update();
+				update();
 			}
 			frame = 35;
 		}
 		else if ((_joe.facing == DIR_LEFT && _joe.prevFacing == DIR_RIGHT) 
 			|| 	(_joe.facing == DIR_RIGHT && _joe.prevFacing == DIR_LEFT)) {
 			pbs->frameNum = 34 + FRAMES_JOE_XTRA;
-			_graphics->update();
+			update();
 		}
 		pbs->frameNum = frame + FRAMES_JOE_XTRA;
 		pbs->scale = _joe.scale;
 		pbs->xflip = (_joe.facing == DIR_LEFT);
-		_graphics->update();
+		update();
 		_joe.prevFacing = _joe.facing;
 		switch (frame) {
 		case 33: frame = 1; break;
@@ -1755,12 +1757,12 @@ void Logic::joeGrabDirection(StateGrab grab, uint16 speed) {
 		_graphics->bankUnpack(5, 29 + FRAMES_JOE_XTRA, 7);
 		bobJoe->xflip = (_joe.facing == DIR_LEFT);
 		bobJoe->scale = _joe.scale;
-		_graphics->update();
+		update();
 		// grab up
         _graphics->bankUnpack(7, 29 + FRAMES_JOE_XTRA, 7);
 		bobJoe->xflip = (_joe.facing == DIR_LEFT);
 		bobJoe->scale = _joe.scale;
-        _graphics->update();
+        update();
 		// turn back
 		if (speed == 0) {
 			frame = 7;
@@ -1775,12 +1777,12 @@ void Logic::joeGrabDirection(StateGrab grab, uint16 speed) {
 		_graphics->bankUnpack(frame, 29 + FRAMES_JOE_XTRA, 7);
 		bobJoe->xflip = (_joe.facing == DIR_LEFT);
 		bobJoe->scale = _joe.scale;
-		_graphics->update();
+		update();
 
 		// extra delay for grab down
 		if (grab == STATE_GRAB_DOWN) {
-			_graphics->update();
-			_graphics->update();
+			update();
+			update();
 		}
 
 		if (speed > 0) {
@@ -1838,9 +1840,17 @@ void Logic::joeUseUnderwear() {
 void Logic::playCutaway(const char* cutFile) {
 
 	char next[20];
-	Cutaway::run(cutFile, next, _graphics, this, _resource, _sound);
+	Cutaway::run(cutFile, next, _graphics, _input, this, _resource, _sound);
 }
 
+void Logic::update() {
+	_graphics->update(_currentRoom);
+	_input->delay();
+	_display->palCustomScroll(_currentRoom);
+	BobSlot *joe = _graphics->bob(0);
+	_display->update(joe->active, joe->x, joe->y);
+	_input->checkKeys();
+}
 
 } // End of namespace Queen
 
