@@ -49,7 +49,7 @@ For a more comprehensive changelog for the latest experimental CVS code, see:
 - New official PalmOS port
 - Various minor and not so minor SCUMM game fixes
 - Large memory leak fixed for The Dig/ComI
-- SMUSH code optimised, frame dropping added for slower machines
+- Smush code optimised, frame dropping added for slower machines
 - Code cleanups
 
 0.3.0b (2002-12-08)
@@ -65,7 +65,7 @@ For a more comprehensive changelog for the latest experimental CVS code, see:
 - code seperation of various engine parts into several libraries
 - several fixes to prevent Simon the Sorcerer crashing and hanging
 - hundreds of bugfixes for many other games
-- new SMUSH video engine, for Full Throttle and The Dig
+- new Smush video engine, for Full Throttle and The Dig
 - new in-game GUI
 - launcher dialog
 
