@@ -783,7 +783,7 @@ byte *Scumm::addMessageToStack(byte *msg)
 				*_msgPtrToAdd++ = ptr[num++];
 				break;
 			default: 
-				warning("addMessageToStack(): string escape sequence %d unknown", chr);
+				debug(2, "addMessageToStack(): string escape sequence %d unknown", chr);
 				*_msgPtrToAdd++ = 0xFF;
 				*_msgPtrToAdd++ = chr;
 				break;
