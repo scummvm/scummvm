@@ -33,7 +33,7 @@ _build_sword1=yes
 _build_sword2=yes
 _build_queen=yes
 _build_kyra=no
-_build_saga=no
+_build_saga=yes
 _need_memalign=no
 _build_plugins=no
 _nasm=auto
@@ -954,7 +954,7 @@ if test "$_build_queen" = yes ; then
   echo "    Flight of the Amazon Queen"
 fi
 if test "$_build_saga" = yes ; then
-  echo "    SAGA Engine"
+  echo "    SAGA"
 fi
 if test "$_build_kyra" = yes ; then
   echo "    Legend of Kyrandia"
