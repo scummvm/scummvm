@@ -15,6 +15,9 @@ LIBS	 = -lncurses
 # DEFINES += -DUSE_ALSA
 # LIBS    += -lasound
 
+# Uncomment this to activate the OpenGL rendering routines (it needs SDL!)
+# LIBS += -lGL
+# DEFINES += -DOPENGL
 
 # Now, please choose a graphical output system between SDL and X11.
 # Beware, only define one of them, otherwise the compilation will blow up.

@@ -30,6 +30,21 @@
 
 #include <SDL.h>
 
+
+#ifdef OPENGL
+
+#ifdef WIN32
+/* Use OpenGL 1.1 */
+#define OGL_1_1 
+#endif
+
+#include "fb2opengl.h"
+
+int gl_shake=0;
+
+#endif
+
+
 #define MAX(a,b) (((a)<(b)) ? (b) : (a))
 #define MIN(a,b) (((a)>(b)) ? (b) : (a))
 
@@ -247,10 +262,14 @@ void OSystem_SDL::set_palette(const byte *colors, uint start, uint num) {
 	uint i;
 	SDL_Color *base = _cur_pal + start;
 	for(i=0;i!=num;i++) {
-		base[i].r = b[0];
-		base[i].g = b[1];
-		base[i].b = b[2];
-		b += 4;
+	  #ifdef OPENGL
+	    fb2gl_palette(i+start,b[0],b[1],b[2]);
+	  #else
+	    base[i].r = b[0];
+            base[i].g = b[1];
+	    base[i].b = b[2];
+	  #endif
+	    b += 4;
 	}
 
 	if (start < _palette_changed_first)
@@ -267,7 +286,11 @@ void OSystem_SDL::load_gfx_mode() {
 
 	_sai_func = NULL;
 	sdl_tmpscreen = NULL;
-	
+
+#ifdef OPENGL
+  scaling=1;
+  _mode_flags |= DF_REAL_8BIT;
+#else		
 	switch(_mode) {
 	case GFX_2XSAI:
 		scaling = 2;
@@ -303,11 +326,13 @@ normal_mode:;
 		scaling = 1;
 		break;
 	}
-
+#endif
+	
 	sdl_screen = SDL_CreateRGBSurface(SDL_SWSURFACE, SCREEN_WIDTH, SCREEN_HEIGHT, 8, 0, 0, 0, 0);
 	if (sdl_screen == NULL)
 		error("sdl_screen failed failed");
 
+#ifndef OPENGL	
 	if (_sai_func) {
 		uint16 *tmp_screen = (uint16*)calloc((SCREEN_WIDTH+3)*(SCREEN_HEIGHT+3),sizeof(uint16));
 		_mode_flags = DF_WANT_RECT_OPTIM | DF_SEPARATE_TEMPSCREEN | DF_UPDATE_EXPAND_1_PIXEL;
@@ -334,6 +359,9 @@ normal_mode:;
 			error("sdl_tmpscreen failed");
 		
 	} else {
+#else
+	  {
+#endif
 		switch(scaling) {
 		case 3:
 			_sai_func = Normal3x;
@@ -348,12 +376,20 @@ normal_mode:;
 
 		_mode_flags = DF_WANT_RECT_OPTIM | DF_REAL_8BIT;
 
+		#ifdef OPENGL
+		  #ifdef OGL_1_1
+		    fb2gl_init(640,480,0,70, FB2GL_FS | FB2GL_320 | FB2GL_PITCH | FB2GL_RGBA | FB2GL_EXPAND);
+		  #else
+		    fb2gl_init(640,480,0,70, FB2GL_FS | FB2GL_320 | FB2GL_PITCH);
+		  #endif
+		#else
 		sdl_hwscreen = SDL_SetVideoMode(SCREEN_WIDTH * scaling, SCREEN_HEIGHT * scaling, 8, 
 			_full_screen ? (SDL_FULLSCREEN|SDL_SWSURFACE) : SDL_SWSURFACE
 		);
 		if (sdl_hwscreen == NULL)
 			error("sdl_hwscreen failed");
-		
+		#endif
+
 		sdl_tmpscreen = sdl_screen;
 	}
 }
@@ -362,7 +398,9 @@ void OSystem_SDL::unload_gfx_mode() {
 	SDL_FreeSurface(sdl_screen);
 	sdl_screen = NULL; 
 
+#ifndef OPENGL
 	SDL_FreeSurface(sdl_hwscreen); 
+#endif
 	sdl_hwscreen = NULL;
 
 	if (_mode_flags & DF_SEPARATE_TEMPSCREEN) {
@@ -542,9 +580,11 @@ void OSystem_SDL::add_dirty_rgn_auto(const byte *buf) {
 }
 
 void OSystem_SDL::update_screen() {
-	
+
+#ifndef OPENGL  
 	if (sdl_hwscreen == NULL)
 		return;	// Can this really happen?
+#endif
 
 	/* First make sure the mouse is drawn, if it should be drawn. */
 	draw_mouse();
@@ -554,10 +594,16 @@ void OSystem_SDL::update_screen() {
 	 * be set up for conversion from 8bit to 16bit.
 	 */ 
 	if (((_mode_flags & DF_REAL_8BIT) == 0) && _palette_changed_last != 0) {
+            #ifdef OPENGL
+                  fb2gl_set_palette(_palette_changed_first,
+                    _palette_changed_last - _palette_changed_first);
+		  fb2gl_update(sdl_tmpscreen->pixels,320,200,320,0,gl_shake);
+            #else
 		SDL_SetColors(sdl_screen, _cur_pal + _palette_changed_first, 
 			_palette_changed_first,
 			_palette_changed_last - _palette_changed_first);
-		
+	    #endif
+
 		_palette_changed_last = 0;
 
 		force_full = true;
@@ -567,13 +613,18 @@ void OSystem_SDL::update_screen() {
 	/* If the shake position changed, fill the dirty area with blackness */
 	if (_current_shake_pos != _new_shake_pos) {
 		SDL_Rect blackrect = {0, 0, SCREEN_WIDTH*scaling, _new_shake_pos*scaling};
+	      #ifdef OPENGL
+		gl_shake=_new_shake_pos;
+		fb2gl_update(sdl_tmpscreen->pixels,320,200,320,0,gl_shake);
+	      #else
 		SDL_FillRect(sdl_hwscreen, &blackrect, 0);
-
+	      #endif
 		_current_shake_pos = _new_shake_pos;
 
 		force_full = true;
 	}
 
+#ifndef OPENGL	
 	/* force a full redraw if requested */
 	if (force_full) {
 		num_dirty_rects = 1;
@@ -659,20 +710,28 @@ void OSystem_SDL::update_screen() {
 		SDL_UnlockSurface(sdl_tmpscreen);
 		SDL_UnlockSurface(sdl_hwscreen);
 	}
-	
+#endif
+
 	/* Palette update in case we are in "real" 8 bit color mode.
 	 * Must take place after the screen data was updated, since with
 	 * "real" 8bit mode, palatte changes may be visible immediatly,
 	 * and we want to avoid any ugly effects.
 	 */
 	if (_mode_flags & DF_REAL_8BIT && _palette_changed_last != 0) {
+            #ifdef OPENGL
+                  fb2gl_set_palette(_palette_changed_first,
+                    _palette_changed_last - _palette_changed_first);
+		  fb2gl_update(sdl_tmpscreen->pixels,320,200,320,0,gl_shake);
+            #else
 		SDL_SetColors(sdl_hwscreen, _cur_pal + _palette_changed_first, 
 			_palette_changed_first,
 			_palette_changed_last - _palette_changed_first);
+	    #endif
 		
 		_palette_changed_last = 0;
 	}
-	
+
+#ifndef OPENGL	
 	if (num_dirty_rects > 0) {
 		/* Finally, blit all our changes to the screen */
 		SDL_UpdateRects(sdl_hwscreen, num_dirty_rects, dirty_rect_list);
@@ -680,6 +739,16 @@ void OSystem_SDL::update_screen() {
 
 	num_dirty_rects = 0;
 	force_full = false;
+#else   /* OpenGL */
+     else gl_shake=0; /* _new_sake_pos == _current_shake_pos */
+     if (_palette_changed_last != 0) {
+        fb2gl_set_palette(_palette_changed_first,
+         _palette_changed_last - _palette_changed_first);
+	_palette_changed_last=0;
+     }
+     fb2gl_update(sdl_tmpscreen->pixels,320,200,320,0,gl_shake);
+#endif			    
+
 }
 
 bool OSystem_SDL::show_mouse(bool visible) {
@@ -875,11 +944,16 @@ void OSystem_SDL::hotswap_gfx_mode() {
 
 	force_full = true;
 
+#ifdef OPENGL
+        fb2gl_set_palette(0,256);
+	fb2gl_update(sdl_tmpscreen->pixels,320,200,320,0,gl_shake);
+#else
 	/* reset palette */
 	if (_mode_flags & DF_REAL_8BIT)
 		SDL_SetColors(sdl_hwscreen, _cur_pal, 0, 256);
 	else
 		SDL_SetColors(sdl_screen, _cur_pal, 0, 256);
+#endif
 
 	/* blit image */
 	OSystem_SDL::copy_rect(bak_mem, SCREEN_WIDTH, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);

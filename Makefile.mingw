@@ -18,6 +18,10 @@ CPPFLAGS= $(DEFINES) $(INCLUDES)
 LIBS	= -lmingw32 -lwinmm -lmad -lstdc++ $(SDL_LIBS)
 EXEEXT	:=.exe
 
+# Uncomment this to activate the OpenGL rendering routines (it needs SDL!)
+#LIBS += -lopengl32
+#DEFINES += -DOPENGL
+
 OBJS	= sdl.o scummvmico.o
 
 include Makefile.common
