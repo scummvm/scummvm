@@ -280,10 +280,10 @@ public:
 	int scummLoop(int delta);
 	void initScummVars();
 
-	const char *getResDataPath() const {return _gameDataPath;}
+	const char *getResDataPath() const { return _gameDataPath; }
 	const char *getGameDataPath() const {
 		if (_features & GF_AFTER_V8) {
-			char resourcePath[255];
+			static char resourcePath[256];
 			sprintf(resourcePath, "%s/resource", _gameDataPath);
 			return resourcePath;
 		}
@@ -294,13 +294,13 @@ public:
 	void shutDown(int i);
 	void setOptions(void);
 
-
 	// GUI
 	NewGui *_newgui;
 
 	Dialog *_pauseDialog;
 	Dialog *_optionsDialog;
 	Dialog *_saveLoadDialog;
+	// Debugger access this one, too...
 	ConsoleDialog *_debuggerDialog;
 
 	int runDialog(Dialog *dialog);
@@ -321,6 +321,7 @@ public:
 
 	/* Random number generation */
 	RandomSource _rnd;
+
 
 	/* Core variable definitions */
 	byte _gameId;
