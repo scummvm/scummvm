@@ -783,14 +783,16 @@ void Scumm::scummInit() {
 		for (i = 0; i < 16; i++)
 			_shadowPalette[i] = i;
 		setupC64Palette();
-	} else if (_features & GF_AMIGA) {
-		for (i = 0; i < 16; i++)
-			_shadowPalette[i] = i;
-		setupAmigaPalette();
 	} else if (_features & GF_16COLOR) {
-		for (i = 0; i < 16; i++)
-			_shadowPalette[i] = i;
-		setupEGAPalette();
+		if (_features & GF_AMIGA) {
+			for (i = 0; i < 16; i++)
+				_shadowPalette[i] = i;
+			setupAmigaPalette();
+		} else {
+			for (i = 0; i < 16; i++)
+				_shadowPalette[i] = i;
+			setupEGAPalette();
+		}
 	}
 
 	if (_version <= 2) {
