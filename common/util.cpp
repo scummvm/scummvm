@@ -102,9 +102,14 @@ void hexdump(const byte * data, int len, int bytes_per_line) {
 	assert(1 <= bytes_per_line && bytes_per_line <= 32);
 	int i;
 	byte c;
+	int offset = 0;
 	while (len >= bytes_per_line) {
-		for (i = 0; i < bytes_per_line; i++)
+		printf("%06x: ", offset);
+		for (i = 0; i < bytes_per_line; i++) {
 			printf("%02x ", data[i]);
+			if (i % 4 == 3)
+				printf(" ");
+		}
 		printf(" |");
 		for (i = 0; i < bytes_per_line; i++) {
 			c = data[i];
@@ -115,13 +120,18 @@ void hexdump(const byte * data, int len, int bytes_per_line) {
 		printf("|\n");
 		data += bytes_per_line;
 		len -= bytes_per_line;
+		offset += bytes_per_line;
 	}
 
 	if (len <= 0) 
 		return;
 
-	for (i = 0; i < len; i++)
+	printf("%06x: ", offset);
+	for (i = 0; i < len; i++) {
 		printf("%02x ", data[i]);
+		if (i % 4 == 3)
+			printf(" ");
+	}
 	for (; i < bytes_per_line; i++)
 		printf("   ");
 	printf(" |");
