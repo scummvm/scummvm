@@ -444,6 +444,17 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 	// Copy MD5 checksum
 	memcpy(_gameMD5, md5sum, 16);
 
+	// Check for unknown MD5
+	char md5str[32+1];
+	for (int j = 0; j < 16; j++) {
+		sprintf(md5str + j*2, "%02x", (int)md5sum[j]);
+	}
+	const MD5Table *elem;
+	elem = (const MD5Table *)bsearch(md5str, md5table, ARRAYSIZE(md5table)-1, sizeof(MD5Table), compareMD5Table);
+
+	if (!elem)
+		printf("Unknown MD5! Please report the details (language, platform, etc.) of this game to the ScummVM team\n");
+
 	// Add default file directories.
 	if (((_features & GF_AMIGA) || (_features & GF_ATARI_ST)) && (_version <= 4)) {
 		// This is for the Amiga version of Indy3/Loom/Maniac/Zak
