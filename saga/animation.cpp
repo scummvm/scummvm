@@ -43,8 +43,14 @@ int Anim::reg() {
 }
 
 Anim::Anim(void) {
+	int i;
+
 	_anim_limit = R_MAX_ANIMATIONS;
 	_anim_count = 0;
+
+	for (i = 0; i < R_MAX_ANIMATIONS; i++)
+		_anim_tbl[i] = NULL;
+
 	_initialized = true;
 }
 
