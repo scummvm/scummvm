@@ -232,7 +232,7 @@ void ScummEngine_v100he::setupOpcodes() {
 		OPCODE(o6_getObjectOldDir),
 		/* 98 */
 		OPCODE(o6_getActorMoving),
-		OPCODE(o6_invalid),
+		OPCODE(o90_getActorData),
 		OPCODE(o6_getActorRoom),
 		OPCODE(o6_getActorScaleX),
 		/* 9C */

@@ -239,6 +239,10 @@ public:
 		animProgress = 0;
 	}
 
+	int getAnimSpeed() const {
+		return animSpeed;
+	}
+
 	int getAnimProgress() const {
 		return animProgress;
 	}

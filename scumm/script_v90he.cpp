@@ -93,7 +93,7 @@ void ScummEngine_v90he::setupOpcodes() {
 		/* 28 */
 		OPCODE(o90_setSpriteGroupInfo),
 		OPCODE(o90_getWizData),
-		OPCODE(o6_invalid),
+		OPCODE(o90_getActorData),
 		OPCODE(o90_startScriptUnk),
 		/* 2C */
 		OPCODE(o90_jumpToScriptUnk),
@@ -448,6 +448,41 @@ void ScummEngine_v90he::o90_getSegmentAngle() {
 		a += 360;
 	}
 	push(a);
+}
+
+void ScummEngine_v90he::o90_getActorData() {
+	Actor *a;
+
+	int subOp = pop();
+	int val = pop();
+	int act = pop();
+
+	a = derefActorSafe(act, "o90_getActorData");
+
+	switch (subOp) {
+	case 1:
+		push(a->isUserConditionSet(val));
+		break;
+	case 2:
+		// Get actor limb?
+		checkRange(15, 0, val, "Limb %d out of range");
+		push(0);
+		break;
+	case 3:
+		push(a->getAnimSpeed());
+		break;
+	case 4:
+		push(a->_shadowMode);
+		break;
+	case 5:
+		push(a->_layer);
+		break;
+	case 6:
+		push(a->hePaletteNum);
+		break;
+	default:
+		error("o90_getActorData: Unknown actor property %d", subOp);
+	}
 }
 
 void ScummEngine_v90he::o90_startScriptUnk() {

@@ -1021,6 +1021,7 @@ protected:
 	void o90_sqrt();
 	void o90_atan2();
 	void o90_getSegmentAngle();
+	void o90_getActorData();
 	void o90_startScriptUnk();
 	void o90_jumpToScriptUnk();
 	void o90_wizImageOps();
