@@ -170,7 +170,7 @@ protected:
 	void push(uint32);
 	uint32 pop();
 	void checkModuleLoaded(uint16 moduleNo);
-	uint32 script(Compact *compact, uint32 script);
+	uint32 script(Compact *compact, uint16 scriptNo, uint16 offset);
 	void initScriptVariables();
 
 	Compact *_compact;

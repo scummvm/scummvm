@@ -95,20 +95,18 @@ void SkyLogic::logicScript() {
 	for (;;) {
 		uint16 mode = _compact->mode; // get pointer to current script
 		printf("compact mode: %d\n", mode);
-		uint16 *p1= (uint16 *)SkyCompact::getCompactElem(_compact, C_BASE_SUB + mode);
-		uint16 *p2= (uint16 *)SkyCompact::getCompactElem(_compact, C_BASE_SUB + mode + 2);
-		uint32 scr = (*p2 << 16) | *p1; // get script number and offset
+		uint16 *scriptNo = (uint16 *)SkyCompact::getCompactElem(_compact, C_BASE_SUB + mode);
+		uint16 *offset   = (uint16 *)SkyCompact::getCompactElem(_compact, C_BASE_SUB + mode + 2);
 
 		// FIXME: HACK ALERT!!!!
-		if (scr == 0x27)
-			scr = 0x9fa0027;
+		if (*scriptNo == 0x27 && *offset == 0)
+			*offset = 0x9fa;
 
-		printf("script: 0x%X\n", scr);
-		scr = script(_compact, scr);
-		*p1 = (uint16)(scr & 0xffff);
-		*p2 = (uint16)(scr >> 16);
+		uint32 scr = script(_compact, *scriptNo, *offset);
+		*scriptNo = (uint16)(scr & 0xffff);
+		*offset   = (uint16)(scr >> 16);
 
-		if (!(scr & 0xffff0000)) // script finished
+		if (!*offset) // script finished
 			_compact->mode -= 4;
 		else if (_compact->mode == mode)
 			return;
@@ -116,7 +114,7 @@ void SkyLogic::logicScript() {
 }
 
 void SkyLogic::autoRoute() {
-	error("autoRoute unimplented");
+	error("autoRoute unimplemented");
 	uint16 *route;
 	route = 0;
 	
@@ -156,11 +154,10 @@ void SkyLogic::alt() {
 	// change the current script
 
 	_compact->logic = L_SCRIPT;
-	uint16 *p1= (uint16 *)SkyCompact::getCompactElem(_compact, C_BASE_SUB + _compact->mode);
-	uint16 *p2= (uint16 *)SkyCompact::getCompactElem(_compact, C_BASE_SUB + _compact->mode + 2);
-
-	*p1 = _compact->extCompact->alt;
-	*p2 = 0;
+	uint16 *scriptNo = (uint16 *)SkyCompact::getCompactElem(_compact, C_BASE_SUB + _compact->mode);
+	uint16 *offset   = (uint16 *)SkyCompact::getCompactElem(_compact, C_BASE_SUB + _compact->mode + 2);
+	*scriptNo = _compact->extCompact->alt;
+	*offset = 0;
 
 	logicScript();
 }
@@ -396,7 +393,7 @@ void SkyLogic::initScriptVariables() {
 	_scriptVariables[822] = 1;
 }
 
-uint32 SkyLogic::script(Compact *compact, uint32 scr) {
+uint32 SkyLogic::script(Compact *compact, uint16 scriptNo, uint16 offset) {
 script:
 	// process a script
 	// low level interface to interpreter
@@ -406,8 +403,7 @@ script:
 	// Bit 12-15 - Module number
 	// Bit 16-31 - Script offset (if any)
 
-	uint16 scriptNo = (uint16)(scr & 0xffff);
-	uint16 moduleNo = (uint16)((scr & 0xff00) >> 12);
+	uint16 moduleNo = (uint16)((scriptNo & 0xff00) >> 12);
 	printf("scriptNo: %d, moduleNo: %d\n", scriptNo, moduleNo);
 	uint16 *scriptData = _moduleList[moduleNo]; // get module address
 
@@ -420,10 +416,10 @@ script:
 	uint16 *moduleStart = scriptData;
 
 	// Check whether we have an offset or what
-	if (scr & 0xffff0000)
-		scriptData = moduleStart + (scr >> 16);
+	if (offset)
+		scriptData = moduleStart + offset;
 	else
-		scriptData += READ_LE_UINT16(scriptData + (scr & 0x0fff));
+		scriptData += READ_LE_UINT16(scriptData + (scriptNo & 0x0fff));
 
 	uint32 a, b, c;
 	uint16 command, mcode, s;
@@ -687,10 +683,10 @@ uint32 SkyLogic::fnGetTo(uint32 targetPlaceId, uint32 mode, uint32 c) {
 	while (*getToTable != targetPlaceId)
 		getToTable += 2;
 
-	uint16 *p1= (uint16 *)SkyCompact::getCompactElem(_compact, C_BASE_SUB + _compact->mode);
-	uint16 *p2= (uint16 *)SkyCompact::getCompactElem(_compact, C_BASE_SUB + _compact->mode + 2);
-	*p1 = *(getToTable + 1); // get new script
-	*p2 = 0;
+	uint16 *scriptNo = (uint16 *)SkyCompact::getCompactElem(_compact, C_BASE_SUB + _compact->mode);
+	uint16 *offset   = (uint16 *)SkyCompact::getCompactElem(_compact, C_BASE_SUB + _compact->mode + 2);
+	*scriptNo = *(getToTable + 1); // get new script
+	*offset = 0;
 
 	return 0; // drop out of script
 }
