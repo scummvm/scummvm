@@ -553,6 +553,12 @@ void Scumm::loadRoomObjectsOldBundle() {
 		setupRoomObject(od, room);
 
 		ptr += 2;
+
+		if (_dumpScripts) {
+			char buf[32];
+			sprintf(buf, "roomobj-%d-", _roomResource);
+			dumpResource(buf, od->obj_nr, room + od->OBCDoffset);
+		}
 	}
 
 	CHECK_HEAP
