@@ -178,6 +178,7 @@ int Anim::play(uint16 anim_id, int vector_time, bool playing) {
 	size_t nextf_len;
 
 	uint16 frame;
+	int frame_time;
 	int result;
 
 	if (anim_id >= _anim_count) {
@@ -284,13 +285,16 @@ int Anim::play(uint16 anim_id, int vector_time, bool playing) {
 			link_anim->state = ANIM_PLAYING;
 		}
 		anim_id = link_anim_id;
+		frame_time = 0;
+	} else {
+		frame_time = anim->frame_time;
 	}
 
 	event.type = ONESHOT_EVENT;
 	event.code = ANIM_EVENT;
 	event.op = EVENT_FRAME;
 	event.param = anim_id;
-	event.time = anim->frame_time + vector_time;
+	event.time = frame_time + vector_time;
 
 	_vm->_events->queue(&event);
 
