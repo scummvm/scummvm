@@ -212,7 +212,7 @@ byte CostumeRenderer::mainRoutine(int xmoveCur, int ymoveCur) {
 		if (!use_scaling)
 			skip = -v1.x;
 		if (skip > 0) {
-			if (!newAmiCost && _vm->_version > 1) {
+			if (!newAmiCost && _loaded._format != 0x57) {
 				v1.skip_width -= skip;
 				codec1_ignorePakCols(skip);
 				v1.x = 0;
@@ -229,7 +229,7 @@ byte CostumeRenderer::mainRoutine(int xmoveCur, int ymoveCur) {
 		if (!use_scaling)
 			skip = x_right - _vm->_screenWidth;
 		if (skip > 0) {
-			if (!newAmiCost && _vm->_version > 1) {
+			if (!newAmiCost && _loaded._format != 0x57) {
 				v1.skip_width -= skip;
 				codec1_ignorePakCols(skip);
 				v1.x = _vm->_screenWidth - 1;
