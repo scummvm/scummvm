@@ -20,23 +20,23 @@
 #include "blocky16.h"
 #include "debug.h"
 
-static int8 codec47_table_small1[] = {
+static int8 blocky16_table_small1[] = {
 	0, 1, 2, 3, 3, 3, 3, 2, 1, 0, 0, 0, 1, 2, 2, 1,
 };
 
-static int8 codec47_table_small2[] = {
+static int8 blocky16_table_small2[] = {
 	0, 0, 0, 0, 1, 2, 3, 3, 3, 3, 2, 1, 1, 1, 2, 2,
 };
 
-static int8 codec47_table_big1[] = {
+static int8 blocky16_table_big1[] = {
 	0, 2, 5, 7, 7, 7, 7, 7, 7, 5, 2, 0, 0, 0, 0, 0,
 };
 
-static int8 codec47_table_big2[] = {
+static int8 blocky16_table_big2[] = {
 	0, 0, 0, 0, 1, 3, 4, 6, 7, 7, 7, 7, 6, 4, 3, 1,
 };
 
-static int8 codec47_table[] = {
+static int8 blocky16_table[] = {
 	  0,   0,  -1, -43,   6, -43,  -9, -42,  13, -41,
 	-16, -40,  19, -39, -23, -36,  26, -34,  -2, -33,
 	  4, -33, -29, -32,  -9, -32,  11, -31, -16, -29,
@@ -101,8 +101,8 @@ void Blocky16::makeTablesInterpolation(int param) {
 	int i, x, y;
 
 	if (param == 8) {
-		table47_1 = codec47_table_big1;
-		table47_2 = codec47_table_big2;
+		table47_1 = blocky16_table_big1;
+		table47_2 = blocky16_table_big2;
 		ptr = _tableBig + 384;
 		for (i = 0; i < 256; i++) {
 			*ptr = 0;
@@ -114,8 +114,8 @@ void Blocky16::makeTablesInterpolation(int param) {
 			ptr += 388;
 		}
 	} else if (param == 4) {
-		table47_1 = codec47_table_small1;
-		table47_2 = codec47_table_small2;
+		table47_1 = blocky16_table_small1;
+		table47_2 = blocky16_table_small2;
 		ptr = _tableSmall + 96;
 		for (i = 0; i < 256; i++) {
 			*ptr = 0;
@@ -258,7 +258,7 @@ void Blocky16::makeTables47(int width) {
 	int16 tmp;
 
 	for (int l = 0; l < 512; l += 2) {
-		_table[l / 2] = (int16)(codec47_table[l + 1] * width + codec47_table[l]);
+		_table[l / 2] = (int16)(blocky16_table[l + 1] * width + blocky16_table[l]);
 	}
 
 	a = 0;
@@ -683,7 +683,7 @@ void Blocky16::decode(byte *dst, const byte *src) {
 		memcpy(_curBuf, gfx_data, _frameSize);
 		break;
 	case 1:
-		error("codec47: not implemented decode1 proc");
+		error("blocky16: not implemented decode1 proc");
 		break;
 	case 2:
 		if (seq_nb == _prevSeqNb + 1) {
@@ -711,7 +711,7 @@ void Blocky16::decode(byte *dst, const byte *src) {
 			break;
 		}
 	case 7:
-		error("codec47: not implemented decode7 proc");
+		error("blocky16: not implemented decode7 proc");
 		break;
 	case 8:
 		{
