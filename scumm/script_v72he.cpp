@@ -51,15 +51,15 @@ void ScummEngine_v72he::setupOpcodes() {
 		OPCODE(o72_pushDWordVar),
 		OPCODE(o6_pushWordVar),
 		/* 04 */
-		OPCODE(o72_getString),
+		OPCODE(o72_addMessageToStack),
 		OPCODE(o6_invalid),
 		OPCODE(o6_invalid),
-		OPCODE(o6_wordArrayRead),
+		OPCODE(o72_wordArrayRead),
 		/* 08 */
 		OPCODE(o6_invalid),
 		OPCODE(o6_invalid),
 		OPCODE(o6_invalid),
-		OPCODE(o6_wordArrayIndexedRead),
+		OPCODE(o72_wordArrayIndexedRead),
 		/* 0C */
 		OPCODE(o6_dup),
 		OPCODE(o6_not),
@@ -134,12 +134,12 @@ void ScummEngine_v72he::setupOpcodes() {
 		OPCODE(o6_invalid),
 		OPCODE(o6_invalid),
 		OPCODE(o6_invalid),
-		OPCODE(o6_wordArrayWrite),
+		OPCODE(o72_wordArrayWrite),
 		/* 48 */
 		OPCODE(o6_invalid),
 		OPCODE(o6_invalid),
 		OPCODE(o6_invalid),
-		OPCODE(o6_wordArrayIndexedWrite),
+		OPCODE(o72_wordArrayIndexedWrite),
 		/* 4C */
 		OPCODE(o6_invalid),
 		OPCODE(o6_invalid),
@@ -149,17 +149,17 @@ void ScummEngine_v72he::setupOpcodes() {
 		OPCODE(o6_invalid),
 		OPCODE(o6_invalid),
 		OPCODE(o6_invalid),
-		OPCODE(o6_wordArrayInc),
+		OPCODE(o72_wordArrayInc),
 		/* 54 */
 		OPCODE(o72_objectX),
 		OPCODE(o72_objectY),
-		OPCODE(o6_byteVarDec),
+		OPCODE(o6_invalid),
 		OPCODE(o6_wordVarDec),
 		/* 58 */
 		OPCODE(o6_invalid),
 		OPCODE(o6_invalid),
 		OPCODE(o6_invalid),
-		OPCODE(o6_wordArrayDec),
+		OPCODE(o72_wordArrayDec),
 		/* 5C */
 		OPCODE(o6_if),
 		OPCODE(o6_ifNot),
@@ -311,7 +311,7 @@ void ScummEngine_v72he::setupOpcodes() {
 		OPCODE(o6_getAnimateVariable),
 		OPCODE(o6_invalid),
 		/* D4 */
-		OPCODE(o6_shuffle),
+		OPCODE(o72_shuffle),
 		OPCODE(o72_jumpToScript),
 		OPCODE(o6_band),
 		OPCODE(o6_bor),
@@ -383,13 +383,15 @@ static int arrayDataSizes[] = {0, 1, 4, 8, 8, 16, 32};
 
 ScummEngine_v72he::ArrayHeader *ScummEngine_v72he::defineArray(int array, int type, int dim2start, int dim2end,
 											int dim1start, int dim1end) {
+	debug(1,"defineArray (array %d, dim2start %d, dim2end %d dim1start %d dim1end %d", array, dim2start, dim2end, dim1start, dim1end);
+
 	int id;
 	int size;
 	ArrayHeader *ah;
 	
 	assert(dim2start >= 0 && dim2start <= dim2end);
 	assert(dim1start >= 0 && dim1start <= dim1end);
-	assert(0 <= type && type <= 5);
+	assert(0 <= type && type <= 6);
 
 	
 	if (type == kBitArray || type == kNibbleArray)
@@ -423,6 +425,8 @@ ScummEngine_v72he::ArrayHeader *ScummEngine_v72he::defineArray(int array, int ty
 }
 
 int ScummEngine_v72he::readArray(int array, int idx2, int idx1) {
+	debug(1, "readArray (array %d, idx2 %d, idx1 %d)", array, idx2, idx1);
+
 	if (readVar(array) == 0)
 		error("readArray: Reference to zeroed array pointer");
 
@@ -431,13 +435,13 @@ int ScummEngine_v72he::readArray(int array, int idx2, int idx1) {
 	if (ah == NULL || ah->data == NULL)
 		error("readArray: invalid array %d (%d)", array, readVar(array));
 
-	if (idx2 < FROM_LE_32(ah->dim2start) || idx2 >= FROM_LE_32(ah->dim2end) || 
-		idx1 < FROM_LE_32(ah->dim1start) || idx1 >= FROM_LE_32(ah->dim2end)) {
+	if (idx2 < 0 || idx2 > FROM_LE_32(ah->dim2end) || 
+		idx1 < 0 || idx1 > FROM_LE_32(ah->dim1end)) {
 		error("readArray: array %d out of bounds: [%d, %d] exceeds [%d..%d, %d..%d]",
 			  array, idx1, idx2, FROM_LE_32(ah->dim1start), FROM_LE_32(ah->dim1end),
 			  FROM_LE_32(ah->dim2start), FROM_LE_32(ah->dim2end));
 	}
-	
+
 	const int offset = (FROM_LE_32(ah->dim1end) - FROM_LE_32(ah->dim1start) + 1) *
 		(idx2 - FROM_LE_32(ah->dim2start)) - FROM_LE_32(ah->dim1start) + idx1;
 
@@ -457,6 +461,8 @@ int ScummEngine_v72he::readArray(int array, int idx2, int idx1) {
 }
 
 void ScummEngine_v72he::writeArray(int array, int idx2, int idx1, int value) {
+	debug(1, "writeArray (array %d, idx2 %d, idx1 %d, value %d)", array, idx2, idx1, value);
+
 	if (readVar(array) == 0)
 		error("writeArray: Reference to zeroed array pointer");
 
@@ -465,8 +471,8 @@ void ScummEngine_v72he::writeArray(int array, int idx2, int idx1, int value) {
 	if (!ah)
 		error("writeArray: Invalid array (%d) reference", readVar(array));
 
-	if (idx2 < FROM_LE_32(ah->dim2start) || idx2 >= FROM_LE_32(ah->dim2end) || 
-		idx1 < FROM_LE_32(ah->dim1start) || idx1 >= FROM_LE_32(ah->dim2end)) {
+	if (idx2 < 0 || idx2 > FROM_LE_32(ah->dim2end) || 
+		idx1 < 0 || idx1 > FROM_LE_32(ah->dim1end)) {
 		error("writeArray: array %d out of bounds: [%d, %d] exceeds [%d..%d, %d..%d]",
 			  array, idx1, idx2, FROM_LE_32(ah->dim1start), FROM_LE_32(ah->dim1end),
 			  FROM_LE_32(ah->dim2start), FROM_LE_32(ah->dim2end));
@@ -503,6 +509,20 @@ void ScummEngine_v72he::readArrayFromIndexFile() {
 	}
 }
 
+void ScummEngine_v72he::copyScriptString(byte *dst) {
+	int a = pop();
+	int b = 0;
+	if (a == -1) {
+		int len = resStrLen(_stringBuffer) + 1;
+		while (len--)
+			*dst++ = _stringBuffer[b++];
+	} else {
+		int len = resStrLen(_scriptPointer) + 1;
+		while (len--)
+			*dst++ = fetchScriptByte();
+	}
+}
+
 void ScummEngine_v72he::o72_pushDWordVar() {
 	int a;
 	if (*_lastCodePtr + sizeof(MemBlkHeader) != _scriptOrgPointer) {
@@ -515,14 +535,24 @@ void ScummEngine_v72he::o72_pushDWordVar() {
 	push(a);
 }
 
-void ScummEngine_v72he::o72_getString() {
-	int len;
-	
-	len = resStrLen(_scriptPointer);
-	warning("stub o72_getString(\"%s\")", _scriptPointer);
-	_scriptPointer += len;
-	fetchScriptWord();
-	fetchScriptWord();
+void ScummEngine_v72he::o72_addMessageToStack() {
+	_stringLength = resStrLen(_scriptPointer) + 1;
+	addMessageToStack(_scriptPointer, _stringBuffer, _stringLength);
+
+	debug(1,"o72_addMessageToStack(\"%s\")", _scriptPointer);
+
+	_scriptPointer += _stringLength;
+}
+
+void ScummEngine_v72he::o72_wordArrayRead() {
+	int base = pop();
+	push(readArray(fetchScriptWord(), 0, base));
+}
+
+void ScummEngine_v72he::o72_wordArrayIndexedRead() {
+	int base = pop();
+	int idx = pop();
+	push(readArray(fetchScriptWord(), idx, base));
 }
 
 void ScummEngine_v72he::o72_compareStackList() {
@@ -540,6 +570,23 @@ void ScummEngine_v72he::o72_compareStackList() {
 	} else {
 		push(0);
 	}
+}
+
+void ScummEngine_v72he::o72_wordArrayWrite() {
+	int a = pop();
+	writeArray(fetchScriptWord(), 0, pop(), a);
+}
+
+void ScummEngine_v72he::o72_wordArrayIndexedWrite() {
+	int val = pop();
+	int base = pop();
+	writeArray(fetchScriptWord(), pop(), base, val);
+}
+
+void ScummEngine_v72he::o72_wordArrayInc() {
+	int var = fetchScriptWord();
+	int base = pop();
+	writeArray(var, 0, base, readArray(var, 0, base) + 1);
 }
 
 void ScummEngine_v72he::o72_objectX() {
@@ -565,6 +612,12 @@ void ScummEngine_v72he::o72_objectY() {
 	}
 
 	push(_objs[objnum].y_pos);
+}
+
+void ScummEngine_v72he::o72_wordArrayDec() {
+	int var = fetchScriptWord();
+	int base = pop();
+	writeArray(var, 0, base, readArray(var, 0, base) - 1);
 }
 
 void ScummEngine_v72he::o72_startScript() {
@@ -658,43 +711,38 @@ void ScummEngine_v72he::o72_getArrayDimSize() {
 
 void ScummEngine_v72he::o72_arrayOps() {
 	byte subOp = fetchScriptByte();
-	int array = fetchScriptWord();
+	int array = 0;
 	int b, c, d, len;
 	ArrayHeader *ah;
 	int list[128];
 
 	switch (subOp) {
 	case 7:			// SO_ASSIGN_STRING
-		len = resStrLen(_scriptPointer);
-		ah = defineArray(array, kStringArray, 0, 0, 0, len + 1);
+		array = fetchScriptWord();
+		ah = defineArray(array, kStringArray, 0, 0, 0, 100);
 		copyScriptString(ah->data);
 		break;
-	case 205:		// SO_ASSIGN_STRING
-		b = pop();
-		len = resStrLen(_scriptPointer);
-		ah = defineArray(array, kStringArray, 0, 0, 0, len + 1);
-		copyScriptString(ah->data + b);
-		break;
 	case 208:		// SO_ASSIGN_INT_LIST
+		array = fetchScriptWord();
 		b = pop();
 		c = pop();
 		d = readVar(array);
 		if (d == 0) {
-			defineArray(array, kIntArray, 0, 0, 0, b + c);
+			defineArray(array, kDwordArray, 0, 0, 0, b + c);
 		}
-		while (c--) {
+		while (--c) {
 			writeArray(array, 0, b + c, pop());
 		}
 		break;
 	case 212:		// SO_ASSIGN_2DIM_LIST
-		b = pop();
+		array = fetchScriptWord();
 		len = getStackList(list, ARRAYSIZE(list));
 		d = readVar(array);
 		if (d == 0)
 			error("Must DIM a two dimensional array before assigning");
 		c = pop();
 		while (--len >= 0) {
-			writeArray(array, c, b + len, list[len]);
+			writeArray(array, c, len, list[len]);
 		}
 		break;
 	default:
@@ -765,6 +813,30 @@ void ScummEngine_v72he::o72_dim2dimArray() {
 	b = pop();
 	a = pop();
 	defineArray(fetchScriptWord(), data, 0, a, 0, b);
+}
+
+void ScummEngine_v72he::shuffleArray(int num, int minIdx, int maxIdx) {
+	int range = maxIdx - minIdx;
+	int count = range * 2;
+
+	// Shuffle the array 'num'
+	while (count--) {
+		// Determine two random elements...
+		int rand1 = _rnd.getRandomNumber(range) + minIdx;
+		int rand2 = _rnd.getRandomNumber(range) + minIdx;
+		
+		// ...and swap them
+		int val1 = readArray(num, 0, rand1);
+		int val2 = readArray(num, 0, rand2);
+		writeArray(num, 0, rand1, val2);
+		writeArray(num, 0, rand2, val1);
+	}
+}
+
+void ScummEngine_v72he::o72_shuffle() {
+	int b = pop();
+	int a = pop();
+	shuffleArray(fetchScriptWord(), a, b);
 }
 
 void ScummEngine_v72he::o72_jumpToScript() {
@@ -933,6 +1005,7 @@ void ScummEngine_v72he::o72_stringLen() {
 }
 
 void ScummEngine_v72he::o72_readINI() {
+	byte name[100];
 	int type;
 	int retval;
 
@@ -943,6 +1016,7 @@ void ScummEngine_v72he::o72_readINI() {
 		push(0);
 		break;
 	case 7: // string
+		copyScriptString(name);
 		defineArray(0, kStringArray, 0, 0, 0, 0);
 		retval = readVar(0);
 		writeArray(0, 0, 0, 0);
@@ -968,7 +1042,11 @@ void ScummEngine_v72he::o72_unknownF4() {
 }
 
 void ScummEngine_v72he::o72_unknownFA() {
-	warning("stub o72_unknownFA(%d)", fetchScriptByte());
+	byte name[100];
+	int id = fetchScriptByte();
+	copyScriptString(name);
+
+	debug(1,"o72_unknownFA: (%d) %s", id, name);
 }
 
 void ScummEngine_v72he::o72_unknownFB() {

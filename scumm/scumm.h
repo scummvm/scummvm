@@ -1107,6 +1107,9 @@ protected:
 	int _charsetBufPos;
 	byte _charsetBuffer[512];
 
+	int _stringLength;
+	byte _stringBuffer[4096];
+
 	bool _keepText;
 
 	void initCharset(int charset);

@@ -353,7 +353,6 @@ protected:
 	void nukeArray(int array);
 	int readArray(int array, int index, int base);
 	void writeArray(int array, int index, int base, int value);
-
 	void shuffleArray(int num, int minIdx, int maxIdx);
 
 	void setCursorFromImg(uint img, uint room, uint imgindex);
@@ -661,7 +660,6 @@ protected:
 
 public:
 	ScummEngine_v72he(GameDetector *detector, OSystem *syst, const ScummGameSettings &gs) : ScummEngine_v7he(detector, syst, gs) {}
-	//ScummEngine_v72he(GameDetector *detector, OSystem *syst, const ScummGameSettings &gs);
 
 protected:
 	virtual void setupScummVars();
@@ -676,13 +674,22 @@ protected:
 	void writeArray(int array, int idx2, int idx1, int value);
 	void redimArray(int arrayId, int newDim2start, int newDim2end, 
 					int newDim1start, int newDim1end, int type);
+	void shuffleArray(int num, int minIdx, int maxIdx);
+
+	void copyScriptString(byte *dst);
 
 	/* Version 7 script opcodes */
 	void o72_pushDWordVar();
-	void o72_getString();
+	void o72_addMessageToStack();
+	void o72_wordArrayRead();
+	void o72_wordArrayIndexedRead();
+	void o72_wordArrayWrite();
+	void o72_wordArrayIndexedWrite();
 	void o72_compareStackList();
+	void o72_wordArrayInc();
 	void o72_objectX();
 	void o72_objectY();
+	void o72_wordArrayDec();
 	void o72_startScript();
 	void o72_startObject();
 	void o72_drawObject();
@@ -691,6 +698,7 @@ protected:
 	void o72_arrayOps();
 	void o72_dimArray();
 	void o72_dim2dimArray();
+	void o72_shuffle();
 	void o72_jumpToScript();
 	void o72_findAllObjects();
 	void o72_getPixel();
