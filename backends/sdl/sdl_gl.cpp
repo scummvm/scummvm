@@ -205,8 +205,6 @@ void OSystem_SDL_OpenGL::load_gfx_mode() {
 			Init_2xSaI(565);
 	}
 
-	SDL_SetGamma(1.25, 1.25, 1.25);
-	
 	//
 	// Create the surface used for the graphics in 16 bit before scaling, and also the overlay
 	//
@@ -262,8 +260,6 @@ void OSystem_SDL_OpenGL::load_gfx_mode() {
 
 void OSystem_SDL_OpenGL::unload_gfx_mode() {
   
-	SDL_SetGamma(1.0, 1.0, 1.0);
-
 	if (_screen) {
 		SDL_FreeSurface(_screen);
 		_screen = NULL; 
