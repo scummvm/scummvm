@@ -242,6 +242,8 @@ void Player::send(uint32 b) {
 
 	case 0x9: // Key On
 		if (!_scanning) {
+			if (_isMT32 && !_se->isNativeMT32())
+				param2 = (((param2 * 3) >> 2) + 32) & 0x7F;
 			if ((part = getPart(chan)) != 0)
 				part->noteOn(param1, param2);
 		} else {
