@@ -67,6 +67,8 @@ static const VersionSettings scumm_settings[] = {
 	/* Scumm Version 2 */
 	{"maniac", "Maniac Mansion", GID_MANIAC, 2, 0, 0,
 	 GF_AFTER_V2 | GF_SMALL_HEADER | GF_USE_KEY | GF_SMALL_NAMES | GF_16COLOR | GF_OLD_BUNDLE | GF_NO_SCALLING, "00.LFL"},
+	{"mmamiga", "Maniac Mansion", GID_MANIAC, 2, 0, 0,
+	 GF_AFTER_V2 | GF_SMALL_HEADER | GF_USE_KEY | GF_SMALL_NAMES | GF_16COLOR | GF_OLD_BUNDLE | GF_NO_SCALLING | GF_AMIGA, "00.LFL"},
 	{"zak",         "Zak McKracken and the Alien Mindbenders",      GID_ZAK,     2, 0, 0,
 	 GF_AFTER_V2 | GF_SMALL_HEADER | GF_USE_KEY | GF_SMALL_NAMES | GF_16COLOR | GF_OLD_BUNDLE | GF_NO_SCALLING, "00.LFL"},
 
@@ -612,8 +614,9 @@ Scumm::Scumm (GameDetector *detector, OSystem *syst)
 		_imuse = NULL;
 		_playerV2 = NULL;
 	} else if (_features & GF_OLD_BUNDLE && !(_features & GF_AFTER_V3)) {
-		debug (0, "Creating player");
-		_playerV2 = new Player_V2();
+		_playerV2 = NULL;
+		if (!(_features & GF_AMIGA))
+			_playerV2 = new Player_V2();
 		_imuse = NULL;
 		_imuseDigital = NULL;
 	} else {
