@@ -387,15 +387,19 @@ int32 Sword2Sound::GetCompSpeechSize(const char *filename, uint32 speechid) {
 		fp.close();
 		return (0);
 	}
+#ifdef SCUMM_BIG_ENDIAN
+	speechIndex[0] = SWAP_BYTES_32(speechIndex[0]);
+	speechIndex[1] = SWAP_BYTES_32(speechIndex[1]);
+#endif
 
-	if (!FROM_LE_32(speechIndex[0]) || !FROM_LE_32(speechIndex[1])) {
+	if (!speechIndex[0] || !speechIndex[1]) {
 		fp.close();
 		return (0);
 	}
 
 	fp.close();
 
-	i = (FROM_LE_32(speechIndex[1]) - 1) * 2 + sizeof(_wavHeader) + 8;
+	i = (speechIndex[1] - 1) * 2 + sizeof(_wavHeader) + 8;
 	
 	return(i);
 }
@@ -419,6 +423,10 @@ int32 Sword2Sound::PreFetchCompSpeech(const char *filename, uint32 speechid, uin
 		fp.close();
 		return (RDERR_READERROR);
 	}
+#ifdef SCUMM_BIG_ENDIAN
+	speechIndex[0] = SWAP_BYTES_32(speechIndex[0]);
+	speechIndex[1] = SWAP_BYTES_32(speechIndex[1]);
+#endif
 
 	if (!speechIndex[0] || !speechIndex[1]) {
 		fp.close();
@@ -500,6 +508,10 @@ int32 Sword2Sound::PlayCompSpeech(const char *filename, uint32 speechid, uint8 v
 			fp.close();
 			return (RDERR_READERROR);
 		}
+#ifdef SCUMM_BIG_ENDIAN
+		speechIndex[0] = SWAP_BYTES_32(speechIndex[0]);
+		speechIndex[1] = SWAP_BYTES_32(speechIndex[1]);
+#endif
 
 		if (speechIndex[0] == 0 || speechIndex[1] == 0) {
 			fp.close();
