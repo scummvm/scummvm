@@ -234,6 +234,7 @@ SmushPlayer::SmushPlayer(ScummEngine_v6 *scumm, int speed) {
 	_subtitles = ConfMan.getBool("subtitles");
 	_dst = NULL;
 	_storeFrame = false;
+	_compressedFileMode = false;
 	_width = 0;
 	_height = 0;
 	_IACTpos = 0;
@@ -289,7 +290,9 @@ void SmushPlayer::release() {
 		free(_specialBuffer);
 		_specialBuffer = NULL;
 	}
-	
+
+	_vm->_mixer->stopHandle(_compressedFileSoundHandle);
+
 	_vm->_mixer->stopHandle(_IACTchannel);
 
 	_vm->_fullRedraw = true;
@@ -850,7 +853,8 @@ void SmushPlayer::handleFrame(Chunk &b) {
 			break;
 #endif
 		case TYPE_PSAD:
-			handleSoundFrame(*sub);
+			if (!_compressedFileMode)
+				handleSoundFrame(*sub);
 			break;
 		case TYPE_TRES:
 			handleTextResource(*sub);
@@ -862,8 +866,10 @@ void SmushPlayer::handleFrame(Chunk &b) {
 			// FIXME: check parameters
 			if (_insanity)
 				_vm->_insane->procIACT(_dst, 0, 0, 0, *sub, 0, 0);
-			else
-				handleIACT(*sub);
+			else {
+				if (!_compressedFileMode)
+					handleIACT(*sub);
+			}
 			break;
 		case TYPE_STOR:
 			handleStore(*sub);
@@ -1113,6 +1119,25 @@ void SmushPlayer::seekSan(const char *file, int32 pos, int32 contFrame) {
 	_frame = contFrame;
 }
 
+void SmushPlayer::tryOggFile(const char *filename) {
+	_compressedFileMode = false;
+	const char *i = strrchr(filename, '.');
+	if (i == NULL) {
+		error("invalid filename : %s", filename);
+	}
+	char fname[260];
+	memcpy(fname, filename, i - filename);
+	strcpy(fname + (i - filename), ".ogg");
+#ifdef USE_VORBIS
+	_compressedFile.open(fname);
+	if (_compressedFile.isOpen()) {
+		int size = _compressedFile.size();
+		_compressedFileMode = true;
+		_vm->_mixer->playVorbis(&_compressedFileSoundHandle, &_compressedFile, size);
+	}
+#endif
+}
+
 void SmushPlayer::play(const char *filename, int32 offset, int32 startFrame) {
 
 	// Verify the specified file exists
@@ -1123,6 +1148,8 @@ void SmushPlayer::play(const char *filename, int32 offset, int32 startFrame) {
 		return;
 	}
 	f.close();
+
+	tryOggFile(filename);
 
 	_updateNeeded = false;
 	

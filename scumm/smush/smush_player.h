@@ -57,6 +57,9 @@ private:
 	int32 _frame;
 
 	PlayingSoundHandle _IACTchannel;
+	PlayingSoundHandle _compressedFileSoundHandle;
+	bool _compressedFileMode;
+	File _compressedFile;
 	byte _IACToutput[4096];
 	int32 _IACTpos;
 	bool _storeFrame;
@@ -94,6 +97,7 @@ private:
 	void release();
 	void setupAnim(const char *file);
 	void updateScreen();
+	void tryOggFile(const char *filename);
 
 	bool readString(const char *file);
 	void checkBlock(const Chunk &, Chunk::type, uint32 = 0);
