@@ -1748,7 +1748,8 @@ void Scumm::processKbd() {
 		return;
 	}
 
-	if (VAR_PAUSE_KEY != 0xFF && _lastKeyHit == VAR(VAR_PAUSE_KEY)) {
+	if ((VAR_PAUSE_KEY != 0xFF && _lastKeyHit == VAR(VAR_PAUSE_KEY)) ||
+		(VAR_PAUSE_KEY == 0xFF && _lastKeyHit == ' ')) {
 		pauseGame(true);
 		/* pause */
 		return;
