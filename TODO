@@ -240,16 +240,16 @@ SCUMM
   - Add rename/delete file support, to make file opcodes function correctly
   - Fix glitch causing bed covers not to be drawn at end of fbear
   - Fix o6_setboxset, only used when leaving basement in fbear
-  - Fix nukeArrays, it is nuking wrong array in some games (fbear)
-  - Document and fix AKOS differences in Humongous Entertainment games
+  - Fix nukeArrays, it is nuking wrong arrays in fbear
 * Humongous entertainment >= v7 titles:
-  - Add support for new animation code used by cut scenes.
-  - Add support for akos_drawLimb C021 (Used in pajama/pjs-demo/timedemo)
+  - Add support for local script offsets used in HE98+ games
+  - Add support for additional drawWizImage flags
+  - Add support for new akos animation code used by cut scenes.
+  - Fix support for akos_drawLimb C021/C022/C025 (Talk animation are missing/glitches)
+    (Used in pjs-demo/racedemo/timedemo)
   - Add support for akos codec 32 (Used in water/socks)
-  - Add support for actor clipping overrides used in costume code
-  - Add support for debug strings (Replaces %d & %s with ints/strings from stack list)
+  - Fix debug strings (Reports incorrect values/strings sometimes)
   - Add support for various new opcodes
-  - Add support for Scummsys.9x and C++ engine MAXS blocks
 
 Broken Sword 2
 ==============
