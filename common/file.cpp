@@ -78,6 +78,14 @@ FILE *File::fopenNoCase(const char *filename, const char *directory, const char 
 		"execute/",
 		"EXECUTE/",
 		// Simon the Sorcerer 2 Amiga/Mac
+		"french/",
+		"FRENCH/",
+		"hebrew/",
+		"HEBREW/",
+		"italian/",
+		"ITALIAN/",
+		"spanish/",
+		"SPANISH/",
 		"voices/",
 		"VOICES/",
 		// sword1/2 stuff if user just copied files without putting
