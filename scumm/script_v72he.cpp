@@ -855,7 +855,7 @@ void ScummEngine_v72he::o72_actorOps() {
 	case 24:
 		// HE 80+
 		k = pop();
-//		a->byte_45737A = 1;
+		a->talkUnk = 1;
 		a->setTalkCondition(k);
 		debug(1,"o72_actorOps: case 24 (%d)", k);
 		break;

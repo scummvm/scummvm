@@ -78,6 +78,7 @@ void Actor::initActor(int mode) {
 		_pos.y = 0;
 		facing = 180;
 		condMask = 1;
+		talkUnk = 0;
 		if (_vm->_version >= 7)
 			visible = false;
 	} else if (mode == 2) {
@@ -1067,6 +1068,19 @@ void Actor::drawActorCostume(bool hitTestMode) {
 
 	bcr->_skipLimb = (skipLimb != 0);
 	
+	if (_vm->_heversion >= 80 && talkUnk == 0) {
+		condMask &= 0xFFFFFC00;
+		condMask |= 1
+;		if (_vm->getTalkingActor() == number) {
+			// Checks if talk sound is active?
+			// Otherwise just do rand animation
+			int rnd = _vm->_rnd.getRandomNumberRng(1, 10);
+;			setTalkCondition(rnd);
+
+		} 
+	}
+	talkUnk == 0;
+
 	// If the actor is partially hidden, redraw it next frame.
 	// Only done for pre-AKOS, though.
 	if (bcr->drawCostume(_vm->virtscr[0], this, drawToBackBuf) & 1) {

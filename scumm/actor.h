@@ -124,6 +124,7 @@ public:
 	uint16 sound[32];
 	CostumeData cost;
 	uint32 condMask;
+	bool talkUnk;
 protected:
 	byte palette[256];
 	int elevation;
