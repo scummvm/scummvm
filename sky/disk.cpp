@@ -124,11 +124,11 @@ uint8 *Disk::loadFile(uint16 fileNr, uint8 *dest) {
 		return NULL;
 	}
 
-	_fileFlags = READ_LE_UINT32((filePtr + 5));
+	_fileFlags = READ_LE_UINT24(filePtr + 5);
 	_fileSize = _fileFlags & 0x03fffff;
 	_lastLoadedFileSize = _fileSize;
 	
-	_fileOffset = READ_LE_UINT32((filePtr + 2)) & 0x0ffffff;
+	_fileOffset = READ_LE_UINT32(filePtr + 2) & 0x0ffffff;
 
 	cflag = (uint8)((_fileOffset >> 23) & 0x1);
 	_fileOffset &= 0x7FFFFF;
