@@ -65,7 +65,8 @@ const char* ActionsText[] = {
 	"Right click",
 	"Cursor on/off",
 	"Subtitles on/off",
-	"Boss"
+	"Boss",
+	"Free look"
 };
 
 bool _typeExists(unsigned int x) {

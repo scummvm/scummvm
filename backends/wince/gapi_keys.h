@@ -14,7 +14,8 @@ enum ActionType {
 	ACTION_RIGHTCLICK = 8,
 	ACTION_CURSOR = 9,
 	ACTION_SUBTITLES = 10,
-	ACTION_BOSS = 11
+	ACTION_BOSS = 11,
+	ACTION_FREELOOK = 12
 };
 
 struct oneAction {
@@ -22,7 +23,7 @@ struct oneAction {
 	unsigned int		action_type;
 };
 
-#define TOTAL_ACTIONS 12
+#define TOTAL_ACTIONS 13
 
 #define GAPI_KEY_BASE 1000
 /*
