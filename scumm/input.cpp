@@ -392,8 +392,6 @@ void ScummEngine::processKbd(bool smushMode) {
 			vol--;
 
 		// Display the music volume
-		// FIXME: Should we use runDialog here? It'll pause the sound/music and video
-		// which is both good and bad...
 		ValueDisplayDialog dlg("Music volume: ", 0, 16, vol, ']', '[');
 		vol = runDialog(dlg);
 
@@ -410,8 +408,6 @@ void ScummEngine::processKbd(bool smushMode) {
 			_defaultTalkDelay--;
 
 		// Display the talk speed
-		// FIXME: Should we use runDialog here? It'll pause the sound/music and video
-		// which is both good and bad...
 		ValueDisplayDialog dlg("Talk speed: ", 0, 10, _defaultTalkDelay, '+', '-');
 		_defaultTalkDelay = runDialog(dlg);
 
