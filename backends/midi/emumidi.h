@@ -54,7 +54,14 @@ public:
 
 	int open() {
 		_isOpen = true;
-		_samples_per_tick = (getRate() << FIXP_SHIFT) / BASE_FREQ;
+
+		int d = getRate() / BASE_FREQ;
+		int r = getRate() % BASE_FREQ;
+
+		// This is equivalent to (getRate() << FIXP_SHIFT) / BASE_FREQ
+		// but less prone to arithmetic overflow.
+
+		_samples_per_tick = (d << FIXP_SHIFT) + (r << FIXP_SHIFT) / BASE_FREQ;
 		return 0;
 	}
 
@@ -71,11 +78,12 @@ public:
 		const int stereoFactor = isStereo() ? 2 : 1;
 		int len = numSamples / stereoFactor;
 		int step;
-	
+
 		do {
 			step = len;
 			if (step > (_next_tick >> FIXP_SHIFT))
 				step = (_next_tick >> FIXP_SHIFT);
+
 			generate_samples(data, step);
 	
 			_next_tick -= step << FIXP_SHIFT;
