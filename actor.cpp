@@ -176,7 +176,7 @@ int Scumm::remapDirection(Actor * a, int dir)
 	int specdir;
 	byte flags;
 	byte dirflag;
-
+	
 	if (!a->ignoreBoxes) {
 		specdir = _extraBoxFlags[a->walkbox];
 		if (specdir) {
@@ -191,7 +191,6 @@ int Scumm::remapDirection(Actor * a, int dir)
 
 		dirflag = ((a->walkdata.XYFactor > 0) ? 1 : 0) |
 			((a->walkdata.YXFactor > 0) ? 2 : 0);
-
 
 		if ((flags & 8) || getClass(a->number, 0x1E)) {
 			dir = 360 - dir;
@@ -218,7 +217,8 @@ int Scumm::remapDirection(Actor * a, int dir)
 			return 180;
 		}
 	}
-	return normalizeAngle(dir);
+	/* Or 1024 in to signal direction interpolation should be done */
+	return normalizeAngle(dir) | 1024;
 }
 
 int Scumm::updateActorDirection(Actor * a)
@@ -226,25 +226,33 @@ int Scumm::updateActorDirection(Actor * a)
 	int from, to;
 	int diff;
 	int dirType;
+	int dir;
 	int num;
+	bool shouldInterpolate;
 	
 	dirType = akos_hasManyDirections(a);
 
 	from = toSimpleDir(dirType, a->facing);
-	to = toSimpleDir(dirType, remapDirection(a, a->newDirection));
+	dir = remapDirection(a, a->newDirection);
+	shouldInterpolate = (dir & 1024);
+	to = toSimpleDir(dirType, dir & 1023);
 	diff = to - from;	
 	num = numSimpleDirDirections(dirType);
 
-	if (abs(diff) > (num >> 1))
-		diff = -diff;
-
-	if (diff == 0) {
-	} else if (diff > 0) {
-		from++;
-	} else {
-		from--;
-	}
-
+	if (shouldInterpolate) {
+		// Turn left or right, depending on which is shorter.
+		if (abs(diff) > (num >> 1))
+			diff = -diff;
+	
+		if (diff == 0) {
+		} else if (diff > 0) {
+			from++;
+		} else {
+			from--;
+		}
+	} else
+		from = to;
+	
 	return fromSimpleDir(dirType, from & (num - 1));
 }
 
@@ -414,11 +422,6 @@ void Scumm::startAnimActor(Actor * a, int frame)
 			a->animProgress = 0;
 			a->cost.animCounter1 = 0;
 			a->needRedraw = true;
-
-			// FIXME: FOA hack, room 17, climbing off machine
-			if (_gameId == GID_INDY4 && a->costume == 27) {
- 				a->facing = 0;
-			}
 
 			if (a->initFrame == frame)
 				initActorCostumeData(a);
