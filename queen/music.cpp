@@ -64,6 +64,7 @@ namespace Queen {
 
 	void Music::stopSong() {
 		_isPlaying = false;
+		_midi->unloadMusic();
 	}
 
 	void Music::myTimerProc(void *refCon) {
