@@ -130,7 +130,7 @@ bool Scumm::loadState(int slot, bool compat, SaveFileManager *mgr) {
 
 	/* Nuke all resources */
 	for (i = rtFirst; i <= rtLast; i++)
-		if (i != rtTemp && i != rtBuffer && (i != rtSound || _saveSound))
+		if (i != rtTemp && i != rtBuffer && (i != rtSound || _saveSound || !compat))
 			for (j = 0; j < res.num[i]; j++) {
 				nukeResource(i, j);
 				res.flags[i][j] = 0;
@@ -551,7 +551,7 @@ void Scumm::saveOrLoad(Serializer *s, uint32 savegameVersion) {
 	int var120Backup;
 	int var98Backup;
 
-	if (!s->isSaving() && _saveSound) {
+	if (!s->isSaving() && (_saveSound || !_saveLoadCompatible)) {
 		_sound->stopAllSounds();
 		if (_mixer) {
 			if (_imuseDigital) {
@@ -668,7 +668,7 @@ void Scumm::saveOrLoad(Serializer *s, uint32 savegameVersion) {
 		}
 	}
 	
-	if (_imuse && _saveSound) {
+	if (_imuse && (_saveSound || !_saveLoadCompatible)) {
 		_imuse->save_or_load(s, this);
 		_imuse->set_master_volume (_sound->_sound_volume_master);
 		_imuse->set_music_volume (_sound->_sound_volume_music);

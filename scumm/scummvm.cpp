@@ -393,7 +393,7 @@ Scumm::Scumm (GameDetector *detector, OSystem *syst)
 	tempMusic = 0;
 	_silentDigitalImuse = 0;
 	_noDigitalSamples = 0;
-	_saveSound = 1;
+	_saveSound = 0;
 	memset(_extraBoxFlags, 0, sizeof(_extraBoxFlags));
 	memset(_scaleSlots, 0, sizeof(_scaleSlots));
 	_charset = NULL;
