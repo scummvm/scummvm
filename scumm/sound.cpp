@@ -391,8 +391,16 @@ void Sound::playSound(int soundID) {
 	}
 	
 	if (_scumm->_features & GF_OLD_BUNDLE) {
-		if (_scumm->_playerV2)
-			_scumm->_playerV2->startSound (soundID, ptr);
+		// FIXME: support amiga sounds
+		uint16 amigatest;
+		amigatest = READ_LE_UINT16(ptr + 12);
+		// other versions seem to be 0000 at this point...
+		// hopefully this test is correct
+		// 0xfe7f seems to be sound and 0x764a music
+		if ((amigatest != 0xfe7f) && (amigatest != 0x764a)) {
+			if (_scumm->_playerV2)
+				_scumm->_playerV2->startSound (soundID, ptr);
+		}
 		return;
 	}
 
