@@ -727,7 +727,7 @@ void ScummEngine_v72he::o72_unknown5A() {
 }
 
 void ScummEngine_v72he::o72_startScript() {
-	int args[24];
+	int args[25];
 	int script;
 	byte flags;
 
@@ -738,7 +738,7 @@ void ScummEngine_v72he::o72_startScript() {
 }
 
 void ScummEngine_v72he::o72_startObject() {
-	int args[24];
+	int args[25];
 	int script, entryp;
 	byte flags;
 
@@ -1521,7 +1521,7 @@ void ScummEngine_v72he::o72_unknownCF() {
 }
 
 void ScummEngine_v72he::o72_jumpToScript() {
-	int args[24];
+	int args[25];
 	int script;
 	byte flags;
 
