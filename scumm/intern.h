@@ -521,7 +521,7 @@ protected:
 	void o6_pickVarRandom();
 	void o6_getDateTime();
 	void o6_unknownE1();
-	void o6_set_box_set();
+	void o6_setBoxSet();
 	void o6_shuffle();
 
 	byte VAR_VIDEONAME;

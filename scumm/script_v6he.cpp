@@ -332,7 +332,7 @@ void ScummEngine_v6he::setupOpcodes() {
 		OPCODE(o6_localizeArray),
 		OPCODE(o6_pickVarRandom),
 		/* E4 */
-		OPCODE(o6_set_box_set),
+		OPCODE(o6_setBoxSet),
 		OPCODE(o6_invalid),
 		OPCODE(o6_invalid),
 		OPCODE(o6_invalid),
