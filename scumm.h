@@ -1066,7 +1066,7 @@ public:
 	void startAnimActorEx(Actor *a, int frame, int direction);
 	int getProgrDirChange(Actor *a, int mode);
 	void initActorCostumeData(Actor *a);
-	void fixActorDirection(Actor *a, int direction);
+	void setActorDirection(Actor *a, int direction);
 
 	int getActorXYPos(Actor *a);
 	void adjustActorPos(Actor *a);	

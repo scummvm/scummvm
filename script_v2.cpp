@@ -2040,7 +2040,7 @@ void Scumm::o6_actorSet()
 		break;
 	case 230:										/* set direction */
 		a->moving &= ~4;
-		fixActorDirection(a, pop());
+		setActorDirection(a, pop());
 		break;
 	case 231:										/* turn to direction */
 		turnToDirection(a, pop());

@@ -424,7 +424,7 @@ void Scumm::startAnimActor(Actor * a, int frame)
 	}
 }
 
-void Scumm::fixActorDirection(Actor * a, int direction)
+void Scumm::setActorDirection(Actor * a, int direction)
 {
 	uint mask;
 	int i;
@@ -433,7 +433,9 @@ void Scumm::fixActorDirection(Actor * a, int direction)
 	if (a->facing == direction)
 		return;
 
-	a->facing = direction;
+	// Make sure the direction is between 0 and 359 degree.
+	// We add 360 to be able to cope with negative directions.
+	a->facing = (direction+360) % 360;
 
 	if (a->costume == 0)
 		return;
@@ -740,12 +742,11 @@ void Scumm::startWalkAnim(Actor * a, int cmd, int angle)
 	} else {
 		switch (cmd) {
 		case 1:										/* start walk */
-			//a->facing = angle;
-			fixActorDirection(a, angle);
+			setActorDirection(a, angle);
 			startAnimActor(a, a->walkFrame);
 			break;
 		case 2:										/* change dir only */
-			fixActorDirection(a, angle);
+			setActorDirection(a, angle);
 			break;
 		case 3:										/* stop walk */
 			turnToDirection(a, angle);
@@ -775,7 +776,7 @@ void Scumm::walkActor(Actor * a)
 		if (a->moving & 4) {
 			j = updateActorDirection(a);
 			if (a->facing != j)
-				fixActorDirection(a, j);
+				setActorDirection(a, j);
 			else
 				a->moving = 0;
 			return;
@@ -1361,7 +1362,7 @@ void Scumm::walkActorOld(Actor * a)
 	if (a->moving & 4) {
 		new_dir = updateActorDirection(a);
 		if (a->facing != new_dir) {
-			fixActorDirection(a, new_dir);
+			setActorDirection(a, new_dir);
 			return;
 		}
 		a->moving = 0;

@@ -476,7 +476,7 @@ void Scumm::startScene(int room, Actor * a, int objectNr)
 						_currentRoom);
 		getObjectXYPos(objectNr);
 		putActor(a, _xPos, _yPos, _currentRoom);
-		fixActorDirection(a, _dir + 180);
+		setActorDirection(a, _dir + 180);
 		a->moving = 0;
 	}
 
