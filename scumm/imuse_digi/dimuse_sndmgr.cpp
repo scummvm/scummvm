@@ -87,10 +87,13 @@ void ImuseDigiSndMgr::prepareSoundFromRMAP(File *file, soundStruct *sound, int32
 	file->seek(offset, SEEK_SET);
 	uint32 tag = file->readUint32BE();
 	assert(tag == 'RMAP');
-	assert(file->readUint32BE() == 1); // version
-	sound->bits = 16;
-	sound->freq = 22050;
-	sound->channels = 2;
+	int32 version = file->readUint32BE();
+	if (version != 2) {
+		error("ImuseDigiSndMgr::prepareSoundFromRMAP: Wrong version number, expected 2, but it's: %d.", version);
+	}
+	sound->bits = file->readUint32BE();
+	sound->freq = file->readUint32BE();
+	sound->channels = file->readUint32BE();
 	sound->numRegions = file->readUint32BE();
 	sound->numJumps = file->readUint32BE();
 	sound->numSyncs = file->readUint32BE();
@@ -595,8 +598,6 @@ int32 ImuseDigiSndMgr::getDataFromRegion(soundStruct *soundHandle, int region, b
 					soundHandle->compressedStream = makeMP3Stream(cmpFile, len);
 #endif
 				assert(soundHandle->compressedStream);
-				assert(soundHandle->compressedStream->getRate() == 22050);
-				assert(soundHandle->compressedStream->isStereo());
 			}
 			strcpy(soundHandle->lastFileName, fileName);
 		}
