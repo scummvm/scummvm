@@ -977,7 +977,7 @@ void Insane::escapeKeyHandler(void) {
 		writeArray(9, 0);
 		break;
 	case 18:
-		queueSceneSwitch(1, _smush_minedrivFlu, "minedriv.san", 64, 0, _continueFrame1, 1300);
+		queueSceneSwitch(17, _smush_minedrivFlu, "minedriv.san", 64, 0, _continueFrame1, 1300);
 		writeArray(9, 1);
 		break;
 	case 2:
@@ -986,7 +986,7 @@ void Insane::escapeKeyHandler(void) {
 						 flu->startFrame, flu->numFrames);
 		break;
 	case 3:
-		queueSceneSwitch(1, _smush_minedrivFlu, "minedriv.san", 64, 0, _continueFrame1, 1300);
+		queueSceneSwitch(1, _smush_minedrivFlu, "minedriv.san", 64, 0, _continueFrame, 1300);
 		break;
 	case 4:
 		if (_needSceneSwitch)
