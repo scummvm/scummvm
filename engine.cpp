@@ -20,6 +20,7 @@
 #include "lua.h"
 #include "colormap.h"
 #include "actor.h"
+#include "textobject.h"
 #include <SDL.h>
 #include <SDL_opengl.h>
 #include <SDL_timer.h>
@@ -112,6 +113,12 @@ void Engine::mainLoop() {
 	a->draw();
     }
     glDisable(GL_TEXTURE_2D);
+
+    // Draw text
+    for (text_list_type::iterator i = textObjects_.begin();
+	 i != textObjects_.end(); i++) {
+      (*i)->draw();
+    }
 
     SDL_GL_SwapBuffers();
 

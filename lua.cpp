@@ -26,6 +26,7 @@
 #include "engine.h"
 #include "mixer.h"
 #include "sound.h"
+#include "textobject.h"
 #include <SDL_keysym.h>
 #include <SDL_keyboard.h>
 #include <cstdio>
@@ -705,11 +706,12 @@ void GetControlState() {
 
 // Text functions
 static void MakeTextObject() {
- char *line = lua_getstring(lua_getparam(1)), *key_text = NULL, *val_text = NULL;
+ char *line = lua_getstring(lua_getparam(1)), *key_text = NULL;
  lua_Object table_obj = lua_getparam(2), key;
- std::string text = Localizer::instance()->localize(line);
+ int x = 0, y = 0;
+ Color *fgColor = NULL;
+ TextObject *textObject;
 
- printf("STUB: MakeTextObject(%s, {", line);
  while(1) {
    lua_pushobject(table_obj);
    if (key_text)
@@ -723,13 +725,41 @@ static void MakeTextObject() {
     break;
 
    key_text=lua_getstring(key);
-   val_text=lua_getstring(lua_getresult(2));
-   printf(" %s=%s ", key_text, val_text);
+   //val_text=lua_getstring(lua_getresult(2));
+   if (strstr(key_text, "x"))
+	x = atoi(lua_getstring(lua_getresult(2)));
+   else if (strstr(key_text, "y"))
+	y = atoi(lua_getstring(lua_getresult(2)));
+   else if (strstr(key_text, "fgcolor"))
+	fgColor = check_color(2);
+   else
+	error("Unknown MakeTextObject key %s\n", key_text);
  }
 
- printf("}) = %s\n", text.c_str());
+ textObject = new TextObject((const char *)line, x, y, *fgColor);
 }
 
+static void KillTextObject() {
+ char *line = lua_getstring(lua_getparam(1));
+
+ if (!line) { // FIXME: check this.. null is kill all lines?
+  Engine::instance()->killTextObjects();
+  return;
+ }
+ error("Wow, a non-null killtextobject. tell ender");
+ for (Engine::text_list_type::const_iterator i = Engine::instance()->textsBegin();
+      i != Engine::instance()->textsEnd(); i++) {
+   TextObject *textO = *i;
+   const char *name = textO->name();
+   if (name==NULL)
+    warning("nullname");
+   else
+    warning("name: %s", name);
+
+   warning("Wanting to destroy text object %s ", line);
+   break;
+ }
+}
 static void ChangeTextObject() {
  char *line = lua_getstring(lua_getparam(1)), *key_text = NULL, *val_text = NULL;
  lua_Object table_obj = lua_getparam(2), key;
@@ -958,7 +988,6 @@ static char *stubFuncs[] = {
   "SetTranslationMode",
   "ExpireText",
   "BlastText",
-  "KillTextObject",
   "PrintLine",
   "SetSayLineDefaults",
   "PurgePrimitiveQueue",
@@ -1194,6 +1223,7 @@ struct luaL_reg builtins[] = {
   { "ChangeTextObject", ChangeTextObject },
   { "GetTextObjectDimensions", GetTextObjectDimensions },
   { "MakeTextObject", MakeTextObject },
+  { "KillTextObject", KillTextObject },
   { "ShutUpActor", ShutUpActor }
 };
 

@@ -52,7 +52,7 @@ See above. There is no point yet.
 What else should I know?
 ------------------------
   * Exit with 'q', and don't press f1, as things will go loopy.
-  * Won't compile in MSVC (see TODO), but will on MingW32.
+  * Won't compile in MSVC (see TODO), but will on MingW32
   * See TODO for other stuff
 
 ScummVM-Residual Team Credits:

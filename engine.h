@@ -19,6 +19,7 @@
 #define ENGINE_H
 
 #include "scene.h"
+#include "textobject.h"
 #include <cstdlib>
 #include <list>
 #include <SDL_keysym.h>
@@ -111,6 +112,21 @@ public:
   void setSelectedActor(Actor *a) { selectedActor_ = a; }
   Actor *selectedActor() { return selectedActor_; }
 
+  typedef std::list<TextObject *> text_list_type;
+  text_list_type::const_iterator textsBegin() const {
+    return textObjects_.begin();
+  }
+  text_list_type::const_iterator textsEnd() const {
+    return textObjects_.end();
+  }
+  void registerTextObject(TextObject *a) { textObjects_.push_back(a); }
+  void killTextObjects() {
+   while (!textObjects_.empty()) {
+    delete textObjects_.back();
+    textObjects_.pop_back();
+   }
+  }
+
 private:
   static Engine *instance_;
 
@@ -125,6 +141,7 @@ private:
 
   actor_list_type actors_;
   Actor *selectedActor_;
+  text_list_type textObjects_;
 };
 
 #endif
