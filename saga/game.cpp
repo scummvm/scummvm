@@ -266,6 +266,21 @@ static GAME_MD5 game_md5[] = {
 	{ GID_ITE_MACDEMO1, "1a91cd60169f367ecb6c6e058d899b2f", "musicd.rsc" },
 	{ GID_ITE_MACDEMO1, "b3a831fbed337d1f1300fee1dd474f6c", "soundsd.rsc" },
 	{ GID_ITE_MACDEMO1, "e139d86bab2ee8ba3157337f894a92d4", "voicesd.rsc" },
+
+	// My CD also has a file called 'patch.re_'. I assume it contains
+	// bugfixes, but let's ignore it for now.
+	{ GID_IHNM_CD, "0439083e3dfdc51b486071d45872ae52", "musicfm.res" },
+	{ GID_IHNM_CD, "80f875a1fb384160d1f4b27166eef583", "musicgm.res" },
+	{ GID_IHNM_CD, "46bbdc65d164ba7e89836a0935eec8e6", "scream.res" },
+	{ GID_IHNM_CD, "be38bbc5a26be809dbf39f13befebd01", "scripts.res" },
+	{ GID_IHNM_CD, "1c610d543f32ec8b525e3f652536f269", "sfx.res" },
+	{ GID_IHNM_CD, "fc6440b38025f4b2cc3ff55c3da5c3eb", "voices1.res" },
+	{ GID_IHNM_CD, "b37f10fd1696ade7d58704ccaaebceeb", "voices2.res" },
+	{ GID_IHNM_CD, "3bbc16a8f741dbb511da506c660a0b54", "voices3.res" },
+	{ GID_IHNM_CD, "ebfa160122d2247a676ca39920e5d481", "voices4.res" },
+	{ GID_IHNM_CD, "1f501ce4b72392bdd1d9ec38f6eec6da", "voices5.res" },
+	{ GID_IHNM_CD, "f580ed7568c7d6ef34e934ba20adf834", "voices6.res" },
+	{ GID_IHNM_CD, "54b1f2013a075338ceb0e258d97808bd", "voicess.res" },
 };
 
 static GAMEDESC GameDescs[] = {
