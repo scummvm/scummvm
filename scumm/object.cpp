@@ -128,11 +128,11 @@ int Scumm::getObjectIndex(int object)
 		// FIXME: Major HACK. This is probably the worst biggest
 		// hack in the whole engine. It's that bad.
 		// (Workaround flobject 188/189 not loaded bug)
-		if (_gameId == GID_CMI && ((object == 188 || object == 189))) {
+		/*if (_gameId == GID_CMI && ((object == 188 || object == 189))) {
 			warning("FIXME MAJOR: Hacking load of FlObject %d\n", object);
 			loadFlObject(object, 3);
 			return getObjectIndex(object);
-		}
+		}*/
 		return -1;
 	}
 }
@@ -446,8 +446,21 @@ void Scumm::loadRoomObjects()
 
 	// Clear out old room objects (FIXME: Locking/FlObjects stuff?)
 	for (i = 0; i < _numLocalObjects; i++) {
-		_objs[i].obj_nr = 0;
-		_objs[i].fl_object_index = 0;
+		if (_objs[i].obj_nr < 1)	// Optimise codepath
+			continue;
+
+		// Nuke all non-flObjects (flObjects are nuked in script.cpp)
+		if (!_objs[i].fl_object_index) {
+			_objs[i].obj_nr = 0;
+			_objs[i].fl_object_index = 0;
+		} else {
+                        // Nuke all unlocked flObjects
+                        if (!(res.flags[rtFlObject][_objs[i].fl_object_index] & RF_LOCK)) {
+                                nukeResource(rtFlObject, _objs[i].fl_object_index);
+                                _objs[i].obj_nr = 0;
+                                _objs[i].fl_object_index = 0;
+                        } 
+		}
 	}
 
 	if (_numObjectsInRoom == 0)
@@ -518,7 +531,7 @@ void Scumm::loadRoomObjects()
 
 	// ENDERFIXME: Switch this one over to numLocals also
 	for (i = 1; i < _numLocalObjects; i++) {
-		if (_objs[i].obj_nr)
+		if (_objs[i].obj_nr && !_objs[i].fl_object_index)
 			setupRoomObject(&_objs[i], room);
 	}
 
@@ -583,7 +596,7 @@ void Scumm::loadRoomObjectsSmall()
 
 	// ENDERFIXME: Switch to numLocals
 	for (i = 1; i < _numLocalObjects; i++) {
-		if (_objs[i].obj_nr)
+		if (_objs[i].obj_nr && !_objs[i].fl_object_index)
 			setupRoomObject(&_objs[i], room);
 	}
 
