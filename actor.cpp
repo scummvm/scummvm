@@ -303,6 +303,12 @@ void Scumm::setupActorScale(Actor *a) {
 	byte *resptr;
 	int y;
 
+	if (_features & GF_NO_SCALLING) {
+		a->scalex = 0xFF;
+		a->scaley = 0xFF;
+		return;
+	}
+	
 	if (a->ignoreBoxes != 0)
 		return;
 

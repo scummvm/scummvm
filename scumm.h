@@ -933,6 +933,7 @@ enum GameFeatures {
 	GF_16COLOR = 256,
 	GF_OLD256 = 512,
 	GF_AUDIOTRACKS = 1024,
+	GF_NO_SCALLING = 2048,
 };
 
 struct ScummDebugger;

@@ -112,7 +112,7 @@ void Scumm::setupOpcodes() {
 	&Scumm::o5_getActorX,
 	/* 44 */
 	&Scumm::o5_isLess,
-	&Scumm::o5_badOpcode,
+	&Scumm::o5_drawObject,
 	&Scumm::o5_increment,
 	&Scumm::o5_setState,
 	/* 48 */
@@ -1213,6 +1213,10 @@ void Scumm::o5_getActorRoom() {
 }
 
 void Scumm::o5_getActorScale() {
+	if(_gameId == GID_INDY3_256) {
+		getVarOrDirectByte(0x80); /*FIXME: missing stuff here*/
+		return;
+	}
 	getResultPos();
 	setResult(derefActorSafe(getVarOrDirectByte(0x80),"o5_getActorScale")->scalex);
 }
