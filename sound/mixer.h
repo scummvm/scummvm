@@ -54,11 +54,11 @@ public:
 	bool _toBeDestroyed;
 	int _id;
 	Channel() : _mixer(0), _toBeDestroyed(false), _id(-1) {}
+	virtual ~Channel() {}
 	virtual void mix(int16 *data, uint len) = 0;
 	void destroy() {
 		_toBeDestroyed = true;
 	}
-	virtual void realDestroy() = 0;
 	virtual bool soundFinished();
 };
 
@@ -141,15 +141,17 @@ public:
 	 * to be generated */
 	bool bindToSystem(OSystem *syst);
 
-	/** set the volume, 0-256 */
+	/** set the global volume, 0-256 */
 	void setVolume(int volume);
+
+	/** set the music volume, 0-256 */
 	void setMusicVolume(int volume);
 
 	/** pause - unpause */
 	void pause(bool paused);
 
 private:
-	int insertAt(PlayingSoundHandle *handle, int index, Channel *chan);
+	int insertChannel(PlayingSoundHandle *handle, Channel *chan);
 };
 
 #endif
