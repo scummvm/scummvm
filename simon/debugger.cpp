@@ -127,9 +127,9 @@ bool Debugger::Cmd_PlaySound(int argc, const char **argv) {
 		if (sound <= range)
 			_vm->_sound->playEffects(sound);
 		else
-			DebugPrintf("Voice out of range (0 - %d)\n", range);
+			DebugPrintf("Sound out of range (0 - %d)\n", range);
 	} else
-		DebugPrintf("Syntax: voice <voicenum>\n");
+		DebugPrintf("Syntax: sound <soundnum>\n");
 
 	return true;
 }
