@@ -463,6 +463,7 @@ int GameDetector::detectMain(int argc, char **argv)
 	_gfx_mode = GFX_NORMAL;
 #endif
 	_sfx_volume = 100;
+	_music_volume = 60;
 
 #if defined(USE_NULL_DRIVER)
 	_gfx_driver = GD_NULL;
@@ -493,7 +494,7 @@ int GameDetector::detectMain(int argc, char **argv)
 #else
 	_saveconfig = false;
 	updateconfig();
-	parseCommandLine(argc, argv);
+	parseCommandLine(argc, argv);	
 #endif
 
 	if (_exe_name == NULL) {

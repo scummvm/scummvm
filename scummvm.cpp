@@ -1395,7 +1395,8 @@ Scumm *Scumm::createFromDetector(GameDetector *detector, OSystem *syst)
 		imuse->property(IMuse::PROP_MT32_EMULATE, detector->_mt32emulate);
 		if (detector->_gameTempo != 0)
 			imuse->property(IMuse::PROP_TEMPO_BASE, detector->_gameTempo);
-					
+		
+		imuse->set_music_volume(scumm->_sound_volume_music);
 		scumm->_imuse = imuse;
 	}
 
