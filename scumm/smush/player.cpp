@@ -617,7 +617,10 @@ static StringResource * getStrings(const char * file, bool is_encoded) {
 		static const int ETRS_HEADER_LENGTH = 16;
 		assert(length > ETRS_HEADER_LENGTH);
 		Chunk::type type = READ_BE_UINT32(filebuffer);
-		if(type != TYPE_ETRS) error("invalid type for file"); // mem leak !!!
+		if(type != TYPE_ETRS) {
+			delete [] filebuffer;
+			return getStrings(file, false);
+		}
 		char * old = filebuffer;
 		filebuffer = new char[length - ETRS_HEADER_LENGTH];
 		for(int i = ETRS_HEADER_LENGTH; i < length; i++)

@@ -173,6 +173,7 @@ bool FontRenderer::drawStringCentered(const char * str, char * buffer, const Poi
 	int * substr_widths = new int[nb_sub];
 	int space_width = charWidth(' ');
 
+	i = 0;
 	while(i < nb_sub) {
 		int substr_width = sizes[i];
 		char * substr = new char[1000];
