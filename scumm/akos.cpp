@@ -985,12 +985,10 @@ void AkosRenderer::codec5()
 	}
 }
 
-static const byte _bitMask[] = {0, 1, 3, 7, 15, 31, 63, 127, 255};
-
 void AkosRenderer::akos16SetupBitReader(byte *src) {
 	akos16.unk5 = 0;
 	akos16.numbits = 16;
-	akos16.mask = _bitMask[*(src)];
+	akos16.mask = (1 << *src) - 1;
 	akos16.shift = *(src);
 	akos16.color = *(src + 1);
 	akos16.bits = (*(src + 2) | *(src + 3) << 8);
