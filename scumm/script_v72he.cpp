@@ -322,7 +322,7 @@ void ScummEngine_v72he::setupOpcodes() {
 		OPCODE(o72_writeFile),
 		OPCODE(o72_findAllObjects),
 		OPCODE(o72_deleteFile),
-		OPCODE(o60_rename),
+		OPCODE(o72_rename),
 		/* E0 */
 		OPCODE(o60_soundOps),
 		OPCODE(o72_getPixel),
@@ -1472,7 +1472,7 @@ void ScummEngine_v72he::o72_talkActor() {
 
 void ScummEngine_v72he::o72_talkEgo() {
 	push(VAR(VAR_EGO));
-	o6_talkActor();
+	o72_talkActor();
 }
 
 void ScummEngine_v72he::o72_dimArray() {
@@ -1807,15 +1807,18 @@ void ScummEngine_v72he::o72_findAllObjects() {
 
 void ScummEngine_v72he::o72_deleteFile() {
 	byte filename[100];
-	int r;
 
 	copyScriptString(filename);
-	for (r = strlen((char*)filename); r != 0; r--) {
-		if (filename[r - 1] == '\\')
-			break;
-	}
+	debug(1, "stub o72_deleteFile(%s)", filename);
+}
 
-	debug(1, "stub o72_deleteFile(%s)", filename + r);
+void ScummEngine_v72he::o72_rename() {
+	byte oldFilename[256],newFilename[256];
+
+	copyScriptString(newFilename);
+	copyScriptString(oldFilename);
+
+	debug(1, "stub o72_rename(%s to %s)", oldFilename, newFilename);
 }
 
 void ScummEngine_v72he::o72_getPixel() {

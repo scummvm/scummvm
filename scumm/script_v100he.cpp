@@ -167,7 +167,7 @@ void ScummEngine_v100he::setupOpcodes() {
 		OPCODE(o6_invalid),
 		/* 64 */
 		OPCODE(o100_redimArray),
-		OPCODE(o60_rename),
+		OPCODE(o72_rename),
 		OPCODE(o6_stopObjectCode),
 		OPCODE(o80_localizeArrayToRoom),
 		/* 68 */
