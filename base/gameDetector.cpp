@@ -39,7 +39,9 @@
 #ifdef UNIX
 #include <sys/errno.h>
 #include <sys/stat.h>
-#ifndef MACOSX
+#ifdef MACOSX
+#define DEFAULT_SAVE_PATH "Documents/ScummVM Savegames"
+#else
 #define DEFAULT_SAVE_PATH ".scummvm"
 #endif
 #endif
