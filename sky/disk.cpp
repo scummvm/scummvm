@@ -210,8 +210,9 @@ void SkyDisk::prefetchFile(uint16 fileNr) {
 		debug(1,"SkyDisk::prefetchFile: File %d was already prefetched.\n",fileNr);
 		return ;
 	}
+	uint8 *temp = loadFile(fileNr, NULL);
 	*fEntry = new prefFile;
-	(*fEntry)->data = loadFile(fileNr, NULL);
+	(*fEntry)->data = temp;
 	(*fEntry)->fileSize = _lastLoadedFileSize;
 	(*fEntry)->fileNr = fileNr;
 	(*fEntry)->next = NULL;
