@@ -303,6 +303,7 @@ MainMenuDialog::MainMenuDialog(ScummEngine *scumm)
 	// Create the sub dialog(s)
 	//
 	_aboutDialog = new GUI::AboutDialog();
+	_optionsDialog = new ConfigDialog(scumm);
 #ifndef DISABLE_HELP
 	_helpDialog = new HelpDialog(scumm);
 #endif
@@ -312,6 +313,7 @@ MainMenuDialog::MainMenuDialog(ScummEngine *scumm)
 
 MainMenuDialog::~MainMenuDialog() {
 	delete _aboutDialog;
+	delete _optionsDialog;
 #ifndef DISABLE_HELP
 	delete _helpDialog;
 #endif
@@ -331,7 +333,7 @@ void MainMenuDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 		close();
 		break;
 	case kOptionsCmd:
-		_vm->optionsDialog();
+		_optionsDialog->runModal();
 		break;
 	case kAboutCmd:
 		_aboutDialog->runModal();

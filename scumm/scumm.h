@@ -412,7 +412,6 @@ public:
 protected:
 	Dialog *_pauseDialog;
 	Dialog *_versionDialog;
-	Dialog *_optionsDialog;
 	Dialog *_mainMenuDialog;
 
 protected:
@@ -422,8 +421,6 @@ protected:
 	void pauseDialog();
 	void versionDialog();
 	void mainMenuDialog();
-public:
-	void optionsDialog();	// Used by MainMenuDialog::handleCommand()
 protected:
 	char displayMessage(const char *altButton, const char *message, ...);
 

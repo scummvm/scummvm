@@ -64,6 +64,7 @@ public:
 
 protected:
 	GUI::Dialog		*_aboutDialog;
+	GUI::Dialog		*_optionsDialog;
 #ifndef DISABLE_HELP
 	GUI::Dialog		*_helpDialog;
 #endif

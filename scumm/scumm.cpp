@@ -551,7 +551,7 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 	  _heversion(gs.heversion),
 	  _numActors(gs.numActors),
 	  _features(gs.features),
-	  gdi(this), _pauseDialog(0), _optionsDialog(0), _mainMenuDialog(0), _versionDialog(0),
+	  gdi(this), _pauseDialog(0), _mainMenuDialog(0), _versionDialog(0),
 	  _targetName(detector->_targetName) {
 
 	// Copy MD5 checksum
@@ -641,7 +641,6 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 	_insaneRunning = false;
 	_quit = false;
 	_pauseDialog = NULL;
-	_optionsDialog = NULL;
 	_mainMenuDialog = NULL;
 	_versionDialog = NULL;
 	_fastMode = 0;
@@ -1041,7 +1040,6 @@ ScummEngine::~ScummEngine() {
 	delete _2byteFontPtr;
 	delete _charset;
 	delete _pauseDialog;
-	delete _optionsDialog;
 	delete _mainMenuDialog;
 	delete _versionDialog;
 
@@ -2583,12 +2581,6 @@ void ScummEngine::mainMenuDialog() {
 	if (!_mainMenuDialog)
 		_mainMenuDialog = new MainMenuDialog(this);
 	runDialog(*_mainMenuDialog);
-}
-
-void ScummEngine::optionsDialog() {
-	if (!_optionsDialog)
-		_optionsDialog = new ConfigDialog(this);
-	runDialog(*_optionsDialog);
 }
 
 void ScummEngine::confirmexitDialog() {
