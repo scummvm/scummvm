@@ -679,7 +679,7 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 	VAR_ROOM_FLAG = 0xFF;
 	VAR_GAME_LOADED = 0xFF;
 	VAR_NEW_ROOM = 0xFF;
-	VAR_VERSION = 0xFF;
+	VAR_VERSION_KEY = 0xFF;
 
 	VAR_V5_TALK_STRING_Y = 0xFF;
 
@@ -1063,16 +1063,9 @@ void ScummEngine::launch() {
 
 	scummInit();
 
-	if (_version > 2) {
-		if (_version < 7 && _heversion <= 60)
-			VAR(VAR_VERSION) = 21;
-		else if (_heversion >= 70)
-			VAR(VAR_VERSION) = 22;
-	
-		if (_version > 3) {
+	if (VAR_DEBUGMODE != 0xFF) {
 			// This is NOT for the Mac version of Indy3/Loom
 			VAR(VAR_DEBUGMODE) = _debugMode;
-		}
 	}
 
 	if (_gameId == GID_MONKEY || _gameId == GID_MONKEY_SEGA)
@@ -1304,7 +1297,6 @@ void ScummEngine::initScummVars() {
 		// TODO
 	} else {
 		VAR(VAR_CURRENTDRIVE) = 0;
-		VAR(VAR_FIXEDDISK) = true;
 		switch (_midiDriver) {
 		case MD_NULL:  VAR(VAR_SOUNDCARD) = 0; break;
 		case MD_ADLIB: VAR(VAR_SOUNDCARD) = 3; break;
@@ -1336,17 +1328,21 @@ void ScummEngine::initScummVars() {
 				VAR(VAR_SOUNDCARD) = 3;
 		}
 		VAR(VAR_VIDEOMODE) = 0x13;
-		VAR(VAR_HEAPSPACE) = 1400;
-		VAR(VAR_MOUSEPRESENT) = true; // FIXME - used to be 0, but that seems odd?!?
-		if (_features & GF_HUMONGOUS) {
-			VAR(VAR_SOUNDPARAM) = 1; // soundblaster for music
-			VAR(VAR_SOUNDPARAM2) = 1; // soundblaster for sfx
-		} else {
-			VAR(VAR_SOUNDPARAM) = 0;
-			VAR(VAR_SOUNDPARAM2) = 0;
+		if (_version >= 4) {
+			VAR(VAR_HEAPSPACE) = 1400;
+			VAR(VAR_FIXEDDISK) = true;
+			if (_features & GF_HUMONGOUS) {
+				VAR(VAR_SOUNDPARAM) = 1; // soundblaster for music
+				VAR(VAR_SOUNDPARAM2) = 1; // soundblaster for sfx
+			} else {
+				VAR(VAR_SOUNDPARAM) = 0;
+				VAR(VAR_SOUNDPARAM2) = 0;
+			}
+			VAR(VAR_SOUNDPARAM3) = 0;
 		}
-		VAR(VAR_SOUNDPARAM3) = 0;
-		if (_version >= 6 && VAR_V6_EMSSPACE != 0xFF)
+		if (_version >= 5)
+			VAR(VAR_MOUSEPRESENT) = true;
+		if (_version == 6)
 			VAR(VAR_V6_EMSSPACE) = 10000;
 
 		// Sets fade delay
@@ -1489,7 +1485,7 @@ int ScummEngine::scummLoop(int delta) {
 		VAR(VAR_VIRT_MOUSE_Y) = _virtualMouse.y;
 		VAR(VAR_MOUSE_X) = _mouse.x;
 		VAR(VAR_MOUSE_Y) = _mouse.y;
-		if (_version > 3) {
+		if (VAR_DEBUGMODE != 0xFF) {
 			// This is NOT for the Mac version of Indy3/Loom
 			VAR(VAR_DEBUGMODE) = _debugMode;
 		}
@@ -2015,8 +2011,8 @@ void ScummEngine::processKbd(bool smushMode) {
 	}
 
 	// COMI version string is hard coded
-	// FT version strings are partly hard coded too
-	if ((_gameId == GID_DIG || _heversion >= 70) && _lastKeyHit == VAR(VAR_VERSION)) {
+	// Dig/FT version strings are partly hard coded too
+	if (_version == 7 && _lastKeyHit == VAR(VAR_VERSION_KEY)) {
 		versionDialog();
 		return;
 	}

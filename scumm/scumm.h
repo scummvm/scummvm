@@ -1215,7 +1215,7 @@ public:
 	byte VAR_ROOM_FLAG;
 	byte VAR_GAME_LOADED;
 	byte VAR_NEW_ROOM;
-	byte VAR_VERSION;
+	byte VAR_VERSION_KEY;
 
 	byte VAR_V5_TALK_STRING_Y;
 

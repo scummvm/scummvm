@@ -54,14 +54,6 @@ void ScummEngine::setupScummVars() {
 	VAR_CUTSCENEEXIT_KEY = 24;
 	VAR_TALK_ACTOR = 25;
 	VAR_CAMERA_FAST_X = 26;
-	
-	// FIXME: Apparently, in the Mac version of Loom, scumm variable 27 was
-	// used for another purpose. It is being set to values 0, 1, 2 or 3.
-	// Maybe it's some kind of 'scroll mode'. See also:
-	// http://www.scummbar.com/games/media/transcripts/maclucas.txt
-	if (!(_gameId == GID_LOOM && _features & GF_MACINTOSH))
-		VAR_SCROLL_SCRIPT = 27;
-
 	VAR_ENTRY_SCRIPT = 28;
 	VAR_ENTRY_SCRIPT2 = 29;
 	VAR_EXIT_SCRIPT = 30;
@@ -73,8 +65,6 @@ void ScummEngine::setupScummVars() {
 	VAR_CUTSCENE_END_SCRIPT = 36;
 	VAR_CHARINC = 37;
 	VAR_WALKTO_OBJ = 38;
-	VAR_DEBUGMODE = 39;
-	VAR_HEAPSPACE = 40;
 	VAR_RESTART_KEY = 42;
 	VAR_PAUSE_KEY = 43;
 	VAR_MOUSE_X = 44;
@@ -83,26 +73,30 @@ void ScummEngine::setupScummVars() {
 	VAR_TMR_4 = 47;
 	VAR_SOUNDCARD = 48;
 	VAR_VIDEOMODE = 49;
-	VAR_MAINMENU_KEY = 50;
-	VAR_FIXEDDISK = 51;
-	VAR_CURSORSTATE = 52;
-	VAR_USERPUT = 53;
-	VAR_SOUNDRESULT = 56;
-	VAR_TALKSTOP_KEY = 57;
-	VAR_NOSUBTITLES = 60; // for loomcd
+	if (_version >= 4) {
+		VAR_SCROLL_SCRIPT = 27;
+		VAR_DEBUGMODE = 39;
+		VAR_HEAPSPACE = 40;
+		VAR_MAINMENU_KEY = 50;
+		VAR_FIXEDDISK = 51;
+		VAR_CURSORSTATE = 52;
+		VAR_USERPUT = 53;
+		VAR_SOUNDRESULT = 56;
+		VAR_TALKSTOP_KEY = 57;
+		VAR_NOSUBTITLES = 60;
 
-	VAR_SOUNDPARAM = 64;
-	VAR_SOUNDPARAM2 = 65;
-	VAR_SOUNDPARAM3 = 66;
-	VAR_MOUSEPRESENT = 67;
-	VAR_PERFORMANCE_1 = 68;
-	if (!(_features & GF_SMALL_HEADER)) {
+		VAR_SOUNDPARAM = 64;
+		VAR_SOUNDPARAM2 = 65;
+		VAR_SOUNDPARAM3 = 66;
+	}
+	if (_version >= 5) {
+		VAR_MOUSEPRESENT = 67;
+		VAR_PERFORMANCE_1 = 68;
 		VAR_PERFORMANCE_2 = 69;	// Zak256 Note: Cashcard for Zak
 		VAR_ROOM_FLAG = 70;	// Zak256 Note: Cashcard for Annie
 		VAR_GAME_LOADED = 71;	// Zak256 Note: Cashcard for Melissa
 		VAR_NEW_ROOM = 72;	// Zak256 Note: Cashcard for Leslie
 	}
-	VAR_VERSION = 75;
 }
 
 void ScummEngine_v2::setupScummVars() {
@@ -311,7 +305,7 @@ void ScummEngine_v7::setupScummVars() {
 	VAR_RESTART_KEY = 63;
 	VAR_PAUSE_KEY = 64;
 	VAR_MAINMENU_KEY = 65;
-	VAR_VERSION = 66;
+	VAR_VERSION_KEY = 66;
 	VAR_TALKSTOP_KEY = 67;
 	VAR_KEYPRESS = 118;
 
@@ -413,7 +407,7 @@ void ScummEngine_v8::setupScummVars() {
 
 	VAR_PAUSE_KEY = 64;
 	VAR_MAINMENU_KEY = 65;
-	VAR_VERSION = 66;
+	VAR_VERSION_KEY = 66;
 	VAR_TALKSTOP_KEY = 67;
 
 	VAR_CUSTOMSCALETABLE = 111;
