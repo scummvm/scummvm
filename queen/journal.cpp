@@ -142,9 +142,7 @@ void Journal::prepare() {
 void Journal::restore() {
 	_vm->display()->fullscreen(false);
 
-	_vm->logic()->joeX(_prevJoeX);
-	_vm->logic()->joeY(_prevJoeY);
-	
+	_vm->logic()->joePos(_prevJoeX, _prevJoeY);
 	_vm->logic()->joeCutFacing(_vm->logic()->joeFacing());
 
 	_vm->logic()->oldRoom(_vm->logic()->currentRoom());
@@ -565,13 +563,11 @@ void Journal::makeSavegameName(char *buf, int slot) {
 
 
 void Journal::saveState(int slot, const char *desc) {
-	warning("Journal::saveState(%d, %s)", slot, desc);
 	_vm->logic()->gameSave(slot, desc);
 }
 
 
 void Journal::loadState(int slot) {
-	warning("Journal::loadState(%d)", slot);
 	_vm->logic()->gameLoad(slot);
 }
 

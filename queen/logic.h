@@ -84,23 +84,23 @@ public:
 	}
 
 	ObjectData *objectData(int index) const;
-	uint16 roomData(int room) const;
-	uint16 objMax(int room) const;
-	GraphicData *graphicData(int index) const;
+	uint16 roomData(int room) const { return _roomData[room]; }
+	uint16 objMax(int room) const { return _objMax[room]; } 
+	GraphicData *graphicData(int index) const { return &_graphicData[index]; }
 	ItemData *itemData(int index) const { return &_itemData[index]; }
 	uint16 itemDataCount() const { return _numItems; }
 
 	uint16 findBob(uint16 obj);
 	uint16 findFrame(uint16 obj);
-	uint16 objectForPerson(uint16 bobnum) const; // OBJ_PERSON
+	uint16 objectForPerson(uint16 bobnum) const;
 	WalkOffData *walkOffPointForObject(uint16 obj) const;
 
-	Area *area(int room, int num) const;
+	Area *area(int room, int num) const { return &_area[room][num]; }
 	Area *currentRoomArea(int num) const;
-	uint16 areaMax(int room) const;
-	uint16 currentRoomAreaMax() const;
-	uint16 walkOffCount() const;
-	WalkOffData *walkOffData(int index) const;
+	uint16 areaMax(int room) const { return _areaMax[room]; }
+	uint16 currentRoomAreaMax() const { return _areaMax[_currentRoom]; }
+	uint16 walkOffCount() const { return _numWalkOffs; }
+	WalkOffData *walkOffData(int index) const { return &_walkOffData[index]; }
 	uint16 currentRoomObjMax() const { return _objMax[_currentRoom]; }
 	uint16 currentRoomData() const { return _roomData[_currentRoom]; }
 	ObjectDescription *objectDescription(uint16 objNum) const { return &_objectDescription[objNum]; }
@@ -115,13 +115,12 @@ public:
 	uint16 joeCutFacing() const { return _joe.cutFacing; }
 	uint16 joePrevFacing() const { return _joe.prevFacing; }
 
-	void joeFacing(uint16 dir);
-	void joeX(uint16 x);
-	void joeY(uint16 y);
+	void joeFacing(uint16 dir) { _joe.facing = dir; }
+	void joePos(uint16 x, uint16 y) { _joe.x = x; _joe.y = y; }
 	void joeWalk(JoeWalkMode walking);
-	void joeScale(uint16 scale);
-	void joeCutFacing(uint16 dir);
-	void joePrevFacing(uint16 dir);
+	void joeScale(uint16 scale) { _joe.scale = scale; }
+	void joeCutFacing(uint16 dir) { _joe.cutFacing = dir; }
+	void joePrevFacing(uint16 dir) { _joe.prevFacing = dir; }
 	
 	const char *joeResponse(int i) const { return _joeResponse[i]; }
 	const char *verbName(Verb v) const { return _verbName[v]; }
@@ -151,11 +150,11 @@ public:
 	Box &zoneBox(uint16 screen, uint16 index) { return _zones[screen][index].box; } 
 
 	void roomErase();
-	void roomSetupFurniture(); // SETUP_FURNITURE()
-	void roomSetupObjects(); // DISP_OBJECTS
-	uint16 roomRefreshObject(uint16 obj); // REDISP_OBJECT
+	void roomSetupFurniture();
+	void roomSetupObjects();
+	uint16 roomRefreshObject(uint16 obj);
 	void roomSetup(const char *room, int comPanel, bool inCutaway);
-	void roomDisplay(uint16 room, RoomDisplayMode mode, uint16 joeScale, int comPanel, bool inCutaway); // DISP_ROOM
+	void roomDisplay(uint16 room, RoomDisplayMode mode, uint16 joeScale, int comPanel, bool inCutaway);
 
 	uint16 findScale(uint16 x, uint16 y);
 
@@ -164,15 +163,15 @@ public:
 
 	uint16 numFrames() const { return _numFrames; }
 
-	void personSetData(int16 noun, const char *actorName, bool loadBank, Person *pp); // SET_PERSON_DATA
-	uint16 personSetup(uint16 noun, uint16 curImage); // SETUP_PERSON
-	uint16 personAllocate(uint16 noun, uint16 curImage); // ALLOCATE_PERSON
+	void personSetData(int16 noun, const char *actorName, bool loadBank, Person *pp);
+	uint16 personSetup(uint16 noun, uint16 curImage);
+	uint16 personAllocate(uint16 noun, uint16 curImage);
 	uint16 personFrames(uint16 bobNum) const { return _personFrames[bobNum]; }
 
-	uint16 animCreate(uint16 curImage, const Person *person); // CREATE_ANIM
+	uint16 animCreate(uint16 curImage, const Person *person);
 	void animErase(uint16 bobNum);
 	void animReset(uint16 bobNum);
-	void animSetup(const GraphicData *gd, uint16 firstImage, uint16 bobNum, bool visible); // FIND_GRAPHIC_ANIMS
+	void animSetup(const GraphicData *gd, uint16 firstImage, uint16 bobNum, bool visible);
 
 	void joeSetupFromBanks(const char *animBank, const char *standBank);
 
@@ -251,10 +250,9 @@ public:
 	bool preChangeRoom_Interview();
 	bool preChangeRoom_Game();
 
-	bool executeASM_Demo(uint16 sm);
-	bool executeASM_Interview(uint16 sm);
-	bool executeASM_Game(uint16 sm);
-
+	bool executeSpecialMove_Demo(uint16 sm);
+	bool executeSpecialMove_Interview(uint16 sm);
+	bool executeSpecialMove_Game(uint16 sm);
 	void executeSpecialMove(uint16 sm);
 
 	void asmMakeJoeUseDress();
@@ -296,15 +294,15 @@ public:
 	void asmPanLeftToBomb();
 	void asmEndDemo();
 
-	typedef bool (Logic::*ExecuteASMProc)(uint16);
+	typedef bool (Logic::*ExecuteSpecialMoveProc)(uint16);
 	typedef bool (Logic::*PreChangeRoomProc)();
 
 	enum {
-		MAX_ZONES_NUMBER   = 32,
-		MAX_AREAS_NUMBER   = 11,
-		JOE_RESPONSE_MAX   = 40,
-		DEFAULT_TALK_SPEED = 7 * 3,
-		GAME_STATE_COUNT   = 211,
+		MAX_ZONES_NUMBER    = 32,
+		MAX_AREAS_NUMBER    = 11,
+		JOE_RESPONSE_MAX    = 40,
+		DEFAULT_TALK_SPEED  = 7 * 3,
+		GAME_STATE_COUNT    = 211,
 		TALK_SELECTED_COUNT = 86
 	};
 
@@ -345,7 +343,7 @@ protected:
 	uint16 _numObjDesc;
 
 	ActorData *_actorData;
-	uint16 _numActors;	//ACTOR_DATA_MAX
+	uint16 _numActors;
 
 	//! Areas in room
 	Area (*_area)[MAX_AREAS_NUMBER];
@@ -358,10 +356,10 @@ protected:
 	uint16 _numWalkOffs;
 
 	FurnitureData *_furnitureData;
-	uint16 _numFurniture;	//FURN_DATA_MAX
+	uint16 _numFurniture;
 	
 	GraphicAnim *_graphicAnim;
-	uint16 _numGraphicAnim;	//GRAPHIC_ANIM_MAX
+	uint16 _numGraphicAnim;
 
 	//! Current areas in room
 	ZoneSlot _zones[2][MAX_ZONES_NUMBER];
@@ -370,30 +368,30 @@ protected:
 	int16 _entryObj;
 
 	//! Object description (Look At)
-	char **_objDescription;	//OBJECT_DESCRstr
+	char **_objDescription;
 	uint16 _numDescriptions;
 
-	char **_objName;	//OBJECT_NAMEstr
+	char **_objName;
 	uint16 _numNames;
 
 	//! Room name, prefix for data files (PCX, LUM...)
-	char **_roomName;	//ROOM_NAMEstr	
+	char **_roomName;
 
 	char *_verbName[13];
 
-	char *_joeResponse[JOE_RESPONSE_MAX + 1];	//JOE_RESPstr
+	char *_joeResponse[JOE_RESPONSE_MAX + 1];
 
 	//! Actor animation string
 	char **_aAnim;
-	uint16 _numAAnim;	//A_ANIM_MAX
+	uint16 _numAAnim;
 
 	//! Actor name
 	char **_aName;
-	uint16 _numAName;	//A_NAME_MAX
+	uint16 _numAName;
 
 	//! Actor filename
 	char **_aFile;
-	uint16 _numAFile;	//A_FILE_MAX
+	uint16 _numAFile;
 
 	struct {
 		uint16 x, y;
@@ -406,16 +404,16 @@ protected:
 
 	TalkSelected _talkSelected[TALK_SELECTED_COUNT];
 	
-	//! Number of animated furniture in current room (FMAXA)
+	//! Number of animated furniture in current room
 	uint16 _numFurnitureAnimated;
 
-	//! Number of static furniture in current room (FMAX)
+	//! Number of static furniture in current room
 	uint16 _numFurnitureStatic;
 
-	//! Total number of frames for the animated furniture (FMAXLEN)
+	//! Total number of frames for the animated furniture
 	uint16 _numFurnitureAnimatedLen;
 
-	//! Current number of frames unpacked (FRAMES)
+	//! Current number of frames unpacked
 	uint16 _numFrames;
 
 	//! Last frame number used for person animation
@@ -434,7 +432,7 @@ protected:
 
 	bool _subtitles;
 
-	ExecuteASMProc _executeASM;
+	ExecuteSpecialMoveProc _executeSpecialMove;
 	PreChangeRoomProc _preChangeRoom;
 
 	QueenEngine *_vm;

@@ -155,8 +155,7 @@ bool Debugger::Cmd_Items(int argc, const char **argv) {
 bool Debugger::Cmd_Room(int argc, const char **argv) {
 	if (argc == 2) {
 		uint16 roomNum = atoi(argv[1]);
-		_vm->logic()->joeX(0);
-		_vm->logic()->joeY(0);
+		_vm->logic()->joePos(0, 0);
 		_vm->logic()->newRoom(roomNum);
 		_vm->logic()->entryObj(_vm->logic()->roomData(roomNum) + 1);
 		DebugPrintf("Changing from room %d to %d\n", _vm->logic()->currentRoom(), roomNum);

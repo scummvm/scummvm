@@ -378,13 +378,11 @@ void Cutaway::changeRooms(CutawayObject &object) {
 
 	// set coordinates for Joe if he is on screen
 
-	_vm->logic()->joeX(0);
-	_vm->logic()->joeY(0);
+	_vm->logic()->joePos(0, 0);
 
 	for (int i = 0; i < object.personCount; i++) {
 		if (PERSON_JOE == object.person[i]) {
-			_vm->logic()->joeX(object.bobStartX);
-			_vm->logic()->joeY(object.bobStartY);
+			_vm->logic()->joePos(object.bobStartX, object.bobStartY);
 		}
 	}
 
@@ -999,8 +997,7 @@ void Cutaway::run(char *nextFilename) {
 			else {
 				// We're not returning to new room, so return to old Joe X,Y coords
 				debug(6, "[Cutaway::run] Moving joe to (%i, %i)", initialJoeX, initialJoeY);
-				_vm->logic()->joeX(initialJoeX);
-				_vm->logic()->joeY(initialJoeY);
+				_vm->logic()->joePos(initialJoeX, initialJoeY);
 			}
 
 			if (_vm->logic()->currentRoom() != _initialRoom) {
@@ -1010,8 +1007,7 @@ void Cutaway::run(char *nextFilename) {
 					_vm->logic()->newRoom(0);
 				}
 			}
-			_vm->logic()->joeX(0);
-			_vm->logic()->joeY(0);
+			_vm->logic()->joePos(0, 0);
 		}
 
 		_vm->logic()->joeCutFacing(0);
@@ -1083,8 +1079,7 @@ void Cutaway::stop() {
 		
 		debug(6, "[Cutaway::stop] Changing rooms and moving Joe");
 
-		_vm->logic()->joeX(joeX);
-		_vm->logic()->joeY(joeY);
+		_vm->logic()->joePos(joeX, joeY);
 		_vm->logic()->currentRoom(joeRoom);
 		_vm->logic()->oldRoom(_initialRoom);
 		_vm->logic()->roomDisplay(_vm->logic()->currentRoom(), RDM_FADE_JOE_XY, 0, _comPanel, true);
