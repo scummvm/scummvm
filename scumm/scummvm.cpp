@@ -551,12 +551,6 @@ Scumm::Scumm (GameDetector *detector, OSystem *syst)
 	_use_adlib = detector->_use_adlib;
 	_language = detector->_language;
 	memset(&res, 0, sizeof(res));
-	_allocatedSize = 0;
-	_roomResource = 0;
-	_lastLoadedRoom = 0;
-	_expire_counter = 0;
-	_dynamicRoomOffsets = 0;
-	_shakeEnabled = false;
 	_hexdumpScripts = false;
 	_showStack = false;
 
