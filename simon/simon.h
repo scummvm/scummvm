@@ -219,8 +219,6 @@ public:
 	Item *_item_1_ptr, *_item_ptr_B;
 	Item *_item_1;
 
-	byte *_sfx_heap;
-
 	Item *_hitarea_object_item;
 	HitArea *_last_hitarea;
 	HitArea *_last_hitarea_2_ptr;
@@ -338,7 +336,6 @@ public:
 	int _num_screen_updates;
 	int _vga_tick_counter;
 
-	PlayingSoundHandle _playing_sound;
 	PlayingSoundHandle _effects_sound;
 	PlayingSoundHandle _voice_sound;
 
