@@ -87,6 +87,9 @@ void ScummDebugger::attach(Scumm *s) {
 
 		DCmd_Register("level", &ScummDebugger::Cmd_DebugLevel);
 		DCmd_Register("help", &ScummDebugger::Cmd_Help);
+
+		DCmd_Register("show", &ScummDebugger::Cmd_Show);
+		DCmd_Register("hide", &ScummDebugger::Cmd_Hide);
 	}
 }
 
@@ -318,6 +321,34 @@ bool ScummDebugger::Cmd_SaveGame(int argc, const char **argv) {
 	} else
 		Debug_Printf("Syntax: savegame <slotnum> <name>\n");
 
+	return true;
+}
+
+bool ScummDebugger::Cmd_Show(int argc, const char **argv) {
+
+	if (argc != 2) {
+		Debug_Printf("Syntax: show <parameter>\n");
+		return true;
+	}
+	
+	if (!strcmp(argv[1], "hex")) {
+		_s->_hexdumpScripts = true;
+		Debug_Printf("Script hex dumping on\n");
+	}
+	return true;
+}
+
+bool ScummDebugger::Cmd_Hide(int argc, const char **argv) {
+
+	if (argc != 2) {
+		Debug_Printf("Syntax: hide <parameter>\n");
+		return true;
+	}
+	
+	if (!strcmp(argv[1], "hex")) {
+		_s->_hexdumpScripts = false;
+		Debug_Printf("Script hex dumping off\n");
+	}
 	return true;
 }
 

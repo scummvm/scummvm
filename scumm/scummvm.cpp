@@ -202,6 +202,7 @@ Scumm::Scumm (GameDetector *detector, OSystem *syst)
 	_expire_counter = 0;
 	_dynamicRoomOffsets = 0;
 	_shakeEnabled = 0;
+	_hexdumpScripts = 0;
 
 	if (_gameId == GID_ZAK256) {	// FmTowns is 320x240
 		_realWidth = 320;

@@ -285,6 +285,8 @@ void Scumm::executeScript() {
 				_scriptPointer - _scriptOrgPointer,
 				_opcode,
 				getOpcodeDesc(_opcode));
+		if (_hexdumpScripts == true)
+			hexdump(_scriptPointer - 1, 8);
 		executeOpcode(_opcode);
 	}
 	CHECK_HEAP;
