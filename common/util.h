@@ -44,7 +44,7 @@ class String;
  * customizable.
  * @param data	the data to be dumped
  * @param len	the lenght of that data
- * @param bytes_per_line	number of bytes to print per line (default: 16)
+ * @param bytesPerLine	number of bytes to print per line (default: 16)
  */
 extern void hexdump(const byte * data, int len, int bytesPerLine = 16);
 
