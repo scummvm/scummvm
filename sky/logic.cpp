@@ -1304,7 +1304,7 @@ script:
 			a = pop(); // and value to switch on
 
 			do {
-				if (a == *scriptData) {
+				if (a == READ_LE_UINT16(scriptData)) {
 					scriptData += READ_LE_UINT16(scriptData + 1)/2;
 					scriptData++;
 					break;
