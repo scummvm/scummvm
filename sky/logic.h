@@ -34,7 +34,7 @@ public:
 	SkyLogic(SkyDisk *skyDisk, SkyGrid *skyGrid, SkyText *skyText, SkyMusicBase *skyMusic, SkyMouse *skyMouse, SkySound *skySound, uint32 gameVersion);
 	void engine();
 
-	void lreturn();
+	void nop();
 	void logicScript();
 	void autoRoute();
 	void arAnim();

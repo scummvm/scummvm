@@ -29,7 +29,7 @@ uint16 SkyLogic::_screen;
 
 typedef void (SkyLogic::*LogicTable) ();
 static const LogicTable logicTable[] = {
-	&SkyLogic::lreturn,
+	&SkyLogic::nop,
 	&SkyLogic::logicScript,	 // 1  script processor
 	&SkyLogic::autoRoute,	 // 2  Make a route
 	&SkyLogic::arAnim,	 // 3  Follow a route
@@ -100,10 +100,7 @@ void SkyLogic::engine() {
 	}
 }
 
-void SkyLogic::lreturn() {
-	// WTF???
-	return;
-}
+void SkyLogic::nop() {}
 
 void SkyLogic::logicScript() {
 	// Process the current mega's script
@@ -915,7 +912,7 @@ script:
 		scriptData += READ_LE_UINT16(scriptData + (scriptNo & 0x0fff));
 
 	uint32 a, b, c;
-	uint16 command, mcode, s;
+	uint16 command, s;
 	uint16 *tmp;
 	int16 t;
 
@@ -989,29 +986,32 @@ script:
 				push(0);
 			break;
 		case 11: // call_mcode
-			s = READ_LE_UINT16(scriptData++);
+			{
+				s = READ_LE_UINT16(scriptData++);
 
-			a = s;
-			b = c = 0;
-			assert(s <= 3);
-			// No, I did not forget the "break"s
-			switch (s) {
-			case 3:
-				c = pop();
-			case 2:
-				b = pop();
-			case 1:
-				a = pop();
+				a = s;
+				b = c = 0;
+				assert(s <= 3);
+				// No, I did not forget the "break"s
+				switch (s) {
+				case 3:
+					c = pop();
+				case 2:
+					b = pop();
+				case 1:
+					a = pop();
+				}
+
+				uint16 mcode = READ_LE_UINT16(scriptData++)/4; // get mcode number
+				SkyDebug::mcode(mcode, a, b, c);
+
+				Compact *saveCpt = _compact;
+				uint32 ret = (this->*mcodeTable[mcode]) (a, b, c);
+				_compact = saveCpt;
+
+				if (!ret)
+					return (((scriptData - moduleStart) << 16) | scriptNo);
 			}
-
-			// TODO: save stuff (compare asm code)
-			mcode = READ_LE_UINT16(scriptData++)/4; // get mcode number
-			SkyDebug::mcode(mcode, a, b, c);
-
-			a = (this->*mcodeTable[mcode]) (a, b, c);
-
-			if (!a)
-				return (((scriptData - moduleStart) << 16) | scriptNo);
 			break;
 		case 12: // more_than
 			a = pop();
