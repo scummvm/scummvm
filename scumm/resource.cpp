@@ -1573,7 +1573,7 @@ int Scumm::readSoundResourceSmallHeader(int type, int idx) {
 		ro_size = _fileHandle.readUint16LE();
 
 		src_ptr = (byte *) calloc(ro_size - 4, 1);
-		_fileHandle.seek(ro_offs +4, SEEK_SET);
+		_fileHandle.seek(ro_offs + 4, SEEK_SET);
 		_fileHandle.read(src_ptr, ro_size -4);
 
 		ptr = createResource(type, idx, ro_size + 2);
@@ -1599,8 +1599,8 @@ int Scumm::readSoundResourceSmallHeader(int type, int idx) {
 		      (char) ((tag >> 8) & 0xff), size);
 		
 		if (tag == 0x4F52) { // RO
-			ro_size = size;
 			ro_offs = _fileHandle.pos();
+			ro_size = size;
 		} else {
 			pos = 6;
 			while (pos < total_size) {
@@ -1667,7 +1667,7 @@ int Scumm::readSoundResourceSmallHeader(int type, int idx) {
 		return 1;
 	} else if (ro_offs != 0) {
 		_fileHandle.seek(ro_offs - 2, SEEK_SET);
-		_fileHandle.read(createResource(type, idx, ro_size + 2), ro_size + 2);
+		_fileHandle.read(createResource(type, idx, ro_size - 4), ro_size - 4);
 		return 1;
 	}
 	res.roomoffs[type][idx] = 0xFFFFFFFF;
