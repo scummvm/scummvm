@@ -1252,6 +1252,7 @@ int Sound::playBundleSound(char *sound) {
 
 	byte *final = (byte *)malloc(size);
 	memcpy(final, ptr, size);
+	free(ptr);
 
 	if (_scumm->_actorToPrintStrFor != 0xFF && _scumm->_actorToPrintStrFor != 0) {
 		Actor *a = _scumm->derefActorSafe(_scumm->_actorToPrintStrFor, "playBundleSound");
