@@ -117,7 +117,7 @@ void GameDetector::updateconfig()
 		_gameTempo = strtol(val, NULL, 0);
 
 	if ((val = scummcfg->get("talkspeed")))
-		_talkspeed = atoi(val);
+		_talkSpeed = atoi(val);
 }
 
 void GameDetector::parseCommandLine(int argc, char **argv)
