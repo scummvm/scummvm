@@ -708,6 +708,13 @@ void CharsetRenderer::printCharOld(int chr) { // Loom3 / Zak256
 	if (chr=='@')
 		return;
 
+	if (_unk12) {
+		_strLeft = _left;
+		_strTop = _top;
+		_strRight = _left;
+		_strBottom = _top;
+		_unk12 = 0;
+	}
 	char_ptr = _vm->getResourceAddress(rtCharset, _curId) + 224 + (chr + 1)*8;
 	dest_ptr = _vm->getResourceAddress(rtBuffer, vs->number+1) + vs->xstart + (_top - vs->topline) * 320 + _left;
 	_vm->updateDirtyRect(vs->number, _left, _left + 8, _top - vs->topline, _top - vs->topline + 8, 0);
