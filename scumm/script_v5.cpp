@@ -2690,7 +2690,13 @@ void ScummEngine_v5::decodeParseString() {
 			}
 			break;
 		case 15:	// SO_TEXTSTRING
-			printString(textSlot, _scriptPointer);
+			// WORKAROUND: This happens when Chaos introduces
+			// herself to bishop Mandible. Of all the places to put
+			// a typo...
+			if (_gameId == GID_LOOM256 && strcmp((const char *) _scriptPointer, "I am Choas.") == 0)
+				printString(textSlot, (const byte *) "I am Chaos.");
+			else
+				printString(textSlot, _scriptPointer);
 			_scriptPointer += resStrLen(_scriptPointer) + 1;
 
 
