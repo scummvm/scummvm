@@ -877,7 +877,7 @@ protected:
 	void initBGBuffers(int height);
 	void initCycl(const byte *ptr);	// Color cycle
 
-	void createSpecialPalette(int16 a, int16 b, int16 c, int16 d, int16 e, int16 colorMin, int16 colorMax);
+	void setupShadowPalette(int16 a, int16 b, int16 c, int16 d, int16 e, int16 colorMin, int16 colorMax);
 
 	void drawObject(int obj, int arg);	
 	void drawRoomObjects(int arg);

@@ -287,11 +287,6 @@ void ScummEngine::cyclePalette() {
 
 			doCyclePalette(_currentPalette, cycl->start, cycl->end, 3, !(cycl->flags & 2));
 
-			// Also cycle the other, indirect palettes
-			if (_proc_special_palette) {
-				doCycleIndirectPalette(_proc_special_palette, cycl->start, cycl->end, !(cycl->flags & 2));
-			}
-
 			if (_shadowPalette) {
 				if (_version >= 7) {
 					for (j = 0; j < NUM_SHADOW_PALETTE; j++)
@@ -531,7 +526,7 @@ void ScummEngine::setupShadowPalette(int redScale, int greenScale, int blueScale
 }
 
 /** This function create the specialPalette used for semi-transparency in SamnMax */
-void ScummEngine::createSpecialPalette(int16 from, int16 to, int16 redScale, int16 greenScale, int16 blueScale,
+void ScummEngine::setupShadowPalette(int16 from, int16 to, int16 redScale, int16 greenScale, int16 blueScale,
 			int16 startColor, int16 endColor) {
 	const byte *palPtr, *curPtr;
 	const byte *searchPtr;
@@ -546,7 +541,7 @@ void ScummEngine::createSpecialPalette(int16 from, int16 to, int16 redScale, int
 	palPtr = getPalettePtr(_curPalIndex);
 
 	for (i = 0; i < 256; i++)
-		_proc_special_palette[i] = i;
+		_shadowPalette[i] = i;
 
 	curPtr = palPtr + startColor * 3;
 
@@ -574,7 +569,7 @@ void ScummEngine::createSpecialPalette(int16 from, int16 to, int16 redScale, int
 			currentResult = colorWeight(ar - r, ag - g, ab - b);
 
 			if (currentResult < bestResult) {
-				_proc_special_palette[i] = currentIndex;
+				_shadowPalette[i] = currentIndex;
 				bestResult = currentResult;
 			}
 			currentIndex++;
