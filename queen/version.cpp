@@ -24,7 +24,7 @@
 namespace Queen {
 
 //English Floppy Demo v1
-const GameVersion QueenResource::_gameVersionPE100v1 = {
+const GameVersion Resource::_gameVersionPE100v1 = {
 	"PE100",
 	155,
 	true,
@@ -33,7 +33,7 @@ const GameVersion QueenResource::_gameVersionPE100v1 = {
 };
 
 //English Floppy Demo v2
-const GameVersion QueenResource::_gameVersionPE100v2 = {
+const GameVersion Resource::_gameVersionPE100v2 = {
 	"PE100",
 	155,
 	true,
@@ -42,7 +42,7 @@ const GameVersion QueenResource::_gameVersionPE100v2 = {
 };
 
 //English Floppy
-const GameVersion QueenResource::_gameVersionPEM10 = {
+const GameVersion Resource::_gameVersionPEM10 = {
 	"PEM10",
 	1076,
 	true,
@@ -51,7 +51,7 @@ const GameVersion QueenResource::_gameVersionPEM10 = {
 };
 
 //English CD Talkie
-const GameVersion QueenResource::_gameVersionCEM10 = {
+const GameVersion Resource::_gameVersionCEM10 = {
 	"CEM10",
 	7671,
 	false,

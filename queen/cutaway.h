@@ -26,18 +26,18 @@
 
 namespace Queen {
 
-class QueenResource;
-class QueenLogic;
-class QueenGraphics;
+class Resource;
+class Logic;
+class Graphics;
 
-class QueenCutaway {
+class Cutaway {
 	public:
 		//! Public interface to run a cutaway from a file
 		static void run(
 				const char *filename,
 				char *nextFilename,
-				QueenLogic *queenLogic,
-				QueenResource *queenResource);
+				Logic *logic,
+				Resource *resource);
 	private:
 		//! Collection of constants used by QueenCutaway
 		enum {
@@ -120,8 +120,8 @@ class QueenCutaway {
 			int16 image;
 		};
 
-		QueenLogic 		*_queenLogic;
-		QueenGraphics *_queenGraphics;
+		Logic 		*_logic;
+		Graphics 	*_graphics;
 
 		//! Raw .cut file data (without 20 byte header)
 		byte *_fileData;
@@ -178,17 +178,17 @@ class QueenCutaway {
 		int16 _songBeforeComic;
 
 
-		QueenCutaway(
+		Cutaway(
 				const char *filename, 
-				QueenLogic *queenLogic,
-				QueenResource *queenResource);
-		~QueenCutaway();
+				Logic *logic,
+				Resource *resource);
+		~Cutaway();
 
 		//! Run this cutaway object 
 		void run(char *nextFilename);
 
 		//! Load cutaway data from file 
-		void load(const char *filename, QueenResource *queenResource);
+		void load(const char *filename, Resource *resource);
 
 		//! Used by load to read string data
 		void loadStrings(byte *ptr);

@@ -23,7 +23,7 @@
 
 namespace Queen {
 
-QueenGraphics::QueenGraphics(QueenResource *resource)
+Graphics::Graphics(Resource *resource)
 	:_resource(resource) {
 		
 	memset(_frames, 0, sizeof(_frames));
@@ -34,7 +34,7 @@ QueenGraphics::QueenGraphics(QueenResource *resource)
 }
 
 
-QueenGraphics::~QueenGraphics() {
+Graphics::~Graphics() {
 	uint32 i;
 	for(i = 0; i < ARRAYSIZE(_banks); ++i) {
 		delete _banks[i].data;
@@ -44,7 +44,7 @@ QueenGraphics::~QueenGraphics() {
 }
 
 
-void QueenGraphics::bankLoad(const char *bankname, uint32 bankslot) {
+void Graphics::bankLoad(const char *bankname, uint32 bankslot) {
 	
 	int16 i;
 	
@@ -72,7 +72,7 @@ void QueenGraphics::bankLoad(const char *bankname, uint32 bankslot) {
 }
 
 
-void QueenGraphics::bankUnpack(uint32 srcframe, uint32 dstframe, uint32 bankslot) {
+void Graphics::bankUnpack(uint32 srcframe, uint32 dstframe, uint32 bankslot) {
 	
 	uint8 *p = _banks[bankslot].data + _banks[bankslot].indexes[srcframe];
 		
@@ -92,7 +92,7 @@ void QueenGraphics::bankUnpack(uint32 srcframe, uint32 dstframe, uint32 bankslot
 }
 
 
-void QueenGraphics::bankOverpack(uint32 srcframe, uint32 dstframe, uint32 bankslot) {
+void Graphics::bankOverpack(uint32 srcframe, uint32 dstframe, uint32 bankslot) {
 	
 	uint8 *p = _banks[bankslot].data + _banks[bankslot].indexes[srcframe];
 	uint16 src_w = READ_LE_UINT16(p + 0);
@@ -111,7 +111,7 @@ void QueenGraphics::bankOverpack(uint32 srcframe, uint32 dstframe, uint32 banksl
 }
 
 
-void QueenGraphics::bankErase(uint32 bankslot) {
+void Graphics::bankErase(uint32 bankslot) {
 	
 	delete[] _banks[bankslot].data;
 	_banks[bankslot].data = 0;
@@ -120,7 +120,7 @@ void QueenGraphics::bankErase(uint32 bankslot) {
 }
 
 
-void QueenGraphics::bobAnimString(uint32 bobnum, uint8* animBuf) {
+void Graphics::bobAnimString(uint32 bobnum, uint8* animBuf) {
 
 	BobSlot *pbs = &_bobs[bobnum];
 	pbs->active = true;
@@ -132,7 +132,7 @@ void QueenGraphics::bobAnimString(uint32 bobnum, uint8* animBuf) {
 }
 
 
-void QueenGraphics::bobAnimNormal(uint32 bobnum, uint16 firstFrame, uint16 lastFrame, uint16 speed, bool rebound, bool xflip) {
+void Graphics::bobAnimNormal(uint32 bobnum, uint16 firstFrame, uint16 lastFrame, uint16 speed, bool rebound, bool xflip) {
 
 	BobSlot *pbs = &_bobs[bobnum];
 	pbs->active = true;
@@ -149,7 +149,7 @@ void QueenGraphics::bobAnimNormal(uint32 bobnum, uint16 firstFrame, uint16 lastF
 }
 
 
-void QueenGraphics::bobMove(uint32 bobnum, uint16 endx, uint16 endy, int16 speed) {
+void Graphics::bobMove(uint32 bobnum, uint16 endx, uint16 endy, int16 speed) {
 
 	BobSlot *pbs = &_bobs[bobnum];
 
@@ -273,7 +273,7 @@ void BobSlot::animOneStep() {
 }
             
 
-void QueenGraphics::bobDraw(uint32 bobnum, uint16 x, uint16 y, uint16 scale, bool xflip, const Box& box) {
+void Graphics::bobDraw(uint32 bobnum, uint16 x, uint16 y, uint16 scale, bool xflip, const Box& box) {
 
 	uint16 w, h;
 	uint8 *src;
@@ -333,7 +333,7 @@ void QueenGraphics::bobDraw(uint32 bobnum, uint16 x, uint16 y, uint16 scale, boo
 }
 
 
-void QueenGraphics::bobDrawInventoryItem(uint32 bobnum, uint16 x, uint16 y) {
+void Graphics::bobDrawInventoryItem(uint32 bobnum, uint16 x, uint16 y) {
 	if (bobnum == 0) {
 		// clear panel area
 //		_display->clear(panel, x, y, 32, 32, INK_BG_PANEL);
@@ -345,7 +345,7 @@ void QueenGraphics::bobDrawInventoryItem(uint32 bobnum, uint16 x, uint16 y) {
 }
 
 
-void QueenGraphics::bobPaste(uint32 bobnum, uint16 x, uint16 y) {
+void Graphics::bobPaste(uint32 bobnum, uint16 x, uint16 y) {
 
 //	BobFrame *pbf = &_frames[bobnum];
 //	_display->blit(backdrop, x, y, 640, pbf->data, pbf->width, pbf->height, pbf->width, false, true);
@@ -353,7 +353,7 @@ void QueenGraphics::bobPaste(uint32 bobnum, uint16 x, uint16 y) {
 }
 
 
-void QueenGraphics::bobShrink(const BobFrame* pbf, uint16 percentage) {
+void Graphics::bobShrink(const BobFrame* pbf, uint16 percentage) {
 
 	// computing new size, rounding to upper value
 	uint16 new_w = (pbf->width  * percentage + 50) / 100;
@@ -398,7 +398,7 @@ void QueenGraphics::bobShrink(const BobFrame* pbf, uint16 percentage) {
 }
 
 
-void QueenGraphics::bobClear(uint32 bobnum) {
+void Graphics::bobClear(uint32 bobnum) {
 
 	BobSlot *pbs = &_bobs[bobnum];
 
@@ -414,7 +414,7 @@ void QueenGraphics::bobClear(uint32 bobnum) {
 }
 
 
-void QueenGraphics::bobSortAll() {
+void Graphics::bobSortAll() {
 
 	int32 _sorted = 0;
 
@@ -455,7 +455,7 @@ void QueenGraphics::bobSortAll() {
 }
 
 
-void QueenGraphics::bobDrawAll() {
+void Graphics::bobDrawAll() {
 	
 	for (BobSlot *pbs = _sortedBobs[0]; pbs; ++pbs) {
 		if (pbs->active) {
@@ -486,14 +486,14 @@ void QueenGraphics::bobDrawAll() {
 }
 
 
-void QueenGraphics::bobClearAll() {
+void Graphics::bobClearAll() {
 
 	for(int32 i = 0; i < ARRAYSIZE(_bobs); ++i) {
 		bobClear(i);
 	}
 }
 
-BobSlot *QueenGraphics::bob(int index) {
+BobSlot *Graphics::bob(int index) {
 	if (index < MAX_BOBS_NUMBER)
 		return _bobs + index;
 	else {
@@ -502,7 +502,7 @@ BobSlot *QueenGraphics::bob(int index) {
 	}
 }
 
-void QueenGraphics::frameErase(uint32 fslot) {
+void Graphics::frameErase(uint32 fslot) {
 
 	BobFrame *pbf = &_frames[fslot];
 	pbf->width  = 0;
@@ -512,3 +512,4 @@ void QueenGraphics::frameErase(uint32 fslot) {
 }
 
 } // End of namespace Queen
+

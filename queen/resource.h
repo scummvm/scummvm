@@ -42,11 +42,11 @@ struct GameVersion {
 };
 
 
-class QueenResource {
+class Resource {
 
 public:
-	QueenResource(char *datafilePath);
-	~QueenResource(void);
+	Resource(char *datafilePath);
+	~Resource(void);
 	uint8 *loadFile(const char *filename, uint32 skipBytes = 0);
 	bool exists(const char *filename);
 	bool isDemo();

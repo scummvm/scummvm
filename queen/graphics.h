@@ -83,11 +83,11 @@ struct BobSlot {
 };
 
 
-class QueenGraphics {
+class Graphics {
 public:
 
-	QueenGraphics(QueenResource *resource);
-	~QueenGraphics();
+	Graphics(Resource *resource);
+	~Graphics();
 
 	void bankLoad(const char *bankname, uint32 bankslot); // loadbank()
 	void bankUnpack(uint32 srcframe, uint32 dstframe, uint32 bankslot); // unpackbank()
@@ -123,7 +123,7 @@ private:
 	BobSlot *_sortedBobs[MAX_BOBS_NUMBER + 1]; //! bobs displayed
 	BobFrame _shrinkBuffer;
 
-	QueenResource *_resource;
+	Resource *_resource;
 	
 };
 

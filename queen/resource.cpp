@@ -29,7 +29,7 @@ namespace Queen {
 
 static const char *dataFilename = "queen.1";
 
-QueenResource::QueenResource(char *datafilePath) {
+Resource::Resource(char *datafilePath) {
 
 	_datafilePath = datafilePath;
 	_resourceFile = new File();
@@ -64,11 +64,11 @@ QueenResource::QueenResource(char *datafilePath) {
 
 }
 
-QueenResource::~QueenResource() {
+Resource::~Resource() {
 	_resourceFile->close();
 }
 
-int32 QueenResource::resourceIndex(const char *filename) {
+int32 Resource::resourceIndex(const char *filename) {
 
 	char entryName[14];
 	char *ptr = entryName;
@@ -109,15 +109,15 @@ int32 QueenResource::resourceIndex(const char *filename) {
 	return -1;
 }
 
-uint32 QueenResource::fileSize(const char *filename) {
+uint32 Resource::fileSize(const char *filename) {
 	return _gameVersion->resourceTable[resourceIndex(filename)].size;
 }
 
-uint32 QueenResource::fileOffset(const char *filename) {
+uint32 Resource::fileOffset(const char *filename) {
 	return _gameVersion->resourceTable[resourceIndex(filename)].offset;
 }
 
-uint8 *QueenResource::loadFile(const char *filename, uint32 skipBytes) {
+uint8 *Resource::loadFile(const char *filename, uint32 skipBytes) {
 	uint32 size = fileSize(filename);
 	byte *mem = new byte[size];
 	// skip 'skipBytes' bytes (useful for headers)
@@ -126,11 +126,11 @@ uint8 *QueenResource::loadFile(const char *filename, uint32 skipBytes) {
 	return mem;
 }
 
-bool QueenResource::exists(const char *filename) {
+bool Resource::exists(const char *filename) {
 	return resourceIndex(filename) >= 0;
 }
 
-const char *QueenResource::JASVersion() {
+const char *Resource::JASVersion() {
 	static char versionStr[6];
 	if (_gameVersion->isDemo)
 		_resourceFile->seek(fileOffset("QUEEN.JAS") + DEMO_JAS_VERSION_OFFSET, SEEK_SET );
@@ -140,8 +140,9 @@ const char *QueenResource::JASVersion() {
 	return versionStr;
 }
 
-bool QueenResource::isDemo() {
+bool Resource::isDemo() {
 	return _gameVersion->isDemo;
 }
 
 } // End of namespace Queen
+

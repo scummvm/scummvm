@@ -72,8 +72,8 @@ QueenEngine::QueenEngine(GameDetector *detector, OSystem *syst)
 }
 
 QueenEngine::~QueenEngine() {
-	delete _queenLogic;
-	delete _queenResource;
+	delete _logic;
+	delete _resource;
 	//delete _queenDisplay;
 }
 
@@ -94,9 +94,9 @@ void QueenEngine::go() {
 }
 
 void QueenEngine::initialise(void) {
-	_queenResource = new QueenResource(_gameDataPath);
-	_queenLogic = new QueenLogic(_queenResource);
-	//_queenSound = new QueenSound(_mixer, _detector->_sfx_volume);
+	_resource = new Resource(_gameDataPath);
+	_logic = new Logic(_resource);
+	//_sound = new Sound(_mixer, _detector->_sfx_volume);
 }
 
 void QueenEngine::delay(uint amount) { 

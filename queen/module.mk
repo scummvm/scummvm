@@ -4,9 +4,9 @@ MODULE_OBJS = \
 	queen/cutaway.o \
 	queen/graphics.o \
 	queen/logic.o \
+	queen/queen.o \
 	queen/resource.o \
 	queen/restables.o \
-	queen/queen.o \
 	queen/version.o \
 
 # This module can be built as a plugin

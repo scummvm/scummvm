@@ -32,11 +32,11 @@ enum {
 	FRAME_XTRA = 2
 };
 
-class QueenLogic {
+class Logic {
 
 public:
-	QueenLogic(QueenResource *resource);
-	~QueenLogic();
+	Logic(Resource *resource);
+	~Logic();
 
 	uint16 currentRoom();
 	void currentRoom(uint16 room);
@@ -73,8 +73,8 @@ protected:
 
 	uint16 *_roomData;
 	uint16 *_sfxName;
-	uint16 *_objMax;
-	uint16 *_areaMax;
+	int16 *_objMax;
+	int16 *_areaMax;
 	uint16 (*_objectBox)[4]; // FIXME: Box *_objectBox;
 	uint16 (*_itemData)[5]; // FIXME: ItemData *_itemData;
 	GraphicData *_graphicData;
@@ -91,7 +91,7 @@ protected:
 	
 	uint16 _maxAnimatedFrame, _maxStaticFrame, _maxAnimatedFrameLen; // FMAXA, FMAX, FMAXALEN
 
-	QueenResource *_resource;
+	Resource *_resource;
 
 	void initialise();
 };

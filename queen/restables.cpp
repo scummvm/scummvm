@@ -24,7 +24,7 @@
 namespace Queen {
 
 //English Floppy Demo v1
-const ResourceEntry QueenResource::_resourceTablePE100v1[] = {
+const ResourceEntry Resource::_resourceTablePE100v1[] = {
 	{ "ANDERSON.ACT", 1, 0x00000000, 0x00007c0a },
 	{ "AQ8.RL", 1, 0x00007c0a, 0x000167f8 },
 	{ "AQBANK.MUS", 1, 0x0001e402, 0x0002db36 },
@@ -183,7 +183,7 @@ const ResourceEntry QueenResource::_resourceTablePE100v1[] = {
 };
 
 //English Floppy Demo v2
-const ResourceEntry QueenResource::_resourceTablePE100v2[] = {
+const ResourceEntry Resource::_resourceTablePE100v2[] = {
 	{ "ANDERSON.ACT", 1, 0x00000000, 0x00007c0a },
 	{ "AQ8.RL", 1, 0x00007c0a, 0x000167f8 },
 	{ "AQBANK.MUS", 1, 0x0001e402, 0x0002db36 },
@@ -342,7 +342,7 @@ const ResourceEntry QueenResource::_resourceTablePE100v2[] = {
 };
 
 //English Floppy Version
-const ResourceEntry QueenResource::_resourceTablePEM10[] = {
+const ResourceEntry Resource::_resourceTablePEM10[] = {
 	{ "1000SSSS.SB", 1, 0x00000000, 0x000027fe },
 	{ "1001SSSS.SB", 1, 0x000027fe, 0x00007af8 },
 	{ "1002SSSS.SB", 1, 0x0000a2f6, 0x000049e2 },
@@ -1422,7 +1422,7 @@ const ResourceEntry QueenResource::_resourceTablePEM10[] = {
 };
 
 //English CD Talkie
-const ResourceEntry QueenResource::_resourceTableCEM10[] = {
+const ResourceEntry Resource::_resourceTableCEM10[] = {
 	{ "020001P2.SB", 1, 0x00000000, 0x00008ed9 },
 	{ "020006J1.SB", 1, 0x00008ed9, 0x000078c2 },
 	{ "020006P1.SB", 1, 0x0001079b, 0x0000543a },

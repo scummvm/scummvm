@@ -23,20 +23,20 @@
 
 namespace Queen {
 
-QueenLogic::QueenLogic(QueenResource *resource) 
+Logic::Logic(Resource *resource) 
 	: _maxAnimatedFrame(0), _maxStaticFrame(0), _resource(resource) {
 	_jas = _resource->loadFile("QUEEN.JAS", 20);
 	
 	initialise();
 }
 
-QueenLogic::~QueenLogic() {
+Logic::~Logic() {
 	delete[] _jas;
 	//free(_graphicData);
 }
 
-void QueenLogic::initialise() {
-	uint16 i;
+void Logic::initialise() {
+	int16 i, j, k;
 	uint8 *ptr = _jas;
 
 	//_display->loadFont();
@@ -113,7 +113,7 @@ void QueenLogic::initialise() {
 	for (i = 1; i < (_numItems + 1); i++) {
 		_itemData[i][0] = READ_BE_UINT16(ptr);
 		ptr += 2;
-		for (uint16 j = 1; j < 5; j++) {
+		for (j = 1; j < 5; j++) {
 		       _itemData[i][j] = READ_BE_UINT16(ptr);
 		       ptr += 2;
 		}
@@ -139,18 +139,18 @@ void QueenLogic::initialise() {
 		ptr += 2;
 	}
 	
-	_objMax = new uint16[_numRooms + 1];
-	_areaMax = new uint16[_numRooms + 1];
+	_objMax = new int16[_numRooms + 1];
+	_areaMax = new int16[_numRooms + 1];
 	_area = new int16[_numRooms + 1][11][8];
-/*
-	for (uint16 i = 1; i < (_numRooms + 1); i++) {
-		_objMax[i] = READ_BE_UINT16(ptr);
+
+	for (i = 1; i < (_numRooms + 1); i++) {
+		_objMax[i] = (int16)READ_BE_UINT16(ptr);
 		ptr += 2;
-		_areaMax[i] = READ_BE_UINT16(ptr);
+		_areaMax[i] = (int16)READ_BE_UINT16(ptr);
 		ptr += 2;
 		
-		for (uint16 j = 1; j < (_areaMax[i] + 1); j++)
-			for (uint16 k = 0; k < 8; k++) {
+		for (j = 1; j < (_areaMax[i] + 1); j++)
+			for (k = 0; k < 8; k++) {
 				_area[i][j][k] = READ_BE_UINT16(ptr);
 				ptr += 2;
 			}
@@ -158,59 +158,56 @@ void QueenLogic::initialise() {
 	}	
 	
 	_objectBox = new uint16[_numObjects + 1][4];
-	for (uint16 i = 1; i < (_numObjects + 1); i++)
-		for (uint16 j = 0; j < 4; j++) {
+	for (i = 1; i < (_numObjects + 1); i++)
+		for (j = 0; j < 4; j++) {
 			_objectBox[i][j] = READ_BE_UINT16(ptr);
 			ptr += 2;
 		}
-		
-
-*/	
 
 	_numWalkOffs = 0;
 }
 
-uint16 QueenLogic::currentRoom() {
+uint16 Logic::currentRoom() {
 	return _currentRoom;
 }
 
-void QueenLogic::currentRoom(uint16 room) {
+void Logic::currentRoom(uint16 room) {
 	_currentRoom = room;
 }
 
-void QueenLogic::oldRoom(uint16 room) {
+void Logic::oldRoom(uint16 room) {
 	_oldRoom = room;
 }
 
-ObjectData* QueenLogic::objectData(int index) {
+ObjectData* Logic::objectData(int index) {
   return &_objectData[index];
 }
 
-uint16 QueenLogic::roomData(int room) {
+uint16 Logic::roomData(int room) {
 	return _roomData[room];
 }
 
-uint16 QueenLogic::objMax(int room) {
+uint16 Logic::objMax(int room) {
 	return _objMax[room];
 }
 
-int16 *QueenLogic::area(int index, int subIndex) {
+int16 *Logic::area(int index, int subIndex) {
 	return _area[index][subIndex];
 }
 
-uint16 QueenLogic::walkOffCount() {
+uint16 Logic::walkOffCount() {
 	return _numWalkOffs;
 }
 
-uint16 *QueenLogic::walkOffData(int index) {
+uint16 *Logic::walkOffData(int index) {
 	return _walkOffData[index];
 }
 
-GraphicData* QueenLogic::findGraphic(int index) {
+GraphicData *Logic::findGraphic(int index) {
 	return &_graphicData[index];
 }
 
-uint16 QueenLogic::findBob(uint16 obj) {
+uint16 Logic::findBob(uint16 obj) {
 
 	uint16 i;
 	uint16 bobnum = 0;
@@ -306,7 +303,7 @@ uint16 QueenLogic::findBob(uint16 obj) {
 }
 
 
-uint16 QueenLogic::findFrame(uint16 obj) {
+uint16 Logic::findFrame(uint16 obj) {
 
 	uint16 i;
 	uint16 framenum = 0;
@@ -382,14 +379,14 @@ uint16 QueenLogic::findFrame(uint16 obj) {
 	return framenum;
 }
 
-int16 QueenLogic::gameState(int index) {
+int16 Logic::gameState(int index) {
 	if (index >= 0 && index < GAME_STATE_COUNT)
 		return _gameState[index];
 	else
 		error("[QueenLogic::gameState] invalid index: %i", index);
 }
 
-void QueenLogic::gameState(int index, int16 newValue) {
+void Logic::gameState(int index, int16 newValue) {
 	if (index >= 0 && index < GAME_STATE_COUNT)
 		 _gameState[index] = newValue;
 	else
@@ -398,3 +395,4 @@ void QueenLogic::gameState(int index, int16 newValue) {
 
 
 } // End of namespace Queen
+
