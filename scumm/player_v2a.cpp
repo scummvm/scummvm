@@ -251,6 +251,7 @@ private:
 
 	int _ticks;
 };
+
 class V2A_Sound_SingleLooped : public V2A_Sound_Base<1> {
 public:
 	V2A_Sound_SingleLooped(uint16 offset, uint16 size, uint16 freq, uint8 vol, uint16 loopoffset, uint16 loopsize) :
@@ -275,6 +276,7 @@ private:
 	const uint16 _freq;
 	const uint8 _vol;
 };
+
 class V2A_Sound_MultiLooped : public V2A_Sound_Base<2> {
 public:
 	V2A_Sound_MultiLooped(uint16 offset, uint16 size, uint16 freq1, uint8 vol1, uint16 freq2, uint8 vol2) :
@@ -301,6 +303,7 @@ private:
 	const uint16 _freq2;
 	const uint8 _vol2;
 };
+
 class V2A_Sound_MultiLoopedDuration : public V2A_Sound_MultiLooped {
 public:
 	V2A_Sound_MultiLoopedDuration(uint16 offset, uint16 size, uint16 freq1, uint8 vol1, uint16 freq2, uint8 vol2, uint16 numframes) :
@@ -321,6 +324,7 @@ private:
 
 	int _ticks;
 };
+
 class V2A_Sound_SingleLoopedPitchbend : public V2A_Sound_Base<1> {
 public:
 	V2A_Sound_SingleLoopedPitchbend(uint16 offset, uint16 size, uint16 freq1, uint16 freq2, uint8 vol, uint8 step) :
@@ -359,6 +363,7 @@ private:
 
 	uint16 _curfreq;
 };
+
 class V2A_Sound_Special_FastPitchbendDownAndFadeout : public V2A_Sound_Base<1> {
 public:
 	V2A_Sound_Special_FastPitchbendDownAndFadeout(uint16 offset, uint16 size, uint16 freq, uint8 vol) :
@@ -720,6 +725,69 @@ private:
 	}
 };
 
+class V2A_Sound_Special_TwinSirenMulti : public V2A_Sound_Base<2> {
+public:
+	V2A_Sound_Special_TwinSirenMulti(uint16 offset1, uint16 size1, uint16 offset2, uint16 size2, uint16 freq1, uint16 freq2, uint8 vol) :
+		_offset1(offset1), _size1(size1), _offset2(offset2), _size2(size2), _freq1(freq1), _freq2(freq2), _vol(vol) { }
+	virtual void start(Player_MOD *mod, int id, const byte *data) {
+		_mod = mod;
+		_id = id;
+		_data = (char *)malloc(READ_LE_UINT16(data));
+		memcpy(_data, data, READ_LE_UINT16(data));
+		
+		_loopnum = 1;
+		_step = 2;
+		_curfreq = _freq1;
+
+		soundon(_data + _offset1, _size1);
+	}
+	virtual bool update() {
+		assert(_id);
+		_mod->setChannelFreq(_id | 0x000, BASE_FREQUENCY / _curfreq);
+		_mod->setChannelFreq(_id | 0x100, BASE_FREQUENCY / (_curfreq + 3));
+		_curfreq -= _step;
+		if (_loopnum == 7) {
+			if ((BASE_FREQUENCY / _curfreq) >= 65536)
+				return false;
+			else
+				return true;
+		}
+		if (_curfreq >= _freq2)
+			return true;
+		const char steps[8] = {0,2,2,3,4,8,15,2};
+		_curfreq = _freq1;
+		_step = steps[++_loopnum];
+		if (_loopnum == 7) {
+			_mod->stopChannel(_id | 0x000);
+			_mod->stopChannel(_id | 0x100);
+			soundon(_data + _offset2, _size2);
+		}
+		return true;
+	}
+private:
+	const uint16 _offset1;
+	const uint16 _size1;
+	const uint16 _offset2;
+	const uint16 _size2;
+	const uint16 _freq1;
+	const uint16 _freq2;
+	const uint8 _vol;
+
+	int _curfreq;
+	uint16 _loopnum;
+	uint16 _step;
+
+	void soundon(const char *data, int size) {
+		char *tmp_data1 = (char *)malloc(size);
+		char *tmp_data2 = (char *)malloc(size);
+		memcpy(tmp_data1, data, size);
+		memcpy(tmp_data2, data, size);
+		int vol = (_vol << 1) | (_vol >> 5);
+		_mod->startChannel(_id | 0x000, tmp_data1, size, BASE_FREQUENCY / _curfreq, vol, 0, size, -127);
+		_mod->startChannel(_id | 0x100, tmp_data2, size, BASE_FREQUENCY / (_curfreq + 3), vol, 0, size, 127);
+	}
+};
+
 class V2A_Sound_Special_QuadSiren : public V2A_Sound_Base<4> {
 public:
 	V2A_Sound_Special_QuadSiren(uint16 offset1, uint16 size1, uint16 offset2, uint16 size2, uint8 vol) :
@@ -788,69 +856,6 @@ private:
 			freq = max;
 			step = -step;
 		}
-	}
-};
-
-class V2A_Sound_Special_TwinSirenMulti : public V2A_Sound_Base<2> {
-public:
-	V2A_Sound_Special_TwinSirenMulti(uint16 offset1, uint16 size1, uint16 offset2, uint16 size2, uint16 freq1, uint16 freq2, uint8 vol) :
-		_offset1(offset1), _size1(size1), _offset2(offset2), _size2(size2), _freq1(freq1), _freq2(freq2), _vol(vol) { }
-	virtual void start(Player_MOD *mod, int id, const byte *data) {
-		_mod = mod;
-		_id = id;
-		_data = (char *)malloc(READ_LE_UINT16(data));
-		memcpy(_data, data, READ_LE_UINT16(data));
-		
-		_loopnum = 1;
-		_step = 2;
-		_curfreq = _freq1;
-
-		soundon(_data + _offset1, _size1);
-	}
-	virtual bool update() {
-		assert(_id);
-		_mod->setChannelFreq(_id | 0x000, BASE_FREQUENCY / _curfreq);
-		_mod->setChannelFreq(_id | 0x100, BASE_FREQUENCY / (_curfreq + 3));
-		_curfreq -= _step;
-		if (_loopnum == 7) {
-			if ((BASE_FREQUENCY / _curfreq) >= 65536)
-				return false;
-			else
-				return true;
-		}
-		if (_curfreq >= _freq2)
-			return true;
-		const char steps[8] = {0,2,2,3,4,8,15,2};
-		_curfreq = _freq1;
-		_step = steps[++_loopnum];
-		if (_loopnum == 7) {
-			_mod->stopChannel(_id | 0x000);
-			_mod->stopChannel(_id | 0x100);
-			soundon(_data + _offset2, _size2);
-		}
-		return true;
-	}
-private:
-	const uint16 _offset1;
-	const uint16 _size1;
-	const uint16 _offset2;
-	const uint16 _size2;
-	const uint16 _freq1;
-	const uint16 _freq2;
-	const uint8 _vol;
-
-	int _curfreq;
-	uint16 _loopnum;
-	uint16 _step;
-
-	void soundon(const char *data, int size) {
-		char *tmp_data1 = (char *)malloc(size);
-		char *tmp_data2 = (char *)malloc(size);
-		memcpy(tmp_data1, data, size);
-		memcpy(tmp_data2, data, size);
-		int vol = (_vol << 1) | (_vol >> 5);
-		_mod->startChannel(_id | 0x000, tmp_data1, size, BASE_FREQUENCY / _curfreq, vol, 0, size, -127);
-		_mod->startChannel(_id | 0x100, tmp_data2, size, BASE_FREQUENCY / (_curfreq + 3), vol, 0, size, 127);
 	}
 };
 
