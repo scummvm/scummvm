@@ -412,9 +412,7 @@ byte AkosRenderer::drawLimb(const Actor *a, int limb) {
 			result |= codec16(xmoveCur, ymoveCur);
 			break;
 		case 32:
-			// TODO Add codec32
-			warning("akos_drawLimb codec32");
-			result = 1;
+			result |= codec32(xmoveCur, ymoveCur);
 			break;
 		default:
 			error("akos_drawLimb: invalid codec %d", codec);
@@ -491,9 +489,7 @@ byte AkosRenderer::drawLimb(const Actor *a, int limb) {
 				result |= codec16(xmoveCur, ymoveCur);
 				break;
 			case 32:
-				// TODO Add codec32
-				warning("akos_drawLimb: codec32 stub");
-				result = 1;
+				result |= codec32(xmoveCur, ymoveCur);
 				break;
 			default:
 				error("akos_drawLimb: invalid codec %d", codec);
@@ -1220,6 +1216,40 @@ byte AkosRenderer::codec16(int xmoveCur, int ymoveCur) {
 	byte *dst = _outptr + width_unk + height_unk * _outwidth;
 
 	akos16Decompress(dst, pitch, _srcptr, cur_x, out_height, dir, numskip_before, numskip_after, transparency, clip.left, clip.top, _zbuf);
+	return 0;
+}
+
+byte AkosRenderer::codec32(int xmoveCur, int ymoveCur) {
+	Common::Rect clip, src, dst;
+
+	debug(0, "codec32(%d, %d)", xmoveCur, ymoveCur);
+
+	if (!_mirror) {
+		dst.left = (_actorX - xmoveCur - _width) + 1;
+	} else {
+		dst.left = _actorX + xmoveCur;
+	}
+
+	src.top = src.left = 0;
+	src.right = _width - 1;
+	src.bottom = _height - 1;
+
+	clip.top = clip.left = 0;
+	clip.right = _outwidth - 1;
+	clip.bottom = _outheight - 1;
+
+	dst.top = _actorY + ymoveCur;
+	dst.right = dst.left + _width - 1;
+	dst.bottom = dst.top + _height - 1;
+
+	clip.clip(_clipOverride);
+	dst.clip(clip);
+
+	_vm->markRectAsDirty(kMainVirtScreen, dst, _actorID);
+
+	byte *dstptr = _outptr + dst.left + dst.top * _outwidth;
+
+	_vm->gdi.decompressImageHE(dstptr, _outwidth, &dst, _srcptr, &src);
 	return 0;
 }
 
