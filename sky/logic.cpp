@@ -426,7 +426,7 @@ script:
 	if (scr & 0xffff0000)
 		scriptData = moduleStart + (scr >> 16);
 	else
-		scriptData += *(scriptData + (scr & 0x0fff));
+		scriptData += READ_LE_UINT16(scriptData + (scr & 0x0fff));
 
 	uint32 a, b, c;
 	uint16 command, mcode, s;
@@ -434,12 +434,12 @@ script:
 	int16 t;
 
 	for (;;) {
-		command = *scriptData++; // get a command
+		command = READ_LE_UINT16(scriptData++); // get a command
 		SkyDebug::script(command, scriptData);
 
 		switch (command) {
 		case 0: // push_variable
-			s = *scriptData++; // get variable number
+			s = READ_LE_UINT16(scriptData++); // get variable number
 			push( _scriptVariables[s/4] );
 			break;
 		case 1: // less_than
@@ -451,7 +451,7 @@ script:
 				push(0);
 			break;
 		case 2: // push_number
-			push(*scriptData++);
+			push(READ_LE_UINT16(scriptData++));
 			break;
 		case 3: // not_equal
 			a = pop();
@@ -470,14 +470,14 @@ script:
 				push(0);
 			break;
 		case 5: // skip_zero
-			s = *scriptData++;
+			s = READ_LE_UINT16(scriptData++);
 
 			a = pop();
 			if (!a)
 				scriptData += s/2;
 			break;
 		case 6: // pop_var
-			s = *scriptData++;
+			s = READ_LE_UINT16(scriptData++);
 			_scriptVariables[s/4] = pop();
 			break;
 		case 7: // minus
@@ -491,7 +491,7 @@ script:
 			push(b+a);
 			break;
 		case 9: // skip_always
-			s = *scriptData++;
+			s = READ_LE_UINT16(scriptData++);
 			scriptData += s/2;
 			break;
 		case 10: // if_or
@@ -503,7 +503,7 @@ script:
 				push(0);
 			break;
 		case 11: // call_mcode
-			s = *scriptData++;
+			s = READ_LE_UINT16(scriptData++);
 
 			a = s;
 			b = c = 0;
@@ -519,7 +519,7 @@ script:
 			}
 
 			// TODO: save stuff (compare asm code)
-			mcode = *scriptData++/4; // get mcode number
+			mcode = READ_LE_UINT16(scriptData++)/4; // get mcode number
 			SkyDebug::mcode(mcode, a, b, c);
 
 			a = (this->*mcodeTable[mcode]) (a, b, c);
@@ -536,7 +536,7 @@ script:
 				push(0);
 			break;
 		case 14: // switch
-			s = *scriptData++; // get number of cases
+			s = READ_LE_UINT16(scriptData++); // get number of cases
 
 			a = pop(); // and value to switch on
 
@@ -549,20 +549,20 @@ script:
 				scriptData += 2;
 			} while (--s);
 
-			s = *scriptData++;
+			s = READ_LE_UINT16(scriptData++);
 			scriptData += s; // use the default
 			scriptData--;
 			break;
 		case 15: // push_offset
 			// Push a compact access
-			s = *scriptData++;
+			s = READ_LE_UINT16(scriptData++);
 			tmp = (uint16 *)SkyCompact::getCompactElem(compact, s);
 			printf("push_offset: %d\n", *tmp);
 			push(*tmp);
 			break;
 		case 16: // pop_offset
 			// pop a value into a compact
-			s = *scriptData++;
+			s = READ_LE_UINT16(scriptData++);
 			tmp = (uint16 *)SkyCompact::getCompactElem(compact, s);
 			*tmp = (uint16)pop();
 			break;
@@ -575,7 +575,7 @@ script:
 				push(0);
 			break;
 		case 18: // skip_nz
-			t = *scriptData++;
+			t = READ_LE_UINT16(scriptData++);
 			a = pop();
 			if (a)
 				scriptData += t/2;

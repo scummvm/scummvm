@@ -409,7 +409,7 @@ void SkyDebug::script(uint32 command, uint16 *scriptData) {
 	int i;
 	printf("SCRIPT: %s", opcodes[command]);
 	for (i = 0; i < opcode_par[command]; i++)
-		printf(" %d", *(scriptData + i));
+		printf(" %d", READ_LE_UINT16(scriptData + i));
 	printf("\n");
 }
 
