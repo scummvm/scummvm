@@ -199,6 +199,10 @@ int Script::SThreadRun(R_SCRIPT_THREAD *thread, int instr_limit, int msec) {
 		}
 	}
 
+	MemoryReadStream scriptS(currentScript()->bytecode->bytecode_p, currentScript()->bytecode->bytecode_len);
+
+	scriptS.seek(thread->i_offset);
+
 	for (instr_count = 0; instr_count < instr_limit; instr_count++) {
 		if ((!thread->executing) || (thread->sem.hold_count)) {
 			break;
@@ -214,9 +218,6 @@ int Script::SThreadRun(R_SCRIPT_THREAD *thread, int instr_limit, int msec) {
 		}
 
 		saved_offset = thread->i_offset;
-
-		MemoryReadStream scriptS(SThreadGetReadPtr(thread), SThreadGetReadLen(thread));
-
 		in_char = scriptS.readByte();
 
 		debug(0, "Executing thread offset: %lu (%x)", thread->i_offset, in_char);
@@ -752,6 +753,8 @@ int Script::SThreadRun(R_SCRIPT_THREAD *thread, int instr_limit, int msec) {
 		// Set instruction offset only if a previous instruction didn't branch
 		if (saved_offset == thread->i_offset) {
 			thread->i_offset = scriptS.pos();
+		} else {
+			scriptS.seek(thread->i_offset);
 		}
 		if (unhandled) {
 			_vm->_console->print(S_ERROR_PREFIX "%X: Unhandled opcode.\n", thread->i_offset);
