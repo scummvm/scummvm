@@ -292,6 +292,20 @@ protected:
 	void o2_setObjectName();
 	void o2_getActorMoving();
 	void o2_add();
+	void o2_cursorCommand();
+	void o2_stopScript();
+	void o2_getActorFacing();
+	void o2_getClosestObjActor();
+	void o2_lights();
+	void o2_getActorCostume();
+	void o2_loadRoom();
+	void o2_getActorWalkBox();
+	void o2_isSoundRunning();
+	void o2_delay();
+	void o2_stopSound();
+	void o2_endCutscene();
+	void o2_decrement();
+	void o2_divide();
 };
 
 class Scumm_v4 : public Scumm_v3 {

@@ -90,7 +90,7 @@ void Scumm_v2::setupOpcodes() {
 		/* 2C */
 		OPCODE(o2_assignVarByte),
 		OPCODE(o2_putActorInRoom),
-		OPCODE(o5_delay),
+		OPCODE(o2_delay),
 		OPCODE(o2_ifNotState04),
 		/* 30 */
 		OPCODE(o2_matrixOps),
@@ -108,7 +108,7 @@ void Scumm_v2::setupOpcodes() {
 		OPCODE(o2_subtract),
 		OPCODE(o2_waitForActor),
 		/* 3C */
-		OPCODE(o5_stopSound),
+		OPCODE(o2_stopSound),
 		OPCODE(o2_getActorElevation),
 		OPCODE(o2_walkActorTo),
 		OPCODE(o2_ifNotState01),
@@ -153,17 +153,17 @@ void Scumm_v2::setupOpcodes() {
 		OPCODE(o2_walkActorTo),
 		OPCODE(o2_ifNotState02),
 		/* 60 */
-		OPCODE(o5_cursorCommand),
+		OPCODE(o2_cursorCommand),
 		OPCODE(o2_putActor),
-		OPCODE(o5_stopScript),
-		OPCODE(o5_getActorFacing),
+		OPCODE(o2_stopScript),
+		OPCODE(o2_getActorFacing),
 		/* 64 */
-		OPCODE(o5_loadRoomWithEgo),
-		OPCODE(o5_pickupObject),
-		OPCODE(o5_getClosestObjActor),
+		OPCODE(o2_loadRoomWithEgo),
+		OPCODE(o2_drawObject),
+		OPCODE(o2_getClosestObjActor),
 		OPCODE(o2_clearState04),
 		/* 68 */
-		OPCODE(o5_isScriptRunning),
+		OPCODE(o2_isScriptRunning),
 		OPCODE(o2_setOwnerOf),
 		OPCODE(o2_subDirect),
 		OPCODE(o5_dummy),
@@ -173,9 +173,9 @@ void Scumm_v2::setupOpcodes() {
 		OPCODE(o5_dummy),
 		OPCODE(o2_ifState04),
 		/* 70 */
-		OPCODE(o5_lights),
-		OPCODE(o5_getActorCostume),
-		OPCODE(o5_loadRoom),
+		OPCODE(o2_lights),
+		OPCODE(o2_getActorCostume),
+		OPCODE(o2_loadRoom),
 		OPCODE(o2_roomOps),
 		/* 74 */
 		OPCODE(o2_getDist),
@@ -186,9 +186,9 @@ void Scumm_v2::setupOpcodes() {
 		OPCODE(o2_isGreater),
 		OPCODE(o2_doSentence),
 		OPCODE(o2_verbOps),
-		OPCODE(o5_getActorWalkBox),
+		OPCODE(o2_getActorWalkBox),
 		/* 7C */
-		OPCODE(o5_isSoundRunning),
+		OPCODE(o2_isSoundRunning),
 		OPCODE(o2_getActorElevation),
 		OPCODE(o2_walkActorTo),
 		OPCODE(o2_ifNotState01),
@@ -235,11 +235,11 @@ void Scumm_v2::setupOpcodes() {
 		/* A0 */
 		OPCODE(o5_stopObjectCode),
 		OPCODE(o2_putActor),
-		OPCODE(o5_getAnimCounter),
+		OPCODE(o2_saveLoadGame),
 		OPCODE(o2_getActorY),
 		/* A4 */
-		OPCODE(o5_loadRoomWithEgo),
-		OPCODE(o5_pickupObject),
+		OPCODE(o2_loadRoomWithEgo),
+		OPCODE(o2_drawObject),
 		OPCODE(o2_setVarRange),
 		OPCODE(o2_setState04),
 		/* A8 */
@@ -248,7 +248,7 @@ void Scumm_v2::setupOpcodes() {
 		OPCODE(o2_addDirect),
 		OPCODE(o5_dummy),
 		/* AC */
-		OPCODE(o5_delay),
+		OPCODE(o2_delay),
 		OPCODE(o2_putActorInRoom),
 		OPCODE(o2_waitForSentence),
 		OPCODE(o2_ifNotState04),
@@ -268,19 +268,19 @@ void Scumm_v2::setupOpcodes() {
 		OPCODE(o2_subtract),
 		OPCODE(o2_waitForActor),
 		/* BC */
-		OPCODE(o5_stopSound),
+		OPCODE(o2_stopSound),
 		OPCODE(o2_getActorElevation),
 		OPCODE(o2_walkActorTo),
 		OPCODE(o2_ifNotState01),
 		/* C0 */
-		OPCODE(o5_endCutscene),
+		OPCODE(o2_endCutscene),
 		OPCODE(o2_putActor),
 		OPCODE(o2_startScript),
 		OPCODE(o2_getActorX),
 		/* C4 */
 		OPCODE(o2_isLess),
 		OPCODE(o2_drawObject),
-		OPCODE(o5_decrement),
+		OPCODE(o2_decrement),
 		OPCODE(o2_clearState08),
 		/* C8 */
 		OPCODE(o2_isEqual),
@@ -306,24 +306,24 @@ void Scumm_v2::setupOpcodes() {
 		OPCODE(o2_printEgo),
 		OPCODE(o2_doSentence),
 		OPCODE(o2_add),
-		OPCODE(o5_divide),
+		OPCODE(o2_divide),
 		/* DC */
 		OPCODE(o5_dummy),
 		OPCODE(o2_ifClassOfIs),
 		OPCODE(o2_walkActorTo),
 		OPCODE(o2_ifNotState02),
 		/* E0 */
-		OPCODE(o5_cursorCommand),
+		OPCODE(o2_cursorCommand),
 		OPCODE(o2_putActor),
-		OPCODE(o5_stopScript),
-		OPCODE(o5_getActorFacing),
+		OPCODE(o2_stopScript),
+		OPCODE(o2_getActorFacing),
 		/* E4 */
-		OPCODE(o5_loadRoomWithEgo),
-		OPCODE(o5_pickupObject),
-		OPCODE(o5_getClosestObjActor),
+		OPCODE(o2_loadRoomWithEgo),
+		OPCODE(o2_drawObject),
+		OPCODE(o2_getClosestObjActor),
 		OPCODE(o2_clearState04),
 		/* E8 */
-		OPCODE(o5_isScriptRunning),
+		OPCODE(o2_isScriptRunning),
 		OPCODE(o2_setOwnerOf),
 		OPCODE(o2_subDirect),
 		OPCODE(o5_dummy),
@@ -333,9 +333,9 @@ void Scumm_v2::setupOpcodes() {
 		OPCODE(o5_dummy),
 		OPCODE(o2_ifState04),
 		/* F0 */
-		OPCODE(o5_lights),
-		OPCODE(o5_getActorCostume),
-		OPCODE(o5_loadRoom),
+		OPCODE(o2_lights),
+		OPCODE(o2_getActorCostume),
+		OPCODE(o2_loadRoom),
 		OPCODE(o2_roomOps),
 		/* F4 */
 		OPCODE(o2_getDist),
@@ -346,9 +346,9 @@ void Scumm_v2::setupOpcodes() {
 		OPCODE(o2_isGreater),
 		OPCODE(o2_doSentence),
 		OPCODE(o2_verbOps),
-		OPCODE(o5_getActorWalkBox),
+		OPCODE(o2_getActorWalkBox),
 		/* FC */
-		OPCODE(o5_isSoundRunning),
+		OPCODE(o2_isSoundRunning),
 		OPCODE(o2_getActorElevation),
 		OPCODE(o2_walkActorTo),
 		OPCODE(o2_ifState01)
@@ -1246,9 +1246,18 @@ void Scumm_v2::o2_cutscene() {
 	// TODO
 }
 
+void Scumm_v2::o2_endCutscene() {
+	// TODO
+}
+
 void Scumm_v2::o2_increment() {
 	getResultPos();
 	_vars[_resultVarNumber]++;
+}
+
+void Scumm_v2::o2_decrement() {
+	getResultPos();
+	_vars[_resultVarNumber]--;
 }
 
 void Scumm_v2::o2_chainScript() {
@@ -1346,3 +1355,138 @@ void Scumm_v2::o2_add() {
 	_vars[_resultVarNumber] += a;
 }
 
+void Scumm_v2::o2_cursorCommand() {
+	getVarOrDirectWord(0x80);
+	// TODO
+}
+
+void Scumm_v2::o2_stopScript() {
+	int script;
+
+	script = getVarOrDirectByte(0x80);
+	if (!script)
+		stopObjectCode();
+	else
+		stopScriptNr(script);
+}
+
+void Scumm_v2::o2_getActorFacing() {
+	int act;
+	Actor *a;
+	getResultPos();
+	act = getVarOrDirectByte(0x80);
+
+	a = derefActorSafe(act, "o2_getActorFacing");
+	if (!a) {
+		warning("Invalid actor %d in o2_getActorFacing", act);
+		return;
+	}
+
+	_vars[_resultVarNumber] = newDirToOldDir(a->facing);
+}
+
+void Scumm_v2::o2_getClosestObjActor() {
+	int obj;
+	int act;
+	int closest_obj = 0xFF, closest_dist = 0xFF;
+	int dist;
+
+	getResultPos();
+
+	act = getVarOrDirectWord(0x80);
+	obj = _vars[VAR_V5_OBJECT_HI];
+
+	do {
+		dist = getObjActToObjActDist(act, obj);
+		if (dist < closest_dist) {
+			closest_dist = dist;
+			closest_obj = obj;
+		}
+	} while (--obj >= _vars[VAR_V5_OBJECT_LO]);
+
+	_vars[_resultVarNumber] = closest_dist;
+}
+
+void Scumm_v2::o2_lights() {
+	int a, b, c;
+
+	a = getVarOrDirectByte(0x80);
+	b = fetchScriptByte();
+	c = fetchScriptByte();
+
+	if (c == 0)
+		_vars[VAR_CURRENT_LIGHTS] = a;
+	else if (c == 1) {
+		_flashlightXStrips = a;
+		_flashlightYStrips = b;
+	}
+	_fullRedraw = 1;
+}
+
+void Scumm_v2::o2_getActorCostume() {
+	int act;
+	Actor *a;
+	getResultPos();
+	act = getVarOrDirectByte(0x80);
+
+	a = derefActorSafe(act, "o2_getActorCostume");
+	if (!a) {
+		warning("Invalid actor %d in o2_getActorCostume", act);
+		return;
+	}
+
+	_vars[_resultVarNumber] = a->costume;
+}
+
+void Scumm_v2::o2_loadRoom() {
+	int room;
+
+	room = getVarOrDirectByte(0x80);
+
+	if (room != _currentRoom)
+		startScene(room, 0, 0);
+	_fullRedraw = 1;
+}
+
+void Scumm_v2::o2_getActorWalkBox() {
+	Actor *a;
+	getResultPos();
+	a = derefActorSafe(getVarOrDirectByte(0x80), "o2_getActorWalkbox");
+	if (a)
+		_vars[_resultVarNumber] = a->walkbox;
+	else
+		_vars[_resultVarNumber] = 0;
+}
+
+void Scumm_v2::o2_isSoundRunning() {
+	int snd;
+	getResultPos();
+	snd = getVarOrDirectByte(0x80);
+	if (snd)
+		snd = _sound->isSoundRunning(snd);
+	_vars[_resultVarNumber] = snd;
+}
+
+void Scumm_v2::o2_delay() {
+	int delay = fetchScriptByte();
+	delay |= fetchScriptByte() << 8;
+	delay |= fetchScriptByte() << 16;
+	vm.slot[_currentScript].delay = delay;
+	vm.slot[_currentScript].status = 1;
+	o5_breakHere();
+}
+
+void Scumm_v2::o2_stopSound() {
+	_sound->stopSound(getVarOrDirectByte(0x80));
+}
+
+void Scumm_v2::o2_divide() {
+	int a;
+	getResultPos();
+	a = getVarOrDirectWord(0x80);
+	if (a == 0) {
+		error("Divide by zero");
+		_vars[_resultVarNumber] = 0;
+	} else
+		_vars[_resultVarNumber] /= a;
+}
