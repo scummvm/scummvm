@@ -58,7 +58,7 @@ public:
 
 	// Set the size of the video bitmap.
 	// Typically, 320x200
-	void initSize(uint w, uint h);
+	virtual void initSize(uint w, uint h); // overloaded by CE backend
 
 	// Set colors of the palette
 	void setPalette(const byte *colors, uint start, uint num);
@@ -79,7 +79,7 @@ public:
 	// Warp the mouse cursor. Where set_mouse_pos() only informs the
 	// backend of the mouse cursor's current position, this function
 	// actually moves the cursor to the specified position.
-	void warpMouse(int x, int y);
+	virtual void warpMouse(int x, int y); // overloaded by CE backend
 
 	// Set the bitmap that's used when drawing the cursor.
 	void setMouseCursor(const byte *buf, uint w, uint h, int hotspot_x, int hotspot_y, byte keycolor);
@@ -95,10 +95,10 @@ public:
 
 	// Get the next event.
 	// Returns true if an event was retrieved.	
-	bool pollEvent(Event &event);
+	virtual bool pollEvent(Event &event); // overloaded by CE backend
 
 	// Set function that generates samples 
-	bool setSoundCallback(SoundProc proc, void *param);
+	virtual bool setSoundCallback(SoundProc proc, void *param); // overloaded by CE backend
 	
 	void clearSoundCallback();
 
@@ -116,7 +116,7 @@ public:
 	void updateCD();
 
 	// Quit
-	void quit();
+	virtual void quit(); // overloaded by CE backend
 
 
 	// Add a callback timer
@@ -290,26 +290,26 @@ protected:
 	void addDirtyRgnAuto(const byte *buf);
 	void makeChecksums(const byte *buf);
 	
-	void addDirtyRect(int x, int y, int w, int h);
+	virtual void addDirtyRect(int x, int y, int w, int h); // overloaded by CE backend
 
-	void drawMouse();
-	void undrawMouse();
+	virtual void drawMouse(); // overloaded by CE backend
+	virtual void undrawMouse(); // overloaded by CE backend
 	
 	/** Set the position of the virtual mouse cursor. */
 	void setMousePos(int x, int y);
-	void fillMouseEvent(Event &event, int x, int y);
+	virtual void fillMouseEvent(Event &event, int x, int y); // overloaded by CE backend
 	void toggleMouseGrab();
 
-	void internUpdateScreen();
+	virtual void internUpdateScreen(); // overloaded by CE backend
 
-	void loadGFXMode();
-	void unloadGFXMode();
-	void hotswapGFXMode();
+	virtual void loadGFXMode(); // overloaded by CE backend
+	virtual void unloadGFXMode(); // overloaded by CE backend
+	virtual void hotswapGFXMode(); // overloaded by CE backend
 	
 	void setFullscreenMode(bool enable);
 	void setAspectRatioCorrection(bool enable);
 
-	bool saveScreenshot(const char *filename);
+	virtual bool saveScreenshot(const char *filename); // overloaded by CE backend
 	
 	int effectiveScreenHeight() const { return (_adjustAspectRatio ? 240 : _screenHeight) * _scaleFactor; }
 
