@@ -119,39 +119,6 @@ int8 forceSlidy;	// 1 = force the use of slidy router (so solid path not used wh
 #define	EXTRA_GRID_SIZE	20			// max 20 lines & 20 points
 #define	O_ROUTE_SIZE	50			// max number of modules in a route
 
-
-typedef struct
-{
-	int16   x1;
-  	int16   y1;
-  	int16   x2;
-	int16   y2;
-	int16   xmin;
-	int16   ymin;
-	int16   xmax;
-	int16   ymax;
-	int16   dx;	   // x2 - x1
-	int16   dy;	   // y2 - y1
-	int32   co;	   // co = (y1 *dx)- (x1*dy) from an equation for a line y*dx = x*dy + co
-}_barData;
-
-typedef struct
-{
-	int16   x;
-	int16   y;
-	int16	level;
-	int16   prev;
-	int16   dist;
-}_nodeData;
-
-typedef	struct
-{
-	int32		nbars;
-	_barData	*bars;
-	int32		nnodes;
-	_nodeData	*node;
-} _floorData;
-
 typedef	struct
 {
 	int32	x;

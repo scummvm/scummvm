@@ -41,6 +41,7 @@
 #include "resman.h"
 #include "sound.h"	// (James22july97) for Clear_fx_queue() called from CacheNewCluster()
 #include "sword2.h"	// (James11aug97) for CloseGame()
+#include "router.h"
 
 // ---------------------------------------------------------------------------
 // welcome to the easy resource manager - written in simple code for easy
@@ -391,6 +392,27 @@ static void convertEndian(uint8 *file, uint32 len) {
 
 			SWAP32(walkGridHeader->numBars);
 			SWAP32(walkGridHeader->numNodes);
+
+			_barData *barData = (_barData *) (file + sizeof(_walkGridHeader));
+			for (i = 0; i < walkGridHeader->numBars; i++) {
+				SWAP16(barData->x1);
+				SWAP16(barData->y1);
+				SWAP16(barData->x2);
+				SWAP16(barData->y2);
+				SWAP16(barData->xmin);
+				SWAP16(barData->ymin);
+				SWAP16(barData->xmax);
+				SWAP16(barData->ymax);
+				SWAP16(barData->dx);
+				SWAP16(barData->dy);
+				SWAP32(barData->co);
+				barData++;
+			}
+
+			uint16 *node = (uint16 *) (file + sizeof(_walkGridHeader) + walkGridHeader->numBars * sizeof(_barData));
+			for (i = 0; i < walkGridHeader->numNodes*2; i++)
+				*node = SWAP_BYTES_16(*node++);
+
 			break;
 		}
 		case GLOBAL_VAR_FILE:
