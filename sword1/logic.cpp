@@ -1676,6 +1676,105 @@ uint16 Logic::inRange(uint16 a, uint16 b, uint16 c) {
 	return (a > b)? a : (((b > c) ? c : b));
 }
 
+void Logic::startPosCallFn(uint8 fnId, uint32 param1, uint32 param2, uint32 param3) {
+	Object *obj = NULL;
+	switch(fnId) {
+		case opcPlaySequence:
+			fnPlaySequence(NULL, 0, param1, 0, 0, 0, 0, 0);
+			break;
+		case opcAddObject:
+			fnAddObject(NULL, 0, param1, 0, 0, 0, 0, 0);
+			break;
+        case opcRemoveObject:
+			fnRemoveObject(NULL, 0, param1, 0, 0, 0, 0, 0);
+			break;
+		case opcMegaSet:
+			obj = _objMan->fetchObject(param1);
+			fnMegaSet(obj, param1, param2, param3, 0, 0, 0, 0);
+			break;
+		case opcNoSprite:
+			obj = _objMan->fetchObject(param1);
+			fnNoSprite(obj, param1, param2, param3, 0, 0, 0, 0);
+			break;
+		default:
+			error("Illegal fnCallfn argument %d", fnId);
+	}
+}
+
+void Logic::runStartScript(const uint8 *data) {
+	uint16 varId = 0;
+	uint8 fnId = 0;
+	uint32 param1 = 0, param2 = 0, param3 = 0;
+	while (*data != opcSeqEnd) {
+		switch (*data++) {
+			case opcCallFn:
+				fnId = *data++;
+				param1 = *data++;
+				startPosCallFn(fnId, param1, 0, 0);
+				break;
+			case opcCallFnLong:
+				fnId = *data++;
+				startPosCallFn(fnId, READ_LE_UINT32(data), READ_LE_UINT32(data + 4), READ_LE_UINT32(data + 8));
+				data += 12;
+				break;
+			case opcSetVar8:
+				varId = READ_LE_UINT16(data);
+				_scriptVars[varId] = data[2];
+				data += 3;
+				break;
+			case opcSetVar16:
+				varId = READ_LE_UINT16(data);
+				_scriptVars[varId] = READ_LE_UINT16(data + 2);
+				data += 4;
+				break;				
+			case opcSetVar32:
+				varId = READ_LE_UINT16(data);
+				_scriptVars[varId] = READ_LE_UINT32(data + 2);
+				data += 6;
+				break;
+			case opcGeorge:
+				_scriptVars[CHANGE_X]     = READ_LE_UINT16(data + 0);
+				_scriptVars[CHANGE_Y]     = READ_LE_UINT16(data + 2);
+				_scriptVars[CHANGE_DIR]   = data[4];
+				_scriptVars[CHANGE_PLACE] = READ_LE_UINT24(data + 5);
+				data += 8;
+				break;
+			case opcRunStart:
+				data = _startData[*data];
+				break;
+			case opcRunHelper:
+				data = _helperData[*data];
+				break;
+			default:
+				error("Unexpected opcode in StartScript");
+		}
+	}
+}
+
+void Logic::startPositions(uint32 pos) {
+	bool spainVisit2 = false;
+	if ((pos >= 956) && (pos <= 962)) {
+		spainVisit2 = true;
+		pos -= 900;
+	}
+	if ((pos > 80) || (_startData[pos] == NULL))
+		error("Starting in Section %d is not supported", pos);
+
+	Logic::_scriptVars[CHANGE_STANCE] = STAND;
+	Logic::_scriptVars[GEORGE_CDT_FLAG] = GEO_TLK_TABLE;
+
+	runStartScript(_startData[pos]);
+	if (spainVisit2)
+		runStartScript(_helperData[HELP_SPAIN2]);
+	
+	if (pos == 0)
+		pos = 1;
+	Object *compact = _objMan->fetchObject(PLAYER);
+	fnEnterSection(compact, PLAYER, pos, 0, 0, 0, 0, 0);	// (automatically opens the compact resource for that section)
+	SwordEngine::_systemVars.controlPanelMode = CP_NORMAL;
+	SwordEngine::_systemVars.wantFade = true;
+}
+
 const uint32 Logic::_scriptVarInit[NON_ZERO_SCRIPT_VARS][2] = {
 	{  42,  448}, {  43,  378}, {  51,    1}, {  92,    1}, { 147,   71}, { 201,   1},
 	{ 209,    1}, { 215,    1}, { 242,    2}, { 244,    1}, { 246,    3}, { 247,   1},

@@ -80,12 +80,11 @@ protected:
 	int go();
 	int init(GameDetector &detector);
 private:
-	void delay(uint amount);
+	void delay(int32 amount);
 
 	void checkCdFiles(void);
 	void checkCd(void);
 	uint8 mainLoop(void);
-	void startPositions(int32 startNumber);
 
 	uint16 _mouseX, _mouseY, _mouseState;
 	uint8 _keyPressed;

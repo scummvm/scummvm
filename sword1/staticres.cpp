@@ -29,6 +29,7 @@
 #include "sword1/music.h"
 #include "sword1/sound.h"
 #include "sword1/sword1.h"
+#include "sword1/logic.h"
 
 namespace Sword1 {
 
@@ -6566,6 +6567,588 @@ const uint16 Sound::_roomsFixedFx[TOTAL_ROOMS][TOTAL_FX_PER_ROOM] =
 	{0},											// 97
 	{0},											// 98
 	{0},											// 99
+};
+
+#define ENCODE8(VAL) \
+	(uint8)(VAL & 0xFF)
+#define ENCODE16(VAL) \
+	(uint8)(VAL & 0xFF), (uint8)(VAL >> 8)
+#define ENCODE24(VAL) \
+	(uint8)(VAL & 0xFF), (uint8)((VAL >> 8) & 0xFF), (uint8)(VAL >> 16)
+#define ENCODE32(VAL) \
+	(uint8)(VAL & 0xFF), (uint8)((VAL >> 8) & 0xFF), (uint8)((VAL >> 16) & 0xFF), (uint8)(VAL >> 24)
+	
+#define LOGIC_CALL_FN(FN_ID, PARAM) \
+	opcCallFn,     ENCODE8(FN_ID), ENCODE8(PARAM)
+#define LOGIC_CALL_FN_LONG(FN_ID, PARAM1, PARAM2, PARAM3) \
+    opcCallFnLong, ENCODE8(FN_ID), ENCODE32(PARAM1), ENCODE32(PARAM2), ENCODE32(PARAM3)
+#define LOGIC_SET_VAR8(VAR_ID, VAL) \
+	opcSetVar8,  ENCODE16(VAR_ID), ENCODE8(VAL)
+#define LOGIC_SET_VAR16(VAR_ID, VAL) \
+	opcSetVar16, ENCODE16(VAR_ID), ENCODE16(VAL)
+#define LOGIC_SET_VAR32(VAR_ID, VAL) \
+	opcSetVar32, ENCODE16(VAR_ID), ENCODE32(VAL)
+#define GEORGE_POS(POS_X, POS_Y, DIR, PLACE) \
+	opcGeorge,   ENCODE16(POS_X),  ENCODE16(POS_Y), DIR, ENCODE24(PLACE)
+
+#define INIT_SEQ_END \
+	opcSeqEnd
+#define RUN_START_SCRIPT(SCR_ID) \
+	opcRunStart, ENCODE8(SCR_ID)
+#define RUN_HELPER_SCRIPT(SCR_ID) \
+	opcRunHelper, ENCODE8(SCR_ID)
+
+const uint8 g_startPos0[] = {				// Intro with sequence
+	LOGIC_CALL_FN(opcPlaySequence, 4),
+	GEORGE_POS(481, 413, DOWN, FLOOR_1),
+	INIT_SEQ_END
+};
+
+const uint8 g_startPos1[] = {				// Intro without sequence
+	GEORGE_POS(481, 413, DOWN, FLOOR_1),
+	INIT_SEQ_END
+};
+
+const uint8 g_startPos2[] = {				// blind alley
+	GEORGE_POS(480, 388, DOWN_LEFT, FLOOR_2),
+	LOGIC_CALL_FN(opcAddObject, LIFTING_KEYS),
+	LOGIC_CALL_FN(opcAddObject, ROSSO_CARD),
+	INIT_SEQ_END
+};
+
+const uint8 g_startPos3[] = {				// cafe
+	GEORGE_POS(660, 368, DOWN_LEFT, FLOOR_3),
+	INIT_SEQ_END
+};
+
+const uint8 g_startPos4[] = {				// ready to use the phone
+	GEORGE_POS(463, 391, DOWN, FLOOR_4),
+	LOGIC_SET_VAR8(MOUE_TEXT,         1),
+	LOGIC_SET_VAR8(MOUE_NICO_FLAG,    1),
+	LOGIC_SET_VAR8(PARIS_FLAG,        5),
+	LOGIC_SET_VAR8(NICO_PHONE_FLAG,   1),
+	LOGIC_SET_VAR8(TAILOR_PHONE_FLAG, 1),
+	LOGIC_SET_VAR8(WORKMAN_GONE_FLAG, 1),
+	LOGIC_SET_VAR8(ALBERT_INFO_FLAG,  1),
+	LOGIC_SET_VAR8(SEEN_SEWERS_FLAG,  1),
+	// item stuff missing
+	INIT_SEQ_END
+};
+
+const uint8 g_startPos5[] = {				// court yard
+	GEORGE_POS(400, 400, DOWN_LEFT, FLOOR_5),
+	INIT_SEQ_END
+};
+
+const uint8 g_startPos7[] = {				// sewer two
+	GEORGE_POS(520, 310, DOWN_LEFT, FLOOR_7),
+	INIT_SEQ_END
+};
+
+const uint8 g_startPos8[] = {				// cafe repaired
+	GEORGE_POS(481, 413, DOWN, FLOOR_8),
+	INIT_SEQ_END
+};
+
+const uint8 g_startPos11[] = {				// costumier
+	GEORGE_POS(264, 436, DOWN_RIGHT, FLOOR_11),
+	LOGIC_CALL_FN(opcAddObject, TISSUE),
+	LOGIC_CALL_FN(opcAddObject, PHOTOGRAPH),
+	INIT_SEQ_END
+};
+
+const uint8 g_startPos12[] = {				// hotel street
+	GEORGE_POS(730, 460, LEFT, FLOOR_12),
+	LOGIC_SET_VAR8(NICO_ADDRESS_FLAG,     1),
+	LOGIC_SET_VAR8(NICO_PHONE_FLAG,       1),
+	LOGIC_SET_VAR8(COSTUMES_ADDRESS_FLAG, 1),
+	LOGIC_SET_VAR8(HOTEL_ADDRESS_FLAG,    1),
+	LOGIC_SET_VAR8(AEROPORT_ADDRESS_FLAG, 1),
+	LOGIC_SET_VAR8(TAILOR_PHONE_FLAG,     1),
+	INIT_SEQ_END
+};
+
+const uint8 g_startPos14[] = {				// hotel corridor
+	GEORGE_POS(528, 484, UP, FLOOR_14),
+	LOGIC_CALL_FN(opcAddObject, HOTEL_KEY),
+	LOGIC_CALL_FN(opcAddObject, MANUSCRIPT),
+	INIT_SEQ_END
+};
+
+const uint8 g_startPos17[] = {				// hotel assassin
+	GEORGE_POS(714, 484, LEFT, FLOOR_17),
+	INIT_SEQ_END
+};
+
+const uint8 g_startPos18[] = {				// gendarmerie
+    GEORGE_POS(446, 408, DOWN_LEFT, FLOOR_18),
+	LOGIC_SET_VAR8(PARIS_FLAG, 5),
+	INIT_SEQ_END
+};
+
+const uint8 g_startPos19[] = {				// ireland street
+	GEORGE_POS(256, 966, UP_RIGHT, FLOOR_19),
+	RUN_HELPER_SCRIPT(HELP_IRELAND)
+};
+
+const uint8 g_startPos20[] = {				// macdevitts
+	GEORGE_POS(194, 417, DOWN_RIGHT, FLOOR_20),
+	LOGIC_SET_VAR8(FARMER_MOVED_FLAG,  1),
+	LOGIC_SET_VAR8(FARMER_SEAN_FLAG,   5),
+	LOGIC_SET_VAR8(PUB_FLAP_FLAG,      1),
+	LOGIC_SET_VAR8(PUB_TRAP_DOOR,      2),
+	LOGIC_SET_VAR8(KNOWS_PEAGRAM_FLAG, 1),
+	RUN_HELPER_SCRIPT(HELP_IRELAND)
+};
+
+const uint8 g_startPos21[] = {				// pub cellar
+	GEORGE_POS(291, 444, DOWN_RIGHT, FLOOR_21),
+	LOGIC_CALL_FN(opcAddObject, BEER_TOWEL),
+	LOGIC_SET_VAR8(FARMER_MOVED_FLAG,       1),
+	LOGIC_SET_VAR8(FLEECY_STUCK,            1),
+	LOGIC_SET_VAR8(LIFTING_KEYS_IN_HOLE_23, 1),
+	RUN_HELPER_SCRIPT(HELP_IRELAND)
+};
+
+const uint8 g_startPos22[] = {				// castle gate
+	GEORGE_POS(547, 500, UP_LEFT, FLOOR_22),
+	LOGIC_SET_VAR8(IRELAND_FLAG, 4),
+	RUN_HELPER_SCRIPT(HELP_IRELAND)
+};
+
+const uint8 g_startPos23[] = {				// castle hay top
+	GEORGE_POS(535, 510, UP, FLOOR_23),
+	RUN_HELPER_SCRIPT(HELP_IRELAND)
+};
+
+const uint8 g_startPos24[] = {				// castle yard
+	GEORGE_POS(815, 446, DOWN_LEFT, FLOOR_24),
+	RUN_HELPER_SCRIPT(HELP_IRELAND)
+};
+
+const uint8 g_startPos25[] = {				// castle dig
+	GEORGE_POS(369, 492, LEFT, FLOOR_25),
+	LOGIC_CALL_FN(opcAddObject, BEER_TOWEL),
+	LOGIC_SET_VAR8(BEER_TOWEL_BEEN_WET, 1),
+	LOGIC_SET_VAR16(WET_BEER_TOWEL_TIMER, 1000),
+	RUN_HELPER_SCRIPT(HELP_IRELAND)
+};
+
+const uint8 g_startPos26[] = {				// cellar dark
+	GEORGE_POS(291, 444, DOWN_RIGHT, FLOOR_26),
+	RUN_HELPER_SCRIPT(HELP_IRELAND)
+};
+
+const uint8 g_startPos27[] = {				// museum street
+	GEORGE_POS(300, 510, UP_RIGHT, FLOOR_27),
+	LOGIC_SET_VAR8(PARIS_FLAG,                  12),
+	LOGIC_SET_VAR8(MANUSCRIPT_ON_TABLE_10_FLAG,  1),
+	INIT_SEQ_END
+};
+
+const uint8 g_startPos31[] = {				// hospital street
+	GEORGE_POS(400, 500, UP_RIGHT, FLOOR_31),
+	LOGIC_SET_VAR8(PARIS_FLAG, 11),
+	LOGIC_CALL_FN(opcAddObject, PHOTOGRAPH),
+	LOGIC_CALL_FN(opcAddObject, LAB_PASS),
+	INIT_SEQ_END
+};
+
+const uint8 g_startPos32[] = {				// hospital desk (after we've found out where Marquet is)
+	GEORGE_POS(405, 446, UP_RIGHT, FLOOR_32),
+	LOGIC_SET_VAR8(GOT_BENOIR_FLAG, 1),
+	LOGIC_CALL_FN(opcAddObject, PHOTOGRAPH),
+	LOGIC_CALL_FN(opcAddObject, LAB_PASS),
+	RUN_HELPER_SCRIPT(HELP_WHITECOAT)
+};
+
+const uint8 g_startPos35[] = {				// hospital jacques
+	GEORGE_POS(640, 500, LEFT, FLOOR_35),
+	LOGIC_SET_VAR8(DOOR_34_OPEN,	 1),
+	LOGIC_SET_VAR8(GOT_BENOIR_FLAG,  2),
+	LOGIC_SET_VAR8(HOS_POS_FLAG,    26),
+	LOGIC_SET_VAR8(BENOIR_FLAG,     24),
+	RUN_HELPER_SCRIPT(HELP_WHITECOAT)
+};
+
+const uint8 g_startPos36[] = { 				// montfaucon
+	GEORGE_POS(300, 480, RIGHT, FLOOR_36),
+	LOGIC_CALL_FN(opcAddObject, LENS),
+	LOGIC_CALL_FN(opcAddObject, RED_NOSE),
+	LOGIC_CALL_FN(opcAddObject, LIFTING_KEYS),
+	LOGIC_SET_VAR8(MONTFAUCON_CONTROL_FLAG, 1),
+	INIT_SEQ_END
+};
+
+const uint8 g_startPos37[] = {				// catacomb sewer
+	GEORGE_POS(592, 386, RIGHT, FLOOR_37),
+	LOGIC_CALL_FN(opcAddObject, LIFTING_KEYS),
+	LOGIC_CALL_FN(opcAddObject, TRIPOD),
+	LOGIC_CALL_FN(opcAddObject, GEM),
+	INIT_SEQ_END
+};
+
+const uint8 g_startPos38[] = {				// catacomb room
+	GEORGE_POS(200, 390, RIGHT, FLOOR_38),
+	LOGIC_CALL_FN(opcAddObject, TRIPOD),
+	LOGIC_CALL_FN(opcAddObject, GEM),
+	INIT_SEQ_END
+};
+
+const uint8 g_startPos39[] = {				// catacomb meeting
+	GEORGE_POS(636, 413, DOWN_LEFT, FLOOR_39),
+	LOGIC_SET_VAR8(MEETING_FLAG, 3),	// meeting finished
+	LOGIC_CALL_FN(opcAddObject, TRIPOD),
+	LOGIC_CALL_FN(opcAddObject, GEM),
+	INIT_SEQ_END
+};
+
+const uint8 g_startPos40[] = {				// excavation exterior
+	GEORGE_POS(648, 492, LEFT, FLOOR_40),
+	LOGIC_SET_VAR8(NICO_PHONE_FLAG,  1),
+	LOGIC_SET_VAR8(PARIS_FLAG,      16),
+	LOGIC_CALL_FN(opcAddObject, PLASTER),
+	LOGIC_CALL_FN(opcAddObject, POLISHED_CHALICE),
+	INIT_SEQ_END
+};
+
+const uint8 g_startPos45[] = {				// syria stall
+	GEORGE_POS(410, 490, DOWN_RIGHT, FLOOR_45),
+	RUN_HELPER_SCRIPT(HELP_SYRIA)
+};
+
+const uint8 g_startPos47[] = {				// syria carpet
+	GEORGE_POS(225, 775, RIGHT, FLOOR_47),
+	RUN_HELPER_SCRIPT(HELP_SYRIA)
+};
+
+const uint8 g_startPos48[] = {				// templar church
+	GEORGE_POS(315, 392, DOWN, FLOOR_48),
+	LOGIC_SET_VAR8(CHALICE_FLAG, 2),
+	LOGIC_SET_VAR8(NEJO_TEXT,    1),
+	LOGIC_CALL_FN(opcAddObject, CHALICE),
+	LOGIC_CALL_FN(opcAddObject, LENS),
+	INIT_SEQ_END
+};
+
+const uint8 g_startPos49[] = {				// syria club
+	GEORGE_POS(438, 400, DOWN_RIGHT, FLOOR_49),
+	LOGIC_CALL_FN(opcAddObject, TOILET_BRUSH),
+	RUN_HELPER_SCRIPT(HELP_SYRIA)
+};
+
+const uint8 g_startPos50[] = {				// syria toilet
+	GEORGE_POS(313, 440, DOWN_RIGHT, FLOOR_50),
+	LOGIC_CALL_FN(opcAddObject, TOILET_KEY),
+	RUN_HELPER_SCRIPT(HELP_SYRIA)
+};
+
+const uint8 g_startPos53[] = {				// bull's head pan
+	LOGIC_SET_VAR32(CHANGE_PLACE, FLOOR_53),
+	LOGIC_CALL_FN(opcAddObject, TOWEL_CUT),
+	RUN_HELPER_SCRIPT(HELP_SYRIA)
+};
+
+const uint8 g_startPos54[] = {				// bull's head
+	GEORGE_POS(680, 425, DOWN_LEFT, FLOOR_54),
+	LOGIC_CALL_FN(opcAddObject, TOWEL_CUT),
+	RUN_HELPER_SCRIPT(HELP_SYRIA)
+};
+
+const uint8 g_startPos55[] = {				// bull secret
+    GEORGE_POS(825, 373, DOWN_LEFT, FLOOR_55),
+	RUN_HELPER_SCRIPT(HELP_SYRIA)
+};
+
+const uint8 g_startPos56[] = {				// contess' room
+	GEORGE_POS(572, 443, LEFT, FLOOR_56),
+	RUN_HELPER_SCRIPT(HELP_SPAIN)
+};
+
+const uint8 g_startPos57[] = {				// Spain drive
+	GEORGE_POS(1630, 460, DOWN_LEFT, FLOOR_57),
+	RUN_HELPER_SCRIPT(HELP_SPAIN)
+};
+
+const uint8 g_startPos58[] = {				// Mausoleum Exterior
+	GEORGE_POS(SC58_PATH_X, SC58_PATH_Y, UP_RIGHT, FLOOR_58),
+	RUN_HELPER_SCRIPT(HELP_SPAIN)
+};
+
+const uint8 g_startPos59[] = {				// Mausoleum interior
+	GEORGE_POS(750, 455, LEFT, FLOOR_59),
+	RUN_HELPER_SCRIPT(HELP_SPAIN)
+};
+
+const uint8 g_startPos60[] = {				// Spain reception
+	GEORGE_POS(750, 475, DOWN_LEFT, FLOOR_60),
+	RUN_HELPER_SCRIPT(HELP_SPAIN)
+};
+
+const uint8 g_startPos61[] = {				// Spain well
+	GEORGE_POS(400, 345, DOWN, LEFT_FLOOR_61),
+	LOGIC_CALL_FN(opcAddObject, STONE_KEY),
+	LOGIC_CALL_FN(opcAddObject, MIRROR),
+	RUN_HELPER_SCRIPT(HELP_SPAIN)
+};
+
+const uint8 g_startPos62[] = {				// chess puzzle
+	LOGIC_SET_VAR32(CHANGE_PLACE, FLOOR_62),
+	LOGIC_SET_VAR8(TOP_MENU_DISABLED, 1),
+	LOGIC_SET_VAR8(GEORGE_ALLOWED_REST_ANIMS, 0),
+	LOGIC_CALL_FN_LONG(opcNoSprite, PLAYER, 0, 0),
+	RUN_HELPER_SCRIPT(HELP_SPAIN)
+};
+
+const uint8 g_startPos63[] = {				// train one
+	GEORGE_POS(710, 450, LEFT, FLOOR_63),
+	LOGIC_SET_VAR8(DOOR_SC65_FLAG, 2),
+	LOGIC_SET_VAR8(DOOR_ONE_63_OPEN, 0),
+	LOGIC_SET_VAR8(DOOR_65_OPEN, 1),
+	LOGIC_SET_VAR8(VAIL_TEXT, 1),
+	RUN_HELPER_SCRIPT(HELP_NIGHTTRAIN)
+};
+
+const uint8 g_startPos65[] = {				// compt one
+	GEORGE_POS(460, 430, DOWN, FLOOR_65),
+	RUN_HELPER_SCRIPT(HELP_NIGHTTRAIN)
+};
+
+const uint8 g_startPos66[] = {				// compt two
+	GEORGE_POS(460, 430, DOWN, FLOOR_66),
+	RUN_HELPER_SCRIPT(HELP_NIGHTTRAIN)
+};
+
+const uint8 g_startPos67[] = {				// compt three
+	GEORGE_POS(460, 430, DOWN, FLOOR_67),
+	RUN_HELPER_SCRIPT(HELP_NIGHTTRAIN)
+};
+
+const uint8 g_startPos69[] = {				// train_guard
+	GEORGE_POS(310, 430, DOWN, FLOOR_69),
+	RUN_HELPER_SCRIPT(HELP_NIGHTTRAIN)
+};
+
+const uint8 g_startPos71[] = {				// churchyard
+	GEORGE_POS(1638, 444, LEFT, RIGHT_FLOOR_71),
+	LOGIC_SET_VAR8(NICO_SCOT_SCREEN, 71),
+	LOGIC_SET_VAR8(NICO_POSITION_71, 1),
+	RUN_HELPER_SCRIPT(HELP_SCOTLAND)
+};
+
+const uint8 g_startPos72[] = {				// church tower
+	GEORGE_POS(150, 503, RIGHT, FLOOR_72),
+	LOGIC_SET_VAR8(NICO_SCOT_SCREEN, 72),
+	RUN_HELPER_SCRIPT(HELP_SCOTLAND)
+};
+
+const uint8 g_startPos73[] = {				// crypt
+	GEORGE_POS(250, 390, DOWN_RIGHT, FLOOR_73),
+	LOGIC_SET_VAR8(NICO_SCOT_SCREEN, 73),
+	LOGIC_SET_VAR8(NICO_POSITION_73, 1)
+};
+
+const uint8 g_startPos80[] = {				// Paris map
+	GEORGE_POS(645, 160, DOWN, FLOOR_80),
+	LOGIC_SET_VAR8(PARIS_FLAG, 3),
+	LOGIC_SET_VAR8(NICO_CLOWN_FLAG, 3),
+	LOGIC_SET_VAR8(NICO_DOOR_FLAG, 2),
+
+	LOGIC_CALL_FN(opcAddObject, RED_NOSE),
+	LOGIC_CALL_FN(opcAddObject, PHOTOGRAPH),
+	LOGIC_CALL_FN(opcAddObject, PLASTER),
+	LOGIC_CALL_FN(opcAddObject, LAB_PASS),
+
+	LOGIC_SET_VAR8(MANUSCRIPT_FLAG,       1),
+	LOGIC_SET_VAR8(NICO_ADDRESS_FLAG,     1),
+	LOGIC_SET_VAR8(NICO_PHONE_FLAG,       1),
+	LOGIC_SET_VAR8(COSTUMES_ADDRESS_FLAG, 1),
+	LOGIC_SET_VAR8(HOTEL_ADDRESS_FLAG,    1),
+	LOGIC_SET_VAR8(MUSEUM_ADDRESS_FLAG,   1),
+	LOGIC_SET_VAR8(HOSPITAL_ADDRESS_FLAG, 1),
+	LOGIC_SET_VAR8(MONTFACN_ADDRESS_FLAG, 1),
+	LOGIC_SET_VAR8(AEROPORT_ADDRESS_FLAG, 1),
+	LOGIC_SET_VAR8(NERVAL_ADDRESS_FLAG,   1),
+
+	LOGIC_SET_VAR8(IRELAND_MAP_FLAG,      1),
+	LOGIC_SET_VAR8(SPAIN_MAP_FLAG,        1),
+	LOGIC_SET_VAR8(SYRIA_FLAG,            2),
+
+	LOGIC_SET_VAR8(TAILOR_PHONE_FLAG,     1),
+	INIT_SEQ_END
+};
+
+const uint8 g_genIreland[] = {
+	LOGIC_SET_VAR8(PARIS_FLAG, 9),
+	LOGIC_CALL_FN(opcAddObject, RED_NOSE),
+	LOGIC_CALL_FN(opcAddObject, PHOTOGRAPH),
+	LOGIC_CALL_FN(opcAddObject, LAB_PASS),
+	LOGIC_CALL_FN(opcAddObject, LIFTING_KEYS),
+	LOGIC_CALL_FN(opcAddObject, MATCHBOOK),
+	LOGIC_CALL_FN(opcAddObject, BUZZER),
+	LOGIC_CALL_FN(opcAddObject, TISSUE),
+	INIT_SEQ_END
+};
+
+const uint8 g_genSyria[] = {
+	LOGIC_SET_VAR8(PARIS_FLAG, 1),
+	LOGIC_CALL_FN(opcAddObject, BALL),
+	LOGIC_CALL_FN(opcAddObject, RED_NOSE),
+	LOGIC_CALL_FN(opcAddObject, PHOTOGRAPH),
+	LOGIC_CALL_FN(opcAddObject, LIFTING_KEYS),
+	LOGIC_CALL_FN(opcAddObject, MATCHBOOK),
+	LOGIC_CALL_FN(opcAddObject, BUZZER),
+	LOGIC_CALL_FN(opcAddObject, TISSUE),
+	LOGIC_SET_VAR8(CHANGE_STANCE, STAND),
+	INIT_SEQ_END
+};
+
+const uint8 g_genSpain[] = {
+	LOGIC_SET_VAR8(PARIS_FLAG, 1),
+	LOGIC_SET_VAR8(SPAIN_VISIT, 1),		// default to 1st spain visit, may get overwritten later
+	LOGIC_CALL_FN(opcAddObject, RED_NOSE),
+	LOGIC_CALL_FN(opcAddObject, PHOTOGRAPH),
+	LOGIC_CALL_FN(opcAddObject, LAB_PASS),
+	LOGIC_CALL_FN(opcAddObject, LIFTING_KEYS),
+	LOGIC_CALL_FN(opcAddObject, BUZZER),
+	LOGIC_CALL_FN(opcAddObject, TISSUE),
+	LOGIC_CALL_FN(opcAddObject, BALL),
+	LOGIC_CALL_FN(opcAddObject, MATCHBOOK),
+	LOGIC_CALL_FN(opcAddObject, PRESSURE_GAUGE),
+	INIT_SEQ_END
+};
+
+const uint8 g_genSpain2[] = {	// 2nd spain visit
+	LOGIC_SET_VAR8(SPAIN_VISIT, 2),
+	LOGIC_CALL_FN(opcRemoveObject, PRESSURE_GAUGE),
+	LOGIC_CALL_FN(opcAddObject, POLISHED_CHALICE),
+	INIT_SEQ_END
+};
+
+const uint8 g_genNightTrain[] = {
+	LOGIC_SET_VAR8(PARIS_FLAG, 18),
+	INIT_SEQ_END
+};
+
+const uint8 g_genScotland[] = {
+	LOGIC_SET_VAR8(PARIS_FLAG, 1),
+	LOGIC_CALL_FN(opcAddObject, RED_NOSE),
+	LOGIC_CALL_FN(opcAddObject, PHOTOGRAPH),
+	LOGIC_CALL_FN(opcAddObject, LAB_PASS),
+	LOGIC_CALL_FN(opcAddObject, LIFTING_KEYS),
+	LOGIC_CALL_FN(opcAddObject, BUZZER),
+	INIT_SEQ_END
+};
+
+const uint8 g_genWhiteCoat[] = {
+	LOGIC_SET_VAR8(PARIS_FLAG,       11),
+	LOGIC_SET_VAR8(EVA_TEXT,          1),
+	LOGIC_SET_VAR8(EVA_MARQUET_FLAG,  2),
+	LOGIC_SET_VAR8(EVA_NURSE_FLAG,    4),
+	LOGIC_SET_VAR8(FOUND_WARD_FLAG,   1),
+	LOGIC_SET_VAR8(CONSULTANT_HERE,   1),
+
+	LOGIC_CALL_FN_LONG(opcMegaSet, PLAYER, GEORGE_WLK, MEGA_WHITE),
+
+	LOGIC_SET_VAR32(GEORGE_CDT_FLAG, WHT_TLK_TABLE),
+	LOGIC_SET_VAR8(GEORGE_TALK_FLAG,          0),
+	LOGIC_SET_VAR8(WHITE_COAT_FLAG,           1),
+	LOGIC_SET_VAR8(GEORGE_ALLOWED_REST_ANIMS, 0),
+	INIT_SEQ_END
+};
+
+const uint8 *Logic::_startData[] = {
+	g_startPos0,
+	g_startPos1,
+	g_startPos2,
+	g_startPos3,
+	g_startPos4,
+	g_startPos5,
+	NULL, //g_startPos6,
+	g_startPos7,
+	g_startPos8,
+	NULL, //g_startPos9,
+	NULL, //g_startPos10,
+	g_startPos11,
+	g_startPos12,
+	NULL, //g_startPos13,
+	g_startPos14,
+	NULL, //g_startPos15,
+	NULL, //g_startPos16,
+	g_startPos17,
+	g_startPos18,
+	g_startPos19,
+	g_startPos20,
+	g_startPos21,
+	g_startPos22,
+	g_startPos23,
+	g_startPos24,
+	g_startPos25,
+	g_startPos26,
+	g_startPos27,
+	NULL, //g_startPos28,
+	NULL, //g_startPos29,
+	NULL, //g_startPos30,
+	g_startPos31,
+	g_startPos32,
+	NULL, //g_startPos33,
+	NULL, //g_startPos34,
+	g_startPos35,
+	g_startPos36,
+	g_startPos37,
+	g_startPos38,
+	g_startPos39,
+	g_startPos40,
+	NULL, //g_startPos41,
+	NULL, //g_startPos42,
+	NULL, //g_startPos43,
+	NULL, //g_startPos44,
+	g_startPos45,
+	NULL, //g_startPos46,
+	g_startPos47,
+	g_startPos48,
+	g_startPos49,
+	g_startPos50,
+	NULL, //g_startPos51,
+	NULL, //g_startPos52,
+	g_startPos53,
+	g_startPos54,
+	g_startPos55,
+	g_startPos56,
+	g_startPos57,
+	g_startPos58,
+	g_startPos59,
+	g_startPos60,
+	g_startPos61,
+	g_startPos62,
+	g_startPos63,
+	NULL, //g_startPos64,
+	g_startPos65,
+	g_startPos66,
+	g_startPos67,
+	NULL, //g_startPos68,
+	g_startPos69,
+	NULL, //g_startPos70,
+	g_startPos71,
+	g_startPos72,
+	g_startPos73,
+	NULL, //g_startPos74,
+	NULL, //g_startPos75,
+	NULL, //g_startPos76
+	NULL, //g_startPos77
+	NULL, //g_startPos78
+	NULL, //g_startPos79
+	g_startPos80
+};
+
+const uint8 *Logic::_helperData[] = {
+	g_genIreland,
+	g_genSyria,
+	g_genSpain,
+	g_genNightTrain,
+	g_genScotland,
+	g_genWhiteCoat,
+	g_genSpain2
 };
 
 } // End of namespace Sword1

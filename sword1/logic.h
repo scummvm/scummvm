@@ -54,15 +54,9 @@ public:
 	void engine(void);
 	void updateScreenParams(void);
 	void runMouseScript(Object *cpt, int32 scriptId);
+	void startPositions(uint32 pos);
 
 	static uint32 _scriptVars[NUM_SCRIPT_VARS];
-// public for startPositions()
-	int fnAddObject		(Object *cpt, int32 id, int32 c, int32 d, int32 e, int32 f, int32 z, int32 x);
-	int fnEnterSection	(Object *cpt, int32 id, int32 c, int32 d, int32 e, int32 f, int32 z, int32 x);
-	int fnPlaySequence	(Object *cpt, int32 id, int32 c, int32 d, int32 e, int32 f, int32 z, int32 x);
-	int fnMegaSet		(Object *cpt, int32 id, int32 c, int32 d, int32 e, int32 f, int32 z, int32 x);
-	int fnNoSprite		(Object *cpt, int32 id, int32 c, int32 d, int32 e, int32 f, int32 z, int32 x);
-
 // public for mouse (menu looking)
 	int cfnPresetScript	(Object *cpt, int32 id, int32 c, int32 d, int32 e, int32 f, int32 z, int32 x);
 private:
@@ -102,6 +96,8 @@ private:
 	int fnBackground	(Object *cpt, int32 id, int32 c, int32 d, int32 e, int32 f, int32 z, int32 x);
 	int fnForeground	(Object *cpt, int32 id, int32 c, int32 d, int32 e, int32 f, int32 z, int32 x);
 	int fnSort			(Object *cpt, int32 id, int32 c, int32 d, int32 e, int32 f, int32 z, int32 x);
+	int fnNoSprite		(Object *cpt, int32 id, int32 c, int32 d, int32 e, int32 f, int32 z, int32 x);
+	int fnMegaSet		(Object *cpt, int32 id, int32 c, int32 d, int32 e, int32 f, int32 z, int32 x);
 	int fnAnim			(Object *cpt, int32 id, int32 c, int32 d, int32 e, int32 f, int32 z, int32 x);
 	int fnSetFrame		(Object *cpt, int32 id, int32 c, int32 d, int32 e, int32 f, int32 z, int32 x);
 	int fnFullAnim		(Object *cpt, int32 id, int32 c, int32 d, int32 e, int32 f, int32 z, int32 x);
@@ -114,6 +110,7 @@ private:
 	int fnSetFadeTargetPalette(Object *cpt, int32 id, int32 c, int32 d, int32 e, int32 f, int32 z, int32 x);
 	int fnSetPaletteToFade(Object *cpt, int32 id, int32 c, int32 d, int32 e, int32 f, int32 z, int32 x);
 	int fnSetPaletteToCut(Object *cpt, int32 id, int32 c, int32 d, int32 e, int32 f, int32 z, int32 x);
+	int fnPlaySequence	(Object *cpt, int32 id, int32 c, int32 d, int32 e, int32 f, int32 z, int32 x);
 
 	int fnIdle			(Object *cpt, int32 id, int32 c, int32 d, int32 e, int32 f, int32 z, int32 x);
 	int fnPause			(Object *cpt, int32 id, int32 c, int32 d, int32 e, int32 f, int32 z, int32 x);
@@ -165,7 +162,9 @@ private:
 	int cfnReleaseMenu	(Object *cpt, int32 id, int32 c, int32 d, int32 e, int32 f, int32 z, int32 x);
 	
 	int fnAddSubject	(Object *cpt, int32 id, int32 c, int32 d, int32 e, int32 f, int32 z, int32 x);
+	int fnAddObject		(Object *cpt, int32 id, int32 c, int32 d, int32 e, int32 f, int32 z, int32 x);
 	int fnRemoveObject	(Object *cpt, int32 id, int32 c, int32 d, int32 e, int32 f, int32 z, int32 x);
+	int fnEnterSection	(Object *cpt, int32 id, int32 c, int32 d, int32 e, int32 f, int32 z, int32 x);
 	int fnLeaveSection	(Object *cpt, int32 id, int32 c, int32 d, int32 e, int32 f, int32 z, int32 x);
 	int fnChangeFloor	(Object *cpt, int32 id, int32 c, int32 d, int32 e, int32 f, int32 z, int32 x);
 	int fnWalk			(Object *cpt, int32 id, int32 c, int32 d, int32 e, int32 f, int32 z, int32 x);
@@ -201,6 +200,37 @@ private:
 	int fnPurple		(Object *cpt, int32 id, int32 c, int32 d, int32 e, int32 f, int32 z, int32 x);
 	int fnBlack			(Object *cpt, int32 id, int32 c, int32 d, int32 e, int32 f, int32 z, int32 x);
 	static const uint32 _scriptVarInit[NON_ZERO_SCRIPT_VARS][2];
+	static const uint8 *_startData[];
+	static const uint8 *_helperData[];
+	void startPosCallFn(uint8 fnId, uint32 param1, uint32 param2, uint32 param3);
+	void runStartScript(const uint8 *data);
+};
+
+enum StartPosOpcodes {
+	opcSeqEnd = 0,
+	opcCallFn,
+	opcCallFnLong,
+	opcSetVar8,
+	opcSetVar16,
+	opcSetVar32,
+	opcGeorge,
+	opcRunStart,
+	opcRunHelper,
+	opcPlaySequence,
+	opcAddObject,
+	opcRemoveObject,
+	opcMegaSet,
+	opcNoSprite
+};
+
+enum HelperScripts {
+	HELP_IRELAND = 0,
+	HELP_SYRIA,
+	HELP_SPAIN,
+	HELP_NIGHTTRAIN,
+	HELP_SCOTLAND,
+	HELP_WHITECOAT,
+	HELP_SPAIN2
 };
 
 } // End of namespace Sword1 

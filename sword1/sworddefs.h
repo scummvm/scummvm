@@ -126,52 +126,54 @@ enum Language {
 	BS1_PORT
 };
 
-#define SAM 2162689
-#define PLAYER 8388608
-#define GEORGE 8388608
-#define NICO 8454144
+#define SAM		2162689
+#define PLAYER	8388608
+#define GEORGE	8388608
+#define NICO	8454144
+#define BENOIR	8585216
+#define ROSSO	8716288
+#define DUANE	8781824
+#define MOUE	9502720
+#define ALBERT	9568256
 
-#define UP 0
-#define UP_RIGHT 1
-#define U_R 1
-#define RIGHT 2
-#define DOWN_RIGHT 3
-#define D_R 3
-#define DOWN 4
-#define DOWN_LEFT 5
-#define D_L 5
-#define LEFT 6
-#define UP_LEFT 7
-#define U_L 7
-#define BENOIR 8585216
-#define ROSSO 8716288
-#define MOUE 9502720
-#define ALBERT 9568256
-#define DUANE 8781824
+#define STAND		0
+#define UP			0
+#define UP_RIGHT	1
+#define U_R			1
+#define RIGHT		2
+#define DOWN_RIGHT	3
+#define D_R			3
+#define DOWN		4
+#define DOWN_LEFT	5
+#define D_L			5
+#define LEFT		6
+#define UP_LEFT		7
+#define U_L			7
+
+#define BEER_TOWEL 3
+#define HOTEL_KEY 4
+#define BALL 5
+#define RED_NOSE 7
+#define POLISHED_CHALICE 8
+#define PHOTOGRAPH 10
+#define GEM 13
+#define LAB_PASS 17
 #define LIFTING_KEYS 18
+#define MANUSCRIPT 19
+#define PLASTER 23
 #define ROSSO_CARD 27
 #define TISSUE 32
-#define PHOTOGRAPH 10
-#define HOTEL_KEY 4
-#define MANUSCRIPT 19
-#define LAB_PASS 17
 #define LENS 37
-#define RED_NOSE 7
 #define TRIPOD 36
-#define GEM 13
-#define PLASTER 23
-#define POLISHED_CHALICE 8
 #define CHALICE 31
 #define MATCHBOOK 20
-#define BUZZER 26
-#define BEER_TOWEL 3
-#define BALL 5
-#define TOILET_BRUSH 33
-#define TOILET_KEY 28
-#define TOWEL_CUT 39
 #define PRESSURE_GAUGE 24
-#define MIRROR 38
+#define BUZZER 26
+#define TOILET_KEY 28
 #define STONE_KEY 30
+#define TOILET_BRUSH 33
+#define MIRROR 38
+#define TOWEL_CUT 39
 
 #define SC58_PATH_X 225
 #define SC58_PATH_Y 369
@@ -347,8 +349,6 @@ enum Language {
 #define IT_RESTARTSCRIPT        30
 #define IT_POPWORDOFFSET        31
 #define IT_PUSHWORDOFFSET       32
-
-#define STAND 0
 
 enum ScriptVariableNames {
 	RETURN_VALUE = 0,
