@@ -465,7 +465,7 @@ void MemoryManager::debugMemory(void) {
 		if (_memList[j].state == MEM_null)
 			debug(5, "%d- NULL", j);
 		else
-			debug(5, "%d- state %s, ad %d, size %d, p %d, c %d, id %d",
+			debug(5, "%d- state %s, ad %p, size %d, p %d, c %d, id %d",
 				j, inf[_memList[j].state], _memList[j].ad,
 				_memList[j].size, _memList[j].parent,
 				_memList[j].child, _memList[j].uid);
@@ -474,8 +474,8 @@ void MemoryManager::debugMemory(void) {
 	// now in child/parent order
 	j = _baseMemBlock;
 	do {
-		debug(5, " %d- state %s, ad %d, size %d, p %d, c %d", j, 
-			inf[_memList[j].state], _memList[j].ad,
+		debug(5, " %d- state %s, ad %p, size %d, p %d, c %d, id %d",
+			j, inf[_memList[j].state], _memList[j].ad,
 			_memList[j].size, _memList[j].parent,
 			_memList[j].child, _memList[j].uid);
 
