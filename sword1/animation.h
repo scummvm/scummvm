@@ -111,10 +111,8 @@ private:
 		byte pal[4 * 256];
 	} palettes[50];
 #else
-	static NewGuiColor lookup2[BITDEPTH * BITDEPTH * 256];
+	static NewGuiColor *lookup;
 	NewGuiColor * overlay;
-	static bool lookupInit;
-
 #endif
 
 public:
@@ -131,7 +129,7 @@ private:
 	void buildLookup(int p, int lines);
 	bool checkPaletteSwitch();
 #else
-	void buildLookup2(void);
+	void buildLookup(void);
 	void plotYUV(NewGuiColor *lut, int width, int height, byte *const *dat);
 #endif
 };

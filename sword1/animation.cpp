@@ -103,7 +103,7 @@ bool AnimationState::init(const char *basename) {
 	lut2 = lookup[1];
 	lutcalcnum = (BITDEPTH + palettes[palnum].end + 2) / (palettes[palnum].end + 2);
 #else
-	buildLookup2();
+	buildLookup();
 	overlay = (NewGuiColor*)calloc(640 * 400, sizeof(NewGuiColor));
 	_sys->show_overlay();
 #endif
@@ -217,13 +217,13 @@ bool AnimationState::checkPaletteSwitch() {
 
 #else
 
-bool AnimationState::lookupInit = false;
-NewGuiColor AnimationState::lookup2[BITDEPTH * BITDEPTH * 256];
+NewGuiColor *AnimationState::lookup = 0;
 
-void AnimationState::buildLookup2() {
+void AnimationState::buildLookup() {
+	if (lookup)
+		return;
 
-	if (lookupInit) return;
-	lookupInit = true;
+	lookup = (NewGuiColor *)calloc(BITDEPTH * BITDEPTH * 256, sizeof(NewGuiColor));
 
 	int y, cb, cr;
 	int r, g, b;
@@ -237,13 +237,13 @@ void AnimationState::buildLookup2() {
 				b = ((y-16) * 256 + (int) (2.018 * 256) * ((cb << SHIFT) - 128)) / 256;
 
 				if (r < 0) r = 0;
-				if (r > 255) r = 255;
+				else if (r > 255) r = 255;
 				if (g < 0) g = 0;
-				if (g > 255) g = 255;
+				else if (g > 255) g = 255;
 				if (b < 0) b = 0;
-				if (b > 255) b = 255;
+				else if (b > 255) b = 255;
 
-				lookup2[pos++] = _sys->RGBToColor(r, g, b);
+				lookup[pos++] = _sys->RGBToColor(r, g, b);
 			}
 		}
 	}
@@ -340,7 +340,7 @@ bool AnimationState::decodeFrame() {
 #else
 
 				if ((bgSoundStream == NULL) || (bgSoundStream->getSamplesPlayed()*12/bgSoundStream->getRate()) < (framenum+3)){
-					plotYUV(lookup2, sequence_i->width, sequence_i->height, info->display_fbuf->buf);
+					plotYUV(lookup, sequence_i->width, sequence_i->height, info->display_fbuf->buf);
 
 					if (bgSoundStream) {
 						while ((bgSoundStream->getSamplesPlayed()*12/bgSoundStream->getRate()) < framenum+1)
