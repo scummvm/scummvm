@@ -790,6 +790,7 @@ protected:
 	void o_unk_132_helper_2(FillOrCopyStruct *fcs, int x);
 	void savegame_dialog(char *buf);
 
+	int count_savegames();
 	int display_savegame_list(int curpos, bool load, char *dst);
 
 	void show_it(void *buf);

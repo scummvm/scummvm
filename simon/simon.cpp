@@ -2513,6 +2513,21 @@ void SimonEngine::o_load_game() {
 	save_or_load_dialog(true);
 }
 
+int SimonEngine::count_savegames() {
+	File f;
+	uint i = 1;
+
+	while (i < 256) {
+		f.open(gen_savename(i), getSavePath());
+		if (f.isOpen() == false)
+			break;
+
+		f.close();
+		i++;
+	}
+	return i;
+}
+
 int SimonEngine::display_savegame_list(int curpos, bool load, char *dst) {
 	int slot, last_slot;
 	File in;
@@ -2601,7 +2616,7 @@ void SimonEngine::save_or_load_dialog(bool load) {
 
 	_copy_partial_mode = 1;
 
-	num = _number_of_savegames;
+	_number_of_savegames = num = count_savegames();
 	if (!load)
 		num++;
 	num -= 6;
