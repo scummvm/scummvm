@@ -59,7 +59,7 @@ void ScummEngine_v2::setupOpcodes() {
 		OPCODE(o5_getObjectOwner),
 		OPCODE(o2_animateActor),
 		OPCODE(o2_panCameraTo),
-		OPCODE(o2_actorSet),
+		OPCODE(o2_actorOps),
 		/* 14 */
 		OPCODE(o5_print),
 		OPCODE(o2_actorFromPos),
@@ -139,7 +139,7 @@ void ScummEngine_v2::setupOpcodes() {
 		OPCODE(o2_pickupObject),
 		OPCODE(o2_animateActor),
 		OPCODE(o5_actorFollowCamera),
-		OPCODE(o2_actorSet),
+		OPCODE(o2_actorOps),
 		/* 54 */
 		OPCODE(o2_setObjectName),
 		OPCODE(o2_actorFromPos),
@@ -219,7 +219,7 @@ void ScummEngine_v2::setupOpcodes() {
 		OPCODE(o5_getObjectOwner),
 		OPCODE(o2_animateActor),
 		OPCODE(o2_panCameraTo),
-		OPCODE(o2_actorSet),
+		OPCODE(o2_actorOps),
 		/* 94 */
 		OPCODE(o5_print),
 		OPCODE(o2_actorFromPos),
@@ -299,7 +299,7 @@ void ScummEngine_v2::setupOpcodes() {
 		OPCODE(o2_pickupObject),
 		OPCODE(o2_animateActor),
 		OPCODE(o5_actorFollowCamera),
-		OPCODE(o2_actorSet),
+		OPCODE(o2_actorOps),
 		/* D4 */
 		OPCODE(o2_setObjectName),
 		OPCODE(o2_actorFromPos),
@@ -662,7 +662,7 @@ void ScummEngine_v2::o2_waitForSentence() {
 	o5_breakHere();
 }
 
-void ScummEngine_v2::o2_actorSet() {
+void ScummEngine_v2::o2_actorOps() {
 	int act = getVarOrDirectByte(0x80);
 	int arg = getVarOrDirectByte(0x40);
 	Actor *a;
@@ -703,7 +703,7 @@ void ScummEngine_v2::o2_actorSet() {
 			a->talkColor = arg;
 		break;
 	default:
-		warning("o2_actorSet: opcode %d not yet supported", _opcode);
+		warning("o2_actorOps: opcode %d not yet supported", _opcode);
 	}
 }
 

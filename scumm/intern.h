@@ -226,7 +226,7 @@ protected:
 
 	/* Version 2 script opcodes */
 	void o2_actorFromPos();
-	void o2_actorSet();
+	void o2_actorOps();
 	void o2_add();
 	void o2_addIndirect();
 	void o2_animateActor();
