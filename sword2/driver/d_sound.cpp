@@ -49,7 +49,7 @@ static File fpMus;
 #define GetCompressedAmplitude(n)  ((n) & 7)
 
 static void premix_proc(void *param, int16 *data, uint len) {
-	((Sound *) param)->fxServer(data, len);
+	((Sound *) param)->streamMusic(data, len);
 }
 
 Sound::Sound(Sword2Engine *vm) {
@@ -86,13 +86,23 @@ Sound::~Sound() {
 		_vm->_system->deleteMutex(_mutex);
 }
 
-void Sound::fxServer(int16 *data, uint len) {
+void Sound::streamMusic(int16 *data, uint len) {
 	Common::StackLock lock(_mutex);
 
 	if (!_soundOn)
 		return;
 
-	updateCompSampleStreaming(data, len);
+	for (int i = 0; i < MAXMUS; i++) {
+		if (!_music[i]._streaming || _music[i]._paused)
+			continue;
+
+		st_volume_t volume = _musicMuted ? 0 : _musicVolTable[_musicVol];
+
+		fpMus.seek(_music[i]._filePos, SEEK_SET);
+		_converter->flow(_music[i], data, len, volume, volume);
+	}
+
+	// DipMusic();
 
 	if (!_music[0]._streaming && !_music[1]._streaming && fpMus.isOpen())
 		fpMus.close();
@@ -514,20 +524,6 @@ int32 Sound::streamCompMusic(const char *filename, uint32 musicId, bool looping)
 		_music[secondaryStream].fadeDown();
 
 	return _music[primaryStream].play(filename, musicId, looping);
-}
-
-void Sound::updateCompSampleStreaming(int16 *data, uint len) {
-	for (int i = 0; i < MAXMUS; i++) {
-		if (!_music[i]._streaming || _music[i]._paused)
-			continue;
-
-		st_volume_t volume = _musicMuted ? 0 : _musicVolTable[_musicVol];
-
-		fpMus.seek(_music[i]._filePos, SEEK_SET);
-		_converter->flow(_music[i], data, len, volume, volume);
-	}
-
-	// DipMusic();
 }
 
 int32 Sound::dipMusic(void) {

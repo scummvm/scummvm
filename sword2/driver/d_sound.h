@@ -92,7 +92,6 @@ private:
 	bool _musicMuted;
 	uint8 _musicVol;
 
-	void updateCompSampleStreaming(int16 *data, uint len);
 	int32 dipMusic(void);
 
 	PlayingSoundHandle _soundHandleSpeech;
@@ -113,7 +112,7 @@ public:
 	Sound(Sword2Engine *vm);
 	~Sound();
 
-	void fxServer(int16 *data, uint len);
+	void streamMusic(int16 *data, uint len);
 	void buildPanTable(bool reverse);
 
 	bool getWavInfo(uint8 *data, WavInfo *wavInfo);
