@@ -344,7 +344,7 @@ printf "Checking hosttype... "
 hosttype=`uname -s`
 echo $hosttype
 case $hosttype in
-	Linux | OpenBSD | FreeBSD | NetBSD | BSD/OS | SunOS | HP-UX)
+	Linux | OpenBSD | FreeBSD | NetBSD | BSD/OS | SunOS | HP-UX | BeOS)
 		DEFINES="$DEFINES -DUNIX"
 		;;
 	IRIX)
@@ -355,6 +355,20 @@ case $hosttype in
 		DEFINES="$DEFINES -DUNIX -DMACOSX"
 		LIBS="$LIBS -framework QuickTime -framework AudioUnit"
 		#CXXFLAGS="$CXXFLAGS -faltivec"
+		;;
+	MINGW32*)
+		echo "mingw32 not supported by configure script"
+		echo "Try 'make -f Makefile.mingw'"
+		exit 1
+		;;
+	CYGWIN*)
+		echo "cygwin not supported by configure script"
+		exit 1
+		;;
+	# given this is a shell script assume some type of unix
+	*)
+		echo "WARNING: could not establish system type, assuming unix like"
+		DEFINES="$DEFINES -DUNIX"
 		;;
 esac
 
