@@ -900,7 +900,9 @@ void Logic::roomSetupObjects() {
 			if (pgd->firstFrame < 0) {
 				// FIXME: if(TEMPA[1]<0) bobs[CURRBOB].xflip=1;
 				curBob = 5 + _numFurnitureAnimated;
-				AnimFrame *paf = NULL;
+				animSetup(pgd, curImage + 1, curBob + numObjectAnimated, pod->name > 0);
+				curImage += pgd->lastFrame;
+/*				AnimFrame *paf = NULL;
 				if (pod->name > 0) {
 					paf = _newAnim[curBob + numObjectAnimated];
 				}
@@ -918,7 +920,7 @@ void Logic::roomSetupObjects() {
 				}
 				else {
 					pbs->animating = false;
-				}
+				}*/
 				++numObjectAnimated;
 			}
 			else if (lastFrame != 0) {
@@ -1062,7 +1064,9 @@ uint16 Logic::roomRefreshObject(uint16 obj) {
 		rebound = true;
 	}
 	if (pgd->firstFrame < 0) {
-		AnimFrame *paf = NULL;
+		animSetup(pgd, curImage, curBob, pod->name != 0);
+		curImage += pgd->lastFrame - 1;
+/*		AnimFrame *paf = NULL;
 		if (pod->name != 0) {
 			paf = _newAnim[curBob];
 		}
@@ -1079,7 +1083,7 @@ uint16 Logic::roomRefreshObject(uint16 obj) {
 		}
 		else {
 			pbs->animating = false;
-		}
+		}*/
 	}
 	else if (lastFrame != 0) {
 		// turn on an animated bob
@@ -1331,6 +1335,7 @@ uint16 Logic::personAllocate(uint16 noun, uint16 curImage) {
 					++curImage;
 				}
 			}
+			// FIXME: shouldn't this line be executed BEFORE curImage is incremented ?
 			_personFrames[bobNum] = curImage + 1;
 		}
 	}
@@ -1399,6 +1404,7 @@ uint16 Logic::animCreate(uint16 curImage, const Person *person) {
 
 
 void Logic::animErase(uint16 bobNum) {
+
 	_newAnim[bobNum][0].frame = 0;
 	BobSlot *pbs = _graphics->bob(bobNum);
 	pbs->animating = false;
@@ -1406,7 +1412,7 @@ void Logic::animErase(uint16 bobNum) {
 }
 
 
-int16 Logic::animFindAll(const GraphicData *gd, uint16 firstImage, AnimFrame *paf) {
+void Logic::animSetup(const GraphicData *gd, uint16 firstImage, uint16 bobNum, bool visible) {
 	
 	int16 tempFrames[20];
 	memset(tempFrames, 0, sizeof(tempFrames));
@@ -1450,7 +1456,15 @@ int16 Logic::animFindAll(const GraphicData *gd, uint16 firstImage, AnimFrame *pa
 	for (i = 0; i < gd->lastFrame; ++i) {
 		_graphics->bankUnpack(ABS(tempFrames[i]), firstImage + i, 15);
 	}
-	if (paf != NULL) {
+	BobSlot *pbs = _graphics->bob(bobNum);
+	pbs->animating = false;
+	if (visible) {
+		pbs->x = gd->x;
+		pbs->y = gd->y;
+		if (tempFrames[0] < 0) {
+			pbs->xflip = true;
+		}
+		AnimFrame *paf = _newAnim[bobNum];
 		for (i = 1; i <= _numGraphicAnim; ++i) {
 			const GraphicAnim *pga = &_graphicAnim[i];
 			if (pga->keyFrame == gd->firstFrame) {
@@ -1472,8 +1486,8 @@ int16 Logic::animFindAll(const GraphicData *gd, uint16 firstImage, AnimFrame *pa
 		}
 		paf->frame = 0;
 		paf->speed = 0;
+		pbs->animString(_newAnim[bobNum]);
 	}
-	return tempFrames[0];
 }
 
 

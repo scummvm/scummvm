@@ -90,6 +90,9 @@ struct BobSlot {
 
 	void moveOneStep();
 	void animOneStep();
+
+	void animString(const AnimFrame *animBuf);
+	void animNormal(uint16 firstFrame, uint16 lastFrame, uint16 speed, bool rebound, bool xflip);
 };
 
 
@@ -117,6 +120,7 @@ public:
 	void bobSetupControl();
 	void bobAnimString(uint32 bobnum, const AnimFrame *buf); // stringanim()
 	void bobAnimNormal(uint32 bobnum, uint16 firstFrame, uint16 lastFrame, uint16 speed, bool rebound, bool xflip); // makeanim()
+	void bobAnimReset(uint32 bobnum);
 	void bobMove(uint32 bobnum, int16 endx, int16 endy, int16 speed); // movebob()
 	void bobDraw(uint32 bobnum, int16 x, int16 y, uint16 scale, bool xflip, const Box& box); // bob()
 	void bobDrawInventoryItem(uint32 bobnum, uint16 x, uint16 y); // invbob()

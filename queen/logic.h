@@ -131,7 +131,7 @@ public:
 
 	uint16 animCreate(uint16 curImage, const Person *person); // CREATE_ANIM
 	void animErase(uint16 bobNum);
-	int16 animFindAll(const GraphicData *gd, uint16 firstImage, AnimFrame *paf); // FIND_GRAPHIC_ANIMS
+	void animSetup(const GraphicData *gd, uint16 firstImage, uint16 bobNum, bool visible); // FIND_GRAPHIC_ANIMS
 
 	StateDirection findStateDirection(uint16 state); // == FIND_STATE(state, "DIR");
 	StateTalk      findStateTalk     (uint16 state); // == FIND_STATE(state, "TALK");
@@ -240,7 +240,7 @@ protected:
 	//! Last frame number used for person animation
 	uint16 _personFrames[4];
 
-	//! Describe an string based animation (30 frames maximum, bob number must be < 17)
+	//! Describe a string based animation (30 frames maximum, bob number must be < 17)
 	AnimFrame _newAnim[17][30];
 
 	Resource *_resource;

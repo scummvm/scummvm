@@ -143,32 +143,34 @@ void Graphics::bobSetupControl() {
 
 void Graphics::bobAnimString(uint32 bobnum, const AnimFrame *animBuf) {
 
-	BobSlot *pbs = &_bobs[bobnum];
-	pbs->active = true;
-	pbs->animating = true;
-	pbs->anim.string.buffer = animBuf;
-	pbs->anim.string.curPos = animBuf;
-	pbs->frameNum = animBuf->frame;
-	pbs->anim.speed = animBuf->speed / 4;
+	debug(9, "Graphics::bobAnimString(%d)", bobnum);
+	_bobs[bobnum].animString(animBuf);
 }
 
 
 void Graphics::bobAnimNormal(uint32 bobnum, uint16 firstFrame, uint16 lastFrame, uint16 speed, bool rebound, bool xflip) {
 
 	debug(9, "Graphics::bobAnimNormal(%d, %d, %d, %d)", bobnum, firstFrame, lastFrame, speed);
+	_bobs[bobnum].animNormal(firstFrame, lastFrame, speed, rebound, xflip);
+}
+
+
+void Graphics::bobAnimReset(uint32 bobnum) {
 
 	BobSlot *pbs = &_bobs[bobnum];
-	pbs->active = true;
-	pbs->animating = true;
-	pbs->frameNum = firstFrame;
-	pbs->anim.speed = speed;
-	pbs->anim.speedBak = speed;
-	pbs->anim.string.buffer = NULL;
-	pbs->anim.normal.firstFrame = firstFrame;
-	pbs->anim.normal.lastFrame = lastFrame;
-	pbs->anim.normal.rebound = rebound;
-	pbs->frameDir = 1;
-	pbs->xflip = xflip;
+	if(pbs->active && pbs->animating) {
+		const AnimFrame *anim = pbs->anim.string.buffer;
+		if (anim != NULL) {
+			pbs->anim.string.curPos = anim;
+			pbs->frameNum = anim->frame;
+			pbs->anim.speed = anim->speed / 4;
+		}
+		else {
+			pbs->anim.speed = pbs->anim.speedBak;
+			pbs->frameNum = pbs->anim.normal.firstFrame;
+			pbs->frameDir = 1;
+		}
+	}
 }
 
 
@@ -296,7 +298,34 @@ void BobSlot::animOneStep() {
 		}
 	}
 }
-          
+
+
+void BobSlot::animString(const AnimFrame *animBuf) {
+
+	active = true;
+	animating = true;
+	anim.string.buffer = animBuf;
+	anim.string.curPos = animBuf;
+	frameNum = animBuf->frame;
+	anim.speed = animBuf->speed / 4;
+}
+
+
+void BobSlot::animNormal(uint16 firstFrame, uint16 lastFrame, uint16 spd, bool rebound, bool flip) {
+
+	active = true;
+	animating = true;
+	frameNum = firstFrame;
+	anim.speed = spd;
+	anim.speedBak = spd;
+	anim.string.buffer = NULL;
+	anim.normal.firstFrame = firstFrame;
+	anim.normal.lastFrame = lastFrame;
+	anim.normal.rebound = rebound;
+	frameDir = 1;
+	xflip = flip;
+}
+
 
 void Graphics::bobDraw(uint32 bobnum, int16 x, int16 y, uint16 scale, bool xflip, const Box& box) {
 
