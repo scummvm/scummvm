@@ -36,8 +36,7 @@ class Timer {
 
 private:
 	Engine *_engine;
-	bool _initialized;
-	bool _timerRunning;
+	void *_mutex;
 	void *_timerHandler;
 	int32 _thisTime;
 	int32 _lastTime;
@@ -49,11 +48,9 @@ private:
 	} _timerSlots[MAX_TIMERS];
 
 public:
-	  Timer(Engine *engine);
-	 ~Timer();
+	Timer(Engine *engine);
+	~Timer();
 
-	bool init();
-	void release();
 	bool installProcedure(TimerProc procedure, int32 interval);
 	void releaseProcedure(TimerProc procedure);
 
