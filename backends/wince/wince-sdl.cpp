@@ -210,7 +210,7 @@ OSystem *OSystem_WINCE3_create() {
 OSystem_WINCE3::OSystem_WINCE3() : OSystem_SDL(), 
 	_orientationLandscape(false), _newOrientation(false), _panelInitialized(false),
 	_panelVisible(false), _panelStateForced(false), _forceHideMouse(false),
-	_freeLook(false), _toolbarHighDrawn(false), _zoomUp(false), _zoomDown(false),
+	_freeLook(false), _forcePanelInvisible(false), _toolbarHighDrawn(false), _zoomUp(false), _zoomDown(false),
 	_scalersChanged(false), _monkeyKeyboard(false), _lastKeyPressed(0)
 {
 	_isSmartphone = CEDevice::hasSmartphoneResolution();
