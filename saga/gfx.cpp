@@ -29,6 +29,7 @@
 
 #include "saga/saga.h"
 #include "saga/gfx.h"
+#include "saga/interface.h"
 
 #include "common/system.h"
 
@@ -979,14 +980,17 @@ void Gfx::showCursor(bool state) {
 
 void Gfx::setCursor() {
 	// Set up the mouse cursor
-	byte cursor_img[CURSOR_W * CURSOR_H] = {
-		0, 0, 0, 4, 0, 0, 0,
-		0, 0, 0, 4, 0, 0, 0,
-		0, 0, 0, 4, 0, 0, 0,
-		4, 4, 4, 2, 4, 4, 4,
-		0, 0, 0, 4, 0, 0, 0,
-		0, 0, 0, 4, 0, 0, 0,
-		0, 0, 0, 4, 0, 0, 0,
+	const byte A = kITEColorLightGrey;
+	const byte B = kITEColorWhite;
+
+	const byte cursor_img[CURSOR_W * CURSOR_H] = {
+		0, 0, 0, A, 0, 0, 0,
+		0, 0, 0, A, 0, 0, 0,
+		0, 0, 0, A, 0, 0, 0,
+		A, A, A, B, B, B, B,
+		0, 0, 0, A, 0, 0, 0,
+		0, 0, 0, A, 0, 0, 0,
+		0, 0, 0, A, 0, 0, 0,
 	};
 
 	_system->setMouseCursor(cursor_img, CURSOR_W, CURSOR_H, 3, 3, 0);

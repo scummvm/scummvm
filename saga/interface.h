@@ -92,11 +92,13 @@ struct Converse {
 };
 
 enum ITEColors {
-	kITEColorBrightWhite = 0x1,
-	kITEColorGrey = 0xa,
-	kITEColorDarkGrey = 0xb,
+	kITEColorBrightWhite = 0x01,
+	kITEColorWhite = 0x02,
+	kITEColorLightGrey = 0x04,
+	kITEColorGrey = 0x0a,
+	kITEColorDarkGrey = 0x0b,
 	kITEColorGreen = 0xba,
-	kITEColorBlack = 0xf,
+	kITEColorBlack = 0x0f,
 	kITEColorBlue = 0x93
 };
 

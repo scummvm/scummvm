@@ -96,6 +96,20 @@ Main.c
 ======
  sceneIndexTable           _scene->getSceneLUT()
 
+Main.h
+======
+BRIGHT_WHITE               kITEColorBrightWhite
+WHITE_02                   kITEColorWhite
+GREY_0A                    kITEColorGrey
+DK_GREY_0B                 kITEColorDarkGrey
+PITCH_BLACK                kITEColorBlack
+BLUE_93                    kITEColorBlue
+GREEB_BA                   kITEColorGreen
+
+Note that ScummVM's kITEColorLightGrey does not have any corresponding
+constant in the original SAGA engine. We use it for the ITE mouse cursor. See
+PtrData[] in Main.c and setCursor() in gfx.cpp
+
 Tile.h
 ======
  isoTile.height            ISOTILE_ENTRY.tile_h
