@@ -86,7 +86,7 @@ ListWidget::~ListWidget()
 void ListWidget::handleClick(int x, int y, int button)
 {
 	if (_flags & WIDGET_ENABLED) {
-		_selectedItem = (y / LINE_HEIGHT) + _currentPos;
+		_selectedItem = (y - 2) / LINE_HEIGHT + _currentPos;
 		draw();
 	}
 }
@@ -123,9 +123,7 @@ void ListWidget::drawWidget(bool hilite)
 		} else
 			buffer = "";
 		buffer += _list[pos];
-		if (_selectedItem == pos)
-			gui->drawString(buffer, _x+5, _y+2 + LINE_HEIGHT * i, _w - 10, gui->_textcolorhi);
-		else
-			gui->drawString(buffer, _x+5, _y+2 + LINE_HEIGHT * i, _w - 10, gui->_textcolor);
+		gui->drawString(buffer, _x+5, _y+2 + LINE_HEIGHT * i, _w - 10,
+							(_selectedItem == pos) ? gui->_textcolorhi : gui->_textcolor);
 	}
 }

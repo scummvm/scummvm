@@ -212,9 +212,10 @@ void SaveLoadDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 {
 	switch (cmd) {
 	case kSaveCmd:
+		//printf("Saving game in slot %d\n", _savegameList->getSelected());
 		break;
 	case kLoadCmd:
-		//printf("Saving game in slot %d\n", _savegameList->getSelected());
+		//printf("Loading game in slot %d\n", _savegameList->getSelected());
 		break;
 	case kPlayCmd:
 		close();

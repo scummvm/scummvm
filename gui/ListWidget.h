@@ -46,9 +46,9 @@ public:
 	ListWidget(Dialog *boss, int x, int y, int w, int h);
 	virtual ~ListWidget();
 	
-	void setList(const StringList& list)	{ _list = list; }
-	const StringList& getList()	const		{ return _list; }
-	const int getSelected()	 {return _selectedItem;}
+	void setList(const StringList& list)		{ _list = list; }
+	const StringList& getList()	const			{ return _list; }
+	int getSelected() const						{ return _selectedItem; }
 	void setNumberingMode(int numberingMode)	{ _numberingMode = numberingMode; }
 	
 	virtual void handleClick(int x, int y, int button);
