@@ -910,6 +910,7 @@ void Scumm::processActors()
 	Actor *actors[MAX_ACTORS], *a, **ac, **ac2, *tmp;
 	int numactors = 0, cnt, cnt2;
 
+	// Make a list of all actors in this room
 	for (i = 1; i < NUM_ACTORS; i++) {
 		a = derefActor(i);
 		if (a->isInCurrentRoom())
@@ -918,6 +919,8 @@ void Scumm::processActors()
 	if (!numactors)
 		return;
 
+	// Sort actors by position before we draw them (to ensure that actors in
+	// front are drawn after thos behind them).
 	ac = actors;
 	cnt = numactors;
 	do {
@@ -932,12 +935,15 @@ void Scumm::processActors()
 		} while (ac2++, --cnt2);
 	} while (ac++, --cnt);
 
+	// Finally draw all the actors in this room
 	ac = actors;
 	cnt = numactors;
 	do {
 		a = *ac;
 		if (a->costume) {
 			CHECK_HEAP getMaskFromBox(a->walkbox);
+			if (_fullRedraw)
+				a->needRedraw = true;
 			a->drawActorCostume();
 			CHECK_HEAP a->actorAnimate();
 		}
