@@ -203,7 +203,8 @@ void Scumm::CHARSET_1() {
 	}
 
 	buffer = _charsetBuffer + _charsetBufPos;
-	_charset->addLinebreaks(0, buffer, 0, t);
+	if (!(_features & GF_AFTER_V2))
+		_charset->addLinebreaks(0, buffer, 0, t);
 
 	if (_charset->_center) {
 		_charset->_nextLeft -= _charset->getStringWidth(0, buffer) >> 1;
