@@ -1436,8 +1436,9 @@ int ScummEngine::scummLoop(int delta) {
 		VAR(VAR_TMR_1) += delta;
 		VAR(VAR_TMR_2) += delta;
 		VAR(VAR_TMR_3) += delta;
-		if ((_gameId == GID_ZAK256 || _gameId == GID_INDY3) && (_features & GF_FMTOWNS)) {
-			// FM Towns version of Indy3 and Zak set three extra timers
+		if ((_gameId == GID_ZAK256) || (_gameId == GID_INDY3 && (_features & GF_FMTOWNS || _features & GF_AMIGA))) {
+			// Amiga and FM Towns version of Indy3 set three extra timers
+			// FM Towns version of Zak set three extra timers
 			VAR(39) += delta;
 			VAR(40) += delta;
 			VAR(41) += delta;
