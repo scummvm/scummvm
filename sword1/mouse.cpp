@@ -190,20 +190,8 @@ void SwordMouse::createPointer(uint32 ptrId, uint32 luggageId) {
 		_currentPtr->sizeY = resSizeY;
 		uint8 *ptrData = (uint8*)_currentPtr + sizeof(MousePtr);
 		memset(ptrData, 255, resSizeX * resSizeY * noFrames);
-		uint8 *dstData = ptrData;
-		uint8 *srcData = (uint8*)ptr + sizeof(MousePtr);
-		for (uint32 frameCnt = 0; frameCnt < noFrames; frameCnt++) {
-			for (uint32 cnty = 0; cnty < FROM_LE_16(ptr->sizeY); cnty++) {
-				for (uint32 cntx = 0; cntx < FROM_LE_16(ptr->sizeX); cntx++)
-					if (srcData[cntx])
-						dstData[cntx] = srcData[cntx];
-				srcData += FROM_LE_16(ptr->sizeX);
-				dstData += resSizeX;
-			}
-			dstData += (resSizeY - FROM_LE_16(ptr->sizeY)) * resSizeX;
-		}
 		if (luggageId) {
-			dstData = ptrData + resSizeX - FROM_LE_16(lugg->sizeX);
+			uint8 *dstData = ptrData + resSizeX - FROM_LE_16(lugg->sizeX);
 			for (uint32 frameCnt = 0; frameCnt < noFrames; frameCnt++) {
 				uint8 *luggSrc = (uint8*)lugg + sizeof(MousePtr);
 				dstData += (resSizeY - FROM_LE_16(lugg->sizeY)) * resSizeX;
@@ -216,6 +204,18 @@ void SwordMouse::createPointer(uint32 ptrId, uint32 luggageId) {
 				}
 			}
 			_resMan->resClose(luggageId);
+		}
+		uint8 *dstData = ptrData;
+		uint8 *srcData = (uint8*)ptr + sizeof(MousePtr);
+		for (uint32 frameCnt = 0; frameCnt < noFrames; frameCnt++) {
+			for (uint32 cnty = 0; cnty < FROM_LE_16(ptr->sizeY); cnty++) {
+				for (uint32 cntx = 0; cntx < FROM_LE_16(ptr->sizeX); cntx++)
+					if (srcData[cntx])
+						dstData[cntx] = srcData[cntx];
+				srcData += FROM_LE_16(ptr->sizeX);
+				dstData += resSizeX;
+			}
+			dstData += (resSizeY - FROM_LE_16(ptr->sizeY)) * resSizeX;
 		}
 		_resMan->resClose(ptrId);
 	}
