@@ -72,8 +72,6 @@ private:
 		int32 iteration;
 		int32 mod;
 		int32 mixerFlags;
-		int32 mixerVol;
-		int32 mixerPan;
 
 		ImuseDigiSndMgr::soundStruct *soundHandle;
 		PlayingSoundHandle handle;
@@ -88,10 +86,6 @@ private:
 	OSystem::MutexRef _mutex;
 	ScummEngine *_vm;
 	ImuseDigiSndMgr *_sound;
-
-	int32 _volVoice;
-	int32 _volSfx;
-	int32 _volMusic;
 
 	bool _pause;
 
@@ -142,13 +136,6 @@ public:
 
 	void saveOrLoad(Serializer *ser);
 	void resetState();
-
-	void setGroupVoiceVolume(int volume) { _volVoice = volume; }
-	void setGroupSfxVolume(int volume) { _volSfx = volume; }
-	void setGroupMusicVolume(int volume) { _volMusic = volume; }
-	int getGroupVoiceVolume() { return _volVoice; }
-	int getGroupSfxVolume() { return _volSfx; }
-	int getGroupMusicVolume() { return _volMusic; }
 
 	void setPriority(int soundId, int priority);
 	void setVolume(int soundId, int volume);

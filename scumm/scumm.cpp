@@ -1390,13 +1390,7 @@ void ScummEngine::setupVolumes() {
 
 	_mixer->setVolumeForSoundType(SoundMixer::kSFXAudioDataType, soundVolumeSfx);
 	_mixer->setVolumeForSoundType(SoundMixer::kMusicAudioDataType, soundVolumeMusic);
-
-	if (_imuseDigital) {
-		_mixer->setVolumeForSoundType(SoundMixer::kSFXAudioDataType, 255);
-		_imuseDigital->setGroupMusicVolume(soundVolumeMusic / 2);
-		_imuseDigital->setGroupSfxVolume(soundVolumeSfx / 2);
-		_imuseDigital->setGroupVoiceVolume(soundVolumeSpeech / 2);
-	}
+	_mixer->setVolumeForSoundType(SoundMixer::kSpeechAudioDataType, soundVolumeSpeech);
 }
 
 

@@ -46,9 +46,6 @@ IMuseDigital::IMuseDigital(ScummEngine *scumm, int fps)
 	_mutex = g_system->createMutex();
 	_pause = false;
 	_sound = new ImuseDigiSndMgr(_vm);
-	_volVoice = 0;
-	_volSfx = 0;
-	_volMusic = 0;
 	_callbackFps = fps;
 	resetState();
 	for (int l = 0; l < MAX_DIGITAL_TRACKS + MAX_DIGITAL_FADETRACKS; l++) {
@@ -81,9 +78,9 @@ void IMuseDigital::saveOrLoad(Serializer *ser) {
 	Common::StackLock lock(_mutex, "IMuseDigital::saveOrLoad()");
 
 	const SaveLoadEntry mainEntries[] = {
-		MKLINE(IMuseDigital, _volVoice, sleInt32, VER(31)),
-		MKLINE(IMuseDigital, _volSfx, sleInt32, VER(31)),
-		MKLINE(IMuseDigital, _volMusic, sleInt32, VER(31)),
+		MK_OBSOLETE(IMuseDigital, _volVoice, sleInt32, VER(31), VER(42)),
+		MK_OBSOLETE(IMuseDigital, _volSfx, sleInt32, VER(31), VER(42)),
+		MK_OBSOLETE(IMuseDigital, _volMusic, sleInt32, VER(31), VER(42)),
 		MKLINE(IMuseDigital, _curMusicState, sleInt32, VER(31)),
 		MKLINE(IMuseDigital, _curMusicSeq, sleInt32, VER(31)),
 		MKLINE(IMuseDigital, _curMusicCue, sleInt32, VER(31)),
@@ -116,8 +113,8 @@ void IMuseDigital::saveOrLoad(Serializer *ser) {
 		MKLINE(Track, iteration, sleInt32, VER(31)),
 		MKLINE(Track, mod, sleInt32, VER(31)),
 		MKLINE(Track, mixerFlags, sleInt32, VER(31)),
-		MKLINE(Track, mixerVol, sleInt32, VER(31)),
-		MKLINE(Track, mixerPan, sleInt32, VER(31)),
+		MK_OBSOLETE(Track, mixerVol, sleInt32, VER(31), VER(42)),
+		MK_OBSOLETE(Track, mixerPan, sleInt32, VER(31), VER(42)),
 		MKEND()
 	};
 
@@ -149,7 +146,19 @@ void IMuseDigital::saveOrLoad(Serializer *ser) {
 			int	freq = _sound->getFreq(track->soundHandle);
 			track->stream2 = NULL;
 			track->stream = makeAppendableAudioStream(freq, track->mixerFlags, streamBufferSize);
-			_vm->_mixer->playInputStream(SoundMixer::kSFXAudioDataType, &track->handle, track->stream, -1, track->mixerVol, track->mixerPan, false);
+
+			const int pan = (track->pan != 64) ? 2 * track->pan - 127 : 0;
+			const int vol = track->vol / 1000;
+			SoundMixer::SoundType type = SoundMixer::kPlainAudioDataType;
+
+			if (track->volGroupId == 1)
+				type = SoundMixer::kSpeechAudioDataType;
+			if (track->volGroupId == 2)
+				type = SoundMixer::kSFXAudioDataType;
+			if (track->volGroupId == 3)
+				type = SoundMixer::kMusicAudioDataType;
+
+			_vm->_mixer->playInputStream(type, &track->handle, track->stream, -1, vol, pan, false);
 		}
 	}
 }
@@ -192,18 +201,16 @@ void IMuseDigital::callback() {
 				debug(5, "Fade: sound(%d), Vol(%d)", track->soundId, track->vol / 1000);
 			}
 
-			int pan = (track->pan != 64) ? 2 * track->pan - 127 : 0;
-			int vol = track->vol / 1000;
+			const int pan = (track->pan != 64) ? 2 * track->pan - 127 : 0;
+			const int vol = track->vol / 1000;
+			SoundMixer::SoundType type = SoundMixer::kPlainAudioDataType;
 
 			if (track->volGroupId == 1)
-				vol = (vol * _volVoice) / 128;
+				type = SoundMixer::kSpeechAudioDataType;
 			if (track->volGroupId == 2)
-				vol = (vol * _volSfx) / 128;
+				type = SoundMixer::kSFXAudioDataType;
 			if (track->volGroupId == 3)
-				vol = (vol * _volMusic) / 128;
-
-			track->mixerVol = vol;
-			track->mixerPan = pan;
+				type = SoundMixer::kMusicAudioDataType;
 
 			if (track->stream) {
 				byte *data = NULL;
@@ -289,7 +296,7 @@ void IMuseDigital::callback() {
 				if (_vm->_mixer->isReady()) {
 					if (!track->started) {
 						track->started = true;
-						_vm->_mixer->playInputStream(SoundMixer::kSFXAudioDataType, &track->handle, track->stream2, -1, vol, pan, false);
+						_vm->_mixer->playInputStream(type, &track->handle, track->stream2, -1, vol, pan, false);
 					} else {
 						_vm->_mixer->setChannelVolume(track->handle, vol);
 						_vm->_mixer->setChannelBalance(track->handle, pan);

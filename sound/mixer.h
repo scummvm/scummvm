@@ -73,8 +73,8 @@ public:
 		kPlainAudioDataType = 0,
 
 		kMusicAudioDataType = 1,
-		kSFXAudioDataType = 2
-		// kSpeechAudioDataType = 3	  TODO: Add this type later...
+		kSFXAudioDataType = 2,
+		kSpeechAudioDataType = 3
 	};
 
 private:

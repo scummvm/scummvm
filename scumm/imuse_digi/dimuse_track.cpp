@@ -101,8 +101,6 @@ void IMuseDigital::startSound(int soundId, const char *soundName, int soundType,
 	track->regionOffset = 0;
 	track->mod = 0;
 	track->mixerFlags = 0;
-	track->mixerPan = 0;
-	track->mixerVol = volume;
 	track->toBeRemoved = false;
 	track->readyToRemove = false;
 	track->soundType = soundType;
@@ -156,24 +154,22 @@ void IMuseDigital::startSound(int soundId, const char *soundName, int soundType,
 		track->stream = NULL;
 		track->started = false;
 	} else {
-		int pan = (track->pan != 64) ? 2 * track->pan - 127 : 0;
-		int vol = track->vol / 1000;
+		const int pan = (track->pan != 64) ? 2 * track->pan - 127 : 0;
+		const int vol = track->vol / 1000;
+		SoundMixer::SoundType type = SoundMixer::kPlainAudioDataType;
 
 		if (track->volGroupId == 1)
-			vol = (vol * _volVoice) / 128;
+			type = SoundMixer::kSpeechAudioDataType;
 		if (track->volGroupId == 2)
-			vol = (vol * _volSfx) / 128;
+			type = SoundMixer::kSFXAudioDataType;
 		if (track->volGroupId == 3)
-			vol = (vol * _volMusic) / 128;
-
-		track->mixerPan = pan;
-		track->mixerVol = vol;
+			type = SoundMixer::kMusicAudioDataType;
 
 		// setup 1 second stream wrapped buffer
 		int32 streamBufferSize = track->iteration;
 		track->stream2 = NULL;
 		track->stream = makeAppendableAudioStream(freq, track->mixerFlags, streamBufferSize);
-		_vm->_mixer->playInputStream(SoundMixer::kSFXAudioDataType, &track->handle, track->stream, -1, track->mixerVol, track->mixerPan, false);
+		_vm->_mixer->playInputStream(type, &track->handle, track->stream, -1, vol, pan, false);
 		track->started = true;
 	}
 
@@ -283,8 +279,6 @@ IMuseDigital::Track *IMuseDigital::cloneToFadeOutTrack(Track *track, int fadeDel
 		fadeTrack->curHookId = track->curHookId;
 		fadeTrack->iteration = track->iteration;
 		fadeTrack->mixerFlags = track->mixerFlags;
-		fadeTrack->mixerVol = track->mixerVol;
-		fadeTrack->mixerPan = track->mixerPan;
 		fadeTrack->mod = track->mod;
 		fadeTrack->toBeRemoved = track->toBeRemoved;
 		fadeTrack->readyToRemove = track->readyToRemove;
