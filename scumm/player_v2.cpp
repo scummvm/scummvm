@@ -801,15 +801,14 @@ void Player_V2::next_freqs(ChannelInfo *channel) {
 	}
 }
 
-void Player_V2::do_mix (int16 *data, int len) {
+void Player_V2::do_mix (int16 *data, uint len) {
 	mutex_up();
-	int step;
+	uint step;
 
 	do {
 		step = len;
 		if (step > (_next_tick >> FIXP_SHIFT))
 			step = (_next_tick >> FIXP_SHIFT);
-
 		if (_pcjr)
 			generatePCjrSamples(data, step);
 		else
@@ -833,8 +832,8 @@ void Player_V2::do_mix (int16 *data, int len) {
 	mutex_down();
 }
 
-void Player_V2::lowPassFilter(int16 *sample, int len) {
-	for (int i = 0; i < len; i++) {
+void Player_V2::lowPassFilter(int16 *sample, uint len) {
+	for (uint i = 0; i < len; i++) {
 		_level = (_level * _decay
 			 + (unsigned int)sample[i] * (0x10000-_decay)) >> 16;
 		sample[i] = _level;
@@ -842,12 +841,12 @@ void Player_V2::lowPassFilter(int16 *sample, int len) {
 }
 
 void Player_V2::squareGenerator(int channel, int freq, int vol,
-                                int noiseFeedback, int16 *sample, int len) {
+                                int noiseFeedback, int16 *sample, uint len) {
 	int period = _update_step * freq;
 	if (period == 0)
 		period = _update_step;
 
-	for (int i = 0; i < len; i++) {
+	for (uint i = 0; i < len; i++) {
 		unsigned int duration = 0;
 		
 		if (_timer_output & (1 << channel))
@@ -883,7 +882,7 @@ void Player_V2::squareGenerator(int channel, int freq, int vol,
 	}
 }
 
-void Player_V2::generateSpkSamples(int16 *data, int len) {
+void Player_V2::generateSpkSamples(int16 *data, uint len) {
 	int winning_channel = -1;
 	for (int i = 0; i < 4; i++) {
 		if (winning_channel == -1
@@ -904,7 +903,7 @@ void Player_V2::generateSpkSamples(int16 *data, int len) {
 	lowPassFilter(data, len);
 }
 
-void Player_V2::generatePCjrSamples(int16 *data, int len) {
+void Player_V2::generatePCjrSamples(int16 *data, uint len) {
 	int i, j;
 	int freq, vol;
 

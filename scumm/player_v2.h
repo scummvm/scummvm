@@ -92,9 +92,9 @@ private:
 	bool _pcjr;
 	int _header_len;
 
-	int _sample_rate;
-	int _next_tick;
-	int _tick_len;
+	uint32 _sample_rate;
+	uint32 _next_tick;
+	uint32 _tick_len;
 	unsigned int _update_step;
 	unsigned int _decay;
 	unsigned int _level;
@@ -129,13 +129,13 @@ private:
 	void chainNextSound();
 
 	static void premix_proc(void *param, int16 *buf, uint len);
-	void do_mix (int16 *buf, int len);
+	void do_mix (int16 *buf, uint len);
 
-	void lowPassFilter(int16 *data, int len);
+	void lowPassFilter(int16 *data, uint len);
 	void squareGenerator(int channel, int freq, int vol,
-	                     int noiseFeedback, int16 *sample, int len);
-	void generateSpkSamples(int16 *data, int len);
-	void generatePCjrSamples(int16 *data, int len);
+	                     int noiseFeedback, int16 *sample, uint len);
+	void generateSpkSamples(int16 *data, uint len);
+	void generatePCjrSamples(int16 *data, uint len);
     
 };
 
