@@ -401,7 +401,7 @@ void CostumeRenderer::proc3_ami() {
 void LoadedCostume::loadCostume(int id) {
 	_ptr = _vm->getResourceAddress(rtCostume, id);
 
-	if (_vm->_features & GF_AFTER_V6)
+	if (_vm->_version >= 6)
 		_ptr += 8;
 	else if (_vm->_features & GF_OLD_BUNDLE)
 		_ptr += -2;
@@ -522,7 +522,7 @@ void Scumm::cost_decodeData(Actor *a, int frame, uint usemask) {
 	i = 0;
 	do {
 		if (mask & 0x8000) {
-			if ((_features & GF_AFTER_V3) || (_features & GF_AFTER_V2)) {
+			if (_version <= 3) {
 				j = *r++;
 
 				if (j == 0xFF)
@@ -575,7 +575,7 @@ void CostumeRenderer::setPalette(byte *palette) {
 		}
 		_palette[_loaded._ptr[8]] = _palette[0];
 	} else {
-		if ((_vm->_features & GF_AFTER_V6) || (_vm->VAR(_vm->VAR_CURRENT_LIGHTS) & LIGHTMODE_actor_color)) {
+		if ((_vm->_features & GF_NEW_OPCODES) || (_vm->VAR(_vm->VAR_CURRENT_LIGHTS) & LIGHTMODE_actor_color)) {
 			for (i = 0; i < _loaded._numColors; i++) {
 				color = palette[i];
 				if (color == 255)
@@ -621,7 +621,7 @@ byte LoadedCostume::increaseAnim(Actor *a, int slot) {
 	end = a->cost.end[slot];
 	code = _dataptr[i] & 0x7F;
 	
-	if (_vm->_features & GF_AFTER_V2 || _vm->_features & GF_AFTER_V3) {
+	if (_vm->_version <= 3) {
 		if (_dataptr[i] & 0x80)
 			a->cost.soundCounter++;
 	}
@@ -641,7 +641,7 @@ byte LoadedCostume::increaseAnim(Actor *a, int slot) {
 			if (a->cost.start[slot] != end)
 				continue;
 		} else {
-			if (_vm->_features & GF_AFTER_V6) {
+			if (_vm->_version >= 6) {
 				if (nc >= 0x71 && nc <= 0x78) {
 					_vm->_sound->addSoundToQueue2(a->sound[nc - 0x71]);
 					if (a->cost.start[slot] != end)

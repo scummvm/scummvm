@@ -76,8 +76,8 @@ void Scumm::openRoom(int room) {
 		}
 		if (!(_features & GF_SMALL_HEADER)) {
 
-			if (_features & GF_AFTER_V7) {
-				if (room > 0 && (_features & GF_AFTER_V8))
+			if (_version >= 7) {
+				if (room > 0 && (_version == 8))
 					VAR(VAR_CURRENTDISK) = res.roomno[rtRoom][room];
 				sprintf(buf, "%s.la%d", _exe_name, room == 0 ? 0 : res.roomno[rtRoom][room]);
 				sprintf(buf2, "%s.%.3d", _exe_name, room == 0 ? 0 : res.roomno[rtRoom][room]);
@@ -219,7 +219,7 @@ bool Scumm::openResourceFile(const char *filename) {
 void Scumm::askForDisk(const char *filename, int disknum) {
 	char buf[128];
 
-	if (_features & GF_AFTER_V8) {
+	if (_version == 8) {
 		char result;
 
 		_bundle->closeVoiceFile();
@@ -254,7 +254,7 @@ void Scumm::readIndexFile() {
 	closeRoom();
 	openRoom(0);
 
-	if (!(_features & GF_AFTER_V6)) {
+	if (_version <= 5) {
 		/* Figure out the sizes of various resources */
 		while (!_fileHandle.eof()) {
 			blocktype = fileReadDword();
@@ -308,14 +308,14 @@ void Scumm::readIndexFile() {
 			break;
 		
 		case MKID('DOBJ'):
-			if (_features & GF_AFTER_V8)
+			if (_version == 8)
 				num = _fileHandle.readUint32LE();
 			else
 				num = _fileHandle.readUint16LE();
 			assert(num == _numGlobalObjects);
 			
 
-			if (_features & GF_AFTER_V8) {	/* FIXME: Not sure.. */
+			if (_version == 8) {	/* FIXME: Not sure.. */
 				char buffer[40];
 				for (i = 0; i < num; i++) {
 					_fileHandle.read(buffer, 40);
@@ -328,7 +328,7 @@ void Scumm::readIndexFile() {
 					_classData[i] = _fileHandle.readUint32LE();
 				}
 				memset(_objectOwnerTable, 0xFF, num);
-			} else if (_features & GF_AFTER_V7) {
+			} else if (_version == 7) {
 				_fileHandle.read(_objectStateTable, num);
 				_fileHandle.read(_objectRoomTable, num);
 				memset(_objectOwnerTable, 0xFF, num);
@@ -344,7 +344,7 @@ void Scumm::readIndexFile() {
 				}
 			}
 			
-			if (!(_features & GF_AFTER_V8)) {
+			if (_version != 8) {
 				_fileHandle.read(_classData, num * sizeof(uint32));
 
 				// Swap flag endian where applicable
@@ -435,7 +435,7 @@ void Scumm::readArrayFromIndexFile() {
 	int num;
 	int a, b, c;
 
-	if (_features & GF_AFTER_V8) {
+	if (_version == 8) {
 		while ((num = _fileHandle.readUint32LE()) != 0) {
 			a = _fileHandle.readUint32LE();
 			b = _fileHandle.readUint32LE();
@@ -470,7 +470,7 @@ void Scumm::readResTypeList(int id, uint32 tag, const char *name) {
 
 	debug(9, "readResTypeList(%s,%x,%s)", resTypeFromId(id), FROM_LE_32(tag), name);
 
-	if (_features & GF_AFTER_V8)
+	if (_version == 8)
 		num = _fileHandle.readUint32LE();
 	else if (!(_features & GF_OLD_BUNDLE))
 		num = _fileHandle.readUint16LE();
@@ -575,7 +575,7 @@ void Scumm::ensureResourceLoaded(int type, int i) {
 
 	debug(9, "ensureResourceLoaded(%s,%d)", resTypeFromId(type), i);
 
-	if (type == rtRoom && i > 0x7F && !(_features & GF_AFTER_V7)) {
+	if (type == rtRoom && i > 0x7F && _version < 7) {
 		i = _resourceMapper[i & 0x7F];
 	}
 
@@ -601,7 +601,7 @@ void Scumm::ensureResourceLoaded(int type, int i) {
 
 	loadResource(type, i);
 
-	if (!(_features & GF_AFTER_V7) && !(_features & GF_SMALL_HEADER))
+	if (_version < 7 && !(_features & GF_SMALL_HEADER))
 		if (type == rtRoom && i == _roomResource)
 			VAR(VAR_ROOM_FLAG) = 1;
 }
@@ -627,7 +627,7 @@ int Scumm::loadResource(int type, int idx) {
 		roomNr = _roomResource;
 
 	if (type == rtRoom) {
-		if (_features & GF_AFTER_V8)
+		if (_version == 8)
 			fileOffs = 8;
 		else
 			fileOffs = 0;
@@ -1649,7 +1649,7 @@ void Scumm::resourceStats() {
 }
 
 void Scumm::readMAXS() {
-	if (_features & GF_AFTER_V8) {                    // CMI
+	if (_version == 8) {                    // CMI
 		_fileHandle.seek(50 + 50, SEEK_CUR);            // 176 - 8
 		_numVariables = _fileHandle.readUint32LE();     // 1500
 		_numBitVariables = _fileHandle.readUint32LE();  // 2048
@@ -1673,7 +1673,7 @@ void Scumm::readMAXS() {
 		_numGlobalScripts = 2000;
 
 		_shadowPaletteSize = NUM_SHADOW_PALETTE * 256;
-	} else if (_features & GF_AFTER_V7) {
+	} else if (_version == 7) {
 		_fileHandle.seek(50 + 50, SEEK_CUR);
 		_numVariables = _fileHandle.readUint16LE();
 		_numBitVariables = _fileHandle.readUint16LE();
@@ -1695,7 +1695,7 @@ void Scumm::readMAXS() {
 		_numGlobalScripts = 2000;
 
 		_shadowPaletteSize = NUM_SHADOW_PALETTE * 256;
-	} else if (_features & GF_AFTER_V6) {
+	} else if (_version == 6) {
 		_numVariables = _fileHandle.readUint16LE();
 		_fileHandle.readUint16LE();                      // 16 in Sam/DOTT
 		_numBitVariables = _fileHandle.readUint16LE();

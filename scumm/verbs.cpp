@@ -260,7 +260,7 @@ void Scumm::checkExecVerbs() {
 				return;
 			}
 			runInputScript(2, 0, code);
-		} else if (_features & GF_AFTER_V2 && zone->number == 2 && _mouse.y > zone->topline + 32) {
+		} else if (_version <= 2 && zone->number == 2 && _mouse.y > zone->topline + 32) {
 			checkV2Inventory(_mouse.x, _mouse.y);
 		} else {
 			over = checkMouseOver(_mouse.x, _mouse.y);
@@ -353,7 +353,7 @@ void Scumm::drawVerb(int verb, int mode) {
 			return;
 		assert(_messagePtr);
 
-		if ((_features & GF_AFTER_V8) && (_messagePtr[0] == '/')) {
+		if ((_version == 8) && (_messagePtr[0] == '/')) {
 			char pointer[20];
 			int i, j;
 
@@ -429,7 +429,7 @@ void Scumm::drawVerbBitmap(int verb, int x, int y) {
 		imptr = (obim + 8);
 	} else {
 		imhd = (const ImageHeader *)findResourceData(MKID('IMHD'), obim);
-		if (_features & GF_AFTER_V7) {
+		if (_version >= 7) {
 			imgw = READ_LE_UINT16(&imhd->v7.width) >> 3;
 			imgh = READ_LE_UINT16(&imhd->v7.height) >> 3;
 		} else {
@@ -437,7 +437,7 @@ void Scumm::drawVerbBitmap(int verb, int x, int y) {
 			imgh = READ_LE_UINT16(&imhd->old.height) >> 3;
 		}
 
-		if (_features & GF_AFTER_V8) {
+		if (_version == 8) {
 			warning("drawVerbBitmap(%d, %d, %d)", verb, x, y);
 			imptr = findResource(MKID('IMAG'), obim);
 			assert(imptr);
@@ -453,7 +453,7 @@ void Scumm::drawVerbBitmap(int verb, int x, int y) {
 			error("No image for verb %d", verb);
 	}
 	assert(imptr);
-	if (_features & GF_AFTER_V1) {
+	if (_version == 1) {
 		gdi._C64ObjectMode = true;
 		gdi.decodeC64Gfx(imptr, gdi._C64ObjectMap, imgw * imgh * 3);
 	}

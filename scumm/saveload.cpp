@@ -162,7 +162,7 @@ bool Scumm::loadState(int slot, bool compat, SaveFileManager *mgr) {
 
 	_completeScreenRedraw = true;
 
-	if (_features & GF_AFTER_V1) {
+	if (_version == 1) {
 		setupC64Palette();
 		setDirtyColors(0, 15);
 	} else if (_features & GF_16COLOR) {
@@ -180,12 +180,12 @@ bool Scumm::loadState(int slot, bool compat, SaveFileManager *mgr) {
 	_drawObjectQueNr = 0;
 	_verbMouseOver = 0;
 
-	if (_features & GF_AFTER_V7)
+	if (_features & GF_NEW_CAMERA)
 		cameraMoved();
 
 	initBGBuffers(_roomHeight);
 
-	if (_features & GF_AFTER_V2) {
+	if (_version == 2) {
 		// Regenerate strip table when loading
 		_roomStrips = gdi.generateStripTable(getResourceAddress(rtRoom, _roomResource) + _IM00_offs,
 		                                     _roomWidth, _roomHeight, _roomStrips);

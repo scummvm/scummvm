@@ -56,7 +56,7 @@ void CharsetRendererCommon::setCurID(byte id) {
 	if (_fontPtr == 0)
 		error("CharsetRendererCommon::setCurID: charset %d not found!\n", id);
 
-	if (_vm->_features & GF_AFTER_V4)
+	if (_vm->_version == 4)
 		_fontPtr += 17;
 	else
 		_fontPtr += 29;

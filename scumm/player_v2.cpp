@@ -556,7 +556,7 @@ void Player_V2::clear_channel(int i) {
 }
 
 int Player_V2::getMusicTimer() {
-	if ((_scumm->_features & GF_AFTER_V3))
+	if (_scumm->_version == 3)
 		return _music_timer;
 	else
 		return channels[0].d.music_timer;

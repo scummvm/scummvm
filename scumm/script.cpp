@@ -137,7 +137,7 @@ int Scumm::getVerbEntrypoint(int obj, int entry) {
 	objptr = getOBCDFromObject(obj);
 	assert(objptr);
 
-	if (_features & GF_AFTER_V2)
+	if (_version <= 2)
 		verbptr = objptr + 15;
 	else if (_features & GF_OLD_BUNDLE)
 		verbptr = objptr + 17;
@@ -153,7 +153,7 @@ int Scumm::getVerbEntrypoint(int obj, int entry) {
 	if (!(_features & GF_SMALL_HEADER))
 		verbptr += _resourceHeaderSize;
 
-	if (_features & GF_AFTER_V8) {
+	if (_version == 8) {
 		const uint32 *ptr = (const uint32 *)verbptr;
 		uint32 verb;
 		do {
@@ -165,7 +165,7 @@ int Scumm::getVerbEntrypoint(int obj, int entry) {
 			ptr += 2;
 		} while (1);
 		return verboffs + 8 + READ_LE_UINT32(ptr + 1);
-	} if (_features & GF_AFTER_V2) {
+	} if (_version <= 2) {
 		do {
 			if (!*verbptr)
 				return 0;
@@ -354,7 +354,7 @@ void Scumm::getScriptBaseAddress() {
 
 	case 3:
 	case WIO_ROOM:								/* room script */
-		if (_features & GF_AFTER_V8) {
+		if (_version == 8) {
 			_scriptOrgPointer = getResourceAddress(rtRoomScripts, _roomResource);
 			assert(_roomResource < res.num[rtRoomScripts]);
 			_lastCodePtr = &res.address[rtRoomScripts][_roomResource];
@@ -640,7 +640,7 @@ void Scumm::stopObjectCode() {
 }
 
 void Scumm::runHook(int i) {
-	if (_features & GF_AFTER_V2) {
+	if (_version <= 2) {
 		// FIXME - TODO
 	} else {
 		int tmp[16];
@@ -654,7 +654,7 @@ void Scumm::runHook(int i) {
 void Scumm::freezeScripts(int flag) {
 	int i;
 
-	if (_features & GF_AFTER_V2) {
+	if (_version <= 2) {
 		for (i = 0; i < NUM_SCRIPT_SLOT; i++) {
 			if (_currentScript != i && vm.slot[i].status != ssDead && !vm.slot[i].freezeResistant) {
 				vm.slot[i].status |= 0x80;
@@ -683,7 +683,7 @@ void Scumm::freezeScripts(int flag) {
 void Scumm::unfreezeScripts() {
 	int i;
 
-	if (_features & GF_AFTER_V2) {
+	if (_version <= 2) {
 		for (i = 0; i < NUM_SCRIPT_SLOT; i++) {
 			vm.slot[i].status &= 0x7F;
 			vm.slot[i].freezeCount = 0;
@@ -728,7 +728,7 @@ void Scumm::runAllScripts() {
 }
 
 void Scumm::runExitScript() {
-	if (!(_features & GF_AFTER_V2) && VAR(VAR_EXIT_SCRIPT))
+	if (_version > 2 && VAR(VAR_EXIT_SCRIPT))
 		runScript(VAR(VAR_EXIT_SCRIPT), 0, 0, 0);
 	if (_EXCD_offs) {
 		int slot = getScriptSlot();
@@ -759,12 +759,12 @@ void Scumm::runExitScript() {
 
 		runScriptNested(slot);
 	}
-	if (!(_features & GF_AFTER_V2) && VAR(VAR_EXIT_SCRIPT2))
+	if (_version > 2 && VAR(VAR_EXIT_SCRIPT2))
 		runScript(VAR(VAR_EXIT_SCRIPT2), 0, 0, 0);
 }
 
 void Scumm::runEntryScript() {
-	if (!(_features & GF_AFTER_V2) && VAR(VAR_ENTRY_SCRIPT))
+	if (_version > 2 && VAR(VAR_ENTRY_SCRIPT))
 		runScript(VAR(VAR_ENTRY_SCRIPT), 0, 0, 0);
 	if (_ENCD_offs) {
 		int slot = getScriptSlot();
@@ -778,7 +778,7 @@ void Scumm::runEntryScript() {
 		vm.slot[slot].delayFrameCount = 0;
 		runScriptNested(slot);
 	}
-	if (!(_features & GF_AFTER_V2) && VAR(VAR_ENTRY_SCRIPT2))
+	if (_version > 2 && VAR(VAR_ENTRY_SCRIPT2))
 		runScript(VAR(VAR_ENTRY_SCRIPT2), 0, 0, 0);
 }
 
@@ -826,7 +826,7 @@ void Scumm::killAllScriptsExceptCurrent() {
 void Scumm::doSentence(int verb, int objectA, int objectB) {
 	SentenceTab *st;
 
-	if (_features & GF_AFTER_V7) {
+	if (_version >= 7) {
 
 		if (objectA == objectB)
 			return;
@@ -855,7 +855,7 @@ void Scumm::checkAndRunSentenceScript() {
 	int i;
 	ScriptSlot *ss;
 	int sentenceScript;
-	if (_features & GF_AFTER_V2)
+	if (_version <= 2)
 		sentenceScript = 2;
 	else
 		sentenceScript = VAR(VAR_SENTENCE_SCRIPT);
@@ -873,11 +873,11 @@ void Scumm::checkAndRunSentenceScript() {
 
 	_sentenceNum--;
 
-	if (!(_features & GF_AFTER_V7))
+	if (_version < 7)
 		if (_sentence[_sentenceNum].preposition && _sentence[_sentenceNum].objectB == _sentence[_sentenceNum].objectA)
 			return;
 
-	if (_features & GF_AFTER_V2) {
+	if (_version <= 2) {
 		_scummVars[VAR_ACTIVE_VERB] = _sentence[_sentenceNum].verb;
 		_scummVars[VAR_ACTIVE_OBJECT1] = _sentence[_sentenceNum].objectA;
 		_scummVars[VAR_ACTIVE_OBJECT2] = _sentence[_sentenceNum].objectB;
@@ -896,7 +896,7 @@ void Scumm::runInputScript(int a, int cmd, int mode) {
 	int args[16];
 	int verbScript;
 
-	if (_features & GF_AFTER_V2) {
+	if (_version <= 2) {
 		verbScript = 4;
 		_scummVars[VAR_CLICK_AREA] = a;
 		switch(a) {
@@ -972,7 +972,7 @@ int Scumm::defineArray(int array, int type, int dim2, int dim1) {
 
 	id = getArrayId();
 
-	if (_features & GF_AFTER_V8) {
+	if (_version == 8) {
 		if (array & 0x40000000) {
 		}
 	
@@ -1054,7 +1054,7 @@ int Scumm::resStrLen(const byte *src) const {
 			num++;
 
 			if (chr != 1 && chr != 2 && chr != 3 && chr != 8) {
-				if (_features & GF_AFTER_V8) {
+				if (_version == 8) {
 					src += 4;
 					num += 4;
 				} else {
@@ -1151,6 +1151,6 @@ void Scumm::endOverride() {
 	vm.cutScenePtr[idx] = 0;
 	vm.cutSceneScript[idx] = 0;
 	
-	if (!(_features & GF_AFTER_V3))
+	if (_version > 3)
 		VAR(VAR_OVERRIDE) = 0;
 }

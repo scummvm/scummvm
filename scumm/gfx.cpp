@@ -211,7 +211,7 @@ void Scumm::getGraphicsPerformance() {
 	if (VAR_PERFORMANCE_2 != 0xFF)	// Variable is reserved for game scripts in earlier games
 		VAR(VAR_PERFORMANCE_2) = 0;
 
-	if (_features & GF_AFTER_V7)
+	if (_version >= 7)
 		initScreens(0, 0, _screenWidth, _screenHeight);
 	else
 		initScreens(0, 16, _screenWidth, 144);
@@ -226,7 +226,7 @@ void Scumm::initScreens(int a, int b, int w, int h) {
 	}
 
 	if (!getResourceAddress(rtBuffer, 4)) {
-		if (_features & GF_AFTER_V7) {
+		if (_version >= 7) {
 			initVirtScreen(3, 0, (_screenHeight / 2) - 10, _screenWidth, 13, false, false);
 		} else {
 			initVirtScreen(3, 0, 80, _screenWidth, 13, false, false);
@@ -249,8 +249,8 @@ void Scumm::initVirtScreen(int slot, int number, int top, int width, int height,
 	assert(height >= 0);
 	assert(slot >= 0 && slot < 4);
 
-	if (_features & GF_AFTER_V7) {
-		if ((!slot) && (_roomHeight != 0))
+	if (_version >= 7) {
+		if (slot == 0 && (_roomHeight != 0))
 			height = _roomHeight;
 	}
 
@@ -266,7 +266,7 @@ void Scumm::initVirtScreen(int slot, int number, int top, int width, int height,
 	vs->backBuf = NULL;
 
 	if (vs->scrollable) {
-		if (_features & GF_AFTER_V7) {
+		if (_version >= 7) {
 			size += _screenWidth * 8;
 		} else {
 			size += _screenWidth * 4;
@@ -316,7 +316,7 @@ void Scumm::updateDirtyRect(int virt, int left, int right, int top, int bottom, 
 		lp = (left >> 3) + _screenStartStrip;
 		if (lp < 0)
 			lp = 0;
-		if (_features & GF_AFTER_V7) {
+		if (_version >= 7) {
 #ifdef V7_SMOOTH_SCROLLING_HACK
 			rp = (right + vs->xstart) >> 3;
 #else
@@ -359,10 +359,10 @@ void Scumm::drawDirtyScreenParts() {
 	byte *src;
 
 	updateDirtyScreen(2);
-	if (_features & GF_AFTER_V2 || _features & GF_AFTER_V3)
+	if (_version <= 3)
 		updateDirtyScreen(1);
 
-	if (camera._last.x == camera._cur.x && (camera._last.y == camera._cur.y || !(_features & GF_AFTER_V7))) {
+	if (camera._last.x == camera._cur.x && (camera._last.y == camera._cur.y || !(_features & GF_NEW_CAMERA))) {
 		updateDirtyScreen(0);
 	} else {
 		vs = &virtscr[0];
@@ -398,7 +398,7 @@ void Gdi::updateDirtyScreen(VirtScreen *vs) {
 	if (vs->height == 0)
 		return;
 
-	if (_vm->_features & GF_AFTER_V7 && (_vm->camera._cur.y != _vm->camera._last.y)) {
+	if (_vm->_features & GF_NEW_CAMERA && (_vm->camera._cur.y != _vm->camera._last.y)) {
 		drawStripToScreen(vs, 0, _numStrips << 3, 0, vs->height);
 	} else {
 		int i;
@@ -421,7 +421,7 @@ void Gdi::updateDirtyScreen(VirtScreen *vs) {
 					continue;
 				}
 				// handle vertically scrolling rooms
-				if (_vm->_features & GF_AFTER_V7)
+				if (_vm->_features & GF_NEW_CAMERA)
 					drawStripToScreen(vs, start * 8, w, 0, vs->height);
 				else
 					drawStripToScreen(vs, start * 8, w, top, bottom);
@@ -490,7 +490,7 @@ void Gdi::resetBackground(int top, int bottom, int strip) {
 
 	numLinesToProcess = bottom - top;
 	if (numLinesToProcess) {
-		if ((_vm->_features & GF_AFTER_V6) || (_vm->VAR(_vm->VAR_CURRENT_LIGHTS) & LIGHTMODE_screen)) {
+		if ((_vm->_features & GF_NEW_OPCODES) || (_vm->VAR(_vm->VAR_CURRENT_LIGHTS) & LIGHTMODE_screen)) {
 			if (_vm->hasCharsetMask(strip << 3, top, (strip + 1) << 3, bottom))
 				draw8ColWithMasking(backbuff_ptr, bgbak_ptr, numLinesToProcess, mask_ptr);
 			else
@@ -581,12 +581,12 @@ void Scumm::initBGBuffers(int height) {
 	int size, itemsize, i;
 	byte *room;
 
-	if (_features & GF_AFTER_V7) {
+	if (_version >= 7) {
 		initVirtScreen(0, 0, virtscr[0].topline, _screenWidth, height, 1, 1);
 	}
 
 	room = getResourceAddress(rtRoom, _roomResource);
-	if ((_features & GF_AFTER_V2) || (_features & GF_AFTER_V3)) {
+	if (_version <= 3) {
 		gdi._numZBuffer = 2;
 	} else if (_features & GF_SMALL_HEADER) {
 		int off;
@@ -603,7 +603,7 @@ void Scumm::initBGBuffers(int height) {
 			ptr += off;
 			off = READ_LE_UINT16(ptr);
 		}
-	} else if (_features & GF_AFTER_V8) {
+	} else if (_version == 8) {
 		// in V8 there is no RMIH and num z buffers is in RMHD
 		ptr = findResource(MKID('RMHD'), room);
 		gdi._numZBuffer = READ_LE_UINT32(ptr + 24) + 1;
@@ -613,7 +613,7 @@ void Scumm::initBGBuffers(int height) {
 	}
 	assert(gdi._numZBuffer >= 1 && gdi._numZBuffer <= 8);
 
-	if (_features & GF_AFTER_V7)
+	if (_version >= 7)
 		itemsize = (_roomHeight + 10) * gdi._numStrips;
 	else
 		itemsize = (_roomHeight + 4) * gdi._numStrips;
@@ -652,7 +652,7 @@ void Scumm::drawFlashlight() {
 		return;
 
 	// Calculate the area of the flashlight
-	if (_gameId == GID_ZAK256 || _features & GF_AFTER_V2) {
+	if (_gameId == GID_ZAK256 || _version <= 2) {
 		x = _mouse.x + virtscr[0].xstart;
 		y = _mouse.y - virtscr[0].topline;
 	} else {
@@ -723,7 +723,7 @@ void Scumm::redrawBGAreas() {
 	int val;
 	int diff;
 
-	if (!(_features & GF_AFTER_V7))
+	if (!(_features & GF_NEW_CAMERA))
 		if (camera._cur.x != camera._last.x && _charset->_hasMask)
 			stopTalk();
 
@@ -738,7 +738,7 @@ void Scumm::redrawBGAreas() {
 		}
 	}
 
-	if (_features & GF_AFTER_V7) {
+	if (_features & GF_NEW_CAMERA) {
 		diff = (camera._cur.x >> 3) - (camera._last.x >> 3);
 		if (_fullRedraw == 0 && diff == 1) {
 			val = 2;
@@ -776,7 +776,7 @@ void Scumm::redrawBGStrip(int start, int num) {
 	for (int i = 0; i < num; i++)
 		setGfxUsageBit(s + i, USAGE_BIT_DIRTY);
 
-	if (_features & GF_AFTER_V1) {
+	if (_version == 1) {
 		gdi._C64ObjectMode = false;
 	}
 	gdi.drawBitmap(getResourceAddress(rtRoom, _roomResource) + _IM00_offs,
@@ -835,7 +835,7 @@ void Scumm::restoreBG(ScummVM::Rect rect, byte backColor) {
 	width = rect.width();
 
 	// Check whether lights are turned on or not
-	lightsOn = (_features & GF_AFTER_V6) || (vs->number != 0) || (VAR(VAR_CURRENT_LIGHTS) & LIGHTMODE_screen);
+	lightsOn = (_features & GF_NEW_OPCODES) || (vs->number != 0) || (VAR(VAR_CURRENT_LIGHTS) & LIGHTMODE_screen);
 
 	if (vs->alloctwobuffers && _currentRoom != 0 && lightsOn ) {
 		blit(backbuff, bgbak, width, height);
@@ -906,12 +906,12 @@ void Gdi::drawBitmap(const byte *ptr, VirtScreen *vs, int x, int y, const int wi
 	bool useOrDecompress = false;
 
 	// Check whether lights are turned on or not
-	lightsOn = (_vm->_features & GF_AFTER_V6) || (vs->number != 0) || (_vm->VAR(_vm->VAR_CURRENT_LIGHTS) & LIGHTMODE_screen);
+	lightsOn = (_vm->_features & GF_NEW_OPCODES) || (vs->number != 0) || (_vm->VAR(_vm->VAR_CURRENT_LIGHTS) & LIGHTMODE_screen);
 
 	CHECK_HEAP;
 	if (_vm->_features & GF_SMALL_HEADER)
 		smap_ptr = ptr;
-	else if (_vm->_features & GF_AFTER_V8)
+	else if (_vm->_version == 8)
 		smap_ptr = ptr;
 	else
 		smap_ptr = findResource(MKID('SMAP'), ptr);
@@ -922,7 +922,7 @@ void Gdi::drawBitmap(const byte *ptr, VirtScreen *vs, int x, int y, const int wi
 
 	if (_zbufferDisabled)
 		numzbuf = 0;
-	else if (_numZBuffer <= 1 || (_vm->_features & GF_AFTER_V2))
+	else if (_numZBuffer <= 1 || (_vm->_version <= 2))
 		numzbuf = _numZBuffer;
 	else {
 		numzbuf = _numZBuffer;
@@ -940,7 +940,7 @@ void Gdi::drawBitmap(const byte *ptr, VirtScreen *vs, int x, int y, const int wi
 			for (i = 2; i < numzbuf; i++) {
 				zplane_list[i] = zplane_list[i-1] + READ_LE_UINT16(zplane_list[i-1]);
 			}
-		} else if (_vm->_features & GF_AFTER_V8) {
+		} else if (_vm->_version == 8) {
 			// Find the OFFS chunk of the ZPLN chunk
 			const byte *zplnOffsChunkStart = smap_ptr + READ_BE_UINT32(smap_ptr + 12) + 24;
 			
@@ -971,7 +971,7 @@ void Gdi::drawBitmap(const byte *ptr, VirtScreen *vs, int x, int y, const int wi
 		}
 	}
 	
-	if (_vm->_features & GF_AFTER_V8) {	
+	if (_vm->_version == 8) {	
 		// A small hack to skip to the BSTR->WRAP->OFFS chunk. Note: order matters, we do this
 		// *after* the Z buffer code because that assumes' the orginal value of smap_ptr. 
 		smap_ptr += 24;
@@ -995,7 +995,7 @@ void Gdi::drawBitmap(const byte *ptr, VirtScreen *vs, int x, int y, const int wi
 	// dificult to draw only parts of a room/object. We handle the V2 graphics
 	// differently from all other (newer) graphic formats for this reason.
 	//
-	if ((_vm->_features & GF_AFTER_V2) && !(_vm->_features & GF_AFTER_V1)) {
+	if (_vm->_version == 2) {
 		
 		if (vs->alloctwobuffers)
 			bgbak_ptr = _vm->getResourceAddress(rtBuffer, vs->number + 5) + (y * _numStrips + x) * 8;
@@ -1125,12 +1125,12 @@ void Gdi::drawBitmap(const byte *ptr, VirtScreen *vs, int x, int y, const int wi
 		else
 			bgbak_ptr = backbuff_ptr;
 
-		if (_vm->_features & GF_AFTER_V1) {
+		if (_vm->_version == 1) {
 			if (_C64ObjectMode)
 				drawStripC64Object(bgbak_ptr, stripnr, width, height);
 			else
 				drawStripC64Background(bgbak_ptr, stripnr, height);
-		} else if (!(_vm->_features & GF_AFTER_V2)) {
+		} else if (_vm->_version > 2) {
 			if (_vm->_features & GF_16COLOR) {
 				decodeStripEGA(bgbak_ptr, smap_ptr + READ_LE_UINT16(smap_ptr + stripnr * 2 + 2), height);
 			} else if (_vm->_features & GF_SMALL_HEADER) {
@@ -1158,10 +1158,10 @@ void Gdi::drawBitmap(const byte *ptr, VirtScreen *vs, int x, int y, const int wi
 		}
 		CHECK_HEAP;
 
-		if (_vm->_features & GF_AFTER_V1) {
+		if (_vm->_version == 1) {
 			mask_ptr = _vm->getResourceAddress(rtBuffer, 9) + y * _numStrips + x + _imgBufOffs[1];
 //			drawStripC64Mask(mask_ptr, stripnr, height);
-		} else if (_vm->_features & GF_AFTER_V2) {
+		} else if (_vm->_version == 2) {
 			// Do nothing here for V2 games - zplane was handled already.
 		} else if (flag & dbDrawMaskOnAll) {
 			// Sam & Max uses dbDrawMaskOnAll for things like the inventory
@@ -1180,7 +1180,7 @@ void Gdi::drawBitmap(const byte *ptr, VirtScreen *vs, int x, int y, const int wi
 			// don't know what for. At the time of writing, these games
 			// are still too unstable for me to investigate.
 
-			if (_vm->_features & GF_AFTER_V8)
+			if (_vm->_version == 8)
 				z_plane_ptr = zplane_list[1] + READ_LE_UINT32(zplane_list[1] + stripnr * 4 + 8);
 			else
 				z_plane_ptr = zplane_list[1] + READ_LE_UINT16(zplane_list[1] + stripnr * 2 + 8);
@@ -1204,7 +1204,7 @@ void Gdi::drawBitmap(const byte *ptr, VirtScreen *vs, int x, int y, const int wi
 					offs = READ_LE_UINT16(zplane_list[i] + stripnr * 2 + 4);
 				else if (_vm->_features & GF_SMALL_HEADER)
 					offs = READ_LE_UINT16(zplane_list[i] + stripnr * 2 + 2);
-				else if (_vm->_features & GF_AFTER_V8)
+				else if (_vm->_version == 8)
 					offs = (uint16) READ_LE_UINT32(zplane_list[i] + stripnr * 4 + 8);
 				else
 					offs = READ_LE_UINT16(zplane_list[i] + stripnr * 2 + 8);
@@ -2183,7 +2183,7 @@ void Scumm::fadeOut(int effect) {
 	VirtScreen *vs;
 
 	virtscr[0].setDirtyRange(0, 0);
-	if (!(_features & GF_AFTER_V7))
+	if (!(_features & GF_NEW_CAMERA))
 		camera._last.x = camera._cur.x;
 
 	if (_screenEffectFlag && effect != 0) {
@@ -2578,7 +2578,7 @@ void Scumm::setPaletteFromPtr(const byte *ptr) {
 		// check for that. And somebody before me added a check for V7 games, turning this
 		// off there, too... I wonder if it hurts other games, too? What exactly is broken
 		// if we remove this patch?
-		if ((_gameId == GID_MONKEY_VGA) || (_features & GF_AFTER_V7) || (i <= 15 || r < 252 || g < 252 || b < 252)) {
+		if ((_gameId == GID_MONKEY_VGA) || (_version >= 7) || (i <= 15 || r < 252 || g < 252 || b < 252)) {
 			*dest++ = r;
 			*dest++ = g;
 			*dest++ = b;
@@ -2719,7 +2719,7 @@ void Scumm::cyclePalette() {
 			}
 			
 			if (_shadowPalette) {
-				if (_features & GF_AFTER_V7) {
+				if (_version >= 7) {
 					for (j = 0; j < NUM_SHADOW_PALETTE; j++)
 						::cycleIndirectPalette(_shadowPalette + j * 256, cycl->start, cycl->end, !(cycl->flags & 2));
 				} else {
@@ -3376,7 +3376,7 @@ void Scumm::useBompCursor(const byte *im, int width, int height) {
 	_cursor.animate = 0;
 
 	// Skip the header
-	if (_features & GF_AFTER_V8) {
+	if (_version == 8) {
 		im += 16;
 	} else {
 		im += 18;
@@ -3409,7 +3409,7 @@ void Scumm::decompressDefaultCursor(int idx) {
 			for (j = 0; j < w; j++)
 				_grabbedCursor[i * 8 + j] = color;
 		}
-	} else if (_features & GF_AFTER_V2) {
+	} else if (_version <= 2) {
 		_cursor.width = 23;
 		_cursor.height = 21;
 		_cursor.hotspotX = 11;

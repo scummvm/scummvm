@@ -90,7 +90,7 @@ void Scumm::CHARSET_1() {
 	// 'secret room while walking' hang. It doesn't do the camera check
 	// when the talk target isn't an actor. The question is, can we make
 	// this a more general case? Does it really need to be Zak specific?
-	if (!(_features & GF_AFTER_V7) && !(_gameId==GID_ZAK256 && VAR(VAR_TALK_ACTOR) == 0xFF)) {
+	if (!(_features & GF_NEW_CAMERA) && !(_gameId == GID_ZAK256 && VAR(VAR_TALK_ACTOR) == 0xFF)) {
 		if ((camera._dest.x >> 3) != (camera._cur.x >> 3) || camera._cur.x != camera._last.x)
 			return;
 	}
@@ -100,7 +100,7 @@ void Scumm::CHARSET_1() {
 		a = derefActorSafe(VAR(VAR_TALK_ACTOR), "CHARSET_1");
 
 	if (a && _string[0].overhead != 0) {
-		if (!(_features & GF_AFTER_V6)) {
+		if (_version <= 5) {
 			_string[0].xpos = a->x - camera._cur.x + (_screenWidth / 2);
 
 			if (VAR(VAR_V5_TALK_STRING_Y) < 0) {
@@ -142,7 +142,7 @@ void Scumm::CHARSET_1() {
 	_charset->_right = _string[0].right;
 	_charset->setColor(_charsetColor);
 
-	if (!(_features & GF_AFTER_V2 || _features & GF_AFTER_V3))	// FIXME
+	if (_version > 3)	// FIXME
 		for (i = 0; i < 4; i++)
 			_charsetColorMap[i] = _charsetData[_charset->getCurID()][i];
 
@@ -182,7 +182,7 @@ void Scumm::CHARSET_1() {
 	_talkDelay = _defaultTalkDelay;
 
 	if (!_keepText) {
-		if ((_features & GF_AFTER_V2 || _features & GF_AFTER_V3) && _gameId != GID_LOOM) {
+		if (_version <= 3 && _gameId != GID_LOOM) {
 			_charset->_hasMask = true;
 			gdi._mask.left = _string[0].xpos;
 			gdi._mask.top = _string[0].ypos;
@@ -202,7 +202,7 @@ void Scumm::CHARSET_1() {
 	}
 
 	buffer = _charsetBuffer + _charsetBufPos;
-	if (!(_features & GF_AFTER_V2 || _features & GF_AFTER_V3))
+	if (_version > 3)
 		_charset->addLinebreaks(0, buffer, 0, t);
 
 	if (_charset->_center) {
@@ -229,7 +229,7 @@ void Scumm::CHARSET_1() {
 				_charset->_nextLeft -= _charset->getStringWidth(0, buffer) >> 1;
 			}
 			_charset->_nextTop += _charset->getFontHeight();
-			if (!(_features & GF_AFTER_V2 || _features & GF_AFTER_V3)) {
+			if (_version > 3) {
 				// FIXME - is this really needed?
 				_charset->_disableOffsX = true;
 			}
@@ -244,9 +244,9 @@ void Scumm::CHARSET_1() {
 			_charset->_top = _charset->_nextTop;
 			if(c & 0x80 && _CJKMode)
 				c += *buffer++ * 256;
-			if (_features & GF_AFTER_V2 || _features & GF_AFTER_V3) {
+			if (_version <= 3) {
 				_charset->printChar(c);
-			} else if (_features & GF_AFTER_V6) {
+			} else if (_version >= 6) {
 				if (!_noSubtitles || (_haveMsg != 0xFE && _haveMsg != 0xFF))
 					_charset->printChar(c);
 			} else {
@@ -256,7 +256,7 @@ void Scumm::CHARSET_1() {
 
 			_charset->_nextLeft = _charset->_left;
 			_charset->_nextTop = _charset->_top;
-			if (_features & GF_AFTER_V2) {
+			if (_version <= 2) {
 				_talkDelay += _defaultTalkDelay / 20;
 				VAR(VAR_CHARCOUNT)++;
 			} else
@@ -356,7 +356,7 @@ void Scumm::drawString(int a) {
 	_charset->_disableOffsX = _charset->_firstChar = true;
 	_charset->setCurID(_string[a].charset);
 
-	if (!(_features & GF_AFTER_V2 || _features & GF_AFTER_V3)) {
+	if (_version > 3) {
 		for (i = 0; i < 4; i++)
 			_charsetColorMap[i] = _charsetData[_charset->getCurID()][i];
 	}
@@ -382,7 +382,7 @@ void Scumm::drawString(int a) {
 		_charset->_left -= _charset->getStringWidth(a, buf) >> 1;
 	}
 
-	if (!(_features & GF_AFTER_V7))
+	if (_version < 7)
 		_charset->_ignoreCharsetMask = true;
 
 
@@ -427,7 +427,7 @@ void Scumm::drawString(int a) {
 				break;
 			}
 		} else {
-			if (a == 1 && (_features & GF_AFTER_V6)) {
+			if (a == 1 && _version >= 6) {
 				if (_string[a].no_talk_anim == 0)
 					_charset->_blitAlso = true;
 			}
@@ -448,7 +448,7 @@ void Scumm::drawString(int a) {
 
 	_string[a].xpos = _charset->_str.right + 8;	// Indy3: Fixes Grail Diary text positioning
 
-	if (_features & GF_AFTER_V7) {
+	if (_version >= 7) {
 		_charset->_hasMask = true;
 		gdi._mask.extend(_charset->_str);
 	}
@@ -478,7 +478,7 @@ const byte *Scumm::addMessageToStack(const byte *msg) {
 			if (chr != 1 && chr != 2 && chr != 3 && chr != 8) {
 				ptr[num++] = *msg++;	// and some commands are followed by parameters to the functions below
 				ptr[num++] = *msg++;	// these are numbers of names, strings, verbs, variables, etc
-				if (_features & GF_AFTER_V8) {
+				if (_version == 8) {
 					ptr[num++] = *msg++;
 					ptr[num++] = *msg++;
 				}
@@ -498,7 +498,7 @@ const byte *Scumm::addMessageToStack(const byte *msg) {
 			chr = ptr[num++];
 			switch (chr) {
 			case 4:
-				if (_features & GF_AFTER_V8) {
+				if (_version == 8) {
 					addIntToStack(READ_LE_UINT32(ptr + num));
 					num += 4;
 				} else {
@@ -507,7 +507,7 @@ const byte *Scumm::addMessageToStack(const byte *msg) {
 				}
 				break;
 			case 5:
-				if (_features & GF_AFTER_V8) {
+				if (_version == 8) {
 					addVerbToStack(READ_LE_UINT32(ptr + num));
 					num += 4;
 				} else {
@@ -516,7 +516,7 @@ const byte *Scumm::addMessageToStack(const byte *msg) {
 				}
 				break;
 			case 6:
-				if (_features & GF_AFTER_V8) {
+				if (_version == 8) {
 					addNameToStack(READ_LE_UINT32(ptr + num));
 					num += 4;
 				} else {
@@ -525,10 +525,10 @@ const byte *Scumm::addMessageToStack(const byte *msg) {
 				}
 				break;
 			case 7:
-				if (_features & GF_AFTER_V8) {
+				if (_version == 8) {
 					addStringToStack(READ_LE_UINT32(ptr + num));
 					num += 4;
-				} else if (_features & GF_AFTER_V2) {
+				} else if (_version <= 2) {
 					int var = READ_LE_UINT16(ptr + num);
 					num += 2;
 					char c;
@@ -553,7 +553,7 @@ const byte *Scumm::addMessageToStack(const byte *msg) {
 				*_msgPtrToAdd++ = chr;
 				*_msgPtrToAdd++ = ptr[num++];
 				*_msgPtrToAdd++ = ptr[num++];
-				if (_features & GF_AFTER_V8) {
+				if (_version == 8) {
 					// FIXME - is this right?!?
 					*_msgPtrToAdd++ = ptr[num++];
 					*_msgPtrToAdd++ = ptr[num++];
@@ -593,7 +593,7 @@ void Scumm::addVerbToStack(int var)
 		for (k = 1; k < _maxVerbs; k++) {
 			if (num == _verbs[k].verbid && !_verbs[k].type && !_verbs[k].saveid) {
 				byte *ptr = getResourceAddress(rtVerb, k);
-				if ((_features & GF_AFTER_V8) && (ptr[0] == '/')) {
+				if ((_version == 8) && (ptr[0] == '/')) {
 					char pointer[20];
 					int i, j;
 
@@ -626,7 +626,7 @@ void Scumm::addNameToStack(int var)
 	if (num)
 		ptr = getObjOrActorName(num);
 	if (ptr) {
-		if ((_features & GF_AFTER_V8) && (ptr[0] == '/')) {
+		if ((_version == 8) && (ptr[0] == '/')) {
 			char pointer[20];
 			int i, j;
 
@@ -649,13 +649,13 @@ void Scumm::addNameToStack(int var)
 void Scumm::addStringToStack(int var) {
 	byte *ptr;
 
-	if (_features & GF_AFTER_V6 || _gameId == GID_INDY3_256)
+	if (_version >= 6 || _gameId == GID_INDY3_256)
 		var = readVar(var);
 
 	if (var) {
 		ptr = getStringAddress(var);
 		if (ptr) {
-			if ((_features & GF_AFTER_V8) && (ptr[0] == '/')) {
+			if ((_version == 8) && (ptr[0] == '/')) {
 				char pointer[20];
 				int i, j;
 

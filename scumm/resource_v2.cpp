@@ -146,7 +146,7 @@ void Scumm_v2::readIndexFile() {
 			break;
 		case 0x0A31:
 			warning("Classic V1 game detected");
-			setFeatures(_features | GF_AFTER_V1);
+			_version = 1;
 			readClassicIndexFile();
 			break;
 		default:

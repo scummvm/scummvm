@@ -378,7 +378,7 @@ const char *Scumm_v6::getOpcodeDesc(byte i) {
 int Scumm_v6::popRoomAndObj(int *room) {
 	int obj;
 
-	if (_features & GF_AFTER_V7) {
+	if (_version >= 7) {
 		obj = pop();
 		*room = getObjectRoom(obj);
 	} else {
@@ -408,7 +408,7 @@ int Scumm::readArray(int array, int idx, int base) {
 
 	if (ah->type == 4) {
 		return ah->data[base];
-	} else if (_features & GF_AFTER_V8) {
+	} else if (_version == 8) {
 		return (int32)READ_LE_UINT32(ah->data + base * 4);
 	} else {
 		return (int16)READ_LE_UINT16(ah->data + base * 2);
@@ -425,7 +425,7 @@ void Scumm::writeArray(int array, int idx, int base, int value) {
 
 	if (ah->type == 4) {
 		ah->data[base] = value;
-	} else if (_features & GF_AFTER_V8) {
+	} else if (_version == 8) {
 #if defined(SCUMM_NEED_ALIGNMENT)
 		uint32 tmp = TO_LE_32(value);
 		memcpy(&ah->data[base*4], &tmp, 4);
@@ -940,7 +940,7 @@ void Scumm_v6::o6_stopObjectScript() {
 }
 
 void Scumm_v6::o6_panCameraTo() {
-	if (_features & GF_AFTER_V7) {
+	if (_version >= 7) {
 		int y = pop();
 		int x = pop();
 		panCameraTo(x, y);
@@ -950,14 +950,14 @@ void Scumm_v6::o6_panCameraTo() {
 }
 
 void Scumm_v6::o6_actorFollowCamera() {
-	if (_features & GF_AFTER_V7)
+	if (_version >= 7)
 		setCameraFollows(derefActor(pop(), "actorFollowCamera"));
 	else
 		actorFollowCamera(pop());
 }
 
 void Scumm_v6::o6_setCameraAt() {
-	if (_features & GF_AFTER_V7) {
+	if (_version >= 7) {
 		int x, y;
 
 		camera._follows = 0;
@@ -1101,7 +1101,7 @@ void Scumm_v6::o6_doSentence() {
 	int verb, objectA, objectB, dummy = 0;
 
 	objectB = pop();
-	if (!(_features & GF_AFTER_V8))
+	if (_version < 8)
 		dummy = pop();	// dummy pop (in Sam&Max, seems to be always 0 or 130)
 	objectA = pop();
 	verb = pop();
@@ -1155,7 +1155,7 @@ void Scumm_v6::o6_loadRoomWithEgo() {
 
 	/* startScene maybe modifies VAR_EGO, i hope not */
 
-	if (!(_features & GF_AFTER_V7)) {
+	if (_version == 6) {
 		setCameraAt(a->x, a->y);
 		setCameraFollows(a);
 	}
@@ -1320,7 +1320,7 @@ void Scumm_v6::o6_setObjectName() {
 	if (obj < _numActors)
 		error("Can't set actor %d name with new-name-of", obj);
 
-	if (!(_features & GF_AFTER_V7) && !getOBCDFromObject(obj))
+	if (_version < 7 && !getOBCDFromObject(obj))
 		error("Can't set name of object %d", obj);
 
 	for (i = 0; i < _numNewNames; i++) {
@@ -1375,7 +1375,7 @@ void Scumm_v6::o6_resourceRoutines() {
 	switch (op) {
 	case 100:										/* load script */
 		resid = pop();
-		if (_features & GF_AFTER_V7)
+		if (_version >= 7)
 			if (resid >= _numGlobalScripts)
 				break;
 		ensureResourceLoaded(rtScript, resid);
@@ -1394,7 +1394,7 @@ void Scumm_v6::o6_resourceRoutines() {
 		break;
 	case 104:										/* nuke script */
 		resid = pop();
-		if (_features & GF_AFTER_V7)
+		if (_version >= 7)
 			if (resid >= _numGlobalScripts)
 				break;
 		setResourceCounter(rtScript, resid, 0x7F);
@@ -1698,7 +1698,7 @@ void Scumm_v6::o6_actorOps() {
 		break;
 	case 95:
 		a->ignoreBoxes = 1;
-		if (_features & GF_AFTER_V7)
+		if (_version >= 7)
 			a->forceClip = 100;
 		else
 			a->forceClip = 0;
@@ -1707,7 +1707,7 @@ void Scumm_v6::o6_actorOps() {
 		break;
 	case 96:
 		a->ignoreBoxes = 0;
-		if (_features & GF_AFTER_V7)
+		if (_version >= 7)
 			a->forceClip = 100;
 		else
 			a->forceClip = 0;
@@ -1977,7 +1977,7 @@ void Scumm_v6::o6_saveRestoreVerbs() {
 	a = pop();
 
 	byte subOp = fetchScriptByte();
-	if (_features & GF_AFTER_V8) {
+	if (_version == 8) {
 		subOp = (subOp - 141) + 0xB4;
 	}
 	
@@ -2061,7 +2061,7 @@ void Scumm_v6::o6_wait() {
 			break;
 		return;
 	case 170:
-		if (_features & GF_AFTER_V7) {
+		if (_version >= 7) {
 			if (camera._dest != camera._cur)
 				break;
 		} else {
@@ -2227,7 +2227,7 @@ void Scumm_v6::o6_talkActor() {
 	_messagePtr = _scriptPointer;
 	_scriptPointer += resStrLen(_scriptPointer) + 1;
 
-	if (((_gameId == GID_DIG) || (_features & GF_AFTER_V8)) && (_messagePtr[0] == '/')) {
+	if ((_gameId == GID_DIG || _gameId == GID_CMI) && (_messagePtr[0] == '/')) {
 		char pointer[20];
 		int i, j;
 
@@ -2380,7 +2380,7 @@ void Scumm_v6::o6_kernelSetFunctions() {
 
 	num = getStackList(args, ARRAYSIZE(args));
 
-	if (_features & GF_AFTER_V7) {
+	if (_version >= 7) {
 		switch (args[0]) {
 		case 4:
 			grabCursor(args[1], args[2], args[3], args[4]);
@@ -2901,7 +2901,7 @@ void Scumm_v6::o6_pickVarRandom() {
 	num = readArray(value, 0, 0);
 
 	byte *ptr = getResourceAddress(rtString, num);
-	if (_features & GF_AFTER_V7) {
+	if (_version >= 7) {
 		var_A = READ_LE_UINT32(ptr + 4);
 		var_C = READ_LE_UINT32(ptr + 8);
 	} else {
@@ -2935,7 +2935,7 @@ void Scumm_v6::o6_getDateTime() {
 	VAR(VAR_TIMEDATE_HOUR) = t->tm_hour;
 	VAR(VAR_TIMEDATE_MINUTE) = t->tm_min;
 	
-	if (_features & GF_AFTER_V8)
+	if (_version == 8)
 		VAR(VAR_TIMEDATE_SECOND) = t->tm_sec;
 }
 

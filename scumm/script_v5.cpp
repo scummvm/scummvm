@@ -1186,7 +1186,7 @@ void Scumm_v5::o5_isEqual() {
 	int16 a, b;
 	int var;
 
-	if (_features & GF_AFTER_V2)
+	if (_version <= 2)
 		var = fetchScriptByte();
 	else
 		var = fetchScriptWord();
@@ -1338,7 +1338,7 @@ void Scumm_v5::o5_loadRoomWithEgo() {
 void Scumm_v5::o5_matrixOps() {
 	int a, b;
 
-	if (_features & GF_AFTER_V3) {
+	if (_version == 3) {
 		a = getVarOrDirectByte(0x80);
 		b = fetchScriptByte();
 		setBoxFlags(a, b);
@@ -1400,7 +1400,7 @@ void Scumm_v5::o5_panCameraTo() {
 
 void Scumm_v5::o5_pickupObject() {
 	int obj, room;
-	if (_features & GF_AFTER_V3) {
+	if (_version == 3) {
 		o5_drawObject();
 		return;
 	}
@@ -1519,7 +1519,7 @@ void Scumm_v5::o5_resourceRoutines() {
 		ensureResourceLoaded(resType[op-1], resid);
 		break;
 	case 4:											// load room 
-		if (_features & GF_AFTER_V3) {
+		if (_version == 3) {
 			ensureResourceLoaded(rtRoom, resid);
 			if (resid > 0x7F)
 				resid = _resourceMapper[resid & 0x7F];
@@ -1623,7 +1623,7 @@ void Scumm_v5::o5_resourceRoutines() {
 void Scumm_v5::o5_roomOps() {
 	int a = 0, b = 0, c, d, e;
 
-	if (_features & GF_AFTER_V3) {
+	if (_version == 3) {
 		a = getVarOrDirectWord(0x80);
 		b = getVarOrDirectWord(0x40);
 	}
@@ -1631,7 +1631,7 @@ void Scumm_v5::o5_roomOps() {
 	_opcode = fetchScriptByte();
 	switch (_opcode & 0x1F) {
 	case 1:											/* room scroll */
-		if (!(_features & GF_AFTER_V3)) {
+		if (_version != 3) {
 			a = getVarOrDirectWord(0x80);
 			b = getVarOrDirectWord(0x40);
 		}
@@ -1648,7 +1648,7 @@ void Scumm_v5::o5_roomOps() {
 		break;
 	case 2:											/* room color */
 		if (_features & GF_SMALL_HEADER) {
-			if (!(_features & GF_AFTER_V3)) {
+			if (_version != 3) {
 				a = getVarOrDirectWord(0x80);
 				b = getVarOrDirectWord(0x40);
 			}
@@ -1666,7 +1666,7 @@ void Scumm_v5::o5_roomOps() {
 		break;
 
 	case 3:											/* set screen */
-		if (!(_features & GF_AFTER_V3)) {
+		if (_version != 3) {
 			a = getVarOrDirectWord(0x80);
 			b = getVarOrDirectWord(0x40);
 		}
@@ -1674,7 +1674,7 @@ void Scumm_v5::o5_roomOps() {
 		break;
 	case 4:											/* set palette color */
 		if (_features & GF_SMALL_HEADER) {
-			if (!(_features & GF_AFTER_V3)) {
+			if (_version != 3) {
 				a = getVarOrDirectWord(0x80);
 				b = getVarOrDirectWord(0x40);
 			}
@@ -1708,7 +1708,7 @@ void Scumm_v5::o5_roomOps() {
 		break;
 	case 8:											/* room scale? */
 		if (_features & GF_SMALL_HEADER) {
-			if (!(_features & GF_AFTER_V3)) {
+			if (_version != 3) {
 				a = getVarOrDirectWord(0x80);
 				b = getVarOrDirectWord(0x40);
 			}
@@ -2400,7 +2400,7 @@ void Scumm_v5::o5_walkActorToActor() {
 	if (!a2->isInCurrentRoom())
 		return;
 
-	if (_features & GF_AFTER_V2)
+	if (_version <= 2)
 		dist *= 8;
 	else if (dist == 0xFF) {
 		dist = a2->scalex * a->width / 0xFF;

@@ -53,7 +53,7 @@ Sound::~Sound() {
 }
 
 void Sound::addSoundToQueue(int sound) {
-	if (!(_scumm->_features & GF_AFTER_V7)) {
+	if (!(_scumm->_features & GF_DIGI_IMUSE)) {
 		_scumm->VAR(_scumm->VAR_LAST_SOUND) = sound;
 		_scumm->ensureResourceLoaded(rtSound, sound);
 		addSoundToQueue2(sound);
@@ -104,7 +104,7 @@ void Sound::processSoundQues() {
 				);
 #endif
 			
-			if (_scumm->_features & GF_AFTER_V7) {
+			if (_scumm->_features & GF_DIGI_IMUSE) {
 				if (_scumm->_imuseDigital)
 					_scumm->_imuseDigital->doCommand(data[0], data[1], data[2], data[3], data[4],
 																	data[5], data[6], data[7]);
@@ -390,7 +390,7 @@ void Sound::playSound(int soundID) {
 	
 	}
 	
-	if (_scumm->_features & GF_OLD_BUNDLE && !(_scumm->_features & GF_AFTER_V1)) {
+	if (_scumm->_features & GF_OLD_BUNDLE && _scumm->_version != 1) {
 		// FIXME: support amiga sounds
 		uint16 amigatest;
 		amigatest = READ_LE_UINT16(ptr + 12);

@@ -26,7 +26,7 @@
 #include "charset.h"
 
 void Scumm::setCameraAtEx(int at) {
-	if (!(_features & GF_AFTER_V7)) {
+	if (!(_features & GF_NEW_CAMERA)) {
 		camera._mode = CM_NORMAL;
 		camera._cur.x = at;
 		setCameraAt(at, 0);
@@ -47,7 +47,7 @@ void Scumm::setCameraAt(int pos_x, int pos_y) {
 		camera._cur.x = (short) VAR(VAR_CAMERA_MAX_X);
 
 	if (VAR_SCROLL_SCRIPT != 0xFF && VAR(VAR_SCROLL_SCRIPT)) {
-		if (_features & GF_AFTER_V2)
+		if (_version <= 2)
 			VAR(VAR_CAMERA_POS_X) = camera._cur.x / 8;
 		else
 			VAR(VAR_CAMERA_POS_X) = camera._cur.x;
@@ -217,7 +217,7 @@ void Scumm::moveCamera() {
 	cameraMoved();
 
 	if (VAR_SCROLL_SCRIPT != 0xFF && VAR(VAR_SCROLL_SCRIPT) && pos != camera._cur.x) {
-		if (_features & GF_AFTER_V2)
+		if (_version <= 2)
 			VAR(VAR_CAMERA_POS_X) = camera._cur.x / 8;
 		else
 			VAR(VAR_CAMERA_POS_X) = camera._cur.x;
@@ -311,7 +311,7 @@ void Scumm_v7::moveCamera() {
 
 
 void Scumm::cameraMoved() {
-	if (_features & GF_AFTER_V7) {
+	if (_features & GF_NEW_CAMERA) {
 		assert(camera._cur.x >= (_screenWidth / 2) && camera._cur.y >= (_screenHeight / 2));
 	} else {
 		if (camera._cur.x < (_screenWidth / 2)) {
@@ -325,7 +325,7 @@ void Scumm::cameraMoved() {
 	_screenEndStrip = _screenStartStrip + gdi._numStrips - 1;
 
 	_screenTop = camera._cur.y - (_screenHeight / 2);
-	if (_features & GF_AFTER_V7) {
+	if (_features & GF_NEW_CAMERA) {
 		_screenLeft = camera._cur.x - (_screenWidth / 2);
 	} else {
 		_screenLeft = _screenStartStrip << 3;
@@ -351,7 +351,7 @@ void Scumm_v7::panCameraTo(int x, int y) {
 }
 
 void Scumm::actorFollowCamera(int act) {
-	if (!(_features & GF_AFTER_V7)) {
+	if (!(_features & GF_NEW_CAMERA)) {
 		int old;
 
 		/* mi1 compatibilty */

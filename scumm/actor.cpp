@@ -79,7 +79,7 @@ void Actor::initActor(int mode) {
 	forceClip = 0;
 	ignoreTurns = false;
 	
-	if (_vm->_features & GF_AFTER_V2) {
+	if (_vm->_version <= 2) {
 		initFrame = 2;
 		walkFrame = 0;
 		standFrame = 1;
@@ -96,7 +96,7 @@ void Actor::initActor(int mode) {
 	walkScript = 0;
 	talkScript = 0;
 
-	_vm->_classData[number] = (_vm->_features & GF_AFTER_V7) ? _vm->_classData[0] : 0;
+	_vm->_classData[number] = (_vm->_version >= 7) ? _vm->_classData[0] : 0;
 }
 
 void Actor::stopActorMoving() {
@@ -237,7 +237,7 @@ int Actor::remapDirection(int dir, bool is_walking) {
 
 		switch (flags & 7) {
 		case 1:
-			if (_vm->_features & GF_AFTER_V7) {
+			if (_vm->_version >= 7) {
 				if (dir < 180)
 					return 90;
 				else
@@ -249,7 +249,7 @@ int Actor::remapDirection(int dir, bool is_walking) {
 					return (dir == 90) ? 90 : 270;
 			}
 		case 2:
-			if (_vm->_features & GF_AFTER_V7) {
+			if (_vm->_version >= 7) {
 				if (dir > 90 && dir < 270)
 					return 180;
 				else
@@ -388,7 +388,7 @@ void Actor::setupActorScale() {
 		return;
 
 	scale = _vm->getScale(walkbox, x, y);
-	if (_vm->_features & GF_AFTER_V8) {
+	if (_vm->_version == 8) {
 		// At least in COMI, scale values are clipped to range 1-255
 		if (scale < 1)
 			scale = 1;
@@ -523,7 +523,7 @@ void Actor::animateActor(int anim) {
 		turnToDirection(dir);
 		break;
 	default:
-		if (_vm->_features & GF_AFTER_V2)
+		if (_vm->_version <= 2)
 			startAnimActor(anim / 4);
 		else
 			startAnimActor(anim);
@@ -759,7 +759,7 @@ void Actor::showActor() {
 
 	if (costumeNeedsInit) {
 		startAnimActor(initFrame);
-		if (_vm->_features & GF_AFTER_V2) {
+		if (_vm->_version <= 2) {
 			startAnimActor(standFrame);
 			startAnimActor(talkStopFrame);
 		}
@@ -784,7 +784,7 @@ void Scumm::walkActors() {
 
 	for (i = 1; i < _numActors; i++) {
 		if (_actors[i].isInCurrentRoom())
-			if (_features & GF_AFTER_V2 || _features & GF_AFTER_V3)
+			if (_version <= 3)
 				_actors[i].walkActorOld();
 			else
 				_actors[i].walkActor();
@@ -828,7 +828,7 @@ void Scumm::processActors() {
 	
 	// Make a list of all actors in this room
 	for (int i = 1; i < _numActors; i++) {
-		if ((_features & GF_AFTER_V8) && _actors[i].layer < 0)
+		if (_version == 8 && _actors[i].layer < 0)
 			continue;
 		if (_actors[i].isInCurrentRoom())
 			actors[numactors++] = &_actors[i];
@@ -1143,7 +1143,7 @@ void Actor::setActorCostume(int c) {
 void Actor::startWalkActor(int destX, int destY, int dir) {
 	AdjustBoxResult abr;
 
-	if (_vm->_features & GF_AFTER_V2 || _vm->_features & GF_AFTER_V3) {
+	if (_vm->_version <= 3) {
 		abr.x = destX;
 		abr.y = destY;
 	} else {
@@ -1226,7 +1226,7 @@ void Actor::walkActor() {
 	int new_dir, box;
 	int16 foundPathX, foundPathY;
 
-	if (_vm->_features & GF_AFTER_V7) {
+	if (_vm->_version >= 7) {
 		// FIXME - this is kind of a hack right now but it fixes the
 		// walk scripts in The Dig.
 		if (moving & MF_FROZEN) {
@@ -1496,7 +1496,7 @@ bool Actor::isInClass(int cls) {
 }
 
 bool Actor::isPlayer() {
-	if (_vm->_features & GF_AFTER_V2)
+	if (_vm->_version <= 2)
 		return _vm->VAR(42) <= number && number <= _vm->VAR(43);
 	else
 		return isInClass(kObjectClassPlayer);

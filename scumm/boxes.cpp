@@ -96,9 +96,9 @@ byte Scumm::getMaskFromBox(int box) {
 	if (!ptr)
 		return 0;
 
-	if (_features & GF_AFTER_V8)
+	if (_version == 8)
 		return (byte) FROM_LE_32(ptr->v8.mask);
-	else if (_features & GF_AFTER_V2)
+	else if (_version <= 2)
 		return ptr->v2.mask;
 	else
 		return ptr->old.mask;
@@ -114,9 +114,9 @@ void Scumm::setBoxFlags(int box, int val) {
 	} else {
 		Box *ptr = getBoxBaseAddr(box);
 		assert(ptr);
-		if (_features & GF_AFTER_V8)
+		if (_version == 8)
 			ptr->v8.flags = TO_LE_32(val);
-		else if (_features & GF_AFTER_V2)
+		else if (_version <= 2)
 			ptr->v2.flags = val;
 		else
 			ptr->old.flags = val;
@@ -127,9 +127,9 @@ byte Scumm::getBoxFlags(int box) {
 	Box *ptr = getBoxBaseAddr(box);
 	if (!ptr)
 		return 0;
-	if (_features & GF_AFTER_V8)
+	if (_version == 8)
 		return (byte) FROM_LE_32(ptr->v8.flags);
-	else if (_features & GF_AFTER_V2)
+	else if (_version <= 2)
 		return ptr->v2.flags;
 	else
 		return ptr->old.flags;
@@ -138,9 +138,9 @@ byte Scumm::getBoxFlags(int box) {
 void Scumm::setBoxScale(int box, int scale) {
 	Box *ptr = getBoxBaseAddr(box);
 	assert(ptr);
-	if (_features & GF_AFTER_V8)
+	if (_version == 8)
 		ptr->v8.scale = TO_LE_32(scale);
-	else if (_features & GF_AFTER_V2)
+	else if (_version <= 2)
 		error("This should not ever be called!");
 	else
 		ptr->old.scale = TO_LE_16(scale);
@@ -160,7 +160,7 @@ int Scumm::getScale(int box, int x, int y) {
 	if (!ptr)
 		return 255;
 
-	if (_features & GF_AFTER_V8) {
+	if (_version == 8) {
 		int slot = FROM_LE_32(ptr->v8.scaleSlot);
 		if (slot) {
 			assert(1 <= slot && slot <= 20);
@@ -214,7 +214,7 @@ int Scumm::getBoxScale(int box) {
 	Box *ptr = getBoxBaseAddr(box);
 	if (!ptr)
 		return 255;
-	if (_features & GF_AFTER_V8)
+	if (_version == 8)
 		return FROM_LE_32(ptr->v8.scale);
 	else
 		return READ_LE_UINT16(&ptr->old.scale);
@@ -224,7 +224,7 @@ byte Scumm::getNumBoxes() {
 	byte *ptr = getResourceAddress(rtMatrix, 2);
 	if (!ptr)
 		return 0;
-	if (_features & GF_AFTER_V8)
+	if (_version == 8)
 		return (byte) READ_LE_UINT32(ptr);
 	else
 		return ptr[0];
@@ -247,13 +247,13 @@ Box *Scumm::getBoxBaseAddr(int box) {
 	} else
 		checkRange(ptr[0] - 1, 0, box, "Illegal box %d");
 
-	if (_features & GF_AFTER_V2)
+	if (_version <= 2)
 		return (Box *)(ptr + box * SIZEOF_BOX_V2 + 1);
-	else if (_features & GF_AFTER_V3)
+	else if (_version == 3)
 		return (Box *)(ptr + box * SIZEOF_BOX_V3 + 1);
 	else if (_features & GF_SMALL_HEADER)
 		return (Box *)(ptr + box * SIZEOF_BOX + 1);
-	else if (_features & GF_AFTER_V8)
+	else if (_version == 8)
 		return (Box *)(ptr + box * SIZEOF_BOX_V8 + 4);
 	else
 		return (Box *)(ptr + box * SIZEOF_BOX + 2);
@@ -327,7 +327,7 @@ void Scumm::getBoxCoordinates(int boxnum, BoxCoords *box) {
 	Box *bp = getBoxBaseAddr(boxnum);
 	assert(bp);
 
-	if (_features & GF_AFTER_V8) {
+	if (_version == 8) {
 		box->ul.x = (short)FROM_LE_32(bp->v8.ulx);
 		box->ul.y = (short)FROM_LE_32(bp->v8.uly);
 		box->ur.x = (short)FROM_LE_32(bp->v8.urx);
@@ -359,7 +359,7 @@ void Scumm::getBoxCoordinates(int boxnum, BoxCoords *box) {
 			SWAP(box->ll.x, box->lr.x);
 			SWAP(box->ll.y, box->lr.y);
 		}
-	} else if (_features & GF_AFTER_V2) {
+	} else if (_version <= 2) {
 		box->ul.x = bp->v2.ulx * 8;
 		box->ul.y = bp->v2.uy * 2;
 		box->ur.x = bp->v2.urx * 8;
@@ -589,7 +589,7 @@ int Scumm::getPathToDestBox(byte from, byte to) {
 
 	boxm = getBoxMatrixBaseAddr();
 
-	if (_features & GF_AFTER_V2) {
+	if (_version <= 2) {
 		// The v2 box matrix is a real matrix with numOfBoxes rows and columns.
 		// The first numOfBoxes bytes contain indices to the start of the corresponding
 		// row (although that seems unnecessary to me - the value is easily computable.
