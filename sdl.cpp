@@ -41,6 +41,8 @@ SoundEngine sound;
 
 static SDL_Surface *screen;
 
+void updateScreen(Scumm *s);
+
 void updatePalette(Scumm *s) {
 	SDL_Color colors[256];
 	int first = s->_palDirtyMin;
@@ -72,82 +74,71 @@ int mapKey(int key, byte mod) {
 	return key;
 }
 
-void waitForTimer(Scumm *s) {
+void waitForTimer(Scumm *s, int delay) {
 	SDL_Event event;
-	byte dontPause = true;
 	
-	do {
-		while (SDL_PollEvent(&event)) {
-			switch(event.type) {
-			case SDL_KEYDOWN:
-				s->_keyPressed = mapKey(event.key.keysym.sym, event.key.keysym.mod);
-				if (event.key.keysym.sym >= '0' && event.key.keysym.sym<='9') {
-					s->_saveLoadSlot = event.key.keysym.sym - '0';
-					if (event.key.keysym.mod&KMOD_SHIFT) {
-						sprintf(s->_saveLoadName, "Quicksave %d", s->_saveLoadSlot);
-						s->_saveLoadFlag = 1;
-					} else if (event.key.keysym.mod&KMOD_CTRL)
-						s->_saveLoadFlag = 2;
-					s->_saveLoadCompatible = false;
-				}
-				if (event.key.keysym.sym=='z' && event.key.keysym.mod&KMOD_CTRL) {
-					exit(1);
-				} 
-				if (event.key.keysym.sym=='f' && event.key.keysym.mod&KMOD_CTRL) {
-					s->_fastMode ^= 1;
-				}
-				if (event.key.keysym.sym=='g' && event.key.keysym.mod&KMOD_CTRL) {
-					s->_fastMode ^= 2;
-				}
-
-				if (event.key.keysym.sym=='d' && event.key.keysym.mod&KMOD_CTRL) {
-					debugger.attach(s);
-				}
-				if (event.key.keysym.sym=='s' && event.key.keysym.mod&KMOD_CTRL) {
-					s->resourceStats();
-				}
-				
-				break;
-			case SDL_MOUSEMOTION: {
-				int newx,newy;
-#if !defined(SCALEUP_2x2)
-				newx = event.motion.x;
-				newy = event.motion.y;
-#else
-				newx = event.motion.x>>1;
-				newy = event.motion.y>>1;
-#endif
-				if (newx != s->mouse.x || newy != s->mouse.y) {
-					s->mouse.x = newx;
-					s->mouse.y = newy;
-					s->drawMouse();
-					updateScreen(s);
-				}
-				break;
-				}
-			case SDL_MOUSEBUTTONDOWN:
-				if (event.button.button==SDL_BUTTON_LEFT)
-					s->_leftBtnPressed |= 1;
-				else if (event.button.button==SDL_BUTTON_RIGHT)
-					s->_rightBtnPressed |= 1;
-				break;
-#if 0
-			case SDL_ACTIVEEVENT:
-				if (event.active.state & SDL_APPINPUTFOCUS) {
-					dontPause = event.active.gain;
-				}
-				break;
-#endif
-			case SDL_QUIT:
-				exit(1);
-				break;
+	while (SDL_PollEvent(&event)) {
+		switch(event.type) {
+		case SDL_KEYDOWN:
+			s->_keyPressed = mapKey(event.key.keysym.sym, event.key.keysym.mod);
+			if (event.key.keysym.sym >= '0' && event.key.keysym.sym<='9') {
+				s->_saveLoadSlot = event.key.keysym.sym - '0';
+				if (event.key.keysym.mod&KMOD_SHIFT) {
+					sprintf(s->_saveLoadName, "Quicksave %d", s->_saveLoadSlot);
+					s->_saveLoadFlag = 1;
+				} else if (event.key.keysym.mod&KMOD_CTRL)
+					s->_saveLoadFlag = 2;
+				s->_saveLoadCompatible = false;
 			}
-		}
-		
-		if (!(s->_fastMode&2))
-			SDL_Delay(dontPause ? 10 : 100);
-	} while (!dontPause);
+			if (event.key.keysym.sym=='z' && event.key.keysym.mod&KMOD_CTRL) {
+				exit(1);
+			} 
+			if (event.key.keysym.sym=='f' && event.key.keysym.mod&KMOD_CTRL) {
+				s->_fastMode ^= 1;
+			}
+			if (event.key.keysym.sym=='g' && event.key.keysym.mod&KMOD_CTRL) {
+				s->_fastMode ^= 2;
+			}
 
+			if (event.key.keysym.sym=='d' && event.key.keysym.mod&KMOD_CTRL) {
+				debugger.attach(s);
+			}
+			if (event.key.keysym.sym=='s' && event.key.keysym.mod&KMOD_CTRL) {
+				s->resourceStats();
+			}
+			
+			break;
+		case SDL_MOUSEMOTION: {
+			int newx,newy;
+#if !defined(SCALEUP_2x2)
+			newx = event.motion.x;
+			newy = event.motion.y;
+#else
+			newx = event.motion.x>>1;
+			newy = event.motion.y>>1;
+#endif
+			if (newx != s->mouse.x || newy != s->mouse.y) {
+				s->mouse.x = newx;
+				s->mouse.y = newy;
+				s->drawMouse();
+				updateScreen(s);
+			}
+			break;
+			}
+		case SDL_MOUSEBUTTONDOWN:
+			if (event.button.button==SDL_BUTTON_LEFT)
+				s->_leftBtnPressed |= 1;
+			else if (event.button.button==SDL_BUTTON_RIGHT)
+				s->_rightBtnPressed |= 1;
+			break;
+		case SDL_QUIT:
+			exit(1);
+			break;
+		}
+	}
+	
+	if (!(s->_fastMode&2))
+		SDL_Delay(delay*10);
 }
 
 #define MAX_DIRTY_RECTS 40
@@ -650,11 +641,8 @@ int main(int argc, char* argv[]) {
 			if (scumm._fastMode)
 				tmp=1;
 		}
-		
-		while(tmp>0) {
-			waitForTimer(&scumm);
-			tmp--;
-		}
+
+		waitForTimer(&scumm, tmp);
 	} while(1);
 
 	return 0;

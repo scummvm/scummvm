@@ -28,6 +28,8 @@ struct GuiWidget {
 	byte _string_number;
 };
 
+#define SAVEGAME_NAME_LEN 32
+
 struct Gui {
 	Scumm *_s;
 	const GuiWidget *_widgets[4];
@@ -49,7 +51,7 @@ struct Gui {
 	int _editString;
 	int _editLen;
 	bool valid_games[9];
-	char game_names[9][32];
+	char game_names[9][SAVEGAME_NAME_LEN];
 	void loop();
 	void init(Scumm *s);
 	void draw(int start, int end);
@@ -71,7 +73,7 @@ struct Gui {
 	void getSavegameNames(int start);
 	void editString(int index);
 	void showCaret(bool show);
-	void addLetter(char letter);
+	void addLetter(byte letter);
 	void saveLoadDialog();
 	void queryMessage(const char *msg, const char *alts);
 	byte getDefaultColor(int color);

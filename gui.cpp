@@ -216,7 +216,7 @@ void Gui::leftMouseClick(int x, int y) {
 }
 
 const GuiWidget save_load_dialog[] = {
-	{GUI_STAT,0xFF,GWF_DEFAULT|GWF_PARENT,30,20,260,120,0,NULL},
+	{GUI_STAT,0xFF,GWF_DEFAULT|GWF_PARENT,30,20,260,120,0,0},
 	{GUI_TEXT,0x01,0,40,5,128,16,0,1}, /* How may I serve you? */
 	{GUI_TEXT,0x02,0,40,5,128,16,0,2}, /* Select a game to LOAD */
 	{GUI_TEXT,0x04,0,40,5,128,16,0,3}, /* Name your SAVE game */
@@ -246,7 +246,6 @@ const GuiWidget save_load_dialog[] = {
 
 	{GUI_TEXT,0x04,GWF_BUTTON,200,45,54,16,8,9}, /* Ok */
 	{GUI_TEXT,0x04,GWF_BUTTON,200,65,54,16,7,7}, /* Cancel */
-
 	{0}
 };
 
@@ -374,7 +373,7 @@ void Gui::showCaret(bool show) {
 	s = game_names[_editString];
 
 	if (show) {
-		if (i < 31) {
+		if (i < SAVEGAME_NAME_LEN-1) {
 			s[i] = '_';
 			s[i+1] = 0;
 		}
@@ -399,7 +398,7 @@ void Gui::editString(int i) {
 	showCaret(true);
 }
 
-void Gui::addLetter(char letter) {
+void Gui::addLetter(byte letter) {
 	if (_editString==-1)
 		return;
 
@@ -408,7 +407,7 @@ void Gui::addLetter(char letter) {
 		return;
 	}
 
-	if (letter>=32 && letter<128 && _editLen < 31) {
+	if (letter>=32 && letter<128 && _editLen < SAVEGAME_NAME_LEN-1) {
 		game_names[_editString][_editLen++] = letter;	
 	} else if (letter==8 && _editLen>0) {
 		_editLen--;

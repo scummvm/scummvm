@@ -1650,8 +1650,6 @@ struct Serializer {
 };
 
 
-
-void waitForTimer(Scumm *s);
 void outputdisplay2(Scumm *s, int disp);
 extern const byte revBitMask[8];
 void blitToScreen(Scumm *s, byte *src, int x, int y, int w, int h);
@@ -1667,10 +1665,10 @@ void CDECL debug(int level, const char *s, ...);
 void checkHeap();
 void initGraphics(Scumm *s, bool fullScreen);
 void updateScreen(Scumm *s);
-
 void drawMouse(Scumm *s, int x, int y, int color, byte *mask, bool visible);
 void drawMouse(Scumm *s, int x, int y, int w, int h, byte *buf, bool visible);
 void blit(byte *dst, byte *src, int w, int h);
 byte *findResource(uint32 id, byte *searchin, int index);
 void playSfxSound(void *sound, uint32 size, uint rate);
 bool isSfxFinished();
+void waitForTimer(Scumm *s, int delay);

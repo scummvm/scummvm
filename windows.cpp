@@ -915,11 +915,11 @@ void updateScreen(Scumm *s) {
 	wm->writeToScreen();
 }
 
-void waitForTimer(Scumm *s) {
-	if (!veryFastMode) {
-		Sleep(10);
-	} 
+void waitForTimer(Scumm *s, int delay) {
 	wm->handleMessage();
+	if (!veryFastMode) {
+		Sleep(delay*10);
+	} 
 }
 
 void initGraphics(Scumm *s, bool fullScreen) {
@@ -1030,10 +1030,7 @@ int main(int argc, char* argv[]) {
 				tmp=1;
 		}
 		
-		while(tmp>0) {
-			waitForTimer(&scumm);
-			tmp--;
-		}
+		waitForTimer(&scumm, tmp);
 	} while(1);
 
 	return 0;
