@@ -20,6 +20,15 @@
 
 #include "stdafx.h"
 
+#include "backends/fs/fs.h"
+
+#include "base/engine.h"
+#include "base/gameDetector.h"
+#include "base/plugins.h"
+
+#include "common/config-manager.h"
+#include "common/util.h"
+
 #include "gui/about.h"
 #include "gui/browser.h"
 #include "gui/chooser.h"
@@ -31,14 +40,6 @@
 #include "gui/ListWidget.h"
 #include "gui/TabWidget.h"
 #include "gui/PopUpWidget.h"
-
-#include "backends/fs/fs.h"
-
-#include "base/engine.h"
-#include "base/gameDetector.h"
-#include "base/plugins.h"
-
-#include "common/config-manager.h"
 
 using Common::ConfigManager;
 
@@ -89,14 +90,19 @@ protected:
 	EditTextWidget *_descriptionWidget;
 	EditTextWidget *_domainWidget;
 	CheckboxWidget *_fullscreenCheckbox;
+	
+	PopUpWidget *_langPopUp;
+	PopUpWidget *_platformPopUp;
+	PopUpWidget *_gfxPopUp;
 };
 
 EditGameDialog::EditGameDialog(const String &domain, GameSettings target)
-	: Dialog(8, 50, 320 - 2 * 8, 200 - 2 * 40),
+	: Dialog(8, 50, 320 - 2 * 8, 140),
 	  _domain(domain) {
 
 	const int vBorder = 5;	// Tab border
 	int yoffset;
+	int sel;
 
 	// GAME: Path to game data (r/o)
 	String path(ConfMan.get("path", _domain));
@@ -129,8 +135,40 @@ EditGameDialog::EditGameDialog(const String &domain, GameSettings target)
 	// GUI:  Label for the game path
 	new StaticTextWidget(tab, 10, yoffset, 40, kLineHeight, "Path: ", kTextAlignRight);
 	new StaticTextWidget(tab, 50, yoffset, _w - 50 - 10, kLineHeight, path, kTextAlignLeft);
+	yoffset += 16;
 
-	// TODO: Platform and language dropdowns (?)
+	// Languag popup
+	_langPopUp = new PopUpWidget(tab, 5, yoffset, 280, kLineHeight, "Language: ", 100);
+	yoffset += 16;
+	_langPopUp->appendEntry("<default>");
+	_langPopUp->appendEntry("");
+	const Common::LanguageDescription *l = Common::g_languages;
+	int lang = Common::parseLanguage(ConfMan.get("language", _domain));
+	sel = 0;
+	for (int i = 0; l->name; ++l, ++i) {
+		_langPopUp->appendEntry(l->description, l->id);
+		if (lang == l->id)
+			sel = i + 2;
+	}
+	_langPopUp->setSelected(sel);
+
+	// Platform popup
+	_platformPopUp = new PopUpWidget(tab, 5, yoffset, 280, kLineHeight, "Platform: ", 100);
+	yoffset += 16;
+	_platformPopUp->appendEntry("<default>");
+	_platformPopUp->appendEntry("");
+	_platformPopUp->appendEntry("Amiga", Common::kPlatformAmiga);
+	_platformPopUp->appendEntry("Atari ST", Common::kPlatformAtariST);
+	_platformPopUp->appendEntry("Macintosh", Common::kPlatformMacintosh);
+	_platformPopUp->appendEntry("PC", Common::kPlatformPC);
+	switch (Common::parsePlatform(ConfMan.get("platform", _domain))) {
+	case Common::kPlatformPC:			sel = 5; break;
+	case Common::kPlatformAmiga:		sel = 2; break;
+	case Common::kPlatformAtariST:		sel = 3; break;
+	case Common::kPlatformMacintosh:	sel = 4; break;
+	default:							sel = 0; break;
+	}
+	_platformPopUp->setSelected(sel);
 
 	//
 	// 2) The graphics tab
@@ -140,27 +178,26 @@ EditGameDialog::EditGameDialog(const String &domain, GameSettings target)
 
 	// The GFX mode popup & a label
 	// TODO - add an API to query the list of available GFX modes, and to get/set the mode
-	PopUpWidget *gfxPopUp;
-	gfxPopUp = new PopUpWidget(tab, 5, yoffset, 280, kLineHeight, "Graphics mode: ", 100);
+	_gfxPopUp = new PopUpWidget(tab, 5, yoffset, 280, kLineHeight, "Graphics mode: ", 100);
 	yoffset += 16;
-	gfxPopUp->appendEntry("<global default>");
-	gfxPopUp->appendEntry("");
-	gfxPopUp->appendEntry("Normal (no scaling)");
-	gfxPopUp->appendEntry("2x");
-	gfxPopUp->appendEntry("3x");
-	gfxPopUp->appendEntry("2xSAI");
-	gfxPopUp->appendEntry("Super2xSAI");
-	gfxPopUp->appendEntry("SuperEagle");
-	gfxPopUp->appendEntry("AdvMAME2x");
-	gfxPopUp->appendEntry("AdvMAME3x");
-	gfxPopUp->appendEntry("hq2x");
-	gfxPopUp->appendEntry("hq3x");
-	gfxPopUp->appendEntry("TV2x");
-	gfxPopUp->appendEntry("DotMatrix");
-	gfxPopUp->setSelected(0);
+	_gfxPopUp->appendEntry("<global default>");
+	_gfxPopUp->appendEntry("");
+	_gfxPopUp->appendEntry("Normal (no scaling)");
+	_gfxPopUp->appendEntry("2x");
+	_gfxPopUp->appendEntry("3x");
+	_gfxPopUp->appendEntry("2xSAI");
+	_gfxPopUp->appendEntry("Super2xSAI");
+	_gfxPopUp->appendEntry("SuperEagle");
+	_gfxPopUp->appendEntry("AdvMAME2x");
+	_gfxPopUp->appendEntry("AdvMAME3x");
+	_gfxPopUp->appendEntry("hq2x");
+	_gfxPopUp->appendEntry("hq3x");
+	_gfxPopUp->appendEntry("TV2x");
+	_gfxPopUp->appendEntry("DotMatrix");
+	_gfxPopUp->setSelected(0);
 
 	// FIXME - disable GFX popup for now
-	gfxPopUp->setEnabled(false);
+	_gfxPopUp->setEnabled(false);
 
 	// GUI:  Full screen checkbox
 	_fullscreenCheckbox = new CheckboxWidget(tab, 15, yoffset, 200, 16, "Fullscreen mode", 0, 'F');
@@ -199,23 +236,25 @@ void EditGameDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 		}
 		ConfMan.set("description", _descriptionWidget->getLabel(), newDomain);
 		ConfMan.set("fullscreen", _fullscreenCheckbox->getState(), newDomain);
+
+		Common::Language lang = (Common::Language)_langPopUp->getSelectedTag();
+		if (lang < 0)
+			ConfMan.removeKey("language", newDomain);
+		else
+			ConfMan.set("language", Common::getLanguageString(lang), newDomain);
+
+		Common::Platform platform = (Common::Platform)_platformPopUp->getSelectedTag();
+		if (platform < 0)
+			ConfMan.removeKey("platform", newDomain);
+		else
+			ConfMan.set("platform", Common::getPlatformString(platform), newDomain);
+
 		setResult(1);
 		close();
 	} else {
 		Dialog::handleCommand(sender, cmd, data);
 	}
 }
-
-/*
- * TODO list
- * - add an text entry widget
- * - add an "Add Game..." button that opens a dialog where new games can be 
- *   configured and added to the list of games
- * - add an "Edit Game..." button that opens a dialog that allows to edit game
- *   settings, i.e. the datapath/savepath/sound driver/... for that game
- * - add an "options" dialog
- * - ...
- */
 
 LauncherDialog::LauncherDialog(GameDetector &detector)
 	: Dialog(0, 0, 320, 200), _detector(detector) {
