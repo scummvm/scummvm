@@ -82,7 +82,7 @@ int32 Logic::fnInteract(int32 *params) {
 	PLAYER_ACTION = 0;
 
 	// 3rd script of clicked on id
-	logicUp((params[0] < 16) | 2);
+	logicUp((params[0] < 16) + 2);
 
 	// out, up and around again - pc is saved for current level to be
 	// returned to
