@@ -855,7 +855,7 @@ bool OSystem_SDL::poll_event(Event *event) {
 					break;
 				}
 
-				if (b == KBD_CTRL && ev.key.keysym.sym=='z') {
+				if ((b == KBD_CTRL && ev.key.keysym.sym=='z') || (b == KBD_ALT && ev.key.keysym.sym=='x')) {
 					quit();
 					break;
 				}
