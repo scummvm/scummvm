@@ -264,6 +264,7 @@ int SagaEngine::init(GameDetector &detector) {
 	}
 
 	_interface->converseInit();
+	_script->setVerb(kVerbWalkTo);
 
 	return 0;
 }
