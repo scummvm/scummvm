@@ -1,15 +1,20 @@
+Residual in-progress items (in rough order of priority):
+-------------------------------------------------------0
+ * Rewrite Bitmap class to use textures (major speed boost on older cards) - Assigned to Yaz
+ * Implement walkplanes - Assigned to Yaz / Ender
+ * Implement 2D primitives - Assigned to Ender, but he's only giving it a shot :)
+ * Add SMUSH (low-priority, but important) - Assigned to aquadran
+
 Residual TODO list (in rough order of priority):
 ------------------------------------------------ 
- * Rewrite Bitmap::draw to use textures (glDrawPixels is SLOW and buggy!) - may fix next issue
- * Check OpenGL usage on Windows (Room bgs look like shit: http://www.enderboi.com/misc/Grim1.jpg)
+ * Rooms look crap on many Win32 cards, Bitmap rewrite may fix? 
+   http://www.enderboi.com/misc/Grim1.jpg
  * Remove hash_map usage (not implemented on Visual Studio & other compilers)
  * Remove as much other STL stuff as possible (see above)
- * Implement walkboxes and related functions (MakeSectorActive/GetActorSector/isActorInSector, etc)
  * Z-Planes (translate ZBitmap data into OpenGL format?)
- * Implement text fonts and other primitives
- * Rewrite sound mixer - often clips when music + audio are playing
  * Add OpenGL lighting
- * Add SMUSH (aquadran is looking, Grim seems to uses CMI codecs + 2 new ones)
+ * Implement text fonts, menus, etc
+ * Rewrite sound mixer (volume control, etc)
  * Proper vsscanf implementation in textsplit.cpp for platforms without it (many!)
  * Cross platform GUI for debug input dialogs (ctrl+e ctrl+g etc) original used MFC
 
