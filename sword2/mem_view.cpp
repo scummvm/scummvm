@@ -38,7 +38,7 @@ void MemoryManager::displayMemory(void) {
 	j = _baseMemBlock;
 	do {
 		if (_memList[j].uid < 65536) {
-			file_header = (_standardHeader*) _vm->_resman->openResource(_memList[j].uid);
+			file_header = (_standardHeader *) _vm->_resman->openResource(_memList[j].uid);
 			// close immediately so give a true count
 			_vm->_resman->closeResource(_memList[j].uid);
 

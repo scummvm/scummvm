@@ -562,7 +562,7 @@ bool Debugger::Cmd_Version(int argc, const char **argv) {
 	char dateStamp[255];
 	char version[6];
 
-	strcpy(version, (char*) version_string + HEAD_LEN);
+	strcpy(version, (char *) version_string + HEAD_LEN);
 	*(((unsigned char *) &t)) = *(version_string + 14);
 	*(((unsigned char *) &t) + 1) = *(version_string + 15);
 	*(((unsigned char *) &t) + 2) = *(version_string + 16);

@@ -64,7 +64,7 @@ uint8 *Sword2Engine::fetchPaletteMatchTable(uint8 *screenFile) {
 
 _screenHeader *Sword2Engine::fetchScreenHeader(uint8 *screenFile) {
 	_multiScreenHeader *mscreenHeader = (_multiScreenHeader *) (screenFile + sizeof(_standardHeader));
-	_screenHeader *screenHeader = (_screenHeader*) ((uint8 *) mscreenHeader + mscreenHeader->screen);
+	_screenHeader *screenHeader = (_screenHeader *) ((uint8 *) mscreenHeader + mscreenHeader->screen);
 
 	return screenHeader;
 }
@@ -184,7 +184,7 @@ uint8 *Sword2Engine::fetchTextLine(uint8 *file, uint32 text_line) {
 	_textHeader *text_header = (_textHeader *) (file + sizeof(_standardHeader));
 
 	if (text_line >= text_header->noOfLines) {
-		fileHeader = (_standardHeader*)file;
+		fileHeader = (_standardHeader *) file;
 		sprintf((char *) errorLine, "xxMissing line %d of %s (only 0..%d)", text_line, fileHeader->name, text_header->noOfLines - 1);
 
 

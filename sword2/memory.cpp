@@ -372,8 +372,8 @@ int32 MemoryManager::defragMemory(uint32 req_size) {
 				// block
 				// memcpy(_memList[cur_block].ad, _memList[child].ad, _memList[child].size);
 
-				a = (uint32*) _memList[cur_block].ad;
-				b = (uint32*) _memList[child].ad;
+				a = (uint32 *) _memList[cur_block].ad;
+				b = (uint32 *) _memList[child].ad;
 
 				for (j = 0; j < _memList[child].size / 4; j++)
 					*(a++) = *(b++);

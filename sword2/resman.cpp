@@ -253,7 +253,7 @@ void convertEndian(uint8 *file, uint32 len) {
 		SWAP32(mscreenHeader->maskOffset);
 
 		// screenHeader
-		_screenHeader *screenHeader = (_screenHeader*) (file + mscreenHeader->screen);
+		_screenHeader *screenHeader = (_screenHeader *) (file + mscreenHeader->screen);
 
 		SWAP16(screenHeader->width);
 		SWAP16(screenHeader->height);
@@ -312,7 +312,7 @@ void convertEndian(uint8 *file, uint32 len) {
 		break;
 	}
 	case GAME_OBJECT: {
-		_object_hub *objectHub = (_object_hub *)file;
+		_object_hub *objectHub = (_object_hub *) file;
 
 		objectHub->type = (int)SWAP_BYTES_32(objectHub->type);
 		SWAP32(objectHub->logic_level);
@@ -325,7 +325,7 @@ void convertEndian(uint8 *file, uint32 len) {
 		break;
 	}
 	case WALK_GRID_FILE: {
-		_walkGridHeader	*walkGridHeader = (_walkGridHeader *)file;
+		_walkGridHeader	*walkGridHeader = (_walkGridHeader *) file;
 
 		SWAP32(walkGridHeader->numBars);
 		SWAP32(walkGridHeader->numNodes);
@@ -499,8 +499,14 @@ uint8 *ResourceManager::openResource(uint32 res, bool dump) {
 			case MOUSE_FILE:
 				strcpy(tag, "mouse");
 				break;
+			case WAV_FILE:
+				strcpy(tag, "wav");
+				break;
 			case ICON_FILE:
 				strcpy(tag, "icon");
+				break;
+			case PALETTE_FILE:
+				strcpy(tag, "palette");
 				break;
 			default:
 				strcpy(tag, "unknown");
@@ -508,9 +514,9 @@ uint8 *ResourceManager::openResource(uint32 res, bool dump) {
 			}
 
 #if defined(MACOS_CARBON)
-			sprintf(buf, ":dumps:%s-%d", tag, res);
+			sprintf(buf, ":dumps:%s-%d.dmp", tag, res);
 #else
-			sprintf(buf, "dumps/%s-%d", tag, res);
+			sprintf(buf, "dumps/%s-%d.dmp", tag, res);
 #endif
 
 			out.open(buf, "");
@@ -909,7 +915,7 @@ void ResourceManager::killAllObjects(bool wantInfo) {
 			//not the global vars which are assumed to be open in
 			// memory & not the player object!
 			if (res != 1 && res != CUR_PLAYER_ID) {
-				header = (_standardHeader*) openResource(res);
+				header = (_standardHeader *) openResource(res);
 				closeResource(res);
 
 				if (header->fileType == GAME_OBJECT) {

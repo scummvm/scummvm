@@ -464,7 +464,7 @@ void Sword2Engine::getPlayerStructures(void) {
  	char *raw_script_ad;
 	_standardHeader *head;
 
-	head = (_standardHeader*) _resman->openResource(CUR_PLAYER_ID);
+	head = (_standardHeader *) _resman->openResource(CUR_PLAYER_ID);
 
 	if (head->fileType != GAME_OBJECT)
 		error("incorrect CUR_PLAYER_ID=%d", CUR_PLAYER_ID);
@@ -483,7 +483,7 @@ void Sword2Engine::putPlayerStructures(void) {
  	char *raw_script_ad;
 	_standardHeader *head;
 
-	head = (_standardHeader*) _resman->openResource(CUR_PLAYER_ID);
+	head = (_standardHeader *) _resman->openResource(CUR_PLAYER_ID);
 
 	if (head->fileType != GAME_OBJECT)
 		error("incorrect CUR_PLAYER_ID=%d", CUR_PLAYER_ID);

@@ -431,7 +431,7 @@ void Sword2Engine::processImage(buildit *build_unit) {
 			spriteType |= RDSPR_RLE16;
 			// points to just after last cdt_entry, ie.
 			// start of colour table
-			colTablePtr = (uint8*) (anim_head + 1) + anim_head->noAnimFrames * sizeof(_cdtEntry);
+			colTablePtr = (uint8 *) (anim_head + 1) + anim_head->noAnimFrames * sizeof(_cdtEntry);
 			break;
 		}
 	}

@@ -497,7 +497,7 @@ void FontRenderer::printTextBlocs(void) {
 
 	for (j = 0; j < MAX_text_blocs; j++) {
 		if (_blocList[j].text_mem) {
-			frame = (_frameHeader*) _blocList[j].text_mem->ad;
+			frame = (_frameHeader *) _blocList[j].text_mem->ad;
 
 			spriteInfo.x = _blocList[j].x;
 			spriteInfo.y = _blocList[j].y;

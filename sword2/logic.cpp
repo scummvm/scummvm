@@ -123,7 +123,7 @@ int Logic::processSession(void) {
 
 				raw_data_ad = (char *) head;
 
-				far_head = (_standardHeader*) _vm->_resman->openResource(script / SIZE);
+				far_head = (_standardHeader *) _vm->_resman->openResource(script / SIZE);
 
 				if (far_head->fileType != GAME_OBJECT && far_head->fileType != SCREEN_MANAGER)
 					error("Logic_engine %d not a far object (its a %d)", script / SIZE, far_head->fileType);

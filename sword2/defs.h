@@ -100,7 +100,7 @@
 // for the poor PSX so it knows what language is running.
 // #define GAME_LANGUAGE		VAR(111)
 
-//resource id's of pouse mointers. It's pretty much safe to do it like this
+// resource id's of pouse mointers. It's pretty much safe to do it like this
 
 #define NORMAL_MOUSE_ID			17
 #define SCROLL_LEFT_MOUSE_ID		1440
