@@ -1187,8 +1187,9 @@ void ScummEngine::initScummVars() {
 		if (_version >= 6 && VAR_V6_EMSSPACE != 0xFF)
 			VAR(VAR_V6_EMSSPACE) = 10000;
 
-		// Sets screen effect delay
-		VAR(59) = 3;
+		// Sets fade delay
+		// byte VAR_FADE_DELAY = (_version == 7) ? 117 : 59;
+		// VAR(VAR_FADE_DELAY) = 3;
 	}
 	
 	if ((_features & GF_MACINTOSH) && (_version == 3)) {
