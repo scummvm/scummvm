@@ -190,8 +190,8 @@ int Sound::playSoundBuffer(PlayingSoundHandle *handle, SOUNDBUFFER *buf, int vol
 	return SUCCESS;
 }
 
-int Sound::playSound(SOUNDBUFFER *buf, int volume) {
-	return playSoundBuffer(&_effectHandle, buf, 2 * volume, false);
+int Sound::playSound(SOUNDBUFFER *buf, int volume, bool loop) {
+	return playSoundBuffer(&_effectHandle, buf, 2 * volume, loop);
 }
 
 int Sound::pauseSound() {

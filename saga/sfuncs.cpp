@@ -1156,7 +1156,7 @@ int Script::SF_playSound(SCRIPTFUNC_PARAMS) {
 	SDataWord_T param = thread->pop() - 13;
 
 	if (/* param >= 0 && */ param < ARRAYSIZE(sfxTable))
-		_vm->_sndRes->playSound(sfxTable[param].res, sfxTable[param].vol);
+		_vm->_sndRes->playSound(sfxTable[param].res, sfxTable[param].vol, false);
 	else
 		_vm->_sound->stopSound();
 

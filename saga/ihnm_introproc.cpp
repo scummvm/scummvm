@@ -339,11 +339,30 @@ int Scene::IHNMHateProc(int param, SCENE_INFO *scene_info) {
 
 		q_event = _vm->_events->queue(&event);
 
+		// Background sound
+		event.type = ONESHOT_EVENT;
+		event.code = SOUND_EVENT;
+		event.op = EVENT_PLAY;
+		event.param = 260;	// FIXME: Verify sound
+		event.param2 = 255;	// FIXME: Verify volume
+		event.param3 = SOUND_LOOP;
+		event.time = 0;
+
+		q_event = _vm->_events->queue(&event);
+
+		// End background sound after the voice has finished
+		event.type = ONESHOT_EVENT;
+		event.code = SOUND_EVENT;
+		event.op = EVENT_STOP;
+		event.time = _vm->_sndRes->getVoiceLength(0);
+
+		q_event = _vm->_events->chain(q_event, &event);
+
 		// End scene after the voice has finished
 		event.type = ONESHOT_EVENT;
 		event.code = SCENE_EVENT;
 		event.op = EVENT_END;
-		event.time = _vm->_sndRes->getVoiceLength(0);
+		event.time = 0;
 
 		q_event = _vm->_events->chain(q_event, &event);
 		break;

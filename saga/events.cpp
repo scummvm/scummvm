@@ -309,6 +309,11 @@ int Events::handleOneShot(EVENT *event) {
 		}
 
 		break;
+	case SOUND_EVENT:
+		_vm->_sound->stopSound();
+		if (event->op == EVENT_PLAY)
+			_vm->_sndRes->playSound(event->param, event->param2, event->param3 != 0);
+		break;
 	case VOICE_EVENT:
 		_vm->_sndRes->playVoice(event->param);
 		break;

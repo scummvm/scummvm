@@ -53,7 +53,7 @@ SndRes::SndRes(SagaEngine *vm) : _vm(vm) {
 	_init = 1;
 }
 
-int SndRes::playSound(uint32 sound_rn, int volume) {
+int SndRes::playSound(uint32 sound_rn, int volume, bool loop) {
 	SOUNDBUFFER snd_buffer;
 
 	debug(0, "SndRes::playSound(%ld)", sound_rn);
@@ -63,7 +63,7 @@ int SndRes::playSound(uint32 sound_rn, int volume) {
 		return FAILURE;
 	}
 
-	_vm->_sound->playSound(&snd_buffer, volume);
+	_vm->_sound->playSound(&snd_buffer, volume, loop);
 
 	return SUCCESS;
 }

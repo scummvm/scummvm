@@ -32,6 +32,10 @@
 
 namespace Saga {
 
+enum SOUND_FLAGS {
+	SOUND_LOOP = 1
+};
+
 struct SOUNDBUFFER {
 	uint16 s_freq;
 	int s_samplebits;
@@ -48,7 +52,7 @@ public:
 	Sound(SagaEngine *vm, SoundMixer *mixer, int enabled);
 	~Sound();
 
-	int playSound(SOUNDBUFFER *buf, int volume);
+	int playSound(SOUNDBUFFER *buf, int volume, bool loop);
 	int pauseSound();
 	int resumeSound();
 	int stopSound();
