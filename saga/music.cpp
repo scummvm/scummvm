@@ -47,7 +47,8 @@ static const byte mt32_to_gm[128] = {
 	 47, 117, 127, 118, 118, 116, 115, 119, 115, 112,  55, 124, 123,   0,  14, 117  // 7x
 };
 
-MusicPlayer::MusicPlayer(MidiDriver *driver) : _driver(driver), _looping(false) {
+MusicPlayer::MusicPlayer(MidiDriver *driver) : _driver(driver), _looping(false), _isPlaying(false)  {
+	memset(_channel, 0, sizeof(_channel));
 	this->open();
 }
 	
@@ -84,6 +85,7 @@ int MusicPlayer::open() {
 	int ret = _driver->open();
 	if (ret)
 		return ret;
+
 	_driver->setTimerCallback(this, &onTimer);
 	return 0;
 }
