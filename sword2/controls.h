@@ -20,16 +20,28 @@
 #ifndef	_CONTROL_S
 #define	_CONTROL_S
 
-uint32 Restore_control(void);
-void Save_control(void);
-void Quit_control(void);
-void Restart_control(void);
-void Option_control(void);
-int32 ReadOptionSettings(void);
-void UpdateGraphicsLevel(uint8 newLevel);
+class Sword2Gui {
+public:
+	int _baseSlot;
+	uint8 _currentGraphicsLevel;
 
-extern uint8 subtitles;			// text selected
-extern uint8 speechSelected;
-extern uint8 current_graphics_level;
+	uint8 _subtitles;
+	uint8 _speechSelected;
+	uint8 _stereoReversed;
+	uint8 _pointerTextSelected;
+
+	Sword2Gui() : _baseSlot(0), _stereoReversed(0),
+		_pointerTextSelected(0) {}
+
+	uint32 restoreControl(void);
+	void saveControl(void);
+	void quitControl(void);
+	void restartControl(void);
+	void optionControl(void);
+	int32 readOptionSettings(void);
+	void updateGraphicsLevel(uint8 newLevel);
+};
+
+extern Sword2Gui gui;
 
 #endif

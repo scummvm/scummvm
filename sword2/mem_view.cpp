@@ -27,7 +27,7 @@
 // has to be global because a local in Fetch_mem_owner is destroyed on exit
 char buf[50];
 
-void MemoryManager::displayMemory(void) {
+void Sword2MemoryManager::displayMemory(void) {
 	int pass, found_end, k, j, free = 0;
 	_standardHeader	*file_header;
 	int scrolls = 0;
@@ -120,7 +120,7 @@ void MemoryManager::displayMemory(void) {
 		(free * 100) / _totalFreeMemory);
 }
 
-const char *MemoryManager::fetchOwner(uint32 uid) {
+const char *Sword2MemoryManager::fetchOwner(uint32 uid) {
 	switch (uid) {
 	case UID_memman:
 		return "MEMMAN";
@@ -146,7 +146,7 @@ const char *MemoryManager::fetchOwner(uint32 uid) {
 	}
 }
 
-void MemoryManager::memoryString(char *string) {
+void Sword2MemoryManager::memoryString(char *string) {
 	int blockNo = _baseMemBlock;
 	int blocksUsed = 0;
 	int mem_free = 0;

@@ -59,7 +59,7 @@
 
 #define BUFFERSIZE	4096
 
-ResourceManager	res_man;	//declare the object global
+Sword2ResourceManager	res_man;	//declare the object global
 
 // ---------------------------------------------------------------------------
 //
@@ -90,7 +90,7 @@ typedef struct {
 
 // FIXME: Should init() / exit() be moved to constructor / destructor instead?
 
-void ResourceManager::init(void) {
+void Sword2ResourceManager::init(void) {
 	// We read in the resource info which tells us the names of the
 	// resource cluster files ultimately, although there might be groups
 	// within the clusters at this point it makes no difference. We only
@@ -240,7 +240,7 @@ void ResourceManager::init(void) {
 		file.close();
 }
 
-void ResourceManager::exit(void) {
+void Sword2ResourceManager::exit(void) {
 	// free up our mallocs
 	free(_resList);
 	free(_age);
@@ -433,7 +433,7 @@ void convertEndian(uint8 *file, uint32 len) {
 	}
 }
 
-uint8 *ResourceManager::open(uint32 res) {
+uint8 *Sword2ResourceManager::open(uint32 res) {
 	// returns ad of resource. Loads if not in memory
 	// retains a count
 	// resource can be aged out of memory if count = 0
@@ -563,7 +563,7 @@ uint8 *ResourceManager::open(uint32 res) {
 	return (uint8 *) _resList[res]->ad;
 }
 
-uint8 ResourceManager::checkValid(uint32 res) {
+uint8 Sword2ResourceManager::checkValid(uint32 res) {
 	// returns '1' if resource is valid, otherwise returns '0'
 	// used in startup.cpp to ignore invalid screen-manager resources
 
@@ -584,7 +584,7 @@ uint8 ResourceManager::checkValid(uint32 res) {
 	return 1;
 }
 
-void ResourceManager::nextCycle(void) {
+void Sword2ResourceManager::nextCycle(void) {
 	// increment the cycle and calculate actual per-cycle memory useage
 
 #ifdef _SWORD2_DEBUG
@@ -614,12 +614,12 @@ void ResourceManager::nextCycle(void) {
 		_resTime++;
 }
 
-uint32 ResourceManager::fetchUsage(void) {
+uint32 Sword2ResourceManager::fetchUsage(void) {
 	// returns memory usage previous cycle
 	return _currentMemoryUsage;
 }
 
-void ResourceManager::close(uint32 res) {
+void Sword2ResourceManager::close(uint32 res) {
 	// decrements the count
 	// resource floats when count = 0
 
@@ -642,7 +642,7 @@ void ResourceManager::close(uint32 res) {
 	}
 }
 
-uint32 ResourceManager::fetchLen(uint32 res) {
+uint32 Sword2ResourceManager::fetchLen(uint32 res) {
 	// returns the total file length of a resource - i.e. all headers are
 	// included too
 
@@ -675,23 +675,23 @@ uint32 ResourceManager::fetchLen(uint32 res) {
 	return len;
 }
 
-char *ResourceManager::fetchCluster(uint32 res) {
+char *Sword2ResourceManager::fetchCluster(uint32 res) {
 	// returns a pointer to the ascii name of the cluster file which
 	// contains resource res
 	return _resourceFiles[_resConvTable[res * 2]];
 }
 
-uint32 ResourceManager::fetchAge(uint32 res) {
+uint32 Sword2ResourceManager::fetchAge(uint32 res) {
 	// return the age of res
 	return _age[res];
 }
 
-uint32 ResourceManager::fetchCount(uint32 res) {
+uint32 Sword2ResourceManager::fetchCount(uint32 res) {
 	// return the open count of res
 	return _count[res];
 }
 
-uint32 ResourceManager::helpTheAgedOut(void) {
+uint32 Sword2ResourceManager::helpTheAgedOut(void) {
 	// remove from memory the oldest closed resource
 
 	uint32 oldest_res;	// holds id of oldest found so far when we have to chuck stuff out of memory
@@ -733,7 +733,7 @@ uint32 ResourceManager::helpTheAgedOut(void) {
 	return _resList[oldest_res]->size;	// return bytes freed
 }
 
-void ResourceManager::printConsoleClusters(void) {
+void Sword2ResourceManager::printConsoleClusters(void) {
 	uint32 j;
 
 	if (_totalClusters) {
@@ -746,7 +746,7 @@ void ResourceManager::printConsoleClusters(void) {
 	Scroll_console();
 }
 
-void ResourceManager::examine(uint8 *input) {
+void Sword2ResourceManager::examine(uint8 *input) {
 	uint32 j = 0;
 	uint32 res;
 	_standardHeader	*file_header;
@@ -859,7 +859,7 @@ void ResourceManager::examine(uint8 *input) {
 	}
 }
 
-void ResourceManager::kill(uint8 *input) {
+void Sword2ResourceManager::kill(uint8 *input) {
 	int j = 0;
 	uint32 res;
 
@@ -897,7 +897,7 @@ void ResourceManager::kill(uint8 *input) {
 	}
 }
 
-void ResourceManager::remove(uint32 res) {
+void Sword2ResourceManager::remove(uint32 res) {
 	if (_age[res]) {
 		_age[res] = 0;			// effectively gone from _resList
 		memory.freeMemory(_resList[res]);	// release the memory too
@@ -906,7 +906,7 @@ void ResourceManager::remove(uint32 res) {
 		debug(5, "remove(%d) not even in memory!", res);
 }
 
-void ResourceManager::removeAll(void) {
+void Sword2ResourceManager::removeAll(void) {
 	// remove all res files from memory - ready for a total restart
 	// including player object & global variables resource
 
@@ -926,7 +926,7 @@ void ResourceManager::removeAll(void) {
 	} while	(j != -1);
 }
 
-void ResourceManager::killAll(uint8 wantInfo) {
+void Sword2ResourceManager::killAll(uint8 wantInfo) {
 	// remove all res files from memory
 	// its quicker to search the mem blocs for res files than search
 	// resource lists for those in memory
@@ -999,7 +999,7 @@ void ResourceManager::killAll(uint8 wantInfo) {
 // disappear forever, or some plaster-filled holes in sand to crash the game &
 // get James in trouble again.
 
-void ResourceManager::killAllObjects(uint8 wantInfo) {
+void Sword2ResourceManager::killAllObjects(uint8 wantInfo) {
 	// remove all object res files from memory, excluding George
 	// its quicker to search the mem blocs for res files than search
 	// resource lists for those in memory
@@ -1063,7 +1063,7 @@ void ResourceManager::killAllObjects(uint8 wantInfo) {
 		Print_to_console(" expelled %d object resource(s)", nuked);
 }
 
-void ResourceManager::cacheNewCluster(uint32 newCluster) {
+void Sword2ResourceManager::cacheNewCluster(uint32 newCluster) {
 	// Stop any music from streaming off the CD before we start the
 	// cluster-copy!
 	//
@@ -1298,7 +1298,7 @@ void ResourceManager::cacheNewCluster(uint32 newCluster) {
 	fclose(file);
 }
 
-void ResourceManager::getCd(int cd) {
+void Sword2ResourceManager::getCd(int cd) {
 	// TODO support a seperate path for cd data?
 	
 	bool done = false;

@@ -39,19 +39,10 @@
 #define	MAX_STRING_LEN		64	// 20 was too low; better to be safe ;)
 #define CHARACTER_OVERLAP	 2	// overlap characters by 3 pixels
 
-uint8 subtitles;
-uint8 speechSelected;
-uint8 stereoReversed = 0;
-
-int baseSlot = 0;
-
-uint8 current_graphics_level;
-
-int32 WriteOptionSettings(void);
-void Control_error(char* text);
-
 // our fonts start on SPACE character (32)
 #define SIZE_OF_CHAR_SET (256 - 32)
+
+Sword2Gui gui;
 
 enum {
 	kAlignLeft,
@@ -725,6 +716,8 @@ private:
 	Sword2Button *_okButton;
 	Sword2Button *_cancelButton;
 
+	int32 writeOptionSettings(void);
+
 public:
 	Sword2OptionsDialog() {
 		_fontRenderer = new Sword2FontRenderer(controls_font_id);
@@ -782,11 +775,11 @@ public:
 		registerWidget(_okButton);
 		registerWidget(_cancelButton);
 
-		ReadOptionSettings();
+		gui.readOptionSettings();
 
-		_objectLabelsSwitch->setValue(pointerTextSelected != 0);
-		_subtitlesSwitch->setValue(subtitles != 0);
-		_reverseStereoSwitch->setValue(stereoReversed != 0);
+		_objectLabelsSwitch->setValue(gui._pointerTextSelected != 0);
+		_subtitlesSwitch->setValue(gui._subtitles != 0);
+		_reverseStereoSwitch->setValue(gui._stereoReversed != 0);
 		_musicSwitch->setValue(g_sound->isMusicMute() == 0);
 		_speechSwitch->setValue(g_sound->isSpeechMute() == 0);
 		_fxSwitch->setValue(g_sound->isFxMute() == 0);
@@ -850,9 +843,9 @@ public:
 		// is handled when the dialog is terminated.
 
 		if (widget == _reverseStereoSwitch) {
-			if (result != stereoReversed)
+			if (result != gui._stereoReversed)
 				g_sound->reverseStereo();
-			stereoReversed = result;
+			gui._stereoReversed = result;
 		} else if (widget == _musicSwitch) {
 			g_sound->muteMusic(result);
 		} else if (widget == _musicSlider) {
@@ -865,7 +858,7 @@ public:
 			_fxSwitch->setValue(result != 0);
 		} else if (widget == _gfxSlider) {
 			_gfxPreview->setState(result);
-			UpdateGraphicsLevel(result);
+			gui.updateGraphicsLevel(result);
 		} else if (widget == _okButton) {
 			// Apply the changes
 			g_sound->muteMusic(_musicSwitch->getValue() == 0);
@@ -875,22 +868,55 @@ public:
 			g_sound->setSpeechVolume(_speechSlider->getValue());
 			g_sound->setFxVolume(_fxSlider->getValue());
 
-			UpdateGraphicsLevel(_gfxSlider->getValue());
+			gui.updateGraphicsLevel(_gfxSlider->getValue());
 
-			subtitles = _subtitlesSwitch->getValue();
-			pointerTextSelected = _objectLabelsSwitch->getValue();
-			speechSelected = _speechSwitch->getValue();
-			stereoReversed = _reverseStereoSwitch->getValue();
+			gui._subtitles = _subtitlesSwitch->getValue();
+			gui._pointerTextSelected = _objectLabelsSwitch->getValue();
+			gui._speechSelected = _speechSwitch->getValue();
+			gui._stereoReversed = _reverseStereoSwitch->getValue();
 
-			WriteOptionSettings();
+			writeOptionSettings();
 			setResult(1);
 		} else if (widget == _cancelButton) {
 			// Revert the changes
-			ReadOptionSettings();
+			gui.readOptionSettings();
 			setResult(0);
 		}
 	}
 };
+
+int32 Sword2OptionsDialog::writeOptionSettings(void) {
+	uint8 buff[10];
+	char filename[256];
+	SaveFile *fp;
+	SaveFileManager *mgr = g_system->get_savefile_manager();
+	
+	sprintf(filename, "%s-settings.dat", g_sword2->_game_name);
+
+	buff[0] = g_sound->getMusicVolume();
+	buff[1] = g_sound->getSpeechVolume();
+	buff[2] = g_sound->getFxVolume();
+	buff[3] = g_sound->isMusicMute();
+	buff[4] = g_sound->isSpeechMute();
+	buff[5] = g_sound->isFxMute();
+	buff[6] = GetRenderType();
+	buff[7] = gui._subtitles;
+	buff[8] = gui._pointerTextSelected;
+	buff[9] = gui._stereoReversed;
+	
+	if (!(fp = mgr->open_savefile(filename, g_sword2->getSavePath(), true)))
+		return 1;
+
+	if (fp->write(buff, 10) != 10) {
+		delete fp;
+		delete mgr;
+		return 2;
+	}
+
+	delete fp;
+	delete mgr;
+	return 0;
+}
 
 enum {
 	kSaveDialog,
@@ -1015,6 +1041,8 @@ private:
 	Sword2Button *_okButton;
 	Sword2Button *_cancelButton;
 
+	void saveLoadError(char *text);
+
 public:
 	Sword2SaveLoadDialog(int mode) : _mode(mode), _selectedSlot(-1) {
 		int i;
@@ -1080,13 +1108,13 @@ public:
 
 	void updateSlots() {
 		for (int i = 0; i < 8; i++) {
-			Sword2Slot *slot = _slotButton[(baseSlot + i) % 8];
+			Sword2Slot *slot = _slotButton[(gui._baseSlot + i) % 8];
 			Sword2FontRenderer *fr;
 			uint8 description[SAVE_DESCRIPTION_LEN];
 
 			slot->setY(72 + i * 36);
 
-			if (baseSlot + i == _selectedSlot) {
+			if (gui._baseSlot + i == _selectedSlot) {
 				slot->setEditable(_mode == kSaveDialog);
 				slot->setState(1);
 				fr = _fontRenderer2;
@@ -1096,11 +1124,11 @@ public:
 				fr = _fontRenderer1;
 			}
 
-			if (GetSaveDescription(baseSlot + i, description) == SR_OK) {
-				slot->setText(fr, baseSlot + i, (char *) description);
+			if (GetSaveDescription(gui._baseSlot + i, description) == SR_OK) {
+				slot->setText(fr, gui._baseSlot + i, (char *) description);
 				slot->setClickable(true);
 			} else {
-				slot->setText(fr, baseSlot + i, NULL);
+				slot->setText(fr, gui._baseSlot + i, NULL);
 				slot->setClickable(_mode == kSaveDialog);
 			}
 
@@ -1113,29 +1141,29 @@ public:
 
 	virtual void onAction(Sword2Widget *widget, int result = 0) {
 		if (widget == _zupButton) {
-			if (baseSlot > 0) {
-				if (baseSlot >= 8)
-					baseSlot -= 8;
+			if (gui._baseSlot > 0) {
+				if (gui._baseSlot >= 8)
+					gui._baseSlot -= 8;
 				else
-					baseSlot = 0;
+					gui._baseSlot = 0;
 				updateSlots();
 			}
 		} else if (widget == _upButton) {
-			if (baseSlot > 0) {
-				baseSlot--;
+			if (gui._baseSlot > 0) {
+				gui._baseSlot--;
 				updateSlots();
 			}
 		} else if (widget == _downButton) {
-			if (baseSlot < 92) {
-				baseSlot++;
+			if (gui._baseSlot < 92) {
+				gui._baseSlot++;
 				updateSlots();
 			}
 		} else if (widget == _zdownButton) {
-			if (baseSlot < 92) {
-				if (baseSlot <= 84)
-					baseSlot += 8;
+			if (gui._baseSlot < 92) {
+				if (gui._baseSlot <= 84)
+					gui._baseSlot += 8;
 				else
-					baseSlot = 92;
+					gui._baseSlot = 92;
 				updateSlots();
 			}
 		} else if (widget == _okButton) {
@@ -1193,7 +1221,7 @@ public:
 				}
 			} else {
 				if (result == kSelectSlot)
-					_selectedSlot = baseSlot + (slot->getY() - 72) / 35;
+					_selectedSlot = gui._baseSlot + (slot->getY() - 72) / 35;
 				else if (result == kDeselectSlot)
 					_selectedSlot = -1;
 
@@ -1221,7 +1249,7 @@ public:
 		// but I doubt that will make any noticeable difference.
 
 		slot->paint();
-		_fontRenderer2->drawText(_editBuffer, 130, 78 + (_selectedSlot - baseSlot) * 36);
+		_fontRenderer2->drawText(_editBuffer, 130, 78 + (_selectedSlot - gui._baseSlot) * 36);
 	}
 
 	virtual void paint() {
@@ -1271,7 +1299,7 @@ public:
 					break;
 				}
 
-				Control_error((char*) (FetchTextLine(res_man.open(textId / SIZE), textId & 0xffff) + 2));
+				saveLoadError((char*) (FetchTextLine(res_man.open(textId / SIZE), textId & 0xffff) + 2));
 				result = 0;
 			}
 		} else {
@@ -1292,7 +1320,7 @@ public:
 					break;
 				}
 
-				Control_error((char *) (FetchTextLine(res_man.open(textId / SIZE), textId & 0xffff) + 2));
+				saveLoadError((char *) (FetchTextLine(res_man.open(textId / SIZE), textId & 0xffff) + 2));
 				result = 0;
 			} else {
 				// Prime system with a game cycle
@@ -1314,7 +1342,36 @@ public:
 	}
 };
 
-uint32 Restore_control(void) {
+void Sword2SaveLoadDialog::saveLoadError(char* text) {
+	// Print a message on screen. Second parameter is duration.
+	DisplayMsg((uint8 *) text, 0);
+
+	// Wait for ESC or mouse click
+	while (1) {
+		_mouseEvent *me;
+
+		ServiceWindows();
+
+		if (KeyWaiting()) {
+			_keyboardEvent ke;
+
+			ReadKey(&ke);
+			if (ke.keycode == 27)
+				break;
+		}
+
+		me = MouseEvent();
+		if (me && (me->buttons & RD_LEFTBUTTONDOWN))
+			break;
+
+		g_system->delay_msecs(20);
+	}
+
+	// Remove the message.
+	RemoveMsg();
+}
+
+uint32 Sword2Gui::restoreControl(void) {
 	// returns 0 for no restore
 	//         1 for restored ok
 
@@ -1322,12 +1379,12 @@ uint32 Restore_control(void) {
 	return loadDialog.run();
 }
 
-void Save_control(void) {
+void Sword2Gui::saveControl(void) {
 	Sword2SaveLoadDialog saveDialog(kSaveDialog);
 	saveDialog.run();
 }
 
-void Quit_control(void) {
+void Sword2Gui::quitControl(void) {
 	Sword2MiniDialog quitDialog(149618692);	// quit text
 
 	if (!quitDialog.run()) {
@@ -1341,7 +1398,7 @@ void Quit_control(void) {
 	exit(0);
 }
 
-void Restart_control(void) {
+void Sword2Gui::restartControl(void) {
 	uint32 temp_demo_flag;
 
 	Sword2MiniDialog restartDialog(149618693);	// restart text
@@ -1407,36 +1464,7 @@ void Restart_control(void) {
  	this_screen.new_palette = 99;
 }
 
-void Control_error(char* text) {
-	// Print a message on screen. Second parameter is duration.
-	DisplayMsg((uint8 *) text, 0);
-
-	// Wait for ESC or mouse click
-	while (1) {
-		_mouseEvent *me;
-
-		ServiceWindows();
-
-		if (KeyWaiting()) {
-			_keyboardEvent ke;
-
-			ReadKey(&ke);
-			if (ke.keycode == 27)
-				break;
-		}
-
-		me = MouseEvent();
-		if (me && (me->buttons & RD_LEFTBUTTONDOWN))
-			break;
-
-		g_system->delay_msecs(20);
-	}
-
-	// Remove the message.
-	RemoveMsg();
-}
-
-int32 ReadOptionSettings(void) {
+int32 Sword2Gui::readOptionSettings(void) {
 	// settings file is 9 bytes long:
 	//   1 music volume
 	//   2 speech volume
@@ -1474,60 +1502,27 @@ int32 ReadOptionSettings(void) {
 	g_sound->muteSpeech(buff[4]);
 	g_sound->muteFx(buff[5]);
 
-	UpdateGraphicsLevel(buff[6]);
+	updateGraphicsLevel(buff[6]);
 
-	speechSelected = !buff[4];
-	subtitles = buff[7];
-	pointerTextSelected = buff[8];
+	_speechSelected = !buff[4];
+	_subtitles = buff[7];
+	_pointerTextSelected = buff[8];
 
-	if (buff[9] != stereoReversed)
+	if (buff[9] != _stereoReversed)
 		g_sound->reverseStereo();
 
-	stereoReversed = buff[9];
+	gui._stereoReversed = buff[9];
 	return 0;
 }
 
-int32 WriteOptionSettings(void) {
-	uint8 buff[10];
-	char filename[256];
-	SaveFile *fp;
-	SaveFileManager *mgr = g_system->get_savefile_manager();
-	
-	sprintf(filename, "%s-settings.dat", g_sword2->_game_name);
-
-	buff[0] = g_sound->getMusicVolume();
-	buff[1] = g_sound->getSpeechVolume();
-	buff[2] = g_sound->getFxVolume();
-	buff[3] = g_sound->isMusicMute();
-	buff[4] = g_sound->isSpeechMute();
-	buff[5] = g_sound->isFxMute();
-	buff[6] = GetRenderType();
-	buff[7] = subtitles;
-	buff[8] = pointerTextSelected;
-	buff[9] = stereoReversed;
-	
-	if (!(fp = mgr->open_savefile(filename, g_sword2->getSavePath(), true)))
-		return 1;
-
-	if (fp->write(buff, 10) != 10) {
-		delete fp;
-		delete mgr;
-		return 2;
-	}
-
-	delete fp;
-	delete mgr;
-	return 0;
-}
-
-void Option_control(void) {
+void Sword2Gui::optionControl(void) {
 	Sword2OptionsDialog optionsDialog;
 
 	optionsDialog.run();
 	return;
 }
 
-void UpdateGraphicsLevel(uint8 newLevel) {
+void Sword2Gui::updateGraphicsLevel(uint8 newLevel) {
 	switch (newLevel) {
 	case 0:
 		// Lowest setting: no graphics fx
@@ -1561,5 +1556,5 @@ void UpdateGraphicsLevel(uint8 newLevel) {
 	// cannot be done with dimmed palette so we turn down one notch while
 	// dimmed, if at top level)
 
-	current_graphics_level = newLevel;
+	_currentGraphicsLevel = newLevel;
 }

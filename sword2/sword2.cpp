@@ -287,8 +287,8 @@ void Sword2State::go() {
 		return;
 	}
 
-	debug(5, "CALLING: ReadOptionSettings");
-	ReadOptionSettings();	//restore the menu settings
+	debug(5, "CALLING: readOptionSettings");
+	gui.readOptionSettings();
 
 	debug(5, "CALLING: InitialiseGame");
 	if (InitialiseGame()) {
@@ -301,7 +301,7 @@ void Sword2State::go() {
 			RestoreGame(_saveSlot);
 		else { // show restore menu
 			Set_mouse(NORMAL_MOUSE_ID);
-			if (!Restore_control())
+			if (!gui.restoreControl())
 				Start_game();
 		}
 	} else
@@ -508,8 +508,8 @@ void PauseGame(void) {
 	// if level at max, turn down because palette-matching won't work
 	// when dimmed
 
-	if (current_graphics_level == 3) {
-		UpdateGraphicsLevel(2);
+	if (gui._currentGraphicsLevel == 3) {
+		gui.updateGraphicsLevel(2);
 		graphics_level_fudged = 1;
 	}
 
@@ -531,12 +531,12 @@ void UnpauseGame(void) {
 
 	UnpauseAllSound();
 
-	// put back game screen palette; see Build_display.cpp (James26jun97)
+	// put back game screen palette; see Build_display.cpp
 	SetFullPalette(0xffffffff);
 
 	// If graphics level at max, turn up again
  	if (graphics_level_fudged) {
-		UpdateGraphicsLevel(3);
+		gui.updateGraphicsLevel(3);
 		graphics_level_fudged = 0;
 	}
 

@@ -99,7 +99,6 @@ uint32 old_button = 0;
 uint32 button_click = 0;
 
 uint32 pointer_text_bloc_no = 0;
-uint32 pointerTextSelected = 0;
 
 uint32 player_activity_delay = 0;	// player activity delay counter
 
@@ -241,19 +240,19 @@ void System_menu(void) {
 				// call the relevent screen
 				switch (hit) {
 				case 0:
-					Option_control();
+					gui.optionControl();
 					break;
 				case 1:
-					Quit_control();
+					gui.quitControl();
 					break;
 				case 2:
-					Save_control();
+					gui.saveControl();
 					break;
 				case 3:
-					Restore_control();
+					gui.restoreControl();
 					break;
 				case 4:
-					Restart_control();
+					gui.restartControl();
 					break;
 				}
 
@@ -880,7 +879,7 @@ void CreatePointerText(uint32 textId, uint32 pointerRes) {
 	int16 xOffset, yOffset;
 	uint8 justification;
 
-	if (pointerTextSelected) {
+	if (gui._pointerTextSelected) {
 		if (textId) {
 			// check what the pointer is, to set offsets
 			// correctly for text position

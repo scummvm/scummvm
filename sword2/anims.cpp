@@ -547,7 +547,7 @@ void CreateSequenceSpeech(_movieTextObject *sequenceText[]) {
 		sequence_text_list[line].speech_mem = NULL;
 		sequenceText[line]->speech = NULL;
 
-		if (speechSelected) {
+		if (gui._speechSelected) {
 			// speech is selected, so try that first
 
 			// set up path to speech cluster
@@ -572,7 +572,7 @@ void CreateSequenceSpeech(_movieTextObject *sequenceText[]) {
 
 		// if we want subtitles, or speech failed to load
 
-		if (subtitles || !speechRunning) {
+		if (gui._subtitles || !speechRunning) {
 			// open text resource & get the line
 			text = FetchTextLine(res_man.open(text_res), local_text);
 			// make the sprite

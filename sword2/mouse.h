@@ -80,8 +80,6 @@ extern uint32 mouse_mode_locked;
 //last minute for pause mode
 extern uint32 real_luggage_item;
 
-extern uint32 pointerTextSelected;
-
 void Reset_mouse_list(void);
 
 void Normal_mouse(void);

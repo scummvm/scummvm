@@ -976,7 +976,7 @@ int32 FN_i_speak(int32 *params) {
 		// for this line either, then just quit back to script right
 		// now!
 
-		if (subtitles == 0 && WantSpeechForLine(params[S_WAV]) == 0)
+		if (gui._subtitles == 0 && WantSpeechForLine(params[S_WAV]) == 0)
 			return IR_CONT;
 
 		if (cycle_skip == 0) {
@@ -1143,7 +1143,7 @@ int32 FN_i_speak(int32 *params) {
 		// if speech is selected, and this line is allowed speech
 		// (not if it's an fx subtitle!)
 
-		if (speechSelected && WantSpeechForLine(officialTextNumber)) {
+		if (gui._speechSelected && WantSpeechForLine(officialTextNumber)) {
 			// if the wavId paramter is zero because not yet
 			// compiled into speech command, we can still get it
 			// from the 1st 2 chars of the text line
@@ -1214,7 +1214,7 @@ int32 FN_i_speak(int32 *params) {
 		}
 
 		// if we want subtitles, or speech failed to load
-		if (subtitles || speechRunning == 0) {
+		if (gui._subtitles || speechRunning == 0) {
 			// then we're going to show the text
 			textRunning = 1;
 

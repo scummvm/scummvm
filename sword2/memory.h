@@ -60,7 +60,7 @@ typedef	struct {
 #define	UID_savegame_buffer		0xfffffff6
 #define UID_restoregame_buffer		0xfffffff5
 
-class MemoryManager {
+class Sword2MemoryManager {
 private:
 	// Address of init malloc to be freed later
 	uint8 *_freeMemman;
@@ -100,6 +100,6 @@ public:
 	void displayMemory(void);
 };
 
-extern MemoryManager memory;
+extern Sword2MemoryManager memory;
 
 #endif

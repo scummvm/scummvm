@@ -24,7 +24,7 @@
 
 #define	MAX_res_files	20
 
-class ResourceManager {
+class Sword2ResourceManager {
 public:
 	void init(void);		// read in the config file
 	void exit(void);
@@ -103,6 +103,6 @@ private:
 	char _cdDrives[24];
 };							
 
-extern ResourceManager res_man;	//declare the object global
+extern Sword2ResourceManager res_man;	//declare the object global
 
 #endif

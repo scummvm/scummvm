@@ -36,9 +36,9 @@ typedef struct {
 	uint16 *_buf;
 	int32 _bufSize;
 	PlayingSoundHandle _handle;
-} FxHandle;
+} Sword2FxHandle;
 
-class MusicHandle : public MusicStream {
+class Sword2MusicHandle : public MusicStream {
 public:
 	uint32 _id;
 	bool _firstTime;
@@ -57,9 +57,9 @@ public:
 	int16 read();
 	bool eos() const;
 
-	MusicHandle() : MusicStream(), _firstTime(false), _streaming(false),
-			_paused(false), _looping(false), _fading(0),
-			_fileStart(0), _filePos(0), _fileEnd(0),
+	Sword2MusicHandle() : MusicStream(), _firstTime(false),
+			_streaming(false), _paused(false), _looping(false),
+			_fading(0), _fileStart(0), _filePos(0), _fileEnd(0),
 			_lastSample(0) {}
 };
 
@@ -70,8 +70,8 @@ private:
 	OSystem::MutexRef _mutex;
 	RateConverter *_converter;
 
-	FxHandle _fx[MAXFX];
-	MusicHandle _music[MAXMUS + 1];
+	Sword2FxHandle _fx[MAXFX];
+	Sword2MusicHandle _music[MAXMUS + 1];
 
 	uint8 _musicVol;
 

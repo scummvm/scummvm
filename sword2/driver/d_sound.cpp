@@ -63,7 +63,7 @@ static int32 musicVolTable[17] = {
 	143, 159, 175, 191, 207, 223, 239, 255
 };
 
-int16 MusicHandle::read() {
+int16 Sword2MusicHandle::read() {
 	uint8 in;
 	uint16 delta;
 	int16 out;
@@ -115,7 +115,7 @@ int16 MusicHandle::read() {
 	return out;
 }
 
-bool MusicHandle::eos() const {
+bool Sword2MusicHandle::eos() const {
 	if (!_streaming || _filePos >= _fileEnd)
 		return true;
 	return false;
