@@ -90,7 +90,21 @@ void Scene::Sector::load0(TextSplitter &ts, char *name, int id) {
   name_ = name;
   id_ = id;
   ts.scanString(" type %256s", 1, buf);
-  type_ = buf;
+
+  // FIXME: I don't think these are right (see grim loc_4A7D19, result is var_200?)
+  if (strstr(buf, "walk"))
+   type_ = 1;
+  else if (strstr(buf, "funnel"))
+   type_ = 3; // ??
+  else if (strstr(buf, "camera"))
+   type_ = 2;
+  else if (strstr(buf, "special"))
+   type_ = 4;
+  else if (strstr(buf, "chernobyl"))
+   type_ = 0;
+  else
+   error("Unknown sector type '%s' in room setup", buf);
+
   ts.scanString(" default visibility %256s", 1, buf);
   visibility_ = buf;
   ts.scanString(" height %f", 1, &height_);

@@ -428,6 +428,43 @@ static void IsMessageGoing() {
   }
 }
 
+// Sector functions
+static void GetActorSector(void) {
+  Actor *act = check_actor(1);
+  int sectorType = check_int(2);
+
+  warning("GetActorSector(%s, %d): STUB", act->name(), sectorType);
+
+  if (0) {
+   lua_pushnumber(0); // id
+   lua_pushstring(""); // name
+   lua_pushnumber(0); // type
+  } else {
+   lua_pushnil();
+  }
+}
+
+static void IsActorInSector(void) {
+  Actor *act = check_actor(1);
+  const char *name = luaL_check_string(2);
+  int i, numSectors = Engine::instance()->currScene()->getSectorCount();
+
+  warning("IsActorInSector(%s, %s): STUB", act->name(), name);
+
+  for (i=0; i<numSectors; i++) {
+   if (strstr(Engine::instance()->currScene()->getSectorName(i), name)) {
+    warning("found sector!");
+    if (Engine::instance()->currScene()->isPointInSector(i, act->pos())) {
+      lua_pushnumber(Engine::instance()->currScene()->getSectorID(i));
+      lua_pushstring((char*)Engine::instance()->currScene()->getSectorName(i));
+      lua_pushnumber(Engine::instance()->currScene()->getSectorType(i));
+    }
+   }
+  } 
+
+  lua_pushnil();
+}
+
 // Scene functions
 
 static void MakeCurrentSet() {
@@ -723,8 +760,6 @@ static char *stubFuncs[] = {
   "GetActorRot",
   "GetPointSector",
   "IsPointInSector",
-  "GetActorSector",
-  "IsActorInSector",
   "SetActorFrustrumCull",
   "ShutUpActor",
   "SetActorFollowBoxes",
@@ -979,6 +1014,8 @@ struct luaL_reg builtins[] = {
   { "GetVisibleThings", GetVisibleThings },
   { "SayLine", SayLine },
   { "IsMessageGoing", IsMessageGoing },
+  { "GetActorSector", GetActorSector },
+  { "IsActorInSector", IsActorInSector },
   { "MakeCurrentSet", MakeCurrentSet },
   { "MakeCurrentSetup", MakeCurrentSetup },
   { "GetCurrentSetup", GetCurrentSetup },

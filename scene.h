@@ -52,6 +52,13 @@ public:
   void setSetup(int num) { currSetup_ = setups_ + num; }
   int setup() const { return currSetup_ - setups_; }
 
+  // Sector access functions
+  int getSectorCount() { return numSectors_; }
+  const char *getSectorName(int id) const { return sectors_[id].name_.c_str(); }
+  int getSectorType(int id) { return sectors_[id].type_; }
+  int getSectorID(int id) { return sectors_[id].id_; }
+  bool isPointInSector(int id, Vector3d point) { return false; } // FIXME: Need pointInPoly func
+
 private:
   struct Setup {		// Camera setup data
     void load(TextSplitter &ts);
@@ -76,7 +83,7 @@ private:
     void load0(TextSplitter &ts, char *name, int id);
     int numVertices_, id_;
     std::string name_;
-    std::string type_;
+    int type_;
     std::string visibility_;
     Vector3d *vertices_;
     float height_;
