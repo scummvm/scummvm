@@ -710,6 +710,8 @@ void Scumm::setOwnerOf(int obj, int owner) {
 
 int Scumm::getObjX(int obj) {
 	if (obj < NUM_ACTORS) {
+		if (obj==0)
+			return 0; /* fix for indy4's map */
 		return derefActorSafe(obj,"getObjX")->x;
 	} else {
 		if (whereIsObject(obj)==WIO_NOT_FOUND)
@@ -721,6 +723,8 @@ int Scumm::getObjX(int obj) {
 
 int Scumm::getObjY(int obj) {
 	if (obj < NUM_ACTORS) {
+		if (obj==0)
+			return 0; /* fix for indy4's map */
 		return derefActorSafe(obj,"getObjY")->y;
 	} else {
 		if (whereIsObject(obj)==WIO_NOT_FOUND)
