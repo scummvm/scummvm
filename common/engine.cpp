@@ -235,7 +235,7 @@ void CDECL warning(const char *s, ...) {
 #endif
 }
 
-uint16 _debugLevel = 1;
+uint16 _debugLevel = 0;
 
 void CDECL debug(int level, const char *s, ...) {
 #ifdef __PALM_OS__
