@@ -65,6 +65,8 @@ int MidiDriver_WIN::open() {
 }
 
 void MidiDriver_WIN::close() {
+	if (!_isOpen)
+		return;
 	_isOpen = false;
 	midiOutUnprepareHeader (_mo, &_streamHeader, sizeof (_streamHeader));
 	check_error(midiOutClose(_mo));
@@ -83,7 +85,6 @@ void MidiDriver_WIN::send(uint32 b)
 	u.bData[1] = (byte)((b & 0x0000FF00) >> 8);
 	u.bData[0] = (byte)(b & 0x000000FF);
 
-	// printMidi(u.bData[0], u.bData[1], u.bData[2], u.bData[3]);
 	check_error(midiOutShortMsg(_mo, u.dwData));
 }
 

@@ -867,6 +867,9 @@ int MidiDriver_ADLIB::open() {
 }
 
 void MidiDriver_ADLIB::close() {
+	if (!_isOpen)
+		return;
+
 	uint i;
 	for (i = 0; i < ARRAYSIZE(_voices); ++i) {
 		if (_voices [i]._part)

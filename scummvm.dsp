@@ -266,6 +266,10 @@ SOURCE=.\sound\midiparser.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\sound\midiparser_smf.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\sound\midiparser_xmidi.cpp
 # End Source File
 # Begin Source File

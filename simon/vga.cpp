@@ -1814,8 +1814,9 @@ void SimonState::vc_69() {
 	if (_vc72_var1 == 999) {
 		_vc70_var2 = b;
 		if (_game & GF_WIN) {
-			midi.initialize();
-			midi.play();
+			// FIXME: What do we expect to have happen here?
+			// midi.initialize();
+			// midi.play();
 		}
 		_vc72_var1 = b;
 	} else if (_vc72_var1 != 0xFFFF) {
@@ -1854,8 +1855,7 @@ void SimonState::vc_72() {
 		_vc72_var3 = a;
 	}
 
-	if (_debugMode)
-		warning("vc_72(%d,%d): music stuff?", a, b);
+	midi.jump (a, b);
 }
 
 void SimonState::vc_73_set_op189_flag() {

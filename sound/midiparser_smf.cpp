@@ -48,8 +48,6 @@ protected:
 	uint32 _ppqn;
 	uint32 _psec_per_tick; // Microseconds per delta tick
 
-	int _lock;
-
 protected:
 	uint32 read4high (byte * &data) {
 		uint32 val = 0;
@@ -109,16 +107,9 @@ uint32 MidiParser_SMF::readVLQ (byte * &data) {
 }
 
 void MidiParser_SMF::onTimer() {
-	if (_lock++) {
-		--_lock;
-		return;
-	}
-
 	if (!_play_pos || !_driver)
 		return;
-
 	playToTime (_play_time + _timer_rate, true);
-	_lock = 0;
 }
 
 void MidiParser_SMF::playToTime (uint32 psec, bool transmit) {
@@ -215,7 +206,6 @@ void MidiParser_SMF::playToTime (uint32 psec, bool transmit) {
 					if (transmit) {
 						_driver->metaEvent (event, pos, (uint16) length);
 					}
-					_lock = 0;
 					return;
 				} else if (event == 0x51) {
 					if (length >= 3) {
@@ -238,8 +228,6 @@ void MidiParser_SMF::playToTime (uint32 psec, bool transmit) {
 	_play_pos = pos;
 }
 
-// This code was adapted from the exult methods
-// XMIDI::ExtractTracks and XMIDI::ExtractTracksFromXmi
 bool MidiParser_SMF::loadMusic (byte *data, uint32 size) {
 	uint32 len;
 	bool isGMD = false; // Indicates an older GMD file without block headers
@@ -465,9 +453,6 @@ void MidiParser_SMF::allNotesOff() {
 }
 
 void MidiParser_SMF::unloadMusic() {
-	while (_lock);
-	++_lock;
-
 	_play_pos = NULL;
 	_data = NULL;
 	_num_tracks = 0;
@@ -476,8 +461,6 @@ void MidiParser_SMF::unloadMusic() {
 	_last_event_time = 0;
 	_running_status = 0;
 	allNotesOff();
-
-	_lock = 0;
 }
 
 void MidiParser_SMF::setTrack (byte track) {

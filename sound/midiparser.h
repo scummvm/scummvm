@@ -34,7 +34,7 @@ protected:
 	uint32 _timer_rate;
 
 public:
-	virtual bool loadMusic (byte *data) = 0;
+	virtual bool loadMusic (byte *data, uint32 size) = 0;
 	virtual void unloadMusic() = 0;
 
 	void setMidiDriver (MidiDriver *driver) { _driver = driver; }
@@ -44,7 +44,7 @@ public:
 	virtual void setTrack (byte track) = 0;
 	virtual void jumpToTick (uint32 tick) = 0;
 
-	static MidiParser *createParser_RIFF();
+	static MidiParser *createParser_SMF();
 	static MidiParser *createParser_XMIDI();
 };
 

@@ -1451,8 +1451,9 @@ void SimonState::o_unk_127() {
 				_vc72_var3 = 0xffff;
 				_midi_unk2 = 0xffff;
 				if (_game & GF_WIN) {
-					midi.initialize();
-					midi.play();
+					// FIXME: What do we expect to happen at this moment?
+					// midi.initialize();
+					// midi.play();
 				}
 				_vc72_var1 = b;
 			} else {

@@ -51,8 +51,6 @@ protected:
 
 	NoteTimer _notes_cache[32];
 
-	int _lock;
-
 protected:
 	uint32 read4high (byte * &data) {
 		uint32 val = 0;
@@ -69,8 +67,10 @@ protected:
 	uint32 readVLQ (byte * &data);
 	uint32 readVLQ2 (byte * &data);
 
+	void playToTime (uint32 psec, bool transmit);
+
 public:
-	bool loadMusic (byte *data);
+	bool loadMusic (byte *data, uint32 size);
 	void unloadMusic();
 
 	void setMidiDriver (MidiDriver *driver) { _driver = driver; }
@@ -130,6 +130,12 @@ uint32 MidiParser_XMIDI::readVLQ2 (byte * &pos) {
 }
 
 void MidiParser_XMIDI::onTimer() {
+	if (!_play_pos || !_driver)
+		return;
+	playToTime (_play_time + _timer_rate, true);
+}
+
+void MidiParser_XMIDI::playToTime (uint32 psec, bool transmit) {
 	uint32 delta;
 	uint32 end_time;
 	uint32 event_time;
@@ -143,15 +149,7 @@ void MidiParser_XMIDI::onTimer() {
 	byte vel;
 	uint32 note_length;
 	
-	if (_lock++) {
-		--_lock;
-		return;
-	}
-
-	if (!_play_pos || !_driver)
-		return;
-
-	end_time = _play_time + _timer_rate;
+	end_time = psec;
 	pos = _play_pos;
 
 	// Send any necessary note off events.
@@ -159,7 +157,8 @@ void MidiParser_XMIDI::onTimer() {
 	for (i = ARRAYSIZE(_notes_cache); i; --i, ++ptr) {
 		if (ptr->time_left) {
 			if (ptr->time_left <= _timer_rate) {
-				_driver->send (0x80 | ptr->channel | (ptr->note << 8));
+				if (transmit)
+					_driver->send (0x80 | ptr->channel | (ptr->note << 8));
 				ptr->time_left = 0;
 			} else {
 				ptr->time_left -= _timer_rate;
@@ -191,7 +190,8 @@ void MidiParser_XMIDI::onTimer() {
 					ptr->time_left = note_length;
 					ptr->channel = event & 0x0F;
 					ptr->note = note;
-					_driver->send (event | (note << 8) | (vel << 16));
+					if (transmit)
+						_driver->send (event | (note << 8) | (vel << 16));
 					break;
 				}
 			}
@@ -199,7 +199,8 @@ void MidiParser_XMIDI::onTimer() {
 
 		case 0xC: // Program Change
 		case 0xD: // Channel Aftertouch
-			_driver->send (event | (pos[0] << 8));
+			if (transmit)
+				_driver->send (event | (pos[0] << 8));
 			++pos;
 			break;
 
@@ -207,19 +208,22 @@ void MidiParser_XMIDI::onTimer() {
 		case 0xA: // Key Aftertouch
 		case 0xB: // Control Change
 		case 0xE: // Pitch Bender Change
-			_driver->send (event | (pos[0] << 8) | (pos[1] << 16));
+			if (transmit)
+				_driver->send (event | (pos[0] << 8) | (pos[1] << 16));
 			pos += 2;
 			break;
 
 		case 0xF: // Meta or SysEx event
 			switch (event & 0x0F) {
 			case 0x2: // Song Position Pointer
-				_driver->send (event | (pos[0] << 8) | (pos[1] << 16));
+				if (transmit)
+					_driver->send (event | (pos[0] << 8) | (pos[1] << 16));
 				pos += 2;
 				break;
 
 			case 0x3: // Song Select
-				_driver->send (event | (pos[0] << 8));
+				if (transmit)
+					_driver->send (event | (pos[0] << 8));
 				++pos;
 				break;
 
@@ -229,37 +233,42 @@ void MidiParser_XMIDI::onTimer() {
 			case 0xB: // Sequencer Continue
 			case 0xC: // Sequencer Stop
 			case 0xE: // Active Sensing
-				_driver->send (event);
+				if (transmit)
+					_driver->send (event);
+				break;
 
 			case 0x0: // SysEx
 				length = readVLQ (pos);
-				_driver->sysEx (pos, (uint16)(length - 1));
+				if (transmit)
+					_driver->sysEx (pos, (uint16)(length - 1));
 				pos += length;
 				break;
 
 			case 0xF: // META event
 				event = *pos++;
 				length = readVLQ (pos);
-				_driver->metaEvent (event, pos, (uint16) length);
 
-				// End of song must be processed by us,
-				// as well as sending it to the output device.
 				if (event == 0x2F) {
-					// End of song. See if there are still holding notes
-					// we need to wait for.
+					// End of song must be processed by us,
+					// as well as sending it to the output device.
 					ptr = &_notes_cache[0];
 					for (i = ARRAYSIZE(_notes_cache); i; --i, ++ptr) {
 						if (ptr->time_left) {
-							_driver->send (0x80 | ptr->channel | (ptr->note << 8));
+							if (transmit)
+								_driver->send (0x80 | ptr->channel | (ptr->note << 8));
 							ptr->time_left = 0;
 						}
 					}
 					_play_pos = 0;
-					_lock = 0;
+					if (transmit)
+						_driver->metaEvent (event, pos, (uint16) length);
 					return;
 				}
 
+				if (transmit)
+					_driver->metaEvent (event, pos, (uint16) length);
 				pos += length;
+				break;
 			}
 		}
 
@@ -268,12 +277,9 @@ void MidiParser_XMIDI::onTimer() {
 
 	_play_time = end_time;
 	_play_pos = pos;
-	_lock = 0;
 }
 
-// This code was adapted from the exult methods
-// XMIDI::ExtractTracks and XMIDI::ExtractTracksFromXmi
-bool MidiParser_XMIDI::loadMusic (byte *data) {
+bool MidiParser_XMIDI::loadMusic (byte *data, uint32 size) {
 	uint32 i = 0;
 	byte *start;
 	uint32 len;
@@ -419,9 +425,6 @@ void MidiParser_XMIDI::unloadMusic() {
 	int i;
 	NoteTimer *ptr;
 
-	while (_lock);
-	++_lock;
-
 	_play_pos = NULL;
 	_data = NULL;
 	_num_tracks = 0;
@@ -437,8 +440,6 @@ void MidiParser_XMIDI::unloadMusic() {
 			ptr->time_left = 0;
 		}
 	}
-
-	_lock = 0;
 }
 
 void MidiParser_XMIDI::setTrack (byte track) {
@@ -451,7 +452,15 @@ void MidiParser_XMIDI::setTrack (byte track) {
 }
 
 void MidiParser_XMIDI::jumpToTick (uint32 tick) {
-	// TODO: Implement this.
+	if (_active_track >= _num_tracks)
+		return;
+	_play_pos = _tracks[_active_track];
+	_play_time = 0;
+	_last_event_time = 0;
+	if (tick > 0) {
+		printf ("jumpToTick (%ld) not completely implemented!\n", tick);
+		playToTime (tick * MICROSECONDS_PER_TICK - 1, false);
+	}
 }
 
 MidiParser *MidiParser::createParser_XMIDI() { return new MidiParser_XMIDI; }

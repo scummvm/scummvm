@@ -170,7 +170,7 @@ Engine *Engine_SIMON_create(GameDetector *detector, OSystem *syst) {
 }
 
 SimonState::SimonState(GameDetector *detector, OSystem *syst)
-	: Engine(detector, syst) {
+	: Engine(detector, syst), midi (syst) {
 	MidiDriver *driver = detector->createMidi();
 
 	_dummy_item_1 = new Item();
@@ -183,6 +183,9 @@ SimonState::SimonState(GameDetector *detector, OSystem *syst)
 	if (!driver)
 		driver = MidiDriver_ADLIB_create();
 	midi.set_driver(driver);
+	int ret = midi.open();
+	if (ret)
+		warning ("MIDI Player init failed: \"%s\"", midi.getErrorName (ret));
 
 	_game = (byte)detector->_features;
 
@@ -857,11 +860,12 @@ void SimonState::playSting(uint a) {
 	if (_mus_file->read(_mus_offsets, size) != size)
 		error("Can't read offsets");
 
-	midi.shutdown();
+	// midi.shutdown();
 	_mus_file->seek(_mus_offsets[a], SEEK_SET);
-	midi.read_all_songs_old(_mus_file, a, _mus_offsets[a+1] - _mus_offsets[a]);
-	midi.initialize();
-	midi.play();
+	// midi.read_all_songs_old(_mus_file, a, _mus_offsets[a+1] - _mus_offsets[a]);
+	// midi.initialize();
+	// midi.play();
+	midi.playSMF (_mus_file);
 }
 
 Subroutine *SimonState::getSubroutineByID(uint subroutine_id) {
@@ -3113,7 +3117,7 @@ void SimonState::processSpecialKeys() {
 			if (_game == GAME_SIMON1DOS) {
 				midi._midi_sfx_toggle ^= 1;
 				if (midi._midi_sfx_toggle)
-					midi.shutdown();
+					midi.stop();
 				else
 					playMusic(0, _last_music_played);
 			} else
@@ -5043,14 +5047,13 @@ void SimonState::playMusic(uint music_unk, uint music) {
 
 	if (_game & GF_SIMON2) {        // Simon 2 music
 		if (_game & GF_WIN) {	
-			midi.shutdown();
+			midi.stop();
 			_game_file->seek(_game_offsets_ptr[gss->MUSIC_INDEX_BASE + music - 1], SEEK_SET);
-			midi.read_all_songs(_game_file, music);
+			midi.playMultipleSMF (_game_file);
 		} else {
-			/* TODO Add XMI midi format support for simon2dos/talkie */
-			//midi.shutdown();
-			//_game_file->seek(_game_offsets_ptr[gss->MUSIC_INDEX_BASE + music - 1], SEEK_SET);
-			//midi.read_xmi_songs(_game_file, music);
+			midi.stop();
+			_game_file->seek(_game_offsets_ptr[gss->MUSIC_INDEX_BASE + music - 1], SEEK_SET);
+			midi.playXMIDI (_game_file);
 		}
 		_midi_unk1 = music;
 		_vc72_var1 = music_unk;
@@ -5066,13 +5069,15 @@ void SimonState::playMusic(uint music_unk, uint music) {
 		} else if (_game & GF_DEMO) {
 			/* TODO Add music support for simon1demo */
 		} else {
-			midi.shutdown();
+			midi.stop();
 			if (_game & GF_WIN) {	
 				_game_file->seek(_game_offsets_ptr[gss->MUSIC_INDEX_BASE + music], SEEK_SET);
-				midi.read_all_songs(_game_file, music);
+				// midi.read_all_songs(_game_file, music);
+				midi.playSMF (_game_file);
 			} else if (_game & GF_TALKIE) {
 				_game_file->seek(_game_offsets_ptr[gss->MUSIC_INDEX_BASE + music], SEEK_SET);
-				midi.read_all_songs_old(_game_file, music);
+				// midi.read_all_songs_old(_game_file, music);
+				midi.playSMF (_game_file);
 			} else {
 				char buf[50];
 				File *f = new File();
@@ -5082,11 +5087,10 @@ void SimonState::playMusic(uint music_unk, uint music) {
 					warning("Can't load music from '%s'", buf);
 					return;
 				}
-				midi.read_all_songs_old(f, music);
+				// midi.read_all_songs_old(f, music);
+				midi.playSMF (f);
 				delete f;
 			}
-			midi.initialize();
-			midi.play();
 		}
 	}
 }

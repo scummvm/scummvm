@@ -22,79 +22,64 @@
 #ifndef SIMON_MIDI_H
 #define SIMON_MIDI_H
 
-class MidiDriver;
-class MidiStreamer;
+#include "sound/mididrv.h"
+#include "sound/midiparser.h"
+
 class File;
-struct MidiEvent;
+class OSystem;
 
-class MidiPlayer {
-public:
-	MidiPlayer();
+class MidiPlayer : public MidiDriver {
+protected:
+	OSystem *_system;
+	void *_mutex;
+	MidiDriver *_driver;
+	MidiParser *_parser;
 
-	bool _midi_sfx_toggle;
-	void read_all_songs (File *in, uint music);
-	void read_all_songs_old (File *in, uint music, uint16 size);
-	void read_all_songs_old (File *in, uint music);
-	void initialize();
-	void shutdown();
-	void play();
-	void pause (bool b);
-	int  get_volume();
-	void set_volume (int volume);
-	void set_driver (MidiDriver *md);
-
-private:
-	struct Track {
-		uint32 a;
-		uint32 data_size;
-		uint32 data_cur_size;
-		byte *data_ptr;
-		byte *data_cur_ptr;
-		uint32 delay;
-		byte last_cmd;
-	};
-
-	struct Song {
-		uint ppqn;
-		uint midi_format;
-		uint num_tracks;
-		Track *tracks;
-	};
-
-	struct NoteRec {
-		uint32 delay;
-		byte cmd;
-		byte param_1;
-		byte param_2;
-		uint cmd_length;
-		byte *sysex_data;
-	};
-
-	MidiStreamer *_midiDriver;
-	uint _lastDelay;
-	Song *_currentSong;
-	Song _songs[8];
+	byte *_data;
 	byte _volumeTable[16]; // 0-127
 	byte _masterVolume;    // 0-255
 	bool _paused;
+	byte _currentTrack;
 
-	void read_mthd(File *in, Song *s, bool old, uint music, uint16 size);
+	byte _num_songs;
+	byte *_songs[16];
+	uint32 _song_sizes[16];
 
-	void read_one_song(File *in, Song *s, uint music, uint16 size = 0);
+	static void onTimer (void *data);
+	void clearConstructs();
 
-	static uint32 track_read_gamma(Track *t);
-	static byte track_read_byte(Track *t);
+public:
+	bool _midi_sfx_toggle;
 
-	int fill (MidiEvent *me, int num_event);
-	bool fill_helper (NoteRec *nr, MidiEvent *me);
+	 MidiPlayer (OSystem *system);
+	~MidiPlayer();
 
-	void reset_tracks();
-	void read_next_note(Track *t, NoteRec *nr);
+	void playSMF (File *in);
+	void playMultipleSMF (File *in);
+	void playXMIDI (File *in);
+	void jump (uint16 track, uint16 tick);
+	void stop();
+	void pause (bool b);
 
-	void unload();
+	int  get_volume() { return _masterVolume; }
+	void set_volume (int volume);
+	void set_driver (MidiDriver *md);
 
-	static int on_fill(void *param, MidiEvent *ev, int num);
+public:
+	// MidiDriver interface implementation
+	int open();
+	void close();
+	void send(uint32 b);
 
+	void metaEvent (byte type, byte *data, uint16 length);
+
+	// Timing functions - MidiDriver now operates timers
+	void setTimerCallback (void *timer_param, void (*timer_proc) (void *)) { }
+	uint32 getBaseTempo (void) { return _driver ? _driver->getBaseTempo() : 0x4A0000; }
+
+	// Channel allocation functions
+	MidiChannel *allocateChannel() { return 0; }
+	MidiChannel *getPercussionChannel() { return 0; }
 };
 
 #endif
