@@ -48,7 +48,7 @@ static const char* string_map_table_custom[] = {
 	"Options",									//17
 	"Misc",											//18
 	"Show speech subtitles",		//19
-	"Amiga pallete conversion",	//20
+	"Amiga pallette conversion",	//20
 	"Except:",									//21
 	"Simon the Sorcerer (c) Adventuresoft" //22
 };

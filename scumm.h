@@ -35,6 +35,7 @@
 
 class GameDetector;
 class Gui;
+class NewGui;
 class Scumm;
 class IMuse;
 class Actor;
@@ -509,6 +510,7 @@ public:
 	OSystem *_system;
 	IMuse *_imuse;
 	Gui *_gui;
+	NewGui *_newgui;
 	uint32 _features;
 	VerbSlot *_verbs;
 	ObjectData *_objs;

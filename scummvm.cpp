@@ -28,6 +28,7 @@
 #include "string.h"
 #include "gameDetector.h"
 #include "actor.h"
+#include"newgui.h"
 
 int autosave(int interval)	/* Not in class to prevent being bound */
 {
@@ -845,12 +846,12 @@ void Scumm::palManipulate(int palettes, int brightness, int color, int time, int
 
 void Scumm::pauseGame(bool user)
 {
-	((Gui *)_gui)->pause();
+	_gui->pause();
 }
 
 void Scumm::setOptions()
 {
-	((Gui *)_gui)->options();
+	_gui->options();
 }
 
 void Scumm::shutDown(int i)
@@ -923,7 +924,7 @@ void Scumm::processKbd()
 						 && _currentRoom != 0) {
 		if (_features & GF_AFTER_V7)
 			runScript(_vars[VAR_UNK_SCRIPT], 0, 0, 0);
-		((Gui *)_gui)->saveLoadDialog();
+		_gui->saveLoadDialog();
 		if (_features & GF_AFTER_V7)
 			runScript(_vars[VAR_UNK_SCRIPT_2], 0, 0, 0);
 	} else if (_lastKeyHit == _vars[VAR_TALKSTOP_KEY]) {
@@ -953,6 +954,10 @@ void Scumm::processKbd()
 			_defaultTalkDelay = 5;
 
 		_vars[VAR_CHARINC] = _defaultTalkDelay / 20;
+	} else if (_lastKeyHit == 320) { // F6, display new GUI
+		_newgui->pauseDialog();
+	} else if (_lastKeyHit == 321) { // F7, display new GUI
+		_newgui->saveloadDialog();
 	}
 			
 	_mouseButStat = _lastKeyHit;
@@ -1354,6 +1359,9 @@ void Scumm::mainRun()
 		if (_gui->isActive()) {
 			_gui->loop();
 			delta = 5;
+		} else if (_newgui->isActive()) {
+			_newgui->loop();
+			delta = 5;
 		} else {
 			delta = scummLoop(delta);
 			if (delta < 1)	// Ensure we don't get into a loop
@@ -1538,16 +1546,13 @@ byte Scumm::getDefaultGUIColor(int color)
 }
 
 void Scumm::setupGUIColors() {
-	Gui *gui = (Gui*)_gui;
 
 	/* FIXME: strange IF line? */
 	if (_gameId && !(_features & GF_SMALL_HEADER)	&& !(_features & GF_AFTER_V7)) {
-		gui->_bgcolor = getDefaultGUIColor(0);
-		gui->_color = getDefaultGUIColor(1);
-		gui->_textcolor = getDefaultGUIColor(2);
-		gui->_textcolorhi = getDefaultGUIColor(6);
-		gui->_shadowcolor = getDefaultGUIColor(8);
+		_newgui->_bgcolor = _gui->_bgcolor = getDefaultGUIColor(0);
+		_newgui->_color = _gui->_color = getDefaultGUIColor(1);
+		_newgui->_textcolor = _gui->_textcolor = getDefaultGUIColor(2);
+		_newgui->_textcolorhi = _gui->_textcolorhi = getDefaultGUIColor(6);
+		_newgui->_shadowcolor = _gui->_shadowcolor = getDefaultGUIColor(8);
 	}
 }
-
-

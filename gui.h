@@ -18,8 +18,8 @@
  * $Header$
  */
 
-#if !defined(gui_h)
-#define gui_h
+#ifndef GUI_H
+#define GUI_H
 
 // Forward declaration for GuiWidget
 struct GuiWidget;

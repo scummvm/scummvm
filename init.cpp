@@ -23,9 +23,13 @@
 #include"stdafx.h"
 #include"scumm.h"
 #include"actor.h"
+#include"newgui.h"
+
 Scumm::Scumm (void) {
+	_newgui = new NewGui(this);
 }
 
 Scumm::~Scumm (void) {
 	delete [] actor;
+	delete _newgui;
 }
