@@ -3280,6 +3280,9 @@ void SimonState::readSfxFile(const char *filename)
 	if (_game == GAME_SIMON1WIN) { 			/* simon 1 win */
 		uint32 size;
 
+		if (_effects_offsets)
+			free(_effects_offsets);
+
 		if (_effects_file->isOpen() == true)
 			_effects_file->close();
 
@@ -4871,7 +4874,8 @@ void SimonState::playVoc(File *sound_file, uint32 *offsets, uint sound, PlayingS
 	byte *buffer = (byte *)malloc(size);
 	sound_file->read(buffer, size);
 
-	_mixer->playRaw(sound_handle, buffer, size, samples_per_sec, SoundMixer::FLAG_UNSIGNED);
+	_mixer->playRaw(sound_handle, buffer, size, samples_per_sec,
+			SoundMixer::FLAG_UNSIGNED|SoundMixer::FLAG_AUTOFREE);
 }
 
 void SimonState::playWav(File *sound_file, uint32 *offsets, uint sound, PlayingSoundHandle *sound_handle)
@@ -4904,7 +4908,7 @@ void SimonState::playWav(File *sound_file, uint32 *offsets, uint sound, PlayingS
 	sound_file->read(buffer, data[1]);
 
 	_mixer->playRaw(sound_handle, buffer, data[1], READ_LE_UINT32(&wave_hdr.samples_per_sec),
-										 SoundMixer::FLAG_UNSIGNED);
+			SoundMixer::FLAG_UNSIGNED|SoundMixer::FLAG_AUTOFREE);
 }
 
 void SimonState::playVoice(uint voice)
