@@ -230,6 +230,8 @@ void exit(Int16 status)
 {
 	// need to change this
 	EventType event;
-	event.eType = appStopEvent;
+	event.eType = keyDownEvent;
+	event.data.keyDown.chr = vchrLaunch;
+	event.data.keyDown.modifiers = commandKeyMask;
 	EvtAddEventToQueue (&event);
 }
