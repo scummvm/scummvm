@@ -311,6 +311,9 @@
 				RelativePath=".\scumm\midiparser_ro.cpp">
 			</File>
 			<File
+				RelativePath="scumm\music.h">
+			</File>
+			<File
 				RelativePath=".\scumm\nut_renderer.cpp">
 			</File>
 			<File
@@ -462,9 +465,6 @@
 				</File>
 			</Filter>
 		</Filter>
-		<File
-			RelativePath="scumm\music.h">
-		</File>
 	</Files>
 	<Globals>
 	</Globals>
