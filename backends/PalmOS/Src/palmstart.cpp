@@ -34,8 +34,6 @@
 #include "mathlib.h"
 #include "vibrate.h"
 
-void MemExtInit();
-void MemExtCleanup();
 /***********************************************************************
  *
  *	Internal Structures
@@ -78,7 +76,13 @@ typedef	struct {
 	Boolean autoOff;
 
 	UInt16 listPosition;
-	UInt16 volRefNum;
+
+	struct {
+		UInt16 volRefNum;
+		Boolean moveDB;
+		Boolean deleteDB;
+		Boolean confirmMoveDB;
+	} card;
 
 	Boolean debug;
 	UInt16 debugLevel;
@@ -123,6 +127,18 @@ static UInt16 sknLastOn = skinButtonNone;
 static Boolean bStartScumm = false;
 
 GlobalsDataType *gVars;
+
+// form list draw
+#define	ITEM_TYPE_UNKNOWN	'U'
+#define ITEM_TYPE_CARD		'C'
+#define ITEM_TYPE_SKIN		'S'
+
+#define frmRedrawUpdateMS		(frmRedrawUpdateCode+1)
+#define frmRedrawUpdateMSImport	(frmRedrawUpdateCode+2)
+
+static Char **itemsText = NULL;
+static void  *itemsList = NULL;
+static Char   itemsType = ITEM_TYPE_UNKNOWN;
 /***********************************************************************
  *
  *	Internal Constants
@@ -180,6 +196,7 @@ static void GBInitAll() {
 	Codec47_initGlobals();
 	Gfx_initGlobals();
 	Dialogs_initGlobals();
+	Charset_initGlobals();
 #endif
 }
 
@@ -192,7 +209,16 @@ static void GBReleaseAll() {
 	Codec47_releaseGlobals();
 	Gfx_releaseGlobals();
 	Dialogs_releaseGlobals();
+	Charset_releaseGlobals();
 #endif
+}
+
+static void FrmReturnToMain(UInt16 updateCode = frmRedrawUpdateMS) {
+	// if there is a form loaded, prevent crash on OS5
+	if (FrmGetFirstForm()) {
+		FrmUpdateForm(MainForm, updateCode);
+		FrmReturnToForm(MainForm);
+	}
 }
 
 //TODO : use Boolean instead of void to check err
@@ -648,7 +674,6 @@ static struct {
 
 //#############################################################################
 //#############################################################################
-
 static Err GamOpenDatabase() {
 	Err err = errNone;
 
@@ -669,9 +694,28 @@ static Err GamOpenDatabase() {
 	return err;
 }
 
-static void GamCloseDatabase() {
-	if (_dbP)
+static void GamCloseDatabase(Boolean ignoreCardParams) {
+	if (_dbP) {
+		LocalID dbID;
+		UInt16 cardNo;
+		
+		DmOpenDatabaseInfo(_dbP, &dbID, 0, 0, &cardNo, 0);
 		DmCloseDatabase(_dbP);
+		
+		if (!ignoreCardParams) {
+			if (gPrefs->card.moveDB && gPrefs->card.volRefNum != sysInvalidRefNum) {
+				VFSFileRename(gPrefs->card.volRefNum, "/Palm/Programs/ScummVM/listdata.pdb", "listdata-old.pdb");
+				Err e = VFSExportDatabaseToFile(gPrefs->card.volRefNum, "/Palm/Programs/ScummVM/listdata.pdb", cardNo, dbID);
+				if (!e) {
+					VFSFileDelete(gPrefs->card.volRefNum, "/Palm/Programs/ScummVM/listdata-old.pdb");
+					if (gPrefs->card.deleteDB)
+						DmDeleteDatabase(cardNo, dbID);
+				} else {
+					VFSFileRename(gPrefs->card.volRefNum, "/Palm/Programs/ScummVM/listdata-old.pdb", "listdata.pdb");
+				}
+			}
+		}
+	}
 	_dbP = NULL;
 }
 
@@ -899,6 +943,47 @@ static void GamUpdateList() {
 	WinScreenUnlock();
 }
 
+static void GamImportDatabase(Boolean updateList) {
+	if (gPrefs->card.volRefNum != sysInvalidRefNum && gPrefs->card.moveDB) {
+		FileRef file;
+		Err e;
+		
+		e = VFSFileOpen(gPrefs->card.volRefNum, "/Palm/Programs/ScummVM/listdata.pdb", vfsModeRead, &file);
+		if (!e) {
+			UInt16 oCardNo, nCardNo;
+			LocalID oDbID, nDbID;
+			UInt32 type = 'ODAT';	// change the type to avoid the old db to be loaded in case of crash
+
+			VFSFileClose(file);
+			if (gPrefs->card.confirmMoveDB)
+				if (FrmCustomAlert(FrmConfirmAlert, "Do you want to import games database from memory card ?", 0, 0) == FrmConfirmNo) {
+					// prevent to replace the file on memory card
+					gPrefs->card.moveDB = false;
+					return;
+				}
+ 			
+ 			// get current db info and rename it
+ 			DmOpenDatabaseInfo(_dbP, &oDbID, 0, 0, &oCardNo, 0);
+			GamCloseDatabase(true);
+			DmSetDatabaseInfo(oCardNo, oDbID, "ScummVM-Data-old.pdb", 0, 0, 0, 0, 0, 0, 0, 0, &type, 0);
+	
+			e = VFSImportDatabaseFromFile(gPrefs->card.volRefNum, "/Palm/Programs/ScummVM/listdata.pdb", &nCardNo, &nDbID);
+			if (e) {
+				type = 'DATA';
+				FrmCustomAlert(FrmErrorAlert, "Failed to import games database from memory card.", 0, 0);
+				DmSetDatabaseInfo(oCardNo, oDbID, "ScummVM-Data.pdb", 0, 0, 0, 0, 0, 0, 0, 0, &type, 0);
+			} else {
+				// in OS5 the localID may change ... ? (cause Free Handle error)
+				oDbID = DmFindDatabase (oCardNo, "ScummVM-Data-old.pdb");
+				DmDeleteDatabase(oCardNo, oDbID);
+			}
+			GamOpenDatabase();
+			if (updateList)
+				GamUpdateList();
+		}
+	}
+}
+
 static Boolean ArwProcessAction(UInt16 button)
 {
 	Boolean handled = false;
@@ -991,10 +1076,10 @@ static void EditGameFormDelete(Boolean direct) {
 		FrmCustomAlert(FrmWarnAlert, "Select an entry first.",0,0);
 		return;
 
-	} else if (FrmAlert(FrmDeleteAlert) == 0) {
+	} else if (FrmCustomAlert(FrmConfirmAlert, "Do you really want to delete this entry ?", 0, 0) == FrmConfirmYes) {
 		DmRemoveRecord(_dbP, index);
 		if (!direct)
-			FrmReturnToForm(MainForm);
+			FrmReturnToMain();
 		GamSortList();
 		GamUpdateList();
 	}
@@ -1136,7 +1221,7 @@ static void EditGameFormSave(UInt16 index) {
 		}
 	}
 
-	FrmReturnToForm (MainForm);
+	FrmReturnToMain();
 	GamUpdateList();
 }
 
@@ -1273,7 +1358,7 @@ static Boolean EditGameFormHandleEvent(EventPtr eventP)
 					break;
 
 				case EditGameCancelButton:
-					FrmReturnToForm(MainForm);
+					FrmReturnToMain();
 					break;
 				
 				case EditGameDeleteButton:
@@ -1395,7 +1480,7 @@ static Boolean SystemInfoFormHandleEvent(EventPtr eventP) {
 
 		case ctlSelectEvent:
 			// OK button only
-			FrmReturnToForm (MainForm);
+			FrmReturnToMain();
 			handled = true;
 			break;
 
@@ -1435,7 +1520,7 @@ static void VolumeFormSave() {
 	CtlGetSliderValues ((ControlType *)slid4P, 0, 0, 0, &gPrefs->volume.music);
 	CtlGetSliderValues ((ControlType *)slid5P, 0, 0, 0, &gPrefs->volume.sfx);
 	
-	FrmReturnToForm (MainForm);
+	FrmReturnToMain();
 }
 
 static void VolumeFormInit() {
@@ -1483,7 +1568,7 @@ static Boolean VolumeFormHandleEvent(EventPtr eventP) {
 					break;
 
 				case VolumeCancelButton:
-					FrmReturnToForm(MainForm);
+					FrmReturnToMain();
 					break;
 			}
 			handled = true;
@@ -1517,7 +1602,7 @@ static void SoundFormSave() {
 	gPrefs->sound.driver = LstGetSelection(list1P);
 	gPrefs->sound.tempo = StrAToI(FldGetTextPtr(fld1P));
 
-	FrmReturnToForm (MainForm);
+	FrmReturnToMain();
 }
 
 static void SoundFormInit() {
@@ -1564,7 +1649,7 @@ static Boolean SoundFormHandleEvent(EventPtr eventP) {
 					break;
 
 				case SoundCancelButton:
-					FrmReturnToForm(MainForm);
+					FrmReturnToMain();
 					break;
 
 				case SoundDriverPopTrigger:
@@ -1625,7 +1710,7 @@ static void MiscOptionsFormSave() {
 
 	gPrefs->debugLevel = StrAToI(FldGetTextPtr(fld1P));
 	
-	FrmReturnToForm (MainForm);
+	FrmReturnToMain();
 }
 
 static void MiscOptionsFormInit() {
@@ -1672,7 +1757,7 @@ static Boolean MiscOptionsFormHandleEvent(EventPtr eventP) {
 					break;
 
 				case MiscOptionsCancelButton:
-					FrmReturnToForm(MainForm);
+					FrmReturnToMain();
 					break;
 			}
 			handled = true;
@@ -1684,20 +1769,32 @@ static Boolean MiscOptionsFormHandleEvent(EventPtr eventP) {
 	
 	return handled;
 }
+///////////////////////////////////////////////////////////////////////
+static void CardSlotFromShowHideOptions() {
+	ControlType *cck1P;
+	FormPtr frmP = FrmGetActiveForm();
 
-static UInt16 parseCards(Boolean forceDisplay) {
+	cck1P = (ControlType *)GetObjectPtr(CardSlotMoveCheckbox);
 
+	if (CtlGetValue(cck1P)) {
+		FrmShowObject(frmP, FrmGetObjectIndex (frmP, CardSlotDeleteCheckbox));
+		FrmShowObject(frmP, FrmGetObjectIndex (frmP, CardSlotConfirmCheckbox));
+	} else {
+		FrmHideObject(frmP, FrmGetObjectIndex (frmP, CardSlotDeleteCheckbox));
+		FrmHideObject(frmP, FrmGetObjectIndex (frmP, CardSlotConfirmCheckbox));
+	}
+}
+
+static UInt16 CardSlotFormInit(Boolean display, Boolean bDraw) {
 	Err err;
 	UInt16 volRefNum;
 	UInt32 volIterator = vfsIteratorStart;
 	UInt8 counter = 0;
+	UInt32 other = 1;
 
 	MemHandle cards = NULL;
 	CardInfoType *cardsInfo;
-	MemHandle items = NULL;
-	Char **itemsText = NULL;
-	UInt32 other = 1;
-	
+
 	while (volIterator != vfsIteratorStop) {
 		err = VFSVolumeEnumerate(&volRefNum, &volIterator);
 
@@ -1734,20 +1831,25 @@ static UInt16 parseCards(Boolean forceDisplay) {
 		}
 	}
 
-	if (counter>0) {
-		cardsInfo = (CardInfoType *)MemHandleLock(cards);
+	if (display) {
+		FormPtr frmP;
+		ListPtr listP;
+		ControlType *cck1P, *cck2P, *cck3P;
+		UInt16 index;
+		Int16 selected = -1;
+		
+		CardInfoType *cardsInfo;
+		MemHandle items = NULL;
 
-		if (forceDisplay) {
-			FormPtr frmP;
-			ListPtr listP;
-			Int16 selected = 0;
-			UInt16 index;
+		listP = (ListType *)GetObjectPtr(CardSlotSlotList);
+		cck1P = (ControlType *)GetObjectPtr(CardSlotMoveCheckbox);
+		cck2P = (ControlType *)GetObjectPtr(CardSlotDeleteCheckbox);
+		cck3P = (ControlType *)GetObjectPtr(CardSlotConfirmCheckbox);
 
-			frmP = FrmInitForm (CardSlotForm);
-			listP = (ListType *)FrmGetObjectPtr(frmP, FrmGetObjectIndex(frmP, CardSlotSlotList));
+		if (counter > 0) {
+			cardsInfo = (CardInfoType *)MemHandleLock(cards);
 
-			for (index = 0; index < counter; index++)
-			{
+			for (index = 0; index < counter; index++) {
 				if (!items)
 					items = MemHandleNew(sizeof(Char *));
 				else
@@ -1757,20 +1859,280 @@ static UInt16 parseCards(Boolean forceDisplay) {
 				itemsText[index] = cardsInfo[index].nameP;
 				MemHandleUnlock(items);
 				
-				if (cardsInfo[index].volRefNum == gPrefs->volRefNum)
+				if (cardsInfo[index].volRefNum == gPrefs->card.volRefNum)
 					selected = index;
 			}
 
 			itemsText = (Char **)MemHandleLock(items);
 			LstSetListChoices (listP, itemsText, counter);
 			LstSetSelection(listP, selected);
-			FrmDoDialog (frmP);
+			// save globals and set list
+			itemsText = (Char **)MemHandleLock(items);
+			itemsList = (void *)cardsInfo;
+			itemsType = ITEM_TYPE_CARD;
+
+		} else {
+			LstSetListChoices(listP, NULL, 0);
+			// save globals and set list
+			itemsText = NULL;
+			itemsList = NULL;
+			itemsType = ITEM_TYPE_CARD;
+		}
+
+		// bDraw = true -> draw whole from
+		// bDraw = false -> redraw list
+		if (bDraw) {
+			CtlSetValue(cck1P, gPrefs->card.moveDB);
+			CtlSetValue(cck2P, gPrefs->card.deleteDB);
+			CtlSetValue(cck3P, gPrefs->card.confirmMoveDB);
+			CardSlotFromShowHideOptions();
+			frmP = FrmGetActiveForm();
+			FrmDrawForm(frmP);
+
+		} else {
+			WinScreenLock(winLockCopy);
+			LstDrawList(listP);
+			WinScreenUnlock();
+		}
+	} else {	// if !display, we just want to retreive an avaliable card
+		if (counter > 0) {
+			UInt16 volRefNum;
+			cardsInfo = (CardInfoType *)MemHandleLock(cards);
+			volRefNum =  cardsInfo[0].volRefNum;	// return the first volref
+			MemHandleUnlock(cards);
+			MemHandleFree(cards);
+			return volRefNum;
+		}
+	}
+
+	return sysInvalidRefNum; // default
+}
+
+static void CardSlotFormExit(Boolean bSave) {
+	MemHandle cards;
+	MemHandle items;
+	CardInfoType *cardsInfo;
+	UInt16 updateCode = frmRedrawUpdateMS;
+
+	if (itemsText && itemsList) {
+		cardsInfo = (CardInfoType *)itemsList;
+		cards = MemPtrRecoverHandle(cardsInfo);
+		items = MemPtrRecoverHandle(itemsText);
+	
+		itemsText = NULL;
+		itemsList = NULL;
+	} else {
+		cards = NULL;
+		items = NULL;
+	}
+	itemsType = ITEM_TYPE_UNKNOWN;
+
+	if (bSave) {
+		ListType *listP;
+		ControlType *cck1P, *cck2P, *cck3P;
+		Int16 selected;
+
+		listP = (ListType *)GetObjectPtr(CardSlotSlotList);
+		cck1P = (ControlType *)GetObjectPtr(CardSlotMoveCheckbox);
+		cck2P = (ControlType *)GetObjectPtr(CardSlotDeleteCheckbox);
+		cck3P = (ControlType *)GetObjectPtr(CardSlotConfirmCheckbox);
+		selected = LstGetSelection(listP);
+
+		if (selected == -1) {
+			gPrefs->card.volRefNum = sysInvalidRefNum;
+		} else if (gPrefs->card.volRefNum != cardsInfo[selected].volRefNum) {
+			updateCode = frmRedrawUpdateMSImport;
+			gPrefs->card.volRefNum = cardsInfo[selected].volRefNum;
+		}
+
+		//gPrefs->card.volRefNum = (selected == -1) ?  : cardsInfo[selected].volRefNum;
+		gPrefs->card.moveDB = CtlGetValue(cck1P);
+		gPrefs->card.deleteDB = CtlGetValue(cck2P);
+		gPrefs->card.confirmMoveDB = CtlGetValue(cck3P);
+	}
+
+	FrmReturnToMain(updateCode);
+
+	if (items && cards) {
+		MemHandleUnlock(items);
+		MemHandleUnlock(cards);
+		MemHandleFree(items);
+		MemHandleFree(cards);
+	}
+}
+
+static void CardSlotFormUpdate() {
+	if (itemsType == ITEM_TYPE_CARD) {
+		if (itemsText && itemsList) {
+			MemHandle cards;
+			MemHandle items;
+			ListType *listP;
+
+			listP = (ListType *)GetObjectPtr(CardSlotSlotList);
+			cards = MemPtrRecoverHandle(itemsList);
+			items = MemPtrRecoverHandle(itemsText);
+
+			itemsText = NULL;
+			itemsList = NULL;
+			itemsType = ITEM_TYPE_UNKNOWN;
+
+			MemHandleUnlock(items);
+			MemHandleUnlock(cards);
+			MemHandleFree(items);
+			MemHandleFree(cards);
+		}
+		CardSlotFormInit(true, false);
+	}
+}
+
+static Boolean CardSlotFormHandleEvent(EventPtr eventP) {
+	Boolean handled = false;
+
+	switch (eventP->eType) {
+	
+		case frmOpenEvent:
+			CardSlotFormInit(true, true);
+			handled = true;
+			break;
+
+		case frmCloseEvent:
+			CardSlotFormExit(false);
+			handled = true;
+			break;
+
+		case ctlSelectEvent:
+			switch (eventP->data.ctlSelect.controlID)
+			{
+				case CardSlotOkButton:
+					CardSlotFormExit(true);
+					break;
+
+				case CardSlotCancelButton:
+					CardSlotFormExit(false);
+					break;
+				
+				case CardSlotMoveCheckbox:
+					CardSlotFromShowHideOptions();
+					break;
+			}
+			handled = true;
+			break;
+
+		default:
+			break;
+	}
+	
+	return handled;
+}
+
+static UInt16 parseCards() {
+	UInt16 volRefNum = CardSlotFormInit(false, false);
+	CardSlotFormExit(false);
+	
+	return volRefNum;
+}
+/*
+static UInt16 parseCards(Boolean forceDisplay) {
+
+	Err err;
+	UInt16 volRefNum;
+	UInt32 volIterator = vfsIteratorStart;
+	UInt8 counter = 0;
+
+	MemHandle cards = NULL;
+	CardInfoType *cardsInfo;
+	MemHandle items = NULL;
+	Char **itemsText = NULL;
+	UInt32 other = 1;
+
+	while (volIterator != vfsIteratorStop) {
+		err = VFSVolumeEnumerate(&volRefNum, &volIterator);
+
+		if (!err)
+		{	Char labelP[expCardInfoStringMaxLen+1];
+			err = VFSVolumeGetLabel(volRefNum, labelP, expCardInfoStringMaxLen+1);
+
+			if (!err) {
+				if (StrLen(labelP) == 0) {	// if no label try to retreive card type
+					VolumeInfoType volInfo;
+					err = VFSVolumeInfo(volRefNum, &volInfo);
+					
+					if (!err) {
+						ExpCardInfoType info;
+						err = ExpCardInfo(volInfo.slotRefNum, &info);
+						StrCopy(labelP, info.deviceClassStr);
+					}
+					
+					if (err != errNone)	// if err default name
+						StrPrintF(labelP,"Other Card %ld", other++);
+				}
+			
+				if (!cards)
+					cards = MemHandleNew(sizeof(CardInfoType));
+				else
+					MemHandleResize(cards, MemHandleSize(cards) + sizeof(CardInfoType));
+					
+				cardsInfo = (CardInfoType *)MemHandleLock(cards);
+				cardsInfo[counter].volRefNum = volRefNum;
+				StrCopy(cardsInfo[counter].nameP, labelP);
+				MemHandleUnlock(cards);
+				counter++;
+			}
+		}
+	}
+
+	if (counter > 0) {
+		cardsInfo = (CardInfoType *)MemHandleLock(cards);
+
+		if (forceDisplay) {
+			FormPtr frmP;
+			ListPtr listP;
+			ControlType *cck1P, *cck2P, *cck3P;
+			Int16 selected = 0;
+			UInt16 index, button;
+
+			frmP = FrmInitForm (CardSlotForm);
+			listP = (ListType *)FrmGetObjectPtr(frmP, FrmGetObjectIndex(frmP, CardSlotSlotList));
+			cck1P = (ControlType *)FrmGetObjectPtr(frmP, FrmGetObjectIndex(frmP, CardSlotMoveCheckbox));
+			cck2P = (ControlType *)FrmGetObjectPtr(frmP, FrmGetObjectIndex(frmP, CardSlotDeleteCheckbox));
+			cck3P = (ControlType *)FrmGetObjectPtr(frmP, FrmGetObjectIndex(frmP, CardSlotConfirmCheckbox));
+
+			for (index = 0; index < counter; index++) {
+				if (!items)
+					items = MemHandleNew(sizeof(Char *));
+				else
+					MemHandleResize(items, MemHandleSize(items) + sizeof(Char *));
+
+				itemsText = (Char **)MemHandleLock(items);
+				itemsText[index] = cardsInfo[index].nameP;
+				MemHandleUnlock(items);
+				
+				if (cardsInfo[index].volRefNum == gPrefs->card.volRefNum)
+					selected = index;
+			}
+
+			itemsText = (Char **)MemHandleLock(items);
+			LstSetListChoices (listP, itemsText, counter);
+			LstSetSelection(listP, selected);
+			
+			CtlSetValue(cck1P, gPrefs->card.moveDB);
+			CtlSetValue(cck2P, gPrefs->card.deleteDB);
+			CtlSetValue(cck3P, gPrefs->card.confirmMoveDB);
+
+			button = FrmDoDialog (frmP);
+
 			selected = LstGetSelection(listP);
 			MemHandleUnlock(items);
 			MemHandleFree(items);
 			FrmDeleteForm(frmP);
 			
-			volRefNum = cardsInfo[selected].volRefNum;
+			// save preferences
+			if (button == CardSlotOkButton) {
+				volRefNum = cardsInfo[selected].volRefNum;
+				gPrefs->card.moveDB = CtlGetValue(cck1P);
+				gPrefs->card.deleteDB = CtlGetValue(cck2P);
+				gPrefs->card.confirmMoveDB = CtlGetValue(cck3P);
+			}
 
 		} else {
 			volRefNum = cardsInfo[0].volRefNum;	// return the first volref
@@ -1805,7 +2167,7 @@ static UInt16 parseCards(Boolean forceDisplay) {
 
 	return volRefNum;
 }
-
+*/
 //#############################################################################
 //#############################################################################
 // Skin manager
@@ -1825,7 +2187,7 @@ static void SknApplySkin()
 //	SknSetPalette();
 	FrmDrawForm(frmP);
 
-	if (gPrefs->volRefNum != sysInvalidRefNum)
+	if (gPrefs->card.volRefNum != sysInvalidRefNum)
 		FrmShowObject(frmP, FrmGetObjectIndex (frmP, MainMSBitMap));
 	else
 		FrmShowObject(frmP, FrmGetObjectIndex (frmP, MainMSNoneBitMap));
@@ -1892,9 +2254,6 @@ static void MainFormInit()
 static Int16 SkinsFormCompare(SkinInfoType *a, SkinInfoType *b, SortRecordInfoPtr, SortRecordInfoPtr, MemHandle) {
 	return StrCompare(a->nameP, b->nameP);
 }
-
-static Char **itemsText = NULL;
-static void  *itemsList = NULL;
 
 static void SkinsFormInit(Boolean bDraw) {
 	MemHandle skins = NULL;
@@ -1964,9 +2323,13 @@ static void SkinsFormInit(Boolean bDraw) {
 	// save globals and set list
 	itemsText = (Char **)MemHandleLock(items);
 	itemsList = (void *)skinsInfo;
+	itemsType = ITEM_TYPE_SKIN;
+
 	LstSetListChoices (listP, itemsText, numSkins);
 	LstSetSelection(listP, selected);
 
+	// bDraw = true -> draw whole from
+	// bDraw = false -> redraw list
 	if (bDraw) {
 		frmP = FrmGetActiveForm();
 		FrmDrawForm(frmP);
@@ -1977,8 +2340,6 @@ static void SkinsFormInit(Boolean bDraw) {
 //		LstSetSelection(listP, 0);
 	}
 }
-
-
 
 static void SkinsFormExit(Boolean bSave) {
 	MemHandle skins;
@@ -2002,6 +2363,7 @@ static void SkinsFormExit(Boolean bSave) {
 	
 	itemsText = NULL;
 	itemsList = NULL;
+	itemsType = ITEM_TYPE_UNKNOWN;
 
 	if (bSave) {
 		ControlType *cck1P;
@@ -2014,7 +2376,7 @@ static void SkinsFormExit(Boolean bSave) {
 		gPrefs->soundClick = CtlGetValue(cck1P);
 	}
 
-	FrmReturnToForm (MainForm);
+	FrmReturnToMain();
 
 	MemHandleUnlock(items);
 	MemHandleUnlock(skins);
@@ -2079,6 +2441,7 @@ static void SkinsFormDelete() {
 
 			itemsText = NULL;
 			itemsList = NULL;
+			itemsType = ITEM_TYPE_UNKNOWN;
 
 			MemHandleUnlock(items);
 			MemHandleUnlock(skins);
@@ -2142,27 +2505,23 @@ static Boolean MainFormDoCommand(UInt16 command)
 	FormPtr frmP;
 
 	switch (command) {
-		case MainGamesChooseaCard:
-			MenuEraseStatus(0);
-			gPrefs->volRefNum = parseCards(true);
+		case MainGamesCard:
+			FrmPopupForm(CardSlotForm);
 			handled = true;
 			break;
 
 		case MainGamesMemory:
-			MenuEraseStatus(0);
 			FrmPopupForm(SystemInfoForm);
 			handled = true;
 			break;
 
 		case MainGamesNewEdit:
-			MenuEraseStatus(0);
 			__editMode__ = edtModeParams;
 			FrmPopupForm(EditGameForm);
 			handled = true;
 			break;
 
 		case MainGamesBeamScummVM:
-			MenuEraseStatus(0);
 			BeamMe();
 			//if (BeamMe())
 				//FrmCustomAlert(FrmErrorAlert,"Unable to beam ScummVM for PalmOS.",0,0);
@@ -2170,7 +2529,6 @@ static Boolean MainFormDoCommand(UInt16 command)
 			break;
 
 		case MainOptionsAbout:
-			MenuEraseStatus(0);					// Clear the menu status from the display.
 			frmP = FrmInitForm (AboutForm);
 			FrmDoDialog (frmP);					// Display the About Box.
 			FrmDeleteForm (frmP);
@@ -2188,19 +2546,17 @@ static Boolean MainFormDoCommand(UInt16 command)
 			break;
 		
 		case MainOptionsSkins:
-			MenuEraseStatus(0);					// Clear the menu status from the display.
-			//SkinsFormDoDialog();
 			FrmPopupForm(SkinsForm);
 			handled = true;
 			break;
 
-		case MainOptionsMiscellaneous:			
-			MenuEraseStatus(0);					// Clear the menu status from the display.
+		case MainOptionsMisc:
 			FrmPopupForm(MiscOptionsForm);
 			handled = true;
 			break;
 		}
-	
+
+	MenuEraseStatus(0);
 	return handled;
 }
 
@@ -2405,7 +2761,7 @@ static void StartScummVM() {
 		MemHandleUnlock(recordH);
 	}
 
-	GamCloseDatabase();
+	GamCloseDatabase(false);
 	FrmCloseAllForms();
 
 	autoOff = gPrefs->autoOff;
@@ -2418,7 +2774,7 @@ static void StartScummVM() {
 	//gVars->HRrefNum defined in checkHRmode on Clié OS4
 	//gVars->logFile defined bellow, must be defined only if debug option is checked
 	gVars->screenLocked = false;
-	gVars->volRefNum = gPrefs->volRefNum;
+	gVars->volRefNum = gPrefs->card.volRefNum;
 	gVars->vibrator = gPrefs->vibrator;
 	gVars->stdPalette = gPrefs->stdPalette;
 	gVars->autoReset = gPrefs->autoReset;
@@ -2466,14 +2822,11 @@ static void StartScummVM() {
 
 		}
 	}
+
 	SavePrefs();	// free globals pref memory
 	GBOpen();
 	GBInitAll();
-
-//	MemExtInit();
 	main(argc, argvP);
-//	MemExtCleanup();
-
 	GBReleaseAll();
 	GBClose();
 
@@ -2580,8 +2933,20 @@ static Boolean MainFormHandleEvent(EventPtr eventP)
 	DmOpenRef skinDBP;
 	
 	switch (eventP->eType) {
+		case frmUpdateEvent:
+		frmP = FrmGetFormPtr(MainForm);
+			if (gPrefs->card.volRefNum != sysInvalidRefNum)
+				FrmShowObject(frmP, FrmGetObjectIndex (frmP, MainMSBitMap));
+			else
+				FrmShowObject(frmP, FrmGetObjectIndex (frmP, MainMSNoneBitMap));
+			if (eventP->data.frmUpdate.updateCode == frmRedrawUpdateMSImport)
+				GamImportDatabase(true);
+			handled = true;
+			break;
+
 		case menuEvent:
-			return MainFormDoCommand(eventP->data.menu.itemID);
+			handled = MainFormDoCommand(eventP->data.menu.itemID);
+			break;
 
 		case frmOpenEvent:
 			MainFormInit();
@@ -2592,7 +2957,8 @@ static Boolean MainFormHandleEvent(EventPtr eventP)
 			switch (eventP->data.ctlSelect.controlID)
 			{
 				case MainCardsButton:
-					gPrefs->volRefNum = parseCards(true);
+					//gPrefs->card.volRefNum = parseCards(true);
+					FrmPopupForm(CardSlotForm);
 					break;
 			
 				case MainAboutButton:
@@ -2606,12 +2972,6 @@ static Boolean MainFormHandleEvent(EventPtr eventP)
 //					break;
 			}
 			handled = true;
-			break;
-
-		case frmUpdateEvent:
-			int a= 0;
-			// To do any custom drawing here, first call FrmDrawForm(), then do your
-			// drawing, and then set handled to true.
 			break;
 
 		case penUpEvent:
@@ -2644,7 +3004,7 @@ static Boolean MainFormHandleEvent(EventPtr eventP)
 							break;
 
 						case skinButtonGameStart:
-							if (gPrefs->volRefNum == sysInvalidRefNum)
+							if (gPrefs->card.volRefNum == sysInvalidRefNum)
 								FrmCustomAlert(FrmWarnAlert,"Please select/insert a memory card.", 0, 0);
 							else
 								bStartScumm = true;
@@ -2757,6 +3117,10 @@ static Boolean AppHandleEvent(EventPtr eventP)
 
 			case SystemInfoForm:
 				FrmSetEventHandler(frmP, SystemInfoFormHandleEvent);
+				break;
+
+			case CardSlotForm:
+				FrmSetEventHandler(frmP,CardSlotFormHandleEvent);
 				break;
 
 			default:
@@ -2964,7 +3328,7 @@ static void AppStopMathLib() {
 
 static Err AppStart(void)
 {
-	UInt16 dataSize;
+	UInt16 dataSize, checkSize = 0;
 	Err error;
 
 	// allocate global variables space
@@ -2975,6 +3339,7 @@ static Err AppStart(void)
 	gVars->indicator.on	= 255;
 	gVars->indicator.off = 0;
 	gVars->HRrefNum = sysInvalidRefNum;
+	gVars->volRefNum = sysInvalidRefNum;
 
 	// allocate prefs space
 	dataSize = sizeof(GlobalsPreferenceType);
@@ -2982,15 +3347,18 @@ static Err AppStart(void)
 	MemSet(gPrefs, dataSize, 0);
 
 	// Read the saved preferences / saved-state information.
-	if (PrefGetAppPreferences(appFileCreator, appPrefID, gPrefs, &dataSize, true) == noPreferenceFound) {
+	if (PrefGetAppPreferences(appFileCreator, appPrefID, NULL, &checkSize, true) == noPreferenceFound || checkSize < dataSize) {
 		UInt32 romVersion;
-		FtrGet(sysFtrCreator, sysFtrNumROMVersion, &romVersion);
+		// reset all elements
+		MemSet(gPrefs, dataSize, 0);
 
-		gPrefs->volRefNum = sysInvalidRefNum;
+		gPrefs->card.volRefNum = sysInvalidRefNum;
 
 		gPrefs->autoOff = true;
 		gPrefs->vibrator = CheckVibratorExists();
 		gPrefs->debug = false;
+
+		FtrGet(sysFtrCreator, sysFtrNumROMVersion, &romVersion);
 		gPrefs->stdPalette = (romVersion >= kOS5Version);
 		
 		gPrefs->volume.speaker = 16;
@@ -3003,10 +3371,7 @@ static Err AppStart(void)
 		gPrefs->sound.tempo = 100;
 		
 	} else {
-		// tempo was popup trigger and now it's numeric field
-		// so fix the value to default if it's an old config
-		if (gPrefs->sound.tempo < 50)
-			gPrefs->sound.tempo = 100;
+		PrefGetAppPreferences(appFileCreator, appPrefID, gPrefs, &dataSize, true);
 	}
 
 	error = AppStartCheckMathLib();
@@ -3020,15 +3385,16 @@ static Err AppStart(void)
 
 	error = GamOpenDatabase();
 	if (error) return (error);
+	GamImportDatabase(false);
 
-	if (gPrefs->volRefNum != sysInvalidRefNum) {	// if volref prviously defined, check if it's a valid one
+	if (gPrefs->card.volRefNum != sysInvalidRefNum) {	// if volref previously defined, check if it's a valid one
 		VolumeInfoType volInfo;
-		Err err = VFSVolumeInfo(gPrefs->volRefNum, &volInfo);
+		Err err = VFSVolumeInfo(gPrefs->card.volRefNum, &volInfo);
 		if (err)
-			gPrefs->volRefNum = sysInvalidRefNum;
+			gPrefs->card.volRefNum = sysInvalidRefNum;
 	}
 	else
-		gPrefs->volRefNum = parseCards(0);	// get first volref
+		gPrefs->card.volRefNum = parseCards(); //parseCards(0);	// get first volref
 
 	AppStartCheckNotify(); // not fatal error if not avalaible
 
@@ -3070,20 +3436,24 @@ static Err AppStopCheckNotify()
 }
 
 static void AppStop(void) {
+	// Close all the open forms.
+	FrmCloseAllForms();
 	WinEraseWindow();
 	WinPalette(winPaletteSetToDefault, 0, 256, NULL);
+
+	// Close and move Game list database
+	GamCloseDatabase(false);
+
 	// Write the saved preferences / saved-state information.  This data 
 	// will saved during a HotSync backup.
 	SavePrefs();
+
+	// stop all
 	AppStopCheckNotify();
 	AppStopMathLib();
 	AppStopHRMode();
 
-	// Close all the open forms.
-
-	FrmCloseAllForms();
-	GamCloseDatabase();
-
+	// reset if needed
 	if (gVars) {
 		Boolean autoReset = gVars->autoReset;
 		MemPtrFree(gVars);
@@ -3115,27 +3485,24 @@ static void AppLaunchCmdNotify(UInt16 LaunchFlags, SysNotifyParamType * pData)
 	{
 		case sysNotifyVolumeMountedEvent:
 			pData->handled = true;	// don't switch
+			CardSlotFormUpdate(); // redraw card list if needed
 
-			if (gPrefs->volRefNum == sysInvalidRefNum) {
-				FormPtr frmP = FrmGetActiveForm();
+			if (gPrefs->card.volRefNum == sysInvalidRefNum) {
 				VFSAnyMountParamType *notifyDetailsP = (VFSAnyMountParamType *)pData->notifyDetailsP;
-				gPrefs->volRefNum = notifyDetailsP->volRefNum;
+				gPrefs->card.volRefNum = notifyDetailsP->volRefNum;
 
-				if (frmP && gPrefs->volRefNum != sysInvalidRefNum) {
-					MenuEraseStatus(0);
-					FrmShowObject(frmP, FrmGetObjectIndex (frmP, MainMSBitMap));
-				}
+				if (FrmGetFormPtr(MainForm) == FrmGetActiveForm())
+					if (gPrefs->card.volRefNum != sysInvalidRefNum)
+						FrmUpdateForm(MainForm, frmRedrawUpdateMSImport);
 			}
 		
 		case sysNotifyVolumeUnmountedEvent:
-			if (gPrefs->volRefNum == (UInt16)pData->notifyDetailsP) {
-				FormPtr frmP = FrmGetActiveForm();
-				gPrefs->volRefNum = sysInvalidRefNum;
+			CardSlotFormUpdate();
+			if (gPrefs->card.volRefNum == (UInt16)pData->notifyDetailsP) {
+				gPrefs->card.volRefNum = sysInvalidRefNum;
 
-				if (frmP) {
-					MenuEraseStatus(0);
-					FrmShowObject(frmP, FrmGetObjectIndex (frmP, MainMSNoneBitMap));
-				}
+				if (FrmGetFormPtr(MainForm) == FrmGetActiveForm())
+					FrmUpdateForm(MainForm, frmRedrawUpdateMS);
 			}
 			break;
 	}

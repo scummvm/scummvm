@@ -35,6 +35,8 @@
 #define GBVARS_STRINGMAPTABLEV7_INDEX		12
 #define GBVARS_STRINGMAPTABLEV6_INDEX		13
 #define GBVARS_STRINGMAPTABLEV5_INDEX		14
+#define GBVARS_GERMANCHARSETDATAV2_INDEX	15
+#define GBVARS_FRENCHCHARSETDATAV2_INDEX	16
 
 #define GBVARS_SCUMM	0
 #define GBVARS_SIMON	1
@@ -63,3 +65,6 @@ void Akos_releaseGlobals();
 
 void Dialogs_initGlobals();
 void Dialogs_releaseGlobals();
+
+void Charset_initGlobals();
+void Charset_releaseGlobals();
