@@ -43,6 +43,19 @@ void Dialog::handleClick(int x, int y, int button)
 		w->handleClick(button);
 }
 
+void Dialog::handleMouseMoved(int x, int y, int button)
+{
+	Widget *w = findWidget(x - _x, y - _y);
+	if (_mouseWidget != w) {
+		if (_mouseWidget)
+			_mouseWidget->handleMouseLeft(button);
+		if (w)
+			w->handleMouseEntered(button);
+		_mouseWidget = w;
+	}
+}
+
+
 /*
  * Determine the widget at location (x,y) if any. Assumes the coordinates are
  * in the local coordinate system, i.e. relative to the top left of the dialog.

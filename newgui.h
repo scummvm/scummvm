@@ -44,21 +44,26 @@ public:
 	NewGui(Scumm *s);
 
 protected:
-	Scumm	*_s;
-	bool	_active;
-	bool	_need_redraw;
-	Dialog	*_activeDialog;
+	Scumm		*_s;
+	bool		_active;
+	bool		_need_redraw;
+	Dialog		*_activeDialog;
 	
-	Dialog	*_pauseDialog;
-	Dialog	*_saveLoadDialog;
+	Dialog		*_pauseDialog;
+	Dialog		*_saveLoadDialog;
 
 	// sound state
-	bool	_old_soundsPaused;
+	bool		_old_soundsPaused;
 
 	// mouse cursor state
-	bool	_old_cursor_mode;
-	int		_old_cursorHotspotX, _old_cursorHotspotY, _old_cursorWidth, _old_cursorHeight;
-	byte	_old_grabbedCursor[2048];
+	bool		_old_cursor_mode;
+	int			_old_cursorHotspotX, _old_cursorHotspotY, _old_cursorWidth, _old_cursorHeight;
+	byte		_old_grabbedCursor[2048];
+	
+	// mouse pos
+	struct {
+		int16 x,y;
+	} _old_mouse;
 
 	void saveState();
 	void restoreState();

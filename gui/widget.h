@@ -29,9 +29,10 @@ class Dialog;
 enum {
 	WIDGET_ENABLED		= 1 << 0,
 	WIDGET_INVISIBLE	= 1 << 1,
-	WIDGET_BORDER		= 1 << 2,
-	WIDGET_CLEARBG		= 1 << 3,
-	WIDGET_WANT_TICKLE	= 1 << 4,
+	WIDGET_HILITED		= 1 << 2,
+	WIDGET_BORDER		= 1 << 3,
+	WIDGET_CLEARBG		= 1 << 4,
+	WIDGET_WANT_TICKLE	= 1 << 5,
 };
 
 /* Widget */
@@ -47,7 +48,9 @@ protected:
 public:
 	Widget(Dialog *boss, int x, int y, int w, int h);
 
-	virtual void handleClick(int button) {}
+	virtual void handleClick(int button)		{}
+	virtual void handleMouseEntered(int button)	{}
+	virtual void handleMouseLeft(int button)	{}
 	void draw();
 
 	void setFlags(int flags)	{ _flags |= flags; }
@@ -76,13 +79,16 @@ protected:
 /* ButtonWidget */
 class ButtonWidget : public StaticTextWidget {
 protected:
-	uint8	_hotkey;
 	uint32	_cmd;
+	uint8	_hotkey;
 public:
 	ButtonWidget(Dialog *boss, int x, int y, int w, int h, const char *label, uint32 cmd);
 	void setCmd(uint32 cmd);
 	uint32 getCmd();
 	void handleClick(int button);
+
+	void handleMouseEntered(int button)	{ printf("handleMouseEntered\n"); setFlags(WIDGET_HILITED); draw(); }
+	void handleMouseLeft(int button)	{ printf("handleMouseLeft\n"); clearFlags(WIDGET_HILITED); draw(); }
 };
 
 

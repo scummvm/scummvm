@@ -35,9 +35,10 @@ protected:
 	Widget	*_firstWidget;
 	int16	_x, _y;
 	uint16	_w, _h;
+	Widget	*_mouseWidget;
 public:
 	Dialog(NewGui *gui, int x, int y, int w, int h)
-		: _gui(gui), _firstWidget(0), _x(x), _y(y), _w(w), _h(h)
+		: _gui(gui), _firstWidget(0), _x(x), _y(y), _w(w), _h(h), _mouseWidget(0)
 		{}
 
 	virtual void draw();
@@ -46,6 +47,7 @@ public:
 	virtual void handleClick(int x, int y, int button);
 	virtual void handleKey(char key, int modifiers) // modifiers = alt/shift/ctrl etc.
 		{ if (key == 27) close(); }
+	virtual void handleMouseMoved(int x, int y, int button);
 	virtual void handleCommand(uint32 cmd)
 		{}
 

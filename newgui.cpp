@@ -61,6 +61,10 @@ void NewGui::loop()
 		_activeDialog->handleClick(_s->mouse.x, _s->mouse.y, _s->_mouseButStat);
 	} else if (_s->_lastKeyHit) {
 		_activeDialog->handleKey(_s->_lastKeyHit, 0);
+	} else if (_old_mouse.x != _s->mouse.x || _old_mouse.y != _s->mouse.y) {
+		_activeDialog->handleMouseMoved(_s->mouse.x, _s->mouse.y, _s->_mouseButStat);
+		_old_mouse.x = _s->mouse.x;
+		_old_mouse.y = _s->mouse.y;
 	}
 
 	_s->drawDirtyScreenParts();

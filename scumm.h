@@ -74,7 +74,7 @@ enum {
 };
 
 struct ScummPoint {
-	int x,y;
+	int x, y;
 };
 
 struct MemBlkHeader {
@@ -417,12 +417,12 @@ struct ArrayHeader {
 };
 
 struct SentenceTab {
-		byte unk5;
-		byte unk2;
-		uint16 unk4;
-		uint16 unk3;
-		byte unk;
-		byte pad;
+	byte unk5;
+	byte unk2;
+	uint16 unk4;
+	uint16 unk3;
+	byte unk;
+	byte pad;
 };
 
 struct StringTab {

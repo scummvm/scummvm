@@ -53,7 +53,7 @@ void Widget::draw()
 	}
 	
 	// Now perform the actual widget draw
-	drawWidget(false);
+	drawWidget(_flags & WIDGET_HILITED);
 	
 	if (_flags & WIDGET_BORDER) {
 		_x -= 4;
