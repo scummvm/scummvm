@@ -854,12 +854,7 @@ int32 IMuseDigital::doCommand(int a, int b, int c, int d, int e, int f, int g, i
 		switch (cmd) {
 		case 0: // play music (state)
 			debug(2, "IMuseDigital::doCommand 0x1000 (%d)", b);
-			if (_scumm->_gameId == GID_CMI) {
-					char musicName[255];
-					sprintf(musicName, "%d-", b);
-					_scumm->_sound->playBundleMusic(strdup(musicName));
-					return 0;
-			} else if (_scumm->_gameId == GID_DIG) {
+			if (_scumm->_gameId == GID_DIG) {
 				for(l = 0;; l++) {
 					if (_digStateMusicMap[l].room == -1) {
 						return 1;
