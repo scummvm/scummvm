@@ -2829,10 +2829,10 @@ restart:;
 
 		// do_save
 		if (!save_game(_saveload_row_curpos + unk132_result, buf + unk132_result * 18))
-			warning("Save failed");
+			o_file_error(_fcs_ptr_array_3[5], true);
 	} else {
 		if (!load_game(_saveload_row_curpos + i))
-			warning("Load failed");
+			o_file_error(_fcs_ptr_array_3[5], false);
 	}
 
 get_out:;
@@ -2856,6 +2856,56 @@ get_out:;
 	}
 
 #endif
+}
+
+void SimonEngine::o_file_error(FillOrCopyStruct *fcs, bool save_error) {
+	HitArea *ha;
+	char *string, *string2;
+
+	if (save_error) {
+		string = "\r       Save failed.";
+		string2 = "\r       Disk error.";
+	} else {
+		string = "\r       Load failed.";
+		string2 = "\r     File not found.";
+	}			
+
+	video_putchar(fcs, 0xC);
+	for (; *string; string++)
+		video_putchar(fcs, *string);
+	for (; *string2; string2++)
+		video_putchar(fcs, *string2);
+
+	fcs->textColumn = (fcs->width >> 1) - 3;
+	fcs->textRow = fcs->height - 1; //height
+	fcs->textLength = 0; // left allign
+
+	string = "[ OK ]";
+	for (; *string; string++)
+		video_putchar(fcs, *string);
+
+	ha = findEmptyHitArea();
+	ha->x = (fcs->width >> 1) + fcs->x - 3 << 3;
+	ha->y = (fcs->height << 3) + fcs->y - 8;
+	ha->width = 48;
+	ha->height = 8;
+	ha->flags = 0x20;
+	ha->id = 0x7FFF;
+	ha->layer = 0x3EF;
+
+loop:;
+	_last_hitarea = _last_hitarea_3 = 0;
+
+	do {
+		delay(1);
+	} while (_last_hitarea_3 == 0);
+
+	ha = _last_hitarea;
+	if (ha == NULL || ha->id != 0x7FFF)
+		goto loop;
+
+	// Return
+	delete_hitarea(0x7FFF);
 }
 
 void SimonEngine::o_wait_for_vga(uint a) {

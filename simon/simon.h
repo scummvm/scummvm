@@ -790,6 +790,7 @@ protected:
 	int o_unk_132_helper(bool *b, char *buf);
 	void o_clear_character(FillOrCopyStruct *fcs, int x, byte b = 0);
 	void savegame_dialog(char *buf);
+	void o_file_error(FillOrCopyStruct *fcs, bool save_error);
 
 	int count_savegames();
 	int display_savegame_list(int curpos, bool load, char *dst);
