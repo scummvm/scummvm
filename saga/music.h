@@ -59,6 +59,7 @@ public:
 	void playMusic();
 	void stopMusic();
 	void setLoop(bool loop) { _looping = loop; }
+	void setPassThrough(bool b)		{ _passThrough = b; }
 
 	void setGM(bool isGM) { _isGM = isGM; }
 
@@ -87,6 +88,7 @@ protected:
 	byte _channelVolume[16];
 	bool _nativeMT32;
 	bool _isGM;
+	bool _passThrough;
 
 	bool _isPlaying;
 	bool _looping;
@@ -104,6 +106,7 @@ public:
 	Music(SoundMixer *mixer, MidiDriver *driver, int enabled);
 	~Music(void);
 	void hasNativeMT32(bool b)		{ _player->hasNativeMT32(b); }
+	void setPassThrough(bool b)		{ _player->setPassThrough(b); }
 
 	int play(uint32 music_rn, uint16 flags = R_MUSIC_DEFAULT);
 	int pause(void);

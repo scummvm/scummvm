@@ -161,26 +161,30 @@ void SagaEngine::go() {
 
 	_previousTicks = _system->getMillis();
 
-	// On some platforms, graphics initialization also initializes sound
-	// ( Win32 DirectX )... Music must be initialized before sound for 
-	// native midi support
-	MidiDriver *driver = GameDetector::createMidi(GameDetector::detectMusicDriver(MDT_NATIVE | MDT_ADLIB | MDT_PREFER_NATIVE));
-	if (!driver)
-		driver = MidiDriver_ADLIB_create(_mixer);
-	else if (ConfMan.getBool("native_mt32"))
-		driver->property(MidiDriver::PROP_CHANNEL_MASK, 0x03FE);
-
-	_music = new Music(_mixer, driver, _musicEnabled);
-	_music->hasNativeMT32(ConfMan.getBool("native_mt32"));
-
-	if (!_musicEnabled) {
-		debug(0, "Music disabled.");
-	}
-
 	// Initialize graphics
 	R_GAME_DISPLAYINFO disp_info;
 	GAME_GetDisplayInfo(&disp_info);
 	_gfx = new Gfx(_system, disp_info.logical_w, disp_info.logical_h);
+
+	// Graphics should be initialized before music
+	int midiDriver = GameDetector::detectMusicDriver(MDT_NATIVE | MDT_ADLIB | MDT_PREFER_NATIVE);
+	bool native_mt32 = (ConfMan.getBool("native_mt32") || (midiDriver == MD_MT32));
+
+	MidiDriver *driver = GameDetector::createMidi(midiDriver);
+	if (!driver)
+		driver = MidiDriver_ADLIB_create(_mixer);
+	else if (native_mt32)
+		driver->property(MidiDriver::PROP_CHANNEL_MASK, 0x03FE);
+
+	_music = new Music(_mixer, driver, _musicEnabled);
+	_music->hasNativeMT32(native_mt32);
+
+	if (midiDriver == MD_MT32)
+		_music->setPassThrough(true);
+
+	if (!_musicEnabled) {
+		debug(0, "Music disabled.");
+	}
 
 	_isoMap = new IsoMap(_gfx);
 	

@@ -230,6 +230,11 @@ void MusicPlayer::close() {
 }
 
 void MusicPlayer::send(uint32 b) {
+	if (_passThrough) {
+		_driver->send(b);
+		return;
+	}
+
 	byte channel = (byte)(b & 0x0F);
 	if ((b & 0xFFF0) == 0x07B0) {
 		// Adjust volume changes by master volume
