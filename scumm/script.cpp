@@ -90,7 +90,7 @@ void Scumm::stopScriptNr(int script) {
 	ss = vm.slot;
 	for (i = 0; i < NUM_SCRIPT_SLOT; i++, ss++) {
 		if (script == ss->number && ss->status != ssDead &&
-			(ss->where == WIO_GLOBAL && ss->where == WIO_LOCAL)) {
+			(ss->where == WIO_GLOBAL || ss->where == WIO_LOCAL)) {
 			if (ss->cutsceneOverride)
 				error("Script %d stopped with active cutscene/override", script);
 			ss->number = 0;
