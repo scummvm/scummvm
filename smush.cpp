@@ -24,7 +24,61 @@
 #include "mixer/mixer.h"
 #include "driver_gl.h"
 
+#include "resource.h"
+
+#include <zlib.h>
+
 Smush *smush;
+
+void hexdump(const byte * data, int len, int bytesPerLine) {
+        assert(1 <= bytesPerLine && bytesPerLine <= 32);
+        int i;
+        byte c;
+        int offset = 0;
+        while (len >= bytesPerLine) {
+                printf("%06x: ", offset);
+                for (i = 0; i < bytesPerLine; i++) {
+                        printf("%02x ", data[i]);
+                        if (i % 4 == 3)
+                                printf(" ");
+                }
+                printf(" |");
+                for (i = 0; i < bytesPerLine; i++) {
+                        c = data[i];
+                        if (c < 32 || c >= 127)
+                                c = '.';
+                        printf("%c", c);
+                }
+                printf("|\n");
+                data += bytesPerLine;
+                len -= bytesPerLine;
+                offset += bytesPerLine;
+        }
+
+        if (len <= 0)
+                return;
+
+        printf("%06x: ", offset);
+        for (i = 0; i < bytesPerLine; i++) {
+                if (i < len)
+                        printf("%02x ", data[i]);
+                else
+                        printf("   ");
+                if (i % 4 == 3)
+                        printf(" ");
+        }
+        printf(" |");
+        for (i = 0; i < len; i++) {
+                c = data[i];
+                if (c < 32 || c >= 127)
+                        c = '.';
+                printf("%c", c);
+        }
+        for (; i < bytesPerLine; i++)
+                printf(" ");
+        printf("|\n");
+}
+
 
 void Smush::timerCallback(void *refCon) {
 	smush->handleFrame();
@@ -172,10 +226,86 @@ void Smush::setupAnim(const char *file, const char *directory) {
 }
 
 void Smush::play(const char *filename, const char *directory) {
+	char tmpOut[256];
+	FILE *tmp = ResourceLoader::instance()->openNewStream(filename);
+	FILE *outFile = NULL;
+	sprintf(tmpOut, "smush.temp");
+	
+	if (tmp != NULL) {
+		z_stream z;
+		char inBuf[1024], outBuf[1024], flags;
+		int status = 0;
+
+
+		warning("Decompressing SMUSH cutscene %s - This may take a minute", filename);
+		fread(inBuf, 4, sizeof(char), tmp);		//	Header, Method, Flags
+		flags = inBuf[4];
+		fread(inBuf, 6, sizeof(char), tmp);		// 	XFlags
+
+		if (((flags & 0x04) != 0) || ((flags & 0x10) != 0))	// Misc
+			error("Unsupported header flag");
+
+		if ((flags & 0x08) != 0) {				// Name
+		  while(inBuf[0] != 0) {
+			fread(inBuf, 1, sizeof(char), tmp);
+			printf("%c", inBuf[0]);
+		 }
+		}
+
+		if ((flags & 0x02 != 0))				// CRC
+			fread(inBuf, 2, sizeof(char), tmp);
+
+		z.zalloc = NULL;
+		z.zfree = NULL;
+		z.opaque = Z_NULL;
+
+		if (inflateInit2(&z, -15) != Z_OK)
+			error("Smush::play() - inflateInit error");
+
+		z.next_in = (Bytef*)inBuf;
+		z.avail_in = fread(inBuf, 1, sizeof(inBuf), tmp);
+		z.next_out = (Bytef *)outBuf;
+		z.avail_out = sizeof(outBuf);
+
+		while(1) {
+			if (z.avail_in == 0) {
+				z.next_in = (Bytef*)inBuf;
+				z.avail_in = fread(inBuf, 1, sizeof(inBuf), tmp);
+			}
+
+			status = inflate(&z, Z_NO_FLUSH);
+			if (status == Z_STREAM_END) {
+				if (sizeof(outBuf) - z.avail_out) {
+					if (outFile == NULL)
+						outFile = fopen(tmpOut, "wb");
+					fwrite(outBuf, 1, sizeof(outBuf) - z.avail_out, outFile);
+				}
+				break;
+			}
+
+			if (status != Z_OK) {
+				warning("Smush::play() - Error inflating stream (%d) [-3 means bad data]", status);
+				return;
+			}
+
+			if (z.avail_out == 0) {
+				if (outFile == NULL)
+					outFile = fopen(tmpOut, "wb");
+
+				fwrite(outBuf, 1, sizeof(outBuf), outFile);
+				z.next_out = (Bytef*)outBuf;
+				z.avail_out = sizeof(outBuf);
+			}
+		}
+
+		inflateEnd(&z);
+		fclose(outFile);
+		warning("Smush::play() Open okay for %s!\n", filename);
+	}
 
 	// Verify the specified file exists
 	File f;
-	f.open(filename, directory);
+	f.open(tmpOut, NULL);
 	if (!f.isOpen()) {
 		warning("Smush::play() File not found %s", filename);
 		return;
@@ -183,7 +313,7 @@ void Smush::play(const char *filename, const char *directory) {
 	f.close();
 
 	// Load the video
-	setupAnim(filename, directory);
+	setupAnim(tmpOut, directory);
 	handleFramesHeader();
 
 	SDL_Surface* image;
