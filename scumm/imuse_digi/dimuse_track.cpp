@@ -83,7 +83,7 @@ void IMuseDigital::startSound(int soundId, const char *soundName, int soundType,
 	Track *track = _track[l];
 	for (;;) {
 		flushTracks();
-		if (!track->used && !track->handle.isActive()) {
+		if (!track->used) {
 			track->pan = 64;
 			track->vol = volume * 1000;
 			track->volFadeDest = 0;
