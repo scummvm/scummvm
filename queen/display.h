@@ -104,7 +104,7 @@ public:
 	void handleTimer();
 	void waitForTimer();
 
-	void mouseCursorInit(uint8* buf, uint16 w, uint16 h, uint16 xhs, uint16 yhs);
+	void mouseCursorInit(uint8 *buf, uint16 w, uint16 h, uint16 xhs, uint16 yhs);
 	void mouseCursorShow(bool show);
 
 private:

@@ -187,7 +187,7 @@ void Display::dynalumUpdate(int16 x, int16 y) {
 	}
 
 	uint8 colMask = _dynalum.msk[offset];
-	debug(9, "Graphics::dynalumUpdate(%d, %d) - colMask = %d", x, y, colMask);
+	debug(9, "Display::dynalumUpdate(%d, %d) - colMask = %d", x, y, colMask);
 
 	if (colMask != _dynalum.prevColMask) {
 		uint8 i;
@@ -238,6 +238,7 @@ void Display::palSet(const uint8 *pal, int start, int end, bool updateScreen) {
 
 void Display::palSetJoe(JoePalette pal) {
 
+	debug(9, "Display::palSetJoe(%d)", pal);
 	const uint8 *palJoe = NULL;
 	switch (pal) {
 	case JP_CLOTHES:
@@ -589,7 +590,6 @@ void Display::palCustomScroll(uint16 roomNum) {
     }
 	_pals.dirtyMin = MIN(_pals.dirtyMin, loPal);
 	_pals.dirtyMax = MAX(_pals.dirtyMax, hiPal);
-    // XXX dynalum();
 }
 
 
@@ -663,7 +663,7 @@ void Display::prepareUpdate() {
 
 void Display::update(bool dynalum, int16 dynaX, int16 dynaY) {
 
-	if (dynalum) {
+	if (_pals.scrollable && dynalum) {
 		dynalumUpdate(dynaX, dynaY);
 	}
 	if (_pals.dirtyMin != 144 || _pals.dirtyMax != 144) {
