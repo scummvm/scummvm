@@ -130,6 +130,7 @@ private:
 	unsigned char *local_fb;
 
 	int window_width, window_height;
+	int fb_width, fb_height;
 	int scumm_x, scumm_y;
 
 #ifdef USE_XV_SCALING
@@ -301,7 +302,6 @@ OSystem *OSystem_X11::create(int gfx_mode, bool full_screen)
 OSystem_X11::OSystem_X11()
 {
 	char buf[512];
-	static XShmSegmentInfo shminfo;
 	XWMHints *wm_hints;
 	XGCValues values;
 	XTextProperty window_name;
@@ -342,27 +342,13 @@ OSystem_X11::OSystem_X11()
 	XSetWMProperties(display, window, &window_name, &window_name,
 	                 NULL /* argv */ , 0 /* argc */ , NULL /* size hints */ ,
 	                 wm_hints, NULL /* class hints */ );
+	XFree(wm_hints);
 
 	XSelectInput(display, window,
 	             ExposureMask | KeyPressMask | KeyReleaseMask |
 	             PointerMotionMask | ButtonPressMask | ButtonReleaseMask |
 	             StructureNotifyMask);
-#ifdef USE_XV_SCALING
-	image = XvShmCreateImage(display, 65, 0x03, 0, 320, 200, &shminfo);
-	shminfo.shmid = shmget(IPC_PRIVATE, image->data_size, IPC_CREAT | 0700);
-#else
-	image =	XShmCreateImage(display, DefaultVisual(display, screen), 16, ZPixmap, NULL, &shminfo, 320, 200);
-	shminfo.shmid = shmget(IPC_PRIVATE, 320 * 200 * 2, IPC_CREAT | 0700);
-#endif
-	shminfo.shmaddr = (char *)shmat(shminfo.shmid, 0, 0);
-	image->data = shminfo.shmaddr;
-	shminfo.readOnly = False;
-	if (XShmAttach(display, &shminfo) == 0) {
-		error("Could not attach shared memory segment !\n");
-		exit(1);
-	}
-	shmctl(shminfo.shmid, IPC_RMID, 0);
-
+	
 	values.foreground = BlackPixel(display, screen);
 	black_gc = XCreateGC(display, window, GCForeground, &values);
 
@@ -380,14 +366,6 @@ OSystem_X11::OSystem_X11()
 out_of_loop:
 	create_empty_cursor();
 
-	/* Initialize the 'local' frame buffer and the palette */
-	local_fb = (unsigned char *)calloc(320 * 200, sizeof(unsigned char));
-#ifdef USE_XV_SCALING
-	palette = (unsigned int *)calloc(256, sizeof(unsigned int));
-#else
-	palette = (unsigned short *)calloc(256, sizeof(unsigned short));
-#endif
-
 	/* And finally start the local timer */
 	gettimeofday(&start_time, NULL);
 }
@@ -400,10 +378,44 @@ uint32 OSystem_X11::get_msecs() {
 }
 
 void OSystem_X11::init_size(uint w, uint h) {
-	if ((w != 320) || (h != 200))
-		error("320x200 is the only game resolution supported");
+	static XShmSegmentInfo shminfo;
 
-	/* Do nothing more for now... */
+	fb_width = w;
+	fb_height = h;
+
+	if ((fb_width != 320) || (fb_height != 200)) {
+		/* We need to change the size of the X11 window */
+		XWindowChanges new_values;
+
+		new_values.width = fb_width;
+		new_values.height = fb_height;
+
+		XConfigureWindow(display, window, CWWidth | CWHeight, &new_values);
+	}
+
+#ifdef USE_XV_SCALING
+	image = XvShmCreateImage(display, 65, 0x03, 0, fb_width, fb_height, &shminfo);
+	shminfo.shmid = shmget(IPC_PRIVATE, image->data_size, IPC_CREAT | 0700);
+#else
+	image =	XShmCreateImage(display, DefaultVisual(display, screen), 16, ZPixmap, NULL, &shminfo, fb_width, fb_height);
+	shminfo.shmid = shmget(IPC_PRIVATE, fb_width * fb_height * 2, IPC_CREAT | 0700);
+#endif
+	shminfo.shmaddr = (char *)shmat(shminfo.shmid, 0, 0);
+	image->data = shminfo.shmaddr;
+	shminfo.readOnly = False;
+	if (XShmAttach(display, &shminfo) == 0) {
+		error("Could not attach shared memory segment !\n");
+		exit(1);
+	}
+	shmctl(shminfo.shmid, IPC_RMID, 0);
+
+	/* Initialize the 'local' frame buffer and the palette */
+	local_fb = (unsigned char *)calloc(fb_width * fb_height, sizeof(unsigned char));
+#ifdef USE_XV_SCALING
+	palette = (unsigned int *)calloc(256, sizeof(unsigned int));
+#else
+	palette = (unsigned short *)calloc(256, sizeof(unsigned short));
+#endif
 }
 
 bool OSystem_X11::set_sound_proc(void *param, SoundProc *proc, byte format) {
@@ -460,11 +472,11 @@ void OSystem_X11::copy_rect(const byte *buf, int pitch, int x, int y, int w, int
 		buf -= y * pitch;
 		y = 0;
 	}
-	if (h > (200 - y)) {
-		h = 200 - y;
+	if (h > (fb_height - y)) {
+		h = fb_height - y;
 	}
 
-	dst = local_fb + 320 * y + x;
+	dst = local_fb + fb_width * y + x;
 
 	if (h <= 0)
 		return;
@@ -475,26 +487,26 @@ void OSystem_X11::copy_rect(const byte *buf, int pitch, int x, int y, int w, int
 	AddDirtyRec(x, y, w, h);
 	while (h-- > 0) {
 		memcpy(dst, buf, w);
-		dst += 320;
+		dst += fb_width;
 		buf += pitch;
 	}
 }
 
 void OSystem_X11::update_screen_helper(const dirty_square * d, dirty_square * dout) {
 	int x, y;
-	unsigned char *ptr_src = local_fb + (320 * d->y) + d->x;
+	unsigned char *ptr_src = local_fb + (fb_width * d->y) + d->x;
 #ifdef USE_XV_SCALING
-	unsigned int *ptr_dst = ((unsigned int *)image->data) + (320 * d->y) + d->x;
+	unsigned int *ptr_dst = ((unsigned int *)image->data) + (fb_width * d->y) + d->x;
 #else
-	unsigned short *ptr_dst = ((unsigned short *)image->data) + (320 * d->y) + d->x;
+	unsigned short *ptr_dst = ((unsigned short *)image->data) + (fb_width * d->y) + d->x;
 #endif
 	
 	for (y = 0; y < d->h; y++) {
 		for (x = 0; x < d->w; x++) {
 			*ptr_dst++ = palette[*ptr_src++];
 		}
-		ptr_dst += 320 - d->w;
-		ptr_src += 320 - d->w;
+		ptr_dst += fb_width - d->w;
+		ptr_src += fb_width - d->w;
 	}
 	if (d->x < dout->x)
 		dout->x = d->x;
@@ -509,8 +521,8 @@ void OSystem_X11::update_screen_helper(const dirty_square * d, dirty_square * do
 void OSystem_X11::update_screen() {
 	bool full_redraw = false;
 	bool need_redraw = false;
-	static const dirty_square ds_full = { 0, 0, 320, 200 };
-	dirty_square dout = { 320, 200, 0, 0 };
+	static const dirty_square ds_full = { 0, 0, fb_width, fb_height };
+	dirty_square dout = { fb_width, fb_height, 0, 0 };
 	
 	/* First make sure the mouse is drawn, if it should be drawn. */
 	draw_mouse();
@@ -545,13 +557,13 @@ void OSystem_X11::update_screen() {
 #ifndef USE_XV_SCALING
 		XShmPutImage(display, window, DefaultGC(display, screen), image,
 		             0, 0, scumm_x, scumm_y + new_shake_pos,
-		             320, 200, 0);
+		             fb_width, fb_height, 0);
 #endif
 		current_shake_pos = new_shake_pos;
 	} else if (need_redraw == true) {
 #ifdef USE_XV_SCALING
 		XvShmPutImage(display, 65, window, DefaultGC(display, screen), image,
-			      0, 0, 320, 200, 0, 0, window_width, window_height, 0);
+			      0, 0, fb_width, fb_height, 0, 0, window_width, window_height, 0);
 #else
 		XShmPutImage(display, window, DefaultGC(display, screen), image,
 		             dout.x, dout.y, scumm_x + dout.x, scumm_y + dout.y + current_shake_pos,
@@ -605,17 +617,17 @@ void OSystem_X11::draw_mouse() {
 		buf += (-ydraw) * w;
 		ydraw = 0;
 	} else {
-		real_h = (ydraw + h) > 200 ? (200 - ydraw) : h;
+		real_h = (ydraw + h) > fb_height ? (fb_height - ydraw) : h;
 	}
 	if (xdraw < 0) {
 		real_w = w + xdraw;
 		buf += (-xdraw);
 		xdraw = 0;
 	} else {
-		real_w = (xdraw + w) > 320 ? (320 - xdraw) : w;
+		real_w = (xdraw + w) > fb_width ? (fb_width - xdraw) : w;
 	}
 
-	dst = local_fb + (ydraw * 320) + xdraw;
+	dst = local_fb + (ydraw * fb_width) + xdraw;
 	dst2 = dst;
 
 	if ((real_h == 0) || (real_w == 0)) {
@@ -633,7 +645,7 @@ void OSystem_X11::draw_mouse() {
 	while (real_h_2 > 0) {
 		memcpy(bak, dst, real_w);
 		bak += BAK_WIDTH;
-		dst += 320;
+		dst += fb_width;
 		real_h_2--;
 	}
 	while (real_h > 0) {
@@ -648,7 +660,7 @@ void OSystem_X11::draw_mouse() {
 			width--;
 		}
 		buf += w - real_w;
-		dst2 += 320 - real_w;
+		dst2 += fb_width - real_w;
 		real_h--;
 	}
 }
@@ -662,13 +674,13 @@ void OSystem_X11::undraw_mouse() {
 
 	AddDirtyRec(old_state.x, old_state.y, old_state.w, old_state.h);
 
-	byte *dst = local_fb + (old_state.y * 320) + old_state.x;
+	byte *dst = local_fb + (old_state.y * fb_width) + old_state.x;
 	byte *bak = _ms_backup;
 
 	while (old_h > 0) {
 		memcpy(dst, bak, old_state.w);
 		bak += BAK_WIDTH;
-		dst += 320;
+		dst += fb_width;
 		old_h--;
 	}
 }
@@ -757,14 +769,14 @@ bool OSystem_X11::poll_event(Event *scumm_event) {
 			}
 			if ((real_h <= 0) || (real_w <= 0))
 				break;
-			if ((real_x >= 320) || (real_y >= 200))
+			if ((real_x >= fb_width) || (real_y >= fb_height))
 				break;
 
-			if ((real_x + real_w) >= 320) {
-				real_w = 320 - real_x;
+			if ((real_x + real_w) >= fb_width) {
+				real_w = fb_width - real_x;
 			}
-			if ((real_y + real_h) >= 200) {
-				real_h = 200 - real_y;
+			if ((real_y + real_h) >= fb_height) {
+				real_h = fb_height - real_y;
 			}
 
 			/* Compute the intersection of the expose event with the real ScummVM display zone */
@@ -876,8 +888,8 @@ bool OSystem_X11::poll_event(Event *scumm_event) {
 			    (window_height != event.xconfigure.height)) {
 				window_width = event.xconfigure.width;
 				window_height = event.xconfigure.height;
-				scumm_x = (window_width - 320) / 2;
-				scumm_y = (window_height - 200) / 2;
+				scumm_x = (window_width - fb_width) / 2;
+				scumm_y = (window_height - fb_height) / 2;
 				XFillRectangle(display, window, black_gc, 0, 0, window_width, window_height);
 			}
 		}
