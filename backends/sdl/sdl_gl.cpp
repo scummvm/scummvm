@@ -159,16 +159,11 @@ void OSystem_SDL_OpenGL::load_gfx_mode() {
 		break;
 
 	case GFX_TRIPLESIZE:
-		if (_full_screen) {
-			warning("full screen in useless in triplesize mode, reverting to normal mode");
-			goto normal_mode;
-		}
 		_scaleFactor = 3;
 		_scaler_proc = Normal3x;
 		break;
 
 	case GFX_NORMAL:
-normal_mode:;
 		_scaleFactor = 1; //_usingOpenGL ? 2 : 1;
 		_scaler_proc = Normal1x;
 		break;
