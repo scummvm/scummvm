@@ -53,7 +53,7 @@ static const char USAGE_STRING[] =
 	"\t-p<path>      - look for game in <path>\n"
 	"\t-x[<num>]     - load this savegame (default: 0 - autosave)\n"
 	"\t-f            - fullscreen mode\n"
-	"\t-g<mode>      - graphics mode (normal,2x,3x,2xsai,super2xsai,supereagle,advmame2x,tv2x,dotmatrix)\n"
+	"\t-g<mode>      - graphics mode (normal,2x,3x,2xsai,super2xsai,supereagle,advmame2x,advmame3x,tv2x,dotmatrix)\n"
 	"\t-e<mode>      - set music engine (see README for details)\n"
 	"\t-a            - specify game is amiga version\n"
 	"\t-q<lang>      - specify language (en,de,fr,it,pt,es,jp,zh,ko,hb)\n"
