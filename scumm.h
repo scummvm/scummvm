@@ -556,7 +556,6 @@ public:
 	/* Scumm main loop */
 
 	void mainRun();
-	int delta; // global time
 
 	/* _insane vars */
 
@@ -741,8 +740,6 @@ public:
 	void stopObjectCode();
 	void stopObjectScript(int script);
 
-
-	
 	/* Should be in Resource class */
 	byte _encbyte;
 	void *_fileHandle;
@@ -783,7 +780,7 @@ public:
     void loadRoomObjectsSmall();
 	void readArrayFromIndexFile();
 	void readMAXS();
-	uint32 isGlobInMemory(int type, int index);
+	bool isGlobInMemory(int type, int index);
 	virtual void readIndexFile();
 	virtual void loadCharset(int i);
 	void nukeCharset(int i);

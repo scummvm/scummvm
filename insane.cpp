@@ -1036,8 +1036,6 @@ void SmushPlayer::startVideo(short int arg, byte *videoFile)
 	sm->videoFinished = 0;
 	sm->_insaneState = 1;
 
-	sm->delta = 5;
-
 	do {
 		_frameChanged = 1;
 

@@ -1450,15 +1450,11 @@ Scumm *Scumm::createFromDetector(GameDetector *detector, OSystem *syst)
 		scumm->_imuse = imuse;
 	}
 
-	scumm->delta = 6;
 	if (detector->_restore) {
 		scumm->_saveLoadSlot = 0;
 		scumm->_saveLoadFlag = 2;
 		scumm->_saveLoadCompatible = false;
 	}
-
-	scumm->delta = 0;
-
 
 	return scumm;
 }

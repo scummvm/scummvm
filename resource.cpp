@@ -1235,22 +1235,11 @@ void Scumm::allocateArrays()
 
 
 
-uint32 Scumm::isGlobInMemory(int type, int index)
-
+bool Scumm::isGlobInMemory(int type, int index)
 {
-
 	validateResource("isGlobInMemory",type,index);
 
-	
-
-	if(res.address[type][index]==NULL)
-
-		return(0);
-
-
-
-	return(1);
-
+	return res.address[type][index] != NULL;
 }
 
 
