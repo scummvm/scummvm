@@ -22,6 +22,7 @@
 #include "stdafx.h"
 #include "queen/display.h"
 #include "queen/defs.h"
+#include "queen/input.h"
 #include "queen/logic.h" // For RandomSource
 #include "queen/resource.h"
 
@@ -100,8 +101,8 @@ void TextRenderer::drawChar(uint8 *dstBuf, uint16 dstPitch, uint16 x, uint16 y, 
 
 
 
-Display::Display(OSystem *system)
-	: _system(system) {
+Display::Display(OSystem *system, Input *input)
+	: _system(system), _input(input) {
 
 	_dynalum.prevColMask = 0xFF;
 	_textRenderer.init();
@@ -816,11 +817,7 @@ void Display::waitForTimer() {
 
 	_gotTick = false;
 	while (!_gotTick) {
-		// FIXME: use _input->delay() instead
-		OSystem::Event event;
-
-		_system->delay_msecs(10);
-		while (_system->poll_event(&event));
+		_input->delay(10);
 	}
 }
 

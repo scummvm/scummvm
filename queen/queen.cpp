@@ -211,8 +211,8 @@ void QueenEngine::go() {
 
 void QueenEngine::initialise(void) {
 	_resource = new Resource(_gameDataPath, _detector->_game.detectname);
-	_display = new Display(_system);
 	_input = new Input(_system);
+	_display = new Display(_system, _input);
 	_graphics = new Graphics(_display, _input, _resource);
 	_sound = Sound::giveSound(_mixer, _input, _resource, _resource->compression());
 	_logic = new Logic(_resource, _graphics, _display, _input, _sound);

@@ -63,7 +63,7 @@ struct TextRenderer {
 class Display {
 public:
 
-	Display(OSystem *system);
+	Display(OSystem *system, Input *input);
 	~Display();
 
 	void dynalumInit(Resource *resource, const char *roomName, uint16 roomNum);
@@ -144,6 +144,7 @@ private:
 
 	Dynalum _dynalum;
 	OSystem *_system;
+	Input *_input;
 
 	static const uint8 PAL_JOE_CLOTHES[];
 	static const uint8 PAL_JOE_DRESS[];
