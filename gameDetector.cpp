@@ -350,7 +350,7 @@ int GameDetector::detectMain(int argc, char **argv)
 	_gfx_driver = GD_X;
 #elif defined(__MORPHOS__)
 	_gfx_driver = GD_MORPHOS;
-#elif defined(WIN32_WCE)
+#elif defined(_WIN32_WCE)
 	_gfx_driver = GD_WINCE;
 #else
 	/* SDL is the default driver for now */
@@ -413,7 +413,7 @@ OSystem *GameDetector::createSystem() {
 #elif defined(__DC__)
 	case GD_DC:
 		return OSystem_Dreamcast_create();
-#elif defined(WIN32_WCE)
+#elif defined(_WIN32_WCE)
 	case GD_WINCE:
 		return OSystem_WINCE3_create();
 #elif defined(__MORPHOS__)
