@@ -378,7 +378,7 @@ const char *Scumm_v6::getOpcodeDesc(byte i) {
 int Scumm_v6::popRoomAndObj(int *room) {
 	int obj;
 
-	if (_features & GF_HAS_ROOMTABLE) {
+	if (_features & GF_AFTER_V7) {
 		obj = pop();
 		*room = getObjectRoom(obj);
 	} else {
