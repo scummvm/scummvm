@@ -546,16 +546,29 @@ bool ScummDebugger::Cmd_Actor(int argc, const char **argv) {
 	}
 
 	a = &_s->_actors[actnum];
+	value = atoi(argv[3]);
 
 	if (!strcmp(argv[2], "ignoreboxes")) {
-			a->ignoreBoxes = (atoi(argv[3]) > 0);
+			a->ignoreBoxes = (value > 0);
 			Debug_Printf("Actor[%d].ignoreBoxes = %d\n", actnum, a->ignoreBoxes);
+	} else if (!strcmp(argv[2], "x")) {
+			a->putActor(value, a->y, a->room);
+			Debug_Printf("Actor[%d].x = %d\n", actnum, a->x);
+			_s->_fullRedraw = 1;
+	} else if (!strcmp(argv[2], "y")) {
+			a->putActor(a->x, value, a->room);
+			Debug_Printf("Actor[%d].y = %d\n", actnum, a->y);
+			_s->_fullRedraw = 1;
+	} else if (!strcmp(argv[2], "elevation")) {
+			a->elevation = value;
+			Debug_Printf("Actor[%d].elevation = %d\n", actnum, a->elevation);
+			_s->_fullRedraw = 1;
 	} else if (!strcmp(argv[2], "costume")) {
-			value = atoi(argv[3]);
 			if (value >= _s->res.num[rtCostume])
 					Debug_Printf("Costume not changed as %d exceeds max of %d\n", value, _s->res.num[rtCostume]);
 			else {
 				a->setActorCostume( value );
+				_s->_fullRedraw = 1;
 				Debug_Printf("Actor[%d].costume = %d\n", actnum, a->costume);
 			}
 	} else {

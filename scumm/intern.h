@@ -263,6 +263,7 @@ protected:
 	void o2_restart();
 	void o2_roomOps();
 	void o2_saveLoadGame();
+	void o2_getActorElevation();
 	void o2_setActorElevation();
 	void o2_setBitVar();
 	void o2_setCameraAt();

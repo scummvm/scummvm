@@ -40,7 +40,7 @@ void Scumm_v2::setupOpcodes() {
 		/* 04 */
 		OPCODE(o5_isGreaterEqual),
 		OPCODE(o2_drawObject),
-		OPCODE(o5_getActorElevation),
+		OPCODE(o2_getActorElevation),
 		OPCODE(o2_setState08),
 		/* 08 */
 		OPCODE(o5_isNotEqual),
@@ -200,7 +200,7 @@ void Scumm_v2::setupOpcodes() {
 		/* 84 */
 		OPCODE(o5_isGreaterEqual),
 		OPCODE(o2_drawObject),
-		OPCODE(o5_getActorElevation),
+		OPCODE(o2_getActorElevation),
 		OPCODE(o2_setState08),
 		/* 88 */
 		OPCODE(o5_isNotEqual),
@@ -1060,12 +1060,19 @@ void Scumm_v2::o2_putActorAtObject() {
 	a->putActor(x, y, a->room);
 }
 
+void Scumm_v2::o2_getActorElevation() {
+        getResultPos();
+        int act = getVarOrDirectByte(0x80);
+        Actor *a = derefActor(act, "o2_getActorElevation");
+        setResult(a->elevation / 2);
+}
+
 void Scumm_v2::o2_setActorElevation() {
 	int act = getVarOrDirectByte(0x80);
 	int elevation = getVarOrDirectByte(0x40);
 
 	Actor *a = derefActor(act, "o2_setActorElevation");
-	a->elevation = elevation;
+	a->elevation = elevation * 2;
 }
 
 void Scumm_v2::o2_animateActor() {
