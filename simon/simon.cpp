@@ -46,11 +46,6 @@
 #include "globals.h"
 #endif
 
-#ifdef _WIN32_WCE
-extern bool toolbar_drawn;
-extern bool draw_keyboard;
-#endif
-
 extern uint16 g_debugLevel;
 
 struct SimonGameSettings {
@@ -2894,14 +2889,9 @@ get_out:;
 		delay(10);
 	} while (i == _timer_4);
 
-#ifdef _WIN32_WCE
-
-	if (draw_keyboard) {
-		draw_keyboard = false;
-		toolbar_drawn = false;
-	}
-
-#endif
+	OSystem::Property prop;
+        prop.show_keyboard = false;
+        g_system->property(OSystem::PROP_TOGGLE_VIRTUAL_KEYBOARD, &prop);
 }
 
 void SimonEngine::o_file_error(FillOrCopyStruct *fcs, bool save_error) {
