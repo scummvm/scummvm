@@ -1217,14 +1217,14 @@ public:
 	int _screenLeft, _screenTop;
 	uint16 _enqueue_b,_enqueue_c,_enqueue_d,_enqueue_e;
 	int _enqueuePos; 
-	EnqueuedObject _enqueuedObjects[32];
+	BlastObject _enqueuedObjects[32];
 
 	void enqueueObject(int a, int b, int c, int d, int e, int f, int g, int h, int mode);
 	void clearEnqueue() { _enqueuePos = 0; }
-	void drawEnqueuedObjects();
-	void drawEnqueuedObject(EnqueuedObject *eo);
-	void removeEnqueuedObjects();
-	void removeEnqueuedObject(EnqueuedObject *eo);
+	void drawBlastObjects();
+	void drawBlastObject(BlastObject *eo);
+	void removeBlastObjects();
+	void removeBlastObject(BlastObject *eo);
 
 	int _drawObjectQueNr;
 	byte _drawObjectQue[200];
@@ -1444,7 +1444,7 @@ public:
 	void setStringVars(int i);
 	void unkMiscOp9();
 
-	void o6_bompWindow();
+	void o6_setBlastObjectWindow();
 	void o6_pushByte();
 	void o6_pushWord();
 	void o6_pushByteVar();

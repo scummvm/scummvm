@@ -153,7 +153,7 @@ void Scumm::setupOpcodes2()
 		&Scumm::o6_setObjectXY,
 		&Scumm::o6_drawBlastObject,
 		/* 64 */
-		&Scumm::o6_bompWindow,
+		&Scumm::o6_setBlastObjectWindow,
 		&Scumm::o6_stopObjectCode,
 		&Scumm::o6_stopObjectCode,
 		&Scumm::o6_endCutscene,
@@ -675,7 +675,7 @@ void Scumm::setupOpcodes2()
 	_opcodes = opcode_list;
 	_opcodes_lookup = opcode_lookup;
 }
-void Scumm::o6_bompWindow()
+void Scumm::o6_setBlastObjectWindow()
 {																// Set BOMP processing window
 	int a, b, c, d;
 

@@ -73,11 +73,12 @@ struct ColorCycle {		/* Palette cycles */
 	byte end;
 };
 
-struct EnqueuedObject {		/* Objects to draw */
+struct BlastObject {		/* BlastObjects to draw */
 	uint16 a,b,c,d,e;
 	int16 x,y;
 	uint16 width,height;
 	uint16 j,k,l;
+	uint16 mode;
 };
 
 struct BompHeader {			/* Bomp header */

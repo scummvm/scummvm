@@ -1151,54 +1151,55 @@ void Scumm::nukeFlObjects(int min, int max)
 		}
 }
 
-void Scumm::enqueueObject(int a, int b, int c, int d, int e, int f, int g,
-													int h, int mode)
+void Scumm::enqueueObject(int objectNumber, int objectX, int objectY, int objectWidth, int objectHeight, int f, int g,
+													int image, int mode)
 {
-	EnqueuedObject *eo;
+	BlastObject *eo;
 	ObjectData *od;
 
 	if (_enqueuePos == sizeof(_enqueuedObjects) / sizeof(_enqueuedObjects[0]))
 		error("enqueueObject: overflow");
 
 	eo = &_enqueuedObjects[_enqueuePos++];
-	eo->a = a;
+	eo->a = objectNumber;
 	eo->b = _enqueue_b;
 	eo->c = _enqueue_c;
 	eo->d = _enqueue_d;
 	eo->e = _enqueue_e;
-	eo->x = b;
-	eo->y = c;
-	if (d == 0) {
-		od = &_objs[getObjectIndex(a)];
+	eo->x = objectX;
+	eo->y = objectY;
+	if (objectWidth == 0) {
+		od = &_objs[getObjectIndex(objectNumber)];
 		eo->width = od->width;
 	} else {
-		eo->width = d;
+		eo->width = objectWidth;
 	}
-	if (e == 0) {
-		od = &_objs[getObjectIndex(a)];
+	if (objectHeight == 0) {
+		od = &_objs[getObjectIndex(objectNumber)];
 		eo->height = od->height;
 	} else {
-		eo->height = e;
+		eo->height = objectHeight;
 	}
 
 	eo->j = f;
 	eo->k = g;
-	eo->l = h;
+	eo->l = image;
+	eo->mode = mode;
 }
 
-void Scumm::drawEnqueuedObjects()
+void Scumm::drawBlastObjects()
 {
-	EnqueuedObject *eo;
+	BlastObject *eo;
 	int i;
 
 	eo = _enqueuedObjects;
 	for (i = 0; i < _enqueuePos; i++, eo++) {
-		drawEnqueuedObject(eo);
+		drawBlastObject(eo);
 	}
 }
 
 
-void Scumm::drawEnqueuedObject(EnqueuedObject * eo)
+void Scumm::drawBlastObject(BlastObject * eo)
 {
 	VirtScreen *vs;
 	byte *roomptr, *bomp;
@@ -1232,7 +1233,7 @@ void Scumm::drawEnqueuedObject(EnqueuedObject * eo)
 
 	assert(ptr);
 	ptr = findResource(IMxx_tags[eo->l], ptr);
-//        assert(ptr);
+
 	if (!ptr)											/* FIXME: Sam and Max highway subgame */
 		return;
 	bomp = findResourceData(MKID('BOMP'), ptr);
@@ -1257,20 +1258,20 @@ void Scumm::drawEnqueuedObject(EnqueuedObject * eo)
 	}
 }
 
-void Scumm::removeEnqueuedObjects()
+void Scumm::removeBlastObjects()
 {
-	EnqueuedObject *eo;
+	BlastObject *eo;
 	int i;
 
 	eo = _enqueuedObjects;
 	for (i = 0; i < _enqueuePos; i++, eo++) {
-		removeEnqueuedObject(eo);
+		removeBlastObject(eo);
 	}
 
 	clearEnqueue();
 }
 
-void Scumm::removeEnqueuedObject(EnqueuedObject * eo)
+void Scumm::removeBlastObject(BlastObject * eo)
 {
 	restoreBG(eo->x, eo->y, eo->x + eo->width, eo->y + eo->height);
 }

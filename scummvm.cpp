@@ -353,9 +353,9 @@ int Scumm::scummLoop(int delta)
 			verbMouseOver(checkMouseOver(mouse.x, mouse.y));
 		}
 
-		drawEnqueuedObjects();
+		drawBlastObjects();
 		drawDirtyScreenParts();
-		removeEnqueuedObjects();
+		removeBlastObjects();
 
 		if (!(_features & GF_AFTER_V6))
 			playActorSounds();
