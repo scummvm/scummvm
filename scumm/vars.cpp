@@ -258,8 +258,13 @@ void ScummEngine_v7::setupScummVars() {
 	VAR_CHARSET_MASK = 119;
 	VAR_VIDEONAME = 123;
 	VAR_CUSTOMSCALETABLE = 131;
+	VAR_BLAST_ABOVE_TEXT = 133;
 
 	VAR_STRING2DRAW = 130;
+
+	VAR_MUSIC_BUNDLE_LOADED = 135;
+	VAR_VOICE_BUNDLE_LOADED = 136;
+
 }
 
 void ScummEngine_v8::setupScummVars() {
@@ -295,12 +300,17 @@ void ScummEngine_v8::setupScummVars() {
 
 	VAR_OVERRIDE = 30;
 	VAR_ROOM = 31;
+	VAR_NEW_ROOM = 32;
+	VAR_WALKTO_OBJ = 33;
+	VAR_TIMER = 34;
 
 	VAR_VOICE_MODE = 39; // 0 is voice, 1 is voice+text, 2 is text only
 	VAR_GAME_LOADED = 40;
 	VAR_LANGUAGE = 41;
 	
 	VAR_CURRENTDISK = 42;
+	VAR_MUSIC_BUNDLE_LOADED = 45;
+	VAR_VOICE_BUNDLE_LOADED = 46;
 
 	VAR_SCROLL_SCRIPT = 50;
 	VAR_ENTRY_SCRIPT = 51;
@@ -336,6 +346,8 @@ void ScummEngine_v8::setupScummVars() {
 	VAR_CAMERA_ACCEL_Y = 123;
 	VAR_CAMERA_THRESHOLD_X = 124;
 	VAR_CAMERA_THRESHOLD_Y = 125;
+
+	VAR_BLAST_ABOVE_TEXT = 133;
 
 	VAR_EGO = 126;
 

@@ -249,6 +249,11 @@ bool ImuseDigiSndMgr::openMusicBundle(soundStruct *sound, int disk) {
 	else
 		error("ImuseDigiSndMgr::openMusicBundle() Don't know which bundle file to load");
 
+	if (result)
+		_vm->VAR(_vm->VAR_MUSIC_BUNDLE_LOADED) = 1;
+	else
+		_vm->VAR(_vm->VAR_MUSIC_BUNDLE_LOADED) = 0;
+
 	return result;
 }
 
@@ -282,6 +287,11 @@ bool ImuseDigiSndMgr::openVoiceBundle(soundStruct *sound, int disk) {
 		result = sound->bundle->openFile("digvoice.bun", _vm->getGameDataPath());
 	else
 		error("ImuseDigiSndMgr::openVoiceBundle() Don't know which bundle file to load");
+
+	if (result)
+		_vm->VAR(_vm->VAR_VOICE_BUNDLE_LOADED) = 1;
+	else
+		_vm->VAR(_vm->VAR_VOICE_BUNDLE_LOADED) = 0;
 
 	return result;
 }

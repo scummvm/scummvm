@@ -1224,7 +1224,10 @@ public:
 	byte VAR_ACTIVE_OBJECT2;
 	byte VAR_CLICK_AREA;
 
+	byte VAR_BLAST_ABOVE_TEXT;
 	byte VAR_VOICE_MODE;
+	byte VAR_MUSIC_BUNDLE_LOADED;
+	byte VAR_VOICE_BUNDLE_LOADED;
 };
 
 // This is a constant lookup table of reverse bit masks
