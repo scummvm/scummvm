@@ -4183,7 +4183,7 @@ void SimonEngine::talk_with_text(uint vga_sprite_id, uint color, const char *str
 	char *convertedString2 = convertedString;
 	int16 height, len_div_3;
 	int stringLength = strlen(string);
-	int pos, padding, lettersPerRow, lettersPerRowJustified;
+	int padding, lettersPerRow, lettersPerRowJustified;
 	const int textHeight = 10;
 
 	height = textHeight;
@@ -4205,6 +4205,7 @@ void SimonEngine::talk_with_text(uint vga_sprite_id, uint color, const char *str
 
 	assert(stringLength > 0);
 	while (stringLength > 0) {
+		int pos = 0;
 		if (stringLength > lettersPerRow) {
 			int removeLastWord = 0;
 			if (lettersPerRow > lettersPerRowJustified) {
