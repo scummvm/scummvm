@@ -227,9 +227,10 @@ Sword2Sound::Sword2Sound(SoundMixer *mixer) {
 	_mixer = mixer;
 }
 
-//	--------------------------------------------------------------------------
-//	This function reverse the pan table, thus reversing the stereo.
-//	--------------------------------------------------------------------------
+// --------------------------------------------------------------------------
+// This function reverse the pan table, thus reversing the stereo.
+// --------------------------------------------------------------------------
+
 int32 Sword2Sound::ReverseStereo(void) {
 	int i,j;
 
@@ -671,7 +672,7 @@ int32 Sword2Sound::OpenFx(int32 id, uint8 *data) {
 			i += 1;
 			data++;
 		}
-		if (i == 100)
+		if (!data32)
 			return(RDERR_INVALIDWAV);
 
 		bufferSizeFx[fxi] = *(data32 + 1);
@@ -757,7 +758,7 @@ int32 Sword2Sound::OpenFx(int32 id, uint8 *data) {
 			i += 1;
 			data++;
 		}
-		if (i == 100)
+		if (!data32)
 			return(RDERR_INVALIDWAV);
 
 		dsbd.dwBufferBytes = *(data32 + 1);
@@ -1173,248 +1174,162 @@ void Sword2Sound::StartMusicFadeDown(int i) {
 }
 
 int32 Sword2Sound::StreamCompMusic(const char *filename, uint32 musicId, int32 looping) {
-	int32		i, z;
-	int32 		v0, v1;
-	uint16   *data16;
-	uint8	   *data8;
+	int32 primaryStream = -1;
+	int32 secondaryStream = -1;
+	int32 i;
+	int32 v0, v1;
+	uint16 *data16;
+	uint8 *data8;
 
 	compressedMusic = 1;
 
-	if (musStreaming[0] + musStreaming[1] == 0) {
-		i = 0;
+	// If both music streams are playing, that should mean one of them is
+	// fading out. Pick that one.
 
-		musLooping[i] = looping;			// Save looping info
-		strcpy(musFilename[i], filename);	// And tune id's
-		musId[i] = musicId;
-
-		if (IsMusicMute())		// Don't start streaming if the volume is off.
-			return (RD_OK);
-
-		fpMus.open(filename, g_engine->getGameDataPath());	// Always use fpMus[0] (all music in one cluster)  musFilePos[i] for different pieces of music.
-		if (fpMus.isOpen() == false)
-			return(RDERR_INVALIDFILENAME);
-
-		fpMus.seek((musicId + 1) * 8, SEEK_SET);
-
-		if (fpMus.read(&musFilePos[i], sizeof(uint32)) != sizeof(uint32)) {
-			fpMus.close();
-			return (RDERR_READERROR);
-		}
-
-		if (fpMus.read(&musEnd[i], sizeof(uint32)) != sizeof(uint32)) {
-			fpMus.close();
-			return (RDERR_READERROR);
-		}
-
-		if (!musEnd[i] || !musFilePos[i])	{
-			fpMus.close();
-			return (RDERR_INVALIDID);
-		}
-
-		musEnd[i] += musFilePos[i];		// Calculate the file position of the end of the music
-
-		// Create a temporary buffer
-		data8 = (uint8*)malloc(bufferSizeMusic / 2);
-		if (data8 == NULL)	{
-			fpMus.close();
-			return(RDERR_OUTOFMEMORY);
-		}
-
-		// Seek to start of the compressed music
-		fpMus.seek(musFilePos[i], SEEK_SET);
-
-		// Read the compressed data in to the buffer
-		if ((int32) fpMus.read(data8, bufferSizeMusic / 2) != bufferSizeMusic / 2) {
-			fpMus.close();
-			free(data8);
-			return (RDERR_INVALIDID);
-		}
-
-		// Store the current position in the file for future streaming
-		musFilePos[i] = fpMus.pos();
-
-		// decompress the music into the music buffer.
-		data16 = (uint16 *)malloc(bufferSizeMusic);
-				
-		data16[0] = *((int16 *)data8);	// First sample value
-		z = 1;
-
-		while (z < (bufferSizeMusic / 2) - 1) {
-			if (GetCompressedSign(data8[z + 1]))
-				data16[z] = data16[z - 1] - (GetCompressedAmplitude(data8[z + 1]) << GetCompressedShift(data8[z + 1]));
-			else
-				data16[z] = data16[z - 1] + (GetCompressedAmplitude(data8[z + 1]) << GetCompressedShift(data8[z + 1]));
-			z++;
-		}
-
-		// Store the value of the last sample ready for next batch of decompression
-		musLastSample[i] = data16[z - 1];
-
-		//	Free the decompression buffer and unlock the buffer now that we've filled it
-		free(data8);
-
-		//  Modify the volume according to the master volume and music mute state
-		if (musicMuted)
-			v0 = v1 = 0;
-		else {
-			v0 = volMusic[0];
-			v1 = volMusic[1];
-		}
-
-		if (v0 > v1) {
-//			IDirectSoundBuffer_SetVolume(lpDsbMus[i], musicVolTable[v0]);
-//			IDirectSoundBuffer_SetPan(lpDsbMus[i], musicVolTable[v1*16/v0]);
-		} else {
-			if (v1 > v0) {
-//  	    IDirectSoundBuffer_SetVolume(lpDsbMus[i], musicVolTable[v1]);
-//				IDirectSoundBuffer_SetPan(lpDsbMus[i], -musicVolTable[v0*16/v1]);
-			} else {
-//        IDirectSoundBuffer_SetVolume(lpDsbMus[i], musicVolTable[v1]);
-//				IDirectSoundBuffer_SetPan(lpDsbMus[i], 0);
-			}
-		}
-
-		//Until the mixer supports LE samples natively, we need to convert our LE ones to BE
-		for (int32 y = 0; y < (bufferSizeMusic / 2); y++) {
-			data16[y] = TO_BE_16(data16[y]);
-		}
-
-		if (soundHandleMusic[i] == 0) {
-			soundHandleMusic[i] = g_engine->_mixer->newStream(data16, bufferSizeMusic, 22050, SoundMixer::FLAG_16BITS, 100000);
-		} else {
-			g_engine->_mixer->appendStream(soundHandleMusic[i], data16, bufferSizeMusic);
-		}
-
-		free(data16);
-
-		// Recorder some last variables
-		musStreaming[i] = 1;
-		musCounter[i] = 250;
-	} else if (musStreaming[0] + musStreaming[1] == 2)	{
+	if (musStreaming[0] && musStreaming[1]) {
 		if (musFading[0])
-			i = 0;
+			primaryStream = 0;
 		else
-			i = 1;
+			primaryStream = 1;
 
-		musFading[i] = 0;
-		g_engine->_mixer->endStream(soundHandleMusic[i]);
-		musStreaming[i] = 0;
-		soundHandleMusic[i] = 0;
-	} else if (musStreaming[0] + musStreaming[1] == 1)	{
-		i = musStreaming[0];			// Set i to the free channel
-
-		musLooping[i] = looping;			// Save looping info
-		strcpy(musFilename[i], filename);	// And tune id's
-		musId[i] = musicId;
-
-		if (IsMusicMute())		// Don't start streaming if the volume is off.
-			return (RD_OK);
-
-		if (fpMus.isOpen() == false)
-			fpMus.open(filename, g_engine->getGameDataPath());			// Always use fpMus[0] (all music in one cluster)  musFilePos[i] for different pieces of music.
-		if (fpMus.isOpen() == false)
-			return(RDERR_INVALIDFILENAME);
-
-		if (!musFading[1 - i])			// Start other music stream fading out
-			musFading[1 - i] = -16;
-
-		fpMus.seek((musicId + 1) * 8, SEEK_SET);
-
-		if (fpMus.read(&musFilePos[i], sizeof(uint32)) != sizeof(uint32)) {
-			fpMus.close();
-			return (RDERR_READERROR);
-		}
-
-		if (fpMus.read(&musEnd[i], sizeof(uint32)) != sizeof(uint32)) {
-			fpMus.close();
-			return (RDERR_READERROR);
-		}
-
-		if (!musEnd[i] || !musFilePos[i])	{
-			fpMus.close();
-			return (RDERR_INVALIDID);
-		}
-
-		musEnd[i] += musFilePos[i];		// Calculate the file position of the end of the music
-
-		// Allocate a compressed data buffer
-		data8 = (uint8*)malloc(bufferSizeMusic);
-		if (data8 == NULL) {
-			fpMus.close();
-			return(RDERR_OUTOFMEMORY);
-		}
-
-		// Seek to start of the compressed music
-		fpMus.seek(musFilePos[i], SEEK_SET);
-
-		// Read the compressed data in to the buffer
-		if ((int32) fpMus.read(data8, bufferSizeMusic / 2) != bufferSizeMusic / 2) {
-			fpMus.close();
-			free(data8);
-			return (RDERR_INVALIDID);
-		}
-			
-		// Store the current position in the file for future streaming
-		musFilePos[i] = fpMus.pos();
-
-		// decompress the music into the music buffer.
-		data16 = (uint16 *)malloc(bufferSizeMusic);
-				
-		data16[0] = *((int16 *)data8);	// First sample value
-		z = 1;
-
-		while (z < (bufferSizeMusic / 2) - 1) {
-			if (GetCompressedSign(data8[z + 1]))
-				data16[z] = data16[z - 1] - (GetCompressedAmplitude(data8[z + 1]) << GetCompressedShift(data8[z + 1]));
-			else
-				data16[z] = data16[z - 1] + (GetCompressedAmplitude(data8[z + 1]) << GetCompressedShift(data8[z + 1]));
-			z++;
-		}
-
-		// Store the value of the last sample ready for next batch of decompression
-		musLastSample[i] = data16[z - 1];
-
-		// Free the compressiong buffer and unlock the buffer now that we've filled it
-		free(data8);
-
-		//  Modify the volume according to the master volume and music mute state
-		if (musicMuted)
-			v0 = v1 = 0;
-		else {
-			v0 = volMusic[0];
-			v1 = volMusic[1];
-		}
-
-		if (v0 > v1) {
-//			IDirectSoundBuffer_SetVolume(lpDsbMus[i], musicVolTable[v0]);
-//			IDirectSoundBuffer_SetPan(lpDsbMus[i], musicVolTable[v1*16/v0]);
-		} else {
-			if (v1 > v0) {
-//			IDirectSoundBuffer_SetVolume(lpDsbMus[i], musicVolTable[v1]);
-//			IDirectSoundBuffer_SetPan(lpDsbMus[i], -musicVolTable[v0*16/v1]);
-			} else {
-//			IDirectSoundBuffer_SetVolume(lpDsbMus[i], musicVolTable[v1]);
-//			IDirectSoundBuffer_SetPan(lpDsbMus[i], 0);
-			}
-		}
-
-		//Until the mixer supports LE samples natively, we need to convert our LE ones to BE
-		for (int32 y = 0; y < (bufferSizeMusic / 2); y++)
-			data16[y] = TO_BE_16(data16[y]);
-
-		if (soundHandleMusic[i] == 0) {
-				soundHandleMusic[i] = g_engine->_mixer->newStream(data16, bufferSizeMusic, 22050, SoundMixer::FLAG_16BITS, 100000);
-		} else {
-			g_engine->_mixer->appendStream(soundHandleMusic[i], data16, bufferSizeMusic);
-		}
-
-		free(data16);
-
-		// Record the last variables for streaming and looping
-		musStreaming[i] = 1;
-		musCounter[i] = 250;
+		musFading[primaryStream] = 0;
+		g_engine->_mixer->endStream(soundHandleMusic[primaryStream]);
+		musStreaming[primaryStream] = 0;
+		soundHandleMusic[primaryStream] = 0;
 	}
-	return (RD_OK);
+
+	// Pick the available music stream. If no music is playing it doesn't
+	// matter which we use, so pick the first one.
+
+	if (musStreaming[0] || musStreaming[1]) {
+		if (musStreaming[0]) {
+			primaryStream = 1;
+			secondaryStream = 0;
+		} else {
+			primaryStream = 0;
+			secondaryStream = 1;
+		}
+	} else
+		primaryStream = 0;
+
+	strcpy(musFilename[primaryStream], filename);
+
+	// Save looping info and tune id
+	musLooping[primaryStream] = looping;
+	musId[primaryStream] = musicId;
+
+	// Don't start streaming if the volume is off.
+	if (IsMusicMute())
+		return RD_OK;
+
+	// Always use fpMus[0] (all music in one cluster)
+	// musFilePos[primaryStream] for different pieces of music.
+	if (!fpMus.isOpen())
+		fpMus.open(filename, g_engine->getGameDataPath());
+
+	if (!fpMus.isOpen())
+		return RDERR_INVALIDFILENAME;
+
+	// Start other music stream fading out
+	if (secondaryStream != -1 && !musFading[secondaryStream])
+		musFading[secondaryStream] = -16;
+
+	fpMus.seek((musicId + 1) * 8, SEEK_SET);
+	musFilePos[primaryStream] = fpMus.readUint32LE();
+	musEnd[primaryStream] = fpMus.readUint32LE();
+
+	if (!musEnd[primaryStream] || !musFilePos[primaryStream])	{
+		fpMus.close();
+		return RDERR_INVALIDID;
+	}
+
+	// Calculate the file position of the end of the music
+	musEnd[primaryStream] += musFilePos[primaryStream];
+
+	// Create a temporary buffer
+	data8 = (uint8*) malloc(bufferSizeMusic / 2);
+	if (!data8) {
+		fpMus.close();
+		return RDERR_OUTOFMEMORY;
+	}
+
+	// Seek to start of the compressed music
+	fpMus.seek(musFilePos[primaryStream], SEEK_SET);
+
+	// Read the compressed data in to the buffer
+	if ((int32) fpMus.read(data8, bufferSizeMusic / 2) != bufferSizeMusic / 2) {
+		fpMus.close();
+		free(data8);
+		return RDERR_INVALIDID;
+	}
+
+	// Store the current position in the file for future streaming
+	musFilePos[primaryStream] = fpMus.pos();
+
+	// FIXME: We used this decompression function in several places, so
+	// it really should be a separate function.
+
+	// decompress the music into the music buffer.
+	data16 = (uint16 *) malloc(bufferSizeMusic);
+	if (!data16)
+		return RDERR_OUTOFMEMORY;
+
+	data16[0] = READ_LE_UINT16(data8);	// First sample value
+
+	i = 1;
+	while (i < (bufferSizeMusic / 2) - 1) {
+		if (GetCompressedSign(data8[i + 1]))
+			data16[i] = data16[i - 1] - (GetCompressedAmplitude(data8[i + 1]) << GetCompressedShift(data8[i + 1]));
+		else
+			data16[i] = data16[i - 1] + (GetCompressedAmplitude(data8[i + 1]) << GetCompressedShift(data8[i + 1]));
+		i++;
+	}
+
+	// Store the value of the last sample ready for next batch of
+	// decompression
+	musLastSample[primaryStream] = data16[i - 1];
+
+	// Free the compressed sound buffer
+	free(data8);
+
+	// Modify the volume according to the master volume and music mute
+	// state
+	if (musicMuted)
+		v0 = v1 = 0;
+	else {
+		v0 = volMusic[0];
+		v1 = volMusic[1];
+	}
+
+	if (v0 > v1) {
+//		IDirectSoundBuffer_SetVolume(lpDsbMus[primaryStream], musicVolTable[v0]);
+//		IDirectSoundBuffer_SetPan(lpDsbMus[primaryStream], musicVolTable[v1*16/v0]);
+	} else if (v1 > v0) {
+//		IDirectSoundBuffer_SetVolume(lpDsbMus[primaryStream], musicVolTable[v1]);
+//		IDirectSoundBuffer_SetPan(lpDsbMus[primaryStream], -musicVolTable[v0*16/v1]);
+	} else {
+//		IDirectSoundBuffer_SetVolume(lpDsbMus[primaryStream], musicVolTable[v1]);
+//		IDirectSoundBuffer_SetPan(lpDsbMus[primaryStream], 0);
+	}
+
+	// FIXME: Until the mixer supports LE samples natively, we need to
+	// convert our LE ones to BE
+	for (i = 0; i < (bufferSizeMusic / 2); i++) {
+		data16[i] = TO_BE_16(data16[i]);
+	}
+
+	if (soundHandleMusic[primaryStream] == 0) {
+		soundHandleMusic[primaryStream] = g_engine->_mixer->newStream(data16, bufferSizeMusic, 22050, SoundMixer::FLAG_16BITS, 100000);
+	} else {
+		g_engine->_mixer->appendStream(soundHandleMusic[primaryStream], data16, bufferSizeMusic);
+	}
+
+	free(data16);
+
+	// Recorder some last variables
+	musStreaming[primaryStream] = 1;
+	musCounter[primaryStream] = 250;
+	return RD_OK;
 
 /*
 	HRESULT		hr;
