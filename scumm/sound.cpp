@@ -458,7 +458,6 @@ void Sound::playSound(int soundID) {
 	}
 
 	if ((_scumm->_features & GF_AMIGA) && (_scumm->_version <= 2)) {
-		// Some very basic sound effects support
 		if (READ_BE_UINT16(ptr + 14) == 0x0880) {
 			size = READ_BE_UINT16(ptr + 6);
 			int start = READ_BE_UINT16(ptr + 8);
@@ -474,17 +473,7 @@ void Sound::playSound(int soundID) {
 
 			sound = (char *)malloc(size);
 			memcpy(sound, ptr + start, size);
-
-			// Experimental sound looping support
-			// FIXME: Fingolfin says: this makes no sense, folks! "start" is used both as a byte offset,
-			// to determine where in the resource the sound data starts, *and* as a loop start offset.
-			// It's extremely unlikely that this is correct.
-			if (start == 108 || start == 106)
-				_scumm->_mixer->playRaw(NULL, sound, size, rate,
-						SoundMixer::FLAG_AUTOFREE | SoundMixer::FLAG_LOOP, soundID, vol, 0,
-						start, size);
-			else
-				_scumm->_mixer->playRaw(NULL, sound, size, rate, SoundMixer::FLAG_AUTOFREE, soundID, vol, 0);
+			_scumm->_mixer->playRaw(NULL, sound, size, rate, SoundMixer::FLAG_AUTOFREE, soundID, vol, 0);
 			return;
 		}
 	}
