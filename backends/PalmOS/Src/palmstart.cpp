@@ -531,6 +531,7 @@ static Err BeamMe() {
 	
 	return err;
 }
+
 /***********************************************************************
  *
  * FUNCTION:    RomVersionCompatible
@@ -1294,6 +1295,117 @@ static Boolean EditGameFormHandleEvent(EventPtr eventP)
 
 /***********************************************************************
  *
+ * FUNCTION:    SystemInfoFormInit
+ * FUNCTION:     SystemInfoFormHandleEvent
+ *
+ * DESCRIPTION: 
+ *
+ * REVISION HISTORY:
+ *
+ *
+ ***********************************************************************/
+static void GetMemory(UInt32* storageMemoryP, UInt32* dynamicMemoryP, UInt32 *storageFreeP, UInt32 *dynamicFreeP) {
+	UInt32		free, max;
+
+	Int16		i;
+	Int16		nCards;
+	UInt16		cardNo;
+	UInt16		heapID;
+
+	UInt32		storageMemory = 0;
+	UInt32		dynamicMemory = 0;
+	UInt32		storageFree = 0;
+	UInt32		dynamicFree = 0;
+
+	// Iterate through each card to support devices with multiple cards.
+	nCards = MemNumCards();		
+
+	for (cardNo = 0; cardNo < nCards; cardNo++) {
+		// Iterate through the RAM heaps on a card (excludes ROM).
+		for (i=0; i< MemNumRAMHeaps(cardNo); i++) {
+			// Obtain the ID of the heap.
+			heapID = MemHeapID(cardNo, i);
+			// Calculate the total memory and free memory of the heap.
+			MemHeapFreeBytes(heapID, &free, &max);
+			
+			// If the heap is dynamic, increment the dynamic memory total.
+			if (MemHeapDynamic(heapID)) {
+				dynamicMemory += MemHeapSize(heapID);
+				dynamicFree += free;
+
+			// The heap is nondynamic (storage ?).
+			} else {
+				storageMemory += MemHeapSize(heapID);
+				storageFree += free;
+			}
+		}
+	}
+	// Reduce the stats to KB.  Round the results.
+	dynamicMemory = dynamicMemory / 1024L;
+	storageMemory = storageMemory / 1024L;
+
+	dynamicFree = dynamicFree / 1024L;
+	storageFree = storageFree / 1024L;
+
+	if (dynamicMemoryP) *dynamicMemoryP = dynamicMemory;
+	if (storageMemoryP) *storageMemoryP = storageMemory;
+	if (dynamicFreeP) *dynamicFreeP = dynamicFree;
+	if (storageFreeP) *storageFreeP = storageFree;
+}
+
+static void SystemInfoFormInit() {
+	FormPtr frmP;
+	Coord x;
+	UInt32 dm, sm, df, sf;
+	Char num[10];
+
+	GetMemory(&sm, &dm, &sf, &df);
+	frmP = FrmGetActiveForm();
+	FrmDrawForm(frmP);
+
+	WinSetTextColor(255);
+	FntSetFont(stdFont);
+	
+	StrIToA(num, dm);
+	x = 149 - FntCharsWidth(num, StrLen(num));
+	WinDrawChars(num, StrLen(num), x, 30);
+
+	StrIToA(num, sm);
+	x = 149 - FntCharsWidth(num, StrLen(num));
+	WinDrawChars(num, StrLen(num), x, 42);
+
+	StrIToA(num, df);
+	x = 109 - FntCharsWidth(num, StrLen(num));
+	WinDrawChars(num, StrLen(num), x, 30);
+
+	StrIToA(num, sf);
+	x = 109 - FntCharsWidth(num, StrLen(num));
+	WinDrawChars(num, StrLen(num), x, 42);
+}
+
+static Boolean SystemInfoFormHandleEvent(EventPtr eventP) {
+	Boolean handled = false;
+
+	switch (eventP->eType) {
+		case frmOpenEvent:
+			SystemInfoFormInit();
+			handled = true;
+			break;
+
+		case ctlSelectEvent:
+			// OK button only
+			FrmReturnToForm (MainForm);
+			handled = true;
+			break;
+
+		default:
+			break;
+	}
+	
+	return handled;
+}
+/***********************************************************************
+ *
  * FUNCTION:    VolumeFormSave
  * FUNCTION:    VolumeFormInit
  * FUNCTION:    VolumeFormHandleEvent
@@ -1385,34 +1497,50 @@ static Boolean VolumeFormHandleEvent(EventPtr eventP) {
 
 static void SoundFormSave() {
 	ControlType *cck1P;
-	ListType *list1P, *list2P;
+	ListType *list1P;
+	FieldType *fld1P;
+	UInt8 tempo;
 
 	cck1P = (ControlType *)GetObjectPtr(SoundMusicCheckbox);
 	list1P = (ListType *)GetObjectPtr(SoundDriverList);
-	list2P = (ListType *)GetObjectPtr(SoundTempoList);
+	fld1P = (FieldType *)GetObjectPtr(SoundTempoField);
+
+	tempo = StrAToI(FldGetTextPtr(fld1P));
+	
+	if (tempo < 50 || tempo > 200) {
+		FrmCustomAlert(FrmErrorAlert, "Invalid tempo value (50...200)", 0, 0);
+		return;
+	}
 
 	gPrefs->sound.music = CtlGetValue(cck1P);
 	gPrefs->sound.driver = LstGetSelection(list1P);
-	gPrefs->sound.tempo = LstGetSelection(list2P);
+	gPrefs->sound.tempo = StrAToI(FldGetTextPtr(fld1P));
 
 	FrmReturnToForm (MainForm);
 }
 
 static void SoundFormInit() {
 	ControlType *cck1P;
-	ListType *list1P, *list2P;
+	ListType *list1P;
+	FieldType *fld1P;
 	FormPtr frmP;
+	MemHandle tempoH;
+	Char *tempoP;
 
 	cck1P = (ControlType *)GetObjectPtr(SoundMusicCheckbox);
 	list1P = (ListType *)GetObjectPtr(SoundDriverList);
-	list2P = (ListType *)GetObjectPtr(SoundTempoList);
+	fld1P = (FieldType *)GetObjectPtr(SoundTempoField);
 
 	CtlSetValue(cck1P, gPrefs->sound.music);
 
 	LstSetSelection(list1P, gPrefs->sound.driver);
-	LstSetSelection(list2P, gPrefs->sound.tempo);
 	CtlSetLabel((ControlType *)GetObjectPtr(SoundDriverPopTrigger), LstGetSelectionText(list1P, LstGetSelection(list1P)));
-	CtlSetLabel((ControlType *)GetObjectPtr(SoundTempoPopTrigger), LstGetSelectionText(list2P, LstGetSelection(list2P)));
+
+	tempoH = MemHandleNew(FldGetMaxChars(fld1P));
+	tempoP = (Char *)MemHandleLock(tempoH);
+	StrIToA(tempoP, gPrefs->sound.tempo);
+	MemHandleUnlock(tempoH);
+	FldSetTextHandle(fld1P, tempoH);
 
 	frmP = FrmGetActiveForm();
 	FrmDrawForm(frmP);
@@ -1441,11 +1569,6 @@ static Boolean SoundFormHandleEvent(EventPtr eventP) {
 				case SoundDriverPopTrigger:
 					FrmList(eventP, SoundDriverList);
 					break;
-
-				case SoundTempoPopTrigger:
-					FrmList(eventP, SoundTempoList);
-					break;
-
 			}
 			handled = true;
 			break;
@@ -2003,105 +2126,22 @@ static Boolean SkinsFormHandleEvent(EventPtr eventP) {
 	
 	return handled;
 }
-/*
 
-static void SkinsFormDoDialog() {
-	MemHandle skins = NULL;
-	SkinInfoType *skinsInfo;
-	UInt16 numSkins = 0;
-
-	FormPtr frmP;
-	ListType *listP;
-	MemHandle items = NULL;
-	Char **itemsText = NULL;
-	
-	DmSearchStateType stateInfo;
-	UInt16 cardNo;
-	LocalID dbID;
-
-	Err errInfo;
-	Char nameP[32];
-	
-	Err err = DmGetNextDatabaseByTypeCreator(true, &stateInfo, 'skin', appFileCreator, false, &cardNo, &dbID);
-	while (!err && dbID) {
-		errInfo = DmDatabaseInfo (cardNo, dbID, nameP, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
-		if (!errInfo)
-		{
-			if (!skins)
-				skins = MemHandleNew(sizeof(SkinInfoType));
-			else
-				MemHandleResize(skins, MemHandleSize(skins) + sizeof(SkinInfoType));
-			
-			skinsInfo = (SkinInfoType *)MemHandleLock(skins);
-			StrCopy(skinsInfo[numSkins].nameP, nameP);
-			skinsInfo[numSkins].cardNo = cardNo;
-			skinsInfo[numSkins].dbID = dbID;
-			MemHandleUnlock(skins);
-			numSkins++;
-		}		
-		err = DmGetNextDatabaseByTypeCreator(false, &stateInfo, 'skin', appFileCreator, false, &cardNo, &dbID);
-	}
-
-	UInt16 button;
-	Int16 selected = -1;
-
-	frmP = FrmInitForm (SkinsForm);
-	listP = (ListType *)FrmGetObjectPtr(frmP, FrmGetObjectIndex(frmP, SkinsSkinList));
-
-	skinsInfo = (SkinInfoType *)MemHandleLock(skins);
-	SysQSort(skinsInfo, numSkins, sizeof(SkinInfoType), (CmpFuncPtr)SkinsFormCompare, 0);
-	for (UInt16 index=0; index < numSkins; index++)
-	{
-		if (!items)
-			items = MemHandleNew(sizeof(Char *));
-		else
-			MemHandleResize(items, MemHandleSize(items) + sizeof(Char *));
-
-		itemsText = (Char **)MemHandleLock(items);
-		itemsText[index] = skinsInfo[index].nameP;
-		MemHandleUnlock(items);
-		
-		if (	gPrefs->skin.cardNo == skinsInfo[index].cardNo &&
-				gPrefs->skin.dbID == skinsInfo[index].dbID &&
-				StrCompare(gPrefs->skin.nameP, skinsInfo[index].nameP) == 0)
-			selected = index;
-	}
-	itemsText = (Char **)MemHandleLock(items);
-	LstSetListChoices (listP, itemsText, numSkins);
-	LstSetSelection(listP, selected);
-	button = FrmDoDialog (frmP);
-	selected = LstGetSelection(listP);
-
-	switch (button) {
-		case SkinsOKButton:
-			StrCopy(gPrefs->skin.nameP, skinsInfo[selected].nameP);
-			gPrefs->skin.cardNo = skinsInfo[selected].cardNo;
-			gPrefs->skin.dbID =  skinsInfo[selected].dbID;
-			SknApplySkin();
-			break;
-
-		case SkinsSkinDeleteButton:
-			FrmCustomAlert(FrmWarnAlert,"Not implemented !",0,0);
-			break;
-	}
-
-	FrmDeleteForm (frmP);
-	MemHandleUnlock(items);
-	MemHandleUnlock(skins);
-	MemHandleFree(items);
-	MemHandleFree(skins);
-}
-*/
 static Boolean MainFormDoCommand(UInt16 command)
 {
 	Boolean handled = false;
 	FormPtr frmP;
 
-	switch (command)
-		{
+	switch (command) {
 		case MainGamesChooseaCard:
 			MenuEraseStatus(0);
 			gPrefs->volRefNum = parseCards(true);
+			handled = true;
+			break;
+
+		case MainGamesMemory:
+			MenuEraseStatus(0);
+			FrmPopupForm(SystemInfoForm);
 			handled = true;
 			break;
 
@@ -2334,14 +2374,8 @@ static void StartScummVM() {
 			AddArg(&argvP[argc], "-e", "null", &argc);
 
 		// music tempo
-		switch (gPrefs->sound.tempo) {
-			case 1:	// Adlib : 0x1D9000 -> no fcuntion to convert hex->dec on palmos
-				AddArg(&argvP[argc], "-t", "1937408", &argc);
-				break;
-			case 2:	// Midi : 0x4A0000 -> no fcuntion to convert hex->dec on palmos
-				AddArg(&argvP[argc], "-t", "4849664", &argc);
-				break;
-		}		
+		StrIToA(num, gPrefs->sound.tempo);
+		AddArg(&argvP[argc], "-t", num, &argc);
 
 		// volume control
 		StrIToA(num, gPrefs->volume.master);
@@ -2469,25 +2503,6 @@ void PalmFatalError(const Char *err)
 	SysReset();
 }
 
-/*
-void DrawBitmap (DmResID resID, Coord x, Coord y, WinDrawOperation newMode)
-{
-	MemHandle hTemp;
-	BitmapType* bmTemp;
-	WinDrawOperation oldMode;
-
-	hTemp	= DmGetResource(bitmapRsc,resID);
-	bmTemp	= MemHandleLock(hTemp);
-
-	oldMode	= WinSetDrawMode(newMode);
-	WinPaintBitmap(bmTemp, x, y);
-	WinSetDrawMode(oldMode);
-
-	MemHandleUnlock(hTemp);
-	DmReleaseResource((MemPtr)bmTemp);
-}
-*/
-
 /***********************************************************************
  *
  * FUNCTION:    MainFormHandleEvent
@@ -2504,30 +2519,7 @@ void DrawBitmap (DmResID resID, Coord x, Coord y, WinDrawOperation newMode)
  *
  *
  ***********************************************************************/
-/*
-static void CheckCardPresent() {
 
-	if (gVolRefNum) {
-		Err err;
-		VolumeInfoType volInfo;
-		err = VFSVolumeInfo(gVolRefNum, &volInfo);
-
-		if (!err) {
-			err = ExpCardPresent(volInfo.slotRefNum);
-
-			if (err != errNone && err != expErrInvalidSlotRefNum) // expErrInvalidSlotRefNum -> error on palmSim with hostFS
-				gVolRefNum = 0;
-		}
-	}
-
-	if (!gVolRefNum) {
-		FormPtr frmP = FrmGetActiveForm();
-		
-		if (frmP)
-			FrmHideObject(frmP, FrmGetObjectIndex (frmP, MainMSBitMap));
-	}
-}
-*/
 static Boolean penDownRepeat() {
 	Coord x,y;
 	Boolean penDown, handled = false;
@@ -2747,6 +2739,10 @@ static Boolean AppHandleEvent(EventPtr eventP)
 				FrmSetEventHandler(frmP, SoundFormHandleEvent);
 				break;
 
+			case SystemInfoForm:
+				FrmSetEventHandler(frmP, SystemInfoFormHandleEvent);
+				break;
+
 			default:
 //				ErrFatalDisplay("Invalid Form Load Event");
 				break;
@@ -2950,7 +2946,6 @@ static void AppStopMathLib() {
 	}
 }
 
-
 static Err AppStart(void)
 {
 	UInt16 dataSize;
@@ -2988,6 +2983,14 @@ static Err AppStart(void)
 		gPrefs->volume.master = 192;
 		gPrefs->volume.music = 192;
 		gPrefs->volume.sfx = 192;
+		
+		gPrefs->sound.tempo = 100;
+		
+	} else {
+		// tempo was popup trigger and now it's numeric field
+		// so fix the value to default if it's an old config
+		if (gPrefs->sound.tempo < 50)
+			gPrefs->sound.tempo = 100;
 	}
 
 	error = AppStartCheckMathLib();
