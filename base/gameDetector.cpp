@@ -37,16 +37,6 @@
 #include "config.h"
 #endif
 
-#define CHECK_OPTION() if ((current_option != NULL) || (*s != '\0')) goto ShowHelpAndExit
-#define HANDLE_OPTION() if ((*s == '\0') && (current_option == NULL)) goto ShowHelpAndExit;  \
-                        if ((*s != '\0') && (current_option != NULL)) goto ShowHelpAndExit; \
-                        option = (*s == '\0' ? current_option : s);                         \
-                        current_option = NULL
-#define HANDLE_OPT_OPTION() if ((*s != '\0') && (current_option != NULL)) goto ShowHelpAndExit; \
-                            if ((*s == '\0') && (current_option == NULL)) option = NULL;         \
-                            else option = (*s == '\0' ? current_option : s);                    \
-                            current_option = NULL
-
 // DONT FIXME: DO NOT ORDER ALPHABETICALY, THIS IS ORDERED BY IMPORTANCE/CATEGORY! :)
 #ifdef __PALM_OS__
 static const char USAGE_STRING[] = "NoUsageString"; // save more data segment space
@@ -62,7 +52,7 @@ static const char USAGE_STRING[] =
 	"  -g<mode>       - Graphics mode (normal,2x,3x,2xsai,super2xsai,supereagle,\n"
 	"                   advmame2x,advmame3x,hq2x,hq3x,tv2x,dotmatrix)\n"
 	"  -e<mode>       - Set music engine (see README for details)\n"
-	"  -q<lang>       - Specify language (en,de,fr,it,pt,es,jp,zh,kr,se,gb,hb)\n"
+	"  -q<lang>       - Specify language (en,de,fr,it,pt,es,jp,zh,kr,se,gb,hb,ru)\n"
 	"\n"
 	"  -c<num>        - Use cdrom <num> for cd audio\n"
 	"  -j[num]        - Enable input with joystick (default: 0 - first joystick)\n"
@@ -250,172 +240,62 @@ GameSettings GameDetector::findGame(const String &gameName, const Plugin **plugi
 	return result;
 }
 
+
+//
+// Various macros used by the command line parser.
+//
+
+#define DO_OPTION_OPT(shortCmd, longCmd) \
+	if (isLongCmd ? (!memcmp(s, longCmd"=", sizeof(longCmd"=") - 1)) : (shortCmdLower == shortCmd)) { \
+		if (isLongCmd) \
+			s += sizeof(longCmd"=") - 1; \
+		if ((*s != '\0') && (current_option != NULL)) goto ShowHelpAndExit; \
+		option = (*s != '\0') ? s : current_option; \
+		current_option = NULL;
+
+#define DO_OPTION(shortCmd, longCmd) \
+	DO_OPTION_OPT(shortCmd, longCmd) \
+	if (option == NULL) goto ShowHelpAndExit;
+
+#define DO_OPTION_BOOL(shortCmd, longCmd) \
+	if (isLongCmd ? (!strcmp(s, longCmd) || !strcmp(s, "no-"longCmd)) : (shortCmdLower == shortCmd)) { \
+		if (isLongCmd) { \
+			cmdValue = !strcmp(s, longCmd); \
+			s += cmdValue ? (sizeof(longCmd) - 1) : (sizeof("no-"longCmd) - 1); \
+		} \
+		if ((*s != '\0') || (current_option != NULL)) goto ShowHelpAndExit;
+
+#define DO_OPTION_CMD(shortCmd, longCmd) \
+	if (isLongCmd ? (!strcmp(s, longCmd)) : (shortCmdLower == shortCmd)) { \
+		if (isLongCmd) \
+			s += sizeof(longCmd) - 1; \
+		if ((*s != '\0') || (current_option != NULL)) goto ShowHelpAndExit;
+
+
+#define DO_LONG_OPTION_OPT(longCmd) 	DO_OPTION_OPT(0, longCmd)
+#define DO_LONG_OPTION(longCmd) 		DO_OPTION(0, longCmd)
+#define DO_LONG_OPTION_BOOL(longCmd) 	DO_OPTION_BOOL(0, longCmd)
+#define DO_LONG_OPTION_CMD(longCmd) 	DO_OPTION_CMD(0, longCmd)
+
+// End an option handler
+#define END_OPTION \
+		continue; \
+	}
+
+
 void GameDetector::parseCommandLine(int argc, char **argv) {
 	int i;
 	char *s;
 	char *current_option = NULL;
 	char *option = NULL;
-	char c;
-	bool long_option_value;
+	char shortCmdLower;
+	bool isLongCmd, cmdValue;
 
 	// Iterate over all comman line arguments, backwards.
 	for (i = argc - 1; i >= 1; i--) {
 		s = argv[i];
-
-		if (s[0] == '-') {
-			s++;
-			c = *s++;
-			switch (tolower(c)) {
-			case 'b':
-				HANDLE_OPTION();
-				ConfMan.set("boot_param", (int)strtol(option, 0, 10));
-				break;
-			case 'c':
-				HANDLE_OPTION();
-				ConfMan.set("cdrom", (int)strtol(option, 0, 10));
-				break;
-			case 'd':
-				HANDLE_OPT_OPTION();
-				if (option != NULL)
-					ConfMan.set("debuglevel", (int)strtol(option, 0, 10));
-				if (ConfMan.getInt("debuglevel")) {
-					printf("Debuglevel (from command line): %d\n", ConfMan.getInt("debuglevel"));
-				} else {
-					printf("Debuglevel (from command line): 0 - Game only\n");
-				}
-				break;
-			case 'e':
-				HANDLE_OPTION();
-				// TODO: Instead of just showing the generic help text,
-				// maybe print a message like:
-				// "'option' is not a supported music driver on this machine.
-				//  Available driver: ..."
-				if (parseMusicDriver(option) < 0)
-					goto ShowHelpAndExit;
-				ConfMan.set("music_driver", option);
-				break;
-			case 'f':
-				CHECK_OPTION();
-				ConfMan.set("fullscreen", (c == 'f'));
-				break;
-			case 'g':{
-				HANDLE_OPTION();
-				int _gfx_mode = parseGraphicsMode(option);
-				// TODO: Instead of just showing the generic help text,
-				// maybe print a message like:
-				// "'option' is not a supported graphic mode on this machine.
-				//  Available graphic modes: ..."
-				if (_gfx_mode == -1)
-					goto ShowHelpAndExit;
-				ConfMan.set("gfx_mode", option);
-				break;}
-			// case 'h': reserved for help
-			case 'j':
-				HANDLE_OPT_OPTION();
-				ConfMan.set("joystick_num", (option != NULL) ? (int)strtol(option, 0, 10) : 0);
-				break;
-			case 'm':
-				HANDLE_OPTION();
-				ConfMan.set("music_volume", (int)strtol(option, 0, 10));
-				break;
-			case 'n':
-				CHECK_OPTION();
-				ConfMan.set("nosubtitles", (c == 'n'));
-				break;
- 			case 'o':
- 				HANDLE_OPTION();
- 				ConfMan.set("master_volume", (int)strtol(option, 0, 10));
- 				break;
-			case 'p':
-				HANDLE_OPTION();
-				// TODO: Verify path is valid
-				ConfMan.set("path", option);
-				break;
-			case 'q':
-				HANDLE_OPTION();
-				if (Common::parseLanguage(option) == Common::UNK_LANG)
-					goto ShowHelpAndExit;
-				ConfMan.set("language", option);
-				break;
-			case 's':
-				HANDLE_OPTION();
-				ConfMan.set("sfx_volume", (int)strtol(option, 0, 10));
-				break;
-#ifndef DISABLE_SCUMM
-			case 't':
-				HANDLE_OPTION();
-				// Use the special value '0' for the base in (int)strtol. 
-				// Doing that makes it possible to enter hex values
-				// as "0x1234", but also decimal values ("123").
-				ConfMan.set("tempo", (int)strtol(option, 0, 0));
-				break;
-#endif
-			case 'u':
-				CHECK_OPTION();
-				_dumpScripts = true;
-				break;
-			case 'v':
-				CHECK_OPTION();
-				printf("%s\n", gScummVMFullVersion);
-				exit(0);
-				break;
-			case 'x':
-				HANDLE_OPT_OPTION();
-				ConfMan.set("save_slot", (option != NULL) ? (int)strtol(option, 0, 10) : 0);
-				break;
-#ifndef DISABLE_SCUMM
-			case 'y':
-				HANDLE_OPTION();
-				ConfMan.set("talkspeed", (int)strtol(option, 0, 10));
-				break;
-#endif
-			case 'z':
-				CHECK_OPTION();
-				listGames();
-				exit(0);
-			case '-':
-				// Long options. Let the fun begin!
-				if (!strncmp(s, "platform=", 9)) {
-					s += 9;
-					int platform = Common::parsePlatform(s);
-					if (platform == Common::kPlatformUnknown)
-						goto ShowHelpAndExit;
-
-					ConfMan.set("platform", platform);
-					break;
-				}
-
-				if (!strncmp(s, "no-", 3)) {
-					long_option_value = false;
-					s += 3;
-				} else
-					long_option_value = true;
-
-				if (!strcmp (s, "multi-midi")) {
-					ConfMan.set("multi_midi", long_option_value);
-				} else if (!strcmp (s, "native-mt32")) {
-					ConfMan.set("native_mt32", long_option_value);
-				} else if (!strcmp (s, "aspect-ratio")) {
-					ConfMan.set("aspect_ratio", long_option_value);
-				} else if (!strcmp (s, "fullscreen")) {
-					ConfMan.set("fullscreen", long_option_value);
-#ifndef DISABLE_SCUMM
-				} else if (!strcmp (s, "demo-mode")) {
-					ConfMan.set("demo_mode", long_option_value);
-#endif
-
-#ifndef DISABLE_SKY
-				} else if (!strcmp (s, "floppy-intro")) {
-					ConfMan.set("floppy_intro", long_option_value);
-#endif
-				} else {
-					goto ShowHelpAndExit;
-				}
-				break;
-			default:
-				goto ShowHelpAndExit;
-			}
-		} else {
+		
+		if (s[0] != '-' || s[1] == '\0') {
 			// Last argument: this could be a target name.
 			// To verify this, check if there is either a game domain (i.e
 			// a configured target) matching this argument, or if we can
@@ -428,6 +308,159 @@ void GameDetector::parseCommandLine(int argc, char **argv) {
 				else
 					goto ShowHelpAndExit;
 			}
+		} else {
+			
+			shortCmdLower = tolower(s[1]);
+			isLongCmd = (s[0] == '-' && s[1] == '-');
+			cmdValue = (shortCmdLower == s[1]);
+			s += 2;
+	
+			DO_OPTION('b', "boot-param")
+				ConfMan.set("boot_param", (int)strtol(option, 0, 10));
+			END_OPTION
+			
+			DO_OPTION_OPT('d', "debuglevel")
+				if (option != NULL)
+					ConfMan.set("debuglevel", (int)strtol(option, 0, 10));
+				if (ConfMan.getInt("debuglevel"))
+					printf("Debuglevel (from command line): %d\n", ConfMan.getInt("debuglevel"));
+				else
+					printf("Debuglevel (from command line): 0 - Game only\n");
+			END_OPTION
+			
+			DO_OPTION('e', "music-driver")
+				// TODO: Instead of just showing the generic help text,
+				// maybe print a message like:
+				// "'option' is not a supported music driver on this machine.
+				//  Available driver: ..."
+				if (parseMusicDriver(option) < 0)
+					goto ShowHelpAndExit;
+				ConfMan.set("music_driver", option);
+			END_OPTION
+			
+			DO_OPTION_BOOL('f', "fullscreen")
+				ConfMan.set("fullscreen", cmdValue);
+			END_OPTION
+			
+			DO_OPTION('g', "gfx-mode")
+				int gfx_mode = parseGraphicsMode(option);
+				// TODO: Instead of just showing the generic help text,
+				// maybe print a message like:
+				// "'option' is not a supported graphic mode on this machine.
+				//  Available graphic modes: ..."
+				if (gfx_mode == -1)
+					goto ShowHelpAndExit;
+				ConfMan.set("gfx_mode", option);
+			END_OPTION
+	
+			DO_OPTION_CMD('h', "help")
+				printf(USAGE_STRING);
+				exit(0);
+			END_OPTION
+			
+			DO_OPTION('m', "music-volume")
+				ConfMan.set("music_volume", (int)strtol(option, 0, 10));
+			END_OPTION
+			
+			DO_OPTION_BOOL('n', "nosubtitles")
+				ConfMan.set("nosubtitles", cmdValue);
+			END_OPTION
+			
+			DO_OPTION('o', "master-volume")
+				ConfMan.set("master_volume", (int)strtol(option, 0, 10));
+			END_OPTION
+			
+			DO_OPTION('p', "path")
+				// TODO: Verify whether the path is valid
+				ConfMan.set("path", option);
+			END_OPTION
+			
+			DO_OPTION('q', "language")
+				if (Common::parseLanguage(option) == Common::UNK_LANG)
+					goto ShowHelpAndExit;
+				ConfMan.set("language", option);
+			END_OPTION
+			
+			DO_OPTION('s', "sfx-volume")
+				ConfMan.set("sfx_volume", (int)strtol(option, 0, 10));
+			END_OPTION
+			
+			DO_OPTION_CMD('t', "list-targets")
+				listTargets();
+				exit(0);
+			END_OPTION
+			
+			DO_OPTION_BOOL('u', "dump-scripts")
+				_dumpScripts = true;
+			END_OPTION
+			
+			DO_OPTION_CMD('v', "version")
+				printf("%s\n", gScummVMFullVersion);
+				exit(0);
+			END_OPTION
+			
+			DO_OPTION('x', "save-slot")
+				ConfMan.set("save_slot", (option != NULL) ? (int)strtol(option, 0, 10) : 0);
+			END_OPTION
+			
+			DO_OPTION_CMD('z', "list-games")
+				listGames();
+				exit(0);
+			END_OPTION
+			
+			DO_LONG_OPTION("cdrom")
+				ConfMan.set("cdrom", (int)strtol(option, 0, 10));
+			END_OPTION
+	
+			DO_LONG_OPTION("joystick")
+				ConfMan.set("joystick_num", (option != NULL) ? (int)strtol(option, 0, 10) : 0);
+			END_OPTION
+			
+			DO_LONG_OPTION("platform")
+				int platform = Common::parsePlatform(option);
+				if (platform == Common::kPlatformUnknown)
+					goto ShowHelpAndExit;
+	
+				ConfMan.set("platform", platform);
+			END_OPTION
+	
+			DO_LONG_OPTION_BOOL("multi-midi")
+				ConfMan.set("multi_midi", cmdValue);
+			END_OPTION
+	
+			DO_LONG_OPTION_BOOL("native-mt32")
+				ConfMan.set("native_mt32", cmdValue);
+			END_OPTION
+	
+			DO_LONG_OPTION_BOOL("aspect-ratio")
+				ConfMan.set("aspect_ratio", cmdValue);
+			END_OPTION
+	
+#ifndef DISABLE_SCUMM
+			DO_LONG_OPTION("tempo")
+				// Use the special value '0' for the base in (int)strtol. 
+				// Doing that makes it possible to enter hex values
+				// as "0x1234", but also decimal values ("123").
+				ConfMan.set("tempo", (int)strtol(option, 0, 0));
+			END_OPTION
+			
+			DO_LONG_OPTION("talkspeed")
+				ConfMan.set("talkspeed", (int)strtol(option, 0, 10));
+			END_OPTION
+
+			DO_LONG_OPTION_BOOL("demo-mode")
+				ConfMan.set("demo_mode", cmdValue);
+			END_OPTION
+#endif
+	
+#ifndef DISABLE_SKY
+			DO_LONG_OPTION_BOOL("floppy-intro")
+				ConfMan.set("floppy_intro", cmdValue);
+			END_OPTION
+#endif
+	
+			// If we get till here, the option is unhandled and hence unknown.
+			goto ShowHelpAndExit;
 		}
 	}
 	
@@ -549,7 +582,7 @@ bool GameDetector::detectMain() {
 }
 
 OSystem *GameDetector::createSystem() {
-	int _gfx_mode = parseGraphicsMode(ConfMan.get("gfx_mode"));	// FIXME: Get rid of this again!
+	int gfx_mode = parseGraphicsMode(ConfMan.get("gfx_mode"));	// FIXME: Get rid of this again!
 	
 #if defined(USE_NULL_DRIVER)
 	return OSystem_NULL_create();
@@ -558,18 +591,18 @@ OSystem *GameDetector::createSystem() {
 #elif defined(X11_BACKEND)
 	return OSystem_X11_create();
 #elif defined(__MORPHOS__)
-	return OSystem_MorphOS_create(_gfx_mode, ConfMan.getBool("fullscreen"));
+	return OSystem_MorphOS_create(gfx_mode, ConfMan.getBool("fullscreen"));
 #elif defined(_WIN32_WCE)
 	return OSystem_WINCE3_create();
 #elif defined(MACOS_CARBON)
-	return OSystem_MAC_create(_gfx_mode, ConfMan.getBool("fullscreen"));
+	return OSystem_MAC_create(gfx_mode, ConfMan.getBool("fullscreen"));
 #elif defined(__GP32__)	// ph0x
 	return OSystem_GP32_create(GFX_NORMAL, true);
 #elif defined(__PALM_OS__) //chrilith
-	return OSystem_PALMOS_create(_gfx_mode, ConfMan.getBool("fullscreen"));
+	return OSystem_PALMOS_create(gfx_mode, ConfMan.getBool("fullscreen"));
 #else
 	/* SDL is the default driver for now */
-	return OSystem_SDL_create(_gfx_mode, ConfMan.getBool("fullscreen"), ConfMan.getBool("aspect_ratio"), ConfMan.getInt("joystick_num"));
+	return OSystem_SDL_create(gfx_mode, ConfMan.getBool("fullscreen"), ConfMan.getBool("aspect_ratio"), ConfMan.getInt("joystick_num"));
 #endif
 }
 
