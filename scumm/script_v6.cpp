@@ -2599,7 +2599,7 @@ void ScummEngine_v6::o6_kernelSetFunctions() {
 	} else {
 		switch (args[0]) {
 		case 3:
-			warning("o6_kernelSetFunctions: nothing in 3");
+			// Dummy case
 			break;
 		case 4:
 			grabCursor(args[1], args[2], args[3], args[4]);
@@ -2618,7 +2618,7 @@ void ScummEngine_v6::o6_kernelSetFunctions() {
 			startManiac();
 			break;
 		case 9:
-			error("o6_kernelSetFunctions: stub9()");
+			killAllScriptsExceptCurrent();
 			break;
 		case 104:									/* samnmax */
 			nukeFlObjects(args[2], args[3]);

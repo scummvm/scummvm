@@ -840,8 +840,11 @@ void ScummEngine::killScriptsAndResources() {
 
 void ScummEngine::killAllScriptsExceptCurrent() {
 	for (int i = 0; i < NUM_SCRIPT_SLOT; i++) {
-		if (i != _currentScript)
+		if (i != _currentScript) {
 			vm.slot[i].status = ssDead;
+			if (_version == 6)
+				vm.slot[i].cutsceneOverride = 0;
+		}
 	}
 }
 
