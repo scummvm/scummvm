@@ -64,6 +64,7 @@ private:
 class Menu {
 public:
 	Menu(Screen *pScreen, Mouse *pMouse);
+	~Menu(void);
 	void fnChooser(Object *compact);
 	void fnEndChooser(void);
 	void fnAddSubject(int32 sub);

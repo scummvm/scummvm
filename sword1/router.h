@@ -96,7 +96,6 @@ extern int whatTarget(int32 startX, int32 startY, int32 destX, int32 destY);
 class Router {
 public:
 	Router(ObjectMan *pObjMan, ResMan *pResMan);
-	~Router(void);
 	int32 routeFinder(int32 id, Object *mega, int32 x, int32 y, int32 dir);
 	void setPlayerTarget(int32 x, int32 y, int32 dir, int32 stance);
 	void resetExtraData(void);

@@ -113,6 +113,17 @@ SwordEngine::SwordEngine(GameDetector *detector, OSystem *syst)
 }
 
 SwordEngine::~SwordEngine() {
+	delete _control;
+	delete _logic;
+	delete _menu;
+	delete _sound;
+	delete _music;
+	delete _screen;
+	delete _mouse;
+	delete _objectMan;
+	_resMan->flush(); // free all memory
+	delete _resMan;
+	delete _memMan;
 }
 
 void SwordEngine::initialize(void) {
@@ -155,10 +166,10 @@ void SwordEngine::initialize(void) {
 
 	_systemVars.justRestoredGame = 0;
 	_systemVars.currentCD = 0;
-	_systemVars.gamePaused = 0;
-	_systemVars.deathScreenFlag = 3;
+	_systemVars.controlPanelMode = CP_NEWGAME;
 	_systemVars.forceRestart = false;
 	_systemVars.wantFade = true;
+	_systemVars.engineQuit = false;
 
 	switch (Common::parseLanguage(ConfMan.get("language"))) {
 	case Common::DE_DEU:
@@ -1065,7 +1076,7 @@ void SwordEngine::startPositions(int32 startNumber) {
 
 	compact = (Object*)_objectMan->fetchObject(PLAYER);
 	_logic->fnEnterSection(compact, PLAYER, startNumber, 0, 0, 0, 0, 0);	// (automatically opens the compact resource for that section)
-	_systemVars.deathScreenFlag = 0;
+	_systemVars.controlPanelMode = CP_NORMAL;
 	_systemVars.wantFade = true;
 }
 
@@ -1079,7 +1090,7 @@ void SwordEngine::checkCdFiles(void) { // check if we're running from cd, hdd or
 #endif
 		"SPEECH%d.CLU"
 	};
-	int numFiles = 0;
+	bool fileFound[2] = { false, false };
 	File test;
 
 	_systemVars.playSpeech = true;
@@ -1090,13 +1101,13 @@ void SwordEngine::checkCdFiles(void) { // check if we're running from cd, hdd or
 			sprintf(fileName, speechFiles[j], i);
 			if (test.open(fileName)) {
 				test.close();
-				numFiles++;
+				fileFound[i - 1] = true;
 				break;
 			}
 		}
 	}
 
-	if (numFiles == 2) {
+	if (fileFound[0] && fileFound[1]) {
 		// both files exist, assume running from HDD and everything's fine.
 		_systemVars.runningFromCd = false;
 		_systemVars.playSpeech = true;
@@ -1128,28 +1139,30 @@ void SwordEngine::go(void) {
 		startPositions(startPos);
 	else {
 		if (_control->savegamesExist()) {
-			_systemVars.deathScreenFlag = 3;
+			_systemVars.controlPanelMode = CP_NEWGAME;
 			if (_control->runPanel() == CONTROL_GAME_RESTORED)
 				_control->doRestore();
-			else
+			else if (!_systemVars.engineQuit)
 				startPositions(0);
 		} else // no savegames, start new game.
 			startPositions(0);
 	}
-	_systemVars.deathScreenFlag = 0;
+	_systemVars.controlPanelMode = CP_NORMAL;
 
-	do {
+	while (!_systemVars.engineQuit) {
 		uint8 action = mainLoop();
 
-		// the mainloop was left, we have to reinitialize.
-		reinitialize();
-		if (action == CONTROL_GAME_RESTORED)
-			_control->doRestore();
-		else if (action == CONTROL_RESTART_GAME)
-			startPositions(1);
-		_systemVars.forceRestart = false;
-		_systemVars.deathScreenFlag = 0;
-	} while (true);
+		if (!_systemVars.engineQuit) {
+			// the mainloop was left, we have to reinitialize.
+			reinitialize();
+			if (action == CONTROL_GAME_RESTORED)
+				_control->doRestore();
+			else if (action == CONTROL_RESTART_GAME)
+				startPositions(1);
+			_systemVars.forceRestart = false;
+			_systemVars.controlPanelMode = CP_NORMAL;
+		}
+	}
 }
 
 void SwordEngine::checkCd(void) {
@@ -1178,7 +1191,7 @@ uint8 SwordEngine::mainLoop(void) {
 	uint8 retCode = 0;
 	_keyPressed = 0;
 
-	while (retCode == 0) {
+	while ((retCode == 0) && (!_systemVars.engineQuit)) {
 		// do we need the section45-hack from sword.c here?
 		checkCd();
 
@@ -1221,28 +1234,29 @@ uint8 SwordEngine::mainLoop(void) {
 				delay(0);
 
 			_mouse->engine( _mouseX, _mouseY, _mouseState);
-			_mouseState = 0;
 
 			if (_systemVars.forceRestart)
 				retCode = CONTROL_RESTART_GAME;
 
 			// The control panel is triggered by F5 or ESC.
 			// FIXME: This is a very strange way of detecting F5...
-			else if (((_keyPressed == 63 || _keyPressed == 27) && (Logic::_scriptVars[MOUSE_STATUS] & 1)) || (_systemVars.deathScreenFlag)) {
+			else if (((_keyPressed == 63 || _keyPressed == 27) && (Logic::_scriptVars[MOUSE_STATUS] & 1)) || (_systemVars.controlPanelMode)) {
 				retCode = _control->runPanel();
 				if (!retCode)
 					_screen->fullRefresh();
 			}
-			_keyPressed = 0;
+			_mouseState = _keyPressed = 0;
+		} while ((Logic::_scriptVars[SCREEN] == Logic::_scriptVars[NEW_SCREEN]) && (retCode == 0) && (!_systemVars.engineQuit));
 
-			// do something smart here to implement pausing the game. If we even want that, that is.
-		} while ((Logic::_scriptVars[SCREEN] == Logic::_scriptVars[NEW_SCREEN]) && (retCode == 0));
-
-		if ((retCode == 0) && (Logic::_scriptVars[SCREEN] != 53) && _systemVars.wantFade) {
+		if ((retCode == 0) && (Logic::_scriptVars[SCREEN] != 53) && _systemVars.wantFade && (!_systemVars.engineQuit)) {
 			_screen->fadeDownPalette();
 			while (_screen->stillFading()) {
+				int32 relDelay = (int32)_system->getMillis() + (1000 / FRAME_RATE);
 				_screen->updateScreen();
-				delay(1000/12);
+				relDelay -= (int32)_system->getMillis();
+				relDelay = (relDelay > 0) ? relDelay : 0; 
+
+				delay(relDelay);
 			}
 		}
 
@@ -1258,7 +1272,6 @@ void SwordEngine::delay(uint amount) { //copied and mutilated from sky.cpp
 	OSystem::Event event;
 
 	uint32 start = _system->getMillis();
-	uint32 cur = start;
 
 	do {
 		while (_system->pollEvent(event)) {
@@ -1296,27 +1309,18 @@ void SwordEngine::delay(uint amount) { //copied and mutilated from sky.cpp
 				_mouseState |= BS1R_BUTTON_UP;
 				break;
 			case OSystem::EVENT_QUIT:
-				_system->quit();
+				//_system->quit();
+				_systemVars.engineQuit = true;
 				break;
 			default:
 				break;
 			}
 		}
 
-		if (amount == 0)
-			break;
+		if (amount > 0)
+			_system->delayMillis(10);
 
-		{
-			uint this_delay = 20; // 1?
-#ifdef _WIN32_WCE
-			this_delay = 10;
-#endif
-			if (this_delay > amount)
-				this_delay = amount;
-			_system->delayMillis(this_delay);
-		}
-		cur = _system->getMillis();
-	} while (cur < start + amount);
+	} while (_system->getMillis() < start + amount);
 }
 
 } // End of namespace Sword1

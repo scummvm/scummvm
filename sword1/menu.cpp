@@ -103,6 +103,18 @@ Menu::Menu(Screen *pScreen, Mouse *pMouse) {
 	_inMenu = 0;
 }
 
+Menu::~Menu(void) {
+	// the menu may be open, so delete the icons
+	for (int i = 0; i < TOTAL_pockets; i++) {
+		delete _objects[i];
+		_objects[i] = NULL;
+	}
+	for (int i = 0; i < TOTAL_subjects; i++) {
+		delete _subjects[i];
+		_subjects[i] = NULL;
+	}
+}
+
 void Menu::refreshMenus() {
 	if (_objectBarStatus == MENU_OPEN) {
 		buildMenu();

@@ -216,7 +216,7 @@ void Control::askForCd(void) {
 				notAccepted = false;
 			}
 		}
-	} while (notAccepted);
+	} while (notAccepted && (!SwordEngine::_systemVars.engineQuit));
 
 	_resMan->resClose(fontId);
 	free(_screenBuf);
@@ -303,7 +303,7 @@ uint8 Control::runPanel(void) {
 		_system->updateScreen();
 		delay(1000 / 12);
 		newMode = getClicks(mode, &retVal);
-	} while ((newMode != 1) && (retVal == 0));
+	} while ((newMode != 1) && (retVal == 0) && (!SwordEngine::_systemVars.engineQuit));
 	destroyButtons();
 	_resMan->resClose(fontId);
 	_resMan->resClose(redFontId);
@@ -366,7 +366,7 @@ uint8 Control::handleButtonClick(uint8 id, uint8 mode, uint8 *retVal) {
 	switch(mode) {
 		case BUTTON_MAIN_PANEL:
 			if (id == BUTTON_RESTART) {
-				if (SwordEngine::_systemVars.deathScreenFlag) // if player is dead or has just started, don't ask for confirmation
+				if (SwordEngine::_systemVars.controlPanelMode) // if player is dead or has just started, don't ask for confirmation
 					*retVal |= CONTROL_RESTART_GAME;
 				else if (getConfirm(_lStrings[STR_RESTART]))
 					*retVal |= CONTROL_RESTART_GAME;
@@ -380,9 +380,8 @@ uint8 Control::handleButtonClick(uint8 id, uint8 mode, uint8 *retVal) {
 				_buttons[5]->setSelected(SwordEngine::_systemVars.showText);
 			} else if (id == BUTTON_QUIT) {
 				if (getConfirm(_lStrings[STR_QUIT]))
-					_system->quit();
-				else
-					return mode;
+					SwordEngine::_systemVars.engineQuit = true;
+				return mode;
 			}
 			break;
 		case BUTTON_SAVE_PANEL:
@@ -421,7 +420,7 @@ void Control::deselectSaveslots(void) {
 void Control::setupMainPanel(void) {
 	uint32 panelId;
 	
-	if (SwordEngine::_systemVars.deathScreenFlag == 1)
+	if (SwordEngine::_systemVars.controlPanelMode == CP_DEATHSCREEN)
 		panelId = SR_DEATHPANEL;
 	else {
 		if (SwordEngine::_systemVars.language <= BS1_SPANISH)
@@ -434,17 +433,17 @@ void Control::setupMainPanel(void) {
 	panel->draw();
 	delete panel;
 
-	if (SwordEngine::_systemVars.deathScreenFlag)
+	if (SwordEngine::_systemVars.controlPanelMode != CP_NORMAL)
 		createButtons(_deathButtons, 3);		
 	else {
 		createButtons(_panelButtons, 7);
 		_buttons[5]->setSelected(SwordEngine::_systemVars.showText);
 	}
 
-	if (SwordEngine::_systemVars.deathScreenFlag == 2) // end of game
+	if (SwordEngine::_systemVars.controlPanelMode == CP_THEEND) // end of game
 		renderText(_lStrings[STR_THE_END], 480, 188 + 40, TEXT_RIGHT_ALIGN);
 
-	if (SwordEngine::_systemVars.deathScreenFlag == 0) { // normal panel
+	if (SwordEngine::_systemVars.controlPanelMode == CP_NORMAL) { // normal panel
 		renderText(_lStrings[STR_SAVE], 180, 188 + 40, TEXT_LEFT_ALIGN);
 		renderText(_lStrings[STR_DONE], 460, 332 + 40, TEXT_RIGHT_ALIGN);
 		renderText(_lStrings[STR_RESTORE], 180, 224 + 40, TEXT_LEFT_ALIGN);
@@ -455,7 +454,7 @@ void Control::setupMainPanel(void) {
 		renderText(_lStrings[STR_TEXT], 460, 224 + 40, TEXT_RIGHT_ALIGN);
 	} else {
 		renderText(_lStrings[STR_RESTORE], 285, 224 + 40, TEXT_LEFT_ALIGN);
-		if (SwordEngine::_systemVars.deathScreenFlag == 3) // just started game
+		if (SwordEngine::_systemVars.controlPanelMode == CP_NEWGAME) // just started game
 			renderText(_lStrings[STR_START], 285, 260 + 40, TEXT_LEFT_ALIGN);
 		else
 			renderText(_lStrings[STR_RESTART], 285, 260 + 40, TEXT_LEFT_ALIGN);
@@ -1031,7 +1030,7 @@ void Control::delay(uint32 msecs) {
 				_mouseState |= BS1_WHEEL_DOWN;
 				break;
 			case OSystem::EVENT_QUIT:
-				_system->quit();
+				SwordEngine::_systemVars.engineQuit = true;
 				break;
 			default:
 				break;

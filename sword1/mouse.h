@@ -72,6 +72,7 @@ class ObjectMan;
 class Mouse {
 public:
 	Mouse(OSystem *system, ResMan *pResMan, ObjectMan *pObjMan);
+	~Mouse(void);
 	void initialize(void);
 	void addToList(int id, Object *compact);
 	void useLogicAndMenu(Logic *pLogic, Menu *pMenu);

@@ -47,6 +47,16 @@ Screen::Screen(OSystem *system, ResMan *pResMan, ObjectMan *pObjMan) {
 	_screenBuf = _screenGrid = NULL;
 	_backLength = _foreLength = _sortLength = 0;
 	_fadingStep = 0;
+	_currentScreen = 0xFFFF;
+}
+
+Screen::~Screen(void) {
+	if (_screenBuf)
+		free(_screenBuf);
+	if (_screenGrid)
+		free(_screenGrid);
+	if (_currentScreen != 0xFFFF)
+		quitScreen();
 }
 
 void Screen::useTextManager(Text *pTextMan) {
@@ -309,6 +319,7 @@ void Screen::quitScreen(void) {
 		_resMan->resClose(_roomDefTable[_currentScreen].parallax[0]);
 	if (_roomDefTable[_currentScreen].parallax[1])
 		_resMan->resClose(_roomDefTable[_currentScreen].parallax[1]);
+	_currentScreen = 0xFFFF;
 }
 
 void Screen::draw(void) {

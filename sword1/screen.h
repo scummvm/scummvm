@@ -67,8 +67,8 @@ class Text; // Text objects use sprites that are created internally at run-time
 class Screen {
 public:
 	Screen(OSystem *system, ResMan *pResMan, ObjectMan *pObjMan);
-	void useTextManager(Text *pTextMan);
 	~Screen(void);
+	void useTextManager(Text *pTextMan);
 	void draw(void);
 
 	void quitScreen(void);

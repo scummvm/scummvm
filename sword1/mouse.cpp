@@ -40,6 +40,14 @@ Mouse::Mouse(OSystem *system, ResMan *pResMan, ObjectMan *pObjMan) {
 	_currentPtr = NULL;
 }
 
+Mouse::~Mouse(void) {
+	setLuggage(0, 0);
+	setPointer(0, 0);
+
+	for (uint8 cnt = 0; cnt < 17; cnt++)	 // force res manager to keep mouse 
+		_resMan->resClose(MSE_POINTER + cnt); // cursors in memory all the time
+}
+
 void Mouse::initialize(void) {
 	_numObjs = 0;
 	Logic::_scriptVars[MOUSE_STATUS] = 0; // mouse off and unlocked

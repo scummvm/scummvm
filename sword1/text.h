@@ -56,6 +56,7 @@ private:
 	ObjectMan *_objMan;
 	ResMan *_resMan;
 	FrameHeader *_textBlocks[MAX_TEXT_OBS];
+	uint32 _fontId;
 };
 
 } // End of namespace Sword1 

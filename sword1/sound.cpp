@@ -41,6 +41,16 @@ Sound::Sound(const char *searchPath, SoundMixer *mixer, ResMan *pResMan) {
 	_speechVolL = _speechVolR = _sfxVolL = _sfxVolR = 192;
 }
 
+Sound::~Sound(void) {
+	// clean up fx queue
+	_mixer->stopAll();
+	for (uint8 cnt = 0; cnt < _endOfQueue; cnt++)
+		if (_fxQueue[cnt].delay == 0)
+			_resMan->resClose(_fxList[_fxQueue[cnt].id].sampleId);
+	_endOfQueue = 0;
+	closeCowSystem();
+}
+
 int Sound::addToQueue(int32 fxNo) {
 	bool alreadyInQueue = false;
 	for (uint8 cnt = 0; (cnt < _endOfQueue) && (!alreadyInQueue); cnt++)

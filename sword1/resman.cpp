@@ -52,6 +52,25 @@ ResMan::ResMan(const char *resFile, MemMan *pMemoMan) {
 }
 
 ResMan::~ResMan(void) {
+#if 0
+	for (uint32 clusCnt = 0; clusCnt < _prj.noClu; clusCnt++) {
+		Clu *cluster = _prj.clu[clusCnt];
+		if (cluster) {
+			for (uint32 grpCnt = 0; grpCnt < cluster->noGrp; grpCnt++) {
+				Grp *group = cluster->grp[grpCnt];
+				if (group) {
+					for (uint32 resCnt = 0; resCnt < group->noRes; resCnt++) {
+						if (group->resHandle[resCnt].cond == MEM_DONT_FREE) {
+							warning("ResMan::~ResMan: Resource %02X.%04X.%02X is still open",
+								clusCnt + 1, grpCnt, resCnt);
+						}
+					}
+				}
+			}
+		}
+	}
+	debug(0, "ResMan closed\n");
+#endif
 	freeCluDescript();
 }
 

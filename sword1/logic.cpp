@@ -61,6 +61,12 @@ Logic::Logic(ObjectMan *pObjMan, ResMan *resMan, Screen *pScreen, Mouse *pMouse,
 	_mixer = mixer;
 }
 
+Logic::~Logic(void) {
+	delete _textMan;
+	delete _router;
+	delete _eventMan;
+}
+
 void Logic::initialize(void) {
 	memset(_scriptVars, 0, NUM_SCRIPT_VARS * sizeof(uint32));
 	for (uint8 cnt = 0; cnt < NON_ZERO_SCRIPT_VARS; cnt++)
@@ -1616,9 +1622,9 @@ int Logic::fnQuitGame(Object *cpt, int32 id, int32 a, int32 b, int32 c, int32 d,
 int Logic::fnDeathScreen(Object *cpt, int32 id, int32 a, int32 b, int32 c, int32 d, int32 z, int32 x) {
 
 	if (_scriptVars[FINALE_OPTION_FLAG] == 4) // successful end of game!
-		SwordEngine::_systemVars.deathScreenFlag = 2;
+		SwordEngine::_systemVars.controlPanelMode = CP_THEEND;
 	else
-		SwordEngine::_systemVars.deathScreenFlag = 1;
+		SwordEngine::_systemVars.controlPanelMode = CP_DEATHSCREEN;
 
 	cpt->o_logic = LOGIC_quit;
 	return SCRIPT_STOP;

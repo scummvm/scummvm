@@ -41,10 +41,9 @@ Text::Text(ObjectMan *pObjMan, ResMan *pResMan, bool czechVersion) {
 	_objMan = pObjMan;
 	_resMan = pResMan;
 	_textCount = 0;
-	if (czechVersion)
-		_font = (uint8*)_resMan->openFetchRes(CZECH_GAME_FONT);
-	else
-		_font = (uint8*)_resMan->openFetchRes(GAME_FONT);
+	_fontId = (czechVersion) ? CZECH_GAME_FONT : GAME_FONT;
+	_font = (uint8*)_resMan->openFetchRes(_fontId);
+
 	_joinWidth = charWidth( SPACE ) - 2 * OVERLAP;
 	_charHeight = FROM_LE_16(_resMan->fetchFrame(_font, 0)->height); // all chars have the same height
 	_textBlocks[0] = _textBlocks[1] = NULL;
@@ -55,6 +54,7 @@ Text::~Text(void) {
 		free(_textBlocks[0]);
 	if (_textBlocks[1])
 		free(_textBlocks[1]);
+	//_resMan->resClose(_fontId); => wiped automatically by _resMan->flush();
 }
 
 uint32 Text::lowTextManager(uint8 *ascii, int32 width, uint8 pen) {

@@ -33,6 +33,13 @@ enum {
 	GF_DEMO = 1 << 0
 };
 
+enum ControlPanelMode {
+	CP_NORMAL = 0,
+	CP_DEATHSCREEN,
+	CP_THEEND,
+	CP_NEWGAME
+};
+
 class Screen;
 class Sound;
 class Logic;
@@ -48,9 +55,9 @@ struct SystemVars {
 	bool	runningFromCd;
 	uint32	currentCD;			// starts at zero, then either 1 or 2 depending on section being played
 	uint32	justRestoredGame;	// see main() in sword.c & New_screen() in gtm_core.c
-	uint32	gamePaused;			// 1 when paused
+	bool	engineQuit;
 
-	uint8	deathScreenFlag;	// 1 death screen version of the control panel, 2 = successful end of game, 3 = force restart
+	uint8	controlPanelMode;	// 1 death screen version of the control panel, 2 = successful end of game, 3 = force restart
 	bool	forceRestart;
 	bool	wantFade;			// when true => fade during scene change, else cut.
 	uint8	playSpeech;
