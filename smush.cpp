@@ -124,16 +124,13 @@ void vimaInit();
 extern SoundMixer *g_mixer;
 
 void Smush::handleWave(const byte *src, uint32 size) {
-    
 	int16 *dst = new int16[size * _channels];
 	decompressVima((char *)src, dst, size * _channels * 2);
-	// convert our LE ones to BE
-	for (uint32 j = 0; j < size * _channels; j++)
-		dst[j] = SWAP_BYTES_16(dst[j]);
 
-	int flags = SoundMixer::FLAG_16BITS | SoundMixer::FLAG_AUTOFREE;
+	int flags = SoundMixer::FLAG_16BITS | SoundMixer::FLAG_AUTOFREE | SoundMixer::FLAG_LITTLE_ENDIAN;
 	if (_channels == 2)
 		flags |= SoundMixer::FLAG_STEREO;
+
 	if (!_soundHandle.isActive())
 		g_mixer->newStream(&_soundHandle, _freq, flags, 500000);
 	g_mixer->appendStream(_soundHandle, (byte *)dst, size * _channels * 2);
