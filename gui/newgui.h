@@ -23,7 +23,6 @@
 
 #include "scummsys.h"
 #include "system.h"	// For events
-#include "common/list.h"
 
 class Dialog;
 class Scumm;
@@ -38,7 +37,8 @@ enum {
 };
 
 enum {
-	kDoubleClickDelay = 500    // milliseconds
+	kDoubleClickDelay = 500,    // milliseconds
+	kCursorAnimateDelay = 500
 };
 
 // Extremly simple stack class, doesn't even do any error checking (for now)
@@ -57,24 +57,18 @@ public:
 	Dialog	*operator [](int i)	{ return _stack[i]; }
 };
 
-typedef ScummVM::List<OSystem::Event> EventList;
-
 // This class hopefully will replace the old Gui class completly one day 
 class NewGui {
 	friend class Dialog;
 public:
-	int16 _color, _shadowcolor;
-	int16 _bgcolor;
-	int16 _textcolor;
-	int16 _textcolorhi;
 
-	void loop();
+	// Main entry for the GUI: this will start an event loop that keeps running
+	// until no dialogs are active anymore.
+	void runLoop();
 
 	bool isActive()	{ return ! _dialogStack.empty(); }
 
 	NewGui(Scumm *s);
-
-	void handleEvent(const OSystem::Event &event) { _eventList.push_back(event); }
 
 protected:
 	Scumm		*_s;
@@ -84,7 +78,6 @@ protected:
 	
 	bool		_use_alpha_blending;
 	bool		_need_redraw;
-	bool		_prepare_for_gui;
 	DialogStack	_dialogStack;
 	
 	// for continuous events (keyDown)
@@ -102,13 +95,10 @@ protected:
 		int count;	// How often was it already pressed?
 	} _lastClick;
 	
-	// List of events to be handled
-	EventList	_eventList;
-	
-
 	// mouse cursor state
 	bool		_oldCursorMode;
 	int			_cursorAnimateCounter;
+	int			_cursorAnimateTimer;
 	byte		_cursor[2048];
 
 	void saveState();
@@ -117,10 +107,18 @@ protected:
 	void openDialog(Dialog *dialog);
 	void closeTopDialog();
 	
+	void loop();
+
 	void animateCursor();
 
 public:
-	// Drawing
+	// Theme colors
+	int16 _color, _shadowcolor;
+	int16 _bgcolor;
+	int16 _textcolor;
+	int16 _textcolorhi;
+
+	// Drawing primitives
 	int16 *getBasePtr(int x, int y);
 	void box(int x, int y, int width, int height);
 	void line(int x, int y, int x2, int y2, int16 color);

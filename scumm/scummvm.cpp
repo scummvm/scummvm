@@ -910,6 +910,7 @@ void Scumm::pauseDialog()
 	if (!_pauseDialog)
 		_pauseDialog = new PauseDialog(_newgui, this);
 	_pauseDialog->open();
+	_newgui->runLoop();
 }
 
 void Scumm::saveloadDialog()
@@ -917,6 +918,7 @@ void Scumm::saveloadDialog()
 	if (!_saveLoadDialog)
 		_saveLoadDialog = new SaveLoadDialog(_newgui, this);
 	_saveLoadDialog->open();
+	_newgui->runLoop();
 }
 
 void Scumm::optionsDialog()
@@ -924,6 +926,7 @@ void Scumm::optionsDialog()
 	if (!_optionsDialog)
 		_optionsDialog = new OptionsDialog(_newgui, this);
 	_optionsDialog->open();
+	_newgui->runLoop();
 }
 
 void Scumm::shutDown(int i)
@@ -1286,19 +1289,6 @@ void Scumm::waitForTimer(int msec_delay) {
 	for(;;) {
 		while (_system->poll_event(&event)) {
 
-			// if newgui is running, copy event to EventList, and let the GUI handle it itself
-			// we might consider this approach for ScummLoop as well, and clean up the current mess
-			if (_newgui->isActive()) {
-				if (event.event_code == OSystem::EVENT_MOUSEMOVE) {
-					mouse.x = event.mouse.x;
-					mouse.y = event.mouse.y;
-					_system->set_mouse_pos(event.mouse.x, event.mouse.y);
-					_system->update_screen();
-				}
-				_newgui->handleEvent(event);
-				continue;
-			}
-
 			switch(event.event_code) {
 			case OSystem::EVENT_KEYDOWN:
 				if (event.kbd.keycode >= '0' && event.kbd.keycode<='9'
@@ -1412,9 +1402,6 @@ void Scumm::mainRun()
 		last_time = _system->get_msecs();
 		if (_gui->isActive()) {
 			_gui->loop();
-			delta = 5;
-		} else if (_newgui->isActive()) {
-			_newgui->loop();
 			delta = 5;
 		} else {
 			delta = scummLoop(delta);

@@ -26,14 +26,20 @@
 #include "dialog.h"
 #include "scumm/dialogs.h"
 
+
 #ifdef _MSC_VER
+
 #	pragma warning( disable : 4068 ) // unknown pragma
+
 #endif
+
 
 /*
  * TODO list
  * - get a nicer font which contains diacrits (ŠšŸ§Žˆ etc.)
- * - add more widgets
+ * - add more widgets: edit field, popup, radio buttons, ...
+ *
+ * Other ideas:
  * - allow multi line (l/c/r aligned) text via StaticTextWidget ?
  * - add "close" widget to all dialogs (with a flag to turn it off) ?
  * - make dialogs "moveable" ?
@@ -73,8 +79,8 @@ static byte guifont[] = {
 
 // Constructor
 NewGui::NewGui(Scumm *s) : _s(s), _system(s->_system), _screen(0),
-	_use_alpha_blending(true), _need_redraw(false), _prepare_for_gui(true),
-	_currentKeyDown(0), _cursorAnimateCounter(0)
+	_use_alpha_blending(true), _need_redraw(false),
+	_currentKeyDown(0), _cursorAnimateCounter(0), _cursorAnimateTimer(0)
 {
 	// Setup some default GUI colors.
 	// TODO - either use nicer values, or maybe make this configurable?
@@ -88,106 +94,105 @@ NewGui::NewGui(Scumm *s) : _s(s), _system(s->_system), _screen(0),
 	memset(_cursor, 0xFF, sizeof(_cursor));
 }
 
-void NewGui::loop()
+void NewGui::runLoop()
 {
-	Dialog *activeDialog = _dialogStack.top();
+	if (!isActive())
+		return;
+	
+	Dialog *activeDialog;
 	int i;
+	OSystem::Event event;
+
+	saveState();
+
+	_currentKeyDown = 0;
 	
-	if (_prepare_for_gui) {
-		saveState();
+	_lastClick.x = _lastClick.y = 0;
+	_lastClick.time = 0;
+	_lastClick.count = 0;
 
-		_eventList.clear();
-		_currentKeyDown = 0;
-		
-		_lastClick.x = _lastClick.y = 0;
-		_lastClick.time = 0;
-		_lastClick.count = 0;
+	while (isActive()) {
+		activeDialog = _dialogStack.top();
 
-		_prepare_for_gui = false;
-	}
-
-	activeDialog->handleTickle();
-
-	if (_need_redraw) {
-		// Restore the overlay to its initial state, then draw all dialogs.
-		// This is necessary to get the blending right.
-		_system->clear_overlay();
-		_system->grab_overlay(_screen, _screen_pitch);
-		for (i = 0; i < _dialogStack.size(); i++)
-			_dialogStack[i]->draw();
-		_need_redraw = false;
-	}
+		activeDialog->handleTickle();
 	
-	animateCursor();
+		if (_need_redraw) {
+			// Restore the overlay to its initial state, then draw all dialogs.
+			// This is necessary to get the blending right.
+			_system->clear_overlay();
+			_system->grab_overlay(_screen, _screen_pitch);
+			for (i = 0; i < _dialogStack.size(); i++)
+				_dialogStack[i]->draw();
+			_need_redraw = false;
+		}
+		
+		animateCursor();
+	
+		_system->update_screen();		
 
-	if (_eventList.size() > 0)
-	{
-		OSystem::Event t;
-		
-		for (i = 0; i < _eventList.size(); i++)
-		{
-			t = _eventList[i];
-		
-			switch(t.event_code) {
+		while (_system->poll_event(&event)) {
+			switch(event.event_code) {
 				case OSystem::EVENT_KEYDOWN:
-					activeDialog->handleKeyDown((byte)t.kbd.ascii, t.kbd.flags);
+					activeDialog->handleKeyDown((byte)event.kbd.ascii, event.kbd.flags);
 
 					// init continuous event stream
-					_currentKeyDown = t.kbd.ascii;
-					_currentKeyDownFlags = t.kbd.flags;
+					_currentKeyDown = event.kbd.ascii;
+					_currentKeyDownFlags = event.kbd.flags;
 					_keyRepeatEvenCount = 1;
 					_keyRepeatLoopCount = 0;
 					break;
 				case OSystem::EVENT_KEYUP:
-					activeDialog->handleKeyUp((byte)t.kbd.ascii, t.kbd.flags);
-					if (t.kbd.ascii == _currentKeyDown)
+					activeDialog->handleKeyUp((byte)event.kbd.ascii, event.kbd.flags);
+					if (event.kbd.ascii == _currentKeyDown)
 						// only stop firing events if it's the current key
 						_currentKeyDown = 0;
 					break;
 				case OSystem::EVENT_MOUSEMOVE:
-					activeDialog->handleMouseMoved(t.mouse.x - activeDialog->_x, t.mouse.y - activeDialog->_y, 0);
+					_system->set_mouse_pos(event.mouse.x, event.mouse.y);
+					activeDialog->handleMouseMoved(event.mouse.x - activeDialog->_x, event.mouse.y - activeDialog->_y, 0);
 					break;
-				// We don't distinguish between mousebuttons (for now at least)
+				// We don'event distinguish between mousebuttons (for now at least)
 				case OSystem::EVENT_LBUTTONDOWN:
 				case OSystem::EVENT_RBUTTONDOWN: {
 					uint32 time = _system->get_msecs();
 					if (_lastClick.count && (time < _lastClick.time + kDoubleClickDelay)
-					      && ABS(_lastClick.x - t.mouse.x) < 3
-					      && ABS(_lastClick.y - t.mouse.y) < 3) {
+					      && ABS(_lastClick.x - event.mouse.x) < 3
+					      && ABS(_lastClick.y - event.mouse.y) < 3) {
 						_lastClick.count++;
 					} else {
-						_lastClick.x = t.mouse.x;
-						_lastClick.y = t.mouse.y;
+						_lastClick.x = event.mouse.x;
+						_lastClick.y = event.mouse.y;
 						_lastClick.count = 1;
 					}
 					_lastClick.time = time;
 					}
-					activeDialog->handleMouseDown(t.mouse.x - activeDialog->_x, t.mouse.y - activeDialog->_y, 1, _lastClick.count);
+					activeDialog->handleMouseDown(event.mouse.x - activeDialog->_x, event.mouse.y - activeDialog->_y, 1, _lastClick.count);
 					break;
 				case OSystem::EVENT_LBUTTONUP:
 				case OSystem::EVENT_RBUTTONUP:
-					activeDialog->handleMouseUp(t.mouse.x - activeDialog->_x, t.mouse.y - activeDialog->_y, 1, _lastClick.count);
+					activeDialog->handleMouseUp(event.mouse.x - activeDialog->_x, event.mouse.y - activeDialog->_y, 1, _lastClick.count);
 					break;
 			}
 		}
 
-		_eventList.clear();
-	}
-
-	// check if event should be sent again (keydown)
-	if (_currentKeyDown != 0)
-	{
-		// if only fired once, wait longer
-		if ( _keyRepeatLoopCount >= ((_keyRepeatEvenCount > 1) ? 2 : 4) )
-		//                                                           ^  loops to wait first event
-		//                                                       ^      loops to wait after first event
+		// check if event should be sent again (keydown)
+		if (_currentKeyDown != 0)
 		{
-			// fire event
-			activeDialog->handleKeyDown(_currentKeyDown, _currentKeyDownFlags);
-			_keyRepeatEvenCount++;
-			_keyRepeatLoopCount = 0;
+			// if only fired once, wait longer
+			if ( _keyRepeatLoopCount >= ((_keyRepeatEvenCount > 1) ? 2 : 4) )
+			//                                                           ^  loops to wait first event
+			//                                                       ^      loops to wait after first event
+			{
+				// fire event
+				activeDialog->handleKeyDown(_currentKeyDown, _currentKeyDownFlags);
+				_keyRepeatEvenCount++;
+				_keyRepeatLoopCount = 0;
+			}
+			_keyRepeatLoopCount++;
 		}
-		_keyRepeatLoopCount++;
+
+		// Delay for a moment
+		_system->delay_msecs(10);
 	}
 }
 
@@ -227,9 +232,6 @@ void NewGui::restoreState()
 
 void NewGui::openDialog(Dialog *dialog)
 {
-	if (_dialogStack.empty())
-		_prepare_for_gui = true;
-
 	_dialogStack.push(dialog);
 	_need_redraw = true;
 }
@@ -458,9 +460,10 @@ void NewGui::drawBitmap(uint32 bitmap[8], int x, int y, int16 color)
 //
 void NewGui::animateCursor()
 {
-	if (0 == (_cursorAnimateCounter & 0x3)) {
+	int time = _system->get_msecs(); 
+	if (time > _cursorAnimateTimer + kCursorAnimateDelay) {
 		const byte colors[4] = { 15, 15, 7, 8 };
-		const byte color = colors[(_cursorAnimateCounter >> 2) & 3];
+		const byte color = colors[_cursorAnimateCounter];
 		int i;
 		
 		for (i = 0; i < 16; i++) {
@@ -471,6 +474,8 @@ void NewGui::animateCursor()
 		}
 	
 		_system->set_mouse_cursor(_cursor, 16, 16, 8, 8);
+
+		_cursorAnimateTimer = time;
+		_cursorAnimateCounter = (_cursorAnimateCounter + 1) % 4;
 	}
-	_cursorAnimateCounter++;
 }
