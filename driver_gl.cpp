@@ -23,7 +23,7 @@ Driver *g_driver;
 // Hacky includes for temporary font rendering
 #if defined(MACOSX)
 	// TODO
-#elif defined(WIN32)
+#elif defined(UNIX)
 	#include <GL/glx.h>
 	#include <X11/Xlib.h>
 #else
