@@ -177,11 +177,11 @@ static const char *const simon1dos_opcode_name_table[256] = {
 	NULL,
 	"IJ|IS_SIBLING_WITH_A",
 	"IBB|UNK126",
-	"WW|UNK127",
+	"WW|PLAY_MUSIC_RESOURCE",
 	/* 128 */
 	"W|GET_DUMMY_WORD",
 	"W|GET_WORD_COND_TRUE",
-	"Bww|UNK131",
+	"Bww|UNK130",
 	NULL,													/* opcode 131 doesn't exist */
 	/* 132 */
 	"|SAVE_GAME",
@@ -250,7 +250,7 @@ static const char *const simon1dos_opcode_name_table[256] = {
 	"|READ_VGARES_23",
 	/* 184 */
 	"W|CLEAR_VGAPOINTER_ENTRY",
-	"W|DUMMY_185",
+	"W|MIDI_SFX_FILE_NUM",
 	"|VGA_POINTER_OP_3",
 	"|FADE_TO_BLACK",
 };
@@ -415,11 +415,11 @@ static const char *const simon1talkie_opcode_name_table[256] = {
 	NULL,
 	"IJ|IS_SIBLING_WITH_A",
 	"IBB|UNK126",
-	"WW|UNK127",
+	"WW|PLAY_MUSIC_RESOURCE",
 	/* 128 */
 	"W|GET_DUMMY_WORD",
 	"W|GET_WORD_COND_TRUE",
-	"Bww|UNK131",
+	"Bww|UNK130",
 	NULL,													/* opcode 131 doesn't exist */
 	/* 132 */
 	"|SAVE_GAME",
@@ -653,11 +653,11 @@ static const char *const simon2dos_opcode_name_table[256] = {
 	NULL,
 	"IJ|IS_SIBLING_WITH_A",
 	"IBB|UNK126",
-	"WW|UNK127",
+	"WW|PLAY_MUSIC_RESOURCE",
 	/* 128 */
 	"W|GET_DUMMY_WORD",
 	"W|GET_WORD_COND_TRUE",
-	"Bww|UNK131",
+	"Bww|UNK130",
 	NULL,													/* opcode 131 doesn't exist */
 	/* 132 */
 	"|SAVE_GAME",
@@ -895,11 +895,11 @@ static const char *const simon2talkie_opcode_name_table[256] = {
 	NULL,
 	"IJ|IS_SIBLING_WITH_A",
 	"IBB|UNK126",
-	"WW|UNK127",
+	"WW|PLAY_MUSIC_RESOURCE",
 	/* 128 */
 	"W|GET_DUMMY_WORD",
 	"W|GET_WORD_COND_TRUE",
-	"Bww|UNK131",
+	"Bww|UNK130",
 	NULL,													/* opcode 131 doesn't exist */
 	/* 132 */
 	"|SAVE_GAME",
@@ -1148,11 +1148,11 @@ const char *const simon2_video_opcode_name_table[] = {
 	"|SKIP_IF_GE",
 	/* 68 */
 	"|SKIP_IF_LE",
-	"dd|UNK69",
-	"dd|UNK70",
-	"|UNK71",
+	"dd|PLAY_TRACK",
+	"dd|QUEUE_MUSIC",
+	"|CHECK_MUSIC_QUEUE",
 	/* 72 */
-	"dd|UNK72",
+	"dd|PLAY_TRACK_2",
 	"bb|SET_OP189_FLAG",
 	"bb|CLEAR_OP189_FLAG",
 };
