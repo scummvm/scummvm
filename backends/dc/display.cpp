@@ -20,8 +20,9 @@
  *
  */
 
-#include "stdafx.h"
-#include "scumm.h"
+#include <common/scummsys.h>
+#include <common/stdafx.h>
+#include <common/engine.h>
 #include "dc.h"
 
 #define SCREEN_W 320

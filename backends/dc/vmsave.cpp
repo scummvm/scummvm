@@ -20,13 +20,13 @@
  *
  */
 
-#include "stdafx.h"
-#include "scumm.h"
-#include "mididrv.h"
-#include "gameDetector.h"
+#include <common/scummsys.h>
+#include <common/stdafx.h>
+#include <common/engine.h>
+#include <common/gameDetector.h>
 #include "dc.h"
 #include "icon.h"
-#include "saveload.h"
+#include <scumm/saveload.h>
 
 #include <ronin/zlib.h>
 

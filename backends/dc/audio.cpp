@@ -20,8 +20,9 @@
  *
  */
 
-#include "stdafx.h"
-#include "scumm.h"
+#include <common/scummsys.h>
+#include <common/stdafx.h>
+#include <common/engine.h>
 #include "dc.h"
 
 EXTERN_C void *memcpy4(void *s1, const void *s2, unsigned int n);

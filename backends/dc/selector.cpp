@@ -20,10 +20,10 @@
  *
  */
 
-#include "stdafx.h"
-#include "scumm.h"
-#include "mididrv.h"
-#include "gameDetector.h"
+#include <common/scummsys.h>
+#include <common/stdafx.h>
+#include <common/engine.h>
+#include <common/gameDetector.h>
 #include "dc.h"
 #include "icon.h"
 #include "label.h"
@@ -165,7 +165,7 @@ static void checkName(GameDetector *d, Game &game)
 {
   d->_exe_name = game.filename_base;
   if(d->detectGame()) {
-    char *n = d->getGameName();
+    const char *n = d->getGameName();
     strcpy(game.text, n);
   } else
     strcpy(game.text, game.filename_base);
