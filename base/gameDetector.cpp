@@ -500,6 +500,9 @@ void GameDetector::setGame(const String &name) {
 }
 
 int GameDetector::parseGraphicsMode(const String &str) {
+	if (str.isEmpty())
+		return -1;
+
 	const char *s = str.c_str();
 	const GraphicsMode *gm = gfx_modes;
 	while (gm->name) {
@@ -513,6 +516,9 @@ int GameDetector::parseGraphicsMode(const String &str) {
 }
 
 Language GameDetector::parseLanguage(const String &str) {
+	if (str.isEmpty())
+		return UNK_LANG;
+
 	const char *s = str.c_str();
 	const LanguageDescription *l = languages;
 	while (l->name) {
@@ -525,6 +531,9 @@ Language GameDetector::parseLanguage(const String &str) {
 }
 
 Platform GameDetector::parsePlatform(const String &str) {
+	if (str.isEmpty())
+		return kPlatformUnknown;
+
 	const char *s = str.c_str();
 	if (!scumm_stricmp(s, "pc"))
 		return kPlatformPC;
@@ -539,7 +548,7 @@ Platform GameDetector::parsePlatform(const String &str) {
 }
 
 int GameDetector::parseMusicDriver(const String &str) {
-	if (str == String::emptyString)
+	if (str.isEmpty())
 		return -1;
 
 	const char *s = str.c_str();
