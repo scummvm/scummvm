@@ -366,6 +366,42 @@ const char *Scumm_v2::getOpcodeDesc(int i) {
 	return _opcodesV2[i].desc;
 }
 
+void Scumm_v2::decodeParseString() {
+	byte buffer[256];	// FIXME
+	byte *ptr = buffer;
+	byte c;
+	while ((c = fetchScriptByte())) {
+		if (c & 0x80) {
+			*ptr++ = c & 0x7f;
+			*ptr++ = ' ';
+		} else if (c < 8) {
+			// Special codes as seen in CHARSET_1 etc. My guess is that they
+			// have a similar function as the corresponding embedded stuff in modern
+			// games. Hence for now we convert them to the modern format.
+			// This might allow us to reuse the existing code.
+			*ptr++ = 0xFF;
+			*ptr++ = c;
+			if (c > 3) {
+				*ptr++ = 0;
+				*ptr++ = fetchScriptByte();
+			}
+		} else
+			*ptr++ = c;
+	}
+	*ptr = 0;
+
+	printf("TODO: Scumm_v2::decodeParseString(\"%s\")\n", buffer);
+}
+
+int Scumm_v2::readVar(uint var) {
+	debug(6, "readvar=%d", var);
+	if (var >= 14 && var <= 16)
+		var = _vars[var];
+
+	checkRange(_numVariables - 1, 0, var, "Variable %d out of range(r)");
+	return _vars[var];
+}
+
 void Scumm_v2::setStateCommon(byte type) {
 	int obj = getVarOrDirectWord(0x80);
 	putState(obj, getState(obj) | type);
@@ -457,15 +493,15 @@ void Scumm_v2::o2_getObjY() {
 }
 
 void Scumm_v2::o2_setBitVar() {
-	byte hi = fetchScriptByte();
 	byte lo = fetchScriptByte();
+	byte hi = fetchScriptByte();
 	byte a = getVarOrDirectByte(0x80);
 
 	int bit_var = (hi << 8) + lo + a;
 	int bit_offset = bit_var & 0x0f;
 	bit_var >>= 4;
 
-	if (getVarOrDirectByte(0x80))
+	if (getVarOrDirectByte(0x40))
 		_vars[bit_var] |= (1 << bit_offset);
 	else
 		_vars[bit_var] &= ~(1 << bit_offset);
@@ -473,8 +509,8 @@ void Scumm_v2::o2_setBitVar() {
 
 void Scumm_v2::o2_getBitVar() {
 	getResultPos();
-	byte hi = fetchScriptByte();
 	byte lo = fetchScriptByte();
+	byte hi = fetchScriptByte();
 	byte a = getVarOrDirectByte(0x80);
 
 	int bit_var = (hi << 8) + lo + a;
@@ -561,12 +597,12 @@ void Scumm_v2::o2_actorSet() {
 	Actor *a = derefActorSafe(act, "actorSet");
 	int i;
 
+	_opcode = fetchScriptByte();
 	if (!a) {
-		fetchScriptByte();
 		return;
 	}
 
-	switch (fetchScriptByte()) {
+	switch (_opcode) {
 		case 1: 	// Actor Sound
 			a->sound[0] = arg;
 			break;
@@ -588,6 +624,8 @@ void Scumm_v2::o2_actorSet() {
 		case 5:		// Talk Color
 			a->talkColor = arg;
 			break;
+		default:
+			warning("o2_actorSet: opcode %d not yet supported", _opcode);
 	}
 }
 
@@ -830,33 +868,6 @@ void Scumm_v2::o2_doSentence() {
 	case 2:
 		break;
 	}
-}
-
-void Scumm_v2::decodeParseString() {
-	byte buffer[256];	// FIXME
-	byte *ptr = buffer;
-	byte c;
-	while ((c = fetchScriptByte())) {
-		if (c & 0x80) {
-			*ptr++ = c & 0x7f;
-			*ptr++ = ' ';
-		} else if (c < 8) {
-			// Special codes as seen in CHARSET_1 etc. My guess is that they
-			// have a similar function as the corresponding embedded stuff in modern
-			// games. Hence for now we convert them to the modern format.
-			// This might allow us to reuse the existing code.
-			*ptr++ = 0xFF;
-			*ptr++ = c;
-			if (c > 3) {
-				*ptr++ = 0;
-				*ptr++ = fetchScriptByte();
-			}
-		} else
-			*ptr++ = c;
-	}
-	*ptr = 0;
-
-	printf("TODO: Scumm_v2::decodeParseString(\"%s\")\n", buffer);
 }
 
 void Scumm_v2::o2_ifClassOfIs() {

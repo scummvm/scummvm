@@ -371,11 +371,7 @@ int Scumm::readVar(uint var) {
 
 		checkRange(_numVariables - 1, 0, var, "Variable %d out of range(r)");
 
-		if ((_features & GF_AFTER_V2) && (var >= 14) && (var <= 16)) {
-			return _vars[_vars[var]];
-		} else {
-			return _vars[var];
-		}
+		return _vars[var];
 	}
 
 	if (var & 0x2000 && !(_features & GF_NEW_OPCODES)) {
@@ -386,9 +382,6 @@ int Scumm::readVar(uint var) {
 			var += a & 0xFFF;
 		var &= ~0x2000;
 	}
-
-	if (!(var & 0xF000))
-		return _vars[var];
 
 	if (var & 0x8000) {
 		if ((_gameId == GID_ZAK256) || (_features & GF_OLD_BUNDLE)) {

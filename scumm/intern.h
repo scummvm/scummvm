@@ -197,6 +197,8 @@ protected:
 
 	virtual void decodeParseString();
 
+	virtual int readVar(uint var);
+
 	virtual void ifStateCommon(byte type);
 	virtual void ifNotStateCommon(byte type);
 	virtual void setStateCommon(byte type);
