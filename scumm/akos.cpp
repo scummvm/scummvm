@@ -1223,13 +1223,34 @@ byte AkosRenderer::codec32(int xmoveCur, int ymoveCur) {
 	src.bottom = _height - 1;
 
 	dst.top = _actorY + ymoveCur;
-	dst.right = dst.left + _width;
-	dst.bottom = dst.top + _height;
+	dst.right = dst.left + _width - 1;
+	dst.bottom = dst.top + _height - 1;
 
-	dst.clip(_clipOverride);
+	int diff;
+	diff = dst.left - _clipOverride.left;
+	if (diff < 0) {
+		src.left -= diff;
+		dst.left -= diff;
+	}
+	diff = dst.right - _clipOverride.right;
+	if (diff > 0) {
+		src.right -= diff;
+		dst.right -= diff;
+	}
+	diff = dst.top - _clipOverride.top;
+	if (diff < 0) {
+		src.top -= diff;
+		dst.top -= diff;
+	}
+	diff = dst.bottom - _clipOverride.bottom;
+	if (diff > 0) {
+		src.bottom -= diff;
+		dst.bottom -= diff;
+	}	
 
-	_vm->markRectAsDirty(kMainVirtScreen, dst, _actorID);
+	_vm->markRectAsDirty(kMainVirtScreen, dst);
 
+	// cyx: are these variables really useful ?
 	if (_draw_top > dst.top)
 		_draw_top = dst.top;
 	if (_draw_bottom < dst.bottom)
