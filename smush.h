@@ -125,6 +125,7 @@ public:
 	void pause(bool pause) { _videoPause = pause; }
 	bool isPlaying() { return !_videoFinished; }
 	bool isUpdateNeeded() { return _updateNeeded; }
+	void clearUpdateNeeded() {_updateNeeded = false; }
 	byte *getDstPtr() { return _buf; }
 	int getX() { return _x; }
 	int getY() { return _y; }
