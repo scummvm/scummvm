@@ -1233,13 +1233,13 @@ void ScummEngine_v90he::spritesProcessWiz(bool arg) {
 			bboxPtr->bottom = -1234;
 		}
 
-		wiz.img.flags = 0x10;
+		wiz.img.flags = kWIFMarkBufferDirty;
 		if (spr_flags & kSFXFlipped)
 			wiz.img.flags |= kWIFFlipX;
 		if (spr_flags & kSFYFlipped)
 			wiz.img.flags |= kWIFFlipY;
 		if (spr_flags & kSF13) {
-			wiz.img.flags &= ~(0x10);
+			wiz.img.flags &= ~kWIFMarkBufferDirty;
 			wiz.img.flags |= kWIFBlitToFrontVideoBuffer;
 		}
 		if (spi->field_54) {
@@ -1248,7 +1248,7 @@ void ScummEngine_v90he::spritesProcessWiz(bool arg) {
 			wiz.unk_15C = spi->field_54;
 		}
 		if (spr_flags & kSF20)
-			wiz.img.flags |= 2;
+			wiz.img.flags |= kWIFRemapPalette;
 		if (spi->field_7C) {
 			wiz.processFlags |= 0x80000;
 			wiz.unk_178 = spi->field_7C;

@@ -78,8 +78,11 @@ struct WizParameters {
 };
 
 enum WizImageFlags {
+	kWIFHasPalette = 0x1,
+	kWIFRemapPalette = 0x2,
 	kWIFPrint = 0x4,
 	kWIFBlitToFrontVideoBuffer = 0x8,
+	kWIFMarkBufferDirty = 0x10,
 	kWIFBlitToMemBuffer = 0x20,
 	kWIFIsPolygon = 0x40,
 	kWIFFlipX = 0x400,
@@ -91,11 +94,14 @@ enum WizProcessFlags {
 	kWPFZoom = 0x8,
 	kWPFRotate = 0x10,
 	kWPFNewFlags = 0x20,
+	kWPFRemapPalette = 0x40,
 	kWPFClipBox = 0x200,
 	kWPFNewState = 0x400,
 	kWPFUseFile = 0x800,
 	kWPFUseDefImgWidth = 0x2000,
-	kWPFUseDefImgHeight = 0x4000
+	kWPFUseDefImgHeight = 0x4000,
+	kWPFFillColor = 0x20000,
+	kWPFClipBox2 = 0x40000
 };
 
 struct Wiz {

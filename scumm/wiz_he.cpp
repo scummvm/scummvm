@@ -867,12 +867,12 @@ uint8 *ScummEngine_v72he::drawWizImage(int restype, const WizImage *pwi) {
 		
 		uint8 *wizd = findWrappedBlock(MKID('WIZD'), dataPtr, pwi->state, 0);
 		assert(wizd);
-		if (pwi->flags & 1) {
+		if (pwi->flags & kWIFHasPalette) {
 			uint8 *pal = findWrappedBlock(MKID('RGBS'), dataPtr, pwi->state, 0);
 			assert(pal);
 			setPaletteFromPtr(pal, 256);
 		}
-		if (pwi->flags & 2) {
+		if (pwi->flags & kWIFRemapPalette) {
 			rmap = findWrappedBlock(MKID('RMAP'), dataPtr, pwi->state, 0);
 			assert(rmap);
 			uint8 *rgbs = findWrappedBlock(MKID('RGBS'), dataPtr, pwi->state, 0);
@@ -893,7 +893,7 @@ uint8 *ScummEngine_v72he::drawWizImage(int restype, const WizImage *pwi) {
 			ch = height;
 		} else {
 			VirtScreen *pvs = &virtscr[kMainVirtScreen];
-			if (pwi->flags & 0x10) {
+			if (pwi->flags & kWIFMarkBufferDirty) {
 				dst = pvs->getPixels(0, pvs->topline);
 			} else {
 				dst = pvs->getBackPixels(0, pvs->topline);
@@ -915,7 +915,7 @@ uint8 *ScummEngine_v72he::drawWizImage(int restype, const WizImage *pwi) {
 			uint8 *trns = findWrappedBlock(MKID('TRNS'), dataPtr, pwi->state, 0);
 			int color = (trns == NULL) ? VAR(VAR_WIZ_TCOLOR) : -1;
 			const uint8 *pal = xmap;
-			if (pwi->flags & 2) {
+			if (pwi->flags & kWIFRemapPalette) {
 				pal = rmap + 4;
 			}
 			_wiz.copyRawWizImage(dst, wizd, cw, ch, pwi->x1, pwi->y1, width, height, &rScreen, pwi->flags, pal, color);
@@ -927,7 +927,7 @@ uint8 *ScummEngine_v72he::drawWizImage(int restype, const WizImage *pwi) {
 			Common::Rect rImage(pwi->x1, pwi->y1, pwi->x1 + width, pwi->y1 + height);
 			if (rImage.intersects(rScreen)) {
 				rImage.clip(rScreen);
-				if (!(pwi->flags & kWIFBlitToFrontVideoBuffer) && pwi->flags & 0x18) {
+				if (!(pwi->flags & kWIFBlitToFrontVideoBuffer) && (pwi->flags & (kWIFBlitToFrontVideoBuffer | kWIFMarkBufferDirty))) {
 					++rImage.bottom;
 					markRectAsDirty(kMainVirtScreen, rImage);
 				} else {
@@ -1024,12 +1024,12 @@ void ScummEngine_v72he::drawWizPolygon(int resnum, int state, int id, int flags)
 	wi.resNum = resnum;
 	wi.state = state;
 	wi.x1 = wi.y1 = 0;
-	wi.flags = 0x20;
+	wi.flags = kWIFBlitToMemBuffer;
 	uint8 *srcWizBuf = drawWizImage(rtImage, &wi);
 	if (srcWizBuf) {
 		uint8 *dst;
 		VirtScreen *pvs = &virtscr[kMainVirtScreen];
-		if (flags & 0x10) {
+		if (flags & kWIFMarkBufferDirty) {
 			dst = pvs->getPixels(0, 0);
 		} else {
 			dst = pvs->getBackPixels(0, 0);
@@ -1094,7 +1094,7 @@ void ScummEngine_v72he::drawWizPolygon(int resnum, int state, int id, int flags)
 			yoff += pvs->pitch;
 		}
 
-		if (flags & 0x10) {
+		if (flags & kWIFMarkBufferDirty) {
 			markRectAsDirty(kMainVirtScreen, wp->bound);
 		} else {
 			gdi.copyVirtScreenBuffers(wp->bound);
@@ -1107,7 +1107,7 @@ void ScummEngine_v72he::drawWizPolygon(int resnum, int state, int id, int flags)
 void ScummEngine_v72he::flushWizBuffer() {
 	for (int i = 0; i < _wiz._imagesNum; ++i) {
 		WizImage *pwi = &_wiz._images[i];
-		if (pwi->flags & 0x40) {
+		if (pwi->flags & kWIFIsPolygon) {
 			drawWizPolygon(pwi->resNum, pwi->state, pwi->x1, pwi->flags);
 		} else {
 			drawWizImage(rtImage, pwi);
@@ -1147,7 +1147,7 @@ void ScummEngine_v80he::loadWizCursor(int resId, int resType, bool state) {
 	wi.resNum = resId;
 	wi.x1 = wi.y1 = 0;
 	wi.state = 0;
-	wi.flags = 0x20;	
+	wi.flags = kWIFBlitToMemBuffer;	
 	uint8 *cursor = drawWizImage(rtImage, &wi);
 	int32 cw, ch;	
 	getWizImageDim(resId, 0, cw, ch);
@@ -1224,8 +1224,8 @@ void ScummEngine_v90he::displayWizComplexImage(const WizParameters *params) {
 		warning("displayWizComplexImage() unhandled flags = 0x10000");
 	}
 
-	if (params->processFlags & 0x40) {
-		int st = (params->processFlags & 0x400) ? params->img.state : 0;
+	if (params->processFlags & kWPFRemapPalette) {
+		int st = (params->processFlags & kWPFNewState) ? params->img.state : 0;
 		int num = params->remapNum;
 		const uint8 *index = params->remapIndex;
 		uint8 *iwiz = getResourceAddress(rtImage, params->img.resNum);
@@ -1249,7 +1249,7 @@ void ScummEngine_v90he::displayWizComplexImage(const WizParameters *params) {
 		pwi->flags = flags;
 		pwi->unk = unk;
 		++_wiz._imagesNum;
-	} else if (params->processFlags & 0x18) {
+	} else if (params->processFlags & (kWPFRotate | kWPFZoom)) {
 		drawWizComplexPolygon(params->img.resNum, state, po_x, po_y, unk, rotationAngle, zoom, r);
 	} else if (flags & kWIFIsPolygon) {
 		drawWizPolygon(params->img.resNum, state, po_x, flags); // XXX , VAR(VAR_WIZ_TCOLOR));
@@ -1354,11 +1354,11 @@ void ScummEngine_v90he::fillWizRect(const WizParameters *params) {
 			}
 			r1.clip(params->box);
 		}
-		if (params->processFlags & 0x40000) {
+		if (params->processFlags & kWPFClipBox2) {
 			r1.clip(params->box2);
 		}
 		uint8 color;
-		if (params->processFlags & 0x20000) {
+		if (params->processFlags & kWPFFillColor) {
 			color = params->fillColor;
 		} else {
 			color = VAR(93);
@@ -1433,8 +1433,8 @@ void ScummEngine_v90he::processWizImage(const WizParameters *params) {
 		}
 		break;
 	case 6:
-		if (params->processFlags & 0x40) {
-			int state = (params->processFlags & 0x400) ? params->img.state : 0;
+		if (params->processFlags & kWPFRemapPalette) {
+			int state = (params->processFlags & kWPFNewState) ? params->img.state : 0;
 			int num = params->remapNum;
 			const uint8 *index = params->remapIndex;
 			uint8 *iwiz = getResourceAddress(rtImage, params->img.resNum);
