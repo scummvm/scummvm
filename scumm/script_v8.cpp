@@ -1187,10 +1187,7 @@ void Scumm_v8::o8_actorOps()
 		warning("o8_actorOps: setActorVolume(%d) not implemented", i);
 		break;
 	case 0x88:		// SO_ACTOR_FREQUENCY Set frequency of actor speech
-		// TODO - implement this!
-		i = pop();
-		if (i != 256)	// De-verbosed: 256 is the default frequency so don't warn on it
-			warning("o8_actorOps: setActorFrequency(%d) not implemented", i);
+		a->talkFrequency = pop();
 		break;
 	case 0x89:		// SO_ACTOR_PAN
 		// TODO - implement this!

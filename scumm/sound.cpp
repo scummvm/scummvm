@@ -1226,6 +1226,13 @@ int Sound::playBundleSound(char *sound) {
 	
 	byte * final = (byte *)malloc(size);
 	memcpy(final, ptr, size);
+
+	if (_scumm->_actorToPrintStrFor != 0xFF && _scumm->_actorToPrintStrFor != 0) {
+		Actor *a = _scumm->derefActorSafe(_scumm->_actorToPrintStrFor, "playBundleSound");
+		if (a)
+			rate = (rate * a->talkFrequency) / 256;
+	}
+	
 	if (bits == 8) {
 		return _scumm->_mixer->playRaw(NULL, final, size, rate, SoundMixer::FLAG_UNSIGNED | SoundMixer::FLAG_AUTOFREE);
 	} else if (bits == 16){

@@ -77,6 +77,7 @@ public:
 	uint16 costume;
 	byte room;
 	byte talkColor;
+	int talkFrequency;
 	byte scalex, scaley;
 	byte charset;
 	int16 newDirection;

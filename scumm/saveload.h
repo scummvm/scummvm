@@ -34,10 +34,11 @@ enum {
 	VER_V12,
 	VER_V13,
 	VER_V14,
-	VER_V15
+	VER_V15,
+	VER_V16
 };
 
-#define CURRENT_VER VER_V15
+#define CURRENT_VER VER_V16
 
 
 // To work around a warning in GCC 3.2 (and 3.1 ?) regarding non-POD types,

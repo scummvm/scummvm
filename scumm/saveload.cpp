@@ -247,6 +247,7 @@ void Scumm::saveOrLoad(Serializer *s, uint32 savegameVersion)
 		MKLINE(Actor, costume, sleUint16, VER_V8),
 		MKLINE(Actor, room, sleByte, VER_V8),
 		MKLINE(Actor, talkColor, sleByte, VER_V8),
+		MKLINE(Actor, talkFrequency, sleInt16, VER_V16),
 		MKLINE(Actor, scalex, sleByte, VER_V8),
 		MKLINE(Actor, scaley, sleByte, VER_V8),
 		MKLINE(Actor, charset, sleByte, VER_V8),

@@ -41,6 +41,7 @@ void Actor::initActor(int mode)
 		y = 0;
 		facing = 180;
 		newDirection = 180;
+		talkFrequency = 256;
 	} else if (mode == 2) {
 		facing = 180;
 		newDirection = 180;
