@@ -244,6 +244,7 @@ int32 BundleMgr::decompressSampleByIndex(int32 index, int32 offset, int32 size, 
 			output_size = size;
 
 		assert(final_size + output_size <= blocks_final_size);
+		assert(skip + output_size <= (int)sizeof(_compOutput));
 
 		memcpy(*comp_final + final_size, _compOutput + skip, output_size);
 		final_size += output_size;
