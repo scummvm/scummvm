@@ -83,7 +83,6 @@ struct _nodeData {
 
 #define	O_WALKANIM_SIZE		600	// max number of nodes in router output
 #define	O_GRID_SIZE		200	// max 200 lines & 200 points
-#define	EXTRA_GRID_SIZE		20	// max 20 lines & 20 points
 #define	O_ROUTE_SIZE		50	// max number of modules in a route
 
 typedef	struct {
@@ -108,22 +107,13 @@ private:
 	// megas (NULL if slot not in use)
 	mem *_routeSlots[TOTAL_ROUTE_SLOTS];
 
-	// because extra bars will be copied into here afer walkgrid loaded
-	_barData _bars[O_GRID_SIZE + EXTRA_GRID_SIZE];
-	_nodeData _node[O_GRID_SIZE + EXTRA_GRID_SIZE];
+	_barData _bars[O_GRID_SIZE];
+	_nodeData _node[O_GRID_SIZE];
 
 	int32 _walkGridList[MAX_WALKGRIDS];
 
 	int32 _nbars;
 	int32 _nnodes;
-
-	// area for extra route data to block parts of floors and enable
-	// routing round mega charaters
-
-	int32 _nExtraBars;
-	int32 _nExtraNodes;
-	_barData _extraBars[EXTRA_GRID_SIZE];
-	_nodeData _extraNode[EXTRA_GRID_SIZE];
 
 	int32 _startX;
 	int32 _startY;
@@ -215,15 +205,11 @@ private:
 	void plotCross(int16 x, int16 y, uint8 colour);
 
 public:
-	Router(Sword2Engine *vm)
-		: _vm(vm), _nExtraBars(0), _nExtraNodes(0), _diagonalx(0),
-		  _diagonaly(0) {
+	Router(Sword2Engine *vm) : _vm(vm), _diagonalx(0), _diagonaly(0) {
 		memset(_routeSlots, 0, sizeof(_routeSlots));
 		memset(_bars, 0, sizeof(_bars));
 		memset(_node, 0, sizeof(_node));
 		memset(_walkGridList, 0, sizeof(_walkGridList));
-		memset(_extraBars, 0, sizeof(_extraBars));
-		memset(_extraNode, 0, sizeof(_extraNode));
 		memset(_route, 0, sizeof(_route));
 		memset(_smoothPath, 0, sizeof(_smoothPath));
 		memset(_modularPath, 0, sizeof(_modularPath));

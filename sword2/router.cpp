@@ -2601,21 +2601,6 @@ void Router::loadWalkGrid(void) {
 			_nnodes	+= theseNodes;
 		}
 	}
-
-	// EXTRA GRIDS (moveable grids added by megas)
-
-	// Note that these will be checked against allowed max at the time of
-	// creating them
-
-	// extra lines
-
- 	memmove((uint8 *) &_bars[_nbars], (uint8 *) &_extraBars[0], _nExtraBars * sizeof(_barData));
-	_nbars += _nExtraBars;
-
-	// extra nodes
-
- 	memmove((uint8 *) &_node[_nnodes], (uint8 *) &_extraNode[0], _nExtraNodes * sizeof(_nodeData));
-	_nnodes += _nExtraNodes;
 }
 
 void Router::clearWalkGridList(void) {
