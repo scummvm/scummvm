@@ -1084,6 +1084,7 @@ public:
 	/* Scumm Vars */
 	byte VAR_LANGUAGE;
 	byte VAR_KEYPRESS;
+	byte VAR_SYNC;
 	byte VAR_EGO;
 	byte VAR_CAMERA_POS_X;
 	byte VAR_HAVE_MSG;

@@ -257,19 +257,16 @@ void IMuseDigital::startSound(int soundId, const char *soundName, int soundType,
 				channels = _sound->getChannels(_track[l].soundHandle);
 				freq = _sound->getFreq(_track[l].soundHandle);
 				
-				_track[l].iteration = freq * channels;
-				if ((bits == 12) || (bits == 16))
-					_track[l].iteration *= 2;
-
 				assert(channels == 1 || channels == 2);
-				_track[l].pullSize = freq * channels;
-				if (channels == 2) {
+
+				_track[l].iteration = _track[l].pullSize = freq * channels;
+
+				if (channels == 2)
 					mixerFlags = SoundMixer::FLAG_STEREO | SoundMixer::FLAG_REVERSE_STEREO;
-				}
 
 				if ((bits == 12) || (bits == 16)) {
 					mixerFlags |= SoundMixer::FLAG_16BITS;
-					_track[l].pullSize *= 2;
+					_track[l].iteration = _track[l].pullSize *= 2;
 				} else if (bits == 8) {
 					mixerFlags |= SoundMixer::FLAG_UNSIGNED;
 				} else
@@ -579,6 +576,39 @@ int IMuseDigital::getSoundStatus(int sound) const {
 	return 0;
 }
 
+void IMuseDigital::getLipSync(int soundId, int syncId, int32 msPos, int32 &width, int32 &height) {
+	int32 param1 = 0, param2 = 0;
+	int32 sync_size;
+	byte *sync_ptr;
+
+	msPos /= 16;
+	if (msPos < 65536) {
+		for (int l = 0; l < MAX_DIGITAL_TRACKS; l++) {
+			if ((_track[l].idSound == soundId) && _track[l].used) {
+				sync_size = _sound->getSyncSizeById(_track[l].soundHandle, syncId);
+				sync_ptr = _sound->getSyncPtrById(_track[l].soundHandle, syncId);
+				if ((sync_size != 0) && (sync_ptr != NULL)) {
+					sync_size /= 4;
+					while (sync_size--) {
+						if (READ_BE_UINT16(sync_ptr) >= msPos)
+							break;
+						sync_ptr += 4;
+					}
+					if (sync_size < 0)
+						sync_ptr -= 4;
+					else
+						if (READ_BE_UINT16(sync_ptr) > msPos)
+							sync_ptr -= 4;
+
+					width = sync_ptr[2];
+					height = sync_ptr[3];
+					return;
+				}
+			}
+		}
+	}
+}
+
 int32 IMuseDigital::getPosInMs(int soundId) {
 	for (int l = 0; l < MAX_DIGITAL_TRACKS; l++) {
 		if ((_track[l].idSound == soundId) && _track[l].used) {
@@ -596,23 +626,35 @@ int32 IMuseDigital::getCurMusicPosInMs() {
 }
 
 int32 IMuseDigital::getCurVoiceLipSyncWidth() {
-//	int32 pos = getPosInMs(kTalkSoundID);
-	return _vm->_rnd.getRandomNumber(255);
+	int32 msPos = getPosInMs(kTalkSoundID) + _vm->VAR(_vm->VAR_SYNC) + 50;
+	int32 width = 0, height = 0;
+
+	getLipSync(kTalkSoundID, 0, msPos, width, height);
+	return width;
 }
 
 int32 IMuseDigital::getCurVoiceLipSyncHeight() {
-//	int32 pos = getPosInMs(kTalkSoundID);
-	return _vm->_rnd.getRandomNumber(255);
+	int32 msPos = getPosInMs(kTalkSoundID) + _vm->VAR(_vm->VAR_SYNC) + 50;
+	int32 width = 0, height = 0;
+
+	getLipSync(kTalkSoundID, 0, msPos, width, height);
+	return height;
 }
 
-int32 IMuseDigital::getCurMusicLipSyncWidth(int32 param) {
-//	int32 pos = getPosInMs(_curMusicId);
-	return _vm->_rnd.getRandomNumber(255);
+int32 IMuseDigital::getCurMusicLipSyncWidth(int syncId) {
+	int32 msPos = getPosInMs(_curMusicId) + _vm->VAR(_vm->VAR_SYNC) + 50;
+	int32 width = 0, height = 0;
+
+	getLipSync(_curMusicId, syncId, msPos, width, height);
+	return width;
 }
 
-int32 IMuseDigital::getCurMusicLipSyncHeight(int32 param) {
-//	int32 pos = getPosInMs(_curMusicId);
-	return _vm->_rnd.getRandomNumber(255);
+int32 IMuseDigital::getCurMusicLipSyncHeight(int syncId) {
+	int32 msPos = getPosInMs(_curMusicId) + _vm->VAR(_vm->VAR_SYNC) + 50;
+	int32 width = 0, height = 0;
+
+	getLipSync(_curMusicId, syncId, msPos, width, height);
+	return height;
 }
 
 } // End of namespace Scumm

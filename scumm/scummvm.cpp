@@ -492,6 +492,7 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 	//
 	VAR_LANGUAGE = 0xFF;
 	VAR_KEYPRESS = 0xFF;
+	VAR_SYNC = 0xFF;
 	VAR_EGO = 0xFF;
 	VAR_CAMERA_POS_X = 0xFF;
 	VAR_HAVE_MSG = 0xFF;

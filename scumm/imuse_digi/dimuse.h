@@ -106,11 +106,12 @@ public:
 	void parseScriptCmds(int a, int b, int c, int d, int e, int f, int g, int h);
 	int getSoundStatus(int sound) const;
 	int32 getPosInMs(int soundId);
+	void getLipSync(int soundId, int syncId, int32 msPos, int32 &width, int32 &height);
 	int32 getCurMusicPosInMs();
 	int32 getCurVoiceLipSyncWidth();
 	int32 getCurVoiceLipSyncHeight();
-	int32 getCurMusicLipSyncWidth(int32 param);
-	int32 getCurMusicLipSyncHeight(int32 param);
+	int32 getCurMusicLipSyncWidth(int syncId);
+	int32 getCurMusicLipSyncHeight(int syncId);
 };
 
 struct imuse_music_table {

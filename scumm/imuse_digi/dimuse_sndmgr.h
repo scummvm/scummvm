@@ -130,6 +130,8 @@ public:
 	int getJumpHookId(soundStruct *soundHandle, int number);
 	int getJumpFade(soundStruct *soundHandle, int number);
 	char *getMarker(soundStruct *soundHandle, int number);
+	int getSyncSizeById(soundStruct *soundHandle, int number);
+	byte *getSyncPtrById(soundStruct *soundHandle, int number);
 
 	int32 getDataFromRegion(soundStruct *soundHandle, int region, byte **buf, int32 offset, int32 size);
 };
