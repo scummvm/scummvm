@@ -2236,8 +2236,15 @@ void Scumm_v6::o6_delay()
 
 void Scumm_v6::o6_delaySeconds()
 {
-	// FIXME - are we really measuring minutes here?
-	uint32 delay = (uint16)pop() * 60;
+	uint32 delay = (uint32)pop();
+	if (_gameId != GID_CMI)
+		// FIXME - are we really measuring minutes here?
+		delay = delay * 60;
+	else
+		// FIXME - Is this the same in ComI? Seem to need a 1.5 minute 
+		// multiplier for correct timing - see patch 664893
+		delay = delay * 90;
+
 	vm.slot[_currentScript].delay = delay;
 	vm.slot[_currentScript].status = 1;
 	o6_breakHere();
