@@ -448,7 +448,7 @@ simon games.
         b                      - background sounds on/off
 
 Note that using ctrl-f and ctrl-g are not recommended: Games can crash when
-being ran faster than their normal speed, as scripts will loose synchronisation
+being ran faster than their normal speed, as scripts will lose synchronisation
 
 
 Language options:
