@@ -659,7 +659,7 @@ static inline uint16 interpolate5(uint16 A, uint16 B, int scale) {
 }
 
 static inline void interpolate5Line(uint16 *dst, const uint16 *srcA, const uint16 *srcB, int scale, int width) {
-#if 1
+#if 0
 	// Accurate but slightly slower code
 	while (width--) {
 		*dst++ = interpolate5(*srcA++, *srcB++, scale);
