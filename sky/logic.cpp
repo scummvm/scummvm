@@ -560,6 +560,7 @@ bool SkyLogic::collide(Compact *cpt) {
 
 		return false;
 	case 3: // looking right
+	case 4: // talking (not sure if this makes sense...) 
 
 		if (y != _compact->ycood)
 			return false;
