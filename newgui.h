@@ -26,6 +26,9 @@
 class Dialog;
 class Scumm;
 
+#define hline(x, y, x2, color) line(x, y, x2, y, color);
+#define vline(x, y, y2, color) line(x, y, x, y2, color);
+
 // Extremly simple stack class, doesn't even do any error checking (for now)
 class DialogStack {
 protected:
@@ -97,9 +100,10 @@ public:
 	byte *getBasePtr(int x, int y);
 	void box(int x, int y, int width, int height);
 	void line(int x, int y, int x2, int y2, byte color);
-	void blendArea(int x, int y, int w, int h, byte color);
-	void fillArea(int x, int y, int w, int h, byte color);
-	void setAreaDirty(int x, int y, int w, int h);
+	void blendRect(int x, int y, int w, int h, byte color);
+	void fillRect(int x, int y, int w, int h, byte color);
+	void frameRect(int x, int y, int w, int h, byte color);
+	void addDirtyRect(int x, int y, int w, int h);
 	void drawChar(const char c, int x, int y);
 	void drawString(const char *str, int x, int y, int w, byte color);
 

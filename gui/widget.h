@@ -40,7 +40,8 @@ enum {
 	kStaticTextWidget	= 'TEXT',
 	kButtonWidget		= 'BTTN',
 	kCheckboxWidget		= 'CHKB',
-	kSliderWidget		= 'SLDE'
+	kSliderWidget		= 'SLDE',
+	kListWidget			= 'LIST'
 };
 
 /* Widget */
@@ -56,11 +57,13 @@ protected:
 	int			_flags;
 public:
 	Widget(Dialog *boss, int x, int y, int w, int h);
+	virtual ~Widget() {}
 
-	virtual void handleClick(int button)		{}
-	virtual void handleMouseEntered(int button)	{}
-	virtual void handleMouseLeft(int button)	{}
+	virtual void handleClick(int button) {}
+	virtual void handleMouseEntered(int button) {}
+	virtual void handleMouseLeft(int button) {}
 	virtual void handleMouseMoved(int x, int y, int button) {}
+	virtual void handleKey(char key, int modifiers) {}
 	void draw();
 
 	void setFlags(int flags)	{ _flags |= flags; }
@@ -75,11 +78,12 @@ protected:
 /* StaticTextWidget */
 class StaticTextWidget : public Widget {
 protected:
-	const char	*_text;
+	char	*_text;
 public:
 	StaticTextWidget(Dialog *boss, int x, int y, int w, int h, const char *text);
+	~StaticTextWidget();
 	void setText(const char *text);
-	const char *getText();
+	const char *getText() const	{ return _text; }
 
 protected:
 	void drawWidget(bool hilite);
@@ -95,7 +99,7 @@ protected:
 public:
 	ButtonWidget(Dialog *boss, int x, int y, int w, int h, const char *label, uint32 cmd = 0, uint8 hotkey = 0);
 	void setCmd(uint32 cmd)	{ _cmd = cmd; }
-	uint32 getCmd()			{ return _cmd; }
+	uint32 getCmd() const	{ return _cmd; }
 
 	void handleClick(int button);
 	void handleMouseEntered(int button)	{ setFlags(WIDGET_HILITED); draw(); }
@@ -109,7 +113,7 @@ protected:
 public:
 	CheckboxWidget(Dialog *boss, int x, int y, int w, int h, const char *label, uint32 cmd = 0, uint8 hotkey = 0);
 	void setState(bool state)	{ _state = state; }
-	bool getState()				{ return _state; }
+	bool getState() const		{ return _state; }
 
 	void handleClick(int button);
 	virtual void handleMouseEntered(int button)	{}
@@ -126,14 +130,13 @@ protected:
 public:
 	SliderWidget(Dialog *boss, int x, int y, int w, int h, const char *label, uint32 cmd = 0, uint8 hotkey = 0);
 	void setValue(uint8 value)	{ _value = value; }
-	uint8 getValue()			{ return _value; }
+	uint8 getValue() const		{ return _value; }
 
 	void handleMouseMoved(int x, int y, int button);
 
 protected:
 	void drawWidget(bool hilite);
 };
-
 
 
 #endif

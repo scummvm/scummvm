@@ -1549,10 +1549,17 @@ void Scumm::setupGUIColors() {
 
 	/* FIXME: strange IF line? */
 	if (_gameId && !(_features & GF_SMALL_HEADER)	&& !(_features & GF_AFTER_V7)) {
-		_newgui->_bgcolor = _gui->_bgcolor = getDefaultGUIColor(0);
-		_newgui->_color = _gui->_color = getDefaultGUIColor(1);
-		_newgui->_textcolor = _gui->_textcolor = getDefaultGUIColor(2);
-		_newgui->_textcolorhi = _gui->_textcolorhi = getDefaultGUIColor(6);
-		_newgui->_shadowcolor = _gui->_shadowcolor = getDefaultGUIColor(8);
+		_gui->_bgcolor = getDefaultGUIColor(0);
+		_gui->_color = getDefaultGUIColor(1);
+		_gui->_textcolor = getDefaultGUIColor(2);
+		_gui->_textcolorhi = getDefaultGUIColor(6);
+		_gui->_shadowcolor = getDefaultGUIColor(8);
+#if 0
+		_newgui->_bgcolor = getDefaultGUIColor(0);
+		_newgui->_color = getDefaultGUIColor(1);
+		_newgui->_textcolor = getDefaultGUIColor(2);
+		_newgui->_textcolorhi = getDefaultGUIColor(6);
+		_newgui->_shadowcolor = getDefaultGUIColor(8);
+#endif
 	}
 }

@@ -21,9 +21,10 @@
 #include <ctype.h>
 
 #include "stdafx.h"
+#include "newgui.h"
 #include "dialog.h"
 #include "widget.h"
-#include "newgui.h"
+#include "ListWidget.h"
 
 Dialog::~Dialog()
 {
@@ -37,14 +38,14 @@ void Dialog::setupScreenBuf()
 		_screenBuf = new byte[320*200];
 	
 	// Draw the fixed parts of the dialog: background and border.
-	_gui->blendArea(_x, _y, _w, _h, _gui->_bgcolor);
+	_gui->blendRect(_x, _y, _w, _h, _gui->_bgcolor);
 	_gui->box(_x, _y, _w, _h);
 
 	// Draw a bgcolor rectangle for all widgets which have WIDGET_CLEARBG set. 
 	Widget *w = _firstWidget;
 	while (w) {
 		if (w->_flags & WIDGET_CLEARBG)
-			_gui->fillArea(_x + w->_x, _y + w->_y, w->_w, w->_h, _gui->_bgcolor);
+			_gui->fillRect(_x + w->_x, _y + w->_y, w->_w, w->_h, _gui->_bgcolor);
 		// FIXME - should we also draw borders here if WIDGET_BORDER is set?
 		w = w->_next;
 	}
@@ -68,10 +69,10 @@ void Dialog::draw()
 	if (_screenBuf) {
 		_gui->blitFrom(_screenBuf, _x, _y, _w, _h); 
 	} else {
-		_gui->fillArea(_x, _y, _w, _h, _gui->_bgcolor);
+		_gui->fillRect(_x, _y, _w, _h, _gui->_bgcolor);
 		_gui->box(_x, _y, _w, _h);
 	}
-	_gui->setAreaDirty(_x, _y, _w, _h);
+	_gui->addDirtyRect(_x, _y, _w, _h);
 
 	while (w) {
 		w->draw();
@@ -102,6 +103,10 @@ void Dialog::handleKey(char key, int modifiers)
 		}
 		w = w->_next;
 	}
+	
+	// TODO - introduce the notion of a "focused" widget which receives
+	// key events (by calling its handleKey method). Required for editfields
+	// and also for an editable list widget.
 }
 
 void Dialog::handleMouseMoved(int x, int y, int button)
@@ -194,10 +199,13 @@ SaveLoadDialog::SaveLoadDialog(NewGui *gui)
 	addButton(200, 100, 54, 16, RES_STRING(8), kQuitCmd, 'Q');	// Quit
 	
 	// FIXME - test
-	new CheckboxWidget(this, 50, 20, 100, 16, "Toggle me", 0);
+	new CheckboxWidget(this, 10, 20, 90, 16, "Toggle me", 0);
 
 	// FIXME - test
-	new SliderWidget(this, 50, 50, 100, 16, "Volume", 0);
+	new SliderWidget(this, 110, 20, 80, 16, "Volume", 0);
+	
+	// FIXME - test
+	new ListWidget(this, 10, 40, 180, 70);
 }
 
 void SaveLoadDialog::handleCommand(uint32 cmd)

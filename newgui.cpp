@@ -24,9 +24,6 @@
 #include "guimaps.h"
 #include "gui/dialog.h"
 
-#define hline(x, y, x2, color) line(x, y, x2, y, color);
-#define vline(x, y, y2, color) line(x, y, x, y2, color);
-
 // 8-bit alpha blending routines
 int BlendCache[256][256];
 
@@ -51,7 +48,7 @@ int RGBMatch(byte *palette, int r, int g, int b) {
 }
 
 int Blend(int src, int dst, byte *palette) {
-	int r, g, b, idx;
+	int r, g, b;
 	int alpha = 128;	// Level of transparency [0-256]
 	byte *srcpal = palette + (dst  * 3);
 	byte *dstpal = palette + (src * 3);
@@ -138,6 +135,18 @@ void NewGui::loop()
 		saveState();
 		if (_use_alpha_blending)
 			activeDialog->setupScreenBuf();
+#if 1
+	// FIXME - hack to encode our own custom GUI colors. Since we have to live
+	// with a given 8 bit palette, the result is not always as nice as one
+	// would wish, but this is just an experiment after all.
+	_bgcolor = RGBMatch(_s->_currentPalette, 0, 0, 0);
+
+	_color = RGBMatch(_s->_currentPalette, 80, 80, 80);
+	_shadowcolor = RGBMatch(_s->_currentPalette, 64, 64, 64);
+
+	_textcolor = RGBMatch(_s->_currentPalette, 32, 192, 32);
+	_textcolorhi = RGBMatch(_s->_currentPalette, 0, 256, 0);
+#endif
 		_prepare_for_gui = false;
 	}
 	
@@ -320,7 +329,7 @@ void NewGui::line(int x, int y, int x2, int y2, byte color)
 	}
 }
 
-void NewGui::blendArea(int x, int y, int w, int h, byte color)
+void NewGui::blendRect(int x, int y, int w, int h, byte color)
 {
 	byte *ptr = getBasePtr(x, y);
 	if (ptr == NULL)
@@ -334,7 +343,7 @@ void NewGui::blendArea(int x, int y, int w, int h, byte color)
 	}
 }
 
-void NewGui::fillArea(int x, int y, int w, int h, byte color)
+void NewGui::fillRect(int x, int y, int w, int h, byte color)
 {
 	byte *ptr = getBasePtr(x, y);
 	if (ptr == NULL)
@@ -348,7 +357,28 @@ void NewGui::fillArea(int x, int y, int w, int h, byte color)
 	}
 }
 
-void NewGui::setAreaDirty(int x, int y, int w, int h)
+void NewGui::frameRect(int x, int y, int w, int h, byte color)
+{
+	int i;
+	byte *ptr, *basePtr = getBasePtr(x, y);
+	if (basePtr == NULL)
+		return;
+
+	ptr = basePtr;
+	for (i = 0; i < w; i++, ptr++)
+		*ptr = color;
+	ptr--;
+	for (i = 0; i < h; i++, ptr += 320)
+		*ptr = color;
+	ptr = basePtr;
+	for (i = 0; i < h; i++, ptr += 320)
+		*ptr = color;
+	ptr -= 320;
+	for (i = 0; i < w; i++, ptr++)
+		*ptr = color;
+}
+
+void NewGui::addDirtyRect(int x, int y, int w, int h)
 {
 	VirtScreen *vs = _s->findVirtScreen(y);
 

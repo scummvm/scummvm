@@ -45,7 +45,7 @@ void Widget::draw()
 
 	// Clear background (unless alpha blending is enabled)
 	if (_flags & WIDGET_CLEARBG && !_boss->_screenBuf)
-		gui->fillArea(_x, _y, _w, _h, gui->_bgcolor);
+		gui->fillRect(_x, _y, _w, _h, gui->_bgcolor);
 
 	// Draw border
 	if (_flags & WIDGET_BORDER) {
@@ -58,7 +58,7 @@ void Widget::draw()
 	drawWidget(_flags & WIDGET_HILITED);
 	
 	// Flag the draw area as dirty
-	gui->setAreaDirty(_x, _y, _w, _h);
+	gui->addDirtyRect(_x, _y, _w, _h);
 
 	// Restore x/y
 	if (_flags & WIDGET_BORDER) {
@@ -74,11 +74,31 @@ void Widget::draw()
 
 
 StaticTextWidget::StaticTextWidget(Dialog *boss, int x, int y, int w, int h, const char *text)
-	: Widget (boss, x, y, w, h)
+	: Widget (boss, x, y, w, h), _text(0)
 {
-	// FIXME - maybe we should make a real copy of the string?
-	_text = text;
 	_type = kStaticTextWidget;
+	setText(text);
+}
+
+StaticTextWidget::~StaticTextWidget()
+{
+	if (_text) {
+		free(_text);
+		_text = 0;
+	}
+}
+
+void StaticTextWidget::setText(const char *text)
+{
+	// Free old text if any
+	if (_text)
+		free(_text);
+
+	// Duplicate new text
+	if (text)
+		_text = strdup(text);
+	else
+		_text = 0;
 }
 
 void StaticTextWidget::drawWidget(bool hilite)
@@ -148,7 +168,7 @@ void CheckboxWidget::drawWidget(bool hilite)
 	if (_state)
 		gui->drawBitmap(checked_img, _x + 3, _y + 3, gui->_textcolor);
 	else
-		gui->fillArea(_x + 2, _y + 2, 10, 10, gui->_bgcolor);
+		gui->fillRect(_x + 2, _y + 2, 10, 10, gui->_bgcolor);
 	
 	// Finally draw the label
 	gui->drawString(_text, _x + 20, _y + 3, _w, gui->_textcolor);
@@ -163,23 +183,6 @@ SliderWidget::SliderWidget(Dialog *boss, int x, int y, int w, int h, const char 
 	_type = kSliderWidget;
 }
 
-void SliderWidget::drawWidget(bool hilite)
-{
-	NewGui *gui = _boss->getGui();
-	
-	// Draw the box
-	gui->box(_x, _y, _w, _h);
-	
-	// Remove old 'bar' if necessary
-	if (_value != _old_value) {
-		gui->fillArea(_x + 2 + ((_w - 5) * _old_value / 100), _y + 2, 2, _h - 4, gui->_bgcolor);
-		_old_value = _value;
-	}
-
-	// Draw the 'bar'
-	gui->fillArea(_x + 2 + ((_w - 5) * _value / 100), _y + 2, 2, _h - 4, hilite ? gui->_textcolorhi : gui->_textcolor);
-}
-
 void SliderWidget::handleMouseMoved(int x, int y, int state) { 
 	if (state == 1) {
 		int newvalue = x * 100 / _w;
@@ -189,4 +192,21 @@ void SliderWidget::handleMouseMoved(int x, int y, int state) {
 			draw();
 		}
 	}
+}
+
+void SliderWidget::drawWidget(bool hilite)
+{
+	NewGui *gui = _boss->getGui();
+	
+	// Draw the box
+	gui->box(_x, _y, _w, _h);
+	
+	// Remove old 'bar' if necessary
+	if (_value != _old_value) {
+		gui->fillRect(_x + 2 + ((_w - 5) * _old_value / 100), _y + 2, 2, _h - 4, gui->_bgcolor);
+		_old_value = _value;
+	}
+
+	// Draw the 'bar'
+	gui->fillRect(_x + 2 + ((_w - 5) * _value / 100), _y + 2, 2, _h - 4, hilite ? gui->_textcolorhi : gui->_textcolor);
 }
