@@ -151,6 +151,10 @@ static bool isGame(const char *fn, char *base)
     base[l-4]='\0';
     return true;
   }
+  if(!strcasecmp(fn, "ZAK.EXP")) {
+    strcpy(base, "ZAK256");
+    return true;
+  }
   return false;
 }
 
@@ -404,7 +408,6 @@ bool selectGame(Scumm *s, char *&ret, Icon &icon)
   void *mark = ta_txmark();
 
   for(;;) {
-
     num_games = findGames(s, games, MAX_GAMES);
 
     for(int i=0; i<num_games; i++) {
@@ -433,7 +436,11 @@ bool selectGame(Scumm *s, char *&ret, Icon &icon)
   delete games;
 
   if(selected>=0) {
+#if 1
     chdir(the_game.dir);
+#else
+    chdir("/");
+#endif
     ret = the_game.filename_base;
     icon = the_game.icon;
     return true;
