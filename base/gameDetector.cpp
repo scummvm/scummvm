@@ -48,6 +48,7 @@ static const char USAGE_STRING[] =
 	"  -z, --list-games         Display list of supported games and exit\n"
 	"  -t, --list-targets       Display list of configured targets and exit\n"
 	"\n"
+	"  -c, --config=CONFIG      Use alternate configuration file\n"
 	"  -p, --path=PATH          Path to where the game is installed\n"
 	"  -x, --save-slot[=NUM]    Save game slot to load (default: autosave)\n"
 	"  -f, --fullscreen         Force full-screen mode\n"
@@ -283,6 +284,10 @@ void GameDetector::parseCommandLine(int argc, char **argv) {
 			isLongCmd = (s[0] == '-' && s[1] == '-');
 			cmdValue = (shortCmdLower == s[1]);
 			s += 2;
+
+			DO_OPTION('c', "config")
+				// Dummy
+			END_OPTION
 
 			DO_OPTION('b', "boot-param")
 				ConfMan.set("boot_param", (int)strtol(option, 0, 10), kTransientDomain);

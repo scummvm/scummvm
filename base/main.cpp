@@ -245,6 +245,7 @@ int main(int argc, char *argv[]) {
 extern "C" int scummvm_main(GameDetector &detector, int argc, char *argv[]) {
 #endif
 	OSystem::Property prop;
+	char *cfgFilename = NULL, *s=argv[1];
 
 #if defined(UNIX)
 	/* On Unix, do a quick endian / alignement check before starting */
@@ -285,6 +286,28 @@ extern "C" int scummvm_main(GameDetector &detector, int argc, char *argv[]) {
 	setbuf(stderr, NULL);			/* No buffering */
 
 #endif //defined(WIN32) && defined(USE_CONSOLE)
+
+
+	// Quick preparse of command-line, looking for alt configfile path
+	for (int i = argc - 1; i >= 1; i--) {
+		s = argv[i];
+		bool shortOpt = (s[0] == '-' && tolower(s[1]) == 'c');
+		bool longOpt  = (s[0] == '-' && s[1] == '-'  && s[2] == 'c' && s[3] == 'o' \
+				 && s[4] == 'n' && s[5] == 'f' && s[6] == 'i' && s[7] == 'g');
+
+		if (shortOpt || longOpt) {
+			if (longOpt) s+=9;
+			if (shortOpt) s+=2;
+
+			if (*s == '\0')
+				break;
+
+			cfgFilename = s;
+			break;
+		}
+	}
+	if (cfgFilename != NULL)
+		ConfMan.switchFile(cfgFilename);
 
 	// Update the config file
 	ConfMan.set("versioninfo", gScummVMVersion, Common::ConfigManager::kApplicationDomain);

@@ -86,6 +86,14 @@ ConfigManager::ConfigManager() {
 	#endif
 #endif
 
+	switchFile(configFile);
+}
+
+void ConfigManager::switchFile(const String &filename) {
+	_globalDomains.clear();
+	_gameDomains.clear();
+	_transientDomain.clear();
+
 	// Ensure the global domain(s) are setup.
 	_globalDomains.addKey(kApplicationDomain);
 #ifdef _WIN32_WCE
@@ -94,8 +102,9 @@ ConfigManager::ConfigManager() {
 	_globalDomains.addKey("smartfon-keys");
 #endif
 
-	_filename = configFile;
+	_filename = filename;
 	loadFile(_filename);
+	printf("Switched to configuration %s\n", _filename.c_str());
 }
 
 void ConfigManager::loadFile(const String &filename) {

@@ -61,6 +61,8 @@ public:
 	/** The transient (pseudo) domain. */
 	static const String kTransientDomain;
 
+	void				switchFile(const String &filename);
+
 	bool				hasKey(const String &key) const;
 	bool				hasKey(const String &key, const String &dom) const;
 
