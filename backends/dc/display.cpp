@@ -569,3 +569,4 @@ int OSystem_Dreamcast::getGraphicsMode() const
   return 0;
 }
 
+int gBitFormat = 565;
