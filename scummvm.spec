@@ -58,15 +58,19 @@ rm -Rf %{buildroot}
 %changelog
 * 0.4.0pre (2003-05-05)
   - Curse of Monkey Island (comi) support (experimental)
+  - Added support for the EGA versions of Loom, Monkey Island and Indy3
+  - Improved music support in Indy3 and the floppy versions of Monkey Islands
   - Many important Simon the Sorcerer 1/2 improvements and fixes
   - Very pre-alpha Beneath a Steel Sky code. Don't expect it to do anything. 
+  - Even more pre-alpha support for V2 SCUMM games (Maniac Mansion and Zak)
   - Preliminary support for early Humongous Entertainment titles (very experimental)
-  - New debug console and several GUI/Launcher enhancements (incomplete)
-  - New Save/Load code (easier to expand while retaining compatability)
+  - New debug console and several GUI/Launcher enhancements
+  - New Save/Load code (easier to expand while retaining compatibility)
   - DreamCast port now works with new games added for 0.3.0b
-  - Various minor SCUMM game fixes
+  - New official PalmOS port
+  - Various minor and not so minor SCUMM game fixes
   - Large memory leak fixed for The Dig/ComI
-  - SMUSH code optimised, framedropping added for slower machines
+  - SMUSH code optimised, frame dropping added for slower machines
   - Code cleanups
 * 0.3.0 (2002-12-01)
   - massive cleanup work for iMUSE. Sam and Max music now plays correctly
