@@ -1154,7 +1154,7 @@ uint16 SkyControl::parseSaveData(uint8 *srcBuf) {
 	for (cnt = 0; cnt < 13; cnt++)
 		LODSW(srcPos, SkyCompact::high_floor_table[cnt]);
 
-	if (srcPos - srcBuf != size)
+	if (srcPos - srcBuf != (int32)size)
 		error("Restore failed! Savegame data = %d bytes. Expected size: %d.\n", srcPos-srcBuf, size);
 
 	_skyLogic->fnLeaveSection(oldSection, 0, 0);

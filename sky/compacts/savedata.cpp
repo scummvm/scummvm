@@ -977,3 +977,4 @@ uint8 *SkyControl::_saveLoadARs[18] = {
 	SkyCompact::gal_auto,
 	SkyCompact::ken_auto
 };
+
