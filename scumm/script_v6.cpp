@@ -1083,7 +1083,17 @@ void Scumm_v6::o6_faceActor() {
 
 void Scumm_v6::o6_animateActor() {
 	int anim = pop();
-	Actor *a = derefActor(pop(), "o6_animateActor");
+	int act = pop();
+	if (_gameId == GID_TENTACLE && _roomResource == 57 &&
+		vm.slot[_currentScript].number == 19 && act == 593) {
+		// FIXME: This very odd case (animateActor(593,250)) occurs in DOTT, in the
+		// cutscene after George cuts down the "cherry tree" and the tree Laverne
+		// is trapped in vanishes... see bug #743363.
+		// Not sure if this means animateActor somehow also must work for objects
+		// (593 is the time machine in room 57), or if this is simply a script bug.
+		act = 6;
+	}
+	Actor *a = derefActor(act, "o6_animateActor");
 	a->animateActor(anim);
 }
 
