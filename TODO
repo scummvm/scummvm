@@ -316,28 +316,38 @@ SIMON
 
 SAGA
 ====
-* Remove any traces of the additional level of abstraction reinherit used
-* Remove homerolled high level data structures like stacks that should
-  be provided by ScummVM if they aren't already.
-* OO'ify (blah_mod.h contains public stuff, blah.h private stuff) [almost done]
-* Implement unimplemented opcodes
-* Remove use of floating point, especially doubles.
-* Change SData so that its buffers point to the appropriate data.
-  (eriktorbjorn - mostly done; the script "static" buffer is still wrong)
-* Rewrite path finder (h00ligan)
-* Eliminate script semaphores and use flags instead
-* Add sound/voices compression. Should _considerably_ save space.
-* Add support for Mac versions. All data is in BE mode and structures are aligned.
-  (h00ligan, partly done)
-* Make sprite RLE decompressor work on Mac resources
-* Fix the usage of Rect so that it's more consistent with the rest of ScummVM,
-  e.g. a rectangle covering the entire ITE screen should have right=320 and
-  bottom=200. (eriktorbjorn, partly - mostly? - done)
-* Support various demo versions
-* Support IHNM
-* Add the Wyrmkeep folks to the credits section of our README so we can thank
-  them properly for... Well, whoever negotiated the deal with them will have
-  to write up something approrpriate here. I don't know enough about it myself.
+- legacy items -
+ * Remove any traces of the additional level of abstraction reinherit used
+ * Remove homerolled high level data structures like stacks that should
+   be provided by ScummVM if they aren't already.
+ * OO'ify (blah_mod.h contains public stuff, blah.h private stuff) [almost done]
+
+- bugs -
+ * Make actor animation Event-driven. See FIXME in actor.cpp
+ * Actor pops up with wrong palette at transition to faery scene. Again :)
+ * Make sprite RLE decompressor work on Mac resources
+ * Animation end is not detected properly with Mac. That leads to hang in intro
+
+- plans -
+ * Implement unimplemented opcodes
+ * Remove use of floating point, especially doubles.
+ * Rewrite path finder (h00ligan)
+ * Eliminate script semaphores and use flags instead
+ * Fix the usage of Rect so that it's more consistent with the rest of ScummVM,
+   e.g. a rectangle covering the entire ITE screen should have right=320 and
+   bottom=200. (eriktorbjorn, partly - mostly? - done)
+ * Change SData so that its buffers point to the appropriate data.
+   (eriktorbjorn - mostly done; the script "static" buffer is still wrong)
+
+- features -
+ * Add sound/voices compression. Should _considerably_ save space.
+ * Add support for Mac versions. All data is in BE mode and structures are aligned.
+   (h00ligan, partly done)
+ * Support various demo versions
+ * Support IHNM
+ * Add the Wyrmkeep folks to the credits section of our README so we can thank
+   them properly for... Well, whoever negotiated the deal with them will have
+   to write up something approrpriate here. I don't know enough about it myself.
 
 #######################################################################
 # Backends
