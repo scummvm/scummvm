@@ -376,7 +376,7 @@ int Actor::actorWalkStep() {
 void Actor::setupActorScale() {
 	uint16 scale;
 
-	if (_vm->_features & GF_NO_SCALLING) {
+	if (_vm->_features & GF_NO_SCALING) {
 		scalex = 0xFF;
 		scaley = 0xFF;
 		return;

@@ -149,7 +149,7 @@ void Scumm::setBoxScaleSlot(int box, int slot) {
 }
 
 int Scumm::getScale(int box, int x, int y) {
-	if (_features & GF_NO_SCALLING)
+	if (_features & GF_NO_SCALING)
 		return 255;
 
 	Box *ptr = getBoxBaseAddr(box);
@@ -205,7 +205,7 @@ int Scumm::getScale(int box, int x, int y) {
 }
 
 int Scumm::getBoxScale(int box) {
-	if (_features & GF_NO_SCALLING)
+	if (_features & GF_NO_SCALING)
 		return 255;
 	Box *ptr = getBoxBaseAddr(box);
 	if (!ptr)

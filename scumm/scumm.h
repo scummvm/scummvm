@@ -79,7 +79,7 @@ enum GameFeatures {
 	GF_16COLOR             = 1 << 9,
 	GF_OLD256              = 1 << 10,
 	GF_AUDIOTRACKS         = 1 << 11,
-	GF_NO_SCALLING         = 1 << 12,
+	GF_NO_SCALING          = 1 << 12,
 	GF_ADLIB_DEFAULT       = 1 << 13,
 	GF_AMIGA               = 1 << 14,
 	GF_HUMONGOUS           = 1 << 15,
