@@ -1236,7 +1236,7 @@ void Gdi::decompressMaskImg()
 	int height = _numLinesToProcess;
 	byte b, c;
 	
-	if (_vm->_gameId == GID_DIG)
+	if ((_vm->_gameId == GID_DIG) && (_vm->_currentRoom == 23))
 		height--;
 				// FIXME: This seems to fix The Dig nexus wrapping corrupting memory..
 				//	  and doesn't break any other games.. but is it correct? If so,
