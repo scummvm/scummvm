@@ -44,6 +44,8 @@ Display::Display(QueenEngine *vm, OSystem *system)
 	memset(_panelBuf,    0, PANEL_W * PANEL_H);
 	memset(_backdropBuf, 0, BACKDROP_W * BACKDROP_H);
 
+	memset(_mousePtr, 0, sizeof(_mousePtr));
+
 	_fullRefresh = true;
 	_dirtyBlocksWidth  = SCREEN_W / D_BLOCK_W;
 	_dirtyBlocksHeight = SCREEN_H / D_BLOCK_H;
@@ -807,10 +809,12 @@ void Display::waitForTimer() {
 }
 
 
-void Display::setMouseCursor(uint8 *buf, uint16 w, uint16 h, uint16 xhs, uint16 yhs) {
+void Display::setMouseCursor(uint8 *buf, uint16 w, uint16 h) {
+	assert(w == 14 && h == 14);
+	uint16 size = 14 * 14;
+	memcpy(_mousePtr, buf, size);
 	// change transparency color to match the one expected by the backend (0xFF)
-	uint16 size = w * h;
-	uint8 *p = buf;
+	uint8 *p = _mousePtr;
 	while (size--) {
 		if (*p == 255) {
 			*p = 254;
@@ -819,7 +823,7 @@ void Display::setMouseCursor(uint8 *buf, uint16 w, uint16 h, uint16 xhs, uint16 
 		}
 		++p;
 	}
-	_system->set_mouse_cursor(buf, w, h, xhs, yhs);
+	_system->set_mouse_cursor(_mousePtr, 14, 14, 1, 1);
 }
 
 

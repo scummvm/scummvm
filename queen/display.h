@@ -85,7 +85,7 @@ public:
 	void handleTimer();
 	void waitForTimer();
 
-	void setMouseCursor(uint8 *buf, uint16 w, uint16 h, uint16 xhs, uint16 yhs);
+	void setMouseCursor(uint8 *buf, uint16 w, uint16 h);
 	void showMouseCursor(bool show);
 
 	void initFont();
@@ -150,6 +150,8 @@ private:
 	uint8 *_screenBuf;
 	uint8 *_panelBuf;
 	uint8 *_backdropBuf;
+
+	uint8 _mousePtr[14 * 14];
 
 	bool _fullRefresh;
 	uint8 *_dirtyBlocks;

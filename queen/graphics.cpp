@@ -207,7 +207,7 @@ void Graphics::unpackControlBank() {
 
 void Graphics::setupMouseCursor() {
 	BobFrame *bf = _vm->bankMan()->fetchFrame(1);
-	_vm->display()->setMouseCursor(bf->data, bf->width, bf->height, bf->xhotspot, bf->yhotspot);
+	_vm->display()->setMouseCursor(bf->data, bf->width, bf->height);
 }
 
 
