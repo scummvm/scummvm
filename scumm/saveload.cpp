@@ -357,11 +357,11 @@ void Scumm::saveOrLoad(Serializer *s, uint32 savegameVersion)
 		MKLINE(Scumm, _currentScript, sleByte, VER_V8),
 		MKARRAY(Scumm, _localScriptList[0], sleUint32, NUM_LOCALSCRIPT, VER_V8),
 
-		// vm.localvar grew from 25 to 40 entries
-		// FIXME: ComI stores 32-bit variables.. so.. er.. shouldn't this be a sleInt32 if we
-		//  don't want games to hidiously behave oddly?
+		// vm.localvar grew from 25 to 40 entries and then from
+		// 16 to 32 bit variables.
 		MKARRAY_OLD(Scumm, vm.localvar[0][0], sleUint16, 25 * 17, VER_V8, VER_V8),
-		MKARRAY(Scumm, vm.localvar[0][0], sleUint16, NUM_SCRIPT_SLOT * 17, VER_V9),
+		MKARRAY_OLD(Scumm, vm.localvar[0][0], sleUint16, NUM_SCRIPT_SLOT * 17, VER_V9, VER_V14),
+		MKARRAY(Scumm, vm.localvar[0][0], sleUint16, NUM_SCRIPT_SLOT * 17, VER_V15),
 
 		MKARRAY(Scumm, _resourceMapper[0], sleByte, 128, VER_V8),
 		MKARRAY(Scumm, _charsetColorMap[0], sleByte, 16, VER_V8),
@@ -625,9 +625,11 @@ void Scumm::saveOrLoad(Serializer *s, uint32 savegameVersion)
 	var120Backup = _vars[120];
 	var98Backup = _vars[98];
 
-	// FIXME: ComI stores 32-bit variables.. so.. er.. shouldn't this be a sleInt32 if we
-	//  don't want games to hidiously behave oddly?
-	s->saveLoadArrayOf(_vars, _numVariables, sizeof(_vars[0]), sleInt16);
+	// The variables grew from 16 to 32 bit.
+	if (savegameVersion < VER_V15)
+		s->saveLoadArrayOf(_vars, _numVariables, sizeof(_vars[0]), sleInt16);
+	else
+		s->saveLoadArrayOf(_vars, _numVariables, sizeof(_vars[0]), sleInt32);
 
 	if (_gameId == GID_TENTACLE)	// Maybe misplaced, but that's the main idea
 		_vars[120] = var120Backup;
