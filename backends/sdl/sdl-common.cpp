@@ -457,8 +457,18 @@ void OSystem_SDL_Common::set_mouse_pos(int x, int y) {
 }
 
 void OSystem_SDL_Common::warp_mouse(int x, int y) {
-	if (_mouseCurState.x != x || _mouseCurState.y != y)
+	if (_mouseCurState.x != x || _mouseCurState.y != y) {
 		SDL_WarpMouse(x * _scaleFactor, y * _scaleFactor);
+
+		// SDL_WarpMouse() generates a mouse movement event, so
+		// set_mouse_pos() would be called eventually. However, the
+		// cannon script in CoMI calls this function twice each time
+		// the cannon is reloaded. Unless we update the mouse position
+		// immediately the second call is ignored, causing the cannon
+		// to change its aim.
+
+		set_mouse_pos(x, y);
+	}
 }
 	
 void OSystem_SDL_Common::set_mouse_cursor(const byte *buf, uint w, uint h, int hotspot_x, int hotspot_y) {
@@ -536,14 +546,14 @@ bool OSystem_SDL_Common::poll_event(Event *event) {
 			// Ctrl-z and Alt-X quit
 			if ((b == KBD_CTRL && ev.key.keysym.sym=='z') || (b == KBD_ALT && ev.key.keysym.sym=='x')) {
 				event->event_code = EVENT_QUIT;
-				return true;;
+				return true;
 			}
 
 #ifdef MACOSX
 			// On Macintosh', Cmd-Q quits
 			if ((ev.key.keysym.mod & KMOD_META) && ev.key.keysym.sym=='q') {
 				event->event_code = EVENT_QUIT;
-				return true;;
+				return true;
 			}
 #endif
 			// Ctr-Alt-<key> will change the GFX mode
@@ -565,7 +575,7 @@ bool OSystem_SDL_Common::poll_event(Event *event) {
 			// quit on fn+backspace on zaurus
 			if (ev.key.keysym.sym == 127) {
 				event->event_code = EVENT_QUIT;
-				return true;;
+				return true;
 			}
 
 			// map menu key (f11) to f5 (scumm menu)
@@ -812,7 +822,7 @@ bool OSystem_SDL_Common::poll_event(Event *event) {
 
 		case SDL_QUIT:
 			event->event_code = EVENT_QUIT;
-			return true;;
+			return true;
 		}
 	}
 	return false;
