@@ -252,7 +252,7 @@ static const ScummGameSettings scumm_settings[] = {
 
 	// There is also a Scummsys.90 version of puttzoo
 	{"puttzoo", "Putt-Putt Saves the Zoo", GID_HEGAME, 6, 72, MDT_NONE,
-	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
+	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES | GF_MULTIPLE_VERSIONS, 0, 0},
 
 	// Humongous Entertainment Scumm Version 8.0 ?  Scummsrc.80 
 	{"dog", "Putt-Putt and Pep's Dog on a Stick", GID_HEGAME, 6, 72, MDT_NONE,
@@ -285,14 +285,14 @@ static const ScummGameSettings scumm_settings[] = {
 	{"f3-mdemo", "Freddi Fish 3: The Case of the Stolen Conch Shell (Demo)", GID_PAJAMA, 6, 90, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
 	// there is also a C++ engine based version of timedemo
-	{"timedemo", "Putt-Putt Travels Through Time (Demo)", GID_HEGAME, 6, 90, MDT_NONE,
+	{"timedemo", "Putt-Putt Travels Through Time (Demo)", GID_PAJAMA, 6, 90, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
-	{"spyfox", "Spyfox 1: Dry Cereal", GID_HEGAME, 6, 90, MDT_NONE,
+	{"spyfox", "Spyfox 1: Dry Cereal", GID_PAJAMA, 6, 90, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
-	{"foxdemo", "Spyfox 1: Dry Cereal (Demo)", GID_HEGAME, 6, 90, MDT_NONE,
+	{"foxdemo", "Spyfox 1: Dry Cereal (Demo)", GID_PAJAMA, 6, 90, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
 	// there is also a C++ engine version of spydemo
-	{"spydemo", "Spyfox 1: Dry Cereal (Demo)", GID_HEGAME, 6, 90, MDT_NONE,
+	{"spydemo", "Spyfox 1: Dry Cereal (Demo)", GID_PAJAMA, 6, 90, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
 
 	// Humongous Entertainment Scumm Version 9.5 ?  Scummsys.95
@@ -388,6 +388,8 @@ static const ScummGameSettings he_md5_settings[] = {
 	{"e144f5f49d9241d2a9dee2576b3d09cb", "Let's Explore the Airport with Buzzy (Demo) (spyfox cd)", GID_HEGAME, 6, 72, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
 	{"df047cc4792150f601290357566d36a6", "Freddi Fish 1: The Case of the Missing Kelp Seeds *updated)", GID_HEGAME, 6, 90, MDT_NONE,
+	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
+	{"92e7727e67f5cd979d8a1070e4eb8cb3", "Putt-Putt Saves the Zoo *updated)", GID_HEGAME, 6, 98, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
 
 	{NULL, NULL, 0, 0, 0, MDT_NONE, 0, 0, 0}
