@@ -1503,7 +1503,7 @@ void Scumm::o6_loadRoomWithEgo()
 	/* startScene maybe modifies VAR_EGO, i hope not */
 
 	if (!(_features & GF_AFTER_V7)) {
-		camera._dest.x = camera._cur.x = a->x;
+		setCameraAt(a->x, a->y);
 		setCameraFollows(a);
 	}
 	_fullRedraw = 1;

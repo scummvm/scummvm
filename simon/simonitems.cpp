@@ -1601,7 +1601,7 @@ void SimonState::o_unk_99_simon2(uint a, uint b)
 	uint16 items[2];
 
 	items[0] = TO_BE_16(a);
-	items[1] = TO_BE_16(a);
+	items[1] = TO_BE_16(b);
 
 	_lock_word |= 0x4000;
 	_vc_ptr = (byte *)&items;

@@ -3432,8 +3432,10 @@ void SimonState::start_vga_code(uint b, uint vga_res, uint vga_struct_id, uint c
 
 	_lock_word |= 0x40;
 
-	if (has_vgastruct_with_id(vga_struct_id, vga_res))
+	if (has_vgastruct_with_id(vga_struct_id, vga_res)) {
+		_lock_word &= ~0x40;
 		return;
+	}
 
 	vsp = _vga_sprites;
 	while (vsp->id != 0)
