@@ -48,6 +48,8 @@ template<typename T> inline T MAX (T a, T b)	{ return (a>b) ? a : b; }
 
 	#define snprintf _snprintf
 
+	#define ZLIB_WINAPI
+
 	#if defined(CHECK_HEAP)
 	#undef CHECK_HEAP
 	#define CHECK_HEAP checkHeap();

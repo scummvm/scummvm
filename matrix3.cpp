@@ -42,11 +42,11 @@ void Matrix3::buildFromPitchYawRoll(float pitch, float yaw, float roll) {
 #define RADTODEG(a) (a * 180.0 / MYPI) 
 
 float RadianToDegree(float rad) {
-	return RADTODEG(rad);
+	return (float)RADTODEG(rad);
 }
 
 float DegreeToRadian(float degrees) {
-	return DEGTORAD(degrees);
+	return (float)DEGTORAD(degrees);
 }
 
 // right

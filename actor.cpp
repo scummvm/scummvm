@@ -34,7 +34,7 @@ Actor::Actor(const char *name) :
 		pitch_(0), yaw_(0), roll_(0), walkRate_(0), turnRate_(0),
 		visible_(true), talkSound_(NULL), lipSynch_(NULL), turning_(false), walking_(false),
 		restCostume_(NULL), restChore_(-1),
-		walkCostume_(NULL), walkChore_(-1), walkedLast_(false), walkedCur_(-1),
+		walkCostume_(NULL), walkChore_(-1), walkedLast_(false), walkedCur_(false),
 		turnCostume_(NULL), leftTurnChore_(-1), rightTurnChore_(-1),
 		lastTurnDir_(0), currTurnDir_(0),
 		mumbleCostume_(NULL), mumbleChore_(-1) {

@@ -68,7 +68,7 @@ ResourceLoader::ResourceLoader() {
 			Lab *l = new Lab(fullname.c_str());
 			lab_counter++;
 			if (l->isOpen())
-				if (strstr(de->d_name, "005"))
+				if (strstr(find_file_data.cFileName, "005"))
 					labs_.push_front(l);
 				else
 					labs_.push_back(l);

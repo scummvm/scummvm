@@ -41,7 +41,7 @@ private:
 	int numEntries_;
 	int currEntry_;
 	bool status_;
-	
+
 	struct PhonemeAnim {
 		uint16 phoneme;
 		uint16 anim;
@@ -51,3 +51,4 @@ private:
 };
 
 #endif
+
