@@ -3678,16 +3678,21 @@ void IMuseAdlib::adlib_setup_channel(int chan, Instrument * instr, byte vol_1, b
 
 	port = channel_mappings[chan];
 	adlib_write(port + 0x20, instr->flags_1);
-	adlib_write(port + 0x40, (instr->oplvl_1 | 0x3F) - vol_1);
-	adlib_write(port + 0x60, ~instr->atdec_1);
-	adlib_write(port + 0x80, ~instr->sustrel_1);
+
+	if ((g_scumm->_gameId != GID_MONKEY_VGA) || (instr->feedback & 1))
+		adlib_write(port + 0x40, (instr->oplvl_1 | 0x3F) - vol_1 );
+	else
+		adlib_write(port + 0x40, instr->oplvl_1);
+
+	adlib_write(port + 0x60, 0xff & (~instr->atdec_1));
+	adlib_write(port + 0x80, 0xff & (~instr->sustrel_1));
 	adlib_write(port + 0xE0, instr->waveform_1);
 
 	port = channel_mappings_2[chan];
 	adlib_write(port + 0x20, instr->flags_2);
-	adlib_write(port + 0x40, (instr->oplvl_2 | 0x3F) - vol_2);
-	adlib_write(port + 0x60, ~instr->atdec_2);
-	adlib_write(port + 0x80, ~instr->sustrel_2);
+	adlib_write(port + 0x40, (instr->oplvl_2 | 0x3F) - vol_2 );
+	adlib_write(port + 0x60, 0xff & (~instr->atdec_2));
+	adlib_write(port + 0x80, 0xff & (~instr->sustrel_2));
 	adlib_write(port + 0xE0, instr->waveform_2);
 
 	adlib_write((byte)chan + 0xC0, instr->feedback);
