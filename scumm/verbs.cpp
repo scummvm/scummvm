@@ -82,8 +82,6 @@ void Scumm::verbMouseOver(int verb)
 	if (_verbMouseOver == verb)
 		return;
 
-printf("verbMouseOver: verb = %d, type = %d\n", verb, _verbs[verb].type);
-
 	if (_verbs[_verbMouseOver].type != 1) {
 		drawVerb(_verbMouseOver, 0);
 		_verbMouseOver = verb;
