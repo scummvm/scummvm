@@ -174,8 +174,8 @@ void GameDetector::list_games()
 	const VersionSettings *v = version_settings;
 	char config[4] = "";
 
-	printf("Game        SCUMM ver   Full Title                                     Config\n"
-	       "----------- ----------- ---------------------------------------------- -------\n");
+	printf("Game          SCUMM ver Full Title                                     Config\n"
+	       "------------- --------- ---------------------------------------------- -------\n");
 
 	while (v->filename && v->gamename) {
 		if (g_config->has_domain(v->filename)) {
@@ -186,10 +186,10 @@ void GameDetector::list_games()
 		}
 
 		if (v->major != 99)
-			printf("%-12s%d.%d.%d\t%-47s%s\n", v->filename,
+			printf("%-14s%d.%d.%d\t%-47s%s\n", v->filename,
 		     	  v->major, v->middle, v->minor, v->gamename, config);
 		else
-			printf("%-12s%-7s\t%-47s%s\n", v->filename, "n/a", 
+			printf("%-14s%-7s\t%-47s%s\n", v->filename, "n/a", 
 					v->gamename, config);
 
 		v++;
