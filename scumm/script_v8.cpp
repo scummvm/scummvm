@@ -1274,10 +1274,16 @@ void Scumm_v8::o8_system()
 {
 	// TODO
 	byte subOp = fetchScriptByte();
-//	switch (subOp) {
-//	default:
+	switch (subOp) {
+	case 0x28:		// SO_SYSTEM_RESTART Restart game
+//		pauseGame(false);
+//		break;
+	case 0x29:		// SO_SYSTEM_QUIT Quit game
+//		shutDown(0);
+//		break;
+	default:
 		error("o8_system: default case %d", subOp);
-//	}
+	}
 }
 
 void Scumm_v8::o8_startVideo()
@@ -1335,7 +1341,7 @@ void Scumm_v8::o6_kernelSetFunctions()
 //		warning("o6_kernelSetFunctions: setBannerColors(%d, %d, %d, %d)", args[1], args[2], args[3], args[4]);
 		break;
 	case 23:	// setActorChoreLimbFrame
-		warning("o6_kernelSetFunctions: setActorChoreLimbFrame(%d, %d, %d, %d)", args[1], args[2], args[3], args[4]);
+//		warning("o6_kernelSetFunctions: setActorChoreLimbFrame(%d, %d, %d, %d)", args[1], args[2], args[3], args[4]);
 		break;
 	case 24:	// clearTextQueue
 		warning("o6_kernelSetFunctions: clearTextQueue()");
@@ -1378,10 +1384,10 @@ void Scumm_v8::o6_kernelSetFunctions()
 		setupShadowPalette(0, args[1], args[2], args[3], args[4], args[5]);
 		break;
 	case 115:	// getWalkBoxAt
-		// TODO
+		warning("o6_kernelSetFunctions: getWalkBoxAt (len = %d)", len);
 		break;
 	case 116:	// isPointInBox
-		// TODO
+		warning("o6_kernelSetFunctions: isPointInBox (len = %d)", len);
 		break;
 	case 118:	// blastShadowObject
 		enqueueObject(args[1], args[2], args[3], args[4], args[5], args[6], args[7], args[8], 3);
