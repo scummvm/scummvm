@@ -681,7 +681,7 @@ int st_resample_start(resample_t r, st_rate_t inrate, st_rate_t outrate) {
  * Processed signed long samples from ibuf to obuf.
  * Return number of samples processed.
  */
-int st_resample_flow(resample_t r, AudioInputStream &input, st_sample_t *obuf, st_size_t *osamp, st_volume_t vol) {
+int st_resample_flow(resample_t r, AudioStream &input, st_sample_t *obuf, st_size_t *osamp, st_volume_t vol) {
 	long i, k, last;
 	long Nout = 0;	// The number of bytes we effectively output
 	long Nx;		// The number of bytes we will read from input
@@ -689,7 +689,7 @@ int st_resample_flow(resample_t r, AudioInputStream &input, st_sample_t *obuf, s
 	const long obufSize = *osamp;
 
 /*
-TODO: adjust for the changes made to AudioInputStream; add support for stereo
+TODO: adjust for the changes made to AudioStream; add support for stereo
 initially, could just average the left/right channel -> bad for quality of course,
 but easiest to implement and would get this going again.
 Next step is to duplicate the X/Y buffers... a lot of computations don't care about
@@ -946,7 +946,7 @@ ResampleRateConverter::~ResampleRateConverter() {
 	free(Y2);
 }
 
-int ResampleRateConverter::flow(AudioInputStream &input, st_sample_t *obuf, st_size_t osamp, st_volume_t vol) {
+int ResampleRateConverter::flow(AudioStream &input, st_sample_t *obuf, st_size_t osamp, st_volume_t vol) {
 //	return st_resample_flow(&rstuff, input, obuf, &osamp, vol);
 	return 0;
 }

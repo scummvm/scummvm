@@ -27,13 +27,13 @@
 
 #ifdef USE_VORBIS
 
-class AudioInputStream;
+class AudioStream;
 class DigitalTrackInfo;
 class File;
 
 DigitalTrackInfo *makeVorbisTrackInfo(File *file);
 
-AudioInputStream *makeVorbisStream(File *file, uint32 size);
+AudioStream *makeVorbisStream(File *file, uint32 size);
 
 #endif
 

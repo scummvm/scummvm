@@ -26,7 +26,7 @@
 #include "stdafx.h"
 #include "common/scummsys.h"
 
-class AudioInputStream;
+class AudioStream;
 class File;
 
 #if !defined(__GNUC__)
@@ -60,7 +60,7 @@ extern int getSampleRateFromVOCRate(int vocSR);
 extern byte *readVOCFromMemory(byte *ptr, int &size, int &rate, int &loops);
 extern byte *loadVOCFile(File *file, int &size, int &rate);
 
-AudioInputStream *makeVOCStream(byte *ptr);
-AudioInputStream *makeVOCStream(File *file);
+AudioStream *makeVOCStream(byte *ptr);
+AudioStream *makeVOCStream(File *file);
 
 #endif

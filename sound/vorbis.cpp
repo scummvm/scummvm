@@ -32,7 +32,7 @@
 #include <vorbis/vorbisfile.h>
 
 
-AudioInputStream *makeVorbisStream(OggVorbis_File *file, int duration);
+AudioStream *makeVorbisStream(OggVorbis_File *file, int duration);
 
 
 #pragma mark -
@@ -145,7 +145,7 @@ void VorbisTrackInfo::play(SoundMixer *mixer, PlayingSoundHandle *handle, int st
 	ov_time_seek(&_ov_file, startFrame / 75.0);
 #endif
 
-	AudioInputStream *input = makeVorbisStream(&_ov_file, duration * ov_info(&_ov_file, -1)->rate / 75);
+	AudioStream *input = makeVorbisStream(&_ov_file, duration * ov_info(&_ov_file, -1)->rate / 75);
 	mixer->playInputStream(handle, input, true);
 }
 
@@ -165,7 +165,7 @@ DigitalTrackInfo *makeVorbisTrackInfo(File *file) {
 #pragma mark -
 
 
-class VorbisInputStream : public AudioInputStream {
+class VorbisInputStream : public AudioStream {
 	OggVorbis_File *_ov_file;
 	int _end_pos;
 	int _numChannels;
@@ -274,11 +274,11 @@ void VorbisInputStream::refill() {
 	_bufferEnd = (int16 *)read_pos;
 }
 
-AudioInputStream *makeVorbisStream(OggVorbis_File *file, int duration) {
+AudioStream *makeVorbisStream(OggVorbis_File *file, int duration) {
 	return new VorbisInputStream(file, duration);
 }
 
-AudioInputStream *makeVorbisStream(File *file, uint32 size) {
+AudioStream *makeVorbisStream(File *file, uint32 size) {
 	OggVorbis_File *ov_file = new OggVorbis_File;
 	file_info *f = new file_info;
 

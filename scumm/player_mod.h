@@ -25,7 +25,7 @@
 
 #include "scumm/scumm.h"
 
-class AudioInputStream;
+class AudioStream;
 class RateConverter;
 
 namespace Scumm {
@@ -61,7 +61,7 @@ private:
 		int8 pan;
 		uint16 freq;
 		RateConverter *converter;
-		AudioInputStream *input;
+		AudioStream *input;
 	};
 
 	SoundMixer *_mixer;

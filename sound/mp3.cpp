@@ -37,7 +37,7 @@
 #pragma mark -
 
 
-class MP3InputStream : public AudioInputStream {
+class MP3InputStream : public AudioStream {
 	struct mad_stream _stream;
 	struct mad_frame _frame;
 	struct mad_synth _synth;
@@ -261,7 +261,7 @@ int MP3InputStream::readBuffer(int16 *buffer, const int numSamples) {
 	return samples;
 }
 
-AudioInputStream *makeMP3Stream(File *file, uint size) {
+AudioStream *makeMP3Stream(File *file, uint size) {
 	return new MP3InputStream(file, mad_timer_zero, size);
 }
 
@@ -376,7 +376,7 @@ void MP3TrackInfo::play(SoundMixer *mixer, PlayingSoundHandle *handle, int start
 	}
 
 	// Play it
-	AudioInputStream *input = new MP3InputStream(_file, durationTime, 0);
+	AudioStream *input = new MP3InputStream(_file, durationTime, 0);
 	mixer->playInputStream(handle, input, true);
 }
 

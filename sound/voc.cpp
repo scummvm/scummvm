@@ -152,14 +152,14 @@ byte *loadVOCFile(File *file, int &size, int &rate) {
 	return data;
 }
 
-AudioInputStream *makeVOCStream(byte *ptr) {
+AudioStream *makeVOCStream(byte *ptr) {
 	int size, rate, loops;
 	byte *data = readVOCFromMemory(ptr, size, rate, loops);
 
 	return makeLinearInputStream(rate, SoundMixer::FLAG_AUTOFREE | SoundMixer::FLAG_UNSIGNED, data, size, 0, 0);
 }
 
-AudioInputStream *makeVOCStream(File *file) {
+AudioStream *makeVOCStream(File *file) {
 	int size, rate;
 	byte *data = loadVOCFile(file, size, rate);
 

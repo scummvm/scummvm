@@ -44,7 +44,7 @@ struct FxHandle {
 	PlayingSoundHandle _handle;
 };
 
-class MusicHandle : public AudioInputStream {
+class MusicHandle : public AudioStream {
 public:
 	bool _firstTime;
 	bool _streaming;

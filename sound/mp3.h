@@ -27,13 +27,13 @@
 
 #ifdef USE_MAD
 
-class AudioInputStream;
+class AudioStream;
 class DigitalTrackInfo;
 class File;
 
 DigitalTrackInfo *makeMP3TrackInfo(File *file);
 
-AudioInputStream *makeMP3Stream(File *file, uint size);
+AudioStream *makeMP3Stream(File *file, uint size);
 
 #endif
 

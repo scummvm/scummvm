@@ -746,7 +746,7 @@ void IMuseDigital::callback() {
 	}
 }
 
-void IMuseDigital::startSound(int sound, byte *voiceBundleData, AudioInputStream *input) {
+void IMuseDigital::startSound(int sound, byte *voiceBundleData, AudioStream *input) {
 	debug(5, "IMuseDigital::startSound(%d)", sound);
 	int l, r;
 
@@ -782,7 +782,7 @@ void IMuseDigital::startSound(int sound, byte *voiceBundleData, AudioInputStream
 			if (input) {
 				// Do nothing here, we already have an audio stream
 			} else if (READ_UINT32(ptr) == MKID('Crea')) {
-				// Create an AudioInputStream
+				// Create an AudioStream
 				input = makeVOCStream(ptr);
 			} else if (READ_UINT32(ptr) == MKID('iMUS')) {
 				uint32 tag;
@@ -922,7 +922,7 @@ void IMuseDigital::startSound(int sound, byte *voiceBundleData, AudioInputStream
 				} else
 					error("IMuseDigital::startSound(): Can't handle %d bit samples", bits);
 
-				// Create an AudioInputStream
+				// Create an AudioStream
 				input = makeLinearInputStream(freq, mixerFlags | SoundMixer::FLAG_AUTOFREE, data, size, 0, 0);
 			} else {
 				error("IMuseDigital::startSound(): Unknown sound format");

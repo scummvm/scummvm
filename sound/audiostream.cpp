@@ -54,7 +54,7 @@
  * generated.
  */
 template<bool stereo, bool is16Bit, bool isUnsigned, bool isLE>
-class LinearMemoryStream : public AudioInputStream {
+class LinearMemoryStream : public AudioStream {
 protected:
 	const byte *_ptr;
 	const byte *_end;
@@ -125,7 +125,7 @@ int LinearMemoryStream<stereo, is16Bit, isUnsigned, isLE>::readBuffer(int16 *buf
 
 
 #pragma mark -
-#pragma mark --- WrappedMemoryStream ---
+#pragma mark --- AppendableMemoryStream ---
 #pragma mark -
 
 
@@ -133,7 +133,7 @@ int LinearMemoryStream<stereo, is16Bit, isUnsigned, isLE>::readBuffer(int16 *buf
  * Wrapped memory stream.
  */
 template<bool stereo, bool is16Bit, bool isUnsigned>
-class WrappedMemoryStream : public WrappedAudioInputStream {
+class AppendableMemoryStream : public AppendableAudioStream {
 protected:
 	byte *_bufferStart;
 	byte *_bufferEnd;
@@ -144,8 +144,8 @@ protected:
 
 	inline bool eosIntern() const { return _end == _pos; };
 public:
-	WrappedMemoryStream(int rate, uint bufferSize);
-	~WrappedMemoryStream()		{ free(_bufferStart); }
+	AppendableMemoryStream(int rate, uint bufferSize);
+	~AppendableMemoryStream()		{ free(_bufferStart); }
 	int readBuffer(int16 *buffer, const int numSamples);
 
 	int16 read();
@@ -161,7 +161,7 @@ public:
 
 
 template<bool stereo, bool is16Bit, bool isUnsigned>
-WrappedMemoryStream<stereo, is16Bit, isUnsigned>::WrappedMemoryStream(int rate, uint bufferSize)
+AppendableMemoryStream<stereo, is16Bit, isUnsigned>::AppendableMemoryStream(int rate, uint bufferSize)
  : _finalized(false), _rate(rate) {
 
 	// Verify the buffer size is sane
@@ -176,7 +176,7 @@ WrappedMemoryStream<stereo, is16Bit, isUnsigned>::WrappedMemoryStream(int rate, 
 }
 
 template<bool stereo, bool is16Bit, bool isUnsigned>
-inline int16 WrappedMemoryStream<stereo, is16Bit, isUnsigned>::read() {
+inline int16 AppendableMemoryStream<stereo, is16Bit, isUnsigned>::read() {
 	assert(!eosIntern());
 
 	// Wrap around?
@@ -190,7 +190,7 @@ inline int16 WrappedMemoryStream<stereo, is16Bit, isUnsigned>::read() {
 }
 
 template<bool stereo, bool is16Bit, bool isUnsigned>
-int WrappedMemoryStream<stereo, is16Bit, isUnsigned>::readBuffer(int16 *buffer, const int numSamples) {
+int AppendableMemoryStream<stereo, is16Bit, isUnsigned>::readBuffer(int16 *buffer, const int numSamples) {
 	int samples = 0;
 	while (samples < numSamples && !eosIntern()) {
 		// Wrap around?
@@ -209,7 +209,7 @@ int WrappedMemoryStream<stereo, is16Bit, isUnsigned>::readBuffer(int16 *buffer, 
 }
 
 template<bool stereo, bool is16Bit, bool isUnsigned>
-void WrappedMemoryStream<stereo, is16Bit, isUnsigned>::append(const byte *data, uint32 len) {
+void AppendableMemoryStream<stereo, is16Bit, isUnsigned>::append(const byte *data, uint32 len) {
 
 	// Verify the buffer size is sane
 	if (is16Bit && stereo)
@@ -225,7 +225,7 @@ void WrappedMemoryStream<stereo, is16Bit, isUnsigned>::append(const byte *data, 
 		uint32 size_to_end_of_buffer = _bufferEnd - _end;
 		len -= size_to_end_of_buffer;
 		if ((_end < _pos) || (_bufferStart + len >= _pos)) {
-			warning("WrappedMemoryStream: buffer overflow (A)");
+			warning("AppendableMemoryStream: buffer overflow (A)");
 			return;
 		}
 		memcpy(_end, data, size_to_end_of_buffer);
@@ -233,7 +233,7 @@ void WrappedMemoryStream<stereo, is16Bit, isUnsigned>::append(const byte *data, 
 		_end = _bufferStart + len;
 	} else {
 		if ((_end < _pos) && (_end + len >= _pos)) {
-			warning("WrappedMemoryStream: buffer overflow (B)");
+			warning("AppendableMemoryStream: buffer overflow (B)");
 			return;
 		}
 		memcpy(_end, data, len);
@@ -250,7 +250,7 @@ void WrappedMemoryStream<stereo, is16Bit, isUnsigned>::append(const byte *data, 
 #if 0
 // Work in progress!!! Not yet usable/finished/working/anything :-)
 
-class ProcInputStream : public AudioInputStream {
+class ProcInputStream : public AudioStream {
 public:
 	typedef void InputProc (void *refCon, int16 *data, uint len);
 
@@ -302,7 +302,7 @@ public:
 		} else \
 			return new LinearMemoryStream<STEREO, false, UNSIGNED, false>(rate, ptr, len, loopOffset, loopLen, autoFree)
 
-AudioInputStream *makeLinearInputStream(int rate, byte _flags, const byte *ptr, uint32 len, uint loopOffset, uint loopLen) {
+AudioStream *makeLinearInputStream(int rate, byte _flags, const byte *ptr, uint32 len, uint loopOffset, uint loopLen) {
 	const bool isStereo   = (_flags & SoundMixer::FLAG_STEREO) != 0;
 	const bool is16Bit    = (_flags & SoundMixer::FLAG_16BITS) != 0;
 	const bool isUnsigned = (_flags & SoundMixer::FLAG_UNSIGNED) != 0;
@@ -326,11 +326,11 @@ AudioInputStream *makeLinearInputStream(int rate, byte _flags, const byte *ptr, 
 
 #define MAKE_WRAPPED(STEREO, UNSIGNED) \
 		if (is16Bit) \
-			return new WrappedMemoryStream<STEREO, true, UNSIGNED>(rate, len); \
+			return new AppendableMemoryStream<STEREO, true, UNSIGNED>(rate, len); \
 		else \
-			return new WrappedMemoryStream<STEREO, false, UNSIGNED>(rate, len)
+			return new AppendableMemoryStream<STEREO, false, UNSIGNED>(rate, len)
 
-WrappedAudioInputStream *makeWrappedInputStream(int rate, byte _flags, uint32 len) {
+AppendableAudioStream *makeAppendableAudioStream(int rate, byte _flags, uint32 len) {
 	const bool isStereo = (_flags & SoundMixer::FLAG_STEREO) != 0;
 	const bool is16Bit = (_flags & SoundMixer::FLAG_16BITS) != 0;
 	const bool isUnsigned = (_flags & SoundMixer::FLAG_UNSIGNED) != 0;

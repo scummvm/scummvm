@@ -85,7 +85,7 @@ protected:
 public:
 	ResampleRateConverter(st_rate_t inrate, st_rate_t outrate, int quality);
 	~ResampleRateConverter();
-	virtual int flow(AudioInputStream &input, st_sample_t *obuf, st_size_t osamp, st_volume_t vol);
+	virtual int flow(AudioStream &input, st_sample_t *obuf, st_size_t osamp, st_volume_t vol);
 	virtual int drain(st_sample_t *obuf, st_size_t osamp, st_volume_t vol);
 };
 

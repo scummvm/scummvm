@@ -34,7 +34,7 @@
 
 class SoundMixer;
 
-class SwordMusicHandle : public AudioInputStream {
+class SwordMusicHandle : public AudioStream {
 private:
 	File _file;
 	bool _looping;

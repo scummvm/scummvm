@@ -30,9 +30,9 @@
 /**
  * Generic input stream for the resampling code.
  */
-class AudioInputStream {
+class AudioStream {
 public:
-	virtual ~AudioInputStream() {}
+	virtual ~AudioStream() {}
 
 	/**
 	 * Fill the given buffer with up to numSamples samples.
@@ -48,7 +48,7 @@ public:
 	/**
 	 * Read a single (16 bit signed) sample from the stream.
 	 */
-	virtual int16 read() = 0;
+//	virtual int16 read() = 0;
 	
 	/** Is this a stereo stream? */
 	virtual bool isStereo() const = 0;
@@ -76,13 +76,13 @@ public:
 	virtual int getRate() const = 0;
 };
 
-class WrappedAudioInputStream : public AudioInputStream {
+class AppendableAudioStream : public AudioStream {
 public:
 	virtual void append(const byte *data, uint32 len) = 0;
 	virtual void finish() = 0;
 };
 
-class ZeroInputStream : public AudioInputStream {
+class ZeroInputStream : public AudioStream {
 private:
 	int _len;
 public:
@@ -100,7 +100,7 @@ public:
 	int getRate() const { return -1; }
 };
 
-AudioInputStream *makeLinearInputStream(int rate, byte _flags, const byte *ptr, uint32 len, uint loopOffset, uint loopLen);
-WrappedAudioInputStream *makeWrappedInputStream(int rate, byte _flags, uint32 len);
+AudioStream *makeLinearInputStream(int rate, byte _flags, const byte *ptr, uint32 len, uint loopOffset, uint loopLen);
+AppendableAudioStream *makeAppendableAudioStream(int rate, byte _flags, uint32 len);
 
 #endif

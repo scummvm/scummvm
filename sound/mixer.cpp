@@ -52,12 +52,12 @@ private:
 
 protected:
 	RateConverter *_converter;
-	AudioInputStream *_input;
+	AudioStream *_input;
 
 public:
 
 	Channel(SoundMixer *mixer, PlayingSoundHandle *handle, bool isMusic, byte volume, int8 pan, int id = -1);
-	Channel(SoundMixer *mixer, PlayingSoundHandle *handle, AudioInputStream *input, bool autofreeStream, bool isMusic, byte volume, int8 pan, bool reverseStereo = false, int id = -1);
+	Channel(SoundMixer *mixer, PlayingSoundHandle *handle, AudioStream *input, bool autofreeStream, bool isMusic, byte volume, int8 pan, bool reverseStereo = false, int id = -1);
 	virtual ~Channel();
 
 	void mix(int16 *data, uint len);
@@ -229,7 +229,7 @@ void SoundMixer::playRaw(PlayingSoundHandle *handle, void *sound, uint32 size, u
 	}
 
 	// Create the input stream
-	AudioInputStream *input;
+	AudioStream *input;
 	if (flags & SoundMixer::FLAG_LOOP) {
 		if (loopEnd == 0) {
 			input = makeLinearInputStream(rate, flags, (byte *)sound, size, 0, size);
@@ -249,7 +249,7 @@ void SoundMixer::playRaw(PlayingSoundHandle *handle, void *sound, uint32 size, u
 #ifdef USE_MAD
 void SoundMixer::playMP3(PlayingSoundHandle *handle, File *file, uint32 size, byte volume, int8 pan, int id) {
 	// Create the input stream
-	AudioInputStream *input = makeMP3Stream(file, size);
+	AudioStream *input = makeMP3Stream(file, size);
 	playInputStream(handle, input, false, volume, pan, id);
 }
 #endif
@@ -257,12 +257,12 @@ void SoundMixer::playMP3(PlayingSoundHandle *handle, File *file, uint32 size, by
 #ifdef USE_VORBIS
 void SoundMixer::playVorbis(PlayingSoundHandle *handle, File *file, uint32 size, byte volume, int8 pan, int id) {
 	// Create the input stream
-	AudioInputStream *input = makeVorbisStream(file, size);
+	AudioStream *input = makeVorbisStream(file, size);
 	playInputStream(handle, input, false, volume, pan, id);
 }
 #endif
 
-void SoundMixer::playInputStream(PlayingSoundHandle *handle, AudioInputStream *input, bool isMusic, byte volume, int8 pan, int id, bool autofreeStream) {
+void SoundMixer::playInputStream(PlayingSoundHandle *handle, AudioStream *input, bool isMusic, byte volume, int8 pan, int id, bool autofreeStream) {
 	Common::StackLock lock(_mutex);
 
 	if (input == 0) {
@@ -467,7 +467,7 @@ Channel::Channel(SoundMixer *mixer, PlayingSoundHandle *handle, bool isMusic,
 	assert(mixer);
 }
 
-Channel::Channel(SoundMixer *mixer, PlayingSoundHandle *handle, AudioInputStream *input,
+Channel::Channel(SoundMixer *mixer, PlayingSoundHandle *handle, AudioStream *input,
 				bool autofreeStream, bool isMusic, byte volume, int8 pan, bool reverseStereo, int id)
 	: _mixer(mixer), _handle(handle), _autofreeStream(autofreeStream), _isMusic(isMusic),
 	  _volume(volume), _pan(pan), _paused(false), _id(id), _converter(0), _input(input) {
@@ -519,16 +519,16 @@ ChannelStream::ChannelStream(SoundMixer *mixer, PlayingSoundHandle *handle,
 							uint rate, byte flags, uint32 buffer_size, byte volume, int8 pan)
 	: Channel(mixer, handle, true, volume, pan) {
 	// Create the input stream
-	_input = makeWrappedInputStream(rate, flags, buffer_size);
+	_input = makeAppendableAudioStream(rate, flags, buffer_size);
 
 	// Get a rate converter instance
 	_converter = makeRateConverter(_input->getRate(), mixer->getOutputRate(), _input->isStereo(), (flags & SoundMixer::FLAG_REVERSE_STEREO) != 0);
 }
 
 void ChannelStream::finish() {
-	((WrappedAudioInputStream *)_input)->finish();
+	((AppendableAudioStream *)_input)->finish();
 }
 
 void ChannelStream::append(void *data, uint32 len) {
-	((WrappedAudioInputStream *)_input)->append((const byte *)data, len);
+	((AppendableAudioStream *)_input)->append((const byte *)data, len);
 }

@@ -28,7 +28,7 @@
 #include "common/system.h"
 
 
-class AudioInputStream;
+class AudioStream;
 class Channel;
 class File;
 
@@ -113,7 +113,7 @@ public:
 	void playVorbis(PlayingSoundHandle *handle, File *file, uint32 size, byte volume = 255, int8 pan = 0, int id = -1);
 #endif
 
-	void playInputStream(PlayingSoundHandle *handle, AudioInputStream *input, bool isMusic, byte volume = 255, int8 pan = 0, int id = -1, bool autofreeStream = true);
+	void playInputStream(PlayingSoundHandle *handle, AudioStream *input, bool isMusic, byte volume = 255, int8 pan = 0, int id = -1, bool autofreeStream = true);
 
 
 	/** Start a new stream. */

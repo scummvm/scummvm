@@ -27,7 +27,7 @@
 #include "scumm/music.h"
 #include "sound/mixer.h"
 
-class AudioInputStream;
+class AudioStream;
 
 namespace Scumm {
 
@@ -81,7 +81,7 @@ private:
 		bool used;
 		bool started;
 		PlayingSoundHandle handle;
-		AudioInputStream *stream;
+		AudioStream *stream;
 		
 		Channel();
 	};
@@ -128,7 +128,7 @@ public:
 	void stopBundleMusic();
 	void playBundleSound(const char *sound);
 
-	void startSound(int sound, byte *voiceBundleData, AudioInputStream *input);
+	void startSound(int sound, byte *voiceBundleData, AudioStream *input);
 
 public:
 	IMuseDigital(ScummEngine *scumm);
