@@ -1,0 +1,35 @@
+EmuDebug by Rafael Vuijk (aka Dark Fader)
+Console debug output for emulators.
+GBA apps must use the new debug library found in MyLib
+
+Usage
+-----
+Please run program with '-h' parameter to get possible options.
+
+How it works
+------------
+1) PC searches the debug buffer in emulators memory.
+	begin & end init value is 0xEDEBEDEB, must reset to 0 to start debugging
+	data all spaces except first and last character, which are '{' & '}'
+2) GBA waits for begin/end to become something else than init value
+3) GBA reads any characters until begin & end index are equal again
+
+History
+-------
+v1.02
+	minimizes window & pop-ups when debugging
+	escape closes emulator window
+	rotating buffer, so incompatable with older versions but who cares :)
+
+v1.01
+	waits for emulator at startup
+	reconnects to new emulator instance
+	window class/title options
+	poll interval boosting
+	option for minimum buffersize
+	wait for key before searching option
+
+v1.00
+	'protocol' defined
+	searches buffer in Boycott Advance
+	console output
