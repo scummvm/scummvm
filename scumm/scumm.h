@@ -39,7 +39,7 @@ class Actor;
 class Sound;
 class Bundle;
 struct ScummDebugger;
-struct Serializer;
+class Serializer;
 struct FindObjectInRoom;
 
 typedef void (Scumm::*OpcodeProc)();

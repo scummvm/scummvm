@@ -284,6 +284,14 @@ SOURCE=.\sound\mixer.cpp
 
 SOURCE=.\sound\mixer.h
 # End Source File
+# Begin Source File
+
+SOURCE=.\sound\mpu401.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\sound\mpu401.h
+# End Source File
 # End Group
 # Begin Group "gui"
 
@@ -406,6 +414,22 @@ SOURCE=".\backends\fs\windows\windows-fs.cpp"
 # Begin Source File
 
 SOURCE=.\backends\midi\adlib.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\backends\midi\alsa.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\backends\midi\coreaudio.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\backends\midi\null.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\backends\midi\quicktime.cpp
 # End Source File
 # End Group
 # End Group

@@ -2601,7 +2601,7 @@ void Scumm::setupShadowPalette(int slot, int redScale, int greenScale, int blueS
 	}
 }
 
-static inline int colorWeight(int red, int green, int blue)
+static inline uint colorWeight(int red, int green, int blue)
 {
 	return 3 * red * red + 6 * green * green + 2 * blue * blue;
 }

@@ -27,7 +27,7 @@ class IMuseInternal;
 class MidiDriver;
 class OSystem;
 class Scumm;
-struct Serializer;
+class Serializer;
 class SoundMixer;
 
 class IMuse {
