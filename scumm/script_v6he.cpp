@@ -768,7 +768,6 @@ void ScummEngine_v6he::o6_kernelSetFunctions() {
 }
 
 void ScummEngine_v6he::virtScreenLoad(int resIdx, int x1, int y1, int x2, int y2) {
-	debug(1, "ScummEngine_v6he::virtScreenLoad(%d, %d, %d, %d, %d)", resIdx, x1, y1, x2, y2);
 	vsUnpackCtx ctx;
 	memset(&ctx, 0, sizeof(ctx));
 	VirtScreen &vs = virtscr[kMainVirtScreen]; // XXX gdi_virtScreen = 0;
@@ -847,7 +846,6 @@ void ScummEngine_v6he::o6_kernelGetFunctions() {
 }
 
 int ScummEngine_v6he::virtScreenSave(byte *dst, int x1, int y1, int x2, int y2) {
-	debug(1, "ScummEngine_v6he::virtScreenSave(%d, %d, %d, %d)", x1, y1, x2, y2);
 	int packedSize = 0;
 	VirtScreen &vs = virtscr[kMainVirtScreen]; // XXX gdi_virtScreen = 0;
 
@@ -984,14 +982,12 @@ void ScummEngine_v6he::o6_openFile() {
 		if (_hFileTable[slot].isOpen() == false)
 			slot = -1;
 
-		debug(1, "%d = o6_openFile(\"%s\", %d)", slot, filename + r, mode);
 	}
 	push(slot);
 }
 
 void ScummEngine_v6he::o6_closeFile() {
 	int slot = pop();
-	debug(1, "o6_closeFile(%d)", slot);
 	if (slot != -1)
 		_hFileTable[slot].close();
 }
@@ -1057,8 +1053,6 @@ void ScummEngine_v6he::o6_readFile() {
 	int slot = pop();
 	int val;
 
-	debug(1, "o6_readFile(%d, %d)", slot, size);
-
 	// Fatty Bear uses positive values
 	if ((_features & GF_PC) && (_gameId == GID_FBEAR))
 		size = -size;
@@ -1086,8 +1080,6 @@ void ScummEngine_v6he::o6_writeFile() {
 	int32 size = pop();
 	int16 resID = pop();
 	int slot = pop();
-
-	debug(1, "o6_writeFile(%d, %d, %d)", slot, resID, size);
 
 	// Fatty Bear uses positive values
 	if ((_features & GF_PC) && (_gameId == GID_FBEAR))
@@ -1134,8 +1126,6 @@ void ScummEngine_v6he::o6_seekFilePos() {
 	offset = pop();
 	slot = pop();
 
-	debug(1, "o6_seekFile(%d, %d, %d)", slot, offset, mode);
-
 	switch (mode) {
 	case 1:
 		seekFilePos(slot, offset, 0);
@@ -1170,8 +1160,6 @@ void ScummEngine_v6he::seekFilePos(int slot, int offset, int mode) {
 
 void ScummEngine_v6he::o6_readFilePos() {
 	int slot = pop();
-
-	debug(1, "o6_tellFile(%d)", slot);
 
 	if (slot == -1) {
 		push(0);

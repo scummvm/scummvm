@@ -1544,7 +1544,6 @@ void ScummEngine_v6::o6_resourceRoutines() {
 			if (resid >= _numGlobalScripts)
 				break;
 		setResourceCounter(rtScript, resid, 0x7F);
-		debug(5, "nuke script %d", resid);
 		break;
 	case 105:		// SO_NUKE_SOUND
 		resid = pop();
@@ -2541,9 +2540,7 @@ void ScummEngine_v6::o6_kernelSetFunctions() {
 					_smushFrameRate = 14;
 				speed = 1000000 / _smushFrameRate;
 
-				debug(1, "INSANE Arg: %d %d", args[1], args[2]);
-
-				// INSANE mode 0: SMUSH movie playback
+				// SMUSH movie playback
 				if (args[1] == 0) {
 					assert(getStringAddressVar(VAR_VIDEONAME));
 					if (strcmp((char *)getStringAddressVar(VAR_VIDEONAME), "sq3.san") == 0)
@@ -2965,7 +2962,6 @@ void ScummEngine_v6::o6_stampObject() {
 		if (state == 0)
 			state = 255;
 
-		//debug(6, "o6_stampObject: (%d at (%d,%d) scale %d)", object, x, y, state);
 		Actor *a = derefActor(object, "o6_stampObject");
 		a->scalex = state;
 		a->scaley = state;
@@ -2991,7 +2987,6 @@ void ScummEngine_v6::o6_stampObject() {
 
 	putState(object, state);
 	drawObject(objnum, 0);
-	//debug(6, "o6_stampObject: (%d at (%d,%d) state %d)", object, x, y, state);
 }
 
 void ScummEngine_v6::o6_stopTalking() {
