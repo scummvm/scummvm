@@ -47,7 +47,7 @@ public:
 
 	// Get the next event.
 	// Returns true if an event was retrieved.	
-//	bool poll_event(Event *event);
+	bool poll_event(Event *event);
 
 protected:
 	FB2GL fb2gl;
@@ -119,6 +119,10 @@ void OSystem_SDL_OpenGL::load_gfx_mode() {
 	_tmpScreenWidth = (_screenWidth + 3);
 
 	switch(_mode) {
+	case GFX_BILINEAR:
+		_usingOpenGL = true;
+		_mode = GFX_NORMAL;
+		break;
 	case GFX_2XSAI:
 		_scaleFactor = 2;
 		_scaler_proc = _2xSaI;
@@ -501,14 +505,13 @@ void OSystem_SDL_OpenGL::update_screen() {
 	_forceFull = false;
 }
 
-/*
 bool OSystem_SDL_OpenGL::poll_event(Event *event) {
 	SDL_Event ev;
 	ev.type = 0;
 
 	SDL_PeepEvents(&ev, 1, SDL_GETEVENT, SDL_VIDEORESIZEMASK);
 
-	if (ev.type == SDL_VIDEORESIZE) {
+	if (_usingOpenGL && ev.type == SDL_VIDEORESIZE) {
 	      int w = ev.resize.w; 
 	      int h = ev.resize.h;
 	      glViewport(0, 0, (GLsizei)w, (GLsizei)h);
@@ -521,7 +524,6 @@ bool OSystem_SDL_OpenGL::poll_event(Event *event) {
 
 	return OSystem_SDL_Common::poll_event(event);
 }
-*/
 
 uint32 OSystem_SDL_OpenGL::property(int param, Property *value) {
 

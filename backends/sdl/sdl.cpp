@@ -112,6 +112,7 @@ void OSystem_SDL::load_gfx_mode() {
 		_scaler_proc = DotMatrix;
 		break;
 
+	case GFX_BILINEAR:
 	case GFX_DOUBLESIZE:
 		_scaleFactor = 2;
 		_scaler_proc = Normal2x;
