@@ -72,7 +72,7 @@ private:
 	char * _curBuffer;		//!< pointer to the current frame
 	int32 _IACTchannel;
 	byte _IACToutput[4096];
-	int32 _IACTrest;
+	int32 _IACTpos;
 
 public:
 	SmushPlayer(Renderer *, bool wait = true, bool output_sound = true);
