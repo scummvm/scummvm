@@ -2085,7 +2085,7 @@ void ScummEngine::processKbd(bool smushMode) {
 
 	if ((_version <= 2) || (_features & GF_FMTOWNS && _version == 3))
 		saveloadkey = 5;	// F5
-	else if ((_version <= 3) || (_gameId == GID_SAMNMAX) || (_gameId == GID_CMI))
+	else if ((_version <= 3) || (_gameId == GID_SAMNMAX) || (_gameId == GID_CMI) || (_heversion >= 72))
 		saveloadkey = 319;	// F5
 	else
 		saveloadkey = VAR(VAR_MAINMENU_KEY);
