@@ -1,5 +1,5 @@
 /* ScummVM - Scumm Interpreter
- * Copyright (C) 2002-2003 The ScummVM project
+ * Copyright (C) 2002-2004 The ScummVM project
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -40,7 +40,7 @@ AboutDialog::AboutDialog()
 	new StaticTextWidget(this, 10, 20, _w - 20, kLineHeight, date, kTextAlignCenter);
 
 	// TODO: Probably should display something regarding GPL
-	new StaticTextWidget(this, 10, 35, _w - 20, kLineHeight, "Copyright (C) 2002-2003 The ScummVM project", kTextAlignCenter);
+	new StaticTextWidget(this, 10, 35, _w - 20, kLineHeight, "Copyright (C) 2002-2004 The ScummVM project", kTextAlignCenter);
 	new StaticTextWidget(this, 10, 45, _w - 20, kLineHeight, "http://www.scummvm.org", kTextAlignCenter);
 
 	new StaticTextWidget(this, 10, 65, _w - 20, kLineHeight, "LucasArts SCUMM Games (C) LucasArts", kTextAlignCenter);
