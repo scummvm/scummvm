@@ -3204,7 +3204,6 @@ void Scumm::decodeParseString2(int m, int n)
 					_mixer->stop(_sound->_talkChannel);
 
 				_sound->_talkChannel = _sound->playBundleSound(pointer);
-				printf("Talkchannel for %s is %d\n", transText, _sound->_talkChannel);
 				_messagePtr = (byte*)&transText;
 
 				switch (m) {

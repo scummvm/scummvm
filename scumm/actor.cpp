@@ -782,7 +782,7 @@ void Scumm::stopTalk()
 	act = _vars[VAR_TALK_ACTOR];
 	if (act && act < 0x80) {
 		Actor *a = derefActorSafe(act, "stopTalk");
-		if ((a->isInCurrentRoom() || (_features & GF_AFTER_V7)) && _useTalkAnims) {
+		if ((a->isInCurrentRoom() && _useTalkAnims) || (_features & GF_AFTER_V7)) {
 			a->startAnimActor(a->talkFrame2);
 			_useTalkAnims = false;
 		}
