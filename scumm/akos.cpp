@@ -221,7 +221,10 @@ void AkosRenderer::setPalette(byte *new_palette) {
 		palette[i] = new_palette[i] != 0xFF ? new_palette[i] : the_akpl[i];
 	}
 
-	if (size == 256) {
+	if (_vm->_heversion == 70 && size) {
+		for (i = 0; i < size; i++)
+			palette[i] = _vm->he_actor_palette[palette[i]];
+	} else if (size == 256) {
 		byte color = new_palette[0];
 		if (color == 255) {
 			palette[0] = color;

@@ -2501,6 +2501,18 @@ void ScummEngine::initRoomSubBlocks() {
 		}
 	}
 
+	// Actor Palette in HE 7.0 games
+	if (_heversion == 70) {
+		ptr = findResourceData(MKID('REMP'), roomptr);
+		if (ptr) {
+			for (i = 0; i < 256; i++)
+				he_actor_palette[i] = *ptr++;
+		} else {
+			for (i = 0; i < 256; i++)
+				he_actor_palette[i] = i;
+		}
+	}
+			
 	// Transparent color
 	if (_features & GF_OLD_BUNDLE)
 		gdi._transparentColor = 255;	// TODO - FIXME

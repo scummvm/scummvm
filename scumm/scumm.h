@@ -1008,9 +1008,11 @@ protected:
 	bool testGfxOtherUsageBits(int strip, int bit);
 
 public:
+	byte he_actor_palette[256];
 	byte _proc_special_palette[256];
 	byte _roomPalette[256];
 	byte *_shadowPalette;
+	int _staticVar1, _staticVar2, _staticVar3, _staticVar4, _staticVar5;
 
 protected:
 	int _shadowPaletteSize;
@@ -1030,7 +1032,6 @@ protected:
 	int _saveSound;
 	bool _native_mt32;
 	int _midiDriver; // Use the MD_ values from mididrv.h
-	int _staticVar1, _staticVar2, _staticVar3, _staticVar4, _staticVar5;
 	bool _copyProtection;
 	bool _demoMode;
 	bool _confirmExit;

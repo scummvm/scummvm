@@ -2236,7 +2236,7 @@ void Gdi::decodeStrip3DO(byte *dst, const byte *src, int height, byte transpChec
 
 			for (; data > 0; data--, src++, dst++) {
 				if (*src != _transparentColor || !transpCheck)
-					*dst = *src;
+					*dst = _roomPalette[*src];
 			
 				destbytes++;
 				if (!(destbytes & 7))
@@ -2262,7 +2262,7 @@ void Gdi::decodeStrip3DO(byte *dst, const byte *src, int height, byte transpChec
 
 			for (; data > 0; data--, dst++) {
 				if (color != _transparentColor || !transpCheck)
-					*dst = color;
+					*dst = _roomPalette[color];
 				destbytes++;
 				if (!(destbytes & 7))
 					dst += 312;
@@ -2288,7 +2288,7 @@ void Gdi::decodeStripHE(byte *dst, const byte *src, int height, byte transpCheck
 	 while (height) {
 		 for (iteration = 0; iteration < 8; iteration++) {
 			 if (color != _transparentColor || !transpCheck)
-				 *dst = color;
+				 *dst = _roomPalette[color];
 			 dst++;
 			 if (shift <= 16) {
 				 data |= *src << shift;
