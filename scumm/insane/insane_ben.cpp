@@ -1928,7 +1928,10 @@ void Insane::switchBenWeapon(void) {
 		_actor[0].act[2].state = 34;
 		break;
 	case INV_WRENCH:
-		smlayer_setActorCostume(0, 2, readArray(25));
+		if ((_vm->_features & GF_DEMO) && (_vm->_features & GF_PC))
+			smlayer_setActorCostume(0, 2, readArray(24));
+		else
+			smlayer_setActorCostume(0, 2, readArray(25));
 		smlayer_setActorFacing(0, 2, 18, 180);
 		_actor[0].weaponClass = 0;
 		_actor[0].act[2].state = 34;
@@ -1936,9 +1939,13 @@ void Insane::switchBenWeapon(void) {
 	case INV_BOOT:
 	case INV_HAND:
 	case INV_DUST:
-		smlayer_setActorCostume(0, 2, readArray(12));
-		_actor[0].weaponClass = 2;
-		_actor[0].act[2].state = 1;
+		if (!((_vm->_features & GF_DEMO) && (_vm->_features & GF_PC))) {
+			smlayer_setActorCostume(0, 2, readArray(12));
+			_actor[0].weaponClass = 2;
+			_actor[0].act[2].state = 1;
+		} else {
+			smlayer_setActorCostume(0, 2, readArray(21));
+		}
 		break;
 	default:
 		break;

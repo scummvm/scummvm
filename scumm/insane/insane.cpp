@@ -176,7 +176,7 @@ void Insane::initvars(void) {
 
 	
 	if ((_vm->_features & GF_DEMO) && (_vm->_features & GF_PC)) {
-		init_enemyStruct(EN_ROTT1, EN_ROTT1, 0, 0, 160, 0, INV_MACE, 90, "endcrshr.san", 
+		init_enemyStruct(EN_ROTT1, EN_ROTT1, 0, 0, 160, 0, INV_MACE, 63, "endcrshr.san", 
 						 25, 16, 15, 27, 11, 3);
 	} else {
 		init_enemyStruct(EN_ROTT1, EN_ROTT1, 0, 0, 160, 0, INV_MACE, 90, "wr2_rott.san", 
@@ -385,11 +385,11 @@ void Insane::initvars(void) {
 	_actor[0].inventory[INV_CHAINSAW] = 0;
 	_actor[0].inventory[INV_MACE] = 0;
 	_actor[0].inventory[INV_2X4] = 0;
+	_actor[0].inventory[INV_WRENCH] = 1;
 	if ((_vm->_features & GF_DEMO) && (_vm->_features & GF_PC))
-		_actor[0].inventory[INV_WRENCH] = 0;
+		_actor[0].inventory[INV_BOOT] = 0;
 	else
-		_actor[0].inventory[INV_WRENCH] = 1;
-	_actor[0].inventory[INV_BOOT] = 1;
+		_actor[0].inventory[INV_BOOT] = 1;
 	_actor[0].inventory[INV_HAND] = 1;
 	_actor[0].inventory[INV_DUST] = 0;
 	_actor[0].probability = 5;
