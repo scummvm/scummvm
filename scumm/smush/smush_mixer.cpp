@@ -135,7 +135,7 @@ bool SmushMixer::handleFrame() {
 
 				if (_silentMixer == false) {
 					if (_channels[i].mixer_index == 0) {
-						_mixer->newStream(&_channels[i].mixer_index, data, size, rate, flags, 500000, 127, 0);
+						_mixer->newStream(&_channels[i].mixer_index, data, size, rate, flags, 500000, 255, 0);
 					} else {
 						_mixer->appendStream(_channels[i].mixer_index, data, size);
 					}

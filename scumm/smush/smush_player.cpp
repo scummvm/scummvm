@@ -460,7 +460,7 @@ void SmushPlayer::handleImuseAction(Chunk &b) {
 
 					if (_IACTchannel == 0) {
 						_scumm->_mixer->newStream(&_IACTchannel, output_data, 0x1000, 22050,
-															SoundMixer::FLAG_STEREO | SoundMixer::FLAG_16BITS, 200000, 127, 0);
+															SoundMixer::FLAG_STEREO | SoundMixer::FLAG_16BITS, 200000, 255, 0);
 					} else {
 						_scumm->_mixer->appendStream(_IACTchannel, output_data, 0x1000);
 					}

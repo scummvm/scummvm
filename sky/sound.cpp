@@ -1054,7 +1054,7 @@ int SkySound::playSound(uint32 id, byte *sound, uint32 size, PlayingSoundHandle 
 	memcpy(buffer, sound+sizeof(struct dataFileHeader), size);	
 	
 	_mixer->stopID(id);
-	return _mixer->playRaw(handle, buffer, size, 11025, flags, 127, 0, id);
+	return _mixer->playRaw(handle, buffer, size, 11025, flags, 255, 0, id);
 }
 
 void SkySound::loadSection(uint8 pSection) {
@@ -1130,9 +1130,9 @@ void SkySound::playSound(uint16 sound, uint16 volume, uint8 channel) {
 	
 	_mixer->setVolume(volume);
 	if (channel == 0)
-		_mixer->playRaw(&_ingameSound0, _soundData + dataOfs, dataSize, sampleRate, flags, 127, 0, SOUND_CH0, loopSta, loopEnd);
+		_mixer->playRaw(&_ingameSound0, _soundData + dataOfs, dataSize, sampleRate, flags, 255, 0, SOUND_CH0, loopSta, loopEnd);
 	else
-		_mixer->playRaw(&_ingameSound1, _soundData + dataOfs, dataSize, sampleRate, flags, 127, 0, SOUND_CH1, loopSta, loopEnd);
+		_mixer->playRaw(&_ingameSound1, _soundData + dataOfs, dataSize, sampleRate, flags, 255, 0, SOUND_CH1, loopSta, loopEnd);
 }
 
 void SkySound::fnStartFx(uint32 sound, uint8 channel) {
@@ -1251,6 +1251,6 @@ bool SkySound::startSpeech(uint16 textNum) {
 	free(speechData);
 
 	_mixer->stopID(SOUND_SPEECH);
-	_mixer->playRaw(&_ingameSpeech, playBuffer, speechSize, 11025, SoundMixer::FLAG_UNSIGNED | SoundMixer::FLAG_AUTOFREE, 127, 0, SOUND_SPEECH);
+	_mixer->playRaw(&_ingameSpeech, playBuffer, speechSize, 11025, SoundMixer::FLAG_UNSIGNED | SoundMixer::FLAG_AUTOFREE, 255, 0, SOUND_SPEECH);
 	return true;
 }
