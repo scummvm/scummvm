@@ -159,7 +159,7 @@ bool SkyAutoRoute::calcWalkGrid(uint8 startX, uint8 startY, uint8 destX, uint8 d
 						gridChanged = true;
 					}
 				}
-                xWalkCalc += directionX;
+				xWalkCalc += directionX;
 			}
 			yWalkCalc += directionY;
 		}
@@ -201,12 +201,12 @@ uint16 *SkyAutoRoute::makeRouteData(uint8 startX, uint8 startY, uint8 destX, uin
 		if (!walkDirection)
 			error("makeRouteData:: can't find way through walkGrid (pos %d)", lastVal);
 		while (lastVal && (lastVal == *(routePos + walkDirection))) {
-            *dataTrg += WALK_JUMP;
+			*dataTrg += WALK_JUMP;
 			lastVal--;
 			routePos += walkDirection;
 		}
 	}
-    return dataTrg;
+	return dataTrg;
 }
 
 uint16 *SkyAutoRoute::checkInitMove(uint16 *data, int16 initStaX) {
@@ -251,7 +251,7 @@ uint16 SkyAutoRoute::autoRoute(Compact *cpt) {
 	// if there was an initial x movement (due to clipping) tag it onto the start
 	routeData = checkInitMove(routeData, initStaX);
 
-    uint8 cnt = 0;
+	uint8 cnt = 0;
 	do {
 		((uint16*)cpt->extCompact->animScratch)[cnt]     = routeData[cnt];
 		((uint16*)cpt->extCompact->animScratch)[cnt + 1] = routeData[cnt + 1];
