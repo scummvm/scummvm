@@ -210,21 +210,20 @@ SimonEngine::SimonEngine(GameDetector *detector, OSystem *syst)
 	
 	_game = (byte)detector->_game.features;
 
-	if (_game == GAME_SIMON2MAC) {
+	if (_game & GF_MAC)
 		gss = &simon2mac_settings;
-	} else if (_game == GAME_SIMON2TALKIE || _game == GAME_SIMON2WIN) {
+	else if ((_game & GF_SIMON2) && (_game & GF_TALKIE))
 		gss = &simon2win_settings;
-	} else if (_game == GAME_SIMON2DOS) {
+	else if (_game & GF_SIMON2)
 		gss = &simon2dos_settings;
-	} else if (_game == GAME_SIMON1ACORN) {
+	else if (_game & GF_ACORN)
 		gss =&simon1acorn_settings;
-	} else if (_game & GF_AMIGA) {
+	else if (_game & GF_AMIGA)
 		gss = &simon1amiga_settings;
-	} else if (_game == GAME_SIMON1DEMO) {
+	else if (_game & GF_DEMO)
 		gss = &simon1demo_settings;
-	} else {
+	else
 		gss = &simon1_settings;
-	}
 
 	_key_pressed = 0;
 
