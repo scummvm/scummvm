@@ -1448,7 +1448,7 @@ void OSystem_SDL::drawMouse() {
 	_mouseBackup.h = dst.h;
 
 	dst.x = dst.x * scale1 / scale2;
-	dst.y = dst.y * scale1 / scale2;
+	dst.y = (dst.y + _currentShakePos) * scale1 / scale2;
 
 	if (SDL_BlitSurface(_mouseSurface, &src, _hwscreen, &dst) != 0)
 		error("SDL_BlitSurface failed: %s", SDL_GetError());
