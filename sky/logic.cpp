@@ -636,7 +636,7 @@ uint32 SkyLogic::pop() {
 	return _stack[--_stackPtr];
 }
 
-typedef uint32 (SkyLogic::*McodeTable) (uint32, uint32, uint32);
+typedef bool (SkyLogic::*McodeTable) (uint32, uint32, uint32);
 static  McodeTable mcodeTable[] = {
 	&SkyLogic::fnCacheChip,
 	&SkyLogic::fnCacheFast,
@@ -1036,7 +1036,7 @@ script:
 				SkyDebug::mcode(mcode, a, b, c);
 
 				Compact *saveCpt = _compact;
-				uint32 ret = (this->*mcodeTable[mcode]) (a, b, c);
+				bool ret = (this->*mcodeTable[mcode]) (a, b, c);
 				_compact = saveCpt;
 
 				if (!ret)
@@ -1102,22 +1102,22 @@ script:
 	}
 }
 
-uint32 SkyLogic::fnCacheChip(uint32 a, uint32 b, uint32 c) {
+bool SkyLogic::fnCacheChip(uint32 a, uint32 b, uint32 c) {
 	warning("Stub: fnCacheChip");
-	return 1;
+	return true;
 }
 
-uint32 SkyLogic::fnCacheFast(uint32 a, uint32 b, uint32 c) {
+bool SkyLogic::fnCacheFast(uint32 a, uint32 b, uint32 c) {
 	warning("Stub: fnCacheFast");
-	return 1;
+	return true;
 }
 
-uint32 SkyLogic::fnDrawScreen(uint32 a, uint32 b, uint32 c) {
+bool SkyLogic::fnDrawScreen(uint32 a, uint32 b, uint32 c) {
 	warning("Stub: fnDrawScreen");
-	return 1;
+	return true;
 }
 
-uint32 SkyLogic::fnAr(uint32 x, uint32 y, uint32 c) {
+bool SkyLogic::fnAr(uint32 x, uint32 y, uint32 c) {
 	_compact->downFlag = 1; // assume failure in-case logic is interupted by speech (esp Joey)
 
 	_compact->extCompact->arTargetX = (uint16)x;
@@ -1127,22 +1127,22 @@ uint32 SkyLogic::fnAr(uint32 x, uint32 y, uint32 c) {
 	_compact->xcood &= 0xfff8;
 	_compact->ycood &= 0xfff8;
 
-	return 0; // drop out of script
+	return false; // drop out of script
 }
 
-uint32 SkyLogic::fnArAnimate(uint32 a, uint32 b, uint32 c) {
+bool SkyLogic::fnArAnimate(uint32 a, uint32 b, uint32 c) {
 	_compact->mood = 0; // high level 'not stood still'
 	_compact->logic = L_AR_ANIM;
-	return 0; // drop out of script
+	return false; // drop out of script
 }
 
-uint32 SkyLogic::fnIdle(uint32 a, uint32 b, uint32 c) {
+bool SkyLogic::fnIdle(uint32 a, uint32 b, uint32 c) {
 	// set the player idling
 	_compact->logic = 0;
-	return 1;
+	return true;
 }
 
-uint32 SkyLogic::fnInteract(uint32 targetId, uint32 b, uint32 c) {
+bool SkyLogic::fnInteract(uint32 targetId, uint32 b, uint32 c) {
 	_compact->mode += 4; // next level up
 	_compact->logic = L_SCRIPT;
 	Compact *cpt = SkyState::fetchCompact(targetId);
@@ -1150,71 +1150,71 @@ uint32 SkyLogic::fnInteract(uint32 targetId, uint32 b, uint32 c) {
 	*SkyCompact::getSub(_compact, _compact->mode) = cpt->actionScript;
 	*SkyCompact::getSub(_compact, _compact->mode + 2) = 0;
 
-	return 0;
+	return false;
 }
 
-uint32 SkyLogic::fnStartSub(uint32 scr, uint32 b, uint32 c) {
+bool SkyLogic::fnStartSub(uint32 scr, uint32 b, uint32 c) {
 	_compact->mode += 4;
 	*SkyCompact::getSub(_compact, _compact->mode) = (uint16)(scr & 0xffff);
 	*SkyCompact::getSub(_compact, _compact->mode + 2) = (uint16)(scr >> 16);
-	return 0;
+	return false;
 }
 
-uint32 SkyLogic::fnTheyStartSub(uint32 mega, uint32 scr, uint32 c) {
+bool SkyLogic::fnTheyStartSub(uint32 mega, uint32 scr, uint32 c) {
 	Compact *cpt = SkyState::fetchCompact(mega);
 	cpt->mode += 4;
 	*SkyCompact::getSub(cpt, _compact->mode) = (uint16)(scr & 0xffff);
 	*SkyCompact::getSub(cpt, _compact->mode + 2) = (uint16)(scr >> 16);
-	return 1;
+	return true;
 }
 
-uint32 SkyLogic::fnAssignBase(uint32 id, uint32 scr, uint32 c) {
+bool SkyLogic::fnAssignBase(uint32 id, uint32 scr, uint32 c) {
 	Compact *cpt = SkyState::fetchCompact(id);
 	cpt->mode = C_BASE_MODE;
 	cpt->logic = L_SCRIPT;
 	cpt->baseSub     = (uint16)(scr & 0xffff);
 	cpt->baseSub_off = (uint16)(scr >> 16);
-	return 1;
+	return true;
 }
 
-uint32 SkyLogic::fnDiskMouse(uint32 a, uint32 b, uint32 c) {
+bool SkyLogic::fnDiskMouse(uint32 a, uint32 b, uint32 c) {
 	warning("Stub: fnDiskMouse");
-	return 1;
+	return true;
 }
 
-uint32 SkyLogic::fnNormalMouse(uint32 a, uint32 b, uint32 c) {
+bool SkyLogic::fnNormalMouse(uint32 a, uint32 b, uint32 c) {
 	error("Stub: fnNormalMouse");
 }
 
-uint32 SkyLogic::fnBlankMouse(uint32 a, uint32 b, uint32 c) {
+bool SkyLogic::fnBlankMouse(uint32 a, uint32 b, uint32 c) {
 	return _skyMouse->fnBlankMouse();
 }
 
-uint32 SkyLogic::fnCrossMouse(uint32 a, uint32 b, uint32 c) {
+bool SkyLogic::fnCrossMouse(uint32 a, uint32 b, uint32 c) {
 	error("Stub: fnCrossMouse");
 }
 
-uint32 SkyLogic::fnCursorRight(uint32 a, uint32 b, uint32 c) {
+bool SkyLogic::fnCursorRight(uint32 a, uint32 b, uint32 c) {
 	error("Stub: fnCursorRight");
 }
 
-uint32 SkyLogic::fnCursorLeft(uint32 a, uint32 b, uint32 c) {
+bool SkyLogic::fnCursorLeft(uint32 a, uint32 b, uint32 c) {
 	error("Stub: fnCursorLeft");
 }
 
-uint32 SkyLogic::fnCursorDown(uint32 a, uint32 b, uint32 c) {
+bool SkyLogic::fnCursorDown(uint32 a, uint32 b, uint32 c) {
 	error("Stub: fnCursorDown");
 }
 
-uint32 SkyLogic::fnOpenHand(uint32 a, uint32 b, uint32 c) {
+bool SkyLogic::fnOpenHand(uint32 a, uint32 b, uint32 c) {
 	error("Stub: fnOpenHand");
 }
 
-uint32 SkyLogic::fnCloseHand(uint32 a, uint32 b, uint32 c) {
+bool SkyLogic::fnCloseHand(uint32 a, uint32 b, uint32 c) {
 	error("Stub: fnCloseHand");
 }
 
-uint32 SkyLogic::fnGetTo(uint32 targetPlaceId, uint32 mode, uint32 c) {
+bool SkyLogic::fnGetTo(uint32 targetPlaceId, uint32 mode, uint32 c) {
 	_compact->upFlag = (uint16)mode; // save mode for action script
 	_compact->mode += 4; // next level up
 	Compact *cpt = SkyState::fetchCompact(_compact->place);
@@ -1227,10 +1227,10 @@ uint32 SkyLogic::fnGetTo(uint32 targetPlaceId, uint32 mode, uint32 c) {
 	*SkyCompact::getSub(_compact, _compact->mode) = *(getToTable + 1);
 	*SkyCompact::getSub(_compact, _compact->mode + 2) = 0;
 
-	return 0; // drop out of script
+	return false; // drop out of script
 }
 
-uint32 SkyLogic::fnSetToStand(uint32 a, uint32 b, uint32 c) {
+bool SkyLogic::fnSetToStand(uint32 a, uint32 b, uint32 c) {
 	_compact->mood = 1; // high level stood still
 
 	uint16 *p = (uint16 *)SkyCompact::getCompactElem(_compact, C_STAND_UP
@@ -1240,10 +1240,10 @@ uint32 SkyLogic::fnSetToStand(uint32 a, uint32 b, uint32 c) {
 	_compact->grafixProg = p;
 	_compact->logic = L_SIMPLE_MOD;
 	simpleAnim();
-	return 0; // drop out of script
+	return false; // drop out of script
 }
 
-uint32 SkyLogic::fnTurnTo(uint32 dir, uint32 b, uint32 c) {
+bool SkyLogic::fnTurnTo(uint32 dir, uint32 b, uint32 c) {
 	// turn compact to direction dir
 
 	uint16 curDir = _compact->extCompact->dir; // get current direction
@@ -1252,23 +1252,23 @@ uint32 SkyLogic::fnTurnTo(uint32 dir, uint32 b, uint32 c) {
 	uint16 **tt = SkyCompact::getTurnTable(_compact, _compact->extCompact->megaSet, curDir);
 
 	if (!tt[dir])
-		return 1; // keep going
+		return true; // keep going
 
 	_compact->extCompact->turnProg = tt[dir]; // put turn program in
 	_compact->logic = L_TURNING;
 
 	turn();
 
-	return 0; // drop out of script
+	return false; // drop out of script
 }
 
-uint32 SkyLogic::fnArrived(uint32 scriptVar, uint32 b, uint32 c) {
+bool SkyLogic::fnArrived(uint32 scriptVar, uint32 b, uint32 c) {
 	_compact->extCompact->leaving = (uint16)(scriptVar & 0xffff);
 	_scriptVariables[scriptVar/4]++;
-	return 1;
+	return true;
 }
 
-uint32 SkyLogic::fnLeaving(uint32 a, uint32 b, uint32 c) {
+bool SkyLogic::fnLeaving(uint32 a, uint32 b, uint32 c) {
 	_compact->extCompact->atWatch = 0;
 
 	if (_compact->extCompact->leaving) {
@@ -1276,93 +1276,93 @@ uint32 SkyLogic::fnLeaving(uint32 a, uint32 b, uint32 c) {
 		_compact->extCompact->leaving = 0; // I shall do this only once
 	}
 
-	return 1; // keep going
+	return true; // keep going
 }
 
-uint32 SkyLogic::fnSetAlternate(uint32 scr, uint32 b, uint32 c) {
+bool SkyLogic::fnSetAlternate(uint32 scr, uint32 b, uint32 c) {
 	_compact->extCompact->alt = (uint16)(scr & 0xffff);
 	_compact->logic = L_ALT;
-	return 0;
+	return false;
 }
 
-uint32 SkyLogic::fnAltSetAlternate(uint32 target, uint32 scr, uint32 c) {
+bool SkyLogic::fnAltSetAlternate(uint32 target, uint32 scr, uint32 c) {
 	Compact *cpt = SkyState::fetchCompact(target);
 	cpt->extCompact->alt = (uint16)(scr & 0xffff);
 	cpt->logic = L_ALT;
-	return 0;
+	return false;
 }
 
-uint32 SkyLogic::fnKillId(uint32 id, uint32 b, uint32 c) {
+bool SkyLogic::fnKillId(uint32 id, uint32 b, uint32 c) {
 	if (id) {
 		Compact *cpt = SkyState::fetchCompact(id);
 		if (cpt->status & (1 << 7))
 			_skyGrid->removeObjectFromWalk(cpt);
 		cpt->status = 0;
 	}
-	return 1;
+	return true;
 }
 
-uint32 SkyLogic::fnNoHuman(uint32 a, uint32 b, uint32 c) {
+bool SkyLogic::fnNoHuman(uint32 a, uint32 b, uint32 c) {
 	if (!_scriptVariables[MOUSE_STOP]) {
 		_scriptVariables[MOUSE_STOP] &= 1;
 		runGetOff();
 		fnBlankMouse(0, 0, 0);
 	}
-	return 1;
+	return true;
 }
 
-uint32 SkyLogic::fnAddHuman(uint32 a, uint32 b, uint32 c) {
+bool SkyLogic::fnAddHuman(uint32 a, uint32 b, uint32 c) {
 	warning("Stub: fnAddHuman");
-	return 1;
+	return true;
 }
 
-uint32 SkyLogic::fnAddButtons(uint32 a, uint32 b, uint32 c) {
+bool SkyLogic::fnAddButtons(uint32 a, uint32 b, uint32 c) {
 	error("Stub: fnAddButtons");
 }
 
-uint32 SkyLogic::fnNoButtons(uint32 a, uint32 b, uint32 c) {
+bool SkyLogic::fnNoButtons(uint32 a, uint32 b, uint32 c) {
 	error("Stub: fnNoButtons");
 }
 
-uint32 SkyLogic::fnSetStop(uint32 a, uint32 b, uint32 c) {
+bool SkyLogic::fnSetStop(uint32 a, uint32 b, uint32 c) {
 	_scriptVariables[MOUSE_STOP] |= 1;
-	return 1;
+	return true;
 }
 
-uint32 SkyLogic::fnClearStop(uint32 a, uint32 b, uint32 c) {
+bool SkyLogic::fnClearStop(uint32 a, uint32 b, uint32 c) {
 	_scriptVariables[MOUSE_STOP] = 0;
-	return 1;
+	return true;
 }
 
-uint32 SkyLogic::fnPointerText(uint32 a, uint32 b, uint32 c) {
+bool SkyLogic::fnPointerText(uint32 a, uint32 b, uint32 c) {
 	error("Stub: fnPointerText");
 }
 
-uint32 SkyLogic::fnQuit(uint32 a, uint32 b, uint32 c) {
-	return 0;
+bool SkyLogic::fnQuit(uint32 a, uint32 b, uint32 c) {
+	return false;
 }
 
-uint32 SkyLogic::fnSpeakMe(uint32 a, uint32 b, uint32 c) {
+bool SkyLogic::fnSpeakMe(uint32 a, uint32 b, uint32 c) {
 	warning("Stub: fnSpeakMe");
-	return 0;
+	return false;
 }
 
-uint32 SkyLogic::fnSpeakMeDir(uint32 a, uint32 b, uint32 c) {
+bool SkyLogic::fnSpeakMeDir(uint32 a, uint32 b, uint32 c) {
 	warning("Stub: fnSpeakMeDir");
-	return 0;
+	return false;
 }
 
-uint32 SkyLogic::fnSpeakWait(uint32 id, uint32 message, uint32 animation) {
+bool SkyLogic::fnSpeakWait(uint32 id, uint32 message, uint32 animation) {
 	_compact->flag = (uint16)(id & 0xffff);
 	_compact->logic = L_LISTEN;
 	return fnSpeakMe(id, message, animation);
 }
 
-uint32 SkyLogic::fnSpeakWaitDir(uint32 a, uint32 b, uint32 c) {
+bool SkyLogic::fnSpeakWaitDir(uint32 a, uint32 b, uint32 c) {
 	error("Stub: fnSpeakWaitDir");
 }
 
-uint32 SkyLogic::fnChooser(uint32 a, uint32 b, uint32 c) {
+bool SkyLogic::fnChooser(uint32 a, uint32 b, uint32 c) {
 	
 	// setup the text questions to be clicked on
 	// read from TEXT1 until 0
@@ -1406,19 +1406,19 @@ uint32 SkyLogic::fnChooser(uint32 a, uint32 b, uint32 c) {
 	}
 
 	if (p == _scriptVariables + TEXT1)
-		return 1;
+		return true;
 
 	_compact->logic = L_CHOOSE; // player frozen until choice made
 	fnAddHuman(0, 0, 0); // bring back mouse
 
-	return 0;
+	return false;
 }
 
-uint32 SkyLogic::fnHighlight(uint32 itemNo, uint32 pen, uint32 c) {
+bool SkyLogic::fnHighlight(uint32 itemNo, uint32 pen, uint32 c) {
 	error("Stub: fnHighlight");
 }
 
-uint32 SkyLogic::fnTextKill(uint32 a, uint32 b, uint32 c) {
+bool SkyLogic::fnTextKill(uint32 a, uint32 b, uint32 c) {
 	// Kill of text items that are mouse detectable
 
 	uint32 id = FIRST_TEXT_COMPACT;
@@ -1429,52 +1429,52 @@ uint32 SkyLogic::fnTextKill(uint32 a, uint32 b, uint32 c) {
 			cpt->status = 0;
 		id++;
 	}
-	return 1;
+	return true;
 }
 
-uint32 SkyLogic::fnStopMode(uint32 a, uint32 b, uint32 c) {
+bool SkyLogic::fnStopMode(uint32 a, uint32 b, uint32 c) {
 	_compact->logic = L_STOPPED;
-	return 0;
+	return false;
 }
 
-uint32 SkyLogic::fnWeWait(uint32 id, uint32 b, uint32 c) {
+bool SkyLogic::fnWeWait(uint32 id, uint32 b, uint32 c) {
 	// We have hit another mega
 	// we are going to wait for it to move
 
 	_compact->extCompact->waitingFor = id;
 	stopAndWait();
-	return 1; // not sure about this
+	return true; // not sure about this
 }
 
-uint32 SkyLogic::fnSendSync(uint32 mega, uint32 sync, uint32 c) {
+bool SkyLogic::fnSendSync(uint32 mega, uint32 sync, uint32 c) {
 	Compact *cpt = SkyState::fetchCompact(mega);
 	cpt->sync = (uint16)(sync & 0xffff);
-	return 0;
+	return false;
 }
 
-uint32 SkyLogic::fnSendFastSync(uint32 mega, uint32 sync, uint32 c) {
+bool SkyLogic::fnSendFastSync(uint32 mega, uint32 sync, uint32 c) {
 	Compact *cpt = SkyState::fetchCompact(mega);
 	cpt->sync = (uint16)(sync & 0xffff);
-	return 1;
+	return true;
 }
 
-uint32 SkyLogic::fnSendRequest(uint32 target, uint32 scr, uint32 c) {
+bool SkyLogic::fnSendRequest(uint32 target, uint32 scr, uint32 c) {
 	Compact *cpt = SkyState::fetchCompact(target);
 	cpt->extCompact->request = (uint16)(scr & 0xffff);
-	return 0;
+	return false;
 }
 
-uint32 SkyLogic::fnClearRequest(uint32 target, uint32 b, uint32 c) {
+bool SkyLogic::fnClearRequest(uint32 target, uint32 b, uint32 c) {
 	Compact *cpt = SkyState::fetchCompact(target);
 	cpt->extCompact->request = 0;
-	return 1;
+	return true;
 }
 
-uint32 SkyLogic::fnCheckRequest(uint32 a, uint32 b, uint32 c) {
+bool SkyLogic::fnCheckRequest(uint32 a, uint32 b, uint32 c) {
 	// check for interaction request
 	
 	if (!_compact->extCompact->request)
-		return 1;
+		return true;
 
 	_compact->mode = C_ACTION_MODE; // into action mode
 
@@ -1482,10 +1482,10 @@ uint32 SkyLogic::fnCheckRequest(uint32 a, uint32 b, uint32 c) {
 	_compact->extCompact->actionSub_off = 0;
 
 	_compact->extCompact->request = 0; // trash request
-	return 0; // drop from script
+	return false; // drop from script
 }
 
-uint32 SkyLogic::fnStartMenu(uint32 firstObject, uint32 b, uint32 c) {
+bool SkyLogic::fnStartMenu(uint32 firstObject, uint32 b, uint32 c) {
 	// initialise the top menu bar
 	// firstObject is o0 for game menu, k0 for linc
 
@@ -1550,17 +1550,17 @@ uint32 SkyLogic::fnStartMenu(uint32 firstObject, uint32 b, uint32 c) {
 			cpt->ycood = 112;
 	}
 
-	return 1;
+	return true;
 }
 
-uint32 SkyLogic::fnUnhighlight(uint32 item, uint32 b, uint32 c) {
+bool SkyLogic::fnUnhighlight(uint32 item, uint32 b, uint32 c) {
 	Compact *cpt = SkyState::fetchCompact(item);
 	cpt->frame--;
 	cpt->getToFlag = 0;
-	return 1;
+	return true;
 }
 
-uint32 SkyLogic::fnFaceId(uint32 otherId, uint32 b, uint32 c) {
+bool SkyLogic::fnFaceId(uint32 otherId, uint32 b, uint32 c) {
 	// return the direction to turn to face another id
 	// pass back result in c_just_flag
 
@@ -1592,55 +1592,55 @@ uint32 SkyLogic::fnFaceId(uint32 otherId, uint32 b, uint32 c) {
 		if (y >= x)
 			_compact->getToFlag = 0;
 	}
-	return 1;
+	return true;
 }
 
-uint32 SkyLogic::fnForeground(uint32 sprite, uint32 b, uint32 c) {
+bool SkyLogic::fnForeground(uint32 sprite, uint32 b, uint32 c) {
 	// Make sprite a foreground sprite
 	Compact *cpt = SkyState::fetchCompact(sprite);
 	cpt->status &= 0xfff8;
 	cpt->status |= ST_FOREGROUND;
-	return 1;
+	return true;
 }
 
-uint32 SkyLogic::fnBackground(uint32 a, uint32 b, uint32 c) {
+bool SkyLogic::fnBackground(uint32 a, uint32 b, uint32 c) {
 	// Make us a background sprite
 	_compact->status &= 0xfff8;
 	_compact->status |= ST_BACKGROUND;
-	return 1;
+	return true;
 }
 
-uint32 SkyLogic::fnNewBackground(uint32 sprite, uint32 b, uint32 c) {
+bool SkyLogic::fnNewBackground(uint32 sprite, uint32 b, uint32 c) {
 	// Make sprite a background sprite
 	Compact *cpt = SkyState::fetchCompact(sprite);
 	cpt->status &= 0xfff8;
 	cpt->status |= ST_BACKGROUND;
-	return 1;
+	return true;
 }
 
-uint32 SkyLogic::fnSort(uint32 mega, uint32 b, uint32 c) {
+bool SkyLogic::fnSort(uint32 mega, uint32 b, uint32 c) {
 	Compact *cpt = SkyState::fetchCompact(mega);
 	cpt->status &= 0xfff8;
 	cpt->status |= ST_SORT;
-	return 1;
+	return true;
 }
 
-uint32 SkyLogic::fnNoSpriteEngine(uint32 a, uint32 b, uint32 c) {
+bool SkyLogic::fnNoSpriteEngine(uint32 a, uint32 b, uint32 c) {
 	// stop the compact printing
 	// remove foreground, background & sort
 	_compact->status &= 0xfff8;
-	return 1;	
+	return true;	
 }
 
-uint32 SkyLogic::fnNoSpritesA6(uint32 us, uint32 b, uint32 c) {
+bool SkyLogic::fnNoSpritesA6(uint32 us, uint32 b, uint32 c) {
 	// stop the compact printing
 	// remove foreground, background & sort
 	Compact *cpt = SkyState::fetchCompact(us);
 	cpt->status &= 0xfff8;
-	return 1;	
+	return true;	
 }
 
-uint32 SkyLogic::fnResetId(uint32 id, uint32 resetBlock, uint32 c) {
+bool SkyLogic::fnResetId(uint32 id, uint32 resetBlock, uint32 c) {
 	// used when a mega is to be restarted
 	// eg - when a smaller mega turn to larger
 	// - a mega changes rooms...
@@ -1651,33 +1651,33 @@ uint32 SkyLogic::fnResetId(uint32 id, uint32 resetBlock, uint32 c) {
 	uint16 off;
 	while ((off = *rst++) != 0xffff)
 		*(uint16 *)SkyCompact::getCompactElem(cpt, off) = *rst++;
-	return 1;
+	return true;
 }
 
-uint32 SkyLogic::fnToggleGrid(uint32 a, uint32 b, uint32 c) {
+bool SkyLogic::fnToggleGrid(uint32 a, uint32 b, uint32 c) {
 	// Toggle a mega's grid plotting
 	_compact->status ^= ST_GRID_PLOT;
-	return 1;
+	return true;
 }
 
-uint32 SkyLogic::fnPause(uint32 cycles, uint32 b, uint32 c) {
+bool SkyLogic::fnPause(uint32 cycles, uint32 b, uint32 c) {
 	// Set mega to l_pause
 	_compact->flag = (uint16)(cycles & 0xffff);
 	_compact->logic = L_PAUSE;
-	return 0; // drop out of script
+	return false; // drop out of script
 }
 
-uint32 SkyLogic::fnRunAnimMod(uint32 animNo, uint32 b, uint32 c) {
+bool SkyLogic::fnRunAnimMod(uint32 animNo, uint32 b, uint32 c) {
 	uint16 *animation = (uint16 *)SkyState::fetchCompact(animNo);
 	uint16 sprite = *animation++; // get sprite set
 	_compact->offset = sprite;
 	_compact->grafixProg = animation;
 	_compact->logic = L_MOD_ANIMATE;
 	anim();
-	return 0; // drop from script
+	return false; // drop from script
 }
 
-uint32 SkyLogic::fnSimpleMod(uint32 animSeqNo, uint32 b, uint32 c) {
+bool SkyLogic::fnSimpleMod(uint32 animSeqNo, uint32 b, uint32 c) {
 	uint16 *animSeq = (uint16 *)SkyState::fetchCompact(animSeqNo);
 
 	_compact->offset = *animSeq++;
@@ -1685,107 +1685,107 @@ uint32 SkyLogic::fnSimpleMod(uint32 animSeqNo, uint32 b, uint32 c) {
 	_compact->grafixProg = animSeq;
 	_compact->logic = L_SIMPLE_MOD;
 	simpleAnim();
-	return 0;
+	return false;
 }
 
-uint32 SkyLogic::fnRunFrames(uint32 sequenceNo, uint32 b, uint32 c) {
+bool SkyLogic::fnRunFrames(uint32 sequenceNo, uint32 b, uint32 c) {
 	uint16 *sequence = (uint16 *)SkyState::fetchCompact(sequenceNo);
 
 	_compact->logic = L_FRAMES;
 	_compact->offset = *sequence++;
 	_compact->grafixProg = sequence;
 	simpleAnim();
-	return 0;
+	return false;
 }
 
-uint32 SkyLogic::fnAwaitSync(uint32 a, uint32 b, uint32 c) {
+bool SkyLogic::fnAwaitSync(uint32 a, uint32 b, uint32 c) {
 	if (_compact->sync)
-		return 1;
+		return true;
 
 	_compact->logic = L_WAIT_SYNC;
-	return 0;
+	return false;
 }
 
-uint32 SkyLogic::fnIncMegaSet(uint32 a, uint32 b, uint32 c) {
+bool SkyLogic::fnIncMegaSet(uint32 a, uint32 b, uint32 c) {
 	_compact->extCompact->megaSet += NEXT_MEGA_SET;
-	return 1;
+	return true;
 }
 
-uint32 SkyLogic::fnDecMegaSet(uint32 a, uint32 b, uint32 c) {
+bool SkyLogic::fnDecMegaSet(uint32 a, uint32 b, uint32 c) {
 	_compact->extCompact->megaSet -= NEXT_MEGA_SET;
-	return 1;
+	return true;
 }
 
-uint32 SkyLogic::fnSetMegaSet(uint32 mega, uint32 setNo, uint32 c) {
+bool SkyLogic::fnSetMegaSet(uint32 mega, uint32 setNo, uint32 c) {
 	Compact *cpt = SkyState::fetchCompact(mega);
 	cpt->extCompact->megaSet = (uint16) (setNo * NEXT_MEGA_SET);
-	return 1;
+	return true;
 }
 
-uint32 SkyLogic::fnMoveItems(uint32 listNo, uint32 screenNo, uint32 c) {
+bool SkyLogic::fnMoveItems(uint32 listNo, uint32 screenNo, uint32 c) {
 	// Move a list of id's to another screen
 	uint16 *p = SkyCompact::move_list[listNo];
 	for (int i = 0; i < 2; i++) {
 		if (!*p)
-			return 1;
+			return true;
 		Compact *cpt = SkyState::fetchCompact(*p++);
 		cpt->screen = (uint16)(screenNo & 0xffff);
 	}
-	return 1;
+	return true;
 }
 
-uint32 SkyLogic::fnNewList(uint32 a, uint32 b, uint32 c) {
+bool SkyLogic::fnNewList(uint32 a, uint32 b, uint32 c) {
 	// Reset the chooser list
 	for (int i = 0; i < 16; i++)
 		_scriptVariables[TEXT1 + i] = 0;
-	return 1;
+	return true;
 }
 
-uint32 SkyLogic::fnAskThis(uint32 textNo, uint32 animNo, uint32 c) {
+bool SkyLogic::fnAskThis(uint32 textNo, uint32 animNo, uint32 c) {
 	// find first free position
 	uint32 *p = _scriptVariables + TEXT1;
 	while (*p)
 		p += 2;
 	*p++ = textNo;
 	*p = animNo;
-	return 1;
+	return true;
 }
 
-uint32 SkyLogic::fnRandom(uint32 a, uint32 b, uint32 c) {
+bool SkyLogic::fnRandom(uint32 a, uint32 b, uint32 c) {
 	error("Stub: fnRandom");
 }
 
-uint32 SkyLogic::fnPersonHere(uint32 id, uint32 room, uint32 c) {
+bool SkyLogic::fnPersonHere(uint32 id, uint32 room, uint32 c) {
 	Compact *cpt = SkyState::fetchCompact(id);
 	_scriptVariables[RESULT] = cpt->screen == room ? 1 : 0;
-	return 1;
+	return true;
 }
 
-uint32 SkyLogic::fnToggleMouse(uint32 a, uint32 b, uint32 c) {
+bool SkyLogic::fnToggleMouse(uint32 a, uint32 b, uint32 c) {
 	error("Stub: fnToggleMouse");
 }
 
-uint32 SkyLogic::fnMouseOn(uint32 a, uint32 b, uint32 c) {
+bool SkyLogic::fnMouseOn(uint32 a, uint32 b, uint32 c) {
 	error("Stub: fnMouseOn");
 }
 
-uint32 SkyLogic::fnMouseOff(uint32 a, uint32 b, uint32 c) {
+bool SkyLogic::fnMouseOff(uint32 a, uint32 b, uint32 c) {
 	error("Stub: fnMouseOff");
 }
 
-uint32 SkyLogic::fnFetchX(uint32 id, uint32 b, uint32 c) {
+bool SkyLogic::fnFetchX(uint32 id, uint32 b, uint32 c) {
 	Compact *cpt = SkyState::fetchCompact(id);
 	_scriptVariables[RESULT] = cpt->xcood;
-	return 1;
+	return true;
 }
 
-uint32 SkyLogic::fnFetchY(uint32 id, uint32 b, uint32 c) {
+bool SkyLogic::fnFetchY(uint32 id, uint32 b, uint32 c) {
 	Compact *cpt = SkyState::fetchCompact(id);
 	_scriptVariables[RESULT] = cpt->ycood;
-	return 1;
+	return true;
 }
 
-uint32 SkyLogic::fnTestList(uint32 id, uint32 x, uint32 y) {
+bool SkyLogic::fnTestList(uint32 id, uint32 x, uint32 y) {
 	_scriptVariables[RESULT] = 0; // assume fail
 	uint16 *list = (uint16 *)SkyState::fetchCompact(id);
 
@@ -1805,16 +1805,16 @@ uint32 SkyLogic::fnTestList(uint32 id, uint32 x, uint32 y) {
 		// get value
 		_scriptVariables[RESULT] = *list++;
 	}
-	return 1;
+	return true;
 }
 
-uint32 SkyLogic::fnFetchPlace(uint32 id, uint32 b, uint32 c) {
+bool SkyLogic::fnFetchPlace(uint32 id, uint32 b, uint32 c) {
 	Compact *cpt = SkyState::fetchCompact(id);
 	_scriptVariables[RESULT] = cpt->place;
-	return 1;
+	return true;
 }
 
-uint32 SkyLogic::fnCustomJoey(uint32 id, uint32 b, uint32 c) {
+bool SkyLogic::fnCustomJoey(uint32 id, uint32 b, uint32 c) {
 	// return id's x & y coordinate & c_mood (i.e. stood still yes/no)
 	// used by Joey-Logic - done in code like this because scripts can't
 	// get access to another megas compact as easily
@@ -1825,50 +1825,50 @@ uint32 SkyLogic::fnCustomJoey(uint32 id, uint32 b, uint32 c) {
 	_scriptVariables[PLAYER_Y] = cpt->ycood;
 	_scriptVariables[PLAYER_MOOD] = cpt->mood;
 	_scriptVariables[PLAYER_SCREEN] = cpt->screen;
-	return 1;
+	return true;
 }
 
-uint32 SkyLogic::fnSetPalette(uint32 a, uint32 b, uint32 c) {
+bool SkyLogic::fnSetPalette(uint32 a, uint32 b, uint32 c) {
 	error("Stub: fnSetPalette");
 }
 
-uint32 SkyLogic::fnTextModule(uint32 a, uint32 b, uint32 c) {
+bool SkyLogic::fnTextModule(uint32 a, uint32 b, uint32 c) {
 	error("Stub: fnTextModule");
 }
 
-uint32 SkyLogic::fnChangeName(uint32 id, uint32 textNo, uint32 c) {
+bool SkyLogic::fnChangeName(uint32 id, uint32 textNo, uint32 c) {
 	Compact *cpt = SkyState::fetchCompact(id);
 	cpt->cursorText = (uint16) textNo;
-	return 1;
+	return true;
 }
 
-uint32 SkyLogic::fnMiniLoad(uint32 a, uint32 b, uint32 c) {
+bool SkyLogic::fnMiniLoad(uint32 a, uint32 b, uint32 c) {
 	error("Stub: fnMiniLoad");
 }
 
-uint32 SkyLogic::fnFlushBuffers(uint32 a, uint32 b, uint32 c) {
+bool SkyLogic::fnFlushBuffers(uint32 a, uint32 b, uint32 c) {
 	error("Stub: fnFlushBuffers");
 }
 
-uint32 SkyLogic::fnFlushChip(uint32 a, uint32 b, uint32 c) {
+bool SkyLogic::fnFlushChip(uint32 a, uint32 b, uint32 c) {
 	error("Stub: fnFlushChip");
 }
 
-uint32 SkyLogic::fnSaveCoods(uint32 a, uint32 b, uint32 c) {
+bool SkyLogic::fnSaveCoods(uint32 a, uint32 b, uint32 c) {
 	error("Stub: fnSaveCoods");
 }
 
-uint32 SkyLogic::fnPlotGrid(uint32 x, uint32 y, uint32 width) {
+bool SkyLogic::fnPlotGrid(uint32 x, uint32 y, uint32 width) {
 	_skyGrid->plotGrid(x, y, width, _compact);
-	return 1;
+	return true;
 }
 
-uint32 SkyLogic::fnRemoveGrid(uint32 x, uint32 y, uint32 width) {
+bool SkyLogic::fnRemoveGrid(uint32 x, uint32 y, uint32 width) {
 	_skyGrid->removeGrid(x, y, width, _compact);
-	return 1;
+	return true;
 }
 
-uint32 SkyLogic::fnEyeball(uint32 id, uint32 b, uint32 c) {
+bool SkyLogic::fnEyeball(uint32 id, uint32 b, uint32 c) {
 	// set 'result' to frame no. pointing to foster, according to table used
 	// eg. FN_eyeball (id_eye_90_table);
 
@@ -1884,24 +1884,24 @@ uint32 SkyLogic::fnEyeball(uint32 id, uint32 b, uint32 c) {
 	y <<= 2;
 
 	_scriptVariables[RESULT] = eyeTable[x + y] + S91;
-	return 1;
+	return true;
 }
 
-uint32 SkyLogic::fnCursorUp(uint32 a, uint32 b, uint32 c) {
+bool SkyLogic::fnCursorUp(uint32 a, uint32 b, uint32 c) {
 	error("Stub: fnCursorUp");
 }
 
-uint32 SkyLogic::fnLeaveSection(uint32 sectionNo, uint32 b, uint32 c) {
+bool SkyLogic::fnLeaveSection(uint32 sectionNo, uint32 b, uint32 c) {
 	if (SkyState::isDemo(_gameVersion))
 		error("End of demo");
 	
 	if (sectionNo == 5) //linc section - has different mouse icons
 		_skyMouse->replaceMouseCursors(60302);
 
-	return 1;
+	return true;
 }
 
-uint32 SkyLogic::fnEnterSection(uint32 sectionNo, uint32 b, uint32 c) {
+bool SkyLogic::fnEnterSection(uint32 sectionNo, uint32 b, uint32 c) {
 
 	if (SkyState::isDemo(_gameVersion))
 		if (sectionNo > 2)
@@ -1925,47 +1925,47 @@ uint32 SkyLogic::fnEnterSection(uint32 sectionNo, uint32 b, uint32 c) {
 
 		}
 			
-	return 1;
+	return true;
 }
 
-uint32 SkyLogic::fnRestoreGame(uint32 a, uint32 b, uint32 c) {
+bool SkyLogic::fnRestoreGame(uint32 a, uint32 b, uint32 c) {
 	error("Stub: fnRestoreGame");
 }
 
-uint32 SkyLogic::fnRestartGame(uint32 a, uint32 b, uint32 c) {
+bool SkyLogic::fnRestartGame(uint32 a, uint32 b, uint32 c) {
 	error("Stub: fnRestartGame");
 }
 
-uint32 SkyLogic::fnNewSwingSeq(uint32 a, uint32 b, uint32 c) {
+bool SkyLogic::fnNewSwingSeq(uint32 a, uint32 b, uint32 c) {
 	error("Stub: fnNewSwingSeq");
 }
 
-uint32 SkyLogic::fnWaitSwingEnd(uint32 a, uint32 b, uint32 c) {
+bool SkyLogic::fnWaitSwingEnd(uint32 a, uint32 b, uint32 c) {
 	error("Stub: fnWaitSwingEnd");
 }
 
-uint32 SkyLogic::fnSkipIntroCode(uint32 a, uint32 b, uint32 c) {
+bool SkyLogic::fnSkipIntroCode(uint32 a, uint32 b, uint32 c) {
 	warning("Stub: fnSkipIntroCode");
-	return 1;
+	return true;
 }
 
-uint32 SkyLogic::fnBlankScreen(uint32 a, uint32 b, uint32 c) {
+bool SkyLogic::fnBlankScreen(uint32 a, uint32 b, uint32 c) {
 	error("Stub: fnBlankScreen");
 }
 
-uint32 SkyLogic::fnPrintCredit(uint32 a, uint32 b, uint32 c) {
+bool SkyLogic::fnPrintCredit(uint32 a, uint32 b, uint32 c) {
 	error("Stub: fnPrintCredit");
 }
 
-uint32 SkyLogic::fnLookAt(uint32 a, uint32 b, uint32 c) {
+bool SkyLogic::fnLookAt(uint32 a, uint32 b, uint32 c) {
 	error("Stub: fnLookAt");
 }
 
-uint32 SkyLogic::fnLincTextModule(uint32 a, uint32 b, uint32 c) {
+bool SkyLogic::fnLincTextModule(uint32 a, uint32 b, uint32 c) {
 	error("Stub: fnLincTextModule");
 }
 
-uint32 SkyLogic::fnTextKill2(uint32 a, uint32 b, uint32 c) {
+bool SkyLogic::fnTextKill2(uint32 a, uint32 b, uint32 c) {
 	// Kill all text items
 
 	uint32 id = FIRST_TEXT_COMPACT;
@@ -1975,54 +1975,54 @@ uint32 SkyLogic::fnTextKill2(uint32 a, uint32 b, uint32 c) {
 		cpt->status = 0;
 		id++;
 	}
-	return 1;
+	return true;
 }
 
-uint32 SkyLogic::fnSetFont(uint32 font, uint32 b, uint32 c) {
+bool SkyLogic::fnSetFont(uint32 font, uint32 b, uint32 c) {
 	_skyText->fnSetFont(font);
-	return 1;
+	return true;
 }
 
-uint32 SkyLogic::fnStartFx(uint32 a, uint32 b, uint32 c) {
+bool SkyLogic::fnStartFx(uint32 a, uint32 b, uint32 c) {
 	warning("Stub: fnStartFx");
-	return 1;
+	return true;
 }
 
-uint32 SkyLogic::fnStopFx(uint32 a, uint32 b, uint32 c) {
+bool SkyLogic::fnStopFx(uint32 a, uint32 b, uint32 c) {
 	error("Stub: fnStopFx");
 }
 
-uint32 SkyLogic::fnStartMusic(uint32 a, uint32 b, uint32 c) {
+bool SkyLogic::fnStartMusic(uint32 a, uint32 b, uint32 c) {
 	error("Stub: fnStartMusic");
 }
 
-uint32 SkyLogic::fnStopMusic(uint32 a, uint32 b, uint32 c) {
+bool SkyLogic::fnStopMusic(uint32 a, uint32 b, uint32 c) {
 	error("Stub: fnStopMusic");
 }
 
-uint32 SkyLogic::fnFadeDown(uint32 a, uint32 b, uint32 c) {
+bool SkyLogic::fnFadeDown(uint32 a, uint32 b, uint32 c) {
 	// this is actually already implemented in SkyScreen
 	error("Stub: fnFadeDown");
 }
 
-uint32 SkyLogic::fnFadeUp(uint32 a, uint32 b, uint32 c) {
+bool SkyLogic::fnFadeUp(uint32 a, uint32 b, uint32 c) {
 	error("Stub: fnFadeUp");
 }
 
-uint32 SkyLogic::fnQuitToDos(uint32 a, uint32 b, uint32 c) {
+bool SkyLogic::fnQuitToDos(uint32 a, uint32 b, uint32 c) {
 	error("Stub: fnQuitToDos");
 }
 
-uint32 SkyLogic::fnPauseFx(uint32 a, uint32 b, uint32 c) {
+bool SkyLogic::fnPauseFx(uint32 a, uint32 b, uint32 c) {
 	error("Stub: fnPauseFx");
 }
 
-uint32 SkyLogic::fnUnPauseFx(uint32 a, uint32 b, uint32 c) {
+bool SkyLogic::fnUnPauseFx(uint32 a, uint32 b, uint32 c) {
 	error("Stub: fnUnPauseFx");
 }
 
-uint32 SkyLogic::fnPrintf(uint32 a, uint32 b, uint32 c) {
+bool SkyLogic::fnPrintf(uint32 a, uint32 b, uint32 c) {
 	printf("fnPrintf: %d\n", a);
-	return 1;
+	return true;
 }
 
