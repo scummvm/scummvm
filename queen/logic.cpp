@@ -1274,8 +1274,10 @@ void Logic::personSetData(int16 noun, const char *actorName, bool loadBank, Pers
 		}
 	}
 
-	if (!actor)
-		error ("Actor '%s' not found", actorName);
+	if (!actor) {
+		warning("Actor '%s' not found, using default", actorName);
+		actor = 1;
+	}
 
 	pp->actor = &_actorData[actor];
 	pp->bankNum = pp->actor->bankNum;

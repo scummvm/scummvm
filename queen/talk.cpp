@@ -127,7 +127,12 @@ void Talk::talk(const char *filename, int personInRoom, char *cutawayFilename) {
 	load(filename);
 
 	Person person;
+	memset(&person, 0, sizeof(Person));
 	_logic->personSetData(personInRoom, "", false, &person);
+
+	if (NULL == person.name) {
+		error("Invalid person object");
+	}
 	
 	int16 oldLevel = 0;
 	bool personWalking = false;		// OWALK in talk.c
