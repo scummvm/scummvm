@@ -75,10 +75,12 @@ void Engine::initCommonGFX(GameDetector &detector) {
 	}
 	
 	// (De)activate aspect-ratio correction as determined by the config settings
-	_system->setFeatureState(OSystem::kFeatureAspectRatioCorrection, ConfMan.getBool("aspect_ratio"));
+	if (ConfMan.hasKey("aspect_ratio", detector._targetName))
+		_system->setFeatureState(OSystem::kFeatureAspectRatioCorrection, ConfMan.getBool("aspect_ratio"));
 		
 	// (De)activate fullscreen mode as determined by the config settings 
-	_system->setFeatureState(OSystem::kFeatureFullscreenMode, ConfMan.getBool("fullscreen"));
+	if (ConfMan.hasKey("fullscreen", detector._targetName))
+		_system->setFeatureState(OSystem::kFeatureFullscreenMode, ConfMan.getBool("fullscreen"));
 }
 
 const char *Engine::getGameDataPath() const {
