@@ -20,14 +20,8 @@
  * $Header$
  *
  */
-/*
 
- Description:   
- 
-    Scripting module script function component header file
-
- Notes: 
-*/
+// Scripting module script function component header file
 
 #ifndef SAGA_SFUNCS_H
 #define SAGA_SFUNCS_H
@@ -38,66 +32,49 @@ namespace Saga {
 
 #define R_SFUNC_NUM 78
 
-
-#define R_SCRIPTFUNC_PARAMS R_SCRIPT_THREAD * thread
+#define R_SCRIPTFUNC_PARAMS R_SCRIPT_THREAD *thread
 
 typedef int (*SFunc_T) (R_SCRIPTFUNC_PARAMS);
 
 struct R_SFUNC_ENTRY {
-
 	int sfunc_num;
 	int sfunc_argc;
 	SFunc_T sfunc_fp;
-
 };
 
 extern R_SFUNC_ENTRY SFuncList[];
 
-/* SF 1 */
+// SF 1
 int SF_Sleep(R_SCRIPTFUNC_PARAMS);
-
-/* SF 3 */
+// SF 3
 int SF_3(R_SCRIPTFUNC_PARAMS);
-
-/* SF 4 */
+// SF 4
 int SF_SetCommandText(R_SCRIPTFUNC_PARAMS);
-
-/* SF 6 */
+// SF 6
 int SF_ActorWalkTo(R_SCRIPTFUNC_PARAMS);
-
-/* SF 8 */
+// SF 8
 int SF_SetActorOrient(R_SCRIPTFUNC_PARAMS);
-
-/* SF 11 */
+// SF 11
 int SF_FreezeInterface(R_SCRIPTFUNC_PARAMS);
-
-/* SF 26 */
+// SF 26
 int SF_StartAnim(R_SCRIPTFUNC_PARAMS);
-
-/* SF 27 */
+// SF 27
 int SF_ActorWalkToAsync(R_SCRIPTFUNC_PARAMS);
-
-/* SF 30 */
+// SF 30
 int SF_PlaceActor(R_SCRIPTFUNC_PARAMS);
-
-/* SF 36 */
+// SF 36
 int SF_ActorWalkTo2(R_SCRIPTFUNC_PARAMS);
-
-/* SF 37 */
+// SF 37
 int SF_SetActorAct(R_SCRIPTFUNC_PARAMS);
-
-/* SF 38 */
+// SF 38
 int SF_SetActorAct2(R_SCRIPTFUNC_PARAMS);
-
-/* SF 41 */
+// SF 41
 int SF_LinkAnim(R_SCRIPTFUNC_PARAMS);
-
-/* SF 43 */
+// SF 43
 int SF_PlaceActorEx(R_SCRIPTFUNC_PARAMS);
-
-/* SF 44 */
+// SF 44
 int SF_CheckUserInterrupt(R_SCRIPTFUNC_PARAMS);
 
 } // End of namespace Saga
 
-#endif				/* SAGA_SFUNCS_H */
+#endif

@@ -20,14 +20,8 @@
  * $Header$
  *
  */
-/*
 
- Description:   
- 
-    Scripting module data management component header file
-
- Notes: 
-*/
+// Scripting module data management component header file
 
 #ifndef SAGA_SDATA_H
 #define SAGA_SDATA_H
@@ -37,8 +31,8 @@ namespace Saga {
 #define R_SCRIPT_DATABUF_NUM 5
 #define R_SCRIPT_DATABUF_LEN 1024
 
-int SDATA_Init(void);
+int SDATA_Init();
 
 } // End of namespace Saga
 
-#endif				/* SAGA_SDATA_H */
+#endif

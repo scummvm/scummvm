@@ -20,16 +20,7 @@
  * $Header$
  *
  */
-/*
-
- Description:   
- 
-    Scripting module data management component
-
- Notes: 
- 
-    Type SDataWord_T must be unpadded
-*/
+// Type SDataWord_T must be unpadded
 
 #include "reinherit.h"
 
@@ -37,47 +28,31 @@
 
 #include <limits.h>
 
-/*
- * Uses the following modules:
-\*--------------------------------------------------------------------------*/
 #include "text_mod.h"
 
-/*
- * Begin module component
-\*--------------------------------------------------------------------------*/
 #include "script_mod.h"
 #include "script.h"
 #include "sdata.h"
 
 namespace Saga {
 
-int SDATA_Init(void)
-{
-
+int SDATA_Init() {
 	unsigned int i;
 	void *alloc_ptr;
 
 	R_printf(R_STDOUT, "Initializing script data buffers.\n");
-
 	for (i = 0; i < R_SCRIPT_DATABUF_NUM; i++) {
-
 		alloc_ptr = malloc(sizeof *ScriptModule.data_buf[0]);
-
 		if (alloc_ptr == NULL) {
-			R_printf(R_STDERR,
-			    "Error allocating memory for script data buffer %d.\n",
-			    i);
+			R_printf(R_STDERR, "Error allocating memory for script data buffer %d.\n", i);
 			return R_MEM;
 		}
 
 		ScriptModule.data_buf[i] = (R_SCRIPT_DATABUF *)alloc_ptr;
-
 		alloc_ptr = calloc(R_SCRIPT_DATABUF_LEN, sizeof(SDataWord_T));
 
 		if (alloc_ptr == NULL) {
-			R_printf(R_STDERR,
-			    "Error allocating memory for script data buffer %d.\n",
-			    i);
+			R_printf(R_STDERR,  "Error allocating memory for script data buffer %d.\n", i);
 			return R_MEM;
 		}
 
@@ -88,9 +63,7 @@ int SDATA_Init(void)
 	return R_SUCCESS;
 }
 
-int SDATA_GetWord(int n_buf, int n_word, SDataWord_T * data)
-{
-
+int SDATA_GetWord(int n_buf, int n_word, SDataWord_T * data) {
 	if ((n_buf < 0) || (n_buf >= R_SCRIPT_DATABUF_NUM)) {
 		return R_FAILURE;
 	}
@@ -108,9 +81,7 @@ int SDATA_GetWord(int n_buf, int n_word, SDataWord_T * data)
 	return R_SUCCESS;
 }
 
-int SDATA_PutWord(int n_buf, int n_word, SDataWord_T data)
-{
-
+int SDATA_PutWord(int n_buf, int n_word, SDataWord_T data) {
 	if ((n_buf < 0) || (n_buf >= R_SCRIPT_DATABUF_NUM)) {
 		return R_FAILURE;
 	}
@@ -124,9 +95,7 @@ int SDATA_PutWord(int n_buf, int n_word, SDataWord_T data)
 	return R_SUCCESS;
 }
 
-int SDATA_SetBit(int n_buf, SDataWord_T n_bit, int bitstate)
-{
-
+int SDATA_SetBit(int n_buf, SDataWord_T n_bit, int bitstate) {
 	int n_word;
 	int n_bitpos;
 
@@ -136,9 +105,7 @@ int SDATA_SetBit(int n_buf, SDataWord_T n_bit, int bitstate)
 		return R_FAILURE;
 	}
 
-	if (n_bit >= (unsigned long)ScriptModule.data_buf[n_buf]->len *
-	    (sizeof(SDataWord_T) * CHAR_BIT)) {
-
+	if (n_bit >= (unsigned long)ScriptModule.data_buf[n_buf]->len * (sizeof(SDataWord_T) * CHAR_BIT)) {
 		return R_FAILURE;
 	}
 
@@ -156,22 +123,17 @@ int SDATA_SetBit(int n_buf, SDataWord_T n_bit, int bitstate)
 	return R_SUCCESS;
 }
 
-int SDATA_GetBit(int n_buf, SDataWord_T n_bit, int *bitstate)
-{
-
+int SDATA_GetBit(int n_buf, SDataWord_T n_bit, int *bitstate) {
 	int n_word;
 	int n_bitpos;
 
 	SDataWord_T bit_pattern = 0x01;
 
 	if ((n_buf < 0) || (n_buf >= R_SCRIPT_DATABUF_NUM)) {
-
 		return R_FAILURE;
 	}
 
-	if (n_bit >= (SDataWord_T) ScriptModule.data_buf[n_buf]->len *
-	    (sizeof(SDataWord_T) * CHAR_BIT)) {
-
+	if (n_bit >= (SDataWord_T) ScriptModule.data_buf[n_buf]->len * (sizeof(SDataWord_T) * CHAR_BIT)) {
 		return R_FAILURE;
 	}
 
@@ -180,14 +142,12 @@ int SDATA_GetBit(int n_buf, SDataWord_T n_bit, int *bitstate)
 
 	bit_pattern <<= ((sizeof(SDataWord_T) * CHAR_BIT) - (n_bitpos + 1));
 
-	*bitstate = (ScriptModule.data_buf[n_buf]->data[n_word] &
-	    bit_pattern) ? 1 : 0;
+	*bitstate = (ScriptModule.data_buf[n_buf]->data[n_word] & bit_pattern) ? 1 : 0;
 
 	return R_SUCCESS;
 }
 
-int SDATA_ReadWordS(SDataWord_T word)
-{
+int SDATA_ReadWordS(SDataWord_T word) {
 	uint16 u_int = word;
 	int s_int;
 
@@ -200,8 +160,7 @@ int SDATA_ReadWordS(SDataWord_T word)
 	return s_int;
 }
 
-uint16 SDATA_ReadWordU(SDataWord_T word)
-{
+uint16 SDATA_ReadWordU(SDataWord_T word) {
 	uint16 u_int = (uint16) word;
 
 	return u_int;
