@@ -116,6 +116,7 @@ SwordMusic::SwordMusic(OSystem *system, SoundMixer *pMixer) {
 	_mutex = _system->create_mutex();
 	_converter[0] = NULL;
 	_converter[1] = NULL;
+	_volume = 192;
 }
 
 SwordMusic::~SwordMusic() {
@@ -132,12 +133,13 @@ void SwordMusic::passMixerFunc(void *param, int16 *buf, uint len) {
 
 void SwordMusic::mixer(int16 *buf, uint32 len) {
 	Common::StackLock lock(_mutex);
-	for (int i = 0; i < ARRAYSIZE(_handles); i++) {
-		if (_handles[i].streaming() && _converter[i]) {
-			st_volume_t vol = 255;
-			_converter[i]->flow(_handles[i], buf, len, vol, vol);
-		}
-	}
+	for (int i = 0; i < ARRAYSIZE(_handles); i++)
+		if (_handles[i].streaming() && _converter[i])
+			_converter[i]->flow(_handles[i], buf, len, _volume, _volume);
+}
+
+void SwordMusic::setVolume(uint8 vol) {
+	_volume = (st_volume_t)vol;
 }
 
 void SwordMusic::startMusic(int32 tuneId, int32 loopFlag) {

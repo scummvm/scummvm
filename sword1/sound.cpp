@@ -36,6 +36,12 @@ SwordSound::SwordSound(const char *searchPath, SoundMixer *mixer, ResMan *pResMa
 	_cowHeader = NULL;
 	_endOfQueue = 0;
 	_currentCowFile = 0;
+	_speechVol = _sfxVol = 192;
+}
+
+void SwordSound::setVolume(uint8 sfxVol, uint8 speechVol) {
+	_sfxVol = sfxVol;
+	_speechVol = speechVol;
 }
 
 int SwordSound::addToQueue(int32 fxNo) {
@@ -138,6 +144,7 @@ void SwordSound::playSample(QueueElement *elem) {
 					uint8 volR = _fxList[elem->id].roomVolList[cnt].rightVol * 10;
 					int8 pan = (volR - volL) / 2;
 					uint8 volume = (volR + volL) / 2;
+					volume = (volume * _sfxVol) >> 8;
 					uint32 size = READ_LE_UINT32(sampleData + 0x28);
 					uint8 flags;
 					if (READ_LE_UINT16(sampleData + 0x22) == 16)
@@ -167,7 +174,7 @@ bool SwordSound::startSpeech(uint16 roomNo, uint16 localNo) {
 		uint32 size;
 		int16 *data = uncompressSpeech(index + _cowHeaderSize, sampleSize, &size);
 		if (data)
-			_mixer->playRaw(&_speechHandle, data, size, 11025, SPEECH_FLAGS, SOUND_SPEECH_ID);
+			_mixer->playRaw(&_speechHandle, data, size, 11025, SPEECH_FLAGS, SOUND_SPEECH_ID, _speechVol);
 		return true;
 	} else
 		return false;

@@ -109,6 +109,12 @@ void SwordEngine::initialize(void) {
 	_logic = new SwordLogic(_objectMan, _resMan, _screen, _mouse, _sound, _music, _menu);
 	_mouse->useLogicAndMenu(_logic, _menu);
 
+	_music->setVolume((uint8)ConfMan.getInt("music_volume"));
+	uint8 speechVol = (uint8)ConfMan.getInt("speech_volume");
+	if (!speechVol)
+		speechVol = 192;
+	_sound->setVolume((uint8)ConfMan.getInt("sfx_volume"), speechVol);
+
 	_systemVars.justRestoredGame = _systemVars.currentCD = 
 		_systemVars.gamePaused = 0;
 	_systemVars.deathScreenFlag = 3;
