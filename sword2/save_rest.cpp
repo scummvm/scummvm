@@ -392,7 +392,7 @@ uint32	RestoreFromBuffer(mem *buffer, uint32 size)
 uint32 GetSaveDescription(uint16 slotNo, uint8 *description)		// (James05feb97)
 {
 	char saveFileName[MAX_FILENAME_LEN];
-	_savegameHeader header;
+	_savegameHeader dummy;
 	FILE *fp;
 
 	sprintf(saveFileName, "saves\\savegame.%.3d", slotNo);			// construct filename
@@ -406,9 +406,9 @@ uint32 GetSaveDescription(uint16 slotNo, uint8 *description)		// (James05feb97)
 	else
 	{
 //		fread(destAddress, size, count, fp);
-		fread(&header, sizeof(header), 1, fp);				// read header
+		fread(&dummy, sizeof(_savegameHeader), 1, fp);				// read header
 		fclose(fp);
-		sprintf((char*)description, header.description);
+		sprintf((char*)description, dummy.description);
 		return(SR_OK);
 	}
 }
