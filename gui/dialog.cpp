@@ -56,9 +56,8 @@ void Dialog::handleKey(char key, int modifiers)
 	Widget *w = _firstWidget;
 	key = toupper(key);
 	while (w) {
-		ButtonWidget *b = dynamic_cast<ButtonWidget *>(w);
-		if (b && key == toupper(b->_hotkey)) {
-			b->handleClick(1);
+		if (w->_type == kButtonWidget && key == toupper(((ButtonWidget *)w)->_hotkey)) {
+			w->handleClick(1);
 			break;
 		}
 		w = w->_next;

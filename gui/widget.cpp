@@ -25,7 +25,7 @@
 
 
 Widget::Widget (Dialog *boss, int x, int y, int w, int h)
-	: _boss(boss), _x(x), _y(y), _w(w), _h(h), _id(0), _flags(0)
+	: _type(0), _boss(boss), _x(x), _y(y), _w(w), _h(h), _id(0), _flags(0)
 {
 	// Insert into the widget list of the boss
 	_next = _boss->_firstWidget;
@@ -78,6 +78,7 @@ StaticTextWidget::StaticTextWidget(Dialog *boss, int x, int y, int w, int h, con
 {
 	// FIXME - maybe we should make a real copy of the string?
 	_text = text;
+	_type = kStaticTextWidget;
 }
 
 void StaticTextWidget::drawWidget(bool hilite)
@@ -94,6 +95,7 @@ ButtonWidget::ButtonWidget(Dialog *boss, int x, int y, int w, int h, const char 
 	: StaticTextWidget(boss, x, y, w, h, label), _cmd(cmd), _hotkey(hotkey)
 {
 	_flags = WIDGET_ENABLED | WIDGET_BORDER /* | WIDGET_CLEARBG */ ;
+	_type = kButtonWidget;
 }
 
 void ButtonWidget::handleClick(int button)
@@ -122,6 +124,7 @@ CheckboxWidget::CheckboxWidget(Dialog *boss, int x, int y, int w, int h, const c
 	: ButtonWidget(boss, x, y, w, h, label, cmd, hotkey), _state(false)
 {
 	_flags = WIDGET_ENABLED;
+	_type = kCheckboxWidget;
 }
 
 void CheckboxWidget::handleClick(int button)

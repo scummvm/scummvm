@@ -35,10 +35,17 @@ enum {
 	WIDGET_WANT_TICKLE	= 1 << 5,
 };
 
+enum {
+	kStaticTextWidget	= 'TEXT',
+	kButtonWidget		= 'BTTN',
+	kCheckboxWidget		= 'CHKB',
+};
+
 /* Widget */
 class Widget {
 friend class Dialog;
 protected:
+	int			_type;
 	Dialog		*_boss;
 	Widget		*_next;
 	int16		_x, _y;
