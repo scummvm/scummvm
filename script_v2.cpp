@@ -2354,19 +2354,17 @@ void Scumm::o6_printEgo() {
 }
 
 void Scumm::o6_talkActor() {
-	char *pointer = NULL, *string = NULL;
 	_actorToPrintStrFor = pop();
-	pointer = string = (char *)_scriptPointer;
-
-	pointer = strtok(pointer, "/");
-	if (pointer) {
-			playBundleSound(pointer);
-			pointer = strtok(NULL, "");				
-			_messagePtr = (unsigned char *)pointer;
-	} else {
-			_messagePtr = (unsigned char *)string;
-	}
+	_messagePtr = _scriptPointer;
 	
+	if (_scriptPointer[0] == '/') {
+		char *pointer = strtok((char *)_scriptPointer, "/");
+		int bunsize = strlen(pointer) + 2;
+		playBundleSound(pointer);
+		_scriptPointer += bunsize;
+		_messagePtr = _scriptPointer;			
+	}
+			
 	setStringVars(0);
 	actorTalk();
 	_scriptPointer = _messagePtr;
@@ -2375,6 +2373,15 @@ void Scumm::o6_talkActor() {
 void Scumm::o6_talkEgo() {
 	_actorToPrintStrFor = (unsigned char)_vars[VAR_EGO];
 	_messagePtr = _scriptPointer;
+	
+	if (_scriptPointer[0] == '/') {
+		char *pointer = strtok((char *)_scriptPointer, "/");
+		int bunsize = strlen(pointer) + 2;
+		playBundleSound(pointer);
+		_scriptPointer += bunsize;
+		_messagePtr = _scriptPointer;			
+	}
+
 	setStringVars(0);
 	actorTalk();
 	_scriptPointer = _messagePtr;
@@ -2826,18 +2833,26 @@ void Scumm::decodeParseString2(int m, int n) {
 	case 74:
 		string[m].no_talk_anim = true;
 		break;
-	case 75:
-		_messagePtr = _scriptPointer;		
+	case 75: {
+		_messagePtr = _scriptPointer;	
+		
+		if (_scriptPointer[0] == '/') {
+			char *pointer = strtok((char *)_scriptPointer, "/");
+			int bunsize = strlen(pointer) + 2;
+			playBundleSound(pointer);
+			_scriptPointer += bunsize;
+			_messagePtr = _scriptPointer;			
+		}
+		
 		switch(m) {
-		case 0: actorTalk(); break;
-		case 1: drawString(1); break;
-
-	case 2: unkMessage1(); break;
-		case 3: unkMessage2(); break;
+			case 0: actorTalk(); break;
+			case 1: drawString(1); break;
+			case 2: unkMessage1(); break;
+			case 3: unkMessage2(); break;
 		}
 		_scriptPointer = _messagePtr;
 		return;
-
+	}
 	case 0xFE:
 		setStringVars(m);
 		if (n)
