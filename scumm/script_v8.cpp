@@ -27,7 +27,8 @@
 #include "sound.h"
 #include "verbs.h"
 
-#include "nut_renderer.h"
+#include "smush/player.h"
+#include "smush/scumm_renderer.h"
 
 /*
  * NO, we do NOT support CMI yet :-) This file is mostly a placeholder and a place
@@ -1236,8 +1237,16 @@ void Scumm_v8::o8_system()
 
 void Scumm_v8::o8_startVideo()
 {
+        char dirName[255];
 	int len = resStrLen((char*)_scriptPointer);
-	warning("o8_startVideo(%s)", (char*)_scriptPointer);
+
+        sprintf(dirName, "%s/resource/", getGameDataPath());
+        warning("o8_startVideo(%s/%s)\n", dirName, (char*)_scriptPointer);
+
+        ScummRenderer * sr = new ScummRenderer(this, 1000/14);
+        SmushPlayer * sp = new SmushPlayer(sr);
+        sp->play((char*)_scriptPointer, dirName);
+
 	_scriptPointer += len + 1;
 }
 
@@ -1411,7 +1420,6 @@ void Scumm_v8::o8_getObjectImageHeight()
 	int i = getObjectIndex(pop());
 	push(_objs[i].height);
 }
-
 
 /*
 
