@@ -1445,7 +1445,8 @@ void SimonState::o_unk_127() {
 			if (b == _vc72_var1 || b == 999) 
 				return;
 
-			if (_vc72_var1 != 0xFFFF || _vc72_var1 != 999)  {
+			//FIXME Changed if to allow midi jumping to work for now.
+			if (b != 1)  {
 				_vc70_var2 = c;
 				_vc70_var1 = 0xFFFF;
 				_vc72_var3 = 0xFFFF;
@@ -1453,8 +1454,10 @@ void SimonState::o_unk_127() {
 				midi_play(b);
 				_vc72_var1 = b;
 			} else {
+				//FIXME This is another midi jump, not sure if variable order is correct.
 				_vc72_var3 = b;
 				_vc72_var2 = c;
+				midi.jump (b, c);
 			}
 		} else if (b == 999) {
 			_next_music_to_play = a;

@@ -5042,11 +5042,7 @@ void SimonState::midi_play(uint a) {
 			return;
 
 		if (_vc72_var1 == 999) {
-			if (_game & GF_WIN) {	
-				midi.playMultipleSMF (_game_file);
-			} else {
-				midi.playXMIDI (_game_file);
-			}
+			//FIXME Original game started music at this point
 		}
 }
 
@@ -5058,6 +5054,13 @@ void SimonState::playMusic(uint music) {
 	if (_game & GF_SIMON2) {        // Simon 2 music
 		midi.stop();
 		_game_file->seek(_game_offsets_ptr[gss->MUSIC_INDEX_BASE + music - 1], SEEK_SET);
+		//FIXME The original game only loaded music file at this point
+		if (_game & GF_WIN) {	
+			midi.playMultipleSMF (_game_file);
+		} else {
+			midi.playXMIDI (_game_file);
+		}
+
 		_last_music_played = music;
 		_vc72_var1 = 999;
 		_vc70_var1 = 0xFFFF;
