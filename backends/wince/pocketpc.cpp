@@ -313,7 +313,7 @@ GameX *gameX;
 
 int gameXGXOpenDisplay(HWND hWnd, DWORD dwFlags) {
 	gameX = new GameX();
-	if (!gameX->OpenGraphics()) {
+	if (!gameX || !gameX->OpenGraphics() || !gameX->GetFBAddress()) {
 		//MessageBox(NULL, TEXT("Couldn't initialize GameX. Reverting to GDI graphics"), TEXT("PocketScumm rendering"), MB_OK);
 		noGAPI = 1;
 	}
@@ -791,7 +791,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLin
 		dynamicGXBeginDraw = defaultGXBeginDraw;
 
 #else
-
 		dynamicGXOpenInput = gameXGXOpenInput;
 		dynamicGXGetDefaultKeys = gameXGXGetDefaultKeys;
 		dynamicGXCloseDisplay = gameXGXCloseDisplay;
@@ -802,6 +801,17 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLin
 		dynamicGXOpenDisplay = gameXGXOpenDisplay;
 		dynamicGXEndDraw = gameXGXEndDraw;
 		dynamicGXBeginDraw = gameXGXBeginDraw;
+
+		FILE *test;
+
+		test = fopen("NoGameX", "r");
+		if (test) {
+			noGAPI = 1;
+			fclose(test);
+		}
+		else
+		if (g_config->getBool("NoGameX", false, "wince"))
+			noGAPI = 1;
 
 #endif
 
@@ -881,19 +891,23 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLin
 }
 
 void runGame(char *game_name) {
-	int argc = 3;
-	char* argv[3];
+	int argc = 4;
+	char* argv[4];
 	char argdir[MAX_PATH];
+	char music[100];
+	bool no_music;
 
 	select_game = false;
 
 	argv[0] = NULL;	
 	sprintf(argdir, "-p%s", _directory);
 	argv[1] = argdir;
-	argv[2] = game_name;
+	no_music = g_config->getBool("NoMusic", false, "wince");
+	sprintf(music, "-e%s", (no_music ? "null" : "adlib"));
+	argv[2] = music;
+	argv[3] = game_name;
 
-	if (!argv[2])
-		//return 0;
+	if (!argv[3])
 		return;
 
 	// No default toolbar for zak256
