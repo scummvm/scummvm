@@ -377,9 +377,6 @@ void Talk::findDialogueString(byte *ptr, int16 id, int16 max, char *str) {
 		else
 			ptr = getString(ptr, NULL, MAX_STRING_LENGTH, 4);
 	}
-
-	if (str[0] == '\0')
-		warning("Failed to find string with ID %i", id);
 }
 
 byte *Talk::loadDialogFile(const char *filename) {

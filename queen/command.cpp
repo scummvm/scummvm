@@ -432,22 +432,20 @@ int16 Command::makeJoeWalkTo(int16 x, int16 y, int16 objNum, Verb v, bool mustWa
 		x = objData->x;
 		y = objData->y;
 	}
-
 	if (v == VERB_WALK_TO) {
 		_vm->logic()->entryObj(objData->entryObj);
-	} else {
-		_vm->logic()->entryObj(0);
-	}
-	if (objData->entryObj > 0 && v != VERB_CLOSE) {
-		_vm->logic()->newRoom(_vm->logic()->objectData(objData->entryObj)->room);
-		// because this is an exit object, see if there is
-		// a walk off point and set (x,y) accordingly
-		WalkOffData *wod = _vm->logic()->walkOffPointForObject(objNum);
-		if (wod != NULL) {
-			x = wod->x;
-			y = wod->y;
+		if (objData->entryObj > 0 && v != VERB_CLOSE) {
+			_vm->logic()->newRoom(_vm->logic()->objectData(objData->entryObj)->room);
+			// because this is an exit object, see if there is
+			// a walk off point and set (x,y) accordingly
+			WalkOffData *wod = _vm->logic()->walkOffPointForObject(objNum);
+			if (wod != NULL) {
+				x = wod->x;
+				y = wod->y;
+			}
 		}
 	} else {
+		_vm->logic()->entryObj(0);
 		_vm->logic()->newRoom(0);
 	}
 
@@ -915,16 +913,15 @@ void Command::openOrCloseAssociatedObject(Verb action, int16 otherObj) {
 	CmdListData *cmdList = &_cmdList[1];
 	uint16 com = 0;
 	uint16 i;
-	for (i = 1; i <= _numCmdList; ++i, ++cmdList) {
+	for (i = 1; i <= _numCmdList && com == 0; ++i, ++cmdList) {
 		if (cmdList->match(action, otherObj, 0)) {
 			if (cmdList->setConditions) {
-				warning("using Command::openOrCloseAssociatedObject() with setConditions");
 				CmdGameState *cmdGs = _cmdGameState;
+				warning("Command::openOrCloseAssociatedObject() setConditions slot=%d", cmdGs[i].gameStateSlot);
 				uint16 j;
 				for (j = 1; j <= _numCmdGameState; ++j) {
-					// FIXME: weird, why using cmdGs[i] instead of cmdGs[j] ?
-					if (cmdGs[j].id == i && cmdGs[i].gameStateSlot > 0) {
-						if (_vm->logic()->gameState(cmdGs[i].gameStateSlot) == cmdGs[i].gameStateValue) {
+					if (cmdGs[j].id == i && cmdGs[j].gameStateSlot > 0) {
+						if (_vm->logic()->gameState(cmdGs[j].gameStateSlot) == cmdGs[j].gameStateValue) {
 							com = i;
 							break;
 						}
@@ -935,11 +932,11 @@ void Command::openOrCloseAssociatedObject(Verb action, int16 otherObj) {
 				break;
 			}
 		}
-	}
-
-	debug(6, "Command::openOrCloseAssociatedObject() - com=%X", com);
+	}	
 
 	if (com != 0) {
+
+		debug(6, "Command::openOrCloseAssociatedObject() com=%X", com);
 
 		cmdList = &_cmdList[com];
 		ObjectData *objData = _vm->logic()->objectData(otherObj);
