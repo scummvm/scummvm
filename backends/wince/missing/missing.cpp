@@ -391,6 +391,10 @@ void *bsearch(const void *key, const void *base, size_t nmemb,
 
 #if _WIN32_WCE < 300 || defined(_TEST_HPC_STDIO)
 
+int _heapchk() {
+	return _HEAPOK;
+}
+
 void *calloc(size_t n, size_t s) {
 	void *result = malloc(n * s);
 	if (result) 
