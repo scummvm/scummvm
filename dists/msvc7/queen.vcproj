@@ -141,6 +141,9 @@
 			RelativePath="..\..\queen\logic.h">
 		</File>
 		<File
+			RelativePath="..\..\queen\musicdata.cpp">
+		</File>
+		<File
 			RelativePath="..\..\queen\queen.cpp">
 		</File>
 		<File

@@ -129,9 +129,6 @@
 				RelativePath="..\..\sword2\driver\menu.h">
 			</File>
 			<File
-				RelativePath="..\..\sword2\driver\misc.cpp">
-			</File>
-			<File
 				RelativePath="..\..\sword2\driver\palette.cpp">
 			</File>
 			<File
