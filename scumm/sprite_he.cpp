@@ -155,6 +155,12 @@ int ScummEngine_v90he::spriteInfoGet_field_80(int spriteNum) {
 	return _spriteTable[spriteNum].field_80;
 }
 
+void ScummEngine_v90he::getSpriteImageDim(int spriteNum, int32 &w, int32 &h) {
+	checkRange(_numSprites, 1, spriteNum, "getSpriteImageDim: Invalid sprite %d");
+
+	getWizImageDim(_spriteTable[spriteNum].res_id, _spriteTable[spriteNum].res_state, w, h);
+}
+
 void ScummEngine_v90he::spritesAllocTables(int numSprites, int numGroups, int numImgLists) {
 	_varNumSpriteGroups = numGroups;
 	_numSpritesToProcess = 0;

@@ -891,6 +891,7 @@ protected:
 	int spriteInfoGet_zoom(int spriteNun);
 	int spriteInfoGet_field_78(int spriteNun);
 	int spriteInfoGet_field_80(int spriteNun);
+	void getSpriteImageDim(int spriteNum, int32 &w, int32 &h);
 
 	void spritesAllocTables(int numSprites, int numGroups, int numImgSprites);
 	void spritesResetTables(bool refreshScreen);

@@ -699,6 +699,7 @@ void ScummEngine_v90he::o90_getDistanceBetweenPoints() {
 void ScummEngine_v90he::o90_getSpriteInfo() {
 	int args[16];
 	int eax, esi;
+	int32 w, h;
 	byte subOp = fetchScriptByte();
 	subOp -= 30;
 
@@ -711,10 +712,22 @@ void ScummEngine_v90he::o90_getSpriteInfo() {
 		pop();
 		break;
 	case 2:
-		pop();
+		eax = pop();
+		if (eax) {
+			getSpriteImageDim(eax, w, h);
+			push(w);
+		} else {
+			push(0);
+		}
 		break;
 	case 3:
-		pop();
+		eax = pop();
+		if (eax) {
+			getSpriteImageDim(eax, w, h);
+			push(h);
+		} else {
+			push(0);
+		}
 		break;
 	case 4:
 		pop();
