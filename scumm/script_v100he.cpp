@@ -276,7 +276,7 @@ void ScummEngine_v100he::setupOpcodes() {
 		/* B8 */
 		OPCODE(o100_unknown27),
 		OPCODE(o6_invalid),
-		OPCODE(o6_invalid),
+		OPCODE(o100_unknown29),
 		OPCODE(o6_isActorInBox),
 		/* BC */
 		OPCODE(o6_isAnyOf),
@@ -1598,6 +1598,88 @@ void ScummEngine_v100he::o100_unknown27() {
 	push(0);
 
 	debug(1,"o100_unknown27 stub (%d)", subOp);
+}
+
+void ScummEngine_v100he::o100_unknown29() {
+	int state, resId;
+	uint32 w, h;
+	int16 x, y;
+
+	byte subOp = fetchScriptByte();
+	subOp -= 20;
+	
+	switch (subOp) {
+	case 0:
+		pop();
+		pop();
+		pop();
+		pop();
+		push(0);
+		warning("o100_unknown29() case 0 unhandled");
+		break;		
+	case 6:
+		pop();
+		push(0);
+		warning("o100_unknown29() case 6 unhandled");
+		break;
+	case 13:
+		pop();
+		pop();
+		pop();
+		pop();
+		push(0);
+		warning("o100_unknown29() case 13 unhandled");
+		break;
+	case 19:
+		state = pop();
+		resId = pop();
+		getWizImageDim(resId, state, w, h);
+		push(h);
+		break;
+	case 34:
+		pop();
+		pop();
+		pop();
+		push(0);
+		warning("o100_unknown29() case 34 unhandled");
+		break;		
+	case 64:
+		state = pop();
+		resId = pop();
+		getWizImageDim(resId, state, w, h);
+		push(w);
+		break;
+	case 65:
+		state = pop();
+		resId = pop();
+		loadImgSpot(resId, state, x, y);
+		push(x);
+		break;	
+	case 66:
+		state = pop();
+		resId = pop();
+		loadImgSpot(resId, state, x, y);
+		push(y);
+		break;
+	case 111:
+		pop();
+		pop();
+		push(0);
+		warning("o100_unknown29() case 111 unhandled");
+		break;
+	case 112:
+		pop();
+		pop();
+		pop();
+		pop();
+		pop();
+		pop();
+		push(0);
+		warning("o100_unknown29() case 112 unhandled");
+		break;
+	default:
+		error("o100_unknown27: Unknown case %d", subOp);
+	}
 }
 
 void ScummEngine_v100he::o100_getPaletteData() {
