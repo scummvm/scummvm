@@ -47,6 +47,7 @@ Logic::Logic(QueenEngine *vm)
 	_joe.scale = 100;
 	memset(_gameState, 0, sizeof(_gameState));
 	memset(_talkSelected, 0, sizeof(_talkSelected));
+	_puzzleAttemptCount = 0;
 	initialise();
 	if (_vm->resource()->isDemo()) {
 		_preChangeRoom = &Logic::preChangeRoom_Demo;
@@ -2184,7 +2185,10 @@ bool Logic::gameSave(uint16 slot, const char *desc) {
 	for (i = 0; i < 3; i++) {
 		WRITE_BE_UINT16(ptr, 0); ptr += 2;
 	}
-	
+	// TOADD:
+	//	Logic::_puzzleAttemptCount
+	//	Logic::_objectDescription
+
 	if ((ptr - saveData) != SAVEGAME_SIZE) {
 		delete[] saveData;
 		return false;
@@ -2661,8 +2665,9 @@ void Logic::asmMakeRobotGrowing() {
 
 void Logic::asmShrinkRobot() {
 	int i;
+	BobSlot *robot = _vm->graphics()->bob(6);
 	for (i = 100; i >= 35; i -= 5) {
-		_vm->graphics()->bob(6)->scale = i;
+		robot->scale = i;
 		update();
 	}
 }
@@ -2673,18 +2678,20 @@ void Logic::asmEndGame() {
 	for (i = 0; i < 40; ++i) {
 		update();
 	}
-	debug(0, "Game completed");
+	debug(0, "Game completed.");
 	OSystem::instance()->quit();
 }
 
 
 void Logic::asmPutCameraOnDino() {
 	_vm->graphics()->cameraBob(-1);
-	while (_vm->display()->horizontalScroll() < 320) {
-		_vm->display()->horizontalScroll(_vm->display()->horizontalScroll() + 16);
-		if (_vm->display()->horizontalScroll() > 320) {
-			_vm->display()->horizontalScroll(320);
+	int16 scrollx = _vm->display()->horizontalScroll();
+	while (scrollx < 320) {
+		scrollx += 16;
+		if (scrollx > 320) {
+			scrollx = 320;
 		}
+		_vm->display()->horizontalScroll(scrollx);
 		update();
 	}
 	_vm->graphics()->cameraBob(1);
@@ -2736,11 +2743,13 @@ void Logic::asmSetAzuraInLove() {
 
 void Logic::asmPanRightFromJoe() {
 	_vm->graphics()->cameraBob(-1);
-	while (_vm->display()->horizontalScroll() < 320) {
-		_vm->display()->horizontalScroll(_vm->display()->horizontalScroll() + 16);
-		if (_vm->display()->horizontalScroll() > 320) {
-			_vm->display()->horizontalScroll(320);
+	int16 scrollx = _vm->display()->horizontalScroll();
+	while (scrollx < 320) {
+		scrollx += 16;
+		if (scrollx > 320) {
+			scrollx = 320;
 		}
+		_vm->display()->horizontalScroll(scrollx);
 		update();
 	}
 }
@@ -2757,7 +2766,8 @@ void Logic::asmSetLightsOn() {
 
 
 void Logic::asmSetManequinAreaOn() {
-	area(ROOM_FLODA_FRONTDESK, 7)->mapNeighbours = ABS(area(ROOM_FLODA_FRONTDESK, 7)->mapNeighbours);
+	Area *a = area(ROOM_FLODA_FRONTDESK, 7);
+	a->mapNeighbours = ABS(a->mapNeighbours);
 }
 
 
@@ -2769,20 +2779,24 @@ void Logic::asmPanToJoe() {
 		i = 320;
 	}
 	_vm->graphics()->cameraBob(-1);
-	if (i < _vm->display()->horizontalScroll()) {
-		while (_vm->display()->horizontalScroll() > i) {
-			_vm->display()->horizontalScroll(_vm->display()->horizontalScroll() - 16);
-			if (_vm->display()->horizontalScroll() < i) {
-				_vm->display()->horizontalScroll(i);
+	int16 scrollx = _vm->display()->horizontalScroll();
+	if (i < scrollx) {
+		while (scrollx > i) {
+			scrollx -= 16;
+			if (scrollx < i) {
+				scrollx = i;
 			}
+			_vm->display()->horizontalScroll(scrollx);
 			update();
 		}
 	} else {
-		while (_vm->display()->horizontalScroll() < i) {
-			_vm->display()->horizontalScroll(_vm->display()->horizontalScroll() + 16);
-			if (_vm->display()->horizontalScroll() > i ) {
-				_vm->display()->horizontalScroll(i);
+		while (scrollx < i) {
+			scrollx += 16;
+			if (scrollx > i) {
+				scrollx = i;
 			}
+			_vm->display()->horizontalScroll(scrollx);
+			update();
 		}
 		update();
 	}
@@ -2797,11 +2811,13 @@ void Logic::asmTurnGuardOn() {
 
 void Logic::asmPanLeft320To144() {
 	_vm->graphics()->cameraBob(-1);
-	while (_vm->display()->horizontalScroll() > 144) {
-		_vm->display()->horizontalScroll(_vm->display()->horizontalScroll() - 8);
-		if (_vm->display()->horizontalScroll() < 144) {
-			_vm->display()->horizontalScroll(144);
+	int16 scrollx = _vm->display()->horizontalScroll();
+	while (scrollx > 144) {
+		scrollx -= 8;
+		if (scrollx < 144) {
+			scrollx = 144;
 		}
+		_vm->display()->horizontalScroll(scrollx);
 		update();
 	}
 }
@@ -2811,8 +2827,10 @@ void Logic::asmSmooch() {
 	_vm->graphics()->cameraBob(-1);
 	BobSlot *bobAzura = _vm->graphics()->bob(5);
 	BobSlot *bobJoe = _vm->graphics()->bob(6);
-	while (_vm->display()->horizontalScroll() < 320) {
-		_vm->display()->horizontalScroll(_vm->display()->horizontalScroll() + 8);
+	int16 scrollx = _vm->display()->horizontalScroll();
+	while (scrollx < 320) {
+		scrollx += 8;
+		_vm->display()->horizontalScroll(scrollx);
 		if (bobJoe->x - bobAzura->x > 128) {
 			bobAzura->x += 10;
 			bobJoe->x += 6;
@@ -2960,10 +2978,10 @@ void Logic::asmShakeScreen() {
 
 
 void Logic::asmAttemptPuzzle() {
-	static short n = 0;
-	++n;
-	if (n & 4) {
+	++_puzzleAttemptCount;
+	if (_puzzleAttemptCount & 4) {
 		joeSpeak(226, true);
+		_puzzleAttemptCount = 0;
 	}
 }
 
@@ -3121,22 +3139,22 @@ void Logic::asmPanLeftToBomb() {
 
 
 void Logic::asmEndDemo() {
-	debug(0, "Flight of the Amazon Queen, released January 95");
+	debug(0, "Flight of the Amazon Queen, released January 95.");
 	OSystem::instance()->quit();
 }
 
 
 void Logic::asmInterviewIntro() {
-	// put camera on zeppelin
+	// put camera on airship
 	_vm->graphics()->cameraBob(5);
-	BobSlot *bzep = _vm->graphics()->bob(5);
+	BobSlot *bas = _vm->graphics()->bob(5);
 
-	bzep->curPos(-30, 40);
+	bas->curPos(-30, 40);
 
-	bzep->move(700, 10, 3);
+	bas->move(700, 10, 3);
 	int scale = 450;
-	while (bzep->moving && !_vm->input()->cutawayQuit()) {
-		bzep->scale = 256 * 100 / scale;
+	while (bas->moving && !_vm->input()->cutawayQuit()) {
+		bas->scale = 256 * 100 / scale;
 		--scale;
 		if (scale < 256) {
 			scale = 256;
@@ -3144,21 +3162,21 @@ void Logic::asmInterviewIntro() {
 		update();
 	}
 
-	bzep->scale = 90;
-	bzep->xflip = true;
+	bas->scale = 90;
+	bas->xflip = true;
 
-	bzep->move(560, 25, 4);
-	while (bzep->moving && !_vm->input()->cutawayQuit()) {
+	bas->move(560, 25, 4);
+	while (bas->moving && !_vm->input()->cutawayQuit()) {
 		update();
 	}
 
-	bzep->move(545, 65, 2);
-	while (bzep->moving && !_vm->input()->cutawayQuit()) {
+	bas->move(545, 65, 2);
+	while (bas->moving && !_vm->input()->cutawayQuit()) {
 		update();
 	}
 
-	bzep->move(540, 75, 2);
-	while (bzep->moving && !_vm->input()->cutawayQuit()) {
+	bas->move(540, 75, 2);
+	while (bas->moving && !_vm->input()->cutawayQuit()) {
 		update();
 	}
 

@@ -427,6 +427,8 @@ protected:
 	//! Inventory items
 	int16 _inventoryItem[4];
 
+	uint8 _puzzleAttemptCount;
+
 	//! scene counter
 	int _scene;
 
