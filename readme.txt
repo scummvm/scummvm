@@ -254,7 +254,7 @@ In game Hot Keys:
 -----------------
         Ctrl 0-9 and Shift 0-9   - load and save games
         Ctrl-Alt 1-7             - cycles between graphics filters
-        Ctrl-z                   - quits
+        Ctrl-z OR Alt-x          - quits
         Ctrl-f                   - runs in fast mode.
         Ctrl-g                   - runs in really REALLY fast mode.
         Ctrl-d                   - starts the debugger.
@@ -265,6 +265,9 @@ In game Hot Keys:
         Space                    - pauses
         Period (.)               - skips current line of text in some games
         Alt-Enter                - toggles full screen/windowed
+        Enter                    - Left Mouse Button Press
+        Tab                      - Right Mouse Button Press
+        Keyboard Arrow Keys      - Mouse Movement
 
 Note that using ctrl-f and ctrl-g are not recommended: Games can crash when
 being ran faster than their normal speed, as scripts will loose syncronisation
