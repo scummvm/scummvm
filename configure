@@ -29,7 +29,7 @@ _vorbis=auto
 _mad=auto
 _alsa=auto
 _zlib=auto
-_mpeg2=no
+_mpeg2=auto
 # default option behaviour yes/no
 _build_scumm=yes
 _build_simon=yes
@@ -189,7 +189,8 @@ Optional Libraries:
   --disable-mad            disable libmad (MP3) support [autodetect]
   --with-zlib-prefix=PFX   Prefix where zlib is installed (optional)
   --disable-zlib           disable zlib (compression) support [autodetect]
-  --enable-mpeg2           enable mpeg2 codec for cutscenes [disabled]
+  --disable-mpeg2          disable mpeg2 codec for cutscenes [autodetect]
+  --with-mpeg2-prefix=PFX  Prefix where libmpeg2 is installed (optional)
  
 EOF
     exit 0
@@ -214,7 +215,12 @@ for ac_option in $@; do
       --disable-mad)		_mad=no		;;
       --enable-zlib)		_zlib=yes	;;
       --disable-zlib)		_zlib=no	;;
-      --enable-mpeg2)           _mpeg2=yes      ;;
+      --disable-mpeg2)          _mpeg2=no       ;;
+      --with-mpeg2-prefix=*)
+	_prefix=`echo $ac_option | cut -d '=' -f 2`
+	MPEG2_CFLAGS="-I$_prefix/include"
+	MPEG2_LIBS="-L$_prefix/libs"
+        ;;
       --with-alsa-prefix=*)
 	_prefix=`echo $ac_option | cut -d '=' -f 2`
 	ALSA_CFLAGS="-I$_prefix/include"
@@ -562,13 +568,30 @@ fi
 echo "$_zlib"
 
 echocheck "mpeg2"
+if test "$_mpeg2" = auto ; then
+  _mpeg2=no
+  cat > $TMPC << EOF
+#include <inttypes.h>
+#include <mpeg2dec/mpeg2.h>
+int main(void) { 
+	#ifdef MPEG2_RELEASE
+		if (MPEG2_RELEASE >= MPEG2_VERSION(0, 4, 0))
+			return 0;
+	#endif
+	return 1;
+}
+EOF
+  cc_check $LDFLAGS $CXXFLAGS $MPEG2_CFLAGS $MPEG2_LIBS -lmpeg2 && _mpeg2=yes
+fi
 if test "$_mpeg2" = yes ; then
   _def_mpeg2='#define USE_MPEG2'
-  LIBS="$LIBS -lmpeg2"
+  INCLUDES="$INCLUDES $MPEG2_CFLAGS"
+  LIBS="$LIBS $MPEG2_LIBS -lmpeg2"
+else
+  _def_mpeg2='#undef USE_MPEG2'
 fi
 echo "$_mpeg2"
 rm -f $TMPC $TMPO
-
 
 echo
 echo "Engines:"
