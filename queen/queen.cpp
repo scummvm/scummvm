@@ -53,7 +53,7 @@ extern bool draw_keyboard;
 
 /* Flight of the Amazon Queen */
 static const GameSettings queen_setting =
-	{ "queen", "Flight of the Amazon Queen", MDT_ADLIB | MDT_NATIVE | MDT_PREFER_NATIVE, 0, "queen.1" };
+	{ "queen", "Flight of the Amazon Queen", 0 };
 
 GameList Engine_QUEEN_gameList() {
 	GameList games;

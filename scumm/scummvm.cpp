@@ -28,6 +28,7 @@
 #include "base/plugins.h"
 
 #include "common/config-manager.h"
+#include "common/md5.h"
 
 #include "gui/message.h"
 #include "gui/newgui.h"
@@ -83,7 +84,7 @@ enum MouseButtonStatus {
 ScummEngine *g_scumm = 0;
 
 struct ScummGameSettings {
-	const char *gameName;
+	const char *name;
 	const char *description;
 	byte id, version;
 	int midi; // MidiDriverType values
@@ -91,7 +92,7 @@ struct ScummGameSettings {
 	const char *baseFilename;
 
 	GameSettings toGameSettings() const {
-		GameSettings dummy = { gameName, description, midi, features, 0 };
+		GameSettings dummy = { name, description, features };
 		return dummy;
 	}
 };
@@ -625,7 +626,41 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 	// Allow the user to override the game name with a custom string.
 	// This allows some game versions to work which use filenames
 	// differing from the regular version(s) of that game.
-	_gameName = ConfMan.hasKey("basename") ? ConfMan.get("basename") : gs.baseFilename ? gs.baseFilename : gs.gameName;
+	_gameName = ConfMan.hasKey("basename") ? ConfMan.get("basename") : gs.baseFilename ? gs.baseFilename : gs.name;
+
+#if 1
+	// HACK HACK HACK
+	// This is not how, and where, MD5 computation should be done in the
+	// real world. Rather this is meant as a proof-of-concept hack. 
+	// It's quick, it's dirty, and it'll go again eventually :-)
+	char buf[1024];
+	uint8 md5sum[16];
+	
+	if (!(_features & GF_SMALL_HEADER)) {
+
+		if (_features & GF_AFTER_HEV7) {
+			sprintf(buf, "%s.he0", _gameName.c_str());
+		} else if (_version >= 7) {
+			sprintf(buf, "%s.la0", _gameName.c_str());
+		} else if (_features & GF_HUMONGOUS)
+			sprintf(buf, "%s.he0", _gameName.c_str());
+		else {
+			sprintf(buf, "%s.000",  _gameName.c_str());
+//			if (_gameId == GID_SAMNMAX)
+//				sprintf(buf2, "%s.sm0",  _gameName.c_str());
+		}
+	} else if (!(_features & GF_SMALL_NAMES)) {
+		sprintf(buf, "000.lfl");
+	} else {
+		sprintf(buf, "00.lfl");
+	}
+	
+	if (md5_file(buf, md5sum)) {
+		for (int j = 0; j < 16; j++)
+			printf("%02x", md5sum[j]);
+		printf("  %s\n", buf);
+	}
+#endif
 
 	_midiDriver = GameDetector::detectMusicDriver(gs.midi);
 
@@ -2794,7 +2829,7 @@ using namespace Scumm;
 GameList Engine_SCUMM_gameList() {
 	const ScummGameSettings *g = scumm_settings;
 	GameList games;
-	while (g->gameName) {
+	while (g->name) {
 		games.push_back(g->toGameSettings());
 		g++;
 	}
@@ -2807,7 +2842,7 @@ GameList Engine_SCUMM_detectGames(const FSList &fslist) {
 	char detectName[128];
 	char detectName2[128];
 
-	for (g = scumm_settings; g->gameName; ++g) {
+	for (g = scumm_settings; g->name; ++g) {
 		// Determine the 'detectname' for this game, that is, the name of a 
 		// file that *must* be presented if the directory contains the data
 		// for this game. For example, FOA requires atlantis.000
@@ -2818,7 +2853,7 @@ GameList Engine_SCUMM_detectGames(const FSList &fslist) {
 			strcpy(detectName, "000.LFL");
 			detectName2[0] = '\0';
 		} else {
-			const char *base = g->baseFilename ? g->baseFilename : g->gameName;
+			const char *base = g->baseFilename ? g->baseFilename : g->name;
 			strcpy(detectName, base);
 			strcat(detectName, ".000");
 			strcpy(detectName2, base);
@@ -2832,10 +2867,10 @@ GameList Engine_SCUMM_detectGames(const FSList &fslist) {
 
 		// Iterate over all files in the given directory
 		for (FSList::ConstIterator file = fslist.begin(); file != fslist.end(); ++file) {
-			const char *gameName = file->displayName().c_str();
+			const char *name = file->displayName().c_str();
 
-			if ((0 == scumm_stricmp(detectName, gameName))  || 
-				(0 == scumm_stricmp(detectName2, gameName))) {
+			if ((0 == scumm_stricmp(detectName, name))  || 
+				(0 == scumm_stricmp(detectName2, name))) {
 				// Match found, add to list of candidates, then abort inner loop.
 				detectedGames.push_back(g->toGameSettings());
 				break;
@@ -2850,13 +2885,13 @@ Engine *Engine_SCUMM_create(GameDetector *detector, OSystem *syst) {
 
 	
 	const ScummGameSettings *g = scumm_settings;
-	while (g->gameName) {
-		if (!scumm_stricmp(detector->_gameName.c_str(), g->gameName))
+	while (g->name) {
+		if (!scumm_stricmp(detector->_game.name, g->name))
 			break;
 		g++;
 	}
-	if (!g->gameName)
-		error("Invalid game '%s'\n", detector->_gameName.c_str());
+	if (!g->name)
+		error("Invalid game '%s'\n", detector->_game.name);
 
 	ScummGameSettings game = *g;
 

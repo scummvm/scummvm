@@ -438,7 +438,7 @@ void LauncherDialog::addGame() {
 			// The auto detector or the user made a choice.
 			// Pick a domain name which does not yet exist (after all, we
 			// are *adding* a game to the config, not replacing).
-			String domain(result.gameName);
+			String domain(result.name);
 			if (ConfMan.hasGameDomain(domain)) {
 				char suffix = 'a';
 				domain += suffix;
@@ -448,7 +448,7 @@ void LauncherDialog::addGame() {
 					suffix++;
 					domain += suffix;
 				}
-				ConfMan.set("gameid", result.gameName, domain);
+				ConfMan.set("gameid", result.name, domain);
 				ConfMan.set("description", result.description, domain);
 			}
 			ConfMan.set("path", dir->path(), domain);

@@ -52,50 +52,63 @@ extern bool draw_keyboard;
 
 extern uint16 _debugLevel;
 
-static const GameSettings simon_settings[] = {
-	// Simon the Sorcerer 1 & 2 (not SCUMM games)
-	{"simon1acorn", "Simon the Sorcerer 1 (Acorn)", MDT_ADLIB | MDT_NATIVE, GAME_SIMON1ACORN, "DATA"},
-	{"simon1dos", "Simon the Sorcerer 1 (DOS)", MDT_ADLIB | MDT_NATIVE, GAME_SIMON1DOS, "GAMEPC"},
-	{"simon1amiga", "Simon the Sorcerer 1 (Amiga)", MDT_NONE, GAME_SIMON1AMIGA, "gameamiga"},
-	{"simon2dos", "Simon the Sorcerer 2 (DOS)", MDT_ADLIB | MDT_NATIVE, GAME_SIMON2DOS, "GAME32"},
-	{"simon1talkie", "Simon the Sorcerer 1 Talkie (DOS)", MDT_ADLIB | MDT_NATIVE, GAME_SIMON1TALKIE, "SIMON.GME"},
-	{"simon2talkie", "Simon the Sorcerer 2 Talkie (DOS)", MDT_ADLIB | MDT_NATIVE, GAME_SIMON2TALKIE, "GSPTR30"},
-	{"simon1win", "Simon the Sorcerer 1 Talkie (Windows)", MDT_ADLIB | MDT_NATIVE, GAME_SIMON1WIN, "SIMON.GME"},
-	{"simon1cd32", "Simon the Sorcerer 1 Talkie (Amiga CD32)", MDT_NONE, GAME_SIMON1CD32, "gameamiga"},
-	{"simon2win", "Simon the Sorcerer 2 Talkie (Windows)", MDT_ADLIB | MDT_NATIVE, GAME_SIMON2WIN, "GSPTR30"},
-	{"simon2mac", "Simon the Sorcerer 2 Talkie (Amiga or Mac)", MDT_ADLIB | MDT_NATIVE, GAME_SIMON2MAC, "GSPTR30"},
-	{"simon1demo", "Simon the Sorcerer 1 (DOS Demo)", MDT_ADLIB | MDT_NATIVE, GAME_SIMON1DEMO, "GDEMO"}, 
+struct SimonGameSettings {
+	const char *name;
+	const char *description;
+	uint32 features;
+	const char *detectname;
+	GameSettings toGameSettings() const {
+		GameSettings dummy = { name, description, features };
+		return dummy;
+	}
+};
 
-	{NULL, NULL, MDT_NONE, 0, NULL}
+static const SimonGameSettings simon_settings[] = {
+	// Simon the Sorcerer 1 & 2 (not SCUMM games)
+	{"simon1acorn", "Simon the Sorcerer 1 (Acorn)", GAME_SIMON1ACORN, "DATA"},
+	{"simon1dos", "Simon the Sorcerer 1 (DOS)", GAME_SIMON1DOS, "GAMEPC"},
+	{"simon1amiga", "Simon the Sorcerer 1 (Amiga)", GAME_SIMON1AMIGA, "gameamiga"},
+	{"simon2dos", "Simon the Sorcerer 2 (DOS)", GAME_SIMON2DOS, "GAME32"},
+	{"simon1talkie", "Simon the Sorcerer 1 Talkie (DOS)", GAME_SIMON1TALKIE, "SIMON.GME"},
+	{"simon2talkie", "Simon the Sorcerer 2 Talkie (DOS)", GAME_SIMON2TALKIE, "GSPTR30"},
+	{"simon1win", "Simon the Sorcerer 1 Talkie (Windows)", GAME_SIMON1WIN, "SIMON.GME"},
+	{"simon1cd32", "Simon the Sorcerer 1 Talkie (Amiga CD32)", GAME_SIMON1CD32, "gameamiga"},
+	{"simon2win", "Simon the Sorcerer 2 Talkie (Windows)", GAME_SIMON2WIN, "GSPTR30"},
+	{"simon2mac", "Simon the Sorcerer 2 Talkie (Amiga or Mac)", GAME_SIMON2MAC, "GSPTR30"},
+	{"simon1demo", "Simon the Sorcerer 1 (DOS Demo)", GAME_SIMON1DEMO, "GDEMO"}, 
+
+	{NULL, NULL, 0, NULL}
 };
 
 GameList Engine_SIMON_gameList() {
-	const GameSettings *g = simon_settings;
+	const SimonGameSettings *g = simon_settings;
 	GameList games;
-	while (g->gameName)
-		games.push_back(*g++);
+	while (g->name) {
+		games.push_back(g->toGameSettings());
+		g++;
+	}
 	return games;
 }
 
 GameList Engine_SIMON_detectGames(const FSList &fslist) {
 	GameList detectedGames;
-	const GameSettings *g;
+	const SimonGameSettings *g;
 	char detectName[128];
 	char detectName2[128];
 
-	for (g = simon_settings; g->gameName; ++g) {
+	for (g = simon_settings; g->name; ++g) {
 		strcpy(detectName, g->detectname);
 		strcpy(detectName2, g->detectname);
 		strcat(detectName2, ".");
 
 		// Iterate over all files in the given directory
 		for (FSList::ConstIterator file = fslist.begin(); file != fslist.end(); ++file) {
-			const char *gameName = file->displayName().c_str();
+			const char *name = file->displayName().c_str();
 
-			if ((0 == scumm_stricmp(detectName, gameName))  || 
-				(0 == scumm_stricmp(detectName2, gameName))) {
+			if ((0 == scumm_stricmp(detectName, name))  || 
+				(0 == scumm_stricmp(detectName2, name))) {
 				// Match found, add to list of candidates, then abort inner loop.
-				detectedGames.push_back(*g);
+				detectedGames.push_back(g->toGameSettings());
 				break;
 			}
 		}
@@ -194,7 +207,7 @@ static const GameSpecificSettings simon2dos_settings = {
 #endif
 
 SimonEngine::SimonEngine(GameDetector *detector, OSystem *syst)
-	: Engine(syst), midi (syst) {
+	: Engine(syst), midi(syst) {
 
 	_vc_ptr = 0;
 	_game_offsets_ptr = 0;

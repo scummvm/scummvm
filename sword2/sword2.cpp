@@ -31,38 +31,51 @@ extern bool isSmartphone(void);
 
 extern uint16 _debugLevel;
 
-static const GameSettings sword2_settings[] = {
+struct Sword2GameSettings {
+	const char *name;
+	const char *description;
+	uint32 features;
+	const char *detectname;
+	GameSettings toGameSettings() const {
+		GameSettings dummy = { name, description, features };
+		return dummy;
+	}
+};
+
+static const Sword2GameSettings sword2_settings[] = {
 	/* Broken Sword 2 */
-	{"sword2", "Broken Sword II", MDT_ADLIB | MDT_NATIVE, GF_DEFAULT_TO_1X_SCALER, "players.clu" },
-	{"sword2alt", "Broken Sword II (alt)", MDT_ADLIB | MDT_NATIVE, GF_DEFAULT_TO_1X_SCALER, "r2ctlns.ocx" },
-	{"sword2demo", "Broken Sword II (Demo)", MDT_ADLIB | MDT_NATIVE, GF_DEFAULT_TO_1X_SCALER | Sword2::GF_DEMO, "players.clu" },
-	{NULL, NULL, MDT_NONE, 0, NULL}
+	{"sword2", "Broken Sword II", GF_DEFAULT_TO_1X_SCALER, "players.clu" },
+	{"sword2alt", "Broken Sword II (alt)", GF_DEFAULT_TO_1X_SCALER, "r2ctlns.ocx" },
+	{"sword2demo", "Broken Sword II (Demo)", GF_DEFAULT_TO_1X_SCALER | Sword2::GF_DEMO, "players.clu" },
+	{NULL, NULL, 0, NULL}
 };
 
 GameList Engine_SWORD2_gameList() {
-	const GameSettings *g = sword2_settings;
+	const Sword2GameSettings *g = sword2_settings;
 	GameList games;
-	while (g->gameName)
-		games.push_back(*g++);
+	while (g->name) {
+		games.push_back(g->toGameSettings());
+		g++;
+	}
 	return games;
 }
 
 GameList Engine_SWORD2_detectGames(const FSList &fslist) {
 	GameList detectedGames;
-	const GameSettings *g;
+	const Sword2GameSettings *g;
 	
 	// TODO: It would be nice if we had code here which distinguishes
 	// between the 'sword2' and 'sword2demo' targets. The current code
 	// can't do that since they use the same detectname.
 
-	for (g = sword2_settings; g->gameName; ++g) {
+	for (g = sword2_settings; g->name; ++g) {
 		// Iterate over all files in the given directory
 		for (FSList::ConstIterator file = fslist.begin(); file != fslist.end(); ++file) {
 			const char *gameName = file->displayName().c_str();
 
 			if (0 == scumm_stricmp(g->detectname, gameName)) {
 				// Match found, add to list of candidates, then abort inner loop.
-				detectedGames.push_back(*g);
+				detectedGames.push_back(g->toGameSettings());
 				break;
 			}
 		}

@@ -47,11 +47,9 @@ enum MidiDriverType {
 };
 
 struct GameSettings {
-	const char *gameName;
+	const char *name;
 	const char *description;
-	int midi; // MidiDriverType values
 	uint32 features;
-	const char *detectname;
 };
 
 class GameDetector {
@@ -64,8 +62,7 @@ public:
 	bool detectMain();
 
 	String _targetName;
-	String _gameName;
-	GameSettings _game;	// TODO: Eventually get rid of _game or at least make it protected
+	GameSettings _game;	// TODO: Eventually get rid of this?!
 	const Plugin *_plugin;
 	
 	bool _dumpScripts;

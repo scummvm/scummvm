@@ -79,7 +79,7 @@ extern bool draw_keyboard;
 #undef WITH_DEBUG_CHEATS
 
 static const GameSettings skySetting =
-	{"sky", "Beneath a Steel Sky", MDT_ADLIB | MDT_NATIVE | MDT_PREFER_NATIVE, 0, "sky.dsk" };
+	{"sky", "Beneath a Steel Sky", 0 };
 
 GameList Engine_SKY_gameList() {
 	GameList games;
@@ -255,7 +255,7 @@ void SkyEngine::initialise(void) {
 	
 	_systemVars.gameVersion = _skyDisk->determineGameVersion();
 
-	int midiDriver = GameDetector::detectMusicDriver(skySetting.midi);
+	int midiDriver = GameDetector::detectMusicDriver(MDT_ADLIB | MDT_NATIVE | MDT_PREFER_NATIVE);
 	if (midiDriver == MD_ADLIB) {
 		_systemVars.systemFlags |= SF_SBLASTER;
 		_skyMusic = new SkyAdlibMusic(_mixer, _skyDisk, _system);

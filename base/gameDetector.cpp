@@ -198,7 +198,7 @@ void listGames() {
 	for (iter = plugins.begin(); iter != plugins.end(); ++iter) {
 		GameList list = (*iter)->getSupportedGames();
 		for (GameList::Iterator v = list.begin(); v != list.end(); ++v) {
-			printf("%-20s %s\n", v->gameName, v->description);
+			printf("%-20s %s\n", v->name, v->description);
 		}
 	}
 }
@@ -229,12 +229,12 @@ void listTargets() {
 GameSettings GameDetector::findGame(const String &gameName, const Plugin **plugin) {
 	// Find the GameSettings for this target
 	const PluginList &plugins = PluginManager::instance().getPlugins();
-	GameSettings result = {NULL, NULL, MDT_NONE, 0, NULL};
+	GameSettings result = {NULL, NULL, 0};
 
 	PluginList::ConstIterator iter = plugins.begin();
 	for (iter = plugins.begin(); iter != plugins.end(); ++iter) {
 		result = (*iter)->findGame(gameName.c_str());
-		if (result.gameName) {
+		if (result.name) {
 			if (plugin)
 				*plugin = *iter;
 			break;
@@ -301,10 +301,10 @@ void GameDetector::parseCommandLine(int argc, char **argv) {
 
 		if (s[0] != '-' || s[1] == '\0') {
 			// Last argument: this could be a target name.
-			// To verify this, check if there is either a game domain (i.e
+			// To verify this, check if there is either a game domain (i.e.
 			// a configured target) matching this argument, or if we can
 			// find any target with that name.
-			if (i == (argc - 1) && (ConfMan.hasGameDomain(s) || findGame(s).gameName)) {
+			if (i == (argc - 1) && (ConfMan.hasGameDomain(s) || findGame(s).name)) {
 				setTarget(s);
 			} else {
 				if (current_option == NULL)
@@ -512,12 +512,10 @@ bool GameDetector::detectGame() {
 
 	_game = findGame(realGame, &_plugin);
 
-	if (_game.gameName) {
-		_gameName = _game.gameName;
+	if (_game.name) {
 		printf("Trying to start game '%s'\n", _game.description);
 		return true;
 	} else {
-		_gameName.clear();
 		printf("Failed game detection\n");
 		return false;
 	}

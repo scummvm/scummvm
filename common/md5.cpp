@@ -239,7 +239,7 @@ void md5_finish( md5_context *ctx, uint8 digest[16] )
     PUT_UINT32( ctx->state[3], digest, 12 );
 }
 
-void md5_file( const char *name, uint8 digest[16] )
+bool md5_file( const char *name, uint8 digest[16] )
 {
     File f;
     md5_context ctx;
@@ -250,7 +250,7 @@ void md5_file( const char *name, uint8 digest[16] )
 	if( ! f.isOpen() )
 	{
 		warning( "md5_file couldn't open '%s'", name );
-		return;
+		return false;
 	}
 
 	md5_starts( &ctx );
@@ -261,6 +261,7 @@ void md5_file( const char *name, uint8 digest[16] )
 	}
 
 	md5_finish( &ctx, digest );
+	return true;
 }
 
 #ifdef TEST

@@ -35,6 +35,6 @@ void md5_starts( md5_context *ctx );
 void md5_update( md5_context *ctx, const uint8 *input, uint32 length );
 void md5_finish( md5_context *ctx, uint8 digest[16] );
 
-void md5_file( const char *name, uint8 digest[16] );
+bool md5_file( const char *name, uint8 digest[16] );
 
 #endif
