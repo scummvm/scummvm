@@ -72,6 +72,7 @@ typedef	struct {
 
 	//skin params
 	SkinInfoType skin;	//	card where is located the skin
+	Boolean soundClick;	
 	//
 	Boolean vibrator;
 	Boolean autoOff;
@@ -1903,7 +1904,7 @@ static void SkinsFormInit(Boolean bDraw) {
 	FormPtr frmP;
 	ListType *listP;
 	MemHandle items = NULL;
-	
+	ControlType *cck1P;
 	DmSearchStateType stateInfo;
 	UInt16 cardNo;
 	LocalID dbID;
@@ -1935,6 +1936,9 @@ static void SkinsFormInit(Boolean bDraw) {
 	}
 
 	Int16 selected = -1;
+
+	cck1P = (ControlType *)GetObjectPtr(SkinsSoundClickCheckbox);
+	CtlSetValue(cck1P, gPrefs->soundClick);
 
 	listP = (ListType *)GetObjectPtr(SkinsSkinList);
 	skinsInfo = (SkinInfoType *)MemHandleLock(skins);
@@ -2000,9 +2004,14 @@ static void SkinsFormExit(Boolean bSave) {
 	itemsList = NULL;
 
 	if (bSave) {
+		ControlType *cck1P;
+
 		StrCopy(gPrefs->skin.nameP, skinsInfo[selected].nameP);
 		gPrefs->skin.cardNo = skinsInfo[selected].cardNo;
 		gPrefs->skin.dbID =  skinsInfo[selected].dbID;
+
+		cck1P = (ControlType *)GetObjectPtr(SkinsSoundClickCheckbox);
+		gPrefs->soundClick = CtlGetValue(cck1P);
 	}
 
 	FrmReturnToForm (MainForm);
@@ -2323,6 +2332,11 @@ static void StartScummVM() {
 				break;
 			case 2:
 				AddArg(&argvP[argc], "-g", "dbuffer", &argc);
+				break;
+			case 3:
+				AddArg(&argvP[argc], "-g", "wide", &argc);
+				gVars->flipping.pageAddr1 = (UInt8 *)WinScreenLock(winLockErase);
+				WinScreenUnlock();
 				break;
 			default:
 				AddArg(&argvP[argc], "-g", "normal", &argc);
@@ -2664,7 +2678,9 @@ static Boolean MainFormHandleEvent(EventPtr eventP)
 					case skinButtonGameStart:
 					case skinButtonGameDelete:
 						SknSetState(skinDBP, sknLastOn, sknStateSelected);
-						SknShowObject(skinDBP, sknLastOn);
+						SknShowObject(skinDBP, sknLastOn);				
+						if (gPrefs->soundClick)
+							SndPlaySystemSound(sndClick);
 						handled = true;
 						break;
 					default:
@@ -3014,7 +3030,7 @@ static Err AppStart(void)
 	else
 		gPrefs->volRefNum = parseCards(0);	// get first volref
 
-	AppStartCheckNotify();		// not fatal error if not avalaible
+	AppStartCheckNotify(); // not fatal error if not avalaible
 
 	return error;
 }

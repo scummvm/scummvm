@@ -148,6 +148,7 @@ private:
 	void update_screen__flipping();
 	void update_screen__dbuffer();
 	void update_screen__direct();
+	void update_screen__wide();
 
 	WinHandle _screenH;
 	WinHandle _offScreenH;
@@ -226,13 +227,17 @@ private:
 
 	// PALM spec
 
-	Int32 lastKeyPressed;
-	UInt32 lastKeyRepeat;
-	UInt8 lastKeyModifier;
+	Int32 _lastKeyPressed;
+	UInt32 _lastKeyRepeat;
+	UInt8 _lastKeyModifier;
 	
 	Boolean _useNumPad;
+	Boolean _useHRmode;
 
-	eventsEnum lastEvent;
+	eventsEnum _lastEvent;
+
+	UInt16 _wideRefNum;
+	Boolean onehalf[320];
 
 	OSystem_PALMOS();
 
