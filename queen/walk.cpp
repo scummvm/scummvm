@@ -57,59 +57,13 @@ Walk::Walk(Logic *logic, Graphics *graphics)
 }
 
 
-uint16 Walk::joeFace() {
-
-	debug(9, "Walk::joeFace() - curFace = %d, prevFace = %d", _logic->joeFacing(), _joePrevFacing);
-	BobSlot *pbs = _graphics->bob(0);
-	uint16 frame;
-	if (_logic->currentRoom() == 108) {
-		frame = 1;
-	}
-	else {
-		frame = 33;
-		if (_logic->joeFacing() == DIR_FRONT) {
-			if (_joePrevFacing == DIR_BACK) {
-				pbs->frameNum = 33 + FRAMES_JOE_XTRA;
-				_graphics->update();
-			}
-			frame = 34;
-		}
-		else if (_logic->joeFacing() == DIR_BACK) {
-			if (_joePrevFacing == DIR_FRONT) {
-				pbs->frameNum = 33 + FRAMES_JOE_XTRA;
-				_graphics->update();
-			}
-			frame = 35;
-		}
-		else if ((_logic->joeFacing() == DIR_LEFT && _joePrevFacing == DIR_RIGHT) 
-			|| 	(_logic->joeFacing() == DIR_RIGHT && _joePrevFacing == DIR_LEFT)) {
-			pbs->frameNum = 34 + FRAMES_JOE_XTRA;
-			_graphics->update();
-		}
-		pbs->frameNum = frame + FRAMES_JOE_XTRA;
-		pbs->scale = _logic->joeScale();
-		pbs->xflip = (_logic->joeFacing() == DIR_LEFT);
-		_graphics->update();
-		_joePrevFacing = _logic->joeFacing();
-		switch (frame) {
-		case 33: frame = 1; break;
-		case 34: frame = 3; break;
-		case 35: frame = 5; break;
-		}
-	}
-	pbs->frameNum = 29 + FRAMES_JOE_XTRA;
-	_graphics->bankUnpack(frame, pbs->frameNum, 7);
-	return frame;
-}
-
-
 void Walk::joeMoveBlock(int facing) {
 	warning("Walk::moveJoeBlock() partially implemented");
 	_graphics->bob(0)->animating = false;
 //    CAN=-2;
     // Make Joe face the right direction
 	_logic->joeFacing(facing);
-	joeFace();
+	_logic->joeFace();
 
 	// TODO: cutaway calls
 }
@@ -164,7 +118,7 @@ void Walk::animateJoe() {
 	BobSlot *pbs = _graphics->bob(0);
 	_logic->joeFacing(_walkData[1].anim.facing);
 	_logic->joeScale(_walkData[1].area->calcScale(pbs->y));
-	joeFace();
+	_logic->joeFace();
 	bool interrupted = false;
 	for (i = 1; i <= _walkDataCount && !interrupted; ++i) {
 
@@ -345,107 +299,6 @@ void Walk::animatePerson(const MovePersonData *mpd, uint16 image, uint16 bobNum,
 }
 
 
-void Walk::joeSetup() {
-	int i;
-
-	_graphics->bankLoad("joe_a.BBK", 13);
-	for (i = 11; i <= 28 + FRAMES_JOE_XTRA; ++i) {
-		_graphics->bankUnpack(i - 10, i, 13);
-	}
-	_graphics->bankErase(13);
-
-	_graphics->bankLoad("joe_b.BBK", 7);
-	_graphics->bankUnpack(1, 33 + FRAMES_JOE_XTRA, 7);
-	_graphics->bankUnpack(3, 34 + FRAMES_JOE_XTRA, 7);
-	_graphics->bankUnpack(5, 35 + FRAMES_JOE_XTRA, 7);
-
-	_logic->joeFacing(DIR_FRONT);
-}
-
-
-ObjectData *Walk::joeSetupInRoom(bool autoPosition, uint16 scale) {
-	// queen.c SETUP_HERO()
-
-	uint16 oldx;
-	uint16 oldy;
-	WalkOffData *pwo = NULL;
-	ObjectData *pod = _logic->objectData(_logic->entryObj());
-	if (pod == NULL) {
-		error("Walk::joeSetupInRoom() - No object data for obj %d", _logic->entryObj());
-	}
-
-	if (!autoPosition || _logic->joeX() != 0 || _logic->joeY() != 0) {
-		oldx = _logic->joeX();
-		oldy = _logic->joeY();
-	}
-	else {
-		// find the walk off point for the entry object and make 
-		// Joe walking to that point
-		pwo = _logic->walkOffPointForObject(_logic->entryObj());
-		if (pwo != NULL) {
-			oldx = pwo->x;
-			oldy = pwo->y;
-		}
-		else {
-			// no walk off point, use object position
-			oldx = pod->x;
-			oldy = pod->y;
-		}
-	}
-
-	debug(9, "Walk::joeSetupInRoom() - oldx=%d, oldy=%d", oldx, oldy);
-
-	if (scale > 0 && scale < 100) {
-		_logic->joeScale(scale);
-	}
-	else {
-		uint16 area = _logic->zoneInArea(ZONE_ROOM, oldx, oldy);
-		if (area > 0) {
-			_logic->joeScale(_logic->currentRoomArea(area)->calcScale(oldy));
-		}
-		else {
-			_logic->joeScale(100);
-		}
-	}
-
-	// TODO: cutawayJoeFacing
-
-    // check to see which way Joe entered room
-	switch (_logic->findStateDirection(pod->state)) {
-	case STATE_DIR_FRONT:
-		_logic->joeFacing(DIR_FRONT);
-		break;
-	case STATE_DIR_BACK:
-		_logic->joeFacing(DIR_BACK);
-		break;
-	case STATE_DIR_LEFT:
-		_logic->joeFacing(DIR_LEFT);
-		break;
-	case STATE_DIR_RIGHT:
-		_logic->joeFacing(DIR_RIGHT);
-		break;
-	}
-
-	_joePrevFacing = _logic->joeFacing();
-	BobSlot *pbs = _graphics->bob(0);
-	pbs->scale = _logic->joeScale();
-
-	// TODO: room 108 specific
-
-	joeFace();
-	pbs->active = true;
-	pbs->x = oldx;
-	pbs->y = oldy;
-	pbs->frameNum = 29 + FRAMES_JOE_XTRA;
-	_logic->joeX(0);
-	_logic->joeY(0);
-
-	if (pwo != NULL) {
-		// entryObj has a walk off point, then walk from there to object x,y
-		return pod;
-	}
-	return NULL;
-}
 
 
 void Walk::joeMove(int direction, uint16 endx, uint16 endy, bool inCutaway) {
@@ -483,13 +336,15 @@ void Walk::joeMove(int direction, uint16 endx, uint16 endy, bool inCutaway) {
 	if (direction > 0) {
 		_logic->joeFacing(direction);
 	}
-	_joePrevFacing = _logic->joeFacing();
-	joeFace();
+	_logic->joePrevFacing(_logic->joeFacing());
+	_logic->joeFace();
 }
 
 
 
 void Walk::personMove(const Person *pp, uint16 endx, uint16 endy, uint16 curImage, int direction) {
+
+	// TODO: room 69 specific
 
 	// CAN = 0;
 	initWalkData();

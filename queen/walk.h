@@ -64,15 +64,6 @@ struct MovePersonData {
 	uint16 moveSpeed;
 };
 
-/*
-struct Person {
-	const char* name;
-	uint16 bobNum; // P_BOB
-	uint16 bankNum; // P_BANK
-	uint16 image; // MOVE_OTHER, CI arg
-	int direction; // MOVE_OTHER, dir arg
-};
-*/
 
 class Logic;
 class Graphics;
@@ -82,18 +73,9 @@ public:
 
 	Walk(Logic* logic, Graphics* graphics);
 
-	//! SETUP_JOE(), loads the various bobs needed to animate Joe
-	void joeSetup();
-
-	//! SETUP_HERO(), places Joe at the right place when entering a room
-	ObjectData *joeSetupInRoom(bool autoPosition, uint16 scale);
-	
 	//! MOVE_JOE()
 	void joeMove(int direction, uint16 endx, uint16 endy, bool inCutaway);
 	
-	//! FACE_JOE()
-	uint16 joeFace();
-
 	//! MOVE_OTHER
 	void personMove(const Person *pp, uint16 endx, uint16 endy, uint16 curImage, int direction);
 
@@ -133,8 +115,6 @@ private:
     void calc(uint16 oldPos, uint16 newPos, uint16 oldx, uint16 oldy, uint16 x, uint16 y);
 
 	static const MovePersonData _moveData[];
-
-	uint16 _joePrevFacing;
 
 	uint16 _walkDataCount;
 	WalkData _walkData[16];	

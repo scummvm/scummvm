@@ -966,7 +966,7 @@ void Cutaway::goToFinalRoom() {
 		joeBob->x = joeX;
 		joeBob->y = joeY;
 		joeBob->scale = _logic->findScale(joeX, joeY);
-		_walk->joeFace();
+		_logic->joeFace();
 	}
 }
 

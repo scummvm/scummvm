@@ -79,12 +79,14 @@ public:
 	uint16 joeY()		{ return _joe.y; }
 	uint16 joeWalk()	{ return _joe.walk; }
 	uint16 joeScale()	{ return _joe.scale; }
+	uint16 joePrevFacing() { return _joe.prevFacing; }
 
 	void joeFacing(uint16 dir);
 	void joeX(uint16 x);
 	void joeY(uint16 y);
 	void joeWalk(uint16 walk);
 	void joeScale(uint16 scale);
+	void joePrevFacing(uint16 dir);
 	
 	int16 gameState(int index);
 	void gameState(int index, int16 newValue);
@@ -123,6 +125,15 @@ public:
 	void animErase(uint16 bobNum);
 
 	StateDirection findStateDirection(uint16 state); // == FIND_STATE(state, "DIR");
+
+	//! SETUP_JOE(), loads the various bobs needed to animate Joe
+	void joeSetup();
+
+	//! SETUP_HERO(), places Joe at the right place when entering a room
+	ObjectData *joeSetupInRoom(bool autoPosition, uint16 scale);
+	
+	//! FACE_JOE()
+	uint16 joeFace();
 
 
 protected:
@@ -191,7 +202,7 @@ protected:
 
 	struct {
 		uint16	x, y;
-		uint16	facing;
+		uint16	facing, prevFacing;
 		uint16  walk;
 		uint16  scale;
 	} _joe;

@@ -126,7 +126,7 @@ SELECT_VERB()
 SETUP_BOBS()				Graphics::bobSetupControl
 SETUP_FURNITURE()			Logic::roomSetupFurniture
 SETUP_ITEMS()
-SETUP_JOE()					Walk::joeSetup
+SETUP_JOE()					Logic::joeSetup
 SETUP_ROOM()
 SETUP_SCRVARS()
 update() 					Graphics::update
@@ -269,7 +269,7 @@ CALC_WALK()					Walk::incWalkData
 CALC_X()					Walk::calcC
 CALC_Y()					Walk::calcC
 CALCSCALE()					Area::calcScale
-FACE_JOE()					Walk::joeFace
+FACE_JOE()					Logic::joeFace
 FIND_FREE_AREA				Walk::findFreeArea
 FIND_NEWP()					Walk::findAreaPosition
 FIND_OLDP()					Walk::findAreaPosition

@@ -295,7 +295,7 @@ void Logic::initialise() {
 
 	_graphics->panelLoad();
 	_graphics->bobSetupControl();
-	_walk->joeSetup();
+	joeSetup();
 	zoneSetupPanel();
 
 	memset(_zones, 0, sizeof(_zones));
@@ -579,6 +579,10 @@ void Logic::joeWalk(uint16 walk) {
 
 void Logic::joeScale(uint16 scale) {
 	_joe.scale = scale;
+}
+
+void Logic::joePrevFacing(uint16 dir) {
+	_joe.prevFacing = dir;
 }
 
 int16 Logic::gameState(int index) {
@@ -949,7 +953,7 @@ void Logic::roomDisplay(const char* room, RoomDisplayMode mode, uint16 scale, in
 	zoneSetup();
 	ObjectData *pod = NULL;
 	if (mode != RDM_FADE_NOJOE) {
-		pod = _walk->joeSetupInRoom(mode != RDM_FADE_JOE_XY, scale);
+		pod = joeSetupInRoom(mode != RDM_FADE_JOE_XY, scale);
 	}
 	if (mode != RDM_NOFADE_JOE) {
 		_graphics->update();
@@ -1216,6 +1220,156 @@ StateDirection Logic::findStateDirection(uint16 state) {
 	}
 	return sd;
 }
+
+
+void Logic::joeSetup() {
+	int i;
+
+	_graphics->bankLoad("joe_a.BBK", 13);
+	for (i = 11; i <= 28 + FRAMES_JOE_XTRA; ++i) {
+		_graphics->bankUnpack(i - 10, i, 13);
+	}
+	_graphics->bankErase(13);
+
+	_graphics->bankLoad("joe_b.BBK", 7);
+	_graphics->bankUnpack(1, 33 + FRAMES_JOE_XTRA, 7);
+	_graphics->bankUnpack(3, 34 + FRAMES_JOE_XTRA, 7);
+	_graphics->bankUnpack(5, 35 + FRAMES_JOE_XTRA, 7);
+
+	_joe.facing = DIR_FRONT;
+}
+
+
+ObjectData *Logic::joeSetupInRoom(bool autoPosition, uint16 scale) {
+	// queen.c SETUP_HERO()
+
+	uint16 oldx;
+	uint16 oldy;
+	WalkOffData *pwo = NULL;
+	ObjectData *pod = &_objectData[_entryObj];
+	if (pod == NULL) {
+		error("Logic::joeSetupInRoom() - No object data for obj %d", _entryObj);
+	}
+
+	if (!autoPosition || _joe.x != 0 || _joe.y != 0) {
+		oldx = _joe.x;
+		oldy = _joe.y;
+	}
+	else {
+		// find the walk off point for the entry object and make 
+		// Joe walking to that point
+		pwo = walkOffPointForObject(_entryObj);
+		if (pwo != NULL) {
+			oldx = pwo->x;
+			oldy = pwo->y;
+		}
+		else {
+			// no walk off point, use object position
+			oldx = pod->x;
+			oldy = pod->y;
+		}
+	}
+
+	debug(9, "Logic::joeSetupInRoom() - oldx=%d, oldy=%d", oldx, oldy);
+
+	if (scale > 0 && scale < 100) {
+		_joe.scale = scale;
+	}
+	else {
+		uint16 a = zoneInArea(ZONE_ROOM, oldx, oldy);
+		if (a > 0) {
+			_joe.scale = currentRoomArea(a)->calcScale(oldy);
+		}
+		else {
+			_joe.scale = 100;
+		}
+	}
+
+	// TODO: cutawayJoeFacing
+
+    // check to see which way Joe entered room
+	switch (findStateDirection(pod->state)) {
+	case STATE_DIR_FRONT:
+		_joe.facing = DIR_FRONT;
+		break;
+	case STATE_DIR_BACK:
+		_joe.facing = DIR_BACK;
+		break;
+	case STATE_DIR_LEFT:
+		_joe.facing = DIR_LEFT;
+		break;
+	case STATE_DIR_RIGHT:
+		_joe.facing = DIR_RIGHT;
+		break;
+	}
+
+	_joe.prevFacing = _joe.facing;
+	BobSlot *pbs = _graphics->bob(0);
+	pbs->scale = _joe.scale;
+
+	// TODO: room 108 specific
+
+	joeFace();
+	pbs->active = true;
+	pbs->x = oldx;
+	pbs->y = oldy;
+	pbs->frameNum = 29 + FRAMES_JOE_XTRA;
+	_joe.x = 0;
+	_joe.y = 0;
+
+	if (pwo != NULL) {
+		// entryObj has a walk off point, then walk from there to object x,y
+		return pod;
+	}
+	return NULL;
+}
+
+
+uint16 Logic::joeFace() {
+
+	debug(9, "Logic::joeFace() - curFace = %d, prevFace = %d", _joe.facing, _joe.prevFacing);
+	BobSlot *pbs = _graphics->bob(0);
+	uint16 frame;
+	if (_currentRoom == 108) {
+		frame = 1;
+	}
+	else {
+		frame = 33;
+		if (_joe.facing == DIR_FRONT) {
+			if (_joe.prevFacing == DIR_BACK) {
+				pbs->frameNum = 33 + FRAMES_JOE_XTRA;
+				_graphics->update();
+			}
+			frame = 34;
+		}
+		else if (_joe.facing == DIR_BACK) {
+			if (_joe.prevFacing == DIR_FRONT) {
+				pbs->frameNum = 33 + FRAMES_JOE_XTRA;
+				_graphics->update();
+			}
+			frame = 35;
+		}
+		else if ((_joe.facing == DIR_LEFT && _joe.prevFacing == DIR_RIGHT) 
+			|| 	(_joe.facing == DIR_RIGHT && _joe.prevFacing == DIR_LEFT)) {
+			pbs->frameNum = 34 + FRAMES_JOE_XTRA;
+			_graphics->update();
+		}
+		pbs->frameNum = frame + FRAMES_JOE_XTRA;
+		pbs->scale = _joe.scale;
+		pbs->xflip = (_joe.facing == DIR_LEFT);
+		_graphics->update();
+		_joe.prevFacing = _joe.facing;
+		switch (frame) {
+		case 33: frame = 1; break;
+		case 34: frame = 3; break;
+		case 35: frame = 5; break;
+		}
+	}
+	pbs->frameNum = 29 + FRAMES_JOE_XTRA;
+	_graphics->bankUnpack(frame, pbs->frameNum, 7);
+	return frame;
+}
+
 
 
 } // End of namespace Queen
