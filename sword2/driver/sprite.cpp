@@ -615,6 +615,8 @@ int32 DrawSprite(_spriteInfo *s) {
 					dst += screenWide;
 				}
 			} else if (s->blend & 0x02) {
+				debug(2, "DrawSprite: s->blend & 0x02");
+
 				// FIXME: This case looks bogus to me. The
 				// same value for the red, green and blue
 				// parameters, and we multiply with the source
@@ -622,8 +624,7 @@ int32 DrawSprite(_spriteInfo *s) {
 				// component.
 				//
 				// But as far as I can see, that's how the
-				// original
-				// code did it.
+				// original code did it.
 				//
 				// Does anyone know where this case was used
 				// anyway?

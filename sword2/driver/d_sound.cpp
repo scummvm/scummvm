@@ -50,7 +50,7 @@ static File fpMus;
 #define GetCompressedSign(n)       (((n) >> 3) & 1)
 #define GetCompressedAmplitude(n)  ((n) & 7)
 
-int32 panTable[33] = {
+static int32 panTable[33] = {
 	-127, -119, -111, -103,  -95,  -87,  -79,  -71,
 	 -63,  -55,  -47,  -39,  -31,  -23,  -15,   -7,
 	   0,
@@ -58,7 +58,7 @@ int32 panTable[33] = {
           71,   79,   87,   95,  103,  111,  119,  127
 };
 
-int32 musicVolTable[17] = {
+static int32 musicVolTable[17] = {
 	  0,  15,  31,  47,  63,  79,  95, 111, 127,
 	143, 159, 175, 191, 207, 223, 239, 255
 };
@@ -249,8 +249,6 @@ void Sword2Sound::playLeadOut(uint8 *leadOut) {
 		ServiceWindows();
 		g_system->delay_msecs(30);
 	}
-
-	closeFx(-2);
 }
 
 // --------------------------------------------------------------------------
@@ -271,12 +269,6 @@ int32 Sword2Sound::isFxOpen(int32 id) {
 	return getFxIndex(id) == MAXFX;
 }
 
-// --------------------------------------------------------------------------
-// This function checks the status of all current sound effects, and clears
-// out the ones which are no longer required in a buffer.  It is called by
-// a separate thread.
-// --------------------------------------------------------------------------
-
 void Sword2Sound::fxServer(int16 *data, uint len) {
 	StackLock lock(_mutex);
 
@@ -287,48 +279,6 @@ void Sword2Sound::fxServer(int16 *data, uint len) {
 
 	if (!_music[0]._streaming && !_music[1]._streaming && fpMus.isOpen())
 		fpMus.close();
-
-	// FIXME: Doing this sort of things from a separate thread seems like
-	// just asking for trouble. But removing it outright causes regressions
-	// which need to be investigated.
-	//
-	// I've fixed one such regression, and as far as I can tell it's
-	// working now.
-
-#if 0
-	int i;
-
-	if (_fxPaused) {
-		for (i = 0; i < MAXFX; i++) {
-			if ((_fx[i]._id == -1) || (_fx[i]._id == -2)) {
-				if (!_fx[i]._handle) {
-					_fx[i]._id = 0;
-					if (_fx[i]._buf != NULL) {
-						free(_fx[i]._buf);
-						_fx[i]._buf = NULL;
-					}
-					_fx[i]._bufSize = 0;
-					_fx[i]._flags = 0;
-				}
-			}
-		}
-		return;
-	}
-
-	for (i = 0; i < MAXFX; i++) {
-		if (_fx[i]._id) {
-			if (!_fx[i]._handle) {
-				_fx[i]._id = 0;
-				if (_fx[i]._buf != NULL) {
-					free(_fx[i]._buf);
-					_fx[i]._buf = NULL;
-				}
-				_fx[i]._bufSize = 0;
-				_fx[i]._flags = 0;
-			}
-		}
-	}
-#endif
 }
 
 /**
@@ -610,17 +560,10 @@ int32 Sword2Sound::openFx(int32 id, uint8 *data) {
 
 		if (fxi == MAXFX) {
 			// Expire the first sound effect that isn't currently
-			// playing.
-
-			// FIXME. This may need a bit of work. I still haven't
-			// grasped all the intricacies of the sound effects
-			// handling.
-			//
-			// Anyway, it'd be nicer - in theory - to expire the
-			// least recently used slot.
-			//
-			// This used to be done by the "garbage collector" in
-			// fxServer().
+			// playing. This usually shouldn't happen since the
+			// game engine manually clears all sound effects (at
+			// least except for lead-ins and lead-outs) when moving
+			// between rooms.
 
 			for (fxi = 0; fxi < MAXFX; fxi++) {
 				if (!_fx[fxi]._handle)

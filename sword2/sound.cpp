@@ -240,8 +240,6 @@ int32 FN_play_fx(int32 *params) {
 		res_man.close(fxq[j].resource);
 	}
 
-	// (James07uag97)
-
 	if (fxq[j].type == FX_LOOP) {
 		// play now, rather than in Process_fx_queue where it was
 		// getting played again & again!

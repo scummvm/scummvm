@@ -322,5 +322,12 @@ int32 PlaySmacker(char *filename, _movieTextObject *text[], uint8 *musicOut) {
 		BS2_SetPalette(0, 256, oldPal, RDPAL_INSTANT);
 	}
 
+	// Lead-in and lead-out music are, as far as I can tell, only used for
+	// the animated cut-scenes, so this seems like a good place to close
+	// both of them.
+
+	g_sound->closeFx(-1);
+	g_sound->closeFx(-2);
+
 	return RD_OK;
 }

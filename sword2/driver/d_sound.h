@@ -73,9 +73,6 @@ private:
 	FxHandle _fx[MAXFX];
 	MusicHandle _music[MAXMUS + 1];
 
-	// We used to have two music volumes - one for each channel -
-	// but they were always set to the same value.
-
 	uint8 _musicVol;
 
 	uint8 _soundOn;
