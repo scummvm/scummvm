@@ -192,8 +192,8 @@
 
 #define START_VOICE	( delay(200), _sound->playVoice(vocBuffer, loadedVocSize) )
 #define START_BG	( _sound->playBgSound(bgVocBuffer, bgVocSize) )
-#define LOAD_NEW_VOICE(num)	( free (vocBuffer), vocBuffer = (byte *)loadFile(num, NULL), loadedVocSize = _lastLoadedFileSize ) 
-#define LOAD_NEW_BG(num)	( free (bgVocBuffer), bgVocBuffer = (byte *)loadFile(num, NULL), bgVocSize = _lastLoadedFileSize )
+#define LOAD_NEW_VOICE(num)	( free (vocBuffer), vocBuffer = loadFile(num, NULL), loadedVocSize = _lastLoadedFileSize ) 
+#define LOAD_NEW_BG(num)	( free (bgVocBuffer), bgVocBuffer = loadFile(num, NULL), bgVocSize = _lastLoadedFileSize )
 #define WAIT_VOICE	while (_sound->_voiceHandle != 0) { delay(50); }
 #define WAIT_SEQUENCE	while (_tseqFrames != 0) { delay(50); }
 #define WAIT_RELATIVE(x)	( delay(20 * (x)) )
@@ -206,24 +206,24 @@ void SkyState::doCDIntro() {
 
 	assert(_isCDVersion);
 	
-	vocBuffer = (byte *)loadFile(cdv_00, NULL);
+	vocBuffer = loadFile(cdv_00, NULL);
 	loadedVocSize = _lastLoadedFileSize;
 
-	_tempPal = (byte *)loadFile(cd_pal, NULL);
-	_workScreen = (byte *)loadFile(cd_1_log, NULL);
+	_tempPal = loadFile(cd_pal, NULL);
+	_workScreen = loadFile(cd_1_log, NULL);
 	
-	cd2_seq_data_1 = (byte *)loadFile(cd_1, NULL);
-	bgVocBuffer = (byte *)loadFile(59499, NULL);
+	cd2_seq_data_1 = loadFile(cd_1, NULL);
+	bgVocBuffer = loadFile(59499, NULL);
 	bgVocSize = _lastLoadedFileSize;
 
 	delay(2000); //keep gibbons screen up for 2 seconds
-	fn_fade_down(0); //and fade out
+	fnFadeDown(0); //and fade out
 
 	START_VOICE;
 	START_BG; 
 	free (vocBuffer);
 
-	vocBuffer = (byte *)loadFile(cdv_01, NULL);
+	vocBuffer = loadFile(cdv_01, NULL);
 	loadedVocSize = _lastLoadedFileSize;
 	
 	WAIT_VOICE; //wait for the voice to finish
@@ -236,7 +236,7 @@ void SkyState::doCDIntro() {
 	WAIT_VOICE;
 	START_VOICE;
 	START_BG; 
-	cd2_seq_data_2 = (byte *)loadFile(cd_2, NULL); //load seq 2 while 1 is playing
+	cd2_seq_data_2 = loadFile(cd_2, NULL); //load seq 2 while 1 is playing
 	LOAD_NEW_VOICE(cdv_03);
 	//WAIT_SEQUENCE;
 	WAIT_VOICE;
@@ -251,7 +251,7 @@ void SkyState::doCDIntro() {
 	START_BG;
 
 	free(cd2_seq_data_1);
-	cd2_seq_data_1 = (byte *)loadFile(cd_3, NULL);
+	cd2_seq_data_1 = loadFile(cd_3, NULL);
 	LOAD_NEW_VOICE(cdv_05);
 	
 	WAIT_SEQUENCE; //2
@@ -269,7 +269,7 @@ void SkyState::doCDIntro() {
 	START_BG;
 
 	free (cd2_seq_data_2);
-	cd2_seq_data_2 = (byte *)loadFile(cd_5, NULL);
+	cd2_seq_data_2 = loadFile(cd_5, NULL);
 	LOAD_NEW_VOICE(cdv_07);
 
 	WAIT_SEQUENCE; //3
@@ -289,7 +289,7 @@ void SkyState::doCDIntro() {
 	START_BG;
 
 	free (cd2_seq_data_1);
-	cd2_seq_data_1 = (byte *)loadFile(cd_7, NULL);
+	cd2_seq_data_1 = loadFile(cd_7, NULL);
 	LOAD_NEW_VOICE(cdv_10);
 
 	WAIT_SEQUENCE; //5
@@ -300,16 +300,16 @@ void SkyState::doCDIntro() {
 	START_BG;
 	
 	loadFile(cd_11_pal, _tempPal);
-	byte *workScreen2 = (byte *)loadFile(cd_11_log, NULL); //need an extra screen or else the sequence will get messed up
+	byte *workScreen2 = loadFile(cd_11_log, NULL); //need an extra screen or else the sequence will get messed up
 	free (cd2_seq_data_2);
-	cd2_seq_data_2 = (byte *)loadFile(cd_11, NULL);
+	cd2_seq_data_2 = loadFile(cd_11, NULL);
 	LOAD_NEW_VOICE(cdv_11);
 
 	WAIT_VOICE; //10
 	START_VOICE; //11
 	START_BG;
 
-	fn_fade_down(0);
+	fnFadeDown(0);
 	COPY_SCREEN;
 	showScreen();
 	paletteFadeUp(_tempPal);
@@ -329,7 +329,7 @@ void SkyState::doCDIntro() {
 	START_BG;
 
 	free(cd2_seq_data_1);
-	cd2_seq_data_1 = (byte *)loadFile(cd_13, NULL);
+	cd2_seq_data_1 = loadFile(cd_13, NULL);
 	LOAD_NEW_VOICE(cdv_14);
 
 	LOAD_NEW_BG(59498);
@@ -350,7 +350,7 @@ void SkyState::doCDIntro() {
 
 	START_VOICE; //15
 	START_BG;
-	fn_fade_down(0);
+	fnFadeDown(0);
 	COPY_SCREEN;
 	showScreen();
 	paletteFadeUp(_tempPal);
@@ -362,7 +362,7 @@ void SkyState::doCDIntro() {
 
 	loadFile(cd_17_log, workScreen2);
 	free (cd2_seq_data_2);
-	cd2_seq_data_2 = (byte *)loadFile(cd_17, NULL);
+	cd2_seq_data_2 = loadFile(cd_17, NULL);
 	LOAD_NEW_VOICE(cdv_17);
 
 	WAIT_VOICE; //16
@@ -389,7 +389,7 @@ void SkyState::doCDIntro() {
 	WAIT_SEQUENCE; //17
 	WAIT_VOICE; //18
 
-	fn_fade_down(0);
+	fnFadeDown(0);
 	COPY_SCREEN;
 	showScreen();
 	paletteFadeUp(_tempPal);
@@ -404,7 +404,7 @@ void SkyState::doCDIntro() {
 	START_VOICE; //20
 	START_BG;
 
-	fn_fade_down(0);
+	fnFadeDown(0);
 	COPY_SCREEN;
 	showScreen();
 	paletteFadeUp(_tempPal);
@@ -417,7 +417,7 @@ void SkyState::doCDIntro() {
 	WAIT_VOICE; //20
 	START_VOICE; //21
 	START_BG;
-	fn_fade_down(0);
+	fnFadeDown(0);
 	COPY_SCREEN;
 	showScreen();
 	paletteFadeUp(_tempPal);
@@ -433,7 +433,7 @@ void SkyState::doCDIntro() {
 	LOAD_NEW_VOICE(cdv_23);
 	WAIT_VOICE; //22
 	START_VOICE; //23
-	fn_fade_down(0);
+	fnFadeDown(0);
 
 	loadFile(cd_23_pal, _tempPal);
 	loadFile(cd_24_log, workScreen2);
@@ -453,12 +453,12 @@ void SkyState::doCDIntro() {
 	START_VOICE; //26
 
 	free (cd2_seq_data_1);
-	cd2_seq_data_1 = (byte *)loadFile(cd_27, NULL);
+	cd2_seq_data_1 = loadFile(cd_27, NULL);
 	LOAD_NEW_VOICE(cdv_27);
 	loadFile(cd_27_pal, _tempPal);
 	loadFile(cd_27_log, workScreen2);
 	WAIT_VOICE; //26
-	fn_fade_down(0);
+	fnFadeDown(0);
 	COPY_SCREEN;
 	showScreen();	
 	paletteFadeUp(_tempPal);
@@ -488,13 +488,13 @@ void SkyState::doCDIntro() {
 	START_VOICE; //35
 
 	free (cd2_seq_data_2);
-	cd2_seq_data_2 = (byte *)loadFile(cd_35, NULL);
+	cd2_seq_data_2 = loadFile(cd_35, NULL);
 	LOAD_NEW_VOICE(cdv_36);
 	loadFile(cd_35_pal, _tempPal);
 	loadFile(cd_35_log, workScreen2);
 	WAIT_VOICE; //35
 	START_VOICE; //36
-	fn_fade_down(0);
+	fnFadeDown(0);
 	COPY_SCREEN;
 	showScreen();
 	paletteFadeUp(_tempPal);
@@ -505,7 +505,7 @@ void SkyState::doCDIntro() {
 	START_VOICE; //37
 
 	free (cd2_seq_data_1);
-	cd2_seq_data_1 = (byte *)loadFile(cd_37, NULL);
+	cd2_seq_data_1 = loadFile(cd_37, NULL);
 	LOAD_NEW_VOICE(cdv_38);
 
 	WAIT_SEQUENCE; //35
@@ -521,7 +521,7 @@ void SkyState::doCDIntro() {
 	loadFile(cd_40_pal, _tempPal);
 	loadFile(cd_40_log, workScreen2);
 	WAIT_VOICE; //39
-	fn_fade_down(0);
+	fnFadeDown(0);
 	COPY_SCREEN;
 	showScreen();
 	paletteFadeUp(_tempPal);
@@ -539,14 +539,14 @@ void SkyState::doCDIntro() {
 	loadFile(cd_43_log, workScreen2);
 	WAIT_VOICE; //42
 
-	fn_fade_down(0);
+	fnFadeDown(0);
 	COPY_SCREEN;
 	showScreen();
 	paletteFadeUp(_tempPal);
 
 	START_VOICE; //43
 	free (cd2_seq_data_2);
-	cd2_seq_data_2 = (byte *)loadFile(cd_43, NULL);
+	cd2_seq_data_2 = loadFile(cd_43, NULL);
 	WAIT_VOICE; //43
 	startTimerSequence(cd2_seq_data_2);
 	LOAD_NEW_VOICE(cdv_45);
@@ -554,12 +554,12 @@ void SkyState::doCDIntro() {
 	loadFile(cd_45_log, workScreen2);
 	WAIT_SEQUENCE; //43
 	START_VOICE; //45
-	fn_fade_down(0);
+	fnFadeDown(0);
 	COPY_SCREEN;
 	showScreen();
 	paletteFadeUp(_tempPal);
 	free (cd2_seq_data_1);
-	cd2_seq_data_1 = (byte *)loadFile(cd_45, NULL);
+	cd2_seq_data_1 = loadFile(cd_45, NULL);
 	LOAD_NEW_VOICE(cdv_46);
 	WAIT_VOICE; //45
 	startTimerSequence(cd2_seq_data_1);
@@ -572,7 +572,7 @@ void SkyState::doCDIntro() {
 	WAIT_SEQUENCE; //45
 	WAIT_VOICE; //46
 
-	fn_fade_down(0);
+	fnFadeDown(0);
 	COPY_SCREEN;
 	showScreen();
 	paletteFadeUp(_tempPal);
@@ -582,13 +582,13 @@ void SkyState::doCDIntro() {
 	loadFile(cd_48_log, workScreen2);
 	WAIT_VOICE; //47
 	START_VOICE; //48
-	fn_fade_down(0);
+	fnFadeDown(0);
 	COPY_SCREEN;
 	showScreen();
 	paletteFadeUp(_tempPal);
 
 	free (cd2_seq_data_2);
-	cd2_seq_data_2 = (byte *)loadFile(cd_48, NULL);
+	cd2_seq_data_2 = loadFile(cd_48, NULL);
 	LOAD_NEW_VOICE(cdv_49);
 	WAIT_VOICE; //48
 	startTimerSequence(cd2_seq_data_2);
@@ -597,7 +597,7 @@ void SkyState::doCDIntro() {
 	WAIT_VOICE; //49
 	START_VOICE; //50
 	free (cd2_seq_data_1);
-	cd2_seq_data_1 = (byte *)loadFile(cd_49, NULL);
+	cd2_seq_data_1 = loadFile(cd_49, NULL);
 	LOAD_NEW_VOICE(cdv_51);
 	WAIT_SEQUENCE; //48
 	WAIT_VOICE; //50
@@ -611,7 +611,7 @@ void SkyState::doCDIntro() {
 	START_VOICE; //53
 	LOAD_NEW_VOICE(cdv_54);
 	free (cd2_seq_data_2);
-	cd2_seq_data_2 = (byte *)loadFile(cd_50, NULL);
+	cd2_seq_data_2 = loadFile(cd_50, NULL);
 	WAIT_VOICE; //53
 	WAIT_SEQUENCE; //49
 
@@ -628,7 +628,7 @@ void SkyState::doCDIntro() {
 	WAIT_VOICE; //55
 	START_VOICE; //56
 
-	fn_fade_down(0);
+	fnFadeDown(0);
 	COPY_SCREEN;
 	showScreen();
 	paletteFadeUp(_tempPal);
@@ -642,7 +642,7 @@ void SkyState::doCDIntro() {
 	loadFile(cd_58_log, workScreen2);
 
 	WAIT_VOICE; //57
-	fn_fade_down(0);
+	fnFadeDown(0);
 	COPY_SCREEN;
 	showScreen();
 	paletteFadeUp(_tempPal);
@@ -651,7 +651,7 @@ void SkyState::doCDIntro() {
 	WAIT_VOICE; //48
 	START_VOICE; //59
 	free (cd2_seq_data_1);
-	cd2_seq_data_1 = (byte *)loadFile(cd_58, NULL);
+	cd2_seq_data_1 = loadFile(cd_58, NULL);
 	WAIT_VOICE; //59
 	LOAD_NEW_VOICE(cdv_60);
 	START_VOICE; //60
@@ -672,7 +672,7 @@ void SkyState::doCDIntro() {
 	WAIT_SEQUENCE; //58
 	WAIT_VOICE; //64
 	START_VOICE; //65
-	fn_fade_down(0);
+	fnFadeDown(0);
 	LOAD_NEW_VOICE(cdv_66);
 	loadFile(cd_66_pal, _tempPal);
 	loadFile(cd_66_log, _workScreen);
@@ -685,7 +685,7 @@ void SkyState::doCDIntro() {
 	START_VOICE; //67
 	loadFile(cd_67_pal, _tempPal);
 	loadFile(cd_67_log, workScreen2);
-	fn_fade_down(0);
+	fnFadeDown(0);
 	COPY_SCREEN;
 	showScreen();
 	paletteFadeUp(_tempPal);
@@ -693,13 +693,13 @@ void SkyState::doCDIntro() {
 	WAIT_VOICE; //67
 	START_VOICE; //68
 	free (cd2_seq_data_2);
-	cd2_seq_data_2 = (byte *)loadFile(cd_69, NULL);
+	cd2_seq_data_2 = loadFile(cd_69, NULL);
 	LOAD_NEW_VOICE(cdv_69);
 	loadFile(cd_69_pal, _tempPal);
 	loadFile(cd_69_log, workScreen2);
 	WAIT_VOICE; //68
 	START_VOICE; //69
-	fn_fade_down(0);
+	fnFadeDown(0);
 	COPY_SCREEN;
 	showScreen();
 	paletteFadeUp(_tempPal);
@@ -709,7 +709,7 @@ void SkyState::doCDIntro() {
 	START_VOICE; //70
 	LOAD_NEW_VOICE(cdv_71);
 	WAIT_VOICE; //70
-	fn_fade_down(0);
+	fnFadeDown(0);
 	START_VOICE; //71
 	loadFile(cd_72_pal, _tempPal);
 	loadFile(cd_72_log, _workScreen);
@@ -723,7 +723,7 @@ void SkyState::doCDIntro() {
 	loadFile(cd_73_log, _workScreen);
 	LOAD_NEW_VOICE(cdv_73);
 	WAIT_VOICE; //72
-	fn_fade_down(0);
+	fnFadeDown(0);
 	showScreen();
 	paletteFadeUp(_tempPal);
 	START_VOICE; //73
@@ -735,8 +735,8 @@ void SkyState::doCDIntro() {
 	START_VOICE; //75
 	loadFile(cd_76_pal, _tempPal);
 	free (workScreen2);
-	workScreen2 = (byte *)loadFile(cd_76_log, NULL);
-	fn_fade_down(0);
+	workScreen2 = loadFile(cd_76_log, NULL);
+	fnFadeDown(0);
 	COPY_SCREEN;
 	showScreen();
 	paletteFadeUp(_tempPal);
@@ -749,13 +749,13 @@ void SkyState::doCDIntro() {
 	START_VOICE; //77
 
 	free (cd2_seq_data_1);
-	cd2_seq_data_1 = (byte *)loadFile(cd_100, NULL);
+	cd2_seq_data_1 = loadFile(cd_100, NULL);
 	loadFile(cd_78_pal, _tempPal);
 	free (workScreen2);
-	workScreen2 = (byte *)loadFile(cd_78_log, NULL);
+	workScreen2 = loadFile(cd_78_log, NULL);
 	LOAD_NEW_VOICE(cdv_78);
 	WAIT_VOICE; //77
-	fn_fade_down(0);
+	fnFadeDown(0);
 	COPY_SCREEN;
 	showScreen();	
 	paletteFadeUp(_tempPal);
@@ -777,7 +777,7 @@ void SkyState::doCDIntro() {
 	WAIT_VOICE; //82
 	loadFile(cd_101_log, workScreen2);
 	free (cd2_seq_data_2);
-	cd2_seq_data_2 = (byte *)loadFile(cd_101, NULL);
+	cd2_seq_data_2 = loadFile(cd_101, NULL);
 	WAIT_SEQUENCE; //100
 	COPY_SCREEN;
 	showScreen();
@@ -793,9 +793,9 @@ void SkyState::doCDIntro() {
 	WAIT_VOICE; //85
 
 	free (workScreen2);
-	workScreen2 = (byte *)loadFile(cd_102_log, NULL);
+	workScreen2 = loadFile(cd_102_log, NULL);
 	free (cd2_seq_data_1);
-	cd2_seq_data_1 = (byte *)loadFile(cd_102, NULL);
+	cd2_seq_data_1 = loadFile(cd_102, NULL);
 	WAIT_SEQUENCE; //101
 	COPY_SCREEN;
 	showScreen();
@@ -804,11 +804,11 @@ void SkyState::doCDIntro() {
 	LOAD_NEW_VOICE(cdv_87);
 	loadFile(cd_103_pal, _tempPal);
 	free (workScreen2);
-	workScreen2 = (byte *)loadFile(cd_103_log, NULL);
+	workScreen2 = loadFile(cd_103_log, NULL);
 	free (cd2_seq_data_2);
-	cd2_seq_data_2 = (byte *)loadFile(cd_103, NULL);
+	cd2_seq_data_2 = loadFile(cd_103, NULL);
 	WAIT_SEQUENCE; //102
-	fn_fade_down(0);
+	fnFadeDown(0);
 	COPY_SCREEN;
 	showScreen();
 	paletteFadeUp(_tempPal);
@@ -817,19 +817,19 @@ void SkyState::doCDIntro() {
 	START_VOICE; //87
 	loadFile(cd_104_pal, _tempPal);
 	free (workScreen2);
-	workScreen2 = (byte *)loadFile(cd_104_log, NULL);
+	workScreen2 = loadFile(cd_104_log, NULL);
 	free (cd2_seq_data_1);
-	cd2_seq_data_1 = (byte *)loadFile(cd_104, NULL);
+	cd2_seq_data_1 = loadFile(cd_104, NULL);
 	WAIT_SEQUENCE; //103
 
 	//fn_start_music(2);
-	fn_fade_down(0);
+	fnFadeDown(0);
 	COPY_SCREEN;
 	showScreen();
 	paletteFadeUp(_tempPal);
 	startTimerSequence(cd2_seq_data_1);
 	free (cd2_seq_data_2);
-	cd2_seq_data_2 = (byte *)loadFile(cd_105, NULL);
+	cd2_seq_data_2 = loadFile(cd_105, NULL);
 	WAIT_SEQUENCE; //104
 	startTimerSequence(cd2_seq_data_2);
 	WAIT_SEQUENCE; //105

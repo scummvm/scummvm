@@ -75,7 +75,7 @@ void SkyState::initialiseDisk() {
 
 //load in file file_nr to address dest
 //if dest == NULL, then allocate memory for this file
-uint16 *SkyState::loadFile(uint16 fileNr, uint8 *dest) {
+uint8 *SkyState::loadFile(uint16 fileNr, uint8 *dest) {
 	
 	uint8 cflag;
 	int32 bytesRead;
@@ -89,7 +89,7 @@ uint16 *SkyState::loadFile(uint16 fileNr, uint8 *dest) {
 	compFile = fileNr;
 	debug(2, "load file %d,%d (%d)", (fileNr >> 11), (fileNr & 2047), fileNr); 
 
-	filePtr = (uint8 *)getFileInfo(fileNr);
+	filePtr = getFileInfo(fileNr);
 	if (filePtr == NULL) {
 		printf("File %d not found!\n", fileNr);
 		return NULL;
@@ -163,7 +163,7 @@ uint16 *SkyState::loadFile(uint16 fileNr, uint8 *dest) {
 				if (fixedDest == NULL)
 					free(compDest);
 			
-				return (uint16 *)fileDest;
+				return fileDest;
 			}
 
 			if (! (uint8)(fileFlags >> (22) & 0x1) ) { // include header?
@@ -182,12 +182,12 @@ uint16 *SkyState::loadFile(uint16 fileNr, uint8 *dest) {
 		} else
 			debug(2, "but not with RNC! (?!)");
 	} else
-		return (uint16 *)fileDest;
+		return fileDest;
 
-	return (uint16 *)compDest;
+	return compDest;
 }
 
-uint16 *SkyState::getFileInfo(uint16 fileNr) {
+uint8 *SkyState::getFileInfo(uint16 fileNr) {
 	
 	uint16 i;
 	uint16 *dnrTbl16Ptr = (uint16 *)dinnerTableArea;
@@ -195,12 +195,12 @@ uint16 *SkyState::getFileInfo(uint16 fileNr) {
 	for (i = 0; i < dinnerTableEntries; i++) {
 		if (READ_LE_UINT16(dnrTbl16Ptr + (i * 4)) == fileNr) {
 			debug(2, "file %d found!", fileNr);
-			return (dnrTbl16Ptr + (i * 4));
+			return (uint8 *)(dnrTbl16Ptr + (i * 4));
 		}
 	}
 
 	// if file not found return NULL
-	return (uint16 *)NULL;
+	return (uint8 *)NULL;
 }
 
 void SkyState::dumpFile(uint16 fileNr) {
@@ -208,7 +208,7 @@ void SkyState::dumpFile(uint16 fileNr) {
 	File out;
 	byte* filePtr;
 
-	filePtr = (byte *)loadFile(fileNr, NULL);
+	filePtr = loadFile(fileNr, NULL);
 	sprintf(buf, "dumps/file-%d.dmp", fileNr);
 	
 	out.open(buf, "", 1);

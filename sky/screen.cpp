@@ -97,7 +97,7 @@ void SkyState::convertPalette(uint8 *inPal, uint8* outPal) { //convert 3 byte 0.
 //action = 0, simply fade out
 //action = 1, scroll left
 //action = 2, scroll right
-void SkyState::fn_fade_down(uint8 action) {
+void SkyState::fnFadeDown(uint8 action) {
 
 	if (action) {
 	

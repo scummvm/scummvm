@@ -92,12 +92,12 @@ protected:
 	void initialiseScreen();
 	void initialiseGrids();
 	void setPalette(uint8 *pal);
-	void fn_fade_down(uint8 action);
+	void fnFadeDown(uint8 action);
 	void palette_fadedown_helper(uint32 *pal, uint num);
 	void paletteFadeUp(uint8 *pal);
 	void palette_fadeup_helper(uint32 *realPal, uint32 *desiredPal, int num);
-	uint16 *loadFile(uint16 fileNr, uint8 *dest);
-	uint16 *getFileInfo(uint16 fileNr);
+	uint8 *loadFile(uint16 fileNr, uint8 *dest);
+	uint8 *getFileInfo(uint16 fileNr);
 	void dumpFile(uint16 fileNr);
 	void initVirgin();
 	void intro();

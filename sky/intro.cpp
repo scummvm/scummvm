@@ -218,11 +218,11 @@ uint32 *command_pointer = (uint32 *)zero_commands;
 
 void SkyState::initVirgin() {
 	
-	_tempPal = (uint8 *)loadFile(60111, NULL);
+	_tempPal = loadFile(60111, NULL);
 	if (_tempPal != NULL)
 		setPalette(_tempPal);
 
-	_workScreen = (uint8 *)loadFile(60110, NULL);
+	_workScreen = loadFile(60110, NULL);
 
 	if (_workScreen != NULL)
 		showScreen();
@@ -234,8 +234,8 @@ void SkyState::initVirgin() {
 
 void SkyState::intro(void) {
 
-	_workScreen = (uint8 *)loadFile(60112, NULL); //while virgin screen is up, load rev screen
-	_tempPal = (uint8 *)loadFile(60113, NULL);
+	_workScreen = loadFile(60112, NULL); //while virgin screen is up, load rev screen
+	_tempPal = loadFile(60113, NULL);
 
 	//loadSectionMusic(0);
 	
@@ -245,15 +245,15 @@ void SkyState::intro(void) {
 	//	fn_start_music();
 	
 	delay(3000); //and another 3 seconds.
-	fn_fade_down(0); //remove virgin screen
+	fnFadeDown(0); //remove virgin screen
 	showScreen();
 	paletteFadeUp(_tempPal);
 	free (_tempPal);
 	free (_workScreen);
 	
 	//while rev is up, load gibbons screen
-	_workScreen = (uint8 *)loadFile(60114, NULL);
-	_tempPal = (uint8 *)loadFile(60115, NULL);
+	_workScreen = loadFile(60114, NULL);
+	_tempPal = loadFile(60115, NULL);
 
 	intro_text_space = (uint8 *)malloc(10000);
 	intro_text_save = (uint8 *)malloc(10000);
@@ -262,7 +262,7 @@ void SkyState::intro(void) {
 	
 	delay(8000); // keep revolution up for 8 seconds
 
-	fn_fade_down(0);
+	fnFadeDown(0);
 	showScreen();
 	paletteFadeUp(_tempPal);
 
