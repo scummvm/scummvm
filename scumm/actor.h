@@ -82,7 +82,8 @@ public:
 	static void initActorClass(Scumm *scumm);
 
 public:
-	int x, y, top, bottom;
+	ScummVM::Point _pos;
+	int top, bottom;
 	int elevation;
 	uint width;
 	byte number;

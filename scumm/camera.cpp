@@ -93,14 +93,14 @@ void Scumm::setCameraFollows(Actor *a) {
 	if (!a->isInCurrentRoom()) {
 		startScene(a->getRoom(), 0, 0);
 		camera._mode = CM_FOLLOW_ACTOR;
-		camera._cur.x = a->x;
+		camera._cur.x = a->_pos.x;
 		setCameraAt(camera._cur.x, 0);
 	}
 
-	t = (a->x >> 3);
+	t = (a->_pos.x >> 3);
 
 	if (t - _screenStartStrip < camera._leftTrigger || t - _screenStartStrip > camera._rightTrigger)
-		setCameraAt(a->x, 0);
+		setCameraAt(a->_pos.x, 0);
 
 	for (i = 1; i < _numActors; i++) {
 		if (_actors[i].isInCurrentRoom())
@@ -121,11 +121,11 @@ void Scumm_v7::setCameraFollows(Actor *a) {
 		startScene(a->getRoom(), 0, 0);
 	}
 
-	ax = abs(a->x - camera._cur.x);
-	ay = abs(a->y - camera._cur.y);
+	ax = abs(a->_pos.x - camera._cur.x);
+	ay = abs(a->_pos.y - camera._cur.y);
 
 	if (ax > VAR(VAR_CAMERA_THRESHOLD_X) || ay > VAR(VAR_CAMERA_THRESHOLD_Y) || ax > (_screenWidth / 2) || ay > (_screenHeight / 2)) {
-		setCameraAt(a->x, a->y);
+		setCameraAt(a->_pos.x, a->_pos.y);
 	}
 
 	if (a->number != oldfollow)
@@ -175,7 +175,7 @@ void Scumm::moveCamera() {
 	if (camera._mode == CM_FOLLOW_ACTOR) {
 		a = derefActor(camera._follows, "moveCamera");
 
-		actorx = a->x;
+		actorx = a->_pos.x;
 		t = (actorx >> 3) - _screenStartStrip;
 
 		if (t < camera._leftTrigger || t > camera._rightTrigger) {
@@ -191,7 +191,7 @@ void Scumm::moveCamera() {
 
 	if (camera._movingToActor) {
 		a = derefActor(camera._follows, "moveCamera(2)");
-		camera._dest.x = a->x;
+		camera._dest.x = a->_pos.x;
 	}
 
 	if (camera._dest.x < VAR(VAR_CAMERA_MIN_X))
@@ -210,7 +210,7 @@ void Scumm::moveCamera() {
 	}
 
 	/* a is set a bit above */
-	if (camera._movingToActor && (camera._cur.x >> 3) == (a->x >> 3)) {
+	if (camera._movingToActor && (camera._cur.x >> 3) == (a->_pos.x >> 3)) {
 		camera._movingToActor = false;
 	}
 
@@ -231,13 +231,13 @@ void Scumm_v7::moveCamera() {
 
 	if (camera._follows) {
 		a = derefActor(camera._follows, "moveCamera");
-		if (abs(camera._cur.x - a->x) > VAR(VAR_CAMERA_THRESHOLD_X) ||
-				abs(camera._cur.y - a->y) > VAR(VAR_CAMERA_THRESHOLD_Y)) {
+		if (abs(camera._cur.x - a->_pos.x) > VAR(VAR_CAMERA_THRESHOLD_X) ||
+				abs(camera._cur.y - a->_pos.y) > VAR(VAR_CAMERA_THRESHOLD_Y)) {
 			camera._movingToActor = true;
 			if (VAR(VAR_CAMERA_THRESHOLD_X) == 0)
-				camera._cur.x = a->x;
+				camera._cur.x = a->_pos.x;
 			if (VAR(VAR_CAMERA_THRESHOLD_Y) == 0)
-				camera._cur.y = a->y;
+				camera._cur.y = a->_pos.y;
 			clampCameraPos(&camera._cur);
 		}
 	} else {
@@ -245,8 +245,8 @@ void Scumm_v7::moveCamera() {
 	}
 
 	if (camera._movingToActor) {
-		VAR(VAR_CAMERA_DEST_X) = camera._dest.x = a->x;
-		VAR(VAR_CAMERA_DEST_Y) = camera._dest.y = a->y;
+		VAR(VAR_CAMERA_DEST_X) = camera._dest.x = a->_pos.x;
+		VAR(VAR_CAMERA_DEST_Y) = camera._dest.y = a->_pos.y;
 	}
 
 	assert(camera._cur.x >= (_screenWidth / 2) && camera._cur.y >= (_screenHeight / 2));

@@ -1221,7 +1221,7 @@ int Scumm::getObjX(int obj) {
 	if (obj < _numActors) {
 		if (obj < 1)
 			return 0;									/* fix for indy4's map */
-		return derefActor(obj, "getObjX")->x;
+		return derefActor(obj, "getObjX")->_pos.x;
 	} else {
 		if (whereIsObject(obj) == WIO_NOT_FOUND)
 			return -1;
@@ -1235,7 +1235,7 @@ int Scumm::getObjY(int obj) {
 	if (obj < _numActors) {
 		if (obj < 1)
 			return 0;									/* fix for indy4's map */
-		return derefActor(obj, "getObjY")->y;
+		return derefActor(obj, "getObjY")->_pos.y;
 	} else {
 		if (whereIsObject(obj) == WIO_NOT_FOUND)
 			return -1;

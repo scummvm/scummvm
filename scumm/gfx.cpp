@@ -662,8 +662,8 @@ void Scumm::drawFlashlight() {
 		y = _mouse.y - virtscr[0].topline;
 	} else {
 		Actor *a = derefActor(VAR(VAR_EGO), "drawFlashlight");
-		x = a->x;
-		y = a->y;
+		x = a->_pos.x;
+		y = a->_pos.y;
 	}
 	_flashlight.w = _flashlight.xStrips * 8;
 	_flashlight.h = _flashlight.yStrips * 8;

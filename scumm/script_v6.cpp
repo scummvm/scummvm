@@ -1023,9 +1023,9 @@ void Scumm_v6::o6_walkActorToObj() {
 			dist = a2->scalex * a2->width / 0xFF;
 			dist += dist / 2;
 		}
-		x = a2->x;
-		y = a2->y;
-		if (x < a->x)
+		x = a2->_pos.x;
+		y = a2->_pos.y;
+		if (x < a->_pos.x)
 			x += dist;
 		else
 			x -= dist;
@@ -1161,7 +1161,7 @@ void Scumm_v6::o6_loadRoomWithEgo() {
 		VAR(VAR_WALKTO_OBJ) = 0;
 
 	if (_version == 6) {
-		setCameraAt(a->x, a->y);
+		setCameraAt(a->_pos.x, a->_pos.y);
 		setCameraFollows(a);
 	}
 
@@ -1267,7 +1267,7 @@ void Scumm_v6::o6_getAnimateVariable() {
 void Scumm_v6::o6_isActorInBox() {
 	int box = pop();
 	Actor *a = derefActor(pop(), "o6_isActorInBox");
-	push(checkXYInBoxBounds(box, a->x, a->y));
+	push(checkXYInBoxBounds(box, a->_pos.x, a->_pos.y));
 }
 
 void Scumm_v6::o6_getActorLayer() {
@@ -1715,7 +1715,7 @@ void Scumm_v6::o6_actorOps() {
 		else
 			a->forceClip = 0;
 		if (a->isInCurrentRoom())
-			a->putActor(a->x, a->y, a->room);
+			a->putActor(a->_pos.x, a->_pos.y, a->room);
 		break;
 	case 96:
 		a->ignoreBoxes = 0;
@@ -1724,7 +1724,7 @@ void Scumm_v6::o6_actorOps() {
 		else
 			a->forceClip = 0;
 		if (a->isInCurrentRoom())
-			a->putActor(a->x, a->y, a->room);
+			a->putActor(a->_pos.x, a->_pos.y, a->room);
 		break;
 	case 97:
 		a->setAnimSpeed(pop());

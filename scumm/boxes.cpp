@@ -802,11 +802,11 @@ bool Actor::findPathTowards(byte box1nr, byte box2nr, byte box3nr, ScummVM::Poin
 					if (flag & 2)
 						SWAP(box2.ul.y, box2.ur.y);
 				} else {
-					pos = y;
+					pos = _pos.y;
 					if (box2nr == box3nr) {
-						int diffX = walkdata.dest.x - x;
-						int diffY = walkdata.dest.y - y;
-						int boxDiffX = box1.ul.x - x;
+						int diffX = walkdata.dest.x - _pos.x;
+						int diffY = walkdata.dest.y - _pos.y;
+						int boxDiffX = box1.ul.x - _pos.x;
 
 						if (diffX != 0) {
 							int t;
@@ -816,7 +816,7 @@ bool Actor::findPathTowards(byte box1nr, byte box2nr, byte box3nr, ScummVM::Poin
 							if (t == 0 && (diffY <= 0 || diffX <= 0)
 									&& (diffY >= 0 || diffX >= 0))
 								t = -1;
-							pos = y + t;
+							pos = _pos.y + t;
 						}
 					}
 
@@ -859,16 +859,16 @@ bool Actor::findPathTowards(byte box1nr, byte box2nr, byte box3nr, ScummVM::Poin
 				} else {
 
 					if (box2nr == box3nr) {
-						int diffX = walkdata.dest.x - x;
-						int diffY = walkdata.dest.y - y;
-						int boxDiffY = box1.ul.y - y;
+						int diffX = walkdata.dest.x - _pos.x;
+						int diffY = walkdata.dest.y - _pos.y;
+						int boxDiffY = box1.ul.y - _pos.y;
 
-						pos = x;
+						pos = _pos.x;
 						if (diffY != 0) {
 							pos += diffX * boxDiffY / diffY;
 						}
 					} else {
-						pos = x;
+						pos = _pos.x;
 					}
 
 					q = pos;
@@ -1155,21 +1155,21 @@ void Actor::findPathTowardsOld(byte trap1, byte trap2, byte final_trap, ScummVM:
 	// next box (trap2) = final box?
 	if (trap2 == final_trap) {
 		// Is the actor (x,y) between both gates?
-		if (compareSlope(x, y, walkdata.dest.x, walkdata.dest.y, gateA[0].x, gateA[0].y) !=
-				compareSlope(x, y, walkdata.dest.x, walkdata.dest.y, gateB[0].x, gateB[0].y) &&
-				compareSlope(x, y, walkdata.dest.x, walkdata.dest.y, gateA[1].x, gateA[1].y) !=
-				compareSlope(x, y, walkdata.dest.x, walkdata.dest.y, gateB[1].x, gateB[1].y)) {
+		if (compareSlope(_pos.x, _pos.y, walkdata.dest.x, walkdata.dest.y, gateA[0].x, gateA[0].y) !=
+				compareSlope(_pos.x, _pos.y, walkdata.dest.x, walkdata.dest.y, gateB[0].x, gateB[0].y) &&
+				compareSlope(_pos.x, _pos.y, walkdata.dest.x, walkdata.dest.y, gateA[1].x, gateA[1].y) !=
+				compareSlope(_pos.x, _pos.y, walkdata.dest.x, walkdata.dest.y, gateB[1].x, gateB[1].y)) {
 			return;
 		}
 	}
 
-	pt = closestPtOnLine(gateA[1].x, gateA[1].y, gateB[1].x, gateB[1].y, x, y);
+	pt = closestPtOnLine(gateA[1].x, gateA[1].y, gateB[1].x, gateB[1].y, _pos.x, _pos.y);
 	p3.x = pt.x;
 	p3.y = pt.y;
 
-	if (compareSlope(x, y, p3.x, p3.y, gateA[0].x, gateA[0].y) ==
-			compareSlope(x, y, p3.x, p3.y, gateB[0].x, gateB[0].y)) {
-		closestPtOnLine(gateA[0].x, gateA[0].y, gateB[0].x, gateB[0].y, x, y);
+	if (compareSlope(_pos.x, _pos.y, p3.x, p3.y, gateA[0].x, gateA[0].y) ==
+			compareSlope(_pos.x, _pos.y, p3.x, p3.y, gateB[0].x, gateB[0].y)) {
+		closestPtOnLine(gateA[0].x, gateA[0].y, gateB[0].x, gateB[0].y, _pos.x, _pos.y);
 		p2.x = pt.x;				/* if point 2 between gates, ignore! */
 		p2.y = pt.y;
 	}

@@ -2020,7 +2020,7 @@ void Scumm::startScene(int room, Actor *a, int objectNr) {
 		}
 		if (camera._follows) {
 			a = derefActor(camera._follows, "startScene: follows");
-			setCameraAt(a->x, a->y);
+			setCameraAt(a->_pos.x, a->_pos.y);
 		}
 	}
 

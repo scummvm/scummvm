@@ -512,7 +512,7 @@ void Scumm_v5::o5_actorSet() {
 			a->ignoreBoxes = !(_opcode & 1);
 			a->forceClip = 0;
 			if (a->isInCurrentRoom())
-				a->putActor(a->x, a->y, a->room);
+				a->putActor(a->_pos.x, a->_pos.y, a->room);
 			break;
 
 		case 22:										/* animspeed */
@@ -1327,7 +1327,7 @@ void Scumm_v5::o5_isActorInBox() {
 	int box = getVarOrDirectByte(0x40);
 	Actor *a = derefActor(act, "o5_isActorInBox");
 
-	if (!checkXYInBoxBounds(box, a->x, a->y))
+	if (!checkXYInBoxBounds(box, a->_pos.x, a->_pos.y))
 		o5_jumpRelative();
 	else
 		ignoreScriptWord();
@@ -1489,9 +1489,9 @@ void Scumm_v5::o5_loadRoomWithEgo() {
 	}
 
 	// FIXME: Can this be removed?
-	camera._cur.x = a->x;
+	camera._cur.x = a->_pos.x;
 
-	setCameraAt(a->x, a->y);
+	setCameraAt(a->_pos.x, a->_pos.y);
 	setCameraFollows(a);
 
 	_fullRedraw = 1;
@@ -2662,9 +2662,9 @@ void Scumm_v5::o5_walkActorToActor() {
 		dist = a->scalex * a->width / 0xFF;
 		dist += (a2->scalex * a2->width / 0xFF) / 2;
 	}
-	x = a2->x;
-	y = a2->y;
-	if (x < a->x)
+	x = a2->_pos.x;
+	y = a2->_pos.y;
+	if (x < a->_pos.x)
 		x += dist;
 	else
 		x -= dist;

@@ -1291,8 +1291,8 @@ void Scumm_v2::o2_loadRoomWithEgo() {
 	a->putActor(x2, y2, _currentRoom);
 	a->setDirection(dir + 180);
 
-	camera._dest.x = camera._cur.x = a->x;
-	setCameraAt(a->x, a->y);
+	camera._dest.x = camera._cur.x = a->_pos.x;
+	setCameraAt(a->_pos.x, a->_pos.y);
 	setCameraFollows(a);
 
 	_fullRedraw = 1;

@@ -69,8 +69,8 @@ void Actor::initActor(int mode) {
 	if (mode == 1) {
 		costume = 0;
 		room = 0;
-		x = 0;
-		y = 0;
+		_pos.x = 0;
+		_pos.y = 0;
 		facing = 180;
 	} else if (mode == 2) {
 		facing = 180;
@@ -159,7 +159,7 @@ int Scumm::getAngleFromPos(int x, int y) const {
 }
 
 int Actor::calcMovementFactor(ScummVM::Point next) {
-	ScummVM::Point actorPos(x, y);
+	ScummVM::Point actorPos(_pos);
 	int diffX, diffY;
 	int32 deltaXFactor, deltaYFactor;
 
@@ -341,7 +341,7 @@ void Actor::setBox(int box) {
 
 int Actor::actorWalkStep() {
 	int tmpX, tmpY;
-	int actorX, actorY;
+	ScummVM::Point actorPos;
 	int distX, distY;
 	int nextFacing;
 
@@ -355,39 +355,37 @@ int Actor::actorWalkStep() {
 		moving |= MF_IN_LEG;
 	}
 
-	actorX = x;
-	actorY = y;
+	actorPos = _pos;
 
-	if (walkbox != walkdata.curbox && _vm->checkXYInBoxBounds(walkdata.curbox, actorX, actorY)) {
+	if (walkbox != walkdata.curbox && _vm->checkXYInBoxBounds(walkdata.curbox, actorPos.x, actorPos.y)) {
 		setBox(walkdata.curbox);
 	}
 
 	distX = abs(walkdata.next.x - walkdata.cur.x);
 	distY = abs(walkdata.next.y - walkdata.cur.y);
 
-	if (abs(actorX - walkdata.cur.x) >= distX && abs(actorY - walkdata.cur.y) >= distY) {
+	if (abs(actorPos.x - walkdata.cur.x) >= distX && abs(actorPos.y - walkdata.cur.y) >= distY) {
 		moving &= ~MF_IN_LEG;
 		return 0;
 	}
 
-	tmpX = (actorX << 16) + walkdata.xfrac + (walkdata.deltaXFactor >> 8) * scalex;
+	tmpX = (actorPos.x << 16) + walkdata.xfrac + (walkdata.deltaXFactor >> 8) * scalex;
 	walkdata.xfrac = (uint16)tmpX;
-	actorX = (tmpX >> 16);
+	actorPos.x = (tmpX >> 16);
 
-	tmpY = (actorY << 16) + walkdata.yfrac + (walkdata.deltaYFactor >> 8) * scaley;
+	tmpY = (actorPos.y << 16) + walkdata.yfrac + (walkdata.deltaYFactor >> 8) * scaley;
 	walkdata.yfrac = (uint16)tmpY;
-	actorY = (tmpY >> 16);
+	actorPos.y = (tmpY >> 16);
 
-	if (abs(actorX - walkdata.cur.x) > distX) {
-		actorX = walkdata.next.x;
+	if (abs(actorPos.x - walkdata.cur.x) > distX) {
+		actorPos.x = walkdata.next.x;
 	}
 
-	if (abs(actorY - walkdata.cur.y) > distY) {
-		actorY = walkdata.next.y;
+	if (abs(actorPos.y - walkdata.cur.y) > distY) {
+		actorPos.y = walkdata.next.y;
 	}
 
-	x = actorX;
-	y = actorY;
+	_pos = actorPos;
 	return 1;
 }
 
@@ -423,7 +421,7 @@ void Actor::setupActorScale() {
 //	if (_vm->getBoxFlags(walkbox) & kBoxPlayerOnly)
 //		return;
 
-	scale = _vm->getScale(walkbox, x, y);
+	scale = _vm->getScale(walkbox, _pos.x, _pos.y);
 	assert(scale <= 0xFF);
 
 	scalex = scaley = (byte)scale;
@@ -575,8 +573,8 @@ void Actor::putActor(int dstX, int dstY, byte newRoom) {
 	if (_vm->_gameId == GID_SAMNMAX && newRoom == 16 && number == 5 && dstX == 235 && dstY == 236)
 		dstX++;
 
-	x = dstX;
-	y = dstY;
+	_pos.x = dstX;
+	_pos.y = dstY;
 	room = newRoom;
 	needRedraw = true;
 
@@ -604,8 +602,8 @@ int Actor::getActorXYPos(int &xPos, int &yPos) const {
 	if (!isInCurrentRoom())
 		return -1;
 
-	xPos = x;
-	yPos = y;
+	xPos = _pos.x;
+	yPos = _pos.y;
 	return 0;
 }
 
@@ -692,10 +690,10 @@ AdjustBoxResult Actor::adjustXYToBeInBox(int dstX, int dstY) {
 void Actor::adjustActorPos() {
 	AdjustBoxResult abr;
 
-	abr = adjustXYToBeInBox(x, y);
+	abr = adjustXYToBeInBox(_pos.x, _pos.y);
 
-	x = abr.x;
-	y = abr.y;
+	_pos.x = abr.x;
+	_pos.y = abr.y;
 	walkdata.destbox = abr.box;
 
 	setBox(abr.box);
@@ -726,7 +724,7 @@ void Actor::faceToObject(int obj) {
 	if (_vm->getObjectOrActorXY(obj, x2, y2) == -1)
 		return;
 
-	dir = (x2 > x) ? 90 : 270;
+	dir = (x2 > _pos.x) ? 90 : 270;
 	turnToDirection(dir);
 }
 
@@ -859,7 +857,7 @@ static int compareDrawOrder(const void* a, const void* b)
 		return -1;
 
 	// The actor with higher y value is ordered higher
-	diff = actor1->y - actor2->y;
+	diff = actor1->_pos.y - actor2->_pos.y;
 	if (diff < 0)
 		return -1;
 	if (diff > 0)
@@ -939,8 +937,8 @@ void Actor::drawActorCostume() {
 
 	bcr->updateNbStrips();
 
-	bcr->_actorX = x - _vm->virtscr[0].xstart;
-	bcr->_actorY = y - elevation;
+	bcr->_actorX = _pos.x - _vm->virtscr[0].xstart;
+	bcr->_actorY = _pos.y - elevation;
 
 	if (_vm->_version <= 2) {
 		// HACK: We have to adjust the x position by one strip (8 pixels) in
@@ -1263,8 +1261,8 @@ void Actor::startWalkActor(int destX, int destY, int dir) {
 	}
 
 	if (!isInCurrentRoom()) {
-		x = abr.x;
-		y = abr.y;
+		_pos.x = abr.x;
+		_pos.y = abr.y;
 		if (dir != -1)
 			setDirection(dir);
 		return;
@@ -1283,7 +1281,7 @@ void Actor::startWalkActor(int destX, int destY, int dir) {
 			return;
 	}
 
-	if (x == abr.x && y == abr.y) {
+	if (_pos.x == abr.x && _pos.y == abr.y) {
 		turnToDirection(dir);
 		return;
 	}
@@ -1380,8 +1378,8 @@ void Actor::walkActor() {
 		moving &= MF_IN_LEG;
 	}
 
+	moving &= ~MF_NEW_LEG;
 	do {
-		moving &= ~MF_NEW_LEG;
 
 		if (walkbox == kInvalidBox) {
 			setBox(walkdata.destbox);
@@ -1413,6 +1411,58 @@ void Actor::walkActor() {
 	moving |= MF_LAST_LEG;
 	calcMovementFactor(walkdata.dest);
 }
+
+/*
+void Actor::walkActorV12() {
+	ScummVM::Point foundPath, tmp;
+	int new_dir, next_box;
+
+	if (moving & MF_TURN) {
+		new_dir = updateActorDirection(false);
+		if (facing != new_dir)
+			setDirection(new_dir);
+		else
+			moving = 0;
+		return;
+	}
+	
+	if (!moving)
+		return;
+	
+	if (moving & MF_IN_LEG) {
+		actorWalkStep();
+	} else {
+		if (moving & MF_LAST_LEG) {
+			moving = 0;
+			startWalkAnim(3, walkdata.destdir);
+		} else {
+			setBox(walkdata.curbox);
+			if (walkbox == walkdata.destbox) {
+				foundPath = walkdata.dest;
+				moving |= MF_LAST_LEG;
+			} else {
+				next_box = _vm->getPathToDestBox(walkbox, walkdata.destbox);
+				if (next_box < 0) {
+					moving |= MF_LAST_LEG;
+					return;
+				}
+		
+				// Can't walk through locked boxes
+				int flags = _vm->getBoxFlags(next_box);
+				if (flags & kBoxLocked && !(flags & kBoxPlayerOnly && !isPlayer())) {
+					moving |= MF_LAST_LEG;
+				}
+
+				walkdata.curbox = next_box;
+
+				_vm->getClosestPtOnBox(walkdata.curbox, x, y, tmp.x, tmp.y);
+				_vm->getClosestPtOnBox(walkbox, tmp.x, tmp.y, foundPath.x, foundPath.y);
+			}
+			calcMovementFactor(foundPath);
+		}
+	}
+}
+*/
 
 void Actor::walkActorOld() {
 	ScummVM::Point p2, p3;	// Gate locations
@@ -1452,8 +1502,8 @@ void Actor::walkActorOld() {
 		moving &= MF_IN_LEG;
 	}
 
+	moving &= ~MF_NEW_LEG;
 	do {
-		moving &= ~MF_NEW_LEG;
 
 		if (walkbox == kInvalidBox) {
 			setBox(walkdata.destbox);
@@ -1469,25 +1519,30 @@ void Actor::walkActorOld() {
 			moving |= MF_LAST_LEG;
 			return;
 		}
-
+		
 		// Can't walk through locked boxes
 		int flags = _vm->getBoxFlags(next_box);
 		if (flags & kBoxLocked && !(flags & kBoxPlayerOnly && !isPlayer())) {
 			moving |= MF_LAST_LEG;
+// FIXME: Work in progress
+//			walkdata.destdir = facing;
 			return;
 		}
 
 		walkdata.curbox = next_box;
 
 		if (_vm->_version <= 2) {
-			_vm->getClosestPtOnBox(walkdata.curbox, x, y, p2.x, p2.y);
+			_vm->getClosestPtOnBox(walkdata.curbox, _pos.x, _pos.y, p2.x, p2.y);
 			_vm->getClosestPtOnBox(walkbox, p2.x, p2.y, p3.x, p3.y);
+// FIXME: Work in progress
+//			calcMovementFactor(p3);
+//			return;
 		} else {
 			findPathTowardsOld(walkbox, next_box, walkdata.destbox, p2, p3);
 			if (p2.x == 32000 && p3.x == 32000) {
 				break;
 			}
-
+	
 			if (p2.x != 32000) {
 				if (calcMovementFactor(p2)) {
 					walkdata.point3 = p3;
@@ -1597,8 +1652,8 @@ bool Actor::isPlayer() {
 
 const SaveLoadEntry *Actor::getSaveLoadEntries() {
 	static const SaveLoadEntry actorEntries[] = {
-		MKLINE(Actor, x, sleInt16, VER(8)),
-		MKLINE(Actor, y, sleInt16, VER(8)),
+		MKLINE(Actor, _pos.x, sleInt16, VER(8)),
+		MKLINE(Actor, _pos.y, sleInt16, VER(8)),
 		MKLINE(Actor, top, sleInt16, VER(8)),
 		MKLINE(Actor, bottom, sleInt16, VER(8)),
 		MKLINE(Actor, elevation, sleInt16, VER(8)),

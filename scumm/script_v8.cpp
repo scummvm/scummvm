@@ -1002,13 +1002,13 @@ void Scumm_v8::o8_actorOps() {
 		a->ignoreBoxes = true;
 		a->forceClip = 100;
 		if (a->isInCurrentRoom())
-			a->putActor(a->x, a->y, a->room);
+			a->putActor(a->_pos.x, a->_pos.y, a->room);
 		break;
 	case 0x77:		// SO_ACTOR_FOLLOW_BOXES Make actor follow boxes
 		a->ignoreBoxes = false;
 		a->forceClip = 100;
 		if (a->isInCurrentRoom())
-			a->putActor(a->x, a->y, a->room);
+			a->putActor(a->_pos.x, a->_pos.y, a->room);
 		break;
 	case 0x78:		// SO_ACTOR_SPECIAL_DRAW
 		a->shadow_mode = pop();

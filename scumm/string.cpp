@@ -108,24 +108,24 @@ void Scumm::CHARSET_1() {
 
 	if (a && _string[0].overhead != 0) {
 		if (_version <= 5) {
-			_string[0].xpos = a->x - camera._cur.x + (_screenWidth / 2);
+			_string[0].xpos = a->_pos.x - camera._cur.x + (_screenWidth / 2);
 
 			if (VAR(VAR_V5_TALK_STRING_Y) < 0) {
 				s = (a->scaley * (int)VAR(VAR_V5_TALK_STRING_Y)) / 0xFF;
-				_string[0].ypos = (int)(((VAR(VAR_V5_TALK_STRING_Y) - s) >> 1) + s - a->elevation + a->y);
+				_string[0].ypos = (int)(((VAR(VAR_V5_TALK_STRING_Y) - s) >> 1) + s - a->elevation + a->_pos.y);
 			} else {
 				_string[0].ypos = (int)VAR(VAR_V5_TALK_STRING_Y);
 			}
 
 		} else {
 			s = a->scaley * a->talkPosY / 0xFF;
-			_string[0].ypos = ((a->talkPosY - s) >> 1) + s - a->elevation + a->y;
+			_string[0].ypos = ((a->talkPosY - s) >> 1) + s - a->elevation + a->_pos.y;
 
 			if (_string[0].ypos < _screenTop)
 				_string[0].ypos = _screenTop;
 
 			s = a->scalex * a->talkPosX / 0xFF;
-			_string[0].xpos = ((a->talkPosX - s) >> 1) + s + a->x - camera._cur.x + (_screenWidth / 2);
+			_string[0].xpos = ((a->talkPosX - s) >> 1) + s + a->_pos.x - camera._cur.x + (_screenWidth / 2);
 		}
 
 		if (_string[0].ypos < 1)
