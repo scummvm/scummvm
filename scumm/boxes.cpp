@@ -177,40 +177,46 @@ int ScummEngine::getScale(int box, int x, int y) {
 
 	// Was a scale slot specified? If so, we compute the effective scale
 	// from it, ignoring the box scale.
-	if (slot) {
-		assert(1 <= slot && slot <= ARRAYSIZE(_scaleSlots));
-		int scaleX = 0, scaleY = 0;
-		ScaleSlot &s = _scaleSlots[slot-1];
-
-		if (s.y1 == s.y2 && s.x1 == s.x2)
-			error("Invalid scale slot %d", slot);
-
-		if (s.y1 != s.y2) {
-			if (y < 0)
-				y = 0;
-
-			scaleY = (s.scale2 - s.scale1) * (y - s.y1) / (s.y2 - s.y1) + s.scale1;
-		}
-		if (s.x1 == s.x2) {
-			scale = scaleY;
-		} else {
-			scaleX = (s.scale2 - s.scale1) * (x - s.x1) / (s.x2 - s.x1) + s.scale1;
-
-			if (s.y1 == s.y2) {
-				scale = scaleX;
-			} else {
-				scale = (scaleX + scaleY) / 2;
-			}
-		}
-
-		// Clip the scale to range 1-255
-		if (scale < 1)
-			scale = 1;
-		else if (scale > 255)
-			scale = 255;
-	}
+	if (slot) 
+    scale = getScaleFromSlot(slot, x, y);
 	
-	// Finally return the scale
+	return scale;
+}
+
+
+int ScummEngine::getScaleFromSlot(int slot, int x, int y) {
+	assert(1 <= slot && slot <= ARRAYSIZE(_scaleSlots));
+  int scale;
+	int scaleX = 0, scaleY = 0;
+	ScaleSlot &s = _scaleSlots[slot-1];
+
+	if (s.y1 == s.y2 && s.x1 == s.x2)
+		error("Invalid scale slot %d", slot);
+
+	if (s.y1 != s.y2) {
+		if (y < 0)
+			y = 0;
+
+		scaleY = (s.scale2 - s.scale1) * (y - s.y1) / (s.y2 - s.y1) + s.scale1;
+	}
+	if (s.x1 == s.x2) {
+		scale = scaleY;
+	} else {
+		scaleX = (s.scale2 - s.scale1) * (x - s.x1) / (s.x2 - s.x1) + s.scale1;
+
+		if (s.y1 == s.y2) {
+			scale = scaleX;
+		} else {
+			scale = (scaleX + scaleY) / 2;
+		}
+	}
+
+	// Clip the scale to range 1-255
+	if (scale < 1)
+		scale = 1;
+	else if (scale > 255)
+		scale = 255;
+	
 	return scale;
 }
 

@@ -1036,7 +1036,7 @@ void Actor::drawActorCostume(bool hitTestMode) {
 	bcr->_clipOverride = _clipOverride;
 
 	if (_vm->_version == 4 && boxscale & 0x8000) {
-		bcr->_scaleX = bcr->_scaleY = _vm->getScale(_walkbox, _pos.x, _pos.y);
+		bcr->_scaleX = bcr->_scaleY = _vm->getScaleFromSlot((boxscale & 0x7fff) + 1, _pos.x, _pos.y);
 	} else {
 		bcr->_scaleX = scalex;
 		bcr->_scaleY = scaley;
