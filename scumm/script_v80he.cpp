@@ -458,11 +458,6 @@ void ScummEngine_v80he::o80_cursorCommand() {
 	case 0x99: 		// SO_CURSOR_IMAGE Set cursor image
 		warning("o80_cursorCommand: Can't set cursors to ID. Use images.");
 		break;
-	case 0x9A:		// SO_CURSOR_HOTSPOT Set cursor hotspot
-	case 0x9B:
-		a = pop();
-		setCursorHotspot(pop(), a);
-		break;
 	case 0x9C:		// SO_CHARSET_SET
 		initCharset(pop());
 		break;
