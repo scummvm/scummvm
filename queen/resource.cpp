@@ -70,10 +70,11 @@ Resource::~Resource() {
 }
 
 ResourceEntry *Resource::resourceEntry(const char *filename) const {
+	assert(filename[0] && strlen(filename) < 14);
+
 	char entryName[14];
 	char *ptr = entryName;
 
-	assert(strlen(filename));
 	strcpy(entryName, filename);
 	do
 		*ptr = toupper(*ptr);
@@ -104,8 +105,8 @@ uint8 *Resource::loadFile(const char *filename, uint32 skipBytes, uint32 *size, 
 	if (size != NULL) {
 		*size = sz;
 	}
-	byte *dstBuf;
 
+	byte *dstBuf;
 	if (useMalloc) {
 		dstBuf = (byte *)malloc(sz);
 	} else {

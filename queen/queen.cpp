@@ -91,13 +91,6 @@ namespace Queen {
 
 QueenEngine::QueenEngine(GameDetector *detector, OSystem *syst)
 	: Engine(syst) {
-
-	if (!_mixer->isReady())
-		warning("Sound initialisation failed.");
-
-	_mixer->setVolume(ConfMan.getInt("sfx_volume"));
-
-	_system->initSize(GAME_SCREEN_WIDTH, GAME_SCREEN_HEIGHT);
 }
 
 QueenEngine::~QueenEngine() {
@@ -329,6 +322,8 @@ void QueenEngine::go() {
 }
 
 void QueenEngine::initialise(void) {
+	_system->initSize(GAME_SCREEN_WIDTH, GAME_SCREEN_HEIGHT);
+
 	_bam = new BamScene(this);
 	_resource = new Resource();
 	_bankMan = new BankManager(_resource);
@@ -346,6 +341,10 @@ void QueenEngine::initialise(void) {
 	} else {
 		_logic = new LogicGame(this);
 	}
+
+	if (!_mixer->isReady())
+		warning("Sound initialisation failed.");
+	_mixer->setVolume(ConfMan.getInt("sfx_volume"));
 
 	int midiDriver = GameDetector::detectMusicDriver(MDT_NATIVE | MDT_ADLIB | MDT_PREFER_NATIVE);
 	MidiDriver *driver = GameDetector::createMidi(midiDriver);
