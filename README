@@ -184,7 +184,6 @@ the section on Reporting Bugs.
                 - simon1dos freezes briefly after Swampling leaves his house and
                   when talking to demons in Sordid's Tower
                 - Minor graphical glitches when using ring
-                - Minor graphical glitch with Sordid statue after leaving room
 
        Simon the Sorcerer 2:
                 - Text in copy protection screen of simon2dos is only shown for
@@ -192,7 +191,6 @@ the section on Reporting Bugs.
                 - simon2dos and simon2talkie (With subtitles enabled) freeze 
                   briefly when Pirate Captain is talking to Mate, when Simon
                   tries to escape
-                - Minor graphical glitch when giving items to baby
                 - Only default language in data files is supported in simon2mac
                 - F10 key animation in simon2mac is different compared to
                   original game
