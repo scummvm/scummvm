@@ -25,10 +25,6 @@ namespace Sword2 {
 class Sword2Engine;
 
 class Gui {
-private:
-	int _musicVolume[17];
-	int _soundVolume[15];
-
 public:
 	Sword2Engine *_vm;
 

@@ -891,9 +891,9 @@ public:
 		_fxSwitch->linkSurfaceImages(_musicSwitch, 516, 250);
 		_fxSwitch->reverseStates();
 
-		_musicSlider = new Slider(this, _panel, 16, 309, 161, 170, 27);
-		_speechSlider = new Slider(this, _panel, 14, 309, 208, 170, 27, _musicSlider);
-		_fxSlider = new Slider(this, _panel, 14, 309, 254, 170, 27, _musicSlider);
+		_musicSlider = new Slider(this, _panel, 255, 309, 161, 170, 27);
+		_speechSlider = new Slider(this, _panel, 255, 309, 208, 170, 27, _musicSlider);
+		_fxSlider = new Slider(this, _panel, 255, 309, 254, 170, 27, _musicSlider);
 		_gfxSlider = new Slider(this, _panel, 3, 309, 341, 170, 27, _musicSlider);
 
 		_gfxPreview = new Widget(this, 4);
@@ -1476,23 +1476,6 @@ public:
 };
 
 Gui::Gui(Sword2Engine *vm) : _vm(vm), _baseSlot(0) {
-	int i;
-
-	for (i = 0; i < ARRAYSIZE(_musicVolume); i++) {
-		_musicVolume[i] = (i * 255) / (ARRAYSIZE(_musicVolume) - 1);
-		if ((i * 255) % (ARRAYSIZE(_musicVolume) - 1))
-			_musicVolume[i]++;
-	}
-
-	for (i = 0; i < ARRAYSIZE(_soundVolume); i++) {
-		_soundVolume[i] = (i * 255) / (ARRAYSIZE(_soundVolume) - 1);
-		if ((i * 255) % (ARRAYSIZE(_soundVolume) - 1))
-			_soundVolume[i]++;
-	}
-
-	ConfMan.registerDefault("music_volume", _musicVolume[12]);
-	ConfMan.registerDefault("speech_volume", _soundVolume[10]);
-	ConfMan.registerDefault("sfx_volume", _soundVolume[10]);
 	ConfMan.registerDefault("music_mute", false);
 	ConfMan.registerDefault("speech_mute", false);
 	ConfMan.registerDefault("sfx_mute", false);
@@ -1508,9 +1491,9 @@ void Gui::readOptionSettings(void) {
 
 	updateGraphicsLevel((uint8) ConfMan.getInt("gfx_details"));
 
-	_vm->_sound->setMusicVolume((16 * ConfMan.getInt("music_volume")) / 255);
-	_vm->_sound->setSpeechVolume((14 * ConfMan.getInt("speech_volume")) / 255);
-	_vm->_sound->setFxVolume((14 * ConfMan.getInt("sfx_volume")) / 255);
+	_vm->_sound->setMusicVolume(ConfMan.getInt("music_volume"));
+	_vm->_sound->setSpeechVolume(ConfMan.getInt("speech_volume"));
+	_vm->_sound->setFxVolume(ConfMan.getInt("sfx_volume"));
 	_vm->_sound->muteMusic(ConfMan.getBool("music_mute"));
 	_vm->_sound->muteSpeech(ConfMan.getBool("speech_mute"));
 	_vm->_sound->muteFx(ConfMan.getBool("sfx_mute"));
@@ -1518,9 +1501,9 @@ void Gui::readOptionSettings(void) {
 }
 
 void Gui::writeOptionSettings(void) {
-	ConfMan.set("music_volume", _musicVolume[_vm->_sound->getMusicVolume()]);
-	ConfMan.set("speech_volume", _soundVolume[_vm->_sound->getSpeechVolume()]);
-	ConfMan.set("sfx_volume", _soundVolume[_vm->_sound->getFxVolume()]);
+	ConfMan.set("music_volume", _vm->_sound->getMusicVolume());
+	ConfMan.set("speech_volume", _vm->_sound->getSpeechVolume());
+	ConfMan.set("sfx_volume", _vm->_sound->getFxVolume());
 	ConfMan.set("music_mute", _vm->_sound->isMusicMute());
 	ConfMan.set("speech_mute", _vm->_sound->isSpeechMute());
 	ConfMan.set("sfx_mute", _vm->_sound->isFxMute());

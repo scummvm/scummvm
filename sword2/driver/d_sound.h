@@ -64,24 +64,23 @@ private:
 	int32 _panTable[33];
 	bool _soundOn;
 
-	static int32 _musicVolTable[17];
 	MusicInputStream *_music[MAXMUS];
 	int16 *_mixBuffer;
 	int _mixBufferLen;
 
 	bool _musicPaused;
 	bool _musicMuted;
-	uint8 _musicVol;
+	uint _musicVol;
 
 	PlayingSoundHandle _soundHandleSpeech;
 	bool _speechPaused;
 	bool _speechMuted;
-	uint8 _speechVol;
+	uint _speechVol;
 
 	FxHandle _fx[MAXFX];
 	bool _fxPaused;
 	bool _fxMuted;
-	uint8 _fxVol;
+	uint _fxVol;
 
 	int32 getFxIndex(int32 id);
 	void stopFxHandle(int i);
@@ -105,7 +104,7 @@ public:
 
 	void muteMusic(bool mute);
 	bool isMusicMute(void);
-	void setMusicVolume(uint8 vol);
+	void setMusicVolume(uint vol);
 	uint8 getMusicVolume(void);
 	void pauseMusic(void);
 	void unpauseMusic(void);
@@ -116,7 +115,7 @@ public:
 
 	void muteSpeech(bool mute);
 	bool isSpeechMute(void);
-	void setSpeechVolume(uint8 vol);
+	void setSpeechVolume(uint vol);
 	uint8 getSpeechVolume(void);
 	void pauseSpeech(void);
 	void unpauseSpeech(void);
@@ -129,7 +128,7 @@ public:
 	void muteFx(bool mute);
 	bool isFxMute(void);
 	uint8 getFxVolume(void);
-	void setFxVolume(uint8 vol);
+	void setFxVolume(uint vol);
 	int32 setFxIdVolumePan(int32 id, uint8 vol, int8 pan);
 	int32 setFxIdVolume(int32 id, uint8 vol);
 	void pauseFx(void);
