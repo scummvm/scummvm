@@ -96,11 +96,19 @@ class FB2GL {
 void FB2GL::setBilinearMode(bool bilinear) {
 	const GLuint mode = bilinear ? GL_LINEAR : GL_NEAREST;
 	glBindTexture(GL_TEXTURE_2D, texture1);
+	// No borders
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+	// Bilinear filter
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, mode);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, mode);
 
 	if (flags & FB2GL_NO_320) {
 		glBindTexture(GL_TEXTURE_2D, texture2);
+		// No borders
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+		// Bilinear filter
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, mode);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, mode);
 	}
@@ -110,6 +118,7 @@ void FB2GL::makeTextures() {
 	glGenTextures(0,&texture1);
 	glBindTexture(GL_TEXTURE_2D,texture1);
 
+	// No borders
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
 
@@ -151,14 +160,23 @@ void FB2GL::makeTextures() {
 
 
 void FB2GL::makeDisplayList(int xf, int yf) {
-	float xfix = xf / 128.0f; // 128 = 256/2 (half texture => 0.0 to 1.0)
-	float yfix = yf / 128.0f;
-	float texend;	// End of 256x256 (from -1.0 to 1.0)
+	GLfloat xfix = xf / 128.0f; // 128 = 256/2 (half texture => 0.0 to 1.0)
+	GLfloat yfix = yf / 128.0f;
+	GLfloat texture1_end;	// End of 256x256 texture (from -1.0 to 1.0)
 
-	if (flags & FB2GL_NO_320)
-		texend = 96.0f / 160.0f; // 160=320/2 (== 0.0), 256-160=96.
-	else
-		texend = 1.0f;
+	if (flags & FB2GL_NO_320) {
+		// Game screen width = 320
+		// GL coordinates (-1.0 <= x <= 1.0, -1.0 <= y <= 1.0)
+		// X axis center: GL => 0.0, Game => 320/2 = 160
+		// GL texture1 width = 256 (texture2 width = 64. 256 + 64 = 320)
+		// 160 = 320/2 (half width). 256 - 160 = 96 
+		texture1_end = 96.0f / 160.0f; // between 0.0 (center) and 1.0
+		// Note: wrong value may cause black vertical line (gap 
+		// between texture1 and texture2 in the X axis)
+	}
+	else {
+		texture1_end = 1.0f;
+	}
 	
 	if (glIsList(displayList)) 
 		glDeleteLists(displayList, 1);
@@ -171,28 +189,28 @@ void FB2GL::makeDisplayList(int xf, int yf) {
 	glBindTexture(GL_TEXTURE_2D, texture1);
 
 	glBegin(GL_QUADS);
-	// upper left
-	glTexCoord2f(0.0f, 1.0f); glVertex2f(-1.0f, -1.0f - yfix);
 	// lower left
+	glTexCoord2f(0.0f, 1.0f); glVertex2f(-1.0f, -1.0f - yfix);
+	// upper left
 	glTexCoord2f(0.0f, 0.0f); glVertex2f(-1.0f, 1.0f);
-	// lower right
-	glTexCoord2f(1.0f, 0.0f); glVertex2f(texend + xfix, 1.0f);
 	// upper right
-	glTexCoord2f(1.0f, 1.0f); glVertex2f(texend + xfix, -1.0f - yfix);
+	glTexCoord2f(1.0f, 0.0f); glVertex2f(texture1_end + xfix, 1.0f);
+	// lower right
+	glTexCoord2f(1.0f, 1.0f); glVertex2f(texture1_end + xfix, -1.0f - yfix);
 	glEnd();
 
 	if (flags & FB2GL_NO_320) {
-		// 64x256 
+		// 64x256 (texture2)
 		glBindTexture(GL_TEXTURE_2D, texture2);
 
 		glBegin(GL_QUADS);
-		// upper left
-		glTexCoord2f(0.0f, 1.0f); glVertex2f(texend + xfix, -1.0f - yfix);
 		// lower left	
-		glTexCoord2f(0.0f, 0.0f); glVertex2f(texend + xfix, 1.0f);
-		// lower right
-		glTexCoord2f(1.0f, 0.0f); glVertex2f(1.0f + xfix, 1.0f);
+		glTexCoord2f(0.0f, 1.0f); glVertex2f(texture1_end + xfix, -1.0f - yfix);
+		// upper left
+		glTexCoord2f(0.0f, 0.0f); glVertex2f(texture1_end + xfix, 1.0f);
 		// upper right
+		glTexCoord2f(1.0f, 0.0f); glVertex2f(1.0f + xfix, 1.0f);
+		// lower right
 		glTexCoord2f(1.0f, 1.0f); glVertex2f(1.0f + xfix, -1.0f - yfix);
 		glEnd();
 	}
@@ -252,14 +270,14 @@ void FB2GL::display()
 
 void FB2GL::update(void *fb, int w, int h, int pitch, int xskip, int yskip) {
 	unsigned char *tempFrameBuffer = (unsigned char *)fb;
-	int x, y, scr_pitch, byte;
+	int x, y, scr_pitch, _byte;
 
 	if (flags & FB2GL_PITCH) {
 		scr_pitch = pitch;
-		byte = 0;
+		_byte = 0;
 	} else {
 		scr_pitch = w * pitch;
-		byte = pitch; // Bytes perl pixel (for RGBA mode)
+		_byte = pitch; // Bytes perl pixel (for RGBA mode)
 	}
 
 	if (flags & FB2GL_RGBA) {
@@ -291,17 +309,17 @@ void FB2GL::update(void *fb, int w, int h, int pitch, int xskip, int yskip) {
 			for (y = yskip; y < h; y++) {
 				for (x = xskip; x < w; x++) {
 					if (!(flags & FB2GL_NO_320)) {
-						RGBAFrameBuffer1[(y-yskip)*320*4 + (x-xskip)*4 + 0] = *(tempFrameBuffer+(x*byte)); 
-						RGBAFrameBuffer1[(y-yskip)*320*4 + (x-xskip)*4 + 1] = *(tempFrameBuffer+(x*byte)+1); 
-						RGBAFrameBuffer1[(y-yskip)*320*4 + (x-xskip)*4 + 2] = *(tempFrameBuffer+(x*byte)+2); 
+						RGBAFrameBuffer1[(y-yskip)*320*4 + (x-xskip)*4 + 0] = *(tempFrameBuffer+(x*_byte)); 
+						RGBAFrameBuffer1[(y-yskip)*320*4 + (x-xskip)*4 + 1] = *(tempFrameBuffer+(x*_byte)+1); 
+						RGBAFrameBuffer1[(y-yskip)*320*4 + (x-xskip)*4 + 2] = *(tempFrameBuffer+(x*_byte)+2); 
 					} else if (x < 256) { 
-						RGBAFrameBuffer1[(y-yskip)*256*4 + (x-xskip)*4 + 0] = *(tempFrameBuffer+(x*byte)); 
-						RGBAFrameBuffer1[(y-yskip)*256*4 + (x-xskip)*4 + 1] = *(tempFrameBuffer+(x*byte)+1); 
-						RGBAFrameBuffer1[(y-yskip)*256*4 + (x-xskip)*4 + 2] = *(tempFrameBuffer+(x*byte)+2); 
+						RGBAFrameBuffer1[(y-yskip)*256*4 + (x-xskip)*4 + 0] = *(tempFrameBuffer+(x*_byte)); 
+						RGBAFrameBuffer1[(y-yskip)*256*4 + (x-xskip)*4 + 1] = *(tempFrameBuffer+(x*_byte)+1); 
+						RGBAFrameBuffer1[(y-yskip)*256*4 + (x-xskip)*4 + 2] = *(tempFrameBuffer+(x*_byte)+2); 
 					} else {
-						RGBAFrameBuffer2[(y-yskip)*64*4 + (x-256)*4 + 0] = *(tempFrameBuffer+(x*byte)); 
-						RGBAFrameBuffer2[(y-yskip)*64*4 + (x-256)*4 + 1] = *(tempFrameBuffer+(x*byte)+1); 
-						RGBAFrameBuffer2[(y-yskip)*64*4 + (x-256)*4 + 2] = *(tempFrameBuffer+(x*byte)+2); 
+						RGBAFrameBuffer2[(y-yskip)*64*4 + (x-256)*4 + 0] = *(tempFrameBuffer+(x*_byte)); 
+						RGBAFrameBuffer2[(y-yskip)*64*4 + (x-256)*4 + 1] = *(tempFrameBuffer+(x*_byte)+1); 
+						RGBAFrameBuffer2[(y-yskip)*64*4 + (x-256)*4 + 2] = *(tempFrameBuffer+(x*_byte)+2); 
 					}
 				}
 				tempFrameBuffer += scr_pitch; // Next row (like y++)
@@ -412,7 +430,7 @@ void FB2GL::blit16(SDL_Surface *fb, int num_rect, SDL_Rect *rect, int xskip, int
 		for (y = ry; y < yend; y++) {
 			for (x = rx; x < xend; x++) {
 			
-				if (x < 256 && tex1_w) { 
+				if (tex1_w && x < 256) { 
 					int pos = (x-rx+(y-ry)*tex1_w)*4; // (x + (y*pitch)) * RGBAsize
 					SDL_GetRGB(
 						((Uint16 *)fb->pixels)[x+y*(pitch)], 
@@ -421,7 +439,7 @@ void FB2GL::blit16(SDL_Surface *fb, int num_rect, SDL_Rect *rect, int xskip, int
 						&RGBAFrameBuffer1[pos+1],
 						&RGBAFrameBuffer1[pos+2]
 					);
-				} else if (x >= 256 && tex2_w) {
+				} else if (tex2_w && x >= 256) {
 					int rx2 = rx < 256? 256: rx;
 					int pos = (x-rx2+(y-ry)*tex2_w)*4; // (x + (y*pitch)) * RGBAsize
 					SDL_GetRGB(
@@ -500,5 +518,4 @@ void FB2GL::setPalette(int first, int n) {
 		}
 
 	}
-
 }
