@@ -57,6 +57,16 @@ GUI
   -> write code allowing this
   -> also, 'in game' option dialogs (for volume/scaler/etc. settings)
      could potentially reuse these, too
+* Maybe rearrange SCUMM in-game menu: essentially, only keep the headline
+  ("How may I serve you?") and the buttons in it (maybe rename "Play"
+  to "Resume" or so). I.e. remove the savegame list. Then, turn
+  "Save" and "Load" intro real buttons, which when clicked pop up a
+  new save or load dialog. That way we avoid all the confusing parts of the
+  current scheme in an elegant fashion. Drawback: Loading a game
+  would now require one click more.
+* Maybe rearrange Launcher dialog, too, to look a bit like the current
+  SCUMM in-game menu: instead of two button rows, have a single button
+  column at the right side, and the target list on the left side.
 
 Audio
 =====
