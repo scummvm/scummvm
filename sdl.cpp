@@ -105,13 +105,14 @@ private:
 	SDL_Surface *sdl_screen;
 	SDL_Surface *sdl_hwscreen;
 	SDL_Surface *sdl_tmpscreen;
+	SDL_Surface *sdl_palscreen;
 	SDL_CD *cdrom;
 
 	enum {
 		DF_FORCE_FULL_ON_PALETTE = 1,
 		DF_WANT_RECT_OPTIM = 2,
 		DF_2xSAI = 4,
-		DF_SEPARATE_HWSCREEN = 8,
+		DF_SEPARATE_TEMPSCREEN = 8,
 		DF_UPDATE_EXPAND_1_PIXEL = 16,
 	};
 
@@ -120,8 +121,6 @@ private:
 	bool _mouse_visible;
 	bool _mouse_drawn;
 	uint32 _mode_flags;
-
-	byte _internal_scaling;
 
 	bool force_full; //Force full redraw on next update_screen
 	bool cksum_valid;
@@ -160,10 +159,13 @@ private:
 	int16 _ms_hotspot_x;
 	int16 _ms_hotspot_y;
 	int _current_shake_pos;
+	int _new_shake_pos;
 	TwoXSaiProc *_sai_func;
 	SDL_Color *_cur_pal;
 
 	uint _palette_changed_first, _palette_changed_last;
+
+	OSystem_SDL() : _current_shake_pos(0), _new_shake_pos(0) {}
 
 	void add_dirty_rgn_auto(const byte *buf);
 	void mk_checksums(const byte *buf);
@@ -194,6 +196,12 @@ void Super2xSaI(uint8 *srcPtr, uint32 srcPitch, uint8 *deltaPtr,
 void SuperEagle(uint8 *srcPtr, uint32 srcPitch, uint8 *deltaPtr,
 								uint8 *dstPtr, uint32 dstPitch, int width, int height);
 void AdvMame2x(uint8 *srcPtr, uint32 srcPitch, uint8 *null,
+								uint8 *dstPtr, uint32 dstPitch, int width, int height);
+void Normal1x(uint8 *srcPtr, uint32 srcPitch, uint8 *null,
+								uint8 *dstPtr, uint32 dstPitch, int width, int height);
+void Normal2x(uint8 *srcPtr, uint32 srcPitch, uint8 *null,
+								uint8 *dstPtr, uint32 dstPitch, int width, int height);
+void Normal3x(uint8 *srcPtr, uint32 srcPitch, uint8 *null,
 								uint8 *dstPtr, uint32 dstPitch, int width, int height);
 
 void atexit_proc() {
@@ -255,34 +263,31 @@ void OSystem_SDL::set_palette(const byte *colors, uint start, uint num) {
 void OSystem_SDL::load_gfx_mode() {
 	force_full = true;
 	scaling = 1;
-	_internal_scaling = 1;
 	_mode_flags = 0;
 
 	_sai_func = NULL;
+	sdl_tmpscreen = NULL;
+	
 	switch(_mode) {
 	case GFX_2XSAI:
+		scaling = 2;
 		_sai_func = _2xSaI;
 		break;
 	case GFX_SUPER2XSAI:
+		scaling = 2;
 		_sai_func = Super2xSaI;
 		break;
 	case GFX_SUPEREAGLE:
+		scaling = 2;
 		_sai_func = SuperEagle;
 		break;
 	case GFX_ADVMAME2X:
+		scaling = 2;
 		_sai_func = AdvMame2x;
 		break;
 
 	case GFX_DOUBLESIZE:
 		scaling = 2;
-		_internal_scaling = 2;
-		_mode_flags = DF_WANT_RECT_OPTIM;
-		
-		sdl_hwscreen = sdl_screen = SDL_SetVideoMode(640, 400, 8, 
-			_full_screen ? (SDL_FULLSCREEN|SDL_SWSURFACE) : SDL_SWSURFACE
-		);
-		if (sdl_screen == NULL)
-			error("sdl_screen failed");
 		break;
 
 	case GFX_TRIPLESIZE:
@@ -291,38 +296,23 @@ void OSystem_SDL::load_gfx_mode() {
 			goto normal_mode;
 		}
 		scaling = 3;
-		_internal_scaling = 3;
-		_mode_flags = DF_WANT_RECT_OPTIM;
-
-		sdl_hwscreen = sdl_screen = SDL_SetVideoMode(960, 600, 8, 
-			_full_screen ? (SDL_FULLSCREEN|SDL_SWSURFACE) : SDL_SWSURFACE
-		);
-		if (sdl_screen == NULL)
-			error("sdl_screen failed");
-
-
 		break;
 
 	case GFX_NORMAL:
 normal_mode:;
-		_mode_flags = DF_WANT_RECT_OPTIM;
-		sdl_hwscreen = sdl_screen = SDL_SetVideoMode(320, 200, 8, 
-			_full_screen ? (SDL_FULLSCREEN|SDL_SWSURFACE) : SDL_SWSURFACE
-		);
-		if (sdl_screen == NULL)
-			error("sdl_screen failed");
+		scaling = 1;
 		break;
 	}
 
+	sdl_screen = SDL_CreateRGBSurface(SDL_SWSURFACE, 320, 200, 8, 0, 0, 0, 0);
+	if (sdl_screen == NULL)
+		error("SDL_CreateRGBSurface(SDL_SWSURFACE, 320, 200, 8, 0, 0, 0, 0) failed");
+
 	if (_sai_func) {
 		uint16 *tmp_screen = (uint16*)calloc(320*204 + 16,sizeof(uint16));
-		_mode_flags = DF_FORCE_FULL_ON_PALETTE | DF_WANT_RECT_OPTIM | DF_2xSAI | DF_SEPARATE_HWSCREEN | DF_UPDATE_EXPAND_1_PIXEL;
+		_mode_flags = DF_FORCE_FULL_ON_PALETTE | DF_WANT_RECT_OPTIM | DF_2xSAI | DF_SEPARATE_TEMPSCREEN | DF_UPDATE_EXPAND_1_PIXEL;
 
-		sdl_screen = SDL_CreateRGBSurface(SDL_SWSURFACE, 320, 200, 8, 0, 0, 0, 0);
-		if (sdl_screen == NULL)
-			error("SDL_CreateRGBSurface(SDL_SWSURFACE, 320, 200, 8, 0, 0, 0, 0) failed");
-
-		sdl_hwscreen = SDL_SetVideoMode(640, 400, 16, 
+		sdl_hwscreen = SDL_SetVideoMode(320 * scaling, 200 * scaling, 16, 
 			_full_screen ? (SDL_FULLSCREEN|SDL_SWSURFACE) : SDL_SWSURFACE
 		);
 		if (sdl_hwscreen == NULL)
@@ -342,25 +332,46 @@ normal_mode:;
 
 		if (sdl_tmpscreen == NULL)
 			error("sdl_tmpscreen failed");
+		
+		sdl_palscreen = sdl_screen;
+	} else {
+		switch(scaling) {
+		case 3:
+			_sai_func = Normal3x;
+			break;
+		case 2:
+			_sai_func = Normal2x;
+			break;
+		case 1:
+			_sai_func = Normal1x;
+			break;
+		}
 
-		scaling = 2;		
+		_mode_flags = DF_WANT_RECT_OPTIM;
+
+		sdl_hwscreen = SDL_SetVideoMode(320 * scaling, 200 * scaling, 8, 
+			_full_screen ? (SDL_FULLSCREEN|SDL_SWSURFACE) : SDL_SWSURFACE
+		);
+		if (sdl_hwscreen == NULL)
+			error("sdl_hwscreen failed");
+		
+		sdl_tmpscreen = sdl_screen;
+		sdl_palscreen = sdl_hwscreen;
 	}
 }
 
 void OSystem_SDL::unload_gfx_mode() {
-	SDL_Surface *surf;
+	SDL_FreeSurface(sdl_screen);
+	sdl_screen = NULL; 
 
-	surf=sdl_screen; sdl_screen=NULL; SDL_FreeSurface(surf);
+	SDL_FreeSurface(sdl_hwscreen); 
+	sdl_hwscreen = NULL;
 
-	if (_mode_flags & DF_SEPARATE_HWSCREEN) {
-		surf=sdl_hwscreen; sdl_hwscreen=NULL; SDL_FreeSurface(surf);
+	if (_mode_flags & DF_SEPARATE_TEMPSCREEN) {
+		free((uint16*)sdl_tmpscreen->pixels - (int)TMP_SCREEN_OFFS);
+		SDL_FreeSurface(sdl_tmpscreen);
 	}
-
-	surf = sdl_tmpscreen; sdl_tmpscreen=NULL;
-	if(surf) { 
-		free((uint16*)surf->pixels - (int)TMP_SCREEN_OFFS);
-		SDL_FreeSurface(surf);
-	}
+	sdl_tmpscreen = NULL;
 }
 
 void OSystem_SDL::init_size(uint w, uint h) {
@@ -388,14 +399,13 @@ void OSystem_SDL::copy_rect(const byte *buf, int pitch, int x, int y, int w, int
 		 * and just updates those, on the actual display. */
 		add_dirty_rgn_auto(buf);
 	} else {
-		y+=_current_shake_pos;
 		/* Clip the coordinates */
 		if (x < 0) { w+=x; buf-=x; x = 0; }
 		if (y < 0) { h+=y; buf-=y*pitch; y = 0; }
-		if (w >= SCREEN_WIDTH-x) { w = SCREEN_WIDTH - x; }
-		if (h >= SCREEN_HEIGHT-y) { h = SCREEN_HEIGHT - y; }
+		if (w > SCREEN_WIDTH-x) { w = SCREEN_WIDTH - x; }
+		if (h > SCREEN_HEIGHT-y) { h = SCREEN_HEIGHT - y; }
 			
-		if (w<=0 || h<=0)
+		if (w <= 0 || h <= 0)
 			return;
 
 		cksum_valid = false;
@@ -409,45 +419,12 @@ void OSystem_SDL::copy_rect(const byte *buf, int pitch, int x, int y, int w, int
 	if (SDL_LockSurface(sdl_screen) == -1)
 		error("SDL_LockSurface failed: %s.\n", SDL_GetError());
 
-	byte *dst;
-
-	switch(_internal_scaling) {
-	case 1:
-		dst = (byte *)sdl_screen->pixels + y * 320 + x;
-		do {
-			memcpy(dst, buf, w);
-			dst += 320;
-			buf += pitch;
-		} while (--h);
-		break;
-
-	case 2:
-		dst = (byte *)sdl_screen->pixels + y * 640 * 2 + x * 2;
-		do {
-			int i = 0;
-			do {
-				dst[i * 2] = dst[i * 2 + 1] = buf[i];
-			} while (++i != w);
-			memcpy(dst + 640, dst, w * 2);
-			dst += 640 * 2;
-			buf += pitch;
-		} while (--h);
-		break;
-
-	case 3:
-		dst = (byte *)sdl_screen->pixels + y * 960 * 3 + x * 3;
-		do {
-			int i = 0;
-			do {
-				dst[i * 3] = dst[i * 3 + 1] = dst[i * 3 + 2] = buf[i];
-			} while (++i != w);
-			memcpy(dst + 960, dst, w * 3);
-			memcpy(dst + 960 + 960, dst, w * 3);
-			dst += 960 * 3;
-			buf += pitch;
-		} while (--h);
-		break;
-	}	
+	byte *dst = (byte *)sdl_screen->pixels + y * 320 + x;
+	do {
+		memcpy(dst, buf, w);
+		dst += 320;
+		buf += pitch;
+	} while (--h);
 
 	SDL_UnlockSurface(sdl_screen);
 }
@@ -472,18 +449,11 @@ void OSystem_SDL::add_dirty_rect(int x, int y, int w, int h) {
 		}
 
 		/* clip */
-		if (x<0) { w+=x; x=0; }
-		if (y<0) { h+=y; y=0; }
-		if (w>=SCREEN_WIDTH-x) { w=SCREEN_WIDTH-x; }
-		if (h>=SCREEN_HEIGHT-y) { h=SCREEN_HEIGHT-y; }
+		if (x < 0) { w+=x; x=0; }
+		if (y < 0) { h+=y; y=0; }
+		if (w > SCREEN_WIDTH-x) { w = SCREEN_WIDTH - x; }
+		if (h > SCREEN_HEIGHT-y) { h = SCREEN_HEIGHT - y; }
 	
-		if (_internal_scaling != 1) {
-			x *= _internal_scaling;
-			y *= _internal_scaling;
-			w *= _internal_scaling;
-			h *= _internal_scaling;
-		}
-
 		r->x = x;
 		r->y = y;
 		r->w = w;
@@ -574,7 +544,7 @@ void OSystem_SDL::update_screen() {
 	
 
 	if (_palette_changed_last != 0) {
-		SDL_SetColors(sdl_screen, _cur_pal + _palette_changed_first, 
+		SDL_SetColors(sdl_palscreen, _cur_pal + _palette_changed_first, 
 			_palette_changed_first,
 			_palette_changed_last - _palette_changed_first);
 		
@@ -584,60 +554,102 @@ void OSystem_SDL::update_screen() {
 			force_full = true;
 	}
 
-	/* force a full redraw, accomplish that by adding one big rect to the dirty
-	 * rect list */
-	if (force_full) {
-		force_full = false;
-		num_dirty_rects = 0;
-		add_dirty_rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
+	if (_current_shake_pos != _new_shake_pos) {
+		/* Fill the dirty area with blackness or the scumm image */
+		SDL_Rect blackrect = {0, 0, SCREEN_WIDTH*scaling, _new_shake_pos*scaling};
+		SDL_FillRect(sdl_hwscreen, &blackrect, 0);
+
+		_current_shake_pos = _new_shake_pos;
+
+		force_full = true;
 	}
 
+	/* force a full redraw if requested */
+	if (force_full) {
+		num_dirty_rects = 1;
+
+		dirty_rect_list[0].x = 0;
+		dirty_rect_list[0].y = 0;
+		dirty_rect_list[0].w = SCREEN_WIDTH;
+		dirty_rect_list[0].h = SCREEN_HEIGHT;
+	}
 
 	if (num_dirty_rects == 0 || sdl_hwscreen == NULL)
 		return;
 
-	if (_mode_flags & DF_2xSAI) {
-		SDL_Rect *r;
-		uint32 area = 0;
+	SDL_Rect *r; 
+	uint32 srcPitch, dstPitch;
+	SDL_Rect *last_rect = dirty_rect_list + num_dirty_rects;
 
-		SDL_Rect *dr = dirty_rect_list + num_dirty_rects;
 
-		/* Convert appropriate parts of image into 16bpp */
-		for(r=dirty_rect_list; r!=dr; r++) {
+	/* Convert appropriate parts of the image into 16bpp */
+	if (_mode_flags & DF_SEPARATE_TEMPSCREEN) {
+		for(r=dirty_rect_list; r!=last_rect; ++r) {
 			if (SDL_BlitSurface(sdl_screen, r, sdl_tmpscreen, r) != 0)
 				error("SDL_BlitSurface failed: %s", SDL_GetError());
 		}
-
-		SDL_LockSurface(sdl_tmpscreen);
-		SDL_LockSurface(sdl_hwscreen);
-	
-		for(r=dirty_rect_list; r!=dr; r++) {
-			/* Apply the 2xsai algorithm */
-			_sai_func((byte*)sdl_tmpscreen->pixels + r->x*2 + r->y*640, 640, NULL, 
-				(byte*)sdl_hwscreen->pixels + r->x*4 + r->y*640*4, 640*2, r->w, r->h);
-
-			/* Calculate area */
-			area += r->w * r->h;
-			
-			/* scaling the rect to fit in SDL_UpdateRects */
-			r->x <<= 1;
-			r->y <<= 1;
-			r->w <<= 1;
-			r->h <<= 1;
-		}
-
-		SDL_UnlockSurface(sdl_tmpscreen);
-		SDL_UnlockSurface(sdl_hwscreen);
-
-#ifdef WIN32
-		if (GetAsyncKeyState(VK_SHIFT)<0)
-			printf("Update area %d pixels. %d%%\n", area, (area+(320*2)/2) / (320*2));
-#endif
 	}
+
+	SDL_LockSurface(sdl_tmpscreen);
+	SDL_LockSurface(sdl_hwscreen);
+
+	srcPitch = sdl_tmpscreen->pitch;
+	dstPitch = sdl_hwscreen->pitch;
+
+	if (_mode_flags & DF_2xSAI) {
+		for(r=dirty_rect_list; r!=last_rect; ++r) {
+			register int dst_y = r->y + _current_shake_pos;
+			register int dst_h = 0;
+			if (dst_y < SCREEN_HEIGHT) {
+				dst_h = r->h;
+				if (dst_h > SCREEN_HEIGHT - dst_y)
+					dst_h = SCREEN_HEIGHT - dst_y;
+				
+				r->x <<= 1;
+				dst_y <<= 1;
+				
+				_sai_func((byte*)sdl_tmpscreen->pixels + r->x + r->y*srcPitch, srcPitch, NULL, 
+					(byte*)sdl_hwscreen->pixels + r->x*scaling + dst_y*dstPitch, dstPitch, r->w, dst_h);
+			}
+	
+			r->y = dst_y;
+			r->w <<= 1;
+			r->h = dst_h << 1;
+		}
+	} else {
+		for(r=dirty_rect_list; r!=last_rect; ++r) {
+			register int dst_y = r->y + _current_shake_pos;
+			register int dst_h = 0;
+			if (dst_y < SCREEN_HEIGHT) {
+				dst_h = r->h;
+				if (dst_h > SCREEN_HEIGHT - dst_y)
+					dst_h = SCREEN_HEIGHT - dst_y;
+	
+				dst_y *= scaling;
+
+				_sai_func((byte*)sdl_tmpscreen->pixels + r->x + r->y*srcPitch, srcPitch, NULL, 
+					(byte*)sdl_hwscreen->pixels + r->x*scaling + dst_y*dstPitch, dstPitch, r->w, dst_h);
+			}
+	
+			r->x *= scaling;
+			r->y = dst_y;
+			r->w *= scaling;
+			r->h = dst_h * scaling;
+		}
+	}
+
+	if (force_full) {
+		dirty_rect_list[0].y = 0;
+		dirty_rect_list[0].h = SCREEN_HEIGHT * scaling;
+	}
+	
+	SDL_UnlockSurface(sdl_tmpscreen);
+	SDL_UnlockSurface(sdl_hwscreen);
 
 	SDL_UpdateRects(sdl_hwscreen, num_dirty_rects, dirty_rect_list);
 	
 	num_dirty_rects = 0;
+	force_full = false;
 }
 
 bool OSystem_SDL::show_mouse(bool visible) {
@@ -676,43 +688,7 @@ void OSystem_SDL::set_mouse_cursor(const byte *buf, uint w, uint h, int hotspot_
 }
 	
 void OSystem_SDL::set_shake_pos(int shake_pos) {
-	int old_shake_pos = _current_shake_pos;
-	int dirty_height, dirty_blackheight;
-	int dirty_top, dirty_blacktop;
-	
-	if (shake_pos != old_shake_pos) {
-		_current_shake_pos = shake_pos;
-		force_full = true;
-
-		/* Old shake pos was current_shake_pos, new is shake_pos.
-		 * Move the screen up or down to account for the change.
-		 */
-		SDL_Rect dstr = { 0, shake_pos*scaling, 320*scaling, 200*scaling };
-		SDL_Rect srcr = { 0, old_shake_pos*scaling, 320*scaling, 200*scaling };
-		SDL_BlitSurface(sdl_screen, &srcr, sdl_screen, &dstr);
-
-		/* Refresh either the upper part of the screen,
-		 * or the lower part */
-		if (shake_pos > old_shake_pos) {
-			dirty_height = MIN(shake_pos, 0) - MIN(old_shake_pos, 0);
-			dirty_top = -MIN(shake_pos, 0);
-			dirty_blackheight = MAX(shake_pos, 0) - MAX(old_shake_pos, 0);
-			dirty_blacktop = MAX(old_shake_pos, 0);
-		} else {
-			dirty_height = MAX(old_shake_pos, 0) - MAX(shake_pos, 0);
-			dirty_top = 200 - MAX(old_shake_pos, 0);
-			dirty_blackheight = MIN(old_shake_pos, 0) - MIN(shake_pos, 0);
-			dirty_blacktop = 200 + MIN(shake_pos, 0);
-		}
-
-		/* Fill the dirty area with blackness or the scumm image */
-		SDL_Rect blackrect = {0, dirty_blacktop*scaling, 320*scaling, dirty_blackheight*scaling};
-		SDL_FillRect(sdl_screen, &blackrect, 0);
-
-		/* FIXME: Um, screen seems to glitch since this
-		          'not needed' function was removed */
-		//g_scumm->redrawLines(dirty_top, dirty_top + dirty_height);
-	}
+	_new_shake_pos = shake_pos;
 }
 		
 uint32 OSystem_SDL::get_msecs() {
@@ -847,36 +823,7 @@ void OSystem_SDL::get_320x200_image(byte *buf) {
 	if (SDL_LockSurface(sdl_screen) == -1)
 		error("SDL_LockSurface failed: %s.\n", SDL_GetError());
 
-	byte *src;
-	int x,y;
-
-	switch(_internal_scaling) {
-	case 1:
-		memcpy(buf, sdl_screen->pixels, 320*200);
-		break;
-
-	case 2:
-		src = (byte*)sdl_screen->pixels;
-		for(y=0; y!=200; y++) {
-			for(x=0; x!=320; x++)
-				buf[x] = src[x*2];
-
-			buf += 320;
-			src += 320 * 2 * 2;
-		}
-		break;
-
-	case 3:
-		src = (byte*)sdl_screen->pixels;
-		for(y=0; y!=200; y++) {
-			for(x=0; x!=320; x++)
-				buf[x] = src[x*3];
-
-			buf += 320;
-			src += 320 * 3 * 3;
-		}
-		break;
-	}	
+	memcpy(buf, sdl_screen->pixels, 320*200);
 
 	SDL_UnlockSurface(sdl_screen);
 }
@@ -897,7 +844,7 @@ void OSystem_SDL::hotswap_gfx_mode() {
 	force_full = true;
 
 	/* reset palette */
-	SDL_SetColors(sdl_screen, _cur_pal, 0, 256);
+	SDL_SetColors(sdl_palscreen, _cur_pal, 0, 256);
 
 	/* blit image */
 	OSystem_SDL::copy_rect(bak_mem, 320, 0, 0, 320, 200);
@@ -972,7 +919,7 @@ void OSystem_SDL::draw_mouse() {
 	if (SDL_LockSurface(sdl_screen) == -1)
 		error("SDL_LockSurface failed: %s.\n", SDL_GetError());
 
-	const int ydraw = _ms_cur.y + _current_shake_pos - _ms_hotspot_y;
+	const int ydraw = _ms_cur.y - _ms_hotspot_y;
 	const int xdraw = _ms_cur.x - _ms_hotspot_x;
 	const int w = _ms_cur.w;
 	const int h = _ms_cur.h;
@@ -986,71 +933,19 @@ void OSystem_SDL::draw_mouse() {
 	_ms_old.x = xdraw;
 	_ms_old.y = ydraw;
 
-	switch(_internal_scaling) {
-	case 1:
-		dst = (byte *)sdl_screen->pixels + ydraw * 320 + xdraw;
+	dst = (byte *)sdl_screen->pixels + ydraw * 320 + xdraw;
 
-		for (y = 0; y < h; y++, dst += 320, bak += MAX_MOUSE_W, buf += w) {
-			if ((uint) (ydraw + y) < 200) {
-				for (x = 0; x < w; x++) {
-					if ((uint) (xdraw + x) < 320) {
-						bak[x] = dst[x];
-						if ((color = buf[x]) != 0xFF) {
-							dst[x] = color;
-						}
+	for (y = 0; y < h; y++, dst += 320, bak += MAX_MOUSE_W, buf += w) {
+		if ((uint) (ydraw + y) < 200) {
+			for (x = 0; x < w; x++) {
+				if ((uint) (xdraw + x) < 320) {
+					bak[x] = dst[x];
+					if ((color = buf[x]) != 0xFF) {
+						dst[x] = color;
 					}
 				}
 			}
 		}
-		break;
-
-	case 2:
-		dst = (byte *)sdl_screen->pixels + ydraw * 640 * 2 + xdraw * 2;
-
-		for (y = 0; y < h; y++, dst += 640 * 2, bak += MAX_MOUSE_W * 2, buf += w) {
-			if ((uint) (ydraw + y) < 200) {
-				for (x = 0; x < w; x++) {
-					if ((uint) (xdraw + x) < 320) {
-						bak[x * 2] = dst[x * 2];
-						bak[x * 2 + 1] = dst[x * 2 + 1];
-						if ((color = buf[x]) != 0xFF) {
-							dst[x * 2] = color;
-							dst[x * 2 + 1] = color;
-							dst[x * 2 + 640] = color;
-							dst[x * 2 + 1 + 640] = color;
-						}
-					}
-				}
-			}
-		}
-		break;
-
-	case 3:
-		dst = (byte *)sdl_screen->pixels + ydraw * 960 * 3 + xdraw * 3;
-
-		for (y = 0; y < h; y++, dst += 960 * 3, bak += MAX_MOUSE_W * 3, buf += w) {
-			if ((uint) (ydraw + y) < 200) {
-				for (x = 0; x < w; x++) {
-					if ((uint) (xdraw + x) < 320) {
-						bak[x * 3] = dst[x * 3];
-						bak[x * 3 + 1] = dst[x * 3 + 1];
-						bak[x * 3 + 2] = dst[x * 3 + 2];
-						if ((color = buf[x]) != 0xFF) {
-							dst[x * 3] = color;
-							dst[x * 3 + 1] = color;
-							dst[x * 3 + 2] = color;
-							dst[x * 3 + 960] = color;
-							dst[x * 3 + 1 + 960] = color;
-							dst[x * 3 + 2 + 960] = color;
-							dst[x * 3 + 960 + 960] = color;
-							dst[x * 3 + 1 + 960 + 960] = color;
-							dst[x * 3 + 2 + 960 + 960] = color;
-						}
-					}
-				}
-			}
-		}
-		break;
 	}
 
 	add_dirty_rect(xdraw,ydraw,w,h);
@@ -1073,54 +968,16 @@ void OSystem_SDL::undraw_mouse() {
 	const int old_mouse_h = _ms_old.h;
 	int x,y;
 
-	switch(_internal_scaling) {
-	case 1:
-		dst = (byte *)sdl_screen->pixels + old_mouse_y * 320 + old_mouse_x;
+	dst = (byte *)sdl_screen->pixels + old_mouse_y * 320 + old_mouse_x;
 
-		for (y = 0; y < old_mouse_h; y++, bak += MAX_MOUSE_W, dst += 320) {
-			if ((uint) (old_mouse_y + y) < 200) {
-				for (x = 0; x < old_mouse_w; x++) {
-					if ((uint) (old_mouse_x + x) < 320) {
-						dst[x] = bak[x];
-					}
+	for (y = 0; y < old_mouse_h; y++, bak += MAX_MOUSE_W, dst += 320) {
+		if ((uint) (old_mouse_y + y) < 200) {
+			for (x = 0; x < old_mouse_w; x++) {
+				if ((uint) (old_mouse_x + x) < 320) {
+					dst[x] = bak[x];
 				}
 			}
 		}
-		break;
-
-	case 2:
-		dst = (byte *)sdl_screen->pixels + old_mouse_y * 640 * 2 + old_mouse_x * 2;
-
-		for (y = 0; y < old_mouse_h; y++, bak += MAX_MOUSE_W * 2, dst += 640 * 2) {
-			if ((uint) (old_mouse_y + y) < 200) {
-				for (x = 0; x < old_mouse_w; x++) {
-					if ((uint) (old_mouse_x + x) < 320) {
-						dst[x * 2 + 640] = dst[x * 2] = bak[x * 2];
-						dst[x * 2 + 640 + 1] = dst[x * 2 + 1] = bak[x * 2 + 1];
-					}
-				}
-			}
-		}
-		break;
-
-	case 3:
-		dst = (byte *)sdl_screen->pixels + old_mouse_y * 960 * 3 + old_mouse_x * 3;
-
-		for (y = 0; y < old_mouse_h; y++, bak += MAX_MOUSE_W * 3, dst += 960 * 3) {
-			if ((uint) (old_mouse_y + y) < 200) {
-				for (x = 0; x < old_mouse_w; x++) {
-					if ((uint) (old_mouse_x + x) < 320) {
-						dst[x * 3 + 960] = dst[x * 3 + 960 + 960] = dst[x * 3] =
-							bak[x * 3];
-						dst[x * 3 + 960 + 1] = dst[x * 3 + 960 + 960 + 1] =
-							dst[x * 3 + 1] = bak[x * 3 + 1];
-						dst[x * 3 + 960 + 2] = dst[x * 3 + 960 + 960 + 2] =
-							dst[x * 3 + 2] = bak[x * 3 + 2];
-					}
-				}
-			}
-		}
-		break;
 	}
 
 	add_dirty_rect(old_mouse_x, old_mouse_y, old_mouse_w, old_mouse_h);
