@@ -575,7 +575,7 @@ void ScummEngine::saveOrLoad(Serializer *s, uint32 savegameVersion) {
 
 		MKLINE(ScummEngine, _egoPositioned, sleByte, VER(8)),
 
-		// gdi._imgBufOffs grew from 4 to 5 entries. Then one day we relized
+		// gdi._imgBufOffs grew from 4 to 5 entries. Then one day we realized
 		// that we don't have to store it since initBGBuffers() recomputes it.
 		MK_OBSOLETE_ARRAY(ScummEngine, gdi._imgBufOffs[0], sleUint16, 4, VER(8), VER(9)),
 		MK_OBSOLETE_ARRAY(ScummEngine, gdi._imgBufOffs[0], sleUint16, 5, VER(10), VER(26)),
