@@ -647,9 +647,9 @@ public:
 
 	uint32 get_base_tempo() {
 #ifdef _WIN32_WCE
-		return 0x1F0000 * 2;				// Sampled down to 11 kHz
+		return 0x1D9000 * 2;				// Sampled down to 11 kHz
 #else	//_WIN32_WCE
-		return 0x1F0000;						// Was: 0x1924E0;
+		return 0x1D9000;
 #endif //_WIN32_WCE
 	}
 
@@ -712,7 +712,7 @@ public:
 
 	static int midi_driver_thread(void *param);
 
-	uint32 get_base_tempo() { return 0x460000; }
+	uint32 get_base_tempo() { return 0x4A0000; }
 	byte get_hardware_type() { return 5; }
 };
 
