@@ -482,7 +482,11 @@ void GameDetector::parseCommandLine(int argc, char **argv) {
 				goto ShowHelpAndExit;
 			}
 		} else {
-			if (i == (argc - 1)) {
+			// Last argument: this could be a target name.
+			// To verify this, check if there is either a game domain (i.e
+			// a configured target) matching this argument, or if we can
+			// find any target with that name.
+			if (i == (argc - 1) && (ConfMan.hasGameDomain(s) || findTarget(s))) {
 				setGame(s);
 			} else {
 				if (current_option == NULL)
