@@ -16,7 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: /cvsroot/scummvm/scummvm/scumm/player_v3a.cpp
+ * $Header: /cvsroot/scummvm/scummvm/scumm/player_v3a.h
  *
  */
 
@@ -27,12 +27,16 @@
 #include "common/system.h"
 #include "scumm/music.h"
 
-#define V3A_MAXCHANS 8
+#define V3A_MAXMUS 8
+#define V3A_MAXSFX 8
+
+#define	V3A_MUS_BASEID	(1)
+#define	V3A_SFX_BASEID	(V3A_MUS_BASEID + V3A_MAXMUS)
 
 class Scumm;
 class SoundMixer;
 
-class Player_V3A : public MusicEngine  {
+class Player_V3A : public MusicEngine {
 public:
 	Player_V3A(Scumm *scumm);
 	virtual ~Player_V3A();
@@ -51,15 +55,18 @@ protected:
 	OSystem *_system;
 	Scumm *_scumm;
 
-	uint16 _soundID[V3A_MAXCHANS];
-	uint16 _timeleft[V3A_MAXCHANS];
+	struct soundChan
+	{
+		uint16 id;
+		uint16 dur;
+	} _mus[V3A_MAXMUS], _sfx[V3A_MAXSFX];
+	
 	uint8 _maxvol;
 
 	int _curSong;
-	unsigned char *_songData;
+	uint8 *_songData;
 	uint16 _songPtr;
 	uint16 _songDelay;
-	uint8 _lastSample;
 	int _music_timer;
 	bool _isinit;
 
@@ -73,7 +80,9 @@ protected:
 		int16 _pitadjust;
 	} **_wavetable;
 
-	void playSound (int nr, char *data, int size, int rate, int vol, int tl, bool looped, int loopStart = 0, int loopEnd = 0);
+	void playSoundSFX (int nr, char *data, int size, int rate, int vol, int tl, bool looped, int loopStart = 0, int loopEnd = 0);
+	void playSoundMUS (char *data, int size, int rate, int vol, int tl, bool looped, int loopStart = 0, int loopEnd = 0);
+
 	void playMusic();
 	static void timerHandler(void *engine);
 };

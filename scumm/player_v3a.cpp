@@ -25,7 +25,7 @@
 #include "sound/mixer.h"
 #include "common/timer.h"
 
-unsigned short _notefreqs[4][12] = {
+static const uint16 note_freqs[4][12] = {
 	{0x06B0,0x0650,0x05F4,0x05A0,0x054C,0x0500,0x04B8,0x0474,0x0434,0x03F8,0x03C0,0x0388},
 	{0x0358,0x0328,0x02FA,0x02D0,0x02A6,0x0280,0x025C,0x023A,0x021A,0x01FC,0x01E0,0x01C4},
 	{0x01AC,0x0194,0x017D,0x0168,0x0153,0x0140,0x012E,0x011D,0x010D,0x00FE,0x00F0,0x00E2},
@@ -44,8 +44,11 @@ Player_V3A::Player_V3A(Scumm *scumm) {
 	_system = scumm->_system;
 	_mixer = scumm->_mixer;
 
-	for (i = 0; i < V3A_MAXCHANS; i++)
-		_soundID[i] = _timeleft[i] = 0;
+	for (i = 0; i < V3A_MAXSFX; i++)
+		_sfx[i].id = _sfx[i].dur = 0;
+
+	for (i = 0; i < V3A_MAXMUS; i++)
+		_mus[i].id = _mus[i].dur = 0;
 
 	_curSong = 0;
 	_songData = NULL;
@@ -66,8 +69,7 @@ Player_V3A::~Player_V3A() {
 	if (!_isinit)
 		return;
 	for (int i = 0; _wavetable[i] != NULL; i++) {
-		for (int j = 0; j < 6; j++)
-		{
+		for (int j = 0; j < 6; j++) {
 			free(_wavetable[i]->_idat[j]);
 			free(_wavetable[i]->_ldat[j]);
 		}
@@ -81,65 +83,84 @@ void Player_V3A::setMasterVolume (int vol) {
 }
 
 void Player_V3A::stopAllSounds() {
+	int i;
+	for (i = 0; i < V3A_MAXMUS; i++) {
+		if (_mus[i].id)
+			_mixer->stopID(V3A_MUS_BASEID + i);
+		_mus[i].id = 0;
+		_mus[i].dur = 0;
+	}
 	_curSong = 0;
-	_songData = NULL;
 	_songPtr = 0;
 	_songDelay = 0;
-	for (int i = 0; i < V3A_MAXCHANS; i++) {
-		if (_soundID[i]) {
-			_mixer->stopID(_soundID[i]);
-			_soundID[i] = 0;
-			_timeleft[i] = 0;
-		}
+	_songData = NULL;
+	for (i = 0; i < V3A_MAXSFX; i++) {
+		if (_sfx[i].id)
+			_mixer->stopID(V3A_SFX_BASEID + i);
+		_sfx[i].id = 0;
+		_sfx[i].dur = 0;
 	}
 }
 
 void Player_V3A::stopSound(int nr) {
 	int i;
 	if (nr == _curSong) {
+		for (i = 0; i < V3A_MAXMUS; i++) {
+			if (_mus[i].id)
+				_mixer->stopID(V3A_MUS_BASEID + i);
+			_mus[i].id = 0;
+			_mus[i].dur = 0;
+		}
 		_curSong = 0;
-		_songData = NULL;
 		_songPtr = 0;
 		_songDelay = 0;
-		for (i = 0; i < V3A_MAXCHANS; i++)
-			if ((_soundID[i] >> 8) == nr)
-				stopSound(_soundID[i--]);
-		return;
+		_songData = NULL;
+	} else {
+		for (i = 0; i < V3A_MAXSFX; i++) {
+			if (_sfx[i].id == nr) {
+				_mixer->stopID(V3A_SFX_BASEID + i);
+				_sfx[i].id = 0;
+				_sfx[i].dur = 0;
+				break;
+			}
+		}
 	}
-	for (i = 0; i < V3A_MAXCHANS; i++) {
-		if (_soundID[i] == nr)
-			break;
-	}
-	if (i == V3A_MAXCHANS)
-		return;
-	_mixer->stopID(_soundID[i]);
-	for (i++; i < V3A_MAXCHANS; i++)
-	{
-		_soundID[i - 1] = _soundID[i];
-		_timeleft[i - 1] = _timeleft[i];
-	}
-	_soundID[V3A_MAXCHANS - 1] = 0;
-	_timeleft[V3A_MAXCHANS - 1] = 0;
 }
 
-void Player_V3A::playSound (int nr, char *data, int size, int rate, int vol, int tl, bool looped, int loopStart, int loopEnd) {
+void Player_V3A::playSoundSFX (int nr, char *data, int size, int rate, int vol, int tl, bool looped, int loopStart, int loopEnd) {
 	int i;
-	for (i = 0; i < V3A_MAXCHANS; i++)
-		if (!_soundID[i])
+	for (i = 0; i < V3A_MAXSFX; i++) {
+		if (!_sfx[i].id)
 			break;
-	if (i == V3A_MAXCHANS)
-	{
-		warning("player_v3a - out of sound channels!");
+	}
+	if (i == V3A_MAXSFX) {
+		warning("player_v3a - too many sound effects playing (%i max)",V3A_MAXSFX);
 		return;
 	}
-	_soundID[i] = nr;
-	_timeleft[i] = tl;
+	_sfx[i].id = nr;
+	_sfx[i].dur = tl;
 
 	vol = (vol * _maxvol) / 255;
-	if (looped)
-		_mixer->playRaw(NULL, data, size, rate, SoundMixer::FLAG_AUTOFREE | SoundMixer::FLAG_LOOP, nr, vol, 0, loopStart, loopEnd);
-	else
-		_mixer->playRaw(NULL, data, size, rate, SoundMixer::FLAG_AUTOFREE, nr, vol, 0);
+	_mixer->playRaw(NULL, data, size, rate, SoundMixer::FLAG_AUTOFREE | (looped ? SoundMixer::FLAG_LOOP : 0),
+		V3A_SFX_BASEID + i, vol, 0, loopStart, loopEnd);
+}
+
+void Player_V3A::playSoundMUS (char *data, int size, int rate, int vol, int tl, bool looped, int loopStart, int loopEnd) {
+	int i;
+	for (i = 0; i < V3A_MAXMUS; i++) {
+		if (!_mus[i].id)
+			break;
+	}
+	if (i == V3A_MAXMUS) {
+		warning("player_v3a - too many music channels playing (%i max)",V3A_MAXMUS);
+		return;
+	}
+	_mus[i].id = i + 1;
+	_mus[i].dur = tl;
+
+	vol = (vol * _maxvol) / 255;
+	_mixer->playRaw(NULL, data, size, rate, SoundMixer::FLAG_AUTOFREE | (looped ? SoundMixer::FLAG_LOOP : 0),
+		V3A_MUS_BASEID + i, vol, 0, loopStart, loopEnd);
 }
 
 void Player_V3A::startSound(int nr) {
@@ -163,6 +184,7 @@ void Player_V3A::startSound(int nr) {
 			ptr = _scumm->getResourceAddress(rtSound, 79);
 			numInstruments = 9;
 		}
+		assert(ptr);
 		_wavetable = (instData **)malloc((numInstruments + 1) * sizeof(void *));
 		for (i = 0; i < numInstruments; i++) {
 			_wavetable[i] = (instData *)malloc(sizeof(instData));
@@ -195,19 +217,16 @@ void Player_V3A::startSound(int nr) {
 		_isinit = true;
 	}
 	
+	if (getSoundStatus(nr))
+		stopSound(nr);	// if a sound is playing, restart it
 	
 	if (data[26]) {
-		stopAllSounds();
 		_curSong = nr;
 		_songData = data;
 		_songPtr = 0x1C;
 		_songDelay = 1;
 		_music_timer = 0;
 	} else {
-		if (_curSong)
-			return;	// don't play music and SFX at the same time
-		if (getSoundStatus(nr))
-			stopSound(nr);
 		int size = READ_BE_UINT16(data + 12);
 		int rate = 3579545 / READ_BE_UINT16(data + 20);
 		char *sound = (char *)malloc(size);
@@ -220,11 +239,11 @@ void Player_V3A::startSound(int nr) {
 			int loopEnd = READ_BE_UINT16(data + 14);
 			int tl = -1;
 			if ((_scumm->_gameId == GID_INDY3) && (nr == 60))
-				tl = 240;
-			playSound(nr, sound, size, rate, vol, tl, true, loopStart, loopEnd);
+				tl = 240;	// the "airplane dive" sound needs to end on its own - the game won't stop it
+			playSoundSFX(nr, sound, size, rate, vol, tl, true, loopStart, loopEnd);
 		} else {
 			int tl = 1 + 60 * size / rate;
-			playSound(nr, sound, size, rate, vol, tl, false);
+			playSoundSFX(nr, sound, size, rate, vol, tl, false);
 		}
 	}
 }
@@ -237,70 +256,64 @@ void Player_V3A::timerHandler(void *refCon) {
 
 void Player_V3A::playMusic() {
 	int i;
-	for (i = 0; i < V3A_MAXCHANS; i++)
-		if ((_timeleft[i]) && (!--_timeleft[i]))
-			stopSound(_soundID[i--]);
+	for (i = 0; i < V3A_MAXSFX; i++) {
+		if ((_sfx[i].dur) && (!--_sfx[i].dur))
+			stopSound(_sfx[i].id);
+	}
+	for (i = 0; i < V3A_MAXMUS; i++) {
+		if ((_mus[i].dur) && (!--_mus[i].dur)) {
+			_scumm->_mixer->stopID(V3A_MUS_BASEID + i);
+			_mus[i].id = 0;
+			_mus[i].dur = 0;
+		}
+	}
 	_music_timer++;
-	if (_songDelay && --_songDelay)
-		return;
 	if (!_curSong)
 		return;
-	if ((_songData[_songPtr] == 0xFC) || (_songData[_songPtr] == 0x00)) {
-		// the final delay has been processed - now we can kill the song
+	if (_songDelay && --_songDelay)
+		return;
+	if (((_songData[_songPtr] & 0xF0) != 0x80) && (_songData[_songPtr] != 0xFB)) {
+		// at the end of the song, and it wasn't looped - kill it
 		_curSong = 0;
 		return;
 	}
 	while (1) {
-		uint8 inst = _songData[_songPtr++];
-		if ((inst == 0x00) || (inst == 0xFC)) {
-			// end of tune - figure out what's still playing
-			// and see how long we have to wait until they're done
-			for (i = 0; i < V3A_MAXCHANS; i++)
-				if ((_soundID[i] >> 8) == _curSong)
-					if (_songDelay < _timeleft[i])
-						_songDelay = _timeleft[i];
+		int inst, pit, vol, dur, oct;
+		inst = _songData[_songPtr++];
+		if ((inst & 0xF0) != 0x80) {
+			// tune is at the end - figure out what's still playing
+			// and see how long we have to wait until we stop/restart
+			for (i = 0; i < V3A_MAXMUS; i++) {
+				if (_songDelay < _mus[i].dur)
+					_songDelay = _mus[i].dur;
+			}
+			if (inst == 0xFB)	// it's a looped song, restart it afterwards
+				_songPtr = 0x1C;
 			break;
 		}
-		else if (inst == 0xFB) {
-			_songPtr = 0x1C;
-			// tune is going to loop - figure out what's still playing
-			// and see how long we have to wait until we restart
-			for (i = 0; i < V3A_MAXCHANS; i++)
-				if ((_soundID[i] >> 8) == _curSong)
-					if (_songDelay < _timeleft[i])
-						_songDelay = _timeleft[i];
-			break;
-		}
-		int8 pitch = _songData[_songPtr++];
-		uint8 unk = _songData[_songPtr++];
-		uint8 dur = _songData[_songPtr++];
-		if ((inst == 0x80) && (pitch == 0) && (unk == 0)) {
+		inst &= 0xF;
+		pit = _songData[_songPtr++];
+		vol = _songData[_songPtr++] & 0x7F;
+		vol = (vol << 1) | (vol >> 7);	// 7-bit volume (Amiga drops the bottom bit), convert to 8-bit
+		dur = _songData[_songPtr++];
+		if (pit == 0) {
 			_songDelay = dur;
 			break;
 		}
-		inst &= 0x7F;
-		pitch -= 24;
-		pitch += _wavetable[inst]->_pitadjust;
-		while (pitch < 0) {
-			pitch += 12;
-			warning("player_v3a - pitch went below range, adjusting!");
-		}
-		while (pitch >= 72) {
-			pitch -= 12;
-			warning("player_v3a - pitch went above range, adjusting!");
-		}
-		int pit = pitch % 12;
-		int oct = pitch / 12;
+		pit += _wavetable[inst]->_pitadjust;
+		oct = (pit / 12) - 2;
+		pit = pit % 12;
+		if (oct < 0)
+			oct = 0;
+		if (oct > 5)
+			oct = 5;
 		char *data = (char *)malloc(_wavetable[inst]->_ilen[oct] + _wavetable[inst]->_llen[oct]);
 		if (_wavetable[inst]->_idat[oct])
 			memcpy(data, _wavetable[inst]->_idat[oct], _wavetable[inst]->_ilen[oct]);
 		if (_wavetable[inst]->_ldat[oct])
 			memcpy(data + _wavetable[inst]->_ilen[oct], _wavetable[inst]->_ldat[oct], _wavetable[inst]->_llen[oct]);
-		if (!_lastSample)
-			_lastSample++;
-		int id = (_curSong << 8) | _lastSample++;
-		playSound(id, data, _wavetable[inst]->_ilen[oct] + _wavetable[inst]->_llen[oct], 3579545 / _notefreqs[_wavetable[inst]->_oct[oct]][pit], 255, dur,
-					(_wavetable[inst]->_ldat[oct] != NULL), _wavetable[inst]->_ilen[oct], _wavetable[inst]->_ilen[oct] + _wavetable[inst]->_llen[oct]);
+		playSoundMUS(data, _wavetable[inst]->_ilen[oct] + _wavetable[inst]->_llen[oct], 3579545 / note_freqs[_wavetable[inst]->_oct[oct]][pit], vol, dur,
+			(_wavetable[inst]->_ldat[oct] != NULL), _wavetable[inst]->_ilen[oct], _wavetable[inst]->_ilen[oct] + _wavetable[inst]->_llen[oct]);
 	}
 }
 
@@ -311,8 +324,8 @@ int Player_V3A::getMusicTimer() const {
 int Player_V3A::getSoundStatus(int nr) const {
 	if (nr == _curSong)
 		return 1;
-	for (int i = 0; i < V3A_MAXCHANS; i++)
-		if (_soundID[i] == nr)
+	for (int i = 0; i < V3A_MAXSFX; i++)
+		if (_sfx[i].id == nr)
 			return 1;
 	return 0;
 }
