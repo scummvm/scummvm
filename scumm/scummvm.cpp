@@ -161,7 +161,8 @@ Scumm::~Scumm ()
 	delete _bundle;
 	delete _sound;
 	delete _imuse;
-	if (_existLanguageFile) delete _languageBuffer;
+	if (_existLanguageFile)
+		delete _languageBuffer;
 }
 
 void Scumm::scummInit()

@@ -84,7 +84,8 @@ struct BlastObject {		/* BlastObjects to draw */
 	uint16 number, areaX, areaY, areaWidth, areaHeight;
 	int16 posX, posY;
 	uint16 width, height;
-	uint16 unk3, unk4, image;
+	uint16 scaleX, scaleY;
+	uint16 image;
 
 	uint16 mode;
 };

@@ -1180,8 +1180,8 @@ void Scumm::enqueueObject(int objectNumber, int objectX, int objectY, int object
 		eo->height = objectHeight;
 	}
 
-	eo->unk3 = f;
-	eo->unk4 = g;
+	eo->scaleX = f;
+	eo->scaleY = g;
 	eo->image = image;
 
 	eo->mode = mode;
@@ -1244,8 +1244,8 @@ void Scumm::drawBlastObject(BlastObject *eo)
 	bdd.dataptr = bomp + 10;
 	bdd.x = eo->posX;
 	bdd.y = eo->posY;
-	bdd.scale_x = (unsigned char)eo->unk3;
-	bdd.scale_y = (unsigned char)eo->unk4;
+	bdd.scale_x = (unsigned char)eo->scaleX;
+	bdd.scale_y = (unsigned char)eo->scaleY;
 
 	drawBomp(&bdd, 0, bdd.dataptr, 1, 0);
 	updateDirtyRect(vs->number, bdd.x, bdd.x + bdd.srcwidth, bdd.y, bdd.y + bdd.srcheight, 0);
