@@ -22,17 +22,6 @@
 // script functions for moving megas about the place & also for keeping tabs
 // on them
 
-// FN_walk()			// walk to (x,y,dir)
-// FN_walk_to_anim()		// walk to start position of anim
-// FN_turn()			// turn to (dir)
-// FN_stand_at()		// stand at (x,y,dir)
-// FN_stand()			// stand facing (dir)
-// FN_stand_after_anim()	// stand at end position of anim
-// FN_face_id()			// turn to face object (id)
-// FN_face_xy()			// turn to face point (x,y)
-// FN_is_facing()		// is mega (id) facing us?
-// FN_get_pos()			// get details of another mega's position
-
 #include "stdafx.h"
 #include "bs2/console.h"
 #include "bs2/defs.h"
@@ -51,7 +40,9 @@ int16 standby_x;		// see FN_set_standby_coords
 int16 standby_y;
 uint8 standby_dir;
 
-// walk mega to (x,y,dir)
+/**
+ * Walk mega to (x,y,dir)
+ */
 
 int32 FN_walk(int32 *params) {
 	// params:	0 pointer to object's logic structure
@@ -252,7 +243,9 @@ int32 FN_walk(int32 *params) {
 	return IR_REPEAT;
 }
 
-// walk mega to start position of anim
+/**
+ * Walk mega to start position of anim
+ */
 
 int32 FN_walk_to_anim(int32 *params) {
 	// params:	0 pointer to object's logic structure
@@ -313,9 +306,11 @@ int32 FN_walk_to_anim(int32 *params) {
 	return FN_walk(pars);
 }
 
-// turn mega to <direction>
-// just needs to call FN_walk() with current feet coords, so router can
-// produce anim of turn frames
+/**
+ * turn mega to <direction>
+ * just needs to call FN_walk() with current feet coords, so router can
+ * produce anim of turn frames
+ */
 
 int32 FN_turn(int32 *params) {
 	// params:	0 pointer to object's logic structure
@@ -355,9 +350,11 @@ int32 FN_turn(int32 *params) {
 	return FN_walk(pars);
 }
 
-// stand mega at (x,y,dir)
-// sets up the graphic object, but also needs to set the new 'current_dir' in
-// the mega object, so the router knows in future
+/**
+ * stand mega at (x,y,dir)
+ * sets up the graphic object, but also needs to set the new 'current_dir' in
+ * the mega object, so the router knows in future
+ */
 
 int32 FN_stand_at(int32 *params) {
 	// params:	0 pointer to object's graphic structure
@@ -416,7 +413,9 @@ int32 FN_stand(int32 *params) {
 	return FN_stand_at(pars);
 }
 
-// stand mega at end position of anim
+/**
+ * stand mega at end position of anim
+ */
 
 int32 FN_stand_after_anim(int32 *params) {
 	// params:	0 pointer to object's graphic structure
@@ -542,9 +541,11 @@ int What_target(int startX, int startY, int destX, int destY) {
 	return (deltaY > 0) ? 5 : 7;
 }
 
-// turn mega to face point (x,y) on the floor
-// just needs to call FN_walk() with current feet coords & direction computed
-// by What_target()
+/**
+ * turn mega to face point (x,y) on the floor
+ * just needs to call FN_walk() with current feet coords & direction computed
+ * by What_target()
+ */
 
 int32 FN_face_xy(int32 *params) {
 	// params:	0 pointer to object's logic structure

@@ -39,7 +39,7 @@ void Set_player_action_event(uint32 id, uint32 interact_id);
 int32 FN_check_event_waiting(void);
 void Start_event(void);
 int32 FN_start_event(void);
-uint32 Check_event_waiting(void);
+bool Check_event_waiting(void);
 void Kill_all_ids_events(uint32 id);
 
 #ifdef _SWORD2_DEBUG 

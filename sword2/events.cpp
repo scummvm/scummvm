@@ -74,12 +74,12 @@ int32 FN_request_speech(int32 *params) {
 	if (j == MAX_events)
 		Con_fatal_error("FN_set_event out of event slots");
 
-	//found that slot
+	// found that slot
 
-	//id of person to stop
+	// id of person to stop
 	event_list[j].id = params[0];
 
-	//full script id to interact with - megas run their own 7th script
+	// full script id to interact with - megas run their own 7th script
 	event_list[j].interact_id = (params[0] * 65536) + 6;
 
 	return IR_CONT;
@@ -276,15 +276,13 @@ int32 FN_pause_for_event(int32 *params) {
 	}
 }
 
-uint32 Check_event_waiting(void) {
-	// returns yes/no
-
+bool Check_event_waiting(void) {
 	for (int j = 0; j < MAX_events; j++) {
 		if (event_list[j].id == ID)
-			return 1;
+			return true;
 	}
 
-	return 0;
+	return false;
 }
 
 int32 FN_clear_event(int32 *params) {
@@ -334,7 +332,7 @@ int32 FN_start_event(int32 *params) {
 
 	// oh dear - stop the system
 	Con_fatal_error("FN_start_event can't find event for id %d", ID);
-	return 0;	//never called - but lets stop them bloody errors
+	return 0;	// never called - but lets stop them bloody errors
 }
 
 void Kill_all_ids_events(uint32 id) {

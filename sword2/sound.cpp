@@ -51,12 +51,10 @@ typedef struct {
 // max number of fx in queue at once [DO NOT EXCEED 255]
 #define FXQ_LENGTH 32
 
-_fxq_entry fxq[FXQ_LENGTH];
+static _fxq_entry fxq[FXQ_LENGTH];
 
 // used to store id of tunes that loop, for save & restore
 uint32 looping_music_id = 0;
-
-char musicDirectory[120];
 
 void Trigger_fx(uint8 j);
 
@@ -254,7 +252,7 @@ int32 FN_play_fx(int32 *params) {
 }
 
 int32 FN_sound_fetch(int32 *params) {
-	return (IR_CONT);
+	return IR_CONT;
 }
 
 // to alter the volume and pan of a currently playing fx

@@ -44,7 +44,7 @@
 namespace Sword2 {
 
 // stores resource id of wav to use as lead-out from smacker
-uint32 smackerLeadOut = 0;
+static uint32 smackerLeadOut = 0;
 
 int32 Animate(int32 *params, uint8 reverse_flag);
 int32 Mega_table_animate(int32 *params, uint8 reverse_flag);

@@ -395,8 +395,6 @@ void Sword2Engine::go() {
 #endif
 		}
 
-		// James (24mar97)
-
 #ifdef _SWORD2_DEBUG
 		// if not in console & 'renderSkip' is set, only render
 		// display once every 4 game-cycles

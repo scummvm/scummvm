@@ -34,7 +34,7 @@ typedef	struct {
 // there wont be many will there. probably 2 at most i reckon
 #define	MAX_syncs 10
 
-_sync_unit sync_list[MAX_syncs];
+static _sync_unit sync_list[MAX_syncs];
 
 void Init_sync_system(void) {
 	// set list to 0's
@@ -43,8 +43,8 @@ void Init_sync_system(void) {
 }
 
 int32 FN_send_sync(int32 *params) {
-	//param	0 sync's recipient
-	//param	1 sync value
+	// param	0 sync's recipient
+	//		1 sync value
 
 	for (int i = 0; i < MAX_syncs; i++) {
 		if (sync_list[i].id == 0) {
@@ -76,7 +76,7 @@ void Clear_syncs(uint32	id) {
 	}
 }
 
-uint32 Get_sync(void) {
+bool Get_sync(void) {
 	// check for a sync waiting for this character
 	// - called from system code eg. from inside FN_anim(), to see if
 	// animation to be quit
@@ -84,12 +84,12 @@ uint32 Get_sync(void) {
 	for (int i = 0; i < MAX_syncs; i++) {
 		if (sync_list[i].id == ID) {
 			// means sync found
-			return 1;
+			return true;
 		}
 	}
 
 	// no sync found
-	return 0;
+	return false;
 }
 
 int32 FN_get_sync(int32 *params) {
