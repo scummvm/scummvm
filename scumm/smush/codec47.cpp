@@ -226,7 +226,7 @@ static int16 codec47_table[] = {
 static byte smush_buf_big[99328];
 static byte smush_buf_small[32768];
 static byte smush_buffer[65536];
-static int16 codec47_temp_table[256];
+static int16 smush_table[256];
 
 void Codec47Decoder::makeTables37(int32 param) {
 	int32 variable1, variable2, variable3, variable4, count_1, count_2;
@@ -282,44 +282,38 @@ void Codec47Decoder::makeTables37(int32 param) {
 			tmp_value1 = tmp;
 			if (tmp == 0) {
 				b1 = 0;
-				goto label3;
-			}
-			if ((tmp_value1 - param) == -1) {
+			} else if ((tmp_value1 - param) == -1) {
 				b1 = 1;
-				goto label3;
-			} 
-			b1 = 2;
-			tmp = *(tmp_table37_1_1);
-			if (tmp != 0) {
-				b1 = 0;
-				tmp -= param;
-				if (tmp == -1)
-					b1 = 3;
-				else
-					b1 = 4;
+			} else {
+				b1 = 2;
+				tmp = *(tmp_table37_1_1);
+				if (tmp != 0) {
+					b1 = 0;
+					tmp -= param;
+					if (tmp == -1)
+						b1 = 3;
+					else
+						b1 = 4;
+				}
 			}
-label3:
 			tmp = *(tmp_table37_2_2);
 			tmp_value2 = tmp;
 			if (tmp == 0) {
 				b2 = 0;
-				goto label4;
-			}
-			if ((tmp_value2 - param) == -1) {
+			} else if ((tmp_value2 - param) == -1) {
 				b2 = 1;
-				goto label4;
+			} else {
+				tmp = *(tmp_table37_1_2);
+				if (tmp == 0) {
+					b2 = 2;
+				} else {
+					tmp -= param;
+					if (tmp == -1)
+						b2 = 3;
+					else
+						b2 = 4;
+				}
 			}
-			tmp = *(tmp_table37_1_2);
-			if (tmp == 0) {
-				b2 = 2;
-				goto label4;
-			}
-			tmp -= param;
-			if (tmp == -1)
-				b2 = 3;
-			else
-				b2 = 4;
-label4:
 			tmp_param_tmp = tmp_param - 1;
 			d = tmp_param_tmp;
 			if(tmp_param != 0) {
@@ -337,151 +331,149 @@ label4:
 			variable1 = 0;
 			tmp_c++;
 			variable2 = tmp_c;
-			if (tmp_c <= 0)
-				goto label27;
-			do {
-				tmp_a = variable2;
-				if (tmp_a > 1) {
-					tmp_c = tmp_a;
-					tmp_a = variable1;
-					tmp_c -= tmp_a;
+			if (tmp_c > 0) {
+				do {
 					tmp_a = variable2;
-					tmp_c--;
-					tmp_a--;
-					tmp_ib = tmp_a;
-					tmp_d = value_table37_1_1;
-					tmp_ib >>= 1;
-					variable3 = tmp_a;
-					tmp_a = value_table37_1_2;
-					tmp_d *= variable1;
-					tmp_a *= tmp_c;
-					tmp_a += tmp_d;
-					tmp_a += tmp_ib;
-					tmp_a /= variable3;
-					tmp_d = tmp_value2;
-					variable4 = tmp_a;
-					tmp_a = tmp_value1;
-					tmp_d *= tmp_c;
-					tmp_a *= variable1;
-					tmp_d += tmp_a;
-					tmp_a = tmp_d + tmp_ib;
-					tmp_a /= variable3;
-				} else {
-					tmp_a = value_table37_1_1;
-					variable4 = tmp_a;
-					tmp_a = tmp_value1;
-				}
-				tmp_c = param;
-				tmp_d = variable4;
-				tmp_c *= tmp_a;
-				tmp_c += tmp_d;
-				tmp_table = &table[tmp_c];
-				*(tmp_table) = 1;
-				if (b1 != 2)
-					goto label8;
-				if (b2 == 3)
-					goto label11;
+					if (tmp_a > 1) {
+						tmp_c = tmp_a;
+						tmp_a = variable1;
+						tmp_c -= tmp_a;
+						tmp_a = variable2;
+						tmp_c--;
+						tmp_a--;
+						tmp_ib = tmp_a;
+						tmp_d = value_table37_1_1;
+						tmp_ib >>= 1;
+						variable3 = tmp_a;
+						tmp_a = value_table37_1_2;
+						tmp_d *= variable1;
+						tmp_a *= tmp_c;
+						tmp_a += tmp_d;
+						tmp_a += tmp_ib;
+						tmp_a /= variable3;
+						tmp_d = tmp_value2;
+						variable4 = tmp_a;
+						tmp_a = tmp_value1;
+						tmp_d *= tmp_c;
+						tmp_a *= variable1;
+						tmp_d += tmp_a;
+						tmp_a = tmp_d + tmp_ib;
+						tmp_a /= variable3;
+					} else {
+						tmp_a = value_table37_1_1;
+						variable4 = tmp_a;
+						tmp_a = tmp_value1;
+					}
+					tmp_c = param;
+					tmp_d = variable4;
+					tmp_c *= tmp_a;
+					tmp_c += tmp_d;
+					tmp_table = &table[tmp_c];
+					*(tmp_table) = 1;
+					if (b1 != 2)
+						goto label8;
+					if (b2 == 3)
+						goto label11;
 label8:
-				if (b2 != 2)
-					goto label9;
-				if (b1 == 3)
-					goto label11;
+					if (b2 != 2)
+						goto label9;
+					if (b1 == 3)
+						goto label11;
 label9:
-				if (b1 != 0)
-					goto label10;
-				if (b2 != 1)
-					goto label11;
+					if (b1 != 0)
+						goto label10;
+					if (b2 != 1)
+						goto label11;
 label10:
-				if (b2 != 0)
-					goto label12;
-				if (b1 == 1)
-					goto label13;
+					if (b2 != 0)
+						goto label12;
+					if (b1 == 1)
+						goto label13;
 label11:
-				if (tmp_a < 0)
-					goto label26;
-				tmp_c = param;
-				tmp_c <<= 2;
-				do {
-					*(tmp_table) = 1;
-					tmp_table -= tmp_c / 4;
-				} while (--tmp_a >= 0);
-				goto label26;
+					if (tmp_a < 0)
+						continue;
+					tmp_c = param;
+					tmp_c <<= 2;
+					do {
+						*(tmp_table) = 1;
+						tmp_table -= tmp_c / 4;
+					} while (--tmp_a >= 0);
+					continue;
 label12:
-				if (b1 != 1)
-					goto label14;
+					if (b1 != 1)
+						goto label14;
 label13:
-				if (b2 != 0)
-					goto label15;
+					if (b2 != 0)
+						goto label15;
 label14:
-				if (b2 != 1)
-					goto label16;
-				if (b1 == 0)
-					goto label17;
+					if (b2 != 1)
+						goto label16;
+					if (b1 == 0)
+						goto label17;
 label15:
-				tmp_c = param;
-				if (tmp_c <= tmp_a)
-					goto label26;
-				tmp_c <<= 2;
-				tmp_d = param;
-				tmp_d -= tmp_a;
-				do {
-					*(tmp_table) = 1;
-					tmp_table += tmp_c / 4;
-				} while (--tmp_d != 0);
-				goto label26;
+					tmp_c = param;
+					if (tmp_c <= tmp_a)
+						continue;
+					tmp_c <<= 2;
+					tmp_d = param;
+					tmp_d -= tmp_a;
+					do {
+						*(tmp_table) = 1;
+						tmp_table += tmp_c / 4;
+					} while (--tmp_d != 0);
+					continue;
 label16:
-				if (b1 != 0)
-					goto label18;
+					if (b1 != 0)
+						goto label18;
 label17:
-				if (b2 == 1)
-					goto label21;
+					if (b2 == 1)
+						goto label21;
 label18:
-				if (b2 != 0)
-					goto label19;
-				if (b1 == 1)
-					goto label21;
+					if (b2 != 0)
+						goto label19;
+					if (b1 == 1)
+						goto label21;
 label19:
-				if (b1 != 3)
-					goto label20;
-				if (b2 != 2)
-					goto label21;
+					if (b1 != 3)
+						goto label20;
+					if (b2 != 2)
+						goto label21;
 label20:
-				if (b2 != 3)
-					goto label22;
-				if (b1 == 2)
-					goto label23;
+					if (b2 != 3)
+						goto label22;
+					if (b1 == 2)
+						goto label23;
 label21:
-				tmp_c = param;
-				if (tmp_c <= variable4)
-					goto label26;
-				tmp_c -= variable4;
-				d = tmp_c;
-				do {
-					*(tmp_table++) = 1;
-				} while (--d != 0);
-				goto label26;
-label22:
-				if (b1 != 2)
-					goto label24;
-label23:
-				if (b2 != 3)
-					goto label25;
-label24:
-				if (b2 != 2)
-					goto label26;
-				if (b1 == 3)
-					goto label26;
-label25:
-				if (variable4 >= 0) {
-					tmp_c = variable4 + 1;
+					tmp_c = param;
+					if (tmp_c <= variable4)
+						continue;
+					tmp_c -= variable4;
 					d = tmp_c;
 					do {
-						*(tmp_table--) = 1;
+						*(tmp_table++) = 1;
 					} while (--d != 0);
-				}
-label26:;
-			} while	(variable2 > ++variable1);
-label27:
+					continue;
+label22:
+					if (b1 != 2)
+						goto label24;
+label23:
+					if (b2 != 3)
+						goto label25;
+label24:
+					if (b2 != 2)
+						continue;
+					if (b1 == 3)
+						continue;
+label25:
+					if (variable4 >= 0) {
+						tmp_c = variable4 + 1;
+						d = tmp_c;
+						do {
+							*(tmp_table--) = 1;
+						} while (--d != 0);
+					}
+				} while	(variable2 > ++variable1);
+			}
 			if (tmp_param != 0) {
 				if (param == 8) {
 					tmp_c = tmp_param_tmp;
@@ -527,7 +519,7 @@ void Codec47Decoder::makeTables47(int32 width) {
 	int32 a, c, d, s, tmp_value, tmp_offset;
 	int16 tmp, tmp2;
 
-	int16 * tmp_ptr = codec47_temp_table;
+	int16 * tmp_ptr = smush_table;
 	int16 * ptr_table = &codec47_table[1];
 	do {
 		int16 tmp_word = *(ptr_table);
@@ -536,7 +528,7 @@ void Codec47Decoder::makeTables47(int32 width) {
 		tmp_word += *(ptr_table - 3);
 		tmp_ptr++;
 		*(tmp_ptr - 1) = tmp_word;
-	} while (tmp_ptr < &codec47_temp_table[255]);
+	} while (tmp_ptr < &smush_table[255]);
 	a = 0;
 	c = 0;
 	s = 0;
@@ -1026,7 +1018,7 @@ bool Codec47Decoder::decode(Blitter & dst, Chunk & src) {
 //		}
 		if ((seq_nb - _prevSeqNb) == 1) {
 			decode2(_curBuf, gfx_data, offset1, offset2, width,
-					codec47_temp_table, chunk_buffer + 8, height,
+					smush_table, chunk_buffer + 8, height,
 					smush_buf_small, smush_buf_big);
 		}
 		break;
