@@ -63,61 +63,39 @@
 #include "stdafx.h"
 #include "driver96.h"
 
-uint8	keyBacklog = 0;				// The number of key presses waiting to be processed.
-uint8	keyPointer = 0;				// Index of the next key to read from the buffer.
-char    keyBuffer[MAX_KEY_BUFFER];	// The keyboard buffer
+uint8 keyBacklog = 0;	// The number of key presses waiting to be processed.
+uint8 keyPointer = 0;	// Index of the next key to read from the buffer.
 
+char keyBuffer[MAX_KEY_BUFFER];		// The keyboard buffer
 
-
-void WriteKey(char key)
-{
-	if (keyBuffer && keyBacklog < MAX_KEY_BUFFER)
-	{
+void WriteKey(char key) {
+	if (keyBuffer && keyBacklog < MAX_KEY_BUFFER) {
 		keyBuffer[(keyPointer + keyBacklog) % MAX_KEY_BUFFER] = key;
-		keyBacklog += 1;
+		keyBacklog++;
 	}
 }
 
-
-
-BOOL KeyWaiting(void)
-
-{
-
+BOOL KeyWaiting(void) {
 	if (keyBacklog)
-		return(TRUE);
-	else
-		return(FALSE);
+		return TRUE;
 
+	return FALSE;
 }
 
 
 
-int32 ReadKey(char *key)
-
-{
+int32 ReadKey(char *key) {
 	if (!keyBacklog)
-		return(RDERR_NOKEYWAITING);
+		return RDERR_NOKEYWAITING;
 
 	if (key == NULL)
-		return(RDERR_INVALIDPOINTER);
+		return RDERR_INVALIDPOINTER;
 
 	*key = keyBuffer[keyPointer++];
 	if (keyPointer == MAX_KEY_BUFFER)
 		keyPointer = 0;
 
-	keyBacklog -= 1;
+	keyBacklog--;
 
-	return(RD_OK);
-
+	return RD_OK;
 }
-
-void GetKeyStatus(_drvKeyStatus *s)
-
-{
-	// Flush key buffer
-	s->pBacklog = &keyBacklog;
-	s->pPointer = &keyPointer;
-	s->pBuffer =  keyBuffer;
-}
-

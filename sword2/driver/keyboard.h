@@ -40,7 +40,6 @@
 #ifndef KEYBOARD_H
 #define KEYBOARD_H
 
-
 void WriteKey(char key);		// Adds a keypress to the buffer
 
 #endif
