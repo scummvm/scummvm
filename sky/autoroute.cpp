@@ -238,13 +238,13 @@ uint16 SkyAutoRoute::autoRoute(Compact *cpt) {
 
 	((uint16*)cpt->extCompact->animScratch)[0] = 0;
 	if ((startX == destX) && (startY == destY))
-		return 1;
+		return 2;
 
 	if (_routeGrid[(destY + 1) * ROUTE_GRID_WIDTH + destX + 1])
-		return 2; // AR destination is an unaccessible block
+		return 1; // AR destination is an unaccessible block
 
 	if (!calcWalkGrid(startX, startY, destX, destY))
-		return 2; // can't find route to block
+		return 1; // can't find route to block
 
 	uint16 *routeData = makeRouteData(startX, startY, destX, destY);
 	// the route is done.
