@@ -290,6 +290,9 @@ void QueenEngine::errorString(const char *buf1, char *buf2) {
 
 int QueenEngine::go() {
 	_logic->start();
+	if (ConfMan.hasKey("save_slot") && !(_resource->isDemo() || _resource->isInterview())) {
+		loadGameState(ConfMan.getInt("save_slot"));
+	}
 	_quit = false;
 	while (!_quit) {
 		// queen.c lines 4080-4104

@@ -262,6 +262,7 @@ void Logic::start() {
 	_vm->graphics()->setupMouseCursor();
 	setupJoe();
 	_vm->grid()->setupPanel();
+	inventorySetup();
 
 	_oldRoom = 0;
 	_newRoom = _currentRoom;
@@ -1430,7 +1431,7 @@ void Logic::sceneStart() {
 	_vm->display()->showMouseCursor(false);
 
 	if (1 == _scene) {
-		_vm->display()->palFadePanel();
+		_vm->display()->palGreyPanel();
 	}
 
 	_vm->update();
@@ -2059,7 +2060,6 @@ bool LogicDemo::preChangeRoom() {
 		displayRoom(currentRoom(), RDM_FADE_JOE, 100, 2, true);
 		playCutaway("c70d.cut");
 		gameState(VAR_INTRO_PLAYED, 1);
-		inventorySetup();
 		inventoryRefresh();
 		return true;
 	}
@@ -2093,7 +2093,6 @@ bool LogicInterview::preChangeRoom() {
 		displayRoom(currentRoom(), RDM_FADE_NOJOE, 100, 2, true);
 		playCutaway("start.cut");
 		gameState(2, 1);
-		inventorySetup();
 		inventoryRefresh();
 		return true;
 	}
@@ -2133,17 +2132,16 @@ bool LogicGame::preChangeRoom() {
 			playCutaway("cintr.cut");
 		} else {
 			playCutaway("cdint.cut");
-			_vm->display()->palSetPanel();
 		}
 
 		playCutaway("cred.cut");
+		_vm->display()->palSetPanel();
 		sceneReset();
 		currentRoom(ROOM_HOTEL_LOBBY);
 		entryObj(584);
 		displayRoom(currentRoom(), RDM_FADE_JOE, 100, 2, true);
 		playCutaway("c70d.cut");
 		gameState(VAR_INTRO_PLAYED, 1);
-		inventorySetup();
 		inventoryRefresh();
 		return true;
 	}

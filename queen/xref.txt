@@ -299,7 +299,7 @@ drawbackdrop()				Display::prepareUpdate
 drawpanel()					Display::prepareUpdate
 drawscreen()				Display::update
 dynalum()					Display::dynalumUpdate
-fade_panel()				Display::palFadePanel
+fade_panel()				Display::palGreyPanel
 fadein()					Display::palFadeIn
 fadeout()					Display::palFadeOut
 flashspecial()				Display::palCustomFlash

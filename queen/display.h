@@ -48,7 +48,7 @@ public:
 	void palSetPanel();
 	void palFadeIn(int start, int end, uint16 roomNum, bool dynalum = false, int16 dynaX = 0, int16 dynaY = 0);
 	void palFadeOut(int start, int end, uint16 roomNum);
-	void palFadePanel();
+	void palGreyPanel();
 	void palScroll(int start, int end);
 	void palCustomColors(uint16 roomNum);
 	void palCustomScroll(uint16 roomNum);

@@ -93,8 +93,6 @@ ResourceEntry *Resource::resourceEntry(const char *filename) const {
 		}
 	} while (cur++ < _resourceEntries);
 #endif
-
-	debug(7, "Couldn't find file '%s'", entryName);
 	return re;
 }
 

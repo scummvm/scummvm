@@ -188,6 +188,7 @@ void Display::palSetJoeNormal() {
 
 void Display::palSetPanel() {
 	memcpy(_pal.room + 144 * 3, _pal.panel, (256 - 144) * 3);
+	memcpy(_pal.screen + 144 * 3, _pal.panel, (256 - 144) * 3);
 }
 
 void Display::palFadeIn(int start, int end, uint16 roomNum, bool dynalum, int16 dynaX, int16 dynaY) {
@@ -218,7 +219,7 @@ void Display::palFadeIn(int start, int end, uint16 roomNum, bool dynalum, int16 
 }
 
 void Display::palFadeOut(int start, int end, uint16 roomNum) {
-	debug(9, "Display::palFadeOut(%d, %d)", start, end);
+	debug(9, "Display::palFadeOut(%d, %d, %d)", start, end, roomNum);
 	_pal.scrollable = false;
 	int n = end - start + 1;
 	if (Logic::isAltIntroRoom(roomNum) || Logic::isIntroRoom(roomNum)) {
@@ -242,7 +243,8 @@ void Display::palFadeOut(int start, int end, uint16 roomNum) {
 	}
 }
 
-void Display::palFadePanel() {
+void Display::palGreyPanel() {
+	debug(9, "Display::palGreyPanel()");
 	int i;
 	uint8 tempPal[256 * 3];
 	for (i = 224 * 3; i < 256 * 3; i += 3) {
