@@ -22,15 +22,10 @@
 #if defined(_MSC_VER) || defined(__MINGW32__)
 
 #include "../fs.h"
-
-
-// TODO - this file is just a dummy place holder for the person who wants to implement
-// the FS backend for windows. I don't even gurantee it compiles, but it should as a 
-// starting place for the implementor at least.
-// Look at posix-fs.cpp to see how it is done there, at fs.h for documentation of the
-// API. I know that Exult as in files/listfiles.cc implementations for something similar
-// for at least Unix, Windows, BeOS, MorphOS and MacOS, if you want to see how it is done.
-
+#include <stdio.h>
+#include <stdlib.h>
+#include <windows.h>
+#include <TCHAR.h>
 
 /*
  * Implementation of the ScummVM file system API based on Windows API.
@@ -38,13 +33,12 @@
 
 class WindowsFilesystemNode : public FilesystemNode {
 protected:
-	// TODO - decide what members to offer. The following are used in the POSIX
-	// implementations, but feel free to scrap all of them and use a complete
-	// different inner working scheme
 	String _displayName;
 	bool _isDirectory;
 	bool _isValid;
+	bool _isPseudoRoot;
 	String _path;
+	WindowsFilesystemNode *_parentNode;
 	
 public:
 	WindowsFilesystemNode();
@@ -59,39 +53,145 @@ public:
 	virtual FSList *listDir() const;
 	virtual FilesystemNode *parent() const;
 	virtual FilesystemNode *clone() const { return new WindowsFilesystemNode(this); }
+
+private:
+	static char *toAscii(TCHAR *x);
+	static TCHAR* toUnicode(char *x);
+	static void addFile (FSList* list, const WindowsFilesystemNode *parentNode, const char *base, WIN32_FIND_DATA* find_data);
 };
 
 
+char* WindowsFilesystemNode::toAscii(TCHAR *x) {
+static char asciiString[MAX_PATH];
+
+#ifndef UNICODE
+	return (char*)x;
+#else
+	WideCharToMultiByte(CP_ACP, 0, x, _tcslen(x) + 1, asciiString, sizeof(asciiString), NULL, NULL);
+	return asciiString;
+#endif
+}
+
+TCHAR* WindowsFilesystemNode::toUnicode(char *x) {
+static TCHAR unicodeString[MAX_PATH];
+
+#ifndef UNICODE
+	return (TCHAR*)x;
+#else
+	MultiByteToWideChar(CP_ACP, 0, x, strlen(x) + 1, unicodeString, sizeof(unicodeString));
+	return unicodeString;
+#endif
+}
+
+void WindowsFilesystemNode::addFile (FSList* list, const WindowsFilesystemNode *parentNode, const char *base, WIN32_FIND_DATA* find_data) {
+	WindowsFilesystemNode entry;
+	char *asciiName = toAscii(find_data->cFileName);
+	bool isDirectory;
+
+	// Skip local directory (.) and parent (..)
+	if (!strcmp(asciiName, ".") || !strcmp(asciiName, ".."))
+		return;
+	
+	isDirectory = (find_data->dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY ? true : false);
+
+	// Only keep the directories for the moment (files already supported)
+	if (!isDirectory)
+		return;
+
+	entry._isDirectory = isDirectory;
+	entry._parentNode = (entry._isDirectory ? (WindowsFilesystemNode*)parentNode : NULL);
+	entry._displayName = asciiName;
+	entry._path = base;
+	entry._path += asciiName;
+	if (entry._isDirectory)
+		entry._path += "\\";
+	entry._isValid = true;	
+	entry._isPseudoRoot = false;
+
+	list->push_back(entry);
+}
+
 FilesystemNode *FilesystemNode::getRoot() {
-	// TODO - return a node with the "root". I guess this will be a fake
-	// dummy node in which you insert elements for all the drives (C:, D:, ...)
 	return new WindowsFilesystemNode();
 }
 
 WindowsFilesystemNode::WindowsFilesystemNode() {
-	// TODO - default constructor; in the POSIX implementations this just
-	// produces the root node, but use as you like....
+	_displayName = "Root";
+	_isDirectory = true;
+#ifndef _WIN32_WCE
+	// Create a virtual root directory for standard Windows system
+	_isValid = false;
+	_path = "";
+	_isPseudoRoot = true;
+#else
+	// No need to create a pseudo root directory on Windows CE
+	_isValid = true;
+	_path = "\\";
+	_isPseudoRoot = false;
+#endif
+	_parentNode = this;
 }
 
 WindowsFilesystemNode::WindowsFilesystemNode(const WindowsFilesystemNode *node) {
-	// TODO - copy constructor
+	_displayName = node->_displayName;
+	_isDirectory = node->_isDirectory;
+	_isValid = node->_isValid;
+	_isPseudoRoot = node->_isPseudoRoot;
+	_path = node->_path;
+	_parentNode = node->_parentNode;
 }
 
 FSList *WindowsFilesystemNode::listDir() const {
 	assert(_isDirectory);
 
-	struct dirent *dp;
 	FSList *myList = new FSList();
-	
-	// TODO - fill myList here
+
+	if (_isPseudoRoot) {
+#ifndef _WIN32_WCE
+		// Drives enumeration
+		TCHAR drive_buffer[100];
+		GetLogicalDriveStrings(sizeof(drive_buffer) / sizeof(TCHAR), drive_buffer);
+
+		for (TCHAR *current_drive = drive_buffer; *current_drive; 
+			current_drive += _tcslen(current_drive) + 1) {
+				WindowsFilesystemNode entry;		
+				char drive_name[2];
+
+				drive_name[0] = toAscii(current_drive)[0];
+				drive_name[1] = '\0';
+				entry._displayName = drive_name;
+				entry._isDirectory = true;
+				entry._isValid = true;
+				entry._isPseudoRoot = false;
+				entry._path = toAscii(current_drive);
+				myList->push_back(entry);
+#endif
+		}
+	}
+	else {
+		// Files enumeration
+		WIN32_FIND_DATA desc;
+		HANDLE			handle;
+		char			searchPath[MAX_PATH + 10];
+
+		sprintf(searchPath, "%s*", _path.c_str());
+
+		handle = FindFirstFile(toUnicode(searchPath), &desc);
+		if (handle == INVALID_HANDLE_VALUE)
+			return myList;
+		addFile(myList, this, _path.c_str(), &desc);
+		while (FindNextFile(handle, &desc))
+			addFile(myList, this, _path.c_str(), &desc);
+
+		FindClose(handle);
+	}
 
 	return myList;
 }
 
 FilesystemNode *WindowsFilesystemNode::parent() const {
-	// TODO - return a node representing the parent node of this one.
-	// For the root node, you may return 'this'.
-	return 0;
+	assert(_isDirectory);
+	return _parentNode;
 }
 
-#endif // defined(UNIX)
+#endif // defined(_MSC_VER) || defined(__MINGW32__)
