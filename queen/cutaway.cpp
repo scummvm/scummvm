@@ -1287,7 +1287,7 @@ void Cutaway::talk(char *nextFilename) {
 			personInRoom = 0; 			// XXX is this correct?
 		}
 
-		Talk::talk(_talkFile, personInRoom, nextFilename, _vm);
+		_vm->logic()->startDialogue(_talkFile, personInRoom, nextFilename);
 	}
 }
 
