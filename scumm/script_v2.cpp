@@ -448,7 +448,6 @@ void ScummEngine_v2::writeVar(uint var, int value) {
 	//       script 89, script 164 isn't reran to redraw it. Why? Dunno. Hack? Yes.
 	if ((var == 175) && (_gameId == GID_MANIAC) && (vm.slot[_currentScript].number == 89))
 			runScript(164, 0, 0, 0);
-
 }
 
 void ScummEngine_v2::getResultPosIndirect() {

@@ -855,7 +855,7 @@ void ScummEngine::killScriptsAndResources() {
 			ss->status = ssDead;
 		} else if (ss->where == WIO_LOCAL) {
 			if (ss->cutsceneOverride) {
-				if ( _version >= 5)
+				if (_version >= 5)
 					warning("Script %d stopped with active cutscene/override in exit", ss->number);
 				ss->cutsceneOverride = 0;
 			}

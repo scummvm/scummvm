@@ -394,7 +394,6 @@ int ScummEngine_v6::popRoomAndObj(int *room) {
 		obj = pop();
 	}
 
-
 	return obj;
 }
 
