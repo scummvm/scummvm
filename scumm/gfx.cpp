@@ -871,7 +871,7 @@ void Gdi::drawBitmap(byte *ptr, VirtScreen *vs, int x, int y, const int width, c
 
 	if (_disable_zbuffer)
 		numzbuf = 0;
-	else if (_numZBuffer <= 1)
+	else if (_numZBuffer <= 1 || (_vm->_features & GF_AFTER_V2))
 		numzbuf = _numZBuffer;
 	else {
 		numzbuf = _numZBuffer;
@@ -949,7 +949,7 @@ void Gdi::drawBitmap(byte *ptr, VirtScreen *vs, int x, int y, const int width, c
 		else
 			bgbak_ptr = vs->screenPtr + (y * _numStrips + x) * 8;
 
-		mask_ptr = _vm->getResourceAddress(rtBuffer, 9) + (y * _numStrips + x);
+		mask_ptr = _vm->getResourceAddress(rtBuffer, 9) + (y * _numStrips + x) + _imgBufOffs[1];
 
 		const int left = (stripnr << 3);
 		const int right = left + (numstrip << 3);
@@ -1013,8 +1013,7 @@ void Gdi::drawBitmap(byte *ptr, VirtScreen *vs, int x, int y, const int width, c
 					theY++;
 					if (theY >= height) {
 						if (left <= theX && theX < right) {
-							mask_ptr -= _numStrips * height;
-							mask_ptr++;
+							mask_ptr -= _numStrips * height - 1;
 						}
 						theY = 0;
 						theX += 8;
@@ -1033,8 +1032,7 @@ void Gdi::drawBitmap(byte *ptr, VirtScreen *vs, int x, int y, const int width, c
 					theY++;
 					if (theY >= height) {
 						if (left <= theX && theX < right) {
-							mask_ptr -= _numStrips * height;
-							mask_ptr++;
+							mask_ptr -= _numStrips * height - 1;
 						}
 						theY = 0;
 						theX += 8;
@@ -1073,8 +1071,6 @@ void Gdi::drawBitmap(byte *ptr, VirtScreen *vs, int x, int y, const int width, c
 		else
 			bgbak_ptr = backbuff_ptr;
 
-		mask_ptr = _vm->getResourceAddress(rtBuffer, 9) + (y * _numStrips + x);
-
 		if (!(_vm->_features & GF_AFTER_V2)) {
 			if (_vm->_features & GF_16COLOR) {
 				decodeStripEGA(bgbak_ptr, smap_ptr + READ_LE_UINT16(smap_ptr + stripnr * 2 + 2), height);
@@ -1084,6 +1080,8 @@ void Gdi::drawBitmap(byte *ptr, VirtScreen *vs, int x, int y, const int width, c
 				useOrDecompress = decompressBitmap(bgbak_ptr, smap_ptr + READ_LE_UINT32(smap_ptr + stripnr * 4 + 8), height);
 			}
 		}
+
+		mask_ptr = _vm->getResourceAddress(rtBuffer, 9) + (y * _numStrips + x);
 
 		CHECK_HEAP;
 		if (vs->alloctwobuffers) {

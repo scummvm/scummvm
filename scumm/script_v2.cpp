@@ -821,8 +821,12 @@ void Scumm_v2::o2_doSentence() {
 	// TODO
 	switch(fetchScriptByte()) {
 	case 1:
+		// TODO - execute the sentence
+		_sentenceNum--;
 		break;
 	case 2:
+		// TODO - print the sentence
+		_sentenceNum--;
 		break;
 	}
 }
