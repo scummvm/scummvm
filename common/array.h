@@ -145,6 +145,15 @@ public:
 		return _data + _size;
 	}
 
+	bool contains(const T &key) const {
+		for (const_iterator i = begin(); i != end(); ++i) {
+			if (*i == key)
+				return true;
+		}
+		return false;
+	}
+
+
 protected:
 	void ensureCapacity(int new_len) {
 		if (new_len <= _capacity)

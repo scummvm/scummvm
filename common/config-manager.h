@@ -127,6 +127,8 @@ private:
 	DomainMap		_globalDomains;
 	Domain			_defaultsDomain;
 	
+	StringList		_domainSaveOrder;
+
 	String			_activeDomain;
 	String			_filename;
 };

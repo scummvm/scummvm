@@ -103,6 +103,7 @@ void ConfigManager::switchFile(const String &filename) {
 #endif
 
 	_filename = filename;
+	_domainSaveOrder.clear();
 	loadFile(_filename);
 	debug(1, "Switched to configuration %s", _filename.c_str());
 }
@@ -159,6 +160,8 @@ void ConfigManager::loadFile(const String &filename) {
 					_gameDomains[domain].setDomainComment(comment);
 				}
 				comment.clear();
+				
+				_domainSaveOrder.push_back(domain);
 			} else {
 				// Skip leading & trailing whitespaces
 				char *t = rtrim(ltrim(buf));
@@ -204,16 +207,31 @@ void ConfigManager::flushToDisk() {
 	if (!(cfg_file = fopen(_filename.c_str(), "w"))) {
 		warning("Unable to write configuration file: %s", _filename.c_str());
 	} else {
+		
+		// First write the domains in _domainSaveOrder, in that order.
+		// Note: It's possible for _domainSaveOrder to list domains which
+		// are not present anymore.
+		StringList::const_iterator i;
+		for (i = _domainSaveOrder.begin(); i != _domainSaveOrder.end(); ++i) {
+			if (_globalDomains.contains(*i)) {
+				writeDomain(cfg_file, *i, _globalDomains[*i]);
+			} else if (_gameDomains.contains(*i)) {
+				writeDomain(cfg_file, *i, _gameDomains[*i]);
+			}
+		}
+
 		DomainMap::const_iterator d;
 
-		// First write the global domains
+		// Now write the global domains which weren't written yet
 		for (d = _globalDomains.begin(); d != _globalDomains.end(); ++d) {
-			writeDomain(cfg_file, d->_key, d->_value);
+			if (!_domainSaveOrder.contains(d->_key))
+				writeDomain(cfg_file, d->_key, d->_value);
 		}
 		
-		// Second, write the game domains
+		// Finally write the remaining game domains
 		for (d = _gameDomains.begin(); d != _gameDomains.end(); ++d) {
-			writeDomain(cfg_file, d->_key, d->_value);
+			if (!_domainSaveOrder.contains(d->_key))
+				writeDomain(cfg_file, d->_key, d->_value);
 		}
 
 		fclose(cfg_file);
