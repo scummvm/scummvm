@@ -234,8 +234,11 @@ int32 DecompressMouse(uint8 *decomp, uint8 *comp, int32 size) {
 
 
 int32 DrawMouse(void) {
+	// FIXME: In the original code, luggage animations were decoded here
+	// as well. Luggage animations and mouse animations were not mutually
+	// exclusive. Was that a necessary feature?
+
 	if (mouseAnim) {
-		memset(_mouseData, 0, sizeof(_mouseData));
 		DecompressMouse(_mouseData, mouseSprite, mouseAnim->mousew * mouseAnim->mouseh);
 		g_sword2->_system->set_mouse_cursor(_mouseData, mouseAnim->mousew, mouseAnim->mouseh, mouseAnim->xHotSpot, mouseAnim->yHotSpot - MENUDEEP);
 	}
@@ -329,8 +332,6 @@ int32 SetLuggageAnim(uint8 *ma, int32 size) {
 		luggageOffset = (int32 *) ((uint8 *) luggageAnim + sizeof(_mouseAnim));
 
 		// The luggage animation is only one frame.
-
-		memset(_mouseData, 0, sizeof(_mouseData));
 
 		DecompressMouse(_mouseData, (uint8 *) luggageAnim + *mouseOffsets, luggageAnim->mousew * luggageAnim->mouseh);
 		DecompressMouse(_mouseData, (uint8 *) luggageAnim + *luggageOffset, luggageAnim->mousew * luggageAnim->mouseh);
