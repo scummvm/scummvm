@@ -172,7 +172,6 @@ class VorbisInputStream : public AudioStream {
 	int16 _buffer[4096];
 	const int16 *_bufferEnd;
 	const int16 *_pos;
-	int _played;
 	
 	void refill();
 	inline bool eosIntern() const;
@@ -185,7 +184,6 @@ public:
 	bool isStereo() const		{ return _numChannels >= 2; }
 	
 	int getRate() const			{ return ov_info(_ov_file, -1)->rate; }
-	int getSamplesPlayed() const { return _played / _numChannels; }
 
 };
 
@@ -196,7 +194,7 @@ public:
 
 
 VorbisInputStream::VorbisInputStream(OggVorbis_File *file, int duration) 
-	: _ov_file(file), _bufferEnd(_buffer + ARRAYSIZE(_buffer)), _played(0) {
+	: _ov_file(file), _bufferEnd(_buffer + ARRAYSIZE(_buffer)) {
 
 	// Check the header, determine if this is a stereo stream
 	_numChannels = ov_info(_ov_file, -1)->channels;
@@ -218,7 +216,6 @@ inline int16 VorbisInputStream::read() {
 	if (_pos >= _bufferEnd) {
 		refill();
 	}
-	_played++;
 	return sample;
 }
 
@@ -238,7 +235,6 @@ int VorbisInputStream::readBuffer(int16 *buffer, const int numSamples) {
 			refill();
 		}
 	}
-	_played += samples;
 	return samples;
 }
 
