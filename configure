@@ -194,7 +194,7 @@ Optional Features:
   --disable-sword1         don't build the Broken Sword I engine
   --disable-sword2         don't build the Broken Sword II engine
   --disable-queen          don't build the Flight of the Amazon Queen engine
-  --enable-plugins         build engines as loadable mdoules instead of
+  --enable-plugins         build engines as loadable modules instead of
                            static linking them
 
 Optional Libraries:
