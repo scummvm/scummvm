@@ -325,6 +325,12 @@ int RunScript ( const char * scriptData , char * objectData , uint32 *offset )
 
 	// Get the start of variables and start of code
 	DEBUG3("Enter interpreter data %x, object %x, offset %d",scriptData,objectData,*offset);
+
+	// FIXME: The following is a fundamental (?) flaw in the code.
+	// Both "variables" and "scriptData" are const pointers. However,
+	// later the code actually writes code into "variables". Both can't
+	// be the case at the same time. Either the const qualifiers have
+	// to be removed, or the writes to *variables are bogus.
 	const char *variables = scriptData + sizeof(int);
 	const char *code = scriptData + *((int *)scriptData) + sizeof(int);
 	uint32 noScripts = *((int32 *)code);
