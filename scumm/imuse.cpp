@@ -1957,10 +1957,13 @@ byte *Player::parse_midi(byte *s) {
 		value = *s++;
 		part = get_part(chan);
 		if (part) {
-			if (_isGM || value >= 32)
-				part->set_program(value);
-			else
-				part->load_global_instrument (value);
+			if (_isGM) {
+				if (value < 128)
+					part->set_program(value);
+			} else {
+				if (value < 32)
+					part->load_global_instrument(value);
+			}
 		}
 		break;
 
