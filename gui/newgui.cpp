@@ -96,6 +96,7 @@ void NewGui::updateScaleFactor() {
 void NewGui::runLoop() {
 	Dialog *activeDialog = _dialogStack.top();
 	bool didSaveState = false;
+	int button;
 
 	if (activeDialog == 0)
 		return;
@@ -155,6 +156,7 @@ void NewGui::runLoop() {
 			// We don't distinguish between mousebuttons (for now at least)
 			case OSystem::EVENT_LBUTTONDOWN:
 			case OSystem::EVENT_RBUTTONDOWN:
+				button = (event.type == OSystem::EVENT_LBUTTONDOWN ? 1 : 2);
 				if (_lastClick.count && (time < _lastClick.time + kDoubleClickDelay)
 							&& ABS(_lastClick.x - event.mouse.x) < 3
 							&& ABS(_lastClick.y - event.mouse.y) < 3) {
@@ -165,11 +167,12 @@ void NewGui::runLoop() {
 					_lastClick.count = 1;
 				}
 				_lastClick.time = time;
-				activeDialog->handleMouseDown(event.mouse.x - (activeDialog->_x * _scaleFactor), event.mouse.y - (activeDialog->_y * _scaleFactor), 1, _lastClick.count);
+				activeDialog->handleMouseDown(event.mouse.x - (activeDialog->_x * _scaleFactor), event.mouse.y - (activeDialog->_y * _scaleFactor), button, _lastClick.count);
 				break;
 			case OSystem::EVENT_LBUTTONUP:
 			case OSystem::EVENT_RBUTTONUP:
-				activeDialog->handleMouseUp(event.mouse.x - (activeDialog->_x * _scaleFactor), event.mouse.y - (activeDialog->_y * _scaleFactor), 1, _lastClick.count);
+				button = (event.type == OSystem::EVENT_LBUTTONUP ? 1 : 2);
+				activeDialog->handleMouseUp(event.mouse.x - (activeDialog->_x * _scaleFactor), event.mouse.y - (activeDialog->_y * _scaleFactor), button, _lastClick.count);
 				break;
 			case OSystem::EVENT_WHEELUP:
 				activeDialog->handleMouseWheel(event.mouse.x - (activeDialog->_x * _scaleFactor), event.mouse.y - (activeDialog->_y * _scaleFactor), -1);
