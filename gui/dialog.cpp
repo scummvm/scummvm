@@ -36,6 +36,11 @@ namespace GUI {
  * ...
  */
 
+Dialog::Dialog(int x, int y, int w, int h)
+	: GuiObject(x, y, w, h),
+	  _mouseWidget(0), _focusedWidget(0), _dragWidget(0), _visible(false) {
+}
+
 Dialog::~Dialog() {
 	delete _firstWidget;
 	_firstWidget = 0;
@@ -114,15 +119,12 @@ void Dialog::drawDialog() {
 void Dialog::handleMouseDown(int x, int y, int button, int clickCount) {
 	Widget *w;
 	w = findWidget(x, y);
+	
+	_dragWidget = w;
 
 	// If the click occured inside a widget which is not the currently
 	// focused one, change the focus to that widget.
-	// TODO: use the wantsFocus() method to objects, so that only fields
-	// that want it get the focus (like edit fields, list field...)
-	// However, right now we "abuse" the focus also for the click&drag
-	// behaviour of buttons. This should probably be changed by adding
-	// a nother field, e.g. _clickedWidget or _dragWidget.
-	if (w && w != _focusedWidget) {
+	if (w && w != _focusedWidget && w->wantsFocus()) {
 		// The focus will change. Tell the old focused widget (if any)
 		// that it lost the focus.
 		releaseFocus();
@@ -134,27 +136,28 @@ void Dialog::handleMouseDown(int x, int y, int button, int clickCount) {
 		_focusedWidget = w;
 	}
 
-	if (w && w == _focusedWidget)
-		_focusedWidget->handleMouseDown(x - (_focusedWidget->getAbsX() - _x), y - (_focusedWidget->getAbsY() - _y), button, clickCount);
+	if (w)
+		w->handleMouseDown(x - (w->getAbsX() - _x), y - (w->getAbsY() - _y), button, clickCount);
 }
 
 void Dialog::handleMouseUp(int x, int y, int button, int clickCount) {
 	Widget *w;
 
 	if (_focusedWidget) {
-		w = _focusedWidget;
+		//w = _focusedWidget;
 		
 		// Lose focus on mouseup unless the widget requested to retain the focus
 		if (! (_focusedWidget->getFlags() & WIDGET_RETAIN_FOCUS )) {
 			releaseFocus();
 		}
-
-	} else {
-		w = findWidget(x, y);
 	}
+
+	w = _dragWidget;
 
 	if (w)
 		w->handleMouseUp(x - (w->getAbsX() - _x), y - (w->getAbsY() - _y), button, clickCount);
+
+	_dragWidget = 0;
 }
 
 void Dialog::handleMouseWheel(int x, int y, int direction) {
@@ -211,7 +214,10 @@ void Dialog::handleKeyUp(uint16 ascii, int keycode, int modifiers) {
 void Dialog::handleMouseMoved(int x, int y, int button) {
 	Widget *w;
 	
-	if (_focusedWidget) {
+	//if (!button)
+	//	_dragWidget = 0;
+	
+	if (_focusedWidget && !_dragWidget) {
 		w = _focusedWidget;
 		int wx = w->getAbsX() - _x;
 		int wy = w->getAbsY() - _y;
@@ -220,6 +226,8 @@ void Dialog::handleMouseMoved(int x, int y, int button) {
 		// (but to no other items).
 		bool mouseInFocusedWidget = (x >= wx && x < wx + w->_w && y >= wy && y < wy + w->_h);
 		if (mouseInFocusedWidget && _mouseWidget != w) {
+			if (_mouseWidget)
+				_mouseWidget->handleMouseLeft(button);
 			_mouseWidget = w;
 			w->handleMouseEntered(button);
 		} else if (!mouseInFocusedWidget && _mouseWidget == w) {
@@ -229,8 +237,13 @@ void Dialog::handleMouseMoved(int x, int y, int button) {
 
 		w->handleMouseMoved(x - wx, y - wy, button);
 	}
-
-	w = findWidget(x, y);
+	
+	// While a "drag" is in process (i.e. mouse is moved while a button is pressed),
+	// only deal with the widget in which the click originated.
+	if (_dragWidget)
+		w = _dragWidget;
+	else
+		w = findWidget(x, y);
 
 	if (_mouseWidget != w) {
 		if (_mouseWidget)
@@ -240,11 +253,9 @@ void Dialog::handleMouseMoved(int x, int y, int button) {
 		_mouseWidget = w;
 	} 
 
-	if (!w || !(w->getFlags() & WIDGET_TRACK_MOUSE)) {
-		return;
+	if (w && (w->getFlags() & WIDGET_TRACK_MOUSE)) {
+		w->handleMouseMoved(x - (w->getAbsX() - _x), y - (w->getAbsY() - _y), button);
 	}
-
-	w->handleMouseMoved(x - (w->getAbsX() - _x), y - (w->getAbsY() - _y), button);
 }
 
 void Dialog::handleTickle() {

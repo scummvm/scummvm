@@ -1,17 +1,18 @@
 The ScummVM team:
        James Brown           - Lead developer
        Max Horn              - Lead developer
-       Torbjorn Andersson    - Engine: SCUMM, Broken Sword II
+       Torbjorn Andersson    - Engine: SCUMM, Broken Sword II, SAGA
        David Eriksson        - Engine: Flight of the Amazon Queen
        Robert Goeffringmann  - Engine: Beneath a Steel Sky, Broken Sword I
-       Jonathan Gray         - Engine: SCUMM, Broken Sword II
-       Travis Howell         - Engine: SCUMM, Simon the Sorcerer
+       Jonathan Gray         - Engine: SCUMM, HE, Broken Sword II
+       Travis Howell         - Engine: SCUMM, HE, Simon the Sorcerer
        Oliver Kiehl          - Engine: Beneath a Steel Sky, Simon
        Pawel Kolodziejski    - Engine: SCUMM (Codecs, iMUSE, Smush, etc.)
-       Gregory Montoir       - Engine: Flight of the Amazon Queen
+       Andrew Kurushin       - Engine: SAGA
+       Gregory Montoir       - Engine: Flight of the Amazon Queen, HE
        Joost Peters          - Engine: Beneath a Steel Sky, Flight of the
                                Amazon Queen
-       Eugene Sandulenko     - Engine: SCUMM (FT INSANE, bugfixes)
+       Eugene Sandulenko     - Engine: SCUMM (FT INSANE), HE, SAGA
        Chris Apers           - Port: PalmOS
        Nicolas Bacca         - Port: PocketPC/WinCE
        Marcus Comstedt       - Port: Dreamcast
@@ -69,6 +70,10 @@ Special thanks to:
        John Passfield and Steve Stamatiadis for sharing the source of their
        classic title, Flight of the Amazon Queen and also being incredibly
        supportive.
+
+       Joe Pearce from The Wyrmkeep Entertainment Co. for sharing the source
+       of their famous title Inherit the Earth and always prompt replies to
+       our questions.
 
        Aric Wilmunder, Ron Gilbert, David Fox, Vince Lee, and all those at
        LucasFilm/LucasArts who made SCUMM the insane mess to reimplement that

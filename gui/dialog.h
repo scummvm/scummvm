@@ -41,16 +41,14 @@ class Dialog : public GuiObject {
 protected:
 	Widget	*_mouseWidget;
 	Widget  *_focusedWidget;
+	Widget  *_dragWidget;
 	bool	_visible;
 
 private:
 	int		_result;
 
 public:
-	Dialog(int x, int y, int w, int h)
-		: GuiObject(x, y, w, h),
-		  _mouseWidget(0), _focusedWidget(0), _visible(false) {
-	}
+	Dialog(int x, int y, int w, int h);
 	virtual ~Dialog();
 
 	virtual int runModal();
