@@ -427,7 +427,6 @@ struct CostumeRenderer {
 };
 
 struct Actor {
-	int init;
 	int x,y,top,bottom;
 	int elevation;
 	uint width;
