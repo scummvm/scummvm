@@ -30,8 +30,6 @@
 #ifndef SOUND_H
 #define SOUND_H
 
-#include "common/scummsys.h"
-
 namespace Sword2 {
 
 // fx types

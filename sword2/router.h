@@ -20,8 +20,8 @@
 #ifndef _ROUTER_H
 #define _ROUTER_H
 
-#include "memory.h"
-#include "object.h"
+#include "bs2/memory.h"
+#include "bs2/object.h"
 
 namespace Sword2 {
 

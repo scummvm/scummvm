@@ -27,16 +27,14 @@
 //
 // ---------------------------------------------------------------------------
 
-#include <stdio.h>
-
 #include "stdafx.h"
-#include "console.h"
-#include "defs.h"		// for RESULT
-#include "interpreter.h"
-#include "protocol.h"		// for FetchObjectName() for debugging FN_play_fx
-#include "resman.h"
-#include "sound.h"
-#include "sword2.h"
+#include "bs2/console.h"
+#include "bs2/defs.h"		// for RESULT
+#include "bs2/interpreter.h"
+#include "bs2/protocol.h"	// for FetchObjectName() for debugging FN_play_fx
+#include "bs2/resman.h"
+#include "bs2/sound.h"
+#include "bs2/sword2.h"
 
 namespace Sword2 {
 

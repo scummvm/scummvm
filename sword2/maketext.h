@@ -57,7 +57,7 @@
 #ifndef _MAKETEXT_H
 #define _MAKETEXT_H
 
-#include "memory.h"
+#include "bs2/memory.h"
 
 namespace Sword2 {
 
@@ -77,7 +77,7 @@ mem* MakeTextSprite(uint8 *sentence, uint16 maxWidth, uint8 pen, uint32 fontRes)
 void Init_text_bloc_system(void);
 
 void Kill_text_bloc(uint32 bloc_number);
-void Print_text_blocs(void);	// Tony16Oct96
+void Print_text_blocs(void);
 
 uint32 Build_new_block(uint8 *ascii, int16 x, int16 y, uint16 width, uint8 pen, uint32 type, uint32 fontRes, uint8 justification);
 
@@ -85,9 +85,9 @@ uint32 Build_new_block(uint8 *ascii, int16 x, int16 y, uint16 width, uint8 pen, 
 #define FINNISH_TEXT	1
 #define POLISH_TEXT	2
 
-// this one works out the language from the text cluster (James31july97)
+// this one works out the language from the text cluster
 void InitialiseFontResourceFlags(void);
-// this one allow you to select the fonts yourself (James31july97)
+// this one allow you to select the fonts yourself
 void InitialiseFontResourceFlags(uint8 language);
 
 extern uint32 speech_font_id;

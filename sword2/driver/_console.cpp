@@ -43,14 +43,9 @@
 //
 //=============================================================================
 
-
-//#include "ddraw.h"
-
 #include "stdafx.h"
 #include "bs2/driver/driver96.h"
-
 #include "bs2/driver/d_draw.h"
-
 
 namespace Sword2 {
 

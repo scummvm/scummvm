@@ -26,13 +26,13 @@
 //	up to 2 foreground parallax layers
 
 #include "stdafx.h"
-#include "build_display.h"
-#include "debug.h"
-#include "header.h"
-#include "layers.h"
-#include "protocol.h"
-#include "resman.h"
-#include "sound.h"	// for Clear_fx_queue() called from FN_init_background()
+#include "bs2/build_display.h"
+#include "bs2/debug.h"
+#include "bs2/header.h"
+#include "bs2/layers.h"
+#include "bs2/protocol.h"
+#include "bs2/resman.h"
+#include "bs2/sound.h"	// for Clear_fx_queue() called from FN_init_background()
 
 namespace Sword2 {
 

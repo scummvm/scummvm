@@ -26,26 +26,24 @@
 //
 // ---------------------------------------------------------------------------
 
-#include <stdio.h>
-
 #include "stdafx.h"
-#include "driver/driver96.h"
-#include "console.h"
-#include "defs.h"
-#include "function.h"		// for engine_logic, engine_graph, etc
-#include "interpreter.h"	// for IR_CONT, etc
-#include "layers.h"
-#include "logic.h"
-#include "memory.h"
-#include "object.h"
-#include "protocol.h"
-#include "resman.h"
-#include "router.h"
-#include "save_rest.h"
-#include "scroll.h"		// for Set_scrolling()
-#include "sound.h"
-#include "sword2.h"
-#include "walker.h"
+#include "bs2/driver/driver96.h"
+#include "bs2/console.h"
+#include "bs2/defs.h"
+#include "bs2/function.h"	// for engine_logic, engine_graph, etc
+#include "bs2/interpreter.h"	// for IR_CONT, etc
+#include "bs2/layers.h"
+#include "bs2/logic.h"
+#include "bs2/memory.h"
+#include "bs2/object.h"
+#include "bs2/protocol.h"
+#include "bs2/resman.h"
+#include "bs2/router.h"
+#include "bs2/save_rest.h"
+#include "bs2/scroll.h"		// for Set_scrolling()
+#include "bs2/sound.h"
+#include "bs2/sword2.h"
+#include "bs2/walker.h"
 
 namespace Sword2 {
 

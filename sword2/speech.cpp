@@ -18,28 +18,26 @@
  */
 
 #include "stdafx.h"
-
-#include "stdafx.h"
-#include "anims.h"
-#include "console.h"
-#include "controls.h"	// for 'subtitles' & 'speechSelected'
-#include "debug.h"
-#include "defs.h"
-#include "events.h"
-#include "function.h"
-#include "interpreter.h"
-#include "layers.h"	// for 'this_screen'
-#include "logic.h"
-#include "maketext.h"
-#include "memory.h"
-#include "mouse.h"
-#include "object.h"
-#include "protocol.h"
-#include "resman.h"
-#include "sound.h"
-#include "speech.h"
-#include "sword2.h"
-#include "walker.h"
+#include "bs2/anims.h"
+#include "bs2/console.h"
+#include "bs2/controls.h"	// for 'subtitles' & 'speechSelected'
+#include "bs2/debug.h"
+#include "bs2/defs.h"
+#include "bs2/events.h"
+#include "bs2/function.h"
+#include "bs2/interpreter.h"
+#include "bs2/layers.h"		// for 'this_screen'
+#include "bs2/logic.h"
+#include "bs2/maketext.h"
+#include "bs2/memory.h"
+#include "bs2/mouse.h"
+#include "bs2/object.h"
+#include "bs2/protocol.h"
+#include "bs2/resman.h"
+#include "bs2/sound.h"
+#include "bs2/speech.h"
+#include "bs2/sword2.h"
+#include "bs2/walker.h"
 
 namespace Sword2 {
 

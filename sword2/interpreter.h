@@ -20,8 +20,8 @@
 #ifndef _INTERPRETER
 #define _INTERPRETER
 
-#include "debug.h"
-#include "header.h"
+#include "bs2/debug.h"
+#include "bs2/header.h"
 
 namespace Sword2 {
 

@@ -18,13 +18,13 @@
  */
 
 #include "stdafx.h"
-#include "driver/driver96.h"
-#include "debug.h"
-#include "defs.h"
-#include "header.h"
-#include "interpreter.h"
-#include "layers.h"
-#include "scroll.h"
+#include "bs2/driver/driver96.h"
+#include "bs2/debug.h"
+#include "bs2/defs.h"
+#include "bs2/header.h"
+#include "bs2/interpreter.h"
+#include "bs2/layers.h"
+#include "bs2/scroll.h"
 
 namespace Sword2 {
 

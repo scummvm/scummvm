@@ -23,8 +23,8 @@
 // this whole file only included on debug versions
 #ifdef _SWORD2_DEBUG
 
-#include "driver.h"
-#include "object.h"
+#include "bs2/driver.h"
+#include "bs2/object.h"
 
 namespace Sword2 {
 

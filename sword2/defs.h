@@ -20,8 +20,8 @@
 #ifndef	DEFS
 #define	DEFS
 
-#include "header.h"
-#include "resman.h"
+#include "bs2/header.h"
+#include "bs2/resman.h"
 
 #define	SIZE	0x10000			// 65536 items per section
 #define	NuSIZE	0xffff			// & with this

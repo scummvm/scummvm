@@ -18,12 +18,9 @@
  */
 
 #include "stdafx.h"
-
 #include "base/gameDetector.h"
 #include "base/plugins.h"
-
 #include "common/config-file.h"
-
 #include "bs2/build_display.h"
 #include "bs2/console.h"
 #include "bs2/controls.h"

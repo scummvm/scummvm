@@ -17,12 +17,10 @@
  * $Header$
  */
 
-//mouse stuff
-
 #ifndef MOUSE_H
 #define MOUSE_H
 
-#include "object.h"
+#include "bs2/object.h"
 
 namespace Sword2 {
 

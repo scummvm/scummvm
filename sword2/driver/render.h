@@ -17,19 +17,6 @@
  * $Header$
  */
 
-//=============================================================================
-//
-//	Filename	:	render.h
-//	Created		:	26th August 1996
-//	By			:	P.R.Porter
-//
-//	Summary		:	This include file defines links to all data which is
-//					defined in the render.c module, but can be accessed by
-//					other parts of the driver96 library.
-//
-//
-//=============================================================================
-
 #ifndef RENDER_H
 #define RENDER_H
 

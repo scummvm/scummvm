@@ -20,8 +20,6 @@
 #ifndef	_SCRIPT_STRUCTURES
 #define	_SCRIPT_STRUCTURES
 
-#include "driver/driver96.h"
-
 namespace Sword2 {
 
 // these structures represent the broken up compact components

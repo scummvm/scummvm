@@ -20,7 +20,7 @@
 #ifndef	_ICONS
 #define	_ICONS
 
-#include "object.h"
+#include "bs2/object.h"
 
 namespace Sword2 {
 

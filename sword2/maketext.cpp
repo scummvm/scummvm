@@ -50,19 +50,17 @@
 #define LAST_CHAR	255	// last character in character set
 #define DUD		64	// the first "chequered flag" (dud) symbol in
 				// our character set is in the '@' position
-#include <string.h>
-
 #include "stdafx.h"
-#include "driver/driver96.h"
-#include "console.h"
-#include "debug.h"
-#include "defs.h"		// for SPEECH_FONT_ID & CONSOLE_FONT_ID
-#include "header.h"
-#include "maketext.h"
-#include "memory.h"
-#include "protocol.h"		// for FetchFrameHeader()
-#include "resman.h"
-#include "sword2.h"
+#include "bs2/driver/driver96.h"
+#include "bs2/console.h"
+#include "bs2/debug.h"
+#include "bs2/defs.h"		// for SPEECH_FONT_ID & CONSOLE_FONT_ID
+#include "bs2/header.h"
+#include "bs2/maketext.h"
+#include "bs2/memory.h"
+#include "bs2/protocol.h"	// for FetchFrameHeader()
+#include "bs2/resman.h"
+#include "bs2/sword2.h"
 
 namespace Sword2 {
 

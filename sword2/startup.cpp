@@ -17,27 +17,25 @@
  * $Header$
  */
 
-#include <stdio.h>
-
 #include "stdafx.h"
-#include "build_display.h"
-#include "console.h"
-#include "debug.h"
-#include "defs.h"
-#include "header.h"
-#include "interpreter.h"
-#include "maketext.h"		// for Kill_text_bloc()
-#include "memory.h"
-#include "mouse.h"		// for FN_add_human()
-#include "object.h"
-#include "resman.h"
-#include "router.h"
-#include "sound.h"
-#include "speech.h"		// for 'speech_text_bloc_no' - so that speech text can be cleared when running a new start-script
-#include "startup.h"
-#include "sword2.h"		// (James11aug97) for CloseGame()
-#include "sync.h"
-#include "tony_gsdk.h"
+#include "bs2/build_display.h"
+#include "bs2/console.h"
+#include "bs2/debug.h"
+#include "bs2/defs.h"
+#include "bs2/header.h"
+#include "bs2/interpreter.h"
+#include "bs2/maketext.h"	// for Kill_text_bloc()
+#include "bs2/memory.h"
+#include "bs2/mouse.h"		// for FN_add_human()
+#include "bs2/object.h"
+#include "bs2/resman.h"
+#include "bs2/router.h"
+#include "bs2/sound.h"
+#include "bs2/speech.h"		// for 'speech_text_bloc_no' - so that speech text can be cleared when running a new start-script
+#include "bs2/startup.h"
+#include "bs2/sword2.h"		// for CloseGame()
+#include "bs2/sync.h"
+#include "bs2/tony_gsdk.h"
 
 namespace Sword2 {
 

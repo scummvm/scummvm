@@ -34,16 +34,16 @@
 // FN_get_pos()			// get details of another mega's position
 
 #include "stdafx.h"
-#include "console.h"
-#include "defs.h"
-#include "events.h"
-#include "function.h"
-#include "interpreter.h"
-#include "logic.h"		// for FN_add_to_kill_list
-#include "object.h"
-#include "protocol.h"
-#include "router.h"
-#include "sync.h"
+#include "bs2/console.h"
+#include "bs2/defs.h"
+#include "bs2/events.h"
+#include "bs2/function.h"
+#include "bs2/interpreter.h"
+#include "bs2/logic.h"		// for FN_add_to_kill_list
+#include "bs2/object.h"
+#include "bs2/protocol.h"
+#include "bs2/router.h"
+#include "bs2/sync.h"
 
 namespace Sword2 {
 

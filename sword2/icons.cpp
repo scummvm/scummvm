@@ -18,10 +18,11 @@
  */
 
 #include "stdafx.h"
-#include "defs.h"
-#include "icons.h"
-#include "interpreter.h"
-#include "mouse.h"
+#include "bs2/driver/driver96.h"
+#include "bs2/defs.h"
+#include "bs2/icons.h"
+#include "bs2/interpreter.h"
+#include "bs2/mouse.h"
 
 namespace Sword2 {
 

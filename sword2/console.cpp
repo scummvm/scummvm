@@ -18,7 +18,7 @@
  */
 
 #include "stdafx.h"
-#include "driver/driver96.h"
+#include "bs2/driver/driver96.h"
 
 namespace Sword2 {
 uint32	console_status = 0;	//0 off		// LEFT IN RELEASE VERSION
@@ -28,30 +28,24 @@ uint32	console_status = 0;	//0 off		// LEFT IN RELEASE VERSION
 
 // its the console! <great>
 
-#include <ctype.h>
-#include <stdarg.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <time.h>		// for version string stuff
-
-#include "build_display.h"
-#include "console.h"
-#include "debug.h"
-#include "defs.h"
-#include "events.h"		// so we can display the event list in Con_display_events()
-#include "header.h"
-#include "layers.h"
-#include "logic.h"
-#include "maketext.h"		// for InitialiseFontResourceFlags()
-#include "mouse.h"
-#include "mem_view.h"
-#include "memory.h"
-#include "protocol.h"
-#include "resman.h"
-#include "save_rest.h"
-#include "startup.h"
-#include "sword2.h"
-#include "time.h"
+#include "bs2/build_display.h"
+#include "bs2/console.h"
+#include "bs2/debug.h"
+#include "bs2/defs.h"
+#include "bs2/events.h"		// so we can display the event list in Con_display_events()
+#include "bs2/header.h"
+#include "bs2/layers.h"
+#include "bs2/logic.h"
+#include "bs2/maketext.h"	// for InitialiseFontResourceFlags()
+#include "bs2/mouse.h"
+#include "bs2/mem_view.h"
+#include "bs2/memory.h"
+#include "bs2/protocol.h"
+#include "bs2/resman.h"
+#include "bs2/save_rest.h"
+#include "bs2/startup.h"
+#include "bs2/sword2.h"
+#include "bs2/time.h"
 
 namespace Sword2 {
 

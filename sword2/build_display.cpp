@@ -21,19 +21,17 @@
 // BUILD_DISPLAY.CPP	like the old spr_engi but slightly more aptly named
 // ---------------------------------------------------------------------------
 
-#include <stdio.h>
-
 #include "stdafx.h"
-#include "build_display.h"
-#include "console.h"
-#include "defs.h"
-#include "interpreter.h"
-#include "layers.h"
-#include "maketext.h"
-#include "mouse.h"
-#include "object.h"
-#include "protocol.h"
-#include "resman.h"
+#include "bs2/build_display.h"
+#include "bs2/console.h"
+#include "bs2/defs.h"
+#include "bs2/interpreter.h"
+#include "bs2/layers.h"
+#include "bs2/maketext.h"
+#include "bs2/mouse.h"
+#include "bs2/object.h"
+#include "bs2/protocol.h"
+#include "bs2/resman.h"
 
 namespace Sword2 {
 

@@ -17,10 +17,10 @@
  * $Header$
  */
 
-#ifndef _Credits_h_
-#define _Credits_h_
+#ifndef _CREDITS_H
+#define _CREDITS_H
 
-#include "driver/driver96.h"
+#include "bs2/driver/driver96.h"
 
 namespace Sword2 {
 

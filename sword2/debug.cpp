@@ -17,31 +17,25 @@
  * $Header$
  */
 
-#include <stdarg.h> // for ExitWithReport, which stays in RELEASE version
-#include <stdio.h>
-
 #include "stdafx.h"
-#include "driver/driver96.h"
-#include "debug.h"
+#include "bs2/driver/driver96.h"
+#include "bs2/debug.h"
 
 // this whole file (except ExitWithReport) only included on debug versions
 #ifdef _SWORD2_DEBUG
 
-#include <stdlib.h>
-
-#include "build_display.h"		// for 'fps'
-#include "console.h"
-#include "defs.h"
-#include "events.h"			// for CountEvents()
-#include "layers.h"
-#include "logic.h"
-#include "maketext.h"
-#include "mem_view.h"
-#include "mouse.h"
-#include "protocol.h"
-#include "resman.h"
-#include "router.h"			// for PlotWalkGrid()
-#include "speech.h"			// for 'officialTextNumber' and
+#include "bs2/build_display.h"		// for 'fps'
+#include "bs2/console.h"
+#include "bs2/defs.h"
+#include "bs2/events.h"			// for CountEvents()
+#include "bs2/layers.h"
+#include "bs2/logic.h"
+#include "bs2/maketext.h"
+#include "bs2/mouse.h"
+#include "bs2/protocol.h"
+#include "bs2/resman.h"
+#include "bs2/router.h"			// for PlotWalkGrid()
+#include "bs2/speech.h"			// for 'officialTextNumber' and
 					// 'speechScriptWaiting'
 
 namespace Sword2 {

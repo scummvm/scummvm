@@ -20,7 +20,12 @@
 #ifndef	_SWORD2
 #define	_SWORD2
 
-#include "driver/d_sound.h"
+#include "base/engine.h"
+#include "common/file.h"
+#include "common/map.h"
+#include "common/rect.h"
+#include "common/str.h"
+#include "bs2/driver/d_sound.h"
 
 enum BSGameId {
 	GID_SWORD2 = GID_SWORD2_FIRST,

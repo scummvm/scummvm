@@ -18,10 +18,11 @@
  */
 
 #include "stdafx.h"
-#include "debug.h"
-#include "defs.h"
-#include "interpreter.h"
-#include "sync.h"
+#include "common/util.h"
+#include "bs2/debug.h"
+#include "bs2/defs.h"
+#include "bs2/interpreter.h"
+#include "bs2/sync.h"
 
 namespace Sword2 {
 

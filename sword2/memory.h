@@ -20,8 +20,6 @@
 #ifndef	MEMORY_H
 #define	MEMORY_H
 
-#include "common/scummsys.h"
-
 namespace Sword2 {
 
 typedef	struct {

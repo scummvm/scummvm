@@ -17,25 +17,14 @@
  * $Header$
  */
 
-//=============================================================================
-//
-//	Filename	:	menu.h
-//	Created		:	15th November 1996
-//	By			:	P.R.Porter
-//
-//	Summary		:	This include file defines links to all data which is
-//					defined in the menu.c module, but can be accessed by
-//					other parts of the driver96 library.
-//
-//
-//=============================================================================
-
-
 #ifndef MENU_H
 #define MENU_H
 
+namespace Sword2 {
 
 #define MENUDEEP 40
+
+} // End of namespace Sword2
 
 #endif
 

@@ -20,7 +20,7 @@
 #ifndef	_ANIM_S
 #define	_ANIM_S
 
-#include "driver/driver96.h"
+#include "bs2/driver/driver96.h"
 
 namespace Sword2 {
 

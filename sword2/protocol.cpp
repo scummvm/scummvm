@@ -17,15 +17,13 @@
  * $Header$
  */
 
-#include <stdio.h>
-
 #include "stdafx.h"
-#include "console.h"
-#include "defs.h"
-#include "header.h"
-#include "memory.h"
-#include "protocol.h"
-#include "resman.h"
+#include "bs2/console.h"
+#include "bs2/defs.h"
+#include "bs2/header.h"
+#include "bs2/memory.h"
+#include "bs2/protocol.h"
+#include "bs2/resman.h"
 
 namespace Sword2 {
 

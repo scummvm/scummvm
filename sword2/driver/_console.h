@@ -17,19 +17,6 @@
  * $Header$
  */
 
-//=============================================================================
-//
-//	Filename	:	console.h
-//	Created		:	19th September 1996
-//	By			:	P.R.Porter
-//
-//	Summary		:	This include file defines links to all data which is
-//					defined in the console.c module, but can be accessed by
-//					other parts of the driver96 library.
-//
-//=============================================================================
-
-
 #ifndef DRIVER_CONSOLE_H
 #define DRIVER_CONSOLE_H
 
@@ -38,6 +25,5 @@ namespace Sword2 {
 extern void DisplayConsole(void);
 
 } // End of namespace Sword2
-
 
 #endif

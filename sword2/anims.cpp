@@ -23,28 +23,22 @@
 // DON'T TOUCH!
 // ---------------------------------------------------------------------------
 
-#include <stdio.h>		// for sprintf
-
-#ifdef _SWORD2_DEBUG
-#include <string.h>		// for strlen
-#endif
-
 #include "stdafx.h"
 #include "common/scummsys.h"
-#include "driver/driver96.h"
-#include "anims.h"
-#include "console.h"
-#include "controls.h"		// for 'speechSelected' & 'subtitles'
-#include "defs.h"
-#include "header.h"
-#include "interpreter.h"
-#include "maketext.h"		// for MakeTextSprite used by FN_play_sequence ultimately
-#include "object.h"
-#include "protocol.h"
-#include "resman.h"
-#include "sword2.h"
-#include "sync.h"
-#include "sound.h"		// for Speech stuff.
+#include "bs2/driver/driver96.h"
+#include "bs2/anims.h"
+#include "bs2/console.h"
+#include "bs2/controls.h"		// for 'speechSelected' & 'subtitles'
+#include "bs2/defs.h"
+#include "bs2/header.h"
+#include "bs2/interpreter.h"
+#include "bs2/maketext.h"		// for MakeTextSprite used by FN_play_sequence ultimately
+#include "bs2/object.h"
+#include "bs2/protocol.h"
+#include "bs2/resman.h"
+#include "bs2/sword2.h"
+#include "bs2/sync.h"
+#include "bs2/sound.h"			// for Speech stuff.
 
 namespace Sword2 {
 

@@ -18,8 +18,6 @@
  */
 
 #include "stdafx.h"
-#include <stdio.h>
-
 #include "common/util.h"
 #include "base/engine.h"
 #include "bs2/driver/d_draw.h"

@@ -20,10 +20,6 @@
 #ifndef DRIVER96_H
 #define DRIVER96_H
 
-#include <limits.h>
-#include <stdio.h>
-#include <string.h>
-
 #include "common/scummsys.h"
 #include "base/engine.h" // for warning()
 #include "common/system.h"

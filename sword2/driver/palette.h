@@ -17,20 +17,6 @@
  * $Header$
  */
 
-//=============================================================================
-//
-//	Filename	:	palette.h
-//	Created		:	8th November 1996
-//	By			:	P.R.Porter
-//
-//	Summary		:	This include file defines links to all data which is
-//					defined in the palette.c module, but can be accessed by
-//					other parts of the driver96 library.
-//
-//
-//=============================================================================
-
-
 #ifndef PALETTE_H
 #define PALETTE_H
 

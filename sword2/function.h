@@ -20,7 +20,7 @@
 #ifndef	_FUNCTION
 #define	_FUNCTION
 
-#include "object.h"
+#include "bs2/object.h"
 
 namespace Sword2 {
 

@@ -20,8 +20,6 @@
 #ifndef	_LAYERS
 #define	_LAYERS
 
-#include "memory.h"
-
 namespace Sword2 {
 
 typedef	struct {

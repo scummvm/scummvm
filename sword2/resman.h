@@ -20,7 +20,7 @@
 #ifndef	RESMAN_H
 #define	RESMAN_H
 
-#include "memory.h"
+#include "bs2/memory.h"
 
 namespace Sword2 {
 

@@ -18,20 +18,20 @@
  */
 
 #include "stdafx.h"
-#include "driver/driver96.h"
-#include "driver/rdwin.h"
-#include "build_display.h"
-#include "credits.h"
-#include "debug.h"
-#include "defs.h"
-#include "function.h"
-#include "interpreter.h"
-#include "layers.h"		// for 'this_screen' structure
-#include "logic.h"
-#include "protocol.h"
-#include "resman.h"
-#include "sound.h"
-#include "sword2.h"		// for CloseGame()
+#include "bs2/driver/driver96.h"
+#include "bs2/driver/rdwin.h"
+#include "bs2/build_display.h"
+#include "bs2/credits.h"
+#include "bs2/debug.h"
+#include "bs2/defs.h"
+#include "bs2/function.h"
+#include "bs2/interpreter.h"
+#include "bs2/layers.h"		// for 'this_screen' structure
+#include "bs2/logic.h"
+#include "bs2/protocol.h"
+#include "bs2/resman.h"
+#include "bs2/sound.h"
+#include "bs2/sword2.h"		// for CloseGame()
 
 namespace Sword2 {
 

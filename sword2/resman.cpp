@@ -17,31 +17,23 @@
  * $Header$
  */
 
-#include <stdarg.h>
-#include <stdio.h>
-#include <stdlib.h>
-
 #include "stdafx.h"
-
-#include "base/engine.h"
-#include "common/file.h"
-
-#include "driver/driver96.h"
-#include "build_display.h"
-#include "console.h"
-#include "debug.h"
-#include "defs.h"
-#include "function.h"
-#include "header.h"
-#include "interpreter.h"
-#include "maketext.h"
-#include "memory.h"
-#include "mouse.h"	// for system Set_mouse & Set_luggage routines
-#include "protocol.h"
-#include "resman.h"
-#include "sound.h"	// for Clear_fx_queue() called from cacheNewCluster()
-#include "sword2.h"	// for CloseGame()
-#include "router.h"
+#include "bs2/driver/driver96.h"
+#include "bs2/build_display.h"
+#include "bs2/console.h"
+#include "bs2/debug.h"
+#include "bs2/defs.h"
+#include "bs2/function.h"
+#include "bs2/header.h"
+#include "bs2/interpreter.h"
+#include "bs2/maketext.h"
+#include "bs2/memory.h"
+#include "bs2/mouse.h"	// for system Set_mouse & Set_luggage routines
+#include "bs2/protocol.h"
+#include "bs2/resman.h"
+#include "bs2/sound.h"	// for Clear_fx_queue() called from cacheNewCluster()
+#include "bs2/sword2.h"	// for CloseGame()
+#include "bs2/router.h"
 
 namespace Sword2 {
 

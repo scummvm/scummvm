@@ -17,20 +17,6 @@
  * $Header$
  */
 
-//=============================================================================
-//
-//	Filename	:	keyboard.h
-//	Created		:	19th September 1996
-//	By			:	P.R.Porter
-//
-//	Summary		:	This include file defines links to all data which is
-//					defined in the keyboard.c module, but can be accessed by
-//					other parts of the driver96 library.
-//
-//
-//=============================================================================
-
-
 #ifndef KEYBOARD_H
 #define KEYBOARD_H
 

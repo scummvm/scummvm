@@ -18,15 +18,15 @@
  */
 
 #include "stdafx.h"
-#include "console.h"
-#include "debug.h"
-#include "defs.h"
-#include "events.h"
-#include "interpreter.h"
-#include "logic.h"
-#include "memory.h"
-#include "object.h"
-#include "sync.h"
+#include "bs2/console.h"
+#include "bs2/debug.h"
+#include "bs2/defs.h"
+#include "bs2/events.h"
+#include "bs2/interpreter.h"
+#include "bs2/logic.h"
+#include "bs2/memory.h"
+#include "bs2/object.h"
+#include "bs2/sync.h"
 
 namespace Sword2 {
 
