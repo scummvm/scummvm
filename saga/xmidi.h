@@ -104,10 +104,10 @@ int ReadIFF_IDChunk(IFF_ID_CHUNK *chunk, const uchar *read_p, const uchar **read
 int Print4CC(char *fourcc);
 int XMIDI_ReadEvents(XMIDIEVENT_LIST *event_list, const uchar *event_data, 
 					 size_t event_data_len, uint n_tracks);
-int WriteVLQ_DW(char *write_ptr, DWORD value);
-DWORD ReadVLQ_DW(const uchar *data, DWORD bytes_left, DWORD *value);
-DWORD ReadVLQ2_DW(const uchar *data, DWORD bytes_left, DWORD *value);
-int GetLengthAsVLQ(DWORD data);
+int WriteVLQ_DW(char *write_ptr, uint32 value);
+uint32 ReadVLQ_DW(const uchar *data, uint32 bytes_left, uint32 *value);
+uint32 ReadVLQ2_DW(const uchar *data, uint32 bytes_left, uint32 *value);
+int GetLengthAsVLQ(uint32 data);
 int AddEventToList(XMIDIEVENT_LIST *event_list, int smf_size, int time,
 	    int event, int channel, int sysex_op, int op1, int op2, int op3, int op4);
 int ProcessEventList(XMIDIEVENT_LIST *event_list);

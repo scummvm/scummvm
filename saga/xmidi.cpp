@@ -224,11 +224,11 @@ ConvertEventListToSMF(XMIDIEVENT_LIST * event_list,
 	return R_SUCCESS;
 }
 
-int WriteVLQ_DW(char *write_ptr, DWORD value)
+int WriteVLQ_DW(char *write_ptr, uint32 value)
 {
 
 	int vlq_len = 1;
-	DWORD pack = value & 0x7F;
+	uint32 pack = value & 0x7F;
 	uint x;
 
 	while (value >>= 7) {
@@ -236,7 +236,7 @@ int WriteVLQ_DW(char *write_ptr, DWORD value)
 		pack |= ((value & 0x7F) | 0x80);
 		vlq_len++;
 	}
-	for (x = 0; x < sizeof(DWORD); x++) {
+	for (x = 0; x < sizeof(uint32); x++) {
 		*write_ptr++ = ((char *)(&pack))[x];
 	}
 
@@ -472,7 +472,7 @@ XMIDI_ReadEvents(XMIDIEVENT_LIST * event_list,
 	while (event_bytes_left > 0) {
 
 		vlq_len = ReadVLQ2_DW(event_data_ptr,
-							  (DWORD)event_bytes_left, (DWORD *)&new_event_time);
+							  (uint32)event_bytes_left, (uint32 *)&new_event_time);
 
 		event_time += new_event_time;
 		event_data_ptr += vlq_len;
@@ -504,8 +504,8 @@ XMIDI_ReadEvents(XMIDIEVENT_LIST * event_list,
 			    event_time, event, channel, 0, op1, op2, 0, 0);
 
 			vlq_len =
-			    ReadVLQ_DW(event_data_ptr, (DWORD)event_bytes_left,
-						   (DWORD *)&event_len);
+			    ReadVLQ_DW(event_data_ptr, (uint32)event_bytes_left,
+						   (uint32 *)&event_len);
 			AddEventToList(event_list, MIDI_NOTE_OFF_LEN,
 			    event_time + event_len, MIDI_NOTE_OFF, channel, 0,
 			    op1, MIDI_STD_VELOCITY, 0, 0);
@@ -580,7 +580,7 @@ XMIDI_ReadEvents(XMIDIEVENT_LIST * event_list,
 
 		case MIDI_SYSTEMEXCLUSIVE:
 
-			sysex_op = (BYTE) * event_data_ptr++;
+			sysex_op = (byte) * event_data_ptr++;
 			event_bytes_left--;
 
 			if (data_byte == MIDI_NONMIDI) {
@@ -600,9 +600,9 @@ XMIDI_ReadEvents(XMIDIEVENT_LIST * event_list,
 				case MIDI_SYSEX_TEMPO:
 					event_data_ptr++;	/*(skip length VLQ) (always 3) */
 
-					op1 = (BYTE) * event_data_ptr++;
-					op2 = (BYTE) * event_data_ptr++;
-					op3 = (BYTE) * event_data_ptr++;
+					op1 = (byte) * event_data_ptr++;
+					op2 = (byte) * event_data_ptr++;
+					op3 = (byte) * event_data_ptr++;
 					AddEventToList(event_list,
 					    MIDI_SYSEX_TEMPO_LEN, event_time,
 					    event, channel, sysex_op, op1, op2,
@@ -616,10 +616,10 @@ XMIDI_ReadEvents(XMIDIEVENT_LIST * event_list,
 				case MIDI_SYSEX_TIMESIG:
 					event_data_ptr++;	/*(skip length VLQ) (always 4) */
 
-					op1 = (BYTE) * event_data_ptr++;
-					op2 = (BYTE) * event_data_ptr++;
-					op3 = (BYTE) * event_data_ptr++;
-					op4 = (BYTE) * event_data_ptr++;
+					op1 = (byte) * event_data_ptr++;
+					op2 = (byte) * event_data_ptr++;
+					op3 = (byte) * event_data_ptr++;
+					op4 = (byte) * event_data_ptr++;
 					AddEventToList(event_list,
 					    MIDI_SYSEX_TIMESIG_LEN, event_time,
 					    event, channel, sysex_op, op1, op2,
@@ -664,7 +664,7 @@ XMIDI_ReadEvents(XMIDIEVENT_LIST * event_list,
 	return R_SUCCESS;
 }
 
-int GetLengthAsVLQ(DWORD data)
+int GetLengthAsVLQ(uint32 data)
 {
 
 	int len = 1;
@@ -675,10 +675,10 @@ int GetLengthAsVLQ(DWORD data)
 
 }
 
-DWORD ReadVLQ_DW(const uchar *data, DWORD bytes_left, DWORD * value)
+uint32 ReadVLQ_DW(const uchar *data, uint32 bytes_left, uint32 * value)
 {
-	BYTE byte;
-	DWORD vlq_len = 0;
+	byte byte;
+	uint32 vlq_len = 0;
 	*value = 0;
 
 	do {
@@ -693,11 +693,11 @@ DWORD ReadVLQ_DW(const uchar *data, DWORD bytes_left, DWORD * value)
 	return vlq_len;
 }
 
-DWORD ReadVLQ2_DW(const uchar *data, DWORD bytes_left, DWORD * value)
+uint32 ReadVLQ2_DW(const uchar *data, uint32 bytes_left, uint32 * value)
 {
 
-	BYTE byte;
-	DWORD vlq_len = 0;
+	byte byte;
+	uint32 vlq_len = 0;
 	*value = 0;
 
 	while (!((byte = *data++) & 0x80)) {
@@ -768,12 +768,12 @@ AddEventToList(XMIDIEVENT_LIST * event_list, int smf_size, int time, int event,
 	new_event->delta_time = time;
 
 	new_event->sysex_op = sysex_op;
-	new_event->event = (BYTE) event;
-	new_event->channel = (BYTE) channel;
-	new_event->op1 = (BYTE) op1;
-	new_event->op2 = (BYTE) op2;
-	new_event->op3 = (BYTE) op3;
-	new_event->op4 = (BYTE) op4;
+	new_event->event = (byte) event;
+	new_event->channel = (byte) channel;
+	new_event->op1 = (byte) op1;
+	new_event->op2 = (byte) op2;
+	new_event->op3 = (byte) op3;
+	new_event->op4 = (byte) op4;
 
 #ifdef XMIPLAY_VERBOSE
 	R_printf(R_STDOUT,

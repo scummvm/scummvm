@@ -76,17 +76,8 @@ int ys_read_s16_be(const unsigned char *, const unsigned char **);
 /* Read 16 bit signed integer, 2's complement, little-endian */
 int ys_read_s16_le(const unsigned char *, const unsigned char **);
 
-/* Read 24 bit unsigned integer, big-endian */
-unsigned long ys_read_u24_be(const unsigned char *, const unsigned char **);
-
 /* Read 24 bit unsigned integer, little-endian */
 unsigned long ys_read_u24_le(const unsigned char *, const unsigned char **);
-
-/* Read 24 bit signed integer, 2's complement, big-endian */
-long ys_read_s24_be(const unsigned char *, const unsigned char **);
-
-/* Read 24 bit signed integer, 2's complement, little-endian */
-long ys_read_s24_le(const unsigned char *, const unsigned char **);
 
 /* Read 32 bit unsigned integer, big-endian */
 unsigned long ys_read_u32_be(const unsigned char *, const unsigned char **);
@@ -94,52 +85,14 @@ unsigned long ys_read_u32_be(const unsigned char *, const unsigned char **);
 /* Read 32 bit unsigned integer, little-endian */
 unsigned long ys_read_u32_le(const unsigned char *, const unsigned char **);
 
-/* Read 32 bit signed integer, 2's complement, big-endian */
-long ys_read_s32_be(const unsigned char *, const unsigned char **);
-
-/* Read 32 bit signed integer, 2's complement, little-endian */
-long ys_read_s32_le(const unsigned char *, const unsigned char **);
-
 /* ys_binwrite.c : Binary output functions ( buffer oriented ) 
 \*------------------------------------------------------------------*/
-
-void ys_write_u8(unsigned int, unsigned char *, unsigned char **);
 
 /* Write 16 bit unsigned integer, big-endian */
 void ys_write_u16_be(unsigned int, unsigned char *, unsigned char **);
 
-/* Write 16 bit unsigned integer, little-endian */
-void ys_write_u16_le(unsigned int, unsigned char *, unsigned char **);
-
-/* Write 16 bit signed integer, 2's complement, big-endian */
-void ys_write_s16_be(int, unsigned char *, unsigned char **);
-
-/* Write 16 bit signed integer, 2's complement, little-endian */
-void ys_write_s16_le(int, unsigned char *, unsigned char **);
-
-/* Write 24 bit unsigned integer, big-endian */
-void ys_write_u24_be(unsigned long, unsigned char *, unsigned char **);
-
-/* Write 24 bit unsigned integer, little-endian */
-void ys_write_u24_le(unsigned long, unsigned char *, unsigned char **);
-
-/* Write 24 bit signed integer, 2's complement, big-endian */
-void ys_write_s24_be(long, unsigned char *, unsigned char **);
-
-/* Write 24 bit signed integer, 2's complement, little-endian */
-void ys_write_s24_le(long, unsigned char *, unsigned char **);
-
 /* Write 32 bit unsigned integer, big-endian */
 void ys_write_u32_be(unsigned long, unsigned char *, unsigned char **);
-
-/* Write 32 bit unsigned integer, little-endian */
-void ys_write_u32_le(unsigned long, unsigned char *, unsigned char **);
-
-/* Write 32 bit signed integer, 2's complement, big-endian */
-void ys_write_s32_be(long, unsigned char *, unsigned char **);
-
-/* Write 32 bit signed integer, 2's complement, little-endian */
-void ys_write_s32_le(long, unsigned char *, unsigned char **);
 
 
 /* Shared declarations for list modules
@@ -184,9 +137,6 @@ YS_DL_NODE *ys_dll_replace(YS_DL_NODE *, void *, size_t);
 
 int ys_dll_reorder_up(YS_DL_LIST *, YS_DL_NODE *, YS_COMPARE_FUNC *);
 int ys_dll_reorder_down(YS_DL_LIST *, YS_DL_NODE *, YS_COMPARE_FUNC *);
-
-int ys_dll_foreach(YS_DL_LIST *,
-    int, void *, int (*)(void *, void *), YS_DL_NODE **);
 
 
 } // End of namespace Saga

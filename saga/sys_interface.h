@@ -25,10 +25,6 @@
 
 namespace Saga {
 
-#define BYTE unsigned char
-#define WORD unsigned short
-#define DWORD unsigned int
-
 #define R_CFGFILE_NAME ".reinheritrc"
 
 #define R_DIRECTORY_SEP '/'

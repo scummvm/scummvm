@@ -168,24 +168,6 @@ int ys_read_s16_le(const unsigned char *data_p, const unsigned char **data_pp)
 }
 
 unsigned long
-ys_read_u24_be(const unsigned char *data_p, const unsigned char **data_pp)
-/*---------------------------------------------------------------------------*\
- * Reads an unsigned 24 bit integer in big-endian format from the array of 
- * bytes pointed to by 'data_p'. If 'data_pp' is not null, it will set
- * '*data_pp' to point past the integer read. 
-\*---------------------------------------------------------------------------*/
-{
-	unsigned long u24_be = ((unsigned long)data_p[0] << 16) |
-	    ((unsigned long)data_p[1] << 8) | data_p[2];
-
-	if (data_pp != NULL) {
-		*data_pp = data_p + 3;
-	}
-
-	return u24_be;
-}
-
-unsigned long
 ys_read_u24_le(const unsigned char *data_p, const unsigned char **data_pp)
 /*---------------------------------------------------------------------------*\
  * Reads an unsigned 24 bit integer in big-endian format from the array of 
@@ -201,58 +183,6 @@ ys_read_u24_le(const unsigned char *data_p, const unsigned char **data_pp)
 	}
 
 	return u24_le;
-}
-
-long ys_read_s24_be(const unsigned char *data_p, const unsigned char **data_pp)
-/*---------------------------------------------------------------------------*\
- * Reads a signed 24 bit integer in big-endian, 2's complement format from
- *  the array of bytes pointed to by 'data_p'. 
- * If 'data_pp' is not null, it will set '*data_pp' to point past the integer
- *  read.
-\*---------------------------------------------------------------------------*/
-{
-	unsigned long u24_be = ((unsigned long)data_p[0] << 16) |
-	    ((unsigned long)data_p[1] << 8) | data_p[2];
-	long s24_be;
-
-#ifndef YS_ASSUME_2S_COMP
-	if (u24_be & 0x800000UL) {
-		s24_be = (long)(u24_be - 0x800000UL) - 0x800000;
-	} else
-#endif
-		s24_be = u24_be;
-
-	if (data_pp != NULL) {
-		*data_pp = data_p + 3;
-	}
-
-	return s24_be;
-}
-
-long ys_read_s24_le(const unsigned char *data_p, const unsigned char **data_pp)
-/*---------------------------------------------------------------------------*\
- * Reads a signed 24 bit integer in little-endian, 2's complement format from
- *  the array of bytes pointed to by 'data_p'. 
- * If 'data_pp' is not null, it will set '*data_pp' to point past the integer
- *  read.
-\*---------------------------------------------------------------------------*/
-{
-	unsigned long u24_be = ((unsigned long)data_p[2] << 16) |
-	    ((unsigned long)data_p[1] << 8) | data_p[0];
-	long s24_be;
-
-#ifndef YS_ASSUME_2S_COMP
-	if (u24_be & 0x800000UL) {
-		s24_be = (long)(u24_be - 0x800000UL) - 0x800000;
-	} else
-#endif
-		s24_be = u24_be;
-
-	if (data_pp != NULL) {
-		*data_pp = data_p + 3;
-	}
-
-	return s24_be;
 }
 
 unsigned long
@@ -291,60 +221,6 @@ ys_read_u32_le(const unsigned char *data_p, const unsigned char **data_pp)
 	}
 
 	return u32_le;
-}
-
-long ys_read_s32_be(const unsigned char *data_p, const unsigned char **data_pp)
-/*---------------------------------------------------------------------------*\
- * Reads a signed 32 bit integer in big-endian, 2's complement format from
- *  the array of bytes pointed to by 'data_p'. 
- * If 'data_pp' is not null, it will set '*data_pp' to point past the integer
- *  read.
-\*---------------------------------------------------------------------------*/
-{
-	unsigned long u32_be = ((unsigned long)data_p[0] << 24) |
-	    ((unsigned long)data_p[1] << 16) |
-	    ((unsigned long)data_p[2] << 8) | data_p[3];
-	long s32_be;
-
-#ifndef YS_ASSUME_2S_COMP
-	if (u32_be & 0x80000000UL) {
-		s32_be = (long)(u32_be - 0x80000000UL) - 0x7FFFFFFF - 1;
-	} else
-#endif
-		s32_be = u32_be;
-
-	if (data_pp != NULL) {
-		*data_pp = data_p + 4;
-	}
-
-	return s32_be;
-}
-
-long ys_read_s32_le(const unsigned char *data_p, const unsigned char **data_pp)
-/*---------------------------------------------------------------------------*\
- * Reads a signed 32 bit integer in little-endian, 2's complement format from
- *  the array of bytes pointed to by 'data_p'. 
- * If 'data_pp' is not null, it will set '*data_pp' to point past the integer
- *  read.
-\*---------------------------------------------------------------------------*/
-{
-	unsigned long u32_le = ((unsigned long)data_p[3] << 24) |
-	    ((unsigned long)data_p[2] << 16) |
-	    ((unsigned long)data_p[1] << 8) | data_p[0];
-	long s32_le;
-
-#ifndef YS_ASSUME_2S_COMP
-	if (u32_le & 0x80000000UL) {
-		s32_le = (long)(u32_le - 0x80000000UL) - 0x7FFFFFFF - 1;
-	} else
-#endif
-		s32_le = u32_le;
-
-	if (data_pp != NULL) {
-		*data_pp = data_p + 4;
-	}
-
-	return s32_le;
 }
 
 } // End of namespace Saga

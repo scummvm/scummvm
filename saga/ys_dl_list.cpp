@@ -271,40 +271,4 @@ ys_dll_reorder_down(YS_DL_NODE * list,
 	return YS_E_SUCCESS;
 }
 
-int
-ys_dll_foreach(YS_DL_NODE * list,
-    int direction,
-    void *param,
-    int (*ys_dll_proc) (void *data, void *param), YS_DL_NODE ** t_node)
-{
-	YS_DL_NODE *walk_p;
-
-	/* Only walk bakcward if explicitly requested to */
-	if (direction == YS_WALK_BACKWARD) {
-		for (walk_p = list->prev; walk_p != list;
-		    walk_p = walk_p->prev) {
-
-			if (ys_dll_proc(walk_p->data, param) == 0) {
-				break;
-			}
-
-		}
-	} else {
-		/* Default behavior is to walk forwards */
-		for (walk_p = list->next; walk_p != list;
-		    walk_p = walk_p->next) {
-
-			if (ys_dll_proc(walk_p->data, param) == 0) {
-				break;
-			}
-		}
-	}
-
-	if (t_node) {
-		*t_node = (walk_p != list) ? walk_p : NULL;
-	}
-
-	return YS_E_SUCCESS;
-}
-
 } // End of namespace Saga
