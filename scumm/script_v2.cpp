@@ -372,6 +372,8 @@ int Scumm_v2::getVar() {
 	return readVar(fetchScriptByte());
 }
 
+int static actor_speech_color[] = {1, 7, 2, 14, 8, 1, 3, 7, 7, 12, 1, 13, 1, 4, 5, 5, 4, 3, 1, 5, 1, 1, 1, 7, 7, 0};
+
 void Scumm_v2::decodeParseString() {
 	byte buffer[256];
 	byte *ptr = buffer;
@@ -412,7 +414,10 @@ void Scumm_v2::decodeParseString() {
 	_string[textSlot].right = 320;
 	_string[textSlot].center = false;
 	_string[textSlot].overhead = false;
-//	_string[textSlot].color = 9;	// light blue
+
+	// V1 Mansion Mansion uses static color table for subtitles
+	if (((_gameId == GID_MANIAC) && (_version == 1)) && _actorToPrintStrFor != 0xFF) 
+		_string[textSlot].color =  actor_speech_color[_actorToPrintStrFor];
 
 	_messagePtr = buffer;
 	switch (textSlot) {

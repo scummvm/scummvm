@@ -1157,7 +1157,8 @@ void Scumm::actorTalk() {
 			return;
 	}
 
-	if (VAR(VAR_TALK_ACTOR) > 0x7F) {
+	//FIXME looks like V1 Maniac Mansion needs a different type of check at this point.
+	if (((_gameId == GID_MANIAC) && (_version == 1)) || VAR(VAR_TALK_ACTOR) > 0x7F) {
 		_charsetColor = (byte)_string[0].color;
 	} else {
 		a = derefActor(VAR(VAR_TALK_ACTOR), "actorTalk(2)");
