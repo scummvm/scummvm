@@ -426,7 +426,10 @@ void ScummEngine_v6he::o6_roomOps() {
 	case 174:		// SO_ROOM_SCREEN
 		b = pop();
 		a = pop();
-		initScreens(a, b);
+		if (_heversion >= 71)
+			initScreens(a, _screenHeight);
+		else
+			initScreens(a, b);
 		break;
 
 	case 175:		// SO_ROOM_PALETTE
