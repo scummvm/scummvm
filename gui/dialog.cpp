@@ -215,8 +215,6 @@ void Dialog::handleKeyUp(uint16 ascii, int keycode, int modifiers) {
 }
 
 void Dialog::handleMouseMoved(int x, int y, int button) {
-	x /= g_gui.getScaleFactor(); y /= g_gui.getScaleFactor();
-
 	Widget *w;
 
 	//if (!button)
