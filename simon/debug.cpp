@@ -353,7 +353,7 @@ void dump_bitmap(const char *filename, byte *offs, int w, int h, int flags, cons
 
 void SimonEngine::dump_single_bitmap(int file, int image, byte *offs, int w, int h, byte base) {
 	char buf[40];
-#ifndef __PALM_OS__
+#if !defined(__PALM_OS__) && !defined(__DC__)
 	struct stat statbuf;
 #endif
 
@@ -363,7 +363,7 @@ void SimonEngine::dump_single_bitmap(int file, int image, byte *offs, int w, int
 	sprintf(buf, "dumps/File%d_Image%d.bmp", file, image);
 #endif
 
-#ifndef __PALM_OS__
+#if !defined(__PALM_OS__) && !defined(__DC__)
 	if (stat(buf, &statbuf) == 0)
 		return;
 #endif
