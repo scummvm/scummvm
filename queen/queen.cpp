@@ -44,6 +44,8 @@
 #include "queen/talk.h"
 #include "queen/walk.h"
 
+#include "sound/mididrv.h"
+
 extern uint16 _debugLevel;
 
 #ifdef _WIN32_WCE
@@ -165,7 +167,14 @@ void QueenEngine::initialise(void) {
 	_graphics = new Graphics(this);
 	_input = new Input(_resource->getLanguage(), _system);
 	_logic = new Logic(this);
-	_music = new Music(GameDetector::createMidi(GameDetector::detectMusicDriver(MDT_NATIVE)), this);
+
+	int midiDriver = GameDetector::detectMusicDriver(MDT_NATIVE | MDT_ADLIB | MDT_PREFER_NATIVE);
+	if (midiDriver == MD_ADLIB) {
+		warning("Adlib music not supported, please use native MIDI if possible");
+		midiDriver = MD_NULL;
+	}
+
+	_music = new Music(GameDetector::createMidi(midiDriver), this);
 	_sound = Sound::giveSound(_mixer, this, _resource->compression());
 	_walk = new Walk(this);
 	_timer->installTimerProc(&timerHandler, 1000000 / 50, this); //call 50 times per second
