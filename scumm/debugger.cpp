@@ -53,7 +53,7 @@ void ScummDebugger::attach(Scumm *s, char *entry) {
 
 	if (entry)
 		errStr = strdup(entry);
-	
+
 	_s = s;
 	s->_debugger = this;
 	_frame_countdown = 1;
@@ -113,7 +113,7 @@ void ScummDebugger::detach() {
 		_s->_debuggerDialog->setCompletionCallback(0, 0);
 	}
 #endif
-	
+
 	_s->_debugger = NULL;
 	_s = NULL;
 	_detach_now = false;
@@ -124,17 +124,17 @@ void ScummDebugger::on_frame() {
 	if (_frame_countdown == 0)
 		return;
 	--_frame_countdown;
-	
+
 	if (!_frame_countdown) {
 		// Pause sound output
 		bool old_soundsPaused = _s->_sound->_soundsPaused;
 		_s->_sound->pauseSounds(true);
-		
+
 		// Enter debugger
 		enter();
-		
+
 		_s->_sound->pauseSounds(old_soundsPaused);	// Resume previous sound state
-		
+
 		if (_detach_now)	// Detach if we're finished with the debugger
 			detach();
 	}
@@ -144,7 +144,7 @@ void ScummDebugger::on_frame() {
 #if USE_CONSOLE
 bool ScummDebugger::debuggerInputCallback(ConsoleDialog *console, const char *input, void *refCon) {
 	ScummDebugger *debugger = (ScummDebugger *)refCon;
-	
+
 	return debugger->RunCommand(input);
 }
 
@@ -167,7 +167,7 @@ void ScummDebugger::DVar_Register(const char *varname, void *pointer, int type, 
 	_dvars[_dvar_count].type = type;
 	_dvars[_dvar_count].variable = pointer;
 	_dvars[_dvar_count].optional = optional;
-	
+
 	_dvar_count++;
 }
 
@@ -175,11 +175,11 @@ void ScummDebugger::DCmd_Register(const char *cmdname, DebugProc pointer) {
 	assert(_dcmd_count < (int)sizeof(_dcmds));
 	strcpy(_dcmds[_dcmd_count].name, cmdname);
 	_dcmds[_dcmd_count].function = pointer;
-	
+
 	_dcmd_count++;
 }
 
-// Main Debugger Loop 
+// Main Debugger Loop
 void ScummDebugger::enter() {
 #if USE_CONSOLE
 	if (!_s->_debuggerDialog) {
@@ -194,7 +194,7 @@ void ScummDebugger::enter() {
 		free(errStr);
 		errStr = NULL;
 	}
-	
+
 	_s->_debuggerDialog->setInputeCallback(debuggerInputCallback, this);
 	_s->_debuggerDialog->setCompletionCallback(debuggerCompletionCallback,
 											   this);
@@ -206,7 +206,7 @@ void ScummDebugger::enter() {
 	// Or maybe instead of choosing between a console dialog and stdio,
 	// we should move that choice into the ConsoleDialog class - that is,
 	// the console dialog code could be #ifdef'ed to not print to the dialog
-	// but rather to stdio. This way, we could also reuse the command history 
+	// but rather to stdio. This way, we could also reuse the command history
 	// and tab completion of the console. It would still require a lot of
 	// work, but at least no dependency on a 3rd party library...
 
@@ -236,7 +236,7 @@ bool ScummDebugger::RunCommand(const char *inputOrig) {
 	int i = 0, num_params = 0;
 	const char *param[256];
 	char *input = strdup(inputOrig);	// One of the rare occasions using strdup is OK (although avoiding strtok might be more elegant here).
-	
+
 	// Parse out any params
 	char *tok = strtok(input, " ");
 	if (tok) {
@@ -280,10 +280,10 @@ bool ScummDebugger::RunCommand(const char *inputOrig) {
 							} else {
 								var[element] = atoi(param[1]);
 								Debug_Printf("(int)%s = %d\n", param[0], var[element]);
-								
+
 							}
 						}
-					}		
+					}
 					break;
 
 					default:
@@ -310,7 +310,7 @@ bool ScummDebugger::RunCommand(const char *inputOrig) {
 								Debug_Printf("%s is out of range (array is %d elements big)\n", param[0], _dvars[i].optional);
 							} else {
 								Debug_Printf("(int)%s = %d\n", param[0], var[element]);
-								
+
 							}
 						}
 					}
@@ -650,8 +650,13 @@ bool ScummDebugger::Cmd_Object(int argc, const char **argv) {
 		_s->removeObjectFromRoom(obj);
 		_s->clearDrawObjectQueue();
 		_s->runInventoryScript(obj);
+
+	} else if (!strcmp(argv[2], "state")) {
+		_s->putState(obj, atoi(argv[3]));
+		//is BgNeedsRedraw enough?
+		_s->_BgNeedsRedraw = TRUE;
 	} else {
-		Debug_Printf("Unknown object command '%s'\nRight now the only command is pickup", argv[2]); //change when adding commands
+		  Debug_Printf("Unknown object command '%s'\nUse <pickup | state> as command\n", argv[2]);
 	}
 
 	return true;
@@ -765,7 +770,7 @@ void ScummDebugger::printBox(int box) {
 								coords.ul.x, coords.ul.y, coords.ll.x, coords.ll.y,
 								coords.ur.x, coords.ur.y, coords.lr.x, coords.lr.y,
 								flags, mask, scale);
-	
+
 	// Draw the box
 	drawBox(box);
 }
@@ -787,7 +792,7 @@ static void hlineColor(Scumm *scumm, int x1, int x2, int y, byte color)
 
 	if (x2 < x1)
 		SWAP(x2, x1);
-	
+
 	// Clip x1 / x2
 	const int left = scumm->_screenStartStrip * 8;
 	const int right = scumm->_screenEndStrip * 8;
@@ -795,7 +800,7 @@ static void hlineColor(Scumm *scumm, int x1, int x2, int y, byte color)
 		x1 = left;
 	if (x2 >= right)
 		x2 = right - 1;
-	
+
 
 	ptr = vs->screenPtr + x1 + y * scumm->_screenWidth;
 
@@ -912,7 +917,7 @@ bool ScummDebugger::Cmd_PrintDraft(int argc, const char **argv) {
 		15162, 15676, 16190,    64, 16961, 17475, 17989, 18503,
 		   73, 19274,    76,    77, 20302, 20816, 21330,    84
 	};
-		
+
 	const char *notes = "cdefgabC";
 	int i, base, draft;
 
