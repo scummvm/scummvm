@@ -32,7 +32,8 @@ include config.mak
 # Uncomment this for stricter compile time code verification
 # CXXFLAGS+= -Werror
 
-CXXFLAGS:= -O -Wall -Wuninitialized $(CXXFLAGS)
+CXXFLAGS:= -Wall $(CXXFLAGS)
+CXXFLAGS+= -O -Wuninitialized
 CXXFLAGS+= -Wno-long-long -Wno-multichar -Wno-unknown-pragmas
 # Even more warnings...
 CXXFLAGS+= -pedantic -Wpointer-arith -Wcast-qual -Wconversion
@@ -60,6 +61,24 @@ deb:
 	ln -sf dists/debian;
 	debian/prepare
 	fakeroot debian/rules binary
+
+
+#######################################################################
+# Unit/regression tests                                               #
+# In order to use 'make test' you have to install cxxtest inside the  #
+# test/cxxtest dir. Get it from http://cxxtest.sourceforge.net.       #
+#######################################################################
+
+CXXTEST := test/cxxtest
+TESTS := test/common/*.h
+CPPFLAGS += -I$(CXXTEST)
+test: runner
+	./runner
+runner: runner.o common/libcommon.a
+	$(CXX) -o $@ $+
+runner.cpp: $(TESTS)
+	$(CXXTEST)/cxxtestgen.py --error-printer -o  $@ $+
+
 
 
 # Special target to create a application wrapper for Mac OS X
