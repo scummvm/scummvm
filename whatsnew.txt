@@ -1,3 +1,18 @@
+For a more comprehensive changelog, see:
+        http://scummvm.sourceforge.net/daily/ChangeLog
+
+0.2.0 (2002-04-14)
+- countless fixes for games
+- sam and max is completable
+- loom talkie is completable (although some bugs remain)
+- our first non-SCUMM game, Simon the Sorcerer, is supported.
+- 2xsai, super2xsai and supereagle graphics filtering support
+- more ports and platforms than ever before
+- new commandline options and ingame options/volume settings.
+- large code rewrite
+- experimental support for indy3 (256), zak256, the dig and full throttle;
+  not complete or totally playable yet, so don't report bugs.
+
 0.1.0 (2002-01-13)
 - loads of changes
 
