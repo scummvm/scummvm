@@ -350,7 +350,7 @@ simon games.
         Ctrl-z OR Alt-x        - quit
         Keyboard Arrow Keys    - simulate mouse movement
         Ctrl-f                 - runs in fast mode.
-        Ctrl-Alt 1-9           - Switch between graphics filters
+        Ctrl-Alt 0-9           - Switch between graphics filters
         Ctrl-Alt 1             - Switch beetwen bilinear and non-linear filtering [OpenGL backend]
         Ctrl-Alt 2             - Don't fit the game in the whole screen (black borders) [OpenGL backend]
         Ctrl-Alt 3             - Fit the game in the whole screen (no black borders) [OpenGL backend]
@@ -412,6 +412,7 @@ They are:
         super2xsai - Enhanced 2xsai filtering. 640x400 screen/window size
         supereagle - Less blurry than 2xsai, but slower. Also 640x400
         advmame2x  - 640x400 scaling. Doesn't rely on blurring like 2xSAI.
+        advmame3x  - 960x600 scaling. Doesn't rely on blurring like 2xSAI.
         tv2x       - 640x400 scaling. Horizontal scanlines.
         dotmatrix  - 640x400 scaling. Dot matrix effect.
 
@@ -665,32 +666,33 @@ An example config file looks as follows:
 
 Credits:
 --------
- The core ScummVM team:
+ The ScummVM team:
         James Brown          - Lead Developer
         Max Horn             - Lead Developer
-        Vincent Hamm         - Developer (retired)
         Jeremy Newman        - Webmaster
-        Ludvig Strigeus      - Original ScummVM author, initial Simon support (retired)
-        Oliver Kiehl         - Lead BASS Developer
-        Joost Peters         - Lead BASS Developer
 
- Developers:
-        Torbjorn Andersson   - Many different contributions
-        Chris Apers          - PalmOS port
-        Nicolas Bacca        - PocketPC/WinCE port
-        Ralph Brorsen        - Helped write the new GUI (retired)
-        Jamieson Christian   - Lots of work on iMuse/MIDI
-        Marcus Comstedt      - Dreamcast port
-        Robert Goeffringmann - Beneath a Steel Sky support
-        Jonathan Gray        - Expert weaver in the Loom
-        Ruediger Hanke       - MorphOS port
-        Travis Howell        - Daily Win32 builds, Simon The Sorcerer work
-        Felix Jakschitsch    - His hard work on Zak256
-        Pawel Kolodziejski   - Added missing Dig/COMI SMUSH codecs, iMuse work
-        Mutwin Kraus         - MacOS Carbon port (retired)
-        Peter Moraliyski     - GP32 port
-        Nicolas Noble        - Config file and ALSA support
-        Lionel Ulmer         - X11 backend
+        Jonathan Gray        - Engine: SCUMM
+        Robert Goeffringmann - Engine: Beneath a Steel Sky
+        Oliver Kiehl         - Engine: Beneath a Steel Sky, Simon
+        Pawel Kolodziejski   - Engine: SCUMM (Codecs, iMUSE, Smush, etc.)
+        Joost Peters         - Engine: Beneath a Steel Sky
+        Chris Apers          - Port:   PalmOS
+        Nicolas Bacca        - Port:   PocketPC/WinCE port
+        Marcus Comstedt      - Port:   DreamCast
+        Ruediger Hanke       - Port:   MorphOS
+        Travis Howell        - Port:   Win32, Engine: Simon
+        Peter Moraliyski     - Port:   GP32
+        Lionel Ulmer         - Port:   X11
+
+        Torbjorn Andersson   - Generic Bugfixer and Patch Submitter
+        Jamieson Christian   - iMuse, MIDI, all things musical.
+
+ Retired Team Members:
+        Ralph Brorsen        - Help with GUI Implementation
+        Vincent Hamm         - Co-Founder
+        Felix Jakschitsch    - Zak256 reverse engineering
+        Mutwin Kraus         - Original MacOS Porter
+        Ludvig Strigeus      - Original ScummVM and SimonVM Author
 
  Contributors:
         Janne Huttunen       - V3 actor mask support, Dig/FT SMUSH audio
@@ -699,18 +701,20 @@ Credits:
         Claudio Matsuoka     - Daily Linux/BeOS builds (http://scummvm.sf.net/daily/)
         Gregory Montoir      - AdvanceMAME Scale-2X, TV 2x and Dot Matrix implementation
         Mikesch Nepomuk      - MI1 VGA Floppy patches.
+        Nicolas Noble        - Config file and ALSA support
         Edward Rudd          - Fixes for playing MP3 versions of MI1/Loom Audio
         Daniel Schepler      - Final MI1 CD music support/ Initial Ogg Vorbis support
         Andre Souza          - SDL-based OpenGL renderer
         Tim 'realmz'         - Initial MI1 CD music support
+        Stuart Caie          - Decoders for Simon 1 Amiga data files
 
         And to all the contributors, users, and beta testers we've missed.
         Thanks!
 
  Special thanks to:
         Sander Buskens  - For his work on the initial reversing of Monkey2
-        Jimmi Thogersen - For ScummRev, and much obscure code/documentation
         Kevin Carnes    - For Scumm16, the basis of ScummVM older gfx codecs
+        Jimmi Thogersen - For ScummRev, and much obscure code/documentation
 
         Aric Wilmunder, Ron Gilbert, David Fox, Vince Lee, and all those at
         LucasFilm/LucasArts who made SCUMM the insane mess to reimplement
