@@ -915,7 +915,7 @@ void ScummEngine_v90he::o90_getSpriteInfo() {
 	case 52:
 		spriteId = pop();
 		if (spriteId)
-			push(spriteInfoGet_flagYFlipped(spriteId));
+			push(spriteInfoGet_flags_22(spriteId));
 		else
 			push(0);
 		break;
@@ -950,7 +950,7 @@ void ScummEngine_v90he::o90_getSpriteInfo() {
 	case 94:
 		spriteId = pop();
 		if (spriteId)
-			push(spriteInfoGet_flagXFlipped(spriteId));
+			push(spriteInfoGet_flags_23(spriteId));
 		else
 			push(0);
 		break;
