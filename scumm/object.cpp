@@ -922,15 +922,21 @@ void Scumm::addObjectToInventory(uint obj, uint room) {
 }
 
 void Scumm::findObjectInRoom(FindObjectInRoom *fo, byte findWhat, uint id, uint room) {
+
 	CodeHeader *cdhd;
 	int i, numobj;
 	byte *roomptr, *obcdptr, *obimptr, *searchptr;
-	RoomHeader *roomhdr;
 	ImageHeader *imhd;
 	int id2;
 	int id3;
 
 	if (findWhat & foCheckAlreadyLoaded && getObjectIndex(id) != -1) {
+		if (_features & GF_OLD_BUNDLE) {
+			// I am not sure if this is even needed for old games...
+			// but using RES_SIZE defintily won't work with OLD_BUNDLE, since it
+			// assumes the size is 32 bit but in old games it's 16 bit
+			error("findObjectInRoom foCheckAlreadyLoaded NYI for GF_OLD_BUNDLE (id = %d, room = %d)", id, room);
+		}
 		fo->obcd = obcdptr = getOBCDFromObject(id);
 		assert((byte *)obcdptr > (byte *)256);
 		fo->obim = obimptr = obcdptr + RES_SIZE(obcdptr);
@@ -943,19 +949,45 @@ void Scumm::findObjectInRoom(FindObjectInRoom *fo, byte findWhat, uint id, uint 
 	if (!roomptr)
 		error("findObjectInRoom: failed getting roomptr to %d", room);
 
-	roomhdr = (RoomHeader *)findResourceData(MKID('RMHD'), roomptr);
-
-	if (_features & GF_AFTER_V8)
-		numobj = READ_LE_UINT32(&(roomhdr->v8.numObjects));
-	else if (_features & GF_AFTER_V7)
-		numobj = READ_LE_UINT16(&(roomhdr->v7.numObjects));
-	else
-		numobj = READ_LE_UINT16(&(roomhdr->old.numObjects));
-
+	if (_features & GF_OLD_BUNDLE) {
+		numobj = roomptr[20];
+	} else {
+		RoomHeader *roomhdr = (RoomHeader *)findResourceData(MKID('RMHD'), roomptr);
+	
+		if (_features & GF_AFTER_V8)
+			numobj = READ_LE_UINT32(&(roomhdr->v8.numObjects));
+		else if (_features & GF_AFTER_V7)
+			numobj = READ_LE_UINT16(&(roomhdr->v7.numObjects));
+		else
+			numobj = READ_LE_UINT16(&(roomhdr->old.numObjects));
+	}
+	
 	if (numobj == 0)
 		error("findObjectInRoom: No object found in room %d", room);
 	if (numobj > _numLocalObjects)
 		error("findObjectInRoom: More (%d) than %d objects in room %d", numobj, _numLocalObjects, room);
+
+	if (_features & GF_OLD_BUNDLE) {
+		searchptr = roomptr + 29;
+		for (i = 0; i < numobj; i++) {
+			obimptr = roomptr + READ_LE_UINT16(searchptr);
+			obcdptr = roomptr + READ_LE_UINT16(searchptr + 2 * _numObjectsInRoom);
+			id2 = READ_LE_UINT16(obcdptr + 4);
+
+			if (id2 == (uint16)id) {
+				if (findWhat & foCodeHeader) {
+					fo->obcd = obcdptr;
+					fo->cdhd = (CodeHeader *)(obcdptr + 10);	// TODO - FIXME
+				}
+				if (findWhat & foImageHeader) {
+					fo->obim = obimptr;
+					fo->imhd = 0;	// TODO - FIXME: is this used at all?
+				}
+				break;
+			}
+		}
+		return;
+	}
 
 	if (findWhat & foCodeHeader) {
 		if (_features & GF_AFTER_V8)
@@ -982,8 +1014,8 @@ void Scumm::findObjectInRoom(FindObjectInRoom *fo, byte findWhat, uint id, uint 
 				id2 = READ_LE_UINT16(&(cdhd->v5.obj_id));
 
 			if (id2 == (uint16)id) {
-				fo->cdhd = cdhd;
 				fo->obcd = obcdptr;
+				fo->cdhd = cdhd;
 				break;
 			}
 			if (++i == numobj)
