@@ -393,7 +393,7 @@ void Sound::processSfxQueues() {
 		_talk_sound_mode = 0;
 	}
 
-	if (_scumm->_vars[_scumm->VAR_TALK_ACTOR]) { //_sfxMode == 2) {
+	if (_scumm->_vars[_scumm->VAR_TALK_ACTOR]) { //_sfxMode & 2) {
 		act = _scumm->_vars[_scumm->VAR_TALK_ACTOR];
 		if (_talkChannel < 0)
 			finished = false;
@@ -422,14 +422,14 @@ void Sound::processSfxQueues() {
 		
 		if (finished  && _scumm->_talkDelay == 0) {
 			_scumm->stopTalk();
-			_sfxMode = 0;
+			_sfxMode &= ~2;
 			_talkChannel = -1;
 		}
 	}
 		
-	if (_sfxMode == 1) {
+	if (_sfxMode & 1) {
 		if (isSfxFinished()) {
-			_sfxMode = 0;
+			_sfxMode &= ~1;
 		}
 	}
 }
@@ -490,7 +490,7 @@ int Sound::startTalkSound(uint32 offset, uint32 b, int mode) {
 		num--;
 	}
 	_mouthSyncTimes[i] = 0xFFFF;
-	_sfxMode = mode;
+	_sfxMode |= mode;
 	_curSoundPos = 0;
 	_mouthSyncMode = true;
 
@@ -498,9 +498,9 @@ int Sound::startTalkSound(uint32 offset, uint32 b, int mode) {
 }
 
 void Sound::stopTalkSound() {
-	if (_sfxMode == 2) {
+	if (_sfxMode & 2) {
 		stopSfxSound();
-		_sfxMode = 0;
+		_sfxMode &= ~2;
 	}
 }
 

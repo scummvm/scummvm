@@ -1030,7 +1030,7 @@ void Scumm::processKbd()
 			runScript(_vars[VAR_UNK_SCRIPT_2], 0, 0, 0);
 	} else if (_lastKeyHit == _vars[VAR_TALKSTOP_KEY]) {
 		_talkDelay = 0;
-		if (_sound->_sfxMode == 2)
+		if (_sound->_sfxMode & 2)
 			stopTalk();
 		return;
 	} else if (_lastKeyHit == '[') { // [, eg volume down
