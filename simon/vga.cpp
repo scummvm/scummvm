@@ -397,12 +397,10 @@ byte *vc_10_depack_column(VC10_state * vs) {
 	byte dh = vs->dh;
 	byte color;
 
-	if (a != -0x80)
-		goto start_here;
+	if (a == -0x80)
+		a = *src++;
 
 	for (;;) {
-		a = *src++;
-	start_here:;
 		if (a >= 0) {
 			color = *src++;
 			do {
@@ -425,6 +423,7 @@ byte *vc_10_depack_column(VC10_state * vs) {
 				}
 			} while (++a != 0);
 		}
+		a = *src++;
 	}
 
 get_out:;
