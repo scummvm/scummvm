@@ -153,6 +153,8 @@ void Gui::drawWidget(const GuiWidget *w) {
 	case GUI_ACTIONTEXT:
 	case GUI_RESTEXT: {
 		char text[500];
+		text[0] = '\0';
+
 		switch(w->_type) {
 			case GUI_CUSTOMTEXT:
 				strcpy(text, string_map_table_custom[w->_string_number]);
@@ -161,8 +163,6 @@ void Gui::drawWidget(const GuiWidget *w) {
 				s = queryString(w->_string_number,w->_id);
 				if (s)
 					strcpy(text, s);
-				else
-					text[0] = '\0';
 				break;
 			case GUI_VARTEXT:
 				sprintf(text, "%s %d", string_map_table_custom[w->_string_number],  _gui_variables[w->_string_number]);
@@ -314,7 +314,7 @@ void Gui::leftMouseClick(int x, int y) {
 			handleCommand(_clickWidget);
 	}
 	
-	if (_dialog == OPTIONS_DIALOG || _dialog == PAUSE_DIALOG)
+	if (_dialog == PAUSE_DIALOG)
 		close();
 }
 const GuiWidget keys_dialog[] = {
@@ -391,7 +391,7 @@ const GuiWidget sound_dialog[] = {
 };
 
 const GuiWidget save_load_dialog[] = {
-	{GUI_STAT,0xFF,GWF_DEFAULT|GWF_PARENT,30,20,260,120,0,0},
+	{GUI_STAT,0xFF,GWF_DEFAULT|GWF_PARENT,30,20,260,150,0,0},
 	{GUI_RESTEXT,0x01,0,40,5,128,16,0,1}, /* How may I serve you? */
 	{GUI_RESTEXT,0x02,0,40,5,128,16,0,2}, /* Select a game to LOAD */
 	{GUI_RESTEXT,0x04,0,40,5,128,16,0,3}, /* Name your SAVE game */
@@ -415,8 +415,9 @@ const GuiWidget save_load_dialog[] = {
 	{GUI_RESTEXT,0x01,GWF_BUTTON,200,25,54,16,3,4}, /* Save */
 	{GUI_RESTEXT,0x01,GWF_BUTTON,200,45,54,16,4,5}, /* Load */
 	{GUI_RESTEXT,0x01,GWF_BUTTON,200,65,54,16,5,6}, /* Play */
-	{GUI_RESTEXT,0x01,GWF_BUTTON,200,85,54,16,6,8}, /* Quit */
-
+	{GUI_CUSTOMTEXT,0x01,GWF_BUTTON,200,85,54,16,9,17}, /* Options */
+	{GUI_RESTEXT,0x01,GWF_BUTTON,200,105,54,16,6,8}, /* Quit */
+	
 	{GUI_RESTEXT,0x02,GWF_BUTTON,200,50,54,16,7,7}, /* Cancel */
 
 	{GUI_RESTEXT,0x04,GWF_BUTTON,200,45,54,16,8,9}, /* Ok */
@@ -508,6 +509,8 @@ void Gui::handleKeysDialogCommand(int cmd) {
 		registry_save();
 		close();
 	}
+#else
+	close();
 #endif
 }
 
@@ -515,14 +518,13 @@ void Gui::handleKeysDialogCommand(int cmd) {
 void Gui::handleCommand(int cmd) {
 	int lastEdit = _editString;
 	showCaret(false);
-
 	
 	if (_dialog == SOUND_DIALOG) {
 		handleSoundDialogCommand(cmd);
 		return;
 	}	
 	
-	if (_dialog == OPTIONS_DIALOG) {
+	if (_dialog == OPTIONS_DIALOG) {		
 		handleOptionsDialogCommand(cmd);
 		return;
 	}
@@ -578,6 +580,10 @@ void Gui::handleCommand(int cmd) {
 		_s->_saveLoadFlag = 1;
 		memcpy(_s->_saveLoadName, game_names[lastEdit], sizeof(_s->_saveLoadName));
 		close();
+		return;
+	case 9: /* options button */
+		options();
+		draw(0, 100);
 		return;
 	default:
 		if (cmd>=20 && cmd<=28) {

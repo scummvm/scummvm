@@ -638,7 +638,7 @@ int SoundEngine::set_music_volume(uint vol) {
 	if (vol < 1)
 		vol = 1;
 	
-	_music_volume = vol;
+	_music_volume = vol;	
 	return 0;
 }
 
@@ -651,6 +651,7 @@ int SoundEngine::set_master_volume(uint vol) {
 		vol = vol / (100 / _music_volume);
 
 	_master_volume = vol;	
+	_s->_sound_volume_master = vol;
 	for (i=0; i!=8; i++)
 		_channel_volume_eff[i] = (_channel_volume[i]+1) * vol >> 7;
 	update_volumes();

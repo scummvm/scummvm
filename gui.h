@@ -39,7 +39,8 @@ static const char* string_map_table_custom[] = {
 	"Pause",
 	"Save",
 	"Skip",
-	"Hide"
+	"Hide",
+	"Options"
 };
 
 static const byte string_map_table_v6[] = {
