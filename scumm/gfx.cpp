@@ -1393,7 +1393,7 @@ void Gdi::drawBMAPBg(const byte *ptr, VirtScreen *vs, int startstrip, int width)
 
 		drawStripHE((byte *)vs->backBuf, width, bmap_ptr, vs->w, vs->h, false);
 	}
-	copyVirtScreenBuffers(Common::Rect(0, 0, vs->w - 1, vs->h - 1));
+	copyVirtScreenBuffers(Common::Rect(vs->w, vs->h));
 
 	if (_numZBuffer <= 1)
 		return;
@@ -1447,6 +1447,11 @@ void Gdi::drawBMAPObject(const byte *ptr, VirtScreen *vs, int obj, int x, int y,
 		rect1.right -= rect2.left;
 		rect1.top -= rect2.top;
 		rect1.bottom -= rect2.top;
+		
+		// FIXME: The following two duplicate the old behaviour of this code
+		// but I am not sure that this was right to start with... ?
+		rect1.right++;
+		rect1.bottom++;
 
 		copyVirtScreenBuffers(rect1);
 	}
@@ -1723,8 +1728,8 @@ dec_next:
 }
 
 void Gdi::copyVirtScreenBuffers(const Common::Rect &rect) {
-	int rw = rect.right - rect.left + 1;
-	int rh = rect.bottom - rect.top + 1;
+	int rw = rect.right - rect.left;
+	int rh = rect.bottom - rect.top;
 	byte *src, *dst;
 	
 	src = _vm->virtscr[0].getBackPixels(rect.left, rect.top);
