@@ -1128,7 +1128,7 @@ int Sound::playBundleSound(char *sound) {
 	}
 
 	ptr = (byte *)malloc(1000000);
-	if (_scumm->_bundle->decompressVoiceSampleByName(sound, ptr) == 0) {
+	if (_scumm->_bundle->decompressVoiceSampleByName(sound, ptr, (_scumm->_gameId == GID_CMI)) == 0) {
 		delete ptr;
 		return -1;
 	}

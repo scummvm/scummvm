@@ -204,8 +204,14 @@ int32 Bundle::decompressMusicSampleByIndex(int32 index, int32 number, byte *comp
 	return final_size;
 }
 
-int32 Bundle::decompressVoiceSampleByName(char *name, byte *comp_final) {
+int32 Bundle::decompressVoiceSampleByName(char *name, byte *comp_final, bool use_extended) {
 	int32 final_size = 0, i;
+	char realName[255];
+
+	if (use_extended)
+		sprintf(realName, "%s.IMX", name);
+	else
+		strcpy(realName, name);
 
 	if (_voiceFile.isOpen() == false) {
 		warning("Bundle: voice file is not open!");
@@ -213,11 +219,12 @@ int32 Bundle::decompressVoiceSampleByName(char *name, byte *comp_final) {
 	}
 
 	for (i = 0; i < _numVoiceFiles; i++) {
-		if (!scumm_stricmp(name, _bundleVoiceTable[i].filename)) {
+		if (!scumm_stricmp(realName, _bundleVoiceTable[i].filename)) {
 			final_size = decompressVoiceSampleByIndex(i, comp_final);
 			return final_size;
 		}
 	}
+	printf("Failed finding voice %s\n", realName);
 	return final_size;
 }
 

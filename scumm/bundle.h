@@ -58,7 +58,7 @@ public:
 
 	bool openVoiceFile(const char *filename, const char *directory);
 	bool openMusicFile(const char *filename, const char *directory);
-	int32 decompressVoiceSampleByName(char *name, byte *comp_final);
+	int32 decompressVoiceSampleByName(char *name, byte *comp_final, bool use_extended=false);
 	int32 decompressVoiceSampleByIndex(int32 index, byte *comp_final);
 	int32 decompressMusicSampleByName(char *name, int32 number, byte *comp_final, bool fuzzy=false);
 	int32 decompressMusicSampleByIndex(int32 index, int32 number, byte *comp_final);
