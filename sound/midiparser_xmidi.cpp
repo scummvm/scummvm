@@ -36,6 +36,7 @@ struct NoteTimer {
 	byte channel;
 	byte note;
 	uint32 off_time;
+	NoteTimer() : channel(0), note(0), off_time(0) {}
 };
 
 class MidiParser_XMIDI : public MidiParser {
@@ -51,6 +52,7 @@ protected:
 	void parseNextEvent (EventInfo &info);
 
 public:
+	MidiParser_XMIDI() : _data(0), _inserted_delta(0) {}
 	~MidiParser_XMIDI() { }
 
 	bool loadMusic (byte *data, uint32 size);

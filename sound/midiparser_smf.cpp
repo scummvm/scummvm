@@ -43,6 +43,7 @@ protected:
 	void parseNextEvent (EventInfo &info);
 
 public:
+	MidiParser_SMF() : _data(0), _buffer(0), _malformedPitchBends(false) {}
 	~MidiParser_SMF();
 
 	bool loadMusic (byte *data, uint32 size);
