@@ -252,6 +252,10 @@ void PluginManager::loadPlugins() {
 #ifndef DISABLE_SAGA
 	LOAD_MODULE("saga", SAGA);
 #endif
+
+#ifndef DISABLE_AWE
+	LOAD_MODULE("awe", AWE);
+#endif
 }
 
 void PluginManager::unloadPlugins() {
