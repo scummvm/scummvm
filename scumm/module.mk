@@ -49,6 +49,7 @@ MODULE_OBJS := \
 	scumm/sound.o \
 	scumm/string.o \
 	scumm/usage_bits.o \
+	scumm/util.o \
 	scumm/vars.o \
 	scumm/verbs.o \
 	scumm/wiz_he.o \

@@ -31,6 +31,7 @@
 
 #include "scumm/gfx.h"
 #include "scumm/script.h"
+#include "scumm/util.h"
 #include "scumm/wiz_he.h"
 
 namespace GUI {
@@ -60,29 +61,6 @@ struct FindObjectInRoom;
 struct ScummGameSettings;
 
 typedef Common::Map<Common::String, int> ObjectIDMap;
-
-class ScummFile : public File {
-private:
-	byte _encbyte;
-	uint32	_subFileStart;
-	uint32	_subFileLen;
-public:
-	ScummFile();
-	void setEnc(byte value);
-	
-	void setSubfileRange(uint32 start, uint32 len);
-	void resetSubfile();
-
-	bool open(const char *filename, AccessMode mode = kFileReadMode);
-	bool openSubFile(const char *filename);
-
-	bool eof();
-	uint32 pos();
-	uint32 size();
-	void seek(int32 offs, int whence = SEEK_SET);
-	uint32 read(void *ptr, uint32 size);
-	uint32 write(const void *ptr, uint32 size);
-};
 
 // Use g_scumm from error() ONLY
 extern ScummEngine *g_scumm;
@@ -1332,21 +1310,6 @@ public:
 	byte VAR_KEY_STATE;
 	byte VAR_WIZ_TCOLOR;
 };
-
-// This is a constant lookup table of reverse bit masks
-extern const byte revBitMask[8];
-
-/* Direction conversion functions (between old dir and new dir format) */
-int newDirToOldDir(int dir);
-int oldDirToNewDir(int dir);
-
-int normalizeAngle(int angle);
-int fromSimpleDir(int dirtype, int dir);
-int toSimpleDir(int dirtype, int dir);
-
-void checkRange(int max, int min, int no, const char *str);
-
-const char *tag2str(uint32 tag);
 
 } // End of namespace Scumm
 
