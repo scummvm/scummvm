@@ -585,6 +585,10 @@ void Scumm::saveOrLoad(Serializer *s)
 	};
 
 	const SaveLoadEntry stringTabEntries[] = {
+		// TODO - It makes no sense to have all these t_* fields in StringTab
+		// Rather let's dump them all when the save game format changes, and 
+		// keep two StringTab objects: one normal, and a "t_" one.
+		// Then copying them can be done in one line etc.
 		MKLINE(StringTab, xpos, sleInt16),
 		MKLINE(StringTab, t_xpos, sleInt16),
 		MKLINE(StringTab, ypos, sleInt16),

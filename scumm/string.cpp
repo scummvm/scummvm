@@ -170,6 +170,8 @@ void Scumm::unkMessage2()
 	if (_string[3].color == 0)
 		_string[3].color = 4;
 
+	// TODO - it appears the this function should display the given message graphically
+	// to the user in a "dialog" looking like the pause dialog, i.e. a single line.
 	warning("unkMessage2(\"%s\")", buf);
 	_messagePtr = tmp;
 }
@@ -717,7 +719,7 @@ byte *Scumm::addMessageToStack(byte *msg)
 		return NULL;
 	}
 
-while ((ptr[num++] = chr = *msg++) != 0) {
+	while ((ptr[num++] = chr = *msg++) != 0) {
 		if (num >= 500)
 			error("Message stack overflow");
 
