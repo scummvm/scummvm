@@ -25,6 +25,12 @@
 #include "dc.h"
 #include "icon.h"
 
+#include <ronin/zlib.h>
+
+
+// Savegame can not be bigger than this, even before compression
+#define MAX_SAVE_SIZE (128*1024)
+
 
 enum vmsaveResult {
   VMSAVE_OK,
@@ -169,9 +175,19 @@ bool SerializerStream::fopen(const char *filename, const char *mode)
     c->issave = true;
     strncpy(c->filename, filename, 16);
     c->pos = 0;
-    c->buffer = new char[c->size = 128*1024];
+    c->buffer = new char[c->size = MAX_SAVE_SIZE];
     return true;
   } else if(readSaveGame(c->buffer, c->size, filename)) {
+    if(c->size > 0 && c->buffer[0] != 'S') {
+      // Data does not start with "SCVM".  Maybe compressed?
+      char *expbuf = new char[MAX_SAVE_SIZE];
+      unsigned long destlen = MAX_SAVE_SIZE;
+      if(!uncompress((Bytef*)expbuf, &destlen, (Bytef*)c->buffer, c->size)) {
+	delete(c->buffer);
+	c->buffer = expbuf;
+	c->size = destlen;
+      } else delete expbuf;
+    }
     c->issave = false;
     c->pos = 0;
     return true;
@@ -189,9 +205,20 @@ void SerializerStream::fclose()
 
   if(context) {
     vmStreamContext *c = (vmStreamContext *)context;
-    if(c->issave)
+    if(c->issave) {
+      if(c->pos) {
+	// Try compression
+	char *compbuf = new char[c->pos];
+	unsigned long destlen = c->pos;
+	if(!compress((Bytef*)compbuf, &destlen, (Bytef*)c->buffer, c->pos)) {
+	  delete c->buffer;
+	  c->buffer = compbuf;
+	  c->pos = destlen;
+	} else delete compbuf;
+      }
       writeSaveGame(&scumm, c->buffer, c->pos,
 		    c->filename, icon);
+    }
     delete c->buffer;
     delete c;
     context = NULL;
