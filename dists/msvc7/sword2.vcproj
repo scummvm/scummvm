@@ -166,9 +166,6 @@
 			RelativePath="..\..\sword2\controls.h">
 		</File>
 		<File
-			RelativePath="..\..\sword2\credits.h">
-		</File>
-		<File
 			RelativePath="..\..\sword2\debug.cpp">
 		</File>
 		<File
