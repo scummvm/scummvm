@@ -88,3 +88,10 @@ Main.c
 ======
  sceneIndexTable           _scene->getSceneLUT()
 
+Tile.h
+======
+ isoTile.height            ISOTILE_ENTRY.tile_h
+ isoTile.attributes        ISOTILE_ENTRY.mask_rule
+ isoTile.offset            ISOTILE_ENTRY.tile_offset
+ isoTile.terrain_mask      ISOTILE_ENTRY.terrain_mask
+ isoTile.fgd_bgd_attr      ISOTILE_ENTRY.mask

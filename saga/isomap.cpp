@@ -62,10 +62,10 @@ int IsoMap::loadTileset(const byte *tileres_p, size_t tileres_len) {
 
 	for (i = 0; i < _tile_ct; i++) {
 		tile_tbl[i].tile_h = readS.readByte();
-		tile_tbl[i].unknown01 = readS.readByte();
+		tile_tbl[i].mask_rule = readS.readByte();
 		tile_tbl[i].tile_offset = readS.readUint16LE();
-		tile_tbl[i].unknown04 = readS.readSint16LE();
-		tile_tbl[i].unknown06 = readS.readSint16LE();
+		tile_tbl[i].terrain_mask = readS.readSint16LE();
+		tile_tbl[i].mask = readS.readSint16LE();
 	}
 
 	_tiles_loaded = 1;

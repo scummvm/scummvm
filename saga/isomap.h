@@ -30,11 +30,10 @@ namespace Saga {
 
 struct ISOTILE_ENTRY {
 	int tile_h;
-	int unknown01;
+	int mask_rule;
 	size_t tile_offset;
-	int unknown04;
-	int unknown06;
-
+	int terrain_mask;
+	int mask;
 };
 
 #define SAGA_ISOTILE_ENTRY_LEN 8
