@@ -146,7 +146,7 @@ void ScummEngine_v72he::setupOpcodes() {
 		OPCODE(o6_invalid),
 		OPCODE(o6_wordVarInc),
 		/* 50 */
-		OPCODE(o6_invalid),
+		OPCODE(o72_unknown50),
 		OPCODE(o6_invalid),
 		OPCODE(o6_invalid),
 		OPCODE(o72_wordArrayInc),
@@ -571,6 +571,17 @@ void ScummEngine_v72he::o72_wordArrayIndexedWrite() {
 	int val = pop();
 	int base = pop();
 	writeArray(fetchScriptWord(), pop(), base, val);
+}
+
+void ScummEngine_v72he::o72_unknown50() {
+	int idx;
+
+	idx = vm.cutSceneStackPointer;
+	vm.cutSceneStackPointer = 0;
+	vm.cutScenePtr[idx] = 0;
+	vm.cutSceneScript[idx] = 0;
+
+	VAR(VAR_OVERRIDE) = 0;
 }
 
 void ScummEngine_v72he::o72_wordArrayInc() {
