@@ -116,8 +116,7 @@ struct Player {
 	bool _abort;
 
 	HookDatas _hook;
-	byte _def_do_command_trigger;
-	byte _deferred_do_command [4];
+	byte _marker;	// Sam & Max: SysEx marker
 
 	bool _mt32emulate;
 	bool _isGM;
@@ -286,6 +285,12 @@ struct Part {
 	void changed(uint16 what);
 };
 
+struct ImTrigger {
+	int sound;
+	byte id;
+	byte command [4];
+};
+
 /* Abstract IMuseInternal driver class */
 class IMuseDriver {
 public:
@@ -354,6 +359,7 @@ private:
 	byte _music_volume;						/* Global music volume. 0-128 */
 
 	uint16 _trigger_count;
+	ImTrigger _snm_triggers[16];	// Sam & Max triggers
 
 	uint16 _channel_volume[8];
 	uint16 _channel_volume_eff[8];	/* NoSave */
@@ -777,8 +783,17 @@ byte *IMuseInternal::findTag(int sound, char *tag, int index)
 	byte *ptr = NULL;
 	int32 size, pos;
 
-	if (_base_sounds)
+	if (_base_sounds) {
+		// FIXME: This is a hack to make certain parts of Sam & Max work.
+		// It's a NASTY HACK because it has to specifically skip sound 1.
+		// For some reason (maybe a script parse bug?), sound 1 is being
+		// played at the very beginning (opening logo). Until this "fix",
+		// the sound was never found and thus never played. It SHOULDN'T
+		// be played.
+		if (!_base_sounds[sound] && (sound > 1 || g_scumm->_gameId != GID_SAMNMAX))
+			g_scumm->ensureResourceLoaded (rtSound, sound);
 		ptr = _base_sounds[sound];
+	}
 
 	if (ptr == NULL) {
 		  debug(1, "IMuseInternal::findTag completely failed finding sound %d", sound);
@@ -874,6 +889,21 @@ bool IMuseInternal::start_sound(int sound)
 		}
 	}
 	player = allocate_player(128);
+	if (!player)
+		return false;
+
+	// Make sure the requested sound is not already playing.
+	// FIXME: This should NEVER happen, but until we get all of the
+	// Sam & Max iMuse issues resolved, it does happen occasionally.
+	// This hack is just to make playtesting tolerable.
+	int i;
+	for (i = ARRAYSIZE(_players), player = _players; i != 0; i--, player++) {
+		if (player->_active && player->_id == sound)
+			return true; // break;
+	}
+
+	if (!i)
+		player = allocate_player(128);
 	if (!player)
 		return false;
 
@@ -1437,10 +1467,30 @@ int32 IMuseInternal::do_command(int a, int b, int c, int d, int e, int f, int g,
 			return stop_all_sounds();
 		case 11:
 			return stop_all_sounds();
+		case 12:
+			// Sam & Max: Player-scope commands
+			for (i = ARRAYSIZE(_players), player = _players; i != 0; i--, player++) {
+				if (player->_active && player->_id == (uint16)b)
+					break;
+			}
+			if (!i)
+				return -1;
+
+			switch (d) {
+			case 6:
+				// Set player volume.
+				// Jamieson360: Good, this is consistent with IMuseDigital.
+				return player->set_vol (e);
+			default:
+				warning("IMuseInternal::do_command (6) unsupported sub-command %d", d);
+			}
+			return -1;
 		case 13:
 			return get_sound_status(b);
 		case 14:
 			// Sam and Max: Volume Fader?
+			// Prevent instantaneous volume fades.
+			// Fixes a Ball of Twine issue, but might not be the right long-term solution.
 			if (f != 0) {
 				for (i = ARRAYSIZE(_players), player = _players; i != 0; i--, player++) {
 					if (player->_active && player->_id == (uint16)b) {
@@ -1462,31 +1512,61 @@ int32 IMuseInternal::do_command(int a, int b, int c, int d, int e, int f, int g,
 		case 16:
 			return set_volchan(b, c);
 		case 17:
-			if (g_scumm->_gameId == GID_SAMNMAX) {
+			if (g_scumm->_gameId != GID_SAMNMAX) {
+				return set_channel_volume(b, c);
+			} else {
 				// Sam & Max: ImSetTrigger.
 				// Sets a trigger for a particular player and
 				// marker ID, along with do_command parameters
 				// to invoke at the marker. The marker is
 				// represented by MIDI SysEx block 00 xx (F7)
 				// where "xx" is the marker ID.
-				for (i = ARRAYSIZE(_players), player = _players; i != 0; i--, player++) {
-					if (player->_active && player->_id == (uint16)b) {
-						player->_def_do_command_trigger = d;
-						player->_deferred_do_command [0] = e;
-						player->_deferred_do_command [1] = f;
-						player->_deferred_do_command [2] = g;
-						player->_deferred_do_command [3] = h;
+				for (i = 0; i < 16; ++i) {
+					if (!_snm_triggers [i].id) {
+						_snm_triggers [i].id = d;
+						_snm_triggers [i].sound = b;
+						_snm_triggers [i].command [0] = e;
+						_snm_triggers [i].command [1] = f;
+						_snm_triggers [i].command [2] = g;
+						_snm_triggers [i].command [3] = h;
 						return 0;
 					}
 				}
 				return -1;
 			}
-			else
-				return set_channel_volume(b, c);
 		case 18:
-			return set_volchan_entry(b, c);
+			if (g_scumm->_gameId != GID_SAMNMAX) {
+				return set_volchan_entry(b, c);
+			} else {
+				// Sam & Max: ImCheckTrigger.
+				// According to Mike's notes to Ender,
+				// this function returns the number of triggers
+				// associated with a particular player ID and
+				// trigger ID.
+				a = 0;
+				for (i = 0; i < 16; ++i) {
+					if (_snm_triggers [i].sound == b && _snm_triggers [i].id &&
+					    (d == -1 || _snm_triggers [i].id == d))
+					{
+						++a;
+					}
+				}
+				return a;
+			}
 		case 19:
-			return stop_sound(b);
+			// Sam & Max: ImClearTrigger
+			// This should clear a trigger that's been set up
+			// with ImSetTrigger (cmd == 17). Seems to work....
+			a = 0;
+			for (i = 0; i < 16; ++i) {
+				if (_snm_triggers [i].sound == b && _snm_triggers [i].id &&
+					(d == -1 || _snm_triggers [i].id == d))
+				{
+					_snm_triggers [i].sound = _snm_triggers [i].id = 0;
+					++a;
+				}
+			}
+			return (a > 0) ? 0 : -1;
 		case 20: // FIXME: Deferred command system? - Sam and Max
 			return 0;
 		case 2:
@@ -1511,11 +1591,11 @@ int32 IMuseInternal::do_command(int a, int b, int c, int d, int e, int f, int g,
 		switch (cmd) {
 		case 0:
 			if (g_scumm->_gameId == GID_SAMNMAX)
-				return player->_def_do_command_trigger;
+				return player->_marker;
 			else
 				return player->get_param(c, d);
 		case 1:
-			if (g_scumm->_gameId == GID_SAMNMAX) // Jamieson630: Nasty
+			if (g_scumm->_gameId == GID_SAMNMAX)
 				player->jump (d - 1, (e - 1) * 4 + f, ((g * player->_ticks_per_beat) >> 2) + h);
 			else
 				player->set_priority(c);
@@ -2128,7 +2208,7 @@ void Player::parse_sysex(byte *p, uint len)
 
 	switch (code = *p++) {
 	case 0:
-		if (len > 2) {
+		if (g_scumm->_gameId != GID_SAMNMAX) {
 			// Part on/off?
 			// This seems to do the right thing for Monkey 2, at least.
 			a = *p++ & 0x0F;
@@ -2142,23 +2222,25 @@ void Player::parse_sysex(byte *p, uint len)
 			// ImSetTrigger. When a marker is encountered whose sound
 			// ID and (presumably) marker ID match what was set by
 			// ImSetTrigger, something magical is supposed to happen....
-			if (_def_do_command_trigger && *p == _def_do_command_trigger) {
-				_def_do_command_trigger = 0;
-				_se->do_command (_deferred_do_command [0],
-				                 _deferred_do_command [1],
-				                 _deferred_do_command [2],
-				                 _deferred_do_command [3],
-				                 0, 0, 0, 0);
-			} else {
-				_def_do_command_trigger = *p;
-			} // end if
+			_marker = *p;
+			for (a = 0; a < 16; ++a) {
+				if (_se->_snm_triggers [a].sound == _id &&
+				    _se->_snm_triggers [a].id == *p)
+				{
+					_se->_snm_triggers [a].sound = _se->_snm_triggers [a].id = 0;
+					_se->do_command (_se->_snm_triggers [a].command [0],
+					                 _se->_snm_triggers [a].command [1],
+					                 _se->_snm_triggers [a].command [2],
+					                 _se->_snm_triggers [a].command [3],
+					                 0, 0, 0, 0);
+					break;
+				}
+			}
 		} // end if
 		break;
 
 	case 1:
-		// This SysEx is used in Sam & Max to provide loop (and
-		// possibly marker) information. Presently, only the
-		// loop information is implemented.
+		// This SysEx is used in Sam & Max for maybe_jump.
 		if (_scanning)
 			break;
 		maybe_jump (p[0], p[1] - 1, (read_word (p + 2) - 1) * 4 + p[4], ((p[5] * _ticks_per_beat) >> 2) + p[6]);
@@ -3270,7 +3352,7 @@ void Part::setup(Player *player)
 	_transpose = 0;
 	_detune = 0;
 	_detune_eff = player->_detune;
-	_pitchbend_factor = ((g_scumm->_gameId == GID_SAMNMAX) ? 2 : 12);
+	_pitchbend_factor = 2;
 	_pitchbend = 0;
 	_effect_level = 64;
 	_program = 255;
