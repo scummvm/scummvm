@@ -54,7 +54,7 @@ public:
 	virtual ~Codec47Decoder();
 	bool initSize(const Point &, const Rect &);
 	void clean();
-	bool decode(Blitter &, Chunk &);
+	bool decode(byte *dst, Chunk &);
 };
 
 #endif

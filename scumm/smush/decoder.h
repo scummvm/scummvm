@@ -47,7 +47,7 @@ public:
 	Decoder() {};
 	virtual ~Decoder() {};
 	virtual bool initSize(const Point &p, const Rect &r) { _p = p; _r = r; return true; };
-	virtual bool decode(Blitter &, Chunk &) = 0;
+	virtual bool decode(byte *dst, Chunk &src) = 0;
 };
 
 #endif

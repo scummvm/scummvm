@@ -24,7 +24,6 @@
 #include "engine.h"
 #include "codec47.h"
 #include "chunk.h"
-#include "blitter.h"
 
 static int32 codec37_table[] = {
        0,       1,       2,       3,       3,       3,
@@ -664,7 +663,7 @@ Codec47Decoder::~Codec47Decoder() {
 	clean();
 }
 
-bool Codec47Decoder::decode(Blitter &dst, Chunk &src) {
+bool Codec47Decoder::decode(byte *dst, Chunk &src) {
 	int32 width = getRect().width();
 	int32 height = getRect().height();
 	_offset1 = _deltaBufs[1] - _curBuf;
@@ -713,7 +712,7 @@ bool Codec47Decoder::decode(Blitter &dst, Chunk &src) {
 		break;
 	}
 
-	dst.blit(_curBuf, width * height);
+	memcpy(dst, _curBuf, width * height);
 
 	if (seq_nb == _prevSeqNb + 1) {
 		if (chunk_buffer[3] == 1) {

@@ -33,7 +33,6 @@
 #include "frenderer.h"
 #include "channel.h"
 #include "chunk_type.h"
-#include "blitter.h"
 
 #include <assert.h>
 #include <stdlib.h>
@@ -608,8 +607,7 @@ void SmushPlayer::handleNewPalette(Chunk &b) {
 
 void SmushPlayer::decodeCodec(Chunk &b, const Rect &r, Decoder &codec) {
 	assert(_curBuffer);
-	Blitter blit((byte *)_curBuffer, _frameSize, r);
-	codec.decode(blit, b);
+	codec.decode((byte *)_curBuffer, b);
 	if (_storeFrame == true) {
 		if (_frameBuffer == NULL) {
 			_frameBuffer = (byte *)malloc(_frameSize.getX() * _frameSize.getY());
@@ -648,7 +646,7 @@ void SmushPlayer::initSize(const Rect &r, bool always, bool transparent) {
 	_alreadyInit = true;
 }
 
-void SmushPlayer::handleFrameObject(Chunk & b) {
+void SmushPlayer::handleFrameObject(Chunk &b) {
 	checkBlock(b, TYPE_FOBJ, 14);
 	if(_skipNext) {
 		_skipNext = false;

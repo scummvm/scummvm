@@ -42,7 +42,7 @@
 class Codec1Decoder : public Decoder {
 public:
 	virtual ~Codec1Decoder();
-	bool decode(Blitter &, Chunk &);
+	bool decode(byte *dst, Chunk &);
 };
 
 #endif

@@ -22,9 +22,8 @@
 #include <stdafx.h>
 #include "codec44.h"
 #include "chunk.h"
-#include "blitter.h"
 
-bool Codec44Decoder::decode(Blitter & dst, Chunk & src) {
+bool Codec44Decoder::decode(byte *dst, Chunk & src) {
 	int32 size_line, num;
 	int32 length = src.getSize() - 14;
 	int32 width = getRect().width();
@@ -61,7 +60,7 @@ bool Codec44Decoder::decode(Blitter & dst, Chunk & src) {
 
 	} while (length > 1);
 
-	dst.blit(_buffer, width * height);
+	memcpy(dst, _buffer, width * height);
 
 	free(org_src2);
 

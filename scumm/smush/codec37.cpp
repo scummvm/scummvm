@@ -22,7 +22,6 @@
 #include <stdafx.h>
 #include "codec37.h"
 #include "chunk.h"
-#include "blitter.h"
 
 #include "common/engine.h"
 
@@ -474,7 +473,7 @@ void Codec37Decoder::proc4WithoutFDFE(byte *dst, byte *src, int32 next_offs, int
 	} while (--bh);
 }
 
-bool Codec37Decoder::decode(Blitter & dst, Chunk & src) {
+bool Codec37Decoder::decode(byte *dst, Chunk & src) {
 	int32 width = getRect().width();
 	int32 height = getRect().height();
 	int32 bw = (width + 3) >> 2, bh = (height + 3) >> 2;
@@ -549,7 +548,7 @@ bool Codec37Decoder::decode(Blitter & dst, Chunk & src) {
 	}
 	_prevSeqNb = seq_nb;
 
-	dst.blit(_deltaBufs[_curtable], width * height);
+	memcpy(dst, _deltaBufs[_curtable], width * height);
 	
 	free(chunk_buffer);
 	return true;

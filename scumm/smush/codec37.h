@@ -48,7 +48,7 @@ protected:
 	void proc4WithFDFE(byte *, byte *, int32, int32, int32, int32, int16 *);
 	void proc4WithoutFDFE(byte *, byte *, int32, int32, int32, int32, int16 *);
 public:
-	bool decode(Blitter &, Chunk &);
+	bool decode(byte *dst, Chunk &);
 };
 
 #endif

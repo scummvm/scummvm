@@ -22,12 +22,11 @@
 #include <stdafx.h>
 #include "codec1.h"
 #include "chunk.h"
-#include "blitter.h"
 
 Codec1Decoder::~Codec1Decoder() {
 }
 
-bool Codec1Decoder::decode(Blitter &dst, Chunk &src) {
+bool Codec1Decoder::decode(byte *dst, Chunk &src) {
 	byte val;
 	int32 size_line;
 	int32 code, length;
@@ -40,18 +39,17 @@ bool Codec1Decoder::decode(Blitter &dst, Chunk &src) {
 #endif
 		while(size_line > 0) {
 			code = src.getByte();
-			size_line --;
+			size_line--;
 			length = (code >> 1) + 1;
 #ifdef DEBUG_CODEC1
 			debug(7, "codec1 : length == %d", length);
 #endif
 			if(code & 1) {
 				val = src.getByte();
-				size_line --;
-				if(val)
-					dst.put(val, length);
-				else
-					dst.advance(length);
+				size_line--;
+				if (val)
+					memset(dst, val, length);
+				dst += length;
 #ifdef DEBUG_CODEC1
 			debug(7, "codec1 : blitting %d times %d", length, val);
 #endif
@@ -62,9 +60,9 @@ bool Codec1Decoder::decode(Blitter &dst, Chunk &src) {
 #endif
 				while(length--) {
 					val = src.getByte();
-					if(val)
-						dst.put(val);
-					else dst.advance();
+					if (val)
+						*dst = val;
+					dst++;
 				}
 			}
 		}
