@@ -30,9 +30,10 @@
 
 
 AudioCDManager::AudioCDManager() {
-	_current_cache = 0;
-	_cd.playing = false;
+	memset(&_cd, 0, sizeof(_cd));
+	memset(_cached_tracks, 0, sizeof(_cached_tracks));
 	memset(_track_info, 0, sizeof(_track_info));
+	_current_cache = 0;
 }
 
 void AudioCDManager::play(int track, int numLoops, int startFrame, int duration) {
