@@ -207,11 +207,11 @@ void Scumm::playSound(int sound)
 	else if (ptr != NULL && READ_UINT32_UNALIGNED(ptr) == MKID('DIGI')) {
 		// TODO - discover what data the first chunk, HSHD, contains
 		// it might be useful here.
-		ptr += 8 + READ_UINT32_UNALIGNED(ptr+12);
+		ptr += 8 + READ_BE_UINT32_UNALIGNED(ptr+12);
 		if (READ_UINT32_UNALIGNED(ptr) != MKID('SDAT'))
 			return;	// abort
 
-		int size = READ_UINT32_UNALIGNED(ptr+4);
+		int size = READ_BE_UINT32_UNALIGNED(ptr+4);
 		int rate = 8000;	// FIXME - what value here ?!? this is just a guess for now
 		
 		// Allocate a sound buffer, copy the data into it, and play
