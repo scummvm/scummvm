@@ -82,7 +82,7 @@ TCHAR* WindowsFilesystemNode::toUnicode(char *x) {
 #endif
 }
 
-void WindowsFilesystemNode::addFile (FSList* list, ListMode mode, const char *base, WIN32_FIND_DATA* find_data) {
+void WindowsFilesystemNode::addFile(FSList* list, ListMode mode, const char *base, WIN32_FIND_DATA* find_data) {
 	WindowsFilesystemNode entry;
 	char *asciiName = toAscii(find_data->cFileName);
 	bool isDirectory;

@@ -86,13 +86,15 @@ public:
 	 */
 	static FilesystemNode *getRoot();
 
+#ifdef MACOSX
 	/*
 	 * Construct a node based on a path; the path is in the same format as it
 	 * would be for calls to fopen().
 	 *
 	 * I.e. getNodeForPath(oldNode.path()) should create a new node identical to oldNode.
 	 */
-//	static FilesystemNode *getNodeForPath(const String &path);
+	static FilesystemNode *getNodeForPath(const String &path);
+#endif
 
 	virtual ~FilesystemNode() {}
 

@@ -83,6 +83,12 @@ FilesystemNode *FilesystemNode::getRoot() {
 	return new POSIXFilesystemNode();
 }
 
+#ifdef MACOSX
+FilesystemNode *FilesystemNode::getNodeForPath(const String &path) {
+	return new POSIXFilesystemNode(path);
+}
+#endif
+
 POSIXFilesystemNode::POSIXFilesystemNode() {
 #ifndef __DC__
 	char buf[MAXPATHLEN];
@@ -99,16 +105,33 @@ POSIXFilesystemNode::POSIXFilesystemNode() {
 	_isDirectory = true;
 }
 
-/*
 POSIXFilesystemNode::POSIXFilesystemNode(const String &p) {
-	// TODO - extract last component from path
-	_displayName = p;
-	// TODO - check whether it is a directory, and whether the file actually exists
+	int len = 0, offset = p.size();
+	struct stat st;
+	
+	assert(offset > 0);
+
+	_path = p;
+
+	// Extract last component from path
+	const char *str = p.c_str();
+	while (offset > 0 && str[offset-1] == '/')
+		offset--;
+	while (offset > 0 && str[offset-1] != '/') {
+		len++;
+		offset--;
+	}
+	_displayName = String(str + offset, len);
+
+	// Check whether it is a directory, and whether the file actually exists
+#ifdef __DC__
 	_isValid = true;
 	_isDirectory = true;
-	_path = p;
+#else
+	_isValid = (0 == stat(_path.c_str(), &st));
+	_isDirectory = S_ISDIR(st.st_mode);
+#endif
 }
-*/
 
 POSIXFilesystemNode::POSIXFilesystemNode(const POSIXFilesystemNode *node) {
 	_displayName = node->_displayName;
@@ -126,7 +149,7 @@ FSList *POSIXFilesystemNode::listDir(ListMode mode) const {
 	FSList *myList = new FSList();
 
 	if (dirp == NULL) return myList;
-	
+
 	// ... loop over dir entries using readdir
 	while ((dp = readdir(dirp)) != NULL) {
 		// Skip 'invisible' files
@@ -136,6 +159,8 @@ FSList *POSIXFilesystemNode::listDir(ListMode mode) const {
 		POSIXFilesystemNode entry;
 		entry._displayName = dp->d_name;
 		entry._path = _path;
+		if (entry._path.lastChar() != '/')
+			entry._path += '/';
 		entry._path += dp->d_name;
 
 #ifdef __DC__
