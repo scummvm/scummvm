@@ -72,7 +72,6 @@ public:
 	int clear_queue();
 	void setBase(byte **base);
 	uint32 property(int prop, uint32 value);
-	MidiDriver *getMidiDriver();
 
 	// Factory methods
 	static IMuse *create(OSystem *syst, SoundMixer *mixer, MidiDriver *midi);

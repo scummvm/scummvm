@@ -465,9 +465,7 @@ public:
 	int32 doCommand (int numargs, int args[]);
 	int clear_queue();
 	void setBase(byte **base);
-
 	uint32 property(int prop, uint32 value);
-	MidiDriver *getMidiDriver();
 
 	static IMuseInternal *create(OSystem *syst, SoundMixer *mixer, MidiDriver *midi);
 };

@@ -73,23 +73,6 @@ IMuseInternal::~IMuseInternal() {
 	terminate();
 }
 
-MidiDriver *IMuseInternal::getMidiDriver() {
-	MidiDriver *driver = NULL;
-
-	if (_midi_native) {
-		driver = _midi_native;
-	} else {
-		// Route it through Adlib anyway.
-		if (!_midi_adlib) {
-			_midi_adlib = MidiDriver_ADLIB_create(_mixer);
-			initMidiDriver(_midi_adlib);
-		}
-		driver = _midi_adlib;
-	}
-
-	return driver;
-}
-
 byte *IMuseInternal::findStartOfSound(int sound) {
 	byte *ptr = NULL;
 	int32 size, pos;
@@ -1766,7 +1749,6 @@ int32 IMuse::doCommand (int numargs, int args[]) { in(); int32 ret = _target->do
 int IMuse::clear_queue() { in(); int ret = _target->clear_queue(); out(); return ret; }
 void IMuse::setBase(byte **base) { in(); _target->setBase(base); out(); }
 uint32 IMuse::property(int prop, uint32 value) { in(); uint32 ret = _target->property(prop, value); out(); return ret; }
-MidiDriver *IMuse::getMidiDriver() { in(); MidiDriver *ret = _target->getMidiDriver(); out(); return ret; }
 
 // The IMuse::create method provides a front-end factory
 // for creating IMuseInternal without exposing that class
