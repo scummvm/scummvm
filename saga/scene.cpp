@@ -530,6 +530,21 @@ int Scene::loadScene(int scene_num, int load_flag, R_SCENE_PROC scene_proc, R_SC
 		event.duration = 0;
 		q_event = _vm->_events->chain(q_event, &event);
 
+		// Start the scene pre script, but stay with black palette
+		if (_desc.startScriptNum > 0) {
+			event.type = R_ONESHOT_EVENT;
+			event.code = R_SCRIPT_EVENT;
+			event.op = EVENT_BLOCKING;
+			event.time = 0;
+			event.param = _desc.startScriptNum;
+			event.param2 = 0;		// Action
+			event.param3 = _sceneNumber;	// Object
+			event.param4 = 0;		// With Object - TODO: should be 'entrance'
+			event.param5 = 0;		// Actor
+
+			_vm->_events->chain(q_event, &event);
+		}
+
 		// Fade in from black to the scene background palette
 		event.type = R_IMMEDIATE_EVENT;
 		event.code = R_PAL_EVENT;
@@ -946,8 +961,25 @@ int Scene::defaultScene(int param, R_SCENE_INFO *scene_info) {
 
 	switch (param) {
 	case SCENE_BEGIN:
-		_vm->_music->stop();
 		_vm->_sound->stopVoice();
+
+		if (_desc.musicRN >= 0) {
+			event.type = R_ONESHOT_EVENT;
+			event.code = R_MUSIC_EVENT;
+			event.param = _desc.musicRN;
+			event.param2 = R_MUSIC_DEFAULT;
+			event.op = EVENT_PLAY;
+			event.time = 0;
+
+			_vm->_events->queue(&event);
+		} else {
+			event.type = R_ONESHOT_EVENT;
+			event.code = R_MUSIC_EVENT;
+			event.op = EVENT_STOP;
+			event.time = 0;
+
+			_vm->_events->queue(&event);
+		}
 
 		// Set scene background
 		event.type = R_ONESHOT_EVENT;
@@ -978,56 +1010,19 @@ int Scene::defaultScene(int param, R_SCENE_INFO *scene_info) {
 		_vm->_anim->setFlag(0, ANIM_LOOP);
 		_vm->_anim->play(0, 0);
 
-		// Start scene scripts
-		if (_desc.startScriptNum > 0) {
-			R_SCRIPT_THREAD *_startScriptThread;
-
-			debug(0, "Starting start script #%d", _desc.startScriptNum);
-
-			_startScriptThread = _vm->_script->SThreadCreate();
-			if (_startScriptThread == NULL) {
-				_vm->_console->print("Thread creation failed.");
-				break;
-			}
-
-			_startScriptThread->threadVars[kVarAction] = 0;
-			_startScriptThread->threadVars[kVarObject] = TO_LE_16(_sceneNumber);
-			_startScriptThread->threadVars[kVarWithObject] = 0; // TOTO: entrance
-			_startScriptThread->threadVars[kVarActor] = 0;
-
-			_vm->_script->SThreadExecute(_startScriptThread, _desc.startScriptNum);
-			_vm->_script->SThreadCompleteThread();
-		}
-
-		if (_desc.musicRN >= 0) {
+		// Start the scene main script
+		if (_desc.sceneScriptNum > 0) {
 			event.type = R_ONESHOT_EVENT;
-			event.code = R_MUSIC_EVENT;
-			event.param = _desc.musicRN;
-			event.param2 = R_MUSIC_DEFAULT;
-			event.op = EVENT_PLAY;
+			event.code = R_SCRIPT_EVENT;
+			event.op = EVENT_NONBLOCKING;
 			event.time = 0;
+			event.param = _desc.sceneScriptNum;
+			event.param2 = 0;		// Action
+			event.param3 = _sceneNumber;	// Object
+			event.param4 = 0;		// With Object - TODO: should be 'entrance'
+			event.param5 = 0;		// Actor - TODO: should be VERB_ENTER
 
 			_vm->_events->queue(&event);
-		} else
-			_vm->_music->stop();
-
-		if (_desc.sceneScriptNum > 0) {
-			R_SCRIPT_THREAD *_sceneScriptThread;
-
-			debug(0, "Starting scene script #%d", _desc.sceneScriptNum);
-
-			_sceneScriptThread = _vm->_script->SThreadCreate();
-			if (_sceneScriptThread == NULL) {
-				_vm->_console->print("Thread creation failed.");
-				break;
-			}
-
-			_sceneScriptThread->threadVars[kVarAction] = 0;
-			_sceneScriptThread->threadVars[kVarObject] = TO_LE_16(_sceneNumber);
-			_sceneScriptThread->threadVars[kVarWithObject] = 0; // TODO: entrance
-			_sceneScriptThread->threadVars[kVarActor] = 0; // TODO: VERB_ENTER
-
-			_vm->_script->SThreadExecute(_sceneScriptThread, _desc.sceneScriptNum);
 		}
 
 		debug(0, "Scene started");

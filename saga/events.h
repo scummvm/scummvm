@@ -52,7 +52,8 @@ enum R_EVENT_CODES {
 	R_TRANSITION_EVENT,
 	R_INTERFACE_EVENT,
 	R_CONSOLE_EVENT,
-	R_ACTOR_EVENT
+	R_ACTOR_EVENT,
+	R_SCRIPT_EVENT
 };
 
 enum R_EVENT_OPS {
@@ -79,6 +80,9 @@ enum R_EVENT_OPS {
 	EVENT_DEACTIVATE,
 	// ACTOR events
 	EVENT_MOVE = 1,
+	// SCRIPT events
+	EVENT_BLOCKING = 1,
+	EVENT_NONBLOCKING = 2,
 
 	// CONTINUOUS events
 	// PALETTE events
@@ -100,6 +104,9 @@ struct R_EVENT {
 	int op;            // Event operation
 	long param;        // Optional event parameter
 	long param2;
+	long param3;
+	long param4;
+	long param5;
 	void *data;        // Optional event data
 	long time;         // Elapsed time until event
 	long duration;     // Duration of event

@@ -261,6 +261,7 @@ int Events::handleImmediate(R_EVENT *event) {
 			break;
 		}
 		break;
+	case R_SCRIPT_EVENT:
 	case R_BG_EVENT:
 	case R_INTERFACE_EVENT:
 		handleOneShot(event);
@@ -280,6 +281,7 @@ int Events::handleImmediate(R_EVENT *event) {
 
 int Events::handleOneShot(R_EVENT *event) {
 	R_SURFACE *back_buf;
+	R_SCRIPT_THREAD *sthread;
 
 	static SCENE_BGINFO bginfo;
 
@@ -311,7 +313,9 @@ int Events::handleOneShot(R_EVENT *event) {
 		_vm->_sndRes->playVoice(event->param);
 		break;
 	case R_MUSIC_EVENT:
-		_vm->_music->play(event->param, event->param2);
+		_vm->_music->stop();
+		if (event->op == EVENT_PLAY)
+			_vm->_music->play(event->param, event->param2);
 		break;
 	case R_BG_EVENT:
 		{
@@ -383,6 +387,26 @@ int Events::handleOneShot(R_EVENT *event) {
 		default:
 			break;
 		}
+		break;
+	case R_SCRIPT_EVENT:
+		debug(0, "Starting start script #%d", event->param);
+
+		sthread = _vm->_script->SThreadCreate();
+		if (sthread == NULL) {
+			_vm->_console->print("Thread creation failed.");
+			break;
+		}
+
+		sthread->threadVars[kVarAction] = TO_LE_16(event->param2);
+		sthread->threadVars[kVarObject] = TO_LE_16(event->param3);
+		sthread->threadVars[kVarWithObject] = TO_LE_16(event->param4);
+		sthread->threadVars[kVarActor] = TO_LE_16(event->param5);
+
+		_vm->_script->SThreadExecute(sthread, event->param);
+
+		if (event->op == EVENT_BLOCKING)
+			_vm->_script->SThreadCompleteThread();
+
 		break;
 	default:
 		break;
