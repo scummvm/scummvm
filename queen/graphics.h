@@ -117,13 +117,13 @@ public:
 
 	void bobSetupControl();
 	void bobDraw(const BobSlot *bs, int16 x, int16 y);
-	void bobDrawInventoryItem(uint32 bobnum, uint16 x, uint16 y); // invbob()
-	void bobPaste(uint32 frameNum, int16 x, int16 y); // bobpaste()
+	void bobDrawInventoryItem(uint32 frameNum, uint16 x, uint16 y);
+	void bobPaste(uint16 objNum, uint16 image);
 	void bobShrink(const BobFrame *bf, uint16 percentage);
-	void bobClear(uint32 bobnum); // clearbob()
-	void bobSortAll(); // sortbobs()
-	void bobDrawAll(); // drawbobs()
-	void bobClearAll(); // clearallbobs()
+	void bobClear(uint32 bobNum);
+	void bobSortAll();
+	void bobDrawAll();
+	void bobClearAll();
 	void bobStopAll();
 	BobSlot *bob(int index);
 

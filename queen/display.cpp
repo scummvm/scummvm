@@ -29,93 +29,31 @@
 namespace Queen {
 
 
-void TextRenderer::init() {
-	// calculate font justification sizes
-	uint16 i, y, x;
-
-	for (i = 0; i < 256; ++i) {
-		_charWidth[i] = 0;
-		for (y = 0; y < 8; ++y) {
-			uint8 c = _font[i * 8 + y];
-			for (x = 0; x < 8; ++x) {
-				if ((c & (0x80 >> x)) && (x > _charWidth[i])) {
-					_charWidth[i] = x;
-				}
-			}
-		}
-		_charWidth[i] += 2;
-	}
-	_charWidth[(uint8)' '] = 4;
-	--_charWidth[(uint8)'^'];
-}
-
-
-void TextRenderer::drawString(uint8 *dstBuf, uint16 dstPitch, uint16 x, uint16 y, uint8 color, const char *text, bool outlined) {
-	const uint8 *str = (const uint8*)text;
-	while (*str && x < dstPitch) {
-
-		uint8 c = (_lang == FRENCH && *str == 0x96) ? 0xFB : *str;
-		const uint8 *pchr = _font + c * 8;
-
-		if (outlined) {
-			drawChar(dstBuf, dstPitch, x - 1, y - 1, INK_OUTLINED_TEXT, pchr);
-			drawChar(dstBuf, dstPitch, x    , y - 1, INK_OUTLINED_TEXT, pchr);
-			drawChar(dstBuf, dstPitch, x + 1, y - 1, INK_OUTLINED_TEXT, pchr);
-			drawChar(dstBuf, dstPitch, x + 1, y    , INK_OUTLINED_TEXT, pchr);
-			drawChar(dstBuf, dstPitch, x + 1, y + 1, INK_OUTLINED_TEXT, pchr);
-			drawChar(dstBuf, dstPitch, x    , y + 1, INK_OUTLINED_TEXT, pchr);
-			drawChar(dstBuf, dstPitch, x - 1, y + 1, INK_OUTLINED_TEXT, pchr);
-			drawChar(dstBuf, dstPitch, x - 1, y    , INK_OUTLINED_TEXT, pchr);
-		}
-		drawChar(dstBuf, dstPitch, x, y, color, pchr);
-
-		x += _charWidth[ c ];
-		++str;
-	}
-}
-
-
-void TextRenderer::drawChar(uint8 *dstBuf, uint16 dstPitch, uint16 x, uint16 y, uint8 color, const uint8 *chr) {
-	dstBuf += dstPitch * y + x;
-	uint16 j, i;
-	for (j = 0; j < 8; ++j) {
-		uint8 *p = dstBuf;
-		uint8 c = *chr++;
-		if (c != 0) {
-			for (i = 0; i < 8; ++i) {
-				if(c & 0x80) {
-					*p = color;
-				}
-				++p;
-				c <<= 1;
-			}
-		}
-		dstBuf += dstPitch;
-	}
-}
-
-
-
-Display::Display(QueenEngine *vm, Language language, OSystem *system)
-	: _horizontalScroll(0), _curBlankingEffect(0), _system(system), _vm(vm) {
+Display::Display(QueenEngine *vm, OSystem *system)
+	: _horizontalScroll(0), _system(system), _vm(vm) {
 	_dynalum.prevColMask = 0xFF;
-	_textRenderer._lang = language;
-	_textRenderer.init();
 
-	_buffer[RB_BACKDROP] = new uint8[BACKDROP_W * BACKDROP_H];
-	_buffer[RB_PANEL]    = new uint8[PANEL_W * PANEL_H];
-	_buffer[RB_SCREEN]   = new uint8[SCREEN_W * SCREEN_H];
-	memset(_buffer[RB_BACKDROP], 0, BACKDROP_W * BACKDROP_H);
-	memset(_buffer[RB_PANEL],    0, PANEL_W * PANEL_H);
-	memset(_buffer[RB_SCREEN],   0, SCREEN_W * SCREEN_H);
-	_bufPitch[RB_BACKDROP] = BACKDROP_W;
-	_bufPitch[RB_PANEL]    = PANEL_W;
-	_bufPitch[RB_SCREEN]   = SCREEN_W;
+	initFont();
+
+	_screenBuf   = new uint8[SCREEN_W * SCREEN_H];
+	_panelBuf    = new uint8[PANEL_W * PANEL_H];
+	_backdropBuf = new uint8[BACKDROP_W * BACKDROP_H];
+	memset(_screenBuf,   0, SCREEN_W * SCREEN_H);
+	memset(_panelBuf,    0, PANEL_W * PANEL_H);
+	memset(_backdropBuf, 0, BACKDROP_W * BACKDROP_H);
+
+	_fullRefresh = true;
+	_dirtyBlocksWidth  = SCREEN_W / D_BLOCK_W;
+	_dirtyBlocksHeight = SCREEN_H / D_BLOCK_H;
+	_dirtyBlocks = new uint8[_dirtyBlocksWidth * _dirtyBlocksHeight];
+	memset(_dirtyBlocks, 0, _dirtyBlocksWidth * _dirtyBlocksHeight);
 
 	_pal.room   = new uint8[ 256 * 3 ];
 	_pal.screen = new uint8[ 256 * 3 ];
+	_pal.panel  = new uint8[ 112 * 3 ];
 	memset(_pal.room,   0, 256 * 3);
 	memset(_pal.screen, 0, 256 * 3);
+	memset(_pal.panel,  0, 112 * 3);
 	_pal.dirtyMin = 0;
 	_pal.dirtyMax = 255;
 	_pal.scrollable = true;
@@ -123,12 +61,13 @@ Display::Display(QueenEngine *vm, Language language, OSystem *system)
 
 
 Display::~Display() {
-	delete[] _buffer[RB_BACKDROP];
-	delete[] _buffer[RB_PANEL];
-	delete[] _buffer[RB_SCREEN];
+	delete[] _backdropBuf;
+	delete[] _panelBuf;
+	delete[] _screenBuf;
 
 	delete[] _pal.room;
 	delete[] _pal.screen;
+	delete[] _pal.panel;
 }
 
 
@@ -222,20 +161,22 @@ void Display::palSet(const uint8 *pal, int start, int end, bool updateScreen) {
 }
 
 
-void Display::palSetJoe(JoePalette pal) {
-	debug(9, "Display::palSetJoe(%d)", pal);
-	const uint8 *palJoe = NULL;
-	switch (pal) {
-	case JP_CLOTHES:
-		palJoe = _palJoeClothes;
-		break;
-	case JP_DRESS:
-		palJoe = _palJoeDress;
-		break;
-	}
-	memcpy(_pal.room + 144 * 3, palJoe, 16 * 3);
-	memcpy(_pal.screen + 144 * 3, palJoe, 16 * 3); 
+void Display::palSetJoeDress() {
+	memcpy(_pal.room + 144 * 3, _palJoeDress, 16 * 3);
+	memcpy(_pal.screen + 144 * 3, _palJoeDress, 16 * 3); 
 	palSet(_pal.screen, 144, 159, true);
+}
+
+
+void Display::palSetJoeNormal() {
+	memcpy(_pal.room + 144 * 3, _palJoeClothes, 16 * 3);
+	memcpy(_pal.screen + 144 * 3, _palJoeClothes, 16 * 3); 
+	palSet(_pal.screen, 144, 159, true);
+}
+
+
+void Display::palSetPanel() {
+	warning("Display::palSetPanel()");
 }
 
 
@@ -633,21 +574,16 @@ void Display::screenMode(int comPanel, bool inCutaway) {
 
 
 void Display::prepareUpdate() {
-	if (!_fullscreen) {
-		// draw the panel
-		memcpy(_buffer[RB_SCREEN] + _bufPitch[RB_SCREEN] * ROOM_ZONE_HEIGHT, 
-			_buffer[RB_PANEL], PANEL_W * PANEL_H);
-	}
-
-	// draw the backdrop bitmap
+	if (!_fullscreen)
+		memcpy(_screenBuf + SCREEN_W * ROOM_ZONE_HEIGHT, _panelBuf, PANEL_W * PANEL_H);
 	int i;
 	int n = _fullscreen ? 200 : 150;
-	uint8 *dst = _buffer[RB_SCREEN];
-	uint8 *src = _buffer[RB_BACKDROP] + _horizontalScroll;
+	uint8 *dst = _screenBuf;
+	uint8 *src = _backdropBuf + _horizontalScroll;
 	for (i = 0; i < n; ++i) {
-		memcpy(dst, src, _bufPitch[RB_SCREEN]);
-		dst += _bufPitch[RB_SCREEN];
-		src += _bufPitch[RB_BACKDROP];
+		memcpy(dst, src, SCREEN_W);
+		dst += SCREEN_W;
+		src += BACKDROP_W;
 	}
 }
 
@@ -661,24 +597,78 @@ void Display::update(bool dynalum, int16 dynaX, int16 dynaY) {
 		_pal.dirtyMin = 144;
 		_pal.dirtyMax = 144;
 	}
-	drawScreen();
+//	_fullRefresh = true;
+	if (_fullRefresh) {
+		_system->copy_rect(_screenBuf, SCREEN_W, 0, 0, SCREEN_W, SCREEN_H);
+		_fullRefresh = false;
+		debug(7, "Display::update() - Full blit");
+	} else {
+		uint16 count = 0;
+		uint8 *scrBuf = _screenBuf;
+		uint8 *dbBuf = _dirtyBlocks;
+		uint16 i, j, x;
+		for (j = 0; j < _dirtyBlocksHeight; ++j) {
+			uint16 accW = 0;
+			for (i = 0; i < _dirtyBlocksWidth; ++i) {
+				if (dbBuf[i] != 0) {
+					--dbBuf[i];
+					++accW;
+				} else if (accW != 0) {
+					x = (i - accW) * D_BLOCK_W;
+					_system->copy_rect(scrBuf + x, SCREEN_W, x, j * D_BLOCK_H, accW * D_BLOCK_W, D_BLOCK_H);
+					accW = 0;
+					++count;
+				}
+			}
+			if (accW != 0) {
+				x = (_dirtyBlocksWidth - accW) * D_BLOCK_W;
+				_system->copy_rect(scrBuf + x, SCREEN_W, x, j * D_BLOCK_H, accW * D_BLOCK_W, D_BLOCK_H);
+				++count;
+			}
+			dbBuf += _dirtyBlocksWidth;
+			scrBuf += SCREEN_W * D_BLOCK_H;
+		}
+		debug(7, "Display::update() - Dirtyblocks blit (%d)", count);
+	}
+	_system->update_screen();
+	waitForTimer();
 }
 
 
-void Display::blit(RenderingBuffer dst, uint16 dstX, uint16 dstY, const uint8 *srcBuf, uint16 srcW, uint16 srcH, uint16 srcPitch, bool xflip, bool masked) {
-	uint16 dstPitch = _bufPitch[dst];
-	uint8 *dstBuf = _buffer[dst] + dstPitch * dstY + dstX;
+void Display::drawBobSprite(const uint8 *data, uint16 x, uint16 y, uint16 w, uint16 h, uint16 pitch, bool xflip) {
+	blit(_screenBuf, SCREEN_W, x, y, data, pitch, w, h, xflip, true);
+	setDirtyBlock(xflip ? (x - w + 1) : x, y, w, h);
+}
 
+
+void Display::drawBobPasteDown(const uint8 *data, uint16 x, uint16 y, uint16 w, uint16 h) {
+	blit(_backdropBuf, BACKDROP_W, x, y, data, w, w, h, false, true);
+}
+
+
+void Display::drawInventoryItem(const uint8 *data, uint16 x, uint16 y, uint16 w, uint16 h) {
+	if (data != NULL) {
+		blit(_panelBuf, PANEL_W, x, y, data, w, w, h, false, false);
+	} else {
+		fill(_panelBuf, PANEL_W, x, y, w, h, INK_BG_PANEL);
+	}
+	setDirtyBlock(x, 150 + y, w, h);
+}
+
+
+void Display::blit(uint8 *dstBuf, uint16 dstPitch, uint16 x, uint16 y, const uint8 *srcBuf, uint16 srcPitch, uint16 w, uint16 h, bool xflip, bool masked) {
+	assert(w <= dstPitch);
+	dstBuf += dstPitch * y + x;
 	if (!masked) { // Unmasked always unflipped
-		while (srcH--) {
-			memcpy(dstBuf, srcBuf, srcW);
+		while (h--) {
+			memcpy(dstBuf, srcBuf, w);
 			srcBuf += srcPitch;
 			dstBuf += dstPitch;
 		}
 	} else if (!xflip) { // Masked bitmap unflipped
-		while (srcH--) {
+		while (h--) {
 			int i;
-			for(i = 0; i < srcW; ++i) {
+			for(i = 0; i < w; ++i) {
 				uint8 b = *(srcBuf + i);
 				if(b != 0) {
 					*(dstBuf + i) = b;
@@ -688,25 +678,24 @@ void Display::blit(RenderingBuffer dst, uint16 dstX, uint16 dstY, const uint8 *s
 			dstBuf += dstPitch;
 		}
 	} else { // Masked bitmap flipped
-		while (srcH--) {
+		while (h--) {
 			int i;
-			for(i = 0; i < srcW; ++i) {
+			for(i = 0; i < w; ++i) {
 				uint8 b = *(srcBuf + i);
 				if(b != 0) {
 					*(dstBuf - i) = b;
 				}
 			}
 			srcBuf += srcPitch;
-			dstBuf += dstPitch;   
+			dstBuf += dstPitch;
 		}
 	}
 }
 
 
-void Display::fill(RenderingBuffer dst, uint16 x, uint16 y, uint16 w, uint16 h, uint8 color) {
-	assert(w <= _bufPitch[dst]);
-	uint16 dstPitch = _bufPitch[dst];
-	uint8 *dstBuf = _buffer[dst] + dstPitch * y + x;
+void Display::fill(uint8 *dstBuf, uint16 dstPitch, uint16 x, uint16 y, uint16 w, uint16 h, uint8 color) {
+	assert(w <= dstPitch);
+	dstBuf += dstPitch * y + x;
 	while (h--) {
 		memset(dstBuf, color, w);
 		dstBuf += dstPitch;
@@ -735,26 +724,53 @@ void Display::readPCX(uint8 *dst, uint16 dstPitch, const uint8 *src, uint16 w, u
 void Display::readPCXBackdrop(const uint8 *pcxBuf, uint32 size, bool useFullPal) {
 	_bdWidth  = READ_LE_UINT16(pcxBuf + 12);
 	_bdHeight = READ_LE_UINT16(pcxBuf + 14);
-	readPCX(_buffer[RB_BACKDROP], _bufPitch[RB_BACKDROP], pcxBuf + 128, _bdWidth, _bdHeight);
+	readPCX(_backdropBuf, BACKDROP_W, pcxBuf + 128, _bdWidth, _bdHeight);
 	memcpy(_pal.room, pcxBuf + size - 768, useFullPal ? 256 * 3 : 144 * 3);
 }
 
 
 void Display::readPCXPanel(const uint8 *pcxBuf, uint32 size) {
-	uint8 *dst = _buffer[RB_PANEL] + PANEL_W * 10;
+	uint8 *dst = _panelBuf + PANEL_W * 10;
 	readPCX(dst, PANEL_W, pcxBuf + 128, PANEL_W, PANEL_H - 10);
-	memcpy(_pal.room + 144 * 3, pcxBuf + size - 768 + 144 * 3, (256 - 144) * 3);
+	const uint8 *pal = pcxBuf + size - 768 + 144 * 3;
+	memcpy(_pal.room + 144 * 3, pal, (256 - 144) * 3);
+	memcpy(_pal.panel, pal, (256 - 144) * 3);
 }
 
 
 void Display::horizontalScrollUpdate(int16 xCamera) {
 	debug(9, "Display::horizontalScrollUpdate(%d)", xCamera);
+	int16 hs = _horizontalScroll;
 	_horizontalScroll = 0;
 	if (_bdWidth > 320) {
 		if (xCamera > 160 && xCamera < 480) {
 			_horizontalScroll = xCamera - 160;
 		} else if (xCamera >= 480) {
 			_horizontalScroll = 320;
+		}
+	}
+	if (hs != _horizontalScroll) {
+		_fullRefresh = true;
+	}
+}
+
+
+void Display::setDirtyBlock(uint16 x, uint16 y, uint16 w, uint16 h) {
+	if (!_fullRefresh) {
+		uint16 ex = (x + w - 1) / D_BLOCK_W;
+		uint16 ey = (y + h - 1) / D_BLOCK_H;
+		x /= D_BLOCK_W;
+		y /= D_BLOCK_H;
+		uint16 cy = ey - y + 1;
+		uint16 cx = ex - x + 1;
+		if (cy >= _dirtyBlocksHeight) cy = _dirtyBlocksHeight - 1;
+		if (cx >= _dirtyBlocksWidth)  cx = _dirtyBlocksWidth  - 1;
+		uint8 *p = _dirtyBlocks + _dirtyBlocksWidth * y + x;
+		while (cy--) {
+			for (uint16 i = 0; i < cx; ++i) {
+				p[i] = 2;
+			}
+			p += _dirtyBlocksWidth;
 		}
 	}
 }
@@ -774,7 +790,7 @@ void Display::waitForTimer() {
 
 
 void Display::setMouseCursor(uint8 *buf, uint16 w, uint16 h, uint16 xhs, uint16 yhs) {
-	// change transparency color match the one expected by the backend (0xFF)
+	// change transparency color to match the one expected by the backend (0xFF)
 	uint16 size = w * h;
 	uint8 *p = buf;
 	while (size--) {
@@ -794,53 +810,106 @@ void Display::showMouseCursor(bool show) {
 }
 
 
+void Display::initFont() {
+	// calculate font justification sizes
+	uint16 i, y, x;
+
+	for (i = 0; i < 256; ++i) {
+		_charWidth[i] = 0;
+		for (y = 0; y < 8; ++y) {
+			uint8 c = _font[i * 8 + y];
+			for (x = 0; x < 8; ++x) {
+				if ((c & (0x80 >> x)) && (x > _charWidth[i])) {
+					_charWidth[i] = x;
+				}
+			}
+		}
+		_charWidth[i] += 2;
+	}
+	_charWidth[(uint8)' '] = 4;
+	--_charWidth[(uint8)'^'];
+}
+
+
 uint16 Display::textWidth(const char *text) const {
 	uint16 len = 0;
 	while (*text) {
-		len += _textRenderer._charWidth[ (uint8)*text ];
+		len += _charWidth[ (uint8)*text ];
 		++text;
 	}
 	return len;
 }
 
 
+void Display::drawChar(uint16 x, uint16 y, uint8 color, const uint8 *chr) {
+	uint8 *dstBuf = _screenBuf + SCREEN_W * y + x;
+	uint16 j, i;
+	for (j = 0; j < 8; ++j) {
+		uint8 *p = dstBuf;
+		uint8 c = *chr++;
+		if (c != 0) {
+			for (i = 0; i < 8; ++i) {
+				if(c & 0x80) {
+					*p = color;
+				}
+				++p;
+				c <<= 1;
+			}
+		}
+		dstBuf += SCREEN_W;
+	}
+}
+
+
 void Display::drawText(uint16 x, uint16 y, uint8 color, const char *text, bool outlined) {
-	debug(9, "Display::drawText(%s)", text);
-	_textRenderer.drawString(_buffer[RB_SCREEN], _bufPitch[RB_SCREEN], x, y, color, text, outlined);
+	const uint8 *str = (const uint8*)text;
+	uint16 xs = x;
+	while (*str && x < SCREEN_W) {
+
+		uint8 c = (_vm->resource()->getLanguage() == FRENCH && *str == 0x96) ? 0xFB : *str;
+		const uint8 *pchr = _font + c * 8;
+
+		if (outlined) {
+			drawChar(x - 1, y - 1, INK_OUTLINED_TEXT, pchr);
+			drawChar(x    , y - 1, INK_OUTLINED_TEXT, pchr);
+			drawChar(x + 1, y - 1, INK_OUTLINED_TEXT, pchr);
+			drawChar(x + 1, y    , INK_OUTLINED_TEXT, pchr);
+			drawChar(x + 1, y + 1, INK_OUTLINED_TEXT, pchr);
+			drawChar(x    , y + 1, INK_OUTLINED_TEXT, pchr);
+			drawChar(x - 1, y + 1, INK_OUTLINED_TEXT, pchr);
+			drawChar(x - 1, y    , INK_OUTLINED_TEXT, pchr);
+		}
+		drawChar(x, y, color, pchr);
+
+		x += _charWidth[ c ];
+		++str;
+	}
+	setDirtyBlock(xs - 1, y - 1, x - xs + 2, 8 + 2);
 }
 
 
 void Display::drawBox(int16 x1, int16 y1, int16 x2, int16 y2, uint8 col) {
-	uint8 *p = _buffer[RB_SCREEN];
-	uint16 pitch = _bufPitch[RB_SCREEN];
-
+	uint8 *p = _screenBuf;
 	int i;
 	for (i = y1; i <= y2; ++i) {
-		*(p + i * pitch + x1) = *(p + i * pitch + x2) = col;
+		*(p + i * SCREEN_W + x1) = *(p + i * SCREEN_W + x2) = col;
 	}
 	for (i = x1; i <= x2; ++i) {
-		*(p + y1 * pitch + i) = *(p + y2 * pitch + i) = col;
+		*(p + y1 * SCREEN_W + i) = *(p + y2 * SCREEN_W + i) = col;
 	}
 }
-
-
-void Display::drawScreen() {
-	_system->copy_rect(_buffer[RB_SCREEN], _bufPitch[RB_SCREEN], 0, 0, SCREEN_W, SCREEN_H);
-	_system->update_screen();
-	waitForTimer();
-}
-
 
 
 void Display::blankScreen() {
+	static int current = 0;
 	typedef void (Display::*BlankerEffect)();
 	static const BlankerEffect effects[] = {
 		&Display::blankScreenEffect1,
 		&Display::blankScreenEffect2,
 		&Display::blankScreenEffect3
 	};
-	(this->*effects[_curBlankingEffect])();
-	_curBlankingEffect = (_curBlankingEffect + 1) % ARRAYSIZE(effects);
+	(this->*effects[current])();
+	current = (current + 1) % ARRAYSIZE(effects);
 }
 
 
@@ -850,12 +919,12 @@ void Display::blankScreenEffect1() {
 		for(int i = 0; i < 2; ++i) {    
 			uint16 x = _vm->randomizer.getRandomNumber(SCREEN_W - 32 - 2) + 1;
 			uint16 y = _vm->randomizer.getRandomNumber(SCREEN_H - 32 - 2) + 1;
-			uint8 *p = _buffer[RB_SCREEN] + _bufPitch[RB_SCREEN] * y + x;
+			uint8 *p = _screenBuf + SCREEN_W * y + x;
 			uint8 *q = buf;
 			uint16 h = 32;
 			while (h--) {
 				memcpy(q, p, 32);
-				p += _bufPitch[RB_SCREEN];
+				p += SCREEN_W;
 				q += 32;
 			}
 			if (_vm->randomizer.getRandomNumber(1)) {
@@ -880,7 +949,7 @@ void Display::blankScreenEffect2() {
 	while (_vm->input()->idleTime() >= Input::DELAY_SCREEN_BLANKER) {
 		uint16 x = _vm->randomizer.getRandomNumber(SCREEN_W - 2);
 		uint16 y = _vm->randomizer.getRandomNumber(SCREEN_H - 2);
-		uint8 *p = _buffer[RB_SCREEN] + y * _bufPitch[RB_SCREEN] + x;
+		uint8 *p = _screenBuf + y * SCREEN_W + x;
 		uint8 c = 0;
 		switch (_vm->randomizer.getRandomNumber(3)) {
 		case 0:
@@ -890,10 +959,10 @@ void Display::blankScreenEffect2() {
 			c = *(p + 1);
 			break;
 		case 2:
-			c = *(p + _bufPitch[RB_SCREEN]);
+			c = *(p + SCREEN_W);
 			break;
 		case 3:
-			c = *(p + _bufPitch[RB_SCREEN] + 1);
+			c = *(p + SCREEN_W + 1);
 			break;
 		default:
 			break;
@@ -902,9 +971,9 @@ void Display::blankScreenEffect2() {
 		int j = 2;
 		while (j--) {
 			memset(p, c, 2);
-			p += _bufPitch[RB_SCREEN];
+			p += SCREEN_W;
 		}
-		_system->copy_rect(buf, _bufPitch[RB_SCREEN], x, y, 2, 2);
+		_system->copy_rect(buf, SCREEN_W, x, y, 2, 2);
 		_system->update_screen();
 		waitForTimer();		
 	}
@@ -915,25 +984,25 @@ void Display::blankScreenEffect3() {
 	uint32 i = 0;
 	while (_vm->input()->idleTime() >= Input::DELAY_SCREEN_BLANKER) {
 		if (i > 4000000) {
-			memset(_buffer[RB_SCREEN], 0, SCREEN_W * SCREEN_H);
-			_system->copy_rect(_buffer[RB_SCREEN], _bufPitch[RB_SCREEN], 0, 0, SCREEN_W, SCREEN_H);			
+			memset(_screenBuf, 0, SCREEN_W * SCREEN_H);
+			_system->copy_rect(_screenBuf, SCREEN_W, 0, 0, SCREEN_W, SCREEN_H);			
 		} else {
 			uint16 x = _vm->randomizer.getRandomNumber(SCREEN_W - 2);
 			uint16 y = _vm->randomizer.getRandomNumber(SCREEN_H - 2);
-			uint8 *p = _buffer[RB_SCREEN] + _bufPitch[RB_SCREEN] * y + x;
+			uint8 *p = _screenBuf + SCREEN_W * y + x;
 			uint8 p0 = *p;
 			uint8 p1 = *(p + 1);
-			uint8 p2 = *(p + _bufPitch[RB_SCREEN]);
-			uint8 p3 = *(p + _bufPitch[RB_SCREEN] + 1);
+			uint8 p2 = *(p + SCREEN_W);
+			uint8 p3 = *(p + SCREEN_W + 1);
 			uint8 c = (p0 + p1 + p2 + p3) / 4;
 			uint8 *buf = p;
 			int j = 2;
 			while (j--) {
 				memset(p, c, 2);
-				p += _bufPitch[RB_SCREEN];
+				p += SCREEN_W;
 			}
 			++i;
-			_system->copy_rect(buf, _bufPitch[RB_SCREEN], x, y, 2, 2);
+			_system->copy_rect(buf, SCREEN_W, x, y, 2, 2);
 		}
 		_system->update_screen();
 		waitForTimer();
@@ -941,7 +1010,7 @@ void Display::blankScreenEffect3() {
 }
 
 
-const uint8 TextRenderer::_font[] = {
+const uint8 Display::_font[] = {
 	0xF8, 0xB0, 0xB0, 0x80, 0xB0, 0xB0, 0xC0, 0x00, 0xF8, 0xB0, 
 	0xB0, 0x80, 0xB0, 0xB0, 0xC0, 0x00, 0xF8, 0xB0, 0xB0, 0x80, 
 	0xB0, 0xB0, 0xC0, 0x00, 0xF8, 0xB0, 0xB0, 0x80, 0xB0, 0xB0, 

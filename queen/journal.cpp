@@ -82,7 +82,7 @@ void Journal::use() {
 				break;
 			}
 		}
-		g_system->delay_msecs(20);
+		system->delay_msecs(20);
 	}
 
 	_vm->logic()->writeOptionSettings();
@@ -103,6 +103,7 @@ void Journal::prepare() {
 	_vm->graphics()->bobClearAll();
 	_vm->graphics()->textClear(0, GAME_SCREEN_HEIGHT - 1);
 	_vm->graphics()->frameEraseAll(false);
+	_vm->graphics()->textCurrentColor(INK_JOURNAL);
 
 	int i;
 	_vm->logic()->zoneClearAll(ZONE_ROOM);
@@ -134,13 +135,12 @@ void Journal::prepare() {
 		}
 	}
 	_vm->graphics()->bankErase(JOURNAL_BANK);
-
-	_vm->graphics()->textCurrentColor(INK_JOURNAL);
 }
 
 
 void Journal::restore() {
 	_vm->display()->fullscreen(false);
+	_vm->display()->forceFullRefresh();
 
 	_vm->logic()->joePos(_prevJoeX, _prevJoeY);
 	_vm->logic()->joeCutFacing(_vm->logic()->joeFacing());
@@ -153,8 +153,8 @@ void Journal::restore() {
 void Journal::redraw() {
 	drawNormalPanel();
 	drawConfigPanel();
-	drawSaveSlot();
 	drawSaveDescriptions();
+	drawSaveSlot();
 }
 
 
@@ -165,6 +165,7 @@ void Journal::update() {
 		int16 y = 9 + _currentSaveSlot * 13 + 8;
 		_vm->display()->drawBox(x, y, x + 6, y, INK_JOURNAL);
 	}
+	_vm->display()->forceFullRefresh();
 	_vm->display()->update();
 }
 

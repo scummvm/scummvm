@@ -726,14 +726,8 @@ void Logic::roomSetupFurniture() {
 	// unpack the paste downs
 	++curImage;
 	for  (i = 1; i <= furnitureTotal; ++i) {
-		int16 obj = gstate[i];
-		if (obj > 5000) {
-			obj -= 5000;
-			GraphicData *pgd = &_graphicData[obj];
-			_vm->graphics()->bankUnpack(pgd->firstFrame, curImage, 15);
-			_vm->graphics()->bobPaste(curImage, pgd->x, pgd->y);
-			// no need to increment curImage here, as bobPaste() destroys the 
-			// unpacked frame after blitting it
+		if (gstate[i] > 5000) {;
+			_vm->graphics()->bobPaste(gstate[i] - 5000, curImage);
 		}
 	}
 }
@@ -843,14 +837,8 @@ void Logic::roomSetupObjects() {
 	_numFrames = curImage;
 	for (i = firstRoomObj; i <= lastRoomObj; ++i) {
 		ObjectData *pod = &_objectData[i];
-		if (pod->name > 0) {
-			int16 obj = pod->image;
-			if (obj > 5000) {
-				obj -= 5000;
-				GraphicData *pgd = &_graphicData[obj];
-				_vm->graphics()->bankUnpack(pgd->firstFrame, curImage, 15);
-				_vm->graphics()->bobPaste(curImage, pgd->x, pgd->y);
-			}
+		if (pod->name > 0 && pod->image > 5000) {
+			_vm->graphics()->bobPaste(pod->image - 5000, curImage);
 		}
 	}
 }
@@ -980,6 +968,8 @@ void Logic::roomSetup(const char *room, int comPanel, bool inCutaway) {
 	_numFrames = 37 + FRAMES_JOE_XTRA;
 	roomSetupFurniture();
 	roomSetupObjects();
+
+	_vm->display()->forceFullRefresh();
 }
 
 
@@ -1549,7 +1539,7 @@ void Logic::joeUseDress(bool showCut) {
 			playCutaway("cudrs.CUT");
 		}
 	}
-	_vm->display()->palSetJoe(JP_DRESS);
+	_vm->display()->palSetJoeDress();
 	joeSetupFromBanks("JoeD_A.BBK", "JoeD_B.BBK");
 	inventoryDeleteItem(ITEM_DRESS);
 	gameState(VAR_DRESSING_MODE, 2);
@@ -1563,7 +1553,7 @@ void Logic::joeUseClothes(bool showCut) {
 		playCutaway("cdclo.CUT");
 		inventoryInsertItem(ITEM_DRESS);
 	}
-	_vm->display()->palSetJoe(JP_CLOTHES);
+	_vm->display()->palSetJoeNormal();
 	joeSetupFromBanks("Joe_A.BBK", "Joe_B.BBK");
 	inventoryDeleteItem(ITEM_CLOTHES);
 	gameState(VAR_DRESSING_MODE, 0);
@@ -1571,7 +1561,7 @@ void Logic::joeUseClothes(bool showCut) {
 
 
 void Logic::joeUseUnderwear() {
-	_vm->display()->palSetJoe(JP_CLOTHES);
+	_vm->display()->palSetJoeNormal();
 	joeSetupFromBanks("JoeU_A.BBK", "JoeU_B.BBK");
 	gameState(VAR_DRESSING_MODE, 1);
 }
@@ -2580,12 +2570,12 @@ void Logic::asmMakeJoeUseUnderwear() {
 
 
 void Logic::asmSwitchToDressPalette() {
-	_vm->display()->palSetJoe(JP_DRESS);
+	_vm->display()->palSetJoeDress();
 }
 
 
 void Logic::asmSwitchToNormalPalette() {
-	_vm->display()->palSetJoe(JP_CLOTHES);
+	_vm->display()->palSetJoeNormal();
 }
 
 

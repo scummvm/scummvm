@@ -159,7 +159,7 @@ void QueenEngine::initialise(void) {
 	_resource = new Resource(_gameDataPath, _system->get_savefile_manager(), getSavePath());
 	_command = new Command(this);
 	_debugger = new Debugger(this);
-	_display = new Display(this, _resource->getLanguage(), _system);
+	_display = new Display(this, _system);
 	_graphics = new Graphics(this);
 	_input = new Input(_resource->getLanguage(), _system);
 	_logic = new Logic(this);

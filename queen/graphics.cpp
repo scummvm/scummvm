@@ -339,26 +339,27 @@ void Graphics::bobDraw(const BobSlot *bs, int16 x, int16 y) {
 			src += w - w_new - x_skip;
 			x += w_new - 1;
 		}
-		_vm->display()->blit(RB_SCREEN, x, y, src, w_new, h_new, w, bs->xflip, true);
+		_vm->display()->drawBobSprite(src, x, y, w_new, h_new, w, bs->xflip);
 	}
 }
 
 
-void Graphics::bobDrawInventoryItem(uint32 bobnum, uint16 x, uint16 y) {
-	if (bobnum == 0) {
-		// clear panel area
-		_vm->display()->fill(RB_PANEL, x, y, 32, 32, INK_BG_PANEL);
+void Graphics::bobDrawInventoryItem(uint32 frameNum, uint16 x, uint16 y) {
+	if (frameNum != 0) {
+		BobFrame *bf = frame(frameNum);
+		_vm->display()->drawInventoryItem(bf->data, x, y, bf->width, bf->height);
 	} else {
-		BobFrame *pbf = &_frames[bobnum];
-		_vm->display()->blit(RB_PANEL, x, y, pbf->data, pbf->width, pbf->height, pbf->width, false, false);
+		_vm->display()->drawInventoryItem(NULL, x, y, 32, 32);
 	}
 }
 
 
-void Graphics::bobPaste(uint32 frameNum, int16 x, int16 y) {
-	BobFrame *pbf = &_frames[frameNum];
-	_vm->display()->blit(RB_BACKDROP, x, y, pbf->data, pbf->width, pbf->height, pbf->width, false, true);
-	frameErase(frameNum);
+void Graphics::bobPaste(uint16 objNum, uint16 image) {
+	GraphicData *pgd = _vm->logic()->graphicData(objNum);
+	_vm->graphics()->bankUnpack(pgd->firstFrame, image, 15);
+	BobFrame *bf = frame(image);
+	_vm->display()->drawBobPasteDown(bf->data, pgd->x, pgd->y, bf->width, bf->height);
+	frameErase(image);
 }
 
 
@@ -407,8 +408,8 @@ void Graphics::bobShrink(const BobFrame *bf, uint16 percentage) {
 }
 
 
-void Graphics::bobClear(uint32 bobnum) {
-	BobSlot *pbs = &_bobs[bobnum];
+void Graphics::bobClear(uint32 bobNum) {
+	BobSlot *pbs = bob(bobNum);
 	pbs->clear();
 	if (_vm->display()->fullscreen()) {
 		pbs->box.y2 = GAME_SCREEN_HEIGHT - 1;

@@ -296,21 +296,21 @@ tseek() 					*not needed*
 SCREEN
 ======
 calc_screen_scroll()		Display::horizontalScrollUpdate
-changejoepal()				Display::palSetJoe
+changejoepal()				Display::palSetJoe*
 check_colors()				Display::palCustomColors
 check_pal_scroll			Display::palCustomScroll
 clearpanel()				Display::prepareUpdate
 drawbackdrop()				Display::prepareUpdate
 drawpanel()					Display::prepareUpdate
 drawscreen()				Display::update
-dynalum()					Dynalum::update
+dynalum()					Display::dynalumUpdate
 fade_panel()				Display::palFadePanel
 fadein()					Display::palFadeIn
 fadeout()					Display::palFadeOut
 flashspecial()				Display::palCustomFlash
-loadfont()					TextRenderer::init
+loadfont()					Display::initFont
 palscroll()					Display::palScroll
-putcharacter()				TextRenderer::drawChar
+putcharacter()				Display::drawChar
 setpal()					Display::palSet
 -
 BDxres						Display::_bdWidth
@@ -318,8 +318,8 @@ BDyres						Display::_bdHeight
 clothespal					Display::_palJoeClothes
 COMPANEL					*not needed* (argument)
 dresspal					Display::_palJoeDress
-font						TextRenderer::_font
-font_sizes					TextRenderer::_charWidth
+font						Display::_font
+font_sizes					Display::_charWidth
 FULLSCREEN					Display::_fullscreen
 nopalscroll					Display::_pal.scrollable
 palette						Display::_pal.room

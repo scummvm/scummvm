@@ -27,44 +27,12 @@
 
 namespace Queen {
 
-
-enum RenderingBuffer {
-	RB_BACKDROP = 0,
-	RB_PANEL    = 1,
-	RB_SCREEN   = 2,
-	RB_MINI     = 3
-};
-
-enum JoePalette {
-	JP_CLOTHES = 0,
-	JP_DRESS   = 1
-};
-
-
-struct Dynalum {
-	bool valid;
-	uint8 msk[50 * 160];
-	int8 lum[8 * 3];
-	uint8 prevColMask;
-};
-
-
-struct TextRenderer {
-	void init();
-	void drawString(uint8 *dstBuf, uint16 dstPitch, uint16 x, uint16 y, uint8 color, const char *text, bool outlined = true);
-	void drawChar(uint8 *dstBuf, uint16 dstPitch, uint16 x, uint16 y, uint8 color, const uint8 *chr);
-
-	Language _lang;
-	uint8 _charWidth[256];
-	static const uint8 _font[];
-};
-
 class QueenEngine;
 
 class Display {
 public:
 
-	Display(QueenEngine *vm, Language language, OSystem *system);
+	Display(QueenEngine *vm, OSystem *system);
 	~Display();
 
 	void dynalumInit(const char *roomName, uint16 roomNum);
@@ -72,7 +40,9 @@ public:
 
 	void palConvert(uint8 *outPal, const uint8 *inPal, int start, int end);
 	void palSet(const uint8 *pal, int start, int end, bool updateScreen = false);
-	void palSetJoe(JoePalette pal);
+	void palSetJoeDress();
+	void palSetJoeNormal();
+	void palSetPanel();
 	void palFadeIn(int start, int end, uint16 roomNum, bool dynalum = false, int16 dynaX = 0, int16 dynaY = 0);
 	void palFadeOut(int start, int end, uint16 roomNum);
 	void palFadePanel();
@@ -89,19 +59,26 @@ public:
 	void prepareUpdate();
 	void update(bool dynalum = false, int16 dynaX = 0, int16 dynaY = 0);
 
-	void blit(RenderingBuffer dstBuf, uint16 dstX, uint16 dstY, const uint8 *srcBuf, uint16 srcW, uint16 srcH, uint16 srcPitch, bool xflip, bool masked);
-	void fill(RenderingBuffer dstBuf, uint16 x, uint16 y, uint16 w, uint16 h, uint8 color);
+	void drawBobSprite(const uint8 *data, uint16 x, uint16 y, uint16 w, uint16 h, uint16 pitch, bool xflip);
+	void drawBobPasteDown(const uint8 *data, uint16 x, uint16 y, uint16 w, uint16 h);
+	void drawInventoryItem(const uint8 *data, uint16 x, uint16 y, uint16 w, uint16 h);
+
+	void blit(uint8 *dstBuf, uint16 dstPitch, uint16 x, uint16 y, const uint8 *srcBuf, uint16 srcPitch, uint16 w, uint16 h, bool xflip, bool masked);
+	void fill(uint8 *dstBuf, uint16 dstPitch, uint16 x, uint16 y, uint16 w, uint16 h, uint8 color);
 
 	void readPCX(uint8 *dst, uint16 dstPitch, const uint8 *src, uint16 w, uint16 h);
 	void readPCXBackdrop(const uint8 *pcxBuf, uint32 size, bool useFullPal);
 	void readPCXPanel(const uint8 *pcxBuf, uint32 size);
 
 	void horizontalScrollUpdate(int16 xCamera);
-	void horizontalScroll(int16 scroll) { _horizontalScroll = scroll; }
+	void horizontalScroll(int16 scroll) { _fullRefresh = true; _horizontalScroll = scroll; }
 	int16 horizontalScroll() const { return _horizontalScroll; }
 
-	void fullscreen(bool fs) { debug(6, "Display::fullscreen(%d)", fs); _fullscreen = fs; }
+	void fullscreen(bool fs) { debug(6, "Display::fullscreen(%d)", fs); _fullRefresh = true; _fullscreen = fs; }
 	bool fullscreen() const { return _fullscreen; }
+
+	void setDirtyBlock(uint16 x, uint16 y, uint16 w, uint16 h);
+	void forceFullRefresh() { _fullRefresh = true; memset(_dirtyBlocks, 0, _dirtyBlocksWidth * _dirtyBlocksHeight); }
 
 	void handleTimer();
 	void waitForTimer();
@@ -109,20 +86,25 @@ public:
 	void setMouseCursor(uint8 *buf, uint16 w, uint16 h, uint16 xhs, uint16 yhs);
 	void showMouseCursor(bool show);
 
+	void initFont();
+
 	uint16 textWidth(const char *text) const;
+	void drawChar(uint16 x, uint16 y, uint8 color, const uint8 *chr);
 	void drawText(uint16 x, uint16 y, uint8 color, const char *text, bool outlined = true);
 	void drawBox(int16 x1, int16 y1, int16 x2, int16 y2, uint8 col);
-	void drawScreen();
 
 	void blankScreen();
 	void blankScreenEffect1();
 	void blankScreenEffect2();
 	void blankScreenEffect3();
 
+
 private:
 
 	enum {
-		FADE_SPEED = 16
+		FADE_SPEED = 16,
+		D_BLOCK_W  =  8,
+		D_BLOCK_H  =  8
 	};
 
 	enum BufferDimension {
@@ -134,30 +116,43 @@ private:
 		PANEL_H    =  50
 	};
 
-	TextRenderer _textRenderer;
-
 	struct {
 		uint8 *room;
 		uint8 *screen;
+		uint8 *panel;
 		int dirtyMin, dirtyMax;
 		bool scrollable;
 	} _pal;
 
-	uint8 *_buffer[3];
-	uint16 _bufPitch[3];
+	struct Dynalum {
+		bool valid;
+		uint8 msk[50 * 160];
+		int8 lum[8 * 3];
+		uint8 prevColMask;
+	};
+
+	uint8 *_screenBuf;
+	uint8 *_panelBuf;
+	uint8 *_backdropBuf;
+
+	bool _fullRefresh;
+	uint8 *_dirtyBlocks;
+	uint16 _dirtyBlocksWidth, _dirtyBlocksHeight;
 
 	bool _fullscreen;
 
 	uint16 _horizontalScroll;
 	uint16 _bdWidth, _bdHeight;
 
-	bool _gotTick;
-	int _curBlankingEffect;
+	uint8 _charWidth[256];
+
+	bool _gotTick;	
 
 	Dynalum _dynalum;
 	OSystem *_system;
 	QueenEngine *_vm;
 
+	static const uint8 _font[];
 	static const uint8 _palJoeClothes[];
 	static const uint8 _palJoeDress[];
 };
