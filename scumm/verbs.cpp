@@ -491,7 +491,7 @@ void ScummEngine::drawVerbBitmap(int verb, int x, int y) {
 
 	vst = &_verbs[verb];
 	vst->curRect.right = vst->curRect.left + imgw * 8;
-	vst->curRect.bottom = vst->curRect.right + imgh * 8;
+	vst->curRect.bottom = vst->curRect.top + imgh * 8;
 	vst->oldRect = vst->curRect;
 
 	gdi.enableZBuffer();
