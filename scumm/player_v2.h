@@ -108,7 +108,7 @@ protected:
 
 	const uint16 *_freqs_table;
 
-	ChannelInfo _channels[4];
+	ChannelInfo _channels[5];
 
 	int   _current_nr;
 	byte *_current_data;

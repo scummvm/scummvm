@@ -574,14 +574,14 @@ void Player_V2::execute_cmd(ChannelInfo *channel) {
 		if (opcode >= 0xf8) {
 			switch (opcode) {
 			case 0xf8: // set hull curve
-				debug(9, "channels[%d]: hull curve %2d", 
+				debug(7, "channels[%d]: hull curve %2d", 
 				channel - _channels, *script_ptr);
 				channel->d.hull_curve = hull_offsets[*script_ptr/2];
 				script_ptr++;
 				break;
 
 			case 0xf9: // set freqmod curve
-				debug(9, "channels[%d]: freqmod curve %2d", 
+				debug(7, "channels[%d]: freqmod curve %2d", 
 				channel - _channels, *script_ptr);
 				channel->d.freqmod_table = freqmod_offsets[*script_ptr/4];
 				channel->d.freqmod_modulo = freqmod_lengths[*script_ptr/4];
@@ -590,13 +590,18 @@ void Player_V2::execute_cmd(ChannelInfo *channel) {
 
 			case 0xfd: // clear other channel
 				value = READ_LE_UINT16 (script_ptr) / sizeof (ChannelInfo);
-				debug(9, "clear channel %d", value);
+				debug(7, "clear channel %d", value);
 				script_ptr += 2;
 				// In Indy3, when traveling to Venice a command is
-				// issued to clear channel 4, which is OOB. So, we
-				// check first.
+				// issued to clear channel 4. So we introduce a 4th
+				// channel, which is never used.  All OOB accesses are
+				// mapped to this channel.
+				//
+				// The original game had room for 8 channels, but only
+				// channels 0-3 are read, changes to other channels
+				// had no effect.
 				if (value >= ARRAYSIZE (_channels))
-					break;
+					value = 4;
 				channel = &_channels[value];
 				// fall through
 
@@ -622,24 +627,23 @@ void Player_V2::execute_cmd(ChannelInfo *channel) {
 				break;
 
 			case 0xfb: // ret from subroutine
-				debug(9, "ret from sub");
+				debug(7, "ret from sub");
 				script_ptr = _retaddr;
 				break;
 
 			case 0xfc: // call subroutine
 				offset = READ_LE_UINT16 (script_ptr);
-				debug(9, "subroutine %d", offset);
+				debug(7, "subroutine %d", offset);
 				script_ptr += 2;
 				_retaddr = script_ptr;
 				script_ptr = _current_data + offset;
-				debug(9, "XXX1: %p -> %04x", script_ptr, offset);
 				break;
 
 			case 0xfe: // loop music
 				opcode = *script_ptr++;
 				offset = READ_LE_UINT16 (script_ptr);
 				script_ptr += 2;
-				debug(9, "loop if %d to %d", opcode, offset);
+				debug(7, "loop if %d to %d", opcode, offset);
 				if (!channel->array[opcode/2] || --channel->array[opcode/2])
 					script_ptr += offset;
 				break;
@@ -648,8 +652,8 @@ void Player_V2::execute_cmd(ChannelInfo *channel) {
 				opcode = *script_ptr++;
 				value = READ_LE_UINT16 (script_ptr);
 				channel->array[opcode/2] = value;
-				debug(9, "channels[%d]: set param %2d = %5d", 
-				channel - &_channels[0], opcode, value);
+				debug(7, "channels[%d]: set param %2d = %5d", 
+					  channel - &_channels[0], opcode, value);
 				script_ptr += 2;
 				if (opcode == 14) {
 				    /* tempo var */
@@ -689,7 +693,7 @@ void Player_V2::execute_cmd(ChannelInfo *channel) {
 				}
 
 
-				debug(9, "channels[%d]: @%04x note: %3d+%d len: %2d hull: %d mod: %d/%d/%d %s", 
+				debug(8, "channels[%d]: @%04x note: %3d+%d len: %2d hull: %d mod: %d/%d/%d %s", 
 				      dest_channel - channel, script_ptr ? script_ptr - _current_data - 2 : 0,
 				      note, (signed short) dest_channel->d.transpose, channel->d.time_left,
 				      dest_channel->d.hull_curve, dest_channel->d.freqmod_table,
