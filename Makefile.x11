@@ -10,6 +10,6 @@ CPPFLAGS= $(DEFINES) $(INCLUDES)
 # Add -lmad for -DCOMPRESSED_SOUND_FILE
 LIBS	= -lXext -lX11 -lncurses -lm -lmad -lpthread
 
-OBJS	= mp3_cd.o x11.o
+OBJS	= x11.o
 
 include Makefile.common
