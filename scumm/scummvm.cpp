@@ -898,7 +898,7 @@ void ScummEngine::launch() {
 
 	// If requested, load a save game instead of running the boot script
 	if (_saveLoadFlag != 2 || !loadState(_saveLoadSlot, _saveLoadCompatible)) {
-		if (_gameId == GID_MANIAC && _demoMode)
+		if (_gameId == GID_MANIAC && _version == 1 && _demoMode)
 			runScript(9, 0, 0, &_bootParam);
 		else
 			runScript(1, 0, 0, &_bootParam);
