@@ -220,7 +220,7 @@ void Talk::talk(const char *filename, int personInRoom, char *cutawayFilename) {
 			if (_input->talkQuit())
 				break;
 
-			speak(_talkString[selectedSentence], &person, _joeVoiceFilePrefix[selectedSentence]);
+			speak(_talkString[selectedSentence], NULL, _joeVoiceFilePrefix[selectedSentence]);
 		}
 		else {
 			if (person.actor->bobNum > 0) {
@@ -623,8 +623,8 @@ bool Talk::speak(const char *sentence, Person *person, const char *voiceFilePref
 		person = &joe_person;
 	}
 	
-	//debug(0, "Sentence '%s' is said by person '%s' and voice files with prefix '%s' played",
-	//		sentence, person->name, voiceFilePrefix);
+	debug(0, "Sentence '%s' is said by person '%s' and voice files with prefix '%s' played",
+			sentence, person->name, voiceFilePrefix);
 
 	if (sentence[0] == '\0') {
 		goto exit;
@@ -1137,7 +1137,6 @@ const Talk::SpeechParameters *Talk::findSpeechParameters(
 		int faceDirection) {
 	// function FIND_SACTION in queen.c
 	const SpeechParameters *iterator = _speechParameters;
-
 	if (faceDirection == DIR_RIGHT)
 		faceDirection = DIR_LEFT;
 
