@@ -60,8 +60,8 @@ const uint8 note_lengths[] = {
 
 static const uint16 hull_offsets[] = {
 	0, 12, 24, 36, 48, 60, 
-	72, 88, 104, 120, 136, 240, 
-	152, 164
+	72, 88, 104, 120, 136, 256, 
+	152, 164, 180
 };
 
 static const int16 hulls[] = {
@@ -69,7 +69,7 @@ static const int16 hulls[] = {
 	3, -1, 0, 0, 0, 0, 0, 0,
 	0, -1, 0, 0,
 	// hull 1 (staccato)
-	3, -1, 0, 30, 0, -1, 0, 0,
+	3, -1, 0, 32, 0, -1, 0, 0,
 	0, -1, 0, 0,
 	// hull 2 (legato)
 	3, -1, 0, 0, 0, 0, 0, 0,
@@ -81,7 +81,7 @@ static const int16 hulls[] = {
 	3, -1, 0, 6, 0, -1, 0, 0,
 	0, -1, 0, 0,
 	// hull 5
-	3, -1, 0, 10, 0, -1, 0, 0,
+	3, -1, 0, 16, 0, -1, 0, 0,
 	0, -1, 0, 0,
 	// hull 6
 	(int16) 60000, -1, -1000, 20, 0, 0, 0, 0,
@@ -105,7 +105,11 @@ static const int16 hulls[] = {
 	20000, -1,  4000,  7, 1000, 15, 0, 0,
 	(int16) 35000, -1, -2000, 15, 0, -1, 0, 0,
 
-	// hull misc = 180
+	// hull 14  == 180
+	(int16) 35000, -1,   500, 20, 0,  0, 0, 0,
+	(int16) 45000, -1,  -500, 60, 0, -1, 0, 0,
+
+	// hull misc = 196
 	(int16) 44000, -1, -4400, 10, 0, -1, 0, 0,
 	0, -1, 0, 0,
 
@@ -121,7 +125,7 @@ static const int16 hulls[] = {
 	(int16) 53000, -1, -1656, 32, 0, -1, 0, 0,
 	0, -1, 0, 0,
 
-	// hull 11 == 240
+	// hull 11 == 256
 	(int16) 63000, -1, -1968, 32, 0, -1, 0, 0,
 	0, -1, 0, 0,
 
@@ -728,7 +732,7 @@ void Player_V2::execute_cmd(ChannelInfo *channel) {
 				dest_channel->d.hull_offset = 0;
 				dest_channel->d.hull_counter = 1;
 				if (_pcjr && dest_channel == &_channels[3]) {
-					dest_channel->d.hull_curve = 180 + note * 12;
+					dest_channel->d.hull_curve = 196 + note * 12;
 					myfreq = 384 - 64 * octave;
 				} else {
 					myfreq = _freqs_table[note] >> octave;
