@@ -1163,7 +1163,7 @@ void ScummEngine_v72he::o72_arrayOps() {
 		if (d == 0) {
 			defineArray(array, kDwordArray, 0, 0, 0, b + c);
 		}
-		while (--c) {
+		while (c--) {
 			writeArray(array, 0, b + c, pop());
 		}
 		break;
