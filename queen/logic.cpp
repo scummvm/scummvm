@@ -1341,6 +1341,12 @@ uint16 Logic::personSetup(uint16 noun, uint16 curImage) {
 		// person is not standing in the area box, scale it accordingly
 		scale = currentRoomArea(a)->calcScale(pad->y);
 	}
+
+	if (noun == 0) {
+		warning("Trying to setup person 0");
+		return curImage;
+	}
+
 	_graphics->bankUnpack(pad->bobFrameStanding, p.bobFrame, p.bankNum);
 	bool xflip = false;
 	uint16 person = _roomData[_currentRoom] + noun;
@@ -1851,6 +1857,7 @@ void Logic::dialogue(const char *dlgFile, int personInRoom, char *cutaway) {
 		cutaway = cutawayFile;
 	}
 	_display->fullscreen(true);
+	_cmd->clear(false);
 	Talk::talk(dlgFile, personInRoom, cutaway, _graphics, _input, this, _resource, _sound);
 	_display->fullscreen(false);
 }
@@ -1874,6 +1881,7 @@ void Logic::joeSpeak(uint16 descNum, bool objectType) {
 	if (objectType) {
 		descNum += JOE_RESPONSE_MAX;
 	}
+	_cmd->clear(false);
 	char descFilePrefix[10];
 	sprintf(descFilePrefix, "JOE%04i", descNum);
 	Talk::speak(text, NULL, descFilePrefix, _graphics, _input, this, _resource, _sound);

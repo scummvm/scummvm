@@ -1295,6 +1295,8 @@ void Command::setObjects(uint16 command) {
 			uint16 dstObj = ABS(cmdObj->dstObj);
 			ObjectData *objData = _logic->objectData(dstObj);
 
+			debug(0, "Command::setObjects() - dstObj=%X srcObj=%X", cmdObj->dstObj, cmdObj->srcObj);
+
 			if (cmdObj->dstObj > 0) {
 				// show the object
 				objData->name = ABS(objData->name);
