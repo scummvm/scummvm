@@ -93,7 +93,7 @@ void Dialog::draw()
 	}
 }
 
-void Dialog::handleMouseDown(int x, int y, int button)
+void Dialog::handleMouseDown(int x, int y, int button, int clickCount)
 {
 	Widget *w;
 	w = findWidget(x, y);
@@ -112,10 +112,10 @@ void Dialog::handleMouseDown(int x, int y, int button)
 	}
 
 	if (_focusedWidget)
-		_focusedWidget->handleMouseDown(x - _focusedWidget->_x, y - _focusedWidget->_y, button);
+		_focusedWidget->handleMouseDown(x - _focusedWidget->_x, y - _focusedWidget->_y, button, clickCount);
 }
 
-void Dialog::handleMouseUp(int x, int y, int button)
+void Dialog::handleMouseUp(int x, int y, int button, int clickCount)
 {
 	Widget *w;
 	
@@ -133,17 +133,14 @@ void Dialog::handleMouseUp(int x, int y, int button)
 	}
 
 	if (w)
-		w->handleMouseUp(x - w->_x, y - w->_y, button);
+		w->handleMouseUp(x - w->_x, y - w->_y, button, clickCount);
 }
 
 void Dialog::handleKeyDown(char key, int modifiers)
 {
-	// ESC closes all dialogs by default
-	if (key == 27)
-		close();
-	
 	if (_focusedWidget) {
-		_focusedWidget->handleKeyDown(key, modifiers);
+		if (_focusedWidget->handleKeyDown(key, modifiers))
+			return;
 	} else {
 		// Hotkey handling
 		Widget *w = _firstWidget;
@@ -152,13 +149,17 @@ void Dialog::handleKeyDown(char key, int modifiers)
 			if (w->_type == kButtonWidget && key == toupper(((ButtonWidget *)w)->_hotkey)) {
 				// We first send a mouseDown then a mouseUp.
 				// FIXME: insert a brief delay between both.
-				w->handleMouseDown(0, 0, 1);
-				w->handleMouseUp(0, 0, 1);
-				break;
+				w->handleMouseDown(0, 0, 1, 1);
+				w->handleMouseUp(0, 0, 1, 1);
+				return;
 			}
 			w = w->_next;
 		}
 	}
+
+	// ESC closes all dialogs by default
+	if (key == 27)
+		close();
 }
 
 void Dialog::handleKeyUp(char key, int modifiers)
@@ -303,6 +304,7 @@ SaveLoadDialog::SaveLoadDialog(NewGui *gui)
 void SaveLoadDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data)
 {
 	switch (cmd) {
+	case kListItemChangedCmd:
 	case kSaveCmd:
 		if (_savegameList->getSelected() > 0 && !_savegameList->getSelectedString().isEmpty()) {
 			Scumm *s = _gui->getScumm();
@@ -313,6 +315,7 @@ void SaveLoadDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 			close();
 		}
 		break;
+	case kListItemDoubleClickedCmd:
 	case kLoadCmd:
 		if (_savegameList->getSelected() > 0 && !_savegameList->getSelectedString().isEmpty()) {
 			Scumm *s = _gui->getScumm();

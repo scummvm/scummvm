@@ -26,7 +26,7 @@
 
 /*
  * TODO:
- * - Auto-repeat: if one clicks & holds on one of the arrows, then after a
+ * - Auto-repeat: if user clicks & holds on one of the arrows, then after a
  *   brief delay, it should start to contiously scroll
  * - Allow for a horizontal scrollbar, too?
  * - If there are less items than fit on one pages, no scrolling can be done
@@ -70,7 +70,7 @@ ScrollBarWidget::ScrollBarWidget(Dialog *boss, int x, int y, int w, int h)
 
 }
 
-void ScrollBarWidget::handleMouseDown(int x, int y, int button)
+void ScrollBarWidget::handleMouseDown(int x, int y, int button, int clickCount)
 {
 	int old_pos = _currentPos;
 
@@ -95,7 +95,7 @@ void ScrollBarWidget::handleMouseDown(int x, int y, int button)
 	checkBounds(old_pos);
 }
 
-void ScrollBarWidget::handleMouseUp(int x, int y, int button)
+void ScrollBarWidget::handleMouseUp(int x, int y, int button, int clickCount)
 {
 	if (_draggingPart != kNoPart)
 		_draggingPart = kNoPart;

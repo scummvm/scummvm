@@ -94,8 +94,8 @@ protected:
 
 	// for continuous events (keyDown)
 	int			_currentKeyDown, _currentKeyDownFlags;
-	int			_loopCount;
-	int			_eventFiredCount;
+	int			_keyRepeatLoopCount;
+	int			_keyRepeatEvenCount;
 
 	// sound state
 	bool		_old_soundsPaused;
@@ -105,10 +105,12 @@ protected:
 	int			_old_cursorHotspotX, _old_cursorHotspotY, _old_cursorWidth, _old_cursorHeight;
 	byte		_old_grabbedCursor[2048];
 	
-	// mouse pos
+	// position and time of last mouse click (used to detect double clicks)
 	struct {
-		int16 x,y;
-	} _old_mouse;
+		int16 x, y;	// Position of mouse when the click occured
+		uint32 time;	// Time
+		int count;	// How often was it already pressed?
+	} _lastClick;
 	
 	// List of events to be handled
 	EventList	_eventList;

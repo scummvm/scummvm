@@ -90,13 +90,13 @@ public:
 	Widget(Dialog *boss, int x, int y, int w, int h);
 	virtual ~Widget() {}
 
-	virtual void handleMouseDown(int x, int y, int button) {}
-	virtual void handleMouseUp(int x, int y, int button) {}
+	virtual void handleMouseDown(int x, int y, int button, int clickCount) {}
+	virtual void handleMouseUp(int x, int y, int button, int clickCount) {}
 	virtual void handleMouseEntered(int button) {}
 	virtual void handleMouseLeft(int button) {}
 	virtual void handleMouseMoved(int x, int y, int button) {}
-	virtual void handleKeyDown(char key, int modifiers) {}
-	virtual void handleKeyUp(char key, int modifiers) {}
+	virtual bool handleKeyDown(char key, int modifiers) { return false; }	// Return true if the event was handled
+	virtual bool handleKeyUp(char key, int modifiers) { return false; }	// Return true if the event was handled
 	virtual void handleTickle() {}
 	void draw();
 	void receivedFocus() { _hasFocus = true; receivedFocusWidget(); }
@@ -146,7 +146,7 @@ public:
 	void setCmd(uint32 cmd)					{ _cmd = cmd; }
 	uint32 getCmd() const					{ return _cmd; }
 
-	void handleMouseUp(int x, int y, int button);
+	void handleMouseUp(int x, int y, int button, int clickCount);
 	void handleMouseEntered(int button)	{ setFlags(WIDGET_HILITED); draw(); }
 	void handleMouseLeft(int button)	{ clearFlags(WIDGET_HILITED); draw(); }
 };
@@ -160,7 +160,7 @@ public:
 	void setState(bool state)	{ _state = state; }
 	bool getState() const		{ return _state; }
 
-	void handleMouseDown(int x, int y, int button);
+	void handleMouseDown(int x, int y, int button, int clickCount);
 	virtual void handleMouseEntered(int button)	{}
 	virtual void handleMouseLeft(int button)	{}
 
@@ -185,8 +185,8 @@ public:
 	int getMaxValue() const		{ return _valueMax; }
 
 	void handleMouseMoved(int x, int y, int button);
-	void handleMouseDown(int x, int y, int button);
-	void handleMouseUp(int x, int y, int button);
+	void handleMouseDown(int x, int y, int button, int clickCount);
+	void handleMouseUp(int x, int y, int button, int clickCount);
 
 protected:
 	void drawWidget(bool hilite);

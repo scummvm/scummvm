@@ -59,8 +59,8 @@ public:
 public:
 	ScrollBarWidget(Dialog *boss, int x, int y, int w, int h);
 
-	void handleMouseDown(int x, int y, int button);
-	void handleMouseUp(int x, int y, int button);
+	void handleMouseDown(int x, int y, int button, int clickCount);
+	void handleMouseUp(int x, int y, int button, int clickCount);
 	void handleMouseMoved(int x, int y, int button);
 	void handleMouseEntered(int button)	{ setFlags(WIDGET_HILITED); }
 	void handleMouseLeft(int button)	{ clearFlags(WIDGET_HILITED); _part = kNoPart; draw(); }

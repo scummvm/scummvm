@@ -36,6 +36,8 @@
  * - ...
  */
 
+#define ABS(x)	((x) < 0 ? -(x) : (x))
+
 NewGui::NewGui(Scumm *s) : _s(s), _use_alpha_blending(true),
 	_need_redraw(false),_prepare_for_gui(true),
 	_pauseDialog(0), _saveLoadDialog(0), _aboutDialog(0), _optionsDialog(0),
@@ -102,6 +104,10 @@ void NewGui::loop()
 
 		_eventList.clear();
 		_currentKeyDown = 0;
+		
+		_lastClick.x = _lastClick.y = 0;
+		_lastClick.time = 0;
+		_lastClick.count = 0;
 
 		_prepare_for_gui = false;
 	}
@@ -130,8 +136,8 @@ void NewGui::loop()
 					// init continuous event stream
 					_currentKeyDown = t.kbd.ascii;
 					_currentKeyDownFlags = t.kbd.flags;
-					_eventFiredCount = 1;
-					_loopCount = 0;
+					_keyRepeatEvenCount = 1;
+					_keyRepeatLoopCount = 0;
 					break;
 				case OSystem::EVENT_KEYUP:
 					activeDialog->handleKeyUp(t.kbd.ascii, t.kbd.flags);
@@ -144,12 +150,24 @@ void NewGui::loop()
 					break;
 				// We don't distinguish between mousebuttons (for now at least)
 				case OSystem::EVENT_LBUTTONDOWN:
-				case OSystem::EVENT_RBUTTONDOWN:
-					activeDialog->handleMouseDown(t.mouse.x - activeDialog->_x, t.mouse.y - activeDialog->_y, 1);
+				case OSystem::EVENT_RBUTTONDOWN: {
+					uint32 time = _s->_system->get_msecs();
+					if (_lastClick.count && (time < _lastClick.time + 1000)
+					      && ABS(_lastClick.x - t.mouse.x) < 3
+					      && ABS(_lastClick.y - t.mouse.y) < 3) {
+						_lastClick.count++;
+					} else {
+						_lastClick.x = t.mouse.x;
+						_lastClick.y = t.mouse.y;
+						_lastClick.count = 1;
+					}
+					_lastClick.time = time;
+					}
+					activeDialog->handleMouseDown(t.mouse.x - activeDialog->_x, t.mouse.y - activeDialog->_y, 1, _lastClick.count);
 					break;
 				case OSystem::EVENT_LBUTTONUP:
 				case OSystem::EVENT_RBUTTONUP:
-					activeDialog->handleMouseUp(t.mouse.x - activeDialog->_x, t.mouse.y - activeDialog->_y, 1);
+					activeDialog->handleMouseUp(t.mouse.x - activeDialog->_x, t.mouse.y - activeDialog->_y, 1, _lastClick.count);
 					break;
 			}
 		}
@@ -161,16 +179,16 @@ void NewGui::loop()
 	if (_currentKeyDown != 0)
 	{
 		// if only fired once, wait longer
-		if ( _loopCount >= ((_eventFiredCount > 1) ? 2 : 4) )
-		//                                               ^  loops to wait first event
-		//                                           ^      loops to wait after first event
+		if ( _keyRepeatLoopCount >= ((_keyRepeatEvenCount > 1) ? 2 : 4) )
+		//                                                           ^  loops to wait first event
+		//                                                       ^      loops to wait after first event
 		{
 			// fire event
 			activeDialog->handleKeyDown(_currentKeyDown, _currentKeyDownFlags);
-			_eventFiredCount++;
-			_loopCount = 0;
+			_keyRepeatEvenCount++;
+			_keyRepeatLoopCount = 0;
 		}
-		_loopCount++;
+		_keyRepeatLoopCount++;
 	}
 
 	_s->drawDirtyScreenParts();

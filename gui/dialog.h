@@ -60,8 +60,8 @@ public:
 	virtual void draw();
 
 	virtual void handleTickle(); // Called periodically (in every guiloop() )
-	virtual void handleMouseDown(int x, int y, int button);
-	virtual void handleMouseUp(int x, int y, int button);
+	virtual void handleMouseDown(int x, int y, int button, int clickCount);
+	virtual void handleMouseUp(int x, int y, int button, int clickCount);
 	virtual void handleKeyDown(char key, int modifiers);
 	virtual void handleKeyUp(char key, int modifiers);
 	virtual void handleMouseMoved(int x, int y, int button);
@@ -116,7 +116,7 @@ class PauseDialog : public Dialog {
 public:
 	PauseDialog(NewGui *gui);
 
-	virtual void handleMouseDown(int x, int y, int button)
+	virtual void handleMouseDown(int x, int y, int button, int clickCount)
 		{ close(); }
 	virtual void handleKeyDown(char key, int modifiers)
 		{

@@ -140,7 +140,7 @@ ButtonWidget::~ButtonWidget()
 	}
 }
 
-void ButtonWidget::handleMouseUp(int x, int y, int button)
+void ButtonWidget::handleMouseUp(int x, int y, int button, int clickCount)
 {
 	if (_flags & WIDGET_ENABLED && x >= 0 && x < _w && y >= 0 && y < _h)
 		sendCommand(_cmd, 0);
@@ -168,7 +168,7 @@ CheckboxWidget::CheckboxWidget(Dialog *boss, int x, int y, int w, int h, const c
 	_type = kCheckboxWidget;
 }
 
-void CheckboxWidget::handleMouseDown(int x, int y, int button)
+void CheckboxWidget::handleMouseDown(int x, int y, int button, int clickCount)
 {
 	if (_flags & WIDGET_ENABLED) {
 		_state = !_state;
@@ -221,7 +221,7 @@ void SliderWidget::handleMouseMoved(int x, int y, int button) {
 	}
 }
 
-void SliderWidget::handleMouseDown(int x, int y, int button) {
+void SliderWidget::handleMouseDown(int x, int y, int button, int clickCount) {
 	
 	if (_flags & WIDGET_ENABLED) {
 		int barx;
@@ -234,7 +234,7 @@ void SliderWidget::handleMouseDown(int x, int y, int button) {
 	}
 }
 
-void SliderWidget::handleMouseUp(int x, int y, int button) {
+void SliderWidget::handleMouseUp(int x, int y, int button, int clickCount) {
 
 	if ((_flags & WIDGET_ENABLED) && _isDragging) {
 		sendCommand(_cmd, _value);

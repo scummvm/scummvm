@@ -32,9 +32,16 @@ enum {
 	kListNumberingOne	= 1
 };
 
+// Some special commands
+enum {
+	kListItemDoubleClickedCmd	= 'LIdb',	// 'data' will be item index
+	kListItemChangedCmd			= 'LIch',	// 'data' will be item index
+};
+
 /* ListWidget */
 class ListWidget : public Widget, public CommandReceiver, public CommandSender {
 	typedef ScummVM::StringList StringList;
+	typedef ScummVM::String String;
 protected:
 	StringList		_list;
 	bool			_editable;
@@ -45,6 +52,7 @@ protected:
 	int				_selectedItem;
 	ScrollBarWidget	*_scrollBar;
 	int				_currentKeyDown;
+	String			_backupString;
 public:
 	ListWidget(Dialog *boss, int x, int y, int w, int h);
 	virtual ~ListWidget();
@@ -55,9 +63,10 @@ public:
 	const ScummVM::String& getSelectedString() const	{ return _list[_selectedItem]; }
 	void setNumberingMode(int numberingMode)	{ _numberingMode = numberingMode; }
 	
-	virtual void handleMouseDown(int x, int y, int button);
-	virtual void handleKeyDown(char key, int modifiers);
-	virtual void handleKeyUp(char key, int modifiers);
+	virtual void handleMouseDown(int x, int y, int button, int clickCount);
+	virtual void handleMouseUp(int x, int y, int button, int clickCount);
+	virtual bool handleKeyDown(char key, int modifiers);
+	virtual bool handleKeyUp(char key, int modifiers);
 	virtual void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);
 
 	void scrollBarRecalc();

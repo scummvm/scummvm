@@ -25,18 +25,6 @@
 #include "newgui.h"
 
 
-/*
- * TODO:
- * - Abort changes when ESC is pressed or the selection changes
- * - When the editing of a string is ended by return, we might consider sending
- *   a message. Return means that the edit was confirmed. Hence the SaveDialog
- *   could immediatly do the save in a trivial fashion.
- * - Handle double clicks: either start editing of the selected item, or
- *   send a cmd to our target (i.e. as specified via setCmd or setDoubleCmd)
- *   This will allow a double click in the load dialog to immediatly load the game
- */
-
-
 // Height of one entry
 #define	LINE_HEIGHT		10
 
@@ -72,7 +60,7 @@ void ListWidget::scrollBarRecalc()
 	_scrollBar->recalc();
 }
 
-void ListWidget::handleMouseDown(int x, int y, int button)
+void ListWidget::handleMouseDown(int x, int y, int button, int clickCount)
 {
 	int oldSelectedItem = _selectedItem;
 
@@ -88,8 +76,18 @@ void ListWidget::handleMouseDown(int x, int y, int button)
 	}
 }
 
-void ListWidget::handleKeyDown(char key, int modifiers)
+void ListWidget::handleMouseUp(int x, int y, int button, int clickCount)
 {
+	// If this was a double click and the mouse is still over the selected item,
+	// send the double click command
+	if (clickCount > 1 && (_selectedItem == (y - 2) / LINE_HEIGHT + _currentPos)) {
+		sendCommand(kListItemDoubleClickedCmd, _selectedItem);
+	}
+}
+
+bool ListWidget::handleKeyDown(char key, int modifiers)
+{
+	bool handled = true;
 	bool dirty = false;
 	int oldSelectedItem = _selectedItem;
 
@@ -99,15 +97,19 @@ void ListWidget::handleKeyDown(char key, int modifiers)
 		_list[_selectedItem].deleteLastChar();
 
 		if (key == '\n' || key == '\r') {
-			// enter, exit editmode
+			// enter, confirm edit and exit editmode
 			_editMode = false;
 			dirty = true;
-		}
-		else if (_editMode && key == 8) {	// backspace
+			sendCommand(kListItemChangedCmd, _selectedItem);
+		} else if (key == 27) {
+			// ESC, abort edit and exit editmode
+			_editMode = false;
+			dirty = true;
+			_list[_selectedItem] = _backupString;
+		} else if (key == 8) {	// backspace
 			_list[_selectedItem].deleteLastChar();
 			dirty = true;
-		} else if (_editMode &&
-					// filter keystrokes
+		} else if (// filter keystrokes
 					( ( key >= 'a' && key <= 'z' )
 					|| ( key >= 'A' && key <= 'Z' )
 					|| ( key >= '0' && key <= '9' )
@@ -117,7 +119,8 @@ void ListWidget::handleKeyDown(char key, int modifiers)
 
 			_list[_selectedItem] += key;
 			dirty = true;
-		}
+		} else
+			handled = false;
 
 	} else {
 		// not editmode
@@ -129,6 +132,7 @@ void ListWidget::handleKeyDown(char key, int modifiers)
 				if ((_currentKeyDown != '\n' && _currentKeyDown != '\r')) {		// override continuous enter keydown
 					_editMode = true;
 					dirty = true;
+					_backupString = _list[_selectedItem];
 				}
 			}
 			break;
@@ -156,6 +160,8 @@ void ListWidget::handleKeyDown(char key, int modifiers)
 		case 23:	// end
 			_selectedItem = _list.size() - 1;
 			break;
+		default:
+			handled = false;
 		}
 
 		scrollToCurrent();
@@ -174,9 +180,11 @@ void ListWidget::handleKeyDown(char key, int modifiers)
 	}
 
 	_currentKeyDown = key;
+	
+	return handled;
 }
 
-void ListWidget::handleKeyUp(char key, int modifiers)
+bool ListWidget::handleKeyUp(char key, int modifiers)
 {
 	if (key == _currentKeyDown)
 		_currentKeyDown = 0;
