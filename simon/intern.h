@@ -39,9 +39,6 @@ struct Child2 : Child {
 	int16 array[1];
 };
 
-struct Child3 : Child {
-};
-
 struct Child9 : Child {
 	uint16 array[4];
 };

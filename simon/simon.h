@@ -47,9 +47,7 @@ uint fileReadItemID(File *in);
 #define NUM_PALETTE_FADEOUT 32
 
 struct Child;
-struct Child1;
 struct Child2;
-struct Child3;
 
 struct Item;
 struct FillOrCopyStruct;
@@ -124,11 +122,21 @@ public:
 		GAME_SIMON1DEMO = 4,
 	};
 
+	typedef enum {
+		FORMAT_NONE,
+		FORMAT_MP3,
+		FORMAT_WAV,
+		FORMAT_VOC
+	} SoundFormat;
+
 	File *_game_file;
+	
 	File *_voice_file;
 	uint32 *_voice_offsets;
+	SoundFormat _voice_type;
 	File *_effects_file;
 	uint32 *_effects_offsets;
+	SoundFormat _effects_type;
 
 	byte *_stripped_txt_mem;
 	uint _text_size;
@@ -429,10 +437,6 @@ public:
 
 	bool hasChildOfType1(Item *item);
 	bool hasChildOfType2(Item *item);
-
-	Child1 *findChildOfType1(Item *item);
-	Child2 *findChildOfType2(Item *item);
-	Child3 *findChildOfType3(Item *item);
 
 	void itemChildrenChanged(Item *item);
 	void unlinkItem(Item *item);

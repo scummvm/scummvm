@@ -166,7 +166,7 @@ int SimonState::runScript()
 			break;
 
 		case 28:{									/* item has prop */
-				Child2 *child = findChildOfType2(getNextItemPtr());
+				Child2 *child = (Child2 *)findChildOfType(getNextItemPtr(), 2);
 				byte num = getVarOrByte();
 				condition = child != NULL && (child->avail_props & (1 << num)) != 0;
 			} break;
@@ -304,7 +304,7 @@ int SimonState::runScript()
 			break;
 
 		case 56:{									/* set child2 fr bit */
-				Child2 *child = findChildOfType2(getNextItemPtr());
+				Child2 *child = (Child2 *)findChildOfType(getNextItemPtr(), 2);
 				int value = getVarOrByte();
 				if (child != NULL && value >= 0x10)
 					child->avail_props |= 1 << value;
@@ -312,7 +312,7 @@ int SimonState::runScript()
 			break;
 
 		case 57:{									/* clear child2 fr bit */
-				Child2 *child = findChildOfType2(getNextItemPtr());
+				Child2 *child = (Child2 *)findChildOfType(getNextItemPtr(), 2);
 				int value = getVarOrByte();
 				if (child != NULL && value >= 0x10)
 					child->avail_props &= ~(1 << value);
@@ -448,7 +448,7 @@ int SimonState::runScript()
 			break;
 
 		case 79:{									/* childstruct fr2 is */
-				Child2 *child = findChildOfType2(getNextItemPtr());
+				Child2 *child = (Child2 *)findChildOfType(getNextItemPtr(), 2);
 				uint string_id = getNextStringID();
 				condition = (child != NULL) && child->string_id == string_id;
 			}
@@ -826,7 +826,7 @@ int SimonState::runScript()
 			break;
 
 		case 143:{									/* start item sub */
-				Child1 *child = findChildOfType1(getNextItemPtr());
+				Child1 *child = (Child1 *)findChildOfType(getNextItemPtr(), 1);
 				if (child != NULL) {
 					Subroutine *sub = getSubroutineByID(child->subroutine_id);
 					if (sub)
@@ -879,7 +879,7 @@ int SimonState::runScript()
 
 		case 157:{									/* get item int prop */
 				Item *item = getNextItemPtr();
-				Child2 *child = findChildOfType2(item);
+				Child2 *child = (Child2 *)findChildOfType(item, 2);
 				uint prop = getVarOrByte();
 
 				if (child != NULL && child->avail_props & (1 << prop) && prop < 16) {
@@ -893,7 +893,7 @@ int SimonState::runScript()
 
 		case 158:{									/* set item prop */
 				Item *item = getNextItemPtr();
-				Child2 *child = findChildOfType2(item);
+				Child2 *child = (Child2 *)findChildOfType(item, 2);
 				uint prop = getVarOrByte();
 				int value = getVarOrWord();
 
@@ -1281,7 +1281,7 @@ void SimonState::o_177()
 		uint a = getVarOrByte();
 		/*uint b = */ getVarOrByte();
 		uint offs;
-		Child2 *child = findChildOfType2(getNextItemPtr());
+		Child2 *child = (Child2 *)findChildOfType(getNextItemPtr(), 2);
 		if (child != NULL && child->avail_props & 0x200) {
 			offs = getOffsetOfChild2Param(child, 0x200);
 			talk_with_speech(child->array[offs], a);
@@ -1292,7 +1292,7 @@ void SimonState::o_177()
 	} else if ((_game == GAME_SIMON1DEMO) || (_game == GAME_SIMON1DOS)) {
 		uint a = getVarOrByte();
 		uint b = getVarOrByte();
-		Child2 *child = findChildOfType2(getNextItemPtr());
+		Child2 *child = (Child2 *)findChildOfType(getNextItemPtr(), 2);
 		if (child != NULL && child->avail_props & 1) {
 			const char *s = (const char *)getStringPtrByID(child->array[0]);
 			ThreeValues *tv;
@@ -1325,7 +1325,7 @@ void SimonState::o_177()
 	} else if (_game == GAME_SIMON2WIN || _game == GAME_SIMON2DOS) {
 		uint a = getVarOrByte();
 		uint b = getVarOrByte();
-		Child2 *child = findChildOfType2(getNextItemPtr());
+		Child2 *child = (Child2 *)findChildOfType(getNextItemPtr(), 2);
 		const char *s = NULL;
 		ThreeValues *tv = NULL;
 		char buf[256];

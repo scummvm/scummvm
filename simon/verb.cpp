@@ -434,7 +434,7 @@ bool SimonState::hitarea_proc_3(Item *item)
 	if (item == 0 || item == _dummy_item_2 || item == _dummy_item_3)
 		return false;
 
-	child2 = findChildOfType2(item);
+	child2 = (Child2 *)findChildOfType(item, 2);
 	if (child2 == NULL)
 		return false;
 

@@ -417,28 +417,14 @@ Child *SimonState::findChildOfType(Item *i, uint type)
 
 bool SimonState::hasChildOfType1(Item *item)
 {
-	return findChildOfType1(item) != NULL;
+	return findChildOfType(item, 1) != NULL;
 }
 
 bool SimonState::hasChildOfType2(Item *item)
 {
-	return findChildOfType2(item) != NULL;
+	return findChildOfType(item, 2) != NULL;
 }
 
-Child1 *SimonState::findChildOfType1(Item *item)
-{
-	return (Child1 *)findChildOfType(item, 1);
-}
-
-Child2 *SimonState::findChildOfType2(Item *item)
-{
-	return (Child2 *)findChildOfType(item, 2);
-}
-
-Child3 *SimonState::findChildOfType3(Item *item)
-{
-	return (Child3 *) findChildOfType(item, 3);
-}
 
 uint SimonState::getOffsetOfChild2Param(Child2 *child, uint prop)
 {
@@ -1422,13 +1408,13 @@ void SimonState::setup_hit_areas(FillOrCopyStruct *fcs, uint fcs_index)
 
 bool SimonState::has_item_childflag_0x10(Item *item)
 {
-	Child2 *child = findChildOfType2(item);
+	Child2 *child = (Child2 *)findChildOfType(item, 2);
 	return child && (child->avail_props & 0x10) != 0;
 }
 
 uint SimonState::item_get_icon_number(Item *item)
 {
-	Child2 *child = findChildOfType2(item);
+	Child2 *child = (Child2 *)findChildOfType(item, 2);
 	uint offs;
 
 	if (child == NULL || !(child->avail_props & 0x10))
@@ -4485,12 +4471,12 @@ bool SimonState::save_game(uint slot, const char *caption)
 		f.writeUint16BE(item->unk3);
 		f.writeUint16BE(item->unk4);
 
-		Child1 *child1 = findChildOfType1(item);
+		Child1 *child1 = (Child1 *)findChildOfType(item, 1);
 		if (child1) {
 			f.writeUint16BE(child1->fr2);
 		}
 
-		Child2 *child2 = findChildOfType2(item);
+		Child2 *child2 = (Child2 *)findChildOfType(item, 2);
 		if (child2) {
 			f.writeUint32BE(child2->avail_props);
 			i = child2->avail_props & 1;
@@ -4599,12 +4585,12 @@ bool SimonState::load_game(uint slot)
 		item->unk3 = f.readUint16BE();
 		item->unk4 = f.readUint16BE();
 
-		Child1 *child1 = findChildOfType1(item);
+		Child1 *child1 = (Child1 *)findChildOfType(item, 1);
 		if (child1 != NULL) {
 			child1->fr2 = f.readUint16BE();
 		}
 
-		Child2 *child2 = findChildOfType2(item);
+		Child2 *child2 = (Child2 *)findChildOfType(item, 2);
 		if (child2 != NULL) {
 			child2->avail_props = f.readUint32BE();
 			i = child2->avail_props & 1;
@@ -4664,8 +4650,9 @@ void SimonState::initSound()
 		const char *me = gss->mp3_effects_filename;
 
 		_voice_offsets = NULL;
-
 		_voice_file = new File();
+		_voice_type = FORMAT_NONE;
+
 #ifdef USE_MAD
 		_voice_file->open(m, _gameDataPath);
 		if (_voice_file->isOpen() == false) {
@@ -4675,27 +4662,30 @@ void SimonState::initSound()
 				warning("Cannot open voice file %s, trying %s", s, s2);
 				if (s2) {
 					_voice_file->open(s2, _gameDataPath);
-					if (_voice_file->isOpen() == false) {
+					if (_voice_file->isOpen() == false)
 						warning("Cannot open voice file %s", s2);
-						return;
-					}
-				} else
-
-					return;
-			}
+					else
+						_voice_type = FORMAT_VOC;
+				}
+			} else
+				_voice_type = FORMAT_WAV;
 #ifdef USE_MAD
-		}
+		} else
+			_voice_type = FORMAT_MP3;
 #endif
 
-		_voice_offsets = (uint32 *)malloc(gss->NUM_VOICE_RESOURCES * sizeof(uint32));
-		if (_voice_offsets == NULL)
-			error("Out of memory for voice offsets");
-
-		if (_voice_file->read(_voice_offsets, gss->NUM_VOICE_RESOURCES * sizeof(uint32)) != gss->NUM_VOICE_RESOURCES * sizeof(uint32))
-			error("Cannot read voice offsets");
+		if (_voice_type != FORMAT_NONE) {
+			_voice_offsets = (uint32 *)malloc(gss->NUM_VOICE_RESOURCES * sizeof(uint32));
+			if (_voice_offsets == NULL)
+				error("Out of memory for voice offsets");
+	
+			if (_voice_file->read(_voice_offsets, gss->NUM_VOICE_RESOURCES * sizeof(uint32)) != gss->NUM_VOICE_RESOURCES * sizeof(uint32))
+				error("Cannot read voice offsets");
+		}
 
 		_effects_offsets = NULL;
 		_effects_file = new File();
+		_effects_type = FORMAT_VOC;
 
 #ifdef USE_MAD
 		_effects_file->open(me, _gameDataPath);
@@ -4703,6 +4693,8 @@ void SimonState::initSound()
 #endif
 			_effects_file->open(e, _gameDataPath);
 #ifdef USE_MAD
+		} else {
+			_effects_type = FORMAT_MP3;
 		}
 #endif
 		if (_effects_file->isOpen() == true)
@@ -4713,16 +4705,21 @@ void SimonState::initSound()
 
 			if (_effects_file->read(_effects_offsets, gss->NUM_EFFECTS_RESOURCES * sizeof(uint32)) != gss->NUM_EFFECTS_RESOURCES * sizeof(uint32))
 				error("Cannot read effects offsets");
+		} else {
+			_effects_type = FORMAT_NONE;
 		}
 
 #if defined(SCUMM_BIG_ENDIAN)
 		uint r;
-		for (r = 0; r < gss->NUM_VOICE_RESOURCES; r++)
-			_voice_offsets[r] = READ_LE_UINT32(&_voice_offsets[r]);
+		if (_voice_offsets) {
+			for (r = 0; r < gss->NUM_VOICE_RESOURCES; r++)
+				_voice_offsets[r] = READ_LE_UINT32(&_voice_offsets[r]);
+		}
 
-		if (_effects_offsets)
+		if (_effects_offsets) {
 			for (r = 0; r < gss->NUM_EFFECTS_RESOURCES; r++)
 				_effects_offsets[r] = READ_LE_UINT32(&_effects_offsets[r]);
+		}
 #endif
 	}
 }
@@ -4777,10 +4774,7 @@ void SimonState::playVoice(uint voice)
 	_voice_file->seek(_voice_offsets[voice], SEEK_SET);
 
 #ifdef USE_MAD
-	const char *m = gss->mp3_filename;
-	File music_file;
-	music_file.open(m, _gameDataPath);
-	if (music_file.isOpen() == true) {
+	if (_voice_type == FORMAT_MP3) {
 
 		uint32 size = _voice_offsets[voice+1] - _voice_offsets[voice];
 
@@ -4790,11 +4784,7 @@ void SimonState::playVoice(uint voice)
 		_mixer->playMP3(&_voice_sound, sound, size, SoundMixer::FLAG_AUTOFREE);
 	} else {
 #endif	
-	const char *s2 = gss->voc_filename;
-	File music_file;
-	music_file.open(s2, _gameDataPath);
-
-	if (music_file.isOpen() == false) {			/* WAVE audio */
+	if (_voice_type == FORMAT_WAV) {            /* WAVE audio */
 		WaveHeader wave_hdr;
 		uint32 data[2];
 
@@ -4822,7 +4812,7 @@ void SimonState::playVoice(uint voice)
 
 		_mixer->playRaw(&_voice_sound, buffer, data[1], READ_LE_UINT32(&wave_hdr.samples_per_sec),
 										 SoundMixer::FLAG_UNSIGNED);
-	} else {											/* VOC audio */
+	} else if (_voice_type == FORMAT_WAV) {      /* VOC audio */
 		VocHeader voc_hdr;
 		VocBlockHeader voc_block_hdr;
 		uint32 size;
@@ -4854,10 +4844,7 @@ void SimonState::playSound(uint sound)
 	if (_game & GAME_WIN) {
 		if (_effects_offsets) {			/* VOC sound file */
 #ifdef USE_MAD
-			const char *m = gss->mp3_filename;
-			File music_file;
-			music_file.open(m, _gameDataPath);
-			if (music_file.isOpen() == true) {
+			if (_effects_type == FORMAT_MP3) {
 				_effects_file->seek(_effects_offsets[sound], SEEK_SET);
 				uint32 size = _effects_offsets[sound+1] - _effects_offsets[sound];
 
