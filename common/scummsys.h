@@ -41,7 +41,7 @@
 #if defined(_MSC_VER)
 
 	#define scumm_stricmp stricmp
-	#define scumm_strnicmp strnicmp
+	#define scumm_strnicmp _strnicmp
 	#define snprintf _snprintf
 
 	#if defined(CHECK_HEAP)
