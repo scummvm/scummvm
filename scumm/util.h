@@ -83,6 +83,7 @@ typedef enum _res_type {
 } res_type;
 
 class ScummNESFile : public BaseScummFile {
+public:
 	typedef	enum _romset {
 		kROMsetUSA,
 		kROMsetEurope,
@@ -90,8 +91,6 @@ class ScummNESFile : public BaseScummFile {
 		kROMsetFrance,
 		kROMsetNum 
 	} t_romset;
-
-public:
 
 	typedef	struct	_resource {
 		uint32 offset[kROMsetNum];
@@ -125,7 +124,7 @@ public:
 	bool eof() { return _stream->eof(); }
 	uint32 pos() { return _stream->pos(); }
 	uint32 size() { return _stream->size(); }
-	void seek(int32 offs, int whence = SEEK_SET) { return _stream->seek(offs, whence); }
+	void seek(int32 offs, int whence = SEEK_SET) { _stream->seek(offs, whence); }
 	uint32 read(void *ptr, uint32 len) { return _stream->read(ptr, len); }
 	uint32 write(const void *ptr, uint32 size);
 };
