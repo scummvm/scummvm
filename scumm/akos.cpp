@@ -126,7 +126,7 @@ bool ScummEngine::akos_hasManyDirections(int costume) {
 }
 
 int ScummEngine::akos_frameToAnim(Actor *a, int frame) {
-	if (akos_hasManyDirections(a->costume))
+	if (_version >= 7 && akos_hasManyDirections(a->costume))
 		return toSimpleDir(1, a->getFacing()) + frame * 8;
 	else
 		return newDirToOldDir(a->getFacing()) + frame * 4;

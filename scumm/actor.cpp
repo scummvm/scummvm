@@ -308,12 +308,12 @@ int Actor::updateActorDirection(bool is_walking) {
 	if ((_vm->_version == 6) && ignoreTurns)
 		return facing;
 
-	dirType = (_vm->_features & GF_NEW_COSTUMES) ? _vm->akos_hasManyDirections(costume) : false;
+	dirType = (_vm->_version >= 7) ? _vm->akos_hasManyDirections(costume) : false;
 
 	from = toSimpleDir(dirType, facing);
 	dir = remapDirection(targetFacing, is_walking);
 
-	if (_vm->_features & GF_NEW_COSTUMES)
+	if (_vm->_version >= 7)
 		// Direction interpolation interfers with walk scripts in Dig; they perform
 		// (much better) interpolation themselves.
 		shouldInterpolate = false;	
@@ -422,7 +422,7 @@ void Actor::setupActorScale() {
 }
 
 void Actor::startAnimActor(int f) {
-	if ((_vm->_features & GF_NEW_COSTUMES) && !(_vm->_features & GF_HUMONGOUS)) {
+	if (_vm->_version >= 7) {
 		switch (f) {
 		case 1001:
 			f = initFrame;
@@ -439,6 +439,16 @@ void Actor::startAnimActor(int f) {
 		case 1005:
 			f = talkStopFrame;
 			break;
+		}
+
+		frame = f;
+
+		if (costume != 0) {
+			animProgress = 0;
+			needRedraw = true;
+			if (f == initFrame)
+				cost.reset();
+			_vm->akos_decodeData(this, f, (uint) - 1);
 		}
 	} else {
 		switch (f) {
@@ -458,19 +468,7 @@ void Actor::startAnimActor(int f) {
 			f = talkStopFrame;
 			break;
 		}
-	}
 
-	if (_vm->_features & GF_NEW_COSTUMES) {
-		frame = f;
-
-		if (costume != 0) {
-			animProgress = 0;
-			needRedraw = true;
-			if (f == initFrame)
-				cost.reset();
-			_vm->akos_decodeData(this, f, (uint) - 1);
-		}
-	} else {		
 		assert(f != 0x3E);
 		frame = f;
 
@@ -482,7 +480,10 @@ void Actor::startAnimActor(int f) {
 			// Causes Zak to lose his body in several scenes, see bug #771508
 			if (_vm->_version >= 3 && f == initFrame)
 				cost.reset();
-			_vm->cost_decodeData(this, f, (uint) - 1);
+			if (_vm->_features & GF_NEW_COSTUMES)
+				_vm->akos_decodeData(this, f, (uint) - 1);
+			else
+				_vm->cost_decodeData(this, f, (uint) - 1);
 		}
 	}
 }
@@ -490,7 +491,7 @@ void Actor::startAnimActor(int f) {
 void Actor::animateActor(int anim) {
 	int cmd, dir;
 
-	if ((_vm->_features & GF_NEW_COSTUMES) && !(_vm->_features & GF_HUMONGOUS)) {
+	if (_vm->_version >= 7) {
 
 		if (anim == 0xFF)
 			anim = 2000;
@@ -965,7 +966,7 @@ void Actor::drawActorCostume() {
 	bcr->setPalette(palette);
 	bcr->setFacing(this);
 
-	if ((_vm->_features & GF_NEW_COSTUMES) && !(_vm->_features & GF_HUMONGOUS)) {
+	if (_vm->_version >= 7) {
 
 		bcr->_zbuf = forceClip;
 		if (bcr->_zbuf == 100) {
