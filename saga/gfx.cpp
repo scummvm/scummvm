@@ -49,9 +49,7 @@
 
 namespace Saga {
 
-int GFX_ClearSurface(char *buf, int w, int h, int p)
-{
-
+int GFX_ClearSurface(char *buf, int w, int h, int p) {
 	int y;
 
 	for (y = 0; y < h; y++) {
@@ -62,9 +60,7 @@ int GFX_ClearSurface(char *buf, int w, int h, int p)
 	return R_SUCCESS;
 }
 
-int GFX_ClearSurface16(char *buf, int w, int h, int p)
-{
-
+int GFX_ClearSurface16(char *buf, int w, int h, int p) {
 	int y;
 	w <<= 1;
 
@@ -76,8 +72,7 @@ int GFX_ClearSurface16(char *buf, int w, int h, int p)
 	return R_SUCCESS;
 }
 
-int GFX_DrawPalette(R_SURFACE * dst_s)
-{
+int GFX_DrawPalette(R_SURFACE *dst_s) {
 	int x;
 	int y;
 
@@ -86,12 +81,10 @@ int GFX_DrawPalette(R_SURFACE * dst_s)
 	R_RECT pal_rect;
 
 	for (y = 0; y < 16; y++) {
-
 		pal_rect.top = (y * 8) + 4;
 		pal_rect.bottom = pal_rect.top + 8;
 
 		for (x = 0; x < 16; x++) {
-
 			pal_rect.left = (x * 8) + 4;
 			pal_rect.right = pal_rect.left + 8;
 
@@ -103,8 +96,7 @@ int GFX_DrawPalette(R_SURFACE * dst_s)
 	return 0;
 }
 
-int GFX_SimpleBlit(R_SURFACE * dst_s, R_SURFACE * src_s)
-{
+int GFX_SimpleBlit(R_SURFACE *dst_s, R_SURFACE *src_s) {
 	uchar *src_p;
 	uchar *dst_p;
 	int y, w, p;
@@ -120,7 +112,6 @@ int GFX_SimpleBlit(R_SURFACE * dst_s, R_SURFACE * src_s)
 	p = src_s->buf_pitch;
 
 	for (y = 0; y < src_s->buf_h; y++) {
-
 		memcpy(dst_p, src_p, w);
 
 		dst_p += p;
@@ -130,14 +121,11 @@ int GFX_SimpleBlit(R_SURFACE * dst_s, R_SURFACE * src_s)
 	return R_SUCCESS;
 }
 
-int GFX_Scale2x(R_SURFACE * dst_s, R_SURFACE * src_s)
-{
-
+int GFX_Scale2x(R_SURFACE *dst_s, R_SURFACE *src_s) {
 	assert((dst_s != NULL) && (src_s != NULL));
 	assert((dst_s->bpp == src_s->bpp));
 
 	switch (dst_s->bpp) {
-
 	case 8:
 		return GFX_Scale2x8(dst_s, src_s);
 		break;
@@ -154,9 +142,7 @@ int GFX_Scale2x(R_SURFACE * dst_s, R_SURFACE * src_s)
 	return R_FAILURE;
 }
 
-int GFX_Scale2x8(R_SURFACE * dst_s, R_SURFACE * src_s)
-{
-
+int GFX_Scale2x8(R_SURFACE *dst_s, R_SURFACE *src_s) {
 	int y, x;
 
 	int src_skip = src_s->buf_pitch - src_s->buf_w;
@@ -172,7 +158,6 @@ int GFX_Scale2x8(R_SURFACE * dst_s, R_SURFACE * src_s)
 	assert(dst_s->buf_h == (src_s->buf_h * 2));
 
 	for (y = 0; y < src_s->buf_h; y++) {
-
 		src_row = src_ptr;
 		dst_row = dst_ptr;
 
@@ -192,8 +177,7 @@ int GFX_Scale2x8(R_SURFACE * dst_s, R_SURFACE * src_s)
 	return R_SUCCESS;
 }
 
-int GFX_Scale2x16(R_SURFACE * dst_s, R_SURFACE * src_s)
-{
+int GFX_Scale2x16(R_SURFACE *dst_s, R_SURFACE *src_s) {
 	int y, x;
 
 	int src_skip;
@@ -211,7 +195,6 @@ int GFX_Scale2x16(R_SURFACE * dst_s, R_SURFACE * src_s)
 	dest_skip = (dst_s->buf_pitch - dst_s->buf_w) / sizeof(short);
 
 	for (y = 0; y < src_s->buf_h; y++) {
-
 		src_row = (short *)src_ptr;
 		dest_row = (short *)dest_ptr;
 
@@ -232,10 +215,6 @@ int GFX_Scale2x16(R_SURFACE * dst_s, R_SURFACE * src_s)
 	return R_SUCCESS;
 }
 
-int
-GFX_BufToSurface(R_SURFACE * ds,
-    const uchar * src,
-    int src_w, int src_h, R_RECT * src_rect, R_POINT * dst_pt)
 /*--------------------------------------------------------------------------*\
  * Copies a rectangle from a raw 8 bit pixel buffer to the specified surface.
  * The buffer is of width 'src_w' and height 'src_h'. The rectangle to be 
@@ -247,8 +226,8 @@ GFX_BufToSurface(R_SURFACE * ds,
  * - The surface must match the logical dimensions of the buffer exactly.
  * - Returns R_FAILURE on error
 \*--------------------------------------------------------------------------*/
-{
-
+int GFX_BufToSurface(R_SURFACE *ds, const uchar *src, int src_w, int src_h, 
+					 R_RECT *src_rect, R_POINT *dst_pt) {
 	const uchar *read_p;
 	uchar *write_p;
 
@@ -263,10 +242,8 @@ GFX_BufToSurface(R_SURFACE * ds,
 	int src_off_x, src_off_y;
 	int src_draw_w, src_draw_h;
 
-	/* Clamp source rectangle to source buffer
-	 * \*------------------------------------------------------------- */
+	/* Clamp source rectangle to source buffer */
 	if (src_rect != NULL) {
-
 		src_rect->clip(src_w - 1, src_h - 1);
 
 		s = *src_rect;
@@ -282,8 +259,7 @@ GFX_BufToSurface(R_SURFACE * ds,
 		s.bottom = src_h - 1;
 	}
 
-	/* Get destination origin and clip rectangle
-	 * \*------------------------------------------------------------- */
+	/* Get destination origin and clip rectangle */
 	if (dst_pt != NULL) {
 		d_x = dst_pt->x;
 		d_y = dst_pt->y;
@@ -304,8 +280,7 @@ GFX_BufToSurface(R_SURFACE * ds,
 		clip.bottom = ds->buf_h - 1;
 	}
 
-	/* Clip source rectangle to destination surface
-	 * \*------------------------------------------------------------- */
+	/* Clip source rectangle to destination surface */
 	dst_off_x = d_x;
 	dst_off_y = d_y;
 	src_off_x = s.left;
@@ -363,13 +338,11 @@ GFX_BufToSurface(R_SURFACE * ds,
 		src_draw_h -= (clip.bottom - (d_y + src_draw_h - 1));
 	}
 
-	/* Transfer buffer data to surface
-	 * \*------------------------------------------------------------- */
+	/* Transfer buffer data to surface */
 	read_p = (src + src_off_x) + (src_w * src_off_y);
 	write_p = (ds->buf + dst_off_x) + (ds->buf_pitch * dst_off_y);
 
 	for (row = 0; row < src_draw_h; row++) {
-
 		memcpy(write_p, read_p, src_draw_w);
 
 		write_p += ds->buf_pitch;
@@ -379,16 +352,8 @@ GFX_BufToSurface(R_SURFACE * ds,
 	return R_SUCCESS;
 }
 
-int
-GFX_BufToBuffer(uchar * dst_buf,
-    int dst_w,
-    int dst_h,
-    const uchar * src,
-    int src_w, int src_h, R_RECT * src_rect, R_POINT * dst_pt)
-/*--------------------------------------------------------------------------*\
-\*--------------------------------------------------------------------------*/
-{
-
+int GFX_BufToBuffer(uchar *dst_buf, int dst_w, int dst_h, const uchar *src,
+					int src_w, int src_h, R_RECT *src_rect, R_POINT *dst_pt) {
 	const uchar *read_p;
 	uchar *write_p;
 
@@ -403,10 +368,8 @@ GFX_BufToBuffer(uchar * dst_buf,
 	int src_off_x, src_off_y;
 	int src_draw_w, src_draw_h;
 
-	/* Clamp source rectangle to source buffer
-	 * \*------------------------------------------------------------- */
+	/* Clamp source rectangle to source buffer */
 	if (src_rect != NULL) {
-
 		src_rect->clip(src_w - 1, src_h - 1);
 
 		s.left = src_rect->left;
@@ -425,8 +388,7 @@ GFX_BufToBuffer(uchar * dst_buf,
 		s.bottom = src_h - 1;
 	}
 
-	/* Get destination origin and clip rectangle
-	 * \*------------------------------------------------------------- */
+	/* Get destination origin and clip rectangle */
 	if (dst_pt != NULL) {
 		d_x = dst_pt->x;
 		d_y = dst_pt->y;
@@ -440,8 +402,7 @@ GFX_BufToBuffer(uchar * dst_buf,
 	clip.right = dst_w - 1;
 	clip.bottom = dst_h - 1;
 
-	/* Clip source rectangle to destination surface
-	 * \*------------------------------------------------------------- */
+	/* Clip source rectangle to destination surface */
 	dst_off_x = d_x;
 	dst_off_y = d_y;
 	src_off_x = s.left;
@@ -499,13 +460,11 @@ GFX_BufToBuffer(uchar * dst_buf,
 		src_draw_h -= (clip.bottom - (d_y + src_draw_h - 1));
 	}
 
-	/* Transfer buffer data to surface
-	 * \*------------------------------------------------------------- */
+	/* Transfer buffer data to surface */
 	read_p = (src + src_off_x) + (src_w * src_off_y);
 	write_p = (dst_buf + dst_off_x) + (dst_w * dst_off_y);
 
 	for (row = 0; row < src_draw_h; row++) {
-
 		memcpy(write_p, read_p, src_draw_w);
 
 		write_p += dst_w;
@@ -515,18 +474,15 @@ GFX_BufToBuffer(uchar * dst_buf,
 	return R_SUCCESS;
 }
 
-int GFX_DrawCursor(R_SURFACE * ds, R_POINT * p1)
-{
-
+int GFX_DrawCursor(R_SURFACE *ds, R_POINT *p1) {
 	static uchar cursor_img[R_CURSOR_W * R_CURSOR_H] = {
-
-		0, 0, 0, 255, 0, 0, 0,
-		0, 0, 0, 255, 0, 0, 0,
-		0, 0, 0, 0, 0, 0, 0,
-		255, 255, 0, 0, 0, 255, 255,
-		0, 0, 0, 0, 0, 0, 0,
-		0, 0, 0, 255, 0, 0, 0,
-		0, 0, 0, 255, 0, 0, 0
+		0,   0,   0,   255, 0,   0,   0,
+		0,   0,   0,   255, 0,   0,   0,
+		0,   0,   0,   0,   0,   0,   0,
+		255, 255, 0,   0,   0,   255, 255,
+		0,   0,   0,   0,   0,   0,   0,
+		0,   0,   0,   255, 0,   0,   0,
+		0,   0,   0,   255, 0,   0,   0
 	};
 
 	R_CLIPINFO ci;
@@ -569,9 +525,7 @@ int GFX_DrawCursor(R_SURFACE * ds, R_POINT * p1)
 	dst_skip = ds->buf_pitch - ci.draw_w;
 
 	for (y = 0; y < ci.draw_h; y++) {
-
 		for (x = 0; x < ci.draw_w; x++) {
-
 			if (*src_p != 0) {
 				*dst_p = *src_p;
 			}
@@ -588,12 +542,11 @@ int GFX_DrawCursor(R_SURFACE * ds, R_POINT * p1)
 
 }
 
-int GFX_DrawRect(R_SURFACE * ds, R_RECT * dst_rect, int color)
 /*--------------------------------------------------------------------------*\
  * Fills a rectangle in the surface ds from point 'p1' to point 'p2' using
  * the specified color.
 \*--------------------------------------------------------------------------*/
-{
+int GFX_DrawRect(R_SURFACE *ds, R_RECT *dst_rect, int color) {
 	uchar *write_p;
 
 	int w;
@@ -603,7 +556,6 @@ int GFX_DrawRect(R_SURFACE * ds, R_RECT * dst_rect, int color)
 	int left, top, right, bottom;
 
 	if (dst_rect != NULL) {
-
 		dst_rect->clip(ds->buf_w - 1, ds->buf_h - 1);
 
 		left = dst_rect->left;
@@ -635,8 +587,7 @@ int GFX_DrawRect(R_SURFACE * ds, R_RECT * dst_rect, int color)
 	return R_SUCCESS;
 }
 
-int GFX_DrawFrame(R_SURFACE * ds, R_POINT * p1, R_POINT * p2, int color)
-{
+int GFX_DrawFrame(R_SURFACE *ds, R_POINT *p1, R_POINT *p2, int color) {
 	int left, top, right, bottom;
 
 	int min_x;
@@ -678,9 +629,7 @@ int GFX_DrawFrame(R_SURFACE * ds, R_POINT * p1, R_POINT * p2, int color)
 	return R_SUCCESS;
 }
 
-int GFX_DrawPolyLine(R_SURFACE * ds, R_POINT * pts, int pt_ct, int draw_color)
-{
-
+int GFX_DrawPolyLine(R_SURFACE *ds, R_POINT *pts, int pt_ct, int draw_color) {
 	R_POINT *first_pt = pts;
 	int last_i = 1;
 	int i;
@@ -702,9 +651,7 @@ int GFX_DrawPolyLine(R_SURFACE * ds, R_POINT * pts, int pt_ct, int draw_color)
 	return R_SUCCESS;
 }
 
-int GFX_GetClipInfo(R_CLIPINFO * clipinfo)
-{
-
+int GFX_GetClipInfo(R_CLIPINFO *clipinfo) {
 	Common::Rect s;
 	int d_x, d_y;
 
@@ -726,8 +673,7 @@ int GFX_GetClipInfo(R_CLIPINFO * clipinfo)
 
 	clip = *clipinfo->dst_rect;
 
-	/* Clip source rectangle to destination surface
-	 * \*------------------------------------------------------------- */
+	/* Clip source rectangle to destination surface */
 	clipinfo->dst_draw_x = d_x;
 	clipinfo->dst_draw_y = d_y;
 	clipinfo->src_draw_x = s.left;
@@ -798,12 +744,8 @@ int GFX_GetClipInfo(R_CLIPINFO * clipinfo)
 	return R_SUCCESS;
 }
 
-int
-GFX_ClipLine(R_SURFACE * ds,
-    const R_POINT * src_p1,
-    const R_POINT * src_p2, R_POINT * dst_p1, R_POINT * dst_p2)
-{
-
+int GFX_ClipLine(R_SURFACE *ds, const R_POINT *src_p1, const R_POINT *src_p2, 
+				 R_POINT *dst_p1, R_POINT *dst_p2) {
 	const R_POINT *n_p1;
 	const R_POINT *n_p2;
 
@@ -841,7 +783,6 @@ GFX_ClipLine(R_SURFACE * ds,
 	dy = bottom - top;
 
 	if (left < 0) {
-
 		if (right < 0) {
 			/* Line completely off left edge */
 			return -1;
@@ -856,7 +797,6 @@ GFX_ClipLine(R_SURFACE * ds,
 	}
 
 	if (bottom > clip.right) {
-
 		if (left > clip.right) {
 			/* Line completely off right edge */
 			return -1;
@@ -873,7 +813,6 @@ GFX_ClipLine(R_SURFACE * ds,
 	return 1;
 }
 
-void GFX_DrawLine(R_SURFACE * ds, R_POINT * p1, R_POINT * p2, int color)
 /*--------------------------------------------------------------------------*\
  * Utilizes Bresenham's run-length slice algorithm described in
  *  "Michael Abrash's Graphics Programming Black Book", 
@@ -881,8 +820,7 @@ void GFX_DrawLine(R_SURFACE * ds, R_POINT * p1, R_POINT * p2, int color)
  *
  * Performs no clipping
 \*--------------------------------------------------------------------------*/
-{
-
+void GFX_DrawLine(R_SURFACE *ds, R_POINT *p1, R_POINT *p2, int color) {
 	uchar *write_p;
 
 	int clip_result;

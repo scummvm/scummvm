@@ -84,16 +84,13 @@ typedef Common::Rect R_RECT;
 
 
 struct R_COLOR {
-
 	int red;
 	int green;
 	int blue;
 	int alpha;
-
 };
 
 struct R_SURFACE {
-
 	uchar *buf;
 	int buf_w;
 	int buf_h;
@@ -104,11 +101,9 @@ struct R_SURFACE {
 	R_RECT clip_rect;
 
 	void *impl_src;
-
 };
 
 struct R_SOUNDBUFFER {
-
 	const uchar *res_data;
 	size_t res_len;
 
@@ -119,7 +114,6 @@ struct R_SOUNDBUFFER {
 
 	const uchar *s_buf;
 	size_t s_buf_len;
-
 };
 
 #define R_RGB_RED   0x00FF0000UL
@@ -127,30 +121,24 @@ struct R_SOUNDBUFFER {
 #define R_RGB_BLUE  0x000000FFUL
 
 struct SAGA_COLOR {
-
 	byte r;
 	byte g;
 	byte b;
-
 };
 
 #define SAGA_COLOR_LEN 3
 
 struct PALENTRY {
-
 	byte red;
 	byte green;
 	byte blue;
-
 };
 
 enum R_ERRORCODE {
-
 	R_STOP = -3,
 	R_MEM = -2,
 	R_FAILURE = -1,
 	R_SUCCESS = 0
-
 };
 
 
@@ -163,10 +151,10 @@ void R_Shutdown(int param);
 /*
  * r_transitions.c
 \*--------------------------------------------------------------------------*/
-int TRANSITION_Dissolve(uchar * dst_img,
+int TRANSITION_Dissolve(uchar *dst_img,
     int dst_w,
     int dst_h,
-    int dst_p, const uchar * src_img, int src_p, int flags, double percent);
+    int dst_p, const uchar *src_img, int src_p, int flags, double percent);
 
 /*--------------------------------------------------------------------------*\
  * System specific routines
@@ -228,22 +216,22 @@ int SYSGFX_Init(R_SYSGFX_INIT *);
 R_SURFACE *SYSGFX_GetScreenSurface(void);
 R_SURFACE *SYSGFX_GetBackBuffer(void);
 
-int SYSGFX_LockSurface(R_SURFACE * surface);
-int SYSGFX_UnlockSurface(R_SURFACE * surface);
+int SYSGFX_LockSurface(R_SURFACE *surface);
+int SYSGFX_UnlockSurface(R_SURFACE *surface);
 
 R_SURFACE *SYSGFX_CreateSurface(int w, int h, int bpp);
-R_SURFACE *SYSGFX_FormatToDisplay(R_SURFACE * surface);
-int SYSGFX_DestroySurface(R_SURFACE * surface);
+R_SURFACE *SYSGFX_FormatToDisplay(R_SURFACE *surface);
+int SYSGFX_DestroySurface(R_SURFACE *surface);
 
 int SYSGFX_GetWhite(void);
 int SYSGFX_GetBlack(void);
 int SYSGFX_MatchColor(unsigned long colormask);
-int SYSGFX_SetPalette(R_SURFACE * surface, PALENTRY * pal);
-int SYSGFX_GetCurrentPal(PALENTRY * src_pal);
+int SYSGFX_SetPalette(R_SURFACE *surface, PALENTRY *pal);
+int SYSGFX_GetCurrentPal(PALENTRY *src_pal);
 
-int SYSGFX_PalToBlack(R_SURFACE * surface, PALENTRY * src_pal, double percent);
+int SYSGFX_PalToBlack(R_SURFACE *surface, PALENTRY *src_pal, double percent);
 
-int SYSGFX_BlackToPal(R_SURFACE * surface, PALENTRY * src_pal, double percent);
+int SYSGFX_BlackToPal(R_SURFACE *surface, PALENTRY *src_pal, double percent);
 
 /*
  * System : Input 
