@@ -38,6 +38,7 @@
 #include "sword2/memory.h"
 #include "sword2/mouse.h"
 #include "sword2/resman.h"
+#include "sword2/router.h"
 #include "sword2/sound.h"
 
 #ifdef _WIN32_WCE
@@ -128,7 +129,6 @@ Sword2Engine::Sword2Engine(GameDetector *detector, OSystem *syst) : Engine(syst)
 	_mouse = NULL;
 	_logic = NULL;
 	_fontRenderer = NULL;
-	_gui = NULL;
 	_debugger = NULL;
 
 	_keyboardEvent.pending = false;
@@ -152,7 +152,6 @@ Sword2Engine::Sword2Engine(GameDetector *detector, OSystem *syst) : Engine(syst)
 Sword2Engine::~Sword2Engine() {
 	delete _debugger;
 	delete _sound;
-	delete _gui;
 	delete _fontRenderer;
 	delete _screen;
 	delete _mouse;
@@ -177,6 +176,43 @@ void Sword2Engine::errorString(const char *buf1, char *buf2) {
 		_debugger->attach(buf2);
 		_debugger->onFrame();
 	}
+}
+
+void Sword2Engine::registerDefaultSettings() {
+	ConfMan.registerDefault("music_mute", false);
+	ConfMan.registerDefault("speech_mute", false);
+	ConfMan.registerDefault("sfx_mute", false);
+	ConfMan.registerDefault("gfx_details", 2);
+	ConfMan.registerDefault("subtitles", false);
+	ConfMan.registerDefault("reverse_stereo", false);
+}
+
+void Sword2Engine::readSettings() {
+	_mixer->setVolumeForSoundType(SoundMixer::kMusicAudioDataType, ConfMan.getInt("music_volume"));
+	_mixer->setVolumeForSoundType(SoundMixer::kSpeechAudioDataType, ConfMan.getInt("speech_volume"));
+	_mixer->setVolumeForSoundType(SoundMixer::kSFXAudioDataType, ConfMan.getInt("sfx_volume"));
+	setSubtitles(ConfMan.getBool("subtitles"));
+	_sound->muteMusic(ConfMan.getBool("music_mute"));
+	_sound->muteSpeech(ConfMan.getBool("speech_mute"));
+	_sound->muteFx(ConfMan.getBool("sfx_mute"));
+	_sound->setReverseStereo(ConfMan.getBool("reverse_stereo"));
+	_mouse->setObjectLabels(ConfMan.getBool("object_labels"));
+	_screen->setRenderLevel(ConfMan.getInt("gfx_details"));
+}
+
+void Sword2Engine::writeSettings() {
+	ConfMan.set("music_volume", _mixer->getVolumeForSoundType(SoundMixer::kMusicAudioDataType));
+	ConfMan.set("speech_volume", _mixer->getVolumeForSoundType(SoundMixer::kSpeechAudioDataType));
+	ConfMan.set("sfx_volume", _mixer->getVolumeForSoundType(SoundMixer::kSFXAudioDataType));
+	ConfMan.set("music_mute", _sound->isMusicMute());
+	ConfMan.set("speech_mute", _sound->isSpeechMute());
+	ConfMan.set("sfx_mute", _sound->isFxMute());
+	ConfMan.set("gfx_details", _screen->getRenderLevel());
+	ConfMan.set("subtitles", getSubtitles());
+	ConfMan.set("object_labels", _mouse->getObjectLabels());
+	ConfMan.set("reverse_stereo", _sound->isReverseStereo());
+
+	ConfMan.flushToDisk();
 }
 
 /**
@@ -209,7 +245,6 @@ int Sword2Engine::init(GameDetector &detector) {
 	_resman = new ResourceManager(this);
 	_logic = new Logic(this);
 	_fontRenderer = new FontRenderer(this);
-	_gui = new Gui(this);
 	_sound = new Sound(this);
 	_mouse = new Mouse(this);
 
@@ -217,9 +252,8 @@ int Sword2Engine::init(GameDetector &detector) {
 	if (!_mixer->isReady())
 		warning("Sound initialization failed");
 
-	_mixer->setVolumeForSoundType(SoundMixer::kMusicAudioDataType, ConfMan.getInt("music_volume"));
-	_mixer->setVolumeForSoundType(SoundMixer::kSpeechAudioDataType, ConfMan.getInt("speech_volume"));
-	_mixer->setVolumeForSoundType(SoundMixer::kSFXAudioDataType, ConfMan.getInt("sfx_volume"));
+	registerDefaultSettings();
+	readSettings();
 
 	initStartMenu();
 
@@ -235,14 +269,15 @@ int Sword2Engine::init(GameDetector &detector) {
 	else
 		Logic::_scriptVars[DEMO] = 0;
 
-	_gui->readOptionSettings();
-
 	if (_saveSlot != -1) {
 		if (saveExists(_saveSlot))
 			restoreGame(_saveSlot);
 		else {
+			SaveLoadDialog dialog(this, kLoadDialog);
+
 			_mouse->setMouse(NORMAL_MOUSE_ID);
-			if (!_gui->restoreControl())
+
+			if (!dialog.runModal())
 				startGame();
 		}
 	} else if (!_bootParam && saveExists()) {
@@ -251,7 +286,10 @@ int Sword2Engine::init(GameDetector &detector) {
 
 		_mouse->setMouse(NORMAL_MOUSE_ID);
 		_logic->fnPlayMusic(pars);
-		result = _gui->startControl();
+
+		StartDialog dialog(this);
+
+		result = dialog.runModal();
 
 		// If the game is started from the beginning, the cutscene
 		// player will kill the music for us. Otherwise, the restore
@@ -348,6 +386,63 @@ int Sword2Engine::go() {
 
 void Sword2Engine::closeGame() {
 	_quit = true;
+}
+
+void Sword2Engine::restartGame() {
+	ScreenInfo *screenInfo = _screen->getScreenInfo();
+	uint32 temp_demo_flag;
+
+	_mouse->closeMenuImmediately();
+
+	// Restart the game. To do this, we must...
+
+	// Stop music instantly!
+	_sound->stopMusic(true);
+
+	// In case we were dead - well we're not anymore!
+	Logic::_scriptVars[DEAD] = 0;
+
+	// Restart the game. Clear all memory and reset the globals
+	temp_demo_flag = Logic::_scriptVars[DEMO];
+
+	// Remove all resources from memory, including player object and
+	// global variables
+	_resman->removeAll();
+
+	// Reopen global variables resource and player object
+	setupPersistentResources();
+
+	Logic::_scriptVars[DEMO] = temp_demo_flag;
+
+	// Free all the route memory blocks from previous game
+	_logic->_router->freeAllRouteMem();
+
+	// Call the same function that first started us up
+	startGame();
+
+	// Prime system with a game cycle
+
+	// Reset the graphic 'BuildUnit' list before a new logic list
+	// (see fnRegisterFrame)
+	_screen->resetRenderLists();
+
+	// Reset the mouse hot-spot list (see fnRegisterMouse and
+	// fnRegisterFrame)
+	_mouse->resetMouseList();
+
+	_mouse->closeMenuImmediately();
+
+	// FOR THE DEMO - FORCE THE SCROLLING TO BE RESET!
+	// - this is taken from fnInitBackground
+	// switch on scrolling (2 means first time on screen)
+	screenInfo->scroll_flag = 2;
+
+	if (_logic->processSession())
+		error("restart 1st cycle failed??");
+
+	// So palette not restored immediately after control panel - we want
+	// to fade up instead!
+	screenInfo->new_palette = 99;
 }
 
 bool Sword2Engine::checkForMouseEvents() {
@@ -529,11 +624,11 @@ void Sword2Engine::pauseGame() {
 	_sound->pauseAllSound();
 	_mouse->pauseGame();
 
-	// If level at max, turn down because palette-matching won't work
-	// when dimmed
+	// If render level is at max, turn it down because palette-matching
+	// won't work when the palette is dimmed.
 
-	if (_gui->_currentGraphicsLevel == 3) {
-		_gui->updateGraphicsLevel(2);
+	if (_screen->getRenderLevel() == 3) {
+		_screen->setRenderLevel(2);
 		_graphicsLevelFudged = true;
 	}
 
@@ -559,7 +654,7 @@ void Sword2Engine::unpauseGame() {
 
 	// If graphics level at max, turn up again
 	if (_graphicsLevelFudged) {
-		_gui->updateGraphicsLevel(3);
+		_screen->setRenderLevel(3);
 		_graphicsLevelFudged = false;
 	}
 

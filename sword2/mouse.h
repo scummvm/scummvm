@@ -135,6 +135,8 @@ private:
 	uint32 _mouseTouching;
 	uint32 _oldMouseTouching;
 
+	bool _objectLabels;
+
 	uint32 _menuSelectedPos;
 
 	void decompressMouse(byte *decomp, byte *comp, int width, int height, int pitch, int xOff = 0, int yOff = 0);
@@ -150,6 +152,9 @@ public:
 
 	void getPos(int &x, int &y);
 	void setPos(int x, int y);
+
+	bool getObjectLabels() { return _objectLabels; }
+	void setObjectLabels(bool b) { _objectLabels = b; }
 
 	bool getMouseStatus() { return _mouseStatus; }
 	uint32 getMouseTouching() { return _mouseTouching; }

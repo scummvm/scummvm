@@ -111,6 +111,8 @@ private:
 	uint32 _totalScreenManagers;
 	uint32 _startRes;
 
+	bool _useSubtitles;
+
 	struct StartUp {
 		char description[MAX_description];
 
@@ -131,7 +133,14 @@ public:
 	int go();
 	int init(GameDetector &detector);
 
+	void registerDefaultSettings();
+	void readSettings();
+	void writeSettings();
+
 	void setupPersistentResources();
+
+	bool getSubtitles() { return _useSubtitles; }
+	void setSubtitles(bool b) { _useSubtitles = b; }
 
 	bool _quit;
 
@@ -145,7 +154,6 @@ public:
 	Mouse *_mouse;
 	Logic *_logic;
 	FontRenderer *_fontRenderer;
-	Gui *_gui;
 
 	Debugger *_debugger;
 
@@ -238,6 +246,7 @@ public:
 	void startGame();
 	void gameCycle();
 	void closeGame();
+	void restartGame();
 
 	void sleepUntil(uint32 time);
 

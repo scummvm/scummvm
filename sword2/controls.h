@@ -21,33 +21,152 @@
 #ifndef	_CONTROL_S
 #define	_CONTROL_S
 
+#include "sword2/defs.h"
+
+#define MAX_WIDGETS 25
+
 namespace Sword2 {
 
 class Sword2Engine;
+class FontRendererGui;
+class Widget;
+class Switch;
+class Slider;
+class Button;
+class ScrollButton;
+class Slot;
 
-class Gui {
+enum {
+	kSaveDialog,
+	kLoadDialog
+};
+
+/**
+ * Base class for all dialogs.
+ */
+
+class Dialog {
+private:
+	int _numWidgets;
+	Widget *_widgets[MAX_WIDGETS];
+	bool _finish;
+	int _result;
+
 public:
 	Sword2Engine *_vm;
 
-	int _baseSlot;
-	uint8 _currentGraphicsLevel;
+	Dialog(Sword2Engine *vm);
+	virtual ~Dialog();
 
-	bool _subtitles;
-	bool _pointerTextSelected;
+	void registerWidget(Widget *widget);
 
-	Gui(Sword2Engine *vm);
+	virtual void paint();
+	virtual void setResult(int result);
 
-	uint32 restoreControl(void);
-	void saveControl(void);
-	bool startControl(void);
-	void quitControl(void);
-	void restartControl(void);
-	void optionControl(void);
-	void readOptionSettings(void);
-	void writeOptionSettings(void);
-	void updateGraphicsLevel(int newLevel);
+	virtual int runModal();
+
+	virtual void onAction(Widget *widget, int result = 0) {}
 };
 
+class OptionsDialog : public Dialog {
+private:
+	FontRendererGui *_fr;
+	Widget *_panel;
+	Switch *_objectLabelsSwitch;
+	Switch *_subtitlesSwitch;
+	Switch *_reverseStereoSwitch;
+	Switch *_musicSwitch;
+	Switch *_speechSwitch;
+	Switch *_fxSwitch;
+	Slider *_musicSlider;
+	Slider *_speechSlider;
+	Slider *_fxSlider;
+	Slider *_gfxSlider;
+	Widget *_gfxPreview;
+	Button *_okButton;
+	Button *_cancelButton;
+	
+	SoundMixer *_mixer;
+
+public:
+	OptionsDialog(Sword2Engine *vm);
+	~OptionsDialog();
+
+	virtual void paint();
+	virtual void onAction(Widget *widget, int result = 0);
+};
+
+class SaveLoadDialog : public Dialog {
+private:
+	int _mode, _selectedSlot;
+	byte _editBuffer[SAVE_DESCRIPTION_LEN];
+	int _editPos, _firstPos;
+	int _cursorTick;
+
+	FontRendererGui *_fr1;
+	FontRendererGui *_fr2;
+	Widget *_panel;
+	Slot *_slotButton[8];
+	ScrollButton *_zupButton;
+	ScrollButton *_upButton;
+	ScrollButton *_downButton;
+	ScrollButton *_zdownButton;
+	Button *_okButton;
+	Button *_cancelButton;
+
+public:
+	SaveLoadDialog(Sword2Engine *vm, int mode);
+	~SaveLoadDialog();
+
+	void updateSlots();
+	void drawEditBuffer(Slot *slot);
+
+	virtual void onAction(Widget *widget, int result = 0);
+	virtual void paint();
+	virtual void setResult(int result);
+	virtual int runModal();
+};
+
+/**
+ * A "mini" dialog is usually a yes/no question, but also used for the
+ * restart/restore dialog at the beginning of the game.
+ */
+
+class MiniDialog : public Dialog {
+private:
+	uint32 _headerTextId;
+	uint32 _okTextId;
+	uint32 _cancelTextId;
+	FontRendererGui *_fr;
+	Widget *_panel;
+	Button *_okButton;
+	Button *_cancelButton;
+
+public:
+	MiniDialog(Sword2Engine *vm, uint32 headerTextId, uint32 okTextId = TEXT_OK, uint32 cancelTextId = TEXT_CANCEL);
+	virtual ~MiniDialog();
+	virtual void paint();
+	virtual void onAction(Widget *widget, int result = 0);
+};
+
+class StartDialog : public MiniDialog {
+public:
+	StartDialog(Sword2Engine *vm);
+	virtual int runModal();
+};
+
+class RestartDialog : public MiniDialog {
+public:
+	RestartDialog(Sword2Engine *vm);
+	virtual int runModal();
+};
+
+class QuitDialog : public MiniDialog {
+public:
+	QuitDialog(Sword2Engine *vm);
+	virtual int runModal();
+};
+ 
 } // End of namespace Sword2
 
 #endif

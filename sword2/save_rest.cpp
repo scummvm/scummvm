@@ -102,6 +102,22 @@ uint32 Sword2Engine::saveGame(uint16 slotNo, byte *desc) {
 	uint32 errorCode = saveData(slotNo, saveBufferMem, bufferSize);
 
 	free(saveBufferMem);
+
+	if (errorCode != SR_OK) {
+		uint32 textId;
+
+		switch (errorCode) {
+		case SR_ERR_FILEOPEN:
+			textId = 213516674;
+			break;
+		default:	// SR_ERR_WRITEFAIL
+			textId = 213516676;
+			break;
+		}
+
+		_screen->displayMsg(fetchTextLine(_resman->openResource(textId / SIZE), textId & 0xffff) + 2, 0);
+	}
+
 	return errorCode;
 }
 
@@ -204,6 +220,37 @@ uint32 Sword2Engine::restoreGame(uint16 slotNo) {
 		errorCode = restoreFromBuffer(saveBufferMem, bufferSize);
 	else
 		free(saveBufferMem);
+
+	if (errorCode != SR_OK) {
+		uint32 textId;
+
+		switch (errorCode) {
+		case SR_ERR_FILEOPEN:
+			textId = 213516670;
+			break;
+		case SR_ERR_INCOMPATIBLE:
+			textId = 213516671;
+			break;
+		default:	// SR_ERR_READFAIL
+			textId = 213516673;
+			break;
+		}
+
+		_screen->displayMsg(fetchTextLine(_resman->openResource(textId / SIZE), textId & 0xffff) + 2, 0);
+	} else {
+		// Prime system with a game cycle
+
+		// Reset the graphic 'BuildUnit' list before a new logic list
+		// (see fnRegisterFrame)
+		_screen->resetRenderLists();
+
+		// Reset the mouse hot-spot list. See fnRegisterMouse()
+		// and fnRegisterFrame()
+		_mouse->resetMouseList();
+
+		if (_logic->processSession())
+			error("restore 1st cycle failed??");
+	}
 
 	// Force the game engine to pick a cursor. This appears to be needed
 	// when using the -x command-line option to restore a game.

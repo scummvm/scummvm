@@ -24,6 +24,21 @@
 #define	SIZE	0x10000			// 65536 items per section
 #define	NuSIZE	0xffff			// & with this
 
+#define TEXT_OK             0x08EB0000
+#define TEXT_CANCEL         0x08EB0001
+#define TEXT_RESTORE        0x08EB0002
+#define TEXT_SAVE           0x08EB0003
+#define TEXT_QUIT           0x08EB0004
+#define TEXT_RESTART        0x08EB0005
+#define TEXT_OPTIONS        0x08EB000A
+#define TEXT_SUBTITLES      0x08EB000B
+#define TEXT_OBJECT_LABELS  0x08EB000C
+#define TEXT_MUSIC_VOLUME   0x08EB000E
+#define TEXT_SPEECH_VOLUME  0x08EB000F
+#define TEXT_FX_VOLUME      0x08EB0010
+#define TEXT_GFX_QUALITY    0x08EB0011
+#define TEXT_REVERSE_STEREO 0x08EB0015
+
 // always 8 (George object used for Nico player character as well)
 #define CUR_PLAYER_ID 8
 

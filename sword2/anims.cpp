@@ -30,7 +30,6 @@
 #include "sword2/sword2.h"
 #include "sword2/defs.h"
 #include "sword2/build_display.h"
-#include "sword2/controls.h"
 #include "sword2/interpreter.h"
 #include "sword2/logic.h"
 #include "sword2/maketext.h"
@@ -246,7 +245,7 @@ void Logic::createSequenceSpeech(MovieTextObject *sequenceText[]) {
 
 		// if we want subtitles, or speech failed to load
 
-		if (_vm->_gui->_subtitles || !speechRunning) {
+		if (_vm->getSubtitles() || !speechRunning) {
 			// open text resource & get the line
 			text = _vm->fetchTextLine(_vm->_resman->openResource(text_res), local_text);
 			// make the sprite

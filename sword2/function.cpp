@@ -26,7 +26,6 @@
 #include "sword2/defs.h"
 #include "sword2/build_display.h"
 #include "sword2/console.h"
-#include "sword2/controls.h"
 #include "sword2/interpreter.h"
 #include "sword2/logic.h"
 #include "sword2/maketext.h"
@@ -1246,7 +1245,7 @@ int32 Logic::fnISpeak(int32 *params) {
 		// we don't want to use a wav for this line either, then just
 		// quit back to script right now!
 
-		if (!_vm->_gui->_subtitles && !wantSpeechForLine(params[S_WAV]))
+		if (!_vm->getSubtitles() && !wantSpeechForLine(params[S_WAV]))
 			return IR_CONT;
 
 		// Drop out for 1st cycle to allow walks/anims to end and
@@ -1411,7 +1410,7 @@ int32 Logic::fnISpeak(int32 *params) {
 			}
 		}
 
-		if (_vm->_gui->_subtitles || !speechRunning) {
+		if (_vm->getSubtitles() || !speechRunning) {
 			// We want subtitles, or the speech failed to load.
 			// Either way, we're going to show the text so create
 			// the text sprite.

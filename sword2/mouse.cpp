@@ -326,19 +326,34 @@ void Mouse::systemMenuMouse(void) {
 
 	switch (hit) {
 	case 0:
-		_vm->_gui->optionControl();
+		{
+			OptionsDialog dialog(_vm);
+			dialog.runModal();
+		}
 		break;
 	case 1:
-		_vm->_gui->quitControl();
+		{
+			QuitDialog dialog(_vm);
+			dialog.runModal();
+		}
 		break;
 	case 2:
-		_vm->_gui->saveControl();
+		{
+			SaveLoadDialog dialog(_vm, kSaveDialog);
+			dialog.runModal();
+		}
 		break;
 	case 3:
-		_vm->_gui->restoreControl();
+		{
+			SaveLoadDialog dialog(_vm, kLoadDialog);
+			dialog.runModal();
+		}
 		break;
 	case 4:
-		_vm->_gui->restartControl();
+		{
+			RestartDialog dialog(_vm);
+			dialog.runModal();
+		}
 		break;
 	}
 
@@ -993,7 +1008,7 @@ void Mouse::createPointerText(uint32 text_id, uint32 pointer_res) {
 	int16 xOffset, yOffset;
 	uint8 justification;
 
-	if (!_vm->_gui->_pointerTextSelected || !text_id)
+	if (!_objectLabels || !text_id)
 		return;
 
 	// Check what the pointer is, to set offsets correctly for text
