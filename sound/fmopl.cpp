@@ -22,18 +22,6 @@
  * Tatsuyuki Satoh. Included from LGPL'ed AdPlug.
  */
 
-/*
-**
-** File: fmopl.c -- software implementation of FM sound generator
-**
-** Copyright (C) 1999,2000 Tatsuyuki Satoh , MultiArcadeMachineEmurator development
-** Modified for ScummVM by Ludvig Strigeus
-** Version 0.37a (modified)
-**
-** ENDER: This file is not GPL. Need to replace or have
-**        relicensed before 0.2.0 release.
-*/
-
 #include "stdafx.h"
 
 #include <stdio.h>
