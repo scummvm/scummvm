@@ -1,0 +1,53 @@
+#!/bin/sh
+# ScummVM Slackware 9(.1) Package Creation Script
+# by Jay Lanagan - roni@parodius.com
+
+CWD=`pwd`
+if [ "$TMP" = "" ]; then
+  TMP=/tmp
+fi
+PKG=$TMP/package-scummvm
+
+#VERSION=0.5.1
+VERSION=20031221
+ARCH=i486
+BUILD=1
+
+if [ ! -d $TMP ]; then
+  mkdir -p $TMP 
+fi
+if [ ! -d $PKG ]; then
+  mkdir -p $PKG 
+fi
+
+cd $TMP
+# tar xzvf scummvm-$VERSION.tgz
+tar xzvf scummvm-$VERSION.tar.gz
+# cd scummvm-$VERSION
+cd scummvm
+chown -R root.root .
+CXXFLAGS="-O2 -march=i486 -mcpu=i686" \
+./configure
+make
+strip scummvm
+chmod 755 scummvm
+mkdir -p $PKG/usr/bin
+cp scummvm $PKG/usr/bin
+chown root:bin $PKG/usr/bin/scummvm
+gzip -9 scummvm.6
+mkdir -p $PKG/usr/man/man6
+cp scummvm.6.gz $PKG/usr/man/man6
+mkdir -p $PKG/usr/doc/scummvm-$VERSION
+cp -a COPYING ChangeLog NEWS README TODO \
+  $PKG/usr/doc/scummvm-$VERSION
+chmod 644 $PKG/usr/doc/scummvm-$VERSION
+mkdir -p $PKG/install
+cat $CWD/slack-desc > $PKG/install/slack-desc
+
+cd $PKG
+makepkg -l y -c n $TMP/scummvm-$VERSION-$ARCH-$BUILD.tgz
+
+if [ "$1" = "--cleanup" ]; then
+  rm -rf $TMP/scummvm-$VERSION
+  rm -rf $PKG
+fi
