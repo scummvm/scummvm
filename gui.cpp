@@ -675,7 +675,7 @@ void Gui::handleCommand(int cmd)
 		close();
 		return;
 	case 9:											/* options button */
-		options(_s);
+		options();
 		draw(0, 100);
 		return;
 	default:
@@ -822,14 +822,13 @@ void Gui::init(Scumm *s)
 	_s = s;
 }
 
-void Gui::loop(Scumm *s)
+void Gui::loop()
 {
-	init(s);
 	if (_active == 1) {
 		_active++;
 		draw(0, 200);								// was 100
-		_old_cursor_mode = s->_system->show_mouse(true);
-		s->pauseSounds(true);
+		_old_cursor_mode = _s->_system->show_mouse(true);
+		_s->pauseSounds(true);
 	}
 
 	_s->getKeyInput(0);
@@ -876,9 +875,8 @@ void Gui::close()
 #endif
 }
 
-void Gui::saveLoadDialog(Scumm *s)
+void Gui::saveLoadDialog()
 {
-	init(s);
 	_widgets[0] = save_load_dialog;
 	_editString = -1;
 	_cur_page = 0;
@@ -886,27 +884,24 @@ void Gui::saveLoadDialog(Scumm *s)
 	_dialog = SAVELOAD_DIALOG;
 }
 
-void Gui::pause(Scumm *s)
+void Gui::pause()
 {
-	init(s);
 	_widgets[0] = pause_dialog;
 	_cur_page = 0;
 	_active = true;
 	_dialog = PAUSE_DIALOG;
 }
 
-void Gui::options(Scumm *s)
+void Gui::options()
 {
-	init(s);
 	_widgets[0] = options_dialog;
 	_active = true;
 	_cur_page = 0;
 	_dialog = OPTIONS_DIALOG;
 }
 
-void Gui::launcher(Scumm *s)
+void Gui::launcher()
 {
-	init(s);
 	_widgets[0] = launcher_dialog;
 	_active = true;
 	_cur_page = 0;

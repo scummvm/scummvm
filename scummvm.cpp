@@ -768,12 +768,12 @@ void Scumm::unkRoomFunc4(int a, int b, int c, int d, int e)
 
 void Scumm::pauseGame(bool user)
 {
-	((Gui *)_gui)->pause(this);
+	((Gui *)_gui)->pause();
 }
 
 void Scumm::setOptions()
 {
-	((Gui *)_gui)->options(this);
+	((Gui *)_gui)->options();
 }
 
 void Scumm::shutDown(int i)
@@ -833,7 +833,7 @@ void Scumm::processKbd()
 						 && _currentRoom != 0) {
 		if (_features & GF_AFTER_V7)
 			runScript(_vars[VAR_UNK_SCRIPT], 0, 0, 0);
-		((Gui *)_gui)->saveLoadDialog(this);
+		((Gui *)_gui)->saveLoadDialog();
 		if (_features & GF_AFTER_V7)
 			runScript(_vars[VAR_UNK_SCRIPT_2], 0, 0, 0);
 	} else if (_lastKeyHit == _vars[VAR_TALKSTOP_KEY]) {
@@ -1193,7 +1193,7 @@ void Scumm::mainRun()
 		waitForTimer(delta * 15 + last_time - new_time);
 		last_time = _system->get_msecs();
 		if (_gui->_active) {
-			_gui->loop(this);
+			_gui->loop();
 			delta = 5;
 		} else {
 			delta = scummLoop(delta);
