@@ -148,8 +148,11 @@ bool Icon::load_image2(void *data, int len)
   if(!hdr.used)
     hdr.used = 1<<hdr.bitcnt;
   hdr.h >>= 1;
-  if(hdr.size + (hdr.used<<2) + hdr.sizeimg > len ||
-     hdr.sizeimg < ((hdr.w*hdr.h*(1+hdr.bitcnt)+7)>>3))
+  /* Fix incorrect sizeimg (The Dig) */
+  if(hdr.sizeimg < ((hdr.w*hdr.h*(1+hdr.bitcnt)+7)>>3))
+    hdr.sizeimg = ((hdr.w*hdr.h*(1+hdr.bitcnt)+7)>>3);
+  if(hdr.size + (hdr.used<<2) + hdr.sizeimg > len /* ||
+     hdr.sizeimg < ((hdr.w*hdr.h*(1+hdr.bitcnt)+7)>>3) */)
     return false;
   if(hdr.w != 32 || hdr.h != 32 || hdr.bitcnt != 4 || hdr.used > 16)
     return false;
