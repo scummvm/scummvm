@@ -185,7 +185,7 @@ SCUMM
   - add sound pitch support and fix missing sound effects for piano mini game in fbear
   - add support kernelSetFunctions/kernelGetFunctions, used for displaying 
     images on birthday cake in fbear and images in painting game of fbpack.
-  - add
+  - add rename/delete file support, to make file opcodes function correctly
   - fix akos asserts in puttmoon, caused by butterfly at start, robot near garage and 
     rock animations near rocket.
   - fix freezes when letting butterfly into fireworks factory and playing alien tag in puttmoon
