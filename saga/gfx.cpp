@@ -60,8 +60,6 @@ Gfx::Gfx(OSystem *system, int width, int height, GameDetector &detector) : _syst
 	// Set module data
 	_back_buf = back_buf;
 	_init = 1;
-	_white_index = -1;
-	_black_index = -1;
 
 	// For now, always show the mouse cursor.
 	setCursor();
@@ -749,89 +747,16 @@ SURFACE *Gfx::getBackBuffer() {
 	return &_back_buf;
 }
 
-int Gfx::getWhite(void) {
-	return _white_index;
-}
-
-int Gfx::getBlack(void) {
-	return _black_index;
-}
-
-int Gfx::matchColor(unsigned long colormask) {
-	int i;
-	int red = (colormask & 0x0FF0000UL) >> 16;
-	int green = (colormask & 0x000FF00UL) >> 8;
-	int blue = colormask & 0x00000FFUL;
-	int dr;
-	int dg;
-	int db;
-	long color_delta;
-	long best_delta = LONG_MAX;
-	int best_index = 0;
-	byte *ppal;
-
-	for (i = 0, ppal = _cur_pal; i < PAL_ENTRIES; i++, ppal += 4) {
-		dr = ppal[0] - red;
-		dr = ABS(dr);
-		dg = ppal[1] - green;
-		dg = ABS(dg);
-		db = ppal[2] - blue;
-		db = ABS(db);
-		ppal[3] = 0;
-
-		color_delta = (long)(dr * RED_WEIGHT + dg * GREEN_WEIGHT + db * BLUE_WEIGHT);
-
-		if (color_delta == 0) {
-			return i;
-		}
-
-		if (color_delta < best_delta) {
-			best_delta = color_delta;
-			best_index = i;
-		}
-	}
-
-	return best_index;
-}
-
 int Gfx::setPalette(SURFACE *surface, PALENTRY *pal) {
-	byte red;
-	byte green;
-	byte blue;
-	int color_delta;
-	int best_wdelta = 0;
-	int best_windex = 0;
-	int best_bindex = 0;
-	int best_bdelta = 1000;
 	int i;
 	byte *ppal;
 
 	for (i = 0, ppal = _cur_pal; i < PAL_ENTRIES; i++, ppal += 4) {
-		red = pal[i].red;
-		ppal[0] = red;
-		color_delta = red;
-		green = pal[i].green;
-		ppal[1] = green;
-		color_delta += green;
-		blue = pal[i].blue;
-		ppal[2] = blue;
-		color_delta += blue;
+		ppal[0] = pal[i].red;
+		ppal[1] = pal[i].green;
+		ppal[2] = pal[i].blue;
 		ppal[3] = 0;
-
-		if (color_delta < best_bdelta) {
-			best_bindex = i;
-			best_bdelta = color_delta;
-		}
-
-		if (color_delta > best_wdelta) {
-			best_windex = i;
-			best_wdelta = color_delta;
-		}
 	}
-
-	// Set whitest and blackest color indices
-	_white_index = best_windex;
-	_black_index = best_bindex;
 
 	_system->setPalette(_cur_pal, 0, PAL_ENTRIES);
 

@@ -126,9 +126,9 @@ int Render::drawScene() {
 			// Display scene maps, if applicable
 			if (getFlags() & RF_OBJECTMAP_TEST) {
 				if (_vm->_scene->_objectMap)
-					_vm->_scene->_objectMap->draw(backbuf_surface, mouse_pt, _vm->_gfx->getWhite(), _vm->_gfx->getBlack());
+					_vm->_scene->_objectMap->draw(backbuf_surface, mouse_pt, kITEColorBrightWhite, kITEColorBlack);
 				if (_vm->_scene->_actionMap)
-					_vm->_scene->_actionMap->draw(backbuf_surface, mouse_pt, _vm->_gfx->matchColor(RGB_RED), _vm->_gfx->getBlack());
+					_vm->_scene->_actionMap->draw(backbuf_surface, mouse_pt, kITEColorRed, kITEColorBlack);
 			}
 
 			// Draw queued actors
@@ -152,7 +152,7 @@ int Render::drawScene() {
 		sprintf(txt_buf, "%d", _fps);
 		fps_width = _vm->_font->getStringWidth(SMALL_FONT_ID, txt_buf, 0, FONT_NORMAL);
 		_vm->_font->draw(SMALL_FONT_ID, backbuf_surface, txt_buf, 0, backbuf_surface->w - fps_width, 2,
-					_vm->_gfx->getWhite(), _vm->_gfx->getBlack(), FONT_OUTLINE);
+					kITEColorBrightWhite, kITEColorBlack, FONT_OUTLINE);
 	}
 
 	// Display "paused game" message, if applicable
@@ -160,7 +160,7 @@ int Render::drawScene() {
 		int msg_len = strlen(PAUSEGAME_MSG);
 		int msg_w = _vm->_font->getStringWidth(BIG_FONT_ID, PAUSEGAME_MSG, msg_len, FONT_OUTLINE);
 		_vm->_font->draw(BIG_FONT_ID, backbuf_surface, PAUSEGAME_MSG, msg_len,
-				(backbuf_surface->w - msg_w) / 2, 90, _vm->_gfx->getWhite(), _vm->_gfx->getBlack(), FONT_OUTLINE);
+				(backbuf_surface->w - msg_w) / 2, 90, kITEColorBrightWhite, kITEColorBlack, FONT_OUTLINE);
 	}
 
 	// Update user interface
@@ -170,7 +170,7 @@ int Render::drawScene() {
 	// Display text formatting test, if applicable
 	if (_flags & RF_TEXT_TEST) {
 		_vm->textDraw(MEDIUM_FONT_ID, backbuf_surface, test_txt, mouse_pt.x, mouse_pt.y,
-				_vm->_gfx->getWhite(), _vm->_gfx->getBlack(), FONT_OUTLINE | FONT_CENTERED);
+				kITEColorBrightWhite, kITEColorBlack, FONT_OUTLINE | FONT_CENTERED);
 	}
 
 	// Display palette test, if applicable

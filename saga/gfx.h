@@ -68,19 +68,11 @@ struct SURFACE : Graphics::Surface {
 
 #define PAL_ENTRIES 256
 
-#define RGB_RED   0x00FF0000UL
-#define RGB_GREEN 0x0000FF00UL
-#define RGB_BLUE  0x000000FFUL
-
 #define CURSOR_W 7
 #define CURSOR_H 7
 
 #define CURSOR_ORIGIN_X 4
 #define CURSOR_ORIGIN_Y 4
-
-#define RED_WEIGHT 0.299
-#define GREEN_WEIGHT 0.587
-#define BLUE_WEIGHT 0.114
 
 int drawPalette(SURFACE *dst_s);
 int bufToSurface(SURFACE *ds, const byte *src, int src_w, int src_h, Rect *src_rect, Point *dst_pt);
@@ -100,9 +92,6 @@ public:
 
 	Gfx(OSystem *system, int width, int height, GameDetector &detector);
 	SURFACE *getBackBuffer();
-	int getWhite();
-	int getBlack();
-	int matchColor(unsigned long colormask);
 	int setPalette(SURFACE *surface, PALENTRY *pal);
 	int getCurrentPal(PALENTRY *src_pal);
 	int palToBlack(SURFACE *surface, PALENTRY *src_pal, double percent);
@@ -114,8 +103,6 @@ private:
 	void setCursor();
 	int _init;
 	SURFACE _back_buf;
-	int _white_index;
-	int _black_index;
 	byte _cur_pal[PAL_ENTRIES * 4];
 	OSystem *_system;
 };

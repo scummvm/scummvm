@@ -99,6 +99,7 @@ enum ITEColors {
 	kITEColorDarkGrey = 0x0b,
 	kITEColorGreen = 0xba,
 	kITEColorBlack = 0x0f,
+	kITEColorRed = 0x65,
 	kITEColorBlue = 0x93
 };
 

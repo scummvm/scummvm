@@ -31,6 +31,7 @@
 #include "saga/gfx.h"
 #include "saga/console.h"
 #include "saga/font.h"
+#include "saga/interface.h"
 #include "saga/objectmap.h"
 #include "saga/stream.h"
 
@@ -206,7 +207,7 @@ void ObjectMap::draw(SURFACE *ds, const Point& testPoint, int color, int color2)
 	if (hitZoneIndex != -1) {		
 		snprintf(txtBuf, sizeof(txtBuf), "hitZone %d", hitZoneIndex);
 		_vm->_font->draw(SMALL_FONT_ID, ds, txtBuf, 0, 2, 2,
-			_vm->_gfx->getWhite(), _vm->_gfx->getBlack(), FONT_OUTLINE);
+			kITEColorBrightWhite, kITEColorBlack, FONT_OUTLINE);
 
 	}
 }

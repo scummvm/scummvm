@@ -1110,8 +1110,8 @@ void Script::sfPlacard(SCRIPTFUNC_PARAMS) {
 
 	_vm->_scene->getInfo(&scene_info);
 
-	text_entry.color = _vm->_gfx->getWhite();
-	text_entry.effect_color = _vm->_gfx->getBlack();
+	text_entry.color = kITEColorBrightWhite;
+	text_entry.effect_color = kITEColorBlack;
 	text_entry.text_x = _vm->getDisplayWidth() / 2;
 	text_entry.text_y = (_vm->getSceneHeight() - _vm->_font->getHeight(MEDIUM_FONT_ID)) / 2;
 	text_entry.font_id = MEDIUM_FONT_ID;

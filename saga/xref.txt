@@ -103,6 +103,7 @@ WHITE_02                   kITEColorWhite
 GREY_0A                    kITEColorGrey
 DK_GREY_0B                 kITEColorDarkGrey
 PITCH_BLACK                kITEColorBlack
+RED_65                     kITEColorRed
 BLUE_93                    kITEColorBlue
 GREEB_BA                   kITEColorGreen
 

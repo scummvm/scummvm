@@ -1518,7 +1518,7 @@ void Actor::actorSpeech(uint16 actorId, const char **strings, int stringsCount, 
 	_activeSpeech.speechCoords[0] = actor->screenPosition;
 	_activeSpeech.speechCoords[0].y -= ACTOR_DIALOGUE_HEIGHT;
 	_activeSpeech.speechColor[0] = actor->speechColor;
-	_activeSpeech.outlineColor[0] = _vm->_gfx->getBlack();
+	_activeSpeech.outlineColor[0] = kITEColorBlack;
 	_activeSpeech.sampleResourceId = sampleResourceId;
 	_activeSpeech.playing = false;
 	_activeSpeech.slowModeCharIndex = 0;
