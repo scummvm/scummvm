@@ -1389,6 +1389,23 @@ static void EnableDebugKeys() {
 	// in residual all keys are handled/enabled
 }
 
+static void LightMgrSetChange() {
+	// that seems only used when some control panel is opened
+}
+
+static void SetAmbientLight() {
+	int type = check_int(1);
+	if (type != 0)
+		warning("SetAmbientLight() Set ambient light to %d", type);
+	else
+		;// 0 - seems turn off ambient light
+}
+
+static void EngineDisplay() {
+	bool mode = check_int(1) != 0;
+	// it enable/disable updating display
+}
+
 // Stub function for builtin functions not yet implemented
 
 static void stubWarning(char *funcName) {
@@ -1476,12 +1493,10 @@ STUB_FUNC(DimScreen)
 STUB_FUNC(ForceRefresh)
 STUB_FUNC(RenderModeUser)
 STUB_FUNC(SetGamma)
-STUB_FUNC(LightMgrSetChange)
 STUB_FUNC(LightMgrStartup)
 STUB_FUNC(SetLightIntensity)
 STUB_FUNC(SetLightPosition)
 STUB_FUNC(TurnLightOn)
-STUB_FUNC(SetAmbientLight)
 STUB_FUNC(GetAngleBetweenVectors)
 STUB_FUNC(TurnActorTo)
 STUB_FUNC(PointActorAt)
@@ -1523,7 +1538,6 @@ STUB_FUNC(GetActorTimeScale)
 STUB_FUNC(SetActorScale)
 STUB_FUNC(SetActorColormap)
 STUB_FUNC(SearchForFileOrSwapCDs)
-STUB_FUNC(EngineDisplay)
 STUB_FUNC(SetOffscreenTextPos)
 STUB_FUNC(SetEmergencyFont)
 STUB_FUNC(GetTranslationMode)
