@@ -254,7 +254,7 @@ void QueenEngine::loadGameState(uint16 slot) {
 			assert(header.dataSize == (uint32)(p - saveData));
 			_logic->setupRestoredGame();
 		}
-		delete saveData;
+		delete[] saveData;
 		delete file;
 	}
 }
