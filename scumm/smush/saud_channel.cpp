@@ -190,7 +190,8 @@ void SaudChannel::recalcVolumeTable() {
 	const int32 MAX_BALANCE = 100;
 	int32 volume_left, volume_right;
 	if(_balance < -MAX_BALANCE || _balance > MAX_BALANCE) {
-		error("balance is out of range ! : %d", _balance);
+		warning("balance is out of range ! : %d", _balance);
+		return;
 	}
 	int32 left_multiplier = MAX_BALANCE - _balance;
 	int32 right_multiplier = MAX_BALANCE + _balance;
