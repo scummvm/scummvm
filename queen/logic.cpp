@@ -2471,7 +2471,6 @@ bool Logic::gameLoad(uint16 slot) {
 	_sound->speechToggle(READ_BE_UINT16(ptr) != 0); ptr += 2;
 	_sound->musicToggle(READ_BE_UINT16(ptr) != 0); ptr += 2;
 	_subtitles = READ_BE_UINT16(ptr) != 0; ptr += 2;
-	ptr += 2 * 6;
 
 	for (i = 0; i < 4; i++) {
 		_inventoryItem[i] = (int16)READ_BE_UINT16(ptr); ptr += 2;
