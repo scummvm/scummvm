@@ -835,45 +835,32 @@ void ScummEngine_v70he::o70_appendString() {
 }
 
 void ScummEngine_v70he::o70_compareString() {
-	byte *addr, *addr2;
-	int i = 0;
+	int result;
 
-	int id = pop();
-	int id2 = pop();
+	int array1 = pop();
+	int array2 = pop();
 
-	addr = getStringAddress(id);
-	if (!addr)
-		error("o70_compareString: Reference to zeroed array pointer (%d)", id);
+	byte *string1 = getStringAddress(array1);
+	if (!string1)
+		error("o70_compareString: Reference to zeroed array pointer (%d)", array1);
 
-	addr2 = getStringAddress(id2);
-	if (!addr2)
-		error("o70_compareString: Reference to zeroed array pointer (%d)", id);
+	byte *string2 = getStringAddress(array2);
+	if (!string2)
+		error("o70_compareString: Reference to zeroed array pointer (%d)", array2);
 
-	while(1) {
-		if (*addr != *addr2)
-			break;
-		if (*addr == 0) {
+	while (*string1 == *string2) {
+		if (*string2 == 0) {
 			push(0);
 			return;
 		}
 
-		addr++;
-		addr2++;
-
-		if (*addr != *addr2)
-			break;
-		if (*addr == 0) {
-			push(0);
-			return;
-		}
-
-		addr++;
-		addr2++;
-		i += 2;
+		string1++;
+		string2++;
 	}
 
-	push (i);
-	debug(1,"o70_compareString (%d, %d, %d)", id, id2, i);
+	result = (*string1 > *string2) ? -1 : 1;
+	push(result);
+	debug(1,"o70_compareString (%d, %d, %d)", array1, array2, result);
 }
 
 void ScummEngine_v70he::o70_readINI() {
