@@ -1434,14 +1434,12 @@ static void BlastText() {
 static void LockFont() {
 	lua_Object param1 = lua_getparam(1);
 	if (lua_isstring(param1)) {
-		/*char *fontName = */lua_getstring(param1);
-		void *result = NULL;//g_resourceloader->loadFont(fontName);
+		char *fontName = lua_getstring(param1);
+		void *result = g_resourceloader->loadFont(fontName);
 		if (result) {
 			lua_pushusertag(result, MKID('FONT'));
-			return;
 		}
 	}
-	lua_pushnil();
 }
 
 static void EnableDebugKeys() {

@@ -27,6 +27,7 @@
 class Bitmap;
 class CMap;
 class Costume;
+class Font;
 class KeyframeAnim;
 class Material;
 class Model;
@@ -93,6 +94,7 @@ public:
 	Bitmap *loadBitmap(const char *fname);
 	CMap *loadColormap(const char *fname);
 	Costume *loadCostume(const char *fname, Costume *prevCost);
+	Font *loadFont(const char *fname);
 	KeyframeAnim *loadKeyframe(const char *fname);
 	Material *loadMaterial(const char *fname, const CMap &c);
 	Model *loadModel(const char *fname, const CMap &c);

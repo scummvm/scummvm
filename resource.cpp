@@ -22,6 +22,7 @@
 #include "bitmap.h"
 #include "colormap.h"
 #include "costume.h"
+#include "font.h"
 #include "keyframe.h"
 #include "material.h"
 #include "model.h"
@@ -183,6 +184,23 @@ Costume *ResourceLoader::loadCostume(const char *filename, Costume *prevCost) {
 		error("Could not find costume %s\n", filename);
 	Costume *result = new Costume(filename, b->data(), b->len(), prevCost);
 	delete b;
+	return result;
+}
+
+Font *ResourceLoader::loadFont(const char *filename) {
+	std::string fname = filename;
+	makeLower(fname);
+	CacheType::iterator i = _cache.find(fname);
+	if (i != _cache.end()) {
+		return dynamic_cast<Font *>(i->second);
+	}
+
+	Block *b = getFileBlock(filename);
+	if (b == NULL)
+		error("Could not find font file %s\n", filename);
+	Font *result = new Font(filename, b->data(), b->len());
+	delete b;
+	_cache[fname] = result;
 	return result;
 }
 
