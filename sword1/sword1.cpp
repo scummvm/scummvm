@@ -1119,6 +1119,7 @@ void SwordEngine::checkCd(void) {
 
 uint8 SwordEngine::mainLoop(void) {
 	uint8 retCode = 0;
+	_keyPressed = 0;
 
 	while (retCode == 0) {
 		// do we need the section45-hack from sword.c here?
@@ -1130,6 +1131,9 @@ uint8 SwordEngine::mainLoop(void) {
 		SwordLogic::_scriptVars[SCREEN] = SwordLogic::_scriptVars[NEW_SCREEN];
 		
 		do {
+			uint32 newTime;
+			bool scrollFrameShown = false;
+
 			uint32 frameTime = _system->get_msecs();
 			_logic->engine();
 			_logic->updateScreenParams(); // sets scrolling
@@ -1138,15 +1142,24 @@ uint8 SwordEngine::mainLoop(void) {
 			_mouse->animate();
 
 			_sound->engine();
-			_screen->updateScreen();
-
 			_menu->refresh(MENU_TOP);
 			_menu->refresh(MENU_BOT);
 
-			uint32 newTime = _system->get_msecs();
+			newTime = _system->get_msecs();
+			if (newTime - frameTime < 1000 / FRAME_RATE) {
+				scrollFrameShown = _screen->showScrollFrame();
+				int32 restDelay = (1000 / (FRAME_RATE * 2)) - (_system->get_msecs() - frameTime);
+                if (restDelay > 0)
+					delay((uint)restDelay);
+			}
 
-			if (newTime - frameTime < 80)
-				delay(80 - (newTime - frameTime));
+			newTime = _system->get_msecs();
+			if ((newTime - frameTime < 1000 / FRAME_RATE) || (!scrollFrameShown))
+				_screen->updateScreen();
+
+			int32 frameDelay = (1000 / FRAME_RATE) - (_system->get_msecs() - frameTime);
+			if (frameDelay > 0)
+				delay((uint)frameDelay);
 			else
 				delay(0);
 
@@ -1160,6 +1173,7 @@ uint8 SwordEngine::mainLoop(void) {
 				if (!retCode)
 					_screen->fullRefresh();
 			}
+			_keyPressed = 0;
 
 			// do something smart here to implement pausing the game. If we even want that, that is.
 		} while ((SwordLogic::_scriptVars[SCREEN] == SwordLogic::_scriptVars[NEW_SCREEN]) && (retCode == 0));
@@ -1185,7 +1199,6 @@ void SwordEngine::delay(uint amount) { //copied and mutilated from sky.cpp
 
 	uint32 start = _system->get_msecs();
 	uint32 cur = start;
-	_keyPressed = 0;
 
 	do {
 		while (_system->poll_event(&event)) {

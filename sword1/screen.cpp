@@ -119,6 +119,21 @@ bool SwordScreen::stillFading(void) {
 	return (_fadingStep != 0);
 }
 
+bool SwordScreen::showScrollFrame(void) {
+	if ((!_fullRefresh) || SwordLogic::_scriptVars[NEW_PALETTE] || (!SwordLogic::_scriptVars[SCROLL_FLAG]))
+		return false; // don't draw an additional frame if we aren't scrolling or have to change the palette
+	if ((_oldScrollX == SwordLogic::_scriptVars[SCROLL_OFFSET_X]) &&
+		(_oldScrollY == SwordLogic::_scriptVars[SCROLL_OFFSET_Y]))
+		return false; // check again if we *really* are scrolling.
+
+	uint16 avgScrlX = (uint16)(_oldScrollX + SwordLogic::_scriptVars[SCROLL_OFFSET_X]) / 2;
+	uint16 avgScrlY = (uint16)(_oldScrollY + SwordLogic::_scriptVars[SCROLL_OFFSET_Y]) / 2;
+
+	_system->copy_rect(_screenBuf + avgScrlY * _scrnSizeX + avgScrlX, _scrnSizeX, 0, 40, SCREEN_WIDTH, SCREEN_DEPTH);
+	_system->update_screen();
+	return true;
+}
+
 void SwordScreen::updateScreen(void) {
 	if (SwordLogic::_scriptVars[NEW_PALETTE]) {
 		_fadingStep = 1;
@@ -653,7 +668,9 @@ void SwordScreen::decompressRLE0(uint8 *src, uint32 compSize, uint8 *dest) {
 void SwordScreen::fadePalette(void) {
 	if (_fadingStep == 16)
 		memcpy(_currentPalette, _targetPalette, 256 * 4);
-	else
+	else if ((_fadingStep == 1) && (_fadingDirection == FADE_DOWN)) {
+		memset(_currentPalette, 0, 4 * 256);
+	} else
 		for (uint16 cnt = 0; cnt < 256 * 4; cnt++)
 			_currentPalette[cnt] = (_targetPalette[cnt] * _fadingStep) >> 4;
 
