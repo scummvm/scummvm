@@ -2232,7 +2232,7 @@ void ScummEngine_v100he::o100_readFile() {
 
 void ScummEngine_v100he::o100_getSpriteInfo() {
 	int args[16];
-	int spriteId, flags;
+	int spriteId, flags, c, d, e, f;
 	int32 a, b;
 
 	byte subOp = fetchScriptByte();
@@ -2260,9 +2260,16 @@ void ScummEngine_v100he::o100_getSpriteInfo() {
 			push(0);
 		break;
 	case 16:
-		getStackList(args, ARRAYSIZE(args));
-		pop();
-		push(0);
+		flags = getStackList(args, ARRAYSIZE(args));
+		spriteId = pop();
+		if (spriteId) {
+			if (flags)
+				push(spriteInfoGet_classFlags2(spriteId, flags, args));
+			else
+				push(spriteInfoGet_classFlags(spriteId, -1));
+		} else {
+			push(0);
+		}
 		break;
 	case 26:
 		spriteId = pop();
@@ -2293,12 +2300,12 @@ void ScummEngine_v100he::o100_getSpriteInfo() {
 			push(1);
 		break;
 	case 33:
-		getStackList(args, ARRAYSIZE(args));
-		pop();
-		pop();
-		pop();
-		pop();
-		push(0);
+		flags = getStackList(args, ARRAYSIZE(args));
+		c = pop();
+		d = pop();
+		e = pop();
+		f = pop();
+		push(spriteInfoGet_case15(f, e, d, c, flags, args));
 		break;
 	case 38:
 		spriteId = pop();

@@ -698,8 +698,9 @@ void ScummEngine_v90he::o90_getDistanceBetweenPoints() {
 
 void ScummEngine_v90he::o90_getSpriteInfo() {
 	int args[16];
-	int spriteId, flags;
+	int spriteId, flags, c, d, e, f;
 	int32 a, b;
+
 	byte subOp = fetchScriptByte();
 	subOp -= 30;
 
@@ -823,11 +824,12 @@ void ScummEngine_v90he::o90_getSpriteInfo() {
 		break;
 	case 15:
 		if (_heversion == 99) {
-			getStackList(args, ARRAYSIZE(args));
-			pop();
-			pop();
-			pop();
-			pop();
+			flags = getStackList(args, ARRAYSIZE(args));
+			c = pop();
+			d = pop();
+			e = pop();
+			f = pop();
+			push(spriteInfoGet_case15(f, e, d, c, flags, args));
 		} else if (_heversion == 98) {
 			pop();
 			pop();
@@ -911,9 +913,16 @@ void ScummEngine_v90he::o90_getSpriteInfo() {
 			push(0);
 		break;
 	case 95:
-		getStackList(args, ARRAYSIZE(args));
-		pop();
-		push(0);
+		flags = getStackList(args, ARRAYSIZE(args));
+		spriteId = pop();
+		if (spriteId) {
+			if (flags)
+				push(spriteInfoGet_classFlags2(spriteId, flags, args));
+			else
+				push(spriteInfoGet_classFlags(spriteId, -1));
+		} else {
+			push(0);
+		}
 		break;
 	case 109:
 		// dummy case
