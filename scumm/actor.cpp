@@ -76,6 +76,8 @@ void Actor::initActor(int mode) {
 		_pos.x = 0;
 		_pos.y = 0;
 		facing = 180;
+		if (_vm->_version >= 7)
+			visible = 0;
 	} else if (mode == 2) {
 		facing = 180;
 	}
@@ -100,6 +102,8 @@ void Actor::initActor(int mode) {
 
 	setActorWalkSpeed(8, 2);
 	animSpeed = 0;
+	if (_vm->_version >= 6)
+		animProgress = 0;
 
 	ignoreBoxes = false;
 	forceClip = (_vm->_version >= 7) ? 100 : 0;
