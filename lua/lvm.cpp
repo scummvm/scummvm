@@ -8,7 +8,7 @@
 #include <stdio.h>
 #include <string.h>
 
-#include <SDL_byteorder.h>
+#include "bits.h"
 
 #include "lauxlib.h"
 #include "ldo.h"
@@ -30,11 +30,7 @@
 
 #define skip_word(pc)	(pc+=2)
 
-#if (SDL_BYTEORDER == SDL_LIL_ENDIAN)
-#define get_word(pc)	(*((unsigned short*)(pc)))
-#else
-#define get_word(pc)    ((*((pc)+1)<<8)|(*(pc)))
-#endif
+#define get_word(pc)	READ_LE_UINT16(pc)
 
 #define next_word(pc)   (pc+=2, get_word(pc-2))
 
