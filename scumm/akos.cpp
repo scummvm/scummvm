@@ -137,6 +137,15 @@ void AkosRenderer::setPalette(byte *new_palette)
 	for (i = 0; i < size; i++) {
 		palette[i] = new_palette[i] != 0xFF ? new_palette[i] : the_akpl[i];
 	}
+
+	if (size == 256) {
+		byte color = new_palette[0];
+		if (color == 255) {
+			palette[0] = color;
+		} else {
+			_vm->_bompActorPalletePtr = palette;
+		}
+	}
 }
 
 void AkosRenderer::setCostume(int costume)
@@ -842,143 +851,87 @@ void AkosRenderer::codec1_ignorePakCols(int num)
 	} while (1);
 }
 
+void AkosRenderer::codec5() {
+	int32 clip_left, clip_right, clip_top, clip_bottom, maxw, maxh, tmp_x, tmp_y;
 
-void AkosRenderer::codec5()
-{
-	int left, right, top, bottom;
-	int clip_left, clip_right, clip_top, clip_bottom;
+	_vm->_bompShadowMode = shadow_mode;
 
-	byte *src, *dest;
-	int src_x, src_y;
-	int dst_x, dst_y;
-
-	bool masking;
-	byte maskbit;
-	byte *mask = NULL;
-
-	// I don't know if this is complete. It used to simply call drawBomp()
-	// to draw an unscaled image, but I don't know if that was because it
-	// will never have to scale, or if it's because until quite recently
-	// drawBomp() didn't know how to scale images.
-	//
-	// What I do know is that drawBomp() doesn't care about masking and
-	// shadows, and these are both needed for Full Throttle and The Dig.
-	
 	if (!mirror) {
-		left = (_x - move_x_cur - _width) + 1;
+		clip_left = (_x - move_x_cur - _width) + 1;
 	} else {
-		left = _x + move_x_cur - 1;
+		clip_left = _x + move_x_cur - 1;
 	}
 
-	right = left + _width;
-	top = _y + move_y_cur;
-	bottom = top + _height;
+	clip_right = (clip_left + _width) - 1;
+	clip_top = _y + move_y_cur;
+	clip_bottom = (clip_top + _height) - 1;
+	maxw = outwidth - 1;
+	maxh = outheight - 1;
 
-	if (left >= (int) outwidth || top >= (int) outheight)
+	if (clip_left < 0) {
+		clip_left = 0;
+	}
+
+	tmp_x = clip_right - maxw;
+	if (tmp_x > 0) {
+		clip_right -= tmp_x;
+	}
+
+	tmp_y = clip_top;
+	if (tmp_y < 0) {
+		clip_top -= tmp_y;
+	}
+
+	tmp_y = clip_bottom - maxh;
+	if (tmp_y > 0) {
+		clip_bottom -= tmp_y;
+	}
+
+	if ((clip_right <= clip_left) || (clip_top >= clip_bottom))
 		return;
 
-	// The actual drawing code shouldn't survive even if the image is
-	// partially outside the screen, but something before that seems to
-	// be less tolerant...
+	_vm->updateDirtyRect(0, clip_left, clip_right + 1, clip_top, clip_bottom + 1, 1 << dirty_id);
 
-	clip_left = (left >= 0) ? left : 0;
-	clip_right = (right > (int) outwidth) ? (int) outwidth : right;
-	clip_top = (top >= 0) ? top : 0;
-	clip_bottom = (bottom > (int) outheight) ? (int) outheight : bottom;
-	
 	if (clip_top < draw_top)
 		draw_top = clip_top;
 	if (clip_bottom > draw_bottom)
-		draw_bottom = clip_bottom;
+		draw_bottom = clip_bottom + 1;
 
-	_vm->updateDirtyRect(0, clip_left, clip_right, clip_top, clip_bottom, 1 << dirty_id);
+	BompDrawData bdd;
 
-	masking = false;
-	if (clipping) {
-		masking = _vm->isMaskActiveAt(clip_left, clip_top, clip_right, clip_bottom,
-			_vm->getResourceAddress(rtBuffer, 9) +
-			_vm->gdi._imgBufOffs[clipping] +
-			_vm->_screenStartStrip) != 0;
+	bdd.srcwidth = _width;
+	bdd.srcheight = _height;
+	bdd.out = outptr;
+	bdd.outwidth = outwidth;
+	bdd.outheight = outheight;
+	bdd.dataptr = srcptr;
+	bdd.scale_x = 255;
+	bdd.scale_y = 255;
+
+	_vm->_bompScallingXPtr = NULL;
+	_vm->_bompScallingYPtr = NULL;
+
+	int decode_mode;
+
+	if (!mirror) {
+		bdd.x = (_x - move_x_cur - _width) + 1;
+		decode_mode = 3;
+	} else {
+		bdd.x = _x + move_x_cur;
+		decode_mode = 1;
 	}
 
-	v1.mask_ptr = NULL;
+	bdd.y = _y + move_y_cur;
 
-	if (masking || charsetmask) {
-		v1.mask_ptr = _vm->getResourceAddress(rtBuffer, 9) + _vm->_screenStartStrip;
-		v1.imgbufoffs = _vm->gdi._imgBufOffs[clipping];
-		if (!charsetmask && masking) {
-			v1.mask_ptr += v1.imgbufoffs;
-			v1.imgbufoffs = 0;
-		}
+	if (clipping != 0) {
+		_vm->_bompMaskPtr = _vm->getResourceAddress(rtBuffer, 9) + _vm->_screenStartStrip + _vm->gdi._imgBufOffs[clipping];
+		_vm->_bompMaskPitch = _vm->_realWidth / 8;
+		_vm->drawBomp(&bdd, 0, bdd.dataptr, decode_mode, 1);
+	} else {
+		_vm->drawBomp(&bdd, 0, bdd.dataptr, decode_mode, 0);
 	}
 
-	src = srcptr;
-	dest = outptr;
-
-	for (src_y = 0, dst_y = top; src_y < _height; src_y++) {
-		byte code, color;
-		uint num, i;
-		byte *d = dest + dst_y * outwidth + left;
-		byte *s;
-		uint data_length;
-
-		data_length = READ_LE_UINT16(src) + 2;
-
-		if (dst_y < 0 || dst_y >= (int) outheight) {
-			src += data_length;
-			dst_y++;
-			continue;
-		}
-
-		src_x = 0;
-		dst_x = left;
-		s = src + 2;
-
-		while (src_x < _width) {
-			code = *s++;
-			num = (code >> 1) + 1;
-			if (code & 1) {
-				color = *s++;
-				for (i = 0; i < num; i++) {
-					if (dst_x >= 0 && dst_x < (int) outwidth) {
-						if (color != 255) {
-							if (v1.mask_ptr)
-								mask = v1.mask_ptr + _numStrips * dst_y + (dst_x >> 3);
-							maskbit = revBitMask[dst_x & 7];
-							if (shadow_mode && color == 13)
-								color = shadow_table[*d];
-							if (!mask || !((mask[0] | mask[v1.imgbufoffs]) & maskbit))
-								*d = color;
-						}
-					}
-					d++;
-					dst_x++;
-					src_x++;
-				}
-			} else {
-				for (i = 0; i < num; i++) {
-					color = s[i];
-					if (dst_x >= 0 && dst_x < (int) outwidth) {
-						if (color != 255) {
-							if (v1.mask_ptr)
-								mask = v1.mask_ptr + _numStrips * dst_y + (dst_x >> 3);
-							maskbit = revBitMask[dst_x & 7];
-							if (shadow_mode && color == 13)
-								color = shadow_table[*d];
-							if (!mask || !((mask[0] | mask[v1.imgbufoffs]) & maskbit))
-								*d = color;
-						}
-					}
-					d++;
-					dst_x++;
-					src_x++;
-				}
-				s += num;
-			}
-		}
-		src += data_length;
-		dst_y++;
-	}
+	_vm->_bompActorPalletePtr = NULL;
 }
 
 void AkosRenderer::akos16SetupBitReader(byte *src) {
@@ -1195,7 +1148,7 @@ void AkosRenderer::akos16DecompressMask(byte * dest, int32 pitch, byte * src, in
 		akos16SkipData(numskip_before);
 	}
 
-	maskpitch = _numStrips + 1;
+	maskpitch = _numStrips ;
 
 	while (t_height != 0) {
 		akos16DecodeLine(tmp_buf, t_width, dir);
@@ -1286,7 +1239,7 @@ void AkosRenderer::codec16() {
 
 	if (!mirror) {
 		dir = -1;
-    
+
     int tmp_skip_x = skip_x;
     skip_x = _width-1-cur_x;
     cur_x = _width-1-tmp_skip_x;
@@ -1331,7 +1284,7 @@ void AkosRenderer::codec16() {
 	}
 
 	byte * ptr = _vm->_screenStartStrip + _vm->getResourceAddress(rtBuffer, 9) + _vm->gdi._imgBufOffs[clipping];
-	ptr += (_numStrips + 1) * clip_top + (clip_left / 8);
+	ptr += _numStrips * clip_top + (clip_left / 8);
 	akos16DecompressMask(dest, pitch, srcptr, cur_x, out_height, dir, numskip_before, numskip_after, 255, ptr, clip_left / 8);
 }
 

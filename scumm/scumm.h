@@ -778,7 +778,17 @@ public:
 	void drawRoomObjects(int arg);
 	void drawRoomObject(int i, int arg);
 	void drawBox(int x, int y, int x2, int y2, int color);
-	void drawBomp(BompDrawData *bd, int param1, byte *dataPtr, int param2, int param3);
+	void drawBomp(BompDrawData * bd, int param1, byte *data_ptr, int decode_mode, int mask);
+	int32 setupBompScale(byte * scalling, int32 size, byte scale);
+	void bompScaleFuncX(byte * line_buffer, byte * scalling_x_ptr, byte skip, int32 size);
+	int32 bompDecodeLineMode0(byte * src, byte * line_buffer, int32 size);
+	int32 bompDecodeLineMode1(byte * src, byte * line_buffer, int32 size);
+	int32 bompDecodeLineMode3(byte * src, byte * line_buffer, int32 size);
+	void bompApplyMask(byte * line_buffer, byte * mask_out, byte bits, int32 size);
+	void bompApplyShadow0(byte * line_buffer, byte * dst, int32 size);
+	void bompApplyShadow1(byte * line_buffer, byte * dst, int32 size);
+	void bompApplyShadow3(byte * line_buffer, byte * dst, int32 size);
+	void bompApplyActorPalette(byte * line_buffer, int32 size);
 
 	void restoreBG(int left, int top, int right, int bottom);
 	void redrawBGStrip(int start, int num);	
@@ -865,13 +875,20 @@ public:
 	void removeBlastObjects();
 	void removeBlastObject(BlastObject *eo);
 
+	uint16 _bompShadowMode;
+	int32 _bompScaleRight, _bompScaleBottom;
+	byte * _bompScallingXPtr, * _bompScallingYPtr;
+	byte * _bompMaskPtr;
+	int32 _bompMaskPitch;
+	byte * _bompActorPalletePtr;
+
 	int _drawObjectQueNr;
 	byte _drawObjectQue[200];
 	byte _palManipStart, _palManipEnd;
 	uint16 _palManipCounter;
 	byte *_palManipPalette;
 	byte *_palManipIntermediatePal;
-	uint32 gfxUsageBits[240];
+	uint32 gfxUsageBits[409];
 	byte *_shadowPalette;
 	int _shadowPaletteSize;
 	byte _currentPalette[0x300];

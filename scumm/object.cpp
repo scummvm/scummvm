@@ -1248,11 +1248,152 @@ void Scumm::drawBlastObject(BlastObject *eo)
 	bdd.dataptr = bomp + 10;
 	bdd.x = eo->posX;
 	bdd.y = eo->posY;
-	bdd.scale_x = (unsigned char)eo->scaleX;
-	bdd.scale_y = (unsigned char)eo->scaleY;
+	bdd.scale_x = (byte)eo->scaleX;
+	bdd.scale_y = (byte)eo->scaleY;
 
-	drawBomp(&bdd, 0, bdd.dataptr, 1, 0);
+	byte bomp_scalling_x[64], bomp_scalling_y[64];
+
+	_bompShadowMode = 0;
+
+	if ((bdd.scale_x != 255) || (bdd.scale_y != 255)) {
+		_bompScallingXPtr = (byte*)&bomp_scalling_x;
+		_bompScallingYPtr = (byte*)&bomp_scalling_y;
+		_bompScaleRight = setupBompScale(_bompScallingXPtr, bdd.srcwidth, bdd.scale_x);
+		_bompScaleBottom = setupBompScale(_bompScallingYPtr, bdd.srcheight, bdd.scale_y);
+		drawBomp(&bdd, 0, bdd.dataptr, 1, 3);
+	}	else {
+		_bompShadowMode = eo->mode;
+		drawBomp(&bdd, 0, bdd.dataptr, 1, 0);
+	}
+
+	_bompShadowMode = 0;
+	_bompScallingXPtr = NULL;
+	_bompScallingYPtr = NULL;
+	_bompScaleRight = 0;
+	_bompScaleBottom = 0;
+
 	updateDirtyRect(vs->number, bdd.x, bdd.x + bdd.srcwidth, bdd.y, bdd.y + bdd.srcheight, 0);
+}
+
+byte _bompScaleTable[] =	{
+    0, 128,  64, 192,  32, 160,  96, 224,
+   16, 144,  80, 208,  48, 176, 112, 240,
+    8, 136,  72, 200,  40, 168, 104, 232,
+   24, 152,  88, 216,  56, 184, 120, 248,
+    4, 132,  68, 196,  36, 164, 100, 228,
+   20, 148,  84, 212,  52, 180, 116, 244,
+   12, 140,  76, 204,  44, 172, 108, 236,
+   28, 156,  92, 220,  60, 188, 124, 252,
+    2, 130,  66, 194,  34, 162,  98, 226,
+   18, 146,  82, 210,  50, 178, 114, 242,
+   10, 138,  74, 202,  42, 170, 106, 234,
+   26, 154,  90, 218,  58, 186, 122, 250,
+    6, 134,  70, 198,  38, 166, 102, 230,
+   22, 150,  86, 214,  54, 182, 118, 246,
+   14, 142,  78, 206,  46, 174, 110, 238,
+   30, 158,  94, 222,  62, 190, 126, 254,
+    1, 129,  65, 193,  33, 161,  97, 225,
+   17, 145,  81, 209,  49, 177, 113, 241,
+    9, 137,  73, 201,  41, 169, 105, 233,
+   25, 153,  89, 217,  57, 185, 121, 249,
+    5, 133,  69, 197,  37, 165, 101, 229,
+   21, 149,  85, 213,  53, 181, 117, 245,
+   13, 141,  77, 205,  45, 173, 109, 237,
+   29, 157,  93, 221,  61, 189, 125, 253,
+    3, 131,  67, 195,  35, 163,  99, 227,
+   19, 147,  83, 211,  51, 179, 115, 243,
+   11, 139,  75, 203,  43, 171, 107, 235,
+   27, 155,  91, 219,  59, 187, 123, 251,
+    7, 135,  71, 199,  39, 167, 103, 231,
+   23, 151,  87, 215,  55, 183, 119, 247,
+   15, 143,  79, 207,  47, 175, 111, 239,
+   31, 159,  95, 223,  63, 191, 127, 255,
+};
+
+byte _bompBitsTable[] = {
+  8, 7, 7, 6, 7, 6, 6, 5, 7, 6, 6, 5, 6, 5, 5, 4,
+  7, 6, 6, 5, 6, 5, 5, 4, 6, 5, 5, 4, 5, 4, 4, 3,
+  7, 6, 6, 5, 6, 5, 5, 4, 6, 5, 5, 4, 5, 4, 4, 3,
+  6, 5, 5, 4, 5, 4, 4, 3, 5, 4, 4, 3, 4, 3, 3, 2,
+  7, 6, 6, 5, 6, 5, 5, 4, 6, 5, 5, 4, 5, 4, 4, 3,
+  6, 5, 5, 4, 5, 4, 4, 3, 5, 4, 4, 3, 4, 3, 3, 2,
+  6, 5, 5, 4, 5, 4, 4, 3, 5, 4, 4, 3, 4, 3, 3, 2,
+  5, 4, 4, 3, 4, 3, 3, 2, 4, 3, 3, 2, 3, 2, 2, 1,
+  7, 6, 6, 5, 6, 5, 5, 4, 6, 5, 5, 4, 5, 4, 4, 3,
+  6, 5, 5, 4, 5, 4, 4, 3, 5, 4, 4, 3, 4, 3, 3, 2,
+  6, 5, 5, 4, 5, 4, 4, 3, 5, 4, 4, 3, 4, 3, 3, 2,
+  5, 4, 4, 3, 4, 3, 3, 2, 4, 3, 3, 2, 3, 2, 2, 1,
+  6, 5, 5, 4, 5, 4, 4, 3, 5, 4, 4, 3, 4, 3, 3, 2,
+  5, 4, 4, 3, 4, 3, 3, 2, 4, 3, 3, 2, 3, 2, 2, 1,
+  5, 4, 4, 3, 4, 3, 3, 2, 4, 3, 3, 2, 3, 2, 2, 1,
+  4, 3, 3, 2, 3, 2, 2, 1, 3, 2, 2, 1, 2, 1, 1, 0,
+};
+
+int32 Scumm::setupBompScale(byte * scalling, int32 size, byte scale) {
+	uint32 tmp;
+	int32 count = (size + 7) >> 3;
+	byte * tmp_ptr = _bompScaleTable + (256 - (size >> 1));
+	byte * tmp_scalling = scalling;
+	byte a = 0;
+
+	while((count--) != 0) {
+		tmp = *(tmp_ptr + 3);
+		a <<= 1;
+		if (scale < tmp) {
+			a |= 1;
+		}
+		tmp = *(tmp_ptr + 2);
+		a <<= 1;
+		if (scale < tmp) {
+			a |= 1;
+		}
+		tmp = *(tmp_ptr + 1);
+		a <<= 1;
+		if (scale < tmp) {
+			a |= 1;
+		}
+		tmp = *(tmp_ptr + 0);
+		a <<= 1;
+		if (scale < tmp) {
+			a |= 1;
+		}
+		tmp_ptr += 4;
+
+		tmp = *(tmp_ptr + 3);
+		a <<= 1;
+		if (scale < tmp) {
+			a |= 1;
+		}
+		tmp = *(tmp_ptr + 2);
+		a <<= 1;
+		if (scale < tmp) {
+			a |= 1;
+		}
+		tmp = *(tmp_ptr + 1);
+		a <<= 1;
+		if (scale < tmp) {
+			a |= 1;
+		}
+		tmp = *(tmp_ptr + 0);
+		a <<= 1;
+		if (scale < tmp) {
+			a |= 1;
+		}
+		tmp_ptr += 4;
+
+		*(tmp_scalling++) = a;
+	}
+	if ((size & 7) != 0) {
+		*(tmp_scalling - 1) |= revBitMask[size & 7];
+	}
+
+	count = (size + 7) >> 3;
+	byte ret_value = 0;
+	while((count--) != 0) {
+		ret_value += *(*(scalling++) + _bompBitsTable);
+	}
+
+	return ret_value;
 }
 
 void Scumm::removeBlastObjects()
@@ -1298,8 +1439,8 @@ void Scumm::removeBlastObject(BlastObject *eo)
 
 	if (left_strip < 0)
 		left_strip = 0;
-	if (right_strip >= 240)
-		right_strip = 240;
+	if (right_strip >= 409)
+		right_strip = 409;
 
 	for (i = left_strip; i <= right_strip; i++)
 		gdi.resetBackground(top, bottom, i);

@@ -3155,137 +3155,294 @@ static byte blend(byte *pal, byte method, int dest_color)
 	return blend_cache[cache][dest_color];
 }
 
-// param3= clipping
-// param2= mirror
-// param1= never used ?
+int32 Scumm::bompDecodeLineMode0(byte * src, byte * line_buffer, int32 size) {
+	if (size <= 0)
+		return size;
 
-void Scumm::drawBomp(BompDrawData *bd, int param1, byte *dataPtr, int param2, int param3)
-{
-	byte *scale_rows = NULL;
-	byte *scale_cols = NULL;
-	byte *dest = bd->out + bd->y * bd->outwidth, *src;
-	int src_x, src_y, dst_x, dst_y;
-	uint scaled_width, scaled_height;
-	int h = bd->srcheight;
-	byte *mask = NULL;
-	uint i;
-
-	if (h == 0 || bd->srcwidth == 0)
-		return;
-
-	if (bd->scale_x != 255) {
-		scale_rows = (byte *) calloc(bd->srcheight, 1);
-		if (scale_rows == NULL) {
-			warning("drawBomp: out of memory");
-			return;
-		}
+	for (int32 l = 0; l < size; l++) {
+		*(line_buffer++) = *(src++);
 	}
-
-	if (bd->scale_y != 255) {	
-		scale_cols = (byte *) calloc(bd->srcwidth, 1);
-		if (scale_cols == NULL) {
-			warning("drawBomp: out of memory");
-			if (scale_rows)
-				free(scale_rows);
-			return;
-		}
-	}
-
-	// We take charset masking into consideration, because otherwise the
-	// inventory window in The Dig may overwrite text.
-
-	mask = getResourceAddress(rtBuffer, 9) + _screenStartStrip;
-	
-	// Select which rows and columns from the original to show in the
-	// scaled version of the image. This is a pretty stupid way of scaling
-	// images, but it will have to do for now.
-
-	if (bd->scale_x < 255) {
-		scaled_width = (bd->srcwidth * bd->scale_x) / 255;
-		for (i = 0; i < scaled_width; i++)
-			scale_cols[(i * 255) / bd->scale_x] = 1;
-	}
-
-	if (bd->scale_y < 255) {
-		scaled_height = (bd->srcheight * bd->scale_y) / 255;
-		for (i = 0; i < scaled_height; i++)
-			scale_rows[(i * 255) / bd->scale_y] = 1;
-	}
-
-	// FIXME: Be more intelligent about clearing the blend cache. It
-	// should be possible to clear it only for the parts of the palette
-	// that have changed since the last time.
-
-	clear_blend_cache();
-
-	dest += bd->x;
-	src = bd->dataptr;
-
-	for (src_y = 0, dst_y = bd->y; src_y < bd->srcheight; src_y++) {
-		byte code, color;
-		uint len, num;
-		byte *d = dest;
-
-		if ((dst_y < 0 || dst_y >= bd->outheight) || (bd->scale_y != 255 && !scale_rows[src_y])) {
-			src += READ_LE_UINT16(src) + 2;
-			continue;
-		}
-
-		len = bd->srcwidth;
-		src_x = 0;
-		dst_x = bd->x;
-		src += 2;
-		
-		while (src_x < bd->srcwidth) {
-			code = *src++;
-			num = (code >> 1) + 1;
-			if (num > len)
-				num = len;
-			len -= num;
-			if (code & 1) {
-				color = *src++;
-				for (i = 0; i < num; i++) {
-					if (bd->scale_x == 255 || scale_cols[src_x]) {
-						if (dst_x >= 0 && dst_x < bd->outwidth) {
-							if (!(*(mask + dst_y * gdi._numStrips + (dst_x >> 3)) & revBitMask[dst_x & 7]))
-							
-								*d = blend(_currentPalette, color, *d);
-						}
-						d++;
-						dst_x++;
-					}
-					src_x++;
-				}
-			} else {
-				for (i = 0; i < num; i++) {
-					if (bd->scale_x == 255 || scale_cols[src_x]) {
-						if (dst_x >= 0 && dst_x < bd->outwidth)
-							if (!(*(mask + dst_y * gdi._numStrips + (dst_x >> 3)) & revBitMask[dst_x & 7]))
-								*d = blend(_currentPalette, src[i], *d);
-						d++;
-						dst_x++;
-					}
-					src_x++;
-				}
-				src += num;
-			}
-		}
-		dest += bd->outwidth;
-		dst_y++;
-		
-	}
-
-	if (scale_rows)
-		free(scale_rows);
-	if (scale_cols)
-		free(scale_cols);
-	CHECK_HEAP;
+	return size;
 }
 
+int32 Scumm::bompDecodeLineMode1(byte * src, byte * line_buffer, int32 size) {
+	int32 t_size = READ_LE_UINT16(src) + 2;
+	if (size <= 0)
+		return t_size;
+	
+	int32 len = size;
+	src += 2;
+	while (len) {
+		byte code = *src++;
+		int32 num = (code >> 1) + 1;
+		if (num > len)
+			num = len;
+		len -= num;
+		if (code & 1) {
+			byte color = *src++;
+			do
+				*line_buffer++ = color;
+			while (--num);
+		} else {
+			do
+				*line_buffer++ = *src++;
+			while (--num);
+		}
+	}
+	return t_size;
+}
+
+int32 Scumm::bompDecodeLineMode3(byte * src, byte * line_buffer, int32 size) {
+	int32 t_size = READ_LE_UINT16(src) + 2;
+	line_buffer += size;
+	if (size <= 0)
+		return t_size;
+	
+	int32 len = size;
+	src += 2;
+	while (len) {
+		byte code = *src++;
+		int32 num = (code >> 1) + 1;
+		if (num > len)
+			num = len;
+		len -= num;
+		if (code & 1) {
+			byte color = *src++;
+			do
+				*--line_buffer = color;
+			while (--num);
+		} else {
+			do
+				*--line_buffer = *src++;
+			while (--num);
+		}
+	}
+	return t_size;
+}
+
+void Scumm::bompApplyMask(byte * line_buffer, byte * mask_src, byte bits, int32 size) {
+	while(1) {
+		byte tmp = *(mask_src++);
+		do {
+			if (size-- == 0) 
+				return;
+			if (tmp & bits) {
+				*(line_buffer) = 255;
+			}
+			line_buffer++;
+			bits >>= 1;
+		} while	(bits != 0);
+		bits = 128;
+	}
+}
+
+void Scumm::bompApplyShadow0(byte * line_buffer, byte * dst, int32 size) {
+	while(1) {
+		if (size-- == 0)
+			return;
+		byte tmp = *(line_buffer++);
+		if (tmp != 255) {
+			*(dst) = tmp;
+		}
+		dst++;
+	}
+}
+
+void Scumm::bompApplyShadow1(byte * line_buffer, byte * dst, int32 size) {
+	while(1) {
+		if (size-- == 0)
+			return;
+		byte tmp = *(line_buffer++);
+		if (tmp != 255) {
+			if (tmp == 13) {
+				tmp = _shadowPalette[*(dst)];
+			}
+			*(dst) = tmp;
+		}
+		dst++;
+	}
+}
+
+void Scumm::bompApplyShadow3(byte * line_buffer, byte * dst, int32 size) {
+	while(1) {
+		if (size-- == 0)
+			return;
+		byte tmp = *(line_buffer++);
+		if (tmp != 255) {
+			if (tmp < 8) {
+				tmp = _shadowPalette[*(dst) + (tmp << 8)];
+			}
+			*(dst) = tmp;
+		}
+		dst++;
+	}
+}
+
+void Scumm::bompApplyActorPalette(byte * line_buffer, int32 size) {
+	if (_bompActorPalletePtr != 0) {
+		*(_bompActorPalletePtr + 255) = 255;
+		while(1) {
+			if (size-- == 0)
+				break;
+			*(line_buffer++) = *(_bompActorPalletePtr + *(line_buffer));
+		}
+	}
+}
+
+void Scumm::bompScaleFuncX(byte * line_buffer, byte * scalling_x_ptr, byte skip, int32 size) {
+	byte * line_ptr1 = line_buffer;
+	byte * line_ptr2 = line_buffer;
+
+	byte tmp = *(scalling_x_ptr++);
+
+	while (size--) {
+		if ((skip & tmp) == 0) {
+			*(line_ptr1++) = *(line_ptr2);
+		}
+		line_ptr2++;
+		skip >>= 1;
+		if (skip == 0) {
+			skip = 128;
+			tmp = *(scalling_x_ptr++);
+		}
+	}
+}
+
+void Scumm::drawBomp(BompDrawData * bd, int param1, byte * data_ptr, int decode_mode, int mask) {
+	byte skip_y = 128, skip_y_new;
+	byte bits, tmp;
+	int32 clip_left, clip_right, clip_top, clip_bottom, tmp_x, tmp_y;
+	byte * mask_out;
+
+	if (bd->x < 0) {
+		clip_left = -bd->x;
+	} else {
+		clip_left = 0;
+	}
+
+	if (bd->y < 0) {
+		clip_top = -bd->y;
+	} else {
+		clip_top = 0;
+	}
+
+	clip_right = bd->srcwidth - clip_left;
+	tmp_x = bd->x + bd->srcwidth;
+	if (tmp_x > bd->outwidth) {
+		clip_right -= tmp_x - bd->outwidth;
+	}
+
+	clip_bottom = bd->srcheight;
+	tmp_y = bd->y + bd->srcheight;
+	if (tmp_y > bd->outheight) {
+		clip_bottom -= tmp_y - bd->outheight;
+	}
+
+	byte * src = bd->dataptr;
+	byte * dst = bd->out + bd->y * bd->outwidth + bd->x + clip_left;
+
+	if (mask == 1) {
+		mask_out = _bompMaskPtr + (bd->y * _bompMaskPitch) + ((bd->x + clip_left) >> 3);
+		bits = 128 >> ((bd->x + clip_left) & 7);
+	}
+
+	if (mask == 3) {
+		if (_bompScallingYPtr != NULL) {
+			skip_y_new = *(_bompScallingYPtr++);
+		}
+
+		if ((clip_right + clip_left) > _bompScaleRight) {
+			clip_right = _bompScaleRight - clip_left;
+		}
+
+		if (clip_bottom > _bompScaleBottom) {
+			clip_bottom = _bompScaleBottom;
+		}
+	}
+
+	if ((clip_right <= 0) || (clip_bottom <= 0))
+		return;
+
+	int32 pos_y = 0;
+
+	byte line_buffer[1024];
+
+	byte * line_ptr = (byte*)&line_buffer + clip_left;
+
+	while(1) {
+		switch(decode_mode) {
+		case 0:
+			{
+				src += bompDecodeLineMode0(src, (byte*)&line_buffer, bd->srcwidth);
+				break;
+			}
+		case 1:
+			{
+				src += bompDecodeLineMode1(src, (byte*)&line_buffer, bd->srcwidth);
+				break;
+			}
+		case 3:
+			{
+				src += bompDecodeLineMode3(src, (byte*)&line_buffer, bd->srcwidth);
+				break;
+			}
+		}
+
+		if (mask == 3) {
+			if (bd->scale_y != 255) {
+				tmp = skip_y_new & skip_y;
+				skip_y >>= 1;
+				if (skip_y == 0) {
+					skip_y = 128;
+					skip_y_new = *(_bompScallingYPtr++);
+				}
+
+				if (tmp != 0) 
+					continue;
+			}
+
+			if (bd->scale_x != 255) {
+				bompScaleFuncX((byte*)&line_buffer, _bompScallingXPtr, 128, bd->srcwidth);
+			}
+		}
+
+		if (clip_top-- > 0)
+			goto labelBompSkip;
+
+		if (mask == 1) {
+			bompApplyMask(line_ptr, mask_out, bits, clip_right);
+		}
+
+		bompApplyActorPalette(line_ptr, clip_right);
+
+		switch(_bompShadowMode) {
+		case 0:
+			{
+				bompApplyShadow0(line_ptr, dst, clip_right);
+				break;
+			}
+		case 1:
+			{
+				bompApplyShadow1(line_ptr, dst, clip_right);
+				break;
+			}
+		case 3:
+			{
+				bompApplyShadow3(line_ptr, dst, clip_right);
+				break;
+			}
+		}
+
+labelBompSkip:
+		mask_out += _bompMaskPitch;
+		pos_y++;
+		dst += bd->outwidth;
+		if (pos_y >= clip_bottom)
+			break;
+	}
+}
 
 /* Yazoo: This function create the specialPalette used for semi-transparency in SamnMax */
-
-
 void Scumm::createSpecialPalette(int16 a, int16 b, int16 c, int16 d, int16 e, int16 colorMin,
 																 int16 colorMax)
 {
