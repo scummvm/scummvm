@@ -33,7 +33,7 @@ static const VgaOpcodeProc vga_opcode_table[] = {
 	NULL,
 	&SimonState::vc_1_dummy_op,
 	&SimonState::vc_2_call,
-	&SimonState::vc_3_new_thread,
+	&SimonState::vc_3_new_sprite,
 	&SimonState::vc_4_dummy_op,
 	&SimonState::vc_5_skip_if_neq,
 	&SimonState::vc_6_skip_ifn_sib_with_a,
@@ -52,10 +52,10 @@ static const VgaOpcodeProc vga_opcode_table[] = {
 	&SimonState::vc_19_chain_to_script,
 	&SimonState::vc_20_set_code_word,
 	&SimonState::vc_21_jump_if_code_word,
-	&SimonState::vc_22_set_pal,
-	&SimonState::vc_23_set_pri,
-	&SimonState::vc_24_set_image_xy,
-	&SimonState::vc_25_halt_thread,
+	&SimonState::vc_22_set_palette,
+	&SimonState::vc_23_set_priority,
+	&SimonState::vc_24_set_sprite_xy,
+	&SimonState::vc_25_halt_sprite,
 	&SimonState::vc_26_set_window,
 	&SimonState::vc_27_reset,
 	&SimonState::vc_28_dummy_op,
@@ -90,7 +90,7 @@ static const VgaOpcodeProc vga_opcode_table[] = {
 	&SimonState::vc_57_no_op,
 	&SimonState::vc_58,
 	&SimonState::vc_59,
-	&SimonState::vc_60_kill_thread,
+	&SimonState::vc_60_kill_sprite,
 	&SimonState::vc_61_sprite_change,
 	&SimonState::vc_62_palette_thing,
 	&SimonState::vc_63_palette_thing_2,
@@ -264,7 +264,7 @@ void SimonState::vc_2_call() {
 	_vc_ptr = vc_ptr_org;
 }
 
-void SimonState::vc_3_new_thread() {
+void SimonState::vc_3_new_sprite() {
 	uint16 a, b, c, d, e, f;
 	uint16 res;
 	VgaSprite *vsp;
@@ -1089,7 +1089,7 @@ void SimonState::vc_21_jump_if_code_word() {
 	}
 }
 
-void SimonState::vc_22_set_pal() {
+void SimonState::vc_22_set_palette() {
 	uint a = vc_read_next_word();
 	uint b = vc_read_next_word();
 	uint num = a == 0 ? 0x20 : 0x10;
@@ -1113,7 +1113,7 @@ void SimonState::vc_22_set_pal() {
 	_vga_sprite_changed++;
 }
 
-void SimonState::vc_23_set_pri() {
+void SimonState::vc_23_set_priority() {
 	VgaSprite *vsp = find_cur_sprite(), *vus2;
 	uint16 pri = vc_read_next_word();
 	VgaSprite bak;
@@ -1152,7 +1152,7 @@ void SimonState::vc_23_set_pri() {
 	_vga_sprite_changed++;
 }
 
-void SimonState::vc_24_set_image_xy() {
+void SimonState::vc_24_set_sprite_xy() {
 	VgaSprite *vsp = find_cur_sprite();
 	vsp->image = vc_read_var_or_word();
 
@@ -1172,7 +1172,7 @@ void SimonState::vc_24_set_image_xy() {
 	_vga_sprite_changed++;
 }
 
-void SimonState::vc_25_halt_thread() {
+void SimonState::vc_25_halt_sprite() {
 	VgaSprite *vsp = find_cur_sprite();
 	while (vsp->id != 0) {
 		memcpy(vsp, vsp + 1, sizeof(VgaSprite));
@@ -1598,7 +1598,7 @@ void SimonState::vc_58() {
 
 	vc_ptr = _vc_ptr;
 	_vc_ptr = (byte *)&tmp;
-	vc_23_set_pri();
+	vc_23_set_priority();
 
 	_vc_ptr = vc_ptr;
 	_vga_cur_sprite_id = sprite;
@@ -1639,7 +1639,7 @@ void SimonState::vc_kill_thread(uint file, uint sprite) {
 
 	vsp = find_cur_sprite();
 	if (vsp->id) {
-		vc_25_halt_thread();
+		vc_25_halt_sprite();
 
 		vte = _vga_timer_list;
 		while (vte->delay != 0) {
@@ -1658,7 +1658,7 @@ void SimonState::vc_kill_thread(uint file, uint sprite) {
 	_vc_ptr = vc_org;
 }
 
-void SimonState::vc_60_kill_thread() {
+void SimonState::vc_60_kill_sprite() {
 	uint file;
 
 	if (_game & GF_SIMON2) {

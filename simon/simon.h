@@ -602,7 +602,7 @@ public:
 	// Simon1/Simon2 video script opcodes
 	void vc_1_dummy_op();
 	void vc_2_call();
-	void vc_3_new_thread();
+	void vc_3_new_sprite();
 	void vc_4_dummy_op();
 	void vc_5_skip_if_neq();
 	void vc_6_skip_ifn_sib_with_a();
@@ -621,10 +621,10 @@ public:
 	void vc_19_chain_to_script();
 	void vc_20_set_code_word();
 	void vc_21_jump_if_code_word();
-	void vc_22_set_pal();
-	void vc_23_set_pri();
-	void vc_24_set_image_xy();
-	void vc_25_halt_thread();
+	void vc_22_set_palette();
+	void vc_23_set_priority();
+	void vc_24_set_sprite_xy();
+	void vc_25_halt_sprite();
 	void vc_26_set_window();
 	void vc_27_reset();
 	void vc_27_reset_simon1();
@@ -660,7 +660,7 @@ public:
 	void vc_56_no_op();
 	void vc_57_no_op();
 	void vc_59();
-	void vc_60_kill_thread();
+	void vc_60_kill_sprite();
 	void vc_61_sprite_change();
 	void vc_62_palette_thing();
 	void vc_63_palette_thing_2();
