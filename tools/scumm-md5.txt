@@ -226,6 +226,10 @@ Curse of Monkey Island
 Backyard Baseball 2001
 	Demo	Windows	en	a194f15f51ee62badab74b9e7da97693	bb2demo	khalek, sev
 
+Backyard Baseball 2003
+	-	Windows	en	efe0a04a703e765ebebe92b6c8aa6b86	baseball2003	sev
+
+
 Backyard Football 2002
 	Demo	All	en	5bd335265a61caa3d78956ad9f88ba23	FOOTDEMO	sev
 
