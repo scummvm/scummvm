@@ -61,7 +61,11 @@ enum {
 	
 	kCmdGlobalGraphicsOverride = 'OGFX',
 	kCmdGlobalAudioOverride = 'OSFX',
-	kCmdGlobalVolumeOverride = 'OVOL'
+	kCmdGlobalVolumeOverride = 'OVOL',
+
+	kCmdExtraBrowser = 'PEXT',
+	kCmdGameBrowser = 'PGME',
+	kCmdSaveBrowser = 'PSAV'
 };
 
 /*
@@ -94,6 +98,10 @@ protected:
 	EditTextWidget *_descriptionWidget;
 	EditTextWidget *_domainWidget;
 
+	StaticTextWidget *_gamePathWidget;
+	StaticTextWidget *_extraPathWidget;
+	StaticTextWidget *_savePathWidget;
+
 	PopUpWidget *_langPopUp;
 	PopUpWidget *_platformPopUp;
 
@@ -111,8 +119,10 @@ EditGameDialog::EditGameDialog(const String &domain, GameSettings target)
 	const int vBorder = 5;	// Tab border
 	int yoffset;
 
-	// GAME: Path to game data (r/o)
-	String path(ConfMan.get("path", _domain));
+	// GAME: Path to game data (r/o), extra data (r/o), and save data (r/w)
+	String gamePath(ConfMan.get("path", _domain));
+	String extraPath(ConfMan.get("extrapath", _domain));
+	String savePath(ConfMan.get("savepath", _domain));
 
 	// GAME: Determine the description string
 	String description(ConfMan.get("description", domain));
@@ -139,12 +149,7 @@ EditGameDialog::EditGameDialog(const String &domain, GameSettings target)
 	_descriptionWidget = new EditTextWidget(tab, x + labelWidth, yoffset, _w - labelWidth - 10, kLineHeight, description);
 	yoffset += 16;
 
-	// GUI:  Label for the game path
-	new StaticTextWidget(tab, x, yoffset, labelWidth, kLineHeight, "Path: ", kTextAlignRight);
-	new StaticTextWidget(tab, x + labelWidth, yoffset, _w - labelWidth - 10, kLineHeight, path, kTextAlignLeft);
-	yoffset += 16;
-
-	// Languag popup
+	// Language popup
 	_langPopUp = new PopUpWidget(tab, x, yoffset, w, kLineHeight, "Language: ", labelWidth);
 	yoffset += 16;
 	_langPopUp->appendEntry("<default>");
@@ -164,10 +169,34 @@ EditGameDialog::EditGameDialog(const String &domain, GameSettings target)
 		_platformPopUp->appendEntry(p->description, p->id);
 	}
 
+	// 2) The 'Path' tab
+	tab->addTab("Paths");
+	yoffset = vBorder;
+	// GUI:  Button + Label for the game path
+ 	new ButtonWidget(tab, x, yoffset, kButtonWidth + 14, 16, "Game Path:", kCmdGameBrowser, 0);
+	_gamePathWidget = new StaticTextWidget(tab, x + kButtonWidth + 20, yoffset, _w - labelWidth - 10, kLineHeight, gamePath, kTextAlignLeft);
+	yoffset += 18;
+
+	// GUI:  Button + Label for the additional path
+ 	new ButtonWidget(tab, x, yoffset, kButtonWidth + 14, 16, "Extra Path:", kCmdExtraBrowser, 0);
+	_extraPathWidget = new StaticTextWidget(tab, x + kButtonWidth + 20, yoffset, _w - labelWidth - 10, kLineHeight, extraPath, kTextAlignLeft);
+	if (extraPath.isEmpty()) {
+		_extraPathWidget->setLabel("None");
+	}
+	yoffset += 18;
+
+	// GUI:  Button + Label for the save path
+ 	new ButtonWidget(tab, x, yoffset, kButtonWidth + 14, 16, "Save Path:", kCmdSaveBrowser, 0);
+	_savePathWidget = new StaticTextWidget(tab, x + kButtonWidth + 20, yoffset, _w - labelWidth - 10, kLineHeight, savePath, kTextAlignLeft);
+	if (savePath.isEmpty()) {
+		_savePathWidget->setLabel("Default");
+	}
+	yoffset += 18;
+
 	//
 	// 2) The graphics tab
 	//
-	tab->addTab("Graphics");
+	tab->addTab("Gfx");
 	yoffset = vBorder;
 
 	_globalGraphicsOverride = new CheckboxWidget(tab, x, yoffset, w, 16, "Override global graphic settings", kCmdGlobalGraphicsOverride);
@@ -231,7 +260,6 @@ void EditGameDialog::open() {
 
 	// TODO: game path
 
-
 	const Common::LanguageDescription *l = Common::g_languages;
 	const Common::Language lang = Common::parseLanguage(ConfMan.get("language", _domain));
 	sel = 0;
@@ -263,6 +291,18 @@ void EditGameDialog::close() {
 		else
 			ConfMan.set("language", Common::getLanguageCode(lang), _domain);
 
+		String gamePath = _gamePathWidget->getLabel();
+		if (!gamePath.isEmpty())
+			ConfMan.set("path", gamePath, _domain);
+
+		String extraPath = _extraPathWidget->getLabel();
+		if (!extraPath.isEmpty() && (extraPath != "None"))
+			ConfMan.set("extrapath", extraPath, _domain);
+
+		String savePath = _savePathWidget->getLabel();
+		if (!extraPath.isEmpty() && (extraPath != "Default"))
+			ConfMan.set("savepath", extraPath, _domain);
+
 		Common::Platform platform = (Common::Platform)_platformPopUp->getSelectedTag();
 		if (platform < 0)
 			ConfMan.removeKey("platform", _domain);
@@ -286,6 +326,47 @@ void EditGameDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 		setVolumeSettingsState(data != 0);
 		draw();
 		break;
+
+	// Change path for the game
+	case kCmdGameBrowser: {
+		BrowserDialog *_browser = new BrowserDialog("Select additional game directory");
+	        if (_browser->runModal() > 0) {
+        	        // User made his choice...
+                	FilesystemNode *dir = _browser->getResult();
+
+			// TODO: Verify the game can be found in the new directory... Best
+			// done with optional specific gameid to pluginmgr detectgames?
+			// FSList *files = dir->listDir(FilesystemNode::kListFilesOnly);
+
+			_gamePathWidget->setLabel(dir->path());
+		}
+		draw();
+		break;
+	}
+
+	// Change path for extra game data (eg, using sword cutscenes when playing via CD)
+	case kCmdExtraBrowser: { 
+		BrowserDialog *_browser = new BrowserDialog("Select additional game directory");
+	        if (_browser->runModal() > 0) {
+        	        // User made his choice...
+                	FilesystemNode *dir = _browser->getResult();
+			_extraPathWidget->setLabel(dir->path());
+		}
+		draw();
+		break;
+	}
+	// Change path for stored save game (perm and temp) data
+	case kCmdSaveBrowser: {
+		BrowserDialog *_browser = new BrowserDialog("Select directory for saved games");
+	        if (_browser->runModal() > 0) {
+        	        // User made his choice...
+                	FilesystemNode *dir = _browser->getResult();
+			_savePathWidget->setLabel(dir->path());
+		}
+		draw();
+		break;
+	}
+
 	case kOKCmd: {
 		// Write back changes made to config object
 		String newDomain(_domainWidget->getLabel());
