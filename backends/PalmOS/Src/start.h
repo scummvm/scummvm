@@ -23,14 +23,6 @@
 #ifndef __START_H__
 #define __START_H__
 
-#define appFileCreator 'ScVM'
-#define curItemVersion sysMakeROMVersion(3,0,0,0,0)
-
-#define itemVersion_27 sysMakeROMVersion(2,7,0,0,0)
-#define itemVersion_26 sysMakeROMVersion(2,6,0,0,0)
-#define itemVersion_25 sysMakeROMVersion(2,5,0,0,0)
-#define itemVersion_20 sysMakeROMVersion(2,0,0,0,0)
-
 typedef struct {
 	Char nameP[32];
 	UInt16 cardNo;
@@ -45,6 +37,8 @@ typedef	struct {
 	//
 	Boolean vibrator;
 	Boolean autoOff;
+	Boolean setStack;
+	Boolean exitLauncher;
 
 	UInt16 listPosition;
 
@@ -58,11 +52,15 @@ typedef	struct {
 	Boolean debug;
 	UInt16 debugLevel;
 	Boolean stdPalette;
-	Boolean autoReset;
 	Boolean demoMode;
 	Boolean copyProtection;
 	Boolean arm;
 	Boolean altIntro;
+	
+	struct {
+		Boolean enable;
+		UInt8 mode;
+	} lightspeed;
 
 } GlobalsPreferenceType, *GlobalsPreferencePtr;
 
@@ -70,6 +68,7 @@ extern GlobalsPreferencePtr gPrefs;
 
 extern Boolean bDirectMode;
 extern Boolean bStartScumm;
+extern Boolean bLaunched;
 
 #define appPrefID				0x00
 #define appVersionNum			0x01
