@@ -23,7 +23,7 @@
 
 #include "scummsys.h"
 #include "system.h"	// For events
-#include "gui/util.h"
+#include "util.h"
 
 class Dialog;
 class Scumm;

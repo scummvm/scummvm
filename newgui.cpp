@@ -23,7 +23,7 @@
 #include "newgui.h"
 #include "guimaps.h"
 #include "gui/dialog.h"
-#include "gui/util.h"
+#include "util.h"
 
 /*
  * TODO list

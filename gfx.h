@@ -20,6 +20,10 @@
  *
  */
 
+#ifndef GFX_H
+#define GFX_H
+
+
 enum VideoMode {		/* Video scalers */
 	VIDEO_SCALE = 0,
 	VIDEO_2XSAI = 1,
@@ -180,3 +184,7 @@ struct Gdi {
 		dbClear = 4
 	};
 };
+
+void blit(byte *dst, byte *src, int w, int h);
+
+#endif

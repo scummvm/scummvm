@@ -188,4 +188,12 @@ enum {
 	GD_DC
 };
 
+enum {
+#ifdef _WIN32_WCE
+	SAMPLES_PER_SEC =  11025
+#else
+	SAMPLES_PER_SEC =  22050
+#endif
+};
+
 #endif 

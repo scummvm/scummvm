@@ -53,12 +53,6 @@ extern SoundMixer *g_mixer;
 
 /* System Wide Constants */
 enum {
-#ifdef _WIN32_WCE
-	SAMPLES_PER_SEC =  11025,
-#else
-	SAMPLES_PER_SEC =  22050,
-#endif
-	BITS_PER_SAMPLE = 16,
 	NUM_MIXER = 4,
 	NUM_SCRIPT_SLOT = 40,
 	NUM_LOCALSCRIPT = 60,
@@ -1022,8 +1016,6 @@ public:
 
 
 	/* Should be in System class */
-	byte _fileMode;
-	uint32 _whereInResToRead;
 	void fileClose(void *file);
 	void *fileOpen(const char *filename, int mode);
 	void fileSeek(void *file, long offs, int whence);
@@ -1499,6 +1491,5 @@ void CDECL NORETURN error(const char *s, ...);
 void CDECL warning(const char *s, ...);
 void CDECL debug(int level, const char *s, ...);
 void checkHeap();
-void blit(byte *dst, byte *src, int w, int h);
 
 #endif

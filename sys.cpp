@@ -25,23 +25,18 @@
 
 void *Scumm::fileOpen(const char *filename, int mode)
 {
-	_fileMode = mode;
-	_whereInResToRead = 0;
 	clearFileReadFailed(_fileHandle);
 
 	if (mode == 1)
 		return fopen(filename, "rb");
 
-	if (mode == 2) {
-		error("fileOpen: write not supported");
-	}
-
+	error("This should not happen!");
 	return NULL;
 }
 
 void Scumm::fileClose(void *file)
 {
-	if (_fileMode == 1 || _fileMode == 2)
+	if (file)
 		fclose((FILE *)file);
 }
 
@@ -67,49 +62,25 @@ uint32 Scumm::filePos(void *handle)
 
 void Scumm::fileSeek(void *file, long offs, int whence)
 {
-	switch (_fileMode) {
-	case 1:
-	case 2:
-		if (fseek((FILE *)file, offs, whence) != 0)
-			clearerr((FILE *)file);
-		return;
-	case 3:
-		_whereInResToRead = offs;
-		return;
-	}
+	if (fseek((FILE *)file, offs, whence) != 0)
+		clearerr((FILE *)file);
 }
 
 void Scumm::fileRead(void *file, void *ptr, uint32 size)
 {
 	byte *ptr2 = (byte *)ptr, *src;
 
-	switch (_fileMode) {
-	case 1:
-		if (size == 0)
-			return;
-
-		if ((uint32)fread(ptr2, size, 1, (FILE *)file) != 1) {
-			clearerr((FILE *)file);
-			_fileReadFailed = true;
-		}
-
-		do {
-			*ptr2++ ^= _encbyte;
-		} while (--size);
-
+	if (size == 0)
 		return;
 
-	case 3:
-		if (size == 0)
-			return;
-
-		src = getResourceAddress(rtTemp, 3) + _whereInResToRead;
-		_whereInResToRead += size;
-		do {
-			*ptr2++ = *src++ ^ _encbyte;
-		} while (--size);
-		return;
+	if ((uint32)fread(ptr2, size, 1, (FILE *)file) != 1) {
+		clearerr((FILE *)file);
+		_fileReadFailed = true;
 	}
+
+	do {
+		*ptr2++ ^= _encbyte;
+	} while (--size);
 }
 
 int Scumm::fileReadByte()
@@ -117,20 +88,11 @@ int Scumm::fileReadByte()
 	byte b;
 	byte *src;
 
-	switch (_fileMode) {
-	case 1:
-		if (fread(&b, 1, 1, (FILE *)_fileHandle) != 1) {
-			clearerr((FILE *)_fileHandle);
-			_fileReadFailed = true;
-		}
-		return b ^ _encbyte;
-
-	case 3:
-		src = getResourceAddress(rtTemp, 3) + _whereInResToRead;
-		_whereInResToRead++;
-		return *src ^ _encbyte;
+	if (fread(&b, 1, 1, (FILE *)_fileHandle) != 1) {
+		clearerr((FILE *)_fileHandle);
+		_fileReadFailed = true;
 	}
-	return 0;
+	return b ^ _encbyte;
 }
 
 uint Scumm::fileReadWordLE()

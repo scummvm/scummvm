@@ -23,15 +23,15 @@
 #include "stdafx.h"
 #include "scummsys.h"
 #include "system.h"
-#include "scumm.h"	// FIXME: remove this! Only needed for SAMPLES_PER_SEC, error() and warning()
 #include "mididrv.h"
-#include "SDL_thread.h"
 #include "gameDetector.h"
 #include "scaler.h"
+#include "scumm.h"	// Only #included for error() and warning()
 
 #include "scummvm.xpm"
 
 #include <SDL.h>
+#include <SDL_thread.h>
 
 #define MAX(a,b) (((a)<(b)) ? (b) : (a))
 #define MIN(a,b) (((a)>(b)) ? (b) : (a))
