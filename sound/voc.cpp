@@ -83,6 +83,10 @@ enum {
 	SOUND_HEADER_BIG_SIZE = 26 + 8
 };
 
+// FIXME/TODO: loadVocSample() essentially duplicates all the code from
+// readCreativeVoc(). Obviously this is bad, it should rather use that function
+// (after some tweaks to readCreativeVoc, to deal with the alternate VTLK
+// header).
 byte *loadVocSample(File *file, int32 &size, int &rate) {
 	char ident[8];
 
@@ -121,7 +125,7 @@ byte *loadVocSample(File *file, int32 &size, int &rate) {
 		error("loadVocSample: out of memory");
 	}
 
-	if (file->read(data, size) != size) {
+	if ((int)file->read(data, size) != size) {
 		/* no need to free the memory since error will shut down */
 		error("startSfxSound: cannot read %d bytes", size);
 	}
