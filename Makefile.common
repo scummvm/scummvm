@@ -85,6 +85,12 @@ else
 MODULES += sky
 endif
 
+ifdef DISABLE_SWORD1
+DEFINES += -DDISABLE_SWORD1
+else
+MODULES += sword1
+endif
+
 ifdef DISABLE_SWORD2
 DEFINES += -DDISABLE_SWORD2
 else
