@@ -627,7 +627,9 @@ AdjustBoxResult Actor::adjustXYToBeInBox(int dstX, int dstY) {
 		if (numBoxes < firstValidBox)
 			return abr;
 
-		bestDist = (_vm->_version <= 2) ? 0xFFFFFF : 0xFFFF;
+		bestDist = 0xFFFF;
+		if (_vm->_version <= 2)
+			bestDist *= 8*2;	// Adjust for the fact that we multiply x by 8 and y by 2
 		bestBox = kInvalidBox;
 
 		// We iterate (backwards) over all boxes, searching the one closest
@@ -902,14 +904,21 @@ void Actor::drawActorCostume() {
 
 	BaseCostumeRenderer* bcr = _vm->_costumeRenderer;
 
-	bcr->updateNbStrips ();
+	bcr->updateNbStrips();
 
 	bcr->_actorX = x - _vm->virtscr[0].xstart;
 	bcr->_actorY = y - elevation;
+
 	if (_vm->_version <= 2) {
-		// We have to adjust the x position by one strip (8 pixels) in V2 games
-		bcr->_actorX += 8;
+		// FIXME: We have to adjust the x position by one strip (8 pixels) in V2 games
+		// However, it is not quite clear to me why. And to fully match the original,
+		// it seems we have to offset by 2 strips when facing left (270 degree).
+		if (facing == 270)
+			bcr->_actorX += 16;
+		else
+			bcr->_actorX += 8;
 	}
+
 	bcr->_scaleX = scalex;
 	bcr->_scaleY = scaley;
 
