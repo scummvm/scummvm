@@ -106,7 +106,7 @@ Scene::Scene(SagaEngine *vm) : _vm(vm), _initialized(false) {
 
 	_sceneLoaded = false;
 	_sceneNumber = 0;
-	_sceneResNum = 0;
+	_sceneResourceId = 0;
 	_inGame = false;
 	_loadDesc = false;
 	memset(&_desc, 0, sizeof(_desc));
@@ -505,7 +505,7 @@ int Scene::getSceneLUT(int scene_num) {
 
 int Scene::loadScene(int scene_num, int load_flag, SCENE_PROC scene_proc, SceneDescription *scene_desc_param, int fadeType, int actorsEntrance) {
 	SCENE_INFO scene_info;
-	uint32 res_number = 0;
+	uint32 resourceId = 0;
 	int result;
 	int i;
 	EVENT event;
@@ -524,11 +524,11 @@ int Scene::loadScene(int scene_num, int load_flag, SCENE_PROC scene_proc, SceneD
 
 	switch (load_flag) {
 	case BY_RESOURCE:
-		res_number = scene_num;
+		resourceId = scene_num;
 		break;
 	case BY_SCENE:
 		assert((scene_num > 0) && (scene_num < _sceneMax));
-		res_number = _sceneLUT[scene_num];
+		resourceId = _sceneLUT[scene_num];
 		_sceneNumber = scene_num;
 		break;
 	case BY_DESC:
@@ -548,11 +548,11 @@ int Scene::loadScene(int scene_num, int load_flag, SCENE_PROC scene_proc, SceneD
 	// Load scene descriptor and resource list resources
 	if (_loadDesc) {
 
-		_sceneResNum = res_number;
-		assert(_sceneResNum != 0);
-		debug(0, "Loading scene resource %u:", res_number);
+		_sceneResourceId = resourceId;
+		assert(_sceneResourceId != 0);
+		debug(0, "Loading scene resource %u:", resourceId);
 
-		if (loadSceneDescriptor(res_number) != SUCCESS) {
+		if (loadSceneDescriptor(resourceId) != SUCCESS) {
 			warning("Scene::loadScene(): Error reading scene descriptor");
 			return FAILURE;
 		}
@@ -581,14 +581,6 @@ int Scene::loadScene(int scene_num, int load_flag, SCENE_PROC scene_proc, SceneD
 		return FAILURE;
 	}
 
-/*	// Load scene script data
-	if (_desc.scriptModuleNumber > 0) {
-		if (_vm->_script->loadScript(_desc.scriptModuleNumber) != SUCCESS) {
-			warning("Scene::loadScene(): Error loading scene script");
-			return FAILURE;
-		}
-	}
-*/
 	_sceneLoaded = true;
 	
 	q_event = NULL;
@@ -1078,7 +1070,7 @@ void Scene::cmdSceneInfo() {
 	const char *fmt = "%-20s %d\n";
 
 	_vm->_console->DebugPrintf(fmt, "Scene number:", _sceneNumber);
-	_vm->_console->DebugPrintf(fmt, "Descriptor R#:", _sceneResNum);
+	_vm->_console->DebugPrintf(fmt, "Descriptor ResourceId:", _sceneResourceId);
 	_vm->_console->DebugPrintf("-------------------------\n");
 	_vm->_console->DebugPrintf(fmt, "Flags:", _desc.flags);
 	_vm->_console->DebugPrintf(fmt, "Resource list R#:", _desc.resListRN);

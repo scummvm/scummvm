@@ -260,7 +260,8 @@ class Scene {
 
 
 	int getSceneLUT(int num);
-	int currentSceneNumber() { return _sceneNumber; }
+	int currentSceneNumber() const { return _sceneNumber; }
+	int currentSceneResourceId() const { return _sceneResourceId; }
 
  private:
 	int loadScene(int scene, int load_flag, SCENE_PROC scene_proc, SceneDescription *, int fadeIn, int actorsEntrance);
@@ -281,7 +282,7 @@ class Scene {
 	int _firstScene;
 	bool _sceneLoaded;
 	int _sceneNumber;
-	int _sceneResNum;
+	int _sceneResourceId;
 	bool _inGame;
 	bool _loadDesc;
 	SceneDescription _desc;

@@ -568,11 +568,17 @@ void Actor::updateActorsScene(int actorsEntrance) {
 	for (i = 0; i < _actorsCount; i++) {
 		actor = _actors[i];		
 		if (actor->flags & (kProtagonist | kFollower)) {
-			actor->sceneNumber = _vm->_scene->currentSceneNumber();
+
 			if (actor->flags & kProtagonist) {
 				actor->finalTarget = actor->location;
 				_centerActor = _protagonist = actor;
+			} else {
+				if (_vm->_scene->currentSceneResourceId() == RID_ITE_OVERMAP_SCENE) {
+					continue;
+				}
 			}
+
+			actor->sceneNumber = _vm->_scene->currentSceneNumber();
 		}
 		if (actor->sceneNumber == _vm->_scene->currentSceneNumber()) {
 			actor->actionCycle = (_vm->_rnd.getRandomNumber(7) & 0x7) * 4; // 1/8th chance
@@ -879,7 +885,7 @@ void Actor::handleActions(int msec, bool setup) {
 					}
 				}
 
-				if (_vm->_scene->currentSceneNumber() == RID_ITE_OVERMAP_SCENE) {
+				if (_vm->_scene->currentSceneResourceId() == RID_ITE_OVERMAP_SCENE) {
 					speed = 2;
 				}
 
@@ -1219,7 +1225,7 @@ void Actor::createDrawOrderList() {
 }
 
 bool Actor::getSpriteParams(CommonObjectData *commonObjectData, int &frameNumber, SpriteList *&spriteList) {
-	if (_vm->_scene->currentSceneNumber() == RID_ITE_OVERMAP_SCENE) {
+	if (_vm->_scene->currentSceneResourceId() == RID_ITE_OVERMAP_SCENE) {
 		if (!(commonObjectData->flags & kProtagonist)){
 			warning("not protagonist");
 			return false;
@@ -1437,6 +1443,7 @@ bool Actor::actorEndWalk(uint16 actorId, bool recurse) {
 	ActorData *actor;
 	const HitZone *hitZone;
 	int hitZoneIndex;
+	Point testPoint;
 
 	actor = getActor(actorId);
 	actor->actorFlags &= ~kActorBackwards;
@@ -1459,7 +1466,8 @@ bool Actor::actorEndWalk(uint16 actorId, bool recurse) {
 	if (actor == _protagonist) {
 		_vm->_script->wakeUpActorThread(kWaitTypeWalk, actor);
 		if (_vm->_script->_pendingVerb == kVerbWalkTo) {
-			hitZoneIndex = _vm->_scene->_actionMap->hitTest(actor->screenPosition);
+			actor->location.toScreenPointUV(testPoint);
+			hitZoneIndex = _vm->_scene->_actionMap->hitTest(testPoint);
 			if (hitZoneIndex != -1) {
 				hitZone = _vm->_scene->_actionMap->getHitZone(hitZoneIndex);
 				stepZoneAction(actor, hitZone, false, true);
