@@ -57,36 +57,17 @@ void SwordScreen::setScrolling(int16 offsetX, int16 offsetY) {
 	if (!SwordLogic::_scriptVars[SCROLL_FLAG])
 		return ; // screen is smaller than 640x400 => no need for scrolling
 
-	int32 dx, dy;
-	uint32 scrlDistX, scrlDistY;
 	uint32 scrlToX, scrlToY;
 
 	offsetX = inRange(0, offsetX, SwordLogic::_scriptVars[MAX_SCROLL_OFFSET_X]);
 	offsetY = inRange(0, offsetY, SwordLogic::_scriptVars[MAX_SCROLL_OFFSET_Y]);
 	_oldScrollX = SwordLogic::_scriptVars[SCROLL_OFFSET_X];
 	_oldScrollY = SwordLogic::_scriptVars[SCROLL_OFFSET_Y];
+	scrlToX = (uint32)offsetX;
+	scrlToY = (uint32)offsetY;
 
-	if (SwordLogic::_scriptVars[SCROLL_FLAG] == 2) { // first time on this screen - need absolute scroll immediately!
-		scrlToX = (uint32)offsetX;
-		scrlToY = (uint32)offsetY;
-	} else {		// catch up with required scroll offsets - speed depending on distance to catch up (dx and dy) & 'SCROLL_FRACTION' used
-					// but limit to certain number of pixels per cycle (MAX_SCROLL_DISTANCE)
-		dx = SwordLogic::_scriptVars[SCROLL_OFFSET_X] - offsetX;
-		dy = SwordLogic::_scriptVars[SCROLL_OFFSET_Y] - offsetY;
-		int8 sig = (dx < 0) ? (-1) : 1;
-		if (dx < 0)
-			dx = -dx;
-		scrlDistX = 1 + dx/SCROLL_FRACTION;
-		scrlDistX = inRange(0, scrlDistX, MAX_SCROLL_DISTANCE);
-		scrlToX = SwordLogic::_scriptVars[SCROLL_OFFSET_X] + sig * scrlDistX;
-
-		sig = (dy < 0) ? (-1) : 1;
-		if (dy < 0)
-			dy = -dy;
-		scrlDistY = 1 + dy/SCROLL_FRACTION;
-		scrlDistY = inRange(0, scrlDistY, MAX_SCROLL_DISTANCE);
-		scrlToY = SwordLogic::_scriptVars[SCROLL_OFFSET_Y] + sig * scrlDistY;
-	}
+	if (SwordLogic::_scriptVars[SCROLL_FLAG] == 2) // first time on this screen - need absolute scroll immediately!
+		SwordLogic::_scriptVars[SCROLL_FLAG] = 1;
 	scrlToX = inRange(0, scrlToX, SwordLogic::_scriptVars[MAX_SCROLL_OFFSET_X]);
 	scrlToY = inRange(0, scrlToY, SwordLogic::_scriptVars[MAX_SCROLL_OFFSET_Y]);
 	if ((scrlToX != SwordLogic::_scriptVars[SCROLL_OFFSET_X]) || (scrlToY != SwordLogic::_scriptVars[SCROLL_OFFSET_Y])) {
@@ -103,8 +84,10 @@ void SwordScreen::setScrolling(int16 offsetX, int16 offsetY) {
 }
 
 void SwordScreen::fadeDownPalette(void) {
-	_fadingStep = 15;
-	_fadingDirection = FADE_DOWN;
+	if (!_isBlack) { // don't fade down twice
+		_fadingStep = 15;
+		_fadingDirection = FADE_DOWN;
+	}
 }
 
 void SwordScreen::fadeUpPalette(void) {
@@ -122,15 +105,16 @@ void SwordScreen::fnSetPalette(uint8 start, uint16 length, uint32 id, bool fadeU
 		_targetPalette[(start + cnt) * 4 + 2] = palData[cnt * 3 + 2] << 2;
 	}
 	_resMan->resClose(id);
+	_isBlack = false;
 	if (fadeUp) {
 		_fadingStep = 1;
-		_fadingDirection = 1;
+		_fadingDirection = FADE_UP;
 	} else
 		_system->set_palette(_targetPalette, start, length);
 }
 
 bool SwordScreen::stillFading(void) {
-	return (_fadingStep > 0);
+	return !_isBlack;
 }
 
 void SwordScreen::updateScreen(void) {
@@ -662,8 +646,11 @@ void SwordScreen::fadePalette(void) {
 			_currentPalette[cnt] = (_targetPalette[cnt] * _fadingStep) >> 4;
 
 	_fadingStep += _fadingDirection;
-	if (_fadingStep == 17)
+	if (_fadingStep == 17) {
 		_fadingStep = 0;
+		_isBlack = false;
+	} else if (_fadingStep == 0)
+		_isBlack = true;
 }
 
 void SwordScreen::fnSetParallax(uint32 screen, uint32 resId) {

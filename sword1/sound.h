@@ -68,8 +68,6 @@ public:
 	void fnStopFx(int32 fxNo);
 	void clearAllFx(void);
 	int addToQueue(int32 fxNo);
-	//void removeFromQueue(int32 fxNo);
-	// ^= part of fnPlayFx
 
 	void engine(void);
 

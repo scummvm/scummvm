@@ -142,6 +142,8 @@ private:
 	uint8 _currentPalette[256 * 4]; // for fading
 	uint8 _fadingStep;
 	int8  _fadingDirection; // 1 for fade up, -1 for fade down
+	bool _isBlack; // if the logic already faded down the palette, this is set to show the
+				   // mainloop that no further fading is necessary.
 };
 
 #endif //BSSCREEN_H

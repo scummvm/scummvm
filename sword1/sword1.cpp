@@ -180,7 +180,6 @@ void SwordEngine::mainLoop(void) {
 			_music->stream();
 			frameTime = _system->get_msecs();
 			_systemVars.saveGameFlag = 0;
-			debug(5, "\n\nNext logic cycle");
 			_logic->engine();
 			_logic->updateScreenParams(); // sets scrolling
 
@@ -222,8 +221,7 @@ void SwordEngine::mainLoop(void) {
 		} while ((SwordLogic::_scriptVars[SCREEN] == SwordLogic::_scriptVars[NEW_SCREEN]) &&
 			(_systemVars.saveGameFlag < 2));	// change screen
 
-		// we don't fade down after syria pan (53). Also, scripts can call fnFadeDown, in that case, we already are fading
-		if ((SwordLogic::_scriptVars[SCREEN] != 53) && (!_screen->stillFading()))
+		if (SwordLogic::_scriptVars[SCREEN] != 53) // we don't fade down after syria pan (53).
 			_screen->fadeDownPalette();
 		while (_screen->stillFading()) {
 			_music->stream();

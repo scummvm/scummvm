@@ -110,13 +110,18 @@ void SwordMouse::engine(uint16 x, uint16 y, uint16 eventFlags) {
 		_numObjs = 0;
 		return;	// no human, so we don't want the mouse engine
 	}
-	
-	if (y < 40) { // okay, we are in the top menu.
-		if (!_inTopMenu) // are we just entering it?
-			_menu->fnStartMenu();
-		_menu->checkTopMenu();
-		_inTopMenu = true;
-	} else if (_inTopMenu) { // we're not in the menu. did we just leave it?
+
+	if (!SwordLogic::_scriptVars[TOP_MENU_DISABLED]) {
+		if (y < 40) { // okay, we are in the top menu.
+			if (!_inTopMenu) // are we just entering it?
+				_menu->fnStartMenu();
+			_menu->checkTopMenu();
+			_inTopMenu = true;
+		} else if (_inTopMenu) { // we're not in the menu. did we just leave it?
+			_menu->fnEndMenu();
+			_inTopMenu = false;
+		}
+	} else if (_inTopMenu) {
 		_menu->fnEndMenu();
 		_inTopMenu = false;
 	}

@@ -213,13 +213,15 @@ void SwordMenu::checkTopMenu(void) {
 }
 
 int SwordMenu::logicChooser(BsObject *compact) {
+	uint8 objSelected = 0;
 	if (_objectBarShown)
-		uint8 objSelected = checkMenuClick(MENU_TOP);
-	if (checkMenuClick(MENU_BOT)) {
+		objSelected = checkMenuClick(MENU_TOP);
+	if (!objSelected)
+		objSelected = checkMenuClick(MENU_BOT);
+	if (objSelected) {
 		compact->o_logic = LOGIC_script;
 		return 1;
-	} else 
-		return 0;
+	}
 	return 0;
 }
 

@@ -91,6 +91,7 @@ void SwordLogic::newScreen(uint32 screen) {
 }
 
 void SwordLogic::engine(void) {
+	debug(5, "\n\nNext logic cycle");
 	_eventMan->serviceGlobalEventList();
 
 	for (uint16 sectCnt = 0; sectCnt < TOTAL_SECTIONS; sectCnt++) {
@@ -862,7 +863,7 @@ int SwordLogic::fnFadeUp(BsObject *cpt, int32 id, int32 speed, int32 d, int32 e,
 
 int SwordLogic::fnCheckFade(BsObject *cpt, int32 id, int32 c, int32 d, int32 e, int32 f, int32 z, int32 x) {
 
-	_scriptVars[RETURN_VALUE] = (uint8)_screen->stillFading();
+	_scriptVars[RETURN_VALUE] = (uint8)(!_screen->stillFading());
 	return SCRIPT_CONT;
 }
 
@@ -1083,12 +1084,13 @@ int SwordLogic::fnISpeak(BsObject *cpt, int32 id, int32 cdt, int32 textNo, int32
 		_objMan->unlockText(textNo);
 
 		BsObject * textCpt = _objMan->fetchObject(textCptId);
+		textCpt->o_screen = cpt->o_screen;
+		textCpt->o_target = textCptId;
 
 		// the graphic is a property of SwordText, so we don't lock/unlock it.
-		uint16 textSpriteWidth  = _textMan->giveSpriteData(cpt->o_target)->width;
-		uint16 textSpriteHeight = _textMan->giveSpriteData(cpt->o_target)->height;
+		uint16 textSpriteWidth  = _textMan->giveSpriteData(textCpt->o_target)->width;
+		uint16 textSpriteHeight = _textMan->giveSpriteData(textCpt->o_target)->height;
 
-		textCpt->o_screen = cpt->o_screen;
 		cpt->o_text_id = textCptId;
 
 		// now set text coords, above the player, usually
@@ -1096,7 +1098,7 @@ int SwordLogic::fnISpeak(BsObject *cpt, int32 id, int32 cdt, int32 textNo, int32
 #define TEXT_MARGIN 3 // distance kept from edges of screen
 #define ABOVE_HEAD 20 // distance kept above talking sprite
 		uint16 textX, textY;
-		if ((id == GEORGE) || ((id == NICO) && (_scriptVars[SCREEN] == 10)) && (!cpt->o_anim_resource)) {
+		if (((id == GEORGE) || ((id == NICO) && (_scriptVars[SCREEN] == 10))) && (!cpt->o_anim_resource)) {
 			// if George is doing Voice-Over text (centered at the bottom of the screen)
 			textX = _scriptVars[SCROLL_OFFSET_X] + 128 + (640 / 2) - textSpriteWidth / 2;
 			textY = _scriptVars[SCROLL_OFFSET_Y] + 128 + 400;
