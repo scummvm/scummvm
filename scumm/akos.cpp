@@ -792,8 +792,8 @@ void AkosRenderer::codec1()
 	masking = false;
 	if (clipping) {
 		masking = _vm->isMaskActiveAt(x_left, y_top, x_right, y_bottom,
-																	_vm->getResourceAddress(rtBuffer, 9) +
-																	_vm->gdi._imgBufOffs[clipping] + _vm->_screenStartStrip) != 0;
+		                _vm->getResourceAddress(rtBuffer, 9) +
+		                _vm->gdi._imgBufOffs[clipping] + _vm->_screenStartStrip) != 0;
 	}
 
 	v1.mask_ptr = NULL;

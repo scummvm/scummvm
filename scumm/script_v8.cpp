@@ -1456,12 +1456,21 @@ void Scumm_v8::o6_kernelGetFunctions()
 	case 0xCE:		// getRGBSlot
 	case 0xD3:		// getKeyState
 	case 0xD7:		// getBox
+		push(0);
+		warning("o6_kernelGetFunctions: default case %d (len = %d)", args[0], len);
+		break;
 	case 0xD8:		// findBlastObject
+		// FIXME - this is WRONG and just a temporary hack
+		push(findObject(args[1], args[2]));
+		break;
 	case 0xD9:		// actorHit
+		push(0);
+		warning("o6_kernelGetFunctions: default case %d (len = %d)", args[0], len);
+		break;
 	case 0xDA:		// lipSyncWidth
 	case 0xDB:		// lipSyncHeight
 	case 0xDC:		// actorTalkAnimation
-		// FIXME - hack!
+		// TODO - these methods are for lip syncing. Not so important right now, though
 		push(0);
 		break;
 	case 0xDD:		// getMasterSFXVol

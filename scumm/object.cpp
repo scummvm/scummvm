@@ -266,9 +266,8 @@ int Scumm::findObject(int x, int y)
 			a = _objs[b].parentstate;
 			b = _objs[b].parent;
 			if (b == 0) {
-				if (_objs[i].x_pos <= x &&
-						_objs[i].width + _objs[i].x_pos > x &&
-						_objs[i].y_pos <= y && _objs[i].height + _objs[i].y_pos > y)
+				if (_objs[i].x_pos <= x && _objs[i].width + _objs[i].x_pos > x &&
+				    _objs[i].y_pos <= y && _objs[i].height + _objs[i].y_pos > y)
 					return _objs[i].obj_nr;
 				break;
 			}
