@@ -972,55 +972,70 @@ int Scumm::convert_extraflags(byte * ptr, byte * src_ptr) {
 	return time;
 }
 
+#define kMIDIHeaderSize		46
+static inline byte *writeMIDIHeader(byte *ptr, const char *type, int ppqn, int total_size) {
+	uint32 dw = TO_BE_32(total_size);
+	
+	memcpy(ptr, type, 4); ptr += 4;
+	memcpy(ptr, &dw, 4); ptr += 4;
+	memcpy(ptr, "MDhd", 4); ptr += 4;
+	ptr[0] = 0; ptr[1] = 0; ptr[2] = 0; ptr[3] = 8;
+	ptr += 4;
+	memset(ptr, 0, 8), ptr += 8;
+	memcpy(ptr, "MThd", 4); ptr += 4;
+	ptr[0] = 0; ptr[1] = 0; ptr[2] = 0; ptr[3] = 6;
+	ptr += 4;
+	ptr[0] = 0; ptr[1] = 0; ptr[2] = 0; ptr[3] = 1; // MIDI format 0 with 1 track
+	ptr += 4;
+	
+	*ptr++ = ppqn >> 8;
+	*ptr++ = ppqn & 0xFF;
+
+	memcpy(ptr, "MTrk", 4); ptr += 4;
+	memcpy(ptr, &dw, 4); ptr += 4;
+
+	return ptr;
+}
+
+static inline byte *writeVLQ(byte *ptr, int value) {
+	if (value > 0x7f) {
+		if (value > 0x3fff) {
+			*ptr++ = (value >> 14) | 0x80;
+			value &= 0x3fff;
+		}
+		*ptr++ = (value >> 7) | 0x80;
+		value &= 0x7f;
+	}
+	*ptr++ = value;
+	return ptr;
+}
+
+static inline byte Mac0ToGMInstrument(uint32 type) {
+	switch (type) {
+	case MKID('MARI'):	return 13;
+	case MKID('PLUC'):	return 46;
+	case MKID('HARM'):	return 23;
+	case MKID('PIPE'):	return 110;	// 20 or 74 or 110 ?
+	case MKID('TROM'):	return 58;
+	case MKID('STRI'):	return 49;	// 49 or 50
+	case MKID('HORN'):	return 61;	// 61 or 70
+	case MKID('VIBE'):	return 12;
+	case MKID('SHAK'):	return 78;
+	case MKID('PANP'):	return 76;
+	case MKID('WHIS'):	return 79;
+	case MKID('ORGA'):	return 17;	// 17-21
+	case MKID('BONG'):	return 116;
+	case MKID('BASS'):	return 33;	// 33-40
+	default:
+		error("Unknown Mac0 instrument %c%c%c%c found",
+					(byte)type,
+					(byte)(type >> 8),
+					(byte)(type >> 16),
+					(byte)(type >> 24));
+	}
+}
+
 void Scumm::convertMac0Resource(int type, int idx, byte *src_ptr, int size) {
-	/* Offset
-	   0x14, 0x1C, 0x20, 0x24 - offsets of channel 1/2/3/4 chunk-
-	   Each channel has tag "Chan", followed by its length. At the end
-	   of each chan follows either an empty "Done" chunk (length 0) or an
-	   empty "Loop" chunk. Maybe "Loop" indicates the song should be
-	   played forever?!?.
-
-	   There can be various different subchunks it seems. The
-	   following combinations appear in Monkey Island:
-	   100: ORGA, TROM, BASS, 
-	   101: ORGA, SHAK, BASS, 
-	   103: PIPE, PIPE, PIPE, 
-	   104: VIBE, WHIS, BASS, 
-	   108: ORGA, MARI, BASS, 
-	   110: ORGA, SHAK, VIBE, 
-	   111: MARI, SHAK, BASS, 
-	   115: PLUC, SHAK, WHIS, 
-	   One guess is that these are instrument names: Organ, Marimba, Whistle...
-	   Maybe there is a mapping table someplace? Maybe these are even mapped to
-	   Mac1 type "instruments" ?
-
-	   What follows are four byte "commands" it seems, like this (hex):
-	   01 68 4F 49
-	   01 68 00 40
-	   01 68 4F 49
-	   ...
-	   01 68 00 40
-	   02 1C 5B 40
-	   00 B4 00 40
-	   ...
-	   01 68 37 3C
-	   00 18 37 38
-	   04 20 3E 34
-	   01 68 4A 3C
-
-	   More data:
-	   00 09 3E 10
-	   01 5F 00 40
-	   00 9C 36 40
-	   00 CC 00 40
-	   00 18 42 49
-	   00 18 45 3C
-	   01 29 4A 3C
-	   00 0F 00 40
-
-	   Maybe I am mistaken when I think it's four byte, some other parts
-	   seem to suggest it's 2 byte oriented, or even variable length...
-	*/
 	/*
 	From Markus Magnuson (superqult) we got this information:
 	Mac0
@@ -1072,48 +1087,102 @@ void Scumm::convertMac0Resource(int type, int idx, byte *src_ptr, int size) {
 	listed above.
 	*/
 
+#if 1
 	byte *ptr = createResource(type, idx, size);
-	
-	// TODO: Implement Mac0 -> GM conversion
-	// For now, just copy the resource data
 	memcpy(ptr, src_ptr, size);
-}
-
-static inline byte *writeMIDIHeader(byte *ptr, const char *type, int ppqn, int total_size) {
-	uint32 dw = TO_BE_32(total_size);
+#else
+	const int ppqn = 480;
+	byte *ptr, *start_ptr;
 	
-	memcpy(ptr, "ADL ", 4); ptr += 4;
-	memcpy(ptr, &dw, 4); ptr += 4;
-	memcpy(ptr, "MDhd", 4); ptr += 4;
-	ptr[0] = 0; ptr[1] = 0; ptr[2] = 0; ptr[3] = 8;
-	ptr += 4;
-	memset(ptr, 0, 8), ptr += 8;
-	memcpy(ptr, "MThd", 4); ptr += 4;
-	ptr[0] = 0; ptr[1] = 0; ptr[2] = 0; ptr[3] = 6;
-	ptr += 4;
-	ptr[0] = 0; ptr[1] = 0; ptr[2] = 0; ptr[3] = 1; // MIDI format 0 with 1 track
-	ptr += 4;
+	int total_size = 0;
+	total_size += kMIDIHeaderSize;	// Header
+	total_size += 5;				// end of song sysex
+	total_size += 3 * 2;			// Three programm change mesages
 	
-	*ptr++ = ppqn >> 8;
-	*ptr++ = ppqn & 0xFF;
+	int i, len;
+	byte track_instr[3];
+	int  current_note[3];
+	int track_time[3];
+	byte *track_data[3];
+	int track_len[3];
+	bool looped = false;
 
-	memcpy(ptr, "MTrk", 4); ptr += 4;
-	memcpy(ptr, &dw, 4); ptr += 4;
+	// TODO: Decipher the unknown bytes in the header. For now, skip 'em
+	src_ptr += 36;
 
-	return ptr;
+	// Parse the three channels
+	for (i = 0; i < 3; i++) {
+		assert(READ_BE_UINT32(src_ptr) == MKID('Chan'));
+		len = READ_BE_UINT32(src_ptr + 4);
+		track_len[i] = (len - 24) / 4;
+		track_instr[i] = Mac0ToGMInstrument(READ_BE_UINT32(src_ptr + 8));
+		track_data[i] = src_ptr + 8;
+		current_note[i] = -1;
+		track_time[i] = -1;
+		src_ptr += len;
+		looped = (READ_BE_UINT32(src_ptr - 8) == MKID('Loop'));
+		
+		// For each note event, we need up to 3 bytes for the VLQ, and 3 bytes
+		// for the note on. Finally, up to 3 bytes for the note off.
+		// That means up to 9 bytes may be used for each note.
+		total_size += 9 * track_len[i];
+	}
+	assert(*src_ptr == 0x09);
+	
+	// Create sound resource
+	start_ptr = createResource(type, idx, total_size);
+	
+	// Insert MIDI header
+	ptr = writeMIDIHeader(start_ptr, "GMD ", ppqn, total_size);
+
+/*
+	// Write a tempo change Meta event
+	// 473 / 4 Hz, convert to micro seconds.
+	// FIXME: This is copied from the SFX case in convertADResource()
+	// and probably is not the proper value, but for now it's
+	// sufficient to act as placeholder.
+	uint32 dw = 1000000 * ppqn * 4 / 473;
+	memcpy(ptr, "\x00\xFF\x51\x03", 4); ptr += 4;
+	*ptr++ = (byte)((dw >> 16) & 0xFF);
+	*ptr++ = (byte)((dw >> 8) & 0xFF);
+	*ptr++ = (byte)(dw & 0xFF);
+*/
+
+	// Time 0
+//	ptr = writeVLQ(ptr, 0);
+
+	// Insert programm change status messages
+	ptr[0] = 'C0'; ptr[1] = track_instr[0];
+	ptr[2] = 'C1'; ptr[3] = track_instr[1];
+	ptr[4] = 'C2'; ptr[5] = track_instr[2];
+	ptr += 6;
+
+	// TODO: now use the information computed above, and create a MIDI track, 
+	// similiar to what is done in convertADResource
+	// ...
+
+	// Insert end of song sysex
+	memcpy(ptr, "\x00\xff\x2f\x00\x00", 5); ptr += 5;
+	
+	assert(ptr <= start_ptr + total_size);
+	
+	// Rewrite MIDI header, this time with true size
+	total_size = ptr - start_ptr;
+	ptr = writeMIDIHeader(start_ptr, "GMD ", ppqn, total_size);
+#endif
 }
 
 void Scumm::convertADResource(int type, int idx, byte *src_ptr, int size) {
 
 	// We will ignore the PPQN in the original resource, because
 	// it's invalid anyway. We use a constant PPQN of 480.
-    const int ppqn = 480;
+	const int ppqn = 480;
 	uint32 dw;
 	int i, ch;
 	byte *ptr;
-	int total_size = 8 + 16 + 14 + 8 + 7 + 8*sizeof(ADLIB_INSTR_MIDI_HACK) + size;
+	int total_size = kMIDIHeaderSize + 7 + 8 * sizeof(ADLIB_INSTR_MIDI_HACK) + size;
 	total_size += 24;	// Up to 24 additional bytes are needed for the jump sysex
-
+	
 	ptr = createResource(type, idx, total_size);
 
 	src_ptr += 2;
@@ -1284,7 +1353,7 @@ void Scumm::convertADResource(int type, int idx, byte *src_ptr, int size) {
 		byte current_instr[3][14];
 		int  current_note[3];
 		int track_time[3];
-		byte *tracks[3];
+		byte *track_data[3];
 	
 		int track_ctr = 0;
 		byte chunk_type = 0;
@@ -1304,7 +1373,7 @@ void Scumm::convertADResource(int type, int idx, byte *src_ptr, int size) {
 		}
 		while (size > 0) {
 			assert(track_ctr < 3);
-			tracks[track_ctr] = src_ptr;
+			track_data[track_ctr] = src_ptr;
 			track_time[track_ctr] = 0;
 			track_ctr++;
 			while (size > 0) {
@@ -1341,22 +1410,14 @@ void Scumm::convertADResource(int type, int idx, byte *src_ptr, int size) {
 			if (mintime < 0)
 				break;
 	
-			src_ptr = tracks[ch];
+			src_ptr = track_data[ch];
 			chunk_type = *src_ptr;
 	
 	
 			if (current_note[ch] >= 0) {
 				delay = mintime - curtime;
 				curtime = mintime;
-				if (delay > 0x7f) {
-					if (delay > 0x3fff) {
-						*ptr++ = (delay >> 14) | 0x80;
-						delay &= 0x3fff;
-					}
-					*ptr++ = (delay >> 7) | 0x80;
-					delay &= 0x7f;
-				}
-				*ptr++ = delay;
+				ptr = writeVLQ(ptr, delay);
 				*ptr++ = 0x80 + ch; // key off channel;
 				*ptr++ = current_note[ch];
 				*ptr++ = 0;
@@ -1446,15 +1507,7 @@ void Scumm::convertADResource(int type, int idx, byte *src_ptr, int size) {
 	
 				olddelay = mintime - curtime;
 				curtime = mintime;
-				if (olddelay > 0x7f) {
-					if (olddelay > 0x3fff) {
-						*ptr++ = (olddelay >> 14) | 0x80;
-						olddelay &= 0x3fff;
-					}
-					*ptr++ = (olddelay >> 7) | 0x80;
-					olddelay &= 0x7f;
-				}
-				*ptr++ = olddelay;
+				ptr = writeVLQ(ptr, olddelay);
 	
 				{
 					int freq = ((current_instr[ch][1] & 3) << 8)
@@ -1495,7 +1548,7 @@ void Scumm::convertADResource(int type, int idx, byte *src_ptr, int size) {
 			default:
 				track_time[ch] = -1;
 			}
-			tracks[ch] = src_ptr;
+			track_data[ch] = src_ptr;
 		}
 	}
 
