@@ -240,7 +240,7 @@ bool IMuseInternal::startSound(int sound) {
 	// iMuse messiness while upgrading the iMuse engine, but it
 	// is apparently necessary to deal with fade-and-restart
 	// race conditions that were observed in MI2. Reference
-	// Bug #590511 and Patch #607175(which was reversed to fix
+	// Bug #590511 and Patch #607175 (which was reversed to fix
 	// an FOA regression: Bug #622606).
 	player = findActivePlayer(sound);
 	if (!player)

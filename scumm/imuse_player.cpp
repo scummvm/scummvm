@@ -98,8 +98,8 @@ bool Player::startSound(int sound, MidiDriver *midi, bool passThrough) {
 	// but we'll go ahead and do a similar check.
 	ptr = _se->findStartOfSound(sound);
 	if (!ptr) {
-			warning("Player::startSound(): Couldn't find start of sound %d!", sound);
-			return false;
+		warning("Player::startSound(): Couldn't find start of sound %d!", sound);
+		return false;
 	}
 
 	_isMT32 = _se->isMT32(sound);
