@@ -947,6 +947,7 @@ int Scene::defaultScene(int param, R_SCENE_INFO *scene_info) {
 		_vm->_anim->setFlag(0, ANIM_LOOP);
 		_vm->_anim->play(0, 0);
 
+		// Start scene scripts
 		if (_desc.startScriptNum > 0) {
 			R_SCRIPT_THREAD *_startScriptThread;
 
@@ -959,6 +960,23 @@ int Scene::defaultScene(int param, R_SCENE_INFO *scene_info) {
 			}
 			_vm->_script->SThreadExecute(_startScriptThread, _desc.startScriptNum);
 			_vm->_script->SThreadCompleteThread();
+		}
+
+		if (_desc.sceneScriptNum > 0) {
+			R_SCRIPT_THREAD *_sceneScriptThread;
+
+			debug(0, "Starting scene script #%d", _desc.sceneScriptNum);
+
+			_sceneScriptThread = _vm->_script->SThreadCreate();
+			if (_sceneScriptThread == NULL) {
+				_vm->_console->print("Thread creation failed.");
+				break;
+			}
+
+			// TODO: Set up thread variables. First we'll need to
+			// add the concept of thread variables...
+
+			_vm->_script->SThreadExecute(_sceneScriptThread, _desc.sceneScriptNum);
 		}
 
 		debug(0, "Scene started");
