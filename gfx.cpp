@@ -17,6 +17,10 @@
  *
  * Change Log:
  * $Log$
+ * Revision 1.7  2001/10/17 10:07:39  strigeus
+ * fixed verbs not saved in non dott games,
+ * implemented a screen effect
+ *
  * Revision 1.6  2001/10/17 07:12:37  strigeus
  * fixed nasty signed/unsigned bug
  *
@@ -302,7 +306,6 @@ void Scumm::setCursor(int cursor) {
 		src = cur->data;	
 		i=16;
 		do {
-/* TODO: endian trouble */
 			data = ((src[0]<<16) | (src[1]<<8))>>shramount;
 			src += 2;
 			mask[0] = (byte)(data>>24);
@@ -569,7 +572,7 @@ void Scumm::unkVirtScreen4(int a) {
 
 	switch(a) {
 	case 1: case 2: case 3:
-		unkVirtScreen5(a-1);
+		unkScreenEffect7(a-1);
 		break;
 	case 128:
 		unkScreenEffect6();
@@ -1450,9 +1453,103 @@ int Scumm::findVirtScreen(int y) {
 	return -1;
 }
 
-void Scumm::unkVirtScreen5(int a) {
+void Scumm::unkScreenEffect1() {
 	/* XXX: not implemented */
-	warning("stub unkVirtScreen5(%d)", a);
+	warning("stub unkScreenEffect1()");
+}
+
+void Scumm::unkScreenEffect2() {
+	/* XXX: not implemented */
+	warning("stub unkScreenEffect2()");
+}
+
+void Scumm::unkScreenEffect3() {
+	/* XXX: not implemented */
+	warning("stub unkScreenEffect3()");
+}
+
+void Scumm::unkScreenEffect4() {
+	/* XXX: not implemented */
+	warning("stub unkScreenEffect4()");
+}
+
+static const int8 screen_eff7_table1[4][16] = {
+	{1,1,-1,1,-1,1,-1,-1,
+     1,-1,-1,-1,1,1,1,-1},
+	{0,1,2,1,2,0,2,1,
+	 2,0,2,1,0,0,0,0},
+	{-2,-1,0,-1,-2,-1,-2,0
+	-2,-1,-2,0,0,0,0,0},
+	{0,-1,-2,-1,-2,0,-2,-1
+	-2,0,-2,-1,0,0,0,0}
+};
+
+static const byte screen_eff7_table2[4][16] = {
+	{0,0,39,0,39,0,39,24,
+	0,24,39,24,0,0,0,24},
+	{0,0,0,0,0,0,0,0,
+	1,0,1,0,255,0,0,0},
+	{39,24,39,24,39,24,39,24,
+	38,24,38,24,255,0,0,0},
+	{0,24,39,24,39,0,39,24,
+	38,0,38,24,255,0,0,0}
+};
+
+static const byte screen_eff7_table3[4] = {
+	13,25,25,25
+};
+
+void Scumm::unkScreenEffect7(int a) {
+	int tab_1[16];
+	int tab_2[16];
+	int i,j;
+	int bottom;
+	int *tab2_ptr;
+	int l,t,r,b;
+
+	for (i=0; i<16; i++) {
+		tab_1[i] = screen_eff7_table1[a][i];
+		j = screen_eff7_table2[a][i];
+		if (j==24)
+			j = (virtscr[0].height>>3)-1;
+		tab_2[i] = j;
+	}
+
+	bottom = virtscr[0].height >> 3;
+	for (j=0; j < screen_eff7_table3[a]; j++) {
+		for (i=0; i<4; i++) {
+			l = tab_2[i*4];
+			t = tab_2[i*4+1];
+			r = tab_2[i*4+2];
+			b = tab_2[i*4+3];
+			if (t==b) {
+				while (l <= r) {
+					if (l>=0 && l<40 && (uint)t<(uint)bottom) {
+						virtscr[0].tdirty[l] = t<<3;
+						virtscr[0].bdirty[l] = (t+1)<<3;
+					}
+					l++;
+				}
+			} else {
+				/* DE92 */
+				if (l<0 || l>=40 || b<=t)
+					continue;
+				if (b>bottom)
+					b=bottom;
+				virtscr[0].tdirty[l] = t<<3;
+				virtscr[0].bdirty[l] = (b+1)<<3;
+			}
+			updateDirtyScreen(0);
+		}
+
+		for (i=0; i<16; i++)
+			tab_2[i] += tab_1[i];
+		
+		updateScreen(this);
+		waitForTimer(this);
+	}
+	/* XXX: not implemented */
+	warning("stub unkScreenEffect7(%d)", a);
 }
 
 void Scumm::unkScreenEffect6() {
@@ -1636,8 +1733,20 @@ void Scumm::palManipulate() {
 
 void Scumm::screenEffect(int effect) {
 	dseg_3DB6 = 1;
-	warning("stub screenEffect(%d)",effect);
-	/* TODO: not implemented */
+	switch(effect) {
+	case 1:
+	case 2:
+	case 3:		unkScreenEffect7(effect-1);	break;
+	case 128:	unkScreenEffect6(); break;
+	case 130:	unkScreenEffect1(); break;
+	case 131:	unkScreenEffect2();	break;
+	case 132:	unkScreenEffect3();	break;
+	case 133:	unkScreenEffect4();	break;
+	case 134:	unkScreenEffect5(0); break;
+	case 135:	unkScreenEffect5(1); break;
+	default:
+		warning("Unknown screen effect, %d", effect);
+	}
 	dseg_4EA0 = 1;
 }
 

@@ -17,6 +17,10 @@
  *
  * Change Log:
  * $Log$
+ * Revision 1.10  2001/10/17 10:07:40  strigeus
+ * fixed verbs not saved in non dott games,
+ * implemented a screen effect
+ *
  * Revision 1.9  2001/10/16 20:31:27  strigeus
  * misc fixes
  *
@@ -60,9 +64,10 @@ void Scumm::initThings() {
 	_numVariables = 800;
 	_numBitVariables = 2048;
 	_numLocalObjects = 200;
+	_numVerbs = 100;
 	
 	_inventory = (uint16*)alloc(0x50 * sizeof(uint16));
-	_verbs = (VerbSlot*)alloc(102 * sizeof(VerbSlot));
+	_verbs = (VerbSlot*)alloc(100 * sizeof(VerbSlot));
 	_objs = (ObjectData*)alloc(200 * sizeof(ObjectData));
 	_vars = (int16*)alloc(800 * sizeof(int16));
 	_bitVars = (byte*)alloc(2048 >> 3);
@@ -353,9 +358,9 @@ void Scumm::scummMain(int argc, char **argv) {
 		cyclePalette();
 		palManipulate();
 		
-		if (dseg_4F8A) {
+		if (doEffect) {
+			doEffect = false;
 			screenEffect(_newEffect);
-			dseg_4F8A = 0;
 			clearClickedStatus();
 		}
 		
@@ -534,7 +539,7 @@ void Scumm::startScene(int room, Actor *a, int objectNr) {
 		a->moving = 0;
 	}
 
-	dseg_4F8A = 1;
+	doEffect = true;
 
 	CHECK_HEAP
 }

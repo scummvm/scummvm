@@ -17,6 +17,10 @@
  *
  * Change Log:
  * $Log$
+ * Revision 1.11  2001/10/17 10:07:40  strigeus
+ * fixed verbs not saved in non dott games,
+ * implemented a screen effect
+ *
  * Revision 1.10  2001/10/17 07:12:37  strigeus
  * fixed nasty signed/unsigned bug
  *
@@ -604,7 +608,8 @@ struct Scumm {
 	
 	byte _switchRoomEffect2, _switchRoomEffect;
 	uint16 dseg_4AC2;
-	uint16 dseg_4F8A;
+
+	bool doEffect;
 	
 	uint16 _drawBmpX;
 	uint16 dseg_719E;
@@ -946,7 +951,7 @@ struct Scumm {
 	void unkVirtScreen2();
 	void updateDirtyScreen(int slot);
 	void unkVirtScreen4(int a);
-	void unkVirtScreen5(int a);
+	
 
 	void drawStripToScreen();
 	void restoreMouse();
@@ -1351,9 +1356,14 @@ struct Scumm {
 	void updateDirtyRect(int virt, int left, int right, int top, int bottom, uint16 dirtybits);
 	int findVirtScreen(int y);
 
-	void unkScreenEffect6();
+	void unkScreenEffect1();
+	void unkScreenEffect2();
+	void unkScreenEffect3();
+	void unkScreenEffect4();
 	void unkScreenEffect5(int a);
-
+	void unkScreenEffect6();
+	void unkScreenEffect7(int a);
+	
 	void playSound(int sound);
 
 	void decreaseScriptDelay(int amount);

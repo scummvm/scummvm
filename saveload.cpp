@@ -17,6 +17,10 @@
  *
  * Change Log:
  * $Log$
+ * Revision 1.4  2001/10/17 10:07:39  strigeus
+ * fixed verbs not saved in non dott games,
+ * implemented a screen effect
+ *
  * Revision 1.3  2001/10/16 10:01:47  strigeus
  * preliminary DOTT support
  *
@@ -287,7 +291,7 @@ void Scumm::saveOrLoad(FILE *inout, bool mode) {
 		MKLINE(Scumm,gdi.unk4,sleByte),
 		MKLINE(Scumm,gdi.currentCursor,sleByte),
 
-		MKLINE(Scumm,dseg_4F8A,sleUint16),
+		MKLINE(Scumm,doEffect,sleUint16), /* Convert to byte */
 		MKLINE(Scumm,_switchRoomEffect,sleByte),
 		MKLINE(Scumm,_newEffect,sleByte),
 		MKLINE(Scumm,_switchRoomEffect2,sleByte),
