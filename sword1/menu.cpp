@@ -88,7 +88,7 @@ uint8 SwordMenu::checkMenuClick(uint8 menuType) {
 }
 
 void SwordMenu::buildSubjects(void) {
-	uint8 subDest = 0;
+	// uint8 subDest = 0;
 	clearMenu(MENU_BOT);
 	for (uint8 cnt = 0; cnt < 16; cnt++)
 		if (_subjects[cnt]) {

@@ -271,7 +271,7 @@ void SwordScreen::newScreen(uint32 screen) {
 
 	// TEMPORARY!
 	uint8 *bgPal = (uint8*)_resMan->openFetchRes(_roomDefTable[_currentScreen].palettes[0]);
-	uint8 *sprPal = (uint8*)_resMan->openFetchRes(_roomDefTable[_currentScreen].palettes[1]);
+	// uint8 *sprPal = (uint8*)_resMan->openFetchRes(_roomDefTable[_currentScreen].palettes[1]);
 	for (uint16 cnt = 0; cnt < 256; cnt++) {
 		_targetPalette[cnt * 4 + 0] = bgPal[cnt * 3 + 0] << 2;
 		_targetPalette[cnt * 4 + 1] = bgPal[cnt * 3 + 1] << 2;

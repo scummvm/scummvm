@@ -106,7 +106,7 @@ void SwordMouse::engine(uint16 x, uint16 y, uint16 eventFlags) {
 
 	//-
 	int32 touchedId = 0;
-	uint16 clicked;
+	uint16 clicked = 0;
 	if (y > 40) {
 		for (uint16 priority = 0; (priority < 10) && (!touchedId); priority++) {
 			for (uint16 cnt = 0; cnt < _numObjs; cnt++) {
@@ -120,7 +120,7 @@ void SwordMouse::engine(uint16 x, uint16 y, uint16 eventFlags) {
 				}
 			}
 		}
-		if (touchedId != SwordLogic::_scriptVars[SPECIAL_ITEM]) { //the mouse collision situation has changed in one way or another
+		if (touchedId != (int)SwordLogic::_scriptVars[SPECIAL_ITEM]) { //the mouse collision situation has changed in one way or another
 			SwordLogic::_scriptVars[SPECIAL_ITEM] = touchedId;
 			debug(9, "New special item: %X\n", touchedId);
 			if (_getOff) { // there was something else selected before, run its get-off script
@@ -128,7 +128,7 @@ void SwordMouse::engine(uint16 x, uint16 y, uint16 eventFlags) {
 				_getOff = 0;
 			}
 			if (touchedId) { // there's something new selected, now.
-				BsObject *compact = _objMan->fetchObject(SwordLogic::_scriptVars[SPECIAL_ITEM]);
+				// BsObject *compact = _objMan->fetchObject(SwordLogic::_scriptVars[SPECIAL_ITEM]);
 
 				if	(_objList[clicked].compact->o_mouse_on)	//run its get on
 					_logic->runMouseScript(_objList[clicked].compact, _objList[clicked].compact->o_mouse_on);
@@ -195,7 +195,8 @@ void SwordMouse::fnAddHuman(void) {
 	if (_mouseStatus & 2) // locked, can't do anything
 		return ;
 	_mouseStatus = 1;
-	SwordLogic::_scriptVars[SPECIAL_ITEM] = -1;
+	// SwordLogic::_scriptVars[SPECIAL_ITEM] = -1;
+	SwordLogic::_scriptVars[SPECIAL_ITEM] = 0; // _scriptVars is unsigned...
 	_getOff = SCR_std_off;
 	setPointer(MSE_POINTER, 0);
 	_mouseCount = 3;

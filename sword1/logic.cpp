@@ -63,7 +63,7 @@ SwordLogic::SwordLogic(ObjectMan *pObjMan, ResMan *resMan, SwordScreen *pScreen,
 	_speechFinished = true;
 }
 
-void SwordLogic::newScreen(uint32 newScreen) {
+void SwordLogic::newScreen(uint32 screen) {
 	BsObject *compact = (BsObject*)_objMan->fetchObject(PLAYER);
 
 	//Tdebug("locked player");
@@ -116,7 +116,7 @@ void SwordLogic::engine(void) {
 					compact->o_sync = 0; // syncs are only available for 1 cycle.
 				}
 
-				if (compact->o_screen == _scriptVars[SCREEN]) {
+				if ((uint32)compact->o_screen == _scriptVars[SCREEN]) {
 					if (compact->o_status & STAT_FORE)
 						_screen->addToGraphicList(0, currentId);
 					if (compact->o_status & STAT_SORT)
@@ -1529,8 +1529,8 @@ int SwordLogic::fnInnerSpace(BsObject *cpt, int32 id, int32 a, int32 b, int32 c,
 	return SCRIPT_STOP;
 }
 
-int SwordLogic::fnSetScreen(BsObject *cpt, int32 id, int32 target, int32 newScreen, int32 c, int32 d, int32 z, int32 x) {
-	_objMan->fetchObject(target)->o_screen = newScreen;
+int SwordLogic::fnSetScreen(BsObject *cpt, int32 id, int32 target, int32 screen, int32 c, int32 d, int32 z, int32 x) {
+	_objMan->fetchObject(target)->o_screen = screen;
 	return SCRIPT_CONT;
 }
 
@@ -1540,7 +1540,7 @@ int SwordLogic::fnPreload(BsObject *cpt, int32 id, int32 resId, int32 b, int32 c
 	return SCRIPT_CONT;
 }
 
-int SwordLogic::fnCheckCD(BsObject *cpt, int32 id, int32 newScreen, int32 b, int32 c, int32 d, int32 z, int32 x) {
+int SwordLogic::fnCheckCD(BsObject *cpt, int32 id, int32 screen, int32 b, int32 c, int32 d, int32 z, int32 x) {
 	warning("fnCheckCd called");
 	// Not sure if we really have to check that here. I think we can do it in the main loop
 	// and leave a dummy here.

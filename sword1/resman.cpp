@@ -173,7 +173,7 @@ void ResMan::resOpen(uint32 id) {  // load resource ID into memory
 	if (memHandle->cond == MEM_FREED) { // memory has been freed
 		uint32 size = resLength(id);
 		_memMan->alloc(memHandle, size);
-		uint8 *dest = (uint8*)memHandle->data;
+		// uint8 *dest = (uint8*)memHandle->data;
 		File *clusFile = openClusterFile(id);
 		clusFile->seek( resOffset(id) );
 		clusFile->read( memHandle->data, size);
@@ -280,7 +280,7 @@ void ResMan::openCptResourceBigEndian(uint32 id) {
 void ResMan::openScriptResourceBigEndian(uint32 id) {
 	resOpen(id);
 	BsMemHandle *handle = resHandle(id);
-	uint32 totSize = handle->size;
+	// uint32 totSize = handle->size;
 	Header *head = (Header*)handle->data;
 	head->comp_length = FROM_LE_32(head->comp_length);
 	head->decomp_length = FROM_LE_32(head->decomp_length);

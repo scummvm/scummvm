@@ -40,7 +40,7 @@ SwordSound::SwordSound(const char *searchPath, SoundMixer *mixer, ResMan *pResMa
 int SwordSound::addToQueue(int32 fxNo) {
 	bool alreadyInQueue = false;
 	for (uint8 cnt = 0; (cnt < _endOfQueue) && (!alreadyInQueue); cnt++)
-		if (_fxQueue[cnt].id == fxNo)
+		if (_fxQueue[cnt].id == (uint32)fxNo)
 			alreadyInQueue = true;
 	if (!alreadyInQueue) {
 		if (_endOfQueue == MAX_FXQ_LENGTH)
@@ -117,7 +117,7 @@ void SwordSound::playSample(QueueElement elem) {
 	uint8 *sampleData = (uint8*)_resMan->fetchRes(_fxList[elem.id].sampleId);
 	for (uint16 cnt = 0; cnt < MAX_ROOMS_PER_FX; cnt++) {
 		if (_fxList[elem.id].roomVolList[cnt].roomNo) {
-			if ((_fxList[elem.id].roomVolList[cnt].roomNo == SwordLogic::_scriptVars[SCREEN]) ||
+			if ((_fxList[elem.id].roomVolList[cnt].roomNo == (int)SwordLogic::_scriptVars[SCREEN]) ||
 				(_fxList[elem.id].roomVolList[cnt].roomNo == -1)) {
 
 					uint8 volL = _fxList[elem.id].roomVolList[cnt].leftVol * 10;

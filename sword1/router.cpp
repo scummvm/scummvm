@@ -75,7 +75,7 @@ int SwordRouter::routeFinder(int32 id, BsObject *mega, int32 x, int32 y, int32 t
 		frameInfo.slowOutFrames = 0;
 	}
 	int32 routeFlag = getRoute();
-	int32 routeLength;
+	int32 routeLength = 0;
 	if (routeFlag == 1) {
 		// extract the route as nodes and the directions to go between each node
 		// route.X,route.Y and route.Dir now hold all the route infomation with
@@ -666,7 +666,7 @@ int32 SwordRouter::smoothestPath(uint16 startX, uint16 startY, uint16 startDir, 
 	int32	DS;
 	int32	DD;
 	int32	temp;
-	int32	steps;
+	int32	steps = 0;
 	int32	option;
 	int32	options;
 	int32 lastDir;
