@@ -54,7 +54,7 @@ public:
 
 private:
 	static char *toAscii(TCHAR *x);
-	static TCHAR* toUnicode(char *x);
+	static const TCHAR* toUnicode(const char *x);
 	static void addFile (FSList &list, ListMode mode, const char *base, WIN32_FIND_DATA* find_data);
 };
 
@@ -70,12 +70,11 @@ char* WindowsFilesystemNode::toAscii(TCHAR *x) {
 #endif
 }
 
-TCHAR* WindowsFilesystemNode::toUnicode(char *x) {
-
+const TCHAR* WindowsFilesystemNode::toUnicode(const char *x) {
 #ifndef UNICODE
-	return (TCHAR*)x;
+	return (const TCHAR *)x;
 #else
-	static TCHAR unicodeString[MAX_PATH];
+	static const TCHAR unicodeString[MAX_PATH];
 	MultiByteToWideChar(CP_ACP, 0, x, strlen(x) + 1, unicodeString, sizeof(unicodeString));
 	return unicodeString;
 #endif
@@ -150,7 +149,7 @@ WindowsFilesystemNode::WindowsFilesystemNode(const String &p) {
 	_displayName = String(str + offset, len);
 
 	// Check whether it is a directory, and whether the file actually exists
-	DWORD fileAttribs = GetFileAttributes(toUnicode((char *)_path.c_str()));
+	DWORD fileAttribs = GetFileAttributes(toUnicode(_path.c_str()));
 
 	if (fileAttribs == 0xffffffff) {
 		_isValid = false;
@@ -199,8 +198,8 @@ FSList WindowsFilesystemNode::listDir(ListMode mode) const {
 	else {
 		// Files enumeration
 		WIN32_FIND_DATA desc;
-		HANDLE			handle;
-		char			searchPath[MAX_PATH + 10];
+		HANDLE handle;
+		char searchPath[MAX_PATH + 10];
 
 		sprintf(searchPath, "%s*", _path.c_str());
 
