@@ -554,7 +554,7 @@ struct TalkSelected {
 	int16 values[4];
 
 	void readFrom(byte *&ptr) {
-		hasTalkedTo = (bool)READ_BE_UINT16(ptr); ptr += 2;
+		hasTalkedTo = READ_BE_UINT16(ptr) != 0; ptr += 2;
 		for (int i = 0; i < 4; i++) {
 			values[i] = (int16)READ_BE_UINT16(ptr); ptr += 2;
 		}	
