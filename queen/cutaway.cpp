@@ -110,7 +110,7 @@ void QueenCutaway::load(const char *filename, QueenResource *queenResource) {
 		 Pointers to other places in the cutaway data
 	 */
 
-	byte *gameStatesPtr = _fileData + READ_BE_UINT16(ptr);
+	/*byte *gameStatesPtr =*/ _fileData + READ_BE_UINT16(ptr);
 	ptr += 2;
 
 	_nextSentence        = _fileData + READ_BE_UINT16(ptr);

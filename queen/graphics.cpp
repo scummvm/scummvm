@@ -267,7 +267,7 @@ void QueenGraphics::bobDraw(uint32 bobnum, uint16 x, uint16 y, uint16 scale, boo
 	uint8 *src;
 
 	BobFrame *pbf = &_frames[bobnum];
-	if(scale >= 0 && scale < 100) {
+	if (scale < 100) {  // Note: scale is unsigned, hence always >= 0
 		bobShrink(pbf, scale);
 		src = _shrinkBuffer.data;
 		w   = _shrinkBuffer.width;
@@ -339,7 +339,7 @@ void QueenGraphics::bobDrawInventoryItem(uint32 bobnum, uint16 x, uint16 y) {
 		}
 	}
 	else {
-		BobFrame *pbf = &_frames[bobnum];
+//		BobFrame *pbf = &_frames[bobnum];
 //		_display->blit(panel, x, y, 320, pbf->data, pbf->width, pbf->height, false, false);
 	}
 }
@@ -347,7 +347,7 @@ void QueenGraphics::bobDrawInventoryItem(uint32 bobnum, uint16 x, uint16 y) {
 
 void QueenGraphics::bobPaste(uint32 bobnum, uint16 x, uint16 y) {
 
-	BobFrame *pbf = &_frames[bobnum];
+//	BobFrame *pbf = &_frames[bobnum];
 //	_display->blit(backdrop, x, y, 640, pbf->data, pbf->width, pbf->height, pbf->width, false, true);
 	frameErase(bobnum);
 }
