@@ -190,8 +190,8 @@ void SmushFont::drawStringAbsolute(const char *str, byte *buffer, int dst_width,
 void SmushFont::drawStringCentered(const char *str, byte *buffer, int dst_width, int dst_height, int y, int xmin, int width, int offset) {
 	debug(9, "SmushFont::drawStringCentered(%s, %d, %d)", str, xmin, y);
 
-	if ((strchr(str, '\n') != 0)) {
-		char *z = strchr(str, '\n');
+	char *z = strchr(str, '\n');
+	if (z != 0) {
 		*z = 0;
 	}
 	char **words = split(str, ' ');
@@ -240,22 +240,20 @@ void SmushFont::drawStringCentered(const char *str, byte *buffer, int dst_width,
 	}
 	delete[] words;
 	
-	max_width = (max_width + 1) >> 1;
-	int x = xmin + width / 2;
-	x += offset - dst_width / 2;
-
-	if (x < max_width) x = max_width;
-	if (x + max_width > dst_width) {
-		x = dst_width - max_width;
-	}
-
-	if (y + height > dst_height) {
+	if (y > dst_height - height) {
 		y = dst_height - height;
 	}
 
+	max_width = (max_width + 1) >> 1;
+	int x = xmin + width / 2 + offset - dst_width / 2;
+
+	if (x < max_width)
+		x = max_width;
+	if (x > dst_width - max_width)
+		x = dst_width - max_width;
+
 	for (i = 0; i < nb_subs; i++) {
-		int substr_width = substr_widths[i];
-		drawSubstring(substrings[i], buffer, dst_width, x - substr_width / 2, y);
+		drawSubstring(substrings[i], buffer, dst_width, x - substr_widths[i] / 2, y);
 		y += getStringHeight(substrings[i]);
 		delete[] substrings[i];
 	}
@@ -267,18 +265,18 @@ void SmushFont::drawStringCentered(const char *str, byte *buffer, int dst_width,
 void SmushFont::drawStringWrap(const char *str, byte *buffer, int dst_width, int dst_height, int x, int y, int width) {
 	debug(9, "SmushFont::drawStringWrap(%s, %d, %d)", str, x, y);
 
-	if ((strchr(str, '\n') != 0)) {
-		char *z = strchr(str, '\n');
+	char *z = strchr(str, '\n');
+	if (z != 0) {
 		*z = 0;
 	}
-	char ** words = split(str, ' ');
+	char **words = split(str, ' ');
 	int nb_sub = 0;
 
 	while (words[nb_sub])
 		nb_sub++;
 
 	int *sizes = new int[nb_sub];
-	int i = 0, max_width = 0, height = 0, nb_subs = 0, left_x;
+	int i = 0, max_width = 0, height = 0, nb_subs = 0;
 
 	for (i = 0; i < nb_sub; i++)
 		sizes[i] = getStringWidth(words[i]);
@@ -305,6 +303,8 @@ void SmushFont::drawStringWrap(const char *str, byte *buffer, int dst_width, int
 
 		substrings[nb_subs] = substr;
 		substr_widths[nb_subs++] = substr_width;
+		if (max_width < substr_width)
+			max_width = substr_width;
 		i = j;
 		height += getStringHeight(substr);
 	}
@@ -315,23 +315,15 @@ void SmushFont::drawStringWrap(const char *str, byte *buffer, int dst_width, int
 	}
 	delete[] words;
 
-	if (y + height > dst_height) {
+	if (y > dst_height - height) {
 		y = dst_height - height;
 	}
 
-	for (i = 0; i < nb_subs; i++)
-		max_width = MAX(max_width, substr_widths[i]);
-
-	if (max_width + x > dst_width)
-		left_x = dst_width - max_width + getCharWidth(' ');
-	else
-		left_x = x;
-
-	if (max_width + left_x > dst_height)
-		left_x = dst_width - max_width;
+	if (x > dst_width - max_width)
+		x = dst_width - max_width;
 
 	for (i = 0; i < nb_subs; i++) {
-		drawSubstring(substrings[i], buffer, dst_width, left_x, y);
+		drawSubstring(substrings[i], buffer, dst_width, x, y);
 		y += getStringHeight(substrings[i]);
 		delete[] substrings[i];
 	}
@@ -343,9 +335,8 @@ void SmushFont::drawStringWrap(const char *str, byte *buffer, int dst_width, int
 void SmushFont::drawStringWrapCentered(const char *str, byte *buffer, int dst_width, int dst_height, int x, int y, int width) {
 	debug(9, "SmushFont::drawStringWrapCentered(%s, %d, %d)", str, x, y);
 	
-	int max_substr_width = 0;
-	if ((strchr(str, '\n') != 0)) {
-		char *z = strchr(str, '\n');
+	char *z = strchr(str, '\n');
+	if (z != 0) {
 		*z = 0;
 	}
 	char **words = split(str, ' ');
@@ -355,7 +346,7 @@ void SmushFont::drawStringWrapCentered(const char *str, byte *buffer, int dst_wi
 		nb_sub++;
 
 	int *sizes = new int[nb_sub];
-	int i = 0, height = 0, nb_subs = 0;
+	int i = 0, max_width = 0, height = 0, nb_subs = 0;
 
 	for (i = 0; i < nb_sub; i++)
 		sizes[i] = getStringWidth(words[i]);
@@ -383,7 +374,8 @@ void SmushFont::drawStringWrapCentered(const char *str, byte *buffer, int dst_wi
 
 		substrings[nb_subs] = substr;
 		substr_widths[nb_subs++] = substr_width;
-		max_substr_width = MAX(substr_width, max_substr_width);
+		if (max_width < substr_width)
+			max_width = substr_width;
 		i = j;
 		height += getStringHeight(substr);
 	}
@@ -394,15 +386,19 @@ void SmushFont::drawStringWrapCentered(const char *str, byte *buffer, int dst_wi
 	}
 	delete[] words;
 
-	if (y + height > dst_height) {
+	if (y > dst_height - height) {
 		y = dst_height - height;
 	}
 
-	x = (dst_width - max_substr_width) / 2;
+	max_width = (max_width + 1) >> 1;
+
+	if (x < max_width)
+		x = max_width;
+	if (x > dst_width - max_width)
+		x = dst_width - max_width;
 
 	for (i = 0; i < nb_subs; i++) {
-		int substr_width = substr_widths[i];
-		drawSubstring(substrings[i], buffer, dst_width, x + (max_substr_width - substr_width) / 2, y);
+		drawSubstring(substrings[i], buffer, dst_width, x - substr_widths[i] / 2, y);
 		y += getStringHeight(substrings[i]);
 		delete[] substrings[i];
 	}
