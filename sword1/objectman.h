@@ -44,7 +44,7 @@ public:
 	void unlockText(uint32 textId);
 	uint32 lastTextNumber(int section);
 
-    void closeSection(uint32 screen);
+	void closeSection(uint32 screen);
 private:
 	ResMan *_resMan;
 	static const uint32 _objectList[TOTAL_SECTIONS];	//a table of pointers to object files

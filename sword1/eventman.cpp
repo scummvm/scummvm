@@ -65,7 +65,7 @@ int EventManager::fnCheckForEvent(BsObject *cpt, int32 id, int32 pause) {
 	if (pause) {
 		cpt->o_pause = pause;
 		cpt->o_logic = LOGIC_pause_for_event;
-        return SCRIPT_STOP;
+		return SCRIPT_STOP;
 	}
 
 	for (uint8 objCnt = 0; objCnt < O_TOTAL_EVENTS; objCnt++) {

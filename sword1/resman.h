@@ -68,7 +68,7 @@ private:
 	void openCptResourceBigEndian(uint32 id);
 	void openScriptResourceBigEndian(uint32 id);
 
-    File *openClusterFile(uint32 id);
+	File *openClusterFile(uint32 id);
 	void makePathToCluster(char *str);
 	void loadCluDescript(const char *fileName);
 	void freeCluDescript(void);

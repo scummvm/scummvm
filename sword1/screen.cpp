@@ -292,7 +292,7 @@ void SwordScreen::spritesAndParallax(void) {
 	for (uint8 cnt = 0; cnt < _sortLength - 1; cnt++)
 		for (uint8 sCnt = 0; sCnt < _sortLength - 1; sCnt++)
 			if (_sortList[sCnt].y > _sortList[sCnt + 1].y) {
-                temp = _sortList[sCnt];
+				temp = _sortList[sCnt];
 				_sortList[sCnt] = _sortList[sCnt + 1];
 				_sortList[sCnt + 1] = temp;
 			}
@@ -422,7 +422,7 @@ void SwordScreen::verticalMask(uint16 x, uint16 y, uint16 bWidth, uint16 bHeight
 			for (uint16 blky = 0; blky < bHeight; blky++) {
 				if (*grid) {
 					uint8 *blkData = _layerBlocks[level + 1] + (READ_LE_UINT16(grid) - 1) * 128;
-			        blitBlockClear(x + blkx, y + blky, blkData);
+					blitBlockClear(x + blkx, y + blky, blkData);
 				}
 				grid += lGridSizeX;
 			}
@@ -460,7 +460,7 @@ void SwordScreen::renderParallax(uint8 *data) {
 			if (doSkip <= remain)
 				remain -= doSkip;
 			else {
-                xPos = doSkip - remain;
+				xPos = doSkip - remain;
 				dest += xPos;
 				remain = 0;
 			}
@@ -528,7 +528,7 @@ void SwordScreen::fastShrink(uint8 *src, uint32 width, uint32 height, uint32 sca
 	uint32 newRow = step >> 1;
 	uint32 oldRow = 0;
 
-    uint8 *destPos = dest;
+	uint8 *destPos = dest;
 	for (uint16 lnCnt = 0; lnCnt < resHeight; lnCnt++) {
 		while (oldRow < (newRow >> 8)) {
 			oldRow++;
@@ -681,7 +681,7 @@ void SwordScreen::spriteClipAndSet(uint16 *pSprX, uint16 *pSprY, uint16 *pSprWid
 		sprH = _scrnSizeY - sprY;
 	if (sprX + sprW > _scrnSizeX)
 		sprW = _scrnSizeX - sprX;
-    
+
 	if (sprH < 0)
 		*pSprHeight = 0;
 	else
@@ -742,48 +742,48 @@ void SwordScreen::vline(uint16 x, uint16 y1, uint16 y2) {
 }
 
 void SwordScreen::hline(uint16 x1, uint16 x2, uint16 y) {
-    for (uint16 cntx = x1; cntx <= x2; cntx++)
+	for (uint16 cntx = x1; cntx <= x2; cntx++)
 		_screenBuf[y * _scrnSizeX + cntx] = 0;
 }
 
 void SwordScreen::bsubline_1(uint16 x1, uint16 y1, uint16 x2, uint16 y2) {
 	int x, y, ddx, ddy, e;
-    ddx = abs(x2 - x1);
-    ddy = abs(y2 - y1) << 1;
-    e = ddx - ddy;
-    ddx <<= 1;
-    
-    if (x1 > x2) {
+	ddx = abs(x2 - x1);
+	ddy = abs(y2 - y1) << 1;
+	e = ddx - ddy;
+	ddx <<= 1;
+
+	if (x1 > x2) {
 		uint16 tmp;
 		tmp = x1; x1 = x2; x2 = tmp;
 		tmp = y1; y1 = y2; y2 = tmp;
-    }
-    
-    for (x = x1, y = y1; x <= x2; x++) {
+	}
+
+	for (x = x1, y = y1; x <= x2; x++) {
 		_screenBuf[y * _scrnSizeX + x] = 0;
 		if (e < 0) {
-		    y++;
-		    e += ddx - ddy;
+			y++;
+			e += ddx - ddy;
 		} else {
-		    e -= ddy;
+			e -= ddy;
 		}
-    }
+	}
 }
 
 void SwordScreen::bsubline_2(uint16 x1, uint16 y1, uint16 x2, uint16 y2) {
 	int x, y, ddx, ddy, e;
-    ddx = abs(x2 - x1) << 1;
-    ddy = abs(y2 - y1);
-    e = ddy - ddx;
-    ddy <<= 1;
-    
-    if (y1 > y2) {
+	ddx = abs(x2 - x1) << 1;
+	ddy = abs(y2 - y1);
+	e = ddy - ddx;
+	ddy <<= 1;
+
+	if (y1 > y2) {
 		uint16 tmp;
 		tmp = x1; x1 = x2; x2 = tmp;
 		tmp = y1; y1 = y2; y2 = tmp;
-    }
-    
-    for (y = y1, x = x1; y <= y2; y++) {
+	}
+
+	for (y = y1, x = x1; y <= y2; y++) {
 		_screenBuf[y * _scrnSizeX + x] = 0;
 		if (e < 0) {
 			x++;
@@ -791,80 +791,80 @@ void SwordScreen::bsubline_2(uint16 x1, uint16 y1, uint16 x2, uint16 y2) {
 		} else {
 			e -= ddx;
 		}
-    }
+	}
 }
 
 void SwordScreen::bsubline_3(uint16 x1, uint16 y1, uint16 x2, uint16 y2) {
 	int x, y, ddx, ddy, e;
-    ddx = abs(x1 - x2) << 1;
-    ddy = abs(y2 - y1);
-    e = ddy - ddx;
-    ddy <<= 1;
-    
-    if (y1 > y2) {
+	ddx = abs(x1 - x2) << 1;
+	ddy = abs(y2 - y1);
+	e = ddy - ddx;
+	ddy <<= 1;
+
+	if (y1 > y2) {
 		uint16 tmp;
 		tmp = x1; x1 = x2; x2 = tmp;
 		tmp = y1; y1 = y2; y2 = tmp;
-    }
+	}
 
-    for (y = y1, x = x1; y <= y2; y++) {
+	for (y = y1, x = x1; y <= y2; y++) {
 		_screenBuf[y * _scrnSizeX + x] = 0;
 		if (e < 0) {
 			x--;
-		    e += ddy - ddx;
+			e += ddy - ddx;
 		} else {
 			e -= ddx;
 		}
-    }
+	}
 }
 
 void SwordScreen::bsubline_4(uint16 x1, uint16 y1, uint16 x2, uint16 y2) {
 	int x, y, ddx, ddy, e;
-    ddy = abs(y2 - y1) << 1;
-    ddx = abs(x1 - x2);
-    e = ddx - ddy;
-    ddx <<= 1;
-    
-    if (x1 > x2) {
+	ddy = abs(y2 - y1) << 1;
+	ddx = abs(x1 - x2);
+	e = ddx - ddy;
+	ddx <<= 1;
+
+	if (x1 > x2) {
 		uint16 tmp;
 		tmp = x1; x1 = x2; x2 = tmp;
 		tmp = y1; y1 = y2; y2 = tmp;
-    }
-    
-    for (x = x1, y = y1; x <= x2; x++) {
+	}
+
+	for (x = x1, y = y1; x <= x2; x++) {
 		_screenBuf[y * _scrnSizeX + x] = 0;
 		if (e < 0) {
-		    y--;
-		    e += ddx - ddy;
+			y--;
+			e += ddx - ddy;
 		} else {
-		    e -= ddy;
+			e -= ddy;
 		}
-    }
+	}
 }
 
 void SwordScreen::drawLine(uint16 x1, uint16 y1, uint16 x2, uint16 y2) {
 	if ((x1 == x2) && (y1 == y2)) {
 		_screenBuf[x1 + y1 * _scrnSizeX] = 0;
 	}
-    if (x1 == x2) {
+	if (x1 == x2) {
 		vline(x1, MIN(y1, y2), MAX(y1, y2));
 		return;
-    }
-    
-    if (y1 == y2) {
+	}
+
+	if (y1 == y2) {
 		hline(MIN(x1, x2), MAX(x1, x2), y1);
 		return;
-    }
+	}
 
-    float k = float(y2 - y1) / float(x2 - x1);
-    
-    if ((k >= 0) && (k <= 1)) {
+	float k = float(y2 - y1) / float(x2 - x1);
+
+	if ((k >= 0) && (k <= 1)) {
 		bsubline_1(x1, y1, x2, y2);
-    } else if (k > 1) {
+	} else if (k > 1) {
 		bsubline_2(x1, y1, x2, y2);
-    } else if ((k < 0) && (k >= -1)) {
+	} else if ((k < 0) && (k >= -1)) {
 		bsubline_4(x1, y1, x2, y2);
-    } else {
+	} else {
 		bsubline_3(x1, y1, x2, y2);
-    }
+	}
 }

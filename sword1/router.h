@@ -177,7 +177,7 @@ private:
 	int32 SmoothestPath();
 	int32 SmoothCheck(int32 best, int32 p, int32 dirS, int32 dirD);
 
-    int32 SolidPath();
+	int32 SolidPath();
 	int32 SolidWalkAnimator(WalkData *walkAnim);
 	void RouteLine(int32 x1,int32 y1,int32 x2,int32 y2 ,int32 colour);
 	void BresenhamLine(int32 x1,int32 y1,int32 x2,int32 y2, uint8 *screen, int32 width, int32 height, int32 colour);

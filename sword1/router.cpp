@@ -326,7 +326,7 @@ int32 SwordRouter::SmoothestPath()
  *	steps taken between two points to the shrunken step size   
  *
  */
-  int32 p;     
+	int32 p;
 	int32	dirS;
 	int32	dirD;
 	int32	dS;
@@ -345,12 +345,12 @@ int32 SwordRouter::SmoothestPath()
 	int32	steps;
 	int32	option;
 	int32	options;
-  int32 lastDir;
-  int32 nextDirS;
-  int32 nextDirD;
-  int32 tempturns[4];     
-  int32 turns[4];     
-  int32 turntable[NO_DIRECTIONS] = {0,1,3,5,7,5,3,1};
+	int32 lastDir;
+	int32 nextDirS;
+	int32 nextDirD;
+	int32 tempturns[4];
+	int32 turns[4];
+	int32 turntable[NO_DIRECTIONS] = {0,1,3,5,7,5,3,1};
 
 //	targetDir;// no warnings
 
@@ -359,12 +359,11 @@ int32 SwordRouter::SmoothestPath()
 	smoothPath[0].y = startY;
 	smoothPath[0].dir = startDir;
 	smoothPath[0].num = 0;
-  p = 0;
-  lastDir = startDir;
-  // for each section of the route
-  do
-  {     
-
+	p = 0;
+	lastDir = startDir;
+	// for each section of the route
+	do
+	{
 		dirS = route[p].dirS;
 		dirD = route[p].dirD;
 		nextDirS = route[p+1].dirS;
@@ -473,16 +472,16 @@ int32 SwordRouter::SmoothestPath()
 		while ((steps == 0) && (i < 4));
 
 #ifdef PLOT_PATHS	// plot the best path
-	if (steps != 0)
-	{
-		i = 0; 
-		do
+		if (steps != 0)
 		{
-			RouteLine(smoothPath[i].x, smoothPath[i].y, smoothPath[i+1].x, smoothPath[i+1].y, 228);
-			i = i + 1;
+			i = 0; 
+			do
+			{
+				RouteLine(smoothPath[i].x, smoothPath[i].y, smoothPath[i+1].x, smoothPath[i+1].y, 228);
+				i = i + 1;
+			}
+			while (i < steps);
 		}
-		while (i < steps);
-	}
 #endif
 
 		if (steps == 0)
@@ -516,7 +515,7 @@ int32 SwordRouter::SmoothCheck(int32 best, int32 p, int32 dirS, int32 dirD)
  *  No longer checks the data it only creates the smoothPath array JPS
  ****************************************************************************/
 {
-static	int32  k;   
+	static	int32  k;   
 	int32 tempK;   
 	int32 x;   
 	int32 y;   
@@ -524,12 +523,12 @@ static	int32  k;
 	int32 y2;   
 	int32 dx;   
 	int32 dy;   
-  int32 dsx;
-  int32 dsy;
-  int32 ddx;
-  int32 ddy;
-  int32 dirX;
-  int32 dirY;
+	int32 dsx;
+	int32 dsy;
+	int32 ddx;
+	int32 ddy;
+	int32 dirX;
+	int32 dirY;
 	int32	ss0;
 	int32	ss1;
 	int32	ss2;
@@ -563,107 +562,107 @@ static	int32  k;
 	}
 
 // set up sd0-ss2 to reflect possible movement in each direction
-		if ((dirS == 0)	|| (dirS == 4))// vert and diag
-		{
-		  ddx = dx;
-			ddy = (dx*diagonaly)/diagonalx;
-			dsy = dy - ddy;
-			ddx = ddx * dirX;
-			ddy = ddy * dirY;
-			dsy = dsy * dirY;
-			dsx = 0;
+	if ((dirS == 0)	|| (dirS == 4))// vert and diag
+	{
+		ddx = dx;
+		ddy = (dx*diagonaly)/diagonalx;
+		dsy = dy - ddy;
+		ddx = ddx * dirX;
+		ddy = ddy * dirY;
+		dsy = dsy * dirY;
+		dsx = 0;
 
-			sd0 = (ddx + modX[dirD]/2)/ modX[dirD];
-			ss0 = (dsy + modY[dirS]/2) / modY[dirS];
-			sd1 = sd0/2;
-			ss1 = ss0/2;
-			sd2 = sd0 - sd1;
-			ss2 = ss0 - ss1;
-		}
-		else
-		{
-		  ddy = dy;
-			ddx = (dy*diagonalx)/diagonaly;
-			dsx = dx - ddx;
-			ddy = ddy * dirY;
-			ddx = ddx * dirX;
-			dsx = dsx * dirX;
-			dsy = 0;
+		sd0 = (ddx + modX[dirD]/2)/ modX[dirD];
+		ss0 = (dsy + modY[dirS]/2) / modY[dirS];
+		sd1 = sd0/2;
+		ss1 = ss0/2;
+		sd2 = sd0 - sd1;
+		ss2 = ss0 - ss1;
+	}
+	else
+	{
+		ddy = dy;
+		ddx = (dy*diagonalx)/diagonaly;
+		dsx = dx - ddx;
+		ddy = ddy * dirY;
+		ddx = ddx * dirX;
+		dsx = dsx * dirX;
+		dsy = 0;
 
-			sd0 = (ddy + modY[dirD]/2)/ modY[dirD];
-			ss0 = (dsx + modX[dirS]/2)/ modX[dirS];
-			sd1 = sd0/2;
-			ss1 = ss0/2;
-			sd2 = sd0 - sd1;
-			ss2 = ss0 - ss1;
-		}
+		sd0 = (ddy + modY[dirD]/2)/ modY[dirD];
+		ss0 = (dsx + modX[dirS]/2)/ modX[dirS];
+		sd1 = sd0/2;
+		ss1 = ss0/2;
+		sd2 = sd0 - sd1;
+		ss2 = ss0 - ss1;
+	}
 
-			if (best == 0) //halfsquare, diagonal,	halfsquare
-			{
-							smoothPath[k].x = x+dsx/2;
-							smoothPath[k].y = y+dsy/2;
-							smoothPath[k].dir = dirS;
-							smoothPath[k].num = ss1;
-							k = k + 1;
-							smoothPath[k].x = x+dsx/2+ddx;
-							smoothPath[k].y = y+dsy/2+ddy;
-							smoothPath[k].dir = dirD;
-							smoothPath[k].num = sd0;
-							k = k + 1;
-							smoothPath[k].x = x+dsx+ddx;
-							smoothPath[k].y = y+dsy+ddy;
-							smoothPath[k].dir = dirS;
-							smoothPath[k].num = ss2;
-							k = k + 1;
-							tempK = k;
-			}
-			else if (best == 1) //square, diagonal
-			{
-						smoothPath[k].x = x+dsx;
-						smoothPath[k].y = y+dsy;
-						smoothPath[k].dir = dirS;
-						smoothPath[k].num = ss0;
-						k = k + 1;
-						smoothPath[k].x = x2;
-						smoothPath[k].y = y2;
-						smoothPath[k].dir = dirD;
-						smoothPath[k].num = sd0;
-						k = k + 1;
-						tempK = k;
-			}
-			else if (best == 2) //diagonal square
-			{
-						smoothPath[k].x = x+ddx;
-						smoothPath[k].y = y+ddy;
-						smoothPath[k].dir = dirD;
-						smoothPath[k].num = sd0;
-						k = k + 1;
-						smoothPath[k].x = x2;
-						smoothPath[k].y = y2;
-						smoothPath[k].dir = dirS;
-						smoothPath[k].num = ss0;
-						k = k + 1;
-						tempK = k;
-			}
-			else //halfdiagonal, square, halfdiagonal
-			{
-							smoothPath[k].x = x+ddx/2;
-							smoothPath[k].y = y+ddy/2;
-							smoothPath[k].dir = dirD;
-							smoothPath[k].num = sd1;
-							k = k + 1;
-							smoothPath[k].x = x+dsx+ddx/2;
-							smoothPath[k].y = y+dsy+ddy/2;
-							smoothPath[k].dir = dirS;
-							smoothPath[k].num = ss0;
-							k = k + 1;
-							smoothPath[k].x = x2;
-							smoothPath[k].y = y2;
-							smoothPath[k].dir = dirD;
-							smoothPath[k].num = sd2;
-							k = k + 1;
-							tempK = k;
-			}
+	if (best == 0) //halfsquare, diagonal,	halfsquare
+	{
+		smoothPath[k].x = x+dsx/2;
+		smoothPath[k].y = y+dsy/2;
+		smoothPath[k].dir = dirS;
+		smoothPath[k].num = ss1;
+		k = k + 1;
+		smoothPath[k].x = x+dsx/2+ddx;
+		smoothPath[k].y = y+dsy/2+ddy;
+		smoothPath[k].dir = dirD;
+		smoothPath[k].num = sd0;
+		k = k + 1;
+		smoothPath[k].x = x+dsx+ddx;
+		smoothPath[k].y = y+dsy+ddy;
+		smoothPath[k].dir = dirS;
+		smoothPath[k].num = ss2;
+		k = k + 1;
+		tempK = k;
+	}
+	else if (best == 1) //square, diagonal
+	{
+		smoothPath[k].x = x+dsx;
+		smoothPath[k].y = y+dsy;
+		smoothPath[k].dir = dirS;
+		smoothPath[k].num = ss0;
+		k = k + 1;
+		smoothPath[k].x = x2;
+		smoothPath[k].y = y2;
+		smoothPath[k].dir = dirD;
+		smoothPath[k].num = sd0;
+		k = k + 1;
+		tempK = k;
+	}
+	else if (best == 2) //diagonal square
+	{
+		smoothPath[k].x = x+ddx;
+		smoothPath[k].y = y+ddy;
+		smoothPath[k].dir = dirD;
+		smoothPath[k].num = sd0;
+		k = k + 1;
+		smoothPath[k].x = x2;
+		smoothPath[k].y = y2;
+		smoothPath[k].dir = dirS;
+		smoothPath[k].num = ss0;
+		k = k + 1;
+		tempK = k;
+	}
+	else //halfdiagonal, square, halfdiagonal
+	{
+		smoothPath[k].x = x+ddx/2;
+		smoothPath[k].y = y+ddy/2;
+		smoothPath[k].dir = dirD;
+		smoothPath[k].num = sd1;
+		k = k + 1;
+		smoothPath[k].x = x+dsx+ddx/2;
+		smoothPath[k].y = y+dsy+ddy/2;
+		smoothPath[k].dir = dirS;
+		smoothPath[k].num = ss0;
+		k = k + 1;
+		smoothPath[k].x = x2;
+		smoothPath[k].y = y2;
+		smoothPath[k].dir = dirD;
+		smoothPath[k].num = sd2;
+		k = k + 1;
+		tempK = k;
+	}
 
 	return tempK;	
 }
@@ -678,13 +677,13 @@ int32 SwordRouter::SlidyPath()
  *	produce a module list from the line data
  *
  ****************************************************************************/
-int32 smooth;
-int32 slidy;
-int32 scale;
-int32 stepX;
-int32 stepY;
-int32 deltaX;
-int32 deltaY;
+	int32 smooth;
+	int32 slidy;
+	int32 scale;
+	int32 stepX;
+	int32 stepY;
+	int32 deltaX;
+	int32 deltaY;
 
 	// strip out the short sections
 	slidy = 1;
@@ -747,31 +746,31 @@ void SwordRouter::SlidyWalkAnimator(WalkData *walkAnim)
  ****************************************************************************/
 {
 
-static int32 left = 0;
-int32 p;
-int32	lastDir;
-int32	lastRealDir;
-int32	currentDir;
-int32	turnDir;
-int32 scale;
-int32 step;
-int32 module;
-int32 moduleEnd;
-int32 moduleX;
-int32 moduleY;
-int32 module16X = 0;
-int32 module16Y = 0;
-int32 stepX;
-int32 stepY;
-int32 errorX;
-int32 errorY;
-int32 lastErrorX;
-int32 lastErrorY;
-int32 lastCount;
-int32 stepCount;
-int32 frameCount;
-int32 frames;
-int32 frame;
+	static int32 left = 0;
+	int32 p;
+	int32	lastDir;
+	int32	lastRealDir;
+	int32	currentDir;
+	int32	turnDir;
+	int32 scale;
+	int32 step;
+	int32 module;
+	int32 moduleEnd;
+	int32 moduleX;
+	int32 moduleY;
+	int32 module16X = 0;
+	int32 module16Y = 0;
+	int32 stepX;
+	int32 stepY;
+	int32 errorX;
+	int32 errorY;
+	int32 lastErrorX;
+	int32 lastErrorY;
+	int32 lastCount;
+	int32 stepCount;
+	int32 frameCount;
+	int32 frames;
+	int32 frame;
 
 	// start at the begining for a change
 	p = 0;
@@ -872,9 +871,9 @@ int32 frame;
 	//****************************************************************************
 
 	if (left == 0)
-	 left = framesPerStep;
+		left = framesPerStep;
 	else
-	 left = 0;
+		left = 0;
 
 	lastCount = stepCount;
 	lastDir = 99;// this ensures that we don't put in turn frames for the start		
@@ -895,9 +894,9 @@ int32 frame;
 		{
 			module =	currentDir * framesPerStep * 2 + left;
 			if (left == 0)
-			 left = framesPerStep;
+				left = framesPerStep;
 			else
-			 left = 0;
+				left = 0;
 			moduleEnd = module + framesPerStep;
 			step = 0;
 			scale = (scaleA * moduleY + scaleB);
@@ -991,7 +990,7 @@ int32 frame;
 				// check each turn condition in turn
 				if (((lastDir != 99) && (currentDir != 99)) && (megaId == GEORGE)) // only for george
 				{	
-				  lastDir = currentDir - lastDir;//1 and -7 going right -1 and 7 going left
+					lastDir = currentDir - lastDir;//1 and -7 going right -1 and 7 going left
 					if (((lastDir == -1) || (lastDir == 7)) || ((lastDir == -2) || (lastDir == 6)))
 					{
 						// turn at the end of the last walk
@@ -1071,7 +1070,7 @@ int32 frame;
 		// rotate to target direction
 		turnDir = targetDir - lastRealDir;
 		if ( turnDir < 0)
-				turnDir += NO_DIRECTIONS;
+			turnDir += NO_DIRECTIONS;
 
 		if (turnDir > 4)
 			turnDir = -1;
@@ -1161,13 +1160,13 @@ int32 SwordRouter::SolidPath()
  *	produce a module list from the line data
  *
  ****************************************************************************/
-int32 smooth;
-int32 solid;
-int32 scale;
-int32 stepX;
-int32 stepY;
-int32 deltaX;
-int32 deltaY;
+	int32 smooth;
+	int32 solid;
+	int32 scale;
+	int32 stepX;
+	int32 stepY;
+	int32 deltaX;
+	int32 deltaY;
 
 	// strip out the short sections
 	solid = 1;
@@ -1202,9 +1201,9 @@ int32 deltaY;
 	// in	case the last bit had no steps
 	if (solid == 1) //there were no paths so put in a dummy end
 	{
-			solid = 2;
-			modularPath[1].dir = smoothPath[0].dir;
-			modularPath[1].num = 0;
+		solid = 2;
+		modularPath[1].dir = smoothPath[0].dir;
+		modularPath[1].num = 0;
 	}	
 	modularPath[solid-1].x = smoothPath[smooth-1].x;
 	modularPath[solid-1].y = smoothPath[smooth-1].y;
@@ -1228,26 +1227,26 @@ int32 SwordRouter::SolidWalkAnimator(WalkData *walkAnim)
  *
  *	returns 0 if solid route not found
  ****************************************************************************/
-int32 p;
-int32 i;
-int32 left;
-int32	lastDir;
-int32	currentDir;
-int32	turnDir;
-int32 scale;
-int32 step;
-int32 module;
-int32 moduleX;
-int32 moduleY;
-int32 module16X;
-int32 module16Y;
-int32 errorX;
-int32 errorY;
-int32 moduleEnd;
-int32 slowStart;
-int32 stepCount;
-int32 lastCount;
-int32 frame;
+	int32 p;
+	int32 i;
+	int32 left;
+	int32	lastDir;
+	int32	currentDir;
+	int32	turnDir;
+	int32 scale;
+	int32 step;
+	int32 module;
+	int32 moduleX;
+	int32 moduleY;
+	int32 module16X;
+	int32 module16Y;
+	int32 errorX;
+	int32 errorY;
+	int32 moduleEnd;
+	int32 slowStart;
+	int32 stepCount;
+	int32 lastCount;
+	int32 frame;
 
 	// start at the begining for a change
 	lastDir = modularPath[0].dir;
@@ -1317,13 +1316,13 @@ int32 frame;
 			if ( turnDir < 0)	// new frames for turn frames	29oct95jps
 			{
 				if ( lastDir < 0)
-						lastDir += NO_DIRECTIONS;
+					lastDir += NO_DIRECTIONS;
 				module =	turnFramesLeft + lastDir;
 			}
 			else
 			{
 				if ( lastDir > 7)
-						lastDir -= NO_DIRECTIONS;
+					lastDir -= NO_DIRECTIONS;
 				module =	turnFramesRight + lastDir;
 			}
 			walkAnim[stepCount].frame = module;
@@ -1472,7 +1471,7 @@ int32 frame;
 					// check each turn condition in turn
 					if (((lastDir != 99) && (currentDir != 99)) && (megaId == GEORGE)) // only for george
 					{	
-					  lastDir = currentDir - lastDir;//1 and -7 going right -1 and 7 going left
+						lastDir = currentDir - lastDir;//1 and -7 going right -1 and 7 going left
 						if (((lastDir == -1) || (lastDir == 7)) || ((lastDir == -2) || (lastDir == 6)))
 						{
 							// turn at the end of the last walk
@@ -1605,29 +1604,29 @@ int32 frame;
 
 //	Tdebug("RouteFinder RouteSize is %d", stepCount);
 //	now check the route
-		i = 0;
-		do
+	i = 0;
+	do
+	{
+		if (!Check(modularPath[i].x, modularPath[i].y, modularPath[i+1].x, modularPath[i+1].y))
+			p=0;
+#ifdef PLOT_PATHS
+		RouteLine(modularPath[i].x, modularPath[i].y, modularPath[i+1].x, modularPath[i+1].y, 227);
+#endif   
+		i += 1;
+	}
+	while(i<p-1);
+	if (p != 0)
+	{
+		targetDir =	modularPath[p-1].dir;
+	}
+	if (p != 0)
+	{
+		if (CheckTarget(moduleX,moduleY) == 3)// new target on a line
 		{
-			if (!Check(modularPath[i].x, modularPath[i].y, modularPath[i+1].x, modularPath[i+1].y))
-				p=0;
-		#ifdef PLOT_PATHS
-			RouteLine(modularPath[i].x, modularPath[i].y, modularPath[i+1].x, modularPath[i+1].y, 227);
-    #endif   
-			i += 1;
+			p = 0;
+			//Tdebug("Solid walk target was on a line %d %d", moduleX, moduleY);
 		}
-		while(i<p-1);
-		if (p != 0)
-		{
-			targetDir =	modularPath[p-1].dir;
-		}
-		if (p != 0)
-		{
-			if (CheckTarget(moduleX,moduleY) == 3)// new target on a line
-			{
-				p = 0;
-				//Tdebug("Solid walk target was on a line %d %d", moduleX, moduleY);
-			}
-		}
+	}
 
 	return p;
 }
@@ -1654,10 +1653,10 @@ int32 SwordRouter::Scan(int32 level)
 {
 	int32	i;
 	int32	k;
-  int32 x1;
-  int32 y1;
-  int32 x2;
-  int32 y2;
+	int32 x1;
+	int32 y1;
+	int32 x2;
+	int32 y2;
 	int32	distance;
 	int32	changed = 0;
  	// For all the nodes that have new values and a distance less than enddist
@@ -1722,22 +1721,22 @@ int32 SwordRouter::NewCheck(int32 status, int32 x1 , int32 y1 , int32 x2 ,int32 
  * Note Bars array must be properly calculated ie min max dx dy co
  *******************************************************************************/
 {
-  int32   dx;
-  int32   dy;
-  int32   dlx;
-  int32   dly;
-  int32   dirX;
-  int32   dirY;
-  int32   step1;   
-  int32   step2;   
-  int32   step3;   
-  int32   steps;   
-  int32   options;   
+	int32   dx;
+	int32   dy;
+	int32   dlx;
+	int32   dly;
+	int32   dirX;
+	int32   dirY;
+	int32   step1;   
+	int32   step2;   
+	int32   step3;   
+	int32   steps;   
+	int32   options;   
 
 	steps = 0;
 	options = 0;
-  dx = x2 - x1;
-  dy = y2 - y1;
+	dx = x2 - x1;
+	dy = y2 - y1;
 	dirX = 1;
 	dirY = 1;
 	if (dx < 0)
@@ -1755,7 +1754,7 @@ int32 SwordRouter::NewCheck(int32 status, int32 x1 , int32 y1 , int32 x2 ,int32 
 	//make the route options
 	if ((diagonaly * dx) > (diagonalx * dy))	// dir  = 1,2 or 2,3 or 5,6 or 6,7
 	{
-	  dly = dy;
+		dly = dy;
 		dlx = (dy*diagonalx)/diagonaly;
 		dx = dx - dlx;
 		dlx = dlx * dirX;
@@ -1773,14 +1772,14 @@ int32 SwordRouter::NewCheck(int32 status, int32 x1 , int32 y1 , int32 x2 ,int32 
 			{
 				steps = step1 + step2;	// yes
 				options = options + 2;
-		#ifdef PLOT_PATHS
-		if (status == 1)
-			RouteLine(x1, y1, x1+dx, y1, 231);
-    #endif   
-		#ifdef PLOT_PATHS
-		if (status == 1)
-			RouteLine(x1+dx, y1, x2, y2, 231);
-    #endif   
+#ifdef PLOT_PATHS
+				if (status == 1)
+					RouteLine(x1, y1, x1+dx, y1, 231);
+#endif   
+#ifdef PLOT_PATHS
+				if (status == 1)
+					RouteLine(x1+dx, y1, x2, y2, 231);
+#endif   
 			}
 		}
 		//diagonal, square a code 2 route
@@ -1794,14 +1793,14 @@ int32 SwordRouter::NewCheck(int32 status, int32 x1 , int32 y1 , int32 x2 ,int32 
 				{
 					steps = step1 + step2;	// yes
 					options = options + 4;
-		#ifdef PLOT_PATHS
-		if (status == 1)
-			RouteLine(x1, y1, x1+dlx,y1+dly, 231);
-    #endif   
-		#ifdef PLOT_PATHS
-		if (status == 1)
-			RouteLine(x1+dlx, y2, x2, y2, 231);
-    #endif   
+#ifdef PLOT_PATHS
+					if (status == 1)
+						RouteLine(x1, y1, x1+dlx,y1+dly, 231);
+#endif   
+#ifdef PLOT_PATHS
+					if (status == 1)
+						RouteLine(x1+dlx, y2, x2, y2, 231);
+#endif   
 				}
 			}
 		}
@@ -1818,19 +1817,19 @@ int32 SwordRouter::NewCheck(int32 status, int32 x1 , int32 y1 , int32 x2 ,int32 
 					if (step3 != 0)
 					{
 						steps = step1 + step2 + step3;	// yes
-					options = options + 1;
-		#ifdef PLOT_PATHS
-		if (status == 1)
-			RouteLine(x1, y1, x1+dx/2, y1, 231);
-    #endif   
-		#ifdef PLOT_PATHS
-		if (status == 1)
-			RouteLine(x1+dx/2, y1, x1+dx/2+dlx, y2, 231);
-    #endif   
-		#ifdef PLOT_PATHS
-		if (status == 1)
-			RouteLine(x1+dx/2+dlx, y2, x2, y2, 231);
-    #endif   
+						options = options + 1;
+#ifdef PLOT_PATHS
+						if (status == 1)
+							RouteLine(x1, y1, x1+dx/2, y1, 231);
+#endif   
+#ifdef PLOT_PATHS
+						if (status == 1)
+							RouteLine(x1+dx/2, y1, x1+dx/2+dlx, y2, 231);
+#endif   
+#ifdef PLOT_PATHS
+						if (status == 1)
+							RouteLine(x1+dx/2+dlx, y2, x2, y2, 231);
+#endif   
 					}
 				}
 			}
@@ -1848,18 +1847,18 @@ int32 SwordRouter::NewCheck(int32 status, int32 x1 , int32 y1 , int32 x2 ,int32 
 					if (step3 != 0)
 					{
 						steps = step1 + step2 + step3;	// yes
-		#ifdef PLOT_PATHS
-		if (status == 1)
-			RouteLine(x1, y1, x1+dlx/2, y1+dly/2, 231);
-    #endif   
-		#ifdef PLOT_PATHS
-		if (status == 1)
-			RouteLine(x1+dlx/2, y1+dly/2, x1+dx+dlx/2, y1+dly/2, 231);
-    #endif   
-		#ifdef PLOT_PATHS
-		if (status == 1)
-			RouteLine(x1+dx+dlx/2, y1+dly/2, x2, y2, 231);
-    #endif   
+#ifdef PLOT_PATHS
+						if (status == 1)
+							RouteLine(x1, y1, x1+dlx/2, y1+dly/2, 231);
+#endif   
+#ifdef PLOT_PATHS
+						if (status == 1)
+							RouteLine(x1+dlx/2, y1+dly/2, x1+dx+dlx/2, y1+dly/2, 231);
+#endif   
+#ifdef PLOT_PATHS
+						if (status == 1)
+							RouteLine(x1+dx+dlx/2, y1+dly/2, x2, y2, 231);
+#endif   
 						options = options + 8;
 					}
 				}
@@ -1868,7 +1867,7 @@ int32 SwordRouter::NewCheck(int32 status, int32 x1 , int32 y1 , int32 x2 ,int32 
 	}
 	else // dir  = 7,0 or 0,1 or 3,4 or 4,5
 	{
-	  dlx = dx;
+		dlx = dx;
 		dly = (dx*diagonaly)/diagonalx;
 		dy = dy - dly;
 		dlx = dlx * dirX;
@@ -1885,14 +1884,14 @@ int32 SwordRouter::NewCheck(int32 status, int32 x1 , int32 y1 , int32 x2 ,int32 
 			if (step2 != 0)
 			{
 				steps = step1 + step2;	// yes
-		#ifdef PLOT_PATHS
-		if (status == 1)
-			RouteLine(x1 ,y1 ,x1 ,y1+dy, 231);
-    #endif   
-		#ifdef PLOT_PATHS
-		if (status == 1)
-			RouteLine(x1 ,y1+dy ,x2, y2, 231);
-    #endif   
+#ifdef PLOT_PATHS
+				if (status == 1)
+					RouteLine(x1 ,y1 ,x1 ,y1+dy, 231);
+#endif   
+#ifdef PLOT_PATHS
+				if (status == 1)
+					RouteLine(x1 ,y1+dy ,x2, y2, 231);
+#endif   
 				options = options + 2;
 			}
 		}
@@ -1906,14 +1905,14 @@ int32 SwordRouter::NewCheck(int32 status, int32 x1 , int32 y1 , int32 x2 ,int32 
 				if (step2 != 0)
 				{
 					steps = step1 + step2;	// yes
-		#ifdef PLOT_PATHS
-		if (status == 1)
-			RouteLine(x1, y1, x2, y1+dly, 231);
-    #endif   
-		#ifdef PLOT_PATHS
-		if (status == 1)
-			RouteLine(x2, y1+dly, x2, y2, 231);
-    #endif   
+#ifdef PLOT_PATHS
+					if (status == 1)
+						RouteLine(x1, y1, x2, y1+dly, 231);
+#endif   
+#ifdef PLOT_PATHS
+					if (status == 1)
+						RouteLine(x2, y1+dly, x2, y2, 231);
+#endif   
 					options = options + 4;
 				}
 			}
@@ -1931,18 +1930,18 @@ int32 SwordRouter::NewCheck(int32 status, int32 x1 , int32 y1 , int32 x2 ,int32 
 					if (step3 != 0)
 					{
 						steps = step1 + step2 + step3;	// yes
-		#ifdef PLOT_PATHS
-		if (status == 1)
-			RouteLine(x1, y1, x1, y1+dy/2, 231);
-    #endif   
-		#ifdef PLOT_PATHS
-		if (status == 1)
-			RouteLine(x1, y1+dy/2, x2, y1+dy/2+dly, 231);
-    #endif   
-		#ifdef PLOT_PATHS
-		if (status == 1)
-			RouteLine(x2, y1+dy/2+dly, x2, y2, 231);
-    #endif   
+#ifdef PLOT_PATHS
+						if (status == 1)
+							RouteLine(x1, y1, x1, y1+dy/2, 231);
+#endif   
+#ifdef PLOT_PATHS
+						if (status == 1)
+							RouteLine(x1, y1+dy/2, x2, y1+dy/2+dly, 231);
+#endif   
+#ifdef PLOT_PATHS
+						if (status == 1)
+							RouteLine(x2, y1+dy/2+dly, x2, y2, 231);
+#endif   
 						options = options + 1;
 					}
 				}
@@ -1962,18 +1961,18 @@ int32 SwordRouter::NewCheck(int32 status, int32 x1 , int32 y1 , int32 x2 ,int32 
 					{
 						steps = step1 + step2 + step3;	// yes
 						options = options + 8;
-		#ifdef PLOT_PATHS
-		if (status == 1)
-			RouteLine(x1, y1, x1+dlx/2, y1+dly/2, 231);
-    #endif   
-		#ifdef PLOT_PATHS
-		if (status == 1)
-			RouteLine(x1+dlx/2, y1+dly/2, x1+dlx/2, y1+dy+dly/2, 231);
-    #endif   
-		#ifdef PLOT_PATHS
-		if (status == 1)
-			RouteLine(x1+dlx/2, y1+dy+dly/2, x2, y2, 231);
-    #endif   
+#ifdef PLOT_PATHS
+						if (status == 1)
+							RouteLine(x1, y1, x1+dlx/2, y1+dly/2, 231);
+#endif   
+#ifdef PLOT_PATHS
+						if (status == 1)
+							RouteLine(x1+dlx/2, y1+dly/2, x1+dlx/2, y1+dy+dly/2, 231);
+#endif   
+#ifdef PLOT_PATHS
+						if (status == 1)
+							RouteLine(x1+dlx/2, y1+dy+dly/2, x2, y2, 231);
+#endif   
 					}
 				}
 			}
@@ -2002,7 +2001,7 @@ int32 SwordRouter::Check(int32 x1 , int32 y1 , int32 x2 ,int32 y2)
 {
 //call the fastest line check for the given line 
 //returns 1 if line didn't cross any bars
-  int32   steps;
+	int32   steps;
 
 	if ((x1 == x2) &&	(y1 == y2))
 	{
@@ -2027,74 +2026,74 @@ int32 SwordRouter::Check(int32 x1 , int32 y1 , int32 x2 ,int32 y2)
 
 int32 SwordRouter::LineCheck(int32 x1 , int32 y1 , int32 x2 ,int32 y2)
 {
-  int32   dirx;
-  int32   diry;
-  int32   co;
-  int32   slope;   
-  int32   i;
-  int32   xc;
-  int32   yc;
-  int32   xmin;
-  int32   ymin;
-  int32   xmax;
-  int32   ymax;
-  int32   linesCrossed = 1;   
+	int32   dirx;
+	int32   diry;
+	int32   co;
+	int32   slope;   
+	int32   i;
+	int32   xc;
+	int32   yc;
+	int32   xmin;
+	int32   ymin;
+	int32   xmax;
+	int32   ymax;
+	int32   linesCrossed = 1;   
 
 
-  if (x1 > x2)
-  {
-  	xmin = x2;    
-  	xmax = x1;
-  }
-  else
-  {
-  	xmin = x1;    
-  	xmax = x2;    
+	if (x1 > x2)
+	{
+		xmin = x2;
+		xmax = x1;
 	}
-  if (y1 > y2)
-  {
-  	ymin = y2;    
-  	ymax = y1;
-  }
-  else
-  {
-  	ymin = y1;    
-  	ymax = y2;    
+	else
+	{
+		xmin = x1;
+		xmax = x2;
 	}
-  //line set to go one step in chosen direction
-  //so ignore if it hits anything
-  dirx = x2 - x1;
+	if (y1 > y2)
+	{
+		ymin = y2;
+		ymax = y1;
+	}
+	else
+	{
+		ymin = y1;
+		ymax = y2;
+	}
+	//line set to go one step in chosen direction
+	//so ignore if it hits anything
+	dirx = x2 - x1;
 	diry = y2 - y1;
-  co = (y1 *dirx)- (x1*diry);       //new line equation
+	co = (y1 *dirx)- (x1*diry);       //new line equation
 
-  i = 0;          
-  do
-  {
+	i = 0;
+	do
+	{
 		// this is the inner inner loop
-	  if ((xmax >= bars[i].xmin) && ( xmin <= bars[i].xmax))  //skip if not on module 
-    {
+		if ((xmax >= bars[i].xmin) && ( xmin <= bars[i].xmax))  //skip if not on module 
+		{
 			if ((ymax >= bars[i].ymin) && ( ymin <= bars[i].ymax))  //skip if not on module 
-	    {
+			{
 				// okay its a valid line calculate an intersept
 				// wow but all this arithmatic we must have loads of time
-		    slope = (bars[i].dx * diry) - (bars[i].dy *dirx);// slope it he slope between the two lines
-		    if (slope != 0)//assuming parallel lines don't cross
-		    {
+				slope = (bars[i].dx * diry) - (bars[i].dy *dirx);// slope it he slope between the two lines
+				if (slope != 0)//assuming parallel lines don't cross
+				{
 					//calculate x intercept and check its on both lines
-			    xc = ((bars[i].co * dirx) - (co * bars[i].dx)) / slope;
+					xc = ((bars[i].co * dirx) - (co * bars[i].dx)) / slope;
 
-			    if ((xc >= xmin-1) && (xc <= xmax+1))   //skip if not on module 
-			    {
-					  if ((xc >= bars[i].xmin-1) && (xc <= bars[i].xmax+1))   //skip if not on line 
-				    {
+					if ((xc >= xmin-1) && (xc <= xmax+1))   //skip if not on module 
+					{
+						if ((xc >= bars[i].xmin-1) && (xc <= bars[i].xmax+1))   //skip if not on line 
+						{
 
-					    yc = ((bars[i].co * diry) - (co * bars[i].dy)) / slope;
+							yc = ((bars[i].co * diry) - (co * bars[i].dy)) / slope;
 
-					    if ((yc >= ymin-1) && (yc <= ymax+1))   //skip if not on module 
-					    {
-						    if ((yc >= bars[i].ymin-1) && (yc <= bars[i].ymax+1))   //skip if not on line 
-						    {
-							 	  linesCrossed = 0;
+							if ((yc >= ymin-1) && (yc <= ymax+1))   //skip if not on module 
+							{
+								if ((yc >= bars[i].ymin-1) && (yc <= bars[i].ymax+1))   //skip if not on line 
+								{
+									linesCrossed = 0;
 								}
 							}
 						}
@@ -2102,175 +2101,175 @@ int32 SwordRouter::LineCheck(int32 x1 , int32 y1 , int32 x2 ,int32 y2)
 				}
 			}
 		}
-    i = i + 1;
-  }
-  while((i < nbars) && linesCrossed);
+		i = i + 1;
+	}
+	while((i < nbars) && linesCrossed);
 
-  return linesCrossed;
+	return linesCrossed;
 }
 
 
 int32 SwordRouter::HorizCheck(int32 x1 , int32 y , int32 x2)
 {
-  int32   dy;
-  int32   i;
-  int32   xc;
-  int32   xmin;
-  int32   xmax;
-  int32   linesCrossed = 1;   
+	int32   dy;
+	int32   i;
+	int32   xc;
+	int32   xmin;
+	int32   xmax;
+	int32   linesCrossed = 1;   
 
-  if (x1 > x2)
-  {
-  	xmin = x2;    
-  	xmax = x1;
-  }
-  else
-  {
-  	xmin = x1;    
-  	xmax = x2;    
+	if (x1 > x2)
+	{
+		xmin = x2;
+		xmax = x1;
 	}
-  //line set to go one step in chosen direction
-  //so ignore if it hits anything
+	else
+	{
+		xmin = x1;
+		xmax = x2;
+	}
+	//line set to go one step in chosen direction
+	//so ignore if it hits anything
 
-  i = 0;          
-  do
-  {
+	i = 0;
+	do
+	{
 		// this is the inner inner loop
-	  if ((xmax >= bars[i].xmin) && ( xmin <= bars[i].xmax))  //skip if not on module 
-    {
+		if ((xmax >= bars[i].xmin) && ( xmin <= bars[i].xmax))  //skip if not on module 
+		{
 			if ((y >= bars[i].ymin) && ( y <= bars[i].ymax))  //skip if not on module 
-	    {
+			{
 				// okay its a valid line calculate an intersept
 				// wow but all this arithmatic we must have loads of time
-		    if (bars[i].dy == 0)
-		    {
-			    linesCrossed = 0;          
-		    }
+				if (bars[i].dy == 0)
+				{
+					linesCrossed = 0;
+				}
 				else
 				{
 					dy = y-bars[i].y1;
 					xc = bars[i].x1 + (bars[i].dx * dy)/bars[i].dy;
-		    	if ((xc >= xmin-1) && (xc <= xmax+1))   //skip if not on module 
-		    	{
-				    linesCrossed = 0;          
-		    	}
+					if ((xc >= xmin-1) && (xc <= xmax+1))   //skip if not on module 
+					{
+						linesCrossed = 0;
+					}
 				}
 			}
 		}
-    i = i + 1;
-  }
-  while((i < nbars) && linesCrossed);
+		i = i + 1;
+	}
+	while((i < nbars) && linesCrossed);
 
-  return linesCrossed;
+	return linesCrossed;
 }
 
 
 int32 SwordRouter::VertCheck(int32 x, int32 y1, int32 y2)
 {
-  int32   dx;
-  int32   i;
-  int32   yc;
-  int32   ymin;
-  int32   ymax;
-  int32   linesCrossed = 1;   
+	int32   dx;
+	int32   i;
+	int32   yc;
+	int32   ymin;
+	int32   ymax;
+	int32   linesCrossed = 1;   
 
-  if (y1 > y2)
-  {
-  	ymin = y2;    
-  	ymax = y1;
-  }
-  else
-  {
-  	ymin = y1;    
-  	ymax = y2;    
+	if (y1 > y2)
+	{
+		ymin = y2;
+		ymax = y1;
 	}
-  //line set to go one step in chosen direction
-  //so ignore if it hits anything
-  i = 0;          
-  do		// this is the inner inner loop
-  {
-	  if ((x >= bars[i].xmin) && ( x <= bars[i].xmax))  //overlapping
-    {
+	else
+	{
+		ymin = y1;
+		ymax = y2;
+	}
+	//line set to go one step in chosen direction
+	//so ignore if it hits anything
+	i = 0;
+	do		// this is the inner inner loop
+	{
+		if ((x >= bars[i].xmin) && ( x <= bars[i].xmax))  //overlapping
+		{
 			if ((ymax >= bars[i].ymin) && ( ymin <= bars[i].ymax))  //skip if not on module 
-		  {
+			{
 				// okay its a valid line calculate an intersept
 				// wow but all this arithmatic we must have loads of time
-		    if (bars[i].dx == 0)//both lines vertical and overlap in x and y so they cross
-		    {
-			    linesCrossed = 0;
-		    }
+				if (bars[i].dx == 0)//both lines vertical and overlap in x and y so they cross
+				{
+					linesCrossed = 0;
+				}
 				else
 				{
-			 		dx = x-bars[i].x1;
+					dx = x-bars[i].x1;
 					yc = bars[i].y1 + (bars[i].dy * dx)/bars[i].dx;
-			    if ((yc >= ymin-1) && (yc <= ymax+1))   //the intersept overlaps 
-			    {
-				    linesCrossed = 0;
-			    }
+					if ((yc >= ymin-1) && (yc <= ymax+1))   //the intersept overlaps 
+					{
+						linesCrossed = 0;
+					}
 				}
 			}
-    }
-    i = i + 1;
-  }
-  while((i < nbars) && linesCrossed);
+		}
+		i = i + 1;
+	}
+	while((i < nbars) && linesCrossed);
 
-  return linesCrossed;
+	return linesCrossed;
 }
 
 int32 SwordRouter::CheckTarget(int32 x , int32 y)
 /*******************************************************************************
  *******************************************************************************/
 {
-  int32   dx;
-  int32   dy;
-  int32   i;
-  int32   xc;
-  int32   yc;
-  int32   xmin;
-  int32   xmax;
-  int32   ymin;
-  int32   ymax;
-  int32   onLine = 0;   
+	int32   dx;
+	int32   dy;
+	int32   i;
+	int32   xc;
+	int32   yc;
+	int32   xmin;
+	int32   xmax;
+	int32   ymin;
+	int32   ymax;
+	int32   onLine = 0;
 
- 	xmin = x - 1;    
+ 	xmin = x - 1;
  	xmax = x + 1;
- 	ymin = y - 1;    
+ 	ymin = y - 1;
  	ymax = y + 1;
 
 	// check if point +- 1 is on the line
-  //so ignore if it hits anything
+	//so ignore if it hits anything
 
-  i = 0;          
-  do
-  {
+	i = 0;
+	do
+	{
 
 		// this is the inner inner loop
 
-	  if ((xmax >= bars[i].xmin) && ( xmin <= bars[i].xmax))  //overlapping line 
-    {
+		if ((xmax >= bars[i].xmin) && ( xmin <= bars[i].xmax))  //overlapping line 
+		{
 			if ((ymax >= bars[i].ymin) && ( ymin <= bars[i].ymax))  //overlapping line 
-	    {
+			{
 
 				// okay this line overlaps the target calculate an y intersept for x 
 
-		    if (bars[i].dx == 0)// vertical line so we know it overlaps y
-		    {
+				if (bars[i].dx == 0)// vertical line so we know it overlaps y
+				{
 					yc = 0; 	
-		    }
+				}
 				else
 				{
 					dx = x-bars[i].x1;
 					yc = bars[i].y1 + (bars[i].dy * dx)/bars[i].dx;
 				}
 
-		    if ((yc >= ymin) && (yc <= ymax))   //overlapping point for y 
-		    {
-			    onLine = 3;// target on a line so drop out
+				if ((yc >= ymin) && (yc <= ymax))   //overlapping point for y 
+				{
+					onLine = 3;// target on a line so drop out
 					//Tdebug("RouteFail due to target on a line %d %d",x,y);
 				}
 				else
 				{
-			    if (bars[i].dy == 0)// vertical line so we know it overlaps y
+					if (bars[i].dy == 0)// vertical line so we know it overlaps y
 					{
 						xc = 0;
 					}
@@ -2280,20 +2279,19 @@ int32 SwordRouter::CheckTarget(int32 x , int32 y)
 						xc = bars[i].x1 + (bars[i].dx * dy)/bars[i].dy;
 					}
 
-				  if ((xc >= xmin) && (xc <= xmax))   //skip if not on module 
-				  {
-				    onLine = 3;// target on a line so drop out
+					if ((xc >= xmin) && (xc <= xmax))   //skip if not on module 
+					{
+						onLine = 3;// target on a line so drop out
 						//Tdebug("RouteFail due to target on a line %d %d",x,y);
-			    }
+					}
 				}
-	    }
-    }
-    i = i + 1;
-  }
-  while((i < nbars) && (onLine == 0));
+			}
+		}
+		i = i + 1;
+	}
+	while((i < nbars) && (onLine == 0));
 
-
-  return onLine;
+	return onLine;
 }
 
 /*******************************************************************************
@@ -2307,18 +2305,18 @@ int32 SwordRouter::CheckTarget(int32 x , int32 y)
 int32 SwordRouter::LoadWalkResources(BsObject *megaObject, int32 x, int32 y, int32 dir)
 {
 	WalkGridHeader	floorHeader;
-  int32 	i;
-  int32 	j;
-  uint8  *fPolygrid;    
-  uint8  *fMegaWalkData;    
+	int32 	i;
+	int32 	j;
+	uint8  *fPolygrid;
+	uint8  *fMegaWalkData;
 
-  int32 	floorId;
+	int32 	floorId;
 	int32		walkGridResourceId;
-  BsObject *floorObject;
-      
+	BsObject *floorObject;
 
 
-// load in floor grid for current mega
+
+	// load in floor grid for current mega
 
 
 	floorId = megaObject->o_place;
@@ -2372,12 +2370,12 @@ int32 SwordRouter::LoadWalkResources(BsObject *megaObject, int32 x, int32 y, int
 		bars[cnt].co   = READ_LE_UINT32(fPolygrid); fPolygrid += 4;
 	}
 
-	/*j = 1;// leave node 0 for start node          
+	/*j = 1;// leave node 0 for start node
 	do
 	{
-			memmove(&node[j].x,fPolygrid,2*sizeof(int16));
-			fPolygrid += 2*sizeof(int16);
-			j ++;
+		memmove(&node[j].x,fPolygrid,2*sizeof(int16));
+		fPolygrid += 2*sizeof(int16);
+		j ++;
 	}
 	while(j < nnodes);//array starts at 0*/
 	for (int32 cnt = 1; cnt < nnodes; cnt++) {
@@ -2390,8 +2388,8 @@ int32 SwordRouter::LoadWalkResources(BsObject *megaObject, int32 x, int32 y, int
 	_resMan->resClose(walkGridResourceId);
 
 
-// floor grid loaded
-// if its george copy extra bars and nodes
+	// floor grid loaded
+	// if its george copy extra bars and nodes
 
 	if (megaId == GEORGE)
 	{
@@ -2403,15 +2401,15 @@ int32 SwordRouter::LoadWalkResources(BsObject *megaObject, int32 x, int32 y, int
 		nbars += _numExtraBars;
 
 		// copy any extra nodes from extraNode array
-	  j = 0;
+		j = 0;
 		while(j < _numExtraNodes)//array starts at 0
 		{
-				node[nnodes+j].x = _extraNodes[j].x ;
-				node[nnodes+j].y = _extraNodes[j].y ;
-				j++;
+			node[nnodes+j].x = _extraNodes[j].x ;
+			node[nnodes+j].y = _extraNodes[j].y ;
+			j++;
 		}
 
-	  nnodes += _numExtraNodes;
+		nnodes += _numExtraNodes;
 	}
 
 
@@ -2473,25 +2471,25 @@ int32 SwordRouter::LoadWalkResources(BsObject *megaObject, int32 x, int32 y, int
 
 // finish setting grid by putting mega node at begining
 // and target node at end	and reset current values
-  node[0].x = startX;
-  node[0].y = startY; 
-  node[0].level = 1;
-  node[0].prev = 0;
-  node[0].dist = 0;
+	node[0].x = startX;
+	node[0].y = startY; 
+	node[0].level = 1;
+	node[0].prev = 0;
+	node[0].dist = 0;
 	i=1;
 	do
 	{
-	  node[i].level = 0;
-  	node[i].prev = 0;
-  	node[i].dist = 9999;
+		node[i].level = 0;
+		node[i].prev = 0;
+		node[i].dist = 9999;
 		i=i+1;
 	}
 	while (i < nnodes);
-  node[nnodes].x = targetX;
-  node[nnodes].y = targetY; 
-  node[nnodes].level = 0;
-  node[nnodes].prev = 0;
-  node[nnodes].dist = 9999;
+	node[nnodes].x = targetX;
+	node[nnodes].y = targetY; 
+	node[nnodes].level = 0;
+	node[nnodes].prev = 0;
+	node[nnodes].dist = 9999;
 
 	return 1;
 }
@@ -2515,7 +2513,7 @@ void	SwordRouter::ExtractRoute()
 	int32	prevy;
 	int32	last;
 	int32	point;
-  int32 p;     
+	int32 p;
 	int32	dirx;
 	int32	diry;
 	int32	dir;
@@ -2554,12 +2552,12 @@ void	SwordRouter::ExtractRoute()
 	routeLength = routeLength - 1;
 
 	// okay the route exists as a series point now put in some directions
-  p = 0;
-  do
-  {
-		#ifdef PLOT_PATHS
-			BresenhamLine(route[p+1].x-128,route[p+1].y-128, route[p].x-128,route[p].y-128, (uint8*)screen_ad, true_pixel_size_x, pixel_size_y, ROUTE_END_FLAG);
-    #endif   
+	p = 0;
+	do
+	{
+#ifdef PLOT_PATHS
+		BresenhamLine(route[p+1].x-128,route[p+1].y-128, route[p].x-128,route[p].y-128, (uint8*)screen_ad, true_pixel_size_x, pixel_size_y, ROUTE_END_FLAG);
+#endif   
 		dx = route[p+1].x - route[p].x;
 		dy = route[p+1].y - route[p].y;
 		dirx = 1;

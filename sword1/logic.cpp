@@ -184,7 +184,7 @@ void SwordLogic::processLogic(BsObject *compact, uint32 id) {
 				logicRet=1;
 				break;
 			case LOGIC_bookmark:
-                memcpy(&(compact->o_tree.o_script_level), &(compact->o_bookmark.o_script_level), sizeof(ScriptTree));
+				memcpy(&(compact->o_tree.o_script_level), &(compact->o_bookmark.o_script_level), sizeof(ScriptTree));
 				compact->o_logic = LOGIC_script;
 				logicRet = 1;
 				break;
@@ -395,7 +395,7 @@ int SwordLogic::scriptManager(BsObject *compact, uint32 id) {
 		} else
 			compact->o_tree.o_script_pc[level] = ret;
 	} while (!ret);
-    return 1;
+	return 1;
 	//Logic continues - but the script must have changed logic mode
 	//this is a radical change from S2.0 where once a script finished there
 	//was no more processing for that object on that cycle - the Logic_engine terminated.
@@ -549,7 +549,7 @@ int SwordLogic::interpretScript(BsObject *compact, int id, Header *scriptModule,
 				debug(9, "IT_SCRIPTEND");
 				return 0;
 			case IT_POPVAR:         // pop a variable
-                debug(9, "IT_POPVAR: ScriptVars[%d] = %d", scriptCode[pc], stack[stackIdx-1]);
+				debug(9, "IT_POPVAR: ScriptVars[%d] = %d", scriptCode[pc], stack[stackIdx-1]);
 				_scriptVars[scriptCode[pc++]] = stack[--stackIdx];
 				break;
 			case IT_POPLONGOFFSET:
@@ -788,7 +788,7 @@ int SwordLogic::fnAnim(BsObject *cpt, int32 id, int32 cdt, int32 spr, int32 e, i
 	cpt->o_logic = LOGIC_anim;
 	cpt->o_anim_pc = 0;
 	cpt->o_sync = 0;
-    return SCRIPT_STOP;
+	return SCRIPT_STOP;
 }
 
 int SwordLogic::fnSetFrame(BsObject *cpt, int32 id, int32 cdt, int32 spr, int32 frameNo, int32 f, int32 z, int32 x) {
@@ -1067,7 +1067,7 @@ int SwordLogic::fnISpeak(BsObject *cpt, int32 id, int32 cdt, int32 textNo, int32
 		_speechRunning = _sound->startSpeech(textNo >> 16, textNo & 0xFFFF);
 	else
 		_speechRunning = false;
-    _speechFinished = false;
+	_speechFinished = false;
 	if (SwordEngine::_systemVars.showText || (!_speechRunning)) {
 		_textRunning = true;
 
@@ -1125,7 +1125,7 @@ int SwordLogic::fnTheyDo(BsObject *cpt, int32 id, int32 tar, int32 instruc, int3
 	target->o_ins1 = param1;
 	target->o_ins2 = param2;
 	target->o_ins3 = param3;
-    return SCRIPT_CONT;
+	return SCRIPT_CONT;
 }
 
 //send an instruction to mega we're talking to and wait
@@ -1176,7 +1176,7 @@ int SwordLogic::fnStartTalk(BsObject *cpt, int32 id, int32 target, int32 d, int3
 
 int SwordLogic::fnCheckForTextLine(BsObject *cpt, int32 id, int32 c, int32 d, int32 e, int32 f, int32 z, int32 x) {
 	_scriptVars[RETURN_VALUE] = _objMan->fnCheckForTextLine(id);
-    return SCRIPT_CONT;
+	return SCRIPT_CONT;
 }
 
 int SwordLogic::fnAddTalkWaitStatusBit(BsObject *cpt, int32 id, int32 c, int32 d, int32 e, int32 f, int32 z, int32 x) {
@@ -1306,7 +1306,7 @@ int SwordLogic::fnChangeFloor(BsObject *cpt, int32 id, int32 floor, int32 d, int
 	BsObject *floorCpt = _objMan->fetchObject(floor);
 	cpt->o_scale_a = floorCpt->o_scale_a;
 	cpt->o_scale_b = floorCpt->o_scale_b;
-    return SCRIPT_CONT;
+	return SCRIPT_CONT;
 }
 
 int SwordLogic::fnWalk(BsObject *cpt, int32 id, int32 x, int32 y, int32 dir, int32 stance, int32 a, int32 b) {
@@ -1350,7 +1350,7 @@ int SwordLogic::fnWalk(BsObject *cpt, int32 id, int32 x, int32 y, int32 dir, int
 		cpt->o_down_flag = 1; // pretend it was successful
 	else
 		cpt->o_down_flag = 0; // 0 means error
-    
+
 	return SCRIPT_CONT;
 }
 
@@ -1446,7 +1446,7 @@ int SwordLogic::fnGetTo(BsObject *cpt, int32 id, int32 a, int32 b, int32 c, int3
 	cpt->o_tree.o_script_level++;
 	cpt->o_tree.o_script_pc[cpt->o_tree.o_script_level] = place->o_get_to_script;
 	cpt->o_tree.o_script_id[cpt->o_tree.o_script_level] = place->o_get_to_script;
-    return SCRIPT_STOP;
+	return SCRIPT_STOP;
 }
 
 int SwordLogic::fnGetToError(BsObject *cpt, int32 id, int32 a, int32 b, int32 c, int32 d, int32 z, int32 x) {

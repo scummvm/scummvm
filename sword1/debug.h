@@ -26,7 +26,7 @@
 
 class SwordDebug {
 public:
-    static void interpretScript(uint32 id, uint32 level, uint32 script, uint32 pc);
+	static void interpretScript(uint32 id, uint32 level, uint32 script, uint32 pc);
 	static void callMCode(uint32 mcodeNum, uint32 paramCount, int32 a, int32 b, int32 c, int32 d, int32 e, int32 f);
 
 private:

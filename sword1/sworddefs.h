@@ -85,7 +85,7 @@ struct ParallaxHeader {
 	char type[16];
 	uint16 sizeX;
 	uint16 sizeY;
-    uint32 lineIndexes[2];			//2 is arbitrary number
+	uint32 lineIndexes[2];			//2 is arbitrary number
 } GCC_PACK;
 
 struct AnimUnit {

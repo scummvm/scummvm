@@ -197,7 +197,7 @@ void SwordMouse::setPointer(uint32 resId, uint32 rate) {
 			_specialPtrId = resId;
 			_specialPtr = (MousePtr*)_resMan->mouseResOpen(resId);
 		}
-        animate();
+		animate();
 		_system->show_mouse(true);
 	}
 }
@@ -249,7 +249,7 @@ void SwordMouse::fnLockMouse(void) {
 }
 
 void SwordMouse::fnUnlockMouse(void) {
-    _mouseStatus &= 1;
+	_mouseStatus &= 1;
 }
 
 void SwordMouse::giveCoords(uint16 *x, uint16 *y) {

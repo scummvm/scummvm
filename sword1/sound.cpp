@@ -95,7 +95,7 @@ void SwordSound::fnStopFx(int32 fxNo) {
 		if (_fxQueue[cnt].id == (uint32)fxNo) {
 			if (!_fxQueue[cnt].delay) // sound was started
 				_resMan->resClose(_fxList[_fxQueue[cnt].id].sampleId);
-            if (cnt != _endOfQueue-1)
+			if (cnt != _endOfQueue-1)
 				_fxQueue[cnt] = _fxQueue[_endOfQueue-1];
 			_endOfQueue--;
 			return ;
@@ -118,7 +118,7 @@ void SwordSound::closeCowSysten(void) {
 bool SwordSound::speechFinished(void) {
 	//warning("stub: SwordSound::speechFinished()");
 	//return true;
-    return (_speechHandle == 0);
+	return (_speechHandle == 0);
 }
 
 void SwordSound::newScreen(uint16 screen) {
@@ -171,7 +171,7 @@ bool SwordSound::startSpeech(uint16 roomNo, uint16 localNo) {
 		uint8 *buf = (uint8*)malloc(sampleSize);
 		_cowFile.read(buf, sampleSize);
 		uint8 *smpBuf = (uint8*)malloc(uncompressedSize(buf));
-        uint32 size = expandSpeech(buf, smpBuf, sampleSize);
+		uint32 size = expandSpeech(buf, smpBuf, sampleSize);
 		free(buf);
 		if (!size) {
 			free(smpBuf);

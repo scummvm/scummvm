@@ -67,8 +67,8 @@ class OSystem;
 class SwordMouse {
 public:
 	SwordMouse(OSystem *system, ResMan *pResMan, ObjectMan *pObjMan);
-    void addToList(int id, BsObject *compact);
-    void useLogicAndMenu(SwordLogic *pLogic, SwordMenu *pMenu);
+	void addToList(int id, BsObject *compact);
+	void useLogicAndMenu(SwordLogic *pLogic, SwordMenu *pMenu);
 	void setLuggage(uint32 resID, uint32 rate);
 	void setPointer(uint32 resID, uint32 rate);
 	void animate(void);

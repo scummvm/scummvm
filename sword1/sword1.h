@@ -57,7 +57,7 @@ struct SystemVars {
 	//uint8	framesPerSecond;	// toggles one frame pre second mode		on "1"
 	//uint8	writingPCXs;		// writing a PCX every frame						on "f"
 	//int16	parallaxOn;			I think we don't need this.
-    uint8	language;
+	uint8	language;
 	int32	currentMusic;
 	//uint32	gameCycle;
 };

@@ -85,7 +85,7 @@ void ResMan::loadCluDescript(const char *fileName) {
 							_memMan->initHandle(group->resHandle + resCnt);
 						}
 					}
-                    free(resIdIdx);
+					free(resIdIdx);
 				} else
 					cluster->grp[grpCnt] = NULL;
 			free(grpIndex);
@@ -200,7 +200,7 @@ void ResMan::resClose(uint32 id) {
 
 FrameHeader *ResMan::fetchFrame(void *resourceData, uint32 frameNo) {
 	uint8 *frameFile = (uint8*)resourceData;
-    uint8 *idxData = frameFile + sizeof(Header);
+	uint8 *idxData = frameFile + sizeof(Header);
 	if (frameNo >= READ_LE_UINT32(idxData))
 		error("fetchFrame:: frame %d doesn't exist in resource.", frameNo);
 	frameFile += READ_LE_UINT32(idxData + (frameNo+1) * 4);

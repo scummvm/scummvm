@@ -119,7 +119,7 @@ private:
 	ObjectMan *_objMan;
 	SwordText *_textMan;
 
-    uint16 _currentScreen;
+	uint16 _currentScreen;
 	uint8  *_screenBuf;
 	uint8  *_screenGrid;
 	uint16 *_layerGrid[4];

@@ -42,7 +42,7 @@ void MemMan::alloc(BsMemHandle *bsMem, uint32 pSize, uint16 pCond) {
 		warning("%d Bytes alloced as FREEABLE.", pSize); // why should one want to alloc mem if it can be freed?
 		addToFreeList(bsMem);
 	} else if (bsMem->next || bsMem->prev) // it's in our _freeAble list, remove it from there
-        removeFromFreeList(bsMem);
+		removeFromFreeList(bsMem);
 	checkMemoryUsage();
 }
 

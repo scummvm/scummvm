@@ -1010,7 +1010,7 @@ void SwordEngine::go(void) {
 	initialize();
 	// check if we have savegames. if we do, show control panel, else start intro.
 	do {
-        mainLoop();
+		mainLoop();
 		// mainLoop was left, show control panel
 	} while (true);
 }
@@ -1081,7 +1081,7 @@ void SwordEngine::mainLoop(void) {
 
 		_screen->quitScreen(); // close graphic resources
 		_objectMan->closeSection(SwordLogic::_scriptVars[SCREEN]); // close the section that PLAYER has just left, if it's empty now
-        // todo: stop sfx, clear sfx queue, free sfx memory
+		// todo: stop sfx, clear sfx queue, free sfx memory
 	} while (_systemVars.saveGameFlag < 2);
 }
 
