@@ -42,6 +42,7 @@ Actor::Actor(const char *name) :
 	g_engine->registerActor(this);
 	_lookingMode = false;
 	_constrain = false;
+	_talkSoundName = "";
 
 	for (int i = 0; i < 10; i++) {
 		_talkCostume[i] = NULL;
