@@ -344,6 +344,10 @@ SAGA
    audial.
  * Sound in old Win demo is all wrong -- eithere there is some unique sound format
    or I didn't guess it correctly
+ * Implementation of threads memory is wrong. See TriggerNScript() and base_address()
+   in original.
+ * Converses ignore kReplyOnce now due to deficient threads memory implementation.
+ * Up and down keys ('u' and 'd') in converse panel do not work properly
 
 - plans -
  * Implement unimplemented/proofread unchecked opcodes
@@ -353,7 +357,7 @@ SAGA
  * Implement Save/Load
  * Finish inventory code
  * Implement ISO path finder
- * Hook conversations to scripts
+ * Hook conversations to scripts (partly done)
  * Change script buffer so that its point to the appropriate data.
    (eriktorbjorn - mostly done)
  * ISO - tile scene implementation
