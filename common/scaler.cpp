@@ -173,7 +173,7 @@ void Normal3x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPit
  */
 void AdvMame2x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch,
 							 int width, int height) {
-	scale(2, dstPtr, dstPitch, srcPtr, srcPitch, 2, width, height);
+	scale(2, dstPtr, dstPitch, srcPtr - srcPitch, srcPitch, 2, width, height);
 }
 
 /**
@@ -182,7 +182,7 @@ void AdvMame2x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPi
  */
 void AdvMame3x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch,
 							 int width, int height) {
-	scale(3, dstPtr, dstPitch, srcPtr, srcPitch, 2, width, height);
+	scale(3, dstPtr, dstPitch, srcPtr - srcPitch, srcPitch, 2, width, height);
 }
 
 template<int bitFormat>
