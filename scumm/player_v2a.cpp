@@ -1066,7 +1066,7 @@ static V2A_Sound *findSound (unsigned long crc) {
 	CRCToSound(0x8F1E3B3D, V2A_Sound_Single(0x00B0,0x05FE,0x04E2,0x3F));	// Zak 107
 	CRCToSound(0x0A2A7646, V2A_Sound_Single(0x00B0,0x36FE,0x016E,0x3F));	// Zak 43
 	CRCToSound(0x6F1FC435, V2A_Sound_Single(0x00B0,0x2808,0x044C,0x3F));	// Zak 108
-	CRCToSound(0x870EFC29, V2A_Sound_Unsupported());	// Zak 55
+	CRCToSound(0x870EFC29, V2A_Sound_SingleLoopedPitchbend(0x00BA,0x0100,0x03E8,0x00C8,0x3F,3));	// Zak 55
 	CRCToSound(0xED773699, V2A_Sound_Special_LoopedFadeinFadeout(0x00B4,0x0020,0x012C,8,4));	// Zak 3
 	CRCToSound(0x0BF59774, V2A_Sound_Special_MultiLoopedFadeinFadeout(0x00BE,0x0020,0x00F8,0x00F7,8,1));	// Zak 72
 	CRCToSound(0x656FFEDE, V2A_Sound_Special_MultiLoopedFadeinFadeout(0x00BE,0x0020,0x00C4,0x00C3,8,1));	// Zak 73
