@@ -54,8 +54,8 @@ void Script::setupScriptFuncList(void) {
 		OPCODE(sfScriptWalkTo),
 		OPCODE(SF_doAction),
 		OPCODE(sfSetActorFacing),
-		OPCODE(SF_startBgdAnim),
-		OPCODE(SF_stopBgdAnim),
+		OPCODE(sfStartBgdAnim),
+		OPCODE(sfStopBgdAnim),
 		OPCODE(SF_freezeInterface),
 		OPCODE(SF_dialogMode),
 		OPCODE(SF_killActorThreads),
@@ -68,10 +68,10 @@ void Script::setupScriptFuncList(void) {
 		OPCODE(SF_getNumber),
 		OPCODE(SF_openDoor),
 		OPCODE(SF_closeDoor),
-		OPCODE(SF_setBgdAnimSpeed),
+		OPCODE(sfSetBgdAnimSpeed),
 		OPCODE(SF_cycleColors),
 		OPCODE(SF_centerActor),
-		OPCODE(SF_startAnim),
+		OPCODE(sfStartBgdAnimSpeed),
 		OPCODE(SF_actorWalkToAsync),
 		OPCODE(SF_enableZone),
 		OPCODE(sfSetActorState),
@@ -251,19 +251,24 @@ int Script::sfSetActorFacing(SCRIPTFUNC_PARAMS) {
 }
 
 // Script function #9 (0x09)
-int Script::SF_startBgdAnim(SCRIPTFUNC_PARAMS) {
-	ScriptDataWord param1 = thread->pop();
-	ScriptDataWord param2 = thread->pop();
+int Script::sfStartBgdAnim(SCRIPTFUNC_PARAMS) {
+	int animId = getSWord(thread->pop());
+	int cycles = getSWord(thread->pop());
 
-	debug(1, "stub: SF_startBgdAnim(%d, %d)", param1, param2);
+	_vm->_anim->setCycles(animId, cycles);
+	_vm->_anim->play(animId, kRepeatSpeed);
+
+	debug(1, "sfStartBgdAnim(%d, %d)", animId, cycles);
 	return SUCCESS;
 }
 
 // Script function #10 (0x0A)
-int Script::SF_stopBgdAnim(SCRIPTFUNC_PARAMS) {
-	ScriptDataWord param = thread->pop();
+int Script::sfStopBgdAnim(SCRIPTFUNC_PARAMS) {
+	ScriptDataWord animId = thread->pop();
 
-	debug(1, "stub: SF_stopBgdAnim(%d)", param);
+	_vm->_anim->stop(animId);
+
+	debug(1, "sfStopBgdAnim(%d)", animId);
 	return SUCCESS;
 }
 
@@ -417,11 +422,13 @@ int Script::SF_closeDoor(SCRIPTFUNC_PARAMS) {
 }
 
 // Script function #23 (0x17)
-int Script::SF_setBgdAnimSpeed(SCRIPTFUNC_PARAMS) {
-	ScriptDataWord param1 = thread->pop();
-	ScriptDataWord param2 = thread->pop();
+int Script::sfSetBgdAnimSpeed(SCRIPTFUNC_PARAMS) {
+	int animId = getSWord(thread->pop());
+	int speed = getSWord(thread->pop());
 
-	debug(1, "stub: SF_setBgdAnimSpeed(%d, %d)", param1, param2);
+	_vm->_anim->setFrameTime(animId, ticksToMSec(speed));
+	debug(1, "sfSetBgdAnimSpeed(%d, %d)", animId, speed);
+
 	return SUCCESS;
 }
 
@@ -444,29 +451,15 @@ int Script::SF_centerActor(SCRIPTFUNC_PARAMS) {
 
 // Script function #26 (0x1A) nonblocking
 // Starts the specified animation 
-// Param1: ?
-// Param2: frames of animation to play or -1 to loop
-// Param3: animation id
-int Script::SF_startAnim(SCRIPTFUNC_PARAMS) {
-// FIXME: implementation is wrong. Should link animation
-	ScriptDataWord timer_parm;
-	ScriptDataWord frame_parm;
-	ScriptDataWord anim_id_parm;
-	int frame_count;
-	int anim_id;
+int Script::sfStartBgdAnimSpeed(SCRIPTFUNC_PARAMS) {
+	int animId = getSWord(thread->pop());
+	int cycles = getSWord(thread->pop());
+	int speed = getSWord(thread->pop());
 
-	anim_id_parm = thread->pop();
-	frame_parm = thread->pop();
-	timer_parm = thread->pop();
+	_vm->_anim->setCycles(animId, cycles);
+	_vm->_anim->play(animId, ticksToMSec(speed));
 
-	frame_count = getSWord(frame_parm);
-	anim_id = getSWord(anim_id_parm);
-
-	if (_vm->_anim->play(anim_id, 0) != SUCCESS) {
-		_vm->_console->DebugPrintf(S_WARN_PREFIX "SF.26: Anim::play() failed. Anim id: %u\n", anim_id);
-		return FAILURE;
-	}
-
+	debug(1, "sfStartBgdAnimSpeed(%d, %d, %d)", animId, cycles, speed);
 	return SUCCESS;
 }
 

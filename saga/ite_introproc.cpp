@@ -657,7 +657,7 @@ int Scene::ITEIntroValleyProc(int param, SCENE_INFO *scene_info) {
 		debug(0, "Beginning animation playback.");
 
 		// Begin title screen background animation 
-		_vm->_anim->setFlag(0, ANIM_LOOP);
+		_vm->_anim->setCycles(0, -1);
 		_vm->_anim->play(0, PALETTE_FADE_DURATION);
 
 		// Begin ITE title theme music
@@ -938,7 +938,7 @@ int Scene::ITEIntroFairePathProc(int param, SCENE_INFO *scene_info) {
 		event_delay = DISSOLVE_DURATION;
 
 		// Begin title screen background animation 
-		_vm->_anim->setFlag(0, ANIM_LOOP);
+		_vm->_anim->setCycles(0, -1);
 		_vm->_anim->play(0, event_delay);
 
 		// Queue game credits list

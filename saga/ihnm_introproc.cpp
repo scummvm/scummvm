@@ -193,7 +193,7 @@ int Scene::IHNMIntroMovieProc2(int param, SCENE_INFO *scene_info) {
 
 		q_event = _vm->_events->chain(q_event, &event);
 
-		_vm->_anim->setFlag(0, ANIM_LOOP);
+		_vm->_anim->setCycles(0, -1);
 		_vm->_anim->play(0, IHNM_PALFADE_TIME * 2);
 
 		// Queue end of scene after looping animation for a while
@@ -301,7 +301,7 @@ int Scene::IHNMHateProc(int param, SCENE_INFO *scene_info) {
 
 	switch (param) {
 	case SCENE_BEGIN:
-		_vm->_anim->setFlag(0, ANIM_LOOP);
+		_vm->_anim->setCycles(0, -1);
 		_vm->_anim->play(0, 0);
 
 		// More music

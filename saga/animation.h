@@ -26,6 +26,8 @@
 #ifndef SAGA_ANIMATION_H_
 #define SAGA_ANIMATION_H_
 
+#include "saga/stream.h"
+
 namespace Saga {
 
 #define MAX_ANIMATIONS 7
@@ -52,15 +54,13 @@ struct ANIMATION_HEADER {
 	uint16 screen_w;
 	uint16 screen_h;
 
-	uint16 unknown06;
-	uint16 unknown07;
+	byte unknown06;
+	byte unknown07;
 
-	uint16 nframes;
-	uint16 flags;
+	byte nframes;
+	byte loopframe;
 
-	uint16 unknown10;
-	uint16 unknown11;
-
+	uint16 start;
 };
 
 struct FRAME_HEADER {
@@ -82,16 +82,16 @@ struct ANIMATION {
 
 	uint16 n_frames;
 	size_t *frame_offsets;
-	uint16 current_frame;
-	uint16 end_frame;
-	uint16 stop_frame;
+	int16 current_frame;
+	uint16 completed;
+	uint16 cycles;
+	int16 loopframe;
 	const byte *cur_frame_p;
 	size_t cur_frame_len;
 	int frame_time;
 
-	uint16 play_flag;
-	int link_flag;
-	uint16 link_id;
+	bool playing;
+	int16 link_id;
 	uint16 flags;
 };
 
@@ -108,20 +108,22 @@ public:
 
 	int load(const byte *anim_resdata, size_t anim_resdata_len, uint16 *anim_id_p);
 	int freeId(uint16 anim_id);
-	int play(uint16 anim_id, int vector_time);
-	int link(uint16 anim_id1, uint16 anim_id2);
+	int play(uint16 anim_id, int vector_time, bool playing = true);
+	int link(int16 anim_id1, int16 anim_id2);
 	int setFlag(uint16 anim_id, uint16 flag);
 	int clearFlag(uint16 anim_id, uint16 flag);
 	int setFrameTime(uint16 anim_id, int time);
 	int reset(void);
 	void animInfo(void);
+	void setCycles(uint animId, int cycles);
+	void stop(uint16 animId);
 
 private:
-	int getNumFrames(const byte *anim_resource, size_t anim_resource_len, uint16 *n_frames);
 	int ITE_DecodeFrame(const byte *anim_resource, size_t anim_resource_len, size_t frame_offset, byte *buf, size_t buf_len);
 	int IHNM_DecodeFrame(byte *decode_buf, size_t decode_buf_len, const byte *thisf_p,
 					size_t thisf_len, const byte **nextf_p, size_t *nextf_len);
 	int getFrameOffset(const byte *anim_resource, size_t anim_resource_len, uint16 find_frame, size_t *frame_offset);
+	void readAnimHeader(MemoryReadStreamEndian &readS, ANIMATION_HEADER &ah);
 
 	SagaEngine *_vm;
 	bool _initialized;

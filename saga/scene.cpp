@@ -972,10 +972,6 @@ int Scene::defaultScene(int param, SCENE_INFO *scene_info) {
 		event.op = EVENT_SHOW;
 		_vm->_events->chain(q_event, &event);
 
-		// Start scene animations
-		_vm->_anim->setFlag(0, ANIM_LOOP);
-		_vm->_anim->play(0, 0);
-
 		// Start the scene main script
 		if (_desc.sceneScriptNum > 0) {
 			event.type = ONESHOT_EVENT;

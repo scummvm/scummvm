@@ -307,8 +307,8 @@ private:
 	int sfScriptWalkTo(SCRIPTFUNC_PARAMS);
 	int SF_doAction(SCRIPTFUNC_PARAMS);
 	int sfSetActorFacing(SCRIPTFUNC_PARAMS);
-	int SF_startBgdAnim(SCRIPTFUNC_PARAMS);
-	int SF_stopBgdAnim(SCRIPTFUNC_PARAMS);
+	int sfStartBgdAnim(SCRIPTFUNC_PARAMS);
+	int sfStopBgdAnim(SCRIPTFUNC_PARAMS);
 	int SF_freezeInterface(SCRIPTFUNC_PARAMS);
 	int SF_dialogMode(SCRIPTFUNC_PARAMS);
 	int SF_killActorThreads(SCRIPTFUNC_PARAMS);
@@ -321,10 +321,10 @@ private:
 	int SF_getNumber(SCRIPTFUNC_PARAMS);
 	int SF_openDoor(SCRIPTFUNC_PARAMS);
 	int SF_closeDoor(SCRIPTFUNC_PARAMS);
-	int SF_setBgdAnimSpeed(SCRIPTFUNC_PARAMS);
+	int sfSetBgdAnimSpeed(SCRIPTFUNC_PARAMS);
 	int SF_cycleColors(SCRIPTFUNC_PARAMS);
 	int SF_centerActor(SCRIPTFUNC_PARAMS);
-	int SF_startAnim(SCRIPTFUNC_PARAMS);
+	int sfStartBgdAnimSpeed(SCRIPTFUNC_PARAMS);
 	int SF_actorWalkToAsync(SCRIPTFUNC_PARAMS);
 	int SF_enableZone(SCRIPTFUNC_PARAMS);
 	int sfSetActorState(SCRIPTFUNC_PARAMS);

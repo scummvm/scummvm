@@ -30,7 +30,6 @@
 #include "saga/render.h"
 
 #include "saga/animation.h"
-#include "saga/stream.h"
 
 namespace Saga {
 
@@ -56,7 +55,8 @@ Anim::~Anim(void) {
 }
 
 int Anim::load(const byte *anim_resdata, size_t anim_resdata_len, uint16 *anim_id_p) {
- ANIMATION *new_anim;
+	ANIMATION *new_anim;
+	ANIMATION_HEADER ah;
 
 	uint16 anim_id = 0;
 	uint16 i;
@@ -88,12 +88,13 @@ int Anim::load(const byte *anim_resdata, size_t anim_resdata_len, uint16 *anim_i
 	new_anim->resdata = anim_resdata;
 	new_anim->resdata_len = anim_resdata_len;
 
-	if (_vm->_gameType == GType_ITE) {
-		if (getNumFrames(anim_resdata, anim_resdata_len, &new_anim->n_frames) != SUCCESS) {
-			warning("Anim::load Couldn't get animation frame count");
-			return FAILURE;
-		}
+	MemoryReadStreamEndian headerReadS(anim_resdata, anim_resdata_len, IS_BIG_ENDIAN);
 
+	readAnimHeader(headerReadS, ah);
+	new_anim->n_frames = ah.nframes;
+	new_anim->loopframe = ah.loopframe;
+
+	if (_vm->_gameType == GType_ITE) {
 		// Cache frame offsets
 		new_anim->frame_offsets = (size_t *)malloc(new_anim->n_frames * sizeof *new_anim->frame_offsets);
 		if (new_anim->frame_offsets == NULL) {
@@ -102,24 +103,22 @@ int Anim::load(const byte *anim_resdata, size_t anim_resdata_len, uint16 *anim_i
 		}
 
 		for (i = 0; i < new_anim->n_frames; i++) {
-			getFrameOffset(anim_resdata, anim_resdata_len, i + 1, &new_anim->frame_offsets[i]);
+			getFrameOffset(anim_resdata, anim_resdata_len, i, &new_anim->frame_offsets[i]);
 		}
 	} else {
 		new_anim->cur_frame_p = anim_resdata + SAGA_FRAME_HEADER_LEN; // ? len - may vary
 		new_anim->cur_frame_len = anim_resdata_len - SAGA_FRAME_HEADER_LEN;
-		getNumFrames(anim_resdata, anim_resdata_len, &new_anim->n_frames);
 	}
 
 	// Set animation data
-	new_anim->current_frame = 1;
-	new_anim->end_frame = new_anim->n_frames;
-	new_anim->stop_frame = new_anim->end_frame;
+	new_anim->current_frame = 0;
+	new_anim->completed = 0;
+	new_anim->cycles = new_anim->n_frames;
 
 	new_anim->frame_time = DEFAULT_FRAME_TIME;
 	new_anim->flags = 0;
-	new_anim->play_flag = 0;
-	new_anim->link_flag = 0;
-	new_anim->link_id = 0;
+	new_anim->link_id = -1;
+	new_anim->playing = false;
 
 	_anim_tbl[anim_id] = new_anim;
 
@@ -130,7 +129,7 @@ int Anim::load(const byte *anim_resdata, size_t anim_resdata_len, uint16 *anim_i
 	return SUCCESS;
 }
 
-int Anim::link(uint16 anim_id1, uint16 anim_id2) {
+int Anim::link(int16 anim_id1, int16 anim_id2) {
 	ANIMATION *anim1;
 	ANIMATION *anim2;
 
@@ -139,21 +138,33 @@ int Anim::link(uint16 anim_id1, uint16 anim_id2) {
 	}
 
 	anim1 = _anim_tbl[anim_id1];
+
+	anim1->link_id = anim_id2;
+
+	if (anim_id2 == -1)
+		return SUCCESS;
+
 	anim2 = _anim_tbl[anim_id2];
 
 	if ((anim1 == NULL) || (anim2 == NULL)) {
 		return FAILURE;
 	}
 
-	anim1->link_id = anim_id2;
-	anim1->link_flag = 1;
-
 	anim2->frame_time = anim1->frame_time;
 
 	return SUCCESS;
 }
 
-int Anim::play(uint16 anim_id, int vector_time) {
+void Anim::setCycles(uint animId, int cycles) {
+	if (animId >= _anim_count) {
+		warning("Anim::setStopFrame(): wrong animation number (%d)", animId);
+		return;
+	}
+	
+	_anim_tbl[animId]->cycles = cycles;
+}
+
+int Anim::play(uint16 anim_id, int vector_time, bool playing) {
 	EVENT event;
 	ANIMATION *anim;
 	ANIMATION *link_anim;
@@ -185,30 +196,34 @@ int Anim::play(uint16 anim_id, int vector_time) {
 		return FAILURE;
 	}
 
+	if (playing)
+		anim->playing = true;
+
 	if (anim->flags & ANIM_PAUSE)
 		return SUCCESS;
 
-	if (anim->play_flag) {
+	if (anim->completed < anim->cycles) {
 		frame = anim->current_frame;
 		if (_vm->_gameType == GType_ITE) {
-			result = ITE_DecodeFrame(anim->resdata, anim->resdata_len, anim->frame_offsets[frame - 1], display_buf,
+			// FIXME: if start > 0, then this works incorrectly
+			result = ITE_DecodeFrame(anim->resdata, anim->resdata_len, anim->frame_offsets[frame], display_buf,
 									disp_info.logical_w * disp_info.logical_h);
 			if (result != SUCCESS) {
-				warning("ANIM::play: Error decoding frame %u", anim->current_frame);
-				anim->play_flag = 0;
+				warning("Anim::play: Error decoding frame %u", anim->current_frame);
+				anim->playing = false;
 				return FAILURE;
 			}
 		} else {
 			if (anim->cur_frame_p == NULL) {
-				warning("ANIM::play: Frames exhausted");
+				warning("Anim::play: Frames exhausted");
 				return FAILURE;
 			}
 
 			result = IHNM_DecodeFrame(display_buf,  disp_info.logical_w * disp_info.logical_h,
 									anim->cur_frame_p, anim->cur_frame_len, &nextf_p, &nextf_len);
 			if (result != SUCCESS) {
-				warning("ANIM::play: Error decoding frame %u", anim->current_frame);
-				anim->play_flag = 0;
+				warning("Anim::play: Error decoding frame %u", anim->current_frame);
+				anim->playing = false;
 				return FAILURE;
 			}
 
@@ -216,35 +231,39 @@ int Anim::play(uint16 anim_id, int vector_time) {
 			anim->cur_frame_len = nextf_len;
 		}
 		anim->current_frame++;
-	}
+		anim->completed++;
 
-	anim->play_flag = 1;
+		if (anim->current_frame >= anim->n_frames) {
+			anim->current_frame = anim->loopframe;
+			
+			// FIXME: HACK. probably needs more testing for IHNM
+			anim->cur_frame_p = anim->resdata + SAGA_FRAME_HEADER_LEN;
+			anim->cur_frame_len = anim->resdata_len - SAGA_FRAME_HEADER_LEN;
 
-	if (anim->current_frame > anim->n_frames) {
+			if (anim->current_frame == -1)
+				anim->playing = false;
+		}
+
+	} else {
 		// Animation done playing
-		if (anim->link_flag) {
+		if (anim->link_id != -1) {
 			// If this animation has a link, follow it
-			anim->play_flag = 0;
-			anim->current_frame = 1;
+			anim->current_frame = 0;
+			anim->playing = false;
 
 			link_anim_id = anim->link_id;
 			link_anim = _anim_tbl[link_anim_id];
 
 			if (link_anim != NULL) {
-				link_anim->current_frame = 1;
-				link_anim->play_flag = 1;
+				link_anim->current_frame = 0;
+				link_anim->playing = true;
 			}
 
 			anim_id = link_anim_id;
-		} else if (anim->flags & ANIM_LOOP) {
-			// Loop animation
-			anim->current_frame = 1;
-			anim->cur_frame_p = anim->resdata + SAGA_FRAME_HEADER_LEN;
-			anim->cur_frame_len = anim->resdata_len - SAGA_FRAME_HEADER_LEN;
 		} else {
 			// No link, stop playing
-			anim->current_frame = anim->n_frames;
-			anim->play_flag = 0;
+			anim->current_frame = anim->n_frames - 1;
+			anim->playing = false;
 
 			if (anim->flags & ANIM_ENDSCENE) {
 				// This animation ends the scene
@@ -258,6 +277,18 @@ int Anim::play(uint16 anim_id, int vector_time) {
 		}
 	}
 
+	if (!anim->playing && anim->link_id != -1) {
+		// If this animation has a link, follow it
+		link_anim_id = anim->link_id;
+		link_anim = _anim_tbl[link_anim_id];
+
+		if (link_anim != NULL) {
+			link_anim->current_frame = 0;
+			link_anim->playing = true;
+		}
+		anim_id = link_anim_id;
+	}
+
 	event.type = ONESHOT_EVENT;
 	event.code = ANIM_EVENT;
 	event.op = EVENT_FRAME;
@@ -267,6 +298,16 @@ int Anim::play(uint16 anim_id, int vector_time) {
 	_vm->_events->queue(&event);
 
 	return SUCCESS;
+}
+
+void Anim::stop(uint16 animId) {
+	if (animId >= _anim_count) {
+		warning("Anim::stop(): wrong animation number (%d)", animId);
+		return;
+	}
+	
+	_anim_tbl[animId]->playing = false;
+	_anim_tbl[animId]->flags |= ANIM_PAUSE;
 }
 
 int Anim::reset() {
@@ -357,54 +398,20 @@ int Anim::freeId(uint16 anim_id) {
 	return SUCCESS;
 }
 
-// The actual number of frames present in an animation resource is 
-// sometimes less than number present in the .nframes member of the
-// animation header. For this reason, the function attempts to find
-// the last valid frame number, which it returns via 'n_frames'
-int Anim::getNumFrames(const byte *anim_resource, size_t anim_resource_len, uint16 *n_frames) {
-	ANIMATION_HEADER ah;
-
-	size_t offset;
-	int magic;
-
-	int x;
-
-	if (!_initialized) {
-		return FAILURE;
-	}
-	
-
-	MemoryReadStreamEndian readS(anim_resource, anim_resource_len, IS_BIG_ENDIAN);
-
+void Anim::readAnimHeader(MemoryReadStreamEndian &readS, ANIMATION_HEADER &ah) {
 	ah.magic = readS.readUint16LE(); // cause ALWAYS LE
 	ah.screen_w = readS.readUint16();
 	ah.screen_h = readS.readUint16();
 
 	ah.unknown06 = readS.readByte();
 	ah.unknown07 = readS.readByte();
-	ah.nframes = readS.readByte();
+	ah.nframes = readS.readByte() - 1;
+	ah.loopframe = readS.readByte() - 1;
+	ah.start = readS.readUint16BE(); //FIXME: check on Mac
 
-	if (_vm->_gameType == GType_IHNM) {
-		*n_frames = ah.nframes;
-	}
-
-	if (ah.magic == 68) {
-		for (x = ah.nframes; x > 0; x--) {
-			if (getFrameOffset(anim_resource, anim_resource_len, x, &offset) != SUCCESS) {
-				return FAILURE;
-			}
-
-			magic = *(anim_resource + offset);
-			if (magic == SAGA_FRAME_START) {
-				*n_frames = x;
-				return SUCCESS;
-			}
-		}
-
-		return FAILURE;
-	}
-
-	return FAILURE;
+	if (ah.start != 65535 && ah.start != 0)
+		error("Anim::readAnimHeader(): found different start: %d. Fix Anim::play()", ah.start);
+	ah.start += readS.pos();
 }
 
 int Anim::ITE_DecodeFrame(const byte *resdata, size_t resdata_len, size_t frame_offset, byte *buf, size_t buf_len) {
@@ -437,16 +444,8 @@ int Anim::ITE_DecodeFrame(const byte *resdata, size_t resdata_len, size_t frame_
 	}
 
 	MemoryReadStreamEndian headerReadS(resdata, resdata_len, IS_BIG_ENDIAN);
-	// Read animation header
-	ah.magic = headerReadS.readUint16LE();
-	ah.screen_w = headerReadS.readUint16();
-	ah.screen_h = headerReadS.readUint16();
-	ah.unknown06 = headerReadS.readByte();
-	ah.unknown07 = headerReadS.readByte();
-	ah.nframes = headerReadS.readByte();
-	ah.flags = headerReadS.readByte();
-	ah.unknown10 = headerReadS.readByte();
-	ah.unknown11 = headerReadS.readByte();
+
+	readAnimHeader(headerReadS, ah);
 
 	screen_w = ah.screen_w;
 	screen_h = ah.screen_h;
@@ -462,7 +461,7 @@ int Anim::ITE_DecodeFrame(const byte *resdata, size_t resdata_len, size_t frame_
 	// Check for frame magic byte
 	magic = readS.readByte();
 	if (magic != SAGA_FRAME_START) {
-		warning("ITE_DecodeFrame: Invalid frame offset");
+		warning("ITE_DecodeFrame: Invalid frame offset %x", frame_offset);
 		return FAILURE;
 	}
 
@@ -828,33 +827,19 @@ int Anim::getFrameOffset(const byte *resdata, size_t resdata_len, uint16 find_fr
 
 	int i;
 
-	if (!_initialized) {
-		return FAILURE;
-	}
-
-
 	MemoryReadStreamEndian readS(resdata, resdata_len, IS_BIG_ENDIAN); 
 
-	// Read animation header
-	ah.magic = readS.readUint16LE();
-	ah.screen_w = readS.readUint16();
-	ah.screen_h = readS.readUint16();
-	ah.unknown06 = readS.readByte();
-	ah.unknown07 = readS.readByte();
-	ah.nframes = readS.readByte();
-	ah.flags = readS.readByte();
-	ah.unknown10 = readS.readByte();
-	ah.unknown11 = readS.readByte();
+	readAnimHeader(readS, ah);
 
 	num_frames = ah.nframes;
 
-	if ((find_frame < 1) || (find_frame > num_frames)) {
+	if (find_frame >= num_frames) {
 		return FAILURE;
 	}
 
 	readS._bigEndian = !IS_BIG_ENDIAN; // RLE has inversion BE<>LE
 
-	for (current_frame = 1; current_frame < find_frame; current_frame++) {
+	for (current_frame = 0; current_frame < find_frame; current_frame++) {
 		magic = readS.readByte();
 		if (magic != SAGA_FRAME_START) {
 			// Frame sync failure. Magic Number not found
