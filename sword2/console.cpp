@@ -196,7 +196,7 @@ bool Debugger::Cmd_Res(int argc, const char **argv) {
 }
 
 bool Debugger::Cmd_Starts(int argc, const char **argv) {
-	g_logic->conPrintStartMenu();
+	_vm->_logic->conPrintStartMenu();
 	return true;
 }
 
@@ -208,7 +208,7 @@ bool Debugger::Cmd_Start(int argc, const char **argv) {
 		return true;
 	}
 
-	g_logic->conStart(atoi(argv[1]));
+	_vm->_logic->conStart(atoi(argv[1]));
 	g_graphics->setPalette(187, 1, pal, RDPAL_INSTANT);
 	return true;
 }
@@ -271,7 +271,7 @@ bool Debugger::Cmd_CurrentInfo(int argc, const char **argv) {
 }
 
 bool Debugger::Cmd_RunList(int argc, const char **argv) {
-	g_logic->examineRunList();
+	_vm->_logic->examineRunList();
 	return true;
 }
 
@@ -611,7 +611,7 @@ bool Debugger::Cmd_AnimTest(int argc, const char **argv) {
 	}
 
 	// Automatically do "s 32" to run the animation testing start script
-	g_logic->conStart(32);
+	_vm->_logic->conStart(32);
 
 	// Same as typing "VAR 912 <value>" at the console
 	varSet(912, atoi(argv[1]));
@@ -627,7 +627,7 @@ bool Debugger::Cmd_TextTest(int argc, const char **argv) {
 	}
 
 	// Automatically do "s 33" to run the text/speech testing start script
-	g_logic->conStart(33);
+	_vm->_logic->conStart(33);
 
 	// Same as typing "VAR 1230 <value>" at the console
 	varSet(1230, atoi(argv[1]));
@@ -646,7 +646,7 @@ bool Debugger::Cmd_LineTest(int argc, const char **argv) {
 	}
 
 	// Automatically do "s 33" to run the text/speech testing start script
-	g_logic->conStart(33);
+	_vm->_logic->conStart(33);
 
 	// Same as typing "VAR 1230 <value>" at the console
 	varSet(1230, atoi(argv[1]));
@@ -681,9 +681,9 @@ bool Debugger::Cmd_Events(int argc, const char **argv) {
 	DebugPrintf("EVENT LIST:\n");
 
 	for (uint32 i = 0; i < MAX_events; i++) {
-		if (g_logic->_eventList[i].id) {
-			uint32 target = g_logic->_eventList[i].id;
-			uint32 script = g_logic->_eventList[i].interact_id;
+		if (_vm->_logic->_eventList[i].id) {
+			uint32 target = _vm->_logic->_eventList[i].id;
+			uint32 script = _vm->_logic->_eventList[i].interact_id;
 
 			DebugPrintf("slot %d: id = %s (%d)\n", i, _vm->fetchObjectName(target), target);
 			DebugPrintf("         script = %s (%d) pos %d\n", _vm->fetchObjectName(script / 65536), script / 65536, script % 65536);

@@ -458,10 +458,11 @@ uint8 *ResourceManager::openResource(uint32 res) {
 		// for the CD until we do.
 
 		while (!file.open(_resourceFiles[parent_res_file])) {
-			// Is the file supposed to be on the hard disk? Then
-			// we're in trouble if we can't find it!
+			// If the file is supposed to be on hard disk, or we're
+			// playing a demo, then we're in trouble if the file
+			// can't be found!
 
-			if (_cdTab[parent_res_file] & LOCAL_PERM)
+			if ((_vm->_features & GF_DEMO) || (_cdTab[parent_res_file] & LOCAL_PERM))
 				error("Could not find '%s'", _resourceFiles[parent_res_file]);
 
 			getCd(_cdTab[parent_res_file] & 3);
@@ -948,21 +949,11 @@ void ResourceManager::killAllObjects(bool wantInfo) {
 void ResourceManager::getCd(int cd) {
 	uint8 *textRes;
 
-	// don't ask for CD's in the playable demo downloaded from our
-	// web-site!
-	if (_vm->_features & GF_DEMO)
-		return;
-
-#ifdef _PCGUIDE
-	// don't ask for CD in the patch for the demo on "PC Guide" magazine
-	return;
-#endif
-
 	// stop any music from playing - so the system no longer needs the
 	// current CD - otherwise when we take out the CD, Windows will
 	// complain!
 
-	g_logic->fnStopMusic(NULL);
+	_vm->_logic->fnStopMusic(NULL);
 
 	textRes = openResource(2283);
 	_vm->displayMsg(_vm->fetchTextLine(textRes, 5 + cd) + 2, 0);

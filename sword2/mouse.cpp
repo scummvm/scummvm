@@ -196,7 +196,7 @@ void Sword2Engine::systemMenuMouse(void) {
 
 	pars[0] = 221;
 	pars[1] = FX_LOOP;
-	g_logic->fnPlayMusic(pars);
+	_logic->fnPlayMusic(pars);
 
 	// restore proper looping_music_id
 	_loopingMusicId = safe_looping_music_id;
@@ -263,13 +263,13 @@ void Sword2Engine::systemMenuMouse(void) {
 	if (_loopingMusicId) {
 		pars[0] = _loopingMusicId;
 		pars[1] = FX_LOOP;
-		g_logic->fnPlayMusic(pars);
+		_logic->fnPlayMusic(pars);
 
 		// cross-fades into the required music: either a restored game
 		// tune, or music playing prior to entering control panels
 	} else {
 		// stop the control panel music
-		g_logic->fnStopMusic(NULL);
+		_logic->fnStopMusic(NULL);
 	}
 }
 
@@ -342,7 +342,7 @@ void Sword2Engine::dragMouse(void) {
 
 		CLICKED_ID = _mouseTouching;
 
-		g_logic->setPlayerActionEvent(CUR_PLAYER_ID, _mouseTouching);
+		_logic->setPlayerActionEvent(CUR_PLAYER_ID, _mouseTouching);
 
 		debug(5, "Used \"%s\" on \"%s\"", fetchObjectName(OBJECT_HELD), fetchObjectName(CLICKED_ID));
 
@@ -376,7 +376,7 @@ void Sword2Engine::dragMouse(void) {
 		// Otherwise, combine the two icons
 
 		COMBINE_BASE = _masterMenuList[hit].icon_resource;
-		g_logic->setPlayerActionEvent(CUR_PLAYER_ID, MENU_MASTER_OBJECT);
+		_logic->setPlayerActionEvent(CUR_PLAYER_ID, MENU_MASTER_OBJECT);
 
 		// Turn off mouse now, to prevent player trying to click
 		// elsewhere BUT leave the bottom menu open
@@ -427,7 +427,7 @@ void Sword2Engine::menuMouse(void) {
 
 		EXIT_CLICK_ID = 0;
 
-		g_logic->setPlayerActionEvent(CUR_PLAYER_ID, MENU_MASTER_OBJECT);
+		_logic->setPlayerActionEvent(CUR_PLAYER_ID, MENU_MASTER_OBJECT);
 
 		// Refresh the menu
 
@@ -636,8 +636,8 @@ void Sword2Engine::normalMouse(void) {
 		// interaction continue and start fading down. Switch the human
 		// off too
 
-		g_logic->fnNoHuman(NULL);
-		g_logic->fnFadeDown(NULL);
+		_logic->fnNoHuman(NULL);
+		_logic->fnFadeDown(NULL);
 
 		// Tell the walker
 
@@ -660,7 +660,7 @@ void Sword2Engine::normalMouse(void) {
 		EXIT_CLICK_ID = 0;
 		EXIT_FADING = 0;
 
-		g_logic->setPlayerActionEvent(CUR_PLAYER_ID, _mouseTouching);
+		_logic->setPlayerActionEvent(CUR_PLAYER_ID, _mouseTouching);
 
 		if (OBJECT_HELD)
 			debug(2, "Used \"%s\" on \"%s\"", fetchObjectName(OBJECT_HELD), fetchObjectName(CLICKED_ID));

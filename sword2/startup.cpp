@@ -212,7 +212,7 @@ void Logic::conStart(int start) {
 		res_man->closeResource(1);
 
 		// free all the route memory blocks from previous game
-		g_logic->_router->freeAllRouteMem();
+		_router->freeAllRouteMem();
 
 		// if there was speech text, kill the text block
 		if (_speechTextBlocNo) {

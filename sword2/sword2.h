@@ -30,6 +30,7 @@
 #include "sword2/header.h"
 #include "sword2/icons.h"
 #include "sword2/layers.h"
+#include "sword2/logic.h"
 #include "sword2/memory.h"
 #include "sword2/mouse.h"
 #include "sword2/object.h"
@@ -139,6 +140,7 @@ public:
 	Input *_input;
 	Sound *_sound;
 	Graphics *_graphics;
+	Logic *_logic;
 
 	Debugger *_debugger;
 

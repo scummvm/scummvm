@@ -82,7 +82,7 @@ void Logic::startEvent(void) {
 	for (int i = 0; i < MAX_events; i++) {
 		if (_eventList[i].id == ID) {
 			// run 3rd script of target object on level 1
-			g_logic->logicOne(_eventList[i].interact_id);
+			logicOne(_eventList[i].interact_id);
 
 			// clear the slot
 			_eventList[i].id = 0;

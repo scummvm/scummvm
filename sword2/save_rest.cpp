@@ -145,7 +145,7 @@ void Sword2Engine::fillSaveBuffer(mem *buffer, uint32 size, uint8 *desc) {
 	g_header.screenId = _thisScreen.background_layer_id;
 
 	// resource id of current run-list
-	g_header.runListId = g_logic->getRunList();
+	g_header.runListId = _logic->getRunList();
 
 	// those scroll position control things
 	g_header.feet_x = _thisScreen.feet_x;
@@ -343,7 +343,7 @@ uint32 Sword2Engine::restoreFromBuffer(mem *buffer, uint32 size) {
 	res_man->killAll(false);
 
 	// clean out the system kill list (no more objects to kill)
-	g_logic->resetKillList();
+	_logic->resetKillList();
 	
 	// get player character data from savegame buffer
 
@@ -380,7 +380,7 @@ uint32 Sword2Engine::restoreFromBuffer(mem *buffer, uint32 size) {
 
 	pars[0] = g_header.screenId;
 	pars[1] = 1;
-	g_logic->fnInitBackground(pars);
+	_logic->fnInitBackground(pars);
 
 	// So palette not restored immediately after control panel - we want to
 	// fade up instead!
@@ -393,7 +393,7 @@ uint32 Sword2Engine::restoreFromBuffer(mem *buffer, uint32 size) {
 	_thisScreen.feet_y = g_header.feet_y;
 
 	// start the new run list
-	g_logic->expressChangeSession(g_header.runListId);
+	_logic->expressChangeSession(g_header.runListId);
 
 	// Force in the new scroll position, so unsightly scroll-catch-up does
 	// not occur when screen first draws after returning from restore panel
@@ -481,7 +481,7 @@ void Sword2Engine::getPlayerStructures(void) {
 		error("incorrect CUR_PLAYER_ID=%d", CUR_PLAYER_ID);
 
 	raw_script_ad = (char *) head;
-	g_logic->runScript(raw_script_ad, raw_script_ad, &null_pc);
+	_logic->runScript(raw_script_ad, raw_script_ad, &null_pc);
 	res_man->closeResource(CUR_PLAYER_ID);
 }
 
@@ -504,12 +504,12 @@ void Sword2Engine::putPlayerStructures(void) {
 	// script no. 8 - 'george_savedata_return' calls fnGetPlayerSaveData
 
 	null_pc = 8;
-	g_logic->runScript(raw_script_ad, raw_script_ad, &null_pc);
+	_logic->runScript(raw_script_ad, raw_script_ad, &null_pc);
 
 	// script no. 14 - 'set_up_nico_anim_tables'
 
 	null_pc = 14;
-	g_logic->runScript(raw_script_ad, raw_script_ad, &null_pc);
+	_logic->runScript(raw_script_ad, raw_script_ad, &null_pc);
 
 	// which megaset was the player at the time of saving?
 
@@ -531,7 +531,7 @@ void Sword2Engine::putPlayerStructures(void) {
 		break;
 	}
 
-	g_logic->runScript(raw_script_ad, raw_script_ad, &null_pc);
+	_logic->runScript(raw_script_ad, raw_script_ad, &null_pc);
 	res_man->closeResource(CUR_PLAYER_ID);
 }
 

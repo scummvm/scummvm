@@ -656,6 +656,7 @@ public:
 
 class MiniDialog : public Dialog {
 private:
+	Sword2Engine *_vm;
 	int _textId;
 	FontRendererGui *_fr;
 	Widget *_panel;
@@ -663,8 +664,8 @@ private:
 	Button *_cancelButton;
 
 public:
-	MiniDialog(uint32 textId) : _textId(textId) {
-		_fr = new FontRendererGui(g_sword2->_controlsFontId);
+	MiniDialog(int fontId, uint32 textId) : _textId(textId) {
+		_fr = new FontRendererGui(fontId);
 
 		_panel = new Widget(this, 1);
 		_panel->createSurfaceImages(1996, 203, 104);
@@ -987,6 +988,8 @@ public:
 
 class SaveLoadDialog : public Dialog {
 private:
+	Sword2Engine *_vm;
+
 	int _mode, _selectedSlot;
 	char _editBuffer[SAVE_DESCRIPTION_LEN];
 	int _editPos, _firstPos;
@@ -1006,14 +1009,15 @@ private:
 	void saveLoadError(char *text);
 
 public:
-	SaveLoadDialog(int mode) : _mode(mode), _selectedSlot(-1) {
+	SaveLoadDialog(Sword2Engine *vm, int mode)
+		: _vm(vm), _mode(mode), _selectedSlot(-1) {
 		int i;
 
 		// FIXME: The "control font" and the "red font" are currently
 		// always the same font, so one should be eliminated.
 
-		_fr1 = new FontRendererGui(g_sword2->_controlsFontId);
-		_fr2 = new FontRendererGui(g_sword2->_redFontId);
+		_fr1 = new FontRendererGui(_vm->_controlsFontId);
+		_fr2 = new FontRendererGui(_vm->_redFontId);
 
 		_panel = new Widget(this, 1);
 		_panel->createSurfaceImages(2016, 0, 40);
@@ -1086,7 +1090,7 @@ public:
 				fr = _fr1;
 			}
 
-			if (g_sword2->getSaveDescription(gui->_baseSlot + i, description) == SR_OK) {
+			if (_vm->getSaveDescription(gui->_baseSlot + i, description) == SR_OK) {
 				slot->setText(fr, gui->_baseSlot + i, (char *) description);
 				slot->setClickable(true);
 			} else {
@@ -1247,7 +1251,7 @@ public:
 
 			_editBuffer[_editPos] = 0;
 
-			uint32 rv = g_sword2->saveGame(_selectedSlot, (uint8 *) &_editBuffer[_firstPos]);
+			uint32 rv = _vm->saveGame(_selectedSlot, (uint8 *) &_editBuffer[_firstPos]);
 
 			if (rv != SR_OK) {
 				uint32 textId;
@@ -1265,7 +1269,7 @@ public:
 				result = 0;
 			}
 		} else {
-			uint32 rv = g_sword2->restoreGame(_selectedSlot);
+			uint32 rv = _vm->restoreGame(_selectedSlot);
 
 			if (rv != SR_OK) {
 				uint32 textId;
@@ -1289,13 +1293,13 @@ public:
 
 				// Reset the graphic 'buildit' list before a
 				// new logic list (see fnRegisterFrame)
-				g_sword2->resetRenderLists();
+				_vm->resetRenderLists();
 
 				// Reset the mouse hot-spot list (see
 				// fnRegisterMouse and fnRegisterFrame)
-				g_sword2->resetMouseList();
+				_vm->resetMouseList();
 
-				if (g_logic->processSession())
+				if (_vm->_logic->processSession())
 					error("restore 1st cycle failed??");
 			}
 		}
@@ -1395,74 +1399,67 @@ uint32 Gui::restoreControl(void) {
 	// returns 0 for no restore
 	//         1 for restored ok
 
-	SaveLoadDialog loadDialog(kLoadDialog);
+	SaveLoadDialog loadDialog(_vm, kLoadDialog);
 	return loadDialog.run();
 }
 
 void Gui::saveControl(void) {
-	SaveLoadDialog saveDialog(kSaveDialog);
+	SaveLoadDialog saveDialog(_vm, kSaveDialog);
 	saveDialog.run();
 }
 
 void Gui::quitControl(void) {
-	MiniDialog quitDialog(149618692);	// quit text
+	MiniDialog quitDialog(_vm->_controlsFontId, 149618692);
 
-	if (!quitDialog.run()) {
-		// just return to game
-		return;
-	}
-
-	// close engine systems down
-	_vm->closeGame();
+	if (quitDialog.run())
+		_vm->closeGame();
 }
 
 void Gui::restartControl(void) {
 	uint32 temp_demo_flag;
 
-	MiniDialog restartDialog(149618693);	// restart text
+	MiniDialog restartDialog(_vm->_controlsFontId, 149618693);
 
-	if (!restartDialog.run()) {
-		// just return to game
+	if (!restartDialog.run())
 		return;
-	}
+
+	// Restart the game. To do this, we must...
 
 	// Stop music instantly!
 	_vm->killMusic();
 
-	//in case we were dead - well we're not anymore!
+	// In case we were dead - well we're not anymore!
 	DEAD = 0;
 
 	g_graphics->clearScene();
 
-	// restart the game
-	// clear all memory and reset the globals
-
+	// Restart the game. Clear all memory and reset the globals
 	temp_demo_flag = DEMO;
 
-	// remove all resources from memory, including player object and
+	// Remove all resources from memory, including player object and
 	// global variables
 	res_man->removeAll();
 
-	// reopen global variables resource & send address to interpreter -
+	// Reopen global variables resource & send address to interpreter -
 	// it won't be moving
-	g_logic->setGlobalInterpreterVariables((int32 *) (res_man->openResource(1) + sizeof(_standardHeader)));
+	_vm->_logic->setGlobalInterpreterVariables((int32 *) (res_man->openResource(1) + sizeof(_standardHeader)));
 	res_man->closeResource(1);
 
 	DEMO = temp_demo_flag;
 
-	// free all the route memory blocks from previous game
-	g_logic->_router->freeAllRouteMem();
+	// Rree all the route memory blocks from previous game
+	_vm->_logic->_router->freeAllRouteMem();
 
-	// call the same function that first started us up
+	// Call the same function that first started us up
 	_vm->startGame();
 
-	// prime system with a game cycle
+	// Prime system with a game cycle
 
-	// reset the graphic 'buildit' list before a new logic list
+	// Reset the graphic 'buildit' list before a new logic list
 	// (see fnRegisterFrame)
 	_vm->resetRenderLists();
 
-	// reset the mouse hot-spot list (see fnRegisterMouse and
+	// Reset the mouse hot-spot list (see fnRegisterMouse and
 	// fnRegisterFrame)
 	_vm->resetMouseList();
 
@@ -1471,15 +1468,13 @@ void Gui::restartControl(void) {
 	// FOR THE DEMO - FORCE THE SCROLLING TO BE RESET!
 	// - this is taken from fnInitBackground
 	// switch on scrolling (2 means first time on screen)
-
 	_vm->_thisScreen.scroll_flag = 2;
 
-	if (g_logic->processSession())
+	if (_vm->_logic->processSession())
 		error("restart 1st cycle failed??");
 
 	// So palette not restored immediately after control panel - we want
 	// to fade up instead!
-
 	_vm->_thisScreen.new_palette = 99;
 }
 

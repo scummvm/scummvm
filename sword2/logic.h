@@ -389,8 +389,6 @@ public:
 	void resetKillList(void);
 };
 
-extern Logic *g_logic;
-
 } // End of namespace Sword2
 
 #endif

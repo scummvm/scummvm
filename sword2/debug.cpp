@@ -151,7 +151,7 @@ void Debugger::buildDebugText(void) {
 			sprintf(buf, "pos: %d", _textNumber & 0xffff);
 			makeDebugTextBlock(buf, 0, 370);
 
- 			sprintf(buf, "TEXT: %d", g_logic->_officialTextNumber);
+ 			sprintf(buf, "TEXT: %d", _vm->_logic->_officialTextNumber);
 			makeDebugTextBlock(buf, 0, 385);
 		}
 	}
@@ -233,7 +233,7 @@ void Debugger::buildDebugText(void) {
 
  		// no. of events in event list
 
-		sprintf(buf, "events=%d", g_logic->countEvents());
+		sprintf(buf, "events=%d", _vm->_logic->countEvents());
 		makeDebugTextBlock(buf, 440, 45);
 
 		// sprite list usage
@@ -268,10 +268,10 @@ void Debugger::buildDebugText(void) {
 		// "waiting for person" indicator - set form fnTheyDo and
 		// fnTheyDoWeWait
 
-		if (g_logic->_speechScriptWaiting) {
+		if (_vm->_logic->_speechScriptWaiting) {
 			sprintf(buf, "script waiting for %s (%d)",
-				_vm->fetchObjectName(g_logic->_speechScriptWaiting),
-				g_logic->_speechScriptWaiting);
+				_vm->fetchObjectName(_vm->_logic->_speechScriptWaiting),
+				_vm->_logic->_speechScriptWaiting);
 			makeDebugTextBlock(buf, 0, 90);
 		}
 
@@ -309,7 +309,7 @@ void Debugger::drawDebugGraphics(void) {
 	// walk-grid
 
 	if (_displayWalkGrid)
-		g_logic->_router->plotWalkGrid(); 
+		_vm->_logic->_router->plotWalkGrid(); 
 
 	// player feet coord marker
 
@@ -359,7 +359,7 @@ void Debugger::printCurrentInfo(void) {
 		Debug_Printf("%d wide, %d high\n", _vm->_thisScreen.screen_wide, _vm->_thisScreen.screen_deep);
 		Debug_Printf("%d normal layers\n", _vm->_thisScreen.number_of_layers);
 
-		g_logic->examineRunList();
+		_vm->_logic->examineRunList();
 	} else
 		Debug_Printf("No screen\n");
 }
