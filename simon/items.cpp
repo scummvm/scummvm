@@ -1446,7 +1446,7 @@ void SimonState::o_unk_127() {
 	if (_game & GF_SIMON2) {
 		int play = getVarOrByte();
 
-		if (_debugMod)
+		if (_debugMode)
 			debug (0, "o_unk_127 (%d, %d, %d);", music, track, play);
 
 		if (_last_music_played != music) {
