@@ -101,7 +101,7 @@ public:
 	byte walkbox;
 	byte animProgress, animSpeed;
 	int16 talkPosX, talkPosY;
-	uint16 talk_script, walk_script;
+	uint16 talkScript, walkScript;
 	bool ignoreTurns;	// TODO - we do not honor this flag at all currently!
 	int8 layer;
 	uint16 sound[8];
@@ -131,7 +131,7 @@ public:
 		memset(animVariable, 0, sizeof(animVariable));
 		memset(palette, 0, sizeof(palette));
 
-		walk_script = 0;
+		walkScript = 0;
 
 		initActor(1);
 	}

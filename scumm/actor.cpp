@@ -93,14 +93,14 @@ void Actor::initActor(int mode) {
 		talkStopFrame = 5;
 	}
 
-	walk_script = 0;
-	talk_script = 0;
+	walkScript = 0;
+	talkScript = 0;
 
 	_vm->_classData[number] = (_vm->_features & GF_AFTER_V7) ? _vm->_classData[0] : 0;
 }
 
 void Actor::stopActorMoving() {
-	_vm->stopScript(walk_script);
+	_vm->stopScript(walkScript);
 	moving = 0;
 }
 
@@ -1205,12 +1205,12 @@ void Actor::startWalkAnim(int cmd, int angle) {
 	 * work as usual
 	 */
 #if 1
-	if (walk_script != 0) {
+	if (walkScript != 0) {
 		int args[16];
 		args[0] = number;
 		args[1] = cmd;
 		args[2] = angle;
-		_vm->runScript(walk_script, 1, 0, args);
+		_vm->runScript(walkScript, 1, 0, args);
 	} else
 #endif
 	{
@@ -1564,8 +1564,8 @@ const SaveLoadEntry *Actor::getSaveLoadEntries() {
 	
 		MKLINE(Actor, layer, sleByte, VER_V8),
 	
-		MKLINE(Actor, talk_script, sleUint16, VER_V8),
-		MKLINE(Actor, walk_script, sleUint16, VER_V8),
+		MKLINE(Actor, talkScript, sleUint16, VER_V8),
+		MKLINE(Actor, walkScript, sleUint16, VER_V8),
 	
 		MKLINE(Actor, walkdata.destx, sleInt16, VER_V8),
 		MKLINE(Actor, walkdata.desty, sleInt16, VER_V8),

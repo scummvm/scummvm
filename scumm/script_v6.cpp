@@ -1740,7 +1740,7 @@ void Scumm_v6::o6_actorOps() {
 		a->layer = pop();
 		break;
 	case 228:										/* walk script */
-		a->walk_script = pop();
+		a->walkScript = pop();
 		break;
 	case 229:										/* stand */
 		a->stopActorMoving();
@@ -1759,8 +1759,8 @@ void Scumm_v6::o6_actorOps() {
 	case 234:										/* unfreeze actor */
 		a->moving &= ~MF_FROZEN;
 		break;
-	case 235:										/* talk_script */
-		a->talk_script = pop();
+	case 235:										/* talkScript */
+		a->talkScript = pop();
 		break;
 	default:
 		error("o6_actorOps: default case %d", b);

@@ -1151,10 +1151,10 @@ void Scumm_v8::o8_actorOps() {
 		a->turnToDirection(pop());
 		break;
 	case 0x83:		// SO_ACTOR_WALK_SCRIPT Set walk script for actor?
-		a->walk_script = pop();
+		a->walkScript = pop();
 		break;
 	case 0x84:		// SO_ACTOR_TALK_SCRIPT Set talk script for actor?
-		a->talk_script = pop();
+		a->talkScript = pop();
 		break;
 	case 0x85:		// SO_ACTOR_WALK_PAUSE
 		a->moving |= MF_FROZEN;
