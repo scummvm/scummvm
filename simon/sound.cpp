@@ -275,8 +275,8 @@ Sound::Sound(const byte game, const GameSpecificSettings *gss, const Common::Str
 				file->seek(0, SEEK_END);
 				int end = file->pos();
 				file->seek(0, SEEK_SET);
-				_filenums = (uint16 *)malloc(end / 3 + 1);
-				_offsets = (uint32 *)malloc((end / 6) * 4 + 1);
+				_filenums = (uint16 *)malloc((end / 6 + 1) * 2);
+				_offsets = (uint32 *)malloc((end / 6 + 1) * 4);
 
 				for (int i = 1; i <= end / 6; i++) {
 					_filenums[i] = file->readUint16BE();
