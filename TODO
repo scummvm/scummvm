@@ -288,6 +288,7 @@ SCUMM
   - Add support for SBNG sound resources for songs ^
   - Add support for sprites (Used by all HE90+ games, especially Spy Fox games)
   - Add support for wizImage compression types 2/3 (For freddicove)
+  - Add support for processWizImage mode 8 (For footdemo)
   - Add support for additional drawWizImage flags (cyx)
   - Add support for additional aux animation resources (cyx)
     (^ Need to find where they are used) 
