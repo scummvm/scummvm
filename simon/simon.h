@@ -483,7 +483,6 @@ public:
 	void o_unk_175();
 	void o_unk_176();
 	void o_pathfind(int x, int y, uint var_1, uint var_2);
-	void o_unk_179();
 	void o_force_unlock();
 	void o_force_lock();
 	void o_read_vgares_328();
@@ -497,7 +496,7 @@ public:
 	void o_setup_cond_c();
 	void setup_cond_c_helper();
 
-	void o_177();
+	void o_inventory_descriptions();
 
 	void lock();
 	void unlock();

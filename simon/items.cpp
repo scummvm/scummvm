@@ -969,8 +969,8 @@ int SimonState::runScript() {
 			}
 			break;
 
-		case 177:{
-				o_177();
+		case 177:{									/* Inventory descriptions */
+				o_inventory_descriptions();
 			}
 			break;
 
@@ -983,7 +983,7 @@ int SimonState::runScript() {
 			}
 			break;
 
-		case 179:{
+		case 179:{									/* Room descriptions */
 				uint b = getVarOrByte();
 				uint c = getVarOrByte();
 				uint a = getVarOrByte();
@@ -1217,7 +1217,7 @@ bool SimonState::o_unk_23(uint a) {
 	return 0;
 }
 
-void SimonState::o_177() {
+void SimonState::o_inventory_descriptions() {
 	uint a = getVarOrByte();
 	uint b = getVarOrByte();
 	const char *s = NULL;
