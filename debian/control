@@ -1,0 +1,15 @@
+Source: scummvm
+Section: contrib/games
+Priority: optional
+Maintainer: Bastien Nocera <hadess@hadess.net>
+Build-Depends: debhelper (>> 3.0.0), libsdl1.2-dev, libreadline4-dev, libncurses5-dev
+Standards-Version: 3.5.2
+
+Package: scummvm
+Architecture: any
+Depends: ${shlibs:Depends}
+Description: Engine to run some LucasArts adventure games
+ The "Script Creation Utility for Maniac Mansion Virtual Machine" (scummvm for
+ short) is an engine used to run a lot of LucasArts adventure games.
+ .
+ You will also need the data files from the game to be able to play it.

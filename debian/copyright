@@ -1,0 +1,16 @@
+This package was debianized by Bastien Nocera <hadess@hadess.net> on
+Fri,  5 Apr 2002 16:37:09 +0100.
+
+It was downloaded from http://prdownloads.sourceforge.net/scummvm/
+
+Upstream Author(s): ScummVM team <scummvm-devel@lists.sourceforge.net>
+
+Copyright:
+
+This program is free software; you can redistribute it and/or modify it
+under the terms of the GNU General Public License as published by the
+Free Software Foundation; either version 2, or (at your option) any
+later version.
+
+On Debian GNU/Linux systems, the complete text of the GNU General
+Public License can be found in `/usr/share/common-licenses/GPL'.

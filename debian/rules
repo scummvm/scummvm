@@ -1,0 +1,48 @@
+#!/usr/bin/make -f
+
+export DH_COMPAT=3
+
+ifneq (,$(findstring debug,$(DEB_BUILD_OPTIONS)))
+	CFLAGS += -g
+endif
+ifeq (,$(findstring nostrip,$(DEB_BUILD_OPTIONS)))
+	INSTALL_PROGRAM += -s
+endif
+
+build:
+	dh_testdir
+	$(MAKE)
+
+clean:
+	dh_testdir
+	dh_testroot
+	-$(MAKE) clean
+	dh_clean
+
+install: build
+	dh_testdir
+	dh_testroot
+	dh_clean -k
+	dh_installdirs
+	install -m0777 scummvm $(CURDIR)/debian/scummvm/usr/games/scummvm
+	install -m0644 scummvm.6 \
+		$(CURDIR)/debian/scummvm/usr/share/man/man6
+
+binary-arch: build install
+	dh_testdir
+	dh_testroot
+	dh_installdocs
+	dh_installchangelogs 
+	dh_installmanpages scummvm.6
+	dh_link
+	dh_strip
+	dh_compress
+	dh_fixperms
+	dh_installdeb
+	dh_shlibdeps
+	dh_gencontrol
+	dh_md5sums
+	dh_builddeb
+
+binary: binary-arch
+.PHONY: build clean binary-arch binary install
