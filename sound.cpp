@@ -1053,7 +1053,7 @@ int Scumm::playMP3CDTrack(int track, int num_loops, int start, int delay) {
 	unsigned int offset;
 	mad_timer_t duration;
 
-	g_scumm->_vars[g_scumm->VAR_MI1_TIMER] = 0;
+	_vars[VAR_MI1_TIMER] = 0;
 
 	if (_soundsPaused)
 		return 0;

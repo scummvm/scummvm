@@ -412,9 +412,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLin
 		g_system = scumm->_system;
 		g_mixer = &scumm->_mixer[0];
 
-		g_scumm->_sound_volume_master = 0;
-		g_scumm->_sound_volume_music = detector._music_volume;
-		g_scumm->_sound_volume_sfx = detector._sfx_volume;
+		scumm->_sound_volume_master = 0;
+		scumm->_sound_volume_music = detector._music_volume;
+		scumm->_sound_volume_sfx = detector._sfx_volume;
 
 		keypad_init();
 		load_key_mapping();

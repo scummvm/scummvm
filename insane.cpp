@@ -150,7 +150,7 @@ void SmushPlayer::parseIACT()
 
 	if (idx == MAX_STREAMER) {
 		for (idx = 0; idx < MAX_STREAMER; idx++) {
-			if (_imusTrk[idx] == 0 && g_scumm->_mixer->_channels[idx] == NULL) {
+			if (_imusTrk[idx] == 0 && g_mixer->_channels[idx] == NULL) {
 				_imusTrk[idx] = trk;
 				_imusSize[idx] = 0;
 				new_mixer = true;
@@ -252,9 +252,9 @@ void SmushPlayer::parseIACT()
 						trk, bpos, _imusRate[idx], _imusSubSize[idx]);
 
 			if (new_mixer) {
-				g_scumm->_mixer->play_stream(NULL, idx, buf, bpos, _imusRate[idx], flags);
+				g_mixer->play_stream(NULL, idx, buf, bpos, _imusRate[idx], flags);
 			} else {
-				g_scumm->_mixer->append(idx, buf, bpos, _imusRate[idx], flags);
+				g_mixer->append(idx, buf, bpos, _imusRate[idx], flags);
 			}
 
 			/* FIXME: append with re-used idx may cause problems
@@ -795,7 +795,7 @@ void SmushPlayer::parsePSAD()		// FIXME: Needs to append to
 
 	if (idx == MAX_STREAMER) {
 		for (idx = 0; idx < MAX_STREAMER; idx++) {
-			if (_psadTrk[idx] == 0 && g_scumm->_mixer->_channels[idx] == NULL) {
+			if (_psadTrk[idx] == 0 && g_mixer->_channels[idx] == NULL) {
 				_psadTrk[idx] = trk;
 				_saudSize[idx] = 0;
 				new_mixer = true;
@@ -846,10 +846,10 @@ void SmushPlayer::parsePSAD()		// FIXME: Needs to append to
 			debug(3, "trk %d: SDAT part len 0x%x rate %d", trk, sublen, _strkRate[idx]);
 
 			if (new_mixer) {
-				g_scumm->_mixer->play_stream(NULL, idx, buf, sublen, _strkRate[idx],
+				g_mixer->play_stream(NULL, idx, buf, sublen, _strkRate[idx],
 																		 SoundMixer::FLAG_UNSIGNED | SoundMixer::FLAG_AUTOFREE);
 			} else {
-				g_scumm->_mixer->append(idx, buf, sublen,
+				g_mixer->append(idx, buf, sublen,
 																_strkRate[idx], SoundMixer::FLAG_UNSIGNED | SoundMixer::FLAG_AUTOFREE);
 			}
 			break;
