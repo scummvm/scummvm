@@ -67,150 +67,26 @@
 	} while (0)
 
 #ifdef __PALM_OS__
-static int32 *codec37_table;
+static int32 *codec47_8x8_table_small_line1;
+static int32 *codec47_8x8_table_small_line2;
+static int32 *codec47_8x8_table_big_line1;
+static int32 *codec47_8x8_table_big_line2;
 static int16 *codec47_table;
 #else
-static int32 codec37_table[] = {
-       0,       1,       2,       3,       3,       3,
-       3,       2,       1,       0,       0,       0,
-       1,       2,       2,       1,       0,       0,
-       0,       0,       1,       2,       3,       3,
-       3,       3,       2,       1,       1,       1,
-       2,       2,       0,       2,       5,       7,
-       7,       7,       7,       7,       7,       5,
-       2,       0,       0,       0,       0,       0,
-       0,       0,       0,       0,       1,       3,
-       4,       6,       7,       7,       7,       7,
-       6,       4,       3,       1,      -1,       0,
-       0,       0,       0,       0,       0,       1,
-       2,       3,       5,       8,      13,      21,
-   65535,   65534,   65533,   65531,   65528,   65523,
-   65519,   65515,   65536,   65537,   65538,   65539,
-   65541,   65544,   65549,   65557,  131071,  131070,
-  131069,  131067,  131064,  131059,  131055,  131051,
-  131072,  131073,  131074,  131075,  131077,  131080,
-  131085,  131093,  196607,  196606,  196605,  196603,
-  196600,  196595,  196591,  196587,  196608,  196609,
-  196610,  196611,  196613,  196616,  196621,  196629,
-  262143,  262142,  262141,  262139,  262136,  262131,
-  262127,  262123,  327680,  327681,  327682,  327683,
-  327685,  327688,  327693,  327701,  393215,  393214,
-  393213,  393211,  393208,  393203,  393199,  393195,
-  524288,  524289,  524290,  524291,  524293,  524296,
-  524301,  524309,  589823,  589822,  589821,  589819,
-  589816,  589811,  589807,  589803,  851968,  851969,
-  851970,  851971,  851973,  851976,  851981,  851989,
-  917503,  917502,  917501,  917499,  917496,  917491,
-  917487,  917483, 1376256, 1376257, 1376258, 1376259,
- 1376261, 1376264, 1376269, 1376277, 1441791, 1441790,
- 1441789, 1441787, 1441784, 1441779, 1441775, 1441771,
-  -65536,  -65535,  -65534,  -65533,  -65531,  -65528,
-  -65523,  -65515,      -1,      -2,      -3,      -5,
-      -8,     -13,     -17,     -21, -131072, -131071,
- -131070, -131069, -131067, -131064, -131059, -131051,
-  -65537,  -65538,  -65539,  -65541,  -65544,  -65549,
-  -65553,  -65557, -196608, -196607, -196606, -196605,
- -196603, -196600, -196595, -196587, -131073, -131074,
- -131075, -131077, -131080, -131085, -131089, -131093,
- -327680, -327679, -327678, -327677, -327675, -327672,
- -327667, -327659, -262145, -262146, -262147, -262149,
- -262152, -262157, -262161, -262165, -524288, -524287,
- -524286, -524285, -524283, -524280, -524275, -524267,
- -458753, -458754, -458755, -458757, -458760, -458765,
- -458769, -458773, -851968, -851967, -851966, -851965,
- -851963, -851960, -851955, -851947, -786433, -786434,
- -786435, -786437, -786440, -786445, -786449, -786453,
--1114112,-1114111,-1114110,-1114109,-1114107,-1114104,
--1114099,-1114091,-1048577,-1048578,-1048579,-1048581,
--1048584,-1048589,-1048593,-1048597,-1376256,-1376255,
--1376254,-1376253,-1376251,-1376248,-1376243,-1376235,
--1310721,-1310722,-1310723,-1310725,-1310728,-1310733,
--1310737,       0,-1835016,-1900536,-1572882,-1638383,
--1507328,-1376262,-1441786,-1179661,-1245172,-1179648,
--1179623,-1048601,-1048581,-1114107, -917514, -983030,
- -917504, -786436, -851964, -851949, -720915, -655368,
- -655362, -720896, -720894, -720888, -589839, -589828,
- -655356, -655345, -524294, -524289, -589823, -589818,
- -458781, -458763, -458760, -458755, -524285, -524280,
- -524277, -524259, -393221, -393218, -458752, -458750,
- -458747, -327702, -327689, -327686, -327683, -327681,
- -393215, -393213, -393210, -393207, -393194, -262161,
- -262151, -262148, -262146, -327680, -327678, -327676,
- -327673, -327663, -196621, -196618, -196613, -196611,
- -196609, -262144, -262143, -262141, -262139, -262134,
- -262131, -131080, -131078, -131076, -131075, -131074,
- -131073, -196608, -196607, -196606, -196604, -196602,
- -196600,  -65547,  -65543,  -65541,  -65539,  -65538,
-  -65537, -131072, -131071, -131070, -131069, -131067,
- -131065, -131061,      -9,      -6,      -4,      -3,
-      -2,      -1,  -65536,  -65535,  -65534,  -65533,
-  -65532,  -65530,  -65527,   65505,   65513,   65518,
-   65522,   65525,   65529,   65531,   65532,   65533,
-   65534,   65535,-2031616,       1,       2,       3,
-       4,       5,       7,      11,      14,      18,
-      23,      31,  131063,  131066,  131068,  131069,
-  131070,  131071,   65536,   65537,   65538,   65539,
-   65540,   65542,   65545,  196597,  196601,  196603,
-  196605,  196606,  196607,  131072,  131073,  131074,
-  131075,  131077,  131079,  131083,  262136,  262138,
-  262140,  262142,  262143,  196608,  196609,  196610,
-  196611,  196612,  196614,  196616,  327667,  327670,
-  327675,  327677,  327679,  262144,  262145,  262147,
-  262149,  262154,  262157,  393199,  393209,  393212,
-  393214,  327680,  327682,  327684,  327687,  327697,
-  458730,  458743,  458746,  458749,  458751,  393217,
-  393219,  393222,  393225,  393238,  524283,  524286,
-  458752,  458754,  458757,  589795,  589813,  589816,
-  589821,  524291,  524296,  524299,  524317,  655354,
-  655359,  589825,  589830,  720881,  720892,  655364,
-  655375,  786424,  786430,  720896,  720898,  720904,
-  786451,  917485,  917500,  851972,  917504, 1048566,
-  983050, 1179643, 1114117, 1114137, 1245159, 1179648,
- 1310708, 1245197, 1507322, 1441798, 1507328, 1703919,
- 1638418, 1966072, 1900552, 2031616,       0,-1376262,
--1441786,-1179661,-1245172,-1179648,-1048581,-1114107,
- -917514, -983030, -917504, -786436, -851964, -851949,
- -720915, -655368, -655362, -720896, -720894, -720888,
- -589839, -589828, -655356, -655345, -524294, -524289,
- -589823, -589818, -458763, -458760, -458755, -524288,
- -524285, -524280, -524277, -393221, -393218, -458752,
- -458750, -458747, -327702, -327689, -327686, -327683,
- -327681, -393215, -393213, -393210, -393207, -393194,
- -262161, -262151, -262148, -262146, -262145, -327680,
- -327679, -327678, -327676, -327673, -327663, -196621,
- -196618, -196613, -196611, -196610, -196609, -262144,
- -262143, -262142, -262141, -262139, -262134, -262131,
- -131080, -131078, -131076, -131075, -131074, -131073,
- -196608, -196607, -196606, -196605, -196604, -196602,
- -196600,  -65547,  -65543,  -65541,  -65540,  -65539,
-  -65538,  -65537, -131072, -131071, -131070, -131069,
- -131068, -131067, -131065, -131061,      -9,      -6,
-      -5,      -4,      -3,      -2,      -1,  -65536,
-  -65535,  -65534,  -65533,  -65532,  -65531,  -65530,
-  -65527,   65513,   65518,   65522,   65525,   65529,
-   65531,   65532,   65533,   65534,   65535,-1507328,
-       1,       2,       3,       4,       5,       7,
-      11,      14,      18,      23,  131063,  131066,
-  131067,  131068,  131069,  131070,  131071,   65536,
-   65537,   65538,   65539,   65540,   65541,   65542,
-   65545,  196597,  196601,  196603,  196604,  196605,
-  196606,  196607,  131072,  131073,  131074,  131075,
-  131076,  131077,  131079,  131083,  262136,  262138,
-  262140,  262141,  262142,  262143,  196608,  196609,
-  196610,  196611,  196612,  196614,  196616,  327667,
-  327670,  327675,  327677,  327678,  327679,  262144,
-  262145,  262146,  262147,  262149,  262154,  262157,
-  393199,  393209,  393212,  393214,  393215,  327680,
-  327681,  327682,  327684,  327687,  327697,  458730,
-  458743,  458746,  458749,  458751,  393217,  393219,
-  393222,  393225,  393238,  524283,  524286,  458752,
-  458754,  458757,  589813,  589816,  589821,  524288,
-  524291,  524296,  524299,  655354,  655359,  589825,
-  589830,  720881,  720892,  655364,  655375,  786424,
-  786430,  720896,  720898,  720904,  786451,  917485,
-  917500,  851972,  917504, 1048566,  983050, 1179643,
- 1114117, 1179648, 1310708, 1245197, 1507322, 1441798,
- 1507328
+static int32 codec47_8x8_table_small_line1[] = {
+  0, 1, 2, 3, 3, 3, 3, 2, 1, 0, 0, 0, 1, 2, 2, 1,
+};
+
+static int32 codec47_8x8_table_small_line2[] = {
+  0, 0, 0, 0, 1, 2, 3, 3, 3, 3, 2, 1, 1, 1, 2, 2,
+};
+
+static int32 codec47_8x8_table_big_line1[] = {
+  0, 2, 5, 7, 7, 7, 7, 7, 7, 5, 2, 0, 0, 0, 0, 0,
+};
+
+static int32 codec47_8x8_table_big_line2[] = {
+  0, 0, 0, 0, 1, 3, 4, 6, 7, 7, 7, 7, 6, 4, 3, 1,
 };
 
 static int16 codec47_table[] = {
@@ -268,18 +144,18 @@ static int16 codec47_table[] = {
 };
 #endif
 
-void Codec47Decoder::makeTables37(int32 param) {
+void Codec47Decoder::makeTablesInterpolation(int param) {
 	int32 variable1, variable2;
 	int32 b1, b2;
-	int32 value_table37_1_2, value_table37_1_1, value_table37_2_2, value_table37_2_1;
+	int32 value_table47_1_2, value_table47_1_1, value_table47_2_2, value_table47_2_1;
 	int32 tableSmallBig[64], tmp, s;
-	int32 *table37_1 = 0, *table37_2 = 0, *ptr_small_big;
+	int32 *table47_1 = 0, *table47_2 = 0, *ptr_small_big;
 	byte *ptr;
 	int i, x, y;
 
 	if (param == 8) {
-		table37_1 = &codec37_table[32];
-		table37_2 = &codec37_table[48];
+		table47_1 = codec47_8x8_table_big_line1;
+		table47_2 = codec47_8x8_table_big_line2;
 		ptr = _tableBig + 384;
 		for (i = 0; i < 256; i++) {
 			*ptr = 0;
@@ -291,8 +167,8 @@ void Codec47Decoder::makeTables37(int32 param) {
 			ptr += 388;
 		}
 	} else if (param == 4) {
-		table37_1 = &codec37_table[0];
-		table37_2 = &codec37_table[16];
+		table47_1 = codec47_8x8_table_small_line1;
+		table47_2 = codec47_8x8_table_small_line2;
 		ptr = _tableSmall + 96;
 		for (i = 0; i < 256; i++) {
 			*ptr = 0;
@@ -304,36 +180,36 @@ void Codec47Decoder::makeTables37(int32 param) {
 			ptr += 128;
 		}
 	} else {
-		error("makeTables37: unknown param %d", param);
+		error("Codec47Decoder::makeTablesInterpolation: unknown param %d", param);
 	}
 
 	s = 0;
 	for (x = 0; x < 16; x++) {
-		value_table37_1_1 = table37_1[x];
-		value_table37_2_1 = table37_2[x];
+		value_table47_1_1 = table47_1[x];
+		value_table47_2_1 = table47_2[x];
 		for (y = 0; y < 16; y++) {
-			value_table37_1_2 = table37_1[y];
-			value_table37_2_2 = table37_2[y];
+			value_table47_1_2 = table47_1[y];
+			value_table47_2_2 = table47_2[y];
 
-			if (value_table37_2_1 == 0) {
+			if (value_table47_2_1 == 0) {
 				b1 = 0;
-			} else if (value_table37_2_1 == param - 1) {
+			} else if (value_table47_2_1 == param - 1) {
 				b1 = 1;
-			} else if (value_table37_1_1 == 0) {
+			} else if (value_table47_1_1 == 0) {
 				b1 = 2;
-			} else if (value_table37_1_1 == param - 1) {
+			} else if (value_table47_1_1 == param - 1) {
 				b1 = 3;
 			} else {
 				b1 = 4;
 			}
 
-			if (value_table37_2_2 == 0) {
+			if (value_table47_2_2 == 0) {
 				b2 = 0;
-			} else if (value_table37_2_2 == param - 1) {
+			} else if (value_table47_2_2 == param - 1) {
 				b2 = 1;
-			} else if (value_table37_1_2 == 0) {
+			} else if (value_table47_1_2 == 0) {
 				b2 = 2;
-			} else if (value_table37_1_2 == param - 1) {
+			} else if (value_table47_1_2 == param - 1) {
 				b2 = 3;
 			} else {
 				b2 = 4;
@@ -341,8 +217,8 @@ void Codec47Decoder::makeTables37(int32 param) {
 			
 			memset(tableSmallBig, 0, param * param * 4);
 
-			variable2 = abs(value_table37_2_2 - value_table37_2_1);
-			tmp = abs(value_table37_1_2 - value_table37_1_1);
+			variable2 = abs(value_table47_2_2 - value_table47_2_1);
+			tmp = abs(value_table47_1_2 - value_table47_1_1);
 			if (variable2 <= tmp) {
 				variable2 = tmp;
 			}
@@ -351,13 +227,13 @@ void Codec47Decoder::makeTables37(int32 param) {
 				int32 variable3, variable4;
 
 				if (variable2 > 0) {
-					// Linearly interpolate between value_table37_1_1 and value_table37_1_2
-					// respectively value_table37_2_1 and value_table37_2_2.
-					variable4 = (value_table37_1_1 * variable1 + value_table37_1_2 * (variable2 - variable1) + variable2 / 2) / variable2;
-					variable3 = (value_table37_2_1 * variable1 + value_table37_2_2 * (variable2 - variable1) + variable2 / 2) / variable2;
+					// Linearly interpolate between value_table47_1_1 and value_table47_1_2
+					// respectively value_table47_2_1 and value_table47_2_2.
+					variable4 = (value_table47_1_1 * variable1 + value_table47_1_2 * (variable2 - variable1) + variable2 / 2) / variable2;
+					variable3 = (value_table47_2_1 * variable1 + value_table47_2_2 * (variable2 - variable1) + variable2 / 2) / variable2;
 				} else {
-					variable4 = value_table37_1_1;
-					variable3 = value_table37_2_1;
+					variable4 = value_table47_1_1;
+					variable3 = value_table47_2_1;
 				}
 				ptr_small_big = &tableSmallBig[param * variable3 + variable4];
 				*ptr_small_big = 1;
@@ -425,7 +301,7 @@ void Codec47Decoder::makeTables37(int32 param) {
 	}
 }
 
-void Codec47Decoder::makeTables47(int32 width) {
+void Codec47Decoder::makeTables47(int width) {
 	if (_lastTableWidth == width)
 		return;
 
@@ -434,12 +310,10 @@ void Codec47Decoder::makeTables47(int32 width) {
 	int32 a, c, d;
 	int16 tmp;
 
-	int16 *tmp_ptr = _table;
-	int16 *ptr_table = codec47_table;
-	do {
-		*tmp_ptr++ = (int16)(ptr_table[1] * width + ptr_table[0]);
-		ptr_table += 2;
-	} while (tmp_ptr < &_table[255]);
+	for (int l = 0; l < 512; l += 2) {
+		_table[l >> 1] = (int16)(codec47_table[l + 1] * width + codec47_table[l]);
+	}
+
 	a = 0;
 	c = 0;
 	do {
@@ -643,8 +517,8 @@ void Codec47Decoder::init(int width, int height) {
 	deinit();
 	_width = width;
 	_height = height;
-	makeTables37(4);
-	makeTables37(8);
+	makeTablesInterpolation(4);
+	makeTablesInterpolation(8);
 
 	_frameSize = _width * _height;
 	_deltaSize = _frameSize * 3;
@@ -655,10 +529,8 @@ void Codec47Decoder::init(int width, int height) {
 }
 
 Codec47Decoder::Codec47Decoder() {
-#ifdef __PALM_OS__
-	_tableBig = (byte *)calloc(99328, sizeof(byte));
-	_tableSmall = (byte *)calloc(32768, sizeof(byte));
-#endif
+	_tableBig = (byte *)malloc(99328);
+	_tableSmall = (byte *)malloc(32768);
 	_deltaBuf = 0;
 }
 
@@ -671,13 +543,19 @@ void Codec47Decoder::deinit() {
 		_deltaBufs[0] = 0;
 		_deltaBufs[1] = 0;
 	}
+	if (_tableBig == NULL) {
+		free(_tableBig);
+		_tableBig = NULL;
+	}
+	if (_tableSmall == NULL) {
+		free(_tableSmall);
+		_tableSmall = NULL;
+	}
 }
 
 Codec47Decoder::~Codec47Decoder() {
 	deinit();
 #ifdef __PALM_OS__
-	free(_tableBig);
-	free(_tableSmall);
 #endif
 }
 
@@ -746,11 +624,17 @@ bool Codec47Decoder::decode(byte *dst, const byte *src) {
 #ifdef __PALM_OS__
 #include "scumm_globals.h" // init globals
 void Codec47_initGlobals() {
-	GSETPTR(codec37_table,	GBVARS_CODEC37TABLE_INDEX,	int32	, GBVARS_SCUMM)
+	GSETPTR(codec47_8x8_table_small_line1,	GBVARS_CODEC47_8X8TABLE_SMALL_LINE1_INDEX,	int32	, GBVARS_SCUMM)
+	GSETPTR(codec47_8x8_table_small_line2,	GBVARS_CODEC47_8X8TABLE_SMALL_LINE2_INDEX,	int32	, GBVARS_SCUMM)
+	GSETPTR(codec47_8x8_table_big_line1,	GBVARS_CODEC47_8X8TABLE_BIG_LINE1_INDEX,	int32	, GBVARS_SCUMM)
+	GSETPTR(codec47_8x8_table_big_line2,	GBVARS_CODEC47_8X8TABLE_BIG_LINE2_INDEX,	int32	, GBVARS_SCUMM)
 	GSETPTR(codec47_table,	GBVARS_CODEC47TABLE_INDEX,	int16	, GBVARS_SCUMM)
 }
 void Codec47_releaseGlobals() {
-	GRELEASEPTR(GBVARS_CODEC37TABLE_INDEX		, GBVARS_SCUMM)
+	GRELEASEPTR(GBVARS_CODEC47_8X8TABLE_SMALL_LINE1_INDEX		, GBVARS_SCUMM)
+	GRELEASEPTR(GBVARS_CODEC47_8X8TABLE_SMALL_LINE2_INDEX		, GBVARS_SCUMM)
+	GRELEASEPTR(GBVARS_CODEC47_8X8TABLE_BIG_LINE1_INDEX		, GBVARS_SCUMM)
+	GRELEASEPTR(GBVARS_CODEC47_8X8TABLE_BIG_LINE2_INDEX		, GBVARS_SCUMM)
 	GRELEASEPTR(GBVARS_CODEC47TABLE_INDEX		, GBVARS_SCUMM)
 }
 #endif

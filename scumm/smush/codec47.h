@@ -36,19 +36,16 @@ private:
 	const byte *_d_src, *_paramPtr;
 	int _d_pitch;
 	int32 _offset1, _offset2;
-#ifdef __PALM_OS__
 	byte *_tableBig;
 	byte *_tableSmall;
-#else
-	byte _tableBig[99328];
-	byte _tableSmall[32768];
-#endif
+//	byte _tableBig[99328];
+//	byte _tableSmall[32768];
 	int16 _table[256];
 	int32 _frameSize;
 	int _width, _height;
 
-	void makeTables47(int32 width);
-	void makeTables37(int32 param);
+	void makeTablesInterpolation(int param);
+	void makeTables47(int width);
 	void level1(byte *d_dst);
 	void level2(byte *d_dst);
 	void level3(byte *d_dst);
