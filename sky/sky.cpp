@@ -114,9 +114,9 @@ void SkyState::initialise(void) {
 	//initMouse();
 	initItemList();
 	//initScript();
-	initialiseGrids();
 	//initialiseRouter();
 	_skyText = getSkyText();
+	_grid = new SkyGrid(_skyDisk);
 	_skyLogic = new SkyLogic(_skyDisk);
 }
 

@@ -57,7 +57,7 @@ void SkyState::initialiseScreen(void) {
 
 	_system->init_size(FULL_SCREEN_WIDTH, FULL_SCREEN_HEIGHT);
 	_backScreen = (uint8 *)malloc(FULL_SCREEN_WIDTH * FULL_SCREEN_HEIGHT);
-	_gameGrid = (uint8 *)malloc(GRID_X * GRID_Y * 2);
+	//_gameGrid = (uint8 *)malloc(GRID_X * GRID_Y * 2);
 	_workPalette = (uint8 *)malloc(VGA_COLOURS * 3);
 
 	//blank the first 240 colors of the palette 
