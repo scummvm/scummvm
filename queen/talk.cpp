@@ -961,14 +961,12 @@ void Talk::speakSegment(
 			// It's the oracle!
 			// Dont turn AMAL animation off, and dont manually anim person
 			command = SPEAK_ORACLE;
-
-			warning("Oracle not yet handled!");
 			oracle = true;
-			// XXX k=PERSON_FRAMES[BNUM];
-			// XXX for(i=5;i<=8;i++) {
-			// XXX 	unpack(i,k,BANK);
-			// XXX 	k=k+1;
-			// XXX }
+			uint16 frameNum = _logic->personFrames(bobNum);
+			for (i = 5; i <= 8; ++i) {
+				_graphics->bankUnpack(i, frameNum, bankNum);
+				++frameNum;
+			}
 		}
 		else {
 			bob->animating = false;
@@ -1092,8 +1090,11 @@ void Talk::speakSegment(
 	_graphics->textClear(0,198);
 
 	if (oracle) {
-		// lines 1831-1339 in talk.c
-		warning("Oracle not yet handled!");
+		uint16 frameNum = _logic->personFrames(bobNum);
+		for (i = 1; i <= 4; ++i) {
+			_graphics->bankUnpack(i, frameNum, bankNum);
+			++frameNum;
+		}
 	}
 
 	// Ensure that the correct buffer frame is selected

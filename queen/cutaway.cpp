@@ -399,16 +399,39 @@ void Cutaway::actionSpecialMove(int index) {
 			}
 			break;
 
-		// cdint.cut - put camera on Joe
+        // Dinocam
+		case 15:
+			_graphics->cameraBob(-1);
+			while (_logic->display()->horizontalScroll() < 320) {
+				_logic->display()->horizontalScroll(_logic->display()->horizontalScroll() + 16);
+				if (_logic->display()->horizontalScroll() > 320) {
+					_logic->display()->horizontalScroll(320);
+				}
+				_logic->update();
+			}
+			_graphics->cameraBob(1);
+			break;
+
+		// cdint.cut / room 67 - put camera on Joe
 		case 16:
 			_graphics->cameraBob(0);
 			break;
-
 
 		case 19:
 			_logic->gameState(VAR_AZURA_IN_LOVE, 1);
 			break;
 
+        // Pan right from Joe
+		case 20:
+			_graphics->cameraBob(-1);
+			while (_logic->display()->horizontalScroll() < 320) {
+				_logic->display()->horizontalScroll(_logic->display()->horizontalScroll() + 16);
+				if (_logic->display()->horizontalScroll() > 320) {
+					_logic->display()->horizontalScroll(320);
+				}
+				_logic->update();
+			}
+			break;
 
 		case 21:
 			_logic->display()->palCustomLightsOff(_logic->currentRoom());
@@ -423,6 +446,48 @@ void Cutaway::actionSpecialMove(int index) {
 			_logic->area(ROOM_FLODA_FRONTDESK, 7)->mapNeighbours = ABS(_logic->area(ROOM_FLODA_FRONTDESK, 7)->mapNeighbours);
 			break;
 
+		case 24: {
+			int i = _graphics->bob(0)->x - 160;
+			if (i < 0) {
+				i = 0;
+			}
+			else if (i > 320) {
+				i = 320;
+			}
+			_graphics->cameraBob(-1);
+			if (i < _logic->display()->horizontalScroll()) {
+				while (_logic->display()->horizontalScroll() > i) {
+					_logic->display()->horizontalScroll(_logic->display()->horizontalScroll() - 16);
+					if (_logic->display()->horizontalScroll() < i) {
+						_logic->display()->horizontalScroll(i);
+					}
+					_logic->update();
+				}
+			}
+			else {
+				while (_logic->display()->horizontalScroll() < i) {
+					_logic->display()->horizontalScroll(_logic->display()->horizontalScroll() + 16);
+					if (_logic->display()->horizontalScroll() > i ) {
+						_logic->display()->horizontalScroll(i);
+					}
+				}
+				_logic->update();
+			}
+			_graphics->cameraBob(0);
+			}
+			break;
+
+		// c69g.CUT - Pan left 320 to 144
+		case 26:
+			_graphics->cameraBob(-1);
+			while (_logic->display()->horizontalScroll() > 144) {
+				_logic->display()->horizontalScroll(_logic->display()->horizontalScroll() - 8);
+				if (_logic->display()->horizontalScroll() < 144) {
+					_logic->display()->horizontalScroll(144);
+				}
+				_logic->update();
+			}
+			break;
 
 		// c75b.cut - Lightning hits plane
 		case 28:
@@ -843,7 +908,7 @@ void Cutaway::changeRooms(CutawayObject &object) {
 			mode = RDM_FADE_JOE_XY;
 	}
 
-	_logic->roomDisplay(_logic->currentRoom(), mode, 0, _comPanel, true);
+	_logic->roomDisplay(_logic->currentRoom(), mode, object.scale, _comPanel, true);
 
 	_currentImage = _logic->numFrames();
 
@@ -1060,9 +1125,10 @@ byte *Cutaway::handleAnimation(byte *ptr, CutawayObject &object) {
 		
 		debug(0, "----- Complex cutaway animation (animType = %i) -----", object.animType);
 
-		if (/*(P_BNUM==1) &&*/ (_logic->currentRoom() == 47 || _logic->currentRoom() == 63)) {
-			// The oracle
-			warning("The oracle is not yet handled");
+		if ((_logic->currentRoom() == 47 || _logic->currentRoom() == 63) &&
+			objAnim[0].object == 1) {
+			//CR 2 - 3/3/95, Special harcoded section to make Oracle work...
+			makeComplexAnimation(_logic->personFrames(1) - 1,  objAnim, frameCount);
 		}
 		else {
 			_currentImage = makeComplexAnimation(_currentImage, objAnim, frameCount);
@@ -1082,14 +1148,14 @@ byte *Cutaway::handleAnimation(byte *ptr, CutawayObject &object) {
 			BobSlot *bob = _graphics->bob(objAnim[i].object);
 			bob->frameNum = objAnim[i].originalFrame;
 			bob->move(objAnim[i].mx, objAnim[i].my,	(object.specialMove > 0) ? object.specialMove : 4);
+			// Boat room hard coded
+			if (_logic->currentRoom() == ROOM_TEMPLE_OUTSIDE) {
+				BobSlot *bobJoe = _graphics->bob(0);
+				if (bobJoe->x < 320) {
+					bobJoe->move(bobJoe->x + 346, bobJoe->y,	4);
+				}
+			}
 		}
-	}
-
-	// Boat room hard coded
-	if (_logic->currentRoom() == ROOM_TEMPLE_OUTSIDE) {
-		BobSlot *bob = _graphics->bob(0);
-		if (bob->x < 320)
-			bob->move(bob->x + 346, bob->y,	4);
 	}
 
 	// Normal cutaway

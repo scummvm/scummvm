@@ -232,6 +232,7 @@ public:
 	void animErase(uint16 bobNum);
 	void animReset(uint16 bobNum);
 	void animSetup(const GraphicData *gd, uint16 firstImage, uint16 bobNum, bool visible); // FIND_GRAPHIC_ANIMS
+	uint16 personFrames(uint16 bobNum) const { return _personFrames[bobNum]; }
 
 	void joeSetupFromBanks(const char *animBank, const char *standBank);
 

@@ -1225,7 +1225,7 @@ void Logic::roomSetup(const char *room, int comPanel, bool inCutaway) {
 
 void Logic::roomDisplay(uint16 room, RoomDisplayMode mode, uint16 scale, int comPanel, bool inCutaway) {
 
-	debug(9, "Logic::roomDisplay(%d, %d, %d, %d, %d)", room, mode, scale, comPanel, inCutaway);
+	debug(0, "Logic::roomDisplay(%d, %d, %d, %d, %d)", room, mode, scale, comPanel, inCutaway);
 
 	roomErase();
 
@@ -1646,7 +1646,7 @@ ObjectData *Logic::joeSetupInRoom(bool autoPosition, uint16 scale) {
 		}
 	}
 
-	debug(0, "Logic::joeSetupInRoom() - oldx=%d, oldy=%d", oldx, oldy);
+	debug(0, "Logic::joeSetupInRoom() - oldx=%d, oldy=%d scale=%d", oldx, oldy, scale);
 
 	if (scale > 0 && scale < 100) {
 		_joe.scale = scale;
