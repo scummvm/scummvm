@@ -240,8 +240,8 @@ begin_credits("Credits");
 	add_person("Jerome Fisher", "KingGuppy", "MT-32 emulator");
 	add_person("Jochen Hoenicke", "hoenicke", "Speaker &amp; PCjr sound support, Adlib work");
   end_section();
-  
-  
+
+
   begin_section("Retired Team Members");
 	add_person("Ralph Brorsen", "painelf", "Help with GUI implementation");
 	add_person('Vincent Hamm', 'yazoo', "Co-Founder");
@@ -252,8 +252,8 @@ begin_credits("Credits");
 	add_person('Ludvig Strigeus', 'ludde', "Original ScummVM and SimonVM author");
 	add_person("Lionel Ulmer", "bbrox", "Port: X11");
   end_section();
-  
-  
+
+
   begin_section("Contributors");
 	add_person("Tore Anderson", "tore", "Packaging for Debian GNU/Linux");
 	add_person("Stuart Caie", "", "Decoders for Simon 1 Amiga data files");
@@ -272,12 +272,12 @@ begin_credits("Credits");
 	add_person("Tim ???", "realmz", "Initial MI1 CD music support");
   end_section();
 
-  
+
   add_paragraph("And to all the contributors, users, and beta testers we've missed. Thanks!");
-  
+
   # HACK!
   $max_name_width = 15;
-  
+
   begin_section("Special thanks to");
 	add_person("Sander Buskens", "", "For his work on the initial reversing of Monkey2");
 	add_person("", "Canadacow", "For the original MT-32 emulator");
@@ -287,21 +287,26 @@ begin_credits("Credits");
 	add_person("Jimmi Th&oslash;gersen", "", "For ScummRev, and much obscure code/documentation");
 	add_person("", "Tristan", "For additional work on the original MT-32 emulator");
   end_section();
-  
+
   # HACK!
   $Text::Wrap::columns = 46 if $mode eq "CPP";
-  
+
   add_paragraph(
   "Tony Warriner and everyone at Revolution Software Ltd. for sharing ".
   "with us the source of some of their brilliant games, allowing us to ".
   "release Beneath a Steel Sky as freeware... and generally being ".
   "supportive above and beyond the call of duty.");
-  
+
   add_paragraph(
   "John Passfield and Steve Stamatiadis for sharing the source of their ".
   "classic title, Flight of the Amazon Queen and also being incredibly ".
   "supportive.");
-  
+
+  add_paragraph(
+  "Joe Pearce from The Wyrmkeep Entertainment Co. for sharing the source ".
+  "of their famous title Inherit the Earth and always prompt replies to ".
+  "our questions.");
+
   add_paragraph(
   "Aric Wilmunder, Ron Gilbert, David Fox, Vince Lee, and all those at ".
   "LucasFilm/LucasArts who made SCUMM the insane mess to reimplement ".
