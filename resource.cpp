@@ -564,10 +564,9 @@ void Scumm::ensureResourceLoaded(int type, int i) {
 
 	loadResource(type, i);
 
-#if !defined(FULL_THROTTLE)
-	if (type==rtRoom && i==_roomResource)
-		_vars[VAR_ROOM_FLAG] = 1;
-#endif
+	if(!(_features & GF_AFTER_V7))
+		if (type==rtRoom && i==_roomResource)
+			_vars[VAR_ROOM_FLAG] = 1;
 }
 
 int Scumm::loadResource(int type, int index) {

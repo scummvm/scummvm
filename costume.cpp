@@ -674,7 +674,7 @@ void CostumeRenderer::loadCostume(int id) {
 	
 	if (_vm->_features&GF_AFTER_V6) {
 		_ptr += 8;
-        } else if(!(_features&GF_SMALL_HEADER)) {
+        } else if(!(_vm->_features&GF_SMALL_HEADER)) {
 		_ptr += 2;
 	}
 
@@ -711,25 +711,26 @@ void Scumm::initActorCostumeData(Actor *a) {
 }
 
 byte CostumeRenderer::drawOneSlot(Actor *a, int slot) {
-#if !defined(FULL_THROTTLE)
-	int i;
-	int code;
-	CostumeData *cd = &a->cost;
-
-	if (cd->curpos[slot]==0xFFFF || cd->stopped & (1<<slot))
-		return 0;
 	
-	i = cd->curpos[slot]&0x7FFF;
-	_frameptr = _loaded._ptr + READ_LE_UINT16(_loaded._ptr + _loaded._numColors + slot*2 + 10);
-	code = _loaded._dataptr[i]&0x7F;
+	if(!(_vm->_features & GF_AFTER_V7)) {
+		int i;
+		int code;
+		CostumeData *cd = &a->cost;
+	
+		if (cd->curpos[slot]==0xFFFF || cd->stopped & (1<<slot))
+			return 0;
+	
+		i = cd->curpos[slot]&0x7FFF;
+		_frameptr = _loaded._ptr + READ_LE_UINT16(_loaded._ptr + _loaded._numColors + slot*2 + 10);
+		code = _loaded._dataptr[i]&0x7F;
 
-	_srcptr = _loaded._ptr + READ_LE_UINT16(_frameptr + code*2);
+		_srcptr = _loaded._ptr + READ_LE_UINT16(_frameptr + code*2);
 
-	if (code != 0x7B) {
-		if ( !(_vm->_features & GF_OLD256) || code <0x79)
-			return mainRoutine(a, slot, code);
+		if (code != 0x7B) {
+			if ( !(_vm->_features & GF_OLD256) || code <0x79)
+				return mainRoutine(a, slot, code);
+		}
 	}
-#endif
 
 	return 0;
 

@@ -815,99 +815,94 @@ void Scumm::processActors() {
 	} while (ac++,--cnt);
 }
 
-#if !defined(FULL_THROTTLE)
 void Scumm::drawActorCostume(Actor *a) {
-	CostumeRenderer cr;
-
-	if (a==NULL || !a->needRedraw)
-		return;
-
-	a->needRedraw = false;
-
-	setupActorScale(a);
-
-	cr._actorX = a->x - virtscr->xstart;
-	cr._actorY = a->y - a->elevation;
-	cr._scaleX = a->scalex;
-	cr._scaleY = a->scaley;
-
-	cr._outheight = virtscr->height;
-	cr._vm = this;
-
-	cr._zbuf = a->mask;
-	if (cr._zbuf > gdi._numZBuffer)
-		cr._zbuf = (byte)gdi._numZBuffer;
-	if (a->forceClip)
-		cr._zbuf = a->forceClip;
+	if(!(_features & GF_AFTER_V7)) {
+		CostumeRenderer cr;
 	
-	cr._shadow_table = _shadowPalette;
+		if (a==NULL || !a->needRedraw)
+			return;
 
-	cost_setCostume(&cr, a->costume);
-	cost_setPalette(&cr, a->palette);
-	cost_setFacing(&cr, a);
+		a->needRedraw = false;
 
-	a->top = 0xFF;
+		setupActorScale(a);
+
+		cr._actorX = a->x - virtscr->xstart;
+		cr._actorY = a->y - a->elevation;
+		cr._scaleX = a->scalex;
+		cr._scaleY = a->scaley;
+
+		cr._outheight = virtscr->height;
+		cr._vm = this;
+
+		cr._zbuf = a->mask;
+		if (cr._zbuf > gdi._numZBuffer)
+			cr._zbuf = (byte)gdi._numZBuffer;
+		if (a->forceClip)
+			cr._zbuf = a->forceClip;
 	
-	a->bottom = 0;
+		cr._shadow_table = _shadowPalette;
 
-	/* if the actor is partially hidden, redraw it next frame */
-	if(cr.drawCostume(a)&1) {
-		a->needBgReset = true;
-		a->needRedraw = true;
+		cost_setCostume(&cr, a->costume);
+		cost_setPalette(&cr, a->palette);
+		cost_setFacing(&cr, a);
+
+		a->top = 0xFF;
+	
+		a->bottom = 0;
+
+		/* if the actor is partially hidden, redraw it next frame */
+		if(cr.drawCostume(a)&1) {
+			a->needBgReset = true;
+			a->needRedraw = true;
+		}
+	} else {
+		AkosRenderer ar;
+
+		if (a==NULL || !a->needRedraw)
+			return;
+
+		a->needRedraw = false;
+
+		setupActorScale(a);
+
+		ar.x = a->x - virtscr->xstart;
+		ar.y = a->y - a->elevation;
+		ar.scale_x = a->scalex;
+		ar.scale_y = a->scaley;
+		ar.clipping = a->forceClip;
+		if (ar.clipping == 100) {
+			ar.clipping = a->mask;
+			if (ar.clipping > (byte)gdi._numZBuffer)
+				ar.clipping = gdi._numZBuffer;
+		}
+		ar.charsetmask = _vars[VAR_CHARSET_MASK]!=0;
+	
+		ar.outptr = getResourceAddress(rtBuffer, 1) + virtscr->xstart;
+		ar.outwidth = virtscr->width;
+		ar.outheight = virtscr->height;
+	
+		ar.shadow_mode = a->shadow_mode;
+		ar.shadow_table = _shadowPalette;
+	
+		akos_setCostume(&ar, a->costume);
+		akos_setPalette(&ar, a->palette);
+		akos_setFacing(&ar, a);
+	
+		ar.dirty_id = a->number;
+	
+		ar.cd = &a->cost;
+	
+		ar.draw_top = a->top = 0x7fffffff;
+		ar.draw_bottom = a->bottom = 0;
+		akos_drawCostume(&ar);
+		a->top = ar.draw_top;
+		a->bottom = ar.draw_bottom;
 	}
 }
-#else
-void Scumm::drawActorCostume(Actor *a) {
-	AkosRenderer ar;
-
-	if (a==NULL || !a->needRedraw)
-		return;
-
-	a->needRedraw = false;
-
-	setupActorScale(a);
-
-	ar.x = a->x - virtscr->xstart;
-	ar.y = a->y - a->elevation;
-	ar.scale_x = a->scalex;
-	ar.scale_y = a->scaley;
-	ar.clipping = a->forceClip;
-	if (ar.clipping == 100) {
-		ar.clipping = a->mask;
-		if (ar.clipping > (byte)gdi._numZBuffer)
-			ar.clipping = gdi._numZBuffer;
-	}
-	ar.charsetmask = _vars[VAR_CHARSET_MASK]!=0;
-
-	ar.outptr = getResourceAddress(rtBuffer, 1) + virtscr->xstart;
-	ar.outwidth = virtscr->width;
-	ar.outheight = virtscr->height;
-
-	ar.shadow_mode = a->shadow_mode;
-	ar.shadow_table = _shadowPalette;
-
-	akos_setCostume(&ar, a->costume);
-	akos_setPalette(&ar, a->palette);
-	akos_setFacing(&ar, a);
-
-	ar.dirty_id = a->number;
-
-	ar.cd = &a->cost;
-	
-	ar.draw_top = a->top = 0x7fffffff;
-	ar.draw_bottom = a->bottom = 0;
-	akos_drawCostume(&ar);
-	a->top = ar.draw_top;
-	a->bottom = ar.draw_bottom;
-}
-#endif
 
 void Scumm::actorAnimate(Actor *a) {
-#if defined(FULL_THROTTLE)
 	byte *akos;
-#else
 	LoadedCostume lc;
-#endif
 
 	if (a==NULL || a->costume == 0)
 		return;
@@ -916,16 +911,19 @@ void Scumm::actorAnimate(Actor *a) {
 	if (a->animProgress >= a->animSpeed) {
 		a->animProgress = 0;
 
-#if defined(FULL_THROTTLE)
-		akos = getResourceAddress(rtCostume, a->costume);
-		assert(akos);
-		if (akos_increaseAnims(akos, a)) {
-#else
-		loadCostume(&lc, a->costume);
-		if (cost_increaseAnims(&lc, a)) {
-#endif
-			a->needRedraw = true;
-			a->needBgReset = true;
+		if (_features & GF_AFTER_V7) {
+			akos = getResourceAddress(rtCostume, a->costume);
+			assert(akos);
+			if (akos_increaseAnims(akos, a)) {
+				a->needRedraw = true;
+				a->needBgReset = true;
+			}
+		} else {
+			loadCostume(&lc, a->costume);
+			if (cost_increaseAnims(&lc, a)) {
+				a->needRedraw = true;
+				a->needBgReset = true;
+			}
 		}
 	}
 }

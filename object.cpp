@@ -532,46 +532,46 @@ void Scumm::setupRoomObject(ObjectData *od, byte *room) {
 		else
 		        od->obj_nr = READ_LE_UINT16(&(cdhd->v5.obj_id));
 	
-#if !defined(FULL_THROTTLE)
-	if (_features & GF_AFTER_V6) {
-		od->width = READ_LE_UINT16(&cdhd->v6.w);
-		od->height = READ_LE_UINT16(&cdhd->v6.h);
-		od->x_pos = ((int16)READ_LE_UINT16(&cdhd->v6.x));
-		od->y_pos = ((int16)READ_LE_UINT16(&cdhd->v6.y));
-		if (cdhd->v6.flags == 0x80) {
-			od->parentstate = 1;
+	if(!(_features & GF_AFTER_V7)) {
+		if (_features & GF_AFTER_V6) {
+			od->width = READ_LE_UINT16(&cdhd->v6.w);
+			od->height = READ_LE_UINT16(&cdhd->v6.h);
+			od->x_pos = ((int16)READ_LE_UINT16(&cdhd->v6.x));
+			od->y_pos = ((int16)READ_LE_UINT16(&cdhd->v6.y));
+			if (cdhd->v6.flags == 0x80) {
+				od->parentstate = 1;
+			} else {
+				od->parentstate = (cdhd->v6.flags&0xF);
+			}
+			od->parent = cdhd->v6.parent;
+			od->actordir = cdhd->v6.actordir;
 		} else {
-			od->parentstate = (cdhd->v6.flags&0xF);
+			od->width = cdhd->v5.w<<3;
+			od->height = cdhd->v5.h<<3;
+			od->x_pos = cdhd->v5.x<<3;
+			od->y_pos = cdhd->v5.y<<3;
+			if (cdhd->v5.flags == 0x80) {
+				od->parentstate = 1;
+			} else {
+				od->parentstate = (cdhd->v5.flags&0xF);
+			}
+			od->parent = cdhd->v5.parent;
+			od->walk_x = READ_LE_UINT16(&cdhd->v5.walk_x);
+			od->walk_y = READ_LE_UINT16(&cdhd->v5.walk_y);
+			od->actordir = cdhd->v5.actordir;
 		}
-		od->parent = cdhd->v6.parent;
-		od->actordir = cdhd->v6.actordir;
 	} else {
-		od->width = cdhd->v5.w<<3;
-		od->height = cdhd->v5.h<<3;
-		od->x_pos = cdhd->v5.x<<3;
-		od->y_pos = cdhd->v5.y<<3;
-		if (cdhd->v5.flags == 0x80) {
-			od->parentstate = 1;
-		} else {
-			od->parentstate = (cdhd->v5.flags&0xF);
-		}
-		od->parent = cdhd->v5.parent;
-		od->walk_x = READ_LE_UINT16(&cdhd->v5.walk_x);
-		od->walk_y = READ_LE_UINT16(&cdhd->v5.walk_y);
-		od->actordir = cdhd->v5.actordir;
+		od->parent = cdhd->v7.parent;
+		od->parentstate = cdhd->v7.parentstate;
+
+		imhd = (ImageHeader*)findResourceData(MKID('IMHD'), room + od->offs_obim_to_room);
+		od->x_pos = imhd->v7.x_pos;
+		od->y_pos = imhd->v7.y_pos;
+		od->width = imhd->v7.width;
+		od->height = imhd->v7.height;
+		od->actordir = imhd->v7.actordir;
+
 	}
-#else
-	od->parent = cdhd->parent;
-	od->parentstate = cdhd->parentstate;
-
-	imhd = (ImageHeader*)findResourceData(MKID('IMHD'), room + od->offs_obim_to_room);
-	od->x_pos = imhd->x_pos;
-	od->y_pos = imhd->y_pos;
-	od->width = imhd->width;
-	od->height = imhd->height;
-	od->actordir = imhd->actordir;
-
-#endif
 	od->fl_object_index = 0;
 }
 
@@ -1049,8 +1049,8 @@ void Scumm::setCursorImg(uint img, uint room, uint imgindex) {
 	w = READ_LE_UINT16(&foir.cdhd->v6.w)>>3;
 	h = READ_LE_UINT16(&foir.cdhd->v6.h)>>3;
 #else
-	w = READ_LE_UINT16(&foir.imhd->width)>>3;
-	h = READ_LE_UINT16(&foir.imhd->height)>>3;
+	w = READ_LE_UINT16(&foir.imhd->v7.width)>>3;
+	h = READ_LE_UINT16(&foir.imhd->v7.height)>>3;
 #endif
 
 	dataptr = findResource(IMxx_tags[imgindex],foir.obim);
