@@ -38,11 +38,11 @@ public:
 public:
 
 	iterator pushFront(const T& element) {
-		return insert(begin(), element);
+		return insert(Common::List<T>::begin(), element);
 	}
 
 	iterator pushBack(const T& element) {
-		return insert(end(), element);
+		return insert(Common::List<T>::end(), element);
 	}
 
 	iterator insert(iterator pos, const T& element) {
@@ -51,11 +51,11 @@ public:
 	}
 
 	iterator pushFront() {
-		return insert(begin());
+		return insert(Common::List<T>::begin());
 	}
 
 	iterator pushBack() {
-		return insert(end());
+		return insert(Common::List<T>::end());
 	}
 
 	iterator insert(iterator pos) {
@@ -64,17 +64,17 @@ public:
 	}
 
 	iterator pushFront(const T& element, CompareFunction* compareFunction) {
-		return insert(begin(), element, compareFunction);
+		return insert(Common::List<T>::begin(), element, compareFunction);
 	}
 
 	iterator pushBack(const T& element, CompareFunction* compareFunction) {
-		return insert(end(), element, compareFunction);
+		return insert(Common::List<T>::end(), element, compareFunction);
 	}
 
 	iterator insert(iterator pos, const T& element, CompareFunction* compareFunction) {
 		int res;
 
-		for (iterator i = begin(); i != end(); ++i) {
+		for (iterator i = Common::List<T>::begin(); i != Common::List<T>::end(); ++i) {
 			res = compareFunction(element, i.operator*());
 			if	(res < 0) {
 				return insert(i, element);
@@ -88,7 +88,7 @@ public:
 		int res;
 
 		--i;		
-		while (i != end()) {
+		while (i != Common::List<T>::end()) {
 			res = compareFunction(i.operator*(), pos.operator*());
 			if (res <= 0) {
 
@@ -107,7 +107,7 @@ public:
 		int res;
 		
 		++i;
-		while (i != end()) {
+		while (i != Common::List<T>::end()) {
 			res = compareFunction(i.operator*(), pos.operator*());
 			if (res >= 0) {
 
@@ -121,7 +121,7 @@ public:
 	}
 
 	iterator eraseAndPrev(iterator pos) {
-		assert(pos != end());
+		assert(pos != Common::List<T>::end());
 		iterator res(pos);
 
 		--res;
@@ -130,7 +130,7 @@ public:
 	}
 
 	void remove(const T* val) {
-		for (iterator i = begin(); i != end(); ++i)
+		for (iterator i = Common::List<T>::begin(); i != Common::List<T>::end(); ++i)
 			if(val == i.operator->()) {
 				erase(i);
 				return;
@@ -139,7 +139,7 @@ public:
 
 	bool locate(const T* val, iterator& foundedIterator) {
 
-		for (iterator i = begin(); i != end(); ++i)
+		for (iterator i = Common::List<T>::begin(); i != Common::List<T>::end(); ++i)
 			if (val == i.operator->())
 			{
 				foundedIterator = i;
