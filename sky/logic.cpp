@@ -400,8 +400,159 @@ void SkyLogic::cursor() {
 	error("Stub: SkyLogic::cursor");
 }
 
+/*
+static uint16 clickTable[] = {
+	ID_FOSTER,
+	ID_JOEY,
+	ID_JOBS,
+	ID_LAMB,
+	ID_ANITA,
+	ID_SON,
+	ID_DAD,
+	ID_MONITOR,
+	ID_SHADES,
+	MINI_SS,
+	FULL_SS,
+	ID_FOREMAN,
+	ID_RADMAN,
+	ID_GALLAGER_BEL,
+	ID_BURKE,
+	ID_BODY,
+	ID_HOLO,
+	ID_TREVOR,
+	ID_ANCHOR,
+	ID_WRECK_GUARD,
+	ID_SKORL_GUARD,
+
+	// BASE LEVEL
+	ID_SC30_HENRI,
+	ID_SC31_GUARD,
+	ID_SC32_VINCENT,
+	ID_SC32_GARDENER,
+	ID_SC32_BUZZER,
+	ID_SC36_BABS,
+	ID_SC36_BARMAN,
+	ID_SC36_COLSTON,
+	ID_SC36_GALLAGHER,
+	ID_SC36_JUKEBOX,
+	ID_DANIELLE,
+	ID_SC42_JUDGE,
+	ID_SC42_CLERK,
+	ID_SC42_PROSECUTION,
+	ID_SC42_JOBSWORTH,
+
+	// UNDERWORLD
+	ID_MEDI,
+	ID_WITNESS,
+	ID_GALLAGHER,
+	ID_KEN,
+	ID_SC76_ANDROID_2,
+	ID_SC76_ANDROID_3,
+	ID_SC81_FATHER,
+	ID_SC82_JOBSWORTH,
+
+	// LINC WORLD
+	ID_HOLOGRAM_B,
+	12289
+};
+*/
+
 void SkyLogic::talk() {
-	error("Stub: SkyLogic::talk");
+	// first count through the frames
+	// just frames - nothing tweeky
+	// the speech finishes when the timer runs out &
+	// not when the animation finishes
+	// this routine is very task specific
+
+	// TODO: Check for mouse clicking
+
+	// Are we allowed to click
+	
+#if 0
+	for (int i = 0; i < ARRAYSIZE(clickTable); i++) {
+		if (clickTable[i] == (uint16)_scriptVariables[CUR_ID]) {
+			if (_compact->extCompact->spTextId == 0xffff) { // is this a voc file?
+				warning("fnStopVoc not implemented");
+				//TODO: fnStopVoc
+				if (_compact->grafixProg) {
+					_compact->frame = _compact->getToFlag; // set character to stand
+					_compact->grafixProg = 0;
+				}
+			} else {
+				if (_compact->grafixProg) // if anim flag stop it
+					_compact->frame = _compact->getToFlag;
+
+				if (_compact->extCompact->spTextId) {
+					Compact *cpt = SkyState::fetchCompact(_compact->extCompact->spTextId); // get text id to kill
+					cpt->status = 0; // kill the text
+				}
+			}
+
+			_compact->logic = L_SCRIPT;
+			logicScript();
+			return;
+		}
+	}
+#endif
+
+	// If speech is allowed then check for it to finish before finishing animations
+
+	if (false // system_flags & (1 << sf_play_vocs) // sblaster?
+			|| _compact->extCompact->spTextId == 0xffff // is this a voc file?
+			|| false) {// !(system_flags & (1 << sf_voc_playing))) { // finished?
+
+		_compact->logic = L_SCRIPT; // restart character control
+
+		if (_compact->grafixProg) {
+			_compact->frame = _compact->getToFlag; // set character to stand
+			_compact->grafixProg = 0;
+		}
+
+		logicScript();
+		return;
+	}
+
+	uint16 *graphixProg = _compact->grafixProg; // no anim file?
+	if (graphixProg) {
+		if (*graphixProg) {
+			// we will force the animation to finish 3 game cycles
+			// before the speech actually finishes - because it looks good.
+
+			if (_compact->extCompact->spTime != 3) {
+				_compact->frame = *(graphixProg + 2) + _compact->offset;
+				graphixProg += 3;
+				_compact->grafixProg = graphixProg;
+				goto past_speech_anim;
+			}
+
+			if (false) { //system_flags & (1 << sf_voc_playing)) {
+				_compact->extCompact->spTime++;
+				return;
+			}
+		}
+
+		_compact->frame = _compact->getToFlag;
+		_compact->grafixProg = 0;
+	}
+
+past_speech_anim:
+	if (--(_compact->extCompact->spTime))
+		return;
+
+	// ok, speech has finished
+
+	if (false) { //system_flags & (1 << sf_voc_playing)) {
+		_compact->extCompact->spTime++;
+		return;
+	}
+
+	if (_compact->extCompact->spTextId) {
+		Compact *cpt = SkyState::fetchCompact(_compact->extCompact->spTextId); // get text id to kill
+		cpt->status = 0; // kill the text
+	}
+
+	_compact->logic = L_SCRIPT;
+	logicScript();
 }
 
 void SkyLogic::listen() {
