@@ -82,6 +82,9 @@ void IMuseDigital::startSound(int soundId, const char *soundName, int soundType,
 
 	Track *track = _track[l];
 	for (;;) {
+#ifdef _WIN32_WCE
+		_vm->parseEvents(); // timers are events, we need to consume them
+#endif
 		flushTracks();
 		if (!track->used) {
 			track->pan = 64;
