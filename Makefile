@@ -43,8 +43,9 @@ include Makefile.common
 
 # check if configure has been run or has been changed since last run
 config.mak: configure
-	@echo "you need to run ./configure before you can run make"
-	@echo "either you haven't run it before or it has changed"
+	@echo "You need to run ./configure before you can run make"
+	@echo "Either you haven't run it before or it has changed."
+	@echo "If you cannot run Configure, use 'make -f Makefile.noconf'"
 	@exit 1
 
 dist:
