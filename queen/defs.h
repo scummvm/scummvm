@@ -160,6 +160,12 @@ enum StateGrab {
 };
 
 
+enum StateOn {
+	STATE_ON_ON,
+	STATE_ON_OFF
+};
+
+
 } // End of namespace Queen
 
 #endif

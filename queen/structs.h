@@ -155,7 +155,7 @@ struct ObjectData {
 	//! room in which this object is available
 	uint16 room;
 	//! state of the object (grab direction, on/off, default command...)
-	int16 state;
+	uint16 state;
 	//! entry in GraphicData (can be negative)
 	/*!
 		<table>
@@ -198,7 +198,7 @@ struct ObjectData {
 		description = READ_BE_UINT16(ptr); ptr += 2;
 		entryObj = (int16)READ_BE_UINT16(ptr); ptr += 2;
 		room = READ_BE_UINT16(ptr); ptr += 2;
-		state = (int16)READ_BE_UINT16(ptr); ptr += 2;
+		state = READ_BE_UINT16(ptr); ptr += 2;
 		image = (int16)READ_BE_UINT16(ptr); ptr += 2;
 	}
 };
@@ -253,7 +253,7 @@ struct ItemData {
 	//! entry in OBJECT_DESCR
 	uint16 description;
 	//! state of the object
-	int16 state;
+	uint16 state;
 	//! bank bobframe 
 	uint16 bobFrame;
 	//! entry in OBJECT_DESCR (>0 if available)
@@ -262,7 +262,7 @@ struct ItemData {
 	void readFrom(byte *&ptr) {
 		item = (int16)READ_BE_UINT16(ptr); ptr += 2;
 		description = READ_BE_UINT16(ptr); ptr += 2;
-		state = (int16)READ_BE_UINT16(ptr); ptr += 2;
+		state = READ_BE_UINT16(ptr); ptr += 2;
 		bobFrame = READ_BE_UINT16(ptr); ptr += 2;
 		sfxDescription = (int16)READ_BE_UINT16(ptr); ptr += 2;
 	}

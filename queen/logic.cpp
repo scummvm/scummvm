@@ -1457,7 +1457,7 @@ void Logic::animSetup(const GraphicData *gd, uint16 firstImage, uint16 bobNum, b
 }
 
 
-StateDirection Logic::findStateDirection(uint16 state) {
+StateDirection Logic::findStateDirection(uint16 state) const {
 
 	// FIXME: may be we should return a DIR_* constant instead
 	// of a STATE_DIR_*. Some (all ?) calls to FIND_STATE(, "DIR")
@@ -1473,11 +1473,11 @@ StateDirection Logic::findStateDirection(uint16 state) {
 	return sd[(state >> 2) & 3];
 }
 
-StateTalk Logic::findStateTalk(uint16 state) {
+StateTalk Logic::findStateTalk(uint16 state) const {
 	return (state & (1 << 9)) ? STATE_TALK_TALK : STATE_TALK_MUTE;
 }
 
-StateGrab Logic::findStateGrab(uint16 state) {
+StateGrab Logic::findStateGrab(uint16 state) const {
 
 	// queen.c l.4022-4029
 	static const StateGrab gd[] = {
@@ -1487,6 +1487,22 @@ StateGrab Logic::findStateGrab(uint16 state) {
 		STATE_GRAB_MID
 	};
 	return gd[state & 3];
+}
+
+StateOn Logic::findStateOn(uint16 state) const {
+	return (state & (1 << 8)) ? STATE_ON_ON : STATE_ON_OFF;
+}
+
+
+void Logic::alterStateOn(uint16 *objState, StateOn state) const {
+	switch (state) {
+	case STATE_ON_ON:
+		*objState |= (1 << 8);
+		break;
+	case STATE_ON_OFF:
+		*objState &= ~(1 << 8);
+		break;
+	}
 }
 
 
@@ -1644,7 +1660,7 @@ uint16 Logic::joeFace() {
 }
 
 
-int16 Logic::joeWalkTo(int16 x, int16 y, const Command *cmd, bool mustWalk) {
+int16 Logic::joeWalkTo(int16 x, int16 y, const Command_ *cmd, bool mustWalk) {
 
 	// Check to see if object is actually an exit to another
 	// room. If so, then set up new room

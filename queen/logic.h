@@ -45,7 +45,7 @@ struct ZoneSlot {
 };
 
 
-struct Command {
+struct Command_ {
 	Verb action, action2;
 	uint16 noun, noun2;
 };
@@ -142,9 +142,11 @@ public:
 	void animErase(uint16 bobNum);
 	void animSetup(const GraphicData *gd, uint16 firstImage, uint16 bobNum, bool visible); // FIND_GRAPHIC_ANIMS
 
-	StateDirection findStateDirection(uint16 state); // == FIND_STATE(state, "DIR");
-	StateTalk      findStateTalk     (uint16 state); // == FIND_STATE(state, "TALK");
-	StateGrab      findStateGrab     (uint16 state); // == FIND_STATE(state, "GRAB");
+	StateDirection findStateDirection(uint16 state) const; // == FIND_STATE(state, "DIR");
+	StateTalk      findStateTalk     (uint16 state) const; // == FIND_STATE(state, "TALK");
+	StateGrab      findStateGrab     (uint16 state) const; // == FIND_STATE(state, "GRAB");
+	StateOn        findStateOn       (uint16 state) const; // == FIND_STATE(state, "ON");
+	void alterStateOn(uint16 *objState, StateOn state) const; // == ALTER_STATE(state, "ON");
 
 	Walk *walk()	{ return _walk; }
 
@@ -162,7 +164,7 @@ public:
 	uint16 joeFace();
 
 	//! WALK()
-	int16 joeWalkTo(int16 x, int16 y, const Command *cmd, bool mustWalk);
+	int16 joeWalkTo(int16 x, int16 y, const Command_ *cmd, bool mustWalk);
 
 	//! GRAB_JOE()
 	void joeGrab(uint16 state, uint16 speed);
@@ -287,6 +289,8 @@ protected:
 	int _talkSpeed;	// TALKSPD
 
 	void initialise();
+
+	friend class Command; // TEMP
 };
 
 } // End of namespace Queen
