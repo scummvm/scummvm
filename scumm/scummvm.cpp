@@ -1434,7 +1434,7 @@ load_game:
 
 		makeSavegameName(filename, _saveLoadSlot, _saveTemporaryState);
 		if (!success) {
-			displayError(false, errMsg, filename);
+			displayError(0, errMsg, filename);
 		} else if (_saveLoadFlag == 1 && _saveLoadSlot != 0 && !_saveTemporaryState) {
 			// Display "Save successful" message, except for auto saves
 #ifdef __PALM_OS__
@@ -2615,7 +2615,7 @@ void ScummEngine::confirmrestartDialog() {
 	}
 }
 
-char ScummEngine::displayError(bool showCancel, const char *message, ...) {
+char ScummEngine::displayError(const char *altButton, const char *message, ...) {
 #ifdef __PALM_OS__
 	char buf[256]; // 1024 is too big overflow the stack
 #else
@@ -2627,7 +2627,7 @@ char ScummEngine::displayError(bool showCancel, const char *message, ...) {
 	vsprintf(buf, message, va);
 	va_end(va);
 
-	GUI::MessageDialog dialog(buf, "OK");
+	GUI::MessageDialog dialog(buf, "OK", altButton);
 	return runDialog(dialog);
 }
 

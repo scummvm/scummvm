@@ -379,7 +379,7 @@ protected:
 public:
 	void optionsDialog();	// Used by MainMenuDialog::handleCommand()
 protected:
-	char displayError(bool showCancel, const char *message, ...);
+	char displayError(const char *altButton, const char *message, ...);
 
 protected:
 	byte _fastMode;
