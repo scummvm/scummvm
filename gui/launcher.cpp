@@ -449,7 +449,7 @@ void LauncherDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 		close();
 		break;
 	case kListSelectionChangedCmd: {
-		bool enable = (data >= 0);
+		bool enable = ((int)data >= 0);
 		if (enable != _startButton->isEnabled()) {
 			_startButton->setEnabled(enable);
 			_startButton->draw();
