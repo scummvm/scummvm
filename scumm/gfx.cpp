@@ -1833,7 +1833,7 @@ void Gdi::decompressMaskImgOr(byte *dst, const byte *src, int height) const {
 void decodeNESTileData(const byte *src, byte *dest) {
 	int len = READ_LE_UINT16(src);	src += 2;
 	const byte *end = src + len;
-	int numtiles = *src++; // not currently used
+	/* int numtiles = */ *src++;
 	while (src < end) {
 		byte data = *src++;
 		for (int j = 0; j < (data & 0x7F); j++)
