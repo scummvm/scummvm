@@ -40,57 +40,49 @@ void ScummEngine_v90he::allocateArrays() {
 int ScummEngine_v90he::spriteInfoGet_flags_1(int spriteNum) {
 	checkRange(_numSprites, 1, spriteNum, "_spriteTableGet_flags_1: Invalid sprite %d");
 
-	int val = _spriteTable[spriteNum].flags >> 0xE;
-	return (val & 1);
+	return (_spriteTable[spriteNum].flags & kSF15 != 0) ? 1 : 0;
 }
 
 int ScummEngine_v90he::spriteInfoGet_flags_2(int spriteNum) {
 	checkRange(_numSprites, 1, spriteNum, "_spriteTableGet_flags_2: Invalid sprite %d");
 
-	int val = _spriteTable[spriteNum].flags >> 0xD;
-	return (val & 1);
+	return (_spriteTable[spriteNum].flags & kSF14 != 0) ? 1 : 0;
 }
 
 int ScummEngine_v90he::spriteInfoGet_flags_3(int spriteNum) {
 	checkRange(_numSprites, 1, spriteNum, "_spriteTableGet_flags_3: Invalid sprite %d");
 
-	int val = _spriteTable[spriteNum].flags >> 0xF;
-	return (val & 1);
+	return (_spriteTable[spriteNum].flags & kSF16 != 0) ? 1 : 0;
 }
 
 int ScummEngine_v90he::spriteInfoGet_flags_4(int spriteNum) {
 	checkRange(_numSprites, 1, spriteNum, "_spriteTableGet_flags_4: Invalid sprite %d");
 
-	int val = _spriteTable[spriteNum].flags >> 0xC;
-	return (val & 1);
+	return (_spriteTable[spriteNum].flags & kSF13 != 0) ? 1 : 0;
 }
 
 int ScummEngine_v90he::spriteInfoGet_flags_5(int spriteNum) {
 	checkRange(_numSprites, 1, spriteNum, "_spriteTableGet_flags_5: Invalid sprite %d");
 
-	int val = _spriteTable[spriteNum].flags >> 0x13;
-	return (val & 1);
+	return (_spriteTable[spriteNum].flags & kSF20 != 0) ? 1 : 0;
 }
 
 int ScummEngine_v90he::spriteInfoGet_flags_6(int spriteNum) {
 	checkRange(_numSprites, 1, spriteNum, "_spriteTableGet_flags_6: Invalid sprite %d");
 
-	int val = _spriteTable[spriteNum].flags;
-	return (val & 0x200000);
+	return _spriteTable[spriteNum].flags & kSF22;
 }
 
 int ScummEngine_v90he::spriteInfoGet_flags_7(int spriteNum) {
 	checkRange(_numSprites, 1, spriteNum, "_spriteTableGet_flags_7: Invalid sprite %d");
 
-	int val = _spriteTable[spriteNum].flags >> 0x16;
-	return (val & 1);
+	return (_spriteTable[spriteNum].flags & kSF23 != 0) ? 1 : 0;
 }
 
 int ScummEngine_v90he::spriteInfoGet_flags_8(int spriteNum) {
 	checkRange(_numSprites, 1, spriteNum, "_spriteTableGet_flags_8: Invalid sprite %d");
 
-	int val = _spriteTable[spriteNum].flags >> 0x1E;
-	return (val & 1);
+	return (_spriteTable[spriteNum].flags & kSF31 != 0) ? 1 : 0;
 }
 
 } // End of namespace Scumm

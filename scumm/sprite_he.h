@@ -25,6 +25,41 @@
 
 namespace Scumm {
 
+enum SpriteFlags {
+	kSF1       = (1 << 0),
+	kSF2       = (1 << 1),
+	kSF3       = (1 << 2),
+	kSF4       = (1 << 3),
+	kSFZoomed  = (1 << 4),
+	kSFRotated = (1 << 5),
+	kSF7       = (1 << 6),
+	kSF8       = (1 << 7),
+	kSF9       = (1 << 8),
+	kSF10      = (1 << 9),
+	kSF11      = (1 << 10),
+	kSF12      = (1 << 11),
+	kSF13      = (1 << 12),
+	kSF14      = (1 << 13),
+	kSF15      = (1 << 14),
+	kSF16      = (1 << 15),
+	kSF17      = (1 << 16),
+	kSF18      = (1 << 17),
+	kSF19      = (1 << 18),
+	kSF20      = (1 << 19),
+	kSF21      = (1 << 20),
+	kSF22      = (1 << 21),
+	kSF23      = (1 << 22),
+	kSF24      = (1 << 23),
+	kSF25      = (1 << 24),
+	kSF26      = (1 << 25),
+	kSF27      = (1 << 26),
+	kSF28      = (1 << 27),
+	kSF29      = (1 << 28),
+	kSF30      = (1 << 29),
+	kSF31      = (1 << 30),
+	kSF32      = (1 << 31)
+};
+
 struct SpriteInfo {
 	int field_0;
 	int flags;
@@ -48,7 +83,7 @@ struct SpriteInfo {
 	int field_4C;
 	int imglist_num;
 	int field_54;
-	int res_wiz_size;
+	int res_wiz_states;
 	int rot_angle;
 	int zoom;
 	int field_64;
