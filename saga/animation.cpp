@@ -58,7 +58,8 @@ Anim::~Anim(void) {
 	uint16 i;
 
 	for (i = 0; i < R_MAX_ANIMATIONS; i++) {
-		free(_anim_tbl[i]);
+		if (_anim_tbl[i])
+			free(_anim_tbl[i]);
 	}
 
 	_initialized = false;
