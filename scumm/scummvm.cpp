@@ -711,8 +711,7 @@ Scumm::Scumm (GameDetector *detector, OSystem *syst)
 	_audioNames = NULL;
 }
 
-Scumm::~Scumm ()
-{
+Scumm::~Scumm () {
 	delete [] _actors;
 	
 	delete _2byteFontPtr;
@@ -739,10 +738,9 @@ Scumm::~Scumm ()
 	delete g_debugger;
 }
 
-void Scumm::setFeatures (uint32 newFeatures)
-{
-	bool newCostumes = _features & GF_NEW_COSTUMES;
-	bool newNewCostumes = newFeatures & GF_NEW_COSTUMES;
+void Scumm::setFeatures (uint32 newFeatures) {
+	bool newCostumes = (_features & GF_NEW_COSTUMES) != 0;
+	bool newNewCostumes = (newFeatures & GF_NEW_COSTUMES) != 0;
 
 	_features = newFeatures;
 	
