@@ -925,7 +925,7 @@ void ScummEngine::launch() {
 	_verbRedraw = false;
 
 	allocResTypeData(rtBuffer, MKID('NONE'), 10, "buffer", 0);
-	initVirtScreen(0, 0, 0, _screenWidth, _screenHeight, false, false);
+//	initVirtScreen(kMainVirtScreen, 0, 0, _screenWidth, _screenHeight, false, false);	// FIXME - why is this here? It seems we could remove it in f
 
 	setupScummVars();
 
@@ -1167,9 +1167,6 @@ void ScummEngine::scummInit() {
 	createResource(rtTemp, 6, 500);
 
 	initScummVars();
-
-	// FIXME: disabled, why we need this, it's looks completly dummy and slow down startup
-	//	getGraphicsPerformance();
 
 	_lastSaveTime = _system->get_msecs();
 }

@@ -791,7 +791,6 @@ protected:
 	
 	StripTable *_roomStrips;
 
-	void getGraphicsPerformance();
 	void initScreens(int b, int w, int h);
 	void initVirtScreen(int slot, int number, int top, int width, int height, bool twobufs, bool scrollable);
 	void initBGBuffers(int height);

@@ -59,7 +59,6 @@ struct VirtScreen {
 	int number;
 	uint16 topline;
 	uint16 width, height;
-	int size;
 	byte alloctwobuffers;
 	bool scrollable;
 	uint16 xstart;
@@ -194,7 +193,7 @@ public:
 };
 
 
-// If you wan to try buggy hacked smooth scrolling support in The Dig, enable
+// If you want to try buggy hacked smooth scrolling support in The Dig, enable
 // the following preprocessor flag by uncommenting it.
 //
 // Note: This is purely experimental, NOT WORKING COMPLETLY and very buggy.

@@ -211,30 +211,6 @@ Gdi::Gdi(ScummEngine *vm) {
 		_roomPalette += 16;
 }
 
-void ScummEngine::getGraphicsPerformance() {
-	int i;
-
-	for (i = 10; i != 0; i--) {
-		initScreens(0, _screenWidth, _screenHeight);
-	}
-
-	if (VAR_PERFORMANCE_1 != 0xFF)	// Variable is reserved for game scripts in earlier games
-		VAR(VAR_PERFORMANCE_1) = 0;
-
-	for (i = 10; i != 0; i--) {
-		virtscr[0].setDirtyRange(0, _screenHeight);	//ender
-		drawDirtyScreenParts();
-	}
-
-	if (VAR_PERFORMANCE_2 != 0xFF)	// Variable is reserved for game scripts in earlier games
-		VAR(VAR_PERFORMANCE_2) = 0;
-
-	if (_version >= 7)
-		initScreens(0, _screenWidth, _screenHeight);
-	else
-		initScreens(16, _screenWidth, 144);
-}
-
 void ScummEngine::initScreens(int b, int w, int h) {
 	int i;
 
@@ -258,7 +234,6 @@ void ScummEngine::initScreens(int b, int w, int h) {
 
 	_screenB = b;
 	_screenH = h;
-
 }
 
 void ScummEngine::initVirtScreen(int slot, int number, int top, int width, int height, bool twobufs,
@@ -281,10 +256,9 @@ void ScummEngine::initVirtScreen(int slot, int number, int top, int width, int h
 	vs->alloctwobuffers = twobufs;
 	vs->scrollable = scrollable;
 	vs->xstart = 0;
-	size = vs->width * vs->height;
-	vs->size = size;
 	vs->backBuf = NULL;
 
+	size = vs->width * vs->height;
 	if (vs->scrollable) {
 		if (_version >= 7) {
 			size += _screenWidth * 8;
@@ -603,7 +577,7 @@ void ScummEngine::initBGBuffers(int height) {
 	byte *room;
 
 	if (_version >= 7) {
-		initVirtScreen(0, 0, virtscr[0].topline, _screenWidth, height, 1, 1);
+		initVirtScreen(kMainVirtScreen, 0, virtscr[0].topline, _screenWidth, height, 1, 1);
 	}
 
 	room = getResourceAddress(rtRoom, _roomResource);
@@ -2238,7 +2212,7 @@ void ScummEngine::fadeOut(int effect) {
 	
 		// Fill screen 0 with black
 		
-		memset(vs->screenPtr + vs->xstart, 0, vs->size);
+		memset(vs->screenPtr + vs->xstart, 0, vs->width * vs->height);
 	
 		// Fade to black with the specified effect, if any.
 		switch (effect) {
@@ -2395,7 +2369,7 @@ void ScummEngine::dissolveEffect(int width, int height) {
 	if (width == 1 && height == 1) {
 		// Optimized case for pixel-by-pixel dissolve
 
-		for (i = 0; i < vs->size; i++)
+		for (i = 0; i < vs->width * vs->height; i++)
 			offsets[i] = i;
 
 		for (i = 1; i < w * h; i++) {
