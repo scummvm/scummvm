@@ -1021,7 +1021,7 @@ SkySound::SkySound(SoundMixer *mixer, SkyDisk *pDisk) {
 	_bgSoundHandle = 0;
 	_ingameSpeech = 0;
 	_ingameSound0 = _ingameSound1 = 0;
-	_slot0 = _slot1 = -1;
+	_spSlot = _slot0 = _slot1 = -1;
 	_saveSounds[0] = _saveSounds[1] = 0xFFFF;
 }
 
@@ -1075,12 +1075,12 @@ void SkySound::loadSection(uint8 pSection) {
 void SkySound::playSound(uint16 sound, uint16 volume, uint8 channel) {
 
 	if (channel == 0) {
-		if (_slot0 >= 0) {
+		if ((_slot0 >= 0) && ((_slot0 != _spSlot) || (!_ingameSpeech))) {
 			_mixer->stop(_slot0);
 			_slot0 = -1;
 		}
 	} else {
-		if (_slot1 >= 0) {
+		if ((_slot1 >= 0) && ((_slot1 != _spSlot) || (!_ingameSpeech))){
 			_mixer->stop(_slot1);
 			_slot1 = -1;
 		}
@@ -1229,6 +1229,6 @@ bool SkySound::startSpeech(uint16 textNum) {
 
 	free(speechData);
 
-	_mixer->playRaw(&_ingameSpeech, playBuffer, speechSize - 64, 11025, SoundMixer::FLAG_UNSIGNED | SoundMixer::FLAG_AUTOFREE);
+	_spSlot = _mixer->playRaw(&_ingameSpeech, playBuffer, speechSize - 64, 11025, SoundMixer::FLAG_UNSIGNED | SoundMixer::FLAG_AUTOFREE);
 	return true;
 }

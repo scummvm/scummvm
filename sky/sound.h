@@ -72,7 +72,7 @@ private:
 	uint16 _sfxBaseOfs;
 	uint8 *_soundData;
 	uint8 *_sampleRates, *_sfxInfo;
-	int _slot0, _slot1;
+	int _slot0, _slot1, _spSlot;
 
 	static uint16 _speechConvertTable[8];
 	static SfxQueue _sfxQueue[MAX_QUEUED_FX];
