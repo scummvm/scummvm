@@ -115,7 +115,7 @@ void IMuseDigital::startSound(int soundId, const char *soundName, int soundType,
 			} else {
 				track->souStream = false;
 				strcpy(track->soundName, soundName);
-				track->soundHandle = _sound->openSound(soundId, soundName, soundType, volGroupId);
+				track->soundHandle = _sound->openSound(soundId, soundName, soundType, volGroupId, -1);
 
 				if (track->soundHandle == NULL)
 					return;
@@ -297,6 +297,7 @@ int IMuseDigital::cloneToFadeOutTrack(int trackId, int fadeDelay) {
 		strcpy(fadeTrack->soundName, track->soundName);
 		fadeTrack->soundType = track->soundType;
 		fadeTrack->soundHandle = _sound->cloneSound(track->soundHandle);
+		assert(fadeTrack->soundHandle);
 	}
 
 	fadeTrack->volFadeDelay = fadeDelay;

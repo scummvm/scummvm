@@ -219,7 +219,7 @@ int ImuseDigiSndMgr::allocSlot() {
 	return -1;
 }
 
-bool ImuseDigiSndMgr::openMusicBundle(int slot) {
+bool ImuseDigiSndMgr::openMusicBundle(int slot, int disk) {
 	bool result = false;
 
 	_sounds[slot].bundle = new BundleMgr(_cacheBundleDir);
@@ -228,13 +228,16 @@ bool ImuseDigiSndMgr::openMusicBundle(int slot) {
 			result = _sounds[slot].bundle->openFile("music.bun", _vm->getGameDataPath());
 		} else {
 			char musicfile[20];
-			sprintf(musicfile, "musdisk%d.bun", _vm->VAR(_vm->VAR_CURRENTDISK));
-			if (_disk != _vm->VAR(_vm->VAR_CURRENTDISK)) {
+			if (disk == -1)
+				sprintf(musicfile, "musdisk%d.bun", _vm->VAR(_vm->VAR_CURRENTDISK));
+			else
+				sprintf(musicfile, "musdisk%d.bun", disk);
+//			if (_disk != _vm->VAR(_vm->VAR_CURRENTDISK)) {
 //				_vm->_imuseDigital->parseScriptCmds(0x1000, 0, 0, 0, 0, 0, 0, 0);
 //				_vm->_imuseDigital->parseScriptCmds(0x2000, 0, 0, 0, 0, 0, 0, 0);
 //				_vm->_imuseDigital->stopAllSounds();
-				_sounds[slot].bundle->closeFile();
-			}
+//				_sounds[slot].bundle->closeFile();
+//			}
 
 			result = _sounds[slot].bundle->openFile(musicfile, _vm->getGameDataPath());
 
@@ -250,7 +253,7 @@ bool ImuseDigiSndMgr::openMusicBundle(int slot) {
 	return result;
 }
 
-bool ImuseDigiSndMgr::openVoiceBundle(int slot) {
+bool ImuseDigiSndMgr::openVoiceBundle(int slot, int disk) {
 	bool result = false;
 
 	_sounds[slot].bundle = new BundleMgr(_cacheBundleDir);
@@ -259,13 +262,16 @@ bool ImuseDigiSndMgr::openVoiceBundle(int slot) {
 			result = _sounds[slot].bundle->openFile("voice.bun", _vm->getGameDataPath());
 		} else {
 			char voxfile[20];
-			sprintf(voxfile, "voxdisk%d.bun", _vm->VAR(_vm->VAR_CURRENTDISK));
-			if (_disk != _vm->VAR(_vm->VAR_CURRENTDISK)) {
+			if (disk == -1)
+				sprintf(voxfile, "voxdisk%d.bun", _vm->VAR(_vm->VAR_CURRENTDISK));
+			else
+				sprintf(voxfile, "voxdisk%d.bun", disk);
+//			if (_disk != _vm->VAR(_vm->VAR_CURRENTDISK)) {
 //				_vm->_imuseDigital->parseScriptCmds(0x1000, 0, 0, 0, 0, 0, 0, 0);
 //				_vm->_imuseDigital->parseScriptCmds(0x2000, 0, 0, 0, 0, 0, 0, 0);
 //				_vm->_imuseDigital->stopAllSounds();
-				_sounds[slot].bundle->closeFile();
-			}
+//				_sounds[slot].bundle->closeFile();
+//			}
 
 			result = _sounds[slot].bundle->openFile(voxfile, _vm->getGameDataPath());
 
@@ -281,7 +287,7 @@ bool ImuseDigiSndMgr::openVoiceBundle(int slot) {
 	return result;
 }
 
-ImuseDigiSndMgr::soundStruct *ImuseDigiSndMgr::openSound(int32 soundId, const char *soundName, int soundType, int volGroupId) {
+ImuseDigiSndMgr::soundStruct *ImuseDigiSndMgr::openSound(int32 soundId, const char *soundName, int soundType, int volGroupId, int disk) {
 	assert(soundId >= 0);
 	assert(soundType);
 
@@ -309,9 +315,9 @@ ImuseDigiSndMgr::soundStruct *ImuseDigiSndMgr::openSound(int32 soundId, const ch
 		} else if (soundType == IMUSE_BUNDLE) {
 			bool header_outside = ((_vm->_gameId == GID_CMI) && !(_vm->_features & GF_DEMO));
 			if (volGroupId == IMUSE_VOLGRP_VOICE)
-				result = openVoiceBundle(slot);
+				result = openVoiceBundle(slot, disk);
 			else if (volGroupId == IMUSE_VOLGRP_MUSIC)
-				result = openMusicBundle(slot);
+				result = openMusicBundle(slot, disk);
 			else
 				error("ImuseDigiSndMgr::openSound() Don't know how load sound: %d", soundId);
 			if (!result) {
@@ -329,9 +335,9 @@ ImuseDigiSndMgr::soundStruct *ImuseDigiSndMgr::openSound(int32 soundId, const ch
 		if (soundType == IMUSE_BUNDLE) {
 			bool header_outside = ((_vm->_gameId == GID_CMI) && !(_vm->_features & GF_DEMO));
 			if (volGroupId == IMUSE_VOLGRP_VOICE)
-				result = openVoiceBundle(slot);
+				result = openVoiceBundle(slot, disk);
 			else if (volGroupId == IMUSE_VOLGRP_MUSIC)
-				result = openMusicBundle(slot);
+				result = openMusicBundle(slot, disk);
 			else
 				error("ImuseDigiSndMgr::openSound() Don't know how load sound: %d", soundId);
 			if (!result) {
@@ -353,6 +359,7 @@ ImuseDigiSndMgr::soundStruct *ImuseDigiSndMgr::openSound(int32 soundId, const ch
 			closeSound(&_sounds[slot]);
 			return NULL;
 		}
+		_sounds[slot].disk = _disk;
 		prepareSound(ptr, slot);
 		return &_sounds[slot];
 	}
@@ -378,7 +385,7 @@ void ImuseDigiSndMgr::closeSound(soundStruct *soundHandle) {
 ImuseDigiSndMgr::soundStruct *ImuseDigiSndMgr::cloneSound(soundStruct *soundHandle) {
 	assert(soundHandle && checkForProperHandle(soundHandle));
 
-	return openSound(soundHandle->soundId, soundHandle->name, soundHandle->type, soundHandle->volGroupId);
+	return openSound(soundHandle->soundId, soundHandle->name, soundHandle->type, soundHandle->volGroupId, soundHandle->disk);
 }
 
 bool ImuseDigiSndMgr::checkForProperHandle(soundStruct *soundHandle) {

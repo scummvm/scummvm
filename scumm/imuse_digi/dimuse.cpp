@@ -140,7 +140,8 @@ void IMuseDigital::saveOrLoad(Serializer *ser) {
 
 			track->soundHandle = _sound->openSound(track->soundId,
 									track->soundName, track->soundType,
-									track->volGroupId);
+									track->volGroupId, -1);
+			assert(track->soundHandle);
 			int32 streamBufferSize = track->iteration;
 			int	freq = _sound->getFreq(track->soundHandle);
 			track->stream2 = NULL;

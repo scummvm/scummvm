@@ -83,6 +83,7 @@ public:
 		BundleMgr *bundle;
 		int type;
 		int volGroupId;
+		int disk;
 	};
 
 private:
@@ -97,8 +98,8 @@ private:
 	byte _disk;
 	BundleDirCache *_cacheBundleDir;
 
-	bool openMusicBundle(int slot);
-	bool openVoiceBundle(int slot);
+	bool openMusicBundle(int slot, int disk);
+	bool openVoiceBundle(int slot, int disk);
 
 	void countElements(byte *ptr, int &numRegions, int &numJumps, int &numSyncs);
 
@@ -107,7 +108,7 @@ public:
 	ImuseDigiSndMgr(ScummEngine *scumm);
 	~ImuseDigiSndMgr();
 
-	soundStruct *openSound(int32 soundId, const char *soundName, int soundType, int volGroupId);
+	soundStruct *openSound(int32 soundId, const char *soundName, int soundType, int volGroupId, int disk);
 	void closeSound(soundStruct *soundHandle);
 	soundStruct *cloneSound(soundStruct *soundHandle);
 
