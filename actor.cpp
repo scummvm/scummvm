@@ -601,7 +601,7 @@ AdjustBoxResult Actor::adjustXYToBeInBox(int dstX, int dstY, int pathfrom)
 					if (flags & 0x80 && (!(flags & 0x20) || _vm->getClass(number, 0x1F)))
 						continue;
 
-					if (pathfrom && (_vm->getPathToDestBox(pathfrom, j) == -1))
+					if (pathfrom >= firstValidBox && (_vm->getPathToDestBox(pathfrom, j) == -1))
 						continue;
 
 					if (!_vm->inBoxQuickReject(j, dstX, dstY, threshold))
@@ -637,6 +637,7 @@ AdjustBoxResult Actor::adjustXYToBeInBox(int dstX, int dstY, int pathfrom)
 			threshold = (threshold == 30) ? 80 : 0;
 		}
 	}
+
 	return abr;
 }
 
@@ -645,7 +646,7 @@ void Actor::adjustActorPos()
 	AdjustBoxResult abr;
 	byte flags;
 
-	abr = adjustXYToBeInBox(x, y, 0);
+	abr = adjustXYToBeInBox(x, y, -1);
 
 	x = abr.x;
 	y = abr.y;
