@@ -110,6 +110,7 @@ public:
 	void printChar(int chr);
 	void setCurID(byte id);
 	void setColor(byte color);
+	int getFontHeight() { return 8; }
 };
 
 class CharsetRendererV2 : public CharsetRendererV3 {
@@ -120,7 +121,6 @@ public:
 	CharsetRendererV2(Scumm *vm) : CharsetRendererV3(vm) {}
 	
 	void setCurID(byte id);
-	int getFontHeight() { return 8; }
 };
 
 class CharsetRendererNut : public CharsetRenderer {

@@ -1162,6 +1162,8 @@ void Scumm::actorTalk() {
 	_talkDelay = 0;
 	_haveMsg = 0xFF;
 	VAR(VAR_HAVE_MSG) = 0xFF;
+	if (VAR_CHARCOUNT != 0xFF)
+		VAR(VAR_CHARCOUNT) = 0;
 	CHARSET_1();
 }
 

@@ -395,6 +395,48 @@ void Scumm_v2::decodeParseString() {
 	*ptr = 0;
 
 	printf("TODO: Scumm_v2::decodeParseString(\"%s\") from %d\n", buffer, vm.slot[_currentScript].number);
+
+	int textSlot;
+
+	if (_actorToPrintStrFor < 128)
+		textSlot = 0;
+	else
+		textSlot = 1;
+
+	textSlot = 0;
+	
+	_string[textSlot].xpos = 0;
+	_string[textSlot].ypos = 0;
+	_string[textSlot].right = 320;
+	_string[textSlot].center = false;
+	_string[textSlot].overhead = false;
+	_string[textSlot].color = 13;	// HACK, make it pink, just for fun 8-)
+
+	_messagePtr = buffer;
+	switch (textSlot) {
+	case 0:
+		actorTalk();
+		break;
+	case 1:
+		drawString(1);
+		break;
+	case 2:
+		unkMessage1();
+		break;
+	case 3:
+		unkMessage2();
+		break;
+	}
+
+/*
+	_string[textSlot].t_xpos = _string[textSlot].xpos;
+	_string[textSlot].t_ypos = _string[textSlot].ypos;
+	_string[textSlot].t_center = _string[textSlot].center;
+	_string[textSlot].t_overhead = _string[textSlot].overhead;
+	_string[textSlot].t_right = _string[textSlot].right;
+	_string[textSlot].t_color = _string[textSlot].color;
+	_string[textSlot].t_charset = _string[textSlot].charset;
+*/
 }
 
 int Scumm_v2::readVar(uint var) {
@@ -752,9 +794,11 @@ void Scumm_v2::o2_verbOps() {
 		int x = fetchScriptByte() << 3;
 		int y = fetchScriptByte() << 3;
 		slot = getVarOrDirectByte(0x80) + 1;
-		// int unk = fetchScriptByte(); // ?
-		fetchScriptByte();
+		/*int unk =*/ fetchScriptByte(); // ?
 		
+		//printf("o2_verbOps: verb = %d, slot = %d, x = %d, y = %d, unk = %d, name = %s\n",
+		//		verb, slot, x, y, unk, _scriptPointer);
+
 		VerbSlot *vs;
 		assert(0 < slot && slot < _maxVerbs);
 
@@ -773,9 +817,6 @@ void Scumm_v2::o2_verbOps() {
 		
 		vs->x = x;
 		vs->y = y;
-
-		//printf("o2_verbOps: verb = %d, slot = %d, x = %d, y = %d, unk = %d, name = %s\n",
-		//		verb, slot, x, y, unk, _scriptPointer);
 
 		// It follows the verb name
 		loadPtrToResource(rtVerb, slot, NULL);

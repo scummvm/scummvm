@@ -141,7 +141,7 @@ void Scumm::CHARSET_1() {
 	_charset->_right = _string[0].right;
 	_charset->setColor(_charsetColor);
 
-	if (!(_features & GF_AFTER_V3))	// FIXME
+	if (!(_features & GF_AFTER_V2 || _features & GF_AFTER_V3))	// FIXME
 		for (i = 0; i < 4; i++)
 			_charsetColorMap[i] = _charsetData[_charset->getCurID()][i];
 
@@ -184,7 +184,7 @@ void Scumm::CHARSET_1() {
 	_talkDelay = _defaultTalkDelay;
 
 	if (!_keepText) {
-		if (_features & GF_AFTER_V3 && _gameId != GID_LOOM) {
+		if ((_features & GF_AFTER_V2 || _features & GF_AFTER_V3) && _gameId != GID_LOOM) {
 			gdi._mask_left = _string[0].xpos;
 			gdi._mask_top = _string[0].ypos;
 			gdi._mask_bottom = _string[0].ypos + 8;
@@ -224,22 +224,16 @@ void Scumm::CHARSET_1() {
 		}
 		if (c == 13) {
 		newLine:;
-			if (_features & GF_AFTER_V3) {
-				_charset->_nextTop += 8;
-				_charset->_nextLeft = _string[0].xpos;
-				if (_charset->_center) {
-					_charset->_nextLeft -= _charset->getStringWidth(0, buffer) >> 1;
-				}
-				continue;
-			} else {
-				_charset->_nextLeft = _string[0].xpos;
-				if (_charset->_center) {
-					_charset->_nextLeft -= _charset->getStringWidth(0, buffer) >> 1;
-				}
-				_charset->_nextTop += _charset->getFontHeight();
-				_charset->_disableOffsX = true;
-				continue;
+			_charset->_nextLeft = _string[0].xpos;
+			if (_charset->_center) {
+				_charset->_nextLeft -= _charset->getStringWidth(0, buffer) >> 1;
 			}
+			_charset->_nextTop += _charset->getFontHeight();
+			if (!(_features & GF_AFTER_V2 || _features & GF_AFTER_V3)) {
+				// FIXME - is this really needed?
+				_charset->_disableOffsX = true;
+			}
+			continue;
 		}
 
 		if (c == 0xFE)
@@ -248,7 +242,7 @@ void Scumm::CHARSET_1() {
 		if (c != 0xFF) {
 			_charset->_left = _charset->_nextLeft;
 			_charset->_top = _charset->_nextTop;
-			if (_features & GF_AFTER_V3) {
+			if (_features & GF_AFTER_V2 || _features & GF_AFTER_V3) {
 				_charset->printChar(c);
 			} else if (_features & GF_AFTER_V6) {
 				if (!_noSubtitles || (_haveMsg != 0xFE && _haveMsg != 0xFF))
@@ -260,7 +254,11 @@ void Scumm::CHARSET_1() {
 
 			_charset->_nextLeft = _charset->_left;
 			_charset->_nextTop = _charset->_top;
-			_talkDelay += (int)VAR(VAR_CHARINC);
+			if (_features & GF_AFTER_V2) {
+				_talkDelay += _defaultTalkDelay / 20;
+				VAR(VAR_CHARCOUNT)++;
+			} else
+				_talkDelay += (int)VAR(VAR_CHARINC);
 			continue;
 		}
 
@@ -410,12 +408,12 @@ void Scumm::drawString(int a) {
 	_charset->_disableOffsX = _charset->_firstChar = true;
 	_charset->setCurID(_string[a].charset);
 
-	if (!(_features & GF_AFTER_V3)) {
+	if (!(_features & GF_AFTER_V2 || _features & GF_AFTER_V3)) {
 		for (i = 0; i < 4; i++)
 			_charsetColorMap[i] = _charsetData[_charset->getCurID()][i];
-
-		fontHeight = _charset->getFontHeight();
 	}
+
+	fontHeight = _charset->getFontHeight();
 
 	_msgPtrToAdd = buf;
 

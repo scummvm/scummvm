@@ -376,7 +376,7 @@ void Scumm::drawDirtyScreenParts() {
 	byte *src;
 
 	updateDirtyScreen(2);
-	if (_features & GF_AFTER_V3)
+	if (_features & GF_AFTER_V2 || _features & GF_AFTER_V3)
 		updateDirtyScreen(1);
 
 	if (camera._last.x == camera._cur.x && (camera._last.y == camera._cur.y || !(_features & GF_AFTER_V7))) {
