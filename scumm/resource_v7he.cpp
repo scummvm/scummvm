@@ -146,8 +146,17 @@ int Win32ResExtractor::extractResource(const char *resType, char *resName, byte 
 	fi.memory = NULL;
 	fi.file = new File;
 
-	if (!_fileName[0]) // We are running for the first time
+	if (!_fileName[0]) { // We are running for the first time
 		snprintf(_fileName, 256, "%s.he3", _vm->getGameName());
+
+		if (_vm->_substResFileNameIndex > 0) {
+			char buf1[128];
+
+			_vm->generateSubstResFileName(_fileName, buf1, 128, 0, _vm->_substResFileNameIndex);
+			strcpy(_fileName, buf1);
+		}
+	}
+
 
 	/* get file size */
 	fi.file->open(_fileName);
@@ -1275,11 +1284,11 @@ void MacResExtractor::setCursor(int id) {
 	File f;
 
 	if (!_fileName[0]) // We are running for the first time
-		if (_vm->_heMacFileNameIndex > 0) {
+		if (_vm->_substResFileNameIndex > 0) {
 			char buf1[128];
 
 			snprintf(buf1, 128, "%s.he3", _vm->getGameName());
-			_vm->generateMacFileName(buf1, _fileName, 128, 0, _vm->_heMacFileNameIndex);
+			_vm->generateSubstResFileName(buf1, _fileName, 128, 0, _vm->_substResFileNameIndex);
 
 			// Some programs write it as .bin. Try that too
 			if (!f.exists(_fileName)) {
@@ -1524,7 +1533,7 @@ void MacResExtractor::convertIcons(byte *data, int datasize, byte **cursor, int 
 	*w = *h = 16;
 
 	// FIXME
-	// Color cursors use their own palette. 
+	// Color cursors use their own palette.
 	// So we can't use it for now and use B/W version
 	return;
 

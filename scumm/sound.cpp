@@ -175,8 +175,8 @@ void Sound::playSound(int soundID, int heOffset, int heChannel, int heFlags) {
 
 		sprintf(buf, "%s.he4", _vm->getGameName());
 
-		if (_vm->_heMacFileNameIndex > 0) {
-			_vm->generateMacFileName(buf, buf1, 128, 0, _vm->_heMacFileNameIndex);
+		if (_vm->_substResFileNameIndex > 0) {
+			_vm->generateSubstResFileName(buf, buf1, 128, 0, _vm->_substResFileNameIndex);
 			strcpy(buf, buf1);
 		}
 		if (musicFile.open(buf) == false) {
@@ -1067,15 +1067,15 @@ ScummFile *Sound::openSfxFile() {
 	if (!file->isOpen()) {
 		if ((_vm->_heversion == 60 && _vm->_features & GF_MACINTOSH) || (_vm->_heversion >= 70)) {
 			sprintf(buf, "%s.he2", _vm->getGameName());
-
-			if (_vm->_heMacFileNameIndex > 0) {
-				char buf1[128];
-
-				_vm->generateMacFileName(buf, buf1, 128, 0, _vm->_heMacFileNameIndex);
-				strcpy(buf, buf1);
-			}
 		} else {
 			sprintf(buf, "%s.tlk", _vm->getGameName());
+		}
+
+		if (_vm->_substResFileNameIndex > 0) {
+			char buf1[128];
+
+			_vm->generateSubstResFileName(buf, buf1, 128, 0, _vm->_substResFileNameIndex);
+			strcpy(buf, buf1);
 		}
 		if (file->open(buf) && _vm->_heversion <= 72) 
 			file->setEnc(0x69);

@@ -124,12 +124,12 @@ void ScummEngine::openRoom(int room) {
 		}
 
 		// If we have substitute
-		if (_heMacFileNameIndex > 0) {
+		if (_substResFileNameIndex > 0) {
 			char tmpBuf[128];
 
-			generateMacFileName(buf, tmpBuf, 128, 0, _heMacFileNameIndex);
+			generateSubstResFileName(buf, tmpBuf, 128, 0, _substResFileNameIndex);
 			strcpy(buf, tmpBuf);
-			generateMacFileName(buf2, tmpBuf, 128, 0, _heMacFileNameIndex);
+			generateSubstResFileName(buf2, tmpBuf, 128, 0, _substResFileNameIndex);
 			strcpy(buf2, tmpBuf);
 		}
 

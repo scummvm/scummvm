@@ -69,7 +69,7 @@
 extern bool isSmartphone(void);
 #endif
 
-static int generateMacFileName_(const char *filename, char *buf, int bufsize, int cont = 0, int index = 0);
+static int generateSubstResFileName_(const char *filename, char *buf, int bufsize, int cont = 0, int index = 0);
 
 namespace Scumm {
 
@@ -258,13 +258,13 @@ static const ScummGameSettings scumm_settings[] = {
 
 	// Humongous Entertainment Scumm Version 8.0 ?  Scummsrc.80 
 	{"ff2-demo", "Freddi Fish 2: The Case of the Haunted Schoolhouse (Demo)", GID_HEGAME, 6, 80, 30, MDT_NONE,
-	GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
+	GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES | GF_MULTIPLE_VERSIONS, 0, 0},
 	{"freddi2", "Freddi Fish 2: The Case of the Haunted Schoolhouse", GID_HEGAME, 6, 80, 30, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES | GF_MULTIPLE_VERSIONS, 0, 0},
 	{"pjs-demo", "Pajama Sam 1: No Need to Hide When It's Dark Outside (Demo)", GID_HEGAME, 6, 80, 61, MDT_NONE,
-	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
+	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES | GF_MULTIPLE_VERSIONS, 0, 0},
 	{"pajama", "Pajama Sam 1: No Need to Hide When It's Dark Outside", GID_HEGAME, 6, 80, 61, MDT_NONE,
-	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
+	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES | GF_MULTIPLE_VERSIONS, 0, 0},
 
 	{"dog", "Putt-Putt and Pep's Dog on a Stick", GID_HEGAME, 6, 80, 30, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES | GF_MULTIPLE_VERSIONS, 0, 0},
@@ -295,8 +295,6 @@ static const ScummGameSettings scumm_settings[] = {
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES | GF_MULTIPLE_VERSIONS, 0, 0},
 	{"spyfox", "Spyfox 1: Dry Cereal", GID_HEGAME, 6, 90, 61, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES | GF_MULTIPLE_VERSIONS, 0, 0},
-	{"foxdemo", "Spyfox 1: Dry Cereal (Demo)", GID_HEGAME, 6, 90, 61, MDT_NONE,
-	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
 	// there is also a C++ engine version of spydemo
 	{"Spydemo", "Spyfox 1: Dry Cereal (Demo)", GID_HEGAME, 6, 90, 61, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES | GF_MULTIPLE_VERSIONS, 0, 0},
@@ -315,15 +313,13 @@ static const ScummGameSettings scumm_settings[] = {
 	{"lost", "Pajama Sam's Lost & Found", GID_HEGAME, 6, 98, 61, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES | GF_MULTIPLE_VERSIONS, 0, 0},
 	{"racedemo", "Putt-Putt Enters the Race (Demo)", GID_HEGAME, 6, 98, 61, MDT_NONE,
-	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
+	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES | GF_MULTIPLE_VERSIONS, 0, 0},
 	{"puttrace", "Putt-Putt Enters the Race", GID_HEGAME, 6, 98, 61, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
 	{"BluesABCTimeDemo", "Blue's ABC Time (Demo)", GID_HEGAME, 6, 98, 61, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
 
 	// Global scripts increased to 2048
-	{"500demo", "Putt-Putt Enters the Race (Demo)", GID_FREDDI4, 6, 98, 61, MDT_NONE,
-	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
 	{"freddi4", "Freddi Fish 4: The Case of the Hogfish Rustlers of Briny Gulch", GID_FREDDI4, 6, 98, 57, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
 	{"f4-demo", "Freddi Fish 4: The Case of the Hogfish Rustlers of Briny Gulch (Demo)", GID_FREDDI4, 6, 98, 57, MDT_NONE,
@@ -356,7 +352,7 @@ static const ScummGameSettings scumm_settings[] = {
 	{"PuttsFunShop", "Putt-Putt's One-Stop Fun Shop", GID_HEGAME, 6, 99, 61, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
 	{"putttime", "Putt-Putt Travels Through Time", GID_HEGAME, 6, 99, 31, MDT_NONE,
-	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
+	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES | GF_MULTIPLE_VERSIONS, 0, 0},
 	{"spyozon", "Spyfox 3: Operation Ozone", GID_HEGAME, 6, 99, 61, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
 	{"sf3-demo", "Spyfox 3: Operation Ozone (Demo)", GID_HEGAME, 6, 99, 61, MDT_NONE,
@@ -365,22 +361,12 @@ static const ScummGameSettings scumm_settings[] = {
 	{"bb2demo", "Backyard Baseball 2001 (Demo)", GID_HEGAME, 6, 99, 61, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
 	{"footdemo", "Backyard Football 2002 (Demo)", GID_HEGAME, 6, 99, 61, MDT_NONE,
-	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
+	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES | GF_MULTIPLE_VERSIONS, 0, 0},
 	{"SoccerMLS", "Backyard Soccer MLS Edition", GID_HEGAME, 6, 99, 61, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
 
 	// Humongous Entertainment Scumm Version ?
-	{"Football2002", "Backyard Football 2002 (Demo)", GID_HEGAME, 6, 100, 61, MDT_NONE,
-	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
-	{"FFHSDemo", "Freddi Fish 2: The Case of the Haunted Schoolhouse (Demo)", GID_HEGAME, 6, 100, 30, MDT_NONE,
-	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
 	{"ff5demo", "Freddi Fish 5: The Case of the Creature of Coral Cave (Demo)", GID_HEGAME, 6, 100, 61, MDT_NONE,
-	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
-	{"PjSamDemo", "Pajama Sam: No Need To Hide When It's Dark Outside (Demo)", GID_HEGAME, 6, 100, 61, MDT_NONE,
-	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
-	{"PajamaNHD", "Pajama Sam: No Need To Hide When It's Dark Outside (Updated)", GID_HEGAME, 6, 100, 61, MDT_NONE,
-	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
-	{"PuttTTT", "Putt-Putt Travels Through Time (Updated)", GID_HEGAME, 6, 100, 31, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
 
 	// Uses bink in external files for logos
@@ -398,7 +384,7 @@ static const ScummGameSettings scumm_settings[] = {
 // and instead of multiplying GIDs this table is used.
 //
 // Use main table to specify default flags and this table to override defaults.
-static const ScummGameSettings he_md5_settings[] = {
+static const ScummGameSettings multiple_versions_md5_settings[] = {
 	{"0b3222aaa7efcf283eb621e0cefd26cc", "Putt-Putt Joins The Parade (early version)", GID_HEGAME, 6, 0, 13, MDT_ADLIB | MDT_NATIVE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS, 0, 0},
 	{"6a30a07f353a75cdc602db27d73e1b42", "Putt-Putt Joins The Parade (Windows)", GID_HEGAME, 6, 70, 13, MDT_NONE,
@@ -441,67 +427,92 @@ static const ScummGameSettings he_md5_settings[] = {
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
 	{"d4b8ee426b1afd3e53bc0cf020418cf6", "Putt-Putt and Pep's Dog on a Stick (Updated)", GID_HEGAME, 6, 98, 30, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
+	{"2e85f7aa054930c692a5b1bed1dfc295", "Backyard Football 2002 (Demo Updated)", GID_HEGAME, 6, 100, 61, MDT_NONE,
+	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0}, // Football2002
+	{"d37c55388294b66e53e7ced3af88fa68", "Freddi Fish 2: The Case of the Haunted Schoolhouse (Demo Updated)", GID_HEGAME, 6, 100, 30, MDT_NONE,
+	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0}, // FFHSDemo
+	{"d7ab7cd6105546016e6a0d46fb36b964", "Pajama Sam: No Need To Hide When It's Dark Outside (Demo Updated)", GID_HEGAME, 6, 100, 61, MDT_NONE,
+	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0}, // PJSamDemo
+	{"37aed3f91c1ef959e0bd265f9b13781f", "Pajama Sam: No Need To Hide When It's Dark Outside (Updated)", GID_HEGAME, 6, 100, 61, MDT_NONE,
+	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0}, // PajamaNHD
+	{"a525c1753c1db5011c00417da37887ef", "Putt-Putt Travels Through Time (Updated)", GID_HEGAME, 6, 100, 31, MDT_NONE,
+	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
+	{"6af2419fe3db5c2fdb091ae4e5833770", "Putt-Putt Enters the Race (Demo Alt)", GID_FREDDI4, 6, 98, 61, MDT_NONE,
+	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0}, // 500demo
 
 	{NULL, NULL, 0, 0, 0, MDT_NONE, 0, 0, 0, 0}
 };
 
-static struct heMacFileNames {
+enum genMethods {
+	kGenMac,
+	kGenMacNoParens,
+	kGenPC
+};
+
+static struct substDataFileNames {
 	const char *winName;
 	const char *macName;
-	bool hasParens;
-} heMacFileNameTable[] = {
-	{ "Intentionally/left/blank", "", false},
-	{ "airdemo", "Airport Demo", true},
-	{ "balloon", "Balloon-O-Rama", true},
-	{ "chase", "Cheese Chase", true},
-	{ "circdemo", "Putt Circus Demo", true},
-	{ "dog", "Dog on a Stick", true},
-	{ "f3-mdemo", "F3-Mdemo", true },
-	{ "f4-demo", "Freddi 4 Demo", true },
-	{ "farmdemo", "Farm Demo", true},
-	{ "fbear", "Fatty Bear", false },
-	{ "fbdemo", "Fatty Bear Demo", false },
-	{ "ff2-demo", "Freddi Fish 2 Demo", true },
-	{ "ffhsdemo", "FFHSDemo", true },
-	{ "footdemo", "FootBall Demo", true },
-	{ "foxdemo", "FoxDemo", true },
-	{ "freddemo", "Freddi Demo", true },
-	{ "freddi", "Freddi Fish", true },
-	{ "freddi2", "Freddi Fish 2", true },
-	{ "freddi3", "Freddi Fish 3", true },
-	{ "freddi4", "Freddi 4", true },
-	{ "freddicove", "FreddiCove", true },
-	{ "kinddemo", "Kinddemo", true },
-	{ "lost", "Lost and Found", true},
-	{ "maze", "Maze Madness", true},
-	{ "moondemo", "Putt-Putt Moon Demo", false },
-	{ "mustard", "Mustard", true},
-	{ "pajama", "Pajama Sam", true},
-	{ "pajama2", "Pajama Sam 2", true},
-	{ "pj2demo", "PJ2Demo", true },
-	{ "pj3-demo", "Pajama Sam 3-Demo", true },
-	{ "pjs-demo", "Pajama Sam Demo", true },
-	{ "pjsamdemo", "PjSamDemo", true },
-	{ "circdemo", "Putt Circus Demo", true },
-	{ "puttdemo", "Putt-Putt's Demo", false },
-	{ "puttmoon", "Putt-Putt Moon", false },
-	{ "puttputt", "Putt-Putt Parade", false },
-	{ "PuttsFunShop", "Putt's FunShop", true },
-	{ "putttime-demo", "TimeDemo", true },
-	{ "puttzoo", "PuttZoo", true },
-	{ "racedemo", "RaceDemo", true },
-	{ "SamsFunShop", "Sam's FunShop", true },
-	{ "sf2-demo", "Spy Fox 2 - Demo", true },
-	{ "sf3-demo", "Spy Ozone Demo", true },
-	{ "socks", "SockWorks", true },
-	{ "spyfox", "SPYFox", true },
-	{ "spyfox2", "Spy Fox 2", true },
-	{ "spyozon", "SpyOzon", true },
-	{ "thinkerk", "ThinkerK", true },
-	{ "timedemo", "TimeDemo", true },
-	{ "water", "Water Worries", true },
-	{ "zoodemo", "Puttzoo Demo", true },
-	{ "zoodemo", "Zoo Demo", true}
+	int genMethod;
+} substDataFileNameTable[] = {
+	{ "Intentionally/left/blank", "", kGenMacNoParens},
+	{ "racedemo", "500demo", kGenPC},
+	{ "Spydemo", "foxdemo", kGenPC},
+	{ "Spydemo", "FoxDemo", kGenMac },
+	{ "airdemo", "Airport Demo", kGenMac},
+	{ "balloon", "Balloon-O-Rama", kGenMac},
+	{ "chase", "Cheese Chase", kGenMac},
+	{ "circdemo", "Putt Circus Demo", kGenMac},
+	{ "dog", "Dog on a Stick", kGenMac},
+	{ "f3-mdemo", "F3-Mdemo", kGenMac },
+	{ "f4-demo", "Freddi 4 Demo", kGenMac },
+	{ "farmdemo", "Farm Demo", kGenMac},
+	{ "fbear", "Fatty Bear", kGenMacNoParens },
+	{ "fbdemo", "Fatty Bear Demo", kGenMacNoParens },
+	{ "ff2-demo", "Freddi Fish 2 Demo", kGenMac },
+	{ "ff2-demo", "FFHSDemo", kGenPC },
+	{ "ff2-demo", "FFHSDemo", kGenMac },
+	{ "footdemo", "FootBall Demo", kGenMac },
+	{ "footdemo", "FootBall2000", kGenPC },
+	{ "freddemo", "Freddi Demo", kGenMac },
+	{ "freddi", "Freddi Fish", kGenMac },
+	{ "freddi2", "Freddi Fish 2", kGenMac },
+	{ "freddi3", "Freddi Fish 3", kGenMac },
+	{ "freddi4", "Freddi 4", kGenMac },
+	{ "freddicove", "FreddiCove", kGenMac },
+	{ "kinddemo", "Kinddemo", kGenMac },
+	{ "lost", "Lost and Found", kGenMac},
+	{ "maze", "Maze Madness", kGenMac},
+	{ "moondemo", "Putt-Putt Moon Demo", kGenMacNoParens },
+	{ "mustard", "Mustard", kGenMac},
+	{ "pajama", "Pajama Sam", kGenMac},
+	{ "pajama", "PajamaNHD", kGenPC},
+	{ "pajama2", "Pajama Sam 2", kGenMac},
+	{ "pj2demo", "PJ2Demo", kGenMac },
+	{ "pj3-demo", "Pajama Sam 3-Demo", kGenMac },
+	{ "pjs-demo", "Pajama Sam Demo", kGenMac },
+	{ "pjs-demo", "PjSamDemo", kGenPC },
+	{ "pjs-demo", "PjSamDemo", kGenMac },
+	{ "circdemo", "Putt Circus Demo", kGenMac },
+	{ "puttdemo", "Putt-Putt's Demo", kGenMacNoParens },
+	{ "puttmoon", "Putt-Putt Moon", kGenMacNoParens },
+	{ "puttputt", "Putt-Putt Parade", kGenMacNoParens },
+	{ "PuttsFunShop", "Putt's FunShop", kGenMac },
+	{ "putttime", "PuttTTT", kGenPC },
+	{ "putttime-demo", "TimeDemo", kGenMac },
+	{ "puttzoo", "PuttZoo", kGenMac },
+	{ "racedemo", "RaceDemo", kGenMac },
+	{ "SamsFunShop", "Sam's FunShop", kGenMac },
+	{ "sf2-demo", "Spy Fox 2 - Demo", kGenMac },
+	{ "sf3-demo", "Spy Ozone Demo", kGenMac },
+	{ "socks", "SockWorks", kGenMac },
+	{ "spyfox", "SPYFox", kGenMac },
+	{ "spyfox2", "Spy Fox 2", kGenMac },
+	{ "spyozon", "SpyOzon", kGenMac },
+	{ "thinkerk", "ThinkerK", kGenMac },
+	{ "timedemo", "TimeDemo", kGenMac },
+	{ "water", "Water Worries", kGenMac },
+	{ "zoodemo", "Puttzoo Demo", kGenMac },
+	{ "zoodemo", "Zoo Demo", kGenMac}
 };
 
 static int compareMD5Table(const void *a, const void *b) {
@@ -691,7 +702,7 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 	_expire_counter = 0;
 	_lastLoadedRoom = 0;
 	_roomResource = 0;
-	_heMacFileNameIndex = 0;
+	_substResFileNameIndex = 0;
 	OF_OWNER_ROOM = 0;
 	_verbMouseOver = 0;
 	_inventoryOffset = 0;
@@ -2612,8 +2623,8 @@ void ScummEngine::errorString(const char *buf1, char *buf2) {
 	}
 }
 
-int ScummEngine::generateMacFileName(const char *filename, char *buf, int bufsize, int cont, int index) {
-	return generateMacFileName_(filename, buf, bufsize, cont, index);
+int ScummEngine::generateSubstResFileName(const char *filename, char *buf, int bufsize, int cont, int index) {
+	return generateSubstResFileName_(filename, buf, bufsize, cont, index);
 }
 
 
@@ -2636,8 +2647,8 @@ DetectedGameList Engine_SCUMM_detectGames(const FSList &fslist) {
 	const ScummGameSettings *g;
 	char detectName[128];
 	char tempName[128];
-	bool heOver;
-	int heLastName = 0;
+	bool substIsOver;
+	int substLastIndex = 0;
 
 	typedef Common::Map<Common::String, bool> StringSet;
 	StringSet fileSet;
@@ -2668,10 +2679,10 @@ DetectedGameList Engine_SCUMM_detectGames(const FSList &fslist) {
 			strcat(detectName, ".000");
 		}
 
-		heOver = false;
-		heLastName = 0;
+		substIsOver = false;
+		substLastIndex = 0;
 
-		while (!heOver) {
+		while (!substIsOver) {
 			// Iterate over all files in the given directory
 			for (FSList::const_iterator file = fslist.begin(); file != fslist.end(); ++file) {
 				if (!file->isDirectory()) {
@@ -2679,7 +2690,9 @@ DetectedGameList Engine_SCUMM_detectGames(const FSList &fslist) {
 
 					if (0 == scumm_stricmp(detectName, name)) {
 						// Match found, add to list of candidates, then abort inner loop.
-						if (heLastName > 0) { // HE Mac versions.
+						if (substLastIndex > 0 && // HE Mac versions.
+							(substDataFileNameTable[substLastIndex].genMethod == kGenMac ||
+							 substDataFileNameTable[substLastIndex].genMethod == kGenMacNoParens)) {
 							detectedGames.push_back(DetectedGame(g->toGameSettings(), 
 																 Common::UNK_LANG, 
 																 Common::kPlatformMacintosh));
@@ -2693,13 +2706,9 @@ DetectedGameList Engine_SCUMM_detectGames(const FSList &fslist) {
 				}
 			}
 
-			if (g->features & GF_HUMONGOUS) {
-				if ((heLastName = generateMacFileName_(tempName, detectName, 128, 
-													  heLastName)) == -1)
-					heOver = true;
-			} else {
-				heOver = true;
-			}
+			if ((substLastIndex = generateSubstResFileName_(tempName, detectName, 128, 
+															substLastIndex)) == -1)
+				substIsOver = true;
 		}
 	}
 	
@@ -2756,7 +2765,7 @@ DetectedGameList Engine_SCUMM_detectGames(const FSList &fslist) {
 	return detectedGames;
 }
 
-static int generateMacFileName_(const char *filename, char *buf, int bufsize, int cont, int index) {
+static int generateSubstResFileName_(const char *filename, char *buf, int bufsize, int cont, int index) {
 	if (cont == -1)
 		return -1;
 
@@ -2769,22 +2778,35 @@ static int generateMacFileName_(const char *filename, char *buf, int bufsize, in
 	if (num == ')')
 		num = filename[strlen(filename) - 2];
 
-	char *n = strrchr(filename, '.');
-	int len = n - filename;
+	char *ext = strrchr(filename, '.');
+	int len = ext - filename;
 
 	if (index > 0)
 		cont = index;
 
-	for (int i = cont; i < ARRAYSIZE(heMacFileNameTable); i++) {
-		if (!scumm_strnicmp(filename, heMacFileNameTable[i].winName, len)) {
-			if (num == '3') { // special case for cursors
-				// For mac they're stored in game binary
-				strncpy(buf, heMacFileNameTable[i].macName, bufsize);
-			} else {
-				if (heMacFileNameTable[i].hasParens)
-					snprintf(buf, bufsize, "%s (%c)", heMacFileNameTable[i].macName, num);
-				else 
-					snprintf(buf, bufsize, "%s %c", heMacFileNameTable[i].macName, num);
+	for (int i = cont; i < ARRAYSIZE(substDataFileNameTable); i++) {
+		if (!scumm_strnicmp(filename, substDataFileNameTable[i].winName, len)) {
+			switch (substDataFileNameTable[i].genMethod) {
+			case kGenMac:
+			case kGenMacNoParens:
+				if (num == '3') { // special case for cursors
+					// For mac they're stored in game binary
+					strncpy(buf, substDataFileNameTable[i].macName, bufsize);
+				} else {
+					if (substDataFileNameTable[i].genMethod == kGenMac)
+						snprintf(buf, bufsize, "%s (%c)", substDataFileNameTable[i].macName, num);
+					else 
+						snprintf(buf, bufsize, "%s %c", substDataFileNameTable[i].macName, num);
+				}
+				break;
+
+			case kGenPC:
+				snprintf(buf, bufsize, "%s%s", substDataFileNameTable[i].macName, ext);
+				break;
+
+			default:
+				*buf = 0;
+				break;
 			}
 
 			return i;
@@ -2812,7 +2834,7 @@ Engine *Engine_SCUMM_create(GameDetector *detector, OSystem *syst) {
 	const char *name = g->name;
 	char detectName[256], tempName[256], gameMD5[32+1];
 	uint8 md5sum[16];
-	int heLastName = 0;
+	int substLastIndex = 0;
 
 	if (g->detectFilename) {
 		strcpy(detectName, game.detectFilename);
@@ -2828,25 +2850,28 @@ Engine *Engine_SCUMM_create(GameDetector *detector, OSystem *syst) {
 		strcat(detectName, ".he0");
 		strcpy(tempName, name);
 		strcat(tempName, ".he0");
-		
-		bool heOver = false;
-		File f;
-
-		while (!heOver) {
-			if (f.exists(detectName, ConfMan.get("path").c_str()))
-				break;
-
-			if ((heLastName = generateMacFileName_(tempName, detectName, 256, 
-													  heLastName)) == -1)
-					heOver = true;
-		}
-
-		// Force game to have Mac platform
-		if (heLastName > 0)
-			game.features |= GF_MACINTOSH;
 	} else {
 		strcpy(detectName, name);
 		strcat(detectName, ".000");
+	}
+
+	bool substIsOver = false;
+	File f;
+
+	while (!substIsOver) {
+		if (f.exists(detectName, ConfMan.get("path").c_str()))
+			break;
+
+		if ((substLastIndex = generateSubstResFileName_(tempName, detectName, 256, 
+														substLastIndex)) == -1)
+			substIsOver = true;
+	}
+
+	// Force game to have Mac platform if needed
+	if (substLastIndex > 0) {
+		if (substDataFileNameTable[substLastIndex].genMethod == kGenMac ||
+			substDataFileNameTable[substLastIndex].genMethod == kGenMacNoParens)
+			game.features |= GF_MACINTOSH;
 	}
 
 	if (md5_file(detectName, md5sum, ConfMan.get("path").c_str(), kMD5FileSizeLimit)) {
@@ -2857,7 +2882,7 @@ Engine *Engine_SCUMM_create(GameDetector *detector, OSystem *syst) {
 
 	// Use MD5 to determine specific game version, if required.
 	if (game.features & GF_MULTIPLE_VERSIONS) {	
-		g = he_md5_settings;
+		g = multiple_versions_md5_settings;
 		while (g->name) {
 			if (!scumm_stricmp(gameMD5, g->name))
 				break;
@@ -2976,7 +3001,7 @@ Engine *Engine_SCUMM_create(GameDetector *detector, OSystem *syst) {
 
 	// FIXME: dirty HACK. Should we introduce another parameter to constructor
 	// instead?
-	((ScummEngine *)engine)->_heMacFileNameIndex = heLastName;
+	((ScummEngine *)engine)->_substResFileNameIndex = substLastIndex;
 
 	return engine;
 }
