@@ -1910,7 +1910,7 @@ void ScummEngine_v72he::o72_openFile() {
 
 	// HACK: Convert paths
 	if (filename[0] == ':') {
-		int len = resStrLen(filename) + 1;
+		int len = resStrLen(filename);
 		int i = 1, j = 0;
 		while(len--) {
 			if (filename[i] == ':')
