@@ -557,6 +557,7 @@ protected:
 	void o8_kernelGetFunctions();
 
 	void o8_getActorChore();
+	void o8_getActorZPlane();
 
 	void o8_drawObject();
 	void o8_getObjectImageX();

@@ -345,7 +345,7 @@ void Scumm_v8::setupOpcodes() {
 		OPCODE(o6_invalid),
 		OPCODE(o6_invalid),
 		OPCODE(o8_getStringWidth),
-		OPCODE(o6_invalid),
+		OPCODE(o8_getActorZPlane),
 		/* F8 */
 		OPCODE(o6_invalid),
 		OPCODE(o6_invalid),
@@ -1668,6 +1668,22 @@ void Scumm_v8::o8_getActorChore() {
 
 	push(a->frame);
 }
+
+void Scumm_v8::o8_getActorZPlane() {
+	int actnum = pop();
+	Actor *a = derefActorSafe(actnum, "o8_getActorChore");
+	assert(a);
+
+	int z = a->forceClip;
+	if (z == 100) {
+		z = getMaskFromBox(a->walkbox);
+		if (z > gdi._numZBuffer)
+			z = gdi._numZBuffer;
+	}
+
+	push(z);
+}
+
 
 void Scumm_v8::o8_getObjectImageX() {
 	int i = getObjectIndex(pop());
