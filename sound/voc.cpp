@@ -30,20 +30,29 @@
 
 
 int getSampleRateFromVOCRate(int vocSR) {
-	if (vocSR == 0xa5 || vocSR == 0xa6 || vocSR == 0x83) {
+	if (vocSR == 0xa5 || vocSR == 0xa6) {
 		return 11025;
 	} else if (vocSR == 0xd2 || vocSR == 0xd3) {
 		return 22050;
 	} else {
 		int sr = 1000000L / (256L - vocSR);
-		warning("inexact sample rate used: %i (0x%x)", sr, vocSR);
+		// inexact sampling rates occur e.g. in the kitchen in Monkey Island,
+		// very easy to reach right from the start of the game.
+		//warning("inexact sample rate used: %i (0x%x)", sr, vocSR);
 		return sr;
 	}
 }
 
 byte *readVOCFromMemory(byte *ptr, int &size, int &rate, int &loops, int &begin_loop, int &end_loop) {
 	
-	assert(memcmp(ptr, "Creative Voice File\x1A", 20) == 0);
+	// Verify the VOC header. We are a little bit lenient here to work around
+	// some invalid VOC headers used in various SCUMM games (they have 0x0
+	// instead of 0x1A after the "Creative Voice File" string).
+	if (memcmp(ptr, "Creative Voice File", 19) != 0)
+		error("readVOCFromMemory: Invalid header");
+	if (ptr[19] != 0x1A)
+		debug(3, "readVOCFromMemory: Partially invalid header");
+
 	int32 offset = READ_LE_UINT16(ptr + 20);
 	int16 version = READ_LE_UINT16(ptr + 22);
 	int16 code = READ_LE_UINT16(ptr + 24);
@@ -118,11 +127,15 @@ byte *loadVOCFile(File *file, int &size, int &rate) {
 			goto invalid;
 	} else {
 	invalid:;
-		warning("loadVOCFile: invalid header");
+		warning("loadVOCFile: Invalid header");
 		return NULL;
 	}
 
-	assert(memcmp(&fileHeader, "Creative Voice File\x1A", 20) == 0);
+	if (memcmp(fileHeader.desc, "Creative Voice File", 19) != 0)
+		error("loadVOCFile: Invalid header");
+	if (fileHeader.desc[19] != 0x1A)
+		debug(3, "loadVOCFile: Partially invalid header");
+
 	//int32 offset = FROM_LE_16(fileHeader.datablock_offset);
 	int16 version = FROM_LE_16(fileHeader.version);
 	int16 code = FROM_LE_16(fileHeader.id);
