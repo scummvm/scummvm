@@ -716,8 +716,7 @@ void ChannelRaw::mix(int16 *data, uint len) {
 	}
 
 	const int volume = _mixer->getVolume();
-	st_size_t tmpLen = len;
-	_converter->flow(*_input, data, &tmpLen, volume);
+	_converter->flow(*_input, data, len, volume);
 #else
 	byte *s, *end;
 
@@ -837,8 +836,7 @@ void ChannelStream::mix(int16 *data, uint len) {
 	}
 
 	const int volume = _mixer->getVolume();
-	st_size_t tmpLen = len;
-	_converter->flow(*_input, data, &tmpLen, volume);
+	_converter->flow(*_input, data, len, volume);
 #else
 	if (_pos == _endOfData) {
 		// Normally, the stream stays around even if all its data is used up.
@@ -960,8 +958,7 @@ void ChannelMP3::mix(int16 *data, uint len) {
 	}
 
 	const int volume = _mixer->getVolume();
-	st_size_t tmpLen = len;
-	_converter->flow(*_input, data, &tmpLen, volume);
+	_converter->flow(*_input, data, len, volume);
 #else
 	const int volume = _mixer->getVolume();
 
@@ -1044,8 +1041,7 @@ void ChannelMP3CDMusic::mix(int16 *data, uint len) {
 	}
 
 	const int volume = _mixer->getMusicVolume();
-	st_size_t tmpLen = len;
-	_converter->flow(*_input, data, &tmpLen, volume);
+	_converter->flow(*_input, data, len, volume);
 #else
 	mad_timer_t frame_duration;
 	const int volume = _mixer->getMusicVolume();
@@ -1198,8 +1194,7 @@ void ChannelVorbis::mix(int16 *data, uint len) {
 	}
 
 	const int volume = isMusicChannel() ? _mixer->getMusicVolume() : _mixer->getVolume();
-	st_size_t tmpLen = len;
-	_converter->flow(*_input, data, &tmpLen, volume);
+	_converter->flow(*_input, data, len, volume);
 #else
 	if (_end_pos > 0 && ov_pcm_tell(_ov_file) >= _end_pos) {
 		destroy();

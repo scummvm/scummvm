@@ -48,14 +48,14 @@ typedef eff_struct *eff_t;
 #define ST_SUCCESS (0)
 
 static inline void clampedAdd(int16& a, int b) {
-	int val = a + b;
+	register int val = a + b;
 
 	if (val > ST_SAMPLE_MAX)
-		a = ST_SAMPLE_MAX;
+		val = ST_SAMPLE_MAX;
 	else if (val < ST_SAMPLE_MIN)
-		a = ST_SAMPLE_MIN;
-	else
-		a = val;
+		val = ST_SAMPLE_MIN;
+
+	a = val;
 }
 
 // Q&D hack to get this SOX stuff to work
@@ -68,19 +68,21 @@ class RateConverter {
 public:
 	RateConverter() {}
 	virtual ~RateConverter() {}
-	virtual int flow(AudioInputStream &input, st_sample_t *obuf, st_size_t *osamp, st_volume_t vol) = 0;
-	virtual int drain(st_sample_t *obuf, st_size_t *osamp, st_volume_t vol) = 0;
+	virtual int flow(AudioInputStream &input, st_sample_t *obuf, st_size_t osamp, st_volume_t vol) = 0;
+	virtual int drain(st_sample_t *obuf, st_size_t osamp, st_volume_t vol) = 0;
 };
 
+/*
 class ResampleRateConverter : public RateConverter {
 protected:
 	eff_struct effp;
 public:
 	ResampleRateConverter(st_rate_t inrate, st_rate_t outrate, int quality);
 	~ResampleRateConverter();
-	virtual int flow(AudioInputStream &input, st_sample_t *obuf, st_size_t *osamp, st_volume_t vol);
-	virtual int drain(st_sample_t *obuf, st_size_t *osamp, st_volume_t vol);
+	virtual int flow(AudioInputStream &input, st_sample_t *obuf, st_size_t osamp, st_volume_t vol);
+	virtual int drain(st_sample_t *obuf, st_size_t osamp, st_volume_t vol);
 };
+*/
 
 RateConverter *makeRateConverter(st_rate_t inrate, st_rate_t outrate, bool stereo, bool reverseStereo = false);
 
