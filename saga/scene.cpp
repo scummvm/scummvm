@@ -66,8 +66,8 @@ Scene::Scene(SagaEngine *vm) : _vm(vm), _initialized(false) {
 
 
 	// Load scene lookup table
-	debug(0, "Loading scene LUT from resource %u.", _vm->getResourceDescription()->scene_lut_rn);
-	result = RSC_LoadResource(_sceneContext, _vm->getResourceDescription()->scene_lut_rn, &scene_lut_p, &scene_lut_len);
+	debug(0, "Loading scene LUT from resource %u.", RSC_ConvertID(_vm->getResourceDescription()->scene_lut_rn));
+	result = RSC_LoadResource(_sceneContext, RSC_ConvertID(_vm->getResourceDescription()->scene_lut_rn), &scene_lut_p, &scene_lut_len);
 	if (result != SUCCESS) {
 		warning("Scene::Scene(): Error: couldn't load scene LUT");
 		return;

@@ -271,7 +271,8 @@ enum GameFeatures {
 	GF_BIG_ENDIAN_DATA = 1 << 1,
 	GF_MAC_RESOURCES   = 1 << 2,
 	GF_LANG_DE         = 1 << 3,
-	GF_WYRMKEEP        = 1 << 4
+	GF_WYRMKEEP        = 1 << 4,
+	GF_CD_FX           = 1 << 5
 };
 
 struct GameSoundInfo {

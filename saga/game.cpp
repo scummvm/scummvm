@@ -432,7 +432,7 @@ static GameDescription gameDescriptions[] = {
 		ARRAYSIZE(ITEMACDEMO_GameFonts),
 		ITEMACDEMO_GameFonts,
 		&ITECD_GameSound,
-		GF_VOX_VOICES | GF_BIG_ENDIAN_DATA | GF_MAC_RESOURCES | GF_WYRMKEEP
+		GF_VOX_VOICES | GF_BIG_ENDIAN_DATA | GF_MAC_RESOURCES | GF_WYRMKEEP | GF_CD_FX
 	},
 
 	// Inherit the earth - early MAC Demo version
@@ -449,7 +449,7 @@ static GameDescription gameDescriptions[] = {
 		ARRAYSIZE(ITEMACDEMO_GameFonts),
 		ITEMACDEMO_GameFonts,
 		&ITECD_GameSound,
-		GF_BIG_ENDIAN_DATA | GF_MAC_RESOURCES | GF_WYRMKEEP
+		GF_VOX_VOICES | GF_BIG_ENDIAN_DATA | GF_MAC_RESOURCES | GF_WYRMKEEP | GF_CD_FX
 	},
 
 	// Inherit the earth - MAC CD Wyrmkeep version
@@ -466,7 +466,7 @@ static GameDescription gameDescriptions[] = {
 		ARRAYSIZE(ITEMACDEMO_GameFonts),
 		ITEMACDEMO_GameFonts,
 		&ITECD_GameSound,
-		GF_BIG_ENDIAN_DATA | GF_MAC_RESOURCES | GF_WYRMKEEP
+		GF_BIG_ENDIAN_DATA | GF_MAC_RESOURCES | GF_WYRMKEEP | GF_CD_FX
 	},
 
 	// Inherit the earth - Linux Demo version
@@ -484,7 +484,7 @@ static GameDescription gameDescriptions[] = {
 		ARRAYSIZE(ITECD_GameFonts),
 		ITECD_GameFonts,
 		&ITECD_GameSound,
-		GF_VOX_VOICES | GF_WYRMKEEP
+		GF_VOX_VOICES | GF_WYRMKEEP | GF_CD_FX
 	},
 	
 	// Inherit the earth - Linux Demo version
@@ -501,7 +501,7 @@ static GameDescription gameDescriptions[] = {
 		ARRAYSIZE(ITECD_GameFonts),
 		ITECD_GameFonts,
 		&ITECD_GameSound,
-		GF_VOX_VOICES | GF_WYRMKEEP
+		GF_VOX_VOICES | GF_WYRMKEEP | GF_CD_FX
 	},
 	
 	// Inherit the earth - Win32 Demo version
@@ -518,7 +518,7 @@ static GameDescription gameDescriptions[] = {
 		ARRAYSIZE(ITEWINDEMO_GameFonts),
 		ITEWINDEMO_GameFonts,
 		&ITECD_GameSound,
-		GF_VOX_VOICES | GF_WYRMKEEP
+		GF_VOX_VOICES | GF_WYRMKEEP | GF_CD_FX
 	},
 	
 	// Inherit the earth - Wyrmkeep Linux CD version
@@ -536,7 +536,7 @@ static GameDescription gameDescriptions[] = {
 		ARRAYSIZE(ITECD_GameFonts),
 		ITECD_GameFonts,
 		&ITECD_GameSound,
-		GF_WYRMKEEP
+		GF_WYRMKEEP | GF_CD_FX
 	},
 
 	// Inherit the earth - DOS CD version
@@ -553,7 +553,7 @@ static GameDescription gameDescriptions[] = {
 		ARRAYSIZE(ITECD_GameFonts),
 		ITECD_GameFonts,
 		&ITECD_GameSound,
-		0
+		GF_CD_FX
 	},
 
 	// Inherit the earth - DOS CD German version
@@ -570,7 +570,7 @@ static GameDescription gameDescriptions[] = {
 		ARRAYSIZE(ITECD_GameFonts),
 		ITECD_GameFonts,
 		&ITECD_GameSound,
-		GF_LANG_DE
+		GF_LANG_DE | GF_CD_FX
 	},
 
 	// Inherit the earth - CD version
@@ -587,7 +587,7 @@ static GameDescription gameDescriptions[] = {
 		ARRAYSIZE(ITECD_GameFonts),
 		ITECD_GameFonts,
 		&ITECD_GameSound,
-		0
+		GF_CD_FX
 	},
 
 	// Inherit the earth - German Floppy version

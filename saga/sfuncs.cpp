@@ -1453,12 +1453,18 @@ static struct {
 
 // Script function #70 (0x46)
 int Script::sfPlaySound(SCRIPTFUNC_PARAMS) {
-	ScriptDataWord param = thread->pop() - 13;
+	int param = getSWord(thread->pop());
+	int res;
 
-	if (/* param >= 0 && */ param < ARRAYSIZE(sfxTable))
-		_vm->_sndRes->playSound(sfxTable[param].res, sfxTable[param].vol, false);
-	else
+	if (param < ARRAYSIZE(sfxTable)) {
+		res = sfxTable[param].res;
+		if (_vm->getFeatures() & GF_CD_FX)
+			res -= 14;
+
+		_vm->_sndRes->playSound(res, sfxTable[param].vol, false);
+	} else {
 		_vm->_sound->stopSound();
+	}
 
 	return SUCCESS;
 }

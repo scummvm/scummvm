@@ -172,26 +172,27 @@ namespace Saga {
 #define FX_DOOR_OPEN_2 53
 #define FX_JAIL_DOOR 54
 #define FX_KILN_FIRE 55
+#define FX_DUMMY 56
 
 // These are only in the CD version
 
-#define FX_CROWD_01 56
-#define FX_CROWD_02 57
-#define FX_CROWD_03 58
-#define FX_CROWD_04 59
-#define FX_CROWD_05 60
-#define FX_CROWD_06 61
-#define FX_CROWD_07 62
-#define FX_CROWD_08 63
-#define FX_CROWD_09 64
-#define FX_CROWD_10 65
-#define FX_CROWD_11 66
-#define FX_CROWD_12 67
-#define FX_CROWD_13 68
-#define FX_CROWD_14 69
-#define FX_CROWD_15 70
-#define FX_CROWD_16 71
-#define FX_CROWD_17 72
+#define FX_CROWD_01 57
+#define FX_CROWD_02 58
+#define FX_CROWD_03 59
+#define FX_CROWD_04 60
+#define FX_CROWD_05 61
+#define FX_CROWD_06 62
+#define FX_CROWD_07 63
+#define FX_CROWD_08 64
+#define FX_CROWD_09 65
+#define FX_CROWD_10 66
+#define FX_CROWD_11 67
+#define FX_CROWD_12 68
+#define FX_CROWD_13 69
+#define FX_CROWD_14 70
+#define FX_CROWD_15 71
+#define FX_CROWD_16 72
+#define FX_CROWD_17 73
 
 } // End of namespace Saga
 
