@@ -1947,7 +1947,7 @@ void Insane::switchBenWeapon(void) {
 			_actor[0].weaponClass = 2;
 			_actor[0].act[2].state = 1;
 		} else {
-			smlayer_setActorCostume(0, 2, readArray(21));
+			smlayer_setActorCostume(0, 2, readArray(11));
 		}
 		break;
 	default:
