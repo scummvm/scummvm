@@ -53,8 +53,8 @@ c0e6ea1d47493cca09fc674c3d097836  airdemo.he3
 42161ad979949daf67924b5227b94f2d  airdemo.he4
 765492059d83bc0ae8c30a4feef50a6a  airdemo.he9
 
-(freddi cd) (apparently combination of farm and spyfox versions)
-khalek
+(freddi cd/pj2 cd)
+khalek, sev
 7.0.0 (Jul  5 1995 14:46:05)
 a5459bfe36183cf1f4ced00fe325aa90  airdemo.w32
 8ffd618a776a4c0d8922bb28b09f8ce8  airdemo.he0
@@ -95,6 +95,16 @@ f67221ca7890906f29ab38aedafb0802  BLUESABCTIMEDEMO.W32
 e4a7e95b00feb1a3e13b542c164c7ff3  BLUESABCTIMEDEMO.HE2
 de94e921f02e3b4c6e061aab0f4cc339  BLUESABCTIMEDEMO.HE4
 
+(puttrace cd)
+sev
+D:\scummsys.98\sputm.98\*.c
+f67221ca7890906f29ab38aedafb0802 BluesABCTimeDemo.exe
+810a9da887aefa597b0cf3c77d262897 BluesABCTimeDemo.HE0
+860eb5a38ce8edef04f614bb50489aab BluesABCTimeDemo.(a)
+5800ab15c53341fa4b4470cd20c2affa BluesABCTimeDemo.he2
+de94e921f02e3b4c6e061aab0f4cc339 BluesABCTimeDemo.he4
+ccca9a823d117afb1a882fd707586bf0 BluesABCTimeDemo.d32
+
 (puttsfunshop cd/pj3 cd)
 sev
 D:\scummsys.98\sputm.98\*.c
@@ -103,6 +113,17 @@ dbf4d59d70b826733f379f998354d350 BluesBirthdayDemo.HE0
 6ddf8b026cfb9410b560f91f353dc0f4 BluesBirthdayDemo.(a)
 409a570e46466aef89c3cd3a30992543 BluesBirthdayDemo.(b)
 60cc055b47b53cb53eaa89e1f974c888 BluesBirthdayDemo.he2
+0794110b085ee91c2aa4a5fc844ff2f4 BluesBirthdayDemo.he4
+ccca9a823d117afb1a882fd707586bf0 BluesBirthdayDemo.d32
+
+(puttrace cd)
+sev
+D:\scummsys.98\sputm.98\*.c
+e07a222d121f7e8b04266bf4d7809cb4 BluesBirthdayDemo.a32
+2d4acbdcfd8e374c9da8c2e7303a5cd0 BluesBirthdayDemo.HE0
+18ee74255c93da057c92effbd39ebd9a BluesBirthdayDemo.(a)
+409a570e46466aef89c3cd3a30992543 BluesBirthdayDemo.(b)
+dc5e63ecf2672d4a3a0458fe32902a4e BluesBirthdayDemo.he2
 0794110b085ee91c2aa4a5fc844ff2f4 BluesBirthdayDemo.he4
 ccca9a823d117afb1a882fd707586bf0 BluesBirthdayDemo.d32
 
@@ -336,7 +357,7 @@ a1a7f76f9de6b74031f4d6c9b8cbb130 FREDDI2.W32
 52494431dd3f658a8dc1d4348e677e48 FREDDI2.HE4
 
 
-(spyfox cd/pjs cd/puttzoo cd/he classics cd)
+(spyfox cd/pjs cd/puttzoo cd/he classics cd/pj2 cd)
 khalek, sev
 1996-10-17 03:54 ff2-demo.w32
 D:\Scummsrc.80\Sputm\*.c
@@ -355,9 +376,9 @@ fc8d197a22146e74766e9cb0cfcaf1da  Freddi Fish 2 Demo (0)
 f96261232a8a7ae6bc7478d8c1c5a49c  Freddi Fish 2 Demo (2)
 a97bf54bcae67fabb8d6e4a1e506efef  Freddi Fish 2 Demo (4)
 
-(humongous ftp)
+(humongous ftp/puttrace cd)
 1997-10-28 12:42 f3-mdemo.w32
-khalek
+khalek, sev
 D:\Scummsys.90\sputm.90\*.c
 3ff95314abdeebe0b2d11f4417efa449  f3-mdemo.w32
 cb1559e8405d17a5a278a6b5ad9338d1  f3-mdemo.he0
@@ -374,6 +395,16 @@ a2fde75fcbd2376f057f4a40f9893cbe  F3-Mdemo (1)
 30e3f97a2290f0683ccedf8b08a6ba55  F3-Mdemo (2)
 b90004518ba5bb4dc473170f5c975568  F3-Mdemo (4)
 d41d8cd98f00b204e9800998ecf8427e  F3-Mdemo (r)
+
+(pj2 cd)
+sev
+D:\Scummsys.90\sputm.90\*.c
+66ed086cf061ca023e5924147fc585be f3-mdemo.w32
+cb1559e8405d17a5a278a6b5ad9338d1 f3-mdemo.he0
+a2fde75fcbd2376f057f4a40f9893cbe f3-mdemo.he1
+30e3f97a2290f0683ccedf8b08a6ba55 f3-mdemo.he2
+b90004518ba5bb4dc473170f5c975568 f3-mdemo.he4
+c0c0934580cde95879bef0b6a5a49c29 f3-mdemo.d32
 
 (humongous ftp/pj3 cd)
 1999-02-08 19:21 F4-demo.w32
@@ -429,8 +460,9 @@ c0e6ea1d47493cca09fc674c3d097836 jungle.he3
 222ad352670c1d94366a8511af846f49 jungle.he4
 f80c48c622ba21d46fc518630f324cf7 jungle.he9
 
+(ftp/pj2 cd/puttrace cd)
 1997-09-03 18:32 kinddemo.w32
-khalek
+khalek, sev
 D:\Scummsys.90\sputm.90\*.c
 b10981a0805c37cda1420f29745d6537  kinddemo.w32
 695fe0b3963333b7e15b37514db3c745  kinddemo.HE0
@@ -523,7 +555,7 @@ f237bf8a5ef9af78b2a6a4f3901da341  Pajama Sam Demo (0)
 4ccd03ca710a9053c42292cae09a6471  Pajama Sam Demo (2)
 6e0fdfcf13e37b659b7155cf5969965f  Pajama Sam Demo (4)
 
-(spyfox cd/puttzoo cd/he classics cd)
+(spyfox cd/puttzoo cd/he classics cd/pj2 cd)
 khalek, sev
 1996-10-31 22:34 pjs-demo.w32
 D:\Scummsrc.80\Sputm\*.c
@@ -541,6 +573,16 @@ f237bf8a5ef9af78b2a6a4f3901da341  Pajama Sam Demo (0)
 5c12305ff68ed053daba74a700a56ad2  Pajama Sam Demo (1)
 4ccd03ca710a9053c42292cae09a6471  Pajama Sam Demo (2)
 6e0fdfcf13e37b659b7155cf5969965f  Pajama Sam Demo (4)
+
+(pj2 cd)
+sev
+D:\scummsys.95\sputm.95\*.cpp
+44a282944b6392ad883a48fc03f37146 pajama2.w32
+d4e79c3d8645b8266cd78c325bc35154 pajama2.he0
+cf1e7394ae00c0c65fa5af486e752e5c pajama2.he1
+53f95adc8f6727d26e3248fb1bad8180 pajama2.he2
+297787a960f2b591bb98add9b0689e9f pajama2.he4
+58dfc09f344a9dec565bb914920800d3 pajama2.x32
 
 (pj3 cd)
 sev
@@ -599,6 +641,7 @@ f69c2ce78a6f2a70bf43f0cf665ac075  data/world-1/levels/level-8.ot2
 049b95a44520347dabf1d14b1cd9b9f4  data/world-1/levels/level-9.ot1
 b6087413d0aac4078203a1ef5fd88cb8  data/world-1/levels/level-9.ot2
 
+(ftp/puttrace cd)
 1998-05-09 20:27 PJ2DEMO.W32
 khalek
 D:\scummsys.95\sputm.95\*.c
@@ -729,6 +772,17 @@ khalek
 dc086db2e995aff8b2336147ccbd75d6  Putt-Putt Parade 1
 5f5a783f29c3da080d3bddbef0e2f01d  Putt-Putt Parade 2
 
+(puttrace cd)
+sev
+D:\scummsys.98\sputm.98\*.c
+7ded875e14d324f610a4fde12de2d407 PUTTRACE.A32
+981e1e1891f2be7e25a01f50ae55a5af PUTTRACE.HE0
+ef68d6670cce33d4300468d0b76b3894 puttrace.(a)
+981e1e1891f2be7e25a01f50ae55a5af PUTTRACE.HE0
+1bb81a151d72f56b81b43b55b1de63e4 PUTTRACE.HE2
+3f368bd19438204b34db7d7ff8e5395d PUTTRACE.HE4
+e56b14495c0075850c900ca0999f90f4 puttrace.(b)
+
 2002-05-07 02:53 RACEDEMO.W32
 khalek
 D:\scummsys.98\sputm.98\*.c
@@ -749,8 +803,29 @@ e80168dc9bfca4577b4e2bbdd70db60b RACEDEMO.HE4
 7ded875e14d324f610a4fde12de2d407 RACEDEMO.A32
 ccca9a823d117afb1a882fd707586bf0 RACEDEMO.D32
 
+(pj2 cd/puttrace cd)
+sev
+D:\Scummsys.90\sputm.90\*.c
+4c33312418b27bfe8ad307a6e14604e9 timedemo.w32
+4e5867848ee61bc30d157e2c94eee9b4 timedemo.he0
+5c58da43055710e93cfedd45bb14b03c timedemo.he1
+42df84a2b73a3d2ee461b89474ee2f57 timedemo.he2
+72339e5cf3f2902ad78e58c05bfcf7bb timedemo.he4
+c0c0934580cde95879bef0b6a5a49c29 timedemo.d32
+
+(ftp)
+sev
+D:\Scummsys.90\sputm.90\*.c
+a43540b44806b8311c7fd04c12cbf46a TIMEDEMO.W32
+4e5867848ee61bc30d157e2c94eee9b4 TIMEDEMO.HE0
+5c58da43055710e93cfedd45bb14b03c TIMEDEMO.HE1
+42df84a2b73a3d2ee461b89474ee2f57 TIMEDEMO.HE2
+72339e5cf3f2902ad78e58c05bfcf7bb TIMEDEMO.HE4
+c0c0934580cde95879bef0b6a5a49c29 TIMEDEMO.D32
+
+(web)
 2002-06-10 20:14 TimeDemo.exe
-khalek
+khalek, sev
 c:\Build\SRC\SPUTM\Src\SrcPWin\*.cpp
 a64bde414f464ef8522fa0ffeea36d9c  TimeDemo.exe
 0ab19be9e2a3f6938226638b2a3744fe  TimeDemo.HE0
@@ -839,6 +914,14 @@ fbdd947d21e8f5bac6d6f7a316af1c5a  spydemo.he0
 820bceab2a1ab02254c33e6e3fc81628  spydemo.he1
 bc8ed64e6a101f6646b80aa294fa5bdc  spydemo.he2
 88867a804055334db8485d7da5d2c51f  spydemo.he4
+
+(ftp/pj2 demo)
+sev
+b7aa3c76d463137a8a09c68d9a1045d1 foxdemo.w32
+53e94115b55dd51d4b8ff0871aa1df1e foxdemo.he0
+81fef80fadf4cd3ad0e04ac619f6eaed foxdemo.he1
+1229ed0135d97aac8b50224a74ee4f34 foxdemo.he2
+6f7993e15da433b58ea63e59e3666cea foxdemo.he4
 
 (farm cd hfs)
 khalek
