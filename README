@@ -541,7 +541,7 @@ simon games.
         Period (.)             - Skips current line of text
 
     Broken Sword I:
-        F5                     - Displays save/load box
+        F5 or ESC              - Displays save/load box
 
     Broken Sword II:
         Ctrl-d                 - Starts the debugger
