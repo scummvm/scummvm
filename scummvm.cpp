@@ -208,6 +208,7 @@ void Scumm::scummMain(int argc, char **argv) {
 
 	if (!_gameDataPath) {
 		warning("No path was provided. Assuming that data file are in the current directory");
+                strcpy(_gameDataPath, "");
 	}
 
 	if(_features & GF_AFTER_V7)
