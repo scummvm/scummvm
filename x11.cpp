@@ -26,6 +26,7 @@
 #include "gui.h"
 #include "sound.h"
 #include "cdmusic.h"
+#include "mp3_cd.h"
 
 #include <sys/time.h>
 #include <unistd.h>
@@ -187,7 +188,10 @@ static void create_empty_cursor(Display *display,
 
 /* No CD on the iPAQ => stub functions */
 void cd_play(Scumm *s, int track, int num_loops, int start_frame, int end_frame) {
-/* Insert SDL.cpp MP3 code here :) */
+
+#ifdef COMPRESSED_SOUND_FILE
+	mp3_cd_play(s, track, num_loops, start_frame, end_frame);
+#endif
 }
 int cd_is_running(void) {
   return 1;
