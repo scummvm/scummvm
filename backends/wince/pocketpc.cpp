@@ -223,7 +223,7 @@ BOOL PPCWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, OSystem_W
 						if (g_scumm->_features & GF_OLD256 || g_scumm->_gameId == GID_CMI)
 							wm->_event.kbd.ascii = 319;
 						else
-							wm->_event.kbd.ascii = g_scumm->_vars[g_scumm->VAR_SAVELOADDIALOG_KEY];
+							wm->_event.kbd.ascii = g_scumm->VAR_SAVELOADDIALOG_KEY;
 						break;
 					case ToolbarMode:
 						SetScreenMode(!GetScreenMode());
@@ -235,7 +235,7 @@ BOOL PPCWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, OSystem_W
 						if (is_demo)
 							do_quit();
 						if (is_simon) {
-							((SimonEngine*)engine)->_exit_cutscene = true;
+							wm->_event.kbd.ascii = mapKey(VK_ESCAPE);
 							break;
 						}
 						wm->_event.event_code = OSystem::EVENT_KEYDOWN;
@@ -243,7 +243,7 @@ BOOL PPCWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, OSystem_W
 							wm->_event.kbd.ascii = g_scumm->_vars[g_scumm->VAR_CUTSCENEEXIT_KEY];
 						else
 						if (g_scumm->_talkDelay > 0)
-							wm->_event.kbd.ascii = g_scumm->_vars[g_scumm->VAR_TALKSTOP_KEY];						
+							wm->_event.kbd.ascii = g_scumm->VAR_TALKSTOP_KEY;						
 						else
 							wm->_event.kbd.ascii = mapKey(VK_ESCAPE);
 						break;

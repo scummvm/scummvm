@@ -39,12 +39,12 @@
 #include "resource.h"
 
 #include "scumm.h"
-#include "debug.h"
+//#include "debug.h"
 #include "screen.h"
 #include "gui/newgui.h"
 #include "sound/mididrv.h"
 #include "gameDetector.h"
-#include "simon/simon.h"
+//#include "simon/simon.h"
 #include "gapi_keys.h"
 #include "config-file.h"
 
@@ -163,6 +163,12 @@ public:
 	void lock_mutex(MutexRef);
 	void unlock_mutex(MutexRef);
 	void delete_mutex(MutexRef);
+
+	// New helpers
+
+	int16 get_height();
+	int16 get_width();
+	void clear_sound_proc();
 
 	// Windows callbacks & stuff
 	static LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);

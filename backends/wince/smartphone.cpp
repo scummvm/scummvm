@@ -300,13 +300,13 @@ void SmartfonSave(OSystem_WINCE3 *wm, BOOL repeat) {
 		if (g_scumm->_features & GF_OLD256)
 			wm->_event.kbd.ascii = 319;
 		else
-			wm->_event.kbd.ascii = g_scumm->_vars[g_scumm->VAR_SAVELOADDIALOG_KEY];
+			wm->_event.kbd.ascii = g_scumm->VAR_SAVELOADDIALOG_KEY;
 }
 
 void SmartfonSkip(OSystem_WINCE3 *wm, BOOL repeat) {
 
 		if (is_simon) {
-			((SimonEngine*)engine)->_exit_cutscene = true;
+			wm->_event.kbd.ascii = VK_ESCAPE;
 			return;
 		}
 		wm->_event.event_code = OSystem::EVENT_KEYDOWN;
@@ -314,7 +314,7 @@ void SmartfonSkip(OSystem_WINCE3 *wm, BOOL repeat) {
 			wm->_event.kbd.ascii = g_scumm->_vars[g_scumm->VAR_CUTSCENEEXIT_KEY];
 		else 
 		if (g_scumm->_talkDelay > 0)
-			wm->_event.kbd.ascii = g_scumm->_vars[g_scumm->VAR_TALKSTOP_KEY];						
+			wm->_event.kbd.ascii = g_scumm->VAR_TALKSTOP_KEY;						
 		else
 			wm->_event.kbd.ascii = VK_ESCAPE;						
 }

@@ -21,6 +21,10 @@
 
 #include "wince.h"
 
+#ifdef USE_VORBIS
+#include <vorbis/vorbisfile.h>
+#endif
+
 #if _WIN32_WCE >= 300
 
 #include <Aygshell.h>
@@ -842,9 +846,9 @@ void runGame(char *game_name) {
 
 	/* Start the engine */
 
-	is_simon = (detector._gameId >= GID_SIMON_FIRST);
+	is_simon = (detector._game.id >= GID_SIMON_FIRST);
 
-	if (smartphone || detector._gameId == GID_SAMNMAX || detector._gameId == GID_FT || detector._gameId == GID_DIG || detector._gameId == GID_CMI)
+	if (smartphone || detector._game.id == GID_SAMNMAX || detector._game.id == GID_FT || detector._game.id == GID_DIG || detector._game.id == GID_CMI)
 		hide_cursor = FALSE;
 	else
 		hide_cursor = TRUE;	
@@ -871,8 +875,8 @@ LRESULT CALLBACK OSystem_WINCE3::WndProc(HWND hWnd, UINT message, WPARAM wParam,
 		wm = (OSystem_WINCE3*)GetWindowLong(hWnd, GWL_USERDATA);
 	
 	if (!select_game && monkey_keyboard && (
-			g_scumm->_vars[g_scumm->VAR_ROOM] != 108 &&		// monkey 2
-			g_scumm->_vars[g_scumm->VAR_ROOM] != 90)) {		// monkey 1 floppy
+			g_scumm->VAR_ROOM != 108 &&		// monkey 2
+			g_scumm->VAR_ROOM != 90)) {		// monkey 1 floppy
 		monkey_keyboard = false;
 		draw_keyboard = false;
 		toolbar_drawn = false;
@@ -1139,7 +1143,7 @@ void action_save() {
 	if (g_scumm->_features & GF_OLD256 || g_scumm->_gameId == GID_CMI)
 		system->addEventKeyPressed(319);
 	else
-		system->addEventKeyPressed(g_scumm->_vars[g_scumm->VAR_SAVELOADDIALOG_KEY]);						
+		system->addEventKeyPressed(g_scumm->VAR_SAVELOADDIALOG_KEY);						
 }
 
 void action_quit() {
@@ -1176,7 +1180,7 @@ void action_skip() {
 	system = (OSystem_WINCE3*)g_scumm->_system;
 
 	if (is_simon) {
-		((SimonEngine*)engine)->_exit_cutscene = true;
+		system->addEventKeyPressed(mapKey(VK_ESCAPE));
 		return;
 	}
 
@@ -1184,7 +1188,7 @@ void action_skip() {
 		system->addEventKeyPressed(g_scumm->_vars[g_scumm->VAR_CUTSCENEEXIT_KEY]);
 	else 
 	if (g_scumm->_talkDelay > 0)
-		system->addEventKeyPressed(g_scumm->_vars[g_scumm->VAR_TALKSTOP_KEY]);						
+		system->addEventKeyPressed(g_scumm->VAR_TALKSTOP_KEY);						
 	else
 		system->addEventKeyPressed(mapKey(VK_ESCAPE));
 }
@@ -1326,6 +1330,18 @@ void OSystem_WINCE3::set_palette(const byte *colors, uint start, uint num) {
 	palette_update();
 
 	num_of_dirty_square = MAX_NUMBER_OF_DIRTY_SQUARES;
+}
+
+int16 OSystem_WINCE3::get_height() {
+        return _screenHeight;
+}
+
+int16 OSystem_WINCE3::get_width() {
+        return _screenWidth;
+}
+
+void OSystem_WINCE3::clear_sound_proc() {
+        SDL_CloseAudio();
 }
 
 void OSystem_WINCE3::load_gfx_mode() {
