@@ -3077,43 +3077,7 @@ void ScummEngine_v6::o6_unknownE1() {
 }
 
 void ScummEngine_v6::o6_setBoxSet() {
-	// Disable for now, crashes fbear.
-	return;
-
-	int arg = pop();
-	const byte *room = getResourceAddress(rtRoom, _roomResource);
-	const byte *boxd = NULL, *boxm = NULL;
-	int32 dboxSize, mboxSize;
-	int i;
-
-	ResourceIterator boxds(room, false);
-	for (i = 0; i < arg; i++)
-		boxd = boxds.findNext(MKID('BOXD'));
-
-	if (!boxd)
-		error("ScummEngine_v6::o6_setBoxSet: Can't find dboxes for set %d", arg);
-
-	dboxSize = READ_BE_UINT32(boxd + 4);
-	byte *matrix = createResource(rtMatrix, 2, dboxSize);
-
-	assert(matrix);
-	memcpy(matrix, boxd, dboxSize);
-
-	ResourceIterator boxms(room, false);
-	for (i = 0; i < arg; i++)
-		boxm = boxms.findNext(MKID('BOXM'));
-
-	if (!boxm)
-		error("ScummEngine_v6::o6_setBoxSet: Can't find mboxes for set %d", arg);
-
-	mboxSize = READ_BE_UINT32(boxm + 4);
-	matrix = createResource(rtMatrix, 1, mboxSize);
-
-	assert(matrix);
-	memcpy(matrix, boxm, mboxSize);
-
-	if (_version == 7)
-		putActors();
+	warning("o6_unknownE4(%d) stub", pop());
 }
 
 void ScummEngine_v6::decodeParseString(int m, int n) {
