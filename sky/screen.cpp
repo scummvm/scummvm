@@ -177,33 +177,16 @@ void SkyScreen::paletteFadeUp(uint8 *pal) {
 	
 	convertPalette(pal, tmpPal);
 
-	for (uint8 cnt = 0; cnt < 32; cnt++) {
-		palette_fadeup_helper((uint32 *)_palette, (uint32 *)tmpPal, GAME_COLOURS);
+	for (uint8 cnt = 1; cnt <= 32; cnt++) {
+		for (uint8 colCnt = 0; colCnt < GAME_COLOURS; colCnt++) {
+			_palette[(colCnt << 2) | 0] = (tmpPal[(colCnt << 2) | 0] * cnt) >> 5;
+			_palette[(colCnt << 2) | 1] = (tmpPal[(colCnt << 2) | 1] * cnt) >> 5;
+			_palette[(colCnt << 2) | 2] = (tmpPal[(colCnt << 2) | 2] * cnt) >> 5;
+		}
 		_system->set_palette(_palette, 0, GAME_COLOURS);
 		_system->update_screen();
 		waitForTimer();
 	}	
-}
-
-void SkyScreen::palette_fadeup_helper(uint32 *realPal, uint32 *desiredPal, int num) {
-
-	byte *r = (byte *)realPal;
-	byte *d = (byte *)desiredPal;
-
-	do {
-		if (r[0] < d[0]-8) r[0] += 8;
-		else r[0] = d[0];
-
-		if (r[1] < d[1]-8) r[1] += 8;
-		else r[1] = d[1];
-
-		if (r[2] < d[2]-8) r[2] += 8;
-		else r[2] = d[2];
-				
-		r += sizeof(uint32);
-		d += sizeof(uint32);
-	} while (--num);
-	
 }
 
 void SkyScreen::waitForTimer(void) {

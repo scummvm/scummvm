@@ -25,18 +25,7 @@
 #include "sky/skydefs.h"
 #include "sky/sky.h"
 
-//#define WAIT_SEQUENCE	while (_tseqFrames != 0) { checkCommands(commandPtr); delay(50); CHECK_ESC }
-//#define CHECK_ESC	if (_key_pressed == 27) { _tseqFrames = 0; REMOVE_INTRO return; }
 #define FREE_IF_NOT_0(ptr)	if (ptr != NULL) { free (ptr); ptr = 0; }
-/*#define REMOVE_INTRO	commandPtr = (uint32 *)zeroCommands; \
-			FREE_IF_NOT_0(_vgaData) \
-			FREE_IF_NOT_0(_diffData) \
-			FREE_IF_NOT_0(_workBase) \
-			FREE_IF_NOT_0(_tempPal) \
-			FREE_IF_NOT_0(seq1) \
-			FREE_IF_NOT_0(seq2) \
-			FREE_IF_NOT_0(_introTextSpace) \
-			FREE_IF_NOT_0(_introTextSave) */
 #define REMOVE_INTRO	commandPtr = (uint32 *)zeroCommands; \
 			FREE_IF_NOT_0(_introTextSpace) \
 			FREE_IF_NOT_0(_introTextSave)
@@ -314,28 +303,21 @@ void SkyState::intro(void) {
 		free(scrollData);
 		free(vgaData);
 		free(diffData);
+		commandPtr = (uint32 *)anim4aCommands;
+		_skyDisk->prefetchFile(FN_4B);
+		_skyDisk->prefetchFile(FN_4B_LOG);
 		WAIT_SEQUENCE;
  		
-		_skyDisk->prefetchFile(FN_4B);
 		_skyScreen->showScreen(FN_4B_LOG);
-
-		/*commandPtr = (uint32 *)anim4aCommands; 
-		WAIT_SEQUENCE; */
-		printf("anim 4A commands skipped.\n");
-
 		commandPtr = (uint32 *)cockpitCommands;
 		_skyScreen->startSequence(FN_4B);
-
 		checkCommands(commandPtr);
 		checkCommands(commandPtr);
-
-		WAIT_SEQUENCE; //4b
-
 		_skyDisk->prefetchFile(FN_4C);
+		WAIT_SEQUENCE; //4b
 
 		_skyScreen->showScreen(FN_4C_LOG);
 		_skyScreen->startSequence(FN_4C);
-
 		commandPtr = (uint32 *)anim4cCommands;
 		WAIT_SEQUENCE; //4c
 		

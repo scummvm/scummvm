@@ -87,7 +87,6 @@ private:
 
 	void convertPalette(uint8 *inPal, uint8* outPal);
 	void palette_fadedown_helper(uint32 *pal, uint num);
-	void palette_fadeup_helper(uint32 *realPal, uint32 *desiredPal, int num);
 };
 
 #endif //SKYSCREEN_H
