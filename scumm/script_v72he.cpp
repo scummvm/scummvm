@@ -1627,7 +1627,6 @@ void ScummEngine_v72he::o72_pickVarRandom() {
 }
 
 void ScummEngine_v72he::o72_redimArray() {
-	printf("o72_redimArray\n");
 	int subcode, newX, newY;
 	newY = pop();
 	newX = pop();
