@@ -131,7 +131,9 @@ private:
 	void unlockMode() { _panelMode = _lockedMode; }
 
 	void drawPanelButtonText(SURFACE *ds, InterfacePanel *panel, PanelButton *panelButton, int textColor, int textShadowColor);
+
 public:
+	void converseInit(void);
 	void converseClear(void);
 	bool converseAddText(const char *text, int replyId, byte replyFlags, int replyBit);
 	void converseDisplayText(int pos);

@@ -738,8 +738,14 @@ void Interface::drawPanelButtonText(SURFACE *ds, InterfacePanel *panel, PanelBut
 
 	_vm->_font->draw(SMALL_FONT_ID, ds, text, 0, point.x , point.y, textColor, textShadowColor, (textShadowColor != 0) ? FONT_SHADOW : 0);
 }
+	
 
 // Converse stuff
+void Interface::converseInit(void) {
+	for (int i = 0; i < CONVERSE_MAX_TEXTS; i++)
+		_converseText[i].text = NULL;
+	converseClear();
+}
 void Interface::converseClear(void) {
 	for (int i = 0; i < CONVERSE_MAX_TEXTS; i++) {
 		if (_converseText[i].text)
