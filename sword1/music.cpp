@@ -25,8 +25,8 @@
 #include "common/util.h"
 #include "common/file.h"
 
-// This means fading takes about half a second. This may need some tuning...
-#define FADE_SAMPLES 5512
+// This means fading takes 3 seconds.
+#define FADE_LENGTH 3
 
 // These functions are only called from SwordMusic, so I'm just going to
 // assume that if locking is needed it has already been taken care of.
@@ -35,14 +35,16 @@ void SwordMusicHandle::fadeDown() {
 	if (_fading < 0)
 		_fading = -_fading;
 	else if (_fading == 0)
-		_fading = FADE_SAMPLES;
+		_fading = FADE_LENGTH * getRate();
+	_fadeSamples = FADE_LENGTH * getRate();
 }
 
 void SwordMusicHandle::fadeUp() {
 	if (_fading > 0)
 		_fading = -_fading;
 	else if (_fading == 0)
-		_fading = -FADE_SAMPLES;
+		_fading = -(FADE_LENGTH * getRate());
+	_fadeSamples = FADE_LENGTH * getRate();
 }
 
 bool SwordMusicHandle::endOfData() const {
@@ -74,10 +76,10 @@ int16 SwordMusicHandle::read() {
 			_looping = false;
 			_file.close();
 		}
-		sample = (sample * _fading) / FADE_SAMPLES;
+		sample = (sample * _fading) / _fadeSamples;
 	} else if (_fading < 0) {
 		_fading++;
-		sample = (sample * (FADE_SAMPLES + _fading)) / FADE_SAMPLES;
+		sample = (sample * (_fadeSamples + _fading)) / _fadeSamples;
 	}
 	return sample;
 }
@@ -153,9 +155,14 @@ void SwordMusic::startMusic(int32 tuneId, int32 loopFlag) {
 		}
 		char fName[20];
 		sprintf(fName, "music/%s.wav", _tuneList[tuneId]);
-		_handles[newStream].play(fName, loopFlag);
+		_handles[newStream].play(fName, loopFlag != 0);
 		delete _converter[newStream];
 		_converter[newStream] = makeRateConverter(_handles[newStream].getRate(), _mixer->getOutputRate(), _handles[newStream].isStereo(), false);
+	} else {
+		if (_handles[0].streaming())
+			_handles[0].fadeDown();
+		if (_handles[1].streaming())
+			_handles[1].fadeDown();
 	}
 }
 

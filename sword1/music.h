@@ -39,6 +39,7 @@ private:
 	File _file;
 	bool _looping;
 	int32 _fading;
+	int32 _fadeSamples;
 	int _rate;
 	bool _stereo;
 public:
