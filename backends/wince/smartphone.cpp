@@ -58,6 +58,7 @@ extern void getSelectedGame(int result, char *id, TCHAR *directory, char* is_dem
 extern TCHAR* getGameName(int);
 extern Engine *engine;
 extern bool is_simon;
+extern bool is_bass;
 extern bool sound_activated;
 extern void Cls();
 
@@ -295,21 +296,31 @@ void SmartfonRightUp(OSystem_WINCE3 *wm, BOOL repeat) {
 
 
 void SmartfonSave(OSystem_WINCE3 *wm, BOOL repeat) {
+		if (is_simon)
+			return;
 
 		wm->_event.event_code = OSystem::EVENT_KEYDOWN;
-		if (g_scumm->_features & GF_OLD256)
+		if (is_bass)
+			wm->_event.kbd.ascii = 63;
+		else
+		if (g_scumm->_version <= 2)
+			wm->_event.kbd.ascii = 5;
+		else
+		if ((g_scumm->_features & GF_OLD256) || (g_scumm->_gameId == GID_CMI) || (g_scumm->_features & GF_16COLOR))
 			wm->_event.kbd.ascii = 319;
 		else
-			wm->_event.kbd.ascii = g_scumm->VAR_SAVELOADDIALOG_KEY;
+			wm->_event.kbd.ascii = g_scumm->VAR(g_scumm->VAR_SAVELOADDIALOG_KEY);
 }
 
 void SmartfonSkip(OSystem_WINCE3 *wm, BOOL repeat) {
 
-		if (is_simon) {
+
+		wm->_event.event_code = OSystem::EVENT_KEYDOWN;
+		if (is_simon || is_bass) {
 			wm->_event.kbd.ascii = VK_ESCAPE;
 			return;
 		}
-		wm->_event.event_code = OSystem::EVENT_KEYDOWN;
+		/*
 		if (g_scumm->vm.cutScenePtr[g_scumm->vm.cutSceneStackPointer] || g_scumm->_insaneState)
 			wm->_event.kbd.ascii = g_scumm->_vars[g_scumm->VAR_CUTSCENEEXIT_KEY];
 		else 
@@ -317,6 +328,8 @@ void SmartfonSkip(OSystem_WINCE3 *wm, BOOL repeat) {
 			wm->_event.kbd.ascii = g_scumm->VAR_TALKSTOP_KEY;						
 		else
 			wm->_event.kbd.ascii = VK_ESCAPE;						
+		*/
+		wm->_event.kbd.ascii = KEY_ALL_SKIP;
 }
 
 void SmartfonBoss(OSystem_WINCE3 *wm, BOOL repeat) {
