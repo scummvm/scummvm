@@ -1825,6 +1825,9 @@ void Scumm::unkScreenEffect5(int a)
 
 void Scumm::setShake(int mode)
 {
+	if (_shakeEnabled != (mode != 0))
+		_fullRedraw = true;
+
 	_shakeEnabled = mode != 0;
 	_shakeFrame = 0;
 	_system->set_shake_pos(0);
