@@ -27,16 +27,20 @@ CP  = cp
 #######################################################################
 
 CXXFLAGS:= -g -O -Wall -Wuninitialized -Wno-long-long -Wno-multichar -Wno-unknown-pragmas
-DEFINES += -DUSE_ZLIB
+DEFINES +=
 LDFLAGS :=
 INCLUDES:= -I. -Icommon -Iscumm $(SDL_CFLAGS)
-LIBS	+= $(SDL_LIBS) -lmingw32 -lwinmm -lopengl32 -lz
+LIBS	+= $(SDL_LIBS) -lmingw32 -lwinmm -lopengl32
 OBJS	:= scummvmico.o backends/sdl/sdl-common.o backends/sdl/sdl_gl.o 
 EXEEXT	:=.exe
 
 #######################################################################
 # Compile options - you can modify these to tweak ScummVM compilation #
 #######################################################################
+
+# Uncomment this to activate the ZLIB lib for compressed save game files
+DEFINES += -DUSE_ZLIB
+LIBS    += -lz
 
 # Uncomment this to activate the MAD lib for compressed sound files
 DEFINES += -DUSE_MAD
