@@ -121,16 +121,16 @@ public:
 	~Smush();
 
 	bool play(const char *filename, int x, int y);
-	void stop();
-	void pause(bool pause);
-	bool isPlaying();
-	bool isUpdateNeeded();
-	byte *getDstPtr();
-	int getX();
-	int getY();
-	int getWidth();
-	int getHeight();
-	void setUpdateNeeded();
+	void stop() { deinit(); }
+	void pause(bool pause) { _videoPause = pause; }
+	bool isPlaying() { return !_videoFinished; }
+	bool isUpdateNeeded() { return _updateNeeded; }
+	byte *getDstPtr() { return _buf; }
+	int getX() { return _x; }
+	int getY() { return _y; }
+	int getWidth() {return _width; }
+	int getHeight() { return _height; }
+	void setUpdateNeeded() { _updateNeeded = true; }
 
 private:
 	static void timerCallback(void *ptr);

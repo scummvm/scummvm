@@ -311,46 +311,6 @@ bool Smush::play(const char *filename, int x, int y) {
 	return true;
 }
 
-void Smush::stop() {
-	deinit();
-}
-
-void Smush::pause(bool pause) {
-	_videoPause = pause;
-}
-
-bool Smush::isPlaying() {
-	return !_videoPause;
-}
-
-bool Smush::isUpdateNeeded() {
-	return _updateNeeded;
-}
-
-int Smush::getX() {
-	return _x;
-}
-
-int Smush::getY() {
-	return _y;
-}
-
-int Smush::getWidth() {
-	return _width;
-}
-
-int Smush::getHeight() {
-	return _height;
-}
-
-byte *Smush::getDstPtr() {
-	return _buf;
-}
-
-void Smush::setUpdateNeeded() {
-	_updateNeeded = true;
-}
-
 FILE *File::fopenNoCase(const char *filename, const char *directory, const char *mode) {
 	FILE *file;
 	char buf[512];
