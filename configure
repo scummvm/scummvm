@@ -12,12 +12,25 @@
 # * command line options to...
 #   - override the host settings (for cross compiles
 #   - select the desired backend (sdl, x11, ...)
-#   - whether mad should be used (--enabled-mad) -> set LIBS/DEFINES
 #   - whether to do a debug build (with -g) or an optimized build (-O3 etc.)
 # * detect whether the chosen backend is available (e.g. call sdl-config)
-# * detect whether mad/ALSA/vorbis/... are available
+# * generate a config.mak file for use in makefiles
 # * ....
 
+
+# default lib behaviour yes/no/auto
+_vorbis=auto
+_mad=auto
+_alsa=auto
+# default option behaviour yes/no
+_build_scumm=yes
+_build_simon=yes
+_build_sky=yes
+
+
+echocheck () {
+  echo -n "Checking for $@... "
+}
 
 #
 # Check whether the given command is a working C++ compiler
@@ -94,20 +107,41 @@ echo "" >> config.h
 # TOOD: allow for multi value params, e.g. --target=dreamcast or --backend=morphos
 #
 
+for parm in "$@" ; do
+  if test "$parm" = "--help" || test "$parm" = "-help" || test "$parm" = "-h" ; then
+    cat << EOF
+
+Usage: $0 [OPTIONS]...
+
+Configuration:
+  -h, --help             display this help and exit
+
+Optional Features:
+  --disable-scumm        don't build the SCUMM engine
+  --disable-simon        don't build the simon engine
+  --disable-sky          don't build the Beneath a Steel Sky engine
+
+Optional Libraries:
+  --disable-alsa         disable ALSA midi sound support [autodetect]
+  --disable-vorbis       disable Ogg Vorbis support [autodetect]
+  --disable-mad          disable libmad (MP3) support [autodetect]
+ 
+EOF
+    exit 0
+  fi
+done # for parm in ...
+
 for x in $@; do
-    case x$x in
-      x--with-alsa)
-		echo "#define USE_ALSA" >> config.h
-		LIBS="$LIBS -lasound"
-		;;
-      x--with-vorbis)
-      		echo "#define USE_VORBIS" >> config.h
-		LIBS="$LIBS -lvorbisfile -lvorbis"
-		;;
-      x--with-mad)
-		echo "#define USE_MAD" >> config.h
-		LIBS="$LIBS -lmad"
-		;;
+    case $x in
+      --disable-scumm)		_build_scumm=no ;;
+      --disable-simon)		_build_simon=no ;;
+      --disable-sky)		_build_sky=no ;;
+      --enable-alsa)		_alsa=yes	;;
+      --disable-alsa)		_alsa=no	;;
+      --enable-vorbis)		_vorbis=yes	;;
+      --disable-vorbis)		_vorbis=no	;;
+      --enable-mad)		_mad=yes	;;
+      --disable-mad)		_mad=no		;;
     esac;
 done;
 
@@ -128,6 +162,26 @@ if test -z $CXX; then
     echo "none found!"
     exit 1
 fi
+
+# Engine selection
+if test "$_build_scumm" = no ; then
+	echo "#define DISABLE_SCUMM" >> config.h
+else
+	echo "#undef DISABLE_SCUMM" >> config.h
+fi
+
+if test "$_build_simon" = no ; then
+	echo "#define DISABLE_SIMON" >> config.h
+else
+	echo "#undef DISABLE_SIMON" >> config.h
+fi
+
+if test "$_build_sky" = no ; then
+	echo "#define DISABLE_SKY" >> config.h
+else
+	echo "#undef DISABLE_SKY" >> config.h
+fi
+echo >> config.h
 
 #
 # Determine hosttype
@@ -209,6 +263,62 @@ echo "typedef unsigned $type_4_byte uint32;" >> config.h
 echo "typedef signed $type_1_byte int8;" >> config.h
 echo "typedef signed $type_2_byte int16;" >> config.h
 echo "typedef signed $type_4_byte int32;" >> config.h
+
+echo >> config.h
+echo "/* Libs */" >> config.h
+echocheck "Ogg Vorbis"
+if test "$_vorbis" = auto ; then
+  _vorbis=no
+  cat > tmp_vorbis_check.cpp << EOF
+#include <vorbis/codec.h>
+int main(void) { vorbis_packet_blocksize(0,0); return 0; }
+EOF
+  $CXX -lvorbis -logg -lm -o tmp_vorbis_check tmp_vorbis_check.cpp && _vorbis=yes
+  rm tmp_vorbis_check tmp_vorbis_check.cpp 2> /dev/null
+fi
+if test "$_vorbis" = yes ; then
+  echo "#define USE_VORBIS" >> config.h
+  LIBS="$LIBS -lvorbisfile -lvorbis"
+else
+  echo "#undef USE_VORBIS" >> config.h
+fi
+echo "$_vorbis"
+
+echocheck "MAD"
+if test "$_mad" = auto ; then
+  _mad=no
+  cat > tmp_mad.cpp << EOF
+#include <mad.h>
+int main(void) {return 0; }
+EOF
+  $CXX tmp_mad.cpp -lmad && _mad=yes
+  rm tmp_mad.cpp tmp_mad 2> /dev/null
+fi
+if test "$_mad" = yes ; then
+  echo "#define USE_MAD" >> config.h
+  LIBS="$LIBS -lmad"
+else
+  echo "#undef USE_MAD" >> config.h
+fi
+echo "$_mad"
+
+echocheck "ALSA 9"
+if test "$_alsa" = auto ; then
+  _alsa=no
+  cat > tmp_alsa.cpp << EOF
+#include <alsa/asoundlib.h>
+int main(void) { return (!(SND_LIB_MAJOR==0 && SND_LIB_MINOR==9)); }
+EOF
+  $CXX -lasound -o tmp_alsa tmp_alsa.cpp && _alsa=yes
+  rm tmp_alsa tmp_alsa.cpp 2> /dev/null
+fi
+if test "$_alsa" = yes ; then
+  echo "#define USE_ALSA" >> config.h
+  LIBS="$LIBS -lasound"
+else
+  echo "#undef USE_ALSA" >> config.h
+fi
+echo "$_alsa"
 
 #
 # End of config.h
