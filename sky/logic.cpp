@@ -351,7 +351,37 @@ void SkyLogic::alt() {
 }
 
 void SkyLogic::anim() {
-	error("Stub: SkyLogic::anim");
+	// Follow an animation sequence
+
+	uint16 *grafixProg = _compact->grafixProg;
+
+	while (*grafixProg) {
+		if (*grafixProg == LF_START_FX) { // do fx
+			grafixProg++;
+			uint16 sound = *grafixProg++;
+			uint16 volume = *grafixProg++;
+
+			// channel 0
+			fnStartFx(sound, 0, volume);
+		} else if (*grafixProg >= LF_START_FX) { // do sync
+			grafixProg++;
+
+			Compact *cpt = SkyState::fetchCompact(*grafixProg++);
+
+			cpt->sync = *grafixProg++;
+		} else { // put coordinates and frame in
+			_compact->xcood = *grafixProg++;
+			_compact->ycood = *grafixProg++;
+
+			_compact->frame = *grafixProg++ | _compact->offset;
+			_compact->grafixProg = grafixProg;
+			return;
+		}
+	}
+
+	_compact->downFlag = 0;
+	_compact->logic = L_SCRIPT;
+	logicScript();
 }
 
 void SkyLogic::turn() {
@@ -401,7 +431,15 @@ void SkyLogic::pause() {
 }
 
 void SkyLogic::waitSync() {
-	error("Stub: SkyLogic::waitSync");
+	// checks c_sync, when its non 0
+	// the id is put back into script mode
+	// use this instead of loops in the script
+
+	if (!_compact->sync)
+		return;
+
+	_compact->logic = L_SCRIPT;
+	logicScript();
 }
 
 void SkyLogic::simpleAnim() {
@@ -1363,8 +1401,11 @@ uint32 SkyLogic::fnNewBackground(uint32 a, uint32 b, uint32 c) {
 	error("Stub: fnNewBackground");
 }
 
-uint32 SkyLogic::fnSort(uint32 a, uint32 b, uint32 c) {
-	error("Stub: fnSort");
+uint32 SkyLogic::fnSort(uint32 mega, uint32 b, uint32 c) {
+	Compact *cpt = SkyState::fetchCompact(mega);
+	cpt->status &= 0xfff8;
+	cpt->status |= ST_SORT;
+	return 1;
 }
 
 uint32 SkyLogic::fnNoSpriteEngine(uint32 a, uint32 b, uint32 c) {
@@ -1375,12 +1416,24 @@ uint32 SkyLogic::fnNoSpritesA6(uint32 a, uint32 b, uint32 c) {
 	error("Stub: fnNoSpritesA6");
 }
 
-uint32 SkyLogic::fnResetId(uint32 a, uint32 b, uint32 c) {
-	error("Stub: fnResetId");
+uint32 SkyLogic::fnResetId(uint32 id, uint32 resetBlock, uint32 c) {
+	// used when a mega is to be restarted
+	// eg - when a smaller mega turn to larger
+	// - a mega changes rooms...
+
+	Compact *cpt  = SkyState::fetchCompact(id);
+	uint16 *rst = (uint16 *)SkyState::fetchCompact(resetBlock);
+
+	uint16 off;
+	while ((off = *rst++) != 0xffff)
+		*(uint16 *)SkyCompact::getCompactElem(cpt, off) = *rst++;
+	return 1;
 }
 
 uint32 SkyLogic::fnToggleGrid(uint32 a, uint32 b, uint32 c) {
-	error("Stub: fnToggleGrid");
+	// Toggle a mega's grid plotting
+	_compact->status ^= ST_GRID_PLOT;
+	return 1;
 }
 
 uint32 SkyLogic::fnPause(uint32 cycles, uint32 b, uint32 c) {
@@ -1390,8 +1443,14 @@ uint32 SkyLogic::fnPause(uint32 cycles, uint32 b, uint32 c) {
 	return 0; // drop out of script
 }
 
-uint32 SkyLogic::fnRunAnimMod(uint32 a, uint32 b, uint32 c) {
-	error("Stub: fnRunAnimMod");
+uint32 SkyLogic::fnRunAnimMod(uint32 animNo, uint32 b, uint32 c) {
+	uint16 *animation = (uint16 *)SkyState::fetchCompact(animNo);
+	uint16 sprite = *animation++; // get sprite set
+	_compact->offset = sprite;
+	_compact->grafixProg = animation;
+	_compact->logic = L_MOD_ANIMATE;
+	anim();
+	return 0; // drop from script
 }
 
 uint32 SkyLogic::fnSimpleMod(uint32 a, uint32 b, uint32 c) {
@@ -1403,7 +1462,11 @@ uint32 SkyLogic::fnRunFrames(uint32 a, uint32 b, uint32 c) {
 }
 
 uint32 SkyLogic::fnAwaitSync(uint32 a, uint32 b, uint32 c) {
-	error("Stub: fnAwaitSync");
+	if (_compact->sync)
+		return 1;
+
+	_compact->logic = L_WAIT_SYNC;
+	return 0;
 }
 
 uint32 SkyLogic::fnIncMegaSet(uint32 a, uint32 b, uint32 c) {
@@ -1607,7 +1670,8 @@ uint32 SkyLogic::fnSetFont(uint32 a, uint32 b, uint32 c) {
 }
 
 uint32 SkyLogic::fnStartFx(uint32 a, uint32 b, uint32 c) {
-	error("Stub: fnStartFx");
+	warning("Stub: fnStartFx");
+	return 1;
 }
 
 uint32 SkyLogic::fnStopFx(uint32 a, uint32 b, uint32 c) {
