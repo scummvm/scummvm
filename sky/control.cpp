@@ -1573,6 +1573,15 @@ void Control::showGameQuitMsg(bool useScreen) {
 	_skyScreen->halvePalette();
 	_skyScreen->showScreen(screenData);
 	free(textBuf1); free(textBuf2);
+
+	// __tom (FIXME): This is a poor method of turning
+	// off music. ~GmMusic, ~AdlibMusic, and ~MT32Music
+	// should do it themselves so the appropriate MIDI
+	// controller events (e.g. 123/'All Notes Off') can
+	// be sent. However, that requires a re-write of
+	// other code and for now this fixes hanging notes
+	// on MT-32 + other external GMIDI synths.
+	_skyMusic->stopMusic();
 	delay(1500);
 	ConfMan.flushToDisk();
 	_system->quit();

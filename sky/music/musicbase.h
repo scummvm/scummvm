@@ -53,6 +53,7 @@ public:
 	void loadSection(uint8 pSection);
 	void musicCommand(uint16 command);
 	void startMusic(uint16 param) { _onNextPoll.musicToProcess = param & 0xF; }; // 4
+	void stopMusic();                                                            // 7
 	bool musicIsPlaying(void);
 	virtual void setVolume(uint8 volume) = 0;
 	uint8 giveVolume(void) { return (uint8)_musicVolume; };
@@ -87,7 +88,6 @@ protected:
 	void setTempo(uint16 newTempo);                                              // 2
 	void pollMusic();                                                            // 3
 	void reinitFM(void) { _onNextPoll.doReInit = true; };                        // 6
-	void stopMusic();                                                            // 7
 	void setFMVolume(uint16 param);                                              // 13
 };
 
