@@ -1307,6 +1307,10 @@ void CharsetRendererClassic::printChar(int chr) {
 		dst = vs->getBackPixels(_left, drawTop);
 	}
 
+	if (!_ignoreCharsetMask && vs->hasTwoBuffers) {
+		drawTop = _top - _vm->_screenTop;
+	}
+
 	if (is2byte) {
 		drawBits1(dstSurface, dst, charPtr, drawTop, origWidth, origHeight);
 	} else {
