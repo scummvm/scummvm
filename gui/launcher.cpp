@@ -399,7 +399,7 @@ void LauncherDialog::addGame() {
 	//    game, e.g. 'Monkey German' and 'Monkey English') and set default
 	//    options for that game.
 
-	if (_browser->runModal()) {
+	if (_browser->runModal() > 0) {
 		// User made his choice...
 		FilesystemNode *dir = _browser->getResult();
 		FSList *files = dir->listDir(FilesystemNode::kListFilesOnly);
@@ -476,7 +476,7 @@ void LauncherDialog::addGame() {
 
 			// Display edit dialog for the new entry
 			EditGameDialog editDialog(domain, result);
-			if (editDialog.runModal()) {
+			if (editDialog.runModal() > 0) {
 				// User pressed OK, so make changes permanent
 
 				// Write config to disk
@@ -496,7 +496,7 @@ void LauncherDialog::addGame() {
 void LauncherDialog::removeGame(int item) {
 	MessageDialog alert("Do you really want to remove this game configuration?", "Yes", "No");
 	
-	if (alert.runModal() == 1) {
+	if (alert.runModal() > 0) {
 		// Remove the currently selected game from the list
 		assert(item >= 0);
 		ConfMan.removeGameDomain(_domains[item]);
@@ -522,7 +522,7 @@ void LauncherDialog::editGame(int item) {
 	if (gameId.isEmpty())
 		gameId = _domains[item];
 	EditGameDialog editDialog(_domains[item], GameDetector::findGame(gameId));
-	if (editDialog.runModal()) {
+	if (editDialog.runModal() > 0) {
 		// User pressed OK, so make changes permanent
 
 		// Write config to disk
