@@ -24,9 +24,9 @@
 std::string parseMsgText(const char *msg, char *msgId);
 
 TextObject::TextObject() :
-		_created(false), _x(0), _y(0), _width(0), _height(0), _textBitmap(NULL),
-		_bitmapWidth(0), _bitmapHeight(0), _textObjectHandle(NULL), _justify(0),
-		_font(NULL), _text(NULL) {
+		_created(false), _x(0), _y(0), _width(0), _height(0), _justify(0),
+		_font(NULL), _text(NULL), _textBitmap(NULL), _bitmapWidth(0),
+		_bitmapHeight(0), _textObjectHandle(NULL) {
 	memset(_textID, 0, 10);
 	_fgColor._vals[0] = 0;
 	_fgColor._vals[1] = 0;
@@ -64,7 +64,7 @@ void TextObject::createBitmap() {
 	for (int i = 0; msg[i] != '\0'; ++i) {
 		_bitmapWidth += _font->getCharLogicalWidth(msg[i]) + _font->getCharStartingCol(msg[i]);
 
-		int h = _font->getCharHeight(msg[i]) + _font->getCharStartingLine(msg[i]);
+		uint h = _font->getCharHeight(msg[i]) + _font->getCharStartingLine(msg[i]);
 		if (h > _bitmapHeight)
 			_bitmapHeight = h;
 	}
@@ -76,7 +76,7 @@ void TextObject::createBitmap() {
 
 	// Fill bitmap
 	int offset = 0;
-	for (int line = 0; line < _bitmapHeight; ++line) {
+	for (uint line = 0; line < _bitmapHeight; ++line) {
 		for (int c = 0; msg[c] != '\0'; ++c) {
 			uint32 charWidth = _font->getCharWidth(msg[c]);
 			uint32 charLogicalWidth = _font->getCharLogicalWidth(msg[c]);

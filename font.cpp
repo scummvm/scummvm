@@ -24,7 +24,7 @@
 #include <cstring>
 #include <SDL_endian.h>
 
-Font::Font(const char *filename, const char *data, int len) :
+Font::Font(const char *filename, const char *data, int /*len*/) :
 	Resource(filename) {
 
 	_numChars = READ_LE_UINT32(data);
@@ -44,7 +44,7 @@ Font::Font(const char *filename, const char *data, int len) :
 	_charIndex = (uint16 *)malloc(sizeof(_charIndex) * _numChars);
 	if (!_charIndex)
 		error("Could not load font %s. Out of memory\n", filename);
-	for (int i = 0; i < _numChars; ++i) {
+	for (uint i = 0; i < _numChars; ++i) {
 		_charIndex[i] = READ_LE_UINT16(data + 2 * i);
 	}
 
@@ -54,7 +54,7 @@ Font::Font(const char *filename, const char *data, int len) :
 	_charHeaders = (CharHeader *)malloc(sizeof(CharHeader) * _numChars);
 	if (!_charHeaders)
 		error("Could not load font %s. Out of memory\n", filename);
-	for (int i = 0; i < _numChars; ++i) {
+	for (uint i = 0; i < _numChars; ++i) {
 		_charHeaders[i].offset = READ_LE_UINT32(data);
 		// 1 unknown byte before the startingLine, and 2 afterwards are skipped
 		_charHeaders[i].unknown = READ_LE_UINT32(data + 4);

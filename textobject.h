@@ -57,13 +57,13 @@ protected:
 	bool _created;
 	Color _fgColor;
 	int _x, _y;
-	int _width, _height;
+	uint _width, _height;
 	int _justify;
 	Font *_font;
 	char *_text;
 	char _textID[32];
 	uint8 *_textBitmap;
-	int _bitmapHeight, _bitmapWidth;
+	uint _bitmapWidth, _bitmapHeight;
 	Driver::TextObjectHandle *_textObjectHandle;
 };
 
