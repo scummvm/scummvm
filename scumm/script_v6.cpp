@@ -1746,7 +1746,7 @@ void Scumm_v6::o6_actorOps()
 	case 86:											/* actor-palette */
 		j = pop();
 		i = pop();
-		checkRange(31, 0, i, "Illegal palette slot %d");
+		checkRange(255, 0, i, "Illegal palette slot %d");
 		a->palette[i] = j;
 		a->needRedraw = true;
 		break;
