@@ -251,9 +251,9 @@ void Scumm_v8::setupOpcodes()
 		OPCODE(o6_animateActor),
 		OPCODE(o6_doSentence),
 		OPCODE(o6_pickupObject),
-		OPCODE(o6_invalid),
+		OPCODE(o6_setBoxFlags),
 		/* A8 */
-		OPCODE(o6_invalid),
+		OPCODE(o6_createBoxMatrix), // fixme?
 		OPCODE(o6_invalid),
 		OPCODE(o8_resourceRoutines),
 		OPCODE(o8_roomOps),
@@ -314,7 +314,7 @@ void Scumm_v8::setupOpcodes()
 		OPCODE(o6_invalid),
 		/* D8 */
 		OPCODE(o6_kernelGetFunctions),
-		OPCODE(o6_invalid),
+		OPCODE(o6_isActorInBox),
 		OPCODE(o6_getVerbEntrypoint),
 		OPCODE(o6_getActorFromXY),
 		/* DC */
@@ -1245,7 +1245,7 @@ void Scumm_v8::o8_startVideo()
 
         ScummRenderer * sr = new ScummRenderer(this, 1000/14);
         SmushPlayer * sp = new SmushPlayer(sr);
-        sp->play((char*)_scriptPointer, dirName);
+        //sp->play((char*)_scriptPointer, dirName);
 
 	_scriptPointer += len + 1;
 }
