@@ -103,8 +103,10 @@ char *ObjectMan::lockText(uint32 textId) {
 		textId = 0; // get first line instead
 	}
 	uint32 offset = READ_LE_UINT32(addr + ((textId & ITM_ID) + 1)* 4);
-	if (offset == 0)
+	if (offset == 0) {
 		warning("ObjectMan::lockText(%d): text number has no text lines", textId);
+		return _errorStr;
+	}
 	return addr + offset;
 }
 
@@ -154,5 +156,7 @@ void ObjectMan::loadLiveList(uint16 *src) {
 void ObjectMan::saveLiveList(uint16 *dest) {
 	memcpy(dest, _liveList, TOTAL_SECTIONS * sizeof(uint16));
 }
+
+char *ObjectMan::_errorStr = "Error: Text not found.";
 
 } // End of namespace Sword1
