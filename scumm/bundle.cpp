@@ -798,7 +798,7 @@ int32 Bundle::decompressCodec(int32 codec, byte *comp_input, byte *comp_output, 
 			int32 sDWord1[MAX_CHANNELS] = {0, 0};
 			int32 sDWord2[MAX_CHANNELS] = {0, 0};
 			int32 tableEntrySum, imcTableEntry, curTablePos, outputWord, adder;
-			byte decompTable, otherTablePos, var3b;
+			byte decompTable, otherTablePos, bitMask;
 			byte *readPos, *dst;
 			uint16 readWord;
 			
@@ -854,28 +854,34 @@ int32 Bundle::decompressCodec(int32 codec, byte *comp_input, byte *comp_output, 
 				destPos = l * 2;
 
 				if (channels == 2) {
-					if (l == 0) {
-						if (left == 0)
-							return output_size;
+					if (l == 0)
 						left++;
-						left >>= 1;
-					} else {
-						if (left <= 1)
-							return output_size;
-						left >>= 1;
-					}
-				} else {
-					if (left == 0)
-						return output_size;
+					left >>= 1;
 				}
 
 				while (left--) {
 					curTableEntry = _destImcTable[curTablePos];
 					decompTable = curTableEntry - 2;
-					var3b = (1 << decompTable) << 1;
+					bitMask = (1 << decompTable) << 1;
 					readPos = src + (tableEntrySum >> 3);
-					if (readPos+1 >= (comp_input+input_size)) {
-						warning("Overflow!!! %d >= %d", (int)readPos+1, (int)comp_input+input_size);
+					
+					// FIXME - it seems the decoder often reads exactly one byte too
+					// far - that is, it reads 2 bytes at once, and the second byte
+					// is just outside the buffer. However, it seems of these two bytes,
+					// only the upper one is actually used, so this should be fine.
+					// Still, I put this error message into place. If somebody one day
+					// encounters a situation where the second byte would be used, too,
+					// then this would indicate there is a bug in the decoder...
+					if (readPos + 1 >= comp_input + input_size) {
+						// OK an overflow... if it is more than one byte or if we
+						// need more than 8 bit of data -> error
+						if (readPos + 1 > comp_input + input_size ||
+						    curTableEntry + (tableEntrySum & 7) > 8) {
+							error("decompressCodec: input buffer overflow: %d bytes over (we need %d bits of data)",
+									(int)((readPos+1) - (comp_input+input_size))+1,
+									curTableEntry + (tableEntrySum & 7)
+								);
+						}
 					}
 					readWord = (uint16)(READ_BE_UINT16(readPos) << (tableEntrySum & 7));
 					otherTablePos = (byte)(readWord >> (16 - curTableEntry));
@@ -884,10 +890,12 @@ int32 Bundle::decompressCodec(int32 codec, byte *comp_input, byte *comp_output, 
 						<< (7 - curTableEntry)) + (curTablePos << 6);
 					imcTableEntry >>= (curTableEntry - 1);
 					adder = imcTableEntry + _destImcTable2[esiReg];
-					if ((otherTablePos & var3b) != 0) {
+					if ((otherTablePos & bitMask) != 0) {
 						adder = -adder;
 					}
 					outputWord += adder;
+
+					// Clip outputWord to 16 bit signed, and write it into the destination stream
 					if (outputWord > 0x7fff)
 						outputWord = 0x7fff;
 					if (outputWord < -0x8000)
@@ -895,17 +903,16 @@ int32 Bundle::decompressCodec(int32 codec, byte *comp_input, byte *comp_output, 
 					dst[destPos] = ((int16)outputWord) >> 8;
 					dst[destPos + 1] = (byte)(outputWord);
 
+					// Adjust the curTablePos / imcTableEntry
 					assert(decompTable < 6);
 					curTablePos += (signed char)imxOtherTable[decompTable][otherTablePos];
-
-					// Clip data
 					if (curTablePos > 88)
 						curTablePos = 88;
 					if (curTablePos < 0)
 						curTablePos = 0;
+					imcTableEntry = imcTable[curTablePos];
 
 					destPos += channels << 1;
-					imcTableEntry = imcTable[curTablePos];
 				}
 			}
 		}
