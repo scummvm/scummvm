@@ -40,6 +40,7 @@ protected:
 
 	bool Cmd_Exit(int argc, const char **argv);
 	bool Cmd_Help(int argc, const char **argv);
+	bool Cmd_DebugLevel(int argc, const char **argv);
 	bool Cmd_PlayMusic(int argc, const char **argv);
 	bool Cmd_PlaySound(int argc, const char **argv);
 	bool Cmd_PlayVoice(int argc, const char **argv);

@@ -24,15 +24,19 @@
 #include "simon/debugger.h"
 #include "simon/simon.h"
 
+extern uint16 g_debugLevel;
+
 namespace Simon {
 
 Debugger::Debugger(SimonEngine *vm) 
 	: Common::Debugger<Debugger>() {
 	_vm = vm;
 		
+	DCmd_Register("continue", &Debugger::Cmd_Exit);
 	DCmd_Register("exit", &Debugger::Cmd_Exit);
 	DCmd_Register("help", &Debugger::Cmd_Help);
 	DCmd_Register("quit", &Debugger::Cmd_Exit);
+	DCmd_Register("level", &Debugger::Cmd_DebugLevel);
 	DCmd_Register("music", &Debugger::Cmd_PlayMusic);
 	DCmd_Register("sound", &Debugger::Cmd_PlaySound);
 	DCmd_Register("voice", &Debugger::Cmd_PlayVoice);
@@ -76,6 +80,28 @@ bool Debugger::Cmd_Help(int argc, const char **argv) {
 		DebugPrintf("%s ", _dcmds[i].name);
 	}
 	DebugPrintf("\n");
+	return true;
+}
+
+bool Debugger::Cmd_DebugLevel(int argc, const char **argv) {
+	if (argc == 1) {
+		if (_vm->_debugMode == false)
+			DebugPrintf("Debugging is not enabled at this time\n");
+		else
+			DebugPrintf("Debugging is currently set at level %d\n", g_debugLevel);
+	} else { // set level
+		int level = atoi(argv[1]);
+		g_debugLevel = level;
+		if (level > 0 && level < 10) {
+			_vm->_debugMode = true;
+			DebugPrintf("Debug level set to level %d\n", level);
+		} else if (level == 0) {
+			_vm->_debugMode = false;
+			DebugPrintf("Debugging is now disabled\n");
+		} else
+			DebugPrintf("Not a valid debug level (0 - 10)\n");
+	}
+
 	return true;
 }
 
