@@ -322,7 +322,7 @@ void Scumm::setupOpcodes2() {
 	&Scumm::o6_invalid,
 	&Scumm::o6_invalid,
 	/* EC */	
-	&Scumm::o6_setBlastWindow,
+	&Scumm::o6_getActorPriority,
 	&Scumm::o6_getObjectNewDir,
 	&Scumm::o6_invalid,
 	&Scumm::o6_invalid,
@@ -2833,10 +2833,11 @@ void Scumm::decodeParseString2(int m, int n) {
 	}
 }
 
-void Scumm::o6_setBlastWindow()
+void Scumm::o6_getActorPriority()
 {
-	pop();
-	pop();
-	pop();
-	pop();
+	Actor *a;
+
+	a=derefActorSafe(pop(),"getActorPriority");
+
+	push(a->layer);
 }

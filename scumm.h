@@ -1558,7 +1558,7 @@ public:
 	void o6_kernelFunction();
 	void o6_getAnimateVariable();
 	void o6_drawBlastObject();
-	void o6_setBlastWindow();
+	void o6_getActorPriority();
 
 	/* Scumm Vars */
 	byte VAR_EGO;
