@@ -66,6 +66,7 @@ int MidiDriver_WIN::open() {
 
 void MidiDriver_WIN::close() {
 	_isOpen = false;
+	midiOutUnprepareHeader (_mo, &_streamHeader, sizeof (_streamHeader));
 	check_error(midiOutClose(_mo));
 	CloseHandle (_streamEvent);
 }
@@ -105,7 +106,7 @@ void MidiDriver_WIN::sysEx (byte *msg, uint16 length)
 	_streamHeader.dwBufferLength = length + 2;
 	_streamHeader.dwBytesRecorded = length + 2;
 	_streamHeader.dwUser = 0;
-	_streamHeader.dwFlags |= MHDR_ISSTRM;
+//	_streamHeader.dwFlags |= MHDR_ISSTRM;
 
 	MMRESULT result = midiOutPrepareHeader (_mo, &_streamHeader, sizeof (_streamHeader));
 	if (result != MMSYSERR_NOERROR) {
