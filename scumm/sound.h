@@ -123,7 +123,7 @@ public:
 	void bundleMusicHandler(Scumm * scumm);
 	void stopBundleMusic();
 	void playBundleSound(char *sound);
-	byte * readCreativeVocFile(byte * ptr, uint32 & size, uint32 & rate);
+	byte * readCreativeVocFile(byte * ptr, uint32 & size, uint32 & rate, uint32 & loops);
 	int playSfxSound(void *sound, uint32 size, uint rate, bool isUnsigned);
 	int playSfxSound_MP3(void *sound, uint32 size);
 

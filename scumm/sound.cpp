@@ -125,19 +125,19 @@ void Sound::processSoundQues() {
 	_soundQuePos = 0;
 }
 
-byte * Sound::readCreativeVocFile(byte * ptr, uint32 & size, uint32 & rate) {
+byte * Sound::readCreativeVocFile(byte * ptr, uint32 & size, uint32 & rate, uint32 & loops) {
 	assert(strncmp((char*)ptr, "Creative Voice File\x1A", 20) == 0);
 	int32 offset = READ_LE_UINT16(ptr + 20);
-	short version = READ_LE_UINT16(ptr + 22);
-	short code = READ_LE_UINT16(ptr + 24);
+	int16 version = READ_LE_UINT16(ptr + 22);
+	int16 code = READ_LE_UINT16(ptr + 24);
 	assert(version == 0x010A || version == 0x0114);
 	assert(code == ~version + 0x1234);
 	bool quit = 0;
-	byte * ret_sound = 0; size = 0;
+	byte * ret_sound = 0; size = 0, loops = 0;
 	while(!quit) {
 		int len = READ_LE_UINT32(ptr + offset);
 		offset += 4;
-		int code = len & 0xFF;		// FIXME not sure this is endian correct
+		int code = len & 0xFF;
 		len >>= 8;
 		switch(code) {
 			case 0: quit = 1; break;
@@ -160,7 +160,7 @@ byte * Sound::readCreativeVocFile(byte * ptr, uint32 & size, uint32 & rate) {
 				}
 				} break;
 			case 6:	// begin of loop
-				debug(3, "loops in Creative files not supported");
+				loops = len + 1;
 				break;
 			case 7:	// end of loop
 				break;

@@ -4866,8 +4866,8 @@ void IMuseDigital::handler() {
 				continue;
 			}
 
-			if ((_channel[l]._jump[0]._numLoops == 0) && (_channel[l]._isLoop == true)) {
-				_channel[l]._isLoop = false;
+			if ((_channel[l]._jump[0]._numLoops == 0) && (_channel[l]._isJump == true)) {
+				_channel[l]._isJump = false;
 			}
 
 			uint32 new_size = _channel[l]._mixerSize;
@@ -4881,11 +4881,15 @@ void IMuseDigital::handler() {
 				new_mixer = false;
 			}
 
-			if (_channel[l]._isLoop == false) {
+			if (_channel[l]._isJump == false) {
 				if (_channel[l]._offset + mixer_size > _channel[l]._size) {
 					new_size = _channel[l]._size - _channel[l]._offset;
-					_channel[l]._toBeRemoved = true;
-					mixer_size = new_size;
+					if (_channel[l]._numLoops > 0) {
+						_channel[l]._numLoops--;
+					} else {
+						_channel[l]._toBeRemoved = true;
+						mixer_size = new_size;
+					}
 				}
 			} else {
 				if (_channel[l]._jump[0]._numLoops != 500) {
@@ -4898,8 +4902,11 @@ void IMuseDigital::handler() {
 
 			byte *buf = (byte*)malloc(mixer_size);
 			memcpy(buf, _channel[l]._data + _channel[l]._offset, new_size);
-			if ((new_size != _channel[l]._mixerSize) && (_channel[l]._isLoop == true)) {
+			if ((new_size != _channel[l]._mixerSize) && (_channel[l]._isJump == true)) {
 				memcpy(buf + new_size, _channel[l]._data + _channel[l]._jump[0]._dest, mixer_size - new_size);
+			}
+			if ((_channel[l]._numLoops > 0) && (new_size != _channel[l]._mixerSize)) {
+				memcpy(buf + new_size, _channel[l]._data, mixer_size - new_size);
 			}
 
 			if (_channel[l]._volumeFade != -1) {
@@ -4937,8 +4944,9 @@ void IMuseDigital::handler() {
 															 _channel[l]._freq, _channel[l]._mixerFlags);
 			}
 
-			if ((new_size != mixer_size) && (_channel[l]._isLoop == true)) {
+			if ((new_size != mixer_size) && (_channel[l]._isJump == true)) {
 				_channel[l]._offset = _channel[l]._jump[0]._dest + (mixer_size - new_size);
+			} else if ((_channel[l]._numLoops > 0) && (new_size != _channel[l]._mixerSize)) {
 			} else {
 				_channel[l]._offset += mixer_size;
 			}
@@ -4970,34 +4978,29 @@ void IMuseDigital::startSound(int sound) {
 
 			if (READ_UINT32_UNALIGNED(ptr) == MKID('Crea')) {
 				_channel[l]._bits = 8;
-				_channel[l]._channels = 1;
+				_channel[l]._channels = 2;
 				_channel[l]._mixerTrack = -1;
 				_channel[l]._mixerSize = (22050 / 5) * 2;
-				_channel[l]._mixerFlags = SoundMixer::FLAG_AUTOFREE | SoundMixer::FLAG_STEREO | SoundMixer::FLAG_REVERSE_STEREO;
-				byte * t_ptr= _scumm->_sound->readCreativeVocFile(ptr, size, _channel[l]._freq);
+				_channel[l]._mixerFlags = SoundMixer::FLAG_AUTOFREE | SoundMixer::FLAG_STEREO | SoundMixer::FLAG_REVERSE_STEREO | SoundMixer::FLAG_UNSIGNED;
+				byte * t_ptr= _scumm->_sound->readCreativeVocFile(ptr, size, _channel[l]._freq, _channel[l]._numLoops);
+
 				if (_channel[l]._freq == 22222) {
 					_channel[l]._freq = 22050;
+				} else if (_channel[l]._freq == 10989) {
+					_channel[l]._freq = 11025;
 				}
+				
 				if (_channel[l]._freq == 11025) {
 					_channel[l]._mixerSize /= 2;
 				}
-				if (_channel[l]._bits == 8) {
-					_channel[l]._mixerFlags |= SoundMixer::FLAG_UNSIGNED;
-					if (_channel[l]._channels == 1) {
-						size *= 2;
-						_channel[l]._channels = 2;
-						_channel[l]._data = (byte *)malloc(size);
-						for (t = 0; t < size / 2; t++) {
-							*(_channel[l]._data + t * 2 + 0) = *(t_ptr + t);
-							*(_channel[l]._data + t * 2 + 1) = *(t_ptr + t);
-						}
-					} else {
-						_channel[l]._data = (byte *)malloc(size);
-						memcpy(_channel[l]._data, t_ptr, size);
-					}
-					free(t_ptr);
-					_channel[l]._size = size;
+				size *= 2;
+				_channel[l]._data = (byte *)malloc(size);
+				for (t = 0; t < size / 2; t++) {
+					*(_channel[l]._data + t * 2 + 0) = *(t_ptr + t);
+					*(_channel[l]._data + t * 2 + 1) = *(t_ptr + t);
 				}
+				free(t_ptr);
+				_channel[l]._size = size;
 			} else if (READ_UINT32_UNALIGNED(ptr) == MKID('iMUS')) {
 				ptr += 16;
 				for (;;) {
@@ -5038,7 +5041,7 @@ void IMuseDigital::startSound(int sound) {
 							_channel[l]._jump[_channel[l]._numJumps]._dest = READ_BE_UINT32(ptr); ptr += 4;
 							_channel[l]._jump[_channel[l]._numJumps]._id = READ_BE_UINT32(ptr); ptr += 4;
 							_channel[l]._jump[_channel[l]._numJumps]._numLoops = READ_BE_UINT32(ptr); ptr += 4;
-							_channel[l]._isLoop = true;
+							_channel[l]._isJump = true;
 							_channel[l]._numJumps++;
 						break;
 						case MKID_BE('DATA'):

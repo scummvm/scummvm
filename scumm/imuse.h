@@ -83,7 +83,8 @@ private:
 		int8 _volumeRight;
 		int8 _volume;
 		int8 _volumeFade;
-		bool _isLoop;
+		bool _isJump;
+		uint32 _numLoops;
 		uint32 _offsetStop;
 		jump _jump[MAX_IMUSE_JUMPS];
 		uint32 _numJumps;
