@@ -4876,7 +4876,7 @@ void IMuseDigital::handler() {
 			byte *buf = (byte*)malloc(_channel[l]._mixerSize);
 			memcpy(buf, _channel[l]._data + _channel[l]._offset, new_size);
 			if ((new_size != _channel[l]._mixerSize) && (_channel[l]._isLoop == true)) {
-				memcpy(buf, _channel[l]._data, _channel[l]._mixerSize - new_size);
+				memcpy(buf + new_size, _channel[l]._data, _channel[l]._mixerSize - new_size);
 			}
 
 			new_mixer = false;
