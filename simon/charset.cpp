@@ -343,6 +343,7 @@ static const byte hebrew_video_font[] = {
 };
 
 static const byte italian_video_font[] = {
+	0, 0, 0, 0, 0, 0, 0, 0,
 	32, 112, 112, 32, 32, 0, 32, 0,
 	48, 48, 96, 0, 0, 0, 0, 0,
 	80, 0, 112, 8, 120, 136, 120, 0,
