@@ -1691,62 +1691,63 @@ void SimonState::vc_62_palette_thing() {
 	vc_29_stop_all_sounds();
 
 	if (!_video_var_3) {
-		if (_game & GF_SIMON2) {
-			if (_next_music_to_play != -1)
-				loadMusic(_next_music_to_play);
-		}
-	} else
 		_video_var_3 = true;
 
-	_video_num_pal_colors = 256;
-	if (_video_palette_mode == 4)
-		_video_num_pal_colors = 208;
+		_video_num_pal_colors = 256;
+		if (_video_palette_mode == 4)
+			_video_num_pal_colors = 208;
 
-	memcpy(_video_buf_1, _palette_backup, _video_num_pal_colors * sizeof(uint32));
-	for (i = NUM_PALETTE_FADEOUT; i != 0; --i) {
-		palette_fadeout((uint32 *)_video_buf_1, _video_num_pal_colors);
-		_system->set_palette(_video_buf_1, 0, _video_num_pal_colors);
-		_system->update_screen();
-		delay(5);
-	}
-
-	if (!(_game & GF_SIMON2)) {
-		uint16 params[5];						/* parameters to vc_10_draw */
-		VgaSprite *vsp;
-		VgaPointersEntry *vpe;
-
-		vsp = _vga_sprites;
-		while (vsp->id != 0) {
-			if (vsp->id == 128) {
-				byte *f1 = _cur_vga_file_1;
-				byte *f2 = _cur_vga_file_2;
-				uint palmode = _video_palette_mode;
-
-				vpe = &_vga_buffer_pointers[vsp->unk7];
-				_cur_vga_file_1 = vpe->vgaFile1;
-				_cur_vga_file_2 = vpe->vgaFile2;
-				_video_palette_mode = vsp->unk6;
-
-				params[0] = READ_BE_UINT16_UNALIGNED(&vsp->image);
-				params[1] = READ_BE_UINT16_UNALIGNED(&vsp->base_color);
-				params[2] = READ_BE_UINT16_UNALIGNED(&vsp->x);
-				params[3] = READ_BE_UINT16_UNALIGNED(&vsp->y);
-				params[4] = READ_BE_UINT16_UNALIGNED(&vsp->unk4);
-				_vc_ptr = (byte *)params;
-				vc_10_draw();
-
-				_video_palette_mode = palmode;
-				_cur_vga_file_1 = f1;
-				_cur_vga_file_2 = f2;
-				break;
-			}
-			vsp++;
+		memcpy(_video_buf_1, _palette_backup, _video_num_pal_colors * sizeof(uint32));
+		for (i = NUM_PALETTE_FADEOUT; i != 0; --i) {
+			palette_fadeout((uint32 *)_video_buf_1, _video_num_pal_colors);
+			_system->set_palette(_video_buf_1, 0, _video_num_pal_colors);
+			_system->update_screen();
+			delay(5);
 		}
+
+		if (!(_game & GF_SIMON2)) {
+			uint16 params[5];						/* parameters to vc_10_draw */
+			VgaSprite *vsp;
+			VgaPointersEntry *vpe;
+
+			vsp = _vga_sprites;
+			while (vsp->id != 0) {
+				if (vsp->id == 128) {
+					byte *f1 = _cur_vga_file_1;
+					byte *f2 = _cur_vga_file_2;
+					uint palmode = _video_palette_mode;
+	
+					vpe = &_vga_buffer_pointers[vsp->unk7];
+					_cur_vga_file_1 = vpe->vgaFile1;
+					_cur_vga_file_2 = vpe->vgaFile2;
+					_video_palette_mode = vsp->unk6;
+
+					params[0] = READ_BE_UINT16_UNALIGNED(&vsp->image);
+					params[1] = READ_BE_UINT16_UNALIGNED(&vsp->base_color);
+					params[2] = READ_BE_UINT16_UNALIGNED(&vsp->x);
+					params[3] = READ_BE_UINT16_UNALIGNED(&vsp->y);
+					params[4] = READ_BE_UINT16_UNALIGNED(&vsp->unk4);
+					_vc_ptr = (byte *)params;
+					vc_10_draw();
+
+					_video_palette_mode = palmode;
+					_cur_vga_file_1 = f1;
+					_cur_vga_file_2 = f2;
+					break;
+				}
+				vsp++;
+			}
+		}
+
+		dx_clear_surfaces(_video_palette_mode == 4 ? 134 : 200);
+
+		_vc_ptr = vc_ptr_org;
+	}
+	if (_game & GF_SIMON2) {
+		if (_next_music_to_play != -1)
+			loadMusic(_next_music_to_play);
 	}
 
-	dx_clear_surfaces(_video_palette_mode == 4 ? 134 : 200);
-
-	_vc_ptr = vc_ptr_org;
 }
 
 void SimonState::vc_63_palette_thing_2() {

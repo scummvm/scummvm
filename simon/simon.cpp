@@ -322,8 +322,8 @@ SimonState::SimonState(GameDetector *detector, OSystem *syst)
 	_video_var_9 = 0;
 
 	_midi_sfx = 0;
-	_last_music_played = 0;
-	_next_music_to_play = 0;
+	_last_music_played = -1;
+	_next_music_to_play = -1;
 
 	_show_preposition = 0;
 	_showmessage_flag = 0;
