@@ -21,6 +21,7 @@
 
 #include "stdafx.h"
 #include "scumm.h"
+#include "intern.h"
 #include "resource.h"
 
 
@@ -29,7 +30,7 @@ void Scumm_v2::readIndexFile()
 	int magic = 0;
 	debug(9, "readIndexFile()");
 
-	openRoom(-1);
+	closeRoom();
 	openRoom(0);
 
 	magic = _fileHandle.readUint16LE();
@@ -81,5 +82,5 @@ void Scumm_v2::readIndexFile()
 	readResTypeList(rtScript, MKID('SCRP'), "script");
 	readResTypeList(rtSound, MKID('SOUN'), "sound");
 
-	openRoom(-1);
+	closeRoom();
 }

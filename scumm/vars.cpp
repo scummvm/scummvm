@@ -23,6 +23,7 @@
 
 #include "stdafx.h"
 #include "scumm.h"
+#include "intern.h"
 
 void Scumm::setupScummVars()
 {

@@ -23,8 +23,9 @@
 #include "stdafx.h"
 #include "scumm.h"
 #include "actor.h"
+#include "intern.h"
+#include "sound.h"
 #include "verbs.h"
-#include "scumm/sound.h"
 
 #define OPCODE(x)	{ &Scumm_v5::x, #x }
 

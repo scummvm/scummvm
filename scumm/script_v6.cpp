@@ -24,13 +24,14 @@
 #include "stdafx.h"
 #include "scumm.h"
 #include "actor.h"
+#include "imuse.h"
+#include "intern.h"
+#include "sound.h"
 #include "verbs.h"
 #include "smush/player.h"
 #include "smush/scumm_renderer.h"
 
 #include "sound/mididrv.h"
-#include "scumm/sound.h"
-#include "scumm/imuse.h"
 
 #include "dialogs.h"		// FIXME: This is just for the FT-INSANE warning. 
 				// Remove when INSANE is implemented

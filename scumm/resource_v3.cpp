@@ -22,6 +22,7 @@
 
 #include "stdafx.h"
 #include "scumm.h"
+#include "intern.h"
 #include "resource.h"
 
 
@@ -34,7 +35,7 @@ void Scumm_v3::readIndexFile()
 
 	debug(9, "readIndexFile()");
 
-	openRoom(-1);
+	closeRoom();
 	openRoom(0);
 
 	while (!_fileHandle.eof()) {
@@ -147,7 +148,7 @@ void Scumm_v3::readIndexFile()
 		}
 	}
 
-	openRoom(-1);
+	closeRoom();
 }
 
 void Scumm_v3::loadCharset(int no)
@@ -156,12 +157,12 @@ void Scumm_v3::loadCharset(int no)
 	memset(_charsetData, 0, sizeof(_charsetData));
 
 	checkRange(4, 0, no, "Loading illegal charset %d");
-	openRoom(-1);
+	closeRoom();
 
 	openRoom(98 + no);
 
 	size = _fileHandle.readUint16LE();
 
 	_fileHandle.read(createResource(6, no, size), size);
-	openRoom(-1);
+	closeRoom();
 }

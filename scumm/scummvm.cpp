@@ -27,6 +27,7 @@
 #include "debugger.h"
 #include "dialogs.h"
 #include "imuse.h"
+#include "intern.h"
 #include "object.h"
 #include "resource.h"
 #include "sound.h"
@@ -61,6 +62,8 @@ Engine *Engine_SCUMM_create(GameDetector *detector, OSystem *syst)
 		engine = new Scumm_v3(detector, syst);
 	else if (detector->_features & GF_SMALL_HEADER)	// this forces loomCD as v4
 		engine = new Scumm_v4(detector, syst);
+	else if (detector->_features & GF_AFTER_V8)
+		engine = new Scumm_v8(detector, syst);
 	else if (detector->_features & GF_AFTER_V7)
 		engine = new Scumm_v7(detector, syst);
 	else if (detector->_features & GF_AFTER_V6)	// this forces SamnmaxCD as v6

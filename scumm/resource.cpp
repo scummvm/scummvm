@@ -31,7 +31,6 @@
 
 uint16 newTag2Old(uint32 oldTag);
 
-
 /* Open a room */
 void Scumm::openRoom(int room)
 {
@@ -39,6 +38,7 @@ void Scumm::openRoom(int room)
 	char buf[256];
 
 	debug(9, "openRoom(%d)", room);
+	assert(room >= 0);
 
 	/* Don't load the same room again */
 	if (_lastLoadedRoom == room)
@@ -125,7 +125,17 @@ void Scumm::openRoom(int room)
 	} while (1);
 
 	deleteRoomOffsets();
-	_fileOffset = 0;							/* start of file */
+	_fileOffset = 0;		// start of file
+}
+
+void Scumm::closeRoom()
+{
+	if (_lastLoadedRoom != -1) {
+		_lastLoadedRoom = -1;
+		_encbyte = 0;
+		deleteRoomOffsets();
+		_fileHandle.close();
+	}
 }
 
 /* Delete the currently loaded room offsets */
@@ -202,7 +212,7 @@ void Scumm::readIndexFile()
 
 	debug(9, "readIndexFile()");
 
-	openRoom(-1);
+	closeRoom();
 	openRoom(0);
 
 	if (!(_features & GF_AFTER_V6)) {
@@ -330,12 +340,17 @@ void Scumm::readIndexFile()
 			break;
 
 		case MKID('AARY'):
+			debug(3, "Going to call readArrayFromIndexFile (pos = 0x%08x)", _fileHandle.pos());
 			readArrayFromIndexFile();
+			debug(3, "After readArrayFromIndexFile (pos = 0x%08x)", _fileHandle.pos());
 			break;
 
 		default:
-			error("Bad ID %c%c%c%c found in directory!", blocktype & 0xFF,
-						blocktype >> 8, blocktype >> 16, blocktype >> 24);
+			error("Bad ID %c%c%c%c found in directory!",
+						(byte)blocktype,
+						(byte)(blocktype >> 8),
+						(byte)(blocktype >> 16),
+						(byte)(blocktype >> 24));
 			return;
 		}
 	}
@@ -343,22 +358,42 @@ void Scumm::readIndexFile()
 //  if (numblock!=9)
 //    error("Not enough blocks read from directory");
 
-	openRoom(-1);
+	closeRoom();
 }
 
 void Scumm::readArrayFromIndexFile()
 {
 	int num;
-	int a, b, c;
+	int a, b, c, d;
 
-	while ((num = _fileHandle.readUint16LE()) != 0) {
-		a = _fileHandle.readUint16LE();
-		b = _fileHandle.readUint16LE();
-		c = _fileHandle.readUint16LE();
-		if (c == 1)
-			defineArray(num, 1, a, b);
-		else
-			defineArray(num, 5, a, b);
+	if (_features & GF_AFTER_V8) {
+		// FIXME - I am not quite sure how to interpret the AARY format of COMI.
+		// Each entry seems to be 12 bytes, while in V7 games it is only 8 bytes.
+		// 2 of the additional bytes seem to be used for num. But what about the
+		// other 2?. Either one of the three fields grew, too (but which). Or there
+		// is a new field, but then what does it mean? Endy or ludde probably know more :-)
+		while ((num = _fileHandle.readUint32LE()) != 0) {
+			a = _fileHandle.readUint16LE();
+			b = _fileHandle.readUint16LE();
+			c = _fileHandle.readUint16LE();
+			d = _fileHandle.readUint16LE();
+			
+			printf("Reading array (0x%08x,%d,%d,%d,%d) - (pos = 0x%08x)\n", num, a, b, c, d, _fileHandle.pos());
+			if (c == 1)
+				defineArray(num, 1, a, b);
+			else
+				defineArray(num, 5, a, b);
+		}
+	} else {
+		while ((num = _fileHandle.readUint16LE()) != 0) {
+			a = _fileHandle.readUint16LE();
+			b = _fileHandle.readUint16LE();
+			c = _fileHandle.readUint16LE();
+			if (c == 1)
+				defineArray(num, 1, a, b);
+			else
+				defineArray(num, 5, a, b);
+		}
 	}
 }
 
@@ -388,7 +423,7 @@ void Scumm::readResTypeList(int id, uint32 tag, const char *name)
 	}
 
 	if (_features & GF_OLD_BUNDLE) {
-		if (id == rtRoom){
+		if (id == rtRoom) {
 			for (i = 0; i < num; i++)
 				res.roomno[id][i] = i;
 			_fileHandle.seek(num, SEEK_CUR);
@@ -1513,6 +1548,10 @@ void Scumm::readMAXS()
 		_fileHandle.readUint32LE();
 		_fileHandle.readUint32LE();
 		_numArray = _fileHandle.readUint32LE();
+
+		// FIXME - uhm... COMI seems to have an ARRY with 143 entries, but
+		// indeed _numArray gets set to 50 ?!?
+		_numArray = 150;
 
 		_objectRoomTable = (byte *)calloc(_numGlobalObjects, 1);
 		_numGlobalScripts = 2000;

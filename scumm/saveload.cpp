@@ -111,7 +111,8 @@ bool Scumm::loadState(int slot, bool compat, SaveFileManager *mgr)
 	_sound->stopCD();
 	_sound->pauseSounds(true);
 
-	CHECK_HEAP openRoom(-1);
+	CHECK_HEAP
+	closeRoom();
 	memset(_inventory, 0, sizeof(_inventory[0]) * _numInventory);
 
 	/* Nuke all resources */

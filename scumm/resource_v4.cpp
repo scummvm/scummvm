@@ -22,6 +22,7 @@
 
 #include "stdafx.h"
 #include "scumm.h"
+#include "intern.h"
 
 void Scumm_v4::loadCharset(int no)
 {
@@ -29,12 +30,12 @@ void Scumm_v4::loadCharset(int no)
 	memset(_charsetData, 0, sizeof(_charsetData));
 
 	checkRange(4, 0, no, "Loading illegal charset %d");
-	openRoom(-1);
+	closeRoom();
 
 	openRoom(900 + no);
 
 	size = _fileHandle.readUint32LE() + 11;
 
 	_fileHandle.read(createResource(6, no, size), size);
-	openRoom(-1);
+	closeRoom();
 }
