@@ -815,7 +815,8 @@ int sortByDrawOrder (const void* a, const void* b)
 void Scumm::processActors() {
 	int numactors = 0;
 
-	// TODO : put this actors as a member array that grows and just realloc when necessary
+	// TODO : put this actors as a member array. It never has to grow or shrink
+	// since _numActors is constant within a game.
 	Actor** actors = new Actor * [_numActors];
 	
 	// Make a list of all actors in this room
@@ -835,7 +836,7 @@ void Scumm::processActors() {
 	// Bertrand TODO : Put a std::sort with a inlined comparison operator?
 	// I suppose only STL containers are not allowed, not algorithms, but I prefered leaving a good old qsort
 	// (Which might be slower that the previous code but just fits on one line)
-	qsort (actors, numactors, sizeof (Actor*), sortByDrawOrder);
+	qsort(actors, numactors, sizeof (Actor*), sortByDrawOrder);
 
 	Actor** end = actors + numactors;
 
