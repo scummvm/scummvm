@@ -420,8 +420,6 @@ void Instrument_Roland::saveOrLoad (Serializer *s) {
 void Instrument_Roland::send (MidiChannel *mc) {
 	if (_native_mt32) {
 		_instrument.device_id = mc->getNumber();
-		if (_instrument.device_id > 7)
-			warning ("MT-32 part %d is greater than 7", (int) _instrument.device_id);
 		mc->device()->sysEx ((byte *) &_instrument, sizeof (_instrument));
 	} else {
 		// Convert to a GM program change.
