@@ -41,7 +41,7 @@ class Dialog : public GuiObject {
 protected:
 	Widget	*_mouseWidget;
 	Widget  *_focusedWidget;
-	Widget  *_clickedWidget;
+	Widget  *_dragWidget;
 	bool	_visible;
 
 private:

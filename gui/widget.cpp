@@ -201,15 +201,13 @@ void CheckboxWidget::drawWidget(bool hilite) {
 
 SliderWidget::SliderWidget(GuiObject *boss, int x, int y, int w, int h, const String &label, uint labelWidth, uint32 cmd, uint8 hotkey)
 	: ButtonWidget(boss, x, y, w, h, label, cmd, hotkey),
-	  _value(0), _oldValue(0),_valueMin(0), _valueMax(100), _isDragging(false),
+	  _value(0), _oldValue(0), _valueMin(0), _valueMax(100), _isDragging(false),
 	  _labelWidth(labelWidth) {
 	_flags = WIDGET_ENABLED | WIDGET_TRACK_MOUSE | WIDGET_CLEARBG;
 	_type = kSliderWidget;
 }
 
 void SliderWidget::handleMouseMoved(int x, int y, int button) {
-	// TODO: when the mouse is dragged outside the widget, the slider should
-	// snap back to the old value.
 	if (isEnabled() && _isDragging && x >= (int)_labelWidth) {
 		int newValue = posToValue(x - _labelWidth);
 		if (newValue < _valueMin)

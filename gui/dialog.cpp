@@ -38,7 +38,7 @@ namespace GUI {
 
 Dialog::Dialog(int x, int y, int w, int h)
 	: GuiObject(x, y, w, h),
-	  _mouseWidget(0), _focusedWidget(0), _clickedWidget(0), _visible(false) {
+	  _mouseWidget(0), _focusedWidget(0), _dragWidget(0), _visible(false) {
 }
 
 Dialog::~Dialog() {
@@ -120,7 +120,7 @@ void Dialog::handleMouseDown(int x, int y, int button, int clickCount) {
 	Widget *w;
 	w = findWidget(x, y);
 	
-	_clickedWidget = w;
+	_dragWidget = w;
 
 	// If the click occured inside a widget which is not the currently
 	// focused one, change the focus to that widget.
@@ -143,8 +143,6 @@ void Dialog::handleMouseDown(int x, int y, int button, int clickCount) {
 void Dialog::handleMouseUp(int x, int y, int button, int clickCount) {
 	Widget *w;
 
-	w = findWidget(x, y);
-
 	if (_focusedWidget) {
 		//w = _focusedWidget;
 		
@@ -154,10 +152,12 @@ void Dialog::handleMouseUp(int x, int y, int button, int clickCount) {
 		}
 	}
 
-	if (w && w == _clickedWidget)
+	w = _dragWidget;
+
+	if (w)
 		w->handleMouseUp(x - (w->getAbsX() - _x), y - (w->getAbsY() - _y), button, clickCount);
 
-	_clickedWidget = 0;
+	_dragWidget = 0;
 }
 
 void Dialog::handleMouseWheel(int x, int y, int direction) {
@@ -215,9 +215,9 @@ void Dialog::handleMouseMoved(int x, int y, int button) {
 	Widget *w;
 	
 	//if (!button)
-	//	_clickedWidget = 0;
+	//	_dragWidget = 0;
 	
-	if (_focusedWidget && !_clickedWidget) {
+	if (_focusedWidget && !_dragWidget) {
 		w = _focusedWidget;
 		int wx = w->getAbsX() - _x;
 		int wy = w->getAbsY() - _y;
@@ -237,14 +237,13 @@ void Dialog::handleMouseMoved(int x, int y, int button) {
 
 		w->handleMouseMoved(x - wx, y - wy, button);
 	}
-
-	w = findWidget(x, y);
 	
 	// While a "drag" is in process (i.e. mouse is moved while a button is pressed),
 	// only deal with the widget in which the click originated.
-	if (_clickedWidget && w != _clickedWidget) {
-		w = 0;
-	}
+	if (_dragWidget)
+		w = _dragWidget;
+	else
+		w = findWidget(x, y);
 
 	if (_mouseWidget != w) {
 		if (_mouseWidget)
