@@ -836,7 +836,7 @@ void ScummEngine_v100he::o100_setSpriteGroupInfo() {
 
 	byte subOp = fetchScriptByte();
 
-	debug(1,"o100_setSpriteGroupInfo (%d)", subOp);
+	debug(1,"o100_setSpriteGroupInfo stub (%d)", subOp);
 	switch (subOp) {
 	case 0:
 		pop();

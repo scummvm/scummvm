@@ -1482,18 +1482,15 @@ void ScummEngine_v72he::o72_traceStatus() {
 
 void ScummEngine_v72he::o72_kernelGetFunctions() {
 	int args[29];
-	int retval;
 	ArrayHeader *ah;
 	getStackList(args, ARRAYSIZE(args));
 
 	switch (args[0]) {
 	case 1:
 		writeVar(0, 0);
-		defineArray(0, kByteArray, 0, 0, 0, virtScreenSave(0, args[1], args[2], args[3], args[4]));
-		retval = readVar(0);
-		ah = (ArrayHeader *)getResourceAddress(rtString, retval);
+		ah = defineArray(0, kByteArray, 0, 0, 0, virtScreenSave(0, args[1], args[2], args[3], args[4]));
 		virtScreenSave(ah->data, args[1], args[2], args[3], args[4]);
-		push(retval);
+		push(readVar(0));
 		break;
 	case 1001:
 		{
@@ -1859,7 +1856,7 @@ void ScummEngine_v72he::o72_checkGlobQueue() {
 
 void ScummEngine_v72he::o72_readINI() {
 	byte option[100];
-	int type, retval;
+	int type;
 
 	// we pretend that we don't have .ini file
 	copyScriptString(option);
@@ -1877,9 +1874,8 @@ void ScummEngine_v72he::o72_readINI() {
 	case 7: // string
 		writeVar(0, 0);
 		defineArray(0, kStringArray, 0, 0, 0, 0);
-		retval = readVar(0);
 		writeArray(0, 0, 0, 0);
-		push(retval); // var ID string
+		push(readVar(0)); // var ID string
 		break;
 	default:
 		error("o72_readINI: default type %d", type);

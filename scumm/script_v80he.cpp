@@ -446,7 +446,7 @@ void ScummEngine_v80he::o80_localizeArrayToRoom() {
 
 void ScummEngine_v80he::o80_readConfigFile() {
 	byte name[128], section[128], filename[256];
-	int type, retval;
+	int type;
 
 	// we pretend that we don't have .ini file
 	copyScriptString(section);
@@ -463,9 +463,8 @@ void ScummEngine_v80he::o80_readConfigFile() {
 	case 7: // string
 		writeVar(0, 0);
 		defineArray(0, kStringArray, 0, 0, 0, 0);
-		retval = readVar(0);
 		writeArray(0, 0, 0, 0);
-		push(retval); // var ID string
+		push(readVar(0)); // var ID string
 		break;
 	default:
 		error("o80_readConfigFile: default type %d", type);

@@ -882,7 +882,6 @@ uint8 virtScreenLoadUnpack(vsUnpackCtx *ctx, byte *data) {
 
 void ScummEngine_v60he::o60_kernelGetFunctions() {
 	int args[29];
-	int retval;
 	ArrayHeader *ah;
 	getStackList(args, ARRAYSIZE(args));
 
@@ -891,11 +890,9 @@ void ScummEngine_v60he::o60_kernelGetFunctions() {
 		// Used to store images when decorating cake in
 		// Fatty Bear's Birthday Surprise
 		writeVar(0, 0);
-		defineArray(0, kByteArray, 0, virtScreenSave(0, args[1], args[2], args[3], args[4]));
-		retval = readVar(0);
-		ah = (ArrayHeader *)getResourceAddress(rtString, retval);
+		ah = defineArray(0, kByteArray, 0, virtScreenSave(0, args[1], args[2], args[3], args[4]));
 		virtScreenSave(ah->data, args[1], args[2], args[3], args[4]);
-		push(retval);
+		push(readVar(0));
 		break;
 	default:
 		error("o60_kernelGetFunctions: default case %d", args[0]);

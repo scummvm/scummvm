@@ -911,7 +911,6 @@ void ScummEngine_v70he::o70_compareString() {
 void ScummEngine_v70he::o70_readINI() {
 	int len;
 	int type;
-	int retval;
 	byte option[256];
 
 	// we pretend that we don't have .ini file
@@ -930,9 +929,8 @@ void ScummEngine_v70he::o70_readINI() {
 	case 2: // string
 		writeVar(0, 0);
 		defineArray(0, kStringArray, 0, 0);
-		retval = readVar(0);
 		writeArray(0, 0, 0, 0);
-		push(retval); // var ID string
+		push(readVar(0)); // var ID string
 		break;
 	default:
 		error("o70_readINI: default type %d", type);
