@@ -45,7 +45,6 @@ class Sound;
 class Logic;
 class Mouse;
 class ResMan;
-class MemMan;
 class ObjectMan;
 class Menu;
 class Music;
@@ -89,7 +88,6 @@ private:
 	uint16 _mouseX, _mouseY, _mouseState;
 	uint8 _keyPressed;
 
-	MemMan		*_memMan;
 	ResMan		*_resMan;
 	ObjectMan	*_objectMan;
 	Screen		*_screen;

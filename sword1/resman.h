@@ -50,7 +50,7 @@ struct Prj {
 
 class ResMan {
 public:
-	ResMan(const char *resFile, MemMan *pMemoMan);
+	ResMan(const char *resFile);
 	~ResMan(void);
 	void flush(void);
 	void resClose(uint32 id);

@@ -46,8 +46,8 @@ namespace Sword1 {
 
 #define MAX_PATH_LEN 260
 
-ResMan::ResMan(const char *resFile, MemMan *pMemoMan) {
-	_memMan = pMemoMan;
+ResMan::ResMan(const char *resFile) {
+	_memMan = new MemMan();
 	loadCluDescript(resFile);
 }
 
@@ -71,7 +71,9 @@ ResMan::~ResMan(void) {
 	}
 	debug(0, "ResMan closed\n");
 #endif
+	flush();
 	freeCluDescript();
+	delete _memMan;
 }
 
 void ResMan::loadCluDescript(const char *fileName) {
@@ -165,6 +167,8 @@ void ResMan::flush(void) {
 							_memMan->setCondition(group->resHandle + resCnt, MEM_CAN_FREE);
 							group->resHandle[resCnt].refCount = 0;
 						}
+	// the memory manager cached the blocks we asked it to free, so explicitly make it free them
+	_memMan->flush();
 }
 
 void *ResMan::fetchRes(uint32 id) {

@@ -29,7 +29,6 @@
 #include "common/file.h"
 #include "common/timer.h"
 
-#include "sword1/memman.h"
 #include "sword1/resman.h"
 #include "sword1/objectman.h"
 #include "sword1/mouse.h"
@@ -121,10 +120,7 @@ SwordEngine::~SwordEngine() {
 	delete _screen;
 	delete _mouse;
 	delete _objectMan;
-	_resMan->flush(); // free all memory
-	_memMan->flush();
 	delete _resMan;
-	delete _memMan;
 }
 
 void SwordEngine::initialize(void) {
@@ -140,10 +136,8 @@ void SwordEngine::initialize(void) {
 	File::addDefaultDirectory(_gameDataPath + "video/");
 
 	_system->initSize(640, 480);
-	debug(5, "Starting memory manager");
-	_memMan = new MemMan();
 	debug(5, "Starting resource manager");
-	_resMan = new ResMan("swordres.rif", _memMan);
+	_resMan = new ResMan("swordres.rif");
 	debug(5, "Starting object manager");
 	_objectMan = new ObjectMan(_resMan);
 	_mixer->setVolume(255);
@@ -207,8 +201,7 @@ void SwordEngine::initialize(void) {
 }
 
 void SwordEngine::reinitialize(void) {
-	_resMan->flush(); // free everything that's currently alloced and opened.
-	_memMan->flush(); // Handle with care.
+	_resMan->flush(); // free everything that's currently alloced and opened. (*evil*)
 
 	_logic->initialize();     // now reinitialize these objects as they (may) have locked
 	_objectMan->initialize(); // resources which have just been wiped.
