@@ -886,8 +886,7 @@ void ScummEngine_v100he::o100_unknown28() {
 }
 
 void ScummEngine_v100he::o100_resourceRoutines() {
-	// Incomplete
-	int obj, room;
+	int obj, objidx, room;
 
 	byte subOp = fetchScriptByte();
 
@@ -915,6 +914,8 @@ void ScummEngine_v100he::o100_resourceRoutines() {
 			loadFlObject(obj, room);
 		} else if (_heResType == rtCharset) {
 			loadCharset(_heResId);
+		} else {
+			ensureResourceLoaded(_heResType, _heResId);
 		}
 		break;
 	case 62:
@@ -930,7 +931,18 @@ void ScummEngine_v100he::o100_resourceRoutines() {
 		_heResId = pop();
 		break;
 	case 128:
-		// lock?
+		break;
+	case 132:
+		if (_heResType == rtScript && _heResId >= _numGlobalScripts)
+			break;
+
+		if (_heResType == rtFlObject) {
+			objidx = getObjectIndex(_heResId);
+			//assert(objidx != -1);
+			//lock(_heResType, objidx);
+		} else {
+			lock(_heResType, _heResId);
+		}
 		break;
 	case 133:
 		if (_heResType == rtCharset)
@@ -938,8 +950,27 @@ void ScummEngine_v100he::o100_resourceRoutines() {
 		else
 			nukeResource(_heResType, _heResId);
 		break;
+	case 134:
+	case 135:
+		// Heap related
+		break;
+	case 136:
+		debug(5,"stub queueload (%d) resource %d", _heResType, _heResId);
+		break;
+	case 137:
+		if (_heResType == rtScript && _heResId >= _numGlobalScripts)
+			break;
+
+		if (_heResType == rtFlObject) {
+			objidx = getObjectIndex(_heResId);
+			//assert(objidx != -1);
+			//unlock(_heResType, objidx);
+		} else {
+			unlock(_heResType, _heResId);
+		}
+		break;
 	default:
-		debug(1,"o100_resourceRoutines: default case %d", subOp);
+		error("o100_resourceRoutines: default case %d", subOp);
 	}
 }
 
@@ -1410,7 +1441,6 @@ void ScummEngine_v100he::o100_cursorCommand() {
 		for (i = 0; i < 16; i++)
 			_charsetColorMap[i] = _charsetData[_string[1]._default.charset][i] = (unsigned char)args[i];
 		break;
-
 	case 0x80:
 		a = pop();
 		loadWizCursor(a, rtInventory, 0);
@@ -1430,24 +1460,25 @@ void ScummEngine_v100he::o100_cursorCommand() {
 	case 0x87:		// SO_CURSOR_OFF Turn cursor off
 		_cursor.state = 0;
 		break;
-	case 0x88:		// SO_USERPUT_ON
-		_userPut = 1;
-		break;
-	case 0x89:		// SO_USERPUT_OFF
-		_userPut = 0;
-		break;
-	case 0x8A:		// SO_CURSOR_SOFT_ON Turn soft cursor on
+	case 0x88:		// SO_CURSOR_SOFT_ON Turn soft cursor on
 		_cursor.state++;
 		if (_cursor.state > 1)
 			error("o100_cursorCommand: Cursor state greater than 1 in script");
 		break;
-	case 0x8B:		// SO_CURSOR_SOFT_OFF Turn soft cursor off
+
+	case 0x89:		// SO_CURSOR_SOFT_OFF Turn soft cursor off
 		_cursor.state--;
 		break;
-	case 0x8C:		// SO_USERPUT_SOFT_ON
+	case 0x8B:		// SO_USERPUT_ON
+		_userPut = 1;
+		break;
+	case 0x8C:		// SO_USERPUT_OFF
+		_userPut = 0;
+		break;
+	case 0x8D:		// SO_USERPUT_SOFT_ON
 		_userPut++;
 		break;
-	case 0x8D:		// SO_USERPUT_SOFT_OFF
+	case 0x8E:		// SO_USERPUT_SOFT_OFF
 		_userPut--;
 		break;
 	default:
