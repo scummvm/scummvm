@@ -4117,6 +4117,7 @@ void SimonState::resfile_read(void *dst, uint32 offs, uint32 size)
 void SimonState::openGameFile()
 {
 	if (_game != GAME_SIMON1DOS) {
+		_game_file = new File();
 		_game_file->open(gss->gme_filename, _gameDataPath);
 
 		if (_game_file->isOpen() == false)
