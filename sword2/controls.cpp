@@ -1598,9 +1598,8 @@ void Gui::restartControl(void) {
 	// global variables
 	_vm->_resman->removeAll();
 
-	// Reopen global variables resource & send address to interpreter -
-	// it won't be moving
-	_vm->_logic->resetScriptVars();
+	// Reopen global variables resource and player object
+	_vm->setupPersistentResources();
 
 	Logic::_scriptVars[DEMO] = temp_demo_flag;
 

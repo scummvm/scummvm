@@ -21,6 +21,7 @@
 #include "common/file.h"
 #include "sword2/sword2.h"
 #include "sword2/console.h"
+#include "sword2/defs.h"
 #include "sword2/interpreter.h"
 #include "sword2/logic.h"
 #include "sword2/maketext.h"
@@ -188,8 +189,8 @@ void Logic::conStart(int start) {
 
 	_vm->_resman->removeAll();
 
-	// Reopen global variables resource and send address to interpreter
-	_vm->_logic->resetScriptVars();
+	// Reopen global variables resource and player object
+	_vm->setupPersistentResources();
 
 	// Free all the route memory blocks from previous game
 	_router->freeAllRouteMem();
@@ -201,7 +202,7 @@ void Logic::conStart(int start) {
 	}
 
 	// Open George
-	char *raw_data_ad = (char *) _vm->_resman->openResource(8);
+	char *raw_data_ad = (char *) _vm->_resman->openResource(CUR_PLAYER_ID);
 	char *raw_script = (char *) _vm->_resman->openResource(_startList[start].start_res_id);
 
 	// Denotes script to run
@@ -211,7 +212,7 @@ void Logic::conStart(int start) {
 	runScript(raw_script, raw_data_ad, &null_pc);
 
 	_vm->_resman->closeResource(_startList[start].start_res_id);
-	_vm->_resman->closeResource(8);
+	_vm->_resman->closeResource(CUR_PLAYER_ID);
 
 	// Make sure there's a mouse, in case restarting while mouse not
 	// available

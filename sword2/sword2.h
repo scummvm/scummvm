@@ -173,6 +173,7 @@ public:
 	Sword2Engine(GameDetector *detector, OSystem *syst);
 	~Sword2Engine();
 	void go(void);
+	void setupPersistentResources(void);
 	int32 initialiseGame(void);
 
 	bool _quit;

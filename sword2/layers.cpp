@@ -58,7 +58,7 @@ int32 Sword2Engine::initBackground(int32 res, int32 new_palette) {
 
 	// The resources age every time a new room is entered.
 	_resman->passTime();
-	_resman->expelOldResources();
+	_resman->expireOldResources();
 
 	clearFxQueue();
 	_graphics->waitForFade();

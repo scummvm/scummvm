@@ -80,6 +80,7 @@ Debugger::Debugger(Sword2Engine *vm)
 	DCmd_Register("mem", &Debugger::Cmd_Mem);
 	DCmd_Register("tony", &Debugger::Cmd_Tony);
 	DCmd_Register("res", &Debugger::Cmd_Res);
+	DCmd_Register("reslist", &Debugger::Cmd_ResList);
 	DCmd_Register("starts", &Debugger::Cmd_Starts);
 	DCmd_Register("start", &Debugger::Cmd_Start);
 	DCmd_Register("s", &Debugger::Cmd_Start);
@@ -188,6 +189,17 @@ bool Debugger::Cmd_Tony(int argc, const char **argv) {
 
 bool Debugger::Cmd_Res(int argc, const char **argv) {
 	_vm->_resman->printConsoleClusters();
+	return true;
+}
+
+bool Debugger::Cmd_ResList(int argc, const char **argv) {
+	// By default, list only resources that are being held open.
+	uint minCount = 1;
+
+	if (argc > 1)
+		minCount = atoi(argv[1]);
+
+	_vm->_resman->listResources(minCount);
 	return true;
 }
 

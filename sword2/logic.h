@@ -197,8 +197,6 @@ public:
 	// could alternately use logic->looping of course
 	bool _choosing;
 
-	void resetScriptVars(void);
-
 	void conPrintStartMenu(void);
 	void conStart(int start);
 

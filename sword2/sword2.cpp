@@ -232,22 +232,23 @@ void Sword2Engine::errorString(const char *buf1, char *buf2) {
 	}
 }
 
+/**
+ * The global script variables and player object should be kept open throughout
+ * the game, so that they are never expelled by the resource manager.
+ */
+
+void Sword2Engine::setupPersistentResources(void) {
+	Logic::_scriptVars = (uint32 *) (_resman->openResource(1) + sizeof(StandardHeader));
+	_resman->openResource(CUR_PLAYER_ID);
+}
+    
 int32 Sword2Engine::initialiseGame(void) {
 	// During normal gameplay, we care neither about mouse button releases
 	// nor the scroll wheel.
 	setEventFilter(RD_LEFTBUTTONUP | RD_RIGHTBUTTONUP | RD_WHEELUP | RD_WHEELDOWN);
 
-	// initialise global script variables
-	// res 1 is the globals list
-	Logic::_scriptVars = (uint32 *) (_resman->openResource(1) + sizeof(StandardHeader));
-
-	// DON'T CLOSE VARIABLES RESOURCE - KEEP IT OPEN AT VERY START OF
-	// MEMORY SO IT CAN'T MOVE!
-
-	// DON'T CLOSE PLAYER OBJECT RESOURCE - KEEP IT OPEN IN MEMORY SO IT
-	// CAN'T MOVE!
-
-	_resman->openResource(8);
+	// Initialise global script variables and player object
+	setupPersistentResources();
 
 	// Set up font resource variables for this language version
 
@@ -555,7 +556,7 @@ void Sword2Engine::startGame(void) {
 	uint32 null_pc = 1;
 
 	// open george object, ready for start script to reference
-	raw_data_ad = (char *) _resman->openResource(8);
+	raw_data_ad = (char *) _resman->openResource(CUR_PLAYER_ID);
 
 	// open the ScreenManager object
 	raw_script = (char *) _resman->openResource(screen_manager_id);
@@ -567,7 +568,7 @@ void Sword2Engine::startGame(void) {
 	_resman->closeResource(screen_manager_id);
 
 	// close george
-	_resman->closeResource(8);
+	_resman->closeResource(CUR_PLAYER_ID);
 
 	debug(5, "startGame() DONE.");
 }

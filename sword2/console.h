@@ -87,6 +87,7 @@ protected:
 	bool Cmd_Mem(int argc, const char **argv);
 	bool Cmd_Tony(int argc, const char **argv);
 	bool Cmd_Res(int argc, const char **argv);
+	bool Cmd_ResList(int argc, const char **argv);
 	bool Cmd_Starts(int argc, const char **argv);
 	bool Cmd_Start(int argc, const char **argv);
 	bool Cmd_Info(int argc, const char **argv);

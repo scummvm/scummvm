@@ -32,16 +32,6 @@
 namespace Sword2 {
 
 /**
- * Reset the script variables. If the resource is already open, this won't do
- * anything, I beleive.
- */
-
-void Logic::resetScriptVars(void) {
-	_scriptVars = (uint32 *) (_vm->_resman->openResource(1) + sizeof(StandardHeader));
-	_vm->_resman->closeResource(1);
-}
-    
-/**
  * Do one cycle of the current session.
  */
 

@@ -44,7 +44,7 @@ public:
 	bool checkValid(uint32 res);
 	uint32 fetchLen(uint32 res);
 
-	void expelOldResources(void);
+	void expireOldResources(void);
 
 	void passTime(void);
 
@@ -60,6 +60,7 @@ public:
 	// ----console commands
 
 	void printConsoleClusters(void);
+	void listResources(uint minCount);
 	void examine(int res);
 	void kill(int res);
 	void killAll(bool wantInfo);

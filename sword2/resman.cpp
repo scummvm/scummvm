@@ -633,7 +633,7 @@ uint32 ResourceManager::fetchLen(uint32 res) {
 	return file.readUint32LE();
 }
 
-void ResourceManager::expelOldResources() {
+void ResourceManager::expireOldResources() {
 	int nuked = 0;
 
 	for (uint i = 0; i < _totalResFiles; i++) {
@@ -671,6 +671,15 @@ void ResourceManager::printConsoleClusters(void) {
 		Debug_Printf("%d resources\n", _totalResFiles);
 	} else
 		Debug_Printf("Argh! No resources!\n");
+}
+
+void ResourceManager::listResources(uint minCount) {
+	for (uint i = 0; i < _totalResFiles; i++) {
+		if (_resList[i].ptr && _resList[i].refCount >= minCount) {
+			StandardHeader *head = (StandardHeader *) _resList[i].ptr;
+			Debug_Printf("%-4d: %-35s refCount: %-3d age: %-2d\n", i, head->name, _resList[i].refCount, _resTime - _resList[i].refTime);
+		}
+	}
 }
 
 void ResourceManager::examine(int res) {
