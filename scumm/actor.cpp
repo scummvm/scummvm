@@ -1144,7 +1144,7 @@ void Actor::setActorCostume(int c)
 		cost.reset();
 	}
 
-	if (_features & GF_AFTER_V7) {
+	if (_vm->_features & GF_AFTER_V7) {
 		for (i = 0; i < 256; i++)
 			palette[i] = 0xFF;
 	} else {
