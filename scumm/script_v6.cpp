@@ -3195,9 +3195,6 @@ void ScummEngine_v6::decodeParseString(int m, int n) {
 			break;
 		}
 		return;
-	case 0xF9:
-		error("decodeParseString case 0xF9 stub");
-		return;
 	case 0xFE:
 		setStringVars(m);
 		if (n)
