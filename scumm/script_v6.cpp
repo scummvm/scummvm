@@ -2703,11 +2703,14 @@ void ScummEngine_v6::o6_kernelGetFunctions() {
 		// the virtual mouse coordinates, because that's what used
 		// everywhere else in the script.
 
-		if (args[1] != -1 && args[2] != -1) {
+		{
 			VirtScreen *vs = &virtscr[0];
-			push(vs->screenPtr[args[1] + args[2] * vs->width]);
-		} else
-			push(0);
+			if (args[1] < 0 || args[1] >= vs->width || args[2] < 0 || args[2] >= vs->height) {
+				// FIXME: Until we know what to do in this case...
+				push(0);
+			} else
+				push(vs->screenPtr[args[1] + args[2] * vs->width]);
+		}
 		break;
 	case 115:
 		push(getSpecialBox(args[1], args[2]));
