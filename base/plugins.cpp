@@ -265,12 +265,24 @@ void PluginManager::loadPlugins() {
 }
 
 void PluginManager::unloadPlugins() {
+	unloadPluginsExcept(NULL);
+}
+
+void PluginManager::unloadPluginsExcept(const Plugin *plugin) {
+	Plugin *found = NULL;
 	uint i;
 	for (i = 0; i < _plugins.size(); i++) {
-		_plugins[i]->unloadPlugin();
-		delete _plugins[i];
+		if (_plugins[i] == plugin) {
+			found = _plugins[i];
+		} else {
+			_plugins[i]->unloadPlugin();
+			delete _plugins[i];
+		}
 	}
 	_plugins.clear();
+	if (found != NULL) {
+		_plugins.push_back(found);
+	}
 }
 
 bool PluginManager::tryLoadPlugin(Plugin *plugin) {

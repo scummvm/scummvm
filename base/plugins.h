@@ -123,6 +123,7 @@ public:
 
 	void loadPlugins();
 	void unloadPlugins();
+	void unloadPluginsExcept(const Plugin *plugin);
 	
 	const PluginList &getPlugins()	{ return _plugins; }
 

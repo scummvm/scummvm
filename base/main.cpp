@@ -381,8 +381,14 @@ extern "C" int scummvm_main(GameDetector &detector, int argc, char *argv[]) {
 	//while(1) {
 		// Verify the given game name is a valid supported game
 		if (detector.detectMain()) {
+			// Unload all plugins not needed for this game,
+			// to save memory
+			PluginManager::instance().unloadPluginsExcept(detector._plugin);
+
 			runGame(detector, system);
 
+			// PluginManager::instance().unloadPlugins();
+			// PluginManager::instance().loadPlugins();
                 	 // launcherDialog(detector, system);
 		}
 	//}
