@@ -59,7 +59,8 @@ public:
 	void playSfx(uint16 sfx);
 	void playSfx(const char *base);
 	void playSong(int16 songNum);
-
+	void stopSfx()			{ _mixer->stopHandle(_sfxHandle); }
+	
 	bool sfxOn()			{ return _sfxToggle; }
 	void sfxToggle(bool val)	{ _sfxToggle = val; }
 	void toggleSfx()		{ _sfxToggle ^= true; }
