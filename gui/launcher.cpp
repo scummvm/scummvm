@@ -23,46 +23,73 @@
 #include "newgui.h"
 #include "ListWidget.h"
 
+#include "common/config-file.h"
 #include "common/engine.h"
 #include "common/gameDetector.h"
-#include "common/list.h"
 
 enum {
-	kOptionsCmd = 'QUIT',
+	kStartCmd = 'STRT',
+	kOptionsCmd = 'OPTN',
 	kQuitCmd = 'QUIT'
 };
+	
+/*
+ * TODO list
+ * - add an text entry widget
+ * - add an "Add Game..." button that opens a dialog where new games can be 
+ *   configured and added to the list of games
+ * - add an "Edit Game..." button that opens a dialog that allows to edit game
+ *   settings, i.e. the datapath/savepath/sound driver/... for that game
+ * - add an "options" dialog
+ * - ...
+ */
 
-LauncherDialog::LauncherDialog(NewGui *gui)
-	: Dialog(gui, 0, 0, 320, 200)
+LauncherDialog::LauncherDialog(NewGui *gui, GameDetector &detector)
+	: Dialog(gui, 0, 0, 320, 200), _detector(detector)
 {
 	// Add three buttons at the bottom
-	addButton(1*(_w - 54)/4, _h - 24, 54, 16, "Quit", kQuitCmd, 'Q');
-	addButton(2*(_w - 54)/4, _h - 24, 54, 16, "Options", kOptionsCmd, 'O');
-	addButton(3*(_w - 54)/4, _h - 24, 54, 16, "Run", kCloseCmd, 'R');
+	addButton(1*(_w - 54)/6, _h - 24, 54, 16, "Quit", kQuitCmd, 'Q');
+	addButton(3*(_w - 54)/6, _h - 24, 54, 16, "Options", kOptionsCmd, 'O');
+	addButton(5*(_w - 54)/6, _h - 24, 54, 16, "Start", kStartCmd, 'S');
 
 	// Add list with game titles
-	ListWidget *w = new ListWidget(this, 10, 10, 300, 112);
-	w->setNumberingMode(kListNumberingOff);
+	_list = new ListWidget(this, 10, 10, 300, 112);
+	_list->setNumberingMode(kListNumberingOff);
 	
 	const VersionSettings *v = version_settings;
 	ScummVM::StringList l;
 
+	// TODO - maybe only display those games for which settings are known
+	// (i.e. a path to the game data was set and is accesible) ?
 	while (v->filename && v->gamename) {
-		l.push_back(v->gamename);
+		if (g_config->has_domain(v->filename)) {
+			l.push_back(v->gamename);
+			_filenames.push_back(v->filename);
+		}
 		v++;
 	}
 
-	w->setList(l);
-	
-	// TODO - add an edit field with the path information; or maybe even a "file selector" ?
+	_list->setList(l);
+//	_list->setSelected(0);
 }
 
 void LauncherDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data)
 {
+	int item;
+	
 	switch (cmd) {
-	case kListItemChangedCmd:
-		break;
+	case kStartCmd:
 	case kListItemDoubleClickedCmd:
+		// Print out what was selected
+		item =  _list->getSelected();
+		if (item >= 0) {
+			printf("Selected game: %s\n", _filenames[item].c_str());
+			_detector.setGame(_filenames[item].c_str());
+			close();
+		} else {
+			// TODO - beep or so ?
+			// Ideally, the start button should be disabled if no game is selected
+		}
 		break;
 	case kQuitCmd:
 		g_system->quit();

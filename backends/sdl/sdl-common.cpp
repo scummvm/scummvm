@@ -21,7 +21,6 @@
 
 #include "sdl-common.h"
 #include "sound/mididrv.h"
-#include "common/gameDetector.h"
 #include "common/scaler.h"
 #include "common/engine.h"	// Only #included for error() and warning()
 

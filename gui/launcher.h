@@ -23,15 +23,23 @@
 
 #include "dialog.h"
 #include "common/str.h"
+#include "common/list.h"
+
+class GameDetector;
+class ListWidget;
 
 class LauncherDialog : public Dialog {
 	typedef ScummVM::String String;
+	typedef ScummVM::StringList StringList;
 public:
-	LauncherDialog(NewGui *gui);
+	LauncherDialog(NewGui *gui, GameDetector &detector);
 
 	void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);
 
 protected:
+	ListWidget	*_list;
+	StringList	_filenames;
+	GameDetector &_detector;
 };
 
 #endif

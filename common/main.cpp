@@ -28,8 +28,6 @@
 #include "gui/launcher.h"
 #include "gui/message.h"
 
-GameDetector detector;
-
 Config *g_config = 0;
 NewGui *g_gui = 0;
 
@@ -97,62 +95,8 @@ static void do_memory_test(void) {
 
 #endif
 
-int main(int argc, char *argv[])
+static void launcherDialog(GameDetector &detector, OSystem *system)
 {
-	int result;
-#ifdef __DC__
-	extern void dc_init_hardware();
-	dc_init_hardware();
-#endif
-
-#if defined(UNIX)
-	/* On Unix, do a quick endian / alignement check before starting */
-	do_memory_test();
-
-	char scummhome[MAXPATHLEN];
-	if(getenv("HOME") != NULL)
-		sprintf(scummhome,"%s/%s", getenv("HOME"), DEFAULT_CONFIG_FILE);
-	else strcpy(scummhome,DEFAULT_CONFIG_FILE);
-#else
-    char scummhome[255];
-	#if defined (WIN32) && !defined(_WIN32_WCE)
-		GetWindowsDirectory(scummhome, 255);
-		strcat(scummhome, "\\");
-		strcat(scummhome, DEFAULT_CONFIG_FILE);
-	#else	
-		strcpy(scummhome, DEFAULT_CONFIG_FILE);
-	#endif
-#endif
-
-	// Read the config file
-	g_config = new Config(scummhome, "scummvm");
-	g_config->set("versioninfo", SCUMMVM_VERSION);
-	
-	// Parse the command line information
-	result = detector.detectMain(argc, argv);
-
-	// Create the system object
-	OSystem *system = detector.createSystem();
-
-	// TODO - if detectMain() returns an error, fire up the launcher dialog
-	// TODO - implement the launcher dialog; also implement some sort of generic
-	//        error dialog, to be used by the launcher if e.g. the game data can't
-	//        be found.
-	if (result) {
-		system->quit();
-		return (-1);
-	}
-
-	// Set the window caption (for OSystems that support it)
-	OSystem::Property prop;
-	prop.caption = (char *)detector.getGameName();
-	system->property(OSystem::PROP_SET_WINDOW_CAPTION, &prop);
-
-	// Create the GUI manager
-	// TODO - move this up for the launcher dialog?
-	g_gui = new NewGui(system);
-
-#if 0
 	// FIXME - we need to call init_size() here so that we can display for example
 	// the launcher dialog. But the Engine object will also call it again (possibly
 	// with a different widht/height!9 However, this method is not for all OSystem 
@@ -187,20 +131,78 @@ int main(int argc, char *argv[])
 
 	system->set_palette(dummy_palette, 0, 16);
 
-#if 1
+	// FIXME - hack we use because LauncherDialog accesses g_system
 	extern OSystem *g_system;
 	g_system = system;
-	Dialog *dlg = new LauncherDialog(g_gui);
-#else
-	const char *message = "This dialog is shown before the\n"
-						  "Engine obejct is even created.\n"
-						  "Wow! Ain't we cool?\n";
-	Dialog *dlg = new MessageDialog(g_gui, message);
-#endif
+
+	Dialog *dlg = new LauncherDialog(g_gui, detector);
 	dlg->open();
 	g_gui->runLoop();
 	delete dlg;
+}
+
+int main(int argc, char *argv[])
+{
+	GameDetector detector;
+#ifdef __DC__
+	extern void dc_init_hardware();
+	dc_init_hardware();
 #endif
+
+#if defined(UNIX)
+	/* On Unix, do a quick endian / alignement check before starting */
+	do_memory_test();
+
+	char scummhome[MAXPATHLEN];
+	if(getenv("HOME") != NULL)
+		sprintf(scummhome,"%s/%s", getenv("HOME"), DEFAULT_CONFIG_FILE);
+	else strcpy(scummhome,DEFAULT_CONFIG_FILE);
+#else
+    char scummhome[255];
+	#if defined (WIN32) && !defined(_WIN32_WCE)
+		GetWindowsDirectory(scummhome, 255);
+		strcat(scummhome, "\\");
+		strcat(scummhome, DEFAULT_CONFIG_FILE);
+	#else	
+		strcpy(scummhome, DEFAULT_CONFIG_FILE);
+	#endif
+#endif
+
+	// Read the config file
+	g_config = new Config(scummhome, "scummvm");
+	g_config->set("versioninfo", SCUMMVM_VERSION);
+	
+	// Parse the command line information
+#if defined(__DC__)
+	extern int dc_setup(GameDetector &detector);
+	dc_setup(detector);
+#else
+	detector._saveconfig = false;
+	detector.updateconfig();
+	detector.parseCommandLine(argc, argv);	
+#endif
+
+	// Create the system object
+	OSystem *system = detector.createSystem();
+
+	// Create the GUI manager
+	// TODO - move this up for the launcher dialog?
+	g_gui = new NewGui(system);
+
+	// Unless a game was specified, show the launcher dialog
+	if (detector._gameFileName.isEmpty())
+		launcherDialog(detector, system);
+
+	// Verify the given game name
+	if (detector.detectMain()) {
+		system->quit();
+		return (-1);
+	}
+	
+	// Set the window caption (for OSystems that support it)
+	OSystem::Property prop;
+	prop.caption = (char *)detector.getGameName();
+	system->property(OSystem::PROP_SET_WINDOW_CAPTION, &prop);
 
 	// Create the game engine
 	Engine *engine = Engine::createFromDetector(&detector, system);

@@ -23,6 +23,8 @@
 #ifndef GAMEDETECTOR_H
 #define GAMEDETECTOR_H
 
+#include "common/str.h"
+
 class OSystem;
 class MidiDriver;
 
@@ -37,15 +39,20 @@ extern const VersionSettings version_settings[];
 
 
 class GameDetector {
-public:
-	int detectMain(int argc, char **argv);
-	void parseCommandLine(int argc, char **argv);
+	typedef ScummVM::String String;
+protected:
 	bool detectGame(void);
+
+public:
+	GameDetector();
+	
+	void parseCommandLine(int argc, char **argv);
+	int detectMain();
+	void setGame(const String &name);
 	const char *getGameName(void);
 
 	bool _fullScreen;
 	byte _gameId;
-	bool _simon;
 
 	bool _use_adlib;
 
@@ -55,14 +62,14 @@ public:
 
 	uint16 _talkSpeed;
 	uint16 _debugMode;
-	uint16 _noSubtitles;
+	bool _noSubtitles;
 	uint16 _bootParam;
 	uint16 _soundCardType;
 
 	char *_gameDataPath;
 	int _gameTempo;
 	int _midi_driver;
-	char *_exe_name;
+	String _gameFileName;
 	const char *_gameText;
 	uint32 _features;
 

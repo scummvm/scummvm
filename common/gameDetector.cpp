@@ -70,6 +70,59 @@ static const char USAGE_STRING[] =
 	"\t-y         - set text speed (default: 60)\n"
 ;
 
+
+GameDetector::GameDetector()
+{
+	_fullScreen = false;
+	_gameId = 0;
+
+	_use_adlib = false;
+
+	_music_volume = kDefaultMusicVolume;
+	_sfx_volume = kDefaultSFXVolume;
+	_amiga = false;
+
+	_talkSpeed = 60;
+	_debugMode = 0;
+	_noSubtitles = false;
+	_bootParam = 0;
+	_soundCardType = 3;
+
+	_gameDataPath = 0;
+	_gameTempo = 0;
+	_midi_driver = MD_AUTO;
+	_gameText = 0;
+	_features = 0;
+
+	_cdrom = 0;
+	_save_slot = 0;
+	
+	_saveconfig = false;
+	
+#ifndef _WIN32_WCE
+	_gfx_mode = GFX_DOUBLESIZE;
+#else
+	_gfx_mode = GFX_NORMAL;
+#endif
+
+#if defined(USE_NULL_DRIVER)
+	_gfx_driver = GD_NULL;
+#elif defined(__DC__)
+	_gfx_driver = GD_DC;
+#elif defined(X11_BACKEND)
+	_gfx_driver = GD_X;
+#elif defined(__MORPHOS__)
+	_gfx_driver = GD_MORPHOS;
+#elif defined(_WIN32_WCE)
+	_gfx_driver = GD_WINCE;
+#elif defined(MACOS_CARBON)
+	_gfx_driver = GD_MAC;
+#else
+	/* SDL is the default driver for now */
+	_gfx_driver = GD_SDL;
+#endif
+}
+
 void GameDetector::updateconfig()
 {
 	const char * val;
@@ -247,11 +300,7 @@ void GameDetector::parseCommandLine(int argc, char **argv)
 			}
 		} else {
 			if (i == (argc - 1)) {
-				_exe_name = s;
-				g_config->set_domain(s);
-				g_config->rename_domain("game-specific");
-				g_config->rename_domain(s);
-				updateconfig();
+				setGame(s);
 			} else {
 				if (current_option == NULL)
 					current_option = s;
@@ -261,7 +310,7 @@ void GameDetector::parseCommandLine(int argc, char **argv)
 		}
 	}
 	
-	if (_exe_name)
+	if (!_gameFileName.isEmpty())
 		g_config->flush();
 
 	return;
@@ -269,6 +318,15 @@ void GameDetector::parseCommandLine(int argc, char **argv)
  ShowHelpAndExit:
 	printf(USAGE_STRING);
 	exit(1);
+}
+
+void GameDetector::setGame(const String &name)
+{
+	_gameFileName = name;
+	g_config->set_domain(name);
+	g_config->rename_domain("game-specific");
+	g_config->rename_domain(name);
+	updateconfig();
 }
 
 int GameDetector::parseGraphicsMode(const char *s) {
@@ -429,7 +487,7 @@ bool GameDetector::detectGame()
 	_gameId = 0;
 	_gameText = NULL;
 	do {
-		if (!scumm_stricmp(_exe_name, gnl->filename)) {
+		if (!scumm_stricmp(_gameFileName.c_str(), gnl->filename)) {
 			_gameId = gnl->id;
 
 			_features = gnl->features;
@@ -449,73 +507,18 @@ const char *GameDetector::getGameName()
 {
 	if (_gameText == NULL) {
 		char buf[256];
-		sprintf(buf, "Unknown game: \"%s\"", _exe_name);
+		sprintf(buf, "Unknown game: \"%s\"", _gameFileName.c_str());
 		_gameText = strdup(buf);
 	}
 	return _gameText;
 }
 
-int GameDetector::detectMain(int argc, char **argv)
+int GameDetector::detectMain()
 {
-	_debugMode = 0;								// off by default...
-
-	_noSubtitles = 0;							// use by default - should this depend on soundtrack?
-
-	_talkSpeed = 60;
-	
-#ifndef _WIN32_WCE
-	_gfx_mode = GFX_DOUBLESIZE;
-#else
-	_gfx_mode = GFX_NORMAL;
-#endif
-	_sfx_volume = kDefaultSFXVolume;
-	_music_volume = kDefaultMusicVolume;
-
-#if defined(USE_NULL_DRIVER)
-	_gfx_driver = GD_NULL;
-#elif defined(__DC__)
-	_gfx_driver = GD_DC;
-#elif defined(X11_BACKEND)
-	_gfx_driver = GD_X;
-#elif defined(__MORPHOS__)
-	_gfx_driver = GD_MORPHOS;
-#elif defined(_WIN32_WCE)
-	_gfx_driver = GD_WINCE;
-#elif defined(MACOS_CARBON)
-	_gfx_driver = GD_MAC;
-#else
-	/* SDL is the default driver for now */
-	_gfx_driver = GD_SDL;
-#endif
-
-	_gameDataPath = NULL;
-	_gameTempo = 0;
-	_soundCardType = 3;
-
-
-
-	_midi_driver = MD_AUTO;
-
-#if defined(__DC__)
-	extern int dc_setup(GameDetector &detector);
-	dc_setup(*this);
-#elif defined(MACOS_CARBON)
-	extern char* SelectGame();
-	char *game_name = SelectGame();
-	printf(game_name);
-#else
-	_saveconfig = false;
-	updateconfig();
-	parseCommandLine(argc, argv);	
-#endif
-
-	if (_exe_name == NULL) {
-		//launcherLoop();
-		//setWindowName(this);
+	if (_gameFileName.isEmpty()) {
 		warning("No game was specified...");
 		return (-1);
 	}
-
 
 	if (!detectGame()) {
 		warning("Game detection failed. Using default settings");

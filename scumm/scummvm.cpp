@@ -81,7 +81,7 @@ Scumm::Scumm (GameDetector *detector, OSystem *syst)
 
 	_debugMode = detector->_debugMode;
 	_bootParam = detector->_bootParam;
-	_exe_name = detector->_exe_name;
+	_exe_name = detector->_gameFileName.c_str();
 	_gameId = detector->_gameId;
 	_gameText = detector->_gameText;
 	_features = detector->_features;

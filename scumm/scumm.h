@@ -932,7 +932,7 @@ public:
 	/* String class */
 	CharsetRenderer charset;
 	byte _charsetColor;
-	uint16 _noSubtitles;	// Skip all subtitles?
+	bool _noSubtitles;	// Skip all subtitles?
 	byte _charsetData[15][16];
 	void initCharset(int charset);
 	void restoreCharsetBg();
