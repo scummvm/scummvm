@@ -246,7 +246,6 @@ uint32 File::read(void *ptr, uint32 len) {
 
 	real_len = fread(ptr2, 1, len, _handle);
 	if (real_len < len) {
-		clearerr(_handle);
 		_ioFailed = true;
 	}
 
@@ -263,7 +262,6 @@ uint32 File::write(const void *ptr, uint32 len) {
 		return 0;
 
 	if ((uint32)fwrite(ptr, 1, len, _handle) != len) {
-		clearerr(_handle);
 		_ioFailed = true;
 	}
 
