@@ -154,17 +154,17 @@ static const ScummGameSettings scumm_settings[] = {
 	 GF_USE_KEY, 0},
 
 	/* Scumm Version 6 */
-	{"puttputt", "Putt-Putt Joins The Parade (DOS)", GID_PUTTPUTT, 6, MDT_ADLIB | MDT_NATIVE,
+	{"puttputt", "Putt-Putt Joins The Parade (DOS)", GID_HEGAME, 6, MDT_ADLIB | MDT_NATIVE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0},
 	{"puttdemo", "Putt-Putt Joins The Parade (DOS Demo)", GID_PUTTDEMO, 6, MDT_ADLIB | MDT_NATIVE,
 	  GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS, 0},
-	{"moondemo", "Putt-Putt Goes To The Moon (DOS Demo)", GID_PUTTMOON, 6, MDT_ADLIB | MDT_NATIVE,
+	{"moondemo", "Putt-Putt Goes To The Moon (DOS Demo)", GID_HEGAME, 6, MDT_ADLIB | MDT_NATIVE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0},
-	{"puttmoon", "Putt-Putt Goes To The Moon (DOS)", GID_PUTTMOON, 6, MDT_ADLIB | MDT_NATIVE,
+	{"puttmoon", "Putt-Putt Goes To The Moon (DOS)", GID_HEGAME, 6, MDT_ADLIB | MDT_NATIVE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0},
-	{"funpack", "Putt-Putt's Fun Pack", GID_PUTTMOON, 6, MDT_ADLIB | MDT_NATIVE,
+	{"funpack", "Putt-Putt's Fun Pack", GID_FUNPACK, 6, MDT_ADLIB | MDT_NATIVE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0},
-	{"fbpack", "Fatty Bear's Fun Pack", GID_FBPACK, 6, MDT_ADLIB | MDT_NATIVE,
+	{"fbpack", "Fatty Bear's Fun Pack", GID_HEGAME, 6, MDT_ADLIB | MDT_NATIVE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0},
 	{"fbear", "Fatty Bear's Birthday Surprise (DOS)", GID_FBEAR, 6, MDT_ADLIB | MDT_NATIVE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0},
@@ -211,29 +211,29 @@ static const ScummGameSettings scumm_settings[] = {
 	 /* Note that both full versions of Humongous games and demos were often released for
 	  * several interpreter versions... */
 #ifdef HEGAMES
-	{"puttwin", "Putt-Putt Joins The Parade (Windows)", GID_PUTTPUTT, 6, MDT_NONE,
+	{"puttwin", "Putt-Putt Joins The Parade (Windows)", GID_HEGAME, 6, MDT_NONE,
 	GF_NEW_OPCODES | GF_AFTER_HEV7 | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, "puttputt"},
 
 	// Humongous Entertainment Scumm Version 7 
-	{"catalog", "Humongous Interactive Catalog", GID_PUTTPUTT, 6, MDT_NONE,
+	{"catalog", "Humongous Interactive Catalog", GID_HEGAME, 6, MDT_NONE,
 	 GF_NEW_OPCODES | GF_AFTER_HEV7 | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0},
-	{"farm", "Let's Explore the Farm with Buzzy", GID_PUTTPUTT, 6, MDT_NONE,
+	{"farm", "Let's Explore the Farm with Buzzy", GID_HEGAME, 6, MDT_NONE,
 	 GF_NEW_OPCODES | GF_AFTER_HEV7 | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0},
-	{"farmdemo", "Let's Explore the Farm with Buzzy (Demo)", GID_PUTTPUTT, 6, MDT_NONE,
+	{"farmdemo", "Let's Explore the Farm with Buzzy (Demo)", GID_HEGAME, 6, MDT_NONE,
 	 GF_NEW_OPCODES | GF_AFTER_HEV7 | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0},
-	{"airport", "Let's Explore the Airport with Buzzy", GID_PUTTPUTT, 6, MDT_NONE,
+	{"airport", "Let's Explore the Airport with Buzzy", GID_HEGAME, 6, MDT_NONE,
 	 GF_NEW_OPCODES | GF_AFTER_HEV7 | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0},
-	{"airdemo", "Let's Explore the Airport with Buzzy (Demo)", GID_PUTTPUTT, 6, MDT_NONE,
+	{"airdemo", "Let's Explore the Airport with Buzzy (Demo)", GID_HEGAME, 6, MDT_NONE,
 	 GF_NEW_OPCODES | GF_AFTER_HEV7 | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0},
-	{"jungle", "Let's Explore the Jungle with Buzzy", GID_PUTTPUTT, 6, MDT_NONE,
+	{"jungle", "Let's Explore the Jungle with Buzzy", GID_HEGAME, 6, MDT_NONE,
 	 GF_NEW_OPCODES | GF_AFTER_HEV7 | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0},
-	{"puttzoo", "Putt-Putt Saves the Zoo", GID_PUTTPUTT, 6, MDT_NONE,
+	{"puttzoo", "Putt-Putt Saves the Zoo", GID_HEGAME, 6, MDT_NONE,
 	 GF_NEW_OPCODES | GF_AFTER_HEV7 | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0},
-	{"zoodemo", "Putt-Putt Saves the Zoo (Demo)", GID_PUTTPUTT, 6, MDT_NONE,
+	{"zoodemo", "Putt-Putt Saves the Zoo (Demo)", GID_HEGAME, 6, MDT_NONE,
 	 GF_NEW_OPCODES | GF_AFTER_HEV7 | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0},
-	{"freddi", "Freddi Fish 1: The Case of the Missing Kelp Seeds", GID_PUTTPUTT, 6, MDT_NONE,
+	{"freddi", "Freddi Fish 1: The Case of the Missing Kelp Seeds", GID_HEGAME, 6, MDT_NONE,
 	 GF_NEW_OPCODES | GF_AFTER_HEV7 | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0},
-	{"freddemo", "Freddi Fish 1: The Case of the Missing Kelp Seeds (Demo)", GID_PUTTPUTT, 6, MDT_NONE,
+	{"freddemo", "Freddi Fish 1: The Case of the Missing Kelp Seeds (Demo)", GID_HEGAME, 6, MDT_NONE,
 	 GF_NEW_OPCODES | GF_AFTER_HEV7 | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0},
 
 	// Humongous Entertainment Scumm Version 8.0 ?  Scummsrc.80 
@@ -1082,6 +1082,12 @@ void ScummEngine::scummInit() {
 		_flashlight.yStrips = 7;
 		_flashlight.buffer = NULL;
 	}
+
+	// HACK curcor hotspot is wrong
+	// Original games used 
+	// setCursorHotspot(8, 7);
+	if (_gameId == GID_FUNPACK)
+		setCursorHotspot(16, 16);
 
 	_mouse.x = 104;
 	_mouse.y = 56;

@@ -53,7 +53,7 @@ int ScummHelp::numPages(byte gameId) {
 		break;  
 /*	TODO - I don't know the controls for these games
 	case GID_PUTTDEMO:
-	case GID_PUTTPUTT:
+	case GID_HEGAME:
 */	
 	default:
 		return 2;
