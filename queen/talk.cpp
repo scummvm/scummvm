@@ -999,7 +999,34 @@ void Talk::speakSegment(
 
 	if (_talkHead) {
 		// talk.c lines 1491-1533
-		warning("Text position for talking heads not yet handled");
+		if (isJoe) {
+			switch (_vm->logic()->currentRoom()) {
+				case FAYE_HEAD:
+				case AZURA_HEAD:
+					textX = 15;
+					break;
+
+				default:
+					textX = 150;
+					break;
+			}
+			textY = 30;
+		}
+		else {
+			// XXX spaces = (spaces * 5) / 2;
+			switch (_vm->logic()->currentRoom()) {
+				case FAYE_HEAD:
+				case AZURA_HEAD:
+					textX = 15;
+					textY = 60;
+					break;
+
+				default: 			// Frank
+					textX = 150;
+					textY = 60;
+					break;
+			}
+		}
 	}
 	else {
 		textX = bob->x;
