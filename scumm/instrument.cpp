@@ -248,13 +248,13 @@ void Instrument::clear()
 	_type = itNone;
 }
 
-void Instrument::program (byte program, bool mt32)
+void Instrument::program (byte prog, bool mt32)
 {
 	clear();
-	if (program > 127)
+	if (prog > 127)
 		return;
 	_type = itProgram;
-	_instrument = new Instrument_Program (program, mt32);
+	_instrument = new Instrument_Program (prog, mt32);
 }
 
 void Instrument::adlib (byte *instrument)
