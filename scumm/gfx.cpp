@@ -612,18 +612,19 @@ void Scumm::moveMemInPalRes(int start, int end, byte direction)
 
 void Scumm::drawFlashlight()
 {
-	int i, j, offset;
+	int i, j, offset, x, y;
 
 	// Remove the flash light first if it was previously drawn
 	if (_flashlightIsDrawn) {
-		updateDirtyRect(0, _flashlight.x<<3, (_flashlight.x+_flashlight.w)<<3, _flashlight.y, _flashlight.y+_flashlight.h, 0x80000000);
+		updateDirtyRect(0, _flashlight.x, _flashlight.x + _flashlight.w,
+		                   _flashlight.y, _flashlight.y + _flashlight.h, 0x80000000);
 		
 		if (_flashlight.buffer) {
 
-			offset = _realWidth - _flashlight.w*8;
+			offset = _realWidth - _flashlight.w;
 			i = _flashlight.h;
 			do {
-				j = _flashlight.w*2;
+				j = _flashlight.w / 4;
 				do {
 					*(uint32 *)_flashlight.buffer = 0;
 					_flashlight.buffer += 4;
@@ -639,41 +640,48 @@ void Scumm::drawFlashlight()
 		return;
 	
 	// Calculate the area of the flashlight
-	Actor *a = a = derefActorSafe(_vars[VAR_EGO], "drawFlashlight");
-	_flashlight.w = _flashlightXStrips;
+	if (_gameId == GID_ZAK256) {
+		x = _virtual_mouse_x;
+		y = _virtual_mouse_y;
+	} else {
+		Actor *a = a = derefActorSafe(_vars[VAR_EGO], "drawFlashlight");
+		x = a->x;
+		y = a->y;
+	}
+	_flashlight.w = _flashlightXStrips * 8;
 	_flashlight.h = _flashlightYStrips * 8;
-	_flashlight.x = a->x/8 - _flashlight.w/2 - _screenStartStrip;
-	_flashlight.y = a->y - _flashlight.h/2;
+	_flashlight.x = x - _flashlight.w/2 - _screenStartStrip * 8;
+	_flashlight.y = y - _flashlight.h/2;
 	
 	// Clip the flashlight at the borders
 	if (_flashlight.x < 0)
 		_flashlight.x = 0;
-	else if (_flashlight.x > gdi._numStrips - _flashlight.w)
-		_flashlight.x = gdi._numStrips - _flashlight.w;
+	else if (_flashlight.x + _flashlight.w > gdi._numStrips*8)
+		_flashlight.x = gdi._numStrips*8 - _flashlight.w;
 	if (_flashlight.y < 0)
 		_flashlight.y = 0;
-	else if (_flashlight.y > virtscr[0].height - _flashlight.h)
+	else if (_flashlight.y + _flashlight.h> virtscr[0].height)
 		_flashlight.y = virtscr[0].height - _flashlight.h;
 
 	// Redraw any actors "under" the flashlight
-	for (i = _flashlight.x; i < _flashlight.x+_flashlight.w; i++) {
+	for (i = _flashlight.x/8; i < (_flashlight.x+_flashlight.w)/8; i++) {
 		gfxUsageBits[_screenStartStrip + i] |= 0x80000000;
 		virtscr[0].tdirty[i] = 0;
 		virtscr[0].bdirty[i] = virtscr[0].height;
 	}
 
 	byte *bgbak;
-	offset = _flashlight.y * _realWidth + virtscr[0].xstart + _flashlight.x * 8;
+	offset = _flashlight.y * _realWidth + virtscr[0].xstart + _flashlight.x;
 	_flashlight.buffer = virtscr[0].screenPtr + offset;
 	bgbak = getResourceAddress(rtBuffer, 5) + offset;
 
-	blit(_flashlight.buffer, bgbak, _flashlight.w*8, _flashlight.h);
+	blit(_flashlight.buffer, bgbak, _flashlight.w, _flashlight.h);
 
 	// Round the corners. To do so, we simply hard-code a set of nicely
 	// rounded corners.
 	int corner_data[] = { 8, 6, 4, 3, 2, 2, 1, 1 };
 	int minrow = 0;
-	int maxcol = _flashlight.w * 8 - 1;
+	int maxcol = _flashlight.w - 1;
 	int maxrow = (_flashlight.h - 1) * _realWidth;
 
 	for (i = 0; i < 8; i++, minrow += _realWidth, maxrow -= _realWidth) {
