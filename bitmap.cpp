@@ -110,7 +110,7 @@ Resource(filename) {
 	}
 }
 
-void Bitmap::prepareDraw() {
+void Bitmap::draw() const {
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 	glOrtho(0, 640, 480, 0, 0, 1);
@@ -122,9 +122,6 @@ void Bitmap::prepareDraw() {
 	// For now, just keep this here :-)
 	glDisable(GL_LIGHTING);
 	glEnable(GL_TEXTURE_2D);
-}
-
-void Bitmap::draw() const {
 	if (format_ == 1) {		// Normal image
 		if (curr_image_ != 0) {
 			warning("Animation not handled yet in GL texture path !\n");
@@ -132,13 +129,13 @@ void Bitmap::draw() const {
 		glDisable(GL_DEPTH_TEST);
 		glDepthMask(GL_FALSE);
 		glEnable(GL_SCISSOR_TEST);
+		glScissor(x_, 480 - (y_ + height_), width_, height_);
 		int cur_tex_idx = 0;
 		for (int y = y_; y < (y_ + height_); y += BITMAP_TEXTURE_SIZE) {
 			for (int x = x_; x < (x_ + width_); x += BITMAP_TEXTURE_SIZE) {
 				int width  = (x + BITMAP_TEXTURE_SIZE >= (x_ + width_))  ? ((x_ + width_)  - x) : BITMAP_TEXTURE_SIZE;
 				int height = (y + BITMAP_TEXTURE_SIZE >= (y_ + height_)) ? ((y_ + height_) - y) : BITMAP_TEXTURE_SIZE;
 				glBindTexture(GL_TEXTURE_2D, tex_ids_[cur_tex_idx]);
-				glScissor(x, 480 - (y + height), x + width, 480 - y);
 				glBegin(GL_QUADS);
 				glTexCoord2f(0.0, 0.0);
 				glVertex2i(x, y);

@@ -98,7 +98,6 @@ int main(int argc, char *argv[]) {
 #endif	
 			g_driver->clearScreen();
 
-			Bitmap::prepareDraw();
 			splash_bm->draw();
 
 			g_driver->flipBuffer();

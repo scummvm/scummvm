@@ -112,9 +112,11 @@ void Engine::mainLoop() {
 			if (SCREENBLOCKS_GLOBAL == 1)
 				screenBlocksBlitDirtyBlocks();
 
-			Bitmap::prepareDraw();
-			if (currScene_ != NULL)
+			if (currScene_ != NULL) {
 				currScene_->drawBackground();
+				currScene_->drawBitmaps(ObjectState::OBJSTATE_UNDERLAY);
+				currScene_->drawBitmaps(ObjectState::OBJSTATE_STATE);
+			}
 
 			if (g_smush->isPlaying()) {
 				movieTime_ = g_smush->getMovieTime();
@@ -148,6 +150,8 @@ void Engine::mainLoop() {
 				(*i)->draw();
 			}
 
+			currScene_->drawBitmaps(ObjectState::OBJSTATE_OVERLAY);
+			
 			g_driver->flipBuffer();
 		}
 

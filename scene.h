@@ -23,6 +23,7 @@
 #include "color.h"
 #include "debug.h"
 #include "walkplane.h"
+#include "objectstate.h"
 #include <SDL.h>
 #include <SDL_opengl.h>
 #include <string>
@@ -47,6 +48,7 @@ public:
 		} 
 		currSetup_->bkgnd_bm_->draw();
 	}
+	void drawBitmaps(ObjectState::Position stage);
 	void setupCamera() {
 		currSetup_->setupCamera();
 	}
@@ -63,6 +65,10 @@ public:
 			return &sectors_[id];
 		else
 			return NULL;
+	}
+
+	void addObjectState(ObjectState *s) {
+		states_.push_back(s);
 	}
 
 private:
@@ -92,6 +98,9 @@ private:
 	Light *lights_;
 	Setup *setups_;
 	Setup *currSetup_;
+
+	typedef std::list<ObjectState*> StateList;
+	StateList states_;
 };
 
 #endif

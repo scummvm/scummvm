@@ -91,7 +91,10 @@ Scene::~Scene() {
 	if (lights_)
 		delete [] lights_;
 	if (sectors_)
-		delete [] sectors_; 
+		delete [] sectors_;
+	for (StateList::iterator i = states_.begin();
+	     i != states_.end(); i++)
+		delete (*i);
 }
 
 void Scene::Setup::load(TextSplitter &ts) {
@@ -157,4 +160,12 @@ void Scene::setSetup(int num) {
 		screenBlocksInit( currSetup_->bkgnd_zbm_->getData() );
 	else
 		screenBlocksInitEmpty();
+}
+
+void Scene::drawBitmaps(ObjectState::Position stage) {
+	for (StateList::iterator i = states_.begin(); i != states_.end();
+	     i++) {
+		if ((*i)->pos() == stage && currSetup_ == setups_ + (*i)->setupID())
+			(*i)->draw();
+	}
 }

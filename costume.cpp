@@ -87,14 +87,12 @@ class BitmapComponent : public Costume::Component {
 public:
 	BitmapComponent(Costume::Component *parent, int parentID, const char *filename);
 
-	void update();
-	void draw();
+	void setKey(int val);
 
 private:
 	std::string filename_;
 	std::string zbuf_filename_;
 	ResPtr<Bitmap> bitmap_;
-	ResPtr<Bitmap> zbuffer_;
 };
 
 class ModelComponent : public Costume::Component {
@@ -158,13 +156,11 @@ BitmapComponent::BitmapComponent(Costume::Component *parent, int parentID,
 		Costume::Component(parent, parentID), filename_(filename) {
 
 	bitmap_ = ResourceLoader::instance()->loadBitmap(filename);
-	warning("Instanced BitmapComponenet from Costume renderer: NOT IMPLEMENTED YET");
+	warning("Instanced BitmapComponenet from Costume renderer with filename %s: NOT IMPLEMENTED YET", filename);
 }
 
-void BitmapComponent::draw() {
-}
-
-void BitmapComponent::update() {
+void BitmapComponent::setKey(int val) {
+	//	bitmap_->setNumber(val);
 }
 
 ModelComponent::ModelComponent(Costume::Component *parent, int parentID,

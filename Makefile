@@ -16,7 +16,7 @@ OBJS = main.o lab.o bitmap.o model.o resource.o material.o debug.o \
 	textsplit.o lua.o registry.o localize.o scene.o engine.o actor.o \
 	sound.o timer.o keyframe.o costume.o walkplane.o textobject.o \
 	matrix3.o matrix4.o screen.o blocky16.o smush.o vima.o driver_gl.o \
-	mixer/mixer.o mixer/rate.o mixer/audiostream.o
+	objectstate.o mixer/mixer.o mixer/rate.o mixer/audiostream.o
 
 DEPS = $(OBJS:.o=.d)
 

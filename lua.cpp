@@ -1087,8 +1087,8 @@ static void NewObjectState() {
 	ObjectState::Position pos = check_objstate_pos(2); // When to draw
 	char *bitmap = luaL_check_string(3);	// Bitmap
 	char *zbitmap = NULL;			// Zbuffer Bitmap
-	bool unk2 = getbool(5);			// ?
-	bool unk3 = getbool(6);
+	bool unk1 = getbool(5);			// ?
+	bool unk2 = getbool(6);
 
 	if (!lua_isnil(lua_getparam(4)))
 		zbitmap = luaL_check_string(4);
@@ -1096,8 +1096,11 @@ static void NewObjectState() {
 #ifndef OSX
 	warning("Stub: newObjectState(%d, %d, %s, %s)", setupID, pos, bitmap, zbitmap);
 #endif
-	// object = scene.addObjectState;
-	// lua_pushusertag(object, object_tag);
+
+	object = new ObjectState(setupID, pos, bitmap, zbitmap,
+				 unk1, unk2);
+	Engine::instance()->currScene()->addObjectState(object);
+	lua_pushusertag(object, object_tag);
 }
 
 static void FreeObjectState() {
