@@ -1289,7 +1289,7 @@ void Scumm_v2::o2_loadRoomWithEgo() {
 
 	getObjectXYPos(obj, x2, y2, dir);
 	a->putActor(x2, y2, _currentRoom);
-	a->setDirection(dir);	// TODO: Original seems to "flip" dir here, need to investigate?
+	a->setDirection(dir + 180);
 
 	camera._dest.x = camera._cur.x = a->x;
 	setCameraAt(a->x, a->y);

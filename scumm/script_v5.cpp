@@ -1483,7 +1483,7 @@ void Scumm_v5::o5_loadRoomWithEgo() {
 			getObjectXYPos(obj, x2, y2, dir);
 			a->putActor(x2, y2, _currentRoom);
 			if (a->getFacing() == oldDir)
-				a->setDirection(dir);	// TODO: Original seems to "flip" dir here, need to investigate?
+				a->setDirection(dir + 180);
 		}
 		a->moving = 0;
 	}
