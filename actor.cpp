@@ -652,8 +652,6 @@ void Actor::hideActor()
 	if (!visible)
 		return;
 
-	debug(1, "hideActor %d", (int)number);
-
 	if (moving) {
 		startAnimActor(standFrame);
 		moving = 0;
@@ -668,8 +666,6 @@ void Actor::showActor()
 {
 	if (_scumm->_currentRoom == 0 || visible)
 		return;
-
-	debug(1, "showActor %d", (int)number);
 
 	adjustActorPos();
 

@@ -557,7 +557,7 @@ int Scumm::readSoundResource(int type, int idx)
 	basetag = fileReadDword();
 	total_size = fileReadDwordBE();
 
-	debug(1, "  basetag: %c%c%c%c, total_size=%d",
+	debug(8, "  basetag: %c%c%c%c, total_size=%d",
 			(char)((basetag >> 24) & 0xff),
 			(char)((basetag >> 16) & 0xff),
 			(char)((basetag >> 8) & 0xff),
@@ -602,7 +602,7 @@ int Scumm::readSoundResource(int type, int idx)
 				break;
 			}
 
-			debug(1, "    tag: %c%c%c%c, total_size=%d, pri=%d",
+			debug(8, "    tag: %c%c%c%c, total_size=%d, pri=%d",
 					(char)((tag >> 24) & 0xff),
 					(char)((tag >> 16) & 0xff),
 					(char)((tag >> 8) & 0xff),
