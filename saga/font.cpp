@@ -168,7 +168,7 @@ int FONT_Load(uint32 font_rn, int font_id) {
 		normal_font->fce[c].tracking = readS->readByte();
 	}
 
-	if (readS->tell() != R_FONT_DESCSIZE) {
+	if (readS->pos() != R_FONT_DESCSIZE) {
 		warning("Invalid font resource size.");
 		return R_FAILURE;
 	}

@@ -216,7 +216,7 @@ int SPRITE_Draw(R_SURFACE *ds, R_SPRITELIST *sprite_list, int sprite_num, int sp
 	s_width = readS->readByte();
 	s_height = readS->readByte();
 
-	sprite_data_p = sprite_p + readS->tell();
+	sprite_data_p = sprite_p + readS->pos();
 
 	spr_x += x_align;
 	spr_y += y_align;
@@ -326,7 +326,7 @@ int SPRITE_DrawOccluded(R_SURFACE *ds, R_SPRITELIST *sprite_list, int sprite_num
 	s_width = readS->readByte();
 	s_height = readS->readByte();
 
-	sprite_data_p = sprite_p + readS->tell();
+	sprite_data_p = sprite_p + readS->pos();
 
 	// Create actor Z occlusion LUT
 	SCENE_GetZInfo(&zinfo);

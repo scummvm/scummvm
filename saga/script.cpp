@@ -104,12 +104,12 @@ int SCRIPT_Init() {
 	// Convert LUT resource to logical LUT
 	MemoryReadStream *readS = new MemoryReadStream(rsc_ptr, rsc_len);
 	for (i = 0; i < ScriptModule.script_lut_max; i++) {
-		prevTell = readS->tell();
+		prevTell = readS->pos();
 		ScriptModule.script_lut[i].script_rn = readS->readUint16LE();
 		ScriptModule.script_lut[i].diag_list_rn = readS->readUint16LE();
 		ScriptModule.script_lut[i].voice_lut_rn = readS->readUint16LE();
 		// Skip the unused portion of the structure
-		for (j = readS->tell(); j < prevTell + ScriptModule.script_lut_entrylen; j++)
+		for (j = readS->pos(); j < prevTell + ScriptModule.script_lut_entrylen; j++)
 			readS->readByte();
 	}
 
@@ -365,7 +365,7 @@ R_SCRIPT_BYTECODE *SCRIPT_LoadBytecode(byte *bytecode_p, size_t bytecode_len) {
 
 	// Read in the entrypoint table
 
-	while (readS->tell() < ep_tbl_offset)
+	while (readS->pos() < ep_tbl_offset)
 		readS->readByte();
 
 	for (i = 0; i < n_entrypoints; i++) {
@@ -439,7 +439,7 @@ R_DIALOGUE_LIST *SCRIPT_LoadDialogue(const byte *dialogue_p, size_t dialogue_len
 	}
 
 	// Read in tables from dialogue list resource
-	readS->rewind();
+	readS->seek(0);
 	for (i = 0; i < n_dialogue; i++) {
 		offset = readS->readUint16LE();
 		if (offset > dialogue_len) {

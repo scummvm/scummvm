@@ -325,7 +325,7 @@ int STHREAD_Run(R_SCRIPT_THREAD *thread, int instr_limit, int msec) {
 				temp = readS->readByte();
 				temp2 = readS->readByte();
 				param1 = (SDataWord_T)readS->readUint16LE();
-				data = readS->tell();
+				data = readS->pos();
 				//SSTACK_Push(thread->stack, (SDataWord_T)temp);
 				SSTACK_Push(thread->stack, data);
 				thread->i_offset = (unsigned long)param1;
@@ -775,7 +775,7 @@ int STHREAD_Run(R_SCRIPT_THREAD *thread, int instr_limit, int msec) {
 
 		// Set instruction offset only if a previous instruction didn't branch
 		if (saved_offset == thread->i_offset) {
-			thread->i_offset = readS->tell();
+			thread->i_offset = readS->pos();
 		}
 		if (unhandled) {
 			CON_Print(S_ERROR_PREFIX "%X: Unhandled opcode.\n", thread->i_offset);

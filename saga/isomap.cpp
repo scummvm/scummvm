@@ -57,7 +57,7 @@ int ISOMAP_LoadTileset(const byte *tileres_p, size_t tileres_len) {
 
 	IsoModule.tile_ct = first_entry.tile_offset / SAGA_ISOTILE_ENTRY_LEN;
 
-	readS->rewind();
+	readS->seek(0);
 
 	tile_tbl = (R_ISOTILE_ENTRY *)malloc(IsoModule.tile_ct * sizeof *tile_tbl);
 	if (tile_tbl == NULL) {

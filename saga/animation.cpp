@@ -583,7 +583,7 @@ int IHNM_DecodeFrame(byte *decode_buf, size_t decode_buf_len, const byte *thisf_
 	*nextf_p = NULL;
 
 	for (; cont_flag; decoded_data = 1) {
-		in_ch_offset = readS->tell();
+		in_ch_offset = readS->pos();
 		in_ch = readS->readByte();
 		switch (in_ch) {
 		case 0x0F: // 15: Frame header
@@ -595,7 +595,7 @@ int IHNM_DecodeFrame(byte *decode_buf, size_t decode_buf_len, const byte *thisf_
 				int param5;
 				int param6;
 
-				if (thisf_len - readS->tell() < 13) {
+				if (thisf_len - readS->pos() < 13) {
 					warning("0x%02X: Input buffer underrun", in_ch);
 					return R_FAILURE;
 				}
@@ -625,7 +625,7 @@ int IHNM_DecodeFrame(byte *decode_buf, size_t decode_buf_len, const byte *thisf_
 			break;
 		case 0x10: // Long Unencoded Run
 			runcount = readS->readSint16BE();
-			if (thisf_len - readS->tell() < runcount) {
+			if (thisf_len - readS->pos() < runcount) {
 				warning("0x%02X: Input buffer underrun", in_ch);
 				return R_FAILURE;
 			}
@@ -646,7 +646,7 @@ int IHNM_DecodeFrame(byte *decode_buf, size_t decode_buf_len, const byte *thisf_
 			continue;
 			break;
 		case 0x1F: // 31: Unusued?
-			if (thisf_len - readS->tell() < 3) {
+			if (thisf_len - readS->pos() < 3) {
 				warning("0x%02X: Input buffer underrun", in_ch);
 				return R_FAILURE;
 			}
@@ -657,7 +657,7 @@ int IHNM_DecodeFrame(byte *decode_buf, size_t decode_buf_len, const byte *thisf_
 			continue;
 			break;
 		case 0x20: // Long compressed run
-			if (thisf_len - readS->tell() <= 3) {
+			if (thisf_len - readS->pos() <= 3) {
 				warning("0x%02X: Input buffer underrun", in_ch);
 				return R_FAILURE;
 			}
@@ -674,7 +674,7 @@ int IHNM_DecodeFrame(byte *decode_buf, size_t decode_buf_len, const byte *thisf_
 			break;
 
 		case 0x2F: // End of row
-			if (thisf_len - readS->tell() <= 4) {
+			if (thisf_len - readS->pos() <= 4) {
 				return R_FAILURE;
 			}
 
@@ -686,7 +686,7 @@ int IHNM_DecodeFrame(byte *decode_buf, size_t decode_buf_len, const byte *thisf_
 			continue;
 			break;
 		case 0x30: // Reposition command
-			if (thisf_len - readS->tell() < 2) {
+			if (thisf_len - readS->pos() < 2) {
 				return R_FAILURE;
 			}
 
@@ -704,9 +704,9 @@ int IHNM_DecodeFrame(byte *decode_buf, size_t decode_buf_len, const byte *thisf_
 
 		case 0x3F:	// 68: Frame end marker
 			debug(1, "0x3F: Frame end marker");
-			if (decoded_data && (thisf_len - readS->tell() > 0)) {
-				*nextf_p = thisf_p + readS->tell();
-				*nextf_len = thisf_len - readS->tell();
+			if (decoded_data && (thisf_len - readS->pos() > 0)) {
+				*nextf_p = thisf_p + readS->pos();
+				*nextf_len = thisf_len - readS->pos();
 			} else {
 				*nextf_p = NULL;
 				*nextf_len = 0;
@@ -736,7 +736,7 @@ int IHNM_DecodeFrame(byte *decode_buf, size_t decode_buf_len, const byte *thisf_
 			break;
 		case 0x80: // Run of compressed data
 			runcount = param_ch + 1;
-			if ((outbuf_remain < runcount) || (thisf_len - readS->tell() <= 1)) {
+			if ((outbuf_remain < runcount) || (thisf_len - readS->pos() <= 1)) {
 				return R_FAILURE;
 			}
 
@@ -751,7 +751,7 @@ int IHNM_DecodeFrame(byte *decode_buf, size_t decode_buf_len, const byte *thisf_
 			break;
 		case 0x40: // Uncompressed run
 			runcount = param_ch + 1;
-			if ((outbuf_remain < runcount) || (thisf_len - readS->tell() < runcount)) {
+			if ((outbuf_remain < runcount) || (thisf_len - readS->pos() < runcount)) {
 				return R_FAILURE;
 			}
 
@@ -887,7 +887,7 @@ int ANIM_GetFrameOffset(const byte *resdata, size_t resdata_len, uint16 find_fra
 		} while (mark_byte != 63);
 	}
 
-	*frame_offset_p = readS->tell();
+	*frame_offset_p = readS->pos();
 	return R_SUCCESS;
 }
 

@@ -119,58 +119,47 @@ public:
 class MemoryReadStream : public ReadStream {
 private:
 	const byte *_ptr;
-	const byte *_ptrOrig;
-	uint32 _size;
-	uint32 _sizeOrig;
+	const byte * const _ptrOrig;
+	const uint32 _bufSize;
 	uint32 _pos;
 public:
-	MemoryReadStream(const byte *ptr, uint32 size) : _ptr(ptr), _ptrOrig(ptr), _size(size), _sizeOrig(size), _pos(0) {}
+	MemoryReadStream(const byte *buf, uint32 len) : _ptr(buf), _ptrOrig(buf), _bufSize(len), _pos(0) {}
 
-	uint32 read(void *ptr, uint32 size) {
-		if (size > _size)
-			size = _size;
-		memcpy(ptr, _ptr, size);
-		_size -= size;
-		_ptr += size;
-		_pos += size;
-		return size;
+	uint32 read(void *ptr, uint32 len) {
+		// Read at most as many bytes as are still available...
+		if (len > _bufSize - _pos)
+			len = _bufSize - _pos;
+		memcpy(ptr, _ptr, len);
+		_ptr += len;
+		_pos += len;
+		return len;
 	}
 
-	uint32 tell() { return _pos; }
-
-	void rewind() {
-		_ptr = _ptrOrig;
-		_size = _sizeOrig;
-		_pos = 0;
-	}
+	bool eof() { return _pos == _bufSize; }
+	uint32 pos() { return _pos; }
+	uint32 size() { return _bufSize; }
 
 	void seek(uint32 offs, int whence = SEEK_SET) {
+		// Pre-Condition
+		assert(_pos <= _bufSize);
 		switch (whence) {
+		case SEEK_END:
+			// SEEK_END works just like SEEK_SET, only 'reversed',
+			// i.e. from the end.
+			offs = _bufSize - offs;
+			// Fall through
 		case SEEK_SET:
-			rewind();
-			if (offs > _size)
-				offs = _size;
-			_size -= offs;
-			_ptr += offs;
-			_pos += offs;
+			_ptr = _ptrOrig + offs;
+			_pos = offs;
 			break;
 
 		case SEEK_CUR:
-			_size -= offs;
-			_ptr += offs;
-			_pos += offs;
-			break;
-
-		case SEEK_END:
-			rewind();
-			if (offs > _size)
-				offs = 0;
-			offs = _size - offs;
-			_size -= offs;
 			_ptr += offs;
 			_pos += offs;
 			break;
 		}
+		// Post-Condition
+		assert(_pos <= _bufSize);
 	}
 };
 
