@@ -1036,8 +1036,8 @@ int32 IMuseDigital::doCommand(int a, int b, int c, int d, int e, int f, int g, i
 			if (b == 1)
 				startSound(1);
 			else {
-				if (getSoundStatus(4) == 0)
-					startSound(4);
+				if (getSoundStatus(2) == 0)
+					startSound(2);
 			}
 			return 0;
 		}
