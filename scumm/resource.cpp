@@ -747,6 +747,8 @@ int Scumm::readSoundResource(int type, int idx) {
 				break;
 			case MKID('ROL '):
 				pri = 3;
+				if (_native_mt32)
+					pri = 5;
 				break;
 			case MKID('GMD '):
 				pri = 4;

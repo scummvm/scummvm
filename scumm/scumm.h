@@ -971,6 +971,7 @@ protected:
 	uint16 _defaultTalkDelay;
 	int tempMusic;
 	int _saveSound;
+	bool _native_mt32;
 public:
 	bool _silentDigitalImuse, _noDigitalSamples;
 

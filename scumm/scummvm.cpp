@@ -663,6 +663,7 @@ Scumm::Scumm (GameDetector *detector, OSystem *syst)
 	_confirmExit = detector->_confirmExit;
 	_defaultTalkDelay = detector->_talkSpeed;
 	_midiDriver = detector->_midi_driver;
+	_native_mt32 = detector->_native_mt32;
 	_language = detector->_language;
 	memset(&res, 0, sizeof(res));
 	_hexdumpScripts = false;
