@@ -95,7 +95,9 @@ void IMuseDigital::setDigMusicSequence(int seqId) {
 			break;
 		}
 	}
-	assert(num != -1);
+	
+	if (num == -1)
+		return;
 
 	if (_curMusicSeq == num)
 		return;
