@@ -867,18 +867,15 @@ void Scumm_v2::o2_doSentence() {
 	case 1:
 		// Execute the sentence
 		_sentenceNum--;
-		//warning("TODO o2_doSentence(%d, %d, %d): execute", st->verb, st->objectA, st->objectB);
-
-		// FIXME / TODO: The following is hackish, and probably incomplete, but it works somewhat.
-		VAR(VAR_ACTIVE_VERB) = st->verb;
-		VAR(VAR_ACTIVE_OBJECT1) = st->objectA;
-		VAR(VAR_ACTIVE_OBJECT2) = st->objectB;
 		
-		if (st->verb == 250)
-			runObjectScript(st->objectA, 253, false, true, NULL);
-		else
-			runObjectScript(st->objectA, st->verb, false, false, NULL);
+		if (st->verb != 250) {
+			VAR(VAR_ACTIVE_VERB) = st->verb;
+			VAR(VAR_ACTIVE_OBJECT1) = st->objectA;	
+			VAR(VAR_ACTIVE_OBJECT2) = st->objectB;
 
+			runObjectScript(st->objectA, st->verb, false, false, NULL);
+		} else
+			runObjectScript(st->objectA, 253, false, true, NULL);
 		break;
 	case 2:
 		// Print the sentence
