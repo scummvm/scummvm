@@ -1806,6 +1806,12 @@ void ScummEngine_v90he::o90_getPolygonOverlap() {
 				r2.top += args2[2];
 				r2.bottom += args2[2];
 			}
+			if (n1 == 3) { 
+				r1.left += args1[1];
+				r1.right += args1[1];
+				r1.top += args1[2];
+				r1.bottom += args1[2];
+			}
 			push(r2.intersects(r1) ? 1 : 0);
 		}
 		break;
@@ -1829,6 +1835,7 @@ void ScummEngine_v90he::o90_getPolygonOverlap() {
 		}
 		break;
 	case 8:
+	case 10:	// TODO: redraw image
 		{
 			Common::Rect r1, r2;
 			getSpriteBounds(args2[0], true, r2);
@@ -1843,6 +1850,12 @@ void ScummEngine_v90he::o90_getPolygonOverlap() {
 				r2.right += args2[1];
 				r2.top += args2[2];
 				r2.bottom += args2[2];
+			}
+			if (n1 == 3) { 
+				r1.left += args1[1];
+				r1.right += args1[1];
+				r1.top += args1[2];
+				r1.bottom += args1[2];
 			}
 			push(r2.intersects(r1) ? 1 : 0);
 		}
@@ -1865,9 +1878,6 @@ void ScummEngine_v90he::o90_getPolygonOverlap() {
 			}
 			push(r2.intersects(r1) ? 1 : 0);
 		}
-		break;
-	case 10:
-		push(0);
 		break;
 	default:
 		error("o90_getPolygonOverlap: default case %d", subOp);
