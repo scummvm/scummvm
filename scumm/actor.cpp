@@ -1402,17 +1402,17 @@ void Actor::walkActorOld() {
 
 	if (!moving)
 		return;
-
+	
 	if (!(moving & MF_NEW_LEG)) {
 		if (moving & MF_IN_LEG && actorWalkStep())
 			return;
-	
+
 		if (moving & MF_LAST_LEG) {
 			moving = 0;
 			startWalkAnim(3, walkdata.destdir);
 			return;
 		}
-	
+
 		if (moving & MF_TURN) {
 			new_dir = updateActorDirection(false);
 			if (facing != new_dir)
@@ -1421,7 +1421,7 @@ void Actor::walkActorOld() {
 				moving = 0;
 			return;
 		}
-	
+
 		if (walkdata.point3.x != 32000) {
 			if (calcMovementFactor(walkdata.point3)) {
 				walkdata.point3.x = 32000;
@@ -1429,7 +1429,7 @@ void Actor::walkActorOld() {
 			}
 			walkdata.point3.x = 32000;
 		}
-	
+
 		setBox(walkdata.curbox);
 		moving &= MF_IN_LEG;
 	}
@@ -1460,26 +1460,22 @@ void Actor::walkActorOld() {
 
 		walkdata.curbox = next_box;
 		
-/*
 		if (_vm->_version <= 2) {
 			_vm->getClosestPtOnBox(walkdata.curbox, x, y, p2.x, p2.y);
 			_vm->getClosestPtOnBox(walkbox, p2.x, p2.y, p3.x, p3.y);
 		} else {
-*/
-		findPathTowardsOld(walkbox, next_box, walkdata.destbox, p2, p3);
-		if (p2.x == 32000 && p3.x == 32000) {
-			break;
-		}
-
-		if (p2.x != 32000) {
-			if (calcMovementFactor(p2)) {
-				walkdata.point3 = p3;
-				return;
+			findPathTowardsOld(walkbox, next_box, walkdata.destbox, p2, p3);
+			if (p2.x == 32000 && p3.x == 32000) {
+				break;
+			}
+	
+			if (p2.x != 32000) {
+				if (calcMovementFactor(p2)) {
+					walkdata.point3 = p3;
+					return;
+				}
 			}
 		}
-/*
-		}
-*/
 		if (calcMovementFactor(p3))
 			return;
 
