@@ -469,7 +469,7 @@ protected:
 	}
 };
 
-static inline void clamped_add_16(int16& a, int16 b) {
+static inline void clamped_add_16(int16& a, int b) {
 	int val = a + b;
 
 	if (val > 32767)
