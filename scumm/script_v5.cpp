@@ -731,11 +731,11 @@ void Scumm_v5::o5_divide() {
 }
 
 void Scumm_v5::o5_doSentence() {
-	int a;
+	int verb;
 	SentenceTab *st;
 
-	a = getVarOrDirectByte(0x80);
-	if (a == 0xFE) {
+	verb = getVarOrDirectByte(0x80);
+	if (verb == 0xFE) {
 		_sentenceNum = 0;
 		stopScript(VAR(VAR_SENTENCE_SCRIPT));
 		clearClickedStatus();
@@ -744,7 +744,7 @@ void Scumm_v5::o5_doSentence() {
 
 	st = &_sentence[_sentenceNum++];
 
-	st->verb = a;
+	st->verb = verb;
 	st->objectA = getVarOrDirectWord(0x40);
 	st->objectB = getVarOrDirectWord(0x20);
 	st->preposition = (st->objectB != 0);

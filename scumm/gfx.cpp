@@ -2355,7 +2355,9 @@ void Scumm::actorFollowCamera(int act) {
 #pragma mark -
 
 void Scumm::fadeIn(int effect) {
+
 	updatePalette();
+
 	switch (effect) {
 	case 1:
 	case 2:
@@ -2389,48 +2391,48 @@ void Scumm::fadeIn(int effect) {
 void Scumm::fadeOut(int effect) {
 	VirtScreen *vs;
 
-	updatePalette();
-
 	setDirtyRange(0, 0, 0);
 	if (!(_features & GF_AFTER_V7))
 		camera._last.x = camera._cur.x;
 
-	if (!_screenEffectFlag)
-		return;
-	_screenEffectFlag = false;
-
-	if (effect == 0)
-		return;
-
-	// Fill screen 0 with black
-	vs = &virtscr[0];
-	memset(vs->screenPtr + vs->xstart, 0, vs->size);
-
-	// Fade to black with the specified effect, if any.
-	switch (effect) {
-	case 1:
-	case 2:
-	case 3:
-	case 4:
-		transitionEffect(effect - 1);
-		break;
-	case 128:
-		unkScreenEffect6();
-		break;
-	case 129:
-		// Just blit screen 0 to the display (i.e. display will be black)
-		setDirtyRange(0, 0, vs->height);
-		updateDirtyScreen(0);
-		break;
-	case 134:
-		dissolveEffect(1, 1);
-		break;
-	case 135:
-		unkScreenEffect5(1);
-		break;
-	default:
-		warning("fadeOut: default case %d", effect);
+	if (_screenEffectFlag && effect != 0) {
+	
+		// Fill screen 0 with black
+		vs = &virtscr[0];
+		memset(vs->screenPtr + vs->xstart, 0, vs->size);
+	
+		// Fade to black with the specified effect, if any.
+		switch (effect) {
+		case 1:
+		case 2:
+		case 3:
+		case 4:
+			transitionEffect(effect - 1);
+			break;
+		case 128:
+			unkScreenEffect6();
+			break;
+		case 129:
+			// Just blit screen 0 to the display (i.e. display will be black)
+			setDirtyRange(0, 0, vs->height);
+			updateDirtyScreen(0);
+			break;
+		case 134:
+			dissolveEffect(1, 1);
+			break;
+		case 135:
+			unkScreenEffect5(1);
+			break;
+		default:
+			warning("fadeOut: default case %d", effect);
+		}
 	}
+
+	// Update the palette at the end (once we faded to black) to avoid
+	// some nasty effects when the palette is changed
+	updatePalette();
+
+	_screenEffectFlag = false;
 }
 
 /* Transition effect. There are four different effects possible,
