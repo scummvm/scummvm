@@ -237,7 +237,8 @@ Engine *Engine_SCUMM_create(GameDetector *detector, OSystem *syst) {
 
 	switch (detector->_platform) {
 	case 1:
-		detector->_game.features |= GF_AMIGA;
+		if (!(_features & GF_AMIGA))
+			detector->_game.features |= GF_AMIGA;
 		break;
 	case 2:
 		detector->_game.features |= GF_ATARI_ST;
