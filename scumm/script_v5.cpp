@@ -1722,7 +1722,7 @@ void Scumm_v5::o5_roomOps() {
 	case 10:											/* ? */
 		a = getVarOrDirectWord(0x80);
 		if (a) {
-			_switchRoomEffect = (byte)a;
+			_switchRoomEffect = (byte)(a&0xFF);
 			_switchRoomEffect2 = (byte)(a >> 8);
 		} else {
 			fadeIn(_newEffect);
