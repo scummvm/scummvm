@@ -23,10 +23,6 @@
 #include "newgui.h"
 #include "dialog.h"
 
-#ifdef __PALM_OS__
-#	include "palm.h"
-#endif
-
 #ifdef NEW_FONT_CODE
 #include "gui/font.h"
 #endif
@@ -138,15 +134,6 @@ void NewGui::runLoop() {
 	}
 
 	while (!_dialogStack.empty() && activeDialog == _dialogStack.top()) {
-#ifdef __PALM_OS__
-		// There is no exit(.) function under PalmOS, to exit an app
-		// we need to send an 'exit' event to the event handler
-		// and then the system return to the launcher. But this event
-		// is not handled by the following loop and so we need to force exit.
-		// In other systems like Windows ScummVM exit immediatly and so this doesn't appear.
-		if (((OSystem_PALMOS *)_system)->_quit)
-			return;
-#endif
 		activeDialog->handleTickle();
 
 		if (_needRedraw) {
