@@ -888,7 +888,6 @@ void Logic::inventoryRefresh() {
 		}
 		x += 35;
 	}
-	_vm->update();
 }
 
 int16 Logic::previousInventoryItem(int16 start) const {
