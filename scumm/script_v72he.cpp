@@ -601,12 +601,12 @@ int ScummEngine_v72he::findObject(int x, int y, int *args) {
 		if ((_objs[i].obj_nr < 1) || getClass(_objs[i].obj_nr, kObjectClassUntouchable))
 			continue;
 
-		if (polygonDefined(_objs[i].obj_nr))
+		if (polygonDefined(_objs[i].obj_nr)) {
 			if (polygonHit(_objs[i].obj_nr, x, y) != 0)
 				return _objs[i].obj_nr;
-
-		//if (VAR(VAR_POLYGONS_ONLY))
-		//	continue;
+			else if (VAR(VAR_POLYGONS_ONLY))
+				continue;
+		}
 
 		b = i;
 		do {
@@ -908,8 +908,8 @@ void ScummEngine_v72he::o72_actorOps() {
 		debug(1,"o72_actorOps: case 24 (%d)", k);
 		break;
 	case 43: // HE 90+
-		k = pop();
-		debug(1,"o72_actorOps: case 43 (%d)", k);
+		// Uses reverse order of layering, so we adjust
+		a->layer = -pop();
 		break;
 	case 64:
 		_actorClipOverride.bottom = pop();

@@ -526,7 +526,7 @@ void ScummEngine_v90he::o90_unknown1C() {
 		error("o90_unknown1C: unhandled case %d", subOp);
 	}
 
-	debug(0,"o90_unknown1C stub (%d)", subOp);
+	debug(1,"o90_unknown1C stub (%d)", subOp);
 }
 
 void ScummEngine_v90he::o90_unknown25() {
