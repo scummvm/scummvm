@@ -101,6 +101,7 @@ enum GAME_IDS {
 	// Wyrmkeep
 	//GID_ITE_CD,    // data for Win rerelease is same as in old DOS
 	GID_ITE_MACCD,
+	GID_ITE_LINCD,
 	GID_ITE_WINDEMO1, // older Wyrmkeep windows demo
 	GID_ITE_MACDEMO1, // older Wyrmkeep mac demo
 	GID_ITE_LINDEMO,
