@@ -2063,7 +2063,7 @@ void ScummEngine::startScene(int room, Actor *a, int objectNr) {
 			a->moving = 0;
 		}
 	} else if (_version >= 7) {
-		if (a) {
+		if ((_gameId == GID_DIG) && a) {
 			// FIXME: This hack mostly is there to fix the tomb/statue room
 			// in The Dig. What happens there is that when you enter, you are
 			// placed at object 399, coords (307,141), which is in box 25.
