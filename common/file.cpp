@@ -39,22 +39,32 @@ bool File::open(const char *filename, int mode, byte encbyte) {
 	}
 
 	clearReadFailed();
+
+	int32 i = 0, pos = 0;
+
 	strcpy(buf, filename);
+	while (buf[i] != 0) {
+		if ((buf[i] == '/') || (buf[i] == '\\')) {
+			pos = i + 1;
+		}
+		i++;
+	}
+	
 	if (mode == 1) {
 		_handle = fopen(buf, "rb");
 		if (_handle == NULL) {
-			ptr = buf;
+			ptr = buf + pos;
 			do
 				*ptr++ = toupper(*ptr);
 			while (*ptr);
-			_handle = fopen(buf, "rb");
+			_handle = fopen(buf + pos, "rb");
 		}
 		if (_handle == NULL) {
-			ptr = buf;
+			ptr = buf + pos;
 			do
 				*ptr++ = tolower(*ptr);
 			while (*ptr);
-			_handle = fopen(buf, "rb");
+			_handle = fopen(buf + pos, "rb");
 		}
 		if (_handle == NULL) {
 			debug(2, "File %s not found", filename);
