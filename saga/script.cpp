@@ -102,6 +102,8 @@ Script::Script() {
 	// Calculate number of entries
 	_scriptLUTMax = rsc_len / _scriptLUTEntryLen;
 
+	debug(0, "LUT has %d entries.", _scriptLUTMax);
+
 	// Allocate space for logical LUT
 	_scriptLUT = (SCRIPT_LUT_ENTRY *)malloc(_scriptLUTMax * sizeof(SCRIPT_LUT_ENTRY));
 	if (_scriptLUT == NULL) {
