@@ -52,6 +52,8 @@ bool SwordMusicHandle::endOfData() const {
 }
 
 int SwordMusicHandle::readBuffer(int16 *buffer, const int numSamples) {
+	// TODO: merge the read() code into readBuffer(), for higher efficency;
+	// we then can remove read() (as it isn't needed for anything anymore).
 	int samples;
 	for (samples = 0; samples < numSamples && !endOfData(); samples++)
 		*buffer++ = read();
