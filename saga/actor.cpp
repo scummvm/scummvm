@@ -636,7 +636,6 @@ void Actor::StoA(Point &actorPoint, const Point &screenPoint) {
 }
 
 bool Actor::actorWalkTo(uint16 actorId, const ActorLocation &actorLocation) {
-	BOOL				result = TRUE;
 	ActorData *actor;
 
 	actor = getActor(actorId);

@@ -555,7 +555,7 @@ int Interface::handleCommandUpdate(SURFACE *ds, const Point& imousePt) {
 }
 
 int Interface::handlePlayfieldClick(SURFACE *ds, const Point& imousePt) {
-	return FALSE;
+	return SUCCESS;
 /*
 	int objectNum;
 	uint16 object_flags = 0;
@@ -598,7 +598,7 @@ int Interface::handlePlayfieldClick(SURFACE *ds, const Point& imousePt) {
 }
 
 int Interface::handlePlayfieldUpdate(SURFACE *ds, const Point& imousePt) {
-	return FALSE;
+	return SUCCESS;
 	/*
 	const char *object_name;
 	int objectNum;
