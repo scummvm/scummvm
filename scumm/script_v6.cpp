@@ -2795,7 +2795,29 @@ void Scumm_v6::o6_pickOneOfDefault() {
 
 void Scumm_v6::o6_stampObject() {
 	int object, x, y, state;
+	
+	// V6 version
+	if (_version == 6) {
+		state = pop();
+		if (state == 0) {
+			state = 1;
+		}
+		y = pop();
+		x = pop();
+		object = pop();
+		int objnum = getObjectIndex(object);
+		if (objnum == -1)
+			return;
+		if (x != -1) {
+			setObjectState(object, state, x, y);
+		}
+		drawObject(objnum, 0);
+		warning("o6_stampObject: (%d at (%d,%d) state %d)", object, x, y, state);
+		
+		return;	
+	}
 
+	// V7 version
 	state = pop();
 	y = pop();
 	x = pop();
