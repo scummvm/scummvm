@@ -2348,6 +2348,7 @@ bool Logic::gameSave(uint16 slot, const char *desc) {
 	byte *saveData = new byte[SAVEGAME_SIZE];
 	byte *ptr = saveData;
 	memcpy(ptr, buf, 32); ptr += 32;
+	delete[] buf;
 	
 	WRITE_BE_UINT16(ptr, _settings.talkSpeed); ptr += 2;
 	WRITE_BE_UINT16(ptr, _settings.musicVolume); ptr += 2;
@@ -2378,7 +2379,7 @@ bool Logic::gameSave(uint16 slot, const char *desc) {
 		for (j = 1; j <= _areaMax[i]; j++)
 			_area[i][j].writeTo(ptr);
 			
-	for (i = 0; i <= 85; i++)
+	for (i = 0; i < TALK_SELECTED_COUNT; i++)
 			_talkSelected[i].writeTo(ptr);
 	
 	for (i = 1; i <= _numWalkOffs; i++)
@@ -2446,7 +2447,7 @@ bool Logic::gameLoad(uint16 slot) {
 		for (j = 1; j <= _areaMax[i]; j++)
 			_area[i][j].readFrom(ptr);
 	
-	for (i = 0; i <= 85; i++)
+	for (i = 0; i < TALK_SELECTED_COUNT; i++)
 		_talkSelected[i].readFrom(ptr);
 		
 	for (i = 1; i <= _numWalkOffs; i++)
