@@ -33,7 +33,6 @@ ImuseDigiSndMgr::ImuseDigiSndMgr(ScummEngine *scumm) {
 	_scumm = scumm;
 	_mutex = g_system->create_mutex();
 	_disk = 0;
-	_accessFree = true;
 	BundleCodecs::initializeImcTables();
 }
 
