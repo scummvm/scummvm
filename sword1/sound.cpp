@@ -221,7 +221,7 @@ void SwordSound::initCowSystem(void) {
 	sprintf(cowName, "SPEECH%d.CLU", SwordEngine::_systemVars.currentCD);
 	_cowFile.open(cowName);
 	if (!_cowFile.isOpen()) {
-		sprintf(cowName, "speech/SPEECH.CLU");
+		sprintf(cowName, "SPEECH.CLU");
 		_cowFile.open(cowName);
 	}
 	if (_cowFile.isOpen()) {

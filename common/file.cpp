@@ -80,10 +80,12 @@ FILE *File::fopenNoCase(const char *filename, const char *directory, const char 
 		// Simon the Sorcerer 2 Amiga/Mac
 		"voices/",
 		"VOICES/",
-		// sword2 stuff if user just copied files without putting
+		// sword1/2 stuff if user just copied files without putting
 		// them all into the same dir like original installer did
 		"CLUSTERS/",
 		"clusters/",
+		"SPEECH/",
+		"speech/"
 		"SWORD2/",
 		"sword2/"
 	};
