@@ -143,6 +143,10 @@ SimonState::SimonState(GameDetector *detector, OSystem *syst)
 		warning("Sound initialization failed. "
 						"Features of the game that depend on sound synchronization will most likely break");
 	set_volume(detector->_sfx_volume);
+
+	_playing_sound = 0;
+	_effects_sound = 0;
+	_voice_sound = 0;
 }
 
 SimonState::~SimonState()
@@ -4770,7 +4774,8 @@ void SimonState::playVoice(uint voice)
 	if (_voice_offsets == NULL)
 		return;
 	
-	_mixer->stop(_voice_sound);
+	if (_voice_sound != 0)
+		_mixer->stop(_voice_sound);
 	_voice_file->seek(_voice_offsets[voice], SEEK_SET);
 
 #ifdef USE_MAD
@@ -4858,7 +4863,8 @@ void SimonState::playSound(uint sound)
 			VocBlockHeader voc_block_hdr;
 			uint32 size;
 
-			_mixer->stop(_effects_sound);
+			if (_effects_sound != 0)
+				_mixer->stop(_effects_sound);
 			_effects_file->seek(_effects_offsets[sound], SEEK_SET);
 
 
@@ -4891,7 +4897,8 @@ void SimonState::playSound(uint sound)
 
 			byte *p;
 
-			_mixer->stop(_playing_sound);
+			if (_playing_sound != 0)
+				_mixer->stop(_playing_sound);
 
 			/* Check if _sfx_heap is NULL */
 			if (_sfx_heap == NULL) {

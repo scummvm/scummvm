@@ -99,6 +99,9 @@ bool File::open(const char *filename, const char *directory, int mode, byte encb
 		return false;
 	}
 
+	if (filename == NULL || *filename == 0)
+		return false;
+
 	clearIOFailed();
 
 	if (mode == kFileReadMode) {
