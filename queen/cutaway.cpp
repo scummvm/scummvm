@@ -418,8 +418,8 @@ void Cutaway::actionSpecialMove(int index) {
 			_logic->display()->palCustomLightsOn(_logic->currentRoom());
 			break;
 
-        // manequin area on
-        case 23:
+		// manequin area on
+		case 23:
 			_logic->area(ROOM_FLODA_FRONTDESK, 7)->mapNeighbours = ABS(_logic->area(ROOM_FLODA_FRONTDESK, 7)->mapNeighbours);
 			break;
 
