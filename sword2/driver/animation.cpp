@@ -366,7 +366,12 @@ int32 MoviePlayer::playDummy(const char *filename, MovieTextObject *text[], byte
 			byte msg[] = "Po\344uk - to\344\345ko pev\345: hagmute k\344abuwy Ucke\343n, u\344u nocetute ca\343t npoekta u ckava\343te budeo po\344uku";
 			data = _vm->_fontRenderer->makeTextSprite(msg, RENDERWIDE, 255, _vm->_speechFontId);
 		} else {
+			// TODO: Translate message to other languages?
+#ifdef USE_MPEG2
 			byte msg[] = "Cutscene - Narration Only: Press ESC to exit, or visit www.scummvm.org to download cutscene videos";
+#else
+			byte msg[] = "Cutscene - Narration Only: Press ESC to exit, or recompile ScummVM with MPEG2 support";
+#endif
 			data = _vm->_fontRenderer->makeTextSprite(msg, RENDERWIDE, 255, _vm->_speechFontId);
 		}
 
