@@ -84,15 +84,22 @@ protected:
 
 private:
 
+#ifdef USE_VORBIS
+	bool checkOggHighSampleRate();
+#endif
+
 	static void private_sound_proc(void *param, byte *buf, int len);
 	static SoundProc _originalSoundProc;
 
 	void create_toolbar();
 	void update_game_settings();
 	void update_keyboard();
+	void get_sample_rate();
 
 	CEKEYS::KeysBuffer *_keysBuffer;
 	CEGUI::ToolbarHandler _toolbarHandler;
+
+	uint16 _sampleRate;			// current audio sample rate
 
 	bool _freeLook;				// freeLook mode (do not send mouse button events)
 

@@ -42,6 +42,9 @@
 
 #include "sound/fmopl.h"
 
+#ifdef USE_VORBIS
+#include <vorbis/vorbisfile.h>
+#endif
 
 using namespace CEGUI; 
 
@@ -81,6 +84,7 @@ int SDL_main(int argc, char **argv) {
 // ********************************************************************************************
 
 void drawError(char *error) {
+	OutputDebugString(TEXT("Error !\r\n"));
 }
 
 bool isSmartphone(void) {
@@ -117,6 +121,9 @@ void OSystem_WINCE3::swap_panel_visibility() {
 	if (!_forcePanelInvisible && !_panelStateForced) {
 		_panelVisible = !_panelVisible;
 		_toolbarHandler.setVisible(_panelVisible);
+		// FIXME
+		add_dirty_rect(0, 200, 320, 40);
+		update_screen();
 	}
 }
 
@@ -163,6 +170,51 @@ void OSystem_WINCE3::private_sound_proc(void *param, byte *buf, int len) {
 		memset(buf, 0, len);
 }
 
+#ifdef USE_VORBIS
+bool OSystem_WINCE3::checkOggHighSampleRate() {
+        char trackFile[255];
+        FILE *testFile;
+        OggVorbis_File *test_ov_file = new OggVorbis_File;
+
+        sprintf(trackFile,"%sTrack1.ogg", ConfMan.get("path").c_str());
+        // Check if we have an OGG audio track
+        testFile = fopen(trackFile, "rb");
+        if (testFile) {
+                if (!ov_open(testFile, test_ov_file, NULL, 0)) {
+                        bool highSampleRate = (ov_info(test_ov_file, -1)->rate == 22050);
+                        ov_clear(test_ov_file);
+                        return highSampleRate;
+                }
+        }
+
+        // Do not test for OGG samples - too big and too slow anyway :)
+
+        return false;
+}
+#endif
+
+void OSystem_WINCE3::get_sample_rate() {
+	// See if the output frequency is forced by the game
+	if ((_gameDetector._game.features & Scumm::GF_DIGI_IMUSE) ||
+		_gameDetector._targetName == "queen" ||
+		strncmp(_gameDetector._targetName.c_str(), "sword", 5) == 0 ||
+		strncmp(_gameDetector._targetName.c_str(), "sky", 3) == 0)
+			_sampleRate = SAMPLES_PER_SEC_NEW;
+	else {
+		if (ConfMan.getBool("CE_high_sample_rate"))
+			_sampleRate = SAMPLES_PER_SEC_NEW;
+		else
+			_sampleRate = SAMPLES_PER_SEC_OLD;
+	}
+
+#ifdef USE_VORBIS
+    // Modify the sample rate on the fly if OGG is involved
+    if (_sampleRate == SAMPLES_PER_SEC_OLD)
+     if (checkOggHighSampleRate())
+		 _sampleRate = SAMPLES_PER_SEC_NEW;
+#endif
+}
+
 bool OSystem_WINCE3::set_sound_proc(SoundProc proc, void *param, SoundFormat format) {
 	SDL_AudioSpec desired;
 	int thread_priority;
@@ -170,18 +222,7 @@ bool OSystem_WINCE3::set_sound_proc(SoundProc proc, void *param, SoundFormat for
 	memset(&desired, 0, sizeof(desired));
 
 	_originalSoundProc = proc;
-	// See if the output frequency is forced by the game
-	if ((_gameDetector._game.features & Scumm::GF_DIGI_IMUSE) ||
-		_gameDetector._targetName == "queen" ||
-		strncmp(_gameDetector._targetName.c_str(), "sword", 5) == 0 ||
-		strncmp(_gameDetector._targetName.c_str(), "sky", 3) == 0)
-			desired.freq = SAMPLES_PER_SEC_NEW;
-	else {
-		if (ConfMan.getBool("CE_high_sample_rate"))
-			desired.freq = SAMPLES_PER_SEC_NEW;
-		else
-			desired.freq = SAMPLES_PER_SEC_OLD;
-	}
+	desired.freq = _sampleRate;
 	desired.format = AUDIO_S16SYS; 
 	desired.channels = 2;
 	//desired.samples = 2048;
@@ -570,12 +611,17 @@ void OSystem_WINCE3::update_screen() {
 		SDL_Rect dst;
 		uint32 srcPitch, dstPitch;
 		SDL_Rect *last_rect = _dirty_rect_list + _num_dirty_rects;
+		bool toolbarVisible = _toolbarHandler.visible();
 
 		if (_scaler_proc == Normal1x && !_adjustAspectRatio) {
 			SDL_Surface *target = _overlayVisible ? _tmpscreen : _screen;
 			for (r = _dirty_rect_list; r != last_rect; ++r) {
 				dst = *r;
-				
+
+				// Check if the toolbar is overwritten
+				if (!_forceFull && toolbarVisible && r->y + r->h >= 200) 
+					_toolbarHandler.forceRedraw();
+
 				if (_overlayVisible) {
 					// FIXME: I don't understand why this is necessary...
 					dst.x--;
@@ -606,6 +652,10 @@ void OSystem_WINCE3::update_screen() {
 				register int dst_y = r->y + _currentShakePos;
 				register int dst_h = 0;
 				register int orig_dst_y = 0;
+
+				// Check if the toolbar is overwritten
+				if (!_forceFull && toolbarVisible && r->y + r->h >= 200) 
+					_toolbarHandler.forceRedraw();
 
 				if (dst_y < _screenHeight) {
 					dst_h = r->h;
@@ -731,6 +781,10 @@ uint32 OSystem_WINCE3::property(int param, Property *value) {
 			default:
 				return 0;
 		}
+	} else if (param == PROP_GET_SAMPLE_RATE) {
+		if (!_sampleRate)
+			get_sample_rate();
+		return _sampleRate;
 	} else if (param == PROP_GET_FMOPL_ENV_BITS) { // imuse FM quality
 		if (ConfMan.getBool("CE_FM_high_quality"))
 			return FMOPL_ENV_BITS_HQ;
