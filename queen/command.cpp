@@ -446,7 +446,7 @@ int16 Command::executeCommand(uint16 comId, int16 condResult) {
 	// FIXME: the EXECUTE_EXIT1 stuff can be omitted as it is 
 	//        more or less redundant code
 	if (condResult > 0) {
-		_vm->logic()->joeSpeak(condResult, true);
+		_vm->logic()->makeJoeSpeak(condResult, true);
 	}
 	return condResult;
 }
@@ -757,7 +757,7 @@ bool Command::executeIfDialog(const char *description) {
 
 		char cutaway[20];
 		memset(cutaway, 0, sizeof(cutaway));
-		_vm->logic()->dialogue(description, _state.selNoun, cutaway);
+		_vm->logic()->startDialogue(description, _state.selNoun, cutaway);
 
 		while (cutaway[0] != '\0') {
 			char currentCutaway[20];
@@ -823,28 +823,28 @@ void Command::sayInvalidAction(Verb action, int16 subj1, int16 subj2) {
 
 	case VERB_OPEN:
 		// 'it doesn't seem to open'
-		_vm->logic()->joeSpeak(1);
+		_vm->logic()->makeJoeSpeak(1);
 		break;
 
 	case VERB_USE:
 		if (subj1 < 0) {
 			uint16 k = _vm->logic()->itemData(-subj1)->sfxDescription;
 			if (k > 0) {
-				_vm->logic()->joeSpeak(k, true);
+				_vm->logic()->makeJoeSpeak(k, true);
 			} else {
-				_vm->logic()->joeSpeak(2);
+				_vm->logic()->makeJoeSpeak(2);
 			}
 		} else {
-			_vm->logic()->joeSpeak(2);
+			_vm->logic()->makeJoeSpeak(2);
 		}
 		break;
 
 	case VERB_TALK_TO:
-		_vm->logic()->joeSpeak(24 + _vm->randomizer.getRandomNumber(2));
+		_vm->logic()->makeJoeSpeak(24 + _vm->randomizer.getRandomNumber(2));
 		break;
 
 	case VERB_CLOSE:
-		_vm->logic()->joeSpeak(2);
+		_vm->logic()->makeJoeSpeak(2);
 		break;
 
 	case VERB_MOVE:
@@ -852,12 +852,12 @@ void Command::sayInvalidAction(Verb action, int16 subj1, int16 subj2) {
 		if (subj1 > 0) {
 			int16 img = _vm->logic()->objectData(subj1)->image;
 			if (img == -4 || img == -3) {
-				_vm->logic()->joeSpeak(18);
+				_vm->logic()->makeJoeSpeak(18);
 			} else {
-				_vm->logic()->joeSpeak(3);
+				_vm->logic()->makeJoeSpeak(3);
 			}
 		} else {
-			_vm->logic()->joeSpeak(3);
+			_vm->logic()->makeJoeSpeak(3);
 		}
 		break;
 
@@ -867,30 +867,30 @@ void Command::sayInvalidAction(Verb action, int16 subj1, int16 subj2) {
 			if (subj2 > 0) {
 				int16 img = _vm->logic()->objectData(subj2)->image;
 				if (img == -4 || img == -3) {
-					_vm->logic()->joeSpeak(27 + _vm->randomizer.getRandomNumber(2));
+					_vm->logic()->makeJoeSpeak(27 + _vm->randomizer.getRandomNumber(2));
 				}
 			} else {
-				_vm->logic()->joeSpeak(11);
+				_vm->logic()->makeJoeSpeak(11);
 			}
 		} else {
-			_vm->logic()->joeSpeak(12);
+			_vm->logic()->makeJoeSpeak(12);
 		}
 		break;
 
 	case VERB_PICK_UP:
 		if (subj1 < 0) {
-			_vm->logic()->joeSpeak(14);
+			_vm->logic()->makeJoeSpeak(14);
 		} else {
 			int16 img = _vm->logic()->objectData(subj2)->image;
 			if (img == -4 || img == -3) {
 				// Trying to get a person
-				_vm->logic()->joeSpeak(20);
+				_vm->logic()->makeJoeSpeak(20);
 			} else {
 				// 5 : 'I can't pick that up'
 				// 6 : 'I don't think I need that'
 				// 7 : 'I'd rather leave it here'
 				// 8 : 'I don't think I'd have any use for that'
-				_vm->logic()->joeSpeak(5 + _vm->randomizer.getRandomNumber(3));
+				_vm->logic()->makeJoeSpeak(5 + _vm->randomizer.getRandomNumber(3));
 			}
 		}
 		break;
@@ -922,7 +922,7 @@ void Command::changeObjectState(Verb action, int16 obj, int16 song, bool cutDone
 			}
 		} else {
 			// 'it's already open !'
-			_vm->logic()->joeSpeak(9);
+			_vm->logic()->makeJoeSpeak(9);
 		}
 	} else if (action == VERB_CLOSE && !cutDone) {
 		if (State::findOn(objData->state) == STATE_ON_OFF) {
@@ -941,7 +941,7 @@ void Command::changeObjectState(Verb action, int16 obj, int16 song, bool cutDone
 			}
 		} else {
 			// 'it's already closed !'
-			_vm->logic()->joeSpeak(10);
+			_vm->logic()->makeJoeSpeak(10);
 		}
 	} else if (action == VERB_MOVE) {
 		State::alterOn(&objData->state, STATE_ON_OFF);
@@ -1046,7 +1046,7 @@ int16 Command::setConditions(uint16 command, bool lastCmd) {
 			// check to see if fail state is in fact a cutaway
 			const char *objDesc = _vm->logic()->objectTextualDescription(cmdGs->speakValue);
 			if (!executeIfCutaway(objDesc) && !executeIfDialog(objDesc)) {
-				_vm->logic()->joeSpeak(cmdGs->speakValue, true);
+				_vm->logic()->makeJoeSpeak(cmdGs->speakValue, true);
 			}
 			ret = -2;
 		} else {
@@ -1239,7 +1239,7 @@ void Command::lookAtSelectedObject() {
 //		if (_vm->logic()->objectData(objNum)->entryObj == 0) {
 //			if (makeJoeWalkTo(_selPosX, _selPosY, objNum, _state.selAction, false) == -2) {
 //				// 'I can't get close enough to have a look.'
-//				_vm->logic()->joeSpeak(13);
+//				_vm->logic()->makeJoeSpeak(13);
 //			}
 //		}
 //	}
@@ -1267,7 +1267,7 @@ void Command::lookAtSelectedObject() {
 		}
 	}
 
-	_vm->logic()->joeSpeak(desc, true);
+	_vm->logic()->makeJoeSpeak(desc, true);
 	_vm->logic()->joeFace();
 }
 

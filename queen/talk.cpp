@@ -99,7 +99,7 @@ void Talk::talk(const char *filename, int personInRoom, char *cutawayFilename) {
 
 	if (State::findTalk(data->state) == STATE_TALK_MUTE) {
 		// 'I can't talk to that'
-		_vm->logic()->joeSpeak(24 + _vm->randomizer.getRandomNumber(2));
+		_vm->logic()->makeJoeSpeak(24 + _vm->randomizer.getRandomNumber(2));
 		return;
 	}
 
@@ -107,7 +107,7 @@ void Talk::talk(const char *filename, int personInRoom, char *cutawayFilename) {
 
 	Person person;
 	memset(&person, 0, sizeof(Person));
-	_vm->logic()->personSetData(personInRoom, "", false, &person);
+	_vm->logic()->initPerson(personInRoom, "", false, &person);
 
 	if (NULL == person.name) {
 		error("Invalid person object");
@@ -337,7 +337,7 @@ void Talk::talk(const char *filename, int personInRoom, char *cutawayFilename) {
 		pbs->y = person.actor->y;
 		
 		// Better kick start the persons anim sequence
-		_vm->graphics()->animReset(person.actor->bobNum);
+		_vm->graphics()->resetPersonAnim(person.actor->bobNum);
 	}
 
 	_vm->logic()->joeWalk(JWM_NORMAL);

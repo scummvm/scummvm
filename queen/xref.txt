@@ -126,7 +126,7 @@ clearallbobs()				Graphics::bobClearAll
 clearbob()					Graphics::bobClear
 drawbobs()					Graphics::bobDrawAll
 invbob()					Graphics::bobDrawInventoryItem
-loadbackdrop()				Graphics::loadBackdrop
+loadbackdrop()				*included in Display::setupNewRoom*
 loadpanel()					Graphics::loadPanel
 MAKE_SPEAK_BOB()			Graphics::bobSetText
 makeanim()					BobSlot::animNormal
@@ -172,8 +172,8 @@ JOE
 ===
 FACE_JOE()					Logic::joeFace
 GRAB_DIR(),GRAB_JOE()		Logic::joeGrab
-SETUP_HERO()				Logic::joeSetupInRoom
-SETUP_JOE()					Logic::joeSetup
+SETUP_HERO()				Logic::setupJoeInRoom
+SETUP_JOE()					Logic::setupJoe
 USE_UNDERWEAR()				Logic::joeUseUnderwear
 USE_CLOTHES()				Logic::joeUseClothes
 USE_DRESS()					Logic::joeUseDress
@@ -205,6 +205,7 @@ walkgameload				*not needed ?*
 LOGIC
 =====
 CHECK_PLAYER()				Logic::checkPlayer
+CUTAWAY_SPECIAL()
 DISP_OBJECTS()				Logic::roomSetupObjects
 DISP_ROOM()					Logic::roomDisplay
 FIND_BOB()					Logic::findBob
@@ -248,7 +249,6 @@ GRAPHIC_MAX					Logic::_numGraphics
 ITEMTOT						Logic::_numItems
 ITEM_DATA					Logic::_itemData
 NAMETOT						Logic::_numNames
-NEW_ANIM					Logic::_newAnim
 OBJ_DESC_DATA				Logic::_objectDescription
 OBJ_DESC_MAX				Logic::_numObjDesc
 OBJECT_BOX					Logic::_objectBox
@@ -262,19 +262,20 @@ ROOMTOT						Logic::_numRooms
 ROOM_DATA					Logic::_roomData
 ROOM_NAMEstr				Logic::_roomName
 SFACTOR						Logic::_joe.scale
-VERB_NAMEstr				Verb::_verbName
+VERB_NAMEstr				Logic::_verbName
 WALK_OFF_DATA				Logic::_walkOffData
 WALK_OFF_MAX				Logic::_numWalkOffs
 
 
 PERSONS
 =======
-ALLOCATE_PERSON()			Logic::personAllocate
-CREATE_ANIM()				Graphics::animCreate
-SET_PERSON_DATA()			Logic::personSetData
-SETUP_PERSON()				Logic::personSetup
+ALLOCATE_PERSON()			Logic::allocatePersonFrames
+CREATE_ANIM()				Graphics::setupPersonAnim
+SET_PERSON_DATA()			Logic::initPerson
+SETUP_PERSON()				Logic::setupPersonInRoom
 OBJ_PERSON()				Logic::objectForPerson
 -
+NEW_ANIM					Graphics::_newAnim
 PERSON_FACE
 PERSON_FACE_MAX
 PERSON_FRAMES				Logic::_personFrames

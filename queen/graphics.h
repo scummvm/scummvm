@@ -179,11 +179,13 @@ public:
 	int textCenterX(const char *text) const; // MIDDLE()
 	void textColor(uint16 y, uint8 color) { _texts[y].color = color; }
 
-	uint16 animCreate(uint16 curImage, const Person *person);
-	void animSetup(const GraphicData *gd, uint16 firstImage, uint16 bobNum, bool visible);
-	void animReset(uint16 bobNum);
-	void animErase(uint16 bobNum);
-	void animEraseAll();
+	void fillAnimBuffer(const char *anim, AnimFrame *af);
+	uint16 countAnimFrames(const char *anim);
+	void setupObjectAnim(const GraphicData *gd, uint16 firstImage, uint16 bobNum, bool visible);
+	uint16 setupPersonAnim(const ActorData *ad, const char *anim, uint16 curImage);
+	void resetPersonAnim(uint16 bobNum);
+	void erasePersonAnim(uint16 bobNum);
+	void eraseAllAnims();
 
 	void loadPanel();
 

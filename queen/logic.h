@@ -130,7 +130,7 @@ public:
 	const char *joeResponse(int i) const { return _joeResponse[i]; }
 	const char *verbName(Verb v) const { return _verbName[v]; }
 
-	int16 gameState(int index);
+	int16 gameState(int index) const;
 	void gameState(int index, int16 newValue);
 
 	TalkSelected *talkSelected(int index) { return _talkSelected + index; }
@@ -169,18 +169,18 @@ public:
 	uint16 numFrames() const { return _numFrames; }
 
 	ActorData *findActor(uint16 noun, const char *name = NULL);
-	void personSetData(int16 noun, const char *actorName, bool loadBank, Person *pp);
-	uint16 personSetup(uint16 noun, uint16 curImage);
-	uint16 personAllocate(uint16 noun, uint16 curImage);
+	void initPerson(int16 noun, const char *actorName, bool loadBank, Person *pp);
+	uint16 setupPersonInRoom(uint16 noun, uint16 curImage);
+	uint16 countPersonFrames(uint16 noun, uint16 curImage);
 	uint16 personFrames(uint16 bobNum) const { return _personFrames[bobNum]; }
 
-	void joeSetupFromBanks(const char *animBank, const char *standBank);
+	void loadJoeBanks(const char *animBank, const char *standBank);
 
 	//! Load the various bobs needed to animate Joe
-	void joeSetup();
+	void setupJoe();
 
 	//! Setup Joe at the right place when entering a room
-	ObjectData *joeSetupInRoom(bool autoPosition, uint16 scale);
+	ObjectData *setupJoeInRoom(bool autoPosition, uint16 scale);
 	
 	uint16 joeFace();
 	void joeGrab(int16 grabState);
@@ -189,10 +189,9 @@ public:
 	void joeUseClothes(bool showCut);
 	void joeUseUnderwear();
 
-	void joeSpeak(uint16 descNum, bool objectType = false);
-
+	void makeJoeSpeak(uint16 descNum, bool objectType = false);
 	void makePersonSpeak(const char *sentence, Person *person, const char *voiceFilePrefix);
-	void dialogue(const char *dlgFile, int personInRoom, char *cutaway);
+	void startDialogue(const char *dlgFile, int personInRoom, char *cutaway);
 	void playCutaway(const char *cutFile, char *next = NULL);
 
 	Verb findVerbUnderCursor(int16 cursorx, int16 cursory) const;

@@ -306,7 +306,7 @@ int16 Walk::moveJoe(int direction, int16 endx, int16 endy, bool inCutaway) {
 			}
 		} else {
 			// path has been blocked, make Joe say so
-			_vm->logic()->joeSpeak(4);
+			_vm->logic()->makeJoeSpeak(4);
 			can = -1;
 		}
 	}

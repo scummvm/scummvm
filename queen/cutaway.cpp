@@ -794,7 +794,7 @@ void Cutaway::handlePersonRecord(
 		} 
 	}
 	else {
-		_vm->logic()->personSetData(
+		_vm->logic()->initPerson(
 				object.objectNumber - _vm->logic()->currentRoomData(), 
 				"", true, &p);
 
@@ -1023,7 +1023,7 @@ void Cutaway::run(char *nextFilename) {
 			if (object->image == -3 || object->image == -4) {
 				k++;
 				if (object->name > 0) {
-					_vm->graphics()->animReset(k);
+					_vm->graphics()->resetPersonAnim(k);
 				}
 			}
 		}
@@ -1040,7 +1040,6 @@ void Cutaway::run(char *nextFilename) {
 			_vm->logic()->gameState(3, 1);
 			_vm->logic()->inventoryRefresh();
 		}
-
 	}
 
 	joeBob->animating = 0;

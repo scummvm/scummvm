@@ -260,7 +260,7 @@ void Logic::initialise() {
 	memset(_gameState, 0, sizeof(_gameState));
 	_vm->graphics()->loadPanel();
 	_vm->graphics()->bobSetupControl();
-	joeSetup();
+	setupJoe();
 	zoneSetupPanel();
 
 	_oldRoom = 0;
@@ -268,11 +268,7 @@ void Logic::initialise() {
 
 
 ObjectData* Logic::objectData(int index) const {
-	if (index < 0) {
-		warning("Logic::objectData() called with negative object index: %i", index);
-	}
-	index = ABS(index); // cyx: is that really necessary ?
-	if (index <= _numObjects)
+	if (index >= 0 && index <= _numObjects)
 		return &_objectData[index];
 	else
 		error("[Logic::objectData] Invalid object data index: %i", index);
@@ -480,7 +476,7 @@ void Logic::joeWalk(JoeWalkMode walking) {
 }
 
 
-int16 Logic::gameState(int index) {
+int16 Logic::gameState(int index) const {
 	if (index >= 0 && index < GAME_STATE_COUNT)
 		return _gameState[index];
 	else
@@ -616,7 +612,7 @@ void Logic::roomErase() {
 	for (i = 0; i <= 3; ++i) {
 		_personFrames[i] = 0;
 	}
-	_vm->graphics()->animEraseAll();
+	_vm->graphics()->eraseAllAnims();
 
 	uint16 cur = _roomData[_oldRoom] + 1;
 	uint16 last = _roomData[_oldRoom + 1];
@@ -767,7 +763,7 @@ void Logic::roomSetupObjects() {
 			if (pgd->firstFrame < 0) {
 				// FIXME: if(TEMPA[1]<0) bobs[CURRBOB].xflip=1;
 				curBob = 5 + _numFurnitureAnimated;
-				_vm->graphics()->animSetup(pgd, curImage + 1, curBob + numObjectAnimated, pod->name > 0);
+				_vm->graphics()->setupObjectAnim(pgd, curImage + 1, curBob + numObjectAnimated, pod->name > 0);
 				curImage += pgd->lastFrame;
 				++numObjectAnimated;
 			} else if (lastFrame != 0) {
@@ -816,9 +812,9 @@ void Logic::roomSetupObjects() {
 			debug(6, "Logic::roomSetupObjects() - Setting up person %X, name=%X", i, pod->name);
 			uint16 noun = i - currentRoomData();
 			if (pod->name > 0) {
-				curImage = personSetup(noun, curImage);
+				curImage = setupPersonInRoom(noun, curImage);
 			} else {
-				curImage = personAllocate(noun, curImage);
+				curImage = countPersonFrames(noun, curImage);
 			}
 		}
 	}
@@ -879,7 +875,7 @@ uint16 Logic::roomRefreshObject(uint16 obj) {
 				curImage = _numFrames;
 				_personFrames[pNum] = curImage;
 			}
-			curImage = personSetup(obj - currentRoomData(), curImage);
+			curImage = setupPersonInRoom(obj - currentRoomData(), curImage);
 		}
 		return curImage;
 	}
@@ -906,7 +902,7 @@ uint16 Logic::roomRefreshObject(uint16 obj) {
 		rebound = true;
 	}
 	if (pgd->firstFrame < 0) {
-		_vm->graphics()->animSetup(pgd, curImage, curBob, pod->name != 0);
+		_vm->graphics()->setupObjectAnim(pgd, curImage, curBob, pod->name != 0);
 		curImage += pgd->lastFrame - 1;
 	} else if (lastFrame != 0) {
 		// turn on an animated bob
@@ -975,7 +971,7 @@ void Logic::roomDisplay(uint16 room, RoomDisplayMode mode, uint16 scale, int com
 	roomSetup(roomName(room), comPanel, inCutaway);
 	ObjectData *pod = NULL;
 	if (mode != RDM_FADE_NOJOE) {
-		pod = joeSetupInRoom(mode != RDM_FADE_JOE_XY, scale);
+		pod = setupJoeInRoom(mode != RDM_FADE_JOE_XY, scale);
 	}
 	if (mode != RDM_NOFADE_JOE) {
 		update();
@@ -1035,9 +1031,9 @@ ActorData *Logic::findActor(uint16 noun, const char *name) {
 }
 
 
-void Logic::personSetData(int16 noun, const char *actorName, bool loadBank, Person *pp) {
+void Logic::initPerson(int16 noun, const char *actorName, bool loadBank, Person *pp) {
 	if (noun <= 0) {
-		warning("Person::setData() - Invalid object number: %i", noun);
+		warning("Logic::initPerson() - Invalid object number: %i", noun);
 	}	
 	ActorData *pad = findActor(noun, actorName);
 	if (pad != NULL) {
@@ -1058,14 +1054,14 @@ void Logic::personSetData(int16 noun, const char *actorName, bool loadBank, Pers
 }
 
 
-uint16 Logic::personSetup(uint16 noun, uint16 curImage) {
+uint16 Logic::setupPersonInRoom(uint16 noun, uint16 curImage) {
 	if (noun == 0) {
 		warning("Trying to setup person 0");
 		return curImage;
 	}
 
 	Person p;
-	personSetData(noun, "", true, &p);
+	initPerson(noun, "", true, &p);
 
 	const ActorData *pad = p.actor;
 	uint16 scale = 100;
@@ -1087,39 +1083,25 @@ uint16 Logic::personSetup(uint16 noun, uint16 curImage) {
 
 	if (p.anim != NULL) {
 		_personFrames[pad->bobNum] = curImage + 1;
-		curImage = _vm->graphics()->animCreate(curImage, &p);
+		curImage = _vm->graphics()->setupPersonAnim(pad, p.anim, curImage);
 	} else {
-		_vm->graphics()->animErase(pad->bobNum);
+		_vm->graphics()->erasePersonAnim(pad->bobNum);
 	}
 	return curImage;
 }
 
 
-uint16 Logic::personAllocate(uint16 noun, uint16 curImage) {
+uint16 Logic::countPersonFrames(uint16 noun, uint16 curImage) {
 	ActorData *pad = findActor(noun);
 	if (pad != NULL && pad->anim != 0) {
-		const char *animStr = _aAnim[pad->anim];
-		bool allocatedFrames[256];
-		memset(allocatedFrames, 0, sizeof(allocatedFrames));
-		uint16 f1, f2;
-		do {
-			sscanf(animStr, "%3hu,%3hu", &f1, &f2);
-			animStr += 8;
-			allocatedFrames[f1] = true;
-		} while(f1 != 0);
-		for (int i = 1; i <= 255; ++i) {
-			if (allocatedFrames[i]) {
-				++curImage;
-			}
-		}
-		// FIXME: shouldn't this line be executed BEFORE curImage is incremented ?
+		curImage += _vm->graphics()->countAnimFrames(_aAnim[pad->anim]);
 		_personFrames[pad->bobNum] = curImage + 1;
 	}
 	return curImage;
 }
 
 
-void Logic::joeSetupFromBanks(const char *animBank, const char *standBank) {
+void Logic::loadJoeBanks(const char *animBank, const char *standBank) {
 	int i;
 	_vm->bankMan()->load(animBank, 13);
 	for (i = 11; i <= 28 + FRAMES_JOE_XTRA; ++i) {
@@ -1134,22 +1116,22 @@ void Logic::joeSetupFromBanks(const char *animBank, const char *standBank) {
 }
 
 
-void Logic::joeSetup() {
-	joeSetupFromBanks("joe_a.BBK", "joe_b.BBK");
+void Logic::setupJoe() {
+	loadJoeBanks("joe_a.BBK", "joe_b.BBK");
 	joePrevFacing(DIR_FRONT);
 	joeFacing(DIR_FRONT);
 }
 
 
-ObjectData *Logic::joeSetupInRoom(bool autoPosition, uint16 scale) {
-	debug(6, "Logic::joeSetupInRoom(%d, %d) joe.x=%d joe.y=%d", autoPosition, scale, _joe.x, _joe.y);
+ObjectData *Logic::setupJoeInRoom(bool autoPosition, uint16 scale) {
+	debug(9, "Logic::setupJoeInRoom(%d, %d) joe.x=%d joe.y=%d", autoPosition, scale, _joe.x, _joe.y);
 
 	uint16 oldx;
 	uint16 oldy;
 	WalkOffData *pwo = NULL;
 	ObjectData *pod = objectData(_entryObj);
 	if (pod == NULL) {
-		error("Logic::joeSetupInRoom() - No object data for obj %d", _entryObj);
+		error("Logic::setupJoeInRoom() - No object data for obj %d", _entryObj);
 	}
 
 	if (!autoPosition || joeX() != 0 || joeY() != 0) {
@@ -1349,7 +1331,7 @@ void Logic::joeUseDress(bool showCut) {
 		}
 	}
 	_vm->display()->palSetJoeDress();
-	joeSetupFromBanks("JoeD_A.BBK", "JoeD_B.BBK");
+	loadJoeBanks("JoeD_A.BBK", "JoeD_B.BBK");
 	inventoryDeleteItem(ITEM_DRESS);
 	gameState(VAR_DRESSING_MODE, 2);
 }
@@ -1363,7 +1345,7 @@ void Logic::joeUseClothes(bool showCut) {
 		inventoryInsertItem(ITEM_DRESS);
 	}
 	_vm->display()->palSetJoeNormal();
-	joeSetupFromBanks("Joe_A.BBK", "Joe_B.BBK");
+	loadJoeBanks("Joe_A.BBK", "Joe_B.BBK");
 	inventoryDeleteItem(ITEM_CLOTHES);
 	gameState(VAR_DRESSING_MODE, 0);
 }
@@ -1371,7 +1353,7 @@ void Logic::joeUseClothes(bool showCut) {
 
 void Logic::joeUseUnderwear() {
 	_vm->display()->palSetJoeNormal();
-	joeSetupFromBanks("JoeU_A.BBK", "JoeU_B.BBK");
+	loadJoeBanks("JoeU_A.BBK", "JoeU_B.BBK");
 	gameState(VAR_DRESSING_MODE, 1);
 }
 
@@ -1382,7 +1364,7 @@ void Logic::makePersonSpeak(const char *sentence, Person *person, const char *vo
 }
 
 
-void Logic::dialogue(const char *dlgFile, int personInRoom, char *cutaway) {
+void Logic::startDialogue(const char *dlgFile, int personInRoom, char *cutaway) {
 	char cutawayFile[20];
 	if (cutaway == NULL) {
 		cutaway = cutawayFile;
@@ -1405,9 +1387,9 @@ void Logic::playCutaway(const char *cutFile, char *next) {
 }
 
 
-void Logic::joeSpeak(uint16 descNum, bool objectType) {
-	// joeSpeak(k, false) == SPEAK(JOE_RESPstr[k],"JOE",find_cd_desc(k)) 
-	// joeSpeak(k, true)  == SPEAK(OBJECT_DESCRstr[k],"JOE",find_cd_desc(JOERESPMAX+k))
+void Logic::makeJoeSpeak(uint16 descNum, bool objectType) {
+	// makeJoeSpeak(k, false) == SPEAK(JOE_RESPstr[k],"JOE",find_cd_desc(k)) 
+	// makeJoeSpeak(k, true)  == SPEAK(OBJECT_DESCRstr[k],"JOE",find_cd_desc(JOERESPMAX+k))
 	const char *text = objectType ? _objDescription[descNum] : _joeResponse[descNum];
 	if (objectType) {
 		descNum += JOE_RESPONSE_MAX;
@@ -1685,7 +1667,7 @@ void Logic::customMoveJoe(int facing, uint16 areaNum, uint16 walkDataNum) {
 
 	switch (_currentRoom) {
 	case ROOM_JUNGLE_BRIDGE:
-		joeSpeak(16);
+		makeJoeSpeak(16);
 		break;
 	case ROOM_JUNGLE_GORILLA_1:
 		playCutaway("c6c.CUT", nextCut);
@@ -1734,10 +1716,10 @@ void Logic::customMoveJoe(int facing, uint16 areaNum, uint16 walkDataNum) {
 		playCutaway("c53b.CUT", nextCut);
 		break;
 	case ROOM_TEMPLE_LIZARD_LASER:
-		joeSpeak(19);
+		makeJoeSpeak(19);
 		break;
 	case ROOM_HOTEL_DOWNSTAIRS:
-		joeSpeak(21);
+		makeJoeSpeak(21);
 		break;
 	case ROOM_HOTEL_LOBBY:
 		if (_gameState[VAR_ESCAPE_FROM_HOTEL_COUNT] == 0) {
@@ -1754,7 +1736,7 @@ void Logic::customMoveJoe(int facing, uint16 areaNum, uint16 walkDataNum) {
 		break;
 	case ROOM_TEMPLE_MAZE_5:
 		if (areaNum == 7) {
-			joeSpeak(17);
+			makeJoeSpeak(17);
 		}
 		break;
 	case ROOM_TEMPLE_MAZE_6:
@@ -2563,7 +2545,7 @@ void Logic::asmShakeScreen() {
 void Logic::asmAttemptPuzzle() {
 	++_puzzleAttemptCount;
 	if (_puzzleAttemptCount & 4) {
-		joeSpeak(226, true);
+		makeJoeSpeak(226, true);
 		_puzzleAttemptCount = 0;
 	}
 }

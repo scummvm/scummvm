@@ -278,11 +278,10 @@ BobFrame *BankManager::fetchFrame(uint32 index) {
 
 
 void BankManager::eraseFrame(uint32 index) {
+	debug(9, "BankManager::eraseFrame(%d)", index);
 	BobFrame *pbf = &_frames[index];
-	pbf->width  = 0;
-	pbf->height = 0;
 	delete[] pbf->data;
-	pbf->data = 0;
+	memset(pbf, 0, sizeof(BobFrame));
 }
 
 
@@ -465,9 +464,9 @@ void Graphics::bobSortAll() {
 
 			if (pbs->animating) {
 				pbs->animOneStep();
-				if (pbs->frameNum > 500) {
-					pbs->frameNum -= 500;
+				if (pbs->frameNum > 500) { // SFX frame
 					_vm->sound()->playSfx(_vm->logic()->currentRoomSfx());
+					pbs->frameNum -= 500;
 				}
 			}
 			if (pbs->moving) {
@@ -668,64 +667,40 @@ uint16 Graphics::textWidth(const char* text) const {
 }
 
 
-uint16 Graphics::animCreate(uint16 curImage, const Person *person) {
-	AnimFrame *animFrames = _newAnim[person->actor->bobNum];
-
-	uint16 allocatedFrames[256];
-	memset(allocatedFrames, 0, sizeof(allocatedFrames));
-	const char *p = person->anim;
-	int frame = 0;
-	uint16 f1, f2;
-	do {
-		sscanf(p, "%3hu,%3hu", &f1, &f2);
-		animFrames[frame].frame = f1;
-		animFrames[frame].speed = f2;
-
-		if (f1 > 500) {
-			// SFX
-			allocatedFrames[f1 - 500] = 1;
-		} else {
-			allocatedFrames[f1] = 1;
-		}
-		
-		p += 8;
-		++frame;
-	} while(f1 != 0);
-	
-	// ajust frame numbers
-	uint16 n = 1;
-	uint16 i;
-	for (i = 1; i <= 255; ++i) {
-		if (allocatedFrames[i] != 0) {
-			allocatedFrames[i] = n;
-			++n;
-		}
+void Graphics::fillAnimBuffer(const char *anim, AnimFrame *af) {
+	while (true) {
+		sscanf(anim, "%3hu,%3hu", &af->frame, &af->speed);
+		if (af->frame == 0)
+			break;
+		anim += 8;
+		++af;
 	}
-	for (i = 0; animFrames[i].frame != 0; ++i) {
-		uint16 frameNum = animFrames[i].frame;
-		if (frameNum > 500) {
-			animFrames[i].frame = curImage + allocatedFrames[frameNum - 500] + 500;
-		} else {
-			animFrames[i].frame = curImage + allocatedFrames[frameNum];
-		}
-	}
-
-	// unpack necessary frames
-	for (i = 1; i <= 255; ++i) {
-		if (allocatedFrames[i] != 0) {
-			++curImage;
-			_vm->bankMan()->unpack(i, curImage, person->actor->bankNum);
-		}
-	}
-
-	// start animation
-	bob(person->actor->bobNum)->animString(animFrames);
-
-	return curImage;
 }
 
 
-void Graphics::animSetup(const GraphicData *gd, uint16 firstImage, uint16 bobNum, bool visible) {
+uint16 Graphics::countAnimFrames(const char *anim) {
+	AnimFrame afbuf[30];
+	fillAnimBuffer(anim, afbuf);
+
+	bool frames[256];
+	memset(frames, 0, sizeof(frames));
+	uint16 count = 0;
+	AnimFrame *af = afbuf;
+	for ( ; af->frame != 0; ++af) {
+		uint16 frameNum = af->frame;
+		if (frameNum > 500) {
+			frameNum -= 500;
+		}
+		if (!frames[frameNum]) {
+			frames[frameNum] = true;
+			++count;
+		}
+	}
+	return count;
+}
+
+
+void Graphics::setupObjectAnim(const GraphicData *gd, uint16 firstImage, uint16 bobNum, bool visible) {
 	int16 tempFrames[20];
 	memset(tempFrames, 0, sizeof(tempFrames));
 	uint16 numTempFrames = 0;
@@ -801,14 +776,60 @@ void Graphics::animSetup(const GraphicData *gd, uint16 firstImage, uint16 bobNum
 }
 
 
-void Graphics::animReset(uint16 bobNum) {
+uint16 Graphics::setupPersonAnim(const ActorData *ad, const char *anim, uint16 curImage) {
+	debug(9, "Graphics::setupPersonAnim(%s, %d)", anim, curImage);
+	AnimFrame *animFrames = _newAnim[ad->bobNum];
+	fillAnimBuffer(anim, animFrames);
+	uint16 frameCount[256];
+	memset(frameCount, 0, sizeof(frameCount));
+	AnimFrame *af = animFrames;
+	for ( ; af->frame != 0; ++af) {
+		uint16 frameNum = af->frame;
+		if (frameNum > 500) {
+			frameNum -= 500;
+		}
+		if (!frameCount[frameNum]) {
+			frameCount[frameNum] = 1;
+		}
+	}
+	uint16 i, n = 1;
+	for (i = 1; i < 256; ++i) {
+		if (frameCount[i]) {
+			frameCount[i] = n;
+			++n;
+		}
+	}
+	af = animFrames;
+	for ( ; af->frame != 0; ++af) {
+		if (af->frame > 500) {
+			af->frame = curImage + frameCount[af->frame - 500] + 500;
+		} else {
+			af->frame = curImage + frameCount[af->frame];
+		}
+	}
+
+	// unpack necessary frames
+	for (i = 1; i < 256; ++i) {
+		if (frameCount[i]) {
+			++curImage;
+			_vm->bankMan()->unpack(i, curImage, ad->bankNum);
+		}
+	}
+
+	// start animation
+	bob(ad->bobNum)->animString(animFrames);
+	return curImage;
+}
+
+
+void Graphics::resetPersonAnim(uint16 bobNum) {
 	if (_newAnim[bobNum][0].frame != 0) {
 		bob(bobNum)->animString(_newAnim[bobNum]);
 	}
 }
 
 
-void Graphics::animErase(uint16 bobNum) {
+void Graphics::erasePersonAnim(uint16 bobNum) {
 	_newAnim[bobNum][0].frame = 0;
 	BobSlot *pbs = bob(bobNum);
 	pbs->animating = false;
@@ -816,7 +837,7 @@ void Graphics::animErase(uint16 bobNum) {
 }
 
 
-void Graphics::animEraseAll() {
+void Graphics::eraseAllAnims() {
 	for (int i = 1; i <= 16; ++i) {
 		_newAnim[i][0].frame = 0;
 	}
