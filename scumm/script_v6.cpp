@@ -2482,7 +2482,7 @@ void ScummEngine_v6::o6_kernelSetFunctions() {
 			enqueueText(message, args[3], args[4], args[2], args[1], true);
 			break;}
 		case 20:
-			warning("o6_kernelSetFunctions: turn 'RadioChatter' effect for voice, on/off(%d)", args[1]);
+			// it's used for turn on/off 'RadioChatter' effect for voice in the dig, but i's not needed
 			break;
 		case 107:
 			a = derefActor(args[1], "o6_kernelSetFunctions: 107");
