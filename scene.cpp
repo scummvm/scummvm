@@ -47,6 +47,12 @@ Scene::Scene(const char *name, const char *buf, int len) :
     setups_[i].load(ts);
   currSetup_ = setups_;
 
+  numSectors_ = -1;
+  numLights_ = -1;
+  // Lights are optional
+  if (ts.eof())
+   return;
+
   ts.expectString("section: lights");
   ts.scanString(" numlights %d", 1, &numLights_);
   lights_ = new Light[numLights_];
@@ -54,9 +60,8 @@ Scene::Scene(const char *name, const char *buf, int len) :
     lights_[i].load(ts);
 
   // Calculate the number of sectors
-  numSectors_ = -1;
   ts.expectString("section: sectors");
-  if (ts.eof()) 	// Sometimes there ARE no sectors (eg, inv room)
+  if (ts.eof()) 	// Sectors are optional, but section: doesn't seem to be
 	return;
   ts.scanString(" sector %256s", 1, tempBuf);
   ts.scanString(" id %d", 1, &numSectors_);
