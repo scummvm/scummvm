@@ -297,6 +297,25 @@ void Sound::playSound(int soundID) {
 		// 80 80 80 80 80 80 80 80  |........|
 		// 80 80 80 80 80 80 80 80  |........|
 
+#if 1
+		// Fingolfin says: after eyeballing a single SEGA
+		// SBL resource, it would seem as if the content of the
+		// data subchunk (AUdt) is XORed with 0x16. At least
+		// then a semi-sane VOC header is revealed, with
+		// a sampling rate of ~25000 Hz (does that make sense?).
+		// I'll add some code to test that theory for now.
+		if (_scumm->_gameId == GID_MONKEY_SEGA)	{
+			size = READ_BE_UINT32(ptr + 4) - 27;
+			for (int i = 0; i < size; i++)
+				ptr[27 + i] ^= 0x16;
+		}
+
+		VocBlockHeader &voc_block_hdr = *(VocBlockHeader *)(ptr + 27);
+		assert(voc_block_hdr.blocktype == 1);
+		size = voc_block_hdr.size[0] + (voc_block_hdr.size[1] << 8) + (voc_block_hdr.size[2] << 16) - 2;
+		rate = getSampleRateFromVOCRate(voc_block_hdr.sr);
+		assert(voc_block_hdr.pack == 0);
+#else
 		// FIXME: SBL resources are apparently horribly
 		// distorted on segacd even though it shares the same
 		// header etc. So don't try to play them for now.
@@ -310,6 +329,7 @@ void Sound::playSound(int soundID) {
 			rate = 8000;
 
 		size = READ_BE_UINT32(ptr + 4) - 27;
+#endif
 
 		// Allocate a sound buffer, copy the data into it, and play
 		sound = (char *)malloc(size);
