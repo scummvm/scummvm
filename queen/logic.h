@@ -43,10 +43,7 @@ struct ZoneSlot {
 
 struct GameConfig {
 	int musicVolume;
-	bool musicToggle;
-	bool sfxToggle;
 	bool textToggle;
-	bool speechToggle;
 	int talkSpeed;
 };
 

@@ -25,6 +25,7 @@
 #include "queen/input.h"
 #include "queen/graphics.h"
 #include "queen/logic.h"
+#include "queen/sound.h"
 #include "queen/talk.h"
 #include "queen/walk.h"
 
@@ -125,8 +126,8 @@ void SelectedCmdState::init() {
 }
 
 
-Command::Command(Logic *l, Graphics *g, Input *i, Walk *w)
-	: _logic(l), _graphics(g), _input(i), _walk(w) {
+Command::Command(Logic *l, Graphics *g, Input *i, Walk *w, Sound *s)
+	: _logic(l), _graphics(g), _input(i), _walk(w), _sound(s) {
 	_cmdText._graphics = _graphics;
 	_cmdText._logic = _logic;
 }
@@ -365,7 +366,7 @@ void Command::executeCurrentAction(bool walk) {
 	if (_selCmd.action.value() != VERB_OPEN && _selCmd.action.value() != VERB_CLOSE) {
 		// only play song if it's a PLAY BEFORE type
 		if (com->song > 0) {
-			// XXX playsong(com->song);
+			_sound->playSong(com->song);
 		}
 	}
 
@@ -423,7 +424,7 @@ void Command::executeCurrentAction(bool walk) {
 
 	// only play song if it's a PLAY AFTER type
 	if (com->song > 0) {
-		// XXX playsong(com->song);
+		_sound->playSong(com->song);
 	}
 
 	clear(true);
@@ -1045,7 +1046,7 @@ void Command::changeObjectState(const Verb& action, int16 obj, int16 song, bool 
 
 			// play music if it exists... (or SFX for open/close door)
 			if (song != 0) {
-				// XXX playsong(abs(song));
+				_sound->playSong(abs(song));
 			}
 
 			if (objData->entryObj != 0) {
@@ -1067,7 +1068,7 @@ void Command::changeObjectState(const Verb& action, int16 obj, int16 song, bool 
 
 			// play music if it exists... (or SFX for open/close door)
 			if (song != 0) {
-				// XXX playsong(abs(song));
+				_sound->playSong(abs(song));
 			}
 
 			if (objData->entryObj != 0) {

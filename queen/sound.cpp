@@ -95,7 +95,7 @@ static ov_callbacks g_File_wrap = {
 #endif
 
 Sound::Sound(SoundMixer *mixer, Input *input, Resource  *resource) : 
-	_mixer(mixer), _input(input), _resource(resource), _lastOverride(0), _currentSong(0), _sfxHandle(0) {
+	_mixer(mixer), _input(input), _resource(resource), _lastOverride(0), _currentSong(0), _sfxHandle(0), _sfxToggle(true), _speechToggle(true), _musicToggle(true) {
 }
 
 Sound::~Sound() {
@@ -137,7 +137,7 @@ void Sound::waitSfxFinished() {
 void Sound::playSong(int16 songNum) {
 	int16 newTune = _song[songNum - 1].tuneList[0];
 
-	if (_tune[newTune - 1].sfx[0] /* && _sfxToggle */ )
+	if (_tune[newTune - 1].sfx[0] && sfxOn())
 		sfxPlay(_sfxName[_tune[newTune - 1].sfx[0] - 1]);
 }
 

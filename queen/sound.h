@@ -56,6 +56,18 @@ public:
 	void waitSfxFinished();
 	void playSong(int16 songNum);
 
+	bool sfxOn()			{ return _sfxToggle; }
+	void sfxToggle(bool val)	{ _sfxToggle = val; }
+	void toggleSfx()		{ _sfxToggle ^= true; }
+
+	bool speechOn()			{ return _speechToggle; }
+	void speechToggle(bool val)	{ _speechToggle = val; }
+	void toggleSpeech()		{ _speechToggle ^= true; }
+	
+	bool musicOn()			{ return _musicToggle; }
+	void musicToggle(bool val)	{ _musicToggle = val; }
+	void toggleMusic()		{ _musicToggle ^= true; }
+
 protected:
 	SoundMixer *_mixer;
 	Input *_input;
@@ -64,6 +76,10 @@ protected:
 	static const songData _song[];
 	static const tuneData _tune[];
 	static const char *_sfxName[];
+
+	bool _sfxToggle;
+	bool _speechToggle;
+	bool _musicToggle;
 	
 	int16 _lastOverride;
 	int16 _lastMerge;

@@ -124,7 +124,7 @@ int32 Resource::resourceIndex(const char *filename) {
 			high = cur;
 	}
 
-	warning("Couldn't find file '%s'", entryName);
+	debug(7, "Couldn't find file '%s'", entryName);
 	return -1;
 }
 

@@ -28,6 +28,7 @@
 #include "queen/display.h"
 #include "queen/graphics.h"
 #include "queen/input.h"
+#include "queen/sound.h"
 #include "queen/talk.h"
 #include "queen/walk.h"
 
@@ -183,7 +184,7 @@ Logic::Logic(Resource *theResource, Graphics *graphics, Display *theDisplay, Inp
 	_joe.x = _joe.y = 0;
 	_joe.scale = 100;
 	_walk = new Walk(this, _graphics);
-	_cmd = new Command(this, _graphics, _input, _walk);
+	_cmd = new Command(this, _graphics, _input, _walk, _sound);
 	_dbg = new Debug(_input, this, _graphics);
 	memset(_gameState, 0, sizeof(_gameState));
 	memset(_talkSelected, 0, sizeof(_talkSelected));
@@ -380,9 +381,9 @@ void Logic::initialise() {
 
 	_settings.textToggle = true;	
 	if (_resource->isFloppy())
-		_settings.speechToggle = false;
+		_sound->speechToggle(false);
 	else
-		_settings.speechToggle = true;
+		_sound->speechToggle(true);
 
 	_cmd->clear(false);
 	_scene = 0;
@@ -2376,9 +2377,9 @@ bool Logic::gameSave(uint16 slot, const char *desc) {
 	
 	WRITE_BE_UINT16(ptr, _settings.talkSpeed); ptr += 2;
 	WRITE_BE_UINT16(ptr, _settings.musicVolume); ptr += 2;
-	WRITE_BE_UINT16(ptr, _settings.sfxToggle ? 1 : 0); ptr += 2;
-	WRITE_BE_UINT16(ptr, _settings.speechToggle ? 1 : 0); ptr += 2;
-	WRITE_BE_UINT16(ptr, _settings.musicToggle ? 1 : 0); ptr += 2;
+	WRITE_BE_UINT16(ptr, _sound->sfxOn() ? 1 : 0); ptr += 2;
+	WRITE_BE_UINT16(ptr, _sound->speechOn() ? 1 : 0); ptr += 2;
+	WRITE_BE_UINT16(ptr, _sound->musicOn() ? 1 : 0); ptr += 2;
 	WRITE_BE_UINT16(ptr, _settings.textToggle ? 1 : 0); ptr += 2;
 	
 	for (i = 0; i < 4; i++) {
@@ -2443,9 +2444,9 @@ bool Logic::gameLoad(uint16 slot) {
 	ptr += 32;	//skip description
 	_settings.talkSpeed = (int16)READ_BE_UINT16(ptr); ptr += 2;
 	_settings.musicVolume = (int16)READ_BE_UINT16(ptr); ptr += 2;
-	_settings.sfxToggle = READ_BE_UINT16(ptr) != 0; ptr += 2;
-	_settings.speechToggle = READ_BE_UINT16(ptr) != 0; ptr += 2;
-	_settings.musicToggle = READ_BE_UINT16(ptr) != 0; ptr += 2;
+	_sound->sfxToggle(READ_BE_UINT16(ptr) != 0); ptr += 2;
+	_sound->speechToggle(READ_BE_UINT16(ptr) != 0); ptr += 2;
+	_sound->musicToggle(READ_BE_UINT16(ptr) != 0); ptr += 2;
 	_settings.textToggle = READ_BE_UINT16(ptr) != 0; ptr += 2;
 
 	for (i = 0; i < 4; i++) {

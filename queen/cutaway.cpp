@@ -1072,7 +1072,7 @@ byte *Cutaway::handleAnimation(byte *ptr, CutawayObject &object) {
 				return NULL;
 
 			if (objAnim[i].song > 0)
-				/* XXX playsong(objAnim[i].song) */ ;
+				_sound->playSong(objAnim[i].song);
 
 			// Load but don't play
 			if(objAnim[i].song < 0) {
@@ -1396,9 +1396,9 @@ void Cutaway::run(char *nextFilename) {
 	_input->cutawayQuitReset();
 
 	if (_songBeforeComic > 0)
-		/* XXX playsong(_songBeforeComic) */ ;
+		_sound->playSong(_songBeforeComic);
 	else if (_lastSong > 0)
-		/* XXX playsong(_lastSong) */ ;
+		_sound->playSong(_lastSong);
 }
 
 void Cutaway::stop() {

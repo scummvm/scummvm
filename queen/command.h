@@ -87,7 +87,7 @@ struct SelectedCmdState {
 class Command {
 public:
 	
-	Command(Logic*, Graphics*, Input*, Walk*);
+	Command(Logic*, Graphics*, Input*, Walk*, Sound*);
 	
 	//! initialise command construction
 	void clear(bool clearTexts);
@@ -188,6 +188,7 @@ private:
 	Logic *_logic;
 	Graphics *_graphics;
 	Input *_input;
+	Sound *_sound;
 	Walk *_walk;
 
 };
