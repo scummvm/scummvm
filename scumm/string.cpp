@@ -278,6 +278,15 @@ void Scumm::CHARSET_1()
 		_useTalkAnims = true;
 	}
 
+	// HACK: Most of the audio sync in Loom is handled by the "MI1
+	// timer", but some of it depends on text strings timing out at
+	// the right moment.
+
+	if (_gameId == GID_LOOM256) {
+		_defaultTalkDelay = 100;
+		_vars[VAR_CHARINC] = 5;
+	}
+
 	_talkDelay = _defaultTalkDelay;
 
 	if (!_keepText) {
