@@ -294,7 +294,6 @@ void IMuseDigital::callback() {
 						_vm->_mixer->setChannelBalance(_track[l]->handle, pan);
 						_track[l]->stream->append(data, result);
 						_track[l]->regionOffset += result;
-						_track[l]->trackOffset += result;
 						free(data);
 					}
 

@@ -101,7 +101,6 @@ void IMuseDigital::startSound(int soundId, const char *soundName, int soundType,
 			_track[l]->curRegion = -1;
 			_track[l]->dataOffset = 0;
 			_track[l]->regionOffset = 0;
-			_track[l]->trackOffset = 0;
 			_track[l]->mod = 0;
 			_track[l]->mixerFlags = 0;
 			_track[l]->mixerPan = 0;
@@ -276,7 +275,6 @@ int IMuseDigital::cloneToFadeOutTrack(int track, int fadeDelay, int killNormalTr
 	_track[track]->soundId = _track[fadeTrack]->soundId;
 	_track[track]->dataOffset = _track[fadeTrack]->dataOffset;
 	_track[track]->regionOffset = _track[fadeTrack]->regionOffset;
-	_track[track]->trackOffset = _track[fadeTrack]->trackOffset;
 	_track[track]->curRegion = _track[fadeTrack]->curRegion;
 	_track[track]->curHookId = _track[fadeTrack]->curHookId;
 	_track[track]->iteration = _track[fadeTrack]->iteration;
