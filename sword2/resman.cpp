@@ -346,7 +346,13 @@ uint8	*resMan::Res_open( uint32 res )	//BHTony30May96
 		}
 */
 
-		curCd = cdTab[parent_res_file] & 3;
+		// If we're loading a cluster that's only available from one
+		// of the CDs, remember which one so that we can play the
+		// correct music.
+
+		if (!(cdTab[parent_res_file] & LOCAL_PERM)) {
+			curCd = cdTab[parent_res_file] & 3;
+		}
 
 		//open the cluster file
 		if (file.open(resource_files[parent_res_file], g_sword2->getGameDataPath()) == false) 
