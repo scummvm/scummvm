@@ -1455,7 +1455,8 @@ void Scumm::updatePalette() {
 	int num = _palDirtyMax - first + 1;
 	int i;
 
-	byte palette_colors[1024],*p = palette_colors;
+	byte palette_colors[1024];
+	byte *p = palette_colors;
 
 	for (i = _palDirtyMin; i <= _palDirtyMax; i++) {
 		byte *data;
@@ -1469,18 +1470,18 @@ void Scumm::updatePalette() {
 		// before uploading them to the backend.
 
 		if (noir_mode) {
-			double r, g, b;
-			double brightness;
+			int r, g, b;
+			byte brightness;
 
-			r = (double) data[0];
-			g = (double) data[1];
-			b = (double) data[2];
+			r = data[0];
+			g = data[1];
+			b = data[2];
 
-			brightness = (0.299 * r + 0.587 * g + 0.114 * b) + 0.5;
+			brightness = (byte)((0.299 * r + 0.587 * g + 0.114 * b) + 0.5);
 
-			*p++ = (byte) brightness;
-			*p++ = (byte) brightness;
-			*p++ = (byte) brightness;
+			*p++ = brightness;
+			*p++ = brightness;
+			*p++ = brightness;
 			*p++ = 0;
 		} else {
 			*p++ = data[0];
