@@ -11,6 +11,7 @@ LDFLAGS := -Wl,-Ttext,0x8c010000 -nostartfiles $(ronindir)/lib/crt0.o
 INCLUDES:= -I./ -I../.. -I../../common -I$(ronindir)/include/
 CPPFLAGS= $(DEFINES) $(INCLUDES)
 LIBS	= -L$(ronindir)/lib -lronin -lz -lm
+EXECUTABLE:= scummvm$(EXEEXT)
 EXEEXT = .elf
 MKDIR = mkdir -p
 ECHO = /usr/ucb/echo -n
