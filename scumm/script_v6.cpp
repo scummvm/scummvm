@@ -478,7 +478,7 @@ ArrayHeader *ScummEngine_v6::getArray(int array) {
 		return 0;
 	
 	// Workaround for a long standing bug where we save array headers in native
-	// endianess, instead of a fixed endianess. We try to detect savegames
+	// endianness, instead of a fixed endianness. We try to detect savegames
 	// which were created on a big endian system and convert them to little
 	// endian.
 	if ((ah->dim1 & 0xF000) || (ah->dim2 & 0xF000) || (ah->type & 0xFF00)) {

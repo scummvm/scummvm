@@ -479,7 +479,7 @@ if test -n "$_host"; then
 	linupy)
 	    echo "Cross-compiling to $_host, forcing endianness, alignment and type sizes"
 	    DEFINES="$DEFINES -DUNIX"
-	    _def_endianess='#define SCUMM_LITTLE_ENDIAN'
+	    _def_endianness='#define SCUMM_LITTLE_ENDIAN'
 	    _def_align='#define SCUMM_NEED_ALIGNMENT'
 	    _def_linupy="#define DLINUPY"
 	    type_1_byte='char'
@@ -532,10 +532,10 @@ else
     esac
 
     #
-    # Check for endianess
+    # Check for endianness
     #
-    echo_n "Checking endianess... "
-    cat <<EOF >tmp_endianess_check.cpp
+    echo_n "Checking endianness... "
+    cat <<EOF >tmp_endianness_check.cpp
 #include <stdio.h>
 #include <stdlib.h>
 int main(int argc, char **argv)
@@ -551,21 +551,21 @@ int main(int argc, char **argv)
     return 0;
 }
 EOF
-    $CXX -o tmp_endianess_check tmp_endianess_check.cpp
-    endianess=`./tmp_endianess_check`
-    echo $endianess;
-    case $endianess in
+    $CXX -o tmp_endianness_check tmp_endianness_check.cpp
+    endianness=`./tmp_endianness_check`
+    echo $endianness;
+    case $endianness in
 	big)
-	    _def_endianess='#define SCUMM_BIG_ENDIAN'
+	    _def_endianness='#define SCUMM_BIG_ENDIAN'
 	    ;;
 	little)
-	    _def_endianess='#define SCUMM_LITTLE_ENDIAN'
+	    _def_endianness='#define SCUMM_LITTLE_ENDIAN'
 	    ;;
 	*)
 	    exit 1
 	    ;;
     esac
-    rm -f tmp_endianess_check tmp_endianess_check.cpp
+    rm -f tmp_endianness_check tmp_endianness_check.cpp
 
     #
     # Check whether memory alignment is required
@@ -875,7 +875,7 @@ cat > config.h << EOF
 #ifndef CONFIG_H
 #define CONFIG_H
 
-$_def_endianess
+$_def_endianness
 $_def_align
 
 $_def_linupy
