@@ -197,7 +197,7 @@ bool Scumm::getSavegameName(int slot, char *desc)
 		return false;
 	}
 
-	if (hdr.ver < VER_V8 || hdr.ver > _current_version) {
+	if (hdr.ver < VER_V7 || hdr.ver > _current_version) {
 		strcpy(desc, "Invalid version");
 		return false;
 	}
