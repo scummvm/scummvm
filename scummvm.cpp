@@ -1109,17 +1109,15 @@ int Scumm::numSimpleDirDirections(int dirType)
 	return dirType ? 8 : 4;
 }
 
-const int16 many_direction_tab[18] = {4, 8, 71, 109, 251, 289, -1, -1, -1, -1, 22, 72, 107, 157, 202, 252, 287, 337};
-const int16 many_direction_tab_2[16] = {0, 90, 180, 270, -1, -1, -1, -1, 0, 45, 90, 135, 180, 225, 270, 315};
-const int bit_table[16] = {1,2,4,8,0x10,0x20,0x40,0x80,0x100,0x200,0x400,0x800,0x1000,0x2000,0x4000,0x8000};
+const int16 many_direction_tab[16] = {71, 109, 251, 289, -1, -1, -1, -1, 22, 72, 107, 157, 202, 252, 287, 337};
 
 
 /* Convert an angle to a simple direction */
 int Scumm::toSimpleDir(int dirType, int dir)
 {
-	int num = dirType ? 8 : 4, i;
-	const int16 *dirtab = &many_direction_tab[dirType * 8 + 2];
-	for (i = 1; i < num; i++, dirtab++) {
+	int num = dirType ? 8 : 4;
+	const int16 *dirtab = &many_direction_tab[dirType * 8];
+	for (int i = 1; i < num; i++, dirtab++) {
 		if (dir >= dirtab[0] && dir <= dirtab[1])
 			return i;
 	}
@@ -1143,28 +1141,7 @@ int Scumm::normalizeAngle(int angle)
 
 	temp = (angle + 360) % 360;
 
-/* (yaz0r) there is probably a much better way to do this */
-	
-	if(temp >=0 && temp <22)
-		return(0);
-	if(temp >=22 && temp <72)
-		return(45);
-	if(temp >=72 && temp <107)
-		return(90);
-	if(temp >=107 && temp <157)
-		return(135);
-	if(temp >=157 && temp <202)
-		return(180);
-	if(temp >=202 && temp <252)
-		return(225);
-	if(temp >=252 && temp <287)
-		return(270);
-	if(temp >=287 && temp <337)
-		return(315);
-	if(temp >=337 && temp <=360)
-		return(0);
-
-	return(temp);
+	return toSimpleDir(1, temp) * 45;
 }
 
 void NORETURN CDECL error(const char *s, ...)
