@@ -149,6 +149,9 @@ void Sound::playSong(int16 songNum) {
 		return;
 	}
 
+	if (!musicOn())
+		return;
+
 	//TODO: Record onto song stack for saving/loading
 	
 	switch (_tune[newTune - 1].mode) {
