@@ -59,7 +59,7 @@ Box *Scumm::getBoxBaseAddr(int box) {
 bool Scumm::checkXYInBoxBounds(int b, int x, int y) {
 	BoxCoords box;
 
-	if (b==0)
+	if (b==0 && (!(_features & GF_OLD256)))
 		return 0;
 
 	getBoxCoordinates(b, &box);
@@ -326,7 +326,7 @@ int Scumm::getPathToDestBox(byte from, byte to) {
 			return boxm[2];
 		boxm+=3;
 	}
-	return 0;
+	return -1;
 }
 
 int Scumm::findPathTowards(Actor *a, byte box1nr, byte box2nr, byte box3nr) {

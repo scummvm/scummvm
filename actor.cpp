@@ -466,8 +466,14 @@ AdjustBoxResult Scumm::adjustXYToBeInBox(Actor *a, int x, int y, int pathfrom) {
 	uint threshold;
 	uint best;
 	int box, iterations = 0;	/* Use inerations for those odd times we get stuck in the loop */
+	int firstValidBox,j;
 	byte flags, b;
 	
+	if(_features & GF_OLD256)
+		firstValidBox=0;
+	else
+		firstValidBox=1;
+
 	abr.x = x;
 	abr.y = y;
 	abr.dist = 0;
@@ -486,25 +492,25 @@ AdjustBoxResult Scumm::adjustXYToBeInBox(Actor *a, int x, int y, int pathfrom) {
 			b = 0;
 
                         if(((_features & GF_SMALL_HEADER) && box) || !(_features & GF_SMALL_HEADER))
-                        do {
-				flags = getBoxFlags(box);
+                        for (j=box;j>=firstValidBox;j--) {
+				flags = getBoxFlags(j);
 				if (flags&0x80 && (!(flags&0x20) || getClass(a->number, 0x1F)) )
 					continue;
 
-				if (pathfrom && !getPathToDestBox(pathfrom, box))
+				if (pathfrom && (getPathToDestBox(pathfrom, j)==-1))
 					continue;
 				
-				if (!inBoxQuickReject(box, x, y, threshold))
+				if (!inBoxQuickReject(j, x, y, threshold))
 					continue;
 				
-				if (checkXYInBoxBounds(box, x, y)) {
+				if (checkXYInBoxBounds(j, x, y)) {
 					abr.x = x;
 					abr.y = y;
-					abr.dist = box;
+					abr.dist = j;
 					return abr;
 				}
 
-				tmp = getClosestPtOnBox(box, x, y);
+				tmp = getClosestPtOnBox(j, x, y);
 
 				if (tmp.dist >= best)
 					continue;
@@ -513,12 +519,12 @@ AdjustBoxResult Scumm::adjustXYToBeInBox(Actor *a, int x, int y, int pathfrom) {
 				abr.y = tmp.y;
 
 				if (tmp.dist==0) {
-					abr.dist = box;
+					abr.dist = j;
 					return abr;
 				}
 				best = tmp.dist;
-				b = box;
-			} while (--box);
+				b = j;
+			}
 			
 			if (threshold==0 || threshold * threshold >= best) {
 				abr.dist = b;
@@ -742,7 +748,7 @@ void Scumm::walkActor(Actor *a) {
 		return;
 	}
 	j = getPathToDestBox(a->walkbox,a->walkdata.destbox);
-	if (j==0) {
+	if (j==-1) {
 		error("walkActor: no path found between %d and %d", a->walkbox, a->walkdata.destbox);
 	}
 
@@ -757,7 +763,7 @@ void Scumm::walkActor(Actor *a) {
 #if 1
 	do {
 		a->moving&=~1;
-		if (!a->walkbox) {
+		if ((!a->walkbox && (!(_features & GF_OLD256))) || a->walkbox !=-1 ) {
 			setActorBox(a, a->walkdata.destbox);
 			a->walkdata.curbox = a->walkdata.destbox;
 			break;
@@ -765,7 +771,7 @@ void Scumm::walkActor(Actor *a) {
 		if (a->walkbox == a->walkdata.destbox)
 			break;
 		j = getPathToDestBox(a->walkbox,a->walkdata.destbox);
-		if (j==0) {
+		if (j==-1) {
 			a->walkdata.destbox = a->walkbox;
 			a->moving |= 8;
 			return;

@@ -808,9 +808,7 @@ void Scumm::initRoomSubBlocks() {
 			ptr += size;
 			size = getResourceDataSize(ptr-size-6) - size;
 
-			if (_features & GF_OLD256) {	// FIXME: Total hack. 									
-				createBoxMatrix();			// This function shouldn't
-			} else if(size>=0) {			// do this :)
+			if(size>=0) {			// do this :)
 				createResource(rtMatrix, 1, size);
 				memcpy(getResourceAddress(rtMatrix, 1), ptr, size);
 			}
