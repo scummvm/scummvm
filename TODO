@@ -232,6 +232,7 @@ SCUMM
   - add save/load code
   - add code for mp3 and ogg
  * SMUSH:
+  - add support for codec 37 opcode 1, for PC version of FT demo
   - get rid smush mixer add code for imuse to handle smush tracks
   - cleanup channel mess
   - make code more clear in some places (subtiles code for ex.)
