@@ -601,6 +601,7 @@ $_mak_scumm
 $_mak_simon
 $_mak_sky
 $_mak_bs2
+$_mak_queen
 
 INCLUDES += $INCLUDES
 OBJS += $OBJS
