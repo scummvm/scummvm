@@ -360,24 +360,24 @@ void SimonState::vc_5_skip_if_neq() {
 		vc_skip_next_instruction();
 }
 
-void SimonState::vc_6_skip_ifn_sib_with_a() {			// vc_6_maybe_skip_3_inv
+void SimonState::vc_6_skip_ifn_sib_with_a() {
 	if (!itemIsSiblingOf(vc_read_next_word()))
 		vc_skip_next_instruction();
 }
 
-void SimonState::vc_7_skip_if_sib_with_a() {			// vc_7_maybe_skip_3
+void SimonState::vc_7_skip_if_sib_with_a() {
 	if (itemIsSiblingOf(vc_read_next_word()))
 		vc_skip_next_instruction();
 }
 
-void SimonState::vc_8_skip_if_parent_is() {			// vc_8_maybe_skip_2			
+void SimonState::vc_8_skip_if_parent_is() {		
 	uint a = vc_read_next_word();
 	uint b = vc_read_next_word();
 	if (!itemIsParentOf(a, b))
 		vc_skip_next_instruction();
 }
 
-void SimonState::vc_9_skip_if_unk3_is() {				// vc_9_maybe_skip
+void SimonState::vc_9_skip_if_unk3_is() {
 	uint a = vc_read_next_word();
 	uint b = vc_read_next_word();
 	if (!vc_maybe_skip_proc_1(a, b))
@@ -966,7 +966,7 @@ void SimonState::vc_11_clear_pathfind_array() {
 	memset(&_pathfind_array, 0, sizeof(_pathfind_array));
 }
 
-void SimonState::vc_12_delay() {					//vc_12_sleep_variable
+void SimonState::vc_12_delay() {
 	uint num;
 
 	if (!(_game & GF_SIMON2)) {
@@ -993,7 +993,7 @@ void SimonState::vc_14_offset_y() {
 	_vga_sprite_changed++;
 }
 
-void SimonState::vc_15_wakeup_id() {				//vc_15_start_funkystruct_by_id
+void SimonState::vc_15_wakeup_id() {
 	VgaSleepStruct *vfs = _vga_sleep_structs, *vfs_tmp;
 	uint16 id = vc_read_next_word();
 	while (vfs->ident != 0) {
@@ -1014,7 +1014,7 @@ void SimonState::vc_15_wakeup_id() {				//vc_15_start_funkystruct_by_id
 		_vga_wait_for = 0;
 }
 
-void SimonState::vc_16_sleep_on_id() {				//vc_16_setup_funkystruct
+void SimonState::vc_16_sleep_on_id() {
 	VgaSleepStruct *vfs = _vga_sleep_structs;
 	while (vfs->ident)
 		vfs++;
@@ -1172,7 +1172,7 @@ void SimonState::vc_24_set_image_xy() {
 	_vga_sprite_changed++;
 }
 
-void SimonState::vc_25_halt_thread() {				//vc_25_del_sprite_and_get_out
+void SimonState::vc_25_halt_thread() {
 	VgaSprite *vsp = find_cur_sprite();
 	while (vsp->id != 0) {
 		memcpy(vsp, vsp + 1, sizeof(VgaSprite));
@@ -1344,7 +1344,7 @@ void SimonState::vc_36_saveload_thing() {
 	}
 }
 
-void SimonState::vc_37_offset_y_f() {				//vc_37_sprite_unk3_add
+void SimonState::vc_37_offset_y_f() {
 	VgaSprite *vsp = find_cur_sprite();
 	vsp->y += vc_read_var(vc_read_next_word());
 	_vga_sprite_changed++;
