@@ -1001,17 +1001,10 @@ int SimonEngine::runScript() {
 				if (_game & GF_TALKIE) 
 					speech_id = _array_4[string_id];
 
-				if (_game & GF_SIMON2) {
-					if (speech_id != 0 && (_language == 20 || !_subtitles))
-						talk_with_speech(speech_id, vga_struct_id);
-					if (string_ptr != NULL && _subtitles)
-						talk_with_text(vga_struct_id, color, string_ptr, tv->a, tv->b, tv->c);
-				} else {
-					if (speech_id != 0)
-						talk_with_speech(speech_id, vga_struct_id);
-					if (string_ptr != NULL && _subtitles)
-						talk_with_text(vga_struct_id, color, string_ptr, tv->a, tv->b, tv->c);
-				}
+				if (speech_id != 0)
+					talk_with_speech(speech_id, vga_struct_id);
+				if (string_ptr != NULL && _subtitles)
+					talk_with_text(vga_struct_id, color, string_ptr, tv->a, tv->b, tv->c);
 			}
 			break;
 
@@ -1298,7 +1291,7 @@ void SimonEngine::o_inventory_descriptions() {
 				}
 			}
 
-			if (_language == 20 || !_subtitles)
+			if (_subtitles)
 				talk_with_speech(var200, vga_struct_id);
 		}
 

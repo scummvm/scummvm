@@ -2116,37 +2116,18 @@ void SimonEngine::o_print_str() {
 	uint speech_id = 0;
 	ThreeValues *tv;
 
-	if (_game & GF_TALKIE) {
-		if (string_id != 0xFFFF)
-			string_ptr = getStringPtrByID(string_id);
-
-		speech_id = (uint16)getNextWord();
-	} else {
+	if (string_id != 0xFFFF)
 		string_ptr = getStringPtrByID(string_id);
-	}
+
+	if (_game & GF_TALKIE)
+		speech_id = (uint16)getNextWord();
 
 	tv = getThreeValues(vga_sprite_id);
 
-	if ((_game & GF_SIMON2) && (_game & GF_TALKIE)) {
-		if (speech_id != 0 && vga_sprite_id == 1 && (_language == 20 || !_subtitles))
-			talk_with_speech(speech_id, vga_sprite_id);
-
-		if ((_game & GF_TALKIE) && (speech_id == 0))
-			o_kill_sprite_simon2(2, vga_sprite_id + 2);
-
-		if (string_ptr != NULL && (speech_id == 0 || _subtitles))
-			talk_with_text(vga_sprite_id, color, (const char *)string_ptr, tv->a, tv->b, tv->c);
-
-	} else if (_game & GF_TALKIE) {
-		if (speech_id != 0)
-			talk_with_speech(speech_id, vga_sprite_id);
-		if (string_ptr != NULL && (speech_id == 0 || _subtitles))
-			talk_with_text(vga_sprite_id, color, (const char *)string_ptr, tv->a, tv->b, tv->c);
-
-	} else {
+	if (speech_id != 0)
+		talk_with_speech(speech_id, vga_sprite_id);
+	if (string_ptr != NULL && (speech_id == 0 || _subtitles))
 		talk_with_text(vga_sprite_id, color, (const char *)string_ptr, tv->a, tv->b, tv->c);
-
-	}
 
 }
 
@@ -3992,10 +3973,9 @@ void SimonEngine::talk_with_speech(uint speech_id, uint vga_sprite_id) {
 			}
 			_skip_vga_wait = true;
 		} else {
-			if (_subtitles && _scriptvar_2) {
-				start_vga_code(4, 2, 5, 0, 0, 0);
-				o_wait_for_vga(205);
-				o_kill_sprite_simon2(2, 5);
+			if (_subtitles) {
+				_sound->playVoice(speech_id);
+				return;	
 			}
 			o_kill_sprite_simon2(2, vga_sprite_id + 2);
 			_sound->playVoice(speech_id);
@@ -4715,23 +4695,12 @@ void SimonEngine::go() {
 		_start_mainscript = true;
 
 	if (_game & GF_TALKIE) {
-		if (_game & GF_SIMON2) {
-			// Allow choice in Hebrew version of Simon the Sorcerer 2
-			if (_language == 20) {
-				if (_noSubtitles)
-					_subtitles = false;
-			// Check for speech file in other versions of Simon the Sorcerer 2
-			} else {
-				if (_sound->hasVoice())
-					_subtitles = false;
-			}
-		// English and German versions of Simon the Sorcerer 1 don't have full subtitles
-		} else if (_language < 2) {
-			_subtitles = false;
-		// Allow choice in other versions of Simon the Sorcerer 1
-		} else {
+		if ((_game & GF_SIMON2) || _language >= 2) {
 			if (_noSubtitles)
 				_subtitles = false;
+		// English and German versions of Simon the Sorcerer 1 don't have full subtitles
+		} else {
+			_subtitles = false;
 		}
 	}
 
