@@ -79,7 +79,7 @@ public:
 protected:
 	void insanity(bool);
 	void setPalette(const byte *palette);
-	void seekSan(const char *file, const char *directory, int32 pos);
+	void seekSan(const char *file, const char *directory, int32 pos, int32 contFrame);
 
 private:
 	void updatePalette(void);

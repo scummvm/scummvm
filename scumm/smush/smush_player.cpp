@@ -961,7 +961,7 @@ void SmushPlayer::insanity(bool flag) {
 }
 
 // FIXME: now it will work with offsets = 8. No Flu files are supported
-void SmushPlayer::seekSan(const char *file, const char *directory, int32 pos) {
+void SmushPlayer::seekSan(const char *file, const char *directory, int32 pos, int32 contFrame) {
 	Chunk *sub;
 	
 	if (file) {
@@ -983,8 +983,7 @@ void SmushPlayer::seekSan(const char *file, const char *directory, int32 pos) {
 		_middleAudio = true;
 	}
 
-	// FIXME: is this really applicable for FLU files? HACK
-	_frame = 0;
+	_frame = contFrame;
 }
 
 void SmushPlayer::play(const char *filename, const char *directory) {

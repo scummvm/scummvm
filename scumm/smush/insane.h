@@ -153,7 +153,6 @@ class Insane {
 	int32 _smush_setupsan1;
 	int16 _smush_setupsan2;
 	int32 _smush_setupsan4;
-	int16 _smush_numFrames;
 	int16 _smush_frameStep;
 	int16 _smush_curFrame;
 	int16 _smush_frameNum1;
@@ -440,7 +439,7 @@ class Insane {
 	void smush_setupSanFromStart(const char *filename, int32 setupsan2, int32 step1, 
 								 int32 step2, int32 setupsan1);
 	void smush_setFrameSteps(int32 step1, int32 step2);
-	void smush_setupSanFile(const char *filename, int32 offset);
+	void smush_setupSanFile(const char *filename, int32 offset, int32 contFrame);
 	int32 getLastKey(bool arg_0);
 	void drawSpeedyActor(int32 arg_0);
 	void actor11Reaction(int32 buttons);

@@ -3991,7 +3991,7 @@ void Insane::smush_rewindCurrentSan(int arg_0, int arg_4, int arg_8) {
 	debug(0, "smush_rewindCurrentSan(%d, %d, %d)", arg_0, arg_4, arg_8);
 	_smush_setupsan2 = arg_0;
 	
-	smush_setupSanFile(0, 8);
+	smush_setupSanFile(0, 8, 0);
 	_smush_isSanFileSetup = 1;
 	smush_setFrameSteps(arg_4, arg_8);
 
@@ -8158,7 +8158,7 @@ void Insane::smush_setupSanWithFlu(const char *filename, int32 setupsan2, int32 
 	if (tmp[2] <= 1) {
 		/* 0x300 -- palette, 0x8 -- header */
 		offset = READ_LE_UINT32(tmp + 0x308 + numFrames*4);
-		smush_setupSanFile(filename, offset);
+		smush_setupSanFile(filename, offset, numFrames);
 		memcpy(_smush_earlyFluContents, tmp+2, 0x306);
 		_smush_earlyFluContents[0x30e] = 0;
 		_smush_earlyFluContents[0x30f] = 0;
@@ -8168,12 +8168,12 @@ void Insane::smush_setupSanWithFlu(const char *filename, int32 setupsan2, int32 
 		_smush_earlyFluContents[0x307] = 0;
 	} else {
 		offset = READ_LE_UINT32(tmp + 0x31c + numFrames*4);
-		smush_setupSanFile(filename, offset);
+		smush_setupSanFile(filename, offset, numFrames);
 		memcpy(_smush_earlyFluContents, tmp+2, 0x31a);
 	}
 	_smush_isSanFileSetup = 1;
 	_smush_setupsan4 = 1;
-	_smush_numFrames = numFrames;
+	_smush_curFrame = numFrames;
 	smush_setFrameSteps(step1, step2);
 }
 
@@ -8181,11 +8181,9 @@ void Insane::smush_setupSanFromStart(const char *filename, int32 setupsan2, int3
 									 int32 step2, int32 setupsan1) {
 	_smush_setupsan1 = setupsan1;
 	_smush_setupsan2 = setupsan2;
-	smush_setupSanFile(filename, 8);
+	smush_setupSanFile(filename, 8, 0);
 	_smush_isSanFileSetup = 1;
 	smush_setFrameSteps(step1, step2);
-
-	_smush_curFrame = 0; // HACK
 }
 
 void Insane::smush_setFrameSteps(int32 step1, int32 step2) {
@@ -8194,10 +8192,10 @@ void Insane::smush_setFrameSteps(int32 step1, int32 step2) {
 	_smush_frameStep = step1;
 }
 
-void Insane::smush_setupSanFile(const char *filename, int32 offset) {
+	void Insane::smush_setupSanFile(const char *filename, int32 offset, int32 contFrame) {
 	debug(0, "smush_setupSanFile(%s, %x)", filename, offset);
 
-	_player->seekSan(filename, _scumm->getGameDataPath(), offset);
+	_player->seekSan(filename, _scumm->getGameDataPath(), offset, contFrame);
 
 	_scumm->_imuseDigital->pause(false);
 }
