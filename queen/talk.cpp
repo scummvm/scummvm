@@ -132,11 +132,11 @@ void Talk::talk(const char *filename, int personInRoom, char *cutawayFilename) {
 
 	// Lines 828-846 in talk.c
 	for (i = 1; i <= 4; i++) {
-		if (talkSelected()->values[i-1] > 0) {
+		if (selectedValue(i) > 0) {
 			// This option has been redefined so display new dialogue option
-			_dialogueTree[1][i].head = talkSelected()->values[i-1];
+			_dialogueTree[1][i].head = selectedValue(i);
 		}
-		else if (talkSelected()->values[i-1] == -1) {
+		else if (selectedValue(i) == -1) {
 
 			// Already selected so don't redisplay
 			if (_dialogueTree[1][i].gameStateIndex >= 0) {
@@ -164,12 +164,12 @@ void Talk::talk(const char *filename, int personInRoom, char *cutawayFilename) {
 
 		_talkString[0][0] = '\0';
 
-		if(talkSelected()->hasTalkedTo == 1 && head == 1)
+		if (hasTalkedTo() && head == 1)
 			strcpy(_talkString[0], _person2String);
 		else
 			findDialogueString(_person1Ptr, head, _talkString[0]);
 
-		if(talkSelected()->hasTalkedTo == 1 && head == 1)
+		if (hasTalkedTo() && head == 1)
 			sprintf(otherVoiceFilePrefix, "%2dXXXXP", _talkKey);
 		else
 			sprintf(otherVoiceFilePrefix, "%2d%4xP", _talkKey, head);
@@ -261,8 +261,8 @@ void Talk::talk(const char *filename, int personInRoom, char *cutawayFilename) {
 			if (_dialogueTree[level][0].dialogueNodeValue1 > 0) {
 				if (1 == oldLevel) {
 						_oldSelectedSentenceIndex = selectedSentence;
-						_oldSelectedSentenceValue = talkSelected()->values[selectedSentence-1];
-						talkSelected()->values[selectedSentence-1] = _dialogueTree[level][0].dialogueNodeValue1;
+						_oldSelectedSentenceValue = selectedValue(selectedSentence);
+						selectedValue(selectedSentence, _dialogueTree[level][0].dialogueNodeValue1);
 				}
 
 				_dialogueTree[oldLevel][selectedSentence].head = _dialogueTree[level][0].dialogueNodeValue1;
@@ -333,15 +333,17 @@ void Talk::talk(const char *filename, int personInRoom, char *cutawayFilename) {
 	}
 
 	if (_input->talkQuit()) {
-		// TODO: missing some code here!
+		if (_oldSelectedSentenceIndex > 0)
+			selectedValue(_oldSelectedSentenceIndex, _oldSelectedSentenceValue);
+		_input->talkQuitReset();
+		_graphics->textClear(0, 198);
+		speak(_talkString[15], NULL, "JOE0015");
 	}
 	else {
-		talkSelected()->hasTalkedTo = 1;
+		setHasTalkedTo();
 	}
 
 	_logic->joeFace();
-
-	// TODO: missing some code here!
 
 	if (cutawayFilename[0] == '\0') {
 		BobSlot *pbs = _graphics->bob(person.actor->bobNum);
@@ -365,8 +367,8 @@ void Talk::disableSentence(int oldLevel, int selectedSentence) {
 		if (_dialogueTree[oldLevel][selectedSentence].dialogueNodeValue1 != -1) {
 			// Make sure choice is not exit option
 			_oldSelectedSentenceIndex = selectedSentence;
-			_oldSelectedSentenceValue = talkSelected()->values[selectedSentence-1];
-			talkSelected()->values[selectedSentence-1] = -1;
+			_oldSelectedSentenceValue = selectedValue(selectedSentence);
+			selectedValue(selectedSentence, -1);
 		}
 	}
 
@@ -486,7 +488,7 @@ void Talk::initialTalk() {
 	ptr = getString(ptr, joe2String, MAX_STRING_LENGTH);
 	//debug(0, "joe2String = '%s'", joe2String);
 
-	if (talkSelected()->hasTalkedTo == 0) {
+	if (!hasTalkedTo()) {
 		
 		// Not yet talked to this person
 		

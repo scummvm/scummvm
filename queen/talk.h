@@ -180,6 +180,22 @@ private:
 	//! Get TalkSelected struct for this talk
 	TalkSelected *talkSelected();
 
+	//! Interface to the TalkSelected struct
+	bool hasTalkedTo() { return talkSelected()->hasTalkedTo; }
+
+	//! Interface to the TalkSelected struct
+	void setHasTalkedTo() { talkSelected()->hasTalkedTo = true; }
+
+	//! Get a selected value
+	int16 selectedValue(int index) { 
+		return talkSelected()->values[index-1];
+	}
+
+	//! Set a selected value
+	void selectedValue(int index, int16 value) { 
+		talkSelected()->values[index-1] = value;
+	}
+
 	//! The sentence will not be displayed again
 	void disableSentence(int oldLevel, int selectedSentence);
 

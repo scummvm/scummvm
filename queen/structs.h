@@ -550,18 +550,18 @@ struct Person {
 
 
 struct TalkSelected {
-	int16 hasTalkedTo;
+	bool hasTalkedTo;
 	int16 values[4];
 
 	void readFrom(byte *&ptr) {
-		hasTalkedTo = (int16)READ_BE_UINT16(ptr); ptr += 2;
+		hasTalkedTo = (bool)READ_BE_UINT16(ptr); ptr += 2;
 		for (int i = 0; i < 4; i++) {
 			values[i] = (int16)READ_BE_UINT16(ptr); ptr += 2;
 		}	
 	}
 
 	void writeTo(byte *&ptr) {
-		WRITE_BE_UINT16(ptr, hasTalkedTo); ptr += 2;
+		WRITE_BE_UINT16(ptr, (uint16)hasTalkedTo); ptr += 2;
 		for (int i = 0; i < 4; i++) {
 			WRITE_BE_UINT16(ptr, values[i]); ptr += 2;
 		}

@@ -665,6 +665,9 @@ void Logic::joeY(uint16 y) {
 
 void Logic::joeWalk(JoeWalkMode walking) {
 	_joe.walk = walking;
+
+	// Do this so that Input doesn't need to know the walk value
+	_input->dialogueRunning(JWM_SPEAK == walking);
 }
 
 void Logic::joeScale(uint16 scale) {

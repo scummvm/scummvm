@@ -69,6 +69,8 @@ class Input {
 		bool cutawayQuit() const  { return _cutawayQuit; }
 		void cutawayQuitReset()   { _cutawayQuit = false; }
 
+		void dialogueRunning(bool running) { _dialogueRunning = running; }
+
 		bool talkQuit() const { return _talkQuit; }
 		void talkQuitReset()  { _talkQuit = false; }
 
@@ -134,6 +136,9 @@ class Input {
 
 		//! moved Cutaway::_quit here
 		bool _cutawayQuit;          // cutawayQuit
+
+		//! set if a dialogue is running
+		bool _dialogueRunning;
 
 		//! moved Talk::_quit here 
 		bool _talkQuit;         // TALKQUIT

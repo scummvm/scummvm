@@ -168,8 +168,8 @@ int Input::checkKeys() {
 					_cutawayQuit = true;
 				}
 
-				// XXX if (_joeWalk == 3)	// Dialogue
-				// XXX 	_talkQuit = true;
+				if (_dialogueRunning)
+					_talkQuit = true;
 			}
 			break;
 
