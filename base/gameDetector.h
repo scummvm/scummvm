@@ -24,7 +24,6 @@
 #define GAMEDETECTOR_H
 
 #include "common/str.h"
-#include "common/scaler.h"
 
 class Engine;
 class GameDetector;
@@ -61,36 +60,7 @@ struct GraphicsMode {
 	int id;
 };
 
-/**
- * List of graphic 'modes' we potentially support. Potentially because not all
- * backends actually support all the filters listed here. At this point only
- * the SDL backend supports all (except for the PalmOS ones of course).
- * @todo Remove this explicit list of graphic modes and rather extend the
- * OSystem API to allow querying a backend for the modes it supports.
- */
-static const struct GraphicsMode gfx_modes[] = {
-	{"normal", "Normal (no scaling)", GFX_NORMAL},
-	{"1x", "Normal (no scaling)", GFX_NORMAL},
-#ifndef __PALM_OS__     // reduce contant data size
-	{"2x", "2x", GFX_DOUBLESIZE},
-	{"3x", "3x", GFX_TRIPLESIZE},
-	{"2xsai", "2xSAI", GFX_2XSAI},
-	{"super2xsai", "Super2xSAI", GFX_SUPER2XSAI},
-	{"supereagle", "SuperEagle", GFX_SUPEREAGLE},
-	{"advmame2x", "AdvMAME2x", GFX_ADVMAME2X},
-	{"advmame3x", "AdvMAME3x", GFX_ADVMAME3X},
-	{"hq2x", "HQ2x", GFX_HQ2X},
-	{"hq3x", "HQ3x", GFX_HQ3X},
-	{"tv2x", "TV2x", GFX_TV2X},
-	{"dotmatrix", "DotMatrix", GFX_DOTMATRIX},
-#else
-	{"flipping", "Page Flipping", GFX_FLIPPING},
-	{"buffered", "Buffered", GFX_BUFFERED},
-	{"wide", "Wide (HiRes+ only)", GFX_WIDE},
-#endif
-	{0, 0, 0}
-};
-
+extern const GraphicsMode g_gfx_modes[];
 
 class GameDetector {
 	typedef Common::String String;

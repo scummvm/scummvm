@@ -77,7 +77,7 @@ void OptionsDialog::open() {
 		_gfxPopUp->setEnabled(false);
 
 		if (ConfMan.hasKey("gfx_mode", _domain)) {
-			const GraphicsMode *gm = gfx_modes;
+			const GraphicsMode *gm = g_gfx_modes;
 			String gfxMode = ConfMan.get("gfx_mode", _domain);
 			int gfxCount = 1;
 			while (gm->name) {
@@ -255,7 +255,7 @@ void OptionsDialog::setVolumeSettingsState(bool enabled) {
 int OptionsDialog::addGraphicControls(GuiObject *boss, int yoffset) {
 	const int x = 10;
 	const int w = _w - 2 * 10;
-        const GraphicsMode *gm = gfx_modes;
+        const GraphicsMode *gm = g_gfx_modes;
 
 	// The GFX mode popup
 	_gfxPopUp = new PopUpWidget(boss, x-5, yoffset, w+5, kLineHeight, "Graphics mode: ", 100);
