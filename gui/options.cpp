@@ -94,11 +94,13 @@ void OptionsDialog::open() {
 			}
 		}
 
+#ifndef _WIN32_WCE
 		// Fullscreen setting
 		_fullscreenCheckbox->setState(ConfMan.getBool("fullscreen", _domain));
 	
 		// Aspect ratio setting
 		_aspectCheckbox->setState(ConfMan.getBool("aspect_ratio", _domain));
+#endif
 	}
 
 	if (_multiMidiCheckbox) {
@@ -224,8 +226,10 @@ void OptionsDialog::setGraphicSettingsState(bool enabled) {
 	_enableGraphicSettings = enabled;
 
 	_gfxPopUp->setEnabled(enabled);
+#ifndef _WIN32_WCE
 	_fullscreenCheckbox->setEnabled(enabled);
 	_aspectCheckbox->setEnabled(enabled);
+#endif
 }
 
 void OptionsDialog::setAudioSettingsState(bool enabled) {
@@ -271,6 +275,7 @@ int OptionsDialog::addGraphicControls(GuiObject *boss, int yoffset) {
                 gm++;
         }
 
+#ifndef _WIN32_WCE
 	// Fullscreen checkbox
 	_fullscreenCheckbox = new CheckboxWidget(boss, x, yoffset, w, 16, "Fullscreen mode");
 	yoffset += 16;
@@ -278,6 +283,7 @@ int OptionsDialog::addGraphicControls(GuiObject *boss, int yoffset) {
 	// Aspect ratio checkbox
 	_aspectCheckbox = new CheckboxWidget(boss, x, yoffset, w, 16, "Aspect ratio correction");
 	yoffset += 16;
+#endif
 	
 	_enableGraphicSettings = true;
 
