@@ -70,24 +70,23 @@ int Init_2xSaI(uint32 BitFormat) {
 	return 1;
 }
 
-static inline int GetResult(uint32 A, uint32 B, uint32 C, uint32 D) {
-	int x = 0;
-	int y = 0;
-	int r = 0;
-
-	if (A == C)
-		x += 1;
-	else if (B == C)
-		y += 1;
-	if (A == D)
-		x += 1;
-	else if (B == D)
-		y += 1;
-	if (x <= 1)
-		r += 1;
-	if (y <= 1)
-		r -= 1;
-	return r;
+static inline int GetResult(uint32 A, uint32 B, uint32 C, uint32 D) { 
+	const bool ac = (A==C);
+	const bool bc = (B==C);
+	const int x1 = ac;
+	const int y1 = (bc && !ac);
+	const bool ad = (A==D);
+	const bool bd = (B==D);
+	const int x2 = ad;
+	const int y2 = (bd && !ad);
+	const int x = x1+x2;
+	const int y = y1+y2;
+	static const int rmap[3][3] = {
+			{0, 0, -1},
+			{0, 0, -1},
+			{1, 1,  0}
+		};
+	return rmap[y][x];
 }
 
 static inline uint32 INTERPOLATE(uint32 A, uint32 B) {
