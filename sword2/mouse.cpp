@@ -197,7 +197,7 @@ void Sword2Engine::systemMenuMouse(void) {
 
 	_graphics->processMenu();
 
-	// call the relevent screen
+	// call the relevant screen
 
 	switch (hit) {
 	case 0:
