@@ -24,9 +24,12 @@
 #define __START_H__
 
 #define appFileCreator 'ScVM'
-#define curItemVersion sysMakeROMVersion(2,5,0,0,0)
+#define curItemVersion sysMakeROMVersion(3,0,0,0,0)
 
-#define itemVersion_2 sysMakeROMVersion(2,0,0,0,0)
+#define itemVersion_27 sysMakeROMVersion(2,7,0,0,0)
+#define itemVersion_26 sysMakeROMVersion(2,6,0,0,0)
+#define itemVersion_25 sysMakeROMVersion(2,5,0,0,0)
+#define itemVersion_20 sysMakeROMVersion(2,0,0,0,0)
 
 typedef struct {
 	Char nameP[32];
@@ -57,33 +60,9 @@ typedef	struct {
 	Boolean stdPalette;
 	Boolean autoReset;
 	Boolean demoMode;
-	Boolean fullscreen;
-	Boolean aspectRatio;
 	Boolean copyProtection;
 	Boolean arm;
-
-	struct {
-		UInt16 master;
-		UInt16 music;
-		UInt16 sfx;
-		UInt16 speech;
-	} volume;
-	
-	struct {
-		// midi
-		Boolean multiMidi;
-		Boolean music;
-		UInt8 drvMusic;
-		UInt8 tempo;
-		// sound FX
-		Boolean sfx;
-		// CD audio
-		Boolean CD;
-		UInt8 drvCD;
-		Boolean setDefaultTrackLength;
-		UInt16 defaultTrackLength;
-		UInt16 firstTrack;
-	} sound;
+	Boolean altIntro;
 
 } GlobalsPreferenceType, *GlobalsPreferencePtr;
 
@@ -102,7 +81,6 @@ extern Boolean bStartScumm;
 
 Err AppStart(void);
 void AppStop(void);
-Boolean CheckVibratorExists();
 Boolean StartScummVM();
 void PINGetScreenDimensions();
 void GetMemory(UInt32* storageMemoryP, UInt32* dynamicMemoryP, UInt32 *storageFreeP, UInt32 *dynamicFreeP);
