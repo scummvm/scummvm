@@ -767,7 +767,7 @@ byte AkosRenderer::codec5(int xmoveCur, int ymoveCur) {
 	maxw = _outwidth;
 	maxh = _outheight;
 
-	_vm->markRectAsDirty(kMainVirtScreen, clip , _actorID);
+	_vm->markRectAsDirty(kMainVirtScreen, clip, _actorID);
 
 	clip.clip(maxw, maxh);
 
@@ -963,18 +963,18 @@ byte AkosRenderer::codec16(int xmoveCur, int ymoveCur) {
 		clip.left = _actorX + xmoveCur;
 	}
 
-	clip.top = ymoveCur + _actorY;
+	clip.top = _actorY + ymoveCur;
 	clip.right = clip.left + _width;
 	clip.bottom = clip.top + _height;
 	maxw = _outwidth;
 	maxh = _outheight;
 
+	_vm->markRectAsDirty(kMainVirtScreen, clip, _actorID);
+
 	skip_x = 0;
 	skip_y = 0;
 	cur_x = _width - 1;
 	cur_y = _height - 1;
-
-	_vm->markRectAsDirty(kMainVirtScreen, clip, _actorID);
 
 	if (clip.left < 0) {
 		skip_x = -clip.left;
