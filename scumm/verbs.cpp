@@ -221,24 +221,11 @@ void Scumm::drawVerbBitmap(int verb, int x, int y) {
 	xstrip = x >> 3;
 	ydiff = y - vs->topline;
 
-	obim = getResourceAddress(rtVerb, verb);
+	assert(obim = getResourceAddress(rtVerb, verb));
 	if (_features & GF_OLD_BUNDLE) {
-		int room = READ_LE_UINT32(obim);
-		int object = READ_LE_UINT32(obim + 4);
-		byte *roomptr = getResourceAddress(rtRoom, room);
-		
-		assert(room == _roomResource);
-		
-		for (i = (_numLocalObjects-1); i > 0; i--) {
-			if (_objs[i].obj_nr == object) {
-				break;
-			}
-		}
-		assert(_objs[i].obj_nr == object);
-
-		imgw = (*(roomptr + _objs[i].OBCDoffset + 9));
-		imgh = (*(roomptr + _objs[i].OBCDoffset + 15)) >> 3;
-		imptr = (roomptr + _objs[i].OBIMoffset);
+		imgw = obim[0];
+		imgh = obim[1] >> 3;
+		imptr = obim + 2;
 	} else if (_features & GF_SMALL_HEADER) {
 		size = READ_LE_UINT32(obim);
 
@@ -330,12 +317,25 @@ void Scumm::setVerbObject(uint room, uint object, uint verb) {
 		error("Can't grab verb image from flobject");
 
 	if (_features & GF_OLD_BUNDLE) {
-		uint32 *ptr = (uint32 *)createResource(rtVerb, verb, 8);
-		ptr[0] = TO_LE_32(room);
-		ptr[1] = TO_LE_32(object);
+		for (i = (_numLocalObjects-1); i > 0; i--) {
+			if (_objs[i].obj_nr == object) {
+				findObjectInRoom(&foir, foImageHeader, object, room);
+				size = READ_LE_UINT16(foir.obim);
+				byte *ptr = createResource(rtVerb, verb, size + 2);
+				obcdptr = getResourceAddress(rtRoom, room) + getOBCDOffs(object);
+				ptr[0] = *(obcdptr + 9);	// Width
+				ptr[1] = *(obcdptr + 15);	// Height
+				memcpy(ptr + 2, foir.obim, size);
+				return;
+			}
+		}
 	} else if (_features & GF_SMALL_HEADER) {
 		for (i = (_numLocalObjects-1); i > 0; i--) {
 			if (_objs[i].obj_nr == object) {
+				// FIXME - the only thing we need from the OBCD is the image size!
+				// So we could use almost the same code (save for offsets)
+				// as in the GF_OLD_BUNDLE code. But of course that would break save games
+				// unless we insert special conversion code... <sigh>
 				findObjectInRoom(&foir, foImageHeader, object, room);
 				size = READ_LE_UINT32(foir.obim);
 				obcdptr = getResourceAddress(rtRoom, room) + getOBCDOffs(object);
