@@ -663,32 +663,33 @@ An example config file looks as follows:
 
 Credits:
 --------
- The core ScummVM team:
+ The ScummVM team:
         James Brown          - Lead Developer
         Max Horn             - Lead Developer
-        Vincent Hamm         - Developer (retired)
         Jeremy Newman        - Webmaster
-        Ludvig Strigeus      - Original ScummVM author, initial Simon support (retired)
-        Oliver Kiehl         - Lead BASS Developer
-        Joost Peters         - Lead BASS Developer
 
- Developers:
-        Torbjorn Andersson   - Many different contributions
-        Chris Apers          - PalmOS port
-        Nicolas Bacca        - PocketPC/WinCE port
-        Ralph Brorsen        - Helped write the new GUI (retired)
-        Jamieson Christian   - Lots of work on iMuse/MIDI
-        Marcus Comstedt      - Dreamcast port
-        Robert Goeffringmann - Beneath a Steel Sky support
-        Jonathan Gray        - Expert weaver in the Loom
-        Ruediger Hanke       - MorphOS port
-        Travis Howell        - Daily Win32 builds, Simon The Sorcerer work
-        Felix Jakschitsch    - His hard work on Zak256
-        Pawel Kolodziejski   - Added missing Dig/COMI SMUSH codecs, iMuse work
-        Mutwin Kraus         - MacOS Carbon port (retired)
-        Peter Moraliyski     - GP32 port
-        Nicolas Noble        - Config file and ALSA support
-        Lionel Ulmer         - X11 backend
+        Jonathan Gray        - Engine: SCUMM, Simon
+        Robert Goeffringmann - Engine: Beneath a Steel Sky
+        Oliver Kiehl         - Engine: Beneath a Steel Sky, Simon
+        Joost Peters         - Engine: Beneath a Steel Sky
+        Pawel Kolodziejski   - Engine: SCUMM (Codecs, iMUSE, Smush, etc.)
+        Chris Apers          - Port:   PalmOS
+        Nicolas Bacca        - Port:   PocketPC/WinCE port
+        Marcus Comstedt      - Port:   DreamCast
+        Ruediger Hanke       - Port:   MorphOS
+	Travis Howell	     - Port:   Win32, Engine: Simon
+        Peter Moraliyski     - Port:   GP32
+        Lionel Ulmer         - Port:   X11
+
+        Torbjorn Andersson   - Generic Bugfixer and Patch Submitter
+        Jamieson Christian   - iMuse, MIDI, all things musical.
+
+ Retired Team Members:
+        Ludvig Strigeus      - Original ScummVM and SimonVM Author
+        Vincent Hamm         - Co-Founder
+        Mutwin Kraus         - Original MacOS Porter
+        Felix Jakschitsch    - Zak256 reverse engineering
+        Ralph Brorsen        - GUI Implementation
 
  Contributors:
         Janne Huttunen       - V3 actor mask support, Dig/FT SMUSH audio
@@ -697,6 +698,7 @@ Credits:
         Claudio Matsuoka     - Daily Linux/BeOS builds (http://scummvm.sf.net/daily/)
         Gregory Montoir      - AdvanceMAME Scale-2X, TV 2x and Dot Matrix implementation
         Mikesch Nepomuk      - MI1 VGA Floppy patches.
+        Nicolas Noble        - Config file and ALSA support
         Edward Rudd          - Fixes for playing MP3 versions of MI1/Loom Audio
         Daniel Schepler      - Final MI1 CD music support/ Initial Ogg Vorbis support
         Andre Souza          - SDL-based OpenGL renderer
