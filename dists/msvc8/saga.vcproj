@@ -199,31 +199,11 @@
 			>
 		</File>
 		<File
-			RelativePath="..\..\saga\cvar.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\saga\cvar.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\saga\cvar_mod.h"
-			>
-		</File>
-		<File
 			RelativePath="..\..\saga\events.cpp"
 			>
 		</File>
 		<File
 			RelativePath="..\..\saga\events.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\saga\expr.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\saga\expr.h"
 			>
 		</File>
 		<File
@@ -244,10 +224,6 @@
 		</File>
 		<File
 			RelativePath="..\..\saga\game.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\saga\game_mod.h"
 			>
 		</File>
 		<File
@@ -295,6 +271,10 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\saga\list.h"
+			>
+		</File>
+		<File
 			RelativePath="..\..\saga\music.cpp"
 			>
 		</File>
@@ -324,10 +304,6 @@
 		</File>
 		<File
 			RelativePath="..\..\saga\palanim.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\saga\reinherit.h"
 			>
 		</File>
 		<File
@@ -379,14 +355,6 @@
 			>
 		</File>
 		<File
-			RelativePath="..\..\saga\sdata.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\saga\sdata.h"
-			>
-		</File>
-		<File
 			RelativePath="..\..\saga\sdebug.cpp"
 			>
 		</File>
@@ -423,6 +391,10 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\saga\stream.h"
+			>
+		</File>
+		<File
 			RelativePath="..\..\saga\text.cpp"
 			>
 		</File>
@@ -432,14 +404,6 @@
 		</File>
 		<File
 			RelativePath="..\..\saga\transitions.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\saga\ys_dl_list.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\saga\yslib.h"
 			>
 		</File>
 	</Files>

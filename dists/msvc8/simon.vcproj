@@ -164,6 +164,10 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\simon\cursor.cpp"
+			>
+		</File>
+		<File
 			RelativePath="..\..\simon\debug.cpp"
 			>
 		</File>
@@ -177,6 +181,10 @@
 		</File>
 		<File
 			RelativePath="..\..\simon\debugger.h"
+			>
+		</File>
+		<File
+			RelativePath="..\..\simon\icons.cpp"
 			>
 		</File>
 		<File
@@ -201,6 +209,14 @@
 		</File>
 		<File
 			RelativePath="..\..\simon\res.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\simon\saveload.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\simon\simon-md5.h"
 			>
 		</File>
 		<File

@@ -179,6 +179,14 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\sword1\credits.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\sword1\credits.h"
+			>
+		</File>
+		<File
 			RelativePath="..\..\sword1\debug.cpp"
 			>
 		</File>
