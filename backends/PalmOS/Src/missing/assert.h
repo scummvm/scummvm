@@ -20,4 +20,13 @@
  *
  */
 
+#ifndef __ASSERT_H__
+#define __ASSERT_H__
+
+#ifdef _DEBUG
+#define assert(a)	ErrFatalDisplayIf(!(a), "Assertion failed: " #a)
+#else
 #define assert(a)
+#endif
+
+#endif
