@@ -388,12 +388,6 @@ void IMuseDigital::stopAllSounds() {
 }
 
 void IMuseDigital::pause(bool p) {
-	for (int l = 0; l < MAX_DIGITAL_TRACKS + MAX_DIGITAL_FADETRACKS; l++) {
-		Track *track = _track[l];
-		if (track->used) {
-			_vm->_mixer->pauseHandle(track->handle, p);
-		}
-	}
 	_pause = p;
 }
 

@@ -914,11 +914,11 @@ void Sound::pauseSounds(bool pause) {
 
 	_soundsPaused = pause;
 
-	_vm->_mixer->pauseAll(pause);
-
 	if (_vm->_imuseDigital) {
 		_vm->_imuseDigital->pause(pause);
 	}
+
+	_vm->_mixer->pauseAll(pause);
 
 	if ((_vm->_features & GF_AUDIOTRACKS) && _vm->VAR(_vm->VAR_MUSIC_TIMER) > 0) {
 		if (pause)

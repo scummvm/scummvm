@@ -136,7 +136,6 @@ void Insane::runScene(int arraynum) {
 	}
 
 	putActors();
-	_vm->_sound->pauseSounds(0); // IMUSE_Resume();
 	_enemy[EN_ROTT3].maxdamage = 120;
 
 	_insaneIsRunning = false;
