@@ -597,8 +597,6 @@ int Sound::isSoundRunning(int sound) {
 		}
 	}
 	
-	_scumm->_mixer->stopID(sound);
-	
 	i = _soundQue2Pos;
 	while (i--) {
 		if (_soundQue2[i] == sound)
