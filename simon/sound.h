@@ -28,7 +28,7 @@ namespace Simon {
 
 class BaseSound;
 
-class SimonSound {
+class Sound {
 private:
 	byte _game;
 	const Common::String _gameDataPath;
@@ -53,8 +53,8 @@ public:
 	bool _voice_file;
 	uint _ambient_playing;
 
-	SimonSound(const byte game, const GameSpecificSettings *gss, const Common::String &gameDataPath, SoundMixer *mixer);
-	~SimonSound();
+	Sound(const byte game, const GameSpecificSettings *gss, const Common::String &gameDataPath, SoundMixer *mixer);
+	~Sound();
 	
 	void readSfxFile(const char *filename, const Common::String &gameDataPath);
 	void loadSfxTable(File *gameFile, uint32 base);

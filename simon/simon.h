@@ -338,7 +338,7 @@ protected:
 	int _num_screen_updates;
 	int _vga_tick_counter;
 
-	SimonSound *_sound;
+	Sound *_sound;
 
 	bool _effects_paused;
 	bool _ambient_paused;

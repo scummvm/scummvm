@@ -4796,7 +4796,7 @@ void SimonEngine::go() {
 
 	setup_vga_file_buf_pointers();
 
-	_sound = new SimonSound(_game, gss, _gameDataPath, _mixer);
+	_sound = new Sound(_game, gss, _gameDataPath, _mixer);
 
 	if (ConfMan.hasKey("sfx_mute") && ConfMan.getBool("sfx_mute") == 1) {
 		if (_game == GAME_SIMON1DOS)

@@ -229,7 +229,7 @@ void VorbisSound::playSound(uint sound, PlayingSoundHandle *handle, byte flags)
 }
 #endif
 
-SimonSound::SimonSound(const byte game, const GameSpecificSettings *gss, const Common::String &gameDataPath, SoundMixer *mixer)
+Sound::Sound(const byte game, const GameSpecificSettings *gss, const Common::String &gameDataPath, SoundMixer *mixer)
 	: _game(game), _gameDataPath(gameDataPath), _mixer(mixer) {
 	_voice = 0;
 	_effects = 0;
@@ -341,7 +341,7 @@ SimonSound::SimonSound(const byte game, const GameSpecificSettings *gss, const C
 	}
 }
 
-SimonSound::~SimonSound() {
+Sound::~Sound() {
 	delete _voice;
 	delete _effects;
 	
@@ -349,7 +349,7 @@ SimonSound::~SimonSound() {
 	free(_offsets);
 }
 
-void SimonSound::readSfxFile(const char *filename, const Common::String &gameDataPath) {
+void Sound::readSfxFile(const char *filename, const Common::String &gameDataPath) {
 	stopAll();
 
 	File *file = new File();
@@ -376,7 +376,7 @@ void SimonSound::readSfxFile(const char *filename, const Common::String &gameDat
 		_effects = new WavSound(_mixer, file);
 }
 
-void SimonSound::loadSfxTable(File *gameFile, uint32 base) {
+void Sound::loadSfxTable(File *gameFile, uint32 base) {
 	stopAll();
 
 	if (_game & GF_WIN)
@@ -385,7 +385,7 @@ void SimonSound::loadSfxTable(File *gameFile, uint32 base) {
 		_effects = new VocSound(_mixer, gameFile, base);
 }
 
-void SimonSound::readVoiceFile(const char *filename, const Common::String &gameDataPath) {
+void Sound::readVoiceFile(const char *filename, const Common::String &gameDataPath) {
 	stopAll();
 
 	File *file = new File();
@@ -408,7 +408,7 @@ void SimonSound::readVoiceFile(const char *filename, const Common::String &gameD
 	_voice = new RawSound(_mixer, file, 0, SOUND_BIG_ENDIAN);
 }
 
-void SimonSound::playVoice(uint sound) {
+void Sound::playVoice(uint sound) {
 	if (_game == GAME_SIMON2MAC && _filenums) {
 		if (_last_voice_file != _filenums[sound]) {
 			stopAll();
@@ -437,7 +437,7 @@ void SimonSound::playVoice(uint sound) {
 	_voice->playSound(sound, &_voice_handle, (_game == GAME_SIMON1CD32) ? 0 : SoundMixer::FLAG_UNSIGNED);
 }
 
-void SimonSound::playEffects(uint sound) {
+void Sound::playEffects(uint sound) {
 	if (!_effects)
 		return;
 	
@@ -447,7 +447,7 @@ void SimonSound::playEffects(uint sound) {
 	_effects->playSound(sound, &_effects_handle, (_game == GAME_SIMON1CD32) ? 0 : SoundMixer::FLAG_UNSIGNED);
 }
 
-void SimonSound::playAmbient(uint sound) {
+void Sound::playAmbient(uint sound) {
 	if (!_effects)
 		return;
 
@@ -463,24 +463,24 @@ void SimonSound::playAmbient(uint sound) {
 	_effects->playSound(sound, &_ambient_handle, SoundMixer::FLAG_LOOP|SoundMixer::FLAG_UNSIGNED);
 }
 
-bool SimonSound::hasVoice() {
+bool Sound::hasVoice() {
 	return _voice_file;
 }
 
-void SimonSound::stopVoice() {
+void Sound::stopVoice() {
 	_mixer->stopHandle(_voice_handle);
 }
 
-void SimonSound::stopAll() {
+void Sound::stopAll() {
 	_mixer->stopAll();
 	_ambient_playing = 0;
 }
 
-void SimonSound::effectsPause(bool b) {
+void Sound::effectsPause(bool b) {
 	_effects_paused = b;
 }
 
-void SimonSound::ambientPause(bool b) {
+void Sound::ambientPause(bool b) {
 	_ambient_paused = b;
 
 	if (_ambient_paused && _ambient_playing) {
