@@ -60,7 +60,7 @@ protected:
 //template <class T>
 //T* Singleton<T>::_singleton=0;
 
-#define DECLARE_SINGLETON(T) T* Common::Singleton<T>::_singleton=0
+#define DECLARE_SINGLETON(T) template<> T* Common::Singleton<T>::_singleton=0
 
 }	// End of namespace Common
 
