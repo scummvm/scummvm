@@ -1473,13 +1473,12 @@ void Actor::walkActorOld() {
 		// Can't walk through locked boxes
 		int flags = _vm->getBoxFlags(next_box);
 		if (flags & kBoxLocked && !(flags & kBoxPlayerOnly && !isPlayer())) {
-//			moving |= MF_LAST_LEG;
-//			return;
-			break;
+			moving |= MF_LAST_LEG;
+			return;
 		}
 
 		walkdata.curbox = next_box;
-		
+
 		if (_vm->_version <= 2) {
 			_vm->getClosestPtOnBox(walkdata.curbox, x, y, p2.x, p2.y);
 			_vm->getClosestPtOnBox(walkbox, p2.x, p2.y, p3.x, p3.y);
@@ -1488,7 +1487,7 @@ void Actor::walkActorOld() {
 			if (p2.x == 32000 && p3.x == 32000) {
 				break;
 			}
-	
+
 			if (p2.x != 32000) {
 				if (calcMovementFactor(p2)) {
 					walkdata.point3 = p3;
