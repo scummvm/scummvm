@@ -51,8 +51,8 @@ public:
 	bool open(const char *filename, const Common::String &directory) { return open(filename, directory.c_str()); }
 	bool open(const char *filename, const char *directory = NULL, int mode = kFileReadMode, byte encbyte = 0);
 	void close();
-	bool isOpen();
-	bool ioFailed();
+	bool isOpen() const;
+	bool ioFailed() const;
 	void clearIOFailed();
 	bool eof();
 	uint32 pos();

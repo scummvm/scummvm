@@ -188,11 +188,11 @@ void File::close() {
 	_handle = NULL;
 }
 
-bool File::isOpen() {
+bool File::isOpen() const {
 	return _handle != NULL;
 }
 
-bool File::ioFailed() {
+bool File::ioFailed() const {
 	return _ioFailed != 0;
 }
 
