@@ -85,7 +85,6 @@ void Dialog::open()
 	}
 	
 	if (w) {
-		printf("Setting default focus\n");
 		w->receivedFocus();
 		_focusedWidget = w;
 	}
