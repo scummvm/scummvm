@@ -46,6 +46,9 @@
 #endif
 #endif
 
+extern int gDebugLevel;
+
+
 // DONT FIXME: DO NOT ORDER ALPHABETICALLY, THIS IS ORDERED BY IMPORTANCE/CATEGORY! :)
 #ifdef __PALM_OS__
 static const char USAGE_STRING[] = "NoUsageString"; // save more data segment space

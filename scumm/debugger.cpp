@@ -36,6 +36,8 @@
 
 #include "common/debugger.cpp"
 
+extern int gDebugLevel;
+
 namespace Scumm {
 
 void CDECL debugC(int channel, const char *s, ...) {

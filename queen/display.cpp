@@ -20,6 +20,7 @@
  */
 
 #include "stdafx.h"
+#include "common/system.h"
 #include "queen/display.h"
 
 #include "queen/input.h"

@@ -23,10 +23,12 @@
 #include <malloc.h>
 #endif
 #include "base/engine.h"
+#include "base/gameDetector.h"
 #include "common/config-manager.h"
 #include "common/file.h"
 #include "common/timer.h"
 #include "common/scaler.h"	// For GFX_NORMAL
+#include "common/system.h"
 #include "sound/mixer.h"
 
 /* FIXME - BIG HACK for MidiEmu */

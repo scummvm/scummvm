@@ -30,6 +30,8 @@
 #include "saga/scene.h"
 #include "saga/script.h"
 
+#include "common/system.h"
+
 namespace Saga {
 
 int SagaEngine::processInput() {

@@ -23,9 +23,10 @@
 
 #include "common/scummsys.h"
 #include "common/str.h"
-#include "common/system.h"
-#include "base/gameDetector.h"
 
+class GameDetector;
+class OSystem;
+class SaveFileManager;
 class SoundMixer;
 class Timer;
 

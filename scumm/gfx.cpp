@@ -20,6 +20,7 @@
  */
 
 #include "stdafx.h"
+#include "common/system.h"
 #include "scumm/scumm.h"
 #include "scumm/actor.h"
 #include "scumm/charset.h"

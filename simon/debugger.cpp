@@ -25,6 +25,8 @@
 #include "simon/debugger.h"
 #include "simon/simon.h"
 
+extern int gDebugLevel;
+
 namespace Simon {
 
 Debugger::Debugger(SimonEngine *vm) 

@@ -25,6 +25,7 @@
 #include "base/engine.h"
 
 class GameDetector;
+class SaveFile;
 
 #if defined(_WIN32_WCE) && (_WIN32_WCE <= 300)
 
