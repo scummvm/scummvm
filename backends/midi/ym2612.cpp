@@ -326,6 +326,9 @@ void Operator2612::nextTick(uint16 rate, const int *phasebuf, int *outbuf, int b
 	const int32 zero_level = ((int32)0x7f << 15);
 	const int phaseIncrement = (_multiple > 0) ? (_frequency * _multiple) : (_frequency / 2);
 
+	int32 output = _lastOutput;
+	int32 level = _currentLevel + _totalLevel;
+
 	while (buflen) {
 		switch (_state) {
 		case _s_ready:
@@ -336,17 +339,17 @@ void Operator2612::nextTick(uint16 rate, const int *phasebuf, int *outbuf, int b
 			break;
 		case _s_decaying:
 			levelIncrement = _decayRate;
-			target = _sustainLevel;
+			target = _sustainLevel + _totalLevel;
 			next_state = _s_sustaining;
 			break;
 		case _s_sustaining:
 			levelIncrement = _sustainRate;
-			target = zero_level;
+			target = zero_level + _totalLevel;
 			next_state = _s_ready;
 			break;
 		case _s_releasing:
 			levelIncrement = _releaseRate;
-			target = zero_level;
+			target = zero_level + _totalLevel;
 			next_state = _s_ready;
 			break;
 		}
@@ -358,29 +361,27 @@ void Operator2612::nextTick(uint16 rate, const int *phasebuf, int *outbuf, int b
 				++_tickCount;
 				int i = (int) (_tickCount * _attackTime);
 				if (i >= 1024) {
-					_currentLevel = 0;
+					level = _totalLevel;
 					_state = _s_decaying;
 					switching = true;
 				} else {
-					_currentLevel = (attackOut[i] << (31 - 8 - 16));
+					level = (attackOut[i] << (31 - 8 - 16)) + _totalLevel;
 				}
 			} else {
 				// Decay, Sustain and Release phases
-				_currentLevel += levelIncrement;
-				if (_currentLevel >= target) {
-					_currentLevel = target;
+				level += levelIncrement;
+				if (level >= target) {
+					level = target;
 					_state = next_state;
 					switching = true;
 				}
 			}
 
-			int32 level = _currentLevel + _totalLevel;
-			int32 output = 0;
 			if (level < zero_level) {
 				_phase &= 0x3ffff;
 				int phaseShift = *phasebuf >> 2; // 正しい変調量は?  3 じゃ小さすぎで 2 じゃ大きいような。
 				if (_feedbackLevel)
-					phaseShift += (_lastOutput << (_feedbackLevel - 1)) / 1024;
+					phaseShift += (output << (_feedbackLevel - 1)) / 1024;
 				output = sintbl[((_phase >> 7) + phaseShift) & 0x7ff];
 				output >>= (level >> 18);	// 正しい減衰量は?
 				// Here is the original code, which requires 64-bit ints
@@ -398,15 +399,17 @@ void Operator2612::nextTick(uint16 rate, const int *phasebuf, int *outbuf, int b
 				output = ((output >> 4) * (powtbl[511-((level>>9)&511)] >> 3)) / 1024;
 
 				_phase += phaseIncrement;
-			}
+			} else
+				output = 0;
 
-			_lastOutput = output;
 			*outbuf += output;
 			 --buflen;
 			 ++phasebuf;
 			 ++outbuf;
 		} while (buflen && !switching);
 	}
+	_lastOutput = output;
+	_currentLevel = level - _totalLevel;
 }
 
 ////////////////////////////////////////
