@@ -45,8 +45,6 @@
 #include <fcntl.h>
 #include <sys/ioctl.h>
 
-#undef BUILD_FOR_IPAQ
-
 Scumm scumm;
 ScummDebugger debugger;
 Gui gui;
@@ -147,15 +145,17 @@ static void *sound_and_music_thread(void *params) {
 
   while (1) {
     unsigned short *buf = (unsigned short *) sound_buffer;
+    int size, written;
 
     scumm.mixWaves((short *) sound_buffer, FRAG_SIZE >> 2);
     /* Now convert to stereo */
     for (int i = ((FRAG_SIZE >> 2) - 1); i >= 0; i--) {
       buf[2 * i + 1] = buf[2 * i] = buf[i];
     }
-    if (write(sound_fd, sound_buffer, FRAG_SIZE) != FRAG_SIZE) {
-      error("Bad write to the audio device !\n");
-      exit(1);
+    size = FRAG_SIZE;
+    while (size > 0) {
+      written = write(sound_fd, sound_buffer, size);
+      size -= written;
     }
   }
 
