@@ -653,6 +653,16 @@ void Scumm::runHook(int i) {
 void Scumm::freezeScripts(int flag) {
 	int i;
 
+	if (_features & GF_AFTER_V2) {
+		for (i = 0; i < NUM_SCRIPT_SLOT; i++) {
+			if (_currentScript != i && vm.slot[i].status != ssDead && !vm.slot[i].freezeResistant) {
+				vm.slot[i].status |= 0x80;
+				vm.slot[i].freezeCount = 1;
+			}
+		}
+		return;
+	}
+
 	for (i = 0; i < NUM_SCRIPT_SLOT; i++) {
 		if (_currentScript != i && vm.slot[i].status != ssDead && (!vm.slot[i].freezeResistant || flag >= 0x80)) {
 			vm.slot[i].status |= 0x80;
@@ -671,6 +681,15 @@ void Scumm::freezeScripts(int flag) {
 
 void Scumm::unfreezeScripts() {
 	int i;
+
+	if (_features & GF_AFTER_V2) {
+		for (i = 0; i < NUM_SCRIPT_SLOT; i++) {
+			vm.slot[i].status &= 0x7F;
+			vm.slot[i].freezeCount = 0;
+		}
+		return;
+	}
+	
 	for (i = 0; i < NUM_SCRIPT_SLOT; i++) {
 		if (vm.slot[i].status & 0x80) {
 			if (!--vm.slot[i].freezeCount) {
@@ -684,6 +703,7 @@ void Scumm::unfreezeScripts() {
 			_sentence[i].freezeCount--;
 	}
 }
+
 
 void Scumm::runAllScripts() {
 	int i;
