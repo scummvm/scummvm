@@ -218,7 +218,7 @@ void Insane::proc62(void) {
 	if (edi >= 14)
 		goto loc5;
 
-	edx = rand() % 11;
+	edx = _vm->_rnd.getRandomNumber(10);
 
 	esi = edx;
 

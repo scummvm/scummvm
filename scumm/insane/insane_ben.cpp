@@ -1166,7 +1166,7 @@ void Insane::actor02Reaction(int32 buttons) {
 			prepareScenePropScene(33, 0, 0);
 			break;
 		case EN_ROTT2:
-			tmp = rand() % 5;
+			tmp = _vm->_rnd.getRandomNumber(4);
 			if (!tmp)
 				prepareScenePropScene(35, 0, 0);
 			if (tmp == 3)
@@ -1176,7 +1176,7 @@ void Insane::actor02Reaction(int32 buttons) {
 			prepareScenePropScene(6, 0, 0);
 			break;
 		case EN_VULTM1:
-			tmp = rand() % 5;
+			tmp = _vm->_rnd.getRandomNumber(4);
 			if (!tmp)
 				prepareScenePropScene(40, 0, 0);
 			if (tmp == 3)
@@ -1955,7 +1955,7 @@ int32 Insane::setBenState(void) {
 void Insane::ouchSoundBen(void) {
 	_actor[0].act[3].state = 52;
 
-	switch (rand() % 4) {
+	switch (_vm->_rnd.getRandomNumber(3)) {
 	case 0:
 		smlayer_startVoice(315);
 		break;

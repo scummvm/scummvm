@@ -118,13 +118,13 @@ int32 Insane::enemy0handler(int32 actor1, int32 actor2, int32 probability) {
 	if (!_actor[actor1].defunct) {
 		if (_enHdlVar[EN_ROTT1][1] > _enHdlVar[EN_ROTT1][2]) {
 			if (act1damage - act2damage >= 30) {
-				if (rand() % probability != 1)
+				if (_vm->_rnd.getRandomNumber(probability - 1) != 1)
 					_enHdlVar[EN_ROTT1][0] = 0;
 				else
 					_enHdlVar[EN_ROTT1][0] = 1;
 			}
 			_enHdlVar[EN_ROTT1][1] = 0;
-			_enHdlVar[EN_ROTT1][2] = rand() % (probability * 2);
+			_enHdlVar[EN_ROTT1][2] = _vm->_rnd.getRandomNumber(probability * 2 - 1);
 		}
 
 		dist = ABS(act1x - act2x);
@@ -157,21 +157,21 @@ int32 Insane::enemy0handler(int32 actor1, int32 actor2, int32 probability) {
 				}
 			}
 			_enHdlVar[EN_ROTT1][3] = 0;
-			_enHdlVar[EN_ROTT1][4] = rand() % probability;
+			_enHdlVar[EN_ROTT1][4] = _vm->_rnd.getRandomNumber(probability - 1);
 		}
 
 		if (_enHdlVar[EN_ROTT1][5] > _enHdlVar[EN_ROTT1][6]) {
 			if (weaponMaxRange(actor2) + 40 >= dist) {
-				if (rand() % probability == 1)
+				if (_vm->_rnd.getRandomNumber(probability - 1) == 1)
 					retval = 1;
 			}
 			if (_actor[actor2].kicking) {
 				if (weaponMaxRange(actor2) >= dist)
-					if (rand() % (probability * 2) <= 1)
+					if (_vm->_rnd.getRandomNumber(probability * 2 - 1) <= 1)
 						retval = 1;
 			}
 			_enHdlVar[EN_ROTT1][5] = 0;
-			_enHdlVar[EN_ROTT1][6] = ABS(rand() % probability) * 2;
+			_enHdlVar[EN_ROTT1][6] = ABS(_vm->_rnd.getRandomNumber(probability - 1)) * 2;
 		}
 
 		if (_actor[actor1].weapon == -1)
@@ -181,7 +181,7 @@ int32 Insane::enemy0handler(int32 actor1, int32 actor2, int32 probability) {
 			(_actor[actor2].lost == 0) &&
 			(_actor[actor1].lost == 0)) {
 			if (_actor[actor1].act[3].state == 54) {
-				switch (rand() % 10) {
+				switch (_vm->_rnd.getRandomNumber(9)) {
 				case 3:
 					if (!_enemyState[EN_ROTT1][6]) {
 						_enemyState[EN_ROTT1][6] = 1;
@@ -196,7 +196,7 @@ int32 Insane::enemy0handler(int32 actor1, int32 actor2, int32 probability) {
 					break;
 				}
 			} else {
-				switch(rand() % 15) {
+				switch(_vm->_rnd.getRandomNumber(14)) {
 				case 2:
 					if (!_enemyState[EN_ROTT1][2]) {
 						_enemyState[EN_ROTT1][2] = 1;
@@ -282,13 +282,13 @@ int32 Insane::enemy1handler(int32 actor1, int32 actor2, int32 probability) {
 	if (!_actor[actor1].defunct) {
 		if (_enHdlVar[EN_ROTT2][1] > _enHdlVar[EN_ROTT2][2]) {
 			if (act1damage - act2damage >= 30) {
-				if (rand() % probability != 1)
+				if (_vm->_rnd.getRandomNumber(probability - 1) != 1)
 					_enHdlVar[EN_ROTT2][0] = 0;
 				else
 					_enHdlVar[EN_ROTT2][0] = 1;
 			}
 			_enHdlVar[EN_ROTT2][1] = 0;
-			_enHdlVar[EN_ROTT2][2] = rand() % (probability * 2);
+			_enHdlVar[EN_ROTT2][2] = _vm->_rnd.getRandomNumber(probability * 2 - 1);
 		}
 
 		dist = ABS(act1x - act2x);
@@ -321,21 +321,21 @@ int32 Insane::enemy1handler(int32 actor1, int32 actor2, int32 probability) {
 				}
 			}
 			_enHdlVar[EN_ROTT2][3] = 0;
-			_enHdlVar[EN_ROTT2][4] = rand() % probability;
+			_enHdlVar[EN_ROTT2][4] = _vm->_rnd.getRandomNumber(probability - 1);
 		}
 
 		if (_enHdlVar[EN_ROTT2][5] > _enHdlVar[EN_ROTT2][6]) {
 			if (weaponMaxRange(actor2) + 40 >= dist) {
-				if (rand() % probability == 1)
+				if (_vm->_rnd.getRandomNumber(probability - 1) == 1)
 					retval = 1;
 			}
 			if (_actor[actor2].kicking) {
 				if (weaponMaxRange(actor2) <= dist)
-					if (rand() % (probability * 2) <= 1)
+					if (_vm->_rnd.getRandomNumber(probability * 2 - 1) <= 1)
 						retval = 1;
 			}
 			_enHdlVar[EN_ROTT1][5] = 0;
-			_enHdlVar[EN_ROTT1][6] = ABS(rand() % probability) * 2;
+			_enHdlVar[EN_ROTT1][6] = ABS(_vm->_rnd.getRandomNumber(probability - 1)) * 2;
 		}
 
 		if (_actor[actor1].weapon == -1)
@@ -345,7 +345,7 @@ int32 Insane::enemy1handler(int32 actor1, int32 actor2, int32 probability) {
 			(_actor[actor2].lost == 0) &&
 			(_actor[actor1].lost == 0)) {
 			if (_actor[actor1].act[3].state == 54) {
-				switch (rand() % 10) {
+				switch (_vm->_rnd.getRandomNumber(9)) {
 				case 3:
 					if (!_enemyState[EN_ROTT2][6]) {
 						_enemyState[EN_ROTT2][6] = 1;
@@ -360,7 +360,7 @@ int32 Insane::enemy1handler(int32 actor1, int32 actor2, int32 probability) {
 					break;
 				}
 			} else {
-				switch(rand() % 15) {
+				switch(_vm->_rnd.getRandomNumber(14)) {
 				case 2:
 					if (!_enemyState[EN_ROTT2][2]) {
 						_enemyState[EN_ROTT2][2] = 1;
@@ -427,13 +427,13 @@ int32 Insane::enemy2handler(int32 actor1, int32 actor2, int32 probability) {
 	if (!_actor[actor1].defunct) {
 		if (_enHdlVar[EN_ROTT3][1] > _enHdlVar[EN_ROTT3][2]) {
 			if (act1damage - act2damage >= 30) {
-				if (rand() % probability != 1)
+				if (_vm->_rnd.getRandomNumber(probability - 1) != 1)
 					_enHdlVar[EN_ROTT3][0] = 0;
 				else
 					_enHdlVar[EN_ROTT3][0] = 1;
 			}
 			_enHdlVar[EN_ROTT3][1] = 0;
-			_enHdlVar[EN_ROTT3][2] = rand() % (probability * 2);
+			_enHdlVar[EN_ROTT3][2] = _vm->_rnd.getRandomNumber(probability * 2 - 1);
 		}
 
 		dist = abs(act1x - act2x);
@@ -466,20 +466,20 @@ int32 Insane::enemy2handler(int32 actor1, int32 actor2, int32 probability) {
 				}
 			}
 			_enHdlVar[EN_ROTT3][3] = 0;
-			_enHdlVar[EN_ROTT3][4] = rand() % probability;
+			_enHdlVar[EN_ROTT3][4] = _vm->_rnd.getRandomNumber(probability - 1);
 		}
 		if (_enHdlVar[EN_ROTT3][5] > _enHdlVar[EN_ROTT3][6]) {
 			if (weaponMaxRange(actor2) + 40 >= dist) {
-				if (rand() % probability == 1)
+				if (_vm->_rnd.getRandomNumber(probability - 1) == 1)
 					retval = 1;
 			}
 			if (_actor[actor2].kicking) {
 				if (weaponMaxRange(actor2) >= dist)
-					if (rand() % (probability * 2) <= 1)
+					if (_vm->_rnd.getRandomNumber(probability * 2 - 1) <= 1)
 						retval = 1;
 			}
 			_enHdlVar[EN_ROTT3][5] = 0;
-			_enHdlVar[EN_ROTT3][6] = ABS(rand() % probability) * 2;
+			_enHdlVar[EN_ROTT3][6] = ABS(_vm->_rnd.getRandomNumber(probability - 1)) * 2;
 		}
 
 		if (_actor[actor1].weapon == -1)
@@ -489,7 +489,7 @@ int32 Insane::enemy2handler(int32 actor1, int32 actor2, int32 probability) {
 			(_actor[actor2].lost == 0) &&
 			(_actor[actor1].lost == 0)) {
 			if (_actor[actor1].act[3].state == 54) {
-				switch (rand() % 10) {
+				switch (_vm->_rnd.getRandomNumber(9)) {
 				case 3:
 					if (!_enemyState[EN_ROTT3][1]) {
 						_enemyState[EN_ROTT3][1] = 1;
@@ -511,14 +511,14 @@ int32 Insane::enemy2handler(int32 actor1, int32 actor2, int32 probability) {
 				}
 			} else {
 				if (_actor[actor1].kicking) {
-					if (rand() % 10 == 9) {
+					if (_vm->_rnd.getRandomNumber(9) == 9) {
 						if (!_enemyState[EN_ROTT3][6]) {
 							_enemyState[EN_ROTT3][6] = 1;
 							prepareScenePropScene(31, 0, 0);
 						}
 					}
 				} else {
-					if (rand() % 15 == 7) {
+					if (_vm->_rnd.getRandomNumber(14) == 7) {
 						if (!_enemyState[EN_ROTT3][5]) {
 							_enemyState[EN_ROTT3][5] = 1;
 							prepareScenePropScene(30, 0, 0);
@@ -575,13 +575,13 @@ int32 Insane::enemy3handler(int32 actor1, int32 actor2, int32 probability) {
 	
 	if (!_actor[actor1].defunct) {
 		if (_enHdlVar[EN_VULTF1][1] > _enHdlVar[EN_VULTF1][2]) {
-			if ((act1damage - act2damage >= 30) && (rand() % probability != 1))
+			if ((act1damage - act2damage >= 30) && (_vm->_rnd.getRandomNumber(probability - 1) != 1))
 				_enHdlVar[EN_VULTF1][0] = 0;
 			else
 				_enHdlVar[EN_VULTF1][0] = 1;
 
 			_enHdlVar[EN_VULTF1][1] = 0;
-			_enHdlVar[EN_VULTF1][2] = rand() % (probability * 2);
+			_enHdlVar[EN_VULTF1][2] = _vm->_rnd.getRandomNumber(probability * 2 - 1);
 		}
 
 		dist = ABS(act1x - act2x);
@@ -614,22 +614,22 @@ int32 Insane::enemy3handler(int32 actor1, int32 actor2, int32 probability) {
 				}
 			}
 			_enHdlVar[EN_VULTF1][3] = 0;
-			_enHdlVar[EN_VULTF1][4] = rand() % probability;
+			_enHdlVar[EN_VULTF1][4] = _vm->_rnd.getRandomNumber(probability - 1);
 		}
 
 		if (_enHdlVar[EN_VULTF1][5] > _enHdlVar[EN_VULTF1][6]) {
 			if (_enHdlVar[EN_VULTF1][0] == 1) {
 				if (weaponMaxRange(actor2) + 40 >= dist)
-					if (rand() % probability == 1)
+					if (_vm->_rnd.getRandomNumber(probability - 1) == 1)
 						retval = 1;
 			} else {
 				if (_actor[actor1].kicking)
 					if (weaponMaxRange(actor2) >= dist)
-						if (rand() % probability <= 1)
+						if (_vm->_rnd.getRandomNumber(probability - 1) <= 1)
 							retval = 1;
 			}
 			_enHdlVar[EN_VULTF1][5] = 0;
-			_enHdlVar[EN_VULTF1][6] = ABS(rand() % probability) / 2;
+			_enHdlVar[EN_VULTF1][6] = ABS(_vm->_rnd.getRandomNumber(probability - 1)) / 2;
 		}
 
 		if (_actor[actor1].weapon == -1)
@@ -638,7 +638,7 @@ int32 Insane::enemy3handler(int32 actor1, int32 actor2, int32 probability) {
 		if ((_actor[actor1].field_54 == 0) &&
 			(_actor[actor2].lost == 0) &&
 			(_actor[actor1].lost == 0)) {
-			_enHdlVar[EN_VULTF1][8] = rand() % 26;
+			_enHdlVar[EN_VULTF1][8] = _vm->_rnd.getRandomNumber(25);
 			if (_enHdlVar[EN_VULTF1][8] != _enHdlVar[EN_VULTF1][7]) {
 				switch (_enHdlVar[EN_VULTF1][8]) {
 				case 0:
@@ -733,13 +733,13 @@ int32 Insane::enemy4handler(int32 actor1, int32 actor2, int32 probability) {
 	if (!_actor[actor1].defunct) {
 		if (_enHdlVar[EN_VULTM1][1] > _enHdlVar[EN_VULTM1][2]) {
 			if (act1damage - act2damage >= 30) {
-				if (rand() % probability != 1)
+				if (_vm->_rnd.getRandomNumber(probability - 1) != 1)
 					_enHdlVar[EN_VULTM1][0] = 0;
 				else
 					_enHdlVar[EN_VULTM1][0] = 1;
 			}
 			_enHdlVar[EN_VULTM1][1] = 0;
-			_enHdlVar[EN_VULTM1][2] = rand() % (probability * 2);
+			_enHdlVar[EN_VULTM1][2] = _vm->_rnd.getRandomNumber(probability * 2 - 1);
 		}
 
 		dist = ABS(act1x - act2x);
@@ -772,20 +772,20 @@ int32 Insane::enemy4handler(int32 actor1, int32 actor2, int32 probability) {
 				}
 			}
 			_enHdlVar[EN_VULTM1][3] = 0;
-			_enHdlVar[EN_VULTM1][4] = rand() % probability;
+			_enHdlVar[EN_VULTM1][4] = _vm->_rnd.getRandomNumber(probability - 1);
 		}
 		if (_enHdlVar[EN_VULTM1][5] > _enHdlVar[EN_VULTM1][6]) {
 			if (weaponMaxRange(actor2) + 40 >= dist) {
-				if (rand() % probability == 1)
+				if (_vm->_rnd.getRandomNumber(probability - 1) == 1)
 					retval = 1;
 			}
 			if (_actor[actor2].kicking) {
 				if (weaponMaxRange(actor2) >= dist) // that's weird but original is >=
-					if (rand() % (probability * 2) <= 1)
+					if (_vm->_rnd.getRandomNumber(probability * 2 - 1) <= 1)
 						retval = 1;
 			}
 			_enHdlVar[EN_VULTM1][5] = 0;
-			_enHdlVar[EN_VULTM1][6] = ABS(rand() % probability) * 2;
+			_enHdlVar[EN_VULTM1][6] = ABS(_vm->_rnd.getRandomNumber(probability - 1)) * 2;
 		}
 
 		if (_actor[actor1].weapon == -1)
@@ -795,7 +795,7 @@ int32 Insane::enemy4handler(int32 actor1, int32 actor2, int32 probability) {
 			(_actor[actor2].lost == 0) &&
 			(_actor[actor1].lost == 0)) {
 			if (_actor[actor1].act[3].state == 54) {
-				switch (rand() % 10) {
+				switch (_vm->_rnd.getRandomNumber(9)) {
 				case 4:
 					if (!_enemyState[EN_VULTM1][7]) {
 						_enemyState[EN_VULTM1][7] = 1;
@@ -811,7 +811,7 @@ int32 Insane::enemy4handler(int32 actor1, int32 actor2, int32 probability) {
 				}
 			} else {
 				if (_actor[actor1].kicking) {
-					switch (rand() % 10) {
+					switch (_vm->_rnd.getRandomNumber(9)) {
 					case 3:
 						prepareScenePropScene(44, 0, 0);
 						break;
@@ -821,7 +821,7 @@ int32 Insane::enemy4handler(int32 actor1, int32 actor2, int32 probability) {
 					}
 				} else {
 					if (weaponMaxRange(actor2) <= dist) {
-						switch (rand() % 10) {
+						switch (_vm->_rnd.getRandomNumber(9)) {
 						case 3:
 							if (!_enemyState[EN_VULTM1][3]) {
 								_enemyState[EN_VULTM1][3] = 1;
@@ -836,7 +836,7 @@ int32 Insane::enemy4handler(int32 actor1, int32 actor2, int32 probability) {
 							break;
 						}
 					} else {
-						switch (rand() % 15) {
+						switch (_vm->_rnd.getRandomNumber(14)) {
 						case 7:
 							if (!_enemyState[EN_VULTM1][9]) {
 								_enemyState[EN_VULTM1][9] = 1;
@@ -923,12 +923,12 @@ int32 Insane::enemy5handler(int32 actor1, int32 actor2, int32 probability) {
 			}
 
 			if (weaponMaxRange(actor1) + 20 >= dist)
-				if (rand() % probability == 1)
+				if (_vm->_rnd.getRandomNumber(probability - 1) == 1)
 					retval = 1;
 		} else {
 			if (weaponMaxRange(actor2) >= dist && _actor[actor2].weapon == INV_CHAINSAW)
 				if (!_actor[actor2].kicking) {
-					if (rand() % probability == 1)
+					if (_vm->_rnd.getRandomNumber(probability - 1) == 1)
 						retval = 1;
 				} else {
 					retval = 1;
@@ -942,7 +942,7 @@ int32 Insane::enemy5handler(int32 actor1, int32 actor2, int32 probability) {
 			(_actor[actor2].lost == 0) &&
 			(_actor[actor1].lost == 0)) {
 			if (_actor[actor1].act[3].state == 54)
-				switch (rand() % 10) {
+				switch (_vm->_rnd.getRandomNumber(9)) {
 				case 4:
 					if (!_enemyState[EN_VULTF2][6]) {
 						_enemyState[EN_VULTF2][6] = 1;
@@ -958,7 +958,7 @@ int32 Insane::enemy5handler(int32 actor1, int32 actor2, int32 probability) {
 				}
 			else {
 				if (_actor[actor1].kicking) {
-					switch (rand() % 10) {
+					switch (_vm->_rnd.getRandomNumber(9)) {
 					case 2:
 						if (!_enemyState[EN_VULTF2][8]) {
 							_enemyState[EN_VULTF2][8] = 1;
@@ -975,7 +975,7 @@ int32 Insane::enemy5handler(int32 actor1, int32 actor2, int32 probability) {
 						break;
 					}
 				} else {
-					switch (rand() % 15) {
+					switch (_vm->_rnd.getRandomNumber(14)) {
 					case 3:
 						if (!_enemyState[EN_VULTF2][4]) {
 							_enemyState[EN_VULTF2][4] = 1;
@@ -1059,7 +1059,7 @@ int32 Insane::enemy6handler(int32 actor1, int32 actor2, int32 probability) {
 			_actor[actor1].damage = 10;
 			if (!_enHdlVar[EN_VULTM2][1] && !_actor[actor1].lost) {
 				if (!_actor[actor1].field_54) {
-					switch (rand() % 4) {
+					switch (_vm->_rnd.getRandomNumber(3)) {
 					case 0:
 						if (!_enemyState[EN_VULTM2][1]) {
 							_enemyState[EN_VULTM2][1] = 1;
@@ -1110,7 +1110,7 @@ int32 Insane::enemy6handler(int32 actor1, int32 actor2, int32 probability) {
 			( _actor[actor1].field_54 == 0) &&
 			(_actor[actor2].lost == 0) &&
 			(_actor[actor1].lost == 0)) {
-			switch (rand() % 15) {
+			switch (_vm->_rnd.getRandomNumber(14)) {
 			case 2:
 				if (!_enemyState[EN_VULTM2][5]) {
 					_enemyState[EN_VULTM2][5] = 1;
@@ -1270,7 +1270,7 @@ void Insane::ouchSoundEnemy(void) {
 		if (_actor[0].weapon == INV_DUST) {
 			smlayer_startVoice(287);
 		} else {
-			if (rand() % 2) {
+			if (_vm->_rnd.getRandomNumber(1)) {
 				smlayer_startVoice(279);
 			} else {
 				smlayer_startVoice(280);
@@ -1284,7 +1284,7 @@ void Insane::ouchSoundEnemy(void) {
 		smlayer_startVoice(162);
 		break;
 	case EN_ROTT1:
-		tmp = rand() % 3;
+		tmp = _vm->_rnd.getRandomNumber(2);
 
 		if (!tmp) {
 			smlayer_startVoice(216);
@@ -1295,7 +1295,7 @@ void Insane::ouchSoundEnemy(void) {
 		}
 		break;
 	case EN_ROTT2:
-		tmp = rand() % 3;
+		tmp = _vm->_rnd.getRandomNumber(2);
 
 		if (!tmp) {
 			smlayer_startVoice(243);
@@ -1866,7 +1866,7 @@ void Insane::actor12Reaction(int32 buttons) {
 		smlayer_startSfx(69);
 
 		if (!_actor[1].field_54) {
-			tmp = rand() % 5;
+			tmp = _vm->_rnd.getRandomNumber(4);
 			if (tmp == 1) {
 				smlayer_startSfx(213);
 			} else if (tmp == 3) {
