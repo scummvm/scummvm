@@ -129,6 +129,8 @@ enum {
 	MD_MIDIEMU = 8,
 	MD_ALSA = 9,
 	MD_ADLIB = 10,
+	MD_PCSPK = 11,
+	MD_PCJR = 12,
 	
 	MD_YPA1 = 100	// palmos
 };

@@ -150,6 +150,8 @@ static const struct MusicDriver music_drivers[] = {
 	{"etude", "Etude", MD_ETUDE},
 	{"alsa", "ALSA", MD_ALSA},
 	{"adlib", "Adlib", MD_ADLIB},
+	{"pcspk", "PC Speaker", MD_PCSPK},
+	{"pcjr", "IBM PCjr", MD_PCJR},
 #else
 	{"ypa1", "Yamaha Pa1", MD_YPA1},
 #endif
@@ -166,8 +168,6 @@ static int countVersions(const VersionSettings *v) {
 GameDetector::GameDetector() {
 	_fullScreen = false;
 	_aspectRatio = false;
-
-	_use_adlib = false;
 
 	_master_volume = kDefaultMasterVolume;
 	_music_volume = kDefaultMusicVolume;
@@ -605,7 +605,9 @@ bool GameDetector::isMusicDriverAvailable(int drv) {
 	case MD_AUTO:
 	case MD_NULL: return true;
 #ifndef __PALM_OS__	// don't show it on palmos
-	case MD_ADLIB: return true;
+	case MD_ADLIB:
+	case MD_PCSPK:
+	case MD_PCJR:  return true;
 #else
 	case MD_YPA1: return true;
 #endif
@@ -640,7 +642,6 @@ bool GameDetector::parseMusicDriver(const char *s) {
 
 	while (md->name) {
 		if (!scumm_stricmp(md->name, s)) {
-			_use_adlib = (md->id == MD_ADLIB);
 			_midi_driver = md->id;
 			return true;
 		}
@@ -706,7 +707,6 @@ int GameDetector::detectMain() {
 	if ((_game.adlib & VersionSettings::ADLIB_ALWAYS) && _midi_driver != MD_NULL ||
 	    (_game.adlib & VersionSettings::ADLIB_PREFERRED) && _midi_driver == MD_AUTO) {
 		_midi_driver = MD_ADLIB;
-		_use_adlib = true;
 	}
 
 	if (!_gameDataPath) {
@@ -781,32 +781,38 @@ MidiDriver *GameDetector::createMidi() {
 	int drv = getMidiDriverType();
 
 	switch(drv) {
-	case MD_NULL:		return MidiDriver_NULL_create();
+	case MD_NULL:      return MidiDriver_NULL_create();
 	// In the case of Adlib, we won't specify anything.
 	// IMuse is designed to set up its own Adlib driver
 	// if need be, and we only have to specify a native
 	// driver.
-	case MD_ADLIB:		_use_adlib = true; return NULL;
+	case MD_ADLIB:     return NULL;
+
+	// Right now PC Speaker and PCjr are handled
+	// outside the MidiDriver architecture, so
+	// don't create anything for now.
+	case MD_PCSPK:
+	case MD_PCJR:      return NULL;
 #if defined(__PALM_OS__)
-	case MD_YPA1:		return MidiDriver_YamahaPa1_create();
+	case MD_YPA1:      return MidiDriver_YamahaPa1_create();
 #endif
 #if defined(WIN32) && !defined(_WIN32_WCE)
-	case MD_WINDOWS:	return MidiDriver_WIN_create();
+	case MD_WINDOWS:   return MidiDriver_WIN_create();
 #endif
 #if defined(__MORPHOS__)
-	case MD_ETUDE:		return MidiDriver_ETUDE_create();
+	case MD_ETUDE:     return MidiDriver_ETUDE_create();
 #endif
 #if defined(UNIX) && !defined(__BEOS__) && !defined(MACOSX)
-	case MD_SEQ:		return MidiDriver_SEQ_create();
+	case MD_SEQ:       return MidiDriver_SEQ_create();
 #endif
 #if (defined(MACOSX) || defined(macintosh)) && !defined(__PALM_OS__)
-	case MD_QTMUSIC:	return MidiDriver_QT_create();
+	case MD_QTMUSIC:   return MidiDriver_QT_create();
 #endif
 #if defined(MACOSX)
-	case MD_COREAUDIO:	return MidiDriver_CORE_create();
+	case MD_COREAUDIO: return MidiDriver_CORE_create();
 #endif
 #if defined(UNIX) && defined(USE_ALSA)
-	case MD_ALSA:		return MidiDriver_ALSA_create();
+	case MD_ALSA:      return MidiDriver_ALSA_create();
 #endif
 	}
 

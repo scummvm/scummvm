@@ -29,6 +29,7 @@
 #include "scumm/sound.h"
 #include "common/map.h"
 #include "common/str.h"
+#include "sound/mididrv.h" // Need MD_ enum values
 #include "gui/message.h"
 #include "dialogs.h"
 
@@ -727,7 +728,7 @@ int Scumm::readSoundResource(int type, int idx) {
 				break;
 			case MKID('ADL '):
 				pri = 1;
-				if (_use_adlib)
+				if (_midiDriver == MD_ADLIB)
 					pri = 10;
 				break;
 			case MKID('AMI '):
@@ -744,10 +745,13 @@ int Scumm::readSoundResource(int type, int idx) {
 				break;
 			case MKID('SPK '):
 				pri = -1;
-//				if (!_use_adlib)
-//					pri = 0;
+//				if (_midiDriver == MD_PCSPK)
+//					pri = 11;
 				break;
 			}
+
+			if ((_midiDriver == MD_PCSPK || _midiDriver == MD_PCJR) && pri != 11)
+				pri = -1;
 
 			debug(8, "    tag: %c%c%c%c, total_size=%d, pri=%d",
 						(char)((tag >> 24) & 0xff),

@@ -1011,7 +1011,7 @@ protected:
 	byte _haveMsg;
 	bool _useTalkAnims;
 	uint16 _defaultTalkDelay;
-	bool _use_adlib;
+	int _midiDriver; // Use the MD_ values from mididrv.h
 	int tempMusic;
 	int _saveSound;
 public:

@@ -114,8 +114,6 @@ public:
 	bool _fullScreen;
 	bool _aspectRatio;
 
-	bool _use_adlib;
-
 	int _master_volume;
 	int _music_volume;
 	int _sfx_volume;

@@ -379,7 +379,7 @@ Scumm::Scumm (GameDetector *detector, OSystem *syst)
 	_haveMsg = 0;
 	_useTalkAnims = false;
 	_defaultTalkDelay = 0;
-	_use_adlib = false;
+	_midiDriver = MD_NULL;
 	tempMusic = 0;
 	_silentDigitalImuse = 0;
 	_noDigitalSamples = 0;
@@ -549,7 +549,7 @@ Scumm::Scumm (GameDetector *detector, OSystem *syst)
 	_noSubtitles = detector->_noSubtitles;
 	_confirmExit = detector->_confirmExit;
 	_defaultTalkDelay = detector->_talkSpeed;
-	_use_adlib = detector->_use_adlib;
+	_midiDriver = detector->_midi_driver;
 	_language = detector->_language;
 	memset(&res, 0, sizeof(res));
 	_hexdumpScripts = false;
@@ -598,12 +598,13 @@ Scumm::Scumm (GameDetector *detector, OSystem *syst)
 	 * automatically when samples need to be generated */
 	_silentDigitalImuse = false;
 	if (!_mixer->bindToSystem(syst)) {
-		warning("Sound initialization failed");
-		if (detector->_use_adlib) {
-			_use_adlib = false;
-			detector->_use_adlib = false;
-			detector->_midi_driver = MD_NULL;
-			warning("Adlib music was selected, switching to midi null driver");
+		warning("Sound mixer initialization failed");
+		if (detector->_midi_driver == MD_ADLIB ||
+		    detector->_midi_driver == MD_PCSPK ||
+		    detector->_midi_driver == MD_PCJR)
+		{
+			_midiDriver = detector->_midi_driver = MD_NULL;
+			warning("MIDI driver depends on sound mixer, switching to null MIDI driver");
 		}
 		_silentDigitalImuse = true;
 		_noDigitalSamples = true;
