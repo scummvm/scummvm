@@ -36,9 +36,9 @@
 #include "sound/audiostream.h"
 #include "sound/mixer.h"
 #include "sound/rate.h"
+#include "sword2/sword2.h"
 #include "sword2/driver/driver96.h"
 #include "sword2/driver/d_sound.h"
-#include "sword2/sword2.h"
 
 namespace Sword2 {
 
@@ -130,10 +130,10 @@ static void premix_proc(void *param, int16 *data, uint len) {
 Sound::Sound(SoundMixer *mixer) {
 	_mutex = g_system->create_mutex();
 
-	_soundOn = 0;
-	_speechStatus = 0;
-	_fxPaused = 0;
-	_speechPaused = 0;
+	_soundOn = false;
+	_speechStatus = false;
+	_fxPaused = false;
+	_speechPaused = false;
 	_speechVol = 14;
 	_fxVol = 14;
 	_speechMuted = 0;
@@ -146,7 +146,7 @@ Sound::Sound(SoundMixer *mixer) {
 	memset(_fx, 0, sizeof(_fx));
 
 	_soundHandleSpeech = 0;
-	_soundOn = 1;
+	_soundOn = true;
 
 	_converter = makeRateConverter(_music[0].getRate(), _mixer->getOutputRate(), _music[0].isStereo(), false);
 
@@ -411,13 +411,13 @@ int32 Sound::playCompSpeech(const char *filename, uint32 speechid, uint8 vol, in
 
 		// Start the speech playing
 
-		_speechPaused = 1;
+		_speechPaused = true;
 			
 		uint32 flags = SoundMixer::FLAG_16BITS | SoundMixer::FLAG_AUTOFREE;
 
 		_mixer->playRaw(&_soundHandleSpeech, data16, bufferSize, 22050, flags, -1, volume, p);
 
-		_speechStatus = 1;
+		_speechStatus = true;
 	}
 
 	// DipMusic();
@@ -435,7 +435,7 @@ int32 Sound::stopSpeech(void) {
   
 	if (_speechStatus) {
 		g_engine->_mixer->stopHandle(_soundHandleSpeech);
-		_speechStatus = 0;
+		_speechStatus = false;
 		return RD_OK;
 	}
 	return RDERR_SPEECHNOTPLAYING;
@@ -453,7 +453,7 @@ int32 Sound::getSpeechStatus(void) {
 		return RDSE_SAMPLEPLAYING;
 
 	if (!_soundHandleSpeech) {
-		_speechStatus = 0;
+		_speechStatus = false;
 		return RDSE_SAMPLEFINISHED;
 	}
 	return RDSE_SAMPLEPLAYING;
@@ -465,7 +465,11 @@ int32 Sound::getSpeechStatus(void) {
  */
 
 void Sound::setSpeechVolume(uint8 volume) {
+	if (volume > 14)
+		volume = 14;
+
 	_speechVol = volume;
+
 	if (_soundHandleSpeech != 0 && !_speechMuted && getSpeechStatus() == RDSE_SAMPLEPLAYING) {
 		g_engine->_mixer->setChannelVolume(_soundHandleSpeech, 16 * _speechVol);
 	}
@@ -481,11 +485,11 @@ uint8 Sound::getSpeechVolume() {
 
 /**
  * Mutes/Unmutes the speech.
- * @param mute If mute is 0, restore the volume to the last set master level.
- * Otherwise the speech is muted (volume 0).
+ * @param mute If mute is false, restore the volume to the last set master
+ * level. Otherwise the speech is muted (volume 0).
  */
 
-void Sound::muteSpeech(uint8 mute) {
+void Sound::muteSpeech(bool mute) {
 	_speechMuted = mute;
 
 	if (getSpeechStatus() == RDSE_SAMPLEPLAYING) {
@@ -496,10 +500,10 @@ void Sound::muteSpeech(uint8 mute) {
 }
 
 /**
- * @return the speech's mute state, 1 if mute, 0 if not mute
+ * @return the speech's mute state, true if mute, false if not mute
  */
 
-uint8 Sound::isSpeechMute(void) {
+bool Sound::isSpeechMute(void) {
 	return _speechMuted;
 }
 
@@ -509,7 +513,7 @@ uint8 Sound::isSpeechMute(void) {
 
 void Sound::pauseSpeech(void) {
 	if (getSpeechStatus() == RDSE_SAMPLEPLAYING) {
-		_speechPaused = 1;
+		_speechPaused = true;
 		g_engine->_mixer->pauseHandle(_soundHandleSpeech, true);
 	}
 }
@@ -520,7 +524,7 @@ void Sound::pauseSpeech(void) {
 
 void Sound::unpauseSpeech(void) {
 	if (_speechPaused) {
-		_speechPaused = 0;
+		_speechPaused = false;
 		g_engine->_mixer->pauseHandle(_soundHandleSpeech, false);
 	}
 }
@@ -649,7 +653,7 @@ int32 Sound::playFx(int32 id, uint8 *data, uint8 vol, int8 pan, uint8 type) {
 				_fx[i]._flags |= SoundMixer::FLAG_LOOP;
 			else 
 				_fx[i]._flags &= ~SoundMixer::FLAG_LOOP;
-				 
+
 			_fx[i]._volume = vol;
 
 			// Start the sound effect playing
@@ -722,11 +726,16 @@ int32 Sound::setFxIdVolumePan(int32 id, uint8 vol, int8 pan) {
 	if (i == MAXFX)
 		return RDERR_FXNOTOPEN;
 
+	if (vol > 14)
+		vol = 14;
+
 	_fx[i]._volume = vol;
+
 	if (!_fxMuted) {
-		g_engine->_mixer->setChannelVolume(_fx[i]._handle, vol * _fxVol);
+		g_engine->_mixer->setChannelVolume(_fx[i]._handle, _fx[i]._volume * _fxVol);
 		g_engine->_mixer->setChannelPan(_fx[i]._handle, panTable[pan + 16]);
 	}
+
 	return RD_OK;
 }
 
@@ -807,7 +816,7 @@ void Sound::pauseFx(void) {
 			} else
 				_fx[i]._paused = false;
 		}
-		_fxPaused = 1;
+		_fxPaused = true;
 	}
 }
 
@@ -821,7 +830,7 @@ void Sound::pauseFxForSequence(void) {
 				_fx[i]._paused = false;
 			}
 		}
-		_fxPaused = 1;
+		_fxPaused = true;
 	}
 }
 
@@ -832,7 +841,7 @@ void Sound::unpauseFx(void) {
 				g_engine->_mixer->pauseHandle(_fx[i]._handle, false);
 			}
 		}
-		_fxPaused = 0;
+		_fxPaused = false;
 	}
 }
 
@@ -851,6 +860,9 @@ uint8 Sound::getFxVolume() {
  */
 
 void Sound::setFxVolume(uint8 volume) {
+	if (volume > 14)
+		volume = 14;
+
 	_fxVol = volume;
 
 	// Now update the volume of any fxs playing
@@ -862,11 +874,11 @@ void Sound::setFxVolume(uint8 volume) {
 
 /**
  * Mutes/Unmutes the sound effects.
- * @param mute If mute is 0, restore the volume to the last set master level.
- * Otherwise the sound effects are muted (volume 0).
+ * @param mute If mute is false, restore the volume to the last set master
+ * level. Otherwise the sound effects are muted (volume 0).
  */
 
-void Sound::muteFx(uint8 mute) {
+void Sound::muteFx(bool mute) {
 	_fxMuted = mute;
 
 	// Now update the volume of any fxs playing
@@ -880,10 +892,10 @@ void Sound::muteFx(uint8 mute) {
 }
 
 /**
- * @return the sound effects's mute state, 1 if mute, 0 if not mute
+ * @return the sound effects's mute state, true if mute, false if not mute
  */
 
-uint8 Sound::isFxMute(void) {
+bool Sound::isFxMute(void) {
 	return _fxMuted;
 }
 
@@ -1117,6 +1129,9 @@ void Sound::unpauseMusic(void) {
  */
 
 void Sound::setMusicVolume(uint8 volume) {
+	if (volume > 16)
+		volume = 16;
+
 	_musicVol = volume;
 }
 
@@ -1130,19 +1145,19 @@ uint8 Sound::getMusicVolume() {
 
 /**
  * Mutes/Unmutes the music.
- * @param mute If mute is 0, restore the volume to the last set master level.
- * Otherwise the music is muted (volume 0).
+ * @param mute If mute is false, restore the volume to the last set master
+ * level. Otherwise the music is muted (volume 0).
  */
 
-void Sound::muteMusic(uint8 mute) {
+void Sound::muteMusic(bool mute) {
 	_musicMuted = mute;
 }
 
 /**
- * @return the music's mute state, 1 if mute, 0 if not mute
+ * @return the music's mute state, true if mute, false if not mute
  */
 
-uint8 Sound::isMusicMute(void) {
+bool Sound::isMusicMute(void) {
 	return _musicMuted;
 }
 

@@ -18,6 +18,7 @@
  */
 
 #include "stdafx.h"
+#include "common/config-manager.h"
 #include "sword2/driver/driver96.h"
 #include "sword2/build_display.h"
 #include "sword2/console.h"
@@ -717,8 +718,6 @@ private:
 	Button *_okButton;
 	Button *_cancelButton;
 
-	void writeOptionSettings(void);
-
 public:
 	OptionsDialog() {
 		_fr = new FontRendererGui(g_sword2->_controlsFontId);
@@ -781,9 +780,9 @@ public:
 		_objectLabelsSwitch->setValue(gui._pointerTextSelected != 0);
 		_subtitlesSwitch->setValue(gui._subtitles != 0);
 		_reverseStereoSwitch->setValue(gui._stereoReversed != 0);
-		_musicSwitch->setValue(g_sound->isMusicMute() == 0);
-		_speechSwitch->setValue(g_sound->isSpeechMute() == 0);
-		_fxSwitch->setValue(g_sound->isFxMute() == 0);
+		_musicSwitch->setValue(!g_sound->isMusicMute());
+		_speechSwitch->setValue(!g_sound->isSpeechMute());
+		_fxSwitch->setValue(!g_sound->isFxMute());
 		_musicSlider->setValue(g_sound->getMusicVolume());
 		_speechSlider->setValue(g_sound->getSpeechVolume());
 		_fxSlider->setValue(g_sound->getFxVolume());
@@ -862,9 +861,9 @@ public:
 			gui.updateGraphicsLevel(result);
 		} else if (widget == _okButton) {
 			// Apply the changes
-			g_sound->muteMusic(_musicSwitch->getValue() == 0);
-			g_sound->muteSpeech(_speechSwitch->getValue() == 0);
-			g_sound->muteFx(_fxSwitch->getValue() == 0);
+			g_sound->muteMusic(!_musicSwitch->getValue());
+			g_sound->muteSpeech(!_speechSwitch->getValue());
+			g_sound->muteFx(!_fxSwitch->getValue());
 			g_sound->setMusicVolume(_musicSlider->getValue());
 			g_sound->setSpeechVolume(_speechSlider->getValue());
 			g_sound->setFxVolume(_fxSlider->getValue());
@@ -873,10 +872,9 @@ public:
 
 			gui._subtitles = _subtitlesSwitch->getValue();
 			gui._pointerTextSelected = _objectLabelsSwitch->getValue();
-			gui._speechSelected = _speechSwitch->getValue();
 			gui._stereoReversed = _reverseStereoSwitch->getValue();
 
-			writeOptionSettings();
+			gui.writeOptionSettings();
 			setResult(1);
 		} else if (widget == _cancelButton) {
 			// Revert the changes
@@ -885,34 +883,6 @@ public:
 		}
 	}
 };
-
-void OptionsDialog::writeOptionSettings(void) {
-	uint8 buff[10];
-	char filename[256];
-	SaveFile *fp;
-	SaveFileManager *mgr = g_system->get_savefile_manager();
-	
-	sprintf(filename, "%s-settings.dat", g_sword2->_targetName);
-
-	buff[0] = g_sound->getMusicVolume();
-	buff[1] = g_sound->getSpeechVolume();
-	buff[2] = g_sound->getFxVolume();
-	buff[3] = g_sound->isMusicMute();
-	buff[4] = g_sound->isSpeechMute();
-	buff[5] = g_sound->isFxMute();
-	buff[6] = g_display->getRenderLevel();
-	buff[7] = gui._subtitles;
-	buff[8] = gui._pointerTextSelected;
-	buff[9] = gui._stereoReversed;
-	
-	fp = mgr->open_savefile(filename, g_sword2->getSavePath(), true);
-
-	if (fp)
-		fp->write(buff, 10);
-
-	delete fp;
-	delete mgr;
-}
 
 enum {
 	kSaveDialog,
@@ -1367,6 +1337,66 @@ void SaveLoadDialog::saveLoadError(char* text) {
 	RemoveMsg();
 }
 
+Gui::Gui() : _baseSlot(0) {
+	int i;
+
+	for (i = 0; i < ARRAYSIZE(_musicVolume); i++) {
+		_musicVolume[i] = (i * 255) / (ARRAYSIZE(_musicVolume) - 1);
+		if ((i * 255) % (ARRAYSIZE(_musicVolume) - 1))
+			_musicVolume[i]++;
+	}
+
+	for (i = 0; i < ARRAYSIZE(_soundVolume); i++) {
+		_soundVolume[i] = (i * 255) / (ARRAYSIZE(_soundVolume) - 1);
+		if ((i * 255) % (ARRAYSIZE(_soundVolume) - 1))
+			_soundVolume[i]++;
+	}
+
+	ConfMan.registerDefault("music_volume", _musicVolume[12]);
+	ConfMan.registerDefault("speech_volume", _soundVolume[10]);
+	ConfMan.registerDefault("sfx_volume", _soundVolume[10]);
+	ConfMan.registerDefault("music_mute", false);
+	ConfMan.registerDefault("speech_mute", false);
+	ConfMan.registerDefault("sfx_mute", false);
+	ConfMan.registerDefault("gfx_details", 2);
+	ConfMan.registerDefault("nosubtitles", false);
+	ConfMan.registerDefault("object_labels", true);
+	ConfMan.registerDefault("reverse_stereo", false);
+}
+
+void Gui::readOptionSettings(void) {
+	bool newStereoReversed;
+
+	g_sound->setMusicVolume((16 * ConfMan.getInt("music_volume")) / 255);
+	g_sound->setSpeechVolume((14 * ConfMan.getInt("speech_volume")) / 255);
+	g_sound->setFxVolume((14 * ConfMan.getInt("sfx_volume")) / 255);
+	g_sound->muteMusic(ConfMan.getBool("music_mute"));
+	g_sound->muteSpeech(ConfMan.getBool("speech_mute"));
+	g_sound->muteFx(ConfMan.getBool("sfx_mute"));
+	updateGraphicsLevel((uint8) ConfMan.getInt("gfx_details"));
+	_subtitles = !ConfMan.getBool("nosubtitles");
+	_pointerTextSelected = ConfMan.getBool("object_labels");
+	newStereoReversed = ConfMan.getBool("reverse_stereo");
+
+	if (_stereoReversed != newStereoReversed)
+		g_sound->reverseStereo();
+
+	_stereoReversed = newStereoReversed;
+}
+
+void Gui::writeOptionSettings(void) {
+	ConfMan.set("music_volume", _musicVolume[g_sound->getMusicVolume()]);
+	ConfMan.set("speech_volume", _soundVolume[g_sound->getSpeechVolume()]);
+	ConfMan.set("sfx_volume", _soundVolume[g_sound->getFxVolume()]);
+	ConfMan.set("music_mute", g_sound->isMusicMute());
+	ConfMan.set("speech_mute", g_sound->isSpeechMute());
+	ConfMan.set("sfx_mute", g_sound->isFxMute());
+	ConfMan.set("gfx_details", g_display->getRenderLevel());
+	ConfMan.set("nosubtitles", !gui._subtitles);
+	ConfMan.set("object_labels", gui._pointerTextSelected);
+	ConfMan.set("reverse_stereo", gui._stereoReversed);
+}
+
 uint32 Gui::restoreControl(void) {
 	// returns 0 for no restore
 	//         1 for restored ok
@@ -1459,52 +1489,6 @@ void Gui::restartControl(void) {
  	this_screen.new_palette = 99;
 }
 
-void Gui::readOptionSettings(void) {
-	// settings file is 9 bytes long:
-	//   1 music volume
-	//   2 speech volume
-	//   3 fx volume
-	//   4 music mute
-	//   5 speech mute
-	//   6 fx mute
-	//   7 graphics level
-	//   8 subtitles
-	//   9 object labels
-
-	uint8 buff[10];
-	uint8 default_settings[10] = { 14, 12, 12, 0, 0, 0, 2, 1, 1 };
-	char filename[256];
-	SaveFile *fp;
-	SaveFileManager *mgr = g_system->get_savefile_manager();
-	
-	sprintf(filename, "%s-settings.dat", g_sword2->_targetName);
-
-	fp = mgr->open_savefile(filename, g_sword2->getSavePath(), false);
-	if (!fp || fp->read(buff, 10) != 10)
-		memcpy(buff, default_settings, sizeof(buff));
-
-	delete fp;
-	delete mgr;
-	
-	g_sound->setMusicVolume(buff[0]);
-	g_sound->setSpeechVolume(buff[1]);
-	g_sound->setFxVolume(buff[2]);
-	g_sound->muteMusic(buff[3]);
-	g_sound->muteSpeech(buff[4]);
-	g_sound->muteFx(buff[5]);
-
-	updateGraphicsLevel(buff[6]);
-
-	_speechSelected = !buff[4];
-	_subtitles = buff[7];
-	_pointerTextSelected = buff[8];
-
-	if (buff[9] != _stereoReversed)
-		g_sound->reverseStereo();
-
-	gui._stereoReversed = buff[9];
-}
-
 void Gui::optionControl(void) {
 	OptionsDialog optionsDialog;
 
@@ -1512,7 +1496,12 @@ void Gui::optionControl(void) {
 	return;
 }
 
-void Gui::updateGraphicsLevel(uint8 newLevel) {
+void Gui::updateGraphicsLevel(int newLevel) {
+	if (newLevel < 0)
+		newLevel = 0;
+	else if (newLevel > 3)
+		newLevel = 3;
+
 	g_display->setRenderLevel(newLevel);
 
 	// update our global variable - which needs to be checked when dimming

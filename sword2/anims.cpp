@@ -29,7 +29,7 @@
 #include "sword2/driver/d_draw.h"
 #include "sword2/anims.h"
 #include "sword2/console.h"
-#include "sword2/controls.h"		// for 'speechSelected' & 'subtitles'
+#include "sword2/controls.h"		// for 'subtitles'
 #include "sword2/defs.h"
 #include "sword2/header.h"
 #include "sword2/interpreter.h"
@@ -540,7 +540,7 @@ void CreateSequenceSpeech(_movieTextObject *sequenceText[]) {
 		sequence_text_list[line].speech_mem = NULL;
 		sequenceText[line]->speech = NULL;
 
-		if (gui._speechSelected) {
+		if (!g_sound->isSpeechMute()) {
 			// speech is selected, so try that first
 
 			// set up path to speech cluster

@@ -1122,7 +1122,7 @@ int32 Logic::fnISpeak(int32 *params) {
 		// if speech is selected, and this line is allowed speech
 		// (not if it's an fx subtitle!)
 
-		if (gui._speechSelected && WantSpeechForLine(officialTextNumber)) {
+		if (!g_sound->isSpeechMute() && WantSpeechForLine(officialTextNumber)) {
 			// if the wavId paramter is zero because not yet
 			// compiled into speech command, we can still get it
 			// from the 1st 2 chars of the text line

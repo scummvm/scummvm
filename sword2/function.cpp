@@ -392,8 +392,8 @@ int32 Logic::fnPlayCredits(int32 *params) {
 
 		g_sound->saveMusicState();
 
-		g_sound->muteFx(1);
-		g_sound->muteSpeech(1);
+		g_sound->muteFx(true);
+		g_sound->muteSpeech(true);
 		g_sound->stopMusic();
 
 		memcpy(oldPal, g_display->_palCopy, 1024);
@@ -448,8 +448,8 @@ int32 Logic::fnPlayCredits(int32 *params) {
 		Build_display();
 		g_display->waitForFade();
 
-		g_sound->muteFx(0);
-		g_sound->muteSpeech(0);
+		g_sound->muteFx(false);
+		g_sound->muteSpeech(false);
 	}
 
 	// FIXME: This probably isn't the correct way of shutting down ScummVM

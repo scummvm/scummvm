@@ -79,19 +79,18 @@ private:
 	FxHandle _fx[MAXFX];
 	MusicHandle _music[MAXMUS + 1];
 
+	bool _soundOn;
+	bool _speechStatus;
+	bool _speechPaused;
+	bool _fxPaused;
+	bool _musicMuted;
+	bool _speechMuted;
+	bool _fxMuted;
 	uint8 _musicVol;
-
-	uint8 _soundOn;
-	uint8 _speechStatus;
-	uint8 _fxPaused;
-	uint8 _speechPaused;
 	uint8 _speechVol;
 	uint8 _fxVol;
-	uint8 _speechMuted;
-	uint8 _fxMuted;
 
 	PlayingSoundHandle _soundHandleSpeech;
-	uint8 _musicMuted;
 
 	int32 getFxIndex(int32 id);
 	int32 dipMusic();
@@ -127,16 +126,16 @@ public:
 	uint8 getFxVolume(void);
 	uint8 getSpeechVolume(void);
 	uint8 getMusicVolume(void);
-	uint8 isMusicMute(void);
-	uint8 isFxMute(void);
-	uint8 isSpeechMute(void);
+	bool isMusicMute(void);
+	bool isFxMute(void);
+	bool isSpeechMute(void);
 	void stopMusic(void);
 	void setFxVolume(uint8 vol);
 	void setSpeechVolume(uint8 vol);
 	void setMusicVolume(uint8 vol);
-	void muteMusic(uint8 mute);
-	void muteFx(uint8 mute);
-	void muteSpeech(uint8 mute);
+	void muteMusic(bool mute);
+	void muteFx(bool mute);
+	void muteSpeech(bool mute);
 	int32 isFxOpen(int32 id);
 	int32 setFxIdVolumePan(int32 id, uint8 vol, int8 pan);
 	int32 setFxIdVolume(int32 id, uint8 vol);

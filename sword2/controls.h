@@ -23,17 +23,19 @@
 namespace Sword2 {
 
 class Gui {
+private:
+	int _musicVolume[17];
+	int _soundVolume[15];
+
 public:
 	int _baseSlot;
 	uint8 _currentGraphicsLevel;
 
-	uint8 _subtitles;
-	uint8 _speechSelected;
-	uint8 _stereoReversed;
-	uint8 _pointerTextSelected;
+	bool _subtitles;
+	bool _stereoReversed;
+	bool _pointerTextSelected;
 
-	Gui() : _baseSlot(0), _stereoReversed(0),
-		_pointerTextSelected(0) {}
+	Gui();
 
 	uint32 restoreControl(void);
 	void saveControl(void);
@@ -41,7 +43,8 @@ public:
 	void restartControl(void);
 	void optionControl(void);
 	void readOptionSettings(void);
-	void updateGraphicsLevel(uint8 newLevel);
+	void writeOptionSettings(void);
+	void updateGraphicsLevel(int newLevel);
 };
 
 extern Gui gui;
