@@ -143,4 +143,4 @@ win32dist: scummvm$(EXEEXT)
 	u2d $(WIN32PATH)/*.txt
 
 
-.PHONY: deb bundle test osxsnap win32dist
+.PHONY: deb bundle test osxsnap win32dist dist install uninstall
