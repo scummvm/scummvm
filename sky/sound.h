@@ -68,8 +68,8 @@ public:
 	void fnStartFx(uint32 sound, uint8 channel);
 	bool startSpeech(uint16 textNum);
 	bool speechFinished(void) { return _ingameSpeech == 0; };
-	void fnPauseFx(void) { _mixer->pauseChannels(true); };
-	void fnUnPauseFx(void) { _mixer->pauseChannels(false); };
+	void fnPauseFx(void) { _mixer->pauseAll(true); };
+	void fnUnPauseFx(void) { _mixer->pauseAll(false); };
 	void fnStopFx(void);
 	void stopSpeech(void);
 	void checkFxQueue(void);

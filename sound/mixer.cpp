@@ -68,6 +68,8 @@ public:
 		_volume = volume;
 	}
 	virtual void setChannelPan(const int8 pan) {
+		if (pan != 0)
+			printf("Pan set to %d\n", pan);
 		_pan = pan;
 	}
 	virtual int getVolume() const {
@@ -149,6 +151,23 @@ SoundMixer::~SoundMixer() {
 		delete _channels[i];
 	}
 	_syst->delete_mutex(_mutex);
+}
+
+bool SoundMixer::bindToSystem(OSystem *syst) {
+	_syst = syst;
+	_mutex = _syst->create_mutex();
+	_outputRate = (uint) syst->property(OSystem::PROP_GET_SAMPLE_RATE, 0);
+
+	if (_outputRate == 0)
+		error("OSystem returned invalid sample rate");
+
+	return syst->set_sound_proc(mixCallback, this, OSystem::SOUND_16BIT);
+}
+
+void SoundMixer::setupPremix(void *param, PremixProc *proc) {
+	StackLock lock(_mutex);
+	_premixParam = param;
+	_premixProc = proc;
 }
 
 int SoundMixer::newStream(PlayingSoundHandle *handle, void *sound, uint32 size, uint rate, byte flags, uint32 buffer_size, byte volume, int8 pan) {
@@ -291,17 +310,6 @@ void SoundMixer::mixCallback(void *s, byte *samples, int len) {
 	((SoundMixer *)s)->mix((int16 *)samples, len >> 2);
 }
 
-bool SoundMixer::bindToSystem(OSystem *syst) {
-	_syst = syst;
-	_mutex = _syst->create_mutex();
-	_outputRate = (uint) syst->property(OSystem::PROP_GET_SAMPLE_RATE, 0);
-
-	if (_outputRate == 0)
-		error("OSystem returned invalid sample rate");
-
-	return syst->set_sound_proc(mixCallback, this, OSystem::SOUND_16BIT);
-}
-
 void SoundMixer::stopAll() {
 	StackLock lock(_mutex);
 	for (int i = 0; i != NUM_CHANNELS; i++)
@@ -382,11 +390,14 @@ void SoundMixer::setChannelPan(PlayingSoundHandle handle, int8 pan) {
 		_channels[index]->setChannelPan(pan);
 }
 
-void SoundMixer::pause(bool paused) {
+void SoundMixer::pauseMixer(bool paused) {
+	// TODO/FIXME: This is only used by scumm/sound.cpp, and 
+	// even there it can probably be replaced by a call to pauseAll.
+	// Research that, and if possible remove this method.
 	_paused = paused;
 }
 
-void SoundMixer::pauseChannels(bool paused) {
+void SoundMixer::pauseAll(bool paused) {
 	_channelsPaused = paused;
 }
 
@@ -439,12 +450,6 @@ bool SoundMixer::hasActiveSFXChannel() {
 		if (_channels[i] && !_channels[i]->isMusicChannel())
 			return true;
 	return false;
-}
-
-void SoundMixer::setupPremix(void *param, PremixProc *proc) {
-	StackLock lock(_mutex);
-	_premixParam = param;
-	_premixProc = proc;
 }
 
 void SoundMixer::setVolume(int volume) {

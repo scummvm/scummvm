@@ -878,7 +878,7 @@ void Sound::pauseSounds(bool pause) {
 		return;
 
 	_soundsPaused = pause;
-	_scumm->_mixer->pause(pause);
+	_scumm->_mixer->pauseMixer(pause);
 
 	_scumm->_sound->pauseBundleMusic(pause);
 

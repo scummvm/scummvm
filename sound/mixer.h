@@ -52,7 +52,6 @@ public:
 	};
 
 	enum {
-		// Do *NOT* change any of these flags without looking at the code in mixer.cpp
 		FLAG_UNSIGNED = 1 << 0,         // unsigned samples (default: signed)
 		FLAG_STEREO = 1 << 1,           // sound is in stereo (default: mono)
 		FLAG_16BITS = 1 << 2,           // sound is 16 bits wide (default: 8bit)
@@ -81,6 +80,14 @@ public:
 	SoundMixer();
 	~SoundMixer();
 
+	/** bind to the OSystem object => mixer will be
+	 * invoked automatically when samples need
+	 * to be generated */
+	bool bindToSystem(OSystem *syst);
+
+	/** Premix procedure, useful when using fmopl adlib */
+	void setupPremix(void * param, PremixProc * proc);
+
 	// start playing a raw sound
 	int playRaw(PlayingSoundHandle *handle, void *sound, uint32 size, uint rate, byte flags,
 				byte volume, int8 pan, int id = -1, uint32 loopStart = 0, uint32 loopEnd = 0);
@@ -92,8 +99,14 @@ public:
 	int playVorbis(PlayingSoundHandle *handle, OggVorbis_File *ov_file, int duration, bool is_cd_track, byte volume, int8 pan);
 #endif
 
-	/** Premix procedure, useful when using fmopl adlib */
-	void setupPremix(void * param, PremixProc * proc);
+	/** Start a new stream. */
+	int newStream(PlayingSoundHandle *handle, void *sound, uint32 size, uint rate, byte flags, uint32 buffer_size, byte volume, int8 pan);
+
+	/** Append to an existing stream. */
+	void appendStream(PlayingSoundHandle handle, void *sound, uint32 size);
+
+	/** Mark a stream as finished - it will play all its remaining data, then stop. */
+	void endStream(PlayingSoundHandle handle);
 
 	/** stop all currently playing sounds */
 	void stopAll();
@@ -107,6 +120,12 @@ public:
 	/** stop playing the channel for the given handle */
 	void stopHandle(PlayingSoundHandle handle);
 
+	/** pause/unpause all mixing (including adlib) */
+	void pauseMixer(bool paused);
+
+	/** pause/unpause all channels */
+	void pauseAll(bool paused);
+
 	/** pause/unpause the given channel */
 	void pauseChannel(int index, bool paused);
 
@@ -116,35 +135,15 @@ public:
 	/** pause/unpause the channel for the given handle */
 	void pauseHandle(PlayingSoundHandle handle, bool paused);
 
-	/** changing the channel volume for the given handle (0 - 255) */
+	/** set the channel volume for the given handle (0 - 255) */
 	void setChannelVolume(PlayingSoundHandle handle, byte volume);
 
-	/** changing the channel pan for the given handle (-127 ... 0 ... 127) (left ... center ... right)*/
+	/** set the channel pan for the given handle (-127 ... 0 ... 127) (left ... center ... right)*/
 	void setChannelPan(PlayingSoundHandle handle, int8 pan);
-
-	/** Start a new stream. */
-	int newStream(PlayingSoundHandle *handle, void *sound, uint32 size, uint rate, byte flags, uint32 buffer_size, byte volume, int8 pan);
-
-	/** Append to an existing stream. */
-	void appendStream(PlayingSoundHandle handle, void *sound, uint32 size);
-
-	/** Mark a stream as finished - it will play all its remaining data, then stop. */
-	void endStream(PlayingSoundHandle handle);
 
 	/** Check whether any SFX channel is active.*/
 	bool hasActiveSFXChannel();
 	
-	/** bind to the OSystem object => mixer will be
-	 * invoked automatically when samples need
-	 * to be generated */
-	bool bindToSystem(OSystem *syst);
-
-	/** pause - unpause */
-	void pause(bool paused);
-
-	/** pause - unpause channels, keep adlib music running */
-	void pauseChannels(bool paused);
-
 	/** set the global volume, 0-256 */
 	void setVolume(int volume);
 	
@@ -163,7 +162,7 @@ public:
 private:
 	int insertChannel(PlayingSoundHandle *handle, Channel *chan);
 
-	/** mix */
+	/** main mixer method */
 	void mix(int16 * buf, uint len);
 
 	static void mixCallback(void *s, byte *samples, int len);
