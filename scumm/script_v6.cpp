@@ -1892,6 +1892,7 @@ void ScummEngine_v6::o6_actorOps() {
 		break;
 	case 229:		// SO_ACTOR_STOP
 		a->stopActorMoving();
+		a->startAnimActor(a->standFrame);
 		break;
 	case 230:										/* set direction */
 		a->moving &= ~MF_TURN;

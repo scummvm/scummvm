@@ -2222,7 +2222,7 @@ void ScummEngine::startScene(int room, Actor *a, int objectNr) {
 		getObjectXYPos(objectNr, x, y, dir);
 		a->putActor(x, y, _currentRoom);
 		a->setDirection(dir + 180);
-		a->moving = 0;
+		a->stopActorMoving();
 	}
 
 	showActors();

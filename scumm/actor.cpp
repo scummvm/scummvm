@@ -94,9 +94,7 @@ void Actor::initActor(int mode) {
 	memset(sound, 0, sizeof(sound));
 	targetFacing = facing;
 
-	if (walkScript)
-		_vm->stopScript(walkScript);
-	moving = 0;
+	stopActorMoving();
 
 	shadow_mode = 0;
 	layer = 0;
@@ -138,10 +136,9 @@ void Actor::initActor(int mode) {
 }
 
 void Actor::stopActorMoving() {
-	if (walkScript)
+	if (_vm->_version >= 7)
 		_vm->stopScript(walkScript);
 	moving = 0;
-	startAnimActor(standFrame);
 }
 
 void Actor::setActorWalkSpeed(uint newSpeedX, uint newSpeedY) {
@@ -593,8 +590,8 @@ void Actor::putActor(int dstX, int dstY, byte newRoom) {
 	if (visible) {
 		if (isInCurrentRoom()) {
 			if (moving) {
+				stopActorMoving();
 				startAnimActor(standFrame);
-				moving = 0;
 			}
 			adjustActorPos();
 		} else {
@@ -708,11 +705,8 @@ void Actor::adjustActorPos() {
 
 	walkdata.dest.x = -1;
 
-	moving = 0;
+	stopActorMoving();
 	cost.soundCounter = 0;
-
-	if (walkScript)
-		_vm->stopScript(walkScript);
 
 	if (walkbox != kInvalidBox) {
 		byte flags = _vm->getBoxFlags(walkbox);
@@ -755,8 +749,8 @@ void Actor::hideActor() {
 		return;
 
 	if (moving) {
+		stopActorMoving();
 		startAnimActor(standFrame);
-		moving = 0;
 	}
 	visible = false;
 	cost.soundCounter = 0;
@@ -785,7 +779,7 @@ void Actor::showActor() {
 	if (!moving && _vm->_version <= 2)
 		startAnimActor(standFrame);
 
-	moving = 0;
+	stopActorMoving();
 	visible = true;
 	needRedraw = true;
 }
