@@ -303,7 +303,10 @@ void SkyText::makeGameCharacter(char textChar, uint8 *charSetPtr, uint8 *&dest, 
 				if (dataBit) 
 					*curPos = color;
 				else
-					*curPos = 240; //transparent
+					//black edge
+					//FIXME: this is 240 in the original sources (with 1 commented out),
+					//yet 240 appears to be white in most palettes.
+					*curPos = 1; //240; 
 
 			curPos++;
 		}

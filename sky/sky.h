@@ -49,6 +49,18 @@ protected:
 	byte *_tseqData;
 	uint32 _tseqCounter;
 
+	//intro related
+	uint8 *_vgaData;
+	uint8 *_diffData;
+	uint8 *_workBase;
+	uint8 *_workScreenEnd;
+	uint8 *_vgaPointer;
+	uint8 *_diffPointer;
+	uint32 _noFrames;   //number of frames in scrolling intro
+	uint32 _frameCounter;
+	byte *_introTextSpace;
+	byte *_introTextSave;
+
 	uint16 _debugMode;
 	uint16 _debugLevel;
 	uint16 _language;
@@ -95,12 +107,24 @@ public:
 	
 	static void **_itemList[300];
 
+	//intro related
+	void prepareText(uint32 *&cmdPtr);
+	void showIntroText(uint32 *&cmdPtr);
+	void removeText(uint32 *&cmdPtr);
+	void introFx(uint32 *&cmdPtr);
+	void introVol(uint32 *&cmdPtr); 
+
+
 protected:
 	void logic_engine();
 	void delay(uint amount);
 	void pollMouseXY();
 	void go();
 	void convertPalette(uint8 *inpal, uint8* outpal);
+
+	//intro related
+	void checkCommands(uint32 *&cmdPtr);
+	void introFrame();
 
 	SkyText *getSkyText();
 	void initialise();

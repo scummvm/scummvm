@@ -45,7 +45,7 @@ void SkyState::startTimerSequence(byte *sequence) {
 	_tseqFrames = *sequence++;
 	_tseqData = sequence;
 	_tseqCounter = SEQUENCE_COUNT;
-	debug(1, "Starting new sequence of %d frames.", _tseqFrames);
+	debug(5, "Starting new sequence of %d frames.", _tseqFrames);
 	
 }
 
@@ -63,8 +63,6 @@ void SkyState::doTimerSequence(void) {
 
 	_tseqCounter = SEQUENCE_COUNT;
 
-	debug(2, "Number of frames left: %d\n", _tseqFrames);
-	
 	do {
 		do {
 			nrToSkip = *_tseqData++;
