@@ -265,6 +265,7 @@ struct IsNoteCmdData {
 
 struct MidiChannel {
 	Part *_part;
+	MidiChannel() : _part(0) {}
 	MidiChannelAdl *adl() { return (MidiChannelAdl *)this; }
 	MidiChannelGM *gm() { return (MidiChannelGM *)this; }
 };
@@ -273,6 +274,7 @@ struct MidiChannel {
 struct MidiChannelGM : MidiChannel {
 	byte _chan;
 	uint16 _actives[8];
+	MidiChannelGM() : _chan(0) { memset(_actives, 0, 16); }
 };
 
 
@@ -568,9 +570,11 @@ struct MidiChannelAdl : MidiChannel {
 	Struct11 _s11a;
 	Struct10 _s10b;
 	Struct11 _s11b;
+	
+	MidiChannelAdl() : _next(0), _prev(0) {}
 };
 
-class IMuseAdlib:public IMuseDriver {
+class IMuseAdlib : public IMuseDriver {
 private:
 	FM_OPL *_opl;
 	byte *_adlib_reg_cache;
