@@ -2042,10 +2042,8 @@ void Scumm_v6::o6_wait() {
 		offs = fetchScriptWordSigned();
 		actnum = pop();
 		a = derefActor(actnum, "o6_wait:168");
-		if (a->isInCurrentRoom() && a->moving) {
-			_scriptPointer += offs;
-			o6_breakHere();
-		}
+		if (a->isInCurrentRoom() && a->moving)
+			break;
 		return;
 	case 169:
 		// HACK: For Conroy Bumpus' song in Sam & Max.
@@ -2085,10 +2083,8 @@ void Scumm_v6::o6_wait() {
 		offs = fetchScriptWordSigned();
 		actnum = pop();
 		a = derefActor(actnum, "o6_wait:226");
-		if (a->isInCurrentRoom() && a->needRedraw) {
-			_scriptPointer += offs;
-			o6_breakHere();
-		}
+		if (a->isInCurrentRoom() && a->needRedraw)
+			break;
 		return;
 	case 232:										/* wait until actor stops turning */
 		// FIXME: This opcode is really odd. It's used a lot in The Dig.
@@ -2107,10 +2103,8 @@ void Scumm_v6::o6_wait() {
 			actnum = _curActor;
 		}
 		a = derefActor(actnum, "o6_wait:232b");
-		if (a->isInCurrentRoom() && a->moving & MF_TURN) {
-			_scriptPointer += offs;
-			o6_breakHere();
-		}
+		if (a->isInCurrentRoom() && a->moving & MF_TURN)
+			break;
 		return;
 	default:
 		error("o6_wait: default case 0x%x", subOp);

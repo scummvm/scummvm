@@ -641,10 +641,8 @@ void Scumm_v8::o8_wait() {
 		offs = fetchScriptWordSigned();
 		actnum = pop();
 		a = derefActor(actnum, "o8_wait:SO_WAIT_FOR_ACTOR");
-		if (a->moving) {
-			_scriptPointer += offs;
-			o6_breakHere();
-		}
+		if (a->isInCurrentRoom() && a->moving)
+			break;
 		return;
 	case 0x1F:		// SO_WAIT_FOR_MESSAGE Wait for message
 		if (VAR(VAR_HAVE_MSG))
@@ -667,19 +665,15 @@ void Scumm_v8::o8_wait() {
 		offs = fetchScriptWordSigned();
 		actnum = pop();
 		a = derefActor(actnum, "o8_wait:SO_WAIT_FOR_ANIMATION");
-		if (a->isInCurrentRoom() && a->needRedraw) {
-			_scriptPointer += offs;
-			o6_breakHere();
-		}
+		if (a->isInCurrentRoom() && a->needRedraw)
+			break;
 		return;
 	case 0x23:		// SO_WAIT_FOR_TURN
 		offs = fetchScriptWordSigned();
 		actnum = pop();
 		a = derefActor(actnum, "o8_wait:SO_WAIT_FOR_TURN");
-		if (a->isInCurrentRoom() && a->moving & MF_TURN) {
-			_scriptPointer += offs;
-			o6_breakHere();
-		}
+		if (a->isInCurrentRoom() && a->moving & MF_TURN)
+			break;
 		return;
 	default:
 		error("o8_wait: default case 0x%x", subOp);
