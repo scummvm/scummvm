@@ -365,7 +365,7 @@ To select a graphics filter, pass its name via the '-g' option to scummvm, for e
 
     scummvm -g advmame2x monkey2
 
-Note #1: Bot all backends support all or any filters. The ones listed above
+Note #1: Not all backends support all or any filters. The ones listed above
 are for the default SDL backend.
 
 Note #2: Filters can be very slow when ScummVM is compiled in a debug
