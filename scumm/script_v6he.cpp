@@ -27,8 +27,6 @@
 
 #include "scumm/actor.h"
 #include "scumm/charset.h"
-#include "scumm/imuse.h"
-#include "scumm/imuse_digi/dimuse.h"
 #include "scumm/intern.h"
 #include "scumm/object.h"
 #include "scumm/resource.h"
@@ -1109,10 +1107,7 @@ void ScummEngine_v6he::o6_setVolume() {
 	int volume = pop();
 	switch (subOp) {
 	case 222:
-		if (_imuse)
-			_imuse->set_music_volume(volume);
-		else
-			_mixer->setMusicVolume(volume);
+		_mixer->setMusicVolume(volume);
 		break;
 	case 224:
 		soundVolumeMaster = ConfMan.getInt("master_volume");

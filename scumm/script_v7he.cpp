@@ -27,8 +27,6 @@
 
 #include "scumm/actor.h"
 #include "scumm/charset.h"
-#include "scumm/imuse.h"
-#include "scumm/imuse_digi/dimuse.h"
 #include "scumm/intern.h"
 #include "scumm/object.h"
 #include "scumm/resource.h"
