@@ -232,6 +232,8 @@ SCUMM
   by ScummEX. [Jamieson has some ideas about this and might work on it|
 
 * Figure out how to extract resources from Apple II and Commodore 64 versions
+  See also <http://www.mts.net/~kbagnall/commodore/scumm/> for some notes on
+  the SCUMM C64 disk format.
 * Figure out how to extract resources from Turbografx/PC Engine version of Loom
 * Indiana Jones and the Last Crusade EGA: Add inventory support for Macintosh version
 * Loom EGA: Add support for music and sound effects in Macintosh version
