@@ -248,6 +248,7 @@ void Engine::savegameRestore() {
 	}
 
 	g_imuse->stopAllSounds();
+	g_imuse->resetState();
 	g_smush->stop();
 	//  free all resource
 	//  lock resources
