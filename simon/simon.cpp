@@ -3411,16 +3411,28 @@ void SimonEngine::processSpecialKeys() {
 		_exit_cutscene = true;
 		break;
 	case 59: // F1
-		vc_write_var(5, 50);
-		vc_write_var(86, 0);
+		if (_game & GF_SIMON2) {
+			vc_write_var(5, 50);
+		} else {
+			vc_write_var(5, 40);
+		}
+			vc_write_var(86, 0);
 		break;
 	case 60: // F2
-		vc_write_var(5, 75);
-		vc_write_var(86, 1);
+		if (_game & GF_SIMON2) {
+			vc_write_var(5, 75);
+		} else {
+			vc_write_var(5, 60);
+		}
+			vc_write_var(86, 1);
 		break;
 	case 61: // F3
-		vc_write_var(5, 125);
-		vc_write_var(86, 2);
+		if (_game & GF_SIMON2) {
+			vc_write_var(5, 125);
+		} else {
+			vc_write_var(5, 100);
+		}
+			vc_write_var(86, 2);
 		break;
 	case 63: // F5
 		if (_game & GF_SIMON2)
