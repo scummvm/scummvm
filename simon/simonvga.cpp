@@ -561,6 +561,7 @@ byte *SimonState::vc_10_depack_swap(byte *src, uint w, uint h)
 byte *vc_10_no_depack_swap(byte *src)
 {
 	error("vc_10_no_depack_swap unimpl");
+	return NULL;
 }
 
 /* must not be const */
