@@ -122,7 +122,6 @@ uint8 *SkyDisk::loadFile(uint16 fileNr, uint8 *dest) {
 
 	filePtr = getFileInfo(fileNr);
 	if (filePtr == NULL) {
-		printf("File %d not found", fileNr);
 		return NULL;
 	}
 
