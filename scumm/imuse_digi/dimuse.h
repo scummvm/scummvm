@@ -146,29 +146,29 @@ public:
 };
 
 struct imuseRoomMap {
-	int roomId;
-	int musicTableIndex;
-	int unk1;
-	int unk2;
-	int unk3;
-	int unk4;
+	byte roomId;
+	byte musicTableIndex;
+	byte unk1;
+	byte unk2;
+	byte unk3;
+	byte unk4;
 };
 
 struct imuseDigTable {
-	int opcode;
-	int soundId;
+	byte opcode;
+	int16 soundId;
 	char name[20];
-	int param;
+	byte param;
 	char filename[13];
 };
 
 struct imuseComiTable {
-	int opcode;
-	int soundId;
+	byte opcode;
+	int16 soundId;
 	char name[20];
-	int param;
-	int hookId;
-	int fadeDelay;
+	byte param;
+	byte hookId;
+	int16 fadeDelay;
 	char filename[13];
 };
 
@@ -179,14 +179,14 @@ struct imuseFtNames {
 
 struct imuseFtStateTable {
 	char audioName[9];
-	int8 opcode;
+	byte opcode;
 	int8 volume;
 	char name[21];
 };
 
 struct imuseFtSeqTable {
 	char audioName[9];
-	int8 opcode;
+	byte opcode;
 	int8 volume;
 };
 
