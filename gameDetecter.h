@@ -1,6 +1,6 @@
 class GameDetecter {
 public:
-	void detectMain(int argc, char **argv);
+	int detectMain(int argc, char **argv);
 	void parseCommandLine(int argc, char **argv);
 	bool detectGame(void);
 	char *getGameName(void);

@@ -922,7 +922,8 @@ int main(int argc, char* argv[]) {
 	long i;
 
 
-	detecter.detectMain(argc, argv);
+	if(detecter.detectMain(argc, argv))
+		return(-1);
 
 	if( detecter._features & GF_AFTER_V7 ) // not final implementation. This is just a test
 		scumm = new Scumm_v7;

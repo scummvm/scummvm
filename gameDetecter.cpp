@@ -216,7 +216,7 @@ char *GameDetecter::getGameName() {
         return strdup(_gameText);
 }
 
-void GameDetecter::detectMain(int argc, char **argv)
+int GameDetecter::detectMain(int argc, char **argv)
 {
         _debugMode = 0;  // off by default...
 	
@@ -233,28 +233,22 @@ void GameDetecter::detectMain(int argc, char **argv)
         #else
                 _midi_driver = MIDI_NULL;
         #endif
+		
 	parseCommandLine(argc, argv);
 
-        if (_exe_name != NULL) {
-          /* No game selection menu */
+	if (_exe_name==NULL) {
+		//launcherLoop();
+		//setWindowName(this);
+		warning("No game was specified...");
+		return(-1);
+	}
+
+	
         if (!detectGame()) {
             warning("Game detection failed. Using default settings");
             _features = GF_DEFAULT;
-	              }
         } else {
           _gameText = "Please choose a game";
-        }
-
-        /* Init graphics and create a primary virtual screen */
-
-        if (_exe_name==NULL) {
-		//launcherLoop();
-		//setWindowName(this);
-        }
-
-        if (!detectGame()) {
-                warning("Game detection failed. Using default settings");
-                _features = GF_DEFAULT;
         }
 
         if (!_gameDataPath) {
@@ -262,5 +256,7 @@ void GameDetecter::detectMain(int argc, char **argv)
                 _gameDataPath = (char *)malloc(sizeof(char) * 2);
                 strcpy(_gameDataPath, "");
         }
+
+	return(0);
 }
 
