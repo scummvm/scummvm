@@ -11,7 +11,7 @@ DEPS = $(OBJS:.o=.d)
 residual: $(OBJS) lua/lib/liblua.a lua/lib/liblualib.a
 	$(CXX) $(LDFLAGS) -o $@ $(OBJS) $(LIBS)
 
-.cc.o:
+.cpp.o:
 	$(CXX) $(CXXFLAGS) -MMD -c $<
 
 lua/lib/liblua.a lua/lib/liblualib.a: lua-build
