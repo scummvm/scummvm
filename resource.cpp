@@ -174,17 +174,18 @@ bool Scumm::openResourceFile(const char *filename)
 	char buf[256];
 
 	debug(9, "openResourceFile(%s)", filename);
-	strcpy(buf, filename);
-        printf("asked to open %s\n", filename);
+
 	if (_fileHandle != NULL) {
 		fileClose(_fileHandle);
 		_fileHandle = NULL;
 	}
 
+	strcpy(buf, filename);
 	_fileHandle = fileOpen(buf, 1);
 	if (!_fileHandle) {
-                char *e=strrchr(buf, '/');
-		if (!e) e=buf; 
+		char *e = strrchr(buf, '/');
+		if (!e)
+			e = buf;
 		do
 			*e = tolower(*e);
 		while (*e++);
@@ -192,8 +193,9 @@ bool Scumm::openResourceFile(const char *filename)
 	}
 
 	if (!_fileHandle) {
-                char *e=strrchr(buf, '/');
-		if (!e) e=buf;
+		char *e = strrchr(buf, '/');
+		if (!e)
+			e = buf;
 		do
 			*e = toupper(*e);
 		while (*e++);
