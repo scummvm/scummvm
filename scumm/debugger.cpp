@@ -751,11 +751,8 @@ static int gfxPrimitivesCompareInt(const void *a, const void *b);
 
 static void hlineColor(Scumm *scumm, int x1, int x2, int y, byte color)
 {
-	VirtScreen *vs = scumm->findVirtScreen(y);
+	VirtScreen *vs = &scumm->virtscr[0];
 	byte *ptr;
-
-	if (vs == NULL)
-		return;
 
 	if (x2 < x1)
 		SWAP(x2, x1);
@@ -769,7 +766,7 @@ static void hlineColor(Scumm *scumm, int x1, int x2, int y, byte color)
 		x2 = right - 1;
 
 	ptr = vs->screenPtr + x1
-			+ (y - vs->topline + scumm->camera._cur.y - scumm->_screenHeight / 2) * scumm->_screenWidth;
+			+ (y + scumm->camera._cur.y - scumm->_screenHeight / 2) * scumm->_screenWidth;
 
 	while (x1++ <= x2) {
 		*ptr++ = color;
