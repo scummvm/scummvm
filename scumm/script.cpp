@@ -379,6 +379,9 @@ int Scumm::readVar(uint var) {
 			// INDY3 checks this during the game...
 			if (var == 94 && _gameId == GID_INDY3 && b == 4) {
 				return 0;
+			} else if (var == 214 && b == 15 && _gameId == GID_LOOM && !copyprotbypassed) {
+				copyprotbypassed = true;
+				return 0;
 			} else
 #endif
 				return (_vars[ var ] & ( 1 << b ) ) ? 1 : 0;
