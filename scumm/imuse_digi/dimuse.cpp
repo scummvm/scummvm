@@ -78,6 +78,72 @@ void IMuseDigital::resetState() {
 	_nextSeqToPlay = 0;
 }
 
+void IMuseDigital::poolDataForMixer(int32 pullSize, byte *mixerBuffer, AudioStream *stream) {
+	Common::StackLock lock(_mutex, "IMuseDigital::poolDataForMixer()");
+	for (int l = 0; l < MAX_DIGITAL_TRACKS + MAX_DIGITAL_FADETRACKS; l++) {
+		if (_track[l]->stream == stream) {
+			int32 mixer_size = pullSize;
+			byte *data = NULL;
+			int32 result = 0, pos = 0;
+
+			if (_track[l]->curRegion == -1)
+				switchToNextRegion(l);
+
+			int bits = _sound->getBits(_track[l]->soundHandle);
+			do {
+				if (bits == 12) {
+					byte *ptr = NULL;
+
+					mixer_size += _track[l]->mod;
+					int mixer_size_12 = (mixer_size * 3) / 4;
+					int length = (mixer_size_12 / 3) * 4;
+					_track[l]->mod = mixer_size - length;
+
+					int32 offset = (_track[l]->regionOffset * 3) / 4;
+					int result2 = _sound->getDataFromRegion(_track[l]->soundHandle, _track[l]->curRegion, &ptr, offset, mixer_size_12);
+					result = BundleCodecs::decode12BitsSample(ptr, &data, result2);
+
+					free(ptr);
+				} else if (bits == 16) {
+					result = _sound->getDataFromRegion(_track[l]->soundHandle, _track[l]->curRegion, &data, _track[l]->regionOffset, mixer_size);
+					if (_sound->getChannels(_track[l]->soundHandle) == 1) {
+						result &= ~1;
+					}
+					if (_sound->getChannels(_track[l]->soundHandle) == 2) {
+						if (result & 2)
+							result &= ~2;
+					}
+				} else if (bits == 8) {
+					result = _sound->getDataFromRegion(_track[l]->soundHandle, _track[l]->curRegion, &data, _track[l]->regionOffset, mixer_size);
+					if (_sound->getChannels(_track[l]->soundHandle) == 2) {
+						result &= ~1;
+					}
+				}
+
+				if (result > mixer_size)
+					result = mixer_size;
+
+				memcpy(mixerBuffer + pos, data, result);
+				pos += result;
+				free(data);
+
+				_track[l]->regionOffset += result;
+				_track[l]->trackOffset += result;
+					
+				if (_sound->isEndOfRegion(_track[l]->soundHandle, _track[l]->curRegion)) {
+					switchToNextRegion(l);
+					if (_track[l]->toBeRemoved)
+						break;
+				}
+				mixer_size -= result;
+				assert(mixer_size >= 0);
+			} while (mixer_size != 0);
+			return;
+		}
+	}
+	error("IMuseDigital::poolDataForMixer() Can't match streams");
+}
+
 void IMuseDigital::callback() {
 	Common::StackLock lock(_mutex, "IMuseDigital::callback()");
 	int l = 0;
