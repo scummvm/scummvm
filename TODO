@@ -26,7 +26,7 @@ General
   replace the current File/FilesystemNode classes (and maybe SaveFileManager).
   The goal is to make these things as portable as possible while keeping it
   easy to use for the coder. Some new functionality we need:
-  - check for existance of file/directory
+  - check for existence of file/directory
   - check whether given directory is readable/writeable
   - convert FSNode into a string representation (for prefs file)
   - convert said string representation back to FSNode
