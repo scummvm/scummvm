@@ -28,21 +28,39 @@
 #define UBYTE unsigned char
 #endif
 
+#ifndef INT16
+#define INT16 signed short
+#endif
+
+#define GAME_SELECTION_X_OFFSET 15
+#define GAME_SELECTION_Y_OFFSET 25
+
 void SetScreenGeometry(int w, int h);
 void LimitScreenGeometry();
 void RestoreScreenGeometry();
-int GraphicsOn(HWND hWndMain);
+int GraphicsOn(HWND hWndMain, bool gfx_mode_switch);
 void GraphicsOff();
 void GraphicsSuspend();
 void GraphicsResume();
 
 void SetPalEntry(int ent, UBYTE r, UBYTE g, UBYTE b);
 void Blt(UBYTE * scr_ptr);
+void checkToolbar();
+
+void Get_565(UBYTE *src, INT16 *buffer, int pitch, int x, int y, int width, int height);
+void Set_565(INT16 *buffer, int pitch, int x, int y, int width, int height);
 
 /* meaning: 0 - portrait, 1 - left hand landscape, 2 - right hand landscape */
 void SetScreenMode(int mode);
 int GetScreenMode();
 void drawWait();
+
+void drawBlankGameSelection();
+void reducePortraitGeometry();
+void drawCommentString(char *);
+void drawStandardString(char *, int);
+void drawHighlightedString(char *, int);
+void resetLastHighlighted();
 
 void Translate(int* x, int* y);
 

@@ -28,12 +28,16 @@
 #include "gx.h"
 #include "screen.h"
 #include "resource.h"
+#include "dynamic_imports.h"
 
 #define COLORCONV565(r,g,b) \
 (((r&0xf8)<<(11-3))|((g&0xfc)<<(5-2))|((b&0xf8)>>3))
 #define COLORCONV555(r,g,b) \
 (((r&0xf8)<<(10-3))|((g&0xf8)<<(5-2))|((b&0xf8)>>3))
 #define COLORCONVMONO(r,g,b) ((((3*r>>3)+(g>>1)+(b>>3))>>colorscale)^invert)
+#define RED_FROM_565(x)		((((x)>>11)&0x1F) << 3)
+#define GREEN_FROM_565(x)	((((x)>>5)&0x3F) << 2)
+#define BLUE_FROM_565(x)	(((x)&0x1F) << 3)
 
 #define MAX_CLR         0x100
 static UBYTE palRed[MAX_CLR];
@@ -49,24 +53,26 @@ extern UBYTE item_toolbar[];
 extern UBYTE item_toolbar_colors[];
 extern UBYTE item_toolbarPortrait[];
 extern UBYTE item_toolbarPortrait_colors[];
-extern UBYTE item_keyboard[];
-extern UBYTE item_keyboard_colors[];
-extern UBYTE item_keyboardPortrait[];
-extern UBYTE item_keyboardPortrait_colors[];
 extern UBYTE item_disk[];
 extern UBYTE item_disk_colors[];
 extern UBYTE item_skip[];
 extern UBYTE item_skip_colors[];
-extern UBYTE item_soundOn[];
-extern UBYTE item_soundOn_colors[];
 extern UBYTE item_soundOff[];
 extern UBYTE item_soundOff_colors[];
-extern UBYTE item_monkeyLandscape[];
-extern UBYTE item_monkeyLandscape_colors[];
+extern UBYTE item_soundOn[];
+extern UBYTE item_soundOn_colors[];
 extern UBYTE item_monkeyPortrait[];
 extern UBYTE item_monkeyPortrait_colors[];
+extern UBYTE item_monkeyLandscape[];
+extern UBYTE item_monkeyLandscape_colors[];
+extern UBYTE item_keyboard[];
+extern UBYTE item_keyboard_colors[];
+extern UBYTE item_keyboardPortrait[];
+extern UBYTE item_keyboardPortrait_colors[];
 extern UBYTE item_loading[];
 extern UBYTE item_loading_colors[];
+extern UBYTE item_startup[];
+extern UBYTE item_startup_colors[];
 
 
 extern bool sound_activated;
@@ -76,6 +82,15 @@ bool draw_keyboard;
 
 GXDisplayProperties gxdp;
 int active;
+
+UBYTE decomp[320 * 240];
+UBYTE comment_zone[8 * 220];
+UBYTE highlighted_zone[8 * 220];
+int _highlighted_index = -1;
+
+bool _gfx_mode_switch;
+int _game_selection_X_offset;
+int _game_selection_Y_offset;
 
 struct tScreenGeometry
 {
@@ -92,6 +107,7 @@ struct tScreenGeometry
 
 
 tScreenGeometry geom[3];
+tScreenGeometry portrait_geometry;
 
 int currentScreenMode = 0;
 int useMode = 0;
@@ -106,6 +122,7 @@ UBYTE *toolbar = NULL;
 typedef void (*tCls)();
 typedef void (*tBlt)(UBYTE*);
 typedef void (*tBlt_part)(UBYTE*,int, int, int, int, UBYTE*);
+typedef void (*tSet_565)(INT16 *buffer, int pitch, int x, int y, int width, int height);
 
 void mono_Cls();
 void mono_Blt(UBYTE*);
@@ -120,18 +137,76 @@ void hicolor555_Blt(UBYTE*);
 void hicolor555_Blt_part(UBYTE*, int, int, int, int, UBYTE*);
 void hicolor565_Blt(UBYTE*);
 void hicolor565_Blt_part(UBYTE*, int, int, int, int, UBYTE*);
+void hicolor565_Get_565(INT16*, int, int, int, int, int);
+void hicolor565_Set_565(INT16*, int, int, int, int, int);
+void hicolor555_Set_565(INT16*, int, int, int, int, int);
+void palette_Set_565(INT16*, int, int, int, int, int);
+void mono_Set_565(INT16*, int, int, int, int, int);
+
+
+void NULL_Get_565(INT16*, int, int, int, int, int);
+void NULL_Set_565(INT16*, int, int, int, int, int);
 
 void palette_update();
+
+void printString(const char *, int, int, int, int = -1);
+static byte textfont[] = {0,0,99,1,226,8,4,8,6,8,6,0,0,0,0,0,0,0,0,0,0,0,8,2,1,8,0,0,0,0,0,0,0,0,0,0,0,0,4,3,7,8,7,7,8,4,5,5,8,7,4,7,3,8,7,7,7,7,8,7,7,7,7,7,3,4,7,5,7,7,8,7,7,7,7,7,7,7,7,5,7,7,
+7,8,7,7,7,7,7,7,7,7,7,8,7,7,7,5,8,5,8,8,7,7,7,6,7,7,7,7,7,5,6,7,5,8,7,7,7,7,7,7,7,7,7,8,7,7,7,5,3,5,0,8,7,7,7,7,7,7,0,6,7,7,7,5,5,5,7,0,6,8,8,7,7,7,7,7,0,7,7,0,0,
+0,0,0,7,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,7,0,0,0,0,0,0,0,0,1,3,6,12,
+24,62,3,0,128,192,96,48,24,124,192,0,0,3,62,24,12,6,3,1,0,192,124,24,48,96,192,128,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,237,74,72,0,0,0,0,0,128,128,128,0,0,0,0,0,0,0,0,0,0,0,0,0,60,66,153,161,161,153,66,60,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,96,96,96,96,0,0,96,0,102,102,102,0,0,0,0,0,102,102,255,102,255,102,102,0,24,62,96,60,6,124,24,0,98,102,12,24,48,102,70,0,60,102,60,56,103,102,63,0,96,48,16,0,0,0,0,0,24,48,96,96,96,48,24,0,96,48,24,24,24,48,96,0,
+0,102,60,255,60,102,0,0,0,24,24,126,24,24,0,0,0,0,0,0,0,48,48,96,0,0,0,126,0,0,0,0,0,0,0,0,0,96,96,0,0,3,6,12,24,48,96,0,60,102,102,102,102,102,60,0,24,24,56,24,24,24,126,0,60,102,6,12,48,96,126,0,60,102,6,28,6,102,60,0,6,
+14,30,102,127,6,6,0,126,96,124,6,6,102,60,0,60,102,96,124,102,102,60,0,126,102,12,24,24,24,24,0,60,102,102,60,102,102,60,0,60,102,102,62,6,102,60,0,0,0,96,0,0,96,0,0,0,0,48,0,0,48,48,96,14,24,48,96,48,24,14,0,0,0,120,0,120,0,0,0,112,24,
+12,6,12,24,112,0,60,102,6,12,24,0,24,0,0,0,0,255,255,0,0,0,24,60,102,126,102,102,102,0,124,102,102,124,102,102,124,0,60,102,96,96,96,102,60,0,120,108,102,102,102,108,120,0,126,96,96,120,96,96,126,0,126,96,96,120,96,96,96,0,60,102,96,110,102,102,60,0,102,102,102,
+126,102,102,102,0,120,48,48,48,48,48,120,0,30,12,12,12,12,108,56,0,102,108,120,112,120,108,102,0,96,96,96,96,96,96,126,0,99,119,127,107,99,99,99,0,102,118,126,126,110,102,102,0,60,102,102,102,102,102,60,0,124,102,102,124,96,96,96,0,60,102,102,102,102,60,14,0,124,102,102,124,
+120,108,102,0,60,102,96,60,6,102,60,0,126,24,24,24,24,24,24,0,102,102,102,102,102,102,60,0,102,102,102,102,102,60,24,0,99,99,99,107,127,119,99,0,102,102,60,24,60,102,102,0,102,102,102,60,24,24,24,0,126,6,12,24,48,96,126,0,120,96,96,96,96,96,120,0,3,6,12,24,48,
+96,192,0,120,24,24,24,24,24,120,0,0,0,0,0,0,219,219,0,0,0,0,0,0,0,0,255,102,102,102,0,0,0,0,0,0,0,60,6,62,102,62,0,0,96,96,124,102,102,124,0,0,0,60,96,96,96,60,0,0,6,6,62,102,102,62,0,0,0,60,102,126,96,60,0,0,14,24,62,24,24,
+24,0,0,0,62,102,102,62,6,124,0,96,96,124,102,102,102,0,0,48,0,112,48,48,120,0,0,12,0,12,12,12,12,120,0,96,96,108,120,108,102,0,0,112,48,48,48,48,120,0,0,0,102,127,127,107,99,0,0,0,124,102,102,102,102,0,0,0,60,102,102,102,60,0,0,0,124,102,102,124,96,
+96,0,0,62,102,102,62,6,6,0,0,124,102,96,96,96,0,0,0,62,96,60,6,124,0,0,24,126,24,24,24,14,0,0,0,102,102,102,102,62,0,0,0,102,102,102,60,24,0,0,0,99,107,127,62,54,0,0,0,102,60,24,60,102,0,0,0,102,102,102,62,12,120,0,0,126,12,24,48,126,0,
+24,48,48,96,48,48,24,0,96,96,96,0,96,96,96,0,96,48,48,24,48,48,96,0,0,0,0,0,0,0,0,0,8,12,14,255,255,14,12,8,60,102,96,96,102,60,24,56,102,0,102,102,102,102,62,0,12,24,60,102,126,96,60,0,24,36,60,6,62,102,62,0,102,0,60,6,62,102,62,0,48,
+24,60,6,62,102,62,0,0,0,0,0,0,0,0,0,0,60,96,96,96,60,24,56,24,36,60,102,126,96,60,0,102,0,60,102,126,96,60,0,48,24,60,102,126,96,60,0,0,216,0,112,48,48,120,0,48,72,0,112,48,48,120,0,96,48,0,112,48,48,120,0,102,24,60,102,126,102,102,0,0,0,
+0,0,0,0,0,0,24,48,124,96,120,96,124,0,0,0,108,26,126,216,110,0,30,40,40,126,72,136,142,0,24,36,60,102,102,102,60,0,102,0,60,102,102,102,60,0,48,24,60,102,102,102,60,0,24,36,0,102,102,102,62,0,48,24,102,102,102,102,62,0,0,0,0,0,0,0,0,0,102,60,102,
+102,102,102,60,0,102,0,102,102,102,102,60,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,12,24,60,6,62,102,62,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,28,54,54,124,102,102,124,64,0,0,0};
 
 static tCls        pCls        = NULL;
 static tBlt		   pBlt	       = NULL;
 static tBlt_part   pBlt_part   = NULL;
+static tSet_565    pSet_565	   = NULL;
 
 static int _geometry_w;
 static int _geometry_h;  
 static int _saved_geometry_h;
 
 HWND hWndMain;
+
+unsigned char *image_expand(unsigned char *src) {
+	int i = 0;
+	int j;
+	int expanded = 0;
+
+	for (;;) {
+		if (!src[i]) {
+			if (!src[i + 1])
+				break;
+			for (j=0; j<src[i + 1]; j++)
+				decomp[expanded++] = src[i+2];
+			i += 3;
+		}
+		else 
+			decomp[expanded++] = src[i++];
+	}
+
+	return decomp;
+}
 
 
 void SetScreenMode(int mode)
@@ -151,7 +226,7 @@ void GraphicsSuspend()
 	if(active)
 	{
 		active = 0;
-		GXSuspend();
+		dynamicGXSuspend();
 	}
 }
 
@@ -160,7 +235,7 @@ void GraphicsResume()
 	if(!active)
 	{
 		active = 1;
-		GXResume();
+		dynamicGXResume();
 	}
 
 	palette_update();
@@ -168,7 +243,7 @@ void GraphicsResume()
 
 void GraphicsOff(void)
 {
-	GXCloseDisplay();
+	dynamicGXCloseDisplay();
 	active = 0;
 }
 
@@ -202,18 +277,41 @@ void RestoreScreenGeometry() {
 	geom[2].lineLimit = _geometry_w * _geometry_h;
 }
 
-int GraphicsOn(HWND hWndMain_param)
+int GraphicsOn(HWND hWndMain_param, bool gfx_mode_switch)
 {
 	hWndMain = hWndMain_param;
-	GXOpenDisplay(hWndMain, GX_FULLSCREEN);
+	dynamicGXOpenDisplay(hWndMain, GX_FULLSCREEN);
+
+	_gfx_mode_switch = gfx_mode_switch;
+
+	if (_gfx_mode_switch) {
+		_game_selection_X_offset = GAME_SELECTION_X_OFFSET;
+		_game_selection_Y_offset = GAME_SELECTION_Y_OFFSET;
+	}
+	else {
+		_game_selection_X_offset = 0;
+		_game_selection_Y_offset = 0;
+	}
 	
-	gxdp = GXGetDisplayProperties();
+	gxdp = dynamicGXGetDisplayProperties();
+
+	// Possible Aero problem
+
+	if (gxdp.cbxPitch == 61440 && 
+		gxdp.cbyPitch == -2 && 
+		gxdp.ffFormat == 0x18
+	   ) {
+		gxdp.cbxPitch = 640;
+		gxdp.cbyPitch = -2;
+		gxdp.ffFormat = kfDirect | kfDirect565;
+	}
 
 	if(gxdp.ffFormat & kfDirect565)
 	{
 		pCls =    hicolor_Cls;
 		pBlt =    hicolor565_Blt;
 		pBlt_part = hicolor565_Blt_part;
+		pSet_565 = hicolor565_Set_565;
 		filter_available = 1;
 		smooth_filter = 1;
 		toolbar_available = 1;
@@ -223,6 +321,7 @@ int GraphicsOn(HWND hWndMain_param)
 		pCls =    hicolor_Cls;
 		pBlt =    hicolor555_Blt;
 		pBlt_part = hicolor555_Blt_part;
+		pSet_565 = hicolor555_Set_565;
 		filter_available = 1;
 		smooth_filter = 1;
 		toolbar_available = 1;
@@ -232,6 +331,7 @@ int GraphicsOn(HWND hWndMain_param)
 		pCls =  mono_Cls;
 		pBlt =  mono_Blt;
 		pBlt_part = mono_Blt_part;
+		pSet_565 = mono_Set_565;
 		
 		if(gxdp.ffFormat & kfDirectInverted)
 			invert = (1<<gxdp.cBPP)-1;
@@ -247,6 +347,7 @@ int GraphicsOn(HWND hWndMain_param)
 		pCls =    palette_Cls;
 		pBlt =    palette_Blt;
 		pBlt_part = palette_Blt_part;
+		pSet_565 = palette_Set_565;
 		
 		toolbar_available = 1;
 	}
@@ -261,15 +362,24 @@ int GraphicsOn(HWND hWndMain_param)
 	}
 	
 	// portrait
-	geom[0].width = gxdp.cxWidth; // 240
-	geom[0].height = gxdp.cyHeight; // 320
+	portrait_geometry.width = gxdp.cxWidth; // 240
+	portrait_geometry.height = gxdp.cyHeight; // 320
+	portrait_geometry.startoffset = 0;
+	portrait_geometry.sourceoffset = 0;
+	portrait_geometry.linestep = gxdp.cbyPitch;
+	portrait_geometry.pixelstep = gxdp.cbxPitch;
+	portrait_geometry.xSkipMask = gxdp.cxWidth < 320 ? 0x00000003 : 0xffffffff;
+	portrait_geometry.xLimit = 320; // skip 1/4
+	portrait_geometry.lineLimit = 320*200;
+	geom[0].width = gxdp.cxWidth;
+	geom[0].height = gxdp.cyHeight;
 	geom[0].startoffset = 0;
 	geom[0].sourceoffset = 0;
 	geom[0].linestep = gxdp.cbyPitch;
 	geom[0].pixelstep = gxdp.cbxPitch;
-	geom[0].xSkipMask = gxdp.cxWidth < 320 ? 0x00000003 : 0xffffffff;
-	geom[0].xLimit = 320; // skip 1/4
-	geom[0].lineLimit = 320*200;
+	geom[0].xSkipMask = 0xffffffff;
+	geom[0].xLimit = 240;
+	geom[0].lineLimit = 320*240;
 	
 	// left handed landscape
 	geom[1].width = gxdp.cyHeight; // 320
@@ -397,7 +507,7 @@ void mono_Cls()
 		return;
 	linestep = (pixelstep > 0) ? -1 : 1;
 
-	scraddr = (UBYTE*)GXBeginDraw();
+	scraddr = (UBYTE*)dynamicGXBeginDraw();
 	if(scraddr)
 	{
 		for(y=0; y<geom[0].height*gxdp.cBPP/8; y++)
@@ -410,7 +520,7 @@ void mono_Cls()
 			}
 			scraddr += linestep;
 		}
-		GXEndDraw();
+		dynamicGXEndDraw();
 	}
 }
 
@@ -419,7 +529,7 @@ void palette_Cls()
 	int x, y;
 	UBYTE* dst;
 	UBYTE *scraddr;
-	scraddr = (UBYTE*)GXBeginDraw();
+	scraddr = (UBYTE*)dynamicGXBeginDraw();
 	if(scraddr)
 	{
 		for(y=0; y<geom[useMode].height; y++)
@@ -432,7 +542,7 @@ void palette_Cls()
 			}
 			scraddr += geom[useMode].linestep;
 		}
-		GXEndDraw();
+		dynamicGXEndDraw();
 	}
 }
 
@@ -441,7 +551,7 @@ void hicolor_Cls()
 	int x, y;
 	UBYTE* dst;
 	UBYTE *scraddr;
-	scraddr = (UBYTE*)GXBeginDraw();
+	scraddr = (UBYTE*)dynamicGXBeginDraw();
 	if(scraddr)
 	{
 		for(y=0; y<geom[useMode].height; y++)
@@ -454,7 +564,7 @@ void hicolor_Cls()
 			}
 			scraddr += geom[useMode].linestep;
 		}
-		GXEndDraw();
+		dynamicGXEndDraw();
 	}
 }
 
@@ -465,56 +575,61 @@ void Cls()
 }
 int counter = 0;
 
-/*
-void drawToolbarItem(UBYTE* palette, UBYTE* item, int dest_x, int dest_y, int width_item, int height_item) {
-	
-	int x,y,z;
-	UBYTE* dst;
-	UBYTE *scraddr;
-
-	scraddr = (UBYTE*)GXBeginDraw();
-	if(scraddr)
-	{
-		scraddr += dest_y * geom[useMode].linestep;
-
-		z = 0;
-
-		for (y=dest_y; y<dest_y + height_item; y++) {
-			dst = scraddr + geom[useMode].startoffset + dest_x * geom[useMode].pixelstep;
-			for (x=dest_x; x<dest_x + width_item; x++) {
-				if(gxdp.ffFormat & kfDirect565)
-		*(unsigned short*)dst = 
-			COLORCONV565(palette[item[z] * 3], palette[item[z] * 3 + 1], palette[item[z] * 3 + 2]);
-	       else if(gxdp.ffFormat & kfDirect555)
-		*(unsigned short*)dst = 
-			COLORCONV555(palette[item[z] * 3], palette[item[z] * 3 + 1], palette[item[z] * 3 + 2]);
-		   else if((gxdp.ffFormat & kfDirect) && (gxdp.cBPP <= 8))
-		*(unsigned short*)dst = 
-			COLORCONVMONO(palette[item[z] * 3], palette[item[z] * 3 + 1], palette[item[z] * 3 + 2]);
-
-
-				dst += geom[useMode].pixelstep;
-				//z += 3;
-				z += 1;
-			}
-			scraddr += geom[useMode].linestep;
-		}
-	}
-	GXEndDraw();
-}
-*/
-
-
 void drawSoundItem(int x, int y) {
-	if (sound_activated)
-		pBlt_part(item_soundOn, x, y, 32, 32, item_soundOn_colors);
+	if (!sound_activated)
+		pBlt_part(image_expand(item_soundOn), x, y, 32, 32, item_soundOn_colors);
 	else
-		pBlt_part(item_soundOff, x, y, 32, 32, item_soundOff_colors);
+		pBlt_part(image_expand(item_soundOff), x, y, 32, 32, item_soundOff_colors);
 }
 
 void drawWait() {
-	pBlt_part(item_toolbar, 0, 0, 320, 40, item_toolbar_colors);
-	pBlt_part(item_loading, 28, 10, 100, 25, item_loading_colors);
+	pBlt_part(image_expand(item_toolbar), 0, 0, 320, 40, item_toolbar_colors);
+	pBlt_part(image_expand(item_loading), 28, 10, 100, 25, item_loading_colors);
+}
+
+void drawBlankGameSelection() {
+	//int i;
+	image_expand(item_startup);
+	/* Store empty comment */
+	memcpy(comment_zone, decomp + (206 * 220), 8 * 220); 
+	pBlt_part(decomp, _game_selection_X_offset, _game_selection_Y_offset, 220, 250, item_startup_colors);
+}
+
+void drawCommentString(char *comment) {
+	/* Erase old comment */	
+	memcpy(decomp + (206 * 220), comment_zone, 8 * 220);
+	/* Draw new comment */
+	printString(comment, 24, 206, 2);
+	pBlt_part(decomp + (206 * 220), _game_selection_X_offset, _game_selection_Y_offset + 206, 220, 8, item_startup_colors);
+}
+
+void drawStandardString(char *game, int index) {
+	printString(game, 24, 70 + (15 * index), 2);
+	//pBlt_part(decomp, GAME_SELECTION_X_OFFSET + 24, GAME_SELECTION_Y_OFFSET + 70 + (12 * index), 220, 8, item_startup_colors);
+	pBlt_part(decomp + ((70 + (15 * index)) * 220), _game_selection_X_offset, _game_selection_Y_offset + 70 + (15 * index), 220, 8, item_startup_colors);	
+}
+
+void drawHighlightedString(char *game, int index) {
+	/* Replace former highlighted string */
+	if (_highlighted_index != -1) {
+		memcpy(decomp + ((70 + (15 * _highlighted_index)) * 220), highlighted_zone, 8 * 220);
+		pBlt_part(decomp + ((70 + (15 * _highlighted_index)) * 220), _game_selection_X_offset, _game_selection_Y_offset + 70 + (15 * _highlighted_index), 220, 8, item_startup_colors);
+	}
+	/* Save non highlighted string */
+	_highlighted_index = index;
+	memcpy(highlighted_zone, decomp + ((70 + (15 * index)) * 220), 8 * 220);
+	/* Draw new highlighted string */
+	printString(game, 24, 70 + (15 * index), 2, 3);
+	pBlt_part(decomp + ((70 + (15 * index)) * 220), _game_selection_X_offset, _game_selection_Y_offset + 70 + (15 * index), 220, 8, item_startup_colors);
+}
+
+void resetLastHighlighted() {
+	_highlighted_index = -1;
+}
+
+void reducePortraitGeometry() {
+	if (_gfx_mode_switch)
+		memcpy(&geom[0], &portrait_geometry, sizeof(tScreenGeometry));
 }
 
 void drawAllToolbar() {
@@ -523,42 +638,46 @@ void drawAllToolbar() {
 	if (currentScreenMode) {
 
 		if (draw_keyboard) {
-			pBlt_part(item_keyboard, 0, 200, 320, 40, item_keyboard_colors);
+			pBlt_part(image_expand(item_keyboard), 0, 200, 320, 40, item_keyboard_colors);
 		}
 		else {
-			pBlt_part(item_toolbar, 0, 200, 320, 40, item_toolbar_colors);
+			pBlt_part(image_expand(item_toolbar), 0, 200, 320, 40, item_toolbar_colors);
 			x = 10;
 			y = 204;
-			pBlt_part(item_disk, x, y, 32, 32, item_disk_colors);
+			pBlt_part(image_expand(item_disk), x, y, 32, 32, item_disk_colors);
 			x += 40;
-			pBlt_part(item_skip, x, y, 32, 32, item_skip_colors);
+			pBlt_part(image_expand(item_skip), x, y, 32, 32, item_skip_colors);
 			x += 40;
 			drawSoundItem(x, y);
-			x += 40;
-			pBlt_part(item_monkeyPortrait, x, y, 32, 32, 
-					item_monkeyPortrait_colors);
+			if (_gfx_mode_switch) {
+				x += 40;
+				pBlt_part(image_expand(item_monkeyPortrait), x, y, 32, 32, 
+						item_monkeyPortrait_colors);
+			}
 		}
 	}
 	else {
 			if (draw_keyboard) {
-				pBlt_part(item_keyboardPortrait, 0, 240, 320, 80,
+				pBlt_part(image_expand(item_keyboardPortrait), 0, 240, 320, 80,
 							item_keyboardPortrait_colors);
 			}
 			else {
-			pBlt_part(item_toolbarPortrait, 0, 240, 320, 80, 
+			pBlt_part(image_expand(item_toolbarPortrait), 0, 240, 320, 80, 
 						item_toolbarPortrait_colors);
 			/*drawToolbarItem(item_toolbarPortrait_colors, item_toolbarPortrait,
 							0, 240, 240, 80);*/
 			x = 10;
 			y = 240;
-			pBlt_part(item_disk, x, y, 32, 32, item_disk_colors);
+			pBlt_part(image_expand(item_disk), x, y, 32, 32, item_disk_colors);
 			x += 40;
-			pBlt_part(item_skip, x, y, 32, 32, item_skip_colors);
+			pBlt_part(image_expand(item_skip), x, y, 32, 32, item_skip_colors);
 			x += 40;
 			drawSoundItem(x, y);
-			x += 40;
-			pBlt_part(item_monkeyLandscape, x, y, 32, 32,
-						item_monkeyLandscape_colors);			
+			if (_gfx_mode_switch) {
+				x += 40;
+				pBlt_part(image_expand(item_monkeyLandscape), x, y, 32, 32,
+							item_monkeyLandscape_colors);			
+			}
 		}
 	}
 
@@ -594,9 +713,11 @@ ToolbarSelected getToolbarSelection (int x, int y) {
 	test_x += 40;
 	if (isInBox(x, y, test_x, test_y, test_x + 32, test_y + 32))
 		return ToolbarSound;
-	test_x += 40;
-	if (isInBox(x, y, test_x, test_y, test_x + 32, test_y + 32))
-		return ToolbarMode;
+	if (_gfx_mode_switch) {
+		test_x += 40;
+		if (isInBox(x, y, test_x, test_y, test_x + 32, test_y + 32))
+			return ToolbarMode;
+	}
 	return ToolbarNone;
 }
 	
@@ -612,6 +733,12 @@ void Blt(UBYTE * scr_ptr)
 
 }
 
+void checkToolbar() {
+	if (toolbar_available && !toolbar_drawn && !hide_toolbar)
+		drawAllToolbar();
+}
+
+/* *************************** MONO DISPLAY ********************************* */
 
 #define ADVANCE_PARTIAL(address, step) \
 	bitshift += gxdp.cBPP;             \
@@ -634,6 +761,63 @@ void Blt(UBYTE * scr_ptr)
 	}                                             \
 	else                                          \
 		bitmask >>= gxdp.cBPP;
+
+
+void mono_Set_565(INT16 *buffer, int pitch, int x, int y, int width, int height) {
+
+	static UBYTE *scraddr;
+	static UBYTE *dst;
+	static long pixelstep;
+	static long linestep;
+	static UBYTE bitmask;
+	static int   bitshift;
+
+	scraddr = (UBYTE*)dynamicGXBeginDraw();
+	pixelstep = geom[useMode].pixelstep;
+	linestep = (pixelstep > 0) ? -1 : 1;
+	bitshift = 0;
+	bitmask = (1<<gxdp.cBPP)-1;
+
+	if(scraddr)
+	{
+		int lines = 0;
+		int current = 0;
+
+		scraddr += geom[useMode].startoffset;
+		scraddr += y * linestep;
+	
+		while(lines != height)
+			{
+				int i;
+				current = 0;
+
+				dst = scraddr;
+
+				/* skip non updated pixels for this line */
+				for (i=0; i < x; i++)					
+					dst += pixelstep;
+
+				/* Turtle warning !!! */
+
+				for (i=0; i<width; i++) {
+
+					*dst = ((*dst)&~bitmask)|(COLORCONVMONO(
+									RED_FROM_565(*(buffer + i)), 
+									GREEN_FROM_565(*(buffer + i)),
+									BLUE_FROM_565(*(buffer + i))) << bitshift);
+
+					dst += pixelstep;
+				}
+
+				ADVANCE_PARTIAL(scraddr, linestep);
+
+				buffer += pitch;
+				lines++;
+			}
+	}
+
+	dynamicGXEndDraw();
+}
 
 
 void mono_Blt(UBYTE *src_ptr) {
@@ -675,7 +859,7 @@ void mono_Blt_part(UBYTE * scr_ptr, int x, int y, int width, int height,
 	linestep = geom[useMode].linestep;
 	skipmask = geom[useMode].xSkipMask;
 
-	scraddr = (UBYTE*)GXBeginDraw();
+	scraddr = (UBYTE*)dynamicGXBeginDraw();
 
 	if(pixelstep)
 	{
@@ -1024,8 +1208,62 @@ void mono_Blt_part(UBYTE * scr_ptr, int x, int y, int width, int height,
 			}
 		}
 	}
-	GXEndDraw();
+	dynamicGXEndDraw();
 }
+
+/* *************************** PALETTED DISPLAY ********************************* */
+
+void palette_Set_565(INT16 *buffer, int pitch, int x, int y, int width, int height) {
+
+	static UBYTE *scraddr;
+	static UBYTE *dst;
+	static long pixelstep;
+	static long linestep;
+	unsigned char color_match[500];
+	memset(color_match, 255, sizeof(color_match));
+
+	scraddr = (UBYTE*)dynamicGXBeginDraw();
+
+	pixelstep = geom[useMode].pixelstep;
+	linestep = geom[useMode].linestep;
+
+	if(scraddr)
+	{
+		int lines = 0;
+		int current = 0;
+
+		scraddr += geom[useMode].startoffset;
+		scraddr += y * linestep;
+	
+		while(lines != height)
+			{
+				int i;
+				current = 0;
+
+				dst = scraddr;
+
+				/* skip non updated pixels for this line */
+				for (i=0; i < x; i++)					
+					dst += pixelstep;
+
+				/* HUGE Turtle warning !!! */
+
+				for (i=0; i<width; i++) {
+
+					*dst++ = best_match(RED_FROM_565(*(buffer + i)),
+									    GREEN_FROM_565(*(buffer + i)), 
+									    BLUE_FROM_565(*(buffer + i)), 236) + 10;
+				}
+
+				buffer += pitch;
+				scraddr += linestep;
+				lines++;
+			}
+	}
+
+	dynamicGXEndDraw();
+}
+
 
 void palette_Blt(UBYTE *src_ptr) {
 	palette_Blt_part(src_ptr, 0, 0, _geometry_w, _geometry_h, NULL);
@@ -1042,6 +1280,8 @@ void palette_Blt_part(UBYTE * scr_ptr,int x, int y, int width, int height,
 	static long pixelstep;
 	static long linestep;
 	static long skipmask;
+	unsigned char color_match[500];
+	memset(color_match, 255, sizeof(color_match));
 
 // Special code is used to deal with packed pixels in monochrome mode
 	static UBYTE bitmask;
@@ -1064,7 +1304,7 @@ void palette_Blt_part(UBYTE * scr_ptr,int x, int y, int width, int height,
 	linestep = geom[useMode].linestep;
 	skipmask = geom[useMode].xSkipMask;
 
-	scraddr = (UBYTE*)GXBeginDraw();
+	scraddr = (UBYTE*)dynamicGXBeginDraw();
 	if(scraddr)
 	{
 
@@ -1102,9 +1342,7 @@ void palette_Blt_part(UBYTE * scr_ptr,int x, int y, int width, int height,
 							else
 								*dst = staticTranslate[*src-236];
 						} else {
-							unsigned char color_match[500];
 							// Turtle warning !!!
-							memset(color_match, 255, sizeof(color_match));
 							if (color_match[*src] == 255)
 								color_match[*src] = 
 									best_match(own_palette[(3 * *src)],
@@ -1144,9 +1382,7 @@ void palette_Blt_part(UBYTE * scr_ptr,int x, int y, int width, int height,
 							*dst = staticTranslate[*src-236];
 					}
 					else {
-							unsigned char color_match[500];
 							// Turtle warning !!!
-							memset(color_match, 255, sizeof(color_match));
 							if (color_match[*src] == 255)
 								color_match[*src] = 
 									best_match(own_palette[(3 * *src)],
@@ -1163,9 +1399,61 @@ void palette_Blt_part(UBYTE * scr_ptr,int x, int y, int width, int height,
 			}
 		}
 
-		GXEndDraw();
+		dynamicGXEndDraw();
 	}
 }
+
+/* ********************************* 555 DISPLAY ********************************* */
+
+void hicolor555_Set_565(INT16 *buffer, int pitch, int x, int y, int width, int height) {
+
+	static UBYTE *scraddr;
+	static UBYTE *dst;
+	static long pixelstep;
+	static long linestep;
+
+	scraddr = (UBYTE*)dynamicGXBeginDraw();
+
+	pixelstep = geom[useMode].pixelstep;
+	linestep = geom[useMode].linestep;
+
+	if(scraddr)
+	{
+		int lines = 0;
+		int current = 0;
+
+		scraddr += geom[useMode].startoffset;
+		scraddr += y * linestep;
+	
+		while(lines != height)
+			{
+				int i;
+				current = 0;
+
+				dst = scraddr;
+
+				/* skip non updated pixels for this line */
+				for (i=0; i < x; i++)					
+					dst += pixelstep;
+
+				/* Turtle warning !!! */
+
+				for (i=0; i<width; i++) {
+					*(unsigned short*)dst = COLORCONV555(
+						RED_FROM_565(*(buffer + i)), GREEN_FROM_565(*(buffer + i)), BLUE_FROM_565(*(buffer + i))
+					);
+					dst += 2;
+				}
+
+				buffer += pitch;
+				scraddr += linestep;
+				lines++;
+			}
+	}
+
+	dynamicGXEndDraw();
+}
+
 
 void hicolor555_Blt(UBYTE *src_ptr) {
 	hicolor555_Blt_part(src_ptr, 0, 0, _geometry_w, _geometry_h, NULL);
@@ -1201,7 +1489,7 @@ void hicolor555_Blt_part(UBYTE * scr_ptr,int x, int y, int width, int height,
 	linestep = geom[useMode].linestep;
 	skipmask = geom[useMode].xSkipMask;
 
-	scraddr = (UBYTE*)GXBeginDraw();
+	scraddr = (UBYTE*)dynamicGXBeginDraw();
 	if(scraddr)
 	{
 
@@ -1360,12 +1648,60 @@ void hicolor555_Blt_part(UBYTE * scr_ptr,int x, int y, int width, int height,
 			}
 		}
 
-		GXEndDraw();
+		dynamicGXEndDraw();
 	}
 }
 
+/* ********************************* 565 DISPLAY ********************************* */
+
+
 void hicolor565_Blt(UBYTE *src_ptr) {
 	hicolor565_Blt_part(src_ptr, 0, 0, _geometry_w, _geometry_h, NULL);
+}
+
+
+void hicolor565_Set_565(INT16 *buffer, int pitch, int x, int y, int width, int height) {
+
+	static UBYTE *scraddr;
+	static UBYTE *dst;
+	static long pixelstep;
+	static long linestep;
+
+	scraddr = (UBYTE*)dynamicGXBeginDraw();
+
+	pixelstep = geom[useMode].pixelstep;
+	linestep = geom[useMode].linestep;
+
+	if(scraddr)
+	{
+		int lines = 0;
+		int current = 0;
+
+		scraddr += geom[useMode].startoffset;
+		scraddr += y * linestep;
+	
+		while(lines != height)
+			{
+				int i;
+				current = 0;
+
+				dst = scraddr;
+
+
+				/* skip non updated pixels for this line */
+
+				for (i=0; i < x; i++)					
+					dst += pixelstep;
+
+				memcpy(dst, buffer, width * 2);
+
+				buffer += pitch;
+				scraddr += linestep;
+				lines++;
+			}
+	}
+
+	dynamicGXEndDraw();
 }
 
 void hicolor565_Blt_part(UBYTE * scr_ptr, int x, int y, int width, int height,
@@ -1397,7 +1733,7 @@ void hicolor565_Blt_part(UBYTE * scr_ptr, int x, int y, int width, int height,
 	linestep = geom[useMode].linestep;
 	skipmask = geom[useMode].xSkipMask;
 
-	scraddr = (UBYTE*)GXBeginDraw();
+	scraddr = (UBYTE*)dynamicGXBeginDraw();
 	if(scraddr)
 	{
 
@@ -1556,9 +1892,11 @@ void hicolor565_Blt_part(UBYTE * scr_ptr, int x, int y, int width, int height,
 			}
 		}
 
-		GXEndDraw();
+		dynamicGXEndDraw();
 	}
 }
+
+/* ************************** STYLUS TRANSLATION ************************* */
 
 
 void Translate(int* px, int* py)
@@ -1584,5 +1922,72 @@ void Translate(int* px, int* py)
 		break;
 	}
 }
+
+/* ************************** LAUNCHER FONT STUFF ************************* */
+
+void printChar(const char str, int xx, int yy, int textcolor, int highlight)
+{
+	unsigned int buffer = 0, mask = 0, x, y;
+	byte *tmp;
+	byte *ptr;
+
+	tmp = &textfont[0];
+	tmp += 224 + (str + 1) * 8;
+
+	ptr = decomp + (yy * 220) + xx;
+
+	for (y = 0; y < 8; y++) {
+		for (x = 0; x < 8; x++) {
+			unsigned char color;
+			if ((mask >>= 1) == 0) {
+				buffer = *tmp++;
+				mask = 0x80;
+			}
+			color = ((buffer & mask) != 0);
+			if (color)
+				ptr[x] = textcolor;
+			else if (highlight > 0)
+				ptr[x] = highlight;
+		}
+		if (highlight > 0) {
+			int i;
+			for (i=9; i<220; i++)
+				ptr[x] = highlight;
+		}
+		ptr += 220;
+	}
+
+}
+void printString(const char *str, int x, int y, int textcolor, int highlight)
+{
+	for (uint letter = 0; letter < strlen(str); letter++)
+		printChar(str[letter], x + (letter * 8), y, textcolor, highlight);
+}
+
+
+/* ************************** DIRECT BLT IMPLEMENTATION ************************* */
+
+
+void Get_565(UBYTE *src, INT16 *buffer, int pitch, int x, int y, int width, int height) {
+	int i,j;
+	UBYTE *tempo = (UBYTE*)buffer;
+
+	// Dumb conversion to 565
+
+	for (i=0; i<240; i++) {
+		for (j=0; j<320; j++) {
+			*buffer++ = COLORCONV565(palRed[*src], palGreen[*src], palBlue[*src]);
+			src++;
+		}
+	}
+}
+
+void Set_565(INT16 *buffer, int pitch, int x, int y, int width, int height) {
+	pSet_565(buffer, pitch, x, y, width, height);
+}
+
+void NULL_Set_565(INT16 *buffer, int pitch, int x, int y, int width, int height) {
+}
+
 
 #endif
