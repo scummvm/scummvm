@@ -73,6 +73,8 @@ struct BobSlot {
 	uint16 dx, dy;
 	uint16 total;
 
+	static const Box _defaultBox;
+
 	void curPos(int16 xx, int16 yy);
 	void move(int16 dstx, int16 dsty, int16 spd);
 	void moveOneStep();
@@ -95,7 +97,7 @@ public:
 	void unpackControlBank();
 	void setupMouseCursor();
 
-	void drawBob(const BobSlot *bs, const BobFrame *bf, int16 x, int16 y);
+	void drawBob(const BobSlot *bs, const BobFrame *bf, const Box *box, int16 x, int16 y);
 	void drawInventoryItem(uint32 frameNum, uint16 x, uint16 y);
 	void pasteBob(uint16 objNum, uint16 image);
 	void shrinkFrame(const BobFrame *bf, uint16 percentage);
@@ -178,6 +180,9 @@ private:
 	int _cameraBob;
 
 	QueenEngine *_vm;
+
+	static const Box _gameScreenBox;
+	static const Box _fullScreenBox;
 };
 
 class BamScene {

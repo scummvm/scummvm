@@ -503,21 +503,9 @@ byte *Cutaway::getCutawayAnim(byte *ptr, int header, CutawayAnim &anim) {
 	if (0 == header) {
 		anim.object = 0;
 		anim.originalFrame = 29 + FRAMES_JOE_XTRA;
-		
-		// 21/9/94, Make sure that bobs are clipped on 150 screens
-		if (_vm->display()->fullscreen())
-			_vm->graphics()->bob(0)->box.y2 = 199;
 	}
 	else {
-		//warning("Stuff not yet implemented in Cutaway::getCutawayAnim()");
-		
 		anim.object = _vm->logic()->findBob(header);
-
-		// If fullscreen cutaway then clip to 199 down
-
-		// 21/9/94, Make sure that bobs are clipped on 150 screens
-		// XXX if(COMPANEL==2 && OBJ_CUT[6]<=0 && BDyres==200) bobs[Param].y2=199;
-
 		anim.originalFrame = _vm->logic()->findFrame(header);
 	}
 
@@ -1026,13 +1014,6 @@ void Cutaway::run(char *nextFilename) {
 
 	joeBob->animating = 0;
 	joeBob->moving    = 0;
-	if (_vm->resource()->isInterview()) {
-		_vm->graphics()->bob(20)->box.y2 = 149;
-		_vm->graphics()->bob(21)->box.y2 = 149;
-		_vm->graphics()->bob(22)->box.y2 = 149;
-	}
-	// Make sure Joe is clipped!
-	joeBob->box.y2    = 149;
 
 	_vm->input()->cutawayRunning(false);
 	_vm->input()->cutawayQuitReset();

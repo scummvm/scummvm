@@ -29,6 +29,14 @@ namespace Queen {
 struct Box {
 	int16 x1, y1, x2, y2;
 
+	Box()
+		: x1(0), y1(0), x2(0), y2(0) {
+	}
+
+	Box(int16 xx1, int16 yy1, int16 xx2, int16 yy2)
+		: x1(xx1), y1(yy1), x2(xx2), y2(yy2) {
+	}
+
 	void readFromBE(byte *&ptr) {
 		x1 = (int16)READ_BE_UINT16(ptr); ptr += 2;
 		y1 = (int16)READ_BE_UINT16(ptr); ptr += 2;
@@ -57,6 +65,10 @@ struct Box {
 
 	bool contains(int16 x, int16 y) const {
 		return (x >= x1) && (x <= x2) && (y >= y1) && (y <= y2);
+	}
+
+	bool operator==(const Box &b) const {
+		return (x1 == b.x1) && (x2 == b.x2) && (y1 == b.y1) && (y2 == b.y2);
 	}
 };
 

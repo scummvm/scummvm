@@ -32,6 +32,8 @@
 
 namespace Queen {
 
+const Box BobSlot::_defaultBox(-1, -1, -1, -1);
+
 void BobSlot::curPos(int16 xx, int16 yy) {
 	active = true;
 	x = xx;
@@ -163,17 +165,17 @@ void BobSlot::animNormal(uint16 firstFrame, uint16 lastFrame, uint16 spd, bool r
 
 void BobSlot::clear() {
 	active = false;
-	xflip  = false;
+	xflip = false;
 	animating = false;
 	anim.string.buffer = NULL;
 	moving = false;
-	scale  = 100;
-	box.x1 = 0;
-	box.y1 = 0;
-	box.x2 = GAME_SCREEN_WIDTH - 1;
-	box.y2 = ROOM_ZONE_HEIGHT - 1;
+	scale = 100;
+	box = _defaultBox;
 }
 
+
+const Box Graphics::_gameScreenBox(0, 0, GAME_SCREEN_WIDTH - 1, ROOM_ZONE_HEIGHT - 1);
+const Box Graphics::_fullScreenBox(0, 0, GAME_SCREEN_WIDTH - 1, GAME_SCREEN_HEIGHT - 1);
 
 Graphics::Graphics(QueenEngine *vm)
 	: _cameraBob(0), _vm(vm) {
@@ -200,7 +202,7 @@ void Graphics::setupMouseCursor() {
 	_vm->display()->setMouseCursor(bf->data, bf->width, bf->height);
 }
 
-void Graphics::drawBob(const BobSlot *bs, const BobFrame *bf, int16 x, int16 y) {
+void Graphics::drawBob(const BobSlot *bs, const BobFrame *bf, const Box *bbox, int16 x, int16 y) {
 	debug(9, "Graphics::drawBob(%d, %d, %d)", bs->frameNum, x, y);
 
 	uint16 w, h;
@@ -211,7 +213,7 @@ void Graphics::drawBob(const BobSlot *bs, const BobFrame *bf, int16 x, int16 y) 
 	w = bf->width;
 	h = bf->height;
 
-	const Box *box = &bs->box;
+	const Box *box = (bs->box == BobSlot::_defaultBox) ? bbox : &bs->box;
 
 	if(w != 0 && h != 0 && box->intersects(x, y, w, h)) {
 		uint8 *src = bf->data;
@@ -315,9 +317,6 @@ void Graphics::shrinkFrame(const BobFrame *bf, uint16 percentage) {
 void Graphics::clearBob(uint32 bobNum) {
 	BobSlot *pbs = bob(bobNum);
 	pbs->clear();
-	if (_vm->display()->fullscreen()) {
-		pbs->box.y2 = GAME_SCREEN_HEIGHT - 1;
-	}
 }
 
 void Graphics::sortBobs() {
@@ -362,8 +361,8 @@ void Graphics::sortBobs() {
 }
 
 void Graphics::drawBobs() {
-	int i;
-	for (i = 0; i < _sortedBobsCount; ++i) {
+	const Box *bobBox = _vm->display()->fullscreen() ? &_fullScreenBox : &_gameScreenBox;
+	for (int i = 0; i < _sortedBobsCount; ++i) {
 		BobSlot *pbs = _sortedBobs[i];
 		if (pbs->active) {
 
@@ -387,7 +386,7 @@ void Graphics::drawBobs() {
 			x = pbs->x - xh - _vm->display()->horizontalScroll();
 			y = pbs->y - yh;
 
-			drawBob(pbs, pbf, x, y);
+			drawBob(pbs, pbf, bobBox, x, y);
 		}
 	}
 }
@@ -524,7 +523,6 @@ void Graphics::setBobText(
 }
 
 void Graphics::handleParallax(uint16 roomNum) {
-	int i;
 	uint16 screenScroll = _vm->display()->horizontalScroll();
 	switch (roomNum) {
 	case ROOM_AMAZON_HIDEOUT:
@@ -543,27 +541,10 @@ void Graphics::handleParallax(uint16 roomNum) {
 	case ROOM_VALLEY_CARCASS:
 		_bobs[5].x = 600 - screenScroll / 2;
 		break;
-	case ROOM_HOTEL_LOBBY:
-		if(_vm->display()->fullscreen()) {
-			for(i = 1; i <= 3; ++i) {
-				_bobs[i].box.y2 = 199;
-			}
-			_bobs[24].box.y2 = 199;
-		}
-		break;
 	case ROOM_UNUSED_INTRO_1:
 		_bobs[5].x = 340 - screenScroll / 2;
 		_bobs[6].x = 50 - screenScroll / 2;
 		_bobs[7].x = 79 - screenScroll / 2;
-		for(i = 1; i <= 8; ++i) {
-			_bobs[i].box.y2 = 199;
-		}
-		_bobs[20].box.y2 = 199;
-		break;
-	case ROOM_UNUSED_INTRO_5:
-		for(i = 0; i < 3; ++i) {
-			_bobs[i].box.y2 = 199;
-		}
 		break;
 	case ROOM_CAR_CHASE:
 		_vm->bam()->updateCarAnimation();
@@ -591,7 +572,7 @@ void Graphics::handleParallax(uint16 roomNum) {
 }
 
 void Graphics::setupNewRoom(const char *room, uint16 roomNum, int16 *furniture, uint16 furnitureCount) {
-	// reset sprites table (bounding box...)
+	// reset sprites table
 	clearBobs();
 
 	// load/setup objects associated to this room
@@ -1002,8 +983,6 @@ void Graphics::setupRoomObjects() {
 				curBob = 20 + _numFurnitureStatic + numObjectStatic;
 				++curImage;
 				clearBob(curBob);
-
-				// XXX if((COMPANEL==2) && (FULLSCREEN==1)) bobs[CURRBOB].y2=199;
 
 				_vm->bankMan()->unpack(pgd->firstFrame, curImage, 15);
 				++_numFrames;

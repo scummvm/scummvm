@@ -1305,13 +1305,11 @@ int16 Talk::selectSentence() {
 	arrowBobUp->x         = 303 + 8 + scrollX;
 	arrowBobUp->y         = 150 + 1;
 	arrowBobUp->frameNum  = 3;
-	arrowBobUp->box.y2    = 199;
 	arrowBobUp->active    = false;
 
 	arrowBobDown->x         = 303 + scrollX;
 	arrowBobDown->y         = 175;
 	arrowBobDown->frameNum  = 4;
-	arrowBobDown->box.y2    = 199;
 	arrowBobDown->active    = false;
 
 	bool rezone = true;

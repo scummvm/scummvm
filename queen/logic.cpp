@@ -1196,9 +1196,6 @@ void Logic::handlePinnacleRoom() {
 
 	joe->frameNum = _vm->input()->mousePosX() / 36 + 43 + FRAMES_JOE_XTRA;
 
-	// adjust bounding box for fullscreen
-	joe->box.y2 = piton->box.y2 = GAME_SCREEN_HEIGHT - 1;
-
 	// bobs have been unpacked from animating objects, we don't need them
 	// to animate anymore ; so turn animating off
 	joe->animating = piton->animating = false;
@@ -1483,7 +1480,6 @@ void Logic::asmMakeFrankGrowing() {
 	BobSlot *bobFrank = _vm->graphics()->bob(5);
 	bobFrank->frameNum = 38;
 	bobFrank->curPos(160, 200);
-	bobFrank->box.y2 = GAME_SCREEN_HEIGHT - 1;
 
 	int i;
 	for (i = 10; i <= 100; i += 4) {
@@ -1507,7 +1503,6 @@ void Logic::asmMakeRobotGrowing() {
 	BobSlot *bobRobot = _vm->graphics()->bob(5);
 	bobRobot->frameNum = 38;
 	bobRobot->curPos(160, 200);
-	bobRobot->box.y2 = GAME_SCREEN_HEIGHT - 1;
 
 	int i;
 	for (i = 10; i <= 100; i += 4) {
@@ -1694,7 +1689,6 @@ void Logic::asmMakeLightningHitPlane() {
 	BobSlot *planeBob     = _vm->graphics()->bob(5);
 	BobSlot *lightningBob = _vm->graphics()->bob(20);
 
-	planeBob->box.y2 = lightningBob->box.y2 = 199;
 	planeBob->y = 135;
 
 	planeBob->scale = 20;
