@@ -631,7 +631,6 @@ protected:
 	void o7_getActorRoom();
 	void o7_pickupObject();
 	void o7_startSound();
-	void o7_actorOps();
 	void o7_cursorCommand();
 };
 
