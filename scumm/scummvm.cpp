@@ -624,7 +624,7 @@ Scumm::Scumm (GameDetector *detector, OSystem *syst)
 	_playerV2 = NULL;
 	if (_features & GF_DIGI_IMUSE) {
 		_imuseDigital = new IMuseDigital(this);
-	} else if ((_features & GF_AMIGA) && (_features & GF_OLD_BUNDLE)) {
+	} else if ((_features & GF_AMIGA) && (_version < 5)) {
 		_playerV2 = NULL;
 	} else if (((_midiDriver == MD_PCJR) || (_midiDriver == MD_PCSPK)) && ((_version > 2) && (_version < 5))) {
 		_playerV2 = new Player_V2(this);
@@ -1057,7 +1057,7 @@ void Scumm::initScummVars() {
 		case MD_PCSPK:
 		case MD_PCJR:  VAR(VAR_SOUNDCARD) = 1; break;
 		default:       
-			if (_features & GF_SMALL_HEADER)
+			if (_features & GF_SMALL_HEADER && !(_features & GF_AMIGA))
 				VAR(VAR_SOUNDCARD) = 4;
 			else
 				VAR(VAR_SOUNDCARD) = 3;
@@ -1761,8 +1761,7 @@ void Scumm::startScene(int room, Actor *a, int objectNr) {
 	if (!(_features & GF_SMALL_HEADER) && VAR_NEW_ROOM != 0xFF)  // Disable for SH games. Overwrites
 		VAR(VAR_NEW_ROOM) = room; // gamevars, eg Zak cashcards
 
-	if (_currentRoom)
-		runExitScript();
+	runExitScript();
 	killScriptsAndResources();
 	clearEnqueue();
 	stopCycle(0);

@@ -1462,6 +1462,13 @@ void Scumm_v5::o5_putActorInRoom() {
 
 	a = derefActor(act, "o5_putActorInRoom");
 	
+	if (_gameId & GID_MONKEY_EGA) {
+		if (room == 0 && a->room != _currentRoom && a->room != room && _currentRoom != room) {
+			warning ("o5_putActorInRoom (%d [%d], %d) ignored", act, a->room, room);
+			return;
+		}
+	}
+
 	if (a->visible && _currentRoom != room && VAR(VAR_TALK_ACTOR) == a->number) {
 		clearMsgQueue();
 	}
@@ -1524,22 +1531,15 @@ void Scumm_v5::o5_resourceRoutines() {
 			ensureResourceLoaded(rtRoom, resid);
 		break;
 
-	case 8:											// nuke room
-		if (resid == _currentRoom) {
-			warning ("Nuking current room %d - exit script called early", resid);
-			runExitScript();
-			_currentRoom = 0;
-		}
-		// Fall through
 	case 5:											// nuke script
 	case 6:											// nuke sound
 	case 7:											// nuke costume
+	case 8:											// nuke room
 		if (_gameId == GID_ZAK256)
 			warning("o5_resourceRoutines %d should not occur in Zak256", op);
 		else
 			setResourceCounter(resType[op-5], resid, 0x7F);
 		break;
-
 	case 9:											// lock script
 		if (resid >= _numGlobalScripts)
 			break;
