@@ -55,6 +55,7 @@ public:
 	int open() {
 		_isOpen = true;
 		_samples_per_tick = (getRate() << FIXP_SHIFT) / BASE_FREQ;
+		return 0;
 	}
 
 	void setTimerCallback(void *timer_param, Timer::TimerProc timer_proc) {
