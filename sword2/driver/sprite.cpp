@@ -25,7 +25,6 @@
 #include "palette.h"
 #include "rdwin.h"
 
-char shitColourTable[1024];
 static uint8 *lightMask = 0;
 
 /**
@@ -371,8 +370,8 @@ void DeleteSurface(uint8 *surface) {
 #define SCALE_MAXWIDTH 512
 #define SCALE_MAXHEIGHT 512
 
-uint16 xScale[SCALE_MAXWIDTH];
-uint16 yScale[SCALE_MAXHEIGHT];
+static uint16 xScale[SCALE_MAXWIDTH];
+static uint16 yScale[SCALE_MAXHEIGHT];
 
 /**
  * Draws a sprite onto the screen. The type of the sprite can be a combination
