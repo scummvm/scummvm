@@ -4,7 +4,7 @@ Compiling ScummVM for SEGA Dreamcast
 If you want to compile ScummVM for your Dreamcast,
 you'll need the following:
 
-* gcc-3.3 configured as a cross-compiler for `sh-elf'
+* gcc-3.3.3 configured as a cross-compiler for `sh-elf'
   (including corresponding binutils)
 
 * newlib for sh-elf : <URL:http://mc.pp.se/dc/files/newlib-1.9.0.tar.gz>
