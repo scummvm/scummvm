@@ -212,8 +212,8 @@ void Command::updatePlayer() {
 	if (_vm->input()->keyVerb() != VERB_NONE) {
 
 		if (_vm->input()->keyVerb() == VERB_USE_JOURNAL) {
-			_vm->input()->clearKeyVerb();
 			_vm->logic()->useJournal();
+			_vm->input()->clearKeyVerb();
 		} else if (_vm->input()->keyVerb() != VERB_SKIP_TEXT) {
 			_state.verb = _vm->input()->keyVerb();
 			if (isVerbInv(_state.verb)) {
@@ -417,18 +417,6 @@ int16 Command::executeCommand(uint16 comId, int16 condResult) {
 	if (_state.subject[0] > 0)
 		changeObjectState(_state.selAction, _state.subject[0], com->song, cutDone);
 
-	// execute.c l.533-548
-	// FIXME: useless test, as .dog has already been played
-	// if (_state.selAction == VERB_TALK_TO && cond > 0) {
-	//	if (executeIfDialog(_vm->logic()->objectTextualDescription(cond))) {
-	//		cleanupCurrentAction();
-	//		return;
-	//	}
-	// }
-
-	// execute.c l.550-589
-	// FIXME: the EXECUTE_EXIT1 stuff can be omitted as it is 
-	//        more or less redundant code
 	if (condResult > 0) {
 		_vm->logic()->makeJoeSpeak(condResult, true);
 	}
@@ -500,7 +488,7 @@ void Command::grabCurrentSelection() {
 		grabSelectedVerb();
 	} else if (isVerbInv(_state.verb)) {
 		grabSelectedItem();
-	} else if (_state.noun != 0) { // 0 && _state.noun <= _vm->logic()->currentRoomObjMax()) {
+	} else if (_state.noun != 0) {
 		grabSelectedNoun();
 	} else if (_selPosY < ROOM_ZONE_HEIGHT && _state.verb == VERB_NONE) {
 		// select without a command, do a WALK
@@ -525,7 +513,6 @@ void Command::grabSelectedObject(int16 objNum, uint16 objState, uint16 objName) 
 			_cmdText.display(INK_CMD_NORMAL);
 			_parse = false;
 		} else {
-//			_cmdText.display(INK_CMD_SELECT);
 			_parse = true;
 		}
 	} else if (_state.action == VERB_GIVE && _state.commandLevel == 1) {
@@ -535,7 +522,6 @@ void Command::grabSelectedObject(int16 objNum, uint16 objState, uint16 objName) 
 		_cmdText.display(INK_CMD_NORMAL);
 		_parse = false;
 	} else {
-//		_cmdText.display(INK_CMD_SELECT);
 		_parse = true;
 	}
 
@@ -549,8 +535,6 @@ void Command::grabSelectedObject(int16 objNum, uint16 objState, uint16 objName) 
 }
 
 void Command::grabSelectedItem() {
-//	_parse = true;
-
 	ItemData *id = findItemData(_state.verb);
 	if (id == NULL || id->name <= 0) {
 		return;

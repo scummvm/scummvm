@@ -50,7 +50,6 @@ struct CmdText {
 	QueenEngine *_vm;
 };
 
-
 struct CmdState {
 
 	void init();
@@ -65,7 +64,6 @@ struct CmdState {
 	Verb selAction;
 	int16 selNoun;
 };
-
 
 class Command {
 public:
@@ -84,11 +82,9 @@ public:
 	//! read all command arrays from stream
 	void readCommandsFrom(byte *&ptr);
 
-
 	enum {
 		MAX_MATCHING_CMDS = 50
 	};
-
 
 private:
 

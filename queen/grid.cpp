@@ -158,7 +158,7 @@ void Grid::drawZones() {
 		const ZoneSlot *pzs = &_zones[GS_ROOM][i];
 		if (pzs->valid) {
 			const Box *b = &pzs->box;
-			_vm->display()->drawBox(b->x1, b->y1, b->x2, b->y2, 3);	
+			_vm->display()->drawBox(b->x1, b->y1, b->x2, b->y2, 3);
 		}
 	}
 }
