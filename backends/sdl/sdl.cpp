@@ -396,6 +396,10 @@ uint32 OSystem_SDL::property(int param, Property *value) {
 			_adjustAspectRatio ^= true;
 			hotswap_gfx_mode();
 		}
+	} else if (param == PROP_HAS_SCALER) {
+		if (value->gfx_mode <= 11)	// FIXME: Hardcoded
+			return 1;
+		return 0;
 	}
 
 	return OSystem_SDL_Common::property(param, value);
