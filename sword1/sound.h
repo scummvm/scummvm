@@ -75,8 +75,8 @@ private:
 	void playSample(QueueElement *elem);
 	void initCowSystem(void);
 	void closeCowSystem(void);
-	uint32 uncompressedSize(uint8 *data);
-	uint32 expandSpeech(void *src, void *dest, uint32 srcSize);
+
+	int16 *uncompressSpeech(uint32 index, uint32 cSize, uint32 *size);
 	File		 _cowFile;
 	uint32		 *_cowHeader;
 	uint32		 _cowHeaderSize;

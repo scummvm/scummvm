@@ -150,10 +150,6 @@ void SwordSound::playSample(QueueElement *elem) {
 	}
 }
 
-uint32 SwordSound::uncompressedSize(uint8 *data) {
-	return READ_LE_UINT32(data + 0x28);
-}
-
 bool SwordSound::startSpeech(uint16 roomNo, uint16 localNo) {
 	if (_cowHeader == NULL) {
 		warning("SwordSound::startSpeech: COW file isn't open!");
@@ -163,50 +159,54 @@ bool SwordSound::startSpeech(uint16 roomNo, uint16 localNo) {
 	uint32 locIndex = _cowHeader[roomNo] >> 2;
 	uint32 sampleSize = _cowHeader[locIndex + (localNo * 2)];
 	uint32 index = _cowHeader[locIndex + (localNo * 2) - 1];
-	debug(4, "startSpeech(%d, %d): locIndex %d, sampleSize %d, index %d", roomNo, localNo, locIndex, sampleSize, index);
+	debug(6, "startSpeech(%d, %d): locIndex %d, sampleSize %d, index %d", roomNo, localNo, locIndex, sampleSize, index);
 	if (sampleSize) {
-		_cowFile.seek(index + _cowHeaderSize);
-		uint8 *buf = (uint8*)malloc(sampleSize);
-		_cowFile.read(buf, sampleSize);
-		uint8 *smpBuf = (uint8*)malloc(uncompressedSize(buf));
-		uint32 size = expandSpeech(buf, smpBuf, sampleSize);
-		free(buf);
-		if (!size) {
-			free(smpBuf);
-			return false;
-		}
-		_mixer->playRaw(&_speechHandle, smpBuf, size, 11025, SPEECH_FLAGS, SOUND_SPEECH_ID);
+		uint32 size;
+		int16 *data = uncompressSpeech(index + _cowHeaderSize, sampleSize, &size);
+		if (data)
+			_mixer->playRaw(&_speechHandle, data, size, 11025, SPEECH_FLAGS, SOUND_SPEECH_ID);
 		return true;
 	} else
 		return false;
 }
 
-uint32 SwordSound::expandSpeech(void *src, void *dest, uint32 srcSize) {
-	int16 *compData = (int16*)src;
-	if (READ_BE_UINT32(compData + 0x12) != 'data') {
-		warning("SwordSound::expandSpeech: 'data' tag not found in wave header");
-		return 0;
-	}
-	srcSize >>= 1;
-	int16 *expData = (int16*)dest;
-	compData += 0x16;
-	srcSize -= 0x16;
-
-	uint32 srcPos = 0;
-	while (srcPos < srcSize) {
-		if ((int16)FROM_LE_16(compData[srcPos]) < 0) {
-			uint16 len = (uint16)(-(int16)FROM_LE_16(compData[srcPos]));
-			for (uint32 cnt = 0; cnt < len; cnt++)
-				*expData++ = compData[srcPos + 1];
-			srcPos += 2;
-		} else {
-			uint32 len = FROM_LE_16(compData[srcPos]);
-			memcpy(expData, compData + srcPos + 1, len * 2);
-			expData += len;
-			srcPos += len + 1;
+int16 *SwordSound::uncompressSpeech(uint32 index, uint32 cSize, uint32 *size) {
+	uint8 *fBuf = (uint8*)malloc(cSize);
+	_cowFile.seek(index);
+	_cowFile.read(fBuf, cSize);
+	uint32 headerPos = 0;
+	while ((READ_BE_UINT32(fBuf + headerPos) != 'data') && (headerPos < 100))
+		headerPos++;
+	if (headerPos < 100) {
+		uint32 resSize = READ_LE_UINT32(fBuf + headerPos + 4) >> 1;
+		int16 *srcData = (int16*)(fBuf + headerPos + 8);
+		int16 *dstData = (int16*)malloc(resSize * 2);
+		uint32 srcPos = 0;
+		int16 *dstPos = dstData;
+		cSize = (cSize - (headerPos + 8)) / 2;
+		while (srcPos < cSize) {
+			int16 length = (int16)READ_LE_UINT16(srcData + srcPos);
+			srcPos++;
+			if (length < 0) {
+				length = -length;
+				for (uint16 cnt = 0; cnt < (uint16)length; cnt++)
+					*dstPos++ = srcData[srcPos];
+				srcPos++;
+			} else {
+				memcpy(dstPos, srcData + srcPos, length * 2);
+				dstPos += length;
+				srcPos += length;
+			}
 		}
+		free(fBuf);
+		*size = resSize * 2;
+		return dstData;
+	} else {
+		free(fBuf);
+		warning("SwordSound::uncompressSpeech(): DATA tag not found in wave header");
+		*size = 0;
+		return NULL;
 	}
-	return (uint8*)expData - (uint8*)dest;
 }
 
 void SwordSound::stopSpeech(void) {
