@@ -165,11 +165,11 @@ void Scumm::unkMessage1() {
 
 		a = buffer[2] | (buffer[3]<<8) | (buffer[6]<<16) | (buffer[7]<<24);
 		b = buffer[10] | (buffer[11]<<8) | (buffer[14]<<16) | (buffer[15]<<24);
-		if (_saveSound != 1)
+//		if (_saveSound != 1)
 			talkSound(a,b,1);
 	}
 
-	warning("unkMessage1(\"%s\")", buffer);
+//	warning("unkMessage1(\"%s\")", buffer);
 }
 
 void Scumm::unkMessage2() {
