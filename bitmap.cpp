@@ -20,7 +20,6 @@
 #include <cstring>
 #include "bitmap.h"
 #include "bits.h"
-#include "smush.h"
 #include "debug.h"
 
 #include "driver_gl.h"
@@ -148,13 +147,6 @@ void Bitmap::draw() const {
 	cur_tex_idx++;
       }
     }
-
-	if (g_smush->isPlaying()) {
-		if (g_smush->isUpdateNeeded()) {
-			g_driver->drawSMUSHframe(g_smush->getX(), g_smush->getY(), g_smush->getWidth(), g_smush->getHeight(), g_smush->getDstPtr());
-			g_smush->setUpdateNeeded();
-		}
-	}
 
     glDisable(GL_SCISSOR_TEST);
     glDisable(GL_TEXTURE_2D);
