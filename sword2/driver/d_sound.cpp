@@ -530,7 +530,7 @@ void Sword2Sound::unpauseSpeech(void) {
  * This function opens a sound effect ready for playing. A unique id should be
  * passed in so that each effect can be referenced individually.
  * @param id the unique sound id
- * @data the WAV data
+ * @param data the WAV data
  * @warning Zero is not a valid id
  */
 
