@@ -1352,8 +1352,10 @@ uint32 SkyLogic::fnWeWait(uint32 a, uint32 b, uint32 c) {
 	error("Stub: fnWeWait");
 }
 
-uint32 SkyLogic::fnSendSync(uint32 a, uint32 b, uint32 c) {
-	error("Stub: fnSendSync");
+uint32 SkyLogic::fnSendSync(uint32 mega, uint32 sync, uint32 c) {
+	Compact *cpt = SkyState::fetchCompact(mega);
+	cpt->sync = (uint16)(sync & 0xffff);
+	return 0;
 }
 
 uint32 SkyLogic::fnSendFastSync(uint32 a, uint32 b, uint32 c) {
@@ -1467,8 +1469,14 @@ uint32 SkyLogic::fnSimpleMod(uint32 a, uint32 b, uint32 c) {
 	error("Stub: fnSimpleMod");
 }
 
-uint32 SkyLogic::fnRunFrames(uint32 a, uint32 b, uint32 c) {
-	error("Stub: fnRunFrames");
+uint32 SkyLogic::fnRunFrames(uint32 sequenceNo, uint32 b, uint32 c) {
+	uint16 *sequence = (uint16 *)SkyState::fetchCompact(sequenceNo);
+
+	_compact->logic = L_FRAMES;
+	_compact->offset = *sequence++;
+	_compact->grafixProg = sequence;
+	simpleAnim();
+	return 0;
 }
 
 uint32 SkyLogic::fnAwaitSync(uint32 a, uint32 b, uint32 c) {
