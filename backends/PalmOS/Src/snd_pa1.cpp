@@ -1,6 +1,6 @@
 #include <stdlib.h>
 
-#include "native.h"
+
 #include "globals.h"
 
 #ifdef COMPILE_PA1SND
