@@ -2379,7 +2379,7 @@ void Scumm::dissolveEffect(int width, int height) {
 	blits_before_refresh = (3 * w * h) / 25;
 	
 	// Speed up the effect for Loom
-	if (_gameId == GID_LOOM256)
+	if (_gameId == GID_LOOM || _gameId == GID_LOOM256)
 		blits_before_refresh *= 4;
 
 	for (i = 0; i < w * h; i++) {
@@ -2480,7 +2480,7 @@ void Scumm::scrollEffect(int dir) {
 }
 
 void Scumm::unkScreenEffect6() {
-	if (_gameId == GID_LOOM256)
+	if (_gameId == GID_LOOM || _gameId == GID_LOOM256)
 		dissolveEffect(1, 1);
 	else
 		dissolveEffect(8, 4);
@@ -3396,7 +3396,7 @@ void Scumm::decompressDefaultCursor(int idx) {
 
 	// FIXME: None of the stock cursors are right for Loom. Why is that?
 
-	if ((_gameId == GID_LOOM256) || (_gameId == GID_LOOM)) {
+	if (_gameId == GID_LOOM || _gameId == GID_LOOM256) {
 		int w = 0;
 
 		_cursor.width = 8;
