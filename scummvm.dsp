@@ -98,7 +98,7 @@ LINK32=link.exe
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /Gm /GX /Zi /Od /I "./sound" /I "./" /D "WIN32" /D "_DEBUG" /D "_CONSOLE" /D "_MBCS" /D "ALLOW_GDI" /D "BYPASS_COPY_PROT" /D "USE_ADLIB" /D "USE_MAD" /Yu"stdafx.h" /FD /GZ /c
 # SUBTRACT BASE CPP /Fr
-# ADD CPP /nologo /MTd /W3 /WX /Gm /GR /GX /ZI /Od /I "." /I "common" /D "WIN32" /D "_DEBUG" /D "_CONSOLE" /D "_MBCS" /D "ALLOW_GDI" /D "USE_ADLIB" /D "BYPASS_COPY_PROT" /D "USE_MAD" /YX /FD /GZ /c
+# ADD CPP /nologo /MTd /W3 /WX /Gm /GR- /GX /ZI /Od /I "." /I "common" /D "WIN32" /D "_DEBUG" /D "_CONSOLE" /D "_MBCS" /D "ALLOW_GDI" /D "USE_ADLIB" /D "BYPASS_COPY_PROT" /D "USE_MAD" /YX /FD /GZ /c
 # SUBTRACT CPP /Fr
 # ADD BASE RSC /l 0x41d /d "_DEBUG"
 # ADD RSC /l 0x41d /d "_DEBUG"
@@ -307,6 +307,19 @@ SOURCE=.\sound\midiparser_xmidi.cpp
 # Begin Source File
 
 SOURCE=.\sound\mixer.cpp
+
+!IF  "$(CFG)" == "scummvm - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "scummvm - Win32 Debug"
+
+!ELSEIF  "$(CFG)" == "scummvm - Win32 mad mp3 Debug"
+
+# ADD CPP /GR
+
+!ELSEIF  "$(CFG)" == "scummvm - Win32 mad mp3 Release"
+
+!ENDIF 
+
 # End Source File
 # Begin Source File
 
