@@ -141,13 +141,7 @@
 				RelativePath="..\..\sword2\driver\palette.cpp">
 			</File>
 			<File
-				RelativePath="..\..\sword2\driver\palette.h">
-			</File>
-			<File
 				RelativePath="..\..\sword2\driver\rdwin.cpp">
-			</File>
-			<File
-				RelativePath="..\..\sword2\driver\rdwin.h">
 			</File>
 			<File
 				RelativePath="..\..\sword2\driver\render.cpp">
@@ -161,9 +155,6 @@
 		</Filter>
 		<File
 			RelativePath="..\..\sword2\anims.cpp">
-		</File>
-		<File
-			RelativePath="..\..\sword2\anims.h">
 		</File>
 		<File
 			RelativePath="..\..\sword2\build_display.cpp">
@@ -199,13 +190,7 @@
 			RelativePath="..\..\sword2\events.cpp">
 		</File>
 		<File
-			RelativePath="..\..\sword2\events.h">
-		</File>
-		<File
 			RelativePath="..\..\sword2\function.cpp">
-		</File>
-		<File
-			RelativePath="..\..\sword2\function.h">
 		</File>
 		<File
 			RelativePath="..\..\sword2\header.h">
@@ -286,9 +271,6 @@
 			RelativePath="..\..\sword2\scroll.cpp">
 		</File>
 		<File
-			RelativePath="..\..\sword2\scroll.h">
-		</File>
-		<File
 			RelativePath="..\..\sword2\sound.cpp">
 		</File>
 		<File
@@ -316,19 +298,10 @@
 			RelativePath="..\..\sword2\sync.cpp">
 		</File>
 		<File
-			RelativePath="..\..\sword2\sync.h">
-		</File>
-		<File
 			RelativePath="..\..\sword2\tony_gsdk.cpp">
 		</File>
 		<File
-			RelativePath="..\..\sword2\tony_gsdk.h">
-		</File>
-		<File
 			RelativePath="..\..\sword2\walker.cpp">
-		</File>
-		<File
-			RelativePath="..\..\sword2\walker.h">
 		</File>
 	</Files>
 	<Globals>

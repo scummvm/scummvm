@@ -394,6 +394,12 @@
 				RelativePath="..\..\gui\ScrollBarWidget.h">
 			</File>
 			<File
+				RelativePath="..\..\gui\TabWidget.cpp">
+			</File>
+			<File
+				RelativePath="..\..\gui\TabWidget.h">
+			</File>
+			<File
 				RelativePath="..\..\gui\about.cpp">
 			</File>
 			<File
