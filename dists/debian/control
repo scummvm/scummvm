@@ -3,7 +3,7 @@ Section: contrib/games
 Priority: optional
 Maintainer: Tore Anderson <tore@linpro.no>
 Build-Depends: debhelper (>> 3.0.0), libsdl1.2-dev, libmad0-dev
-Standards-Version: 3.5.7.1
+Standards-Version: 3.5.8
 
 Package: scummvm-cvs
 Architecture: any
