@@ -294,8 +294,7 @@ void Scumm::setupSound() {
 	}
 	_soundTagTable = (byte*)sound_tags;
 	_numSoundTags = 1;
-	if (_majorScummVersion==6)
-		_sfxFile = openSfxFile();
+	_sfxFile = openSfxFile();
 }
 
 struct VOCHeader {
