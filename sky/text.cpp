@@ -364,2890 +364,1100 @@ lowTextManager_t SkyText::lowTextManager(uint32 textNum, uint16 width, uint16 lo
 
 }
 
+static const HuffTree huffTree_00267[] = {
+	{ 1, 20, 0 },
+	{ 2, 7, 0 },
+	{ 3, 6, 0 },
+	{ 4, 5, 0 },
+	{ 0, 0, (char)0x20 },
+	{ 0, 0, (char)0x65 },
+	{ 0, 0, (char)0x73 },
+	{ 8, 15, 0 },
+	{ 9, 12, 0 },
+	{ 10, 11, 0 },
+	{ 0, 0, (char)0x6d },
+	{ 0, 0, (char)0x61 },
+	{ 13, 14, 0 },
+	{ 0, 0, (char)0x0 },
+	{ 0, 0, (char)0x6e },
+	{ 16, 19, 0 },
+	{ 17, 18, 0 },
+	{ 0, 0, (char)0x69 },
+	{ 0, 0, (char)0x74 },
+	{ 0, 0, (char)0x75 },
+	{ 21, 44, 0 },
+	{ 22, 31, 0 },
+	{ 23, 28, 0 },
+	{ 24, 27, 0 },
+	{ 25, 26, 0 },
+	{ 0, 0, (char)0x2e },
+	{ 0, 0, (char)0x72 },
+	{ 0, 0, (char)0x45 },
+	{ 29, 30, 0 },
+	{ 0, 0, (char)0x6f },
+	{ 0, 0, (char)0x68 },
+	{ 32, 39, 0 },
+	{ 33, 36, 0 },
+	{ 34, 35, 0 },
+	{ 0, 0, (char)0x44 },
+	{ 0, 0, (char)0x67 },
+	{ 37, 38, 0 },
+	{ 0, 0, (char)0x49 },
+	{ 0, 0, (char)0x79 },
+	{ 40, 43, 0 },
+	{ 41, 42, 0 },
+	{ 0, 0, (char)0x53 },
+	{ 0, 0, (char)0x64 },
+	{ 0, 0, (char)0x6c },
+	{ 45, 64, 0 },
+	{ 46, 53, 0 },
+	{ 47, 50, 0 },
+	{ 48, 49, 0 },
+	{ 0, 0, (char)0x54 },
+	{ 0, 0, (char)0x4e },
+	{ 51, 52, 0 },
+	{ 0, 0, (char)0x63 },
+	{ 0, 0, (char)0x52 },
+	{ 54, 59, 0 },
+	{ 55, 58, 0 },
+	{ 56, 57, 0 },
+	{ 0, 0, (char)0x41 },
+	{ 0, 0, (char)0x4f },
+	{ 0, 0, (char)0x4c },
+	{ 60, 63, 0 },
+	{ 61, 62, 0 },
+	{ 0, 0, (char)0x48 },
+	{ 0, 0, (char)0x43 },
+	{ 0, 0, (char)0x55 },
+	{ 65, 84, 0 },
+	{ 66, 75, 0 },
+	{ 67, 72, 0 },
+	{ 68, 71, 0 },
+	{ 69, 70, 0 },
+	{ 0, 0, (char)0x62 },
+	{ 0, 0, (char)0x21 },
+	{ 0, 0, (char)0x27 },
+	{ 73, 74, 0 },
+	{ 0, 0, (char)0x77 },
+	{ 0, 0, (char)0x66 },
+	{ 76, 81, 0 },
+	{ 77, 80, 0 },
+	{ 78, 79, 0 },
+	{ 0, 0, (char)0x47 },
+	{ 0, 0, (char)0x4d },
+	{ 0, 0, (char)0x2c },
+	{ 82, 83, 0 },
+	{ 0, 0, (char)0x57 },
+	{ 0, 0, (char)0x42 },
+	{ 85, 98, 0 },
+	{ 86, 93, 0 },
+	{ 87, 90, 0 },
+	{ 88, 89, 0 },
+	{ 0, 0, (char)0x3f },
+	{ 0, 0, (char)0x50 },
+	{ 91, 92, 0 },
+	{ 0, 0, (char)0x6b },
+	{ 0, 0, (char)0x70 },
+	{ 94, 97, 0 },
+	{ 95, 96, 0 },
+	{ 0, 0, (char)0x76 },
+	{ 0, 0, (char)0x46 },
+	{ 0, 0, (char)0x4b },
+	{ 99, 110, 0 },
+	{ 100, 105, 0 },
+	{ 101, 104, 0 },
+	{ 102, 103, 0 },
+	{ 0, 0, (char)0x56 },
+	{ 0, 0, (char)0x59 },
+	{ 0, 0, (char)0x7a },
+	{ 106, 109, 0 },
+	{ 107, 108, 0 },
+	{ 0, 0, (char)0x2d },
+	{ 0, 0, (char)0x23 },
+	{ 0, 0, (char)0x4a },
+	{ 111, 124, 0 },
+	{ 112, 117, 0 },
+	{ 113, 116, 0 },
+	{ 114, 115, 0 },
+	{ 0, 0, (char)0x5a },
+	{ 0, 0, (char)0x28 },
+	{ 0, 0, (char)0x29 },
+	{ 118, 121, 0 },
+	{ 119, 120, 0 },
+	{ 0, 0, (char)0x6a },
+	{ 0, 0, (char)0x2b },
+	{ 122, 123, 0 },
+	{ 0, 0, (char)0x2a },
+	{ 0, 0, (char)0x71 },
+	{ 125, 138, 0 },
+	{ 126, 131, 0 },
+	{ 127, 130, 0 },
+	{ 128, 129, 0 },
+	{ 0, 0, (char)0x7d },
+	{ 0, 0, (char)0x3a },
+	{ 0, 0, (char)0x60 },
+	{ 132, 135, 0 },
+	{ 133, 134, 0 },
+	{ 0, 0, (char)0x30 },
+	{ 0, 0, (char)0x32 },
+	{ 136, 137, 0 },
+	{ 0, 0, (char)0x31 },
+	{ 0, 0, (char)0x51 },
+	{ 139, 150, 0 },
+	{ 140, 145, 0 },
+	{ 141, 144, 0 },
+	{ 142, 143, 0 },
+	{ 0, 0, (char)0x58 },
+	{ 0, 0, (char)0x78 },
+	{ 0, 0, (char)0x33 },
+	{ 146, 149, 0 },
+	{ 147, 148, 0 },
+	{ 0, 0, (char)0x39 },
+	{ 0, 0, (char)0x34 },
+	{ 0, 0, (char)0x3c },
+	{ 151, 160, 0 },
+	{ 152, 157, 0 },
+	{ 153, 156, 0 },
+	{ 154, 155, 0 },
+	{ 0, 0, (char)0x38 },
+	{ 0, 0, (char)0x5d },
+	{ 0, 0, (char)0x3d },
+	{ 158, 159, 0 },
+	{ 0, 0, (char)0x26 },
+	{ 0, 0, (char)0x35 },
+	{ 161, 168, 0 },
+	{ 162, 165, 0 },
+	{ 163, 164, 0 },
+	{ 0, 0, (char)0x36 },
+	{ 0, 0, (char)0x2f },
+	{ 166, 167, 0 },
+	{ 0, 0, (char)0x37 },
+	{ 0, 0, (char)0x24 },
+	{ 169, 174, 0 },
+	{ 170, 173, 0 },
+	{ 171, 172, 0 },
+	{ 0, 0, (char)0x3e },
+	{ 0, 0, (char)0x25 },
+	{ 0, 0, (char)0x5e },
+	{ 175, 180, 0 },
+	{ 176, 179, 0 },
+	{ 177, 178, 0 },
+	{ 0, 0, (char)0x22 },
+	{ 0, 0, (char)0x40 },
+	{ 0, 0, (char)0x5b },
+	{ 181, 184, 0 },
+	{ 182, 183, 0 },
+	{ 0, 0, (char)0x5f },
+	{ 0, 0, (char)0x7b },
+	{ 185, 186, 0 },
+	{ 0, 0, (char)0x5c },
+	{ 0, 0, (char)0x7c },
+};
+
+static const HuffTree huffTree_00288[] = {
+	{ 1, 20, 0 },
+	{ 2, 7, 0 },
+	{ 3, 4, 0 },
+	{ 0, 0, (char)0x20 },
+	{ 5, 6, 0 },
+	{ 0, 0, (char)0x65 },
+	{ 0, 0, (char)0x73 },
+	{ 8, 15, 0 },
+	{ 9, 12, 0 },
+	{ 10, 11, 0 },
+	{ 0, 0, (char)0x6e },
+	{ 0, 0, (char)0x69 },
+	{ 13, 14, 0 },
+	{ 0, 0, (char)0x74 },
+	{ 0, 0, (char)0x61 },
+	{ 16, 19, 0 },
+	{ 17, 18, 0 },
+	{ 0, 0, (char)0x2e },
+	{ 0, 0, (char)0x0 },
+	{ 0, 0, (char)0x45 },
+	{ 21, 44, 0 },
+	{ 22, 31, 0 },
+	{ 23, 28, 0 },
+	{ 24, 27, 0 },
+	{ 25, 26, 0 },
+	{ 0, 0, (char)0x72 },
+	{ 0, 0, (char)0x6f },
+	{ 0, 0, (char)0x75 },
+	{ 29, 30, 0 },
+	{ 0, 0, (char)0x6d },
+	{ 0, 0, (char)0x68 },
+	{ 32, 39, 0 },
+	{ 33, 36, 0 },
+	{ 34, 35, 0 },
+	{ 0, 0, (char)0x49 },
+	{ 0, 0, (char)0x6c },
+	{ 37, 38, 0 },
+	{ 0, 0, (char)0x53 },
+	{ 0, 0, (char)0x52 },
+	{ 40, 43, 0 },
+	{ 41, 42, 0 },
+	{ 0, 0, (char)0x64 },
+	{ 0, 0, (char)0x4e },
+	{ 0, 0, (char)0x54 },
+	{ 45, 68, 0 },
+	{ 46, 55, 0 },
+	{ 47, 52, 0 },
+	{ 48, 51, 0 },
+	{ 49, 50, 0 },
+	{ 0, 0, (char)0x63 },
+	{ 0, 0, (char)0x41 },
+	{ 0, 0, (char)0x4f },
+	{ 53, 54, 0 },
+	{ 0, 0, (char)0x44 },
+	{ 0, 0, (char)0x4c },
+	{ 56, 63, 0 },
+	{ 57, 60, 0 },
+	{ 58, 59, 0 },
+	{ 0, 0, (char)0x43 },
+	{ 0, 0, (char)0x67 },
+	{ 61, 62, 0 },
+	{ 0, 0, (char)0x55 },
+	{ 0, 0, (char)0x27 },
+	{ 64, 67, 0 },
+	{ 65, 66, 0 },
+	{ 0, 0, (char)0x79 },
+	{ 0, 0, (char)0x48 },
+	{ 0, 0, (char)0x70 },
+	{ 69, 88, 0 },
+	{ 70, 79, 0 },
+	{ 71, 76, 0 },
+	{ 72, 75, 0 },
+	{ 73, 74, 0 },
+	{ 0, 0, (char)0x21 },
+	{ 0, 0, (char)0x4d },
+	{ 0, 0, (char)0x62 },
+	{ 77, 78, 0 },
+	{ 0, 0, (char)0x76 },
+	{ 0, 0, (char)0x2c },
+	{ 80, 85, 0 },
+	{ 81, 84, 0 },
+	{ 82, 83, 0 },
+	{ 0, 0, (char)0x50 },
+	{ 0, 0, (char)0x66 },
+	{ 0, 0, (char)0x3f },
+	{ 86, 87, 0 },
+	{ 0, 0, (char)0x47 },
+	{ 0, 0, (char)0x42 },
+	{ 89, 104, 0 },
+	{ 90, 97, 0 },
+	{ 91, 94, 0 },
+	{ 92, 93, 0 },
+	{ 0, 0, (char)0x77 },
+	{ 0, 0, (char)0x57 },
+	{ 95, 96, 0 },
+	{ 0, 0, (char)0x46 },
+	{ 0, 0, (char)0x56 },
+	{ 98, 101, 0 },
+	{ 99, 100, 0 },
+	{ 0, 0, (char)0x6b },
+	{ 0, 0, (char)0x7a },
+	{ 102, 103, 0 },
+	{ 0, 0, (char)0x4b },
+	{ 0, 0, (char)0x2d },
+	{ 105, 116, 0 },
+	{ 106, 111, 0 },
+	{ 107, 110, 0 },
+	{ 108, 109, 0 },
+	{ 0, 0, (char)0x4a },
+	{ 0, 0, (char)0x2b },
+	{ 0, 0, (char)0x71 },
+	{ 112, 115, 0 },
+	{ 113, 114, 0 },
+	{ 0, 0, (char)0x59 },
+	{ 0, 0, (char)0x6a },
+	{ 0, 0, (char)0x5a },
+	{ 117, 132, 0 },
+	{ 118, 125, 0 },
+	{ 119, 122, 0 },
+	{ 120, 121, 0 },
+	{ 0, 0, (char)0x23 },
+	{ 0, 0, (char)0x51 },
+	{ 123, 124, 0 },
+	{ 0, 0, (char)0x28 },
+	{ 0, 0, (char)0x29 },
+	{ 126, 129, 0 },
+	{ 127, 128, 0 },
+	{ 0, 0, (char)0x3c },
+	{ 0, 0, (char)0x78 },
+	{ 130, 131, 0 },
+	{ 0, 0, (char)0x3a },
+	{ 0, 0, (char)0x2a },
+	{ 133, 146, 0 },
+	{ 134, 141, 0 },
+	{ 135, 138, 0 },
+	{ 136, 137, 0 },
+	{ 0, 0, (char)0x58 },
+	{ 0, 0, (char)0x7d },
+	{ 139, 140, 0 },
+	{ 0, 0, (char)0x3d },
+	{ 0, 0, (char)0x60 },
+	{ 142, 145, 0 },
+	{ 143, 144, 0 },
+	{ 0, 0, (char)0x5d },
+	{ 0, 0, (char)0x30 },
+	{ 0, 0, (char)0x32 },
+	{ 147, 158, 0 },
+	{ 148, 153, 0 },
+	{ 149, 152, 0 },
+	{ 150, 151, 0 },
+	{ 0, 0, (char)0x31 },
+	{ 0, 0, (char)0x33 },
+	{ 0, 0, (char)0x39 },
+	{ 154, 157, 0 },
+	{ 155, 156, 0 },
+	{ 0, 0, (char)0x2f },
+	{ 0, 0, (char)0x34 },
+	{ 0, 0, (char)0x5e },
+	{ 159, 168, 0 },
+	{ 160, 165, 0 },
+	{ 161, 164, 0 },
+	{ 162, 163, 0 },
+	{ 0, 0, (char)0x38 },
+	{ 0, 0, (char)0x3e },
+	{ 0, 0, (char)0x26 },
+	{ 166, 167, 0 },
+	{ 0, 0, (char)0x35 },
+	{ 0, 0, (char)0x40 },
+	{ 169, 176, 0 },
+	{ 170, 173, 0 },
+	{ 171, 172, 0 },
+	{ 0, 0, (char)0x36 },
+	{ 0, 0, (char)0x5f },
+	{ 174, 175, 0 },
+	{ 0, 0, (char)0x5c },
+	{ 0, 0, (char)0x37 },
+	{ 177, 182, 0 },
+	{ 178, 181, 0 },
+	{ 179, 180, 0 },
+	{ 0, 0, (char)0x5b },
+	{ 0, 0, (char)0x24 },
+	{ 0, 0, (char)0x7b },
+	{ 183, 186, 0 },
+	{ 184, 185, 0 },
+	{ 0, 0, (char)0x25 },
+	{ 0, 0, (char)0x9 },
+	{ 187, 188, 0 },
+	{ 0, 0, (char)0x22 },
+	{ 0, 0, (char)0x7c },
+};
+
+static const HuffTree huffTree_00303[] = {
+	{ 1, 22, 0 },
+	{ 2, 9, 0 },
+	{ 3, 6, 0 },
+	{ 4, 5, 0 },
+	{ 0, 0, (char)0x20 },
+	{ 0, 0, (char)0x65 },
+	{ 7, 8, 0 },
+	{ 0, 0, (char)0x74 },
+	{ 0, 0, (char)0x73 },
+	{ 10, 17, 0 },
+	{ 11, 14, 0 },
+	{ 12, 13, 0 },
+	{ 0, 0, (char)0x6e },
+	{ 0, 0, (char)0x61 },
+	{ 15, 16, 0 },
+	{ 0, 0, (char)0x69 },
+	{ 0, 0, (char)0x2e },
+	{ 18, 21, 0 },
+	{ 19, 20, 0 },
+	{ 0, 0, (char)0x6f },
+	{ 0, 0, (char)0x0 },
+	{ 0, 0, (char)0x45 },
+	{ 23, 46, 0 },
+	{ 24, 35, 0 },
+	{ 25, 30, 0 },
+	{ 26, 29, 0 },
+	{ 27, 28, 0 },
+	{ 0, 0, (char)0x72 },
+	{ 0, 0, (char)0x75 },
+	{ 0, 0, (char)0x68 },
+	{ 31, 34, 0 },
+	{ 32, 33, 0 },
+	{ 0, 0, (char)0x49 },
+	{ 0, 0, (char)0x6d },
+	{ 0, 0, (char)0x6c },
+	{ 36, 41, 0 },
+	{ 37, 40, 0 },
+	{ 38, 39, 0 },
+	{ 0, 0, (char)0x54 },
+	{ 0, 0, (char)0x53 },
+	{ 0, 0, (char)0x52 },
+	{ 42, 45, 0 },
+	{ 43, 44, 0 },
+	{ 0, 0, (char)0x64 },
+	{ 0, 0, (char)0x4e },
+	{ 0, 0, (char)0x41 },
+	{ 47, 70, 0 },
+	{ 48, 59, 0 },
+	{ 49, 54, 0 },
+	{ 50, 53, 0 },
+	{ 51, 52, 0 },
+	{ 0, 0, (char)0x63 },
+	{ 0, 0, (char)0x4f },
+	{ 0, 0, (char)0x44 },
+	{ 55, 58, 0 },
+	{ 56, 57, 0 },
+	{ 0, 0, (char)0x4c },
+	{ 0, 0, (char)0x43 },
+	{ 0, 0, (char)0x79 },
+	{ 60, 65, 0 },
+	{ 61, 64, 0 },
+	{ 62, 63, 0 },
+	{ 0, 0, (char)0x67 },
+	{ 0, 0, (char)0x27 },
+	{ 0, 0, (char)0x55 },
+	{ 66, 69, 0 },
+	{ 67, 68, 0 },
+	{ 0, 0, (char)0x48 },
+	{ 0, 0, (char)0x21 },
+	{ 0, 0, (char)0x70 },
+	{ 71, 88, 0 },
+	{ 72, 81, 0 },
+	{ 73, 78, 0 },
+	{ 74, 77, 0 },
+	{ 75, 76, 0 },
+	{ 0, 0, (char)0x4d },
+	{ 0, 0, (char)0x62 },
+	{ 0, 0, (char)0x3f },
+	{ 79, 80, 0 },
+	{ 0, 0, (char)0x76 },
+	{ 0, 0, (char)0x66 },
+	{ 82, 85, 0 },
+	{ 83, 84, 0 },
+	{ 0, 0, (char)0x50 },
+	{ 0, 0, (char)0x2c },
+	{ 86, 87, 0 },
+	{ 0, 0, (char)0x77 },
+	{ 0, 0, (char)0x47 },
+	{ 89, 102, 0 },
+	{ 90, 95, 0 },
+	{ 91, 94, 0 },
+	{ 92, 93, 0 },
+	{ 0, 0, (char)0x42 },
+	{ 0, 0, (char)0x57 },
+	{ 0, 0, (char)0x6b },
+	{ 96, 99, 0 },
+	{ 97, 98, 0 },
+	{ 0, 0, (char)0x46 },
+	{ 0, 0, (char)0x56 },
+	{ 100, 101, 0 },
+	{ 0, 0, (char)0x59 },
+	{ 0, 0, (char)0x4b },
+	{ 103, 114, 0 },
+	{ 104, 109, 0 },
+	{ 105, 108, 0 },
+	{ 106, 107, 0 },
+	{ 0, 0, (char)0x2d },
+	{ 0, 0, (char)0x7a },
+	{ 0, 0, (char)0x4a },
+	{ 110, 113, 0 },
+	{ 111, 112, 0 },
+	{ 0, 0, (char)0x71 },
+	{ 0, 0, (char)0x2b },
+	{ 0, 0, (char)0x6a },
+	{ 115, 132, 0 },
+	{ 116, 123, 0 },
+	{ 117, 120, 0 },
+	{ 118, 119, 0 },
+	{ 0, 0, (char)0x5a },
+	{ 0, 0, (char)0x23 },
+	{ 121, 122, 0 },
+	{ 0, 0, (char)0x51 },
+	{ 0, 0, (char)0x78 },
+	{ 124, 129, 0 },
+	{ 125, 128, 0 },
+	{ 126, 127, 0 },
+	{ 0, 0, (char)0x3a },
+	{ 0, 0, (char)0x29 },
+	{ 0, 0, (char)0x28 },
+	{ 130, 131, 0 },
+	{ 0, 0, (char)0x3c },
+	{ 0, 0, (char)0x58 },
+	{ 133, 148, 0 },
+	{ 134, 141, 0 },
+	{ 135, 138, 0 },
+	{ 136, 137, 0 },
+	{ 0, 0, (char)0x2a },
+	{ 0, 0, (char)0x60 },
+	{ 139, 140, 0 },
+	{ 0, 0, (char)0x7d },
+	{ 0, 0, (char)0x3d },
+	{ 142, 145, 0 },
+	{ 143, 144, 0 },
+	{ 0, 0, (char)0x32 },
+	{ 0, 0, (char)0x30 },
+	{ 146, 147, 0 },
+	{ 0, 0, (char)0x5d },
+	{ 0, 0, (char)0x31 },
+	{ 149, 160, 0 },
+	{ 150, 155, 0 },
+	{ 151, 154, 0 },
+	{ 152, 153, 0 },
+	{ 0, 0, (char)0x7e },
+	{ 0, 0, (char)0x33 },
+	{ 0, 0, (char)0x7f },
+	{ 156, 159, 0 },
+	{ 157, 158, 0 },
+	{ 0, 0, (char)0x39 },
+	{ 0, 0, (char)0x34 },
+	{ 0, 0, (char)0x2f },
+	{ 161, 172, 0 },
+	{ 162, 167, 0 },
+	{ 163, 166, 0 },
+	{ 164, 165, 0 },
+	{ 0, 0, (char)0x38 },
+	{ 0, 0, (char)0x5e },
+	{ 0, 0, (char)0x26 },
+	{ 168, 171, 0 },
+	{ 169, 170, 0 },
+	{ 0, 0, (char)0x35 },
+	{ 0, 0, (char)0x36 },
+	{ 0, 0, (char)0x3e },
+	{ 173, 182, 0 },
+	{ 174, 179, 0 },
+	{ 175, 178, 0 },
+	{ 176, 177, 0 },
+	{ 0, 0, (char)0x40 },
+	{ 0, 0, (char)0x37 },
+	{ 0, 0, (char)0x5f },
+	{ 180, 181, 0 },
+	{ 0, 0, (char)0x5c },
+	{ 0, 0, (char)0x24 },
+	{ 183, 190, 0 },
+	{ 184, 187, 0 },
+	{ 185, 186, 0 },
+	{ 0, 0, (char)0x5b },
+	{ 0, 0, (char)0x80 },
+	{ 188, 189, 0 },
+	{ 0, 0, (char)0x81 },
+	{ 0, 0, (char)0x22 },
+	{ 191, 194, 0 },
+	{ 192, 193, 0 },
+	{ 0, 0, (char)0x25 },
+	{ 0, 0, (char)0x82 },
+	{ 195, 196, 0 },
+	{ 0, 0, (char)0x7b },
+	{ 197, 198, 0 },
+	{ 0, 0, (char)0x9 },
+	{ 0, 0, (char)0x7c },
+};
+
+static const HuffTree huffTree_00331[] = {
+	{ 1, 20, 0 },
+	{ 2, 7, 0 },
+	{ 3, 4, 0 },
+	{ 0, 0, (char)0x20 },
+	{ 5, 6, 0 },
+	{ 0, 0, (char)0x65 },
+	{ 0, 0, (char)0x61 },
+	{ 8, 15, 0 },
+	{ 9, 12, 0 },
+	{ 10, 11, 0 },
+	{ 0, 0, (char)0x6f },
+	{ 0, 0, (char)0x73 },
+	{ 13, 14, 0 },
+	{ 0, 0, (char)0x74 },
+	{ 0, 0, (char)0x6e },
+	{ 16, 19, 0 },
+	{ 17, 18, 0 },
+	{ 0, 0, (char)0x2e },
+	{ 0, 0, (char)0x69 },
+	{ 0, 0, (char)0x72 },
+	{ 21, 44, 0 },
+	{ 22, 31, 0 },
+	{ 23, 28, 0 },
+	{ 24, 27, 0 },
+	{ 25, 26, 0 },
+	{ 0, 0, (char)0x0 },
+	{ 0, 0, (char)0x45 },
+	{ 0, 0, (char)0x75 },
+	{ 29, 30, 0 },
+	{ 0, 0, (char)0x6d },
+	{ 0, 0, (char)0x41 },
+	{ 32, 39, 0 },
+	{ 33, 36, 0 },
+	{ 34, 35, 0 },
+	{ 0, 0, (char)0x6c },
+	{ 0, 0, (char)0x49 },
+	{ 37, 38, 0 },
+	{ 0, 0, (char)0x64 },
+	{ 0, 0, (char)0x52 },
+	{ 40, 43, 0 },
+	{ 41, 42, 0 },
+	{ 0, 0, (char)0x4e },
+	{ 0, 0, (char)0x53 },
+	{ 0, 0, (char)0x54 },
+	{ 45, 68, 0 },
+	{ 46, 55, 0 },
+	{ 47, 52, 0 },
+	{ 48, 51, 0 },
+	{ 49, 50, 0 },
+	{ 0, 0, (char)0x4f },
+	{ 0, 0, (char)0x68 },
+	{ 0, 0, (char)0x63 },
+	{ 53, 54, 0 },
+	{ 0, 0, (char)0x44 },
+	{ 0, 0, (char)0x67 },
+	{ 56, 63, 0 },
+	{ 57, 60, 0 },
+	{ 58, 59, 0 },
+	{ 0, 0, (char)0x4c },
+	{ 0, 0, (char)0x43 },
+	{ 61, 62, 0 },
+	{ 0, 0, (char)0x70 },
+	{ 0, 0, (char)0x55 },
+	{ 64, 67, 0 },
+	{ 65, 66, 0 },
+	{ 0, 0, (char)0x21 },
+	{ 0, 0, (char)0x79 },
+	{ 0, 0, (char)0x4d },
+	{ 69, 88, 0 },
+	{ 70, 79, 0 },
+	{ 71, 76, 0 },
+	{ 72, 75, 0 },
+	{ 73, 74, 0 },
+	{ 0, 0, (char)0x50 },
+	{ 0, 0, (char)0x76 },
+	{ 0, 0, (char)0x48 },
+	{ 77, 78, 0 },
+	{ 0, 0, (char)0x3f },
+	{ 0, 0, (char)0x62 },
+	{ 80, 85, 0 },
+	{ 81, 84, 0 },
+	{ 82, 83, 0 },
+	{ 0, 0, (char)0x27 },
+	{ 0, 0, (char)0x66 },
+	{ 0, 0, (char)0x2c },
+	{ 86, 87, 0 },
+	{ 0, 0, (char)0x47 },
+	{ 0, 0, (char)0x42 },
+	{ 89, 108, 0 },
+	{ 90, 99, 0 },
+	{ 91, 96, 0 },
+	{ 92, 95, 0 },
+	{ 93, 94, 0 },
+	{ 0, 0, (char)0x56 },
+	{ 0, 0, (char)0x6b },
+	{ 0, 0, (char)0x46 },
+	{ 97, 98, 0 },
+	{ 0, 0, (char)0x71 },
+	{ 0, 0, (char)0x2a },
+	{ 100, 105, 0 },
+	{ 101, 104, 0 },
+	{ 102, 103, 0 },
+	{ 0, 0, (char)0x77 },
+	{ 0, 0, (char)0x4b },
+	{ 0, 0, (char)0x2d },
+	{ 106, 107, 0 },
+	{ 0, 0, (char)0x57 },
+	{ 0, 0, (char)0x4a },
+	{ 109, 126, 0 },
+	{ 110, 117, 0 },
+	{ 111, 114, 0 },
+	{ 112, 113, 0 },
+	{ 0, 0, (char)0x7a },
+	{ 0, 0, (char)0x2b },
+	{ 115, 116, 0 },
+	{ 0, 0, (char)0x59 },
+	{ 0, 0, (char)0x6a },
+	{ 118, 123, 0 },
+	{ 119, 122, 0 },
+	{ 120, 121, 0 },
+	{ 0, 0, (char)0x85 },
+	{ 0, 0, (char)0x29 },
+	{ 0, 0, (char)0x51 },
+	{ 124, 125, 0 },
+	{ 0, 0, (char)0x5a },
+	{ 0, 0, (char)0x7e },
+	{ 127, 148, 0 },
+	{ 128, 137, 0 },
+	{ 129, 134, 0 },
+	{ 130, 133, 0 },
+	{ 131, 132, 0 },
+	{ 0, 0, (char)0x8b },
+	{ 0, 0, (char)0x3c },
+	{ 0, 0, (char)0x8a },
+	{ 135, 136, 0 },
+	{ 0, 0, (char)0x7f },
+	{ 0, 0, (char)0x3a },
+	{ 138, 143, 0 },
+	{ 139, 142, 0 },
+	{ 140, 141, 0 },
+	{ 0, 0, (char)0x87 },
+	{ 0, 0, (char)0x23 },
+	{ 0, 0, (char)0x78 },
+	{ 144, 147, 0 },
+	{ 145, 146, 0 },
+	{ 0, 0, (char)0x58 },
+	{ 0, 0, (char)0x91 },
+	{ 0, 0, (char)0x83 },
+	{ 149, 168, 0 },
+	{ 150, 159, 0 },
+	{ 151, 156, 0 },
+	{ 152, 155, 0 },
+	{ 153, 154, 0 },
+	{ 0, 0, (char)0x88 },
+	{ 0, 0, (char)0x60 },
+	{ 0, 0, (char)0x32 },
+	{ 157, 158, 0 },
+	{ 0, 0, (char)0x30 },
+	{ 0, 0, (char)0x31 },
+	{ 160, 165, 0 },
+	{ 161, 164, 0 },
+	{ 162, 163, 0 },
+	{ 0, 0, (char)0x28 },
+	{ 0, 0, (char)0x2f },
+	{ 0, 0, (char)0x5d },
+	{ 166, 167, 0 },
+	{ 0, 0, (char)0x3d },
+	{ 0, 0, (char)0x86 },
+	{ 169, 184, 0 },
+	{ 170, 177, 0 },
+	{ 171, 174, 0 },
+	{ 172, 173, 0 },
+	{ 0, 0, (char)0x5e },
+	{ 0, 0, (char)0x33 },
+	{ 175, 176, 0 },
+	{ 0, 0, (char)0x39 },
+	{ 0, 0, (char)0x34 },
+	{ 178, 181, 0 },
+	{ 179, 180, 0 },
+	{ 0, 0, (char)0x7d },
+	{ 0, 0, (char)0x38 },
+	{ 182, 183, 0 },
+	{ 0, 0, (char)0x5c },
+	{ 0, 0, (char)0x22 },
+	{ 185, 198, 0 },
+	{ 186, 193, 0 },
+	{ 187, 190, 0 },
+	{ 188, 189, 0 },
+	{ 0, 0, (char)0x3e },
+	{ 0, 0, (char)0x26 },
+	{ 191, 192, 0 },
+	{ 0, 0, (char)0x8d },
+	{ 0, 0, (char)0x7b },
+	{ 194, 197, 0 },
+	{ 195, 196, 0 },
+	{ 0, 0, (char)0x35 },
+	{ 0, 0, (char)0x36 },
+	{ 0, 0, (char)0x8f },
+	{ 199, 210, 0 },
+	{ 200, 205, 0 },
+	{ 201, 204, 0 },
+	{ 202, 203, 0 },
+	{ 0, 0, (char)0x8e },
+	{ 0, 0, (char)0x8c },
+	{ 0, 0, (char)0x37 },
+	{ 206, 209, 0 },
+	{ 207, 208, 0 },
+	{ 0, 0, (char)0x89 },
+	{ 0, 0, (char)0x24 },
+	{ 0, 0, (char)0x92 },
+	{ 211, 218, 0 },
+	{ 212, 215, 0 },
+	{ 213, 214, 0 },
+	{ 0, 0, (char)0x5b },
+	{ 0, 0, (char)0x80 },
+	{ 216, 217, 0 },
+	{ 0, 0, (char)0x81 },
+	{ 0, 0, (char)0x40 },
+	{ 219, 222, 0 },
+	{ 220, 221, 0 },
+	{ 0, 0, (char)0x5f },
+	{ 0, 0, (char)0x82 },
+	{ 223, 224, 0 },
+	{ 0, 0, (char)0x25 },
+	{ 225, 226, 0 },
+	{ 0, 0, (char)0x9 },
+	{ 227, 228, 0 },
+	{ 0, 0, (char)0x3b },
+	{ 0, 0, (char)0x7c },
+};
+
+static const HuffTree huffTree_00372[] = {
+	{ 1, 20, 0 },
+	{ 2, 7, 0 },
+	{ 3, 4, 0 },
+	{ 0, 0, ' ' },
+	{ 5, 6, 0 },
+	{ 0, 0, 'e' },
+	{ 0, 0, 'a' },
+	{ 8, 15, 0 },
+	{ 9, 12, 0 },
+	{ 10, 11, 0 },
+	{ 0, 0, 'o' },
+	{ 0, 0, 's' },
+	{ 13, 14, 0 },
+	{ 0, 0, 't' },
+	{ 0, 0, 'n' },
+	{ 16, 19, 0 },
+	{ 17, 18, 0 },
+	{ 0, 0, '.' },
+	{ 0, 0, 'i' },
+	{ 0, 0, 'r' },
+	{ 21, 44, 0 },
+	{ 22, 31, 0 },
+	{ 23, 28, 0 },
+	{ 24, 27, 0 },
+	{ 25, 26, 0 },
+	{ 0, 0, (char)0 },
+	{ 0, 0, 'E' },
+	{ 0, 0, 'u' },
+	{ 29, 30, 0 },
+	{ 0, 0, 'm' },
+	{ 0, 0, 'A' },
+	{ 32, 39, 0 },
+	{ 33, 36, 0 },
+	{ 34, 35, 0 },
+	{ 0, 0, 'l' },
+	{ 0, 0, 'I' },
+	{ 37, 38, 0 },
+	{ 0, 0, 'd' },
+	{ 0, 0, 'R' },
+	{ 40, 43, 0 },
+	{ 41, 42, 0 },
+	{ 0, 0, 'N' },
+	{ 0, 0, 'S' },
+	{ 0, 0, 'T' },
+	{ 45, 68, 0 },
+	{ 46, 55, 0 },
+	{ 47, 52, 0 },
+	{ 48, 51, 0 },
+	{ 49, 50, 0 },
+	{ 0, 0, 'O' },
+	{ 0, 0, 'h' },
+	{ 0, 0, 'c' },
+	{ 53, 54, 0 },
+	{ 0, 0, 'D' },
+	{ 0, 0, 'g' },
+	{ 56, 63, 0 },
+	{ 57, 60, 0 },
+	{ 58, 59, 0 },
+	{ 0, 0, 'L' },
+	{ 0, 0, 'C' },
+	{ 61, 62, 0 },
+	{ 0, 0, 'p' },
+	{ 0, 0, 'U' },
+	{ 64, 67, 0 },
+	{ 65, 66, 0 },
+	{ 0, 0, '!' },
+	{ 0, 0, 'y' },
+	{ 0, 0, 'M' },
+	{ 69, 88, 0 },
+	{ 70, 79, 0 },
+	{ 71, 76, 0 },
+	{ 72, 75, 0 },
+	{ 73, 74, 0 },
+	{ 0, 0, 'P' },
+	{ 0, 0, 'v' },
+	{ 0, 0, 'H' },
+	{ 77, 78, 0 },
+	{ 0, 0, '?' },
+	{ 0, 0, 'b' },
+	{ 80, 85, 0 },
+	{ 81, 84, 0 },
+	{ 82, 83, 0 },
+	{ 0, 0, (char)39 },
+	{ 0, 0, 'f' },
+	{ 0, 0, ',' },
+	{ 86, 87, 0 },
+	{ 0, 0, 'G' },
+	{ 0, 0, 'B' },
+	{ 89, 108, 0 },
+	{ 90, 99, 0 },
+	{ 91, 96, 0 },
+	{ 92, 95, 0 },
+	{ 93, 94, 0 },
+	{ 0, 0, 'V' },
+	{ 0, 0, 'k' },
+	{ 0, 0, 'F' },
+	{ 97, 98, 0 },
+	{ 0, 0, 'q' },
+	{ 0, 0, 'w' },
+	{ 100, 105, 0 },
+	{ 101, 104, 0 },
+	{ 102, 103, 0 },
+	{ 0, 0, 'K' },
+	{ 0, 0, '-' },
+	{ 0, 0, 'W' },
+	{ 106, 107, 0 },
+	{ 0, 0, 'J' },
+	{ 0, 0, '*' },
+	{ 109, 128, 0 },
+	{ 110, 117, 0 },
+	{ 111, 114, 0 },
+	{ 112, 113, 0 },
+	{ 0, 0, 'z' },
+	{ 0, 0, 'Y' },
+	{ 115, 116, 0 },
+	{ 0, 0, 'j' },
+	{ 0, 0, '+' },
+	{ 118, 123, 0 },
+	{ 119, 122, 0 },
+	{ 120, 121, 0 },
+	{ 0, 0, 'Q' },
+	{ 0, 0, (char)133 },
+	{ 0, 0, ')' },
+	{ 124, 127, 0 },
+	{ 125, 126, 0 },
+	{ 0, 0, 'Z' },
+	{ 0, 0, (char)139 },
+	{ 0, 0, '<' },
+	{ 129, 150, 0 },
+	{ 130, 139, 0 },
+	{ 131, 136, 0 },
+	{ 132, 135, 0 },
+	{ 133, 134, 0 },
+	{ 0, 0, (char)149 },
+	{ 0, 0, (char)126 },
+	{ 0, 0, (char)138 },
+	{ 137, 138, 0 },
+	{ 0, 0, (char)135 },
+	{ 0, 0, ':' },
+	{ 140, 145, 0 },
+	{ 141, 144, 0 },
+	{ 142, 143, 0 },
+	{ 0, 0, (char)127 },
+	{ 0, 0, ']' },
+	{ 0, 0, 'x' },
+	{ 146, 149, 0 },
+	{ 147, 148, 0 },
+	{ 0, 0, 'x' },
+	{ 0, 0, 'X' },
+	{ 0, 0, (char)145 },
+	{ 151, 172, 0 },
+	{ 152, 163, 0 },
+	{ 153, 158, 0 },
+	{ 154, 157, 0 },
+	{ 155, 156, 0 },
+	{ 0, 0, (char)136 },
+	{ 0, 0, '`' },
+	{ 0, 0, '2' },
+	{ 159, 162, 0 },
+	{ 160, 161, 0 },
+	{ 0, 0, '0' },
+	{ 0, 0, (char)131 },
+	{ 0, 0, '1' },
+	{ 164, 169, 0 },
+	{ 165, 168, 0 },
+	{ 166, 167, 0 },
+	{ 0, 0, '/' },
+	{ 0, 0, '(' },
+	{ 0, 0, '=' },
+	{ 170, 171, 0 },
+	{ 0, 0, (char)134 },
+	{ 0, 0, '^' },
+	{ 173, 190, 0 },
+	{ 174, 181, 0 },
+	{ 175, 178, 0 },
+	{ 176, 177, 0 },
+	{ 0, 0, '3' },
+	{ 0, 0, '9' },
+	{ 179, 180, 0 },
+	{ 0, 0, (char)152 },
+	{ 0, 0, '4' },
+	{ 182, 187, 0 },
+	{ 183, 186, 0 },
+	{ 184, 185, 0 },
+	{ 0, 0, '}' },
+	{ 0, 0, '8' },
+	{ 0, 0, '\\' },
+	{ 188, 189, 0 },
+	{ 0, 0, '"' },
+	{ 0, 0, (char)144 },
+	{ 191, 206, 0 },
+	{ 192, 199, 0 },
+	{ 193, 196, 0 },
+	{ 194, 195, 0 },
+	{ 0, 0, '&' },
+	{ 0, 0, (char)141 },
+	{ 197, 198, 0 },
+	{ 0, 0, '5' },
+	{ 0, 0, '6' },
+	{ 200, 203, 0 },
+	{ 201, 202, 0 },
+	{ 0, 0, (char)146 },
+	{ 0, 0, (char)143 },
+	{ 204, 205, 0 },
+	{ 0, 0, (char)142 },
+	{ 0, 0, (char)147 },
+	{ 207, 220, 0 },
+	{ 208, 213, 0 },
+	{ 209, 212, 0 },
+	{ 210, 211, 0 },
+	{ 0, 0, (char)140 },
+	{ 0, 0, '7' },
+	{ 0, 0, (char)128 },
+	{ 214, 217, 0 },
+	{ 215, 216, 0 },
+	{ 0, 0, (char)129 },
+	{ 0, 0, (char)153 },
+	{ 218, 219, 0 },
+	{ 0, 0, '$' },
+	{ 0, 0, '@' },
+	{ 221, 230, 0 },
+	{ 222, 227, 0 },
+	{ 223, 226, 0 },
+	{ 224, 225, 0 },
+	{ 0, 0, '[' },
+	{ 0, 0, (char)154 },
+	{ 0, 0, '_' },
+	{ 228, 229, 0 },
+	{ 0, 0, '>' },
+	{ 0, 0, (char)150 },
+	{ 231, 236, 0 },
+	{ 232, 235, 0 },
+	{ 233, 234, 0 },
+	{ 0, 0, (char)130 },
+	{ 0, 0, '%' },
+	{ 0, 0, (char)9 },
+	{ 237, 240, 0 },
+	{ 238, 239, 0 },
+	{ 0, 0, (char)156 },
+	{ 0, 0, (char)151 },
+	{ 241, 242, 0 },
+	{ 0, 0, '{' },
+	{ 243, 244, 0 },
+	{ 0, 0, (char)148 },
+	{ 0, 0, '!' },
+};
+
+char SkyText::traverseTree(const HuffTree *huffTree) {
+	int pos = 0;
+	for (;;) {
+		if (getTBit() == 0)
+			pos = huffTree[pos].lChild;
+		else
+			pos = huffTree[pos].rChild;
+		if (huffTree[pos].lChild == 0 && huffTree[pos].rChild == 0) {
+			return huffTree[pos].value;
+		}
+	}
+}
+
 char SkyText_v00267::getTextChar() {
-
-	//NOTE: The decoding code for the floppy versions (both demo and full version) is _completely_ different.
-	//This code is based on disassembly of the v0.0267 binary.
-	
-
-	if (getTBit())
-		goto ab73;
-	if (getTBit())
-		goto ab34;
-
-	if (getTBit())
-		goto ab31;
-	if (getTBit())
-		goto ab2e;
-
-	return (char)0x20;
-
-ab2e:  
-	return (char)0x65;
-
-ab31:  
-	return (char)0x73;
-
-ab34:  
-	if (getTBit())
-		goto ab5c;
-	if (getTBit())
-		goto ab4f;
-	if (getTBit())
-		goto ab4c;
-
-	return (char)0x6d;
-
-ab4c:  
-	return (char)0x61;
-
-ab4f:  
-	if (getTBit())
-		goto ab59;
-
-	return (char)0x0;
-
-ab59:  
-	return (char)0x6e;
-
-ab5c:  
-	if (getTBit())
-		goto ab70;
-	if (getTBit())
-		goto ab6d;
-	
-	return (char)0x69;
-
-ab6d:  
-	return (char)0x74;
-
-ab70:  
-	return (char)0x75;
-
-ab73:  
-	if (getTBit())
-		goto abeb;
-	if (getTBit())
-		goto abac;
-	if (getTBit())
-		goto ab9f;
-	if (getTBit())
-		goto ab9c;
-	if (getTBit())
-		goto ab99;
-	
-	return (char)0x2e;
-
-ab99:  
-	return (char)0x72;
-
-ab9c:  
-	return (char)0x45;
-
-ab9f:  
-	if (getTBit())
-		goto aba9;
-	
-	return (char)0x6f;
-
-aba9:  
-	return (char)0x68;
-
-abac:  
-	if (getTBit())
-		goto abd4;
-	if (getTBit())
-		goto abc7;
-	if (getTBit())
-		goto abc4;
-
-	return (char)0x44;
-
-abc4:  
-	return (char)0x67;
-
-abc7:  
-	if (getTBit())
-		goto abd1;
-	
-	return (char)0x49;
-
-abd1:  
-	return (char)0x79;
-
-abd4:  
-	if (getTBit())
-		goto abe8;
-	if (getTBit())
-		goto abe5;
-	
-	return (char)0x53;
-
-abe5:  
-	return (char)0x64;
-
-abe8:  
-	return (char)0x6c;
-
-abeb:  
-	if (getTBit())
-		goto ac4f;
-	if (getTBit())
-		goto ac1a;
-	if (getTBit())
-		goto ac0d;
-	if (getTBit())
-		goto ac0a;
-       
-	return (char)0x54;
-
-ac0a:  
-	return (char)0x4e;
-
-ac0d:  
-       if (getTBit())
-		goto ac17;
-
-	return (char)0x63;
-
-ac17:  
-	return (char)0x52;
-
-ac1a:  
-	if (getTBit())
-		goto ac38;
-	if (getTBit())
-		goto ac35;
-	if (getTBit())
-		goto ac32;
-	
-	return (char)0x41;
-
-ac32:  
-	return (char)0x4f;
-
-ac35:  
-	return (char)0x4c;
-
-ac38:  
-	if (getTBit())
-		goto ac4c;
-	if (getTBit())
-		goto ac49;
-	
-	return (char)0x48;
-
-ac49:  
-	return (char)0x43;
-
-ac4c:  
-	return (char)0x55;
-
-ac4f:  
-	if (getTBit())
-		goto acb3;
-	if (getTBit())
-		goto ac88;
-	if (getTBit())
-		goto ac7b;
-	if (getTBit())
-		goto ac78;
-	if (getTBit())
-		goto ac75;
-	
-	return (char)0x62;
-
-ac75:  
-	return (char)0x21;
-
-ac78:  
-	return (char)0x27;
-
-ac7b:  
-	if (getTBit())
-		goto ac85;
-	
-	return (char)0x77;
-
-ac85:  
-	return (char)0x66;
-
-ac88:  
-	if (getTBit())
-		goto aca6;
-	if (getTBit())
-		goto aca3;
-	if (getTBit())
-		goto aca0;
-	
-	return (char)0x47;
-
-aca0:  
-	return (char)0x4d;
-
-aca3:  
-	return (char)0x2c;
-
-aca6:  
-	if (getTBit())
-		goto acb0;
-	
-	return (char)0x57;
-
-acb0:  
-	return (char)0x42;
-
-acb3:  
-	if (getTBit())
-		goto acf9;
-	if (getTBit())
-		goto ace2;
-	if (getTBit())
-		goto acd5;
-	if (getTBit())
-		goto acd2;
-	
-	return (char)0x3f;
-
-acd2:  
-	return (char)0x50;
-
-acd5:  
-	if (getTBit())
-		goto acdf;
-	
-	return (char)0x6b;
-
-acdf:  
-	return (char)0x70;
-
-ace2:  
-	if (getTBit())
-		goto acf6;
-	if (getTBit())
-		goto acf3;
-	
-	return (char)0x76;
-
-acf3:  
-	return (char)0x46;
-
-acf6:  
-	return (char)0x4b;
-
-acf9:  
-	if (getTBit())
-		goto ad35;
-	if (getTBit())
-		goto ad1e;
-	if (getTBit())
-		goto ad1b;
-	if (getTBit())
-		goto ad18;
-	
-	return (char)0x56;
-
-ad18:  
-	return (char)0x59;
-
-ad1b:  
-	return (char)0x7a;
-
-ad1e:  
-	if (getTBit())
-		goto ad32;
-	if (getTBit())
-		goto ad2f;
-	
-	return (char)0x2d;
-
-ad2f:  
-	return (char)0x23;
-
-ad32:  
-	return (char)0x4a;
-
-ad35:  
-	if (getTBit())
-		goto ad7b;
-	if (getTBit())
-		goto ad5a;
-	if (getTBit())
-		goto ad57;
-	if (getTBit())
-		goto ad54;
-	
-	return (char)0x5a;
-
-ad54:  
-	return (char)0x28;
-
-ad57:  
-	return (char)0x29;
-
-ad5a:  
-	if (getTBit()) 
-		goto ad6e;
-	if (getTBit())
-		goto ad6b;
-	
-	return (char)0x6a;
-
-ad6b:  
-	return (char)0x2b;
-
-ad6e:  
-	if (getTBit())
-		goto ad78;
-	
-	return (char)0x2a;
-
-ad78:  
-	return (char)0x71;
-
-ad7b:  
-	if (getTBit())
-		goto adc1;
-	if (getTBit())
-		goto ada0;
-	if (getTBit())
-		goto ad9d;
-	if (getTBit())
-		goto ad9a;
-	
-	return (char)0x7d;
-
-ad9a:  
-	return (char)0x3a;
-
-ad9d:  
-	return (char)0x60;
-
-ada0:  
-	if (getTBit())
-		goto adb4;
-	if (getTBit())
-		goto adb1;
-	
-	return (char)0x30;
-
-adb1:  
-	return (char)0x32;
-
-adb4:  
-	if (getTBit())
-		goto adbe;
-	
-	return (char)0x31;
-
-adbe:  
-	return (char)0x51;
-
-adc1:  
-	if (getTBit())
-		goto adfd;
-	if (getTBit())
-		goto ade6;
-	if (getTBit())
-		goto ade3;
-	if (getTBit())
-		goto ade0;
-	
-	return (char)0x58;
-
-ade0:  
-	return (char)0x78;
-
-ade3:  
-	return (char)0x33;
-
-ade6:  
-	if (getTBit())
-		goto adfa;
-	if (getTBit())
-		goto adf7;
-	
-	return (char)0x39;
-
-adf7:  
-	return (char)0x34;
-
-adfa:  
-	return (char)0x3c;
-
-adfd:  
-	if (getTBit())
-		goto ae2f;
-	if (getTBit())
-		goto ae22;
-	if (getTBit())
-		goto ae1f;
-	if (getTBit())
-		goto ae1c;
-	
-	return (char)0x38;
-
-ae1c:  
-	return (char)0x5d;
-
-ae1f:  
-	return (char)0x3d;
-
-ae22:  
-	if (getTBit())
-		goto ae2c;
-	
-	return (char)0x26;
-
-ae2c:  
-	return (char)0x35;
-
-ae2f:  
-	if (getTBit())
-		goto ae57;
-	if (getTBit())
-		goto ae4a;
-	if (getTBit())
-		goto ae47;
-	
-	return (char)0x36;
-
-ae47:  
-	return (char)0x2f;
-
-ae4a:  
-	if (getTBit())
-		goto ae54;
-	
-	return (char)0x37;
-
-ae54:  
-	return (char)0x24;
-
-ae57:  
-	if (getTBit())
-		goto ae75;
-	if (getTBit())
-		goto ae72;
-	if (getTBit())
-		goto ae6f;
-	
-	return (char)0x3e;
-
-ae6f:  
-	return (char)0x25;
-
-ae72:  
-	return (char)0x5e;
-
-ae75:  
-	if (getTBit())
-		goto ae93;
-	if (getTBit())
-		goto ae90;
-	if (getTBit())
-		goto ae8d;
-	
-	return (char)0x22;
-
-ae8d:  
-	return (char)0x40;
-
-ae90:  
-	return (char)0x5b;
-
-ae93:  
-	if (getTBit())
-		goto aea7;
-	if (getTBit())
-		goto aea4;
-	
-	return (char)0x5f;
-
-aea4:  
-	return (char)0x7b;
-
-aea7:  
-	if (getTBit())
-		goto aeb1;
-	
-	return (char)0x5c;
-
-aeb1:  
-	return (char)0x7c;
-
+	return traverseTree(huffTree_00267);
 }
 
 char SkyText_v00288::getTextChar() {
-
-	//This code is based on disassembly of the v0.0288 binary.
-
-	if (getTBit())
-		goto e5b3;
-	if (getTBit())
-		goto e574;
-	if (getTBit())
-		goto e567;
-
-	return (char)0x20;
-
-e567:
-	if (getTBit())
-		goto e571;
-
-	return (char)0x65;
-
-e571:
-	return (char)0x73;
-
-e574:
-	if (getTBit())
-		goto e59c;
-	if (getTBit())
-		goto e58f;
-	if (getTBit())
-		goto e58c;
-
-	return (char)0x6e;
-
-e58c:
-	return (char)0x69;
-
-e58f:  
-	if (getTBit())
-		goto e599;
-
-	return (char)0x74;
-
-e599:
-	return (char)0x61;
-
-e59c:
-	if (getTBit())
-		goto e5b0;
-	if (getTBit())
-		goto e5ad;
-
-	return (char)0x2e;
-
-e5ad:
-	return (char)0x0;
-
-e5b0:
-	return (char)0x45;
-
-e5b3:
-	if (getTBit())
-		goto e62b;
-	if (getTBit())
-		goto e5ec;
-	if (getTBit())
-		goto e5df;
-	if (getTBit())
-		goto e5dc;
-	if (getTBit())
-		goto e5d9;
-
-	return (char)0x72;
-
-e5d9:
-	return (char)0x6f;
-
-e5dc:
-	return (char)0x75;
-
-e5df:
-	if (getTBit())
-		goto e5e9;
-
-	return (char)0x6d;
-
-e5e9:
-	return (char)0x68;
-
-e5ec:
-	if (getTBit())
-		goto e614;
-	if (getTBit())
-		goto e607;
-	if (getTBit())
-		goto e604;
-	
-	return (char)0x49;
-
-e604:
-	return (char)0x6c;
-
-e607:
-	if (getTBit())
-		goto e611;
-	
-	return (char)0x53;
-
-e611:
-	return (char)0x52;
-
-e614:  
-	if (getTBit())
-		goto e628;
-	if (getTBit())
-		goto e625;
-
-	return (char)0x64;
-
-e625:
-	return (char)0x4e;
-
-e628:
-	return (char)0x54;
-
-e62b:  
-	if (getTBit())
-		goto e6a3;
-	if (getTBit())
-		goto e664;
-	if (getTBit())
-		goto e657;
-	if (getTBit())
-		goto e654;
-	if (getTBit())
-		goto e651;
-	
-	return (char)0x63;
-
-e651:  
-	return (char)0x41;
-
-e654:  
-	return (char)0x4f;
-
-e657:  
-	if (getTBit())
-		goto e661;
-	
-	return (char)0x44;
-
-e661:  
-	return (char)0x4c;
-
-e664:  
-	if (getTBit())
-		goto e68c;
-	if (getTBit())
-		goto e67f;
-	if (getTBit())
-		goto e67c;
-
-	return (char)0x43;
-
-e67c:  
-	return (char)0x67;
-
-e67f:  
-	if (getTBit())
-		goto e689;
-	
-	return (char)0x55;
-
-e689:  
-	return (char)0x27;
-
-e68c:  
-	if (getTBit())
-		goto e6a0;
-	if (getTBit())
-		goto e69d;
-	
-	return (char)0x79;
-
-e69d:  
-	return (char)0x48;
-
-e6a0:  
-	return (char)0x70;
-
-e6a3:  
-	if (getTBit())
-		goto e707;
-	if (getTBit())
-		goto e6dc;
-	if (getTBit())
-		goto e6cf;
-	if (getTBit())
-		goto e6cc;
-	if (getTBit())
-		goto e6c9;
-	
-	return (char)0x21;
-
-e6c9:  
-	return (char)0x4d;
-
-e6cc:  
-	return (char)0x62;
-
-e6cf:  
-	if (getTBit())
-		goto e6d9;
-	
-	return (char)0x76;
-
-e6d9:  
-	return (char)0x2c;
-
-e6dc:  
-	if (getTBit())
-		goto e6fa;
-	if (getTBit())
-		goto e6f7;
-	if (getTBit())
-		goto e6f4;
-	
-	return (char)0x50;
-
-e6f4:  
-	return (char)0x66;
-
-e6f7:  
-	return (char)0x3f;
-
-e6fa:  
-	if (getTBit())
-		goto e704;
-	
-	return (char)0x47;
-
-e704:  
-	return (char)0x42;
-
-e707:  
-	if (getTBit())
-		goto e757;
-	if (getTBit())
-		goto e736;
-	if (getTBit())
-		goto e729;
-	if (getTBit())
-		goto e726;
-	
-	return (char)0x77;
-
-e726:  
-	return (char)0x57;
-
-e729:  
-	if (getTBit())
-		goto e733;
-	
-	return (char)0x46;
-
-e733:  
-	return (char)0x56;
-
-e736:  
-	if (getTBit())
-		goto e74a;
-	if (getTBit())
-		goto e747;
-	
-	return (char)0x6b;
-
-e747:  
-	return (char)0x7a;
-
-e74a:  
-	if (getTBit())
-		goto e754;
-	
-	return (char)0x4b;
-
-e754:  
-	return (char)0x2d;
-
-e757:  
-	if (getTBit())
-		goto e793;
-	if (getTBit())
-		goto e77c;
-	if (getTBit())
-		goto e779;
-	if (getTBit())
-		goto e776;
-	
-	return (char)0x4a;
-
-e776:  
-	return (char)0x2b;
-
-e779:  
-	return (char)0x71;
-
-e77c:  
-	if (getTBit())
-		goto e790;
-	if (getTBit())
-		goto e78d;
-	
-	return (char)0x59;
-
-e78d:  
-	return (char)0x6a;
-
-e790:  
-	return (char)0x5a;
-
-e793:  
-	if (getTBit())
-		goto e7e3;
-	if (getTBit())
-		goto e7c2;
-	if (getTBit())
-		goto e7b5;
-	if (getTBit())
-		goto e7b2;
-	
-	return (char)0x23;
-
-e7b2:  
-	return (char)0x51;
-
-e7b5:  
-	if (getTBit())
-		goto e7bf;
-	
-	return (char)0x28;
-
-e7bf:  
-	return (char)0x29;
-
-e7c2:  
-	if (getTBit())
-		goto e7d6;
-	if (getTBit())
-		goto e7d3;
-	
-	return (char)0x3c;
-
-e7d3:  
-	return (char)0x78;
-
-e7d6:  
-	if (getTBit())
-		goto e7e0;
-	
-	return (char)0x3a;
-
-e7e0:  
-	return (char)0x2a;
-
-e7e3:  
-	if (getTBit())
-		goto e829;
-	if (getTBit())
-		goto e812;
-	if (getTBit())
-		goto e805;
-	if (getTBit())
-		goto e802;
-	
-	return (char)0x58;
-
-e802:  
-	return (char)0x7d;
-
-e805:  
-	if (getTBit())
-		goto e80f;
-	
-	return (char)0x3d;
-
-e80f:  
-	return (char)0x60;
-
-e812:  
-	if (getTBit())
-		goto e826;
-	if (getTBit())
-		goto e823;
-	
-	return (char)0x5d;
-
-e823:  
-	return (char)0x30;
-
-e826:  
-	return (char)0x32;
-
-e829:  
-	if (getTBit())
-		goto e865;
-	if (getTBit())
-		goto e84e;
-	if (getTBit())
-		goto e84b;
-	if (getTBit())
-		goto e848;
-	
-	return (char)0x31;
-
-e848:  
-	return (char)0x33;
-
-e84b:  
-	return (char)0x39;
-
-e84e:  
-	if (getTBit())
-		goto e862;
-	if (getTBit())
-		goto e85f;
-	
-	return (char)0x2f;
-
-e85f:  
-	return (char)0x34;
-
-e862:  
-	return (char)0x5e;
-
-e865:  
-	if (getTBit())
-		goto e897;
-	if (getTBit())
-		goto e88a;
-	if (getTBit())
-		goto e887;
-	if (getTBit())
-		goto e884;
-	
-	return (char)0x38;
-
-e884:  
-	return (char)0x3e;
-
-e887:  
-	return (char)0x26;
-
-e88a:  
-	if (getTBit())
-		goto e894;
-	
-	return (char)0x35;
-
-e894:  
-	return (char)0x40;
-
-e897:  
-	if (getTBit())
-		goto e8bf;
-	if (getTBit())
-		goto e8b2;
-	if (getTBit())
-		goto e8af;
-	
-	return (char)0x36;
-
-e8af:  
-	return (char)0x5f;
-
-e8b2:  
-	if (getTBit())
-		goto e8bc;
-	
-	return (char)0x5c;
-
-e8bc:  
-	return (char)0x37;
-
-e8bf:  
-	if (getTBit())
-		goto e8dd;
-	if (getTBit())
-		goto e8da;
-	if (getTBit())
-		goto e8d7;
-	
-	return (char)0x5b;
-
-e8d7:  
-	return (char)0x24;
-
-e8da:  
-	return (char)0x7b;
-
-e8dd:  
-	if (getTBit())
-		goto e8f1;
-	if (getTBit())
-		goto e8ee;
-	
-	return (char)0x25;
-
-e8ee:  
-	return (char)0x9;
-
-e8f1:  
-	if (getTBit())
-		goto e8fb;
-	
-	return (char)0x22;
-
-e8fb:  
-	return (char)0x7c;
-
+	return traverseTree(huffTree_00288);
 }
 
 char SkyText_v00303::getTextChar() {
-
-	//This code is based on disassembly of the v0.0303 binary.
-
-	if (getTBit())
-		goto ec6d;
-	if (getTBit())
-		goto ec2e;
-	if (getTBit())
-		goto ec21;
-	if (getTBit())
-		goto ec1e;
-   
-	return (char)0x20;
-
-ec1e:   
-	return (char)0x65;
-
-ec21:   
-	if (getTBit())
-		goto ec2b;
-   
-	return (char)0x74;
-
-ec2b:   
-	return (char)0x73;
-
-ec2e:   
-	if (getTBit())
-		goto ec56;
-	if (getTBit())
-		goto ec49;
-	if (getTBit())
-		goto ec46;
-   
-	return (char)0x6e;
-
-ec46:   
-	return (char)0x61;
-
-ec49:   
-	if (getTBit())
-		goto ec53;
-   
-	return (char)0x69;
-
-ec53:   
-	return (char)0x2e;
-
-ec56:   
-	if (getTBit())
-		goto ec6a;
-	if (getTBit())
-		goto ec67;
-   
-	return (char)0x6f;
-
-ec67:   
-	return (char)0x0;
-
-ec6a:   
-	return (char)0x45;
-
-ec6d:   
-	if (getTBit())
-		goto ece5;
-	if (getTBit())
-		goto ecb0;
-	if (getTBit())
-		goto ec99;
-	if (getTBit())
-		goto ec96;
-	if (getTBit())
-		goto ec93;
-   
-	return (char)0x72;
-
-ec93:   
-	return (char)0x75;
-
-ec96:   
-	return (char)0x68;
-
-ec99:   
-	if (getTBit())
-		goto ecad;
-	if (getTBit())
-		goto ecaa;
-   
-	return (char)0x49;
-
-ecaa:   
-	return (char)0x6d;
-
-ecad:   
-	return (char)0x6c;
-
-ecb0:   
-	if (getTBit())
-		goto ecce;
-	if (getTBit())
-		goto eccb;
-	if (getTBit())
-		goto ecc8;
-   
-	return (char)0x54;
-
-ecc8:   
-	return (char)0x53;
-
-eccb:   
-	return (char)0x52;
-
-ecce:   
-	if (getTBit())
-		goto ece2;
-	if (getTBit())
-		goto ecdf;
-  
-	return (char)0x64;
-
-ecdf:   
-	return (char)0x4e;
-
-ece2:   
-	return (char)0x41;
-
-ece5:   
-	if (getTBit())
-		goto ed5d;
-	if (getTBit())
-		goto ed28;
-	if (getTBit())
-		goto ed11;
-	if (getTBit())
-		goto ed0e;
-	if (getTBit())
-		goto ed0b;
-   
-	return (char)0x63;
-
-ed0b:   
-	return (char)0x4f;
-
-ed0e:   
-	return (char)0x44;
-
-ed11:   
-	if (getTBit())
-		goto ed25;
-	if (getTBit())
-		goto ed22;
-   
-	return (char)0x4c;
-
-ed22:   
-	return (char)0x43;
-
-ed25:   
-	return (char)0x79;
-
-ed28:   
-	if (getTBit())
-		goto ed46;
-	if (getTBit())
-		goto ed43;
-	if (getTBit())
-		goto ed40;
-   
-	return (char)0x67;
-
-ed40:   
-	return (char)0x27;
-
-ed43:   
-	return (char)0x55;
-
-ed46:   
-	if (getTBit())
-		goto ed5a;
-	if (getTBit())
-		goto ed57;
-   
-	return (char)0x48;
-
-ed57:   
-	return (char)0x21;
-
-ed5a:   
-	return (char)0x70;
-
-ed5d:   
-	if (getTBit())
-		goto edb7;
-	if (getTBit())
-		goto ed96;
-	if (getTBit())
-		goto ed89;
-	if (getTBit())
-		goto ed86;
-	if (getTBit())
-		goto ed83;
-   
-	return (char)0x4d;
-
-ed83:   
-	return (char)0x62;
-
-ed86:   
-	return (char)0x3f;
-
-ed89:   
-	if (getTBit())
-		goto ed93;
-   
-	return (char)0x76;
-
-ed93:   
-	return (char)0x66;
-
-ed96:   
-	if (getTBit())
-		goto edaa;
-	if (getTBit())
-		goto eda7;
-   
-	return (char)0x50;
-
-eda7:   
-	return (char)0x2c;
-
-edaa:   
-	if (getTBit())
-		goto edb4;
-   
-	return (char)0x77;
-
-edb4:   
-	return (char)0x47;
-
-edb7:   
-	if (getTBit())
-		goto edfd;
-	if (getTBit())
-		goto eddc;
-	if (getTBit())
-		goto edd9;
-	if (getTBit())
-		goto edd6;
-   
-	return (char)0x42;
-
-edd6:   
-	return (char)0x57;
-
-edd9:   
-	return (char)0x6b;
-
-eddc:   
-	if (getTBit())
-		goto edf0;
-	if (getTBit())
-		goto eded;
-   
-	return (char)0x46;
-
-eded:   
-	return (char)0x56;
-
-edf0:   
-	if (getTBit())
-		goto edfa;
-   
-	return (char)0x59;
-
-edfa:   
-	return (char)0x4b;
-
-edfd:   
-	if (getTBit())
-		goto ee39;
-	if (getTBit())
-		goto ee22;
-	if (getTBit())
-		goto ee1f;
-	if (getTBit())
-		goto ee1c;
-   
-	return (char)0x2d;
-
-ee1c:   
-	return (char)0x7a;
-
-ee1f:   
-	return (char)0x4a;
-
-ee22:   
-	if (getTBit())
-		goto ee36;
-	if (getTBit())
-		goto ee33;
-   
-	return (char)0x71;
-
-ee33:   
-	return (char)0x2b;
-
-ee36:   
-	return (char)0x6a;
-
-ee39:   
-	if (getTBit())
-		goto ee93;
-	if (getTBit())
-		goto ee68;
-	if (getTBit())
-		goto ee5b;
-	if (getTBit())
-		goto ee58;
-   
-	return (char)0x5a;
-
-ee58:   
-	return (char)0x23;
-
-ee5b:   
-	if (getTBit())
-		goto ee65;
-   
-	return (char)0x51;
-
-ee65:   
-	return (char)0x78;
-
-ee68:   
-	if (getTBit())
-		goto ee86;
-	if (getTBit())
-		goto ee83;
-	if (getTBit())
-		goto ee80;
-   
-	return (char)0x3a;
-
-ee80:   
-	return (char)0x29;
-
-ee83:   
-	return (char)0x28;
-
-ee86:   
-	if (getTBit())
-		goto ee90;
-   
-	return (char)0x3c;
-
-ee90:   
-	return (char)0x58;
-
-ee93:   
-	if (getTBit())
-		goto eee3;
-	if (getTBit())
-		goto eec2;
-	if (getTBit())
-		goto eeb5;
-	if (getTBit())
-		goto eeb2;
-   
-	return (char)0x2a;
-
-eeb2:   
-	return (char)0x60;
-
-eeb5:   
-	if (getTBit())
-		goto eebf;
-   
-	return (char)0x7d;
-
-eebf:   
-	return (char)0x3d;
-
-eec2:   
-	if (getTBit())
-		goto eed6;
-	if (getTBit())
-		goto eed3;
-   
-	return (char)0x32;
-
-eed3:   
-	return (char)0x30;
-
-eed6:   
-	if (getTBit())
-		goto eee0;
-   
-	return (char)0x5d;
-
-eee0:   
-	return (char)0x31;
-
-eee3:   
-	if (getTBit())
-		goto ef1f;
-	if (getTBit())
-		goto ef08;
-	if (getTBit())
-		goto ef05;
-	if (getTBit())
-		goto ef02;
-   
-	return (char)0x7e;
-
-ef02:   
-	return (char)0x33;
-
-ef05:   
-	return (char)0x7f;
-
-ef08:   
-	if (getTBit())
-		goto ef1c;
-	if (getTBit())
-		goto ef19;
-   
-	return (char)0x39;
-
-ef19:   
-	return (char)0x34;
-
-ef1c:   
-	return (char)0x2f;
-
-ef1f:   
-	if (getTBit())
-		goto ef5b;
-	if (getTBit())
-		goto ef44;
-	if (getTBit())
-		goto ef41;
-	if (getTBit())
-		goto ef3e;
-   
-	return (char)0x38;
-
-ef3e:   
-	return (char)0x5e;
-
-ef41:   
-	return (char)0x26;
-
-ef44:   
-	if (getTBit())
-		goto ef58;
-	if (getTBit())
-		goto ef55;
-   
-	return (char)0x35;
-
-ef55:   
-	return (char)0x36;
-
-ef58:   
-	return (char)0x3e;
-
-ef5b:   
-	if (getTBit())
-		goto ef8d;
-	if (getTBit())
-		goto ef80;
-	if (getTBit())
-		goto ef7d;
-	if (getTBit())
-		goto ef7a;
-   
-	return (char)0x40;
-
-ef7a:   
-	return (char)0x37;
-
-ef7d:   
-	return (char)0x5f;
-
-ef80:   
-	if (getTBit())
-		goto ef8a;
-   
-	return (char)0x5c;
-
-ef8a:   
-	return (char)0x24;
-
-ef8d:   
-	if (getTBit())
-		goto efb5;
-	if (getTBit())
-		goto efa8;
-	if (getTBit())
-		goto efa5;
-   
-	return (char)0x5b;
-
-efa5:   
-	return (char)0x80;
-
-efa8:   
-	if (getTBit())
-		goto efb2;
-   
-	return (char)0x81;
-
-efb2:   
-	return (char)0x22;
-
-efb5:   
-	if (getTBit())
-		goto efc9;
-	if (getTBit())
-		goto efc6;
-   
-	return (char)0x25;
-
-efc6:   
-	return (char)0x82;
-
-efc9:   
-	if (getTBit())
-		goto efd3;
-   
-	return (char)0x7b;
-
-efd3:   
-	if (getTBit())
-		goto efdd;
-   
-	return (char)0x9;
-
-efdd:   
-	return (char)0x7c;
-
+	return traverseTree(huffTree_00303);
 }
 
 char SkyText_v00331::getTextChar() {
-
-	//This code is based on disassembly of the v0.0331 binary.
-	
-	if (getTBit())
-		goto f3db;
-	if (getTBit())
-		goto f39c;
-	if (getTBit())
-		goto f38f;
-
-	return (char)0x20;
-
-f38f:
-	if (getTBit())
-		goto f399;
-
-	return (char)0x65;
-
-f399:
-	return (char)0x61;
-
-f39c:
-	if (getTBit())
-		goto f3c4;
-	if (getTBit())
-		goto f3b7;
-	if (getTBit())
-		goto f3b4;
-
-	return (char)0x6f;
-
-f3b4:  
-	return (char)0x73;
-
-f3b7:  
-	if (getTBit())
-		goto f3c1;
-  
-	return (char)0x74;
-
-f3c1:  
-	return (char)0x6e;
-
-f3c4:  
-	if (getTBit())
-		goto f3d8;
-	if (getTBit())
-		goto f3d5;
-  
-	return (char)0x2e;
-
-f3d5:  
-	return (char)0x69;
-
-f3d8:  
-	return (char)0x72;
-
-f3db:  
-	if (getTBit())
-		goto f453;
-	if (getTBit())
-		goto f414;
-	if (getTBit())
-		goto f407;
-	if (getTBit())
-		goto f404;
-	if (getTBit())
-		goto f401;
-  
-	return (char)0x0;
-
-f401:  
-	return (char)0x45;
-
-f404:  
-	return (char)0x75;
-
-f407:  
-	if (getTBit())
-		goto f411;
-  
-	return (char)0x6d;
-
-f411:  
-	return (char)0x41;
-
-f414:  
-	if (getTBit())
-		goto f43c;
-	if (getTBit())
-		goto f42f;
-	if (getTBit())
-		goto f42c;
-  
-	return (char)0x6c;
-
-f42c:  
-	return (char)0x49;
-
-f42f:
-	if (getTBit())
-		goto f439;
-  
-	return (char)0x64;
-
-f439:  
-	return (char)0x52;
-
-f43c:  
-	if (getTBit())
-		goto f450;
-	if (getTBit())
-		goto f44d;
-  
-	return (char)0x4e;
-
-f44d:  
-	return (char)0x53;
-
-f450:  
-	return (char)0x54;
-
-f453:  
-	if (getTBit())
-		goto f4cb;
-	if (getTBit())
-		goto f48c;
-	if (getTBit())
-		goto f47f;
-	if (getTBit())
-		goto f47c;
-	if (getTBit())
-		goto f479;
-  
-	return (char)0x4f;
-
-f479:  
-	return (char)0x68;
-
-f47c:  
-	return (char)0x63;
-
-f47f:  
-	if (getTBit())
-		goto f489;
-  
-	return (char)0x44;
-
-f489:  
-	return (char)0x67;
-
-f48c:  
-	if (getTBit())
-		goto f4b4;
-	if (getTBit())
-		goto f4a7;
-	if (getTBit())
-	goto f4a4;
-  
-	return (char)0x4c;
-
-f4a4:  
-	return (char)0x43;
-
-f4a7:  
-	if (getTBit())
-		goto f4b1;
-  
-	return (char)0x70;
-
-f4b1:  
-	return (char)0x55;
-
-f4b4:  
-	if (getTBit())
-		goto f4c8;
-	if (getTBit())
-		goto f4c5;
-  
-	return (char)0x21;
-
-f4c5:  
-	return (char)0x79;
-
-f4c8:  
-	return (char)0x4d;
-
-f4cb:  
-	if (getTBit())
-		goto f52f;
-	if (getTBit())
-		goto f504;
-	if (getTBit())
-		goto f4f7;
-	if (getTBit())
-		goto f4f4;
-	if (getTBit())
-		goto f4f1;
-  
-	return (char)0x50;
-
-f4f1:  
-	return (char)0x76;
-
-f4f4:  
-	return (char)0x48;
-
-f4f7:  
-	if (getTBit())
-		goto f501;
-  
-	return (char)0x3f;
-
-f501:  
-	return (char)0x62;
-
-f504:  
-	if (getTBit())
-		goto f522;
-	if (getTBit())
-		goto f51f;
-	if (getTBit())
-		goto f51c;
-  
-	return (char)0x27;
-
-f51c:  
-	return (char)0x66;
-
-f51f:  
-	return (char)0x2c;
-
-f522:  
-	if (getTBit())
-		goto f52c;
-  
-	return (char)0x47;
-
-f52c:  
-	return (char)0x42;
-
-f52f:  
-	if (getTBit())
-		goto f593;
-	if (getTBit())
-		goto f568;
-	if (getTBit())
-		goto f55b;
-	if (getTBit())
-		goto f558;
-	if (getTBit())
-		goto f555;
-  
-	return (char)0x56;
-
-f555:  
-	return (char)0x6b;
-
-f558:  
-	return (char)0x46;
-
-f55b:  
-	if (getTBit())
-		goto f565;
-  
-	return (char)0x71;
-
-f565:  
-	return (char)0x2a;
-
-f568:
-	if (getTBit())
-		goto f586;
-	if (getTBit())
-		goto f583;
-	if (getTBit())
-		goto f580;
-  
-	return (char)0x77;
-
-f580:  
-	return (char)0x4b;
-
-f583:  
-	return (char)0x2d;
-
-f586:  
-	if (getTBit())
-		goto f590;
-  
-	return (char)0x57;
-
-f590:  
-	return (char)0x4a;
-
-f593:  
-	if (getTBit())
-		goto f5ed;
-	if (getTBit())
-		goto f5c2;
-	if (getTBit())
-		goto f5b5;
-	if (getTBit())
-		goto f5b2;
-  
-	return (char)0x7a;
-
-f5b2:  
-	return (char)0x2b;
-
-f5b5:  
-	if (getTBit())
-		goto f5bf;
-  
-	return (char)0x59;
-
-f5bf:  
-	return (char)0x6a;
-
-f5c2:  
-	if (getTBit())
-		goto f5e0;
-	if (getTBit())
-		goto f5dd;
-	if (getTBit())
-		goto f5da;
-  
-	return (char)0x85;
-
-f5da:  
-	return (char)0x29;
-
-f5dd:  
-	return (char)0x51;
-
-f5e0:  
-	if (getTBit())
-		goto f5ea;
-  
-	return (char)0x5a;
-
-f5ea:  
-	return (char)0x7e;
-
-f5ed:  
-	if (getTBit())
-		goto f65b;
-	if (getTBit())
-		goto f626;
-	if (getTBit())
-		goto f619;
-	if (getTBit())
-		goto f616;
-	if (getTBit())
-		goto f613;
-  
-	return (char)0x8b;
-
-f613:  
-	return (char)0x3c;
-
-f616:  
-	return (char)0x8a;
-
-f619:  
-	if (getTBit())
-		goto f623;
-  
-	return (char)0x7f;
-
-f623:  
-	return (char)0x3a;
-
-f626:  
-	if (getTBit())
-		goto f644;
-	if (getTBit())
-		goto f641;
-	if (getTBit())
-		goto f63e;
-  
-	return (char)0x87;
-
-f63e:  
-	return (char)0x23;
-
-f641:  
-	return (char)0x78;
-
-f644:  
-	if (getTBit())
-		goto f658;
-	if (getTBit())
-		goto f655;
-  
-	return (char)0x58;
-
-f655:  
-	return (char)0x91;
-
-f658:  
-	return (char)0x83;
-
-f65b:  
-	if (getTBit())
-		goto f6bf;
-	if (getTBit())
-		goto f694;
-	if (getTBit())
-		goto f687;
-	if (getTBit())
-		goto f684;
-	if (getTBit())
-		goto f681;
-  
-	return (char)0x88;
-
-f681:  
-	return (char)0x60;
-
-f684:  
-	return (char)0x32;
-
-f687:  
-	if (getTBit())
-		goto f691;
-  
-	return (char)0x30;
-
-f691:  
-	return (char)0x31;
-
-f694:  
-	if (getTBit())
-		goto f6b2;
-	if (getTBit())
-		goto f6af;
-	if (getTBit())
-		goto f6ac;
-  
-	return (char)0x28;
-
-f6ac:  
-	return (char)0x2f;
-
-f6af:  
-	return (char)0x5d;
-
-f6b2:  
-	if (getTBit())
-		goto f6bc;
-  
-	return (char)0x3d;
-
-f6bc:  
-	return (char)0x86;
-
-f6bf:  
-	if (getTBit())
-		goto f70f;
-	if (getTBit())
-		goto f6ee;
-	if (getTBit())
-		goto f6e1;
-	if (getTBit())
-		goto f6de;
-  
-	return (char)0x5e;
-
-f6de:  
-	return (char)0x33;
-
-f6e1:  
-	if (getTBit())
-		goto f6eb;
-  
-	return (char)0x39;
-
-f6eb:  
-	return (char)0x34;
-
-f6ee:  
-	if (getTBit())
-		goto f702;
-	if (getTBit())
-		goto f6ff;
-  
-	return (char)0x7d;
-
-f6ff:  
-	return (char)0x38;
-
-f702:  
-	if (getTBit())
-		goto f70c;
-  
-	return (char)0x5c;
-
-f70c:  
-	return (char)0x22;
-
-f70f:  
-	if (getTBit())
-		goto f755;
-	if (getTBit())
-		goto f73e;
-	if (getTBit())
-		goto f731;
-	if (getTBit())
-		goto f72e;
-  
-	return (char)0x3e;
-
-f72e:  
-	return (char)0x26;
-
-f731:  
-	if (getTBit())
-		goto f73b;
-  
-	return (char)0x8d;
-
-f73b:  
-	return (char)0x7b;
-
-f73e:  
-	if (getTBit())
-		goto f752;
-	if (getTBit())
-		goto f74f;
-  
-	return (char)0x35;
-
-f74f:  
-	return (char)0x36;
-
-f752:  
-	return (char)0x8f;
-
-f755:  
-	if (getTBit())
-		goto f791;
-	if (getTBit())
-		goto f77a;
-	if (getTBit())
-		goto f777;
-	if (getTBit())
-		goto f774;
-  
-	return (char)0x8e;
-
-f774:  
-	return (char)0x8c;
-
-f777:  
-	return (char)0x37;
-
-f77a:  
-	if (getTBit())
-		goto f78e;
-	if (getTBit())
-		goto f78b;
-  
-	return (char)0x89;
-
-f78b:  
-	return (char)0x24;
-
-f78e:  
-	return (char)0x92;
-
-f791:  
-	if (getTBit())
-		goto f7b9;
-	if (getTBit())
-		goto f7ac;
-	if (getTBit())
-		goto f7a9;
-  
-	return (char)0x5b;
-
-f7a9:  
-	return (char)0x80;
-
-f7ac:  
-	if (getTBit())
-		goto f7b6;
-  
-	return (char)0x81;
-
-f7b6:  
-	return (char)0x40;
-
-f7b9:  
-	if (getTBit())
-		goto f7cd;
-	if (getTBit())
-		goto f7ca;
-  
-	return (char)0x5f;
-
-f7ca:  
-	return (char)0x82;
-
-f7cd:  
-	if (getTBit())
-		goto f7d7;
-  
-	return (char)0x25;
-
-f7d7:  
-	if (getTBit())
-		goto f7e1;
-
-	return (char)0x9;
-
-f7e1:  
-	if (getTBit())
-		goto f7eb;
-
-	return (char)0x3b;
-
-f7eb:  
-	return (char)0x7c;
-
+	return traverseTree(huffTree_00331);
 }
 
 char SkyText_v00372::getTextChar() {
-
-	//This code is based on the original sources
-	//Should work for all (known) cd versions.
-
-	if (getTBit())
-		goto label_1;
-	if (getTBit())
-		goto label_2;
-	if (getTBit())
-		goto label_3;
-
-	return ' ';
-
-label_3:
-	if (getTBit())
-		goto label_4;
-
-	return 'e';
-
-label_4:
-	return 'a';
-
-label_2:
-	if (getTBit())
-		goto label_5;
-	if (getTBit())
-		goto label_6;
-	if (getTBit())
-		goto label_7;
-
-	return 'o';
-
-label_7:
-	return 's';
-
-label_6:
-	if (getTBit())
-		goto label_8;
-	
-	return 't';
-
-label_8:
-	return 'n';
-
-label_5:
-	if (getTBit())
-		goto label_9;
-	if (getTBit())
-		goto label_10;
-
-	return '.';
-
-label_10:
-	return 'i';
-
-label_9:
-	return 'r';
-
-label_1:
-	if (getTBit())
-		goto label_11;
-	if (getTBit())
-		goto label_12;
-	if (getTBit())
-		goto label_13;
-	if (getTBit())
-		goto label_14;
-	if (getTBit())
-		goto label_15;
-
-	return (char)0; //end of line
-
-label_15:
-	return 'E';
-
-label_14:
-	return 'u';
-
-label_13:
-	if (getTBit())
-		goto label_16;
-
-	return 'm';
-
-label_16:
-	return 'A';
-
-label_12:
-	if (getTBit())
-		goto label_17;
-	if (getTBit())
-		goto label_18;
-	if (getTBit())
-		goto label_19;
-	
-	return 'l';
-
-label_19:
-	return 'I';
-
-label_18:
-	if (getTBit())
-		goto label_20;
-
-	return 'd';
-
-label_20:
-	return 'R';
-
-label_17:
-	if (getTBit())
-		goto label_21;
-	if (getTBit())
-		goto label_22;
-
-	return 'N';
-
-label_22:
-	return 'S';
-
-label_21:
-	return 'T';
-
-label_11:
-	if (getTBit())
-		goto label_23;
-	if (getTBit())
-		goto label_24;
-	if (getTBit())
-		goto label_25;
-	if (getTBit())
-		goto label_26;
-	if (getTBit())
-		goto label_27;
-
-	return 'O';
-
-label_27:
-	return 'h';
-
-label_26:
-	return 'c';
-
-label_25:
-	if (getTBit())
-		goto label_28;
-
-	return 'D';
-
-label_28:
-	return 'g';
-
-label_24:
-	if (getTBit())
-		goto label_29;
-	if (getTBit())
-		goto label_30;
-	if (getTBit())
-		goto label_31;
-
-	return 'L';
-
-label_31:
-	return 'C';
-
-label_30:
-	if (getTBit())
-		goto label_32;
-	
-	return 'p';
-
-label_32:
-	return 'U';
-
-label_29:
-	if (getTBit())
-		goto label_33;
-	if (getTBit())
-		goto label_34;
-
-	return '!';
-
-label_34:
-	return 'y';
-
-label_33:
-	return 'M';
-
-label_23:
-	if (getTBit())
-		goto label_35;
-	if (getTBit())
-		goto label_36;
-	if (getTBit())
-		goto label_37;
-	if (getTBit())
-		goto label_38;
-	if (getTBit())
-		goto label_39;
-
-	return 'P';
-
-label_39:
-	return 'v';
-
-label_38:
-	return 'H';
-
-label_37:
-	if (getTBit())
-		goto label_40;
-	
-	return '?';
-
-label_40:
-	return 'b';
-
-label_36:
-	if (getTBit())
-		goto label_41;
-	if (getTBit())
-		goto label_42;
-	if (getTBit())
-		goto label_43;
-
-	return (char)39;
-
-label_43:
-	return 'f';
-
-label_42:
-	return ',';
-
-label_41:
-	if (getTBit())
-		goto label_44;
-
-	return 'G';
-
-label_44:
-	return 'B';
-
-label_35:
-	if (getTBit())
-		goto label_45;
-	if (getTBit())
-		goto label_46;
-	if (getTBit())
-		goto label_47;
-	if (getTBit())
-		goto label_48;
-	if (getTBit())
-		goto label_49;
-
-	return 'V';
-
-label_49:
-	return 'k';
-
-label_48:
-	return 'F';
-
-label_47:
-	if (getTBit())
-		goto label_50;
-	
-	return 'q';
-
-label_50:
-
-	return 'w';
-
-label_46:
-	if (getTBit())
-		goto label_51;
-	if (getTBit())
-		goto label_52;
-	if (getTBit())
-		goto label_53;
-
-	return 'K';
-
-label_53:
-	return '-';
-
-label_52:
-	return 'W';
-
-label_51:
-	if (getTBit())
-		goto label_54;
-
-	return 'J';
-
-label_54:
-	return '*';
-
-label_45:
-	if (getTBit())
-		goto label_55;
-	if (getTBit())
-		goto label_56;
-	if (getTBit())
-		goto label_57;
-	if (getTBit())
-		goto label_58;
-
-	return 'z';
-
-label_58:
-	return 'Y';
-
-label_57:
-	if (getTBit())
-		goto label_59;
-	
-	return 'j';
-
-label_59:
-	return '+';
-
-label_56:
-	if (getTBit())
-		goto label_60;
-	if (getTBit())
-		goto label_61;
-	if (getTBit())
-		goto label_62;
-
-	return 'Q';
-
-label_62:
-	return (char)133;
-
-label_61:
-	return ')';
-
-label_60:
-	if (getTBit())
-		goto label_63;
-	if (getTBit())
-		goto label_64;
-
-	return 'Z';
-
-label_64:
-	return (char)139;
-
-label_63:
-	return '<';
-
-label_55:
-	if (getTBit())
-		goto label_65;
-	if (getTBit())
-		goto label_66;
-	if (getTBit())
-		goto label_67;
-	if (getTBit())
-		goto label_68;
-	if (getTBit())
-		goto label_69;
-
-	return (char)149;
-
-label_69:
-	return (char)126;
-
-label_68:
-	return (char)138;
-
-label_67:
-	if (getTBit())
-		goto label_70;
-
-	return (char)135;
-
-label_70:
-	return ':';
-
-label_66:
-
-	if (getTBit())
-		goto label_71;
-	if (getTBit())
-		goto label_72;
-	if (getTBit())
-		goto label_73;
-
-	return (char)127;
-
-label_73:
-	return ']';
-
-label_72:
-	if (_gameVersion == 372)
-		return '#';
-	else 
-		return 'x';
-	
-label_71:
-	if (getTBit())
-		goto label_74;
-	if (getTBit())
-		goto label_75;
-
-	if (_gameVersion == 368)
-		return 'X';
-	else
-		return 'x';
-	
-label_75:
-	return 'X';
-
-label_74:
-	return (char)145;
-
-label_65:
-	if (getTBit())
-		goto label_76;
-	if (getTBit())
-		goto label_77;
-	if (getTBit())
-		goto label_78;
-	if (getTBit())
-		goto label_79;
-	if (getTBit())
-		goto label_80;
-
-	return (char)136;
-
-label_80:
-	return '`';
-
-label_79:
-	return '2';
-
-label_78:
-	if (getTBit())
-		goto label_81;
-	if (getTBit())
-		goto label_82;
-
-	return '0';
-
-label_82:
-	return (char)131;
-
-label_81:
-	return '1';
-
-label_77:
-	if (getTBit())
-		goto label_83;
-	if (getTBit())
-		goto label_84;
-	if (getTBit())
-		goto label_85;
-
-	return '/';
-
-label_85:
-	return '(';
-
-label_84:
-	return '=';
-
-label_83:
-	if (getTBit())
-		goto label_86;
-
-	return (char)134;
-
-label_86:
-	return '^';
-
-label_76:
-	if (getTBit())
-		goto label_87;
-	if (getTBit())
-		goto label_88;
-	if (getTBit())
-		goto label_89;
-	if (getTBit())
-		goto label_90;	
-
-	return '3';
-
-label_90:
-	return '9';
-
-label_89:
-	if (getTBit())
-		goto label_91;
-
-	return (char)152;
-
-label_91:
-	return '4';
-
-label_88:
-	if (getTBit())
-		goto label_92;
-	if (getTBit())
-		goto label_93;
-	if (getTBit())
-		goto label_94;
-
-	return '}';
-
-label_94:
-	return '8';
-
-label_93:
-	return '\\';	//needs to be escaped
-
-label_92:
-	if (getTBit())
-		goto label_95;
-
-	return '"';
-
-label_95:
-	return (char)144;
-
-label_87:
-	if (getTBit())
-		goto label_96;
-	if (getTBit())
-		goto label_97;
-	if (getTBit())
-		goto label_98;
-	if (getTBit())
-		goto label_99;
-
-
-	return '&';
-
-label_99:
-	return (char)141;
-
-label_98:
-	if (getTBit())
-		goto label_100;
-
-	return '5';
-
-label_100:
-	return '6';
-
-label_97:
-	if (getTBit())
-		goto label_101;
-	if (getTBit())
-		goto label_102;
-
-	return (char)146;
-
-label_102:
-	return (char)143;
-
-label_101:
-	if (getTBit())
-		goto label_103;
-
-	return (char)142;
-
-label_103:
-	return (char)147;
-
-label_96:
-	if (getTBit())
-		goto label_104;
-	if (getTBit())
-		goto label_105;
-	if (getTBit())
-		goto label_106;
-	if (getTBit())
-		goto label_107;
-
-	return (char)140;
-
-label_107:
-	return '7';
-
-label_106:
-	return (char)128;
-
-label_105:
-	if (getTBit())
-		goto label_108;
-	if (getTBit())
-		goto label_109;
-
-	return (char)129;
-
-label_109:
-
-	return (char)153;
-
-label_108:
-	if (getTBit())
-		goto label_110;
-
-	return '$';
-
-label_110:
-	return '@';
-
-label_104:
-	if (getTBit())
-		goto label_111;
-	if (getTBit())
-		goto label_112;
-	if (getTBit())
-		goto label_113;
-	if (getTBit())
-		goto label_114;	
-
-	return '[';
-
-label_114:
-	return (char)154;
-
-label_113:
-	return '_';
-
-label_112:
-	if (getTBit())
-		goto label_115;
-	return '>';
-
-label_115:
-	return (char)150;
-
-label_111:
-	if (getTBit())
-		goto label_116;
-	if (getTBit())
-		goto label_117;
-	if (getTBit())
-		goto label_118;
-
-	return (char)130;
-
-label_118:
-	return '%';
-
-label_117: 
-	return (char)9;
-
-label_116:
-	if (getTBit())
-		goto label_119;
-	if (getTBit())
-		goto label_120;
-
-	return (char)156;
-
-label_120:
-	return (char)151;
-
-label_119:
-	if (getTBit())
-		goto label_121;
-
-	return '{';
-
-label_121:
-	if (getTBit())
-		goto label_122;
-
-	return (char)148;
-
-label_122:
-	return '|';
-
-
-	return '!'; //should never be reached
+	return traverseTree(huffTree_00372);
 }
 

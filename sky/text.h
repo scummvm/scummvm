@@ -24,6 +24,12 @@
 
 #include "sky/disk.h"
 
+struct HuffTree {
+	char lChild;
+	char rChild;
+	char value;
+};
+
 class SkyText {
 public:
 	SkyText(SkyDisk *skyDisk, uint32 gameVersion, uint16 _language);
@@ -36,6 +42,7 @@ public:
 protected:
 	bool getTBit();
 	void fnSetFont(uint32 fontNr);
+	char traverseTree(const HuffTree *huffTree);
 	virtual char getTextChar() = 0;
 
 	SkyDisk *_skyDisk;
