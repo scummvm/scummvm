@@ -188,7 +188,7 @@ int SDATA_GetBit(int n_buf, SDataWord_T n_bit, int *bitstate)
 
 int SDATA_ReadWordS(SDataWord_T word)
 {
-	uint u_int = word;
+	uint16 u_int = word;
 	int s_int;
 
 	if (u_int & 0x8000U) {
@@ -200,9 +200,9 @@ int SDATA_ReadWordS(SDataWord_T word)
 	return s_int;
 }
 
-uint SDATA_ReadWordU(SDataWord_T word)
+uint16 SDATA_ReadWordU(SDataWord_T word)
 {
-	uint u_int = (uint) word;
+	uint16 u_int = (uint16) word;
 
 	return u_int;
 }

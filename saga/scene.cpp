@@ -80,10 +80,10 @@ int SCENE_Init(void)
 
 	R_GAME_SCENEDESC gs_desc;
 
-	uchar *scene_lut_p;
+	byte *scene_lut_p;
 	size_t scene_lut_len;
 
-	const uchar *read_p;
+	const byte *read_p;
 
 	int result;
 	int i;
@@ -478,7 +478,7 @@ int SCENE_GetBGPal(PALENTRY ** pal)
 	return R_SUCCESS;
 }
 
-int SCENE_GetBGMaskInfo(int *w, int *h, uchar ** buf, size_t * buf_len)
+int SCENE_GetBGMaskInfo(int *w, int *h, byte ** buf, size_t * buf_len)
 {
 
 	assert(SceneModule.init);
@@ -519,7 +519,7 @@ SCENE_Load(int scene_num,
 {
 
 	R_SCENE_INFO scene_info;
-	ulong res_number = 0;
+	uint32 res_number = 0;
 	int result;
 	int i;
 
@@ -652,13 +652,13 @@ SCENE_Load(int scene_num,
 	return R_SUCCESS;
 }
 
-int LoadSceneDescriptor(ulong res_number)
+int LoadSceneDescriptor(uint32 res_number)
 {
 
-	uchar *scene_desc_data;
+	byte *scene_desc_data;
 	size_t scene_desc_len;
 
-	const uchar *read_p;
+	const byte *read_p;
 
 	int result;
 
@@ -694,13 +694,13 @@ int LoadSceneDescriptor(ulong res_number)
 	return R_SUCCESS;
 }
 
-int LoadSceneResourceList(ulong reslist_rn)
+int LoadSceneResourceList(uint32 reslist_rn)
 {
 
-	uchar *resource_list;
+	byte *resource_list;
 	size_t resource_list_len;
 
-	const uchar *read_p;
+	const byte *read_p;
 
 	int result;
 	int i;
@@ -759,10 +759,10 @@ int LoadSceneResourceList(ulong reslist_rn)
 int ProcessSceneResources(void)
 {
 
-	const uchar *res_data;
+	const byte *res_data;
 	size_t res_data_len;
 
-	const uchar *pal_p;
+	const byte *pal_p;
 
 	int i;
 
@@ -951,7 +951,7 @@ int ProcessSceneResources(void)
 		case SAGA_ANIM_7:
 			{
 				SCENE_ANIMINFO *new_animinfo;
-				uint new_anim_id;
+				uint16 new_anim_id;
 
 				R_printf(R_STDOUT,
 				    "Loading animation resource...\n");

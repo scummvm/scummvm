@@ -38,10 +38,10 @@
 namespace Saga {
 
 int
-TRANSITION_Dissolve(uchar * dst_img,
+TRANSITION_Dissolve(byte * dst_img,
     int dst_w,
     int dst_h,
-    int dst_p, const uchar * src_img, int src_p, int flags, double percent)
+    int dst_p, const byte * src_img, int src_p, int flags, double percent)
 {
 #define XOR_MASK 0xB400;
 

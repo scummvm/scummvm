@@ -216,7 +216,7 @@ int CVAR_SetValue(R_CVAR_P cvar, char *r_value)
 {
 
 	long int int_param;
-	unsigned long uint_param;
+	unsigned long uint16_param;
 
 	char *end_p;
 	ptrdiff_t scan_len;
@@ -288,16 +288,16 @@ int CVAR_SetValue(R_CVAR_P cvar, char *r_value)
 			return R_FAILURE;
 		}
 
-		uint_param = strtoul(r_value, &end_p, 10);
+		uint16_param = strtoul(r_value, &end_p, 10);
 
-		if (uint_param == ULONG_MAX) {
+		if (uint16_param == ULONG_MAX) {
 			CVAR_ErrorState = CVERR_PARSEOVERFLOW;
 			return R_FAILURE;
 		}
 
 		scan_len = end_p - r_value;
 
-		if (uint_param == 0) {
+		if (uint16_param == 0) {
 
 			if (!scan_len || r_value[scan_len - 1] != '0') {
 				/* strtol() returned 0, but string isn't "0". Invalid. */
@@ -312,7 +312,7 @@ int CVAR_SetValue(R_CVAR_P cvar, char *r_value)
 			return R_FAILURE;
 		}
 
-		if (uint_param > CV_UINTMAX) {
+		if (uint16_param > CV_UINTMAX) {
 			/* Overflows destination type */
 			CVAR_ErrorState = CVERR_DESTOVERFLOW;
 			return R_FAILURE;
@@ -321,18 +321,18 @@ int CVAR_SetValue(R_CVAR_P cvar, char *r_value)
 		/* Ignore bounds if equal */
 		if (cvar->t.ui.lbound != cvar->t.ui.ubound) {
 
-			if ((uint_param < cvar->t.ui.lbound) ||
-			    (uint_param > cvar->t.ui.ubound)) {
+			if ((uint16_param < cvar->t.ui.lbound) ||
+			    (uint16_param > cvar->t.ui.ubound)) {
 				/* Value is outside cvar bounds */
 				CVAR_ErrorState = CVERR_BOUND;
 				return R_FAILURE;
 			}
 		}
 
-		*(cvar->t.ui.var_p) = (cv_uint_t) uint_param;
+		*(cvar->t.ui.var_p) = (cv_uint16_t) uint16_param;
 
 #ifdef R_CVAR_TRACE
-		printf("Set cvar to value %lu.\n", uint_param);
+		printf("Set cvar to value %lu.\n", uint16_param);
 #endif
 
 		break;
@@ -413,7 +413,7 @@ int CVAR_IsFunc(R_CVAR_P cvar_func)
 int
 CVAR_RegisterFunc(cv_func_t func,
     const char *func_name,
-    const char *func_argstr, uint flags, int min_args, int max_args)
+    const char *func_argstr, uint16 flags, int min_args, int max_args)
 /****************************************************************************\
  Registers a console function 'cvar' 
  (could think of a better place to put these...?)
@@ -444,7 +444,7 @@ CVAR_RegisterFunc(cv_func_t func,
 int
 CVAR_Register_I(cv_int_t * var_p,
     const char *var_name,
-    const char *section, uint flags, cv_int_t lbound, cv_int_t ubound)
+    const char *section, uint16 flags, cv_int_t lbound, cv_int_t ubound)
 /****************************************************************************\
  Registers an integer type cvar.
 \****************************************************************************/
@@ -473,9 +473,9 @@ CVAR_Register_I(cv_int_t * var_p,
 }
 
 int
-CVAR_Register_UI(cv_uint_t * var_p,
+CVAR_Register_UI(cv_uint16_t * var_p,
     const char *var_name,
-    const char *section, uint flags, cv_uint_t lbound, cv_uint_t ubound)
+    const char *section, uint16 flags, cv_uint16_t lbound, cv_uint16_t ubound)
 /****************************************************************************\ 
  Registers an unsigned integer type cvar.
 \****************************************************************************/
@@ -506,7 +506,7 @@ CVAR_Register_UI(cv_uint_t * var_p,
 int
 CVAR_Register_F(cv_float_t * var_p,
     const char *var_name,
-    const char *section, uint flags, cv_float_t lbound, cv_float_t ubound)
+    const char *section, uint16 flags, cv_float_t lbound, cv_float_t ubound)
 /****************************************************************************\
  Registers a floating point type cvar.
 \****************************************************************************/
@@ -536,7 +536,7 @@ CVAR_Register_F(cv_float_t * var_p,
 
 int
 CVAR_Register_S(cv_char_t * var_str,
-    const char *var_name, const char *section, uint flags, int ubound)
+    const char *var_name, const char *section, uint16 flags, int ubound)
 /****************************************************************************\
  Registers a string type cvar. Storage must be provided in var_p for 'ubound'
  characters plus 1 for NUL char. 

@@ -54,7 +54,7 @@ struct R_ACTIONMAP_INFO {
 	int n_exits;
 	R_ACTIONMAP_ENTRY *exits_tbl;
 
-	const uchar *exmap_res;
+	const byte *exmap_res;
 	size_t exmap_res_len;
 
 };

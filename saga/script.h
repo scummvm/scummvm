@@ -118,7 +118,7 @@ struct R_SCRIPT_MODULE {
 	int voice_lut_present;
 	R_SCRIPT_LUT_ENTRY *script_lut;
 	int script_lut_max;
-	uint script_lut_entrylen;
+	uint16 script_lut_entrylen;
 
 	R_SCRIPTDATA *current_script;
 	YS_DL_LIST *thread_list;
@@ -133,13 +133,13 @@ struct R_SCRIPT_MODULE {
 
 extern R_SCRIPT_MODULE ScriptModule;
 
-R_SCRIPT_BYTECODE *SCRIPT_LoadBytecode(uchar * bytecode_p,
+R_SCRIPT_BYTECODE *SCRIPT_LoadBytecode(byte * bytecode_p,
     size_t bytecode_len);
 
-R_DIALOGUE_LIST *SCRIPT_LoadDialogue(const uchar * dialogue_p,
+R_DIALOGUE_LIST *SCRIPT_LoadDialogue(const byte * dialogue_p,
     size_t dialogue_len);
 
-R_VOICE_LUT *SCRIPT_LoadVoiceLUT(const uchar * voicelut_p,
+R_VOICE_LUT *SCRIPT_LoadVoiceLUT(const byte * voicelut_p,
     size_t voicelut_len, R_SCRIPTDATA * script);
 
 int

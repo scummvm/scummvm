@@ -59,8 +59,8 @@ int SDEBUG_PrintInstr(R_SCRIPT_THREAD * thread)
 
 	R_TEXTLIST_ENTRY tl_e;
 
-	const uchar *start_p;
-	const uchar *read_p;
+	const byte *start_p;
+	const byte *read_p;
 
 	char tmp_buf[80] = { 0 };
 	static char disp_buf[SD_DISPLAY_LEN] = { 0 };

@@ -101,7 +101,7 @@ int OBJECTMAP_Shutdown(void)
 	return R_SUCCESS;
 }
 
-int OBJECTMAP_Load(const uchar * om_res, size_t om_res_len)
+int OBJECTMAP_Load(const byte * om_res, size_t om_res_len)
 /*--------------------------------------------------------------------------*\
  * Loads an object map resource ( objects ( clickareas ( points ) ) ) 
 \*--------------------------------------------------------------------------*/
@@ -320,7 +320,7 @@ int OBJECTMAP_GetName(int object, const char **name)
 	return R_SUCCESS;
 }
 
-int OBJECTMAP_GetFlags(int object, uint * flags)
+int OBJECTMAP_GetFlags(int object, uint16 * flags)
 {
 	int i;
 

@@ -100,7 +100,7 @@ class Music {
 	~Music(void);
 	void hasNativeMT32(bool b)		{ _player->hasNativeMT32(b); }
 
-	int play(ulong music_rn, uint flags);
+	int play(uint32 music_rn, uint16 flags);
 	int pause(void);
 	int resume(void);
 	int stop(void);

@@ -594,7 +594,7 @@ static int ProcessEventTime(long msec)
 	YS_DL_NODE *walk_node;
 	R_EVENT *event_p;
 
-	uint event_count = 0;
+	uint16 event_count = 0;
 
 	for (walk_node = ys_dll_head(EventList);
 	    walk_node != NULL; walk_node = ys_dll_next(walk_node)) {

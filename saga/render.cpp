@@ -171,7 +171,7 @@ int RENDER_Init(void)
 	RenderModule.r_bg_buf_w = disp_info.logical_w;
 	RenderModule.r_bg_buf_h = disp_info.logical_h;
 
-	RenderModule.r_bg_buf = (uchar *)calloc(disp_info.logical_w,
+	RenderModule.r_bg_buf = (byte *)calloc(disp_info.logical_w,
 	    disp_info.logical_h);
 
 	if (RenderModule.r_bg_buf == NULL) {
@@ -194,7 +194,7 @@ int RENDER_Init(void)
 		tmp_bytepp = 2;
 	}
 
-	RenderModule.r_tmp_buf = (uchar *)calloc(1, tmp_w * tmp_h * tmp_bytepp);
+	RenderModule.r_tmp_buf = (byte *)calloc(1, tmp_w * tmp_h * tmp_bytepp);
 	if (RenderModule.r_tmp_buf == NULL) {
 
 		free(RenderModule.r_bg_buf);

@@ -97,8 +97,8 @@ int GFX_DrawPalette(R_SURFACE *dst_s) {
 }
 
 int GFX_SimpleBlit(R_SURFACE *dst_s, R_SURFACE *src_s) {
-	uchar *src_p;
-	uchar *dst_p;
+	byte *src_p;
+	byte *dst_p;
 	int y, w, p;
 
 	assert((dst_s != NULL) && (src_s != NULL));
@@ -148,11 +148,11 @@ int GFX_Scale2x8(R_SURFACE *dst_s, R_SURFACE *src_s) {
 	int src_skip = src_s->buf_pitch - src_s->buf_w;
 	int dst_skip = dst_s->buf_pitch - dst_s->buf_w;
 
-	uchar *src_ptr = src_s->buf;
-	uchar *dst_ptr = dst_s->buf;
+	byte *src_ptr = src_s->buf;
+	byte *dst_ptr = dst_s->buf;
 
-	uchar *src_row;
-	uchar *dst_row;
+	byte *src_row;
+	byte *dst_row;
 
 	assert(dst_s->buf_w == (src_s->buf_w * 2));
 	assert(dst_s->buf_h == (src_s->buf_h * 2));
@@ -183,8 +183,8 @@ int GFX_Scale2x16(R_SURFACE *dst_s, R_SURFACE *src_s) {
 	int src_skip;
 	int dest_skip;
 
-	uchar *src_ptr = src_s->buf;
-	uchar *dest_ptr = dst_s->buf;
+	byte *src_ptr = src_s->buf;
+	byte *dest_ptr = dst_s->buf;
 
 	short *src_row;
 	short *dest_row;
@@ -226,10 +226,10 @@ int GFX_Scale2x16(R_SURFACE *dst_s, R_SURFACE *src_s) {
  * - The surface must match the logical dimensions of the buffer exactly.
  * - Returns R_FAILURE on error
 \*--------------------------------------------------------------------------*/
-int GFX_BufToSurface(R_SURFACE *ds, const uchar *src, int src_w, int src_h, 
+int GFX_BufToSurface(R_SURFACE *ds, const byte *src, int src_w, int src_h, 
 					 R_RECT *src_rect, R_POINT *dst_pt) {
-	const uchar *read_p;
-	uchar *write_p;
+	const byte *read_p;
+	byte *write_p;
 
 	int row;
 
@@ -352,10 +352,10 @@ int GFX_BufToSurface(R_SURFACE *ds, const uchar *src, int src_w, int src_h,
 	return R_SUCCESS;
 }
 
-int GFX_BufToBuffer(uchar *dst_buf, int dst_w, int dst_h, const uchar *src,
+int GFX_BufToBuffer(byte *dst_buf, int dst_w, int dst_h, const byte *src,
 					int src_w, int src_h, R_RECT *src_rect, R_POINT *dst_pt) {
-	const uchar *read_p;
-	uchar *write_p;
+	const byte *read_p;
+	byte *write_p;
 
 	int row;
 
@@ -475,7 +475,7 @@ int GFX_BufToBuffer(uchar *dst_buf, int dst_w, int dst_h, const uchar *src,
 }
 
 int GFX_DrawCursor(R_SURFACE *ds, R_POINT *p1) {
-	static uchar cursor_img[R_CURSOR_W * R_CURSOR_H] = {
+	static byte cursor_img[R_CURSOR_W * R_CURSOR_H] = {
 		0,   0,   0,   255, 0,   0,   0,
 		0,   0,   0,   255, 0,   0,   0,
 		0,   0,   0,   0,   0,   0,   0,
@@ -487,7 +487,7 @@ int GFX_DrawCursor(R_SURFACE *ds, R_POINT *p1) {
 
 	R_CLIPINFO ci;
 
-	uchar *src_p, *dst_p;
+	byte *src_p, *dst_p;
 
 	int x, y;
 	int src_skip, dst_skip;
@@ -547,7 +547,7 @@ int GFX_DrawCursor(R_SURFACE *ds, R_POINT *p1) {
  * the specified color.
 \*--------------------------------------------------------------------------*/
 int GFX_DrawRect(R_SURFACE *ds, R_RECT *dst_rect, int color) {
-	uchar *write_p;
+	byte *write_p;
 
 	int w;
 	int h;
@@ -821,7 +821,7 @@ int GFX_ClipLine(R_SURFACE *ds, const R_POINT *src_p1, const R_POINT *src_p2,
  * Performs no clipping
 \*--------------------------------------------------------------------------*/
 void GFX_DrawLine(R_SURFACE *ds, R_POINT *p1, R_POINT *p2, int color) {
-	uchar *write_p;
+	byte *write_p;
 
 	int clip_result;
 
@@ -892,21 +892,21 @@ void GFX_DrawLine(R_SURFACE *ds, R_POINT *p1, R_POINT *p2, int color) {
 
 	if (dx == 0) {
 		for (i = 0; i <= dy; i++) {
-			*write_p = (uchar) color;
+			*write_p = (byte) color;
 			write_p += ds->buf_pitch;
 		}
 		return;
 	}
 	if (dy == 0) {
 		for (i = 0; i <= dx; i++) {
-			*write_p = (uchar) color;
+			*write_p = (byte) color;
 			write_p += x_vector;
 		}
 		return;
 	}
 	if (dx == dy) {
 		for (i = 0; i <= dx; i++) {
-			*write_p = (uchar) color;
+			*write_p = (byte) color;
 			write_p += x_vector + ds->buf_pitch;
 		}
 		return;
@@ -929,7 +929,7 @@ void GFX_DrawLine(R_SURFACE *ds, R_POINT *p1, R_POINT *p2, int color) {
 
 		/* Horiz. seg */
 		for (k = 0; k < init_run; k++) {
-			*write_p = (uchar) color;
+			*write_p = (byte) color;
 			write_p += x_vector;
 		}
 		write_p += ds->buf_pitch;
@@ -945,7 +945,7 @@ void GFX_DrawLine(R_SURFACE *ds, R_POINT *p1, R_POINT *p2, int color) {
 
 			/* Horiz. seg */
 			for (k = 0; k < run; k++) {
-				*write_p = (uchar) color;
+				*write_p = (byte) color;
 				write_p += x_vector;
 			}
 			write_p += ds->buf_pitch;
@@ -954,7 +954,7 @@ void GFX_DrawLine(R_SURFACE *ds, R_POINT *p1, R_POINT *p2, int color) {
 
 		/* Horiz. seg */
 		for (k = 0; k < end_run; k++) {
-			*write_p = (uchar) color;
+			*write_p = (byte) color;
 			write_p += x_vector;
 		}
 		write_p += ds->buf_pitch;
@@ -983,7 +983,7 @@ void GFX_DrawLine(R_SURFACE *ds, R_POINT *p1, R_POINT *p2, int color) {
 
 		/* Vertical seg */
 		for (k = 0; k < init_run; k++) {
-			*write_p = (uchar) color;
+			*write_p = (byte) color;
 			write_p += ds->buf_pitch;
 		}
 		write_p += x_vector;
@@ -998,7 +998,7 @@ void GFX_DrawLine(R_SURFACE *ds, R_POINT *p1, R_POINT *p2, int color) {
 
 			/* Vertical seg */
 			for (k = 0; k < run; k++) {
-				*write_p = (uchar) color;
+				*write_p = (byte) color;
 				write_p += ds->buf_pitch;
 			}
 			write_p += x_vector;
@@ -1007,7 +1007,7 @@ void GFX_DrawLine(R_SURFACE *ds, R_POINT *p1, R_POINT *p2, int color) {
 
 		/* Vertical seg */
 		for (k = 0; k < end_run; k++) {
-			*write_p = (uchar) color;
+			*write_p = (byte) color;
 			write_p += ds->buf_pitch;
 		}
 		write_p += x_vector;

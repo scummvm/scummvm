@@ -95,24 +95,24 @@ struct R_GAME_SOUNDINFO {
 
 struct R_GAME_FONTDESC {
 
-	uint font_id;
-	ulong font_rn;
+	uint16 font_id;
+	uint32 font_rn;
 
 };
 
 struct R_GAME_SCENEDESC {
 
-	ulong scene_lut_rn;
-	ulong first_scene;
+	uint32 scene_lut_rn;
+	uint32 first_scene;
 
 };
 
 struct R_GAME_RESOURCEDESC {
 
-	ulong scene_lut_rn;
-	ulong script_lut_rn;
-	ulong command_panel_rn;
-	ulong dialogue_panel_rn;
+	uint32 scene_lut_rn;
+	uint32 script_lut_rn;
+	uint32 command_panel_rn;
+	uint32 dialogue_panel_rn;
 
 };
 
@@ -120,7 +120,7 @@ int GAME_Register(void);
 
 int GAME_Init(void);
 
-int GAME_GetFileContext(R_RSCFILE_CONTEXT ** ctxt_p, uint r_type, int param);
+int GAME_GetFileContext(R_RSCFILE_CONTEXT ** ctxt_p, uint16 r_type, int param);
 
 int GAME_GetFontInfo(R_GAME_FONTDESC **, int *);
 

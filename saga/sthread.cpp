@@ -170,7 +170,7 @@ unsigned char *GetReadPtr(R_SCRIPT_THREAD * thread)
 	    thread->i_offset;
 }
 
-unsigned long GetReadOffset(const uchar * read_p)
+unsigned long GetReadOffset(const byte * read_p)
 {
 
 	return (unsigned long)(read_p - (unsigned char *)
@@ -217,8 +217,8 @@ int STHREAD_Run(R_SCRIPT_THREAD * thread, int instr_limit, int msec)
 
 	int instr_count;
 
-	const uchar *read_p;
-	ulong saved_offset;
+	const byte *read_p;
+	uint32 saved_offset;
 
 	SDataWord_T param1;
 	SDataWord_T param2;
@@ -448,7 +448,7 @@ int STHREAD_Run(R_SCRIPT_THREAD * thread, int instr_limit, int msec)
 		case 0x18:
 			{
 				int n_args;
-				uint func_num;
+				uint16 func_num;
 				int FIXME_SHADOWED_result;
 
 				SFunc_T sfunc;

@@ -68,7 +68,7 @@ int ACTIONMAP_Init(void)
 	return R_SUCCESS;
 }
 
-int ACTIONMAP_Load(const uchar * exmap_res, size_t exmap_res_len)
+int ACTIONMAP_Load(const byte * exmap_res, size_t exmap_res_len)
 /*--------------------------------------------------------------------------*\
  * Loads exit map data from specified exit map resource
 \*--------------------------------------------------------------------------*/
@@ -80,7 +80,7 @@ int ACTIONMAP_Load(const uchar * exmap_res, size_t exmap_res_len)
 	int exit_ct;
 	int i, pt;
 
-	const uchar *read_p = exmap_res;
+	const byte *read_p = exmap_res;
 	size_t read_len = exmap_res_len;
 
 	assert(ActmapModule.init);

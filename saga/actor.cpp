@@ -522,9 +522,9 @@ int AddActor(R_ACTOR * actor)
 	return R_SUCCESS;
 }
 
-int ACTOR_GetActorIndex(uint actor_id)
+int ACTOR_GetActorIndex(uint16 actor_id)
 {
-	uint actor_idx;
+	uint16 actor_idx;
 
 	if (actor_id == 1) {
 		actor_idx = 0;
@@ -539,9 +539,9 @@ int ACTOR_GetActorIndex(uint actor_id)
 	return actor_idx;
 }
 
-int ACTOR_ActorExists(uint actor_id)
+int ACTOR_ActorExists(uint16 actor_id)
 {
-	uint actor_idx;
+	uint16 actor_idx;
 
 	if (actor_id == 1) {
 		actor_idx = 0;
@@ -556,7 +556,7 @@ int ACTOR_ActorExists(uint actor_id)
 	return 1;
 }
 
-int ACTOR_Speak(int index, const char *d_string, uint d_voice_rn, R_SEMAPHORE * sem)
+int ACTOR_Speak(int index, const char *d_string, uint16 d_voice_rn, R_SEMAPHORE * sem)
 {
 
 	YS_DL_NODE *node;
@@ -730,7 +730,7 @@ HandleSpeakIntent(R_ACTOR * actor,
 	return R_SUCCESS;
 }
 
-int ACTOR_GetSpeechTime(const char *d_string, uint d_voice_rn)
+int ACTOR_GetSpeechTime(const char *d_string, uint16 d_voice_rn)
 {
 	int voice_len;
 
@@ -767,7 +767,7 @@ int ACTOR_SetOrientation(int index, int orient)
 	return R_SUCCESS;
 }
 
-int ACTOR_SetAction(int index, int action_n, uint action_flags)
+int ACTOR_SetAction(int index, int action_n, uint16 action_flags)
 {
 	R_ACTOR *actor;
 
@@ -795,7 +795,7 @@ int ACTOR_SetAction(int index, int action_n, uint action_flags)
 	return R_SUCCESS;
 }
 
-int ACTOR_SetDefaultAction(int index, int action_n, uint action_flags)
+int ACTOR_SetDefaultAction(int index, int action_n, uint16 action_flags)
 {
 	R_ACTOR *actor;
 
@@ -847,10 +847,10 @@ R_ACTOR *LookupActor(int index)
 int LoadActorSpriteIndex(R_ACTOR * actor, int si_rn, int *last_frame_p)
 {
 
-	uchar *res_p;
+	byte *res_p;
 	size_t res_len;
 
-	const uchar *read_p;
+	const byte *read_p;
 
 	int s_action_ct;
 	R_ACTORACTION *action_p;
@@ -950,7 +950,7 @@ int DeleteActor(int index)
 	return R_SUCCESS;
 }
 
-int ACTOR_WalkTo(int id, R_POINT * walk_pt, uint flags, R_SEMAPHORE * sem)
+int ACTOR_WalkTo(int id, R_POINT * walk_pt, uint16 flags, R_SEMAPHORE * sem)
 /*--------------------------------------------------------------------------*\
 \*--------------------------------------------------------------------------*/
 {
@@ -1341,7 +1341,7 @@ static void CF_actor_add(int argc, char *argv[])
 	if (argc < 3)
 		return;
 
-	actor.id = (uint) atoi(argv[0]);
+	actor.id = (uint16) atoi(argv[0]);
 
 	actor.a_pt.x = atoi(argv[1]);
 	actor.a_pt.y = atoi(argv[2]);

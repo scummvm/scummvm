@@ -72,7 +72,7 @@ int ACTOR_Shutdown(void);
 int ACTOR_Direct(int msec);
 
 int ACTOR_Create(int actor_id, int x, int y);
-int ACTOR_ActorExists(uint actor_id);
+int ACTOR_ActorExists(uint16 actor_id);
 
 int ACTOR_DrawList(void);
 int ACTOR_AtoS(R_POINT * logical, const R_POINT * actor);
@@ -81,18 +81,18 @@ int ACTOR_StoA(R_POINT * actor, const R_POINT * screen);
 int ACTOR_Move(int index, R_POINT * move_pt);
 int ACTOR_MoveRelative(int index, R_POINT * move_pt);
 
-int ACTOR_WalkTo(int index, R_POINT * walk_pt, uint flags, R_SEMAPHORE * sem);
+int ACTOR_WalkTo(int index, R_POINT * walk_pt, uint16 flags, R_SEMAPHORE * sem);
 
-int ACTOR_GetActorIndex(uint actor_id);
+int ACTOR_GetActorIndex(uint16 actor_id);
 
-int ACTOR_Speak(int index, const char *d_string, uint d_voice_rn, R_SEMAPHORE * sem);
+int ACTOR_Speak(int index, const char *d_string, uint16 d_voice_rn, R_SEMAPHORE * sem);
 
 int ACTOR_SkipDialogue(void);
 
-int ACTOR_GetSpeechTime(const char *d_string, uint d_voice_rn);
+int ACTOR_GetSpeechTime(const char *d_string, uint16 d_voice_rn);
 int ACTOR_SetOrientation(int index, int orient);
-int ACTOR_SetAction(int index, int action_n, uint action_flags);
-int ACTOR_SetDefaultAction(int index, int action_n, uint action_flags);
+int ACTOR_SetAction(int index, int action_n, uint16 action_flags);
+int ACTOR_SetDefaultAction(int index, int action_n, uint16 action_flags);
 
 } // End of namespace Saga
 

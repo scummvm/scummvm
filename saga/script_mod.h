@@ -70,7 +70,7 @@ int SDATA_GetBit(int n_buf, SDataWord_T n_bit, int *bitstate);
 
 int SDATA_ReadWordS(SDataWord_T word);
 
-uint SDATA_ReadWordU(SDataWord_T word);
+uint16 SDATA_ReadWordU(SDataWord_T word);
 
 R_SCRIPT_THREAD *STHREAD_Create(void);
 

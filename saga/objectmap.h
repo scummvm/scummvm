@@ -44,7 +44,7 @@ struct R_CLICKAREA {
 struct R_OBJECTMAP_ENTRY {
 
 	int unknown0;
-	uint flags;
+	uint16 flags;
 
 	int object_num;
 	int script_num;

@@ -39,11 +39,11 @@ namespace Saga {
 
 struct PALANIM_ENTRY {
 
-	uint pal_count;
-	uint color_count;
-	uint cycle;
+	uint16 pal_count;
+	uint16 color_count;
+	uint16 cycle;
 
-	uchar *pal_index;
+	byte *pal_index;
 	R_COLOR *colors;
 
 };
@@ -51,7 +51,7 @@ struct PALANIM_ENTRY {
 struct PALANIM_DATA {
 
 	int loaded;
-	uint entry_count;
+	uint16 entry_count;
 
 	PALANIM_ENTRY *entries;
 

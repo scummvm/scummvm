@@ -49,14 +49,14 @@ struct R_IMAGE_HEADER {
 };
 
 int
-DecodeBGImageRLE(const uchar * inbuf,
-    size_t inbuf_len, uchar * outbuf, size_t outbuf_len);
+DecodeBGImageRLE(const byte * inbuf,
+    size_t inbuf_len, byte * outbuf, size_t outbuf_len);
 
-int FlipImage(uchar * img_buf, int columns, int scanlines);
+int FlipImage(byte * img_buf, int columns, int scanlines);
 
 int
-UnbankBGImage(uchar * dest_buf,
-    const uchar * src_buf, int columns, int scanlines);
+UnbankBGImage(byte * dest_buf,
+    const byte * src_buf, int columns, int scanlines);
 
 } // End of namespace Saga
 

@@ -78,14 +78,14 @@ struct R_FONT_STYLE {
 	R_FONT_HEADER hdr;
 	FONT_CHAR_ENTRY fce[256];
 
-	uchar *font_free_p;
-	uchar *font_p;
+	byte *font_free_p;
+	byte *font_p;
 
 };
 
 struct R_FONT {
 
-	ulong font_rn;
+	uint32 font_rn;
 	int font_id;
 
 	int normal_loaded;
@@ -93,7 +93,7 @@ struct R_FONT {
 	int outline_loaded;
 	R_FONT_STYLE *outline;
 
-	uchar *res_data;
+	byte *res_data;
 	size_t res_len;
 
 };
@@ -112,7 +112,7 @@ struct R_FONT_MODULE {
 
 };
 
-int FONT_Load(ulong font_rn, int font_id);
+int FONT_Load(uint32 font_rn, int font_id);
 
 static R_FONT_STYLE *FONT_CreateOutline(R_FONT_STYLE * src_font);
 

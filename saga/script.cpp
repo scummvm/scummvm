@@ -77,11 +77,11 @@ int SCRIPT_Init(void)
 {
 	R_RSCFILE_CONTEXT *s_lut_ctxt;
 
-	uchar *rsc_ptr;
+	byte *rsc_ptr;
 	size_t rsc_len;
 
-	const uchar *read_ptr;
-	const uchar *read_ptr2;
+	const byte *read_ptr;
+	const byte *read_ptr2;
 
 	int result;
 	int i;
@@ -232,17 +232,17 @@ int SCRIPT_Load(int script_num)
 
 	R_SCRIPTDATA *script_data;
 
-	uchar *bytecode_p;
+	byte *bytecode_p;
 	size_t bytecode_len;
-	ulong scriptl_rn;
+	uint32 scriptl_rn;
 
-	uchar *diagl_p;
+	byte *diagl_p;
 	size_t diagl_len;
-	ulong diagl_rn;
+	uint32 diagl_rn;
 
-	uchar *voicelut_p;
+	byte *voicelut_p;
 	size_t voicelut_len;
-	ulong voicelut_rn;
+	uint32 voicelut_rn;
 
 	int result;
 
@@ -415,7 +415,7 @@ int SCRIPT_Free(void)
 	return R_SUCCESS;
 }
 
-R_SCRIPT_BYTECODE *SCRIPT_LoadBytecode(uchar * bytecode_p,
+R_SCRIPT_BYTECODE *SCRIPT_LoadBytecode(byte * bytecode_p,
     size_t bytecode_len)
 /*--------------------------------------------------------------------------*\
  * Reads the entrypoint table from a script bytecode resource in memory. 
@@ -423,7 +423,7 @@ R_SCRIPT_BYTECODE *SCRIPT_LoadBytecode(uchar * bytecode_p,
 \*--------------------------------------------------------------------------*/
 {
 
-	const uchar *read_p = bytecode_p;
+	const byte *read_p = bytecode_p;
 	R_PROC_TBLENTRY *bc_ep_tbl = NULL;
 	R_SCRIPT_BYTECODE *bc_new_data = NULL;
 
@@ -494,7 +494,7 @@ R_SCRIPT_BYTECODE *SCRIPT_LoadBytecode(uchar * bytecode_p,
 		}
 	}
 
-	bc_new_data->bytecode_p = (uchar *) bytecode_p;
+	bc_new_data->bytecode_p = (byte *) bytecode_p;
 	bc_new_data->bytecode_len = bytecode_len;
 
 	bc_new_data->n_entrypoints = n_entrypoints;
@@ -504,19 +504,19 @@ R_SCRIPT_BYTECODE *SCRIPT_LoadBytecode(uchar * bytecode_p,
 	return bc_new_data;
 }
 
-R_DIALOGUE_LIST *SCRIPT_LoadDialogue(const uchar * dialogue_p,
+R_DIALOGUE_LIST *SCRIPT_LoadDialogue(const byte * dialogue_p,
     size_t dialogue_len)
 /*--------------------------------------------------------------------------*\
  * Reads a logical dialogue list from a dialogue list resource in memory.
  * Returns NULL on failure.
 \*--------------------------------------------------------------------------*/
 {
-	const uchar *read_p = dialogue_p;
+	const byte *read_p = dialogue_p;
 
 	R_DIALOGUE_LIST *dialogue_list;
-	uint n_dialogue;
+	uint16 n_dialogue;
 
-	uint i;
+	uint16 i;
 	size_t offset;
 
 	R_printf(R_STDOUT, "Loading dialogue list...\n");
@@ -572,19 +572,19 @@ R_DIALOGUE_LIST *SCRIPT_LoadDialogue(const uchar * dialogue_p,
 	return dialogue_list;
 }
 
-R_VOICE_LUT *SCRIPT_LoadVoiceLUT(const uchar * voicelut_p,
+R_VOICE_LUT *SCRIPT_LoadVoiceLUT(const byte * voicelut_p,
     size_t voicelut_len, R_SCRIPTDATA * script)
 /*--------------------------------------------------------------------------*\
  * Reads a logical voice LUT from a voice LUT resource in memory.
  * Returns NULL on failure.
 \*--------------------------------------------------------------------------*/
 {
-	const uchar *read_p = voicelut_p;
+	const byte *read_p = voicelut_p;
 
 	R_VOICE_LUT *voice_lut;
 
-	uint n_voices;
-	uint i;
+	uint16 n_voices;
+	uint16 i;
 
 	voice_lut = (R_VOICE_LUT *)malloc(sizeof *voice_lut);
 	if (voice_lut == NULL) {
@@ -615,8 +615,8 @@ R_VOICE_LUT *SCRIPT_LoadVoiceLUT(const uchar * voicelut_p,
 void CF_script_info(int argc, char *argv[])
 {
 
-	ulong n_entrypoints;
-	ulong i;
+	uint32 n_entrypoints;
+	uint32 i;
 	char *name_ptr;
 
 	if (ScriptModule.current_script == NULL) {
@@ -645,7 +645,7 @@ void CF_script_info(int argc, char *argv[])
 
 void CF_script_exec(int argc, char *argv[])
 {
-	uint ep_num;
+	uint16 ep_num;
 
 	if (argc < 1) {
 		return;

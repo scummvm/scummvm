@@ -33,7 +33,7 @@
 
 namespace Saga {
 
-int PALANIM_Load(const uchar *, size_t);
+int PALANIM_Load(const byte *, size_t);
 
 int PALANIM_CycleStart(void);
 

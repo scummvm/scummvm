@@ -45,17 +45,17 @@ int OBJECTMAP_Init(void);
 
 int OBJECTMAP_Shutdown(void);
 
-int OBJECTMAP_Load(const uchar * om_res, size_t om_res_len);
+int OBJECTMAP_Load(const byte * om_res, size_t om_res_len);
 
 int OBJECTMAP_Free(void);
 
-int OBJECTMAP_LoadNames(const uchar * onl_res, size_t onl_res_len);
+int OBJECTMAP_LoadNames(const byte * onl_res, size_t onl_res_len);
 
 int OBJECTMAP_FreeNames(void);
 
 int OBJECTMAP_GetName(int object, const char **name);
 
-int OBJECTMAP_GetFlags(int object, uint * flags);
+int OBJECTMAP_GetFlags(int object, uint16 * flags);
 
 int OBJECTMAP_GetEPNum(int object, int *ep_num);
 

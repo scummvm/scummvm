@@ -58,11 +58,11 @@ struct R_RENDER_MODULE {
 	R_SURFACE *r_display_surface;
 	R_SURFACE *r_backbuf_surface;
 
-	uchar *r_bg_buf;
+	byte *r_bg_buf;
 	int r_bg_buf_w;
 	int r_bg_buf_h;
 
-	uchar *r_tmp_buf;
+	byte *r_tmp_buf;
 	int r_tmp_buf_w;
 	int r_tmp_buf_h;
 

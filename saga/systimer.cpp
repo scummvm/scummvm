@@ -106,7 +106,7 @@ int SYSTIMER_ResetMSCounter(void)
 	return R_SUCCESS;
 }
 
-int SYSTIMER_Sleep(uint msec)
+int SYSTIMER_Sleep(uint16 msec)
 {
 	SDL_Delay(msec);
 

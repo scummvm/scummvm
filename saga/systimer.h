@@ -33,7 +33,7 @@ int SYSTIMER_InitMSCounter(void);
 unsigned long SYSTIMER_ReadMSCounter(void);
 
 int SYSTIMER_ResetMSCounter(void);
-int SYSTIMER_Sleep(uint msec);
+int SYSTIMER_Sleep(uint16 msec);
 int SYSTIMER_CreateTimer(R_SYSTIMER **,
     unsigned long, void *, R_SYSTIMER_CALLBACK);
 int SYSTIMER_DestroyTimer(R_SYSTIMER *);

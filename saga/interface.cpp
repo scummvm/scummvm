@@ -544,7 +544,7 @@ int HandleCommandUpdate(R_SURFACE *ds, R_POINT *imouse_pt) {
 int HandlePlayfieldClick(R_SURFACE *ds, R_POINT *imouse_pt) {
 	int hit_object;
 	int object_num;
-	uint object_flags = 0;
+	uint16 object_flags = 0;
 
 	int script_num;
 	R_POINT iactor_pt;
@@ -588,7 +588,7 @@ int HandlePlayfieldClick(R_SURFACE *ds, R_POINT *imouse_pt) {
 int HandlePlayfieldUpdate(R_SURFACE *ds, R_POINT *imouse_pt) {
 	const char *object_name;
 	int object_num;
-	uint object_flags = 0;
+	uint16 object_flags = 0;
 
 	char new_status[R_STATUS_TEXT_LEN];
 

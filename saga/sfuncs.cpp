@@ -598,7 +598,7 @@ int SF_SetActorAct(R_SCRIPTFUNC_PARAMS)
 	int actor_idx;
 
 	int action;
-	/*uint flags; */
+	/*uint16 flags; */
 
 	SSTACK_Pop(thread->stack, &actor_parm);
 
@@ -644,7 +644,7 @@ int SF_SetActorAct2(R_SCRIPTFUNC_PARAMS)
 	int actor_idx;
 
 	int action;
-	/*uint flags; */
+	/*uint16 flags; */
 
 	SSTACK_Pop(thread->stack, &actor_parm);
 
@@ -687,8 +687,8 @@ int SF_LinkAnim(R_SCRIPTFUNC_PARAMS)
 
 	int tframes;
 
-	uint anim_id1;
-	uint anim_id2;
+	uint16 anim_id1;
+	uint16 anim_id2;
 
 	SSTACK_Pop(thread->stack, &anim1_parm);
 	SSTACK_Pop(thread->stack, &anim2_parm);

@@ -60,7 +60,7 @@ int STHREAD_Destroy(R_SCRIPT_THREAD *thread);
 int STHREAD_SetEntrypoint(R_SCRIPT_THREAD *thread, int ep_num);
 int STHREAD_Execute(R_SCRIPT_THREAD *thread, int ep_num);
 int STHREAD_Run(R_SCRIPT_THREAD *thread, int instr_limit, int msec);
-unsigned long GetReadOffset(const uchar *read_p);
+unsigned long GetReadOffset(const byte *read_p);
 unsigned char *GetReadPtr(R_SCRIPT_THREAD *thread);
 int SDEBUG_PrintInstr(R_SCRIPT_THREAD *thread);
 

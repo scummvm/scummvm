@@ -35,11 +35,11 @@ namespace Saga {
 
 int ISOMAP_Init(void);
 
-int ISOMAP_LoadTileset(const uchar *, size_t);
+int ISOMAP_LoadTileset(const byte *, size_t);
 
-int ISOMAP_LoadMetaTileset(const uchar *, size_t);
+int ISOMAP_LoadMetaTileset(const byte *, size_t);
 
-int ISOMAP_LoadMetamap(const uchar * mm_res_p, size_t mm_res_len);
+int ISOMAP_LoadMetamap(const byte * mm_res_p, size_t mm_res_len);
 
 int ISOMAP_Draw(R_SURFACE * dst_s);
 

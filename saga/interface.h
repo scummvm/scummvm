@@ -106,11 +106,11 @@ struct R_INTERFACE_BUTTON {
 
 struct R_INTERFACE_PANEL {
 
-	uchar *res;
+	byte *res;
 	size_t res_len;
 	int x;
 	int y;
-	uchar *img;
+	byte *img;
 	size_t img_len;
 	int img_w;
 	int img_h;

@@ -61,7 +61,7 @@ struct SCENE_BGINFO {
 	int bg_h;
 	int bg_p;
 
-	uchar *bg_buf;
+	byte *bg_buf;
 	size_t bg_buflen;
 
 };
@@ -89,7 +89,7 @@ int SCENE_End(void);
 int SCENE_Draw(R_SURFACE *);
 
 int SCENE_GetMode(void);
-int SCENE_GetBGMaskInfo(int *w, int *h, uchar ** buf, size_t * buf_len);
+int SCENE_GetBGMaskInfo(int *w, int *h, byte ** buf, size_t * buf_len);
 
 int SCENE_IsBGMaskPresent(void);
 int SCENE_GetBGInfo(SCENE_BGINFO * bginfo);

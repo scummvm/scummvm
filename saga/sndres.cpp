@@ -71,7 +71,7 @@ SndRes::SndRes(SagaEngine *vm) {
 	_init = 1;
 }
 
-int SndRes::playVoice(ulong voice_rn) {
+int SndRes::playVoice(uint32 voice_rn) {
 	R_SOUNDBUFFER snd_buffer;
 	int result;
 
@@ -92,8 +92,8 @@ int SndRes::playVoice(ulong voice_rn) {
 	return R_SUCCESS;
 }
 
-int SndRes::load(R_RSCFILE_CONTEXT *snd_ctxt, ulong snd_rn, R_SOUNDBUFFER *snd_buf_i) {
-	uchar *snd_res;
+int SndRes::load(R_RSCFILE_CONTEXT *snd_ctxt, uint32 snd_rn, R_SOUNDBUFFER *snd_buf_i) {
+	byte *snd_res;
 	size_t snd_res_len;
 
 	int result;
@@ -149,8 +149,8 @@ int SndRes::loadVocSound(byte *snd_res, size_t snd_res_len, R_SOUNDBUFFER *snd_b
 
 	long byte_rate;
 
-	const uchar *read_p;
-	size_t read_len;
+	const byte *read_p;
+	uint16 read_len;
 
 	read_p = snd_res;
 	read_len = snd_res_len;
@@ -235,8 +235,8 @@ int SndRes::loadVocSound(byte *snd_res, size_t snd_res_len, R_SOUNDBUFFER *snd_b
 	return R_SUCCESS;
 }
 
-int SndRes::getVoiceLength(ulong voice_rn) {
-	ulong length;
+int SndRes::getVoiceLength(uint32 voice_rn) {
+	uint32 length;
 
 	double ms_f;
 	int ms_i = -1;
@@ -267,20 +267,20 @@ int SndRes::getVoiceLength(ulong voice_rn) {
 	return ms_i;
 }
 
-int SndRes::ITEVOC_Resample(long src_freq, long dst_freq, uchar *src_buf, 
-						size_t src_buf_len, uchar **dst_buf, size_t *dst_buf_len) {
-	uchar *resamp_buf;
+int SndRes::ITEVOC_Resample(long src_freq, long dst_freq, byte *src_buf, 
+						size_t src_buf_len, byte **dst_buf, size_t *dst_buf_len) {
+	byte *resamp_buf;
 	size_t resamp_len;
 
-	uchar src_samp_a;
-	uchar src_samp_b;
+	byte src_samp_a;
+	byte src_samp_b;
 
-	const uchar *read_pa;
-	const uchar *read_pb;
+	const byte *read_pa;
+	const byte *read_pb;
 
-	uchar *write_pa;
-	uchar *write_pb;
-	uchar *write_pc;
+	byte *write_pa;
+	byte *write_pb;
+	byte *write_pc;
 
 	size_t src_i;
 
@@ -288,7 +288,7 @@ int SndRes::ITEVOC_Resample(long src_freq, long dst_freq, uchar *src_buf,
 	assert(dst_freq == 22050);
 
 	resamp_len = (size_t) (src_buf_len * 1.5);
-	resamp_buf = (uchar *)malloc(resamp_len);
+	resamp_buf = (byte *)malloc(resamp_len);
 	if (resamp_buf == NULL) {
 		return R_FAILURE;
 	}
@@ -308,7 +308,7 @@ int SndRes::ITEVOC_Resample(long src_freq, long dst_freq, uchar *src_buf,
 		read_pb += 2;
 
 		*write_pa = src_samp_a;
-		*write_pb = (uchar) ((src_samp_a / 2) + (src_samp_b / 2));
+		*write_pb = (byte) ((src_samp_a / 2) + (src_samp_b / 2));
 		*write_pc = src_samp_b;
 
 		write_pa += 3;

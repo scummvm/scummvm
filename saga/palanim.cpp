@@ -48,12 +48,12 @@ namespace Saga {
 
 static PALANIM_DATA PAnimData;
 
-int PALANIM_Load(const uchar * resdata, size_t resdata_len)
+int PALANIM_Load(const byte * resdata, size_t resdata_len)
 {
-	const uchar *read_p = resdata;
+	const byte *read_p = resdata;
 	void *test_p;
 
-	uint i;
+	uint16 i;
 
 	YS_IGNORE_PARAM(resdata_len);
 
@@ -108,7 +108,7 @@ int PALANIM_Load(const uchar * resdata, size_t resdata_len)
 			return R_MEM;
 		}
 
-		PAnimData.entries[i].pal_index = (uchar *)test_p;
+		PAnimData.entries[i].pal_index = (byte *)test_p;
 
 #       if 0
 		R_printf(R_STDOUT,
@@ -127,18 +127,18 @@ int PALANIM_Load(const uchar * resdata, size_t resdata_len)
 
 		for (p = 0; p < pal_count; p++) {
 			PAnimData.entries[i].pal_index[p] =
-			    (uchar) ys_read_u8(read_p, &read_p);
+			    (byte) ys_read_u8(read_p, &read_p);
 		}
 
 		for (c = 0; c < color_count; c++) {
 			PAnimData.entries[i].colors[c].red =
-			    (uchar) ys_read_u8(read_p, &read_p);
+			    (byte) ys_read_u8(read_p, &read_p);
 
 			PAnimData.entries[i].colors[c].green =
-			    (uchar) ys_read_u8(read_p, &read_p);
+			    (byte) ys_read_u8(read_p, &read_p);
 
 			PAnimData.entries[i].colors[c].blue =
-			    (uchar) ys_read_u8(read_p, &read_p);
+			    (byte) ys_read_u8(read_p, &read_p);
 		}
 	}
 
@@ -172,12 +172,12 @@ int PALANIM_CycleStep(int vectortime)
 	R_SURFACE *back_buf;
 
 	static PALENTRY pal[256];
-	uint pal_index;
-	uint col_index;
+	uint16 pal_index;
+	uint16 col_index;
 
-	uint i, j;
-	uint cycle;
-	uint cycle_limit;
+	uint16 i, j;
+	uint16 cycle;
+	uint16 cycle_limit;
 
 	R_EVENT event;
 
@@ -200,14 +200,14 @@ int PALANIM_CycleStep(int vectortime)
 			col_index = (cycle + j) % cycle_limit;
 
 			pal[pal_index].red =
-			    (uchar) PAnimData.entries[i].colors[col_index].red;
+			    (byte) PAnimData.entries[i].colors[col_index].red;
 
 			pal[pal_index].green =
-			    (uchar) PAnimData.entries[i].colors[col_index].
+			    (byte) PAnimData.entries[i].colors[col_index].
 			    green;
 
 			pal[pal_index].blue =
-			    (uchar) PAnimData.entries[i].colors[col_index].
+			    (byte) PAnimData.entries[i].colors[col_index].
 			    blue;
 		}
 
@@ -234,7 +234,7 @@ int PALANIM_CycleStep(int vectortime)
 int PALANIM_Free(void)
 {
 
-	uint i;
+	uint16 i;
 
 	if (!PAnimData.loaded) {
 		return R_FAILURE;

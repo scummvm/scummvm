@@ -55,15 +55,15 @@ int ISOMAP_Init(void)
 	return R_SUCCESS;
 }
 
-int ISOMAP_LoadTileset(const uchar * tileres_p, size_t tileres_len)
+int ISOMAP_LoadTileset(const byte * tileres_p, size_t tileres_len)
 {
 
 	R_ISOTILE_ENTRY first_entry;
 	R_ISOTILE_ENTRY *tile_tbl;
 
-	uint i;
+	uint16 i;
 
-	const uchar *read_p = tileres_p;
+	const byte *read_p = tileres_p;
 	size_t read_len = tileres_len;
 
 	assert((IsoModule.init) && (!IsoModule.tiles_loaded));
@@ -100,16 +100,16 @@ int ISOMAP_LoadTileset(const uchar * tileres_p, size_t tileres_len)
 	return R_SUCCESS;
 }
 
-int ISOMAP_LoadMetaTileset(const uchar * mtileres_p, size_t mtileres_len)
+int ISOMAP_LoadMetaTileset(const byte * mtileres_p, size_t mtileres_len)
 {
 
 	R_ISO_METATILE_ENTRY *mtile_tbl;
 
-	const uchar *read_p = mtileres_p;
+	const byte *read_p = mtileres_p;
 	size_t read_len = mtileres_len;
 
-	uint mtile_ct;
-	uint ct;
+	uint16 mtile_ct;
+	uint16 ct;
 
 	int i;
 
@@ -148,10 +148,10 @@ int ISOMAP_LoadMetaTileset(const uchar * mtileres_p, size_t mtileres_len)
 	return R_SUCCESS;
 }
 
-int ISOMAP_LoadMetamap(const uchar * mm_res_p, size_t mm_res_len)
+int ISOMAP_LoadMetamap(const byte * mm_res_p, size_t mm_res_len)
 {
 
-	const uchar *read_p = mm_res_p;
+	const byte *read_p = mm_res_p;
 	size_t read_len = mm_res_len;
 
 	int i;
@@ -225,7 +225,7 @@ int ISOMAP_DrawMetamap(R_SURFACE * dst_s, int map_x, int map_y)
 }
 
 int
-ISOMAP_DrawMetaTile(R_SURFACE * dst_s, uint mtile_i, int mtile_x, int mtile_y)
+ISOMAP_DrawMetaTile(R_SURFACE * dst_s, uint16 mtile_i, int mtile_x, int mtile_y)
 {
 
 	int tile_xi;
@@ -276,13 +276,13 @@ ISOMAP_DrawMetaTile(R_SURFACE * dst_s, uint mtile_i, int mtile_x, int mtile_y)
 	return R_SUCCESS;
 }
 
-int ISOMAP_DrawTile(R_SURFACE * dst_s, uint tile_i, int tile_x, int tile_y)
+int ISOMAP_DrawTile(R_SURFACE * dst_s, uint16 tile_i, int tile_x, int tile_y)
 {
 
-	const uchar *tile_p;
-	const uchar *read_p;
+	const byte *tile_p;
+	const byte *read_p;
 
-	uchar *draw_p;
+	byte *draw_p;
 
 	int draw_x;
 	int draw_y;

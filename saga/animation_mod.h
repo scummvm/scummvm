@@ -46,18 +46,18 @@ int ANIM_Init(void);
 int ANIM_Shutdown(void);
 
 int
-ANIM_Load(const uchar * anim_resdata,
-    size_t anim_resdata_len, uint * anim_id_p);
+ANIM_Load(const byte * anim_resdata,
+    size_t anim_resdata_len, uint16 * anim_id_p);
 
-int ANIM_Free(uint anim_id);
+int ANIM_Free(uint16 anim_id);
 
-int ANIM_Play(uint anim_id, int vector_time);
+int ANIM_Play(uint16 anim_id, int vector_time);
 
-int ANIM_Link(uint anim_id1, uint anim_id2);
+int ANIM_Link(uint16 anim_id1, uint16 anim_id2);
 
-int ANIM_SetFlag(uint anim_id, uint flag);
+int ANIM_SetFlag(uint16 anim_id, uint16 flag);
 
-int ANIM_SetFrameTime(uint anim_id, int time);
+int ANIM_SetFrameTime(uint16 anim_id, int time);
 
 int ANIM_Reset(void);
 

@@ -69,16 +69,6 @@ typedef struct R_SEMAPHORE_tag R_SEMAPHORE;
  * Define common data types
 \*--------------------------------------------------------------------------*/
 
-#ifndef HAVE_UCHAR
-typedef unsigned char uchar;
-#endif
-#ifndef HAVE_ULONG
-typedef unsigned long ulong;
-#endif
-#ifndef HAVE_UINT
-typedef unsigned int uint;
-#endif
-
 typedef Common::Point R_POINT;
 typedef Common::Rect R_RECT;
 
@@ -91,7 +81,7 @@ struct R_COLOR {
 };
 
 struct R_SURFACE {
-	uchar *buf;
+	byte *buf;
 	int buf_w;
 	int buf_h;
 	int buf_pitch;
@@ -132,10 +122,10 @@ enum R_ERRORCODE {
 /*
  * r_transitions.c
 \*--------------------------------------------------------------------------*/
-int TRANSITION_Dissolve(uchar *dst_img,
+int TRANSITION_Dissolve(byte *dst_img,
     int dst_w,
     int dst_h,
-    int dst_p, const uchar *src_img, int src_p, int flags, double percent);
+    int dst_p, const byte *src_img, int src_p, int flags, double percent);
 
 /*--------------------------------------------------------------------------*\
  * System specific routines
@@ -147,7 +137,6 @@ int TRANSITION_Dissolve(uchar *dst_img,
 #define R_PAL_ENTRIES 256
 
 struct R_SYSGFX_INIT {
-
 	int backbuf_w;
 	int backbuf_h;
 	int backbuf_bpp;
@@ -157,7 +146,6 @@ struct R_SYSGFX_INIT {
 	int screen_bpp;
 
 	int fullscreen;
-
 };
 
 int SYSGFX_Init(R_SYSGFX_INIT *);

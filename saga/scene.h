@@ -71,10 +71,10 @@ enum SAGA_RESOURCE_TYPES {
 
 struct R_SCENE_RESLIST {
 
-	ulong res_number;
+	uint32 res_number;
 	int res_type;
 
-	uchar *res_data;
+	byte *res_data;
 	size_t res_data_len;
 
 };
@@ -105,10 +105,10 @@ struct SCENE_IMAGE {
 	int h;
 	int p;
 
-	uchar *buf;
+	byte *buf;
 	size_t buf_len;
 
-	uchar *res_buf;
+	byte *res_buf;
 	size_t res_len;
 
 	PALENTRY pal[256];
@@ -126,7 +126,7 @@ struct SCENE_ANIMINFO {
 
 struct R_SCENE_QUEUE {
 
-	ulong scene_n;
+	uint32 scene_n;
 	R_SCENE_DESC *scene_desc;
 	int load_flag;
 
@@ -181,9 +181,9 @@ int
 SCENE_Load(int scene,
     int load_flag, R_SCENE_PROC scene_proc, R_SCENE_DESC *);
 
-int LoadSceneDescriptor(ulong res_number);
+int LoadSceneDescriptor(uint32 res_number);
 
-int LoadSceneResourceList(ulong res_number);
+int LoadSceneResourceList(uint32 res_number);
 
 int ProcessSceneResources(void);
 

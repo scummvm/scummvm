@@ -34,11 +34,11 @@
 namespace Saga {
 
 int
-IMG_DecodeBGImage(const uchar * image_data,
+IMG_DecodeBGImage(const byte * image_data,
     size_t image_size,
-    uchar ** output_buf, size_t * output_buf_len, int *w, int *h);
+    byte ** output_buf, size_t * output_buf_len, int *w, int *h);
 
-const uchar *IMG_GetImagePal(const uchar * image_data, size_t image_size);
+const byte *IMG_GetImagePal(const byte * image_data, size_t image_size);
 
 } // End of namespace Saga
 

@@ -71,7 +71,7 @@ int ANIM_Init(void)
 
 int ANIM_Shutdown(void)
 {
-	uint i;
+	uint16 i;
 
 	for (i = 0; i < R_MAX_ANIMATIONS; i++) {
 
@@ -84,13 +84,13 @@ int ANIM_Shutdown(void)
 }
 
 int
-ANIM_Load(const uchar * anim_resdata,
-    size_t anim_resdata_len, uint * anim_id_p)
+ANIM_Load(const byte * anim_resdata,
+    size_t anim_resdata_len, uint16 * anim_id_p)
 {
 	R_ANIMATION *new_anim;
 
-	uint anim_id = 0;
-	uint i;
+	uint16 anim_id = 0;
+	uint16 i;
 
 	if (!AnimInfo.initialized) {
 		return R_FAILURE;
@@ -176,7 +176,7 @@ ANIM_Load(const uchar * anim_resdata,
 	return R_SUCCESS;
 }
 
-int ANIM_Link(uint anim_id1, uint anim_id2)
+int ANIM_Link(uint16 anim_id1, uint16 anim_id2)
 {
 	R_ANIMATION *anim1;
 	R_ANIMATION *anim2;
@@ -202,22 +202,22 @@ int ANIM_Link(uint anim_id1, uint anim_id2)
 	return R_SUCCESS;
 }
 
-int ANIM_Play(uint anim_id, int vector_time)
+int ANIM_Play(uint16 anim_id, int vector_time)
 {
 
 	R_EVENT event;
 	R_ANIMATION *anim;
 	R_ANIMATION *link_anim;
-	uint link_anim_id;
+	uint16 link_anim_id;
 
 	R_BUFFER_INFO buf_info;
 
-	uchar *display_buf;
+	byte *display_buf;
 
-	const uchar *nextf_p;
+	const byte *nextf_p;
 	size_t nextf_len;
 
-	uint frame;
+	uint16 frame;
 	int result;
 
 	R_GAME_DISPLAYINFO disp_info;
@@ -354,7 +354,7 @@ int ANIM_Play(uint anim_id, int vector_time)
 
 int ANIM_Reset(void)
 {
-	uint i;
+	uint16 i;
 
 	for (i = 0; i < R_MAX_ANIMATIONS; i++) {
 
@@ -366,7 +366,7 @@ int ANIM_Reset(void)
 	return R_SUCCESS;
 }
 
-int ANIM_SetFlag(uint anim_id, uint flag)
+int ANIM_SetFlag(uint16 anim_id, uint16 flag)
 {
 	R_ANIMATION *anim;
 
@@ -386,7 +386,7 @@ int ANIM_SetFlag(uint anim_id, uint flag)
 	return R_SUCCESS;
 }
 
-int ANIM_SetFrameTime(uint anim_id, int time)
+int ANIM_SetFrameTime(uint16 anim_id, int time)
 {
 	R_ANIMATION *anim;
 
@@ -406,7 +406,7 @@ int ANIM_SetFrameTime(uint anim_id, int time)
 	return R_SUCCESS;
 }
 
-int ANIM_Free(uint anim_id)
+int ANIM_Free(uint16 anim_id)
 {
 	R_ANIMATION *anim;
 
@@ -434,7 +434,7 @@ int ANIM_Free(uint anim_id)
 	return R_SUCCESS;
 }
 
-int ANIM_GetNumFrames(const uchar * anim_resource, uint * n_frames)
+int ANIM_GetNumFrames(const byte * anim_resource, uint16 * n_frames)
 /*--------------------------------------------------------------------------*\
  * The actual number of frames present in an animation resource is 
  * sometimes less than number present in the .nframes member of the
@@ -449,7 +449,7 @@ int ANIM_GetNumFrames(const uchar * anim_resource, uint * n_frames)
 
 	int x;
 
-	const uchar *read_p = anim_resource;
+	const byte *read_p = anim_resource;
 
 	if (!AnimInfo.initialized) {
 
@@ -495,34 +495,34 @@ int ANIM_GetNumFrames(const uchar * anim_resource, uint * n_frames)
 }
 
 int
-ITE_DecodeFrame(const uchar * resdata,
-    size_t frame_offset, uchar * buf, size_t buf_len)
+ITE_DecodeFrame(const byte * resdata,
+    size_t frame_offset, byte * buf, size_t buf_len)
 {
 
 	R_ANIMATION_HEADER ah;
 	R_FRAME_HEADER fh;
 
-	const uchar *read_p = resdata;
-	uchar *write_p;
+	const byte *read_p = resdata;
+	byte *write_p;
 
-	uint magic;
+	uint16 magic;
 
-	uint x_start;
-	uint y_start;
-	ulong screen_w;
-	ulong screen_h;
+	uint16 x_start;
+	uint16 y_start;
+	uint32 screen_w;
+	uint32 screen_h;
 
 	int mark_byte;
-	uchar data_byte;
+	byte data_byte;
 	int new_row;
 
-	uint control_ch;
-	uint param_ch;
+	uint16 control_ch;
+	uint16 param_ch;
 
-	uint runcount;
+	uint16 runcount;
 	int x_vector;
 
-	uint i;
+	uint16 i;
 
 	if (!AnimInfo.initialized) {
 
@@ -705,10 +705,10 @@ ITE_DecodeFrame(const uchar * resdata,
 }
 
 int
-IHNM_DecodeFrame(uchar * decode_buf,
+IHNM_DecodeFrame(byte * decode_buf,
     size_t decode_buf_len,
-    const uchar * thisf_p,
-    size_t thisf_len, const uchar ** nextf_p, size_t * nextf_len)
+    const byte * thisf_p,
+    size_t thisf_len, const byte ** nextf_p, size_t * nextf_len)
 {
 
 	int in_ch;
@@ -719,23 +719,23 @@ IHNM_DecodeFrame(uchar * decode_buf,
 	int control_ch;
 	int param_ch;
 
-	uchar data_pixel;
+	byte data_pixel;
 
 	int x_origin = 0;
 	int y_origin = 0;
 	int x_vector;
 	int new_row;
 
-	uint runcount;
-	uint c;
+	uint16 runcount;
+	uint16 c;
 
 	size_t in_ch_offset;
 
-	const uchar *inbuf_p = thisf_p;
+	const byte *inbuf_p = thisf_p;
 	size_t inbuf_remain = thisf_len;
 
-	uchar *outbuf_p = decode_buf;
-	uchar *outbuf_endp = (decode_buf + decode_buf_len) - 1;
+	byte *outbuf_p = decode_buf;
+	byte *outbuf_endp = (decode_buf + decode_buf_len) - 1;
 	size_t outbuf_remain = decode_buf_len;
 
 	R_GAME_DISPLAYINFO di;
@@ -1017,22 +1017,22 @@ IHNM_DecodeFrame(uchar * decode_buf,
 }
 
 int
-ANIM_GetFrameOffset(const uchar * resdata,
-    uint find_frame, size_t * frame_offset_p)
+ANIM_GetFrameOffset(const byte * resdata,
+    uint16 find_frame, size_t * frame_offset_p)
 {
 	R_ANIMATION_HEADER ah;
 
-	uint num_frames;
-	uint current_frame;
+	uint16 num_frames;
+	uint16 current_frame;
 
-	const uchar *read_p = resdata;
-	const uchar *search_ptr;
+	const byte *read_p = resdata;
+	const byte *search_ptr;
 
-	uchar mark_byte;
-	uint control;
-	uint runcount;
+	byte mark_byte;
+	uint16 control;
+	uint16 runcount;
 
-	uint magic;
+	uint16 magic;
 
 	if (!AnimInfo.initialized) {
 
@@ -1163,9 +1163,9 @@ ANIM_GetFrameOffset(const uchar * resdata,
 
 static void CF_anim_info(int argc, char *argv[])
 {
-	uint anim_ct;
-	uint i;
-	uint idx;
+	uint16 anim_ct;
+	uint16 i;
+	uint16 idx;
 
 	YS_IGNORE_PARAM(argc);
 	YS_IGNORE_PARAM(argv);

@@ -48,7 +48,7 @@ typedef int (*R_GAME_VERIFYFUNC) (const char *);
 struct R_GAME_FILEDESC {
 
 	const char *gf_fname;
-	uint gf_type;
+	uint16 gf_type;
 
 };
 
@@ -85,8 +85,8 @@ struct R_GAME_FILEDATA {
 
 	R_RSCFILE_CONTEXT *file_ctxt;
 
-	uint file_types;
-	uint file_flags;
+	uint16 file_types;
+	uint16 file_flags;
 
 };
 
@@ -104,10 +104,10 @@ struct R_GAMEMODULE {
 
 	char game_language[R_GAME_LANGSTR_LIMIT];
 
-	uint gfile_n;
+	uint16 gfile_n;
 	R_GAME_FILEDATA *gfile_data;
 
-	uint gd_fontct;
+	uint16 gd_fontct;
 	R_GAME_FONTDESC *gd_fontdescs;
 
 	int err_n;
@@ -117,9 +117,9 @@ struct R_GAMEMODULE {
 
 int LoadLanguage(void);
 
-int DetectGame(const char *game_dir, uint * game_n_p);
+int DetectGame(const char *game_dir, uint16 * game_n_p);
 
-int LoadGame(const char *game_dir, uint game_n_p);
+int LoadGame(const char *game_dir, uint16 game_n_p);
 
 int Verify_ITEDEMO(const char *game_dir);
 int Verify_ITEDISK(const char *game_dir);

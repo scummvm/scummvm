@@ -63,7 +63,7 @@ enum R_INTRO_SCENE_DIALOGUE_INFO {
 
 struct R_INTRO_DIALOGUE {
 
-	ulong i_voice_rn;
+	uint32 i_voice_rn;
 	const char *i_cvar_name;
 	char i_str[R_INTRO_STRMAX];
 

@@ -45,24 +45,24 @@ namespace Saga {
 
 struct R_VOC_HEADER_BLOCK {
 	char ft_desc[20];	/* BYTE [20] */
-	uint db_offset;		/* WORD */
-	uint voc_version;	/* WORD */
-	uint voc_fileid;	/* WORD */
+	uint16 db_offset;		/* WORD */
+	uint16 voc_version;	/* WORD */
+	uint16 voc_fileid;	/* WORD */
 };
 
 #define R_VOC_HEADER_BLOCK_LEN 26
 
 struct R_VOC_GENBLOCK {
 	int block_id;		/* BYTE */
-	ulong block_len;	/* BYTE[3] */
+	uint32 block_len;	/* BYTE[3] */
 };
 
 #define R_VOC_GENBLOCK_LEN 4
 
 struct R_VOC_BLOCK1 {
 	int block_id;		/* BYTE */
-	ulong block_len;	/* BYTE[3] */
-	uint time_constant;	/* BYTE */
+	uint32 block_len;	/* BYTE[3] */
+	uint16 time_constant;	/* BYTE */
 	int pack_method;	/* BYTE */
 };
 
@@ -71,14 +71,14 @@ class SndRes {
 
 	SndRes(SagaEngine *vm);
 
-	int loadSound(ulong sound_rn);
-	int playVoice(ulong voice_rn);
-	int getVoiceLength(ulong voice_rn);
-	int ITEVOC_Resample(long src_freq, long dst_freq, uchar *src_buf,
-						size_t src_buf_len, uchar **dst_buf, size_t *dst_buf_len);
+	int loadSound(uint32 sound_rn);
+	int playVoice(uint32 voice_rn);
+	int getVoiceLength(uint32 voice_rn);
+	int ITEVOC_Resample(long src_freq, long dst_freq, byte *src_buf,
+						size_t src_buf_len, byte **dst_buf, size_t *dst_buf_len);
 
  private:
-	int load(R_RSCFILE_CONTEXT *snd_ctxt, ulong snd_rn, R_SOUNDBUFFER *snd_buf_i);
+	int load(R_RSCFILE_CONTEXT *snd_ctxt, uint32 snd_rn, R_SOUNDBUFFER *snd_buf_i);
 	int loadVocSound(byte *snd_res, size_t snd_res_len, R_SOUNDBUFFER *snd_buf_i);
 
 	int _init;

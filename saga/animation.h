@@ -45,19 +45,19 @@ namespace Saga {
 
 struct R_ANIMATION_HEADER {
 
-	uint magic;
+	uint16 magic;
 
-	uint screen_w;
-	uint screen_h;
+	uint16 screen_w;
+	uint16 screen_h;
 
-	uint unknown06;
-	uint unknown07;
+	uint16 unknown06;
+	uint16 unknown07;
 
-	uint nframes;
-	uint flags;
+	uint16 nframes;
+	uint16 flags;
 
-	uint unknown10;
-	uint unknown11;
+	uint16 unknown10;
+	uint16 unknown11;
 
 };
 
@@ -81,26 +81,26 @@ struct R_FRAME_HEADER {
 /* Animation info array member */
 struct R_ANIMATION {
 
-	const uchar *resdata;
+	const byte *resdata;
 	size_t resdata_len;
 
-	uint n_frames;
+	uint16 n_frames;
 	size_t *frame_offsets;
 
-	uint current_frame;
-	uint end_frame;
-	uint stop_frame;
+	uint16 current_frame;
+	uint16 end_frame;
+	uint16 stop_frame;
 
-	const uchar *cur_frame_p;
+	const byte *cur_frame_p;
 	size_t cur_frame_len;
 
 	int frame_time;
 
-	uint play_flag;
+	uint16 play_flag;
 	int link_flag;
-	uint link_id;
+	uint16 link_id;
 
-	uint flags;
+	uint16 flags;
 
 };
 
@@ -108,28 +108,28 @@ struct R_ANIMINFO {
 
 	int initialized;
 
-	uint anim_count;
-	uint anim_limit;
+	uint16 anim_count;
+	uint16 anim_limit;
 
 	R_ANIMATION *anim_tbl[R_MAX_ANIMATIONS];
 
 };
 
-int ANIM_GetNumFrames(const uchar * anim_resource, uint * n_frames);
+int ANIM_GetNumFrames(const byte * anim_resource, uint16 * n_frames);
 
 int
-ITE_DecodeFrame(const uchar * anim_resource,
-    size_t frame_offset, uchar * buf, size_t buf_len);
+ITE_DecodeFrame(const byte * anim_resource,
+    size_t frame_offset, byte * buf, size_t buf_len);
 
 int
-IHNM_DecodeFrame(uchar * decode_buf,
+IHNM_DecodeFrame(byte * decode_buf,
     size_t decode_buf_len,
-    const uchar * thisf_p,
-    size_t thisf_len, const uchar ** nextf_p, size_t * nextf_len);
+    const byte * thisf_p,
+    size_t thisf_len, const byte ** nextf_p, size_t * nextf_len);
 
 int
-ANIM_GetFrameOffset(const uchar * anim_resource,
-    uint find_frame, size_t * frame_offset);
+ANIM_GetFrameOffset(const byte * anim_resource,
+    uint16 find_frame, size_t * frame_offset);
 
 static void CF_anim_info(int argc, char *argv[]);
 

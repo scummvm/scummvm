@@ -51,7 +51,7 @@ struct R_SPRITELIST_ENTRY {
 
 struct R_SPRITELIST_OFFSET {
 
-	uint data_idx;
+	uint16 data_idx;
 	size_t offset;
 
 };
@@ -64,7 +64,7 @@ struct R_SPRITELIST_tag {
 	R_SPRITELIST_OFFSET *offset_list;
 
 	int slist_rn;
-	uchar *sprite_data[R_APPENDMAX];
+	byte *sprite_data[R_APPENDMAX];
 
 };
 
@@ -74,14 +74,14 @@ struct R_SPRITE_MODULE {
 
 	R_RSCFILE_CONTEXT *sprite_ctxt;
 
-	uchar *decode_buf;
+	byte *decode_buf;
 	size_t decode_buf_len;
 
 };
 
 int
-DecodeRLESprite(const uchar * inbuf,
-    size_t inbuf_len, uchar * outbuf, size_t outbuf_len);
+DecodeRLESprite(const byte * inbuf,
+    size_t inbuf_len, byte * outbuf, size_t outbuf_len);
 
 } // End of namespace Saga
 

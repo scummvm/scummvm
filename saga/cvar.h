@@ -45,9 +45,9 @@ struct R_SUBCVAR_INT {
 
 struct R_SUBCVAR_UINT {
 
-	cv_uint_t *var_p;
-	cv_uint_t ubound;
-	cv_uint_t lbound;
+	cv_uint16_t *var_p;
+	cv_uint16_t ubound;
+	cv_uint16_t lbound;
 
 };
 
@@ -80,7 +80,7 @@ typedef struct R_CVAR_tag {
 	int type;
 	const char *name;
 	const char *section;
-	uint flags;
+	uint16 flags;
 
 	union {
 		R_SUBCVAR_INT i;

@@ -41,12 +41,12 @@ struct R_SOUNDBUFFER {
 	byte *res_data;
 	uint32 res_len;
 
-	uint s_freq;
+	uint16 s_freq;
 	int s_samplebits;
 	int s_stereo;
 	int s_signed;
 
-	const uchar *s_buf;
+	const byte *s_buf;
 	size_t s_buf_len;
 };
 

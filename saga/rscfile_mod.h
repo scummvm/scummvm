@@ -44,15 +44,15 @@ int RSC_OpenContext(R_RSCFILE_CONTEXT *, const char *);
 
 int RSC_CloseContext(R_RSCFILE_CONTEXT *);
 
-ulong RSC_GetResourceCount(R_RSCFILE_CONTEXT *);
+uint32 RSC_GetResourceCount(R_RSCFILE_CONTEXT *);
 
-int RSC_GetResourceSize(R_RSCFILE_CONTEXT *, ulong, ulong *);
+int RSC_GetResourceSize(R_RSCFILE_CONTEXT *, uint32, uint32 *);
 
-int RSC_GetResourceOffset(R_RSCFILE_CONTEXT *, ulong, ulong *);
+int RSC_GetResourceOffset(R_RSCFILE_CONTEXT *, uint32, uint32 *);
 
-int RSC_LoadResource(R_RSCFILE_CONTEXT *, ulong, uchar **, size_t *);
+int RSC_LoadResource(R_RSCFILE_CONTEXT *, uint32, byte **, size_t *);
 
-int RSC_FreeResource(uchar *);
+int RSC_FreeResource(byte *);
 
 } // End of namespace Saga
 

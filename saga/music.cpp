@@ -158,11 +158,11 @@ Music::~Music() {
 	delete _player;
 }
 
-int Music::play(ulong music_rn, uint flags) {
+int Music::play(uint32 music_rn, uint16 flags) {
 	R_RSCFILE_CONTEXT *rsc_ctxt = NULL;
 	const char *midi_file = NULL;
 
-	uchar *resource_data;
+	byte *resource_data;
 	size_t resource_size;
 
 	if (!_musicInitialized) {
@@ -310,7 +310,7 @@ int Music::play(ulong music_rn, uint flags) {
 	if (midi_file) {
 		debug(0, "Using external MIDI file: %s.mid", midi_file);
 		resource_size = f_midi.size();
-		resource_data = (uchar *) malloc(resource_size);
+		resource_data = (byte *) malloc(resource_size);
 		f_midi.read(resource_data, resource_size);
 		f_midi.close();
 

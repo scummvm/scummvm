@@ -406,7 +406,7 @@ int GAME_Register(void)
 
 int GAME_Init(void)
 {
-	uint game_n;
+	uint16 game_n;
 	char *game_dir;
 
 	game_dir = GameModule.game_dir;
@@ -445,7 +445,7 @@ int LoadLanguage(void)
 
 	char lang_file[R_MAXPATH];
 	// char lang_path[R_MAXPATH];
-	uint game_n;
+	uint16 game_n;
 
 	File test_file;
 
@@ -508,11 +508,11 @@ const char *GAME_GetErrS(void)
 	    ? "No error description." : GameModule.err_str;
 }
 
-int GAME_GetFileContext(R_RSCFILE_CONTEXT ** ctxt_p, uint r_type, int param)
+int GAME_GetFileContext(R_RSCFILE_CONTEXT ** ctxt_p, uint16 r_type, int param)
 {
 
 	R_RSCFILE_CONTEXT *found_ctxt = NULL;
-	uint i;
+	uint16 i;
 
 	YS_IGNORE_PARAM(param);
 
@@ -540,13 +540,13 @@ int GAME_GetFileContext(R_RSCFILE_CONTEXT ** ctxt_p, uint r_type, int param)
 	return R_SUCCESS;
 }
 
-int DetectGame(const char *game_dir, uint * game_n_p)
+int DetectGame(const char *game_dir, uint16 * game_n_p)
 {
-	uint game_count = ARRAYSIZE(GameDescs);
-	uint game_n;
+	uint16 game_count = ARRAYSIZE(GameDescs);
+	uint16 game_n;
 
-	uint file_count;
-	uint file_n;
+	uint16 file_count;
+	uint16 file_n;
 
 	File test_file;
 
@@ -604,17 +604,17 @@ int DetectGame(const char *game_dir, uint * game_n_p)
 	return R_FAILURE;
 }
 
-int LoadGame(const char *game_dir, uint game_n)
+int LoadGame(const char *game_dir, uint16 game_n)
 {
 
 	R_RSCFILE_CONTEXT *load_ctxt;
 
-	uint game_count = ARRAYSIZE(GameDescs);
+	uint16 game_count = ARRAYSIZE(GameDescs);
 
 	const char *game_fname;
-	uint game_filect;
+	uint16 game_filect;
 
-	uint i;
+	uint16 i;
 
 	if ((game_dir == NULL) || (game_n >= game_count)) {
 
@@ -755,8 +755,8 @@ int Verify_ITEDISK(const char *game_dir)
 
 	R_RSCFILE_CONTEXT *test_ctx;
 
-	ulong script_lut_len;
-	ulong script_lut_rn;
+	uint32 script_lut_len;
+	uint32 script_lut_rn;
 
 	int verified = 0;
 

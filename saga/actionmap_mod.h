@@ -37,7 +37,7 @@ namespace Saga {
 int ACTIONMAP_Register(void);
 int ACTIONMAP_Init(void);
 
-int ACTIONMAP_Load(const uchar * exmap_res, size_t exmap_res_len);
+int ACTIONMAP_Load(const byte * exmap_res, size_t exmap_res_len);
 int ACTIONMAP_Draw(R_SURFACE * ds, int color);
 
 int ACTIONMAP_Free(void);

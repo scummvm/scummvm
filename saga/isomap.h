@@ -73,29 +73,29 @@ struct R_ISOMAP_MODULE {
 	int init;
 
 	int tiles_loaded;
-	const uchar *tileres_p;
+	const byte *tileres_p;
 	size_t tileres_len;
-	uint tile_ct;
+	uint16 tile_ct;
 	R_ISOTILE_ENTRY *tile_tbl;
 
 	int mtiles_loaded;
-	const uchar *mtileres_p;
+	const byte *mtileres_p;
 	size_t mtileres_len;
-	uint mtile_ct;
+	uint16 mtile_ct;
 	R_ISO_METATILE_ENTRY *mtile_tbl;
 
 	int metamap_loaded;
 	int metamap_n;
-	uint metamap_tbl[SAGA_METAMAP_SIZE];
-	const uchar *mm_res_p;
+	uint16 metamap_tbl[SAGA_METAMAP_SIZE];
+	const byte *mm_res_p;
 	size_t mm_res_len;
 
 };
 
-int ISOMAP_DrawTile(R_SURFACE * dst_s, uint tile_i, int tile_x, int tile_y);
+int ISOMAP_DrawTile(R_SURFACE * dst_s, uint16 tile_i, int tile_x, int tile_y);
 
 int
-ISOMAP_DrawMetaTile(R_SURFACE * dst_s, uint mtile_i, int mtile_x, int mtile_y);
+ISOMAP_DrawMetaTile(R_SURFACE * dst_s, uint16 mtile_i, int mtile_x, int mtile_y);
 
 int ISOMAP_DrawMetamap(R_SURFACE * dst_s, int map_x, int map_y);
 

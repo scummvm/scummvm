@@ -74,7 +74,7 @@ int SPRITE_Init(void)
 
 	SpriteModule.decode_buf_len = R_DECODE_BUF_LEN;
 
-	SpriteModule.decode_buf = (uchar *)malloc(R_DECODE_BUF_LEN);
+	SpriteModule.decode_buf = (byte *)malloc(R_DECODE_BUF_LEN);
 	if (SpriteModule.decode_buf == NULL) {
 		return R_MEM;
 	}
@@ -101,13 +101,13 @@ int SPRITE_LoadList(int resource_num, R_SPRITELIST ** sprite_list_p)
 {
 	R_SPRITELIST *new_slist;
 
-	uchar *spritelist_data;
+	byte *spritelist_data;
 	size_t spritelist_len;
 
-	const uchar *read_p;
+	const byte *read_p;
 
-	uint sprite_count;
-	uint i;
+	uint16 sprite_count;
+	uint16 i;
 
 	new_slist = (R_SPRITELIST *)malloc(sizeof *new_slist);
 	if (new_slist == NULL) {
@@ -153,16 +153,16 @@ int SPRITE_LoadList(int resource_num, R_SPRITELIST ** sprite_list_p)
 
 int SPRITE_AppendList(int resource_num, R_SPRITELIST * spritelist)
 {
-	uchar *spritelist_data;
+	byte *spritelist_data;
 	size_t spritelist_len;
 
-	const uchar *read_p;
+	const byte *read_p;
 
 	void *test_p;
 
-	uint old_sprite_count;
-	uint new_sprite_count;
-	uint sprite_count;
+	uint16 old_sprite_count;
+	uint16 new_sprite_count;
+	uint16 sprite_count;
 
 	int i;
 
@@ -236,15 +236,15 @@ SPRITE_Draw(R_SURFACE * ds,
 	int offset;
 	int offset_idx;
 
-	uchar *sprite_p;
+	byte *sprite_p;
 
-	const uchar *sprite_data_p;
-	const uchar *read_p;
+	const byte *sprite_data_p;
+	const byte *read_p;
 
 	int i, j;
 
-	uchar *buf_row_p;
-	uchar *src_row_p;
+	byte *buf_row_p;
+	byte *src_row_p;
 
 	int s_width;
 	int s_height;
@@ -265,7 +265,7 @@ SPRITE_Draw(R_SURFACE * ds,
 	sprite_p = sprite_list->sprite_data[offset_idx];
 	sprite_p += offset;
 
-	read_p = (uchar *) sprite_p;
+	read_p = (byte *) sprite_p;
 
 	x_align = ys_read_s8(read_p, &read_p);
 	y_align = ys_read_s8(read_p, &read_p);
@@ -326,18 +326,18 @@ SPRITE_DrawOccluded(R_SURFACE * ds,
 	int offset;
 	int offset_idx;
 
-	uchar *sprite_p;
-	const uchar *sprite_data_p;
-	const uchar *read_p;
+	byte *sprite_p;
+	const byte *sprite_data_p;
+	const byte *read_p;
 
 	int i;
 
 	int x, y;
-	uchar *dst_row_p;
-	uchar *src_row_p;
-	uchar *src_p;
-	uchar *dst_p;
-	uchar *mask_p;
+	byte *dst_row_p;
+	byte *src_row_p;
+	byte *src_p;
+	byte *dst_p;
+	byte *mask_p;
 
 	int s_width;
 	int s_height;
@@ -357,10 +357,10 @@ SPRITE_DrawOccluded(R_SURFACE * ds,
 	/* BG mask variables */
 	int mask_w;
 	int mask_h;
-	uchar *mask_buf;
+	byte *mask_buf;
 	size_t mask_buf_len;
 
-	uchar *mask_row_p;
+	byte *mask_row_p;
 	int mask_z;
 
 	/* Z info variables */
@@ -499,18 +499,18 @@ SPRITE_DrawOccluded(R_SURFACE * ds,
 }
 
 int
-DecodeRLESprite(const uchar * inbuf,
-    size_t inbuf_len, uchar * outbuf, size_t outbuf_len)
+DecodeRLESprite(const byte * inbuf,
+    size_t inbuf_len, byte * outbuf, size_t outbuf_len)
 {
 
 	int bg_runcount;
 	int fg_runcount;
 
-	const uchar *inbuf_ptr;
-	uchar *outbuf_ptr;
+	const byte *inbuf_ptr;
+	byte *outbuf_ptr;
 
-	const uchar *inbuf_end;
-	uchar *outbuf_end;
+	const byte *inbuf_end;
+	byte *outbuf_end;
 
 	int c;
 
@@ -540,7 +540,7 @@ DecodeRLESprite(const uchar * inbuf,
 
 		for (c = 0; c < bg_runcount; c++) {
 
-			*outbuf_ptr = (uchar) 0;
+			*outbuf_ptr = (byte) 0;
 			if (outbuf_ptr < outbuf_end)
 				outbuf_ptr++;
 			else

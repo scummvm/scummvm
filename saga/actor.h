@@ -71,7 +71,7 @@ struct R_ACTORACTION {
 struct R_WALKINTENT {
 
 	int wi_active;
-	uint wi_flags;
+	uint16 wi_flags;
 	int wi_init;
 
 	int time;
@@ -100,7 +100,7 @@ struct R_WALKNODE {
 struct R_SPEAKINTENT {
 
 	int si_init;
-	uint si_flags;
+	uint16 si_flags;
 	int si_last_action;
 
 	YS_DL_LIST *si_diaglist;	/* Actor dialogue list */
@@ -110,7 +110,7 @@ struct R_SPEAKINTENT {
 struct R_ACTORINTENT {
 
 	int a_itype;
-	uint a_iflags;
+	uint16 a_iflags;
 	int a_idone;
 
 	void *a_data;
@@ -123,7 +123,7 @@ struct R_ACTOR {
 
 	int id;			/* Actor id */
 	int name_i;		/* Actor's index in actor name string list */
-	uint flags;
+	uint16 flags;
 
 	R_POINT a_pt;		/* Actor's logical coordinates */
 	R_POINT s_pt;		/* Actor's screen coordinates */
@@ -149,10 +149,10 @@ struct R_ACTOR {
 */
 
 	int def_action;
-	uint def_action_flags;
+	uint16 def_action_flags;
 
 	int action;
-	uint action_flags;
+	uint16 action_flags;
 
 	int action_frame;
 	int action_time;
@@ -170,7 +170,7 @@ struct R_ACTORDIALOGUE {
 
 	int d_playing;
 	const char *d_string;
-	uint d_voice_rn;
+	uint16 d_voice_rn;
 
 	long d_time;
 	int d_sem_held;
@@ -193,7 +193,7 @@ struct R_ACTOR_MODULE {
 
 	R_RSCFILE_CONTEXT *actor_ctxt;
 
-	uint count;
+	uint16 count;
 
 	int *alias_tbl;
 	YS_DL_NODE **tbl;

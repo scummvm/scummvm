@@ -67,24 +67,24 @@ static int granulate(int value, int granularity)
 }
 
 int
-IMG_DecodeBGImage(const uchar * image_data,
+IMG_DecodeBGImage(const byte * image_data,
     size_t image_size,
-    uchar ** output_buf, size_t * output_buf_len, int *w, int *h)
+    byte ** output_buf, size_t * output_buf_len, int *w, int *h)
 {
 
 	R_IMAGE_HEADER hdr;
 	int modex_height;
 
-	const uchar *RLE_data_ptr;
+	const byte *RLE_data_ptr;
 	size_t RLE_data_len;
 
-	uchar *decode_buf;
+	byte *decode_buf;
 	size_t decode_buf_len;
 
-	uchar *out_buf;
+	byte *out_buf;
 	size_t out_buf_len;
 
-	const uchar *read_p = image_data;
+	const byte *read_p = image_data;
 
 	if (image_size <= SAGA_IMAGE_DATA_OFFSET) {
 		/* Image size is way too small */
@@ -102,10 +102,10 @@ IMG_DecodeBGImage(const uchar * image_data,
 	modex_height = granulate(hdr.height, 4);
 
 	decode_buf_len = hdr.width * modex_height;
-	decode_buf = (uchar *)malloc(decode_buf_len);
+	decode_buf = (byte *)malloc(decode_buf_len);
 
 	out_buf_len = hdr.width * hdr.height;
-	out_buf = (uchar *)malloc(out_buf_len);
+	out_buf = (byte *)malloc(out_buf_len);
 
 	if (DecodeBGImageRLE(RLE_data_ptr,
 		RLE_data_len, decode_buf, decode_buf_len) != R_SUCCESS) {
@@ -137,31 +137,31 @@ IMG_DecodeBGImage(const uchar * image_data,
 }
 
 int
-DecodeBGImageRLE(const uchar * inbuf,
-    size_t inbuf_len, uchar * outbuf, size_t outbuf_len)
+DecodeBGImageRLE(const byte * inbuf,
+    size_t inbuf_len, byte * outbuf, size_t outbuf_len)
 {
 
-	const uchar *inbuf_ptr;
-	uchar *outbuf_ptr;
-	size_t inbuf_remain;
+	const byte *inbuf_ptr;
+	byte *outbuf_ptr;
+	uint16 inbuf_remain;
 
-	const uchar *inbuf_end;
-	uchar *outbuf_end;
-	size_t outbuf_remain;
+	const byte *inbuf_end;
+	byte *outbuf_end;
+	uint16 outbuf_remain;
 
-	uchar mark_byte;
+	byte mark_byte;
 	int test_byte;
 
-	uint runcount;
+	uint16 runcount;
 
-	uchar bitfield;
-	uchar bitfield_byte1;
-	uchar bitfield_byte2;
+	byte bitfield;
+	byte bitfield_byte1;
+	byte bitfield_byte2;
 
-	uchar *backtrack_ptr;
+	byte *backtrack_ptr;
 	int backtrack_amount;
 
-	uint c, b;
+	uint16 c, b;
 
 	int decode_err = 0;
 
@@ -368,18 +368,18 @@ DecodeBGImageRLE(const uchar * inbuf,
 	return R_SUCCESS;
 }
 
-int FlipImage(uchar * img_buf, int columns, int scanlines)
+int FlipImage(byte * img_buf, int columns, int scanlines)
 {
 
 	int line;
-	uchar *tmp_scan;
+	byte *tmp_scan;
 
-	uchar *flip_p1;
-	uchar *flip_p2;
+	byte *flip_p1;
+	byte *flip_p2;
 
 	int flipcount = scanlines / 2;
 
-	tmp_scan = (uchar *)malloc(columns);
+	tmp_scan = (byte *)malloc(columns);
 	if (tmp_scan == NULL) {
 		return R_FAILURE;
 	}
@@ -403,8 +403,8 @@ int FlipImage(uchar * img_buf, int columns, int scanlines)
 }
 
 int
-UnbankBGImage(uchar * dst_buf,
-    const uchar * src_buf, int columns, int scanlines)
+UnbankBGImage(byte * dst_buf,
+    const byte * src_buf, int columns, int scanlines)
 {
 
 	int x, y;
@@ -416,11 +416,11 @@ UnbankBGImage(uchar * dst_buf,
 	int rowjump_src;
 	int rowjump_dest;
 
-	const uchar *src_p;
-	uchar *dst_p;
+	const byte *src_p;
+	byte *dst_p;
 
-	const uchar *srcptr1, *srcptr2, *srcptr3, *srcptr4;
-	uchar *dstptr1, *dstptr2, *dstptr3, *dstptr4;
+	const byte *srcptr1, *srcptr2, *srcptr3, *srcptr4;
+	byte *dstptr1, *dstptr2, *dstptr3, *dstptr4;
 
 	quadruple_rows = scanlines - (scanlines % 4);
 	remain_rows = scanlines - quadruple_rows;
@@ -519,7 +519,7 @@ UnbankBGImage(uchar * dst_buf,
 	return R_SUCCESS;
 }
 
-const uchar *IMG_GetImagePal(const uchar * image_data, size_t image_size)
+const byte *IMG_GetImagePal(const byte * image_data, size_t image_size)
 {
 	if (image_size <= SAGA_IMAGE_HEADER_LEN) {
 		return NULL;

@@ -114,17 +114,17 @@ int RSC_DestroyContext(R_RSCFILE_CONTEXT * rsc_context)
 
 int RSC_LoadRSC(R_RSCFILE_CONTEXT * rsc)
 {
-	ulong res_tbl_ct;
-	ulong res_tbl_offset;
+	uint32 res_tbl_ct;
+	uint32 res_tbl_offset;
 
-	uchar tblinfo_buf[RSC_TABLEINFO_SIZE];
-	uchar *tbl_buf;
+	byte tblinfo_buf[RSC_TABLEINFO_SIZE];
+	byte *tbl_buf;
 	size_t tbl_len;
-	ulong i;
+	uint32 i;
 
 	R_RSCFILE_RESOURCE *rsc_restbl;
 
-	const uchar *read_p;
+	const byte *read_p;
 
 	read_p = tblinfo_buf;
 
@@ -155,7 +155,7 @@ int RSC_LoadRSC(R_RSCFILE_CONTEXT * rsc)
 	 * \*------------------------------------------------------------- */
 	tbl_len = RSC_TABLEENTRY_SIZE * res_tbl_ct;
 
-	tbl_buf = (uchar *)malloc(tbl_len);
+	tbl_buf = (byte *)malloc(tbl_len);
 	if (tbl_buf == NULL) {
 		return R_FAILURE;
 	}
@@ -208,13 +208,13 @@ int RSC_FreeRSC(R_RSCFILE_CONTEXT * rsc)
 	return R_SUCCESS;
 }
 
-ulong RSC_GetResourceCount(R_RSCFILE_CONTEXT * rsc)
+uint32 RSC_GetResourceCount(R_RSCFILE_CONTEXT * rsc)
 {
 	return (rsc == NULL) ? 0 : rsc->rc_res_ct;
 }
 
 int
-RSC_GetResourceSize(R_RSCFILE_CONTEXT * rsc, ulong res_num, ulong * res_size)
+RSC_GetResourceSize(R_RSCFILE_CONTEXT * rsc, uint32 res_num, uint32 * res_size)
 {
 	if ((rsc == NULL) || (res_size == NULL)) {
 		return R_FAILURE;
@@ -231,7 +231,7 @@ RSC_GetResourceSize(R_RSCFILE_CONTEXT * rsc, ulong res_num, ulong * res_size)
 
 int
 RSC_GetResourceOffset(R_RSCFILE_CONTEXT * rsc,
-    ulong res_num, ulong * res_offset)
+    uint32 res_num, uint32 * res_offset)
 {
 	if ((rsc == NULL) || (res_offset == NULL)) {
 		return R_FAILURE;
@@ -248,11 +248,11 @@ RSC_GetResourceOffset(R_RSCFILE_CONTEXT * rsc,
 
 int
 RSC_LoadResource(R_RSCFILE_CONTEXT * rsc,
-    ulong res_num, uchar ** res_p, size_t * res_size_p)
+    uint32 res_num, byte ** res_p, size_t * res_size_p)
 {
-	ulong res_offset;
+	uint32 res_offset;
 	size_t res_size;
-	uchar *res_buf;
+	byte *res_buf;
 
 	if ((rsc == NULL) || (res_p == NULL)) {
 		return R_FAILURE;
@@ -267,7 +267,7 @@ RSC_LoadResource(R_RSCFILE_CONTEXT * rsc,
 
 	rsc->rc_file.seek((long)res_offset, SEEK_SET);
 
-	res_buf = (uchar *)malloc(res_size);
+	res_buf = (byte *)malloc(res_size);
 	if (res_buf == NULL) {
 		return R_MEM;
 	}
@@ -286,7 +286,7 @@ RSC_LoadResource(R_RSCFILE_CONTEXT * rsc,
 	return R_SUCCESS;
 }
 
-int RSC_FreeResource(uchar * resource_ptr)
+int RSC_FreeResource(byte * resource_ptr)
 {
 
 	free(resource_ptr);

@@ -86,7 +86,7 @@ int SYSGFX_Init(R_SYSGFX_INIT *gfx_init) {
 	    sdl_screen->w, sdl_screen->h, sdl_screen->format->BitsPerPixel);
 
 	/* Convert sdl surface data to R surface data */
-	r_screen.buf = (uchar *)sdl_screen->pixels;
+	r_screen.buf = (byte *)sdl_screen->pixels;
 	r_screen.buf_w = sdl_screen->w;
 	r_screen.buf_h = sdl_screen->h;
 	r_screen.buf_pitch = sdl_screen->pitch;
@@ -116,7 +116,7 @@ int SYSGFX_Init(R_SYSGFX_INIT *gfx_init) {
 	}
 
 	/* Convert sdl surface data to R surface data */
-	r_back_buf.buf = (uchar *)sdl_back_buf->pixels;
+	r_back_buf.buf = (byte *)sdl_back_buf->pixels;
 	r_back_buf.buf_w = sdl_back_buf->w;
 	r_back_buf.buf_h = sdl_back_buf->h;
 	r_back_buf.buf_pitch = sdl_back_buf->pitch;
@@ -181,7 +181,7 @@ R_SURFACE *SYSGFX_FormatToDisplay(R_SURFACE *surface) {
 		return NULL;
 	}
 
-	new_r_surface->buf = (uchar *)new_sdl_surface->pixels;
+	new_r_surface->buf = (byte *)new_sdl_surface->pixels;
 	new_r_surface->buf_w = new_sdl_surface->w;
 	new_r_surface->buf_h = new_sdl_surface->h;
 	new_r_surface->buf_pitch = new_sdl_surface->pitch;
@@ -295,9 +295,9 @@ int SYSGFX_MatchColor(unsigned long colormask) {
 
 int SYSGFX_SetPalette(R_SURFACE *surface, PALENTRY *pal) {
 
-	uchar red;
-	uchar green;
-	uchar blue;
+	byte red;
+	byte green;
+	byte blue;
 
 	int color_delta;
 	int best_wdelta = 0;
@@ -388,7 +388,7 @@ int SYSGFX_PalToBlack(R_SURFACE *surface, PALENTRY *src_pal, double percent) {
 		if (new_entry < 0) {
 			cur_pal[i].r = 0;
 		} else {
-			cur_pal[i].r = (uchar) new_entry;
+			cur_pal[i].r = (byte) new_entry;
 		}
 
 		new_entry = (int)(src_pal[i].green * fpercent);
@@ -396,7 +396,7 @@ int SYSGFX_PalToBlack(R_SURFACE *surface, PALENTRY *src_pal, double percent) {
 		if (new_entry < 0) {
 			cur_pal[i].g = 0;
 		} else {
-			cur_pal[i].g = (uchar) new_entry;
+			cur_pal[i].g = (byte) new_entry;
 		}
 
 		new_entry = (int)(src_pal[i].blue * fpercent);
@@ -404,7 +404,7 @@ int SYSGFX_PalToBlack(R_SURFACE *surface, PALENTRY *src_pal, double percent) {
 		if (new_entry < 0) {
 			cur_pal[i].b = 0;
 		} else {
-			cur_pal[i].b = (uchar) new_entry;
+			cur_pal[i].b = (byte) new_entry;
 		}
 	}
 
@@ -450,7 +450,7 @@ int SYSGFX_BlackToPal(R_SURFACE *surface, PALENTRY *src_pal, double percent) {
 		if (new_entry < 0) {
 			cur_pal[i].r = 0;
 		} else {
-			cur_pal[i].r = (uchar) new_entry;
+			cur_pal[i].r = (byte) new_entry;
 		}
 
 		new_entry =
@@ -459,7 +459,7 @@ int SYSGFX_BlackToPal(R_SURFACE *surface, PALENTRY *src_pal, double percent) {
 		if (new_entry < 0) {
 			cur_pal[i].g = 0;
 		} else {
-			cur_pal[i].g = (uchar) new_entry;
+			cur_pal[i].g = (byte) new_entry;
 		}
 
 		new_entry =
@@ -468,7 +468,7 @@ int SYSGFX_BlackToPal(R_SURFACE *surface, PALENTRY *src_pal, double percent) {
 		if (new_entry < 0) {
 			cur_pal[i].b = 0;
 		} else {
-			cur_pal[i].b = (uchar) new_entry;
+			cur_pal[i].b = (byte) new_entry;
 		}
 	}
 

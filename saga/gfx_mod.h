@@ -69,14 +69,14 @@ int GFX_ClearSurface16(char *buf, int w, int h, int p);
 int GFX_DrawPalette(R_SURFACE * dst_s);
 
 int GFX_BufToSurface(R_SURFACE * ds,
-    const uchar * src,
+    const byte * src,
     int src_w, int src_h, R_RECT * src_rect, R_POINT * dst_pt);
 
 int
-GFX_BufToBuffer(uchar * dst_buf,
+GFX_BufToBuffer(byte * dst_buf,
     int dst_w,
     int dst_h,
-    const uchar * src,
+    const byte * src,
     int src_w, int src_h, R_RECT * src_rect, R_POINT * dst_pt);
 
 int GFX_DrawCursor(R_SURFACE * ds, R_POINT * p1);
