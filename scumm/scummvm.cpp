@@ -617,6 +617,8 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 	VAR_VERB_ALLOWED = 0xFF;
 	VAR_CLICK_AREA = 0xFF;
 
+	VAR_BLAST_ABOVE_TEXT = 0xFF;
+
 	// Use g_scumm from error() ONLY
 	g_scumm = this;
 
@@ -1512,7 +1514,7 @@ load_game:
 		// texts have to be drawn before the blast objects. Unless
 		// someone can think of a better way to achieve this effect.
 
-		if (_gameId == GID_FT) {
+		if (_version >= 7 && VAR(VAR_BLAST_ABOVE_TEXT) == 1) {
 			drawBlastTexts();
 			drawBlastObjects();
 		} else {
