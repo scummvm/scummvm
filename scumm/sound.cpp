@@ -1161,7 +1161,7 @@ int Sound::playBundleSound(char *sound) {
 		return -1;
 	}
 
-	int32 rate = 22050, channels;
+	int32 rate = 22050, channels, output_size = 0;
 	int32 tag, size = -1, bits = 0;
 
 	if (_scumm->_gameId == GID_CMI) {
@@ -1169,17 +1169,20 @@ int Sound::playBundleSound(char *sound) {
 		strcpy(name, sound);
 		strcat(name, ".IMX");
 		ptr = (byte *)malloc(1000000);
-		if (_scumm->_bundle->decompressVoiceSampleByName(name, ptr) == 0) {
+		output_size = _scumm->_bundle->decompressVoiceSampleByName(name, ptr);
+		if (output_size == 0) {
 			delete ptr;
 			return -1;
 		}
 	} else {
 		ptr = (byte *)malloc(1000000);
-		if (_scumm->_bundle->decompressVoiceSampleByName(sound, ptr) == 0) {
+		output_size = _scumm->_bundle->decompressVoiceSampleByName(sound, ptr);
+		if (output_size == 0) {
 			delete ptr;
 			return -1;
 		}
 	}
+	assert(output_size <= 1000000);
 
 	tag = READ_BE_UINT32(ptr); ptr+=4;
 	if (tag != MKID_BE('iMUS')) {
