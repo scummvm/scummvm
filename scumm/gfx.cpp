@@ -1497,7 +1497,7 @@ void Gdi::decompressWizImage(uint8 *dst, int dstPitch, const Common::Rect *dstRe
 				}
 			} else {
 				databit = code & 1;
-				code = (code >> 2) + 1;
+				code = (code >> 1) + 1;
 				if (databit) {
 					++dataPtr;
 					xoff -= code;
@@ -1527,7 +1527,7 @@ dec_sub1:		dstPtr += code;
 				w -= code;
 			} else {
 				databit = code & 1;
-				code = (code >> 2) + 1;
+				code = (code >> 1) + 1;
 				if (databit) {
 dec_sub2:			w -= code;
 					if (w < 0) {
