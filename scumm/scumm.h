@@ -637,7 +637,7 @@ protected:
 	const byte *_resourceLastSearchBuf; // FIXME: need to put it to savefile?
 	uint32 _resourceLastSearchSize;    // FIXME: need to put it to savefile?
 
-	void allocateArrays();
+	virtual void allocateArrays();
 	void openRoom(int room);
 	void closeRoom();
 	void deleteRoomOffsets();

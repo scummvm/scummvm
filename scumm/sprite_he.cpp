@@ -30,4 +30,67 @@
 
 namespace Scumm {
 
+void ScummEngine_v90he::allocateArrays() {
+	_spriteGroups = (SpriteGroup *)calloc(_numSprites, sizeof(SpriteGroup));
+	_spriteTable = (SpriteInfo *)calloc(_numSprites, sizeof(SpriteInfo));
+	
+	ScummEngine::allocateArrays();
+}
+
+int ScummEngine_v90he::spriteInfoGet_flags_1(int spriteNum) {
+	checkRange(_numSprites, 1, spriteNum, "_spriteTableGet_flags_1: Invalid sprite %d");
+
+	int val = _spriteTable[spriteNum].flags >> 0xE;
+	return (val & 1);
+}
+
+int ScummEngine_v90he::spriteInfoGet_flags_2(int spriteNum) {
+	checkRange(_numSprites, 1, spriteNum, "_spriteTableGet_flags_2: Invalid sprite %d");
+
+	int val = _spriteTable[spriteNum].flags >> 0xD;
+	return (val & 1);
+}
+
+int ScummEngine_v90he::spriteInfoGet_flags_3(int spriteNum) {
+	checkRange(_numSprites, 1, spriteNum, "_spriteTableGet_flags_3: Invalid sprite %d");
+
+	int val = _spriteTable[spriteNum].flags >> 0xF;
+	return (val & 1);
+}
+
+int ScummEngine_v90he::spriteInfoGet_flags_4(int spriteNum) {
+	checkRange(_numSprites, 1, spriteNum, "_spriteTableGet_flags_4: Invalid sprite %d");
+
+	int val = _spriteTable[spriteNum].flags >> 0xC;
+	return (val & 1);
+}
+
+int ScummEngine_v90he::spriteInfoGet_flags_5(int spriteNum) {
+	checkRange(_numSprites, 1, spriteNum, "_spriteTableGet_flags_5: Invalid sprite %d");
+
+	int val = _spriteTable[spriteNum].flags >> 0x13;
+	return (val & 1);
+}
+
+int ScummEngine_v90he::spriteInfoGet_flags_6(int spriteNum) {
+	checkRange(_numSprites, 1, spriteNum, "_spriteTableGet_flags_6: Invalid sprite %d");
+
+	int val = _spriteTable[spriteNum].flags;
+	return (val & 0x200000);
+}
+
+int ScummEngine_v90he::spriteInfoGet_flags_7(int spriteNum) {
+	checkRange(_numSprites, 1, spriteNum, "_spriteTableGet_flags_7: Invalid sprite %d");
+
+	int val = _spriteTable[spriteNum].flags >> 0x16;
+	return (val & 1);
+}
+
+int ScummEngine_v90he::spriteInfoGet_flags_8(int spriteNum) {
+	checkRange(_numSprites, 1, spriteNum, "_spriteTableGet_flags_8: Invalid sprite %d");
+
+	int val = _spriteTable[spriteNum].flags >> 0x1E;
+	return (val & 1);
+}
+
 } // End of namespace Scumm

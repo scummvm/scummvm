@@ -81,6 +81,9 @@ struct SpriteGroup {
 	int field_3C;
 };
 
+	SpriteInfo *_spriteTable;
+	SpriteGroup *_spriteGroups;
+
 } // End of namespace Scumm
 
 #endif

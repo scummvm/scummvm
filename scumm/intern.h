@@ -858,6 +858,7 @@ public:
 	virtual void scummInit();
 
 protected:
+	virtual void allocateArrays();
 	virtual void setupOpcodes();
 	virtual void executeOpcode(byte i);
 	virtual const char *getOpcodeDesc(byte i);
@@ -870,6 +871,15 @@ protected:
 	uint8 getWizPixelColor(int restype, int resnum, int state, int x, int y, int flags);
 	int computeWizHistogram(int resnum, int state, int x, int y, int w, int h);
 	
+	int spriteInfoGet_flags_1(int spriteNum);
+	int spriteInfoGet_flags_2(int spriteNum);
+	int spriteInfoGet_flags_3(int spriteNum);
+	int spriteInfoGet_flags_4(int spriteNum);
+	int spriteInfoGet_flags_5(int spriteNum);
+	int spriteInfoGet_flags_6(int spriteNum);
+	int spriteInfoGet_flags_7(int spriteNum);	
+	int spriteInfoGet_flags_8(int spriteNum);
+
 	/* HE version 90 script opcodes */
 	void o90_dup();
 	void o90_min();
