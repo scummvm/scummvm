@@ -122,7 +122,7 @@ GRAPHICS
 bob()						Graphics::drawBob
 CHECK_PARALLAX()			Graphics::handleParallax
 clearallbobs()				Graphics::clearBobs
-clearbob()					Graphics::clearBob
+clearbob()					BobSlot::clear
 DISP_OBJECTS()				Graphics::setupRoomObjects
 drawbobs()					Graphics::drawBobs
 invbob()					Graphics::drawInventoryItem
