@@ -1,9 +1,17 @@
+# $Id$
+#
+# $Log$
+# Revision 1.9  2001/11/06 22:59:59  cmatsuoka
+# Re-added changes to allow cygwin and beos cross-compilation.
+#
+
 CC	= gcc
 CFLAGS	= -g -Wno-multichar
 DEFINES	= -DUNIX
-LDFLAGS := `sdl-config --libs`
+LDFLAGS := 
 INCLUDES:= `sdl-config --cflags`
 CPPFLAGS= $(DEFINES) $(INCLUDES)
+LIBS	= -lSDL
 ZIPFILE := scummvm-`date '+%Y-%m-%d'`.zip
 
 INCS	= scumm.h scummsys.h stdafx.h

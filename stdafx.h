@@ -1,3 +1,11 @@
+/*
+ * $Id$
+ *
+ * $Log$
+ * Revision 1.6  2001/11/06 22:59:59  cmatsuoka
+ * Re-added changes to allow cygwin and beos cross-compilation.
+ *
+ */
 #if defined(WIN32)
 
 #if _MSC_VER > 1000
@@ -48,7 +56,9 @@
 #endif
 #include <sys/types.h>
 #include <sys/uio.h>
+#if !defined (__BEOS__)
 #include <unistd.h>
+#endif
 #include <stdio.h>
 #include <fcntl.h>
 #include <stdlib.h>
