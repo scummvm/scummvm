@@ -26,10 +26,10 @@
 void Dialog::draw()
 {
 	Widget *w = _firstWidget;
-	
+
 	_gui->clearArea(_x, _y, _w, _h);
 	_gui->box(_x, _y, _w, _h);
-	
+
 	while (w) {
 		w->draw();
 		w = w->_next;
@@ -60,7 +60,7 @@ void Dialog::handleMouseMoved(int x, int y, int button)
  * Determine the widget at location (x,y) if any. Assumes the coordinates are
  * in the local coordinate system, i.e. relative to the top left of the dialog.
  */
-Widget* Dialog::findWidget(int x, int y)
+Widget *Dialog::findWidget(int x, int y)
 {
 	Widget *w = _firstWidget;
 	while (w) {
@@ -108,30 +108,30 @@ void Dialog::addButton(int x, int y, int w, int h, char hotkey, int resID, uint3
 #pragma mark -
 
 enum {
-	kSaveCmd	= 'SAVE',
-	kLoadCmd	= 'LOAD',
-	kPlayCmd	= 'PLAY',
-	kOptionsCmd	= 'OPTN',
-	kQuitCmd	= 'QUIT'
+	kSaveCmd = 'SAVE',
+	kLoadCmd = 'LOAD',
+	kPlayCmd = 'PLAY',
+	kOptionsCmd = 'OPTN',
+	kQuitCmd = 'QUIT'
 };
 
-SaveLoadDialog::SaveLoadDialog(NewGui *gui)
-	: Dialog(gui, 30, 20, 260, 124)
+SaveLoadDialog::SaveLoadDialog(NewGui * gui)
+:Dialog(gui, 30, 20, 260, 124)
 {
 	addResText(10, 7, 240, 16, 1);
-//	addResText(10, 7, 240, 16, 2);
-//	addResText(10, 7, 240, 16, 3);
-	
-	addButton(200,  20, 54, 16, 'S', 4, kSaveCmd);		// Save
-	addButton(200,  40, 54, 16, 'L', 5, kLoadCmd);		// Load
-	addButton(200,  60, 54, 16, 'P', 6, kPlayCmd);		// Play
-	addButton(200,  80, 54, 16, 'O', 17, kOptionsCmd);	// Options
-	addButton(200, 100, 54, 16, 'Q', 8, kQuitCmd);		// Quit
+//  addResText(10, 7, 240, 16, 2);
+//  addResText(10, 7, 240, 16, 3);
+
+	addButton(200, 20, 54, 16, 'S', 4, kSaveCmd);	// Save
+	addButton(200, 40, 54, 16, 'L', 5, kLoadCmd);	// Load
+	addButton(200, 60, 54, 16, 'P', 6, kPlayCmd);	// Play
+	addButton(200, 80, 54, 16, 'O', 17, kOptionsCmd);	// Options
+	addButton(200, 100, 54, 16, 'Q', 8, kQuitCmd);	// Quit
 }
 
 void SaveLoadDialog::handleCommand(uint32 cmd)
 {
-	switch(cmd) {
+	switch (cmd) {
 	case kSaveCmd:
 		break;
 	case kLoadCmd:
@@ -151,8 +151,8 @@ void SaveLoadDialog::handleCommand(uint32 cmd)
 #pragma mark -
 
 
-PauseDialog::PauseDialog(NewGui *gui)
-	: Dialog(gui, 50, 80, 220, 16)
+PauseDialog::PauseDialog(NewGui * gui)
+:Dialog(gui, 50, 80, 220, 16)
 {
 	addResText(2, 2, 220, 16, 10);
 }

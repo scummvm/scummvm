@@ -28,7 +28,7 @@
 #define vline(x, y, y2, color) line(x, y, x, y2, color);
 
 
-NewGui::NewGui(Scumm *s) : _s(s), _active(false), _need_redraw(false), _activeDialog(0)
+NewGui::NewGui(Scumm *s):_s(s), _active(false), _need_redraw(false), _activeDialog(0)
 {
 	_pauseDialog = new PauseDialog(this);
 	_saveLoadDialog = new SaveLoadDialog(this);
@@ -128,13 +128,13 @@ const char *NewGui::queryString(int stringno)
 
 	result = (char *)_s->getStringAddress(string);
 
-	if (!result) {									// Gracelessly degrade to english :)
+	if (!result) {								// Gracelessly degrade to english :)
 		if (_s->_features & GF_AFTER_V6)
 			return string_map_table_v6[stringno - 1].string;
 		else
 			return string_map_table_v5[stringno - 1].string;
 	}
-	
+
 	return result;
 }
 
@@ -148,7 +148,7 @@ byte *NewGui::getBasePtr(int x, int y)
 		return NULL;
 
 	return vs->screenPtr + x + (y - vs->topline) * 320 +
-		_s->_screenStartStrip * 8 + (_s->camera._cur.y - 100)*320;
+		_s->_screenStartStrip * 8 + (_s->camera._cur.y - 100) * 320;
 }
 
 void NewGui::box(int x, int y, int width, int height)
@@ -167,12 +167,12 @@ void NewGui::box(int x, int y, int width, int height)
 void NewGui::line(int x, int y, int x2, int y2, byte color)
 {
 	byte *ptr;
-	
+
 	if (x2 < x)
-		x2 ^= x ^= x2 ^= x;	// Swap x2 and x
+		x2 ^= x ^= x2 ^= x;					// Swap x2 and x
 
 	if (y2 < y)
-		y2 ^= y ^= y2 ^= y;	// Swap y2 and y
+		y2 ^= y ^= y2 ^= y;					// Swap y2 and y
 
 	ptr = getBasePtr(x, y);
 
@@ -221,8 +221,8 @@ void NewGui::drawChar(const char str, int xx, int yy)
 
 	byte *ptr = getBasePtr(xx, yy);
 	if (ptr == NULL)
-	  return;
-	
+		return;
+
 	for (y = 0; y < 8; y++) {
 		for (x = 0; x < 8; x++) {
 			unsigned char color;

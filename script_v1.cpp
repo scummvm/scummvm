@@ -826,22 +826,21 @@ void Scumm::o5_actorSetClass()
 {
 	int act = getVarOrDirectWord(0x80);
 	int newClass;
-	
+
 	while ((_opcode = fetchScriptByte()) != 0xFF) {
 		newClass = getVarOrDirectWord(0x80);
 		if (newClass == 0) {
 			_classData[act] = 0;
-			if((_features & GF_SMALL_HEADER) && act <= NUM_ACTORS)
-			{
+			if ((_features & GF_SMALL_HEADER) && act <= NUM_ACTORS) {
 				Actor *a;
 				a = derefActorSafe(act, "actorSetClass");
-				a->forceClip=0;
-			}				
+				a->forceClip = 0;
+			}
 			continue;
 		}
 
 
-		if(_gameId == GID_INDY3_256)
+		if (_gameId == GID_INDY3_256)
 
 			newClass--;
 
@@ -963,8 +962,7 @@ void Scumm::o5_cursorCommand()
 	case 14:											/* unk */
 		getWordVararg(table);
 		for (i = 0; i < 16; i++)
-			charset._colorMap[i] = _charsetData[string[1].t_charset][i] =
-				(unsigned char)table[i];
+			charset._colorMap[i] = _charsetData[string[1].t_charset][i] = (unsigned char)table[i];
 		break;
 	}
 
@@ -1002,7 +1000,7 @@ void Scumm::o5_delay()
 	delay |= fetchScriptByte() << 16;
 	vm.slot[_currentScript].delay = delay;
 	vm.slot[_currentScript].status = 1;
-	
+
 	o5_breakHere();
 }
 
@@ -1079,7 +1077,7 @@ void Scumm::o5_drawObject()
 
 	if (_features & GF_SMALL_HEADER) {
 		int temp = getVarOrDirectWord(0x40);
-		int temp2= getVarOrDirectWord(0x20);		// Room
+		int temp2 = getVarOrDirectWord(0x20);	// Room
 
 		idx = getObjectIndex(obj);
 		if (idx == -1)
@@ -1088,9 +1086,9 @@ void Scumm::o5_drawObject()
 		xpos = ypos = 255;
 		if (temp != 0xFF) {
 
-			od->x_pos = temp<<3;
+			od->x_pos = temp << 3;
 
-			od->y_pos = temp2<<3;
+			od->y_pos = temp2 << 3;
 		}
 
 
@@ -1104,8 +1102,7 @@ void Scumm::o5_drawObject()
 
 		i = _numObjectsInRoom;
 		do {
-			if (_objs[i].x_pos == x && _objs[i].y_pos == y && _objs[i].width == w
-					&& _objs[i].height == h)
+			if (_objs[i].x_pos == x && _objs[i].y_pos == y && _objs[i].width == w && _objs[i].height == h)
 				putState(_objs[i].obj_nr, 0);
 		} while (--i);
 
@@ -1146,8 +1143,7 @@ void Scumm::o5_drawObject()
 
 	i = _numObjectsInRoom;
 	do {
-		if (_objs[i].x_pos == x && _objs[i].y_pos == y
-				&& _objs[i].width == w && _objs[i].height == h)
+		if (_objs[i].x_pos == x && _objs[i].y_pos == y && _objs[i].width == w && _objs[i].height == h)
 			putState(_objs[i].obj_nr, 0);
 	} while (--i);
 
@@ -1240,30 +1236,25 @@ void Scumm::o5_freezeScripts()
 void Scumm::o5_getActorCostume()
 {
 	getResultPos();
-	setResult(derefActorSafe(getVarOrDirectByte(0x80), "o5_getActorCostume")->
-						costume);
+	setResult(derefActorSafe(getVarOrDirectByte(0x80), "o5_getActorCostume")->costume);
 }
 
 void Scumm::o5_getActorElevation()
 {
 	getResultPos();
-	setResult(derefActorSafe(getVarOrDirectByte(0x80), "o5_getActorElevation")->
-						elevation);
+	setResult(derefActorSafe(getVarOrDirectByte(0x80), "o5_getActorElevation")->elevation);
 }
 
 void Scumm::o5_getActorFacing()
 {
 	getResultPos();
-	setResult(newDirToOldDir
-						(derefActorSafe(getVarOrDirectByte(0x80), "o5_getActorFacing")->
-						 facing));
+	setResult(newDirToOldDir(derefActorSafe(getVarOrDirectByte(0x80), "o5_getActorFacing")->facing));
 }
 
 void Scumm::o5_getActorMoving()
 {
 	getResultPos();
-	setResult(derefActorSafe(getVarOrDirectByte(0x80), "o5_getActorMoving")->
-						moving);
+	setResult(derefActorSafe(getVarOrDirectByte(0x80), "o5_getActorMoving")->moving);
 }
 
 void Scumm::o5_getActorRoom()
@@ -1272,9 +1263,9 @@ void Scumm::o5_getActorRoom()
 	Actor *act;
 	getResultPos();
 	temp = getVarOrDirectByte(0x80);
-	
+
 	act = derefActorSafe(temp, "o5_getActorRoom");
-	if (!act) 
+	if (!act)
 		return;
 
 	setResult(act->room);
@@ -1287,8 +1278,7 @@ void Scumm::o5_getActorScale()
 		return;
 	}
 	getResultPos();
-	setResult(derefActorSafe(getVarOrDirectByte(0x80), "o5_getActorScale")->
-						scalex);
+	setResult(derefActorSafe(getVarOrDirectByte(0x80), "o5_getActorScale")->scalex);
 }
 
 void Scumm::o5_getActorWalkBox()
@@ -1296,7 +1286,7 @@ void Scumm::o5_getActorWalkBox()
 	Actor *a;
 	getResultPos();
 	a = derefActorSafe(getVarOrDirectByte(0x80), "o5_getActorWalkbox");
-	if (a) // FIXME - bug 572977 workaround
+	if (a)												// FIXME - bug 572977 workaround
 		setResult(a->walkbox);
 	else
 		setResult(0);
@@ -1305,8 +1295,7 @@ void Scumm::o5_getActorWalkBox()
 void Scumm::o5_getActorWidth()
 {
 	getResultPos();
-	setResult(derefActorSafe(getVarOrDirectByte(0x80), "o5_getActorWidth")->
-						width);
+	setResult(derefActorSafe(getVarOrDirectByte(0x80), "o5_getActorWidth")->width);
 }
 
 void Scumm::o5_getActorX()
@@ -1314,7 +1303,7 @@ void Scumm::o5_getActorX()
 	int a;
 	getResultPos();
 
-	if(_gameId == GID_INDY3_256)
+	if (_gameId == GID_INDY3_256)
 		a = getVarOrDirectByte(0x80);
 	else
 		a = getVarOrDirectWord(0x80);
@@ -1327,7 +1316,7 @@ void Scumm::o5_getActorY()
 	int a;
 	getResultPos();
 
-	if(_gameId == GID_INDY3_256)
+	if (_gameId == GID_INDY3_256)
 		a = getVarOrDirectByte(0x80);
 	else
 		a = getVarOrDirectWord(0x80);
@@ -1340,9 +1329,9 @@ void Scumm::o5_getAnimCounter()
 	Actor *a;
 	getResultPos();
 
-	a=derefActorSafe(getVarOrDirectByte(0x80),"o5_getActorAnimCounter");
+	a = derefActorSafe(getVarOrDirectByte(0x80), "o5_getActorAnimCounter");
 
-	if(a) // FIXME
+	if (a)												// FIXME
 		setResult(a->cost.animCounter1);
 	else
 		setResult(0);
@@ -1381,13 +1370,12 @@ void Scumm::o5_getDist()
 	r = getObjActToObjActDist(o1, o2);
 
 	/* FIXME: Fix for monkey 2, dunno what's wrong in scummvm */
-	if (_gameId == GID_MONKEY2 && vm.slot[_currentScript].number == 40
-			&& r < 60)
+	if (_gameId == GID_MONKEY2 && vm.slot[_currentScript].number == 40 && r < 60)
 		r = 60;
 
 	/* FIXME: Patch to allow TV cord to be picked up in Zak256 */
 	if ((_gameId == GID_ZAK256) && (r > 0))
-		r--;	
+		r--;
 
 	setResult(r);
 }
@@ -1577,7 +1565,7 @@ void Scumm::o5_isSoundRunning()
 
 void Scumm::o5_jumpRelative()
 {
-	_scriptPointer += (int16) fetchScriptWord();
+	_scriptPointer += (int16)fetchScriptWord();
 }
 
 void Scumm::o5_lights()
@@ -1618,8 +1606,8 @@ void Scumm::o5_loadRoomWithEgo()
 	/* Warning: used previously _xPos, _yPos from a previous update of those */
 	putActor(a, a->x, a->y, room);
 
-	x = (int16) fetchScriptWord();
-	y = (int16) fetchScriptWord();
+	x = (int16)fetchScriptWord();
+	y = (int16)fetchScriptWord();
 
 	_egoPositioned = false;
 
@@ -1645,9 +1633,9 @@ void Scumm::o5_matrixOps()
 		a = getVarOrDirectByte(0x80);
 		b = fetchScriptByte();
 
-		if (b & 0x40) {	// We don't use the locked 
-			b &= ~0x40; // flag, so convert it to
-			b |= 0x80;  // invisible
+		if (b & 0x40) {							// We don't use the locked 
+			b &= ~0x40;								// flag, so convert it to
+			b |= 0x80;								// invisible
 		}
 
 		setBoxFlags(a, b);
@@ -1794,8 +1782,7 @@ void Scumm::o5_putActorInRoom()
 
 	a = derefActorSafe(getVarOrDirectByte(0x80), "o5_putActorInRoom");
 	room = getVarOrDirectByte(0x40);
-	if (a->visible && _currentRoom != room
-			&& _vars[VAR_TALK_ACTOR] == a->number) {
+	if (a->visible && _currentRoom != room && _vars[VAR_TALK_ACTOR] == a->number) {
 		clearMsgQueue();
 	}
 	a->room = room;
@@ -2037,30 +2024,28 @@ void Scumm::o5_roomOps()
 	case 13:{										/* save-string */
 			char buf[256], *s;
 			FILE *out;
-			
+
 			a = getVarOrDirectByte(0x80);
 			s = buf;
-			while ((*s++ = fetchScriptByte()))
-				;
+			while ((*s++ = fetchScriptByte()));
 
 			// Use buf as filename
 			out = fopen(buf, "wb");
 			if (out) {
 				byte *ptr;
 				ptr = getResourceAddress(rtString, a);
-				fwrite(ptr, getStringLen(ptr)+1, 1, out);
+				fwrite(ptr, getStringLen(ptr) + 1, 1, out);
 				fclose(out);
 			}
 			break;
 		}
-	case 14:{											/* load-string */
+	case 14:{										/* load-string */
 			char buf[256], *s;
 			FILE *in;
-			
+
 			a = getVarOrDirectByte(0x80);
 			s = buf;
-			while ((*s++ = fetchScriptByte()))
-				;
+			while ((*s++ = fetchScriptByte()));
 
 			// Use buf as filename
 			in = fopen(buf, "rb");
@@ -2069,9 +2054,9 @@ void Scumm::o5_roomOps()
 				int len;
 				fseek(in, 0, SEEK_END);
 				len = ftell(in);				// Determine file size
-				ptr = (byte *)calloc(len+1, 1);	// Create a zero terminated buffer
+				ptr = (byte *)calloc(len + 1, 1);	// Create a zero terminated buffer
 				fseek(in, 0, SEEK_SET);
-				fread(ptr, len, 1, in);			// Read in the data
+				fread(ptr, len, 1, in);	// Read in the data
 				fclose(in);
 				loadPtrToResource(rtString, a, ptr);
 				free(ptr);
@@ -2088,7 +2073,7 @@ void Scumm::o5_roomOps()
 		palManipulate(b, c, a, d, 1);
 		break;
 
-	case 16:			
+	case 16:
 		a = getVarOrDirectByte(0x80);
 		b = getVarOrDirectByte(0x40);
 		if (a < 1)
@@ -2200,8 +2185,7 @@ void Scumm::o5_setObjectName()
 
 	if (i >= size) {
 		work[i] = 0;
-		warning("New name of object %d too long (old *%s* new *%s*)",
-						obj, name, work);
+		warning("New name of object %d too long (old *%s* new *%s*)", obj, name, work);
 		i = size - 1;
 	}
 
@@ -2305,7 +2289,7 @@ void Scumm::o5_startScript()
 void Scumm::o5_startSound()
 {
 
-	_vars[VAR_MUSIC_FLAG]=0;
+	_vars[VAR_MUSIC_FLAG] = 0;
 
 	addSoundToQueue(getVarOrDirectByte(0x80));
 }
@@ -2331,7 +2315,7 @@ void Scumm::o5_stopScript()
 
 	script = getVarOrDirectByte(0x80);
 	if (!script)
-		stopObjectCode();		
+		stopObjectCode();
 	else
 		stopScriptNr(script);
 }
@@ -2448,26 +2432,26 @@ void Scumm::o5_verbOps()
 			vs->y = getVarOrDirectWord(0x40);
 			// FIXME: hack loom notes into right spot
 			if (_gameId == GID_LOOM256) {
-				if ((verb >= 90) && (verb <= 97)) { // Notes
+				if ((verb >= 90) && (verb <= 97)) {	// Notes
 					switch (verb) {
-						case 90:
-                        case 91:
-							vs->y -= 7;
+					case 90:
+					case 91:
+						vs->y -= 7;
 						break;
-						case 92:
-							vs->y -= 6;
+					case 92:
+						vs->y -= 6;
 						break;
-						case 93:
-							vs->y -= 4;
+					case 93:
+						vs->y -= 4;
 						break;
-						case 94:
-							vs->y -= 3;
+					case 94:
+						vs->y -= 3;
 						break;
-						case 95:
-							vs->y -= 1;
+					case 95:
+						vs->y -= 1;
 						break;
-						case 97:
-							vs->y -= 5;
+					case 97:
+						vs->y -= 5;
 					}
 				}
 			}
@@ -2574,8 +2558,7 @@ void Scumm::o5_wait()
 		return;
 	case 4:											/* wait for sentence */
 		if (_sentenceNum) {
-			if (sentence[_sentenceNum - 1].unk &&
-					!isScriptInUse(_vars[VAR_SENTENCE_SCRIPT]))
+			if (sentence[_sentenceNum - 1].unk && !isScriptInUse(_vars[VAR_SENTENCE_SCRIPT]))
 				return;
 			break;
 		}
@@ -2662,7 +2645,7 @@ void Scumm::o5_walkActorToObject()
 	}
 }
 
-int Scumm::getWordVararg(int16 * ptr)
+int Scumm::getWordVararg(int16 *ptr)
 {
 	int i;
 
@@ -2680,7 +2663,7 @@ int Scumm::getVarOrDirectWord(byte mask)
 {
 	if (_opcode & mask)
 		return readVar(fetchScriptWord());
-	return (int16) fetchScriptWord();
+	return (int16)fetchScriptWord();
 }
 
 int Scumm::getVarOrDirectByte(byte mask)
@@ -2750,12 +2733,12 @@ void Scumm::decodeParseString()
 				else
 					offset = 0;
 				delay = (int)((getVarOrDirectWord(0x40) & 0xffff) * 7.5);
-				if (_gameId == GID_LOOM256) {					
+				if (_gameId == GID_LOOM256) {
 					_vars[VAR_MI1_TIMER] = 0;
 #ifdef COMPRESSED_SOUND_FILE
 					if (playMP3CDTrack(1, 0, offset, delay) == -1)
 #endif
-					_system->play_cdrom(1, 0, offset, delay);
+						_system->play_cdrom(1, 0, offset, delay);
 				} else {
 					warning("parseString: 8");
 				}
@@ -2800,15 +2783,15 @@ void Scumm::o5_oldRoomEffect()
 	_opcode = fetchScriptByte();
 	if ((_opcode & 0x1F) == 3) {
 		a = getVarOrDirectWord(0x80);
-		switch(a) {
-			case 4:
-				_fullRedraw =true;
-				break;
-			default:
-				warning("Unsupported oldRoomEffect %d", a);
-				break;
+		switch (a) {
+		case 4:
+			_fullRedraw = true;
+			break;
+		default:
+			warning("Unsupported oldRoomEffect %d", a);
+			break;
 		}
-	}	
+	}
 }
 
 void Scumm::o5_pickupObjectOld()
@@ -2825,10 +2808,10 @@ void Scumm::o5_pickupObjectOld()
 		return;
 
 	if (whereIsObject(obj) == WIO_INVENTORY)	/* Don't take an */
-		return;									/* object twice */
+		return;											/* object twice */
 
 	// warning("adding %d from %d to inventoryOld", obj, _currentRoom);
-	addObjectToInventory(obj, _roomResource);	
+	addObjectToInventory(obj, _roomResource);
 	removeObjectFromRoom(obj);
 	putOwner(obj, _vars[VAR_EGO]);
 	putClass(obj, 32, 1);

@@ -25,7 +25,7 @@
 #include "actor.h"
 
 /* Start executing script 'script' with parameters 'a' and 'b' */
-void Scumm::runScript(int script, int a, int b, int16 * lvarptr)
+void Scumm::runScript(int script, int a, int b, int16 *lvarptr)
 {
 	byte *scriptPtr;
 	uint32 scriptOffs;
@@ -142,8 +142,8 @@ void Scumm::stopObjectScript(int script)
 
 	do {
 		if (nest->number == script &&
-				(nest->where == WIO_ROOM || nest->where == WIO_FLOBJECT ||
-				 nest->where == WIO_INVENTORY)) {
+				(nest->where == WIO_ROOM || nest->where == WIO_FLOBJECT
+				 || nest->where == WIO_INVENTORY)) {
 			nest->number = 0xFF;
 			nest->slot = 0xFF;
 			nest->where = 0xFF;
@@ -276,7 +276,8 @@ void Scumm::executeScript()
 		_opcode = fetchScriptByte();
 		_scriptPointerStart = _scriptPointer;
 		vm.slot[_currentScript].didexec = 1;
-		debug(8, "Script %d: [%X] %s()", vm.slot[_currentScript].number, _opcode, _opcodes_lookup[_opcode]);
+		debug(8, "Script %d: [%X] %s()", vm.slot[_currentScript].number, _opcode,
+					_opcodes_lookup[_opcode]);
 		op = getOpcode(_opcode);
 		(this->*op) ();
 	}
@@ -340,8 +341,7 @@ int Scumm::readVar(uint var)
 
 	if (var & 0x8000) {
 		var &= 0x7FFF;
-		checkRange(_numBitVariables - 1, 0, var,
-							 "Bit variable %d out of range(r)");
+		checkRange(_numBitVariables - 1, 0, var, "Bit variable %d out of range(r)");
 		return (_bitVars[var >> 3] & (1 << (var & 7))) ? 1 : 0;
 	}
 
@@ -364,25 +364,27 @@ void Scumm::writeVar(uint var, int value)
 		if (var == VAR_CHARINC)
 			_vars[VAR_CHARINC] = _defaultTalkDelay / 20;
 		else
-			_vars[var] = value;		
+			_vars[var] = value;
 
 		if ((_varwatch == (int)var) || (_varwatch == 0)) {
 			if (vm.slot[_currentScript].number < 100)
-				debug(0, "vars[%d] = %d (via script-%d)", var, value, vm.slot[_currentScript].number);
+				debug(0, "vars[%d] = %d (via script-%d)", var, value,
+							vm.slot[_currentScript].number);
 			else
-				debug(0, "vars[%d] = %d (via room-%d-%d)", var, value, _currentRoom, vm.slot[_currentScript].number);
+				debug(0, "vars[%d] = %d (via room-%d-%d)", var, value, _currentRoom,
+							vm.slot[_currentScript].number);
 		}
 		return;
 	}
 
 	if (var & 0x8000) {
 		var &= 0x7FFF;
-		checkRange(_numBitVariables - 1, 0, var,
-							 "Bit variable %d out of range(w)");
+		checkRange(_numBitVariables - 1, 0, var, "Bit variable %d out of range(w)");
 
 		/* FIXME: Enable Indy4 mousefighting by default. 
-				  is there a better place to put this? */
-		if (_gameId == GID_INDY4 && var == 107 && vm.slot[_currentScript].number == 1)
+		   is there a better place to put this? */
+		if (_gameId == GID_INDY4 && var == 107
+				&& vm.slot[_currentScript].number == 1)
 			value = 1;
 
 		if (value)
@@ -562,7 +564,7 @@ void Scumm::unfreezeScripts()
 	}
 
 	for (i = 0; i < 6; i++) {
-		if (((int8)-- sentence[i].unk) < 0)
+		if (((int8)--sentence[i].unk) < 0)
 			sentence[i].unk = 0;
 	}
 }
@@ -576,8 +578,8 @@ void Scumm::runAllScripts()
 
 	_currentScript = 0xFF;
 	for (_curExecScript = 0; _curExecScript < NUM_SCRIPT_SLOT; _curExecScript++) {
-		if (vm.slot[_curExecScript].status == ssRunning &&
-				vm.slot[_curExecScript].didexec == 0) {
+		if (vm.slot[_curExecScript].status == ssRunning
+				&& vm.slot[_curExecScript].didexec == 0) {
 			_currentScript = (char)_curExecScript;
 			getScriptBaseAddress();
 			getScriptEntryPoint();
@@ -684,8 +686,8 @@ void Scumm::checkAndRunVar33()
 	_sentenceNum--;
 
 	if (!(_features & GF_AFTER_V7))
-		if (sentence[_sentenceNum].unk2 &&
-				sentence[_sentenceNum].unk3 == sentence[_sentenceNum].unk4)
+		if (sentence[_sentenceNum].unk2
+				&& sentence[_sentenceNum].unk3 == sentence[_sentenceNum].unk4)
 			return;
 
 	_localParamList[0] = sentence[_sentenceNum].unk5;
@@ -722,7 +724,7 @@ void Scumm::decreaseScriptDelay(int amount)
 	}
 }
 
-void Scumm::runVerbCode(int object, int entry, int a, int b, int16 * vars)
+void Scumm::runVerbCode(int object, int entry, int a, int b, int16 *vars)
 {
 	uint32 obcd;
 	int slot, where, offs;
@@ -760,7 +762,7 @@ void Scumm::runVerbCode(int object, int entry, int a, int b, int16 * vars)
 	runScriptNested(slot);
 }
 
-void Scumm::initializeLocals(int slot, int16 * vars)
+void Scumm::initializeLocals(int slot, int16 *vars)
 {
 	int i;
 	if (!vars) {
@@ -852,7 +854,7 @@ void Scumm::endCutscene()
 		runScript(_vars[VAR_CUTSCENE_END_SCRIPT], 0, 0, args);
 }
 
-void Scumm::cutscene(int16 * args)
+void Scumm::cutscene(int16 *args)
 {
 	int scr = _currentScript;
 	vm.slot[scr].cutsceneOverride++;
@@ -901,8 +903,8 @@ bool Scumm::isScriptRunning(int script)
 	int i;
 	ScriptSlot *ss = vm.slot;
 	for (i = 0; i < NUM_SCRIPT_SLOT; i++, ss++)
-		if (ss->number == script && (ss->where == WIO_GLOBAL ||
-																 ss->where == WIO_LOCAL) && ss->status)
+		if (ss->number == script
+				&& (ss->where == WIO_GLOBAL || ss->where == WIO_LOCAL) && ss->status)
 			return true;
 	return false;
 }
@@ -978,8 +980,7 @@ int Scumm::defineArray(int array, int type, int dim2, int dim1)
 	size *= dim1 + 1;
 	size >>= 3;
 
-	ah =
-		(ArrayHeader *)createResource(rtString, id, size + sizeof(ArrayHeader));
+	ah = (ArrayHeader *)createResource(rtString, id, size + sizeof(ArrayHeader));
 
 	ah->type = type;
 	ah->dim1_size = dim1 + 1;

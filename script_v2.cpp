@@ -710,8 +710,7 @@ int Scumm::popRoomAndObj(int *room)
 
 int Scumm::readArray(int array, int idx, int base)
 {
-	ArrayHeader *ah =
-		(ArrayHeader *)getResourceAddress(rtString, readVar(array));
+	ArrayHeader *ah = (ArrayHeader *)getResourceAddress(rtString, readVar(array));
 
 	if (ah == NULL) {
 		error("readArray: invalid array %d (%d)", array, readVar(array));
@@ -724,14 +723,13 @@ int Scumm::readArray(int array, int idx, int base)
 	if (ah->type == 4) {
 		return ah->data[base];
 	} else {
-		return (int16) READ_LE_UINT16(ah->data + base * 2);
+		return (int16)READ_LE_UINT16(ah->data + base * 2);
 	}
 }
 
 void Scumm::writeArray(int array, int idx, int base, int value)
 {
-	ArrayHeader *ah =
-		(ArrayHeader *)getResourceAddress(rtString, readVar(array));
+	ArrayHeader *ah = (ArrayHeader *)getResourceAddress(rtString, readVar(array));
 	assert(ah);
 	base += idx * ah->dim1_size;
 
@@ -744,7 +742,7 @@ void Scumm::writeArray(int array, int idx, int base, int value)
 	}
 }
 
-int Scumm::getStackList(int16 * args, uint maxnum)
+int Scumm::getStackList(int16 *args, uint maxnum)
 {
 	uint num, i;
 
@@ -771,7 +769,7 @@ void Scumm::o6_pushByte()
 
 void Scumm::o6_pushWord()
 {
-	push((int16) fetchScriptWord());
+	push((int16)fetchScriptWord());
 }
 
 void Scumm::o6_pushByteVar()
@@ -786,8 +784,7 @@ void Scumm::o6_pushWordVar()
 
 void Scumm::o6_invalid()
 {
-	error("Invalid opcode '%x' at %x", _opcode,
-				_scriptPointer - _scriptOrgPointer);
+	error("Invalid opcode '%x' at %x", _opcode, _scriptPointer - _scriptOrgPointer);
 }
 
 void Scumm::o6_byteArrayRead()
@@ -1012,7 +1009,7 @@ void Scumm::o6_jumpFalse()
 
 void Scumm::o6_jump()
 {
-	_scriptPointer += (int16) fetchScriptWord();
+	_scriptPointer += (int16)fetchScriptWord();
 }
 
 void Scumm::o6_startScriptEx()
@@ -1161,8 +1158,7 @@ void Scumm::o6_cursorCommand()
 	case 0x9D:										/* set charset colors */
 		getStackList(args, sizeof(args) / sizeof(args[0]));
 		for (i = 0; i < 16; i++)
-			charset._colorMap[i] = _charsetData[string[1].t_charset][i] =
-				(unsigned char)args[i];
+			charset._colorMap[i] = _charsetData[string[1].t_charset][i] = (unsigned char)args[i];
 		break;
 	case 0xD6:
 		makeCursorColorTransparent(pop());
@@ -1389,8 +1385,7 @@ void Scumm::o6_putActorInRoom()
 	if (room == 0xFF) {
 		room = a->room;
 	} else {
-		if (a->visible && _currentRoom != room
-				&& _vars[VAR_TALK_ACTOR] == a->number) {
+		if (a->visible && _currentRoom != room && _vars[VAR_TALK_ACTOR] == a->number) {
 			clearMsgQueue();
 		}
 		if (room != 0)
@@ -1649,16 +1644,16 @@ void Scumm::o6_isSoundRunning()
 	int snd = pop();
 
 	// FIXME: This fixes wak-a-rat until we correctly implement 
-	//		  sam and max iMUSE
+	//      sam and max iMUSE
 	if (_gameId == GID_SAMNMAX && _currentRoom == 18 && snd == 23) {
 		stopSound(snd);
 		push(0);
-		return; 
+		return;
 	}
 
 	if (snd)
 		snd = isSoundRunning(snd);
-	
+
 	push(snd);
 }
 
@@ -1996,7 +1991,7 @@ void Scumm::o6_actorSet()
 		break;
 	case 95:
 		a->ignoreBoxes = 1;
-		if(_features & GF_AFTER_V7) // yazoo: I don't know if it's supposed to be 100 in other games too...
+		if (_features & GF_AFTER_V7)	// yazoo: I don't know if it's supposed to be 100 in other games too...
 			a->forceClip = 100;
 		else
 			a->forceClip = 0;
@@ -2006,7 +2001,7 @@ void Scumm::o6_actorSet()
 		break;
 	case 96:
 		a->ignoreBoxes = 0;
-		if(_features & GF_AFTER_V7) // yazoo: I don't know if it's supposed to be 100 in other games too...
+		if (_features & GF_AFTER_V7)	// yazoo: I don't know if it's supposed to be 100 in other games too...
 			a->forceClip = 100;
 		else
 			a->forceClip = 0;
@@ -2332,7 +2327,7 @@ void Scumm::o6_wait()
 {
 	switch (fetchScriptByte()) {
 	case 168:{
-			int offs = (int16) fetchScriptWord();
+			int offs = (int16)fetchScriptWord();
 			if (derefActorSafe(pop(), "o6_wait")->moving) {
 				_scriptPointer += offs;
 				o6_breakHere();
@@ -2341,7 +2336,7 @@ void Scumm::o6_wait()
 		}
 	case 169:
 		//printf("waiting for message: %d\n", _vars[VAR_HAVE_MSG]);
-		
+
 		if (_vars[VAR_HAVE_MSG])
 			break;
 		return;
@@ -2358,8 +2353,7 @@ void Scumm::o6_wait()
 	case 171:
 		printf("wait for sentence");
 		if (_sentenceNum) {
-			if (sentence[_sentenceNum - 1].unk &&
-					!isScriptInUse(_vars[VAR_SENTENCE_SCRIPT]))
+			if (sentence[_sentenceNum - 1].unk && !isScriptInUse(_vars[VAR_SENTENCE_SCRIPT]))
 				return;
 			break;
 		}
@@ -2368,7 +2362,7 @@ void Scumm::o6_wait()
 		break;
 	case 226:{										/* wait until actor drawn */
 			Actor *a = derefActorSafe(pop(), "o6_wait:226");
-			int offs = (int16) fetchScriptWord();
+			int offs = (int16)fetchScriptWord();
 			if (a && a->isInCurrentRoom() && a->needRedraw) {
 				_scriptPointer += offs;
 				o6_breakHere();
@@ -2377,7 +2371,7 @@ void Scumm::o6_wait()
 		}
 	case 232:{										/* wait until actor stops turning */
 			Actor *a = derefActorSafe(pop(), "o6_wait:226");
-			int offs = (int16) fetchScriptWord();
+			int offs = (int16)fetchScriptWord();
 			if (a && a->isInCurrentRoom() && a->moving & MF_TURN) {
 				_scriptPointer += offs;
 				o6_breakHere();
@@ -2415,10 +2409,10 @@ void Scumm::o6_soundKludge()
 
 	/* (yazoo): I don't know enought about the sound code to
 	 * fix the looping sound bug. FIXME !*/
-	
-	if(list[1] == 163 && _gameId == GID_DIG)
+
+	if (list[1] == 163 && _gameId == GID_DIG)
 		return;
-	
+
 	soundKludge(list);
 }
 
@@ -2696,7 +2690,7 @@ void Scumm::o6_miscOps()
 	int i;
 	Actor *a;
 
-	IMuse *se = _imuse; //yazoo: not very nice
+	IMuse *se = _imuse;						//yazoo: not very nice
 
 	getStackList(args, sizeof(args) / sizeof(args[0]));
 
@@ -2714,8 +2708,7 @@ void Scumm::o6_miscOps()
 			warning("o6_miscOps: stub7()");
 			break;
 		case 10:
-			warning("o6_miscOps: stub10(%d,%d,%d,%d)", args[1], args[2], args[3],
-							args[4]);
+			warning("o6_miscOps: stub10(%d,%d,%d,%d)", args[1], args[2], args[3], args[4]);
 			break;
 		case 11:
 			warning("o6_miscOps: stub11(%d)", args[1]);
@@ -2724,12 +2717,10 @@ void Scumm::o6_miscOps()
 			setCursorImg(args[1], (uint) - 1, args[2]);
 			break;
 		case 13:
-			derefActorSafe(args[1], "o6_miscOps:14")->remapActor(args[2], args[3],
-								 args[4], -1);
+			derefActorSafe(args[1], "o6_miscOps:14")->remapActor(args[2], args[3], args[4], -1);
 			break;
 		case 14:
-			derefActorSafe(args[1], "o6_miscOps:14")->remapActor(args[2], args[3],
-								 args[4], args[5]);
+			derefActorSafe(args[1], "o6_miscOps:14")->remapActor(args[2], args[3], args[4], args[5]);
 			break;
 		case 15:
 			_insaneFlag = args[1];
@@ -2739,7 +2730,7 @@ void Scumm::o6_miscOps()
 				_msgPtrToAdd = charset._buffer;
 				_messagePtr = addMessageToStack(getStringAddressVar(VAR_STRING2DRAW));
 				i = 0;
-				while (charset._buffer[i] != 0)	{
+				while (charset._buffer[i] != 0) {
 					if (charset._buffer[i] == '/') {
 						charset._bufPos = i + 1;
 					}
@@ -2749,8 +2740,7 @@ void Scumm::o6_miscOps()
 			}
 			break;
 		case 17:
-			warning("o6_miscOps: stub17(%d,%d,%d,%d)", args[1], args[2], args[3],
-							args[4]);
+			warning("o6_miscOps: stub17(%d,%d,%d,%d)", args[1], args[2], args[3], args[4]);
 			break;
 		case 18:
 			warning("o6_miscOps: stub18(%d,%d)", args[1], args[2]);
@@ -2762,8 +2752,7 @@ void Scumm::o6_miscOps()
 			a->needRedraw = true;
 			break;
 		case 108:
-			setupShadowPalette(args[1], args[2], args[3], args[4], args[5],
-												 args[6]);
+			setupShadowPalette(args[1], args[2], args[3], args[4], args[5], args[6]);
 			break;
 		case 109:
 			setupShadowPalette(0, args[1], args[2], args[3], args[4], args[5]);
@@ -2775,12 +2764,10 @@ void Scumm::o6_miscOps()
 			freezeScripts(2);
 			break;
 		case 118:
-			enqueueObject(args[1], args[2], args[3], args[4], args[5], args[6],
-										args[7], args[8], 3);
+			enqueueObject(args[1], args[2], args[3], args[4], args[5], args[6], args[7], args[8], 3);
 			break;
 		case 119:
-			enqueueObject(args[1], args[2], args[3], args[4], args[5], args[6],
-										args[7], args[8], 0);
+			enqueueObject(args[1], args[2], args[3], args[4], args[5], args[6], args[7], args[8], 0);
 			break;
 		case 120:
 			warning("o6_miscOps: stub120(%d,%d)", args[1], args[2]);
@@ -2833,7 +2820,7 @@ void Scumm::o6_miscOps()
 		case 108:									/* create proc_special_palette */
 		case 109:
 
-			createSpecialPalette(args[1], args[2],args[3], args[4], args[5], 0, 256);
+			createSpecialPalette(args[1], args[2], args[3], args[4], args[5], 0, 256);
 			break;
 
 		case 110:
@@ -2863,8 +2850,7 @@ void Scumm::o6_miscOps()
 			break;
 
 		case 119:
-			enqueueObject(args[1], args[2], args[3], args[4], args[5],
-										args[6], args[7], args[8], 0);
+			enqueueObject(args[1], args[2], args[3], args[4], args[5], args[6], args[7], args[8], 0);
 			break;
 
 		case 120:
@@ -2877,9 +2863,9 @@ void Scumm::o6_miscOps()
 
 		case 122:
 
-			_vars[VAR_SOUNDRESULT] = (short)se->do_command(	args[1], args[2], args[3], args[4],
-							args[5], args[6], args[7], args[8]
-							);
+			_vars[VAR_SOUNDRESULT] =
+				(short)se->do_command(args[1], args[2], args[3], args[4], args[5], args[6], args[7], args[8]
+				);
 			break;
 
 		case 123:
@@ -2939,15 +2925,15 @@ void Scumm::o6_kernelFunction()
 	case 211:
 		warning("o6_kernelFunction: getInput(%d)", args[1]);
 		/*
-		13 = thrust
-		336 = thrust
-		328 = thrust
-		27 = abord
-		97 = left
-		331 = left
-		115 = right
-		333 = tight
-		*/
+		   13 = thrust
+		   336 = thrust
+		   328 = thrust
+		   27 = abord
+		   97 = left
+		   331 = left
+		   115 = right
+		   333 = tight
+		 */
 		push(0);
 		break;
 	case 212:
@@ -3101,8 +3087,7 @@ void Scumm::decodeParseString2(int m, int n)
 	}
 }
 
-void Scumm::setupShadowPalette(int slot, int rfact, int gfact, int bfact,
-															 int from, int to)
+void Scumm::setupShadowPalette(int slot, int rfact, int gfact, int bfact, int from, int to)
 {
 	byte *table;
 	int i, num;
@@ -3123,8 +3108,7 @@ void Scumm::setupShadowPalette(int slot, int rfact, int gfact, int bfact,
 	num = to - from + 1;
 	do {
 		*table++ = remapPaletteColor((curpal[0] * rfact) >> 8,
-																 curpal[1] * gfact >> 8,
-																 curpal[2] * bfact >> 8, (uint) - 1);
+																 curpal[1] * gfact >> 8, curpal[2] * bfact >> 8, (uint) - 1);
 		curpal += 3;
 	} while (--num);
 }

@@ -1,0 +1,6 @@
+-br -bap -nbc -lp -ce -cdw -brs -nbad -nbc -npsl -nip -ts2 -ncs -nbs
+-npcs -nbap -Tbyte -Tvoid -Tuint32 -Tuint8 -Tuint16 -Tint -Tint8
+-Tint16 -Tint32 -TArrayHeader -TMemBlkHeader -TVerbSlot -TObjectData
+-TImageHeader -TRoomHeader -TCodeHeader -TResHdr -TBompHeader
+-TMidiChannelAdl -TGui -TScumm -TSoundEngine -TPart -TPlayer
+--line-length100

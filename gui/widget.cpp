@@ -24,8 +24,8 @@
 #include "newgui.h"
 
 
-Widget::Widget(Dialog *boss, int x, int y, int w, int h)
-	: _boss(boss), _x(x), _y(y), _w(w), _h(h), _id(0), _flags(0)
+Widget::Widget(Dialog * boss, int x, int y, int w, int h)
+:_boss(boss), _x(x), _y(y), _w(w), _h(h), _id(0), _flags(0)
 {
 	// Insert into the widget list of the boss
 	_next = _boss->_firstWidget;
@@ -40,26 +40,24 @@ void Widget::draw()
 	// Account for our relative position in the dialog
 	_x += _boss->_x;
 	_y += _boss->_y;
-	
+
 	// Clear background
 	if (_flags & WIDGET_CLEARBG)
 		_boss->_gui->clearArea(_x, _y, _w, _h);
-	
+
 	// Draw border
 	if (_flags & WIDGET_BORDER) {
 		_boss->_gui->box(_x, _y, _w, _h);
 		_x += 4;
 		_y += 4;
 	}
-	
 	// Now perform the actual widget draw
 	drawWidget(_flags & WIDGET_HILITED);
-	
+
 	if (_flags & WIDGET_BORDER) {
 		_x -= 4;
 		_y -= 4;
 	}
-	
 	// Restore x/y
 	_x -= _boss->_x;
 	_y -= _boss->_y;
@@ -69,8 +67,8 @@ void Widget::draw()
 #pragma mark -
 
 
-StaticTextWidget::StaticTextWidget(Dialog *boss, int x, int y, int w, int h, const char *text)
-	: Widget(boss, x, y, w, h)
+StaticTextWidget::StaticTextWidget(Dialog * boss, int x, int y, int w, int h, const char *text)
+:Widget(boss, x, y, w, h)
 {
 	// FIXME - maybe we should make a real copy of the string?
 	_text = text;
@@ -78,7 +76,7 @@ StaticTextWidget::StaticTextWidget(Dialog *boss, int x, int y, int w, int h, con
 
 void StaticTextWidget::drawWidget(bool hilite)
 {
-	NewGui	*gui = _boss->_gui;
+	NewGui *gui = _boss->_gui;
 	gui->drawString(_text, _x, _y, _w, hilite ? gui->_textcolorhi : gui->_textcolor);
 }
 
@@ -86,10 +84,10 @@ void StaticTextWidget::drawWidget(bool hilite)
 #pragma mark -
 
 
-ButtonWidget::ButtonWidget(Dialog *boss, int x, int y, int w, int h, const char *label, uint32 cmd)
-	: StaticTextWidget(boss, x, y, w, h, label), _cmd(cmd), _hotkey(0)
+ButtonWidget::ButtonWidget(Dialog * boss, int x, int y, int w, int h, const char *label, uint32 cmd)
+:StaticTextWidget(boss, x, y, w, h, label), _cmd(cmd), _hotkey(0)
 {
-	_flags = WIDGET_ENABLED | WIDGET_BORDER /* | WIDGET_CLEARBG */;
+	_flags = WIDGET_ENABLED | WIDGET_BORDER /* | WIDGET_CLEARBG */ ;
 }
 
 void ButtonWidget::handleClick(int button)
