@@ -2315,9 +2315,7 @@ bool SkyLogic::fnLookAt(uint32 a, uint32 b, uint32 c) {
 	fnNoHuman(0, 0, 0); 
 	_skyMouse->lockMouse();
 
-	//waitRelative(0);
 	_skyMouse->waitMouseNotPressed();
-	//waitRelative(40);
 	
 	_skyMouse->unlockMouse();
 	fnAddHuman(0, 0, 0);

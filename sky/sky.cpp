@@ -192,9 +192,10 @@ void SkyState::go() {
 			_skyScreen->recreate();
 			_skyScreen->spriteEngine();
 			_skyScreen->flip();
-			if (_paintGrid)
+			if (_paintGrid) {
 				_skyScreen->showGrid(_skyLogic->_skyGrid->giveGrid(SkyLogic::_scriptVariables[SCREEN]));
-			_system->update_screen();
+				_system->update_screen();
+			}
 		}
 	}
 }

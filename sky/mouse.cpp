@@ -167,7 +167,17 @@ void SkyMouse::drawNewMouse() {
 }
 
 void SkyMouse::waitMouseNotPressed(void) {
-	while (_mouseB) ;
+
+	bool mousePressed = true;
+	OSystem::Event event;
+	while (mousePressed) {
+		_system->delay_msecs(20);
+		while (_system->poll_event(&event)) {
+			if ((event.event_code == OSystem::EVENT_LBUTTONUP) ||
+				(event.event_code == OSystem::EVENT_QUIT))
+				mousePressed = false;
+		}
+	}
 	_bMouseB = 0;
 }
 

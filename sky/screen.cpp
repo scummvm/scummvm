@@ -197,7 +197,6 @@ void SkyScreen::recreate(void) {
 void SkyScreen::flip(void) {
 
 	SkyState::_systemVars.mouseFlag |= MF_NO_UPDATE;
-	// drawMouseToBackScreen();
 	uint8 *screenPos = _currentScreen;
 	uint8 *backPos = _backScreen;
 	uint32 copyX, copyWidth;
@@ -230,7 +229,7 @@ void SkyScreen::flip(void) {
 		backPos += (GRID_H - 1) * GAME_SCREEN_WIDTH;
 	}
 	SkyState::_systemVars.mouseFlag &= ~MF_NO_UPDATE;
-	// _skyMouse->restoreDataToBackScreen();
+	_system->update_screen();
 }
 
 void SkyScreen::fnDrawScreen(uint32 palette, uint32 scroll) {
