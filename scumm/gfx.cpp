@@ -491,7 +491,7 @@ void Gdi::resetBackground(int top, int bottom, int strip) {
 		vs->bdirty[strip] = bottom;
 
 	offs = (top * _numStrips + _vm->_screenStartStrip + strip);
-	_mask_ptr = _vm->getResourceAddress(rtBuffer, 9) + offs;
+	byte *mask_ptr = _vm->getResourceAddress(rtBuffer, 9) + offs;
 	bgbak_ptr = _vm->getResourceAddress(rtBuffer, 5) + (offs << 3);
 	backbuff_ptr = vs->screenPtr + (offs << 3);
 
@@ -499,7 +499,7 @@ void Gdi::resetBackground(int top, int bottom, int strip) {
 	if (numLinesToProcess) {
 		if ((_vm->_features & GF_AFTER_V6) || (_vm->VAR(_vm->VAR_CURRENT_LIGHTS) & LIGHTMODE_screen)) {
 			if (_vm->hasCharsetMask(strip << 3, top, (strip + 1) << 3, bottom))
-				draw8ColWithMasking(backbuff_ptr, bgbak_ptr, numLinesToProcess, _mask_ptr);
+				draw8ColWithMasking(backbuff_ptr, bgbak_ptr, numLinesToProcess, mask_ptr);
 			else
 				draw8Col(backbuff_ptr, bgbak_ptr, numLinesToProcess);
 		} else {
@@ -843,6 +843,8 @@ void Gdi::drawBitmap(byte *ptr, VirtScreen *vs, int x, int y, const int width, c
 	assert(ptr);
 	assert(height > 0);
 	byte *backbuff_ptr, *bgbak_ptr, *smap_ptr;
+	byte *mask_ptr;
+
 	int i;
 	byte *zplane_list[9];
 
@@ -942,13 +944,12 @@ void Gdi::drawBitmap(byte *ptr, VirtScreen *vs, int x, int y, const int width, c
 	//////
 	if (_vm->_features & GF_AFTER_V2) {
 		
-		backbuff_ptr = vs->screenPtr + (y * _numStrips + x) * 8;
 		if (vs->alloctwobuffers)
 			bgbak_ptr = _vm->getResourceAddress(rtBuffer, vs->number + 5) + (y * _numStrips + x) * 8;
 		else
-			bgbak_ptr = backbuff_ptr;
+			bgbak_ptr = vs->screenPtr + (y * _numStrips + x) * 8;
 
-		_mask_ptr = _vm->getResourceAddress(rtBuffer, 9) + (y * _numStrips + x);
+		mask_ptr = _vm->getResourceAddress(rtBuffer, 9) + (y * _numStrips + x);
 
 		const int left = (stripnr << 3);
 		const int right = left + (numstrip << 3);
@@ -1006,14 +1007,14 @@ void Gdi::drawBitmap(byte *ptr, VirtScreen *vs, int x, int y, const int width, c
 				data = *src++;
 				do {
 					if (left <= theX && theX < right) {
-						*_mask_ptr = data;
-						_mask_ptr += _numStrips;
+						*mask_ptr = data;
+						mask_ptr += _numStrips;
 					}
 					theY++;
 					if (theY >= height) {
 						if (left <= theX && theX < right) {
-							_mask_ptr -= _numStrips * height;
-							_mask_ptr++;
+							mask_ptr -= _numStrips * height;
+							mask_ptr++;
 						}
 						theY = 0;
 						theX += 8;
@@ -1026,14 +1027,14 @@ void Gdi::drawBitmap(byte *ptr, VirtScreen *vs, int x, int y, const int width, c
 					data = *src++;
 					
 					if (left <= theX && theX < right) {
-						*_mask_ptr = data;
-						_mask_ptr += _numStrips;
+						*mask_ptr = data;
+						mask_ptr += _numStrips;
 					}
 					theY++;
 					if (theY >= height) {
 						if (left <= theX && theX < right) {
-							_mask_ptr -= _numStrips * height;
-							_mask_ptr++;
+							mask_ptr -= _numStrips * height;
+							mask_ptr++;
 						}
 						theY = 0;
 						theX += 8;
@@ -1072,7 +1073,7 @@ void Gdi::drawBitmap(byte *ptr, VirtScreen *vs, int x, int y, const int width, c
 		else
 			bgbak_ptr = backbuff_ptr;
 
-		_mask_ptr = _vm->getResourceAddress(rtBuffer, 9) + (y * _numStrips + x);
+		mask_ptr = _vm->getResourceAddress(rtBuffer, 9) + (y * _numStrips + x);
 
 		if (!(_vm->_features & GF_AFTER_V2)) {
 			if (_vm->_features & GF_16COLOR) {
@@ -1088,9 +1089,9 @@ void Gdi::drawBitmap(byte *ptr, VirtScreen *vs, int x, int y, const int width, c
 		if (vs->alloctwobuffers) {
 			if (_vm->hasCharsetMask(sx << 3, y, (sx + 1) << 3, bottom)) {
 				if (flag & dbClear || !lightsOn)
-					clear8ColWithMasking(backbuff_ptr, height, _mask_ptr);
+					clear8ColWithMasking(backbuff_ptr, height, mask_ptr);
 				else
-					draw8ColWithMasking(backbuff_ptr, bgbak_ptr, height, _mask_ptr);
+					draw8ColWithMasking(backbuff_ptr, bgbak_ptr, height, mask_ptr);
 			} else {
 				if (flag & dbClear || !lightsOn)
 					clear8Col(backbuff_ptr, height);
@@ -1125,11 +1126,11 @@ void Gdi::drawBitmap(byte *ptr, VirtScreen *vs, int x, int y, const int width, c
 			else
 				z_plane_ptr = zplane_list[1] + READ_LE_UINT16(zplane_list[1] + stripnr * 2 + 8);
 			for (i = 0; i < numzbuf; i++) {
-				_mask_ptr_dest = _vm->getResourceAddress(rtBuffer, 9) + y * _numStrips + x + _imgBufOffs[i];
+				mask_ptr = _vm->getResourceAddress(rtBuffer, 9) + y * _numStrips + x + _imgBufOffs[i];
 				if (useOrDecompress && (flag & dbAllowMaskOr))
-					decompressMaskImgOr(_mask_ptr_dest, z_plane_ptr, height);
+					decompressMaskImgOr(mask_ptr, z_plane_ptr, height);
 				else
-					decompressMaskImg(_mask_ptr_dest, z_plane_ptr, height);
+					decompressMaskImg(mask_ptr, z_plane_ptr, height);
 			}
 		} else {
 			for (i = 1; i < numzbuf; i++) {
@@ -1149,21 +1150,21 @@ void Gdi::drawBitmap(byte *ptr, VirtScreen *vs, int x, int y, const int width, c
 				else
 					offs = READ_LE_UINT16(zplane_list[i] + stripnr * 2 + 8);
 
-				_mask_ptr_dest = _vm->getResourceAddress(rtBuffer, 9) + y * _numStrips + x + _imgBufOffs[i];
+				mask_ptr = _vm->getResourceAddress(rtBuffer, 9) + y * _numStrips + x + _imgBufOffs[i];
 
 				if (offs) {
 					byte *z_plane_ptr = zplane_list[i] + offs;
 
 					if (useOrDecompress && (flag & dbAllowMaskOr)) {
-						decompressMaskImgOr(_mask_ptr_dest, z_plane_ptr, height);
+						decompressMaskImgOr(mask_ptr, z_plane_ptr, height);
 					} else {
-						decompressMaskImg(_mask_ptr_dest, z_plane_ptr, height);
+						decompressMaskImg(mask_ptr, z_plane_ptr, height);
 					}
 
 				} else {
 					if (!(useOrDecompress && (flag & dbAllowMaskOr)))
 						for (int h = 0; h < height; h++)
-							_mask_ptr_dest[h * _numStrips] = 0;
+							mask_ptr[h * _numStrips] = 0;
 					// FIXME: needs better abstraction
 				}
 			}

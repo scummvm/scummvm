@@ -124,9 +124,6 @@ protected:
 	bool _useOrDecompress;
 	byte _cursorActive;
 
-	byte *_mask_ptr;
-	byte *_mask_ptr_dest;
-
 	byte _palette_mod;
 	byte _decomp_shr, _decomp_mask;
 	byte _transparentColor;
