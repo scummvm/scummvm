@@ -837,25 +837,23 @@ bool Sound::isSfxFinished() {
 }
 
 uint32 Sound::decode12BitsSample(byte * src, byte ** dst, uint32 size) {
-	uint32 s_size = (size * 4) / 3;
-	byte * ptr = *dst = (byte*)malloc (s_size + 4);
+	uint32 s_size = (size / 3) * 4;
+	uint32 loop_size = s_size / 4;
+	byte *ptr = *dst = (byte*)malloc(s_size);
 
-	uint32 r = 0, tmp, l;
-	for (l = 0; l < size; l += 3) {
-		tmp = (src[l + 1] & 0x0f) << 8;
-		tmp = (tmp | src[l + 0]) << 4;
-		tmp -= 0x8000;
-		ptr[r++] = (byte)((tmp >> 8) & 0xff);
-		ptr[r++] = (byte)(tmp & 0xff);
-
-		tmp = (src[l + 1] & 0xf0) << 4;
-		tmp = (tmp | src[l + 2]) << 4;
-		tmp -= 0x8000;
-		ptr[r++] = (byte)((tmp >> 8) & 0xff);
-		ptr[r++] = (byte)(tmp & 0xff);
+	uint32 tmp;
+	while(loop_size--) {
+		byte v1 = *src++;
+		byte v2 = *src++;
+		byte v3 = *src++;
+		tmp = ((((v2 & 0x0f) << 8) | v1) << 4) - 0x8000;
+		*ptr++ = (byte)((tmp >> 8) & 0xff);
+		*ptr++ = (byte)(tmp & 0xff);
+		tmp = ((((v2 & 0xf0) << 4) | v3) << 4) - 0x8000;
+		*ptr++ = (byte)((tmp >> 8) & 0xff);
+		*ptr++ = (byte)(tmp & 0xff);
 	}
-
-	return r;
+	return s_size;
 }
 
 static void music_handler (void * engine) {
