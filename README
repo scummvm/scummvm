@@ -857,6 +857,12 @@ Broken Sword II adds the following non-standard keywords:
         speech_mute     bool     If true, speech is muted
         speech_volume   number   The speech volume setting (0-255)
 
+Flight of the Amazon Queen adds the following non-standard keywords:
+
+        music_mute      bool     If true, music is muted
+        sfx_mute        bool     If true, sound effects are muted
+        speech_mute     bool     If true, speech is muted
+
 Simon the Sorcerer 1 & 2 add the following non-standard keywords:
 
         fade            bool     If true, fade effect is enabled
