@@ -20,21 +20,13 @@
  * $Header$
  *
  */
-/*
- Description:   
- 
-    Game interface module
 
- Notes: 
-*/
+// Game interface module
 
 #include "reinherit.h"
 
 #include "yslib.h"
 
-/*
- * Uses the following modules:
-\*--------------------------------------------------------------------------*/
 #include "game_mod.h"
 #include "cvar_mod.h"
 #include "actor_mod.h"
@@ -47,9 +39,6 @@
 #include "script_mod.h"
 #include "sprite_mod.h"
 
-/*
- * Begin module
-\*--------------------------------------------------------------------------*/
 #include "interface_mod.h"
 #include "interface.h"
 
@@ -88,7 +77,7 @@ static R_INTERFACE_DESC ITE_interface = {
 
 static R_INTERFACE_BUTTON ITE_c_buttons[] = {
 	{5, 4, 46, 47, "Portrait", 0, 0, BUTTON_NONE, 0},
-	/* "Walk To" and "Talk To" share button sprites */
+	// "Walk To" and "Talk To" share button sprites
 	{52, 4, 109, 14, "Walk To", 1, 2, BUTTON_VERB, I_VERB_WALKTO},
 	{52, 15, 109, 25, "Look At", 3, 4, BUTTON_VERB, I_VERB_LOOKAT},
 	{52, 26, 109, 36, "Pick Up", 5, 6, BUTTON_VERB, I_VERB_PICKUP},
@@ -161,58 +150,47 @@ int INTERFACE_Init(void) {
 
 	IfModule.i_thread = STHREAD_Create();
 	if (IfModule.i_thread == NULL) {
-		R_printf(R_STDERR,
-		    "Error creating script thread for game interface "
-		    "module.\n");
-
+		R_printf(R_STDERR, "Error creating script thread for game interface module.\n");
 		return R_FAILURE;
 	}
 
-	/* Load interface module resource file context */
-	result = GAME_GetFileContext(&IfModule.i_file_ctxt,
-	    R_GAME_RESOURCEFILE, 0);
+	// Load interface module resource file context
+	result = GAME_GetFileContext(&IfModule.i_file_ctxt, R_GAME_RESOURCEFILE, 0);
 	if (result != R_SUCCESS) {
-
 		return R_FAILURE;
 	}
 
-	/* Initialize interface data by game type */
+	// Initialize interface data by game type
 	game_type = GAME_GetGameType();
-
 	if (game_type == R_GAMETYPE_ITE) {
-		/* Load Inherit the Earth interface desc */
+		// Load Inherit the Earth interface desc
 		IfModule.c_panel.buttons = ITE_c_buttons;
 		IfModule.c_panel.nbuttons = ARRAYSIZE(ITE_c_buttons);
 
 		IfModule.i_desc = ITE_interface;
 	} else if (game_type == R_GAMETYPE_IHNM) {
-		/* Load I Have No Mouth interface desc */
+		// Load I Have No Mouth interface desc
 		IfModule.c_panel.buttons = IHNM_c_buttons;
 		IfModule.c_panel.nbuttons = ARRAYSIZE(IHNM_c_buttons);
-
 		IfModule.i_desc = IHNM_interface;
 	} else {
 		return R_FAILURE;
 	}
 
-	/* Load interface resources */
+	// Load interface resources
 	GAME_GetResourceInfo(&g_resdesc);
 
-	/* Load command panel resource */
-	result = RSC_LoadResource(IfModule.i_file_ctxt,
-	    g_resdesc.command_panel_rn,
-	    &IfModule.c_panel.res, &IfModule.c_panel.res_len);
+	// Load command panel resource
+	result = RSC_LoadResource(IfModule.i_file_ctxt, g_resdesc.command_panel_rn,
+							&IfModule.c_panel.res, &IfModule.c_panel.res_len);
 	if (result != R_SUCCESS) {
-
 		return R_FAILURE;
 	}
 
-	/* Load dialogue panel resource */
-	result = RSC_LoadResource(IfModule.i_file_ctxt,
-	    g_resdesc.dialogue_panel_rn,
-	    &IfModule.d_panel.res, &IfModule.d_panel.res_len);
+	// Load dialogue panel resource
+	result = RSC_LoadResource(IfModule.i_file_ctxt, g_resdesc.dialogue_panel_rn,
+							&IfModule.d_panel.res, &IfModule.d_panel.res_len);
 	if (result != R_SUCCESS) {
-
 		return R_FAILURE;
 	}
 
@@ -220,17 +198,12 @@ int INTERFACE_Init(void) {
 
 	SPRITE_LoadList(ITE_DEFAULT_PORTRAITS, &IfModule.def_portraits);
 
-	IMG_DecodeBGImage(IfModule.c_panel.res,
-	    IfModule.c_panel.res_len,
-	    &IfModule.c_panel.img,
-	    &IfModule.c_panel.img_len,
-	    &IfModule.c_panel.img_w, &IfModule.c_panel.img_h);
+	IMG_DecodeBGImage(IfModule.c_panel.res, IfModule.c_panel.res_len, &IfModule.c_panel.img,
+					&IfModule.c_panel.img_len, &IfModule.c_panel.img_w, &IfModule.c_panel.img_h);
 
-	IMG_DecodeBGImage(IfModule.d_panel.res,
-	    IfModule.d_panel.res_len,
-	    &IfModule.d_panel.img,
-	    &IfModule.d_panel.img_len,
-	    &IfModule.d_panel.img_w, &IfModule.d_panel.img_h);
+	IMG_DecodeBGImage(IfModule.d_panel.res, IfModule.d_panel.res_len,
+					&IfModule.d_panel.img, &IfModule.d_panel.img_len,
+					&IfModule.d_panel.img_w, &IfModule.d_panel.img_h);
 
 	IfModule.c_panel.x = 0;
 	IfModule.c_panel.y = 149;
@@ -248,14 +221,14 @@ int INTERFACE_Init(void) {
 	return R_SUCCESS;
 }
 
-int INTERFACE_Activate(void) {
+int INTERFACE_Activate() {
 	IfModule.active = 1;
 	INTERFACE_Draw();
 
 	return R_SUCCESS;
 }
 
-int INTERFACE_Deactivate(void) {
+int INTERFACE_Deactivate() {
 	IfModule.active = 0;
 
 	return R_SUCCESS;
@@ -269,9 +242,8 @@ int INTERFACE_SetStatusText(const char *new_txt) {
 	return R_SUCCESS;
 }
 
-int INTERFACE_Draw(void) {
+int INTERFACE_Draw() {
 	R_GAME_DISPLAYINFO g_di;
-
 	R_SURFACE *back_buf;
 
 	int xbase;
@@ -288,10 +260,10 @@ int INTERFACE_Draw(void) {
 		return R_SUCCESS;
 	}
 
-	/* Get game display info */
+	// Get game display info
 	GAME_GetDisplayInfo(&g_di);
 
-	/* Erase background of status bar */
+	// Erase background of status bar
 	rect.left = 0;
 	rect.top = IfModule.i_desc.status_h - 1;
 
@@ -300,7 +272,7 @@ int INTERFACE_Draw(void) {
 
 	GFX_DrawRect(back_buf, &rect, IfModule.i_desc.status_bgcol);
 
-	/* Draw command panel background */
+	// Draw command panel background
 	if (IfModule.panel_mode == PANEL_COMMAND) {
 		xbase = IfModule.c_panel.x;
 		ybase = IfModule.c_panel.y;
@@ -308,10 +280,8 @@ int INTERFACE_Draw(void) {
 		origin.x = 0;
 		origin.y = g_di.logical_h - IfModule.c_panel.img_h;
 
-		GFX_BufToSurface(back_buf,
-		    IfModule.c_panel.img,
-		    IfModule.c_panel.img_w,
-		    IfModule.c_panel.img_h, NULL, &origin);
+		GFX_BufToSurface(back_buf, IfModule.c_panel.img, IfModule.c_panel.img_w,
+						IfModule.c_panel.img_h, NULL, &origin);
 	} else {
 		xbase = IfModule.d_panel.x;
 		ybase = IfModule.d_panel.y;
@@ -319,19 +289,15 @@ int INTERFACE_Draw(void) {
 		origin.x = 0;
 		origin.y = g_di.logical_h - IfModule.c_panel.img_h;
 
-		GFX_BufToSurface(back_buf,
-		    IfModule.d_panel.img,
-		    IfModule.d_panel.img_w,
-		    IfModule.d_panel.img_h, NULL, &origin);
+		GFX_BufToSurface(back_buf, IfModule.d_panel.img, IfModule.d_panel.img_w,
+						IfModule.d_panel.img_h, NULL, &origin);
 	}
 
-	/* Draw character portrait */
+	// Draw character portrait
 	lportrait_x = xbase + IfModule.i_desc.lportrait_x;
 	lportrait_y = ybase + IfModule.i_desc.lportrait_y;
 
-	SPRITE_Draw(back_buf,
-	    IfModule.def_portraits,
-	    IfModule.active_portrait, lportrait_x, lportrait_y);
+	SPRITE_Draw(back_buf, IfModule.def_portraits, IfModule.active_portrait, lportrait_x, lportrait_y);
 
 	return R_SUCCESS;
 }
@@ -354,12 +320,12 @@ int INTERFACE_Update(R_POINT *imouse_pt, int update_flag) {
 
 	back_buf = SYSGFX_GetBackBuffer();
 
-	/* Get game display info */
+	// Get game display info
 	GAME_GetDisplayInfo(&g_di);
 
-	/* Update playfield space ( only if cursor is inside ) */
+	// Update playfield space ( only if cursor is inside )
 	if (imouse_y < g_di.scene_h) {
-		/* Mouse is in playfield space */
+		// Mouse is in playfield space
 		if (update_flag == UPDATE_MOUSEMOVE) {
 			HandlePlayfieldUpdate(back_buf, imouse_pt);
 		} else if (update_flag == UPDATE_MOUSECLICK) {
@@ -367,7 +333,7 @@ int INTERFACE_Update(R_POINT *imouse_pt, int update_flag) {
 		}
 	}
 
-	/* Update command space */
+	// Update command space
 	if (update_flag == UPDATE_MOUSEMOVE) {
 		HandleCommandUpdate(back_buf, imouse_pt);
 	} else if (update_flag == UPDATE_MOUSECLICK) {
@@ -385,10 +351,10 @@ int DrawStatusBar(R_SURFACE *ds) {
 
 	int string_w;
 
-	/* Get game display info */
+	// Get game display info
 	GAME_GetDisplayInfo(&g_di);
 
-	/* Erase background of status bar */
+	// Erase background of status bar
 	rect.left = 0;
 	rect.top = IfModule.i_desc.status_y;
 	rect.right = g_di.logical_w - 1;
@@ -396,19 +362,12 @@ int DrawStatusBar(R_SURFACE *ds) {
 
 	GFX_DrawRect(ds, &rect, IfModule.i_desc.status_bgcol);
 
-	string_w = FONT_GetStringWidth(SMALL_FONT_ID,
-	    IfModule.status_txt, 0, 0);
+	string_w = FONT_GetStringWidth(SMALL_FONT_ID, IfModule.status_txt, 0, 0);
 
-	FONT_Draw(SMALL_FONT_ID,
-	    ds,
-	    IfModule.status_txt,
-	    0,
-	    (IfModule.i_desc.status_w / 2) - (string_w / 2),
-	    IfModule.i_desc.status_y + IfModule.i_desc.status_txt_y,
-	    IfModule.i_desc.status_txt_col, 0, 0);
+	FONT_Draw(SMALL_FONT_ID, ds, IfModule.status_txt, 0, (IfModule.i_desc.status_w / 2) - (string_w / 2),
+			IfModule.i_desc.status_y + IfModule.i_desc.status_txt_y, IfModule.i_desc.status_txt_col, 0, 0);
 
 	return R_SUCCESS;
-
 }
 
 int HandleCommandClick(R_SURFACE *ds, R_POINT *imouse_pt) {
@@ -426,7 +385,7 @@ int HandleCommandClick(R_SURFACE *ds, R_POINT *imouse_pt) {
 
 	hit_button = INTERFACE_HitTest(imouse_pt, &ibutton_num);
 	if (hit_button != R_SUCCESS) {
-		/* Clicking somewhere other than a button doesn't do anything */
+		// Clicking somewhere other than a button doesn't do anything
 		return R_SUCCESS;
 	}
 
@@ -439,36 +398,23 @@ int HandleCommandClick(R_SURFACE *ds, R_POINT *imouse_pt) {
 		IfModule.c_panel.set_button = set_button;
 
 		if (IfModule.c_panel.buttons[set_button].flags & BUTTON_VERB) {
-			IfModule.active_verb =
-			    IfModule.c_panel.buttons[ibutton_num].data;
+			IfModule.active_verb = IfModule.c_panel.buttons[ibutton_num].data;
 		}
 
 		if (IfModule.c_panel.buttons[set_button].flags & BUTTON_BITMAP) {
-			button_x =
-			    x_base + IfModule.c_panel.buttons[set_button].x1;
-			button_y =
-			    y_base + IfModule.c_panel.buttons[set_button].y1;
+			button_x = x_base + IfModule.c_panel.buttons[set_button].x1;
+			button_y = y_base + IfModule.c_panel.buttons[set_button].y1;
 
-			SPRITE_Draw(ds,
-			    IfModule.c_panel.sprites,
-			    IfModule.c_panel.buttons[set_button].
-			    active_sprite - 1, button_x, button_y);
+			SPRITE_Draw(ds, IfModule.c_panel.sprites, IfModule.c_panel.buttons[set_button].
+						active_sprite - 1, button_x, button_y);
 		}
 
-		if (IfModule.c_panel.buttons[old_set_button].
-		    flags & BUTTON_BITMAP) {
+		if (IfModule.c_panel.buttons[old_set_button].flags & BUTTON_BITMAP) {
+			button_x = x_base + IfModule.c_panel.buttons[old_set_button].x1;
+			button_y = y_base + IfModule.c_panel.buttons[old_set_button].y1;
 
-			button_x =
-			    x_base +
-			    IfModule.c_panel.buttons[old_set_button].x1;
-			button_y =
-			    y_base +
-			    IfModule.c_panel.buttons[old_set_button].y1;
-
-			SPRITE_Draw(ds,
-			    IfModule.c_panel.sprites,
-			    IfModule.c_panel.buttons[old_set_button].
-			    inactive_sprite - 1, button_x, button_y);
+			SPRITE_Draw(ds, IfModule.c_panel.sprites, IfModule.c_panel.buttons[old_set_button].
+						inactive_sprite - 1, button_x, button_y);
 		}
 	}
 
@@ -487,15 +433,13 @@ int HandleCommandUpdate(R_SURFACE *ds, R_POINT *imouse_pt) {
 	int string_w = 0;
 
 	int color;
-
 	int i;
 
 	hit_button = INTERFACE_HitTest(imouse_pt, &ibutton_num);
 
 	if (hit_button == R_SUCCESS) {
-		/* Hovering over a command panel button */
-		INTERFACE_SetStatusText(I_VerbData[IfModule.active_verb].
-		    verb_str);
+		// Hovering over a command panel button
+		INTERFACE_SetStatusText(I_VerbData[IfModule.active_verb].verb_str);
 	}
 
 	for (i = 0; i < IfModule.c_panel.nbuttons; i++) {
@@ -503,13 +447,11 @@ int HandleCommandUpdate(R_SURFACE *ds, R_POINT *imouse_pt) {
 			continue;
 		}
 
-		button_w = IfModule.c_panel.buttons[i].x2 -
-		    IfModule.c_panel.buttons[i].x1;
+		button_w = IfModule.c_panel.buttons[i].x2 - IfModule.c_panel.buttons[i].x1;
 
 		verb_idx = IfModule.c_panel.buttons[i].data;
 
-		string_w = FONT_GetStringWidth(SMALL_FONT_ID,
-		    I_VerbData[verb_idx].verb_str, 0, 0);
+		string_w = FONT_GetStringWidth(SMALL_FONT_ID, I_VerbData[verb_idx].verb_str, 0, 0);
 
 		if (i == hit_button) {
 			color = IfModule.i_desc.cmd_txt_hilitecol;
@@ -520,21 +462,13 @@ int HandleCommandUpdate(R_SURFACE *ds, R_POINT *imouse_pt) {
 		button_x = IfModule.c_panel.x + IfModule.c_panel.buttons[i].x1;
 		button_y = IfModule.c_panel.y + IfModule.c_panel.buttons[i].y1;
 
-		FONT_Draw(SMALL_FONT_ID,
-		    ds,
-		    I_VerbData[verb_idx].verb_str,
-		    0,
-		    button_x + ((button_w / 2) - (string_w / 2)),
-		    button_y + 1,
-		    color, IfModule.i_desc.cmd_txt_shadowcol, FONT_SHADOW);
+		FONT_Draw(SMALL_FONT_ID, ds, I_VerbData[verb_idx].verb_str, 0,
+				button_x + ((button_w / 2) - (string_w / 2)), button_y + 1,
+				color, IfModule.i_desc.cmd_txt_shadowcol, FONT_SHADOW);
 
-		if ((i == IfModule.c_panel.set_button) &&
-		    (IfModule.c_panel.buttons[i].flags & BUTTON_BITMAP)) {
-
-			SPRITE_Draw(ds,
-			    IfModule.c_panel.sprites,
-			    IfModule.c_panel.buttons[i].active_sprite - 1,
-			    button_x, button_y);
+		if ((i == IfModule.c_panel.set_button) && (IfModule.c_panel.buttons[i].flags & BUTTON_BITMAP)) {
+			SPRITE_Draw(ds, IfModule.c_panel.sprites, IfModule.c_panel.buttons[i].active_sprite - 1,
+						button_x, button_y);
 		}
 	}
 
@@ -552,32 +486,29 @@ int HandlePlayfieldClick(R_SURFACE *ds, R_POINT *imouse_pt) {
 	hit_object = OBJECTMAP_HitTest(imouse_pt, &object_num);
 
 	if (hit_object != R_SUCCESS) {
-		/* Player clicked on empty spot - walk here regardless of verb */
+		// Player clicked on empty spot - walk here regardless of verb
 		ACTOR_StoA(&iactor_pt, imouse_pt);
 		ACTOR_WalkTo(0, &iactor_pt, 0, NULL);
-
 		return R_SUCCESS;
 	}
 
 	if (OBJECTMAP_GetFlags(object_num, &object_flags) != R_SUCCESS) {
 		CON_Print("Invalid object number: %d\n", object_num);
-
 		return R_FAILURE;
 	}
 
 	if (object_flags & R_OBJECT_NORMAL) {
 		if (OBJECTMAP_GetEPNum(object_num, &script_num) == R_SUCCESS) {
-			/* Set active verb in script module */
-			SDATA_PutWord(4, 4,
-			    I_VerbData[IfModule.active_verb].s_verb);
+			// Set active verb in script module
+			SDATA_PutWord(4, 4, I_VerbData[IfModule.active_verb].s_verb);
 
-			/* Execute object script if present */
+			// Execute object script if present
 			if (script_num != 0) {
 				STHREAD_Execute(IfModule.i_thread, script_num);
 			}
 		}
 	} else {
-		/* Not a normal scene object - walk to it as if it weren't there */
+		// Not a normal scene object - walk to it as if it weren't there
 		ACTOR_StoA(&iactor_pt, imouse_pt);
 		ACTOR_WalkTo(0, &iactor_pt, 0, NULL);
 	}
@@ -599,33 +530,25 @@ int HandlePlayfieldUpdate(R_SURFACE *ds, R_POINT *imouse_pt) {
 	hit_object = OBJECTMAP_HitTest(imouse_pt, &object_num);
 
 	if (hit_object != R_SUCCESS) {
-		/* Cursor over nothing - just display current verb */
-		INTERFACE_SetStatusText(I_VerbData[IfModule.active_verb].
-		    verb_str);
-
+		// Cursor over nothing - just display current verb
+		INTERFACE_SetStatusText(I_VerbData[IfModule.active_verb].verb_str);
 		return R_SUCCESS;
 	}
 
 	if (OBJECTMAP_GetFlags(object_num, &object_flags) != R_SUCCESS) {
 		CON_Print("Invalid object number: %d\n", object_num);
-
 		return R_FAILURE;
 	}
 
 	OBJECTMAP_GetName(object_num, &object_name);
 
 	if (object_flags & R_OBJECT_NORMAL) {
-		/* Normal scene object - display as subject of verb */
-		snprintf(new_status,
-		    R_STATUS_TEXT_LEN,
-		    "%s %s",
-		    I_VerbData[IfModule.active_verb].verb_str, object_name);
+		// Normal scene object - display as subject of verb
+		snprintf(new_status, R_STATUS_TEXT_LEN, "%s %s", I_VerbData[IfModule.active_verb].verb_str, object_name);
 	} else {
-		/* Not normal scene object - override verb as we can only
-		 * walk to this object */
-		snprintf(new_status,
-		    R_STATUS_TEXT_LEN,
-		    "%s %s", I_VerbData[I_VERB_WALKTO].verb_str, object_name);
+		// Not normal scene object - override verb as we can only
+		// walk to this object
+		snprintf(new_status, R_STATUS_TEXT_LEN, "%s %s", I_VerbData[I_VERB_WALKTO].verb_str, object_name);
 	}
 
 	INTERFACE_SetStatusText(new_status);
@@ -649,13 +572,9 @@ int INTERFACE_HitTest(R_POINT *imouse_pt, int *ibutton) {
 	ybase = IfModule.c_panel.y;
 
 	for (i = 0; i < nbuttons; i++) {
-		if ((imouse_pt->x >= (xbase + buttons[i].x1)) &&
-		    (imouse_pt->x < (xbase + buttons[i].x2)) &&
-		    (imouse_pt->y >= (ybase + buttons[i].y1)) &&
-		    (imouse_pt->y < (ybase + buttons[i].y2))) {
-
+		if ((imouse_pt->x >= (xbase + buttons[i].x1)) && (imouse_pt->x < (xbase + buttons[i].x2)) &&
+			(imouse_pt->y >= (ybase + buttons[i].y1)) && (imouse_pt->y < (ybase + buttons[i].y2))) {
 			*ibutton = i;
-
 			return R_SUCCESS;
 		}
 	}

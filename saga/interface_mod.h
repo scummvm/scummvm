@@ -20,13 +20,8 @@
  * $Header$
  *
  */
-/*
- Description:	
- 
-	Game interface module public header file
 
- Notes: 
-*/
+// Game interface module public header file
 
 #ifndef SAGA_INTERFACE_MOD_H
 #define SAGA_INTERFACE_MOD_H
@@ -34,23 +29,18 @@
 namespace Saga {
 
 typedef enum INTERFACE_UPDATE_FLAGS_tag {
-
 	UPDATE_MOUSEMOVE = 1,
 	UPDATE_MOUSECLICK
-
 } INTERFACE_UPDATE_FLAGS;
 
-int INTERFACE_RegisterLang(void);
-
-int INTERFACE_Init(void);
-int INTERFACE_Shutdown(void);
-
-int INTERFACE_Activate(void);
-int INTERFACE_Deactivate(void);
-
+int INTERFACE_RegisterLang();
+int INTERFACE_Init();
+int INTERFACE_Shutdown();
+int INTERFACE_Activate();
+int INTERFACE_Deactivate();
 int INTERFACE_SetStatusText(const char *new_txt);
-int INTERFACE_Draw(void);
-int INTERFACE_Update(R_POINT * imouse_pt, int update_flag);
+int INTERFACE_Draw();
+int INTERFACE_Update(R_POINT *imouse_pt, int update_flag);
 
 } // End of namespace Saga
 
