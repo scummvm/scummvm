@@ -78,6 +78,7 @@ uint8 stepOneCycle = 0;			// for use while game paused
 static const TargetSettings sword2_settings[] = {
 	/* Broken Sword 2 */
 	{"sword2", "Broken Sword II", GID_SWORD2, 99, MDT_ADLIB | MDT_NATIVE, GF_DEFAULT_TO_1X_SCALER, "players.clu" },
+	{"sword2alt", "Broken Sword II (alt)", GID_SWORD2, 99, MDT_ADLIB | MDT_NATIVE, GF_DEFAULT_TO_1X_SCALER, "r2ctlns.ocx" },
 	{"sword2demo", "Broken Sword II (Demo)", GID_SWORD2_DEMO, 99, MDT_ADLIB | MDT_NATIVE, GF_DEFAULT_TO_1X_SCALER, "players.clu" },
 	{NULL, NULL, 0, 0, MDT_NONE, 0, NULL}
 };
