@@ -25,6 +25,10 @@
 #include "common/str.h"
 #include "common/list.h"
 
+#ifdef MACOSX
+#include <Carbon/Carbon.h>
+#endif
+
 class FilesystemNode;
 class FSList;
 
@@ -40,20 +44,31 @@ public:
 	BrowserDialog(const char *title);
 	virtual ~BrowserDialog();
 
+#ifdef MACOSX
+	virtual int runModal();
+#else
 	virtual void open();
 	virtual void close();
 	virtual void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);
+#endif
 
 	FilesystemNode	*getResult() { return _choice; };
 
+
 protected:
+#ifdef MACOSX
+	CFStringRef		_titleRef;
+#else
 	ListWidget		*_fileList;
 	StaticTextWidget*_currentPath;
 	FilesystemNode	*_node;
 	FSList			*_nodeContent;
+#endif
 	FilesystemNode	*_choice;
 
+#ifndef MACOSX
 	void updateListing();
+#endif
 };
 
 } // End of namespace GUI
