@@ -461,6 +461,9 @@
 					RelativePath="..\..\backends\midi\adlib.cpp">
 				</File>
 				<File
+					RelativePath="..\..\backends\midi\mt32.cpp">
+				</File>
+				<File
 					RelativePath="..\..\backends\midi\null.cpp">
 				</File>
 				<File
@@ -472,19 +475,37 @@
 				<Filter
 					Name="mt32">
 					<File
-						RelativePath="..\..\backends\midi\mt32\freeverb.cpp">
+						RelativePath="..\..\backends\midi\mt32\file.cpp">
 					</File>
 					<File
-						RelativePath="..\..\backends\midi\mt32\freeverb.h">
+						RelativePath="..\..\backends\midi\mt32\file.h">
 					</File>
 					<File
-						RelativePath="..\..\backends\midi\mt32\mt32.cpp">
+						RelativePath="..\..\backends\midi\mt32\i386.cpp">
+					</File>
+					<File
+						RelativePath="..\..\backends\midi\mt32\i386.h">
+					</File>
+					<File
+						RelativePath="..\..\backends\midi\mt32\mt32emu.h">
+					</File>
+					<File
+						RelativePath="..\..\backends\midi\mt32\part.cpp">
+					</File>
+					<File
+						RelativePath="..\..\backends\midi\mt32\part.h">
 					</File>
 					<File
 						RelativePath="..\..\backends\midi\mt32\partial.cpp">
 					</File>
 					<File
 						RelativePath="..\..\backends\midi\mt32\partial.h">
+					</File>
+					<File
+						RelativePath="..\..\backends\midi\mt32\partialManager.cpp">
+					</File>
+					<File
+						RelativePath="..\..\backends\midi\mt32\partialManager.h">
 					</File>
 					<File
 						RelativePath="..\..\backends\midi\mt32\structures.h">
@@ -495,6 +516,39 @@
 					<File
 						RelativePath="..\..\backends\midi\mt32\synth.h">
 					</File>
+					<File
+						RelativePath="..\..\backends\midi\mt32\tables.cpp">
+					</File>
+					<File
+						RelativePath="..\..\backends\midi\mt32\tables.h">
+					</File>
+					<Filter
+						Name="freeverb">
+						<File
+							RelativePath="..\..\backends\midi\mt32\freeverb\allpass.cpp">
+						</File>
+						<File
+							RelativePath="..\..\backends\midi\mt32\freeverb\allpass.h">
+						</File>
+						<File
+							RelativePath="..\..\backends\midi\mt32\freeverb\comb.cpp">
+						</File>
+						<File
+							RelativePath="..\..\backends\midi\mt32\freeverb\comb.h">
+						</File>
+						<File
+							RelativePath="..\..\backends\midi\mt32\freeverb\denormals.h">
+						</File>
+						<File
+							RelativePath="..\..\backends\midi\mt32\freeverb\revmodel.cpp">
+						</File>
+						<File
+							RelativePath="..\..\backends\midi\mt32\freeverb\revmodel.h">
+						</File>
+						<File
+							RelativePath="..\..\backends\midi\mt32\freeverb\tuning.h">
+						</File>
+					</Filter>
 				</Filter>
 			</Filter>
 		</Filter>

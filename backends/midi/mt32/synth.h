@@ -1,68 +1,73 @@
-/* ScummVM - Scumm Interpreter
- * Copyright (C) 2004 The ScummVM project
- * Based on Tristan's conversion of Canadacow's code
+/* Copyright (c) 2003-2004 Various contributors
  *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version.
-
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
-
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to
+ * deal in the Software without restriction, including without limitation the
+ * rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+ * sell copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
  *
- * $Header$
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
  *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+ * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+ * IN THE SOFTWARE.
  */
 
-#ifndef CSYNTHMT32_H
-#define CSYNTHMT32_H
+#ifndef MT32EMU_SYNTH_H
+#define MT32EMU_SYNTH_H
 
-#ifdef HAVE_X86
-#if defined(_MSC_VER)
-#define USE_MMX 2
-#define I_ASM
-#else
-#define USE_MMX 0
-#undef I_ASM
-#endif
-#else
-#define USE_MMX 0
-#endif
+#include <stdarg.h>
 
-#define AMPENV 0
-#define FILTENV 1
-#define PITCHENV 2
+// Shows number of partials MT-32 is playing
+#define MONITORPARTIALS 0
 
-// Filter setting
-#define FILTER_FLOAT 1
-#define FILTER_64BIT 0
-#define FILTER_INT 0
+#define ROMSIZE (512 * 1024)
+#define PCMSIZE (ROMSIZE / 2)
+#define GRAN 512
 
-#define FILTERGRAN 512
+class revmodel;
 
-// Amplitude of waveform generator
-#define WGAMP (7168)
-//#define WGAMP (8192)
+namespace MT32Emu {
 
-#include "backends/midi/mt32/structures.h"
-#include "sound/mixer.h"
+class File;
+class TableInitialiser;
+class Partial;
+class PartialManager;
+class Part;
 
-// Function that detects the availablity of SSE SIMD instructions
-// On non-MSVC compilers it automatically returns FALSE as inline assembly is required
-bool DetectSIMD();
-// Function that detects the availablity of 3DNow instructions
-// On non-MSVC compilers it automatically returns FALSE as inline assembly is required
-bool Detect3DNow();
+enum ReportType {
+	// Files missing
+	ReportType_errorPreset1    = 1,
+	ReportType_errorPreset2    = 2,
+	ReportType_errorDrumpat    = 3,
+	ReportType_errorPatchlog   = 4,
+	ReportType_errorMT32ROM    = 5,
+
+	// HW spec
+	ReportType_availableSSE    = 6,
+	ReportType_available3DNow  = 7,
+	ReportType_asingSSE        = 8,
+	ReportType_asing3DNow      = 9,
+
+	// General info
+	ReportType_lcdMessage      = 10,
+	ReportType_devReset        = 11,
+	ReportType_devReconfig     = 12,
+	ReportType_newReverbMode   = 13,
+	ReportType_newReverbTime   = 14,
+	ReportType_newReverbLevel  = 15
+};
 
 struct SynthProperties {
 	// Sample rate to use in mixing
 	int SampleRate;
+
 	// Flag to activate reverb.  True = use reverb, False = no reverb
 	bool UseReverb;
 	// Flag True to use software set reverb settings, Flag False to set reverb settings in
@@ -70,11 +75,25 @@ struct SynthProperties {
 	bool UseDefault;
 	// When not using the default settings, this specifies one of the 4 reverb types
 	// 1 = Room 2 = Hall 3 = Plate 4 = Tap
-	int RevType;
+	unsigned char RevType;
 	// This specifies the delay time, from 0-7 (not sure of the actual MT-32's measurement)
-	int RevTime;
+	unsigned char RevTime;
 	// This specifies the reverb level, from 0-7 (not sure of the actual MT-32's measurement)
-	int RevLevel;
+	unsigned char RevLevel;
+	// The name of the directory in which the ROM and data files are stored (with trailing slash/backslash)
+	// Not used if "openFile" is set. May be NULL in any case.
+	char *baseDir;
+	// This is used as the first argument to all callbacks
+	void *userData;
+	// Callback for reporting various errors and information. May be NULL
+	void (*report)(void *userData, ReportType type, void *reportData);
+	// Callback for debug messages, in vprintf() format
+	void (*printDebug)(void *userData, const char *fmt, va_list list);
+	// Callback for providing an implementation of File, opened and ready for use
+	// May be NULL, in which case a default implementation will be used.
+	File *(*openFile)(void *userData, const char *filename, File::OpenMode mode);
+	// Callback for closing a File. May be NULL, in which case the File will automatically be close()d/deleted.
+	void (*closeFile)(void *userData, File *file);
 };
 
 // This is the specification of the Callback routine used when calling the RecalcWaveforms
@@ -85,73 +104,98 @@ typedef void (*recalcStatusCallback)(int percDone);
 // sampling rate.  The callback routine provides interactivity to let the user know what
 // percentage is complete in regenerating the waveforms.  When a NULL pointer is used as the
 // callback routine, no status is reported.
-bool RecalcWaveforms(int sampRate, recalcStatusCallback callBack);
+bool RecalcWaveforms(char * baseDir, int sampRate, recalcStatusCallback callBack);
 
 typedef float (*iir_filter_type)(float input,float *hist1_ptr, float *coef_ptr, int revLevel);
 extern iir_filter_type usefilter;
 
-extern partialFormat PCM[54];
-extern int16 romfile[262656];
-extern int32 divtable[256];
-extern int32 smalldivtable[256];
-extern uint32 wavtabler[64][256];
-extern uint32 looptabler[16][16][256];	
-extern int16 sintable[65536];
-extern int32 penvtable[16][128];		
-extern int32 pulsetable[101];
-extern int32 pulseoffset[101];
-extern int32 sawtable[128][128];
-extern float filtcoeff[FILTERGRAN][32][16];	
-extern uint32 lfoptable[101][128];
-extern int32 ampveltable[128][64];
-extern int32 amptable[129];
-extern int16 smallnoise[441];
-extern int32 samplepos;
-extern int16* waveforms[4][256];
-extern uint32 waveformsize[4][256];
-extern int8 LoopPatterns[16][16];
-extern int drumPan[30][2];
-extern float ResonFactor[32];
-extern float ResonInv[32];
-
-extern int32 getPitchEnvelope(dpoly::partialStatus *pStat, dpoly *poly);
-extern int32 getAmpEnvelope(dpoly::partialStatus *pStat, dpoly *poly);
-extern int32 getFiltEnvelope(int16 wg, dpoly::partialStatus *pStat, dpoly *poly);
-
-class CSynthMT32 {
+class Synth {
+friend class Part;
+friend class Partial;
+friend class TableInitialiser;
 private:
+	bool isEnabled;
+
+	sampleFormat PCM[54];
+	sampleTable PCMList[128];
+	Bit32u PCMReassign[54];
+	Bit32s PCMLoopTable[54];
+
+	Bit16s romfile[PCMSIZE + GRAN];
+	Bit8s chantable[32];
+
+	#if MONITORPARTIALS == 1
+	static Bit32s samplepos = 0;
+	#endif
+
+	MT32RAMFormat mt32ram, mt32default;
+
+	revmodel *reverbModel;
+
+	Bit16s mastervolume;
+
+	char curRevMode;
+	char curRevTime;
+	Bit32u curRevLevel;
 
 	unsigned char initmode;
 	bool isOpen;
+
+	PartialManager *partialManager;
+	Part *parts[9];
+
+	Bit16s tmpBuffer[MAX_SAMPLE_OUTPUT * 2];
+	float sndbufl[MAX_SAMPLE_OUTPUT];
+	float sndbufr[MAX_SAMPLE_OUTPUT];
+	float outbufl[MAX_SAMPLE_OUTPUT];
+	float outbufr[MAX_SAMPLE_OUTPUT];
+
 	SynthProperties myProp;
-	
-	bool InitTables();
+
+	bool loadPreset(const char *filename);
+	void initReverb(char newRevMode, char newRevTime);
+	void doRender(Bit16s * stream, Bit32u len);
+	void playMsgOnPart(unsigned char part, unsigned char code, unsigned char note, unsigned char velocity);
+	void playSysexWithoutHeader(unsigned char channel, Bit8u *sysex, Bit32u len);
+
+	bool loadDrums(const char *filename);
+	bool loadPCMToROMMap(const char *filename);
+	bool loadROM(const char *filename);
+	void dumpDrums(const char *filename);
+	// Save the system state to a sysex file specified by filename
+	int dumpSysex(char *filename);
+
+protected:
+	void report(ReportType type, void *reportData);
+	File *openFile(const char *filename, File::OpenMode mode);
+	void closeFile(File *file);
+	void printDebug(const char *fmt, ...);
 
 public:
-	CSynthMT32() : isOpen(false) {};
+	Synth();
+	~Synth();
 
-	// Used to initialized the MT-32.  The useProp parameter specifies
-	// properties for the synthesizer, as outlined in the structure above.
-	// Returns TRUE if initialization was sucessful, otherwise returns FALSE.
-	bool ClassicOpen(SynthProperties useProp);
+	// Used to initialise the MT-32. Must be called before any other function.
+	// Returns true if initialization was sucessful, otherwise returns false.
+	bool open(SynthProperties &useProp);
 
 	// Closes the MT-32 and deallocates any memory used by the synthesizer
-	void Close(void);
+	void close(void);
 
 	// Sends a 4-byte MIDI message to the MT-32 for immediate playback
-	void PlayMsg(uint32 msg);
+	void playMsg(Bit32u msg);
 
 	// Sends a string of Sysex commands to the MT-32 for immediate interpretation
-	void PlaySysex(uint8 * sysex, uint32 len);
-
-	// Save the system state to a sysex file specified by filename 
-	int DumpSysex(char *filename);
+	// The length is in bytes
+	void playSysex(Bit8u *sysex, Bit32u len);
+	void playSysexWithoutFraming(Bit8u *sysex, Bit32u len);
 
 	// This callback routine is used to have the MT-32 generate samples to the specified
 	// output stream.  The length is in whole samples, not bytes. (I.E. in 16-bit stereo,
 	// one sample is 4 bytes)
-	void MT32_CallBack(uint8 * stream, uint32 len, int volume);
-
+	void render(Bit16s * stream, Bit32u len);
 };
+
+}
 
 #endif

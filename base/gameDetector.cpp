@@ -598,9 +598,9 @@ MidiDriver *GameDetector::createMidi(int midiDriver) {
 	// if need be, and we only have to specify a native
 	// driver.
 	case MD_ADLIB:     return NULL;
-
-	case MD_MT32:      return MidiDriver_MT32_create(g_engine->_mixer, ConfMan.get("extrapath").c_str());
-
+#ifdef USE_MT32EMU
+	case MD_MT32:      return MidiDriver_MT32_create(g_engine->_mixer);
+#endif
 	case MD_TOWNS:     return MidiDriver_YM2612_create(g_engine->_mixer);
 
 	// Right now PC Speaker and PCjr are handled

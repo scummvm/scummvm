@@ -178,7 +178,9 @@ extern MidiDriver *MidiDriver_CORE_create();
 extern MidiDriver *MidiDriver_ETUDE_create();
 extern MidiDriver *MidiDriver_ALSA_create();
 extern MidiDriver *MidiDriver_YM2612_create(SoundMixer *mixer);
-extern MidiDriver *MidiDriver_MT32_create(SoundMixer *mixer, const char *path);
+#ifdef USE_MT32EMU
+extern MidiDriver *MidiDriver_MT32_create(SoundMixer *mixer);
+#endif
 extern MidiDriver *MidiDriver_YamahaPa1_create();
 extern MidiDriver *MidiDriver_Zodiac_create();
 

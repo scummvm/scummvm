@@ -20,6 +20,7 @@ _mad=auto
 _alsa=auto
 _zlib=auto
 _mpeg2=auto
+_mt32emu=yes
 # default option behaviour yes/no
 _build_scumm=yes
 _build_simon=yes
@@ -269,6 +270,7 @@ Optional Features:
   --enable-kyra            build the Legend of Kyrandia engine
   --enable-plugins         build engines as loadable modules instead of
                            static linking them
+  --disable-mt32emu        don't enable the integrated MT-32 emulator
 
 Optional Libraries:
   --with-alsa-prefix=DIR   Prefix where alsa is installed (optional)
@@ -334,6 +336,8 @@ for ac_option in $@; do
       --disable-nasm)		_nasm=no	;;
       --disable-mpeg2)          _mpeg2=no       ;;
       --enable-plugins)         _build_plugins=yes ;;
+      --enable-mt32emu)         _mt32emu=yes    ;;
+      --disable-mt32emu)        _mt32emu=no     ;;
       --with-mpeg2-prefix=*)
 	_prefix=`echo $ac_option | cut -d '=' -f 2`
 	MPEG2_CFLAGS="-I$_prefix/include"
@@ -783,6 +787,19 @@ LIBS            += -ldl
 fi
 echo "$_build_plugins"
 
+
+#
+# Check whether integrated MT-32 emulator support is requested
+#
+if test "$_mt32emu" = no ; then
+  _def_mt32emu='#undef USE_MT32EMU'
+  _mak_mt32emu='# USE_MT32EMU = 1'
+else
+  _def_mt32emu='#define USE_MT32EMU'
+  _mak_mt32emu='USE_MT32EMU = 1'
+  INCLUDES="$INCLUDES -I\$(srcdir)/backends/midi/mt32"
+fi
+
 #
 # Check for Ogg Vorbis
 #
@@ -1058,8 +1075,9 @@ $_def_mad
 $_def_alsa
 $_def_zlib
 $_def_mpeg2
+$_def_mt32emu
 
-/* Should we use i386 assembly routines */
+/* Whether we should use i386 assembly routines */
 $_def_nasm
 
 #endif /* CONFIG_H */
@@ -1106,6 +1124,7 @@ $_mak_sword2
 $_mak_queen
 $_mak_kyra
 $_mak_saga
+$_mak_mt32emu
 
 INCLUDES += $INCLUDES
 OBJS += $OBJS

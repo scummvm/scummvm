@@ -13,19 +13,14 @@ MODULE_OBJS := \
 	backends/midi/alsa.o \
 	backends/midi/windows.o \
 	backends/midi/ym2612.o \
-	backends/midi/mt32/mt32.o \
-	backends/midi/mt32/partial.o \
-	backends/midi/mt32/synth.o \
-	backends/midi/mt32/freeverb.o
-
+	backends/midi/mt32.o
 
 MODULE_DIRS += \
 	backends \
 	backends/fs/posix \
 	backends/fs/morphos \
 	backends/fs/windows \
-	backends/midi \
-	backends/midi/mt32
+	backends/midi
 
 # Include common rules 
 include $(srcdir)/common.rules

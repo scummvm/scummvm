@@ -1382,9 +1382,6 @@ void ScummEngine::setupMusic(int midi) {
 			}
 			if (midi == MDT_TOWNS)
 				_imuse->property(IMuse::PROP_DIRECT_PASSTHROUGH, 1);
-			if (_midiDriver == MD_MT32) {
-				_imuse->property(IMuse::PROP_DIRECT_PASSTHROUGH, 1);
-			}
 			_imuse->set_music_volume(ConfMan.getInt("music_volume"));
 		}
 	}

@@ -1,115 +1,124 @@
-/* ScummVM - Scumm Interpreter
- * Copyright (C) 2004 The ScummVM project
- * Based on Tristan's conversion of Canadacow's code
+/* Copyright (c) 2003-2004 Various contributors
  *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version.
-
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
-
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to
+ * deal in the Software without restriction, including without limitation the
+ * rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+ * sell copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
  *
- * $Header$
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
  *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+ * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+ * IN THE SOFTWARE.
  */
 
-#ifndef CPARTIALMT32_H
-#define CPARTIALMT32_H
+#ifndef MT32EMU_PARTIAL_H
+#define MT32EMU_PARTIAL_H
 
-#include "backends/midi/mt32/structures.h"
+namespace MT32Emu {
 
-// Class definition of MT-32 partials.  32 in all.
-class CPartialMT32 {
-private:
-	int useMix;
-	int partNum;
+struct envstatus {
+	Bit32s envpos;
+	Bit32s envstat;
+	Bit32s envbase;
+	Bit32s envdist;
+	Bit32s envsize;
 
-	int pN;
+	bool sustaining;
+	bool decaying;
+	Bit32s prevlevel;
 
-
-
-
-	int16 myBuffer[2048];
-	// For temporary output of paired buffer
-	int16 pairBuffer[2048];
-
-	void mixBuffers(int16 * buf1, int16 * buf2, int len);
-	void mixBuffersRingMix(int16 * buf1, int16 * buf2, int len);
-	void mixBuffersRing(int16 * buf1, int16 * buf2, int len);
-	void mixBuffersStereo(int16 * buf1, int16 * buf2, int16 * outBuf, int len);
-
-
-public:
-	patchCache *tcache;
-	patchCache cachebackup[4];
-
-	//FILE *fp;
-	//FILE *fp2;
-
-	dpoly::partialStatus *partCache;
-
-	CPartialMT32 *tibrePair;
-	bool isActive;
-	bool alreadyOutputed;
-	int ownerChan;
-	int64 age;
-	int timbreNum;
-	dpoly *tmppoly;
-
-	CPartialMT32(int partialNum) {
-
-		isActive = false;		
-		pN = partialNum;
-
-		/*
-		sprintf(buffer, "partial%d.raw",pN);
-		fp = fopen(buffer,"wb");
-
-		sprintf(buffer, "partial%dx.raw",pN);
-		fp2 = fopen(buffer,"wb");
-		*/
-
-		
-	};
-	
-	void startPartial(dpoly *usePoly, patchCache *useCache, dpoly::partialStatus * usePart, CPartialMT32 * pairPart, int mixType, int num, int ownChan, int timNum) {
-
-		//LOG_MSG("Starting partial %d for %d", num, ownChan);
-		tmppoly = usePoly;
-		tcache = useCache;
-		partCache = usePart;
-		tibrePair = pairPart;
-		isActive = true;
-		useMix = mixType;
-		partNum = num;
-		age = 0;
-		ownerChan = ownChan;
-		alreadyOutputed = false;
-		timbreNum = timNum;
-		memset(usePart->history,0,sizeof(usePart->history));
-
-	}
-
-	void stopPartial(void) { isActive = false; }
-
-	
-	// Returns true only if data written to buffer
-	// This function (unline the one below it) returns processed stereo samples
-	// made from combining this single partial with its pair, if it has one.
-	bool produceOutput(int16 * partialBuf, long length);
-
-	// This function produces mono sample output of the specific partial
-	void generateSamples(int16 * partialBuf, long length);
-
+	Bit32s counter;
+	Bit32s count;
 };
 
+class Synth;
+
+// Class definition of MT-32 partials.  32 in all.
+class Partial {
+private:
+	Synth *synth; // Only used for sending debug output
+
+	int ownerPart; // -1 if unassigned
+	int mixType;
+	int structurePosition; // 0 or 1 of a structure pair
+	bool useNoisePair;
+
+	Bit16s myBuffer[MAX_SAMPLE_OUTPUT];
+
+	bool play;
+
+	// Keyfollowed note value
+	int noteVal;
+
+	// Keyfollowed filter values
+	int realVal;
+	int filtVal;
+
+	envstatus envs[3];
+
+	int pulsewidth;
+
+	Bit32u lfoPos;
+	soundaddr partialOff;
+
+	Bit32u ampEnvCache;
+	Bit32u pitchEnvCache;
+
+	float history[32];
+
+	bool pitchSustain;
+
+	int loopPos;
+
+	dpoly *poly;
+
+	Bit16s *mixBuffers(Bit16s * buf1, Bit16s * buf2, int len);
+	Bit16s *mixBuffersRingMix(Bit16s * buf1, Bit16s * buf2, int len);
+	Bit16s *mixBuffersRing(Bit16s * buf1, Bit16s * buf2, int len);
+	void mixBuffersStereo(Bit16s * buf1, Bit16s * buf2, Bit16s * outBuf, int len);
+
+	Bit32s getFiltEnvelope();
+	Bit32s getAmpEnvelope();
+	Bit32s getPitchEnvelope();
+
+	void initKeyFollow(int freqNum);
+
+public:
+	PatchCache *patchCache;
+	PatchCache cachebackup;
+
+	Partial *pair;
+	bool alreadyOutputed;
+	Bit64s age;
+
+	Partial(Synth *synth);
+
+	int getOwnerPart();
+	bool isActive();
+	void activate(int part);
+	void deactivate(void);
+	void startPartial(dpoly *usePoly, PatchCache *useCache, Partial *pairPartial);
+	void startDecay(int envnum, Bit32s startval);
+	void startDecayAll();
+	bool shouldReverb();
+
+	// Returns true only if data written to buffer
+	// This function (unlike the one below it) returns processed stereo samples
+	// made from combining this single partial with its pair, if it has one.
+	bool produceOutput(Bit16s * partialBuf, long length);
+
+	// This function produces mono sample output using the partial's private internal buffer
+	Bit16s *generateSamples(long length);
+};
+
+}
 
 #endif
-

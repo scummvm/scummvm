@@ -89,6 +89,9 @@ MODULES += \
 	sound \
 	common
 
+ifdef USE_MT32EMU
+MODULES += backends/midi/mt32
+endif
 
 ######################################################################
 # The build rules follow - normally you should have no need to
