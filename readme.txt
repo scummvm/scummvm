@@ -237,7 +237,7 @@ Command Line Options:
 In game Hot Keys:
 -----------------
         Ctrl 0-9 and Shift 0-9   - load and save states.
-        Ctrl-Alt 0-4             - cycles between filter modes
+        Ctrl-Alt 1-7             - cycles between graphics filters
         Ctrl-z                   - quits
         Ctrl-f                   - runs in fast mode.
         Ctrl-d                   - starts the debugger.
