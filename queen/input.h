@@ -23,6 +23,7 @@
 #define INPUT_H
 
 #include "queen/defs.h"
+#include "common/scummsys.h"
 
 class OSystem;
 
