@@ -1029,9 +1029,11 @@ void Actor::drawActorCostume()
 		ar.draw_top = top = 0x7fffffff;
 		ar.draw_bottom = bottom = 0;
 
-		if (ar.drawCostume(cost)) {
-			needBgReset = true;
-			needRedraw = true;
+		if (ar.drawCostume()) {
+			// FIXME: this breaks talking in The Dig. But why?
+			// Note that I originally added this to correct some redraw issues.
+			//needBgReset = true;
+			//needRedraw = true;
 		}
 		top = ar.draw_top;
 		bottom = ar.draw_bottom;
