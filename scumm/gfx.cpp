@@ -1371,12 +1371,19 @@ void Gdi::drawBitmap(const byte *ptr, VirtScreen *vs, int x, int y, const int wi
 		} else if (_vm->_version == 2) {
 			// Do nothing here for V2 games - drawing was already handled.
 		} else {
+			int offset;
 			if (_vm->_features & GF_16COLOR) {
+				offset = READ_LE_UINT16(smap_ptr + stripnr * 2 + 2);
+				assert(offset < READ_LE_UINT16(smap_ptr));
 				drawStripEGA(dstPtr, vs->pitch, smap_ptr + READ_LE_UINT16(smap_ptr + stripnr * 2 + 2), height);
 			} else if (_vm->_features & GF_SMALL_HEADER) {
-				useOrDecompress = decompressBitmap(dstPtr, vs->pitch, smap_ptr + READ_LE_UINT32(smap_ptr + stripnr * 4 + 4), height);
+				offset = READ_LE_UINT32(smap_ptr + stripnr * 4 + 4);
+				assert(offset < READ_LE_UINT32(smap_ptr));
+				useOrDecompress = decompressBitmap(dstPtr, vs->pitch, smap_ptr + offset, height);
 			} else {
-				useOrDecompress = decompressBitmap(dstPtr, vs->pitch, smap_ptr + READ_LE_UINT32(smap_ptr + stripnr * 4 + 8), height);
+				offset = READ_LE_UINT32(smap_ptr + stripnr * 4 + 8);
+				assert(offset < READ_BE_UINT32(smap_ptr));
+				useOrDecompress = decompressBitmap(dstPtr, vs->pitch, smap_ptr + offset, height);
 			}
 		}
 
