@@ -84,7 +84,7 @@ static const char USAGE_STRING[] =
 	"\t-z             - Display list of games\n"
 	"\n"
 	"\t-b<num>        - Pass number to the boot script (boot param)\n"
-	"\t-d[num]        - Enable debug output (debug level [1])\n"
+	"\t-d[num]        - Enable debug output (debug level [0])\n"
 	"\t-u             - Dump scripts\n"
 	"\n"
 	"\t--platform=    - Specify version of game (amiga,atari-st,macintosh)\n"
@@ -351,12 +351,14 @@ void GameDetector::parseCommandLine(int argc, char **argv) {
 				g_config->setInt("cdrom", _cdrom);
 				break;
 			case 'd':
+				_debugMode = true;
 				HANDLE_OPT_OPTION();
 				if (option != NULL)
 					_debugLevel = atoi(option);
 				if (_debugLevel) {
-					_debugMode = true;
 					printf("Debuglevel (from command line): %d\n", _debugLevel);
+				} else {
+					printf("Debuglevel (from command line): 0 - Engine only\n");
 				}
 				break;
 			case 'e':
