@@ -26,6 +26,7 @@
 #include <SDL.h>
 #include <SDL_opengl.h>
 #include <cmath>
+#include "screen.h"
 
 Scene::Scene(const char *name, const char *buf, int len) :
   name_(name) {
@@ -163,4 +164,13 @@ void Scene::Setup::setupCamera() const {
   gluLookAt(pos_.x(), pos_.y(), pos_.z(),
 	    interest_.x(), interest_.y(), interest_.z(),
 	    up_vec.x(), up_vec.y(), up_vec.z());
+}
+
+void Scene::setSetup(int num)
+{
+	currSetup_ = setups_ + num;
+	if(currSetup_->bkgnd_zbm_)
+		screenBlocksInit( currSetup_->bkgnd_zbm_->getData() );
+	else
+		screenBlocksInitEmpty();
 }

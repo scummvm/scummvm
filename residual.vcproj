@@ -216,6 +216,12 @@
 				RelativePath="scene.h">
 			</File>
 			<File
+				RelativePath="screen.cpp">
+			</File>
+			<File
+				RelativePath="screen.h">
+			</File>
+			<File
 				RelativePath="sound.cpp">
 			</File>
 			<File

@@ -25,6 +25,7 @@
 #include <cstring>
 #include <SDL.h>
 #include <SDL_opengl.h>
+#include "screen.h"
 
 Model::Model(const char *filename, const char *data, int len,
 	     const Colormap &cmap) : Resource(filename)
@@ -485,7 +486,7 @@ void Model::HierNode::update() {
 void Model::Mesh::draw() const {
   for (int i = 0; i < numFaces_; i++)
     faces_[i].draw(vertices_, vertNormals_, textureVerts_);
-
+/*
 // Yaz: debug
 // this draw the model node in red
 
@@ -563,6 +564,7 @@ void Model::Mesh::draw() const {
 	  Matrix4 tempMatrix = matrix_;
 	  float* pVertices;
 	  int j;
+      float bestDepth = 0;
 
 	  for( j =0; j< faces_[i].numVertices_; j++ )
 	  {
@@ -588,9 +590,45 @@ void Model::Mesh::draw() const {
 			if( winY > bottom )
 				bottom = winY;
 
+			if( winZ> bestDepth )
+				bestDepth = winZ;
 
 	  }
-  }
+
+	  screenBlocksAddRectangle( top, right, left, bottom, bestDepth );
+/*
+	  if( faces_[i].numVertices_ == 3 ) // triangle
+	  {
+		  float* pVertices0;
+		  float* pVertices1;
+		  float* pVertices2;
+
+		  pVertices0 = vertices_ + 3 * faces_[i].vertices_[0];
+		  pVertices1 = vertices_ + 3 * faces_[i].vertices_[1];
+		  pVertices2 = vertices_ + 3 * faces_[i].vertices_[2];
+
+		//  screenBlocksAddTriangle( pVertices0, pVertices1, pVertices2 );
+	  }
+	  else
+	  if( faces_[i].numVertices_ == 4 ) // quad
+	  {
+		  float* pVertices0;
+		  float* pVertices1;
+		  float* pVertices2;
+		  float* pVertices3;
+
+		  pVertices0 = vertices_ + 3 * faces_[i].vertices_[0];
+		  pVertices1 = vertices_ + 3 * faces_[i].vertices_[1];
+		  pVertices2 = vertices_ + 3 * faces_[i].vertices_[2];
+		  pVertices3 = vertices_ + 3 * faces_[i].vertices_[3];
+
+		//  screenBlocksAddTriangle( pVertices0, pVertices1, pVertices2, pVertices3 );
+	  }
+	  else
+	  {
+		  printf("Bad primitive !\n");
+	  } */
+/*  }
 
   glDisable(GL_DEPTH_TEST);
   glPointSize( 3.f );
@@ -630,7 +668,7 @@ void Model::Mesh::draw() const {
   glEnd();
   glEnable(GL_DEPTH_TEST);
   glEnable(GL_TEXTURE_2D );
-  glPopMatrix();
+  glPopMatrix();*/
 }
 
 void Model::Face::draw(float *vertices, float *vertNormals,

@@ -26,6 +26,7 @@
 #include <SDL_opengl.h>
 #include <SDL_timer.h>
 #include <assert.h>
+#include "screen.h"
 
 Engine *Engine::instance_ = NULL;
 
@@ -84,17 +85,21 @@ void Engine::mainLoop() {
     // Run asynchronous tasks
     lua_runtasks();
 
+	screenBlocksReset();
+
     // Update actor costumes
     for (actor_list_type::iterator i = actors_.begin();
 	 i != actors_.end(); i++) {
       Actor *a = *i;
       assert(currScene_);
       if (a->inSet(currScene_->name()) && a->visible())
-	a->update();
+		a->update();
     }
 
     // Draw the screen
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+	screenBlocksBlitDirtyBlocks();
 
     Bitmap::prepareGL();
     if (currScene_ != NULL)
@@ -110,9 +115,11 @@ void Engine::mainLoop() {
 	 i != actors_.end(); i++) {
       Actor *a = *i;
       if (a->inSet(currScene_->name()) && a->visible())
-	a->draw();
+		a->draw();
     }
     glDisable(GL_TEXTURE_2D);
+
+//	screenBlocksDrawDebug();
 
     // Draw text
     for (text_list_type::iterator i = textObjects_.begin();

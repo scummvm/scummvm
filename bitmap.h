@@ -42,6 +42,8 @@ public:
   int x() const { return x_; }
   int y() const { return y_; }
 
+  char * getData() { return data_[curr_image_]; }
+
   ~Bitmap();
 
 private:

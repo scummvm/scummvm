@@ -53,7 +53,7 @@ public:
 
   const char *name() const { return name_.c_str(); }
 
-  void setSetup(int num) { currSetup_ = setups_ + num; }
+  void setSetup(int num);
   int setup() const { return currSetup_ - setups_; }
 
   // Sector access functions
