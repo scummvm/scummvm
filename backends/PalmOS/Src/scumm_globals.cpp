@@ -29,10 +29,12 @@
 #include "scumm.h"
 
 static void GlbInitAll() {
+	if (gVars->globals[GBVARS_COMMON]) {
+		CALL_INIT(ScummFont)
+	}
 #ifndef DISABLE_SCUMM
 	if (gVars->globals[GBVARS_SCUMM]) {
 		CALL_INIT(DimuseTables)
-		CALL_INIT(NewGui)
 		CALL_INIT(Akos)
 		CALL_INIT(DimuseCodecs)
 		CALL_INIT(Codec47)
@@ -50,17 +52,23 @@ static void GlbInitAll() {
 	}
 #endif
 #ifndef DISABLE_QUEEN
-//	if (gVars->globals[GBVARS_QUEEN]) {
-//		CALL_INIT(Queen_Restables)
-//	}
+	if (gVars->globals[GBVARS_QUEEN]) {
+		CALL_INIT(Queen_Talk)
+		CALL_INIT(Queen_Display)
+		CALL_INIT(Queen_Graphics)
+		CALL_INIT(Queen_Restables)
+		CALL_INIT(Queen_Musicdata)
+	}
 #endif
 }
 
 static void GlbReleaseAll() {
+	if (gVars->globals[GBVARS_COMMON]) {
+		CALL_RELEASE(ScummFont)
+	}
 #ifndef DISABLE_SCUMM
 	if (gVars->globals[GBVARS_SCUMM]) {
 		CALL_RELEASE(DimuseTables)
-		CALL_RELEASE(NewGui)
 		CALL_RELEASE(Akos)
 		CALL_RELEASE(DimuseCodecs)
 		CALL_RELEASE(Codec47)
@@ -78,9 +86,13 @@ static void GlbReleaseAll() {
 	}
 #endif
 #ifndef DISABLE_QUEEN
-//	if (gVars->globals[GBVARS_QUEEN]) {
-//		CALL_RELEASE(Queen_Restables)
-//	}
+	if (gVars->globals[GBVARS_QUEEN]) {
+		CALL_RELEASE(Queen_Talk)
+		CALL_RELEASE(Queen_Display)
+		CALL_RELEASE(Queen_Graphics)
+		CALL_RELEASE(Queen_Restables)
+		CALL_RELEASE(Queen_Musicdata)
+	}
 #endif
 }
 
@@ -98,9 +110,10 @@ static DmOpenRef GlbOpenInternal(const Char *nameP) {
 }
 
 void GlbOpen() {
-	gVars->globals[GBVARS_SCUMM] = GlbOpenInternal("Scumm-Globals");
-	gVars->globals[GBVARS_SIMON] = GlbOpenInternal("Simon-Globals");
-	gVars->globals[GBVARS_QUEEN] = GlbOpenInternal("Queen-Globals");
+	gVars->globals[GBVARS_COMMON]= GlbOpenInternal("Glbs::Common");
+	gVars->globals[GBVARS_SCUMM] = GlbOpenInternal("Glbs::Scumm");
+	gVars->globals[GBVARS_SIMON] = GlbOpenInternal("Glbs::Simon");
+	gVars->globals[GBVARS_QUEEN] = GlbOpenInternal("Glbs::Queen");
 
 	GlbInitAll();
 }
@@ -108,6 +121,8 @@ void GlbOpen() {
 void GlbClose() {
 	GlbReleaseAll();
 
+	if (gVars->globals[GBVARS_COMMON])
+		DmCloseDatabase(gVars->globals[GBVARS_COMMON]);
 	if (gVars->globals[GBVARS_SCUMM])
 		DmCloseDatabase(gVars->globals[GBVARS_SCUMM]);
 	if (gVars->globals[GBVARS_SIMON])

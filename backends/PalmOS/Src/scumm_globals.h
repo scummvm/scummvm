@@ -44,9 +44,14 @@ void GlbClose();
 #define PROTO_GLOBALS(x)		void CALL_INIT(x);\
 								void CALL_RELEASE(x);
 
+
+// Common stuffs
+PROTO_GLOBALS(ScummFont)
+PROTO_GLOBALS(NewFont)
+
+// Scumm stuffs
 #ifndef DISABLE_SCUMM
 PROTO_GLOBALS(DimuseTables)
-PROTO_GLOBALS(NewGui)
 PROTO_GLOBALS(Akos)
 PROTO_GLOBALS(DimuseCodecs)
 PROTO_GLOBALS(Codec47)
@@ -56,14 +61,18 @@ PROTO_GLOBALS(Charset)
 PROTO_GLOBALS(Costume)
 PROTO_GLOBALS(PlayerV2)
 #endif
-
+// Simon stuffs
 #ifndef DISABLE_SIMON
 PROTO_GLOBALS(Simon_Simon)
 PROTO_GLOBALS(Simon_Charset)
 #endif
-
+// Queen stuffs
 #ifndef DISABLE_QUEEN
+PROTO_GLOBALS(Queen_Talk)
+PROTO_GLOBALS(Queen_Display)
+PROTO_GLOBALS(Queen_Graphics)
 PROTO_GLOBALS(Queen_Restables)
+PROTO_GLOBALS(Queen_Musicdata)
 #endif
 
 #undef PROTO_GLOBALS
