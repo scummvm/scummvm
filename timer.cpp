@@ -56,15 +56,6 @@ Timer::~Timer() {
 		}
 	}
 
-
-	// FIXME: There is still a potential race condition here, depending on how
-	// the system backend implements set_timer: If timers are done using
-	// threads, and if set_timer does *not* gurantee that after it terminates
-	// that timer thread is not run anymore, we are fine. However, if the timer
-	// is still running in parallel to this destructor, then it might be that
-	// it is still waiting for the _mutex. So, again depending on the backend,
-	// we might end up unlocking the mutex then immediately deleting it, while
-	// the timer thread is about to lock it.
 	delete_mutex(_mutex);
 }
 
