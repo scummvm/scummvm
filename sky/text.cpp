@@ -116,6 +116,10 @@ void SkyText::fnTextModule(uint32 textInfoId, uint32 textNo) {
 }
 
 void SkyText::getText(uint32 textNr) { //load text #"textNr" into textBuffer
+	
+	if (patchMessage(textNr))
+		return ;
+	
 	uint32 sectionNo = (textNr & 0x0F000) >> 12;
 	
 	if (SkyState::_itemList[FIRST_TEXT_SEC + sectionNo] == (void **)NULL) { //check if already loaded
@@ -479,4 +483,49 @@ char SkyText::getTextChar() {
 		}
 	}
 }
+
+bool SkyText::patchMessage(uint32 textNum) {
+
+	uint16 patchIdx = _patchLangIdx[SkyState::_systemVars.language];
+	uint16 patchNum = _patchLangNum[SkyState::_systemVars.language];
+	for (uint16 cnt = 0; cnt < patchNum; cnt++) {
+		if (_patchedMessages[cnt + patchIdx].textNr == textNum) {
+			strcpy(_textBuffer, _patchedMessages[cnt + patchIdx].text);
+			return true;
+		}		
+	}
+	return false;
+}
+
+const PatchMessage SkyText::_patchedMessages[NUM_PATCH_MSG] = {
+	{ 28724, "Testo e Parlato" }, // - italian
+	{ 28707, "Solo Testo" },
+	{ 28693, "Solo Parlato" }, 
+	{ 28724, "Text och tal" }, // - swedish
+	{ 28707, "Endast text" },
+	{ 28693, "Endast tal" },
+	{ 28686, "Musikvolym" }
+};
+
+const uint16 SkyText::_patchLangIdx[8] = {
+	0xFFFF, // SKY_ENGLISH
+	0xFFFF, // SKY_GERMAN
+	0xFFFF, // SKY_FRENCH
+	0xFFFF, // SKY_USA
+	3,		// SKY_SWEDISH
+	0,		// SKY_ITALIAN
+	0xFFFF, // SKY_PORTUGUESE
+	0xFFFF  // SKY_SPANISH
+};
+
+const uint16 SkyText::_patchLangNum[8] = {
+	0, // SKY_ENGLISH
+	0, // SKY_GERMAN
+	0, // SKY_FRENCH
+	0, // SKY_USA
+	4, // SKY_SWEDISH
+	3, // SKY_ITALIAN
+	0, // SKY_PORTUGUESE
+	0  // SKY_SPANISH
+};
 
