@@ -109,6 +109,11 @@ public:
 	
 	// Set the position of the mouse cursor
 	virtual void set_mouse_pos(int x, int y) = 0;
+
+	// Warp the mouse cursor. Where set_mouse_pos() only informs the
+	// backend of the mouse cursor's current position, this function
+	// actually moves the cursor to the specified position.
+	virtual void warp_mouse(int x, int y) = 0;
 	
 	// Set the bitmap that's used when drawing the cursor.
 	virtual void set_mouse_cursor(const byte *buf, uint w, uint h, int hotspot_x, int hotspot_y) = 0;
