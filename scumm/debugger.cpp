@@ -377,8 +377,8 @@ bool ScummDebugger::Cmd_Actor(int argc, const char **argv) {
 		DebugPrintf("Actor[%d].y = %d\n", actnum, a->_pos.y);
 		_vm->_fullRedraw = 1;
 	} else if (!strcmp(argv[2], "elevation")) {
-		a->elevation = value;
-		DebugPrintf("Actor[%d].elevation = %d\n", actnum, a->elevation);
+		a->setElevation(value);
+		DebugPrintf("Actor[%d].elevation = %d\n", actnum, a->getElevation());
 		_vm->_fullRedraw = 1;
 	} else if (!strcmp(argv[2], "costume")) {
 		if (value >= _vm->res.num[rtCostume])
@@ -408,7 +408,7 @@ bool ScummDebugger::Cmd_PrintActor(int argc, const char **argv) {
 		a = &_vm->_actors[i];
 		if (a->visible)
 			DebugPrintf("|%2d|%4d|%4d|%4d|%4d|%3d|%5d|%3d|%3d|%3d|%5d|%5d|%3d|$%02x|\n",
-						 a->number, a->room, a->_pos.x, a->_pos.y, a->elevation, a->costume,
+						 a->number, a->room, a->_pos.x, a->_pos.y, a->getElevation(), a->costume,
 						 a->width, a->walkbox, a->moving, a->forceClip, a->frame,
 						 a->scalex, a->getFacing(), int(_vm->_classData[a->number]&0xFF));
 	}

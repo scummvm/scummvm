@@ -967,11 +967,7 @@ void ScummEngine_v8::o8_actorOps() {
 		a->initActor(0);
 		break;
 	case 0x6E:		// SO_ACTOR_ELEVATION
-		i = pop();
-		if (i != a->elevation) {
-			a->elevation = i;
-			a->needRedraw = true;
-		}
+		a->setElevation(pop());
 		break;
 	case 0x6F:		// SO_ACTOR_PALETTE Set actor palette
 		j = pop();

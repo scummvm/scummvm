@@ -85,7 +85,6 @@ public:
 public:
 	Common::Point _pos;
 	int top, bottom;
-	int elevation;
 	uint width;
 	byte number;
 	uint16 costume;
@@ -112,6 +111,7 @@ public:
 	CostumeData cost;
 	byte palette[256];
 protected:
+	int elevation;
 	uint16 facing;
 	uint16 targetFacing;
 	uint speedx, speedy;
@@ -193,6 +193,17 @@ public:
 	void setAnimSpeed(byte newAnimSpeed) {
 		animSpeed = newAnimSpeed;
 		animProgress = 0;
+	}
+
+	int getElevation() const {
+		return elevation;
+	}
+	
+	void setElevation(int newElevation) {
+		if (elevation != newElevation) {
+			elevation = newElevation;
+			needRedraw = true;
+		}
 	}
 	
 	void classChanged(int cls, bool value);

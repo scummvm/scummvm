@@ -1153,7 +1153,7 @@ void ScummEngine_v2::o2_getActorElevation() {
 	getResultPos();
 	int act = getVarOrDirectByte(PARAM_1);
 	Actor *a = derefActor(act, "o2_getActorElevation");
-	setResult(a->elevation / 2);
+	setResult(a->getElevation() / 2);
 }
 
 void ScummEngine_v2::o2_setActorElevation() {
@@ -1161,8 +1161,7 @@ void ScummEngine_v2::o2_setActorElevation() {
 	int elevation = (int8)getVarOrDirectByte(PARAM_2);
 
 	Actor *a = derefActor(act, "o2_setActorElevation");
-	a->elevation = elevation * 2;
-	a->needRedraw = true;
+	a->setElevation(elevation * 2);
 }
 
 void ScummEngine_v2::o2_animateActor() {

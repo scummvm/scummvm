@@ -446,8 +446,7 @@ void ScummEngine_v5::o5_actorOps() {
 			a->initActor(0);
 			break;
 		case 9:			// SO_ELEVATION
-			a->elevation = getVarOrDirectWord(PARAM_1);
-			a->needRedraw = true;
+			a->setElevation(getVarOrDirectWord(PARAM_1));
 			break;
 		case 10:		// SO_ANIMATION_DEFAULT
 			a->initFrame = 1;
@@ -1032,7 +1031,7 @@ void ScummEngine_v5::o5_getActorElevation() {
 	getResultPos();
 	int act = getVarOrDirectByte(PARAM_1);
 	Actor *a = derefActor(act, "o5_getActorElevation");
-	setResult(a->elevation);
+	setResult(a->getElevation());
 }
 
 void ScummEngine_v5::o5_getActorFacing() {

@@ -305,7 +305,7 @@ int Actor::updateActorDirection(bool is_walking) {
 	if (ignoreTurns)
 		return facing;
 
-	dirType = (_vm->_features & GF_NEW_COSTUMES) ? _vm->akos_hasManyDirections(this) : false;
+	dirType = (_vm->_features & GF_NEW_COSTUMES) ? _vm->akos_hasManyDirections(costume) : false;
 
 	from = toSimpleDir(dirType, facing);
 	dir = remapDirection(targetFacing, is_walking);
@@ -876,7 +876,7 @@ void ScummEngine::processActors() {
 	for (int i = 1; i < _numActors; i++) {
 		if (_version == 8 && _actors[i].layer < 0)
 			continue;
-		if (_actors[i].isInCurrentRoom())
+		if (_actors[i].isInCurrentRoom() && _actors[i].costume)
 			actors[numactors++] = &_actors[i];
 	}
 	if (!numactors) {
@@ -893,12 +893,10 @@ void ScummEngine::processActors() {
 	// Finally draw the now sorted actors
 	for (Actor** ac = actors; ac != end; ++ac) {
 		Actor* a = *ac;
-		if (a->costume) {
-			CHECK_HEAP
-			a->drawActorCostume();
-			CHECK_HEAP
-			a->animateCostume();
-		}
+		CHECK_HEAP
+		a->drawActorCostume();
+		CHECK_HEAP
+		a->animateCostume();
 	}
 	
 	delete [] actors;
@@ -929,7 +927,7 @@ void Actor::drawActorCostume() {
 
 	BaseCostumeRenderer* bcr = _vm->_costumeRenderer;
 
-	bcr->updateNbStrips();
+	bcr->_actorID = number;
 
 	bcr->_actorX = _pos.x - _vm->virtscr[0].xstart;
 	bcr->_actorY = _pos.y - elevation;
@@ -960,8 +958,6 @@ void Actor::drawActorCostume() {
 	bcr->setPalette(palette);
 	bcr->setFacing(this);
 
-	bcr->_dirty_id = number;
-
 	if (!(_vm->_features & GF_NEW_COSTUMES)) {
 
 		if (forceClip)
@@ -989,13 +985,9 @@ void Actor::drawActorCostume() {
 
 	bcr->_draw_bottom = bottom = 0;
 
-	bcr->_outptr = _vm->virtscr[0].screenPtr + _vm->virtscr[0].xstart;
-	bcr->_outwidth = _vm->virtscr[0].width;
-	bcr->_outheight = _vm->virtscr[0].height;
-
 	// If the actor is partially hidden, redraw it next frame.
 	// Only done for pre-AKOS, though.
-	if (bcr->drawCostume(cost) & 1) {
+	if (bcr->drawCostume(_vm->virtscr[0], cost) & 1) {
 		needRedraw = !(_vm->_features & GF_NEW_COSTUMES);
 	}
 

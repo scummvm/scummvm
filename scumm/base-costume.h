@@ -44,13 +44,14 @@ struct CostumeInfo {
 
 class Actor;
 class ScummEngine;
+struct VirtScreen;
 
 /**
  * Base class for both CostumeRenderer and AkosRenderer.
  */
 class BaseCostumeRenderer {
 public:
-	byte _dirty_id;
+	byte _actorID;
 
 	byte _shadow_mode;
 	byte *_shadow_table;
@@ -61,12 +62,12 @@ public:
 
 	int _draw_top, _draw_bottom;
 
+protected:
+	ScummEngine *_vm;
+
 	// Destination
 	byte *_outptr;
 	uint _outwidth, _outheight;
-
-protected:
-	ScummEngine *_vm;
 	int32 _numStrips;
 
 	// Source pointer
@@ -98,7 +99,7 @@ protected:
 
 public:
 	BaseCostumeRenderer(ScummEngine *scumm) {
-		_dirty_id = 0;
+		_actorID = 0;
 		_shadow_mode = 0;
 		_shadow_table = 0;
 		_actorX = _actorY = 0;
@@ -120,10 +121,9 @@ public:
 	virtual void setPalette(byte *palette) = 0;
 	virtual void setFacing(Actor *a) = 0;
 	virtual void setCostume(int costume) = 0;
-	void updateNbStrips (void)		{ _numStrips = _vm->gdi._numStrips; }
 
 
-	byte drawCostume(const CostumeData &cost);
+	byte drawCostume(const VirtScreen &vs, const CostumeData &cost);
 
 protected:
 

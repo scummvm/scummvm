@@ -748,7 +748,7 @@ public:
 	void akos_queCommand(byte cmd, Actor *a, int param_1, int param_2);
 	void akos_decodeData(Actor *a, int frame, uint usemask);
 	int akos_frameToAnim(Actor *a, int frame);
-	bool akos_hasManyDirections(Actor *a);
+	bool akos_hasManyDirections(int costume);
 
 protected:
 	/* Should be in Graphics class? */

@@ -202,9 +202,9 @@ byte CostumeRenderer::mainRoutine(int xmoveCur, int ymoveCur) {
 
 	if (_vm->_version == 1)
 		//HACK: it fix gfx glitches leaved by actor costume in V1 games, when actor moving to left
-		_vm->markRectAsDirty(kMainVirtScreen, x_left, x_right + 8, y_top, y_bottom, _dirty_id);
+		_vm->markRectAsDirty(kMainVirtScreen, x_left, x_right + 8, y_top, y_bottom, _actorID);
 	else
-		_vm->markRectAsDirty(kMainVirtScreen, x_left, x_right + 1, y_top, y_bottom, _dirty_id);
+		_vm->markRectAsDirty(kMainVirtScreen, x_left, x_right + 1, y_top, y_bottom, _actorID);
 
 	if (y_top >= (int)_outheight || y_bottom <= 0)
 		return 0;
@@ -280,8 +280,8 @@ byte CostumeRenderer::mainRoutine(int xmoveCur, int ymoveCur) {
 
 	if (_loaded._format == 0x57) {
 		// The v1 costume renderer needs the actor number, which is
-		// the same thing as the costume renderer's _dirty_id.
-		procC64(_dirty_id);
+		// the same thing as the costume renderer's _actorID.
+		procC64(_actorID);
 	} else if (newAmiCost)
 		proc3_ami();
 	else
@@ -846,20 +846,6 @@ byte LoadedCostume::increaseAnim(Actor *a, int slot) {
 		a->cost.curpos[slot] = i | highflag;
 		return (_animCmds[i] & 0x7F) != code;
 	} while (1);
-}
-
-bool ScummEngine::isCostumeInUse(int cost) const {
-	int i;
-	Actor *a;
-
-	if (_roomResource != 0)
-		for (i = 1; i < _numActors; i++) {
-			a = derefActor(i);
-			if (a->isInCurrentRoom() && a->costume == cost)
-				return true;
-		}
-
-	return false;
 }
 
 } // End of namespace Scumm

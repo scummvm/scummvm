@@ -1254,7 +1254,7 @@ void ScummEngine_v6::o6_getActorCostume() {
 
 void ScummEngine_v6::o6_getActorElevation() {
 	Actor *a = derefActor(pop(), "o6_getActorElevation");
-	push(a->elevation);
+	push(a->getElevation());
 }
 
 void ScummEngine_v6::o6_getActorWidth() {
@@ -1692,11 +1692,7 @@ void ScummEngine_v6::o6_actorOps() {
 		a->initActor(0);
 		break;
 	case 84:		// SO_ELEVATION
-		i = pop();
-		if (i != a->elevation) {
-			a->elevation = i;
-			a->needRedraw = true;
-		}
+		a->setElevation(pop());
 		break;
 	case 85:		// SO_ANIMATION_DEFAULT
 		a->initFrame = 1;

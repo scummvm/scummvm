@@ -25,9 +25,14 @@
 
 namespace Scumm {
 
-byte BaseCostumeRenderer::drawCostume(const CostumeData &cost) {
+byte BaseCostumeRenderer::drawCostume(const VirtScreen &vs, const CostumeData &cost) {
 	int i;
 	byte result = 0;
+
+	_outptr = vs.screenPtr + vs.xstart;
+	_outwidth = vs.width;
+	_outheight = vs.height;
+	_numStrips = vs.width / 8;
 
 	if (_vm->_version == 1) {
 		_xmove = 0;
@@ -59,6 +64,20 @@ void BaseCostumeRenderer::codec1_ignorePakCols(int num) {
 				return;
 		} while (--v1.replen);
 	} while (1);
+}
+
+bool ScummEngine::isCostumeInUse(int cost) const {
+	int i;
+	Actor *a;
+
+	if (_roomResource != 0)
+		for (i = 1; i < _numActors; i++) {
+			a = derefActor(i);
+			if (a->isInCurrentRoom() && a->costume == cost)
+				return true;
+		}
+
+	return false;
 }
 
 } // End of namespace Scumm

@@ -113,11 +113,11 @@ static bool akos_compare(int a, int b, byte cmd) {
 	}
 }
 
-bool ScummEngine::akos_hasManyDirections(Actor *a) {
+bool ScummEngine::akos_hasManyDirections(int costume) {
 	byte *akos;
 	const AkosHeader *akhd;
 
-	akos = getResourceAddress(rtCostume, a->costume);
+	akos = getResourceAddress(rtCostume, costume);
 	assert(akos);
 
 	akhd = (const AkosHeader *)findResourceData(MKID('AKHD'), akos);
@@ -125,7 +125,7 @@ bool ScummEngine::akos_hasManyDirections(Actor *a) {
 }
 
 int ScummEngine::akos_frameToAnim(Actor *a, int frame) {
-	if (akos_hasManyDirections(a))
+	if (akos_hasManyDirections(a->costume))
 		return toSimpleDir(1, a->getFacing()) + frame * 8;
 	else
 		return newDirToOldDir(a->getFacing()) + frame * 4;
@@ -673,7 +673,7 @@ byte AkosRenderer::codec1(int xmoveCur, int ymoveCur) {
 		if (_actorHitX < x_left || _actorHitX >= x_right || _actorHitY < y_top || _actorHitY >= y_bottom)
 			return 0;
 	} else
-		_vm->markRectAsDirty(kMainVirtScreen, x_left, x_right, y_top, y_bottom, _dirty_id);
+		_vm->markRectAsDirty(kMainVirtScreen, x_left, x_right, y_top, y_bottom, _actorID);
 
 	if (y_top >= (int)_outheight || y_bottom <= 0)
 		return 0;
@@ -763,7 +763,7 @@ byte AkosRenderer::codec5(int xmoveCur, int ymoveCur) {
 	maxw = _outwidth - 1;
 	maxh = _outheight - 1;
 
-	_vm->markRectAsDirty(kMainVirtScreen, clip_left, clip_right + 1, clip_top, clip_bottom + 1, _dirty_id);
+	_vm->markRectAsDirty(kMainVirtScreen, clip_left, clip_right + 1, clip_top, clip_bottom + 1, _actorID);
 
 	if (clip_top < 0) {
 		clip_top = 0;
@@ -980,7 +980,7 @@ byte AkosRenderer::codec16(int xmoveCur, int ymoveCur) {
 	cur_x = _width - 1;
 	cur_y = _height - 1;
 
-	_vm->markRectAsDirty(kMainVirtScreen, clip_left, clip_right + 1, clip_top, clip_bottom + 1, _dirty_id);
+	_vm->markRectAsDirty(kMainVirtScreen, clip_left, clip_right + 1, clip_top, clip_bottom + 1, _actorID);
 
 	if (clip_left < 0) {
 		skip_x = -clip_left;
