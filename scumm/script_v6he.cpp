@@ -1124,12 +1124,12 @@ void ScummEngine_v6he::o6_soundOps() {
 }
 
 void ScummEngine_v6he::o6_localizeArray() {
-	int stringID = pop();
+	int slot = pop();
 
-	if (stringID < _numArray) {
-		_baseArrays[stringID][0] = (byte)_currentScript;
+	if (slot < _numArray) {
+		_arraySlot[slot] = vm.slot[_currentScript].number;
 	} else {
-		warning("o6_localizeArray(%d): too big scriptID", stringID);
+		warning("o6_localizeArray(%d): array slot out of range", slot);
 	}
 }
 

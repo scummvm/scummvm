@@ -443,6 +443,7 @@ protected:
 
 	Actor *_actors;	// Has _numActors elements
 	
+	byte *_arraySlot;
 	uint16 *_inventory;
 	uint16 *_newNames;
 	uint16 *_images;
@@ -572,6 +573,7 @@ public:
 	void runScript(int script, bool freezeResistant, bool recursive, int *lvarptr);
 	void stopScript(int script);
 	bool isScriptRunning(int script) const;	// FIXME - should be protected, used by Sound::startTalkSound
+	void nukeArrays(int script);
 
 protected:
 	void runObjectScript(int script, int entry, bool freezeResistant, bool recursive, int *vars, int slot = -1);

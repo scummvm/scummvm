@@ -215,6 +215,7 @@ void ScummEngine::stopScript(int script) {
 				error("Script %d stopped with active cutscene/override", script);
 			ss->number = 0;
 			ss->status = ssDead;
+			nukeArrays(script);
 			if (_currentScript == i)
 				_currentScript = 0xFF;
 		}
@@ -226,6 +227,7 @@ void ScummEngine::stopScript(int script) {
 	while (num > 0) {
 		if (nest->number == script &&
 				(nest->where == WIO_GLOBAL || nest->where == WIO_LOCAL)) {
+			nukeArrays(script);
 			nest->number = 0xFF;
 			nest->slot = 0xFF;
 			nest->where = 0xFF;
@@ -252,6 +254,7 @@ void ScummEngine::stopObjectScript(int script) {
 				error("Object %d stopped with active cutscene/override", script);
 			ss->number = 0;
 			ss->status = ssDead;
+			nukeArrays(script);
 			if (_currentScript == i)
 				_currentScript = 0xFF;
 		}
@@ -263,6 +266,7 @@ void ScummEngine::stopObjectScript(int script) {
 	while (num > 0) {
 		if (nest->number == script &&
 				(nest->where == WIO_ROOM || nest->where == WIO_INVENTORY || nest->where == WIO_FLOBJECT)) {
+			nukeArrays(script);
 			nest->number = 0xFF;
 			nest->slot = 0xFF;
 			nest->where = 0xFF;
@@ -339,6 +343,19 @@ void ScummEngine::updateScriptPtr() {
 		return;
 
 	vm.slot[_currentScript].offs = _scriptPointer - _scriptOrgPointer;
+}
+
+/* Nuke arrays based on script */
+void ScummEngine::nukeArrays(int script) {
+	int i;
+
+	if (!_heversion || !script)
+		return;
+
+	for (i = 1; i < _numArray; i++) {
+		if (_arraySlot[i] == script)
+			nukeResource(rtString, i);
+	}
 }
 
 /* Get the code pointer to a script */
@@ -673,6 +690,7 @@ void ScummEngine::stopObjectCode() {
 	}
 	ss->number = 0;
 	ss->status = ssDead;
+	nukeArrays(_currentScript);
 	_currentScript = 0xFF;
 }
 
@@ -828,6 +846,7 @@ void ScummEngine::killScriptsAndResources() {
 				warning("Object %d stopped with active cutscene/override in exit", ss->number);
 				ss->cutsceneOverride = 0;
 			}
+			nukeArrays(i);
 			ss->status = ssDead;
 		} else if (ss->where == WIO_LOCAL) {
 			// Earlier games only checked global scripts at this point
@@ -835,6 +854,7 @@ void ScummEngine::killScriptsAndResources() {
 				warning("Script %d stopped with active cutscene/override in exit", ss->number);
 				ss->cutsceneOverride = 0;
 			}
+			nukeArrays(i);
 			ss->status = ssDead;
 		}
 	}

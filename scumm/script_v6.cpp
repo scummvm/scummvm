@@ -465,6 +465,7 @@ void ScummEngine_v6::nukeArray(int a) {
 
 	if (data)
 		nukeResource(rtString, data);
+	_arraySlot[a] = 0;
 
 	writeVar(a, 0);
 }
