@@ -1087,6 +1087,8 @@ uint32 IMuseInternal::property(int prop, uint32 value) {
 	case IMuse::PROP_NATIVE_MT32:
 		_native_mt32 = (value > 0);
 		Instrument::nativeMT32(value > 0);
+		if (value > 0 && _midi_native)
+			initMT32(_midi_native);
 		break;
 
 	case IMuse::PROP_MULTI_MIDI:
@@ -1164,9 +1166,6 @@ void IMuseInternal::initMidiDriver(MidiDriver *midi) {
 	int result = midi->open();
 	if (result)
 		error("IMuse initialization - %s", MidiDriver::getErrorName(result));
-
-	if (_native_mt32)
-		initMT32(midi);
 
 	// Connect to the driver's timer
 	midi->setTimerCallback(midi, &IMuseInternal::midiTimerCallback);
