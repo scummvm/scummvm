@@ -3377,6 +3377,7 @@ void Scumm::updatePalette() {
 void Scumm::setupCursor() {
 	_cursor.animate = 1;
 	if (_gameId == GID_TENTACLE) {
+		// HACK: For DOTT we manually set the default cursor. See also bug #786994
 		setCursorImg(697, 60, 1);
 		makeCursorColorTransparent(1);
 	}
