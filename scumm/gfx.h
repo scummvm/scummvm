@@ -124,7 +124,6 @@ protected:
 	byte *_readPtr;
 
 	bool _useOrDecompress;
-	byte _currentX;
 	byte _cursorActive;
 
 	byte *_mask_ptr;
