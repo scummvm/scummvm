@@ -17,6 +17,9 @@
  *
  * Change Log:
  * $Log$
+ * Revision 1.5  2001/10/10 16:29:59  strigeus
+ * temporary fix to prevent freeze in stan's room until sound is there
+ *
  * Revision 1.4  2001/10/10 10:02:33  strigeus
  * alternative mouse cursor
  * basic save&load
@@ -623,11 +626,10 @@ void Scumm::dumpResource(char *tag, int index, byte *ptr) {
 	char buf[256];
 	FILE *out;
 
-	return;
-
+	
 	uint32 size = READ_BE_UINT32_UNALIGNED(ptr+4);
 
-	sprintf(buf, "d:\\monkey2\\dumps\\%s%d.dmp", tag,index);
+	sprintf(buf, "f:\\descumm\\%s%d.dmp", tag,index);
 
 	out = fopen(buf,"rb");
 	if (!out) {
