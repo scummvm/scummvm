@@ -465,6 +465,8 @@ int SimonState::runScript()
 			break;
 
 		case 83:{									/* restart subroutine */
+				if (_game & GAME_SIMON2)
+					o_83_helper();
 				return -10;
 			}
 
@@ -1280,9 +1282,32 @@ bool SimonState::checkIfToRunSubroutineLine(SubroutineLine *sl, Subroutine *sub)
 	return true;
 }
 
+void SimonState::o_83_helper()
+{
+		if (_exit_cutscene) {
+			if (vc_get_bit(9)) {
+				startSubroutine170();
+			}
+		} else {
+			processSpecialKeys();
+		}
+}
+
 void SimonState::o_190_helper(uint i)
 {
-	warning("o_190_helper not implemented");
+	_exit_cutscene = false;
+	while (!(_op_189_flags & (1 << i))) {
+		if (_exit_cutscene) {
+			if (vc_get_bit(9)) {
+				startSubroutine170();
+				break;
+			}
+		} else {
+			processSpecialKeys();
+		}
+
+		delay(10);
+	}
 }
 
 
@@ -1300,7 +1325,8 @@ bool SimonState::o_unk_23(uint a)
 		return 0;
 	}
 
-	if (((uint) (rand() >> 5)) % 100 < a) {
+	warning("opcode 24 random is been used");
+	if (((uint) (_rnd.getRandomNumber(100) >> 5)) % 100 < a) {
 		if (_script_unk_1 <= 0)
 			_script_unk_1 -= 5;
 		else

@@ -754,6 +754,7 @@ public:
 	void checkTimerCallback();
 	void delay(uint delay);
 
+	void o_83_helper();
 	void o_190_helper(uint i);
 	void vc_58();
 	void timer_vga_sprites_helper();
