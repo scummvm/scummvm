@@ -36,7 +36,7 @@
 #include <SDL_keysym.h>
 #include <SDL_keyboard.h>
 
-static int actor_tag, color_tag, sound_tag, text_tag, vbuffer_tag, object_tag;
+static int actor_tag, color_tag, text_tag, vbuffer_tag, object_tag;
 
 extern Imuse *g_imuse;
 
@@ -54,12 +54,6 @@ static inline bool isActor(int num) {
 
 static inline bool isColor(int num) {
 	if (lua_tag(lua_getparam(num)) != color_tag)
-		return false;
-	return true;
-}
-
-static inline bool isSound(int num) {
-	if (lua_tag(lua_getparam(num)) != sound_tag)
 		return false;
 	return true;
 }
@@ -82,13 +76,7 @@ static inline Color *check_color(int num) {
 		luaL_argerror(num, "color expected");
 	return static_cast<Color *>(lua_getuserdata(lua_getparam(num)));
 }
-/*
-static inline Sound *check_sound(int num) {
-	if (lua_tag(lua_getparam(num)) != sound_tag)
-		luaL_argerror(num, "sound expected");
-	return static_cast<Sound *>(lua_getuserdata(lua_getparam(num)));
-}
-*/
+
 static inline int check_int(int num) {
 	double val = luaL_check_number(num);
 
@@ -129,8 +117,7 @@ static Costume *get_costume(Actor *a, int param, char *called_from) {
 	} else {
 		result = a->findCostume(luaL_check_string(param));
 		if (result == NULL)
-			warning("Actor %s has no costume %s [%s]\n", a->name(),
-				lua_getstring(lua_getparam(param)), called_from);
+			warning("Actor %s has no costume %s [%s]\n", a->name(), lua_getstring(lua_getparam(param)), called_from);
 	}
 	return result;
 }
@@ -176,14 +163,14 @@ static void FunctionName() {
 		break;
 	default:
 		{
-		if (line == 0)
-			sprintf(buf, "main of %.100s", filename);
-		else if (line < 0)
-			sprintf(buf, "%.100s", filename);
-		else {
-			sprintf(buf, "function (%.100s:%d)", filename, line);
-			filename = NULL;
-		}
+			if (line == 0)
+				sprintf(buf, "main of %.100s", filename);
+			else if (line < 0)
+				sprintf(buf, "%.100s", filename);
+			else {
+				sprintf(buf, "function (%.100s:%d)", filename, line);
+				filename = NULL;
+			}
 		}
 	}
 	int curr_line = lua_currentline(lua_getparam(1));
@@ -213,10 +200,7 @@ static unsigned char clamp_color(int c) {
 }
 
 static void MakeColor() {
-	Color *c = new Color
-		(clamp_color(check_int(1)),
-		clamp_color(check_int(2)),
-		clamp_color(check_int(3)));
+	Color *c = new Color (clamp_color(check_int(1)), clamp_color(check_int(2)), clamp_color(check_int(3)));
 	lua_pushusertag(c, color_tag);
 }
 
@@ -290,8 +274,7 @@ static void SetActorRestChore() {
 	if (lua_isnil(lua_getparam(2))) {
 		chore = -1;
 		costume = NULL;
-	}
-	else {
+	} else {
 		chore = check_int(2);
 		costume = get_costume(act, 3, "SetActorRestChore");
 	}
@@ -767,7 +750,7 @@ static void MakeSectorActive(void) {
 	if (lua_isstring(sectorName)) {
 		char *name = luaL_check_string(1);
 
-		for (i=0; i<numSectors; i++) {
+		for (i = 0; i < numSectors; i++) {
 			Sector *sector = g_engine->currScene()->getSectorBase(i);
 			if (strstr(sector->name(), name)) {
 				sector->setVisible(visible);
@@ -1040,7 +1023,7 @@ static void MakeTextObject() {
 	Color *fgColor = NULL;
 	TextObject *textObject;
 
-	while (1) {
+	for (;;) {
 		lua_pushobject(table_obj);
 		if (key_text)
 			lua_pushobject(key);
@@ -1087,8 +1070,7 @@ static void KillTextObject() {
 
 	textID = lua_getstring(lua_getparam(1));
 
-	for (Engine::TextListType::const_iterator i = g_engine->textsBegin();
-			i != g_engine->textsEnd(); i++) {
+	for (Engine::TextListType::const_iterator i = g_engine->textsBegin(); i != g_engine->textsEnd(); i++) {
 		TextObject *textO = *i;
 
 		if (strstr(textO->name(), textID)) {
@@ -1220,9 +1202,7 @@ static void PauseMovie() {
 }
 
 static void GetTextCharPosition() {
-	warning("STUB GetTextCharPosition(\"%s\", %d)", 
-			lua_getstring(lua_getparam(1)), lua_getnumber(lua_getparam(2)));
-
+	warning("STUB GetTextCharPosition(\"%s\", %d)", lua_getstring(lua_getparam(1)), lua_getnumber(lua_getparam(2)));
 	lua_pushnumber(0);
 }
 
@@ -1314,16 +1294,10 @@ static void stubWarning(char *funcName) {
 			if (lua_tag(lua_getparam(i)) == actor_tag) {
 				Actor *a = check_actor(i);
 				fprintf(stderr, "<actor \"%s\">", a->name());
-			}
-			else if (lua_tag(lua_getparam(i)) == color_tag) {
+			} else if (lua_tag(lua_getparam(i)) == color_tag) {
 				Color *c = check_color(i);
 				fprintf(stderr, "<color #%02x%02x%02x>", c->red(), c->green(), c->blue());
-			}
-			else if (lua_tag(lua_getparam(i)) == sound_tag) {
-//				Sound *s = check_sound(i);
-//				fprintf(stderr, "<sound %s>", s->filename());
-			}
-			else
+			} else
 				fprintf(stderr, "<userdata %p>", lua_getuserdata(lua_getparam(i)));
 		} else if (lua_isfunction(lua_getparam(i)))
 			fprintf(stderr, "<function>");
@@ -1348,7 +1322,7 @@ static void BlastText() {
 	int x = 0, y = 0, height = 0, width = 0;
 	Color *fgColor = NULL;
 
-	while (1) {
+	for (;;) {
 		lua_pushobject(table_obj);
 		if (key_text)
 			lua_pushobject(key);
@@ -1379,8 +1353,7 @@ static void BlastText() {
 			error("Unknown BlastText key %s\n", key_text);
 	}
 
-	warning("STUB: BlastText(\"%s\", x = %d, y = %d)\n", 
-			g_localizer->localize(str).c_str(), x, y);
+	warning("STUB: BlastText(\"%s\", x = %d, y = %d)\n", g_localizer->localize(str).c_str(), x, y);
 }
 
 #define STUB_FUNC(name) static void name() { stubWarning(#name); }
@@ -2072,7 +2045,6 @@ void register_lua() {
 	// Create various LUA tags
 	actor_tag = lua_newtag();
 	color_tag = lua_newtag();
-	sound_tag = lua_newtag();  // Yaz: wasn't found in the original engine, maybe I messed it.
 	text_tag = lua_newtag();
 	vbuffer_tag = lua_newtag();
 	object_tag = lua_newtag();
