@@ -1184,9 +1184,6 @@ void CostumeRenderer::proc_special(byte mask2) {
 void LoadedCostume::loadCostume(int id) {
 	_ptr = _vm->getResourceAddress(rtCostume, id);
 
-printf("Costume %d:\n", id);
-hexdump(_ptr, 0x40);
-
 	if (_vm->_features & GF_AFTER_V6)
 		_ptr += 8;
 	else if (_vm->_features & GF_OLD_BUNDLE)
