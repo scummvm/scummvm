@@ -23,18 +23,6 @@
 #ifndef COMMON_SINGLETON_H
 #define COMMON_SINGLETON_H
 
-/**
- * The default object factory used by the template class Singleton.
- * By specialising this template function, one can make a singleton use a
- * custom object factory. For example, to support encapsulation, your
- * singleton class might be pure virtual (or "abstract" in Java terminology),
- * and you specialise makeInstance to return an instance of a subclass.
- */
-template <class T>
-T* makeInstance() {
-	return new T();
-}
-
 namespace Common {
 
 /**
@@ -49,6 +37,19 @@ private:
 	
 	static T* _singleton;
 
+	/**
+	 * The default object factory used by the template class Singleton.
+	 * By specialising this template function, one can make a singleton use a
+	 * custom object factory. For example, to support encapsulation, your
+	 * singleton class might be pure virtual (or "abstract" in Java terminology),
+	 * and you specialise makeInstance to return an instance of a subclass.
+	 */
+	//template <class T>
+	static T* makeInstance() {
+		return new T();
+	}
+	
+
 public:
 	static T& instance() {
 		// TODO: We aren't thread safe. For now we ignore it since the
@@ -59,7 +60,7 @@ public:
 		// order might become an issue. There are various approaches
 		// to solve that problem, but for now this is sufficient
 		if (!_singleton)
-			_singleton = makeInstance<T>();
+			_singleton = makeInstance();
 		return *_singleton;
 	}
 protected:

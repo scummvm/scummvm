@@ -117,7 +117,7 @@ private:
 	
 	bool tryLoadPlugin(Plugin *plugin);
 	
-	friend SingletonBaseType *makeInstance<>();
+	friend class Common::Singleton<SingletonBaseType>;
 	PluginManager();
 
 public:

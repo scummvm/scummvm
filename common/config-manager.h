@@ -114,7 +114,7 @@ public:
 */
 
 private:
-	friend SingletonBaseType *makeInstance<>();
+	friend class Singleton<SingletonBaseType>;
 	ConfigManager();
 
 	void			loadFile(const String &filename);

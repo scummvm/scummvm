@@ -56,7 +56,7 @@ typedef Common::FixedStack<Dialog *> DialogStack;
 class NewGui : public Common::Singleton<NewGui> {
 	typedef Common::String String;
 	friend class Dialog;
-	friend SingletonBaseType *makeInstance<>();
+	friend class Common::Singleton<SingletonBaseType>;
 	NewGui();
 public:
 

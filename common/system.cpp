@@ -34,7 +34,7 @@
 DECLARE_SINGLETON(OSystem);
 
 template <>
-OSystem *makeInstance<>() {
+OSystem *Common::Singleton<OSystem>::makeInstance() {
 	// Attention: Do not call parseGraphicsMode() here, nor any other function
 	// which needs to access the OSystem instance, else you get stuck in an
 	// endless loop.
