@@ -457,7 +457,6 @@ public:
 	virtual void writeVar(uint var, int value);
 	void runHook(int i);
 	bool isScriptInUse(int script);
-	int getStringLen(byte *ptr);
 	
 	void freezeScripts(int scr);
 	void unfreezeScripts();
@@ -476,8 +475,8 @@ public:
 	void decreaseScriptDelay(int amount);
 	bool isScriptRunning(int script);
 	bool isRoomScriptRunning(int script);
-	void arrayop_1(int a, byte *ptr);
-	void copyString(byte *dst, byte *src, int len);
+	void copyScriptString(byte *dst);
+	int resStrLen(const byte *src) const;
 	void doSentence(int c, int b, int a);
 	void setStringVars(int i);
 

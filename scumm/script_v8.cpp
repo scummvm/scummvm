@@ -512,16 +512,14 @@ void Scumm_v8::decodeParseString(int m, int n)
 	case 0xD0:		// SO_PRINT_MUMBLE
 		error("decodeParseString: SO_PRINT_MUMBLE");
 		break;
-	case 0xD1: {
-
-#if 1
+	case 0xD1:
 		_messagePtr = _scriptPointer;
 
 		if (_messagePtr[0] == '/') {
 			char pointer[20];
 			int i, j;
 
-			_scriptPointer += resStrLen((char*)_scriptPointer)+ 1;
+			_scriptPointer += resStrLen(_scriptPointer) + 1;
 			translateText(_messagePtr, _transText);
 			for (i = 0, j = 0; (_messagePtr[i] != '/' || j == 0) && j < 19; i++) {
 				if (_messagePtr[i] != '/')
@@ -569,61 +567,7 @@ void Scumm_v8::decodeParseString(int m, int n)
 			_scriptPointer = _messagePtr;
 			return;
 		}
-#else
-		char buffer[1024];
-		_messagePtr = _scriptPointer;
-
-		if (_messagePtr[0] == '/') {
-			char pointer[20];
-			int i, j;
-
-			// Skip over the string
-			_scriptPointer += resStrLen((char*)_scriptPointer) + 1;
-	
-			translateText(_messagePtr, _transText);
-			for (i = 0, j = 0; (_messagePtr[i] != '/' || j == 0) && j < 19; i++) {
-				if (_messagePtr[i] != '/')
-					pointer[j++] = _messagePtr[i];
-			}
-			pointer[j] = 0;
-
-			// Stop any talking that's still going on
-			if (_sound->_talkChannel > -1)
-				_mixer->stop(_sound->_talkChannel);
-
-			// FIXME: no 'digvoice.bun' in COMI
-			_sound->_talkChannel = _sound->playBundleSound(pointer);
-
-			_messagePtr = _transText;
-			_msgPtrToAdd = (byte *)buffer;
-			_messagePtr = addMessageToStack(_messagePtr);
-		} else {
-			_msgPtrToAdd = (byte *)buffer;
-			_scriptPointer = _messagePtr = addMessageToStack(_messagePtr);
-		}
-
-		if (_fr[_string[m].charset] == NULL)	// FIXME: Put this elsewhere?
-			loadCharset(_string[m].charset);
-
-		if (_fr[_string[m].charset] != NULL) {
-			int x = _string[m].xpos;
-			// HACK - center mode. I call this a hack because we really should
-			// not duplicate all the string code from string.cpp. Rather, maybe
-			// abstract away the code in string.cpp from using the 'charset'
-			// fonts, and allow it to work both with old and new fonts. To this
-			// end, we should seperate the parts of Charset/_charset which are
-			// for bookkeeping (like x_pos, center mode etc.) and those that are
-			// for rendering. Then let the old (think printCharOld), medium (printChar),
-			// new (NUT) style renderers be subclasses of a common base class (which
-			// defines the API). This will clean up the code, and allow us to reuse
-			// the string logic in string.cpp.
-			if (_string[m].center)
-				x -= _fr[_string[m].charset]->getStringWidth(buffer) / 2;
-			_fr[_string[m].charset]->drawString(buffer, x, _string[m].ypos, _string[m].color, 0);
-		}
-#endif
 		break;
-	}
 	case 0xD2:		// SO_PRINT_WRAP Set print wordwrap
 		error("decodeParseString: SO_PRINT_MUMBLE");
 		break;
@@ -746,23 +690,18 @@ void Scumm_v8::o8_arrayOps()
 	byte subOp = fetchScriptByte();
 	int array = fetchScriptWord();
 	int b, c, d, len;
+	ArrayHeader *ah;
 	int list[128];
 	
 	switch (subOp) {
 	case 0x14:		// SO_ASSIGN_STRING
-		{
-		int idx = pop();
-		ArrayHeader *ah;
-		int r;
-		len = getStringLen(NULL);
-	
-		r = defineArray(array, 4, 0, len);
-		ah = (ArrayHeader *)getResourceAddress(rtString, r);
-		copyString(ah->data + idx, NULL, len);
-		}
+		b = pop();
+		len = resStrLen(_scriptPointer);
+		c = defineArray(array, 4, 0, len + 1);
+		ah = (ArrayHeader *)getResourceAddress(rtString, c);
+		copyScriptString(ah->data + b);
 		break;
 	case 0x15:		// SO_ASSIGN_SCUMMVAR_LIST
-		// TODO / FIXME: is this right?
 		b = pop();
 		c = pop();
 		d = readVar(array);
@@ -774,7 +713,6 @@ void Scumm_v8::o8_arrayOps()
 		}
 		break;
 	case 0x16:		// SO_ASSIGN_2DIM_LIST
-		// TODO / FIXME: is this right?
 		b = pop();
 		len = getStackList(list, sizeof(list) / sizeof(list[0]));
 		d = readVar(array);
@@ -1333,7 +1271,7 @@ void Scumm_v8::o8_system()
 
 void Scumm_v8::o8_startVideo()
 {
-	int len = resStrLen((char*)_scriptPointer);
+	int len = resStrLen(_scriptPointer);
 	
 	warning("o8_startVideo(%s/%s)", getGameDataPath(), (char*)_scriptPointer);
 	
@@ -1528,7 +1466,7 @@ void Scumm_v8::o8_getObjectImageHeight()
 void Scumm_v8::o8_getStringWidth()
 {
 	int charset = pop();
-	int len = resStrLen((char*)_scriptPointer);
+	int len = resStrLen(_scriptPointer);
 	int oldID = _charset->getCurID(); 
 	int width;
 	

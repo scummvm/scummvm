@@ -494,7 +494,7 @@ void Scumm::drawString(int a)
 	}
 
 	for (i = 0; (chr = buf[i++]) != 0;) {
-		if (chr == 254 || chr == 255) {
+		if (chr == 0xFE || chr == 0xFF) {
 			chr = buf[i++];
 			switch (chr) {
 			case 9:
@@ -650,6 +650,11 @@ byte *Scumm::addMessageToStack(byte *msg)
 				*_msgPtrToAdd++ = chr;
 				*_msgPtrToAdd++ = ptr[num++];
 				*_msgPtrToAdd++ = ptr[num++];
+				if (_features & GF_AFTER_V8) {
+					// FIXME - is this right?!?
+					*_msgPtrToAdd++ = ptr[num++];
+					*_msgPtrToAdd++ = ptr[num++];
+				}
 				break;
 			default: 
 				debug(2, "addMessageToStack(): string escape sequence %d unknown", chr);
@@ -808,11 +813,11 @@ void Scumm::translateText(byte *text, byte *trans_buff) {
 		// skip translation if flag 'h' exist
 		if (*(buf + pos) == 'h') {
 			pos += 3;
-			char *pointer = strchr((char*)text + 1, '/');
+			byte *pointer = (byte *)strchr((char*)text + 1, '/');
 			if (pointer != NULL)
-				strcpy((char *)trans_buff, pointer + 1);
+				memcpy(trans_buff, pointer + 1, resStrLen(pointer + 1) + 1);
 			else
-				strcpy((char *)trans_buff, "");
+				trans_buff[0] = '\0';
 			return;
 		}
 
@@ -868,14 +873,14 @@ void Scumm::translateText(byte *text, byte *trans_buff) {
 	}
 
 	if (text[0] == '/') {
-		char *pointer = strchr((char*)text + 1, '/');
+		byte *pointer = (byte *)strchr((char*)text + 1, '/');
 		if (pointer != NULL)
-			strcpy((char *)trans_buff, pointer + 1);
+			memcpy(trans_buff, pointer + 1, resStrLen(pointer + 1) + 1);
 		else
-			strcpy((char *)trans_buff, "");
-
+			trans_buff[0] = '\0';
 		return;
 	}
-	strcpy((char *)trans_buff, (char *)text);
+
+	memcpy(trans_buff, text, resStrLen(text) + 1);
 }
 

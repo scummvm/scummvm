@@ -1477,7 +1477,7 @@ void Scumm::loadPtrToResource(int type, int resindex, byte *source)
 
 	nukeResource(type, resindex);
 
-	len = getStringLen(source);
+	len = resStrLen(source) + 1;
 
 	if (len <= 0)
 		return;

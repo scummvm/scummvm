@@ -1827,7 +1827,7 @@ void Scumm_v5::o5_roomOps()
 			if (out) {
 				byte *ptr;
 				ptr = getResourceAddress(rtString, a);
-				fwrite(ptr, getStringLen(ptr) + 1, 1, out);
+				fwrite(ptr, resStrLen(ptr) + 1, 1, out);
 				fclose(out);
 			}
 			break;

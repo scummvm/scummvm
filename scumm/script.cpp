@@ -1097,33 +1097,43 @@ int Scumm::getArrayId()
 	return -1;
 }
 
-void Scumm::copyString(byte *dst, byte *src, int len)
+void Scumm::copyScriptString(byte *dst)
 {
-	if (!src) {
-		while (--len >= 0)
-			*dst++ = fetchScriptByte();
-	} else {
-		while (--len >= 0)
-			*dst++ = *src++;
-	}
+	int len = resStrLen(_scriptPointer) + 1;
+	while (len--)
+		*dst++ = fetchScriptByte();
 }
 
-int Scumm::getStringLen(byte *ptr)
+//
+// Given a pointer to a Scumm string, this function returns the total byte length
+// of the string data in that resource. To do so it has to understand certain
+// special characters embedded into the string. The reason for this function is that
+// sometimes this embedded data contains zero bytes, thus we can't just use strlen.
+//
+int Scumm::resStrLen(const byte *src) const
 {
-	int len;
-	byte c;
-	if (!ptr)
-		ptr = _scriptPointer;
-	len = 0;
-	do {
-		c = *ptr++;
-		if (!c)
-			break;
-		len++;
-		if (c == 0xFF)
-			ptr += 3, len += 3;
-	} while (1);
-	return len + 1;
+	int num = 0;
+	byte chr;
+	if (src == NULL)
+		src = _scriptPointer;
+	while ((chr = *src++) != 0) {
+		num++;
+		if (chr == 255) {
+			chr = *src++;
+			num++;
+
+			if (chr != 1 && chr != 2 && chr != 3 && chr != 8) {
+				if (_features & GF_AFTER_V8) {
+					src += 4;
+					num += 4;
+				} else {
+					src += 2;
+					num += 2;
+				}
+			}
+		}
+	}
+	return num;
 }
 
 void Scumm::exitCutscene()

@@ -133,31 +133,6 @@ void hexdump(const byte * data, int len)
 	printf("|\n");
 }
 
-//
-// Given a pointer to a Scumm resource, this function returns the length
-// of the (string) data in that resource. To do so it understands certain
-// special chars starting with FF. The reason for this function is that
-// sometimes resource data will contain 0 bytes, thus we can't just use strlen.
-//
-int resStrLen(const char *src)
-{
-	int num = 0;
-	byte chr;
-	while ((chr = *src++) != 0) {
-		num++;
-		if (chr == 255) {
-			chr = *src++;
-			num++;
-
-			if (chr != 1 && chr != 2 && chr != 3 && chr != 8) {
-				src += 2;
-				num += 2;
-			}
-		}
-	}
-	return num;
-}
-
 RandomSource::RandomSource(uint32 seed)
 {
 	_randSeed = seed;

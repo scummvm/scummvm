@@ -1952,54 +1952,46 @@ void Scumm_v6::o6_getVerbEntrypoint()
 	push(getVerbEntrypoint(v, e));
 }
 
-void Scumm::arrayop_1(int a, byte *ptr)
-{
-	ArrayHeader *ah;
-	int r;
-	int len = getStringLen(ptr);
-
-	r = defineArray(a, 4, 0, len);
-	ah = (ArrayHeader *)getResourceAddress(rtString, r);
-	copyString(ah->data, ptr, len);
-}
-
 void Scumm_v6::o6_arrayOps()
 {
-	int a, b, c, d, num;
+	byte subOp = fetchScriptByte();
+	int array = fetchScriptWord();
+	int b, c, d, len;
+	ArrayHeader *ah;
 	int list[128];
 
-	switch (fetchScriptByte()) {
+	switch (subOp) {
 	case 205:
-		a = fetchScriptWord();
-		pop();
-		arrayop_1(a, NULL);
+		b = pop();
+		len = resStrLen(_scriptPointer);
+		c = defineArray(array, 4, 0, len + 1);
+		ah = (ArrayHeader *)getResourceAddress(rtString, c);
+		copyScriptString(ah->data + b);
 		break;
 	case 208:
-		a = fetchScriptWord();
 		b = pop();
 		c = pop();
-		d = readVar(a);
+		d = readVar(array);
 		if (d == 0) {
-			defineArray(a, 5, 0, b + c);
+			defineArray(array, 5, 0, b + c);
 		}
 		while (c--) {
-			writeArray(a, 0, b + c, pop());
+			writeArray(array, 0, b + c, pop());
 		}
 		break;
 	case 212:
-		a = fetchScriptWord();
 		b = pop();
-		num = getStackList(list, sizeof(list) / sizeof(list[0]));
-		d = readVar(a);
+		len = getStackList(list, sizeof(list) / sizeof(list[0]));
+		d = readVar(array);
 		if (d == 0)
 			error("Must DIM a two dimensional array before assigning");
 		c = pop();
-		while (--num >= 0) {
-			writeArray(a, c, b + num, list[num]);
+		while (--len >= 0) {
+			writeArray(array, c, b + len, list[len]);
 		}
 		break;
 	default:
-		error("o6_arrayOps: default case");
+		error("o6_arrayOps: default case %d (array %d)", subOp, array);
 	}
 }
 
@@ -2015,7 +2007,6 @@ void Scumm_v6::o6_saveRestoreVerbs()
 	byte subOp = fetchScriptByte();
 	if (_features & GF_AFTER_V8) {
 		subOp = (subOp - 141) + 0xB4;
-		printf("o8_saveRestoreVerbs:%d\n", (int)subOp);
 	}
 	
 	switch (subOp) {
@@ -2112,7 +2103,6 @@ void Scumm_v6::o6_wait()
 
 		return;
 	case 171:
-		printf("wait for sentence");
 		if (_sentenceNum) {
 			if (_sentence[_sentenceNum - 1].freezeCount && !isScriptInUse(_vars[VAR_SENTENCE_SCRIPT]))
 				return;
@@ -2290,8 +2280,9 @@ void Scumm_v6::o6_talkActor()
 		char pointer[20];
 		int i, j;
 
-		_scriptPointer += resStrLen((char*)_scriptPointer) + 1;
+		_scriptPointer += resStrLen(_scriptPointer) + 1;
 		translateText(_messagePtr, _transText);
+
 		for (i = 0, j = 0; (_messagePtr[i] != '/' || j == 0) && j < 19; i++) {
 			if (_messagePtr[i] != '/')
 				pointer[j++] = _messagePtr[i];
@@ -2934,7 +2925,7 @@ void Scumm_v6::decodeParseString(int m, int n)
 				char pointer[20];
 				int i, j;
 
-				_scriptPointer += resStrLen((char*)_scriptPointer)+ 1;
+				_scriptPointer += resStrLen(_scriptPointer)+ 1;
 				translateText(_messagePtr, _transText);
 				for (i = 0, j = 0; (_messagePtr[i] != '/' || j == 0) && j < 19; i++) {
 					if (_messagePtr[i] != '/')

@@ -47,10 +47,6 @@ void ClearBlendCache(byte *palette, int weight);
  */
 void hexdump(const byte * data, int len);
 
-// Resource string length
-int resStrLen(const char *src);
-
-
 class RandomSource {
 private:
 	uint32 _randSeed;
