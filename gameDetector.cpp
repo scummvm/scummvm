@@ -391,9 +391,9 @@ static const VersionSettings version_settings[] = {
 	 GF_USE_KEY | GF_AUDIOTRACKS | GF_ADLIB_DEFAULT},
 	{"monkey2", "Monkey Island 2: LeChuck's revenge", GID_MONKEY2, 5, 2, 2,
 	 GF_USE_KEY | GF_ADLIB_DEFAULT},
-	{"atlantis", "Indiana Jones 4 and the Fate of Atlantis", GID_INDY4, 5, 5, 0,
+	{"atlantis", "Indiana Jones and the Fate of Atlantis", GID_INDY4, 5, 5, 0,
 	 GF_USE_KEY | GF_ADLIB_DEFAULT},
-	{"playfate", "Indiana Jones 4 and the Fate of Atlantis (Demo)", GID_INDY4,
+	{"playfate", "Indiana Jones and the Fate of Atlantis (Demo)", GID_INDY4,
 	 5, 5, 0, GF_USE_KEY | GF_ADLIB_DEFAULT},
 
 	/* Scumm Version 6 */
