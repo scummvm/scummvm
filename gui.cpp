@@ -36,12 +36,16 @@
 // Additional variables for WinCE specific GUI
 #include "gapi_keys.h"
 extern bool toolbar_drawn;
+extern bool hide_toolbar;
 extern bool draw_keyboard;
 extern bool get_key_mapping;
 extern struct keyops keyMapping;
 extern void save_key_mapping(void);
+extern void do_hide(bool);
 uint16 _key_mapping_required;
 uint16 _current_page;
+bool keyboard_override;
+bool save_hide_toolbar;
 #else
 #define save_key_mapping() ;
 bool get_key_mapping;
@@ -1111,7 +1115,12 @@ void Gui::close()
 #ifdef _WIN32_WCE
 
 	// Option dialog can be accessed from the file dialog now, always check
-	if (draw_keyboard) {
+	if (save_hide_toolbar) {
+		do_hide(true);
+		save_hide_toolbar = false;
+	}
+	if (keyboard_override) {
+		keyboard_override = false;
 		draw_keyboard = false;
 		toolbar_drawn = false;
 	}
@@ -1151,6 +1160,20 @@ void Gui::saveLoadDialog()
 	_active = true;
 	_cur_page = 0;
 	_dialog = SAVELOAD_DIALOG;
+
+#ifdef _WIN32_WCE
+	save_hide_toolbar = hide_toolbar;
+	if (save_hide_toolbar) {
+		// Display the keyboard while the dialog is running
+		do_hide(false);
+	}
+	if (!draw_keyboard) {
+		keyboard_override = true;
+		draw_keyboard = true;
+		toolbar_drawn = false;
+	}
+#endif
+
 }
 
 void Gui::pause()
