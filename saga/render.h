@@ -37,7 +37,8 @@ enum RENDER_FLAGS {
 	RF_TEXT_TEST = 0x04,
 	RF_OBJECTMAP_TEST = 0x08,
 	RF_RENDERPAUSE = 0x10,
-	RF_GAMEPAUSE = 0x20
+	RF_GAMEPAUSE = 0x20,
+	RF_PLACARD = 0x40
 };
 
 struct BUFFER_INFO {
@@ -57,6 +58,7 @@ public:
 	int drawScene(void);
 	unsigned int getFlags(void);
 	void setFlag(unsigned int);
+	void clearFlag(unsigned int);
 	void toggleFlag(unsigned int);
 	unsigned int getFrameCount(void);
 	unsigned int resetFrameCount(void);
@@ -85,7 +87,6 @@ private:
 	unsigned int _fps;
 	unsigned int _framecount;
 	unsigned int _flags;
-	int _mode;
 };
 
 } // End of namespace Saga

@@ -29,9 +29,11 @@
 #include "saga/actor.h"
 #include "saga/animation.h"
 #include "saga/console.h"
+#include "saga/font.h"
 #include "saga/interface.h"
 #include "saga/music.h"
 #include "saga/objectdata.h"
+#include "saga/render.h"
 #include "saga/sound.h"
 #include "saga/sndres.h"
 
@@ -920,13 +922,58 @@ int Script::SF_simulSpeech2(SCRIPTFUNC_PARAMS) {
 
 // Script function #48 (0x30)
 int Script::SF_placard(SCRIPTFUNC_PARAMS) {
-	debug(1, "stub: SF_placard()");
+	GAME_DISPLAYINFO disp_info;
+	SURFACE *back_buf = _vm->_gfx->getBackBuffer();
+	PALENTRY cur_pal[PAL_ENTRIES];
+	PALENTRY *pal;
+
+	_vm->getDisplayInfo(&disp_info);
+
+	_vm->_gfx->showCursor(false);
+	_vm->_gfx->getCurrentPal(cur_pal);
+	_vm->_gfx->palToBlackWait(back_buf, cur_pal, PALETTE_FADE_DURATION);
+
+	_vm->_interface->setStatusText("");
+
+	Rect rect(disp_info.logical_w, disp_info.scene_h);
+	drawRect(back_buf, &rect, 138);
+
+	// TODO: Draw the text at the correct spot. This is (probably) just a
+	// close approximation.
+	_vm->textDraw(MEDIUM_FONT_ID, back_buf, getString(thread->pop()),
+		disp_info.logical_w / 2, disp_info.scene_h / 2,
+		_vm->_gfx->getWhite(), _vm->_gfx->getBlack(),
+		FONT_OUTLINE | FONT_CENTERED);
+
+	_vm->_render->setFlag(RF_PLACARD);
+	_vm->_render->drawScene();
+
+	_vm->_scene->getBGPal(&pal);
+	_vm->_gfx->blackToPalWait(back_buf, pal, PALETTE_FADE_DURATION);
+
 	return SUCCESS;
 }
 
 // Script function #49 (0x31)
 int Script::SF_placardOff(SCRIPTFUNC_PARAMS) {
-	debug(1, "stub: SF_placardOff()");
+	SURFACE *back_buf = _vm->_gfx->getBackBuffer();
+	PALENTRY cur_pal[PAL_ENTRIES];
+	PALENTRY *pal;
+
+	// Fade down
+	_vm->_gfx->showCursor(false);
+	_vm->_gfx->getCurrentPal(cur_pal);
+	_vm->_gfx->palToBlackWait(back_buf, cur_pal, PALETTE_FADE_DURATION);
+
+	_vm->_render->clearFlag(RF_PLACARD);
+	_vm->_render->drawScene();
+
+	// Fade up
+	_vm->_scene->getBGPal(&pal);
+
+	_vm->_gfx->showCursor(true);
+	_vm->_gfx->blackToPalWait(back_buf, pal, PALETTE_FADE_DURATION);
+
 	return SUCCESS;
 }
 

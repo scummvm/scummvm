@@ -122,19 +122,21 @@ int Render::drawScene() {
 	bg_pt.x = 0;
 	bg_pt.y = 0;
 
-	// Display scene background
-	_vm->_scene->draw(backbuf_surface);
+	if (!(_flags & RF_PLACARD)) {
+		// Display scene background
+		_vm->_scene->draw(backbuf_surface);
 
-	// Display scene maps, if applicable
-	if (getFlags() & RF_OBJECTMAP_TEST) {
-		if (_vm->_scene->_objectMap)
-			_vm->_scene->_objectMap->draw(backbuf_surface, mouse_pt, _vm->_gfx->getWhite(), _vm->_gfx->getBlack());
-		if (_vm->_scene->_actionMap)
-			_vm->_scene->_actionMap->draw(backbuf_surface, _vm->_gfx->matchColor(RGB_RED));
+		// Display scene maps, if applicable
+		if (getFlags() & RF_OBJECTMAP_TEST) {
+			if (_vm->_scene->_objectMap)
+				_vm->_scene->_objectMap->draw(backbuf_surface, mouse_pt, _vm->_gfx->getWhite(), _vm->_gfx->getBlack());
+			if (_vm->_scene->_actionMap)
+				_vm->_scene->_actionMap->draw(backbuf_surface, _vm->_gfx->matchColor(RGB_RED));
+		}
+
+		// Draw queued actors
+		_vm->_actor->drawActors();
 	}
-
-	// Draw queued actors
-	_vm->_actor->drawActors();
 
 	// Draw queued text strings
 	_vm->_scene->getInfo(&scene_info);
@@ -209,6 +211,10 @@ unsigned int Render::getFlags() {
 
 void Render::setFlag(unsigned int flag) {
 	_flags |= flag;
+}
+
+void Render::clearFlag(unsigned int flag) {
+	_flags &= ~flag;
 }
 
 void Render::toggleFlag(unsigned int flag) {
