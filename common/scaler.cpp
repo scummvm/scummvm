@@ -479,10 +479,10 @@ void _2xSaI(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch
 
 void AdvMame2x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch,
 							 int width, int height) {
-	const unsigned int nextlineSrc = srcPitch / sizeof(uint16);
+	const uint32 nextlineSrc = srcPitch / sizeof(uint16);
 	const uint16 *p = (const uint16 *)srcPtr;
 
-	const unsigned int nextlineDst = dstPitch / sizeof(uint16);
+	const uint32 nextlineDst = dstPitch / sizeof(uint16);
 	uint16 *q = (uint16 *)dstPtr;
 	
 	uint16 A, B, C;
@@ -515,10 +515,10 @@ void AdvMame2x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPi
 
 void AdvMame3x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch,
 							 int width, int height) {
-	const unsigned int nextlineSrc = srcPitch / sizeof(uint16);
+	const uint32 nextlineSrc = srcPitch / sizeof(uint16);
 	const uint16 *p = (const uint16 *)srcPtr;
 
-	const unsigned int nextlineDst = dstPitch / sizeof(uint16);
+	const uint32 nextlineDst = dstPitch / sizeof(uint16);
 	uint16 *q = (uint16 *)dstPtr;
 	
 	uint16 A, B, C;
@@ -610,10 +610,10 @@ void Normal3x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPit
 
 void TV2x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, 
 					int width, int height) {
-	const unsigned int nextlineSrc = srcPitch / sizeof(uint16);
+	const uint32 nextlineSrc = srcPitch / sizeof(uint16);
 	const uint16 *p = (const uint16 *)srcPtr;
 
-	const unsigned int nextlineDst = dstPitch / sizeof(uint16);
+	const uint32 nextlineDst = dstPitch / sizeof(uint16);
 	uint16 *q = (uint16 *)dstPtr;
 
 	while(height--) {
@@ -641,10 +641,10 @@ static inline uint16 DOT_16(uint16 c, int j, int i) {
 void DotMatrix(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch,
 					int width, int height)
 {
-	const unsigned int nextlineSrc = srcPitch / sizeof(uint16);
+	const uint32 nextlineSrc = srcPitch / sizeof(uint16);
 	const uint16 *p = (const uint16 *)srcPtr;
 
-	const unsigned int nextlineDst = dstPitch / sizeof(uint16);
+	const uint32 nextlineDst = dstPitch / sizeof(uint16);
 	uint16 *q = (uint16 *)dstPtr;
 
 	for (int j = 0, jj = 0; j < height; ++j, jj += 2) {
@@ -737,7 +737,7 @@ static inline uint16 INTERPOLATE_2_7_7(uint16 w1, uint16 w2, uint16 w3) {
 #define PIXEL22_5   *(q+2+nextlineDst2) = INTERPOLATE_1_1(w[6], w[8]);
 #define PIXEL22_C   *(q+2+nextlineDst2) = w[5];
 
-static inline bool diffYUV(unsigned int yuv1, unsigned int yuv2) {
+static inline bool diffYUV(int yuv1, int yuv2) {
 	static const  int   Ymask = 0x00FF0000;
 	static const  int   Umask = 0x0000FF00;
 	static const  int   Vmask = 0x000000FF;
@@ -746,21 +746,20 @@ static inline bool diffYUV(unsigned int yuv1, unsigned int yuv2) {
 	static const  int   trV   = 0x00000006;
 
 	return
-	  ( ( abs((yuv1 & Ymask) - (yuv2 & Ymask)) > trY ) ||
-	    ( abs((yuv1 & Umask) - (yuv2 & Umask)) > trU ) ||
-	    ( abs((yuv1 & Vmask) - (yuv2 & Vmask)) > trV ) );
+	  ( ( ABS((yuv1 & Ymask) - (yuv2 & Ymask)) > trY ) ||
+	    ( ABS((yuv1 & Umask) - (yuv2 & Umask)) > trU ) ||
+	    ( ABS((yuv1 & Vmask) - (yuv2 & Vmask)) > trV ) );
 }
 
 void HQ3x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, int width, int height) {
-	int  i, k;
 	int  w[10];
 	int  yuv[10];
   
-	const unsigned int nextlineSrc = srcPitch / sizeof(uint16);
+	const uint32 nextlineSrc = srcPitch / sizeof(uint16);
 	const uint16 *p = (const uint16 *)srcPtr;
 
-	const unsigned int nextlineDst = dstPitch / sizeof(uint16);
-	const unsigned int nextlineDst2 = 2 * nextlineDst;
+	const uint32 nextlineDst = dstPitch / sizeof(uint16);
+	const uint32 nextlineDst2 = 2 * nextlineDst;
 	uint16 *q = (uint16 *)dstPtr;
 	
 	// TODO: The YUV access could be finetuned and optimized; depending on the
@@ -796,7 +795,8 @@ void HQ3x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, 
 		w[6] = *(p);                    yuv[6] = RGBtoYUV[w[6]];
 		w[9] = *(p + nextlineSrc);      yuv[9] = RGBtoYUV[w[9]];
 
-		for (i = 0; i < width; i++) {
+		int tmpWidth = width;
+		while (tmpWidth--) {
 			p++;
 
 			w[1] = w[2];                yuv[1] = yuv[2];
@@ -814,7 +814,7 @@ void HQ3x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, 
 			int pattern = 0;
 			int flag = 1;
 
-			for (k = 1; k <= 9; k++) {
+			for (int k = 1; k <= 9; k++) {
 				if (k == 5) continue;
 
 				if (w[k] != w[5]) {
