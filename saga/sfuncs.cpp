@@ -65,7 +65,7 @@ void Script::setupScriptFuncList(void) {
 		OPCODE(SF_gotoScene),
 		OPCODE(SF_setObjImage),
 		OPCODE(SF_setObjName),
-		OPCODE(SF_getObjName),
+		OPCODE(SF_getObjImage),
 		OPCODE(SF_getNumber),
 		OPCODE(SF_openDoor),
 		OPCODE(SF_closeDoor),
@@ -365,19 +365,30 @@ int Script::SF_setObjImage(SCRIPTFUNC_PARAMS) {
 
 // Script function #18 (0x12)
 int Script::SF_setObjName(SCRIPTFUNC_PARAMS) {
-	for (int i = 0; i < nArgs; i++)
-		thread->pop();
+	SDataWord_T obj_param = thread->pop();
+	SDataWord_T name_param = thread->pop();
 
-	debug(1, "stub: SF_setObjName(), %d args", nArgs);
+	int index = obj_param & 0x1FFF;
+
+	if (index >= ARRAYSIZE(ObjectTable)) {
+		return FAILURE;
+	}
+
+	ObjectTable[index].nameIndex = name_param;
 	return SUCCESS;
 }
 
 // Script function #19 (0x13)
-int Script::SF_getObjName(SCRIPTFUNC_PARAMS) {
-	for (int i = 0; i < nArgs; i++)
-		thread->pop();
+int Script::SF_getObjImage(SCRIPTFUNC_PARAMS) {
+	SDataWord_T param = thread->pop();
+	int index = param & 0x1FFF;
 
-	debug(1, "stub: SF_getObjName(), %d args", nArgs);
+	if (index >= ARRAYSIZE(ObjectTable)) {
+		thread->retVal = 0;
+		return FAILURE;
+	}
+
+	thread->retVal = ObjectTable[index].spritelistRn;
 	return SUCCESS;
 }
 

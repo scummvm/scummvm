@@ -270,7 +270,7 @@ private:
 	int SF_gotoScene(SCRIPTFUNC_PARAMS);
 	int SF_setObjImage(SCRIPTFUNC_PARAMS);
 	int SF_setObjName(SCRIPTFUNC_PARAMS);
-	int SF_getObjName(SCRIPTFUNC_PARAMS);
+	int SF_getObjImage(SCRIPTFUNC_PARAMS);
 	int SF_getNumber(SCRIPTFUNC_PARAMS);
 	int SF_openDoor(SCRIPTFUNC_PARAMS);
 	int SF_closeDoor(SCRIPTFUNC_PARAMS);
