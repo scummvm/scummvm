@@ -1351,6 +1351,634 @@ e8fb:
 
 }
 
+char SkyText_v00331::getTextChar() {
+
+	//This code is based on disassembly of the v0.0331 binary.
+	
+	if (getTBit())
+		goto f3db;
+	if (getTBit())
+		goto f39c;
+	if (getTBit())
+		goto f38f;
+
+	return (char)0x20;
+
+f38f:
+	if (getTBit())
+		goto f399;
+
+	return (char)0x65;
+
+f399:
+	return (char)0x61;
+
+f39c:
+	if (getTBit())
+		goto f3c4;
+	if (getTBit())
+		goto f3b7;
+	if (getTBit())
+		goto f3b4;
+
+	return (char)0x6f;
+
+f3b4:  
+	return (char)0x73;
+
+f3b7:  
+	if (getTBit())
+		goto f3c1;
+  
+	return (char)0x74;
+
+f3c1:  
+	return (char)0x6e;
+
+f3c4:  
+	if (getTBit())
+		goto f3d8;
+	if (getTBit())
+		goto f3d5;
+  
+	return (char)0x2e;
+
+f3d5:  
+	return (char)0x69;
+
+f3d8:  
+	return (char)0x72;
+
+f3db:  
+	if (getTBit())
+		goto f453;
+	if (getTBit())
+		goto f414;
+	if (getTBit())
+		goto f407;
+	if (getTBit())
+		goto f404;
+	if (getTBit())
+		goto f401;
+  
+	return (char)0x0;
+
+f401:  
+	return (char)0x45;
+
+f404:  
+	return (char)0x75;
+
+f407:  
+	if (getTBit())
+		goto f411;
+  
+	return (char)0x6d;
+
+f411:  
+	return (char)0x41;
+
+f414:  
+	if (getTBit())
+		goto f43c;
+	if (getTBit())
+		goto f42f;
+	if (getTBit())
+		goto f42c;
+  
+	return (char)0x6c;
+
+f42c:  
+	return (char)0x49;
+
+f42f:
+	if (getTBit())
+		goto f439;
+  
+	return (char)0x64;
+
+f439:  
+	return (char)0x52;
+
+f43c:  
+	if (getTBit())
+		goto f450;
+	if (getTBit())
+		goto f44d;
+  
+	return (char)0x4e;
+
+f44d:  
+	return (char)0x53;
+
+f450:  
+	return (char)0x54;
+
+f453:  
+	if (getTBit())
+		goto f4cb;
+	if (getTBit())
+		goto f48c;
+	if (getTBit())
+		goto f47f;
+	if (getTBit())
+		goto f47c;
+	if (getTBit())
+		goto f479;
+  
+	return (char)0x4f;
+
+f479:  
+	return (char)0x68;
+
+f47c:  
+	return (char)0x63;
+
+f47f:  
+	if (getTBit())
+		goto f489;
+  
+	return (char)0x44;
+
+f489:  
+	return (char)0x67;
+
+f48c:  
+	if (getTBit())
+		goto f4b4;
+	if (getTBit())
+		goto f4a7;
+	if (getTBit())
+	goto f4a4;
+  
+	return (char)0x4c;
+
+f4a4:  
+	return (char)0x43;
+
+f4a7:  
+	if (getTBit())
+		goto f4b1;
+  
+	return (char)0x70;
+
+f4b1:  
+	return (char)0x55;
+
+f4b4:  
+	if (getTBit())
+		goto f4c8;
+	if (getTBit())
+		goto f4c5;
+  
+	return (char)0x21;
+
+f4c5:  
+	return (char)0x79;
+
+f4c8:  
+	return (char)0x4d;
+
+f4cb:  
+	if (getTBit())
+		goto f52f;
+	if (getTBit())
+		goto f504;
+	if (getTBit())
+		goto f4f7;
+	if (getTBit())
+		goto f4f4;
+	if (getTBit())
+		goto f4f1;
+  
+	return (char)0x50;
+
+f4f1:  
+	return (char)0x76;
+
+f4f4:  
+	return (char)0x48;
+
+f4f7:  
+	if (getTBit())
+		goto f501;
+  
+	return (char)0x3f;
+
+f501:  
+	return (char)0x62;
+
+f504:  
+	if (getTBit())
+		goto f522;
+	if (getTBit())
+		goto f51f;
+	if (getTBit())
+		goto f51c;
+  
+	return (char)0x27;
+
+f51c:  
+	return (char)0x66;
+
+f51f:  
+	return (char)0x2c;
+
+f522:  
+	if (getTBit())
+		goto f52c;
+  
+	return (char)0x47;
+
+f52c:  
+	return (char)0x42;
+
+f52f:  
+	if (getTBit())
+		goto f593;
+	if (getTBit())
+		goto f568;
+	if (getTBit())
+		goto f55b;
+	if (getTBit())
+		goto f558;
+	if (getTBit())
+		goto f555;
+  
+	return (char)0x56;
+
+f555:  
+	return (char)0x6b;
+
+f558:  
+	return (char)0x46;
+
+f55b:  
+	if (getTBit())
+		goto f565;
+  
+	return (char)0x71;
+
+f565:  
+	return (char)0x2a;
+
+f568:
+	if (getTBit())
+		goto f586;
+	if (getTBit())
+		goto f583;
+	if (getTBit())
+		goto f580;
+  
+	return (char)0x77;
+
+f580:  
+	return (char)0x4b;
+
+f583:  
+	return (char)0x2d;
+
+f586:  
+	if (getTBit())
+		goto f590;
+  
+	return (char)0x57;
+
+f590:  
+	return (char)0x4a;
+
+f593:  
+	if (getTBit())
+		goto f5ed;
+	if (getTBit())
+		goto f5c2;
+	if (getTBit())
+		goto f5b5;
+	if (getTBit())
+		goto f5b2;
+  
+	return (char)0x7a;
+
+f5b2:  
+	return (char)0x2b;
+
+f5b5:  
+	if (getTBit())
+		goto f5bf;
+  
+	return (char)0x59;
+
+f5bf:  
+	return (char)0x6a;
+
+f5c2:  
+	if (getTBit())
+		goto f5e0;
+	if (getTBit())
+		goto f5dd;
+	if (getTBit())
+		goto f5da;
+  
+	return (char)0x85;
+
+f5da:  
+	return (char)0x29;
+
+f5dd:  
+	return (char)0x51;
+
+f5e0:  
+	if (getTBit())
+		goto f5ea;
+  
+	return (char)0x5a;
+
+f5ea:  
+	return (char)0x7e;
+
+f5ed:  
+	if (getTBit())
+		goto f65b;
+	if (getTBit())
+		goto f626;
+	if (getTBit())
+		goto f619;
+	if (getTBit())
+		goto f616;
+	if (getTBit())
+		goto f613;
+  
+	return (char)0x8b;
+
+f613:  
+	return (char)0x3c;
+
+f616:  
+	return (char)0x8a;
+
+f619:  
+	if (getTBit())
+		goto f623;
+  
+	return (char)0x7f;
+
+f623:  
+	return (char)0x3a;
+
+f626:  
+	if (getTBit())
+		goto f644;
+	if (getTBit())
+		goto f641;
+	if (getTBit())
+		goto f63e;
+  
+	return (char)0x87;
+
+f63e:  
+	return (char)0x23;
+
+f641:  
+	return (char)0x78;
+
+f644:  
+	if (getTBit())
+		goto f658;
+	if (getTBit())
+		goto f655;
+  
+	return (char)0x58;
+
+f655:  
+	return (char)0x91;
+
+f658:  
+	return (char)0x83;
+
+f65b:  
+	if (getTBit())
+		goto f6bf;
+	if (getTBit())
+		goto f694;
+	if (getTBit())
+		goto f687;
+	if (getTBit())
+		goto f684;
+	if (getTBit())
+		goto f681;
+  
+	return (char)0x88;
+
+f681:  
+	return (char)0x60;
+
+f684:  
+	return (char)0x32;
+
+f687:  
+	if (getTBit())
+		goto f691;
+  
+	return (char)0x30;
+
+f691:  
+	return (char)0x31;
+
+f694:  
+	if (getTBit())
+		goto f6b2;
+	if (getTBit())
+		goto f6af;
+	if (getTBit())
+		goto f6ac;
+  
+	return (char)0x28;
+
+f6ac:  
+	return (char)0x2f;
+
+f6af:  
+	return (char)0x5d;
+
+f6b2:  
+	if (getTBit())
+		goto f6bc;
+  
+	return (char)0x3d;
+
+f6bc:  
+	return (char)0x86;
+
+f6bf:  
+	if (getTBit())
+		goto f70f;
+	if (getTBit())
+		goto f6ee;
+	if (getTBit())
+		goto f6e1;
+	if (getTBit())
+		goto f6de;
+  
+	return (char)0x5e;
+
+f6de:  
+	return (char)0x33;
+
+f6e1:  
+	if (getTBit())
+		goto f6eb;
+  
+	return (char)0x39;
+
+f6eb:  
+	return (char)0x34;
+
+f6ee:  
+	if (getTBit())
+		goto f702;
+	if (getTBit())
+		goto f6ff;
+  
+	return (char)0x7d;
+
+f6ff:  
+	return (char)0x38;
+
+f702:  
+	if (getTBit())
+		goto f70c;
+  
+	return (char)0x5c;
+
+f70c:  
+	return (char)0x22;
+
+f70f:  
+	if (getTBit())
+		goto f755;
+	if (getTBit())
+		goto f73e;
+	if (getTBit())
+		goto f731;
+	if (getTBit())
+		goto f72e;
+  
+	return (char)0x3e;
+
+f72e:  
+	return (char)0x26;
+
+f731:  
+	if (getTBit())
+		goto f73b;
+  
+	return (char)0x8d;
+
+f73b:  
+	return (char)0x7b;
+
+f73e:  
+	if (getTBit())
+		goto f752;
+	if (getTBit())
+		goto f74f;
+  
+	return (char)0x35;
+
+f74f:  
+	return (char)0x36;
+
+f752:  
+	return (char)0x8f;
+
+f755:  
+	if (getTBit())
+		goto f791;
+	if (getTBit())
+		goto f77a;
+	if (getTBit())
+		goto f777;
+	if (getTBit())
+		goto f774;
+  
+	return (char)0x8e;
+
+f774:  
+	return (char)0x8c;
+
+f777:  
+	return (char)0x37;
+
+f77a:  
+	if (getTBit())
+		goto f78e;
+	if (getTBit())
+		goto f78b;
+  
+	return (char)0x89;
+
+f78b:  
+	return (char)0x24;
+
+f78e:  
+	return (char)0x92;
+
+f791:  
+	if (getTBit())
+		goto f7b9;
+	if (getTBit())
+		goto f7ac;
+	if (getTBit())
+		goto f7a9;
+  
+	return (char)0x5b;
+
+f7a9:  
+	return (char)0x80;
+
+f7ac:  
+	if (getTBit())
+		goto f7b6;
+  
+	return (char)0x81;
+
+f7b6:  
+	return (char)0x40;
+
+f7b9:  
+	if (getTBit())
+		goto f7cd;
+	if (getTBit())
+		goto f7ca;
+  
+	return (char)0x5f;
+
+f7ca:  
+	return (char)0x82;
+
+f7cd:  
+	if (getTBit())
+		goto f7d7;
+  
+	return (char)0x25;
+
+f7d7:  
+	if (getTBit())
+		goto f7e1;
+
+	return (char)0x9;
+
+f7e1:  
+	if (getTBit())
+		goto f7eb;
+
+	return (char)0x3b;
+
+f7eb:  
+	return (char)0x7c;
+
+}
+
 char SkyText_v00372::getTextChar() {
 
 	//This code is based on the original sources
