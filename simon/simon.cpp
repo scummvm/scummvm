@@ -4420,6 +4420,10 @@ void SimonState::go() {
 	} else {
 		_subtitles = true;
 	}
+
+	if (_language == 4 || (_language > 5 && _language < 20))
+		error("Only English, French, German, Hebrew, Italian and Spanish are supported");
+
 	//Only English and German voice files were produced
 	if  (_language >= 2)
 		_subtitles = true;
