@@ -2746,36 +2746,7 @@ void ScummEngine_v6::o6_kernelGetFunctions() {
 		   333 = right
 		 */
 
-		// FIXME: I guess this is applicable to all engines, but lets avoid
-		// regressions
-		if (_gameId == GID_FT) {
-			push(getKeyState(args[1]));
-			return;
-		}
-
-		if ((args[1] == 27) && (_lastKeyHit == 27)) {
-			push(1); // abort
-			return;
-		}
-
-		if ( ((args[1] == 328) || (args[1] == 336) || (args[1] == 13)) &&
-			((VAR(VAR_LEFTBTN_HOLD)) || (_lastKeyHit == 13) || (_lastKeyHit == 274) ||
-			(_lastKeyHit == 273)) ) {
-			push(1); // thrust
-			return;
-		}
-
-		if (((args[1] == 97) || (args[1] == 331)) && (_lastKeyHit == 276)) {
-			push(1); // left
-			return;
-		}
-		
-		if (((args[1] == 115) || (args[1] == 333)) && (_lastKeyHit == 275)) {
-			push(1); // right
-			return;
-		}
-
-		push(0);
+		push(getKeyState(args[1]));
 		break;
 	case 212:
 		a = derefActor(args[1], "o6_kernelGetFunctions:212");
