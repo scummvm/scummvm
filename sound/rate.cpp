@@ -144,7 +144,7 @@ int st_rate_flow(eff_t effp, AudioInputStream &input, st_sample_t *obuf, st_size
 resume:
 		// Loop as long as the outpos trails behind, and as long as there is
 		// still space in the output buffer.
-		while (rate->ipos > rate->opos && obuf < oend) {
+		while (rate->ipos > rate->opos) {
 
 			// interpolate
 			out = (st_sample_t) (ilast[0] + (((icur[0] - ilast[0]) * rate->opos_frac + (1UL << (FRAC_BITS-1))) >> FRAC_BITS));
@@ -168,6 +168,9 @@ resume:
 			tmp = rate->opos_frac + rate->opos_inc_frac;
 			rate->opos = rate->opos + rate->opos_inc + (tmp >> FRAC_BITS);
 			rate->opos_frac = tmp & ((1UL << FRAC_BITS) - 1);
+			
+			if (obuf < oend)
+				goto the_end;
 		}
 
 		// Increment input position again (for the sample we read now)
@@ -179,13 +182,11 @@ resume:
 
 the_end:
 	*osamp = (obuf - ostart) / 2;
-	if (!input.eof()) {
-		rate->ilast[0] = ilast[0];
-		rate->icur[0] = input.read();
-		if (stereo) {
-			rate->ilast[1] = ilast[1];
-			rate->icur[1] = input.read();
-		}
+	rate->ilast[0] = ilast[0];
+	rate->icur[0] = icur[0];
+	if (stereo) {
+		rate->ilast[1] = ilast[1];
+		rate->icur[1] = icur[1];
 	}
 	return (ST_SUCCESS);
 }
