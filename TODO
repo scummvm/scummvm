@@ -255,8 +255,7 @@ SCUMM
   on small devices 
 * Fix codec44 for nut fonts
 * iMUSE Digital:
-  - Fix music code
-  - Recheck 'next region' code
+  - Fix music code and 'next region' code
   - Implement pool method data transfer between imuse and sound mixer
   - Implement split track for fadeout track needed by fadeParam in JUMP opcode
   - Add save/load code

@@ -257,7 +257,7 @@ void IMuseDigital::setComiMusicSequence(int seqId) {
 
 	if (num != 0) {
 		if (_curMusicSeq == 0) {
-			playComiMusic(_comiSeqMusicTable[num].name, &_comiSeqMusicTable[0], 0, true);
+			playComiMusic(_comiSeqMusicTable[num].name, &_comiSeqMusicTable[num], 0, true);
 			_curSeqAtribPos = 0;
 			_attributes[COMI_SEQ_OFFSET + num] = 1;
 		} else {
