@@ -17,6 +17,7 @@ void CardSlotCreateDirs() {
 		VFSDirCreate(gPrefs->card.volRefNum, "/PALM/Programs/ScummVM");
 		VFSDirCreate(gPrefs->card.volRefNum, "/PALM/Programs/ScummVM/Games");
 		VFSDirCreate(gPrefs->card.volRefNum, "/PALM/Programs/ScummVM/Saved");
+		VFSDirCreate(gPrefs->card.volRefNum, "/PALM/Programs/ScummVM/Audio");
 	}
 }
 
