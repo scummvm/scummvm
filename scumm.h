@@ -17,6 +17,9 @@
  *
  * Change Log:
  * $Log$
+ * Revision 1.7  2001/10/11 12:07:35  strigeus
+ * Determine caption from file name.
+ *
  * Revision 1.6  2001/10/11 08:00:42  strigeus
  * Dump scripts by using DUMP_SCRIPTS as a compile option instead.
  *
@@ -1251,7 +1254,8 @@ struct Scumm {
 	void parseCommandLine(int argc, char **argv);
 
 	void showHelpAndExit();
-
+	
+	char *getGameName();
 };
 
 void waitForTimer(Scumm *s);
