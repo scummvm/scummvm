@@ -145,6 +145,13 @@ byte veryFastMode;
 
 void modifyslot(int sel, int what);
 
+int mapKey(int key) {
+	if (key>=VK_F1 && key<=VK_F9) {
+		return key - VK_F1 + 315;
+	}
+	return key;
+}
+
 static LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) {
 	WndMan *wm = (WndMan*)GetWindowLong(hWnd, GWL_USERDATA);	
 	
@@ -155,10 +162,6 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM l
 //			TerminateThread((void*)wm->_threadId, 0);
 //			wm->_scumm->destroy();
 			exit(0);
-			break;
-
-		case WM_CHAR:
-			wm->_scumm->_keyPressed = wParam;
 			break;
 
 		case WM_KEYDOWN:
@@ -189,6 +192,8 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM l
 					wm->_scumm->resourceStats();
 				}
 			}
+
+			wm->_scumm->_keyPressed = mapKey(wParam);
 			break;
 
 		case WM_MOUSEMOVE:
@@ -918,6 +923,7 @@ void updateScreen(Scumm *s) {
 void waitForTimer(Scumm *s, int delay) {
 	wm->handleMessage();
 	if (!veryFastMode) {
+		assert(delay<500);
 		Sleep(delay*10);
 	} 
 }

@@ -1695,8 +1695,8 @@ void Scumm::o5_verbOps() {
 		switch(_opcode&0x1F) {
 		case 1: /* load image */
 			a = getVarOrDirectWord(0x80);
-			if (verb) {
-				setVerbObject(_roomResource, a, verb);
+			if (slot) {
+				setVerbObject(_roomResource, a, slot);
 				vs->type = 1;
 			}
 			break;

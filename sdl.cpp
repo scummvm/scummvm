@@ -137,8 +137,10 @@ void waitForTimer(Scumm *s, int delay) {
 		}
 	}
 	
-	if (!(s->_fastMode&2))
+	if (!(s->_fastMode&2)) {
+		assert(delay<500);
 		SDL_Delay(delay*10);
+	}
 }
 
 #define MAX_DIRTY_RECTS 40

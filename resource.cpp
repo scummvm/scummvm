@@ -721,7 +721,8 @@ void Scumm::expireResources(uint32 size) {
 			if (res.mode[i]) {
 				for(j=res.num[i]; --j>=0;) {
 					flag = res.flags[i][j];
-					if (!(flag&0x80) && flag >= best_counter && !isResourceInUse(i,j)) {
+					if (!(flag&0x80) && flag >= best_counter
+						&& res.address[i][j] && !isResourceInUse(i,j)) {
 						best_counter = flag;
 						best_type = i;
 						best_res = j;
