@@ -1219,9 +1219,8 @@ script:
 				scriptData += 2;
 			} while (--s);
 
-			s = READ_LE_UINT16(scriptData++);
-			scriptData += s; // use the default
-			scriptData--;
+			if (s == 0)
+				scriptData += READ_LE_UINT16(scriptData++)/2 - 1; // use the default
 			break;
 		case 15: // push_offset
 			push( *(uint16 *)SkyCompact::getCompactElem(_compact, READ_LE_UINT16(scriptData++)) );
