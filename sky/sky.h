@@ -52,6 +52,7 @@ class Control;
 class MusicBase;
 class Intro;
 class Debugger;
+class SkyCompact;
 
 class SkyEngine : public Engine {
 	void errorString(const char *buf_input, char *buf_output);
@@ -69,6 +70,7 @@ protected:
 	Mouse *_skyMouse;
 	Screen *_skyScreen;
 	Control *_skyControl;
+	SkyCompact *_skyCompact;
 	Debugger *_debugger;
 	
 	MusicBase *_skyMusic;
@@ -81,10 +83,8 @@ public:
 	static bool isDemo(void);
 	static bool isCDVersion(void);
 
-	static Compact *fetchCompact(uint32 a);
-	static void **fetchItem(uint32 num);
-	
-	static void **_itemList[300];
+	static void *fetchItem(uint32 num);
+	static void *_itemList[300];
 
 	static SystemVars _systemVars;
 

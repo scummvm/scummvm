@@ -54,125 +54,119 @@ struct dataFileHeader {
 	uint16 s_compressed_size;
 } GCC_PACK;
 
+struct TurnTable {
+	uint16 turnTableUp[5];
+	uint16 turnTableDown[5];
+	uint16 turnTableLeft[5];
+	uint16 turnTableRight[5];
+	uint16 turnTableTalk[5];
+} GCC_PACK;
+
+struct MegaSet {
+	uint16 gridWidth;	 //  0
+	uint16 colOffset;	 //  1
+	uint16 colWidth;	 //  2
+	uint16 lastChr;		 //  3
+
+	uint16 animUpId;	 //  4
+	uint16 animDownId;	 //  5
+	uint16 animLeftId;	 //  6
+	uint16 animRightId;	 //  7
+
+	uint16 standUpId;	 //  8
+	uint16 standDownId;	 //  9
+	uint16 standLeftId;	 // 10
+	uint16 standRightId; // 11
+	uint16 standTalkId;	 // 12
+	uint16 turnTableId;	 // 13
+} GCC_PACK;
+
+struct Compact {
+	uint16 logic;		 //  0: Entry in logic table to run (byte as <256entries in logic table
+	uint16 status;		 //  1
+	uint16 sync;		 //  2: flag sent to compacts by other things
+
+	uint16 screen;		 //  3: current screen
+	uint16 place;		 //  4: so's this one
+	uint16 getToTableId; //  5: Address of how to get to things table
+
+	uint16 xcood;		 //  6
+	uint16 ycood;		 //  7
+
+	uint16 frame;		 //  8
+
+	uint16 cursorText;	 //  9
+	uint16 mouseOn;		 // 10
+	uint16 mouseOff;	 // 11
+	uint16 mouseClick;	 // 12
+
+	int16 mouseRelX;	 // 13
+	int16 mouseRelY;	 // 14
+	uint16 mouseSizeX;	 // 15
+	uint16 mouseSizeY;	 // 16
+
+	uint16 actionScript; // 17
+
+	uint16 upFlag;		 // 18: usually holds the Action Mode
+	uint16 downFlag;	 // 19: used for passing back
+	uint16 getToFlag;	 // 20: used by action script for get to attempts, also frame store (hence word)
+	uint16 flag;		 // 21: a use any time flag
+
+	uint16 mood;		 // 22: high level - stood or not
+	
+	uint16 grafixProgId; // 23
+	uint16 grafixProgPos;// 24
+
+	uint16 offset;		 // 25
+
+	uint16 mode;		 // 26: which mcode block
+
+	uint16 baseSub;		 // 27: 1st mcode block relative to start of compact
+	uint16 baseSub_off;	 // 28
+	uint16 actionSub;	 // 29
+	uint16 actionSub_off;// 30
+	uint16 getToSub;	 // 31
+	uint16 getToSub_off; // 32
+	uint16 extraSub;	 // 33
+	uint16 extraSub_off; // 34
+
+	uint16 dir;			 // 35
+
+	uint16 stopScript;	 // 36
+	uint16 miniBump;	 // 37
+	uint16 leaving;		 // 38
+	uint16 atWatch;		 // 39: pointer to script variable
+	uint16 atWas;		 // 40: pointer to script variable
+	uint16 alt;			 // 41: alternate script
+	uint16 request;		 // 42
+
+	uint16 spWidth_xx;	 // 43
+	uint16 spColour;	 // 44
+	uint16 spTextId;	 // 45
+	uint16 spTime;		 // 46
+
+	uint16 arAnimIndex;	 // 47
+	uint16 turnProgId;	 // 48
+	uint16 turnProgPos;	 // 49
+
+	uint16 waitingFor;	 // 50
+
+	uint16 arTargetX;	 // 51
+	uint16 arTargetY;	 // 52
+
+	uint16 animScratchId;// 53: data area for AR
+
+	uint16 megaSet;		 // 54
+
+	MegaSet megaSet0;	 // 55
+	MegaSet megaSet1;	 // 
+	MegaSet megaSet2;	 // 
+	MegaSet megaSet3;	 // 
+} GCC_PACK;
+
 #if !defined(__GNUC__)
 #pragma END_PACK_STRUCTS
 #endif
-
-struct GrafixPtr { // replacement for old grafixProg pointer. More savegame compatible.
-	uint8 ptrType; // ptr to autoroute / to compact / to turntable
-	uint16 ptrTarget; // compact / turntable number
-	uint16 pos; // position
-};
-
-struct TurnTable {
-	uint16 *turnTableUp[5];
-	uint16 *turnTableDown[5];
-	uint16 *turnTableLeft[5];
-	uint16 *turnTableRight[5];
-	uint16 *turnTableTalk[5];
-};
-
-struct MegaSet {
-	uint16 gridWidth;
-	uint16 colOffset;
-	uint16 colWidth;
-	uint16 lastChr;
-
-	uint16 *animUp;
-	uint16 *animDown;
-	uint16 *animLeft;
-	uint16 *animRight;
-
-	uint16 *standUp;
-	uint16 *standDown;
-	uint16 *standLeft;
-	uint16 *standRight;
-	uint16 *standTalk;
-	TurnTable *turnTable;
-};
-
-struct ExtCompact {
-	uint16 actionSub;
-	uint16 actionSub_off;
-	uint16 getToSub;
-	uint16 getToSub_off;
-	uint16 extraSub;
-	uint16 extraSub_off;
-
-	uint16 dir;
-
-	uint16 stopScript;
-	uint16 miniBump;
-	uint16 leaving;
-	uint16 atWatch; // pointer to script variable
-	uint16 atWas; // pointer to script variable
-	uint16 alt; // alternate script
-	uint16 request;
-
-	uint16 spWidth_xx;
-	uint16 spColour;
-	uint16 spTextId;
-	uint16 spTime;
-
-	uint16 arAnimIndex;
-	uint16 *turnProg;
-
-	uint16 waitingFor;
-
-	uint16 arTargetX;
-	uint16 arTargetY;
-
-	uint16 *animScratch; // data area for AR
-
-	uint16 megaSet;
-	MegaSet *megaSet0;
-	MegaSet *megaSet1;
-	MegaSet *megaSet2;
-	MegaSet *megaSet3;
-};
-
-struct Compact {
-	uint16 logic; // Entry in logic table to run (byte as <256entries in logic table
-	uint16 status;
-	uint16 sync; // flag sent to compacts by other things
-
-	uint16 screen; // current screen
-	uint16 place; // so's this one
-	uint16 *getToTable; // Address of how to get to things table
-
-	uint16 xcood;
-	uint16 ycood;
-
-	uint16 frame;
-
-	uint16 cursorText;
-	uint16 mouseOn;
-	uint16 mouseOff;
-	uint16 mouseClick; // dword script
-
-	int16 mouseRelX;
-	int16 mouseRelY;
-	uint16 mouseSizeX;
-	uint16 mouseSizeY;
-
-	uint16 actionScript;
-
-	uint16 upFlag; // usually holds the Action Mode
-	uint16 downFlag; // used for passing back
-	uint16 getToFlag; // used by action script for get to attempts, also frame store (hence word)
-	uint16 flag; // a use any time flag
-
-	uint16 mood; // high level - stood or not
-	GrafixPtr grafixProg;
-	uint16 offset;
-
-	uint16 mode; // which mcode block
-
-	uint16 baseSub; // 1st mcode block relative to start of compact
-	uint16 baseSub_off;
-
-	ExtCompact *extCompact;
-};
 
 } // End of namespace Sky
 

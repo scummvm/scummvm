@@ -121,10 +121,12 @@ class MusicBase;
 class Screen;
 class Sound;
 class Text;
+class SkyCompact;
 
 class Logic {
 public:
 	Logic(
+		SkyCompact *skyCompact,
 		Screen *skyScreen,
 		Disk *skyDisk,
 		Text *skyText,
@@ -299,14 +301,15 @@ protected:
 
 	Common::RandomSource _rnd;
 	
-	Screen *_skyScreen;
-	Disk *_skyDisk;
-	Text *_skyText;
-	MusicBase *_skyMusic;
-	Sound *_skySound;
-	AutoRoute *_skyAutoRoute;
-	Mouse *_skyMouse;
-	Control *_skyControl;
+	SkyCompact	*_skyCompact;
+	Screen		*_skyScreen;
+	Disk		*_skyDisk;
+	Text		*_skyText;
+	MusicBase	*_skyMusic;
+	Sound		*_skySound;
+	AutoRoute	*_skyAutoRoute;
+	Mouse		*_skyMouse;
+	Control		*_skyControl;
 };
 
 } // End of namespace Sky

@@ -29,11 +29,11 @@ namespace Sky {
 //This file is incomplete, several flags still missing.
 
 // grafixProg pointer types:
-#define PTR_NULL	0
-#define AUTOROUTE	1
-#define COMPACT		2
-#define COMPACTELEM	3 // needed by fnSetToStand
-#define TALKTABLE	4
+#define OG_PTR_NULL		0
+#define OG_AUTOROUTE	1
+#define OG_COMPACT		2
+#define OG_COMPACTELEM	3 // needed by fnSetToStand
+#define OG_TALKTABLE	4
 
 // language codes:
 #define SKY_ENGLISH		0

@@ -25,6 +25,7 @@
 #include "sky/sky.h"
 #include "sky/skydefs.h"
 #include "sky/struc.h"
+#include "sky/compact.h"
 
 namespace Sky {
 
@@ -36,8 +37,9 @@ namespace Sky {
 #define CHAR_SET_HEADER	128
 #define	MAX_NO_LINES	10
 
-Text::Text(Disk *skyDisk) {
+Text::Text(Disk *skyDisk, SkyCompact *skyCompact) {
 	_skyDisk = skyDisk;
+	_skyCompact = skyCompact;
 
 	initHuffTree();
 
@@ -247,10 +249,10 @@ void Text::fnSetFont(uint32 fontNr) {
 void Text::fnTextModule(uint32 textInfoId, uint32 textNo) {
 
 	fnSetFont(1);
-	uint16* msgData = (uint16 *)SkyEngine::fetchCompact(textInfoId);
+	uint16* msgData = (uint16 *)_skyCompact->fetchCpt(textInfoId);
 	lowTextManager_t textId = lowTextManager(textNo, msgData[1], msgData[2], 209, false);
 	Logic::_scriptVariables[RESULT] = textId.compactNum;
-	Compact *textCompact = SkyEngine::fetchCompact(textId.compactNum);
+	Compact *textCompact = _skyCompact->fetchCpt(textId.compactNum);
 	textCompact->xcood = msgData[3];
 	textCompact->ycood = msgData[4];
 	fnSetFont(0);
@@ -331,7 +333,7 @@ void Text::getText(uint32 textNr) { //load text #"textNr" into textBuffer
 
 void Text::fnPointerText(uint32 pointedId, uint16 mouseX, uint16 mouseY) {
 
-	Compact *ptrComp = SkyEngine::fetchCompact(pointedId);
+	Compact *ptrComp = _skyCompact->fetchCpt(pointedId);
 	lowTextManager_t text = lowTextManager(ptrComp->cursorText, TEXT_MOUSE_WIDTH, L_CURSOR, 242, false);
 	Logic::_scriptVariables[CURSOR_ID] = text.compactNum;
 	if (Logic::_scriptVariables[MENU]) {
@@ -343,7 +345,7 @@ void Text::fnPointerText(uint32 pointedId, uint16 mouseX, uint16 mouseY) {
 		if (mouseX < 150) _mouseOfsX = TOP_LEFT_X + 13;
 		else _mouseOfsX = TOP_LEFT_X - 8 - _lowTextWidth;
 	}
-	Compact *textCompact = SkyEngine::fetchCompact(text.compactNum);
+	Compact *textCompact = _skyCompact->fetchCpt(text.compactNum);
 	logicCursor(textCompact, mouseX, mouseY);
 }
 
@@ -537,11 +539,11 @@ lowTextManager_t Text::lowTextManager(uint32 textNum, uint16 width, uint16 logic
 
 	uint32 compactNum = FIRST_TEXT_COMPACT;
 
-	Compact *cpt = SkyEngine::fetchCompact(compactNum);
+	Compact *cpt = _skyCompact->fetchCpt(compactNum);
 
 	while (cpt->status != 0) { 
 		compactNum++;
-		cpt = SkyEngine::fetchCompact(compactNum);
+		cpt = _skyCompact->fetchCpt(compactNum);
 	}
 
 	cpt->flag = (uint16)(compactNum - FIRST_TEXT_COMPACT) + FIRST_TEXT_BUFFER;

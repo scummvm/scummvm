@@ -34,11 +34,6 @@
 #include "sky/sky.h"
 #include "sky/sound.h"
 #include "sky/struc.h"
-#include "sky/talks.h"
-/*
-#include "sky/skydefs.h"
-#include "base/gameDetector.h"
-*/
 
 namespace Sky {
 
@@ -65,15 +60,16 @@ static const LogicTable logicTable[] = {
 	&Logic::simpleAnim,	 // 16 Module anim without x,y's
 };
 
-Logic::Logic(Screen *skyScreen, Disk *skyDisk, Text *skyText, MusicBase *skyMusic, Mouse *skyMouse, Sound *skySound) {
+Logic::Logic(SkyCompact *skyCompact, Screen *skyScreen, Disk *skyDisk, Text *skyText, MusicBase *skyMusic, Mouse *skyMouse, Sound *skySound) {
+	_skyCompact = skyCompact;
 	_skyScreen = skyScreen;
 	_skyDisk = skyDisk;
 	_skyText = skyText;
 	_skyMusic = skyMusic;
 	_skySound = skySound;
 	_skyMouse = skyMouse;
-	_skyGrid = new Grid(_skyDisk);
-	_skyAutoRoute = new AutoRoute(_skyGrid);
+	_skyGrid = new Grid(_skyDisk, _skyCompact);
+	_skyAutoRoute = new AutoRoute(_skyGrid, _skyCompact);
 
 	memset(_objectList, 0, 30 * sizeof(uint32));
 
@@ -100,17 +96,20 @@ bool Logic::checkProtection(void) {
 }
 
 void Logic::engine() {
-	uint16 *logicList = (uint16 *)SkyEngine::fetchCompact(_scriptVariables[LOGIC_LIST_NO]);
+	uint16 *logicList = (uint16 *)_skyCompact->fetchCpt(_scriptVariables[LOGIC_LIST_NO]);
+	//uint16 *logicList = (uint16*)_skyCompact->fetchFromDataList(_scriptVariables[LOGIC_LIST_NO]);
 
 	while (uint16 id = *logicList++) { // 0 means end of list
 		if (id == 0xffff) {
 			// Change logic data address
-			logicList = (uint16 *)SkyEngine::fetchCompact(*logicList);
+			if (*logicList == ID_STD_MENU_LOGIC)
+				printf("\n\n\nMenu Logic:\n");
+			logicList = (uint16 *)_skyCompact->fetchCpt(*logicList);
 			continue;
 		}
 
 		_scriptVariables[CUR_ID] = id;
-		_compact = SkyEngine::fetchCompact(id);
+		_compact = _skyCompact->fetchCpt(id);
 
 		// check the id actually wishes to be processed
 		if (!(_compact->status & (1 << 6)))
@@ -131,6 +130,8 @@ void Logic::engine() {
 		// only. that cycle has just ended so remove the sync.
 		// presumably the mega has just reacted to it.
 		_compact->sync = 0;
+		if (id == ID_STD_MENU_LOGIC)
+			printf("\n\n\n");
 	}
 }
 
@@ -162,15 +163,14 @@ void Logic::logicScript() {
 void Logic::autoRoute() {
 	
 	_compact->downFlag = _skyAutoRoute->autoRoute(_compact);
-	if ((_compact->downFlag == 2) && (_compact == &SkyCompact::joey) && 
+	if ((_compact->downFlag == 2) && _skyCompact->cptIsId(_compact, CPT_JOEY) && 
 	   (_compact->mode == 0) && (_compact->baseSub == JOEY_OUT_OF_LIFT)) {
 		   // workaround for script bug #1064113. Details unclear...
 		   _compact->downFlag = 0;
 	}
 	if (_compact->downFlag != 1) { // route ok
-		_compact->grafixProg.pos = 0;
-		_compact->grafixProg.ptrTarget = 0;
-		_compact->grafixProg.ptrType = AUTOROUTE;
+		_compact->grafixProgId = _compact->animScratchId;
+		_compact->grafixProgPos = 0;
 	}
 
 	_compact->logic = L_SCRIPT; // continue the script
@@ -192,12 +192,12 @@ void Logic::arAnim() {
 	// On character boundary. Have we been told to wait?
 	// if not - are WE colliding?
 
-	if (_compact->extCompact->waitingFor == 0xffff) { // 1st cycle of re-route does
+	if (_compact->waitingFor == 0xffff) { // 1st cycle of re-route does
 		mainAnim();
 		return;
 	}
 
-	if (_compact->extCompact->waitingFor) {
+	if (_compact->waitingFor) {
 		// ok, we've been told we've hit someone
 		// we will wait until we are no longer colliding
 		// with them. here we check to see if we are (still) colliding.
@@ -211,7 +211,7 @@ void Logic::arAnim() {
 		// fine because the later collision will almost certainly
 		// take longer to clear than the earlier one.
 
-		if (collide(SkyEngine::fetchCompact(_compact->extCompact->waitingFor))) {
+		if (collide(_skyCompact->fetchCpt(_compact->waitingFor))) {
 			stopAndWait();
 			return;
 		}
@@ -219,18 +219,18 @@ void Logic::arAnim() {
 		// we are not in fact hitting this person so clr & continue
 		// it must have registered some time ago
 
-		_compact->extCompact->waitingFor = 0; // clear id flag
+		_compact->waitingFor = 0; // clear id flag
 	}
 
 	// ok, our turn to check for collisions
 
-	uint16 *logicList = (uint16 *)SkyEngine::fetchCompact(_scriptVariables[LOGIC_LIST_NO]);
+	uint16 *logicList = (uint16 *)_skyCompact->fetchCpt(_scriptVariables[LOGIC_LIST_NO]);
 	Compact *cpt = 0;
 
 	while (uint16 id = *logicList++) { // get an id
 
 		if (id == 0xffff) { // address change?
-			logicList = (uint16 *)SkyEngine::fetchCompact(*logicList); // get new logic list
+			logicList = (uint16 *)_skyCompact->fetchCpt(*logicList); // get new logic list
 			continue;
 		}
 
@@ -238,7 +238,7 @@ void Logic::arAnim() {
 			continue;
 
 		_scriptVariables[HIT_ID] = id; // save target id for any possible c_mini_bump
-		cpt = SkyEngine::fetchCompact(id); // let's have a closer look
+		cpt = _skyCompact->fetchCpt(id); // let's have a closer look
 
 		if (!(cpt->status & (1 << ST_COLLISION_BIT))) // can it collide?
 			continue;
@@ -256,9 +256,9 @@ void Logic::arAnim() {
 				// first tell it to wait for us - in case it starts moving
 				// ( *it may have already hit us and stopped to wait )
 
-				_compact->extCompact->waitingFor = 0xffff; // effect 1 cycle collision skip
+				_compact->waitingFor = 0xffff; // effect 1 cycle collision skip
 				// tell it it is waiting for us
-				cpt->extCompact->waitingFor = (uint16)(_scriptVariables[CUR_ID] & 0xffff);
+				cpt->waitingFor = (uint16)(_scriptVariables[CUR_ID] & 0xffff);
 				// restart current script
 				*SkyCompact::getSub(_compact, _compact->mode + 2) = 0;
 				_compact->logic = L_SCRIPT;
@@ -266,7 +266,7 @@ void Logic::arAnim() {
 				return;
 			}
 
-			script(_compact->extCompact->miniBump, 0);
+			script(_compact->miniBump, 0);
 			return;
 		}
 	}
@@ -275,11 +275,11 @@ void Logic::arAnim() {
 	// now check for interaction request
 	// *note: the interaction is always set up as an action script
 
-	if (_compact->extCompact->request) {
+	if (_compact->request) {
 		_compact->mode = C_ACTION_MODE; // put into action mode
-		_compact->extCompact->actionSub = _compact->extCompact->request;
-		_compact->extCompact->actionSub_off = 0;
-		_compact->extCompact->request = 0; // trash request
+		_compact->actionSub = _compact->request;
+		_compact->actionSub_off = 0;
+		_compact->request = 0; // trash request
 		_compact->logic = L_SCRIPT;
 		logicScript();
 		return;
@@ -289,14 +289,14 @@ void Logic::arAnim() {
 	// if change then re-run the current script, which must be
 	// a position independent get-to		 ----
 
-	if (!_compact->extCompact->atWatch) { // any flag set?
+	if (!_compact->atWatch) { // any flag set?
 		mainAnim();
 		return;
 	}
 
 	// ok, there is an at watch - see if it's changed
 
-	if (_compact->extCompact->atWas == _scriptVariables[_compact->extCompact->atWatch/4]) { // still the same?
+	if (_compact->atWas == _scriptVariables[_compact->atWatch/4]) { // still the same?
 		mainAnim();
 		return;
 	}
@@ -311,19 +311,18 @@ void Logic::arAnim() {
 
 void Logic::mainAnim() {
 	/// Extension of arAnim()
-	_compact->extCompact->waitingFor = 0; // clear possible zero-zero skip
+	_compact->waitingFor = 0; // clear possible zero-zero skip
 
-	//uint16 *sequence = _compact->grafixProg;
-	uint16 *sequence = SkyCompact::getGrafixPtr(_compact);
+	uint16 *sequence = _skyCompact->getGrafixPtr(_compact);
 	if (!*sequence) {
 		// ok, move to new anim segment
 		sequence += 2;
-		_compact->grafixProg.pos += 2;
+		_compact->grafixProgPos += 2;
 		if (!*sequence) { // end of route?
 			// ok, sequence has finished
 
 			// will start afresh if new sequence continues in last direction
-			_compact->extCompact->arAnimIndex = 0;
+			_compact->arAnimIndex = 0;
 
 			_compact->downFlag = 0; // pass back ok to script
 			_compact->logic = L_SCRIPT;
@@ -331,33 +330,34 @@ void Logic::mainAnim() {
 			return;
 		}
 
-		_compact->extCompact->arAnimIndex = 0; // reset position
+		_compact->arAnimIndex = 0; // reset position
 	}
 
 	uint16 dir;
-	while ((dir = _compact->extCompact->dir) != *(sequence + 1)) {
+	while ((dir = _compact->dir) != *(sequence + 1)) {
 		// ok, setup turning
-		_compact->extCompact->dir = *(sequence + 1);
+		_compact->dir = *(sequence + 1);
 
-		uint16 **tt = SkyCompact::getTurnTable(_compact,_compact->extCompact->megaSet, dir);
-		if (tt[_compact->extCompact->dir]) {
-			_compact->extCompact->turnProg = tt[_compact->extCompact->dir];
+		uint16 *tt = _skyCompact->getTurnTable(_compact, dir);
+		if (tt[_compact->dir]) {
+			_compact->turnProgId = tt[_compact->dir];
+			_compact->turnProgPos = 0;
 			_compact->logic = L_AR_TURNING;
 			arTurn();
 			return;
 		}
 	};
 
-	uint16 *animList = *(uint16 **)SkyCompact::getCompactElem(_compact,
-			C_ANIM_UP + _compact->extCompact->megaSet + dir * 4);
+	uint16 animId = *(uint16*)_skyCompact->getCompactElem(_compact, C_ANIM_UP + _compact->megaSet + dir * 4);
+	uint16 *animList = (uint16*)_skyCompact->fetchCpt(animId);
 
-	uint16 arAnimIndex = _compact->extCompact->arAnimIndex;
+	uint16 arAnimIndex = _compact->arAnimIndex;
 	if (!animList[arAnimIndex / 2]) {
 		 arAnimIndex = 0;
-		_compact->extCompact->arAnimIndex = 0; // reset
+		_compact->arAnimIndex = 0; // reset
 	}
 
-	_compact->extCompact->arAnimIndex += S_LENGTH;
+	_compact->arAnimIndex += S_LENGTH;
 
 	*sequence       -= animList[(S_COUNT + arAnimIndex)/2]; // reduce the distance to travel
 	_compact->frame  = animList[(S_FRAME + arAnimIndex)/2]; // new graphic frame
@@ -366,11 +366,13 @@ void Logic::mainAnim() {
 }
 
 void Logic::arTurn() {
-	_compact->frame = *_compact->extCompact->turnProg++;
+	uint16 *turnData = (uint16*)_skyCompact->fetchCpt(_compact->turnProgId) + _compact->turnProgPos;
+	_compact->frame = *turnData++;
+	_compact->turnProgPos++;
 
-	if (!*_compact->extCompact->turnProg) { // turn done?
+	if (!*turnData) { // turn done?
 		// Back to ar mode
-		_compact->extCompact->arAnimIndex = 0;
+		_compact->arAnimIndex = 0;
 		_compact->logic = L_AR_ANIM;
 	}
 }
@@ -378,19 +380,17 @@ void Logic::arTurn() {
 void Logic::alt() {
 	/// change the current script
 	_compact->logic = L_SCRIPT;
-	*SkyCompact::getSub(_compact, _compact->mode) = _compact->extCompact->alt;
+	*SkyCompact::getSub(_compact, _compact->mode) = _compact->alt;
 	*SkyCompact::getSub(_compact, _compact->mode + 2) = 0;
 	logicScript();
 }
 
 void Logic::anim() {
 	/// Follow an animation sequence
-
-	//uint16 *grafixProg = _compact->grafixProg;
-	uint16 *grafixProg = SkyCompact::getGrafixPtr(_compact);
+	uint16 *grafixProg = _skyCompact->getGrafixPtr(_compact);
 
 	while (*grafixProg) {
-		_compact->grafixProg.pos += 3; // all types are 3 words.
+		_compact->grafixProgPos += 3; // all types are 3 words.
 		if (*grafixProg == LF_START_FX) { // do fx
 			grafixProg++;
 			uint16 sound = *grafixProg++;
@@ -401,7 +401,7 @@ void Logic::anim() {
 		} else if (*grafixProg >= LF_START_FX) { // do sync
 			grafixProg++;
 
-			Compact *cpt = SkyEngine::fetchCompact(*grafixProg++);
+			Compact *cpt = _skyCompact->fetchCpt(*grafixProg++);
 
 			cpt->sync = *grafixProg++;
 		} else { // put coordinates and frame in
@@ -419,13 +419,15 @@ void Logic::anim() {
 }
 
 void Logic::turn() {
-	if (*_compact->extCompact->turnProg) {
-		_compact->frame = *_compact->extCompact->turnProg++;
+	uint16 *turnData = (uint16*)_skyCompact->fetchCpt(_compact->turnProgId) + _compact->turnProgPos;
+	if (*turnData) {
+		_compact->frame = *turnData;
+		_compact->turnProgPos++;
 		return;
 	}
 
 	// turn_to_script:
-	_compact->extCompact->arAnimIndex = 0;
+	_compact->arAnimIndex = 0;
 	_compact->logic = L_SCRIPT;
 
 	logicScript();
@@ -507,14 +509,14 @@ void Logic::talk() {
 				if ((SkyEngine::_systemVars.systemFlags & SF_ALLOW_SPEECH) && (!_skySound->speechFinished()))
 					_skySound->stopSpeech();
 				if ((SkyEngine::_systemVars.systemFlags & SF_ALLOW_TEXT) &&
-					(_compact->extCompact->spTextId > 0) &&
-					(_compact->extCompact->spTextId < 0xFFFF)) {
+					(_compact->spTextId > 0) &&
+					(_compact->spTextId < 0xFFFF)) {
 					
-					SkyEngine::fetchCompact(_compact->extCompact->spTextId)->status = 0;
+					_skyCompact->fetchCpt(_compact->spTextId)->status = 0;
 				}
-				if (SkyCompact::getGrafixPtr(_compact)) {
+				if (_skyCompact->getGrafixPtr(_compact)) {
 					_compact->frame = _compact->getToFlag; // set character to stand
-					_compact->grafixProg.ptrType = PTR_NULL;
+					_compact->grafixProgId = 0;
 				}
 
 				_compact->logic = L_SCRIPT;
@@ -524,45 +526,44 @@ void Logic::talk() {
 
 	// If speech is allowed then check for it to finish before finishing animations
 
-	if ((_compact->extCompact->spTextId == 0xFFFF) && // is this a voc file?
+	if ((_compact->spTextId == 0xFFFF) && // is this a voc file?
 		(_skySound->speechFinished())) { // finished?
 
 		_compact->logic = L_SCRIPT; // restart character control
 
-		if (SkyCompact::getGrafixPtr(_compact)) {
+		if (_skyCompact->getGrafixPtr(_compact)) {
 			_compact->frame = _compact->getToFlag; // set character to stand
-			_compact->grafixProg.ptrType = PTR_NULL;
+			_compact->grafixProgId = 0;
 		}
 
 		logicScript();
 		return;
 	}
 
-	//uint16 *graphixProg = _compact->grafixProg; // no anim file?
-	uint16 *graphixProg = SkyCompact::getGrafixPtr(_compact);
+	uint16 *graphixProg = _skyCompact->getGrafixPtr(_compact);
 	if (graphixProg) {
-		if ((*graphixProg) && ((_compact->extCompact->spTime != 3) || (!_skySound->speechFinished()))) {
+		if ((*graphixProg) && ((_compact->spTime != 3) || (!_skySound->speechFinished()))) {
 			// we will force the animation to finish 3 game cycles
 			// before the speech actually finishes - because it looks good.
 
 			_compact->frame = *(graphixProg + 2) + _compact->offset;
 			graphixProg += 3;
-			_compact->grafixProg.pos += 3;
+			_compact->grafixProgPos += 3;
 		} else {
 			// we ran out of frames or finished speech, let actor stand still.
 			_compact->frame = _compact->getToFlag;
-			_compact->grafixProg.ptrType = PTR_NULL;
+			_compact->grafixProgId = 0;
 		}
 	}
 
-	if (_skySound->speechFinished()) _compact->extCompact->spTime--;
+	if (_skySound->speechFinished()) _compact->spTime--;
 
-	if (_compact->extCompact->spTime == 0) {
+	if (_compact->spTime == 0) {
 
 		// ok, speech has finished
 
-		if (_compact->extCompact->spTextId) {
-			Compact *cpt = SkyEngine::fetchCompact(_compact->extCompact->spTextId); // get text id to kill
+		if (_compact->spTextId) {
+			Compact *cpt = _skyCompact->fetchCpt(_compact->spTextId); // get text id to kill
 			cpt->status = 0; // kill the text
 		}
 
@@ -574,7 +575,7 @@ void Logic::talk() {
 void Logic::listen() {
 	/// Stay in this mode until id in getToFlag leaves L_TALK mode
 
-	Compact *cpt = SkyEngine::fetchCompact(_compact->flag);
+	Compact *cpt = _skyCompact->fetchCpt(_compact->flag);
 
 	if (cpt->logic == L_TALK)
 		return;
@@ -590,7 +591,7 @@ void Logic::stopped() {
 	/// that will be one level higher than the script we
 	/// would wish to restart from
 
-	Compact *cpt = SkyEngine::fetchCompact(_compact->extCompact->waitingFor);
+	Compact *cpt = _skyCompact->fetchCpt(_compact->waitingFor);
 
 	if (cpt)
 		if (!cpt->mood && collide(cpt))
@@ -600,7 +601,7 @@ void Logic::stopped() {
 
 	// restart script one level below
 	*SkyCompact::getSub(_compact, _compact->mode - 2) = 0;
-	_compact->extCompact->waitingFor = 0xffff;
+	_compact->waitingFor = 0xffff;
 
 	_compact->logic = L_SCRIPT;
 	logicScript();
@@ -653,11 +654,11 @@ void Logic::waitSync() {
 void Logic::simpleAnim() {
 	/// follow an animation sequence module whilst ignoring the coordinate data
 
-	uint16 *grafixProg = SkyCompact::getGrafixPtr(_compact);
+	uint16 *grafixProg = _skyCompact->getGrafixPtr(_compact);
 
 	// *grafix_prog: command
 	while (*grafixProg) {
-		_compact->grafixProg.pos += 3;
+		_compact->grafixProgPos += 3;
 		if (*grafixProg != SEND_SYNC) {
 			grafixProg++;
 			grafixProg++; // skip coordinates
@@ -673,7 +674,7 @@ void Logic::simpleAnim() {
 
 		grafixProg++;
 		// *grafix_prog: id to sync
-		Compact *compact2 = SkyEngine::fetchCompact(*grafixProg);
+		Compact *compact2 = _skyCompact->fetchCpt(*grafixProg);
 		grafixProg++;
 
 		// *grafix_prog: sync
@@ -687,15 +688,15 @@ void Logic::simpleAnim() {
 }
 
 bool Logic::collide(Compact *cpt) {
-	MegaSet *m1 = SkyCompact::getMegaSet(_compact, _compact->extCompact->megaSet);
-	MegaSet *m2 = SkyCompact::getMegaSet(cpt, cpt->extCompact->megaSet);
+	MegaSet *m1 = SkyCompact::getMegaSet(_compact);
+	MegaSet *m2 = SkyCompact::getMegaSet(cpt);
 
 	// target's base coordinates
 	uint16 x = cpt->xcood & 0xfff8;
 	uint16 y = cpt->ycood & 0xfff8;
 
 	// The collision is direction dependent
-	switch (_compact->extCompact->dir) {
+	switch (_compact->dir) {
 	case 0: // looking up
 		x -= m1->colOffset; // compensate for inner x offsets
 		x += m2->colOffset;
@@ -766,7 +767,7 @@ bool Logic::collide(Compact *cpt) {
 
 		return true;
 	default:
-		error("Unknown Direction: %d", _compact->extCompact->dir);
+		error("Unknown Direction: %d", _compact->dir);
 	}
 }
 
@@ -783,9 +784,8 @@ void Logic::stopAndWait() {
 	uint16 *scriptNo = SkyCompact::getSub(_compact, _compact->mode);
 	uint16 *offset   = SkyCompact::getSub(_compact, _compact->mode + 2);
 
-	*scriptNo = (uint16)(_compact->extCompact->stopScript & 0xffff);
-	*offset   = 0; //stopScript is uint16, after right shift is zero
-//	*offset   = (uint16)(_compact->extCompact->stopScript >> 16);
+	*scriptNo = _compact->stopScript;
+	*offset   = 0;
 
 	_compact->logic = L_SCRIPT;
 	logicScript();
@@ -1329,11 +1329,11 @@ script:
 				scriptData += READ_LE_UINT16(scriptData++)/2 - 1; // use the default
 			break;
 		case 15: // push_offset
-			push( *(uint16 *)SkyCompact::getCompactElem(_compact, READ_LE_UINT16(scriptData++)) );
+			push( *(uint16 *)_skyCompact->getCompactElem(_compact, READ_LE_UINT16(scriptData++)) );
 			break;
 		case 16: // pop_offset
 			// pop a value into a compact
-			*(uint16 *)SkyCompact::getCompactElem(_compact, READ_LE_UINT16(scriptData++)) = (uint16)pop();
+			*(uint16 *)_skyCompact->getCompactElem(_compact, READ_LE_UINT16(scriptData++)) = (uint16)pop();
 			break;
 		case 17: // is_equal
 			a = pop();
@@ -1364,12 +1364,12 @@ script:
 
 bool Logic::fnCacheChip(uint32 a, uint32 b, uint32 c) {
 	_skySound->fnStopFx();
-	_skyDisk->fnCacheChip(a);
+	_skyDisk->fnCacheChip((uint16*)_skyCompact->fetchCpt((uint16)a));
 	return true;
 }
 
 bool Logic::fnCacheFast(uint32 a, uint32 b, uint32 c) {
-	_skyDisk->fnCacheFast(a);
+	_skyDisk->fnCacheFast((uint16*)_skyCompact->fetchCpt((uint16)a));
 	return true;
 }
 
@@ -1398,8 +1398,8 @@ bool Logic::fnDrawScreen(uint32 a, uint32 b, uint32 c) {
 bool Logic::fnAr(uint32 x, uint32 y, uint32 c) {
 	_compact->downFlag = 1; // assume failure in-case logic is interupted by speech (esp Joey)
 
-	_compact->extCompact->arTargetX = (uint16)x;
-	_compact->extCompact->arTargetY = (uint16)y;
+	_compact->arTargetX = (uint16)x;
+	_compact->arTargetY = (uint16)y;
 	_compact->logic = L_AR; // Set to AR mode
 
 	_compact->xcood &= 0xfff8;
@@ -1423,7 +1423,7 @@ bool Logic::fnIdle(uint32 a, uint32 b, uint32 c) {
 bool Logic::fnInteract(uint32 targetId, uint32 b, uint32 c) {
 	_compact->mode += 4; // next level up
 	_compact->logic = L_SCRIPT;
-	Compact *cpt = SkyEngine::fetchCompact(targetId);
+	Compact *cpt = _skyCompact->fetchCpt(targetId);
 
 	*SkyCompact::getSub(_compact, _compact->mode) = cpt->actionScript;
 	*SkyCompact::getSub(_compact, _compact->mode + 2) = 0;
@@ -1439,7 +1439,7 @@ bool Logic::fnStartSub(uint32 scr, uint32 b, uint32 c) {
 }
 
 bool Logic::fnTheyStartSub(uint32 mega, uint32 scr, uint32 c) {
-	Compact *cpt = SkyEngine::fetchCompact(mega);
+	Compact *cpt = _skyCompact->fetchCpt(mega);
 	cpt->mode += 4;
 	*SkyCompact::getSub(cpt, cpt->mode) = (uint16)(scr & 0xffff);
 	*SkyCompact::getSub(cpt, cpt->mode + 2) = (uint16)(scr >> 16);
@@ -1447,7 +1447,7 @@ bool Logic::fnTheyStartSub(uint32 mega, uint32 scr, uint32 c) {
 }
 
 bool Logic::fnAssignBase(uint32 id, uint32 scr, uint32 c) {
-	Compact *cpt = SkyEngine::fetchCompact(id);
+	Compact *cpt = _skyCompact->fetchCpt(id);
 	cpt->mode = C_BASE_MODE;
 	cpt->logic = L_SCRIPT;
 	cpt->baseSub     = (uint16)(scr & 0xffff);
@@ -1511,12 +1511,12 @@ bool Logic::fnCloseHand(uint32 a, uint32 b, uint32 c) {
 bool Logic::fnGetTo(uint32 targetPlaceId, uint32 mode, uint32 c) {
  	_compact->upFlag = (uint16)mode; // save mode for action script
 	_compact->mode += 4; // next level up
-	Compact *cpt = SkyEngine::fetchCompact(_compact->place);
+	Compact *cpt = _skyCompact->fetchCpt(_compact->place);
 	if (!cpt) { 
 		warning("can't find _compact's getToTable. Place compact is NULL");
 		return false; 
 	}
-	uint16 *getToTable = cpt->getToTable;
+	uint16 *getToTable = (uint16*)_skyCompact->fetchCpt(cpt->getToTableId);
 	if (!getToTable) { 
 		warning("Place compact's getToTable is NULL!");
 		return false; 
@@ -1535,16 +1535,14 @@ bool Logic::fnGetTo(uint32 targetPlaceId, uint32 mode, uint32 c) {
 bool Logic::fnSetToStand(uint32 a, uint32 b, uint32 c) {
 	_compact->mood = 1; // high level stood still
 
-	_compact->grafixProg.ptrType = COMPACTELEM;
-	_compact->grafixProg.pos = 0;
-	_compact->grafixProg.ptrTarget = 
-		 C_STAND_UP	+ _compact->extCompact->megaSet + _compact->extCompact->dir * 4;
+	_compact->grafixProgId = *(uint16*)_skyCompact->getCompactElem(_compact, C_STAND_UP + _compact->megaSet + _compact->dir * 4);
+	_compact->grafixProgPos = 0;
 
-	uint16 *standList = SkyCompact::getGrafixPtr(_compact);
+	uint16 *standList = _skyCompact->getGrafixPtr(_compact);
 
 	_compact->offset = *standList; // get frames offset
 	_compact->logic = L_SIMPLE_MOD;
-	_compact->grafixProg.pos++;
+	_compact->grafixProgPos++;
 	simpleAnim();
 	return false; // drop out of script
 }
@@ -1552,15 +1550,16 @@ bool Logic::fnSetToStand(uint32 a, uint32 b, uint32 c) {
 bool Logic::fnTurnTo(uint32 dir, uint32 b, uint32 c) {
 	/// turn compact to direction dir
 
-	uint16 curDir = _compact->extCompact->dir; // get current direction
-	_compact->extCompact->dir = (uint16)(dir & 0xffff); // set new direction
+	uint16 curDir = _compact->dir; // get current direction
+	_compact->dir = (uint16)(dir & 0xffff); // set new direction
 
-	uint16 **tt = SkyCompact::getTurnTable(_compact, _compact->extCompact->megaSet, curDir);
+	uint16 *tt = _skyCompact->getTurnTable(_compact, curDir);
 
 	if (!tt[dir])
 		return true; // keep going
 
-	_compact->extCompact->turnProg = tt[dir]; // put turn program in
+	_compact->turnProgId = tt[dir]; // put turn program in
+	_compact->turnProgPos = 0;
 	_compact->logic = L_TURNING;
 
 	turn();
@@ -1569,38 +1568,38 @@ bool Logic::fnTurnTo(uint32 dir, uint32 b, uint32 c) {
 }
 
 bool Logic::fnArrived(uint32 scriptVar, uint32 b, uint32 c) {
-	_compact->extCompact->leaving = (uint16)(scriptVar & 0xffff);
+	_compact->leaving = (uint16)(scriptVar & 0xffff);
 	_scriptVariables[scriptVar/4]++;
 	return true;
 }
 
 bool Logic::fnLeaving(uint32 a, uint32 b, uint32 c) {
-	_compact->extCompact->atWatch = 0;
+	_compact->atWatch = 0;
 
-	if (_compact->extCompact->leaving) {
-		_scriptVariables[_compact->extCompact->leaving/4]--;
-		_compact->extCompact->leaving = 0; // I shall do this only once
+	if (_compact->leaving) {
+		_scriptVariables[_compact->leaving/4]--;
+		_compact->leaving = 0; // I shall do this only once
 	}
 
 	return true; // keep going
 }
 
 bool Logic::fnSetAlternate(uint32 scr, uint32 b, uint32 c) {
-	_compact->extCompact->alt = (uint16)(scr & 0xffff);
+	_compact->alt = (uint16)(scr & 0xffff);
 	_compact->logic = L_ALT;
 	return false;
 }
 
 bool Logic::fnAltSetAlternate(uint32 target, uint32 scr, uint32 c) {
-	Compact *cpt = SkyEngine::fetchCompact(target);
-	cpt->extCompact->alt = (uint16)(scr & 0xffff);
+	Compact *cpt = _skyCompact->fetchCpt(target);
+	cpt->alt = (uint16)(scr & 0xffff);
 	cpt->logic = L_ALT;
 	return false;
 }
 
 bool Logic::fnKillId(uint32 id, uint32 b, uint32 c) {
 	if (id) {
-		Compact *cpt = SkyEngine::fetchCompact(id);
+		Compact *cpt = _skyCompact->fetchCpt(id);
 		if (cpt->status & (1 << 7))
 			_skyGrid->removeObjectFromWalk(cpt);
 		cpt->status = 0;
@@ -1653,7 +1652,7 @@ bool Logic::fnQuit(uint32 a, uint32 b, uint32 c) {
 }
 
 bool Logic::fnSpeakMe(uint32 targetId, uint32 mesgNum, uint32 animNum) {
-	stdSpeak(SkyEngine::fetchCompact(targetId), mesgNum, animNum, 0);
+	stdSpeak(_skyCompact->fetchCpt(targetId), mesgNum, animNum, 0);
 	return false; 	//drop out of script
 }
 
@@ -1661,7 +1660,7 @@ bool Logic::fnSpeakMeDir(uint32 targetId, uint32 mesgNum, uint32 animNum) {
 	//must be player so don't cause script to drop out
 	//this function sets the directional option whereby
 	//the anim chosen is linked to c_dir
-	animNum += _compact->extCompact->dir << 1;	//2 sizes (large and small)
+	animNum += _compact->dir << 1;	//2 sizes (large and small)
 	return fnSpeakMe(targetId, mesgNum, animNum);
 }
 
@@ -1692,10 +1691,10 @@ bool Logic::fnSpeakWaitDir(uint32 a, uint32 b, uint32 c) {
 	_compact->flag = (uint16)a;
 	_compact->logic = L_LISTEN;
 
-	Compact *speaker = SkyEngine::fetchCompact(a);
+	Compact *speaker = _skyCompact->fetchCpt(a);
 	if (c) {
-		c += speaker->extCompact->dir << 1;
-		stdSpeak(speaker, b, c, speaker->extCompact->dir << 1);
+		c += speaker->dir << 1;
+		stdSpeak(speaker, b, c, speaker->dir << 1);
 	} else
 		stdSpeak(speaker, b, c, 0);
 
@@ -1737,7 +1736,7 @@ bool Logic::fnChooser(uint32 a, uint32 b, uint32 c) {
 			index += 2;
 		}
 
-		Compact *textCompact = SkyEngine::fetchCompact(lowText.compactNum);
+		Compact *textCompact = _skyCompact->fetchCpt(lowText.compactNum);
 
 		textCompact->getToFlag = (uint16)textNum;
 		textCompact->downFlag = (uint16)*p++; // get animation number
@@ -1762,7 +1761,7 @@ bool Logic::fnHighlight(uint32 itemNo, uint32 pen, uint32 c) {
 	pen -= 11;
 	pen ^= 1;
 	pen += 241;
-	Compact *textCompact = SkyEngine::fetchCompact(itemNo);
+	Compact *textCompact = _skyCompact->fetchCpt(itemNo);
 	uint8 *sprData = (uint8 *)SkyEngine::fetchItem(textCompact->flag);
 	_skyText->changeTextSpriteColour(sprData, (uint8)pen);
 	return true;
@@ -1774,7 +1773,7 @@ bool Logic::fnTextKill(uint32 a, uint32 b, uint32 c) {
 	uint32 id = FIRST_TEXT_COMPACT;
 
 	for (int i = 10; i > 0; i--) {
-		Compact *cpt = SkyEngine::fetchCompact(id);
+		Compact *cpt = _skyCompact->fetchCpt(id);
 		if (cpt->status & (1 << 4))
 			cpt->status = 0;
 		id++;
@@ -1791,47 +1790,47 @@ bool Logic::fnWeWait(uint32 id, uint32 b, uint32 c) {
 	/// We have hit another mega
 	/// we are going to wait for it to move
 
-	_compact->extCompact->waitingFor = (uint16) id;
+	_compact->waitingFor = (uint16) id;
 	stopAndWait();
 	return true; // not sure about this
 }
 
 bool Logic::fnSendSync(uint32 mega, uint32 sync, uint32 c) {
-	Compact *cpt = SkyEngine::fetchCompact(mega);
+	Compact *cpt = _skyCompact->fetchCpt(mega);
 	cpt->sync = (uint16)(sync & 0xffff);
 	return false;
 }
 
 bool Logic::fnSendFastSync(uint32 mega, uint32 sync, uint32 c) {
-	Compact *cpt = SkyEngine::fetchCompact(mega);
+	Compact *cpt = _skyCompact->fetchCpt(mega);
 	cpt->sync = (uint16)(sync & 0xffff);
 	return true;
 }
 
 bool Logic::fnSendRequest(uint32 target, uint32 scr, uint32 c) {
-	Compact *cpt = SkyEngine::fetchCompact(target);
-	cpt->extCompact->request = (uint16)(scr & 0xffff);
+	Compact *cpt = _skyCompact->fetchCpt(target);
+	cpt->request = (uint16)(scr & 0xffff);
 	return false;
 }
 
 bool Logic::fnClearRequest(uint32 target, uint32 b, uint32 c) {
-	Compact *cpt = SkyEngine::fetchCompact(target);
-	cpt->extCompact->request = 0;
+	Compact *cpt = _skyCompact->fetchCpt(target);
+	cpt->request = 0;
 	return true;
 }
 
 bool Logic::fnCheckRequest(uint32 a, uint32 b, uint32 c) {
 	/// check for interaction request
 	
-	if (!_compact->extCompact->request)
+	if (!_compact->request)
 		return true;
 
 	_compact->mode = C_ACTION_MODE; // into action mode
 
-	_compact->extCompact->actionSub = _compact->extCompact->request;
-	_compact->extCompact->actionSub_off = 0;
+	_compact->actionSub = _compact->request;
+	_compact->actionSub_off = 0;
 
-	_compact->extCompact->request = 0; // trash request
+	_compact->request = 0; // trash request
 	return false; // drop from script
 }
 
@@ -1844,11 +1843,11 @@ bool Logic::fnStartMenu(uint32 firstObject, uint32 b, uint32 c) {
 
 	// (1) FIRST, SET UP THE 2 ARROWS SO THEY APPEAR ON SCREEN
 
-	Compact *cpt = SkyEngine::fetchCompact(47);
+	Compact *cpt = _skyCompact->fetchCpt(47);
 	cpt->status = ST_MOUSE + ST_FOREGROUND + ST_LOGIC + ST_RECREATE;
 	cpt->screen = (uint16)(_scriptVariables[SCREEN] & 0xffff);
 
-	cpt = SkyEngine::fetchCompact(48);
+	cpt = _skyCompact->fetchCpt(48);
 	cpt->status = ST_MOUSE + ST_FOREGROUND + ST_LOGIC + ST_RECREATE;
 	cpt->screen = (uint16)(_scriptVariables[SCREEN] & 0xffff);
 
@@ -1874,7 +1873,7 @@ bool Logic::fnStartMenu(uint32 firstObject, uint32 b, uint32 c) {
 
 	for (i = 0; i < ARRAYSIZE(_objectList); i++) {
 		if (_objectList[i])
-			(SkyEngine::fetchCompact(_objectList[i]))->status = ST_LOGIC;
+			(_skyCompact->fetchCpt(_objectList[i]))->status = ST_LOGIC;
 		else break;
 	}
 
@@ -1889,7 +1888,7 @@ bool Logic::fnStartMenu(uint32 firstObject, uint32 b, uint32 c) {
 
 	uint16 rollingX = TOP_LEFT_X + 28;
 	for (i = 0; i < 11; i++) {
-		cpt = SkyEngine::fetchCompact(
+		cpt = _skyCompact->fetchCpt(
 				_objectList[_scriptVariables[SCROLL_OFFSET] + i]);
 
 		cpt->status = ST_MOUSE + ST_FOREGROUND + ST_LOGIC + ST_RECREATE;
@@ -1908,7 +1907,7 @@ bool Logic::fnStartMenu(uint32 firstObject, uint32 b, uint32 c) {
 }
 
 bool Logic::fnUnhighlight(uint32 item, uint32 b, uint32 c) {
-	Compact *cpt = SkyEngine::fetchCompact(item);
+	Compact *cpt = _skyCompact->fetchCpt(item);
 	cpt->frame--;
 	cpt->getToFlag = 0;
 	return true;
@@ -1918,7 +1917,7 @@ bool Logic::fnFaceId(uint32 otherId, uint32 b, uint32 c) {
 	/// return the direction to turn to face another id
 	/// pass back result in c_just_flag
 
-	Compact *cpt = SkyEngine::fetchCompact(otherId);
+	Compact *cpt = _skyCompact->fetchCpt(otherId);
 
 	int16 x = _compact->xcood - cpt->xcood;
 
@@ -1951,7 +1950,7 @@ bool Logic::fnFaceId(uint32 otherId, uint32 b, uint32 c) {
 
 bool Logic::fnForeground(uint32 sprite, uint32 b, uint32 c) {
 	/// Make sprite a foreground sprite
-	Compact *cpt = SkyEngine::fetchCompact(sprite);
+	Compact *cpt = _skyCompact->fetchCpt(sprite);
 	cpt->status &= 0xfff8;
 	cpt->status |= ST_FOREGROUND;
 	return true;
@@ -1966,14 +1965,14 @@ bool Logic::fnBackground(uint32 a, uint32 b, uint32 c) {
 
 bool Logic::fnNewBackground(uint32 sprite, uint32 b, uint32 c) {
 	/// Make sprite a background sprite
-	Compact *cpt = SkyEngine::fetchCompact(sprite);
+	Compact *cpt = _skyCompact->fetchCpt(sprite);
 	cpt->status &= 0xfff8;
 	cpt->status |= ST_BACKGROUND;
 	return true;
 }
 
 bool Logic::fnSort(uint32 mega, uint32 b, uint32 c) {
-	Compact *cpt = SkyEngine::fetchCompact(mega);
+	Compact *cpt = _skyCompact->fetchCpt(mega);
 	cpt->status &= 0xfff8;
 	cpt->status |= ST_SORT;
 	return true;
@@ -1989,7 +1988,7 @@ bool Logic::fnNoSpriteEngine(uint32 a, uint32 b, uint32 c) {
 bool Logic::fnNoSpritesA6(uint32 us, uint32 b, uint32 c) {
 	/// stop the compact printing
 	/// remove foreground, background & sort
-	Compact *cpt = SkyEngine::fetchCompact(us);
+	Compact *cpt = _skyCompact->fetchCpt(us);
 	cpt->status &= 0xfff8;
 	return true;	
 }
@@ -1999,8 +1998,8 @@ bool Logic::fnResetId(uint32 id, uint32 resetBlock, uint32 c) {
 	/// eg - when a smaller mega turn to larger
 	/// - a mega changes rooms...
 
-	Compact *cpt = SkyEngine::fetchCompact(id);
-	uint16 *rst = (uint16 *)SkyEngine::fetchCompact(resetBlock);
+	Compact *cpt = _skyCompact->fetchCpt(id);
+	uint16 *rst = (uint16 *)_skyCompact->fetchCpt(resetBlock);
 
 	if (!cpt) {
 		warning("fnResetId(): Compact %d (id) == NULL",id);
@@ -2013,7 +2012,7 @@ bool Logic::fnResetId(uint32 id, uint32 resetBlock, uint32 c) {
 
 	uint16 off;
 	while ((off = *rst++) != 0xffff)
-		*(uint16 *)SkyCompact::getCompactElem(cpt, off) = *rst++;
+		*(uint16 *)_skyCompact->getCompactElem(cpt, off) = *rst++;
 	return true;
 }
 
@@ -2031,48 +2030,34 @@ bool Logic::fnPause(uint32 cycles, uint32 b, uint32 c) {
 }
 
 bool Logic::fnRunAnimMod(uint32 animNo, uint32 b, uint32 c) {
-	_compact->grafixProg.ptrType = COMPACT;
-	_compact->grafixProg.ptrTarget = animNo;
-	_compact->grafixProg.pos = 0;
+	_compact->grafixProgId = animNo;
+	_compact->grafixProgPos = 0;
 	
-	//uint16 *animation = (uint16 *)SkyEngine::fetchCompact(animNo);
-	//uint16 sprite = *animation++; // get sprite set
-	//_compact->offset = sprite;
-	_compact->offset = *SkyCompact::getGrafixPtr(_compact);
-	//_compact->grafixProg = animation;
-	_compact->grafixProg.pos++;
+	_compact->offset = *_skyCompact->getGrafixPtr(_compact);
+	_compact->grafixProgPos++;
 	_compact->logic = L_MOD_ANIMATE;
 	anim();
 	return false; // drop from script
 }
 
 bool Logic::fnSimpleMod(uint32 animSeqNo, uint32 b, uint32 c) {
+	_compact->grafixProgId = animSeqNo;
+	_compact->grafixProgPos = 0;
 
-	_compact->grafixProg.ptrType = COMPACT;
-	_compact->grafixProg.ptrTarget = animSeqNo;
-	_compact->grafixProg.pos = 0;
-	//uint16 *animSeq = (uint16 *)SkyEngine::fetchCompact(animSeqNo);
-	//_compact->offset = *animSeq++;
-	//assert(*animSeq != 0);
-	_compact->offset = *SkyCompact::getGrafixPtr(_compact);
-	//_compact->grafixProg = animSeq;
-	_compact->grafixProg.pos++;
 	_compact->logic = L_SIMPLE_MOD;
+	_compact->offset = *_skyCompact->getGrafixPtr(_compact);
+	_compact->grafixProgPos++;
 	simpleAnim();
 	return false;
 }
 
 bool Logic::fnRunFrames(uint32 sequenceNo, uint32 b, uint32 c) {
-	_compact->grafixProg.ptrType = COMPACT;
-	_compact->grafixProg.ptrTarget = sequenceNo;
-	_compact->grafixProg.pos = 0;
-	//uint16 *sequence = (uint16 *)SkyEngine::fetchCompact(sequenceNo);
+	_compact->grafixProgId = sequenceNo;
+	_compact->grafixProgPos = 0;
 
 	_compact->logic = L_FRAMES;
-	//_compact->offset = *sequence++;
-	_compact->offset = *SkyCompact::getGrafixPtr(_compact);
-	_compact->grafixProg.pos++;
-	//_compact->grafixProg = sequence;
+	_compact->offset = *_skyCompact->getGrafixPtr(_compact);
+	_compact->grafixProgPos++;
 	simpleAnim();
 	return false;
 }
@@ -2086,28 +2071,29 @@ bool Logic::fnAwaitSync(uint32 a, uint32 b, uint32 c) {
 }
 
 bool Logic::fnIncMegaSet(uint32 a, uint32 b, uint32 c) {
-	_compact->extCompact->megaSet += NEXT_MEGA_SET;
+	_compact->megaSet += NEXT_MEGA_SET;
 	return true;
 }
 
 bool Logic::fnDecMegaSet(uint32 a, uint32 b, uint32 c) {
-	_compact->extCompact->megaSet -= NEXT_MEGA_SET;
+	_compact->megaSet -= NEXT_MEGA_SET;
 	return true;
 }
 
 bool Logic::fnSetMegaSet(uint32 mega, uint32 setNo, uint32 c) {
-	Compact *cpt = SkyEngine::fetchCompact(mega);
-	cpt->extCompact->megaSet = (uint16) (setNo * NEXT_MEGA_SET);
+	Compact *cpt = _skyCompact->fetchCpt(mega);
+	cpt->megaSet = (uint16) (setNo * NEXT_MEGA_SET);
 	return true;
 }
 
 bool Logic::fnMoveItems(uint32 listNo, uint32 screenNo, uint32 c) {
-	/// Move a list of id's to another screen
-	uint16 *p = SkyCompact::move_list[listNo];
+	// Move a list of id's to another screen
+	uint16 *p = (uint16*)_skyCompact->fetchCpt(CPT_MOVE_LIST);
+	p = (uint16*)_skyCompact->fetchCpt(p[listNo]);
 	for (int i = 0; i < 2; i++) {
 		if (!*p)
 			return true;
-		Compact *cpt = SkyEngine::fetchCompact(*p++);
+		Compact *cpt = _skyCompact->fetchCpt(*p++);
 		cpt->screen = (uint16)(screenNo & 0xffff);
 	}
 	return true;
@@ -2136,46 +2122,46 @@ bool Logic::fnRandom(uint32 a, uint32 b, uint32 c) {
 }
 
 bool Logic::fnPersonHere(uint32 id, uint32 room, uint32 c) {
-	Compact *cpt = SkyEngine::fetchCompact(id);
+	Compact *cpt = _skyCompact->fetchCpt(id);
 	_scriptVariables[RESULT] = cpt->screen == room ? 1 : 0;
 	return true;
 }
 
 bool Logic::fnToggleMouse(uint32 a, uint32 b, uint32 c) {
 	
-	SkyEngine::fetchCompact(a)->status ^= ST_MOUSE;
+	_skyCompact->fetchCpt(a)->status ^= ST_MOUSE;
 	return true;
 }
 
 bool Logic::fnMouseOn(uint32 a, uint32 b, uint32 c) {
 	//switch on the mouse highlight
-	Compact *cpt = SkyEngine::fetchCompact(a);
+	Compact *cpt = _skyCompact->fetchCpt(a);
 	cpt->status |= ST_MOUSE;
 	return true;
 }
 
 bool Logic::fnMouseOff(uint32 a, uint32 b, uint32 c) {
-	//switch on (off??) the mouse highlight
-	Compact *cpt = SkyEngine::fetchCompact(a);
+	//switch off the mouse highlight
+	Compact *cpt = _skyCompact->fetchCpt(a);
 	cpt->status &= ~ST_MOUSE;
 	return true;
 }
 
 bool Logic::fnFetchX(uint32 id, uint32 b, uint32 c) {
-	Compact *cpt = SkyEngine::fetchCompact(id);
+	Compact *cpt = _skyCompact->fetchCpt(id);
 	_scriptVariables[RESULT] = cpt->xcood;
 	return true;
 }
 
 bool Logic::fnFetchY(uint32 id, uint32 b, uint32 c) {
-	Compact *cpt = SkyEngine::fetchCompact(id);
+	Compact *cpt = _skyCompact->fetchCpt(id);
 	_scriptVariables[RESULT] = cpt->ycood;
 	return true;
 }
 
 bool Logic::fnTestList(uint32 id, uint32 x, uint32 y) {
 	_scriptVariables[RESULT] = 0; // assume fail
-	uint16 *list = (uint16 *)SkyEngine::fetchCompact(id);
+	uint16 *list = (uint16 *)_skyCompact->fetchCpt(id);
 
 	while (*list) {
 		if ((x >= list[0]) && (x < list[1]) && (y >= list[2]) && (y < list[3]))
@@ -2186,7 +2172,7 @@ bool Logic::fnTestList(uint32 id, uint32 x, uint32 y) {
 }
 
 bool Logic::fnFetchPlace(uint32 id, uint32 b, uint32 c) {
-	Compact *cpt = SkyEngine::fetchCompact(id);
+	Compact *cpt = _skyCompact->fetchCpt(id);
 	_scriptVariables[RESULT] = cpt->place;
 	return true;
 }
@@ -2196,7 +2182,7 @@ bool Logic::fnCustomJoey(uint32 id, uint32 b, uint32 c) {
 	/// used by Joey-Logic - done in code like this because scripts can't
 	/// get access to another megas compact as easily
 
-	Compact *cpt = SkyEngine::fetchCompact(id);
+	Compact *cpt = _skyCompact->fetchCpt(id);
 	
 	_scriptVariables[PLAYER_X] = cpt->xcood;
 	_scriptVariables[PLAYER_Y] = cpt->ycood;
@@ -2206,7 +2192,7 @@ bool Logic::fnCustomJoey(uint32 id, uint32 b, uint32 c) {
 }
 
 bool Logic::fnSetPalette(uint32 a, uint32 b, uint32 c) {
-	_skyScreen->setPaletteEndian((uint8 *)SkyEngine::fetchCompact(a));
+	_skyScreen->setPaletteEndian((uint8 *)_skyCompact->fetchCpt(a));
 	SkyEngine::_systemVars.currentPalette = a;
 	return true;
 }
@@ -2217,7 +2203,7 @@ bool Logic::fnTextModule(uint32 a, uint32 b, uint32 c) {
 }
 
 bool Logic::fnChangeName(uint32 id, uint32 textNo, uint32 c) {
-	Compact *cpt = SkyEngine::fetchCompact(id);
+	Compact *cpt = _skyCompact->fetchCpt(id);
 	cpt->cursorText = (uint16) textNo;
 	return true;
 }
@@ -2256,8 +2242,8 @@ bool Logic::fnEyeball(uint32 id, uint32 b, uint32 c) {
 	// set 'result' to frame no. pointing to foster, according to table used
 	// eg. FN_eyeball (id_eye_90_table);
 
-	uint16 *eyeTable = (uint16 *)SkyEngine::fetchCompact(id);
-	Compact *cpt = SkyEngine::fetchCompact(ID_BLUE_FOSTER);
+	uint16 *eyeTable = (uint16 *)_skyCompact->fetchCpt(id);
+	Compact *cpt = _skyCompact->fetchCpt(ID_BLUE_FOSTER);
 
 	uint32 x = cpt->xcood; // 168 < x < 416
 	x -= 168;
@@ -2277,8 +2263,6 @@ bool Logic::fnLeaveSection(uint32 sectionNo, uint32 b, uint32 c) {
 	
 	if (sectionNo == 5) //linc section - has different mouse icons
 		_skyMouse->replaceMouseCursors(60301);
-
-	//_currentSection = 0xFF; // force music-, sound- and gridreload
 
 	return true;
 }
@@ -2347,7 +2331,7 @@ bool Logic::fnBlankScreen(uint32 a, uint32 b, uint32 c) {
 bool Logic::fnPrintCredit(uint32 a, uint32 b, uint32 c) {
 
 	lowTextManager_t creditText = _skyText->lowTextManager(a , 240, 0, 248, true);
-	Compact *credCompact = SkyEngine::fetchCompact(creditText.compactNum);
+	Compact *credCompact = _skyCompact->fetchCpt(creditText.compactNum);
 	credCompact->xcood = 168;
 	if ((a == 558) && (c == 215))
 		credCompact->ycood = 211;
@@ -2360,7 +2344,7 @@ bool Logic::fnPrintCredit(uint32 a, uint32 b, uint32 c) {
 bool Logic::fnLookAt(uint32 a, uint32 b, uint32 c) {
 	
 	struct lowTextManager_t textInfo = _skyText->lowTextManager(a, 240, 0, 248, true);
-	Compact *textCpt = SkyEngine::fetchCompact(textInfo.compactNum);
+	Compact *textCpt = _skyCompact->fetchCpt(textInfo.compactNum);
 	textCpt->xcood = 168;
 	textCpt->ycood = (uint16)c;
 
@@ -2392,7 +2376,7 @@ bool Logic::fnLincTextModule(uint32 textPos, uint32 textNo, uint32 buttonAction)
 
 	lowTextManager_t text = _skyText->lowTextManager(textNo, 220, 0, 215, false);
 
-	Compact *textCpt = SkyEngine::fetchCompact(text.compactNum);
+	Compact *textCpt = _skyCompact->fetchCpt(text.compactNum);
 
 	if (textPos < 20) { // line number (for text)
 		textCpt->xcood = 152;
@@ -2411,7 +2395,7 @@ bool Logic::fnTextKill2(uint32 a, uint32 b, uint32 c) {
 	uint32 id = FIRST_TEXT_COMPACT;
 
 	for (int i = 10; i > 0; i--) {
-		Compact *cpt = SkyEngine::fetchCompact(id);
+		Compact *cpt = _skyCompact->fetchCpt(id);
 		cpt->status = 0;
 		id++;
 	}
@@ -2481,26 +2465,19 @@ void Logic::stdSpeak(Compact *target, uint32 textNum, uint32 animNum, uint32 bas
 
 	uint16 *animPtr;
 
-	animNum += target->extCompact->megaSet / NEXT_MEGA_SET;
+	animNum += target->megaSet / NEXT_MEGA_SET;
 	animNum &= 0xFF;
-	if (TalkAnims::animTalkTableIsPointer[animNum]) { //is it a pointer? 
-		//animPtr = (uint16 *)TalkAnims::animTalkTablePtr[animNum];
-		target->grafixProg.ptrType = TALKTABLE;
-		target->grafixProg.ptrTarget = animNum;
-	} else {	//then it must be a value
-		//animPtr = (uint16 *)SkyEngine::fetchCompact(TalkAnims::animTalkTableVal[animNum]);
-		target->grafixProg.ptrType = COMPACT;
-		target->grafixProg.ptrTarget = TalkAnims::animTalkTableVal[animNum];
-	}
-	target->grafixProg.pos = 0;
-	animPtr = SkyCompact::getGrafixPtr(target);
+	
+	target->grafixProgId = TALKTABLE_LIST_ID + animNum;
+	target->grafixProgPos = 0;
+	animPtr = _skyCompact->getGrafixPtr(target);
 	
 	if (animPtr) {
 		target->offset = *animPtr++;
 		target->getToFlag = *animPtr++;
-		target->grafixProg.pos += 2;
+		target->grafixProgPos += 2;
 	} else {
-		target->grafixProg.ptrType = PTR_NULL;
+		target->grafixProgId = 0;
 	}
 
 	bool speechUsed = false;
@@ -2511,16 +2488,16 @@ void Logic::stdSpeak(Compact *target, uint32 textNum, uint32 animNum, uint32 bas
 	// if sky is configured to speech-only return now - except if we're running another
 	// language than english
 	if (speechUsed && (!(SkyEngine::_systemVars.systemFlags & SF_ALLOW_TEXT))) {
-		target->extCompact->spTime = 10;
+		target->spTime = 10;
 		target->logic = L_TALK; 
 		return ;
 	}
 
 	//now form the text sprite
 	struct lowTextManager_t textInfo;
-	textInfo = _skyText->lowTextManager(textNum, FIXED_TEXT_WIDTH, 0, (uint8)target->extCompact->spColour, true);
-	Compact *textCompact = SkyEngine::fetchCompact(textInfo.compactNum);
-	target->extCompact->spTextId = textInfo.compactNum;	//So we know what text to kill
+	textInfo = _skyText->lowTextManager(textNum, FIXED_TEXT_WIDTH, 0, (uint8)target->spColour, true);
+	Compact *textCompact = _skyCompact->fetchCpt(textInfo.compactNum);
+	target->spTextId = textInfo.compactNum;	//So we know what text to kill
 	byte *textGfx = textInfo.textData;
 
 	//create the x coordinate for the speech text
@@ -2554,14 +2531,16 @@ void Logic::stdSpeak(Compact *target, uint32 textNum, uint32 animNum, uint32 bas
 			
 	} else {
 		//talking off-screen
-		target->extCompact->spTextId = 0; 	//don't kill any text 'cos none was made
+		target->spTextId = 0; 	//don't kill any text 'cos none was made
 		textCompact->status = 0;	//don't display text
 	}
 	// In CD version, we're doing the timing by checking when the VOC has stopped playing.
 	// Setting spTime to 10 thus means that we're doing a pause of 10 gamecycles between
 	// each sentence.
-	if (speechUsed) target->extCompact->spTime = 10;
-	else target->extCompact->spTime = (uint16)_skyText->_dtLetters + 5;
+	if (speechUsed)
+		target->spTime = 10;
+	else
+		target->spTime = (uint16)_skyText->_dtLetters + 5;
 	target->logic = L_TALK; 
 }
 

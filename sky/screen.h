@@ -32,6 +32,7 @@ namespace Sky {
 
 class Disk;
 class SkyEngine;
+class SkyCompact;
 struct Compact;
 struct dataFileHeader;
 
@@ -51,7 +52,7 @@ typedef struct {
 
 class Screen {
 public:
-	Screen(OSystem *pSystem, Disk *pDisk);
+	Screen(OSystem *pSystem, Disk *pDisk, SkyCompact *skyCompact);
 	~Screen(void);
 	void setPalette(uint8 *pal);
 	void setPaletteEndian(uint8 *pal);
@@ -90,6 +91,7 @@ public:
 private:
 	OSystem *_system;
 	Disk *_skyDisk;
+	SkyCompact *_skyCompact;
 	static uint8 _top16Colours[16*3];
 	uint8 _palette[1024];
 	uint32 _currentPalette;

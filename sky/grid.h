@@ -30,10 +30,11 @@ namespace Sky {
 
 struct Compact;
 class Disk;
+class SkyCompact;
 
 class Grid {
 public:
-	Grid(Disk *pDisk);
+	Grid(Disk *pDisk, SkyCompact *skyCompact);
 	~Grid(void);
 
 	// grid.asm routines
@@ -58,6 +59,7 @@ private:
 	static int8 _gridConvertTable[];
 	uint8 *_gameGrids[TOT_NO_GRIDS];
 	Disk *_skyDisk;
+	SkyCompact *_skyCompact;
 };
 
 } // End of namespace Sky

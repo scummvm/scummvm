@@ -255,12 +255,12 @@ uint8 *Disk::getFileInfo(uint16 fileNr) {
 	return 0; //not found
 }
 
-void Disk::fnCacheChip(uint32 list) {
+void Disk::fnCacheChip(uint16 *fList) {
 
 	// fnCacheChip is called after fnCacheFast
 	uint16 cnt = 0;
-	while (_buildList[cnt]) cnt++;
-	uint16 *fList = (uint16 *)SkyEngine::fetchCompact(list);
+	while (_buildList[cnt])
+		cnt++;	
 	uint16 fCnt = 0;
 	do {
 		_buildList[cnt + fCnt] = fList[fCnt] & 0x7FFFU;
@@ -269,15 +269,14 @@ void Disk::fnCacheChip(uint32 list) {
 	fnCacheFiles();
 }
 
-void Disk::fnCacheFast(uint32 list) {
-
-	if (list == 0) return;
-	uint8 cnt = 0;
-	uint16 *fList = (uint16 *)SkyEngine::fetchCompact(list);
-	do {
-		_buildList[cnt] = fList[cnt] & 0x7FFFU;
-		cnt++;
-	} while (fList[cnt-1]);
+void Disk::fnCacheFast(uint16 *fList) {
+	if (fList != NULL) {
+		uint8 cnt = 0;
+		do {
+			_buildList[cnt] = fList[cnt] & 0x7FFFU;
+			cnt++;
+		} while (fList[cnt-1]);
+	}
 }
 
 void Disk::fnCacheFiles(void) {

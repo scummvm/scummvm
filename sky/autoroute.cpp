@@ -37,9 +37,10 @@ namespace Sky {
 const int16 AutoRoute::_routeDirections[4] = {    -1,     1, -ROUTE_GRID_WIDTH, ROUTE_GRID_WIDTH };
 const uint16 AutoRoute::_logicCommands[4] = { RIGHTY, LEFTY,             DOWNY,              UPY };
 
-AutoRoute::AutoRoute(Grid *pGrid) {
+AutoRoute::AutoRoute(Grid *pGrid, SkyCompact *compact) {
 
 	_grid = pGrid;
+	_skyCompact = compact;
 	_routeGrid = (uint16 *)malloc(ROUTE_GRID_SIZE);
 	_routeBuf = (uint16 *)malloc(ROUTE_SPACE);
 }
@@ -233,7 +234,7 @@ uint16 *AutoRoute::checkInitMove(uint16 *data, int16 initStaX) {
 uint16 AutoRoute::autoRoute(Compact *cpt) {
 
 	uint8 cptScreen = (uint8)cpt->screen;
-	uint8 cptWidth = (uint8)SkyCompact::getMegaSet(cpt, cpt->extCompact->megaSet)->gridWidth;
+	uint8 cptWidth = (uint8)SkyCompact::getMegaSet(cpt)->gridWidth;
 	initWalkGrid(cptScreen, cptWidth);
 
 	uint8 startX, startY, destX, destY;
@@ -241,15 +242,17 @@ uint16 AutoRoute::autoRoute(Compact *cpt) {
 
 	clipCoordX(cpt->xcood, startX, initStaX);
 	clipCoordY(cpt->ycood, startY, initStaY);
-	clipCoordX(cpt->extCompact->arTargetX, destX, initDestX);
-	clipCoordY(cpt->extCompact->arTargetY, destY, initDestY);
+	clipCoordX(cpt->arTargetX, destX, initDestX);
+	clipCoordY(cpt->arTargetY, destY, initDestY);
 
-	memset(cpt->extCompact->animScratch, 0, 64);
+	uint16 *routeDest = (uint16*)_skyCompact->fetchCpt(cpt->animScratchId);
+	memset(routeDest, 0, 64);
 	if ((startX == destX) && (startY == destY))
 		return 2;
 
 	if (_routeGrid[(destY + 1) * ROUTE_GRID_WIDTH + destX + 1]) {
-		if ((cpt == &Sky::SkyCompact::foster) && (cptScreen == 12) && (destX == 2) && (destY == 14)) {
+		//if ((cpt == &Sky::SkyCompact::foster) && (cptScreen == 12) && (destX == 2) && (destY == 14)) {
+		if (_skyCompact->cptIsId(cpt, CPT_FOSTER) && (cptScreen == 12) && (destX == 2) && (destY == 14)) {
 			/* workaround for Scriptbug #1043047
 			   In screen 12 (the pipe factory) Joey can block Foster's target
 			   coordinates (2/14). This is normally not too tragic, but in the
@@ -271,8 +274,8 @@ uint16 AutoRoute::autoRoute(Compact *cpt) {
 
 	uint8 cnt = 0;
 	do {
-		((uint16*)cpt->extCompact->animScratch)[cnt]     = routeData[cnt];
-		((uint16*)cpt->extCompact->animScratch)[cnt + 1] = routeData[cnt + 1];
+		routeDest[cnt]     = routeData[cnt];
+		routeDest[cnt + 1] = routeData[cnt + 1];
 		cnt += 2;
 	} while (routeData[cnt - 2]);
 	return 0;

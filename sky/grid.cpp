@@ -23,6 +23,7 @@
 #include "sky/disk.h"
 #include "sky/grid.h"
 #include "sky/logic.h"
+#include "sky/compact.h"
 
 namespace Sky {
 
@@ -129,10 +130,11 @@ int8 Grid::_gridConvertTable[] = {
 	69,	//96
 };
 
-Grid::Grid(Disk *pDisk) {
+Grid::Grid(Disk *pDisk, SkyCompact *skyCompact) {
 	for (int cnt = 0; cnt < TOT_NO_GRIDS; cnt++)
 		_gameGrids[cnt] = NULL;
 	_skyDisk = pDisk;
+	_skyCompact = skyCompact;
 }
 
 Grid::~Grid(void) {
@@ -152,12 +154,13 @@ void Grid::loadGrids(void) {
 		// Reloading the grids can sometimes cause problems eg when reichs door is
 		// open the door grid bit gets replaced so you can't get back in (or out)
 		if (Logic::_scriptVariables[REICH_DOOR_FLAG])
-			removeGrid(256, 280, 1, &SkyCompact::reich_door_20);
+			removeGrid(256, 280, 1, _skyCompact->fetchCpt(CPT_REICH_DOOR_20));
+			//removeGrid(256, 280, 1, &SkyCompact::reich_door_20);
 	}
 }
 
 bool Grid::getGridValues(Compact *cpt, uint8 *resGrid, uint32 *resBitNum, uint32 *resWidth) {
-	uint16 width = SkyCompact::getMegaSet(cpt, cpt->extCompact->megaSet)->gridWidth;
+	uint16 width = SkyCompact::getMegaSet(cpt)->gridWidth;
 	return getGridValues(cpt->xcood, cpt->ycood, width, cpt, resGrid, resBitNum, resWidth);
 }
 

@@ -29,6 +29,7 @@ namespace Sky {
 
 struct Compact;
 class Disk;
+class SkyCompact;
 
 struct HuffTree {
 	unsigned char lChild;
@@ -45,7 +46,7 @@ struct PatchMessage {
 
 class Text {
 public:
-	Text(Disk *skyDisk);
+	Text(Disk *skyDisk, SkyCompact *skyCompact);
 	~Text(void);
 	void getText(uint32 textNr);
 	struct displayText_t displayText(uint8 *dest, bool centre, uint16 pixelWidth, uint8 color);
@@ -68,6 +69,7 @@ protected:
 	bool patchMessage(uint32 textNum);
 
 	Disk *_skyDisk;
+	SkyCompact *_skyCompact;
 	uint8	_inputValue;
 	uint8	_shiftBits;
 	uint8	*_textItemPtr;

@@ -31,10 +31,11 @@ namespace Sky {
 class Logic;
 class Mouse;
 class Screen;
+class SkyCompact;
 
 class Debugger : public Common::Debugger<Debugger> {
 public:
-	Debugger(Logic *logic, Mouse *mouse, Screen *screen);
+	Debugger(Logic *logic, Mouse *mouse, Screen *screen, SkyCompact *skyCompact);
 	bool showGrid()	{	return _showGrid; }
 	
 protected:
@@ -54,6 +55,7 @@ protected:
 	Logic *_logic;
 	Mouse *_mouse;
 	Screen *_screen;
+	SkyCompact *_skyCompact;
 
 	bool _showGrid;
 };

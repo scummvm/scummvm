@@ -28,6 +28,7 @@
 #include "sky/screen.h"
 #include "sky/sky.h"
 #include "sky/struc.h"
+#include "sky/compact.h"
 
 #include "common/debugger.cpp"
 
@@ -1276,7 +1277,8 @@ void Debug::mcode(uint32 mcode, uint32 a, uint32 b, uint32 c) {
 
 
 
-Debugger::Debugger(Logic *logic, Mouse *mouse, Screen *screen) : _logic(logic), _mouse(mouse), _screen(screen), _showGrid(false) {
+Debugger::Debugger(Logic *logic, Mouse *mouse, Screen *screen, SkyCompact *skyCompact) 
+: _logic(logic), _mouse(mouse), _screen(screen), _skyCompact(skyCompact), _showGrid(false) {
 	DCmd_Register("exit", &Debugger::Cmd_Exit);
 	DCmd_Register("help", &Debugger::Cmd_Help);
 	DCmd_Register("info", &Debugger::Cmd_Info);
@@ -1356,7 +1358,7 @@ bool Debugger::Cmd_ShowCompact(int argc, const char **argv) {
 
 	for (i = 0; i < numCompacts; ++i) {
 		if (0 == strcmp(section_0_compacts[i], argv[1])) {
-			cpt = SkyEngine::fetchCompact(i);
+			cpt = _skyCompact->fetchCpt(i);
 			break;
 		}
 	}
@@ -1372,10 +1374,10 @@ bool Debugger::Cmd_ShowCompact(int argc, const char **argv) {
 		DebugPrintf("getToFlag  : %d\n", cpt->getToFlag);
 		DebugPrintf("mode       : %d\n", cpt->mode);
 		// Mega / extCompact info
-		if (cpt->extCompact) {
+		/*if (cpt->extCompact) {
 			DebugPrintf("waitingFor : %d\n", cpt->extCompact->waitingFor);
 			DebugPrintf("arTargetX/Y: %d/%d\n", cpt->extCompact->arTargetX, cpt->extCompact->arTargetY);
-		}
+		}*/
 	} else {
 		DebugPrintf("Unknown compact: '%s'\n", argv[1]);
 	}
@@ -1471,7 +1473,7 @@ bool Debugger::Cmd_Section(int argc, const char **argv) {
 	if (section >= 0 && section <= 6) {
 		_logic->fnEnterSection(section == 6 ? 4 : section, 0, 0);
 		_logic->fnAssignBase(ID_FOSTER, baseId[section], 0);
-		SkyEngine::fetchCompact(ID_FOSTER)->extCompact->megaSet = 0;
+		_skyCompact->fetchCpt(ID_FOSTER)->megaSet = 0;
 	} else {
 		DebugPrintf("Unknown section '%s'\n", argv[1]);
 	}

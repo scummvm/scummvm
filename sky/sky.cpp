@@ -30,7 +30,6 @@
 #include "common/file.h"
 #include "common/timer.h"
 
-#include "sky/compact.h"
 #include "sky/control.h"
 #include "sky/debug.h"
 #include "sky/disk.h"
@@ -47,6 +46,7 @@
 #include "sky/skydefs.h"
 #include "sky/sound.h"
 #include "sky/text.h"
+#include "sky/compact.h"
 
 #include "sound/mididrv.h"
 #include "sound/mixer.h"
@@ -112,7 +112,7 @@ REGISTER_PLUGIN("Beneath a Steel Sky", Engine_SKY_gameList, Engine_SKY_create, E
 
 namespace Sky {
 
-void **SkyEngine::_itemList[300];
+void *SkyEngine::_itemList[300];
 
 SystemVars SkyEngine::_systemVars = {0, 0, 0, 0, 4316, 0, 0, false, false };
 
@@ -293,24 +293,22 @@ int SkyEngine::init(GameDetector &detector) {
 	_systemVars.systemFlags |= SF_PLAY_VOCS;
 	_systemVars.gameSpeed = 50;
 
-	_skyText = new Text(_skyDisk);
-	_skyMouse = new Mouse(_system, _skyDisk);
-	_skyScreen = new Screen(_system, _skyDisk);
+	_skyCompact = new SkyCompact();
+	_skyText = new Text(_skyDisk, _skyCompact);
+	_skyMouse = new Mouse(_system, _skyDisk, _skyCompact);
+	_skyScreen = new Screen(_system, _skyDisk, _skyCompact);
 
 	initVirgin();
 	initItemList();
 	loadFixedItems();
-	_skyLogic = new Logic(_skyScreen, _skyDisk, _skyText, _skyMusic, _skyMouse, _skySound);
+	_skyLogic = new Logic(_skyCompact, _skyScreen, _skyDisk, _skyText, _skyMusic, _skyMouse, _skySound);
 	_skyMouse->useLogicInstance(_skyLogic);
 	
 	// initialize timer *after* _skyScreen has been initialized.
 	_timer->installTimerProc(&timerHandler, 1000000 / 50, this); //call 50 times per second
 
-	_skyControl = new Control(_saveFileMan, _skyScreen, _skyDisk, _skyMouse, _skyText, _skyMusic, _skyLogic, _skySound, _system);
+	_skyControl = new Control(_saveFileMan, _skyScreen, _skyDisk, _skyMouse, _skyText, _skyMusic, _skyLogic, _skySound, _skyCompact, _system);
 	_skyLogic->useControlInstance(_skyControl);
-
-	if (_systemVars.gameVersion == 288)
-		SkyCompact::patchFor288();
 
 	switch (Common::parseLanguage(ConfMan.get("language"))) {
 	case Common::DE_DEU:
@@ -364,7 +362,7 @@ int SkyEngine::init(GameDetector &detector) {
 
 	_skyMusic->setVolume(ConfMan.getInt("music_volume") >> 1);
 
-	_debugger = new Debugger(_skyLogic, _skyMouse, _skyScreen);
+	_debugger = new Debugger(_skyLogic, _skyMouse, _skyScreen, _skyCompact);
 	
 	return 0;
 }
@@ -374,10 +372,12 @@ void SkyEngine::initItemList() {
 	//See List.asm for (cryptic) item # descriptions
 
 	for (int i = 0; i < 300; i++)
-		_itemList[i] = (void **)NULL;
+		_itemList[i] = NULL;
 
 	//init the non-null items
-	_itemList[119] = (void **)SkyCompact::data_0; // Compacts - Section 0
+	// I don't see where the script could possible access this.. so it should be safe to
+	// leave these as NULL.
+	/*_itemList[119] = (void **)SkyCompact::data_0; // Compacts - Section 0
 	_itemList[120] = (void **)SkyCompact::data_1; // Compacts - Section 1
 	
 	if (isDemo()) {
@@ -388,7 +388,7 @@ void SkyEngine::initItemList() {
 		_itemList[123] = (void **)SkyCompact::data_4; // Compacts - Section 4
 		_itemList[124] = (void **)SkyCompact::data_5; // Compacts - Section 5
 		_itemList[125] = (void **)SkyCompact::data_6; // Compacts - Section 6
-	}
+	}*/
 }
 
 void SkyEngine::loadBase0(void) {
@@ -400,29 +400,25 @@ void SkyEngine::loadBase0(void) {
 
 void SkyEngine::loadFixedItems(void) {
 
-	if (!isDemo())
-		_itemList[36] = (void **)_skyDisk->loadFile(36);
+	_itemList[49] = _skyDisk->loadFile(49);
+	_itemList[50] = _skyDisk->loadFile(50);
+	_itemList[73] = _skyDisk->loadFile(73);
+	_itemList[262] = _skyDisk->loadFile(262);
 
-	_itemList[49] = (void **)_skyDisk->loadFile(49);
-	_itemList[50] = (void **)_skyDisk->loadFile(50);
-	_itemList[73] = (void **)_skyDisk->loadFile(73);
-	_itemList[262] = (void **)_skyDisk->loadFile(262);
-
-	if (isDemo()) 
-		return;
-	
-	_itemList[263] = (void **)_skyDisk->loadFile(263);
-	_itemList[264] = (void **)_skyDisk->loadFile(264);
-	_itemList[265] = (void **)_skyDisk->loadFile(265);
-	_itemList[266] = (void **)_skyDisk->loadFile(266);
-	_itemList[267] = (void **)_skyDisk->loadFile(267);
-	_itemList[269] = (void **)_skyDisk->loadFile(269);
-	_itemList[271] = (void **)_skyDisk->loadFile(271);
-	_itemList[272] = (void **)_skyDisk->loadFile(272);
-		
+	if (!isDemo()) {
+		_itemList[36] = _skyDisk->loadFile(36);
+		_itemList[263] = _skyDisk->loadFile(263);
+		_itemList[264] = _skyDisk->loadFile(264);
+		_itemList[265] = _skyDisk->loadFile(265);
+		_itemList[266] = _skyDisk->loadFile(266);
+		_itemList[267] = _skyDisk->loadFile(267);
+		_itemList[269] = _skyDisk->loadFile(269);
+		_itemList[271] = _skyDisk->loadFile(271);
+		_itemList[272] = _skyDisk->loadFile(272);
+	}		
 }
 
-void **SkyEngine::fetchItem(uint32 num) {
+void *SkyEngine::fetchItem(uint32 num) {
 
 	return _itemList[num];
 }
@@ -435,14 +431,6 @@ void SkyEngine::timerHandler(void *refCon) {
 void SkyEngine::gotTimerTick(void) {
 
 	_skyScreen->handleTimer();
-}
-
-Compact *SkyEngine::fetchCompact(uint32 a) {
-	Debug::fetchCompact(a);
-	uint32 sectionNum = (a & 0xf000) >> 12;
-	uint32 compactNum = (a & 0x0fff);
-
-	return (Compact *)(_itemList[119 + sectionNum][compactNum]);
 }
 
 void SkyEngine::delay(uint amount) {

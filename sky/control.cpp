@@ -36,6 +36,7 @@
 #include "sky/sound.h"
 #include "sky/struc.h"
 #include "sky/text.h"
+#include "sky/compact.h"
 
 namespace Sky {
 
@@ -191,7 +192,7 @@ void ControlStatus::drawToScreen(void) {
 	_statusText->drawToScreen(WITH_MASK);
 }
 
-Control::Control(SaveFileManager *saveFileMan, Screen *screen, Disk *disk, Mouse *mouse, Text *text, MusicBase *music, Logic *logic, Sound *sound, OSystem *system) {
+Control::Control(SaveFileManager *saveFileMan, Screen *screen, Disk *disk, Mouse *mouse, Text *text, MusicBase *music, Logic *logic, Sound *sound, SkyCompact *skyCompact, OSystem *system) {
 	_saveFileMan = saveFileMan;
 
 	_skyScreen = screen;
@@ -201,8 +202,8 @@ Control::Control(SaveFileManager *saveFileMan, Screen *screen, Disk *disk, Mouse
 	_skyMusic = music;
 	_skyLogic = logic;
 	_skySound = sound;
+	_skyCompact = skyCompact;
 	_system = system;
-	_memListRoot = NULL;
 }
 
 ConResource *Control::createResource(void *pSpData, uint32 pNSprites, uint32 pCurSprite, int16 pX, int16 pY, uint32 pText, uint8 pOnClick, uint8 panelType) {
@@ -434,7 +435,7 @@ void Control::doLoadSavePanel(void) {
 	_system->copyRectToScreen(_screenBuf, GAME_SCREEN_WIDTH, 0, 0, GAME_SCREEN_WIDTH, FULL_SCREEN_HEIGHT);
 	_system->updateScreen();
 	_skyScreen->forceRefresh();
-	_skyScreen->setPaletteEndian((uint8 *)SkyEngine::fetchCompact(SkyEngine::_systemVars.currentPalette));
+	_skyScreen->setPaletteEndian((uint8 *)_skyCompact->fetchCpt(SkyEngine::_systemVars.currentPalette));
 	removePanel();
 	_skyMouse->spriteMouse(_savedMouse, 0, 0);
 	_skyText->fnSetFont(_savedCharSet);
@@ -500,7 +501,7 @@ void Control::doControlPanel(void) {
 	_system->copyRectToScreen(_screenBuf, GAME_SCREEN_WIDTH, 0, 0, GAME_SCREEN_WIDTH, FULL_SCREEN_HEIGHT);
 	_system->updateScreen();
 	_skyScreen->forceRefresh();
-	_skyScreen->setPaletteEndian((uint8 *)SkyEngine::fetchCompact(SkyEngine::_systemVars.currentPalette));
+	_skyScreen->setPaletteEndian((uint8 *)_skyCompact->fetchCpt(SkyEngine::_systemVars.currentPalette));
 	removePanel();
 	_skyMouse->spriteMouse(_savedMouse, 0, 0);
 	_skyText->fnSetFont(_savedCharSet);
@@ -1118,7 +1119,6 @@ void Control::doAutoSave(void) {
 }
 
 uint16 Control::saveGameToFile(void) {
-
 	char fName[20];
 	sprintf(fName,"SKY-VM.%03d", _selectedGame);
 
@@ -1144,125 +1144,14 @@ uint16 Control::saveGameToFile(void) {
 #define STOSD(ptr, val) { *(uint32 *)(ptr) = TO_LE_32(val); (ptr) += 4; }
 #define STOSW(ptr, val) { *(uint16 *)(ptr) = TO_LE_16(val); (ptr) += 2; }
 
-void Control::stosMegaSet(uint8 **destPos, MegaSet *mega) {
-	STOSW(*destPos, mega->gridWidth);
-	STOSW(*destPos, mega->colOffset);
-	STOSW(*destPos, mega->colWidth);
-	STOSW(*destPos, mega->lastChr);
-	// anims, stands, turnTable
-}
-
-void Control::stosStr(uint8 **destPos, Compact *cpt, uint16 type) {
-	uint16 strLen = 0;
-	if (type & SAVE_GRAFX) {
-		STOSW(*destPos, cpt->grafixProg.ptrType);
-		STOSW(*destPos, cpt->grafixProg.ptrTarget);
-		STOSW(*destPos, cpt->grafixProg.pos);
-	}
-
-	if (type & SAVE_TURNP) {
-		uint16 *src = cpt->extCompact->turnProg;
-		while (src[strLen])
-			strLen++;
-		strLen++;
-		STOSW(*destPos, strLen);
-		for (uint16 cnt = 0; cnt < strLen; cnt++) {
-			STOSW(*destPos, src[cnt]);
-		}
-	}
-}
-
-void Control::stosCompact(uint8 **destPos, Compact *cpt) {
-	uint16 saveType = 0;
-	if (cpt->extCompact) {
-		saveType |= SAVE_EXT;
-		if (cpt->extCompact->megaSet0) saveType |= SAVE_MEGA0;
-		if (cpt->extCompact->megaSet1) saveType |= SAVE_MEGA1;
-		if (cpt->extCompact->megaSet2) saveType |= SAVE_MEGA2;
-		if (cpt->extCompact->megaSet3) saveType |= SAVE_MEGA3;
-		if (cpt->extCompact->turnProg) saveType |= SAVE_TURNP;
-	}
-	if (cpt->grafixProg.ptrType != PTR_NULL)
-		saveType |= SAVE_GRAFX;
-
-	STOSW(*destPos, saveType);
-
-	stosStr(destPos, cpt, saveType);
-
-	STOSW(*destPos, cpt->logic);
-	STOSW(*destPos, cpt->status);
-	STOSW(*destPos, cpt->sync);
-	STOSW(*destPos, cpt->screen);
-	STOSW(*destPos, cpt->place);
-	// getToTable
-	STOSW(*destPos, cpt->xcood);
-	STOSW(*destPos, cpt->ycood);
-	STOSW(*destPos, cpt->frame);
-	STOSW(*destPos, cpt->cursorText);
-	STOSW(*destPos, cpt->mouseOn);
-	STOSW(*destPos, cpt->mouseOff);
-	STOSW(*destPos, cpt->mouseClick);
-	STOSW(*destPos, cpt->mouseRelX);
-	STOSW(*destPos, cpt->mouseRelY);
-	STOSW(*destPos, cpt->mouseSizeX);
-	STOSW(*destPos, cpt->mouseSizeY);
-	STOSW(*destPos, cpt->actionScript);
-	STOSW(*destPos, cpt->upFlag);
-	STOSW(*destPos, cpt->downFlag);
-	STOSW(*destPos, cpt->getToFlag);
-	STOSW(*destPos, cpt->flag);
-	STOSW(*destPos, cpt->mood);
-	// grafixProg
-	STOSW(*destPos, cpt->offset);
-	STOSW(*destPos, cpt->mode);
-	STOSW(*destPos, cpt->baseSub);
-	STOSW(*destPos, cpt->baseSub_off);
-	if (cpt->extCompact) {
-		STOSW(*destPos, cpt->extCompact->actionSub);
-		STOSW(*destPos, cpt->extCompact->actionSub_off);
-		STOSW(*destPos, cpt->extCompact->getToSub);
-		STOSW(*destPos, cpt->extCompact->getToSub_off);
-		STOSW(*destPos, cpt->extCompact->extraSub);
-		STOSW(*destPos, cpt->extCompact->extraSub_off);
-		STOSW(*destPos, cpt->extCompact->dir);
-		STOSW(*destPos, cpt->extCompact->stopScript);
-		STOSW(*destPos, cpt->extCompact->miniBump);
-		STOSW(*destPos, cpt->extCompact->leaving);
-		STOSW(*destPos, cpt->extCompact->atWatch);
-		STOSW(*destPos, cpt->extCompact->atWas);
-		STOSW(*destPos, cpt->extCompact->alt);
-		STOSW(*destPos, cpt->extCompact->request);
-		STOSW(*destPos, cpt->extCompact->spWidth_xx);
-		STOSW(*destPos, cpt->extCompact->spColour);
-		STOSW(*destPos, cpt->extCompact->spTextId);
-		STOSW(*destPos, cpt->extCompact->spTime);
-		STOSW(*destPos, cpt->extCompact->arAnimIndex);
-		// turnProg
-		STOSW(*destPos, cpt->extCompact->waitingFor);
-		STOSW(*destPos, cpt->extCompact->arTargetX);
-		STOSW(*destPos, cpt->extCompact->arTargetY);
-		// animScratch
-		STOSW(*destPos, cpt->extCompact->megaSet);
-
-		if (cpt->extCompact->megaSet0)
-			stosMegaSet(destPos, cpt->extCompact->megaSet0);
-		if (cpt->extCompact->megaSet1)
-			stosMegaSet(destPos, cpt->extCompact->megaSet1);
-		if (cpt->extCompact->megaSet2)
-			stosMegaSet(destPos, cpt->extCompact->megaSet2);
-		if (cpt->extCompact->megaSet3)
-			stosMegaSet(destPos, cpt->extCompact->megaSet3);
-	}
-}
-
 uint32 Control::prepareSaveData(uint8 *destBuf) {
 
 	uint32 cnt;
 	memset(destBuf, 0, 4); // space for data size
 	uint8 *destPos = destBuf + 4;
 	STOSD(destPos, SAVE_FILE_REVISION);
-
 	STOSD(destPos, SkyEngine::_systemVars.gameVersion);
+
 	STOSW(destPos, _skySound->_saveSounds[0]);
 	STOSW(destPos, _skySound->_saveSounds[1]);
 
@@ -1277,19 +1166,12 @@ uint32 Control::prepareSaveData(uint8 *destBuf) {
 	for (cnt = 0; cnt < 60; cnt++)
 		STOSD(destPos, loadedFilesList[cnt]);
 
-	for (cnt = 0; cnt < ARRAYSIZE(_saveLoadCpts); cnt++)
-		stosCompact(&destPos, _saveLoadCpts[cnt]);
-
-	for (cnt = 0; cnt < ARRAYSIZE(_saveLoadARs); cnt++)
-		for (uint8 elemCnt = 0; elemCnt < 32; elemCnt++) {
-			STOSW(destPos, _saveLoadARs[cnt][elemCnt]);
-		}
-
-	for (cnt = 0; cnt < 3; cnt++)
-		STOSW(destPos, SkyCompact::park_table[cnt]);
-
-	for (cnt = 0; cnt < 13; cnt++)
-		STOSW(destPos, SkyCompact::high_floor_table[cnt]);
+	for (cnt = 0; cnt < _skyCompact->_numSaveIds; cnt++) {
+		uint16 numElems;
+		uint16 *rawCpt = (uint16*)_skyCompact->fetchCptInfo(_skyCompact->_saveIds[cnt], &numElems, NULL, NULL);
+		for (uint16 cnt = 0; cnt < numElems; cnt++)
+			STOSW(destPos, rawCpt[cnt]);
+	}
 
 	*(uint32 *)destBuf = TO_LE_32(destPos - destBuf); // save size
 	return destPos - destBuf;
@@ -1298,163 +1180,143 @@ uint32 Control::prepareSaveData(uint8 *destBuf) {
 #undef STOSD
 #undef STOSW
 
-void Control::appendMemList(uint16 *pMem) {
-	AllocedMem *newMem = new AllocedMem;
-	newMem->mem = pMem;
-	newMem->next = _memListRoot;
-	_memListRoot = newMem;
-}
-
-void Control::freeMemList(void) {
-	AllocedMem *block = _memListRoot;
-	AllocedMem *temp;
-	while (block) {
-		temp = block;
-		free(block->mem);
-		block = block->next;
-		delete temp;
-	}
-	_memListRoot = NULL;
-}
-
-
 #define LODSD(strPtr, val) { val = READ_LE_UINT32(strPtr); (strPtr) += 4; }
 #define LODSW(strPtr, val) { val = READ_LE_UINT16(strPtr); (strPtr) += 2; }
 
-void Control::lodsMegaSet(uint8 **srcPos, MegaSet *mega) {
+void Control::importOldMegaSet(uint8 **srcPos, MegaSet *mega) {
 	LODSW(*srcPos, mega->gridWidth);
 	LODSW(*srcPos, mega->colOffset);
 	LODSW(*srcPos, mega->colWidth);
 	LODSW(*srcPos, mega->lastChr);
-	// anims, stands, turnTable
 }
 
-void Control::lodsCompact(uint8 **srcPos, Compact *cpt) {
-
-	uint16 saveType, cnt;
+void Control::importOldCompact(Compact* destCpt, uint8 **srcPos, uint16 numElems, uint16 type, char *name) {
+	uint16 saveType;
 	LODSW(*srcPos, saveType);
-	if ((saveType & (SAVE_EXT | SAVE_TURNP)) && (cpt->extCompact == NULL))
-		error("Can't restore! SaveData is SAVE_EXT for Compact");
-	if ((saveType & SAVE_MEGA0) && (cpt->extCompact->megaSet0 == NULL))
-		error("Can't restore! SaveData is SAVE_MEGA0 for Compact");
-	if ((saveType & SAVE_MEGA1) && (cpt->extCompact->megaSet1 == NULL))
-		error("Can't restore! SaveData is SAVE_MEGA1 for Compact");
-	if ((saveType & SAVE_MEGA2) && (cpt->extCompact->megaSet2 == NULL))
-		error("Can't restore! SaveData is SAVE_MEGA2 for Compact");
-	if ((saveType & SAVE_MEGA3) && (cpt->extCompact->megaSet3 == NULL))
-		error("Can't restore! SaveData is SAVE_MEGA3 for Compact");
-
+	if ((saveType & (SAVE_EXT | SAVE_TURNP)) && (numElems < 54))
+		error("Cpt %s: Savedata doesn't match cpt size (%d)!\n", name, numElems);
+	if ((saveType & SAVE_MEGA0) && (numElems < 54 + 13))
+		error("Cpt %s: Savedata doesn't match cpt size (%d)!\n", name, numElems);
+	if ((saveType & SAVE_MEGA1) && (numElems < 54 + 13 + 13))
+		error("Cpt %s: Savedata doesn't match cpt size (%d)!\n", name, numElems);
+	if ((saveType & SAVE_MEGA2) && (numElems < 54 + 13 + 13 + 13))
+		error("Cpt %s: Savedata doesn't match cpt size (%d)!\n", name, numElems);
+	if ((saveType & SAVE_MEGA3) && (numElems < 54 + 13 + 13 + 13))
+		error("Cpt %s: Savedata doesn't match cpt size (%d)!\n", name, numElems);
 	if (saveType & SAVE_GRAFX) {
-		uint16 tmp;
-		LODSW(*srcPos, tmp);
-		cpt->grafixProg.ptrType = (uint8)tmp;
-		LODSW(*srcPos, cpt->grafixProg.ptrTarget);
-		LODSW(*srcPos, cpt->grafixProg.pos);
-	} else {
-		cpt->grafixProg.ptrType = PTR_NULL;
-		cpt->grafixProg.ptrTarget = 0;
-		cpt->grafixProg.pos = 0;
+		uint16 type, target, pos;
+		LODSW(*srcPos, type);
+		LODSW(*srcPos, target);
+		LODSW(*srcPos, pos);
+		// convert to new compact system..
+		destCpt->grafixProgPos = pos;
+		if (type == OG_PTR_NULL)
+			destCpt->grafixProgId = 0;
+		else if (type == OG_AUTOROUTE)
+			destCpt->grafixProgId = destCpt->animScratchId;
+		else if (type == OG_COMPACT)
+			destCpt->grafixProgId = target;
+		else if (type == OG_TALKTABLE)
+			destCpt->grafixProgId = TALKTABLE_LIST_ID | target;
+		else if (type == OG_COMPACTELEM)
+			destCpt->grafixProgId = *(uint16*)_skyCompact->getCompactElem(destCpt, target);
+		else 
+			error("Illegal GrafixProg type encountered for compact %s", name);
 	}
-
 	if (saveType & SAVE_TURNP) {
-		uint16 turnLen;
-		LODSW(*srcPos, turnLen);
-		cpt->extCompact->turnProg = (uint16 *)malloc(turnLen << 1);
-		appendMemList(cpt->extCompact->turnProg);
-		for (cnt = 0; cnt < turnLen; cnt++)
-			LODSW(*srcPos, cpt->extCompact->turnProg[cnt]);
-	} else if (cpt->extCompact)
-		cpt->extCompact->turnProg = NULL;
-
-	LODSW(*srcPos, cpt->logic);
-	LODSW(*srcPos, cpt->status);
-	LODSW(*srcPos, cpt->sync);
-	LODSW(*srcPos, cpt->screen);
-	LODSW(*srcPos, cpt->place);
+		// basically impossible to import these. simply set it to end-of-turn and hope the script
+		// will take care of it.
+		destCpt->turnProgId = 0x13B;
+		destCpt->turnProgPos = 1;
+		uint16 turnSkipLen;
+		LODSW(*srcPos, turnSkipLen);
+		*srcPos += 2 * turnSkipLen;
+	} else if (numElems >= 49) {
+		destCpt->turnProgId = 0;
+		destCpt->turnProgPos = 0;
+	}
+	LODSW(*srcPos, destCpt->logic);
+	LODSW(*srcPos, destCpt->status);
+	LODSW(*srcPos, destCpt->sync);
+	LODSW(*srcPos, destCpt->screen);
+	LODSW(*srcPos, destCpt->place);
 	// getToTable
-	LODSW(*srcPos, cpt->xcood);
-	LODSW(*srcPos, cpt->ycood);
-	LODSW(*srcPos, cpt->frame);
-	LODSW(*srcPos, cpt->cursorText);
-	LODSW(*srcPos, cpt->mouseOn);
-	LODSW(*srcPos, cpt->mouseOff);
-	LODSW(*srcPos, cpt->mouseClick);
-	LODSW(*srcPos, cpt->mouseRelX);
-	LODSW(*srcPos, cpt->mouseRelY);
-	LODSW(*srcPos, cpt->mouseSizeX);
-	LODSW(*srcPos, cpt->mouseSizeY);
-	LODSW(*srcPos, cpt->actionScript);
-	LODSW(*srcPos, cpt->upFlag);
-	LODSW(*srcPos, cpt->downFlag);
-	LODSW(*srcPos, cpt->getToFlag);
-	LODSW(*srcPos, cpt->flag);
-	LODSW(*srcPos, cpt->mood);
+	LODSW(*srcPos, destCpt->xcood);
+	LODSW(*srcPos, destCpt->ycood);
+	LODSW(*srcPos, destCpt->frame);
+	LODSW(*srcPos, destCpt->cursorText);
+	LODSW(*srcPos, destCpt->mouseOn);
+	LODSW(*srcPos, destCpt->mouseOff);
+	LODSW(*srcPos, destCpt->mouseClick);
+	LODSW(*srcPos, destCpt->mouseRelX);
+	LODSW(*srcPos, destCpt->mouseRelY);
+	LODSW(*srcPos, destCpt->mouseSizeX);
+	LODSW(*srcPos, destCpt->mouseSizeY);
+	LODSW(*srcPos, destCpt->actionScript);
+	LODSW(*srcPos, destCpt->upFlag);
+	LODSW(*srcPos, destCpt->downFlag);
+	LODSW(*srcPos, destCpt->getToFlag);
+	LODSW(*srcPos, destCpt->flag);
+	LODSW(*srcPos, destCpt->mood);
 	// grafixProg
-	LODSW(*srcPos, cpt->offset);
-	LODSW(*srcPos, cpt->mode);
-	LODSW(*srcPos, cpt->baseSub);
-	LODSW(*srcPos, cpt->baseSub_off);
+	LODSW(*srcPos, destCpt->offset);
+	LODSW(*srcPos, destCpt->mode);
+	LODSW(*srcPos, destCpt->baseSub);
+	LODSW(*srcPos, destCpt->baseSub_off);
 	if (saveType & SAVE_EXT) {
-		LODSW(*srcPos, cpt->extCompact->actionSub);
-		LODSW(*srcPos, cpt->extCompact->actionSub_off);
-		LODSW(*srcPos, cpt->extCompact->getToSub);
-		LODSW(*srcPos, cpt->extCompact->getToSub_off);
-		LODSW(*srcPos, cpt->extCompact->extraSub);
-		LODSW(*srcPos, cpt->extCompact->extraSub_off);
-		LODSW(*srcPos, cpt->extCompact->dir);
-		LODSW(*srcPos, cpt->extCompact->stopScript);
-		LODSW(*srcPos, cpt->extCompact->miniBump);
-		LODSW(*srcPos, cpt->extCompact->leaving);
-		LODSW(*srcPos, cpt->extCompact->atWatch);
-		LODSW(*srcPos, cpt->extCompact->atWas);
-		LODSW(*srcPos, cpt->extCompact->alt);
-		LODSW(*srcPos, cpt->extCompact->request);
-		LODSW(*srcPos, cpt->extCompact->spWidth_xx);
-		LODSW(*srcPos, cpt->extCompact->spColour);
-		LODSW(*srcPos, cpt->extCompact->spTextId);
-		LODSW(*srcPos, cpt->extCompact->spTime);
-		LODSW(*srcPos, cpt->extCompact->arAnimIndex);
+		LODSW(*srcPos, destCpt->actionSub);
+		LODSW(*srcPos, destCpt->actionSub_off);
+		LODSW(*srcPos, destCpt->getToSub);
+		LODSW(*srcPos, destCpt->getToSub_off);
+		LODSW(*srcPos, destCpt->extraSub);
+		LODSW(*srcPos, destCpt->extraSub_off);
+		LODSW(*srcPos, destCpt->dir);
+		LODSW(*srcPos, destCpt->stopScript);
+		LODSW(*srcPos, destCpt->miniBump);
+		LODSW(*srcPos, destCpt->leaving);
+		LODSW(*srcPos, destCpt->atWatch);
+		LODSW(*srcPos, destCpt->atWas);
+		LODSW(*srcPos, destCpt->alt);
+		LODSW(*srcPos, destCpt->request);
+		LODSW(*srcPos, destCpt->spWidth_xx);
+		LODSW(*srcPos, destCpt->spColour);
+		LODSW(*srcPos, destCpt->spTextId);
+		LODSW(*srcPos, destCpt->spTime);
+		LODSW(*srcPos, destCpt->arAnimIndex);
 		// turnProg
-		LODSW(*srcPos, cpt->extCompact->waitingFor);
-		LODSW(*srcPos, cpt->extCompact->arTargetX);
-		LODSW(*srcPos, cpt->extCompact->arTargetY);
+		LODSW(*srcPos, destCpt->waitingFor);
+		LODSW(*srcPos, destCpt->arTargetX);
+		LODSW(*srcPos, destCpt->arTargetY);
 		// animScratch
-		LODSW(*srcPos, cpt->extCompact->megaSet);
-
+		LODSW(*srcPos, destCpt->megaSet);
 		if (saveType & SAVE_MEGA0)
-			lodsMegaSet(srcPos, cpt->extCompact->megaSet0);
+			importOldMegaSet(srcPos, &(destCpt->megaSet0));
 		if (saveType & SAVE_MEGA1)
-			lodsMegaSet(srcPos, cpt->extCompact->megaSet1);
+			importOldMegaSet(srcPos, &(destCpt->megaSet1));
 		if (saveType & SAVE_MEGA2)
-			lodsMegaSet(srcPos, cpt->extCompact->megaSet2);
+			importOldMegaSet(srcPos, &(destCpt->megaSet2));
 		if (saveType & SAVE_MEGA3)
-			lodsMegaSet(srcPos, cpt->extCompact->megaSet3);
+			importOldMegaSet(srcPos, &(destCpt->megaSet3));
 	}
 }
 
 uint16 Control::parseSaveData(uint8 *srcBuf) {
-
 	uint32 reloadList[60];
 	uint32 oldSection = Logic::_scriptVariables[CUR_SECTION];
-	
 	uint32 cnt;
 	uint8 *srcPos = srcBuf;
 	uint32 size;
 	uint32 saveRev;
-
+	uint32 gameVersion;
 	LODSD(srcPos, size);
 	LODSD(srcPos, saveRev);
 	if (saveRev > SAVE_FILE_REVISION) {
 		displayMessage(0, "Unknown save file revision (%d)", saveRev);
 		return RESTORE_FAILED;
-	}
-
-	if (saveRev <= OLD_SAVEGAME_TYPE) {
+	} else if (saveRev < OLD_SAVEGAME_TYPE) {
 		displayMessage(0, "This savegame version is unsupported.");
 		return RESTORE_FAILED;
 	}
-	uint32 music, mouseType, palette, gameVersion;
-	
 	LODSD(srcPos, gameVersion);
 	if (gameVersion != SkyEngine::_systemVars.gameVersion) {
 		if ((!SkyEngine::isCDVersion()) || (gameVersion < 365)) { // cd versions are compatible
@@ -1469,7 +1331,7 @@ uint16 Control::parseSaveData(uint8 *srcBuf) {
 	LODSW(srcPos, _skySound->_saveSounds[1]);
 	_skySound->restoreSfx();
 
-	freeMemList(); // memory from last restore isn't needed anymore
+	uint32 music, mouseType, palette;
 	LODSD(srcPos, music);
 	LODSD(srcPos, _savedCharSet);
 	LODSD(srcPos, mouseType);
@@ -1481,19 +1343,34 @@ uint16 Control::parseSaveData(uint8 *srcBuf) {
 	for (cnt = 0; cnt < 60; cnt++)
 		LODSD(srcPos, reloadList[cnt]);
 
-	for (cnt = 0; cnt < ARRAYSIZE(_saveLoadCpts); cnt++)
-		lodsCompact(&srcPos, _saveLoadCpts[cnt]);
-
-	for (cnt = 0; cnt < ARRAYSIZE(_saveLoadARs); cnt++)
-		for (uint8 elemCnt = 0; elemCnt < 32; elemCnt++) {
-			LODSW(srcPos, _saveLoadARs[cnt][elemCnt]);
+	if (saveRev == SAVE_FILE_REVISION) {
+		for (cnt = 0; cnt < _skyCompact->_numSaveIds; cnt++) {
+			uint16 numElems;
+			uint16 *rawCpt = (uint16*)_skyCompact->fetchCptInfo(_skyCompact->_saveIds[cnt], &numElems, NULL, NULL);
+			for (uint16 elemCnt = 0; elemCnt < numElems; elemCnt++)
+				LODSW(srcPos, rawCpt[elemCnt]);
 		}
-
-	for (cnt = 0; cnt < 3; cnt++)
-		LODSW(srcPos, SkyCompact::park_table[cnt]);
-
-	for (cnt = 0; cnt < 13; cnt++)
-		LODSW(srcPos, SkyCompact::high_floor_table[cnt]);
+	} else {	// import old savegame revision
+		for (cnt = 0; cnt < (uint32)(_skyCompact->_numSaveIds - 2); cnt++) {
+			uint16 numElems;
+			uint16 type;
+			char name[128];
+			uint16 *rawCpt = (uint16*)_skyCompact->fetchCptInfo(_skyCompact->_saveIds[cnt], &numElems, &type, name);
+			if (type == COMPACT) {
+				importOldCompact((Compact*)rawCpt, &srcPos, numElems, type, name);
+			} else if (type == ROUTEBUF) {
+				assert(numElems == 32);
+				for (uint32 elemCnt = 0; elemCnt < numElems; elemCnt++)
+					LODSW(srcPos, rawCpt[elemCnt]);
+			}
+		}
+		uint16 *rawCpt = (uint16*)_skyCompact->fetchCpt(0xBF);
+		for (cnt = 0; cnt < 3; cnt++)
+			LODSW(srcPos, rawCpt[cnt]);
+		rawCpt = (uint16*)_skyCompact->fetchCpt(0xC2);
+		for (cnt = 0; cnt < 13; cnt++)
+			LODSW(srcPos, rawCpt[cnt]);
+	}
 
 	if (srcPos - srcBuf != (int32)size)
 		error("Restore failed! Savegame data = %d bytes. Expected size: %d", srcPos-srcBuf, size);
@@ -1513,11 +1390,8 @@ uint16 Control::parseSaveData(uint8 *srcBuf) {
 	return GAME_RESTORED;
 }
 
-#undef LODSD
-#undef LODSW
 
 uint16 Control::restoreGameFromFile(bool autoSave) {
-	
 	char fName[20];
 	if (autoSave) {
 		if (SkyEngine::isCDVersion())
@@ -1581,7 +1455,7 @@ uint16 Control::quickXRestore(uint16 slot) {
 		memset(_skyScreen->giveCurrent(), 0, GAME_SCREEN_WIDTH * GAME_SCREEN_HEIGHT);
 		_skyScreen->showScreen(_skyScreen->giveCurrent());
 		_skyScreen->forceRefresh();
-		_skyScreen->setPaletteEndian((uint8 *)SkyEngine::fetchCompact(SkyEngine::_systemVars.currentPalette));
+		_skyScreen->setPaletteEndian((uint8 *)_skyCompact->fetchCpt(SkyEngine::_systemVars.currentPalette));
 	} else {
 		memset(_screenBuf, 0, FULL_SCREEN_WIDTH * FULL_SCREEN_HEIGHT);
 		_system->copyRectToScreen(_screenBuf, GAME_SCREEN_WIDTH, 0, 0, GAME_SCREEN_WIDTH, FULL_SCREEN_HEIGHT);
@@ -1596,82 +1470,18 @@ uint16 Control::quickXRestore(uint16 slot) {
     return result;
 }
 
-uint16 *Control::lz77decode(uint16 *data) {
-	uint32 size = READ_LE_UINT32(data);
-	data += 2;
-	uint16 *outBuf = (uint16*)malloc(size << 1);
-	uint32 outPos = 0;
-	uint16 lzPos;
-	uint16 lzBuf[0x1000];
-	memset(lzBuf + 0xF00, 0, 0x200);
-	for (lzPos = 0; lzPos < 0xF00; lzPos++)
-		lzBuf[lzPos] = TO_LE_16(0xF00 - lzPos);
-	lzPos = 0;
-	uint32 indic = 0;
-	while (outPos < size) {
-		if (!(indic >> 16)) {
-			indic = READ_LE_UINT16(data) | 0xFFFF0000;
-			data++;
-		}
-		if (indic & 1) {
-			lzBuf[lzPos] = outBuf[outPos] = *data;
-			outPos++;
-			lzPos = (lzPos + 1) & 0xFFF;
-		} else {
-			uint16 lzFrom = READ_LE_UINT16(data) >> 4;
-			uint16 lzLen = (READ_LE_UINT16(data) & 0xF) + 2;
-			for (uint16 cnt = 0; cnt < lzLen; cnt++)
-				outBuf[outPos + cnt] = lzBuf[(lzPos + cnt) & 0xFFF] = lzBuf[(lzFrom + cnt) & 0xFFF];
-			
-			outPos += lzLen;
-			lzPos = (lzPos + lzLen) & 0xFFF;
-		}
-		data++;
-		indic >>= 1;
-	}
-	return outBuf;
-}
-
-void Control::applyDiff(uint16 *data, uint16 *diffData, uint16 len) {
-	for (uint16 cnt = 0; cnt < len; cnt++) {
-		data += READ_LE_UINT16(diffData);
-		diffData++;
-		*data = *diffData;
-		diffData++;
-		data++;
-	}
-}
-
 void Control::restartGame(void) {
 	if (SkyEngine::_systemVars.gameVersion <= 267)
 		return; // no restart for floppy demo
 
-	uint16 *resetData = lz77decode((uint16 *)_resetData288);
-	switch (SkyEngine::_systemVars.gameVersion) {
-	case 303:
-		applyDiff(resetData, (uint16*)_resetDiff303, 206);
-		break;
-	case 331:
-		applyDiff(resetData, (uint16*)_resetDiff331, 206);
-		break;
-	case 348:
-		applyDiff(resetData, (uint16*)_resetDiff348, 206);
-		break;
-	case 365:
-	case 368:
-	case 372:
-		applyDiff(resetData, (uint16*)_resetDiffCd, 214);
-	default:
-		break;
-	}
-	// ok, we finally have our savedata
-
+	uint8 *resetData = _skyCompact->createResetData((uint16)SkyEngine::_systemVars.gameVersion);
 	parseSaveData((uint8*)resetData);
 	free(resetData);
 	_skyScreen->forceRefresh();
+
 	memset(_skyScreen->giveCurrent(), 0, GAME_SCREEN_WIDTH * FULL_SCREEN_HEIGHT);
 	_skyScreen->showScreen(_skyScreen->giveCurrent());
-	_skyScreen->setPaletteEndian((uint8 *)SkyEngine::fetchCompact(SkyEngine::_systemVars.currentPalette));
+	_skyScreen->setPaletteEndian((uint8 *)_skyCompact->fetchCpt(SkyEngine::_systemVars.currentPalette));
 	_skyMouse->spriteMouse(_savedMouse, 0, 0);
 	SkyEngine::_systemVars.pastIntro = true;
 }

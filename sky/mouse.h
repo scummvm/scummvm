@@ -31,12 +31,13 @@ namespace Sky {
 
 class Disk;
 class Logic;
+class SkyCompact;
 
 class Mouse {
 
 public:
 
-	Mouse(OSystem *system, Disk *skyDisk);
+	Mouse(OSystem *system, Disk *skyDisk, SkyCompact *skyCompact);
 	~Mouse(void);
 
 	void mouseEngine(uint16 mouseX, uint16 mouseY);
@@ -82,6 +83,7 @@ protected:
 	OSystem *_system;
 	Disk *_skyDisk;
 	Logic *_skyLogic;
+	SkyCompact *_skyCompact;
 };
 
 } // End of namespace Sky

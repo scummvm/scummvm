@@ -27,6 +27,7 @@
 #include "sky/sky.h"
 #include "sky/skydefs.h"
 #include "sky/struc.h"
+#include "sky/compact.h"
 
 namespace Sky {
 
@@ -85,9 +86,10 @@ uint32 Mouse::_mouseLincObjects[21] = {
 	24829
 };
 
-Mouse::Mouse(OSystem *system, Disk *skyDisk) {
+Mouse::Mouse(OSystem *system, Disk *skyDisk, SkyCompact *skyCompact) {
 
 	_skyDisk = skyDisk;
+	_skyCompact = skyCompact;
 	_system = system;
 	_mouseB = 0;
 	_currentCursor = 6;
@@ -215,10 +217,12 @@ void Mouse::pointerEngine(uint16 xPos, uint16 yPos) {
 	uint32 currentListNum = Logic::_scriptVariables[MOUSE_LIST_NO];
 	uint16 *currentList;
 	do {
-		currentList = (uint16 *)SkyEngine::fetchCompact(currentListNum);
+		currentList = (uint16 *)_skyCompact->fetchCpt(currentListNum);
 		while ((*currentList != 0) && (*currentList != 0xFFFF)) {
 			uint16 itemNum = *currentList;
-			Compact *itemData = SkyEngine::fetchCompact(itemNum);
+			Compact *itemData = _skyCompact->fetchCpt(itemNum);
+			if (itemNum == 0x2E)
+				printf("menu\n");
 			currentList++;
 			if ((itemData->screen == Logic::_scriptVariables[SCREEN]) &&	(itemData->status & 16)) {
 				if (itemData->xcood + ((int16)itemData->mouseRelX) > xPos) continue;
@@ -237,8 +241,8 @@ void Mouse::pointerEngine(uint16 xPos, uint16 yPos) {
 				return;
 			}
 		}
-		if (*currentList == 0xFFFF) currentListNum = currentList[1];
-
+		if (*currentList == 0xFFFF)
+			currentListNum = currentList[1];
 	} while (*currentList != 0);
 	if (Logic::_scriptVariables[SPECIAL_ITEM] != 0) {
 		Logic::_scriptVariables[SPECIAL_ITEM] = 0;
@@ -261,7 +265,7 @@ void Mouse::buttonEngine1(void) {
 	if (_mouseB) {	//anything pressed?
 		Logic::_scriptVariables[BUTTON] = _mouseB;
 		if (Logic::_scriptVariables[SPECIAL_ITEM]) { //over anything?
-			Compact *item = SkyEngine::fetchCompact(Logic::_scriptVariables[SPECIAL_ITEM]);
+			Compact *item = _skyCompact->fetchCpt(Logic::_scriptVariables[SPECIAL_ITEM]);
 			if (item->mouseClick)
 				_skyLogic->mouseScript(item->mouseClick, item);
 		}
