@@ -23,6 +23,10 @@
 #include "scumm.h"
 #include "sound.h"
 
+#ifdef _WIN32_WCE
+#define _MANAGE_OLD_SAVE
+#endif
+
 struct SaveGameHeader {
 	uint32 type;
 	uint32 size;
@@ -30,7 +34,7 @@ struct SaveGameHeader {
 	char name[32];
 };
 
-#ifdef _WIN32_WCE
+#ifdef _MANAGE_OLD_SAVE
 
 // Support for "old" savegames (made with 2501 CVS build)
 // Can be useful for other ports too :)
@@ -64,7 +68,7 @@ bool Scumm::saveState(int slot, bool compat) {
 	hdr.type = MKID('SCVM');
 	hdr.size = 0;
 
-#ifdef _WIN32_WCE
+#ifdef _MANAGE_OLD_SAVE
 
 	hdr.ver = _current_version;
 
@@ -104,7 +108,7 @@ bool Scumm::loadState(int slot, bool compat) {
 		return false;
 	}
 
-#ifdef _WIN32_WCE	
+#ifdef _MANAGE_OLD_SAVE	
 
 	if (hdr.ver != VER_V8 && hdr.ver != VER_V7) {
 
@@ -119,7 +123,7 @@ bool Scumm::loadState(int slot, bool compat) {
 		return false;
 	}
 
-#ifdef _WIN32_WCE
+#ifdef _MANAGE_OLD_SAVE
 
 	_current_version = hdr.ver;
 
@@ -185,7 +189,7 @@ bool Scumm::loadState(int slot, bool compat) {
 
 void Scumm::makeSavegameName(char *out, int slot, bool compatible) {
 
-#ifndef _WIN32_WCE			
+#ifndef _WIN32_WCE
 
 	#if !defined(__APPLE__CW)
 	const char *dir = getenv("SCUMMVM_SAVEPATH");
@@ -223,7 +227,7 @@ bool Scumm::getSavegameName(int slot, char *desc) {
 		return false;
 	}
 
-#ifdef _WIN32_WCE				
+#ifdef _MANAGE_OLD_SAVE
 
 	if (hdr.ver != VER_V8 && hdr.ver != VER_V7) {
 
@@ -365,7 +369,7 @@ void Scumm::saveOrLoad(Serializer *s) {
 		MKEND()
 	};
 	
-#ifdef _WIN32_WCE
+#ifdef _MANAGE_OLD_SAVE
 
 		const SaveLoadEntry mainEntries1[] = {
 		MKLINE(Scumm,_scrWidth,sleUint16),
@@ -652,7 +656,7 @@ void Scumm::saveOrLoad(Serializer *s) {
 	int var120Backup;
 	int var98Backup;
 	
-#ifdef _WIN32_WCE
+#ifdef _MANAGE_OLD_SAVE
 
 	s->saveLoadEntries(this, mainEntries1);
 	s->saveLoadEntries(this, (_current_version == VER_V8 ? mainEntries2V8 : mainEntries2V7));
@@ -664,7 +668,7 @@ void Scumm::saveOrLoad(Serializer *s) {
 
 #endif
 
-#ifdef _WIN32_WCE
+#ifdef _MANAGE_OLD_SAVE
 
 	// Probably not necessary anymore with latest NUM_ACTORS values
 
