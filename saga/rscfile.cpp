@@ -264,7 +264,7 @@ int RSC_FreeResource(byte *resource_ptr) {
 int RSC_ConvertID(int id) {
 	int res = id;
 
-	if (IS_MAC_VERSION) {
+	if (_vm->_features & GF_MAC_RESOURCES) {
 		if (res > 1537)
 			res -= 2;
 		else if (res == 1535 || res == 1536) {

@@ -24,9 +24,11 @@
 // Game detection, general game parameters
 
 #include "saga/saga.h"
+
 #include "common/file.h"
-#include "base/gameDetector.h"
+#include "common/md5.h"
 #include "base/plugins.h"
+#include "base/gameDetector.h"
 #include "backends/fs/fs.h"
 
 #include "saga/rscfile_mod.h"
@@ -55,22 +57,21 @@ static GAME_SOUNDINFO ITEDEMO_GameSound = {
 	GAME_SOUND_VOC, 0, 0, 0
 };
 
-// Inherit the Earth - MAC Wyrmkeep Demo version
-static GAME_FILEDESC ITEMACDEMO_GameFiles[] = {
-	{"ITED.RSC", GAME_RESOURCEFILE},
-	{"SCRIPTSD.RSC", GAME_SCRIPTFILE},
-	{"SOUNDSD.RSC", GAME_SOUNDFILE},
-	{"VOICESD.RSC", GAME_VOICEFILE},
-	{"MUSICD.RSC", GAME_MUSICFILE}
-};
-
 static GAME_FONTDESC ITEMACDEMO_GameFonts[] = {
 	{GAME_FONT_MEDIUM, 0},
 	{GAME_FONT_SMALL, 2}
 }; 
 
-// Inherit the Earth - win32 Wyrmkeep Linux Demo version
-static GAME_FILEDESC ITEWINDEMO_GameFiles[] = {
+// Inherit the Earth - Wyrmkeep Win32 Demo version
+static GAME_FILEDESC ITEWINDEMO2_GameFiles[] = {
+	{"ITED.RSC", GAME_RESOURCEFILE},
+	{"SCRIPTSD.RSC", GAME_SCRIPTFILE},
+	{"SOUNDSD.RSC", GAME_SOUNDFILE},
+	{"VOICESD.RSC", GAME_VOICEFILE}
+};
+
+// Inherit the Earth -  Wyrmkeep Linux Demo version
+static GAME_FILEDESC ITELINDEMO_GameFiles[] = {
 	{"ITED.RSC", GAME_RESOURCEFILE},
 	{"SCRIPTSD.RSC", GAME_SCRIPTFILE},
 	{"SOUNDSD.RSC", GAME_SOUNDFILE},
@@ -83,8 +84,17 @@ static GAME_FONTDESC ITEWINDEMO_GameFonts[] = {
 	{GAME_FONT_SMALL, 2}
 }; 
 
+// Inherit the Earth - Mac Wyrmkeep version
+static GAME_FILEDESC ITEMACCD_GameFiles[] = {
+	{"ite.rsc", GAME_RESOURCEFILE},
+	{"scripts.rsc", GAME_SCRIPTFILE},
+	{"sounds.rsc", GAME_SOUNDFILE},
+	{"Inherit the Earth Voices", GAME_VOICEFILE},
+	{"music.rsc", GAME_MUSICFILE}
+};
+
 // Inherit the Earth - win32 Wyrmkeep Demo version older release
-static GAME_FILEDESC ITEWINDEMOOld_GameFiles[] = {
+static GAME_FILEDESC ITEWINDEMO1_GameFiles[] = {
 	{"ITED.RSC", GAME_RESOURCEFILE},
 	{"SCRIPTSD.RSC", GAME_SCRIPTFILE},
 	{"SOUNDSD.RSC", GAME_SOUNDFILE},
@@ -181,12 +191,74 @@ static GAME_SOUNDINFO IHNM_GameSound = {
 	GAME_SOUND_WAV, 0, 0, 0
 };
 
+struct GAME_MD5 {
+	GAME_IDS id;
+	const char *md5;
+	const char *filename;
+	uint32 len;
+};
+
+static GAME_MD5 game_md5[] = {
+	{ GID_ITE_DISK_G,   "8f4315a9bb10ec839253108a032c8b54", "ite.rsc", 5000 },
+	{ GID_ITE_DISK_G,   "516f7330f8410057b834424ea719d1ef", "scripts.rsc", 5000 },
+	{ GID_ITE_DISK_G,   "c46e4392fcd2e89bc91e5567db33b62d", "voices.rsc", 5000 },
+
+	{ GID_ITE_CD_G,     "8f4315a9bb10ec839253108a032c8b54", "ite.rsc", 5000 },
+	{ GID_ITE_CD_G,     "a891405405edefc69c9d6c420c868b84", "scripts.rsc", 5000 },
+	{ GID_ITE_CD_G,     "e2ccb61c325d6d1ead3be0e731fe29fe", "sounds.rsc", 5000 },
+	{ GID_ITE_CD_G,     "41bb6b95d792dde5196bdb78740895a6", "voices.rsc", 5000 },
+
+	{ GID_ITE_DEMO_G,   "986c79c4d2939dbe555576529fd37932", "ite.rsc", 5000 },
+	{ GID_ITE_DEMO_G,   "d5697dd3240a3ceaddaa986c47e1a2d7", "scripts.rsc", 5000 },
+	{ GID_ITE_DEMO_G,   "c58e67c506af4ffa03fd0aac2079deb0", "voices.rsc", 5000 },
+
+	{ GID_ITE_MACCD,    "4f7fa11c5175980ed593392838523060", "ite.rsc", 5000 },
+	{ GID_ITE_MACCD,    "adf1f46c1d0589083996a7060c798ad0", "scripts.rsc", 5000 },
+	{ GID_ITE_MACCD,    "1a91cd60169f367ecb6c6e058d899b2f", "music.rsc", 5000 },
+	{ GID_ITE_MACCD,    "95863b89a0916941f6c5e1789843ba14", "sounds.rsc", 5000 },
+	{ GID_ITE_MACCD,    "c14c4c995e7a0d3828e3812a494301b7", "Inherit the Earth Voices", 5000 },
+
+	{ GID_ITE_DISK_DE,  "869fc23c8f38f575979ec67152914fee", "ite.rsc", 5000 },
+	{ GID_ITE_DISK_DE,  "516f7330f8410057b834424ea719d1ef", "scripts.rsc", 5000 },
+	{ GID_ITE_DISK_DE,  "0c9113e630f97ef0996b8c3114badb08", "voices.rsc", 5000 },
+
+	{ GID_ITE_WINDEMO2, "3a450852cbf3c80773984d565647e6ac", "ited.rsc", 5000 },
+	{ GID_ITE_WINDEMO2, "3f12b67fa93e56e1a6be39d2921d80bb", "scriptsd.rsc", 5000 },
+	{ GID_ITE_WINDEMO2, "95a6c148e22e99a8c243f2978223583c", "soundsd.rsc", 5000 },
+	{ GID_ITE_WINDEMO2, "e139d86bab2ee8ba3157337f894a92d4", "voicesd.rsc", 5000 },
+
+	{ GID_ITE_LINDEMO,  "3a450852cbf3c80773984d565647e6ac", "ited.rsc", 5000 },
+	{ GID_ITE_LINDEMO,  "3f12b67fa93e56e1a6be39d2921d80bb", "scriptsd.rsc", 5000 },
+	{ GID_ITE_LINDEMO,  "d6454756517f042f01210458abe8edd4", "musicd.rsc", 5000 },
+	{ GID_ITE_LINDEMO,  "95a6c148e22e99a8c243f2978223583c", "soundsd.rsc", 5000 },
+	{ GID_ITE_LINDEMO,  "e139d86bab2ee8ba3157337f894a92d4", "voicesd.rsc", 5000 },
+
+	{ GID_ITE_MACDEMO2, "addfc9d82bc2fa1f4cab23743c652c08", "ited.rsc", 5000 },
+	{ GID_ITE_MACDEMO2, "fded5c59b8b7c5976229f960d21e6b0b", "scriptsd.rsc", 5000 },
+	{ GID_ITE_MACDEMO2, "495bdde51fd9f4bea2b9c911091b1ab2", "musicd.rsc", 5000 },
+	{ GID_ITE_MACDEMO2, "b3a831fbed337d1f1300fee1dd474f6c", "soundsd.rsc", 5000 },
+	{ GID_ITE_MACDEMO2, "e139d86bab2ee8ba3157337f894a92d4", "voicesd.rsc", 5000 },
+
+	{ GID_ITE_WINDEMO1, "3a450852cbf3c80773984d565647e6ac", "ited.rsc", 5000 },
+	{ GID_ITE_WINDEMO1, "3f12b67fa93e56e1a6be39d2921d80bb", "scriptsd.rsc", 5000 },
+	{ GID_ITE_WINDEMO1, "a741139dd7365a13f463cd896ff9969a", "soundsd.rsc", 5000 },
+	{ GID_ITE_WINDEMO1, "0759eaf5b64ae19fd429920a70151ad3", "voicesd.rsc", 5000 },
+
+	{ GID_ITE_MACDEMO1, "addfc9d82bc2fa1f4cab23743c652c08", "ited.rsc", 5000 },
+	{ GID_ITE_MACDEMO1, "fded5c59b8b7c5976229f960d21e6b0b", "scriptsd.rsc", 5000 },
+	{ GID_ITE_MACDEMO1, "1a91cd60169f367ecb6c6e058d899b2f", "musicd.rsc", 5000 },
+	{ GID_ITE_MACDEMO1, "b3a831fbed337d1f1300fee1dd474f6c", "soundsd.rsc", 5000 },
+	{ GID_ITE_MACDEMO1, "e139d86bab2ee8ba3157337f894a92d4", "voicesd.rsc", 5000 },
+};
+
+static bool gameMD5check(int descNum);
+
 static GAMEDESC GameDescs[] = {
 	// Inherit the earth - DOS Demo version
 	{
 		"ite-demo",
 		GType_ITE,
-		GID_ITE_DEMO, // Game id
+		GID_ITE_DEMO_G, // Game id
 		"Inherit the Earth (DOS Demo)", // Game title
 		320, 200, // Logical resolution
 		137, // Scene viewport height
@@ -201,37 +273,90 @@ static GAMEDESC GameDescs[] = {
 	},
 
 	// Inherit the earth - MAC Demo version
-	// Note: it should be before win32 version ???
 	{
 		"ite-demo",
 		GType_ITE,
-		GID_ITE_MACDEMO,
+		GID_ITE_MACDEMO2,
 		"Inherit the Earth (MAC Demo)",
 		320, 200,
 		137,
 		ITE_DEFAULT_SCENE,
 		&ITE_Resources,
-		ARRAYSIZE(ITEMACDEMO_GameFiles),
-		ITEMACDEMO_GameFiles,
+		ARRAYSIZE(ITEWINDEMO2_GameFiles),
+		ITEWINDEMO2_GameFiles,
 		ARRAYSIZE(ITEMACDEMO_GameFonts),
 		ITEMACDEMO_GameFonts,
 		&ITECD_GameSound,
-		GF_VOX_VOICES | GF_BIG_ENDIAN_DATA			
+		GF_VOX_VOICES | GF_BIG_ENDIAN_DATA | GF_MAC_RESOURCES
 	},
 
-	// Inherit the earth - Linux Demo version
-	// Note: it should be before win32 version
+	// Inherit the earth - early MAC Demo version
 	{
 		"ite-demo",
 		GType_ITE,
-		GID_ITE_WINDEMO,
+		GID_ITE_MACDEMO1,
+		"Inherit the Earth (early MAC Demo)",
+		320, 200,
+		137,
+		ITE_DEFAULT_SCENE,
+		&ITE_Resources,
+		ARRAYSIZE(ITEWINDEMO2_GameFiles),
+		ITEWINDEMO2_GameFiles,
+		ARRAYSIZE(ITEMACDEMO_GameFonts),
+		ITEMACDEMO_GameFonts,
+		&ITECD_GameSound,
+		GF_BIG_ENDIAN_DATA | GF_MAC_RESOURCES
+	},
+
+	// Inherit the earth - MAC CD Wyrmkeep version
+	{
+		"ite",
+		GType_ITE,
+		GID_ITE_MACCD,
+		"Inherit the Earth (MAC CD)",
+		320, 200,
+		137,
+		ITE_DEFAULT_SCENE,
+		&ITE_Resources,
+		ARRAYSIZE(ITEMACCD_GameFiles),
+		ITEMACCD_GameFiles,
+		ARRAYSIZE(ITEMACDEMO_GameFonts),
+		ITEMACDEMO_GameFonts,
+		&ITECD_GameSound,
+		GF_BIG_ENDIAN_DATA | GF_MAC_RESOURCES
+	},
+
+	// Inherit the earth - Linux Demo version
+	// Note: it should be before GID_ITE_WINDEMO2 version
+	{
+		"ite-demo",
+		GType_ITE,
+		GID_ITE_LINDEMO,
 		"Inherit the Earth (Linux Demo)",
 		320, 200,
 		137,
 		ITE_DEFAULT_SCENE,
 		&ITE_Resources,
-		ARRAYSIZE(ITEWINDEMO_GameFiles),
-		ITEWINDEMO_GameFiles,
+		ARRAYSIZE(ITELINDEMO_GameFiles),
+		ITELINDEMO_GameFiles,
+		ARRAYSIZE(ITECD_GameFonts),
+		ITECD_GameFonts,
+		&ITECD_GameSound,
+		GF_VOX_VOICES
+	},
+	
+	// Inherit the earth - Linux Demo version
+	{
+		"ite-demo",
+		GType_ITE,
+		GID_ITE_WINDEMO2,
+		"Inherit the Earth (Win32 Demo)",
+		320, 200,
+		137,
+		ITE_DEFAULT_SCENE,
+		&ITE_Resources,
+		ARRAYSIZE(ITEWINDEMO2_GameFiles),
+		ITEWINDEMO2_GameFiles,
 		ARRAYSIZE(ITECD_GameFonts),
 		ITECD_GameFonts,
 		&ITECD_GameSound,
@@ -242,14 +367,14 @@ static GAMEDESC GameDescs[] = {
 	{
 		"ite-demo",
 		GType_ITE,
-		GID_ITE_WINDEMO,
-		"Inherit the Earth (Win32 Demo)",
+		GID_ITE_WINDEMO1,
+		"Inherit the Earth (early Win32 Demo)",
 		320, 200,
 		137,
 		ITE_DEFAULT_SCENE,
 		&ITE_Resources,
-		ARRAYSIZE(ITEWINDEMOOld_GameFiles),
-		ITEWINDEMO_GameFiles,
+		ARRAYSIZE(ITEWINDEMO1_GameFiles),
+		ITEWINDEMO1_GameFiles,
 		ARRAYSIZE(ITEWINDEMO_GameFonts),
 		ITEWINDEMO_GameFonts,
 		&ITECD_GameSound,
@@ -257,12 +382,11 @@ static GAMEDESC GameDescs[] = {
 	},
 	
 	// Inherit the earth - CD version
-	// NOTE: it should be before floppy version
 	{
 		"ite",
 		GType_ITE,
-		GID_ITE_CD,
-		"Inherit the Earth (DOS CD Version)",
+		GID_ITE_CD_G,
+		"Inherit the Earth (DOS/Win32 CD Version)",
 		320, 200,
 		137,
 		ITE_DEFAULT_SCENE,
@@ -275,12 +399,30 @@ static GAMEDESC GameDescs[] = {
 		0
 	},
 
+	// Inherit the earth - German Floppy version
+	{
+		"ite",
+		GType_ITE,
+		GID_ITE_DISK_DE,
+		"Inherit the Earth (De DOS Floppy)",
+		320, 200,
+		137,
+		ITE_DEFAULT_SCENE,
+		&ITE_Resources,
+		ARRAYSIZE(ITEDISK_GameFiles),
+		ITEDISK_GameFiles,
+		ARRAYSIZE(ITEDISK_GameFonts),
+		ITEDISK_GameFonts,
+		&ITE_GameSound,
+		GF_LANG_DE
+	},
+
 	// Inherit the earth - Disk version
 	{
 		"ite",
 		GType_ITE,
-		GID_ITE_DISK,
-		"Inherit the Earth (DOS)",
+		GID_ITE_DISK_G,
+		"Inherit the Earth (DOS Floppy)",
 		320, 200,
 		137,
 		ITE_DEFAULT_SCENE,
@@ -481,6 +623,10 @@ int SagaEngine::detectGame(uint16 *game_n_p) {
 		// game
 		if (file_missing) {
 			continue;
+		} else {
+			debug(0, "Pre-Found game: %s", GameDescs[game_n].gd_title);
+			if (!gameMD5check(game_n))
+				continue;
 		}
 
 		debug(0, "Found game: %s", GameDescs[game_n].gd_title);
@@ -504,6 +650,10 @@ int SagaEngine::loadGame(uint16 game_n) {
 
 	GameModule.game_number = game_n;
 	GameModule.gamedesc = &GameDescs[game_n];
+
+	_gameId = GameModule.gamedesc->gd_game_id;
+	_gameType = GameModule.gamedesc->gd_game_type;
+	_features = GameModule.gamedesc->features;
 
 	game_filect = GameDescs[game_n].gd_filect;
 	
@@ -531,10 +681,6 @@ int SagaEngine::loadGame(uint16 game_n) {
 	// Load game font data
 	GameModule.gd_fontct = GameDescs[game_n].gd_fontct;
 	GameModule.gd_fontdescs = GameDescs[game_n].gd_fontdescs;
-
-	_gameId = GameModule.gamedesc->gd_game_id;
-	_gameType = GameModule.gamedesc->gd_game_type;
-	_features = GameModule.gamedesc->features;
 
 	return SUCCESS;
 }
@@ -577,6 +723,34 @@ int SagaEngine::getSceneInfo(GAME_SCENEDESC *gs_desc) {
 	gs_desc->scene_lut_rn = RSC_ConvertID(GameModule.gamedesc->gd_resource_desc->scene_lut_rn);
 
 	return SUCCESS;
+}
+
+static bool gameMD5check(int descNum) {
+	bool result = true;
+	char md5str[32+1];
+	uint8 md5sum[16];
+
+	for (int i = 0; i < ARRAYSIZE(game_md5); i++) {
+		if (game_md5[i].id == GameDescs[descNum].gd_game_id) {
+			if (md5_file(game_md5[i].filename, md5sum, NULL, game_md5[i].len)) {
+				for (int j = 0; j < 16; j++) {
+					sprintf(md5str + j*2, "%02x", (int)md5sum[j]);
+				}
+				
+				if (strcmp(game_md5[i].md5, md5str)) {
+					result = false;
+					debug(0, "!MD5 for %s wrong", game_md5[i].filename);
+					break;
+				} else {
+					debug(0, "MD5 for %s correct", game_md5[i].filename);
+				}
+			} else {
+				result = false;
+			}
+		}
+	}
+
+	return result;
 }
 
 } // End of namespace Saga

@@ -90,17 +90,35 @@ struct CLICKAREA {
 
 
 #define IS_BIG_ENDIAN ((_vm->_features & GF_BIG_ENDIAN_DATA) != 0)
-#define IS_MAC_VERSION (_vm->_gameId == GID_ITE_MACDEMO)
 
 
 enum GAME_IDS {
-	GID_ITE_DEMO = 0,
-	GID_ITE_DISK = 1,
-	GID_ITE_CD = 2,
-	GID_IHNM_DEMO = 3,
-	GID_IHNM_CD = 4,
-	GID_ITE_WINDEMO = 5,
-	GID_ITE_MACDEMO = 6
+	// Dreamers Guild
+	GID_ITE_DEMO_G = 0,
+	GID_ITE_DISK_G,
+	GID_ITE_CD_G,
+	GID_ITE_MAC_G,  // TODO
+
+	// Wyrmkeep
+	//GID_ITE_CD,    // data for Win rerelease is same as in old DOS
+	GID_ITE_MACCD,
+	GID_ITE_WINDEMO1, // older Wyrmkeep windows demo
+	GID_ITE_MACDEMO1, // older Wyrmkeep mac demo
+	GID_ITE_LINDEMO,
+	GID_ITE_WINDEMO2,
+	GID_ITE_MACDEMO2,
+
+	// German
+	GID_ITE_DISK_DE,
+	GID_ITE_AMIGACD_DE, // TODO
+	GID_ITE_OLDMAC_DE,  // TODO
+	GID_ITE_AMIGA_FL_DE,
+	GID_ITE_CD_DE,      // don't have it
+	GID_ITE_AMIGA_AGA_DEMO,
+	GID_ITE_AMIGA_ECS_DEMO,
+
+	GID_IHNM_DEMO,
+	GID_IHNM_CD
 };
 
 enum GAME_FILETYPES {
@@ -133,7 +151,9 @@ enum GAME_FONT_IDS {
 
 enum GAME_FEATURES {
 	GF_VOX_VOICES = 1,
-	GF_BIG_ENDIAN_DATA = 2
+	GF_BIG_ENDIAN_DATA = 2,
+	GF_MAC_RESOURCES = 4,
+	GF_LANG_DE = 8
 };
 
 struct GAME_DISPLAYINFO {

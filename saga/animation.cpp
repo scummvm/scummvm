@@ -468,7 +468,7 @@ int Anim::ITE_DecodeFrame(const byte *resdata, size_t resdata_len, size_t frame_
 
 
 	fh.x_start = readS.readUint16BE();
-	if (IS_MAC_VERSION)
+	if (_vm->_features & GF_BIG_ENDIAN_DATA)
 		fh.y_start = readS.readUint16BE();
 	else
 		fh.y_start = readS.readByte();
@@ -523,7 +523,7 @@ int Anim::ITE_DecodeFrame(const byte *resdata, size_t resdata_len, size_t frame_
 		case SAGA_FRAME_ROW_END: // End of row
 			x_vector = readS.readSint16BE();
 			
-			if (IS_MAC_VERSION)
+			if (_vm->_features & GF_BIG_ENDIAN_DATA)
 				new_row = readS.readSint16BE();
 			else
 				new_row = readS.readByte();
@@ -883,7 +883,7 @@ int Anim::getFrameOffset(const byte *resdata, size_t resdata_len, uint16 find_fr
 				break;
 			case SAGA_FRAME_ROW_END: // End of row marker
 				readS.readSint16BE();
-				if (IS_MAC_VERSION)
+				if (_vm->_features & GF_BIG_ENDIAN_DATA)
 					readS.readSint16BE();
 				else
 					readS.readByte();
