@@ -327,152 +327,150 @@ void Codec47Decoder::makeTables37(int32 param) {
 			if (tmp_c <= tmp_a) {
 				tmp_c = tmp_a;
 			}
-			variable1 = 0;
-			tmp_c++;
-			variable2 = tmp_c;
-			if (tmp_c > 0) {
-				do {
+
+			variable2 = tmp_c + 1;
+			for (variable1 = 0; variable1 < variable2; variable1++) {
+				tmp_a = variable2;
+				if (tmp_a > 1) {
+					tmp_c = tmp_a;
+					tmp_a = variable1;
+					tmp_c -= tmp_a;
 					tmp_a = variable2;
-					if (tmp_a > 1) {
-						tmp_c = tmp_a;
-						tmp_a = variable1;
-						tmp_c -= tmp_a;
-						tmp_a = variable2;
-						tmp_c--;
-						tmp_a--;
-						tmp_ib = tmp_a;
-						tmp_d = value_table37_1_1;
-						tmp_ib >>= 1;
-						variable3 = tmp_a;
-						tmp_a = value_table37_1_2;
-						tmp_d *= variable1;
-						tmp_a *= tmp_c;
-						tmp_a += tmp_d;
-						tmp_a += tmp_ib;
-						tmp_a /= variable3;
-						tmp_d = tmp_value2;
-						variable4 = tmp_a;
-						tmp_a = tmp_value1;
-						tmp_d *= tmp_c;
-						tmp_a *= variable1;
-						tmp_d += tmp_a;
-						tmp_a = tmp_d + tmp_ib;
-						tmp_a /= variable3;
-					} else {
-						tmp_a = value_table37_1_1;
-						variable4 = tmp_a;
-						tmp_a = tmp_value1;
-					}
-					tmp_c = param;
-					tmp_d = variable4;
-					tmp_c *= tmp_a;
-					tmp_c += tmp_d;
-					table_ptr = &table[tmp_c];
-					*(table_ptr) = 1;
-					if (b1 != 2)
-						goto label8;
-					if (b2 == 3)
-						goto label11;
+					tmp_c--;
+					tmp_a--;
+					tmp_ib = tmp_a;
+					tmp_d = value_table37_1_1;
+					tmp_ib >>= 1;
+					variable3 = tmp_a;
+					tmp_a = value_table37_1_2;
+					tmp_d *= variable1;
+					tmp_a *= tmp_c;
+					tmp_a += tmp_d;
+					tmp_a += tmp_ib;
+					tmp_a /= variable3;
+					tmp_d = tmp_value2;
+					variable4 = tmp_a;
+					tmp_a = tmp_value1;
+					tmp_d *= tmp_c;
+					tmp_a *= variable1;
+					tmp_d += tmp_a;
+					tmp_a = tmp_d + tmp_ib;
+					tmp_a /= variable3;
+				} else {
+					tmp_a = value_table37_1_1;
+					variable4 = tmp_a;
+					tmp_a = tmp_value1;
+				}
+				tmp_c = param;
+				tmp_d = variable4;
+				tmp_c *= tmp_a;
+				tmp_c += tmp_d;
+				table_ptr = &table[tmp_c];
+				*(table_ptr) = 1;
+				if (b1 != 2)
+					goto label8;
+				if (b2 == 3)
+					goto label11;
 label8:
-					if (b2 != 2)
-						goto label9;
-					if (b1 == 3)
-						goto label11;
+				if (b2 != 2)
+					goto label9;
+				if (b1 == 3)
+					goto label11;
 label9:
-					if (b1 != 0)
-						goto label10;
-					if (b2 != 1)
-						goto label11;
+				if (b1 != 0)
+					goto label10;
+				if (b2 != 1)
+					goto label11;
 label10:
-					if (b2 != 0)
-						goto label12;
-					if (b1 == 1)
-						goto label13;
+				if (b2 != 0)
+					goto label12;
+				if (b1 == 1)
+					goto label13;
 label11:
-					if (tmp_a < 0)
-						continue;
-					tmp_c = param;
-					tmp_c <<= 2;
-					do {
-						*(table_ptr) = 1;
-						table_ptr -= tmp_c / 4;
-					} while (--tmp_a >= 0);
+				if (tmp_a < 0)
 					continue;
+				tmp_c = param;
+				tmp_c <<= 2;
+				do {
+					*(table_ptr) = 1;
+					table_ptr -= tmp_c / 4;
+				} while (--tmp_a >= 0);
+				continue;
 label12:
-					if (b1 != 1)
-						goto label14;
+				if (b1 != 1)
+					goto label14;
 label13:
-					if (b2 != 0)
-						goto label15;
+				if (b2 != 0)
+					goto label15;
 label14:
-					if (b2 != 1)
-						goto label16;
-					if (b1 == 0)
-						goto label17;
+				if (b2 != 1)
+					goto label16;
+				if (b1 == 0)
+					goto label17;
 label15:
-					tmp_c = param;
-					if (tmp_c <= tmp_a)
-						continue;
-					tmp_c <<= 2;
-					tmp_d = param;
-					tmp_d -= tmp_a;
-					do {
-						*(table_ptr) = 1;
-						table_ptr += tmp_c / 4;
-					} while (--tmp_d != 0);
+				tmp_c = param;
+				if (tmp_c <= tmp_a)
 					continue;
+				tmp_c <<= 2;
+				tmp_d = param;
+				tmp_d -= tmp_a;
+				do {
+					*(table_ptr) = 1;
+					table_ptr += tmp_c / 4;
+				} while (--tmp_d != 0);
+				continue;
 label16:
-					if (b1 != 0)
-						goto label18;
+				if (b1 != 0)
+					goto label18;
 label17:
-					if (b2 == 1)
-						goto label21;
+				if (b2 == 1)
+					goto label21;
 label18:
-					if (b2 != 0)
-						goto label19;
-					if (b1 == 1)
-						goto label21;
+				if (b2 != 0)
+					goto label19;
+				if (b1 == 1)
+					goto label21;
 label19:
-					if (b1 != 3)
-						goto label20;
-					if (b2 != 2)
-						goto label21;
+				if (b1 != 3)
+					goto label20;
+				if (b2 != 2)
+					goto label21;
 label20:
-					if (b2 != 3)
-						goto label22;
-					if (b1 == 2)
-						goto label23;
+				if (b2 != 3)
+					goto label22;
+				if (b1 == 2)
+					goto label23;
 label21:
-					tmp_c = param;
-					if (tmp_c <= variable4)
-						continue;
-					tmp_c -= variable4;
+				tmp_c = param;
+				if (tmp_c <= variable4)
+					continue;
+				tmp_c -= variable4;
+				d = tmp_c;
+				do {
+					*(table_ptr++) = 1;
+				} while (--d != 0);
+				continue;
+label22:
+				if (b1 != 2)
+					goto label24;
+label23:
+				if (b2 != 3)
+					goto label25;
+label24:
+				if (b2 != 2)
+					continue;
+				if (b1 == 3)
+					continue;
+label25:
+				if (variable4 >= 0) {
+					tmp_c = variable4 + 1;
 					d = tmp_c;
 					do {
-						*(table_ptr++) = 1;
+						*(table_ptr--) = 1;
 					} while (--d != 0);
-					continue;
-label22:
-					if (b1 != 2)
-						goto label24;
-label23:
-					if (b2 != 3)
-						goto label25;
-label24:
-					if (b2 != 2)
-						continue;
-					if (b1 == 3)
-						continue;
-label25:
-					if (variable4 >= 0) {
-						tmp_c = variable4 + 1;
-						d = tmp_c;
-						do {
-							*(table_ptr--) = 1;
-						} while (--d != 0);
-					}
-				} while	(variable2 > ++variable1);
+				}
 			}
+
 			if (tmp_param != 0) {
 				if (param == 8) {
 					tmp_c = tmp_param_tmp;
@@ -632,269 +630,166 @@ void Codec47Decoder::bompDecode(byte *dst, byte *src, int32 len) {
 
 static int32 codec47_decode2_offset1;
 static int32 codec47_decode2_offset2;
-static int16 * codec47_decode2_table;
 static int32 d_pitch;
 static byte * codec47_decode2_param_ptr;
-static byte * codec47_decode2_buf_small;
-static byte * codec47_decode2_buf_big;
 static int32 codec47_subgfx_width_blocks;
 static int32 codec47_subgfx_height_blocks;
 static int32 codec47_subgfx_width_pixels;
 static byte * d_src;
-static byte * d_dst;
 
-static void codec47_subgfx_lev4() {
-	int32 tmp, tmp2;
-	byte code = *d_src;
-	if (code < 0xF8) {
-		d_src++;
-		tmp2 = codec47_decode2_table[code] + codec47_decode2_offset1;
-		*(uint16*)(d_dst + (d_pitch * 0)) = *(uint16*)(d_dst + (d_pitch * 0) + tmp2);
-		*(uint16*)(d_dst + (d_pitch * 1)) = *(uint16*)(d_dst + (d_pitch * 1) + tmp2);
-		return;
-	}
-	if (code == 0xFF) {
-		*(uint16*)(d_dst + (d_pitch * 0)) = *(uint16*)(d_src + 1);
-		*(uint16*)(d_dst + (d_pitch * 1)) = *(uint16*)(d_src + 3);
-		d_src += 5;
-		return;
-	}
-	if (code == 0xFE) {
-		tmp = *(d_src + 1);
-		int32 val = tmp | tmp << 8;
-		d_src += 2;
-		*(uint16*)(d_dst + (d_pitch * 0)) = (int16)val;
-		*(uint16*)(d_dst + (d_pitch * 1)) = (int16)val;
-		return;
-	}
-	if (code == 0xFC) {
-		tmp2 = codec47_decode2_offset2;
-		d_src++;
-		*(uint16*)(d_dst + (d_pitch * 0)) = *(uint16*)(d_dst + (d_pitch * 0) + tmp2);
-		*(uint16*)(d_dst + (d_pitch * 1)) = *(uint16*)(d_dst + (d_pitch * 1) + tmp2);
-		return;
-	}
-	tmp = *(codec47_decode2_param_ptr + code);
-	int32 val = tmp | tmp << 8;
-	d_src++;
-	*(uint16*)(d_dst + (d_pitch * 0)) = (int16)val;
-	*(uint16*)(d_dst + (d_pitch * 1)) = (int16)val;
-}
+static void codec47_subgfx_lev4(byte * d_dst) {
+	int32 tmp;
+	byte code = *d_src++;
 
-static void codec47_subgfx_lev3() {
-	int32 tmp2;
-	byte code = *d_src;
 	if (code < 0xF8) {
-		d_src++;
-		tmp2 = codec47_decode2_table[code] + codec47_decode2_offset1;
-		byte * dst2 = d_dst + d_pitch * 2;
-		*(uint32*)(dst2 + (d_pitch * 0)) = *(uint32*)(dst2 + (d_pitch * 0) + tmp2);
-		*(uint32*)(d_dst + (d_pitch * 0)) = *(uint32*)(d_dst + (d_pitch * 0) + tmp2);
-		*(uint32*)(dst2 + (d_pitch * 1)) = *(uint32*)(dst2 + (d_pitch * 1) + tmp2);
-		*(uint32*)(d_dst + (d_pitch * 1)) = *(uint32*)(d_dst + (d_pitch * 1) + tmp2);
-		return;
-	}
-	if (code == 0xFF) {
-		d_src++;
-		byte * tmp_dst = d_dst;
-		codec47_subgfx_lev4();
-		d_dst += 2;
-		codec47_subgfx_lev4();
-		d_dst += d_pitch * 2 - 2;
-		codec47_subgfx_lev4();
-		d_dst += 2;
-		codec47_subgfx_lev4();
-		d_dst = tmp_dst;
-		return;
-	}
-	if (code == 0xFE) {
-		byte t = *(d_src + 1);
-		int32 val = t << 24 | t << 16 | t << 8 | t;
-		d_src += 2;
-		*(uint32*)(d_dst + (d_pitch * 0)) = val;
-		*(uint32*)(d_dst + (d_pitch * 1)) = val;
-		*(uint32*)(d_dst + (d_pitch * 2)) = val;
-		*(uint32*)(d_dst + (d_pitch * 3)) = val;
-		return;
-	}
-	if (code == 0xFD) {
-		byte * tmp_ptr = (*(d_src + 1) << 7) + codec47_decode2_buf_small;
-		int32 l = *(tmp_ptr + 96);
-		byte val = *(d_src + 2);
-		int16 * tmp_ptr2 = (int16*)tmp_ptr;
-		do {
-			*(d_dst + READ_LE_UINT16(tmp_ptr2)) = val;
-			tmp_ptr2++;
-		} while (--l > 0);
-		l = *(tmp_ptr + 97);
-		val = *(d_src + 3);
-		tmp_ptr2 = (int16*)(tmp_ptr + 32);
-		do {
-			*(d_dst + READ_LE_UINT16(tmp_ptr2)) = val;
-			tmp_ptr2++;
-		} while (--l > 0);
+		tmp = smush_table[code] + codec47_decode2_offset1;
+		*(uint16*)(d_dst + (d_pitch * 0)) = *(uint16*)(d_dst + (d_pitch * 0) + tmp);
+		*(uint16*)(d_dst + (d_pitch * 1)) = *(uint16*)(d_dst + (d_pitch * 1) + tmp);
+	} else if (code == 0xFF) {
+		*(uint16*)(d_dst + (d_pitch * 0)) = *(uint16*)(d_src + 0);
+		*(uint16*)(d_dst + (d_pitch * 1)) = *(uint16*)(d_src + 2);
 		d_src += 4;
-		return;
+	} else if (code == 0xFE) {
+		byte t = *d_src++;
+		tmp = t | t << 8;
+		*(uint16*)(d_dst + (d_pitch * 0)) = tmp;
+		*(uint16*)(d_dst + (d_pitch * 1)) = tmp;
+	} else if (code == 0xFC) {
+		tmp = codec47_decode2_offset2;
+		*(uint16*)(d_dst + (d_pitch * 0)) = *(uint16*)(d_dst + (d_pitch * 0) + tmp);
+		*(uint16*)(d_dst + (d_pitch * 1)) = *(uint16*)(d_dst + (d_pitch * 1) + tmp);
+	} else {
+		byte t = codec47_decode2_param_ptr[code];
+		tmp = t | t << 8;
+		*(uint16*)(d_dst + (d_pitch * 0)) = tmp;
+		*(uint16*)(d_dst + (d_pitch * 1)) = tmp;
 	}
-	if (code == 0xFC) {
-		d_src++;
-		tmp2 = codec47_decode2_offset2;
-		byte * dst2 = d_dst + d_pitch * 2;
-		*(uint32*)(dst2 + (d_pitch * 0)) = *(uint32*)(dst2 + (d_pitch * 0) + tmp2);
-		*(uint32*)(d_dst + (d_pitch * 0)) = *(uint32*)(d_dst + (d_pitch * 0) + tmp2);
-		*(uint32*)(dst2 + (d_pitch * 1)) = *(uint32*)(dst2 + (d_pitch * 1) + tmp2);
-		*(uint32*)(d_dst + (d_pitch * 1)) = *(uint32*)(d_dst + (d_pitch * 1) + tmp2);
-		return;
-	}
-	d_src++;
-	byte t = *(codec47_decode2_param_ptr + code);
-	int32 val = t << 24 | t << 16 | t << 8 | t;
-	*(uint32*)(d_dst + (d_pitch * 0)) = val;
-	*(uint32*)(d_dst + (d_pitch * 1)) = val;
-	*(uint32*)(d_dst + (d_pitch * 2)) = val;
-	*(uint32*)(d_dst + (d_pitch * 3)) = val;
 }
 
-static void codec47_subgfx_lev2() {
-	int32 tmp, tmp2;
-	byte code = *d_src;
+static void codec47_subgfx_lev3(byte * d_dst) {
+	int32 tmp;
+	byte code = *d_src++;
+	int i;
+
 	if (code < 0xF8) {
-		d_src++;
-		tmp2 = codec47_decode2_table[code] + codec47_decode2_offset1;
-		byte * dst2 = d_dst + d_pitch * 4;
-		*(uint32*)(dst2 + (d_pitch * 0) + 0) = *(uint32*)(dst2 + (d_pitch * 0) + tmp2);
-		*(uint32*)(d_dst + (d_pitch * 0) + 0) = *(uint32*)(d_dst + (d_pitch * 0) + tmp2);
-		*(uint32*)(dst2 + (d_pitch * 0) + 4) = *(uint32*)(dst2 + (d_pitch * 0) + tmp2 + 4);
-		*(uint32*)(d_dst + (d_pitch * 0) + 4) = *(uint32*)(d_dst + (d_pitch * 0) + tmp2 + 4);
-		*(uint32*)(dst2 + (d_pitch * 1) + 0) = *(uint32*)(dst2 + (d_pitch * 1) + tmp2);
-		*(uint32*)(d_dst + (d_pitch * 1) + 0) = *(uint32*)(d_dst + (d_pitch * 1) + tmp2);
-		*(uint32*)(dst2 + (d_pitch * 1) + 4) = *(uint32*)(dst2 + (d_pitch * 1) + tmp2 + 4);
-		*(uint32*)(d_dst + (d_pitch * 1) + 4) = *(uint32*)(d_dst + (d_pitch * 1) + tmp2 + 4);
-		*(uint32*)(dst2 + (d_pitch * 2) + 0) = *(uint32*)(dst2 + (d_pitch * 2) + tmp2);
-		*(uint32*)(d_dst + (d_pitch * 2) + 0) = *(uint32*)(d_dst + (d_pitch * 2) + tmp2);
-		*(uint32*)(dst2 + (d_pitch * 2) + 4) = *(uint32*)(dst2 + (d_pitch * 2) + tmp2 + 4);
-		*(uint32*)(d_dst + (d_pitch * 2) + 4) = *(uint32*)(d_dst + (d_pitch * 2) + tmp2 + 4);
-		*(uint32*)(dst2 + (d_pitch * 3) + 0) = *(uint32*)(dst2 + (d_pitch * 3) + tmp2);
-		*(uint32*)(d_dst + (d_pitch * 3) + 0) = *(uint32*)(d_dst + (d_pitch * 3) + tmp2);
-		*(uint32*)(dst2 + (d_pitch * 3) + 4) = *(uint32*)(dst2 + (d_pitch * 3) + tmp2 + 4);
-		*(uint32*)(d_dst + (d_pitch * 3) + 4) = *(uint32*)(d_dst + (d_pitch * 3) + tmp2 + 4);
-		return;
-	}
-	if (code == 0xFF) {
-		d_src++;
+		tmp = smush_table[code] + codec47_decode2_offset1;
+		for (i = 0; i < 4; i++)
+			*(uint32*)(d_dst + (d_pitch * i)) = *(uint32*)(d_dst + (d_pitch * i) + tmp);
+	} else if (code == 0xFF) {
 		byte * tmp_dst = d_dst;
-		codec47_subgfx_lev3();
-		d_dst += 4;
-		codec47_subgfx_lev3();
-		d_dst += d_pitch * 4 - 4;
-		codec47_subgfx_lev3();
-		d_dst += 4;
-		codec47_subgfx_lev3();
+		codec47_subgfx_lev4(d_dst);
+		d_dst += 2;
+		codec47_subgfx_lev4(d_dst);
+		d_dst += d_pitch * 2 - 2;
+		codec47_subgfx_lev4(d_dst);
+		d_dst += 2;
+		codec47_subgfx_lev4(d_dst);
 		d_dst = tmp_dst;
-		return;
+	} else if (code == 0xFE) {
+		byte t = *d_src++;
+		uint32 val = t << 24 | t << 16 | t << 8 | t;
+		for (i = 0; i < 4; i++)
+			*(uint32*)(d_dst + (d_pitch * i)) = val;
+	} else if (code == 0xFD) {
+		byte * tmp_ptr = (*d_src++ << 7) + smush_buf_small;
+		int32 l = *(tmp_ptr + 96);
+		byte val = *d_src++;
+		int16 * tmp_ptr2 = (int16*)tmp_ptr;
+		while(l--) {
+			*(d_dst + READ_LE_UINT16(tmp_ptr2)) = val;
+			tmp_ptr2++;
+		}
+		l = *(tmp_ptr + 97);
+		val = *d_src++;
+		tmp_ptr2 = (int16*)(tmp_ptr + 32);
+		while(l--) {
+			*(d_dst + READ_LE_UINT16(tmp_ptr2)) = val;
+			tmp_ptr2++;
+		}
+	} else if (code == 0xFC) {
+		tmp = codec47_decode2_offset2;
+		for (i = 0; i < 4; i++)
+			*(uint32*)(d_dst + (d_pitch * i)) = *(uint32*)(d_dst + (d_pitch * i) + tmp);
+	} else {
+		byte t = codec47_decode2_param_ptr[code];
+		uint32 val = t << 24 | t << 16 | t << 8 | t;
+		for (i = 0; i < 4; i++)
+			*(uint32*)(d_dst + (d_pitch * i)) = val;
 	}
-	if (code == 0xFE) {
-		byte t = *(d_src + 1);
+}
+
+static void codec47_subgfx_lev2(byte * d_dst) {
+	int32 tmp, tmp2;
+	byte code = *d_src++;
+	int i;
+
+	if (code < 0xF8) {
+		tmp2 = smush_table[code] + codec47_decode2_offset1;
+		for (i = 0; i < 8; i++) {
+			*(uint32*)(d_dst + (d_pitch * i) + 0) = *(uint32*)(d_dst + (d_pitch * i) + tmp2);
+			*(uint32*)(d_dst + (d_pitch * i) + 4) = *(uint32*)(d_dst + (d_pitch * i) + tmp2 + 4);
+		}
+	} else if (code == 0xFF) {
+		byte * tmp_dst = d_dst;
+		codec47_subgfx_lev3(d_dst);
+		d_dst += 4;
+		codec47_subgfx_lev3(d_dst);
+		d_dst += d_pitch * 4 - 4;
+		codec47_subgfx_lev3(d_dst);
+		d_dst += 4;
+		codec47_subgfx_lev3(d_dst);
+		d_dst = tmp_dst;
+	} else if (code == 0xFE) {
+		byte t = *d_src++;
 		int32 val = t << 24 | t << 16 | t << 8 | t;
-		d_src += 2;
-		byte * dst2 = d_dst + d_pitch * 4;
-		*(uint32*)(dst2 + (d_pitch * 0)) = val;
-		*(uint32*)(d_dst + (d_pitch * 0)) = val;
-		*(uint32*)(dst2 + (d_pitch * 0) + 4) = val;
-		*(uint32*)(d_dst + (d_pitch * 0) + 4) = val;
-		*(uint32*)(dst2 + (d_pitch * 1)) = val;
-		*(uint32*)(d_dst + (d_pitch * 1)) = val;
-		*(uint32*)(dst2 + (d_pitch * 1) + 4) = val;
-		*(uint32*)(d_dst + (d_pitch * 1) + 4) = val;
-		*(uint32*)(dst2 + (d_pitch * 2)) = val;
-		*(uint32*)(d_dst + (d_pitch * 2)) = val;
-		*(uint32*)(dst2 + (d_pitch * 2) + 4) = val;
-		*(uint32*)(d_dst + (d_pitch * 2) + 4) = val;
-		*(uint32*)(dst2 + (d_pitch * 3)) = val;
-		*(uint32*)(d_dst + (d_pitch * 3)) = val;
-		*(uint32*)(dst2 + (d_pitch * 3) + 4) = val;
-		*(uint32*)(d_dst + (d_pitch * 3) + 4) = val;
-		return;
-	}
-	if (code == 0xFD) {
-		tmp = *(d_src + 1);
+		for (i = 0; i < 8; i++) {
+			*(uint32*)(d_dst + (d_pitch * i)) = val;
+			*(uint32*)(d_dst + (d_pitch * i) + 4) = val;
+		}
+	} else if (code == 0xFD) {
+		tmp = *d_src++;
 		tmp2 = tmp * 4;
 		tmp <<= 7;
 		int32 tmp3 = tmp2 + tmp * 2;
-		byte * tmp_ptr = tmp + tmp3 + codec47_decode2_buf_big;
+		byte * tmp_ptr = tmp + tmp3 + smush_buf_big;
 		byte l = *(tmp_ptr + 384);
-		byte val = *(d_src + 2);
+		byte val = *d_src++;
 		int16 * tmp_ptr2 = (int16*)tmp_ptr;
-		do {
+		while(l--) {
 			*(d_dst + READ_LE_UINT16(tmp_ptr2)) = val;
 			tmp_ptr2++;
-		} while (--l > 0);
+		}
 		l = *(tmp_ptr + 385);
-		val = *(d_src + 3);
+		val = *d_src++;
 		tmp_ptr2 = (int16*)(tmp_ptr + 128);
-		do {
+		while(l--) {
 			*(d_dst + READ_LE_UINT16(tmp_ptr2)) = val;
 			tmp_ptr2++;
-		} while (--l > 0);
-		d_src += 4;
-		return;
-	}
-	if (code == 0xFC) {
-		d_src++;
+		}
+	} else if (code == 0xFC) {
 		tmp2 = codec47_decode2_offset2;
-		byte * dst2 = d_dst + d_pitch * 4;
-		*(uint32*)(dst2 + (d_pitch * 0)) = *(uint32*)(dst2 + (d_pitch * 0) + tmp2);
-		*(uint32*)(d_dst + (d_pitch * 0)) = *(uint32*)(d_dst + (d_pitch * 0) + tmp2);
-		*(uint32*)(dst2 + (d_pitch * 0) + 4) = *(uint32*)(dst2 + (d_pitch * 0) + 4 + tmp2);
-		*(uint32*)(d_dst + (d_pitch * 0) + 4) = *(uint32*)(d_dst + (d_pitch * 0) + 4 + tmp2);
-		*(uint32*)(dst2 + (d_pitch * 1)) = *(uint32*)(dst2 + (d_pitch * 1) + tmp2);
-		*(uint32*)(d_dst + (d_pitch * 1)) = *(uint32*)(d_dst + (d_pitch * 1) + tmp2);
-		*(uint32*)(dst2 + (d_pitch * 1) + 4) = *(uint32*)(dst2 + (d_pitch * 1) + 4 + tmp2);
-		*(uint32*)(d_dst + (d_pitch * 1) + 4) = *(uint32*)(d_dst + (d_pitch * 1) + 4 + tmp2);
-		*(uint32*)(dst2 + (d_pitch * 2)) = *(uint32*)(dst2 + (d_pitch * 2) + tmp2);
-		*(uint32*)(d_dst + (d_pitch * 2)) = *(uint32*)(d_dst + (d_pitch * 2) + tmp2);
-		*(uint32*)(dst2 + (d_pitch * 2) + 4) = *(uint32*)(dst2 + (d_pitch * 2) + 4 + tmp2);
-		*(uint32*)(d_dst + (d_pitch * 2) + 4) = *(uint32*)(d_dst + (d_pitch * 2) + 4 + tmp2);
-		*(uint32*)(dst2 + (d_pitch * 3)) = *(uint32*)(dst2 + (d_pitch * 3) + tmp2);
-		*(uint32*)(d_dst + (d_pitch * 3)) = *(uint32*)(d_dst + (d_pitch * 3) + tmp2);
-		*(uint32*)(dst2 + (d_pitch * 3) + 4) = *(uint32*)(dst2 + (d_pitch * 3) + 4 + tmp2);
-		*(uint32*)(d_dst + (d_pitch * 3) + 4) = *(uint32*)(d_dst + (d_pitch * 3) + 4 + tmp2);
-		return;
+		for (i = 0; i < 8; i++) {
+			*(uint32*)(d_dst + (d_pitch * i) + 0) = *(uint32*)(d_dst + (d_pitch * i) + tmp2);
+			*(uint32*)(d_dst + (d_pitch * i) + 4) = *(uint32*)(d_dst + (d_pitch * i) + tmp2 + 4);
+		}
+	} else {
+		byte t = *(codec47_decode2_param_ptr + code);
+		int32 val = t << 24 | t << 16 | t << 8 | t;
+		for (i = 0; i < 8; i++) {
+			*(uint32*)(d_dst + (d_pitch * i)) = val;
+			*(uint32*)(d_dst + (d_pitch * i) + 4) = val;
+		}
 	}
-	d_src++;
-	byte t = *(codec47_decode2_param_ptr + code);
-	int32 val = t << 24 | t << 16 | t << 8 | t;
-	byte * dst2 = d_dst + d_pitch * 4;
-	*(uint32*)(dst2 + (d_pitch * 0)) = val;
-	*(uint32*)(d_dst + (d_pitch * 0)) = val;
-	*(uint32*)(dst2 + (d_pitch * 0) + 4) = val;
-	*(uint32*)(d_dst + (d_pitch * 0) + 4) = val;
-	*(uint32*)(dst2 + (d_pitch * 1)) = val;
-	*(uint32*)(d_dst + (d_pitch * 1)) = val;
-	*(uint32*)(dst2 + (d_pitch * 1) + 4) = val;
-	*(uint32*)(d_dst + (d_pitch * 1) + 4) = val;
-	*(uint32*)(dst2 + (d_pitch * 2)) = val;
-	*(uint32*)(d_dst + (d_pitch * 2)) = val;
-	*(uint32*)(dst2 + (d_pitch * 2) + 4) = val;
-	*(uint32*)(d_dst + (d_pitch * 2) + 4) = val;
-	*(uint32*)(dst2 + (d_pitch * 3)) = val;
-	*(uint32*)(d_dst + (d_pitch * 3)) = val;
-	*(uint32*)(dst2 + (d_pitch * 3) + 4) = val;
-	*(uint32*)(d_dst + (d_pitch * 3) + 4) = val;
 }
 
 void Codec47Decoder::decode2(byte * dst, byte * src, int32 offset1, int32 offset2, int32 pitch,
 						 int16 * tmp_table, byte * param_ptr, int32 height,
 						 byte * buf_small, byte * buf_big) {
-	d_dst = dst;
 	d_src = src;
 	codec47_decode2_offset1 = offset1;
 	codec47_decode2_offset2 = offset2;
 	d_pitch = pitch;
-	codec47_decode2_table = tmp_table;
 	codec47_decode2_param_ptr = param_ptr - 0xf8;
-	codec47_decode2_buf_small = buf_small;
-	codec47_decode2_buf_big = buf_big;
 	codec47_subgfx_height_blocks = (height + 7) >> 3;
 	codec47_subgfx_width_blocks = (pitch + 7) >> 3;
 	codec47_subgfx_width_pixels = pitch << 3;
@@ -903,10 +798,10 @@ void Codec47Decoder::decode2(byte * dst, byte * src, int32 offset1, int32 offset
 	do {
 		int32 tmp_codec47_subgfx_width_blocks = codec47_subgfx_width_blocks;
 		do {
-			codec47_subgfx_lev2();
-			d_dst += 8;
+			codec47_subgfx_lev2(dst);
+			dst += 8;
 		} while (--tmp_codec47_subgfx_width_blocks);
-		d_dst += codec47_subgfx_width_pixels;
+		dst += codec47_subgfx_width_pixels;
 	} while (--codec47_subgfx_height_blocks);
 }
 
@@ -987,7 +882,7 @@ bool Codec47Decoder::decode(Blitter & dst, Chunk & src) {
 		warning("codec47: not implemented decode1 proc");
 		break;
 	case 2:
-		if ((seq_nb - _prevSeqNb) == 1) {
+		if (seq_nb == _prevSeqNb + 1) {
 			decode2(_curBuf, gfx_data, offset1, offset2, width,	smush_table, 
 							chunk_buffer + 8, height, smush_buf_small, smush_buf_big);
 		}
@@ -1005,7 +900,7 @@ bool Codec47Decoder::decode(Blitter & dst, Chunk & src) {
 
 	dst.blit(_curBuf, width * height);
 
-	if ((seq_nb - _prevSeqNb) == 1) {
+	if (seq_nb == _prevSeqNb + 1) {
 		if (chunk_buffer[3] == 1) {
 			tmp_ptr = _curBuf;
 			_curBuf = _deltaBufs[1];
