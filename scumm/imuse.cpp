@@ -3735,7 +3735,8 @@ void IMuseGM::init(IMuseInternal *eng, OSystem *syst)
 }
 
 void IMuseGM::timer_callback (void *) {
-	g_scumm->_imuse->on_timer();
+	if (g_scumm->_imuse)
+		g_scumm->_imuse->on_timer();
 }
 
 void IMuseGM::uninit()
