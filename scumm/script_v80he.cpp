@@ -141,8 +141,8 @@ void ScummEngine_v80he::setupOpcodes() {
 		OPCODE(o72_wordArrayIndexedWrite),
 		/* 4C */
 		OPCODE(o6_invalid),
-		OPCODE(o80_unknown4D),
-		OPCODE(o6_invalid),
+		OPCODE(o80_readConfigFile),
+		OPCODE(o80_writeConfigFile),
 		OPCODE(o6_wordVarInc),
 		/* 50 */
 		OPCODE(o72_unknown50),
@@ -422,14 +422,14 @@ void ScummEngine_v80he::o80_unknown49() {
 	debug(1,"o80_unknown49 stub (%d, %d)", subOp, snd);
 }
 
-void ScummEngine_v80he::o80_unknown4D() {
-	byte option[128], option2[128], option3[256];
+void ScummEngine_v80he::o80_readConfigFile() {
+	byte name[128], section[128], filename[256];
 	int type, retval;
 
 	// we pretend that we don't have .ini file
-	copyScriptString(option);
-	copyScriptString(option2);
-	copyScriptString(option3);
+	copyScriptString(section);
+	copyScriptString(name);
+	copyScriptString(filename);
 	type = fetchScriptByte();
 
 	switch (type) {
@@ -444,9 +444,36 @@ void ScummEngine_v80he::o80_unknown4D() {
 		push(retval); // var ID string
 		break;
 	default:
-		error("o80_unknown4D: default type %d", type);
+		error("o80_readConfigFile: default type %d", type);
 	}
-	debug(1, "o80_unknown4D (%d) %s %s %s", type, option, option2, option3);
+	debug(1, "o80_readConfigFile: Filename %s Section %s Name %s", filename, section, name);
+}
+
+void ScummEngine_v80he::o80_writeConfigFile() {
+	byte filename[256], section[256], name[256], string[1024];
+	int type, value;
+
+	// we pretend that we don't have .ini file
+	type = fetchScriptByte();
+
+	switch (type) {
+	case 6: // number
+		value = pop();
+		copyScriptString(section);
+		copyScriptString(name);
+		copyScriptString(filename);
+		debug(1,"o80_writeConfigFile: Filename %s Section %s Name %s Value %d", filename, section, name, value);
+		break;
+	case 7: // string
+		copyScriptString(string);
+		copyScriptString(section);
+		copyScriptString(name);
+		copyScriptString(filename);
+		debug(1,"o80_writeConfigFile: Filename %s Section %s Name %s String %s", filename, section, name, string);
+		break;
+	default:
+		error("o80_writeConfigFile: default type %d", type);
+	}
 }
 
 void ScummEngine_v80he::o80_cursorCommand() {

@@ -647,9 +647,7 @@ void ScummEngine_v7he::o7_resourceRoutines() {
 			resid = _resourceMapper[resid & 0x7F];
 		unlock(rtRoom, resid);
 		break;
-	case 116:		// SO_CLEAR_HEAP
-		/* this is actually a scumm message */
-		error("clear heap not working yet");
+	case 116:
 		break;
 	case 117:		// SO_LOAD_CHARSET
 		resid = pop();

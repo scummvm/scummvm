@@ -790,7 +790,8 @@ protected:
 	/* HE version 80 script opcodes */
 	void o80_unknown45();
 	void o80_unknown49();
-	void o80_unknown4D();
+	void o80_readConfigFile();
+	void o80_writeConfigFile();
 	void o80_cursorCommand();
 	void o80_setState();
 };

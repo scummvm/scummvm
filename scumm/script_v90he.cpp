@@ -141,8 +141,8 @@ void ScummEngine_v90he::setupOpcodes() {
 		OPCODE(o72_wordArrayIndexedWrite),
 		/* 4C */
 		OPCODE(o6_invalid),
-		OPCODE(o80_unknown4D),
-		OPCODE(o6_invalid),
+		OPCODE(o80_readConfigFile),
+		OPCODE(o80_writeConfigFile),
 		OPCODE(o6_wordVarInc),
 		/* 50 */
 		OPCODE(o72_unknown50),
