@@ -37,6 +37,7 @@ Contributors:
        Janne Huttunen        - V3 actor mask support, Dig/FT SMUSH audio
        Kovacs Endre Janos    - Several fixes for Simon1
        Jeroen Janssen        - Numerous readability and bugfix patches
+       Robert Kelsen         - Packaging for SlackWare
        Claudio Matsuoka      - Daily Linux/BeOS builds
        Mikesch Nepomuk       - MI1 VGA floppy patches
        Nicolas Noble         - Config file and ALSA support
