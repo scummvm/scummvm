@@ -330,10 +330,10 @@ int RunScript ( char * scriptData , char * objectData , uint32 *offset )
 	// FIXME: 'scriptData' and 'variables' used to be const. However,
 	// this code writes into 'variables' so it can not be const.
 	char *variables = scriptData + sizeof(int);
-	const char *code = scriptData + (int)READ_LE_UINT32(scriptData) + sizeof(int);
-	uint32 noScripts = (int)READ_LE_UINT32(code);
+	const char *code = scriptData + (int32)READ_LE_UINT32(scriptData) + sizeof(int);
+	uint32 noScripts = (int32)READ_LE_UINT32(code);
 	if ( (*offset) < noScripts)
-	{	ip = (int)READ_LE_UINT32((const int *)code + (*offset) + 1);
+	{	ip = (int32)READ_LE_UINT32((const int *)code + (*offset) + 1);
 		DEBUG2("Start script %d with offset %d",*offset,ip);
 	}
 	else
@@ -354,7 +354,7 @@ int RunScript ( char * scriptData , char * objectData , uint32 *offset )
 	const int *checksumBlock = (const int *)code;
 	code += sizeof(int) * 3;
 
-	if ((int)READ_LE_UINT32(checksumBlock) != 12345678)
+	if ((int32)READ_LE_UINT32(checksumBlock) != 12345678)
 	{
 #ifdef INSIDE_LINC
 		AfxMessageBox(CVString("Invalid script in object %s",header->name));
@@ -363,11 +363,11 @@ int RunScript ( char * scriptData , char * objectData , uint32 *offset )
 #endif
 		return(0);
 	}
-	int codeLen = (int)READ_LE_UINT32(checksumBlock + 1);
+	int codeLen = (int32)READ_LE_UINT32(checksumBlock + 1);
 	int checksum = 0;
 	for (int count = 0 ; count < codeLen ; count++)
 		checksum += (unsigned char)code[count];
-	if ( checksum != (int)READ_LE_UINT32(checksumBlock + 2) )
+	if ( checksum != (int32)READ_LE_UINT32(checksumBlock + 2) )
 	{
 #ifdef INSIDE_LINC
 		AfxMessageBox(CVString("Checksum error in script %s",header->name));
@@ -396,8 +396,8 @@ int RunScript ( char * scriptData , char * objectData , uint32 *offset )
 
 			case CP_PUSH_LOCAL_VAR32:		// 1	Push the contents of a local variable
 				Read16ip(parameter)
-				DEBUG2("Push local var %d (%d)",parameter,*((int *)(variables+parameter)));
-				PUSHONSTACK ( *((int *)(variables+parameter)) );
+				DEBUG2("Push local var %d (%d)",parameter,(int32)READ_LE_UINT32(variables+parameter));
+				PUSHONSTACK ( (int32)READ_LE_UINT32(variables+parameter) );
 				break;
 
 
@@ -417,7 +417,7 @@ int RunScript ( char * scriptData , char * objectData , uint32 *offset )
 				Read16ip(parameter)
 				POPOFFSTACK ( value );
 				DEBUG2("Pop %d into var %d",value,parameter);
-				*((int *)(variables+parameter)) = value;
+				*((int *)(variables+parameter)) = TO_LE_32(value);
 				break;
 
 			case CP_CALL_MCODE:			// 4	Call an mcode routine
@@ -499,10 +499,10 @@ int RunScript ( char * scriptData , char * objectData , uint32 *offset )
 				int foundCase = 0;
 				for (int count = 0 ; (count < caseCount) && (!foundCase) ; count++)
 				{
-					if (value == *((const int32 *)(code+ip)))
+					if (value == (int32)READ_LE_UINT32(code+ip))
 					{	// We have found the case, so lets jump to it
 						foundCase = 1;
-						ip +=  *((const int32 *)(code+ip+sizeof(int32)));
+						ip += (int32)READ_LE_UINT32(code+ip+sizeof(int32));
 					}
 					else
 						ip += sizeof(int32) * 2;
@@ -510,7 +510,7 @@ int RunScript ( char * scriptData , char * objectData , uint32 *offset )
 				// If we found no matching case then use the default
 				if (!foundCase)
 				{
-					ip += *((const int32 *)(code+ip));
+					ip += (int32)READ_LE_UINT32(code+ip);
 				}
 			}
 				break;
@@ -518,15 +518,15 @@ int RunScript ( char * scriptData , char * objectData , uint32 *offset )
 			case CP_ADDNPOP_LOCAL_VAR32:						// 10
 				Read16ip(parameter)
 				POPOFFSTACK ( value );
-				*((int *)(variables+parameter)) += value;
-				DEBUG3("+= %d into var %d->%d",value,parameter,*((int *)(variables+parameter)));
+				*((int *)(variables+parameter)) = TO_LE_32((int32)READ_LE_UINT32(variables+parameter) + value);
+				DEBUG3("+= %d into var %d->%d",value,parameter,(int32)READ_LE_UINT32(variables+parameter));
 				break;
 
 			case CP_SUBNPOP_LOCAL_VAR32:						// 11
 				Read16ip(parameter)
 				POPOFFSTACK ( value );
-				*((int *)(variables+parameter)) -= value;
-				DEBUG3("-= %d into var %d->%d",value,parameter,*((int *)(variables+parameter)));
+				*((int *)(variables+parameter)) = TO_LE_32((int32)READ_LE_UINT32(variables+parameter) - value);
+				DEBUG3("-= %d into var %d->%d",value,parameter,(int32)READ_LE_UINT32(variables+parameter));
 				break;
 
 			case CP_SKIPONTRUE:									//	12	Skip if the value on the stack is TRUE
@@ -574,7 +574,7 @@ int RunScript ( char * scriptData , char * objectData , uint32 *offset )
 										VS_COL_GREY);
 #else
 				globalInterpreterVariables2[parameter] += value;
-				DEBUG3("+= %d into global var %d->%d",value,parameter,*((int *)(variables+parameter)));
+				DEBUG3("+= %d into global var %d->%d",value,parameter,(int32)READ_LE_UINT32(variables+parameter));
 #endif
 				break;
 			}
@@ -593,7 +593,7 @@ int RunScript ( char * scriptData , char * objectData , uint32 *offset )
 										VS_COL_GREY);
 #else
 				globalInterpreterVariables2[parameter] -= value;
-				DEBUG3("-= %d into global var %d->%d",value,parameter,*((int *)(variables+parameter)));
+				DEBUG3("-= %d into global var %d->%d",value,parameter,(int32)READ_LE_UINT32(variables+parameter));
 #endif
 				break;
 			}
@@ -696,10 +696,10 @@ int RunScript ( char * scriptData , char * objectData , uint32 *offset )
 #ifdef INSIDE_LINC
 				TRACE("ip %d: Parameter %d skip %d\r\n",	ip,
 															parameterReturnedFromMcodeFunction,
-															((const int32 *)(code+ip))[parameterReturnedFromMcodeFunction] );
+															(int32)READ_LE_UINT32(code + ip + parameterReturnedFromMcodeFunction * 4) );
 #endif
 
-				ip += ((const int32 *)(code+ip))[parameterReturnedFromMcodeFunction];
+				ip += (int32)READ_LE_UINT32(code + ip + parameterReturnedFromMcodeFunction * 4);
 			}
 				break;
 
@@ -723,7 +723,7 @@ int RunScript ( char * scriptData , char * objectData , uint32 *offset )
 			case CP_RESTART_SCRIPT:	// 32
 			{	// Start the script again
 				// Do a ip search to find the script we are running
-				const char *tempScrPtr = scriptData + *((int *)scriptData) + sizeof(int);
+				const char *tempScrPtr = scriptData + (int32)READ_LE_UINT32(scriptData) + sizeof(int);
 				int scriptNumber = 0;
 				int foundScript = 0;
 				uint32 count = 0;

@@ -1143,9 +1143,9 @@ int32 InitialiseBackgroundLayer(_parallax *p) {
 		if (p->offset[i] == 0)
 			continue;
 
-		line = (_parallaxLine *) ((uint8 *) p + p->offset[i]);
+		line = (_parallaxLine *) ((uint8 *) p + FROM_LE_32(p->offset[i]));
 		data = (uint8 *) line + sizeof(_parallaxLine);
-		x = line->offset;
+		x = FROM_LE_16(line->offset);
 
 		dst = memchunk + i * p->w + x;
 
@@ -1155,7 +1155,7 @@ int32 InitialiseBackgroundLayer(_parallax *p) {
 			continue;
 		}
 
-		for (j = 0; j < line->packets; j++) {
+		for (j = 0; j < FROM_LE_16(line->packets); j++) {
 			if (zeros) {
 				dst += *data;
 				x += *data;
