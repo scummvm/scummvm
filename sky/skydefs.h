@@ -42,6 +42,7 @@
 #define CUR_ID 12
 #define MOUSE_STATUS 13
 #define MOUSE_STOP 14
+#define GET_OFF	18
 #define HIT_ID 37
 #define THE_CHOSEN_ONE 51
 #define TEXT1 53

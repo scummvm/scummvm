@@ -115,7 +115,7 @@ void SkyLogic::logicScript() {
 		uint16 *scriptNo = (uint16 *)SkyCompact::getCompactElem(_compact, C_BASE_SUB + mode);
 		uint16 *offset   = (uint16 *)SkyCompact::getCompactElem(_compact, C_BASE_SUB + mode + 2);
 
-		uint32 scr = script(_compact, *scriptNo, *offset);
+		uint32 scr = script(*scriptNo, *offset);
 		*scriptNo = (uint16)(scr & 0xffff);
 		*offset   = (uint16)(scr >> 16);
 
@@ -231,7 +231,7 @@ void SkyLogic::arAnim() {
 				return;
 			}
 
-			script(_compact, _compact->extCompact->miniBump, 0);
+			script(_compact->extCompact->miniBump, 0);
 			return;
 		}
 	}
@@ -579,6 +579,13 @@ bool SkyLogic::collide(Compact *cpt) {
 	}
 }
 
+void SkyLogic::runGetOff() {
+	uint32 getOff = _scriptVariables[GET_OFF];
+	_scriptVariables[GET_OFF] = 0;
+	if (getOff)
+		script((uint16)(getOff & 0xffff), (uint16)(getOff >> 16));
+}
+
 void SkyLogic::checkModuleLoaded(uint16 moduleNo) {
 	if (!_moduleList[moduleNo])
 		_moduleList[moduleNo] = (uint16 *)_skyDisk->loadFile((uint16)moduleNo + F_MODULE_0, NULL);
@@ -880,7 +887,7 @@ void SkyLogic::initScriptVariables() {
 	memcpy(_scriptVariables + 505, forwardList5b, sizeof(forwardList5b));
 }
 
-uint32 SkyLogic::script(Compact *compact, uint16 scriptNo, uint16 offset) {
+uint32 SkyLogic::script(uint16 scriptNo, uint16 offset) {
 script:
 	// process a script
 	// low level interface to interpreter
@@ -1035,13 +1042,13 @@ script:
 		case 15: // push_offset
 			// Push a compact access
 			s = READ_LE_UINT16(scriptData++);
-			tmp = (uint16 *)SkyCompact::getCompactElem(compact, s);
+			tmp = (uint16 *)SkyCompact::getCompactElem(_compact, s);
 			push(*tmp);
 			break;
 		case 16: // pop_offset
 			// pop a value into a compact
 			s = READ_LE_UINT16(scriptData++);
-			tmp = (uint16 *)SkyCompact::getCompactElem(compact, s);
+			tmp = (uint16 *)SkyCompact::getCompactElem(_compact, s);
 			*tmp = (uint16)pop();
 			break;
 		case 17: // is_equal
@@ -1252,7 +1259,11 @@ uint32 SkyLogic::fnKillId(uint32 a, uint32 b, uint32 c) {
 }
 
 uint32 SkyLogic::fnNoHuman(uint32 a, uint32 b, uint32 c) {
-	warning("Stub: fnNoHuman");
+	if (!_scriptVariables[MOUSE_STOP]) {
+		_scriptVariables[MOUSE_STOP] &= 1;
+		runGetOff();
+		fnBlankMouse(a, b, c);
+	}
 	return 1;
 }
 
@@ -1270,7 +1281,7 @@ uint32 SkyLogic::fnNoButtons(uint32 a, uint32 b, uint32 c) {
 }
 
 uint32 SkyLogic::fnSetStop(uint32 a, uint32 b, uint32 c) {
-	warning("Stub: fnSetStop");
+	_scriptVariables[MOUSE_STOP] |= 1;
 	return 1;
 }
 
