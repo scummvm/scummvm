@@ -1565,7 +1565,11 @@ void ScummEngine_v8::o8_getStringWidth() {
 }
 
 void ScummEngine_v8::o8_drawObject() {
-	int state = pop(), y = pop(), x = pop(), obj = pop(), objnum = getObjectIndex(obj);
+	int state = pop();
+	int y = pop();
+	int x = pop();
+	int obj = pop();
+	int objnum = getObjectIndex(obj);
 	ObjectData *od;
 
 	if (!objnum)
@@ -1575,7 +1579,6 @@ void ScummEngine_v8::o8_drawObject() {
 	if (x != 0x7FFFFFFF) {
 		od->x_pos = x;
 		od->y_pos = y;
-		debug(1, "setting position: 0x%X b 0x%X", x, y);
 	}
 
 	addObjectToDrawQue(objnum);

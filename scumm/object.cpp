@@ -413,6 +413,7 @@ void ScummEngine::drawObject(int obj, int arg) {
 	width = od.width / 8;
 	height = od.height &= 0xFFFFFFF8;	// Mask out last 3 bits
 
+	// Short circuit for objects which aren't visible at all.
 	if (width == 0 || xpos > _screenEndStrip || xpos + width < _screenStartStrip)
 		return;
 
@@ -809,6 +810,16 @@ void ScummEngine::processDrawQue() {
 	_drawObjectQueNr = 0;
 }
 
+void ScummEngine::addObjectToDrawQue(int object) {
+	if ((unsigned int)_drawObjectQueNr >= ARRAYSIZE(_drawObjectQue))
+		error("Draw Object Que overflow");
+	_drawObjectQue[_drawObjectQueNr++] = object;
+}
+
+void ScummEngine::clearDrawObjectQueue() {
+	_drawObjectQueNr = 0;
+}
+
 void ScummEngine::clearOwnerOf(int obj) {
 	int i, j;
 	uint16 *a;
@@ -871,16 +882,6 @@ void ScummEngine::markObjectRectAsDirty(int obj) {
 			return;
 		}
 	}
-}
-
-void ScummEngine::addObjectToDrawQue(int object) {
-	_drawObjectQue[_drawObjectQueNr++] = object;
-	if ((unsigned int)_drawObjectQueNr > ARRAYSIZE(_drawObjectQue))
-		error("Draw Object Que overflow");
-}
-
-void ScummEngine::clearDrawObjectQueue() {
-	_drawObjectQueNr = 0;
 }
 
 const byte *ScummEngine::getObjOrActorName(int obj) {
