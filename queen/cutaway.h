@@ -162,7 +162,7 @@ class Cutaway {
 		bool _roomFade;
 
 		//! Number of cutaway objects at _cutawayData
-		int _cutawayObjectCount;
+		int16 _cutawayObjectCount;
 
 		//! This cutaway is followed by another
 		bool _anotherCutaway;

@@ -100,7 +100,7 @@ void Cutaway::load(const char *filename) {
 	_comPanel = READ_BE_UINT16(ptr);
 	ptr += 2;
 
-	_cutawayObjectCount = READ_BE_UINT16(ptr);
+	_cutawayObjectCount = (int16)READ_BE_UINT16(ptr);
 	ptr += 2;
 	debug(0, "_cutawayObjectCount = %i", _cutawayObjectCount);
 
