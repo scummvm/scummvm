@@ -1086,27 +1086,28 @@ void ScummEngine_v90he::spritesBlitToScreen() {
 			if (spi->bbox.left <= spi->bbox.right && spi->bbox.top <= spi->bbox.bottom) {
 				if (spi->flags & kSFBlitDirectly) {
 					gdi.copyVirtScreenBuffers(spi->bbox); // XXX 0, 0x40000000);
-				}
-			} else if (firstLoop) {
-				xmin = spi->bbox.left;
-				ymin = spi->bbox.top;
-				xmax = spi->bbox.right;
-				ymax = spi->bbox.bottom;
-				firstLoop = false;
-			} else {
-				if (xmin < spi->bbox.left) {
+				} else if (firstLoop) {
 					xmin = spi->bbox.left;
-				}
-				if (ymin < spi->bbox.top) {
 					ymin = spi->bbox.top;
-				}
-				if (xmax > spi->bbox.right) {
 					xmax = spi->bbox.right;
-				}
-				if (ymax > spi->bbox.bottom) {
 					ymax = spi->bbox.bottom;
+					firstLoop = false;
+					refreshScreen = true;
+				} else {
+					if (xmin < spi->bbox.left) {
+						xmin = spi->bbox.left;
+					}
+					if (ymin < spi->bbox.top) {
+						ymin = spi->bbox.top;
+					}
+					if (xmax > spi->bbox.right) {
+						xmax = spi->bbox.right;
+					}
+					if (ymax > spi->bbox.bottom) {
+						ymax = spi->bbox.bottom;
+					}
+					refreshScreen = true;
 				}
-				refreshScreen = true;
 			}
 			if (!(spi->flags & (kSFNeedRedraw | kSF30)) && spi->res_id) {
 				spi->flags |= kSFNeedRedraw;
@@ -1168,7 +1169,6 @@ void ScummEngine_v90he::spritesUpdateImages() {
 				spi->res_state = 0;
 				if (spi->imglist_num != 0) {
 					if (!(spi->flags & kSF25)) {
-						// XXX
 						checkRange(_varMaxSprites, 1, spi->imglist_num, "Image list %d out of range");
 						uint16 img1 = _imageListTable[0x21 * spi->imglist_num - 1];
 						uint16 img2 = spi->field_74 + 1;

@@ -56,17 +56,17 @@ enum SpriteFlags {
 	kSF28           = (1 << 27),
 	kSF29           = (1 << 28),
 	kSF30           = (1 << 29),
-	kSF31           = (1 << 30),
+	kSF31           = (1 << 30), // kSFHasImage ?
 	kSF32           = (1 << 31)
 };
 
 enum SpriteGroupFlags {
-	kSGF01  = 1 << 0,
-	kSGF02  = 1 << 1
+	kSGF01  = 1 << 0, // kSGFClipBox
+	kSGF02  = 1 << 1  // kSGFNeedRedraw
 };
 
 struct SpriteInfo {
-	int field_0;
+	int field_0; // zorder ?
 	int flags;
 	int res_id;
 	int res_state;
@@ -104,7 +104,7 @@ struct SpriteInfo {
 
 struct SpriteGroup {
 	Common::Rect bbox;
-	int field_10;
+	int field_10; // zorderPriority ?
 	int flags;
 	int tx;
 	int ty;
@@ -112,10 +112,10 @@ struct SpriteGroup {
 	int scaling;
 	int scale_x;
 	int scale_y;
-	int field_30;
-	int field_34;
-	int field_38;
-	int field_3C;
+	int field_30; // scale_x_ratio_mul
+	int field_34; // scale_x_ratio_div
+	int field_38; // scale_y_ratio_mul
+	int field_3C; // scale_y_ratio_div
 };
 
 	int _varNumSpriteGroups;
