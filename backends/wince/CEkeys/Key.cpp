@@ -27,8 +27,8 @@ namespace CEKEYS {
 	_ascii(0), _keycode(0), _flags(0) {
 	}
 
-	Key::Key(int ascii, int keycode, int flags, bool pushed) :
-	_ascii(ascii), _keycode(keycode), _flags(flags), _pushed(pushed) {
+	Key::Key(int ascii, int keycode, int flags) :
+	_ascii(ascii), _keycode(keycode), _flags(flags) {
 	}
 
 	int Key::ascii() {
@@ -43,10 +43,6 @@ namespace CEKEYS {
 		return _flags;
 	}
 
-	bool Key::pushed() {
-		return _pushed;
-	}
-
 
 	void Key::setAscii(int ascii) {
 		_ascii = ascii;
@@ -59,9 +55,5 @@ namespace CEKEYS {
 
 	void Key::setFlags(int flags) {
 		_flags = flags;
-	}
-
-	void Key::setPushed(bool pushed) {
-		_pushed = pushed;
 	}
 }

@@ -30,21 +30,18 @@ namespace CEKEYS {
 
 	class Key {
 	public:
-		Key(int ascii, int keycode = 0, int flags = 0, bool pushed = true);
+		Key(int ascii, int keycode = 0, int flags = 0);
 		Key();
 		void setAscii(int ascii);
 		void setKeycode(int keycode);
 		void setFlags(int flags);
-		void setPushed(bool pushed);
 		int ascii();
 		int keycode();
 		int flags();
-		bool pushed();
 	private:
 		int _ascii;
 		int _keycode;
 		int _flags;
-		bool _pushed;
 	};
 }
 
