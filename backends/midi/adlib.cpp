@@ -26,7 +26,7 @@
 #include "common/util.h"
 
 class MidiDriver_ADLIB;
-struct MidiChannelAdl;
+struct AdlibVoice;
 
 struct InstrumentExtra {
 	byte a, b, c, d, e, f, g, h;
@@ -54,9 +54,9 @@ struct AdlibInstrument {
 class AdlibPart : public MidiChannel {
 	friend class MidiDriver_ADLIB;
 
-private:
+protected:
 //	AdlibPart *_prev, *_next;
-	MidiChannelAdl *_mc;
+	AdlibVoice *_voice;
 	int16 _pitchbend;
 	byte _pitchbend_factor;
 	int8 _transpose_eff;
@@ -68,7 +68,7 @@ private:
 	byte _pri_eff;
 	AdlibInstrument _part_instr;
 
-private:
+protected:
 	MidiDriver_ADLIB *_owner;
 	bool _allocated;
 	byte _channel;
@@ -104,6 +104,35 @@ public:
 	void sysEx_customInstrument (uint32 type, byte *instr);
 };
 
+// FYI (Jamieson630)
+// It is assumed that any invocation to AdlibPercussionChannel
+// will be done through the MidiChannel base class as opposed to the
+// AdlibPart base class. If this were NOT the case, all the functions
+// listed below would need to be virtual in AdlibPart as well as MidiChannel.
+class AdlibPercussionChannel : public AdlibPart {
+	friend class MidiDriver_ADLIB;
+
+protected:
+	void init (MidiDriver_ADLIB *owner, byte channel);
+
+public:
+	void noteOff (byte note);
+	void noteOn (byte note, byte velocity);
+	void programChange (byte program) { }
+	void pitchBend (int16 bend) { }
+
+	// Control Change messages
+	void controlChange (byte control, byte value) { }
+	void modulationWheel (byte value) { }
+	void pitchBendFactor (byte value) { }
+	void detune (byte value) { }
+	void priority (byte value) { }
+	void sustain (bool value) { }
+
+	// SysEx messages
+	void sysEx_customInstrument (uint32 type, byte *instr) { }
+};
+
 struct Struct10 {
 	byte active;
 	int16 cur_val;
@@ -130,9 +159,9 @@ struct Struct11 {
 	Struct10 *s10;
 };
 
-struct MidiChannelAdl {
+struct AdlibVoice {
 	AdlibPart *_part;
-	MidiChannelAdl *_next, *_prev;
+	AdlibVoice *_next, *_prev;
 	byte _waitforpedal;
 	byte _note;
 	byte _channel;
@@ -145,7 +174,7 @@ struct MidiChannelAdl {
 	Struct10 _s10b;
 	Struct11 _s11b;
 	
-	MidiChannelAdl() : _part (0), _next(0), _prev(0) {}
+	AdlibVoice() : _part (0), _next(0), _prev(0) {}
 };
 
 struct AdlibSetParams {
@@ -411,6 +440,63 @@ static byte map_gm_to_fm [128][30] = {
 { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 }  // Unknown
 };
 
+struct PercussionMapEntry {
+	byte _key; // 0 means no map data
+	char *_name;
+	byte _instrument [30];
+};
+
+static PercussionMapEntry gm_percussion_to_fm [47] = {
+	// The first entry is actual for key 34 (0-based)
+	{  0, "Acoustic Bass Drum", { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 } },
+	{  0, "Bass Drum 1",        { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 } },
+	{ 72, "Side Stick",         { 0x0F, 0x21, 0x07, 0xE3, 0x01, 0x09, 0x30, 0x0B, 0xF6, 0x00, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 } },
+	{ 59, "Acoustic Snare",     { 0x00, 0x3F, 0x09, 0x00, 0x02, 0x06, 0x00, 0x57, 0x00, 0x7C, 0x0E, 0x80, 0x02, 0x08, 0x03, 0x1B, 0x1F, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 } },
+	{ 65, "Hand Clap",          { 0x00, 0x3F, 0x09, 0x00, 0x02, 0x06, 0x00, 0x57, 0x00, 0x7C, 0x0E, 0x80, 0x02, 0x08, 0x03, 0x1B, 0x1F, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 } },
+	{ 71, "Electric Snare",     { 0x00, 0x3F, 0x09, 0x00, 0x02, 0x06, 0x00, 0x57, 0x00, 0x7C, 0x0E, 0x80, 0x02, 0x08, 0x03, 0x1B, 0x1F, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 } },
+	{ 50, "Low Floor Tom",      { 0x0F, 0x10, 0x10, 0x09, 0x49, 0x02, 0x12, 0x07, 0x9A, 0x7C, 0x0A, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 } },
+	{ 80, "Closed Hi-Hat",      { 0x00, 0x3F, 0x09, 0x00, 0x02, 0x06, 0x00, 0x57, 0x00, 0x7C, 0x0E, 0x80, 0x02, 0x08, 0x03, 0x1B, 0x1F, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 } },
+	{ 55, "High Floor Tom",     { 0x0F, 0x10, 0x10, 0x09, 0x49, 0x02, 0x12, 0x07, 0x9A, 0x7C, 0x0A, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 } },
+	{ 74, "Pedal Hi-Hat",       { 0x00, 0x3F, 0x09, 0x00, 0x02, 0x06, 0x00, 0x57, 0x00, 0x7C, 0x0E, 0x80, 0x02, 0x08, 0x03, 0x1B, 0x1F, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 } },
+	{ 62, "Low Tom",            { 0x0F, 0x10, 0x10, 0x09, 0x49, 0x02, 0x12, 0x07, 0x9A, 0x7C, 0x0A, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 } },
+	{ 72, "Open Hi-Hat",        { 0xCF, 0x3B, 0x2A, 0xFE, 0x7E, 0xC0, 0xC0, 0x0C, 0xEB, 0x63, 0x0E, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x10 } },
+	{ 70, "Low-Mid Tom",        { 0x0F, 0x10, 0x10, 0x09, 0x49, 0x02, 0x12, 0x07, 0x9A, 0x7C, 0x0A, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 } },
+	{ 78, "High-Mid Tom",       { 0x0F, 0x10, 0x10, 0x09, 0x49, 0x02, 0x12, 0x07, 0x9A, 0x7C, 0x0A, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 } },
+	{ 60, "Crash Cymbal 1",     { 0xCF, 0x3B, 0x2A, 0xFE, 0x7E, 0xC0, 0xC0, 0x0C, 0xEB, 0x63, 0x0E, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x10 } },
+	{ 86, "High Tom",           { 0x0F, 0x10, 0x10, 0x09, 0x49, 0x02, 0x12, 0x07, 0x9A, 0x7C, 0x0A, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 } },
+	{  0, "Ride Cymbal 1",      { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 } },
+	{  0, "Chinese Cymbal",     { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 } },
+	{  0, "Ride Bell",          { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 } },
+	{ 61, "Tambourine",         { 0xE0, 0x3F, 0xAF, 0xF5, 0x7F, 0xEC, 0x2E, 0x0E, 0xC4, 0x7A, 0x08, 0x01, 0x00, 0x03, 0x1E, 0x01, 0x1E, 0x00, 0x00, 0x1E, 0xA8, 0x00, 0x01, 0x20, 0x06, 0x23, 0x04, 0x03, 0x20, 0x00 } },
+	{ 75, "Splash Cymbal",      { 0xCF, 0x3B, 0x2A, 0xFE, 0x7E, 0xC0, 0xC0, 0x0C, 0xEB, 0x63, 0x0E, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x10 } },
+	{ 60, "Cowbell",            { 0xEC, 0x34, 0x07, 0x00, 0x01, 0xE7, 0x3F, 0x05, 0x00, 0x4F, 0x09, 0xA1, 0x00, 0x01, 0x1E, 0x02, 0x1D, 0x01, 0x01, 0x22, 0xA8, 0x00, 0x01, 0x24, 0x06, 0x20, 0x04, 0x03, 0x24, 0x00 } },
+	{ 69, "Crash Cymbal 2",     { 0xCF, 0x3B, 0x2A, 0xFE, 0x7E, 0xC0, 0xC0, 0x0C, 0xEB, 0x63, 0x0E, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x10 } },
+	{  0, "Vibraslap",          { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 } },
+	{  0, "Ride Cymbal 2",      { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 } },
+	{  0, "High Bongo",         { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 } },
+	{  0, "Low Bongo",          { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 } },
+	{  0, "Mute High Conga",    { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 } },
+	{ 66, "Open High Conga",    { 0x21, 0x3F, 0x05, 0x95, 0x00, 0x21, 0x30, 0x55, 0x05, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 } },
+	{ 60, "Low Conga",          { 0x21, 0x3F, 0x05, 0x95, 0x00, 0x21, 0x30, 0x55, 0x05, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 } },
+	{  0, "High Timbale",       { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 } },
+	{  0, "Low Timbale",        { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 } },
+	{  0, "High Agogo",         { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 } },
+	{  0, "Low Agogo",          { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 } },
+	{  0, "Cabasa",             { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 } },
+	{  0, "Maracas",            { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 } },
+	{  0, "Short Whistle",      { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 } },
+	{  0, "Long Whistle",       { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 } },
+	{  0, "Short Guiro",        { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 } },
+	{  0, "Long Guiro",         { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 } },
+	{  0, "Claves",             { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 } },
+	{ 72, "High Wood Block",    { 0x0F, 0x21, 0x07, 0xE3, 0x01, 0x09, 0x30, 0x0B, 0xF6, 0x00, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 } },
+	{ 66, "Low Wood Block",     { 0x0F, 0x21, 0x07, 0xE3, 0x01, 0x09, 0x30, 0x0B, 0xF6, 0x00, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 } },
+	{  0, "Mute Cuica",         { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 } },
+	{ 62, "Open Cuica",         { 0x00, 0x23, 0x96, 0x00, 0x00, 0x00, 0x3F, 0x69, 0x00, 0x00, 0x00, 0x80, 0x00, 0x01, 0x21, 0x08, 0x1F, 0x00, 0x00, 0x1F, 0x0E, 0x00, 0x0B, 0x3E, 0x12, 0x1F, 0x00, 0x00, 0x1F, 0x00 } },
+	{  0, "Mute Triangle",      { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 } },
+	{  0, "Open Triangle",      { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 } }
+};
+
 static byte lookup_table[64][32];
 const byte volume_table[] = {
 	0, 4, 7, 11,
@@ -482,6 +568,7 @@ typedef void TimerCallback (void *);
 
 class MidiDriver_ADLIB : public MidiDriver {
 	friend class AdlibPart;
+	friend class AdlibPercussionChannel;
 
 public:
 	MidiDriver_ADLIB();
@@ -504,7 +591,7 @@ public:
 	}
 
 	MidiChannel *allocateChannel();
-	MidiChannel *getPercussionChannel() { return NULL; } // Percussion currently not supported
+	MidiChannel *getPercussionChannel() { return &_percussion; } // Percussion partially supported
 
 private:
 	bool _isOpen;
@@ -519,18 +606,16 @@ private:
 	int _adlib_timer_counter;
 
 	uint16 channel_table_2[9];
-	int _midichan_index;
+	int _voice_index;
 	int _next_tick;
 	uint16 curnote_table[9];
-	MidiChannelAdl _midi_channels[9];
+	AdlibVoice _voices[9];
 	AdlibPart _parts[32];
-
-	void sysEx_customInstrument (AdlibPart *part, uint32 type, byte *instr);
+	AdlibPercussionChannel _percussion;
 
 	void generate_samples(int16 *buf, int len);
 	void on_timer();
-	void part_set_instrument (AdlibPart *part, AdlibInstrument * instr);
-	void part_key_on (AdlibPart *part, byte note, byte velocity);
+	void part_key_on (AdlibPart *part, AdlibInstrument *instr, byte note, byte velocity);
 	void part_key_off (AdlibPart *part, byte note);
 
 	void adlib_key_off(int chan);
@@ -546,21 +631,21 @@ private:
 	void adlib_write(byte port, byte value);
 	void adlib_playnote(int channel, int note);
 
-	MidiChannelAdl *allocate_midichan(byte pri);
+	AdlibVoice *allocate_voice(byte pri);
 
 	void reset_tick();
-	void mc_off(MidiChannelAdl * mc);
+	void mc_off(AdlibVoice * voice);
 
-	static void link_mc (AdlibPart *part, MidiChannelAdl *mc);
-	void mc_inc_stuff(MidiChannelAdl *mc, Struct10 * s10, Struct11 * s11);
-	void mc_init_stuff(MidiChannelAdl *mc, Struct10 * s10, Struct11 * s11, byte flags,
+	static void link_mc (AdlibPart *part, AdlibVoice *voice);
+	void mc_inc_stuff(AdlibVoice *voice, Struct10 * s10, Struct11 * s11);
+	void mc_init_stuff(AdlibVoice *voice, Struct10 * s10, Struct11 * s11, byte flags,
 	                   InstrumentExtra * ie);
 
 	static void struct10_init(Struct10 * s10, InstrumentExtra * ie);
 	static byte struct10_ontimer(Struct10 * s10, Struct11 * s11);
 	static void struct10_setup(Struct10 * s10);
 	static int random_nr(int a);
-	void mc_key_on (MidiChannelAdl * mc, byte note, byte velocity);
+	void mc_key_on (AdlibVoice *voice, AdlibInstrument *instr, byte note, byte velocity);
 
 	static void premix_proc(void *param, int16 *buf, uint len);
 };
@@ -581,7 +666,7 @@ void AdlibPart::noteOff (byte note) {
 }
 
 void AdlibPart::noteOn (byte note, byte velocity) {
-	_owner->part_key_on (this, note, velocity);
+	_owner->part_key_on (this, &_part_instr, note, velocity);
 }
 
 void AdlibPart::programChange (byte program) {
@@ -595,15 +680,15 @@ void AdlibPart::programChange (byte program) {
 	if (!count)
 		warning ("No Adlib instrument defined for GM program %d", (int) program);
 	_program = program;
-	_owner->part_set_instrument (this, (AdlibInstrument *) &map_gm_to_fm [program]);
+	memcpy(&_part_instr, &map_gm_to_fm [program], sizeof(AdlibInstrument));
 }
 
 void AdlibPart::pitchBend (int16 bend) {
-	MidiChannelAdl *mc;
+	AdlibVoice *voice;
 
 	_pitchbend = bend;
-	for (mc = _mc; mc; mc = mc->_next) {
-		_owner->adlib_note_on(mc->_channel, mc->_note + _transpose_eff,
+	for (voice = _voice; voice; voice = voice->_next) {
+		_owner->adlib_note_on(voice->_channel, voice->_note + _transpose_eff,
 			          (_pitchbend * _pitchbend_factor >> 6) + _detune_eff);
 	}
 }
@@ -628,45 +713,45 @@ void AdlibPart::controlChange (byte control, byte value) {
 }
 
 void AdlibPart::modulationWheel (byte value) {
-	MidiChannelAdl *mc;
+	AdlibVoice *voice;
 
 	_modwheel = value;
-	for (mc = _mc; mc; mc = mc->_next) {
-		if (mc->_s10a.active && mc->_s11a.flag0x40)
-			mc->_s10a.modwheel = _modwheel >> 2;
-		if (mc->_s10b.active && mc->_s11b.flag0x40)
-			mc->_s10b.modwheel = _modwheel >> 2;
+	for (voice = _voice; voice; voice = voice->_next) {
+		if (voice->_s10a.active && voice->_s11a.flag0x40)
+			voice->_s10a.modwheel = _modwheel >> 2;
+		if (voice->_s10b.active && voice->_s11b.flag0x40)
+			voice->_s10b.modwheel = _modwheel >> 2;
 	}
 }
 
 void AdlibPart::volume (byte value) {
-	MidiChannelAdl *mc;
+	AdlibVoice *voice;
 
 	_vol_eff = value;
-	for (mc = _mc; mc; mc = mc->_next) {
-		_owner->adlib_set_param(mc->_channel, 0, volume_table[lookup_table[mc->_vol_2][_vol_eff >> 2]]);
-		if (mc->_twochan) {
-			_owner->adlib_set_param(mc->_channel, 13, volume_table[lookup_table[mc->_vol_1][_vol_eff >> 2]]);
+	for (voice = _voice; voice; voice = voice->_next) {
+		_owner->adlib_set_param(voice->_channel, 0, volume_table[lookup_table[voice->_vol_2][_vol_eff >> 2]]);
+		if (voice->_twochan) {
+			_owner->adlib_set_param(voice->_channel, 13, volume_table[lookup_table[voice->_vol_1][_vol_eff >> 2]]);
 		}
 	}
 }
 
 void AdlibPart::pitchBendFactor (byte value) {
-	MidiChannelAdl *mc;
+	AdlibVoice *voice;
 
 	_pitchbend_factor = value;
-	for (mc = _mc; mc; mc = mc->_next) {
-		_owner->adlib_note_on(mc->_channel, mc->_note + _transpose_eff,
+	for (voice = _voice; voice; voice = voice->_next) {
+		_owner->adlib_note_on(voice->_channel, voice->_note + _transpose_eff,
 		                      (_pitchbend * _pitchbend_factor >> 6) + _detune_eff);
 	}
 }
 
 void AdlibPart::detune (byte value) {
-	MidiChannelAdl *mc;
+	AdlibVoice *voice;
 
 	_detune_eff = value;
-	for (mc = _mc; mc; mc = mc->_next) {
-		_owner->adlib_note_on(mc->_channel, mc->_note + _transpose_eff,
+	for (voice = _voice; voice; voice = voice->_next) {
+		_owner->adlib_note_on(voice->_channel, voice->_note + _transpose_eff,
 		              (_pitchbend * _pitchbend_factor >> 6) + _detune_eff);
 	}
 }
@@ -676,24 +761,66 @@ void AdlibPart::priority (byte value) {
 }
 
 void AdlibPart::sustain (bool value) {
-	MidiChannelAdl *mc;
+	AdlibVoice *voice;
 
 	_pedal = value;
 	if (!value) {
-		for (mc = _mc; mc; mc = mc->_next) {
-			if (mc->_waitforpedal)
-				_owner->mc_off(mc);
+		for (voice = _voice; voice; voice = voice->_next) {
+			if (voice->_waitforpedal)
+				_owner->mc_off(voice);
 		}
 	}
 }
 
 void AdlibPart::allNotesOff() {
-	while (_mc)
-		_owner->mc_off (_mc);
+	while (_voice)
+		_owner->mc_off (_voice);
 }
 
 void AdlibPart::sysEx_customInstrument (uint32 type, byte *instr) {
-	_owner->sysEx_customInstrument (this, type, instr);
+	if (type == 'ADL ') {
+		AdlibInstrument *i = &_part_instr;
+		memcpy(i, instr, sizeof(AdlibInstrument));
+	}
+}
+
+// MidiChannel method implementations for percussion
+
+void AdlibPercussionChannel::init (MidiDriver_ADLIB *owner, byte channel) {
+	AdlibPart::init (owner, channel);
+	_pri_eff = 0;
+	_vol_eff = 127;
+}
+
+void AdlibPercussionChannel::noteOff (byte note) {
+	// Jamieson630: Unless I run into a specific instrument that
+	// may require a key off, I'm going to ignore this message.
+	// The rationale is that a percussion instrument should
+	// fade out of its own accord, and the Adlib instrument
+	// definitions used should follow this rule. Since
+	// percussion voices are allocated at the lowest priority
+	// anyway, we know that "hanging" percussion sounds will
+	// not prevent later musical instruments (or even other
+	// percussion sounds) from playing.
+/*
+	if (note < 34 || note > 81)
+		return; // Out of GM range
+	byte key = gm_percussion_to_fm [note-34]._key;
+	if (key == 0)
+		return;
+	_owner->part_key_off (this, key);
+*/
+}
+
+void AdlibPercussionChannel::noteOn (byte note, byte velocity) {
+	if (note < 34 || note > 81)
+		return; // Out of GM range
+	byte key = gm_percussion_to_fm [note-34]._key;
+	if (key == 0) {
+		debug (2, "No FM map for GM percussion key %d (%s)", (int) note, gm_percussion_to_fm [note-34]._name);
+		return;
+	}
+	_owner->part_key_on (this, (AdlibInstrument *) &gm_percussion_to_fm [note-34]._instrument, key, velocity);
 }
 
 // MidiDriver method implementations
@@ -703,6 +830,7 @@ MidiDriver_ADLIB::MidiDriver_ADLIB() {
 	for (i = 0; i < ARRAYSIZE(_parts); ++i) {
 		_parts[i].init (this, i);
 	}
+	_percussion.init (this, 0);
 	_game_SmallHeader = false;
 	_isOpen = false;
 }
@@ -713,12 +841,12 @@ int MidiDriver_ADLIB::open() {
 	_isOpen = true;
 
 	int i;
-	MidiChannelAdl *mc;
+	AdlibVoice *voice;
 
-	for (i = 0, mc = _midi_channels; i != ARRAYSIZE(_midi_channels); i++, mc++) {
-		mc->_channel = i;
-		mc->_s11a.s10 = &mc->_s10b;
-		mc->_s11b.s10 = &mc->_s10a;
+	for (i = 0, voice = _voices; i != ARRAYSIZE(_voices); i++, voice++) {
+		voice->_channel = i;
+		voice->_s11a.s10 = &voice->_s10b;
+		voice->_s11b.s10 = &voice->_s10a;
 	}
 
 	_adlib_reg_cache = (byte *)calloc(256, 1);
@@ -740,9 +868,9 @@ int MidiDriver_ADLIB::open() {
 
 void MidiDriver_ADLIB::close() {
 	uint i;
-	for (i = 0; i < ARRAYSIZE(_midi_channels); ++i) {
-		if (_midi_channels [i]._part)
-			mc_off (&_midi_channels [i]);
+	for (i = 0; i < ARRAYSIZE(_voices); ++i) {
+		if (_voices [i]._part)
+			mc_off (&_voices [i]);
 	}
 
 	// Detach the premix callback handler
@@ -760,14 +888,19 @@ void MidiDriver_ADLIB::send (uint32 b) {
 	byte param1 = (byte) ((b >>  8) & 0xFF);
 	byte cmd    = (byte) (b & 0xF0);
 	byte chan   = (byte) (b & 0x0F);
-	AdlibPart *part = &_parts [chan];
+
+	AdlibPart *part;
+	if (chan == 9)
+		part = &_percussion;
+	else
+		part = &_parts [chan];
 
 	switch (cmd) {
 	case 0x80:// Note Off
-		part_key_off (part, param1);
+		part->noteOff (param1);
 		break;
 	case 0x90: // Note On
-		part_key_on (part, param1, param2);
+		part->noteOn (param1, param2);
 		break;
 	case 0xA0: // Aftertouch
 		break; // Not supported.
@@ -775,8 +908,7 @@ void MidiDriver_ADLIB::send (uint32 b) {
 		part->controlChange (param1, param2);
 		break;
 	case 0xC0: // Program Change
-		if (chan != 9)
-			part->programChange (param1);
+		part->programChange (param1);
 		break;
 	case 0xD0: // Channel Pressure
 		break; // Not supported.
@@ -805,25 +937,18 @@ uint32 MidiDriver_ADLIB::property (int prop, uint32 param) {
 }
 
 void MidiDriver_ADLIB::setPitchBendRange (byte channel, uint range) {
-	MidiChannelAdl *mc;
+	AdlibVoice *voice;
 	AdlibPart *part = &_parts [channel];
 
 	part->_pitchbend_factor = range;
-	for (mc = part->_mc; mc; mc = mc->_next) {
-		adlib_note_on(mc->_channel, mc->_note + part->_transpose_eff,
+	for (voice = part->_voice; voice; voice = voice->_next) {
+		adlib_note_on(voice->_channel, voice->_note + part->_transpose_eff,
 					(part->_pitchbend * part->_pitchbend_factor >> 6) + part->_detune_eff);
 	}
 }
 
 void MidiDriver_ADLIB::sysEx_customInstrument (byte channel, uint32 type, byte *instr) {
-	sysEx_customInstrument (&_parts [channel], type, instr);
-}
-
-void MidiDriver_ADLIB::sysEx_customInstrument (AdlibPart *part, uint32 type, byte *instr) {
-	if (type == 'ADL ') {
-		AdlibInstrument *i = &part->_part_instr;
-		memcpy(i, instr, sizeof(AdlibInstrument));
-	}
+	_parts[channel].sysEx_customInstrument (type, instr);
 }
 
 void MidiDriver_ADLIB::setTimerCallback (void *timer_param, void (*timer_proc) (void *)) {
@@ -888,68 +1013,68 @@ void MidiDriver_ADLIB::reset_tick() {
 }
 
 void MidiDriver_ADLIB::on_timer() {
-	MidiChannelAdl *mc;
+	AdlibVoice *voice;
 	int i;
 
 	_adlib_timer_counter += 0xD69;
 	while (_adlib_timer_counter >= 0x411B) {
 		_adlib_timer_counter -= 0x411B;
-		mc = _midi_channels;
-		for (i = 0; i != ARRAYSIZE(_midi_channels); i++, mc++) {
-			if (!mc->_part)
+		voice = _voices;
+		for (i = 0; i != ARRAYSIZE(_voices); i++, voice++) {
+			if (!voice->_part)
 				continue;
-			if (mc->_duration && (mc->_duration -= 0x11) <= 0) {
-				mc_off(mc);
+			if (voice->_duration && (voice->_duration -= 0x11) <= 0) {
+				mc_off(voice);
 				return;
 			}
-			if (mc->_s10a.active) {
-				mc_inc_stuff(mc, &mc->_s10a, &mc->_s11a);
+			if (voice->_s10a.active) {
+				mc_inc_stuff(voice, &voice->_s10a, &voice->_s11a);
 			}
-			if (mc->_s10b.active) {
-				mc_inc_stuff(mc, &mc->_s10b, &mc->_s11b);
+			if (voice->_s10b.active) {
+				mc_inc_stuff(voice, &voice->_s10b, &voice->_s11b);
 			}
 		}
 	}
 }
 
-void MidiDriver_ADLIB::mc_off(MidiChannelAdl * mc2) {
-	MidiChannelAdl *mc = (MidiChannelAdl *)mc2, *tmp;
+void MidiDriver_ADLIB::mc_off(AdlibVoice *voice) {
+	AdlibVoice *tmp;
 
-	adlib_key_off(mc->_channel);
+	adlib_key_off(voice->_channel);
 
-	tmp = mc->_prev;
+	tmp = voice->_prev;
 
-	if (mc->_next)
-		mc->_next->_prev = tmp;
+	if (voice->_next)
+		voice->_next->_prev = tmp;
 	if (tmp)
-		tmp->_next = mc->_next;
+		tmp->_next = voice->_next;
 	else
-		mc->_part->_mc = mc->_next;
-	mc->_part = NULL;
+		voice->_part->_voice = voice->_next;
+	voice->_part = NULL;
 }
 
-void MidiDriver_ADLIB::mc_inc_stuff(MidiChannelAdl *mc, Struct10 *s10, Struct11 *s11) {
+void MidiDriver_ADLIB::mc_inc_stuff(AdlibVoice *voice, Struct10 *s10, Struct11 *s11) {
 	byte code;
-	AdlibPart *part = mc->_part;
+	AdlibPart *part = voice->_part;
 
 	code = struct10_ontimer(s10, s11);
 
 	if (code & 1) {
 		switch (s11->param) {
 		case 0:
-			mc->_vol_2 = s10->start_value + s11->modify_val;
-			adlib_set_param(mc->_channel, 0,
-											volume_table[lookup_table[mc->_vol_2]
+			voice->_vol_2 = s10->start_value + s11->modify_val;
+			adlib_set_param(voice->_channel, 0,
+											volume_table[lookup_table[voice->_vol_2]
 											[part->_vol_eff >> 2]]);
 			break;
 		case 13:
-			mc->_vol_1 = s10->start_value + s11->modify_val;
-			if (mc->_twochan) {
-				adlib_set_param(mc->_channel, 13,
-												volume_table[lookup_table[mc->_vol_1]
+			voice->_vol_1 = s10->start_value + s11->modify_val;
+			if (voice->_twochan) {
+				adlib_set_param(voice->_channel, 13,
+												volume_table[lookup_table[voice->_vol_1]
 												[part->_vol_eff >> 2]]);
 			} else {
-				adlib_set_param(mc->_channel, 13, mc->_vol_1);
+				adlib_set_param(voice->_channel, 13, voice->_vol_1);
 			}
 			break;
 		case 30:
@@ -959,14 +1084,14 @@ void MidiDriver_ADLIB::mc_inc_stuff(MidiChannelAdl *mc, Struct10 *s10, Struct11 
 			s11->s10->unk3 = (char)s11->modify_val;
 			break;
 		default:
-			adlib_set_param(mc->_channel, s11->param,
+			adlib_set_param(voice->_channel, s11->param,
 											s10->start_value + s11->modify_val);
 			break;
 		}
 	}
 
 	if (code & 2 && s11->flag0x10)
-		adlib_key_onoff(mc->_channel);
+		adlib_key_onoff(voice->_channel);
 }
 
 void MidiDriver_ADLIB::adlib_key_off(int chan){
@@ -1153,37 +1278,37 @@ int MidiDriver_ADLIB::random_nr(int a) {
 }
 
 void MidiDriver_ADLIB::part_key_off (AdlibPart *part, byte note) {
-	MidiChannelAdl *mc;
+	AdlibVoice *voice;
 
-	for (mc = part->_mc; mc; mc = mc->_next) {
-		if (mc->_note == note) {
+	for (voice = part->_voice; voice; voice = voice->_next) {
+		if (voice->_note == note) {
 			if (part->_pedal)
-				mc->_waitforpedal = true;
+				voice->_waitforpedal = true;
 			else
-				mc_off(mc);
+				mc_off(voice);
 		}
 	}
 }
 
-void MidiDriver_ADLIB::part_key_on (AdlibPart *part, byte note, byte velocity) {
-	MidiChannelAdl *mc;
+void MidiDriver_ADLIB::part_key_on (AdlibPart *part, AdlibInstrument *instr, byte note, byte velocity) {
+	AdlibVoice *voice;
 
-	mc = allocate_midichan(part->_pri_eff);
-	if (!mc)
+	voice = allocate_voice(part->_pri_eff);
+	if (!voice)
 		return;
 
-	link_mc(part, mc);
-	mc_key_on(mc, note, velocity);
+	link_mc(part, voice);
+	mc_key_on(voice, instr, note, velocity);
 }
 
-MidiChannelAdl *MidiDriver_ADLIB::allocate_midichan(byte pri) {
-	MidiChannelAdl *ac, *best = NULL;
+AdlibVoice *MidiDriver_ADLIB::allocate_voice(byte pri) {
+	AdlibVoice *ac, *best = NULL;
 	int i;
 
 	for (i = 0; i < 9; i++) {
-		if (++_midichan_index >= 9)
-			_midichan_index = 0;
-		ac = &_midi_channels[_midichan_index];
+		if (++_voice_index >= 9)
+			_voice_index = 0;
+		ac = &_voices[_voice_index];
 		if (!ac->_part)
 			return ac;
 		if (!ac->_next) {
@@ -1199,59 +1324,57 @@ MidiChannelAdl *MidiDriver_ADLIB::allocate_midichan(byte pri) {
 	return best;
 }
 
-void MidiDriver_ADLIB::link_mc (AdlibPart *part, MidiChannelAdl *mc) {
-	mc->_part = part;
-	mc->_next = (MidiChannelAdl *)part->_mc;
-	part->_mc = mc;
-	mc->_prev = NULL;
+void MidiDriver_ADLIB::link_mc (AdlibPart *part, AdlibVoice *voice) {
+	voice->_part = part;
+	voice->_next = (AdlibVoice *)part->_voice;
+	part->_voice = voice;
+	voice->_prev = NULL;
 
-	if (mc->_next)
-		mc->_next->_prev = mc;
+	if (voice->_next)
+		voice->_next->_prev = voice;
 }
 
-void MidiDriver_ADLIB::mc_key_on (MidiChannelAdl *mc2, byte note, byte velocity) {
-	MidiChannelAdl *mc = (MidiChannelAdl *)mc2;
-	AdlibPart *part = mc->_part;
-	AdlibInstrument *instr = &part->_part_instr;
+void MidiDriver_ADLIB::mc_key_on (AdlibVoice *voice, AdlibInstrument *instr, byte note, byte velocity) {
+	AdlibPart *part = voice->_part;
 	int c;
 	byte vol_1, vol_2;
 
-	mc->_twochan = instr->feedback & 1;
-	mc->_note = note;
-	mc->_waitforpedal = false;
-	mc->_duration = instr->duration;
-	if (mc->_duration != 0)
-		mc->_duration *= 63;
+	voice->_twochan = instr->feedback & 1;
+	voice->_note = note;
+	voice->_waitforpedal = false;
+	voice->_duration = instr->duration;
+	if (voice->_duration != 0)
+		voice->_duration *= 63;
 
 	vol_1 = (instr->oplvl_1 & 0x3F) + lookup_table[velocity >> 1][instr->waveform_1 >> 2];
 	if (vol_1 > 0x3F)
 		vol_1 = 0x3F;
-	mc->_vol_1 = vol_1;
+	voice->_vol_1 = vol_1;
 
 	vol_2 = (instr->oplvl_2 & 0x3F) + lookup_table[velocity >> 1][instr->waveform_2 >> 2];
 	if (vol_2 > 0x3F)
 		vol_2 = 0x3F;
-	mc->_vol_2 = vol_2;
+	voice->_vol_2 = vol_2;
 
 	c = part->_vol_eff >> 2;
 
 	vol_2 = volume_table[lookup_table[vol_2][c]];
-	if (mc->_twochan)
+	if (voice->_twochan)
 		vol_1 = volume_table[lookup_table[vol_1][c]];
 
-	adlib_setup_channel(mc->_channel, instr, vol_1, vol_2);
-	adlib_note_on_ex(mc->_channel, part->_transpose_eff + note, part->_detune_eff + (part->_pitchbend * part->_pitchbend_factor >> 6));
+	adlib_setup_channel(voice->_channel, instr, vol_1, vol_2);
+	adlib_note_on_ex(voice->_channel, part->_transpose_eff + note, part->_detune_eff + (part->_pitchbend * part->_pitchbend_factor >> 6));
 
 	if (instr->flags_a & 0x80) {
-		mc_init_stuff(mc, &mc->_s10a, &mc->_s11a, instr->flags_a, &instr->extra_a);
+		mc_init_stuff(voice, &voice->_s10a, &voice->_s11a, instr->flags_a, &instr->extra_a);
 	} else {
-		mc->_s10a.active = 0;
+		voice->_s10a.active = 0;
 	}
 
 	if (instr->flags_b & 0x80) {
-		mc_init_stuff(mc, &mc->_s10b, &mc->_s11b, instr->flags_b, &instr->extra_b);
+		mc_init_stuff(voice, &voice->_s10b, &voice->_s11b, instr->flags_b, &instr->extra_b);
 	} else {
-		mc->_s10b.active = 0;
+		voice->_s10b.active = 0;
 	}
 }
 
@@ -1292,9 +1415,9 @@ void MidiDriver_ADLIB::adlib_note_on_ex(int chan, byte note, int mod)
 	adlib_playnote(chan, code);
 }
 
-void MidiDriver_ADLIB::mc_init_stuff (MidiChannelAdl *mc, Struct10 * s10,
+void MidiDriver_ADLIB::mc_init_stuff (AdlibVoice *voice, Struct10 * s10,
 															Struct11 * s11, byte flags, InstrumentExtra * ie) {
-	AdlibPart *part = mc->_part;
+	AdlibPart *part = voice->_part;
 	s11->modify_val = 0;
 	s11->flag0x40 = flags & 0x40;
 	s10->loop = flags & 0x20;
@@ -1310,10 +1433,10 @@ void MidiDriver_ADLIB::mc_init_stuff (MidiChannelAdl *mc, Struct10 * s10,
 
 	switch (s11->param) {
 	case 0:
-		s10->start_value = mc->_vol_2;
+		s10->start_value = voice->_vol_2;
 		break;
 	case 13:
-		s10->start_value = mc->_vol_1;
+		s10->start_value = voice->_vol_1;
 		break;
 	case 30:
 		s10->start_value = 31;
@@ -1324,7 +1447,7 @@ void MidiDriver_ADLIB::mc_init_stuff (MidiChannelAdl *mc, Struct10 * s10,
 		s11->s10->unk3 = 0;
 		break;
 	default:
-		s10->start_value = adlib_read_param(mc->_channel, s11->param);
+		s10->start_value = adlib_read_param(voice->_channel, s11->param);
 	}
 
 	struct10_init(s10, ie);
@@ -1389,9 +1512,4 @@ void MidiDriver_ADLIB::adlib_note_on(int chan, byte note, int mod) {
 	code = (note << 7) + mod;
 	curnote_table[chan] = code;
 	adlib_playnote(chan, channel_table_2[chan] + code);
-}
-
-void MidiDriver_ADLIB::part_set_instrument(AdlibPart *part, AdlibInstrument *instr) {
-	AdlibInstrument *i = &part->_part_instr;
-	memcpy(i, instr, sizeof(AdlibInstrument));
 }
