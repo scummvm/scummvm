@@ -1084,6 +1084,13 @@ void Scumm::actorTalk() {
 		VAR(VAR_TALK_ACTOR) = 0xFF;
 	} else {
 		int oldact;
+		
+		// FIXME: Workaround for bug #770724
+		if (_gameId == GID_LOOM && _roomResource == 23 &&
+			vm.slot[_currentScript].number == 232 && _actorToPrintStrFor == 0) {
+			_actorToPrintStrFor = 2;	// Could be anything from 2 to 5. Maybe compare to original?
+		}
+		
 		a = derefActor(_actorToPrintStrFor, "actorTalk");
 		if (!a->isInCurrentRoom() && !(_features & GF_NEW_COSTUMES)) {
 			oldact = 0xFF;
