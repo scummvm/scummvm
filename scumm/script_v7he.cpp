@@ -689,6 +689,9 @@ void ScummEngine_v70he::o70_resourceRoutines() {
 		resid = pop();
 		debug(5,"stub o70_resourceRoutines unlock object %d", resid);
 		break;
+	case 239:
+		// Used in airport
+		break;
 	default:
 		debug(1,"o70_resourceRoutines: default case %d", op);
 	}
@@ -902,7 +905,7 @@ void ScummEngine_v70he::o70_compareString() {
 	while(1) {
 		if (*addr != *addr2)
 			break;
-		if (*addr == 0) {
+		if (*addr2 == 0) {
 			push(0);
 			return;
 		}
@@ -912,14 +915,13 @@ void ScummEngine_v70he::o70_compareString() {
 
 		if (*addr != *addr2)
 			break;
-		if (*addr == 0) {
+		if (*addr2 == 0) {
 			push(0);
 			return;
 		}
 
 		addr++;
 		addr2++;
-		i += 2;
 	}
 
 	push (i);
