@@ -227,14 +227,11 @@ Sword2Sound::Sword2Sound(SoundMixer *mixer) {
 	_mixer = mixer;
 	
 	memset(fxId,		0, sizeof(fxId));
-	memset(fxCached,	0, sizeof(fxCached));
 	memset(fxiPaused,	0, sizeof(fxiPaused));
-	memset(fxLooped, 	0, sizeof(fxLooped));
 	memset(fxRate,		0, sizeof(fxRate));
 
  	memset(musStreaming,	0, sizeof(musStreaming));
 	memset(musicPaused,	0, sizeof(musicPaused));
-	memset(musCounter, 	0, sizeof(musCounter));
 	memset(musFading, 	0, sizeof(musFading));
 	memset(musLooping,	0, sizeof(musLooping));
 	memset(musFilePos,	0, sizeof(musFilePos));
@@ -686,7 +683,6 @@ int32 Sword2Sound::OpenFx(int32 id, uint8 *data) {
 			bufferFx[fxi][j] = TO_BE_16(bufferFx[fxi][j]);
 
 		fxId[fxi] = id;
-		fxCached[fxi] = RDSE_FXCACHED;
 	}
 	return(RD_OK);
 }
@@ -703,12 +699,11 @@ int32 Sword2Sound::PlayFx(int32 id, uint8 *data, uint8 vol, int8 pan, uint8 type
 	if (soundOn) {
 		if (data == NULL) {
 			if (type == RDSE_FXLEADOUT) {
-				id = 0xffffffff;
+				id = (int32) 0xffffffff;
 				i = GetFxIndex(id);
 				if (i == MAXFX) {
 					return(RDERR_FXNOTOPEN);
 				}
-				fxLooped[i] = 0;
 				flagsFx[i] &= ~SoundMixer::FLAG_LOOP;
 
 				byte volume;
@@ -719,14 +714,11 @@ int32 Sword2Sound::PlayFx(int32 id, uint8 *data, uint8 vol, int8 pan, uint8 type
 					volume = musicVolTable[volMusic[0]];
 				}
 				g_engine->_mixer->playRaw(&soundHandleFx[i], bufferFx[i], bufferSizeFx[i], fxRate[i], flagsFx[i], volume, 0);
-
-				fxCached[i] = RDSE_FXTOCLEAR;
 			} else {
 				i = GetFxIndex(id);
 				if (i == MAXFX) {
 					return(RDERR_FXNOTOPEN);
 				}
-				fxLooped[i] = loop;
 				if (loop == 1)
 					flagsFx[i] |= SoundMixer::FLAG_LOOP;
 				else 
@@ -745,9 +737,6 @@ int32 Sword2Sound::PlayFx(int32 id, uint8 *data, uint8 vol, int8 pan, uint8 type
 				p = panTable[pan + 16];
 
 				g_engine->_mixer->playRaw(&soundHandleFx[i], bufferFx[i], bufferSizeFx[i], fxRate[i], flagsFx[i], volume, p);
-				if (id == (int32) 0xffffffff) {
-					fxCached[i] = RDSE_FXTOCLEAR;
-				}
 			}
 		} else {
 			if (type == RDSE_FXLEADIN) {
@@ -760,8 +749,6 @@ int32 Sword2Sound::PlayFx(int32 id, uint8 *data, uint8 vol, int8 pan, uint8 type
 				if (i == MAXFX) {
 					return RDERR_FXFUCKED;
 				}
-				fxCached[i] = RDSE_FXTOCLEAR;
-
 				flagsFx[i] &= ~SoundMixer::FLAG_LOOP;
 				
 				byte volume;
@@ -781,8 +768,6 @@ int32 Sword2Sound::PlayFx(int32 id, uint8 *data, uint8 vol, int8 pan, uint8 type
 				if (i == MAXFX) {
 					return(RDERR_FXFUCKED);
 				}
-				fxCached[i] = RDSE_FXTOCLEAR;
-				fxLooped[i] = loop;
 				if (loop == 1)
 					flagsFx[i] |= SoundMixer::FLAG_LOOP;
 				else 
@@ -1121,7 +1106,6 @@ int32 Sword2Sound::StreamCompMusic(const char *filename, uint32 musicId, int32 l
 
 	// Recorder some last variables
 	musStreaming[primaryStream] = 1;
-	musCounter[primaryStream] = 250;
 	return RD_OK;
 }
 

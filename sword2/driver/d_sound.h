@@ -93,9 +93,7 @@ class Sword2Sound {
 		int32 DipMusic();
 
 		int32 fxId[MAXFX];
-		uint8 fxCached[MAXFX];
 		uint8 fxiPaused[MAXFX];
-		uint8 fxLooped[MAXFX];
 		uint8 fxVolume[MAXFX];
 		uint16 fxRate[MAXFX];
 		uint32 flagsFx[MAXFX];
@@ -114,7 +112,6 @@ class Sword2Sound {
 
 		int16 musStreaming[MAXMUS];
 		int16 musicPaused[MAXMUS];
-		int16 musCounter[MAXMUS];
 		int16 musFading[MAXMUS];
 		int16 musLooping[MAXMUS];
 
