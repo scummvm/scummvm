@@ -1001,7 +1001,7 @@ int SimonEngine::runScript() {
 				if (_game & GF_TALKIE) 
 					speech_id = _array_4[string_id];
 
-				if (speech_id != 0)
+				if (_speech && speech_id != 0)
 					talk_with_speech(speech_id, vga_struct_id);
 				if (string_ptr != NULL && _subtitles)
 					talk_with_text(vga_struct_id, color, string_ptr, tv->a, tv->b, tv->c);
@@ -1291,7 +1291,8 @@ void SimonEngine::o_inventory_descriptions() {
 				}
 			}
 
-			talk_with_speech(var200, vga_struct_id);
+			if (_speech)
+				talk_with_speech(var200, vga_struct_id);
 		}
 
 	} else if (_game & GF_TALKIE) {

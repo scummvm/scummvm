@@ -187,6 +187,7 @@ protected:
 	bool _continous_mainscript;
 	bool _continous_vgascript;
 	bool _draw_images_debug;
+	bool _speech;
 	bool _subtitles;
 	byte _mouse_cursor;
 	bool _vga_var9;

@@ -329,6 +329,7 @@ SimonEngine::SimonEngine(GameDetector *detector, OSystem *syst)
 	_continous_mainscript = 0;
 	_continous_vgascript = 0;
 	_draw_images_debug = 0;
+	_speech = false;
 	_subtitles = true;
 	_mouse_cursor = 0;
 	_vga_var9 = 0;
@@ -2124,7 +2125,7 @@ void SimonEngine::o_print_str() {
 
 	tv = getThreeValues(vga_sprite_id);
 
-	if (speech_id != 0)
+	if (_speech && speech_id != 0)
 		talk_with_speech(speech_id, vga_sprite_id);
 	if (string_ptr != NULL && (speech_id == 0 || _subtitles))
 		talk_with_text(vga_sprite_id, color, (const char *)string_ptr, tv->a, tv->b, tv->c);
@@ -3450,9 +3451,14 @@ void SimonEngine::processSpecialKeys() {
 			_exit_cutscene = true;
 		break;
 	case 't':
-		if (_game & GF_SIMON2 && _game & GF_TALKIE || _game & GF_TALKIE && _language > 1)
-			_subtitles ^= 1;
+		if ((_game & GF_SIMON2 && _game & GF_TALKIE) ||( _game & GF_TALKIE && _language > 1))
+			if (_speech)
+				_subtitles ^= 1;
 		break;
+	case 'v':
+		if (_game & GF_SIMON2 && _game & GF_TALKIE)
+			if (_subtitles)
+				_speech ^= 1;
 	case '+':
 		midi.set_volume(midi.get_volume() + 16);
 		break;
@@ -3479,7 +3485,7 @@ void SimonEngine::processSpecialKeys() {
 		if (_debugMode)
 			_continous_mainscript ^= 1;
 		break;
-	case 'v':
+	case 'g':
 		if (_debugMode)
 			_continous_vgascript ^= 1;
 		break;
@@ -4695,6 +4701,7 @@ void SimonEngine::go() {
 		_start_mainscript = true;
 
 	if (_game & GF_TALKIE) {
+		_speech = true;
 		if ((_game & GF_SIMON2) || _language >= 2) {
 			if (_noSubtitles)
 				_subtitles = false;

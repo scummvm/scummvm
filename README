@@ -516,6 +516,10 @@ simon games.
         m                      - Music on/off
         s                      - Sound effects on/off
         b                      - Background sounds on/off
+	t                      - Switch between speech and subtitles
+        v                      - Switch between subtitles only and
+                                 combined speech & subtitles.
+				 [Simon the Sorcerer 2 only]
 
     Beneath a Steel Sky:
         Ctrl-g                 - Runs in really REALLY fast mode.
