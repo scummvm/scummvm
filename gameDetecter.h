@@ -21,4 +21,6 @@ public:
 	uint32 _features;
 	uint16 _soundCardType;
 
+	int _scummVersion;
+
 };

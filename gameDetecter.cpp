@@ -191,6 +191,7 @@ bool GameDetecter::detectGame() {
         do {
                 if (!scumm_stricmp(_exe_name, gnl->filename)) {
                         _gameId = gnl->id;
+			_scummVersion = gnl->major;
 //                      _majorScummVersion = gnl->major;
 //                      _middleScummVersion = gnl->middle;
 //                      _minorScummVersion = gnl->minor;

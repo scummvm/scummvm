@@ -925,15 +925,28 @@ int main(int argc, char* argv[]) {
 	if(detecter.detectMain(argc, argv))
 		return(-1);
 
-	if( detecter._features & GF_AFTER_V7 ) // not final implementation. This is just a test
-		scumm = new Scumm_v7;
-	else
-	if( detecter._features & GF_OLD256 )
-		scumm = new Scumm_v3;
-
-	else
-		scumm = new Scumm;
-
+	switch(detecter._scummVersion)
+	{
+		case 3:
+			scumm = new Scumm_v3;
+			break;
+		case 4:
+			scumm = new Scumm_v4;
+			break;
+		case 5:
+			scumm = new Scumm_v5;
+			break;
+		case 6:
+			scumm = new Scumm_v6;
+			break;
+		case 7:
+			scumm = new Scumm_v7;
+			break;
+		default: // do we really need a default ?
+			scumm = new Scumm;
+			break;
+	}
+		
 
 /* All those stuff should be moved to the constructor.... */
 	for (i=0;i<17;i++)

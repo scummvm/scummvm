@@ -1664,15 +1664,26 @@ public:
 	void launch();
 };
 
-class Scumm_v7 : public Scumm
-{
-public:
-};
-
 class Scumm_v3 : public Scumm
 {
 public:
 	void readIndexFile();
+};
+
+class Scumm_v4 : public Scumm_v3
+{
+};
+
+class Scumm_v5 : public Scumm
+{
+};
+
+class Scumm_v6 : public Scumm
+{
+};
+
+class Scumm_v7 : public Scumm
+{
 };
 
 struct ScummDebugger {
