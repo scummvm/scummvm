@@ -17,20 +17,6 @@
  * $Header$
  */
 
-//=============================================================================
-//
-//	Filename	:	d_draw.h
-//	Created		:	22nd August 1996
-//	By			:	P.R.Porter
-//
-//	Summary		:	This include file defines links to all data which is
-//					defined in the d_draw.c module, but can be accessed by
-//					other parts of the driver96 library.
-//
-//
-//=============================================================================
-
-
 #ifndef D_DRAW_H
 #define D_DRAW_H
 
@@ -40,18 +26,7 @@ extern "C" {
 
 #include "driver96.h"
 
-//  Bits defining hardware and emulation capabilities.
-#define RDCAPS_BLTSTRETCH	1
-#define RDCAPS_SRCBLTCKEY	2
-#define DirectDrawError(f, g) FatalDirectDrawError(f, g, __FILE__, __LINE__)
-
-
-extern uint8 *lpPalette;			// palette
-extern byte *lpBackBuffer;		// back surface
-extern int32					dxHalCaps;			// Hardware capabilities.
-extern int32					dxHelCaps;			// Emulation capabilities.
-
-extern void FatalDirectDrawError(char *str, int32 dderr, char *file, int32 line);
+extern byte *lpBackBuffer;
 
 #ifdef __cplusplus
 }

@@ -37,20 +37,12 @@ byte *lpBackBuffer;
 int16 screenDeep;
 int16 screenWide;
 
-
-// Set to 1 if vertical blank status cannot be checked.
-// BOOL			bFullScreen = 0;
-
-
-
 // Scroll variables.  scrollx and scrolly hold the current scroll position, 
 
-int16			scrollx;
-int16			scrolly;
+int16 scrollx;
+int16 scrolly;
 
-int32			renderCaps = 0;
-int32			dxHalCaps = 0;
-int32			dxHelCaps = 0;
+int32 renderCaps = 0;
 
 void FatalDirectDrawError(char *str, int32 code, char *filename, int32 line) {
 	char string[256];
