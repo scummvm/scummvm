@@ -1062,7 +1062,7 @@ bool ScummDebugger::TabComplete(const char *input, char*& completion) {
 
 	completion = new char[matchlen+1];
 	memcpy(completion, match, matchlen);
-	completion[matchlen+1] = 0;
+	completion[matchlen] = 0;
 	return true;
 }
 
