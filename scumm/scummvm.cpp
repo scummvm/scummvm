@@ -315,7 +315,6 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 	_smushFrameRate = 0;
 	_insaneState = false;
 	_videoFinished = false;
-	_smushPlay = false;
 	_quit = false;
 	_pauseDialog = NULL;
 	_optionsDialog = NULL;
@@ -2543,18 +2542,11 @@ int ScummEngine::runDialog(Dialog &dialog) {
 	bool old_soundsPaused = _sound->_soundsPaused;
 	_sound->pauseSounds(true);
 
-	// Pause playing smush movie
-	bool oldSmushPlay = _smushPlay;
-	_smushPlay = false;
-
 	// Open & run the dialog
 	int result = dialog.runModal();
 
 	// Restore old cursor
 	updateCursor();
-
-	// Resume playing smush movie, if any
-	_smushPlay = oldSmushPlay;
 
 	// Resume sound output
 	_sound->pauseSounds(old_soundsPaused);

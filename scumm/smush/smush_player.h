@@ -69,8 +69,6 @@ private:
 	bool _updateNeeded;
 	bool _insanity;
 
-	volatile bool _smushProcessFrame;
-
 public:
 	SmushPlayer(ScummEngine *, int, bool);
 	~SmushPlayer();

@@ -205,21 +205,11 @@ static StringResource *getStrings(const char *file, const char *directory, bool 
 	return sr;
 }
 
-SmushPlayer *player;
-
 void SmushPlayer::timerCallback(void *refCon) {
-	ScummEngine *scumm = (ScummEngine *)refCon;
-	if (!scumm->_smushPlay)
-		return;
-
-	player->_smushProcessFrame = true;
-	player->parseNextFrame();
-	player->_smushProcessFrame = false;
+	((SmushPlayer *)refCon)->parseNextFrame();
 }
 
 SmushPlayer::SmushPlayer(ScummEngine *scumm, int speed, bool subtitles) {
-	player = this;
-
 	_scumm = scumm;
 	_version = -1;
 	_nbframes = 0;
@@ -243,7 +233,6 @@ SmushPlayer::SmushPlayer(ScummEngine *scumm, int speed, bool subtitles) {
 	_IACTpos = 0;
 	_soundFrequency = 22050;
 	_speed = speed;
-	_smushProcessFrame = false;
 	_insanity = false;
 }
 
@@ -266,19 +255,14 @@ void SmushPlayer::init() {
 
 	_scumm->setDirtyColors(0, 255);
 	_smixer->_silentMixer = _scumm->_silentDigitalImuse;
-	_scumm->_smushPlay = true;
 	_dst = _scumm->virtscr[0].screenPtr + _scumm->virtscr[0].xstart;
-	_scumm->_timer->installTimerProc(&timerCallback, _speed, _scumm);
+	g_timer->installTimerProc(&timerCallback, _speed, this);
 
 	_alreadyInit = false;
 }
 
 void SmushPlayer::deinit() {
 	_scumm->_timer->removeTimerProc(&timerCallback);
-	_scumm->_smushPlay = false;
-	// In case the timerCallback is active right now, we loop till it finishes.
-	// Note: even this still leaves a window for race conditions to occur.
-	while (_smushProcessFrame) {}
 
 	for (int i = 0; i < 5; i++) {
 		if (_sf[i]) {

@@ -338,7 +338,6 @@ public:
 	int _smushFrameRate;
 	bool _insaneState;
 	bool _videoFinished;
-	bool _smushPlay;
 	
 	void pauseGame();
 	void restart();
