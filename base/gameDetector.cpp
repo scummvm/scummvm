@@ -259,13 +259,6 @@ void GameDetector::parseCommandLine(int argc, char **argv) {
 	bool long_option_value;
 
 	// Iterate over all comman line arguments, backwards.
-	// FIXME: Looping backwards has a major problem: Consider this example
-	// invocation: "scummvm -g 1x". It should work exactly like "scummvm -g1x"
-	// but it doesn't! Instead of starting the launcher with the 1x sacler
-	// in effect, it will give an error about target 1x being unknown.
-	// This can be fixed by forward iterating the args. Of course doing that
-	// essentially means we have to rewrite the whole command line parser,
-	// but that seems like a good idea anyway.
 	for (i = argc - 1; i >= 1; i--) {
 		s = argv[i];
 

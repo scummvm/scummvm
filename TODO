@@ -7,7 +7,6 @@ General
   we set when the application should be quit (e.g. when an EVENT_QUIT is
   received). This is useful if multiple levels of event loops have to be ended
 * Fix the Map<> template, make it more robust; maybe use a red-black tree?
-* Add iterators to List<> template and make use of them
 * Allow for return-to-launcher instead of a normal "quit" ?
 * Improve the argv (command line args) parser
 * Extend the Plugin API to provide for "game detection": instead of the
