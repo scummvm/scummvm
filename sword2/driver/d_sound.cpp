@@ -182,10 +182,10 @@ CLUInputStream::CLUInputStream(File *file, int size)
 	_file->incRef();
 
 	// Determine the end position.
-	_end_pos = file->pos() + size;
+	_file_pos = _file->pos();
+	_end_pos = _file_pos + size;
 
 	// Read in initial data
-	_file_pos = _file->pos();
 	refill();
 }
 
