@@ -64,6 +64,7 @@ void OSystem_SDL_Common::init_intern(int gfx_mode) {
 	int joystick_num = ConfMan.getInt("joystick_num");
 	uint32 sdlFlags = SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_TIMER;
 
+	cksum_valid = false;
 	_mode = gfx_mode;
 	_full_screen = ConfMan.getBool("fullscreen");
 	_adjustAspectRatio = ConfMan.getBool("aspect_ratio");
