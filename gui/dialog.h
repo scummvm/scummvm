@@ -78,6 +78,7 @@ protected:
 	ButtonWidget *addButton(int x, int y, const Common::String &label, uint32 cmd, char hotkey);
 
 	void setResult(int result) { _result = result; }
+	int getResult() const { return _result; }
 };
 
 #endif

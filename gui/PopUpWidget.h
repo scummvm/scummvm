@@ -53,7 +53,7 @@ protected:
 	uint			_labelWidth;
 
 public:
-	PopUpWidget(GuiObject *boss, int x, int y, int w, int h, const String &label, uint labelWidth);
+	PopUpWidget(GuiObject *boss, int x, int y, int w, int h, const String &label, uint labelWidth = 0);
 
 	void handleMouseDown(int x, int y, int button, int clickCount);
 
