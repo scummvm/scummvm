@@ -1056,7 +1056,7 @@ void Gdi::drawBitmap(const byte *ptr, VirtScreen *vs, int x, int y, const int wi
 				}
 			}
 			if (left <= theX && theX < right) {
-				dst -= height * _vm->_screenWidth - 1;
+				dst -= _vertStripNextInc;
 			}
 		}
 
@@ -1073,45 +1073,30 @@ void Gdi::drawBitmap(const byte *ptr, VirtScreen *vs, int x, int y, const int wi
 			theX = 0;
 		}
 		while (theX < right) {
-			if (run & 0x80) {
+			const byte runFlag = run & 0x80;
+			if (runFlag) {
 				run &= 0x7f;
 				data = *src++;
-				do {
-					if (left <= theX) {
-						*mask_ptr = data;
-						mask_ptr += _numStrips;
-					}
-					theY++;
-					if (theY >= height) {
-						if (left <= theX) {
-							mask_ptr -= height * _numStrips - 1;
-						}
-						theY = 0;
-						theX += 8;
-						if (theX >= right)
-							break;
-					}
-				} while (--run);
-			} else {
-				do {
-					data = *src++;
-					
-					if (left <= theX) {
-						*mask_ptr = data;
-						mask_ptr += _numStrips;
-					}
-					theY++;
-					if (theY >= height) {
-						if (left <= theX) {
-							mask_ptr -= _numStrips * height - 1;
-						}
-						theY = 0;
-						theX += 8;
-						if (theX >= right)
-							break;
-					}
-				} while (--run);
 			}
+			do {
+				if (!runFlag)
+					data = *src++;
+				
+				if (left <= theX) {
+					*mask_ptr = data;
+					mask_ptr += _numStrips;
+				}
+				theY++;
+				if (theY >= height) {
+					if (left <= theX) {
+						mask_ptr -= _numStrips * height - 1;
+					}
+					theY = 0;
+					theX += 8;
+					if (theX >= right)
+						break;
+				}
+			} while (--run);
 			run = *src++;
 		}
 	}
@@ -1318,38 +1303,26 @@ StripTable *Gdi::generateStripTable(const byte *src, int width, int height, Stri
 	
 	for (;;) {
 		length = *src++;
-		if (length & 0x80) {
+		const byte runFlag = length & 0x80;
+		if (runFlag) {
 			length &= 0x7f;
 			data = *src++;
-			do {
-				if (y == height) {
-					assert(x < 120);
-					table->zoffsets[x] = src - bitmapStart - 1;
-					table->zrun[x] = length | 0x80;
-				}
-				if (--y == 0) {
-					if (--width == 0)
-						return table;
-					x++;
-					y = height;
-				}
-			} while (--length);
-		} else {
-			do {
-				data = *src++;
-				if (y == height) {
-					assert(x < 120);
-					table->zoffsets[x] = src - bitmapStart - 1;
-					table->zrun[x] = length;
-				}
-				if (--y == 0) {
-					if (--width == 0)
-						return table;
-					x++;
-					y = height;
-				}
-			} while (--length);
 		}
+		do {
+			if (!runFlag)
+				data = *src++;
+			if (y == height) {
+				assert(x < 120);
+				table->zoffsets[x] = src - bitmapStart - 1;
+				table->zrun[x] = length | runFlag;
+			}
+			if (--y == 0) {
+				if (--width == 0)
+					return table;
+				x++;
+				y = height;
+			}
+		} while (--length);
 	}
 
 	return table;
