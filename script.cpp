@@ -734,7 +734,8 @@ void Scumm::runVerbCode(int object, int entry, int a, int b, int16 * vars)
 	where = whereIsObject(object);
 
 	if (where == WIO_NOT_FOUND) {
-		error("Code for object %d not in room %d", object, _roomResource);
+		warning("Code for object %d not in room %d", object, _roomResource);
+		return;
 	}
 
 	obcd = getOBCDOffs(object);
