@@ -773,15 +773,17 @@ void Scumm::akos_codec1(AkosRenderer *ar) {
 		return;
 	case 2:
 //		akos_c1_spec2(ar);
+		warning("akos_c1_spec2");
 		return;
 	case 3:
 //		akos_c1_spec3(ar);
+		warning("akos_c1_spec3");
 		return;
 	}
 
 	akos_generic_decode(ar);
 	
-	//	akos_c1_0y_decode(ar);
+//	akos_c1_0y_decode(ar);
 
 #if 0
 

@@ -2509,7 +2509,7 @@ void Scumm::o6_miscOps() {
 			remapActor(derefActorSafe(args[1], "o6_miscOps:14"), args[2],args[3],args[4],args[5]);
 			break;
 		case 15:
-			warning("o6_miscOps: stub15(%d)", args[1]);
+			_insaneFlag = args[1];
 			break;
 		case 16: {
 			byte buf[200];

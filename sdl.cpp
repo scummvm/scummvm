@@ -1084,6 +1084,9 @@ int main(int argc, char* argv[]) {
 	}
 
 	scumm->_charsetColor = 0;
+
+	scumm->_insaneFlag = 12;
+
 /* */
 
 	scumm->_fullScreen = detector._fullScreen;

@@ -790,7 +790,11 @@ void Scumm::processKbd() {
 	if (_lastKeyHit==_vars[VAR_CUTSCENEEXIT_KEY]) {
 		exitCutscene();
 	} else if (_lastKeyHit==_vars[VAR_SAVELOADDIALOG_KEY]) {
+		if ( _features & GF_AFTER_V7)
+			runScript(_vars[VAR_UNK_SCRIPT],0,0,0);
 		((Gui*)_gui)->saveLoadDialog();
+		if ( _features & GF_AFTER_V7)
+			runScript(_vars[VAR_UNK_SCRIPT_2],0,0,0);
 	} else if (_lastKeyHit==_vars[VAR_TALKSTOP_KEY]) {
 		_talkDelay = 0;
 		if (_sfxMode==2)

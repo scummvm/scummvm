@@ -588,6 +588,10 @@ public:
 	void mainRun();
 	int delta; // global time
 
+	/* _insane vars */
+
+	int _insaneFlag;
+	
 	
 	void scummInit();
 	void scummMain(int argc, char **argv); // is it still used ?
