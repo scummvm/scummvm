@@ -646,6 +646,7 @@ void ValueDisplayDialog::handleKeyDown(uint16 ascii, int keycode, int modifiers)
 		_timer = getMillis() + kDisplayDelay;
 		draw();
 	} else {
+		setResult(_value);
 		close();
 	}
 }
