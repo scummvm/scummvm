@@ -2636,7 +2636,7 @@ void Scumm::setupEGAPalette() {
 	setPalColor( 6, 168,  84,   0);
 	setPalColor( 7, 168, 168, 168);
 	setPalColor( 8,  84,  84,  84);
-	setPalColor( 9,  84,  84, 168);
+	setPalColor( 9,  84,  84, 252);
 	setPalColor(10,   0, 252,   0);
 	setPalColor(11,   0, 252, 252);
 	setPalColor(12, 252,  84,  84);
