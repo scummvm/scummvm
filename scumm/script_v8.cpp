@@ -784,8 +784,7 @@ void ScummEngine_v8::o8_resourceRoutines() {
 	int resid = pop();
 
 	switch (subOp) {
-	case 0x3C:		// SO_HEAP_LOAD_CHARSET Load character set to heap
-		ensureResourceLoaded(rtCharset, resid);	// FIXME - is this correct?
+	case 0x3C:		// Dummy case
 		break;
 	case 0x3D:		// SO_HEAP_LOAD_COSTUME Load costume to heap
 		ensureResourceLoaded(rtCostume, resid);
