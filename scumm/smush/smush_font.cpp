@@ -252,7 +252,7 @@ int SmushFont::draw2byte(byte *buffer, int dst_width, int x, int y, int idx) {
 	} else {
 		char color = (_color != -1) ? _color : 1;
 		if (_new_colors)
-			color = 0xff; //FIXME;
+			color = (char)0xff; //FIXME;
 		for(int j = 0; j < h; j++) {
 			for(int i = 0; i < w; i++) {
 				if((i % 8) == 0)
