@@ -3113,7 +3113,37 @@ void ScummEngine_v6::o6_unknownE1() {
 }
 
 void ScummEngine_v6::o6_unknownE4() {
-	warning("o6_unknownE4(%d) stub", pop());
+	int arg = pop();
+	const byte *room = getResourceAddress(rtRoom, _roomResource);
+	const byte *boxd = room;
+	const byte *boxm = room;
+	int32 dboxSize, mboxSize;
+
+	for (int i = 0; i < arg; i++)
+		boxd = findResource(MKID('BOXD'), boxd);
+
+	if (!boxd)
+		error("ScummEngine_v6::o6_unknownE4: Can't find boxes for set %d", arg);
+
+	dboxSize = READ_BE_UINT32(boxd + 4);
+	byte *matrix = createResource(rtMatrix, 2, dboxSize);
+
+	assert(matrix);
+	memcpy(matrix, boxd, dboxSize);
+
+	for (int i = 0; i < arg; i++)
+		boxm = findResource(MKID('BOXM'), boxm);
+
+	if (!boxm)
+		error("ScummEngine_v6::o6_unknownE4: Can't find boxes for set %d", arg);
+
+	mboxSize = READ_BE_UINT32(boxd + 4);
+	matrix = createResource(rtMatrix, 1, mboxSize);
+
+	assert(matrix);
+	memcpy(matrix, boxm, mboxSize);
+
+	showActors();
 }
 
 void ScummEngine_v6::decodeParseString(int m, int n) {
