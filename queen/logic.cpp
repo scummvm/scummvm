@@ -107,7 +107,7 @@ void QueenLogic::initialise() {
 	
 	_objMax = new uint16[_numRooms + 1];
 	_areaMax = new uint16[_numRooms + 1];
-	_area = new uint16[_numRooms + 1][11][8];
+	_area = new int16[_numRooms + 1][11][8];
 /*
 	for (uint16 i = 1; i < (_numRooms + 1); i++) {
 		_objMax[i] = READ_BE_UINT16(ptr);
@@ -144,6 +144,10 @@ void QueenLogic::currentRoom(uint16 room) {
 	_currentRoom = room;
 }
 
+void QueenLogic::oldRoom(uint16 room) {
+	_oldRoom = room;
+}
+
 int16* QueenLogic::objectData(int index) {
 	return _objectData[index];
 }
@@ -156,6 +160,10 @@ uint16 QueenLogic::objMax(int room) {
 	return _objMax[room];
 }
 
+int16 *QueenLogic::area(int index, int subIndex) {
+	return _area[index][subIndex];
+}
+
 uint16 QueenLogic::walkOffCount() {
 	return _numWalkOffs;
 }
@@ -163,6 +171,4 @@ uint16 QueenLogic::walkOffCount() {
 uint16 *QueenLogic::walkOffData(int index) {
 	return _walkOffData[index];
 }
-
-
 

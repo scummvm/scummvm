@@ -33,10 +33,13 @@ public:
 	uint16 currentRoom();
 	void currentRoom(uint16 room);
 
+	void oldRoom(uint16 room);
+
 	int16 *objectData(int index);
 	uint16 roomData(int room);
 	uint16 objMax(int room);
 
+	int16 *area(int index, int subIndex);
 	uint16 walkOffCount();
 	uint16 *walkOffData(int index);
 
@@ -66,7 +69,7 @@ protected:
 	int16 (*_objectData)[8];
 	uint16 (*_actorData)[12];
 
-	uint16 (*_area)[11][8];
+	int16 (*_area)[11][8];
 
 	uint16 (*_walkOffData)[3];
 
