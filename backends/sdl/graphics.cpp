@@ -134,7 +134,11 @@ bool OSystem_SDL::setGraphicsMode(int mode) {
 		}
 		if (newScalerName) {
 			char buffer[128];
-			sprintf(buffer, "Active graphics filter: %s", newScalerName);
+			sprintf(buffer, "Active graphics filter: %s\n%d x %d -> %d x %d",
+				newScalerName,
+				_screenWidth, _screenHeight,
+				_hwscreen->w, _hwscreen->h
+				);
 			displayMessageOnOSD(buffer);
 		}
 	}
@@ -1170,7 +1174,9 @@ void OSystem_SDL::undraw_mouse() {
 #ifdef USE_OSD
 void OSystem_SDL::displayMessageOnOSD(const char *msg) {
 	
-//	printf("displayMessageOnOSD(%s)\n", msg);
+	uint i;
+	
+	// Lock the OSD surface for drawing
 	if (SDL_LockSurface(_osdSurface))
 		error("displayMessageOnOSD: SDL_LockSurface failed: %s", SDL_GetError());
 
@@ -1181,14 +1187,36 @@ void OSystem_SDL::displayMessageOnOSD(const char *msg) {
 	dst.pitch = _osdSurface->pitch;
 	dst.bytesPerPixel = _osdSurface->format->BytesPerPixel;
 	
+	// The font we are going to use:
+//	const GUI::Font *font = &GUI::g_sysfont;
+	const GUI::Font *font = &GUI::g_scummfont;
+	
 	// Clear everything with the "transparent" color, i.e. the colorkey
 	SDL_FillRect(_osdSurface, 0, kOSDColorKey);
+	
+	// Split the message into separate lines.
+	Common::StringList lines;
+	const char *ptr;
+	for (ptr = msg; *ptr; ++ptr) {
+		if (*ptr == '\n') {
+			lines.push_back(Common::String(msg, ptr - msg));
+			msg = ptr + 1;
+		}
+	}
+	lines.push_back(Common::String(msg, ptr - msg));
 
 	// Determine a rect which would contain the message string (clipped to the
 	// screen dimensions).
-	const int vOffset = 10;
-	int width = GUI::g_sysfont.getStringWidth(msg) + 16;
-	int height = GUI::g_sysfont.getFontHeight() + 2 * vOffset;
+	const int vOffset = 6;
+	const int lineSpacing = 1;
+	const int lineHeight = font->getFontHeight() + 2 * lineSpacing;
+	int width = 0;
+	int height = lineHeight * lines.size() + 2 * vOffset;
+	for (i = 0; i < lines.size(); i++) {
+		width = MAX(width, font->getStringWidth(lines[i]) + 14);
+	}
+	
+	// Clip the rect
 	if (width > dst.w)
 		width = dst.w;
 	if (height > dst.h)
@@ -1204,10 +1232,14 @@ void OSystem_SDL::displayMessageOnOSD(const char *msg) {
 	SDL_FillRect(_osdSurface, &osdRect, SDL_MapRGB(_osdSurface->format, 64, 64, 64));
 
 	// Render the message, centered, and in white
-	GUI::g_sysfont.drawString(&dst, msg, osdRect.x, osdRect.y + vOffset, osdRect.w,
+	for (i = 0; i < lines.size(); i++) {
+		font->drawString(&dst, lines[i],
+							osdRect.x, osdRect.y + i * lineHeight + vOffset + lineSpacing, osdRect.w,
 							SDL_MapRGB(_osdSurface->format, 255, 255, 255),
 							GUI::kTextAlignCenter);
+	}
 
+	// Finished drawing, so unlock the OSD surface again
 	SDL_UnlockSurface(_osdSurface);
 
 	// Init the OSD display parameters, and the fade out
