@@ -290,11 +290,27 @@ SOURCE=.\gui\browser.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\gui\chooser.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\gui\chooser.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\gui\dialog.cpp
 # End Source File
 # Begin Source File
 
 SOURCE=.\gui\dialog.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\gui\EditTextWidget.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\gui\EditTextWidget.h
 # End Source File
 # Begin Source File
 
