@@ -36,7 +36,7 @@ class SmushMixer {
 private:
 
 	SoundMixer *_mixer;
-	struct {
+	struct channels {
 		int id;
 		SmushChannel *chan;
 		PlayingSoundHandle handle;
