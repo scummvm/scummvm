@@ -17,140 +17,6 @@
  * $Header$
  */
 
-//=============================================================================
-//
-//	Filename	:	d_sound.c
-//	Created		:	3rd December 1996
-//	By			:	P.R.Porter
-//
-//	Summary		:	This module holds the driver interface to direct sound.
-//
-//	Functions
-//	---------
-//
-//	--------------------------------------------------------------------------
-//
-//	int32 PlayCompSpeech(const char *filename, uint32 id, uint8 vol, int8 pan)
-//
-//	This function loads, decompresses and plays the wav 'id' from the cluster
-// 'filename'.  An error occurs if speech is already playing, or directSound
-//  comes accross problems. 'volume' can be from 0 to 16. 'pan' can be from
-//  -16 (full left) to 16 (full right).
-//  id is the text line id used to reference the speech within the speech
-//  cluster.
-//
-//	--------------------------------------------------------------------------
-//
-//	int32 StopSpeechSword2(void)
-//
-//	Stops the speech from playing.
-//
-//	--------------------------------------------------------------------------
-//
-//	int32 GetSpeechStatus(void)
-//
-//	Returns either RDSE_SAMPLEPLAYING or RDSE_SAMPLEFINISHED
-//
-//	--------------------------------------------------------------------------
-//
-//	int32 AmISpeaking(void)
-//
-//	Returns either RDSE_QUIET or RDSE_SPEAKING
-//
-//	--------------------------------------------------------------------------
-//
-//	int32 PauseSpeech(void)
-//
-//	Stops the speech dead in it's tracks.
-//
-//	--------------------------------------------------------------------------
-//
-//	int32 UnpauseSpeech(void)
-//
-//	Re-starts the speech from where it was stopped.
-//
-//	--------------------------------------------------------------------------
-//
-//	int32 OpenFx(int32 id, uint8 *data)
-//
-//	This function opens a sound effect ready for playing.  A unique id should
-//	be passed in so that each effect can be referenced individually.
-//
-//	WARNING: Zero is not a valid ID.
-//
-//	--------------------------------------------------------------------------
-//
-//	int32 PlayFx(int32 id, uint8 *data, uint8 vol, int8 pan, uint8 type)
-//
-//	This function plays a sound effect.  If the effect has already been opened
-//	then *data should be NULL, and the sound effect will simply be obtained 
-//	from the id passed in.  If the effect has not been opened, then the wav
-//	data should be passed in data.  The sound effect will be closed when it
-//	has finished playing.
-//
-//	The volume can be between 0 (minimum) and 16 (maximum).  The pan defines
-//	the left/right balance of the sample.  -16 is full left, and 16 is full
-//	right with 0 in the middle.  The sample type can be either RDSE_FXSPOT, or
-//	RDSE_FXLOOP.
-//
-//	WARNING: Zero is not a valid ID
-//
-//	--------------------------------------------------------------------------
-//
-//	int32 CloseFx(int32 id)
-//
-//	This function closes a sound effect which has been previously opened for
-//	playing.  Sound effects must be closed when they are finished with,
-//	otherwise you will run out of sound effect buffers.
-//
-//	--------------------------------------------------------------------------
-//
-//	int32 ClearAllFx(void)
-//
-//	This function clears all of the sound effects which are currently open or
-//	playing, irrespective of type.
-//
-//	--------------------------------------------------------------------------
-//
-//	int32 StreamCompMusic(uint8 *filename, uint32 id, int32 loopFlag)
-//
-//	Streams music 'id' from the cluster file 'filename'.  The loopFlag should
-//	be set to RDSE_FXLOOP if the music is to loop back to the start.
-//	Otherwise, it should be RDSE_FXSPOT.
-//	The return value must be checked for any problems.
-//
-//	--------------------------------------------------------------------------
-//
-//	void StopMusic(void)
-//
-//	Fades out and stops the music.
-//
-//	--------------------------------------------------------------------------
-//
-//	int32 PauseMusic(void)
-//
-//	Stops the music dead in it's tracks.
-//
-//	--------------------------------------------------------------------------
-//
-//	int32 UnpauseMusic(void)
-//
-//	Re-starts the music from where it was stopped.
-//
-//	---------------------------------------------------------------------------
-//
-//	int32 MusicTimeRemaining(void)
-//
-//  Returns the time left for the current tune.
-//
-//	----------------------------------------------------------------------------
-//
-//	int32 ReverseStereo(void)
-//
-//	This function reverse the pan table, thus reversing the stereo.
-//
-//=============================================================================
-
 // FIXME: One feature still missing is the original's DipMusic() function
 // which, as far as I can understand, softened the music volume when someone
 // was speaking, but only if the music was playing loudly at the time.
@@ -296,6 +162,10 @@ Sword2Sound::~Sword2Sound() {
 
 // FIXME: We could probably use the FLAG_REVERSE_STEREO mixer flag here.
 
+/**
+ * This function reverses the pan table, thus reversing the stereo.
+ */
+
 int32 Sword2Sound::ReverseStereo(void) {
 	int i, j;
 
@@ -369,14 +239,12 @@ void Sword2Sound::restoreMusicState() {
 // --------------------------------------------------------------------------
 
 int32 Sword2Sound::GetFxIndex(int32 id) {
-	int32 i;
-
-	for (i = 0; i < MAXFX; i++) {
+	for (int i = 0; i < MAXFX; i++) {
 		if (fx[i]._id == id)
-			break;
+			return i;
 	}
 
-	return i;
+	return MAXFX;
 }
 
 int32 Sword2Sound::IsFxOpen(int32 id) {
@@ -444,12 +312,25 @@ void Sword2Sound::FxServer(int16 *data, uint len) {
 #endif
 }
 
+/**
+ * Returns either RDSE_QUIET or RDSE_SPEAKING
+ */
+
 int32 Sword2Sound::AmISpeaking() {
 	if (!speechMuted && !speechPaused && soundHandleSpeech != 0)
 		return RDSE_SPEAKING;
 
 	return RDSE_QUIET;
 }
+
+/**
+ * This function loads and decompresses a list of speech from a cluster, but
+ * does not play it. This is primarily used by PlayCompSpeech(), but also to
+ * store the voice-overs for the animated cutscenes until they are played.
+ * @param filename the file name of the speech cluster file
+ * @param speechid the text line id used to reference the speech
+ * @param buf a pointer to the buffer that will be allocated for the sound
+ */ 
 
 uint32 Sword2Sound::PreFetchCompSpeech(const char *filename, uint32 speechid, uint16 **buf) {
 	uint32 i;
@@ -532,6 +413,15 @@ uint32 Sword2Sound::PreFetchCompSpeech(const char *filename, uint32 speechid, ui
 	return bufferSize;
 }
 
+/**
+ * This function loads, decompresses and plays a line of speech. An error
+ * occurs if speech is already playing.
+ * @param filename the name of the speech cluster file
+ * @param speechid the text line id used to reference the speech
+ * @param vol volume, 0 (minimum) to 16 (maximum)
+ * @param pan panning, -16 (full left) to 16 (full right)
+ */
+
 int32 Sword2Sound::PlayCompSpeech(const char *filename, uint32 speechid, uint8 vol, int8 pan) {
 	uint16 *data16;
 	uint32 bufferSize;
@@ -567,6 +457,10 @@ int32 Sword2Sound::PlayCompSpeech(const char *filename, uint32 speechid, uint8 v
 	return RD_OK;
 }
 
+/**
+ * Stops the speech from playing.
+ */
+
 int32 Sword2Sound::StopSpeechSword2(void) {
 	if (!soundOn)
 		return RD_OK;
@@ -578,6 +472,10 @@ int32 Sword2Sound::StopSpeechSword2(void) {
 	}
 	return RDERR_SPEECHNOTPLAYING;
 }
+
+/**
+ * @return Either RDSE_SAMPLEPLAYING or RDSE_SAMPLEFINISHED
+ */
 
 int32 Sword2Sound::GetSpeechStatus(void) {
 	if (!soundOn || !speechStatus)
@@ -593,6 +491,11 @@ int32 Sword2Sound::GetSpeechStatus(void) {
 	return RDSE_SAMPLEPLAYING;
 }
 
+/**
+ * Set the volume of any future as well as playing speech samples.
+ * @param volume volume, from 0 (silent) to 14 (max)
+ */
+
 void Sword2Sound::SetSpeechVolume(uint8 volume) {
 	speechVol = volume;
 	if (soundHandleSpeech != 0 && !speechMuted && GetSpeechStatus() == RDSE_SAMPLEPLAYING) {
@@ -600,9 +503,19 @@ void Sword2Sound::SetSpeechVolume(uint8 volume) {
 	}
 }
 
+/**
+ * @return the volume setting for speech
+ */
+
 uint8 Sword2Sound::GetSpeechVolume() {
 	return speechVol;
 }
+
+/**
+ * Mutes/Unmutes the speech.
+ * @param mute If mute is 0, restore the volume to the last set master level.
+ * Otherwise the speech is muted (volume 0).
+ */
 
 void Sword2Sound::MuteSpeech(uint8 mute) {
 	speechMuted = mute;
@@ -614,9 +527,17 @@ void Sword2Sound::MuteSpeech(uint8 mute) {
 	}
 }
 
+/**
+ * @return the speech's mute state, 1 if mute, 0 if not mute
+ */
+
 uint8 Sword2Sound::IsSpeechMute(void) {
 	return speechMuted;
 }
+
+/**
+ * Stops the speech dead in its tracks.
+ */
 
 int32 Sword2Sound::PauseSpeech(void) {
 	if (GetSpeechStatus() == RDSE_SAMPLEPLAYING) {
@@ -626,6 +547,10 @@ int32 Sword2Sound::PauseSpeech(void) {
 	return RD_OK;
 }
 
+/**
+ * Restarts the speech from where it was stopped.
+ */
+
 int32 Sword2Sound::UnpauseSpeech(void) {
 	if (speechPaused) {
 		speechPaused = 0;
@@ -633,6 +558,14 @@ int32 Sword2Sound::UnpauseSpeech(void) {
 	}
 	return RD_OK;
 }
+
+/**
+ * This function opens a sound effect ready for playing. A unique id should be
+ * passed in so that each effect can be referenced individually.
+ * @param id the unique sound id
+ * @data the WAV data
+ * @warning Zero is not a valid id
+ */
 
 int32 Sword2Sound::OpenFx(int32 id, uint8 *data) {
  	int32 i, fxi;
@@ -722,6 +655,20 @@ int32 Sword2Sound::OpenFx(int32 id, uint8 *data) {
 	}
 	return RD_OK;
 }
+
+/**
+ * This function plays a sound effect. If the effect has already been opened
+ * then 'data' should be NULL, and the sound effect will simply be obtained
+ * from the id passed in. If the effect has not been opened, then the WAV data
+ * should be passed in 'data'. The sound effect will be closed when it has
+ * finished playing.
+ * @param id the sound id
+ * @param data either NULL or the WAV data
+ * @param vol volume, 0 (minimum) to 16 (maximum)
+ * @param pan panning, -16 (full left) to 16 (full right)
+ * @param type either RDSE_FXSPOT or RDSE_FXLOOP
+ * @warning Zero is not a valid id
+ */
 
 int32 Sword2Sound::PlayFx(int32 id, uint8 *data, uint8 vol, int8 pan, uint8 type) {
 	int32 i, loop;
@@ -814,6 +761,13 @@ int32 Sword2Sound::PlayFx(int32 id, uint8 *data, uint8 vol, int8 pan, uint8 type
 	return RD_OK;
 }
 
+/**
+ * Sets the volume and pan of the sample which is currently playing
+ * @param id the id of the sample
+ * @param vol volume
+ * @param pan panning
+ */
+
 int32 Sword2Sound::SetFxVolumePan(int32 id, uint8 vol, int8 pan) {
 	int32 i = GetFxIndex(id);
 	if (i == MAXFX)
@@ -840,6 +794,11 @@ int32 Sword2Sound::SetFxIdVolume(int32 id, uint8 vol) {
 	return RD_OK;
 }
 
+/**
+ * This function clears all of the sound effects which are currently open or
+ * playing, irrespective of type.
+ */
+
 int32 Sword2Sound::ClearAllFx(void) {
 	if (!soundOn)
 		return(RD_OK);
@@ -860,6 +819,13 @@ int32 Sword2Sound::ClearAllFx(void) {
 
 	return RD_OK;
 }
+
+/**
+ * This function closes a sound effect which has been previously opened for
+ * playing. Sound effects must be closed when they are finished with, otherwise
+ * you will run out of sound effect buffers.
+ * @param id the id of the sound to close
+ */
 
 int32 Sword2Sound::CloseFx(int32 id) {
 	int i;
@@ -927,9 +893,19 @@ int32 Sword2Sound::UnpauseFx(void) {
 	return RD_OK;
 }
 
+/**
+ * @return the master volume setting for sound effects
+ */
+
 uint8 Sword2Sound::GetFxVolume() {
 	return fxVol;
 }
+
+/**
+ * Set the master volume of all sound effects. The effects still have their
+ * own volume setting as well as the master volume.
+ * @param volume volume, from 0 (silent) to 14 (max)
+ */
 
 void Sword2Sound::SetFxVolume(uint8 volume) {
 	fxVol = volume;
@@ -940,6 +916,12 @@ void Sword2Sound::SetFxVolume(uint8 volume) {
 			g_engine->_mixer->setChannelVolume(fx[i]._handle, fx[i]._volume * fxVol);
 	}
 }
+
+/**
+ * Mutes/Unmutes the sound effects.
+ * @param mute If mute is 0, restore the volume to the last set master level.
+ * Otherwise the sound effects are muted (volume 0).
+ */
 
 void Sword2Sound::MuteFx(uint8 mute) {
 	fxMuted = mute;
@@ -954,9 +936,21 @@ void Sword2Sound::MuteFx(uint8 mute) {
 	}
 }
 
+/**
+ * @return the sound effects's mute state, 1 if mute, 0 if not mute
+ */
+
 uint8 Sword2Sound::IsFxMute(void) {
 	return fxMuted;
 }
+
+/**
+ * Streams music from a cluster file.
+ * @param filename the file name of the music cluster file
+ * @param musicId the id of the music to stream
+ * @param looping true if the music is to loop back to the start
+ * @return RD_OK or an error code
+ */
 
 int32 Sword2Sound::StreamCompMusic(const char *filename, uint32 musicId, bool looping) {
 	StackLock lock(_mutex);
@@ -1120,6 +1114,10 @@ int32 Sword2Sound::DipMusic() {
 */
 }
 
+/**
+ * @return the time left for the current music, in seconds.
+ */
+
 int32 Sword2Sound::MusicTimeRemaining() {
 	StackLock lock(_mutex);
 
@@ -1131,6 +1129,10 @@ int32 Sword2Sound::MusicTimeRemaining() {
 	return 0;
 }
 
+/**
+ * Fades out and stops the music.
+ */
+
 void Sword2Sound::StopMusic(void) {
 	StackLock lock(_mutex);
 
@@ -1141,6 +1143,10 @@ void Sword2Sound::StopMusic(void) {
 			music[i]._looping = false;
 	}
 }
+
+/**
+ * Stops the music dead in its tracks.
+ */
 
 int32 Sword2Sound::PauseMusic(void) {
 	StackLock lock(_mutex);
@@ -1157,6 +1163,10 @@ int32 Sword2Sound::PauseMusic(void) {
 	return RD_OK;
 }
 
+/**
+ * Restarts the music from where it was stopped.
+ */
+
 int32 Sword2Sound::UnpauseMusic(void) {
 	StackLock lock(_mutex);
 
@@ -1167,17 +1177,36 @@ int32 Sword2Sound::UnpauseMusic(void) {
 	return RD_OK;
 }
 
+/**
+ * Set the volume of any future as well as playing music.
+ * @param volume volume, from 0 (silent) to 16 (max)
+ */
+
 void Sword2Sound::SetMusicVolume(uint8 volume) {
 	musicVol = volume;
 }
+
+/**
+ * @return the volume setting for music
+ */
 
 uint8 Sword2Sound::GetMusicVolume() {
 	return musicVol;
 }
 
+/**
+ * Mutes/Unmutes the music.
+ * @param mute If mute is 0, restore the volume to the last set master level.
+ * Otherwise the music is muted (volume 0).
+ */
+
 void Sword2Sound::MuteMusic(uint8 mute) {
 	musicMuted = mute;
 }
+
+/**
+ * @return the music's mute state, 1 if mute, 0 if not mute
+ */
 
 uint8 Sword2Sound::IsMusicMute(void) {
 	return musicMuted;
