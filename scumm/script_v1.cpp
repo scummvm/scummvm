@@ -86,7 +86,7 @@ void Scumm::setupOpcodes()
 		&Scumm::o5_cursorCommand,
 		&Scumm::o5_putActorInRoom,
 		&Scumm::o5_delay,
-		&Scumm::o5_getObjectState,
+		&Scumm::o5_ifState,
 		/* 30 */
 		&Scumm::o5_matrixOps,
 		&Scumm::o5_getInventoryCount,
@@ -126,7 +126,7 @@ void Scumm::setupOpcodes()
 		&Scumm::o5_soundKludge,
 		&Scumm::o5_walkActorToActor,
 		&Scumm::o5_putActorAtObject,
-		&Scumm::o5_badOpcode,
+		&Scumm::o5_ifState,
 		/* 50 */
 		&Scumm::o5_pickupObjectOld,
 		&Scumm::o5_animateActor,
@@ -166,7 +166,7 @@ void Scumm::setupOpcodes()
 		&Scumm::o5_getActorWidth,
 		&Scumm::o5_putActorInRoom,
 		&Scumm::o5_stopObjectScript,
-		&Scumm::o5_badOpcode,
+		&Scumm::o5_ifState,
 		/* 70 */
 		&Scumm::o5_lights,
 		&Scumm::o5_getActorCostume,
@@ -246,7 +246,7 @@ void Scumm::setupOpcodes()
 		&Scumm::o5_expression,
 		&Scumm::o5_putActorInRoom,
 		&Scumm::o5_wait,
-		&Scumm::o5_badOpcode,
+		&Scumm::o5_ifState,
 		/* B0 */
 		&Scumm::o5_matrixOps,
 		&Scumm::o5_getInventoryCount,
@@ -286,7 +286,7 @@ void Scumm::setupOpcodes()
 		&Scumm::o5_pseudoRoom,
 		&Scumm::o5_walkActorToActor,
 		&Scumm::o5_putActorAtObject,
-		&Scumm::o5_badOpcode,
+		&Scumm::o5_ifState,
 		/* D0 */
 		&Scumm::o5_pickupObjectOld,
 		&Scumm::o5_animateActor,
@@ -326,7 +326,7 @@ void Scumm::setupOpcodes()
 		&Scumm::o5_getActorWidth,
 		&Scumm::o5_putActorInRoom,
 		&Scumm::o5_stopObjectScript,
-		&Scumm::o5_badOpcode,
+		&Scumm::o5_ifState,
 		/* F0 */
 		&Scumm::o5_lights,
 		&Scumm::o5_getActorCostume,
@@ -409,7 +409,7 @@ void Scumm::setupOpcodes()
 		"o5_cursorCommand",
 		"o5_putActorInRoom",
 		"o5_delay",
-		"o5_badOpcode",
+		"o5_ifNotState",
 		/* 30 */
 		"o5_matrixOps",
 		"o5_getInventoryCount",
@@ -437,7 +437,7 @@ void Scumm::setupOpcodes()
 		"o5_getActorX",
 		/* 44 */
 		"o5_isLess",
-		"o5_badOpcode",
+		"o5_drawObject",
 		"o5_increment",
 		"o5_setState",
 		/* 48 */
@@ -449,7 +449,7 @@ void Scumm::setupOpcodes()
 		"o5_soundKludge",
 		"o5_walkActorToActor",
 		"o5_putActorAtObject",
-		"o5_badOpcode",
+		"o5_ifState",
 		/* 50 */
 		"o5_pickupObjectOld",
 		"o5_animateActor",
@@ -489,7 +489,7 @@ void Scumm::setupOpcodes()
 		"o5_getActorWidth",
 		"o5_putActorInRoom",
 		"o5_stopObjectScript",
-		"o5_badOpcode",
+		"o5_ifNotState",
 		/* 70 */
 		"o5_lights",
 		"o5_getActorCostume",
@@ -569,7 +569,7 @@ void Scumm::setupOpcodes()
 		"o5_expression",
 		"o5_putActorInRoom",
 		"o5_wait",
-		"o5_badOpcode",
+		"o5_ifNotState",
 		/* B0 */
 		"o5_matrixOps",
 		"o5_getInventoryCount",
@@ -597,7 +597,7 @@ void Scumm::setupOpcodes()
 		"o5_getActorX",
 		/* C4 */
 		"o5_isLess",
-		"o5_badOpcode",
+		"o5_drawObject",
 		"o5_decrement",
 		"o5_setState",
 		/* C8 */
@@ -609,7 +609,7 @@ void Scumm::setupOpcodes()
 		"o5_pseudoRoom",
 		"o5_walkActorToActor",
 		"o5_putActorAtObject",
-		"o5_badOpcode",
+		"o5_ifState",
 		/* D0 */
 		"o5_pickupObjectOld",
 		"o5_animateActor",
@@ -649,7 +649,7 @@ void Scumm::setupOpcodes()
 		"o5_getActorWidth",
 		"o5_putActorInRoom",
 		"o5_stopObjectScript",
-		"o5_badOpcode",
+		"o5_ifNotState",
 		/* F0 */
 		"o5_lights",
 		"o5_getActorCostume",
@@ -1367,17 +1367,23 @@ void Scumm::o5_getObjectOwner()
 void Scumm::o5_getObjectState()
 {
 	if (_features & GF_SMALL_HEADER) {
-		int a = getVarOrDirectWord(0x80);
-		int b = getVarOrDirectByte(0x40);
-
-		if ((getState(a) & 0xF0 >> 4) != b)
-			o5_jumpRelative();
-		else
-			ignoreScriptWord();
+		o5_ifState();
 	} else {
 		getResultPos();
 		setResult(getState(getVarOrDirectWord(0x80)));
 	}
+}
+
+void Scumm::o5_ifState()
+{
+	int a = getVarOrDirectWord(0x80);
+	int b = getVarOrDirectByte(0x40);
+	bool isNegated = _opcode & 0x20;
+
+	if (((getState(a) & 0xF0 >> 4) != b) ^ isNegated)
+		o5_jumpRelative();
+	else
+		ignoreScriptWord();
 }
 
 void Scumm::o5_getRandomNr()

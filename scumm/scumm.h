@@ -1017,6 +1017,7 @@ public:
 	void o5_isGreaterEqual();
 	void o5_isLess();
 	void o5_isNotEqual();
+	void o5_ifState();
 	void o5_isSoundRunning();
 	void o5_jumpRelative();
 	void o5_lessOrEqual();
