@@ -46,6 +46,7 @@ void sword2_sound_handler (void *engine);
 class Sword2Sound {
 	public:
 		Sword2Sound(SoundMixer *mixer);
+		~Sword2Sound();
 		void FxServer(void);
 		int32 PlaySpeech(uint8 *data, uint8 vol, int8 pan);
 		int32 PlayCompSpeech(const char *filename, uint32 speechid, uint8 vol, int8 pan);
@@ -88,9 +89,12 @@ class Sword2Sound {
 		void UpdateCompSampleStreaming(void);
 		SoundMixer *_mixer;
 	private:
+		int32 StreamCompMusicFromLock(const char *filename, uint32 musicId, int32 looping);
 		int32 GetFxIndex(int32 id);
 		void StartMusicFadeDown(int i);
 		int32 DipMusic();
+
+		OSystem::MutexRef _mutex;
 
 		int32 fxId[MAXFX];
 		uint8 fxiPaused[MAXFX];
@@ -118,11 +122,8 @@ class Sword2Sound {
 		PlayingSoundHandle soundHandleFx[MAXFX];
 		PlayingSoundHandle soundHandleMusic[MAXMUS];
 		PlayingSoundHandle soundHandleSpeech;
-		File				fpMus;
+		File fpMus;
 		int bufferSizeMusic;
-		int musicIndexChannel[MAXMUS];
-		int musicChannels[MAXMUS];
-		int32 streamCursor[MAXMUS];
 		char musFilename[MAXMUS][256];
 		int32 musFilePos[MAXMUS];
 		int32 musEnd[MAXMUS];
