@@ -57,8 +57,8 @@ void ScummEngine::setCameraAt(int pos_x, int pos_y) {
 	}
 
 	// If the camera moved and text is visible, remove it
-	//if (camera._cur.x != camera._last.x && _charset->_hasMask)
-	//	stopTalk();
+	if (camera._cur.x != camera._last.x && _charset->_hasMask && _version > 3)
+		stopTalk();
 }
 
 void ScummEngine_v7::setCameraAt(int pos_x, int pos_y) {
