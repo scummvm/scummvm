@@ -293,9 +293,11 @@ int ScummEngine::getObjActToObjActDist(int a, int b) {
 	if (getObjectOrActorXY(b, x2, y2) == -1)
 		return 0xFF;
 
-	// Only call FOO in V5 games. Older versions don't seem to make this
-	// call at all, and using it caused at least one bug (#853874).
-	if (acta && _version == 5) {
+	// Perform adjustXYToBeInBox() *only* if the first item is an
+	// actor and the second is an object. This used to not check
+	// whether the second item is a non-actor, which caused bug
+	// #853874).
+	if (acta && !actb) {
 		AdjustBoxResult r = acta->adjustXYToBeInBox(x2, y2);
 		x2 = r.x;
 		y2 = r.y;
