@@ -293,7 +293,7 @@ void SkyControl::drawMainPanel(void) {
 }
 
 void SkyControl::doLoadSavePanel(void) {
-	if (SkyState::isDemo() && (!SkyState::isCDVersion()))
+	if (SkyState::isDemo())
 		return; // I don't think this can even happen
 	initPanel();
 	_skyScreen->clearScreen();
@@ -321,15 +321,15 @@ void SkyControl::doLoadSavePanel(void) {
 
 void SkyControl::doControlPanel(void) {
 
-	if (SkyState::isDemo() && (!SkyState::isCDVersion())) {
+	if (SkyState::isDemo()) {
 		return ;
 	}
 	initPanel();
 
 	_skyScreen->clearScreen();
-	if (SkyState::_systemVars.gameVersion < 368)
+	if (SkyState::_systemVars.gameVersion < 368) {
 		_skyScreen->setPalette(60509);
-	else 
+	} else 
 		_skyScreen->setPalette(60510);
 	
 	drawMainPanel();
