@@ -573,33 +573,21 @@ struct Actor {
 	byte new_3;
 	int8 layer;
 	ActorWalkData walkdata;
-//#if defined(FULL_THROTTLE)
 	int16 animVariable[16];
-//#endif
 	uint16 sound[8];
 	CostumeData cost;
 	byte palette[64];
 };
 
-#if defined(FULL_THROTTLE)
 struct CameraData {
 	Point _cur;
 	Point _dest;
 	Point _accel;
 	Point _last;
-	byte _follows;
-	bool _movingToActor;
-};
-#else
-struct CameraData {
-	Point _cur;
-	Point _dest;
-	Point _last;
 	int _leftTrigger, _rightTrigger;
 	byte _follows, _mode;
 	bool _movingToActor;
 };
-#endif
 
 #define ARRAY_HDR_SIZE 6
 struct ArrayHeader {

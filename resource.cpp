@@ -657,45 +657,45 @@ int Scumm::readSoundResource(int type, int index) {
 	basetag = fileReadDwordLE();
 	total_size = fileReadDwordBE();
 
-#if defined(SAMNMAX) || defined(FULL_THROTTLE)
-	if (basetag == MKID('MIDI')) {
-		fileSeek(_fileHandle, -8, SEEK_CUR);
-		fileRead(_fileHandle,createResource(type, index, total_size+8), total_size+8);
-		return 1;
-        }
-#else
-	best_pri = -1;
-	while (pos < total_size) {
-		tag = fileReadDword();
-		size = fileReadDwordBE() + 8;
-		pos += size;
+	if (_gameId==GID_SAMNMAX) {
+		if (basetag == MKID('MIDI')) {
+			fileSeek(_fileHandle, -8, SEEK_CUR);
+			fileRead(_fileHandle,createResource(type, index, total_size+8), total_size+8);
+			return 1;
+        	}
+	} else {
+		best_pri = -1;
+		while (pos < total_size) {
+			tag = fileReadDword();
+			size = fileReadDwordBE() + 8;
+			pos += size;
 		
-		switch(tag) {
+			switch(tag) {
 #ifdef USE_ADLIB
-		case MKID('ADL '): pri = 10; break;
+			case MKID('ADL '): pri = 10; break;
 #else
-		case MKID('ROL '): pri = 1; break;
-		case MKID('GMD '): pri = 2; break;
+			case MKID('ROL '): pri = 1; break;
+			case MKID('GMD '): pri = 2; break;
 #endif
-		default:	pri = -1;
+			default:	pri = -1;
+			}
+
+			if (pri > best_pri) {
+				best_pri = pri;
+				best_size = size;
+				best_offs = filePos(_fileHandle);
+			}
+	
+			fileSeek(_fileHandle, size - 8, SEEK_CUR);
 		}
 
-		if (pri > best_pri) {
-			best_pri = pri;
-			best_size = size;
-			best_offs = filePos(_fileHandle);
+		if (best_pri != -1) {
+			fileSeek(_fileHandle, best_offs - 8, SEEK_SET);
+			fileRead(_fileHandle,createResource(type, index, best_size), best_size);
+			return 1;
 		}
 
-		fileSeek(_fileHandle, size - 8, SEEK_CUR);
 	}
-
-	if (best_pri != -1) {
-		fileSeek(_fileHandle, best_offs - 8, SEEK_SET);
-		fileRead(_fileHandle,createResource(type, index, best_size), best_size);
-		return 1;
-	}
-
-#endif
 	res.roomoffs[type][index] = 0xFFFFFFFF;
 	return 0;
 }
