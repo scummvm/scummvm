@@ -936,12 +936,12 @@ protected:
 	void darkenPalette(int redScale, int greenScale, int blueScale, int startColor, int endColor);
 	void desaturatePalette(int hueScale, int satScale, int lightScale, int startColor, int endColor);
 
-	void setCursor(int cursor);
 	void setCursorHotspot(int x, int y);
 	void setCursorTransparency(int a);
 	void setupCursor();
 
 	void setBuiltinCursor(int index);
+	void redefineBuiltinCursorFromChar(int index, int chr);
 	void grabCursor(int x, int y, int w, int h);
 	void setCursorFromBuffer(byte *ptr, int width, int height, int pitch);
 

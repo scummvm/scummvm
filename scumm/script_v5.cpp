@@ -677,13 +677,7 @@ void ScummEngine_v5::o5_cursorCommand() {
 	case 10:		// SO_CURSOR_IMAGE
 		i = getVarOrDirectByte(PARAM_1);	// Cursor number
 		j = getVarOrDirectByte(PARAM_2);	// Charset letter to use
-		// Cursor image in both Looms are based on images from charset.
-		// For now we don't handle them.
-		if (_gameId != GID_LOOM && _gameId != GID_LOOM256) {
-			// FIXME: Actually: is this opcode ever called by a non-Loom game?
-			// Which V3-V5 game besides Loom makes use of custom cursors, ever?
-			warning("V3--V5 SO_CURSOR_IMAGE(%d,%d) called - tell Fingolfin where you saw this!", i, j);
-		}
+		redefineBuiltinCursorFromChar(i, j);
 		break;
 	case 11:		// SO_CURSOR_HOTSPOT
 		i = getVarOrDirectByte(PARAM_1);
@@ -692,7 +686,11 @@ void ScummEngine_v5::o5_cursorCommand() {
 		setCursorHotspot(j, k);
 		break;
 	case 12:		// SO_CURSOR_SET
-		setCursor(getVarOrDirectByte(PARAM_1));
+		i = getVarOrDirectByte(PARAM_1);
+		if (i >= 0 && i <= 3)
+			_currentCursor = i;
+		else
+			error("SO_CURSOR_SET: unsupported cursor id %d", i);
 		break;
 	case 13:		// SO_CHARSET_SET
 		initCharset(getVarOrDirectByte(PARAM_1));

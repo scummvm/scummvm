@@ -21,6 +21,7 @@
 
 #include "stdafx.h"
 #include "scumm/bomp.h"
+#include "scumm/charset.h"
 #include "scumm/intern.h"
 #include "scumm/object.h"
 #include "scumm/scumm.h"
@@ -41,7 +42,7 @@ static const byte default_cursor_colors[4] = {
 
 
 
-static const uint16 default_cursor_images[5][16] = {
+static uint16 default_cursor_images[5][16] = {
 	/* cross-hair */
 	{ 0x0080, 0x0080, 0x0080, 0x0080, 0x0080, 0x0080, 0x0000, 0x7e3f,
 	  0x0000, 0x0080, 0x0080, 0x0080, 0x0080, 0x0080, 0x0080, 0x0000 },
@@ -79,13 +80,6 @@ void ScummEngine::animateCursor() {
 		}
 		_cursor.animateIndex++;
 	}
-}
-
-void ScummEngine::setCursor(int cursor) {
-	if (cursor >= 0 && cursor <= 3)
-		_currentCursor = cursor;
-	else
-		warning("setCursor(%d)", cursor);
 }
 
 void ScummEngine::setCursorHotspot(int x, int y) {
@@ -259,6 +253,48 @@ void ScummEngine_v6::useBompCursor(const byte *im, int width, int height) {
 	updateCursor();
 }
 
+void ScummEngine::redefineBuiltinCursorFromChar(int index, int chr) {
+	// Cursor image in both Looms are based on images from charset.
+	// For now we don't handle them.
+	if (_gameId != GID_LOOM && _gameId != GID_LOOM256) {
+		// FIXME: Actually: is this opcode ever called by a non-Loom game?
+		// Which V3-V5 game besides Loom makes use of custom cursors, ever?
+		warning("V3--V5 SO_CURSOR_IMAGE(%d,%d) called - tell Fingolfin where you saw this!", index, chr);
+	}
+	
+//	const int oldID = _charset->getCurID(); 
+
+	if (_version == 3) {
+		_charset->setCurID(0);
+	} else if (_version >= 4) {
+		_charset->setCurID(1);
+	}
+
+	Graphics::Surface s;
+	byte buf[16*16];
+	memset(buf, 123, 16*16);
+	s.pixels = buf;
+	s.w = _charset->getCharWidth(chr);
+	s.h = _charset->getFontHeight();
+	s.pitch = s.w;
+	assert(s.w <= 16 && s.h <= 16);
+	s.bytesPerPixel = 1;
+	
+	_charset->drawChar(chr, s, 0, 0);
+
+	uint16 *ptr = default_cursor_images[index];
+	memset(ptr, 0, 16 * sizeof(uint16));
+	for (int h = 0; h < s.h; h++) {
+		for (int w = 0; w < s.w; w++) {
+			if (buf[s.pitch * h + w] != 123)
+				*ptr |= 1 << (16 - w);
+		}
+		ptr++;
+	}
+	
+//	_charset->setCurID(oldID);
+}
+
 void ScummEngine::setBuiltinCursor(int idx) {
 	int i, j;
 	byte color;
@@ -270,25 +306,7 @@ void ScummEngine::setBuiltinCursor(int idx) {
 	else
 		color = default_cursor_colors[idx];
 
-	// FIXME: None of the stock cursors are right for Loom. Why is that?
-	// Fingolfing says: because it sets different cursor shapes --
-	// check the SO_CURSOR_IMAGE opcode in script_v5.cpp; if we implement
-	// that, this problem should be gone...
-
-	if (_gameId == GID_LOOM || _gameId == GID_LOOM256) {
-		int w = 0;
-
-		_cursor.width = 8;
-		_cursor.height = 8;
-		_cursor.hotspotX = 0;
-		_cursor.hotspotY = 0;
-		
-		for (i = 0; i < 8; i++) {
-			w += (i >= 6) ? -2 : 1;
-			for (j = 0; j < w; j++)
-				_grabbedCursor[i * 8 + j] = color;
-		}
-	} else if (_version <= 2) {
+	if (_version <= 2) {
 		_cursor.width = 23;
 		_cursor.height = 21;
 		_cursor.hotspotX = 11;

@@ -61,8 +61,6 @@ protected:
 	ScummEngine *_vm;
 	byte _curId;
 
-	virtual int getCharWidth(byte chr) = 0;
-
 public:
 	CharsetRenderer(ScummEngine *vm);
 	virtual ~CharsetRenderer() {}
@@ -71,6 +69,7 @@ public:
 	void clearCharsetMask();
 
 	virtual void printChar(int chr) = 0;
+	virtual void drawChar(int chr, const Graphics::Surface &s, int x, int y) {}
 
 	int getStringWidth(int a, const byte *str);
 	void addLinebreaks(int a, byte *str, int pos, int maxwidth);
@@ -79,6 +78,7 @@ public:
 	int getCurID() { return _curId; }
 	
 	virtual int getFontHeight() = 0;
+	virtual int getCharWidth(byte chr) = 0;
 	
 	virtual void setColor(byte color) { _color = color; }
 };
@@ -87,7 +87,7 @@ class CharsetRendererCommon : public CharsetRenderer {
 protected:
 	byte *_fontPtr;
 
-	void drawBits1(VirtScreen *vs, byte *dst, const byte *src, int drawTop, int width, int height);
+	void drawBits1(const Graphics::Surface &s, byte *dst, const byte *src, int drawTop, int width, int height);
 
 public:
 	CharsetRendererCommon(ScummEngine *vm) : CharsetRenderer(vm) {}
@@ -99,46 +99,43 @@ public:
 
 class CharsetRendererClassic : public CharsetRendererCommon {
 protected:
-	int getCharWidth(byte chr);
-
-	void drawBitsN(VirtScreen *vs, byte *dst, const byte *src, byte bpp, int drawTop, int width, int height);
+	void drawBitsN(const Graphics::Surface &s, byte *dst, const byte *src, byte bpp, int drawTop, int width, int height);
 
 public:
 	CharsetRendererClassic(ScummEngine *vm) : CharsetRendererCommon(vm) {}
 	
 	void printChar(int chr);
+	void drawChar(int chr, const Graphics::Surface &s, int x, int y);
+
+	int getCharWidth(byte chr);
 };
 
 class CharsetRendererV3 : public CharsetRendererCommon {
 protected:
-	int _nbChars;
+	int _numChars;
 	byte *_widthTable;
-
-	int getCharWidth(byte chr);
 
 public:
 	CharsetRendererV3(ScummEngine *vm) : CharsetRendererCommon(vm) {}
 	
 	void printChar(int chr);
+	void drawChar(int chr, const Graphics::Surface &s, int x, int y);
 	void setCurID(byte id);
 	void setColor(byte color);
 	int getFontHeight() { return 8; }
+	int getCharWidth(byte chr);
 };
 
 class CharsetRendererV2 : public CharsetRendererV3 {
-protected:
-	int getCharWidth(byte chr) { return 8; }
-
 public:
 	CharsetRendererV2(ScummEngine *vm, Common::Language language);
 	
 	void setCurID(byte id) {}
+	int getCharWidth(byte chr) { return 8; }
 };
 
 class CharsetRendererNut : public CharsetRenderer {
 protected:
-	int getCharWidth(byte chr);
-
 	NutRenderer *_fr[5];
 	NutRenderer *_current;
 
@@ -151,6 +148,7 @@ public:
 	void setCurID(byte id);
 	
 	int getFontHeight();
+	int getCharWidth(byte chr);
 };
 
 } // End of namespace Scumm

@@ -74,10 +74,10 @@ void CharsetRendererV3::setCurID(byte id) {
 	if (_fontPtr == 0)
 		error("CharsetRendererCommon::setCurID: charset %d not found!", id);
 
-	_nbChars = _fontPtr[4];
+	_numChars = _fontPtr[4];
 	_fontPtr += 6;
 	_widthTable = _fontPtr;
-	_fontPtr += _nbChars;
+	_fontPtr += _numChars;
 }
 
 // do spacing for variable width old-style font
@@ -981,11 +981,11 @@ void CharsetRendererV3::printChar(int chr) {
 	}
 	if (_ignoreCharsetMask || !vs->hasTwoBuffers) {
 		dest_ptr = vs->getPixels(_left, drawTop);
+		drawBits1(*vs, dest_ptr, char_ptr, drawTop, 8, 8);
 	} else {
 		dest_ptr = (byte *)_vm->gdi._textSurface.pixels + _top * _vm->gdi._textSurface.pitch + _left;
+		drawBits1(_vm->gdi._textSurface, dest_ptr, char_ptr, drawTop, 8, 8);
 	}
-
-	drawBits1(vs, dest_ptr, char_ptr, drawTop, 8, 8);
 
 	if (_str.left > _left)
 		_str.left = _left;
@@ -1001,6 +1001,14 @@ void CharsetRendererV3::printChar(int chr) {
 	if (_str.bottom < _top + height)
 		_str.bottom = _top + height;
 }
+
+void CharsetRendererV3::drawChar(int chr, const Graphics::Surface &s, int x, int y) {
+	byte *char_ptr, *dest_ptr;
+	char_ptr = _fontPtr + chr * 8;
+	dest_ptr = (byte *)s.pixels + y * s.pitch + x;
+	drawBits1(s, dest_ptr, char_ptr, y, 8, 8);
+}
+
 
 void CharsetRendererClassic::printChar(int chr) {
 	int width, height, origWidth, origHeight;
@@ -1101,15 +1109,15 @@ void CharsetRendererClassic::printChar(int chr) {
 		dst = (byte *)_vm->gdi._textSurface.pixels + (_top - _vm->_screenTop) * _vm->gdi._textSurface.pitch + _left;
 	}
 
-	back = dst;
 	if (_blitAlso && vs->hasTwoBuffers) {
+		back = dst;
 		dst = vs->getBackPixels(_left, drawTop);
 	}
 
 	if (is2byte) {
-		drawBits1(vs, dst, charPtr, drawTop, origWidth, origHeight);
+		drawBits1(*vs, dst, charPtr, drawTop, origWidth, origHeight);
 	} else {
-		drawBitsN(vs, dst, charPtr, *_fontPtr, drawTop, origWidth, origHeight);
+		drawBitsN(*vs, dst, charPtr, *_fontPtr, drawTop, origWidth, origHeight);
 	}
 
 	if (_blitAlso && vs->hasTwoBuffers) {
@@ -1143,7 +1151,26 @@ void CharsetRendererClassic::printChar(int chr) {
 	_top -= offsY;
 }
 
-void CharsetRendererClassic::drawBitsN(VirtScreen *vs, byte *dst, const byte *src, byte bpp, int drawTop, int width, int height) {
+void CharsetRendererClassic::drawChar(int chr, const Graphics::Surface &s, int x, int y) {
+	const byte *charPtr;
+	byte *dst;
+
+	uint32 charOffs = READ_LE_UINT32(_fontPtr + chr * 4 + 4);
+	assert(charOffs < 0x10000);
+	if (!charOffs)
+		return;
+	charPtr = _fontPtr + charOffs;
+	
+	int width = charPtr[0];
+	int height = charPtr[1];
+
+	charPtr += 4;	// Skip over char header
+
+	dst = (byte *)s.pixels + y * s.pitch + x;
+	drawBitsN(s, dst, charPtr, *_fontPtr, y, width, height);
+}
+
+void CharsetRendererClassic::drawBitsN(const Graphics::Surface &s, byte *dst, const byte *src, byte bpp, int drawTop, int width, int height) {
 	int y, x;
 	int color;
 	byte numbits, bits;
@@ -1152,7 +1179,7 @@ void CharsetRendererClassic::drawBitsN(VirtScreen *vs, byte *dst, const byte *sr
 	bits = *src++;
 	numbits = 8;
 
-	for (y = 0; y < height && y + drawTop < vs->h; y++) {
+	for (y = 0; y < height && y + drawTop < s.h; y++) {
 		for (x = 0; x < width; x++) {
 			color = (bits >> (8 - bpp)) & 0xFF;
 			
@@ -1167,30 +1194,30 @@ void CharsetRendererClassic::drawBitsN(VirtScreen *vs, byte *dst, const byte *sr
 				numbits = 8;
 			}
 		}
-		dst += vs->pitch - width;
+		dst += s.pitch - width;
 	}
 }
 
-void CharsetRendererCommon::drawBits1(VirtScreen *vs, byte *dst, const byte *src, int drawTop, int width, int height) {
+void CharsetRendererCommon::drawBits1(const Graphics::Surface &s, byte *dst, const byte *src, int drawTop, int width, int height) {
 	int y, x;
 	byte bits = 0;
 
-	for (y = 0; y < height && y + drawTop < vs->h; y++) {
+	for (y = 0; y < height && y + drawTop < s.h; y++) {
 		for (x = 0; x < width; x++) {
 			if ((x % 8) == 0)
 				bits = *src++;
 			if ((bits & revBitMask[x % 8]) && y + drawTop >= 0) {
 				if (_dropShadow) {
 					*(dst + 1) = _shadowColor;
-					*(dst + vs->pitch) = _shadowColor;
-					*(dst + vs->pitch + 1) = _shadowColor;
+					*(dst + s.pitch) = _shadowColor;
+					*(dst + s.pitch + 1) = _shadowColor;
 				}					
 				*dst = _color;
 			}
 			dst++;
 		}
 
-		dst += vs->pitch - width;
+		dst += s.pitch - width;
 	}
 }
 
