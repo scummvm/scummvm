@@ -146,7 +146,7 @@ protected:
 
 	// CD Audio
 	SDL_CD *_cdrom;
-	int cd_track, cd_num_loops, cd_start, cd_duration;
+	int cd_track, cd_num_loops, cd_start_frame, cd_duration;
 	Uint32 cd_end_time, cd_stop_time, cd_next_second;
 
 	enum {
