@@ -91,6 +91,8 @@ public:
 	const char *roomName(uint16 roomNum)	{ return _roomName[roomNum] ; }
 	const char *objectName(uint16 objNum)	{ return _objName[objNum]; }
 
+	uint16 numFrames() { return _numFrames; }
+
 	Language language()	{ return _resource->getLanguage(); } 
 
 	void zoneSet(uint16 screen, uint16 zone, uint16 x1, uint16 y1, uint16 x2, uint16 y2);
