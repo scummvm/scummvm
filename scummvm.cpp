@@ -199,9 +199,9 @@ void Scumm::scummMain(int argc, char **argv) {
 	_minHeapThreshold = 400000;
 
 	_gameDataPath = NULL;
-    _gameTempo = 0;
+        _gameTempo = 0;
 	_videoMode = 0;
-
+        _soundCardType = 3;
 	parseCommandLine(argc, argv);
 
 	if (_exe_name==NULL)
