@@ -463,7 +463,7 @@ void MidiPlayer::loadS1D (File *in, bool sfx) {
 
 	uint32 size = in->readByte() | (in->readByte() << 8);
 	if (size != in->size() - 2) {
-		printf ("ERROR! Size mismatch in simon1demo MUS file (%ld versus reported %d)\n", (long) in->size() - 2, (long) size);
+		printf ("ERROR! Size mismatch in simon1demo MUS file (%ld versus reported %ld)\n", (long) in->size() - 2, (long) size);
 		_system->unlock_mutex (_mutex);
 		return;
 	}
