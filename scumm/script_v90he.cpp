@@ -781,13 +781,27 @@ void ScummEngine_v90he::o90_unknown26() {
 void ScummEngine_v90he::o90_unknown27() {
 	int subOp = fetchScriptByte();
 	switch (subOp) {
+	case 8: // HE 99+
+		pop();
+		break;
 	case 30:
 		pop();
 		break;
 	case 31:
 		pop();
 		break;
+	case 42: // HE 99+
+		pop();
+		pop();
+		break;
 	case 43:
+		pop();
+		break;
+	case 63: // HE 99+
+		pop();
+		break;
+	case 139: // HE 99+
+		pop();
 		pop();
 		break;
 	default:

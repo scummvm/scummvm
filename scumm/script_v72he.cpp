@@ -1050,6 +1050,7 @@ void ScummEngine_v72he::o72_actorOps() {
 		a->_layer = -pop();
 		break;
 	case 64:
+	case 67: // HE 99+
 		_actorClipOverride.bottom = pop();
 		_actorClipOverride.right = pop();
 		_actorClipOverride.top = pop();
@@ -1058,7 +1059,7 @@ void ScummEngine_v72he::o72_actorOps() {
 	case 65: // HE 98+
 		i = pop();
 		j = pop();
-		debug(1,"o72_actorOps: case 65 (%d, %d)", i, j);
+		a->putActor(i, j, a->room);
 		break;
 	case 68: // HE 90+
 		k = pop();
