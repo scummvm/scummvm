@@ -46,6 +46,7 @@ private:
 	public:
 		bool _toBeDestroyed;
 		int _id;
+		Channel() : _id(-1) {}
 		virtual void mix(int16 *data, uint len) = 0;
 		void destroy() {
 			_toBeDestroyed = true;
@@ -196,16 +197,14 @@ public:
 	// start playing a raw sound
 	enum {
 		// Do *NOT* change any of these flags without looking at the code in mixer.cpp
-		FLAG_UNSIGNED = 1,          // unsigned samples
-		FLAG_STEREO = 2,            // sound is in stereo
-		FLAG_16BITS = 4,            // sound is 16 bits wide
-		FLAG_AUTOFREE = 8,          // sound buffer is freed automagically at the end of playing
-		FLAG_FILE = 16,             // sound is a FILE * that's read from
-		FLAG_REVERSE_STEREO = 32,   // sound should be reverse stereo
-		FLAG_LOOP = 64              // loop the audio
+		FLAG_UNSIGNED = 1 << 0,         // unsigned samples
+		FLAG_STEREO = 1 << 1,           // sound is in stereo
+		FLAG_16BITS = 1 << 2,           // sound is 16 bits wide
+		FLAG_AUTOFREE = 1 << 3,         // sound buffer is freed automagically at the end of playing
+		FLAG_REVERSE_STEREO = 1 << 4,   // sound should be reverse stereo
+		FLAG_LOOP = 1 << 5              // loop the audio
 	};
-	int playRaw(PlayingSoundHandle *handle, void *sound, uint32 size, uint rate, byte flags);
-	int playRaw(PlayingSoundHandle *handle, void *sound, uint32 size, uint rate, byte flags, int id);
+	int playRaw(PlayingSoundHandle *handle, void *sound, uint32 size, uint rate, byte flags, int id = -1);
 	int playStream(PlayingSoundHandle *handle, int index, void *sound, uint32 size, uint rate,
 									byte flags, int32 timeout = 3, int32 buffer_size = 2000000);
 #ifdef USE_MAD
@@ -227,6 +226,9 @@ public:
 
 	/* stop playing a specific sound */
 	void stop(int index);
+
+	/* stop playing a specific sound */
+	void stopID(int id);
 
 	/* append to existing sound */
 	int append(int index, void * sound, uint32 size, uint rate, byte flags);

@@ -88,17 +88,6 @@ int SoundMixer::insertAt(PlayingSoundHandle *handle, int index, Channel *chan) {
 	return index;
 }
 
-int SoundMixer::playRaw(PlayingSoundHandle *handle, void *sound, uint32 size, uint rate, byte flags) {
-	for (int i = _beginSlots; i != NUM_CHANNELS; i++) {
-		if (_channels[i] == NULL) {
-			return insertAt(handle, i, new ChannelRaw(this, sound, size, rate, flags, -1));
-		}
-	}
-
-	warning("SoundMixer::out of mixer slots");
-	return -1;
-}
-
 int SoundMixer::playRaw(PlayingSoundHandle *handle, void *sound, uint32 size, uint rate, byte flags, int id) {
 	for (int i = _beginSlots; i != NUM_CHANNELS; i++) {
 		if (_channels[i] == NULL) {
@@ -215,6 +204,16 @@ void SoundMixer::stop(int index) {
 
 	if (_channels[index])
 		_channels[index]->destroy();
+}
+
+void SoundMixer::stopID(int id) {
+
+	for (int i = _beginSlots; i != NUM_CHANNELS; i++) {
+		if (_channels[i] != NULL && _channels[i]->_id == id) {
+			_channels[i]->destroy();
+			return;
+		}
+	}
 }
 
 void SoundMixer::pause(bool paused) {
@@ -578,9 +577,7 @@ static int16 mixer_element_size[] = {
 };
 
 void SoundMixer::ChannelRaw::mix(int16 *data, uint len) {
-	byte *s, *s_org = NULL;
-	uint32 fp_pos;
-	byte *end;
+	byte *s, *end;
 
 	if (_toBeDestroyed) {
 		realDestroy();
@@ -591,41 +588,15 @@ void SoundMixer::ChannelRaw::mix(int16 *data, uint len) {
 		len = _size;
 	_size -= len;
 
-	/* 
-	 * simple support for fread() reading of samples
-	 */
-	if (_flags & FLAG_FILE) {
-		/* determine how many samples to read from the file */
-		uint num = len * _fpSpeed >> 16;
-
-		s_org = (byte *)malloc(num);
-		if (s_org == NULL)
-			error("ChannelRaw::mix out of memory");
-
-		uint num_read = ((File *)_ptr)->read(s_org, num);
-		if (num - num_read != 0)
-			memset(s_org + num_read, 0x80, num - num_read);
-
-		s = s_org;
-		fp_pos = 0;
-		end = s_org + num;
-	} else {
-		s = (byte *)_ptr + _pos;
-		fp_pos = _fpPos;
-		end = (byte *)_ptr + _realSize;
-	}
+	s = (byte *)_ptr + _pos;
+	end = (byte *)_ptr + _realSize;
 
 	const uint32 fp_speed = _fpSpeed;
 	const int16 *vol_tab = _mixer->_volumeTable;
 
-	mixer_helper_table[_flags & 0x07] (data, &len, &s, &fp_pos, fp_speed, vol_tab, end, (_flags & FLAG_REVERSE_STEREO) ? true : false);
+	mixer_helper_table[_flags & 0x07] (data, &len, &s, &_fpPos, fp_speed, vol_tab, end, (_flags & FLAG_REVERSE_STEREO) ? true : false);
 
 	_pos = s - (byte *)_ptr;
-	_fpPos = fp_pos;
-
-	if (_flags & FLAG_FILE) {
-		free(s_org);
-	}
 
 	if (_size < 1) {
 		if (_flags & FLAG_LOOP) {
