@@ -318,6 +318,9 @@ SAGA
   bottom=200. (eriktorbjorn)
 * Support various demo versions
 * Support IHNM
+* Add the Wyrmkeep folks to the credits section of our README so we can thank
+  them properly for... Well, whoever negotiated the deal with them will have
+  to write up something approrpriate here. I don't know enough about it myself.
 
 #######################################################################
 # Backends
