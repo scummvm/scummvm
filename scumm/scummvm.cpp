@@ -1369,8 +1369,18 @@ load_game:
 			checkV2MouseOver(_mouse);
 		}
 
-		drawBlastObjects();
-		drawBlastTexts();
+		// For the Full Throttle credits to work properly, the blast
+		// texts have to be drawn before the blast objects. Unless
+		// someone can think of a better way to achieve this effect.
+
+		if (_gameId == GID_FT) {
+			drawBlastTexts();
+			drawBlastObjects();
+		} else {
+			drawBlastObjects();
+			drawBlastTexts();
+		}
+
 		if (_version == 8)
 			processUpperActors();
 		drawDirtyScreenParts();
