@@ -378,7 +378,7 @@ void Scumm::drawObject(int obj, int arg)
 		// Sam & Max needs this to fix object-layering problems with
 		// the inventory and conversation icons.
 		if ((_features & GF_AFTER_V7 || _gameId == GID_SAMNMAX) && getClass(od->obj_nr, 22))
-			flags |= Gdi::dbDrawMaskOnBoth;
+			flags |= Gdi::dbDrawMaskOnAll;
 		gdi.drawBitmap(ptr, _curVirtScreen, x, ypos, height, x - xpos, numstrip, flags);
 	}
 }

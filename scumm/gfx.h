@@ -184,7 +184,7 @@ struct Gdi {
 
 	enum DrawBitmapFlags {
 		dbAllowMaskOr = 1,
-		dbDrawMaskOnBoth = 2,
+		dbDrawMaskOnAll = 2,
 		dbClear = 4
 	};
 };

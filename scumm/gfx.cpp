@@ -924,44 +924,62 @@ void Gdi::drawBitmap(byte *ptr, VirtScreen *vs, int x, int y, int h,
 			}
 		}
 		CHECK_HEAP;
-		if (flag & dbDrawMaskOnBoth) {
+
+		// Sam & Max uses dbDrawMaskOnAll for things like the inventory
+		// box and the speech icons. While these objects only have one
+		// mask, it should be applied to all the Z-planes in the room,
+		// i.e. they should mask every actor.
+		//
+		// This flag used to be called dbDrawMaskOnBoth, and all it
+		// would do was to mask Z-plane 0. (Z-plane 1 would also be
+		// masked, because what is now the else-clause used to be run
+		// always.) While this seems to be the only way there is to
+		// mask Z-plane 0, this wasn't good enough since actors in
+		// Z-planes >= 2 would not be masked.
+		//
+		// The flag is also used by The Dig and Full Throttle, but I
+		// don't know what for. At the time of writing, these games
+		// are still too unstable for me to investigate.
+
+		if (flag & dbDrawMaskOnAll) {
 			_z_plane_ptr = zplane_list[1] + READ_LE_UINT16(zplane_list[1] + stripnr * 2 + 8);
-			_mask_ptr_dest = _vm->getResourceAddress(rtBuffer, 9) + y * NUM_STRIPS + x;
-			if (_useOrDecompress && flag & dbAllowMaskOr)
-				decompressMaskImgOr();
-			else
-				decompressMaskImg();
-		}
-
-		for (i = 1; i < numzbuf; i++) {
-			uint16 offs;
-
-			if (!zplane_list[i])
-				continue;
-
-			if (_vm->_features & GF_SMALL_HEADER)
-				if (_vm->_features & GF_OLD256)
-					offs = READ_LE_UINT16(zplane_list[i] + stripnr * 2 + 4);
-				else
-					offs = READ_LE_UINT16(zplane_list[i] + stripnr * 2 + 2);
-			else
-				offs = READ_LE_UINT16(zplane_list[i] + stripnr * 2 + 8);
-
-			_mask_ptr_dest = _vm->getResourceAddress(rtBuffer, 9) + y * NUM_STRIPS + x + _imgBufOffs[i];
-
-			if (offs) {
-				_z_plane_ptr = zplane_list[i] + offs;
-
+			for (i = 0; i < numzbuf; i++) {
+				_mask_ptr_dest = _vm->getResourceAddress(rtBuffer, 9) + y * NUM_STRIPS + x + _imgBufOffs[i];
 				if (_useOrDecompress && flag & dbAllowMaskOr)
 					decompressMaskImgOr();
 				else
 					decompressMaskImg();
-			} else {
-				if (_useOrDecompress && flag & dbAllowMaskOr);	/* nothing */
-				else
-					for (int h = 0; h < _numLinesToProcess; h++)
-						_mask_ptr_dest[h * NUM_STRIPS] = 0;
-				/* needs better abstraction, FIXME */
+			}
+		} else {
+			for (i = 1; i < numzbuf; i++) {
+				uint16 offs;
+
+				if (!zplane_list[i])
+					continue;
+
+				if (_vm->_features & GF_SMALL_HEADER) {
+					if (_vm->_features & GF_OLD256)
+						offs = READ_LE_UINT16(zplane_list[i] + stripnr * 2 + 4);
+					else
+						offs = READ_LE_UINT16(zplane_list[i] + stripnr * 2 + 2);
+				} else
+					offs = READ_LE_UINT16(zplane_list[i] + stripnr * 2 + 8);
+
+				_mask_ptr_dest = _vm->getResourceAddress(rtBuffer, 9) + y * NUM_STRIPS + x + _imgBufOffs[i];
+
+				if (offs) {
+					_z_plane_ptr = zplane_list[i] + offs;
+
+					if (_useOrDecompress && flag & dbAllowMaskOr)
+						decompressMaskImgOr();
+					else
+						decompressMaskImg();
+				} else {
+					if (!(_useOrDecompress && flag & dbAllowMaskOr));
+						for (int h = 0; h < _numLinesToProcess; h++)
+							_mask_ptr_dest[h * NUM_STRIPS] = 0;
+					/* needs better abstraction, FIXME */
+				}
 			}
 		}
 		CHECK_HEAP;
