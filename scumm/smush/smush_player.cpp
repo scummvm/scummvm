@@ -654,9 +654,6 @@ void SmushPlayer::handleNewPalette(Chunk &b) {
 	setPalette(_pal);
 }
 
-void SmushPlayer::initCodecs() {
-}
-
 extern void smush_decode_codec1(byte *dst, byte *src, int height);
 
 void SmushPlayer::handleFrameObject(Chunk &b) {
@@ -672,15 +669,7 @@ void SmushPlayer::handleFrameObject(Chunk &b) {
 	int width = b.getWord();
 	int height = b.getWord();
 
-	// hack for spontanic changing resolution
-	// differ than width scumm screen, and pass only one width 384x242
-	if((height != _scumm->_realHeight) && (height != 242))
-		return;
-	if (height == 242)
-		return;
-	if((width != _scumm->_realWidth) && (width != 384))
-		return;
-	if (width == 384)
+	if((height != _scumm->_realHeight) || (width != _scumm->_realWidth))
 		return;
 
 	if(_alreadyInit == false) {
@@ -865,13 +854,10 @@ void SmushPlayer::setPalette(byte *palette) {
 }
 
 void SmushPlayer::updateScreen() {
-	int width = MIN(_width, _scumm->_realWidth);
-	int height = MIN(_height, _scumm->_realHeight);
-
 	if (_whileUpdate == false) {
 		_whileCopyRect = true;
 		uint32 end_time, start_time = _scumm->_system->get_msecs();
-		_scumm->_system->copy_rect(_data, _width, 0, 0, width, height);
+		_scumm->_system->copy_rect(_data, _width, 0, 0, _width, _height);
 		end_time = _scumm->_system->get_msecs();
 		debug(4, "Smush stats: updateScreen( %03d )", end_time - start_time);
 		_updateNeeded = true;
@@ -880,9 +866,17 @@ void SmushPlayer::updateScreen() {
 }
 
 void SmushPlayer::play(const char *filename, const char *directory) {
+	File f;
+	f.open(filename, directory);
+	if(f.isOpen() == false) {
+		warning("SmushPlayer::setupAnim() File not found %s", filename);
+		return;
+	}
+
 	_whileUpdate = false;
 	_whileCopyRect = false;
 	_updateNeeded = false;
+
 	setupAnim(filename, directory);
 	init();
 

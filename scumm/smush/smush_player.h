@@ -79,7 +79,6 @@ public:
 	void init();
 	void deinit();
 	void setupAnim(const char *file, const char *directory);
-	void initCodecs();
 	void updateScreen();
 	void play(const char *filename, const char *directory);
 	void setPalette(byte *palette);
@@ -87,7 +86,6 @@ public:
 protected:
 
 	bool readString(const char *file, const char *directory);
-	void clean();
 	void checkBlock(const Chunk &, Chunk::type, uint32 = 0);
 	void handleAnimHeader(Chunk &);
 	void handleFrame(Chunk &);
