@@ -54,21 +54,24 @@ Engine::~Engine() {
 
 const char *Engine::getSavePath() const {
 
-#ifdef _WIN32_WCE
-	return _gameDataPath.c_str();
-#elif defined(__PALM_OS__)
+#if defined(__PALM_OS__)
 	return SCUMMVM_SAVEPATH;
 #else
 
 	const char *dir = NULL;
 
-#if !defined(MACOS_CARBON)
+#if !defined(MACOS_CARBON) && !defined(_WIN32_WCE)
 	dir = getenv("SCUMMVM_SAVEPATH");
 #endif
 
 	// If SCUMMVM_SAVEPATH was not specified, try to use game specific savepath from config
 	if (!dir || dir[0] == 0)
 		dir = ConfMan.get("savepath").c_str();
+
+#ifdef _WIN32_WCE
+	if (dir[0] == 0)
+		dir = _gameDataPath.c_str();
+#endif
 
 	assert(dir);
 
