@@ -192,7 +192,7 @@ void SoundMixer::appendStream(int index, void *sound, uint32 size) {
 	StackLock lock(_mutex);
 
 	ChannelStream *chan;
-#ifndef _WIN32_WCE
+#if !defined(_WIN32_WCE) && !defined(__PALM_OS__)
 	chan = dynamic_cast<ChannelStream *>(_channels[index]);
 #else
 	chan = (ChannelStream*)_channels[index];
@@ -208,7 +208,7 @@ void SoundMixer::endStream(int index) {
 	StackLock lock(_mutex);
 
 	ChannelStream *chan;
-#ifndef _WIN32_WCE
+#if !defined(_WIN32_WCE) && !defined(__PALM_OS__)
 	chan = dynamic_cast<ChannelStream *>(_channels[index]);
 #else
 	chan = (ChannelStream*)_channels[index];
