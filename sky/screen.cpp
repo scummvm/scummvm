@@ -516,7 +516,7 @@ void SkyScreen::sortSprites(void) {
 		if (spriteCnt > 1) { // bubble sort
 			for (uint32 cnt1 = 0; cnt1 < spriteCnt - 1; cnt1++)
 				for (uint32 cnt2 = cnt1 + 1; cnt2 < spriteCnt; cnt2++)
-					if (sortList[cnt1].yCood <= sortList[cnt2].yCood) {
+					if (sortList[cnt1].yCood >= sortList[cnt2].yCood) {
 						StSortList tmp;
 						tmp.yCood = sortList[cnt1].yCood;
 						tmp.sprite = sortList[cnt1].sprite;
@@ -643,7 +643,7 @@ void SkyScreen::drawSprite(uint8 *spriteInfo, Compact *sprCompact) {
 	for (uint8 cnty = 0; cnty < _sprHeight; cnty++) {
 		for (uint8 cntx = 0; cntx < _sprWidth; cntx++)
 			if (spriteData[cntx + _maskX1]) screenPtr[cntx] = spriteData[cntx + _maskX1];
-		spriteData += _sprWidth + _maskX2;
+		spriteData += _sprWidth + _maskX2 + _maskX1;
 		screenPtr += GAME_SCREEN_WIDTH;
 	}
 	// Convert the sprite coordinate/size values to blocks for vertical mask and/or vector to game

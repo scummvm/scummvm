@@ -1393,9 +1393,14 @@ bool SkyLogic::fnCloseHand(uint32 a, uint32 b, uint32 c) {
 }
 
 bool SkyLogic::fnGetTo(uint32 targetPlaceId, uint32 mode, uint32 c) {
-	_compact->upFlag = (uint16)mode; // save mode for action script
+ 	_compact->upFlag = (uint16)mode; // save mode for action script
 	_compact->mode += 4; // next level up
 	Compact *cpt = SkyState::fetchCompact(_compact->place);
+	if (!cpt) { 
+		// FIXME: This should never happen
+		warning("can't find _compact's getToTable. Place compact is NULL");
+		return false; 
+	}
 	uint16 *getToTable = cpt->getToTable;
 
 	while (*getToTable != targetPlaceId)
@@ -1959,7 +1964,8 @@ bool SkyLogic::fnAskThis(uint32 textNo, uint32 animNo, uint32 c) {
 }
 
 bool SkyLogic::fnRandom(uint32 a, uint32 b, uint32 c) {
-	error("Stub: fnRandom");
+	warning("Stub: fnRandom");
+	return true;
 }
 
 bool SkyLogic::fnPersonHere(uint32 id, uint32 room, uint32 c) {
@@ -2218,7 +2224,8 @@ bool SkyLogic::fnStartFx(uint32 sound, uint32 b, uint32 c) {
 }
 
 bool SkyLogic::fnStopFx(uint32 a, uint32 b, uint32 c) {
-	error("Stub: fnStopFx");
+	warning("Stub: fnStopFx");
+	return true;
 }
 
 bool SkyLogic::fnStartMusic(uint32 a, uint32 b, uint32 c) {
@@ -2246,12 +2253,12 @@ bool SkyLogic::fnQuitToDos(uint32 a, uint32 b, uint32 c) {
 }
 
 bool SkyLogic::fnPauseFx(uint32 a, uint32 b, uint32 c) {
-	//warning("Stub: fnPauseFx");
+	warning("Stub: fnPauseFx");
 	return true;
 }
 
 bool SkyLogic::fnUnPauseFx(uint32 a, uint32 b, uint32 c) {
-	//warning("Stub: fnUnPauseFx");
+	warning("Stub: fnUnPauseFx");
 	return true;
 }
 
