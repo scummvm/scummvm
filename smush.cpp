@@ -108,13 +108,8 @@ extern SoundMixer *g_mixer;
 void Smush::handleWave(const byte *src, uint32 size) {
 	int16 *dst = new int16[size * _channels];
 	decompressVima((char *)src, dst, size * _channels * 2, destTable);
-
-#ifndef SYSTEM_BIG_ENDIAN
-	for (uint32 j = 0; j < size * _channels; j++)
-		dst[j] = SWAP_BYTES_16(dst[j]);
-#endif
 	
-	int flags = SoundMixer::FLAG_16BITS | SoundMixer::FLAG_AUTOFREE;
+	int flags = SoundMixer::FLAG_16BITS | SoundMixer::FLAG_LITTLE_ENDIAN | SoundMixer::FLAG_AUTOFREE;
 	if (_channels == 2)
 		flags |= SoundMixer::FLAG_STEREO;
 

@@ -178,7 +178,7 @@ void decompressVima(const char *src, int16 *dest, int destLen, uint16 *destTable
 					outputWord = 0x7fff;
 			}
 
-			*destPos = outputWord;
+			WRITE_LE_UINT16(destPos, outputWord);
 			destPos += numChannels;
 
 			currTablePos += offsets[numBits - 2][val];
