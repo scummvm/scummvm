@@ -179,13 +179,7 @@ void ScummEngine_v6::setupScummVars() {
 
 }
 
-void ScummEngine_v7he::setupScummVars() {
-	// Early windows titles and freddi
-	if (_heversion <= 71) {
-		ScummEngine_v6he::setupScummVars();
-		return;
-	}
-
+void ScummEngine_v72he::setupScummVars() {
 	// TODO Not complete
 	VAR_KEYPRESS = 0;
 	VAR_DEBUGMODE = 1;

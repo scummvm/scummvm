@@ -613,8 +613,6 @@ public:
 	ScummEngine_v7he(GameDetector *detector, OSystem *syst, const ScummGameSettings &gs);
 
 protected:
-	virtual void setupScummVars();
-
 	virtual void setupOpcodes();
 	virtual void executeOpcode(byte i);
 	virtual const char *getOpcodeDesc(byte i);
