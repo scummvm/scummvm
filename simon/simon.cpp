@@ -3993,13 +3993,7 @@ void SimonEngine::talk_with_text(uint vga_sprite_id, uint color, const char *str
 
 	len_div_3 = (strlen(string_ptr) + 3) / 3;
 
-	if (_game & GF_SIMON2) {
-		if (_variableArray[86] == 0)
-			len_div_3 >>= 1;
-		if (_variableArray[86] == 2)
-			len_div_3 <<= 1;
-		_variableArray[85] = len_div_3 * 5;
-	} else if (_game & GF_TALKIE) {
+	if (!(_game & GF_SIMON2) && (_game & GF_TALKIE)) {
 		if (_variableArray[141] == 0)
 			_variableArray[141] = 9;
 		_variableArray[85] = _variableArray[141] * len_div_3;
