@@ -29,8 +29,6 @@
 #include "scumm/imuse_digi/dimuse.h"
 #include "scumm/sound.h"
 
-#include "common/util.h"
-
 namespace Scumm {
 
 #if !defined(__GNUC__)
