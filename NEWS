@@ -1,7 +1,14 @@
 For a more comprehensive changelog for the latest experimental CVS code, see:
         http://scummvm.sourceforge.net/daily/ChangeLog
 
-0.5.7(CVS) (2003-??-??)
+0.??
+ General:
+   - Added support for FLAC (losless) encoded audio files
+
+ SCUMM:
+   - Added graphics decoders for 3DO Humongous Entertainment games
+
+0.6.0(PRE) (2003-??-??)
  New Games:
    - Added Broken Sword 1 engine.
    - Added Broken Sword 2 engine.
@@ -35,7 +42,6 @@ For a more comprehensive changelog for the latest experimental CVS code, see:
    - Added MIDI support for loom (ega), monkeyega and monkeyvga.
    - Added sound effects support for indy3/monkeyega/monkeyvga/pass
    - Added FM Towns targets for Loom and Indy3
-   - Added graphics decoders for 3DO Humongous Entertainment games
    - Rewrote in-game menu (F5) to be easier to use
    - Improved FM Towns SFX support (YM2612 emulation, looping)
    - Classic V1 versions of Maniac Mansion and Zak McKracken are now supported and completable
