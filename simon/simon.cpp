@@ -4577,7 +4577,11 @@ void SimonState::delay(uint amount)
 						if (event.kbd.keycode == 'f')
 							_fast_mode ^= 1;
 					}
-					_key_pressed = (byte)event.kbd.ascii;
+					// Make sure backspace works right (this fixes a small issue on OS X)
+					if (event.kbd.keycode == 8)
+						_key_pressed = 8;
+					else
+						_key_pressed = (byte)event.kbd.ascii;
 					break;
 
 				case OSystem::EVENT_MOUSEMOVE:
