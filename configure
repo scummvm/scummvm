@@ -212,6 +212,14 @@ for ac_option in $@; do
       --backend=*)
         _backend=`echo $ac_option | cut -d '=' -f 2`
 	;;
+      --enable-debug)
+        CXXFLAGS="$CXXFLAGS -g"
+        ;;
+      *)
+        echo "error: unrecognised option: $ac_option
+Try \`$0 --help' for more information." >&2
+	exit 1
+        ;;
     esac;
 done;
 
