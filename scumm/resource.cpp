@@ -422,15 +422,15 @@ void Scumm::readResTypeList(int id, uint32 tag, const char *name) {
 	else
 		num = _fileHandle.readByte();
 
-	if (1 || _features & GF_AFTER_V6) {
-		if (num != res.num[id]) {
-			error("Invalid number of %ss (%d) in directory", name, num);
-		}
-	} else {
+	if (_features & GF_OLD_BUNDLE) {
 		if (num >= 0xFF) {
 			error("Too many %ss (%d) in directory", name, num);
 		}
 		allocResTypeData(id, tag, num, name, 1);
+	} else {
+		if (num != res.num[id]) {
+			error("Invalid number of %ss (%d) in directory", name, num);
+		}
 	}
 
 	if (_features & GF_OLD_BUNDLE) {
