@@ -21,7 +21,9 @@
  */
 
 #include "stdafx.h"
-#include "scumm.h"
+#include "scummsys.h"
+#include "system.h"
+#include "scumm.h"	// FIXME: remove this! Only needed for SAMPLES_PER_SEC, error() and warning()
 #include "mididrv.h"
 #include "SDL_thread.h"
 #include "gameDetector.h"
