@@ -1626,7 +1626,7 @@ void SimonState::setup_hit_areas(FillOrCopyStruct *fcs, uint fcs_index) {
 		ha->unk3 = 1;
 
 		// Simon1 specific
-		o_kill_thread_simon1(0x80);
+		o_kill_sprite_simon1(0x80);
 		start_vga_code(0, 1, 0x80, 0, 0, 0xE);
 	} else {
 		ha->x = 227;
@@ -2066,7 +2066,7 @@ void SimonState::o_print_str() {
 			return;
 
 		if (speech_id == 0)
-			o_kill_thread_simon2(2, num_1 + 2);
+			o_kill_sprite_simon2(2, num_1 + 2);
 
 		talk_with_text(num_1, num_2, (const char *)string_ptr, tv->a, tv->b, tv->c);
 		break;
@@ -2389,7 +2389,7 @@ void SimonState::expire_vga_timers() {
 					// special scroll timer
 					scroll_timeout();
 				} else {
-					vc_resume_thread(script_ptr, cur_file, cur_unk);
+					vc_resume_sprite(script_ptr, cur_file, cur_unk);
 				}
 				vte = _next_vga_timer_to_process;
 			} else {
@@ -2410,7 +2410,7 @@ void SimonState::expire_vga_timers() {
 				_next_vga_timer_to_process = vte + 1;
 				delete_vga_timer(vte);
 
-				vc_resume_thread(script_ptr, cur_file, cur_unk);
+				vc_resume_sprite(script_ptr, cur_file, cur_unk);
 				vte = _next_vga_timer_to_process;
 			} else {
 				vte++;
@@ -2441,7 +2441,7 @@ void SimonState::scroll_timeout() {
 	add_vga_timer(10, NULL, 0, 0);
 }
 
-void SimonState::vc_resume_thread(byte *code_ptr, uint16 cur_file, uint16 cur_sprite) {
+void SimonState::vc_resume_sprite(byte *code_ptr, uint16 cur_file, uint16 cur_sprite) {
 	VgaPointersEntry *vpe;
 
 	_vga_cur_sprite_id = cur_sprite;
@@ -2772,7 +2772,7 @@ void SimonState::skip_speech() {
 		_variableArray[100] = 5;
 		start_vga_code(4, 1, 0x1e, 0, 0, 0);
 		o_wait_for_vga(0x82);
-		o_kill_thread_simon2(2, 1);
+		o_kill_sprite_simon2(2, 1);
 	}       
 }
 
@@ -3185,7 +3185,7 @@ void SimonState::fcs_unk1(uint fcs_index) {
 // ok
 void SimonState::fcs_unk_5(FillOrCopyStruct *fcs, uint fcs_index) {
 	if (!(_game & GF_SIMON2)) {
-		o_kill_thread_simon1(0x80);
+		o_kill_sprite_simon1(0x80);
 	}
 }
 
@@ -4189,7 +4189,7 @@ void SimonState::talk_with_speech(uint speech_id, uint num_1) {
 			return;
 		}
 		if (num_1 < 100) {
-			o_kill_thread_simon1(num_1 + 201);
+			o_kill_sprite_simon1(num_1 + 201);
 		}
 
 		_sound->playVoice(speech_id);
@@ -4212,9 +4212,9 @@ void SimonState::talk_with_speech(uint speech_id, uint num_1) {
 			if (_subtitles && _scriptvar_2) {
 				start_vga_code(4, 2, 5, 0, 0, 0);
 				o_wait_for_vga(0xcd);
-				o_kill_thread_simon2(2, 5);
+				o_kill_sprite_simon2(2, 5);
 			}
-			o_kill_thread_simon2(2, num_1 + 2);
+			o_kill_sprite_simon2(2, num_1 + 2);
 			_sound->playVoice(speech_id);
 
 			start_vga_code(4, 2, num_1 + 2, 0, 0, 0);
@@ -4463,9 +4463,9 @@ void SimonState::talk_with_text(uint num_1, uint num_2, const char *string_ptr, 
 
 	strcpy(char_buf, string_ptr_2);
 	if (!(_game & GF_SIMON2)) {
-		o_kill_thread_simon1(199 + num_1);
+		o_kill_sprite_simon1(199 + num_1);
 	} else {
-		o_kill_thread_simon2(2, num_1);
+		o_kill_sprite_simon2(2, num_1);
 	}
 	num_2 = num_2 * 3 + 192;
 

@@ -533,13 +533,13 @@ int SimonState::runScript() {
 			}
 			break;
 
-		case 99:{									/* kill thread */
+		case 99:{									/* kill sprite */
 				if (!(_game & GF_SIMON2)) {
-					o_kill_thread_simon1(getVarOrWord());
+					o_kill_sprite_simon1(getVarOrWord());
 				} else {
 					uint a = getVarOrWord();
 					uint b = getVarOrWord();
-					o_kill_thread_simon2(a, b);
+					o_kill_sprite_simon2(a, b);
 				}
 			}
 			break;
@@ -1491,7 +1491,7 @@ void SimonState::o_unk_103() {
 	unlock();
 }
 
-void SimonState::o_kill_thread_simon1(uint a) {
+void SimonState::o_kill_sprite_simon1(uint a) {
 	uint16 b = TO_BE_16(a);
 	_lock_word |= 0x4000;
 	_vc_ptr = (byte *)&b;
@@ -1499,7 +1499,7 @@ void SimonState::o_kill_thread_simon1(uint a) {
 	_lock_word &= ~0x4000;
 }
 
-void SimonState::o_kill_thread_simon2(uint a, uint b) {
+void SimonState::o_kill_sprite_simon2(uint a, uint b) {
 	uint16 items[2];
 
 	items[0] = TO_BE_16(a);

@@ -1577,7 +1577,7 @@ void SimonState::vc_59() {
 		uint end = vc_read_next_word() + 1;
 
 		do {
-			vc_kill_thread(file, start);
+			vc_kill_sprite(file, start);
 		} while (++start != end);
 	} else {
 		if (_sound->_voice_handle == 0)
@@ -1609,7 +1609,7 @@ void SimonState::vc_57_no_op() {
 	/* no op */
 }
 
-void SimonState::vc_kill_thread(uint file, uint sprite) {
+void SimonState::vc_kill_sprite(uint file, uint sprite) {
 	uint16 old_sprite_id, old_cur_file_id;
 	VgaSleepStruct *vfs;
 	VgaSprite *vsp;
@@ -1667,7 +1667,7 @@ void SimonState::vc_60_kill_sprite() {
 		file = _vga_cur_file_id;
 	}
 	uint sprite = vc_read_next_word();
-	vc_kill_thread(file, sprite);
+	vc_kill_sprite(file, sprite);
 }
 
 void SimonState::vc_61_sprite_change() {

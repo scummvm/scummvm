@@ -443,8 +443,8 @@ public:
 
 	bool o_unk_23(uint a);
 
-	void o_kill_thread_simon1(uint a);
-	void o_kill_thread_simon2(uint a, uint b);
+	void o_kill_sprite_simon1(uint a);
+	void o_kill_sprite_simon2(uint a, uint b);
 
 	void o_vga_reset();
 	void o_unk_101();
@@ -679,7 +679,7 @@ public:
 	void vc_74_clear_op189_flag();
 
 	void delete_vga_timer(VgaTimerEntry * vte);
-	void vc_resume_thread(byte *code_ptr, uint16 cur_file, uint16 cur_sprite);
+	void vc_resume_sprite(byte *code_ptr, uint16 cur_file, uint16 cur_sprite);
 	int vc_read_var_or_word();
 	uint vc_read_next_word();
 	uint vc_read_next_byte();
@@ -783,7 +783,7 @@ public:
 	void realizePalette();
 	void fadeUpPalette();
 
-	void vc_kill_thread(uint file, uint sprite);
+	void vc_kill_sprite(uint file, uint sprite);
 
 	void set_dummy_cursor();
 

@@ -142,7 +142,7 @@ static const char *const simon1dos_opcode_name_table[256] = {
 	"WB|UNK_96",
 	"W|LOAD_VGA",
 	"WBWWW|START_VGA",
-	"W|KILL_THREAD",
+	"W|KILL_SPRITE",
 	/* 100 */
 	"|VGA_RESET",
 	"BWWWWWW|UNK_101",
@@ -380,7 +380,7 @@ static const char *const simon1talkie_opcode_name_table[256] = {
 	"WB|UNK_96",
 	"W|LOAD_VGA",
 	"WBWWW|START_VGA",
-	"W|KILL_THREAD",
+	"W|KILL_SPRITE",
 	/* 100 */
 	"|VGA_RESET",
 	"BWWWWWW|UNK_101",
@@ -618,7 +618,7 @@ static const char *const simon2dos_opcode_name_table[256] = {
 	"WB|UNK_96",
 	"W|LOAD_VGA",
 	"WWBWWW|START_VGA",
-	"WW|KILL_THREAD",
+	"WW|KILL_SPRITE",
 	/* 100 */
 	"|VGA_RESET",
 	"BWWWWWW|UNK_101",
@@ -860,7 +860,7 @@ static const char *const simon2talkie_opcode_name_table[256] = {
 	"WB|UNK_96",
 	"W|LOAD_VGA",
 	"WWBWWW|START_VGA",
-	"WW|KILL_THREAD",
+	"WW|KILL_SPRITE",
 	/* 100 */
 	"|VGA_RESET",
 	"BWWWWWW|UNK_101",
@@ -982,7 +982,7 @@ const char *const simon1_video_opcode_name_table[] = {
 	"x|RET",
 	"ddd|DUMMY_1",
 	"d|CALL",
-	"ddddd|NEW_THREAD",
+	"ddddd|NEW_SPRITE",
 	/* 4 */
 	"ddd|DUMMY_4",
 	"vd|SKIP_IF_NEQ",
@@ -1006,18 +1006,18 @@ const char *const simon1_video_opcode_name_table[] = {
 	/* 20 */
 	"dd|SET_CODE_WORD",
 	"i|JUMP_IF_CODE_WORD",
-	"dd|SET_PAL",
-	"d|SET_PRI",
+	"dd|SET_PALETTE",
+	"d|SET_PRIORITY",
 	/* 24 */
-	"diid|SET_IMG_XY",
-	"x|HALT_THREAD",
+	"diid|SET_SPRITE_XY",
+	"x|HALT_SPRITE",
 	"ddddd|SET_WINDOW",
 	"|RESET",
 	/* 28 */
 	"dddd|DUMMY_28",
 	"|STOP_ALL_SOUNDS",
 	"d|SET_BASE_DELAY",
-	"d|SET_PALETTE_MODE",
+	"d|SET_PALETTEETTE_MODE",
 	/* 32 */
 	"vv|COPY_VAR",
 	"|FORCE_UNLOCK",
@@ -1054,7 +1054,7 @@ const char *const simon1_video_opcode_name_table[] = {
 	"|UNK_58",
 	"|SKIP_IF_TEXT",
 	/* 60 */
-	"d|KILL_THREAD",
+	"d|KILL_SPRITE",
 	"ddd|INIT_SPRITE",
 	"|PALETTE_THING",
 	"|PALETTE_THING_2",
@@ -1065,7 +1065,7 @@ const char *const simon2_video_opcode_name_table[] = {
 	"x|RET",
 	"ddd|DUMMY_1",
 	"d|CALL",
-	"ddddd|NEW_THREAD",
+	"ddddd|NEW_SPRITE",
 	/* 4 */
 	"ddd|DUMMY_4",
 	"vd|SKIP_IF_NEQ",
@@ -1089,18 +1089,18 @@ const char *const simon2_video_opcode_name_table[] = {
 	/* 20 */
 	"dd|SET_CODE_WORD",
 	"i|JUMP_IF_CODE_WORD",
-	"dd|SET_PAL",
-	"d|SET_PRI",
+	"dd|SET_PALETTE",
+	"d|SET_PRIORITY",
 	/* 24 */
-	"diid|SET_IMG_XY",
-	"x|HALT_THREAD",
+	"diid|SET_SPRITE_XY",
+	"x|HALT_SPRITE",
 	"ddddd|SET_WINDOW",
 	"|RESET",
 	/* 28 */
 	"dddd|DUMMY_28",
 	"|STOP_ALL_SOUNDS",
 	"d|SET_BASE_DELAY",
-	"d|SET_PALETTE_MODE",
+	"d|SET_PALETTEETTE_MODE",
 	/* 32 */
 	"vv|COPY_VAR",
 	"|FORCE_UNLOCK",
@@ -1135,9 +1135,9 @@ const char *const simon2_video_opcode_name_table[] = {
 	"i|SLEEP_EX",
 	"|DUMMY_57",
 	"|UNK_58",
-	"ddd|KILL_MULTI_THREAD",
+	"ddd|KILL_MULTI_SPRITE",
 	/* 60 */
-	"dd|KILL_THREAD",
+	"dd|KILL_SPRITE",
 	"ddd|INIT_SPRITE",
 	"|PALETTE_THING",
 	"|PALETTE_THING_2",
