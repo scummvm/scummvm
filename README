@@ -527,9 +527,8 @@ Autosaves:
 ----------
 Because ScummVM is still a beta product, it -can- crash and/or hang
 occasionally. As such, every five minutes it will save a game in Slot 0. This
-game can be loaded via Ctrl-0, or the F5 menu. This autosaving currently only
-applies to SCUMM games, not other games (such as Simon the Sorcerer or
-Beneath a Steel Sky)
+game can be loaded via Ctrl-0, or the F5 menu. This autosaving does not, however,
+occur with Simon the Sorcerer.
 
 
 Savegames:
