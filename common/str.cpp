@@ -160,6 +160,16 @@ void String::deleteLastChar() {
 	}
 }
 
+void String::deleteChar(int p)
+{
+	if (p >= 0 && p < _len) {
+		ensureCapacity(_len - 1, true);
+		while (p++ < _len)
+			_str[p-1] = _str[p];
+		_len--;
+	}
+}
+
 void String::clear()
 {
 	if (_capacity) {
@@ -169,6 +179,17 @@ void String::clear()
 		_capacity = 0;
 		_len = 0;
 		_str = 0;
+	}
+}
+
+void String::insertChar(char c, int p)
+{
+	if (p >= 0 && p <= _len) {
+		ensureCapacity(++_len, true);
+		for (int i = _len; i > p; i--) {
+			_str[i] = _str[i-1];
+		}
+		_str[p] = c;
 	}
 }
 

@@ -33,6 +33,7 @@ protected:
 	String			_backupString;
 	bool			_caretVisible;
 	uint32			_caretTime;
+	int			_pos;
 public:
 	EditTextWidget(Dialog *boss, int x, int y, int w, int h, const String &text);
 

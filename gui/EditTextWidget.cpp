@@ -31,6 +31,8 @@ EditTextWidget::EditTextWidget(Dialog *boss, int x, int y, int w, int h, const S
 
 	_caretVisible = false;
 	_caretTime = 0;
+
+	_pos = _label.size();
 }
 
 void EditTextWidget::handleTickle()
@@ -74,19 +76,33 @@ bool EditTextWidget::handleKeyDown(uint16 ascii, int keycode, int modifiers)
 			break;
 		case 8:		// backspace
 			_label.deleteLastChar();
+			if (_pos > 0)
+				_pos--;
+			dirty = true;
+			break;
+		case 127:	// delete
+			_label.deleteChar(_pos);
 			dirty = true;
 			break;
 		case 256+20:	// left arrow
+			if (_pos > 0)
+				_pos--;
 			break;
 		case 256+19:	// right arrow
+			if (_pos < _label.size())
+				_pos++;
+			break;
 			break;
 		case 256+22:	// home
+			_pos = 0;
 			break;
 		case 256+23:	// end
+			_pos = _label.size();
 			break;
 		default:
 			if (isprint((char)ascii)) {
-				_label += (char)ascii;
+				_label.insertChar((char)ascii, _pos++);
+				//_label += (char)ascii;
 				dirty = true;
 			} else {
 				handled = false;
@@ -123,12 +139,13 @@ void EditTextWidget::drawCaret(bool erase)
 	NewGui *gui = _boss->getGui();
 	
 	int16 color = erase ? gui->_bgcolor : gui->_textcolorhi;
-	int x = _x + _boss->getX() + 3;
+	int x = _x + _boss->getX() + 2;
 	int y = _y + _boss->getY() + 1;
 
-	// TODO - once we support "real editing" (i.e. caret can be at any spot),
-	// x should be calculated based on the current caret position.
-	int width = gui->getStringWidth(_label);
+	int width = 0;
+	for (int i = 0; i < _pos; i++)
+		width += gui->getCharWidth(_label[i]);
+
 	if (width > _w-6)
 		width = _w-6;
 	x += width;

@@ -110,7 +110,9 @@ public:
 	}
 
 	void deleteLastChar();
+	void deleteChar(int p);
 	void clear();
+	void insertChar(char c, int p);
 	
 	void toLowercase();
 	void toUppercase();
