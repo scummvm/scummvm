@@ -1245,7 +1245,7 @@ void Scumm_v2::o2_endCutscene() {
 	_userPut = 1;
 	_cursor.state = 1;
 	
-	if (_gameId == GID_MANIAC) {
+	if (_gameId == GID_MANIAC || _gameId == GID_MANIAC64) {
 		camera._mode = (byte) vm.cutSceneData[3];
 		if (camera._mode == CM_FOLLOW_ACTOR) {
 			actorFollowCamera(VAR(VAR_EGO));

@@ -2327,7 +2327,7 @@ void Scumm::launch() {
 		_numActors = 80;
 	else if ((_features & GF_AFTER_V7) || (_gameId == GID_SAMNMAX))
 		_numActors = 30;
-	else if (_gameId == GID_MANIAC)
+	else if (_gameId == GID_MANIAC || _gameId == GID_MANIAC64)
 		_numActors = 25;
 	else
 		_numActors = 13;
