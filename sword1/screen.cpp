@@ -440,6 +440,7 @@ void SwordScreen::blitBlockClear(uint16 x, uint16 y, uint8 *data) {
 
 void SwordScreen::renderParallax(uint8 *data) {
 	ParallaxHeader *header = (ParallaxHeader*)data;
+	uint32 *lineIndexes = (uint32*)(data + sizeof(ParallaxHeader));
 	assert((FROM_LE_16(header->sizeX) >= SCREEN_WIDTH) && (FROM_LE_16(header->sizeY) >= SCREEN_DEPTH));
 
 	double scrlfx, scrlfy;
@@ -458,7 +459,7 @@ void SwordScreen::renderParallax(uint8 *data) {
 		scrlY = 0;
 
 	for (uint16 cnty = 0; cnty < SCREEN_DEPTH; cnty++) {
-		uint8 *src = data + READ_LE_UINT32(header->lineIndexes + cnty + scrlY);
+		uint8 *src = data + READ_LE_UINT32(lineIndexes + cnty + scrlY);
 		uint8 *dest = _screenBuf + SwordLogic::_scriptVars[SCROLL_OFFSET_X] + (cnty + SwordLogic::_scriptVars[SCROLL_OFFSET_Y]) * _scrnSizeX;
 		uint16 remain = scrlX;
 		uint16 xPos = 0;
