@@ -72,7 +72,8 @@ bool ScummDebugger::do_command() {
 				"(a)ctor [actornum] -> show actor information\n"
 				"(r)oom roomnum -> load room\n"
 				"(s)cripts -> show running scripts\n"
-                                "(b)oxes -> list and draw boxen\n"
+                "(b)oxes -> list and draw boxen\n"
+				"(w)atch [varnum] -> set a variable watch. 0 means all variables.\n"
 				"(e)xit -> exit game\n"
 			   );
 		return true;

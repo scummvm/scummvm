@@ -335,7 +335,7 @@ void Scumm::writeVar(uint var, int value) {
 		_vars[var] = value;
 
 		if ((_varwatch == (int)var) || (_varwatch == 0))
-			printf("vars[%d] = %d (via script %d)\n", var, value, &vm.slot[_currentScript].number);
+			printf("vars[%d] = %d (via script %d)\n", var, value, vm.slot[_currentScript].number);
 		return;
 	}
 
