@@ -621,30 +621,30 @@ void Cutaway::handlePersonRecord(
 
 	if (object.objectNumber == OBJECT_JOE) {
 		if (object.moveToX || object.moveToY) {
-			// XXX _walk->joeMove(0, object.moveToX, object.moveToY, true);
+			_walk->joeMove(0, object.moveToX, object.moveToY, true);
 		} 
 		strcpy(name, "JOE");
 	}
 	else {
-		// Not Joe XXX
-		warning("Person not Joe");
-		strcpy(name, "unknown");
-#if 0
-		K=OBJECT-ROOM_DATA[ROOM];
+		Person p;
+		_logic->personSetData(
+				object.objectNumber - _logic->roomData(object.room), 
+				"", false, &p);
 
-		/* Find out which object position on the screen the person is */
-
-		SET_PERSON_DATA(K,NULLstr,0);
-		if(OBJ_CUT[13]>0 || OBJ_CUT[14]>0)
-		{
-			bobs[P_BNUM].scale=SF;
-			bobs[P_BNUM].x=OBJ_CUT[13];
-			bobs[P_BNUM].y=OBJ_CUT[14];
+		strcpy(name, p.name);
+		if (object.moveToX || object.moveToY) {
+			BobSlot *bob = _graphics->bob(p.actor->bobNum);
+			// XXX bob->scale = SF;
+			bob->x = object.moveToX;
+			bob->y = object.moveToY;
 		}
-		/* Add person's direction to be passed across */
 
-		MOVE_OTHER(P_NAMEstr,IX,IY,CI+1,OBJECT_DATA[OBJECT][7]);
-#endif
+		_walk->personMove(
+				&p, 
+				object.moveToX, object.moveToY,
+				_logic->numFrames() + 1, 		// XXX CI+1
+				_logic->objectData(object.objectNumber)->image
+				);
 	}
 
 	if (_quit)
@@ -889,7 +889,7 @@ void Cutaway::goToFinalRoom() {
 	uint16 joeX    = READ_BE_UINT16(ptr); ptr += 2;
 	uint16 joeY    = READ_BE_UINT16(ptr); ptr += 2;
 
-	if ((!_quit || (!_anotherCutaway && joeRoom != _finalRoom)) &&
+	if ((!_quit || (!_anotherCutaway && joeRoom == _finalRoom)) &&
 			joeRoom != _temporaryRoom &&
 			joeRoom != 0) {
 
