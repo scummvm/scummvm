@@ -616,7 +616,6 @@ void Scumm::drawFlashlight()
 	static int flashX, flashY, flashW, flashH;
 
 	int i, j, offset;
-	int topline = virtscr[0].topline;
 
 	// Remove the flash light first if it was previously drawn
 	if (_flashlightIsDrawn) {
@@ -667,7 +666,7 @@ void Scumm::drawFlashlight()
 	}
 
 	byte *bgbak;
-	offset = (flashY - topline) * _realWidth + virtscr[0].xstart + flashX * 8;
+	offset = flashY * _realWidth + virtscr[0].xstart + flashX * 8;
 	flashBuffer = virtscr[0].screenPtr + offset;
 	bgbak = getResourceAddress(rtBuffer, 5) + offset;
 
