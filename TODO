@@ -235,7 +235,7 @@ SCUMM
 * SMUSH:
   - Add code for MP3 encoded sound tracks
 * Humongous Entertainment Games
-  - Add proper handling of sound in Humongous games
+  - Add proper handling of sound looping in Humongous games
   - Add sound pitch support for piano keys in piano mini game of fbear (DOS)
   - Add rename/delete file support, to make file opcodes function correctly
   - Fix akos asserts in puttmoon, caused by butterfly at start, robot near
