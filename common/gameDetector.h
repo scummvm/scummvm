@@ -160,14 +160,12 @@ public:
 	OSystem *createSystem();
 	MidiDriver *createMidi();
 
+	int parseGraphicsMode(const char *s);
 	void updateconfig();
 
 protected:
 	bool detectGame(void);
-
-	int parseGraphicsMode(const char *s);
 	bool parseMusicDriver(const char *s);
-	
 	void list_games();
 };
 
