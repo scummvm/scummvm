@@ -304,7 +304,7 @@ void Codec37Decoder::bompDecode(byte *dst, const byte *src, int len) {
 	*(uint32 *)(dst) = v
 
 #define COPY_4X1_LINE(dst, src)			\
-	*(uint32 *)(dst) = *(uint32 *)(src)
+	*(uint32 *)(dst) = *(const uint32 *)(src)
 
 #endif /* SCUMM_NEED_ALIGNMENT */
 

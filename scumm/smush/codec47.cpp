@@ -44,10 +44,10 @@
 #else /* SCUMM_NEED_ALIGNMENT */
 
 #define COPY_4X1_LINE(dst, src)			\
-	*(uint32 *)(dst) = *(uint32 *)(src)
+	*(uint32 *)(dst) = *(const uint32 *)(src)
 
 #define COPY_2X1_LINE(dst, src)			\
-	*(uint16 *)(dst) = *(uint16 *)(src)
+	*(uint16 *)(dst) = *(const uint16 *)(src)
 
 #endif
 

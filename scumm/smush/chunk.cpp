@@ -150,7 +150,7 @@ bool FileChunk::seek(int32 delta, seek_type dir) {
 			_curPos = (uint32)delta;
 			break;
 		case seek_end:
-			if(delta > 0 || (_size + delta) < 0)
+			if(delta > 0 || _size < (uint32)-delta)
 				error("invalid seek request");
 
 			_curPos = (uint32)(_size + delta);
@@ -263,7 +263,7 @@ bool ContChunk::seek(int32 delta, seek_type dir) {
 			_curPos = (uint32)delta;
 			break;
 		case seek_end:
-			if(delta > 0 || (_size + delta) < 0) error("invalid seek request");
+			if(delta > 0 || _size < (uint32)-delta) error("invalid seek request");
 			_curPos = (uint32)(_size + delta);
 			break;
 	}
