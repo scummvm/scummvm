@@ -263,11 +263,6 @@ void Sword2State::go() {
 
 	// Zdebug("[%s]", lpCmdLine);
 
-#ifndef _SWORD2_DEBUG
-	// so cannot use Ctrl-Q from the release versions (full game or demo)
-	DisableQuitKey();
-#endif
-
 	// Call the application "Revolution" until the resource manager is
 	// ready to dig the name out of a text file. See InitialiseGame()
 	// which calls InitialiseFontResourceFlags() in maketext.cpp
@@ -275,16 +270,6 @@ void Sword2State::go() {
 	// Have to do it like this since we cannot really fire up the resource
 	// manager until a window has been created as any errors are displayed
 	// via a window, thus time becomes a loop.
-
-	// Zdebug("CALLING: InitialiseWindow");
-	// rv = InitialiseWindow(hInstance, hPrevInstance, lpCmdLine, nCmdShow, "Revolution");
-	rv = RD_OK;
-	// Zdebug("RETURNED with rv = %.8x", rv);
-
-	if (rv != RD_OK) {
-		// ReportDriverError(rv);
-		return;
-	}
 
 	// Override global scaler with any game-specific define
 	if (g_config->get("gfx_mode")) {

@@ -31,18 +31,15 @@
 #include "palette.h"
 #include "render.h"
 
-#define SCREENYOFFSET	40
-#define MILLISECSPERCYCLE 83
-
 byte *lpBackBuffer;
 
 // Game screen metrics
-int16			screenDeep;
-int16			screenWide;
+int16 screenDeep;
+int16 screenWide;
 
 
 // Set to 1 if vertical blank status cannot be checked.
-BOOL			bFullScreen = 0;
+// BOOL			bFullScreen = 0;
 
 
 

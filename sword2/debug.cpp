@@ -105,12 +105,7 @@ void ExitWithReport(const char *format,...)	// (6dec96 JEL)
 	// wait for fade to finish before calling RestoreDisplay()
 	WaitForFade();
 
-	ReportFatalError((const uint8 *)buf);	// display message box
-	CloseAppWindow();
-	// This looks like a bad idea, since our ServiceWindows() never
-	// returns RDERR_APPCLOSED.
-	// while (ServiceWindows() != RDERR_APPCLOSED);
-	exit(0);
+	error(buf);
 }
 
 #ifdef _SWORD2_DEBUG	// all other functions only for _SWORD2_DEBUG version

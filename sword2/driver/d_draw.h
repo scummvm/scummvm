@@ -68,7 +68,6 @@
 extern "C" {
 #endif
 
-//#include "ddraw.h"
 #include "driver96.h"
 
 //  Bits defining hardware and emulation capabilities.
@@ -79,11 +78,6 @@ extern "C" {
 
 extern uint8 *lpPalette;			// palette
 extern byte *lpBackBuffer;		// back surface
-// extern Surface *lpPrimarySurface;	// DirectDraw front buffer.
-extern uint8 *lpDD2;				// DirectDraw2 object
-extern BOOL bFullScreen;		// Defines whether the app is running in full screen mode or not.
-//extern DDCOLORKEY				blackColorKey;		// transparent pixel for color key blitting.
-extern uint8 blackColorKey;		// transparent pixel for color key blitting.
 extern int32					dxHalCaps;			// Hardware capabilities.
 extern int32					dxHelCaps;			// Emulation capabilities.
 

@@ -354,28 +354,9 @@
 //
 //	Plays the smacker file, filename.
 //
-//	---------------------------------------------------------------------------
-//
-//	void GetDrawStatus(_drvStatus *s)
-//
-//	Retrieves the value of the driver's drawing globals and stores them in s.
-//
-//	---------------------------------------------------------------------------
-//
-//	void SetDrawStatus(_drvStatus *s)
-//
-//	Set the value of the driver's drawing globals from s.
-//
 //	--------------------------- rdwin.c ---------------------------------------
 //	---------------------------------------------------------------------------
 //
-//	int32 InitialiseWindow(HWND hWnd)
-//
-//	Creates a window!  This must be the first operation in creating the 
-//	Windows 95 version.
-//
-//	---------------------------------------------------------------------------
-//	
 //	int32 ServiceWindows(void)
 //
 //	This function should be called at a high rate ( > 20 per second) to service
@@ -386,20 +367,6 @@
 //	int32 CloseAppWindow(void)
 //
 //	Removes all windows hooks from the application.
-//
-//	---------------------------------------------------------------------------
-//
-//	int32 ReportDriverError(int32 error)
-//
-//	Creates a message box and displays the error code passed to it, as well as
-//	the filename and line that the function was called from
-//
-//	---------------------------------------------------------------------------
-//
-//	int32 ReportFatalError(const uint8 *error)
-//
-//	Creates a message box and displays the error string passed in, as well as
-//	the filename and line that the function was called from
 //
 //	---------------------------------------------------------------------------
 //
@@ -530,18 +497,12 @@
 //
 //	--------------------------------------------------------------------------
 //
-//	int32 ReadKey(char *key)
+//	int32 ReadKey(_keyboardEvent *key)
 //
 //	Sets the value of key passed in to the current waiting key.  If there is
 //	no key waiting, an error code is returned.
 //
 //
-//	--------------------------------------------------------------------------
-//
-//	void GetKeyStatus(_drvKeyStatus *)
-//
-//	Retrieves the address of the keyboard buffer bits.
-//	
 //	--------------------------------------------------------------------------
 //	------------------------------- sprite.c ---------------------------------
 //	--------------------------------------------------------------------------
@@ -885,18 +846,6 @@
 //	int32 UnpauseMusic(void)
 //
 //	Re-starts the music from where it was stopped.
-//
-//	---------------------------------------------------------------------------
-//
-//	void GetSoundStatus(_drvStatus *s)
-//
-//	Retrieves the value of the driver's audio globals and stores them in s.
-//
-//	---------------------------------------------------------------------------
-//
-//	void SetSoundStatus(_drvStatus *s)
-//
-//	Set the value of the driver's audio globals from s.
 //
 //	---------------------------------------------------------------------------
 //
@@ -1328,12 +1277,8 @@ extern int32 PlaySmacker(char *filename, _movieTextObject *textObjects[], uint8 
 //-----------------------------------------------------------------------------
 //	Windows OS functions - from rdwin.c
 //-----------------------------------------------------------------------------
-//extern int32 InitialiseWindow(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow, char *gameName);
 extern int32 CloseAppWindow(void);
 extern int32 ServiceWindows(void);
-extern int32 _ReportDriverError(int32 error, const uint8 *filename, uint32 line);
-extern int32 _ReportFatalError(const uint8 *error, const uint8 *filename, uint32 line);
-extern int32 DisableQuitKey(void);
 extern void  SetWindowName(const char *windowName);
 //-----------------------------------------------------------------------------
 
@@ -1425,33 +1370,9 @@ extern int32 SVM_GetVolumeInformation(char *cdPath, char *sCDName, uint32 maxPat
 extern void scumm_mkdir(const char *pathname);
 extern void SVM_GetModuleFileName(void *module, char *destStr, uint32 maxLen);
 
-//-----------------------------------------------------------------------------
-//Macro for calling error handler with source filename and line.
-//-----------------------------------------------------------------------------
-#define ReportDriverError(f) _ReportDriverError(f, (const uint8 *) __FILE__, (uint32) __LINE__)
-#define ReportFatalError(f) _ReportFatalError(f, (const uint8 *) __FILE__, (uint32) __LINE__)
-//-----------------------------------------------------------------------------
-
-
-
-//-----------------------------------------------------------------------------
-// Macro for reporting a non-fatal driver error
-//-----------------------------------------------------------------------------
-#ifdef _SWORD2_DEBUG
-static  int32	rderror;
-#define Driver(f)							\
-	if (rderror = f)						\
-		ReportDriverError(rderror)
-#else
-#define Driver(f) f
-#endif
-//-----------------------------------------------------------------------------
-
-
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-extern BOOL		gotTheFocus;		// set if the game is currently displayed
 extern int16	screenWide;			// Width of the screen display
 extern int16	screenDeep;			// Height of the screen display
 extern int16	mousex;				// Mouse screen x coordinate
