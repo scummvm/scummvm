@@ -113,3 +113,13 @@ enum {
 };
 
 
+/* Graphics drivers */
+enum {
+	GD_AUTO = 0,
+	GD_SDL = 1,
+	GD_WIN32 = 2,
+	GD_X = 3,
+};
+
+
+

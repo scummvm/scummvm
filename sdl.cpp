@@ -502,7 +502,6 @@ void OSystem_SDL::add_dirty_rgn_auto(const byte *buf) {
 	if (!force_full) {
 		uint x,y,w;
 		uint32 *ck = dirty_checksums;
-		SDL_Rect *dr = dirty_rect_list;
 		
 		for(y=0; y!=SCREEN_HEIGHT/8; y++) {
 			for(x=0; x!=SCREEN_WIDTH/8; x++,ck++) {
@@ -515,21 +514,13 @@ void OSystem_SDL::add_dirty_rgn_auto(const byte *buf) {
 						w++;
 					} while (x+w != SCREEN_WIDTH/8 && ck[w] != ck[w+CKSUM_NUM]);
 
-					/* add this rect to the dirty list. */
-					if(dr==&dirty_rect_list[NUM_DIRTY_RECT-1]) {
-						force_full=true;
+					add_dirty_rect(x*8, y*8, w*8, 8);
+
+					if (force_full)
 						goto get_out;
-					}
-										
-					dr->x = x*8;
-					dr->y = y*8;
-					dr->w = w*8;
-					dr->h = 1*8;
-					dr++;
 				}
 			}
 		}
-		num_dirty_rects = dr - dirty_rect_list;
 	} else {
 		get_out:;
 		/* Copy old checksums to new */
@@ -544,13 +535,9 @@ void OSystem_SDL::update_screen() {
 	/* force a full redraw, accomplish that by adding one big rect to the dirty
 	 * rect list */
 	if (force_full) {
-		SDL_Rect *dr = dirty_rect_list;
-		dr->x = 0;
-		dr->y = 0;
-		dr->w = SCREEN_WIDTH;
-		dr->h = SCREEN_HEIGHT;
-		num_dirty_rects = 1;
 		force_full = false;
+		num_dirty_rects = 0;
+		add_dirty_rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
 	}
 
 	if (num_dirty_rects == 0 || sdl_hwscreen == NULL)
@@ -807,14 +794,15 @@ void OSystem_SDL::hotswap_gfx_mode() {
 	unload_gfx_mode();
 	load_gfx_mode();
 
-	/* blit image */
-	OSystem_SDL::copy_rect(bak_mem, 320, 0, 0, 320, 200);
-	free(bak_mem);
+	force_full = true;
 
 	/* reset palette */
 	SDL_SetColors(sdl_screen, _cur_pal, 0, 256);
 
-	force_full = true;
+	/* blit image */
+	OSystem_SDL::copy_rect(bak_mem, 320, 0, 0, 320, 200);
+	free(bak_mem);
+
 	OSystem_SDL::update_screen();
 }
 

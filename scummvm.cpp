@@ -1298,8 +1298,24 @@ Scumm *Scumm::createFromDetector(GameDetector *detector, OSystem *syst)
 	scumm->_features = detector->_features;
 	scumm->_soundCardType = detector->_soundCardType;
 	scumm->_noSubtitles = detector->_noSubtitles;
-	scumm->_midi_driver = detector->_midi_driver;
 	scumm->_cdrom = detector->_cdrom;
+
+	{
+		SoundDriver *sdriv;
+		SoundEngine *seng;
+
+		scumm->_use_adlib = detector->_use_adlib;
+		
+		if (!detector->_use_adlib) {
+			MidiDriver *midi = detector->createMidi();
+			sdriv = new MidiSoundDriver;
+			((MidiSoundDriver*)sdriv)->midiSetDriver(midi);
+		} else {
+			sdriv = new AdlibSoundDriver;
+		}
+		seng = new SoundEngine;
+		seng->initialize(scumm, sdriv);
+	}
 
 	scumm->delta = 6;
 	if (detector->_restore) {
@@ -1309,6 +1325,8 @@ Scumm *Scumm::createFromDetector(GameDetector *detector, OSystem *syst)
 	}
 
 	scumm->delta = 0;
+
+
 	return scumm;
 }
 

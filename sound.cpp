@@ -377,7 +377,6 @@ void Scumm::talkSound(uint32 a, uint32 b, int mode)
 void Scumm::setupSound()
 {
 	SoundEngine *se = (SoundEngine *)_soundEngine;
-	SOUND_DRIVER_TYPE *driver = se->driver();
 	if (se) {
 		se->setBase(res.address[rtSound]);
 		if (se->get_music_volume() == 0)
@@ -387,7 +386,6 @@ void Scumm::setupSound()
 		_sound_volume_sfx = 100;
 		_sound_volume_music = se->get_music_volume();
 		_sound_volume_master = (se->get_master_volume() / 127);
-		driver->midiSetDriver(_midi_driver);
 	}
 	_sfxFile = openSfxFile();
 }

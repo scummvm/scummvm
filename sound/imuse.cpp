@@ -27,18 +27,6 @@ int num_mix;
 
 #define TICKS_PER_BEAT 480
 
-#ifdef USE_ADLIB
-#ifdef _WIN32_WCE
-#define TEMPO_BASE 0x1F0000 * 2	// Sampled down to 11 kHz
-#else
-#define TEMPO_BASE 0x1924E0
-#endif
-#define HARDWARE_TYPE 1
-#else
-#define TEMPO_BASE 0x400000
-#define HARDWARE_TYPE 5
-#endif
-
 #define SYSEX_ID 0x7D
 #define SPECIAL_CHANNEL 9
 
@@ -984,7 +972,9 @@ int SoundEngine::initialize(Scumm *scumm, SoundDriver * driver)
 	scumm->_soundEngine = this;
 	_s = scumm;
 
-	_driver = (SOUND_DRIVER_TYPE *) driver;
+	_driver = driver;
+
+	_hardware_type = driver->get_hardware_type();
 
 	_master_volume = 127;
 	if (_music_volume < 1)
@@ -1160,7 +1150,7 @@ void Player::set_tempo(uint32 b)
 	uint32 i, j;
 
 	if (_se->_s->_gameTempo < 1000)
-		i = TEMPO_BASE;
+		i = _se->_driver->get_base_tempo();
 	else
 		i = _se->_s->_gameTempo;
 
@@ -1357,7 +1347,7 @@ void Player::parse_sysex(byte *p, uint len)
 	switch (code = *p++) {
 	case 16:											/* set instrument in part */
 		a = *p++ & 0x0F;
-		if (HARDWARE_TYPE != *p++)
+		if (_se->_hardware_type != *p++)
 			break;
 		decode_sysex_bytes(p, buf, len - 3);
 		part = get_part(a);
@@ -1367,7 +1357,7 @@ void Player::parse_sysex(byte *p, uint len)
 
 	case 17:											/* set global instrument */
 		p++;
-		if (HARDWARE_TYPE != *p++)
+		if (_se->_hardware_type != *p++)
 			break;
 		a = *p++;
 		decode_sysex_bytes(p, buf, len - 4);
@@ -1376,7 +1366,7 @@ void Player::parse_sysex(byte *p, uint len)
 
 	case 33:											/* param adjust */
 		a = *p++ & 0x0F;
-		if (HARDWARE_TYPE != *p++)
+		if (_se->_hardware_type != *p++)
 			break;
 		decode_sysex_bytes(p, buf, len - 3);
 		part = get_part(a);
@@ -2400,7 +2390,7 @@ void Part::key_off(byte note)
 
 void Part::init(SoundDriver * driver)
 {
-	_drv = (SOUND_DRIVER_TYPE *) driver;
+	_drv = driver;
 	_player = NULL;
 	_next = NULL;
 	_prev = NULL;

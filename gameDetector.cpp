@@ -40,7 +40,7 @@ static const char USAGE_STRING[] =
 	"\tt<num>  - set music tempo. Suggested: 1F0000\n"
 	"\tp<path> - look for game in <path>\n"
 	"\tm<num>  - set music volume to <num> (0-100)\n"
-	"\te<num>  - set music engine. see readme.txt for details\n"
+	"\te<mode> - set music engine. see readme.txt for details\n"
 	"\tr       - emulate roland mt32 instruments\n"
 	"\tf       - fullscreen mode\n"
 	"\tg<mode> - graphics mode. normal,2x,3x,2xsai,super2xsai,supereagle\n"
@@ -118,9 +118,8 @@ void GameDetector::parseCommandLine(int argc, char **argv)
 						break;
 					}
 				case 'e':
-					if (*(s + 1) == '\0')
+					if (!parseMusicDriver(s+1))
 						goto ShowHelpAndExit;
-					_midi_driver = atoi(s + 1);
 					goto NextArg;
 				case 'g': {
 						int gfx_mode = parseGraphicsMode(s+1);
@@ -151,7 +150,7 @@ void GameDetector::parseCommandLine(int argc, char **argv)
 	}
 
 #else
-	_midi_driver = 4;
+	_midi_driver = 4; /* FIXME: don't use numerics */
 	_exe_name = *argv;
 	_gameDataPath = (char *)malloc(strlen(_exe_name) + 3);
 	sprintf(_gameDataPath, ":%s:", _exe_name);
@@ -183,6 +182,45 @@ int GameDetector::parseGraphicsMode(const char *s) {
 
 	return -1;
 }
+
+bool GameDetector::parseMusicDriver(const char *s) {
+	struct MusicDrivers {
+		const char *name;
+		int id;
+	};
+
+	const struct MusicDrivers music_drivers[] = {
+		{"auto",MD_AUTO},
+		{"null",MD_NULL},
+		{"windows",MD_WINDOWS},
+		{"timidity",MD_TIMIDITY},
+		{"seq",MD_SEQ},
+		{"qt",MD_QTMUSIC},
+		{"amidi",MD_AMIDI},
+		{"adlib",-1},
+	};
+
+	const MusicDrivers *md = music_drivers;
+	int i;
+
+	_use_adlib = false;
+
+	for(i=0; i!=ARRAYSIZE(music_drivers); i++,md++) {
+		if (!scumm_stricmp(md->name, s)) {
+			/* FIXME: when adlib driver is in use, propagate that to
+			 * the Scumm class, and let it create an AdlibSoundDriver
+			 * instead of MidiSoundDriver */
+			if (md->id == -1) {
+				_use_adlib = true;
+			}
+			_midi_driver = md->id;
+			return true;
+		}
+	}
+
+	return false;
+}
+
 
 struct VersionSettings {
 	const char *filename;
@@ -223,27 +261,27 @@ static const VersionSettings version_settings[] = {
 
 	/* Scumm version 5 */
 	{"loomcd", "Loom (256 color CD version)", GID_LOOM256, 5, 1, 42,
-	 GF_SMALL_HEADER | GF_USE_KEY | GF_AUDIOTRACKS},
+	 GF_SMALL_HEADER | GF_USE_KEY | GF_AUDIOTRACKS | GF_ADLIB_DEFAULT},
 	{"monkey", "Monkey Island 1", GID_MONKEY, 5, 2, 2,
 	 GF_USE_KEY | GF_AUDIOTRACKS},
 	{"monkey1", "Monkey Island 1 (alt)", GID_MONKEY, 5, 2, 2,
-	 GF_USE_KEY | GF_AUDIOTRACKS},
+	 GF_USE_KEY | GF_AUDIOTRACKS | GF_ADLIB_DEFAULT},
 	{"monkey2", "Monkey Island 2: LeChuck's revenge", GID_MONKEY2, 5, 2, 2,
-	 GF_USE_KEY},
+	 GF_USE_KEY | GF_ADLIB_DEFAULT},
 	{"atlantis", "Indiana Jones 4 and the Fate of Atlantis", GID_INDY4, 5, 5, 0,
-	 GF_USE_KEY},
+	 GF_USE_KEY | GF_ADLIB_DEFAULT},
 	{"playfate", "Indiana Jones 4 and the Fate of Atlantis (Demo)", GID_INDY4,
-	 5, 5, 0, GF_USE_KEY},
+	 5, 5, 0, GF_USE_KEY | GF_ADLIB_DEFAULT},
 
 	/* Scumm Version 6 */
 	{"tentacle", "Day Of The Tentacle", GID_TENTACLE, 6, 4, 2,
-	 GF_NEW_OPCODES | GF_AFTER_V6 | GF_USE_KEY},
+	 GF_NEW_OPCODES | GF_AFTER_V6 | GF_USE_KEY | GF_ADLIB_DEFAULT},
 	{"dottdemo", "Day Of The Tentacle (Demo)", GID_TENTACLE, 6, 3, 2,
-	 GF_NEW_OPCODES | GF_AFTER_V6 | GF_USE_KEY},
+	 GF_NEW_OPCODES | GF_AFTER_V6 | GF_USE_KEY | GF_ADLIB_DEFAULT},
 	{"samnmax", "Sam & Max", GID_SAMNMAX, 6, 4, 2,
-	 GF_NEW_OPCODES | GF_AFTER_V6 | GF_USE_KEY | GF_DRAWOBJ_OTHER_ORDER},
+	 GF_NEW_OPCODES | GF_AFTER_V6 | GF_USE_KEY | GF_DRAWOBJ_OTHER_ORDER | GF_ADLIB_DEFAULT},
 	{"snmdemo", "Sam & Max (Demo)", GID_SAMNMAX, 6, 3, 0,
-	 GF_NEW_OPCODES | GF_AFTER_V6 | GF_USE_KEY},
+	 GF_NEW_OPCODES | GF_AFTER_V6 | GF_USE_KEY | GF_ADLIB_DEFAULT},
 
 	/* Scumm Version 7 */
 	{"ft", "Full Throttle", GID_FT, 7, 3, 0,
@@ -307,11 +345,7 @@ int GameDetector::detectMain(int argc, char **argv)
 	_gameTempo = 0;
 	_soundCardType = 3;
 
-#ifdef WIN32
-	_midi_driver = MIDI_WINDOWS;
-#else
-	_midi_driver = MIDI_NULL;
-#endif
+	_midi_driver = MD_AUTO;
 
 	parseCommandLine(argc, argv);
 
@@ -329,6 +363,13 @@ int GameDetector::detectMain(int argc, char **argv)
 		_gameText = "Please choose a game";
 	}
 
+	/* Use the adlib sound driver if auto mode is selected,
+	 * and the game is one of those that want adlib as
+	 * default */
+	if (_midi_driver == MD_AUTO && _features&GF_ADLIB_DEFAULT) {
+		_use_adlib = true;
+	}
+
 	if (!_gameDataPath) {
 		warning("No path was provided. Assuming that data file are in the current directory");
 		_gameDataPath = (char *)malloc(sizeof(char) * 2);
@@ -336,4 +377,41 @@ int GameDetector::detectMain(int argc, char **argv)
 	}
 
 	return (0);
+}
+
+OSystem *GameDetector::createSystem() {
+	/* auto is to use SDL */
+	switch(_gfx_driver) {
+	case GD_SDL:
+	case GD_AUTO:
+		return OSystem_SDL_create(_gfx_mode, _fullScreen);
+	case GD_WIN32:
+		/* not implemented yet */
+		break;
+
+	case GD_X:
+		/* not implemented yet */
+		break;
+	}
+
+	error("Invalid graphics driver");
+	return NULL;
+}
+
+MidiDriver *GameDetector::createMidi() {
+	int drv = _midi_driver;
+
+#ifdef WIN32
+	/* MD_WINDOWS is default MidiDriver on windows targets */
+	if (drv == MD_AUTO) drv = MD_WINDOWS;
+#endif
+	
+	switch(drv) {
+	case MD_AUTO:
+	case MD_NULL:			return MidiDriver_NULL_create();
+	case MD_WINDOWS:	return MidiDriver_WIN_create();
+	}
+
+	error("Invalid midi driver selected");
+	return NULL;
 }

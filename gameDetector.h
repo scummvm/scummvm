@@ -32,6 +32,8 @@ public:
 	byte _gameId;
 	bool _simon;
 
+	bool _use_adlib;
+
 	uint16 _debugMode;
 	uint16 _noSubtitles;
 	uint16 _bootParam;
@@ -45,12 +47,17 @@ public:
 	const char *_gameText;
 	uint32 _features;
 
+	int _gfx_driver;
 	int _gfx_mode;
 	
 	int _scummVersion;
 	int _cdrom;
 
 	int parseGraphicsMode(const char *s);
-	
 
+	bool parseMusicDriver(const char *s);
+
+public:
+	OSystem *createSystem();
+	MidiDriver *createMidi();
 };

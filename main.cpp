@@ -8,8 +8,6 @@ GameDetector detector;
 Gui gui;
 
 Scumm *g_scumm;
-SoundEngine sound;
-SOUND_DRIVER_TYPE snd_driv;
 
 
 #if !defined(__APPLE__)
@@ -55,7 +53,7 @@ int main(int argc, char *argv[])
 	if (detector.detectMain(argc, argv))
 		return (-1);
 
-	OSystem *system = OSystem_SDL_create(detector._gfx_mode, detector._fullScreen);
+	OSystem *system = detector.createSystem();
 
 	{
 		char *s = detector.getGameName();
@@ -66,16 +64,16 @@ int main(int argc, char *argv[])
 	/* Simon the Sorcerer? */
 	if (detector._gameId >= GID_SIMON_FIRST && detector._gameId <= GID_SIMON_LAST) {
 		/* Simon the Sorcerer. Completely different initialization */
+		MidiDriver *midi = detector.createMidi();
+		
 		SimonState *simon = SimonState::create();
 		simon->_game = detector._gameId - GID_SIMON_FIRST;
-		simon->go(system);
+		simon->go(system, midi);
 
 	} else {
 		Scumm *scumm = Scumm::createFromDetector(&detector, system);
 		g_scumm = scumm;
 
-		sound.initialize(scumm, &snd_driv);
-		
 		/* bind to Gui */
 		scumm->_gui = &gui;
 		gui.init(scumm);							/* Reinit GUI after loading a game */

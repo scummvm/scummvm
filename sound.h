@@ -91,12 +91,6 @@ struct Instrument;
 struct AdlibSoundDriver;
 struct MidiSoundDriver;
 
-#if defined(USE_ADLIB)
-#define SOUND_DRIVER_TYPE AdlibSoundDriver 
-#else
-#define SOUND_DRIVER_TYPE MidiSoundDriver
-#endif
-
 struct Struct10 {
 	byte active;
 	int16 cur_val;
@@ -148,7 +142,7 @@ struct Instrument {
 
 struct Part {
 	int _slot;
-	SOUND_DRIVER_TYPE *_drv;
+	SoundDriver *_drv;
 	Part *_next, *_prev;
 	MidiChannel *_mc;
 	Player *_player;
@@ -378,6 +372,21 @@ struct SoundDriver {
 		pcChorus = 128,
 		pcAll = 255,
 	};
+
+	virtual void on_timer() = 0;
+	virtual uint32 get_base_tempo() = 0;
+	virtual byte get_hardware_type() = 0;
+	virtual void init(SoundEngine *eng, OSystem *syst) = 0;
+	virtual void update_pris() = 0;
+	virtual void set_instrument(uint slot, byte *instr) = 0;
+	virtual void part_set_instrument(Part *part, Instrument *instr) = 0;
+	virtual void part_key_on(Part *part, byte note, byte velocity) = 0;
+	virtual void part_key_off(Part *part, byte note) = 0;
+	virtual void part_off(Part *part) = 0;
+	virtual void part_changed(Part *part,byte what) = 0;
+	virtual void part_set_param(Part *part, byte param, int value) = 0;
+	virtual int part_update_active(Part *part,uint16 *active) = 0;
+	virtual void generate_samples(int16 *buf, int len) = 0;
 };
 
 struct AdlibSoundDriver : SoundDriver {
@@ -426,8 +435,8 @@ public:
 	void uninit();
 	void init(SoundEngine *eng, OSystem *syst);
 	void update_pris() { }
-	void generate_samples(int16 *buf, int len);
-	void on_timer();
+	void generate_samples(int16 *buf, int len);	
+	void on_timer();	
 	void set_instrument(uint slot, byte *instr);
 	void part_set_instrument(Part *part, Instrument *instr);
 	void part_key_on(Part *part, byte note, byte velocity);
@@ -437,9 +446,19 @@ public:
 	void part_off(Part *part);
 	int part_update_active(Part *part,uint16 *active);
 	void adjust_priorities() {}
-	void midiSetDriver(int devicetype) {;}
+
+	uint32 get_base_tempo() { 
+#ifdef _WIN32_WCE
+		return 0x1F0000 * 2;	// Sampled down to 11 kHz
+#else //_WIN32_WCE
+		return 0x1924E0;
+#endif //_WIN32_WCE
+	}
+
+	byte get_hardware_type() { return 1; }
 };
 
+#if 0
 struct MidiDriver {
 	bool MidiInitialized;
 	int DeviceType;
@@ -462,6 +481,7 @@ struct MidiDriver {
 	int connect_to_timidity(int port);
 	int open_sequencer_device();
 };
+#endif
 
 struct MidiSoundDriver : SoundDriver {	
 	SoundEngine *_se;
@@ -477,7 +497,7 @@ struct MidiSoundDriver : SoundDriver {
 	byte _midi_chorus_last[16];
 	int8 _midi_pan_last[16];
 
-	MidiDriver _midi_driver;
+	MidiDriver *_md;
 	void midiPitchBend(byte chan, int16 pitchbend);
 	void midiVolume(byte chan, byte volume);
 	void midiPedal(byte chan, bool pedal);
@@ -507,21 +527,25 @@ public:
 	void part_key_on(Part *part, byte note, byte velocity);
 	void part_key_off(Part *part, byte note);
 	void part_changed(Part *part,byte what);
-	void midiSetDriver(int devicetype);
+	void midiSetDriver(MidiDriver *driver);
 
 	static int midi_driver_thread(void *param);
+
+	uint32 get_base_tempo() { return 0x400000; }
+	byte get_hardware_type() { return 5; }
 };
 
 struct SoundEngine {
 friend struct Player;
 private:
-	SOUND_DRIVER_TYPE *_driver;
+	SoundDriver *_driver;
 
 	byte **_base_sounds;
 
 	Scumm *_s;
 	
 	byte _locked;
+	byte _hardware_type;
 
 	bool _paused;
 	bool _active_volume_faders;
@@ -613,7 +637,7 @@ public:
 	int clear_queue();
 	void setBase(byte **base) { _base_sounds = base; }	
 
-	SOUND_DRIVER_TYPE *driver() { return _driver; }
+	SoundDriver *driver() { return _driver; }
 	bool _mt32emulate;	
 };
 

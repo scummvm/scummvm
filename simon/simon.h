@@ -230,6 +230,8 @@ int GetAsyncKeyState(int key);
 
 #endif
 
+class MidiDriver;
+struct MidiEvent;
 
 class MidiPlayer {
 public:
@@ -238,7 +240,8 @@ public:
 	void initialize();
 	void shutdown();
 	void play();
-	
+	void set_driver(MidiDriver *md);
+		
 private:
 	struct Track {
 		uint32 a;
@@ -257,17 +260,7 @@ private:
 		Track *tracks;
 	};
 
-	struct MyMidiHdr {
-		MIDIHDR hdr;
-		uint32 a;
-		uint32 size;
-		uint32 b;
-		uint32 c;
-		uint32 d;
-	};
-
 	struct NoteRec {
-#ifdef WIN32
 		uint32 delay;
 		union {
 			struct {
@@ -279,17 +272,11 @@ private:
 		};
 		uint cmd_length;
 		byte *sysex_data;
-#endif
 	};
 
-	enum {
-		NumPreparedHeaders = 2,
-	};
+	MidiDriver *_md;
 
 	FILE *_input;
-
-	HMIDISTRM _midi_stream_handle;
-	UINT _midi_device_id;
 
 	uint _midi_var10, _midi_5;
 	bool _midi_var9;
@@ -298,8 +285,6 @@ private:
 	uint _midi_var8;
 
 	uint _midi_var11;
-
-	uint _midi_num_sysex;
 
 	uint32 _midi_tempo;
 	
@@ -311,12 +296,9 @@ private:
 
 	Song *_midi_cur_song_ptr;
 
-	NoteRec _midi_tmp_note_rec;
-	
 	uint32 _midi_volume_table[16];
 
 	Song _midi_songs[8];
-	MyMidiHdr _prepared_headers[NumPreparedHeaders];
 
 	void read_mthd(Song *s, bool old);
 
@@ -329,22 +311,15 @@ private:
 	static uint32 track_read_gamma(Track *t);
 	static byte track_read_byte(Track *t);
 
-	static void check_error(MMRESULT result);
-
-	int fill(uint x, MyMidiHdr *mmh);
-	int fill_helper(NoteRec *nr, MyMidiHdr *mmh);
+	int fill(MidiEvent *me, int num_event);
+	bool fill_helper(NoteRec *nr, MidiEvent *me);
 
 	void reset_tracks();
 	void read_next_note(Track *t, NoteRec *nr);
 
-	static void CALLBACK midi_callback(HMIDIOUT hmo, UINT wMsg,
-		DWORD dwInstance, DWORD dwParam1, DWORD dwParam2);
-
-
 	void unload();
-	void unprepare();
 
-	void add_finished_hdrs();
+	static int on_fill(void *param, MidiEvent *ev, int num);
 
 };
 
@@ -975,7 +950,7 @@ public:
 
 	void resfile_read(void *dst, uint32 offs, uint32 size);
 
-	void go(OSystem *syst);
+	void go(OSystem *syst, MidiDriver *driver);
 	void openGameFile();
 
 	static int CDECL game_thread_proc(void *param);

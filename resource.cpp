@@ -566,21 +566,21 @@ int Scumm::readSoundResource(int type, int idx)
 			size = fileReadDwordBE() + 8;
 			pos += size;
 
+			pri = -1;
+
 			switch (tag) {
-#ifdef USE_ADLIB
 			case MKID('ADL '):
-				pri = 10;
+				if (_use_adlib)
+					pri = 10;
 				break;
-#else
 			case MKID('ROL '):
-				pri = 1;
+				if (!_use_adlib)
+					pri = 1;
 				break;
 			case MKID('GMD '):
-				pri = 2;
+				if (!_use_adlib)
+					pri = 2;
 				break;
-#endif
-			default:
-				pri = -1;
 			}
 
 			if (pri > best_pri) {

@@ -23,10 +23,8 @@
 #include "stdafx.h"
 #include "scummsys.h"
 #include "system.h"
+#include "gmidi.h"
 #include "simon.h"
-
-/* This is win32 only code at the moment */
-#ifdef WIN32
 
 void MidiPlayer::read_from_file(void *dst, uint size) {
 	if (fread(dst, size, 1, _input) != 1)
@@ -135,9 +133,7 @@ void MidiPlayer::read_mthd(Song *s, bool old) {
 		
 		t->delay = track_read_gamma(t);
 	}
-
 }
-
 
 void MidiPlayer::read_one_song(Song *s) {
 	_midi_var10 = 0;
@@ -190,81 +186,38 @@ byte MidiPlayer::track_read_byte(Track *t) {
 }
 
 void MidiPlayer::initialize() {
-#ifdef WIN32
-	uint i;
-	MyMidiHdr *mmh;
-	MIDIPROPTIMEDIV mptd;
-	uint x;
-
-	if (_midi_stream_handle == NULL) {
-		_midi_device_id = 0;
-		check_error(midiStreamOpen(&_midi_stream_handle, &_midi_device_id, 1, 
-			(uint32)midi_callback, (uint32)this, CALLBACK_FUNCTION));
-	}
-
-	for(i=0,mmh=_prepared_headers; i!=NumPreparedHeaders; i++,mmh++) {
-		mmh->hdr.dwBufferLength = 0x400;
-		mmh->hdr.lpData = (LPSTR)calloc(0x400,1);
-		if (mmh->hdr.lpData == NULL)
-			error("Out of memory for prepared header");
-	}
+	int res;
+	int i;
 
 	for(i=0; i!=16; i++)
 		_midi_volume_table[i] = 100;
-	
-	mptd.cbStruct = sizeof(mptd);
-	mptd.dwTimeDiv = _midi_songs[0].ppqn;
-
-	check_error(midiStreamProperty(_midi_stream_handle, (byte*)&mptd, 
-		MIDIPROP_SET | MIDIPROP_TIMEDIV));
-
 	_midi_5 = 0;
-	x = 1;
+
+	_md->property(MidiDriver::PROP_TIMEDIV, _midi_songs[0].ppqn);
+
+	res = _md->open(MidiDriver::MO_STREAMING);
+	if (res != 0)
+		error("MidiPlayer::initializer, got %s", MidiDriver::get_error_name(res));
 	
-	for(i=0,mmh=_prepared_headers; i!=NumPreparedHeaders; i++,mmh++) {
-		
-		fill(x, mmh);
-
-		mmh->hdr.dwBytesRecorded = mmh->b;
-		
-		if (!_midi_var9) {
-			check_error(midiOutPrepareHeader((HMIDIOUT)_midi_stream_handle, 
-				&mmh->hdr, sizeof(mmh->hdr)));
-		}
-		
-		check_error(midiStreamOut(_midi_stream_handle, 
-			&mmh->hdr, sizeof(mmh->hdr)));
-
-		x = 0;
-	}
-
 	_midi_var9 = true;
-#endif
 }
 
-int MidiPlayer::fill(uint x, MyMidiHdr *mmh) {
-	uint32 best,i;
+int MidiPlayer::fill(MidiEvent *me, int num_event) {
+	uint32 best,j;
 	Track *best_track,*t;
 	bool did_reset;
-
-	mmh->a = 0;
-	mmh->size = 0x200;
-	mmh->c = 0;
-	mmh->d = 0;
-	mmh->b = 0;
+	NoteRec midi_tmp_note_rec;
+	int i = 0;
 
 	did_reset = false;
 	
-	for(;;) {
-		if (mmh->size - mmh->b < 12)
-			return 1;
-		
+	for(i=0; i!=num_event;) {
 		best_track = NULL;
 		best = 0xFFFFFFFF;
 
 		/* Locate which track that's next */
 		t = _midi_cur_song_ptr->tracks;
-		for(i=0; i!=_midi_cur_song_ptr->num_tracks; i++,t++) {
+		for(j=_midi_cur_song_ptr->num_tracks; j; j--,t++) {
 			if (!(t->a&1)) {
 				if (t->delay < best) {
 					best = t->delay;
@@ -276,278 +229,59 @@ int MidiPlayer::fill(uint x, MyMidiHdr *mmh) {
 		if (best_track == NULL) {
 			/* reset tracks if song ended? */
 			if (did_reset) {
-				return 0;
+				/* exit if song ended completely */
+				return i;
 			}
 			did_reset = true;
 			reset_tracks();
 			continue;
 		}
 
-		read_next_note(best_track, &_midi_tmp_note_rec);
-//		if ((_midi_tmp_note_rec.cmd&0xF)==3) {
-//			printf("%4d: %2X %d\n", _midi_tmp_note_rec.delay,
-//				_midi_tmp_note_rec.cmd, _midi_tmp_note_rec.param_1);
-			fill_helper(&_midi_tmp_note_rec, mmh);
-//		}
+		read_next_note(best_track, &midi_tmp_note_rec);
+		if (fill_helper(&midi_tmp_note_rec, me + i))
+			i++;
 
-		if (_midi_num_sysex) {
-			free(_midi_tmp_note_rec.sysex_data);
-			_midi_num_sysex--;
-		}
+		if (midi_tmp_note_rec.sysex_data)	free(midi_tmp_note_rec.sysex_data);
 	}
+
+	return i;
 }
 
-int MidiPlayer::fill_helper(NoteRec *nr, MyMidiHdr *mmh) {
-#ifdef WIN32
-	byte *lpdata;
+int MidiPlayer::on_fill(void *param, MidiEvent *ev, int num) {
+	MidiPlayer *mp = (MidiPlayer*)param;
+	return mp->fill(ev, num);
+}
+
+bool MidiPlayer::fill_helper(NoteRec *nr, MidiEvent *me) {
 	uint b;
 
-	lpdata = (byte*)mmh->hdr.lpData + mmh->a + mmh->b;
-
 	b = nr->delay - _midi_var10;
 	_midi_var10 = nr->delay;
 	
 	if (nr->cmd<0xF0) {
-		((MIDIEVENT*)lpdata)->dwDeltaTime = b;
-		((MIDIEVENT*)lpdata)->dwStreamID = 0;
-		((MIDIEVENT*)lpdata)->dwEvent = nr->cmd | (nr->param_1<<8) | (nr->param_2<<16);
+		me->delta = b;
+		me->event = nr->cmd | (nr->param_1<<8) | (nr->param_2<<16);
 		
 		if ((nr->cmd&0xF0) == 0xB0 && nr->param_1 == 7) {
 			_midi_volume_table[nr->cmd&0xF] = nr->param_2;
-
 			nr->param_1 = 0x76;
-
-			((MIDIEVENT*)lpdata)->dwEvent = nr->cmd | 
-				(nr->param_1<<8) | (nr->param_2<<16) | MEVT_F_CALLBACK;
+			me->event = nr->cmd | (nr->param_1<<8) | (nr->param_2<<16)/* | MEVT_F_CALLBACK*/;
 		}
+		return true;
 
-		mmh->b += 12;
-	} else if (nr->cmd==0xF0 || nr->cmd==0xF7) {
-	} else if (nr->param_1 != 0x51) {
-		return -105;
-	} else {
-		((MIDIEVENT*)lpdata)->dwDeltaTime = b;
-		((MIDIEVENT*)lpdata)->dwStreamID = 0;
-
-		_midi_tempo = nr->sysex_data[2] | 
-			(nr->sysex_data[1]<<8) | (nr->sysex_data[0]<<16);
-		
-		((MIDIEVENT*)lpdata)->dwEvent = _midi_tempo | (MEVT_TEMPO<<24);
-
-		_midi_var8 = (_midi_cur_song_ptr->ppqn*60000) / _midi_tempo;
-		
-		if(_midi_num_sysex) {
-			free(nr->sysex_data);
-			_midi_num_sysex--;
-		}
+	}
 	
-		mmh->b += 12;
+	if (nr->cmd==0xF0 || nr->cmd==0xF7 || nr->param_1 != 0x51) {
+		return false;
 	}
-#endif
-	return 0;
-}
-
-#if 0
-int MidiPlayer::fill(uint x, MyMidiHdr *mmh) {
-	Track *t;
-	uint i;
-	uint32 best;
-	Track *best_track;
-	int result;
-
-	mmh->b = 0;
-
-	if (x&1) {
-		NoteRec *nr = &_midi_tmp_note_rec;
-		
-		_midi_var1 = 0;
-		nr->delay = 0;
-		nr->big_cmd = 0;
-		nr->cmd_length = 0;
-		nr->sysex_data = NULL;
-
-		_midi_track_ptr = NULL;
-		_midi_tick_track_ptr = NULL;
-	}
-
-	if (_midi_var1 & 1) {
-		if (_midi_var2 == 0)
-			error("MidiPlayer::fill: Return -103");
-		reset_tracks();
-		_midi_var1 = 0;
-	} else if (_midi_var1 & 2) {
-		error("MidiPlayer::fill: Return -102");
-	} else if (_midi_var1 & 4) {
-		_midi_var1 ^= 4;
-		
-		if (_midi_tmp_note_rec.cmd==0xFF && _midi_tmp_note_rec.param_1==0x2F) {
-			if (_midi_num_sysex) {
-				free(_midi_tmp_note_rec.sysex_data);
-				_midi_num_sysex--;
-			}
-		} else {
-			result = fill_helper(&_midi_tmp_note_rec, mmh);
-			if (result==-104) {
-				_midi_var1 |= 4;
-				return 0;
-			}
-		}
-	}
-
-	/* find_next_track_to_run */
-	for(;;) {
-		best_track = NULL;
-		best = 0xFFFFFFFF;
-
-		/* Locate which track that's next */
-		t = _midi_cur_song_ptr->tracks;
-		for(i=0; i!=_midi_cur_song_ptr->num_tracks; i++,t++) {
-			if (!(t->a&1)) {
-				if (t->delay < best) {
-					best = t->delay;
-					best_track = t;
-				}
-			}
-		}
-
-		if (best_track == NULL) {
-			_midi_var1 |= 1;
-			return 0;
-		}
-
-		read_next_note(best_track, &_midi_tmp_note_rec);
-
-		if (_midi_tmp_note_rec.cmd==0xFF && _midi_tmp_note_rec.param_1==0x2F) {
-			if (_midi_num_sysex) {
-				free(_midi_tmp_note_rec.sysex_data);
-				_midi_num_sysex--;
-			}
-			continue;
-		}
-
-		result = fill_helper(&_midi_tmp_note_rec, mmh);
-		if (result==-104) {
-			_midi_var1 |= 4;
-			return 0;
-		}
-	}
-}
-
-int MidiPlayer::fill_helper(NoteRec *nr, MyMidiHdr *mmh) {
-	byte *lpdata;
-	uint a,b;
-
-	lpdata = (byte*)mmh->hdr.lpData + mmh->a + mmh->b;
-
-	if (mmh->b == 0) {
-		mmh->c = _midi_var10;
-	}
-
-	if (_midi_var10 - mmh->c > _midi_var8) {
-		if (mmh->d!=0) {
-			mmh->d = 0;
-			return -104;
-		}
-		mmh->d = 1;
-	}
-
-	a = _midi_var10;
-	b = nr->delay - _midi_var10;
-	_midi_var10 = nr->delay;
 	
-	if (nr->cmd<0xF0) {
-		if (mmh->size - mmh->b < 12)
-			return -104;
+	_midi_tempo = nr->sysex_data[2] | (nr->sysex_data[1]<<8) | (nr->sysex_data[0]<<16);
+	_midi_var8 = (_midi_cur_song_ptr->ppqn*60000) / _midi_tempo;
 
-		((MIDIEVENT*)lpdata)->dwDeltaTime = b;
-		((MIDIEVENT*)lpdata)->dwStreamID = 0;
-		((MIDIEVENT*)lpdata)->dwEvent = nr->cmd | (nr->param_1<<8) | (nr->param_2<<16);
-		
-		if ((nr->cmd&0xF0) == 0xB0 && nr->param_1 == 7) {
-			_midi_volume_table[nr->cmd&0xF] = nr->param_2;
+	me->delta = b;
+	me->event = (MidiDriver::ME_TEMPO << 24) | _midi_tempo;
 
-			nr->param_1 = 0x76;
-
-			((MIDIEVENT*)lpdata)->dwEvent = nr->cmd | 
-				(nr->param_1<<8) | (nr->param_2<<16) | MEVT_F_CALLBACK;
-		}
-
-		mmh->b += 12;
-	} else if (nr->cmd==0xF0 || nr->cmd==0xF7) {
-		if(_midi_num_sysex) {
-			free(nr->sysex_data);
-			_midi_num_sysex--;
-		}
-	} else if (nr->param_1 != 0x51) {
-		if(_midi_num_sysex) {
-			free(nr->sysex_data);
-			_midi_num_sysex--;
-		}
-
-		return -105;
-	} else if (mmh->size - mmh->b < 12) {
-		if(_midi_num_sysex) {
-			free(nr->sysex_data);
-			_midi_num_sysex--;
-		}
-		return -104;
-	} else {
-		((MIDIEVENT*)lpdata)->dwDeltaTime = b;
-		((MIDIEVENT*)lpdata)->dwStreamID = 0;
-
-		_midi_tempo = nr->sysex_data[2] | 
-			(nr->sysex_data[1]<<8) | (nr->sysex_data[0]<<16);
-		
-		((MIDIEVENT*)lpdata)->dwEvent = _midi_tempo | (MEVT_TEMPO<<24);
-
-		_midi_var8 = (_midi_cur_song_ptr->ppqn*60000) / _midi_tempo;
-		
-		if(_midi_num_sysex) {
-			free(nr->sysex_data);
-			_midi_num_sysex--;
-		}
-	
-		mmh->b += 12;
-	}
-
-	return 0;
-}
-#endif
-
-void MidiPlayer::add_finished_hdrs() {
-	uint i;
-	MyMidiHdr *mmh = _prepared_headers;
-
-	for(i=0; i!=NumPreparedHeaders; i++,mmh++) {
-		if (!(mmh->hdr.dwFlags & MHDR_INQUEUE)) {
-			fill(0, mmh);
-			if (mmh->b == 0)
-				break;
-			mmh->hdr.dwBytesRecorded = mmh->b;
-			check_error(midiStreamOut(_midi_stream_handle, &mmh->hdr, sizeof(mmh->hdr)));
-		}
-	}
-}
-
-void CALLBACK MidiPlayer::midi_callback(HMIDIOUT hmo, UINT wMsg,
-	DWORD dwInstance, DWORD dwParam1, DWORD dwParam2) {
-
-	switch(wMsg) {
-	case MM_MOM_DONE:{
-		MidiPlayer *mp = ((MidiPlayer*)dwInstance);
-		if (!mp->_shutting_down)
-			mp->add_finished_hdrs();
-		break;
-		}
-	}
-}
-
-void MidiPlayer::check_error(MMRESULT result) {
-	char buf[200];
-	if (result != MMSYSERR_NOERROR) {
-		midiOutGetErrorText(result, buf, 200);
-		error("MM System Error '%s'", buf);
-	}
+	return true;
 }
 
 void MidiPlayer::reset_tracks() {
@@ -628,7 +362,6 @@ void MidiPlayer::read_next_note(Track *t, NoteRec *nr) {
 			error("read_next_note: out of memory");
 		for(i=0; i!=nr->cmd_length; i++)
 			nr->sysex_data[i] = track_read_byte(t);
-		_midi_num_sysex++;
 	} else if (cmd_byte==0xFF) {
 		
 		nr->cmd = cmd_byte;
@@ -642,7 +375,6 @@ void MidiPlayer::read_next_note(Track *t, NoteRec *nr) {
 				error("read_next_note: out of memory");
 			for(i=0; i!=nr->cmd_length; i++)
 				nr->sysex_data[i] = track_read_byte(t);
-			_midi_num_sysex++;
 		}
 		if (nr->param_1==0x2F)
 			t->a|=1;
@@ -657,21 +389,8 @@ void MidiPlayer::read_next_note(Track *t, NoteRec *nr) {
 }
 
 void MidiPlayer::shutdown() {
-	
-	if (_midi_stream_handle != NULL) {
-		_shutting_down = true;
-		
-		check_error(midiStreamStop(_midi_stream_handle));
-		check_error(midiOutReset((HMIDIOUT)_midi_stream_handle));
-
-		unload();
-		unprepare();
-
-		check_error(midiStreamClose(_midi_stream_handle));
-		_midi_stream_handle = NULL;
-
-		_shutting_down = false;
-	}
+	_md->close();
+	unload();
 }
 
 void MidiPlayer::unload() {
@@ -690,31 +409,14 @@ void MidiPlayer::unload() {
 	}
 }
 
-void MidiPlayer::unprepare() {
-	uint i;
-	MyMidiHdr *mmh = _prepared_headers;
-
-	for(i=0; i!=NumPreparedHeaders; i++,mmh++) {
-		check_error(midiOutUnprepareHeader(
-			(HMIDIOUT)_midi_stream_handle, &mmh->hdr, sizeof(mmh->hdr)));
-		free(mmh->hdr.lpData);
-		mmh->hdr.lpData = NULL;
-	}
-
-	_midi_var9 = false;
-}
-
 void MidiPlayer::play() {
-	check_error(midiStreamRestart(_midi_stream_handle));
+	_md->pause(false);
 }
 
-#else
 
-/* Dummy midiplayer for unix */
-void MidiPlayer::shutdown() {}
-void MidiPlayer::read_all_songs(FILE *in) {}
-void MidiPlayer::read_all_songs_old(FILE *in) {}
-void MidiPlayer::initialize() {}
-void MidiPlayer::play() {}
+void MidiPlayer::set_driver(MidiDriver *md) {
+	_md = md;
+	md->set_stream_callback(this, on_fill);
+}
 
-#endif
+

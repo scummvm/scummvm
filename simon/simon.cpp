@@ -7515,11 +7515,14 @@ void SimonState::realizePalette() {
 }
 
 
-void SimonState::go(OSystem *syst) {
+void SimonState::go(OSystem *syst, MidiDriver *driver) {
 	_system = syst;
 
 	if (!_dump_file)
 		_dump_file = stdout;
+
+	/* Setup midi driver */
+	midi.set_driver(driver);
 
 	/* allocate buffers */
 	sdl_buf_3 = (byte*)calloc(320*200,1);

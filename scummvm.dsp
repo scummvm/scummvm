@@ -68,7 +68,7 @@ LINK32=link.exe
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /Gm /GX /ZI /Od /D "WIN32" /D "_DEBUG" /D "_CONSOLE" /D "_MBCS" /Yu"stdafx.h" /FD /GZ /c
-# ADD CPP /nologo /W3 /Gm /GX /Zi /Od /I "./sound" /I "./" /D "WIN32" /D "_DEBUG" /D "_CONSOLE" /D "_MBCS" /D "ALLOW_GDI" /D "BYPASS_COPY_PROT" /D "DUMP_SCRIPTS" /D "USE_ADLIB" /Yu"stdafx.h" /FD /GZ /c
+# ADD CPP /nologo /W3 /Gm /GX /Zi /Od /I "./sound" /I "./" /D "WIN32" /D "_DEBUG" /D "_CONSOLE" /D "_MBCS" /D "ALLOW_GDI" /D "BYPASS_COPY_PROT" /D "DUMP_SCRIPTS" /Yu"stdafx.h" /FD /GZ /c
 # SUBTRACT CPP /Fr
 # ADD BASE RSC /l 0x41d /d "_DEBUG"
 # ADD RSC /l 0x41d /d "_DEBUG"
@@ -133,7 +133,15 @@ SOURCE=.\sound\gmidi.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\sound\gmidi.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\sound\imuse.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\sound\mididrv.cpp
 # End Source File
 # End Group
 # Begin Group "v3"
@@ -477,10 +485,6 @@ SOURCE=.\gameDetector.h
 # Begin Source File
 
 SOURCE=.\gfx.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\sound\gmidi.h
 # End Source File
 # Begin Source File
 

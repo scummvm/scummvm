@@ -529,7 +529,8 @@ enum GameFeatures {
 	GF_16COLOR = 256,
 	GF_OLD256 = 512,
 	GF_AUDIOTRACKS = 1024,
-	GF_NO_SCALLING = 2048
+	GF_NO_SCALLING = 2048,
+	GF_ADLIB_DEFAULT = 4096,
 };
 
 enum WhereIsObject {
@@ -941,8 +942,9 @@ public:
 
 	/* Should be in Sound class */
 	MixerChannel _mixer_channel[NUM_MIXER];
-	int _gameTempo, _midi_driver;	
+	int _gameTempo;	
 	byte _sfxMode;
+	bool _use_adlib;
 	int16 _sound_volume_master, _sound_volume_music, _sound_volume_sfx;
 	int _saveSound;
 	void *_sfxFile;

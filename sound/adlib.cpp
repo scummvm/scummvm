@@ -23,7 +23,6 @@
 #include "scumm.h"
 #include "fmopl.h"
 
-#if defined USE_ADLIB
 
 static byte lookup_table[64][32];
 const byte volume_table[] = {
@@ -643,7 +642,7 @@ void AdlibSoundDriver::mc_init_stuff(MidiChannelAdl *mc, Struct10 * s10,
 		s11->s10->unk3 = 0;
 		break;
 	default:
-		s10->start_value = part->_drv->adlib_read_param(mc->_channel, s11->param);
+		s10->start_value = ((AdlibSoundDriver*)part->_drv)->adlib_read_param(mc->_channel, s11->param);
 	}
 
 	struct10_init(s10, ie);
@@ -661,18 +660,18 @@ void AdlibSoundDriver::mc_inc_stuff(MidiChannelAdl *mc, Struct10 * s10,
 		switch (s11->param) {
 		case 0:
 			mc->_vol_2 = s10->start_value + s11->modify_val;
-			part->_drv->adlib_set_param(mc->_channel, 0,
+			((AdlibSoundDriver*)part->_drv)->adlib_set_param(mc->_channel, 0,
 																	volume_table[lookup_table[mc->_vol_2]
 																							 [part->_vol_eff >> 2]]);
 			break;
 		case 13:
 			mc->_vol_1 = s10->start_value + s11->modify_val;
 			if (mc->_twochan) {
-				part->_drv->adlib_set_param(mc->_channel, 13,
+				((AdlibSoundDriver*)part->_drv)->adlib_set_param(mc->_channel, 13,
 																		volume_table[lookup_table[mc->_vol_1]
 																								 [part->_vol_eff >> 2]]);
 			} else {
-				part->_drv->adlib_set_param(mc->_channel, 13, mc->_vol_1);
+				((AdlibSoundDriver*)part->_drv)->adlib_set_param(mc->_channel, 13, mc->_vol_1);
 			}
 			break;
 		case 30:
@@ -682,14 +681,14 @@ void AdlibSoundDriver::mc_inc_stuff(MidiChannelAdl *mc, Struct10 * s10,
 			s11->s10->unk3 = (char)s11->modify_val;
 			break;
 		default:
-			part->_drv->adlib_set_param(mc->_channel, s11->param,
+			((AdlibSoundDriver*)part->_drv)->adlib_set_param(mc->_channel, s11->param,
 																	s10->start_value + s11->modify_val);
 			break;
 		}
 	}
 
 	if (code & 2 && s11->flag0x10)
-		part->_drv->adlib_key_onoff(mc->_channel);
+		((AdlibSoundDriver*)part->_drv)->adlib_key_onoff(mc->_channel);
 }
 
 void AdlibSoundDriver::part_changed(Part *part, byte what)
@@ -988,4 +987,3 @@ int AdlibSoundDriver::part_update_active(Part *part, uint16 *active)
 	return count;
 }
 
-#endif
