@@ -46,6 +46,7 @@ void Actor::initActorClass(ScummEngine *scumm) {
 
 Actor::Actor() {
 	assert(_vm != 0);
+	offs_x = offs_y = 0;
 	top = bottom = 0;
 	number = 0;
 	needRedraw = needBgReset = costumeNeedsInit = visible = false;
@@ -88,7 +89,7 @@ void Actor::initActor(int mode) {
 	talkColor = 15;
 	talkPosX = 0;
 	talkPosY = -80;
-	scaley = scalex = 0xFF;
+	boxscale = scaley = scalex = 0xFF;
 	charset = 0;
 	memset(sound, 0, sizeof(sound));
 	targetFacing = facing;
@@ -421,6 +422,8 @@ void Actor::setupActorScale() {
 	// Older games used the flag 0x20 differently, though.
 	if (_vm->_version >= 6 && (_vm->getBoxFlags(walkbox) & kBoxIgnoreScale))
 		return;
+
+	boxscale = _vm->getBoxScale(walkbox);
 
 	uint16 scale = _vm->getScale(walkbox, _pos.x, _pos.y);
 	assert(scale <= 0xFF);
@@ -813,6 +816,17 @@ void ScummEngine::putActors() {
 	}
 }
 
+static const int v1MMActorTalkColor[25] = {
+	1, 7, 2, 14, 8, 1, 3, 7, 7, 12, 1, 13, 1, 4, 5, 5, 4, 3, 1, 5, 1, 1, 1, 7, 7
+};
+
+void ScummEngine::setupV1ActorTalkColor() {
+	int i;
+
+	for (i = 1; i < _numActors; i++)
+		_actors[i].talkColor = v1MMActorTalkColor[i];
+}
+
 void ScummEngine::showActors() {
 	int i;
 
@@ -969,8 +983,8 @@ void Actor::drawActorCostume() {
 
 	bcr->_actorID = number;
 
-	bcr->_actorX = _pos.x - _vm->virtscr[0].xstart;
-	bcr->_actorY = _pos.y - elevation;
+	bcr->_actorX = _pos.x + offs_x - _vm->virtscr[0].xstart;
+	bcr->_actorY = _pos.y + offs_y - elevation;
 
 	if (_vm->_version <= 2) {
 		// HACK: We have to adjust the x position by one strip (8 pixels) in
@@ -985,8 +999,12 @@ void Actor::drawActorCostume() {
 			bcr->_actorX += 8;
 	}
 
-	bcr->_scaleX = scalex;
-	bcr->_scaleY = scaley;
+	if (_vm->_version == 4 && boxscale & 0x8000) {
+		bcr->_scaleX = bcr->_scaleY = _vm->getScale(walkbox, _pos.x, _pos.y);
+	} else {
+		bcr->_scaleX = scalex;
+		bcr->_scaleY = scaley;
+	}
 
 	bcr->_shadow_mode = shadow_mode;
 	if (_vm->_features & GF_SMALL_HEADER)
@@ -1200,7 +1218,7 @@ void ScummEngine::actorTalk(const byte *msg) {
 			return;
 	}
 
-	if (((_gameId == GID_MANIAC) && (_version == 1)) || getTalkingActor() > 0x7F) {
+	if (getTalkingActor() > 0x7F) {
 		_charsetColor = (byte)_string[0].color;
 	} else {
 		a = derefActor(getTalkingActor(), "actorTalk(2)");
@@ -1763,6 +1781,8 @@ const SaveLoadEntry *Actor::getSaveLoadEntries() {
 	static const SaveLoadEntry actorEntries[] = {
 		MKLINE(Actor, _pos.x, sleInt16, VER(8)),
 		MKLINE(Actor, _pos.y, sleInt16, VER(8)),
+		MKLINE(Actor, offs_x, sleInt16, VER(32)),
+		MKLINE(Actor, offs_y, sleInt16, VER(32)),
 		MKLINE(Actor, top, sleInt16, VER(8)),
 		MKLINE(Actor, bottom, sleInt16, VER(8)),
 		MKLINE(Actor, elevation, sleInt16, VER(8)),
@@ -1774,6 +1794,7 @@ const SaveLoadEntry *Actor::getSaveLoadEntries() {
 		MKLINE(Actor, talkFrequency, sleInt16, VER(16)),
 		MKLINE(Actor, talkPan, sleInt16, VER(24)),
 		MKLINE(Actor, talkVolume, sleInt16, VER(29)),
+		MKLINE(Actor, boxscale, sleUint16, VER(34)),
 		MKLINE(Actor, scalex, sleByte, VER(8)),
 		MKLINE(Actor, scaley, sleByte, VER(8)),
 		MKLINE(Actor, charset, sleByte, VER(8)),
@@ -1792,7 +1813,10 @@ const SaveLoadEntry *Actor::getSaveLoadEntries() {
 		MKLINE(Actor, speedy, sleUint16, VER(8)),
 		MKLINE(Actor, cost.animCounter, sleUint16, VER(8)),
 		MKLINE(Actor, cost.soundCounter, sleByte, VER(8)),
-	
+ 		MKLINE(Actor, actorDrawVirScr, sleByte, VER(32)),
+ 		MKLINE(Actor, flip, sleByte, VER(32)),
+		MKLINE(Actor, skipLimb, sleByte, VER(32)),
+
 		// Actor palette grew from 64 to 256 bytes
 		MKARRAY_OLD(Actor, palette[0], sleByte, 64, VER(8), VER(9)),
 		MKARRAY(Actor, palette[0], sleByte, 256, VER(10)),

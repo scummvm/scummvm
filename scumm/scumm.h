@@ -753,6 +753,7 @@ protected:
 	void setActorRedrawFlags();
 	void putActors();
 	void showActors();
+	void setupV1ActorTalkColor();
 	void resetActorBgs();
 	void processActors();
 	void processUpperActors();
@@ -832,8 +833,6 @@ protected:
 	void initBGBuffers(int height);
 	void initCycl(const byte *ptr);	// Color cycle
 
-	void createSpecialPalette(int16 a, int16 b, int16 c, int16 d, int16 e, int16 colorMin, int16 colorMax);
-
 	void drawObject(int obj, int arg);	
 	void drawRoomObjects(int arg);
 	void drawRoomObject(int i, int arg);
@@ -874,7 +873,7 @@ public:
 protected:
 	void moveMemInPalRes(int start, int end, byte direction);
 	void setupShadowPalette(int slot, int redScale, int greenScale, int blueScale, int startColor, int endColor);
-	void setupShadowPalette(int redScale, int greenScale, int blueScale, int startColor, int endColor);
+	void setupShadowPalette(int redScale, int greenScale, int blueScale, int startColor, int endColor, int start, int end);
 	void darkenPalette(int redScale, int greenScale, int blueScale, int startColor, int endColor);
 	void desaturatePalette(int hueScale, int satScale, int lightScale, int startColor, int endColor);
 
@@ -1218,6 +1217,7 @@ public:
 
 	byte VAR_BLAST_ABOVE_TEXT;
 	byte VAR_VOICE_MODE;
+	byte VAR_NUM_GLOBAL_OBJS;
 	byte VAR_MUSIC_BUNDLE_LOADED;
 	byte VAR_VOICE_BUNDLE_LOADED;
 };

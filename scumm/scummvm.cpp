@@ -620,6 +620,7 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 
 	VAR_BLAST_ABOVE_TEXT = 0xFF;
 	VAR_VOICE_MODE = 0xFF;
+	VAR_NUM_GLOBAL_OBJS = 0xFF;
 	VAR_MUSIC_BUNDLE_LOADED = 0xFF;
 	VAR_VOICE_BUNDLE_LOADED = 0xFF;
 
@@ -1037,9 +1038,11 @@ void ScummEngine::scummInit() {
 			_actors[i].setActorCostume(i);
 	}
 
-	// HACK Some palette changes needed for demo script
-	// in Maniac Mansion (Enchanced)
-	if (_gameId == GID_MANIAC && _version == 2 && _demoMode) {
+	if (_gameId == GID_MANIAC && _version == 1) {
+		setupV1ActorTalkColor();
+	} else if (_gameId == GID_MANIAC && _version == 2 && _demoMode) {
+		// HACK Some palette changes needed for demo script
+		// in Maniac Mansion (Enchanced)
 		_actors[3].setPalette(3, 1);
 		_actors[9].talkColor = 15;
 		_actors[10].talkColor = 7;
@@ -1165,6 +1168,7 @@ void ScummEngine::initScummVars() {
 		VAR(VAR_LANGUAGE) = _language;
 	} else if (_version >= 7) {
 		VAR(VAR_V6_EMSSPACE) = 10000;
+		VAR(VAR_NUM_GLOBAL_OBJS) = _numGlobalObjects - 1;
 	} else {
 		VAR(VAR_CURRENTDRIVE) = 0;
 		VAR(VAR_FIXEDDISK) = true;

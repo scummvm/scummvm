@@ -185,6 +185,13 @@ bool ScummEngine::loadState(int slot, bool compat, SaveFileManager *mgr) {
 	if (_screenTop < 0)
 		_screenTop = 0;
 	
+	if (hdr.ver < VER(33) && _version >= 7) {
+		// For a long time, we didn't set these vars to default values.
+		VAR(VAR_DEFAULT_TALK_DELAY) = 60;
+		if (_version == 7)
+			VAR(VAR_NUM_GLOBAL_OBJS) = _numGlobalObjects - 1;
+	}
+
 	if (hdr.ver < VER(30)) {
 		// For a long time, we used incorrect location, causing it to default to zero.
 		if (_version == 8)
@@ -210,9 +217,14 @@ bool ScummEngine::loadState(int slot, bool compat, SaveFileManager *mgr) {
 		_scummVars[VAR_CAMERA_ACCEL_Y] = _scummVars[110];
 	}
 
-	// Sync with current config setting
-	if (_version >= 7)
-		VAR(VAR_VOICE_MODE) = ConfMan.getBool("subtitles");
+	// With version 22, we replaced the scale items with scale slots. So when
+	// loading such an old save game, try to upgrade the old to new format.
+	if (hdr.ver < VER(22)) {
+		// Convert all rtScaleTable resources to matching scale items
+		for (i = 1; i < res.num[rtScaleTable]; i++) {
+			convertScaleTableToScaleSlot(i);
+		}
+	}
 
 	// We could simply dirty colours 0-15 for 16-colour games -- nowadays
 	// they handle their palette pretty much like the more recent games
@@ -232,6 +244,9 @@ bool ScummEngine::loadState(int slot, bool compat, SaveFileManager *mgr) {
 	} else
 		setDirtyColors(0, 255);
 
+
+	if (hdr.ver < VER(35) && _gameId == GID_MANIAC && _version == 1)
+		setupV1ActorTalkColor();
 
 	// Regenerate strip table (for V1/V2 games)
 	if (_version == 1) {
@@ -274,15 +289,6 @@ bool ScummEngine::loadState(int slot, bool compat, SaveFileManager *mgr) {
 	_charset->_mask.right = _charset->_mask.bottom = 0;
 	_charset->_hasMask = false;
 
-	// With version 22, we replaced the scale items with scale slots. So when
-	// loading such an old save game, try to upgrade the old to new format.
-	if (hdr.ver < VER(22)) {
-		// Convert all rtScaleTable resources to matching scale items
-		for (i = 1; i < res.num[rtScaleTable]; i++) {
-			convertScaleTableToScaleSlot(i);
-		}
-	}
-
 	_lastCodePtr = NULL;
 	_drawObjectQueNr = 0;
 	_verbMouseOver = 0;
@@ -290,6 +296,13 @@ bool ScummEngine::loadState(int slot, bool compat, SaveFileManager *mgr) {
 	cameraMoved();
 
 	initBGBuffers(_roomHeight);
+
+	if (VAR_ROOM_FLAG != 0xFF)
+		VAR(VAR_ROOM_FLAG) = 1;
+
+	// Sync with current config setting
+	if (_version >= 7)
+		VAR(VAR_VOICE_MODE) = ConfMan.getBool("subtitles");
 
 	CHECK_HEAP
 	debug(1, "State loaded from '%s'", filename);
@@ -361,6 +374,7 @@ void ScummEngine::saveOrLoad(Serializer *s, uint32 savegameVersion) {
 	};
 
 	const SaveLoadEntry *actorEntries = Actor::getSaveLoadEntries();
+	const SaveLoadEntry *soundEntries = _sound->getSaveLoadEntries();
 
 	const SaveLoadEntry verbEntries[] = {
 		MKLINE(VerbSlot, curRect.left, sleInt16, VER(8)),
@@ -508,7 +522,8 @@ void ScummEngine::saveOrLoad(Serializer *s, uint32 savegameVersion) {
 		MKLINE(ScummEngine, gdi._transparentColor, sleByte, VER(8)),
 		MKARRAY(ScummEngine, _currentPalette[0], sleByte, 768, VER(8)),
 
-		MKARRAY(ScummEngine, _proc_special_palette[0], sleByte, 256, VER(8)),
+		// Sam & Max specific palette replaced by _shadowPalette now.
+		MK_OBSOLETE_ARRAY(ScummEngine, _proc_special_palette[0], sleByte, 256, VER(8), VER(33)),
 
 		MKARRAY(ScummEngine, _charsetBuffer[0], sleByte, 256, VER(8)),
 
@@ -653,6 +668,7 @@ void ScummEngine::saveOrLoad(Serializer *s, uint32 savegameVersion) {
 	}
 
 	s->saveLoadArrayOf(_actors, _numActors, sizeof(_actors[0]), actorEntries);
+	s->saveLoadEntries(_sound, soundEntries);
 
 	if (savegameVersion < VER(9))
 		s->saveLoadArrayOf(vm.slot, 25, sizeof(vm.slot[0]), scriptSlotEntries);

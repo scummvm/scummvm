@@ -425,11 +425,10 @@ void CostumeRenderer::proc3() {
 				masked = (y < 0 || y >= _outheight) || (v1.mask_ptr && ((mask[0] | mask[v1.imgbufoffs]) & maskbit));
 				
 				if (color && !masked) {
-					// FIXME: Fully implement _shadow_mode.
-					// For now, it's enough for Sam & Max
-					// transparency.
+					// FIXME: Fully implement _shadow_mode.in Sam & Max
+					// For now, it's enough for transparency.
 					if (_shadow_mode & 0x20) {
-						pcolor = _vm->_proc_special_palette[*dst];
+						pcolor = _shadow_table[*dst];
 					} else {
 						pcolor = _palette[color];
 						if (pcolor == 13 && _shadow_table)

@@ -83,6 +83,7 @@ public:
 
 public:
 	Common::Point _pos;
+	int offs_x, offs_y;
 	int top, bottom;
 	uint width;
 	byte number;
@@ -92,6 +93,7 @@ public:
 	int talkFrequency;
 	byte talkPan;
 	byte talkVolume;
+	uint16 boxscale;
 	byte scalex, scaley;
 	byte charset;
 	byte moving;

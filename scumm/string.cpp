@@ -173,7 +173,10 @@ void ScummEngine::CHARSET_1() {
 	}
 
 	// Always set to 60
-	_talkDelay = 60;
+	if (_version <= 6)
+		_talkDelay = 60;
+	else
+		_talkDelay = VAR(VAR_DEFAULT_TALK_DELAY);
 
 	if (!_keepText) {
 		if (_version <= 3 && _gameId != GID_LOOM) {

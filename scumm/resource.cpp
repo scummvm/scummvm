@@ -580,8 +580,7 @@ void ScummEngine::ensureResourceLoaded(int type, int i) {
 
 	loadResource(type, i);
 
-	if (_version < 7 && !(_features & GF_SMALL_HEADER))
-		if (type == rtRoom && i == _roomResource)
+	if (_version == 5 && type == rtRoom && i == _roomResource)
 			VAR(VAR_ROOM_FLAG) = 1;
 }
 
