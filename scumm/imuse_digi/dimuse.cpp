@@ -202,7 +202,7 @@ void IMuseDigital::callback() {
 				if (track->stream2) {
 					if (!track->started) {
 						track->started = true;
-						_vm->_mixer->playInputStream(&track->handle, track->stream2, false, track->vol / 1000, track->pan, -1, false);
+						_vm->_mixer->playInputStream(&track->handle, track->stream2, false, vol, pan, -1, false);
 					} else {
 						_vm->_mixer->setChannelVolume(track->handle, vol);
 						_vm->_mixer->setChannelBalance(track->handle, pan);
