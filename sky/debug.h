@@ -49,6 +49,7 @@ protected:
 	bool Cmd_LogicCommand(int argc, const char **argv);
 	bool Cmd_Info(int argc, const char **argv);
 	bool Cmd_ScriptVar(int argc, const char **argv);
+	bool Cmd_Section(int argc, const char **argv);
 	
 	Logic *_logic;
 	Mouse *_mouse;

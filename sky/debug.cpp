@@ -1285,6 +1285,7 @@ Debugger::Debugger(Logic *logic, Mouse *mouse, Screen *screen) : _logic(logic), 
 	DCmd_Register("compact", &Debugger::Cmd_ShowCompact);
 	DCmd_Register("logiccmd", &Debugger::Cmd_LogicCommand);
 	DCmd_Register("scriptvar", &Debugger::Cmd_ScriptVar);
+	DCmd_Register("section", &Debugger::Cmd_Section);
 }
 
 void Debugger::preEnter() {
@@ -1455,6 +1456,26 @@ bool Debugger::Cmd_ScriptVar(int argc, const char **argv) {
 
 	DebugPrintf("Unknown ScriptVar: '%s'\n", argv[1]);
 	
+	return true;
+}
+
+bool Debugger::Cmd_Section(int argc, const char **argv) {
+	if (argc < 2) {
+		DebugPrintf("Example: %s 4\n", argv[0]);
+		return true;
+	}
+
+	const int baseId[] = { START_ONE, START_S6, START_29, START_SC31, START_SC66, START_SC90, START_SC81 };
+	int section = atoi(argv[1]);
+	
+	if (section >= 0 && section <= 6) {
+		_logic->fnEnterSection(section % 6, 0, 0);
+		_logic->fnAssignBase(ID_FOSTER, baseId[section], 0);
+		SkyEngine::fetchCompact(ID_FOSTER)->extCompact->megaSet = 0;
+	} else {
+		DebugPrintf("Unknown section '%s'\n", argv[1]);
+	}
+
 	return true;
 }
 
