@@ -266,7 +266,7 @@ static int findGames(Game *games, int max)
   for(int i=0; i<curr_game; i++)
     if(!loadIcon(games[i], dirs, num_dirs))
       makeDefIcon(games[i].icon);
-  delete dirs;
+  delete[] dirs;
   return curr_game;
 }
 
