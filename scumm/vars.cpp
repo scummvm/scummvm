@@ -325,7 +325,8 @@ void ScummEngine_v8::setupScummVars() {
 
 	VAR_DEBUGMODE = 130;
 	VAR_KEYPRESS = 132;
-	
+	VAR_SYNC = 134;
+
 	VAR_CHARINC = 221;
 }
 
