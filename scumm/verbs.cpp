@@ -415,7 +415,7 @@ void ScummEngine::drawVerb(int verb, int mode) {
 		vs->oldRect = _charset->_str;
 		_charset->_str.left = _charset->_str.right;
 	} else if (_gameId != GID_FT) {
-		//restoreVerbBG(verb);
+		restoreVerbBG(verb);
 	}
 }
 
@@ -519,10 +519,10 @@ void ScummEngine::killVerb(int slot) {
 
 	nukeResource(rtVerb, slot);
 
-	//if (vs->saveid == 0) {
-	//	drawVerb(slot, 0);
-	//	verbMouseOver(0);
-	//}
+	if (vs->saveid == 0) {
+		drawVerb(slot, 0);
+		verbMouseOver(0);
+	}
 	vs->saveid = 0;
 }
 
