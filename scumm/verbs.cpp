@@ -157,17 +157,17 @@ void Scumm::drawVerb(int verb, int mode)
 			return;
 		assert(_messagePtr);
 
-	        if ((_features & GF_AFTER_V8) && (_messagePtr[0] == '/')) {
-                	char pointer[20];
-                	int i, j;
+		if ((_features & GF_AFTER_V8) && (_messagePtr[0] == '/')) {
+			char pointer[20];
+			int i, j;
 
-	                translateText(_messagePtr, _transText);
+			translateText(_messagePtr, _transText);
 
-        	        for (i = 0, j = 0; (_messagePtr[i] != '/' || j == 0) && j < 19; i++) {
-                	        if (_messagePtr[i] != '/')
-                        	        pointer[j++] = _messagePtr[i];
-                	}
-                	pointer[j] = 0;
+			for (i = 0, j = 0; (_messagePtr[i] != '/' || j == 0) && j < 19; i++) {
+				if (_messagePtr[i] != '/')
+					pointer[j++] = _messagePtr[i];
+			}
+			pointer[j] = 0;
 			_messagePtr = _transText;
 		}
 
