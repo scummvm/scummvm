@@ -824,8 +824,18 @@ void Display::setText(uint16 x, uint16 y, const char *text, bool outlined) {
 }
 
 void Display::setTextCentered(uint16 y, const char *text, bool outlined) {
-	uint16 x = (GAME_SCREEN_WIDTH - textWidth(text)) / 2;
-	setText(x, y, text, outlined);
+	int len = strlen(text);
+	int16 x;
+	while ((x = (GAME_SCREEN_WIDTH - textWidth(text, len)) / 2) <= 0) {
+		++text;
+		len -= 2;
+	}
+	assert(y < GAME_SCREEN_HEIGHT);
+	TextSlot *pts = &_texts[y];
+	pts->x = x;
+	pts->color = _curTextColor;
+	pts->outlined = outlined;
+	pts->text = Common::String(text, len);
 }
 
 void Display::drawTexts() {
