@@ -88,9 +88,9 @@ Revision History:
 #define FREQ_MASK		((1<<FREQ_SH)-1)
 
 /* envelope output entries */
-#define ENV_BITS		10
-#define ENV_LEN			(1<<ENV_BITS)
-#define ENV_STEP		(128.0/ENV_LEN)
+static const int	ENV_BITS	= 10;
+static const int	ENV_LEN		= 1<<ENV_BITS;
+static const float	ENV_STEP	= 128.f/ENV_LEN;
 
 #define MAX_ATT_INDEX	((1<<(ENV_BITS-1))-1) /*511*/
 #define MIN_ATT_INDEX	(0)
@@ -345,6 +345,7 @@ static const UINT32 ksl_tab[8*16]=
 /* sustain level table (3dB per step) */
 /* 0 - 15: 0, 3, 6, 9,12,15,18,21,24,27,30,33,36,39,42,93 (dB)*/
 #define SC(db) (UINT32) ( db * (2.0/ENV_STEP) )
+
 static const UINT32 sl_tab[16]={
  SC( 0),SC( 1),SC( 2),SC(3 ),SC(4 ),SC(5 ),SC(6 ),SC( 7),
  SC( 8),SC( 9),SC(10),SC(11),SC(12),SC(13),SC(14),SC(31)
@@ -1125,7 +1126,7 @@ static int init_tables(void)
 
 	for (x=0; x<TL_RES_LEN; x++)
 	{
-		m = (1<<16) / pow(2, (x+1) * (ENV_STEP/4.0) / 8.0);
+		m = (1<<16) / pow(2.0, (x+1) * (ENV_STEP/4.0) / 8.0);
 		m = floor(m);
 
 		/* we never reach (1<<16) here due to the (x+1) */
@@ -1165,9 +1166,9 @@ static int init_tables(void)
 		/* we never reach zero here due to ((i*2)+1) */
 
 		if (m>0.0)
-			o = 8*log(1.0/m)/log(2);	/* convert to 'decibels' */
+			o = 8*log(1.0/m)/log(2.0);	/* convert to 'decibels' */
 		else
-			o = 8*log(-1.0/m)/log(2);	/* convert to 'decibels' */
+			o = 8*log(-1.0/m)/log(2.0);	/* convert to 'decibels' */
 
 		o = o / (ENV_STEP/4);
 
