@@ -36,11 +36,18 @@
  */
 class AudioInputStream {
 public:
+	virtual ~AudioInputStream() {}
+
 	virtual int16 read() = 0;
 	virtual int size() const = 0;
 	virtual bool isStereo() const = 0;
 
 	bool eof() const { return size() <= 0; }
+};
+
+class WrappedAudioInputStream : public AudioInputStream {
+public:
+	virtual void append(const byte *data, uint32 len) = 0;
 };
 
 class ZeroInputStream : public AudioInputStream {
@@ -53,24 +60,7 @@ public:
 	bool isStereo() const { return false; }
 };
 
-// Wrapped memory stream, to be used by the ChannelStream class (and possibly others?)
-template<bool stereo, bool is16Bit, bool isUnsigned>
-class WrappedMemoryStream : public AudioInputStream {
-protected:
-	byte *_bufferStart;
-	byte *_bufferEnd;
-	byte *_pos;
-	byte *_end;
-	
-public:
-	WrappedMemoryStream(const byte *buffer, uint bufferSize);
-	int16 read();
-	int size() const;
-
-	void append(const byte *data, uint32 len);
-};
-
-
-AudioInputStream *makeInputStream(byte _flags, const byte *ptr, uint32 len);
+AudioInputStream *makeLinearInputStream(byte _flags, const byte *ptr, uint32 len);
+WrappedAudioInputStream *makeWrappedInputStream(byte _flags, uint32 len);
 
 #endif

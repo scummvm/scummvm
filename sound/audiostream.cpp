@@ -21,6 +21,7 @@
 
 #include "audiostream.h"
 #include "mixer.h"
+#include "common/engine.h"
 
 
 template<bool is16Bit, bool isUnsigned>
@@ -39,7 +40,7 @@ static inline int16 readSample(const byte *ptr) {
 }
 
 #pragma mark -
-#pragma mark --- WrappedMemoryStream ---
+#pragma mark --- LinearMemoryStream ---
 #pragma mark -
 
 
@@ -75,17 +76,41 @@ public:
 #pragma mark -
 
 
+// Wrapped memory stream, to be used by the ChannelStream class (and possibly others?)
 template<bool stereo, bool is16Bit, bool isUnsigned>
-WrappedMemoryStream<stereo, is16Bit, isUnsigned>::WrappedMemoryStream(const byte *buffer, uint bufferSize)
-	: _bufferStart(buffer), _bufferEnd(buffer+bufferSize), _pos(buffer), _end(buffer) {
+class WrappedMemoryStream : public WrappedAudioInputStream {
+protected:
+	byte *_bufferStart;
+	byte *_bufferEnd;
+	byte *_pos;
+	byte *_end;
+	
+public:
+	WrappedMemoryStream(uint bufferSize);
+	~WrappedMemoryStream() { free(_bufferStart); }
+	int16 read();
+	int size() const;
+	bool isStereo() const {
+		return stereo;
+	}
+
+	void append(const byte *data, uint32 len);
+};
+
+
+template<bool stereo, bool is16Bit, bool isUnsigned>
+WrappedMemoryStream<stereo, is16Bit, isUnsigned>::WrappedMemoryStream(uint bufferSize) {
 	if (stereo)	// Stereo requires an even sized buffer
 		assert(bufferSize % 2 == 0);
+	_bufferStart = (byte *)malloc(bufferSize);
+	_pos = _end = _bufferStart;
+	_bufferEnd = _bufferStart + bufferSize;
 }
 
 template<bool stereo, bool is16Bit, bool isUnsigned>
 int16 WrappedMemoryStream<stereo, is16Bit, isUnsigned>::read() {
 	assert(_pos != _end);
-	int16 val = readSample<is16Bit, isUnsigned>(_ptr);
+	int16 val = readSample<is16Bit, isUnsigned>(_pos);
 	_pos += (is16Bit ? 2 : 1);
 
 	// Wrap around?
@@ -113,8 +138,8 @@ void WrappedMemoryStream<stereo, is16Bit, isUnsigned>::append(const byte *data, 
 			debug(2, "WrappedMemoryStream: buffer overflow (A)");
 			return;
 		}
-		memcpy(_end, (byte*)data, size_to_end_of_buffer);
-		memcpy(_bufferStart, (byte *)data + size_to_end_of_buffer, len);
+		memcpy(_end, data, size_to_end_of_buffer);
+		memcpy(_bufferStart, data + size_to_end_of_buffer, len);
 		_end = _bufferStart + len;
 	} else {
 		if ((_end < _pos) && (_end + len >= _pos)) {
@@ -133,7 +158,7 @@ void WrappedMemoryStream<stereo, is16Bit, isUnsigned>::append(const byte *data, 
 
 
 template<bool stereo>
-static AudioInputStream *makeInputStream(const byte *ptr, uint32 len, bool isUnsigned, bool is16Bit) {
+static AudioInputStream *makeLinearInputStream(const byte *ptr, uint32 len, bool isUnsigned, bool is16Bit) {
 	if (isUnsigned) {
 		if (is16Bit)
 			return new LinearMemoryStream<stereo, true, true>(ptr, len);
@@ -148,9 +173,34 @@ static AudioInputStream *makeInputStream(const byte *ptr, uint32 len, bool isUns
 }
 
 
-AudioInputStream *makeInputStream(byte _flags, const byte *ptr, uint32 len) {
-	if (_flags & SoundMixer::FLAG_STEREO)
-		return makeInputStream<true>(ptr, len, _flags & SoundMixer::FLAG_UNSIGNED, _flags & SoundMixer::FLAG_16BITS);
-	else
-		return makeInputStream<false>(ptr, len, _flags & SoundMixer::FLAG_UNSIGNED, _flags & SoundMixer::FLAG_16BITS);
+template<bool stereo>
+static WrappedAudioInputStream *makeWrappedInputStream(uint32 len, bool isUnsigned, bool is16Bit) {
+	if (isUnsigned) {
+		if (is16Bit)
+			return new WrappedMemoryStream<stereo, true, true>(len);
+		else
+			return new WrappedMemoryStream<stereo, false, true>(len);
+	} else {
+		if (is16Bit)
+			return new WrappedMemoryStream<stereo, true, false>(len);
+		else
+			return new WrappedMemoryStream<stereo, false, false>(len);
+	}
+}
+
+
+AudioInputStream *makeLinearInputStream(byte _flags, const byte *ptr, uint32 len) {
+	if (_flags & SoundMixer::FLAG_STEREO) {
+		return makeLinearInputStream<true>(ptr, len, _flags & SoundMixer::FLAG_UNSIGNED, _flags & SoundMixer::FLAG_16BITS);
+	} else {
+		return makeLinearInputStream<false>(ptr, len, _flags & SoundMixer::FLAG_UNSIGNED, _flags & SoundMixer::FLAG_16BITS);
+	}
+}
+
+WrappedAudioInputStream *makeWrappedInputStream(byte _flags, uint32 len) {
+	if (_flags & SoundMixer::FLAG_STEREO) {
+		return makeWrappedInputStream<true>(len, _flags & SoundMixer::FLAG_UNSIGNED, _flags & SoundMixer::FLAG_16BITS);
+	} else {
+		return makeWrappedInputStream<false>(len, _flags & SoundMixer::FLAG_UNSIGNED, _flags & SoundMixer::FLAG_16BITS);
+	}
 }
