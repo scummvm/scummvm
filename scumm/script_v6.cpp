@@ -1526,7 +1526,7 @@ void ScummEngine_v6::o6_roomOps() {
 	case 174:		// SO_ROOM_SCREEN
 		b = pop();
 		a = pop();
-		initScreens(a, _screenWidth, b);
+		initScreens(a, b);
 		break;
 
 	case 175:		// SO_ROOM_PALETTE

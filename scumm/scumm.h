@@ -789,7 +789,7 @@ protected:
 	
 	StripTable *_roomStrips;
 
-	void initScreens(int b, int w, int h);
+	void initScreens(int b, int h);
 	void initVirtScreen(VirtScreenNumber slot, int number, int top, int width, int height, bool twobufs, bool scrollable);
 	void initBGBuffers(int height);
 	void initCycl(const byte *ptr);	// Color cycle

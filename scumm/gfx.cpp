@@ -170,7 +170,7 @@ Gdi::Gdi(ScummEngine *vm) {
 		_roomPalette += 16;
 }
 
-void ScummEngine::initScreens(int b, int w, int h) {
+void ScummEngine::initScreens(int b, int h) {
 	int i;
 
 	for (i = 0; i < 3; i++) {
@@ -2264,7 +2264,7 @@ void ScummEngine::transitionEffect(int a) {
 			b = tab_2[i * 4 + 3];
 			if (t == b) {
 				while (l <= r) {
-					if (l >= 0 && l < gdi._numStrips && (uint) t < (uint) bottom) {
+					if (l >= 0 && l < gdi._numStrips && t < bottom) {
 						virtscr[0].tdirty[l] = t * 8;
 /*
 						//HACK: this is bad place of this hack
@@ -2272,10 +2272,10 @@ void ScummEngine::transitionEffect(int a) {
 		 				//this is only for maniac classic version becouse that game
 		 				//has bigger height of room gfx layer
 						if ((_version == 1) && (_gameId == GID_MANIAC))
-							virtscr[0].bdirty[l] = (t + 2) * 8;
+							virtscr[0].bdirty[l] = (b + 2) * 8;
 						else
 */
-							virtscr[0].bdirty[l] = (t + 1) * 8;
+							virtscr[0].bdirty[l] = (b + 1) * 8;
 					}
 					l++;
 				}

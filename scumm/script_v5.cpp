@@ -1847,7 +1847,7 @@ void ScummEngine_v5::o5_roomOps() {
 			a = getVarOrDirectWord(PARAM_1);
 			b = getVarOrDirectWord(PARAM_2);
 		}
-		initScreens(a, _screenWidth, b);
+		initScreens(a, b);
 		break;
 	case 4:		// SO_ROOM_PALETTE
 		if (_features & GF_SMALL_HEADER) {

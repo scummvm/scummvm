@@ -997,11 +997,11 @@ void ScummEngine::scummInit() {
 	debug(9, "scummInit");
 
 	if ((_gameId == GID_MANIAC) && (_version == 1)) {
-		initScreens(16, _screenWidth, 152);
+		initScreens(16, 152);
 	} else if (_version >= 7) {
-		initScreens(0, _screenWidth, _screenHeight);
+		initScreens(0, _screenHeight);
 	} else {
-		initScreens(16, _screenWidth, 144);
+		initScreens(16, 144);
 	}
 
 	for (i = 0; i < 256; i++)
