@@ -1158,24 +1158,24 @@ void Scumm::buildStripOffsets() {
 					_egaStripZRun[x] = length | 0x80;
 				}
 				if (--y == 0) {
-			    if (--room_width == 0)
+					if (--room_width == 0)
 						return;
 					x++;
-			    y = 128;
+					y = 128;
 				}
 			} while (--length);
 		} else {
-	    do {
+			do {
 				data = *zplane++;
 				if (y == 128) {
 					_egaStripZOffsets[x] = zplane - roomptr - 1;
 					_egaStripZRun[x] = length;
 				}
 				if (--y == 0) {
-			    if (--room_width == 0)
+					if (--room_width == 0)
 						return;
 					x++;
-			    y = 128;
+					y = 128;
 				}
 			} while (--length);
 		}
