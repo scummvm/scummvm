@@ -29,57 +29,180 @@
 
 namespace Common {
 
+/**
+ * Generic interface for a writable data stream.
+ */
 class WriteStream {
 public:
+	/**
+	 * Write data into the stream. Subclasses must implement this
+	 * method; all other write methods are implemented using it.
+	 *
+	 * @param ptr	pointer to the data to be written
+	 * @param size	number of bytes to be written
+	 * @return the number of bytes which were actually written.
+	 */
 	virtual uint32 write(const void *ptr, uint32 size) = 0;
 
-	// The remaining methods all have default implementations
 
-	void writeByte(byte value);
-	void writeSByte(int8 value);
+	// The remaining methods all have default implementations; subclasses
+	// need not (and should not) overload them.
 
-	void writeUint16LE(uint16 value);
-	void writeUint24LE(uint32 value);
-	void writeUint32LE(uint32 value);
+	void writeByte(byte value) {
+		write(&value, 1);
+	}
 
-	void writeUint16BE(uint16 value);
-	void writeUint24BE(uint32 value);
-	void writeUint32BE(uint32 value);
+	void writeSByte(int8 value) {
+		write(&value, 1);
+	}
 
-	void writeSint16LE(int16 value);
-	void writeSint24LE(int32 value);
-	void writeSint32LE(int32 value);
+	void writeUint16LE(uint16 value) {
+		writeByte((byte)(value & 0xff));
+		writeByte((byte)(value >> 8));
+	}
 
-	void writeSint16BE(int16 value);
-	void writeSint24BE(int32 value);
-	void writeSint32BE(int32 value);
+	void writeUint24LE(uint32 value) {
+		writeUint16LE((uint16)(value & 0xffff));
+		writeByte((byte)(value >> 16));
+	}
+
+	void writeUint32LE(uint32 value) {
+		writeUint16LE((uint16)(value & 0xffff));
+		writeUint16LE((uint16)(value >> 16));
+	}
+
+	void writeUint16BE(uint16 value) {
+		writeByte((byte)(value >> 8));
+		writeByte((byte)(value & 0xff));
+	}
+
+	void writeUint24BE(uint32 value) {
+		writeByte((byte)(value >> 16));
+		writeUint16BE((uint16)(value & 0xffff));
+	}
+
+	void writeUint32BE(uint32 value) {
+		writeUint16BE((uint16)(value >> 16));
+		writeUint16BE((uint16)(value & 0xffff));
+	}
+
+	void writeSint16LE(int16 value) {
+		writeUint16LE((uint16)value);
+	}
+
+	void writeSint24LE(int32 value) {
+		writeUint24LE((uint32)value);
+	}
+
+	void writeSint32LE(int32 value) {
+		writeUint32LE((uint32)value);
+	}
+
+	void writeSint16BE(int16 value) {
+		writeUint16BE((uint16)value);
+	}
+
+	void writeSint24BE(int32 value) {
+		writeUint24BE((uint32)value);
+	}
+
+	void writeSint32BE(int32 value) {
+		writeUint32BE((uint32)value);
+	}
 };
 
 
+/**
+ * Generic interface for a readable data stream.
+ */
 class ReadStream {
 public:
+	/**
+	 * Read data from the stream. Subclasses must implement this
+	 * method; all other read methods are implemented using it.
+	 *
+	 * @param ptr	pointer to a buffer into which the data is read
+	 * @param size	number of bytes to be read
+	 * @return the number of bytes which were actually read.
+	 */
 	virtual uint32 read(void *ptr, uint32 size) = 0;
 
-	// The remaining methods all have default implementations
 
-	byte readByte();
-	int8 readSByte();
+	// The remaining methods all have default implementations; subclasses
+	// need not (and should not) overload them.
 
-	uint16 readUint16LE();
-	uint32 readUint24LE();
-	uint32 readUint32LE();
+	byte readByte() {
+		byte b = 0;
+		read(&b, 1);
+		return b;
+	}
 
-	uint16 readUint16BE();
-	uint32 readUint24BE();
-	uint32 readUint32BE();
+	int8 readSByte() {
+		int8 b = 0;
+		read(&b, 1);
+		return b;
+	}
 
-	int16 readSint16LE();
-	int32 readSint24LE();
-	int32 readSint32LE();
+	uint16 readUint16LE() {
+		uint16 a = readByte();
+		uint16 b = readByte();
+		return a | (b << 8);
+	}
 
-	int16 readSint16BE();
-	int32 readSint24BE();
-	int32 readSint32BE();
+	uint32 readUint24LE() {
+		uint32 a = readUint16LE();
+		uint32 b = readByte();
+		return (b << 16) | a;
+	}
+
+	uint32 readUint32LE() {
+		uint32 a = readUint16LE();
+		uint32 b = readUint16LE();
+		return (b << 16) | a;
+	}
+
+	uint16 readUint16BE() {
+		uint16 b = readByte();
+		uint16 a = readByte();
+		return a | (b << 8);
+	}
+
+	uint32 readUint24BE() {
+		uint32 b = readByte();
+		uint32 a = readUint16BE();
+		return (b << 16) | a;
+	}
+
+	uint32 readUint32BE() {
+		uint32 b = readUint16BE();
+		uint32 a = readUint16BE();
+		return (b << 16) | a;
+	}
+
+
+	int16 readSint16LE() {
+		return (int16)readUint16LE();
+	}
+
+	int32 readSint24LE() {
+		return (int32)readUint24LE();
+	}
+
+	int32 readSint32LE() {
+		return (int32)readUint32LE();
+	}
+
+	int16 readSint16BE() {
+		return (int16)readUint16BE();
+	}
+
+	int32 readSint24BE() {
+		return (int32)readUint24BE();
+	}
+
+	int32 readSint32BE() {
+		return (int32)readUint32BE();
+	}
 };
 
 /**
@@ -135,32 +258,11 @@ public:
 		return len;
 	}
 
-	bool eof() { return _pos == _bufSize; }
-	uint32 pos() { return _pos; }
-	uint32 size() { return _bufSize; }
+	bool eof() const { return _pos == _bufSize; }
+	uint32 pos() const { return _pos; }
+	uint32 size() const { return _bufSize; }
 
-	void seek(uint32 offs, int whence = SEEK_SET) {
-		// Pre-Condition
-		assert(_pos <= _bufSize);
-		switch (whence) {
-		case SEEK_END:
-			// SEEK_END works just like SEEK_SET, only 'reversed',
-			// i.e. from the end.
-			offs = _bufSize - offs;
-			// Fall through
-		case SEEK_SET:
-			_ptr = _ptrOrig + offs;
-			_pos = offs;
-			break;
-
-		case SEEK_CUR:
-			_ptr += offs;
-			_pos += offs;
-			break;
-		}
-		// Post-Condition
-		assert(_pos <= _bufSize);
-	}
+	void seek(uint32 offs, int whence = SEEK_SET);
 };
 
 }	// End of namespace Common
