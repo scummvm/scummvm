@@ -1116,8 +1116,8 @@ void Scumm::buildStripOffsets() {
 	byte *bitmap = roomptr + READ_LE_UINT16(roomptr + 10);
 	byte *zplane = roomptr + READ_LE_UINT16(roomptr + 12);
 	int room_width = READ_LE_UINT16(roomptr + 4) >> 3;
-	byte color, data;
-	int x, y, length;
+	byte color = 0, data = 0;
+	int x, y, length = 0;
 	int run = 1;
 
 	for (x = 0 ; x < room_width << 3; x++) {
@@ -1187,7 +1187,7 @@ void Gdi::decodeStripOldEGA(byte *dst, byte *src, int height, int stripnr) {
 	int run = _vm->_egaStripRun[stripnr];
 	bool dither = false;
 	byte dither_table[128];
-	byte data;
+	byte data = 0;
 	int x = 4;
 	do {
 		byte *ptr_dither_table = dither_table;
@@ -1215,7 +1215,6 @@ void Gdi::decodeStripOldEGA(byte *dst, byte *src, int height, int stripnr) {
 		} while (--y);
 		dst -= _vm->_realWidth * 128;
 		dst++;
-
 		ptr_dither_table = dither_table;
 		y = 128;
 		do {
@@ -1237,7 +1236,6 @@ void Gdi::decodeStripOldEGA(byte *dst, byte *src, int height, int stripnr) {
 				*ptr_dither_table = color;
 			}
 			*dst = *ptr_dither_table++;
-
 			dst += _vm->_realWidth;
 		} while (--y);
 		dst -= _vm->_realWidth * 128;
@@ -1248,7 +1246,7 @@ void Gdi::decodeStripOldEGA(byte *dst, byte *src, int height, int stripnr) {
 void Gdi::decompressMaskImgOld(byte *dst, byte *src, int stripnr) {
 	int run = _vm->_egaStripRun[stripnr];
 	int y = 128;
-	byte data;
+	byte data = 0;
 
 	for (;;) {
 		if (run & 0x80) {
