@@ -219,6 +219,32 @@ public:
 	virtual void initSize(uint width, uint height) = 0;
 
 	/**
+	 * Begin a new GFX transaction, which is a sequence of GFX mode changes.
+	 * The idea behind GFX transactions is to make it possible to activate
+	 * several different GFX changes at once as a "batch" operation. For
+	 * example, assume we are running in 320x200 with a 2x scaler (thus using
+	 * 640x400 pixels in total). Now, we want to switch to 640x400 with the 1x
+	 * scaler. Without transactions, we have to choose whether we want to first
+	 * switch the scaler mode, or first to 640x400 mode. In either case,
+	 * depending on the backend implementation, some ugliness may result.
+	 * E.g. the window might briefly switch to 320x200 or 1280x800.
+	 * Using transactions, this can be avoided.
+	 *
+	 * @note Transaction support is optional, and the default implementations
+	 *       of the relevant methods simply do nothing.
+	 * @see endGFXTransaction
+	 */
+	virtual void beginGFXTransaction() {};
+
+
+	/**
+	 * End (and thereby commit) the current GFX transaction.
+	 * @see beginGFXTransaction
+	 */
+	virtual void endGFXTransaction() {};
+
+
+	/**
 	 * Returns the currently set virtual screen height.
 	 * @see initSize
 	 * @return the currently set virtual screen height
@@ -254,9 +280,6 @@ public:
 	 *       API are probably going to remove it.
 	 */
 	virtual void setPalette(const byte *colors, uint start, uint num) = 0;
-	
-	/** Clear the screen to black */
-	virtual void clearScreen() {;}
 
 	/**
 	 * Blit a bitmap to the virtual screen.
@@ -267,6 +290,11 @@ public:
 	 * @see updateScreen
 	 */
 	virtual void copyRectToScreen(const byte *buf, int pitch, int x, int y, int w, int h) = 0;
+	
+	/**
+	 * Clear the screen to black.
+	 */
+	virtual void clearScreen() {}
 
 	/** Update the dirty areas of the screen. */
 	virtual void updateScreen() = 0;
