@@ -184,7 +184,7 @@ void Normal1o5xTemplate(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uin
 	const uint32 srcPitch2 = srcPitch * 2;
 
 	assert(((int)dstPtr & 1) == 0);
-	while (height) {
+	while (height > 0) {
 		r = dstPtr;
 		for (int i = 0; i < width; i += 2, r += 6) {
 			uint16 color0 = *(((const uint16 *)srcPtr) + i);
