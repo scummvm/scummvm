@@ -26,8 +26,10 @@ OBJS	:=
 
 # Turn on useful warnings
 CXXFLAGS+= -Wall -pedantic -Wpointer-arith -Wcast-qual -Wcast-align -Wconversion
-CXXFLAGS+= -Wshadow -Wstrict-prototypes -Wuninitialized
+CXXFLAGS+= -Wshadow -Wstrict-prototypes -Wuninitialized -Wimplicit
 CXXFLAGS+= -Wno-long-long -Wno-multichar -Wno-unknown-pragmas -Wno-reorder
+CXXFLAGS+= -Wwrite-strings -Wredundant-decls -Wdisabled-optimization -fcheck-new -Wundef
+CXXFLAGS+= -Wctor-dtor-privacy -Wnon-virtual-dtor -Woverloaded-virtual -Wfloat-equal
 # Seems GCC 2.95 doesn't support the following, so we do not yet turn them
 # on by default (but I'd strongly recommend to all GCC 2.95 users to update
 # to a better compiler like GCC 3.x).
