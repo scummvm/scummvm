@@ -191,8 +191,8 @@ bool Debugger<T>::RunCommand(const char *inputOrig) {
 					DebugPrintf("byte%s = %d\n", param[0], *(byte *)_dvars[i].variable);
 					break;
 				case DVAR_INT:
-					*(int *)_dvars[i].variable = atoi(param[1]);
-					DebugPrintf("(int)%s = %d\n", param[0], *(int *)_dvars[i].variable);
+					*(int32 *)_dvars[i].variable = atoi(param[1]);
+					DebugPrintf("(int)%s = %d\n", param[0], *(int32 *)_dvars[i].variable);
 					break;
 				// Integer Array
 				case DVAR_INTARRAY: {
@@ -220,19 +220,19 @@ bool Debugger<T>::RunCommand(const char *inputOrig) {
 				switch(_dvars[i].type) {
 				// Integer
 				case DVAR_BYTE:
-					DebugPrintf("(byte)%s = %d\n", param[0], *(byte *)_dvars[i].variable);
+					DebugPrintf("(byte)%s = %d\n", param[0], *(const byte *)_dvars[i].variable);
 					break;
 				case DVAR_INT:
-					DebugPrintf("(int)%s = %d\n", param[0], *(int *)_dvars[i].variable);
+					DebugPrintf("(int)%s = %d\n", param[0], *(const int32 *)_dvars[i].variable);
 					break;
 				// Integer array
 				case DVAR_INTARRAY: {
-					char *chr = (char *)strchr(param[0], '[');
+					const char *chr = strchr(param[0], '[');
 					if (!chr) {
 						DebugPrintf("You must access this array as %s[element]\n", param[0]);
 					} else {
 						int element = atoi(chr+1);
-						int32 *var = *(int32 **)_dvars[i].variable;
+						const int32 *var = *(const int32 **)_dvars[i].variable;
 						if (element >= _dvars[i].optional) {
 							DebugPrintf("%s is out of range (array is %d elements big)\n", param[0], _dvars[i].optional);
 						} else {
