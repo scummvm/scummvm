@@ -34,11 +34,11 @@
 class MidiParser_EUP : public MidiParser {
 protected:
 	struct {
-		bool mute;
-		uint8 channel;
-		int8 volume;
-		int8 transpose;
-	} _presets[32];
+		byte *enable;
+		int8 *channel;
+		int8 *volume;
+		int8 *transpose;
+	} _presets;
 	bool _loop;
 	byte _presend; // Tracks which startup implied events have been sent.
 
@@ -84,15 +84,15 @@ void MidiParser_EUP::parseNextEvent (EventInfo &info) {
 		byte cmd = *pos;
 		if ((cmd & 0xF0) == 0x90) {
 			byte preset = pos[1];
-			byte channel = _presets[preset].channel;
+			byte channel = _presets.channel[preset];
 			if (channel >= 16)
 				channel = cmd & 0x0F;
 			uint16 tick = pos[2] | ((uint16) pos[3] << 7);
-			int note = (int) pos[4] + _presets[preset].transpose;
-			int volume = (int) pos[5] + _presets[preset].volume;
+			int note = (int) pos[4] + _presets.transpose[preset];
+			int volume = (int) pos[5] + _presets.volume[preset];
 			pos += 6;
 			if ((*pos & 0xF0) == 0x80) {
-				if (!_presets[preset].mute) {
+				if (_presets.enable[preset]) {
 					uint16 duration = pos[1] | (pos[2] << 4) | (pos[3] << 8) | (pos[4] << 12);
 					info.start = pos;
 					uint32 last = _position._last_event_tick;
@@ -157,13 +157,16 @@ bool MidiParser_EUP::loadMusic (byte *data, uint32 size) {
 	byte numInstruments = pos[16];
 	pos += (16 + 2 + numInstruments * 48);
 
-	for (int i = 0; i < 32; ++i) {
-		_presets[i].mute = ((int8) pos[i] == 0);
-		_presets[i].channel = pos[i+32];
-		_presets[i].volume = (int8) pos[i+64];
-		_presets[i].transpose = (int8) pos[i+96];
-	}
-	pos += 32 * 4; // Jump past presets
+	// Load the prest pointers
+	_presets.enable = pos;
+	pos += 32;
+	_presets.channel = (int8 *) pos;
+	pos += 32;
+	_presets.volume = (int8 *) pos;
+	pos += 32;
+	_presets.transpose = (int8 *) pos;
+	pos += 32;
+
 	pos += 8; // Unknown bytes
 	pos += 6; // Instrument-to-channel mapping (not supported yet)
 	pos += 4; // Skip the music size for now.
