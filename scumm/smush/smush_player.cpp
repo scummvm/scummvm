@@ -38,6 +38,10 @@
 #include "common/util.h"
 #include "common/timer.h"
 
+#ifdef DUMP_SMUSH_FRAMES
+#include <png.h>
+#endif
+
 const int MAX_STRINGS = 200;
 
 class StringResource {
@@ -872,9 +876,9 @@ void SmushPlayer::setPalette(const byte *palette) {
 	byte *p = palette_colors;
 
 	for (int i = 0; i != 256; ++i) {
-		*p++ = *palette++; // red
-		*p++ = *palette++; // green
-		*p++ = *palette++; // blue
+		*p++ = _pal[i * 3 + 0] = *palette++; // red
+		*p++ = _pal[i * 3 + 1] = *palette++; // green
+		*p++ = _pal[i * 3 + 2] = *palette++; // blue
 		*p++ = 0;
 	}
 
@@ -882,6 +886,57 @@ void SmushPlayer::setPalette(const byte *palette) {
 }
 
 void SmushPlayer::updateScreen() {
+#ifdef DUMP_SMUSH_FRAMES
+	char fileName[100];
+	// change path below for dump png files
+	sprintf(fileName, "/path/to/somethere/%s%04d.png", _scumm->getExeName, _frame);
+	FILE *file = fopen(fileName, "wb");
+	if (file == NULL) 
+		error("can't open file for writing png");
+ 
+  png_structp png_ptr = png_create_write_struct(PNG_LIBPNG_VER_STRING, 0, 0, 0);
+	if (png_ptr == NULL) {
+      fclose(file);
+      error("can't write png header");
+  }
+  png_infop info_ptr = png_create_info_struct(png_ptr);
+	if (info_ptr == NULL) {
+      fclose(file);
+      error("can't create png info struct");
+  }
+  if (setjmp(png_ptr->jmpbuf)) {
+      fclose(file);
+      error("png jmpbuf error");
+  }
+
+  png_init_io(png_ptr, file);
+  
+  png_set_IHDR(png_ptr, info_ptr, _width, _height, 8, PNG_COLOR_TYPE_PALETTE, PNG_INTERLACE_NONE, 
+	       PNG_COMPRESSION_TYPE_DEFAULT, PNG_FILTER_TYPE_DEFAULT);
+
+	png_colorp palette = (png_colorp)png_malloc(png_ptr, PNG_MAX_PALETTE_LENGTH * sizeof (png_color));
+	for (int i = 0; i != 256; ++i) {
+	  (palette + i)->red = _pal[i * 3 + 0];
+	  (palette + i)->green = _pal[i * 3 + 1];
+	  (palette + i)->blue = _pal[i * 3 + 2];
+	}
+	
+	png_set_PLTE(png_ptr, info_ptr, palette, PNG_MAX_PALETTE_LENGTH);
+	
+  png_write_info(png_ptr, info_ptr);
+  png_set_flush(png_ptr, 10);
+
+  png_bytep row_pointers[480];
+  for (int y = 0 ; y < _height ; y++)
+    row_pointers[y] = (png_byte *) (_dst + y * _width);
+  png_write_image(png_ptr, row_pointers);
+  png_write_end(png_ptr, info_ptr);
+  png_free(png_ptr, palette);
+  
+  fclose(file);
+  png_destroy_write_struct(&png_ptr, &info_ptr);
+#endif
+
 	uint32 end_time, start_time = _scumm->_system->get_msecs();
 	_scumm->_system->copy_rect(_dst, _width, 0, 0, _width, _height);
 	_updateNeeded = true;
