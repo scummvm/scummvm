@@ -51,14 +51,6 @@ void Sword2Engine::buildDisplay(void) {
 		_graphics->startRenderCycle();
 
 		while (1) {
-			// clear the back buffer, before building up the new
-			// screen from the back forwards
-
-			// FIXME: I'm not convinced that this is needed. Isn't
-			// the whole screen redrawn each time?
-
-			// _graphics->clearScene();
-
 			// first background parallax + related anims
 
 			// open the screen resource

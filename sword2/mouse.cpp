@@ -188,9 +188,6 @@ void Sword2Engine::systemMenuMouse(void) {
 	// restore proper looping_music_id
 	_loopingMusicId = safe_looping_music_id;
 
-	// clear the screen & set up the new palette for the menus
-
-	_graphics->clearScene();
 	_graphics->processMenu();
 
 	// call the relevent screen
@@ -223,9 +220,8 @@ void Sword2Engine::systemMenuMouse(void) {
 		buildSystemMenu();
 	}
 
-	// Clear the screen & restore the location palette
+	// Back to the game again
 
-	_graphics->clearScene();
 	_graphics->processMenu();
 
 	// Reset game palette, but not after a successful restore or restart!

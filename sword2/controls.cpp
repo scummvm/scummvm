@@ -249,6 +249,13 @@ void FontRendererGui::drawText(int textId, int x, int y, int alignment) {
 Dialog::Dialog(Gui *gui)
 	: _numWidgets(0), _finish(false), _result(0), _gui(gui) {
 	_gui->_vm->setFullPalette(CONTROL_PANEL_PALETTE);
+	_gui->_vm->_graphics->clearScene();
+
+	// HACK: Since the dialogs don't do normal scene updates we need to
+	// trigger a full redraw manually.
+
+	_gui->_vm->_graphics->setNeedFullRedraw();
+	_gui->_vm->_graphics->updateDisplay();
 }
 
 Dialog::~Dialog() {
@@ -1554,8 +1561,6 @@ void Gui::restartControl(void) {
 
 	// In case we were dead - well we're not anymore!
 	DEAD = 0;
-
-	_vm->_graphics->clearScene();
 
 	// Restart the game. Clear all memory and reset the globals
 	temp_demo_flag = DEMO;

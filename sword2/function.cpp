@@ -606,8 +606,6 @@ int32 Logic::fnPlayCredits(int32 *params) {
 	fnPlayMusic(pars);
 
 	_vm->_graphics->clearScene();
-	_vm->_graphics->setNeedFullRedraw();
-	_vm->_graphics->updateDisplay();
 	_vm->_graphics->fadeUp(0);
 
 	spriteInfo.scale = 0;
