@@ -230,6 +230,7 @@ void IMuseDigital::switchToNextRegion(int track) {
 	}
 
 	debug(5, "switchToNextRegion-sound(%d) select %d region, curHookId: %d", _track[track].soundId, _track[track].curRegion, _track[track].curHookId);
+	_track[track].dataOffset += _track[track].regionOffset;
 	_track[track].regionOffset = 0;
 }
 
@@ -250,6 +251,7 @@ void IMuseDigital::startSound(int soundId, const char *soundName, int soundType,
 			_track[l].soundGroup = soundGroup;
 			_track[l].curHookId = hookId;
 			_track[l].curRegion = -1;
+			_track[l].dataOffset = 0;
 			_track[l].regionOffset = 0;
 			_track[l].trackOffset = 0;
 			_track[l].mod = 0;
@@ -622,7 +624,7 @@ int32 IMuseDigital::getPosInMs(int soundId) {
 	for (int l = 0; l < MAX_DIGITAL_TRACKS; l++) {
 		_track[l].locked = true;
 		if ((_track[l].soundId == soundId) && _track[l].used) {
-			int32 pos = 1000 * _track[l].trackOffset / _track[l].iteration;
+			int32 pos = 1000 * (_track[l].dataOffset + _track[l].regionOffset) / _track[l].iteration;
 			_track[l].locked = false;
 			return pos;
 		}

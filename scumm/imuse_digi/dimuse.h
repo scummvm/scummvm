@@ -54,6 +54,7 @@ private:
 		bool started;
 		int32 regionOffset;
 		int32 trackOffset;
+		int32 dataOffset;
 		bool sequence;
 		int curRegion;
 		int curHookId;
