@@ -647,6 +647,12 @@ void Model::Mesh::draw() const {
   glPopMatrix();
   glEnable(GL_TEXTURE_2D ); */
 
+  // Ender: HACK HACK HACK
+  // Mannys head isn't computed correctly, so bail out to prevent memory corruption.
+  // .. at least until it IS computed, or the DirtyScreen code has bounds checking :)
+  if (strstr(name_, "m_head_1"))
+        return;
+
 // Yaz: debug
 // this compute the dirty rect for the mesh
 
