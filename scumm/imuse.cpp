@@ -1437,7 +1437,7 @@ int IMuseInternal::set_music_volume(uint vol)
 		return 0;
 	_music_volume = vol;
 	vol = vol * _master_volume / 255;
-	for (int i = 0; i < ARRAYSIZE (_channel_volume); i++) {
+	for (uint i = 0; i < ARRAYSIZE (_channel_volume); i++) {
 		_channel_volume_eff[i] = _channel_volume[i] * vol / 255;
 	}
 	if (!_paused)
@@ -1456,7 +1456,7 @@ int IMuseInternal::set_master_volume (uint vol)
 
 	_master_volume = vol;
 	vol = vol * _music_volume / 255;
-	for (int i = 0; i < ARRAYSIZE (_channel_volume); i++) {
+	for (uint i = 0; i < ARRAYSIZE (_channel_volume); i++) {
 		_channel_volume_eff[i] = _channel_volume[i] * vol / 255;
 	}
 	if (!_paused)
