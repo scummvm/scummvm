@@ -327,6 +327,9 @@ void CostumeRenderer::c64_ignorePakCols(int num) {
 	}
 }
 
+int v1_actor_palatte_1 [] = { 8, 8, 8, 8, 4, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 0};
+int v1_actor_palatte_2 [] = { 0, 7, 2, 6, 9, 1, 3, 7, 7, 1, 1, 9, 1, 4, 5, 5, 4, 1, 0, 5, 4, 2, 2, 7, 7, 0};
+
 void CostumeRenderer::procC64() {
 	const byte *src;
 	byte *dst;
@@ -346,9 +349,12 @@ void CostumeRenderer::procC64() {
 	// * figure out how to get the right colors/palette
 	// * test masking (once we implement any masking for V1 games)
 
-//	const byte *palette = _vm->gdi._C64Colors;
-	const byte palette[4] = { 0, 10, 6, 0 };
-//	const byte *palette = _palette;
+	byte palette[4] = { 0, 10, 6, 0 };
+	//FIXME We need to know actor number for correct palette
+//	palette[0] = 0;
+//	palette[1] = v1_actor_palatte_1[actor];
+//	palette[2] = v1_actor_palatte_2[actor];
+//	palette[3] = 0;
 
 	v1.skip_width >>= 3;
 
