@@ -204,6 +204,12 @@
 			RelativePath="..\..\scumm\charset.h">
 		</File>
 		<File
+			RelativePath="..\..\sword1\control.cpp">
+		</File>
+		<File
+			RelativePath="..\..\sword1\control.h">
+		</File>
+		<File
 			RelativePath="..\..\scumm\costume.cpp">
 		</File>
 		<File
