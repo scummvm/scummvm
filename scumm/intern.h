@@ -678,8 +678,6 @@ protected:
 	int readFileToArray(int slot, int32 size);
 	void writeFileFromArray(int slot, int resID);
 
-	void copyScriptString(byte *dst);
-
 	/* Version 7 script opcodes */
 	void o72_pushDWord();
 	void o72_addMessageToStack();
@@ -715,6 +713,8 @@ protected:
 	void o72_stringLen();
 	void o72_readINI();
 	void o72_unknownF4();
+	void o72_unknownF8();
+	void o72_unknownF9();
 	void o72_unknownFA();
 	void o72_unknownFB();
 	void o72_unknownFC();

@@ -478,9 +478,12 @@ int ScummEngine::fetchScriptWordSigned() {
 
 int ScummEngine::readVar(uint var) {
 	// HACK Seems to variable difference
+	// Correct values for now
 	if (_gameId == GID_PAJAMA && var == 32770) 
 		return 5;
-
+	else if (_gameId == GID_WATER && var == 32770) 
+		return 23
+;
 	int a;
 	static byte copyprotbypassed;
 	if (!_copyProtection)
@@ -1034,10 +1037,20 @@ bool ScummEngine::isRoomScriptRunning(int script) const {
 	return false;
 }
 
-void ScummEngine::copyScriptString(byte *dst) {
-	int len = resStrLen(_scriptPointer) + 1;
-	while (len--)
-		*dst++ = fetchScriptByte();
+void ScummEngine::copyScriptString(byte *dst, bool override) {
+	int len, i = 0;
+	if (_heversion >= 72 && (pop() == -1 || override)) {
+		printf("part one\n");
+		len = resStrLen(_stringBuffer) + 1;
+		while (len--)
+			*dst++ = _stringBuffer[i++];
+	} else {
+		printf("part two\n");
+		len = resStrLen(_scriptPointer) + 1;
+		while (len--)
+			*dst++ = fetchScriptByte();
+	}
+
 }
 
 //

@@ -257,7 +257,8 @@ enum ScummGameId {
 	GID_PUTTDEMO,
 	GID_FBEAR,
 	GID_FUNPACK,
-	GID_PAJAMA
+	GID_PAJAMA,
+	GID_WATER
 };
 
 #define _baseRooms res.address[rtRoom]
@@ -623,7 +624,7 @@ protected:
 	void beginOverride();
 	void endOverride();
 
-	void copyScriptString(byte *dst);
+	void copyScriptString(byte *dst, bool override = false);
 	int resStrLen(const byte *src) const;
 	void doSentence(int c, int b, int a);
 

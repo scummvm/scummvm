@@ -486,6 +486,12 @@ void ScummEngine_v7he::o7_startSound() {
 	op = fetchScriptByte();
 
 	switch (op) {
+	case 9:
+		_heSndLoop |= 4;
+		break;
+	case 164:
+		_heSndLoop |= 2;
+		break;
 	case 224:
 		_heSndSoundFreq = pop();
 		break;

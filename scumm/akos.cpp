@@ -59,6 +59,7 @@ enum AkosOpcodes {
 	AKC_SetVar = 0xC010,
 	AKC_CmdQue3 = 0xC015,
 	AKC_ComplexChan = 0xC020,
+	AKC_Unk2 = 0xC025,
 	AKC_Jump = 0xC030,
 	AKC_JumpIfSet = 0xC031,
 	AKC_AddVar = 0xC040,
@@ -1294,6 +1295,7 @@ bool ScummEngine::akos_increaseAnim(Actor *a, int chan, const byte *aksq, const 
 		case AKC_EndSeq:
 		case AKC_ComplexChan:
 		case AKC_Unk1:
+		case AKC_Unk2:
 			break;
 
 		case AKC_Cmd3:
@@ -1322,7 +1324,7 @@ bool ScummEngine::akos_increaseAnim(Actor *a, int chan, const byte *aksq, const 
 	int code2 = aksq[curpos];
 	if (code2 & 0x80)
 		code2 = (code2 << 8) | aksq[curpos + 1];
-	assert((code2 & 0xC000) != 0xC000 || code2 == AKC_ComplexChan || code2 == AKC_Return || code2 == AKC_EndSeq || code2 == AKC_Unk1);
+	assert((code2 & 0xC000) != 0xC000 || code2 == AKC_ComplexChan || code2 == AKC_Return || code2 == AKC_EndSeq || code2 == AKC_Unk1 || code2 == AKC_Unk2);
 
 	a->cost.curpos[chan] = curpos;
 

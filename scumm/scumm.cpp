@@ -263,7 +263,7 @@ static const ScummGameSettings scumm_settings[] = {
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
 	{"maze", "Freddi Fish and Luther's Maze Madness", GID_HEGAME, 6, 72, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
-	{"water", "Freddi Fish and Luther's Water Worries", GID_HEGAME, 6, 72, MDT_NONE,
+	{"water", "Freddi Fish and Luther's Water Worries", GID_WATER, 6, 72, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
 	{"pjs-demo", "Pajama Sam 1: No Need to Hide When It's Dark Outside (Demo)", GID_PAJAMA, 6, 72, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
@@ -1082,6 +1082,8 @@ void ScummEngine::launch() {
 		_numActors = 25;
 	else if (_gameId == GID_PAJAMA)
 		_numActors = 62;
+	else if (_gameId == GID_WATER)
+		_numActors = 61;
 	else 
 		_numActors = 13;
 

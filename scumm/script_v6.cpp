@@ -1915,6 +1915,7 @@ void ScummEngine_v6::o6_verbOps() {
 	int slot, a, b;
 	VerbSlot *vs;
 	byte op;
+	byte name[200];
 
 	op = fetchScriptByte();
 	if (op == 196) {
@@ -1936,7 +1937,8 @@ void ScummEngine_v6::o6_verbOps() {
 		}
 		break;
 	case 125:		// SO_VERB_NAME
-		loadPtrToResource(rtVerb, slot, NULL);
+		copyScriptString(name);
+		loadPtrToResource(rtVerb, slot, name);
 		vs->type = kTextVerbType;
 		vs->imgindex = 0;
 		break;

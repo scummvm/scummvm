@@ -166,7 +166,7 @@ void Sound::playSound(int soundID, int offset) {
 		debugC(DEBUG_SOUND, "playSound #%d", soundID);
 
 		int music_offs, total_size;
-		uint skip;
+		uint skip = 0;
 		char buf[32];
 		File musicFile;
 
@@ -195,7 +195,10 @@ void Sound::playSound(int soundID, int offset) {
 			musicFile.seek(+20, SEEK_CUR);
 
 			// Skip to correct music header
-			skip = (soundID - 4001) * 25;
+			if (soundID >= 8000)
+				skip = (soundID - 8001) * 25;
+			else
+				skip = (soundID - 4001) * 25;
 			musicFile.seek(+skip, SEEK_CUR);
 
 			// Skip to offsets

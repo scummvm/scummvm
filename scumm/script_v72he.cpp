@@ -356,8 +356,8 @@ void ScummEngine_v72he::setupOpcodes() {
 		OPCODE(o6_invalid),
 		OPCODE(o6_invalid),
 		/* F8 */
-		OPCODE(o6_invalid),
-		OPCODE(o7_unknownF9),
+		OPCODE(o72_unknownF8),
+		OPCODE(o72_unknownF9),
 		OPCODE(o72_unknownFA),
 		OPCODE(o72_unknownFB),
 		/* FC */
@@ -510,21 +510,6 @@ void ScummEngine_v72he::readArrayFromIndexFile() {
 			defineArray(num, kBitArray, 0, a, 0, b);
 		else
 			defineArray(num, kDwordArray, 0, a, 0, b);
-	}
-}
-
-void ScummEngine_v72he::copyScriptString(byte *dst) {
-	int a = pop();
-	int b = 0;
-	// FIXME Should only be -1
-	if (a == 1 || a == -1) {
-		int len = resStrLen(_stringBuffer) + 1;
-		while (len--)
-			*dst++ = _stringBuffer[b++];
-	} else {
-		int len = resStrLen(_scriptPointer) + 1;
-		while (len--)
-			*dst++ = fetchScriptByte();
 	}
 }
 
@@ -743,7 +728,13 @@ void ScummEngine_v72he::o72_arrayOps() {
 	switch (subOp) {
 	case 7:			// SO_ASSIGN_STRING
 		array = fetchScriptWord();
-		ah = defineArray(array, kStringArray, 0, 0, 0, 256);
+		ah = defineArray(array, kStringArray, 0, 0, 0, 1024);
+		copyScriptString(ah->data);
+		break;
+	case 194:			// SO_ASSIGN_STRING
+		array = fetchScriptWord();
+		len = getStackList(list, ARRAYSIZE(list));
+		ah = defineArray(array, kStringArray, 0, 0, 0, 1024);
 		copyScriptString(ah->data);
 		break;
 	case 208:		// SO_ASSIGN_INT_LIST
@@ -887,7 +878,7 @@ void ScummEngine_v72he::o72_openFile() {
 	int mode, slot, l, r;
 	byte filename[100];
 
-	copyScriptString(filename);
+	copyScriptString(filename, true);
 	printf("File %s\n", filename);
 	
 	for (r = strlen((char*)filename); r != 0; r--) {
@@ -916,6 +907,7 @@ void ScummEngine_v72he::o72_openFile() {
 			slot = -1;
 
 	}
+	debug(1, "o72_openFile: slot %d, mode %d", slot, mode);
 	push(slot);
 }
 
@@ -962,6 +954,8 @@ void ScummEngine_v72he::o72_readFile() {
 	default:
 		error("default case %d", subOp);
 	}
+	debug(1, "o72_readFile: slot %d, subOp %d val %d", slot, subOp, val);
+
 }
 
 void ScummEngine_v72he::writeFileFromArray(int slot, int resID) {
@@ -1192,6 +1186,28 @@ void ScummEngine_v72he::o72_unknownFA() {
 	copyScriptString(name);
 
 	debug(1,"o72_unknownFA: (%d) %s", id, name);
+}
+
+void ScummEngine_v72he::o72_unknownF8() {
+	int a = fetchScriptByte();
+	push(1);
+
+	warning("stub o72_unknownF8(%d)", a);
+}
+
+void ScummEngine_v72he::o72_unknownF9() {
+	// File related
+	int r;
+	byte filename[255];
+
+	copyScriptString(filename);
+
+	for (r = strlen((char*)filename); r != 0; r--) {
+		if (filename[r - 1] == '\\')
+			break;
+	}
+
+	warning("stub o72_unknownF9(\"%s\")", filename + r);
 }
 
 void ScummEngine_v72he::o72_unknownFB() {

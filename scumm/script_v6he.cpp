@@ -549,6 +549,7 @@ void ScummEngine_v6he::o6_actorOps() {
 	int i, j, k;
 	int args[8];
 	byte b;
+	byte name[256];
 
 	b = fetchScriptByte();
 	if (b == 197) {
@@ -620,7 +621,8 @@ void ScummEngine_v6he::o6_actorOps() {
 		a->talkColor = pop();
 		break;
 	case 88:		// SO_ACTOR_NAME
-		loadPtrToResource(rtActorName, a->number, NULL);
+		copyScriptString(name);
+		loadPtrToResource(rtActorName, a->number, name);
 		break;
 	case 89:		// SO_INIT_ANIMATION
 		a->initFrame = pop();
@@ -999,7 +1001,8 @@ void ScummEngine_v6he::o6_openFile() {
 void ScummEngine_v6he::o6_closeFile() {
 	int slot = pop();
 	if (slot != -1)
-		_hFileTable[slot].close();
+		if (_hFileTable[slot].isOpen() == true)
+			_hFileTable[slot].close();
 }
 
 void ScummEngine_v6he::o6_deleteFile() {
