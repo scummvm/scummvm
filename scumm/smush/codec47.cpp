@@ -618,17 +618,15 @@ void Codec47Decoder::bompDecode(byte *dst, byte *src, int32 len) {
 
 	do {
 		code = *src++;
+		num = (code >> 1) + 1;
 		if (code & 1) {
-			num = (code >> 1) + 1;
 			color = *src++;
 			memset(dst, color, num);
-			dst += num;
 		} else {
-			num = (code >> 1) + 1;
 			memcpy(dst, src, num);
-			dst += num;
 			src += num;
 		}
+		dst += num;
 	} while (len -= num);
 }
 

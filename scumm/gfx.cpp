@@ -3375,14 +3375,12 @@ void Scumm::decompressBomp(byte *dst, byte *src, int w, int h)
 			len -= num;
 			if (code & 1) {
 				color = *src++;
-				do
-					*dst++ = color;
-				while (--num);
+				memset(dst, color, num);
 			} else {
-				do
-					*dst++ = *src++;
-				while (--num);
+				memcpy(dst, src, num);
+				src += num;
 			}
+			dst += num;
 		}
 	} while (--h);
 }
