@@ -274,7 +274,7 @@ uint8 SwordControl::handleButtonClick(uint8 id, uint8 mode, uint8 *retVal) {
 				}
 			} else if (id == BUTTON_SAVE_CANCEL)
 				return BUTTON_MAIN_PANEL; // mode down to main panel
-            break;
+			break;
 		case BUTTON_VOLUME_PANEL:
 			return id;
    	}
@@ -299,9 +299,9 @@ void SwordControl::setupMainPanel(void) {
 	delete panel;
 
 	if (SwordEngine::_systemVars.deathScreenFlag)
-        createButtons(_deathButtons, 3);		
+		createButtons(_deathButtons, 3);		
 	else {
-        createButtons(_panelButtons, 8);
+		createButtons(_panelButtons, 8);
 		_buttons[6]->setSelected(SwordEngine::_systemVars.showText);
 	}
 
@@ -343,7 +343,7 @@ void SwordControl::setupSaveRestorePanel(bool saving) {
 	} else {
 		renderText(_lStrings[STR_RESTORE], _saveButtons[12].x + 30, _saveButtons[13].y, TEXT_LEFT_ALIGN);
 	}
-    readSavegameDescriptions();
+	readSavegameDescriptions();
 	_selectedSavegame = 255;
 	showSavegameNames();
 }
@@ -391,7 +391,7 @@ void SwordControl::handleSaveKey(uint8 key) {
 bool SwordControl::saveToFile(void) {
 	if ((_selectedSavegame == 255) || !strlen(_saveNames[_selectedSavegame]))
 		return false; // no saveslot selected or no name entered
-    saveGameToFile(_selectedSavegame);
+	saveGameToFile(_selectedSavegame);
 	writeSavegameDescriptions();
 	return true;
 }
@@ -424,7 +424,7 @@ void SwordControl::readSavegameDescriptions(void) {
 			} while ((ch != 10) && (ch != 255));
 			curFileNum++;
 		} while (ch != 255);
-        _saveFiles = curFileNum;
+		_saveFiles = curFileNum;
 		for (uint8 cnt = _saveFiles; cnt < 64; cnt++)
 			_saveNames[cnt][0] = '\0';
 	} else
@@ -467,7 +467,7 @@ void SwordControl::saveNameSelect(uint8 id, bool saving) {
 	if (saving && (_selectedSavegame != 255)) // the player may have entered something, clear it again
 		strcpy(_saveNames[_selectedSavegame], _oldName);
 	if (num < _saveFiles) {
-        _selectedSavegame = num;
+		_selectedSavegame = num;
 		strcpy(_oldName, _saveNames[num]); // save for later
 	} else {
 		if (!saving)
@@ -530,7 +530,7 @@ uint16 SwordControl::getTextWidth(const char *str) {
 		width += FROM_LE_16(_resMan->fetchFrame(_font, *str - 32)->width) - 3;
 		str++;
 	}
-    return width;
+	return width;
 }
 
 void SwordControl::renderText(const char *str, uint16 x, uint16 y, uint8 mode) {
@@ -650,7 +650,7 @@ void SwordControl::doRestore(void) {
 		playerRaw++;
 		bufPos += 4;
 	}
-    free(_restoreBuf);
+	free(_restoreBuf);
 	SwordLogic::_scriptVars[CHANGE_DIR] = cpt->o_dir;
 	SwordLogic::_scriptVars[CHANGE_X] = cpt->o_xcoord;
 	SwordLogic::_scriptVars[CHANGE_Y] = cpt->o_ycoord;
@@ -886,6 +886,6 @@ const char SwordControl::_languageStrings[8 * 20][43] = {
 	"M\xFAsica",
 	"Voz",
 	"Efeitos",
-    "Fim",
+	"Fim",
 	"UNIDADE CHEIA!",
 };

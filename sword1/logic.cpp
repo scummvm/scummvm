@@ -196,7 +196,7 @@ void SwordLogic::processLogic(BsObject *compact, uint32 id) {
 				if (id == GMASTER_79) {
 					// workaround for ending script.
 					// GMASTER_79 is not prepared for mega_interact receiving INS_quit
-                    fnSuicide(compact, id, 0, 0, 0, 0, 0, 0);
+					fnSuicide(compact, id, 0, 0, 0, 0, 0, 0);
 					logicRet = 0;
 				} else {
 					compact->o_logic = LOGIC_script;

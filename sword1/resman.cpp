@@ -94,7 +94,7 @@ void ResMan::loadCluDescript(const char *fileName) {
 	free(cluIndex);
 	
 	if (_prj.clu[3]->grp[5]->noRes == 29)
-        for (uint8 cnt = 0; cnt < 29; cnt++)
+		for (uint8 cnt = 0; cnt < 29; cnt++)
 			_srIdList[cnt] = 0x04050000 | cnt;
 }
 
