@@ -4431,10 +4431,16 @@ void SimonEngine::go() {
 		_start_mainscript = true;
 
 	if (_game & GF_TALKIE) {
-		// Check for speech file in Simon the Sorcerer 2
 		if (_game & GF_SIMON2) {
-			if (_sound->hasVoice())
-				_subtitles = false;
+			// Allow choice in Hebrew version of Simon the Sorcerer 2
+			if (_language == 20) {
+				if (_noSubtitles)
+					_subtitles = false;
+			// Check for speech file in other versions of Simon the Sorcerer 2
+			} else {
+				if (_sound->hasVoice())
+					_subtitles = false;
+			}
 		// English and German versions of Simon the Sorcerer 1 don't have full subtitles
 		} else if (_language < 2) {
 			_subtitles = false;
