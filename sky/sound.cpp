@@ -106,3 +106,4 @@ void SkySound::playSound(uint16 sound, uint16 volume) {
 	_mixer->setVolume(volume);
 	_mixer->playRaw(&_ingameSound, _soundData + dataOfs, dataSize, sampleRate, flags);
 }
+
