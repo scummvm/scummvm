@@ -603,7 +603,6 @@ protected:
 	void o6_localizeArray();
 	void o6_redimArray();
 	void o6_readFilePos();
-	void o6_quitPauseRestart();
 };
 
 class ScummEngine_v7he : public ScummEngine_v6he {
@@ -620,7 +619,7 @@ public:
 	ScummEngine_v7he(GameDetector *detector, OSystem *syst, const ScummGameSettings &gs) : ScummEngine_v6he(detector, syst, gs) {}
 
 protected:
-	virtual void setupScummVars();
+	//virtual void setupScummVars();
 
 	virtual void setupOpcodes();
 	virtual void executeOpcode(byte i);
@@ -637,6 +636,7 @@ protected:
 	void o7_unknownF9();
 	void o7_unknownFA();
 	void o7_unknownFB();
+	void o7_quitPauseRestart();
 };
 
 class ScummEngine_v7 : public ScummEngine_v6 {

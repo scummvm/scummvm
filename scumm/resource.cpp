@@ -2057,7 +2057,7 @@ void ScummEngine::readMAXS() {
 			_numGlobalScripts = 2000;
 
 		_shadowPaletteSize = NUM_SHADOW_PALETTE * 256;
-	} else if (_features & GF_AFTER_HEV7) {
+	} else if (_heversion >= 70) {
 		_fileHandle.readUint16LE();
 		_numVariables = _fileHandle.readUint16LE();
 		_numBitVariables = _fileHandle.readUint16LE();

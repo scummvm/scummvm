@@ -168,6 +168,7 @@ void ScummEngine_v6::setupScummVars() {
 	VAR_TIMEDATE_MINUTE = 126;
 }
 
+#if 0
 void ScummEngine_v7he::setupScummVars() {
 	// TODO Not complete
 	VAR_KEYPRESS = 0;
@@ -228,6 +229,7 @@ void ScummEngine_v7he::setupScummVars() {
 	VAR_TIMEDATE_YEAR = 67;
 
 }
+#endif
 
 void ScummEngine_v7::setupScummVars() {
 	VAR_MOUSE_X = 1;

@@ -568,4 +568,34 @@ void ScummEngine_v7he::o7_unknownFB() {
 	warning("o7_unknownFB stub");
 }
 
+void ScummEngine_v7he::o7_quitPauseRestart() {
+	byte subOp = fetchScriptByte();
+	int par1;
+
+	switch (subOp & 0xff) {
+	case 158:		// SO_RESTART
+		// FIXME: check
+		restart();
+		break;
+	case 160:		// SO_QUIT
+		// FIXME: check
+		shutDown();
+		break;
+	case 250:
+		par1 = pop();
+		warning("stub: o7_quitPauseRestart subOpcode %d", subOp);
+		break;
+	case 253:
+		par1 = pop();
+		warning("stub: o7_quitPauseRestart subOpcode %d", subOp);
+	case 244:
+	case 251:
+	case 252:
+		warning("stub: o7_quitPauseRestart subOpcode %d", subOp);
+		break;
+	default:
+		error("o7_quitPauseRestart invalid case %d", subOp);
+	}
+}
+
 } // End of namespace Scumm
