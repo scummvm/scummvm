@@ -43,6 +43,8 @@ struct imuseComiTable;
 class IMuseDigital : public MusicEngine {
 private:
 
+	int _callbackFps;
+
 	struct Track {
 		int8 pan;			// pan
 		int32 vol;			// volume
@@ -126,7 +128,7 @@ private:
 	void playDigMusic(const char *songName, const imuseDigTable *table, int atribPos, bool sequence);
 
 public:
-	IMuseDigital(ScummEngine *scumm);
+	IMuseDigital(ScummEngine *scumm, int fps);
 	virtual ~IMuseDigital();
 
 	void startVoice(int soundId, AudioStream *input);

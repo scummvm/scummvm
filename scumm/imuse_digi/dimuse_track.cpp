@@ -196,6 +196,7 @@ void IMuseDigital::setPriority(int soundId, int priority) {
 
 void IMuseDigital::setVolume(int soundId, int volume) {
 	debug(5, "IMuseDigital::setVolume(%d, %d)", soundId, volume);
+
 	for (int l = 0; l < MAX_DIGITAL_TRACKS; l++) {
 		Track *track = _track[l];
 		if ((track->soundId == soundId) && track->used && !track->toBeRemoved) {
@@ -206,6 +207,7 @@ void IMuseDigital::setVolume(int soundId, int volume) {
 
 void IMuseDigital::setPan(int soundId, int pan) {
 	debug(5, "IMuseDigital::setPan(%d, %d)", soundId, pan);
+
 	for (int l = 0; l < MAX_DIGITAL_TRACKS; l++) {
 		Track *track = _track[l];
 		if ((track->soundId == soundId) && track->used && !track->toBeRemoved) {
@@ -231,14 +233,14 @@ void IMuseDigital::selectVolumeGroup(int soundId, int volGroupId) {
 
 void IMuseDigital::setFade(int soundId, int destVolume, int delay60HzTicks) {
 	Common::StackLock lock(_mutex, "IMuseDigital::setFade()");
-
 	debug(5, "IMuseDigital::setFade(%d, %d, %d)", soundId, destVolume, delay60HzTicks);
+
 	for (int l = 0; l < MAX_DIGITAL_TRACKS; l++) {
 		Track *track = _track[l];
 		if ((track->soundId == soundId) && track->used && !track->toBeRemoved) {
 			track->volFadeDelay = delay60HzTicks;
 			track->volFadeDest = destVolume * 1000;
-			track->volFadeStep = (track->volFadeDest - track->vol) * 60 * 40 / (1000 * delay60HzTicks);
+			track->volFadeStep = (track->volFadeDest - track->vol) * 60 * (1000 / _callbackFps) / (1000 * delay60HzTicks);
 			track->volFadeUsed = true;
 		}
 	}
@@ -302,7 +304,7 @@ int IMuseDigital::cloneToFadeOutTrack(int trackId, int fadeDelay) {
 
 	fadeTrack->volFadeDelay = fadeDelay;
 	fadeTrack->volFadeDest = 0;
-	fadeTrack->volFadeStep = (fadeTrack->volFadeDest - fadeTrack->vol) * 60 * 40 / (1000 * fadeDelay);
+	fadeTrack->volFadeStep = (fadeTrack->volFadeDest - fadeTrack->vol) * 60 * (1000 / _callbackFps) / (1000 * fadeDelay);
 	fadeTrack->volFadeUsed = true;
 
 	// setup 1 second stream wrapped buffer

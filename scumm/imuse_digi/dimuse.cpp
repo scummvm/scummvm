@@ -41,7 +41,7 @@ void IMuseDigital::timer_handler(void *refCon) {
 	imuseDigital->callback();
 }
 
-IMuseDigital::IMuseDigital(ScummEngine *scumm)
+IMuseDigital::IMuseDigital(ScummEngine *scumm, int fps)
 	: _vm(scumm) {
 	_mutex = g_system->createMutex();
 	_pause = false;
@@ -49,12 +49,13 @@ IMuseDigital::IMuseDigital(ScummEngine *scumm)
 	_volVoice = 0;
 	_volSfx = 0;
 	_volMusic = 0;
+	_callbackFps = fps;
 	resetState();
 	for (int l = 0; l < MAX_DIGITAL_TRACKS + MAX_DIGITAL_FADETRACKS; l++) {
 		_track[l] = new Track;
 		_track[l]->used = false;
 	}
-	_vm->_timer->installTimerProc(timer_handler, 1000000 / 25, this);
+	_vm->_timer->installTimerProc(timer_handler, 1000000 / _callbackFps, this);
 }
 
 IMuseDigital::~IMuseDigital() {
@@ -202,8 +203,8 @@ void IMuseDigital::callback() {
 			track->mixerVol = vol;
 			track->mixerPan = pan;
 
-			if (_vm->_mixer->isReady()) {
-				if (track->stream2) {
+			if (track->stream2) {
+				if (_vm->_mixer->isReady()) {
 					if (!track->started) {
 						track->started = true;
 						_vm->_mixer->playInputStream(&track->handle, track->stream2, false, vol, pan, -1, false);
@@ -228,7 +229,7 @@ void IMuseDigital::callback() {
 				int bits = _sound->getBits(track->soundHandle);
 				int channels = _sound->getChannels(track->soundHandle);
 
-				int32 mixer_size = track->iteration / 25;
+				int32 mixer_size = track->iteration / _callbackFps;
 
 				if (track->stream->endOfData()) {
 					mixer_size *= 2;

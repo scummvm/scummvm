@@ -715,7 +715,7 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 
 	// Init iMuse
 	if (_features & GF_DIGI_IMUSE) {
-		_musicEngine = _imuseDigital = new IMuseDigital(this);
+		_musicEngine = _imuseDigital = new IMuseDigital(this, 10);
 		_mixer->setVolume(ConfMan.getInt("master_volume"));
 		_imuseDigital->setGroupMusicVolume(ConfMan.getInt("music_volume") / 2);
 		_imuseDigital->setGroupSfxVolume(ConfMan.getInt("sfx_volume") / 2);
