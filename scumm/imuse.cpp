@@ -4797,7 +4797,7 @@ int IMuseGM::midi_driver_thread(void *param)
 	int old_time, cur_time;
 	
 	// Avoid race condition
-	if (NULL == g_scumm->_imuse);
+	if (NULL == g_scumm->_imuse)
 		return 0;
 
 	old_time = mid->_system->get_msecs();
