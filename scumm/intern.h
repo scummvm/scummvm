@@ -317,6 +317,8 @@ protected:
 	};
 	
 	const OpcodeEntryV6 *_opcodesV6;
+
+	File _hFileTable[17];
 	
 public:
 	Scumm_v6(GameDetector *detector, OSystem *syst) : Scumm(detector, syst)
