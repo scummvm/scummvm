@@ -261,6 +261,7 @@ SCUMM
   - Add support for song sync. in HE80+ games.
   - Add support for additional sound resources
   - Add support for sprites (Used by HE90+ games)
+  - Add support for wizImage compression types 2/3 (For freddicove)
   - Add support for additional drawWizImage flags (cyx)
   - Add support for additional aux animation resources (cyx)
     (^ Need to find where they are used) 

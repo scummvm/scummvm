@@ -540,6 +540,7 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 	_numLocalScripts = 60;
 	_numSprites = 0;
 	_numTalkies = 0;
+	_numPalettes = 0;
 	_audioNames = NULL;
 	_numAudioNames = 0;
 	_curActor = 0;
