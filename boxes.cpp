@@ -131,16 +131,16 @@ bool Scumm::checkXYInBoxBounds(int b, int x, int y)
 			return 1;
 	}
 
-	if (!getSideOfLine(box.ul.x, box.ul.y, box.ur.x, box.ur.y, x, y, b))
+	if (!compareSlope(box.ul.x, box.ul.y, box.ur.x, box.ur.y, x, y))
 		return 0;
 
-	if (!getSideOfLine(box.ur.x, box.ur.y, box.ll.x, box.ll.y, x, y, b))
+	if (!compareSlope(box.ur.x, box.ur.y, box.ll.x, box.ll.y, x, y))
 		return 0;
 
-	if (!getSideOfLine(box.ll.x, box.ll.y, box.lr.x, box.lr.y, x, y, b))
+	if (!compareSlope(box.ll.x, box.ll.y, box.lr.x, box.lr.y, x, y))
 		return 0;
 
-	if (!getSideOfLine(box.lr.x, box.lr.y, box.ul.x, box.ul.y, x, y, b))
+	if (!compareSlope(box.lr.x, box.lr.y, box.ul.x, box.ul.y, x, y))
 		return 0;
 
 	return 1;
@@ -185,12 +185,6 @@ uint Scumm::distanceFromPt(int x, int y, int ptx, int pty)
 	diffx *= diffx;
 	diffy *= diffy;
 	return diffx + diffy;
-}
-
-bool Scumm::getSideOfLine(int x1, int y1, int x2, int y2, int x, int y,
-													int box)
-{
-	return (x - x1) * (y2 - y1) <= (y - y1) * (x2 - x1);
 }
 
 ScummPoint Scumm::closestPtOnLine(int ulx, int uly, int llx, int lly, int x,
@@ -885,10 +879,10 @@ int Scumm::findPathTowardsOld(Actor * a, byte trap1, byte trap2,
 		gateLoc[4].y = actor->walkdata.desty;
 
 		if (getMaskFromBox(trap1) == getMaskFromBox(trap2) || 1) {
-			if (CompareSlope(gateLoc[1].x, gateLoc[1].y, gateLoc[4].x, gateLoc[4].y, gate1ax, gate1ay) !=
-					CompareSlope(gateLoc[1].x, gateLoc[1].y, gateLoc[4].x, gateLoc[4].y, gate1bx, gate1by) &&
-					CompareSlope(gateLoc[1].x, gateLoc[1].y, gateLoc[4].x, gateLoc[4].y, gate2ax, gate2ay) !=
-					CompareSlope(gateLoc[1].x, gateLoc[1].y, gateLoc[4].x, gateLoc[4].y, gate2bx, gate2by)) {
+			if (compareSlope(gateLoc[1].x, gateLoc[1].y, gateLoc[4].x, gateLoc[4].y, gate1ax, gate1ay) !=
+					compareSlope(gateLoc[1].x, gateLoc[1].y, gateLoc[4].x, gateLoc[4].y, gate1bx, gate1by) &&
+					compareSlope(gateLoc[1].x, gateLoc[1].y, gateLoc[4].x, gateLoc[4].y, gate2ax, gate2ay) !=
+					compareSlope(gateLoc[1].x, gateLoc[1].y, gateLoc[4].x, gateLoc[4].y, gate2bx, gate2by)) {
 				return 0;								/* same zplane and between both gates? */
 			}
 		}
@@ -898,8 +892,8 @@ int Scumm::findPathTowardsOld(Actor * a, byte trap1, byte trap2,
 	gateLoc[3].x = pt.x;
 	gateLoc[3].y = pt.y;
 
-	if (CompareSlope(gateLoc[1].x, gateLoc[1].y, gateLoc[3].x, gateLoc[3].y, gate1ax, gate1ay) ==
-			CompareSlope(gateLoc[1].x, gateLoc[1].y, gateLoc[3].x, gateLoc[3].y, gate1bx, gate1by)) {
+	if (compareSlope(gateLoc[1].x, gateLoc[1].y, gateLoc[3].x, gateLoc[3].y, gate1ax, gate1ay) ==
+			compareSlope(gateLoc[1].x, gateLoc[1].y, gateLoc[3].x, gateLoc[3].y, gate1bx, gate1by)) {
 		closestPtOnLine(gate1ax, gate1ay, gate1bx, gate1by, gateLoc[1].x, gateLoc[1].y);
 		gateLoc[2].x = pt.x;							/* if point 2 between gates, ignore! */
 		gateLoc[2].y = pt.y;
@@ -1009,11 +1003,9 @@ void Scumm::GetGates(int trap1, int trap2)
 	}
 }
 
-int Scumm::CompareSlope(int X1, int Y1, int X2, int Y2, int X3, int Y3)
+bool Scumm::compareSlope(int X1, int Y1, int X2, int Y2, int X3, int Y3)
 {
-	if ((Y2 - Y1) * (X3 - X1) > (Y3 - Y1) * (X2 - X1))
-		return (0);
-	return (1);
+	return (Y2 - Y1) * (X3 - X1) <= (Y3 - Y1) * (X2 - X1);
 }
 
 void Scumm::SetGate(int line1, int line2, int polyx[8], int polyy[8])

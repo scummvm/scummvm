@@ -276,13 +276,6 @@ enum {
 	RF_USAGE_MAX = RF_USAGE
 };
 
-enum MoveFlags {
-	MF_NEW_LEG = 1,
-	MF_IN_LEG = 2,
-	MF_TURN = 4,
-	MF_LAST_LEG = 8
-};
-
 #define _maxRooms res.num[rtRoom]
 #define _maxScripts res.num[rtScript]
 #define _maxCostumes res.num[rtCostume]
@@ -505,7 +498,6 @@ enum MouseButtonStatus {
 
 #include "gfx.h"
 #include "boxes.h"
-#include "akos.h"
 #include "smush.h"
 
 class Scumm {
@@ -1182,14 +1174,13 @@ public:
 	PathNode *unkMatrixProc2(PathVertex *vtx, int i);
 	bool areBoxesNeighbours(int i, int j);
 	void addToBoxMatrix(byte b);
-	int CompareSlope(int X1,int Y1,int X2,int Y2,int X3,int Y3);
+	bool compareSlope(int X1,int Y1,int X2,int Y2,int X3,int Y3);
 	void SetGate(int line1,int line2, int polyx[8], int polyy[8]);
 	void *addToBoxVertexHeap(int size);
 	PathVertex *addPathVertex();
 	bool checkXYInBoxBounds(int box, int x, int y);
 	uint distanceFromPt(int x, int y, int ptx, int pty);
 	ScummPoint closestPtOnLine(int ulx, int uly, int llx, int lly, int x, int y);
-	bool getSideOfLine(int x1,int y1, int x2, int y2, int x, int y, int box);
 	void getBoxCoordinates(int boxnum, BoxCoords *bc);
 	byte getMaskFromBox(int box);
 	Box *getBoxBaseAddr(int box);

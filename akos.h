@@ -104,8 +104,15 @@ struct AkosRenderer {
 	byte *akcd;
 
 	byte palette[256];
-	
+
+protected:
+	Scumm	*_vm;
+
 public:
+
+	// Constructor, sets all data to 0
+	AkosRenderer(Scumm *scumm) { memset(this, 0, sizeof(AkosRenderer)); _vm = scumm; }
+
 	bool drawCostume();
 	void setPalette(byte *palette);
 	void setCostume(int costume);

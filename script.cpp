@@ -907,7 +907,7 @@ void Scumm::animateActor(int act, int anim)
 			a->startAnimActor(a->standFrame);
 			break;
 		case 3:
-			a->moving &= ~4;
+			a->moving &= ~MF_TURN;
 			a->setActorDirection(dir);
 			break;
 		case 4:
@@ -933,7 +933,7 @@ void Scumm::animateActor(int act, int anim)
 			a->startAnimActor(a->standFrame);
 			break;
 		case 0x3E:
-			a->moving &= ~4;
+			a->moving &= ~MF_TURN;
 			a->setActorDirection(oldDirToNewDir(dir));
 			break;
 		case 0x3D:

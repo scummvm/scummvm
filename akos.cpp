@@ -22,6 +22,7 @@
 #include "stdafx.h"
 #include "scumm.h"
 #include "actor.h"
+#include "akos.h"
 
 bool Scumm::akos_hasManyDirections(Actor * a)
 {
@@ -155,8 +156,8 @@ void AkosRenderer::setPalette(byte *new_palette)
 	byte *the_akpl;
 	uint size, i;
 
-	the_akpl = g_scumm->findResourceData(MKID('AKPL'), akos);
-	size = g_scumm->getResourceDataSize(akpl);
+	the_akpl = _vm->findResourceData(MKID('AKPL'), akos);
+	size = _vm->getResourceDataSize(akpl);
 
 	if (size > 256)
 		error("akos_setPalette: %d is too many colors", size);
@@ -168,21 +169,21 @@ void AkosRenderer::setPalette(byte *new_palette)
 
 void AkosRenderer::setCostume(int costume)
 {
-	akos = g_scumm->getResourceAddress(rtCostume, costume);
+	akos = _vm->getResourceAddress(rtCostume, costume);
 	assert(akos);
 
-	akhd = (AkosHeader *) g_scumm->findResourceData(MKID('AKHD'), akos);
-	akof = (AkosOffset *) g_scumm->findResourceData(MKID('AKOF'), akos);
-	akci = g_scumm->findResourceData(MKID('AKCI'), akos);
-	aksq = g_scumm->findResourceData(MKID('AKSQ'), akos);
-	akcd = g_scumm->findResourceData(MKID('AKCD'), akos);
-	akpl = g_scumm->findResourceData(MKID('AKPL'), akos);
+	akhd = (AkosHeader *) _vm->findResourceData(MKID('AKHD'), akos);
+	akof = (AkosOffset *) _vm->findResourceData(MKID('AKOF'), akos);
+	akci = _vm->findResourceData(MKID('AKCI'), akos);
+	aksq = _vm->findResourceData(MKID('AKSQ'), akos);
+	akcd = _vm->findResourceData(MKID('AKCD'), akos);
+	akpl = _vm->findResourceData(MKID('AKPL'), akos);
 	codec = READ_LE_UINT16(&akhd->codec);
 }
 
 void AkosRenderer::setFacing(Actor * a)
 {
-	mirror = (g_scumm->newDirToOldDir(a->facing) != 0 || akhd->flags & 1);
+	mirror = (_vm->newDirToOldDir(a->facing) != 0 || akhd->flags & 1);
 	if (a->flip)
 		mirror ^= 1;
 }
@@ -584,14 +585,14 @@ void AkosRenderer::codec1()
 
 
 
-	if(g_scumm->isGlobInMemory(rtString,g_scumm->_vars[g_scumm->VAR_CUSTOMSCALETABLE])) {
-		v1.scaletable = g_scumm->getStringAddressVar(g_scumm->VAR_CUSTOMSCALETABLE);
+	if(_vm->isGlobInMemory(rtString,_vm->_vars[_vm->VAR_CUSTOMSCALETABLE])) {
+		v1.scaletable = _vm->getStringAddressVar(_vm->VAR_CUSTOMSCALETABLE);
 	} else {
 		v1.scaletable = default_scale_table;
 	}
 
 	/* Setup color decoding variables */
-	num_colors = g_scumm->getResourceDataSize(akpl);
+	num_colors = _vm->getResourceDataSize(akpl);
 	if (num_colors == 32) {
 		v1.mask = (1 << 3) - 1;
 		v1.shl = 3;
@@ -757,7 +758,7 @@ void AkosRenderer::codec1()
 	if (v1.skip_width <= 0 || height <= 0)
 		return;
 
-	g_scumm->updateDirtyRect(0, x_left, x_right, y_top, y_bottom, 1 << dirty_id);
+	_vm->updateDirtyRect(0, x_left, x_right, y_top, y_bottom, 1 << dirty_id);
 
 	y_clipping = ((uint) y_bottom > outheight || y_top < 0);
 
@@ -779,18 +780,18 @@ void AkosRenderer::codec1()
 
 	masking = false;
 	if (clipping) {
-		masking = g_scumm->isMaskActiveAt(x_left, y_top, x_right, y_bottom,
-														 g_scumm->getResourceAddress(rtBuffer, 9) +
-														 g_scumm->gdi._imgBufOffs[clipping] +
-														 g_scumm->_screenStartStrip) != 0;
+		masking = _vm->isMaskActiveAt(x_left, y_top, x_right, y_bottom,
+														 _vm->getResourceAddress(rtBuffer, 9) +
+														 _vm->gdi._imgBufOffs[clipping] +
+														 _vm->_screenStartStrip) != 0;
 	}
 
 	v1.mask_ptr = NULL;
 
 	if (masking || charsetmask || shadow_mode) {
 		v1.mask_ptr =
-			g_scumm->getResourceAddress(rtBuffer, 9) + cur_y * 40 + g_scumm->_screenStartStrip;
-		v1.imgbufoffs = g_scumm->gdi._imgBufOffs[clipping];
+			_vm->getResourceAddress(rtBuffer, 9) + cur_y * 40 + _vm->_screenStartStrip;
+		v1.imgbufoffs = _vm->gdi._imgBufOffs[clipping];
 		if (!charsetmask && masking) {
 			v1.mask_ptr += v1.imgbufoffs;
 			v1.imgbufoffs = 0;
@@ -904,7 +905,7 @@ void AkosRenderer::codec5()
 	int top;
 	int bottom;
 
-	vs = &g_scumm->virtscr[0];
+	vs = &_vm->virtscr[0];
 	//setBlastObjectMode(shadow_mode); // not implemented yet
 	moveX=move_x_cur;
 	moveY=move_y_cur;
@@ -930,7 +931,7 @@ void AkosRenderer::codec5()
 	draw_top = 0;
 	draw_bottom = 200;
 
-	g_scumm->updateDirtyRect(0, left, right+1, top, bottom+1, 1 << dirty_id);
+	_vm->updateDirtyRect(0, left, right+1, top, bottom+1, 1 << dirty_id);
 
 	bdd.dataptr = srcptr;
 	bdd.out = vs->screenPtr;
@@ -943,7 +944,7 @@ void AkosRenderer::codec5()
 	bdd.x = left+1;
 	bdd.y = top;
 
-	g_scumm->drawBomp(&bdd,0,bdd.dataptr,0,0);
+	_vm->drawBomp(&bdd,0,bdd.dataptr,0,0);
 }
 
 void AkosRenderer::codec16()

@@ -1267,7 +1267,6 @@ void Gdi::unkDecode3()
 	} while (--_tempNumLines);
 }
 
-
 void Gdi::unkDecode4()
 {
 	byte *src = _smap_ptr;

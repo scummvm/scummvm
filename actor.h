@@ -29,6 +29,13 @@
 
 class Scumm;
 
+enum MoveFlags {
+	MF_NEW_LEG = 1,
+	MF_IN_LEG = 2,
+	MF_TURN = 4,
+	MF_LAST_LEG = 8
+};
+
 struct ActorWalkData {
 	int16 destx,desty;			// Final destination
 	byte destbox;
@@ -99,13 +106,13 @@ public:
 	byte palette[64];
 
 protected:
-	Scumm	*_scumm;
+	Scumm	*_vm;
 
 public:
 
 	// Constructor, sets all data to 0
 	Actor() { memset(this, 0, sizeof(Actor)); }
-    void initActorClass(Scumm *scumm) {_scumm = scumm;}
+    void initActorClass(Scumm *scumm) {_vm = scumm;}
 //protected:
 	void hideActor();
 	void showActor();
@@ -136,7 +143,7 @@ public:
 	void remapActor(int b, int c, int d, int e);
 	void walkActorOld();
 	
-	bool isInCurrentRoom()					{ return room == _scumm->_currentRoom; }
+	bool isInCurrentRoom()					{ return room == _vm->_currentRoom; }
 
 	int getAnimVar(byte var)				{ return animVariable[var]; }
 	void setAnimVar(byte var, int value)	{ animVariable[var] = value; }
