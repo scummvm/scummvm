@@ -693,7 +693,7 @@ int32 Sword2Sound::OpenFx(int32 id, uint8 *data) {
 		while (i < 100) {
 			if (*data == 'd') {
 				data32 = (uint32*)data;
-				if (READ_BE_UINT32(data32) == MKID('data'))
+				if (READ_UINT32(data32) == MKID('data'))
 					break;
 			}
 			i += 1;
