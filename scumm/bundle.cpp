@@ -238,7 +238,7 @@ bool Bundle::openMusicFile(const char *filename, const char *directory) {
 	return true;
 }
 
-int32 Bundle::decompressVoiceSampleByIndex(int32 index, byte *comp_final) {
+int32 Bundle::decompressVoiceSampleByIndex(int32 index, byte **comp_final) {
 	int32 i, tag, num, final_size, output_size;
 	byte *comp_input, *comp_output;
 
@@ -273,6 +273,8 @@ int32 Bundle::decompressVoiceSampleByIndex(int32 index, byte *comp_final) {
 
 	comp_output = (byte *)malloc(0x2000);
 
+	*comp_final = (byte *)malloc(0x2000 * num);
+
 	for (i = 0; i < num; i++) {
 		comp_input = (byte *)malloc(_compVoiceTable[i].size);
 
@@ -281,7 +283,7 @@ int32 Bundle::decompressVoiceSampleByIndex(int32 index, byte *comp_final) {
 
 		output_size = decompressCodec(_compVoiceTable[i].codec, comp_input, comp_output, _compVoiceTable[i].size);
 		assert(output_size <= 0x2000);
-		memcpy(comp_final + final_size, comp_output, output_size);
+		memcpy(*comp_final + final_size, comp_output, output_size);
 		final_size += output_size;
 
 		free(comp_input);
@@ -339,7 +341,7 @@ int32 Bundle::decompressMusicSampleByIndex(int32 index, int32 number, byte *comp
 	return final_size;
 }
 
-int32 Bundle::decompressVoiceSampleByName(char *name, byte *comp_final) {
+int32 Bundle::decompressVoiceSampleByName(char *name, byte **comp_final) {
 	int32 final_size = 0, i;
 
 	if (_voiceFile.isOpen() == false) {

@@ -1194,21 +1194,18 @@ int Sound::playBundleSound(char *sound) {
 		strcpy(name, sound);
 		if (_scumm->_maxRooms != 6) // CMI demo does not have .IMX for voice but does for music...
 			strcat(name, ".IMX");
-		ptr = (byte *)malloc(1000000);
-		output_size = _scumm->_bundle->decompressVoiceSampleByName(name, ptr);
+		output_size = _scumm->_bundle->decompressVoiceSampleByName(name, &ptr);
 		if (output_size == 0) {
 			free(ptr);
 			return -1;
 		}
 	} else {
-		ptr = (byte *)malloc(1000000);
-		output_size = _scumm->_bundle->decompressVoiceSampleByName(sound, ptr);
+		output_size = _scumm->_bundle->decompressVoiceSampleByName(sound, &ptr);
 		if (output_size == 0) {
 			free(ptr);
 			return -1;
 		}
 	}
-	assert(output_size <= 1000000);
 	orig_ptr = ptr;
 
 	tag = READ_BE_UINT32(ptr); ptr += 4;
