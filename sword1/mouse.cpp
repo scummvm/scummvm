@@ -45,6 +45,7 @@ void Mouse::initialize(void) {
 	Logic::_scriptVars[MOUSE_STATUS] = 0; // mouse off and unlocked
 	_getOff = 0;
 	_inTopMenu = false;
+	_lastState = 0;
 	_mouseOverride = false;
 	_currentPtrId = _currentLuggageId = 0;
 
