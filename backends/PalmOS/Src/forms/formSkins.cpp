@@ -1,5 +1,6 @@
 #include <PalmOS.h>
 
+#include "palmdefs.h"
 #include "start.h"
 #include "forms.h"
 #include "skin.h"
