@@ -93,10 +93,11 @@ private:
 	bool tryLoadPlugin(Plugin *plugin);
 	
 	friend class Singleton<PluginManager>;
-	PluginManager();
-	~PluginManager();
 	
 public:
+	PluginManager();
+	~PluginManager();
+
 	void loadPlugins();
 	void unloadPlugins();
 	
