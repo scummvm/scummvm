@@ -49,6 +49,8 @@
 //item list defines
 #define section_0_item	119
 
+#define MAIN_CHAR_HEIGHT	12
+
 #define c_base_mode	0
 #define c_base_mode56	56
 #define c_action_mode	4

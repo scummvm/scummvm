@@ -28,7 +28,6 @@
 #define FIRST_TEXT_SEC	77
 #define NO_OF_TEXT_SECTIONS	8	// 8 sections per language
 #define	CHAR_SET_FILE	60150
-#define	SET_FONT_DATA_SIZE	12
 #define MAX_SPEECH_SECTION	7 
 
 SkyText::SkyText(SkyDisk *skyDisk, uint32 gameVersion) {
@@ -36,11 +35,19 @@ SkyText::SkyText(SkyDisk *skyDisk, uint32 gameVersion) {
 	_gameVersion = gameVersion;
 
 	_mainCharacterSet.addr = _skyDisk->loadFile(CHAR_SET_FILE, NULL);
+	_mainCharacterSet.charHeight = MAIN_CHAR_HEIGHT;
+	_mainCharacterSet.charSpacing = 0;
+	
 	fnSetFont(0);
 	
 	if (!SkyState::isDemo(_gameVersion)) {
 		_controlCharacterSet.addr = _skyDisk->loadFile(60520, NULL);
+		_controlCharacterSet.charHeight = 12;
+		_controlCharacterSet.charSpacing = 1;
+		
 		_linkCharacterSet.addr = _skyDisk->loadFile(60521, NULL);
+		_linkCharacterSet.charHeight = 12;
+		_linkCharacterSet.charSpacing = 0;
 	}
 
 	if (SkyState::isCDVersion(_gameVersion)) {
@@ -49,11 +56,27 @@ SkyText::SkyText(SkyDisk *skyDisk, uint32 gameVersion) {
 }
 
 void SkyText::fnSetFont(uint32 fontNr) { 
+
+	struct charSet *newCharSet;
+
+	switch (fontNr) {
+		case 0:
+			newCharSet = &_mainCharacterSet;
+			break;
+		case 1:
+			newCharSet = &_controlCharacterSet;
+			break;
+		case 2:
+			newCharSet = &_linkCharacterSet;
+			break;
+		default:
+			error("Tried to set invalid font (%d)", fontNr);
+	}
+
 	_curCharSet = fontNr;
-	byte *charSetPtr = _mainCharacterSet.addr + (fontNr * SET_FONT_DATA_SIZE);		
-	_characterSet = READ_LE_UINT32(charSetPtr);
-	_charHeight = READ_LE_UINT32(charSetPtr + 4);
-	_dtCharSpacing = READ_LE_UINT32(charSetPtr + 8);
+	_characterSet = newCharSet->addr;
+	_charHeight = newCharSet->charHeight;
+	_dtCharSpacing = newCharSet->charSpacing;
 }
 
 void SkyText::getText(uint32 textNr, void **itemList, uint16 language) { //load text #"textNr" into textBuffer
