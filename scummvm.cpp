@@ -224,7 +224,7 @@ void Scumm::scummMain(int argc, char **argv) {
 	allocResTypeData(rtBuffer, MKID('NONE'),10,"buffer", 0);
 	initVirtScreen(0, 0, 200, false, false);	
 
- #ifndef __MORPHOS__
+ #if !defined(__MORPHOS__) && !defined(__APPLE__CW)
 	if (_exe_name==NULL)
 		//error("Specify the name of the game to start on the command line");
 		launcherLoop();
