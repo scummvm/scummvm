@@ -246,6 +246,12 @@
 			RelativePath="..\..\scumm\imuse_player.cpp">
 		</File>
 		<File
+			RelativePath="..\..\scumm\smush\insane.cpp">
+		</File>
+		<File
+			RelativePath="..\..\scumm\smush\insane.h">
+		</File>
+		<File
 			RelativePath="..\..\scumm\instrument.cpp">
 		</File>
 		<File

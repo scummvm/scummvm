@@ -231,7 +231,13 @@
 					RelativePath="..\..\common\scaler\hq2x.cpp">
 				</File>
 				<File
+					RelativePath="..\..\common\scaler\hq2x.h">
+				</File>
+				<File
 					RelativePath="..\..\common\scaler\hq3x.cpp">
+				</File>
+				<File
+					RelativePath="..\..\common\scaler\hq3x.h">
 				</File>
 				<File
 					RelativePath="..\..\common\scaler\intern.h">
