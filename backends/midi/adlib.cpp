@@ -584,7 +584,7 @@ int MidiDriver_ADLIB::open (int mode)
 
 void MidiDriver_ADLIB::close()
 {
-	int i;
+	uint i;
 	for (i = 0; i < ARRAYSIZE(_midi_channels); ++i) {
 		if (_midi_channels [i]._part)
 			mc_off (&_midi_channels [i]);
@@ -601,7 +601,7 @@ void MidiDriver_ADLIB::send (uint32 b)
 
 	MidiChannelAdl *mc;
 
-	byte param3 = (byte) ((b >> 24) & 0xFF);
+	//byte param3 = (byte) ((b >> 24) & 0xFF);
 	byte param2 = (byte) ((b >> 16) & 0xFF);
 	byte param1 = (byte) ((b >>  8) & 0xFF);
 	byte cmd    = (byte) (b & 0xF0);
