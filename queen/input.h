@@ -114,8 +114,7 @@ class Input {
 			KEY_F12
 		};
 
-		enum 
-		{
+		enum {
 			LANGUAGE_COUNT = 6
 		};
 		
@@ -168,6 +167,9 @@ class Input {
 
 		//! Command keys for all languages
 		static const char *_commandKeys[LANGUAGE_COUNT];
+		
+		//! Verbs matching the command keys
+		static const Verb _verbKeys[8];
 };
 
 } // End of namespace Queen

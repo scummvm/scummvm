@@ -28,6 +28,7 @@
 #include "queen/grid.h"
 #include "queen/logic.h"
 #include "queen/queen.h"
+#include "queen/resource.h"
 #include "queen/sound.h"
 #include "queen/state.h"
 #include "queen/walk.h"

@@ -73,80 +73,67 @@ void Credits::update() {
 		if ('.' == line[0]) {
 			int i;
 
-			switch (tolower(line[1])) {
-				
-				case 'l' :
-					_justify = 0;
-					break;
-				case 'c' :
-					_justify = 1;
-					break;
-				case 'r' :
-					_justify = 2;
-					break;
-
-				case 's' :
-					_fontSize = 0;
-					break;
-				case 'b' :
-					_fontSize = 1;
-					break;
-
-				case 'p' :
-					_pause = atoi(&line[3]);
-					_pause *= 10;
-
-					/* wait until next room */
-					if (0 == _pause)
-						_pause = -1;
-
-
-					for(i = 0; i < _count; i++)
-					{
-						_vm->display()->textCurrentColor(_list[i].color);
-						_vm->display()->setText(_list[i].x, _list[i].y, _list[i].text);
-					}
-
-					_count = 0;
-					return;
-					
-				case 'i' :
-					_color = atoi(&line[3]);
-					break;
-
-				case '1' :
-				case '2' :
-				case '3' :
-				case '4' :
-				case '5' :
-				case '6' :
-				case '7' :
-				case '8' :
-				case '9' :
-					_zone = line[1] - '1';
-					break;
+			switch (tolower(line[1])) {	
+			case 'l' :
+				_justify = 0;
+				break;
+			case 'c' :
+				_justify = 1;
+				break;
+			case 'r' :
+				_justify = 2;
+				break;
+			case 's' :
+				_fontSize = 0;
+				break;
+			case 'b' :
+				_fontSize = 1;
+				break;
+			case 'p' :
+				_pause = atoi(&line[3]);
+				_pause *= 10;
+				/* wait until next room */
+				if (0 == _pause)
+					_pause = -1;
+				for(i = 0; i < _count; i++)	{
+					_vm->display()->textCurrentColor(_list[i].color);
+					_vm->display()->setText(_list[i].x, _list[i].y, _list[i].text);
+				}
+				_count = 0;
+				return;					
+			case 'i' :
+				_color = atoi(&line[3]);
+				break;
+			case '1' :
+			case '2' :
+			case '3' :
+			case '4' :
+			case '5' :
+			case '6' :
+			case '7' :
+			case '8' :
+			case '9' :
+				_zone = line[1] - '1';
+				break;
 			}
-
-		}
-		else {
+		} else {
 			assert(_count < ARRAYSIZE(_list));
 			_list[_count].text = line;
 			_list[_count].color = _color;
 			_list[_count].fontSize = _fontSize;
 			switch (_justify) {
-				case 0:
-					_list[_count].x = (_zone % 3) * (320 / 3) + 8;
-					break;
-				case 1:
-					_list[_count].x = (_zone % 3) * (320 / 3) + 54 - _vm->display()->textWidth(line) / 2;
-					if (_list[_count].x < 8)
-						_list[_count].x = 8;
-					break;
-				case 2:
-					_list[_count].x = (_zone % 3) * (320 / 3) + 100 - _vm->display()->textWidth(line);
-					break;
+			case 0:
+				_list[_count].x = (_zone % 3) * (320 / 3) + 8;
+				break;
+			case 1:
+				_list[_count].x = (_zone % 3) * (320 / 3) + 54 - _vm->display()->textWidth(line) / 2;
+				if (_list[_count].x < 8)
+					_list[_count].x = 8;
+				break;
+			case 2:
+				_list[_count].x = (_zone % 3) * (320 / 3) + 100 - _vm->display()->textWidth(line);
+				break;
 			}
-
 			_list[_count].y = (_zone / 3) * (200 / 3) + (_count * 10);
 			_count++;
 		}

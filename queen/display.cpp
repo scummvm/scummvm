@@ -674,7 +674,7 @@ void Display::setupNewRoom(const char *name, uint16 room) {
 	uint32 size;
 	char filename[20];
 	sprintf(filename, "%s.PCX", name);
-	uint8 *pcxBuf = _vm->resource()->loadFile(filename, 0, &size);
+	const uint8 *pcxBuf = _vm->resource()->loadFile(filename, 0, &size);
 	_bdWidth  = READ_LE_UINT16(pcxBuf + 12);
 	_bdHeight = READ_LE_UINT16(pcxBuf + 14);
 	readPCX(_backdropBuf, BACKDROP_W, pcxBuf + 128, _bdWidth, _bdHeight);
@@ -845,8 +845,8 @@ void Display::initFont() {
 		}
 		_charWidth[i] += 2;
 	}
-	_charWidth[(uint8)' '] = 4;
-	--_charWidth[(uint8)'^'];
+	_charWidth[0x20] = 4;
+	--_charWidth[0x5E];
 }
 
 void Display::setText(uint16 x, uint16 y, const char *text, bool outlined) {
@@ -854,7 +854,6 @@ void Display::setText(uint16 x, uint16 y, const char *text, bool outlined) {
 		if (x == 0) x = 1;
 		if (y == 0) y = 1;
 		TextSlot *pts = &_texts[y];
-
 		pts->x = x;
 		pts->color = _curTextColor;
 		pts->outlined = outlined;

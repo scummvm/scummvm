@@ -181,13 +181,11 @@ void Talk::talk(const char *filename, int personInRoom, char *cutawayFilename) {
 				break;
 
 			speak(_talkString[selectedSentence], NULL, _joeVoiceFilePrefix[selectedSentence]);
-		}
-		else {
+		} else {
 			if (person.actor->bobNum > 0) {
 				speak(_talkString[0], &person, otherVoiceFilePrefix);
 				selectedSentence = selectSentence();
-			}
-			else {
+			} else {
 				warning("bobBum is %i", person.actor->bobNum);
 				selectedSentence = 0;
 			}
@@ -217,8 +215,7 @@ void Talk::talk(const char *filename, int personInRoom, char *cutawayFilename) {
 						level = i;
 
 			disableSentence(oldLevel, selectedSentence);
-		}
-		else { // 0 != level
+		} else { // 0 != level
 			// Check to see if Person Return value is positive, if it is, then
 			// change the selected dialogue option to the Return value
 
@@ -231,8 +228,7 @@ void Talk::talk(const char *filename, int personInRoom, char *cutawayFilename) {
 
 				_dialogueTree[oldLevel][selectedSentence].head = _dialogueTree[level][0].dialogueNodeValue1;
 				_dialogueTree[level][0].dialogueNodeValue1 = -1;
-			}
-			else {
+			} else {
 				disableSentence(oldLevel, selectedSentence);
 			}
 		}
@@ -296,8 +292,7 @@ void Talk::talk(const char *filename, int personInRoom, char *cutawayFilename) {
 		_vm->input()->talkQuitReset();
 		_vm->display()->clearTexts(0, 198);
 		_vm->logic()->makeJoeSpeak(15, false);
-	}
-	else {
+	} else {
 		setHasTalkedTo();
 	}
 
@@ -508,8 +503,7 @@ int Talk::getSpeakCommand(const Person *person, const char *sentence, unsigned &
 		if (sentence[index + 0] >= '0' && sentence[index + 0] <= '9' &&
 				sentence[index + 1] >= '0' && sentence[index + 1] <= '9') {
 			commandCode = (sentence[index] - '0') * 10 + (sentence[index + 1] - '0');
-		}
-		else
+		} else
 			warning("Unknown command string: '%2s'", sentence + index);
 	}
 
@@ -584,8 +578,7 @@ bool Talk::speak(const char *sentence, Person *person, const char *voiceFilePref
 
 			segmentIndex++;
 			segmentStart = i;
-		}
-		else
+		} else
 			i++;
 
 		if (_vm->input()->cutawayQuit() || _vm->input()->talkQuit())
@@ -647,8 +640,7 @@ void Talk::headStringAnimation(const SpeechParameters *parameters, int bobNum, i
 
 			_vm->update();
 		}
-	}
-	else
+	} else
 		bob2->active = false;
 }
 
@@ -663,16 +655,13 @@ void Talk::stringAnimation(const SpeechParameters *parameters, int startFrame, i
 		torso = true;
 		_vm->bankMan()->overpack(parameters->body, startFrame, bankNum);
 		offset++;
-	}
-	else if (parameters->animation[0] == 'E') {
+	} else if (parameters->animation[0] == 'E') {
 		// Talking head animation
 		return;
-	}
-	else if (!isdigit(parameters->animation[0])) {
+	} else if (!isdigit(parameters->animation[0])) {
 		debug(6, "Error in speak string animation: '%s'", parameters->animation);
 		return;
-	}
-	else
+	} else
 		torso = false;
 
 	for (;;) {
@@ -691,8 +680,7 @@ void Talk::stringAnimation(const SpeechParameters *parameters, int startFrame, i
 
 		if (torso) {
 			_vm->bankMan()->overpack(frame, startFrame, bankNum);
-		}
-		else {
+		} else {
 			_vm->bankMan()->unpack(frame, startFrame, bankNum);
 			// XXX bobs[BNUM].scale=SF;
 		}
@@ -741,8 +729,7 @@ void Talk::defaultAnimation(
 					else {
 						_vm->bankMan()->overpack(head, startFrame, bankNum);
 					}
-				}
-				else {
+				} else {
 					debug(6, "[Talk::defaultAnimation] Body action!");
 					// Just do a body action
 					_vm->bankMan()->overpack(parameters->body, startFrame, bankNum);
@@ -750,8 +737,7 @@ void Talk::defaultAnimation(
 
 				if (!_talkHead)
 					_vm->update();
-			}
-			else { // (_talkHead && isJoe)
+			} else { // (_talkHead && isJoe)
 				_vm->update();
 			}
 
@@ -760,8 +746,7 @@ void Talk::defaultAnimation(
 			
 			if (_vm->logic()->joeWalk() == JWM_SPEAK) {
 				_vm->update();
-			}
-			else {
+			} else {
 				_vm->update(true);
 				if (_vm->logic()->joeWalk() == JWM_EXECUTE)
 					// Selected a command, so exit
@@ -809,19 +794,19 @@ void Talk::speakSegment(
 	int faceDirectionCommand = 0;
 
 	switch (command) {
-		case SPEAK_PAUSE:
-			for (i = 0; i < 10 && !_vm->input()->talkQuit(); i++) {
-				_vm->update();
-			}
-			return;
+	case SPEAK_PAUSE:
+		for (i = 0; i < 10 && !_vm->input()->talkQuit(); i++) {
+			_vm->update();
+		}
+		return;
 
-		case SPEAK_FACE_LEFT:
-		case SPEAK_FACE_RIGHT:
-		case SPEAK_FACE_FRONT:
-		case SPEAK_FACE_BACK:
-			faceDirectionCommand = command;	
-			command = 0;
-			break;
+	case SPEAK_FACE_LEFT:
+	case SPEAK_FACE_RIGHT:
+	case SPEAK_FACE_FRONT:
+	case SPEAK_FACE_BACK:
+		faceDirectionCommand = command;	
+		command = 0;
+		break;
 	}
 
 	bool isJoe = (0 == person->actor->bobNum);
@@ -847,8 +832,7 @@ void Talk::speakSegment(
 				_vm->bankMan()->unpack(i, frameNum, bankNum);
 				++frameNum;
 			}
-		}
-		else {
+		} else {
 			bob->animating = false;
 			bob->frameNum = 31 + bobNum;
 		}
@@ -858,34 +842,32 @@ void Talk::speakSegment(
 		// talk.c lines 1491-1533
 		if (isJoe) {
 			switch (_vm->logic()->currentRoom()) {
-				case FAYE_HEAD:
-				case AZURA_HEAD:
-					textX = 15;
-					break;
+			case FAYE_HEAD:
+			case AZURA_HEAD:
+				textX = 15;
+				break;
 
-				default:
-					textX = 150;
-					break;
+			default:
+				textX = 150;
+				break;
 			}
 			textY = 30;
-		}
-		else {
+		} else {
 			// XXX spaces = (spaces * 5) / 2;
 			switch (_vm->logic()->currentRoom()) {
-				case FAYE_HEAD:
-				case AZURA_HEAD:
-					textX = 15;
-					textY = 60;
-					break;
+			case FAYE_HEAD:
+			case AZURA_HEAD:
+				textX = 15;
+				textY = 60;
+				break;
 
-				default: 			// Frank
-					textX = 150;
-					textY = 60;
-					break;
+			default: 			// Frank
+				textX = 150;
+				textY = 60;
+				break;
 			}
 		}
-	}
-	else {
+	} else {
 		textX = bob->x;
 		textY = bob->y;
 	}
@@ -899,8 +881,7 @@ void Talk::speakSegment(
 		if (_vm->subtitles())
 			_vm->graphics()->setBobText(bob, segment, textX, textY, color, true);
 		defaultAnimation(segment, isJoe, parameters, startFrame, bankNum);
-	}
-	else {
+	} else {
 		if (SPEAK_UNKNOWN_6 == command)
 			return;
 
@@ -932,10 +913,18 @@ void Talk::speakSegment(
 
 		if (faceDirectionCommand) {
 			switch (faceDirectionCommand) {
-				case SPEAK_FACE_LEFT:  faceDirection = DIR_LEFT;  break;
-				case SPEAK_FACE_RIGHT: faceDirection = DIR_RIGHT; break;
-				case SPEAK_FACE_FRONT: faceDirection = DIR_FRONT; break;
-				case SPEAK_FACE_BACK:  faceDirection = DIR_BACK;  break;
+			case SPEAK_FACE_LEFT:
+				faceDirection = DIR_LEFT;
+				break;
+			case SPEAK_FACE_RIGHT:
+				faceDirection = DIR_RIGHT;
+				break;
+			case SPEAK_FACE_FRONT:
+				faceDirection = DIR_FRONT;
+				break;
+			case SPEAK_FACE_BACK:
+				faceDirection = DIR_BACK;
+				break;
 			}
 			if (isJoe)
 				_vm->logic()->joeFacing(faceDirection);
@@ -957,8 +946,7 @@ void Talk::speakSegment(
 
 		if (parameters->animation[0] != '\0' && parameters->animation[0] != 'E') {
 			stringAnimation(parameters, startFrame, bankNum);
-		}
-		else {
+		} else {
 			_vm->bankMan()->unpack(parameters->body, startFrame, bankNum);
 
 			if (length == 0 && !isJoe && parameters->bf > 0) {
@@ -1009,14 +997,12 @@ void Talk::speakSegment(
 			//       holding the Dino Ray gun.
 			if (_vm->logic()->currentRoom() != 69) 
 				_vm->logic()->joeFace();
-		}
-		else {
+		} else {
 			if (command == SPEAK_DEFAULT ||
 					command == 6 ||
 					command == 7) {
 				_vm->logic()->joeFace();
-			}
-			else if (command != 5) {
+			} else if (command != 5) {
 				// 7/11/94, Ensure that correct mouth closed frame is used!
 				if (parameters->rf != -1)
 					// XXX should really be just "bf", but it is not always calculated... :-(
@@ -1288,8 +1274,7 @@ int16 Talk::selectSentence() {
 					}
 					rezone = true;
 					break;
-				}
-				else {
+				} else {
 					if (oldZone != zone) {
 						// Changed zone, change text colors
 						int y;

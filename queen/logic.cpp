@@ -287,41 +287,40 @@ uint16 Logic::findBob(uint16 obj) const {
 
 			uint16 idxAnimated = 0;
 			uint16 idxStatic = 0;
-			uint16 i;
-			for(i = _roomData[room] + 1; i <= obj; ++i) {
+			for (uint16 i = _roomData[room] + 1; i <= obj; ++i) {
 				img = _objectData[i].image;
-				if(img <= -10) {
-					if(_graphicData[-(img + 10)].lastFrame != 0) {
+				if (img <= -10) {
+					if (_graphicData[-(img + 10)].lastFrame != 0) {
 						++idxAnimated;
 					} else {
 						++idxStatic;
 					}
-				} else if(img > 0) {
-					if(img > 5000) {
+				} else if (img > 0) {
+					if (img > 5000) {
 						img -= 5000;
 					}
 
 					assert (img <= _numGraphics);
 					
-					if(_graphicData[img].lastFrame != 0) {
+					if (_graphicData[img].lastFrame != 0) {
 						++idxAnimated;
 					} else {
 						++idxStatic;
 					}
-				} else if(img == -1) {
+				} else if (img == -1) {
 					++idxStatic;
-				} else if(img == -2) {
+				} else if (img == -2) {
 					++idxAnimated;
 				}
 			}
-			if(bobtype == 0) {
+			if (bobtype == 0) {
 				// static bob
-				if(idxStatic > 0) {
+				if (idxStatic > 0) {
 					bobnum = 19 + _vm->graphics()->numStaticFurniture() + idxStatic;
 				}
 			} else {
 				// animated bob
-				if(idxAnimated > 0) {
+				if (idxAnimated > 0) {
 					bobnum = 4 + _vm->graphics()->numAnimatedFurniture() + idxAnimated;
 				}
 			}
@@ -331,21 +330,19 @@ uint16 Logic::findBob(uint16 obj) const {
 }
 
 uint16 Logic::findFrame(uint16 obj) const {
-	uint16 i;
 	uint16 framenum = 0;
-
 	uint16 room = _objectData[obj].room;
 	int16 img = _objectData[obj].image;
-	if(img == -3 || img == -4) {
+	if (img == -3 || img == -4) {
 		uint16 bobnum = findPersonNumber(obj, room);
 		if(bobnum <= 3) {
 			framenum = 31 + bobnum;
 		}
 	} else {
 		uint16 idx = 0;
-		for(i = _roomData[room] + 1; i < obj; ++i) {
+		for(uint16 i = _roomData[room] + 1; i < obj; ++i) {
 			img = _objectData[i].image;
-			if(img <= -10) {
+			if (img <= -10) {
 				const GraphicData* pgd = &_graphicData[-(img + 10)];
 				if(pgd->lastFrame != 0) {
 					// skip all the frames of the animation
@@ -354,17 +351,17 @@ uint16 Logic::findFrame(uint16 obj) const {
 					// static bob, skip one frame
 					++idx;
 				}
-			} else if(img == -1) {
+			} else if (img == -1) {
 				++idx;
-			} else if(img > 0) {
-				if(img > 5000) {
+			} else if (img > 0) {
+				if (img > 5000) {
 					img -= 5000;
 				}
 				const GraphicData* pgd = &_graphicData[img];
 				uint16 lastFrame = ABS(pgd->lastFrame);
-				if(pgd->firstFrame < 0) {
+				if (pgd->firstFrame < 0) {
 					idx += lastFrame;
-				} else if(lastFrame != 0) {
+				} else if (lastFrame != 0) {
 					idx += (lastFrame - pgd->firstFrame) + 1;
 				} else {
 					++idx;
@@ -373,19 +370,19 @@ uint16 Logic::findFrame(uint16 obj) const {
 		}
 
 		img = _objectData[obj].image;
-		if(img <= -10) {
+		if (img <= -10) {
 			const GraphicData* pgd = &_graphicData[-(img + 10)];
-			if(pgd->lastFrame != 0) {
+			if (pgd->lastFrame != 0) {
 				idx += ABS(pgd->lastFrame) - pgd->firstFrame + 1;
 			} else {
 				++idx;
 			}
-		} else if(img == -1 || img > 0) {
+		} else if (img == -1 || img > 0) {
 			++idx;
 		}
 
 		// calculate only if there are person frames
-		if(idx > 0) {
+		if (idx > 0) {
 			framenum = FRAMES_JOE + _vm->graphics()->numFurnitureFrames() + idx;
 		}
 	}
@@ -398,7 +395,7 @@ uint16 Logic::objectForPerson(uint16 bobNum) const {
 	uint16 cur = currentRoomData() + 1;
 	// last object number in the room
 	uint16 last = _roomData[_currentRoom + 1];
-	while (cur <= last) {
+	for (; cur <= last; ++cur) {
 		int16 image = _objectData[cur].image;
 		if (image == -3 || image == -4) {
 			// the object is a bob
@@ -407,14 +404,12 @@ uint16 Logic::objectForPerson(uint16 bobNum) const {
 		if (bobcur == bobNum) {
 			return cur;
 		}
-		++cur;
 	}
 	return 0;
 }
 
 WalkOffData *Logic::walkOffPointForObject(int16 obj) const {
-	uint16 i;
-	for (i = 1; i <= _numWalkOffs; ++i) {
+	for (uint16 i = 1; i <= _numWalkOffs; ++i) {
 		if (_walkOffData[i].entryObj == obj) {
 			return &_walkOffData[i];
 		}
@@ -463,7 +458,7 @@ void Logic::eraseRoom() {
 
 	uint16 cur = _roomData[_oldRoom] + 1;
 	uint16 last = _roomData[_oldRoom + 1];
-	while (cur <= last) {
+	for (; cur <= last; ++cur) {
 		ObjectData *pod = &_objectData[cur];
 		if (pod->name == 0) {
 			// object has been deleted, invalidate image
@@ -477,7 +472,6 @@ void Logic::eraseRoom() {
 				pod->image = -2;
 			}
 		}
-		++cur;
 	}
 }
 
@@ -542,8 +536,7 @@ ActorData *Logic::findActor(uint16 noun, const char *name) const {
 
 	// search for a matching actor
 	if (bobNum > 0) {
-		uint16 i;
-		for (i = 1; i <= _numActors; ++i) {
+		for (uint16 i = 1; i <= _numActors; ++i) {
 			ActorData *pad = &_actorData[i];
 			if (pad->room == _currentRoom && gameState(pad->gsSlot) == pad->gsValue) {
 				if (bobNum == pad->bobNum || (name && !strcmp(_aName[pad->name], name))) {
@@ -556,7 +549,7 @@ ActorData *Logic::findActor(uint16 noun, const char *name) const {
 }
 
 bool Logic::initPerson(uint16 noun, const char *actorName, bool loadBank, Person *pp) {
-	ActorData *pad = findActor(noun, actorName);
+	const ActorData *pad = findActor(noun, actorName);
 	if (pad != NULL) {
 		pp->actor = pad;
 		pp->name = _aName[pad->name];
@@ -577,8 +570,7 @@ bool Logic::initPerson(uint16 noun, const char *actorName, bool loadBank, Person
 
 uint16 Logic::findPersonNumber(uint16 obj, uint16 room) const {
 	uint16 num = 0;
-	uint16 i;
-	for (i = _roomData[room] + 1; i <= obj; ++i) {
+	for (uint16 i = _roomData[room] + 1; i <= obj; ++i) {
 		int16 img = _objectData[i].image;
 		if (img == -3 || img == -4) {
 			++num;
@@ -588,9 +580,8 @@ uint16 Logic::findPersonNumber(uint16 obj, uint16 room) const {
 }
 
 void Logic::loadJoeBanks(const char *animBank, const char *standBank) {
-	int i;
 	_vm->bankMan()->load(animBank, 13);
-	for (i = 11; i < 31; ++i) {
+	for (int i = 11; i < 31; ++i) {
 		_vm->bankMan()->unpack(i - 10, i, 13);
 	}
 	_vm->bankMan()->close(13);
@@ -609,7 +600,6 @@ void Logic::setupJoe() {
 
 void Logic::setupJoeInRoom(bool autoPosition, uint16 scale) {
 	debug(9, "Logic::setupJoeInRoom(%d, %d) joe.x=%d joe.y=%d", autoPosition, scale, _joe.x, _joe.y);
-	WalkOffData *pwo = NULL;
 
 	int16 oldx, oldy;
 	if (!autoPosition || joeX() != 0 || joeY() != 0) {
@@ -617,10 +607,10 @@ void Logic::setupJoeInRoom(bool autoPosition, uint16 scale) {
 		oldy = joeY();
 		joePos(0, 0);
 	} else {
-		ObjectData *pod = objectData(_entryObj);
+		const ObjectData *pod = objectData(_entryObj);
 		// find the walk off point for the entry object and make 
 		// Joe walking to that point
-		pwo = walkOffPointForObject(_entryObj);
+		const WalkOffData *pwo = walkOffPointForObject(_entryObj);
 		if (pwo != NULL) {
 			oldx = pwo->x;
 			oldy = pwo->y;
@@ -652,7 +642,7 @@ void Logic::setupJoeInRoom(bool autoPosition, uint16 scale) {
 		joeCutFacing(0);
 	} else {
 		// check to see which way Joe entered room
-		ObjectData *pod = objectData(_entryObj);
+		const ObjectData *pod = objectData(_entryObj);
 		switch (State::findDirection(pod->state)) {
 		case DIR_BACK:
 			joeFacing(DIR_FRONT);
@@ -744,7 +734,6 @@ void Logic::joeGrab(int16 grabState) {
 	switch (grabState) {
 	case STATE_GRAB_NONE:
 		break;
-
 	case STATE_GRAB_MID:
 		if (joeFacing() == DIR_BACK) {
 			frame = 6;
@@ -754,7 +743,6 @@ void Logic::joeGrab(int16 grabState) {
 			frame = 2;
 		}
 		break;
-
 	case STATE_GRAB_DOWN:
 		if (joeFacing() == DIR_BACK) {
 			frame = 9;
@@ -762,7 +750,6 @@ void Logic::joeGrab(int16 grabState) {
 			frame = 8;
 		}
 		break;
-
 	case STATE_GRAB_UP:
 		// turn back
 		_vm->bankMan()->unpack(5, 31, 7);
@@ -897,9 +884,8 @@ void Logic::inventorySetup() {
 }
 
 void Logic::inventoryRefresh() {
-	int16 i;
 	uint16 x = 182;
-	for (i = 0; i < 4; ++i) {
+	for (int i = 0; i < 4; ++i) {
 		uint16 itemNum = _inventoryItem[i];
 		if (itemNum != 0) {
 			// 1st object in inventory uses frame 8, 
@@ -1538,8 +1524,8 @@ void Logic::asmShrinkRobot() {
 }
 
 void Logic::asmEndGame() {
-	int i;
-	for (i = 0; i < 40; ++i) {
+	int n = 40;
+	while (n--) {
 		_vm->update();
 	}
 	debug(0, "Game completed.");
@@ -1726,7 +1712,7 @@ void Logic::asmMakeLightningHitPlane() {
 	planeBob->scale = 100;
 	_vm->display()->horizontalScroll(0);
 
-	planeBob->x -= -8;
+	planeBob->x += 8;
 	planeBob->y += 6;
 
 	lightningBob->x = 160;

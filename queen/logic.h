@@ -25,7 +25,6 @@
 #include "common/util.h"
 #include "queen/defs.h"
 #include "queen/structs.h"
-#include "queen/resource.h"
 
 namespace Queen {
 
@@ -45,6 +44,7 @@ enum JoeWalkMode {
 
 class Credits;
 class Journal;
+class LineReader;
 class QueenEngine;
 
 class Logic {
@@ -115,7 +115,7 @@ public:
 	int16 gameState(int index) const;
 	void gameState(int index, int16 newValue);
 
-	TalkSelected *talkSelected(int index) { return _talkSelected + index; }
+	TalkSelected *talkSelected(int index) { return &_talkSelected[index]; }
 
 	const char *roomName(uint16 roomNum) const;
 	const char *objectName(uint16 objNum) const { return _objName[objNum]; }

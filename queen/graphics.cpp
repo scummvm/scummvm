@@ -406,7 +406,7 @@ void Graphics::stopBobs() {
 
 BobSlot *Graphics::bob(int index) {
 	assert(index < MAX_BOBS_NUMBER);
-	return _bobs + index;
+	return &_bobs[index];
 }
 
 void Graphics::setBobText(

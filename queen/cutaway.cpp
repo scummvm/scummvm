@@ -82,8 +82,7 @@ void Cutaway::load(const char *filename) {
 	if (_cutawayObjectCount < 0) {
 		_cutawayObjectCount = -_cutawayObjectCount;
 		_vm->input()->canQuit(false);
-	}
-	else
+	} else
 		_vm->input()->canQuit(true);
 
 	int16 flags1 = (int16)READ_BE_INT16(ptr);
@@ -93,8 +92,7 @@ void Cutaway::load(const char *filename) {
 	if (flags1 < 0) {
 		_vm->logic()->entryObj(0);
 		_finalRoom = -flags1;
-	}
-	else
+	} else
 		_finalRoom = PREVIOUS_ROOM;
 
 	_anotherCutaway = (flags1 == 1);
@@ -135,18 +133,18 @@ void Cutaway::load(const char *filename) {
 			entryString[1] == 'F' &&
 			entryString[3] == '\0') {
 		switch (entryString[2]) {
-			case 'L':
-				_vm->logic()->joeCutFacing(DIR_LEFT);
-				break;
-			case 'R':
-				_vm->logic()->joeCutFacing(DIR_RIGHT);
-				break;
-			case 'F':
-				_vm->logic()->joeCutFacing(DIR_FRONT);
-				break;
-			case 'B':
-				_vm->logic()->joeCutFacing(DIR_BACK);
-				break;
+		case 'L':
+			_vm->logic()->joeCutFacing(DIR_LEFT);
+			break;
+		case 'R':
+			_vm->logic()->joeCutFacing(DIR_RIGHT);
+			break;
+		case 'F':
+			_vm->logic()->joeCutFacing(DIR_FRONT);
+			break;
+		case 'B':
+			_vm->logic()->joeCutFacing(DIR_BACK);
+			break;
 		}
 	}
 
@@ -210,8 +208,7 @@ const byte *Cutaway::getCutawayObject(const byte *ptr, CutawayObject &object)
 	if (object.limitBobX1 < 0) {
 		object.song = -object.limitBobX1;
 		object.limitBobX1 = 0;
-	}
-	else
+	} else
 		object.song = 0;
 
 	return ptr;
@@ -224,16 +221,18 @@ void Cutaway::dumpCutawayObject(int index, CutawayObject &object)
 	const char *objectNumberStr;
 
 	switch (object.objectNumber) {
-		case -1:  
-			objectNumberStr = "MESSAGE";  break;
-		case 0:   
-			objectNumberStr = "Joe";      break;
-		default:
-			if (object.objectNumber > 0)
-				objectNumberStr = _vm->logic()->objectName(ABS(_vm->logic()->objectData(object.objectNumber)->name));
-			else
-				objectNumberStr = "Unknown!";
-		  break;
+	case -1:  
+		objectNumberStr = "MESSAGE";
+		break;
+	case 0:   
+		objectNumberStr = "Joe";
+		break;
+	default:
+		if (object.objectNumber > 0)
+			objectNumberStr = _vm->logic()->objectName(ABS(_vm->logic()->objectData(object.objectNumber)->name));
+		else
+			objectNumberStr = "Unknown!";
+		break;
 	}
 
 	debug(6, "objectNumber = %i (%s)", object.objectNumber, objectNumberStr);
@@ -345,8 +344,7 @@ void Cutaway::changeRooms(CutawayObject &object) {
 				if (on) {
 					// It is needed, so ensure it's ON
 					objectData->name = ABS(objectData->name);
-				}
-				else {
+				} else {
 					// Not needed, so switch off!
 					objectData->name = -ABS(objectData->name);
 				}
@@ -388,8 +386,7 @@ void Cutaway::changeRooms(CutawayObject &object) {
 
 	if (!_vm->logic()->joeX() && !_vm->logic()->joeY()) {
 		mode = RDM_FADE_NOJOE;
-	}
-	else {
+	} else {
 		// We need to display Joe on screen
 		if (_roomFade)
 			mode = RDM_NOFADE_JOE;
@@ -418,8 +415,7 @@ Cutaway::ObjectType Cutaway::getObjectType(CutawayObject &object) {
 			if (objectData->image == -3 || objectData->image == -4)
 				objectType = OBJECT_TYPE_PERSON;
 		}
-	}
-	else if (object.objectNumber == OBJECT_JOE) {
+	} else if (object.objectNumber == OBJECT_JOE) {
 		// It's Joe. See if he's to be treated as a person.
 		if (!object.animList) {
 			// There's no animation list, so Joe must be talking.
@@ -432,8 +428,7 @@ Cutaway::ObjectType Cutaway::getObjectType(CutawayObject &object) {
 
 		if(object.objectNumber != object.fromObject) {
 			_vm->logic()->objectCopy(object.fromObject, object.objectNumber);
-		}
-		else {
+		} else {
 			// Same object, so just turn it on!
 			ObjectData *objectData = _vm->logic()->objectData(object.objectNumber);
 			objectData->name = ABS(objectData->name);
@@ -446,18 +441,18 @@ Cutaway::ObjectType Cutaway::getObjectType(CutawayObject &object) {
 	}
 
 	switch(object.objectNumber) {
-		case -2:
-			// Text to be spoken
-			objectType = OBJECT_TYPE_TEXT_SPEAK;
-			break;
-		case -3:
-			// Text to be displayed AND spoken
-			objectType = OBJECT_TYPE_TEXT_DISPLAY_AND_SPEAK;
-			break;
-		case -4:
-			// Text to be displayed only (not spoken)
-			objectType = OBJECT_TYPE_TEXT_DISPLAY;
-			break;
+	case -2:
+		// Text to be spoken
+		objectType = OBJECT_TYPE_TEXT_SPEAK;
+		break;
+	case -3:
+		// Text to be displayed AND spoken
+		objectType = OBJECT_TYPE_TEXT_DISPLAY_AND_SPEAK;
+		break;
+	case -4:
+		// Text to be displayed only (not spoken)
+		objectType = OBJECT_TYPE_TEXT_DISPLAY;
+		break;
 	}
 
 	if (OBJECT_TYPE_ANIMATION == objectType && !object.execute) {
@@ -482,8 +477,7 @@ const byte *Cutaway::getCutawayAnim(const byte *ptr, int header, CutawayAnim &an
 	if (0 == header) {
 		anim.object = 0;
 		anim.originalFrame = 31;
-	}
-	else {
+	} else {
 		anim.object = _vm->logic()->findBob(header);
 		anim.originalFrame = _vm->logic()->findFrame(header);
 	}
@@ -499,13 +493,11 @@ const byte *Cutaway::getCutawayAnim(const byte *ptr, int header, CutawayAnim &an
 
 	if (anim.bank == 0) {
 		anim.bank = 15;
-	}
-	else {
+	} else {
 		if (anim.bank != 13) {
 			_vm->bankMan()->load(_bankNames[anim.bank-1], CUTAWAY_BANK);
 			anim.bank = 8;
-		}
-		else {
+		} else {
 			// Make sure we ref correct JOE bank (7)
 			anim.bank = 7;
 		}
@@ -528,8 +520,7 @@ const byte *Cutaway::getCutawayAnim(const byte *ptr, int header, CutawayAnim &an
 
 	if (_vm->resource()->isDemo()) {
 		anim.song = 0;
-	}
-	else {
+	} else {
 		anim.song = (int16)READ_BE_INT16(ptr);
 		ptr += 2;
 	}
@@ -538,8 +529,7 @@ const byte *Cutaway::getCutawayAnim(const byte *ptr, int header, CutawayAnim &an
 	if (anim.unpackFrame < 0) {
 		anim.flip = true;
 		anim.unpackFrame = -anim.unpackFrame;
-	}
-	else
+	} else
 		anim.flip = false;
 
 	return ptr;
@@ -601,8 +591,7 @@ const byte *Cutaway::handleAnimation(const byte *ptr, CutawayObject &object) {
 			objAnim[0].object == 1) {
 			//CR 2 - 3/3/95, Special harcoded section to make Oracle work...
 			makeComplexAnimation(_vm->graphics()->personFrames(1) - 1,  objAnim, frameCount);
-		}
-		else {
+		} else {
 			_currentImage = makeComplexAnimation(_currentImage, objAnim, frameCount);
 		}
 
@@ -654,8 +643,7 @@ const byte *Cutaway::handleAnimation(const byte *ptr, CutawayObject &object) {
 			if (objAnim[i].unpackFrame == 0) {
 				// Turn off the bob
 				bob->active = false;
-			}
-			else {
+			} else {
 				if (object.animType == 2 || object.animType == 0) {
 					// Unpack animation, but do not unpack moving people
 
@@ -741,8 +729,7 @@ void Cutaway::handlePersonRecord(
 		if (object.moveToX || object.moveToY) {
 			_vm->walk()->moveJoe(0, object.moveToX, object.moveToY, true);
 		} 
-	}
-	else {
+	} else {
 		_vm->logic()->initPerson(
 				object.objectNumber - _vm->logic()->currentRoomData(), 
 				"", true, &p);
@@ -770,8 +757,7 @@ void Cutaway::handlePersonRecord(
 		if (sentence[0] == '#') {
 			debug(4, "Starting credits '%s'", sentence + 1);
 			_vm->logic()->startCredits(sentence + 1);
-		}
-		else {
+		} else {
 			if (object.objectNumber > 0) {
 				bool foundPerson = false;
 
@@ -843,8 +829,7 @@ void Cutaway::run(char *nextFilename) {
 		if (CURRENT_ROOM == object.room) {
 			// Get current room
 			object.room = _vm->logic()->currentRoom();
-		}
-		else {
+		} else {
 			// Change current room
 			_vm->logic()->currentRoom(object.room);
 		}
@@ -859,8 +844,7 @@ void Cutaway::run(char *nextFilename) {
 		if (OBJECT_ROOMFADE == object.objectNumber) {
 			_roomFade = true;
 			object.objectNumber = OBJECT_JOE;
-		}
-		else {
+		} else {
 			_roomFade = false;
 		}
 
@@ -873,27 +857,23 @@ void Cutaway::run(char *nextFilename) {
 			_vm->sound()->playSong(object.song);
 
 		switch (objectType) {
-			case OBJECT_TYPE_ANIMATION:
-				ptr = handleAnimation(ptr, object);
-				break;
-
-			case OBJECT_TYPE_PERSON:
-				handlePersonRecord(i + 1, object, sentence);
-				break;
-
-			case OBJECT_TYPE_NO_ANIMATION:
-				// Do nothing?
-				break;
-
-			case OBJECT_TYPE_TEXT_SPEAK:
-			case OBJECT_TYPE_TEXT_DISPLAY_AND_SPEAK:
-			case OBJECT_TYPE_TEXT_DISPLAY:
-				handleText(i + 1, objectType, object, sentence);
-				break;
-
-			default:
-				warning("Unhandled object type: %i", objectType);
-				break;
+		case OBJECT_TYPE_ANIMATION:
+			ptr = handleAnimation(ptr, object);
+			break;
+		case OBJECT_TYPE_PERSON:
+			handlePersonRecord(i + 1, object, sentence);
+			break;
+		case OBJECT_TYPE_NO_ANIMATION:
+			// Do nothing?
+			break;
+		case OBJECT_TYPE_TEXT_SPEAK:
+		case OBJECT_TYPE_TEXT_DISPLAY_AND_SPEAK:
+		case OBJECT_TYPE_TEXT_DISPLAY:
+			handleText(i + 1, objectType, object, sentence);
+			break;
+		default:
+			warning("Unhandled object type: %i", objectType);
+			break;
 		}
 
 		if (_vm->input()->cutawayQuit())
@@ -935,8 +915,7 @@ void Cutaway::run(char *nextFilename) {
 		if (_finalRoom) {
 			_vm->logic()->newRoom(0);
 			_vm->logic()->entryObj(0);
-		}
-		else {
+		} else {
 			/// No need to stay in current room, so return to previous room
 			//  if one exists. Reset Joe's X,Y coords to those when first entered 
 
@@ -945,8 +924,7 @@ void Cutaway::run(char *nextFilename) {
 			debug(6, "_vm->logic()->entryObj() = %i", _vm->logic()->entryObj());
 			if (_vm->logic()->entryObj() > 0) {
 				_initialRoom = _vm->logic()->objectData(_vm->logic()->entryObj())->room;
-			}
-			else {
+			} else {
 				// We're not returning to new room, so return to old Joe X,Y coords
 				debug(6, "[Cutaway::run] Moving joe to (%i, %i)", initialJoeX, initialJoeY);
 				_vm->logic()->joePos(initialJoeX, initialJoeY);
@@ -1069,8 +1047,7 @@ void Cutaway::stop() {
 				if (fromIndex == objectIndex) {
 					// Enable object
 					object->name = ABS(object->name);
-				}
-				else {
+				} else {
 					_vm->logic()->objectCopy(fromIndex, objectIndex);
 
 					ObjectData *from = _vm->logic()->objectData(fromIndex);
@@ -1104,8 +1081,7 @@ void Cutaway::stop() {
 
 					if (objectFrame == 1000) {
 						_vm->graphics()->bob(bobIndex)->clear();
-					}
-					else if (objectFrame) {
+					} else if (objectFrame) {
 						_vm->bankMan()->unpack(ABS(frame), objectFrame, bank);
 						pbs->frameNum = objectFrame;
 						if (frame < 0)
@@ -1156,8 +1132,7 @@ void Cutaway::updateGameState() {
 		if (stateIndex > 0) {
 			if(_vm->logic()->gameState(stateIndex) == stateValue) 
 				update = true;
-		}
-		else {
+		} else {
 			_vm->logic()->gameState(ABS(stateIndex), stateValue);
 			update = true;
 		}
@@ -1170,8 +1145,7 @@ void Cutaway::updateGameState() {
 				if (fromObject > 0)
 					_vm->logic()->objectCopy(fromObject, objectIndex);
 				_vm->graphics()->refreshObject(objectIndex);
-			}
-			else if (objectIndex < 0) {               // Hide the object
+			} else if (objectIndex < 0) {               // Hide the object
 				objectIndex             = -objectIndex;
 				ObjectData *objectData  = _vm->logic()->objectData(objectIndex);
 				objectData->name        = -ABS(objectData->name);
@@ -1185,8 +1159,7 @@ void Cutaway::updateGameState() {
 				if (areaSubIndex > 0) {
 					Area *area = _vm->grid()->area(areaIndex, areaSubIndex);
 					area->mapNeighbours = ABS(area->mapNeighbours);
-				}
-				else {
+				} else {
 					Area *area = _vm->grid()->area(areaIndex, ABS(areaSubIndex));
 					area->mapNeighbours = -ABS(area->mapNeighbours);
 				}
@@ -1278,8 +1251,7 @@ void Cutaway::handleText(
 	if (OBJECT_TYPE_TEXT_DISPLAY == type) {
 		x = _vm->display()->textCenterX(sentence);
 		flags = 2;
-	}
-	else {
+	} else {
 		x = object.bobStartX;
 		flags = 1;
 	}
@@ -1350,8 +1322,7 @@ int Cutaway::scale(CutawayObject &object) {
 		if (object.bobStartX > 0 || object.bobStartY > 0) {
 			x = object.bobStartX;
 			y = object.bobStartY;
-		}
-		else {
+		} else {
 			BobSlot *bob = _vm->graphics()->bob(0);
 			x = bob->x;
 			y = bob->y;
