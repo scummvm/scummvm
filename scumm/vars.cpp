@@ -271,8 +271,12 @@ void Scumm_v8::setupScummVars()
 	VAR_CAMERA_ACCEL_Y = 110;
 
 	VAR_CUSTOMSCALETABLE = 111;	// FIXME - guess
+
 	VAR_TIMER_NEXT = 112;
-	// 113/114/115 are also TIMERs..
+	VAR_TMR_1 = 113;
+	VAR_TMR_2 = 114;
+	VAR_TMR_3 = 115;
+
 	VAR_EGO = 126;
 
 	VAR_DEBUGMODE = 130;
