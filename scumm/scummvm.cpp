@@ -1153,8 +1153,6 @@ load_game:
 	if (_currentRoom == 0) {
 		CHARSET_1();
 		drawDirtyScreenParts();
-		_sound->processSoundQues();
-		camera._last = camera._cur;
 	} else {
 		walkActors();
 		moveCamera();
@@ -1218,10 +1216,10 @@ load_game:
 
 		if (_version <= 5)
 			playActorSounds();
-
-		_sound->processSoundQues();
-		camera._last = camera._cur;
 	}
+
+	_sound->processSoundQues();
+	camera._last = camera._cur;
 
 	if (!(++_expire_counter)) {
 		increaseResourceCounter();
