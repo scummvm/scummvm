@@ -802,11 +802,13 @@ void ScummEngine_v7he::o7_unknownEF() {
 
 	size = len - b + 2;
 
+
 	defineArray(0, kStringArray, 0, size);
 	writeArray(0, 0, 0, 0);
 
 	array = readVar(0);
 
+	len2 = len;
 	if (len == -1) {
 		len2 = resStrLen(getStringAddress(array2));
 		len = 0;
@@ -818,11 +820,11 @@ void ScummEngine_v7he::o7_unknownEF() {
 	offset = 0;
 	len2 -= len;
 	len2++;
-	while (offset <= len2) {
+	while (offset < len2) {
 		writeVar(0, array2);
 		value = readArray(0, 0, offset + len);
 		writeVar(0, array);
-		writeArray(0, 0, len3 + offset, value);
+		writeArray(0, 0, offset + len3, value);
 		offset++;
 	}
 
