@@ -870,6 +870,8 @@ int Scumm::findPathTowardsOld(Actor * a, byte trap1, byte trap2,
 {
 	GetGates(trap1, trap2);
 	ScummPoint pt;
+	// FIXME - is parameter "a" ignored on purpose?!?
+	Actor *actor = getFirstActor();
 
 	gateLoc[1].x = actor->x;
 	gateLoc[1].y = actor->y;
