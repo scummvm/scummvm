@@ -405,21 +405,19 @@ void Sound::playSound(int soundID) {
 }
 
 void Sound::processSfxQueues() {
-	Actor *a;
-	int act;
-	bool b, finished;
 
 	if (_talk_sound_mode != 0) {
 		if (_talk_sound_mode & 1)
 			startTalkSound(_talk_sound_a1, _talk_sound_b1, 1);
-		if (_talk_sound_mode & 2) {
+		if (_talk_sound_mode & 2)
 			startTalkSound(_talk_sound_a2, _talk_sound_b2, 2, &_talkChannelHandle);
-		}
 		_talk_sound_mode = 0;
 	}
 
-	if ((_sfxMode & 2) && _vm->VAR(_vm->VAR_TALK_ACTOR)) {
-		act = _vm->VAR(_vm->VAR_TALK_ACTOR);
+	const int act = _vm->VAR(_vm->VAR_TALK_ACTOR);
+	if ((_sfxMode & 2) && act != 0) {
+		Actor *a;
+		bool b, finished;
 
 		if (_vm->_imuseDigital) {
 			finished = !isSoundRunning(kTalkSoundID);
@@ -427,9 +425,9 @@ void Sound::processSfxQueues() {
 			finished = !_talkChannelHandle.isActive();
 		}
 
-		if (act != 0 && (uint) act < 0x80 && !_vm->_string[0].no_talk_anim) {
+		if ((uint) act < 0x80 && !_vm->_string[0].no_talk_anim && (finished || !_endOfMouthSync)) {
 			a = _vm->derefActor(act, "processSfxQueues");
-			if (a->isInCurrentRoom() && (finished || !_endOfMouthSync)) {
+			if (a->isInCurrentRoom()) {
 				b = finished || isMouthSyncOff(_curSoundPos);
 				if (_mouthSyncMode != b) {
 					_mouthSyncMode = b;
@@ -463,6 +461,11 @@ void Sound::startTalkSound(uint32 offset, uint32 b, int mode, PlayingSoundHandle
 	int size = 0;
 	byte *sound;
 	int id = -1;
+
+	if (_vm->_gameId == GID_CMI) {
+		_sfxMode |= mode;
+		return;
+	}
 
 	if ((_vm->_gameId == GID_DIG) && (_vm->_features & GF_DEMO)) {
 		char filename[30];

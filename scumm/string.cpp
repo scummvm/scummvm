@@ -166,13 +166,6 @@ void ScummEngine::CHARSET_1() {
 	if (_talkDelay)
 		return;
 
-	if ((_gameId == GID_CMI || _gameId == GID_DIG) && (_imuseDigital)
-				&& _sound->isSoundRunning(kTalkSoundID)) {
-		// Keep the 'speech' flag in _sound->_sfxMode set as long as the
-		// sound kTalkSoundID is playing.
-		_sound->_sfxMode |= 2;
-	}
-
 	if (_haveMsg == 1) {
 		if ((_sound->_sfxMode & 2) == 0)
 			stopTalk();
@@ -892,8 +885,14 @@ const byte *ScummEngine::translateTextAndPlaySpeech(const byte *ptr) {
 		// Play speech
 		if (!(_features & GF_DEMO) && (_gameId == GID_CMI)) // CMI demo does not have .IMX for voice
 			strcat(pointer, ".IMX");
-//		_imuseDigital->stopSound(kTalkSoundID);
-		_imuseDigital->startVoice(kTalkSoundID, pointer);
+		// FIXME: This is a hack to distinguish between 'real' actor speech and
+		// some odd (?) other strings... there is probably a better way to do this.
+		// I just don't know which (yet).
+		if (ptr[i+1] != 0 && ptr[i+1] != 255) {
+			_sound->stopTalkSound();
+			_imuseDigital->startVoice(kTalkSoundID, pointer);
+			_sound->talkSound(0, 0, 2, -1);
+		}
 
 		ptr = _transText;
 	}
