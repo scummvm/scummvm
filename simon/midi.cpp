@@ -21,7 +21,7 @@
 
 
 #include "stdafx.h"
-#include "scummsys.h"
+#include "common/scummsys.h"
 #include "common/system.h"
 #include "common/file.h"
 #include "sound/mixer.h"

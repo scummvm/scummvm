@@ -21,8 +21,8 @@
 #ifndef ENGINE_H
 #define ENGINE_H
 
-#include "scummsys.h"
-#include "system.h"
+#include "common/scummsys.h"
+#include "common/system.h"
 
 extern const char *gScummVMVersion;		// e.g. "0.4.1"
 extern const char *gScummVMBuildDate;	// e.g. "2003-06-24"

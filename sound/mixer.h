@@ -23,6 +23,7 @@
 #ifndef MIXER_H
 #define MIXER_H
 
+#include "stdafx.h"
 #if defined(HAVE_CONFIG_H)
 #include "config.h"
 #endif
@@ -32,7 +33,6 @@
 #ifdef USE_VORBIS
 #include <vorbis/vorbisfile.h>
 #endif
-#include "stdafx.h"
 #include "common/scummsys.h"
 #include "common/system.h"
 

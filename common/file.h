@@ -22,9 +22,8 @@
 #ifndef COMMON_FILE_H
 #define COMMON_FILE_H
 
-#include <stdio.h>
 #include "stdafx.h"
-#include "scummsys.h"
+#include "common/scummsys.h"
 
 class File {
 private:

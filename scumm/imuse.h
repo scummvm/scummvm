@@ -23,7 +23,7 @@
 #ifndef IMUSE_H
 #define IMUSE_H
 
-#include "scummsys.h"
+#include "common/scummsys.h"
 #include "common/system.h"
 
 class IMuseInternal;

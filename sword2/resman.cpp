@@ -23,7 +23,8 @@
 
 #include "stdafx.h"
 
-#include "engine.h"
+#include "common/engine.h"
+#include "common/file.h"
 
 #include "driver/driver96.h"
 #include "build_display.h"

@@ -26,7 +26,7 @@
 #ifndef FMOPL_H_
 #define FMOPL_H_
 
-#include "scummsys.h"
+#include "common/scummsys.h"
 
 enum {
 	FMOPL_ENV_BITS_HQ = 16,

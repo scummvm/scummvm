@@ -20,8 +20,8 @@
  */
 
 #include "stdafx.h"
-#include "scummsys.h"
-#include "system.h"
+#include "common/scummsys.h"
+#include "common/system.h"
 
 
 #if defined(USE_NULL_DRIVER)

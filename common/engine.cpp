@@ -19,10 +19,10 @@
  */
 
 #include "stdafx.h"
-#include "engine.h"
-#include "config-file.h"
-#include "gameDetector.h"
-#include "timer.h"
+#include "common/config-file.h"
+#include "common/engine.h"
+#include "common/gameDetector.h"
+#include "common/timer.h"
 #include "sound/mixer.h"
 
 /*

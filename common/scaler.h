@@ -18,8 +18,8 @@
  * $Header$
  */
 
-#ifndef SCALER_H
-#define SCALER_H
+#ifndef COMMON_SCALER_H
+#define COMMON_SCALER_H
 
 extern int Init_2xSaI (uint32 BitFormat);
 

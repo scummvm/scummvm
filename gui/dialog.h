@@ -21,7 +21,7 @@
 #ifndef DIALOG_H
 #define DIALOG_H
 
-#include "scummsys.h"
+#include "common/scummsys.h"
 #include "widget.h"	// For CommandReceiver
 
 class NewGui;

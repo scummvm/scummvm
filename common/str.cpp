@@ -19,7 +19,7 @@
  */
 
 #include "stdafx.h"
-#include "str.h"
+#include "common/str.h"
 
 #include <ctype.h>
 

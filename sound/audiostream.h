@@ -22,8 +22,8 @@
 #ifndef AUDIOSTREAM_H
 #define AUDIOSTREAM_H
 
-#include "scummsys.h"
-#include <assert.h>
+#include "stdafx.h"
+#include "common/scummsys.h"
 #ifdef USE_MAD
 #include <mad.h>
 #endif

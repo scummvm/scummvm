@@ -21,7 +21,7 @@
 #ifndef COMMON_MAP_H
 #define COMMON_MAP_H
 
-#include "scummsys.h"
+#include "common/scummsys.h"
 
 namespace ScummVM {
 

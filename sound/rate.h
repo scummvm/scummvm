@@ -7,7 +7,7 @@
 
 #include <stdio.h>
 #include <assert.h>
-#include "scummsys.h"
+#include "common/scummsys.h"
 #include "common/engine.h"
 #include "common/util.h"
 

@@ -29,10 +29,10 @@
  */
  
 #include "stdafx.h"
-#include "engine.h"
-#include "gameDetector.h"
-#include "config-file.h"
-#include "scaler.h"	// For GFX_NORMAL
+#include "common/config-file.h"
+#include "common/engine.h"
+#include "common/gameDetector.h"
+#include "common/scaler.h"	// For GFX_NORMAL
 #include "gui/newgui.h"
 #include "gui/launcher.h"
 #include "gui/message.h"

@@ -81,7 +81,6 @@
 #include <stdarg.h>
 #include <fcntl.h>
 #include <conio.h>
-#include <malloc.h>
 #include <assert.h>
 #include <mmsystem.h>
 #include <ctype.h>

@@ -23,8 +23,8 @@
 #ifndef COMMON_SYSTEM_H
 #define COMMON_SYSTEM_H
 
-#include "scummsys.h"
-#include "savefile.h"
+#include "common/scummsys.h"
+#include "common/savefile.h"
 
 /**
  * Interface for ScummVM backends. If you want to port ScummVM to a system

@@ -21,8 +21,8 @@
 #ifndef NEWGUI_H
 #define NEWGUI_H
 
-#include "scummsys.h"
-#include "system.h"	// For events
+#include "common/scummsys.h"
+#include "common/system.h"	// For events
 #include "common/str.h"
 
 class Dialog;

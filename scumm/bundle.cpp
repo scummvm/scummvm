@@ -19,10 +19,9 @@
  */
 
 #include "stdafx.h"
-#include "scumm.h"
-#include "scummsys.h"
-#include "bundle.h"
-#include "file.h"
+#include "common/scummsys.h"
+#include "scumm/scumm.h"
+#include "scumm/bundle.h"
 
 static const int16 imcTable[] = {
 	0x0007, 0x0008, 0x0009, 0x000A, 0x000B, 0x000C, 0x000D, 0x000E, 0x0010, 0x0011,

@@ -23,7 +23,7 @@
 #ifndef BASE_COSTUME_H
 #define BASE_COSTUME_H
 
-#include "scummsys.h"
+#include "common/scummsys.h"
 #include "actor.h"		// for CostumeData
 
 #if !defined(__GNUC__)

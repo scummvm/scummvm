@@ -22,7 +22,7 @@
 #ifndef SAVELOAD_H
 #define SAVELOAD_H
 
-#include "scummsys.h"
+#include "common/scummsys.h"
 
 // Support for "old" savegames (made with 2501 CVS build)
 // Can be useful for other ports too :)

@@ -19,7 +19,7 @@
  */
 
 #include "stdafx.h"
-#include "util.h"
+#include "common/util.h"
 #include "newgui.h"
 #include "dialog.h"
 

@@ -21,7 +21,7 @@
 #ifndef COMMON_STRING_H
 #define COMMON_STRING_H
 
-#include "scummsys.h"
+#include "common/scummsys.h"
 #include "common/list.h"
 
 #include <assert.h>

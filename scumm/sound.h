@@ -21,7 +21,7 @@
 #ifndef SOUND_H
 #define SOUND_H
 
-#include "scummsys.h"
+#include "common/scummsys.h"
 #include "sound/mixer.h"
 
 class Bundle;

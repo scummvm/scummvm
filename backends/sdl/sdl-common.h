@@ -22,9 +22,9 @@
 #ifndef SDL_COMMON_H
 #define SDL_COMMON_H
 
-#include "stdafx.h"
-#include "scummsys.h"
-#include "system.h"
+#include "common/stdafx.h"
+#include "common/scummsys.h"
+#include "common/system.h"
 #include "backends/intern.h"
 
 #include <SDL.h>

@@ -30,7 +30,7 @@
 #ifndef SOUND_H
 #define SOUND_H
 
-#include "scummsys.h"
+#include "common/scummsys.h"
 
 // fx types
 #define FX_SPOT		0

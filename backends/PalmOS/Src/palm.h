@@ -24,7 +24,7 @@
 #define PALM_H
 
 #include <SonyClie.h>
-#include "system.h"
+#include "common/system.h"
 
 Err HwrDisplayPalette(UInt8 operation, Int16 startIndex, 
 			 	  			 UInt16 paletteEntries, RGBColorType *tableP)

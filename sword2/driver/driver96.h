@@ -1053,8 +1053,6 @@
 #include "common/scummsys.h"
 #include "common/engine.h" // for warning()
 #include "common/system.h"
-#include "system.h"
-#include "file.h"
 //#include "ddraw.h"
 //#include "dsound.h"
 

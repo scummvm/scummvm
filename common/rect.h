@@ -22,8 +22,8 @@
 #ifndef COMMON_RECT_H
 #define COMMON_RECT_H
 
-#include "scummsys.h"
-#include "util.h"
+#include "common/scummsys.h"
+#include "common/util.h"
 
 namespace ScummVM {
 

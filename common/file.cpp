@@ -19,9 +19,9 @@
  *
  */
 
-#include "file.h"
-#include "util.h"
-#include "engine.h"	// For debug/warning/error
+#include "common/engine.h"	// For debug/warning/error
+#include "common/file.h"
+#include "common/util.h"
 
 FILE *File::fopenNoCase(const char *filename, const char *directory, const char *mode) {
 	FILE *file;

@@ -23,7 +23,7 @@
 #ifndef SOUND_MIDIDRV_H
 #define SOUND_MIDIDRV_H
 
-#include "scummsys.h"
+#include "common/scummsys.h"
 
 class MidiChannel;
 

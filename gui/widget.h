@@ -21,7 +21,7 @@
 #ifndef WIDGET_H
 #define WIDGET_H
 
-#include "scummsys.h"
+#include "common/scummsys.h"
 #include "common/str.h"
 
 class Dialog;
