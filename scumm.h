@@ -29,12 +29,8 @@
 #endif
 
 #define SCUMMVM_VERSION "0.2.0 devel"
-#ifdef _WIN32_WCE
-        // Additional build information for easier bug report
+#define SCUMMVM_CVS "031402"
 
-        #define POCKETSCUMM_BUILD "031302"
-        #define SCUMMVM_CVS "031002"
-#endif
 #define SWAP(a,b) do{int tmp=a; a=b; b=tmp; } while(0)
 #define ARRAYSIZE(x) (sizeof(x)/sizeof(x[0]))
 
@@ -907,7 +903,7 @@ struct Scumm {
 	byte _resFilePathId;
 
 	bool _soundsPaused;
-        bool _soundsPaused2;
+	bool _soundsPaused2;
 	bool _useTalkAnims;
 	
 	char *_resFilePrefix;
@@ -1756,7 +1752,7 @@ struct Scumm {
 	void removeObjectFromRoom(int obj);
 	void decodeParseString();
 	void pauseGame(bool user);
-// FIXME        void setOptions(void);
+    void setOptions(void);
 	void shutDown(int i);
 	void lock(int type, int i);
 	void unlock(int type, int i);
@@ -2073,6 +2069,7 @@ struct Scumm {
 	byte VAR_ROOM_RESOURCE;
 	byte VAR_LAST_SOUND;
 	byte VAR_CUTSCENEEXIT_KEY;
+	byte VAR_OPTIONS_KEY;
 	byte VAR_TALK_ACTOR;
 	byte VAR_CAMERA_FAST_X;
 	byte VAR_SCROLL_SCRIPT;

@@ -413,9 +413,13 @@ invalid:;
 		error("startSfxSound: cannot read %d bytes", size);
 		return;
 	}
-	for(i=0;i<size; i++)
+	for(i=0;i<size; i++) {
+		// Fixme: From WinCE port
+		if (_sound_volume_sfx != 100)
+ 			data[i] = _sound_volume_sfx * data[i] / 100;
+
 		data[i] ^= 0x80;
-	
+	}
 	playSfxSound(data, size, 1000000 / (256 - rate) );
 }
 
@@ -567,12 +571,22 @@ void Scumm::playSfxSound(void *sound, uint32 size, uint rate) {
 
 	mc->type = MIXER_STANDARD;
 	mc->_sfx_sound = sound;
-	mc->sound_data.standard._sfx_pos = 0;
-	mc->sound_data.standard._sfx_fp_speed = (1<<16) * rate / 22050;
+	mc->sound_data.standard._sfx_pos = 0;	
 	mc->sound_data.standard._sfx_fp_pos = 0;
 
+#ifdef _WIN32_WCE
+	mc->sound_data.standard._sfx_fp_speed = (1<<16) * rate / 11025;
+#else
+ 	mc->sound_data.standard._sfx_fp_speed = (1<<16) * rate /22050;
+#endif
 	while (size&0xFFFF0000) size>>=1, rate>>=1;
+
+	
+#ifdef _WIN32_WCE
+ 	mc->sound_data.standard._sfx_size = size * 11025 / rate;
+#else 
 	mc->sound_data.standard._sfx_size = size * 22050 / rate;
+#endif
 }
 
 #ifdef COMPRESSED_SOUND_FILE
@@ -695,5 +709,8 @@ void Scumm::mixWaves(int16 *sounds, int len) {
 	for(i=NUM_MIXER-1; i>=0;i--) {
 		_mixer_channel[i].mix(sounds, len);
 	}
+
+	if (_soundsPaused2)
+		memset(sounds, 0x0, len * sizeof(int16));
 }
 

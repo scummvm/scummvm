@@ -21,10 +21,30 @@
 #include "stdafx.h"
 #include "scumm.h"
 #include "gui.h"
+#include "sound.h"
+
+#ifdef _WIN32_WCE
+// Additional variables for Win32 specific GUI
+	#include "gapi_keys.h"
+	extern bool toolbar_drawn;
+	extern bool draw_keyboard;
+	extern bool get_key_mapping;
+	extern struct keyops keyMapping;
+	extern void registry_save(void);
+	uint16 _key_mapping_required;
+#else
+	#define registry_save() ;
+	bool get_key_mapping;
+	uint16 _key_mapping_required;
+#endif
 
 enum {
 	SAVELOAD_DIALOG,
-	PAUSE_DIALOG
+	PAUSE_DIALOG,
+	SOUND_DIALOG,
+	KEYS_DIALOG,
+	OPTIONS_DIALOG,
+	ABOUT_DIALOG
 };
 
 
@@ -127,13 +147,42 @@ void Gui::drawWidget(const GuiWidget *w) {
 	}
 
 	switch(w->_type) {
-	case GUI_TEXT:
-		s = queryString(w->_string_number,w->_id);
-		if (s)
-			drawString(s, x+_parentX, y+_parentY, w->_w,
+	case GUI_CUSTOMTEXT:
+	case GUI_VARTEXT:
+	case GUI_KEYTEXT:
+	case GUI_ACTIONTEXT:
+	case GUI_RESTEXT: {
+		char text[500];
+		switch(w->_type) {
+			case GUI_CUSTOMTEXT:
+				strcpy(text, string_map_table_custom[w->_string_number]);
+				break;
+			case GUI_RESTEXT:
+				s = queryString(w->_string_number,w->_id);
+				if (s)
+					strcpy(text, s);
+				else
+					text[0] = '\0';
+				break;
+			case GUI_VARTEXT:
+				sprintf(text, "%s %d", string_map_table_custom[w->_string_number],  _gui_variables[w->_string_number]);
+				break;
+#ifdef _WIN32_WCE
+			case GUI_KEYTEXT:
+				strcpy(text, getGAPIKeyName(getAction(w->_string_number - 1)->action_key));
+				break;
+			case GUI_ACTIONTEXT:
+				strcpy(text, getActionName(getAction(w->_string_number - 1)->action_type));
+				break;
+#endif
+		}
+		
+		if (*text)
+			drawString(text, x+_parentX, y+_parentY, w->_w,
 				(_clickWidget && _clickWidget==w->_id) ? _textcolorhi : _textcolor,
 				false);
 		break;
+	}
 	case GUI_IMAGE:
 		;
 	}
@@ -264,51 +313,229 @@ void Gui::leftMouseClick(int x, int y) {
 		else
 			handleCommand(_clickWidget);
 	}
+	
+	if (_dialog == OPTIONS_DIALOG || _dialog == PAUSE_DIALOG)
+		close();
 }
+const GuiWidget keys_dialog[] = {
+	{GUI_STAT, 0xFF, GWF_DEFAULT, 30, 10, 260, 130, 0, 0 },
+
+	// First action
+	{GUI_CUSTOMTEXT, 0x01, GWF_BUTTON, 30 + 11, 10 + 10, 15, 15, 10, 3}, // CUSTOMTEXT_PLUS
+	{GUI_CUSTOMTEXT, 0x01, GWF_BUTTON, 30 + 33, 10 + 10, 15, 15, 11, 4}, // CUSTOMTEXT_MINUS
+	{GUI_ACTIONTEXT, 0x01, GWF_BUTTON, 30 + 11 + 33 + 10, 10 + 10, 100, 15, 100, 1},
+	{GUI_KEYTEXT, 0x01, 0, 30 + 11 + 33 + 120, 10 + 10 + 3, 100, 15, 1, 1},
+
+	//Second action
+	{GUI_CUSTOMTEXT, 0x01, GWF_BUTTON, 30 + 11, 10 + 10 + 15 + 5, 15, 15, 20, 3}, // CUSTOMTEXT_PLUS
+	{GUI_CUSTOMTEXT, 0x01, GWF_BUTTON, 30 + 33, 10 + 10 + 15 + 5, 15, 15, 21, 4}, // CUSTOMTEXT_MINUS
+	{GUI_ACTIONTEXT, 0x01, GWF_BUTTON, 30 + 10 + 33 + 10, 10 + 10 + 15 + 5, 100, 15, 101, 2},
+	{GUI_KEYTEXT, 0x01, 0, 30 + 11 + 33 + 120, 10 + 10 + 15 + 5 + 3, 100, 15, 2,  2},
+	
+	//Third action
+	{GUI_CUSTOMTEXT, 0x01, GWF_BUTTON, 30 + 11, 10 + 10 + 15 + 5 + 15 + 5, 15, 15, 30, 3},// CUSTOMTEXT_PLUS
+	{GUI_CUSTOMTEXT, 0x01, GWF_BUTTON, 30 + 33, 10 + 10 + 15 + 5 + 15 + 5, 15, 15, 31, 4}, // CUSTOMTEXT_MINUS
+	{GUI_ACTIONTEXT, 0x01, GWF_BUTTON, 30 + 10 + 33 + 10, 10 + 10 + 15 + 5 + 15 + 5, 100, 15, 102, 3},
+	{GUI_KEYTEXT, 0x01, 0, 30 + 11 + 33 + 120, 10 + 10 + 15 + 5 + 15 + 5 + 3, 100, 15, 3, 3},
+
+	//Fourth action
+	{GUI_CUSTOMTEXT, 0x01, GWF_BUTTON, 30 + 11, 10 + 10 + 15 + 5 + 15 + 5 + 15 + 5, 15, 15, 40, 3},
+	{GUI_CUSTOMTEXT, 0x01, GWF_BUTTON, 30 + 33, 10 + 10 + 15 + 5 + 15 + 5 + 15 + 5, 15, 15, 41, 4},
+	{GUI_ACTIONTEXT, 0x01, GWF_BUTTON, 30 + 10 + 33 + 10, 10 + 10 + 15 + 5 + 15 + 5 + 15 + 5, 100, 15, 103, 4},
+	{GUI_KEYTEXT, 0x01, 0, 30 + 11 + 33 + 120, 10 + 10 + 15 + 5 + 15 + 5 + 15 + 5 + 3, 100, 15, 4, 4},
+
+	//Fifth action
+	{GUI_CUSTOMTEXT, 0x01, GWF_BUTTON, 30 + 11, 10 + 10 + 15 + 5 + 15 + 5 + 15 + 5 + 15 + 5, 15, 15, 50, 3},
+	{GUI_CUSTOMTEXT, 0x01, GWF_BUTTON, 30 + 33, 10 + 10 + 15 + 5 + 15 + 5 + 15 + 5 + 15 + 5, 15, 15, 51, 4},
+	{GUI_ACTIONTEXT, 0x01, GWF_BUTTON, 30 + 10 + 33 + 10, 10 + 10 + 15 + 5 + 15 + 5 + 15 + 5 + 15 + 5, 100, 15, 104, 5},
+	{GUI_KEYTEXT, 0x01, 0, 30 + 11 + 33 + 120, 10 + 10 + 15 + 5 + 15 + 5 + 15 + 5 + 15 + 5 + 3, 100, 15, 5, 5},
+
+	//OK
+	{GUI_RESTEXT, 0x01, GWF_BUTTON, 30 + 113, 10 + 106, 54, 16, 60, 9 },
+	{0}
+};
+
+
+const GuiWidget about_dialog[] = {
+	{GUI_STAT, 0xFF, GWF_DEFAULT, 30, 20, 260, 120, 0, 0 },
+	// {GUI_CUSTOMTEXT, 0x01, 0, 30 + 95, 20 + 10, 100, 15, 0, }, .. pocketscummvm
+	{GUI_CUSTOMTEXT, 0x01, 0, 30 + 68, 20 + 10 + 15 + 5, 160, 15, 0, 9}, // Build
+	{GUI_CUSTOMTEXT, 0x01, 0, 30 + 10, 20 + 10 + 15 + 5 + 15, 230, 15, 0, 10},	 // ScummVM Url
+	{GUI_CUSTOMTEXT, 0x01, 0, 30 + 75, 20 + 10 + 15 + 5 + 15 + 15 + 15, 150, 15, 0, 11}, // Lucasarts
+	{GUI_CUSTOMTEXT, 0x01, GWF_BUTTON, 30 + 113, 20 + 96, 54, 16, 40, 9 },
+	{0}
+};
+
+const GuiWidget options_dialog[] = {
+	{GUI_STAT, 0xFF, GWF_DEFAULT, 50, 80, 210, 35, 0, 0 },
+	{GUI_CUSTOMTEXT, 0x01, GWF_BUTTON, 50 + 10 , 80 + 10, 40, 15, 1, 5}, // Sound
+	{GUI_CUSTOMTEXT, 0x01, GWF_BUTTON, 50 + 10 + 40 + 30 , 80 + 10, 40, 15 , 2, 6}, // Keys
+	{GUI_CUSTOMTEXT, 0x01, GWF_BUTTON, 50 + 10 + 40 + 30 + 40 + 30, 80 + 10, 40, 15, 3, 7},	 // About
+	{0}
+};
+
+const GuiWidget sound_dialog[] = {
+	{GUI_STAT, 0xFF, GWF_DEFAULT, 30, 20, 260, 120, 0, 0 },
+	{GUI_CUSTOMTEXT, 0x01, GWF_BUTTON, 30 + 11, 20 + 11, 15, 15, 1, 3}, // Plus
+	{GUI_CUSTOMTEXT, 0x01, GWF_BUTTON, 30 + 33, 20 + 11, 15, 15, 2, 4}, // Minus
+	{GUI_VARTEXT, 0x01, GWF_DEFAULT, 30 + 73, 20 + 11, 128, 15, 3, 0}, // Master
+	{GUI_CUSTOMTEXT, 0x01, GWF_BUTTON, 30 + 11, 20 + 25 + 11, 15, 15, 11, 3}, // Plus
+	{GUI_CUSTOMTEXT, 0x01, GWF_BUTTON, 30 + 33, 20 + 25 + 11, 15, 15, 12, 4}, // Minus
+	{GUI_VARTEXT, 0x01, GWF_BUTTON, 30 + 73, 20 + 25 + 11, 128, 15, 13, 1},	 // Music
+	{GUI_CUSTOMTEXT, 0x01, GWF_BUTTON, 30 + 11, 20 + 25 + 25 + 11, 15, 15, 21, 3}, // Plus
+	{GUI_CUSTOMTEXT, 0x01, GWF_BUTTON, 30 + 33, 20 + 25 + 25 + 11, 15, 15, 22, 4}, // Minus
+	{GUI_VARTEXT, 0x01, GWF_BUTTON, 30 + 73, 20 + 25 + 25 + 11, 128, 15, 23, 2}, // SFX
+	{GUI_RESTEXT,0x01,GWF_BUTTON,30 + (260 / 2) - 80, 20 + 25 + 25 + 11 + 25 ,54,16,40,9}, /* OK */
+	{GUI_RESTEXT,0x01,GWF_BUTTON,30 + (260 / 2), 20 + 25 + 25 + 11 + 25 ,54,16,50,7}, /* Cancel */
+	{0}
+};
 
 const GuiWidget save_load_dialog[] = {
 	{GUI_STAT,0xFF,GWF_DEFAULT|GWF_PARENT,30,20,260,120,0,0},
-	{GUI_TEXT,0x01,0,40,5,128,16,0,1}, /* How may I serve you? */
-	{GUI_TEXT,0x02,0,40,5,128,16,0,2}, /* Select a game to LOAD */
-	{GUI_TEXT,0x04,0,40,5,128,16,0,3}, /* Name your SAVE game */
+	{GUI_RESTEXT,0x01,0,40,5,128,16,0,1}, /* How may I serve you? */
+	{GUI_RESTEXT,0x02,0,40,5,128,16,0,2}, /* Select a game to LOAD */
+	{GUI_RESTEXT,0x04,0,40,5,128,16,0,3}, /* Name your SAVE game */
 
 	{GUI_STAT,0xFF,GWF_DEFAULT,6,16,170,96,0,0},
-	{GUI_TEXT,0x01,GWF_DEFAULT,180,20,16,40,0,0},
-	{GUI_TEXT,0x01,GWF_DEFAULT,180,66,16,40,0,0},
-	{GUI_TEXT,0xFE,GWF_DEFAULT,180,20,16,40,1,0},
-	{GUI_TEXT,0xFE,GWF_DEFAULT,180,66,16,40,2,0},
+	{GUI_RESTEXT,0x01,GWF_DEFAULT,180,20,16,40,0,0},
+	{GUI_RESTEXT,0x01,GWF_DEFAULT,180,66,16,40,0,0},
+	{GUI_RESTEXT,0xFE,GWF_DEFAULT,180,20,16,40,1,0},
+	{GUI_RESTEXT,0xFE,GWF_DEFAULT,180,66,16,40,2,0},
 	
-	{GUI_TEXT,0x06,GWF_CLEARBG,10,20,160,10,20,0},
-	{GUI_TEXT,0x06,GWF_CLEARBG,10,30,160,10,21,0},
-	{GUI_TEXT,0x06,GWF_CLEARBG,10,40,160,10,22,0},
-	{GUI_TEXT,0x06,GWF_CLEARBG,10,50,160,10,23,0},
-	{GUI_TEXT,0x06,GWF_CLEARBG,10,60,160,10,24,0},
-	{GUI_TEXT,0x06,GWF_CLEARBG,10,70,160,10,25,0},
-	{GUI_TEXT,0x06,GWF_CLEARBG,10,80,160,10,26,0},
-	{GUI_TEXT,0x06,GWF_CLEARBG,10,90,160,10,27,0},
-	{GUI_TEXT,0x06,GWF_CLEARBG,10,100,160,10,28,0},
+	{GUI_RESTEXT,0x06,GWF_CLEARBG,10,20,160,10,20,0},
+	{GUI_RESTEXT,0x06,GWF_CLEARBG,10,30,160,10,21,0},
+	{GUI_RESTEXT,0x06,GWF_CLEARBG,10,40,160,10,22,0},
+	{GUI_RESTEXT,0x06,GWF_CLEARBG,10,50,160,10,23,0},
+	{GUI_RESTEXT,0x06,GWF_CLEARBG,10,60,160,10,24,0},
+	{GUI_RESTEXT,0x06,GWF_CLEARBG,10,70,160,10,25,0},
+	{GUI_RESTEXT,0x06,GWF_CLEARBG,10,80,160,10,26,0},
+	{GUI_RESTEXT,0x06,GWF_CLEARBG,10,90,160,10,27,0},
+	{GUI_RESTEXT,0x06,GWF_CLEARBG,10,100,160,10,28,0},
 
-	{GUI_TEXT,0x01,GWF_BUTTON,200,25,54,16,3,4}, /* Save */
-	{GUI_TEXT,0x01,GWF_BUTTON,200,45,54,16,4,5}, /* Load */
-	{GUI_TEXT,0x01,GWF_BUTTON,200,65,54,16,5,6}, /* Play */
-	{GUI_TEXT,0x01,GWF_BUTTON,200,85,54,16,6,8}, /* Quit */
+	{GUI_RESTEXT,0x01,GWF_BUTTON,200,25,54,16,3,4}, /* Save */
+	{GUI_RESTEXT,0x01,GWF_BUTTON,200,45,54,16,4,5}, /* Load */
+	{GUI_RESTEXT,0x01,GWF_BUTTON,200,65,54,16,5,6}, /* Play */
+	{GUI_RESTEXT,0x01,GWF_BUTTON,200,85,54,16,6,8}, /* Quit */
 
-	{GUI_TEXT,0x02,GWF_BUTTON,200,50,54,16,7,7}, /* Cancel */
+	{GUI_RESTEXT,0x02,GWF_BUTTON,200,50,54,16,7,7}, /* Cancel */
 
-	{GUI_TEXT,0x04,GWF_BUTTON,200,45,54,16,8,9}, /* Ok */
-	{GUI_TEXT,0x04,GWF_BUTTON,200,65,54,16,7,7}, /* Cancel */
+	{GUI_RESTEXT,0x04,GWF_BUTTON,200,45,54,16,8,9}, /* Ok */
+	{GUI_RESTEXT,0x04,GWF_BUTTON,200,65,54,16,7,7}, /* Cancel */
 	{0,0,0,0,0,0,0,0,0}
 };
 
 const GuiWidget pause_dialog[] = {
-	{GUI_TEXT,0x01,GWF_DEFAULT,50,80,220,16,0,10},
+	{GUI_RESTEXT,0x01,GWF_DEFAULT,50,80,220,16,0,10},
 	{0,0,0,0,0,0,0,0,0}
 };
+
+void Gui::handleSoundDialogCommand(int cmd) {
+	if (cmd == 40 || cmd == 50) {
+		if (cmd == 40) {
+			SoundEngine *se = (SoundEngine*)_s->_soundEngine;
+			_s->_sound_volume_master =	_gui_variables[0]; // Master
+			_s->_sound_volume_music =	_gui_variables[1]; // Music
+			_s->_sound_volume_sfx =		_gui_variables[2]; // SFX
+			se->set_music_volume(_s->_sound_volume_music);
+			se->set_master_volume(_s->_sound_volume_master);
+			registry_save();
+		}
+
+	close();
+	return;
+	}
+	if ((cmd % 10) == 1) {
+		if (_gui_variables[cmd / 10] < 100)
+			_gui_variables[cmd / 10]+=5;
+	}
+	else {
+		if (_gui_variables[cmd / 10] > 0)
+			_gui_variables[cmd / 10]-=5;
+	}
+	
+	draw((cmd / 10) * 10 + 3, (cmd / 10) * 10 + 3);
+}
+
+void Gui::handleOptionsDialogCommand(int cmd) {
+	switch(cmd) {
+		case 1:
+			_widgets[0] = sound_dialog;
+			_gui_variables[0] = _s->_sound_volume_master;
+			_gui_variables[1] = _s->_sound_volume_music;
+			_gui_variables[2] = _s->_sound_volume_sfx;
+			_active = true;
+			_cur_page = 0;
+			_dialog = SOUND_DIALOG;
+			draw(0, 100);
+			return;
+		case 2:
+			_key_mapping_required = 0;
+			get_key_mapping = true;
+			_widgets[0] = keys_dialog;
+			_active = true;
+			_cur_page = 0;
+			_dialog = KEYS_DIALOG;
+			draw(0, 200);
+			return;
+		case 3:
+			_widgets[0] = about_dialog;
+			_active = true;
+			_cur_page = 0;
+			_dialog = ABOUT_DIALOG;
+			draw(0, 100);
+			return;
+	}
+}
+
+void Gui::handleKeysDialogCommand(int cmd) {
+#ifdef _WIN32_WCE
+	if (cmd < 100 && cmd != 60) {
+
+		if ((cmd % 10) == 1) 
+			setNextType((cmd / 10) - 1);
+		else 
+			setPreviousType((cmd / 10) - 1);
+
+		draw(0, 200);
+
+		return;
+	}
+			
+	_key_mapping_required = cmd;
+
+	if (cmd == 60) {
+		get_key_mapping = false;
+		registry_save();
+		close();
+	}
+#endif
+}
 
 
 void Gui::handleCommand(int cmd) {
 	int lastEdit = _editString;
 	showCaret(false);
+
+	
+	if (_dialog == SOUND_DIALOG) {
+		handleSoundDialogCommand(cmd);
+		return;
+	}	
+	
+	if (_dialog == OPTIONS_DIALOG) {
+		handleOptionsDialogCommand(cmd);
+		return;
+	}
+
+	if (_dialog == KEYS_DIALOG) {
+		handleKeysDialogCommand(cmd);
+		return;
+	}
+
+	if (_dialog == ABOUT_DIALOG) {
+		close();
+		return;
+	}
 
 	switch(cmd) {
 	case 1: /* up button */
@@ -378,32 +605,6 @@ void Gui::getSavegameNames(int start) {
 		valid_games[i] = _s->getSavegameName(start, game_names[i]);
 	}
 }
-
-const byte string_map_table_v6[] = {
-	117, /* How may I serve you? */
-	109, /* Select a game to LOAD */
-	108, /* Name your SAVE game */
-	96,  /* Save */
-	97,  /* Load */
-	98,  /* Play */
-	99,  /* Cancel */
-	100, /* Quit */
-	101, /* Ok */
-	93,  /* Game paused */
-};
-
-const byte string_map_table_v5[] = {
-	0, /* How may I serve you? */
-	20, /* Select a game to LOAD */
-	19, /* Name your SAVE game */
-	7,  /* Save */
-	8,  /* Load */
-	9,  /* Play */
-	10,  /* Cancel */
-	11, /* Quit */
-	12, /* Ok */
-	4,  /* Game paused */
-};
 
 const char *Gui::queryString(int string, int id) {
 	static char namebuf[64];
@@ -485,6 +686,16 @@ void Gui::addLetter(byte letter) {
 		if (letter==32)
 			close();
 		break;
+
+#ifdef _WIN32_WCE
+	case KEYS_DIALOG:
+		clearActionKey(letter);
+		if (_key_mapping_required) 
+			getAction(_key_mapping_required - 100)->action_key = letter;
+		_key_mapping_required = 0;
+		draw(0, 200);
+		break;
+#endif
 	}
 }
 
@@ -519,7 +730,7 @@ void Gui::init(Scumm *s) {
 void Gui::loop() {
 	if (_active==1) {
 		_active++;
-		draw(0,100);
+		draw(0,200); // was 100
 		_s->_cursorAnimate++;
 		_s->gdi._cursorActive = 1;
 		_s->pauseSounds(true);
@@ -529,7 +740,13 @@ void Gui::loop() {
 	if (_s->_mouseButStat&MBS_LEFT_CLICK) {
 		leftMouseClick(_s->mouse.x, _s->mouse.y);
 	} else if (_s->_lastKeyHit) {
-		addLetter((unsigned char)_s->_lastKeyHit);
+		if (_dialog != KEYS_DIALOG)
+			addLetter((unsigned char)_s->_lastKeyHit);
+#ifdef _WIN32_WCE
+		else if (_s->_lastKeyHit > 1000) // GAPI
+			addLetter(_s->_lastKeyHit - 1000);
+#endif
+
 	}
 	
 	if (_clickTimer && !--_clickTimer) {
@@ -549,6 +766,13 @@ void Gui::close() {
 	_s->_cursorAnimate--;
 	_s->pauseSounds(false);
 	_active = false;
+
+#ifdef _WIN32_WCE
+	if (_dialog == SAVELOAD_DIALOG) {
+		draw_keyboard = false;
+		toolbar_drawn = false;
+	}
+#endif
 }
 
 void Gui::saveLoadDialog() {
@@ -564,4 +788,11 @@ void Gui::pause() {
 	_cur_page = 0;
 	_active = true;
 	_dialog = PAUSE_DIALOG;
+}
+
+void Gui::options() {
+	_widgets[0] = options_dialog;
+	_active = true;
+	_cur_page = 0;
+	_dialog = OPTIONS_DIALOG;
 }

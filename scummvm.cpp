@@ -1037,6 +1037,10 @@ void Scumm::pauseGame(bool user) {
 	((Gui*)_gui)->pause();
 }
 
+void Scumm::setOptions() {
+	((Gui*)_gui)->options();
+}
+
 void Scumm::shutDown(int i) {
 	/* TODO: implement this */
 	warning("shutDown: not implemented");
@@ -1065,6 +1069,11 @@ void Scumm::processKbd() {
 
 	if (!_lastKeyHit)
 		return;
+
+	if (_lastKeyHit==KEY_SET_OPTIONS) {
+		setOptions();
+		return;
+	}
 
 	if (_lastKeyHit==_vars[VAR_RESTART_KEY]) {
 		warning("Restart not implemented");

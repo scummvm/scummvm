@@ -3,9 +3,13 @@
 
 enum {
 	GUI_NONE = 0,
-	GUI_TEXT = 1,
+	GUI_RESTEXT = 1,
 	GUI_IMAGE = 2,
-	GUI_STAT = 3
+	GUI_STAT = 3,
+	GUI_CUSTOMTEXT = 4,
+	GUI_VARTEXT = 5,
+	GUI_ACTIONTEXT = 6,
+	GUI_KEYTEXT = 7
 };
 
 enum {
@@ -16,6 +20,52 @@ enum {
 	GWF_DEFAULT = GWF_BORDER|GWF_CLEARBG,
 	GWF_BUTTON = GWF_BORDER|GWF_CLEARBG|GWF_DELAY
 
+};
+
+static const char* string_map_table_custom[] = { 
+	"Master Volume :",
+	"Music Volume :",
+	"SFX Volume :",
+	"+",
+	"-",
+	"Sound",
+	"Keys",
+	"About",
+	"Pocket ScummVM",
+	"Build " SCUMMVM_VERSION "(" SCUMMVM_CVS ")",	
+	"ScummVM http://scummvm.sourceforge.net",	
+	"All games (c) LucasArts",
+	"Quit",
+	"Pause",
+	"Save",
+	"Skip",
+	"Hide"
+};
+
+static const byte string_map_table_v6[] = {
+	117, /* How may I serve you? */
+	109, /* Select a game to LOAD */
+	108, /* Name your SAVE game */
+	96,  /* Save */
+	97,  /* Load */
+	98,  /* Play */
+	99,  /* Cancel */
+	100, /* Quit */
+	101, /* Ok */
+	93  /* Game paused */
+};
+
+static const byte string_map_table_v5[] = {
+	0, /* How may I serve you? */
+	20, /* Select a game to LOAD */
+	19, /* Name your SAVE game */
+	7,  /* Save */
+	8,  /* Load */
+	9,  /* Play */
+	10,  /* Cancel */
+	11, /* Quit */
+	12, /* Ok */
+	4  /* Game paused */
 };
 
 struct GuiWidget {
@@ -47,6 +97,9 @@ struct Gui {
 	int _clickWidget;
 	char *_queryMess;
 
+	/* optiondialog specifics */
+	int _gui_variables[100];
+
 	/* savedialog specifics */	
 	int _slotIndex;
 	int _editString;
@@ -75,11 +128,19 @@ struct Gui {
 	void getSavegameNames(int start);
 	void editString(int index);
 	void showCaret(bool show);
-	void addLetter(byte letter);
-	void saveLoadDialog();
+	void addLetter(byte letter);	
 	void queryMessage(const char *msg, const char *alts);
 	byte getDefaultColor(int color);
+
+	// Dialogs
+	void saveLoadDialog();
 	void pause();
+	void options();
+
+	void handleSoundDialogCommand(int cmd);
+	void handleOptionsDialogCommand(int cmd);
+	void handleKeysDialogCommand(int cmd);
+
 };
 
 // Built-in font
