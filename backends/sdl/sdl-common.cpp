@@ -939,7 +939,7 @@ uint32 OSystem_SDL_Common::property(int param, Property *value) {
 			_cdrom = SDL_CDOpen(value->cd_num);
 			/* Did if open? Check if _cdrom is NULL */
 			if (!_cdrom) {
-				warning("Couldn't open drive: %s\n", SDL_GetError());
+				warning("Couldn't open drive: %s", SDL_GetError());
 			} else {
 				cd_num_loops = 0;
 				cd_stop_time = 0;

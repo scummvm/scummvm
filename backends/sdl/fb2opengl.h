@@ -236,7 +236,7 @@ int FB2GL::init(int width, int height, int xfix, int yfix, char _flags) {
 //	warning("Screen BitsPerPixel: %d\n",screen->format->BitsPerPixel);
 
 	if (!screen) {
-		warning("Couldn't start video res %dx%d\n", width, height);
+		warning("Couldn't start video res %dx%d", width, height);
 		return 0;
 	}
 
