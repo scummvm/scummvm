@@ -96,7 +96,7 @@ private:
 	int palnum;
 	int maxPalnum;
 
-	byte lookup[2][BITDEPTH * BITDEPTH * BITDEPTH];
+	byte lookup[2][(BITDEPTH+1) * (BITDEPTH+1) * (BITDEPTH+1)];
 	byte *lut;
 	byte *lut2;
 	int lutcalcnum;

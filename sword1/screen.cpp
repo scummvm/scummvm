@@ -943,7 +943,7 @@ void Screen::plotYUV(byte *lut, int width, int height, byte *const *dat) {
 
 	for (y = 0; y < height; y += 2) {
 		for (x = 0; x < width; x += 2) {
-			int i = ((((dat[2][cpos] + ROUNDADD) >> SHIFT) * BITDEPTH) + ((dat[1][cpos] + ROUNDADD)>>SHIFT)) * BITDEPTH;
+			int i = ((((dat[2][cpos] + ROUNDADD) >> SHIFT) * (BITDEPTH+1)) + ((dat[1][cpos] + ROUNDADD)>>SHIFT)) * (BITDEPTH+1);
 			cpos++;
 
 			buf[linepos          ] = lut[i + ((dat[0][        ypos  ] + ROUNDADD) >> SHIFT)];

@@ -169,16 +169,16 @@ void AnimationState::buildLookup(int p, int lines) {
 		pos = 0;
 	}
 
-	if (cr >= BITDEPTH)
+	if (cr > BITDEPTH)
 		return;
 
 	for (ii = 0; ii < lines; ii++) {
 		r = (-16 * 256 + (int) (256 * 1.596) * ((cr << SHIFT) - 128)) / 256;
-		for (cb = 0; cb < BITDEPTH; cb++) {
+		for (cb = 0; cb <= BITDEPTH; cb++) {
 			g = (-16 * 256 - (int) (0.813 * 256) * ((cr << SHIFT) - 128) - (int) (0.391 * 256) * ((cb << SHIFT) - 128)) / 256;
 			b = (-16 * 256 + (int) (2.018 * 256) * ((cb << SHIFT) - 128)) / 256;
 
-			for (y = 0; y < BITDEPTH; y++) {
+			for (y = 0; y <= BITDEPTH; y++) {
 				int idx, bst = 0;
 				int dis = 2 * SQR(r - palettes[p].pal[0]) + 4 * SQR(g - palettes[p].pal[1]) + SQR(b - palettes[p].pal[2]);
 
@@ -195,10 +195,10 @@ void AnimationState::buildLookup(int p, int lines) {
 				g += (1 << SHIFT);
 				b += (1 << SHIFT);
 			}
-			r -= 256;
+			r -= (BITDEPTH+1)*(1 << SHIFT);
 		}
 		cr++;
-		if (cr >= BITDEPTH)
+		if (cr > BITDEPTH)
 			return;
 	}
 }
@@ -226,14 +226,14 @@ void AnimationState::buildLookup() {
 	if (lookup)
 		return;
 
-	lookup = (OverlayColor *)calloc(BITDEPTH * BITDEPTH * 256, sizeof(OverlayColor));
+	lookup = (OverlayColor *)calloc((BITDEPTH+1) * (BITDEPTH+1) * 256, sizeof(OverlayColor));
 
 	int y, cb, cr;
 	int r, g, b;
 	int pos = 0;
 
-	for (cr = 0; cr < BITDEPTH; cr++) {
-		for (cb = 0; cb < BITDEPTH; cb++) {
+	for (cr = 0; cr <= BITDEPTH; cr++) {
+		for (cb = 0; cb <= BITDEPTH; cb++) {
 			for (y = 0; y < 256; y++) {
 				r = ((y - 16) * 256 + (int) (256 * 1.596) * ((cr << SHIFT) - 128)) / 256;
 				g = ((y - 16) * 256 - (int) (0.813 * 256) * ((cr << SHIFT) - 128) - (int) (0.391 * 256) * ((cb << SHIFT) - 128)) / 256;
@@ -264,7 +264,7 @@ void AnimationState::plotYUV(OverlayColor *lut, int width, int height, byte *con
 
 	for (y = 0; y < height; y += 2) {
 		for (x = 0; x < width; x += 2) {
-			int i = ((((dat[2][cpos] + ROUNDADD) >> SHIFT) * BITDEPTH) + ((dat[1][cpos] + ROUNDADD)>>SHIFT)) * 256;
+			int i = ((((dat[2][cpos] + ROUNDADD) >> SHIFT) * (BITDEPTH+1)) + ((dat[1][cpos] + ROUNDADD)>>SHIFT)) * 256;
 			cpos++;
 
 			ptr[linepos               ] = lut[i + dat[0][        ypos  ]];
